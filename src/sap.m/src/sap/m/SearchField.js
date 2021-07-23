@@ -558,6 +558,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Handles the <code>sapfocusleave</code> event of the input.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 */
+	SearchField.prototype.onsapfocusleave = function(oEvent) {
+		// because the internal input HTML element is in a Form,
+		// we need to call preventDefault() when Enter is pressed,
+		// but this breaks the firing of the standard "input.onchange" event in this case:
+		// "type something - Enter - Ctrl+A - Ctrl+X - Tab"
+		// for that we're calling the following method here
+		this._fireChangeEvent();
+	};
+
+	/**
 	 * Fires the <code>change</code> event if needed
 	 * @private
 	 */
