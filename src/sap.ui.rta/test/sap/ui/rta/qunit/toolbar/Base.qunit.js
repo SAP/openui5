@@ -210,34 +210,18 @@ function(
 	 * ANIMATION FUNCTIONALITY
 	 ********************************************************************************************************/
 
-	var insertStyles = function (sStyles) {
-		return jQuery('<style ></style>').text(sStyles).prependTo('body');
-	};
-
 	QUnit.module('Animation functionality', {
 		beforeEach: function() {
 			var CustomToolbar = BaseToolbar.extend('CustomToolbar', {
 				renderer: 'sap.ui.rta.toolbar.BaseRenderer',
 				animation: true,
-				type: 'custom'
+				type: 'fiori'
 			});
 
 			this.oToolbar = new CustomToolbar();
-
-			this.$styles = insertStyles('\
-				.type_custom {\
-					background-color: blue;\
-					transition: opacity 0.05s linear;\
-					opacity: 0;\
-				}\
-				.type_custom.is_visible {\
-					opacity: 1;\
-				}\
-			');
 		},
 		afterEach: function() {
 			this.oToolbar.destroy();
-			this.$styles.remove();
 			sandbox.restore();
 		}
 	}, function () {
