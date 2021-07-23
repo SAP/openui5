@@ -43,7 +43,7 @@ sap.ui.define([
 			oRM.close("header");
 		}
 
-		if (oSubHeader) {
+		if (oSubHeader && oSubHeader.getVisible()) {
 			oRM.openStart("header").openEnd();
 
 				oRM.openStart("div", oControl.getId() + "-subHeader")
@@ -80,7 +80,7 @@ sap.ui.define([
 
 	ToolPageRenderer.renderAsideContent = function (oRM, oControl) {
 		var oSideContent = oControl.getSideContent();
-		if (!oSideContent) {
+		if (!oSideContent || !oSideContent.getVisible()) {
 			return;
 		}
 
