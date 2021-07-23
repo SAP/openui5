@@ -25,6 +25,7 @@
 		},
 		"config": {
 			"sample": {
+				"stretch": true,
 				"files": [
 					"view/NavContainer.view.xml",
 					"controller/NavContainer.controller.js",
