@@ -83,6 +83,9 @@
 									<smartForm:GroupElement id="EntityType01.technicalInvisibleProp" visible="false" label="Technical invisible via ui.hidden annotation (not revealable)">
 										<TextArea value="{EntityType01_TechnicalInvisibleProperty}"/>
 									</smartForm:GroupElement>
+									<smartForm:GroupElement id="EntityType01.Property10b" visible="false" label="Property10b - visible with similar name to invisible property">
+										<TextArea value="{Property10b}"/>
+									</smartForm:GroupElement>
 								</smartForm:Group>
 								<!--This Group is bound to EntityType02 because the form is bound to EntityType02 -->
 								<smartForm:Group id="GroupEntityType02" label="Group2 bound to EntityType02" >
