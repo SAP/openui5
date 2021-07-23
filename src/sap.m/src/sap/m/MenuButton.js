@@ -443,8 +443,8 @@ sap.ui.define([
 				case Dock.EndBottom:
 					aParam.push(Dock.EndTop, Dock.EndBottom, oOffset.minus2_right);
 					break;
-				default:
 				case Dock.BeginBottom:
+				default:
 					aParam.push(Dock.BeginTop, Dock.BeginBottom, oOffset.minus2_right);
 					break;
 			}

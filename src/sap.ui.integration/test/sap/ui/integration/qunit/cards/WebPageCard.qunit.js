@@ -17,6 +17,7 @@ sap.ui.define([
 	function bypassHttpsValidation() {
 		sinon.stub(WebPageContent.prototype, "getSrc")
 			.callsFake(function () {
+				// eslint-disable-next-line no-new-wrappers
 				var oSrc = new String(this.getProperty("src"));
 				oSrc.startsWith = function (sStarsWith) {
 					if (sStarsWith === "https://") {

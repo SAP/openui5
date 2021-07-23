@@ -130,6 +130,7 @@ sap.ui.define(['./Delegate', "sap/base/strings/hyphenate", "sap/base/util/deepEq
 			}
 			return oValue;
 		}, function (sName, oValue) {
+			// eslint-disable-next-line valid-typeof
 			return (oValue !== null && typeof oValue !== undefined && oValue !== "");
 		});
 

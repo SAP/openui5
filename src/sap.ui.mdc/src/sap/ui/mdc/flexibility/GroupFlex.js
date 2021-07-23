@@ -40,7 +40,7 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function (FlexRuntimeI
 		return new Promise(function (resolve, reject) {
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-			return Promise.resolve()
+			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "groupConditions"))
 				.then(function(oGroupConditions) {
 					var aValue = oGroupConditions ? oGroupConditions.groupLevels : [];
@@ -69,7 +69,7 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function (FlexRuntimeI
 		return new Promise(function (resolve, reject) {
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-			return Promise.resolve()
+			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "groupConditions"))
 				.then(function(oGroupConditions) {
 					var aValue = oGroupConditions ? oGroupConditions.groupLevels : [];
@@ -104,7 +104,7 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function (FlexRuntimeI
 		return new Promise(function (resolve, reject) {
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-			return Promise.resolve()
+			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "groupConditions"))
 				.then(function(oGroupConditions) {
 					var aValue = oGroupConditions ? oGroupConditions.groupLevels : [];

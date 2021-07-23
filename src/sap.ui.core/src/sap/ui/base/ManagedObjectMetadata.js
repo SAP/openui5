@@ -209,7 +209,10 @@ function(
 	};
 
 	Property.prototype.getType = function() {
-		return this._oType || (this._oType = DataType.getType(this.type));
+		if (!this._oType) {
+			this._oType = DataType.getType(this.type);
+		}
+		return this._oType;
 	};
 
 	Property.prototype.getDefaultValue = function() {
@@ -321,7 +324,10 @@ function(
 	};
 
 	Aggregation.prototype.getType = function() {
-		return this._oType || (this._oType = DataType.getType(this.type));
+		if (!this._oType) {
+			this._oType = DataType.getType(this.type);
+		}
+		return this._oType;
 	};
 
 	Aggregation.prototype.get = function(instance) {
@@ -702,7 +708,10 @@ function(
 	};
 
 	Association.prototype.getType = function() {
-		return this._oType || (this._oType = DataType.getType(this.type));
+		if (!this._oType) {
+			this._oType = DataType.getType(this.type);
+		}
+		return this._oType;
 	};
 
 	Association.prototype.get = function(instance) {

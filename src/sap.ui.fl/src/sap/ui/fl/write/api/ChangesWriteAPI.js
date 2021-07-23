@@ -123,6 +123,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		apply: function(mPropertyBag) {
+			// eslint-disable-next-line no-unsafe-negation
 			if (!mPropertyBag.element instanceof Element) {
 				return Promise.reject("Please provide an Element");
 			}

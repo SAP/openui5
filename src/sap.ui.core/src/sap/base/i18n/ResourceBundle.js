@@ -388,9 +388,9 @@ sap.ui.define([
 			}
 
 			if (this.bIncludeInfo) {
-				/* eslint-disable no-new-wrappers */
+				// String object is created on purpose and must not be a string literal
+				// eslint-disable-next-line no-new-wrappers
 				sValue = new String(sValue);
-				/* eslint-enable no-new-wrappers */
 				sValue.originInfo = {
 					source: "Resource Bundle",
 					url: this.oUrlInfo.url,

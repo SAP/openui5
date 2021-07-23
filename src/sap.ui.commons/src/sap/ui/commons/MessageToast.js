@@ -160,12 +160,12 @@ sap.ui.define([
 		// Toast done (allows for smooth toasting):
 	  this.bIdle = true;
 	  this.fireNext();
-	}
+	};
 
 	/**
 	 * This utility opens the MessageToast Popup.
 	 * @private
-	 */;
+	 */
 	MessageToast.prototype.open = function(iDuration) {
 		// For Multiple Messages, 1st we need to close the existing toast:
 	  if (!this.bIdle) {

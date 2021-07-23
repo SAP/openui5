@@ -904,7 +904,7 @@ sap.ui.define([
 			}),
 			oIncBtn = oSI._getIncrementButton(),
 			oSI2 = new StepInput({
-				value: 1.3266999999999999999,
+				value: 1.326699999999999,
 				step: 0.00499999999999,
 				displayValuePrecision: 3
 			}),
@@ -923,12 +923,12 @@ sap.ui.define([
 		assert.strictEqual(oSI.getAggregation("_input")._getInputValue(), "1.332", "The input value is correctly formatted");
 
 		//second test
-		assert.strictEqual(oSI2.getValue(), 1.3266999999999999999, "The value is formated correctly");
+		assert.strictEqual(oSI2.getValue(), 1.326699999999999, "The value is formated correctly");
 		assert.strictEqual(oSI2.getAggregation("_input")._getInputValue(), "1.327", "The input value is rounded to the given displayValuePrecision");
 
 		oIncBtn2.firePress();
 
-		assert.strictEqual(oSI2.getValue(), 1.3316999999999899999, "The value is formated correctly");
+		assert.strictEqual(oSI2.getValue(), 1.331699999999989, "The value is formated correctly");
 		assert.strictEqual(oSI2.getAggregation("_input")._getInputValue(), "1.332", "The input value is correctly formatted");
 
 		oSI.destroy();

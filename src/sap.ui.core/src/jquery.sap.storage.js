@@ -59,8 +59,11 @@ sap.ui.define([
 			if (sIdPrefix && sIdPrefix != "state.key_") {
 				sKey = oStorage + "_" + sIdPrefix;
 			}
+			if (!mStorages[sKey]) {
+				mStorages[sKey] = new Storage(oStorage, sIdPrefix);
+			}
 
-			return mStorages[sKey] || (mStorages[sKey] = new Storage(oStorage, sIdPrefix));
+			return mStorages[sKey];
 		}
 
 		// OK, tough but probably good for issue identification. As something was passed in, let's at least ensure our used API is fulfilled.

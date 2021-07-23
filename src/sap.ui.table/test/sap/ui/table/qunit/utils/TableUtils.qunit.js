@@ -797,6 +797,7 @@ sap.ui.define([
 		oTable.setNoData(new Control());
 		assert.strictEqual(TableUtils.getNoDataText(oTable), null);
 
+		// eslint-disable-next-line no-new-wrappers
 		var oString = new String("Some Text");
 		oTable.setNoData(oString);
 		assert.equal(TableUtils.getNoDataText(oTable), oString);

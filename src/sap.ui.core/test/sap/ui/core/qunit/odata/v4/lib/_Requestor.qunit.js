@@ -3956,7 +3956,7 @@ sap.ui.define([
 				}));
 
 			// send a request that starts a session with timeout=960 (16 min)
-			return oRequestor.sendRequest("POST", sResourcePath).then(function () {
+			oRequestor.sendRequest("POST", sResourcePath).then(function () {
 				oJQueryMock.expects("ajax").withExactArgs(sServiceUrl, {
 						headers : sinon.match({
 							"SAP-ContextId" : "context"

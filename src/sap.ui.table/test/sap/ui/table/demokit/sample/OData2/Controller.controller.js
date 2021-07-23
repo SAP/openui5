@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Text",
 	"sap/ui/model/type/String"
-], function(Controller, MockServer, ODataModel, JSONModel, Column, Currency, Label, Text, String) {
+], function(Controller, MockServer, ODataModel, JSONModel, Column, Currency, Label, Text, StringType) {
 	"use strict";
 
 	var sServiceUrl = "http://my.test.service.com/";
@@ -68,7 +68,7 @@ sap.ui.define([
 				if (sUnit) {
 					var sUnitType = oModel.getMetaModel().getMetaContext("/ProductSet/" + sUnit).getProperty()["sap:semantics"];
 					if (sUnitType == "currency-code") {
-						return new Currency({value: {path: sName, type: new String()}, currency: {path: sName}});
+						return new Currency({value: {path: sName, type: new StringType()}, currency: {path: sName}});
 					}
 				}
 				return null;

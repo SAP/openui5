@@ -621,6 +621,8 @@ sap.ui.define([
 				if (iActiveClock >= iClocksCount) {
 					iActiveClock = bWrapAround ? 0 : iClocksCount - 1;
 				}
+			// false-positive finding of no-unmodified-loop-condition rule
+			// eslint-disable-next-line no-unmodified-loop-condition
 			} while (!oActiveClock.getEnabled() && iActiveClock !== iStartActiveClock && (bWrapAround || iActiveClock < iClocksCount - 1));
 
 			this._ctrlKeyDown = 0; // 0 = Ctrl is released, 1 = Ctrl is pressed, 2 = Ctrl key down flag must be reset due to value change

@@ -926,12 +926,7 @@ sap.ui.define([
 			var oLayout = this.__myParentLayout;
 			if (!oLayout._mainGrid || !oLayout._mainGrid.__bIsUsed ) {
 				// no main grid used -> only 1 container
-				var aContainers = oLayout.getParent().getVisibleFormContainers();
-				var oFirstContainer;
-				for (var i = 0; i < aContainers.length; i++) {
-					oFirstContainer = aContainers[i];
-					break;
-				}
+				var oFirstContainer = oLayout.getParent().getVisibleFormContainers()[0];
 				if (!oFirstContainer || !oLayout.mContainers[oFirstContainer.getId()] || oFirstContainer.getId() != this.__myParentContainerId) {
 					// Form seems to be invalidated (container changed) but rerendering still not done
 					// -> ignore resize, it will be rerendered soon

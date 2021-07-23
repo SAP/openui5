@@ -27,11 +27,11 @@ sap.ui.define(['./TextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/libra
 	 */
 	TextAreaRenderer.getInnerTagName = function(){
 		return ('textarea');
-	}
+	};
 
 	/**
 	 * Add attributes, styles and so on to TextField tag
-	 */;
+	 */
 	TextAreaRenderer.renderInnerAttributes = function(rm, oTextArea){
 
 		rm.addClass("sapUiTxtA");
@@ -74,11 +74,11 @@ sap.ui.define(['./TextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/libra
 			rm.writeAttribute('wrap', 'off');
 			break;
 		}
-	}
+	};
 
 	/**
 	 * Overwrite renderARIAInfo function of TextField
-	 */;
+	 */
 	TextAreaRenderer.renderARIAInfo = function(rm, oTextArea) {
 
 		rm.writeAccessibilityState(oTextArea, {

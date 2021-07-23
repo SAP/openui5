@@ -147,6 +147,7 @@ sap.ui.define([
 			}
 			return oValue;
 		}, function (sName, oValue) {
+			// eslint-disable-next-line valid-typeof
 			return (oValue !== null && typeof oValue !== undefined && oValue !== "");
 		});
 

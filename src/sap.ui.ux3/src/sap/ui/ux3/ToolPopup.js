@@ -673,8 +673,8 @@ sap.ui.define([
                                 iOffsetX = -this.iArrowWidth;
                                 break;
 
-                            default:
                             case "Left":
+                            default:
                                 iOffsetX = this.iArrowWidth;
                                 break;
                         }

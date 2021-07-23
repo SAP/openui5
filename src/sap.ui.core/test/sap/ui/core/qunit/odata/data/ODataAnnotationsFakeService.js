@@ -233,8 +233,8 @@ sap.ui.define([
 							sAnnotations = aValueListStrings[2];
 							break;
 
-						default:
 						case "none":
+						default:
 							sAnnotations = "";
 							break;
 					}

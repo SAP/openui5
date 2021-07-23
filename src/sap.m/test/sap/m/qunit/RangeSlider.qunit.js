@@ -301,7 +301,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//act
-		this.rangeSlider.setValue(0.150000000000000001);
+		this.rangeSlider.setValue(0.1500000000000001);
 		sap.ui.getCore().applyChanges();
 
 		//assert
@@ -315,7 +315,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//act
-		this.rangeSlider.setValue2(0.150000000000000001);
+		this.rangeSlider.setValue2(0.1500000000000001);
 		sap.ui.getCore().applyChanges();
 
 		//assert

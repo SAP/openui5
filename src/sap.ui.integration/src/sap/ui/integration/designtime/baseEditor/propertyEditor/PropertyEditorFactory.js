@@ -96,10 +96,12 @@ sap.ui.define([
 	PropertyEditorFactory.create = function (sPropertyType) {
 		return new Promise(function (resolve, reject) {
 			if (!sPropertyType) {
-				return reject("No editor type was specified in the property configuration.");
+				reject("No editor type was specified in the property configuration.");
+				return;
 			}
 			if (!oLoadingPromisses[sPropertyType]) {
-				return reject("Editor type was not registered");
+				reject("Editor type was not registered");
+				return;
 			}
 			oLoadingPromisses[sPropertyType]
 				.then(function (PropertyEditorClass) {

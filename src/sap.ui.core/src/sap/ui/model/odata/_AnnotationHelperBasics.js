@@ -116,6 +116,7 @@ sap.ui.define([
 			if (sExpectedType === "array") {
 				bError = !Array.isArray(vValue);
 			} else {
+				// eslint-disable-next-line valid-typeof
 				bError = typeof vValue !== sExpectedType
 					|| vValue === null
 					|| Array.isArray(vValue);
@@ -182,36 +183,38 @@ sap.ui.define([
 			}
 			aParts = sPath.split("/");
 
-			while (sPath && aParts.length && sContextPath) {
-				sSegment = aParts[0];
-				iIndexOfAt = sSegment.indexOf("@");
-				if (iIndexOfAt === 0) {
-					// term cast
-					sContextPath += "/" + sSegment.slice(1);
-					aParts.shift();
-					continue;
-//				} else if (iIndexOfAt > 0) { // annotation of a navigation property
-//					sSegment = sSegment.slice(0, iIndexOfAt);
-				}
-
-				oType = oModel.getObject(sContextPath);
-				oAssociationEnd = oModel.getODataAssociationEnd(oType, sSegment);
-				if (oAssociationEnd) {
-					// navigation property
-					oResult.associationSetEnd
-						= oModel.getODataAssociationSetEnd(oType, sSegment);
-					oResult.navigationProperties.push(sSegment);
-					if (oResult.isMultiple) {
-						oResult.navigationAfterMultiple = true;
+			if (sPath) {
+				while (aParts.length && sContextPath) {
+					sSegment = aParts[0];
+					iIndexOfAt = sSegment.indexOf("@");
+					if (iIndexOfAt === 0) {
+						// term cast
+						sContextPath += "/" + sSegment.slice(1);
+						aParts.shift();
+						continue;
+//					} else if (iIndexOfAt > 0) { // annotation of a navigation property
+//						sSegment = sSegment.slice(0, iIndexOfAt);
 					}
-					oResult.isMultiple = oAssociationEnd.multiplicity === "*";
-					sContextPath = oModel.getODataEntityType(oAssociationEnd.type, true);
-					aParts.shift();
-					continue;
-				}
 
-				// structural properties or some unsupported case
-				sContextPath = oModel.getODataProperty(oType, aParts, true);
+					oType = oModel.getObject(sContextPath);
+					oAssociationEnd = oModel.getODataAssociationEnd(oType, sSegment);
+					if (oAssociationEnd) {
+						// navigation property
+						oResult.associationSetEnd
+							= oModel.getODataAssociationSetEnd(oType, sSegment);
+						oResult.navigationProperties.push(sSegment);
+						if (oResult.isMultiple) {
+							oResult.navigationAfterMultiple = true;
+						}
+						oResult.isMultiple = oAssociationEnd.multiplicity === "*";
+						sContextPath = oModel.getODataEntityType(oAssociationEnd.type, true);
+						aParts.shift();
+						continue;
+					}
+
+					// structural properties or some unsupported case
+					sContextPath = oModel.getODataProperty(oType, aParts, true);
+				}
 			}
 
 			oResult.resolvedPath = sContextPath;

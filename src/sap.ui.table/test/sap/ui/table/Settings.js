@@ -1801,8 +1801,8 @@ sap.ui.define([
 				oTable.setShowNoData(false);
 				oTable.setNoData(null);
 				break;
-			default:
 			case "SHOWDATA":
+			default:
 				oNoDataConfig.setData(oTable, false);
 				oTable.setShowNoData(true);
 				oTable.setNoData(null);

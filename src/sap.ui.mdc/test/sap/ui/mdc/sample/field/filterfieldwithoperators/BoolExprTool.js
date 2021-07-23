@@ -175,6 +175,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject", "sap/ui/mdc/con
 			// <expression>::= <term>{<or><term>}
 			var expression = function() {
 				var astLeft = term();
+				// eslint-disable-next-line no-unmodified-loop-condition
 				while (sy === "OR") {
 					checkSymbol("OR");
 					var astRight = term();
@@ -186,6 +187,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject", "sap/ui/mdc/con
 			// <term>::= <factor>{<and><factor>}
 			var term = function() {
 				var astLeft = factor();
+				// eslint-disable-next-line no-unmodified-loop-condition
 				while (sy === "AND") {
 					checkSymbol("AND");
 					var astRight = factor();

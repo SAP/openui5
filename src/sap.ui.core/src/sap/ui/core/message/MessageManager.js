@@ -402,6 +402,7 @@ sap.ui.define([
 	 * @public
 	 */
 	MessageManager.prototype.registerObject = function(oObject, bHandleValidation) {
+		// eslint-disable-next-line no-unsafe-negation
 		if (!oObject instanceof ManagedObject) {
 			Log.error(this + " : " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
 			return;
@@ -419,6 +420,7 @@ sap.ui.define([
 	 * @public
 	 */
 	MessageManager.prototype.unregisterObject = function(oObject) {
+		// eslint-disable-next-line no-unsafe-negation
 		if (!oObject instanceof ManagedObject) {
 			Log.error(this + " : " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
 			return;

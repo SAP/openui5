@@ -334,8 +334,10 @@ sap.ui.define([
 					} while (!oCurrentItem);
 				}
 				// move to the most left column index
-				while (oCurrentItem && iColIndex > 0 && aMatrix[iRow][iColIndex - 1] === oCurrentItem) {
-					iColIndex--;
+				if (oCurrentItem) {
+					while (iColIndex > 0 && aMatrix[iRow][iColIndex - 1] === oCurrentItem) {
+						iColIndex--;
+					}
 				}
 
 				break;
@@ -356,8 +358,10 @@ sap.ui.define([
 				}
 
 				// move to the upper top row index
-				while (oCurrentItem && iRowIndex > 0 && aMatrix[iRowIndex - 1][iColumn] === oCurrentItem) {
-					iRowIndex--;
+				if (oCurrentItem) {
+					while (iRowIndex > 0 && aMatrix[iRowIndex - 1][iColumn] === oCurrentItem) {
+						iRowIndex--;
+					}
 				}
 				break;
 			default:

@@ -82,7 +82,8 @@ sap.ui.define([
 					var oCrossApplicationNavigation = Factory.getService("CrossApplicationNavigation");
 					if (!oCrossApplicationNavigation) {
 						SapBaseLog.error("FlpLinkDelegate: Service 'CrossApplicationNavigation' could not be obtained");
-						return resolve({});
+						resolve({});
+						return;
 					}
 					oCrossApplicationNavigation.getDistinctSemanticObjects().then(function(aDistinctSemanticObjects) {
 						aDistinctSemanticObjects.forEach(function(sSemanticObject) {

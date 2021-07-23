@@ -82,7 +82,8 @@ sap.ui.define(['sap/base/Log'], function(Log) {
 							break;
 						}
 						oParentWindow = oParentWindow.parent;
-					} while (bTrue);
+					// eslint-disable-next-line no-unmodified-loop-condition
+					} while (bTrue); // TODO: refactor loop condition bTrue
 					if (bOk) {
 						this._applyState(true, true);
 					}

@@ -1270,7 +1270,8 @@ sap.ui.define([
 				jQuery(this).off("webkitAnimationEnd animationend");
 
 				if (!bFirstSlideDone) {
-					return (bFirstSlideDone = true);
+					bFirstSlideDone = true;
+					return bFirstSlideDone;
 				}
 
 				bTransitionEndPending = false;

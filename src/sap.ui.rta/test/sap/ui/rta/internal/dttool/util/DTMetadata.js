@@ -52,7 +52,8 @@ sap.ui.define([
 			var sURL = sap.ui.resource(sLibraryName + ".designtime", 'messagebundle.properties');
 			var oLib = oCore.getLoadedLibraries()[sLibraryName];
 			if (mLibraryData[sLibraryName]) {
-				return fnResolve(mLibraryData[sLibraryName]);
+				fnResolve(mLibraryData[sLibraryName]);
+				return;
 			}
 
 			ResourceBundle.create({url: sURL, async: true})

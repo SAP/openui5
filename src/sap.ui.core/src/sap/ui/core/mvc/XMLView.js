@@ -350,15 +350,17 @@ sap.ui.define([
 		var Component = sap.ui.require("sap/ui/core/Component"),
 			oComponent;
 
-		while (oSrcElement && Component) {
-			var oCandidateComponent = Component.getOwnerComponentFor(oSrcElement);
-			if (oCandidateComponent) {
-				oSrcElement = oComponent = oCandidateComponent;
-			} else {
-				if (oSrcElement instanceof Component) {
-					oComponent = oSrcElement;
+		if (Component) {
+			while (oSrcElement) {
+				var oCandidateComponent = Component.getOwnerComponentFor(oSrcElement);
+				if (oCandidateComponent) {
+					oSrcElement = oComponent = oCandidateComponent;
+				} else {
+					if (oSrcElement instanceof Component) {
+						oComponent = oSrcElement;
+					}
+					oSrcElement = oSrcElement.getParent && oSrcElement.getParent();
 				}
-				oSrcElement = oSrcElement.getParent && oSrcElement.getParent();
 			}
 		}
 		return oComponent;

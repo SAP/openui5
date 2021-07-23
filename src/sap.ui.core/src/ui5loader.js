@@ -920,7 +920,10 @@
 	 * @static
 	 */
 	Module.get = function(sModuleName) {
-		return mModules[sModuleName] || (mModules[sModuleName] = new Module(sModuleName));
+		if (!mModules[sModuleName]) {
+			mModules[sModuleName] = new Module(sModuleName);
+		}
+		return mModules[sModuleName];
 	};
 
 	/*

@@ -59,7 +59,10 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 	 * @public
 	 */
 	Properties.prototype.getKeys = function() {
-		return this.aKeys || (this.aKeys = Object.keys(this.mProperties));
+		if (!this.aKeys) {
+			this.aKeys = Object.keys(this.mProperties);
+		}
+		return this.aKeys;
 	};
 
 	/**

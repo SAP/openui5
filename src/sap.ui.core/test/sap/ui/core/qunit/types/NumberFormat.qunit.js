@@ -729,6 +729,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oDefaultFloat.format("123456789.123456789"), "123,456,789.123456789", "123456789.123456789 (string)");
 		// Due to IEEE_754 (Binary Floating-Point Arithmetic)
 		// JavaScript can only represent the number 123456789.123456789 as 123456789.12345679
+		// eslint-disable-next-line no-loss-of-precision
 		assert.equal(oDefaultFloat.format(123456789.123456789), "123,456,789.12345679", "123456789.123456789 (number)");
 	});
 
@@ -765,6 +766,9 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFloatInstanceWithPreserveDecimals.format("1000.0000"), "1,000.0000", "1000.0000");
 		assert.equal(oFloatInstanceWithPreserveDecimals.format("1000.00000000"), "1,000.00000000", "1000.00000000");
 		assert.equal(oFloatInstanceWithPreserveDecimals.format("123456789.123456789"), "123,456,789.123456789", "123456789.123456789 (string)");
+		// Due to IEEE_754 (Binary Floating-Point Arithmetic)
+		// JavaScript can only represent the number 123456789.123456789 as 123456789.12345679
+		// eslint-disable-next-line no-loss-of-precision
 		assert.equal(oFloatInstanceWithPreserveDecimals.format(123456789.123456789), "123,456,789.12345679", "123456789.12345679 (number)");
 	});
 
@@ -1282,6 +1286,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format("1000.0000", "mass-kilogram"), "1,000.0000 kg", "1000.0000");
 		// Due to IEEE_754 (Binary Floating-Point Arithmetic)
 		// JavaScript can only represent the number 123456789.123456789 as 123456789.12345679
+		// eslint-disable-next-line no-loss-of-precision
 		assert.equal(oFormat.format(123456789.123456789, "mass-kilogram"), "123,456,789.12345679 kg", "123456789.123456789 (number)");
 		assert.equal(oFormat.format("123456789.123456789", "mass-kilogram"), "123,456,789.123456789 kg", "123456789.123456789 (string)");
 	});
@@ -1320,6 +1325,9 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format("1000.00", "mass-kilogram"), "1,000.00 kg", "1000.00");
 		assert.equal(oFormat.format("1000.0000", "mass-kilogram"), "1,000.0000 kg", "1000.0000");
 		assert.equal(oFormat.format("1000.00000000", "mass-kilogram"), "1,000.00000000 kg", "1000.00000000");
+		// Due to IEEE_754 (Binary Floating-Point Arithmetic)
+		// JavaScript can only represent the number 123456789.123456789 as 123456789.12345679
+		// eslint-disable-next-line no-loss-of-precision
 		assert.equal(oFormat.format(123456789.123456789, "mass-kilogram"), "123,456,789.12345679 kg", "123456789.123456789 (number)");
 		assert.equal(oFormat.format("123456789.123456789", "mass-kilogram"), "123,456,789.123456789 kg", "123456789.123456789 (string)");
 	});
@@ -2601,10 +2609,10 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 			expected: -1.2345678901234568e+22
 		}, {
 			value: "1.2345678901234568e+32",
-			expected: 1.2345678901234568e+32
+			expected: 1.2345678901234569e+32
 		}, {
 			value: "-1.2345678901234568e+32",
-			expected: -1.2345678901234568e+32
+			expected: -1.2345678901234569e+32
 		}].forEach(function (oInput) {
 			var sParsedInteger = oIntegerFormat.parse(oInput.value);
 			assert.strictEqual(sParsedInteger, oInput.expected, "integer content must be the same for " + oInput.value);
@@ -2704,10 +2712,10 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 			expected: -3e+23
 		}, {
 			value: "12.345678901234568e+22",
-			expected: 1.2345678901234568e+23
+			expected: 1.2345678901234569e+23
 		}, {
 			value: "-12.345678901234568e+22",
-			expected: -1.2345678901234568e+23
+			expected: -1.2345678901234569e+23
 		}, {
 			value: "12.345678901234568e+32",
 			expected: 1.2345678901234568e+33

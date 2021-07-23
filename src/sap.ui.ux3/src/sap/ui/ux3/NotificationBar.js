@@ -1115,8 +1115,8 @@ sap.ui.define([
 				display = "block";
 				break;
 
-			default:
 			case NotificationBarStatus.Default:
+			default:
 				/*
 				 * If bar should be resized from maximized to default a re-rendering
 				 * is needed. Otherwise a simple animation and CSS exchange is

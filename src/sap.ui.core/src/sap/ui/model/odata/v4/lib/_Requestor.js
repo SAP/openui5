@@ -1736,9 +1736,10 @@ sap.ui.define([
 			}
 
 			if (that.oSecurityTokenPromise && sMethod !== "GET") {
-				return that.oSecurityTokenPromise.then(send);
+				that.oSecurityTokenPromise.then(send);
+			} else {
+				send();
 			}
-			return send();
 		});
 	};
 

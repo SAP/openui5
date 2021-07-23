@@ -1538,7 +1538,10 @@ sap.ui.define([
 
 	Table.prototype._getPasteButton = function() {
 		if (this.getShowPasteButton()) {
-			return this._oPasteButton || (this._oPasteButton = TableSettings.createPasteButton(this.getId()));
+			if (!this._oPasteButton) {
+				this._oPasteButton = TableSettings.createPasteButton(this.getId());
+			}
+			return this._oPasteButton;
 		}
 	};
 

@@ -1348,13 +1348,13 @@ sap.ui.define([
 				 break;
 		 }
 
-	 }
+	 };
 
 	/**
 	 * Update the state of aggregated child controls inside this row repeater.
 	 *
 	 * @private
-	 */;
+	 */
 	RowRepeater.prototype.updateChildControls = function() {
 
 		// local referenced to controls

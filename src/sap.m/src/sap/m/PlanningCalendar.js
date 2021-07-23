@@ -3017,55 +3017,65 @@ sap.ui.define([
 		aResultViews = aKeysForBuiltInViews.map(function (sViewKey) {
 			switch (sViewKey) {
 				case oViewType.Hour:
-					return this._oViews[oViewType.Hour] ||
-						(this._oViews[oViewType.Hour] = new PlanningCalendarView(this.getId() + "-HourView", {
+					if (!this._oViews[oViewType.Hour]) {
+						this._oViews[oViewType.Hour] = new PlanningCalendarView(this.getId() + "-HourView", {
 							key: oViewType.Hour,
 							intervalType: oIntervalType.Hour,
 							description: this._oRB && this._oRB.getText("PLANNINGCALENDAR_HOURS"),
 							intervalsS: 6,
 							intervalsM: 6,
 							intervalsL: 12
-						}));
+						});
+					}
+					return this._oViews[oViewType.Hour];
 				case oViewType.Day:
-					return this._oViews[oViewType.Day] ||
-						(this._oViews[oViewType.Day] = new PlanningCalendarView(this.getId() + "-DayView", {
+					if (!this._oViews[oViewType.Day]) {
+						this._oViews[oViewType.Day] = new PlanningCalendarView(this.getId() + "-DayView", {
 							key: oViewType.Day,
 							intervalType: oIntervalType.Day,
 							description: this._oRB && this._oRB.getText("PLANNINGCALENDAR_DAYS"),
 							intervalsS: 7,
 							intervalsM: 7,
 							intervalsL: 14
-						}));
+						});
+					}
+					return this._oViews[oViewType.Day];
 				case oViewType.Month:
-					return  this._oViews[oViewType.Month] ||
-						(this._oViews[oViewType.Month] = new PlanningCalendarView(this.getId() + "-MonthView", {
+					if (!this._oViews[oViewType.Month]) {
+						this._oViews[oViewType.Month] = new PlanningCalendarView(this.getId() + "-MonthView", {
 							key: oViewType.Month,
 							intervalType: oIntervalType.Month,
 							description: this._oRB && this._oRB.getText("PLANNINGCALENDAR_MONTHS"),
 							intervalsS: 3,
 							intervalsM: 6,
 							intervalsL: 12
-						}));
+						});
+					}
+					return this._oViews[oViewType.Month];
 				case oViewType.Week:
-					return this._oViews[oViewType.Week] ||
-						(this._oViews[oViewType.Week] = new PlanningCalendarView(this.getId() + "-WeekView", {
+					if (!this._oViews[oViewType.Week]) {
+						this._oViews[oViewType.Week] = new PlanningCalendarView(this.getId() + "-WeekView", {
 							key: oViewType.Week,
 							intervalType: oIntervalType.Week,
 							description: this._oRB && this._oRB.getText("PLANNINGCALENDAR_WEEK"),
 							intervalsS: 7,
 							intervalsM: 7,
 							intervalsL: 7
-						}));
+						});
+					}
+					return this._oViews[oViewType.Week];
 				case oViewType.OneMonth:
-					return this._oViews[oViewType.OneMonth] ||
-						( this._oViews[oViewType.OneMonth] = new PlanningCalendarView(this.getId() + "-OneMonthView", {
+					if (!this._oViews[oViewType.OneMonth]) {
+						this._oViews[oViewType.OneMonth] = new PlanningCalendarView(this.getId() + "-OneMonthView", {
 							key: oViewType.OneMonth,
 							intervalType: oIntervalType.OneMonth,
 							description: this._oRB && this._oRB.getText("PLANNINGCALENDAR_ONE_MONTH"),
 							intervalsS: 1,
 							intervalsM: 1,
 							intervalsL: 31
-						}));
+						});
+					}
+					return this._oViews[oViewType.OneMonth];
 				default:
 					Log.error("Cannot get PlanningCalendar views. Invalid view key " + sViewKey);
 					break;

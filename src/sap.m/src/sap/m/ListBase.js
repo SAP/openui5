@@ -526,7 +526,10 @@ function(
 	ListBase.prototype.bPreventMassSelection = false;
 
 	ListBase.getInvisibleText = function() {
-		return this.oInvisibleText || (this.oInvisibleText = new InvisibleText().toStatic());
+		if (!this.oInvisibleText) {
+			this.oInvisibleText = new InvisibleText().toStatic();
+		}
+		return this.oInvisibleText;
 	};
 
 	// class name for the navigation items
@@ -1621,12 +1624,13 @@ function(
 	};
 
 	ListBase.prototype._getSwipeContainer = function() {
-		return this._$swipeContainer || (
+		if (!this._$swipeContainer) {
 			this._$swipeContainer = jQuery("<div>", {
 				"id" : this.getId("swp"),
 				"class" : "sapMListSwp"
-			})
-		);
+			});
+		}
+		return this._$swipeContainer;
 	};
 
 	ListBase.prototype._setSwipePosition = function() {
@@ -2508,7 +2512,8 @@ function(
 	ListBase.prototype.getStickyStyleValue = function() {
 		var aSticky = this.getSticky();
 		if (!aSticky || !aSticky.length) {
-			return (this._iStickyValue = 0);
+			this._iStickyValue = 0;
+			return this._iStickyValue;
 		}
 
 		var iStickyValue = 0,
@@ -2535,7 +2540,8 @@ function(
 			}
 		});
 
-		return (this._iStickyValue = iStickyValue);
+		this._iStickyValue = iStickyValue;
+		return this._iStickyValue;
 	};
 
 	// gets the sticky header position and scrolls the page so that the item is completely visible when focused

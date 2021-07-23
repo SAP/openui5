@@ -1418,6 +1418,8 @@ sap.ui.define([
 
 	NumberFormat.prototype._addOriginInfo = function(sResult) {
 		if (sap.ui.getCore().getConfiguration().getOriginInfo()) {
+			// String object is created on purpose and must not be a string literal
+			// eslint-disable-next-line no-new-wrappers
 			sResult = new String(sResult);
 			sResult.originInfo = {
 				source: "Common Locale Data Repository",

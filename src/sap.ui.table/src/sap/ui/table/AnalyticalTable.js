@@ -422,6 +422,7 @@ sap.ui.define([
 			if (this._aGroupedColumns.indexOf(oColumn.getId()) > -1) {
 				continue;
 			}
+			// eslint-disable-next-line no-unsafe-negation
 			if (!oColumn instanceof AnalyticalColumn) {
 				Log.error("You have to use AnalyticalColumns for the Analytical table");
 			}

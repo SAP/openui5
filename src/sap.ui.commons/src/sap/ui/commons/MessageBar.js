@@ -312,7 +312,7 @@ sap.ui.define([
 	  } else {
 		Log.debug("Warning: MessageBar unsupported click on " + jSource.attr('className'));
 	  }
-	}
+	};
 
 	// #############################################################################
 	// Internal Utilities
@@ -320,7 +320,7 @@ sap.ui.define([
 	/**
 	 * This utility checks what action the Toaster should execute next.
 	 * @private
-	 */;
+	 */
 	MessageBar.prototype.checkForToast = function() {
 	  // No more toast if Multiple Toasts has already been displayed:
 	  if (this.maxToastsReached) {

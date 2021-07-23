@@ -110,7 +110,10 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 
 
 		NavigationListItem._getInvisibleText = function() {
-			return this._invisibleText || (this._invisibleText = new InvisibleText().toStatic());
+			if (!this._invisibleText) {
+				this._invisibleText = new InvisibleText().toStatic();
+			}
+			return this._invisibleText;
 		};
 
 		/**
@@ -1007,4 +1010,3 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 		return NavigationListItem;
 
 	});
-

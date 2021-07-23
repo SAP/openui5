@@ -95,7 +95,7 @@ sap.ui.define(["./library"],
 			//There may be business actions which have to be displayed in the "More Menu"
 			this._renderMoreMenuButton(rm, oMoreMenuButton);
 		}
-	}
+	};
 
 	/**
 	 * Renders "More" menu button if present
@@ -106,7 +106,7 @@ sap.ui.define(["./library"],
 	 * @param {sap.ui.commons.MenuButton}
 	 *			oMoreMenuButton menu button to be rendered, may be null
 	 * @private
-	 */;
+	 */
 	ActionBarRenderer._renderMoreMenuButton = function (rm, oMoreMenuButton) {
 
 		if (oMoreMenuButton) {

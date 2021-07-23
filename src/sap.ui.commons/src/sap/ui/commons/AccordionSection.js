@@ -139,12 +139,12 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 			this.onAfterRendering();
 		}
 
-	}
+	};
 
 	/**
 	 * Adapts size settings of the rendered HTML
 	 * @private
-	 */;
+	 */
 	AccordionSection.prototype.onAfterRendering = function () {
 
 		this.oScrollDomRef = this.getDomRef("cont");
@@ -310,7 +310,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 	 */
 		AccordionSection._isSizeSet = function(sCssSize) {
 		return (sCssSize && !(sCssSize === "auto") && !(sCssSize === "inherit"));
-	}
+	};
 
 
 	/*   Event Handling   */
@@ -320,7 +320,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 	 *
 	 * @param {jQuery.Event} oEvent . Current event which is processed
 	 * @private
-	 */;
+	 */
 	AccordionSection.prototype._handleTrigger = function(oEvent) {
 		// minimize button toggled
 		if ((oEvent.target.id === this.getId() + "-minL") ||

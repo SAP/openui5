@@ -81,20 +81,16 @@ function(
 
 			assert.ok(
 				aIndexes.every(function (iCurrent, iIndex, aSource) {
-					return (
-						iIndex === 0 // Do not check the first element of the array
-						|| (
-							iCurrent > aSource[iIndex - 1]
-							&& iCurrent < this.iBusyIndicatorZIndex
-						)
-						|| (
-							// If we are in the equal sequence we must ensure the next value is always
-							// equal the previous and never goes up.
-							iCurrent === aSource[iIndex - 1]
-							&& iCurrent < this.iBusyIndicatorZIndex
-							&& (iEqualSequenceStartIndex = !Util.isInteger(iEqualSequenceStartIndex) ? iIndex - 1 : iEqualSequenceStartIndex)
-						)
-					);
+					if (iIndex === 0) {
+						return true; // Do not check the first element of the array
+					} else if (iCurrent > aSource[iIndex - 1] && iCurrent < this.iBusyIndicatorZIndex) {
+						return true;
+					} else if (iCurrent === aSource[iIndex - 1] && iCurrent < this.iBusyIndicatorZIndex) {
+						// If we are in the equal sequence we must ensure the next value is always
+						// equal the previous and never goes up.
+						iEqualSequenceStartIndex = !Util.isInteger(iEqualSequenceStartIndex) ? iIndex - 1 : iEqualSequenceStartIndex;
+						return iEqualSequenceStartIndex;
+					}
 				}.bind(this)),
 				"then the z-index value is greater than or equal to the non-adaptable popup minus the reserved indices"
 			);

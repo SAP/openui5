@@ -133,7 +133,7 @@ sap.ui.define([
 				reject(oError);
 			};
 
-			return oModel.read("/aps_iam_app_ddl('" + sIamAppId + "')/to_BusinessCatalogAssignment", {success: fnSuccess, error: fnFailure});
+			oModel.read("/aps_iam_app_ddl('" + sIamAppId + "')/to_BusinessCatalogAssignment", {success: fnSuccess, error: fnFailure});
 		});
 	};
 
@@ -157,4 +157,3 @@ sap.ui.define([
 
 	return S4HanaCloudBackend;
 });
-

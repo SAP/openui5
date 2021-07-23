@@ -165,7 +165,7 @@
             } else {
                 var oValidationRoot = oGenerator._getValidationRoot(oOptions.control);
                 if (oValidationRoot) {
-                    return _ControlSelectorGenerator._generateUniqueSelectorInSubtree(oOptions.control, oValidationRoot)
+                    _ControlSelectorGenerator._generateUniqueSelectorInSubtree(oOptions.control, oValidationRoot)
                         .then(function (mSelector) {
                             resolve(mSelector);
                         }).catch(function (oError) {
@@ -195,7 +195,7 @@
             } else {
                 var oAncestor = oGenerator._getAncestor(oOptions.control);
                 if (oAncestor) {
-                    return _ControlSelectorGenerator._generate({
+                    _ControlSelectorGenerator._generate({
                         control: oAncestor
                     }).then(function (mSelector) {
                         resolve(mSelector);
@@ -296,7 +296,7 @@
             } else {
                 // extract all relevant children
                 var aChildren = _ControlSelectorGenerator._getAggregatedControls(oControl.mAggregations);
-                return _ControlSelectorGenerator._generateUniqueSelectorForChild(aChildren)
+                _ControlSelectorGenerator._generateUniqueSelectorForChild(aChildren)
                     .then(function (mSelector) {
                         resolve(mSelector);
                     }).catch(function () {
@@ -448,7 +448,7 @@
                     reject(new Error("Could not generate unique sibling selector at level " + iLevel));
                 }
             };
-            return fnGenerateWithNextParent();
+            fnGenerateWithNextParent();
         });
     };
 

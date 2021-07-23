@@ -21,7 +21,7 @@ sap.ui.define([
 	P13nConditionPanel,
 	coreLibrary,
 	NumberFormat,
-	String,
+	StringType,
 	Int16,
 	Single,
 	Double,
@@ -31,8 +31,8 @@ sap.ui.define([
 	Time,
 	typeTime,
 	DateTime,
-	Boolean,
-	typeBoolean
+	BooleanType,
+	EdmBooleanType
 ) {
 	"use strict";
 
@@ -647,8 +647,8 @@ sap.ui.define([
 				P13nConditionOperation.LE,
 				P13nConditionOperation.GT ];
 
-			var oKeyField2 = {key: "CompanyCode", text: "Code", typeInstance: new String()};
-			var oKeyField3 = {key: "CompanyName", text: "Name", typeInstance: new String({}, {maxLength: 20})};
+			var oKeyField2 = {key: "CompanyCode", text: "Code", typeInstance: new StringType()};
+			var oKeyField3 = {key: "CompanyName", text: "Name", typeInstance: new StringType({}, {maxLength: 20})};
 			var oKeyField5 = {key: "int16", text: "int16", typeInstance: new Int16()};
 			var oKeyField6 = {key: "single", text: "single", typeInstance: new Single({maxIntegerDigits: 5, maxFractionDigits: 2})};
 			var oKeyField7 = {key: "double", text: "double", typeInstance: new Double({maxIntegerDigits: 10,maxFractionDigits: 3})};
@@ -658,10 +658,10 @@ sap.ui.define([
 			var oKeyField11 = {key: "time", text: "time", typeInstance: new Time({UTC: false, style: "short", strictParsing: true})};
 			var oKeyField12 = {key: "odatatime", text: "odata time", typeInstance: new typeTime({UTC: false, style: "short", strictParsing: true})};
 			var oKeyField13 = {key: "datetime", text: "Datetime", typeInstance: new DateTime({UTC: false, style: "short", strictParsing: true}, {displayFormat: "Date"})};
-			var oKeyField14 = {key: "numc", text: "Numc", typeInstance: new String({}, {isDigitSequence: true, maxLength: 10})};
+			var oKeyField14 = {key: "numc", text: "Numc", typeInstance: new StringType({}, {isDigitSequence: true, maxLength: 10})};
 	//		var oKeyField15= {key: "stringdate", text: "StringDate", typeInstance: new sap.ui.comp.odata.type.StringDate({UTC: false, style: "long", strictParsing: true})};
-			var oKeyField16 = {key: "boolean", text: "boolean", typeInstance: new Boolean()};
-			var oKeyField17 = {key: "odatabool", text: "odata Bool", typeInstance: new typeBoolean()};
+			var oKeyField16 = {key: "boolean", text: "boolean", typeInstance: new BooleanType()};
+			var oKeyField17 = {key: "odatabool", text: "odata Bool", typeInstance: new EdmBooleanType()};
 			var aKeyFields = [oKeyField2,oKeyField3,oKeyField5,oKeyField6,oKeyField7,oKeyField8,oKeyField9,oKeyField10,oKeyField11,oKeyField12,oKeyField13,oKeyField14,oKeyField16,oKeyField17];
 
 			oP13nConditionPanel.setKeyFields(aKeyFields);
@@ -746,7 +746,7 @@ sap.ui.define([
 				P13nConditionOperation.EQ,
 				P13nConditionOperation.Empty];
 
-			var oKeyField2 = {key: "CompanyName", text: "Name", typeInstance: new String()};
+			var oKeyField2 = {key: "CompanyName", text: "Name", typeInstance: new StringType()};
 			var oKeyField5 = {key: "int16", text: "int16", typeInstance: new Int16()};
 			var aKeyFields = [oKeyField2,oKeyField5];
 

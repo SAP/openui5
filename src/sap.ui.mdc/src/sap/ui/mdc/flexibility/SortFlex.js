@@ -38,7 +38,7 @@ sap.ui.define(["sap/ui/mdc/p13n/Engine"], function(Engine) {
 		return new Promise(function(resolve, reject) {
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-			return Promise.resolve()
+			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "sortConditions"))
 				.then(function(oSortConditions) {
 					var aValue = oSortConditions ? oSortConditions.sorters : [];
@@ -68,7 +68,7 @@ sap.ui.define(["sap/ui/mdc/p13n/Engine"], function(Engine) {
 		return new Promise(function(resolve, reject) {
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-			return Promise.resolve()
+			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "sortConditions"))
 				.then(function(oSortConditions) {
 					var aValue = oSortConditions ? oSortConditions.sorters : [];
@@ -103,7 +103,7 @@ sap.ui.define(["sap/ui/mdc/p13n/Engine"], function(Engine) {
 		return new Promise(function(resolve, reject) {
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-			return Promise.resolve()
+			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "sortConditions"))
 				.then(function(oSortConditions) {
 					var aValue = oSortConditions ? oSortConditions.sorters : [];

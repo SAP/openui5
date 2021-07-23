@@ -615,7 +615,10 @@ function(
 	 * @private
 	 */
 	SelectionDetails.prototype._getNavContainer = function(NavContainer) {
-		return this._oNavContainer || (this._oNavContainer = new NavContainer(this.getId() + "-nav-container"));
+		if (!this._oNavContainer) {
+			this._oNavContainer = new NavContainer(this.getId() + "-nav-container");
+		}
+		return this._oNavContainer;
 	};
 
 	/**

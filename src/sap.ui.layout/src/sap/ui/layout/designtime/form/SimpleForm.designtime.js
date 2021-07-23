@@ -193,6 +193,7 @@ sap.ui.define([
 									bContent = true;
 							} else if ((aToolbarContent.length === 1) &&
 												(!aToolbarContent[0].getMetadata().isInstanceOf("sap.ui.core.Label") &&
+												// eslint-disable-next-line no-unsafe-negation
 												!aToolbarContent[0] instanceof sap.ui.core.Title && !aToolbarContent[0] instanceof sap.m.Title)) {
 									bContent = true;
 							}
