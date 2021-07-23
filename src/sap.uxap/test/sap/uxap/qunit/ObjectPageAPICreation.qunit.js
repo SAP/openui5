@@ -1114,9 +1114,7 @@ function (
 				//check
 				setTimeout(function() {
 
-					var iExpectedScrollTop = sap.ui.Device.system.phone ?
-						oPage._oSectionInfo[oSubSectionToScrollTo.getId()].positionTopMobile :
-						oPage._oSectionInfo[oSubSectionToScrollTo.getId()].positionTop;
+					var iExpectedScrollTop = oPage._oSectionInfo[oSubSectionToScrollTo.getId()].positionTop;
 
 					var oExpected = {
 						oSelectedSection: oSecondSection,
