@@ -3494,15 +3494,17 @@ sap.ui.define([
 		var aElements = this.mKeyIndex[sGroupId] || [],
 			iLimit = this.mFinalLength[sGroupId] ? this.mLength[sGroupId] : undefined,
 			aIntervals = ODataUtils._getReadIntervals(aElements, iStartIndex, iLength, iThreshold,
-				iLimit);
+				iLimit),
+			oInterval = ODataUtils._mergeIntervals(aIntervals);
 
-		if (aIntervals.length) {
+		if (oInterval) {
 			return {
-				startIndex : aIntervals[0].start,
-				length : aIntervals[aIntervals.length - 1].end - aIntervals[0].start
+				startIndex : oInterval.start,
+				length : oInterval.end - oInterval.start
 			};
 		}
-		return {startIndex : 0, length : iLength > 0 ? 0 : iLength};
+
+		return {startIndex : 0, length : Math.min(0, iLength)};
 	};
 
 	/**

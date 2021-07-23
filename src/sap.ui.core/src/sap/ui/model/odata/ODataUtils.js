@@ -799,6 +799,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Merges the given intervals into a single interval. The start and end of the resulting
+	 * interval are the start of the first interval and the end of the last interval.
+	 *
+	 * @param {object[]} aIntervals
+	 *   The array of available intervals
+	 * @returns {object|undefined}
+	 *   The merged interval with a member <code>start</code> and <code>end</code>, or
+	 *   <code>undefined</code> if no intervals are given.
+	 *
+	 * @private
+	 */
+	ODataUtils._mergeIntervals = function (aIntervals) {
+		if (aIntervals.length) {
+			return {start : aIntervals[0].start, end : aIntervals[aIntervals.length - 1].end};
+		}
+		return undefined;
+	};
+
+	/**
 	 * Returns the array of gaps in the given array of elements, taking the given start index,
 	 * length, and prefetch length into consideration.
 	 *
