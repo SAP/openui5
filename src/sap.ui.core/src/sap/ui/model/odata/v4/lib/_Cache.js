@@ -2923,7 +2923,7 @@ sap.ui.define([
 	 *   The entity which contains the ETag to be sent as "If-Match" header with the POST request.
 	 * @param {boolean} [bIgnoreETag]
 	 *   Whether the entity's ETag should be actively ignored (If-Match:*); used only in case an
-	 *   entity is given
+	 *   entity is given and an ETag is present
 	 * @param {function} [fnOnStrictHandlingFailed]
 	 *   If this callback is given, then the preference "handling=strict" is applied.
 	 *   If the request fails with an error having <code>oError.strictHandlingFailed</code> set,
@@ -2942,7 +2942,9 @@ sap.ui.define([
 	_SingleCache.prototype.post = function (oGroupLock, oData, oEntity, bIgnoreETag,
 			fnOnStrictHandlingFailed) {
 		var sGroupId,
-			mHeaders = oEntity && {"If-Match" : bIgnoreETag ? "*" : oEntity} || {},
+			mHeaders = oEntity
+				? {"If-Match" : bIgnoreETag && "@odata.etag" in oEntity ? "*" : oEntity}
+				: {},
 			sHttpMethod = "POST",
 			that = this;
 
