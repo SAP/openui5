@@ -1400,4 +1400,43 @@ sap.ui.define([
 
 			}.bind(this));
 		});
+
+		QUnit.test("Card#showLoadingPlaceholders when there is footer", function (assert) {
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				this.oCard.showLoadingPlaceholders();
+
+				setTimeout(function () {
+					assert.ok(
+						this.oCard.getAggregation("_footer").getDomRef().classList.contains("sapFCardFooterLoading"),
+						"Loading class should be added to the footer"
+					);
+					done();
+				}.bind(this), 200);
+
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.loading"
+				},
+				"sap.card": {
+					"type": "List",
+					"content": {
+						"item": {
+							"title": {
+								"value": "{title}"
+							}
+						}
+					},
+					"footer": {
+						"actionsStrip": [{
+							"text": "{someBindingPath}"
+						}]
+					}
+				}
+			});
+		});
+
 	});
