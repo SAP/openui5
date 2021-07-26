@@ -228,19 +228,21 @@ sap.ui.define([
 			// open value state message popup when focus is in the input
 			this.openValueStateMessage();
 		} else if (this._oValueStateHeader) {
-			this._oValueStateHeader.setVisible(!!this._getTextForPickerValueStateContent());
+			this._oValueStateHeader.setVisible(this.getValueState() !== ValueState.None);
 		}
 
 	};
 
 	DateTimeField.prototype._getValueStateHeader = function () {
+		var sValueState;
 
 		if (!this._oValueStateHeader) {
-			var sText = this._getTextForPickerValueStateContent();
+			sValueState = this.getValueState();
+
 			this._oValueStateHeader = new ValueStateHeader({
-				text: sText,
-				valueState: this.getValueState(),
-				visible: !!sText
+				text: this._getTextForPickerValueStateContent(),
+				valueState: sValueState,
+				visible: sValueState !== ValueState.None
 			});
 		}
 
@@ -504,15 +506,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DateTimeField.prototype._getTextForPickerValueStateContent = function() {
-		var sValueStateText = this.getValueStateText(),
-			sText;
-
-		if (sValueStateText) {
-			sText = sValueStateText;
-		} else {
-			sText = this._getDefaultTextForPickerValueStateContent();
-		}
-		return sText;
+		return this.getValueStateText() || this._getDefaultTextForPickerValueStateContent();
 	};
 
 	/**
