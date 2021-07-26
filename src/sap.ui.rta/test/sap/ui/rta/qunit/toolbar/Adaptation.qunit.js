@@ -53,6 +53,10 @@ function(
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 			});
 
+			document.getElementById("qunit-fixture").style.width = "1600px";
+			this.oToolbar.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
 			return this.oToolbar._pFragmentLoaded;
 		},
 		afterEach: function() {

@@ -99,6 +99,12 @@ sap.ui.define([
 					only: ["sap/ui/rta/toolbar/Adaptation"]
 				}
 			},
+			"toolbar/OverflowToolbarButton": {
+				group: 'Toolbar',
+				coverage: {
+					only: ["sap/ui/rta/toolbar/OverflowToolbarButton"]
+				}
+			},
 			"toolbar/translation/Translation": {
 				group: 'Toolbar',
 				coverage: {
