@@ -34,6 +34,11 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				}
 			},
 			"jquery.sap.properties": {
+				// Skip the execution of this test, if running with Karma Runner, as the current UI5 tooling middleware leads to test failure
+				// Issue reported with BCP incident 2070146288
+				// Jira Backlog Item create with CPOUI5FOUNDATION-193, yet not tackled so far
+				// Once the Backlog Item is done, this workaround can be removed!
+				skip: !!parent.__karma__,
 				group: "jQuery plugins",
 				loader: {
 					paths: {
