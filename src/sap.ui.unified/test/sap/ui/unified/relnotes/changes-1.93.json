@@ -3,6 +3,17 @@
     "date": "July 2021",
     "notes": [
       {
+        "id": "1cc773736ac3d8f58990aa8eab7696e8eee4c404",
+        "type": "FIX",
+        "text": " sap.ui.unfied.ColorPicker: events are fired only on user interaction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180283917"
+          }
+        ]
+      },
+      {
         "id": "69b61e5bd41df199f68e5167937ddd5d0cd934d1",
         "type": "FIX",
         "text": " sap.ui.unified.CalendarDateInterval: Year and month pickers width now correct",

@@ -1,0 +1,18 @@
+{
+  "1.93.0": {
+    "date": "July 2021",
+    "notes": [
+      {
+        "id": "1cc773736ac3d8f58990aa8eab7696e8eee4c404",
+        "type": "FIX",
+        "text": " sap.ui.unfied.ColorPicker: events are fired only on user interaction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180283917"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -3,6 +3,120 @@
     "date": "July 2021",
     "notes": [
       {
+        "id": "dc406609899e56ae131e81e9c72582bf19d16005",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: Fixed ComponentContainer height of Demo Kit sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180281943"
+          }
+        ]
+      },
+      {
+        "id": "352d56986aa3ed8cd9440f4563a21d4a2b330cef",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Samples descriptions are enhanced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180213675"
+          }
+        ]
+      },
+      {
+        "id": "2f62e4225ac9141ee253d44f7c3162e0098371d4",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: width=100% now works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180300725"
+          }
+        ]
+      },
+      {
+        "id": "48c1f8e337e40ef196dda46c16d7c30bab44720a",
+        "type": "FIX",
+        "text": " sap.m.FlexBox: Change listeners are now removed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180300992"
+          }
+        ]
+      },
+      {
+        "id": "9a13c1b5f6695484271d94ead82becd48a51fc37",
+        "type": "FIX",
+        "text": " sap.m.Popover: Title's font-size is not correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180304802"
+          }
+        ]
+      },
+      {
+        "id": "a24fc7e06dc47b93a74383aed06655f25a256367",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Title is with correct size",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180304549"
+          }
+        ]
+      },
+      {
+        "id": "25359d318584478c98b9f32fb149b1a912740047",
+        "type": "FIX",
+        "text": " sap.m.ExpandableText: Curly braces escaping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180266429"
+          }
+        ]
+      },
+      {
+        "id": "efc4d945feb9bdefc0b4d717365f5e1720154db9",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.m.ProgressIndicator: Fixed text contrast ratio",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180165340"
+          }
+        ]
+      },
+      {
+        "id": "f10b8f04fa14b05bc52347d9705126464c59ad97",
+        "type": "FIX",
+        "text": " Table: binding columns before items with growing=true option",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180281941"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180261124"
+          }
+        ]
+      },
+      {
+        "id": "be46c812de5a8cd643f2bda8b6420151f3139a3c",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: correct resizing of the appointments on more than one day in week views",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004487212021"
+          }
+        ]
+      },
+      {
         "id": "272bdc454241ee113861cb0e74b41eee3bee5723",
         "type": "FIX",
         "text": " sap.m.ComboBox:  Suggestions with empty text are now shown",

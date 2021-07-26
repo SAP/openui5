@@ -3,6 +3,43 @@
     "date": "July 2021",
     "notes": [
       {
+        "id": "399aac16c72bcc705bc2d816cb786044df42dba5",
+        "type": "FIX",
+        "text": " sap.ui.VersionInfo: copy 'hasOwnPreload' flag for components",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180290030"
+          }
+        ]
+      },
+      {
+        "id": "a411712804cb4f55283a4325d0c79ffa8eb01c08",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataParentBinding#changeParameters: ignore unchanged $expand/$select strings"
+      },
+      {
+        "id": "6a730f3bff6bfd58006e6aeb61fafacd0ab00384",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataContextBinding#execute: avoid If-Match:* if ETag is missing"
+      },
+      {
+        "id": "34d198f3d78d0d6111fbc4c6b48575aba0daea21",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataModel#createUI5Message: ignore targets inside sap-messages header"
+      },
+      {
+        "id": "e49382236dcb4593cb87396d317cbbf671b80325",
+        "type": "FIX",
+        "text": " core.Popup: provide alternative for ResizeObserver",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003037482021"
+          }
+        ]
+      },
+      {
         "id": "e73bd3cf345ffc8e753ad46d2491706925a764d4",
         "type": "FIX",
         "text": " sap.ui.core.UIArea: validateFieldgroup on focusout",

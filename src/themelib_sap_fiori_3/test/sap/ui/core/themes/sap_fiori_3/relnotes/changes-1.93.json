@@ -3,6 +3,17 @@
     "date": "July 2021",
     "notes": [
       {
+        "id": "efc4d945feb9bdefc0b4d717365f5e1720154db9",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.m.ProgressIndicator: Fixed text contrast ratio",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180165340"
+          }
+        ]
+      },
+      {
         "id": "56ecb2ac631e236b55db4751f8c870f5c9128cac",
         "type": "FIX",
         "text": " sap.uxap.HierarchicalSelect: Fixed button's focus on XL desktop sreen",

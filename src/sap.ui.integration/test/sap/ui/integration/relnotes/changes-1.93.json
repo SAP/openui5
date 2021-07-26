@@ -3,6 +3,17 @@
     "date": "July 2021",
     "notes": [
       {
+        "id": "3fb0a934a502b3623d96dce05bd56b9adc2342c8",
+        "type": "FIX",
+        "text": " Integration cards: Title of the card is now read out by screen readers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180288841"
+          }
+        ]
+      },
+      {
         "id": "8fa72ea2fa27733b6f327f6463f69b4b5db56491",
         "type": "FIX",
         "text": " Integration cards: Avatar with static URL no longer shows loading placeholder",
@@ -10,28 +21,6 @@
           {
             "type": "BCP",
             "reference": "2180153516"
-          }
-        ]
-      },
-      {
-        "id": "fae59acb5c43e714fe765e6ceeeadc4832207ac9",
-        "type": "FIX",
-        "text": " sap.ui.integration.cards.AdaptiveContent: Refresh CSS properly on theme changed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180176493"
-          }
-        ]
-      },
-      {
-        "id": "fee6a9d180a6ef880b3eeb6d9fdcad9fb739864e",
-        "type": "FIX",
-        "text": " SAC Card: Error is no longer thrown when the card is refreshed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180154423"
           }
         ]
       }

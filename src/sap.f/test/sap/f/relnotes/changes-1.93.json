@@ -3,6 +3,17 @@
     "date": "July 2021",
     "notes": [
       {
+        "id": "3fb0a934a502b3623d96dce05bd56b9adc2342c8",
+        "type": "FIX",
+        "text": " Integration cards: Title of the card is now read out by screen readers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180288841"
+          }
+        ]
+      },
+      {
         "id": "4c3328616d781f0b4ec124b4d4139b8a38014368",
         "type": "FIX",
         "text": " sap.f.DynamicPage: Prevent redundant scrollbar",

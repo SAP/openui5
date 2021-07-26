@@ -3,6 +3,17 @@
     "date": "July 2021",
     "notes": [
       {
+        "id": "efc4d945feb9bdefc0b4d717365f5e1720154db9",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.m.ProgressIndicator: Fixed text contrast ratio",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180165340"
+          }
+        ]
+      },
+      {
         "id": "f0bc2c7910ff7952c805cde78322932116332638",
         "type": "FIX",
         "text": "[INTERNAL] sap.m.Toolbar: Fixed focus color of icons",
