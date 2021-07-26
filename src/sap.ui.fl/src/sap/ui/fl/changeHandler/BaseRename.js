@@ -80,6 +80,7 @@ sap.ui.define([
 					if (vOldValue || vOldValue === "") {
 						oModifier.setPropertyBindingOrProperty(oControl, sPropertyName, vOldValue);
 						oChange.resetRevertData();
+						return;
 					}
 
 					Log.error("Change doesn't contain sufficient information to be reverted. Most Likely the Change didn't go through applyChange.");
@@ -92,6 +93,7 @@ sap.ui.define([
 				 * @param {object} mSpecificChangeInfo with attribute (e.g. textLabel) to be included in the change
 				 * @param {object} mPropertyBag - Property bag
 				 * @param {object} mPropertyBag.modifier - Modifier for the controls
+				 * @returns {Promise} A promise resolving when the change content is completed
 				 * @public
 				 */
 				completeChangeContent: function(oChange, mSpecificChangeInfo, mPropertyBag) {
