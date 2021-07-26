@@ -541,9 +541,6 @@ function(
 	// announce accessibility details at the initial focus
 	ListBase.prototype.bAnnounceDetails = true;
 
-	// determines whether range selection and select all feature should be enabled for MultiSelect mode
-	ListBase.prototype.bPreventMassSelection = false;
-
 	ListBase.getInvisibleText = function() {
 		if (!this.oInvisibleText) {
 			this.oInvisibleText = new InvisibleText().toStatic();
