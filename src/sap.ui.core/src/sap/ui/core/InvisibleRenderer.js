@@ -75,7 +75,7 @@ sap.ui.define([], function() {
 		oRm.attr("data-sap-ui", sPlaceholderId);
 		oRm.attr("aria-hidden", "true");
 		oRm.class("sapUiHiddenPlaceholder");
-		oRm.openEnd();
+		oRm.openEnd(true /* bExludeStyleClasses */);
 		oRm.close(sTagName);
 	};
 
