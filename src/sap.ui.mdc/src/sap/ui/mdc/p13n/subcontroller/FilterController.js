@@ -15,7 +15,7 @@ sap.ui.define([
     };
 
     FilterController.prototype.getResetEnabled = function() {
-        return !!this.getAdaptationControl()._bNewP13n;
+        return true;
     };
 
     FilterController.prototype.getUISettings = function() {

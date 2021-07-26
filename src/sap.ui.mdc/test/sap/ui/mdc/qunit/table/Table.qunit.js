@@ -3773,24 +3773,11 @@ sap.ui.define([
 			}
 
 			var oButton;
-			aModes.forEach(function(sMode) {
-				switch (sMode) {
-					case "Filter":
-						oButton = findButton("filter")[0];
-						assert.ok(oButton, sTitlePrefix + "Filter button exists");
-						assert.equal(oButton.getAriaHasPopup(), HasPopup.Dialog, "button has correct ariaHasPopup value");
-						break;
-					case "Sort":
-						oButton = findButton("sort")[0];
-						assert.ok(oButton, sTitlePrefix + "Sort button exists");
-						assert.equal(oButton.getAriaHasPopup(), HasPopup.Dialog, "button has correct ariaHasPopup value");
-						break;
-					default:
-						oButton = findButton("action-settings")[0];
-						assert.ok(oButton, sTitlePrefix + "Column settings button exists");
-						assert.equal(oButton.getAriaHasPopup(), HasPopup.Dialog, "button has correct ariaHasPopup value");
-				}
-			});
+			if (aModes.length > 0) {
+				oButton = findButton("action-settings")[0];
+				assert.ok(oButton, sTitlePrefix + "Table settings button exists");
+				assert.equal(oButton.getAriaHasPopup(), HasPopup.Dialog, "button has correct ariaHasPopup value");
+			}
 		},
 		assertAPI: function(assert, oMDCTable) {
 			var oTable = oMDCTable || this.oTable;

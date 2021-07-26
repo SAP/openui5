@@ -36,7 +36,6 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/subcontroller/AggregateController",
 	"sap/m/ColumnPopoverSelectListItem",
 	"sap/m/ColumnPopoverActionItem",
-	"sap/base/util/UriParameters",
 	"sap/ui/mdc/p13n/subcontroller/ColumnWidthController"
 ], function(
 	Control,
@@ -72,7 +71,6 @@ sap.ui.define([
 	AggregateController,
 	ColumnPopoverSelectListItem,
 	ColumnPopoverActionItem,
-	SAPUriParameters,
 	ColumnWidthController
 ) {
 	"use strict";
@@ -516,10 +514,6 @@ sap.ui.define([
 		constructor: function() {
 			this._oTableReady = new Deferred();
 			this._oFullInitialize = new Deferred();
-
-			//Note: parameter should be removed once the new p13n is the default
-			var oURLParams = new SAPUriParameters(window.location.search);
-			this._bNewP13n = oURLParams.getAll("sap-ui-xx-mdcTableP13n").length > 0;
 
 			Control.apply(this, arguments);
 			this.bCreated = true;
@@ -1508,28 +1502,11 @@ sap.ui.define([
 		var aP13nMode = this.getP13nMode();
 		var aButtons = [];
 
-		// Order should be: Sort, Filter, Group and then Columns as per UX spec
-		if (this.isSortingEnabled() && !this._bNewP13n) {
-			aButtons.push(TableSettings.createSortButton(this.getId(), [
-				this._showSort, this
-			]));
-		}
-
-		if (this.isFilteringEnabled() && !this._bNewP13n) {
-			aButtons.push(TableSettings.createFilterButton(this.getId(), [
-				this._showFilter, this
-			]));
-		}
-
-		if (aP13nMode.indexOf("Column") > -1 || (this._bNewP13n && aP13nMode.length > 0)) {
-			aButtons.push(TableSettings[this._bNewP13n ? "createSettingsButton" : "createColumnsButton"](this.getId(), [
+		//Note: 'Aggregate' does not have a p13n UI, if only 'Aggregate' is enabled no settings icon is necessary
+		var bAggregateP13nOnly = aP13nMode.length === 1 && aP13nMode[0] === "Aggregate";
+		if (aP13nMode.length > 0 && !bAggregateP13nOnly) {
+			aButtons.push(TableSettings["createSettingsButton"](this.getId(), [
 				this._showSettings, this
-			]));
-		}
-
-		if (this.isGroupingEnabled() && !this._bNewP13n) {
-			aButtons.push(TableSettings.createGroupButton(this.getId(), [
-				this._showGroup, this
 			]));
 		}
 
@@ -2629,9 +2606,6 @@ sap.ui.define([
 		if (this._oTemplate) {
 			this._oTemplate.destroy();
 		}
-
-		//TODO: remove once new p13n is the default
-		this._bNewP13n = null;
 
 		this._oTemplate = null;
 		this._oTable = null;

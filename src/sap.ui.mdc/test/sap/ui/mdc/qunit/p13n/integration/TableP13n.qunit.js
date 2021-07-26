@@ -44,7 +44,6 @@ sap.ui.define([
 				]
 			});
 			this.oTable.setP13nMode(["Column","Sort","Filter"]);
-			this.oTable._bNewP13n = true;
             MDCQUnitUtils.stubPropertyInfos(this.oTable, aPropertyInfos);
 
             sinon.stub(TableDelegate,"getFilterDelegate").callsFake(function() {
