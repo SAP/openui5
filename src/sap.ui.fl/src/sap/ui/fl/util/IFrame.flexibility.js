@@ -11,6 +11,7 @@ sap.ui.define([
 
 	return {
 		updateIFrame: UpdateIFrame,
-		hideControl: "default"
+		hideControl: "default",
+		unhideControl: "default"
 	};
 });

@@ -63,6 +63,9 @@ sap.ui.define([
 			},
 			remove: {
 				changeType: "hideControl"
+			},
+			reveal: {
+				changeType: "unhideControl"
 			}
 		}
 	};
