@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ScrollContainer",
 	"sap/m/Image",
+	"sap/ui/core/Core",
 	"sap/ui/core/HTML",
 	"sap/m/App",
 	"sap/m/Page",
@@ -15,6 +16,7 @@ sap.ui.define([
 	createAndAppendDiv,
 	ScrollContainer,
 	Image,
+	Core,
 	HTML,
 	App,
 	Page,
@@ -83,10 +85,19 @@ sap.ui.define([
 	});
 
 	var bigContent = new HTML({content:"<div id='cont1'>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br></div>"});
+	var bigContent2 = new HTML({content:"<div id='cont1'>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br></div>"});
 	//var bigContent = new sap.ui.core.HTML({content:"<div style=\"overflow:scroll; -webkit-overflow-scrolling: touch; width:200px; height:200px; border: 1px solid red;\">abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br></div>"});
 	var oSC4 = new ScrollContainer({
 		vertical: true,
 		content:[bigContent],
+		height: "100px",
+		width: "200px"
+	});
+
+	var oSC5 = new ScrollContainer({
+		vertical: false,
+		horizontal: true,
+		content:[bigContent2],
 		height: "100px",
 		width: "200px"
 	});
@@ -99,7 +110,7 @@ sap.ui.define([
 		pages: [
 				new Page("page1", {
 					title: "Page 1",
-					content: [oSC, oSC2, oSC3, oSC4]
+					content: [oSC, oSC2, oSC3, oSC4, oSC5]
 				})
 				]
 	});
@@ -541,6 +552,18 @@ sap.ui.define([
 			qutils.triggerKeyboardEvent(oSC4.getDomRef(), "PAGE_UP", false, true, false);
 
 			intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled to position 0");
+		});
+
+		QUnit.test("Press [CTRL] + [END] in RTL", function(assert) {
+			var oStub = this.stub(Core.getConfiguration(), "getRTL", function() { return true; }),
+				oSpy = this.spy(oSC5._oScroller, "_scrollTo");
+
+			qutils.triggerKeyboardEvent(oSC5.getDomRef(), "END", false, false, true);
+
+			assert.ok(oSpy.firstCall.args[0] < 0, "In RTL scenario scrolling to beginning with CTRL + [END] scrolls to negative position");
+
+			oStub.restore();
+			oSpy.restore();
 		});
 
 		QUnit.module("Styling");
