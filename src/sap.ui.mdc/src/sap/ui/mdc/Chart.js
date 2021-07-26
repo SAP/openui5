@@ -23,7 +23,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/mdc/p13n/subcontroller/ChartItemController",
 	"sap/ui/mdc/p13n/subcontroller/SortController",
-	'sap/ui/events/KeyCodes'
+	"sap/ui/events/KeyCodes",
+	"sap/ui/mdc/actiontoolbar/ActionToolbarAction"
 ],
 	function (
 		Core,
@@ -46,7 +47,8 @@ sap.ui.define([
 		Text,
 		ChartItemController,
 		SortController,
-		KeyCodes
+		KeyCodes,
+		ActionToolbarAction
 	) {
 		"use strict";
 
@@ -265,7 +267,7 @@ sap.ui.define([
 						type: "sap.ui.core.Control",
 						multiple: true,
 						forwarding: {
-							idSuffix: "--toolbar",
+							getter: "_getToolbar",
 							aggregation: "actions"
 						}
 					},
@@ -441,7 +443,10 @@ sap.ui.define([
 			// target control that has not been created.
 			if (mSettings) {
 				aActions = mSettings.actions;
-				delete mSettings.actions;
+			}
+
+			if (!this._oToolbarHandler) {
+				this._oToolbarHandler = new ToolbarHandler();
 			}
 
 			var oManagedObj = Control.prototype.applySettings.apply(this, arguments);
@@ -476,15 +481,20 @@ sap.ui.define([
 				this._mStoredActions = aActions;
 
 				//Toolbar needs settings to be applied before creation to read properties like header/title
-				if (!this._oToolbarHandler) {
-					this._oToolbarHandler = new ToolbarHandler();
-				}
 				this._oToolbarHandler.createToolbar(this, aActions, true);
 				this._createTempNoData();
 			}
 
 			return oManagedObj;
 
+		};
+
+		Chart.prototype._getToolbar = function(){
+			if (!this.getAggregation("_toolbar")){
+				this._oToolbarHandler.createToolbar(this);
+			}
+
+			return this.getAggregation("_toolbar");
 		};
 
 		/**
@@ -924,6 +934,11 @@ sap.ui.define([
 
 			this.oChartPromise = null;
 			this._oSelectionHandlerPromise = null;
+
+			if (this._oToolbarHandler) {
+				this._oToolbarHandler.destroy();
+				this._oToolbarHandler = null;
+			}
 
 			var oChart = this.getAggregation("_chart");
 
@@ -1767,6 +1782,16 @@ sap.ui.define([
 					oEvent.preventDefault();
 				}
 			}
+		};
+
+		Chart.prototype.addAction = function(oControl) {
+			if (oControl.getMetadata().getName() !== "sap.ui.mdc.actiontoolbar.ActionToolbarAction") {
+				oControl = new ActionToolbarAction(oControl.getId() + "-action", {
+					action: oControl
+				});
+			}
+
+			return Control.prototype.addAggregation.apply(this, ["actions", oControl]);
 		};
 
 		return Chart;
