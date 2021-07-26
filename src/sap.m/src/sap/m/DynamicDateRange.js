@@ -812,7 +812,7 @@ sap.ui.define([
 				oPopover.getFooter().setVisible(bVisible);
 			}
 
-			oPopover.rerender();
+			oPopover.invalidate();
 
 			return this;
 		};
