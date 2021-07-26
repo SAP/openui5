@@ -491,9 +491,7 @@ sap.ui.define([
 
 		return new ToolPage({
 			header: toolHeader,
-
 			sideContent: sideNavigation,
-
 			mainContents: [content]
 		});
 	}
@@ -521,6 +519,50 @@ sap.ui.define([
 
 	QUnit.test("contains elements and classes", function (assert) {
 		assert.ok(this.toolPage.$().hasClass('sapTntToolPage'), "sapTntToolPage class is not set");
+	});
+
+	QUnit.test("header", function (assert) {
+		assert.strictEqual(this.toolPage.$().find("header").length, 1, "header is rendered");
+	});
+
+	QUnit.test("header and subheader", function (assert) {
+		this.toolPage.setSubHeader(new ToolHeader());
+		Core.applyChanges();
+
+		assert.strictEqual(this.toolPage.$().find("header").length, 2, "header and subheader are rendered");
+	});
+
+	QUnit.test("set subheader visibility to true|false", function (assert) {
+		var oToolHeader = new ToolHeader();
+
+		this.toolPage.setSubHeader(oToolHeader);
+		Core.applyChanges();
+
+		assert.strictEqual(this.toolPage.$().find("header").length, 2, "header and subheader are rendered");
+
+		oToolHeader.setVisible(false);
+		Core.applyChanges();
+
+		assert.strictEqual(this.toolPage.$().find("header").length, 1, "subheader is not rendered");
+
+		oToolHeader.setVisible(true);
+		Core.applyChanges();
+		assert.strictEqual(this.toolPage.$().find("header").length, 2, "header and subheader are rendered");
+	});
+
+	QUnit.test("set side navigation visibility to true|false", function (assert) {
+		var oSideNavigation = this.toolPage.getSideContent();
+
+		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageAsideContent").length, 1, "sapTntToolPageAsideContent is rendered");
+
+		oSideNavigation.setVisible(false);
+		Core.applyChanges();
+
+		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageAsideContent").length, 0, "sapTntToolPageAsideContent is not rendered");
+
+		oSideNavigation.setVisible(true);
+		Core.applyChanges();
+		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageAsideContent").length, 1, "sapTntToolPageAsideContent is rendered");
 	});
 
 	QUnit.test("toggleSideContentMode", function (assert) {
