@@ -6,15 +6,14 @@
 		noDataText="No Products Found"
 		title="Select Product"
 		search=".onSearch"
-		confirm=".onDialogClose"
-		cancel=".onDialogClose"
+		growingThreshold="30"
+		updateStarted=".onUpdateStarted"
 		items="{
-			path: '/ProductCollection'
+			path: '/productCollection'
 		}">
 		<StandardListItem
-			title="{Name}"
-			description="{ProductId}"
-			icon="{ProductPicUrl}"
+			title="{name}"
+			description="{description}"
 			iconDensityAware="false"
 			iconInset="false"
 			type="Active" />
