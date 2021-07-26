@@ -11,6 +11,7 @@
         function suite() {
             var suite = new parent.jsUnitTestSuite();
             var contextPath = "/" + window.location.pathname.split("/")[1];
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/opa/testsuite.opa.qunit.html");
             suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/test/starter/testsuite.starter.qunit.html");
             suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/app/testsuite.app.qunit.html");
             suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/testsuite.bootstrap.qunit.html");
@@ -48,7 +49,6 @@
             suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/odata/type/testsuite.odata.types.qunit.html");
             suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/odata/v2/testsuite.odatav2.qunit.html");
             suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/odata/v4/testsuite.odatav4.qunit.html");
-            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/opa/testsuite.opa.qunit.html");
             suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/types/testsuite.types.qunit.html");
             suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/util/testsuite.util.qunit.html");
             suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/rule/testsuite.rule.qunit.html");
