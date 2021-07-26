@@ -107,7 +107,7 @@ sap.ui.define([
 		this._oListControl = this._createInnerListControl();
 
 		// disable 'select all'
-		this._oListControl.bPreventMassSelection = true;
+		this._oListControl.setMultiSelectMode("ClearAll");
 
 		this._setInnerLayout();
 	};
