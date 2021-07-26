@@ -12,6 +12,9 @@ sap.ui.define([
 			onDefaultActionAccept: function() {
 				MessageToast.show("Accepted");
 			},
+			onBeforeMenuOpen: function (evt) {
+				MessageToast.show("beforeMenuOpen is fired");
+			},
 			onPress: function (evt) {
 				MessageToast.show(evt.getSource().getId() + " Pressed");
 			},

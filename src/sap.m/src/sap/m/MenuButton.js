@@ -174,7 +174,13 @@ sap.ui.define([
 				 * unless <code>useDefaultActionOnly</code> is set to <code>false</code> and another action
 				 * from the menu has been selected previously.
 				 */
-				defaultAction: {}
+				defaultAction: {},
+
+				/**
+				 * Fired before menu opening when the <code>buttonMode</code> is set to <code>Split</code> and the user
+				 * presses the arrow button.
+				 */
+				beforeMenuOpen: {}
 			},
 			defaultAggregation : "menu",
 			designtime: "sap/m/designtime/MenuButton.designtime",
@@ -385,6 +391,8 @@ sap.ui.define([
 					minus2_left: "-2 0"
 				};
 
+			this._isSplitButton() && this.fireBeforeMenuOpen();
+
 			if (!oMenu) {
 				return;
 			}
@@ -395,11 +403,12 @@ sap.ui.define([
 				return;
 			}
 
-
 			if (!oMenu.getTitle()) {
 				oMenu.setTitle(this.getText());
 			}
+
 			var aParam = [this, bWithKeyboard];
+
 			switch (this.getMenuPosition()) {
 				case Dock.BeginTop:
 					aParam.push(Dock.BeginBottom, Dock.BeginTop, oOffset.plus2_right);

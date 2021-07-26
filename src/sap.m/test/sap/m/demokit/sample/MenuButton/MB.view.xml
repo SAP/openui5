@@ -76,7 +76,7 @@
 		</MenuButton>
 
 		<Label text = "Split mode button with associated last action"/>
-		<MenuButton text="File Menu" buttonMode="Split" defaultAction="onDefaultAction">
+		<MenuButton text="File Menu" buttonMode="Split" defaultAction="onDefaultAction" beforeMenuOpen="onBeforeMenuOpen">
 			<menu>
 				<Menu itemSelected="onMenuAction">
 					<MenuItem text="Edit" icon="sap-icon://edit" />
@@ -87,7 +87,7 @@
 		</MenuButton>
 
 		<Label text = "Split mode button with associated last action with initial icon"/>
-		<MenuButton text="File Menu" buttonMode="Split" defaultAction="onDefaultAction">
+		<MenuButton text="File Menu" buttonMode="Split" defaultAction="onDefaultAction" beforeMenuOpen="onBeforeMenuOpen">
 			<menu>
 				<Menu itemSelected="onMenuAction">
 					<MenuItem text="Edit" icon="sap-icon://edit" />
@@ -98,7 +98,7 @@
 		</MenuButton>
 
 		<Label text = "Split mode button with default action only"/>
-		<MenuButton text="File Menu" buttonMode="Split" defaultAction="onDefaultAction" useDefaultActionOnly="true">
+		<MenuButton text="File Menu" buttonMode="Split" defaultAction="onDefaultAction" beforeMenuOpen="onBeforeMenuOpen" useDefaultActionOnly="true">
 			<menu>
 				<Menu itemSelected="onMenuAction">
 					<MenuItem text="Edit" icon="sap-icon://edit" />
@@ -109,7 +109,7 @@
 		</MenuButton>
 
 		<Label text = "Split mode with type Accept and constant default action"/>
-		<MenuButton text="Accept" buttonMode="Split" type="Accept" defaultAction="onDefaultActionAccept" useDefaultActionOnly="true">
+		<MenuButton text="Accept" buttonMode="Split" type="Accept" defaultAction="onDefaultActionAccept" beforeMenuOpen="onBeforeMenuOpen" useDefaultActionOnly="true">
 			<menu>
 				<Menu itemSelected="onMenuAction">
 					<MenuItem text="Send the response now" icon="sap-icon://response" />
@@ -120,7 +120,7 @@
 		</MenuButton>
 
 		<Label text = "Menu button with menuPosition set to Right Bottom which in RTL will stay on the Right"/>
-		<MenuButton text="File Menu" defaultAction="onDefaultAction" useDefaultActionOnly="true" menuPosition="RightBottom">
+		<MenuButton text="File Menu" defaultAction="onDefaultAction" beforeMenuOpen="onBeforeMenuOpen" useDefaultActionOnly="true" menuPosition="RightBottom">
 			<menu>
 				<Menu itemSelected="onMenuAction">
 					<MenuItem text="Edit" icon="sap-icon://edit" />
