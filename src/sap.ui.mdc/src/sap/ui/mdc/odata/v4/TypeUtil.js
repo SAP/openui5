@@ -56,6 +56,23 @@ sap.ui.define(['sap/ui/mdc/odata/TypeUtil', 'sap/ui/mdc/enum/BaseType'], functio
 		return sType;
 	};
 
+	ODataV4TypeUtil.getDataTypeInstance = function(sDataType, formatOptions, constraints) {
+		switch (sDataType) {
+			case "sap.ui.model.odata.type.DateTimeOffset":
+			case "Edm.DateTimeOffset":
+				if (!constraints) {
+					constraints = {};
+				}
+				constraints.V4 = true;
+				break;
+
+			default:
+		}
+
+		var TypeClass = this.getDataTypeClass(sDataType);
+		return new TypeClass(formatOptions, constraints);
+	};
+
 	return ODataV4TypeUtil;
 
 }, /* bExport= */ true);
