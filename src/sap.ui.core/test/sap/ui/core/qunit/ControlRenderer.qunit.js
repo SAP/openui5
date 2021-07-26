@@ -23,22 +23,6 @@ sap.ui.define([
 		return aMutations;
 	}
 
-	var ControlWithOwnVisibleProperty = Control.extend("test.ControlWithOwnVisibleProperty", {
-		metadata: {
-			properties: {
-				visible: {type: 'boolean', defaultValue: true}
-			}
-		},
-		renderer: function(rm, oControl) {
-			rm.openStart("button", oControl);
-			if (!oControl.getVisible()) {
-				rm.style("display", "none");
-			}
-			rm.openEnd();
-			rm.close("button");
-		}
-	});
-
 	var StringControl = Control.extend("test.StringControl", {
 		metadata: {
 			properties: {
@@ -602,21 +586,6 @@ sap.ui.define([
 		assert.equal(oDomRef.textContent, "R/", "PatchingControl child has no output anymore");
 
 		oRootControl.destroy();
-	});
-
-	QUnit.test("Custom style classes and invisible controls", function(assert) {
-		var oControlWithOwnVisibleProperty = new ControlWithOwnVisibleProperty({
-			visible: false
-		}).addStyleClass("X");
-
-		oControlWithOwnVisibleProperty.placeAt("qunit-fixture");
-		Core.applyChanges();
-
-		var oDomRef = oControlWithOwnVisibleProperty.getDomRef();
-		assert.ok(oDomRef, "ControlWithOwnVisibleProperty is rendered");
-		assert.notOk(oDomRef.classList.contains("X"), "Custom style class is not rendered for the invisible ControlWithOwnVisibleProperty");
-
-		oControlWithOwnVisibleProperty.destroy();
 	});
 
 	QUnit.test("Invisible Rendering", function(assert) {
