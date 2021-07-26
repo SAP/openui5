@@ -29,14 +29,18 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 	});
 
 	it("Group headers disabled when there are more then ten options available", function() {
-		var oValueHelp = element(by.id("DDR1-input-vhi")),
+		var oDDRInputField = element(by.id("DDR1-input-inner")),
+			sAltArrowDown = protractor.Key.chord(protractor.Key.ALT, protractor.Key.ARROW_DOWN),
+			sAltArrowUp = protractor.Key.chord(protractor.Key.ALT, protractor.Key.ARROW_UP),
 			oPopover;
 
-		oValueHelp.click();
+		oDDRInputField.click();
+		browser.actions().sendKeys(sAltArrowUp).perform();
+
 		oPopover = element(by.id("DDR1-RP-popover"));
 		expect(takeScreenshot(oPopover)).toLookAs("group_headers_disabled");
 
-		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+		browser.actions().sendKeys(sAltArrowDown).perform();
 	});
 
 	it("Group headers enabled when there are less then ten options available", function() {
