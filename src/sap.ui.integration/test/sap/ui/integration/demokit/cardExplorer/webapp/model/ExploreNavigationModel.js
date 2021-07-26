@@ -772,50 +772,69 @@ sap.ui.define([
 				title: 'Card Footer',
 				key: 'footer',
 				target: 'exploreSamples',
-				icon: "sap-icon://minimize",
+				icon: 'sap-icon://SAP-icons-TNT/local-process-call',
 				hasExpander: false,
 				experimental: true,
 				subSamples: [
 					{
-						title: 'Many Buttons',
-						key: 'manyButtons',
+						title: 'General Actions',
+						key: 'generalActions',
 						settings: {
 							columns: 5
 						},
 						files: [
 							{
-								url: '/samples/footer/manyButtons/manifest.json',
+								url: '/samples/footer/generalActions/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
 							}
 						]
 					},
 					{
-						title: 'Details Dialog',
-						key: 'detailsDialog',
+						title: 'Adaptive Card With Dialog',
+						key: 'cardWithDialog',
 						settings: {
 							columns: 4
 						},
 						files: [
 							{
-								url: '/samples/footer/detailsDialog/manifest.json',
+								url: '/samples/footer/cardWithDialog/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
 							},
 							{
-								url: '/samples/footer/detailsDialog/DetailsDialogExtension.js',
+								url: '/samples/footer/cardWithDialog/DetailsDialogExtension.js',
 								name: 'DetailsDialogExtension.js',
 								key: 'DetailsDialogExtension.js'
 							},
 							{
-								url: '/samples/footer/detailsDialog/detailsCard.json',
+								url: '/samples/footer/cardWithDialog/detailsCard.json',
 								name: 'detailsCard.json',
 								key: 'detailsCard.json'
 							},
 							{
-								url: '/samples/footer/detailsDialog/images/DonnaMoore.png',
+								url: '/samples/footer/cardWithDialog/images/DonnaMoore.png',
 								name: 'images/DonnaMoore.png',
 								key: 'images/DonnaMoore.png'
+							}
+						]
+					},
+					{
+						title: 'Hide Card',
+						key: 'hideCard',
+						settings: {
+							columns: 6
+						},
+						files: [
+							{
+								url: '/samples/footer/hideCard/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							},
+							{
+								url: '/samples/footer/hideCard/HideCardExtension.js',
+								name: 'HideCardExtension.js',
+								key: 'HideCardExtension.js'
 							}
 						]
 					}

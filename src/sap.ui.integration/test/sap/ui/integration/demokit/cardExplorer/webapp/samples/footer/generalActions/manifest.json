@@ -167,7 +167,7 @@
 					"actions": [
 						{
 							"type": "Navigation",
-							"enabled": "false",
+							"enabled": false,
 							"parameters": {
 								"url": "{agendaUrl}"
 							}

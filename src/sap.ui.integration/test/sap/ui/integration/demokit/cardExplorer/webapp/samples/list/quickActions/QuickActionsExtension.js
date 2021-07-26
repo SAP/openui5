@@ -73,17 +73,17 @@ sap.ui.define([
 			var oCard = this.getCard(),
 				oParameters = oEvent.getParameter("parameters");
 
-			if (oParameters.method === "delete") {
+			if (oParameters.method === "remove") {
 				// remove this item from database
-				this._deleteItemRequest(oParameters.id)
+				this._removeItem(oParameters.id)
 					.then(function () {
 						oCard.refresh();
 					});
 			}
 		},
 
-		_deleteItemRequest: function (sId) {
-			// simulate backend request that deletes the item from the database
+		_removeItem: function (sId) {
+			// simulate backend request that removes the item from the database
 			return new Promise(function (resolve, reject) {
 				var iInd = aData.products.findIndex(function (oProduct) {
 					return oProduct.Id === sId;

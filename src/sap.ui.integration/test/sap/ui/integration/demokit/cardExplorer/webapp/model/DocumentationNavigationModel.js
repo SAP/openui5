@@ -89,7 +89,7 @@ sap.ui.define([
 				title: 'Card Footer',
 				key: 'footer',
 				target: 'learnDetail',
-				icon: 'sap-icon://minimize',
+				icon: 'sap-icon://SAP-icons-TNT/local-process-call',
 				experimental: true
 			},
 			{
