@@ -164,13 +164,17 @@ sap.ui.define([
 					this.getRouter().navTo(aParts[0]);
 			}
 		},
+
 		onSideNavigationItemSelect: function (oEvent) {
 			var oItem = oEvent.getParameter("item"),
 				oItemConfig = this.getView().getModel().getProperty(oItem.getBindingContext().getPath()),
 				sRootKey,
 				sChildKey;
 
-			if (oItem.data("type") === "root") {
+			// special handling for "footer" section in Explore
+			if (oItemConfig.key === "footer" && oItemConfig.target === "exploreSamples") {
+				sChildKey = oItemConfig.key;
+			} else if (oItem.data("type") === "root") {
 				sRootKey = oItemConfig.key;
 			} else { // child
 				sRootKey = oItem.getParent().getKey();

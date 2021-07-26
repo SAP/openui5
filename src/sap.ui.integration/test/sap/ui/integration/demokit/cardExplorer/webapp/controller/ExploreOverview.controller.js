@@ -25,6 +25,14 @@ sap.ui.define([
 			this.oDefaultModel = new JSONModel();
 			this.getView().setModel(this.oDefaultModel);
 		},
+
+		/**
+		 * @override
+		 */
+		getNavigationModel: function() {
+			return ExploreNavigationModel;
+		},
+
 		_onRouteMatched: function (oEvent) {
 			var oArgs = oEvent.getParameter("arguments"),
 				sTopic = oArgs.topic,

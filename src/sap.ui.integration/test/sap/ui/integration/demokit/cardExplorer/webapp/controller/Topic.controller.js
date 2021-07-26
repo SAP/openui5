@@ -41,8 +41,15 @@ sap.ui.define([
 			// navigate to the id in the URL
 			var sCurrentHash = this.getRouter().getHashChanger().getHash();
 			var oArgs = this.getRouter().getRouteInfoByHash(sCurrentHash).arguments;
+			var sElementId = oArgs.id;
 
-			this.scrollTo(oArgs.id);
+			// right shift the sub topic to element id
+			// /{topic}/:subTopic:/:id:
+			if (!this.isSubTopic(oArgs.subTopic)) {
+				sElementId = oArgs.subTopic;
+			}
+
+			this.scrollTo(sElementId);
 		},
 
 		scrollTo: function (sId) {
@@ -56,6 +63,53 @@ sap.ui.define([
 				channel: "scrollTo",
 				id: sId
 			}, window.location.origin);
+		},
+
+		/**
+		 * Checks if the given key is sub topic key
+		 * E.g. "/learn/{topic}/:subTopic:/:id:"
+		 *
+		 * @param {string} sKey The key of the topic
+		 * @returns {boolean} Whether sKey is a key of sub topic
+		 */
+		isSubTopic: function (sKey) {
+			return this.getNavigationModel().getProperty("/navigation").some(function (oNavEntry) {
+				return oNavEntry.items && oNavEntry.items.some(function (oSubEntry) {
+					return oSubEntry.key === sKey;
+				});
+			});
+		},
+
+		findNavEntry: function (key) {
+			var navEntries = this.getNavigationModel().getProperty("/navigation"),
+				navEntry,
+				subItems,
+				i,
+				j;
+
+			for (i = 0; i < navEntries.length; i++) {
+				navEntry  = navEntries[i];
+
+				if (navEntry.key === key) {
+					return navEntry;
+				}
+
+				subItems = navEntry.items;
+
+				if (subItems) {
+					for (j = 0; j < subItems.length; j++) {
+						if (subItems[j].key === key) {
+							return subItems[j];
+						}
+					}
+				}
+			}
+
+			return null;
+		},
+
+		getNavigationModel: function() {
+			return null;
 		},
 
 		_getIFrame: function () {

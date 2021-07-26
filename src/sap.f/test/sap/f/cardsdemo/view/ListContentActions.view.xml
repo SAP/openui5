@@ -24,7 +24,7 @@
 			</items>
 		</SegmentedButton>
 		<f:GridContainer class="sapUiSmallMargin">
-			<w:Card manifest="./cardsDemo/bundles/listQuickActions/manifest.json" action=".onAction">
+			<w:Card manifest="./cardsdemo/bundles/listQuickActions/manifest.json" action=".onAction">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>

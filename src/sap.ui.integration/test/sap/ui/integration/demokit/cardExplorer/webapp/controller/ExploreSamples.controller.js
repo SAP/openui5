@@ -488,12 +488,22 @@ sap.ui.define([
 
 			// loops through all samples in the navigation and gets the current one
 			aSections.some(function (oSection) {
-				oSection.items.some(function (oSample) {
-					if (oSample.key === sSampleKey) {
-						oFoundSample = oSample;
-						return true;
-					}
-				});
+				if (oSection.key === sSampleKey) {
+					oFoundSample = oSection;
+					return true;
+				}
+
+				if (oSection.items) {
+					oSection.items.some(function (oSample) {
+						if (oSample.key === sSampleKey) {
+							oFoundSample = oSample;
+							return true;
+						}
+						return false;
+					});
+				}
+
+				return false;
 			});
 
 			return oFoundSample;

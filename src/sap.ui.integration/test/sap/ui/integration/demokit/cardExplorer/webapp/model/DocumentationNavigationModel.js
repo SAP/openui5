@@ -86,6 +86,13 @@ sap.ui.define([
 				]
 			},
 			{
+				title: 'Card Footer',
+				key: 'footer',
+				target: 'learnDetail',
+				icon: 'sap-icon://minimize',
+				experimental: true
+			},
+			{
 				title: 'Card Features',
 				icon: 'sap-icon://activities',
 				target: 'learnDetail',

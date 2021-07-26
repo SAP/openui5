@@ -579,6 +579,23 @@ sap.ui.define([
 										key: 'images/Elena_Petrova.jpg'
 									}
 								]
+							},
+							{
+								title: 'Quick Actions',
+								key: 'quickActions',
+								experimental: true,
+								files: [
+									{
+										url: '/samples/list/quickActions/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/list/quickActions/QuickActionsExtension.js',
+										name: 'QuickActionsExtension.js',
+										key: 'QuickActionsExtension.js'
+									}
+								]
 							}
 						]
 					},
@@ -612,25 +629,6 @@ sap.ui.define([
 										url: '/samples/object/visibleObject.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									}
-								]
-							},
-							{
-								title: 'Array Parameters',
-								key: 'arrayParameters',
-								settings: {
-									columns: 5
-								},
-								files: [
-									{
-										url: '/samples/object/arrayParameters.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									},
-									{
-										url: '/samples/object/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							}
@@ -767,6 +765,59 @@ sap.ui.define([
 						settings: {
 							columns: 7
 						}
+					}
+				]
+			},
+			{
+				title: 'Card Footer',
+				key: 'footer',
+				target: 'exploreSamples',
+				icon: "sap-icon://minimize",
+				hasExpander: false,
+				experimental: true,
+				subSamples: [
+					{
+						title: 'Many Buttons',
+						key: 'manyButtons',
+						settings: {
+							columns: 5
+						},
+						files: [
+							{
+								url: '/samples/footer/manyButtons/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							}
+						]
+					},
+					{
+						title: 'Details Dialog',
+						key: 'detailsDialog',
+						settings: {
+							columns: 4
+						},
+						files: [
+							{
+								url: '/samples/footer/detailsDialog/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							},
+							{
+								url: '/samples/footer/detailsDialog/DetailsDialogExtension.js',
+								name: 'DetailsDialogExtension.js',
+								key: 'DetailsDialogExtension.js'
+							},
+							{
+								url: '/samples/footer/detailsDialog/detailsCard.json',
+								name: 'detailsCard.json',
+								key: 'detailsCard.json'
+							},
+							{
+								url: '/samples/footer/detailsDialog/images/DonnaMoore.png',
+								name: 'images/DonnaMoore.png',
+								key: 'images/DonnaMoore.png'
+							}
+						]
 					}
 				]
 			},
@@ -991,11 +1042,36 @@ sap.ui.define([
 						key: 'parameters',
 						target: 'exploreSamples',
 						title: 'Parameters',
-						files: [
+						subSamples: [
 							{
-								url: '/samples/parameters/parameters/manifest.json',
-								name: 'manifest.json',
-								key: 'manifest.json'
+								title: 'Parameters',
+								key: 'parameters',
+								files: [
+									{
+										url: '/samples/parameters/parameters/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Array Parameters',
+								key: 'arrayParameters',
+								settings: {
+									columns: 5
+								},
+								files: [
+									{
+										url: '/samples/parameters/arrayParameters/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/parameters/arrayParameters/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									}
+								]
 							}
 						]
 					},

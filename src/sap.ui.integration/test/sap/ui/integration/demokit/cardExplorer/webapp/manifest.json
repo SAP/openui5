@@ -110,12 +110,12 @@
 					"target": "exploreSamples"
 				},
 				{
-					"pattern": "exploreOverview/{topic}/:id:",
+					"pattern": "exploreOverview/{topic}/:subTopic:/:id:",
 					"name": "exploreOverview",
 					"target": "exploreOverview"
 				},
 				{
-					"pattern": "integrate/{topic}/:id:",
+					"pattern": "integrate/{topic}/:subTopic:/:id:",
 					"name": "integrate",
 					"target": "integrate"
 				},
