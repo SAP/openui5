@@ -2245,8 +2245,8 @@ sap.ui.define([
 				}),
 				oBinding = oControl.getBinding("text");
 
-			return new Promise(function (resolve) {
-				//TODO cannot use "dataReceived" because oControl.getText() === undefined then...
+			return new Promise(function (resolve, reject) {
+				// Note: cannot use "dataReceived" because oControl.getText() === undefined then...
 				oBinding.attachEventOnce("change", function () {
 					var sPhoneNumber = !oControl.getText().includes("/")
 							? "06227/34567"
@@ -2257,7 +2257,14 @@ sap.ui.define([
 
 					// Wait for #setValue to finish (then the response has been processed). The
 					// assertion is only that no error/warning logs happen.
-					resolve();
+					oBinding.getContext().getBinding()
+						.attachEventOnce("patchCompleted", function (oEvent) {
+							if (oEvent.getParameter("success")) {
+								resolve();
+							} else {
+								reject(new Error("Unexpected error"));
+							}
+						});
 				});
 			});
 		});
