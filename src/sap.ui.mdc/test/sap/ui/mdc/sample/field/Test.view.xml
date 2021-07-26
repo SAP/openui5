@@ -462,6 +462,21 @@
 					</mdc:dependents>
 				</mdc:Field>
 
+				<m:Label text="with set contentEdit"></m:Label>
+				<mdc:Field
+					id="F2-7e"
+					value="{view>/field/value}"
+					additionalValue="{view>/field/additionalValue}"
+					display="Description"
+					change="handleChange"
+					liveChange="handleLiveChange"
+					submit="handleSubmit"
+					fieldHelp="FVH-7d">
+					<mdc:contentEdit>
+						<m:Input value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}"/>
+					</mdc:contentEdit>
+				</mdc:Field>
+
 
 				<c:Title text="Fields with type Currency"></c:Title>
 
