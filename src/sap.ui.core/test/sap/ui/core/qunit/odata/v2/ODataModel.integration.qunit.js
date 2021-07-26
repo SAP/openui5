@@ -9179,4 +9179,58 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.strictEqual(that.oView.byId("table").getBinding("items").getCount(), 2);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Set created context as binding context for a table with a relative list binding.
+	// The table becomes empty and there is no request.
+	// JIRA: CPOUI5MODELS-605, CPOUI5MODELS-612
+	QUnit.test("Set created binding context for a table", function (assert) {
+		var sView = '\
+<FlexBox id="objectPage" binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="salesOrderId" text="{SalesOrderID}" />\
+	<Table id="table" items="{ToLineItems}">\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
+				Note : "Note 1",
+				SalesOrderID : "1"
+			})
+			.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=100", {
+				results : [{
+					__metadata : {
+						uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					},
+					ItemPosition : "10",
+					SalesOrderID : "1"
+				}, {
+					__metadata : {
+						uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+					},
+					ItemPosition : "20",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("salesOrderId", null)
+			.expectChange("salesOrderId", "1")
+			.expectChange("itemPosition", ["10", "20"]);
+
+		return this.createView(assert, sView).then(function () {
+			var oCreatedContext;
+
+			that.expectChange("salesOrderId", "42");
+
+			// code under test - no requests are executed
+			oCreatedContext = that.oModel.createEntry("/SalesOrderSet",
+				{properties : {SalesOrderID : "42"}});
+			that.oView.byId("objectPage").bindElement({path : oCreatedContext.getPath()});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(that.oView.byId("table").getItems().length, 0);
+		});
+	});
 });
