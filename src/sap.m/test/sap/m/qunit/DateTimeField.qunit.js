@@ -82,6 +82,22 @@ sap.ui.define(
 				// Clean up
 				oDTF.destroy();
 			});
+
+			QUnit.test("value state text header visibility", function (assert) {
+				// Arrange
+				var oDTF = new DateTimeField({
+					valueState: "None",
+					valueStateText: "Custom text"
+				});
+
+				// Assert
+				assert.strictEqual(oDTF._getValueStateHeader().getVisible(),
+					false,
+					"The value state header is not visible when the valueState is None");
+
+				// Clean up
+				oDTF.destroy();
+			});
 		});
 	}
 );
