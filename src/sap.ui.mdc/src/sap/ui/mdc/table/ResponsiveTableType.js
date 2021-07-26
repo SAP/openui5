@@ -10,6 +10,7 @@ sap.ui.define([
 	var InnerTable, InnerColumn, InnerRow;
 	var GrowingMode = library.GrowingMode;
 	var RowAction = library.RowAction;
+	var MultiSelectMode = library.MultiSelectMode;
 
 	/**
 	 * Constructor for a new ResponsiveTableType.
@@ -72,6 +73,19 @@ sap.ui.define([
 				detailsButtonSetting: {
 					type: "sap.ui.core.Priority[]",
 					group: "Behavior"
+				},
+				/**
+				 * Defines the selection mode for the control.
+				 * If this property is set to the <code>Default</code> value, the <code>sap.m.Table</code> control renders
+				 * the Select All checkbox in the column header, otherwise the Deselect All icon is rendered.
+				 *
+				 * This property is used with the <code>MultiSelect</code> mode.
+				 * @since 1.93
+				 */
+				multiSelectMode : {
+					type: "sap.ui.mdc.MultiSelectMode",
+					group: "Behavior",
+					defaultValue: MultiSelectMode.Default
 				}
 			}
 		}
@@ -89,6 +103,8 @@ sap.ui.define([
 				oTable.setGrowing(vValue !== GrowingMode.None);
 			} else if (sProperty === "showDetailsButton") {
 				this.updateShowDetailsButton(oTable, vValue);
+			} else if (sProperty === "multiSelectMode") {
+				oTable.setMultiSelectMode(vValue);
 			}
 		}
 	};

@@ -2739,6 +2739,37 @@ sap.ui.define([
 			assert.strictEqual(Core.byId(sSelectionItemId).getText(), "Item Selection", "Invisible text added to Static area");
 		});
 
+		QUnit.test("Events when multiSelectMode property is changed", function(assert) {
+			bindListData(oList, data2, "/items", createTemplateListItem());
+			oList.setMode("MultiSelect");
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			assert.strictEqual(oList.getItems().length, 3, "List has exactly 3 items");
+			oList.selectAll();
+			assert.strictEqual(oList.getSelectedItems().length, 3, "multiSelectMode: Default, selectAll API is enabled");
+			oList.removeSelections();
+			oList.getItems()[0].focus();
+			qutils.triggerKeydown(oList.getItems()[0].getDomRef(), KeyCodes.A, /*Shift*/false, /*Alt*/false, /*Ctrl*/true);
+			assert.strictEqual(oList.getSelectedItems().length, 3, "multiSelectMode: Default, Items are selected when 'ctrl+A' is pressed");
+
+			qutils.triggerKeydown(oList.getItems()[0].getDomRef(), KeyCodes.A, /*Shift*/false, /*Alt*/false, /*Ctrl*/true);
+			assert.notOk(oList.getSelectedItems().length, "multiSelectMode: Default, Items are deselected when 'ctrl+A' is pressed again");
+
+			oList.setMultiSelectMode("ClearAll");
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			oList.getItems()[0].focus();
+			qutils.triggerKeydown(oList.getItems()[0].getDomRef(), KeyCodes.A, /*Shift*/false, /*Alt*/false, /*Ctrl*/true);
+			assert.notOk(oList.getSelectedItems().length, "multiSelectMode: ClearAll, Items are not selected when 'ctrl+A' is pressed");
+			oList.getItems()[0].setSelected(true);
+			qutils.triggerKeydown(oList.getItems()[0].getDomRef(), KeyCodes.A, /*Shift*/true, /*Alt*/false, /*Ctrl*/true);
+			assert.notOk(oList.getSelectedItems().length, "multiSelectMode: ClearAll, Items are deselected when 'ctrl+shift+A' is pressed");
+			oList.selectAll();
+			assert.notOk(oList.getSelectedItems().length, "multiSelectMode: ClearAll, selectAll API is disabled");
+		});
+
 		QUnit.module("Context Menu", {
 			beforeEach: function() {
 				oList = new List();

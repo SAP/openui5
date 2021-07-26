@@ -69,7 +69,6 @@ sap.ui.define([
 	var HasPopup = CoreLibrary.aria.HasPopup;
 	var aTestedTypes = ["Table", "ResponsiveTable"];
 	var sDelegatePath = "test-resources/sap/ui/mdc/delegates/TableDelegate";
-
 	function wait(iMilliseconds) {
 		return new Promise(function(resolve) {
 			setTimeout(resolve, iMilliseconds);
@@ -4158,6 +4157,21 @@ sap.ui.define([
 
 			clock.restore();
 		}.bind(this));
+	});
+
+	QUnit.test("test multiSelectMode", function(assert) {
+		var done = assert.async();
+		var oTable = new Table({
+			type: new ResponsiveTableType()
+		});
+
+		oTable.initialized().then(function() {
+			assert.equal(oTable._oTable.getMultiSelectMode(), "Default", "MultiSelectMode is set default on the responsiveTableType");
+			var oType = oTable.getType();
+			oType.setMultiSelectMode("ClearAll");
+			assert.equal(oTable._oTable.getMultiSelectMode(), "ClearAll", "MultiSelectMode is set to is set to ClearAll type on the inner table");
+			done();
+		});
 	});
 
 	QUnit.module("ColumnResize", {

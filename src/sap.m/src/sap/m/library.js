@@ -111,6 +111,7 @@ sap.ui.define([
 			"sap.m.ListType",
 			"sap.m.LoadState",
 			"sap.m.MenuButtonMode",
+			"sap.m.MultiSelectMode",
 			"sap.m.ObjectHeaderPictureShape",
 			"sap.m.ObjectMarkerType",
 			"sap.m.ObjectMarkerVisibility",
@@ -4364,6 +4365,28 @@ sap.ui.define([
 		 * @public
 		 */
 		ServiceReset: "ServiceReset"
+	};
+
+	/**
+	 * Enumeration of the <code>multiSelectMode>/code> in <code>ListBase</code>.
+	 * @enum {string}
+	 * @public
+	 * @since 1.93
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.MultiSelectMode = {
+
+		/**
+		 * Renders the <code>selectAll</code> checkbox (default behavior).
+		 * @public
+		 */
+		Default: "Default",
+
+		/**
+		 * Renders the <code>clearAll</code> icon.
+		 * @public
+		 */
+		 ClearAll: "ClearAll"
 	};
 
 	sap.ui.lazyRequire("sap.m.DynamicDate");
