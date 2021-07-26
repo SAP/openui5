@@ -15,17 +15,22 @@ sap.ui.define([
 
 
 		handleSelectionChange: function(oEvent) {
-			var changedItem = oEvent.getParameter("changedItem");
+			var changedItems = oEvent.getParameter("changedItems") || [oEvent.getParameter("changedItem")];
 			var isSelected = oEvent.getParameter("selected");
+			var isSelectAllTriggered = oEvent.getParameter("selectAll");
+			var state = isSelected ? "Selected" : "Deselected";
 
-			var state = "Selected";
-			if (!isSelected) {
-				state = "Deselected";
-			}
+			var fnLogChangedItems = function() {
+				var changesLog = "Event 'selectionChange':\n Select all: " + isSelectAllTriggered +  ":\n ";
 
-			MessageToast.show("Event 'selectionChange': " + state + " '" + changedItem.getText() + "'", {
-				width: "auto"
-			});
+				changedItems.forEach(function(oItem) {
+					changesLog += state + " '" + oItem.getText() + "'" + "\n";
+				});
+
+				return changesLog;
+			};
+
+			MessageToast.show(fnLogChangedItems());
 		},
 
 		handleSelectionFinish: function(oEvent) {
