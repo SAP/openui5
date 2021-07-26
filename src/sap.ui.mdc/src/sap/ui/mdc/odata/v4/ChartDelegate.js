@@ -441,7 +441,7 @@ sap.ui.define([
 
 				var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
 				var aParameterNames = DelegateUtil.getParameterNames(oFilter);
-				var oFilterInfo = FilterUtil.getFilterInfo(oFilter, mConditions, aPropertiesMetadata, aParameterNames);
+				var oFilterInfo = FilterUtil.getFilterInfo(ChartDelegate.getTypeUtil(), mConditions, aPropertiesMetadata, aParameterNames);
 				if (oFilterInfo) {
 					oBindingInfo.filters = oFilterInfo.filters;
 				}
@@ -453,7 +453,7 @@ sap.ui.define([
 			}
 
 			// get the basic search
-			var sSearchText = oFilter.getSearch();
+			var sSearchText = oFilter.getSearch instanceof Function ? oFilter.getSearch() :  "";
 			if (sSearchText) {
 
 				if (!oBindingInfo) {

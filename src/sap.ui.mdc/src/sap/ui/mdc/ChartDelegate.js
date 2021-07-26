@@ -174,7 +174,7 @@ sap.ui.define([
 					}
 
 					var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
-					var oFilterInfo = FilterUtil.getFilterInfo(oFilter, mConditions, aPropertiesMetadata);
+					var oFilterInfo = FilterUtil.getFilterInfo(ChartDelegate.getTypeUtil(), mConditions, aPropertiesMetadata);
 					oBindingInfo.filters = oFilterInfo.filters;
 				}
 			}

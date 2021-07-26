@@ -68,18 +68,24 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.Control} The MDC Control instance.
 	 */
 	FilterIntegrationMixin.setFilter = function (vFilter) {
-		this._validateFilter(vFilter);
 
-		var oOldFilter = Core.byId(this.getFilter());
-		if (oOldFilter) {
-			deregisterFilter(this, oOldFilter);
-		}
+		var sNewFilter = typeof vFilter === "object" ? vFilter.getId() : vFilter;
+		var sOldFilter = this.getFilter();
 
-		this.setAssociation("filter", vFilter, true);
+		if (sOldFilter !== sNewFilter) {
+			this._validateFilter(vFilter);
 
-		var oNewFilter = Core.byId(this.getFilter());
-		if (oNewFilter) {
-			registerFilter(this, oNewFilter);
+			var oOldFilter = Core.byId(this.getFilter());
+			if (oOldFilter) {
+				deregisterFilter(this, oOldFilter);
+			}
+
+			this.setAssociation("filter", vFilter, true);
+
+			var oNewFilter = Core.byId(this.getFilter());
+			if (oNewFilter) {
+				registerFilter(this, oNewFilter);
+			}
 		}
 
 		return this;
@@ -106,9 +112,12 @@ sap.ui.define([
 	 */
     function registerFilter(oControl, oFilter) {
 		oFilter.attachSearch(onSearch, oControl);
-		oFilter.attachFiltersChanged(onFiltersChanged, oControl);
 
-		if (oControl._onFilterProvided) {
+		if (oFilter.attachFiltersChanged instanceof Function) {
+			oFilter.attachFiltersChanged(onFiltersChanged, oControl);
+		}
+
+		if (oControl._onFilterProvided instanceof Function) {
 			oControl._onFilterProvided(oFilter);
 		}
 	}
@@ -121,9 +130,12 @@ sap.ui.define([
 	 */
     function deregisterFilter(oControl, oFilter) {
 		oFilter.detachSearch(onSearch, oControl);
-		oFilter.detachFiltersChanged(onFiltersChanged, oControl);
 
-		if (oControl._onFilterRemoved) {
+		if (oFilter.detachFiltersChanged instanceof Function) {
+			oFilter.detachFiltersChanged(onFiltersChanged, oControl);
+		}
+
+		if (oControl._onFilterRemoved instanceof Function) {
 			oControl._onFilterRemoved(oFilter);
 		}
 	}

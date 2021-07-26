@@ -290,7 +290,7 @@ sap.ui.define([
     };
 
 
-    QueryPanel.prototype._updatePresence = function (sKey, bAdd) {
+    QueryPanel.prototype._updatePresence = function (sKey, bAdd, sOldKey) {
         var aItems = this.getP13nModel().getProperty("/items");
         var aRelevant = aItems.filter(function (oItem) {
             return oItem.name === sKey;

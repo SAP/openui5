@@ -64,7 +64,7 @@ sap.ui.define([
 		oBindingInfo.model = oBindingInfo.model || oMetadataInfo.model;
 
 		//TODO: consider a mechanism ('FilterMergeUtil' or enhance 'FilterUtil') to allow the connection between different filters)
-		var aFilters = createInnerFilters(oTable).concat(createOuterFilters(oTable));
+		var aFilters = createInnerFilters.call(this, oTable).concat(createOuterFilters.call(this, oTable));
 		oBindingInfo.filters = new Filter(aFilters, true);
 
 		addSearchParameter(oTable, oBindingInfo);
@@ -76,7 +76,7 @@ sap.ui.define([
 
 		if (bFilterEnabled) {
 			var aTableProperties = oTable.getPropertyHelper().getProperties();
-			var oInnerFilterInfo = FilterUtil.getFilterInfo(oTable, oTable.getConditions(), aTableProperties);
+			var oInnerFilterInfo = FilterUtil.getFilterInfo(TestTableDelegate.getTypeUtil(), oTable.getConditions(), aTableProperties);
 
 			if (oInnerFilterInfo.filters) {
 				aFilters.push(oInnerFilterInfo.filters);
@@ -99,7 +99,7 @@ sap.ui.define([
 		if (mConditions) {
 			var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
 			var aParameterNames = DelegateUtil.getParameterNames(oFilter);
-			var oOuterFilterInfo = FilterUtil.getFilterInfo(oFilter, mConditions, aPropertiesMetadata, aParameterNames);
+			var oOuterFilterInfo = FilterUtil.getFilterInfo(TestTableDelegate.getTypeUtil(), mConditions, aPropertiesMetadata, aParameterNames);
 
 			if (oOuterFilterInfo.filters) {
 				aFilters.push(oOuterFilterInfo.filters);
@@ -115,8 +115,9 @@ sap.ui.define([
 			return;
 		}
 
-		var sSearchText = oFilter.getSearch();
 		var mConditions = oFilter.getConditions();
+		// get the basic search
+		var sSearchText = oFilter.getSearch instanceof Function ? oFilter.getSearch() :  "";
 
 		if (mConditions) {
 			var sParameterPath = DelegateUtil.getParametersInfo(oFilter, mConditions);

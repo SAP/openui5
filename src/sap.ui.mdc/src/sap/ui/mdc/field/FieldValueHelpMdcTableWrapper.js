@@ -265,7 +265,9 @@ sap.ui.define([
 				oTable.initialized().then(function() {
 					this._oCurrentConditions = oCurrentConditions;
 					this._handleScrolling(); // reset scrolling to prevent skip parameters being added
-					oFilterBar.triggerSearch();
+					oFilterBar.valid().then(function(){
+						oFilterBar.fireSearch();
+					});
 				}.bind(this));
 			}
 
