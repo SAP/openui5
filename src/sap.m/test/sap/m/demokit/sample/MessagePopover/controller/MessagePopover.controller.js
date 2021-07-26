@@ -144,16 +144,16 @@ sap.ui.define([
 			aMessages.forEach(function (sMessage) {
 				switch (sMessage.type) {
 					case "Error":
-						sIcon = "sap-icon://message-error";
+						sIcon = "sap-icon://error";
 						break;
 					case "Warning":
-						sIcon = sIcon !== "sap-icon://message-error" ? "sap-icon://message-warning" : sIcon;
+						sIcon = sIcon !== "sap-icon://error" ? "sap-icon://alert" : sIcon;
 						break;
 					case "Success":
-						sIcon = "sap-icon://message-error" && sIcon !== "sap-icon://message-warning" ? "sap-icon://message-success" : sIcon;
+						sIcon = "sap-icon://error" && sIcon !== "sap-icon://alert" ? "sap-icon://sys-enter-2" : sIcon;
 						break;
 					default:
-						sIcon = !sIcon ? "sap-icon://message-information" : sIcon;
+						sIcon = !sIcon ? "sap-icon://information" : sIcon;
 						break;
 				}
 			});

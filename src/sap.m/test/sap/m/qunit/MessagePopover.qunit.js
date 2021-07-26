@@ -1392,7 +1392,7 @@ sap.ui.define([
 
 		oChangeToWarningBtn.firePress();
 
-		assert.strictEqual(oMessagePopover._oMessageView._oMessageIcon.getSrc(), IconPool.getIconURI("message-warning"), "Icon should be warning");
+		assert.strictEqual(oMessagePopover._oMessageView._oMessageIcon.getSrc(), IconPool.getIconURI("alert"), "Icon should be warning");
 		assert.strictEqual(oMessagePopover._oMessageView._detailsPage.getContent()[0].getText(), sWarningText, "Text should be warning");
 
 		oButton.destroy();

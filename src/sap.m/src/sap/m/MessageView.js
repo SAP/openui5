@@ -246,10 +246,10 @@ sap.ui.define([
 	var ICONS = {
 		back: IconPool.getIconURI("nav-back"),
 		close: IconPool.getIconURI("decline"),
-		information: IconPool.getIconURI("message-information"),
-		warning: IconPool.getIconURI("message-warning"),
-		error: IconPool.getIconURI("message-error"),
-		success: IconPool.getIconURI("message-success")
+		information: IconPool.getIconURI("information"),
+		warning: IconPool.getIconURI("alert"),
+		error: IconPool.getIconURI("error"),
+		success: IconPool.getIconURI("sys-enter-2")
 	};
 
 	var LIST_TYPES = ["all", "error", "warning", "success", "information"];
@@ -665,7 +665,7 @@ sap.ui.define([
 
 		this._detailsPage = new Page(this.getId() + "-detailsPage", {
 			customHeader: this._getDetailsHeader()
-		});
+		}).addStyleClass("sapMMsgViewDetailsPage");
 
 		// TODO: check if this is the best location for this
 		// Disable clicks on disabled and/or pending links
