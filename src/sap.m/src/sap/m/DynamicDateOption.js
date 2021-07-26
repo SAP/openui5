@@ -124,6 +124,41 @@ sap.ui.define([
 		};
 
 		/**
+		 * Validates all input controls in the value help UI related to the current option.
+		 * If one of the input controls contains invalid value, then validation will return <code>false</code>.
+		 * If all input controls contain valid value, then the validation will return <code>true</code>.
+		 *
+		 * @public
+		 * @param {sap.m.DynamicDateRange} oControl The control instance
+		 * @returns {boolean} value help UI validity indicator
+		 */
+		DynamicDateOption.prototype.validateValueHelpUI = function(oControl) {
+			var aParams = this.getValueHelpUITypes();
+
+			for (var i = 0; i < aParams.length; i++) {
+				var oInputControl = oControl.aControlsByParameters[this.getKey()][i];
+
+				switch (aParams[i].getType()) {
+					case "int":
+						if (oInputControl._isLessThanMin(oInputControl.getValue()) ||
+							oInputControl._isMoreThanMax(oInputControl.getValue())) {
+							return false;
+						}
+						break;
+					case "month":
+					case "date":
+					case "daterange":
+						if (!oInputControl.getSelectedDates() || oInputControl.getSelectedDates().length == 0) {
+							return false;
+						}
+						break;
+				}
+			}
+
+			return true;
+		};
+
+		/**
 		 * Gets the value help controls' output values and
 		 * converts them to a DynamicDateRange value.
 		 *
@@ -132,7 +167,7 @@ sap.ui.define([
 		 * @public
 		 */
 		DynamicDateOption.prototype.getValueHelpOutput = function(oControl) {
-			var aParams = this.getValueHelpUITypes(oControl),
+			var aParams = this.getValueHelpUITypes(),
 				aResult = {},
 				vOutput;
 
@@ -274,7 +309,9 @@ sap.ui.define([
 			}
 
 			if (fnControlsUpdated instanceof Function) {
-				oControl.attachChange(fnControlsUpdated);
+				oControl.attachChange(function() {
+					fnControlsUpdated(this);
+				}, this);
 			}
 
 			return oControl;
@@ -292,7 +329,9 @@ sap.ui.define([
 			}
 
 			if (fnControlsUpdated instanceof Function) {
-				oControl.attachSelect(fnControlsUpdated);
+				oControl.attachSelect(function() {
+					fnControlsUpdated(this);
+				}, this);
 			}
 
 			return oControl;
@@ -313,7 +352,9 @@ sap.ui.define([
 			}
 
 			if (fnControlsUpdated instanceof Function) {
-				oControl.attachSelect(fnControlsUpdated);
+				oControl.attachSelect(function() {
+					fnControlsUpdated(this);
+				}, this);
 			}
 
 			return oControl;
@@ -330,7 +371,9 @@ sap.ui.define([
 			}));
 
 			if (fnControlsUpdated instanceof Function) {
-				oControl.attachSelect(fnControlsUpdated);
+				oControl.attachSelect(function() {
+					fnControlsUpdated(this);
+				}, this);
 			}
 
 			return oControl;

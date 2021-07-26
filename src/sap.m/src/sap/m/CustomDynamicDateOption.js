@@ -45,6 +45,10 @@ sap.ui.define(['sap/m/DynamicDateOption'],
 					 */
 					createValueHelpUI: { type: "function" },
 					/**
+					 * Defines a method that can validate all controls from the value help UI related to a given option.
+					 */
+					validateValueHelpUI: { type: "function" },
+					/**
 					 * Defines a method that can collect the value from the value help UI.
 					 */
 					getValueHelpOutput: { type: "function" },
@@ -82,7 +86,7 @@ sap.ui.define(['sap/m/DynamicDateOption'],
 			return sString.charAt(0).toUpperCase() + sString.slice(1);
 		}
 
-		["getText", "getValueHelpUITypes", "createValueHelpUI", "getValueHelpOutput",
+		["getText", "getValueHelpUITypes", "createValueHelpUI", "getValueHelpOutput", "validateValueHelpUI",
 			"getGroup", "getGroupHeader", "format", "parse", "toDates", "enhanceFormattedValue"]
 			.forEach(function(sFnName) {
 				CustomDynamicDateOption.prototype[sFnName] = function() {

@@ -239,6 +239,7 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 		/**
 		 * Creates a UI for this DynamicDateOption.
 		 * @param {*} oOptions some parameters that can adapt the UI from outside
+		 * @param {function} fnControlsUpdated A callback invoked when any of the created controls updates its value
 		 *
 		 * Returns an array of controls which is mapped to the parameters of this DynamicDateOption.
 		 */
@@ -318,14 +319,6 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 			oControl.setMin(iMin);
 			oControl.setMax(MAX_VALUE_HELP_INTEGER);
 
-			if (oControl.getValue() < iMin) {
-				oControl.setValue(iMin);
-			}
-
-			if (oControl.getValue() > MAX_VALUE_HELP_INTEGER) {
-				oControl.setValue(MAX_VALUE_HELP_INTEGER);
-			}
-
 			return oControl;
 		};
 
@@ -344,7 +337,9 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 			}
 
 			if (fnControlsUpdated instanceof Function) {
-				oControl.attachSelect(fnControlsUpdated);
+				oControl.attachSelect(function() {
+					fnControlsUpdated(this);
+				}, this);
 			}
 
 			return oControl;
@@ -364,6 +359,46 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 			}
 
 			return undefined;
+		};
+
+		/**
+		 * Validates all input controls in the value help UI related to the current option.
+		 * If one of the input controls contains invalid value, then validation will return <code>false</code>.
+		 * If all input controls contain valid value, then the validation will return <code>true</code>.
+		 *
+		 * @public
+		 * @param {sap.m.DynamicDateRange} oControl The control instance
+		 * @returns {boolean} value help UI validity indicator
+		 */
+		StandardDynamicDateOption.prototype.validateValueHelpUI = function(oControl) {
+			var aParams = this.getValueHelpUITypes();
+
+			for (var i = 0; i < aParams.length; i++) {
+				var oInputControl = oControl.aControlsByParameters[this.getKey()][i];
+
+				switch (aParams[i].getType()) {
+					case "int":
+						if (oInputControl._isLessThanMin(oInputControl.getValue()) ||
+							oInputControl._isMoreThanMax(oInputControl.getValue())) {
+							return false;
+						}
+						break;
+					case "month":
+					case "date":
+					case "daterange":
+						if (!oInputControl.getSelectedDates() || oInputControl.getSelectedDates().length == 0) {
+							return false;
+						}
+						break;
+					case "options":
+						if (oInputControl.getSelectedIndex() < 0) {
+							return false;
+						}
+						break;
+				}
+			}
+
+			return true;
 		};
 
 		// Gets the output for each input parameter.

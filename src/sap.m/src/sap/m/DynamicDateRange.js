@@ -733,12 +733,9 @@ sap.ui.define([
 				var oToolbar = this._createInfoDatesFooter();
 
 				this._destroyInputControls();
-				this.aInputControls = oOption.createValueHelpUI(this, this._updateDatesLabel.bind(this));
+				this.aInputControls = oOption.createValueHelpUI(this, this._updateInternalControls.bind(this));
 
 				var oSecondPage = this._oNavContainer.getPages()[1];
-
-				//update the label after the controls have received their values
-				this._updateDatesLabel();
 
 				oSecondPage.removeAllContent();
 				this.aInputControls.forEach(function(oControl) {
@@ -749,6 +746,7 @@ sap.ui.define([
 				oSecondPage.setTitle(oOption.getText(this));
 
 				this._setFooterVisibility(true);
+				this._updateInternalControls(oOption);
 
 				this._oNavContainer.to(oSecondPage);
 			}
@@ -790,6 +788,31 @@ sap.ui.define([
 				sFormattedDates = this._getDatesLabelFormatter().format(aResultDates);
 				this._getDatesLabel().setText(oResourceBundle.getText("DDR_INFO_DATES", [sFormattedDates]));
 			}
+		};
+
+		DynamicDateRange.prototype._setApplyButtonEnabled = function(bEnabled) {
+			if (!this._oPopup) {
+				return;
+			}
+
+			var oApplyButton = this._oPopup.getBeginButton();
+
+			if (oApplyButton.getVisible()) {
+				oApplyButton.setEnabled(bEnabled);
+			}
+		};
+
+		/**
+		 * Function triggered when an input control, which is part of a given option UI changes its state.
+		 * @private
+		 * @param {sap.m.DynamicDateOption} oOption the currently selected option.
+		 */
+		DynamicDateRange.prototype._updateInternalControls = function(oOption) {
+			var bValidValueHelpUI = oOption.validateValueHelpUI(this);
+			if (bValidValueHelpUI) {
+				this._updateDatesLabel();
+			}
+			this._setApplyButtonEnabled(bValidValueHelpUI);
 		};
 
 		/**
@@ -917,7 +940,7 @@ sap.ui.define([
 					if (jQuery(oControl.getDomRef()).firstFocusableDomRef()) {
 						oControl.addAriaLabelledBy(oToPage.getAggregation("_internalHeader"));
 
-						if (!this._isCalendarBasedControl(oControl)) {
+						if (!this._isCalendarBasedControl(oControl) && oControl.addAriaDescribedBy) {
 							oControl.addAriaDescribedBy(oToPage.getFooter().getContent()[0]);
 						}
 					}
