@@ -1,6 +1,7 @@
 /*!
  * ${copyright}
  */
+QUnit.config.autostart = false;
 
 sap.ui.require([
 	'jquery.sap.global', 'sap/ui/qunit/utils/MemoryLeakCheck', 'composites/SimpleText', 'composites/TextToggleButtonNested', 'composites/ForwardText2', 'sap/m/Text'
@@ -25,4 +26,6 @@ sap.ui.require([
 			})
 		});
 	});
+
+	QUnit.start();
 });
