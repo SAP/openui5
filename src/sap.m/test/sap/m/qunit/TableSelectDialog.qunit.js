@@ -43,8 +43,6 @@ sap.ui.define([
 	// prepare DOM
 	createAndAppendDiv("content");
 
-
-
 	var aSearchEvents = [];
 	var aLiveChangeEvents = [];
 
@@ -107,31 +105,31 @@ sap.ui.define([
 
 	// create the data to be shown in the table
 	var data = {
-	navigation : [{
-			name : "Headphone",
-			qty : "10 EA",
-			limit : "15.00 Eur",
-			price : "12.00 EUR"
+		navigation: [{
+			name: "Headphone",
+			qty: "10 EA",
+			limit: "15.00 Eur",
+			price: "12.00 EUR"
 		}, {
-			name : "Mouse Pad",
-			qty : "1 EA",
-			limit : "5.00 Eur",
-			price : "3.00 EUR"
+			name: "Mouse Pad",
+			qty: "1 EA",
+			limit: "5.00 Eur",
+			price: "3.00 EUR"
 		}, {
-			name : "Monitor",
-			qty : "8 EA",
-			limit : "60.00 Eur",
-			price : "45.00 EUR"
+			name: "Monitor",
+			qty: "8 EA",
+			limit: "60.00 Eur",
+			price: "45.00 EUR"
 		}, {
-			name : "Optic Mouse",
-			qty : "2 EA",
-			limit : "40.00 Eur",
-			price : "15.00 EUR"
+			name: "Optic Mouse",
+			qty: "2 EA",
+			limit: "40.00 Eur",
+			price: "15.00 EUR"
 		}, {
-			name : "Dock Station",
-			qty : "1 EA",
-			limit : "90.00 Eur",
-			price : "55.00 EUR"
+			name: "Dock Station",
+			qty: "1 EA",
+			limit: "90.00 Eur",
+			price: "55.00 EUR"
 		}]
 	};
 
@@ -878,100 +876,115 @@ sap.ui.define([
 		oTableSelectDialog._oDialog.close();
 	});
 
-	/********************************************************************************/
-	QUnit.module("Keyboard Handling");
-	/********************************************************************************/
+	QUnit.module("Keyboard Handling", {
+		beforeEach: function() {
+			sinon.config.useFakeTimers = true;
+			this.oTableSelectDialog = new TableSelectDialog({
+				columns: [
+					new Column({
+						styleClass : "name",
+						hAlign : "Left",
+						header : new Label({
+							text : "Name"
+						})
+					}),
+					new Column({
+						hAlign : "Center",
+						styleClass : "qty",
+						popinDisplay : "Inline",
+						header : new Label({
+							text : "Qty"
+						}),
+						minScreenWidth : "Tablet",
+						demandPopin : true
+					}),
+					new Column({
+						hAlign : "Right",
+						styleClass : "limit",
+						width : "30%",
+						header : new Label({
+							text : "Value"
+						}),
+						minScreenWidth : "Tablet",
+						demandPopin : true
+					}),
+					new Column({
+						hAlign : "Right",
+						styleClass : "price",
+						width : "30%",
+						popinDisplay : "Inline",
+						header : new Label({
+							text : "Price"
+						}),
+						minScreenWidth : "Tablet",
+						demandPopin : true
+					})
+				]
+			});
+		},
+		afterEach: function() {
+			sinon.config.useFakeTimers = false;
+			this.oTableSelectDialog.destroy();
+		}
+	});
 
-	QUnit.test("Initialfocus when there are no rows in the TableSelectDialog's table", function (assert) {
-		var done = assert.async();
-		assert.expect(1);
+	QUnit.test("Initial focus when there are no rows in the TableSelectDialog's table", function (assert) {
+		// Arrange
 		var oSystem = {
-				desktop: true,
-				phone: false,
-				tablet: false
-			};
+			desktop: true,
+			phone: false,
+			tablet: false
+		};
 
 		this.stub(Device, "system", oSystem);
 
-		var oTableSelectDialog5 = new TableSelectDialog("tableSelectDialog", {
-			title: "my TableSelectDialog",
-			noDataText: "Sorry, no data is available"
-		});
+		// Act
+		this.oTableSelectDialog.open();
+		this.clock.tick(500);
 
-		oTableSelectDialog5.open();
-
-		setTimeout(function(){
-			assert.ok(jQuery.sap.byId('tableSelectDialog-searchField-I').is(":focus"), 'SearchField should be focused if there are no rows in the list');
-				oTableSelectDialog5._oDialog.close();
-				oTableSelectDialog5.destroy();
-				done();
-
-		}, 500);
-
+		// Assert
+		assert.strictEqual(this.oTableSelectDialog._oSearchField.getFocusDomRef(), document.activeElement, 'SearchField should be focused if there are no items in the table');
 	});
 
-	QUnit.test("InitialFocus when there are rows in the tableSelectDialog's table", function(assert){
-		var done = assert.async();
-		assert.expect(1);
-		var oTableSelectDialog15 = new TableSelectDialog("tableSelectDialog15", {
-			title: "my TableSelectDialog",
-			noDataText: "Sorry, no data is available",
-			columns : [
-				new Column({
-					styleClass : "name",
-					hAlign : "Left",
-					header : new Label({
-						text : "Name"
-					})
-				}),
-				new Column({
-					hAlign : "Center",
-					styleClass : "qty",
-					popinDisplay : "Inline",
-					header : new Label({
-						text : "Qty"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				}),
-				new Column({
-					hAlign : "Right",
-					styleClass : "limit",
-					width : "30%",
-					header : new Label({
-						text : "Value"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				}),
-				new Column({
-					hAlign : "Right",
-					styleClass : "price",
-					width : "30%",
-					popinDisplay : "Inline",
-					header : new Label({
-						text : "Price"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				})
-			]
-		});
+	QUnit.test("InitialFocus when there are rows in the TableSelectDialog's table", function (assert){
+		// Arrange
+		var oSystem = {
+			desktop: true,
+			phone: false,
+			tablet: false
+		};
 
+		this.stub(Device, "system", oSystem);
+		this.oTableSelectDialog.setModel(oModel);
+		this.oTableSelectDialog.bindAggregation("items", "/navigation", template);
 
-		oTableSelectDialog15.setModel(oModel);
-		oTableSelectDialog15.bindAggregation("items", "/navigation", template);
-		oTableSelectDialog15.setModel(oModelDialog,"dialog");
+		// Act
+		this.oTableSelectDialog.open();
+		this.clock.tick(500);
 
-		oTableSelectDialog15.open();
+		// Assert
+		assert.strictEqual(this.oTableSelectDialog.getItems()[0].$().is(":focus"), true, 'The first row of the table should be focused');
+	});
 
-		setTimeout(function() {
-			assert.strictEqual(oTableSelectDialog15.getItems()[0].$().is(":focus"), true, 'The first row of the table should be focused');
-				oTableSelectDialog15._oDialog.close();
-				oTableSelectDialog15.destroy();
-				done();
-		}, 500);
+	QUnit.test("Initial focus when items load after some time", function (assert) {
+		// Arrange
+		var oSystem = {
+			desktop: true,
+			phone: false,
+			tablet: false
+		};
 
+		this.stub(Device, "system", oSystem);
+
+		// Act
+		this.oTableSelectDialog.open();
+		this.clock.tick(500);
+		this.oTableSelectDialog.setModel(oModel);
+		this.oTableSelectDialog.bindAggregation("items", "/navigation", template);
+		this.clock.tick(500);
+
+		// Assert
+		assert.strictEqual(this.oTableSelectDialog._oSearchField.getFocusDomRef(), document.activeElement, 'SearchField should be focused when items appear later');
 	});
 
 	/********************************************************************************/

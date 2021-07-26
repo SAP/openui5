@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 
 sap.ui.define([
 	"sap/m/SelectDialog",
@@ -15,13 +14,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/StandardListItemRenderer",
 	"sap/ui/core/Core",
-	"sap/ui/core/InvisibleText",
-	"sap/ui/qunit/qunit-css",
-	"sap/ui/thirdparty/qunit",
-	"sap/ui/qunit/qunit-junit",
-	"sap/ui/qunit/qunit-coverage",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
+	"sap/ui/core/InvisibleText"
 ],
 	function(
 		SelectDialog,
@@ -40,7 +33,6 @@ sap.ui.define([
 		InvisibleText
 	) {
 		"use strict";
-
 
 		function generateData() {
 			return {
@@ -1225,7 +1217,6 @@ sap.ui.define([
 
 				// simple types
 				assert.strictEqual(that.oSelectDialog._iListUpdateRequested, 0, "internal parameter _iListUpdateRequested is reset correctly");
-				assert.strictEqual(that.oSelectDialog._bFirstRequest, false, "internal parameter _bFirstRequest is reset correctly");
 				assert.strictEqual(that.oSelectDialog._bInitBusy, false, "internal parameter _bInitBusy is reset correctly");
 				assert.strictEqual(that.oSelectDialog._bFirstRender, false, "internal parameter _bFirstRender is reset correctly");
 
@@ -1306,90 +1297,108 @@ sap.ui.define([
 			this.clock.tick(350);
 		});
 
-		QUnit.module("Keyboard and focus Handling", {
+		QUnit.module("Keyboard Handling", {
 			beforeEach: function() {
-
-				// arrange
-				this.oSelectDialog = new SelectDialog('selectDialog');
+				this.oSelectDialog = new SelectDialog();
 				this.mockupData = generateData();
-			}, afterEach: function() {
-
-				// cleanup
+			},
+			afterEach: function() {
 				this.oSelectDialog.destroy();
-				delete this.mockupData;
 			}
 		});
 
 
-		QUnit.test("Initialfocus when there are no items in the SelectDialog's list", function (assert) {
+		QUnit.test("Initial focus when there are no items in the SelectDialog's list", function (assert) {
+			// Arrange
 			var oSystem = {
-					desktop: true,
-					phone: false,
-					tablet: false
-				},
-				that = this;
+				desktop: true,
+				phone: false,
+				tablet: false
+			};
 
 			this.stub(Device, "system", oSystem);
 
-			jQuery.when(that.oSelectDialog.open(), that.oSelectDialog._updateFinished({ getParameters : function () { return {}; } })).then(function(){
-				assert.ok(jQuery('#selectDialog-searchField-I').is(":focus"), 'SearchField should be focused if there are no items in the list');
-
-				that.oSelectDialog._oDialog.close();
-				that.clock.tick(350);
-			});
-
+			// Act
 			this.oSelectDialog.open();
+			this.clock.tick(500);
+
+			// Assert
+			assert.strictEqual(this.oSelectDialog._oSearchField.getFocusDomRef(), document.activeElement, 'SearchField should be focused if there are no items in the list');
+
+			// Clean up
+			this.oSelectDialog._oDialog.close();
+			this.clock.tick(350);
 		});
 
-		QUnit.test("Initialfocus when there are items in the SelectDialog's list", function (assert) {
+		QUnit.test("Initial focus when there are items in the SelectDialog's list", function (assert) {
+			// Arrange
 			var oSystem = {
-					desktop: true,
-					phone: false,
-					tablet: false
-				},
-				that = this;
+				desktop: true,
+				phone: false,
+				tablet: false
+			};
+
+			this.stub(Device, "system", oSystem);
+			bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
+
+			// Act
+			this.oSelectDialog.open();
+			this.clock.tick(500);
+
+			// Assert
+			assert.ok(this.oSelectDialog.getItems()[0].$().is(':focus'), 'The first item of the list should be focused');
+
+			// Clean up
+			this.oSelectDialog._oDialog.close();
+			this.clock.tick(350);
+		});
+
+		QUnit.test("Initial focus when items load after some time", function (assert) {
+			// Arrange
+			var oSystem = {
+				desktop: true,
+				phone: false,
+				tablet: false
+			};
 
 			this.stub(Device, "system", oSystem);
 
-			bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
-			sap.ui.getCore().applyChanges();
-
-			jQuery.when(that.oSelectDialog.open(), that.oSelectDialog._updateFinished({ getParameters : function () { return {}; } })).then(function(){
-				assert.ok(that.oSelectDialog.getItems()[0].$().is(':focus'), 'The first item of the list should be focused');
-
-				// Clean
-				that.oSelectDialog._oDialog.close();
-				that.clock.tick(350);
-			});
-
+			// Act
 			this.oSelectDialog.open();
+			this.clock.tick(500);
+			bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
+			this.clock.tick(500);
+
+			// Assert
+			assert.strictEqual(this.oSelectDialog._oSearchField.getFocusDomRef(), document.activeElement, 'SearchField should be focused when items appear later');
+
+			// Clean up
+			this.oSelectDialog._oDialog.close();
+			this.clock.tick(350);
 		});
 
 		QUnit.test("focus on SearchField after liveChange", function (assert) {
 			var done = assert.async();
 
 			// Arrange
-			var fnFireLiveChangeSpy = sinon.spy(function(oEvent) {
+			this.oSelectDialog.attachLiveChange(function(oEvent) {
 				var sValue = oEvent.getParameter("value");
 				var oFilter = new Filter("Title", FilterOperator.Contains, sValue);
 
 				oEvent.getSource().getBinding("items").filter([oFilter]);
 				sap.ui.getCore().applyChanges();
 
-				assert.strictEqual(jQuery('#selectDialog-searchField-I')[0], document.activeElement, 'Focus should stay on the searchfield after liveChange');
+				// Assert
+				assert.strictEqual(this.oSelectDialog._oSearchField.getFocusDomRef(), document.activeElement, 'Focus should stay on the searchfield after liveChange');
 				done();
-
-			}),
-			that = this;
-
-			this.oSelectDialog.attachLiveChange(fnFireLiveChangeSpy);
+			}.bind(this));
 
 			bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
 
 			this.oSelectDialog._oDialog.attachAfterOpen(function(oEvent) {
-				that.oSelectDialog._oSearchField.$('I').trigger("focus").val("1").trigger("input");
-				that.clock.tick(350);
-			});
+				this.oSelectDialog._oSearchField.$('I').trigger("focus").val("1").trigger("input");
+				this.clock.tick(350);
+			}.bind(this));
 
 			this.oSelectDialog.open();
 			this.clock.tick(350);
@@ -1550,11 +1559,9 @@ sap.ui.define([
 
 		sap.ui.getCore().applyChanges();
 
-		var oCustomHeader = this.oSelectDialog._oDialog.getCustomHeader();
 		var oClearButton = this.oSelectDialog._getClearButton();
 		this.oSelectDialog.setShowClearButton(false);
 		sap.ui.getCore().applyChanges();
-
 
 		//assert
 		assert.equal(oClearButton.getVisible(), false, 'Clear button is not visible');
