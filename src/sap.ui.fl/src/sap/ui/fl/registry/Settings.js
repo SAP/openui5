@@ -25,18 +25,6 @@ sap.ui.define([
 		if (!oSettings) {
 			throw new Error("no flex settings provided");
 		}
-
-		// By default, variant sharing is enabled
-		if (oSettings.isVariantSharingEnabled === undefined) {
-			oSettings.isVariantSharingEnabled = true;
-		}
-
-		if (oSettings.isPublicFlVariantEnabled === undefined) {
-			oSettings.isPublicFlVariantEnabled =
-				oSettings.isVariantSharingEnabled
-				&& oSettings.isPublicLayerAvailable;
-		}
-
 		this._oSettings = oSettings;
 	};
 
@@ -90,7 +78,6 @@ sap.ui.define([
 					isKeyUser: false,
 					isKeyUserTranslationEnabled: false,
 					isVariantSharingEnabled: false,
-					isPublicFlVariantEnabled: false,
 					isVariantPersonalizationEnabled: true,
 					isAtoAvailable: false,
 					isAtoEnabled: false,
