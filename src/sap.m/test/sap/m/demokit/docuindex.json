@@ -1243,7 +1243,8 @@
 		  "since": "1.16",
 		  "formFactors": "L",
 		  "samples": [
-			"sap.m.sample.SelectDialog"
+			"sap.m.sample.SelectDialog",
+			"sap.m.sample.SelectDialogLazyLoading"
 		  ]
 		},
 		{
