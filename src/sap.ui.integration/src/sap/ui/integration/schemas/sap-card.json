@@ -124,208 +124,166 @@
     "extension": {
       "description": "A path to an Extension implementation. It is resolved relatively to the manifest",
       "type": "string"
+    },
+    "footer": {
+      "descirption": "Represent card footer attributes",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "actionsStrip": {
+          "description": "[Experimental] Describes actions strip",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/actionsStripItem"
+          }
+        }
+      }
     }
   },
-  "oneOf": [
+  "allOf": [
     {
-      "allOf": [
-        {
-          "properties": {
-            "type": {
-              "enum": [
-                "List"
-              ]
-            }
-          }
-        },
-        {
-          "properties": {
-            "content": {
-              "$ref": "#/definitions/ContentType.List"
-            }
+      "if": {
+        "properties": {
+          "type": {
+            "const": "List"
           }
         }
-      ]
+      },
+      "then": {
+        "properties": {
+          "content": {
+            "$ref": "#/definitions/ContentType.List"
+          }
+        }
+      }
     },
     {
-      "allOf": [
-        {
-          "properties": {
-            "type": {
-              "enum": [
-                "Analytical"
-              ]
-            }
-          }
-        },
-        {
-          "properties": {
-            "content": {
-              "$ref": "#/definitions/ContentType.Analytical"
-            }
+      "if": {
+        "properties": {
+          "type": {
+            "const": "Analytical"
           }
         }
-      ]
+      },
+      "then": {
+        "properties": {
+          "content": {
+            "$ref": "#/definitions/ContentType.Analytical"
+          }
+        }
+      }
     },
     {
-      "allOf": [
-        {
-          "properties": {
-            "type": {
-              "enum": [
-                "AnalyticsCloud"
-              ]
-            }
-          }
-        },
-        {
-          "properties": {
-            "content": {
-              "$ref": "#/definitions/ContentType.AnalyticsCloud"
-            }
+      "if": {
+        "properties": {
+          "type": {
+            "const": "AnalyticsCloud"
           }
         }
-      ]
+      },
+      "then": {
+        "properties": {
+          "content": {
+            "$ref": "#/definitions/ContentType.AnalyticsCloud"
+          }
+        }
+      }
     },
     {
-      "allOf": [
-        {
-          "properties": {
-            "type": {
-              "enum": [
-                "Timeline"
-              ]
-            }
-          }
-        },
-        {
-          "properties": {
-            "content": {
-              "$ref": "#/definitions/ContentType.Timeline"
-            }
+      "if": {
+        "properties": {
+          "type": {
+            "const": "Timeline"
           }
         }
-      ]
+      },
+      "then": {
+        "properties": {
+          "content": {
+            "$ref": "#/definitions/ContentType.Timeline"
+          }
+        }
+      }
     },
     {
-      "allOf": [
-        {
-          "properties": {
-            "type": {
-              "enum": [
-                "Table"
-              ]
-            }
-          }
-        },
-        {
-          "properties": {
-            "content": {
-              "$ref": "#/definitions/ContentType.Table"
-            }
+      "if": {
+        "properties": {
+          "type": {
+            "const": "Table"
           }
         }
-      ]
+      },
+      "then": {
+        "properties": {
+          "content": {
+            "$ref": "#/definitions/ContentType.Table"
+          }
+        }
+      }
     },
     {
-      "allOf": [
-        {
-          "properties": {
-            "type": {
-              "enum": [
-                "Object"
-              ]
-            }
-          }
-        },
-        {
-          "properties": {
-            "content": {
-              "$ref": "#/definitions/ContentType.Object"
-            }
+      "if": {
+        "properties": {
+          "type": {
+            "const": "Object"
           }
         }
-      ]
+      },
+      "then": {
+        "properties": {
+          "content": {
+            "$ref": "#/definitions/ContentType.Object"
+          }
+        }
+      }
     },
     {
-      "allOf": [
-        {
-          "properties": {
-            "type": {
-              "enum": [
-                "Component"
-              ]
-            }
-          }
-        },
-        {
-          "properties": {
-            "content": {
-              "$ref": "#/definitions/ContentType.Component"
-            }
+      "if": {
+        "properties": {
+          "type": {
+            "const": "Component"
           }
         }
-      ]
+      },
+      "then": {
+        "properties": {
+          "content": {
+            "$ref": "#/definitions/ContentType.Component"
+          }
+        }
+      }
     },
     {
-      "allOf": [
-        {
-          "properties": {
-            "type": {
-              "enum": [
-                "Calendar"
-              ]
-            }
-          }
-        },
-        {
-          "properties": {
-            "content": {
-              "$ref": "#/definitions/ContentType.Calendar"
-            }
+      "if": {
+        "properties": {
+          "type": {
+            "const": "Calendar"
           }
         }
-      ]
+      },
+      "then": {
+        "properties": {
+          "content": {
+            "$ref": "#/definitions/ContentType.Calendar"
+          }
+        }
+      }
     },
     {
-      "allOf": [
-        {
-          "properties": {
-            "type": {
-              "enum": [
-                "AdaptiveCard"
-              ]
-            }
-          }
-        },
-        {
-          "properties": {
-            "content": {
-              "$ref": "#/definitions/ContentType.AdaptiveCard"
-            }
+      "if": {
+        "properties": {
+          "type": {
+            "const": "AdaptiveCard"
           }
         }
-      ]
-    },
-    {
-      "allOf": [
-        {
-          "properties": {
-            "type": {
-              "enum": [
-                "WebPage"
-              ]
-            }
-          }
-        },
-        {
-          "properties": {
-            "content": {
-              "$ref": "#/definitions/ContentType.WebPage"
-            }
+      },
+      "then": {
+        "properties": {
+          "content": {
+            "$ref": "#/definitions/ContentType.AdaptiveCard"
           }
         }
-      ]
+      }
     }
   ],
   "definitions": {
@@ -606,6 +564,13 @@
         },
         "chart": {
           "$ref": "#/definitions/Microchart"
+        },
+        "actionsStrip": {
+          "description": "[Experimental] Describes actions strip",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/actionsStripItem"
+          }
         }
       }
     },
@@ -1882,6 +1847,7 @@
           "oneOf": [
             {
               "enum": [
+                "Custom",
                 "Navigation",
                 "Submit"
               ]
@@ -2372,6 +2338,129 @@
           "$ref": "#/definitions/simpleBinding"
         }
       ]
+    },
+    "actionsStripItem": {
+      "description": "[Experimental] Attributes of actions strip item",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "actions": {
+          "$ref": "#/definitions/action"
+        },
+        "type": {
+          "description": "The type of the item",
+          "oneOf": [
+            {
+              "enum": [
+                "Button",
+                "ToolbarSpacer"
+              ],
+              "default": "Button"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "overflowPriority": {
+          "description": "Defines items priority",
+          "oneOf": [
+            {
+              "enum": [
+                "AlwaysOverflow",
+                "Disappear",
+                "High",
+                "Low",
+                "NeverOverflow"
+              ],
+              "default": "High"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "icon": {
+          "description": "The icon of the item",
+          "type": "string"
+        },
+        "text": {
+          "description": "The text of the item",
+          "type": "string"
+        },
+        "tooltip": {
+          "description": "The tooltip of the item",
+          "type": "string"
+        },
+        "buttonType": {
+          "description": "The type of the button",
+          "oneOf": [
+            {
+              "enum": [
+                "Accept",
+                "Attention",
+                "Back",
+                "Critical",
+                "Default",
+                "Emphasized",
+                "Ghost",
+                "Negative",
+                "Neutral",
+                "Reject",
+                "Success",
+                "Transparent",
+                "Unstyled",
+                "Up"
+              ],
+              "default": "Default"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "ariaHasPopup": {
+          "description": "Use this property only when the item is related to a popover/popup",
+          "oneOf": [
+            {
+              "enum": [
+                "Dialog",
+                "Grid",
+                "ListBox",
+                "Menu",
+                "None",
+                "Tree"
+              ],
+              "default": "None"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "enabled": {
+          "description": "Determines whether the item is enabled",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "visible": {
+          "description": "Determines whether the item is visible",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        }
+      }
     }
   }
 }
