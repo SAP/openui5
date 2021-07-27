@@ -1669,7 +1669,6 @@ sap.ui.define([
 				key: 'designtime',
 				target: 'exploreOverview',
 				hasExpander: false,
-				hidden: !window._isinternal,
 				items: [
 					{
 						key: 'designtimeAdmin',

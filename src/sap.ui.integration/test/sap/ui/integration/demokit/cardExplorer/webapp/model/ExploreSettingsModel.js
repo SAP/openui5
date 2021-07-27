@@ -10,7 +10,6 @@ sap.ui.define([
 		splitViewVertically: false,
 		editable: true,
 		editorType: Constants.EDITOR_TYPE.TEXT,
-		internal: window._isinternal,
 		//to enable/disable menuitems of Configuration Editor button, the value can be "All", "Admin", "Content" or "Translation"
 		configMode: 'All',
 		//to enable/disable Configuration Editor button

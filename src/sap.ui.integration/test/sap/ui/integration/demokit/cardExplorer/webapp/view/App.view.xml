@@ -23,7 +23,7 @@
 							<IconTabFilter key="learnDetail" text="Learn" />
 							<IconTabFilter key="exploreSamples" text="Explore" />
 							<IconTabFilter key="integrate" text="Integrate" />
-							<IconTabFilter key="designtime" text="Configuration Editor" visible="{= ${settings>/internal}}"/>
+							<IconTabFilter key="designtime" text="Configuration Editor" />
 
 						</items>
 					</IconTabHeader>
@@ -32,8 +32,8 @@
 			<tnt:sideContent>
 				<tnt:SideNavigation id="sideNavigation" selectedKey="{/selectedKey}" itemSelect="onSideNavigationItemSelect">
 					<tnt:NavigationList items="{path: '/navigation'}">
-						<tnt:NavigationListItem text="{title}{= ${experimental} ? ' (Experimental)' : ''}" icon="{icon}" enabled="{enabled}" expanded="{expanded}" items="{path: 'items', templateShareable: false}" key="{key}" hasExpander="{hasExpander}" visible="{= !${hidden}}">
-							<tnt:NavigationListItem text="{title}{= ${experimental} ? ' (Experimental)' : ''}" key="{key}" enabled="{enabled}" visible="{= !${hidden}}">
+						<tnt:NavigationListItem text="{title}{= ${experimental} ? ' (Experimental)' : ''}" icon="{icon}" enabled="{enabled}" expanded="{expanded}" items="{path: 'items', templateShareable: false}" key="{key}" hasExpander="{hasExpander}">
+							<tnt:NavigationListItem text="{title}{= ${experimental} ? ' (Experimental)' : ''}" key="{key}" enabled="{enabled}">
 								<tnt:customData>
 									<core:CustomData key="type" value="child"/>
 								</tnt:customData>

@@ -33,11 +33,11 @@ sap.ui.define([
 		},
 
 		/**
-				 * Binds the view to the object path and expands the aggregated line items.
-				 * @function
-				 * @param {sap.ui.base.Event} event pattern match event in route 'topicId'
-				 * @private
-				 */
+		 * Binds the view to the object path and expands the aggregated line items.
+		 * @function
+		 * @param {sap.ui.base.Event} event pattern match event in route 'topicId'
+		 * @private
+		 */
 		_onTopicMatched: function (event) {
 			var oArgs = event.getParameter("arguments"),
 				sTopic = oArgs.topic,
