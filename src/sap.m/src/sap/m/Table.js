@@ -810,7 +810,7 @@ sap.ui.define([
 				id: this.getId() + "-clearSelection",
 				src: "sap-icon://clear-all",
 				decorative: false,
-				press: this.removeSelections.bind(this, false, true)
+				press: this.removeSelections.bind(this, false, true, false)
 			}).setParent(this, null, true).addEventDelegate({
 				onAfterRendering: function() {
 					this._clearAllButton.getDomRef().setAttribute("tabindex", -1);
