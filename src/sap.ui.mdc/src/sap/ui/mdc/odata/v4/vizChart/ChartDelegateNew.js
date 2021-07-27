@@ -924,6 +924,9 @@ sap.ui.define([
 
         if (oPropertyInfo.textProperty){
             oDimension.setTextProperty(oPropertyInfo.textProperty);
+            if (oPropertyInfo.textFormatter){
+                oDimension.setTextFormatter(oPropertyInfo.textFormatter);
+            }
             oDimension.setDisplayText(true);
         }
 
@@ -1318,6 +1321,7 @@ sap.ui.define([
                             role: MDCLib.ChartItemRoleType.category, //standard, normally this should be interpreted from UI.Chart annotation
                             criticality: null ,//To be implemented by FE
                             textProperty: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"] ? oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"].$Path  : null //To be implemented by FE
+                            //textFormatter: function(){} -> can be used to provide a custom formatter for the textProperty
                         });
                     }
                 }
