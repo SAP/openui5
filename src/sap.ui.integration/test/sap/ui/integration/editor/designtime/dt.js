@@ -244,7 +244,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/floatFormatter/value",
 						"type": "number",
 						"formatter": {
-							"decimals": 3
+							"decimals": 3, style:'short'
 						}
 					},
 					"integerFormatter": {
