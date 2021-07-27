@@ -8,7 +8,7 @@ sap.ui.define([
 
 		onInit: function () {
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/f/cardsdemo/cardcontent/tablecontent/tableManifests.json"));
-			this.getView().setModel(oModel);
+			this.getView().setModel(oModel, "manifests");
 		},
 
 		onFormFactorChange: function () {
