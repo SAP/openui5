@@ -391,7 +391,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				Device.browser = actualResult;
 
 				if (currentTest.system) {
-					var oSystem = Device._getSystem(false, currentTest.ua);
+					var oSystem = Device._getSystem(currentTest.ua);
 
 					for (prop in currentTest.system) {
 						assert.strictEqual(!!oSystem[prop], currentTest.system[prop], currentTest.name + ": browser detection property 'system." + prop + "' should match for " + currentTest.ua);
