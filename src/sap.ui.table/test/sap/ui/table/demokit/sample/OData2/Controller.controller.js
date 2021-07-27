@@ -68,7 +68,7 @@ sap.ui.define([
 				if (sUnit) {
 					var sUnitType = oModel.getMetaModel().getMetaContext("/ProductSet/" + sUnit).getProperty()["sap:semantics"];
 					if (sUnitType == "currency-code") {
-						return new Currency({value: {path: sName, type: new StringType()}, currency: {path: sName}});
+						return new Currency({value: {path: sName, type: new StringType()}, currency: {path: sUnit}});
 					}
 				}
 				return null;
