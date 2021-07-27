@@ -6,13 +6,17 @@ sap.ui.define([
 	'sap/m/DynamicDateUtil',
 	'sap/ui/model/SimpleType',
 	'sap/ui/model/FormatException',
-	'sap/ui/model/ParseException'
+	'sap/ui/model/ParseException',
+	'sap/ui/model/ValidateException',
+	'sap/base/util/each'
 ],
 	function(
 		DynamicDateUtil,
 		SimpleType,
 		FormatException,
-		ParseException
+		ParseException,
+		ValidateException,
+		each
 	) {
 		"use strict";
 
@@ -33,6 +37,9 @@ sap.ui.define([
 		 * @param {object} [oFormatOptions.date] Format options controlling the options that contain dates in their display values.
 		 * @param {object} [oFormatOptions.month] Format options controlling the options that contain months in their display values.
 		 * @param {object} [oFormatOptions.int] Format options controlling the options that contain numbers in their display values.
+		 * @param {object} [oConstraints] Value constraints
+		 * @param {int} [oConstraints.minimum] Smallest resulting date allowed for this type. Must be provided as a timestamps.
+		 * @param {int} [oConstraints.maximum] Greatest resulting date allowed for this type. Must be provided as a timestamps.
 		 * @since 1.92
 		 * @alias sap.m.DynamicDate
 		 * @experimental Since 1.92. This class is experimental and provides only limited functionality. Also the API might be changed in future.
@@ -120,11 +127,49 @@ sap.ui.define([
 			return oResult;
 		};
 
-		/**
-		 * Validates whether a given raw value meets the defined constraints.
-		 * <strong>Note: No support for constraints for now.</strong>
-		 */
-		DynamicDate.prototype.validateValue = function() {};
+		DynamicDate.prototype.validateValue = function(oValue) {
+			if (this.oConstraints) {
+				var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+					oMBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+					aViolatedConstraints = [],
+					aMessages = [],
+					oOption = DynamicDateUtil.getOption(oValue.operator),
+					aDates = oOption.toDates(this.formatValue(oValue)).map(function(oUDate) {
+							return oUDate.getTime();
+					});
+
+				if (aDates[0] === aDates[1]) {
+					aDates.length = 1;
+				}
+
+				aDates.forEach(function(iTimestamp, index) {
+					var sErrorGenericTextKey = "DynamicDate.Invalid" + (index === 0 ? "Start" : "End");
+
+					each(this.oConstraints, function (sConstraintName, iConstraintValue) {
+						switch (sConstraintName) {
+							case "minimum":
+								if (iTimestamp < iConstraintValue) {
+									aViolatedConstraints.push("minimum");
+									aMessages.push(oMBundle.getText(sErrorGenericTextKey, [new Date(iTimestamp).toDateString()]));
+									aMessages.push(oBundle.getText("Date.Minimum", [new Date(iConstraintValue).toDateString()]));
+								}
+								break;
+							case "maximum":
+								if (iTimestamp > iConstraintValue) {
+									aViolatedConstraints.push("maximum");
+									aMessages.push(oMBundle.getText(sErrorGenericTextKey, [new Date(iTimestamp).toDateString()]));
+									aMessages.push(oBundle.getText("Date.Maximum", [new Date(iConstraintValue).toDateString()]));
+								}
+								break;
+						}
+					});
+				}, this);
+
+				if (aViolatedConstraints.length > 0) {
+					throw new ValidateException(this.combineMessages(aMessages), aViolatedConstraints);
+				}
+			}
+		};
 
 		var oTimestampInputFormat = {
 			format: function(oValue) {

@@ -108,12 +108,19 @@
 		}
 	}
 
+	var oToday = new Date();
+	var oBefore5Days = new Date(oToday.getFullYear(), oToday.getMonth(), oToday.getDate() - 5);
+	var oAfter5Days = new Date(oToday.getFullYear(), oToday.getMonth(), oToday.getDate() + 6);
+
 	var oDDR1 = new sap.m.DynamicDateRange({
 			width: '350px',
 			options: StandardKeys,
 			value: {
 				path: '/val1',
-				type: new sap.m.DynamicDate()
+				type: new sap.m.DynamicDate(null, {
+					"minimum": oBefore5Days.getTime(),
+					"maximum": oAfter5Days.getTime()
+				})
 			},
 			change: handleValueChange
 		}),
@@ -161,7 +168,7 @@
 		oPage1 = new sap.m.Page("myPage1", {
 			title: "DynamicDateRange Control",
 			content: [
-				new sap.m.Label({ text: "All keys:"}),
+				new sap.m.Label({ text: "All keys & message handling:"}),
 				oDDR1,
 				new sap.m.Label({ text: "Custom options:"}),
 				oDDR2,
@@ -172,6 +179,9 @@
 				new sap.m.TextArea("txt1", { width: "350px", height: "300px"})
 			]
 		});
+
+	var oMessageManager = sap.ui.getCore().getMessageManager();
+	oMessageManager.registerObject(oDDR1, true);
 
 	var oModel = new sap.ui.model.json.JSONModel({
 			val1: {
