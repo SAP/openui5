@@ -17,16 +17,19 @@
  * Focus outline
  */
 .sapUiTableCell:focus {
-	outline-offset: @_sap_ui_table_Cell_FocusOutlineOffset;
-	outline: @_sap_ui_table_FocusOutlineWidth dotted @sapUiContentFocusColor;
+	outline: none;
 
-	.sapUiTableZoomout & {
-		outline-offset: @_sap_ui_table_Cell_FocusOutlineOffsetInZoomedChrome;
-	}
+	&::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		outline: @_sap_ui_table_FocusOutlineWidth dotted @sapUiContentFocusColor;
+		outline-offset: @_sap_ui_table_Cell_FocusOutlineOffset;
 
-	// To show the bottom focus outline of row selection cells that would otherwise be hidden by the top border of the selection cell below.
-	.sapUiTableGroupMode &.sapUiTableRowSelectionCell:focus {
-		z-index: 1;
+		.sapUiTableZoomout & {
+			outline-offset: @_sap_ui_table_Cell_FocusOutlineOffsetInZoomedChrome;
+		}
 	}
 }
 
@@ -43,6 +46,7 @@
  * Borders
  */
 .sapUiTableCell {
+	position: relative;
 	box-sizing: border-box;
 	border-right: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
 	border-bottom: @_sap_ui_table_BaseBorderWidth solid @sapUiListBorderColor;
@@ -124,10 +128,6 @@
 
 	.sapUiTableRowSel > & {
 		border-bottom-color: @_sap_ui_table_Cell_BorderColorSelected;
-
-		&:focus {
-			border-bottom-color: transparent;
-		}
 	}
 
 	.sapUiTableSummaryRow > & {
