@@ -284,6 +284,22 @@
           }
         }
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "WebPage"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "content": {
+            "$ref": "#/definitions/ContentType.WebPage"
+          }
+        }
+      }
     }
   ],
   "definitions": {
