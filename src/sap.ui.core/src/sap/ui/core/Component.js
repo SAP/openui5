@@ -2278,8 +2278,7 @@ sap.ui.define([
 				}
 				// If we're async but we don't have a promise we still need to be one !
 				return pRootControlReady;
-			}
-			if (typeof Component._fnOnInstanceCreated === "function") {
+			} else if (typeof Component._fnOnInstanceCreated === "function") {
 				Component._fnOnInstanceCreated(oInstance, vConfig);
 			}
 			return oInstance;

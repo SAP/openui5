@@ -295,22 +295,52 @@ sap.ui.define([
 			};
 		}
 
-		function afterRootControlCreated(oRootControl) {
-			that.setAggregation("rootControl", oRootControl);
-
-			// notify Component initialization callback handler
-			if (typeof UIComponent._fnOnInstanceInitialized === "function") {
-				UIComponent._fnOnInstanceInitialized(that);
+		function setRootControl(vRootControl) {
+			var fnFireInstanceCreated = function() {
+				if (typeof UIComponent._fnOnInstanceInitialized === "function") {
+					UIComponent._fnOnInstanceInitialized(that);
+				}
+			};
+			var fnAggregateRootControl = function(oRootControl) {
+				that.setAggregation("rootControl", oRootControl);
+			};
+			if (vRootControl instanceof Promise) {
+				that.pRootControlLoaded = that.pRootControlLoaded.then(function(oRootControl) {
+					fnAggregateRootControl(oRootControl);
+					fnFireInstanceCreated();
+					return oRootControl;
+				});
+			} else if (vRootControl instanceof View && vRootControl.oAsyncState && vRootControl.oAsyncState.promise) {
+				fnAggregateRootControl(vRootControl);
+				that.pRootControlLoaded = that.pRootControlLoaded.then(function(oRootControl) {
+					// notify Component initialization callback handler
+					fnFireInstanceCreated();
+					return oRootControl;
+				});
+			} else {
+				fnAggregateRootControl(vRootControl);
+				fnFireInstanceCreated();
 			}
 		}
 
 		//routingConfig must be set synchronous. Id could be a promise that must be handled in Target impl
-		function setRootViewId(vId, oRoutingConfig) {
-			if (oRoutingConfig.targetParent === undefined) {
-				oRoutingConfig.targetParent = vId;
+		function setRootViewId(vRootControl, oRoutingConfig) {
+			var vId;
+			if (vRootControl instanceof Promise) {
+				vId = that.pRootControlLoaded.then(function(oRootControl) {
+					// only for root "views" we automatically define the target parent
+					return (oRootControl instanceof View) ? oRootControl.getId() : undefined;
+				});
+			} else if (vRootControl instanceof View) {
+				vId = vRootControl.getId();
 			}
-			if (that._oTargets) {
-				that._oTargets._setRootViewId(vId);
+			if (vId) {
+				if (oRoutingConfig.targetParent === undefined) {
+					oRoutingConfig.targetParent = vId;
+				}
+				if (that._oTargets) {
+					that._oTargets._setRootViewId(vId);
+				}
 			}
 		}
 
@@ -359,38 +389,14 @@ sap.ui.define([
 			} else {
 				throw new Error("Interface 'sap.ui.core.IAsyncContentCreation' must be implemented for component '" + this.getMetadata().getComponentName() + "' when 'createContent' is implemented asynchronously");
 			}
-		} else if (this.isA("sap.ui.core.IAsyncContentCreation") && vRootControl && vRootControl.isA("sap.ui.core.mvc.View")) {
+		} else if (vRootControl instanceof View && vRootControl.oAsyncState && vRootControl.oAsyncState.promise) {
 			// if rootControl is a view created with the legacy factory we chain the loaded promise
 			this.pRootControlLoaded = vRootControl.loaded();
-		}
-
-		if (this.pRootControlLoaded) {
-			var pIdPromise = this.pRootControlLoaded.then(function(oRootControl) {
-				// only for root "views" we automatically define the target parent
-				return (oRootControl instanceof View) ? oRootControl.getId() : undefined;
-			});
-			setRootViewId(pIdPromise, oRoutingConfig);
-			this.pRootControlLoaded = this.pRootControlLoaded.then(function(oRootControl) {
-				afterRootControlCreated(oRootControl, oRoutingConfig);
-				return oRootControl;
-			});
 		} else {
-			// sync path
-			// only for root "views" we automatically define the target parent
-			if (vRootControl instanceof View) {
-				setRootViewId(vRootControl.getId(), oRoutingConfig);
-			}
-			afterRootControlCreated(vRootControl, oRoutingConfig);
-			/* is this compatible? we could cactch up the async loading here, but it starts breaking tests
-			if (vRootControl && vRootControl.isA("sap.ui.core.mvc.View")) {
-				this.pRootControlLoaded = vRootControl.loaded(); */
 			this.pRootControlLoaded = Promise.resolve(vRootControl);
 		}
-
-		//rootControl could be null/undefined no registration needed
-		if (vRootControl) {
-			this.registerForDestroy(this.pRootControlLoaded);
-		}
+		setRootViewId(vRootControl, oRoutingConfig);
+		setRootControl(vRootControl);
 	};
 
 	function getConstructorFunctionFor (vRoutingObjectConstructor) {
