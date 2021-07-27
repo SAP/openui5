@@ -369,8 +369,7 @@ sap.ui.define([
 					_AggregationHelper.checkTypeof(vValue[sKey], vType[bIsMap ? "*" : sKey],
 						sPath + "/" + sKey);
 				});
-			// eslint-disable-next-line valid-typeof
-			} else if (typeof vValue !== vType) {
+			} else if (typeof vValue !== vType) { // eslint-disable-line valid-typeof
 				throw new Error("Not a " + vType + " value for '" + sPath + "'");
 			}
 		},
