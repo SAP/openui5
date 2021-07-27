@@ -83,7 +83,7 @@ sap.ui.define([
 			payload: mAction.delegateInfo.payload || {}
 		};
 		return mAction.delegateInfo.delegate.getPropertyInfo(mPropertyBag)
-			.then(_flattenProperties);
+			.then(_flattenProperties.bind(null));
 	}
 
 	function getAllPropertiesFromDelegate(oElement, sAggregationName) {

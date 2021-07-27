@@ -194,7 +194,7 @@ sap.ui.define([], function() {
 				}
 			}
 		}
-		return Promise.resolve({});
+		return Promise.resolve([]);
 	}
 	var Delegate = {
 		/**
