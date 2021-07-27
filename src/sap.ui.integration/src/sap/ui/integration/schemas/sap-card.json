@@ -1755,6 +1755,10 @@
           "additionalProperties": {
             "$ref": "#/definitions/batchRequest"
           }
+        },
+        "cache": {
+          "description": "Cache control settings",
+          "$ref" :"#/definitions/cache"
         }
       }
     },
@@ -1790,6 +1794,28 @@
         "body": {
           "description": "Represents the request body",
           "additionalProperties": true
+        }
+      }
+    },
+    "cache": {
+      "description": "Cache control settings",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxAge": {
+          "description": "The maximum age for which the cache is considered fresh.",
+          "type": "number",
+          "default": 0
+        },
+        "staleWhileRevalidate": {
+          "description": "Should we show stale cache while revalidating.",
+          "type": "boolean",
+          "default": false
+        },
+        "noStore": {
+          "description": "Set to true to disable caching for this card.",
+          "type": "boolean",
+          "default": false
         }
       }
     },
