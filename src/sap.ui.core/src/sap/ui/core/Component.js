@@ -638,12 +638,15 @@ sap.ui.define([
 		// make user specific data available during component instantiation
 		this.oComponentData = mSettings && mSettings.componentData;
 
-		// static initialization (loading dependencies, includes, ... / register customizing)
-		//   => either init the static or the instance manifest
-		if (!this._isVariant()) {
-			this.getMetadata().init();
-		} else {
+		// manifest initialization (loading dependencies, includes, ... / register customizing)
+		//   => either call init on the instance specific manifest or the static one on the ComponentMetadata
+		if (this._oManifest) {
 			this._oManifest.init(this);
+		} else {
+			this.getMetadata().init();
+		}
+
+		if (this._isVariant()) {
 			// in case of variants we ensure to register the module path for the variant
 			// to allow module loading of code extensibility relative to the manifest
 			var sAppId = this._oManifest.getEntry("/sap.app/id");
@@ -766,13 +769,13 @@ sap.ui.define([
 		// unregister for messaging (on MessageManager)
 		sap.ui.getCore().getMessageManager().unregisterObject(this);
 
-		// static initialization (unload includes, ... / unregister customzing)
-		//   => either exit the static or the instance manifest
-		if (!this._isVariant()) {
-			this.getMetadata().exit();
-		} else {
+		// manifest exit (unload includes, ... / unregister customzing)
+		//   => either call exit on the instance specific manifest or the static one on the ComponentMetadata
+		if (this._oManifest) {
 			this._oManifest.exit(this);
 			delete this._oManifest;
+		} else {
+			this.getMetadata().exit();
 		}
 		return Promise.all(aDestroyables);
 	};
@@ -2351,9 +2354,25 @@ sap.ui.define([
 			//        constructor and delegate the current owner id for the instance creation
 			var sCurrentOwnerId = ManagedObject._sOwnerId;
 			return vClassOrPromise.then(function(oClass) {
-				return runWithOwner(function() {
-					return createInstance(oClass);
-				}, sCurrentOwnerId);
+				// [Compatibility]: We sequentialize the dependency loading for the inheritance chain of the component.
+				// This keeps the order of the dependency execution stable (e.g. thirdparty script includes).
+				var loadDependenciesAndIncludes = function (oMetadata) {
+					var oParent = oMetadata.getParent();
+					var oPromise = Promise.resolve();
+					if (oParent instanceof ComponentMetadata) {
+						oPromise = oPromise.then(function () {
+							return loadDependenciesAndIncludes(oParent);
+						});
+					}
+					return oPromise.then(function () {
+						return oMetadata.getManifestObject().loadDependenciesAndIncludes(true);
+					});
+				};
+				return loadDependenciesAndIncludes(oClass.getMetadata()).then(function () {
+					return runWithOwner(function() {
+						return createInstance(oClass);
+					}, sCurrentOwnerId);
+				});
 			});
 		} else {
 			// sync: constructor has been returned, instantiate component immediately
@@ -3114,13 +3133,21 @@ sap.ui.define([
 				Log.debug("Component.load: all promises fulfilled, then " + v);
 				if (oManifest) {
 					return oManifest.then(function(oLoadedManifest) {
-						// store the loaded manifest in the oManifest variable
-						// which is used for the scope constructor function
-						oManifest = oLoadedManifest;
-						// read the component name from the manifest and
-						// preload the dependencies defined in the manifest
-						sName = oManifest.getComponentName();
-						return preloadDependencies(sName, oManifest, true);
+						if (!oLoadedManifest._bLoadManifestRequestFailed) {
+							// store the loaded manifest in the oManifest variable
+							// which is used for the scope constructor function
+							oManifest = oLoadedManifest;
+							// read the component name from the manifest and
+							// preload the dependencies defined in the manifest
+							sName = oManifest.getComponentName();
+							return preloadDependencies(sName, oManifest, true);
+						} else {
+							// Set oManifest to undefined in case the loadManifest request failed
+							// This should be only the case if manifestFirst is true but there was
+							// no manifest.json
+							oManifest = undefined;
+							return oManifest;
+						}
 					});
 				} else {
 					return v;

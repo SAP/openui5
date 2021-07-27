@@ -580,15 +580,10 @@ sap.ui.define([
 		}).then(function(oComponent) {
 			assert.ok(oComponent instanceof Component, "Component has been created.");
 
-			// Note that although the component is created "async", the dependencies are all
-			// loaded sync via the Component constructor (Manifest#loadDependencies).
-			// This *could* be improved in future to also load those within the factory, but
-			// is currently only supported in the "manifest first" use case.
-
-			// Verify that all expected libraries have been prelaoded
+			// Verify that all expected libraries have been preloaded
 			// "sap.test.lib3" is declared as "lazy" and shouldn't get preloaded initially
-			sinon.assert.calledWithExactly(this.oLoadLibrarySpy, "sap.test.lib2");
-			sinon.assert.calledWithExactly(this.oLoadLibrarySpy, "sap.test.lib4");
+			sinon.assert.calledWithExactly(this.oLoadLibrarySpy, "sap.test.lib2", { async: true});
+			sinon.assert.calledWithExactly(this.oLoadLibrarySpy, "sap.test.lib4", { async: true});
 
 			// Verify that all expected components have been preloaded
 			sinon.assert.calledWithMatch(this.oRegisterPreloadedModulesSpy, {
@@ -609,10 +604,6 @@ sap.ui.define([
 
 			// As manifest first is not used, no manifest.json should have been loaded
 			sinon.assert.notCalled(this.oManifestLoad);
-
-			// Deprecated sap.ui.component.load should be called once
-			sinon.assert.calledOnce(this.oLogWarningSpy);
-			sinon.assert.calledWithMatch(this.oLogWarningSpy, "Do not use deprecated function 'sap.ui.component.load'");
 
 			done();
 		}.bind(this), function(oError) {

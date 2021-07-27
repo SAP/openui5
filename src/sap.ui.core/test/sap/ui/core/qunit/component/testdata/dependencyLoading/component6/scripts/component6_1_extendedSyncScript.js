@@ -1,0 +1,1 @@
+sap.ui.test.testScriptForUnitTest(2);
