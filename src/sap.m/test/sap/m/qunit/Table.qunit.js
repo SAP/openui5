@@ -848,6 +848,22 @@ sap.ui.define([
 		sut.destroy();
 	});
 
+	QUnit.test("Test for multiSelectMode - space key should trigger deselectAll when trigger on the table header", function(assert) {
+		var sut = createSUT("idMultiSelectDelectAllKeyboard", true, true, "MultiSelect");
+		sut.setMultiSelectMode("ClearAll");
+		sut.getItems()[1].setSelected(true);
+		sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		var $tblHeader = sut.$("tblHeader").trigger("focus");
+		assert.notOk(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "ClearAll button is enabled since an item is selected in the table");
+
+		qutils.triggerKeydown($tblHeader, KeyCodes.SPACE);
+		Core.applyChanges();
+		assert.ok(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "ClearAll button is disabled, since items are desected in the table via space key");
+		sut.destroy();
+	});
+
 	QUnit.test("Test for destroyItems", function(assert) {
 		var sut = createSUT("idTableDestroyItems", true, true);
 		sut.placeAt("qunit-fixture");

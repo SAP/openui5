@@ -1012,10 +1012,14 @@ sap.ui.define([
 		if (oEvent.target.id == this.getId("tblHeader")) {
 			// prevent from scrolling
 			oEvent.preventDefault();
+			var sMultiSelectMode = this.getMultiSelectMode();
 
 			// toggle select all header checkbox and fire its event
-			if (this._selectAllCheckBox && this.getMultiSelectMode() == "Default") {
+			if (this._selectAllCheckBox && sMultiSelectMode == "Default") {
 				this._selectAllCheckBox.setSelected(!this._selectAllCheckBox.getSelected()).fireSelect();
+				oEvent.setMarked();
+			} else if (this._clearAllButton && sMultiSelectMode == "ClearAll" && !this._clearAllButton.hasStyleClass("sapMTableDisableClearAll")) {
+				this._clearAllButton.firePress();
 				oEvent.setMarked();
 			}
 		}
