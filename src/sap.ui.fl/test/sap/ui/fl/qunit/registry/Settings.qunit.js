@@ -83,12 +83,6 @@ sap.ui.define([
 			assert.equal(bIsAtoEnabled, false);
 		});
 
-		QUnit.test("variants sharing is enabled by default", function(assert) {
-			assert.equal(this.cut._oSettings.isVariantSharingEnabled, true);
-			var bIsVariantSharingEnabled = this.cut.isVariantSharingEnabled();
-			assert.equal(bIsVariantSharingEnabled, true);
-		});
-
 		QUnit.test("variants sharing is set to false", function(assert) {
 			var oSettings = {
 				isVariantSharingEnabled: false
@@ -115,12 +109,6 @@ sap.ui.define([
 			assert.equal(bIsVariantPersonalizationEnabled, false);
 		});
 
-		QUnit.test("fl variants sharing is disabled by default", function(assert) {
-			assert.equal(this.cut._oSettings.isPublicFlVariantEnabled, false);
-			var bIsPublicFlVariantEnabled = this.cut.isPublicFlVariantEnabled();
-			assert.equal(bIsPublicFlVariantEnabled, false);
-		});
-
 		QUnit.test("fl variants sharing is set to true", function(assert) {
 			var oSettings = {
 				isPublicFlVariantEnabled: true
@@ -139,39 +127,6 @@ sap.ui.define([
 			assert.equal(this.cut._oSettings.isPublicFlVariantEnabled, false);
 			var bIsPublicFlVariantEnabled = this.cut.isPublicFlVariantEnabled();
 			assert.equal(bIsPublicFlVariantEnabled, false);
-		});
-
-		QUnit.test("fl variants sharing is set to false by determine it via PUBLIC layer and variantSharing", function(assert) {
-			[{
-				settings: {
-					isVariantSharingEnabled: false,
-					isPublicLayerAvailable: false
-				},
-				expected: false
-			}, {
-				settings: {
-					isVariantSharingEnabled: true,
-					isPublicLayerAvailable: false
-				},
-				expected: false
-			}, {
-				settings: {
-					isVariantSharingEnabled: false,
-					isPublicLayerAvailable: true
-				},
-				expected: false
-			}, {
-				settings: {
-					isVariantSharingEnabled: true,
-					isPublicLayerAvailable: true
-				},
-				expected: true
-			}].forEach(function (oScenario) {
-				this.cut = new Settings(oScenario.settings);
-				assert.equal(this.cut._oSettings.isPublicFlVariantEnabled, oScenario.expected);
-				var bIsPublicFlVariantEnabled = this.cut.isPublicFlVariantEnabled();
-				assert.equal(bIsPublicFlVariantEnabled, oScenario.expected);
-			}.bind(this));
 		});
 
 		QUnit.test("isPublicLayerAvailable is false by default", function(assert) {

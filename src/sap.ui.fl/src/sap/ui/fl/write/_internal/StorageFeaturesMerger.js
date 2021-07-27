@@ -58,6 +58,7 @@ sap.ui.define([
 		 */
 		mergeResults: function(aResponses) {
 			var oResult = DEFAULT_FEATURES;
+
 			aResponses.forEach(function (oResponse) {
 				Object.keys(oResponse.features).forEach(function (sKey) {
 					if (sKey !== "isVersioningEnabled") {
