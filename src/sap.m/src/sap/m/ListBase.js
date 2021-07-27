@@ -246,7 +246,7 @@ function(
 			sticky : {type : "sap.m.Sticky[]", group : "Appearance"},
 
 			/**
-			 * Defines the multi selection mode for the control.
+			 * Defines the multi-selection mode for the control.
 			 * If this property is set to the <code>Default</code> value, the <code>sap.m.Table</code> control renders
 			 * the Select All checkbox in the column header, otherwise the Deselect All icon is rendered.
 			 * The Select All checkbox allows the user to select all the items in the control, and

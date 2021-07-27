@@ -1303,6 +1303,7 @@
 			"sap.m.sample.TableBreadcrumb",
 			"sap.m.sample.TableLayout",
 			"sap.m.sample.TableMergeCells",
+			"sap.m.sample.TableMultiSelectMode",
 			"sap.m.sample.TablePerso",
 			"sap.m.sample.TableScrollToIndex",
 			"sap.m.sample.TableVerticalAlignment",
@@ -2810,6 +2811,11 @@
 		  "id": "sap.m.sample.TableDnD",
 		  "name": "Table - Drag and Drop",
 		  "description": "Shows the different kinds of drag-and-drop capabilities across view boundaries along with custom context menu alternatives to perform these action."
+		},
+		{
+			"id": "sap.m.sample.TableMultiSelectMode",
+			"name": "Table - MultiSelectMode",
+			"description": "This example demonstrates the different multi-selection modes when the table is configured with MultiToggle mode."
 		},
 		{
 		  "id": "sap.m.sample.TablePerso",
