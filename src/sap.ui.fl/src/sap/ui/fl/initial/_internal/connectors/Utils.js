@@ -180,7 +180,7 @@ sap.ui.define([
 						var sErrorMessage = "";
 						try {
 							//Handle back end error. TODO Implement CF error with the same format
-							var oResponse = JSON.parse(xhr.response);
+							var oResponse = typeof xhr.response === "string" ? JSON.parse(xhr.response) : xhr.response;
 							if (Array.isArray(oResponse.messages) && oResponse.messages.length) {
 								sErrorMessage = oResponse.messages.reduce(function(sConcatenatedMessage, oErrorResponse) {
 									return sConcatenatedMessage.concat(oErrorResponse.severity === "Error" ? oErrorResponse.text + "\n" : "");
