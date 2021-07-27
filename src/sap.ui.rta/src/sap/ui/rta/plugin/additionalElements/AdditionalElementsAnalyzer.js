@@ -238,9 +238,10 @@ sap.ui.define([
 			return aControlsBindingPaths.some(function(sBindingPath) {
 				//there might be some deeper binding paths available on controls,
 				//than returned by the model evaluation (e.g. navigation property paths)
-				//So we only check a properties are part of the controls bindings
-				return sBindingPath.startsWith(oModelProperty.bindingPath)
-						&& oModelProperty.label !== "UI Field Control";
+				//in this case we only check if the navigation path is valid
+				//unsupported: check existence of the property also in the navigation target
+				return sBindingPath === oModelProperty.bindingPath ||
+					sBindingPath.startsWith(oModelProperty.bindingPath + '/');
 			});
 		}).pop();
 	}
