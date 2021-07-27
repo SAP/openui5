@@ -542,6 +542,12 @@ sap.ui.define([
 
 		this.oSearchField.onChange();
 		assert.strictEqual(fnFireChangeSpy.callCount, 2, "The change event is fired");
+
+		// act
+		QunitUtils.triggerCharacterInput(this.oSearchField.getFocusDomRef(), "a");
+		this.oSearchField.onsapfocusleave();
+
+		assert.strictEqual(fnFireChangeSpy.callCount, 3, "The change event is fired");
 	});
 
 	QUnit.test("Order of clear and focus of the input is correct when pressing reset", function (assert) {
