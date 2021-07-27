@@ -40,13 +40,15 @@ sap.ui.getCore().attachInit(function () {
 
 				When.onTheListReport.selectSalesOrder(0);
 				Then.onTheObjectPage.checkSalesOrderID("0500000000");
+				Then.onTheListReport.checkSalesOrder(0, "0500000000", "Test (original)");
+				Then.onTheObjectPage.checkNote("Test (original)");
+
+				When.onTheObjectPage.changeNote("Test");
 
 				When.onTheListReport.sortBySalesOrderID();
 				Then.onTheListReport.checkSalesOrderNotInTheList("0500000000");
 				Then.onTheObjectPage.checkSalesOrderID("0500000000");
 
-				When.onTheObjectPage.changeNote("Test");
-				When.onTheApplication.pressSave();
 				Then.onTheObjectPage.checkNote("Test");
 
 				When.onTheListReport.sortBySalesOrderID();
@@ -57,8 +59,8 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheObjectPage.checkNote("Test (changed)");
 
 				When.onTheApplication.pressCancel();
-				Then.onTheListReport.checkSalesOrder(0, "0500000000", "Test");
-				Then.onTheObjectPage.checkNote("Test");
+				Then.onTheListReport.checkSalesOrder(0, "0500000000", "Test (original)");
+				Then.onTheObjectPage.checkNote("Test (original)");
 
 				Then.onAnyPage.checkLog();
 				Then.onAnyPage.analyzeSupportAssistant();
@@ -79,11 +81,12 @@ sap.ui.getCore().attachInit(function () {
 				When.onTheObjectPage.selectSalesOrderItem(0);
 				Then.onTheSubObjectPage.checkItemPosition('0000000010');
 
+				When.onTheSubObjectPage.changeQuantity("2");
+
 				When.onTheObjectPage.sortByGrossAmount();
 				Then.onTheObjectPage.checkSalesOrderItemNotInTheList('0000000010');
 				Then.onTheSubObjectPage.checkItemPosition('0000000010');
 
-				When.onTheSubObjectPage.changeQuantity("2");
 				Then.onTheSubObjectPage.checkQuantity("2.000");
 				When.onTheObjectPage.pressMore();
 				Then.onTheSubObjectPage.checkQuantity("2.000");
@@ -111,10 +114,14 @@ sap.ui.getCore().attachInit(function () {
 				When.onTheListReport.selectSalesOrder(4);
 				Then.onTheObjectPage.checkSalesOrderID("0500000004");
 
+				When.onTheObjectPage.changeNote("Test");
+
 				When.onTheListReport.filterByGrossAmount('1000');
 				Then.onTheListReport.checkSalesOrderNotInTheList("0500000004");
 				Then.onTheListReport.checkSalesOrdersCount(7);
 				Then.onTheObjectPage.checkSalesOrderID("0500000004");
+
+				When.onTheApplication.pressCancel(); // reset "Note" change
 
 				When.onTheObjectPage.deleteSalesOrder();
 				When.onTheApplication.closeDialog("Success");

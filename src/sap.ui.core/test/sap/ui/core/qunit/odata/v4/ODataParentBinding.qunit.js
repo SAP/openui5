@@ -257,7 +257,7 @@ sap.ui.define([
 					applyParameters : function () {}
 				});
 
-			this.mock(oBinding).expects("hasPendingChanges").returns(false);
+			this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(false);
 			this.mock(oBinding).expects("applyParameters").withExactArgs(
 				oFixture.mExpectedParameters, oFixture.sChangeReason || ChangeReason.Change);
 
@@ -312,7 +312,7 @@ sap.ui.define([
 				applyParameters : function () {}
 			});
 
-		this.mock(oBinding).expects("hasPendingChanges").returns(false);
+		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(false);
 		this.mock(oBinding).expects("applyParameters")
 			.withExactArgs({$$ownRequest : true, $count : true}, ChangeReason.Change);
 
@@ -332,7 +332,7 @@ sap.ui.define([
 				sPath : "/EMPLOYEES"
 			});
 
-		this.mock(oBinding).expects("hasPendingChanges").returns(true);
+		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(true);
 
 		assert.throws(function () {
 			// code under test
@@ -406,7 +406,7 @@ sap.ui.define([
 				}
 			};
 
-		this.mock(oBinding).expects("hasPendingChanges").returns(false);
+		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(false);
 		this.mock(oBinding).expects("applyParameters")
 			.withExactArgs({$expand : {SO_2_SOITEM : {$orderby : "ItemPosition"}}},
 				ChangeReason.Change)
@@ -480,7 +480,7 @@ sap.ui.define([
 				applyParameters : function () {}
 			});
 
-		this.mock(oBinding).expects("hasPendingChanges").returns(false);
+		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(false);
 		this.mock(oBinding).expects("applyParameters")
 			.withExactArgs({
 				$$ownRequest : true,
@@ -2505,7 +2505,7 @@ sap.ui.define([
 			oResult = {};
 
 		oBindingMock.expects("isRoot").withExactArgs().returns(true);
-		oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
+		oBindingMock.expects("hasPendingChanges").withExactArgs(true).returns(false);
 		oBindingMock.expects("removeReadGroupLock").withExactArgs();
 		oBindingMock.expects("doSuspend").withExactArgs();
 
@@ -2563,7 +2563,7 @@ sap.ui.define([
 			});
 
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
-		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(true);
+		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(true);
 		this.mock(oBinding).expects("removeReadGroupLock").never();
 
 		assert.throws(function () {
@@ -3188,123 +3188,172 @@ sap.ui.define([
 		var oCache1 = {
 				hasPendingChangesForPath : function () {}
 			},
-			oCache31 = {
+			oCache3_1 = {
 				hasPendingChangesForPath : function () {}
 			},
-			oCache32 = {
+			oCache3_2 = {
 				hasPendingChangesForPath : function () {}
+			},
+			oContext = {
+				isKeepAlive : function () {
+					return false;
+				}
 			},
 			oChild1 = new ODataParentBinding({
-				oCache : oCache1
+				oCache : oCache1,
+				mCacheByResourcePath : {
+					"/Foo/1" : oCache1
+				},
+				oContext : oContext
 			}),
 			oChild2 = new ODataParentBinding({
-				oCache : null
+				oCache : null,
+				oContext : oContext
 			}),
 			oChild3 = new ODataParentBinding({
-				mCacheByResourcePath : {
-					"/Foo/1" : oCache31,
-					"/Foo/2" : oCache32
+				mCacheByResourcePath: {
+					"/Foo/1" : oCache3_1,
+					"/Foo/2" : oCache3_2
 				},
-				oCache : undefined
+				oCache : undefined,
+				oContext : oContext
 			}),
 			oBinding = new ODataParentBinding({
-				oContext : {},
-				oModel :  {
-					getDependentBindings : function () {},
+				oModel : {
 					withUnresolvedBindings : function () {}
 				}
 			}),
-			oChild1CacheMock = this.mock(oCache1),
+			oCache1Mock = this.mock(oCache1),
 			oChild1Mock = this.mock(oChild1),
 			oChild2Mock = this.mock(oChild2),
 			oChild3Mock = this.mock(oChild3),
-			oChild3CacheMock1 = this.mock(oCache31),
-			oChild3CacheMock2 = this.mock(oCache32),
-			oModelMock = this.mock(oBinding.oModel),
-			bResult = {/*false,true*/};
+			oCache3_1Mock = this.mock(oCache3_1),
+			oCache3_2Mock = this.mock(oCache3_2),
+			oModelMock = this.mock(oBinding.oModel);
 
 		oModelMock.expects("withUnresolvedBindings").never();
 
 		this.mock(oBinding).expects("getDependentBindings").exactly(8)
 			.withExactArgs()
 			.returns([oChild1, oChild2, oChild3]);
-		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
+		oCache1Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
 		oChild1Mock.expects("hasPendingChangesInDependents").never();
 		oChild2Mock.expects("hasPendingChangesInDependents").never();
 		oChild3Mock.expects("hasPendingChangesInDependents").never();
-		oChild3CacheMock1.expects("hasPendingChangesForPath").never();
-		oChild3CacheMock2.expects("hasPendingChangesForPath").never();
+		oCache3_1Mock.expects("hasPendingChangesForPath").never();
+		oCache3_2Mock.expects("hasPendingChangesForPath").never();
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesInDependents(), true);
+		assert.strictEqual(oBinding.hasPendingChangesInDependents("~bIgnoreKeptAlive~"), true);
 
-		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		oCache1Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(true);
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesInDependents(), true);
+		assert.strictEqual(oBinding.hasPendingChangesInDependents("~bIgnoreKeptAlive~"), true);
 
-		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		oCache1Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		oChild2Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(true);
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesInDependents(), true);
+		assert.strictEqual(oBinding.hasPendingChangesInDependents("~bIgnoreKeptAlive~"), true);
 
-		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		oCache1Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		oChild2Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesInDependents(), true);
+		assert.strictEqual(oBinding.hasPendingChangesInDependents("~bIgnoreKeptAlive~"), true);
 
-		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		oCache1Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		oChild2Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
-		oChild3CacheMock1.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
+		oCache3_1Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesInDependents(), true);
+		assert.strictEqual(oBinding.hasPendingChangesInDependents("~bIgnoreKeptAlive~"), true);
 
-		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		oCache1Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		oChild2Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
-		oChild3CacheMock1.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
-		oChild3CacheMock2.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
+		oCache3_1Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		oCache3_2Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesInDependents(), true);
+		assert.strictEqual(oBinding.hasPendingChangesInDependents("~bIgnoreKeptAlive~"), true);
 
-		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		oCache1Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		oChild2Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
-		oChild3CacheMock1.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
-		oChild3CacheMock2.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		oCache3_1Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		oCache3_2Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(true);
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesInDependents(), true);
+		assert.strictEqual(oBinding.hasPendingChangesInDependents("~bIgnoreKeptAlive~"), true);
 
-		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		oCache1Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		oChild2Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
-		oChild3CacheMock1.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
-		oChild3CacheMock2.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		oCache3_1Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		oCache3_2Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs()
 			.returns("/some/absolute/path");
 		oModelMock.expects("withUnresolvedBindings")
 			.withExactArgs("hasPendingChangesInCaches", "some/absolute/path")
-			.returns(bResult);
+			.returns("~bResult~");
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesInDependents(), bResult);
+		assert.strictEqual(oBinding.hasPendingChangesInDependents("~bIgnoreKeptAlive~"),
+			"~bResult~");
 	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bIgnoreKeptAlive) {
+	var sTitle = "hasPendingChangesInDependents:setKeepAlive = " + bIgnoreKeptAlive;
+
+	QUnit.test(sTitle, function (assert) {
+		var oContext1 = {
+				isKeepAlive : function () {}
+			},
+			oContext2 = {
+				isKeepAlive : function () {}
+			},
+			oChild1 = new ODataParentBinding({
+				oCache : undefined,
+				oContext : oContext1
+			}),
+			oChild2 = new ODataParentBinding({
+				oCache : undefined,
+				oContext : oContext2
+			}),
+			oBinding = new ODataParentBinding();
+
+		this.mock(oBinding).expects("getDependentBindings").withExactArgs()
+			.returns([oChild1, oChild2]);
+		if (bIgnoreKeptAlive) {
+			this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(true);
+			this.mock(oContext2).expects("isKeepAlive").withExactArgs().returns(false);
+			this.mock(oChild1).expects("hasPendingChangesForPath").never();
+			this.mock(oChild2).expects("hasPendingChangesForPath").withExactArgs("").returns(true);
+		} else {
+			this.mock(oContext1).expects("isKeepAlive").never();
+			this.mock(oContext2).expects("isKeepAlive").never();
+			this.mock(oChild1).expects("hasPendingChangesForPath").withExactArgs("").returns(true);
+			this.mock(oChild2).expects("hasPendingChangesForPath").never();
+		}
+
+		// code under test
+		assert.strictEqual(oBinding.hasPendingChangesInDependents(bIgnoreKeptAlive), true);
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("resetChangesInDependents", function (assert) {
@@ -3770,7 +3819,6 @@ sap.ui.define([
 			"adjustPredicate",
 			"destroy",
 			"doDeregisterChangeListener",
-			"fetchCache",
 			"getGeneration",
 			"hasPendingChangesForPath"
 		].forEach(function (sMethod) {

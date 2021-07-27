@@ -253,12 +253,17 @@ sap.ui.define([
 	 *   The resource path
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context instance to be used, undefined for absolute bindings
-	 * @returns {sap.ui.model.odata.lib._Cache}
+	 * @param {boolean} [bOldCacheReadOnly]
+	 *   Whether the old cache is read-only and must be kept intact - not reset and reused!
+	 * @param {sap.ui.model.odata.v4.lib._Cache} [oOldCache]
+	 *   The old cache, in case it may be reused
+	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 *
 	 * @private
 	 */
-	ODataBinding.prototype.createAndSetCache = function (mQueryOptions, sResourcePath, oContext) {
+	ODataBinding.prototype.createAndSetCache = function (mQueryOptions, sResourcePath, oContext,
+			bOldCacheReadOnly, oOldCache) {
 		var oCache, sDeepResourcePath, iGeneration;
 
 		this.mCacheQueryOptions = Object.assign({}, this.oModel.mUriParameters, mQueryOptions);
@@ -282,7 +287,7 @@ sap.ui.define([
 			} else {
 				sDeepResourcePath = _Helper.buildPath(oContext.getPath(), this.sPath).slice(1);
 				oCache = this.doCreateCache(sResourcePath, this.mCacheQueryOptions, oContext,
-					sDeepResourcePath);
+					sDeepResourcePath, bOldCacheReadOnly, oOldCache);
 				if (!(this.mParameters && this.mParameters.$$sharedRequest)) {
 					this.mCacheByResourcePath = this.mCacheByResourcePath || {};
 					this.mCacheByResourcePath[sResourcePath] = oCache;
@@ -291,10 +296,16 @@ sap.ui.define([
 				oCache.$generation = iGeneration;
 			}
 		} else { // absolute binding
-			oCache = this.doCreateCache(sResourcePath, this.mCacheQueryOptions);
+			oCache = this.doCreateCache(sResourcePath, this.mCacheQueryOptions, undefined,
+				undefined, bOldCacheReadOnly, oOldCache);
 		}
-		if (this.mLateQueryOptions) {
-			oCache.setLateQueryOptions(this.mLateQueryOptions);
+		if (oOldCache !== oCache) {
+			if (oOldCache) {
+				oOldCache.setActive(false);
+			}
+			if (this.mLateQueryOptions) {
+				oCache.setLateQueryOptions(this.mLateQueryOptions);
+			}
 		}
 		this.oCache = oCache;
 
@@ -335,6 +346,10 @@ sap.ui.define([
 	 *   The context instance to be used, must be <code>undefined</code> for absolute bindings
 	 * @param {string} [sDeepResourcePath=sResourcePath]
 	 *   The deep resource path to be used to build the target path for bound messages
+	 * @param {boolean} [bOldCacheReadOnly]
+	 *   Whether the old cache is read-only and must be kept intact - not reset and reused!
+	 * @param {sap.ui.model.odata.v4.lib._Cache} [oOldCache]
+	 *   The old cache, in case it may be reused
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The new cache instance
 	 *
@@ -385,15 +400,22 @@ sap.ui.define([
 	 * @param {boolean} [bKeepQueryOptions]
 	 *   Whether to keep existing (late) query options and not to run auto-$expand/$select again
 	 *   (cannot be combined with <code>bIgnoreParentCache</code>!)
+	 * @param {boolean} [bKeepCacheOnError]
+	 *   If <code>true</code>, the binding data remains unchanged if the refresh fails. This implies
+	 *   that the old cache must be kept intact - not reset and reused!
 	 * @throws {Error}
 	 *   If auto-$expand/$select is still running and query options shall be kept (this case is just
 	 *   not yet implemented and should not be needed)
 	 *
 	 * @private
 	 */
-	ODataBinding.prototype.fetchCache = function (oContext, bIgnoreParentCache, bKeepQueryOptions) {
+	ODataBinding.prototype.fetchCache = function (oContext, bIgnoreParentCache, bKeepQueryOptions,
+		bKeepCacheOnError) {
 		var oCache = this.oCache,
-			oCallToken = {},
+			oCallToken = {
+				// propagate old cache from first call of fetchCache to the latest call
+				oOldCache : oCache === undefined ? this.oFetchCacheCallToken.oOldCache : oCache
+			},
 			aPromises,
 			that = this;
 
@@ -401,25 +423,21 @@ sap.ui.define([
 			oContext = undefined;
 		}
 
-		if (oCache) {
-			// if oCachePromise is pending no cache will be created because of oFetchCacheCallToken
-			oCache.setActive(false);
-		} else if (bKeepQueryOptions) {
+		if (!oCache && bKeepQueryOptions) {
 			if (oCache === undefined) {
 				throw new Error("Unsupported bKeepQueryOptions while oCachePromise is pending");
 			}
-			this.oFetchCacheCallToken = undefined;
 			return;
 		}
 
 		this.oCache = undefined;
+		this.oFetchCacheCallToken = oCallToken;
 		if (bKeepQueryOptions) {
 			// asynchronously re-create an equivalent cache
 			this.oCachePromise = SyncPromise.resolve(Promise.resolve()).then(function () {
 				return that.createAndSetCache(that.mCacheQueryOptions, oCache.getResourcePath(),
-					oContext);
+					oContext, bKeepCacheOnError, oCache);
 			});
-			this.oFetchCacheCallToken = undefined;
 			return;
 		}
 
@@ -428,7 +446,6 @@ sap.ui.define([
 			this.oModel.oRequestor.ready()
 		];
 		this.mCacheQueryOptions = undefined;
-		this.oFetchCacheCallToken = oCallToken;
 		this.oCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
 			var mQueryOptions = aResult[0].mQueryOptions;
 
@@ -445,7 +462,8 @@ sap.ui.define([
 						oError.canceled = true;
 						throw oError;
 					}
-					return that.createAndSetCache(mQueryOptions, sResourcePath, oContext);
+					return that.createAndSetCache(mQueryOptions, sResourcePath, oContext,
+						bKeepCacheOnError, oCallToken.oOldCache);
 				});
 			}
 			that.oCache = null;
@@ -801,15 +819,23 @@ sap.ui.define([
 	 * parent context path of this binding. If this binding is unresolved (see
 	 * {@link sap.ui.model.Binding#isResolved}), it returns <code>false</code>.
 	 *
+	 * @param {boolean} [bIgnoreKeptAlive]
+	 *   Whether to ignore changes which will not be lost by APIs like
+	 *  {@link sap.ui.model.odata.v4.ODataListBinding#changeParameters changeParameters},
+	 *  {@link sap.ui.model.odata.v4.ODataListBinding#filter filter},
+	 *  {@link sap.ui.model.odata.v4.ODataListBinding#sort sort}, or
+	 *  {@link sap.ui.model.odata.v4.ODataListBinding#suspend suspend} because they relate to a
+	 *  {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding.
 	 * @returns {boolean}
 	 *   <code>true</code> if the binding is resolved and has pending changes
 	 *
 	 * @public
 	 * @since 1.39.0
 	 */
-	ODataBinding.prototype.hasPendingChanges = function () {
+	ODataBinding.prototype.hasPendingChanges = function (bIgnoreKeptAlive) {
 		return this.isResolved()
-			&& (this.hasPendingChangesForPath("") || this.hasPendingChangesInDependents());
+			&& (this.hasPendingChangesForPath("", bIgnoreKeptAlive)
+				|| this.hasPendingChangesInDependents(bIgnoreKeptAlive));
 	};
 
 	/**
@@ -818,20 +844,23 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   The path (absolute or relative to this binding)
+	 * @param {boolean} [bIgnoreKeptAlive]
+	 *   Whether to ignore changes which will not be lost by APIs like sort or filter because they
+	 *   relate to a context which is kept alive.
 	 * @returns {boolean}
 	 *   <code>true</code> if there are pending changes for the path
 	 *
 	 * @private
 	 */
-	ODataBinding.prototype.hasPendingChangesForPath = function (sPath) {
+	ODataBinding.prototype.hasPendingChangesForPath = function (sPath, bIgnoreKeptAlive) {
 		return this.withCache(function (oCache, sCachePath) {
-				return oCache.hasPendingChangesForPath(sCachePath);
+				return oCache.hasPendingChangesForPath(sCachePath, bIgnoreKeptAlive);
 			}, sPath, true).unwrap();
 	};
 
 	/**
 	 * Checks whether there are pending changes in caches stored by resource path at this binding
-	 * which have the given resource path as prefix.
+	 * which have the given resource path as prefix. Called for unresolved bindings only.
 	 *
 	 * @param {string} sResourcePathPrefix
 	 *   The resource path prefix to identify the relevant caches
@@ -859,6 +888,9 @@ sap.ui.define([
 	 *
 	 * @returns {boolean}
 	 *   <code>true</code> if this binding has pending changes
+	 * @param {boolean} [bIgnoreKeptAlive]
+	 *   Whether to ignore changes which will not be lost by APIs like sort or filter because they
+	 *   relate to a context which is kept alive.
 	 *
 	 * @abstract
 	 * @function
@@ -1075,7 +1107,7 @@ sap.ui.define([
 			if (this.requestSideEffects) {
 				return this.requestSideEffects(sGroupId, aPaths);
 			}
-			return this.refreshInternal("", sGroupId, true);
+			return this.refreshInternal("", sGroupId, true, true);
 		}
 		// return undefined;
 	};
@@ -1296,7 +1328,6 @@ sap.ui.define([
 		"adjustPredicate",
 		"destroy",
 		"doDeregisterChangeListener",
-		"fetchCache",
 		"hasPendingChangesForPath"
 	].forEach(function (sMethod) { // method not final, allow for "super" calls
 		asODataBinding.prototype[sMethod] = ODataBinding.prototype[sMethod];

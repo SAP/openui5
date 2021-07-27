@@ -2337,14 +2337,19 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[function (_oModelMock, _oBinding, _oBindingMock, _fnErrorCallback, _fnPatchSent, oError) {
+[function (_assert, _oModelMock, _oBinding, _oBindingMock, _fnErrorCallback, _fnPatchSent,
+		_fnIsKeepAlive, oError) {
 	return Promise.reject(oError); // #update fails
-}, function (_oModelMock, oBinding, oBindingMock, _fnErrorCallback, fnPatchSent, oError) {
+}, function (assert, _oModelMock, oBinding, oBindingMock, _fnErrorCallback, fnPatchSent,
+		fnIsKeepAlive, oError) {
 	// simulate a failed PATCH via Context#setProperty
 	oBindingMock.expects("firePatchSent").on(oBinding).withExactArgs();
 
 	// code under test: fnPatchSent
 	fnPatchSent();
+
+	// code under test
+	assert.strictEqual(fnIsKeepAlive(), "~bKeepAlive~");
 
 	oBindingMock.expects("firePatchCompleted").on(oBinding).withExactArgs(false);
 
@@ -2352,7 +2357,7 @@ sap.ui.define([
 }, function () {
 	// simulate a PATCH for a newly created entity (PATCH is merged into POST -> no events)
 	return Promise.resolve("n/a"); // #update succeeds
-}, function (oModelMock, oBinding, oBindingMock, fnErrorCallback, fnPatchSent) {
+}, function (_assert, oModelMock, oBinding, oBindingMock, fnErrorCallback, fnPatchSent) {
 	// simulate repeating a patch if first request failed
 	var oError = new Error("500 Internal Server Error");
 
@@ -2410,6 +2415,8 @@ sap.ui.define([
 			vWithCacheResult = {},
 			that = this;
 
+		this.mock(oContext).expects("isKeepAlive").withExactArgs().on(oContext)
+			.exactly(i === 1 ? 1 : 0).returns("~bKeepAlive~");
 		this.mock(oContext).expects("withCache").withExactArgs(sinon.match.func,
 			"some/relative/path",  /*bSync*/false, /*bWithOrWithoutCache*/true)
 			.callsFake(function (fnProcessor) {
@@ -2448,12 +2455,13 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oGroupLock), "property/path", "new value",
 						/*fnErrorCallback*/bSkipRetry ? undefined : sinon.match.func, "/edit/url",
 						"helper/path", "unit/or/currency/path",
-						sinon.match.same(bPatchWithoutSideEffects), /*fnPatchSent*/sinon.match.func)
+						sinon.match.same(bPatchWithoutSideEffects), /*fnPatchSent*/sinon.match.func,
+						/*fnIsKeepAlive*/sinon.match.func)
 					.callsFake(function () {
 						return SyncPromise.resolve(
-							fnScenario(that.mock(oModel), oBinding, oBindingMock,
+							fnScenario(assert, that.mock(oModel), oBinding, oBindingMock,
 								/*fnErrorCallback*/arguments[3], /*fnPatchSent*/arguments[8],
-								oError));
+								/*fnIsKeepAlive*/arguments[9], oError));
 					});
 
 				// code under test
@@ -2558,7 +2566,7 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oGroupLock), "property/path", "new value",
 						/*fnErrorCallback*/sinon.match.func, "/edit/url", "helper/path",
 						"unit/or/currency/path", sinon.match.same(bPatchWithoutSideEffects),
-						/*fnPatchSent*/sinon.match.func)
+						/*fnPatchSent*/sinon.match.func, /*fnIsKeepAlive*/sinon.match.func)
 					.resolves();
 
 				return fnProcessor(oCache, "some/relative/path", oBinding);
@@ -2640,7 +2648,7 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oGroupLock), "property/path", "new value",
 						/*fnErrorCallback*/sinon.match.func, "/edit/url", "helper/path",
 						"unit/or/currency/path", sinon.match.same(bPatchWithoutSideEffects),
-						/*fnPatchSent*/sinon.match.func)
+						/*fnPatchSent*/sinon.match.func, /*fnIsKeepAlive*/sinon.match.func)
 					.resolves();
 
 				return fnProcessor(oCache, "/reduced/path", oBinding);
@@ -2779,7 +2787,7 @@ sap.ui.define([
 							/*fnErrorCallback*/bSkipRetry ? undefined : sinon.match.func,
 							"/edit/url", "helper/path", "unit/or/currency/path",
 							sinon.match.same(bPatchWithoutSideEffects),
-							/*fnPatchSent*/sinon.match.func)
+							/*fnPatchSent*/sinon.match.func, /*fnIsKeepAlive*/sinon.match.func)
 						.resolves();
 				}
 

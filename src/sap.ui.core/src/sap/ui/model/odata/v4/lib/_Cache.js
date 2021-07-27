@@ -987,14 +987,23 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   The relative path of a binding; must not end with '/'
+	 * @param {boolean} [bIgnoreKeptAlive]
+	 *   Whether to ignore changes which will not be lost by APIs like sort or filter because they
+	 *   relate to a context which is kept alive.
 	 * @returns {boolean}
 	 *   <code>true</code> if there are pending changes
 	 *
 	 * @public
 	 */
-	_Cache.prototype.hasPendingChangesForPath = function (sPath) {
+	_Cache.prototype.hasPendingChangesForPath = function (sPath, bIgnoreKeptAlive) {
+		var that = this;
+
 		return Object.keys(this.mPatchRequests).some(function (sRequestPath) {
-			return isSubPath(sRequestPath, sPath);
+			return isSubPath(sRequestPath, sPath)
+				&& !(bIgnoreKeptAlive
+					&& that.mPatchRequests[sRequestPath].every(function (oPatchPromise) {
+						return oPatchPromise.$isKeepAlive();
+					}));
 		}) || Object.keys(this.mPostRequests).some(function (sRequestPath) {
 			return isSubPath(sRequestPath, sPath);
 		});
@@ -1618,6 +1627,8 @@ sap.ui.define([
 	 * @param {function} fnPatchSent
 	 *   The function is called just before a back-end request is sent for the first time.
 	 *   If no back-end request is needed, the function is not called.
+	 * @param {function} fnIsKeepAlive
+	 *   A function to tell whether the entity is kept-alive
 	 * @returns {Promise}
 	 *   A promise for the PATCH request (resolves with <code>undefined</code>); rejected in case of
 	 *   cancellation or if no <code>fnErrorCallback</code> is given
@@ -1626,7 +1637,8 @@ sap.ui.define([
 	 * @public
 	 */
 	_Cache.prototype.update = function (oGroupLock, sPropertyPath, vValue, fnErrorCallback,
-			sEditUrl, sEntityPath, sUnitOrCurrencyPath, bPatchWithoutSideEffects, fnPatchSent) {
+			sEditUrl, sEntityPath, sUnitOrCurrencyPath, bPatchWithoutSideEffects, fnPatchSent,
+			fnIsKeepAlive) {
 		var oPromise,
 			aPropertyPath = sPropertyPath.split("/"),
 			aUnitOrCurrencyPath,
@@ -1689,6 +1701,7 @@ sap.ui.define([
 					mHeaders, oUpdateData, onSubmit, onCancel, /*sMetaPath*/undefined,
 					_Helper.buildPath(that.getOriginalResourcePath(oEntity), sEntityPath),
 					bAtFront);
+				oPatchPromise.$isKeepAlive = fnIsKeepAlive;
 				_Helper.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				return SyncPromise.all([
 					oPatchPromise,
@@ -2455,7 +2468,9 @@ sap.ui.define([
 			var aKeyFilters,
 				mQueryOptions = _Helper.merge({}, that.mQueryOptions);
 
-			_Helper.aggregateExpandSelect(mQueryOptions, that.mLateQueryOptions);
+			if (that.mLateQueryOptions) {
+				_Helper.aggregateExpandSelect(mQueryOptions, that.mLateQueryOptions);
+			}
 			delete mQueryOptions.$count;
 			delete mQueryOptions.$orderby;
 			delete mQueryOptions.$search;
@@ -2688,6 +2703,38 @@ sap.ui.define([
 						preventKeyPredicateChange);
 				}
 			});
+	};
+
+	/**
+	 * Resets this cache to its initial state, but keeps certain elements and their change listeners
+	 * alive.
+	 *
+	 * @param {string[]} aKeptElementPredicates
+	 *   The key predicates for all kept-alive elements
+	 *
+	 * @public
+	 */
+	_CollectionCache.prototype.reset = function (aKeptElementPredicates) {
+		var mChangeListeners = this.mChangeListeners,
+			mByPredicate = this.aElements.$byPredicate,
+			that = this;
+
+		this.mChangeListeners = {};
+		this.sContext = undefined;
+		this.aElements = [];
+		this.aElements.$byPredicate = {};
+		this.aElements.$count = undefined; // needed for setCount()
+		this.aElements.$created = 0;
+		this.iLimit = Infinity;
+
+		Object.keys(mChangeListeners).forEach(function (sPath) {
+			if (aKeptElementPredicates.includes(sPath.split("/")[0])) {
+				that.mChangeListeners[sPath] = mChangeListeners[sPath];
+			}
+		});
+		aKeptElementPredicates.forEach(function (sPredicate) {
+			that.aElements.$byPredicate[sPredicate] = mByPredicate[sPredicate];
+		});
 	};
 
 	//*********************************************************************************************

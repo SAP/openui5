@@ -103,8 +103,8 @@
 					<Input id="SalesOrder::note" value="{Note}"/>
 					<Label labelFor="SalesOrder::grossAmount" text="Gross Amount"/>
 					<Input editable="false" id="SalesOrder::grossAmount" value="{GrossAmount}"/>
-					<Label text="Currency"/>
-					<Input value="{CurrencyCode}"/>
+					<Label labelFor="SalesOrder::currency" text="Currency"/>
+					<Input id="SalesOrder::currency" value="{CurrencyCode}"/>
 				</form:SimpleForm>
 				<Table growing="true" growingThreshold="5" id="SO_2_SOITEM"
 					items="{

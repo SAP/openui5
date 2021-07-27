@@ -2098,9 +2098,8 @@ sap.ui.define([
 				that.mListChanges = {};
 				assert.strictEqual(that.aExpectedEvents.length, 0, "no missing events");
 				that.checkMessages(assert);
-				if (sTitle) {
-					assert.ok(true, "waitForChanges: Done with " + sTitle + " *".repeat(25));
-				}
+				assert.ok(true, "waitForChanges: Done" + (sTitle ? " with " + sTitle : "")
+					+ " *".repeat(25));
 			});
 
 			return oPromise;
@@ -4070,6 +4069,7 @@ sap.ui.define([
 	// * Sort by any other column (e.g. "Employee Name" or "Age") and check that the "City" is taken
 	//   as a secondary sort criterion
 	// In this test dynamic filters are used instead of dynamic sorters
+	//
 	// Additionally ODLB#getDownloadUrl is tested
 	// JIRA: CPOUI5ODATAV4-12
 	QUnit.test("Relative ODLB inherits parent ODCB's query options on filter", function (assert) {
@@ -6084,6 +6084,7 @@ sap.ui.define([
 	// BCP: 2080123400
 	QUnit.test("BCP: 2080123400", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oTable,
 			sView = '\
 <Table id="list" items="{/SalesOrderList}">\
 	<Text id="id" text="{SalesOrderID}"/>\
@@ -6104,6 +6105,8 @@ sap.ui.define([
 			.expectChange("note", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("detail");
+
 			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
 					+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=20", {
 					value : [
@@ -6112,9 +6115,7 @@ sap.ui.define([
 				})
 				.expectChange("note", ["Note 1"]);
 
-			that.oView.byId("detail").setBindingContext(
-				that.oView.byId("list").getItems()[0].getBindingContext()
-			);
+			oTable.setBindingContext(that.oView.byId("list").getItems()[0].getBindingContext());
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -6149,7 +6150,7 @@ sap.ui.define([
 					resolveLater(fnResolve); // must not respond before requestSideEffects
 					return oRowContext.requestSideEffects(["SO_2_SOITEM"]);
 				}, 0),
-				that.oView.byId("detail").setBindingContext(oRowContext),
+				oTable.setBindingContext(oRowContext),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -25717,6 +25718,9 @@ sap.ui.define([
 	// Scenario: Check that the failure to refresh a complete table using requestSideEffects leads
 	// to a rejected promise, but no changes in data.
 	// JIRA: CPOUI5UISERVICESV3-1828
+	//
+	// Check that a kept-alive context does not interfere with this.
+	// JIRA: CPOUI5ODATAV4-1104
 	QUnit.test("ODLB: refresh within requestSideEffects fails", function (assert) {
 		var oModel = createSalesOrdersModel({
 				autoExpandSelect : true,
@@ -25737,9 +25741,11 @@ sap.ui.define([
 			.expectChange("note", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.oLogMock.expects("error"); // don't care about console here
-			that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100",
+			that.oLogMock.expects("error").twice(); // don't care about console here
+			that.expectRequest("SalesOrderList?$select=SalesOrderID&$filter=SalesOrderID eq '42'",
 					createErrorInsideBatch())
+				// no response required
+				.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100")
 				.expectMessages([{
 					code : "CODE",
 					message : "Request intentionally failed",
@@ -25750,6 +25756,9 @@ sap.ui.define([
 
 			oTable = that.oView.byId("list");
 			oTableBinding = oTable.getBinding("items");
+
+			// code under test (JIRA: CPOUI5ODATAV4-1104)
+			oTableBinding.getCurrentContexts()[0].setKeepAlive(true);
 
 			return Promise.all([
 				oTableBinding.getHeaderContext().requestSideEffects([""])
@@ -32891,15 +32900,15 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario:
-	// 1. Create a view with an object page showing a sales order. Use an update group. Ensure that
-	//    the order shares the list's cache, but needs late properties.
+	// 1. List report and object page showing a sales order. Use an update group. Ensure that
+	//    the object page shares the list report's cache, but needs late properties.
 	// 2. Select a sales order and see that late properties are requested. Keep its context alive.
 	// 3. Filter the list, so that the context drops out of it. Check that the context is still
 	//    alive and has its data.
 	//    BCP: 2170211215 Check that #setAggregation is throwing an error (mPreviousContextsByPath)
 	// 4. Modify a property. See that the list has pending changes.
-	// 5. Reset the list's pending changes.
-	// 6. Delete the filter. Expect no request for the late properties.
+	// 5. Delete the filter. Expect no request for the late properties.
+	// 6. Submit the list's pending changes. (JIRA: CPOUI5ODATAV4-1104)
 	// 7. Filter the list, so that the context remains. Give the sales order a new ETag. See that
 	//    the late properties are requested again.
 	// 8. BCP: 2170211215 Check that #setAggregation is throwing an error (aContexts)
@@ -32960,23 +32969,10 @@ sap.ui.define([
 
 			that.oView.byId("buyerId").getBinding("value").setValue("42a");
 
-			assert.ok(oTableBinding.hasPendingChanges());
-
 			return that.waitForChanges(assert, "(4)");
 		}).then(function () {
-			that.expectCanceledError("Failed to update path /SalesOrderList('1')/BuyerID",
-					"Request canceled: PATCH SalesOrderList('1'); group: update")
-				.expectChange("buyerId", "42");
+			assert.ok(oTableBinding.hasPendingChanges());
 
-			oTableBinding.resetChanges();
-
-			assert.notOk(oTableBinding.hasPendingChanges());
-
-			return Promise.all([
-				oModel.submitBatch("update"),
-				that.waitForChanges(assert, "(5)")
-			]);
-		}).then(function () {
 			that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
 					value : [{"@odata.etag" : "etag1", SalesOrderID : "1"}]
 				})
@@ -32985,16 +32981,36 @@ sap.ui.define([
 
 			oTableBinding.filter();
 
-			return that.waitForChanges(assert, "(6)");
+			return that.waitForChanges(assert, "(5)");
 		}).then(function () {
+			assert.ok(oTableBinding.hasPendingChanges());
+			assert.notOk(oTableBinding.hasPendingChanges(/*bIgnoreKeptAlive*/true));
+
+			that.expectChange("buyerId", "42b")
+				.expectRequest({
+					headers : {"If-Match" : "etag1"},
+					method : "PATCH",
+					url : "SalesOrderList('1')",
+					payload : {BuyerID : "42b"}
+				}, {"@odata.etag" : "etag2", BuyerID : "42c", SalesOrderID : "1"})
+				.expectChange("buyerId", "42c");
+
+			return Promise.all([
+				oKeptContext.setProperty("BuyerID", "42b"),
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert, "(6)")
+			]);
+		}).then(function () {
+			assert.strictEqual(oKeptContext.getProperty("BuyerID"), "42c");
+			assert.notOk(oTableBinding.hasPendingChanges());
 			assert.strictEqual(oKeptContext.getIndex(), 0);
 
 			that.expectRequest("SalesOrderList?$select=SalesOrderID&$filter=SalesOrderID eq '1'"
 					+ "&$skip=0&$top=100", {
-					value : [{"@odata.etag" : "etag2", SalesOrderID : "1"}]
+					value : [{"@odata.etag" : "etag3", SalesOrderID : "1"}]
 				})
 				.expectRequest("SalesOrderList('1')?$select=BuyerID",
-					{"@odata.etag" : "etag2", BuyerID : "42*"})
+					{"@odata.etag" : "etag3", BuyerID : "42*"})
 				.expectChange("buyerId", "42*");
 
 			oTableBinding.filter(new Filter("SalesOrderID", FilterOperator.EQ, "1"));
@@ -35067,10 +35083,24 @@ sap.ui.define([
 	// (3) changeParameters
 	// (4) suspend/resume
 	// JIRA: CPOUI5ODATAV4-874
-	QUnit.test("Absolute ODLB: sort/filter/changeParameters/resume & late properties",
-			function (assert) {
-		var oListBinding,
+	//
+	// Do likewise with a kept-alive context
+	// JIRA: CPOUI5ODATAV4-926
+	//
+	// Same while there are pending changes for the kept-alive context which must not block those
+	// APIs, but survive and can be submitted later on. This includes a creation row which needs to
+	// remain functional without blocking those APIs.
+	// JIRA: CPOUI5ODATAV4-1104
+[false, true].forEach(function (bWithPendingChanges) {
+	var sTitle = "Absolute ODLB: sort/filter/changeParameters/resume & late properties"
+			+ ", with pending changes: " + bWithPendingChanges;
+
+	QUnit.test(sTitle, function (assert) {
+		var aContexts,
+			oCreationRowContext,
+			oListBinding,
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oSetPropertyPromise,
 			sView = '\
 <Table id="list" items="{/SalesOrderList}">\
 	<Text id="listNote" text="{Note}"/>\
@@ -35086,11 +35116,11 @@ sap.ui.define([
 
 		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
 				value : [{
-					SalesOrderID : "1",
-					Note : "Note 1"
+					Note : "Note 1",
+					SalesOrderID : "1"
 				}, {
-					SalesOrderID : "2",
-					Note : "Note 2"
+					Note : "Note 2",
+					SalesOrderID : "2"
 				}]
 			})
 			.expectChange("listNote", ["Note 1", "Note 2"])
@@ -35099,22 +35129,51 @@ sap.ui.define([
 			.expectChange("grossAmount");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var aContexts;
-
-			that.expectRequest("SalesOrderList('1')?$select=NoteLanguage", {NoteLanguage : "EN"})
-				.expectChange("note", "Note 1")
-				.expectChange("noteLanguage", "EN")
-				.expectRequest("SalesOrderList('2')?$select=GrossAmount", {GrossAmount : "2.00"})
-				.expectChange("grossAmount", "2.00");
-
 			oListBinding = that.oView.byId("list").getBinding("items");
 			aContexts = oListBinding.getCurrentContexts();
+
+			that.expectChange("note", "Note 1")
+				.expectRequest("SalesOrderList('1')?$select=NoteLanguage", {NoteLanguage : "EN"})
+				.expectChange("noteLanguage", "EN");
+
 			that.oView.byId("objectPage").setBindingContext(aContexts[0]);
-			aContexts[1].setKeepAlive(true);
+
+			that.expectRequest("SalesOrderList('2')?$select=GrossAmount", {GrossAmount : "2.00"})
+				.expectChange("grossAmount", "2.00");
 			that.oView.byId("keptAlivePage").setBindingContext(aContexts[1]);
 
 			return that.waitForChanges(assert, "object page with late property");
 		}).then(function () {
+			var oNoPatchPromise;
+
+			assert.notOk(oModel.hasPendingChanges());
+			assert.notOk(oListBinding.hasPendingChanges());
+			assert.notOk(aContexts[1].hasPendingChanges());
+
+			if (bWithPendingChanges) {
+				that.expectChange("listNote", [, "pending"]);
+				oSetPropertyPromise = aContexts[1].setProperty("Note", "pending", "update");
+
+				// "creation row"
+				oCreationRowContext
+					= oModel.bindList("SO_2_SOITEM", aContexts[1], [], [],
+						{$$updateGroupId : "never"})
+					.create();
+			} else { // Note: this does not count as a pending change!
+				// just try it to make sure nothing breaks
+				that.expectChange("listNote", [, "no patch"]);
+				oNoPatchPromise = aContexts[1].setProperty("Note", "no patch", null);
+			}
+			aContexts[1].setKeepAlive(true); // change "keep alive" flag *after* PATCH exists
+
+			return Promise.all([
+				oNoPatchPromise,
+				that.waitForChanges(assert, "(no) pending changes")
+			]);
+		}).then(function () {
+			assert.strictEqual(oListBinding.hasPendingChanges(), bWithPendingChanges);
+			assert.notOk(oListBinding.hasPendingChanges(/*bIgnoreKeptAlive*/true));
+
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
 					+ "&$orderby=SalesOrderID desc&$skip=0&$top=100", {
 					value : [{
@@ -35125,7 +35184,10 @@ sap.ui.define([
 						Note : "Note 1.1"
 					}]
 				})
-				.expectChange("listNote", [/* no ETag -> cache wins */ "Note 2", "Note 1.1"])
+				.expectChange("listNote", [
+					bWithPendingChanges ? "pending" : "no patch", // no ETag -> kept-alive wins
+					"Note 1.1"
+				])
 				.expectChange("note", "Note 1.1")
 				.expectRequest("SalesOrderList('1')?$select=NoteLanguage", {NoteLanguage : "FR"})
 				.expectChange("noteLanguage", "FR");
@@ -35135,11 +35197,14 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "(1) sort");
 		}).then(function () {
+			assert.strictEqual(oListBinding.hasPendingChanges(), bWithPendingChanges);
+			assert.notOk(oListBinding.hasPendingChanges(/*bIgnoreKeptAlive*/true));
+
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
 					+ "&$orderby=SalesOrderID desc&$filter=SalesOrderID eq '1'&$skip=0&$top=100", {
 					value : [{
-						SalesOrderID : "1",
-						Note : "Note 1.2"
+						Note : "Note 1.2",
+						SalesOrderID : "1"
 					}]
 				})
 				.expectChange("listNote", ["Note 1.2"])
@@ -35152,12 +35217,15 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "(2) filter");
 		}).then(function () {
+			assert.strictEqual(oListBinding.hasPendingChanges(), bWithPendingChanges);
+			assert.notOk(oListBinding.hasPendingChanges(/*bIgnoreKeptAlive*/true));
+
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
 					+ "&$orderby=SalesOrderID desc&$filter=SalesOrderID eq '1'&foo=bar"
 					+ "&$skip=0&$top=100", {
 					value : [{
-						SalesOrderID : "1",
-						Note : "Note 1.3"
+						Note : "Note 1.3",
+						SalesOrderID : "1"
 					}]
 				})
 				.expectChange("listNote", ["Note 1.3"])
@@ -35171,16 +35239,22 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "(3) changeParameters");
 		}).then(function () {
+			assert.strictEqual(oListBinding.hasPendingChanges(), bWithPendingChanges);
+			assert.notOk(oListBinding.hasPendingChanges(/*bIgnoreKeptAlive*/true));
+
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
 					value : [{
-						SalesOrderID : "1",
-						Note : "Note 1.4"
+						Note : "Note 1.4",
+						SalesOrderID : "1"
 					}, {
-						SalesOrderID : "2",
-						Note : "Note 2.4"
+						Note : "Note 2.4",
+						SalesOrderID : "2"
 					}]
 				})
-				.expectChange("listNote", ["Note 1.4", /* no ETag -> cache wins */ "Note 2"])
+				.expectChange("listNote", [
+					"Note 1.4",
+					bWithPendingChanges ? "pending" : "no patch" // no ETag -> kept-alive wins
+				])
 				.expectChange("note", "Note 1.4")
 				.expectRequest("SalesOrderList('1')?$select=NoteLanguage", {NoteLanguage : "ES"})
 				.expectChange("noteLanguage", "ES");
@@ -35193,6 +35267,220 @@ sap.ui.define([
 			oListBinding.resume();
 
 			return that.waitForChanges(assert, "(4) suspend/resume");
+		}).then(function () {
+			var oSetPropertyPromise2;
+
+			assert.strictEqual(oListBinding.hasPendingChanges(), bWithPendingChanges);
+			assert.notOk(oListBinding.hasPendingChanges(/*bIgnoreKeptAlive*/true));
+			assert.strictEqual(aContexts[1].getProperty("Note"),
+				bWithPendingChanges ? "pending" : "no patch");
+
+			if (bWithPendingChanges) {
+				that.expectChange("listNote", [, "updated"]);
+
+				// code under test
+				oSetPropertyPromise2 = aContexts[1].setProperty("Note", "updated", "update");
+
+				that.expectRequest({
+						method : "PATCH",
+						url : "SalesOrderList('2')",
+						payload : {Note : "updated"}
+					}, {ID : "2", Note : "from server"})
+					.expectChange("listNote", [, "from server"]);
+			}
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				oSetPropertyPromise,
+				oSetPropertyPromise2,
+				that.waitForChanges(assert, "submit (no) pending changes")
+			]);
+		}).then(function () {
+			assert.strictEqual(aContexts[1].getProperty("Note"),
+				bWithPendingChanges ? "from server" : "no patch");
+			assert.strictEqual(oModel.hasPendingChanges("never"), bWithPendingChanges);
+			assert.notOk(oModel.hasPendingChanges("update"));
+			assert.strictEqual(oListBinding.hasPendingChanges(), bWithPendingChanges,
+				"creation row");
+			assert.strictEqual(aContexts[0].hasPendingChanges(), false);
+			assert.strictEqual(aContexts[1].hasPendingChanges(), bWithPendingChanges,
+				"creation row");
+
+			if (oCreationRowContext) {
+				// code under test
+				oCreationRowContext.setProperty("Note", "alive & kicking");
+				assert.strictEqual(oCreationRowContext.getProperty("Note"), "alive & kicking");
+
+				oCreationRowContext.delete(); // clean up
+
+				return checkCanceled(assert, oCreationRowContext.created());
+			}
+		}).then(function () {
+			assert.notOk(oModel.hasPendingChanges("never"));
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: List report with absolute binding, object page with items table. Parent context of
+	// items table is not kept-alive, but one of the items contexts is. Pending change in there must
+	// not be ignored when filtering etc. in list report.
+	// JIRA: CPOUI5ODATAV4-1104
+	QUnit.test("JIRA: CPOUI5ODATAV4-1104 - do not ignore indirect kept-alive", function (assert) {
+		var oItemsTableBinding,
+			oKeptAliveItem,
+			oListReportBinding,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oSetPropertyPromise,
+			sView = '\
+<Table id="listReport" items="{/SalesOrderList}">\
+	<Text id="note" text="{Note}"/>\
+</Table>\
+<FlexBox id="objectPage">\
+	<Table id="itemsTable" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
+		<Text id="itemPosition" text="{ItemPosition}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+				value : [{
+					Note : "First SalesOrder",
+					SalesOrderID : "42"
+				}]
+			})
+			.expectChange("note", ["First SalesOrder"])
+			.expectChange("itemPosition", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=ItemPosition,SalesOrderID"
+					+ "&$skip=0&$top=100", {
+					value : [{
+						ItemPosition : "0010",
+						SalesOrderID : "42"
+					}]
+				})
+				.expectChange("itemPosition", ["0010"]);
+
+			oListReportBinding = that.oView.byId("listReport").getBinding("items");
+			oItemsTableBinding = that.oView.byId("itemsTable").getBinding("items");
+			oItemsTableBinding.setContext(oListReportBinding.getCurrentContexts()[0]);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oKeptAliveItem = oItemsTableBinding.getCurrentContexts()[0];
+			oKeptAliveItem.setKeepAlive(true);
+
+			that.expectChange("itemPosition", ["0001"]);
+
+			oSetPropertyPromise = oKeptAliveItem.setProperty("ItemPosition", "0001", "noSubmit");
+
+			assert.strictEqual(oKeptAliveItem.hasPendingChanges(), true);
+			assert.strictEqual(oItemsTableBinding.hasPendingChanges(), true);
+			assert.strictEqual(oItemsTableBinding.hasPendingChanges(true), false);
+			assert.strictEqual(oListReportBinding.hasPendingChanges(), true);
+			assert.strictEqual(oListReportBinding.hasPendingChanges(true), true, "do not ignore!");
+
+			assert.throws(function () {
+				// code under test
+				oListReportBinding.filter(new Filter("SalesOrderID", FilterOperator.NE, "42"));
+			}, new Error("Cannot filter due to pending changes"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("itemPosition", ["0010"])
+				.expectCanceledError("Failed to update path /SalesOrderList('42')"
+					+ "/SO_2_SOITEM(SalesOrderID='42',ItemPosition='0010')/ItemPosition",
+					"Request canceled: PATCH SalesOrderList('42')"
+					+ "/SO_2_SOITEM(SalesOrderID='42',ItemPosition='0010'); group: noSubmit");
+
+			// cleanup
+			oModel.resetChanges("noSubmit");
+
+			return Promise.all([
+				checkCanceled(assert, oSetPropertyPromise),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: List report with absolute binding, some kept-alive element outside of collection.
+	// Side effect causes a refresh which succeeds. Check that kept-alive element is still working.
+	// JIRA: CPOUI5ODATAV4-1104
+	QUnit.test("JIRA: CPOUI5ODATAV4-1104 - kept-alive and bKeepCacheOnError", function (assert) {
+		var oBinding,
+			oKeptAliveItem,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="listReport" items="{/SalesOrderList}">\
+	<Text id="note" text="{Note}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+				value : [{
+					Note : "First SalesOrder",
+					SalesOrderID : "42"
+				}]
+			})
+			.expectChange("note", ["First SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("listReport").getBinding("items");
+			oKeptAliveItem = oBinding.getCurrentContexts()[0];
+			oKeptAliveItem.setKeepAlive(true);
+
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+					+ "&$filter=SalesOrderID ne '42'&$skip=0&$top=100", {
+					value : [{
+						Note : "Yet Another SalesOrder",
+						SalesOrderID : "0"
+					}]
+				})
+				.expectChange("note", ["Yet Another SalesOrder"]);
+
+			oBinding.filter(new Filter("SalesOrderID", FilterOperator.NE, "42"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+					+ "&$filter=SalesOrderID eq '42'", {
+					value : [{
+						Note : "First SalesOrder###",
+						SalesOrderID : "42"
+					}]
+				})
+				.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+					+ "&$filter=SalesOrderID ne '42'&$skip=0&$top=100", {
+					value : [{
+						Note : "Yet Another SalesOrder***",
+						SalesOrderID : "0"
+					}]
+				})
+				.expectChange("note", ["Yet Another SalesOrder***"]);
+
+			return Promise.all([
+				// code under test
+				oBinding.getHeaderContext().requestSideEffects([""]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(oKeptAliveItem.getProperty("Note"), "First SalesOrder###");
+
+			that.expectRequest({
+					method : "PATCH",
+					payload : {
+						"Note" : "update"
+					},
+					url : "SalesOrderList('42')"
+				}); // no response required
+
+			return Promise.all([
+				// code under test
+				oKeptAliveItem.setProperty("Note", "update"),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 

@@ -739,6 +739,36 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_Cache#hasPendingChangesForPath: bIgnoreKeptAlive", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS"),
+			oPatchPromise1 = {
+				$isKeepAlive : function () {
+					throw "I should be mocked before being called!";
+				}
+			},
+			oPatchPromise2 = {
+				$isKeepAlive : function () {
+					throw "I should be mocked before being called!";
+				}
+			};
+
+		oCache.mPatchRequests = {
+			"bar" : [oPatchPromise1],
+			"foo" : [oPatchPromise1, oPatchPromise2]
+		};
+		assert.strictEqual(oCache.hasPendingChangesForPath("bar", false), true);
+		this.mock(oPatchPromise1).expects("$isKeepAlive").withExactArgs().returns(true).twice();
+
+		// code under test
+		assert.strictEqual(oCache.hasPendingChangesForPath("bar", true), false);
+
+		this.mock(oPatchPromise2).expects("$isKeepAlive").withExactArgs().returns(false);
+
+		// code under test
+		assert.strictEqual(oCache.hasPendingChangesForPath("foo", true), true);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("_Cache#resetChangesForPath: PATCHes", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS"),
 			oCall1,
@@ -1990,6 +2020,7 @@ sap.ui.define([
 				}
 			},
 			fnError = this.spy(),
+			fnIsKeepAlive = "~fnIsKeepAlive~",
 			oError = new Error(),
 			oGroupLock = {getGroupId : function () {}},
 			oPatchPromise = Promise.reject(oError),
@@ -2015,7 +2046,10 @@ sap.ui.define([
 			.returns(oPatchPromise);
 		this.mock(_Helper).expects("addByPath")
 			.withExactArgs(sinon.match.same(oCache.mPatchRequests),
-				"('0')/path/to/entity/Address/City", sinon.match.same(oPatchPromise));
+				"('0')/path/to/entity/Address/City", sinon.match(function (oPromise) {
+					return oPromise === oPatchPromise
+						&& oPromise.$isKeepAlive === "~fnIsKeepAlive~";
+				}));
 		this.oRequestorMock.expects("getGroupSubmitMode")
 			.withExactArgs("group").returns("Direct");
 		this.mock(_Helper).expects("removeByPath")
@@ -2030,7 +2064,7 @@ sap.ui.define([
 		oCacheUpdatePromise = oCache.update(oGroupLock, "Address/City", "Walldorf", fnError,
 				"/~/BusinessPartnerList('0')", "('0')/path/to/entity",
 				/*sUnitOrCurrencyPath*/undefined, /*bPatchWithoutSideEffects*/undefined,
-				function fnPatchSent() {})
+				function fnPatchSent() {}, fnIsKeepAlive)
 			.then(function () {
 				assert.ok(false);
 			}, function (oResult) {
@@ -8299,6 +8333,53 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[[], ["('0')"]].forEach(function (aKeptElementPredicates, i) {
+	QUnit.test("CollectionCache#reset; #" + i, function (assert) {
+		var oCache = this.createCache("Employees"),
+			oElement = {};
+
+		oCache.mChangeListeners = {
+			"bar" : [],
+			"foo" : [],
+			"('0')/bar/baz" : "~listener[]~0~",
+			"('0')/foo" : "~listener[]~1~"
+		};
+		oCache.sContext = "foo";
+		oCache.aElements = [{}, oElement];
+		oCache.aElements.$byPredicate = {
+			"$uid=1-23" : oCache.aElements[0],
+			"('0')" : oElement
+		};
+		oCache.aElements.$count = 1;
+		oCache.aElements.$created = 1;
+		oCache.aElements.$tail = SyncPromise.resolve();
+		oCache.iLimit = 42;
+
+		// code under test
+		oCache.reset(aKeptElementPredicates);
+
+		assert.deepEqual(oCache.mChangeListeners, i
+			? {
+				"('0')/bar/baz" : "~listener[]~0~",
+				"('0')/foo" : "~listener[]~1~"
+			} : {});
+		assert.strictEqual(oCache.sContext, undefined);
+		assert.deepEqual(oCache.aElements, []);
+		assert.deepEqual(oCache.aElements.$byPredicate, i
+			? {"('0')" : oElement}
+			: {});
+		if (i) {
+			assert.strictEqual(oCache.aElements.$byPredicate["('0')"], oElement);
+		}
+		assert.strictEqual(oCache.aElements.$count, undefined);
+		assert.ok("$count" in oCache.aElements); // needed for setCount()
+		assert.strictEqual(oCache.aElements.$created, 0);
+		assert.strictEqual(oCache.aElements.$tail, undefined);
+		assert.strictEqual(oCache.iLimit, Infinity);
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("SingleCache", function (assert) {
 		var oCache,
 			fnGetOriginalResourcePath = {},
@@ -9946,6 +10027,7 @@ sap.ui.define([
 			oCache = _Cache.create(this.oRequestor, "Employees", {}),
 			oCacheMock = this.mock(oCache),
 			oGroupLock = {},
+			bHasLateQueryOptions = "iTop" in oFixture, // just to have some variance
 			oHelperMock = this.mock(_Helper),
 			mLateQueryOptions = {},
 			mQueryOptionsCopy = {
@@ -9959,7 +10041,7 @@ sap.ui.define([
 			},
 			mTypes = {};
 
-		oCache.mLateQueryOptions = mLateQueryOptions;
+		oCache.mLateQueryOptions = bHasLateQueryOptions ? mLateQueryOptions : undefined;
 		Object.keys(oFixture.mKeptAliveElementsByPredicate).forEach(function (sPredicate) {
 			var oElement = oFixture.mKeptAliveElementsByPredicate[sPredicate];
 
@@ -9984,7 +10066,7 @@ sap.ui.define([
 		// calculateKeptElementQuery
 		oHelperMock.expects("merge").withExactArgs({}, sinon.match.same(oCache.mQueryOptions))
 			.returns(mQueryOptionsCopy);
-		oHelperMock.expects("aggregateExpandSelect")
+		oHelperMock.expects("aggregateExpandSelect").exactly(bHasLateQueryOptions ? 1 : 0)
 			.withExactArgs(sinon.match.same(mQueryOptionsCopy),
 				sinon.match.same(oCache.mLateQueryOptions));
 		this.mock(oCache.oRequestor).expects("buildQueryString")

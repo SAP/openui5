@@ -297,8 +297,8 @@ sap.ui.define([
 	/**
 	 * Changes this binding's parameters and refreshes the binding.
 	 *
-	 * If there are pending changes an error is thrown. Use {@link #hasPendingChanges} to check if
-	 * there are pending changes. If there are changes, call
+	 * If there are pending changes that cannot be ignored, an error is thrown. Use
+	 * {@link #hasPendingChanges} to check if there are such pending changes. If there are, call
 	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch} to submit the changes or
 	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} to reset the changes before calling
 	 * {@link #changeParameters}.
@@ -311,12 +311,14 @@ sap.ui.define([
 	 *   Map of binding parameters, see {@link sap.ui.model.odata.v4.ODataModel#bindList} and
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext}
 	 * @throws {Error}
-	 *   If there are pending changes or if <code>mParameters</code> is missing, contains
-	 *   binding-specific or unsupported parameters, contains unsupported values, or contains the
-	 *   property "$expand" or "$select" when the model is in auto-$expand/$select mode.
-	 *   Since 1.90.0, binding-specific parameters are ignored if they are unchanged. Since 1.93.0,
-	 *   string values for "$expand" and "$select" are ignored if they are unchanged; pending
-	 *   changes are ignored if all parameters are unchanged.
+	 *   If there are pending changes that cannot be ignored or if <code>mParameters</code> is
+	 *   missing, contains binding-specific or unsupported parameters, contains unsupported values,
+	 *   or contains the property "$expand" or "$select" when the model is in auto-$expand/$select
+	 *   mode. Since 1.90.0, binding-specific parameters are ignored if they are unchanged. Since
+	 *   1.93.0, string values for "$expand" and "$select" are ignored if they are unchanged;
+	 *   pending changes are ignored if all parameters are unchanged. Since 1.97.0, pending changes
+	 *   are ignored if they relate to a
+	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding.
 	 *
 	 * @public
 	 * @since 1.45.0
@@ -382,7 +384,7 @@ sap.ui.define([
 		}
 
 		if (sChangeReason) {
-			if (this.hasPendingChanges()) {
+			if (this.hasPendingChanges(true)) {
 				throw new Error("Cannot change parameters due to pending changes");
 			}
 			this.applyParameters(mBindingParameters, sChangeReason);
@@ -454,7 +456,7 @@ sap.ui.define([
 	 *   The absolute path to the collection in the cache where to create the entity
 	 * @param {string} sTransientPredicate
 	 *   A (temporary) key predicate for the transient entity: "($uid=...)"
-	 * @param {object} oInitialData
+	 * @param {object} [oInitialData={}]
 	 *   The initial data for the created entity
 	 * @param {function} fnErrorCallback
 	 *   A function which is called with an error object each time a POST request for the create
@@ -990,13 +992,14 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#hasPendingChangesInDependents
 	 */
-	ODataParentBinding.prototype.hasPendingChangesInDependents = function () {
-		var aDependents = this.getDependentBindings();
-
-		return aDependents.some(function (oDependent) {
+	ODataParentBinding.prototype.hasPendingChangesInDependents = function (bIgnoreKeptAlive) {
+		return this.getDependentBindings().some(function (oDependent) {
 			var oCache = oDependent.oCache,
 				bHasPendingChanges;
 
+			if (bIgnoreKeptAlive && oDependent.oContext.isKeepAlive()) {
+				return false;
+			}
 			if (oCache !== undefined) {
 				// Pending changes for this cache are only possible when there is a cache already
 				if (oCache && oCache.hasPendingChangesForPath("")) {
@@ -1008,7 +1011,10 @@ sap.ui.define([
 			if (oDependent.mCacheByResourcePath) {
 				bHasPendingChanges = Object.keys(oDependent.mCacheByResourcePath)
 					.some(function (sPath) {
-						return oDependent.mCacheByResourcePath[sPath].hasPendingChangesForPath("");
+						var oCacheForPath = oDependent.mCacheByResourcePath[sPath];
+
+						return oCacheForPath !== oCache // don't ask again
+							&& oCacheForPath.hasPendingChangesForPath("");
 					});
 				if (bHasPendingChanges) {
 					return true;
@@ -1320,8 +1326,10 @@ sap.ui.define([
 
 	/**
 	 * Suspends this binding. A suspended binding does not fire change events nor does it trigger
-	 * data service requests. Call {@link #resume} to resume the binding.
-	 * Before 1.53.0, this method was not supported and threw an error.
+	 * data service requests. Call {@link #resume} to resume the binding. Before 1.53.0, this method
+	 * was not supported and threw an error. Since 1.97.0, pending changes are ignored if they
+	 * relate to a {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this
+	 * binding.
 	 *
 	 * @throws {Error}
 	 *   If this binding
@@ -1329,7 +1337,7 @@ sap.ui.define([
 	 *   <li>is relative to a {@link sap.ui.model.odata.v4.Context},</li>
 	 *   <li>is an operation binding,</li>
 	 *   <li>has {@link sap.ui.model.Binding#isSuspended} set to <code>true</code>,</li>
-	 *   <li>has pending changes,</li>
+	 *   <li>has pending changes that cannot be ignored,</li>
 	 *   <li>is not a root binding. Use {@link #getRootBinding} to determine the root binding.</li>
 	 *   </ul>
 	 *
@@ -1354,7 +1362,7 @@ sap.ui.define([
 		if (this.bSuspended) {
 			throw new Error("Cannot suspend a suspended binding: " + this);
 		}
-		if (this.hasPendingChanges()) {
+		if (this.hasPendingChanges(true)) {
 			throw new Error("Cannot suspend a binding with pending changes: " + this);
 		}
 
@@ -1443,7 +1451,6 @@ sap.ui.define([
 		"adjustPredicate",
 		"destroy",
 		"doDeregisterChangeListener",
-		"fetchCache",
 		"getGeneration",
 		"hasPendingChangesForPath"
 	].forEach(function (sMethod) { // method (still) not final, allow for "super" calls

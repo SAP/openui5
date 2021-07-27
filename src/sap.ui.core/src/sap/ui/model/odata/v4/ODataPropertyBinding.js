@@ -499,7 +499,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
 	ODataPropertyBinding.prototype.refreshInternal = function (_sResourcePathPrefix, sGroupId,
-			bCheckUpdate, _bKeepCacheOnError) {
+			bCheckUpdate, bKeepCacheOnError) {
 		var that = this;
 
 		if (this.isRootBindingSuspended()) {
@@ -507,7 +507,7 @@ sap.ui.define([
 			return SyncPromise.resolve();
 		}
 		return this.oCachePromise.then(function () {
-			that.fetchCache(that.oContext, false, /*bKeepQueryOptions*/true);
+			that.fetchCache(that.oContext, false, /*bKeepQueryOptions*/true, bKeepCacheOnError);
 
 			if (bCheckUpdate) {
 				return that.checkUpdateInternal(undefined, ChangeReason.Refresh, sGroupId);

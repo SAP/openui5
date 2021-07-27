@@ -37,9 +37,10 @@ sap.ui.define([
 			return {bDescending : bDescending, sNewIcon : sNewIcon};
 		},
 
-		hasPendingChanges : function (vBindingOrContext, sVerb) {
-			if (vBindingOrContext.hasPendingChanges()) {
-				MessageBox.error("There are unsaved changes; save or reset changes before "
+		hasPendingChanges : function (vBindingOrContext, sVerb, bIgnoreKeptAlive) {
+			if (vBindingOrContext.hasPendingChanges(bIgnoreKeptAlive)) {
+				MessageBox.error(
+					"There are unsaved changes which will be lost; save or reset changes before "
 					+ sVerb);
 
 				return true;
@@ -100,7 +101,7 @@ sap.ui.define([
 			var oBinding = this.byId("SalesOrderList").getBinding("items"),
 				sQuery = oEvent.getParameter("query");
 
-			if (this.hasPendingChanges(oBinding, "filtering")) {
+			if (this.hasPendingChanges(oBinding, "filtering", true)) {
 				return;
 			}
 
@@ -276,7 +277,7 @@ sap.ui.define([
 				bDescending = this.oUIModel.getProperty("/bSortGrossAmountDescending"),
 				oSortOrder;
 
-			if (this.hasPendingChanges(oBinding, "sorting")) {
+			if (this.hasPendingChanges(oBinding, "sorting", true)) {
 				return;
 			}
 
@@ -295,7 +296,7 @@ sap.ui.define([
 				bDescending = this.oUIModel.getProperty("/bSortSalesOrderIDDescending"),
 				oSortOrder;
 
-			if (this.hasPendingChanges(oBinding, "sorting")) {
+			if (this.hasPendingChanges(oBinding, "sorting", true)) {
 				return;
 			}
 

@@ -1243,7 +1243,7 @@ sap.ui.define([
 				bHasChangeListeners = oCache.hasChangeListeners();
 				// remove all cached Caches before fetching a new one
 				that.removeCachesAndMessages(sResourcePathPrefix);
-				that.fetchCache(that.oContext);
+				that.fetchCache(that.oContext, false, false, bKeepCacheOnError);
 				// Do not fire a change event, or else ManagedObject destroys and recreates the
 				// binding hierarchy causing a flood of events.
 				oPromise = bHasChangeListeners ? that.createRefreshPromise() : undefined;

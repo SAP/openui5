@@ -409,7 +409,7 @@ sap.ui.define([
 					return oCache.update(oGroupLock, oResult.propertyPath, vValue,
 						bSkipRetry ? undefined : errorCallback, oResult.editUrl, sEntityPath,
 						oMetaModel.getUnitOrCurrencyPath(that.oModel.resolve(sPath, that)),
-						oBinding.isPatchWithoutSideEffects(), patchSent
+						oBinding.isPatchWithoutSideEffects(), patchSent, that.isKeepAlive.bind(that)
 					).then(function () {
 						firePatchCompleted(true);
 					}, function (oError) {

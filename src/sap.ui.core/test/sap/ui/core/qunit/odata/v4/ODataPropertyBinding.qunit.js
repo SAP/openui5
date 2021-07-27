@@ -313,8 +313,7 @@ sap.ui.define([
 			var oBinding,
 				oModel = this.oModel,
 				oCache = {
-					oRequestor : oModel.oRequestor,
-					setActive : function () {}
+					oRequestor : oModel.oRequestor
 				},
 				oCacheMock = this.mock(_Cache),
 				oInitialContext = createContext(oFixture.sInit, "/EMPLOYEES(ID='1')"),
@@ -340,7 +339,6 @@ sap.ui.define([
 
 			if (oFixture.sInit === "base") {
 				assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
-				this.mock(oCache).expects("setActive").withExactArgs(false);
 			} else {
 				assert.strictEqual(oBinding.oCachePromise.getResult(), null);
 			}
@@ -1979,7 +1977,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
 		this.mock(oBinding.oCachePromise).expects("then").callsFake(function (fnThen) {
 			that.mock(oBinding).expects("fetchCache")
-				.withExactArgs(oContext, false, /*bKeepQueryOptions*/true);
+				.withExactArgs(oContext, false, /*bKeepQueryOptions*/true,
+					/*bKeepCacheOnError*/undefined);
 			that.mock(oBinding).expects("checkUpdateInternal")
 				.exactly(bCheckUpdate ? 1 : 0)
 				.withExactArgs(undefined, ChangeReason.Refresh, "myGroup")

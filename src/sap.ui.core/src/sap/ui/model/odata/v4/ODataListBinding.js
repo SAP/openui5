@@ -1023,10 +1023,45 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#doCreateCache
 	 */
 	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext,
-			sDeepResourcePath) {
-		return _AggregationCache.create(this.oModel.oRequestor, sResourcePath, sDeepResourcePath,
+			sDeepResourcePath, bOldCacheReadOnly, oOldCache) {
+		var sBindingPath,
+			aKeptElementPaths,
+			oCache,
+			that = this;
+
+		if (oOldCache && oOldCache.getResourcePath() === sResourcePath
+				&& oOldCache.$deepResourcePath === sDeepResourcePath) {
+			sBindingPath = this.oHeaderContext.getPath();
+			aKeptElementPaths = Object.keys(this.mPreviousContextsByPath).filter(function (sPath) {
+				return that.mPreviousContextsByPath[sPath].isKeepAlive();
+			});
+
+			if (aKeptElementPaths.length && !bOldCacheReadOnly) {
+				oOldCache.reset(aKeptElementPaths.map(function (sPath) {
+					return _Helper.getRelativePath(sPath, sBindingPath);
+				}));
+				// Note: #inheritQueryOptions as called below should not matter in case of own
+				// requests, which are a precondition for kept-alive elements
+				oOldCache.setQueryOptions(mQueryOptions, true);
+
+				return oOldCache;
+			}
+		}
+
+		oCache = _AggregationCache.create(this.oModel.oRequestor, sResourcePath, sDeepResourcePath,
 			this.mParameters.$$aggregation, this.inheritQueryOptions(mQueryOptions, oContext),
 			this.oModel.bAutoExpandSelect, this.bSharedRequest);
+
+		if (aKeptElementPaths && aKeptElementPaths.length) {
+			oCache.setLateQueryOptions(oOldCache.getLateQueryOptions());
+			aKeptElementPaths.forEach(function (sPath) {
+				oCache.addKeptElement(
+					oOldCache.getValue(_Helper.getRelativePath(sPath, sBindingPath)));
+				that.mPreviousContextsByPath[sPath].checkUpdate(); // add change listeners
+			});
+		}
+
+		return oCache;
 	};
 
 	/**
@@ -1106,43 +1141,6 @@ sap.ui.define([
 
 			throw oError;
 		});
-	};
-
-	/**
-	 * Creates a cache for this binding if a cache is needed and updates <code>oCachePromise</code>.
-	 * Copies the data for kept-alive contexts and the late query options from the old cache to the
-	 * new one.
-	 *
-	 * @private
-	 */
-	// @override sap.ui.model.odata.v4.ODataBinding#fetchCache
-	ODataListBinding.prototype.fetchCache = function () {
-		var oOldCache = this.oCache,
-			sBindingPath = this.getResolvedPath(),
-			bKeptDataAdded,
-			that = this;
-
-		asODataParentBinding.prototype.fetchCache.apply(this, arguments);
-
-		if (oOldCache) {
-			this.oCachePromise.then(function (oCache) {
-				Object.keys(that.mPreviousContextsByPath).forEach(function (sPath) {
-					var oContext = that.mPreviousContextsByPath[sPath];
-
-					if (oContext.isKeepAlive()) {
-						// either absolute or $$ownRequest === true
-						// ->has own cache, see #checkKeepAlive
-						oCache.addKeptElement(
-							oOldCache.getValue(_Helper.getRelativePath(sPath, sBindingPath)));
-						oContext.checkUpdate(); // add change listeners
-						bKeptDataAdded = true;
-					}
-				});
-				if (bKeptDataAdded) {
-					oCache.setLateQueryOptions(oOldCache.getLateQueryOptions());
-				}
-			}); // no catch; if the new cache can't be created, data for kept-alive contexts is lost
-		}
 	};
 
 	/**
@@ -1502,8 +1500,8 @@ sap.ui.define([
 	/**
 	 * Filters the list with the given filters.
 	 *
-	 * If there are pending changes an error is thrown. Use {@link #hasPendingChanges} to check if
-	 * there are pending changes. If there are changes, call
+	 * If there are pending changes that cannot be ignored, an error is thrown. Use
+	 * {@link #hasPendingChanges} to check if there are such pending changes. If there are, call
 	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch} to submit the changes or
 	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} to reset the changes before calling
 	 * {@link #filter}.
@@ -1544,8 +1542,10 @@ sap.ui.define([
 	 * @returns {this}
 	 *   <code>this</code> to facilitate method chaining
 	 * @throws {Error}
-	 *   If there are pending changes or if an unsupported operation mode is used (see
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList})
+	 *   If there are pending changes that cannot be ignored or if an unsupported operation mode is
+	 *   used (see {@link sap.ui.model.odata.v4.ODataModel#bindList}). Since 1.97.0, pending changes
+	 *   are ignored if they relate to a
+	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding.
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#filter
@@ -1557,7 +1557,7 @@ sap.ui.define([
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
 		}
-		if (this.hasPendingChanges()) {
+		if (this.hasPendingChanges(true)) {
 			throw new Error("Cannot filter due to pending changes");
 		}
 
@@ -2359,9 +2359,13 @@ sap.ui.define([
 
 			if (oCache && !oPromise) { // do not refresh twice
 				that.removeCachesAndMessages(sResourcePathPrefix);
-				that.fetchCache(that.oContext, false, /*bKeepQueryOptions*/true);
+				that.fetchCache(that.oContext, false, /*bKeepQueryOptions*/true, bKeepCacheOnError);
 				oKeptElementsPromise = that.oCachePromise.then(function (oNewCache) {
 					return oNewCache.refreshKeptElements(that.lockGroup(sGroupId), onRemove);
+				}).catch(function (oError) {
+					that.oModel.reportError("Failed to refresh kept-alive elements", sClassName,
+						oError);
+					throw oError;
 				});
 				if (that.iCurrentEnd > 0) {
 					oPromise = that.createRefreshPromise().catch(function (oError) {
@@ -2848,7 +2852,8 @@ sap.ui.define([
 		aBindings.forEach(function (oDependentBinding) {
 			// do not call checkUpdate in dependent property bindings if the cache of this
 			// binding is reset and the binding has not yet fired a change event
-			oDependentBinding.resumeInternal(!bRefresh, !!sResumeChangeReason);
+			oDependentBinding.resumeInternal(!bRefresh,
+				!!sResumeChangeReason && !oDependentBinding.oContext.isKeepAlive());
 		});
 		if (this.sChangeReason === "AddVirtualContext") {
 			// In a refresh event the table would ignore the result -> no virtual context -> no
@@ -3065,8 +3070,8 @@ sap.ui.define([
 	 * The sorters are stored at this list binding and they are used for each following data
 	 * request.
 	 *
-	 * If there are pending changes an error is thrown. Use {@link #hasPendingChanges} to check if
-	 * there are pending changes. If there are changes, call
+	 * If there are pending changes that cannot be ignored, an error is thrown. Use
+	 * {@link #hasPendingChanges} to check if there are such pending changes. If there are, call
 	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch} to submit the changes or
 	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} to reset the changes before calling
 	 * {@link #sort}.
@@ -3079,8 +3084,10 @@ sap.ui.define([
 	 * @returns {this}
 	 *   <code>this</code> to facilitate method chaining
 	 * @throws {Error}
-	 *   If there are pending changes or if an unsupported operation mode is used (see
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}).
+	 *   If there are pending changes that cannot be ignored or if an unsupported operation mode is
+	 *   used (see {@link sap.ui.model.odata.v4.ODataModel#bindList}). Since 1.97.0, pending changes
+	 *   are ignored if they relate to a
+	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding.
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#sort
@@ -3091,7 +3098,7 @@ sap.ui.define([
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
 		}
-		if (this.hasPendingChanges()) {
+		if (this.hasPendingChanges(true)) {
 			throw new Error("Cannot sort due to pending changes");
 		}
 
