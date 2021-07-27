@@ -5,18 +5,24 @@
 // Provides control sap.t.ToolPage.
 sap.ui.define([
 	"./library",
+	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/Control",
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
 	"./ToolPageRenderer"
-], function (library, Control, Device, ResizeHandler, ToolPageRenderer) {
+], function (library,
+			 ManagedObjectObserver,
+			 Control,
+			 Device,
+			 ResizeHandler,
+			 ToolPageRenderer) {
 	"use strict";
 
 	/**
 	 * Constructor for a new ToolPage.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] Initial settings for the new control
+ * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * The ToolPage is a layout control, used to create a basic tools app that has a header, side navigation and contents area.
@@ -53,9 +59,8 @@ sap.ui.define([
 				header: {type: "sap.tnt.IToolHeader", multiple: false},
 
 				/**
-				 * The control to appear in the sub header area.
+				 * The control to appear in the subheader area.
 				 * @since 1.93
-				 * @experimental Since 1.93
 				 */
 				subHeader: {type: "sap.tnt.IToolHeader", multiple: false },
 				/**
@@ -71,8 +76,27 @@ sap.ui.define([
 		}
 	});
 
+	ToolPage.prototype.init = function () {
+		this._oContentObserver = new ManagedObjectObserver(this._onContentChange.bind(this));
+		this._oContentObserver.observe(this, { aggregations: ["subHeader", "sideContent"] });
+
+		this._oContentVisibilityObserver = new ManagedObjectObserver(this._onContentVisibilityChange.bind(this));
+
+		this._deregisterControl();
+	};
+
 	ToolPage.prototype.exit = function () {
 		this._deregisterControl();
+
+		if (this._oContentObserver) {
+			this._oContentObserver.disconnect();
+			this._oContentObserver = null;
+		}
+
+		if (this._oContentVisibilityObserver) {
+			this._oContentVisibilityObserver.disconnect();
+			this._oContentVisibilityObserver = null;
+		}
 	};
 
 	ToolPage.prototype.onBeforeRendering = function () {
@@ -204,6 +228,21 @@ sap.ui.define([
 		}
 
 		return "Desktop";
+	};
+
+	ToolPage.prototype._onContentChange = function(oChanges) {
+		switch (oChanges.mutation) {
+			case "insert":
+				this._oContentVisibilityObserver.observe(oChanges.child, { properties: ["visible"] });
+				break;
+			case "remove":
+				this._oContentVisibilityObserver.unobserve(oChanges.child, { properties: ["visible"] });
+				break;
+		}
+	};
+
+	ToolPage.prototype._onContentVisibilityChange = function(oChanges) {
+		this.invalidate();
 	};
 
 	return ToolPage;
