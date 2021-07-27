@@ -2345,7 +2345,11 @@
       "additionalProperties": false,
       "properties": {
         "actions": {
-          "$ref": "#/definitions/action"
+          "description": "Action(s) which will be executed when button is pressed.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/action"
+          }
         },
         "type": {
           "description": "The type of the item",
