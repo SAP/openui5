@@ -780,8 +780,7 @@ sap.ui.define([
 			oMonthPickerSelectedDates = this.getAggregation("selectedDates"),
 			oStartDate, oFocusedDate;
 
-		// Marking internally the focused month
-		this._focusedMonth = iMonth;
+		this.setProperty("_focusedMonth", iMonth);
 
 		if (!oSelectedDates) {
 			return;
