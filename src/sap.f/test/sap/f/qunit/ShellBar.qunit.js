@@ -627,7 +627,7 @@ function (
 			"menu configured and no home icon, we show primary title text inside the MenuButton");
 
 		//Cleanup
-		document.getElementById(DOM_RENDER_LOCATION).style.width = 1024 + "px";
+		document.getElementById(DOM_RENDER_LOCATION).style.width = 1000 + "px"; // back to default size
 
 
 	});
@@ -837,6 +837,10 @@ function (
 
 			oSearchManager._oSearch.setIsOpen(true);
 
+			this.iOriginalFixtureWidth = document.getElementById(DOM_RENDER_LOCATION).style.width;
+			// ensure that by default the shellbar has enough space to render all its items
+			document.getElementById(DOM_RENDER_LOCATION).style.width = 1500 + "px";
+
 			this.oSB = new ShellBar({
 				title: "Application title",
 				secondTitle: "Short description",
@@ -857,12 +861,14 @@ function (
 		afterEach: function () {
 			this.oSB.destroy();
 			this.oRb = null;
+			// cleanup
+			document.getElementById(DOM_RENDER_LOCATION).style.width = this.iOrigibalFixtureWidth;
 		}
 	});
 
 	QUnit.test("ResponsiveHandler with open search", function (assert) {
 		// Assert
-		assert.strictEqual(_getVisibleControlsCount(this.oSB), 8, "phone mode requirements passed");
+		assert.strictEqual(_getVisibleControlsCount(this.oSB), 10, "phone mode requirements passed");
 		assert.strictEqual(this.oSB.hasStyleClass("sapFShellBarFullSearch"), false,
 			"Full width search class list was added to Shell Bar.");
 
@@ -878,7 +884,7 @@ function (
 		this.oSB._oResponsiveHandler._transformToRegularState();
 
 		// Assert
-		assert.strictEqual(_getVisibleControlsCount(this.oSB), 8, "phone mode requirements passed");
+		assert.strictEqual(_getVisibleControlsCount(this.oSB), 10, "phone mode requirements passed");
 		assert.strictEqual(this.oSB.hasStyleClass("sapFShellBarFullSearch"), false,
 			"Full width search class list was added to Shell Bar.");
 	});
