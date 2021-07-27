@@ -152,6 +152,8 @@ sap.ui.define([
 	 * @protected
 	 */
 	ODataListBinding.prototype.getContexts = function(iStartIndex, iLength, iThreshold) {
+		var aContexts, oInterval, aIntervals, iLimit,
+			aContextData = [];
 
 		if (this.bInitial) {
 			return [];
@@ -199,26 +201,22 @@ sap.ui.define([
 				iThreshold = Math.max(this.iThreshold, iThreshold);
 			}
 		}
-
-		var bLoadContexts = true,
-		aContexts = this._getContexts(iStartIndex, iLength),
-		aContextData = [],
-		oMissingSection;
-
+		aContexts = this._getContexts(iStartIndex, iLength);
 		if (this.useClientMode()) {
 			if (!this.aAllKeys && !this.bPendingRequest && this.oModel.getServiceMetadata()) {
 				this.loadData();
 				aContexts.dataRequested = true;
 			}
 		} else {
-			oMissingSection = this.calculateSection(iStartIndex, iLength, iThreshold, aContexts);
-			bLoadContexts = aContexts.length !== iLength || oMissingSection.length > 0;
-
+			iLimit = this.bLengthFinal ? this.iLength : undefined;
+			aIntervals = ODataUtils._getReadIntervals(this.aKeys, iStartIndex, iLength, iThreshold,
+				iLimit);
+			oInterval = ODataUtils._mergeIntervals(aIntervals);
 			// check if metadata are already available
 			if (this.oModel.getServiceMetadata()) {
 				// If rows are missing send a request
-				if (!this.bPendingRequest && oMissingSection.length > 0 && bLoadContexts) {
-					this.loadData(oMissingSection.startIndex, oMissingSection.length);
+				if (!this.bPendingRequest && oInterval) {
+					this.loadData(oInterval.start, oInterval.end - oInterval.start);
 					aContexts.dataRequested = true;
 				}
 			}
@@ -309,65 +307,6 @@ sap.ui.define([
 		}
 
 		return aContexts;
-	};
-
-	/**
-	 * Calculates a missing section inside the binding's data array.
-	 * The result is an object containing the first missing index (startIndex),
-	 * and the number of missing entries (length).
-	 *
-	 * The given threshold is prependend and appended before/after the given iStartIndex
-	 * and iLength. If there is a missing section read at least iThreshold data or as many entries
-	 * to close the gap in the data.
-	 *
-	 * @param {int} iStartIndex The start index of the requested contexts
-	 * @param {int} iLength The requested amount of contexts
-	 * @param {int} iThreshold The threshold value
-	 * @returns {object} oMissingSection The section object;
-	 * @private
-	 */
-	ODataListBinding.prototype.calculateSection = function(iStartIndex, iLength, iThreshold) {
-		var bEndOfGapFound = false;
-
-		// prepend threshold to start
-		if (iStartIndex >= iThreshold) {
-			iStartIndex -= iThreshold;
-			iLength += iThreshold;
-		} else {
-			iLength += iStartIndex;
-			iStartIndex = 0;
-		}
-
-		// append threshold to end
-		iLength += iThreshold;
-		if (this.bLengthFinal && iStartIndex + iLength > this.iLength) {
-			iLength = this.iLength - iStartIndex;
-		}
-
-		// search start of first gap
-		while (iLength && this.aKeys[iStartIndex]) {
-			iStartIndex += 1;
-			iLength -= 1;
-		}
-
-		// search end of last gap
-		while (iLength && this.aKeys[iStartIndex + iLength - 1]) {
-			iLength -= 1;
-			bEndOfGapFound = true;
-		}
-
-		// if there is a gap and the end of the last gap is not known, read up to "iThreshold"
-		// entries to close the gap
-		if (iLength && !bEndOfGapFound && iLength < iThreshold) {
-			while (iLength < iThreshold && !this.aKeys[iStartIndex + iLength]) {
-				iLength += 1;
-			}
-		}
-
-		return {
-			startIndex : iStartIndex,
-			length : iLength
-		};
 	};
 
 	/**

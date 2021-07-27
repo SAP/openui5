@@ -95,17 +95,7 @@ sap.ui.define([
 				assert.ok(oBinding.aKeys[0]);
 				assert.ok(oBinding.aKeys[39]);
 				assert.notOk(oBinding.aKeys[40]);
-				oBinding.attachChange(fnHandler3);
 				oBinding.getContexts(0, 10, 50);
-			};
-
-			var fnHandler3 = function() {
-				oBinding.detachChange(fnHandler3);
-				assert.equal(oBinding.getLength(), 91, "length of items");
-				assert.equal(oBinding.aKeys.length, 60);
-				assert.ok(oBinding.aKeys[0]);
-				assert.ok(oBinding.aKeys[59]);
-				assert.notOk(oBinding.aKeys[60]);
 				done();
 			};
 
@@ -147,16 +137,7 @@ sap.ui.define([
 				assert.ok(oBinding.aKeys[21]);
 				assert.ok(oBinding.aKeys[60]);
 				assert.notOk(oBinding.aKeys[61]);
-				oBinding.attachChange(fnHandler3);
 				oBinding.getContexts(37, 10, 16);
-			};
-
-			var fnHandler3 = function() {
-				oBinding.detachChange(fnHandler3);
-				assert.equal(oBinding.getLength(), 91, "length of items");
-				assert.equal(Object.keys(oBinding.aKeys).length, 56);
-				assert.ok(oBinding.aKeys[76]);
-				assert.notOk(oBinding.aKeys[77]);
 				done();
 			};
 

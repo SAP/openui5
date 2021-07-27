@@ -76,6 +76,8 @@ sap.ui.define([], function() {
 			[200, oCountHeaders, "91"],
 		"Customers?$skip=0&$top=60":
 			[200, oJSONHeaders, JSON.stringify(oCustomers1)],
+    "Customers?$skip=20&$top=40":
+			[200, oJSONHeaders, JSON.stringify(oCustomers11)],
 		"Customers?$skip=20&$top=50":
 			[200, oJSONHeaders, JSON.stringify(oCustomers2)],
 		"Customers?$skip=40&$top=50":
@@ -10019,6 +10021,7 @@ var oCustomers1 = {
 	}
 };
 
+// skip 20 top 50
 var oCustomers2 = {
 	"d" : {
 		"results": [
@@ -10265,6 +10268,14 @@ var oCustomers2 = {
 			}
 		], "__next": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers?$top=30&$skiptoken='LACOR'"
 	}
+};
+
+// skip 20 top 40
+var oCustomers11 = {
+  "d" : {
+    "results" : oCustomers2.d.results,
+    "__next": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers/?$top=20&$skiptoken='LACOR'"
+  }
 };
 
 var oCustomers3 = {
