@@ -638,6 +638,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/_internal/fieldExtensibility/ServiceValidation"]
 				}
 			},
+			"write/_internal/fieldExtensibility/cap/dialog/CustomFieldCAPDialog": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/fieldExtensibility/cap/dialog/CustomFieldCAPDialog"]
+				}
+			},
 			// Team Gravity tests
 			"descriptorRelated/api/Api": {
 				group: "Descriptor related APIs",
