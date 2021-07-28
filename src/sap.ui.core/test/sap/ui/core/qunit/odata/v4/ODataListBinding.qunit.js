@@ -2983,7 +2983,7 @@ sap.ui.define([
 			oTransientBindingContextMock = this.mock(oTransientBindingContext);
 
 		oBinding = this.bindList("relative"); // unresolved
-		this.mock(oBinding).expects("destroyPreviousContexts").withExactArgs(true);
+		this.mock(oBinding).expects("destroyPreviousContexts").withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
 		oParentBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
@@ -3026,34 +3026,53 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bAllContexts) {
-	QUnit.test("destroyPreviousContexts(" + bAllContexts + ")", function (assert) {
+	QUnit.test("destroyPreviousContexts: all", function (assert) {
+		var oBinding = this.bindList("relative"),
+			oContext1 = {
+				destroy : function () {}
+			},
+			oContext2 = {
+				destroy : function () {}
+			},
+			oContext3 = {
+				destroy : function () {}
+			};
+
+		oBinding.mPreviousContextsByPath = {p1 : oContext1, p2 : oContext2, p3 : oContext3};
+		this.mock(oContext1).expects("destroy").withExactArgs();
+		this.mock(oContext2).expects("destroy").withExactArgs();
+		this.mock(oContext3).expects("destroy").withExactArgs();
+
+		// code under test
+		oBinding.destroyPreviousContexts();
+
+		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("destroyPreviousContexts: selection", function (assert) {
 		var oBinding = this.bindList("relative"),
 			oContext1 = {
 				destroy : function () {},
 				isKeepAlive : function () {}
 			},
 			oContext2 = {
-				destroy : function () {},
 				iIndex : 2,
 				isKeepAlive : function () {}
-			};
+			},
+			oContext3 = {};
 
-		oBinding.mPreviousContextsByPath = {p1 : oContext1, p2 : oContext2};
-		this.mock(oContext1).expects("isKeepAlive").exactly(bAllContexts ? 0 : 1)
-			.withExactArgs().returns(false);
+		oBinding.mPreviousContextsByPath = {p1 : oContext1, p2 : oContext2, p3 : oContext3};
+		this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(false);
 		this.mock(oContext1).expects("destroy").withExactArgs();
-		this.mock(oContext2).expects("isKeepAlive").exactly(bAllContexts ? 0 : 1)
-			.withExactArgs().returns(true);
-		this.mock(oContext2).expects("destroy").exactly(bAllContexts ? 1 : 0);
+		this.mock(oContext2).expects("isKeepAlive").withExactArgs().returns(true);
 
 		// code under test
-		oBinding.destroyPreviousContexts(bAllContexts);
+		oBinding.destroyPreviousContexts(["p1", "p2", "p4"]);
 
-		assert.deepEqual(oBinding.mPreviousContextsByPath, bAllContexts ? {} : {p2 : oContext2});
-		assert.deepEqual(oContext2.iIndex, bAllContexts ? 2 : undefined);
+		assert.deepEqual(oBinding.mPreviousContextsByPath, {p2 : oContext2, p3 : oContext3});
+		assert.deepEqual(oContext2.iIndex, undefined);
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("destroyPreviousContexts: binding already destroyed", function (assert) {
@@ -3385,7 +3404,7 @@ sap.ui.define([
 			.returns(oContext3);
 		this.mock(this.oModel).expects("addPrerenderingTask")
 			.withExactArgs(sinon.match.func).callsArg(0);
-		this.mock(oBinding).expects("destroyPreviousContexts").withExactArgs();
+		this.mock(oBinding).expects("destroyPreviousContexts").withExactArgs(["/EMPLOYEES/0"]);
 
 		// code under test
 		oBinding.createContexts(1, [{}, {}, {}]);
@@ -3398,25 +3417,28 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("createContexts w/ keyPredicates, reuse previous contexts", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES", {/*oContext*/}),
-			oContext0 = {
-				destroy : function () {},
-				isKeepAlive : function () {}
-			},
+			oBindingMock = this.mock(oBinding),
+			oContext0 = {},
 			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES('B')", 99),
 			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES('C')", 1),
+			oContext3 = {},
 			oContextMinus1 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
 				SyncPromise.resolve(Promise.resolve())), // transient context
 			oContextMinus2 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-42)", -2,
 				SyncPromise.resolve(Promise.resolve())), // transient context
-			oContextMock = this.mock(Context);
+			oContextMock = this.mock(Context),
+			oTaskMock;
 
+		// must be mocked here, so that later bind grabs the mock
+		oBindingMock.expects("destroyPreviousContexts").never();
 		assert.deepEqual(oBinding.aContexts, [], "binding is reset");
 		assert.strictEqual(oBinding.iCreatedContexts, 0, "binding is reset");
 		oBinding.mPreviousContextsByPath = {
 			"/EMPLOYEES('A')" : oContext0,
 			"/EMPLOYEES('B')" : oContext1,
 			"/EMPLOYEES($uid=id-1-23)" : oContextMinus1,
-			"/EMPLOYEES($uid=id-1-42)" : oContextMinus2
+			"/EMPLOYEES($uid=id-1-42)" : oContextMinus2,
+			"/EMPLOYEES('D')" : oContext3
 		};
 		this.mock(oContext1).expects("destroy").never();
 		this.mock(oContext1).expects("checkUpdate").withExactArgs();
@@ -3428,10 +3450,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"/EMPLOYEES('C')", 1)
 			.returns(oContext2);
-		this.mock(this.oModel).expects("addPrerenderingTask")
-			.withExactArgs(sinon.match.func).callsArg(0);
-		this.mock(oContext0).expects("isKeepAlive").returns(false);
-		this.mock(oContext0).expects("destroy").withExactArgs();
+		oTaskMock = this.mock(this.oModel).expects("addPrerenderingTask")
+			.withExactArgs(sinon.match.func);
 
 		// code under test
 		oBinding.createContexts(0, [{
@@ -3457,7 +3477,15 @@ sap.ui.define([
 		assert.strictEqual(oContextMinus1.iIndex, -1);
 		assert.strictEqual(oContext1.iIndex, 0);
 		assert.strictEqual(oContext2.iIndex, 1);
-		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
+		assert.strictEqual(Object.keys(oBinding.mPreviousContextsByPath).length, 2);
+		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES('A')"], oContext0);
+		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES('D')"], oContext3);
+
+		oBindingMock.expects("destroyPreviousContexts")
+			.withExactArgs(["/EMPLOYEES('A')", "/EMPLOYEES('D')"]);
+
+		// code under test
+		oTaskMock.firstCall.args[0]();
 
 		return Promise.all([
 			oContextMinus1.created(),

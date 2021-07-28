@@ -4223,6 +4223,62 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: A row is deleted. Afterwards, but before the rendering the list is refreshed. The
+	// list has a nested list.
+	//
+	// BCP: 002075129500005176612021
+	QUnit.test("Nested ODLB: contexts deleted too early", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="rootTable" items="{/SalesOrderList}">\
+	<Text text="{SalesOrderID}"/>\
+	<Table items="{path : \'SO_2_SOITEM\', templateShareable : false}">\
+		<Text text="{ItemPosition}"/>\
+	</Table>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID"
+				+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)&$skip=0&$top=100", {
+				value : [{
+					SalesOrderID : "1",
+					SO_2_SOITEM : []
+				}, {
+					SalesOrderID : "2",
+					SO_2_SOITEM : [
+						{ItemPosition : "0010", SalesOrderID : "2"}
+					]
+				}]});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oRootTable = that.oView.byId("rootTable");
+
+			that.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('1')"
+				})
+				.expectRequest("SalesOrderList?$select=SalesOrderID"
+					+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)&$skip=0&$top=100", {
+					value : [{
+						SalesOrderID : "2",
+						SO_2_SOITEM : [
+							{ItemPosition : "0010", SalesOrderID : "2"}
+						]
+					}]
+				});
+
+			return Promise.all([
+				oRootTable.getItems()[0].getBindingContext().delete().then(function () {
+					// refresh before the prerendering task caused by #getContexts after #delete
+					// has run, so that in that task _all_ contexts are parked
+					return oRootTable.getBinding("items").requestRefresh();
+				}),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Refresh single row in a list below a return value context. Ensure that
 	// refreshSingle is able to calculate the key predicates in its response and a subsequent PATCH
 	// is possible.
