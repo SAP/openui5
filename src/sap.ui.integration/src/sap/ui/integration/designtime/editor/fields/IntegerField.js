@@ -43,7 +43,8 @@ sap.ui.define([
 						oSource.getBinding("value").setValue(oSource.getValue());
 						oSource.getBinding("value").checkUpdate();
 					},
-					editable: oConfig.editable
+					editable: oConfig.editable,
+					type: "Number"
 				}
 			};
 		}
