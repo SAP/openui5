@@ -24,7 +24,12 @@ sap.ui.define([
 		 * Constructor for a dynamic date range type.
 		 *
 		 * @class
-		 * This class represents the dynamic date range type.
+		 * This class represents the dynamic date range type. Model values should be in
+		 * the following format: { operator: "KEY", values: [param1, param2] }. Where the
+		 * supported parameters are timestamps, month indexes and numbers (all three are numbers).
+		 * Their type is defined by the corresponding DynamicDateOption instance identified by
+		 * the same "KEY". This class is capable of formatting only the value parameters expected
+		 * by the DynamicDateRange control. A display format may be provided via the format options.
 		 *
 		 * @extends sap.ui.model.SimpleType
 		 *
@@ -33,10 +38,13 @@ sap.ui.define([
 		 *
 		 * @constructor
 		 * @public
-		 * @param {object} [oFormatOptions] Formatting options.
-		 * @param {object} [oFormatOptions.date] Format options controlling the options that contain dates in their display values.
-		 * @param {object} [oFormatOptions.month] Format options controlling the options that contain months in their display values.
-		 * @param {object} [oFormatOptions.int] Format options controlling the options that contain numbers in their display values.
+		 * @param {object} [oFormatOptions] Format options. There are format options for each of the supported types of value parameters.
+		 * @param {object} [oFormatOptions.date] Display format options for the values that contain dates. For a list of all available options,
+		 * see {@link sap.ui.core.format.DateFormat.getDateInstance DateFormat}.
+		 * @param {object} [oFormatOptions.month] Display format options for the values that contain month names. The only
+		 * supported option is the <code>pattern</code> using the respective symbols for displaying months "MM", "MMM" or "MMMM".
+		 * @param {object} [oFormatOptions.int] Display format options for the values that contain numbers. For a list of all available options,
+		 * see {@link sap.ui.core.format.NumberFormat.getInstance NumberFormat}.
 		 * @param {object} [oConstraints] Value constraints
 		 * @param {int} [oConstraints.minimum] Smallest resulting date allowed for this type. Must be provided as a timestamps.
 		 * @param {int} [oConstraints.maximum] Greatest resulting date allowed for this type. Must be provided as a timestamps.
@@ -93,6 +101,7 @@ sap.ui.define([
 		 * The whole value is in the following format { operator: "KEY", values: [...array with JS dates or numbers to be parsed]}.
 		 * Only parses the 'values' part of the given object. The dates are expected as Javascript Dates
 		 * and are converted to timestamps. The numbers and strings are left untouched.
+		 * Special values with operator: "PARSEERROR" generate a parse exception.
 		 *
 		 * @param {object} oValue The value to be parsed
 		 * @return {object} A value object in a similar form
