@@ -31,7 +31,6 @@
 			</p>
 
 			<h2 id="properties">Properties</h2>
-
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -46,7 +45,7 @@
 						<td>type</td>
 						<td>string</td>
 						<td>Yes</td>
-						<td>Represents the type of the header.</td>
+						<td>The type of the header. Should be set to "Numeric".</td>
 						<td>1.14.0</td>
 						<td>1.64</td>
 					</tr>
@@ -54,7 +53,7 @@
 						<td>title</td>
 						<td>string</td>
 						<td>Yes</td>
-						<td>Represents language-dependent title.</td>
+						<td>The title.</td>
 						<td>1.14.0</td>
 						<td>1.64</td>
 					</tr>
@@ -62,7 +61,7 @@
 						<td>subTitle</td>
 						<td>string</td>
 						<td>No</td>
-						<td>Represents language-dependent additional information to the title.</td>
+						<td>The subtitle.</td>
 						<td>1.14.0</td>
 						<td>1.64</td>
 					</tr>
@@ -84,9 +83,9 @@
 					</tr>
 					<tr>
 						<td>mainIndicator</td>
-						<td></td>
+						<td><a href="#mainIndicatorProperties">MainIndicator</a></td>
 						<td>No</td>
-						<td></td>
+						<td>Numeric indicator.</td>
 						<td>1.14.0</td>
 						<td>1.64</td>
 					</tr>
@@ -100,8 +99,8 @@
 					</tr>
 					<tr>
 						<td>sideIndicators</td>
-						<td>string</td>
-						<td>array</td>
+						<td><a href="#sideIndicatorProperties">SideIndicator[]</a></td>
+						<td>No</td>
 						<td>Side indicators that relate to the main numeric indicator. You can have a maximum of two
 							side indicators.</td>
 						<td>1.14.0</td>
@@ -129,6 +128,95 @@
 						<td>1.89</td>
 					</tr>
 				</table>
+
+				<h4 id="mainIndicatorProperties">MainIndicator properties</h4>
+				<div class="tableWrapper">
+					<table>
+						<tr>
+							<th>Property</th>
+							<th>Type</th>
+							<th>Default Value</th>
+							<th>Required</th>
+							<th>Description</th>
+							<th>Schema Version</th>
+							<th>Since</th>
+						</tr>
+						<tr>
+							<td>number</td>
+							<td>string</td>
+							<td></td>
+							<td>No</td>
+							<td>The value of the main indicator.</td>
+							<td>1.14.0</td>
+							<td>1.64</td>
+						</tr>
+						<tr>
+							<td>unit</td>
+							<td>string</td>
+							<td></td>
+							<td>No</td>
+							<td>The unit of measurement of the main indicator.</td>
+							<td>1.14.0</td>
+							<td>1.64</td>
+						</tr>
+						<tr>
+							<td>trend</td>
+							<td><a data-demokit-href="/api/sap.m.DeviationIndicator" target="_blank">sap.m.DeviationIndicator</a></td>
+							<td>"None"</td>
+							<td>No</td>
+							<td>The trend indicator (direction).</td>
+							<td>1.14.0</td>
+							<td>1.64</td>
+						</tr>
+						<tr>
+							<td>state</td>
+							<td><a data-demokit-href="/api/sap.m.ValueColor" target="_blank">sap.m.ValueColor</a></td>
+							<td>"Neutral"</td>
+							<td>No</td>
+							<td>The state color of the main indicator.</td>
+							<td>1.14.0</td>
+							<td>1.64</td>
+						</tr>
+					</table>
+				</div>
+
+				<h4 id="sideIndicatorProperties">SideIndicator properties</h4>
+				<div class="tableWrapper">
+					<table>
+						<tr>
+							<th>Property</th>
+							<th>Type</th>
+							<th>Required</th>
+							<th>Description</th>
+							<th>Schema Version</th>
+							<th>Since</th>
+						</tr>
+						<tr>
+							<td>title</td>
+							<td>string</td>
+							<td>No</td>
+							<td>The title of the side indicator.</td>
+							<td>1.14.0</td>
+							<td>1.64</td>
+						</tr>
+						<tr>
+							<td>number</td>
+							<td>string</td>
+							<td>No</td>
+							<td>The value of the side indicator.</td>
+							<td>1.14.0</td>
+							<td>1.64</td>
+						</tr>
+						<tr>
+							<td>unit</td>
+							<td>string</td>
+							<td>No</td>
+							<td>The unit of measurement of the side indicator.</td>
+							<td>1.14.0</td>
+							<td>1.64</td>
+						</tr>
+					</table>
+				</div>
 			</div>
 
 			<h2 id="example">Example</h2>
