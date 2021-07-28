@@ -16,8 +16,12 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 * <code>viewLevel</code>, <code>transition</code>, and <code>transitionParameters</code>
 		 * properties that you can specify in every Route or Target created by this router.
 		 *
-		 * Additionally, the <code>layout</code> property can be specified in every Route,
-		 * in which case it is applied to the root control.
+		 * The difference to the <code>{@link sap.m.routing.Router}</code> is the additional
+		 * <code>layout</code> property that can be specified in every Route, in which case it
+		 * is applied to the root control. Also, the <code>sap.f.routing.Router</code> supports
+		 * navigations that involve both change of <code>{@link sap.f.LayoutType}</code>
+		 * and change of the current page within a single column of the
+		 * <code>sap.f.FlexibleColumnLayout</code>.
 		 *
 		 * See <code>{@link sap.ui.core.routing.Router}</code> for the constructor arguments.
 		 *
