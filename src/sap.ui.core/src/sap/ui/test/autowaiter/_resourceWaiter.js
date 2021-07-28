@@ -16,7 +16,7 @@ sap.ui.define([
 	var ResourceWaiter = WaiterBase.extend("sap.ui.test.autowaiter._ResourceWaiter", {
 		constructor: function () {
 			WaiterBase.apply(this, arguments);
-			this._oLogger.setLevel("TRACE");
+			//this._oLogger.setLevel("TRACE");
 			this._aResources = [];
 			// observe for new img elements and for img elements with changed src attribute
 			var observer = new window.MutationObserver(function (mutations) {
@@ -69,9 +69,9 @@ sap.ui.define([
 
 			var bHasPendingResources = aPendingResources.length > 0;
 			if (bHasPendingResources) {
-				this._oHasPendingLogger.debug("There are " + aPendingResources.length + " resources still loading");
+				this._oHasPendingLogger.debug("There are " + aPendingResources.length + " images still loading");
 				aPendingResources.forEach(function (mResource) {
-					this._oHasPendingLogger.debug("Pending resource: " + mResource.src);
+					this._oHasPendingLogger.debug("Pending image: " + mResource.src);
 				}.bind(this));
 			}
 			return bHasPendingResources;
@@ -91,7 +91,7 @@ sap.ui.define([
 					element: oElement
 				};
 				this._aResources.push(mNewResource);
-				this._oLogger.trace("Image with src '" + oElement.src + "' is tracked");
+				this._oLogger.trace("Image with src '" + oElement.src + "' is pending");
 
 				oElement.addEventListener("load", function() {
 					mNewResource.state = STATE.LOADED;
