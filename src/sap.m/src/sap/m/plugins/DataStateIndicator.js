@@ -299,7 +299,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			if (!this._bFiltering && oBinding.requestFilterForMessages && this.getEnableFiltering()) {
 				var fnFilter = this.getFilter();
 				var fnMessageFilter = fnFilter && function(oMessage) {
-					return fnFilter(oMessage, oControl);
+					return fnFilter(oMessage, oParent);
 				};
 
 				oBinding.requestFilterForMessages(fnMessageFilter).then(function(oFilter) {
