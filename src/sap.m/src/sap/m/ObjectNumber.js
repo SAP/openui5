@@ -180,6 +180,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Ensures that parent interactive controls will not handle
+	 * the touch/mouse events a second time.
+	 * @private
+	 * @param {object} oEvent The fired event
+	 */
+	ObjectNumber.prototype.ontouchstart = function(oEvent) {
+		if (this._isClickable(oEvent)) {
+			oEvent.setMarked();
+		}
+	};
+
+	/**
 	 * Applies active state to the OnjectNumber.
 	 *
 	 * @private
