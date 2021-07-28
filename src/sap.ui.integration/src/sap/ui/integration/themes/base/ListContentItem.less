@@ -29,8 +29,15 @@
 			margin-bottom: 0.5rem;
 		}
 
-		&.sapMLIBActive .sapFCardIcon.sapFAvatar .sapUiIcon {
-			color: @sapUiListActiveTextColor;
+		&.sapMLIBActive {
+			.sapFCardIcon.sapFAvatar .sapUiIcon {
+				color: @sapUiListActiveTextColor;
+			}
+
+			.sapMBtnTransparent,
+			.sapMBtnTransparent .sapMBtnIcon {
+				color: @sapUiContentContrastTextColor;
+			}
 		}
 	}
 
