@@ -3,6 +3,17 @@
     "date": "July 2021",
     "notes": [
       {
+        "id": "efc4d945feb9bdefc0b4d717365f5e1720154db9",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.m.ProgressIndicator: Fixed text contrast ratio",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180165340"
+          }
+        ]
+      },
+      {
         "id": "56ecb2ac631e236b55db4751f8c870f5c9128cac",
         "type": "FIX",
         "text": " sap.uxap.HierarchicalSelect: Fixed button's focus on XL desktop sreen",
@@ -32,27 +43,6 @@
           {
             "type": "BCP",
             "reference": "2180218347"
-          }
-        ]
-      },
-      {
-        "id": "bb09a807cf855840900063dd7087a7abbcc86369",
-        "type": "FIX",
-        "text": " Theming: do not overlay variables from other libs"
-      },
-      {
-        "id": "dc178ce2b83938b252e1af1b891077f1754d247e",
-        "type": "FEATURE",
-        "text": " sap.m.QuickViewPage: Introduced new avatar aggregation"
-      },
-      {
-        "id": "a71bfd847635d56804c78ab728fca13b82b3d6f2",
-        "type": "FIX",
-        "text": "sap.ui.unified.CalendarRow: Focus is now correct for non working days",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2070448075"
           }
         ]
       }

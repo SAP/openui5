@@ -3,6 +3,11 @@
     "date": "July 2021",
     "notes": [
       {
+        "id": "ff2d9f7f2a5183185fb96be15495144c20b32caa",
+        "type": "FEATURE",
+        "text": " ListBase: new property multiSelectMode added"
+      },
+      {
         "id": "83260c5efb68aaa8391248231158dedad10cc524",
         "type": "FEATURE",
         "text": " Field/FilterField: support field help for external content"

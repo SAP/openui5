@@ -12,17 +12,6 @@
             "reference": "2180288841"
           }
         ]
-      },
-      {
-        "id": "8fa72ea2fa27733b6f327f6463f69b4b5db56491",
-        "type": "FIX",
-        "text": " Integration cards: Avatar with static URL no longer shows loading placeholder",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180153516"
-          }
-        ]
       }
     ]
   }
