@@ -743,18 +743,23 @@ sap.ui.define([
 		this.sut = null;
 		this.sut = new MenuButton({
 			buttonMode: MenuButtonMode.Split,
-			defaultAction : function () {}
+			defaultAction : function () {},
+			beforeMenuOpen : function () {}
 		});
 		this.sut.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		var fnFireDefaultAction = sinon.spy(this.sut, "fireDefaultAction");
+		var fnFireDefaultAction = sinon.spy(this.sut, "fireDefaultAction"),
+			fnFireBeforeMenuOpen = sinon.spy(this.sut, "fireBeforeMenuOpen");
 		this.sut.getAggregation('_button').firePress();
 
 		this.clock.tick(1000);
 		assert.strictEqual(this.sut.getAggregation('_button').getMetadata().getName() === 'sap.m.SplitButton', true, 'Split button.');
 		assert.strictEqual(jQuery('.sapMMenuBtnSplit').length, 1, 'Split button rendered');
 		assert.strictEqual(fnFireDefaultAction.calledOnce, true, 'Default action called.');
+
+		this.sut.getAggregation('_button').getAggregation('_arrowButton').firePress();
+		assert.strictEqual(fnFireBeforeMenuOpen.calledOnce, true, 'BeforeMenuOpen event fired.');
 
 		var handlerCalled = 0;
 		this.oMenu = new Menu({
