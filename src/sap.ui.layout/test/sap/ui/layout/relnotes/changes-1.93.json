@@ -12,11 +12,6 @@
             "reference": "2170156208"
           }
         ]
-      },
-      {
-        "id": "0ab7ff8a0eabe07b33e4cd17385bfe9acdcfbe7a",
-        "type": "FEATURE",
-        "text": " sap.ui.layout.ResponsiveSplitter: \"resize\" event is added"
       }
     ]
   }

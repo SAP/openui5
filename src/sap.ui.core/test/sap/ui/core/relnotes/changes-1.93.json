@@ -3,6 +3,28 @@
     "date": "July 2021",
     "notes": [
       {
+        "id": "830d025698894aafa44a9b0ceeff7505fb558c96",
+        "type": "FIX",
+        "text": " base/shared.less: Fix pseudo invisible text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180234044"
+          }
+        ]
+      },
+      {
+        "id": "571c2941ea4f72a6b8106644c10bd44c916d37fa",
+        "type": "FIX",
+        "text": " core.routing.HistoryIframeSync: exclude some tests from Firefox testsuite run",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180299639"
+          }
+        ]
+      },
+      {
         "id": "399aac16c72bcc705bc2d816cb786044df42dba5",
         "type": "FIX",
         "text": " sap.ui.VersionInfo: copy 'hasOwnPreload' flag for components",

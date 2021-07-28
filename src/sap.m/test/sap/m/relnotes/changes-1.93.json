@@ -3,6 +3,76 @@
     "date": "July 2021",
     "notes": [
       {
+        "id": "79a9ef4d35b532401830ee54f5f3babd20b577aa",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Introducing relative views"
+      },
+      {
+        "id": "ff2d9f7f2a5183185fb96be15495144c20b32caa",
+        "type": "FEATURE",
+        "text": " ListBase: new property multiSelectMode added"
+      },
+      {
+        "id": "f4260c16d31b52995e3d73ea6accdceacec86eac",
+        "type": "FIX",
+        "text": " sap.m.Popover: Focus handling when opened from another control fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170040819"
+          }
+        ]
+      },
+      {
+        "id": "caad29f3b96fe7ae437875c1fda102b857e19361",
+        "type": "FEATURE",
+        "text": " sap.m.MultiComboBox: Range selection is implemented"
+      },
+      {
+        "id": "c7dc49c967ec3d3057bc3c49f01bc90430fbfb97",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: No invalid message when ValueState is None",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180301803"
+          }
+        ]
+      },
+      {
+        "id": "017ba2fff29807d8fc6afe03573d1c28c19129ca",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog,TableSelectDialog: Initial focus is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180209652"
+          }
+        ]
+      },
+      {
+        "id": "4e1bbd5e0eb1138a65b0353ae3953c2987287bd5",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: When active the four side of focus are now visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180260374"
+          }
+        ]
+      },
+      {
+        "id": "97857cc607053e800e362bbef8a80a6803cc882e",
+        "type": "FIX",
+        "text": " sap.m.SearchField: \"Change\" event is now fired correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180294828"
+          }
+        ]
+      },
+      {
         "id": "dc406609899e56ae131e81e9c72582bf19d16005",
         "type": "FIX",
         "text": " sap.m.NavContainer: Fixed ComponentContainer height of Demo Kit sample",
