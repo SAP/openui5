@@ -177,7 +177,6 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 		return '<div>' + content + '</div>';
 	}
 
-	/* eslint-disable no-undef */
 	/**
 	 * Creates an html string containing the issues and appends it to the OPA html page
 	 * @param {Object} issues - the issues in viewmodel format
@@ -216,7 +215,6 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			window.sapUiSupportReport.filter.init();
 		}
 	}
-	/* eslint-enable no-undef */
 
 	return {
 		render: render,
