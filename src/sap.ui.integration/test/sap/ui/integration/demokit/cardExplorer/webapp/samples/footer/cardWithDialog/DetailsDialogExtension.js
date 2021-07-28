@@ -15,22 +15,22 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var FooterExtension = Extension.extend("card.explorer.footer.detailsDialog.Extension");
+	var DetailsDialogExtension = Extension.extend("card.explorer.footer.cardWithDialog.DetailsDialogExtension");
 
-	FooterExtension.prototype.init = function () {
+	DetailsDialogExtension.prototype.init = function () {
 		Extension.prototype.init.apply(this, arguments);
 		this.attachAction(this._handleAction.bind(this));
 	};
 
-	FooterExtension.prototype.exit = function () {
-		if (this._oSnackDialog) {
-			this._oSnackDialog.destroy();
+	DetailsDialogExtension.prototype.exit = function () {
+		if (this._oDetailsDialog) {
+			this._oDetailsDialog.destroy();
 		}
 
 		Extension.prototype.exit.apply(this, arguments);
 	};
 
-	FooterExtension.prototype._handleAction = function (oEvent) {
+	DetailsDialogExtension.prototype._handleAction = function (oEvent) {
 		var sActionType = oEvent.getParameter("type"),
 			mParams = oEvent.getParameter("parameters");
 
@@ -43,14 +43,14 @@ sap.ui.define([
 				this._oDetailsDialog.close();
 				break;
 			case "OpenDetailsDialog":
-				this._openSnack();
+				this._openDetailsDialog();
 				break;
 			default:
 				Log.error("Method" + mParams.method + " not recognized");
 		}
 	};
 
-	FooterExtension.prototype._openSnack = function () {
+	DetailsDialogExtension.prototype._openDetailsDialog = function () {
 		var oCard = this.getCard(),
 			sUrl = oCard.getRuntimeUrl("./detailsCard.json"),
 			oDetailsCard = new Card({
@@ -74,5 +74,5 @@ sap.ui.define([
 		this._oDetailsDialog.open();
 	};
 
-	return FooterExtension;
+	return DetailsDialogExtension;
 });

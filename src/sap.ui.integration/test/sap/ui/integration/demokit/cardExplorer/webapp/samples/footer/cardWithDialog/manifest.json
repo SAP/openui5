@@ -1,7 +1,7 @@
 {
 	"_version": "1.35.0",
 	"sap.app": {
-		"id": "card.explorer.detailsDialog",
+		"id": "card.explorer.footer.cardWithDialog",
 		"type": "card",
 		"title": "Sample of an Adaptive Card with Customized Actions",
 		"subTitle": "Sample of an Adaptive Card with Customized Actions",
@@ -29,8 +29,8 @@
 		"type": "AdaptiveCard",
 		"extension": "./DetailsDialogExtension",
 		"header": {
-			"title": "Join next Meeting",
-			"subTitle": "Already in progress (4 min)",
+			"title": "Join Next Meeting",
+			"subTitle": "Starts in 2 Hours",
 			"icon": {
 				"src": "sap-icon://appointment"
 			},
@@ -71,7 +71,7 @@
 							"items": [
 								{
 									"type": "TextBlock",
-									"text": "CEP Engineering Sprint - Show & Tell 1",
+									"text": "Engineering Meeting - Show & Tell 1",
 									"wrap": true
 								},
 								{
@@ -95,7 +95,7 @@
 								{
 									"type": "Image",
 									"style": "Person",
-									"url": "./samples/footer/detailsDialog/images/DonnaMoore.png",
+									"url": "./samples/footer/cardWithDialog/images/DonnaMoore.png",
 									"size": "small"
 								}
 							],
@@ -106,8 +106,13 @@
 							"items": [
 								{
 									"type": "TextBlock",
-									"text": "[Donna Moore](mailto:donna.moore@sap.com) + 21",
-									"spacing": "Small"
+									"text": "Donna Moore"
+								},
+								{
+									"type": "TextBlock",
+									"spacing": "None",
+									"text": "Organizer",
+									"isSubtle": true
 								}
 							],
 							"width": "stretch",

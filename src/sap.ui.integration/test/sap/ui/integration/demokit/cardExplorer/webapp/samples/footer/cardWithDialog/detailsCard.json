@@ -1,7 +1,7 @@
 {
 	"_version": "1.15.0",
 	"sap.app": {
-		"id": "card.explorer.footer.detailsDialog.card",
+		"id": "card.explorer.footer.cardWithDialog.card",
 		"type": "card",
 		"title": "Sample of an Object Card",
 		"subTitle": "Sample of an Object Card",
@@ -64,7 +64,7 @@
 			"body": [
 				{
 					"type": "TextBlock",
-					"text": "CEP Engineering Spring - Show & Tell 1",
+					"text": "Engineering Meeting - Show & Tell 1",
 					"wrap": true,
 					"size": "large"
 				},
@@ -75,6 +75,12 @@
 					"size": "large"
 				},
 				{
+					"type": "TextBlock",
+					"text": "Agenda details will be provided later.",
+					"wrap": true,
+					"isSubtle": true
+				},
+				{
 					"type": "FactSet",
 					"facts": [
 						{
@@ -82,12 +88,8 @@
 							"value": "Microsoft Teams Meeting"
 						},
 						{
-							"title": "Link",
-							"value": "[Meeting Link](msteams:/l/meetup-join/19:meeting_YWUyY2I3NDUtYWFhZi00YmZjLWE0YzEtMTNkYjBjZWEzMTg3@thread.v2/0?context=%7b%22Tid%22%3a%2242f7676c-f455-423c-82f6-dc2d99791af7%22%2c%22Oid%22%3a%2254995cbb-44a1-4a68-b6f5-e7d561a44433%22%7d&anon=true&deeplinkId=b2899f17-5ce3-4a55-9741-65be6ad26bb5&launchAgent=join_launcher&type=meetup-join&directDl=true&msLaunch=true&enableMobilePage=true&fqdn=teams.microsoft.com)"
-						},
-						{
 							"title": "Organizer",
-							"value": "Moore, Donna"
+							"value": "Donna Moore"
 						}
 					]
 				}
