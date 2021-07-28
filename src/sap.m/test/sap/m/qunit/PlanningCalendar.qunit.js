@@ -1127,6 +1127,48 @@ sap.ui.define([
 		assert.equal(this.oPC.getVisibleIntervalsCount(), 31, "correct number of shown intervals");
 	});
 
+	QUnit.module("rendering - relativeView",{
+		beforeEach: function () {
+			this.oPC = createPlanningCalendar("PC3", new SearchField(), new Button());
+			this.oPC.setBuiltInViews(["Day", "Hour"]);
+			this.oPC.setMinDate(this.oPC.getStartDate());
+			this.oPC.setMaxDate(this.oPC.getStartDate());
+			this.oRelativeView = new PlanningCalendarView({
+				key: "test",
+						intervalType: "Day",
+						relative: true,
+						description: "Project in Weeks",
+						intervalSize: 7,
+						intervalLabelFormatter: function(iIntervalIndex) {
+							return "Week " + (iIntervalIndex + 1);
+						},
+						intervalsS: 4,
+						intervalsM: 8,
+						intervalsL: 1
+			});
+			this.oPC.addView(this.oRelativeView);
+			this.oPC.setViewKey("test");
+		},
+		afterEach: function () {
+			this.oPC.destroy();
+		},
+		prepareTest: function (sTargetElementId) {
+			this.oPC.placeAt(sTargetElementId);
+			sap.ui.getCore().applyChanges();
+		}
+	});
+
+	QUnit.test("checks for the number of week on small screen in relative period", function(assert) {
+		var iVisibleIntervals;
+		//Arrange
+		this.prepareTest("smallUiArea");
+		//Assert
+		assert.ok(this.oPC.isRelative(), "Relative period is active");
+		iVisibleIntervals = jQuery("#PC3-DatesRow-customintervals .sapUiCalItem").length;
+		assert.equal(iVisibleIntervals, 8, "week are 8");
+		assert.equal(this.oPC.getVisibleIntervalsCount(), 8, "correct number of shown intervals");
+	});
+
 	QUnit.module("Setters", {
 		beforeEach: function() {
 			this.oPC = createPlanningCalendar("SelectionMode", new SearchField(), new Button());
@@ -1661,6 +1703,63 @@ sap.ui.define([
 		assert.equal(oRowHeader.getTitle(), "Test", "row header Title");
 		assert.equal(oRowHeader.getDescription(), "Test", "row header Text");
 		assert.equal(oRowHeader.getIcon(), "sap-icon://sap-ui5", "row header icon");
+	});
+
+	QUnit.test("specialDates in relative period not rendered", function(assert){
+		// arrange
+		var oPC11 = createPlanningCalendar("PC11");
+
+		oPC11.setBuiltInViews(["Day", "Hour"]);
+		oPC11.setMinDate(this.oPC.getStartDate());
+		oPC11.setMaxDate(this.oPC.getStartDate());
+		var oView = this.oRelativeView = new PlanningCalendarView({
+			key: "test",
+					intervalType: "Day",
+					relative: true,
+					description: "Project in Weeks",
+					intervalSize: 7,
+					intervalLabelFormatter: function(iIntervalIndex) {
+						return "Week " + (iIntervalIndex + 1);
+					},
+					intervalsS: 4,
+					intervalsM: 8,
+					intervalsL: 13
+		});
+
+		sap.ui.getCore().applyChanges();
+
+		//act
+		oPC11.addView(oView);
+		oPC11.setViewKey("test");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(jQuery("#oPC11-TimesRow-201501011200").hasClass("sapUiCalItemType02"), "SpecialDate not rendered");
+
+		// act
+		oPC11.addSpecialDate(new DateTypeRange("SD1", {
+			startDate: new Date(2015, 0, 1, 15, 30),
+			type: CalendarDayType.Type01,
+			tooltip: "Test"
+		}));
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(jQuery("#oPC11-TimesRow-201501011500").hasClass("sapUiCalItemType01"), "new SpecialDate not rendered");
+
+		//act
+		oPC11.insertSpecialDate(new DateTypeRange("SD2", {
+			startDate: new Date(2015, 0, 1, 16, 30),
+			type: CalendarDayType.Type01,
+			tooltip: "Test"
+		}), 1);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(jQuery("#oPC11-TimesRow-201501011600").hasClass("sapUiCalItemType01"), "new SpecialDate not rendered");
+
+		// cleanup
+		oPC11.destroy();
 	});
 
 	QUnit.test("Row nonWorkingIntervals", function(assert) {
@@ -2906,10 +3005,12 @@ sap.ui.define([
 
 		//act
 		this.sut._handleDateSelect({
-			oSource: {
-				getStartDate: function () {
-					return new Date(Date.UTC(2015, 0, 5));
-				}
+			getSource: function(x) {
+				return	{
+					getStartDate: function () {
+						return new Date(Date.UTC(2015, 0, 5));
+					}
+				};
 			}
 		});
 		//assert
@@ -2917,10 +3018,12 @@ sap.ui.define([
 
 		//act
 		this.sut._handleDateSelect({
-			oSource: {
-				getStartDate: function () {
-					return new Date(Date.UTC(2015, 0, 8));
-				}
+			getSource: function(x) {
+				return	{
+					getStartDate: function () {
+						return new Date(Date.UTC(2015, 0, 8));
+					}
+				};
 			}
 		});
 		//assert

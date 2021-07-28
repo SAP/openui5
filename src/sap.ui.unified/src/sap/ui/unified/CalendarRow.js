@@ -16,6 +16,7 @@ sap.ui.define([
 	'sap/ui/core/Locale',
 	"./CalendarRowRenderer",
 	"sap/ui/dom/containsOrEquals",
+	"sap/ui/events/checkMouseEnterOrLeave",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/unified/CalendarAppointment"
 ], function(
@@ -31,6 +32,7 @@ sap.ui.define([
 	Locale,
 	CalendarRowRenderer,
 	containsOrEquals,
+	checkMouseEnterOrLeave,
 	jQuery,
 	CalendarAppointment
 ) {
@@ -94,6 +96,12 @@ sap.ui.define([
 			 * Number of displayed intervals. The size of the intervals is defined with <code>intervalType</code>
 			 */
 			intervals : {type : "int", group : "Appearance", defaultValue : 12},
+
+			/**
+			 * Number of interval type units merged. It's used when presenting Relative View in sap.m.PlanningCalendar.
+			 * Note: If the value is more than 1, the NonWorkingDays type is not presented.
+			 */
+			intervalSize : { type: "int", group: "Appearance", defaultValue: 1},
 
 			/**
 			 * Type of the intervals of the row. The default is one hour.
@@ -214,7 +222,6 @@ sap.ui.define([
 			 * @since 1.81.0
 			 */
 			appointmentRoundWidth: { type: "sap.ui.unified.CalendarAppointmentRoundWidth", group: "Appearance", defaultValue: CalendarAppointmentRoundWidth.None}
-
 		},
 		aggregations : {
 
@@ -287,7 +294,6 @@ sap.ui.define([
 					domRefId: {type: "string"}
 				}
 			},
-
 			/**
 			 * <code>startDate</code> was changed while navigating in <code>CalendarRow</code>
 			 */
@@ -574,7 +580,6 @@ sap.ui.define([
 	};
 
 	CalendarRow.prototype.onsapselect = function(oEvent){
-
 		// focused appointment must be selected
 		var aVisibleAppointments = this._getVisibleAppointments();
 
@@ -835,6 +840,9 @@ sap.ui.define([
 	};
 
 	CalendarRow.prototype._getNonWorkingDays = function() {
+		if (this.getIntervalSize() !== 1) {
+			return [];
+		}
 
 		var aNonWorkingDays = this.getNonWorkingDays();
 
@@ -1014,7 +1022,7 @@ sap.ui.define([
 		case CalendarIntervalType.Week:
 		case CalendarIntervalType.OneMonth:
 			oEndDate = new UniversalDate(this._oUTCStartDate.getTime());
-			oEndDate.setUTCDate(oEndDate.getUTCDate() + iIntervals);
+			oEndDate.setUTCDate(oEndDate.getUTCDate() + iIntervals * this.getIntervalSize());
 			break;
 
 		case CalendarIntervalType.Month:

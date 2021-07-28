@@ -24,6 +24,10 @@
 	height: 6rem;
 }
 
+.sapPCRelative.sapMPlanCalWithWeekNumbers .sapMPlanCalHead{
+	height: 3rem;
+}
+
 .sapMPlanCalWithDayNamesLine .sapMPlanCalHead{
 	height: 5rem;
 }
@@ -184,6 +188,11 @@
 	display: block;
 }
 
+.sapMSize0.sapMPlanCal.sapPCRelative > .sapMList .sapMListInfoTBar,
+.sapMSize1.sapMPlanCal.sapPCRelative > .sapMList .sapMListInfoTBar {
+	display: flex;
+}
+
 .sapMPlanCal.sapMPlanCalNoHead > .sapMList .sapMListInfoTBar > .sapMPlanCalHead,
 .sapMPlanCal.sapMPlanCalNoHead > .sapMList .sapMListInfoTBar > .sapUiCalRow,
 .sapMSize0.sapMPlanCal > .sapMList .sapMListInfoTBar > .sapMPlanCalHead,
@@ -191,6 +200,16 @@
 .sapMSize1.sapMPlanCal > .sapMList .sapMListInfoTBar > .sapMPlanCalHead,
 .sapMSize1.sapMPlanCal > .sapMList .sapMListInfoTBar > .sapUiCalRow{
 	width: 100%;
+}
+
+.sapMSize0.sapMPlanCal.sapPCRelative > .sapMList .sapMListInfoTBar > .sapMPlanCalHead,
+.sapMSize1.sapMPlanCal.sapPCRelative > .sapMList .sapMListInfoTBar > .sapMPlanCalHead {
+	width: 20%;
+}
+
+.sapMSize0.sapMPlanCal.sapPCRelative > .sapMList .sapMListInfoTBar > .sapUiCalRow,
+.sapMSize1.sapMPlanCal.sapPCRelative > .sapMList .sapMListInfoTBar > .sapUiCalRow {
+	width: 80%;
 }
 
 .sapMPlanCal.sapMPlanCalNoHead > .sapMList .sapMListInfoTBar > .sapMPlanCalHead,

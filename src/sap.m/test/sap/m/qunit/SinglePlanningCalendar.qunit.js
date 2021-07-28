@@ -1599,7 +1599,7 @@ sap.ui.define([
 				"Button 'Today' has appropriate hidden label");
 		assert.ok(oHeader._oPickerBtn.getAriaLabelledBy().indexOf(sPickerButtonLabelId) > -1,
 				"Picker button has appropriate hidden label");
-		assert.strictEqual(oHeader._oPickerBtn.$().attr("aria-haspopup"), "grid",
+		assert.strictEqual(oHeader._oPickerBtn.$().attr("aria-haspopup"), "dialog",
 				"Picker button indicates that it will open a calendar");
 
 		// Clean up
