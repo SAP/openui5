@@ -202,6 +202,52 @@ sap.ui.define([
 	}
 
 	/**
+	 * Test that the template output is as expected.
+	 *
+	 * @param {object} assert The QUnit assert object
+	 * @param {object} oXMLPreprocessorConfig Holds a preprocessor configuration for type "xml",
+	 *    see {@link sap.ui.core.mvc.View.create}
+	 * @param {string} sTemplate The template used to generate the expected view as XML
+	 * @param {string} sView The expected resulting view from templating
+	 * @returns {Promise} A promise that is resolved when the test is done
+	 *
+	 * @private
+	 */
+	function doTestXMLTemplating(assert, oXMLPreprocessorConfig, sTemplate, sView) {
+		var that = this;
+
+		/*
+		 * Remove all namespaces and all spaces before tag ends (..."/>) and all tabs from the
+		 * given XML string.
+		 *
+		 * @param {string} sXml
+		 *   XML string
+		 * @returns {string}
+		 *   Normalized XML string
+		 */
+		function _normalizeXml(sXml) {
+			/*jslint regexp: true*/
+			sXml = sXml
+				.replace(/ xmlns.*?=".*?"/g, "")
+				.replace(/ \/>/g, '/>')
+				// Replace all tabulators
+				.replace(/\t/g, "");
+			return sXml;
+		}
+
+		// allow indents in expectation
+		sView = sView.replace(/\t/g, "");
+
+		return this.createView(assert, sTemplate, undefined, undefined,
+			{xml : oXMLPreprocessorConfig}).then(function () {
+			assert.strictEqual(
+				_normalizeXml(XMLHelper.serialize(that.oView._xContent)),
+				_normalizeXml(XMLHelper.serialize(xml(sView)))
+			);
+		});
+	}
+
+	/**
 	 * Returns the binding context's path for a given managed object.
 	 *
 	 * @param {sap.ui.model.ManagedObject} oManagedObject - A managed object
@@ -281,6 +327,70 @@ sap.ui.define([
 					reject(e);
 				}
 			}, iDelay === undefined ? 5 : iDelay);
+		});
+	}
+
+	/**
+	 * Creates a test with the given title and executes viewStart with the given parameters.
+	 *
+	 * @param {string} sTitle The title of the test case
+	 * @param {string} sView The XML snippet of the view
+	 * @param {object} mResponseByRequest A map containing the request as key
+	 *   and response as value
+	 * @param {object|object[]} mValueByControl A map or an array of maps containing control id as
+	 *   key and the expected control values as value
+	 * @param {string|sap.ui.model.odata.v4.ODataModel} [vModel]
+	 *   The model (or the name of a function at <code>this</code> which creates it); it is attached
+	 *   to the view and to the test instance.
+	 *   If no model is given, the <code>TEA_BUSI</code> model is created and used.
+	 * @param {function} [fnAssert]
+	 *   A function containing additional assertions such as expected log messages which is called
+	 *   just before view creation with the test as "this"
+	 */
+	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl, vModel, fnAssert) {
+
+		QUnit.test(sTitle, function (assert) {
+			var sControlId, sRequest, that = this;
+
+			function expectChanges(mValueByControl) {
+				for (sControlId in mValueByControl) {
+					that.expectChange(sControlId, mValueByControl[sControlId]);
+				}
+			}
+
+			for (sRequest in mResponseByRequest) {
+				this.expectRequest(sRequest, mResponseByRequest[sRequest]);
+			}
+			if (Array.isArray(mValueByControl)) {
+				mValueByControl.forEach(expectChanges);
+			} else {
+				expectChanges(mValueByControl);
+			}
+			if (typeof vModel === "string") {
+				vModel = this[vModel]();
+			}
+			if (fnAssert) {
+				fnAssert.call(this);
+			}
+
+			return this.createView(assert, sView, vModel);
+		});
+	}
+
+	/**
+	 * Creates a QUnit.test which tests that the template output is as expected.
+	 *
+	 * @param {string} sTitle The title of the test case
+	 * @param {object} oXMLPreprocessorConfig Holds a preprocessor configuration for type "xml",
+	 *    see {@link sap.ui.core.mvc.View.create}
+	 * @param {string} sTemplate The template used to generate the expected view as XML
+	 * @param {string} sView The expected resulting view from templating
+	 *
+	 * @private
+	 */
+	function testXMLTemplating(sTitle, oXMLPreprocessorConfig, sTemplate, sView) {
+		QUnit.test(sTitle, function (assert) {
+			return doTestXMLTemplating.call(this, assert, oXMLPreprocessorConfig, sTemplate, sView);
 		});
 	}
 
@@ -1915,117 +2025,6 @@ sap.ui.define([
 			return oPromise;
 		}
 	});
-
-	/**
-	 *
-	 * Creates a test with the given title and executes viewStart with the given parameters.
-	 *
-	 * @param {string} sTitle The title of the test case
-	 * @param {string} sView The XML snippet of the view
-	 * @param {object} mResponseByRequest A map containing the request as key
-	 *   and response as value
-	 * @param {object|object[]} mValueByControl A map or an array of maps containing control id as
-	 *   key and the expected control values as value
-	 * @param {string|sap.ui.model.odata.v4.ODataModel} [vModel]
-	 *   The model (or the name of a function at <code>this</code> which creates it); it is attached
-	 *   to the view and to the test instance.
-	 *   If no model is given, the <code>TEA_BUSI</code> model is created and used.
-	 * @param {function} [fnAssert]
-	 *   A function containing additional assertions such as expected log messages which is called
-	 *   just before view creation with the test as "this"
-	 */
-	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl, vModel, fnAssert) {
-
-		QUnit.test(sTitle, function (assert) {
-			var sControlId, sRequest, that = this;
-
-			function expectChanges(mValueByControl) {
-				for (sControlId in mValueByControl) {
-					that.expectChange(sControlId, mValueByControl[sControlId]);
-				}
-			}
-
-			for (sRequest in mResponseByRequest) {
-				this.expectRequest(sRequest, mResponseByRequest[sRequest]);
-			}
-			if (Array.isArray(mValueByControl)) {
-				mValueByControl.forEach(expectChanges);
-			} else {
-				expectChanges(mValueByControl);
-			}
-			if (typeof vModel === "string") {
-				vModel = this[vModel]();
-			}
-			if (fnAssert) {
-				fnAssert.call(this);
-			}
-
-			return this.createView(assert, sView, vModel);
-		});
-	}
-
-	/**
-	 * Test that the template output is as expected.
-	 *
-	 * @param {object} assert The QUnit assert object
-	 * @param {object} oXMLPreprocessorConfig Holds a preprocessor configuration for type "xml",
-	 *    see {@link sap.ui.core.mvc.View.create}
-	 * @param {string} sTemplate The template used to generate the expected view as XML
-	 * @param {string} sView The expected resulting view from templating
-	 * @returns {Promise} A promise that is resolved when the test is done
-	 *
-	 * @private
-	 */
-	function doTestXMLTemplating(assert, oXMLPreprocessorConfig, sTemplate, sView) {
-		var that = this;
-
-		/*
-		 * Remove all namespaces and all spaces before tag ends (..."/>) and all tabs from the
-		 * given XML string.
-		 *
-		 * @param {string} sXml
-		 *   XML string
-		 * @returns {string}
-		 *   Normalized XML string
-		 */
-		function _normalizeXml(sXml) {
-			/*jslint regexp: true*/
-			sXml = sXml
-				.replace(/ xmlns.*?=".*?"/g, "")
-				.replace(/ \/>/g, '/>')
-				// Replace all tabulators
-				.replace(/\t/g, "");
-			return sXml;
-		}
-
-		// allow indents in expectation
-		sView = sView.replace(/\t/g, "");
-
-		return this.createView(assert, sTemplate, undefined, undefined,
-			{xml : oXMLPreprocessorConfig}).then(function () {
-				assert.strictEqual(
-					_normalizeXml(XMLHelper.serialize(that.oView._xContent)),
-					_normalizeXml(XMLHelper.serialize(xml(sView)))
-				);
-		});
-	}
-
-	/**
-	 * Creates a QUnit.test which tests that the template output is as expected.
-	 *
-	 * @param {string} sTitle The title of the test case
-	 * @param {object} oXMLPreprocessorConfig Holds a preprocessor configuration for type "xml",
-	 *    see {@link sap.ui.core.mvc.View.create}
-	 * @param {string} sTemplate The template used to generate the expected view as XML
-	 * @param {string} sView The expected resulting view from templating
-	 *
-	 * @private
-	 */
-	function testXMLTemplating(sTitle, oXMLPreprocessorConfig, sTemplate, sView) {
-		QUnit.test(sTitle, function (assert) {
-			return doTestXMLTemplating.call(this, assert, oXMLPreprocessorConfig, sTemplate, sView);
-		});
-	}
 
 	//*********************************************************************************************
 	// verify that error responses are processed correctly for direct requests
