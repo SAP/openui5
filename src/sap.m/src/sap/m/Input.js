@@ -2707,22 +2707,27 @@ function(
 		oSuggPopover.attachEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, function (oEvent) {
 			var oItem = oEvent.getParameter("newItem"),
 				sNewValue = this.calculateNewValue(oItem),
-				bFocusedGroupHeader = oItem && oItem.isA("sap.m.GroupHeaderListItem"),
+				bIsGroupItem = oItem && oItem.isA("sap.m.GroupHeaderListItem"),
 				oFocusDomRef = this.getFocusDomRef(),
 				sTypedValue = oFocusDomRef && oFocusDomRef.value.substring(0, oFocusDomRef.selectionStart),
 				oPreviousItem = oEvent.getParameter("previousItem"),
 				bPreviosFocusOnGroup = oPreviousItem && oPreviousItem.isA("sap.m.GroupHeaderListItem"),
 				iSelectionStart = calculateSelectionStart(selectionRange(oFocusDomRef, bPreviosFocusOnGroup), sNewValue, sTypedValue, bPreviosFocusOnGroup);
 
-			// setValue isn't used because here is too early to modify the lastValue of input
-			this.setDOMValue(bFocusedGroupHeader ? sTypedValue : sNewValue);
+			if (!oItem) { // When out of the list, reset to user's input
+				this.setDOMValue(sTypedValue);
+			} else if (bIsGroupItem) { // If it's a GroupHeader item, reset the input
+				this.setDOMValue("");
+			} else { // Replace the value and highlight it
+				this.setDOMValue(sNewValue);
+
+				// If the matched item starts with user input's value, highlight only the remaining part. Otherwise, the whole item.
+				iSelectionStart = (iSelectionStart === 0 && sNewValue.indexOf(sTypedValue) === 0) ? sTypedValue.length : iSelectionStart;
+				this._doSelect(iSelectionStart);
+			}
 
 			// memorize the value set by calling jQuery.val, because browser doesn't fire a change event when the value is set programmatically.
 			this._sSelectedSuggViaKeyboard = sNewValue;
-
-			if (!bFocusedGroupHeader) {
-				this._doSelect(iSelectionStart);
-			}
 		}, this);
 
 		if (this.getShowTableSuggestionValueHelp()) {
