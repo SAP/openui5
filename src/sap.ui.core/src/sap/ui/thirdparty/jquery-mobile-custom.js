@@ -2122,12 +2122,11 @@ if ( eventCaptureSupported ) {
 					stop = $.event.special.swipe.stop( event );
 
 					// prevent scrolling
-					// MODIFIED BY SAP: skip this behavior on chrome+desktop, as it prevents text selection on non-input fields (CSN #3696977/2013)
-					// NOTE: other browsers (Firefox, IE, Safari) don't stop the text selection when calling preventDefault, so we only alter the behaviour for Chrome to be as close to the original implementation of jQuery
-					if (event.cancelable && (!sap.ui.Device.system.desktop || sap.ui.Device.browser.name !== "cr")) {
-						if (!sap.ui.Device.os.blackberry && Math.abs( start.coords[ 0 ] - stop.coords[ 0 ] ) > $.event.special.swipe.scrollSupressionThreshold ) {
-							event.preventDefault();
-						}
+					// MODIFIED BY SAP: because calling 'preventDefault' breaks the text selection in all browsers, it's
+					// now checked whether there's text selected and 'preventDefault' is called only when no text is
+					// currently being selected.
+					if (event.cancelable && !window.getSelection().toString() && Math.abs( start.coords[ 0 ] - stop.coords[ 0 ] ) > $.event.special.swipe.scrollSupressionThreshold) {
+						event.preventDefault();
 					}
 				}
 
