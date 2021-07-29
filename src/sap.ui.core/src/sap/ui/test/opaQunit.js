@@ -14,6 +14,11 @@ sap.ui.define([
 	QUnitPause.setupAfterQUnit();
 
 	QUnit.begin(function (oDetails) {
+		// add ui5 version in the user agent string bar
+		if (sap && sap.ui) {
+			jQueryDOM('#qunit-userAgent')[0].innerText += "; UI5: " + sap.ui.version;
+		}
+
 		Opa._usageReport.begin({uri: new URI().toString(), totalTests: oDetails.totalTests});
 	});
 
