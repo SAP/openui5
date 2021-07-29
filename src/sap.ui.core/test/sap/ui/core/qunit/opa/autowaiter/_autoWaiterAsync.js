@@ -159,31 +159,4 @@ sap.ui.define([
 		fnStartLogSpy.restore();
 		fnDestroyLogSpy.restore();
 	});
-
-	QUnit.module("AutoWaiterAsync - autoWait xhr waiter", {
-		beforeEach: function () {
-			this.clock = sinon.useFakeTimers();
-			this.fnHasPendingStub = sinon.stub(_XHRWaiter, "hasPending");
-			// ensure setTimeout is called once in waitAsync
-			this.fnHasPendingStub.returns(false).onCall(1).returns(true);
-		},
-		afterEach: function () {
-			this.clock.restore();
-			this.fnHasPendingStub.restore();
-		}
-	});
-
-	// the delayed function is wrapped by _timeoutWaiter and when it is executed,
-	// _timeoutWaiter stops tracking the corresponding setTimeout function before executing the original delayed function
-	// as a result, there are no pending timeouts at the moment when hasToWait is performed
-	QUnit.test("Should ignore the waitAsync timeout in autoWaiter check", function (assert) {
-		var fnCallbackSpy = sinon.spy();
-
-		_autoWaiterAsync.waitAsync(fnCallbackSpy);
-
-		this.clock.tick(iPollInterval);
-		assert.ok(fnCallbackSpy.calledOnce, "Should invoke the callback when the autoWaiter conditions are met");
-		assert.ok(!fnCallbackSpy.args[0][0], "Should invoke the callback with no arguments");
-		assert.ok($.isEmptyObject(this.clock.timers), "Should stop polling when autoWaiter conditions are met");
-	});
 });
