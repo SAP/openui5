@@ -147,12 +147,14 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.core
 	 */
 	HistoryUtils.exit = function () {
-		HistoryUtils._resetCounterAfterTimeOut().then(function () {
-			if (!HistoryUtils._isOriginalReplaceStateFunctionActive() && History._bUsePushState) {
-				window.history.replaceState = fnOriginalReplaceState;
-				window.history.pushState = fnOriginalPushState;
-			}
-		});
+		if (History._bUsePushState) {
+			HistoryUtils._resetCounterAfterTimeOut().then(function () {
+				if (!HistoryUtils._isOriginalReplaceStateFunctionActive() && History._bUsePushState) {
+					window.history.replaceState = fnOriginalReplaceState;
+					window.history.pushState = fnOriginalPushState;
+				}
+			});
+		}
 	};
 
 	/**
