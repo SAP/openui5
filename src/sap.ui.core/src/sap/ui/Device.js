@@ -1477,10 +1477,11 @@ if (typeof window.sap.ui !== "object") {
 	/**
 	 * Provides a basic categorization of the used device based on various indicators.
 	 *
-	 * These indicators are for example the support of touch events, the screen size, the used operation system or
-	 * the user agent of the browser.
+	 * These indicators are, for example, the support of touch events, the used operating system, and the user agent of the browser.
 	 *
-	 * <b>Note:</b> Depending on the capabilities of the device it is also possible that multiple flags are set to <code>true</code>.
+	 * <b>Note:</b> There is no easy way to precisely determine the used device from the information provided by the browser. We therefore rely especially on the user agent.
+     * In combination with given device capabilities, it is therefore possible that multiple flags are set to <code>true</code>.
+     * This is mostly the case for desktop devices with touch capability, and for mobile devices requesting web pages as desktop pages.
 	 *
 	 * @namespace
 	 * @name sap.ui.Device.system
@@ -1491,8 +1492,7 @@ if (typeof window.sap.ui !== "object") {
 	 *
 	 * Furthermore, a CSS class <code>sap-tablet</code> is added to the document root element.
 	 *
-	 * <b>Note:</b> This flag is also true for some browsers on desktop devices running on Windows 8 or higher. Also see the
-	 * documentation for {@link sap.ui.Device.system.combi} devices.
+	 * <b>Note:</b> This flag is also <code>true</code> for some browsers running on desktop devices. See the documentation for {@link sap.ui.Device.system.combi} devices.
 	 * You can use the following logic to ensure that the current device is a tablet device:
 	 *
 	 * <pre>
@@ -1510,6 +1510,10 @@ if (typeof window.sap.ui !== "object") {
 	 *
 	 * Furthermore, a CSS class <code>sap-phone</code> is added to the document root element.
 	 *
+	 * <b>Note:</b> In case a phone requests a web page as a "Desktop Page", it is possible
+	 * that all properties except <code>Device.system.phone</code> are set to <code>true</code>.
+	 * In this case it is not possible to differentiate between tablet and phone relying on the user agent.
+	 *
 	 * @name sap.ui.Device.system.phone
 	 * @type boolean
 	 * @public
@@ -1518,6 +1522,10 @@ if (typeof window.sap.ui !== "object") {
 	 * If this flag is set to <code>true</code>, the device is recognized as a desktop system.
 	 *
 	 * Furthermore, a CSS class <code>sap-desktop</code> is added to the document root element.
+	 *
+	 * <b>Note:</b> This flag is by default also true for Safari on iPads running on iOS 13 or higher.
+	 * The end user can change this behavior by disabling "Request Desktop Website -> All websites" within the iOS settings.
+	 * See also the documentation for {@link sap.ui.Device.system.combi} devices.
 	 *
 	 * @name sap.ui.Device.system.desktop
 	 * @type boolean
@@ -1528,8 +1536,7 @@ if (typeof window.sap.ui !== "object") {
 	 *
 	 * Furthermore, a CSS class <code>sap-combi</code> is added to the document root element.
 	 *
-	 * <b>Note:</b> This property is mainly for Microsoft Windows 8 (and following) devices where the mouse and touch event may be supported
-	 * natively by the browser being used. This property is set to <code>true</code> only when both mouse and touch event are natively supported.
+	 * <b>Note:</b> This property is set to <code>true</code> only when both a desktop and a mobile device is detected.
 	 *
 	 * @name sap.ui.Device.system.combi
 	 * @type boolean
@@ -1552,15 +1559,13 @@ if (typeof window.sap.ui !== "object") {
 
 	Device.system = {};
 
-	function getSystem(simMobileOnDesktop, customUA) {
-		var bTabletDetected = isTablet(customUA);
-		var isWin8Upwards = Device.os.windows && Device.os.version >= 8;
-		var isWin7 = Device.os.windows && Device.os.version === 7;
+	function getSystem(customUA) {
+		var bTabletDetected = !!isTablet(customUA);
 
 		var oSystem = {};
-		oSystem.tablet = !!(((Device.support.touch && !isWin7) || isWin8Upwards || simMobileOnDesktop) && bTabletDetected);
-		oSystem.phone = !!(((Device.support.touch && !isWin7) || simMobileOnDesktop) && !bTabletDetected);
-		oSystem.desktop = !!((!oSystem.tablet && !oSystem.phone) || isWin8Upwards || isWin7 || Device.os.linux || Device.os.macintosh);
+		oSystem.tablet = bTabletDetected;
+		oSystem.phone = Device.support.touch && !bTabletDetected;
+		oSystem.desktop = !!((!oSystem.tablet && !oSystem.phone) || Device.os.windows || Device.os.linux || Device.os.macintosh);
 		oSystem.combi = oSystem.desktop && oSystem.tablet;
 		oSystem.SYSTEMTYPE = SYSTEMTYPE;
 
@@ -1574,7 +1579,7 @@ if (typeof window.sap.ui !== "object") {
 		var sUserAgent = customUA || navigator.userAgent;
 		if (Device.os.ios) {
 			return /ipad/i.test(sUserAgent);
-		} else if (Device.os.macintosh || Device.os.linux) {
+		} else if (Device.os.windows || Device.os.macintosh || Device.os.linux) {
 			// For iOS:
 			// With iOS 13 the string 'iPad' was removed from the user agent string through a browser setting, which is applied on all sites by default:
 			// "Request Desktop Website -> All websites" (for more infos see: https://forums.developer.apple.com/thread/119186).
@@ -1586,11 +1591,7 @@ if (typeof window.sap.ui !== "object") {
 			return Device.support.touch;
 		} else {
 			//in real mobile device
-			if (Device.support.touch) {
-				if (Device.os.windows && Device.os.version >= 8) {
-					return true;
-				}
-
+			if (Device.support.touch) { // eslint-disable-line no-lonely-if
 				if (Device.browser.chrome && Device.os.android && Device.os.version >= 4.4) {
 					// From Android version 4.4, WebView also uses Chrome as Kernel.
 					// We can use the user agent pattern defined in Chrome to do phone/tablet detection
@@ -1639,8 +1640,8 @@ if (typeof window.sap.ui !== "object") {
 		}
 	}
 
-	function setSystem(simMobileOnDesktop, customUA) {
-		Device.system = getSystem(simMobileOnDesktop, customUA);
+	function setSystem(customUA) {
+		Device.system = getSystem(customUA);
 		if (Device.system.tablet || Device.system.phone) {
 			Device.browser.mobile = true;
 		}
@@ -1948,16 +1949,6 @@ if (typeof window.sap.ui !== "object") {
 		bResize = false;
 		iClearFlagTimeout = null;
 	}
-
-	//******** Update browser settings for test purposes ********
-
-	Device._update = function(simMobileOnDesktop) {
-		ua = navigator.userAgent;
-		oLogger.log(WARNING, "Device API values manipulated: NOT PRODUCTIVE FEATURE!!! This should be only used for test purposes. Only use if you know what you are doing.");
-		setBrowser();
-		setOS();
-		setSystem(simMobileOnDesktop);
-	};
 
 	//********************************************************
 
