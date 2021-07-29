@@ -1,0 +1,86 @@
+{
+	"selectedKey": "page1",
+	"navigation": [
+		{
+			"title": "Home",
+			"key": "page1"
+		},
+		{
+			"title": "Applications",
+			"key": "page2"
+		},
+		{
+			"title": "Users and Groups",
+			"key": "page3",
+			"items": [
+				{
+					"title": "User 1",
+					"key": "page31"
+				},
+				{
+					"title": "User 2",
+					"key": "page32"
+				},
+				{
+					"title": "User 3",
+					"key": "page33"
+				}
+			]
+		},
+		{
+			"title": "Identity",
+			"key": "page4",
+			"items": [
+				{
+					"title": "Identity 1",
+					"key": "page41"
+				},
+				{
+					"title": "Identity 2",
+					"key": "page42"
+				},
+				{
+					"title": "Identity 3",
+					"key": "page43"
+				}
+			]
+		},
+		{
+			"title": "Provisioning",
+			"key": "page5"
+		},
+		{
+			"title": "Monitoring",
+			"icon": "sap-icon://unwired",
+			"key": "page6",
+			"items": [
+				{
+					"title": "Monitoring 1",
+					"key": "page61"
+				},
+				{
+					"title": "Monitoring 2",
+					"key": "page62"
+				}
+			]
+		},
+		{
+			"title": "Resources",
+			"key": "page7",
+			"items": [
+				{
+					"title": "Resource 1",
+					"key": "page71"
+				},
+				{
+					"title": "Resource 2",
+					"key": "page72"
+				},
+				{
+					"title": "Resource 3",
+					"key": "page73"
+				}
+			]
+		}
+	]
+}

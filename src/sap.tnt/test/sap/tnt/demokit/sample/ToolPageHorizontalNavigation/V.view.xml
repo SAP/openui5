@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.tnt.sample.ToolPageNavigation.C"
+	controllerName="sap.tnt.sample.ToolPageHorizontalNavigation.C"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:tnt="sap.tnt"
@@ -7,16 +7,6 @@
 	<tnt:ToolPage id="toolPage">
 		<tnt:header>
 			<tnt:ToolHeader>
-				<Button
-					visible="{= ${device>/system/phone}}"
-					id="sideNavigationToggleButton"
-					icon="sap-icon://menu2"
-					type="Transparent"
-					press=".onSideNavButtonPress">
-					<layoutData>
-						<OverflowToolbarLayoutData priority="NeverOverflow" />
-					</layoutData>
-				</Button>
 				<Image height="1.5rem"
 					   class="sapUiSmallMarginBegin"
 					   src="https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg" />
@@ -25,7 +15,7 @@
 						<OverflowToolbarLayoutData shrinkable="true" />
 					</layoutData>
 				</Title>
-				<Title level="H3" titleStyle="H6" text="Second Title" visible="{=! ${device>/system/phone}}">
+				<Title level="H3" titleStyle="H6" text="Second Title">
 					<layoutData>
 						<OverflowToolbarLayoutData shrinkable="true" />
 					</layoutData>
@@ -36,36 +26,20 @@
 					</layoutData>
 				</ToolbarSpacer>
 				<tnt:ToolHeaderUtilitySeparator />
-				<OverflowToolbarButton text="Search" tooltip="Search" icon="sap-icon://search" type="Transparent">
-					<layoutData>
-						<OverflowToolbarLayoutData priority="{= ${device>/system/phone} ? 'AlwaysOverflow' : 'High'}" />
-					</layoutData>
-				</OverflowToolbarButton>
-				<OverflowToolbarButton text="Tasks" tooltip="Tasks" icon="sap-icon://circle-task" type="Transparent">
-					<layoutData>
-						<OverflowToolbarLayoutData priority="{= ${device>/system/phone} ? 'AlwaysOverflow' : 'High'}" />
-					</layoutData>
-				</OverflowToolbarButton>
-				<OverflowToolbarButton text="Notifications" tooltip="Notifications" icon="sap-icon://bell" type="Transparent">
-					<layoutData>
-						<OverflowToolbarLayoutData priority="{= ${device>/system/phone} ? 'AlwaysOverflow' : 'High'}" />
-					</layoutData>
-				</OverflowToolbarButton>
+				<OverflowToolbarButton text="Search" tooltip="Search" icon="sap-icon://search" type="Transparent" />
+				<OverflowToolbarButton text="Tasks" tooltip="Tasks" icon="sap-icon://circle-task" type="Transparent" />
+				<OverflowToolbarButton text="Notifications" tooltip="Notifications" icon="sap-icon://bell" type="Transparent" />
 				<Avatar src="test-resources/sap/tnt/images/John_Miller.png"
 						displaySize="XS">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
 				</Avatar>
-				<OverflowToolbarButton text="Custom Action" tooltip="Custom Action" icon="sap-icon://grid" type="Transparent">
-					<layoutData>
-						<OverflowToolbarLayoutData priority="{= ${device>/system/phone} ? 'AlwaysOverflow' : 'High'}" />
-					</layoutData>
-				</OverflowToolbarButton>
+				<OverflowToolbarButton text="Custom Action" tooltip="Custom Action" icon="sap-icon://grid" type="Transparent" />
 			</tnt:ToolHeader>
 		</tnt:header>
 		<tnt:subHeader>
-			<tnt:ToolHeader visible="{=! ${device>/system/phone}}">
+			<tnt:ToolHeader>
 				<IconTabHeader
 						selectedKey="{/selectedKey}"
 						items="{path: '/navigation'}"
@@ -77,14 +51,12 @@
 					<items>
 						<IconTabFilter
 								items="{items}"
-								icon="{icon}"
 								text="{title}"
 								key="{key}">
 							<items>
 								<IconTabFilter
 										text="{title}"
-										key="{key}"
-										enabled="{enabled}">
+										key="{key}">
 								</IconTabFilter>
 							</items>
 						</IconTabFilter>
@@ -92,28 +64,6 @@
 				</IconTabHeader>
 			</tnt:ToolHeader>
 		</tnt:subHeader>
-		<tnt:sideContent>
-			<tnt:SideNavigation
-				visible="{= ${device>/system/phone}}"
-				expanded="true"
-				selectedKey="{/selectedKey}"
-				itemSelect=".onItemSelect">
-				<tnt:NavigationList items="{path: '/navigation'}">
-					<tnt:NavigationListItem
-						text="{title}"
-						icon="{icon}"
-						enabled="{enabled}"
-						expanded="{expanded}"
-						items="{items}"
-						key="{key}">
-						<tnt:NavigationListItem
-							text="{title}"
-							key="{key}"
-							enabled="{enabled}" />
-					</tnt:NavigationListItem>
-				</tnt:NavigationList>
-			</tnt:SideNavigation>
-		</tnt:sideContent>
 		<tnt:mainContents>
 			<NavContainer id="pageContainer" initialPage="page1">
 				<pages>
