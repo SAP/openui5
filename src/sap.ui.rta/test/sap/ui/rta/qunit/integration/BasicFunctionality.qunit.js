@@ -215,13 +215,17 @@ sap.ui.define([
 
 		QUnit.test("with focus on an open dialog", function(assert) {
 			var done = assert.async();
-
 			this.oElementOverlay.focus();
 			this.oElementOverlay.setSelected(true);
+
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oElementOverlay, sinon).then(function() {
-				var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[1];
-				oContextMenuButton.firePress();
+				var clock = sinon.useFakeTimers();
+				var oMenu = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				oMenu.getItems()[1].setEnabled(true);
+				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[1].getDomRef());
+				clock.tick(1000);
 				sap.ui.getCore().applyChanges();
+				clock.restore();
 
 				var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
 				oDialog.attachOpened(function() {
@@ -230,7 +234,7 @@ sap.ui.define([
 					QUnitUtils.triggerKeydown(document, KeyCodes.Y, false, false, true);
 					assert.equal(this.fnRedoSpy.callCount, 0, "then _onRedo was not called");
 					var oOkButton = sap.ui.getCore().byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
-					sap.ui.qunit.QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
+					QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
 					sap.ui.getCore().applyChanges();
 					done();
 				}.bind(this));
@@ -253,8 +257,12 @@ sap.ui.define([
 			this.oElementOverlay.focus();
 			this.oElementOverlay.setSelected(true);
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oElementOverlay, sinon).then(function() {
-				var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[0];
-				oContextMenuButton.firePress();
+				var clock = sinon.useFakeTimers();
+				var oMenu = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[0].getDomRef());
+				clock.tick(1000);
+				sap.ui.getCore().applyChanges();
+				clock.restore();
 			}.bind(this));
 		});
 	});

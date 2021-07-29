@@ -167,7 +167,6 @@ sap.ui.define([
 	RtaQunitUtils.openContextMenuWithKeyboard = function(oTarget) {
 		return new Promise(function(resolve) {
 			this.oRta.getPlugins()["contextMenu"].attachEventOnce("openedContextMenu", resolve);
-
 			var oParams = {};
 			oParams.keyCode = KeyCodes.F10;
 			oParams.which = oParams.keyCode;
@@ -190,34 +189,25 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	RtaQunitUtils.closeContextMenuWithKeyboard = function(oTarget) {
+	RtaQunitUtils.closeContextMenu = function(oTarget) {
 		return new Promise(function(resolve) {
-			var oPopover = oTarget.getPopover();
-			if (!oPopover.isOpen()) {
-				resolve();
-				return;
-			}
-			oPopover.attachEventOnce("afterClose", resolve);
-
-			oPopover.focus();
-			var oParams = {};
-			oParams.keyCode = KeyCodes.ESCAPE;
-			QUnitUtils.triggerEvent("keydown", oPopover.getDomRef(), oParams);
-		});
+			this.oRta.getPlugins()["contextMenu"].attachEventOnce("closedContextMenu", resolve);
+			oTarget.close();
+		}.bind(this));
 	};
 
 	RtaQunitUtils.getContextMenuItemCount = function(oTarget) {
 		return new Promise(function(resolve) {
 			var iItemCount;
 			oTarget.focus();
-			oTarget.setSelected();
+			oTarget.setSelected(true);
 			RtaQunitUtils.openContextMenuWithKeyboard.call(this, oTarget)
 				.then(function () {
 					var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-					iItemCount = oContextMenuControl.getButtons().length;
+					iItemCount = oContextMenuControl.getItems().length;
 					return oContextMenuControl;
 				}.bind(this))
-				.then(RtaQunitUtils.closeContextMenuWithKeyboard)
+				.then(RtaQunitUtils.closeContextMenu.call(this))
 				.then(function () {
 					resolve(iItemCount);
 				});
