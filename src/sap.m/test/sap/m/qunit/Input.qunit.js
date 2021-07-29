@@ -6185,7 +6185,7 @@ sap.ui.define([
 
 		// assert
 		// go to the header group item
-		assert.strictEqual(this.oInput.getValue(), "A", "The typed in value should remain.");
+		assert.strictEqual(this.oInput.getValue(), "", "The typed in value should be reset.");
 
 		// act
 		// go to the next list item
@@ -6217,6 +6217,112 @@ sap.ui.define([
 
 		//assert
 		assert.strictEqual(document.activeElement, this.oInput.getFocusDomRef(), "The focus is in the input field");
+	});
+
+	QUnit.test("Behaviour for a 'startsWith' item selection", function (assert) {
+		// Setup
+		this.oInput.showItems();
+		this.clock.tick(500);
+
+		var oSuggestionsPopover = this.oInput._getSuggestionsPopover();
+		var oItem = oSuggestionsPopover.getItemsContainer().getItems()[1]; // The first SsstandardListItem
+
+		// Simulate user input- the first 3 letters of a StandardListItem
+		this.oInput.setValue(oItem.getTitle().substr(0, 3));
+		this.oInput.focus();
+
+		// Act
+		oSuggestionsPopover.fireEvent(sap.m.SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
+			previousItem: null,
+			newItem: oItem
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oInput.getValue(), oItem.getTitle(), "The title is autocompleted in the Input.");
+		assert.strictEqual(this.oInput._$input[0].selectionStart, 3,"The selection is over the autocompleted value.");
+
+		// Act
+		// Go back to the input. The "focus" is moved to the input
+		oSuggestionsPopover.fireEvent(sap.m.SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
+			previousItem: null,
+			newItem: null
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oInput.getValue(), oItem.getTitle().substr(0, 3), "User's input is kept.");
+	});
+
+	QUnit.test("Behaviour for a 'contains' item selection", function (assert) {
+		// Setup
+		this.oInput.showItems();
+		this.clock.tick(500);
+
+		var oSuggestionsPopover = this.oInput._getSuggestionsPopover();
+		var oItem = oSuggestionsPopover.getItemsContainer().getItems()[1]; // The first SsstandardListItem
+
+		// Simulate user input- some letters letters from a StandardListItem, but not the first ones
+		this.oInput.setValue(oItem.getTitle().substr(3));
+		this.oInput.focus();
+
+		// Act
+		oSuggestionsPopover.fireEvent(sap.m.SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
+			previousItem: null,
+			newItem: oItem
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oInput.getValue(), oItem.getTitle(), "The title is autocompleted in the Input.");
+		assert.strictEqual(this.oInput._$input[0].selectionStart, 0,"The selection is over the whole text.");
+		assert.strictEqual(this.oInput._$input[0].selectionEnd, this.oInput.getValue().length,"The selection is over the whole text.");
+
+		// Act
+		// Go back to the input. The "focus" is moved to the input
+		oSuggestionsPopover.fireEvent(sap.m.SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
+			previousItem: null,
+			newItem: null
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oInput.getValue(), "", "The input is reset");
+	});
+
+	QUnit.test("Behaviour for a GroupItem selection", function (assert) {
+		// Setup
+		this.oInput.showItems();
+		this.clock.tick(500);
+
+		var oSuggestionsPopover = this.oInput._getSuggestionsPopover();
+		var oGroupItem = oSuggestionsPopover.getItemsContainer().getItems()[0]; // A GroupItem
+		var oItem = oSuggestionsPopover.getItemsContainer().getItems()[1]; // A StandardListItem
+
+		// Simulate user input- which matches some item
+		this.oInput.setValue(oItem.getTitle().substr(0, 3));
+		this.oInput.focus();
+
+		// Act
+		oSuggestionsPopover.fireEvent(sap.m.SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
+			previousItem: null,
+			newItem: oGroupItem
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oInput.getValue(), "", "User's input is reset.");
+
+		// Act
+		// Go back to the input. The "focus" is moved to the input
+		oSuggestionsPopover.fireEvent(sap.m.SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
+			previousItem: null,
+			newItem: null
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oInput.getValue(), "", "The input is reset");
 	});
 
 	QUnit.module("showItems functionality: List", {

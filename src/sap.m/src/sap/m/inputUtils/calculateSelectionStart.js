@@ -27,7 +27,7 @@ sap.ui.define([
 	/**
 	 * Calculates the correct start of a text selection.
 	 *
-	 * @param {HTMLElement} oFocusDomRef The inner input element.
+	 * @param {object} oSelectionRange Start and end range.
 	 * @param {string} sItemText The item text property.
 	 * @param {string} sTypedValue The user input.
 	 * @param {boolean} bSkipTextSelection True, if the selection should be skipped.
