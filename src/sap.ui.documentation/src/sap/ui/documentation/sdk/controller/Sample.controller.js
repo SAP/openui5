@@ -2,6 +2,8 @@
  * ${copyright}
  */
 
+/*global URLSearchParams*/
+
 sap.ui.define([
     "sap/ui/thirdparty/jquery",
     "sap/ui/documentation/sdk/controller/SampleBaseController",
@@ -14,7 +16,8 @@ sap.ui.define([
     "sap/ui/core/HTML",
     "sap/m/library",
     "sap/base/Log",
-	"sap/ui/core/Fragment"
+	"sap/ui/core/Fragment",
+	"sap/ui/documentation/sdk/util/Resources"
 ], function(
     jQuery,
 	SampleBaseController,
@@ -27,7 +30,8 @@ sap.ui.define([
 	HTML,
 	mobileLibrary,
 	Log,
-	Fragment
+	Fragment,
+	ResourcesUtil
 ) {
 		"use strict";
 
@@ -50,7 +54,10 @@ sap.ui.define([
 					rtaLoaded: false
 				});
 
-				this._sDefaultSampleTheme = 'sap_fiori_3';
+				this._sSampleVersion = window.sessionStorage.getItem("versionPrefixPath");
+
+				this._sDefaultSampleTheme = (this._sSampleVersion && parseInt(this._sSampleVersion.slice(3,5)) < 68) ?
+					"sap_belize" : sap.ui.getCore().getConfiguration().getTheme();
 
 				this._sId = null; // Used to hold sample ID
 				this._sEntityId = null; // Used to hold entity ID for the sample currently shown
@@ -62,6 +69,12 @@ sap.ui.define([
 				]).then(this._loadRTA.bind(this));
 
 				this.getView().setModel(this.oModel);
+
+				this.bUseUnifiedResourceOrigin =  new URLSearchParams(window.location.search).get('sap-ui-xx-unifiedResources') != null;
+
+				this.bus = sap.ui.getCore().getEventBus();
+				this.setDefaultSampleTheme();
+				this.bus.subscribe("themeChanged", "onDemoKitThemeChanged", this.onDemoKitThemeChanged, this);
 			},
 
 			/* =========================================================== */
@@ -138,7 +151,7 @@ sap.ui.define([
 						var oSampleConfig = oConfig && oConfig.sample || {};
 
 						// only have the option to run standalone if there is an iframe
-						oModelData.showNewTab = !!oSampleConfig.iframe;
+						oModelData.showNewTab = !!oSampleConfig.iframe || this.bUseUnifiedResourceOrigin;
 						oModelData.id = oSample.id;
 						oModelData.name = oSample.name;
 						oModelData.details = oSample.details;
@@ -162,7 +175,7 @@ sap.ui.define([
 								}
 							}
 
-							if (oSampleConfig.iframe) {
+							if (oSampleConfig.iframe || this.bUseUnifiedResourceOrigin) {
 								oComponentContainer = this._createIframe(oComponentContainer, oSampleConfig.iframe);
 							} else {
 								this.sIFrameUrl = null;
@@ -170,7 +183,7 @@ sap.ui.define([
 						}
 
 						// Sets the current iframe URL or restores it to "undefined"
-						oModelData.iframe = oSampleConfig.iframe;
+						oModelData.iframe = oSampleConfig.iframe || this.bUseUnifiedResourceOrigin;
 
 						// handle stretch content
 						var bStretch = !!oSampleConfig.stretch;
@@ -301,6 +314,17 @@ sap.ui.define([
 
 					// combine namespace with the file name again
 					this.sIFrameUrl = sap.ui.require.toUrl((sIframePath + "/" + sIframeWithoutUI5Ending).replace(/\./g, "/")) + sFileEnding || ".html";
+				} else if (this.bUseUnifiedResourceOrigin) {
+					var sSamplePath =  ResourcesUtil.getResourceOriginPath(sap.ui.require.toUrl(this._sId.replace(/\./g, "/"))),
+						sSampleOrigin = (window['sap-ui-documentation-config'] && window['sap-ui-documentation-config'].demoKitResourceOrigin),
+						sSampleVersion = this._sSampleVersion || "";
+
+					this.sIFrameUrl = sap.ui.require.toUrl(
+						"sap/ui/demo/mock/index.html") +
+						"?sap-ui-xx-sample-id=" + sSampleId
+						+ "&&sap-ui-xx-sample-path=" + sSamplePath
+						+ "&&sap-ui-xx-sample-origin=" + sSampleOrigin
+						+ "&&sap-ui-xx-sample-version=" + sSampleVersion;
 				} else {
 					Log.error("no iframe source was provided");
 					return;
@@ -323,7 +347,7 @@ sap.ui.define([
 									oSampleFrame.sap.ui.getCore().attachInit(function () {
 										var bCompact = jQuery(document.body).hasClass("sapUiSizeCompact");
 
-										oSampleFrameCore.applyTheme(this._oCore.getConfiguration().getTheme());
+										oSampleFrameCore.applyTheme(this.bUseUnifiedResourceOrigin ? this._sDefaultSampleTheme : this._oCore.getConfiguration().getTheme());
 										oSampleFrameCore.getConfiguration().setRTL(this._oCore.getConfiguration().getRTL());
 										oSampleFrame.jQuery('body')
 											.toggleClass("sapUiSizeCompact", bCompact)
@@ -371,6 +395,18 @@ sap.ui.define([
 				});
 			},
 
+			setDefaultSampleTheme: function() {
+				this._sDefaultSampleTheme = (this._sSampleVersion && parseInt(this._sSampleVersion.slice(3,5)) < 68) ?
+					"sap_belize" : sap.ui.getCore().getConfiguration().getTheme();
+			},
+
+			onDemoKitThemeChanged: function(sChannelId, sEventId, oData) {
+				if (this._oHtmlControl) {
+					this._oHtmlControl.$()[0].contentWindow.sap.ui.getCore().applyTheme(oData.sThemeActive);
+				}
+				this.setDefaultSampleTheme();
+			},
+
 			onNavBack : function (oEvt) {
 				this.getRouter().navTo("entity", { id : this.entityId });
 			},
@@ -401,7 +437,7 @@ sap.ui.define([
 
 				oIFrameURL.searchParams.set(sSearchParam, sNewVal);
 
-				this.sIFrameUrl += oIFrameURL.search;
+				this.sIFrameUrl = oIFrameURL.origin + oIFrameURL.pathname + decodeURI(oIFrameURL.search);
 			},
 
 			_loadRTA: function () {
