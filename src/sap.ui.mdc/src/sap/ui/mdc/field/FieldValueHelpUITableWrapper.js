@@ -139,6 +139,7 @@ sap.ui.define([
 			fnEventAction("cellClick", this._handleItemPress, this);
 			fnEventAction("rowSelectionChange", this._handleSelectionChange, this);
 			fnEventAction("rowsUpdated", this._handleUpdateFinished, this);
+			fnEventAction("busyStateChanged", this._handleBusyStateChanged, this);
 
 			var oRowBinding = this.getListBinding();
 			if (oRowBinding) {
