@@ -9631,16 +9631,17 @@ sap.ui.define([
 	// Scenario: Create a sales order line item, enter a quantity, then submit the batch. Expect the
 	// quantity unit to be sent, too.
 	QUnit.test("Create with default value in a currency/unit", function (assert) {
-		var sView = '\
-<Table id="table" items="{/SalesOrderList(\'42\')/SO_2_SOITEM}">\
-	<Input id="quantity" value="{Quantity}"/>\
-	<Text id="unit" text="{QuantityUnit}"/>\
-</Table>',
+		var oListBinding,
 			oModel = createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
 			oTable,
+			sView = '\
+<Table id="table" items="{/SalesOrderList(\'42\')/SO_2_SOITEM}">\
+	<Input id="quantity" value="{Quantity}"/>\
+	<Text id="unit" text="{QuantityUnit}"/>\
+</Table>',
 			that = this;
 
 		this.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=ItemPosition,Quantity"
@@ -9660,7 +9661,8 @@ sap.ui.define([
 				.expectChange("unit", ["EA", "DZ"]);
 
 			oTable = that.oView.byId("table");
-			oTable.getBinding("items").create();
+			oListBinding = oTable.getBinding("items");
+			oListBinding.create();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -9694,7 +9696,13 @@ sap.ui.define([
 				});
 
 			return Promise.all([
-				that.oModel.submitBatch("update"),
+				that.oModel.submitBatch("update").then(
+					function () {
+						assert.notOk(oModel.hasPendingChanges("update"),
+							"Model: No pending changes when submitBatch promise resolves");
+						assert.notOk(oListBinding.hasPendingChanges(),
+							"Binding: No pending changes when submitBatch promise resolves");
+					}),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -10022,7 +10030,14 @@ sap.ui.define([
 			oBindingNote0.setValue("Note02");
 
 			return Promise.all([
-				oModel.submitBatch("update"),
+				oModel.submitBatch("update").then(
+					function () {
+						assert.notOk(oModel.hasPendingChanges("update"),
+							"No pending changes when submitBatch promise resolves");
+						assert.notOk(
+							that.oView.byId("table").getBinding("items").hasPendingChanges(),
+							"No pending changes when submitBatch promise resolves");
+					}),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -10101,7 +10116,13 @@ sap.ui.define([
 			oBindingAmount1.setValue("4.22");
 
 			return Promise.all([
-				oModel.submitBatch("update"),
+				oModel.submitBatch("update").then(
+					function () {
+						assert.ok(oModel.hasPendingChanges("update"),
+							"Pending changes when submitBatch promise resolves as PATCH failed");
+						assert.ok(that.oView.byId("table").getBinding("items").hasPendingChanges(),
+							"Pending changes when submitBatch promise resolves as PATCH failed");
+					}),
 				that.waitForChanges(assert)
 			]);
 		});
