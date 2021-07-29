@@ -80,6 +80,7 @@ sap.ui.define([
 	var RowAction = library.RowAction;
 	var ToolbarDesign = MLibrary.ToolbarDesign;
 	var ToolbarStyle = MLibrary.ToolbarStyle;
+	var MultiSelectMode = library.MultiSelectMode;
 	var sFilterInterface = "sap.ui.mdc.IFilter";
 	var internalMap = new window.WeakMap();
 	var internal = function(oTable) {
@@ -350,6 +351,19 @@ sap.ui.define([
 					type: "boolean",
 					group: "Behavior",
 					defaultValue: false
+				},
+				/**
+				 * Defines the multi-selection mode for the control.
+				 * If this property is set to the <code>Default</code> value, the <code>ResponsiveTable</code> type control renders
+				 * the Select All checkbox in the column header, otherwise the Deselect All icon is rendered.
+				 *
+				 * This property is used with the <code>selectionMode="Multi"</code>.
+				 * @since 1.93
+				 */
+				 multiSelectMode : {
+					type: "sap.ui.mdc.MultiSelectMode",
+					group: "Behavior",
+					defaultValue: MultiSelectMode.Default
 				}
 			},
 			aggregations: {
@@ -835,6 +849,15 @@ sap.ui.define([
 		this.setProperty("selectionMode", sMode, true);
 		if (this._oTable && sOldMode != this.getSelectionMode()) {
 			this._updateSelectionBehavior();
+		}
+		return this;
+	};
+
+	Table.prototype.setMultiSelectMode = function(sMultiSelectMode) {
+		var sOldMultiSelectMode = this.getMultiSelectMode();
+		this.setProperty("multiSelectMode", sMultiSelectMode, true);
+		if (this._oTable && sOldMultiSelectMode != this.getMultiSelectMode()) {
+			this._updateMultiSelectMode();
 		}
 		return this;
 	};
@@ -1850,6 +1873,12 @@ sap.ui.define([
 	Table.prototype._updateSelectionBehavior = function() {
 		var oTableType = this._bMobileTable ? ResponsiveTableType : GridTableType;
 		oTableType.updateSelection(this);
+	};
+
+	Table.prototype._updateMultiSelectMode = function() {
+		if (this._bMobileTable) {
+			ResponsiveTableType.updateMultiSelectMode(this);
+		}
 	};
 
 	Table.prototype._onColumnRearrange = function(oEvent) {
