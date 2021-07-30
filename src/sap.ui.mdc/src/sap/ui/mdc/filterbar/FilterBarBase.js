@@ -572,7 +572,7 @@ sap.ui.define([
 
 				if (this._bPersistValues && this._isPersistenceSupported()) {
 					var mOrigConditions = {};
-					mOrigConditions[sFieldPath] = this._stringifyConditions(sFieldPath, oEvent.getParameter("value"));
+					mOrigConditions[sFieldPath] = this._stringifyConditions(sFieldPath, merge([], oEvent.getParameter("value")));
 					this._cleanupConditions(mOrigConditions[sFieldPath]);
 
 					var oChangePromise = this.getEngine().createChanges({
@@ -669,7 +669,6 @@ sap.ui.define([
 
 		return oResultCondition;
 	};
-
 
 	FilterBarBase.prototype._stringifyConditions = function(sFieldPath, aConditions) {
 		var oProperty = this._getPropertyByName(sFieldPath);
@@ -1039,10 +1038,10 @@ sap.ui.define([
 	FilterBarBase.prototype._getModelConditions = function(oModel, bDoNotExternalize, bKeepAllValues) {
 		var mConditions = {};
 		if (oModel) {
-			var aAllConditions = oModel.getAllConditions();
+			var aAllConditions = merge({}, oModel.getAllConditions());
 			for (var sFieldPath in aAllConditions) {
 				if (aAllConditions[sFieldPath] && (bKeepAllValues || aAllConditions[sFieldPath].length > 0)) {
-					mConditions[sFieldPath] = merge([], aAllConditions[sFieldPath]);
+					mConditions[sFieldPath] = aAllConditions[sFieldPath];
 					if (!bDoNotExternalize) {
 						this._cleanupConditions(mConditions[sFieldPath]);
 						var aFieldConditions = this._stringifyConditions(sFieldPath, mConditions[sFieldPath]);
