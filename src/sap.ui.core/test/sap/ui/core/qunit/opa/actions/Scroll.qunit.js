@@ -51,8 +51,14 @@ sap.ui.define([
 			properties: {
 				title: "Section 20"
 			},
-			success: function  (aControls) {
-				Opa5.assert.ok(isInViewport(aControls[0].getDomRef()), "The page is scrolled");
+			matchers: function(oControl) {
+				return isInViewport(oControl.getDomRef());
+			},
+			success: function  () {
+				Opa5.assert.ok(true, "The page is scrolled");
+			},
+			error: function  () {
+				Opa5.assert.ok(false, "The page is not scrolled");
 			}
 		});
 
@@ -97,8 +103,14 @@ sap.ui.define([
 			properties: {
 				title: "Mousepad"
 			},
-			success: function  (aControls) {
-				Opa5.assert.ok(isInViewport(aControls[0].getDomRef()), "The page is scrolled");
+			matchers: function(oControl) {
+				return isInViewport(oControl.getDomRef());
+			},
+			success: function  () {
+				Opa5.assert.ok(true, "The page is scrolled");
+			},
+			error: function  () {
+				Opa5.assert.ok(false, "The page is not scrolled");
 			}
 		});
 
