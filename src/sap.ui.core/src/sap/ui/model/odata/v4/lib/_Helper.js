@@ -652,8 +652,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Extracts all (top and detail) messages from the given error instance into lists of
-		 * unbound and bound messages.
+		 * Extracts all (top and detail) messages from the given error instance.
 		 *
 		 * @param {Error} oError
 		 *   An error instance as created by {@link .createError} or {@link .decomposeError}
@@ -667,15 +666,14 @@ sap.ui.define([
 		 * @param {string} [oError.requestUrl]
 		 *   The absolute request URL of the failed OData request; required to resolve a long text
 		 *   URL
-		 * @returns {object}
-		 *   An object containing "unbound" and "bound" properties each containing an array of raw
-		 *   message objects suitable for {@link sap.ui.model.odata.v4.ODataModel#createUI5Message}
+		 * @returns {object[]}
+		 *   An array of raw message objects suitable for
+		 *   {@link sap.ui.model.odata.v4.ODataModel#createUI5Message}
 		 *
 		 * @private
 		 */
 		extractMessages : function (oError) {
-			var aBound = [],
-				aUnbound = [];
+			var aMessages = [];
 
 			/*
 			 * Creates a raw message object taking all relevant properties, converts the annotations
@@ -711,18 +709,17 @@ sap.ui.define([
 					}
 				});
 
-				if (typeof oMessage.target !== "string") {
-					aUnbound.push(oRawMessage);
-				} else if (oMessage.target[0] === "$" || !oError.resourcePath) {
-					// target for the bound message is a system query option or cannot be resolved
-					// -> report as unbound message
-					oRawMessage.message = oMessage.target + ": " + oMessage.message;
-					aUnbound.push(oRawMessage);
-				} else {
-					oRawMessage.target = oMessage.target;
-					oRawMessage.transition = true;
-					aBound.push(oRawMessage);
+				if (typeof oMessage.target === "string") {
+					if (oMessage.target[0] === "$" || !oError.resourcePath) {
+						// target for the bound message is a system query option or cannot be
+						// resolved -> report as unbound message
+						oRawMessage.message = oMessage.target + ": " + oMessage.message;
+					} else {
+						oRawMessage.target = oMessage.target;
+					}
 				}
+				oRawMessage.transition = true;
+				aMessages.push(oRawMessage);
 			}
 
 			if (oError.error) {
@@ -737,7 +734,7 @@ sap.ui.define([
 			} else {
 				addMessage(oError, 4 /*Error*/, true);
 			}
-			return {bound : aBound, unbound : aUnbound};
+			return aMessages;
 		},
 
 		/**

@@ -4008,18 +4008,16 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("extractMessages w/o oError.error", function (assert) {
 		var oError = new Error("Failure"),
-			oExpectedResult = {
-				bound : [],
-				unbound : [{
-					additionalTargets : undefined,
-					code : undefined,
-					message : "Failure",
-					numericSeverity : 4,
-					technical : true,
-					"@$ui5.error" : oError,
-					"@$ui5.originalMessage" : oError
-				}]
-			},
+			aExpectedMessages = [{
+				additionalTargets : undefined,
+				code : undefined,
+				message : "Failure",
+				numericSeverity : 4,
+				technical : true,
+				transition : true,
+				"@$ui5.error" : oError,
+				"@$ui5.originalMessage" : oError
+			}],
 			oResult;
 
 		oError.resourcePath = "some/resource/path"; // required for bound message
@@ -4030,9 +4028,9 @@ sap.ui.define([
 		// code under test
 		oResult = _Helper.extractMessages(oError);
 
-		assert.deepEqual(oResult, oExpectedResult);
-		assert.strictEqual(oResult.unbound[0]["@$ui5.error"], oError);
-		assert.strictEqual(oResult.unbound[0]["@$ui5.originalMessage"], oError);
+		assert.deepEqual(oResult, aExpectedMessages);
+		assert.strictEqual(oResult[0]["@$ui5.error"], oError);
+		assert.strictEqual(oResult[0]["@$ui5.originalMessage"], oError);
 	});
 
 	//*********************************************************************************************
@@ -4059,54 +4057,55 @@ sap.ui.define([
 				}],
 				message : "OData-Error"
 			},
-			oExpectedResult = {
-				bound : [{
-					additionalTargets : "~add3~",
-					code : undefined,
-					message : undefined,
-					numericSeverity : undefined,
-					target : "",
-					technical : "~bTechnical3~",
-					transition : true,
-					"@$ui5.error" : oError,
-					"@$ui5.originalMessage" : oDataError.details[3]
-				}],
-				unbound : [{
-					additionalTargets : "~undefined~",
-					code : "code",
-					message : "OData-Error",
-					numericSeverity : 4,
-					technical : true,
-					"@$ui5.error" : oError,
-					"@$ui5.originalMessage" : oDataError
-				}, {
-					additionalTargets : "~add0-undefined~",
-					code : "detail-code0",
-					message : "detail-message0",
-					technical : "~bTechnical0~",
-					numericSeverity : undefined,
-					"@$ui5.error" : oError,
-					"@$ui5.originalMessage" : oDataError.details[0]
-				}, {
-					additionalTargets : "~add1-undefined~",
-					code : "detail-code1",
-					message : "detail-message1",
-					technical : "~bTechnical1~",
-					numericSeverity : undefined,
-					"@$ui5.error" : oError,
-					"@$ui5.originalMessage" : oDataError.details[1]
-				}, {
-					additionalTargets : "~add2-undefined~",
-					code : "detail-code2",
-					message : "$filter: detail-message2",
-					technical : "~bTechnical2~",
-					numericSeverity : undefined,
-					"@$ui5.error" : oError,
-					"@$ui5.originalMessage" : oDataError.details[2]
-				}]
-			},
+			aExpectedMessages = [{
+				additionalTargets : "~undefined~",
+				code : "code",
+				message : "OData-Error",
+				numericSeverity : 4,
+				technical : true,
+				transition : true,
+				"@$ui5.error" : oError,
+				"@$ui5.originalMessage" : oDataError
+			}, {
+				additionalTargets : "~add0-undefined~",
+				code : "detail-code0",
+				message : "detail-message0",
+				technical : "~bTechnical0~",
+				transition : true,
+				numericSeverity : undefined,
+				"@$ui5.error" : oError,
+				"@$ui5.originalMessage" : oDataError.details[0]
+			}, {
+				additionalTargets : "~add1-undefined~",
+				code : "detail-code1",
+				message : "detail-message1",
+				technical : "~bTechnical1~",
+				transition : true,
+				numericSeverity : undefined,
+				"@$ui5.error" : oError,
+				"@$ui5.originalMessage" : oDataError.details[1]
+			}, {
+				additionalTargets : "~add2-undefined~",
+				code : "detail-code2",
+				message : "$filter: detail-message2",
+				technical : "~bTechnical2~",
+				transition : true,
+				numericSeverity : undefined,
+				"@$ui5.error" : oError,
+				"@$ui5.originalMessage" : oDataError.details[2]
+			}, {
+				additionalTargets : "~add3~",
+				code : undefined,
+				message : undefined,
+				numericSeverity : undefined,
+				target : "",
+				technical : "~bTechnical3~",
+				transition : true,
+				"@$ui5.error" : oError,
+				"@$ui5.originalMessage" : oDataError.details[3]
+			}],
 			oHelperMock = this.mock(_Helper),
-			oResult;
+			aMessages;
 
 		oError.error = oDataError;
 		oError.resourcePath = "some/resource/path"; // required for bound message
@@ -4123,15 +4122,15 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oDataError.details[3])).returns("~add3~");
 
 		// code under test
-		oResult = _Helper.extractMessages(oError);
+		aMessages = _Helper.extractMessages(oError);
 
-		assert.deepEqual(oResult, oExpectedResult);
-		assert.strictEqual(oResult.unbound[0]["@$ui5.error"], oError);
-		assert.strictEqual(oResult.unbound[0]["@$ui5.originalMessage"], oDataError);
-		assert.strictEqual(oResult.unbound[1]["@$ui5.error"], oError);
-		assert.strictEqual(oResult.unbound[1]["@$ui5.originalMessage"], oDataError.details[0]);
-		assert.strictEqual(oResult.unbound[2]["@$ui5.error"], oError);
-		assert.strictEqual(oResult.unbound[2]["@$ui5.originalMessage"], oDataError.details[1]);
+		assert.deepEqual(aMessages, aExpectedMessages);
+		assert.strictEqual(aMessages[0]["@$ui5.error"], oError);
+		assert.strictEqual(aMessages[0]["@$ui5.originalMessage"], oDataError);
+		assert.strictEqual(aMessages[1]["@$ui5.error"], oError);
+		assert.strictEqual(aMessages[1]["@$ui5.originalMessage"], oDataError.details[0]);
+		assert.strictEqual(aMessages[2]["@$ui5.error"], oError);
+		assert.strictEqual(aMessages[2]["@$ui5.originalMessage"], oDataError.details[1]);
 	});
 
 	//*********************************************************************************************
@@ -4139,7 +4138,7 @@ sap.ui.define([
 		// $ignoreTopLevel, numericSeverity, longtextUrl
 		var oError = new Error(),
 			oHelperMock = this.mock(_Helper),
-			oResult;
+			aMessages;
 
 		oError.resourcePath = "some/resource/path"; // required for bound message
 		oError.requestUrl = "the/requestUrl";
@@ -4179,12 +4178,12 @@ sap.ui.define([
 			.returns("/absolute/url1");
 
 		// code under test
-		oResult = _Helper.extractMessages(oError);
+		aMessages = _Helper.extractMessages(oError);
 
-		assert.strictEqual(oResult.unbound[0].numericSeverity, 2);
-		assert.strictEqual(oResult.bound[0].numericSeverity, 43);
-		assert.strictEqual(oResult.unbound[0].longtextUrl, "/absolute/url0");
-		assert.strictEqual(oResult.bound[0].longtextUrl, "/absolute/url1");
+		assert.strictEqual(aMessages[0].numericSeverity, 2);
+		assert.strictEqual(aMessages[1].numericSeverity, 43);
+		assert.strictEqual(aMessages[0].longtextUrl, "/absolute/url0");
+		assert.strictEqual(aMessages[1].longtextUrl, "/absolute/url1");
 
 		oError.error.details = [{
 			"@Common0.longtextUrl" : undefined,
@@ -4196,26 +4195,24 @@ sap.ui.define([
 		oHelperMock.expects("makeAbsolute").never();
 
 		// code under test (falsy longtextUrl)
-		oResult = _Helper.extractMessages(oError);
+		aMessages = _Helper.extractMessages(oError);
 
-		assert.strictEqual(oResult.unbound[0].longtextUrl, undefined);
-		assert.strictEqual(oResult.unbound.length, 1);
-		assert.strictEqual(oResult.bound.length, 0);
+		assert.strictEqual(aMessages[0].longtextUrl, undefined);
+		assert.strictEqual(aMessages.length, 1);
 
 		delete oError.error.details;
 
 		// code under test (no oError.error.details)
-		oResult = _Helper.extractMessages(oError);
+		aMessages = _Helper.extractMessages(oError);
 
-		assert.strictEqual(oResult.unbound.length, 0);
-		assert.strictEqual(oResult.bound.length, 0);
+		assert.strictEqual(aMessages.length, 0);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("extractMessages: no resource path -> unbound", function (assert) {
 		// a bound message will be reported as unbound if there is no resource path
 		var oError = new Error(),
-			oResult;
+			aMessages;
 
 		oError.error = {
 			message : "message",
@@ -4223,11 +4220,10 @@ sap.ui.define([
 		};
 
 		// code under test
-		oResult = _Helper.extractMessages(oError);
+		aMessages = _Helper.extractMessages(oError);
 
-		assert.strictEqual(oResult.bound.length, 0);
-		assert.strictEqual(oResult.unbound.length, 1);
-		assert.strictEqual(oResult.unbound[0].message, "target: message");
-		assert.notOk("target" in oResult.unbound[0]);
+		assert.strictEqual(aMessages.length, 1);
+		assert.strictEqual(aMessages[0].message, "target: message");
+		assert.notOk("target" in aMessages[0]);
 	});
 });

@@ -1164,16 +1164,13 @@ sap.ui.define([
 	 *   the longtext URL
 	 * @param {string} [sCachePath]
 	 *   The cache-relative path to the entity; used to resolve the targets
-	 * @param {boolean} [bIgnoreTargets]
-	 *   Whether to ignore all (main or additional) targets
 	 * @returns {sap.ui.core.message.Message}
 	 *   The created UI5 message object
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.createUI5Message = function (oRawMessage, sResourcePath, sCachePath,
-			bIgnoreTargets) {
-		var bIsBound = !bIgnoreTargets && typeof oRawMessage.target === "string",
+	ODataModel.prototype.createUI5Message = function (oRawMessage, sResourcePath, sCachePath) {
+		var bIsBound = typeof oRawMessage.target === "string",
 			sMessageLongtextUrl = oRawMessage.longtextUrl,
 			aTargets;
 
@@ -1184,6 +1181,7 @@ sap.ui.define([
 		}
 
 		if (bIsBound) {
+			sResourcePath = sResourcePath && sResourcePath.split("?")[0]; // remove query string
 			aTargets = [resolveTarget(oRawMessage.target)];
 			if (oRawMessage.additionalTargets) {
 				oRawMessage.additionalTargets.forEach(function (sTarget) {
@@ -1200,7 +1198,7 @@ sap.ui.define([
 			code : oRawMessage.code,
 			descriptionUrl : sMessageLongtextUrl || undefined,
 			message : oRawMessage.message,
-			persistent : bIsBound ? oRawMessage.transition : true,
+			persistent : !bIsBound || oRawMessage.transition,
 			processor : this,
 			// Note: "" instead of undefined makes filtering easier (agreement with FE!)
 			target : bIsBound ? aTargets : "",
@@ -1691,8 +1689,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.reportError = function (sLogMessage, sReportingClassName, oError) {
-		var sDetails,
-			oRawMessages;
+		var sDetails;
 
 		if (oError.canceled === "noDebugLog") {
 			return;
@@ -1713,16 +1710,7 @@ sap.ui.define([
 		}
 		oError.$reported = true;
 
-		oRawMessages = _Helper.extractMessages(oError);
-		if (oRawMessages.bound.length) {
-			this.reportStateMessages(
-				oError.resourcePath.split("?")[0],
-				{"" : oRawMessages.bound},
-				[]
-			);
-		}
-		// The longtextUrls are already absolute, so sResourcePath is not needed here
-		this.reportTransitionMessages(oRawMessages.unbound);
+		this.reportTransitionMessages(_Helper.extractMessages(oError), oError.resourcePath);
 	};
 
 	/**
@@ -1792,7 +1780,8 @@ sap.ui.define([
 		if (aMessages && aMessages.length) {
 			this.fireMessageChange({
 				newMessages : aMessages.map(function (oMessage) {
-					return that.createUI5Message(oMessage, sResourcePath, undefined, true);
+					oMessage.transition = true;
+					return that.createUI5Message(oMessage, sResourcePath);
 				})
 			});
 		}

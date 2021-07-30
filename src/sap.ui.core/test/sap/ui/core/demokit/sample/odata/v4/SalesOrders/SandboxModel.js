@@ -282,10 +282,10 @@ sap.ui.define([
 					source : "SalesOrderList('NEW3')-SO_2_SOITEM('20').json"
 				},
 				"POST SalesOrderList('NEW3')/SO_2_SOITEM?custom-option=value" : [{
-					ifMatch : /,"Note":"new 10"/g,
+					ifMatch : /,"Note":"new 10"/,
 					source : "POST-SalesOrderList('NEW3')-SO_2_SOITEM_10.json"
 				}, {
-					ifMatch : /,"Note":"new 20"/g,
+					ifMatch : /,"Note":"new 20"/,
 					source : "POST-SalesOrderList('NEW3')-SO_2_SOITEM_20.json"
 				}],
 				"SalesOrderList('NEW4')?custom-option=value&$select=ChangedAt,CreatedAt,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID,CompanyName,PhoneNumber)" : {
@@ -372,7 +372,7 @@ sap.ui.define([
 				},
 				"POST SalesOrderList?custom-option=value" : [{
 					code : 400,
-					ifMatch : /,"Note":"RAISE_ERROR"/g,
+					ifMatch : /,"Note":"RAISE_ERROR"/,
 					message : {
 						error : {
 							code : "OO/000",
@@ -384,20 +384,20 @@ sap.ui.define([
 						}
 					}
 				}, {
-					ifMatch : /,"Note":"new 2"/g,
+					ifMatch : /,"Note":"new 2"/,
 					source : "POST-SalesOrderList_NEW2.json"
 				}, {
-					ifMatch : /,"Note":"new 3"/g,
+					ifMatch : /,"Note":"new 3"/,
 					source : "POST-SalesOrderList_NEW3.json"
 				}, {
-					ifMatch : /,"Note":"new 4"/g,
+					ifMatch : /,"Note":"new 4"/,
 					source : "POST-SalesOrderList_NEW4.json"
 				}, {
 					source : "POST-SalesOrderList_NEW1.json"
 				}],
 				"POST SalesOrderList('0500000004')/SO_2_SOITEM?custom-option=value" : [{
 					code : 400,
-					ifMatch : /,"Quantity":"0",/g,
+					ifMatch : /,"Quantity":"0",/,
 					message : {
 						"error" : {
 							"code" : "SEPM_BO_COMMON/022",
@@ -437,9 +437,20 @@ sap.ui.define([
 						}
 					}
 				}],
+				"PATCH SalesOrderList('0500000000')?custom-option=value" : {
+					ifMatch : /{"Note":"HEADER_MESSAGE"}/,
+					headers : {
+						"sap-messages" : JSON.stringify([{
+							"code" : "42",
+							"message" : "This is your requested bound header message",
+							"numericSeverity" : 1,
+							"target" : "Note"
+						}])
+					}
+				},
 				"PATCH SalesOrderList('0500000004')?custom-option=value" : [{
 					code : 400,
-					ifMatch : /{"Note":"RAISE_ERROR"}/g,
+					ifMatch : /{"Note":"RAISE_ERROR"}/,
 					message :	{
 						error : {
 							code : "OO/000",

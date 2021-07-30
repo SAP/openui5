@@ -2474,10 +2474,8 @@ sap.ui.define([
 			}),
 			oOperationMetadata = {$kind : "Action"},
 			sPath = "/ActionImport(...)",
-			oRawMessages = {
-				bound : ["~boundMessage0", "~boundMessage1"],
-				unbound : ["~unboundMessage0", "~unboundMessage1"]
-			},
+			aRawMessages =
+				["~boundMessage0", "~boundMessage1", "~unboundMessage0", "~unboundMessage1"],
 			oSingleCache = {
 				post : function () {}
 			};
@@ -2521,15 +2519,15 @@ sap.ui.define([
 			.withExactArgs(sinon.match(function (oError) {
 				return oError.error.$ignoreTopLevel === true;
 			}))
-			.returns(oRawMessages);
+			.returns(aRawMessages);
 
-		oModelMock.expects("createUI5Message").withExactArgs(oRawMessages.bound[0])
+		oModelMock.expects("createUI5Message").withExactArgs(aRawMessages[0])
 			.returns("~ui5message0");
-		oModelMock.expects("createUI5Message").withExactArgs(oRawMessages.bound[1])
+		oModelMock.expects("createUI5Message").withExactArgs(aRawMessages[1])
 			.returns("~ui5message1");
-		oModelMock.expects("createUI5Message").withExactArgs(oRawMessages.unbound[0])
+		oModelMock.expects("createUI5Message").withExactArgs(aRawMessages[2])
 			.returns("~ui5message2");
-		oModelMock.expects("createUI5Message").withExactArgs(oRawMessages.unbound[1])
+		oModelMock.expects("createUI5Message").withExactArgs(aRawMessages[3])
 			.returns("~ui5message3");
 
 		// code under test - trigger onStrictHandlingFailed callback

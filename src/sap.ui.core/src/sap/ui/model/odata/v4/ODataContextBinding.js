@@ -623,18 +623,18 @@ sap.ui.define([
 		 * @throws {Error} If <code>fnOnStrictHandlingFailed</code> does not return a promise
 		 */
 		function onStrictHandling(oError) {
-			var oRawMessages, oResult;
+			var oResult;
 
 			_Helper.adjustTargetsInError(oError, oOperationMetadata,
 				that.oParameterContext.getPath(),
 				that.bRelative ? that.oContext.getPath() : undefined);
 			oError.error.$ignoreTopLevel = true;
-			oRawMessages = _Helper.extractMessages(oError);
 
 			oResult = fnOnStrictHandlingFailed(
-				oRawMessages.bound.concat(oRawMessages.unbound).map(function (oRawMessage) {
+				_Helper.extractMessages(oError).map(function (oRawMessage) {
 					return that.oModel.createUI5Message(oRawMessage);
-			}));
+				})
+			);
 
 			if (!(oResult instanceof Promise)) {
 				throw new Error("Not a promise: " + oResult);
