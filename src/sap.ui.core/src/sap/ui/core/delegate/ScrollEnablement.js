@@ -12,6 +12,7 @@
 sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/base/Object',
+	'sap/ui/core/Core',
 	'sap/ui/core/IntervalTrigger',
 	'sap/ui/core/ResizeHandler',
 	"sap/ui/thirdparty/jquery",
@@ -20,6 +21,7 @@ sap.ui.define([
 	function(
 		Device,
 		BaseObject,
+		Core,
 		IntervalTrigger,
 		ResizeHandler,
 		jQuery,
@@ -387,7 +389,8 @@ sap.ui.define([
 							}
 
 							if (!this.getVertical()) {
-								left = this._scrollX;
+								left = Core.getConfiguration().getRTL() ?
+									container.clientWidth - container.scrollWidth : this._scrollX;
 							}
 
 							this._customScrollTo(left, top, oEvent);
@@ -803,7 +806,7 @@ sap.ui.define([
 					if (oConfig.nonTouchScrolling === true) {
 						this._bDragScroll = true; // optional drag instead of native scrolling
 					}
-					if (sap.ui.getCore().getConfiguration().getRTL()) {
+					if (Core.getConfiguration().getRTL()) {
 						this._scrollX = 9999; // in RTL case initially scroll to the very right
 					}
 				},
