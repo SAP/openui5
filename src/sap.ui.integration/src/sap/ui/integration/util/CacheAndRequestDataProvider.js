@@ -3,8 +3,9 @@
  */
 sap.ui.define([
 	"sap/ui/integration/util/RequestDataProvider",
-	"sap/base/Log"
-], function (RequestDataProvider, Log) {
+	"sap/base/Log",
+	"sap/ui/core/Core"
+], function (RequestDataProvider, Log, Core) {
 	"use strict";
 	/*global URL*/
 
@@ -34,7 +35,19 @@ sap.ui.define([
 	/**
 	 * @private
 	 */
-	var CacheAndRequestDataProvider = RequestDataProvider.extend("sap.ui.integration.util.CacheAndRequestDataProvider");
+	var CacheAndRequestDataProvider = RequestDataProvider.extend("sap.ui.integration.util.CacheAndRequestDataProvider", {
+		metadata: {
+			associations : {
+				/**
+				 * The card.
+				 */
+				card: {
+					type : "sap.ui.integration.widgets.Card",
+					multiple: false
+				}
+			}
+		}
+	});
 
 	/**
 	 * @override
@@ -52,6 +65,10 @@ sap.ui.define([
 		this._detachTimestampPress();
 
 		RequestDataProvider.prototype.destroy.apply(this, arguments);
+	};
+
+	CacheAndRequestDataProvider.prototype.getCardInstance = function () {
+		return Core.byId(this.getCard());
 	};
 
 	CacheAndRequestDataProvider.prototype.onDataRequestComplete = function () {

@@ -100,6 +100,7 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, CacheAndRequestD
 
 		if (oDataSettings.request && bUseExperimentalCaching) {
 			oDataProvider = new CacheAndRequestDataProvider(oConfig);
+			oDataProvider.setCard(oCard);
 		} else if (oDataSettings.request) {
 			oDataProvider = new RequestDataProvider(oConfig);
 		} else if (oDataSettings.service) {
