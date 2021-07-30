@@ -179,6 +179,8 @@ sap.ui.define([
 				/**
 				 * Fired before menu opening when the <code>buttonMode</code> is set to <code>Split</code> and the user
 				 * presses the arrow button.
+				 *
+				 * @since 1.94.0
 				 */
 				beforeMenuOpen: {}
 			},
