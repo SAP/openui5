@@ -34,7 +34,7 @@
 				</expandedContent>
 
 				<snappedTitleOnMobile>
-					<m:Title text="Header Title On Phone"/>
+					<m:Title text="Object Page Header with Links, Rating Indicator, and Object Status"/>
 				</snappedTitleOnMobile>
 
 				<actions>

@@ -14,7 +14,7 @@
 				</heading>
 
 				<snappedTitleOnMobile>
-					<m:Title text="Header Title On Phone"/>
+					<m:Title text="ObjectPage with LazyLoading"/>
 				</snappedTitleOnMobile>
 
 				<actions>

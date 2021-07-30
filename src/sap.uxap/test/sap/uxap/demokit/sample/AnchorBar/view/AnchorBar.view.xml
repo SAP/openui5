@@ -11,7 +11,7 @@
 				</heading>
 
 				<snappedTitleOnMobile>
-					<m:Title text="Header Title On Phone"/>
+					<m:Title text="AnchorBar sample"/>
 				</snappedTitleOnMobile>
 			</ObjectPageDynamicHeaderTitle>
 		</headerTitle>
