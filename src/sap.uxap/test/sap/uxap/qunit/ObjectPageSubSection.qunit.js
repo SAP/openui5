@@ -1372,8 +1372,36 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 			//check
 			var iViewportHeight = oPage._getScrollableViewportHeight(false),
 				iOffsetTop = oSubSection.$().position().top,
-				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop);
-			assert.ok(oSubSection.$().height(), iExpectedSubSectionHeight, "_setHeight is called");
+				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop),
+				iSubSectionHeight = Math.round(oSubSection.$().height());
+			assert.strictEqual(iSubSectionHeight, iExpectedSubSectionHeight, "the height is correct");
+			done();
+		}, this);
+	});
+
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer expands the subSection tab to fit the container", function (assert) {
+		var oPage = this.oObjectPage,
+			oSection = this.oObjectPage.getSections()[0],
+			oSubSection = oSection.getSubSections()[0],
+			done = assert.async();
+
+		oPage.addSection(new ObjectPageSection({
+			subSections: new ObjectPageSubSectionClass({
+				blocks: new sap.m.Panel()
+			})
+		}));
+		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
+		oPage.setUseIconTabBar(true);
+		Core.applyChanges();
+
+		//setup
+		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			//check
+			var iViewportHeight = oPage._getScrollableViewportHeight(false),
+				iOffsetTop = oSubSection.$().position().top,
+				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop),
+				iSubSectionHeight = Math.round(oSubSection.$().height());
+			assert.strictEqual(iSubSectionHeight, iExpectedSubSectionHeight, "the height is correct");
 			done();
 		}, this);
 	});

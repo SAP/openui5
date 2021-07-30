@@ -2522,7 +2522,8 @@ sap.ui.define([
 
 		this.iFooterHeight = this._getFooterHeight();
 
-		var iSubSectionIndex = -1;
+		var iSubSectionIndex = -1,
+			iSectionsContainerOffsetTop = this._$sectionsContainer.position().top;
 
 		this._aSectionBases.forEach(function (oSectionBase) {
 			var oInfo = this._oSectionInfo[oSectionBase.getId()],
@@ -2611,7 +2612,7 @@ sap.ui.define([
 				bIsFirstVisibleSubSection = bParentIsFirstVisibleSection && (iSubSectionIndex === 0); /* index of *visible* subSections is first */
 				bIsFullscreenSection = oSectionBase.hasStyleClass(ObjectPageSubSection.FIT_CONTAINER_CLASS);
 
-				oSectionBase._setHeight(this._computeSubSectionHeight(bIsFirstVisibleSubSection, bIsFullscreenSection, Math.ceil(realTop)));
+				oSectionBase._setHeight(this._computeSubSectionHeight(bIsFirstVisibleSubSection, bIsFullscreenSection, Math.ceil(realTop), iSectionsContainerOffsetTop));
 			}
 
 		}, this);
@@ -2671,7 +2672,7 @@ sap.ui.define([
 		return true; // return success flag
 	};
 
-	ObjectPageLayout.prototype._computeSubSectionHeight = function(bFirstVisibleSubSection, bFullscreenSection, iSubSectionOffsetTop) {
+	ObjectPageLayout.prototype._computeSubSectionHeight = function(bFirstVisibleSubSection, bFullscreenSection, iSubSectionOffsetTop, iSectionsContainerOffsetTop) {
 
 		var iSectionsContainerHeight,
 			iRemainingSectionContentHeight;
@@ -2684,22 +2685,20 @@ sap.ui.define([
 		// depends on the position of the section in the sections list
 		// 1) first visible is initially displayed in container with *expanded* header
 		// => obtain container height when *expanded* header
-		// 2) non-first visible is displayed in container with *snapped* header
+		// 2) non-first visible is always displayed in container with *snapped* header
 		// (because by the time we scroll to show the section, the header is already snapped)
 		// => obtain container height when *snapped* header
 		var bIsHeaderExpanded = (this._bAllContentFitsContainer) ? this._bHeaderExpanded : bFirstVisibleSubSection;
 
 
 		// size the section to have the full height of its container
-		iSectionsContainerHeight = this._getSectionsContainerHeight(!bIsHeaderExpanded);
+		iSectionsContainerHeight = this._getSectionsContainerHeight(bIsHeaderExpanded);
 
 
 		if (this._bAllContentFitsContainer) {
-			// if we have a single fullscreen subsection [that takes the entire height of the sections container]
-			// => then the only *other* content in the sections container [besides the subSection]
-			// is the title of its parent section and the footer space
-			// => subtract the above heights from the subSection height to *avoid having a scrollbar*
-			iRemainingSectionContentHeight = (iSubSectionOffsetTop - this.iHeaderContentHeight /*- this.iAnchorBarHeight*/) + this.iFooterHeight;
+			// if we have a single fullscreen subsection [that takes the entire available height within the sections container]
+			// => subtract the heights above and bellow the subSection to *avoid having a scrollbar*
+			iRemainingSectionContentHeight = (iSubSectionOffsetTop - iSectionsContainerOffsetTop) + this.iFooterHeight;
 			iSectionsContainerHeight -= iRemainingSectionContentHeight;
 		}
 
@@ -2771,9 +2770,10 @@ sap.ui.define([
 		return this.getDomRef().getBoundingClientRect().height - this._getStickyAreaHeight(bIsStickyMode);
 	};
 
-	ObjectPageLayout.prototype._getSectionsContainerHeight = function(bIsStickyMode) {
+	ObjectPageLayout.prototype._getSectionsContainerHeight = function(bIsHeaderExpanded) {
 
-		var iScrollContainerHeight = this._getScrollableViewportHeight(bIsStickyMode);
+		var bIsStickyMode = !bIsHeaderExpanded,
+			iScrollContainerHeight = this._getScrollableViewportHeight(bIsStickyMode);
 		if (!bIsStickyMode) {
 			// for expanded mode, subtract the heights of headerContent and anchorBar
 			// as they are also part of the scrollable content when *expanded* header,
