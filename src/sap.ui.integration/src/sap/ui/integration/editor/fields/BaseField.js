@@ -667,6 +667,13 @@ sap.ui.define([
 		}
 		if (oControl instanceof Control) {
 			this.setAggregation("_field", oControl);
+			if (oControl.attachChange) {
+				oControl.attachChange(function (oEvent) {
+					if (oEvent.mParameters.value === "") {
+						this._triggerValidation(oEvent.getParameter("value"));
+					}
+				}.bind(this));
+			}
 			/*if (oControl.attachChange) {
 				oControl.attachChange(function (oEvent) {
 					var value;
