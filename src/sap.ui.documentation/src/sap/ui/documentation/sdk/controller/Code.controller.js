@@ -280,8 +280,7 @@ sap.ui.define([
 
 				return Component.create({
 					id: sCompId,
-					name: sCompName,
-					manifest: false
+					name: sCompName
 				});
 			}
 		});
