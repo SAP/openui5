@@ -363,8 +363,7 @@ sap.ui.define([
 				return oMainComponent.runAsOwner(function(){
 					return Component.create({
 						id: sCompId,
-						name: sCompName,
-						manifest: false
+						name: sCompName
 					}).then(function (oComponent) {
 						return new ComponentContainer({component : oComponent});
 					});

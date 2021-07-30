@@ -29,10 +29,6 @@ sap.ui.define([
 				throw new Error("sap.ui.test.launchers.componentLauncher: Start was called twice without teardown. Only one component can be started at a time.");
 			}
 
-			if ( mComponentConfig.manifest === undefined ) {
-				mComponentConfig.manifest = false;
-			}
-
 			var oPromise = Component.create(mComponentConfig);
 
 			_loadingStarted = true;
