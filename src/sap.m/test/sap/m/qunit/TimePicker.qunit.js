@@ -1154,249 +1154,215 @@ sap.ui.define([
 
 	QUnit.test("pageup increases the hours", function(assert) {
 		//arrange
-		var oDate = new Date();
-		oDate.setHours(5);
-
-		//sut
-		var tp = new TimePicker({
-			dateValue: oDate
-		});
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//arrange
-		tp.focus();
+		var iHours = 4,
+			oTP = new TimePicker({
+				dateValue: new Date(2000, 10, 10, iHours, 10, 10)
+			}),
+			oFakePageupEventObject = {
+				preventDefault: function() {}
+			};
 
 		//act
-		qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
+		oTP.onsappageup(oFakePageupEventObject);
 
 		//assert
-		assert.equal(tp.getDateValue().getHours(), 6, "The time picker hours are increased");
+		assert.equal(oTP.getDateValue().getHours(), iHours + 1, "The time picker hours are increased");
 
 		//cleanup
-		tp.destroy();
+		oTP.destroy();
 	});
 
 	QUnit.test("pagedown decreases the hours", function(assert) {
 		//arrange
-		var oDate = new Date();
-		oDate.setHours(5);
-
-		//sut
-		var tp = new TimePicker({
-			dateValue: oDate
-		});
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//arrange
-		tp.focus();
+		var iHours = 4,
+			oTP = new TimePicker({
+				dateValue: new Date(2000, 10, 10, iHours, 10, 10)
+			}),
+			oFakePagedownEventObject = {
+				preventDefault: function() {}
+			};
 
 		//act
-		qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
+		oTP.onsappagedown(oFakePagedownEventObject);
 
 		//assert
-		assert.equal(tp.getDateValue().getHours(), 4, "The time picker hours are decreased");
+		assert.equal(oTP.getDateValue().getHours(), iHours - 1, "The time picker hours are decreased");
 
 		//cleanup
-		tp.destroy();
+		oTP.destroy();
 	});
 
 	QUnit.test("pageup does not have side effects", function(assert) {
 		//arrange
-		var oDate = new Date();
-		oDate.setMinutes(20);
-		oDate.setSeconds(21);
-
-		//sut
-		var tp = new TimePicker({
-			dateValue: oDate
-		});
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//arrange
-		tp.focus();
+		var iSeconds = 21,
+			iMinutes = 20,
+			oTP = new TimePicker({
+				dateValue: new Date(2000, 10, 10, 10, iMinutes, iSeconds)
+			}),
+			oFakePageupEventObject = {
+				preventDefault: function() {}
+			};
 
 		//act
-		qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
+		oTP.onsappageup(oFakePageupEventObject);
 
 		//assert
-		assert.equal(tp.getDateValue().getMinutes(), 20, "The time picker minutes stay the same");
-		assert.equal(tp.getDateValue().getSeconds(), 21, "The time picker seconds stay the same");
-		assert.ok(!tp._getPicker(), "picker is missing");
+		assert.equal(oTP.getDateValue().getMinutes(), iMinutes, "The time picker minutes stay the same");
+		assert.equal(oTP.getDateValue().getSeconds(), iSeconds, "The time picker seconds stay the same");
+		assert.ok(!oTP._getPicker(), "picker is missing");
 
 		//cleanup
-		tp.destroy();
+		oTP.destroy();
 	});
 
 	QUnit.test("shift+pageup increases the minutes", function(assert) {
 		//arrange
-		var oDate = new Date();
-		oDate.setMinutes(15);
-
-		//sut
-		var tp = new TimePicker({
-			dateValue: oDate
-		});
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//arrange
-		tp.focus();
+		var iMinutes = 15,
+			oTP = new TimePicker({
+				dateValue: new Date(2000, 10, 10, 10, iMinutes, 10)
+			}),
+			oFakePageupEventObject = {
+				ctrlKey: false,
+				metaKey: false,
+				altKey:  false,
+				shiftKey: true,
+				preventDefault: function() {}
+			};
 
 		//act
-		qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, true, false, false);
+		oTP.onsappageupmodifiers(oFakePageupEventObject);
 
 		//assert
-		assert.equal(tp.getDateValue().getMinutes(), 16, "The time picker minutes are increased");
+		assert.equal(oTP.getDateValue().getMinutes(), iMinutes + 1, "The time picker minutes are increased");
 
 		//cleanup
-		tp.destroy();
+		oTP.destroy();
 	});
 
 	QUnit.test("shift+pagedown decreases the minutes", function(assert) {
 		//arrange
-		var oDate = new Date();
-		oDate.setMinutes(13);
-
-		//sut
-		var tp = new TimePicker({
-			dateValue: oDate
-		});
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//arrange
-		tp.focus();
+		var iMinutes = 13,
+			oTP = new TimePicker({
+				dateValue: new Date(2000, 10, 10, 10, iMinutes, 10)
+			}),
+			oFakePagedownEventObject = {
+				ctrlKey: false,
+				metaKey: false,
+				altKey:  false,
+				shiftKey: true,
+				preventDefault: function() {}
+			};
 
 		//act
-		qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN, true, false, false);
+		oTP.onsappagedownmodifiers(oFakePagedownEventObject);
 
 		//assert
-		assert.equal(tp.getDateValue().getMinutes(), 12, "The time picker minutes are decreased");
+		assert.equal(oTP.getDateValue().getMinutes(), iMinutes - 1, "The time picker minutes are decreased");
 
 		//cleanup
-		tp.destroy();
+		oTP.destroy();
 	});
 
 	QUnit.test("shift+pageup does not have side effects", function(assert) {
 		//arrange
-		var oDate = new Date(),
-			tp,
-			tpDomRef,
-			oDelegate;
+		var iHours = 5,
+			iSeconds = 21,
+			oTP = new TimePicker({
+				dateValue: new Date(2000, 10, 10, iHours, 10, iSeconds)
+			}),
+			oFakePageupEventObject = {
+				ctrlKey: false,
+				metaKey: false,
+				altKey:  false,
+				shiftKey: true,
+				preventDefault: function() {}
+			};
 
-		oDate.setHours(5);
-		oDate.setSeconds(21);
+		//act
+		oTP.onsappageupmodifiers(oFakePageupEventObject);
 
-		//sut
-		tp = new TimePicker({
-			dateValue: oDate
-		});
+		//assert
+		assert.equal(oTP.getDateValue().getHours(), iHours, "The time picker hours stay the same");
+		assert.equal(oTP.getDateValue().getSeconds(), iSeconds, "The time picker seconds stay the same");
+		assert.ok(!oTP._getPicker(), "picker is missing");
 
-		oDelegate = {
-			onAfterRendering: function() {
-
-				tpDomRef = tp.getDomRef();
-				tp.focus();
-
-				//arrange
-				qutils.triggerKeydown(tpDomRef, jQuery.sap.KeyCodes.PAGE_UP, true, false, false);
-				sap.ui.getCore().applyChanges();
-
-				//assert
-				assert.equal(tp.getDateValue().getHours(), 5, "The time picker hours stay the same");
-				assert.equal(tp.getDateValue().getSeconds(), 21, "The time picker seconds stay the same");
-				assert.ok(!tp._getPicker(), "picker is missing");
-
-				//cleanup
-				tp.destroy();
-			}
-		};
-		tp.addEventDelegate(oDelegate);
-
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
+		//cleanup
+		oTP.destroy();
 	});
 
 	QUnit.test("ctrl+shift+pageup increases the seconds", function(assert) {
 		//arrange
-		var oDate = new Date();
-		oDate.setSeconds(11);
-
-		//sut
-		var tp = new TimePicker({
-			dateValue: oDate
-		});
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//arrange
-		tp.focus();
+		var iSeconds = 11,
+			oTP = new TimePicker({
+				dateValue: new Date(2000, 10, 10, 10, 10, iSeconds)
+			}),
+			oFakePageupEventObject = {
+				ctrlKey: true,
+				metaKey: false,
+				altKey:  false,
+				shiftKey: true,
+				preventDefault: function() {}
+			};
 
 		//act
-		qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, true, false, true);
+		oTP.onsappageupmodifiers(oFakePageupEventObject);
 
 		//assert
-		assert.equal(tp.getDateValue().getSeconds(), 12, "The time picker seconds are increased");
+		assert.equal(oTP.getDateValue().getSeconds(), iSeconds + 1, "The time picker seconds are increased");
 
 		//cleanup
-		tp.destroy();
+		oTP.destroy();
 	});
 
 	QUnit.test("ctrl+shift+pagedown decreases the seconds", function(assert) {
 		//arrange
-		var oDate = new Date();
-		oDate.setSeconds(4);
-
-		//sut
-		var tp = new TimePicker({
-			dateValue: oDate
-		});
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//arrange
-		tp.focus();
+		var iSeconds = 4,
+			oTP = new TimePicker({
+				dateValue: new Date(2000, 10, 10, 10, 10, iSeconds)
+			}),
+			oFakePagedownEventObject = {
+				ctrlKey: true,
+				metaKey: false,
+				altKey:  false,
+				shiftKey: true,
+				preventDefault: function() {}
+			};
 
 		//act
-		qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN, true, false, true);
+		oTP.onsappagedownmodifiers(oFakePagedownEventObject);
 
 		//assert
-		assert.equal(tp.getDateValue().getSeconds(), 3, "The time picker seconds are decreased");
+		assert.equal(oTP.getDateValue().getSeconds(), iSeconds - 1, "The time picker seconds are decreased");
 
 		//cleanup
-		tp.destroy();
+		oTP.destroy();
 	});
 
 	QUnit.test("ctrl+pageup does not have side effects", function(assert) {
 		//arrange
-		var oDate = new Date();
-		oDate.setHours(5);
-		oDate.setMinutes(38);
-
-		//sut
-		var tp = new TimePicker({
-			dateValue: oDate
-		});
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//arrange
-		tp.focus();
+		var iHours = 5,
+			iMinutes = 38,
+			oTP = new TimePicker({
+				dateValue: new Date(2000, 10, 10, iHours, iMinutes, 10)
+			}),
+			oFakePageupEventObject = {
+				ctrlKey: true,
+				metaKey: false,
+				altKey:  false,
+				shiftKey: false,
+				preventDefault: function() {}
+			};
 
 		//act
-		qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, false, false, true);
+		oTP.onsappageupmodifiers(oFakePageupEventObject);
 
 		//assert
-		assert.equal(tp.getDateValue().getHours(), 5, "The time picker hours stay the same");
-		assert.equal(tp.getDateValue().getMinutes(), 38, "The time picker minutes stay the same");
-		assert.ok(!tp._getPicker(), "picker is missing");
+		assert.equal(oTP.getDateValue().getHours(), 5, "The time picker hours stay the same");
+		assert.equal(oTP.getDateValue().getMinutes(), 38, "The time picker minutes stay the same");
+		assert.ok(!oTP._getPicker(), "picker is missing");
 
 		//cleanup
-		tp.destroy();
+		oTP.destroy();
 	});
 
 	QUnit.test("arrow up opens the picker", function(assert) {
