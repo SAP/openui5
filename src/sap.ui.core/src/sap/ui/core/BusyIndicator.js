@@ -99,11 +99,6 @@ sap.ui.define([
 	 * @private
 	 */
 	BusyIndicator._init = function() {
-		// Create the graphics element
-		// inserts 2 divs:
-		// 1. an empty one which will contain the old indicator (used in goldreflection)
-		// 2. a div containing the new standard busy indicator (used in bluecrystal)
-
 		var oRootDomRef = document.createElement("div");
 		oRootDomRef.id = this.sDOM_ID;
 
@@ -123,13 +118,8 @@ sap.ui.define([
 		oBusyElement.setAttribute("title", sTitle);
 		oRootDomRef.appendChild(oBusyElement);
 
-		// Render into invisible area, so the size settings from CSS are applied
-		var oInvisible = sap.ui.getCore().getStaticAreaRef();
-		oInvisible.appendChild(oRootDomRef);
-
 		this.oDomRef = oRootDomRef;
 
-		//TODO how could this be destroyed? Who can/will destroy this?
 		this.oPopup = new Popup(oRootDomRef);
 		this.oPopup.setModal(true, "sapUiBlyBusy");
 		this.oPopup.setShadow(false);

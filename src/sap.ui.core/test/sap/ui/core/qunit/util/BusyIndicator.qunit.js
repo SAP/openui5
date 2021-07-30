@@ -30,15 +30,25 @@ sap.ui.define(["sap/ui/core/BusyIndicator"], function (BusyIndicator) {
 
 	// make sure the BusyIndicator is not rendered initially
 	QUnit.test("Check existance", function (assert) {
+		var done = assert.async();
 		assert.equal(jQuery(".sapUiBusy").length, 0, "BusyIndicator should not exist initially");
 
-		BusyIndicator.show(0);
-		assert.equal(jQuery(".sapUiBusy").length, 1, "BusyIndicator should exist after show");
+		// open with default delay
+		BusyIndicator.show();
+
+		var oBusyDOM = jQuery(this.sClass).get(0);
+		assert.equal(oBusyDOM, undefined, "BusyIndicator DOM must not exist before the default timeout of 1000ms is reached");
+
+		setTimeout(function() {
+			assert.equal(jQuery(this.sClass).length, 1, "BusyIndicator should exist after 1000ms delay");
+			done();
+		}.bind(this), 1200);
 	});
 
 	QUnit.test("Check DOM structure", function (assert) {
 		BusyIndicator.show(0);
 
+		assert.equal(jQuery(this.sClass).length, 1, "BusyIndicator should exist after immediate show");
 		assert.equal(BusyIndicator.oDomRef.children.length, 2, "DOM contains container and busy element");
 
 		var $Container = jQuery(BusyIndicator.oDomRef.children[0]);
