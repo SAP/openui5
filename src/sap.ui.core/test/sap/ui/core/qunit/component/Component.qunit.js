@@ -941,6 +941,58 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("On instance created callback / hook called before view init", function(assert) {
+		assert.expect(3);
+
+		var bAfterInitCalled = false;
+
+		sap.ui.predefine("sap/test/myView", ["sap/ui/core/mvc/View", "sap/m/Button"], function(View, Button) {
+			return View.extend("sap.test.myView", {
+				createContent: function() {
+					this.attachAfterInit(function() {
+						bAfterInitCalled = true;
+						assert.equal(bAfterInitCalled, true, "AfterInit called");
+
+					});
+					return Promise.resolve(new Button());
+				}
+			});
+		});
+
+		sap.ui.predefine("sap/test/myComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("sap.test.myComponent", {
+				metadata: {
+					manifest: {
+						"dependencies": {
+							"libs": {
+								"sap.ui.core": {},
+								"sap.m": {}
+							}
+						},
+						"sap.ui5": {
+							"rootView": {
+								"viewName": "module:sap/test/myView",
+								"async": true
+							}
+						}
+					}
+				}
+			});
+		});
+
+		// set the instance created callback hook
+		Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
+			assert.equal(bAfterInitCalled, false, "_fnOnInstanceCreated should be called before view init");
+			return Promise.resolve();
+		};
+
+		return Component.create({
+			name: "sap.test.myComponent"
+		}).then(function(oComponent) {
+			assert.ok(oComponent, "Component created");
+		});
+	});
+
 	QUnit.test("Usage of manifest property in component configuration for URL", function(assert) {
 
 		return sap.ui.component({
