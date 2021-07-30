@@ -259,15 +259,6 @@ sap.ui.define([
 					this.waitFor({
 						controlType : "sap.m.MessagePopover",
 						success : function (aMessagePopover) {
-							if (aMessagePopover[0].getItems().length === 1) {
-								// Note:
-								// selectMessage is used to display the message details, e.g. to
-								// afterwards check the details via checkMessageDetails.
-								// But, if only ONE Message is in the popover, then
-								// the message cannot (and need not) be selected because the
-								// details are already shown
-								return null;
-							}
 							this.waitFor({
 								controlType : "sap.m.StandardListItem",
 								matchers : new Properties({title : sMessage}),
