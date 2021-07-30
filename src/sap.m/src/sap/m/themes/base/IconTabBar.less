@@ -243,7 +243,11 @@
 
 	&.sapMITHUnselectable:not(.sapMITBDisabled) .sapMITHTextContent {
 		position: relative;
-		bottom: 0.125rem;
+
+		.sapMITHStartOverflow &,
+		.sapMITHEndOverflow & {
+			bottom: 0.125rem;
+		}
 	}
 
 	.sapMITBCount {
@@ -1443,7 +1447,7 @@ html[dir=rtl] {
 			color: @_sap_m_IconTabBar_ShellTextColor;
 			background-color: transparent;
 			border-color: @_sap_m_IconTabBar_ShellOverflowBorderColor;
-	
+
 			.sapMITHShowSubItemsIcon {
 				color: @_sap_m_IconTabBar_ShellTextColor;
 			}
