@@ -1406,6 +1406,40 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 		}, this);
 	});
 
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer expands the subSection when header in title area", function (assert) {
+		var oPage = this.oObjectPage,
+			oSection = oPage.getSections()[0],
+			oSubSection = oSection.getSubSections()[0],
+			done = assert.async(),
+			// ensure the achorBar is in the title area
+			stub = sinon.stub(oPage, "_shouldPreserveHeaderInTitleArea", function() {
+				return true;
+			});
+		// ensure there is anchorBar (page has more than one section)
+		oPage.addSection(new ObjectPageSection({
+			subSections: new ObjectPageSubSectionClass({
+				blocks: new sap.m.Panel()
+			})
+		}));
+		// ensure first subSection fits the container
+		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
+		// ensure only a single section rendered at a time (tabs mode enabled)
+		oPage.setUseIconTabBar(true);
+		Core.applyChanges();
+
+		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			//check
+			var iViewportHeight = oPage._getScrollableViewportHeight(false),
+				iOffsetTop = oSubSection.$().position().top,
+				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop),
+				iSubSectionHeight = Math.round(oSubSection.$().height());
+			assert.strictEqual(iSubSectionHeight, iExpectedSubSectionHeight, "the height is correct");
+			done();
+			stub.restore();
+		}, this);
+
+	});
+
 	QUnit.test("sapUxAPObjectPageSubSectionFitContainer expands the subSection with padding to fit the container any theme", function (assert) {
 		var oPage = this.oObjectPage,
 			oSection = this.oObjectPage.getSections()[0],

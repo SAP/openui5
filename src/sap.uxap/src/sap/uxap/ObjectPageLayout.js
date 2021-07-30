@@ -2501,7 +2501,7 @@ sap.ui.define([
 			sPreviousSubSectionId,
 			sPreviousSectionId,
 			bAllowScrollSectionToTop,
-			bStickyTitleMode = !this._bHeaderExpanded,
+			bStickyTitleMode = this._bHeaderInTitleArea || !this._bHeaderExpanded,
 			bIsFirstVisibleSubSection,
 			bParentIsFirstVisibleSection,
 			bIsFullscreenSection,
@@ -2774,7 +2774,7 @@ sap.ui.define([
 
 		var bIsStickyMode = !bIsHeaderExpanded,
 			iScrollContainerHeight = this._getScrollableViewportHeight(bIsStickyMode);
-		if (!bIsStickyMode) {
+		if (!bIsStickyMode && !this._bHeaderInTitleArea) {
 			// for expanded mode, subtract the heights of headerContent and anchorBar
 			// as they are also part of the scrollable content when *expanded* header,
 			// but we need the height of the *sections area bellow* them
