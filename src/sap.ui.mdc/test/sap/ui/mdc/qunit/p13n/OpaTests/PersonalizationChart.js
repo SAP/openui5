@@ -60,11 +60,11 @@ sap.ui.define([
 	var sViewSettings = Arrangement.P13nDialog.Titles.settings;
 
 	opaTest("When I start the 'appUnderTestChart' app, the chart with some dimentions and measures appears", function(Given, When, Then) {
+		Given.enableAndDeleteLrepLocalStorage();
 		Given.iStartMyAppInAFrame({
 			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestChart/ChartOpaApp.html',
 			autoWait: true
 		});
-		Given.enableAndDeleteLrepLocalStorage();
 
 		When.iLookAtTheScreen();
 
