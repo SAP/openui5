@@ -254,4 +254,20 @@ sap.ui.define([
 
 		assert.strictEqual(this.oSpy.notCalled, true, "Parents are not traversed when isTopLevel value is false");
 	});
+
+	QUnit.module("Invisible App", {
+		beforeEach: function () {
+			this.oApp = new sap.m.App({ visible: false });
+			this.oApp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oApp.destroy();
+			this.oApp = null;
+		}
+	});
+
+	QUnit.test("Error not thrown when App is invisible and has no parent", function(assert) {
+		assert.ok(true, "Error is not thrown when there is no parent of the App and it's initially invisible");
+	});
 });
