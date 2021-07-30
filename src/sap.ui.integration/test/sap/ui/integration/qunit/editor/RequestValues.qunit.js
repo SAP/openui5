@@ -162,7 +162,42 @@ sap.ui.define([
 			"i18n": "../i18n/i18n.properties"
 		},
 		"sap.card": {
-			"designtime": "designtime/filterBackendForStringArray",
+			"designtime": "designtime/filterBackendForStringArrayInMultiComboBox",
+			"type": "List",
+			"header": {},
+			"configuration": {
+				"parameters": {
+					"CustomersWithFilterParameter": {
+						"value": []
+					},
+					"CustomersWithFilterInURL": {
+						"value": []
+					},
+					"CustomersWithNotEditable": {
+						"value": ""
+					},
+					"CustomersWithNotVisible": {
+						"value": ""
+					}
+				},
+				"destinations": {
+					"northwind": {
+						"name": "Northwind"
+					},
+					"mock_request": {
+						"name": "mock_request"
+					}
+				}
+			}
+		}
+	};
+	var oManifestForFilterBackendInMultiInput = {
+		"sap.app": {
+			"id": "test.sample",
+			"i18n": "../i18n/i18n.properties"
+		},
+		"sap.card": {
+			"designtime": "designtime/filterBackendForStringArrayInMultiInput",
 			"type": "List",
 			"header": {},
 			"configuration": {
@@ -256,6 +291,9 @@ sap.ui.define([
 					},
 					"CustomersWithEditableDependent": {
 						"value": []
+					},
+					"CustomersInMultiInputWithEditableDependent": {
+						"value": []
 					}
 				},
 				"destinations": {
@@ -287,6 +325,9 @@ sap.ui.define([
 						"value": ""
 					},
 					"CustomersWithVisibleDependent": {
+						"value": []
+					},
+					"CustomersInMultiInputWithVisibleDependent": {
 						"value": []
 					}
 				},
@@ -1314,7 +1355,7 @@ sap.ui.define([
 					assert.ok(oNextField.isA("sap.m.Panel"), "Field: Customers NotVisible is not visible");
 					setTimeout(function () {
 						assert.ok(oCustomersMultiComboBox.getItems().length === 5, "Field: Customers NotEditable data lenght is OK");
-						resolve();
+					resolve();
 					}, 2000);
 				}.bind(this));
 			}.bind(this));
@@ -1340,7 +1381,7 @@ sap.ui.define([
 					setTimeout(function () {
 						assert.ok(oCustomersMultiComboBox.getItems().length === 5, "Field: Customers origin lenght is OK");
 						oCustomersMultiComboBox.setValue("c");
-						oCustomersField.onInput({
+						oCustomersField.onInputForMultiComboBox({
 							"target": {
 								"value": "c"
 							},
@@ -1375,7 +1416,7 @@ sap.ui.define([
 					setTimeout(function () {
 						assert.ok(oCustomersMultiComboBox.getItems().length === 5, "Field: Customers origin lenght is OK");
 						oCustomersMultiComboBox.setValue("c");
-						oCustomersField.onInput({
+						oCustomersField.onInputForMultiComboBox({
 							"target": {
 								"value": "c"
 							},
@@ -1386,6 +1427,286 @@ sap.ui.define([
 							resolve();
 						}, iWaitTimeout);
 					}, iWaitTimeout);
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Filter in Backend by input for string[] (MultiInput)", {
+		beforeEach: function () {
+			this.oMockServer = new MockServer();
+			this.oMockServer.setRequests([
+				{
+					method: "GET",
+					path: RegExp("/mock_request/Customers.*"),
+					response: function (xhr) {
+						var oValue = {};
+						var sKey = "Customers";
+						var aSplits = xhr.url.split("?");
+						if (aSplits.length > 1) {
+							var aParameters = aSplits[1].split("&");
+							var sConditionOperation = "_";
+							var sConditionValue = "_";
+							aParameters.forEach(function (parameter) {
+								if (parameter.startsWith("%24filter=")) {
+									parameter = parameter.substr(10);
+									var aConditions = parameter.split(")%20and%20(");
+									aConditions.forEach(function (condition) {
+										if (condition.startsWith("startswith(CompanyName%2C'")) {
+											sConditionOperation += "startswith";
+											sConditionValue += condition.substring(26, condition.lastIndexOf("')"));
+											sKey = sKey + sConditionOperation + sConditionValue;
+										} else if (condition.startsWith("(CustomerID%20eq%20'")) {
+											sConditionOperation += "CustomerID";
+											sConditionValue += condition.slice(20, -1);
+											sKey = sKey + sConditionOperation + sConditionValue;
+										}
+										sConditionOperation = "_";
+										sConditionValue = "_";
+									});
+								} else if (parameter.startsWith("$filter=")) {
+									parameter = parameter.substr(8);
+									var aConditions = parameter.split(") and (");
+									aConditions.forEach(function (condition) {
+										if (condition.startsWith("startswith(CompanyName,'")) {
+											sConditionOperation += "startswith";
+											sConditionValue += condition.substring(24, condition.lastIndexOf("')"));
+											sKey = sKey + sConditionOperation + sConditionValue;
+										}
+										sConditionOperation = "_";
+										sConditionValue = "_";
+									});
+								}
+							});
+							oValue = {"value": oResponseData[sKey]};
+						} else {
+							oValue = {"value": []};
+						}
+						xhr.respondJSON(200, null, oValue);
+					}
+				},
+				{
+					method: "GET",
+					path: RegExp("/mock_request/Employees.*"),
+					response: function (xhr) {
+						var oValue = {};
+						var sKey = "Employees";
+						var aSplits = xhr.url.split("?");
+						if (aSplits.length > 1) {
+							var aParameters = aSplits[1].split("&");
+							var sConditionOperation = "_";
+							var sConditionValue = "_";
+							aParameters.forEach(function (parameter) {
+								if (parameter.startsWith("%24filter=")) {
+									parameter = parameter.substr(10);
+									var aConditions = parameter.split(")%20or%20");
+									aConditions.forEach(function (condition) {
+										if (condition.startsWith("endswith(FirstName%2C'")) {
+											sConditionOperation += "endswith";
+											sConditionValue += condition.slice(22, -1);
+											sKey = sKey + sConditionOperation + sConditionValue;
+										} else if (condition.startsWith("endswith(LastName%2C'")) {
+											sConditionOperation += "endswith";
+											sConditionValue += condition.substring(21, condition.lastIndexOf("')"));
+											sKey = sKey + sConditionOperation + sConditionValue;
+										}
+										sConditionOperation = "_";
+										sConditionValue = "_";
+									});
+								}
+							});
+							oValue = {"value": oResponseData[sKey]};
+						} else {
+							oValue = {"value": []};
+						}
+						xhr.respondJSON(200, null, oValue);
+					}
+				}
+			]);
+			this.oMockServer.start();
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oEditor = new Editor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.style.position = "absolute";
+				oContent.style.top = "200px";
+
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oEditor.destroy();
+			this.oMockServer.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("Check the setting button", function (assert) {
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: oManifestForFilterBackendInMultiInput
+
+			});
+			this.oEditor.setAllowSettings(true);
+			this.oEditor.setAllowDynamicValues(true);
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var oCustomersLabel = this.oEditor.getAggregation("_formContent")[1];
+					var oCustomersField = this.oEditor.getAggregation("_formContent")[2];
+					assert.ok(oCustomersLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oCustomersLabel.getText() === "Customers with filter parameter", "Label: Has static label text");
+					assert.ok(oCustomersField.isA("sap.ui.integration.editor.fields.ListField"), "Field: List Field");
+					var oCustomersMultiInput = oCustomersField.getAggregation("_field");
+					assert.ok(oCustomersMultiInput.isA("sap.m.MultiInput"), "Field: Customers is MultiInput");
+					//settings button
+					var oButton = oCustomersField._settingsButton;
+					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
+					oButton.firePress();
+					oButton.focus();
+					setTimeout(function () {
+						assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
+						//popup is opened
+						assert.ok(oCustomersField._oSettingsPanel._oOpener === oCustomersField, "Settings: Has correct owner");
+						var settingsClass = oCustomersField._oSettingsPanel.getMetadata().getClass();
+						var testInterface = settingsClass._private();
+						assert.ok(testInterface.oCurrentInstance === oCustomersField._oSettingsPanel, "Settings: Points to right settings panel");
+						assert.ok(testInterface.oPopover.isA("sap.m.ResponsivePopover"), "Settings: Has a Popover instance");
+						assert.ok(testInterface.oSegmentedButton.getVisible() === true, "Settings: Allows to edit settings and dynamic values");
+						assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel initially visible");
+						assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel initially not visible");
+						testInterface.oSegmentedButton.getItems()[1].firePress();
+						assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel is visible after settings button press");
+						assert.ok(testInterface.oDynamicPanel.getVisible() === false, "Settings: Dynamic Values Panel not visible after settings button press");
+						testInterface.oSegmentedButton.getItems()[0].firePress();
+						assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel is not visible after dynamic button press");
+						assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel is visible after dynamic button press");
+						testInterface.oDynamicValueField.fireValueHelpRequest();
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems().length === 5, "Settings: Settings Panel has 5 items");
+						var oItem = testInterface.getMenuItems()[3].getItems()[2];
+						testInterface.getMenu().fireItemSelected({ item: oItem });
+						testInterface.oPopover.getBeginButton().firePress();
+						setTimeout(function () {
+							//this is delayed not to give time to show the tokenizer
+							assert.ok(oButton.getIcon() === "sap-icon://display-more", "Settings: Shows display-more Icon after dynamic value was selected");
+							resolve();
+						}, 1000);
+					}, 1000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check the NotEditable and NotVisible parameter", function (assert) {
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: oManifestForFilterBackendInMultiInput
+			});
+			this.oEditor.setAllowSettings(true);
+			this.oEditor.setAllowDynamicValues(true);
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var oCustomersNotEditableLabel = this.oEditor.getAggregation("_formContent")[5];
+					var oCustomersNotEditableField = this.oEditor.getAggregation("_formContent")[6];
+					assert.ok(oCustomersNotEditableLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oCustomersNotEditableLabel.getText() === "CustomersWithNotEditable", "Label: Has static label text");
+					assert.ok(oCustomersNotEditableField.isA("sap.ui.integration.editor.fields.ListField"), "Field: Customers NotEditable List Field");
+					var oCustomersMultiInput = oCustomersNotEditableField.getAggregation("_field");
+					assert.ok(oCustomersMultiInput.isA("sap.m.MultiInput"), "Field: Customers NotEditable is MultiInput");
+					assert.ok(!oCustomersMultiInput.getEditable(), "Field: Customers NotEditable is Not Editable");
+					var oNextField = this.oEditor.getAggregation("_formContent")[7];
+					assert.ok(oNextField.isA("sap.m.Panel"), "Field: Customers NotVisible is not visible");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Defined in Filter Parameter", function (assert) {
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: oManifestForFilterBackendInMultiInput
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var oCustomersLabel = this.oEditor.getAggregation("_formContent")[1];
+					var oCustomersField = this.oEditor.getAggregation("_formContent")[2];
+					assert.ok(oCustomersLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oCustomersLabel.getText() === "Customers with filter parameter", "Label: Has static label text");
+					assert.ok(oCustomersField.isA("sap.ui.integration.editor.fields.ListField"), "Field: List Field");
+					var oCustomersMultiInput = oCustomersField.getAggregation("_field");
+					assert.ok(oCustomersMultiInput.isA("sap.m.MultiInput"), "Field: Customers is MultiInput");
+
+					setTimeout(function () {
+						oCustomersMultiInput.setValue("c");
+						oCustomersMultiInput._openSuggestionsPopover();
+						var oFakeEvent = {
+							isMarked: function(){},
+							setMarked:function(){},
+							"target": {
+								"value": "c"
+							},
+							"srcControl": oCustomersMultiInput
+						};
+						oCustomersField.onInputForMultiInput(oFakeEvent);
+						setTimeout(function () {
+							assert.ok(oCustomersMultiInput._getSuggestionsList().getItems().length === 3, "Field: Customers lenght is OK");
+							resolve();
+						}, 2 * iWaitTimeout);
+					}, 2 * iWaitTimeout);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Defined in URL", function (assert) {
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: oManifestForFilterBackendInMultiInput
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var oCustomersLabel = this.oEditor.getAggregation("_formContent")[3];
+					var oCustomersField = this.oEditor.getAggregation("_formContent")[4];
+					assert.ok(oCustomersLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oCustomersLabel.getText() === "CustomersWithFilterInURL", "Label: Has static label text");
+					assert.ok(oCustomersField.isA("sap.ui.integration.editor.fields.ListField"), "Field: List Field");
+					var oCustomersMultiInput = oCustomersField.getAggregation("_field");
+					assert.ok(oCustomersMultiInput.isA("sap.m.MultiInput"), "Field: Customers is MultiInput");
+
+					setTimeout(function () {
+						oCustomersMultiInput.setValue("c");
+						oCustomersMultiInput._openSuggestionsPopover();
+						var oFakeEvent = {
+							isMarked: function(){},
+							setMarked:function(){},
+							"target": {
+								"value": "c"
+							},
+							"srcControl": oCustomersMultiInput
+						};
+						oCustomersField.onInputForMultiInput(oFakeEvent);
+						setTimeout(function () {
+							assert.ok(oCustomersMultiInput._getSuggestionsList().getItems().length === 3, "Field: Customers lenght is OK");
+							resolve();
+						}, 2 * iWaitTimeout);
+					}, 2 * iWaitTimeout);
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1581,6 +1902,15 @@ sap.ui.define([
 					assert.ok(oCustomersWithEditableDependentMultiComboBox.isA("sap.m.MultiComboBox"), "Field: Customers Editable is MultiComboBox");
 					assert.ok(!oCustomersWithEditableDependentMultiComboBox.getEditable(), "Field: Customers Editable is Not Editable");
 
+					var oCustomersInMultiInputWithEditableDependentLabel = this.oEditor.getAggregation("_formContent")[7];
+					var oCustomersInMultiInputWithEditableDependenteField = this.oEditor.getAggregation("_formContent")[8];
+					assert.ok(oCustomersInMultiInputWithEditableDependentLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oCustomersInMultiInputWithEditableDependentLabel.getText() === "CustomersInMultiInputWithEditableDependent", "Label: Has static label text");
+					assert.ok(oCustomersInMultiInputWithEditableDependenteField.isA("sap.ui.integration.editor.fields.ListField"), "Field: Customers Editable List Field");
+					var oCustomersWithEditableDependentMultiInput = oCustomersInMultiInputWithEditableDependenteField.getAggregation("_field");
+					assert.ok(oCustomersWithEditableDependentMultiInput.isA("sap.m.MultiInput"), "Field: Customers Editable is MultiInput");
+					assert.ok(!oCustomersWithEditableDependentMultiInput.getEditable(), "Field: Customers Editable is Not Editable");
+
 					setTimeout(function () {
 						assert.ok(oCustomerWithEditableDependentComboBox.getItems().length === 4, "Field: Customer Editable data lenght is OK");
 						assert.ok(oCustomersWithEditableDependentMultiComboBox.getItems().length === 5, "Field: Customers Editable data lenght is OK");
@@ -1591,6 +1921,7 @@ sap.ui.define([
 							assert.ok(oCustomerWithEditableDependentComboBox.getItems().length === 4, "Field: Customer Editable data lenght is OK");
 							assert.ok(oCustomersWithEditableDependentMultiComboBox.getEditable(), "Field: Customers Editable is now Editable");
 							assert.ok(oCustomersWithEditableDependentMultiComboBox.getItems().length === 5, "Field: Customers Editable data lenght is OK");
+							assert.ok(oCustomersWithEditableDependentMultiInput.getEditable(), "Field: Customers Editable is now Editable");
 							resolve();
 						}, iWaitTimeout);
 					}, iWaitTimeout);
@@ -1629,6 +1960,15 @@ sap.ui.define([
 					var oCustomersWithVisibleDependentMultiComboBox = oCustomersWithVisibleDependentField.getAggregation("_field");
 					assert.ok(oCustomersWithVisibleDependentMultiComboBox.isA("sap.m.MultiComboBox"), "Field: Customers Visible is MultiComboBox");
 					assert.ok(!oCustomersWithVisibleDependentMultiComboBox.getVisible(), "Field: Customers Visible is Not Visible");
+
+					var oCustomersMultiInputWithVisibleDependentLabel = this.oEditor.getAggregation("_formContent")[7];
+					var oCustomersMultiInputWithVisibleDependentField = this.oEditor.getAggregation("_formContent")[8];
+					assert.ok(oCustomersMultiInputWithVisibleDependentLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oCustomersMultiInputWithVisibleDependentLabel.getText() === "CustomersInMultiInputWithVisibleDependent", "Label: Has static label text");
+					assert.ok(oCustomersMultiInputWithVisibleDependentField.isA("sap.ui.integration.editor.fields.ListField"), "Field: Customers Visible List Field");
+					var oCustomersWithVisibleDependentMultiInput = oCustomersMultiInputWithVisibleDependentField.getAggregation("_field");
+					assert.ok(oCustomersWithVisibleDependentMultiInput.isA("sap.m.MultiInput"), "Field: Customers Visible is MultiInput");
+					assert.ok(!oCustomersWithVisibleDependentMultiInput.getVisible(), "Field: Customers Visible is Not Visible");
 					setTimeout(function () {
 						assert.ok(oCustomerWithVisibleDependentComboBox.getItems().length === 4, "Field: Customer Visible data lenght is OK");
 						assert.ok(oCustomersWithVisibleDependentMultiComboBox.getItems().length === 5, "Field: Customers Visible data lenght is OK");
@@ -1639,6 +1979,7 @@ sap.ui.define([
 							assert.ok(oCustomerWithVisibleDependentComboBox.getItems().length === 4, "Field: Customer Visible data lenght is OK");
 							assert.ok(oCustomersWithVisibleDependentMultiComboBox.getVisible(), "Field: Customers Visible is now Visible");
 							assert.ok(oCustomersWithVisibleDependentMultiComboBox.getItems().length === 5, "Field: Customers Visible data lenght is OK");
+							assert.ok(oCustomersWithVisibleDependentMultiInput.getEditable(), "Field: Customers Visible is now Editable");
 							resolve();
 						}, iWaitTimeout);
 					}, iWaitTimeout);

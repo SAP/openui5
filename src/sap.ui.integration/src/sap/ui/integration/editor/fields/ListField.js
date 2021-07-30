@@ -6,18 +6,22 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Text",
 	"sap/m/MultiComboBox",
+	"sap/m/MultiInput",
 	"sap/ui/core/ListItem",
 	"sap/base/util/each",
 	"sap/base/util/restricted/_debounce",
 	"sap/base/util/restricted/_isEqual",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/includes",
+	"sap/base/util/merge",
 	"sap/ui/core/SeparatorItem",
 	"sap/ui/core/Core",
 	"sap/ui/model/Sorter",
+	"sap/m/Token",
+	"sap/m/Tokenizer",
 	"sap/base/util/deepClone"
 ], function (
-	BaseField, Input, Text, MultiComboBox, ListItem, each, _debounce, _isEqual, ObjectPath, includes, SeparatorItem, Core, Sorter, deepClone
+	BaseField, Input, Text, MultiComboBox, MultiInput, ListItem, each, _debounce, _isEqual, ObjectPath, includes, merge, SeparatorItem, Core, Sorter, Token, Tokenizer, deepClone
 ) {
 	"use strict";
 	var sDefaultSeperator = "#";
@@ -45,49 +49,50 @@ sap.ui.define([
 		if (oResourceBundle && oResourceBundle.sLocale !== Core.getConfiguration().getLanguage()) {
 			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 		}
-		var that = this;
+		var that = this,
+			oItem;
 		var oVisualization = oConfig.visualization;
 		if (!oVisualization) {
 			if (oConfig.values) {
-				var oItem = this.formatListItem(oConfig.values.item);
-				oVisualization = {
-					type: MultiComboBox,
-					settings: {
-						selectedKeys: {
-							path: 'currentSettings>value'
-						},
-						busy: { path: 'currentSettings>_loading' },
-						editable: oConfig.editable,
-						visible: oConfig.visible,
-						showSecondaryValues: true,
-						width: "100%",
-						items: {
-							path: "", //empty, because the bindingContext for the undefined model already points to the path
-							template: oItem,
-							sorter: [new Sorter({
-								path: 'Selected',
-								descending: false,
-								group: true
-							})],
-							groupHeaderFactory: that.getGroupHeader
-						}
-					}
-				};
-				if (this.isFilterBackend()) {
-					oVisualization.settings.selectedKeys = {
-						parts: [
-							'currentSettings>value',
-							'currentSettings>suggestValue'
-						],
-						formatter: function(sValue, sSuggestValue) {
-							if (sSuggestValue) {
-								//set suggest value in the input field of the MultiComboBox
-								that.setSuggestValue();
+				oItem = this.formatListItem(oConfig.values.item);
+					oVisualization = {
+						type: MultiComboBox,
+						settings: {
+							selectedKeys: {
+								path: 'currentSettings>value'
+							},
+							busy: { path: 'currentSettings>_loading' },
+							editable: oConfig.editable,
+							visible: oConfig.visible,
+							showSecondaryValues: true,
+							width: "100%",
+							items: {
+								path: "", //empty, because the bindingContext for the undefined model already points to the path
+								template: oItem,
+								sorter: [new Sorter({
+									path: 'Selected',
+									descending: false,
+									group: true
+								})],
+								groupHeaderFactory: that.getGroupHeader
 							}
-							return sValue;
 						}
 					};
-				}
+					if (this.isFilterBackend()) {
+						oVisualization.settings.selectedKeys = {
+							parts: [
+								'currentSettings>value',
+								'currentSettings>suggestValue'
+							],
+							formatter: function(sValue, sSuggestValue) {
+								if (sSuggestValue) {
+									//set suggest value in the input field of the MultiComboBox
+									that.setSuggestValue();
+								}
+								return sValue;
+							}
+						};
+					}
 			} else {
 				oVisualization = {
 					type: Input,
@@ -109,6 +114,37 @@ sap.ui.define([
 					}
 				};
 			}
+		} else if (oConfig.values && this.isFilterBackend() && oVisualization.type === "MultiInput") {
+			oItem = this.formatListItem(oConfig.values.item);
+			var oSettings = {
+				busy: { path: 'currentSettings>_loading' },
+				placeholder: oConfig.placeholder,
+				editable: oConfig.editable,
+				visible: oConfig.visible,
+				showSuggestion: true,
+				autocomplete: false,
+				showValueHelp: false,
+				filterSuggests: false,
+				width: "100%",
+				suggestionItems: {
+					path: "", //empty, because the bindingContext for the undefined model already points to the path
+					template: oItem,
+					sorter: [new Sorter({
+						path: 'Selected',
+						descending: false,
+						group: true
+					})],
+					groupHeaderFactory: that.getGroupHeader
+				}
+			};
+			if (oVisualization.settings) {
+				oSettings = merge(oSettings, oVisualization.settings);
+			}
+			// use MultiInput for backend filter if visualization.type === "MultiInput"
+			oVisualization = {
+				type: MultiInput,
+				settings: oSettings
+			};
 		}
 		this._visualization = oVisualization;
 		this.attachAfterInit(this._afterInit);
@@ -116,26 +152,39 @@ sap.ui.define([
 
 	ListField.prototype._afterInit = function () {
 		var oControl = this.getAggregation("_field");
-		if (oControl instanceof MultiComboBox) {
-			var oConfig = this.getConfiguration();
+		var oConfig = this.getConfiguration();
+		var oModel = this.getModel();
+		if (oConfig.values) {
 			this.prepareFieldsInKey(oConfig);
-			//workaround for DIGITALWORKPLACE-5156, set the min-height of the popover
-			oControl.onAfterOpen = this.onAfterOpen;
+		}
+		if (oControl instanceof MultiComboBox) {
+			//fix DIGITALWORKPLACE-5156, set the min-height of the popover
+			oControl.onAfterOpen = this.onAfterOpenForMultiComboBox;
 			if (this.isFilterBackend()) {
-				this.onInput = _debounce(this.onInput, 500);
+				this.onInputForMultiComboBox = _debounce(this.onInputForMultiComboBox, 500);
 				//if need to filter backend by input value, need to hook the onInput function which only support filter locally.
-				oControl.oninput = this.onInput;
+				oControl.oninput = this.onInputForMultiComboBox;
 				//listen to the selectionChange event of MultiComboBox
 				oControl.attachSelectionChange(this.onSelectionChangeForFilterBackend);
 				//listen to the selectionFinish event of MultiComboBox
 				oControl.attachSelectionFinish(this.onSelectionFinish);
-				var oModel = this.getModel();
 				//merge the previous selected items with new items got from request
 				oModel.attachPropertyChange(this.onPropertyChange, this);
 			} else {
 				//listen to the selectionChange event of MultiComboBox
 				oControl.attachSelectionChange(this.onSelectionChange);
 			}
+		} else if (oControl instanceof MultiInput) {
+			//init tokens from changes
+			this.initTokens();
+			this.onInputForMultiInput = _debounce(this.onInputForMultiInput, 500);
+			//if need to filter backend by input value, need to hook the onInput function which only support filter locally.
+			oControl.oninput = this.onInputForMultiInput;
+			//merge the previous selected items with new items got from request
+			oModel.attachPropertyChange(this.onPropertyChange, this);
+			//init tokens with new items got from request
+			oModel.attachPropertyChange(this.initTokens, this);
+			oControl.attachTokenChange(this.onTokenChange);
 		}
 	};
 
@@ -156,6 +205,39 @@ sap.ui.define([
 				this._aFields[n] = this._aFields[n].substring(0, this._aFields[n].length - 1);
 			}
 		}
+	};
+
+	ListField.prototype.initTokens = function() {
+		var oControl = this.getAggregation("_field");
+		var oConfig = this.getConfiguration();
+		var aTokens = [];
+		if (Array.isArray(oConfig.valueTokens) && oConfig.valueTokens.length > 0) {
+			oConfig.valueTokens.forEach(function (oValueToken) {
+				var token = new Token(oValueToken);
+				aTokens.push(token);
+			});
+		} else if (Array.isArray(oConfig.value) && oConfig.value.length > 0 && Array.isArray(oConfig.valueItems) && oConfig.valueItems.length > 0) {
+			// backward compatibility for old changes
+			// init tokens from valueItems saved by MultiComboBox
+			oConfig.valueTokens = [];
+			var oValueItemKeys = oConfig.valueItems.map(function (oValueItem) {
+				return this.getKeyFromItem(oValueItem);
+			}.bind(this));
+			oConfig.value.forEach(function (sValuekey) {
+				if (includes(oValueItemKeys, sValuekey)) {
+					var oSuggestionItem = oControl.getSuggestionItemByKey(sValuekey);
+					var sText = oSuggestionItem ? oSuggestionItem.getText() : sValuekey;
+					var oItem = {
+						key: sValuekey,
+						text: sText
+					};
+					var token = new Token(oItem);
+					aTokens.push(token);
+					oConfig.valueTokens.push(oItem);
+				}
+			});
+		}
+		oControl.setTokens(aTokens);
 	};
 
 	ListField.prototype.getKeyFromItem = function(oItem) {
@@ -222,7 +304,7 @@ sap.ui.define([
 			//concat the filtered items to the selectedItems list as new data
 			oData = oConfig.valueItems.concat(oNotSelectedItems);
 			var oControl = this.getAggregation("_field");
-			if (oControl.isOpen()) {
+			if (oControl.isOpen && oControl.isOpen()) {
 				aSelectedItemKeys = oConfig.valueItems.map(function (oSelectedItem) {
 					return this.getKeyFromItem(oSelectedItem);
 				}.bind(this));
@@ -262,7 +344,7 @@ sap.ui.define([
 	};
 
 	ListField.prototype.onSelectionChangeForFilterBackend = function(oEvent) {
-		var oField = oEvent.oSource.getParent();
+		var oField = oEvent.getSource().getParent();
 		var oConfig = oField.getConfiguration();
 		var oListItem = oEvent.getParameter("changedItem");
 		var sChangedItemKey = oListItem.getKey();
@@ -270,16 +352,16 @@ sap.ui.define([
 
 		//get items in data model
 		var oData = this.getModel().getData();
-		var sPath = oConfig.values.data.path || "/";
+			var sPath = oConfig.values.data.path || "/";
 		var aPath, oItems;
-		if (sPath !== "/") {
-			if (sPath.startsWith("/")) {
-				sPath = sPath.substring(1);
-			}
-			if (sPath.endsWith("/")) {
-				sPath = sPath.substring(0, sPath.length - 1);
-			}
-			aPath = sPath.split("/");
+			if (sPath !== "/") {
+				if (sPath.startsWith("/")) {
+					sPath = sPath.substring(1);
+				}
+				if (sPath.endsWith("/")) {
+					sPath = sPath.substring(0, sPath.length - 1);
+				}
+				aPath = sPath.split("/");
 			oItems = ObjectPath.get(aPath, oData);
 		} else {
 			oItems = oData;
@@ -309,13 +391,110 @@ sap.ui.define([
 					}
 				}
 				oNewItems.push(oNewItem);
-			});
+				});
 			if (aPath !== undefined) {
 				ObjectPath.set(aPath, oNewItems, oData);
 				this.getModel().checkUpdate(true);
 			} else {
 				this.getModel().setData(oNewItems);
 			}
+		}
+	};
+
+	ListField.prototype.onTokenChange = function(oEvent) {
+		var oField = this.getParent();
+		var oConfig = oField.getConfiguration();
+		var oSettingsModel = oField.getModel("currentSettings");
+		var sSettingspath = oField.getBindingContext("currentSettings").sPath;
+		var aValue = oSettingsModel.getProperty(sSettingspath + "/value");
+
+		var oToken = oEvent.getParameter("token");
+		if (oToken) {
+			var sItemKey = oToken.getKey();
+			if (!oConfig.valueTokens) {
+				oConfig.valueTokens = [];
+			}
+			if (!aValue) {
+				aValue = [];
+			}
+			//get the change type
+			var sChangeType = oEvent.getParameter("type");
+			switch (sChangeType) {
+				case Tokenizer.TokenChangeType.Removed:
+					// remove the item in value
+					aValue = aValue.filter(function (value) {
+						return value !== sItemKey;
+					});
+					oConfig.value = aValue;
+					// remove the item token
+					oConfig.valueTokens = oConfig.valueTokens.filter(function (valueToken) {
+						return valueToken.key !== sItemKey;
+					});
+					break;
+				case Tokenizer.TokenChangeType.Added:
+					// add the selected item into value
+					if (!includes(aValue, sItemKey)) {
+						aValue = aValue.concat([sItemKey]);
+						oConfig.value = aValue;
+					}
+					// add the token of the selected item
+					var aTokenKeys = oConfig.valueTokens.map(function (oValueToken) {
+						return oValueToken.key;
+					});
+					if (!includes(aTokenKeys, sItemKey)) {
+						oConfig.valueTokens = oConfig.valueTokens.concat([{
+							"key": sItemKey,
+							"text": oToken.getText()
+						}]);
+					}
+					break;
+				case Tokenizer.TokenChangeType.RemovedAll :
+					oConfig.value = [];
+					oConfig.valueItems = [];
+					oConfig.valueTokens = [];
+					break;
+				default:
+					break;
+			}
+			var oData = oField.getModel().getData();
+			var oResult;
+			var sPath = oConfig.values.data.path || "/";
+			var aPath;
+			if (sPath !== "/") {
+				if (sPath.startsWith("/")) {
+					sPath = sPath.substring(1);
+				}
+				if (sPath.endsWith("/")) {
+					sPath = sPath.substring(0, sPath.length - 1);
+				}
+				aPath = sPath.split("/");
+				oResult = deepClone(ObjectPath.get(aPath, oData), 10);
+			} else {
+				oResult = deepClone(oData, 10);
+			}
+			if (Array.isArray(oResult)) {
+				// update the group in the items popover
+				oConfig.valueItems = [];
+				oResult.forEach(function (oItem) {
+					var sItemKey = oField.getKeyFromItem(oItem);
+					if (includes(oConfig.value, sItemKey)) {
+						oItem.Selected = oResourceBundle.getText("EDITOR_ITEM_SELECTED");
+						oConfig.valueItems.push(oItem);
+					} else {
+						oItem.Selected = oResourceBundle.getText("EDITOR_ITEM_UNSELECTED");
+					}
+				});
+				if (sPath !== "/") {
+					ObjectPath.set(aPath, oResult, oData);
+				} else {
+					oData = oResult;
+				}
+				oField.getModel().setData(oData);
+				oField.getModel().checkUpdate(true);
+			}
+			//save the selected keys as field value
+			oSettingsModel.setProperty(sSettingspath + "/value", oConfig.value);
+			oSettingsModel.setProperty(sSettingspath + "/valueItems", oConfig.valueItems);
 		}
 	};
 
@@ -407,7 +586,7 @@ sap.ui.define([
 		}
 	};
 
-	ListField.prototype.onInput = function (oEvent) {
+	ListField.prototype.onInputForMultiComboBox = function (oEvent) {
 		//get the suggestion value
 		var sTerm = oEvent.target.value;
 		var sSettingspath = this.getBindingContext("currentSettings").sPath;
@@ -419,13 +598,45 @@ sap.ui.define([
 		oEvent.srcControl._getSuggestionsPopover()._sTypedInValue = sTerm;
 	};
 
-	ListField.prototype.onAfterOpen = function () {
+	ListField.prototype.onAfterOpenForMultiComboBox = function () {
 		MultiComboBox.prototype.onAfterOpen.apply(this, arguments);
 		var oPopover = this.getPicker();
 		if (oPopover._oCalcedPos === "Bottom" && !oPopover.hasStyleClass("sapUiIntegrationEditorPopupHeight")) {
 			oPopover.addStyleClass("sapUiIntegrationEditorPopupHeight");
 		} else if (oPopover._oCalcedPos !== "Bottom" &&  oPopover.hasStyleClass("sapUiIntegrationEditorPopupHeight")) {
 			oPopover.removeStyleClass("sapUiIntegrationEditorPopupHeight");
+		}
+	};
+
+	ListField.prototype.onInputForMultiInput = function (oEvent) {
+		var oControl = oEvent.srcControl;
+		MultiInput.prototype.oninput.apply(oControl, arguments);
+		//get the suggestion value
+		var sTerm = oEvent.target.value;
+		if (sTerm === "") {
+			return;
+		}
+		var sSettingspath = this.getBindingContext("currentSettings").sPath;
+		var oSettingsModel = this.getModel("currentSettings");
+		//set the suggestion value into data model property "suggestValue" for filter backend
+		var sSuggestValue = oSettingsModel.getProperty(sSettingspath + "/suggestValue");
+		if (sSuggestValue !== sTerm.replaceAll("'", "\'\'")) {
+			oSettingsModel.setProperty(sSettingspath + "/suggestValue", sTerm.replaceAll("'", "\'\'"));
+			oSettingsModel.setProperty(sSettingspath + "/_loading", true);
+		}
+
+		//workaround for DIGITALWORKPLACE-5156, set the min-height of the popover
+		if (!oControl._bAttachChangeStyleOfPopover) {
+			oControl._getSuggestionsPopoverPopup().attachAfterOpen(oControl.getParent().changeStyleOfSuggestionsPopover);
+			oControl._bAttachChangeStyleOfPopover = true;
+		}
+	};
+
+	ListField.prototype.changeStyleOfSuggestionsPopover = function () {
+		if (this._oCalcedPos === "Bottom" && !this.hasStyleClass("sapUiIntegrationEditorPopupBottom")) {
+			this.addStyleClass("sapUiIntegrationEditorPopupBottom");
+		} else if (this._oCalcedPos !== "Bottom" &&  this.hasStyleClass("sapUiIntegrationEditorPopupBottom")) {
+			this.removeStyleClass("sapUiIntegrationEditorPopupBottom");
 		}
 	};
 

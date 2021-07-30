@@ -951,7 +951,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						}
 					},
 					"filterBackendInStringArray": {
-						"label": "Filter backend by input in MultiComboBox",
+						"label": "Filter backend by input in MultiComboBox or MultiInput",
 						"type": "group"
 					},
 					"CustomersWithMultiKeys": {
@@ -1062,6 +1062,31 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"key": "{CustomerID}",
 								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
 							}
+						}
+					},
+					"Customers_MultiInput": {
+						"manifestpath": "/sap.card/configuration/parameters/Customers_MultiInput/value",
+						"type": "string[]",
+						"required": true,
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address",
+										"$filter": "startswith(CompanyName,'{currentSettings>suggestValue}')"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						},
+						"visualization": {
+							"type": "MultiInput"
 						}
 					},
 					"filterBackendInString": {

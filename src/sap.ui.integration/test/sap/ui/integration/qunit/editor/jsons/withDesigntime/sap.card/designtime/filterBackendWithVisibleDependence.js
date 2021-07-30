@@ -57,6 +57,27 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
 							}
 						}
+					},
+					"CustomersInMultiInputWithVisibleDependent": {
+						"manifestpath": "/sap.card/configuration/parameters/CustomersInMultiInputWithVisibleDependent/value",
+						"type": "string[]",
+						"visible": "{items>booleanVisualization/value}",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.mock_request}}/Customers?$filter=startswith(CompanyName,'{currentSettings>suggestValue}')"
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						},
+						"visualization": {
+							"type": "MultiInput"
+						}
 					}
 				}
 			},

@@ -8,24 +8,34 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 		return new Designtime({
 			"form": {
 				"items": {
-					"booleanVisualization": {
-						"manifestpath": "/sap.card1/configuration/parameters/boolean/value",
-						"type": "boolean",
-						"label": "Boolean Label using Switch",
+					"CustomersWithFilterParameter": {
+						"manifestpath": "/sap.card1/configuration/parameters/CustomersWithFilterParameter/value",
+						"label": "Customers with filter parameter",
+						"type": "string[]",
+						"allowDynamicValues": true,
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.mock_request}}/Customers",
+									"parameters": {
+										"$filter": "startswith(CompanyName,'{currentSettings>suggestValue}')"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						},
 						"visualization": {
-							"type": "sap/m/Switch",
-							"settings": {
-								"state": "{currentSettings>value}",
-								"customTextOn": "Yes",
-								"customTextOff": "No",
-								"enabled": "{currentSettings>editable}"
-							}
+							"type": "MultiInput"
 						}
 					},
-					"CustomerWithEditableDependent": {
-						"manifestpath": "/sap.card1/configuration/parameters/CustomerWithEditableDependent/value",
-						"type": "string",
-						"editable": "{items>booleanVisualization/value}",
+					"CustomersWithFilterInURL": {
+						"manifestpath": "/sap.card1/configuration/parameters/CustomersWithFilterInURL/value",
+						"type": "string[]",
 						"values": {
 							"data": {
 								"request": {
@@ -38,12 +48,15 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"key": "{CustomerID}",
 								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
 							}
+						},
+						"visualization": {
+							"type": "MultiInput"
 						}
 					},
-					"CustomersWithEditableDependent": {
-						"manifestpath": "/sap.card1/configuration/parameters/CustomersWithEditableDependent/value",
+					"CustomersWithNotEditable": {
+						"manifestpath": "/sap.card1/configuration/parameters/CustomersWithNotEditable/value",
 						"type": "string[]",
-						"editable": "{items>booleanVisualization/value}",
+						"editable": false,
 						"values": {
 							"data": {
 								"request": {
@@ -56,12 +69,15 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"key": "{CustomerID}",
 								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
 							}
+						},
+						"visualization": {
+							"type": "MultiInput"
 						}
 					},
-					"CustomersInMultiInputWithEditableDependent": {
-						"manifestpath": "/sap.card1/configuration/parameters/CustomersInMultiInputWithEditableDependent/value",
+					"CustomersWithNotVisible": {
+						"manifestpath": "/sap.card1/configuration/parameters/CustomersWithNotVisible/value",
 						"type": "string[]",
-						"editable": "{items>booleanVisualization/value}",
+						"visible": false,
 						"values": {
 							"data": {
 								"request": {
