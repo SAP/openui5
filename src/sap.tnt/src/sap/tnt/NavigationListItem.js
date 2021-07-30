@@ -947,7 +947,7 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 				itemPosition = bundle.getText("LIST_ITEM_POSITION", [mPosition.index, mPosition.size]),
 				selected = navList._selectedItem === this ? bundle.getText("LIST_ITEM_SELECTED") : '',
 				itemText = navList.getExpanded() ? this.getText() : "",
-				text = accType + " " + itemPosition + " " + selected + " " + itemText;
+				text = accType + " " + selected + " " + itemText + " " + itemPosition;
 
 			invisibleText.setText(text);
 
