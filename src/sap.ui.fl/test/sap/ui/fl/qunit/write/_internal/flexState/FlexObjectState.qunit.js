@@ -144,6 +144,58 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("Get - Given flex objects are present in the CompVariantState + ChangePersistence + invalidateCache is true", function(assert) {
+			var sPersistencyKey = "persistency.key";
+			var oControl = new Control();
+			oControl.getPersistencyKey = function() {
+				return sPersistencyKey;
+			};
+			CompVariantState.addVariant({
+				changeSpecificData: {
+					type: "pageVariant",
+					isVariant: true,
+					content: {},
+					id: "1"
+				},
+				reference: sReference,
+				persistencyKey: sPersistencyKey
+			});
+			CompVariantState.updateVariant({
+				favorite: true,
+				id: "1",
+				layer: Layer.USER,
+				control: oControl,
+				reference: sReference,
+				persistencyKey: sPersistencyKey
+			});
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
+			addChangesToChangePersistence(oChangePersistence);
+			FlexState.setInitialNonFlCompVariantData(sReference, sPersistencyKey,
+				{
+					executeOnSelection: false,
+					id: "*standard*",
+					name: "Standard"
+				},
+				[{
+					favorite: true,
+					id: "#PS1",
+					name: "EntityType"
+				}]);
+			return FlexObjectState.getFlexObjects({
+				selector: this.appComponent,
+				invalidateCache: true
+			})
+				.then(function (aFlexObjects) {
+					assert.equal(aFlexObjects.length, 6, "an array with 6 entries is returned");
+					assert.equal(aFlexObjects[0].getChangeType(), "pageVariant", "the variant from the compVariantState is present");
+					assert.equal(aFlexObjects[1].getChangeType(), "updateVariant", "the change from the compVariantState is present");
+					assert.equal(aFlexObjects[2].getFileName(), "#PS1", "the oData variant is present");
+					assert.equal(aFlexObjects[3].getFileName(), "*standard*", "the standard variant is present");
+					assert.equal(aFlexObjects[4].getChangeType(), "renameField", "the 1st change in changePersistence is present");
+					assert.equal(aFlexObjects[5].getChangeType(), "addGroup", "the 2nd change in changePersistence is present");
+				});
+		});
+
 		QUnit.test("Get - Given flex objects of different layers are present in the CompVariantState and currentLayer set", function(assert) {
 			var sPersistencyKey = "persistency.key";
 			var sVariantId = "variantId1";

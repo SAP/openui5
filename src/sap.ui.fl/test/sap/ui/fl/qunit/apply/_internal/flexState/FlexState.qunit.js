@@ -282,6 +282,41 @@ sap.ui.define([
 				assert.ok(FlexState.clearState.calledWith(sReference2), "then state was cleared for reference2");
 			});
 		});
+
+		QUnit.test("when external comp variant data is stored and retrieved", function(assert) {
+			var oStoredData = FlexState.getInitialNonFlCompVariantData("reference.Component", "persistencyKey");
+			assert.equal(oStoredData, undefined, "when no external data is stored, retrieve function return undefined");
+			var aVariants1 = [{
+				id: "variant_1",
+				name: "A Variant",
+				content: {}
+			}];
+			var oStandardVariant1 = {
+				name: "Standard1"
+			};
+			var oStoredData1 = {
+				variants: aVariants1,
+				standardVariant: oStandardVariant1
+			};
+			var aVariants2 = [{
+				id: "variant_2",
+				name: "A Variant",
+				content: {}
+			}];
+			var oStandardVariant2 = {
+				name: "Standard2"
+			};
+			var oStoredData2 = {
+				variants: aVariants2,
+				standardVariant: oStandardVariant2
+			};
+			FlexState.setInitialNonFlCompVariantData("reference.Component", "persistencyKey", oStandardVariant1, aVariants1);
+			oStoredData = FlexState.getInitialNonFlCompVariantData("reference.Component", "persistencyKey");
+			assert.deepEqual(oStoredData, oStoredData1, "retrieve function return stored data correctly");
+			FlexState.setInitialNonFlCompVariantData("reference.Component", "persistencyKey", oStandardVariant2, aVariants2);
+			oStoredData = FlexState.getInitialNonFlCompVariantData("reference.Component", "persistencyKey");
+			assert.deepEqual(oStoredData, oStoredData2, "store the data will overwrite existing stored data");
+		});
 	});
 
 	QUnit.module("FlexState with loadFlexData and callPrepareFunction stubbed, filtering active", {
