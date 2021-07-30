@@ -1341,28 +1341,28 @@ sap.ui.define([
 		 *
 		 * @param {string} sCSSSize The CSSSize to convert.
 		 * @param {boolean} [bWithUnit=false] Whether the value should be returned as a string with the unit.
-		 * @returns {string | int | null} The pixel value as an integer, or string if <code>bWithUnit</code> is <code>true</code>. Returns
+		 * @returns {string | float | null} The pixel value as a number, or string if <code>bWithUnit</code> is <code>true</code>. Returns
 		 *                                <code>null</code> if the CSS size could not be converted.
 		 */
 		convertCSSSizeToPixel: function(sCSSSize, bWithUnit) {
-			var iPixelValue;
+			var fPixelValue;
 
 			if (typeof sCSSSize !== "string") {
 				return null;
 			}
 
 			if (sCSSSize.endsWith("px")) {
-				iPixelValue = parseInt(sCSSSize);
+				fPixelValue = parseFloat(sCSSSize);
 			} else if (sCSSSize.endsWith("em") || sCSSSize.endsWith("rem")) {
-				iPixelValue = Math.ceil(parseFloat(sCSSSize) * TableUtils.getBaseFontSize());
+				fPixelValue = parseFloat(sCSSSize) * TableUtils.getBaseFontSize();
 			} else {
 				return null;
 			}
 
 			if (bWithUnit) {
-				return iPixelValue + "px";
+				return fPixelValue + "px";
 			} else {
-				return iPixelValue;
+				return fPixelValue;
 			}
 		},
 

@@ -1268,13 +1268,17 @@ sap.ui.define([
 
 	QUnit.test("convertCSSSizeToPixel", function(assert) {
 		assert.equal(TableUtils.convertCSSSizeToPixel("10em", true), "160px", "10em converted to pixel string correctly.");
+		assert.equal(TableUtils.convertCSSSizeToPixel("10.11em", true), "161.76px", "10.11em converted to pixel string correctly.");
 		assert.equal(TableUtils.convertCSSSizeToPixel("10rem"), 160, "10rem converted to pixel integer correctly.");
+		assert.equal(TableUtils.convertCSSSizeToPixel("10.11rem"), 161.76, "10.11rem converted to pixel float correctly.");
 		assert.equal(TableUtils.convertCSSSizeToPixel("100px"), 100, "100px converted to pixel integer correctly.");
+		assert.equal(TableUtils.convertCSSSizeToPixel("100.11px"), 100.11, "100.11px converted to pixel float correctly.");
 
 		assert.equal(TableUtils.convertCSSSizeToPixel(), null, "undefined could not be converted. Returned null.");
 		assert.equal(TableUtils.convertCSSSizeToPixel("100"), null, "100 could not be converted. Returned null.");
 		assert.equal(TableUtils.convertCSSSizeToPixel("10vh"), null, "100vh could not be converted. Returned null.");
 		assert.equal(TableUtils.convertCSSSizeToPixel(100), null, "Integer could not be converted. Returned null.");
+		assert.equal(TableUtils.convertCSSSizeToPixel(100.11), null, "Float could not be converted. Returned null.");
 	});
 
 	QUnit.test("getBaseFontSize", function(assert) {
