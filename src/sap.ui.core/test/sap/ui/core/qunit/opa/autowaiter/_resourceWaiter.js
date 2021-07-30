@@ -43,34 +43,39 @@ sap.ui.define([
 
 	QUnit.test("Should wait for image to load", function (assert) {
 		var fnDone = assert.async();
+		var bCompleted = false;
 		this.oImageExistingSrc = new Image({
 			src: this.sExistingImageSrc,
-			load: fnOnComplete().bind(this)
+			load: fnOnComplete.bind(this)
 		});
 		this.oImageExistingSrc.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		function fnOnComplete() {
-			return function () {
-				// wait for other load handlers
-				setTimeout(function () {
-					// assert image was pending and then completed retrospectively from logs
-					assertPendingStartedAndFinished(this.sExistingImageSrc,true,assert);
+			// guard agains duplicate call to load callback
+			if (bCompleted) {
+				return;
+			}
+			bCompleted = true;
+			// wait for other load handlers, give some time for the observer to fire the changed event
+			setTimeout(function () {
+				// assert image was pending and then completed retrospectively from logs
+				assertPendingStartedAndFinished(this.sExistingImageSrc,true,assert);
 
-					// cleanup
-					this.oImageExistingSrc.destroy();
-					sap.ui.getCore().applyChanges();
-					fnDone();
-				}.bind(this), 0);
-			};
+				// cleanup
+				this.oImageExistingSrc.destroy();
+				sap.ui.getCore().applyChanges();
+				fnDone();
+			}.bind(this), 50);
 		}
 	});
 
 	QUnit.test("Should wait for image to load - nested image", function (assert) {
 		var fnDone = assert.async();
+		var bCompleted = false;
 		this.oNestedImage = new Image("nestedImage", {
 			src: this.sNestedImageSrc,
-			load: fnOnComplete().bind(this)
+			load: fnOnComplete.bind(this)
 		});
 		this.oText = new Text("headline", {
 			text: "Headline"
@@ -91,83 +96,98 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		function fnOnComplete() {
-			return function () {
-				// wait for other load handlers
-				setTimeout(function () {
-					// assert image was pending and then completed retrospectively from logs
-					assertPendingStartedAndFinished(this.sNestedImageSrc,true,assert);
+			// guard agains duplicate call to load callback
+			if (bCompleted) {
+				return;
+			}
+			bCompleted = true;
+			// wait for other load handlers, give some time for the observer to fire the changed event
+			setTimeout(function () {
+				// assert image was pending and then completed retrospectively from logs
+				assertPendingStartedAndFinished(this.sNestedImageSrc,true,assert);
 
-					// cleanup
-					this.oPanel.destroy();
-					sap.ui.getCore().applyChanges();
-					fnDone();
-				}.bind(this), 0);
-			};
+				// cleanup
+				this.oPanel.destroy();
+				sap.ui.getCore().applyChanges();
+				fnDone();
+			}.bind(this), 50);
 		}
 	});
 
 	QUnit.test("Should wait for image to complete with error", function (assert) {
+		var bFailed = false;
 		var fnDone = assert.async();
 		this.oImageWrongSrc = new Image({
 			src: this.sNotFoundSrc,
-			error: fnOnError().bind(this)
+			error: fnOnError.bind(this)
 		});
 		this.oImageWrongSrc.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		function fnOnError() {
-			return function () {
-				// wait for other load handlers
-				setTimeout(function () {
-					// assert image was pending and then completed retrospectively from logs
-					assertPendingStartedAndFinished(this.sNotFoundSrc,false,assert);
+			// guard agains duplicate call to error callback
+			if (bFailed) {
+				return;
+			}
+			bFailed = true;
+			// wait for other load handlers, give some time for the observer to fire the changed event
+			setTimeout(function () {
+				// assert image was pending and then completed retrospectively from logs
+				assertPendingStartedAndFinished(this.sNotFoundSrc,false,assert);
 
-					// cleanup
-					this.oImageWrongSrc.destroy();
-					sap.ui.getCore().applyChanges();
-					fnDone();
-				}.bind(this), 0);
-			};
+				// cleanup
+				this.oImageWrongSrc.destroy();
+				sap.ui.getCore().applyChanges();
+				fnDone();
+			}.bind(this), 50);
 		}
 	});
 
 	QUnit.test("Should wait for image to load when src is changed", function (assert) {
 		var fnDone = assert.async();
+		var bCompleted = false;
+		var bFailed = false;
 		this.oImageWrongSrc = new Image({
 			src: this.sNotFoundSrc,
-			error: fnOnError().bind(this),
-			load: fnOnComplete().bind(this)
+			error: fnOnError.bind(this),
+			load: fnOnComplete.bind(this)
 		});
 		this.oImageWrongSrc.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		function fnOnError() {
-			return function () {
-				// wait for other load handlers
-				setTimeout(function () {
-					// assert image was pending and then completed retrospectively from logs
-					assertPendingStartedAndFinished(this.sNotFoundSrc,false,assert);
+			// guard agains duplicate call to error callback
+			if (bFailed) {
+				return;
+			}
+			bFailed = true;
+			// wait for other load handlers
+			setTimeout(function () {
+				// wait for other load handlers, give some time for the observer to fire the changed event
+				assertPendingStartedAndFinished(this.sNotFoundSrc,false,assert);
 
-					// update image - from sNotFoundSrc to sReplacerImageSrc
-					this.oImageWrongSrc.setSrc(this.sReplacerImageSrc);
-					sap.ui.getCore().applyChanges();
-				}.bind(this), 0);
-			};
+				// update image - from sNotFoundSrc to sReplacerImageSrc
+				this.oImageWrongSrc.setSrc(this.sReplacerImageSrc);
+				sap.ui.getCore().applyChanges();
+			}.bind(this), 50);
 		}
 
 		function fnOnComplete() {
-			return function () {
-				// wait for load handlers
-				setTimeout(function () {
-					// assert image was pending and then completed retrospectively from logs
-					assertPendingStartedAndFinished(this.sReplacerImageSrc,true,assert);
+			// guard agains duplicate call to load callback
+			if (bCompleted) {
+				return;
+			}
+			bCompleted = true;
+			// wait for other load handlers, give some time for the observer to fire the changed event
+			setTimeout(function () {
+				// assert image was pending and then completed retrospectively from logs
+				assertPendingStartedAndFinished(this.sReplacerImageSrc,true,assert);
 
-					// cleanup
-					this.oImageWrongSrc.destroy();
-					sap.ui.getCore().applyChanges();
-					fnDone();
-				}.bind(this), 0);
-			};
+				// cleanup
+				this.oImageWrongSrc.destroy();
+				sap.ui.getCore().applyChanges();
+				fnDone();
+			}.bind(this), 50);
 		}
 	});
 });
