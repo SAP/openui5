@@ -697,10 +697,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the focused date of the calendar.
+	 * Displays and sets the focused date of the calendar.
 	 *
-	 * @param {Object} oDate
-	 *         JavaScript date object for focused date.
+	 * @param {Object} oDate A JavaScript date object for focused date
 	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
