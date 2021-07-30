@@ -156,6 +156,19 @@ sap.ui.define([
 			 */
 
 			/**
+			 * Suspends the object which is loaded by the target.
+			 *
+			 * Currently this function stops the router of the component when the object which is loaded by this target
+			 * is an instance of UIComponent. This is done only when the target is already loaded. When the target is
+			 * not loaded yet or still being loaded, the router of the component isn't stopped.
+			 *
+			 * @return {sap.ui.core.routing.Target} The 'this' to chain the call
+			 * @name sap.ui.core.routing.Target#suspend
+			 * @function
+			 * @public
+			 */
+
+			/**
 			 * Will be fired when a target is displayed
 			 *
 			 * Could be triggered by calling the display function or by the @link sap.ui.core.routing.Router when a target is referenced in a matching route.
