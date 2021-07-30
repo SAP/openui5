@@ -378,6 +378,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the ABAP package name.
+	 *
+	 * @param {string} sPackage - Package name
+	 *
+	 * @public
+	 */
+	Change.prototype.setPackage = function (sPackage) {
+		if (typeof (sPackage) !== "string") {
+			Log.error("sap.ui.fl.Change.setPackage : sPackage is not defined");
+		}
+		this._oDefinition.packageName = sPackage;
+	};
+
+	/**
 	 * Returns the namespace. The namespace of the change is also the namespace of the change file in the repository.
 	 *
 	 * @returns {String} Namespace of the change file

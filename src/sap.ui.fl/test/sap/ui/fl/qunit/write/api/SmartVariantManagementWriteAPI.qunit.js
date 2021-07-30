@@ -412,16 +412,16 @@ sap.ui.define([
 		});
 
 		[{
-			testDetails: "on a variant with an empty request entry",
+			testDetails: "on a variant with an empty package name",
 			packageName: "",
 			expectedChange: false
 		}, {
-			testDetails: "on a variant with an '$TMP' request entry",
+			testDetails: "on a variant with an '$TMP' package name",
 			packageName: "$TMP",
 			expectedChange: false
 		}, {
-			testDetails: "on a variant with a set request entry",
-			packageName: "SOME_TRANSPORT_REQUEST",
+			testDetails: "on a variant with a package name",
+			packageName: "PACKAGE_A",
 			expectedChange: true
 		}].forEach(function (oTestData) {
 			QUnit.test("When updateVariant is called " + oTestData.testDetails, function (assert) {
@@ -475,16 +475,18 @@ sap.ui.define([
 						layer: Layer.VENDOR,
 						id: "flex_variant_1",
 						name: "a new name",
-						packageName: "SOME_OTHER_TRANSPORT"
+						packageName: "PACKAGE_A",
+						transportId: "transport1"
 					});
 				}).then(function (oVariant) {
 					if (oTestData.expectedChange) {
 						assert.equal(oVariant.getChanges().length, 1, "one change was added");
-						assert.equal(oVariant.getChanges()[0].getDefinition().packageName, "SOME_OTHER_TRANSPORT", "the packageName was set correct");
+						assert.equal(oVariant.getChanges()[0].getPackage(), "PACKAGE_A", "the packageName was set correct");
+						assert.equal(oVariant.getChanges()[0].getRequest(), "transport1", "the transportId was set correct");
 						assert.equal(oVariant.getState(), Change.states.PERSISTED, "the change is not flagged as dirty");
 					} else {
 						assert.equal(oVariant.getChanges().length, 0, "no change was added");
-						assert.equal(oVariant.getRequest(), "SOME_OTHER_TRANSPORT", "the packageName was set correct");
+						assert.equal(oVariant.getRequest(), "transport1", "the transportId was set correct");
 						assert.equal(oVariant.getState(), Change.states.DIRTY, "the change is not flagged as dirty");
 					}
 				});
