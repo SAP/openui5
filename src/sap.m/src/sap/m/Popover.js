@@ -732,8 +732,6 @@ sap.ui.define([
 					this._marginTopInit = true;
 				}
 			}
-
-			this._repositionOffset();
 		};
 
 		/**
@@ -1100,6 +1098,8 @@ sap.ui.define([
 		Popover.prototype._handleOpened = function () {
 			var that = this;
 			this.oPopup.detachOpened(this._handleOpened, this);
+
+			this._repositionOffset();
 
 			//	recalculate the arrow position when the size of the popover changes.
 			if (!Device.support.touch) {

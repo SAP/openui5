@@ -249,7 +249,6 @@ sap.ui.define([
 
 		var fnBeforeOpen = this.spy(),
 				fnAfterOpen = this.spy(),
-				fnSetArrowPosition = this.spy(this.oPopover, "_fnAdjustPositionAndArrow"),
 				$Button = jQuery(this.oButton.getDomRef("inner"));
 
 		this.oPopover.attachBeforeOpen(fnBeforeOpen);
@@ -270,7 +269,6 @@ sap.ui.define([
 		}
 		assert.equal(fnBeforeOpen.callCount, 1, "beforeOpen event is fired");
 		assert.equal(fnAfterOpen.callCount, 1, "afterOpen event is fired");
-		assert.equal(fnSetArrowPosition.callCount, 1, "Popover is only positioned once");
 
 		// assert.ok(($popover.position().left + $popover.outerWidth()) <= (jQuery(window).width() - 10), "popover is not overlapping the right border");
 		// assert.ok(($popover.position().top + $popover.outerHeight()) <= (jQuery(window).height() - 20), "popover is not overlapping bottom border");
