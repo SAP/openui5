@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/rta/util/BindingsExtractor",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	XMLView,
 	BindingsExtractor,
-	Button
+	Button,
+	sinon
 ) {
 	"use strict";
 
@@ -16,6 +18,8 @@ sap.ui.define([
 			return oBinding.getPath && oBinding.getPath() === sPath;
 		});
 	}
+
+	var sandbox = sinon.sandbox.create();
 
 	// One model with EntityType01 and EntityType02 (default) + one i18n model ("i18n")
 	QUnit.module("Given a complex test view with oData Model...", {
@@ -31,6 +35,9 @@ sap.ui.define([
 				sap.ui.getCore().applyChanges();
 				return this.oView.getController().isDataReady();
 			}.bind(this));
+		},
+		afterEach: function() {
+			sandbox.restore();
 		},
 		after: function () {
 			this.oView.destroy();
@@ -142,6 +149,44 @@ sap.ui.define([
 			var sBindingContextPath = BindingsExtractor.getBindingContextPath(oElementWithContext);
 			assert.strictEqual(typeof sBindingContextPath, 'string',
 				"then the return value is a string");
+		});
+
+		QUnit.test("when collectBindingPaths is called for element with bindings not containing a path property", function(assert) {
+			var oElement = {
+				getParent: function() {
+					return undefined;
+				}
+			};
+
+			sandbox.stub(BindingsExtractor, "getBindings")
+				.returns(
+					[
+						{
+							parts: [{
+								value: true,
+								mode: "OneWay"
+							}]
+						},
+						{
+							parts: [{
+								value: "",
+								mode: "OneWay"
+							}]
+						},
+						{
+							parts: [{
+								path: "realPath",
+								mode: "OneWay",
+								value: "doesntMatter"
+							}]
+						}
+					]
+				);
+
+			var aBindingPaths = BindingsExtractor.collectBindingPaths(oElement);
+
+			assert.strictEqual(aBindingPaths.bindingPaths.length, 1, "then only one binding is returned");
+			assert.strictEqual(aBindingPaths.bindingPaths[0], "realPath", "then only the binding with a path is returned");
 		});
 	});
 

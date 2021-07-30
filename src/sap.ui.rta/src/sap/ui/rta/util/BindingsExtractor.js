@@ -14,6 +14,8 @@ function(
 ) {
 	"use strict";
 
+	var BindingsExtractor = {};
+
 	/**
 	 * Get all relevant binding paths and binding context paths for the element (from all properties)
 	 *
@@ -24,14 +26,14 @@ function(
 	 *
 	 * @private
 	 */
-	function collectBindingPaths(oElement, oModel, oRelevantContainerElement) {
+	BindingsExtractor.collectBindingPaths = function(oElement, oModel, oRelevantContainerElement) {
 		var mBindingsCollection = {
 			bindingPaths: [],
 			bindingContextPaths: []
 		};
 		var sAggregationName = oElement.sParentAggregationName;
 		var oParent = oElement.getParent();
-		var aBindings = getBindings(oElement, oModel, undefined, undefined, oRelevantContainerElement);
+		var aBindings = BindingsExtractor.getBindings(oElement, oModel, undefined, undefined, oRelevantContainerElement);
 
 		if (oParent) {
 			var oDefaultAggregation = oParent.getMetadata().getAggregation();
@@ -48,7 +50,7 @@ function(
 					if (oTemplateDefaultAggregation) {
 						var sTemplateDefaultAggregationName = oTemplateDefaultAggregation.name;
 						var oTemplateElement = ElementUtil.getAggregation(oTemplate, sTemplateDefaultAggregationName)[iPositionOfInvisibleElement];
-						aBindings = aBindings.concat(getBindings(oTemplateElement, null, true, undefined, oRelevantContainerElement));
+						aBindings = aBindings.concat(BindingsExtractor.getBindings(oTemplateElement, null, true, undefined, oRelevantContainerElement));
 					}
 				}
 			}
@@ -68,13 +70,15 @@ function(
 				}
 			}
 			if (isPlainObject(aBindings[i])) {
-				if (mBindingsCollection.bindingPaths.indexOf(aBindings[i].parts[0].path) === -1) {
-					mBindingsCollection.bindingPaths.push(aBindings[i].parts[0].path);
+				var sCurrentPath = aBindings[i].parts[0] && aBindings[i].parts[0].path;
+				// Sometimes the binding does not contain a path
+				if (sCurrentPath && mBindingsCollection.bindingPaths.indexOf(sCurrentPath) === -1) {
+					mBindingsCollection.bindingPaths.push(sCurrentPath);
 				}
 			}
 		}
 		return mBindingsCollection;
-	}
+	};
 
 	function isElementRelatedToRelevantContainer(oElement, oRelevantContainerElement) {
 		if (oRelevantContainerElement && oElement !== oRelevantContainerElement) {
@@ -98,13 +102,13 @@ function(
 	 *
 	 * @private
 	 */
-	function getBindings(oElement, oParentDefaultModel, bTemplate, sAggregationName, oRelevantContainerElement) {
+	BindingsExtractor.getBindings = function(oElement, oParentDefaultModel, bTemplate, sAggregationName, oRelevantContainerElement) {
 		var aBindings = [];
 		if (isElementRelatedToRelevantContainer(oElement, oRelevantContainerElement)) {
 			aBindings = (
 				bTemplate
 					? getBindingsFromTemplateProperties(oElement)
-					: getBindingsFromProperties(oElement, oParentDefaultModel)
+					: BindingsExtractor.getBindingsFromProperties(oElement, oParentDefaultModel)
 			);
 		}
 		var aAggregationNames = sAggregationName ? [sAggregationName] : Object.keys(oElement.getMetadata().getAllAggregations());
@@ -114,7 +118,7 @@ function(
 		});
 
 		return aBindings;
-	}
+	};
 
 	function getBindingsForAggregation(oElement, oParentDefaultModel, bTemplate, sAggregationName, oRelevantContainerElement) {
 		var aBindings = [];
@@ -129,10 +133,10 @@ function(
 					// Fetching bindings from Element and all children of Element
 					aBindings = aBindings.concat(oTemplate || bTemplate
 						? getBindingsFromTemplateProperties(oChildElement, oRelevantContainerElement)
-						: getBindingsFromProperties(oChildElement, oParentDefaultModel));
+						: BindingsExtractor.getBindingsFromProperties(oChildElement, oParentDefaultModel));
 				}
 				aBindings = aBindings.concat(
-					getBindings(oChildElement, oParentDefaultModel, oTemplate || bTemplate, undefined, oRelevantContainerElement)
+					BindingsExtractor.getBindings(oChildElement, oParentDefaultModel, oTemplate || bTemplate, undefined, oRelevantContainerElement)
 				);
 			}
 		});
@@ -150,13 +154,13 @@ function(
 	 *
 	 * @private
 	 */
-	function flattenBindings(oBinding, oParentDefaultModel) {
+	BindingsExtractor.flattenBindings = function(oBinding, oParentDefaultModel) {
 		var aBindings = [];
 		var sModelName = oBinding.getMetadata().getName();
 
 		if (sModelName === "sap.ui.model.CompositeBinding") {
 			oBinding.getBindings().forEach(function (oBinding) {
-				aBindings = aBindings.concat(flattenBindings(oBinding, oParentDefaultModel));
+				aBindings = aBindings.concat(BindingsExtractor.flattenBindings(oBinding, oParentDefaultModel));
 			});
 		} else if (
 			(
@@ -176,7 +180,7 @@ function(
 		}
 
 		return aBindings;
-	}
+	};
 
 	/**
 	 * Fetches all bindings from template
@@ -209,7 +213,7 @@ function(
 	 *
 	 * @private
 	 */
-	function getBindingsFromProperties(oElement, oParentDefaultModel) {
+	BindingsExtractor.getBindingsFromProperties = function(oElement, oParentDefaultModel) {
 		var aPropertiesKeys = Object.keys(oElement.getMetadata().getAllProperties());
 
 		return aPropertiesKeys
@@ -217,13 +221,13 @@ function(
 			.filter(oElement.getBinding.bind(oElement))
 			.reduce(function (aBindings, sPropertyName) {
 				return aBindings.concat(
-					flattenBindings(
+					BindingsExtractor.flattenBindings(
 						oElement.getBinding(sPropertyName),
 						oParentDefaultModel
 					)
 				);
 			}, []);
-	}
+	};
 
 	/**
 	 * Retrieving all bindings from all available properties for a specified element of template
@@ -255,18 +259,12 @@ function(
 	 * @return {boolean|string} - Returns the binding context path string from element. If not available <code>false</code> is returned.
 	 * @private
 	 */
-	function getBindingContextPath(oElement) {
+	BindingsExtractor.getBindingContextPath = function(oElement) {
 		if (oElement.getBindingContext() && oElement.getBindingContext().getPath) {
 			return oElement.getBindingContext().getPath();
 		}
 		return undefined;
-	}
-
-	return {
-		getBindings: getBindings,
-		collectBindingPaths: collectBindingPaths,
-		flattenBindings: flattenBindings,
-		getBindingsFromProperties: getBindingsFromProperties,
-		getBindingContextPath: getBindingContextPath
 	};
+
+	return BindingsExtractor;
 }, true);
