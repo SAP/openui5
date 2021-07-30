@@ -2640,6 +2640,27 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Interpolate query parameter with '#' sign", function(assert) {
+		var oRouter = fnCreateRouter([{
+			name: "queryParamWithPound",
+			pattern: "{?query}"
+		}]);
+
+
+		// Act
+		var sHash = oRouter.getURL("queryParamWithPound", {
+			"?query": {
+				"a": "#b#c#",
+				"#d#e#f": "g"
+			}
+		});
+
+		// assert
+		assert.equal(sHash, "?a=#b#c#&#d#e#f=g", "Hash can be constructed correctly");
+
+		oRouter.destroy();
+	});
+
 	QUnit.module("Typed View", {
 		beforeEach: function() {
 			hasher.setHash("");

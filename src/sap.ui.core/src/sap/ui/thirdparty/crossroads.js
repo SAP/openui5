@@ -545,14 +545,16 @@ var factory = function (signals) {
                 'RQ' : {
                     //required query string - everything in between `{? }`
                     rgx : /\{\?([^}]+)\}/g,
-                    //everything from `?` till `#` or end of string
-                    res : '\\?([^#]+)'
+                    // ##### BEGIN: MODIFIED BY SAP
+                    //everything from `?` till end of string
+                    res : '\\?(.+)'
                 },
                 'OQ' : {
                     //optional query string - everything in between `:? :`
                     rgx : /:\?([^:]+):/g,
-                    //everything from `?` till `#` or end of string
-                    res : '(?:\\?([^#]*))?'
+                    //everything from `?` till end of string
+                    res : '(?:\\?(.*))?'
+                    // ##### END: MODIFIED BY SAP
                 },
                 'OR' : {
                     //optional rest - everything in between `: *:`
