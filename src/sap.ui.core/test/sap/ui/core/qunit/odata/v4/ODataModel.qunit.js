@@ -468,8 +468,8 @@ sap.ui.define([
 			fnGetGroupProperty = {},
 			oModel,
 			oModelInterface,
-			fnReportBoundMessages = {},
-			fnReportUnboundMessages = {},
+			fnreportStateMessages = {},
+			fnreportTransitionMessages = {},
 			oRequestor = {
 				checkForOpenRequests : function () {},
 				checkHeaderNames : function () {}
@@ -483,8 +483,8 @@ sap.ui.define([
 					fireSessionTimeout : sinon.match.func,
 					getGroupProperty : sinon.match.same(fnGetGroupProperty),
 					onCreateGroup : sinon.match.func,
-					reportBoundMessages : sinon.match.same(fnReportBoundMessages),
-					reportUnboundMessages : sinon.match.same(fnReportUnboundMessages)
+					reportStateMessages : sinon.match.same(fnreportStateMessages),
+					reportTransitionMessages : sinon.match.same(fnreportTransitionMessages)
 				},
 				{"Accept-Language" : "ab-CD"},
 				{"sap-client" : "123"}, "4.0")
@@ -495,10 +495,10 @@ sap.ui.define([
 			.returns(fnFetchMetadata);
 		oExpectedBind2 = this.mock(ODataModel.prototype.getGroupProperty).expects("bind")
 			.returns(fnGetGroupProperty);
-		oExpectedBind3 = this.mock(ODataModel.prototype.reportUnboundMessages).expects("bind")
-			.returns(fnReportUnboundMessages);
-		oExpectedBind4 = this.mock(ODataModel.prototype.reportBoundMessages).expects("bind")
-			.returns(fnReportBoundMessages);
+		oExpectedBind3 = this.mock(ODataModel.prototype.reportTransitionMessages).expects("bind")
+			.returns(fnreportTransitionMessages);
+		oExpectedBind4 = this.mock(ODataModel.prototype.reportStateMessages).expects("bind")
+			.returns(fnreportStateMessages);
 
 		// code under test
 		oModel = this.createModel("?sap-client=123", {}, true);
@@ -967,8 +967,8 @@ sap.ui.define([
 				.returns(oExtractedMessages);
 			this.oLogMock.expects("error").withExactArgs(sLogMessage, oFixture.message, sClassName)
 				.twice();
-			oModelMock.expects("reportBoundMessages").never();
-			oModelMock.expects("reportUnboundMessages")
+			oModelMock.expects("reportStateMessages").never();
+			oModelMock.expects("reportTransitionMessages")
 				.once()// add each error only once to the MessageManager
 				.withExactArgs(sinon.match.same(oExtractedMessages.unbound));
 
@@ -1000,9 +1000,9 @@ sap.ui.define([
 		this.mock(_Helper).expects("extractMessages")
 			.withExactArgs(oError)
 			.returns(oExtractedMessages);
-		this.mock(oModel).expects("reportUnboundMessages")
+		this.mock(oModel).expects("reportTransitionMessages")
 			.withExactArgs(oExtractedMessages.unbound);
-		this.mock(oModel).expects("reportBoundMessages")
+		this.mock(oModel).expects("reportStateMessages")
 			.exactly(bBoundMessages ? 1 : 0)
 			.withExactArgs("/Product('1')", {"" : oExtractedMessages.bound}, []);
 
@@ -1019,8 +1019,8 @@ sap.ui.define([
 		this.oLogMock.expects("debug")
 			.withExactArgs("Failure", "Canceled\n    at foo.bar", "class");
 		this.mock(_Helper).expects("extractMessages").never();
-		this.mock(oModel).expects("reportBoundMessages").never();
-		this.mock(oModel).expects("reportUnboundMessages").never();
+		this.mock(oModel).expects("reportStateMessages").never();
+		this.mock(oModel).expects("reportTransitionMessages").never();
 
 		// code under test
 		oModel.reportError("Failure", "class", oError);
@@ -1033,8 +1033,8 @@ sap.ui.define([
 
 		this.oLogMock.expects("debug").never();
 		this.mock(_Helper).expects("extractMessages").never();
-		this.mock(oModel).expects("reportBoundMessages").never();
-		this.mock(oModel).expects("reportUnboundMessages").never();
+		this.mock(oModel).expects("reportStateMessages").never();
+		this.mock(oModel).expects("reportTransitionMessages").never();
 
 		// code under test
 		oModel.reportError("Failure", "class", oError);
@@ -1691,7 +1691,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("reportUnboundMessages", function () {
+	QUnit.test("reportTransitionMessages", function () {
 		var oModel = this.createModel(),
 			oModelMock = this.mock(oModel),
 			aMessages = [{}, {}],
@@ -1707,17 +1707,17 @@ sap.ui.define([
 			.withExactArgs(sinon.match({newMessages: ["~UI5msg0~", "~UI5msg1~"]}));
 
 		// code under test
-		oModel.reportUnboundMessages(aMessages, sResourcePath);
+		oModel.reportTransitionMessages(aMessages, sResourcePath);
 
 		// code under test
-		oModel.reportUnboundMessages([], sResourcePath);
+		oModel.reportTransitionMessages([], sResourcePath);
 
 		// code under test
-		oModel.reportUnboundMessages(null, sResourcePath);
+		oModel.reportTransitionMessages(null, sResourcePath);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("reportBoundMessages", function () {
+	QUnit.test("reportStateMessages", function () {
 		var aBarMessages = ["~rawMessage0~", "~rawMessage1~"],
 			aBazMessages = ["~rawMessage2~"],
 			oModel = this.createModel(),
@@ -1734,17 +1734,17 @@ sap.ui.define([
 				{newMessages : ["~UI5msg0~", "~UI5msg1~", "~UI5msg2~"], oldMessages : []}));
 
 		// code under test
-		oModel.reportBoundMessages("Team('42')",
+		oModel.reportStateMessages("Team('42')",
 			{"foo/bar" : aBarMessages, "foo/baz" : aBazMessages});
 
 		oModelMock.expects("fireMessageChange").never();
 
 		// code under test
-		oModel.reportBoundMessages("Team('42')", {});
+		oModel.reportStateMessages("Team('42')", {});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("reportBoundMessages: remove old messages w/o key predicates", function (assert) {
+	QUnit.test("reportStateMessages: remove old messages w/o key predicates", function (assert) {
 		var mMessages = {
 				"/FOO('1')" : [{}, {}],
 				// TODO use Message.getPersistent() instead of Message.persistent?
@@ -1776,7 +1776,7 @@ sap.ui.define([
 			});
 
 		// code under test
-		oModel.reportBoundMessages("FOO('1')", {});
+		oModel.reportStateMessages("FOO('1')", {});
 
 		oModelMock.expects("fireMessageChange")
 			.withExactArgs(sinon.match.object)
@@ -1793,11 +1793,11 @@ sap.ui.define([
 			});
 
 		// code under test
-		oModel.reportBoundMessages("FOO('3')/NavSingle", {});
+		oModel.reportStateMessages("FOO('3')/NavSingle", {});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("reportBoundMessages: remove old messages with key predicates", function (assert) {
+	QUnit.test("reportStateMessages: remove old messages with key predicates", function (assert) {
 		var oHelperMock = this.mock(_Helper),
 			mMessages = {
 				"/FOO('1')" : [{}, {}],
@@ -1832,11 +1832,11 @@ sap.ui.define([
 			});
 
 		// code under test - only keys 1 and 2 were read
-		oModel.reportBoundMessages("FOO", {}, ["('1')", "('2')"]);
+		oModel.reportStateMessages("FOO", {}, ["('1')", "('2')"]);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("reportBoundMessages: remove old messages - complete collection", function (assert) {
+	QUnit.test("reportStateMessages: remove old messages - complete collection", function (assert) {
 		var mMessages = {
 				"/FOO('1')" : [{}, {}],
 				"/FOO('1')/bar" : [{}],
@@ -1871,7 +1871,7 @@ sap.ui.define([
 			});
 
 		// code under test
-		oModel.reportBoundMessages("FOO", {});
+		oModel.reportStateMessages("FOO", {});
 	});
 
 	//*********************************************************************************************

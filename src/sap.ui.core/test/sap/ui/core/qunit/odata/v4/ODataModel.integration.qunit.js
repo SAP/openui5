@@ -26764,7 +26764,7 @@ sap.ui.define([
 
 			// simulate messages for unit of measure as sales order model does not declare a message
 			// property for products
-			oModel.reportBoundMessages("ProductList", {
+			oModel.reportStateMessages("ProductList", {
 				"" : [{
 					code : "42",
 					message : "Warning for WeightUnit",
@@ -26785,7 +26785,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectMessages([]);
 			// remove model messages again
-			oModel.reportBoundMessages("ProductList", {});
+			oModel.reportStateMessages("ProductList", {});
 		}).then(function () {
 			that.expectChange("weight", "23.40000 KG")
 				.expectChange("weight0", "23.40000")
@@ -26916,7 +26916,7 @@ sap.ui.define([
 
 			// simulate messages for currency code as sales order model does not declare a message
 			// property for products
-			oModel.reportBoundMessages("ProductList", {
+			oModel.reportStateMessages("ProductList", {
 				"" : [{
 					code : "43",
 					message : "Info for CurrencyCode",
@@ -26937,7 +26937,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectMessages([]);
 			// remove model messages again
-			oModel.reportBoundMessages("ProductList", {});
+			oModel.reportStateMessages("ProductList", {});
 		}).then(function () {
 			//TODO get rid of first change event which is due to using setRawValue([...]) on the
 			//  composite binding. Solution idea: change integration test framework to not use

@@ -312,8 +312,8 @@ sap.ui.define([
 									that._submitBatch.bind(that, sGroupId, true));
 							}
 						},
-						reportBoundMessages : this.reportBoundMessages.bind(this),
-						reportUnboundMessages : this.reportUnboundMessages.bind(this)
+						reportStateMessages : this.reportStateMessages.bind(this),
+						reportTransitionMessages : this.reportTransitionMessages.bind(this)
 					};
 					this.oRequestor = _Requestor.create(this.sServiceUrl, this.oInterface,
 						this.mHeaders, this.mUriParameters, sODataVersion);
@@ -1660,53 +1660,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Reports the given bound OData messages by firing a <code>messageChange</code> event with
-	 * the new messages.
-	 *
-	 * @param {string} sResourcePath
-	 *   The resource path of the cache that saw the messages; used to resolve the targets and
-	 *   the longtext URL
-	 * @param {object} mPathToODataMessages
-	 *   Maps a cache-relative path with key predicates or indices to an array of messages suitable
-	 *   for {@link #createUI5Message}
-	 * @param {string[]} [aCachePaths]
-	 *   An array of cache-relative paths of the entities for which non-persistent messages have to
-	 *   be removed; if the array is not given, all entities are affected
-	 *
-	 * @private
-	 */
-	ODataModel.prototype.reportBoundMessages = function (sResourcePath, mPathToODataMessages,
-			aCachePaths) {
-		var sDataBindingPath = "/" + sResourcePath,
-			aNewMessages = [],
-			aOldMessages = [],
-			that = this;
-
-		Object.keys(mPathToODataMessages).forEach(function (sCachePath) {
-			mPathToODataMessages[sCachePath].forEach(function (oRawMessage) {
-				aNewMessages.push(that.createUI5Message(oRawMessage, sResourcePath, sCachePath));
-			});
-		});
-		(aCachePaths || [""]).forEach(function (sCachePath) {
-			var sPath = _Helper.buildPath(sDataBindingPath, sCachePath);
-
-			Object.keys(that.mMessages).forEach(function (sMessageTarget) {
-				if (sMessageTarget === sPath
-						|| sMessageTarget.startsWith(sPath + "/")
-						|| sMessageTarget.startsWith(sPath + "(")) {
-					aOldMessages = aOldMessages.concat(
-						that.mMessages[sMessageTarget].filter(function (oMessage) {
-							return !oMessage.persistent;
-						}));
-				}
-			});
-		});
-		if (aNewMessages.length || aOldMessages.length) {
-			this.fireMessageChange({newMessages : aNewMessages, oldMessages : aOldMessages});
-		}
-	};
-
-	/**
 	 * Reports a technical error by firing a <code>messageChange</code> event with a new message and
 	 * logging the error to the console. Takes care that the error is only reported once via the
 	 * <code>messageChange</code> event. Existing messages remain untouched.
@@ -1762,18 +1715,68 @@ sap.ui.define([
 
 		oRawMessages = _Helper.extractMessages(oError);
 		if (oRawMessages.bound.length) {
-			this.reportBoundMessages(
+			this.reportStateMessages(
 				oError.resourcePath.split("?")[0],
 				{"" : oRawMessages.bound},
 				[]
 			);
 		}
 		// The longtextUrls are already absolute, so sResourcePath is not needed here
-		this.reportUnboundMessages(oRawMessages.unbound);
+		this.reportTransitionMessages(oRawMessages.unbound);
 	};
 
 	/**
-	 * Reports the given unbound OData messages by firing a <code>messageChange</code> event with
+	 * Reports the given OData state messages by firing a <code>messageChange</code> event with
+	 * the new messages.
+	 *
+	 * Note that this method may also report transition messages that have been transported via the
+	 * messages property of an entity.
+	 *
+	 * @param {string} sResourcePath
+	 *   The resource path of the cache that saw the messages; used to resolve the targets and
+	 *   the longtext URL
+	 * @param {object} mPathToODataMessages
+	 *   Maps a cache-relative path with key predicates or indices to an array of messages suitable
+	 *   for {@link #createUI5Message}
+	 * @param {string[]} [aCachePaths]
+	 *   An array of cache-relative paths of the entities for which non-persistent messages have to
+	 *   be removed; if the array is not given, all entities are affected
+	 *
+	 * @private
+	 */
+	 ODataModel.prototype.reportStateMessages = function (sResourcePath, mPathToODataMessages,
+			aCachePaths) {
+		var sDataBindingPath = "/" + sResourcePath,
+			aNewMessages = [],
+			aOldMessages = [],
+			that = this;
+
+		Object.keys(mPathToODataMessages).forEach(function (sCachePath) {
+			mPathToODataMessages[sCachePath].forEach(function (oRawMessage) {
+				aNewMessages.push(that.createUI5Message(oRawMessage, sResourcePath, sCachePath));
+			});
+		});
+		(aCachePaths || [""]).forEach(function (sCachePath) {
+			var sPath = _Helper.buildPath(sDataBindingPath, sCachePath);
+
+			Object.keys(that.mMessages).forEach(function (sMessageTarget) {
+				if (sMessageTarget === sPath
+						|| sMessageTarget.startsWith(sPath + "/")
+						|| sMessageTarget.startsWith(sPath + "(")) {
+					aOldMessages = aOldMessages.concat(
+						that.mMessages[sMessageTarget].filter(function (oMessage) {
+							return !oMessage.persistent;
+						}));
+				}
+			});
+		});
+		if (aNewMessages.length || aOldMessages.length) {
+			this.fireMessageChange({newMessages : aNewMessages, oldMessages : aOldMessages});
+		}
+	};
+
+	/**
+	 * Reports the given OData transition messages by firing a <code>messageChange</code> event with
 	 * the new messages.
 	 *
 	 * @param {object[]} aMessages
@@ -1783,7 +1786,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.reportUnboundMessages = function (aMessages, sResourcePath) {
+	ODataModel.prototype.reportTransitionMessages = function (aMessages, sResourcePath) {
 		var that = this;
 
 		if (aMessages && aMessages.length) {

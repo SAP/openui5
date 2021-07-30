@@ -65,12 +65,12 @@ sap.ui.define([
 	 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
 	 *   returning the property value in question. Only 'submit' is supported for <code>
 	 *   sPropertyName</code>. Supported property values are: 'API', 'Auto' and 'Direct'.
-	 * @param {function} oModelInterface.reportBoundMessages
-	 *   A function for reporting bound messages; see {@link #reportBoundMessages} for the signature
+	 * @param {function} oModelInterface.reportStateMessages
+	 *   A function for reporting state messages; see {@link #reportStateMessages} for the signature
 	 *   of this function
-	 * @param {function} oModelInterface.reportUnboundMessages
+	 * @param {function} oModelInterface.reportTransitionMessages
 	 *   A function called with parameters <code>sResourcePath</code> and <code>sMessages</code>
-	 *   reporting unbound OData messages to the {@link sap.ui.core.message.MessageManager}.
+	 *   reporting OData transition messages to the {@link sap.ui.core.message.MessageManager}.
 	 * @param {function (string)} [oModelInterface.onCreateGroup]
 	 *   A callback function that is called with the group name as parameter when the first
 	 *   request is added to a group
@@ -1198,7 +1198,7 @@ sap.ui.define([
 						// methods it must be possible to insert the ETag from the header
 						oResponse = vRequest.method === "GET" ? null : {};
 					}
-					that.reportUnboundMessagesAsJSON(vRequest.url,
+					that.reportHeaderMessages(vRequest.url,
 						getResponseHeader.call(vResponse, "sap-messages"));
 					sETag = getResponseHeader.call(vResponse, "ETag");
 					if (sETag) {
@@ -1448,7 +1448,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Reports unbound OData messages.
+	 * Reports OData messages from the "sap-messages" response header.
 	 *
 	 * @param {string} sResourcePath
 	 *   The resource path of the request whose response contained the messages
@@ -1457,9 +1457,9 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	_Requestor.prototype.reportUnboundMessagesAsJSON = function (sResourcePath, sMessages) {
+	_Requestor.prototype.reportHeaderMessages = function (sResourcePath, sMessages) {
 		if (sMessages) {
-			this.oModelInterface.reportUnboundMessages(JSON.parse(sMessages), sResourcePath);
+			this.oModelInterface.reportTransitionMessages(JSON.parse(sMessages), sResourcePath);
 		}
 	};
 
@@ -1599,7 +1599,7 @@ sap.ui.define([
 			Object.assign({}, mHeaders, this.mFinalHeaders),
 			JSON.stringify(oPayload), sOriginalResourcePath
 		).then(function (oResponse) {
-			that.reportUnboundMessagesAsJSON(oResponse.resourcePath, oResponse.messages);
+			that.reportHeaderMessages(oResponse.resourcePath, oResponse.messages);
 			return that.doConvertResponse(oResponse.body, sMetaPath);
 		});
 	};
@@ -1873,11 +1873,10 @@ sap.ui.define([
 	 * @param {function (string)} [oModelInterface.onCreateGroup]
 	 *   A callback function that is called with the group name as parameter when the first
 	 *   request is added to a group
-	 * @param {function} oModelInterface.reportBoundMessages
-	 *   A function to report bound OData messages
-	 * @param {function (object[])} oModelInterface.reportUnboundMessages
-	 *   A function to report unbound OData messages contained in the <code>sap-messages</code>
-	 *   response header
+	 * @param {function} oModelInterface.reportStateMessages
+	 *   A function to report OData state messages
+	 * @param {function (object[])} oModelInterface.reportTransitionMessages
+	 *   A function to report OData transition messages
 	 * @param {object} [mHeaders={}]
 	 *   Map of default headers; may be overridden with request-specific headers; certain
 	 *   OData V4 headers are predefined, but may be overridden by the default or

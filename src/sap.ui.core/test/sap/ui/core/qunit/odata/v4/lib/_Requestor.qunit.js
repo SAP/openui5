@@ -21,8 +21,8 @@ sap.ui.define([
 			fireSessionTimeout : function () {},
 			getGroupProperty : defaultGetGroupProperty,
 			onCreateGroup : function () {},
-			reportBoundMessages : function () {},
-			reportUnboundMessages : function () {}
+			reportStateMessages : function () {},
+			reportTransitionMessages : function () {}
 		},
 		sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 		sSampleServiceUrl = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/";
@@ -745,7 +745,7 @@ sap.ui.define([
 						"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 					}, "~payload~", "~Employees~?custom=value")
 				.resolves(oResponse);
-			this.mock(oRequestor).expects("reportUnboundMessagesAsJSON")
+			this.mock(oRequestor).expects("reportHeaderMessages")
 				.withExactArgs(oResponse.resourcePath, sinon.match.same(oResponse.messages));
 			this.mock(oRequestor).expects("doConvertResponse")
 				.withExactArgs(sinon.match.same(oResponse.body), "meta/path")
@@ -1171,7 +1171,7 @@ sap.ui.define([
 			};
 
 		this.mock(oRequestor).expects("doConvertResponse").never();
-		this.mock(oRequestor).expects("reportUnboundMessagesAsJSON").never();
+		this.mock(oRequestor).expects("reportHeaderMessages").never();
 		oGetProductsPromise = oRequestor.request("GET", "Products", this.createGroupLock())
 			.then(function () {
 				assert.notOk("Unexpected success");
@@ -1763,7 +1763,7 @@ sap.ui.define([
 
 		this.mock(oRequestor).expects("sendBatch") // arguments don't matter
 			.resolves([createResponse({id : 42}, mHeaders)]);
-		this.mock(oRequestor).expects("reportUnboundMessagesAsJSON")
+		this.mock(oRequestor).expects("reportHeaderMessages")
 			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
 
 		return Promise.all([oRequestPromise, oRequestor.processBatch("groupId")]);
@@ -1777,7 +1777,7 @@ sap.ui.define([
 
 		this.mock(oRequestor).expects("sendBatch") // arguments don't matter
 			.resolves([createResponse(undefined, mHeaders)]);
-		this.mock(oRequestor).expects("reportUnboundMessagesAsJSON")
+		this.mock(oRequestor).expects("reportHeaderMessages")
 			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
 
 		return Promise.all([oRequestPromise, oRequestor.processBatch("groupId")])
@@ -1794,7 +1794,7 @@ sap.ui.define([
 
 		this.mock(oRequestor).expects("sendBatch") // arguments don't matter
 			.resolves([createResponse(undefined, mHeaders)]);
-		this.mock(oRequestor).expects("reportUnboundMessagesAsJSON")
+		this.mock(oRequestor).expects("reportHeaderMessages")
 			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
 
 		return Promise.all([oRequestPromise, oRequestor.processBatch("groupId")])
@@ -3518,13 +3518,13 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("reportUnboundMessagesAsJSON", function () {
+	QUnit.test("reportHeaderMessages", function () {
 		var aMessages = [{code : "42", message : "Test"}, {code : "43", type : "Warning"}],
 			sMessages = JSON.stringify(aMessages),
 			oRequestor = _Requestor.create("/", oModelInterface),
 			sResourcePath = "Procduct(42)/to_bar";
 
-		this.mock(oModelInterface).expects("reportUnboundMessages")
+		this.mock(oModelInterface).expects("reportTransitionMessages")
 			.withExactArgs([{
 					code : "42",
 					message : "Test"
@@ -3535,17 +3535,17 @@ sap.ui.define([
 			], sResourcePath);
 
 		// code under test
-		oRequestor.reportUnboundMessagesAsJSON(sResourcePath, sMessages);
+		oRequestor.reportHeaderMessages(sResourcePath, sMessages);
 	});
 
 	//*****************************************************************************************
-	QUnit.test("reportUnboundMessagesAsJSON without messages", function () {
+	QUnit.test("reportHeaderMessages without messages", function () {
 		var oRequestor = _Requestor.create("/", oModelInterface);
 
-		this.mock(oModelInterface).expects("reportUnboundMessages").never();
+		this.mock(oModelInterface).expects("reportTransitionMessages").never();
 
 		// code under test
-		oRequestor.reportUnboundMessagesAsJSON("foo(42)/to_bar");
+		oRequestor.reportHeaderMessages("foo(42)/to_bar");
 	});
 
 	//*****************************************************************************************
