@@ -56,6 +56,14 @@
 				<Property Name="Property09" Type="Edm.String"
 					Nullable="false" MaxLength="25" sap:quickinfo="Property without sap:label and visible false"
 					sap:creatable="false" sap:sortable="false"/>
+				<Property Name="Property10b" Type="Edm.String"
+					sap:label="Property10b - name starting like Property10"
+					Nullable="false" MaxLength="25" sap:quickinfo="Property with name starting like hidden property name"
+					sap:creatable="false" sap:sortable="false"/>
+				<Property Name="Property10" Type="Edm.String"
+					sap:label="Property10 - technically hidden"
+					Nullable="false" MaxLength="25" sap:quickinfo="Property10 technically hidden"
+					sap:creatable="false" sap:sortable="false"/>
 				<Property Name="EntityType01_Complex" Type="AdditionalElementsTest.ComplexType03"
 					Nullable="false" />
 				<Property Name="CommonPropertyName" Type="Edm.String"
@@ -317,6 +325,9 @@
 			</EntityContainer>
 
 			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="AdditionalElementsTest.EntityType02/TechnicalInvisibleProperty">
+				<Annotation Term="UI.Hidden"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="AdditionalElementsTest.EntityType01/Property10">
 				<Annotation Term="UI.Hidden"/>
 			</Annotations>
 			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="AdditionalElementsTest.EntityType01/EntityType01_TechnicalInvisibleProperty">

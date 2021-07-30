@@ -214,12 +214,6 @@ sap.ui.define([
 		});
 	}
 
-	function _checkHideFromReveal(aModelProperties) {
-		return aModelProperties.some(function (mModelProperty) {
-			return mModelProperty.hideFromReveal;
-		});
-	}
-
 	/**
 	 * Checks if array of paths is not empty
 	 * @param {string[]} aBindingPaths - Array of collected binding paths
@@ -240,15 +234,17 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	function _findModelProperties(aControlsBindingPaths, aProperties) {
+	function _findModelProperty(aControlsBindingPaths, aProperties) {
 		return aProperties.filter(function (oModelProperty) {
 			return aControlsBindingPaths.some(function(sBindingPath) {
 				//there might be some deeper binding paths available on controls,
 				//than returned by the model evaluation (e.g. navigation property paths)
-				//So we only check a properties are part of the controls bindings
-				return sBindingPath.startsWith(oModelProperty.bindingPath);
+				//in this case we only check if the navigation path is valid
+				//unsupported: check existence of the property also in the navigation target
+				return sBindingPath === oModelProperty.bindingPath ||
+					sBindingPath.startsWith(oModelProperty.bindingPath + '/');
 			});
-		});
+		}).pop();
 	}
 
 	function _vBindingToPath(vBinding) {
@@ -283,17 +279,17 @@ sap.ui.define([
 
 	function _getRepresentedBindingPathsFromDelegateOrBinding(oElement, mAction, sModelName, sAggregationName) {
 		return _getRepresentedPropertiesFromDelegate(mAction, sAggregationName)
-		.then(function(aRepresentedProperties) {
-			if (aRepresentedProperties === undefined) {
-				//delegate skipped taking over => evaluate binding
-				return _getRepresentedBindingPathsFromBinding(oElement, mAction, sModelName, sAggregationName);
-			}
-			var aBindingPaths = [];
-			aRepresentedProperties.forEach(function(oRepresentedProperty) {
-				aBindingPaths = aBindingPaths.concat(oRepresentedProperty.bindingPaths);
+			.then(function(aRepresentedProperties) {
+				if (aRepresentedProperties === undefined) {
+					//delegate skipped taking over => evaluate binding
+					return _getRepresentedBindingPathsFromBinding(oElement, mAction, sModelName, sAggregationName);
+				}
+				var aBindingPaths = [];
+				aRepresentedProperties.forEach(function(oRepresentedProperty) {
+					aBindingPaths = aBindingPaths.concat(oRepresentedProperty.bindingPaths);
+				});
+				return aBindingPaths;
 			});
-			return aBindingPaths;
-		});
 	}
 
 
@@ -374,16 +370,15 @@ sap.ui.define([
 			return true;
 		}
 
-		var aModelProperties = _findModelProperties(aBindingPaths, aProperties);
-		if (aModelProperties.length) {
-			if (_checkHideFromReveal(aModelProperties)) {
+		var mModelProperty = _findModelProperty(aBindingPaths, aProperties);
+		if (mModelProperty) {
+			if (mModelProperty.hideFromReveal) {
 				return false;
 			}
-			_enhanceInvisibleElement(oInvisibleElement, aModelProperties.pop());
+			_enhanceInvisibleElement(oInvisibleElement, mModelProperty);
 			return true;
 		}
-
-		// if model properties are not found, only hide for AddViaDelegate case
+		// if model property is not found, only hide for AddViaDelegate case
 		return !bHasAddViaDelegate;
 	}
 
