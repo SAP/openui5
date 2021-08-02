@@ -1554,5 +1554,21 @@
         ]
       }
     ]
+  },
+  "1.60.38": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "6047861ae17bdb43de435ccf7faf1593da4959b4",
+        "type": "FIX",
+        "text": " core/testsuite.util.qunit: remove test jquery.sap.history",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

@@ -3513,5 +3513,32 @@
         ]
       }
     ]
+  },
+  "1.60.38": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "2023a6fae38c784c5b0c63d8031fd06b01b9e22d",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: unit tests are stabilized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180310583"
+          }
+        ]
+      },
+      {
+        "id": "df1650a3360c1e3c0047624daf1b624fac56a8cc",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Tag IconTabDensityMode enum entries as @public",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004915202021"
+          }
+        ]
+      }
+    ]
   }
 }
