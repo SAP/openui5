@@ -129,4 +129,17 @@ sap.ui.define([
         assert.deepEqual(this.oQueryPanel.getP13nState(), aNewState, "The state has been updated correctly");
 	});
 
+    QUnit.test("Check that 'remove' updates the focus to the last row", function(assert){
+
+        var oFirstItem = this.oQueryPanel._oListControl.getItems()[0]; //key1
+        var oFirstItemRemoveBtn = oFirstItem.getContent()[0].getContent()[1].getItems()[0]; //remove button for 'key1'
+
+        oFirstItemRemoveBtn.firePress({});
+
+        var oSelectOfNewRow = this.oQueryPanel.getItems()[1].getContent()[0].getContent()[0];
+        var nActiveElement = document.activeElement;
+
+        assert.ok(oSelectOfNewRow.getFocusDomRef() === nActiveElement, "The select control is focused");
+	});
+
 });

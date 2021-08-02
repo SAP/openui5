@@ -206,14 +206,16 @@ sap.ui.define([
 
     QueryPanel.prototype._handleActivated = function(oHoveredItem) {
         var oQueryRow = oHoveredItem.getContent()[0];
-        var iItemLength = oQueryRow.getContent().length - 1;
-        var oButtonBox = oHoveredItem.getContent()[0].getContent()[iItemLength];
+        if (oQueryRow) {
+            var iItemLength = oQueryRow.getContent().length - 1;
+            var oButtonBox = oHoveredItem.getContent()[0].getContent()[iItemLength];
 
-        //Only add the buttons if 1) an hovered item is provided 2) the buttons are not already there
-        if (oHoveredItem && oButtonBox.getItems().length < 2) {
-            oButtonBox.insertItem(this._getMoveUpButton(), 0);
-            oButtonBox.insertItem(this._getMoveDownButton(), 1);
-            this._updateEnableOfMoveButtons(oHoveredItem, false);
+            //Only add the buttons if 1) an hovered item is provided 2) the buttons are not already there
+            if (oHoveredItem && oButtonBox.getItems().length < 2) {
+                oButtonBox.insertItem(this._getMoveUpButton(), 0);
+                oButtonBox.insertItem(this._getMoveDownButton(), 1);
+                this._updateEnableOfMoveButtons(oHoveredItem, false);
+            }
         }
     };
 
@@ -275,6 +277,10 @@ sap.ui.define([
                         this._updatePresence(oRow.getContent()[0].getContent()[0]._key, false);
                         if (this._oListControl.getItems().length === 0) {
                             this._addQueryRow();
+                        } else {
+                            //In case an item has been removed, focus the Select control of the new 'none' row
+                            var iLastIndex = this._oListControl.getItems().length - 1;
+                            this._oListControl.getItems()[iLastIndex].getContent()[0].getContent()[0].focus();
                         }
                     }.bind(this)
                 })
