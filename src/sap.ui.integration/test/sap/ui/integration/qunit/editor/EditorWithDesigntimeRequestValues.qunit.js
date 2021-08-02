@@ -978,12 +978,12 @@ sap.ui.define([
 					var oCustomerComoboBox = oCustomerField.getAggregation("_field");
 					assert.ok(oCustomerComoboBox.isA("sap.m.ComboBox"), "Field: Customer is ComboBox");
 					//settings button
-					var oButton = oCustomerField.getAggregation("_settingsButton");
+					var oButton = oCustomerField._settingsButton;
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-					assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 					oButton.firePress();
 					oButton.focus();
 					setTimeout(function () {
+						assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.ok(oCustomerField._oSettingsPanel._oOpener === oCustomerField, "Settings: Has correct owner");
 						var settingsClass = oCustomerField._oSettingsPanel.getMetadata().getClass();
@@ -1255,12 +1255,12 @@ sap.ui.define([
 					var oCustomerComoboBox = oCustomersField.getAggregation("_field");
 					assert.ok(oCustomerComoboBox.isA("sap.m.MultiComboBox"), "Field: Customers is MultiComboBox");
 					//settings button
-					var oButton = oCustomersField.getAggregation("_settingsButton");
+					var oButton = oCustomersField._settingsButton;
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-					assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 					oButton.firePress();
 					oButton.focus();
 					setTimeout(function () {
+						assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.ok(oCustomersField._oSettingsPanel._oOpener === oCustomersField, "Settings: Has correct owner");
 						var settingsClass = oCustomersField._oSettingsPanel.getMetadata().getClass();

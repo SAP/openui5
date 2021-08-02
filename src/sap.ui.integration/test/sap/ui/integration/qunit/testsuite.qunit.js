@@ -718,6 +718,15 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"editor/EditorWithDesigntimeLayout": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
 			"editor/EditorWithDesigntimeRequestValues": {
 				group: "Runtime Editor",
 				coverage: {

@@ -567,7 +567,7 @@ sap.ui.define([
 		return new Promise(function (resolve, reject) {
 			this.oEditor.attachReady(function () {
 				assert.ok(this.oEditor.isReady(), "Editor is ready");
-				var oHint = this.oEditor.getAggregation("_formContent")[3].mAggregations._hint;
+				var oHint = this.oEditor.getAggregation("_formContent")[4];
 				assert.ok(oHint.isA("sap.m.FormattedText"), "Hint: Form content contains a Hint");
 				assert.ok(oHint.getHtmlText() === 'Please refer to the <a target="blank" href="https://www.sap.com" class="sapMLnk">documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a target="blank" href="https://www.sap.com" class="sapMLnk">two links</a>. good?', "Hint: Has html hint text");
 				resolve();
@@ -1255,11 +1255,11 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					oLabel.getDependents()[0].onmouseover();
+					oField._descriptionIcon.onmouseover();
 					var oDescriptionText = this.oEditor._getPopover().getContent()[0];
 					assert.ok(oDescriptionText.isA("sap.m.Text"), "Text: Text Field");
 					assert.ok(oDescriptionText.getText() === "Description", "Text: Description OK");
-					oLabel.getDependents()[0].onmouseout();
+					oField._descriptionIcon.onmouseout();
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1947,12 +1947,12 @@ sap.ui.define([
 					var oCustomerComoboBox = oCustomerField.getAggregation("_field");
 					assert.ok(oCustomerComoboBox.isA("sap.m.ComboBox"), "Field: Customer is ComboBox");
 					//settings button
-					var oButton = oCustomerField.getAggregation("_settingsButton");
+					var oButton = oCustomerField._settingsButton;
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-					assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 					oButton.firePress();
 					oButton.focus();
 					setTimeout(function () {
+						assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.ok(oCustomerField._oSettingsPanel._oOpener === oCustomerField, "Settings: Has correct owner");
 						var settingsClass = oCustomerField._oSettingsPanel.getMetadata().getClass();
@@ -2228,12 +2228,12 @@ sap.ui.define([
 					var oCustomerComoboBox = oCustomersField.getAggregation("_field");
 					assert.ok(oCustomerComoboBox.isA("sap.m.MultiComboBox"), "Field: Customers is MultiComboBox");
 					//settings button
-					var oButton = oCustomersField.getAggregation("_settingsButton");
+					var oButton = oCustomersField._settingsButton;
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-					assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 					oButton.firePress();
 					oButton.focus();
 					setTimeout(function () {
+						assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.ok(oCustomersField._oSettingsPanel._oOpener === oCustomersField, "Settings: Has correct owner");
 						var settingsClass = oCustomersField._oSettingsPanel.getMetadata().getClass();

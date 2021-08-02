@@ -282,11 +282,11 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					oLabel.getDependents()[0].onmouseover();
+					oField._descriptionIcon.onmouseover();
 					var oDescriptionText = this.oCardEditor._getPopover().getContent()[0];
 					assert.ok(oDescriptionText.isA("sap.m.Text"), "Text: Text Field");
 					assert.ok(oDescriptionText.getText() === "Description", "Text: Description OK");
-					oLabel.getDependents()[0].onmouseout();
+					oField._descriptionIcon.onmouseout();
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -526,7 +526,7 @@ sap.ui.define([
 					return new Promise(function (resolve) {
 						wait(100).then(function () {
 							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
-							oField1.getAggregation("_settingsButton").focus();
+							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(iWaitTimeout).then(function () {
 								oMultiComboBox.focus();
@@ -683,7 +683,7 @@ sap.ui.define([
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
 					return new Promise(function (resolve) {
 						wait(iWaitTimeout).then(function () {
-							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[0].getItems()[1];
+							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
 							var oCheckBox = oField1.getAggregation("_field");
 							assert.ok(!oCheckBox.getSelected(), "Selected is false");
 							oCheckBox.setSelected(true);
@@ -779,7 +779,7 @@ sap.ui.define([
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
 					return new Promise(function (resolve) {
 						wait(iWaitTimeout).then(function () {
-							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[0].getItems()[1];
+							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
 							var oSwitch = oField1.getAggregation("_field");
 							assert.ok(!oSwitch.getState(), "State is false");
 							oSwitch.setState(true);

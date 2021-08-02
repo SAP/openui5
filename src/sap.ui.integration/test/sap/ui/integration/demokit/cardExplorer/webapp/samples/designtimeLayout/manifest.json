@@ -1,0 +1,58 @@
+{
+	"_version": "1.18.0",
+	"sap.app": {
+		"id": "sap.ui5.test.editor.listcard.layout",
+		"type": "card",
+		"i18n": "i18n/i18n.properties",
+		"title": "Test Card for Layout",
+		"subTitle": "Test Card for Layout",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://accept"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"configuration": {
+			"editor": "./dt/Configuration",
+			"parameters": {
+			},
+			"destinations": {
+				"northwind": {
+					"name": "Northwind_V4"
+				}
+			}
+		},
+		"header": {
+			"title": "Invoice",
+			"subTitle": "Invoice Details",
+			"icon": {
+				"src": "sap-icon://sales-quote"
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{destinations.northwind}}/Invoices",
+				"parameters": {
+					"$select": "ShipName, ShipAddress, ShipCity, ShipCountry, ShippedDate, Quantity"
+				}
+			},
+			"path": "/value"
+		},
+		"content": {
+			"item": {
+				"title": "{ShipName}",
+				"description": "Shipped Date: {= format.dateTime(${ShippedDate}, {format: 'yMMMd'}) }",
+				"info": {
+					"value": "Quantity: {= format.integer(${Quantity}, { 'minIntegerDigits': 2,  'maxIntegerDigits': 6, 'emptyString': ''}) }"
+				}
+			},
+			"maxItems": 4
+		}
+	}
+}

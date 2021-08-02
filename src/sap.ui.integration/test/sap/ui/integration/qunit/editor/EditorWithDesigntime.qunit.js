@@ -33,17 +33,7 @@ sap.ui.define([
 
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
-
-
 	function getDefaultContextModel(oResourceBundle) {
-
 		return {
 			empty: {
 				label: oResourceBundle.getText("EDITOR_CONTEXT_EMPTY_VAL"),
@@ -310,7 +300,7 @@ sap.ui.define([
 		return new Promise(function (resolve, reject) {
 			this.oEditor.attachReady(function () {
 				assert.ok(this.oEditor.isReady(), "Editor is ready");
-				var oHint = this.oEditor.getAggregation("_formContent")[3].mAggregations._hint;
+				var oHint = this.oEditor.getAggregation("_formContent")[4];
 				assert.ok(oHint.isA("sap.m.FormattedText"), "Hint: Form content contains a Hint");
 				assert.ok(oHint.getHtmlText() === 'Please refer to the <a target="blank" href="https://www.sap.com" class="sapMLnk">documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a target="blank" href="https://www.sap.com" class="sapMLnk">two links</a>. good?', "Hint: Has html hint text");
 				resolve();
@@ -1534,11 +1524,11 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					oLabel.getDependents()[0].onmouseover();
+					oField._descriptionIcon.onmouseover();
 					var oDescriptionText = this.oEditor._getPopover().getContent()[0];
 					assert.ok(oDescriptionText.isA("sap.m.Text"), "Text: Text Field");
 					assert.ok(oDescriptionText.getText() === "Description", "Text: Description OK");
-					oLabel.getDependents()[0].onmouseout();
+					oField._descriptionIcon.onmouseout();
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -3448,12 +3438,12 @@ sap.ui.define([
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable changed from admin change");
 					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
 					//settings button
-					var oButton = oField.getAggregation("_settingsButton");
+					var oButton = oField._settingsButton;
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-					assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 					oButton.firePress();
 					oButton.focus();
 					setTimeout(function () {
+						assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.ok(oField._oSettingsPanel._oOpener === oField, "Settings: Has correct owner");
 						var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
@@ -3526,12 +3516,12 @@ sap.ui.define([
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable changed from admin change");
 					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
 					//settings button
-					var oButton = oField.getAggregation("_settingsButton");
+					var oButton = oField._settingsButton;
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-					assert.ok(oButton.getIcon() === "sap-icon://display-more", "Settings: Shows display-more Icon");
 					oButton.firePress();
 					oButton.focus();
 					setTimeout(function () {
+						assert.ok(oButton.getIcon() === "sap-icon://display-more", "Settings: Shows display-more Icon");
 						//popup is opened
 						assert.ok(oField._oSettingsPanel._oOpener === oField, "Settings: Has correct owner");
 						var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
@@ -3606,12 +3596,12 @@ sap.ui.define([
 					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
 					assert.ok(oField.getAggregation("_field").getValue() === "{{parameters.TODAY_ISO}}", "Field: Value is correct");
 					//settings button
-					var oButton = oField.getAggregation("_settingsButton");
+					var oButton = oField._settingsButton;
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-					assert.ok(oButton.getIcon() === "sap-icon://display-more", "Settings: Shows display-more Icon");
 					oButton.firePress();
 					oButton.focus();
 					setTimeout(function () {
+						assert.ok(oButton.getIcon() === "sap-icon://display-more", "Settings: Shows display-more Icon");
 						//popup is opened
 						assert.ok(oField._oSettingsPanel._oOpener === oField, "Settings: Has correct owner");
 						var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
@@ -3671,12 +3661,12 @@ sap.ui.define([
 					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
 					assert.ok(oField.getAggregation("_field").getValue() === "{{parameters.TODAY_ISO}}", "Field: Value is correct");
 					//settings button
-					var oButton = oField.getAggregation("_settingsButton");
+					var oButton = oField._settingsButton;
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-					assert.ok(oButton.getIcon() === "sap-icon://display-more", "Settings: Shows display-more Icon");
 					oButton.firePress();
 					oButton.focus();
 					setTimeout(function () {
+						assert.ok(oButton.getIcon() === "sap-icon://display-more", "Settings: Shows display-more Icon");
 						//popup is opened
 						assert.ok(oField._oSettingsPanel._oOpener === oField, "Settings: Has correct owner");
 						var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
@@ -3739,12 +3729,12 @@ sap.ui.define([
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable changed from admin change");
 					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
 					//settings button
-					var oButton = oField.getAggregation("_settingsButton");
+					var oButton = oField._settingsButton;
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-					assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 					oButton.firePress();
 					oButton.focus();
 					setTimeout(function () {
+						assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.ok(oField._oSettingsPanel._oOpener === oField, "Settings: Has correct owner");
 						var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
@@ -3824,12 +3814,12 @@ sap.ui.define([
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable changed from admin change");
 					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
 					//settings button
-					var oButton = oField.getAggregation("_settingsButton");
+					var oButton = oField._settingsButton;
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-					assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 					oButton.firePress();
 					oButton.focus();
 					setTimeout(function () {
+						assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.ok(oField._oSettingsPanel._oOpener === oField, "Settings: Has correct owner");
 						var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
@@ -3900,12 +3890,12 @@ sap.ui.define([
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable changed from admin change");
 					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
 					//settings button
-					var oButton = oField.getAggregation("_settingsButton");
+					var oButton = oField._settingsButton;
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-					assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 					oButton.firePress();
 					oButton.focus();
 					setTimeout(function () {
+						assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.ok(oField._oSettingsPanel._oOpener === oField, "Settings: Has correct owner");
 						var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
@@ -4152,12 +4142,12 @@ sap.ui.define([
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable changed from admin change");
 					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
 					//settings button
-					var oButton = oField.getAggregation("_settingsButton");
+					var oButton = oField._settingsButton;
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-					assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 					oButton.firePress();
 					oButton.focus();
 					setTimeout(function () {
+						assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.ok(oField._oSettingsPanel._oOpener === oField, "Settings: Has correct owner");
 						var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
@@ -5271,95 +5261,6 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		});*/
-	});
-
-	QUnit.module("Label and control in one line for boolean parameter", {
-		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
-		},
-		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
-		}
-	}, function () {
-		QUnit.test("Label and default checkbox are in one line", function (assert) {
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1boolean", "type": "List", "configuration": { "parameters": { "booleanParameter": {} } } } } });
-			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
-						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
-						var oHBox = oPanel.getContent()[0];
-						assert.ok(oHBox.isA("sap.m.HBox"), "Label: Panel contains a HBox");
-						var oHBox1 = oHBox.getItems()[0];
-						assert.ok(oHBox1.isA("sap.m.HBox"), "Label: HBox contains a sub HBox");
-						var oLabel = oHBox1.getItems()[0];
-						var oDescription = oHBox1.getItems()[1];
-						var oField = oHBox.getItems()[1];
-						assert.ok(oLabel.isA("sap.m.Label"), "Label: VBox contains a Label");
-						assert.ok(oLabel.getText() === "booleanParameter", "Label: Has integerParameter label from label");
-						assert.ok(oField.isA("sap.ui.integration.editor.fields.BooleanField"), "Field: Boolean Field");
-						assert.ok(!oField.getAggregation("_field").getSelected(), "Field: Value false since No Value and Default Value");
-						oDescription.onmouseover();
-						var oDescriptionText = this.oEditor._getPopover().getContent()[0];
-						assert.ok(oDescriptionText.isA("sap.m.Text"), "Text: Text Field");
-						assert.ok(oDescriptionText.getText() === "Description", "Text: Description OK");
-						oDescription.onmouseout();
-						resolve();
-					}.bind(this));
-				}.bind(this));
-			}.bind(this));
-		});
-
-		QUnit.test("Label and switch are in one line", function (assert) {
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1booleanWithSwitch", "type": "List", "configuration": { "parameters": { "booleanParameter": {} } } } } });
-			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
-						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
-						var oHBox = oPanel.getContent()[0];
-						assert.ok(oHBox.isA("sap.m.HBox"), "Label: Panel contains a HBox");
-						var oHBox1 = oHBox.getItems()[0];
-						assert.ok(oHBox1.isA("sap.m.HBox"), "Label: HBox contains a sub HBox");
-						var oLabel = oHBox1.getItems()[0];
-						var oDescription = oHBox1.getItems()[1];
-						var oField = oHBox.getItems()[1];
-						assert.ok(oLabel.isA("sap.m.Label"), "Label: VBox contains a Label");
-						assert.ok(oLabel.getText() === "booleanParameter", "Label: Has integerParameter label from label");
-						assert.ok(oField.isA("sap.ui.integration.editor.fields.BooleanField"), "Field: Boolean Field");
-						assert.ok(!oField.getAggregation("_field").getState(), "Field: Value false since No Value and Default Value");
-						oDescription.onmouseover();
-						var oDescriptionText = this.oEditor._getPopover().getContent()[0];
-						assert.ok(oDescriptionText.isA("sap.m.Text"), "Text: Text Field");
-						assert.ok(oDescriptionText.getText() === "Description", "Text: Description OK");
-						oDescription.onmouseout();
-						resolve();
-					}.bind(this));
-				}.bind(this));
-			}.bind(this));
-		});
 	});
 
 	QUnit.done(function () {

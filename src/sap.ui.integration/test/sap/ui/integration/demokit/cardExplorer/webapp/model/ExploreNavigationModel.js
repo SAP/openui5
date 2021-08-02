@@ -1925,6 +1925,27 @@ sap.ui.define([
 										key: 'i18n.properties'
 									}
 								]
+							},
+							{
+								title: 'Layout',
+								key: 'designtimeLayout',
+								files: [
+									{
+										url: '/samples/designtimeLayout/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimeLayout/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimeLayout/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									}
+								]
 							}
 						]
 					}

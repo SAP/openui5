@@ -156,14 +156,14 @@ sap.ui.define([
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 								assert.ok(oDefaultBundle.getText("EDITOR_VAL_TEXTREQ") === oMsgStrip.getText(), "Default Required String Text");
-								oField1.getAggregation("_settingsButton").focus();
+								oField1._settingsButton.focus();
 								oField1.getAggregation("_field").setValue("12345678901");
 								wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
 									assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 									assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 									assert.ok(oDefaultBundle.getText("EDITOR_VAL_MAXLENGTH", [10]) === oMsgStrip.getText(), "Default MaxLength String Text");
-									oField1.getAggregation("_settingsButton").focus();
+									oField1._settingsButton.focus();
 									oField1.getAggregation("_field").setValue("1234567890");
 									wait(500).then(function () {
 										oField1.getAggregation("_field").focus();
@@ -181,14 +181,14 @@ sap.ui.define([
 							var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
 							var oI18nBundle = oField1.getModel("i18n").getResourceBundle();
 							assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip invisible");
-							oField1.getAggregation("_settingsButton").focus();
+							oField1._settingsButton.focus();
 							oField1.getAggregation("_field").setValue("a");
 							wait(500).then(function () {
 								oField1.getAggregation("_field").focus();
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Warning", "Message strip Warning");
 								assert.ok(oI18nBundle.getText("string2err2", [1]) === oMsgStrip.getText(), "Custom Validate Val text");
-								oField1.getAggregation("_settingsButton").focus();
+								oField1._settingsButton.focus();
 								oField1.getAggregation("_field").setValue("111");
 								wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
@@ -305,14 +305,14 @@ sap.ui.define([
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 								assert.ok(oDefaultBundle.getText("EDITOR_VAL_MIN", [1]) === oMsgStrip.getText(), "Default Min Number Text");
-								oField1.getAggregation("_settingsButton").focus();
+								oField1._settingsButton.focus();
 								oField1.getAggregation("_field").setValue("11");
 								wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
 									assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 									assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 									assert.ok(oDefaultBundle.getText("EDITOR_VAL_MAX", [10]) === oMsgStrip.getText(), "Default Max Number Text");
-									oField1.getAggregation("_settingsButton").focus();
+									oField1._settingsButton.focus();
 									oField1.getAggregation("_field").setValue("1");
 									wait(500).then(function () {
 										oField1.getAggregation("_field").focus();
@@ -333,7 +333,7 @@ sap.ui.define([
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.ok(oDefaultBundle.getText("EDITOR_VAL_MIN_E", [2]) === oMsgStrip.getText(), "Default Exclusive Minimum Text");
-								oField1.getAggregation("_settingsButton").focus();
+								oField1._settingsButton.focus();
 								oField1.getAggregation("_field").setValue("10");
 								wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
@@ -341,7 +341,7 @@ sap.ui.define([
 									assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 									var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 									assert.ok(oDefaultBundle.getText("EDITOR_VAL_MAX_E", [10]) === oMsgStrip.getText(), "Default Exclusive Maximum Text");
-									oField1.getAggregation("_settingsButton").focus();
+									oField1._settingsButton.focus();
 									oField1.getAggregation("_field").setValue("5");
 									wait(500).then(function () {
 										oField1.getAggregation("_field").focus();
@@ -349,7 +349,7 @@ sap.ui.define([
 										assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 										var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 										assert.ok(oDefaultBundle.getText("EDITOR_VAL_MULTIPLE", [2]) === oMsgStrip.getText(), "Default Multiple Of Text");
-										oField1.getAggregation("_settingsButton").focus();
+										oField1._settingsButton.focus();
 										resolve();
 									});
 								});
@@ -366,14 +366,14 @@ sap.ui.define([
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Warning", "Message strip Warning");
 								assert.ok(oI18nBundle.getText("int1err1", [1]) === oMsgStrip.getText(), "Custom Min Val text");
-								oField1.getAggregation("_settingsButton").focus();
+								oField1._settingsButton.focus();
 								oField1.getAggregation("_field").setValue("5");
 								wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
 									assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 									assert.ok(oMsgStrip.getType() === "Warning", "Message strip Warning");
 									assert.ok(oI18nBundle.getText("int1err2", [1]) === oMsgStrip.getText(), "Custom Max Val text");
-									oField1.getAggregation("_settingsButton").focus();
+									oField1._settingsButton.focus();
 									oField1.getAggregation("_field").setValue("3");
 									wait(500).then(function () {
 										oField1.getAggregation("_field").focus();
@@ -447,7 +447,7 @@ sap.ui.define([
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
-							oField1.getAggregation("_settingsButton").focus();
+							oField1._settingsButton.focus();
 							wait(1000).then(function () {
 								oField1.getAggregation("_field").focus();
 								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
@@ -455,7 +455,7 @@ sap.ui.define([
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 								assert.ok(oDefaultBundle.getText("EDITOR_VAL_TEXTREQ") === oMsgStrip.getText(), "Default Required String Text");
-								oField1.getAggregation("_settingsButton").focus();
+								oField1._settingsButton.focus();
 								oField1.getAggregation("_field").setValue("aa");
 								wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
@@ -536,7 +536,7 @@ sap.ui.define([
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getContent()[1];
-							oField1.getAggregation("_settingsButton").focus();
+							oField1._settingsButton.focus();
 							wait(1000).then(function () {
 								oField1.getAggregation("_field").focus();
 								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
@@ -609,7 +609,7 @@ sap.ui.define([
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
-							oField1.getAggregation("_settingsButton").focus();
+							oField1._settingsButton.focus();
 							oField1.getAggregation("_field").setValue("");
 							oField1.getAggregation("_field").fireChange({ value: ""});
 							wait(1000).then(function () {
@@ -619,7 +619,7 @@ sap.ui.define([
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 								assert.ok(oDefaultBundle.getText("EDITOR_VAL_NUMBERREQ") === oMsgStrip.getText(), "Default Required Integer Text");
-								oField1.getAggregation("_settingsButton").focus();
+								oField1._settingsButton.focus();
 								oField1.getAggregation("_field").setValue("11");
 								wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
@@ -684,7 +684,7 @@ sap.ui.define([
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
-							oField1.getAggregation("_settingsButton").focus();
+							oField1._settingsButton.focus();
 							oField1.getAggregation("_field").setValue("");
 							oField1.getAggregation("_field").fireChange({ value: ""});
 							wait(1000).then(function () {
@@ -694,7 +694,7 @@ sap.ui.define([
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 								assert.ok(oDefaultBundle.getText("EDITOR_VAL_NUMBERREQ") === oMsgStrip.getText(), "Default Required Number Text");
-								oField1.getAggregation("_settingsButton").focus();
+								oField1._settingsButton.focus();
 								oField1.getAggregation("_field").setValue("1.1");
 								wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
@@ -785,7 +785,7 @@ sap.ui.define([
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
-							oField1.getAggregation("_settingsButton").focus();
+							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
@@ -880,7 +880,7 @@ sap.ui.define([
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
-							oField1.getAggregation("_settingsButton").focus();
+							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
@@ -982,7 +982,7 @@ sap.ui.define([
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
-							oField1.getAggregation("_settingsButton").focus();
+							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
@@ -998,7 +998,7 @@ sap.ui.define([
 									assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 									assert.ok(oDefaultBundle.getText("EDITOR_VAL_LISTMINLENGTH", 2) === oMsgStrip.getText(), "Default Min List Text");
 									oMultiComboBox.setSelectedKeys(["key1", "key2", "key3", "key4", "key5"]);
-									oField1.getAggregation("_settingsButton").focus();
+									oField1._settingsButton.focus();
 									wait(500).then(function () {
 										oMultiComboBox.focus();
 										assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
@@ -1153,7 +1153,7 @@ sap.ui.define([
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
-							oField1.getAggregation("_settingsButton").focus();
+							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
@@ -1262,7 +1262,7 @@ sap.ui.define([
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
-							oField1.getAggregation("_settingsButton").focus();
+							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
@@ -1354,7 +1354,7 @@ sap.ui.define([
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
-							oField1.getAggregation("_settingsButton").focus();
+							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
@@ -1363,14 +1363,14 @@ sap.ui.define([
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 								assert.ok(oMsgStrip.getText() === "Please select at least 2 items!", "Message text correct");
 								oMultiComboBox.setSelectedKeys(["key1"]);
-								oField1.getAggregation("_settingsButton").focus();
+								oField1._settingsButton.focus();
 								wait(500).then(function () {
 									oMultiComboBox.focus();
 									assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 									assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 									assert.ok(oMsgStrip.getText() === "Please select at least 2 items!", "Message text correct");
 									oMultiComboBox.setSelectedKeys(["key1", "key2"]);
-									oField1.getAggregation("_settingsButton").focus();
+									oField1._settingsButton.focus();
 									wait(500).then(function () {
 										oMultiComboBox.focus();
 										assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
@@ -1459,19 +1459,19 @@ sap.ui.define([
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
-							oField1.getAggregation("_settingsButton").focus();
+							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
 								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
 								oMultiComboBox.setSelectedKeys(["key1", "key2", "key3", "key4"]);
-								oField1.getAggregation("_settingsButton").focus();
+								oField1._settingsButton.focus();
 								wait(500).then(function () {
 									oMultiComboBox.focus();
 									assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
 									oMultiComboBox.setSelectedKeys(["key1", "key2", "key3", "key4", "key5"]);
-									oField1.getAggregation("_settingsButton").focus();
+									oField1._settingsButton.focus();
 									wait(500).then(function () {
 										oMultiComboBox.focus();
 										assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
@@ -1570,7 +1570,7 @@ sap.ui.define([
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
-							oField1.getAggregation("_settingsButton").focus();
+							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
@@ -1579,12 +1579,12 @@ sap.ui.define([
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 								assert.ok(oMsgStrip.getText() === "Please select items in key1,key3,key6", "Message text correct");
 								oMultiComboBox.setSelectedKeys(["key1"]);
-								oField1.getAggregation("_settingsButton").focus();
+								oField1._settingsButton.focus();
 								wait(500).then(function () {
 									oMultiComboBox.focus();
 									assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
 									oMultiComboBox.setSelectedKeys(["key1", "key2", "key3"]);
-									oField1.getAggregation("_settingsButton").focus();
+									oField1._settingsButton.focus();
 									wait(500).then(function () {
 										oMultiComboBox.focus();
 										assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
@@ -1683,7 +1683,7 @@ sap.ui.define([
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
-							oField1.getAggregation("_settingsButton").focus();
+							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
@@ -1692,12 +1692,12 @@ sap.ui.define([
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 								assert.ok(oMsgStrip.getText() === "Please select items in key1,key3,key6", "Message text correct");
 								oMultiComboBox.setSelectedKeys(["key1", "key3"]);
-								oField1.getAggregation("_settingsButton").focus();
+								oField1._settingsButton.focus();
 								wait(500).then(function () {
 									oMultiComboBox.focus();
 									assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
 									oMultiComboBox.setSelectedKeys(["key1", "key3", "key6"]);
-									oField1.getAggregation("_settingsButton").focus();
+									oField1._settingsButton.focus();
 									wait(500).then(function () {
 										oMultiComboBox.focus();
 										assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip visible");
@@ -1794,7 +1794,7 @@ sap.ui.define([
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
-							oField1.getAggregation("_settingsButton").focus();
+							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
@@ -1803,12 +1803,12 @@ sap.ui.define([
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 								assert.ok(oMsgStrip.getText() === "Please select items in key1,key3,key6", "Message text correct");
 								oMultiComboBox.setSelectedKeys(["key1", "key3", "key6"]);
-								oField1.getAggregation("_settingsButton").focus();
+								oField1._settingsButton.focus();
 								wait(500).then(function () {
 									oMultiComboBox.focus();
 									assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
 									oMultiComboBox.setSelectedKeys(["key1", "key3", "key6", "key7"]);
-									oField1.getAggregation("_settingsButton").focus();
+									oField1._settingsButton.focus();
 									wait(500).then(function () {
 										oMultiComboBox.focus();
 										assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
@@ -1942,7 +1942,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(1000).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[0].getItems()[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
 							var oCheckBox = oField1.getAggregation("_field");
 							assert.ok(!oCheckBox.getSelected(), "Selected is false");
 							oCheckBox.setSelected(true);
@@ -2028,7 +2028,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(1000).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[0].getItems()[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
 							var oCheckBox = oField1.getAggregation("_field");
 							assert.ok(!oCheckBox.getSelected(), "Selected is false");
 							oCheckBox.setSelected(true);
@@ -2102,7 +2102,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(1000).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[0].getItems()[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
 							var oSwitch = oField1.getAggregation("_field");
 							assert.ok(!oSwitch.getState(), "State is false");
 							oSwitch.setState(true);
@@ -2198,7 +2198,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(1000).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[0].getItems()[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
 							var oSwitch = oField1.getAggregation("_field");
 							assert.ok(!oSwitch.getState(), "State is false");
 							oSwitch.setState(true);

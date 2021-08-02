@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/FormattedText",
 	"sap/m/MultiInput",
-	"./Settings",
 	"sap/m/Token",
 	"sap/ui/core/Core",
 	"sap/ui/integration/util/BindingHelper",
@@ -20,7 +19,6 @@ sap.ui.define([
 	Button,
 	FormattedText,
 	MultiInput,
-	Settings,
 	Token,
 	Core,
 	BindingHelper,
@@ -73,18 +71,8 @@ sap.ui.define([
 					multiple: false,
 					visibility: "hidden"
 				},
-				_settingsButton: {
-					type: "sap.ui.core.Control",
-					multiple: false,
-					visibility: "hidden"
-				},
 				_dynamicField: {
 					type: "sap.ui.core.Control",
-					multiple: false,
-					visibility: "hidden"
-				},
-				_hint: {
-					type: "sap.m.FormattedText",
 					multiple: false,
 					visibility: "hidden"
 				}
@@ -107,11 +95,10 @@ sap.ui.define([
 		},
 		renderer: function (oRm, oControl) {
 			var oField = oControl.getAggregation("_field"),
-				oSettingsButton = oControl.getAggregation("_settingsButton"),
 				oDynamicField = oControl._getDynamicField();
 			oRm.openStart("div");
 			oRm.addClass("sapUiIntegrationEditorItemField");
-			if (oField && oField.getWidth && !oSettingsButton) {
+			if (oField && oField.getWidth) {
 				//oRm.addStyle("width", oField.getWidth());
 			}
 			if (!oControl.getVisible()) {
@@ -130,6 +117,8 @@ sap.ui.define([
 				if (oControl._hasDynamicValue()) {
 					oRm.addStyle("width", "1px");
 					oRm.addStyle("opacity", "0");
+				} else {
+					oRm.addStyle("width", "100%");
 				}
 				oRm.writeStyles();
 				oRm.writeClasses();
@@ -137,29 +126,19 @@ sap.ui.define([
 				oRm.renderControl(oField);
 				oRm.close("span");
 				oRm.close("span");
-				if (oSettingsButton || oControl._hasDynamicValue()) {
+				if (oControl._hasDynamicValue()) {
 					oRm.openStart("span");
 					oRm.addClass("sapUiIntegrationEditorSettings");
 					oRm.writeClasses();
 					oRm.openEnd();
 					oRm.openStart("span");
 					oRm.addClass("sapUiIntegrationEditorSettingsField");
-					if (oControl._hasDynamicValue()) {
-						oRm.addStyle("width", "calc(100% - 2.5rem)");
-						oRm.addStyle("opacity", "1");
-					}
+					oRm.addStyle("width", "100%");
+					oRm.addStyle("opacity", "1");
 					oRm.writeClasses();
 					oRm.writeStyles();
 					oRm.openEnd();
 					oRm.renderControl(oDynamicField);
-					oRm.close("span");
-
-					oRm.openStart("span");
-					oRm.addClass("sapUiIntegrationEditorSettingsButton");
-					oRm.writeClasses();
-					oRm.openEnd();
-					oRm.renderControl(oSettingsButton);
-					oRm.close("span");
 					oRm.close("span");
 				}
 				oRm.openStart("div");
@@ -168,19 +147,6 @@ sap.ui.define([
 				oRm.writeStyles();
 				oRm.openEnd();
 				oRm.close("div");
-
-				//render hint
-				if (oControl.getMode() !== "translation") {
-					var oHint = oControl.getAggregation("_hint");
-					if (oHint) {
-						oRm.openStart("div");
-						oRm.addClass("sapUiIntegrationEditorHint");
-						oRm.writeClasses();
-						oRm.openEnd();
-						oRm.renderControl(oHint);
-						oRm.close("div");
-					}
-				}
 			}
 			oRm.close("div");
 
@@ -210,24 +176,11 @@ sap.ui.define([
 				//async to ensure all settings that are applied sync are processed.
 				Promise.resolve().then(function () {
 					this.initEditor(oConfig);
-					if (oConfig.hint && oConfig.type !== "boolean") {
-						this._addHint(oConfig.hint);
-					} else if (oConfig.hint && oConfig.type === "boolean" && oConfig.cols && oConfig.cols === 1) {
-						this._addHint(oConfig.hint);
-					}
 				}.bind(this));
 
 			}
 		}
 		return this;
-	};
-
-	BaseField.prototype._addHint = function (sHint) {
-		sHint = sHint.replace(/<a href/g, "<a target='blank' href");
-		var oFormattedText = new FormattedText({
-			htmlText: sHint
-		});
-		this.setAggregation("_hint", oFormattedText);
 	};
 
 	BaseField.prototype._sanitizeValidationSettings = function (oConfig) {
@@ -706,7 +659,7 @@ sap.ui.define([
 		oConfig.allowDynamicValues = oConfig.allowDynamicValues || oConfig.allowDynamicValues !== false;
 		oConfig._changeDynamicValues = oConfig.visible && oConfig.editable && (oConfig.allowDynamicValues || oConfig.allowSettings) && sMode !== "translation";
 		if (oConfig._changeDynamicValues) {
-			this._addSettingsButton();
+			this._getDynamicField();
 		}
 		this._applySettings(oConfig);
 		this.fireAfterInit();
@@ -778,7 +731,7 @@ sap.ui.define([
 			oStyle.opacity = 0;
 			oStyle = oField.getDomRef().parentNode.style;
 			oField.getDomRef().style.visibility = "visible";
-			oStyle.width = "calc(100% - 2.5rem)";
+			oStyle.width = "100%";
 			oStyle.opacity = 1;
 		}
 	};
@@ -788,54 +741,13 @@ sap.ui.define([
 			oField = this.getAggregation("_field");
 		if (oDynamicField.getDomRef()) {
 			var oStyle = oDynamicField.getDomRef().parentNode.style;
-			oStyle.width = "calc(100% - 2.5rem)";
+			oStyle.width = "100%";
 			oStyle.opacity = 1;
 			oStyle = oField.getDomRef().parentNode.style;
 			oField.getDomRef().style.visibility = "hidden";
 			oStyle.width = "1px";
 			oStyle.opacity = 0;
 		}
-	};
-
-	BaseField.prototype._getSettingsPanel = function () {
-		if (!this._oSettingsPanel) {
-			this._oSettingsPanel = new Settings();
-		}
-		return this._oSettingsPanel;
-	};
-
-	BaseField.prototype._openSettingsDialog = function (iDelay) {
-		var oSettingsPanel = this._getSettingsPanel();
-		window.setTimeout(function () {
-			oSettingsPanel.setConfiguration(this.getConfiguration());
-			var oRightContent = (this.getParent().getParent() && this.getParent().getParent().getAggregation("_rightContent"))
-				|| (this.getParent().getParent().getParent() && this.getParent().getParent().getParent().getAggregation("_rightContent"))
-				|| (this.getParent().getParent().getParent().getParent() && this.getParent().getParent().getParent().getParent().getAggregation("_rightContent"));
-			oSettingsPanel.open(
-				this.getAggregation("_settingsButton"),
-				this.getAggregation("_settingsButton"),
-				oRightContent,
-				this.getHost(),
-				this,
-				this._applySettings.bind(this),
-				this._cancelSettings.bind(this));
-		}.bind(this), iDelay || 600);
-	};
-
-
-	/**
-	 * Add the settings button
-	 */
-	BaseField.prototype._addSettingsButton = function () {
-		this._getDynamicField(); //create the dynamic field
-		this.setAggregation("_settingsButton", new Button({
-			icon: "{= ${currentSettings>_hasDynamicValue} ? 'sap-icon://display-more' : 'sap-icon://enter-more'}",
-			type: "Transparent",
-			tooltip: oResourceBundle.getText("EDITOR_FIELD_MORE_SETTINGS"),
-			press: function () {
-				this._openSettingsDialog(200);
-			}.bind(this)
-		}));
 	};
 
 	BaseField.prototype._setCurrentProperty = function (sProperty, vValue) {
@@ -902,15 +814,18 @@ sap.ui.define([
 	};
 
 	BaseField.prototype._applyButtonStyles = function () {
+		if (!this._settingsButton) {
+			return;
+		}
 		if (!this._hasDynamicValue()) {
-			this.removeStyleClass("dynamicvalue");
+			this._settingsButton.removeStyleClass("dynamicvalue");
 		} else {
-			this.addStyleClass("dynamicvalue");
+			this._settingsButton.addStyleClass("dynamicvalue");
 		}
 		if (!this._hasSettings()) {
-			this.removeStyleClass("settings");
+			this._settingsButton.removeStyleClass("settings");
 		} else {
-			this.addStyleClass("settings");
+			this._settingsButton.addStyleClass("settings");
 		}
 	};
 

@@ -120,13 +120,13 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
 					var oField1 = this.oEditor.getAggregation("_formContent")[2];
-					var oIcon1 = oLabel1.getDependents()[0];
+					var oIcon1 = oField1._descriptionIcon;
 					var oLabel2 = this.oEditor.getAggregation("_formContent")[3];
 					var oField2 = this.oEditor.getAggregation("_formContent")[4];
-					var oIcon2 = oLabel2.getDependents()[0];
+					var oIcon2 = oField2._descriptionIcon;
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[5];
 					var oField3 = this.oEditor.getAggregation("_formContent")[6];
-					var oIcon3 = oLabel3.getDependents()[0];
+					var oIcon3 = oField3._descriptionIcon;
 					wait().then(function () {
 						assert.ok(oLabel1.getText() === "Label 1 English", "Label1: Label 1 English");
 						assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field1: Is editable");
@@ -178,13 +178,13 @@ sap.ui.define([
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
 						var oField1 = this.oEditor.getAggregation("_formContent")[2];
-						var oIcon1 = oLabel1.getDependents()[0];
+						var oIcon1 = oField1._descriptionIcon;
 						var oLabel2 = this.oEditor.getAggregation("_formContent")[3];
 						var oField2 = this.oEditor.getAggregation("_formContent")[4];
-						var oIcon2 = oLabel2.getDependents()[0];
+						var oIcon2 = oField2._descriptionIcon;
 						var oLabel3 = this.oEditor.getAggregation("_formContent")[5];
 						var oField3 = this.oEditor.getAggregation("_formContent")[6];
-						var oIcon3 = oLabel3.getDependents()[0];
+						var oIcon3 = oField3._descriptionIcon;
 						wait().then(function () {
 							assert.ok(oLabel1.getText() === "Label 1 US English", "Label1: Label 1 US English");
 							assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field1: Is editable");
@@ -263,13 +263,13 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
 					var oField1 = this.oEditor.getAggregation("_formContent")[2];
-					var oIcon1 = oLabel1.getDependents()[0];
+					var oIcon1 = oField1._descriptionIcon;
 					var oLabel2 = this.oEditor.getAggregation("_formContent")[3];
 					var oField2 = this.oEditor.getAggregation("_formContent")[4];
-					var oIcon2 = oLabel2.getDependents()[0];
+					var oIcon2 = oField2._descriptionIcon;
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[5];
 					var oField3 = this.oEditor.getAggregation("_formContent")[6];
-					var oIcon3 = oLabel3.getDependents()[0];
+					var oIcon3 = oField3._descriptionIcon;
 					wait().then(function () {
 						assert.ok(oLabel1.getText() === "Label 1 English", "Label1: Label 1 English");
 						assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field1: Is editable");
@@ -321,13 +321,13 @@ sap.ui.define([
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
 						var oField1 = this.oEditor.getAggregation("_formContent")[2];
-						var oIcon1 = oLabel1.getDependents()[0];
+						var oIcon1 = oField1._descriptionIcon;
 						var oLabel2 = this.oEditor.getAggregation("_formContent")[3];
 						var oField2 = this.oEditor.getAggregation("_formContent")[4];
-						var oIcon2 = oLabel2.getDependents()[0];
+						var oIcon2 = oField2._descriptionIcon;
 						var oLabel3 = this.oEditor.getAggregation("_formContent")[5];
 						var oField3 = this.oEditor.getAggregation("_formContent")[6];
-						var oIcon3 = oLabel3.getDependents()[0];
+						var oIcon3 = oField3._descriptionIcon;
 						wait().then(function () {
 							assert.ok(oLabel1.getText() === "Label 1 US English", "Label1: Label 1 US English");
 							assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field1: Is editable");

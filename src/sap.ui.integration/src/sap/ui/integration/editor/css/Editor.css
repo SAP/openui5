@@ -103,11 +103,13 @@
 }
 
 .sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemField .sapUiIntegrationEditorEditor {
-	width: calc(100% - 2.5rem);
+	width: 100%;
 }
 .sapUiIntegrationEditor .sapUiIntegrationEditorForm.settingsButtonSpace .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemField .sapUiIntegrationEditorEditor,
 .sapUiIntegrationEditor .sapUiIntegrationEditorForm.settingsButtonSpace .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemField .sapUiIntegrationEditorHint{
-	width: calc(100% - 2.5rem);
+	white-space: normal;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorHint{
 	white-space: normal;
 }
 
@@ -118,14 +120,31 @@
 	white-space: nowrap;
 }
 
-.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorSettingsButton {
-	max-width: 1.6rem;
-	margin-left: 0.3rem;
+.sapUiIntegrationEditor .sapUiIntegrationEditorSettingsButton {
 	display: inline-block;
 }
 
-.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorSettingsButton .sapMBtnIcon {
-	color: var(--sapUiContentLabelColor, #c0c0c0)
+.sapUiIntegrationEditor .sapUiIntegrationEditorSettingsButton .sapMBtnIcon {
+	color: var(--sapUiContentLabelColor, #c0c0c0);
+	margin-top: -1px;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorSettingsButton.settings .sapMBtnIcon {
+	color: unset;
+	margin-top: -1px;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorSettingsButton.settings .sapMBtnIcon::after {
+	content: "\e0a6";
+    border-radius: 50%;
+    position: absolute;
+    margin-left: -10px;
+    margin-top: 0.4rem;
+    font-size: 10px;
+    background-color:var(--sapUiButtonHoverBackground,#f5f5f5);
+    clip-path: circle(5px at 5px 12px);
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorSettingsButton.dynamicvalue .sapMBtnIcon{
+	color: unset;
 }
 
 .sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorSettingsField {
@@ -133,16 +152,7 @@
 }
 
 .sapUiIntegrationEditor .sapUiIntegrationEditorItem .col1 {
-	width: 50%;
-}
-.sapUiIntegrationEditor .sapUiIntegrationEditorItem .col1 .col1box {
-	width: 100%;
-}
-.sapUiIntegrationEditor .sapUiIntegrationEditorItem .col1 .col1box .sapMFlexItem {
-	width: 84%;
-}
-.sapUiIntegrationEditor .sapUiIntegrationEditorItem .col1 .col1box .sapMFlexItem .sapUiIntegrationEditorDescriptionIcon {
-	margin-left: -0.5rem;
+	width: 49.5%;
 }
 
 .sapUiIntegrationEditor .notWrappingRow {
@@ -171,22 +181,23 @@
 	display: block;
 	white-space: nowrap;
 	padding-top: 7px;
-	padding-right: 10px;
 	width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemLabel.description .sapMLabel {
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .description .sapMLabel {
 	max-width: calc(100% - 1.2rem);
 }
 .sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemLabel .sapMLabel {
 	width: calc(100% - 1.2rem);
 }
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemLabelWithInfo {
+	padding-right: 10px;
+}
 
 .sapUiIntegrationEditor .sapUiIntegrationEditorDescriptionIcon {
-	margin: 0.20rem 0.4rem;
 	vertical-align: top;
-	padding-top: 6px;
+	padding-top: 9px;
 }
 
 .sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapMTitle {
@@ -309,23 +320,6 @@
 	padding: 0.5rem 1rem;
 }
 
-.sapUiIntegrationEditor .sapUiIntegrationEditorItemField.settings .sapUiIntegrationEditorSettingsButton .sapMBtnIcon {
-	color: unset;
-	margin-top: -1px;
-}
-.sapUiIntegrationEditor .sapUiIntegrationEditorItemField.settings .sapUiIntegrationEditorSettingsButton .sapMBtnIcon::after {
-	content: "\e0a6";
-    border-radius: 50%;
-    position: absolute;
-    margin-left: -10px;
-    margin-top: 0.4rem;
-    font-size: 10px;
-    background-color:var(--sapUiButtonHoverBackground,#f5f5f5);
-    clip-path: circle(5px at 5px 12px);
-}
-.sapUiIntegrationEditor .sapUiIntegrationEditorItemField.dynamicvalue .sapUiIntegrationEditorSettingsButton .sapMBtnIcon{
-	color: unset;
-}
 .sapUiIntegrationEditorSettingsField .sapMInputBaseInner {
 	visibility: hidden;
 }
@@ -470,10 +464,10 @@
 	color: var(--sapUiPositiveText, green);
 }
 .sapUiIntegrationEditor .sapUiIntegrationEditorMessageIcon {
-	margin: 0.20rem 0.5rem;
+	margin: 0.10rem 0.5rem;
 	vertical-align: top;
 	display: none;
-	padding-top: 6px;
+	padding-top: 8px;
 	/*
 	right: 3.2rem;
     position: absolute;
@@ -497,4 +491,10 @@
 }
 .sapUiIntegrationEditorItem .sapUiIntegrationEditorSpacerWithoutLine {
 	height: 15px;
+}
+.sapUiIntegrationEditorItem .sapUiIntegrationEditorFieldAlignEnd {
+	text-align: End;
+}
+.sapUiIntegrationEditorItem .sapUiIntegrationEditorSettingBox {
+	max-width: 5rem;
 }
