@@ -1826,6 +1826,9 @@ sap.ui.define([
 		// Update the selection handlers
 		this._updateSelectionBehavior();
 
+		// Update the multiSelectMode
+		this._updateMultiSelectMode();
+
 		var oDDI = new DragDropInfo({
 			sourceAggregation: "columns",
 			targetAggregation: "columns",
