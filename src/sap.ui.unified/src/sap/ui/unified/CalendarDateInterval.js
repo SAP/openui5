@@ -263,7 +263,7 @@ sap.ui.define([
 			oCalendar.setPopupMode(true);
 			oCalendar.attachEvent("select", this._handleCalendarPickerDateSelect, this);
 			oCalendar.attachEvent("cancel", function (oEvent) {
-				this._closeCalendarPicker();
+				this._closeCalendarPicker(true);
 				var oDomRefB1 = this.getAggregation("header").getDomRef("B1");
 				if (oDomRefB1) {
 					oDomRefB1.focus();

@@ -239,7 +239,8 @@ sap.ui.define([
 	QUnit.test("focusDate method", function(assert) {
 		var bFound = false,
 			i = 0,
-			aMonths, aDays;
+			aMonths, aDays,
+			oFocusSpy = this.spy(HTMLElement.prototype, "focus");
 
 		iStartDateChangeFired = 0;
 		this.oCal2.focusDate(new Date(2012, 11, 12));
@@ -259,6 +260,8 @@ sap.ui.define([
 		}
 
 		assert.ok((bFound && jQuery(aDays[i]).attr("data-sap-day") == "20121212"), "20121212 focused");
+		assert.equal(oFocusSpy.callCount, 1, "an item was focused");
+		assert.ok(oFocusSpy.calledOn(jQuery(aDays[i])[0]), "the correct item was focused");
 		assert.equal(iStartDateChangeFired, 0, "no startdateChange event fired");
 
 		// BCP 1780270593

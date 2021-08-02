@@ -277,6 +277,9 @@ sap.ui.define([
 			delete this._oItemNavigation;
 		}
 
+		this.removeEventDelegate(this._focusDelegate);
+		delete this._focusDelegate;
+
 		if (this._sInvalidateMonth) {
 			clearTimeout(this._sInvalidateMonth);
 		}
@@ -2077,18 +2080,26 @@ sap.ui.define([
 		var iYear = oDate.getYear();
 		CalendarUtils._checkYearInValidRange(iYear);
 
-		var bFocusable = true; // if date not changed it is still focusable
 		if (!this.getDate() || !oDate.isSame(CalendarDate.fromLocalJSDate(this.getDate(), oDate.getCalendarType()))) {
 			var oCalDate = new CalendarDate(oDate);
 			this.setProperty("date", oDate.toLocalJSDate());
-			bFocusable = this.checkDateFocusable(oDate.toLocalJSDate());
 			this._oDate = oCalDate;
+		} else {
+			this.invalidate();
 		}
 
-		if (this.getDomRef()) {
-			this._focusDate(this._oDate, true, bFocusable ? bNoFocus : true);
-		}
+		// focus the new date after rendering
+		this.removeEventDelegate(this._focusDelegate);
+		this._focusDelegate = {
+			onAfterRendering: function() {
+				var bFocusable = this.checkDateFocusable(this._oDate.toLocalJSDate());
+				this._focusDate(this._oDate, true, bFocusable ? bNoFocus : true);
 
+				this.removeEventDelegate(this._focusDelegate);
+				delete this._focusDelegate;
+			}
+		};
+		this.addEventDelegate(this._focusDelegate, this);
 	}
 
 	/**
