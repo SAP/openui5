@@ -206,36 +206,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Plugin behavior when table has one column and the column is destroyed", function(assert) {
-		this.oTable.destroy();
-		var oColumnResizer = new ColumnResizer();
-		this.oTable = new Table({
-			columns: [
-				new Column({
-					header: new Text({
-						text: "Column1 has a very very long text"
-					})
-				})
-			],
-			items: [
-				new ColumnListItem({
-					cells: [
-						new Text({
-							text: "Cell1"
-						})
-					]
-				})
-			]
-		});
-
-		this.oTable.addDependent(oColumnResizer);
-		this.oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
-		this.oTable.getColumns()[0].destroy();
-		Core.applyChanges();
-		assert.notOk(oColumnResizer._aResizables.length, "Resizables updated when column is destroyed");
-	});
-
 	QUnit.module("Events", {
 		beforeEach: function() {
 			this.clock = sinon.useFakeTimers();
@@ -669,5 +639,28 @@ sap.ui.define([
 		assert.strictEqual(this.oColumnResizer._iHoveredColumnIndex, 0, "_iHoveredColumnIndex is updated correctly via _onmousemove");
 		assert.strictEqual(this.oColumnResizer._oAlternateHandle.style[this.sBeginDirection], "", "AlternateHandle is not visible");
 		assert.strictEqual(parseInt(this.oColumnResizer._oHandle.style[this.sBeginDirection]), parseInt(this.oColumnResizer._aPositions[0] - this.oColumnResizer._fContainerX), "Resize handle is visible");
+	});
+
+	QUnit.test("getColumnResizeButton", function(assert) {
+		var oColumn = this.oTable.getColumns()[0],
+			fnStartResizingSpy = sinon.spy(this.oColumnResizer, "startResizing");
+
+		var oMatchMediaStub = sinon.stub(window, "matchMedia");
+		oMatchMediaStub.withArgs("(hover:none)").returns({
+			matches: true
+		});
+
+		var oResizerButton = this.oColumnResizer.getColumnResizeButton(oColumn);
+		assert.ok(oResizerButton.isA("sap.m.ColumnPopoverActionItem"), "sap.m.ColumnPopoverActionItem instance returned");
+		assert.strictEqual(oResizerButton.getText(), Core.getLibraryResourceBundle("sap.m").getText("COLUMNRESIZER_RESIZE_BUTTON"), "correct text set");
+		assert.strictEqual(oResizerButton.getIcon(), "sap-icon://resize-horizontal", "correct icon set");
+		assert.ok(oResizerButton.hasListeners("press"), "press event registered");
+
+		oResizerButton.firePress(oColumn);
+
+		assert.ok(fnStartResizingSpy.calledOnce, "startResizing called once");
+		assert.ok(fnStartResizingSpy.calledWith(oColumn.getDomRef()), "startResizing called with correct args");
+
+		oMatchMediaStub.restore();
 	});
 });
