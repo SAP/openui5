@@ -5,6 +5,28 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 
 	browser.testrunner.currentSuite.meta.controlName = 'sap.m.DynamicDateRange';
 
+	it("Mock now Date", function() {
+		var el = element(by.tagName('body'));
+
+		// We have to mock the current date in order to have stable tests as the dates used in the DynamicDateRange
+		// control are relative to the current date. This is done by executing a script on body level in the HTML page -
+		// the case where there are no arguments passed to the Date object returns a solid date in the past. The magic
+		// string passed to the executeScript function is the same as the lines below but without the spaces:
+
+		// var a = new Date(2015,0,1);
+		// Date = class extends Date{
+		// 	constructor(options) {
+		// 		if (options) {
+		// 			super(options);
+		// 		} else {
+		// 			super(a);
+		// 		}
+		// 	}
+		// };
+
+		browser.executeScript('var a = new Date(2015,1,1);Date = class extends Date{constructor(options) {if (options) {super(options);} else {super(a);}}};', el);
+	});
+
 	it("Suggestion popover gets opened", function() {
 		var oInput = element(by.id("DDR1-input-inner")),
 			oVBox = element(by.id("vertical-box"));
