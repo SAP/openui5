@@ -813,6 +813,7 @@ sap.ui.define([
 		var oBinding,
 			oCache,
 			oCacheMock,
+			oContext = this.oModel.createBindingContext("/Base"),
 			oError = new Error(),
 			oGroupLock = {unlock : function () {}},
 			oODataContextBindingMock = this.mock(ODataContextBinding.prototype),
@@ -820,9 +821,14 @@ sap.ui.define([
 
 		oODataContextBindingMock.expects("lockGroup").withExactArgs("$direct", true)
 			.returns(oGroupLock);
-		oBinding = this.bindContext("/absolute", undefined, {$$groupId : "$direct"});
+		oBinding = this.bindContext("relative", oContext, {$$groupId : "$direct"});
 		oCache = oBinding.oCachePromise.getResult();
 		oCacheMock = this.mock(oCache);
+		this.mock(this.oModel).expects("resolve")
+			.withExactArgs("relative", sinon.match.same(oContext))
+			.returns("~");
+		this.mock(oBinding).expects("getRelativePath").withExactArgs("/Base/relative/foo")
+			.returns("foo");
 		oCacheMock.expects("fetchValue")
 			.withExactArgs(sinon.match.same(oGroupLock), "foo", sinon.match.func, undefined)
 			.callsArg(2)
@@ -835,9 +841,9 @@ sap.ui.define([
 		this.mock(oBinding).expects("fireDataReceived").withExactArgs({error : oError});
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 		this.mock(this.oModel).expects("reportError").withExactArgs(
-			"Failed to read path /absolute", sClassName, sinon.match.same(oError));
+			"Failed to read path ~", sClassName, sinon.match.same(oError));
 
-		return oBinding.fetchValue("/absolute/foo").then(function () {
+		return oBinding.fetchValue("/Base/relative/foo").then(function () {
 			assert.ok(false, "unexpected success");
 		}, function (oResult) {
 			assert.strictEqual(oResult, oError);

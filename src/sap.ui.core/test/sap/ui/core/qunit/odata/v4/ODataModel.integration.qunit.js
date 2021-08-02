@@ -2495,6 +2495,7 @@ sap.ui.define([
 [false, true].forEach(function (bGrowing) {
 	QUnit.test("OLDB#requestContexts w/ sap.m.Table, growing=" + bGrowing, function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oTable,
 			sView = '\
 <Table id="table" growing="' + bGrowing + '" growingThreshold="3" items="{/SalesOrderList}">\
 	<Text id="note" text="{Note}"/>\
@@ -2514,7 +2515,7 @@ sap.ui.define([
 			.expectChange("note", ["Note 1", "Note 2", "Note 3"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oBinding = that.oView.byId("table").getBinding("items");
+			var oBinding;
 
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=3&$top=9", {
 				value : [
@@ -2522,6 +2523,9 @@ sap.ui.define([
 					{SalesOrderID : "05", Note : "Note 5"}
 				]
 			});
+
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("items");
 
 			return Promise.all([
 				oBinding.requestContexts(2, 10).then(function (aContexts) {
@@ -2538,7 +2542,7 @@ sap.ui.define([
 				that.expectChange("note", [,,, "Note 4", "Note 5"]);
 
 				// show more items
-				that.oView.byId("table").requestItems();
+				oTable.requestItems();
 			}
 
 			return that.waitForChanges(assert);
@@ -11531,7 +11535,8 @@ sap.ui.define([
 					Name : "n/a"
 				})
 				// Note: this is caused by "nameCreated" via R.V.C., path is a bit misleading
-				.expectCanceledError("Failed to read path special.cases.Create(...)", sErrorMessage)
+				.expectCanceledError("Failed to read path /Artists/special.cases.Create(...)",
+					sErrorMessage)
 				.expectCanceledError("Failed to read path"
 					+ " /Artists(ArtistID='ABC',IsActiveEntity=false)/Name", sErrorMessage)
 				.expectRequest(sResourcePath, {
@@ -30486,7 +30491,7 @@ sap.ui.define([
 					Name : "Team #2",
 					Team_Id : "TEAM_02"
 				})
-				.expectCanceledError("Failed to read path ", sErrorMessage) //TODO empty relative path not helpful here!
+				.expectCanceledError("Failed to read path /TEAMS('TEAM_01')", sErrorMessage)
 				.expectCanceledError("Failed to read path /TEAMS('TEAM_01')/Name", sErrorMessage)
 				.expectChange("name", "Team #2");
 
