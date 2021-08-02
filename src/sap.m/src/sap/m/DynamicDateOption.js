@@ -321,16 +321,13 @@ sap.ui.define([
 
 		DynamicDateOption.prototype._createMonthControl = function(oValue, iIndex, fnControlsUpdated) {
 			var oControl = new MonthPicker(),
-				oDate;
+				oDate = new Date(),
+				iMonth = (oValue && this.getKey() === oValue.operator) ? oValue.values[iIndex] : oDate.getMonth();
 
-			if (oValue && this.getKey() === oValue.operator) {
-				oDate = new Date();
-				oDate.setMonth(oValue.values[iIndex]);
-
-				oControl.addSelectedDate(new DateRange({
-					startDate: oDate
-				}));
-			}
+			oControl.setMonth(iMonth);
+			oControl.addSelectedDate(new DateRange({
+				startDate: oDate
+			}));
 
 			if (fnControlsUpdated instanceof Function) {
 				oControl.attachSelect(fnControlsUpdated);
