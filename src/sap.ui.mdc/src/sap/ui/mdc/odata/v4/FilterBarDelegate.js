@@ -353,13 +353,13 @@ sap.ui.define([
 			oProperty.display = sDisplay;
 		}
 
-		if (oObj.$Type === "Edm.DateTimeOffset") {
-			if (!oConstraints) {
-				oConstraints = {};
-			}
+		// if (oObj.$Type === "Edm.DateTimeOffset") {
+		// 	if (!oConstraints) {
+		// 		oConstraints = {};
+		// 	}
 
-			oConstraints.V4 = true;
-		}
+		// 	oConstraints.V4 = true;
+		// }
 
 		if (oConstraints) {
 			oProperty.constraints = oConstraints;

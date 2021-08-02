@@ -43,10 +43,10 @@
 					<mdcf:FieldValueHelp id="fhName" title="Name" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />
 					<mdcf:FieldValueHelp id="fhAdob" title="Birth Epoch" showConditionPanel="true" filterFields="*dateOfBirth*" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />
 					<mdcf:ConditionFieldHelp id="fhAdod" title="Define Filter Conditions" label="Date of death" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}"/>
-					<mdcf:FieldValueHelp id="IOFFVHCountry" title="Countries" showConditionPanel="true" filterFields="*code,descr*" keyPath="code" descriptionPath="descr" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+					<mdcf:FieldValueHelp id="IOFFVHCountry" noDialog="true" title="Countries" showConditionPanel="true" filterFields="*code,descr*" keyPath="code" descriptionPath="descr" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
 					<mdcf:suggestContent>
 						<mdcf:FieldValueHelpMTableWrapper>
-								<Table items="{path: '/Countries', length: 10}" width="30rem">
+								<Table items="{path: '/Countries'}" width="30rem">
 									<columns>
 										<Column>
 											<Label text="Country"></Label>
