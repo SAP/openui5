@@ -218,10 +218,11 @@ sap.ui.define([
 			if (bHasRootBindingAndWasNotSuspended) {
 				oRootBinding.suspend();
 			}
+
+			setAggregation(oTable, oBindingInfo);
 			oBinding.changeParameters(oBindingInfo.parameters);
 			oBinding.filter(oBindingInfo.filters, "Application");
 			oBinding.sort(oBindingInfo.sorter);
-			setAggregation(oTable);
 		} catch (e) {
 			this.rebindTable(oTable, oBindingInfo);
 			if (oRootBinding == oBinding) {
@@ -241,7 +242,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	Delegate.rebindTable = function (oTable, oBindingInfo) {
-		setAggregation(oTable);
+		setAggregation(oTable, oBindingInfo);
 		TableDelegate.rebindTable(oTable, oBindingInfo);
 	};
 
@@ -397,10 +398,15 @@ sap.ui.define([
 	 * Updates the aggregation info if the plugin is enabled.
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} [oBindingInfo] The binding info object to be used to bind the table to the model
 	 */
-	function setAggregation(oTable) {
+	function setAggregation(oTable, oBindingInfo) {
 		if (isInnerTableReadyForAnalytics(oTable)) {
 			var aAggregates = Object.keys(oTable._getAggregatedProperties());
+			var sSearch = oBindingInfo && oBindingInfo.parameters["$search"] || undefined;
+			if (sSearch ) {
+				delete oBindingInfo.parameters["$search"];
+			}
 			var aGroupLevels = oTable._getGroupedProperties().map(function (mGroupLevel) {
 				return mGroupLevel.name;
 			});
@@ -409,7 +415,8 @@ sap.ui.define([
 				groupLevels: aGroupLevels,
 				grandTotal: aAggregates,
 				subtotals: aAggregates,
-				columnState: getColumnState(oTable, aAggregates)
+				columnState: getColumnState(oTable, aAggregates),
+				search: sSearch
 			};
 
 			TableMap.get(oTable).plugin.setAggregationInfo(oAggregationInfo);

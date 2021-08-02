@@ -269,6 +269,7 @@ sap.ui.define([
 	 *     The state is an object with the following keys:
 	 *     - subtotals: boolean - Whether the cell content should be visible in subtotal rows
 	 *     - grandTotal: boolean - Whether the cell content should be visible in grand total rows
+	 * @param {string} [oAggregateInfo.search] A search string used to search transformation (see {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}) for details..
 	 */
 	V4Aggregation.prototype.setAggregationInfo = function(oAggregateInfo) {
 		oAggregateInfo = Object.assign({
@@ -279,6 +280,7 @@ sap.ui.define([
 			this._mGroup = undefined;
 			this._mAggregate = undefined;
 			this._aGroupLevels = undefined;
+			this._sSearch = undefined;
 		} else {
 			var aAllUnitProperties = [];
 			var aAllAdditionalProperties = [];
@@ -391,6 +393,10 @@ sap.ui.define([
 					delete this._mGroup[sKey];
 				}
 			}.bind(this));
+
+			if (oAggregateInfo.search) {
+				this._sSearch = oAggregateInfo.search;
+			}
 		}
 
 		this._mColumnState = oAggregateInfo.columnState;
@@ -409,7 +415,8 @@ sap.ui.define([
 			group: deepClone(this._mGroup),
 			groupLevels: this._aGroupLevels ? this._aGroupLevels.map(function(mGroupLevelInfo) {
 				return mGroupLevelInfo.property.path;
-			}) : undefined
+			}) : undefined,
+			search: this._sSearch
 		};
 
 		if (mAggregation.aggregate) {

@@ -71,6 +71,36 @@ sap.ui.define([
 		return mState;
 	}
 
+	function poll(fnCheck, iTimeout) {
+		return new Promise(function(resolve, reject) {
+			if (fnCheck()) {
+				resolve();
+				return;
+			}
+
+			var iRejectionTimeout = setTimeout(function() {
+				clearInterval(iCheckInterval);
+				reject("Polling timeout");
+			}, iTimeout == null ? 100 : iTimeout);
+
+			var iCheckInterval = setInterval(function() {
+				if (fnCheck()) {
+					clearTimeout(iRejectionTimeout);
+					clearInterval(iCheckInterval);
+					resolve();
+				}
+			}, 10);
+		});
+	}
+
+	function waitForBindingInfo(oTable, iTimeout) {
+		return poll(function() {
+			var oInnerTable = oTable._oTable;
+			return oInnerTable && oInnerTable.getBindingInfo(oTable._getStringType() === "Table" ? "rows" : "items");
+		}, iTimeout);
+	}
+
+
 	QUnit.module("Initialization", {
 		afterEach: function() {
 			if (this.oTable) {
@@ -383,7 +413,8 @@ sap.ui.define([
 					{subtotals: false, grandTotal: false},
 					{subtotals: true, grandTotal: true},
 					{subtotals: true, grandTotal: true}
-				])
+				]),
+				search: undefined
 			}), "Plugin#setAggregationInfo call");
 
 			oTable._oTable.fireEvent("columnSelect", {
@@ -425,7 +456,8 @@ sap.ui.define([
 					{subtotals: false, grandTotal: false},
 					{subtotals: true, grandTotal: true},
 					{subtotals: true, grandTotal: true}
-				])
+				]),
+				search: undefined
 			}), "Plugin#setAggregationInfo call");
 
 			var oNewCol = new sap.ui.mdc.table.Column({
@@ -444,7 +476,8 @@ sap.ui.define([
 					{subtotals: true, grandTotal: true},
 					{subtotals: false, grandTotal: false},
 					{subtotals: true, grandTotal: true}
-				])
+				]),
+				search: undefined
 			}), "Plugin#setAggregationInfo call");
 
 			fSetAggregationSpy.restore();
@@ -481,7 +514,8 @@ sap.ui.define([
 							{subtotals: false, grandTotal: false},
 							{subtotals: false, grandTotal: false},
 							{subtotals: false, grandTotal: false}
-						])
+						]),
+						search: undefined
 					}), "Plugin#setAggregationInfo call");
 					fSetAggregationSpy.restore();
 					oDelegate.rebindTable = fnRebindTable;
@@ -523,7 +557,8 @@ sap.ui.define([
 							{subtotals: false, grandTotal: false},
 							{subtotals: true, grandTotal: true},
 							{subtotals: true, grandTotal: true}
-						])
+						]),
+						search: undefined
 					}), "Plugin#setAggregationInfo call");
 					fSetAggregationSpy.restore();
 					oDelegate.rebindTable = fnRebindTable;
@@ -564,7 +599,8 @@ sap.ui.define([
 							{subtotals: false, grandTotal: false},
 							{subtotals: false, grandTotal: false},
 							{subtotals: false, grandTotal: false}
-						])
+						]),
+						search: undefined
 					}), "Plugin#setAggregationInfo call");
 
 					fColumnPressSpy.restore();
@@ -591,7 +627,8 @@ sap.ui.define([
 									{subtotals: false, grandTotal: false},
 									{subtotals: true, grandTotal: true},
 									{subtotals: true, grandTotal: true}
-								])
+								]),
+								search: undefined
 							}), "Plugin#setAggregationInfo call");
 
 							fColumnPressSpy.restore();
@@ -644,7 +681,8 @@ sap.ui.define([
 							{subtotals: false, grandTotal: false},
 							{subtotals: false, grandTotal: false},
 							{subtotals: false, grandTotal: false}
-						])
+						]),
+						search: undefined
 					}), "Plugin#setAggregationInfo call");
 
 					fSetAggregationSpy.reset();
@@ -669,7 +707,8 @@ sap.ui.define([
 							{subtotals: true, grandTotal: true},
 							{subtotals: false, grandTotal: false},
 							{subtotals: true, grandTotal: true}
-						])
+						]),
+						search: undefined
 					}), "Plugin#setAggregationInfo call");
 
 					fSetAggregationSpy.reset();
@@ -961,7 +1000,8 @@ sap.ui.define([
 						columnState: createColumnStateIdMap(oTable, [
 							{subtotals: false, grandTotal: false},
 							{subtotals: true, grandTotal: true}
-						])
+						]),
+						search: undefined
 					}), "Plugin#setAggregationInfo call");
 					fSetAggregationSpy.restore();
 					oDelegate.rebindTable = fnRebindTable;
@@ -1115,7 +1155,8 @@ sap.ui.define([
 					{subtotals: true, grandTotal: true},
 					{subtotals: true, grandTotal: true},
 					{subtotals: false, grandTotal: false}
-				])
+				]),
+				search: undefined
 			}), "Plugin#setAggregationInfo call");
 		});
 	});
@@ -1150,7 +1191,8 @@ sap.ui.define([
 					{subtotals: false, grandTotal: false},
 					{subtotals: false, grandTotal: false},
 					{subtotals: false, grandTotal: false}
-				])
+				]),
+				search: undefined
 			}), "Plugin#setAggregationInfo call");
 		});
 	});
@@ -1188,8 +1230,52 @@ sap.ui.define([
 					{subtotals: true, grandTotal: true},
 					{subtotals: true, grandTotal: true},
 					{subtotals: false, grandTotal: false}
-				])
+				]),
+				search: undefined
 			}), "Plugin#setAggregationInfo call");
+		});
+	});
+
+	QUnit.test("Transformation Search", function(assert) {
+		var done = assert.async();
+		var oTable = this.oTable;
+
+		return oTable._fullyInitialized().then(function() {
+			var fnOriginalUpdateBindingInfo = oTable.getControlDelegate().updateBindingInfo;
+			oTable.getControlDelegate().updateBindingInfo = function(oTable, oPayload, oBindingInfo) {
+				fnOriginalUpdateBindingInfo(oTable, oPayload, oBindingInfo);
+				oBindingInfo.parameters["$search"] = "Name";
+			};
+			return waitForBindingInfo(oTable);
+		}).then(function() {
+			var oPlugin = oTable._oTable.getDependents()[0];
+			var oBindRowsSpy = sinon.spy(oTable._oTable, "bindRows");
+			var oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
+			oTable.setGroupConditions({ groupLevels: [{ name: "CountryKey" }] }).rebind();
+			var oBinding = oTable._oTable.getBindingInfo("rows");
+
+			assert.notOk(oBinding.parameters["$search"], "$search has been removed from oBinding");
+			assert.ok(oBindRowsSpy.calledWithExactly(oBinding), "BindRows of inner table called with oBindingInfo without $search parameter");
+			assert.ok(oSetAggregation.calledOnceWithExactly({
+				visible: ["CountryKey", "CountryText", "SalesAmount", "Currency", "Region", "SalesAmountInLocalCurrency", "RegionText"],
+				groupLevels: ["CountryKey"],
+				grandTotal: [],
+				subtotals: [],
+				columnState: createColumnStateIdMap(oTable, [
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false}
+				]),
+				search: "Name"
+			}), "Plugin#setAggregationInfo call");
+			done();
 		});
 	});
 

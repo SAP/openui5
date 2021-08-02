@@ -205,6 +205,16 @@ sap.ui.define([
 		expectedGroup: {prop1: {}, prop2: {}, prop7: {}, prop3: {additionally: ["prop4"]}},
 		expectedAggregate: {},
 		expectedGroupLevels: ["prop3"]
+	}, {
+		label: "Search",
+		aggregationInfo: {
+			visible: ["Property1", "Property2"],
+			search: "Property"
+		},
+		expectedGroup: {prop1: {}, prop2: {}},
+		expectedAggregate: {},
+		expectedGroupLevels: [],
+		expectedSearch: "Property"
 	}];
 
 	aTestData.forEach(function(oData) {
@@ -227,6 +237,7 @@ sap.ui.define([
 				assert.deepEqual(mAggregationInfo.groupLevels, oData.expectedGroupLevels, "group levels");
 				assert.strictEqual(mAggregationInfo.grandTotalAtBottomOnly, bExpectedTotalsSetting, "grandTotalAtBottomOnly");
 				assert.strictEqual(mAggregationInfo.subtotalsAtBottomOnly, bExpectedTotalsSetting, "subtotalsAtBottomOnly");
+				assert.strictEqual(mAggregationInfo.search, oData.expectedSearch, "search parameter");
 			}
 
 			oUpdateAggregationSpy.restore();
@@ -238,7 +249,8 @@ sap.ui.define([
 			group: {prop1: {}, prop2: {}},
 			groupLevels: [],
 			aggregate: {prop5: {grandTotal: true}},
-			grandTotalAtBottomOnly: true
+			grandTotalAtBottomOnly: true,
+			search: undefined
 		};
 
 		this.oPlugin.setGroupSummary("None");
@@ -268,7 +280,8 @@ sap.ui.define([
 			group: {prop1: {}, prop2: {}},
 			groupLevels: [],
 			aggregate: {prop5: {subtotals: true}},
-			subtotalsAtBottomOnly: true
+			subtotalsAtBottomOnly: true,
+			search: undefined
 		};
 
 		this.oPlugin.setTotalSummaryOnTop("Off");
