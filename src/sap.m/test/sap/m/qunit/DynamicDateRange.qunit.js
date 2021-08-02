@@ -407,6 +407,30 @@ sap.ui.define([
 		oOptionLast.destroy();
 	});
 
+	QUnit.test("today -x/+y creating and validating the option UI", function(assert) {
+		var oOptionToday = new StandardDynamicDateOption({ key: "TODAYFROMTO" }),
+			oValidateValueHelpUISpy = this.spy(oOptionToday, "validateValueHelpUI"),
+			oStepInput,
+			aControls = oOptionToday.createValueHelpUI(this.ddr, this.ddr._updateInternalControls.bind(this.ddr));
+
+		this.ddr._createInfoDatesFooter();
+		this.ddr._oSelectedOption = oOptionToday;
+		oStepInput = aControls[3];
+
+		oStepInput.setValue(7000);
+		//simulate input interaction
+		oStepInput.fireChange();
+
+		assert.ok(oValidateValueHelpUISpy.calledOnce, "validation for the option UI is triggered");
+		assert.ok(oValidateValueHelpUISpy.returned(false), "validation failed");
+
+		oStepInput.setValue(10);
+		oStepInput.fireChange();
+
+		assert.ok(oValidateValueHelpUISpy.calledTwice, "validation for the option UI is triggered");
+		assert.ok(oValidateValueHelpUISpy.returned(true), "validation succeeded");
+	});
+
 	QUnit.test("getGroup and getGroupHeader - several options", function(assert) {
 		var oOption = new StandardDynamicDateOption({ key: "LASTDAYS" });
 

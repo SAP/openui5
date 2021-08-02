@@ -63,6 +63,29 @@
 			getValueHelpUITypes: function(oControl) {
 				return [new DynamicDateValueHelpUIType({ type: "int" })];
 			},
+			createValueHelpUI: function(oControl, fnControlsUpdated) {
+				var oLabel = new sap.m.Label({
+					text: this.getKey(),
+					width: "100%"
+				});
+				var oSlider = new sap.m.Slider({
+					max: 10,
+					enableTickmarks: true
+				}).addStyleClass("sapUiSmallMarginTop")
+
+				oControl.aControlsByParameters = {};
+				oControl.aControlsByParameters[this.getKey()] = [];
+
+				if (fnControlsUpdated instanceof Function) {
+					oSlider.attachLiveChange(function() {
+						fnControlsUpdated(this);
+					}, this);
+				}
+
+				oControl.aControlsByParameters[this.getKey()].push(oSlider);
+
+				return [oLabel, oSlider];
+			},
 			format: function(oValue) {
 				return `Before ${oValue.values[0]} full moons`;
 			},
@@ -82,9 +105,15 @@
 
 				return oResult;
 			},
+			validateValueHelpUI: function(oControl) {
+				var oSlider = oControl.aInputControls[1];
+
+				return oSlider.getValue() >= (oSlider.getMax() / 4)  &&
+					oSlider.getValue() <= (oSlider.getMax() / 2);
+			},
 			toDates: function(oValue) {
 				var now = new Date();
-				return [now, now]
+				return [now, now];
 			}
 		})
 	})();
