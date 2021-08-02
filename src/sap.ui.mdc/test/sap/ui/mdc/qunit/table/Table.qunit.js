@@ -4161,7 +4161,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("test multiSelectMode - ResponsiveTable type", function(assert) {
+	QUnit.test("test multiSelectMode - ResponsiveTable type (switch mode after table creation)", function(assert) {
 		var done = assert.async();
 		var oTable = new Table({
 			selectionMode: "Multi",
@@ -4171,6 +4171,21 @@ sap.ui.define([
 		oTable.initialized().then(function() {
 			assert.equal(oTable._oTable.getMultiSelectMode(), "Default", "MultiSelectMode is set default on the responsiveTableType");
 			oTable.setMultiSelectMode("ClearAll");
+			assert.equal(oTable._oTable.getMultiSelectMode(), "ClearAll", "MultiSelectMode is set to is set to ClearAll type on the inner table");
+			oTable.destroy();
+			done();
+		});
+	});
+
+	QUnit.test("test multiSelectMode - ResponsiveTable type (before table creation)", function(assert) {
+		var done = assert.async();
+		var oTable = new Table({
+			selectionMode: "Multi",
+			multiSelectMode: "ClearAll",
+			type: "ResponsiveTable"
+		});
+
+		oTable.initialized().then(function() {
 			assert.equal(oTable._oTable.getMultiSelectMode(), "ClearAll", "MultiSelectMode is set to is set to ClearAll type on the inner table");
 			oTable.destroy();
 			done();
