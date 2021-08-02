@@ -1,0 +1,23 @@
+{
+  "1.94.0": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "ff2d9f7f2a5183185fb96be15495144c20b32caa",
+        "type": "FEATURE",
+        "text": " ListBase: new property multiSelectMode added"
+      },
+      {
+        "id": "3cf6dd8fb326ccc72036c75df8755799c06711a9",
+        "type": "FIX",
+        "text": " TreeTable: Prevent page scrolling when pressing SPACE on tree expand icons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180212724"
+          }
+        ]
+      }
+    ]
+  }
+}

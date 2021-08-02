@@ -1,0 +1,29 @@
+{
+  "1.94.0": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "766113d1ffff1ced4c36cc8f1cf79155c867a3f9",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: Avatar icon color is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180319394"
+          }
+        ]
+      },
+      {
+        "id": "7c880616b799fc264eadba6e86698b7ceb679ac1",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: Item position is now read after the item text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180210026"
+          }
+        ]
+      }
+    ]
+  }
+}

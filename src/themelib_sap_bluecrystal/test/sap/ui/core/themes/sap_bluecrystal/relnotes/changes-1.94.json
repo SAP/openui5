@@ -1,0 +1,23 @@
+{
+  "1.94.0": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "d90fbe7ef235b41f63c7517b642f1182c7e64999",
+        "type": "FIX",
+        "text": " sap.m.MessagePage: increase CSS specificity of main icon"
+      },
+      {
+        "id": "f0bc2c7910ff7952c805cde78322932116332638",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.m.Toolbar: Fixed focus color of icons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180218347"
+          }
+        ]
+      }
+    ]
+  }
+}
