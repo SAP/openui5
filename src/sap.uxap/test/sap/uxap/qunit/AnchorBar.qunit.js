@@ -603,6 +603,7 @@ sap.ui.define([
 	QUnit.test("ARIA role and role descrption of buttons", function (assert) {
 		var aAnchorBarContent = this.oObjectPage.getAggregation("_anchorBar").getContent(),
 			iAnchorBarContentLength = aAnchorBarContent.length,
+			sInvTextId = sap.ui.core.InvisibleText.getStaticId("sap.m", "SPLIT_BUTTON_DESCRIPTION"),
 			oCurrentButton,
 			iIndex;
 
@@ -610,6 +611,10 @@ sap.ui.define([
 			oCurrentButton = aAnchorBarContent[iIndex];
 
 			if (oCurrentButton.isA("sap.m.MenuButton")) {
+				oCurrentButton = oCurrentButton._getButtonControl();
+				assert.ok(oCurrentButton.$().attr("aria-labelledby").indexOf(sInvTextId) === -1,
+					"aria-labelledby of button excludes the id of the 'Split Button' text");
+
 				assert.strictEqual(oCurrentButton.$().find(".sapMBtn").attr("role"), "none",
 				"inner buttons are hidden from accessibility API");
 			}
