@@ -286,6 +286,12 @@ sap.ui.define([
 			return "custom group header";
 		});
 
+		assert.strictEqual(oOption.getGroupHeader(this.ddr), "No Group", "custom header does not matter when the group is not defined");
+
+		oOption.setGetGroup(function(oControl) {
+			return 7;
+		});
+
 		assert.strictEqual(oOption.getGroupHeader(this.ddr), "custom group header", "custom getGroupHeader is used when provided");
 
 		oOption.destroy();
