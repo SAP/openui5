@@ -386,7 +386,7 @@ sap.ui.define([
 	};
 
 	Breadcrumbs.prototype._getItemsForMobile = function () {
-		var oItems = this.getLinks();
+		var oItems = this.getLinks().filter(function (oLink) { return oLink.getVisible(); });
 
 		if (this.getCurrentLocationText()) {
 			oItems.push(this._getCurrentLocation());

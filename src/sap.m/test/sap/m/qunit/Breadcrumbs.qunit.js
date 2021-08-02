@@ -325,6 +325,19 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 		assert.ok(aSelectItems.length === 5, "All links are in select along with the currrent location item");
 	});
 
+	QUnit.test("Select on mobile contains only links with visible true", function (assert) {
+		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl,
+			oSecondLink = oStandardBreadCrumbsControl.getLinks()[0],
+			iItemsLengthA,
+			iItemsLengthB;
+
+		iItemsLengthA = oStandardBreadCrumbsControl._getItemsForMobile().length;
+		oSecondLink.setVisible(false);
+		iItemsLengthB = oStandardBreadCrumbsControl._getItemsForMobile().length;
+
+		assert.ok(iItemsLengthB === iItemsLengthA - 1, "All links with visible true are returned");
+	});
+
 	/*------------------------------------------------------------------------------------*/
 	QUnit.module("Breadcrumbs - Special cases", {
 		afterEach: function () {
