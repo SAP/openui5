@@ -1730,27 +1730,27 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("reportUnboundMessages does not call model", function (assert) {
-		var fnReportUnboundMessages = this.spy(),
-			oModelInterface = {reportUnboundMessages : fnReportUnboundMessages},
+	QUnit.test("reportTransitionMessages does not call model", function (assert) {
+		var fnreportTransitionMessages = this.spy(),
+			oModelInterface = {reportTransitionMessages : fnreportTransitionMessages},
 			oRequestor = _Requestor.create("/", oModelInterface, undefined, undefined, "2.0");
 
 		// code under test
-		oRequestor.reportUnboundMessagesAsJSON('[]');
+		oRequestor.reportHeaderMessages('[]');
 
-		assert.notOk(fnReportUnboundMessages.called);
+		assert.notOk(fnreportTransitionMessages.called);
 	});
 
 	//*****************************************************************************************
-	QUnit.test("reportBoundMessages does not call model", function (assert) {
-		var fnReportBoundMessages = this.spy(),
-			oModelInterface = {reportBoundMessages : fnReportBoundMessages},
+	QUnit.test("reportStateMessages does not call model", function (assert) {
+		var fnreportStateMessages = this.spy(),
+			oModelInterface = {reportStateMessages : fnreportStateMessages},
 			oRequestor = _Requestor.create("/", oModelInterface, undefined, undefined, "2.0");
 
 		// code under test
-		oRequestor.getModelInterface().reportBoundMessages("Teams('42')", {/*mPathToMessages*/});
+		oRequestor.getModelInterface().reportStateMessages("Teams('42')", {/*mPathToMessages*/});
 
-		assert.notOk(fnReportBoundMessages.called);
+		assert.notOk(fnreportStateMessages.called);
 	});
 
 	//*********************************************************************************************

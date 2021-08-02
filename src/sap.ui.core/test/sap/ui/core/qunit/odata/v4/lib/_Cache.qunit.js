@@ -64,7 +64,7 @@ sap.ui.define([
 					fetchMetadata : function () {
 						return SyncPromise.resolve(null);
 					},
-					reportBoundMessages : function () {}
+					reportStateMessages : function () {}
 				};
 
 			this.oModelInterfaceMock = this.mock(oModelInterface);
@@ -94,7 +94,7 @@ sap.ui.define([
 				relocateAll : function () {},
 				removePatch : function () {},
 				removePost : function () {},
-				reportUnBoundMessages : function () {},
+				reportTransitionMessages : function () {},
 				request : function () {}
 			};
 			this.oRequestorMock = this.mock(this.oRequestor);
@@ -375,7 +375,7 @@ sap.ui.define([
 			oPromise,
 			oRequestPromise = oFixture.iStatus === 200
 				? Promise.resolve().then(function () {
-					that.oModelInterfaceMock.expects("reportBoundMessages")
+					that.oModelInterfaceMock.expects("reportStateMessages")
 						.withExactArgs(oCache.sResourcePath, [],
 							["EMPLOYEE_2_EQUIPMENTS('1')"]);
 				})
@@ -496,7 +496,7 @@ sap.ui.define([
 				}, undefined, undefined, undefined, undefined,
 				"Equipments(Category='foo',ID='0815')/EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM")
 			.returns(Promise.resolve().then(function () {
-				that.oModelInterfaceMock.expects("reportBoundMessages")
+				that.oModelInterfaceMock.expects("reportStateMessages")
 					.withExactArgs(oCache.sResourcePath, [],
 						["EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM"]);
 			}));
@@ -544,7 +544,7 @@ sap.ui.define([
 					"If-Match" : "etag"
 				}, undefined, undefined, undefined, undefined, "EMPLOYEES('1')")
 			.returns(Promise.resolve().then(function () {
-				that.oModelInterfaceMock.expects("reportBoundMessages")
+				that.oModelInterfaceMock.expects("reportStateMessages")
 					.withExactArgs(oCache.sResourcePath, [], ["('1')"]);
 				bDeleted = true;
 			}));
@@ -2305,7 +2305,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("getKeyPredicate").withExactArgs(sinon.match.same(oEntity),
 				"/TEAMS", sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate);
-		this.oModelInterfaceMock.expects("reportBoundMessages").never();
+		this.oModelInterfaceMock.expects("reportStateMessages").never();
 
 		// code under test
 		oCache.visitResponse(oEntity, mTypeForMetaPath);
@@ -2324,7 +2324,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("getKeyPredicate").withExactArgs(sinon.match.same(oEntity),
 			"/~/$Type", sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate);
-		this.oModelInterfaceMock.expects("reportBoundMessages").never();
+		this.oModelInterfaceMock.expects("reportStateMessages").never();
 
 		// code under test
 		oCache.visitResponse(oEntity, mTypeForMetaPath, "/~/$Type");
@@ -2375,7 +2375,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oEntity.property.navigation),
 				"/TEAMS/property/navigation", sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate4);
-		this.oModelInterfaceMock.expects("reportBoundMessages").never();
+		this.oModelInterfaceMock.expects("reportStateMessages").never();
 
 		// code under test
 		oCache.visitResponse(oEntity, mTypeForMetaPath);
@@ -2414,7 +2414,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oEntity.bar[1]), "/TEAMS/bar",
 				sinon.match.same(mTypeForMetaPath))
 			.returns(undefined);
-		this.oModelInterfaceMock.expects("reportBoundMessages").never();
+		this.oModelInterfaceMock.expects("reportStateMessages").never();
 
 		// code under test
 		oCache.visitResponse(oEntity, mTypeForMetaPath);
@@ -2427,7 +2427,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#visitResponse: reportBoundMessages; single entity", function () {
+	QUnit.test("Cache#visitResponse: reportStateMessages; single entity", function () {
 		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')"),
 			aMessagesInBusinessPartner = [{/* any message object */}],
 			aMessagesSalesOrder = [{/* any message object */}],
@@ -2479,7 +2479,7 @@ sap.ui.define([
 				}
 			};
 
-		this.oModelInterfaceMock.expects("reportBoundMessages")
+		this.oModelInterfaceMock.expects("reportStateMessages")
 			.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
 
 		// code under test
@@ -2487,7 +2487,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#visitResponse: reportBoundMessages; nested; to 1 navigation property",
+	QUnit.test("Cache#visitResponse: reportStateMessages; nested; to 1 navigation property",
 			function () {
 		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')"),
 			aMessagesInBusinessPartner = [{/* any message object */}],
@@ -2504,7 +2504,7 @@ sap.ui.define([
 				}
 			};
 
-		this.oModelInterfaceMock.expects("reportBoundMessages")
+		this.oModelInterfaceMock.expects("reportStateMessages")
 			.withExactArgs(oCache.sResourcePath, mExpectedMessages, ["SO_2_BP"]);
 
 		// code under test
@@ -2512,7 +2512,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#visitResponse: reportBoundMessages; nested; collection entity", function () {
+	QUnit.test("Cache#visitResponse: reportStateMessages; nested; collection entity", function () {
 		var oCache = new _Cache(this.oRequestor, "SalesOrderList"),
 			aMessagesInBusinessPartner = [{/* any message object */}],
 			oData = {
@@ -2528,7 +2528,7 @@ sap.ui.define([
 				}
 			};
 
-		this.oModelInterfaceMock.expects("reportBoundMessages")
+		this.oModelInterfaceMock.expects("reportStateMessages")
 			.withExactArgs(oCache.sResourcePath, mExpectedMessages, ["('0500000001')/SO_2_BP"]);
 
 		// code under test
@@ -2538,7 +2538,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[undefined, false, true].forEach(function (bKeepTransientPath) {
-		var sTitle = "Cache#visitResponse: reportBoundMessages for new entity"
+		var sTitle = "Cache#visitResponse: reportStateMessages for new entity"
 			+ ", keep transient path: " + bKeepTransientPath;
 
 		QUnit.test(sTitle, function () {
@@ -2570,7 +2570,7 @@ sap.ui.define([
 			}
 			mExpectedMessages[sMessagePath] = aMessages;
 
-			this.oModelInterfaceMock.expects("reportBoundMessages")
+			this.oModelInterfaceMock.expects("reportStateMessages")
 				.withExactArgs(oCache.sResourcePath, mExpectedMessages, [sMessagePath]);
 
 			// code under test
@@ -2580,7 +2580,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#visitResponse: reportBoundMessages for new nested entity", function () {
+	QUnit.test("Cache#visitResponse: reportStateMessages for new nested entity", function () {
 		var oCache = new _Cache(this.oRequestor, "SalesOrderList"),
 			aMessages = [{/* any message object */}],
 			oData = {
@@ -2606,7 +2606,7 @@ sap.ui.define([
 				}
 			};
 
-		this.oModelInterfaceMock.expects("reportBoundMessages")
+		this.oModelInterfaceMock.expects("reportStateMessages")
 			.withExactArgs(oCache.sResourcePath, mExpectedMessages,
 				["('0500000001')/SO_2_SOITEM(SalesOrderID='0500000001',ItemPosition='42')"]);
 
@@ -2616,11 +2616,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#visitResponse: no reportBoundMessages if message property is not selected",
+	QUnit.test("Cache#visitResponse: no reportStateMessages if message property is not selected",
 			function () {
 		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')");
 
-		this.oModelInterfaceMock.expects("reportBoundMessages").never();
+		this.oModelInterfaceMock.expects("reportStateMessages").never();
 
 		// code under test
 		oCache.visitResponse({}, {
@@ -2631,14 +2631,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#visitResponse: no reportBoundMessages; message in complex type", function () {
+	QUnit.test("Cache#visitResponse: no reportStateMessages; message in complex type", function () {
 		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')"),
 			oData = {};
 
 		this.mock(_Helper).expects("drillDown")
 			.withExactArgs(oData, ["foo", "bar", "messages"])
 			.returns();
-		this.oModelInterfaceMock.expects("reportBoundMessages").never();
+		this.oModelInterfaceMock.expects("reportStateMessages").never();
 
 		// code under test
 		oCache.visitResponse(oData, {
@@ -2654,7 +2654,7 @@ sap.ui.define([
 		{iStart : 13, bPredicate : false},
 		{iStart : 23, bPredicate : true}
 	].forEach(function (oFixture) {
-		var sTitle = "visitResponse: reportBoundMessages; collection with"
+		var sTitle = "visitResponse: reportStateMessages; collection with"
 				+ (oFixture.bPredicate ? "" : "out") + " key properties, iStart="
 				+ oFixture.iStart;
 
@@ -2727,7 +2727,7 @@ sap.ui.define([
 			oHelperMock.expects("drillDown")
 				.withExactArgs(oData.value[2], aMessagePathSegments)
 				.returns([]);
-			this.oModelInterfaceMock.expects("reportBoundMessages")
+			this.oModelInterfaceMock.expects("reportStateMessages")
 				.withExactArgs(oCache.sResourcePath, mExpectedMessages, [sFirst, sSecond, sThird]);
 
 			// code under test
@@ -2738,7 +2738,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[true, false].forEach(function (bPredicate) {
-		var sTitle = "visitResponse: reportBoundMessages; nested collection, key properties: "
+		var sTitle = "visitResponse: reportStateMessages; nested collection, key properties: "
 				+ bPredicate;
 
 		QUnit.test(sTitle, function () {
@@ -2796,7 +2796,7 @@ sap.ui.define([
 			oHelperMock.expects("drillDown")
 				.withExactArgs(oData.value[0].SO_2_SOITEM[1], ["messages"])
 				.returns(aMessages);
-			this.oModelInterfaceMock.expects("reportBoundMessages")
+			this.oModelInterfaceMock.expects("reportStateMessages")
 				.withExactArgs(oCache.sResourcePath, mExpectedMessages,
 					[bPredicate ? "('42')" : "5"]);
 
@@ -2832,7 +2832,7 @@ sap.ui.define([
 
 		mExpectedMessages[""].$count = 1;
 		mExpectedMessages[""].$created = 0;
-		this.oModelInterfaceMock.expects("reportBoundMessages")
+		this.oModelInterfaceMock.expects("reportStateMessages")
 			.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
 
 		// code under test
@@ -2904,7 +2904,7 @@ sap.ui.define([
 		mExpectedMessages["foo/bar"].$created = 0;
 		mExpectedMessages["foo/baz"].$count = 1;
 		mExpectedMessages["foo/baz"].$created = 0;
-		this.oModelInterfaceMock.expects("reportBoundMessages")
+		this.oModelInterfaceMock.expects("reportStateMessages")
 			.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
 
 		// code under test
@@ -2974,7 +2974,7 @@ sap.ui.define([
 		mExpectedMessages["(1)/foo(2)"].$created = 0;
 		mExpectedMessages["(1)/foo(2)/bar(3)"].$count = 1;
 		mExpectedMessages["(1)/foo(2)/bar(3)"].$created = 0;
-		this.oModelInterfaceMock.expects("reportBoundMessages")
+		this.oModelInterfaceMock.expects("reportStateMessages")
 			.withExactArgs(oCache.sResourcePath, mExpectedMessages, ["(1)"]);
 
 		// code under test
@@ -3026,7 +3026,7 @@ sap.ui.define([
 
 		mExpectedMessages[""].$count = 1;
 		mExpectedMessages[""].$created = 0;
-		this.oModelInterfaceMock.expects("reportBoundMessages")
+		this.oModelInterfaceMock.expects("reportStateMessages")
 			.withExactArgs(bReturnsOriginalResourcePath ? sOriginalResourcePath : sResourcePath,
 				mExpectedMessages, undefined);
 
@@ -3068,7 +3068,7 @@ sap.ui.define([
 
 		oCache.sReportedMessagesPath = sReportedMessagesPath;
 
-		this.oModelInterfaceMock.expects("reportBoundMessages")
+		this.oModelInterfaceMock.expects("reportStateMessages")
 			.exactly(sReportedMessagesPath ? 1 : 0)
 			.withExactArgs(sReportedMessagesPath, {});
 
@@ -3408,7 +3408,7 @@ sap.ui.define([
 				oCacheMock.expects("removeElement").exactly(bRemoved ? 1 : 0)
 					.withExactArgs(sinon.match.same(aElements), 1, sKeyPredicate,
 						"EMPLOYEE_2_EQUIPMENTS");
-				that.oModelInterfaceMock.expects("reportBoundMessages")
+				that.oModelInterfaceMock.expects("reportStateMessages")
 					.exactly(bRemoved ? 1 : 0)
 					.withExactArgs(oCache.sResourcePath, [],
 						["EMPLOYEE_2_EQUIPMENTS('13')"]);
@@ -7586,7 +7586,7 @@ sap.ui.define([
 		// real requestor to avoid reimplementing callback handling of _Requestor.request
 		var oRequestor = _Requestor.create("/~/", {
 				getGroupProperty : defaultGetGroupProperty,
-				reportBoundMessages : function () {}
+				reportStateMessages : function () {}
 			}),
 			oCache = _Cache.create(oRequestor, "Employees"),
 			fnCallback = this.spy(),
@@ -7642,7 +7642,7 @@ sap.ui.define([
 					{"If-Match" : sinon.match.same(oCacheData)},
 					undefined, undefined, undefined, undefined, "Employees('4711')")
 				.returns(Promise.resolve().then(function () {
-					that.mock(oRequestor.oModelInterface).expects("reportBoundMessages")
+					that.mock(oRequestor.oModelInterface).expects("reportStateMessages")
 						.withExactArgs(oCache.sResourcePath, [], ["('4711')"]);
 				}));
 
@@ -8878,7 +8878,7 @@ sap.ui.define([
 					{"If-Match" : sinon.match.same(oEntity)},
 					undefined, undefined, undefined, undefined, "Employees('42')")
 				.returns(Promise.resolve().then(function () {
-					that.oModelInterfaceMock.expects("reportBoundMessages")
+					that.oModelInterfaceMock.expects("reportStateMessages")
 						.withExactArgs(oCache.sResourcePath, [], [""]);
 				}));
 			that.mock(oCache).expects("requestCount")
@@ -9595,7 +9595,7 @@ sap.ui.define([
 		oCacheMock.expects("calculateKeyPredicate")
 			.withExactArgs(sinon.match.same(aResult[1].list3[2]),
 				sinon.match.same(mTypeForMetaPath), "/FOO/list3");
-		this.oModelInterfaceMock.expects("reportBoundMessages").never();
+		this.oModelInterfaceMock.expects("reportStateMessages").never();
 
 		// code under test
 		oCache.visitResponse({value : aResult}, mTypeForMetaPath, "/FOO", undefined, undefined, 0);

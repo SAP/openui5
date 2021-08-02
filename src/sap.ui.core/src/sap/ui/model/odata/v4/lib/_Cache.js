@@ -208,7 +208,7 @@ sap.ui.define([
 							}
 							fnCallback();
 						}
-						that.oRequestor.getModelInterface().reportBoundMessages(that.sResourcePath,
+						that.oRequestor.getModelInterface().reportStateMessages(that.sResourcePath,
 							[], [sEntityPath]);
 					}),
 				iIndex === undefined // single element or kept-alive not in list
@@ -1218,7 +1218,7 @@ sap.ui.define([
 				} else if (aReadResult.length === 0) {
 					that.removeElement(aElements, iIndex, sPredicate, sPath);
 					that.oRequestor.getModelInterface()
-						.reportBoundMessages(that.sResourcePath, [], [sPath + sPredicate]);
+						.reportStateMessages(that.sResourcePath, [], [sPath + sPredicate]);
 					fnOnRemove(false);
 				} else if (bRemoveFromCollection) {
 					that.removeElement(aElements, iIndex, sPredicate, sPath);
@@ -1303,7 +1303,7 @@ sap.ui.define([
 	 */
 	_Cache.prototype.removeMessages = function () {
 		if (this.sReportedMessagesPath) {
-			this.oRequestor.getModelInterface().reportBoundMessages(this.sReportedMessagesPath, {});
+			this.oRequestor.getModelInterface().reportStateMessages(this.sReportedMessagesPath, {});
 			this.sReportedMessagesPath = undefined;
 		}
 	};
@@ -1812,7 +1812,7 @@ sap.ui.define([
 	 * Processes the response from the server. All arrays are annotated by their length, influenced
 	 * by the annotations "@odata.count" and "@odata.nextLink". Recursively calculates the key
 	 * predicates for all entities in the result. Collects and reports OData messages via
-	 * {@link sap.ui.model.odata.v4.lib._Requestor#reportBoundMessages}.
+	 * {@link sap.ui.model.odata.v4.lib._Requestor#reportStateMessages}.
 	 *
 	 * @param {*} oRoot An OData response, arrays or simple values are wrapped into an object as
 	 *   property "value"
@@ -1987,7 +1987,7 @@ sap.ui.define([
 		}
 		if (bHasMessages) {
 			this.sReportedMessagesPath = this.getOriginalResourcePath(oRoot);
-			this.oRequestor.getModelInterface().reportBoundMessages(this.sReportedMessagesPath,
+			this.oRequestor.getModelInterface().reportStateMessages(this.sReportedMessagesPath,
 				mPathToODataMessages, aCachePaths);
 		}
 	};
