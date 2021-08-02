@@ -303,6 +303,18 @@ sap.ui.define([
 			oDeviceStub.restore();
 		});
 
+		QUnit.test("_selectMonth - updates the internal property for currenty focused month", function(assert) {
+			// prepare
+			var oSetPropertySpy = this.spy(this.MP, "setProperty");
+			this.MP.setIntervalSelection(false);
+
+			// act
+			this.MP._selectMonth(5);
+
+			// assert
+			assert.ok(oSetPropertySpy.calledWith("_focusedMonth", 5), "Focused month is properly set");
+		});
+
 		QUnit.test("onmouseover", function(assert) {
 			// arrange
 			var oFakeEvent = {

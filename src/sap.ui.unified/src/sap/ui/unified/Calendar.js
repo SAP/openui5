@@ -2153,9 +2153,8 @@ sap.ui.define([
 	Calendar.prototype._selectMonth = function () {
 		var oFocusedDate = new CalendarDate(this._getFocusedDate(), this.getPrimaryCalendarType()),
 			oMonthPicker = this._getMonthPicker(),
-			iMonth = oMonthPicker._focusedMonth || oMonthPicker._focusedMonth === 0 ?
-				oMonthPicker._focusedMonth :
-				oMonthPicker.getMonth(),
+			iFocusedMonth = oMonthPicker.getProperty("_focusedMonth"),
+			iMonth = (iFocusedMonth || iFocusedMonth === 0) ? iFocusedMonth : oMonthPicker.getMonth(),
 			oSecondDate = oMonthPicker._iYear ?
 				new CalendarDate(oMonthPicker._iYear, iMonth - 1, 1) :
 				new CalendarDate(this._getFocusedDate().getYear(), iMonth - 1, 1);
