@@ -238,5 +238,47 @@
         ]
       }
     ]
+  },
+  "1.90.4": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "22a57d692a41201ccb5c16ece439faafbc17d902",
+        "type": "FIX",
+        "text": " sap.ui.VersionInfo: copy 'hasOwnPreload' flag for components",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180290030"
+          }
+        ]
+      },
+      {
+        "id": "1121dc0584b0bdfad9f6ce19b71df74fdc776472",
+        "type": "FIX",
+        "text": " core.Popup: provide alternative for ResizeObserver",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003037482021"
+          }
+        ]
+      },
+      {
+        "id": "a089f74f66648db2766ccbff3a31af48ab08d6f7",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: check text-selection before calling 'preventDefault'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180148848"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180292257"
+          }
+        ]
+      }
+    ]
   }
 }

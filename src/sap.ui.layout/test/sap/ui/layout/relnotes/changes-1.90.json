@@ -25,5 +25,21 @@
         ]
       }
     ]
+  },
+  "1.90.4": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "ecd6448e5c62545bdce3b01b4d1a3e03410ed483",
+        "type": "FIX",
+        "text": " FormElement: update Label on field editable change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180160299"
+          }
+        ]
+      }
+    ]
   }
 }
