@@ -259,6 +259,34 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Direction determination after a hash is replaced with the same hash", function(assert) {
+		var that = this;
+		var sHash = "theSameHashValue";
+
+		return this.setup().then(function() {
+			return that.checkDirection(function() {
+				that.oExtendedHashChanger.setHash(sHash);
+			}, function(sHash) {
+				assert.strictEqual(that.oHistory.getDirection(), "NewEntry", "The direction should be NewEntry after the hash is set");
+			});
+		}).then(function() {
+			function onHashChanged() {
+				assert.ok(false, "no hashChanged event should be fired");
+			}
+
+			that.oExtendedHashChanger.attachEvent("hashChanged", onHashChanged);
+			that.oExtendedHashChanger.replaceHash(sHash, "Backwards");
+
+			return new Promise(function(resolve, reject) {
+				setTimeout(function() {
+					that.oExtendedHashChanger.detachEvent("hashChanged", onHashChanged);
+					assert.equal(that.oHistory.getDirection(), "Backwards", "The custom direction is saved correctly");
+					resolve();
+				}, 200);
+			});
+		});
+	});
+
 	QUnit.test("Keep existing history state", function(assert){
 		var oHistoryStub = sinon.stub(History, "getInstance");
 

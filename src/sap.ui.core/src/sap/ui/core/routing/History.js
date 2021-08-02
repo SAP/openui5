@@ -516,13 +516,21 @@ sap.ui.define([
 	 * @private
 	 */
 	History.prototype._hashReplaced = function(oEvent) {
-		var sHash = oEvent.getParameter("hash");
+		var sHash = oEvent.getParameter("hash"),
+			sDirection = oEvent.getParameter("direction");
 
 		if (sHash === undefined) {
 			sHash = oEvent.getParameter("sHash");
 		}
 
-		this._hashChangedByApp(sHash, true, oEvent.getParameter("direction"));
+		// When the same hash is replaced, let the direction be set manually
+		// This is needed when switching between iframes. The new iframe needs to be updated with the navigation
+		// direction that is forwarded from the outer frame.
+		if (sHash === this._oHashChanger.getHash() && sDirection) {
+			this._sCurrentDirection = sDirection;
+		}
+
+		this._hashChangedByApp(sHash, true, sDirection);
 	};
 
 	/**
