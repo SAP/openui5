@@ -19,7 +19,6 @@
 
 					<DynamicDateRange
 						id="dynamic-range"
-						enableGroupHeaders="false"
 						change="onChange"
 						options="{/dynamicDateFilterKeys}"
 						width="{env>/filterInputWidth}"/>
