@@ -1460,7 +1460,7 @@ function(
 		if (oDomRef && oPopover) {
 			// Popover's width was calculated once in its onBeforeOpen method and is set in PX
 			iCurrentWidth = parseInt(oPopover.getContentWidth());
-			iCalculatedWidth = oDomRef.offsetWidth > iCurrentWidth ? oDomRef.offsetWidth : iCurrentWidth;
+			iCalculatedWidth = isNaN(iCurrentWidth) || oDomRef.offsetWidth > iCurrentWidth ? oDomRef.offsetWidth : iCurrentWidth;
 
 			iCalculatedWidth = ((oTokenizer.getTokens().length === 1) || !bEditable) ? "auto" :
 				(iCalculatedWidth / parseFloat(library.BaseFontSize)) + "rem";
