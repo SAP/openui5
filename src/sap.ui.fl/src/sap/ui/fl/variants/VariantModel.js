@@ -1096,13 +1096,23 @@ sap.ui.define([
 			this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
 				oVariant.remove = isVariantValidForRemove(oVariant, sVariantManagementReference, bDesignTimeModeToBeSet);
 				// Check for end-user variant
-				if (oVariant.layer === Layer.USER) {
-					oVariant.rename = true;
-					oVariant.change = true;
-					updatePersonalVariantPropertiesWithFlpSettings(oVariant);
-				} else {
-					oVariant.rename = false;
-					oVariant.change = false;
+				switch (oVariant.layer) {
+					case Layer.USER:
+						oVariant.rename = true;
+						oVariant.change = true;
+						updatePersonalVariantPropertiesWithFlpSettings(oVariant);
+						break;
+					case Layer.PUBLIC:
+						var oUShellContainer = Utils.getUshellContainer();
+						var oUser = oUShellContainer && oUShellContainer.getUser();
+						var bUserIsAuthorized = !oUser || oUser.getId().toUpperCase() === oVariant.author.toUpperCase() || Settings.getInstanceOrUndef().isKeyUser();
+						oVariant.remove = bUserIsAuthorized;
+						oVariant.rename = bUserIsAuthorized;
+						oVariant.change = bUserIsAuthorized;
+						break;
+					default:
+						oVariant.rename = false;
+						oVariant.change = false;
 				}
 			});
 		} else {

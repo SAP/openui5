@@ -28,6 +28,7 @@ sap.ui.define([
 		return ObjectStorageConnector.loadFeatures.apply(this, arguments).then(function(oFeatures) {
 			return merge({
 				isPublicLayerAvailable: true,
+				isPublicFlVariantEnabled: true,
 				isVariantAdaptationEnabled: true
 			}, oFeatures);
 		});
