@@ -177,6 +177,11 @@ sap.ui.define([
 		if (NavContainer.prototype.onAfterRendering) {
 			NavContainer.prototype.onAfterRendering.apply(this, arguments);
 		}
+
+		if (!this.getDomRef()) {
+			return;
+		}
+
 		var ref = this.getDomRef().parentNode;
 		// set all parent elements to 100% height this *should* be done by the application in CSS, but people tend to forget it...
 		while (ref && ref !== document.documentElement) {
