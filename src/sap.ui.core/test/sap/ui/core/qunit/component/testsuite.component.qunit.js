@@ -46,6 +46,12 @@ sap.ui.define(function() {
 					preload: "async" // enforce preloads in dev mode
 				}
 			},
+			"Component_containedInLibrary": {
+				title: "QUnit test: Components contained in a Library",
+				ui5: {
+					preload: "async"
+				}
+			},
 			ComponentContainer: {
 				title: "QUnit Page for sap.ui.core.ComponentContainer",
 				ui5: {
