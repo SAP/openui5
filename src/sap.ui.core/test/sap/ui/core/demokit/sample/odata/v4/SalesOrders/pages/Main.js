@@ -566,19 +566,14 @@ sap.ui.define([
 				},
 				setFilter : function (sFilterKey) {
 					this.waitFor({
-						actions : new Press(),
 						id : "itemFilter",
+						actions : function (oFilter) {
+							oFilter.setSelectedKey(sFilterKey);
+							oFilter.fireEvent("change");
+						},
 						success : function (oFilter) {
-							this.waitFor({
-								actions: new Press(),
-								controlType: "sap.ui.core.ListItem",
-								matchers: [
-									new Ancestor(oFilter), new Properties({key : sFilterKey})
-								],
-								success : function () {
-									Opa5.assert.ok(true, "Filter applied to " + sFilterKey);
-								}
-							});
+							Opa5.assert.strictEqual(oFilter.getSelectedKey(), sFilterKey,
+								"Filter applied to " + sFilterKey);
 						},
 						viewName : sViewName
 					});

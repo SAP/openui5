@@ -74,25 +74,14 @@ sap.ui.getCore().attachInit(function () {
 					},
 					errorMessage : "Instance selector not found"
 				});
-				Then.onAnyPage.analyzeSupportAssistant();
 
 				Then.waitFor({
 					id : /selectEntitySet/,
-					success : function (aControls) {
-						// reactivate support assistant
-						When.onAnyPage.applySupportAssistant();
-						aControls[0].$().tap();
-						Opa5.assert.ok(true, "Open 'selectEntitySet'");
+					actions : function (oSelect) {
+						oSelect.setSelectedKey("ProductSet");
+						oSelect.fireEvent("change");
 					},
 					errorMessage : "'selectEntitySet' selector not found"
-				});
-				Then.waitFor({
-					id : /selectEntitySet-1/,
-					success : function (aControls) {
-						aControls[0].$().tap();
-						Opa5.assert.ok(true, "Select 2nd entry from 'selectEntitySet'");
-					},
-					errorMessage : "2nd entry from 'selectEntitySet' selector not found"
 				});
 				Then.waitFor({
 					controlType : "sap.m.Table",
