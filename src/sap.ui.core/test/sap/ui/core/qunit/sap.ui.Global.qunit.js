@@ -5,11 +5,26 @@ sap.ui.define([
 ], function(jQuery, VersionInfo) {
 	"use strict";
 
+
+	function deepSort(obj) {
+		if ( Array.isArray(obj) ) {
+			obj.sort().forEach(deepSort);
+		} else if ( typeof obj === "object" && obj != null ) {
+			Object.values(obj).forEach(deepSort);
+		}
+		return obj;
+	}
+
 	// NOTE:
 	// "sap.ui.versioninfo" will only be cleared AFTER each test which will result into
 	// a failure of the first test when the core or some initial module loads the versioninfo
 	// right away. If this is the case and the behavior is expected these module/tests should be adopted.
 	QUnit.module("sap.ui.getVersionInfo", {
+		before: function() {
+			QUnit.assert.deepSortedEqual = function(a, b, msg) {
+				return this.deepEqual(deepSort(a), deepSort(b), msg);
+			};
+		},
 		beforeEach: function() {
 			// Define mocked version info
 			this.oVersionInfo = {
@@ -18,18 +33,114 @@ sap.ui.define([
 				"buildTimestamp": "<TIMESTAMP>",
 				"scmRevision": "<HASH>",
 				"gav": "<GAV>",
-				"libraries": [{
-					"name": "sap.ui.core",
-					"version": "1.1.1",
-					"buildTimestamp": "<CORE.TIMESTAMP>",
-					"scmRevision": "<CORE.HASH>",
-					"gav": "<CORE.GAV>"
-				}]
+				"libraries": [
+					{
+						"name": "sap.ui.core",
+						"version": "1.0.0",
+						"buildTimestamp": "<CORE.TIMESTAMP>",
+						"scmRevision": "<CORE.HASH>",
+						"gav": "<CORE.GAV>"
+					},
+					{
+						"name": "sap.ui.layout",
+						"version": "1.0.0",
+						"buildTimestamp": "<LAYOUT.TIMESTAMP>",
+						"scmRevision": "<LAYOUT.HASH>",
+						"gav": "<LAYOUT.GAV>",
+						"manifestHints": {
+							"dependencies": {
+								"libs": {
+									"sap.ui.core": {}
+								}
+							}
+						}
+					},
+					{
+						"name": "sap.ui.unified",
+						"version": "1.0.0",
+						"buildTimestamp": "<UNIFIED.TIMESTAMP>",
+						"scmRevision": "<UNIFIED.HASH>",
+						"gav": "<UNIFIED.GAV>",
+						"manifestHints": {
+							"dependencies": {
+								"libs": {
+									"sap.ui.core": {},
+									"sap.ui.layout": {}
+								}
+							}
+						}
+					},
+					{
+						"name": "sap.m",
+						"version": "1.0.0",
+						"buildTimestamp": "<M.TIMESTAMP>",
+						"scmRevision": "<M.HASH>",
+						"gav": "<M.GAV>",
+						"manifestHints": {
+							"dependencies": {
+								"libs": {
+									"sap.ui.core": {},
+									"sap.ui.layout": {},
+									"sap.ui.unified": {
+										"lazy": true
+									}
+								}
+							}
+						}
+					},
+					{
+						"name": "sap.ui.documentation",
+						"version": "1.0.0",
+						"buildTimestamp": "<DOCUMENTATION.TIMESTAMP>",
+						"scmRevision": "<DOCUMENTATION.HASH>",
+						"gav": "<DOCUMENTATION.GAV>",
+						"manifestHints": {
+							"dependencies": {
+								"libs": {
+									"sap.m": {},
+									"sap.ui.core": {},
+									"sap.ui.layout": {},
+									"sap.ui.unified": {
+										"lazy": true
+									}
+								}
+							}
+						}
+					}
+				],
+				"components": {
+					"sap.ui.documentation.sdk": {
+						"library": "sap.ui.documentation",
+						"manifestHints": {
+							"dependencies": {
+								"libs": {
+									"sap.m": {},
+									"sap.ui.core": {},
+									"sap.ui.layout": {}
+								}
+							}
+						}
+					},
+					"sap.ui.documentation.sdk.cookieSettingsDialog": {
+						"hasOwnPreload": true,
+						"library": "sap.ui.documentation",
+						"manifestHints": {
+							"dependencies": {
+								"libs": {
+									"sap.m": {},
+									"sap.ui.core": {},
+									"sap.ui.layout": {},
+									"sap.ui.unified": {}
+								}
+							}
+						}
+					}
+				}
 			};
 
 			this.oDeprecatedAPISpy = this.spy(sap.ui, "getVersionInfo");
 		},
-		initFakeServer: function(sResponseCode) {
+		initFakeServer: function(sResponseCode, oResponse) {
 			this.oServer = this._oSandbox.useFakeServer();
 			this.oServer.autoRespond = true;
 			this.oServer.respondWith("GET", jQuery.sap.getResourcePath("sap-ui-version", ".json"), [
@@ -37,12 +148,13 @@ sap.ui.define([
 				{
 					"Content-Type": "application/json"
 				},
-				JSON.stringify(this.oVersionInfo)
+				JSON.stringify(oResponse || this.oVersionInfo)
 			]);
 		},
 		afterEach: function() {
-			// Delete cached versionInfo data after each test
-			delete sap.ui.versioninfo;
+			// Clear cached version info data after each test
+			// do not delete as this removes the defined setters / getters
+			sap.ui.versioninfo = undefined;
 		}
 	});
 
@@ -525,6 +637,83 @@ sap.ui.define([
 				"Deprecated function should not be called internally");
 
 		}.bind(this)).then(done);
+	});
+
+	QUnit.test("_getTransitiveDependencyForLibraries", function(assert) {
+		this.initFakeServer();
+
+		return VersionInfo.load().then(function() {
+			assert.deepSortedEqual(
+				VersionInfo._getTransitiveDependencyForLibraries(["sap.ui.core"]),
+				["sap.ui.core"],
+				"transitive dependencies for sap.ui.core");
+
+			assert.deepSortedEqual(
+				VersionInfo._getTransitiveDependencyForLibraries(["sap.m"]),
+				["sap.m", "sap.ui.core", "sap.ui.layout"],
+				"transitive dependencies for sap.m");
+
+			assert.deepSortedEqual(
+				VersionInfo._getTransitiveDependencyForLibraries(["sap.ui.documentation"]),
+				["sap.m", "sap.ui.core", "sap.ui.documentation", "sap.ui.layout"],
+				"transitive dependencies for sap.ui.documentation");
+
+			assert.deepSortedEqual(
+				VersionInfo._getTransitiveDependencyForLibraries(["sap.ui.unified", "sap.ui.documentation"]),
+				["sap.m", "sap.ui.core", "sap.ui.documentation", "sap.ui.layout", "sap.ui.unified"],
+				"merged transitive dependencies for sap.ui.unified and sap.ui.documentation");
+		});
+	});
+
+	QUnit.test("_getTransitiveDependencyForComponent", function(assert) {
+		this.initFakeServer();
+
+		return VersionInfo.load().then(function() {
+
+			// a component packaged in a library
+			assert.deepSortedEqual(
+				VersionInfo._getTransitiveDependencyForComponent(["sap.ui.documentation.sdk"]),
+				{
+					library: "sap.ui.documentation",
+					hasOwnPreload: false,
+					dependencies: ["sap.m", "sap.ui.core", "sap.ui.layout"]
+				},
+				"Transitive dependencies for sdk component should match the expectation");
+
+			// a component that is part of a library, but packaged separately
+			assert.deepSortedEqual(
+				VersionInfo._getTransitiveDependencyForComponent(["sap.ui.documentation.sdk.cookieSettingsDialog"]),
+				{
+					library: "sap.ui.documentation",
+					hasOwnPreload: true,
+					dependencies: ["sap.m", "sap.ui.core", "sap.ui.layout", "sap.ui.unified"]
+				},
+				"Transitive dependencies for cookieSettingsDialog component should match the expectation");
+		});
+	});
+
+	QUnit.test("refresh transitive dependency information", function(assert) {
+		// read version info from the fixture
+		this.initFakeServer();
+		return VersionInfo.load().then(function() {
+
+			// then clear it and load another version info (an empty one is sufficient)
+			sap.ui.versioninfo = undefined;
+			this.initFakeServer(null, {});
+
+			return VersionInfo.load().then(function() {
+
+				// now the transitive dependency info should have been updated
+				assert.deepSortedEqual(
+					VersionInfo._getTransitiveDependencyForLibraries(["sap.ui.documentation"]),
+					["sap.ui.documentation"],
+					"transitive dependencies for sap.ui.documentation should have been refreshed");
+				assert.deepSortedEqual(
+					VersionInfo._getTransitiveDependencyForComponent("sap.ui.documentation.sdk"),
+					undefined,
+					"transitive dependencies for sap.ui.documentation.sdk should have been refreshed");
+			});
+		}.bind(this));
 	});
 
 });
