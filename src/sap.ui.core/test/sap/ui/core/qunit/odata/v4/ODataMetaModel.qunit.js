@@ -96,6 +96,21 @@ sap.ui.define([
 		sSampleServiceUrl = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 		mScope = {
 			"$Annotations" : {
+				"name.space.EnumType" : {
+					"@Common.Label" : "EnumType label"
+				},
+				"name.space.EnumType/A" : {
+					"@Common.Label" : "Label of A"
+				},
+				"name.space.EnumType/B" : {
+					"@Common.Label" : "Label of B"
+				},
+				"name.space.EnumType64/Z" : {
+					"@Common.Label" : "Label of Z",
+					"@Common.Text" : {
+						"$Path" : "Z@Common.Label" // CSDL does not specify this case
+					}
+				},
 				"name.space.Id" : {
 					"@Common.Label" : "ID"
 				},
@@ -391,6 +406,16 @@ sap.ui.define([
 				}
 			}],
 			"name.space.EmptyOverloads" : [],
+			"name.space.EnumType" : {
+				"$kind" : "EnumType",
+				"A" : 0,
+				"B" : 1
+			},
+			"name.space.EnumType64" : {
+				"$kind" : "EnumType",
+				"$UnderlyingType" : "Edm.Int64",
+				"Z" : "0"
+			},
 			"name.space.Id" : {
 				"$kind" : "TypeDefinition",
 				"$UnderlyingType" : "Edm.String",
@@ -1679,6 +1704,16 @@ sap.ui.define([
 		"/T€AMS/Team_Id@Common.Text@UI.TextArrangement"
 			: mScope.$Annotations["tea_busi.TEAM/Team_Id"]["@Common.Text@UI.TextArrangement"],
 		"/tea_busi./@Schema" : mScope["tea_busi."]["@Schema"],
+		// Note: enums have no $Type, slash makes no difference
+		"/name.space.EnumType@Common.Label" : "EnumType label",
+		"/name.space.EnumType/@Common.Label" : "EnumType label",
+		"/name.space.EnumType/A@Common.Label" : "Label of A",
+		"/name.space.EnumType/A/@Common.Label" : "Label of A",
+		"/name.space.EnumType/B@Common.Label" : "Label of B",
+		"/name.space.EnumType/B/@Common.Label" : "Label of B",
+		"/name.space.EnumType64/Z@Common.Label" : "Label of Z",
+		"/name.space.EnumType64/Z/@Common.Label" : "Label of Z",
+		"/name.space.EnumType64/Z@Common.Text/$Path/" : "Label of Z",
 		// annotations at parameters across all overloads - - - - - - - - - - - - - - - - - - - - -
 		"/name.space.OverloadedAction/_it@Common.Label"
 			: mScope.$Annotations["name.space.OverloadedAction/_it"]["@Common.Label"],
@@ -1869,8 +1904,6 @@ sap.ui.define([
 			assert.notStrictEqual(vResult, undefined, "use this test for defined results only!");
 		});
 	});
-	//TODO annotations at enum member ".../<10.2.1 Member Name>@..." (Note: "<10.2.2 Member Value>"
-	// might be a string! Avoid indirection!)
 	//TODO special cases where inline and external targeting annotations need to be merged!
 	//TODO support also external targeting from a different schema!
 	//TODO MySchema.MyFunction/MyParameter --> requires search in array?!

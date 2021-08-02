@@ -1287,7 +1287,7 @@ sap.ui.define([
 			 *   Whether to continue after this step
 			 */
 			function step(sSegment, i, aSegments) {
-				var iIndexOfAt, bSplitSegment;
+				var iIndexOfAt, bResultIsObject, bSplitSegment;
 
 				if (sSegment === "$Annotations") {
 					return log(WARNING, "Invalid segment: $Annotations");
@@ -1326,8 +1326,9 @@ sap.ui.define([
 
 					if (typeof vResult === "string"
 						&& !(bSplitSegment && (sSegment === "@sapui.name" || sSegment[1] === "@"))
+						&& !(bODataMode && oSchemaChild && oSchemaChild.$kind === "EnumType")
 						// indirection: treat string content as a meta model path unless followed by
-						// a computed annotation
+						// a computed annotation or if it is an (Edm.Int64) enum member value
 						&& !steps(vResult, aSegments.slice(0, i))) {
 						return false;
 					}
@@ -1339,23 +1340,24 @@ sap.ui.define([
 							// technical property, switch to pure "JSON" drill-down
 							bODataMode = false;
 						} else {
+							bResultIsObject = typeof vResult === "object";
 							if (bSplitSegment) {
 								// no special preparations needed, but handle overloads below!
 							} else if (sSegment[0] !== "@" && sSegment.includes(".", 1)) {
 								// "17.3 QualifiedName": scope lookup
 								return scopeLookup(sSegment);
-							} else if (vResult && "$Type" in vResult) {
+							} else if (bResultIsObject && "$Type" in vResult) {
 								// implicit $Type insertion, e.g. at (navigation) property
 								if (!scopeLookup(vResult.$Type, "$Type")) {
 									return false;
 								}
-							} else if (vResult && "$Action" in vResult) {
+							} else if (bResultIsObject && "$Action" in vResult) {
 								// implicit $Action insertion at action import
 								if (!scopeLookup(vResult.$Action, "$Action")) {
 									return false;
 								}
 								vBindingParameterType = UNBOUND;
-							} else if (vResult && "$Function" in vResult) {
+							} else if (bResultIsObject && "$Function" in vResult) {
 								// implicit $Function insertion at function import
 								if (!scopeLookup(vResult.$Function, "$Function")) {
 									return false;
@@ -1460,19 +1462,18 @@ sap.ui.define([
 								aSegments[i].slice(0, iIndexOfAt)).join("/"));
 						}
 					}
-					if (!vResult || typeof vResult !== "object") {
-						// Note: even an OData path cannot continue here (e.g. by type cast)
-						vResult = undefined;
-						return !bInsideAnnotation && log(DEBUG, "Invalid segment: ", sSegment);
-					}
 					if (bODataMode && sSegment[0] === "@") { // annotation(s) via external targeting
 						// Note: inline annotations are reached via above fast path for pure "JSON"
 						// drill-down
-						vBindingParameterType = vResult.$Type || vBindingParameterType;
+						vBindingParameterType = vResult && vResult.$Type || vBindingParameterType;
 						vResult = mScope.$Annotations[sTarget] || {};
 						bODataMode = false; // switch to pure "JSON" drill-down
 					} else if (sSegment === "$" && i + 1 < aSegments.length) {
 						return log(WARNING, "Unsupported path after $");
+					} else if (!vResult || typeof vResult !== "object") {
+						// Note: even an OData path cannot continue here (e.g. by type cast)
+						vResult = undefined;
+						return !bInsideAnnotation && log(DEBUG, "Invalid segment: ", sSegment);
 					}
 				}
 
