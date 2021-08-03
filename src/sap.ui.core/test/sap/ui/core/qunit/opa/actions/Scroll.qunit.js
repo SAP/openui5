@@ -9,7 +9,8 @@ sap.ui.define([
 	"use strict";
 
 	Opa5.extendConfig({
-		autoWait: true
+		autoWait: true,
+		asyncPolling: true
 	});
 
 	QUnit.module("Scroll");
@@ -23,9 +24,19 @@ sap.ui.define([
 
 	opaTest("Should scroll in control - ObjectPageLayout", function (Given, When, Then) {
 		Given.iStartMyUIComponent({
+			autoWait: true,
 			componentConfig: {
 				name: "sap.uxap.sample.ObjectPageLazyLoadingWithoutBlocks"
 			}
+		});
+
+		// give some time for proper initialization so scroll event is handled correctly
+		Then.waitFor({
+			controlType: "sap.m.Button",
+			properties: {
+				text: "Section 1"
+			},
+			actions: new Press()
 		});
 
 		Then.waitFor({
@@ -42,7 +53,7 @@ sap.ui.define([
 			controlType: "sap.uxap.ObjectPageLayout",
 			actions: new Scroll({
 				x: 0,
-				y: 2200
+				y: 2300
 			})
 		});
 
@@ -67,6 +78,7 @@ sap.ui.define([
 
 	opaTest("Should scroll in control - Dialog", function (Given, When, Then) {
 		Given.iStartMyUIComponent({
+			autoWait: true,
 			componentConfig: {
 				name: "sap.m.sample.Dialog"
 			}
