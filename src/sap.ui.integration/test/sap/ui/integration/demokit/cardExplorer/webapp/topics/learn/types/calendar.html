@@ -30,7 +30,7 @@
 					<tr>
 						<th>Property</th>
 						<th>Type</th>
-						<th>Default value</th>
+						<th>Default Value</th>
 						<th>Required</th>
 						<th>Description</th>
 						<th>Schema Version</th>
@@ -103,21 +103,21 @@
 					</tr>
 					<tr>
 						<td>moreItems</td>
-						<td>object</td>
+						<td><a href="#moreItemsProperties">MoreItems</a></td>
 						<td></td>
 						<td>No</td>
-						<td>Defines the actions, triggered by pressing the button below the items. This button is
-							present only if there are more items existing than the allowed maxItem.</td>
+						<td>This button is present only if there are more items existing than the allowed maxItem.</td>
 						<td>1.18.0</td>
 						<td>1.74</td>
 					</tr>
 					<tr>
 						<td>actions</td>
-						<td>array</td>
+						<td><a href="../../../index.html#/learn/features/cardActions" target="_parent">Actions[]</a></td>
 						<td></td>
 						<td>No</td>
-						<td>Defines actions that can be applied on the item.
-							<b>Note:</b> This property is experimental and may change!</td></td>
+						<td>Actions that are triggered when item button is pressed.
+							<b>Note:</b> This property is experimental and may change!
+						</td>
 						<td>1.32.0</td>
 						<td>1.88</td>
 					</tr>
@@ -133,7 +133,7 @@
 					<tr>
 						<th>Property</th>
 						<th>Type</th>
-						<th>Default value</th>
+						<th>Default Value</th>
 						<th>Required</th>
 						<th>Description</th>
 						<th>Schema Version</th>
@@ -167,7 +167,7 @@
 					<tr>
 						<th>Property</th>
 						<th>Type</th>
-						<th>Default value</th>
+						<th>Default Value</th>
 						<th>Required</th>
 						<th>Description</th>
 						<th>Schema Version</th>
@@ -238,7 +238,7 @@
 					<tr>
 						<th>Property</th>
 						<th>Type</th>
-						<th>Default value</th>
+						<th>Default Value</th>
 						<th>Required</th>
 						<th>Description</th>
 						<th>Schema Version</th>
@@ -272,7 +272,7 @@
 					<tr>
 						<th>Property</th>
 						<th>Type</th>
-						<th>Default value</th>
+						<th>Default Value</th>
 						<th>Required</th>
 						<th>Description</th>
 						<th>Schema Version</th>
@@ -317,7 +317,7 @@
 					<tr>
 						<th>Property</th>
 						<th>Type</th>
-						<th>Default value</th>
+						<th>Default Value</th>
 						<th>Required</th>
 						<th>Description</th>
 						<th>Schema Version</th>
@@ -351,7 +351,7 @@
 					<tr>
 						<th>Property</th>
 						<th>Type</th>
-						<th>Default value</th>
+						<th>Default Value</th>
 						<th>Required</th>
 						<th>Description</th>
 						<th>Schema Version</th>
@@ -384,6 +384,33 @@
 						<td>The type of the special date - one of the types defined in the legend.</td>
 						<td>1.18.0</td>
 						<td>1.74</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4 id="moreItemsProperties">MoreItems button properties</h4>
+
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>actions</td>
+						<td><a href="../../../index.html#/learn/features/cardActions" target="_parent">Actions[]</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Actions that are triggered when the button is pressed.
+							<b>Note:</b> This property is experimental and may change!
+						</td>
+						<td>1.32.0</td>
+						<td>1.88</td>
 					</tr>
 				</table>
 			</div>
@@ -641,8 +668,10 @@
 	"actions": [
 	  {
 		"type": "Navigation",
-		"enabled": true,
-		"url": "http://sap.com"
+		"parameters": {
+			"enabled": true,
+			"url": "http://sap.com"
+		}
 	  }
 	]
   }

@@ -16,14 +16,11 @@
 
 			<h1>Card Actions</h1>
 
-			<h2 id="overview">
-				Overview
-			</h2>
+			<h2 id="overview">Overview</h2>
 
 			<p>
-				Card actions can be defined on different levels inside the card manifest. Actionable parts of the card
-				are
-				header, content, list items, table rows.
+				Card actions are used to trigger events. The events can be predefined - handled by the card or custom.
+				Actions can be attached to different parts of the card, for example header, content, list items, table rows.
 			</p>
 
 			<h2 id="properties">Action Properties</h2>
@@ -32,6 +29,7 @@
 					<tr>
 						<th>Property</th>
 						<th>Type</th>
+						<th>Default Value</th>
 						<th>Required</th>
 						<th>Description</th>
 						<th>Schema Version</th>
@@ -39,9 +37,10 @@
 					</tr>
 					<tr>
 						<td>type</td>
-						<td>string</td>
+						<td><a data-demokit-href="/api/sap.ui.integration.CardActionType">CardActionType</a></td>
+						<td></td>
 						<td>Yes</td>
-						<td>The type of the action. Possible values: "Navigation", "Submit" and "Custom".</td>
+						<td>The type of the action. Predefined types are "Navigation" and "Submit". If custom handling is needed use "Custom".</td>
 						<td>1.15.0</td>
 						<td>1.65</td>
 
@@ -49,8 +48,9 @@
 					<tr>
 						<td>enabled</td>
 						<td>boolean</td>
+						<td>true</td>
 						<td>No</td>
-						<td>If the action is enabled. Default value is true.</td>
+						<td>If the action is enabled.</td>
 						<td>1.15.0</td>
 						<td>1.65</td>
 
@@ -58,8 +58,12 @@
 					<tr>
 						<td>parameters</td>
 						<td>Object</td>
+						<td></td>
 						<td>No</td>
-						<td>The parameters of the action.</td>
+						<td>
+							The parameters of the action. Predefined actions require certain parameters to be present.
+							Any parameter can be added to action of type "Custom".
+						</td>
 						<td>1.15.0</td>
 						<td>1.65</td>
 
@@ -67,15 +71,13 @@
 				</table>
 			</div>
 
-			<p>
-				Parameters for Navigation action:
-			</p>
-
+			<h4>Parameters for Action of Type "Navigation"</h4>
 			<div class="tableWrapper">
 				<table>
 					<tr>
-						<th>Parameter</th>
+						<th>Property</th>
 						<th>Type</th>
+						<th>Default Value</th>
 						<th>Required</th>
 						<th>Description</th>
 						<th>Schema Version</th>
@@ -84,7 +86,8 @@
 					<tr>
 						<td>url</td>
 						<td>string</td>
-						<td>No</td>
+						<td></td>
+						<td>Yes</td>
 						<td>The URL to navigate to.</td>
 						<td>1.15.0</td>
 						<td>1.65</td>
@@ -92,11 +95,9 @@
 					<tr>
 						<td>target</td>
 						<td>string</td>
+						<td>"_blank"</td>
 						<td>No</td>
-						<td>If the browser should open a new window or use the same window. Possible values: "_blank",
-							"_self".
-							Default value is "_blank".
-						</td>
+						<td>If the browser should open a new window or use the same window. Possible values are "_blank" and "_self".</td>
 						<td>1.15.0</td>
 						<td>1.65</td>
 					</tr>

@@ -199,7 +199,9 @@
 		  {
 			"type": "Navigation",
 			"enabled": true,
-			"url": "http://sap.com"
+			"parameters": {
+				"url": "http://sap.com"
+			}
 		  }
 		]
 	  }
