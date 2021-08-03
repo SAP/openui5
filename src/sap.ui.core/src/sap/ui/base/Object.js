@@ -11,8 +11,8 @@
  */
 
 // Provides class sap.ui.base.Object
-sap.ui.define(['./Interface', './Metadata', "sap/base/Log"],
-	function(Interface, Metadata, Log) {
+sap.ui.define(['./Metadata', "sap/base/Log"],
+	function(Metadata, Log) {
 	"use strict";
 
 
@@ -65,7 +65,7 @@ sap.ui.define(['./Interface', './Metadata', "sap/base/Log"],
 		// initially, an Object instance has no associated Interface and the getInterface
 		// method is defined only in the prototype. So the code here will be executed.
 		// It creates an interface (basically the same code as in the old implementation)
-		var oInterface = new Interface(this, this.getMetadata().getAllPublicMethods());
+		var oInterface = new BaseObject._Interface(this, this.getMetadata().getAllPublicMethods());
 		// Now this Object instance gets a new, private implementation of getInterface
 		// that returns the newly created oInterface. Future calls of getInterface on the
 		// same Object therefore will return the already created interface
@@ -232,6 +232,51 @@ sap.ui.define(['./Interface', './Metadata', "sap/base/Log"],
 	 */
 	BaseObject.isA = function(oObject, vTypeName) {
 		return oObject instanceof BaseObject && oObject.isA(vTypeName);
+	};
+
+	/**
+	 * @param  {sap.ui.base.Object} [oObject] Object for which a facade should be created
+	 * @param  {string[]} [aMethods=[]] Names of the methods, that should be available in the new facade
+	 * @param  {boolean} [_bReturnFacade=false] If true, the return value of a function call is this created Interface instance instead of the BaseObject interface
+	 * @private
+	 * @static
+	 */
+	BaseObject._Interface = function(oObject, aMethods, _bReturnFacade) {
+		// if object is null or undefined, return itself
+		if (!oObject) {
+			return oObject;
+		}
+
+		function fCreateDelegator(oObject, sMethodName) {
+			return function() {
+					// return oObject[sMethodName].apply(oObject, arguments);
+					var tmp = oObject[sMethodName].apply(oObject, arguments);
+					// to avoid to hide the implementation behind the interface you need
+					// to override the getInterface function in the object or create the interface with bFacade = true
+					if (_bReturnFacade) {
+						return this;
+					} else {
+						return (tmp instanceof BaseObject) ? tmp.getInterface() : tmp;
+					}
+				};
+		}
+
+		// if there are no methods return
+		if (!aMethods) {
+			return {};
+		}
+
+		var sMethodName;
+
+		// create functions for all delegated methods
+		// PERFOPT: 'cache' length of aMethods to reduce # of resolutions
+		for (var i = 0, ml = aMethods.length; i < ml; i++) {
+			sMethodName = aMethods[i];
+			//!oObject[sMethodName] for 'lazy' loading interface methods ;-)
+			if (!oObject[sMethodName] || typeof oObject[sMethodName] === "function") {
+				this[sMethodName] = fCreateDelegator(oObject, sMethodName);
+			}
+		}
 	};
 
 	return BaseObject;
