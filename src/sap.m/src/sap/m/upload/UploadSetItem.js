@@ -814,7 +814,7 @@ sap.ui.define([
 			oRm.openStart("div").class("sapMUCAttrContainer").openEnd();
 			this.getAttributes().forEach(function (oAttribute, iIndex) {
 				oRm.renderControl(oAttribute.addStyleClass("sapMUCAttr"));
-				if (iIndex < iLastAttribure) {
+				if (iIndex < iLastAttribure && oAttribute.getVisible()) {
 					oRm.openStart("div").class("sapMUCSeparator").openEnd();
 					oRm.text("\u00a0\u00B7\u00a0").close("div");
 				}
