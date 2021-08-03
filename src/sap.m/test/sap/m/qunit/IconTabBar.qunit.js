@@ -3287,6 +3287,8 @@ sap.ui.define([
 		var oOverflow = this.oIconTabHeader._getOverflow();
 		var aItems = this.oIconTabHeader.getItems();
 		var oOverflowDomRef = oOverflow.getDomRef();
+
+		this.oIconTabHeader.setEnableTabReordering(true);
 		assert.ok(!oOverflowDomRef.classList.contains("sapMITHDragOver"), "Overflow button has default state");
 
 		oOverflow._handleOnDragOver({
@@ -3995,6 +3997,16 @@ sap.ui.define([
 		assert.strictEqual(this.itemWithSubItems.getItems()[1].getItems()[0].getText(), "child 1.1", 'The nested item on sub level two of the second item in the first tab is "child 1.1"');
 	});
 
+	QUnit.module("EnableTabReordering: false");
+	QUnit.test("Drag&Drop tab does trigger drag start" , function(assert) {
+		var oSpy = sinon.spy(IconTabFilter.prototype, "addEventDelegate"),
+			oIconTabBar = getIconTabBar();
+		oIconTabBar.placeAt("qunit-fixture");
+		Core.applyChanges();
+		// Assert
+		assert.notOk(oSpy.calledWith(oIconTabBar.getItems()[0]._oDragEventDelegate), 'Drag&Drop aggregation configuration should be added');
+		oIconTabBar.destroy();
+	});
 	QUnit.module("Sticky Content Support");
 
 	QUnit.test("IconTabHeader's classes when taken for sticky header content", function (assert) {
