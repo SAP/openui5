@@ -533,7 +533,7 @@ sap.ui.define([
 			}
 			oField.setValueState(sEnumType);
 			oField.setValueStateText(sMessage);
-		} else if (oMessageStrip && oMessageStrip.getVisible()) {
+		} else if (oMessageStrip && oMessageStrip.getVisible() && oField.getMetadata().getName() !== "sap.m.Switch") {
 			this._showMessage();
 		}
 		this._applyMessage();
