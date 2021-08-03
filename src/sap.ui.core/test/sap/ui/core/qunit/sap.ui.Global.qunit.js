@@ -10,7 +10,11 @@ sap.ui.define([
 		if ( Array.isArray(obj) ) {
 			obj.sort().forEach(deepSort);
 		} else if ( typeof obj === "object" && obj != null ) {
-			Object.values(obj).forEach(deepSort);
+			for (var key in obj) {
+				if (Object.hasOwnProperty.call(obj, key)) {
+					deepSort(obj[key]);
+				}
+			}
 		}
 		return obj;
 	}
