@@ -23,6 +23,7 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, CacheAndRequestD
 	 * @version ${version}
 	 *
 	 * @private
+	 * @ui5-restricted Used in sap.ui.integration and in shell-toolkit
 	 * @since 1.65
 	 * @alias sap.ui.integration.util.DataProviderFactory
 	 */
@@ -39,6 +40,10 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, CacheAndRequestD
 		}
 	});
 
+	/**
+	 * @private
+	 * @ui5-restricted Used in sap.ui.integration and in shell-toolkit
+	 */
 	DataProviderFactory.prototype.destroy = function () {
 		BaseObject.prototype.destroy.apply(this, arguments);
 
@@ -61,6 +66,8 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, CacheAndRequestD
 	/**
 	 * Returns if this factory is destroyed.
 	 *
+	 * @private
+	 * @ui5-restricted Used in sap.ui.integration and in shell-toolkit
 	 * @returns {boolean} if this manifest is destroyed
 	 */
 	DataProviderFactory.prototype.isDestroyed = function () {
@@ -72,6 +79,8 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, CacheAndRequestD
 	 *
 	 * @param {Object} oDataSettings The data settings.
 	 * @param {sap.ui.integration.util.ServiceManager} oServiceManager A reference to the service manager.
+	 * @private
+	 * @ui5-restricted Used in sap.ui.integration and in shell-toolkit
 	 * @returns {sap.ui.integration.util.DataProvider|null} A data provider instance used for data retrieval.
 	 */
 	DataProviderFactory.prototype.create = function (oDataSettings, oServiceManager, bIsFilter) {
@@ -141,6 +150,8 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, CacheAndRequestD
 	 * Removes a DataProvider from Factory's registry.
 	 *
 	 * @param oDataProvider {sap.ui.integration.util.DataProvider}
+	 * @private
+	 * @ui5-restricted Used in sap.ui.integration and in shell-toolkit
 	 * @experimental
 	 */
 	DataProviderFactory.prototype.remove = function (oDataProvider) {

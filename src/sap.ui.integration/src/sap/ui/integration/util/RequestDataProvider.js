@@ -33,6 +33,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @private
+	 * @ui5-restricted Used in sap.ui.integration and in shell-toolkit
 	 * @since 1.65
 	 * @alias sap.ui.integration.util.RequestDataProvider
 	 */
@@ -62,6 +63,8 @@ sap.ui.define([
 
 	/**
 	 * @override
+	 * @private
+	 * @ui5-restricted Used in sap.ui.integration and in shell-toolkit
 	 * @returns {Promise} A promise resolved when the data is available and rejected in case of an error.
 	 */
 	RequestDataProvider.prototype.getData = function () {
@@ -118,7 +121,7 @@ sap.ui.define([
 			oRequest;
 
 		if ( !sUrl.startsWith("/")) {
-			sUrl = this.getRuntimeUrl(oRequestConfig.url);
+			sUrl = this._getRuntimeUrl(oRequestConfig.url);
 		}
 
 		// if not 'application/x-www-form-urlencoded', data has to be serialized manually
