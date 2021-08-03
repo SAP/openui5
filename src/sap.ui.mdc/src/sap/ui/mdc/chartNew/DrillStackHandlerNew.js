@@ -40,7 +40,7 @@ sap.ui.define([
 	var ListMode = MLibrary.ListMode;
 
 	function _getDrillStackDimensions(oMDCChart) {
-		var aDrillStack = oMDCChart.getControlDelegate().getDrillStack();
+		var aDrillStack = oMDCChart.getControlDelegate().getDrillStack(oMDCChart);
 		var aStackDimensions = [];
 
 		aDrillStack.forEach(function(oStackEntry) {

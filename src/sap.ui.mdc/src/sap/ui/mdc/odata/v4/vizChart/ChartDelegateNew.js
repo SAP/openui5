@@ -15,7 +15,8 @@ sap.ui.define([
     "sap/ui/mdc/chartNew/ChartTypeButtonNew",
     "sap/ui/mdc/chartNew/ItemNew",
     "sap/ui/model/Sorter",
-    "sap/m/VBox"
+    "sap/m/VBox",
+    "sap/ui/base/ManagedObjectObserver"
 ], function (
     V4ChartDelegate,
     loadModules,
@@ -29,7 +30,8 @@ sap.ui.define([
     ChartTypeButton,
     MDCChartItem,
     Sorter,
-    VBox
+    VBox,
+    ManagedObjectObserver
 ) {
     "use strict";
     /**
@@ -44,6 +46,8 @@ sap.ui.define([
      */
     var ChartDelegate = Object.assign({}, V4ChartDelegate);
 
+
+    var mStateMap = new window.WeakMap();
     //var ChartLibrary;
     var Chart;
     var Dimension;
@@ -52,9 +56,101 @@ sap.ui.define([
     var Measure;
     //var VizPopover;
     var VizTooltip;
-    var oColorings;
-    var aInSettings = [];
-    var aColMeasures = [];
+
+    //API to access state
+    ChartDelegate._getState = function (oMDCChart) {
+        if (mStateMap.has(oMDCChart)){
+            return mStateMap.get(oMDCChart);
+        }
+
+        Log.info("Couldn't get state for " + oMDCChart.getId());
+    };
+
+    ChartDelegate._setState = function(oMDCChart, oState) {
+        mStateMap.set(oMDCChart, oState);
+    };
+
+    ChartDelegate._deleteState = function(oMDCChart) {
+
+        if (this._getState(oMDCChart).vizTooltip) {
+            this._getState(oMDCChart).vizTooltip.destroy();
+        }
+
+        return mStateMap.delete(oMDCChart);
+    };
+
+
+    ChartDelegate._getChart = function (oMDCChart){
+
+        if (mStateMap.has(oMDCChart)) {
+            return mStateMap.get(oMDCChart).innerChart;
+        }
+
+        Log.info("Couldn't get state for " + oMDCChart.getId());
+
+        return undefined;
+
+    };
+
+    ChartDelegate._setChart = function (oMDCChart, oInnerChart) {
+        if (mStateMap.has(oMDCChart)) {
+            mStateMap.get(oMDCChart).innerChart = oInnerChart;
+        } else {
+            mStateMap.set(oMDCChart, {innerChart: oInnerChart});
+        }
+    };
+
+    ChartDelegate._getInnerStructure = function (oMDCChart) {
+        if (mStateMap.has(oMDCChart)) {
+            return mStateMap.get(oMDCChart).innerStructure;
+        }
+
+        Log.info("Couldn't get state for " + oMDCChart.getId());
+
+        return undefined;
+    };
+
+    ChartDelegate._setInnerStructure = function (oMDCChart, oInnerStructure) {
+        if (mStateMap.has(oMDCChart)) {
+            mStateMap.get(oMDCChart).innerStructure = oInnerStructure;
+        } else {
+            mStateMap.set(oMDCChart, {innerStructure: oInnerStructure});
+        }
+    };
+
+    ChartDelegate._getBindingInfoFromState = function (oMDCChart) {
+        if (mStateMap.has(oMDCChart)) {
+            return mStateMap.get(oMDCChart).bindingInfo;
+        }
+
+        Log.info("Couldn't get state for " + oMDCChart.getId());
+
+        return undefined;
+    };
+
+    ChartDelegate._setBindingInfoForState = function (oMDCChart, oBindingInfo) {
+        if (mStateMap.has(oMDCChart)) {
+            mStateMap.get(oMDCChart).bindingInfo = oBindingInfo;
+        } else {
+            mStateMap.set(oMDCChart, {bindingInfo: oBindingInfo});
+        }
+    };
+
+    ChartDelegate._setUpChartObserver = function(oMDCChart) {
+		var mChartMap = this._getState(oMDCChart);
+
+		if (!mChartMap.observer) {
+			mChartMap.observer = new ManagedObjectObserver(function(oChange) {
+				if (oChange.type === "destroy") {
+                    this.exit(oChange.object);
+				}
+			}.bind(this));
+		}
+
+		mChartMap.observer.observe(oMDCChart, {
+			destroy: true
+		});
+	};
 
 
     /**
@@ -94,15 +190,23 @@ sap.ui.define([
         };
     };
 
+    ChartDelegate.exit = function(oMDCChart) {
+        if (this._getInnerStructure(oMDCChart)){
+            this._getInnerStructure(oMDCChart).destroy();
+        }
+
+        this._deleteState(oMDCChart);
+    };
+
     /**
      * Toolbar relevant API (WIP)
      */
-    ChartDelegate.zoomIn = function (iValue) {
-        this._oInnerChart.zoom({direction: "in"});
+    ChartDelegate.zoomIn = function (oMDCChart, iValue) {
+        this._getChart(oMDCChart).zoom({direction: "in"});
     };
 
-    ChartDelegate.zoomOut = function (iValue) {
-        this._oInnerChart.zoom({direction: "out"});
+    ChartDelegate.zoomOut = function (oMDCChart, iValue) {
+        this._getChart(oMDCChart).zoom({direction: "out"});
     };
 
 
@@ -110,10 +214,10 @@ sap.ui.define([
      * Gets the current zooming information for the inner chart
      * @returns {integer} Current zoom level on the inner chart
      */
-    ChartDelegate.getZoomState = function () {
+    ChartDelegate.getZoomState = function (oMDCChart) {
 
-        if (this._oInnerChart) {
-            return this._oInnerChart.getZoomInfo(this);
+        if (this._getChart(oMDCChart)) {
+            return this._getChart(oMDCChart).getZoomInfo(this);
         }
 
     };
@@ -126,8 +230,8 @@ sap.ui.define([
      *
      * @returns {object} event handler for chartSelectionDetails
      */
-    ChartDelegate.getInnerChartSelectionHandler = function () {
-        return {eventId: "_selectionDetails", listener: this._oInnerChart};
+    ChartDelegate.getInnerChartSelectionHandler = function (oMDCChart) {
+        return {eventId: "_selectionDetails", listener: this._getChart(oMDCChart)};
     };
 
     /**
@@ -139,9 +243,9 @@ sap.ui.define([
      * @private
      * @ui5-restricted Fiori Elements, sap.ui.mdc
      */
-    ChartDelegate.setLegendVisible = function (bVisible) {
-        if (this._oInnerChart) {
-            this._oInnerChart.setVizProperties({
+    ChartDelegate.setLegendVisible = function (oMDCChart, bVisible) {
+        if (this._getChart(oMDCChart)) {
+            this._getChart(oMDCChart).setVizProperties({
                 'legend': {
                     'visible': bVisible
                 },
@@ -178,25 +282,25 @@ sap.ui.define([
      * @param {sap.ui.mdc.chartNew-ItemNew} oMDCChartItem the MDC CHart Item to insert into the inner chart
      * @param {int} iIndex the index to insert into
      */
-    ChartDelegate.insertItemToInnerChart = function (oMDCChartItem, iIndex) {
+    ChartDelegate.insertItemToInnerChart = function (oMDCChart, oMDCChartItem, iIndex) {
         //TODO: Create Measures/Dimension only when required?
         if (oMDCChartItem.getType() === "groupable") {
-            this.createInnerDimension(oMDCChartItem);
-            var aVisibleDimension = this._oInnerChart.getVisibleDimensions();
+            this.createInnerDimension(oMDCChart, oMDCChartItem);
+            var aVisibleDimension = this._getChart(oMDCChart).getVisibleDimensions();
             aVisibleDimension.splice(iIndex, 0, oMDCChartItem.getName()); //Insert Item without deleting existing dimension
-            this._oInnerChart.setVisibleDimensions(aVisibleDimension);
+            this._getChart(oMDCChart).setVisibleDimensions(aVisibleDimension);
         } else if (oMDCChartItem.getType() === "aggregatable") {
-            this.createInnerMeasure(oMDCChartItem);
-            var aVisibleMeasures = this._oInnerChart.getVisibleMeasures();
+            this.createInnerMeasure(oMDCChart, oMDCChartItem);
+            var aVisibleMeasures = this._getChart(oMDCChart).getVisibleMeasures();
             aVisibleMeasures.splice(iIndex, 0, this._getAggregatedMeasureNameForMDCItem(oMDCChartItem));
-            this._oInnerChart.setVisibleMeasures(aVisibleMeasures);
+            this._getChart(oMDCChart).setVisibleMeasures(aVisibleMeasures);
         }
 
         //Update coloring and semantical patterns on Item change
         this._prepareColoringForItem(oMDCChartItem);
-        this._updateColoring(this._oInnerChart.getVisibleDimensions(), this._oInnerChart.getVisibleMeasures());
+        this._updateColoring(oMDCChart, this._getChart(oMDCChart).getVisibleDimensions(), this._getChart(oMDCChart).getVisibleMeasures());
         this.fetchProperties(oMDCChartItem.getParent()).then(function (aProperties) {
-            this._updateSemanticalPattern(aProperties);
+            this._updateSemanticalPattern(oMDCChart, aProperties);
         }.bind(this));
     };
 
@@ -205,27 +309,27 @@ sap.ui.define([
      * This function is called by MDC Chart on a change of the <code>Items</code> aggregation
      * @param {sap.ui.mdc.chartNew.ItemNew} oMDCChartItem The Item to remove from the inner chart
      */
-    ChartDelegate.removeItemFromInnerChart = function (oMDCChartItem) {
-        if (oMDCChartItem.getType() === "groupable" && this._oInnerChart.getVisibleDimensions().includes(oMDCChartItem.getName())) {
-            var aNewVisibleDimensions = this._oInnerChart.getVisibleDimensions().filter(function (e) {
+    ChartDelegate.removeItemFromInnerChart = function (oMDCChart, oMDCChartItem) {
+        if (oMDCChartItem.getType() === "groupable" && this._getChart(oMDCChart).getVisibleDimensions().includes(oMDCChartItem.getName())) {
+            var aNewVisibleDimensions = this._getChart(oMDCChart).getVisibleDimensions().filter(function (e) {
                 return e !== oMDCChartItem.getName();
             });
-            this._oInnerChart.setVisibleDimensions(aNewVisibleDimensions);
+            this._getChart(oMDCChart).setVisibleDimensions(aNewVisibleDimensions);
 
-            this._oInnerChart.removeDimension(this._oInnerChart.getDimensionByName(oMDCChartItem.getName()));
-        } else if (oMDCChartItem.getType() === "aggregatable" && this._oInnerChart.getVisibleMeasures().includes(this._getAggregatedMeasureNameForMDCItem(oMDCChartItem))) {
-            var aNewVisibleMeasures = this._oInnerChart.getVisibleMeasures().filter(function (e) {
+            this._getChart(oMDCChart).removeDimension(this._getChart(oMDCChart).getDimensionByName(oMDCChartItem.getName()));
+        } else if (oMDCChartItem.getType() === "aggregatable" && this._getChart(oMDCChart).getVisibleMeasures().includes(this._getAggregatedMeasureNameForMDCItem(oMDCChartItem))) {
+            var aNewVisibleMeasures = this._getChart(oMDCChart).getVisibleMeasures().filter(function (e) {
                 return e !== this._getAggregatedMeasureNameForMDCItem(oMDCChartItem);
             }.bind(this));
-            this._oInnerChart.setVisibleMeasures(aNewVisibleMeasures);
+            this._getChart(oMDCChart).setVisibleMeasures(aNewVisibleMeasures);
 
-            this._oInnerChart.removeMeasure(this._oInnerChart.getMeasureByName(this._getAggregatedMeasureNameForMDCItem(oMDCChartItem)));
+            this._getChart(oMDCChart).removeMeasure(this._getChart(oMDCChart).getMeasureByName(this._getAggregatedMeasureNameForMDCItem(oMDCChartItem)));
         }
 
         //Update coloring and semantical patterns on Item change
-        this._updateColoring(this._oInnerChart.getVisibleDimensions(), this._oInnerChart.getVisibleMeasures());
+        this._updateColoring(oMDCChart, this._getChart(oMDCChart).getVisibleDimensions(), this._getChart(oMDCChart).getVisibleMeasures());
         this.fetchProperties(oMDCChartItem.getParent()).then(function (aProperties) {
-            this._updateSemanticalPattern(aProperties);
+            this._updateSemanticalPattern(oMDCChart, aProperties);
         }.bind(this));
     };
 
@@ -289,24 +393,25 @@ sap.ui.define([
      * @returns {Promise} resolved when inner chart is ready
      */
     ChartDelegate.initializeInnerChart = function (oMDCChart) {
-        this._oMDCChart = oMDCChart;
 
         return new Promise(function (resolve, reject) {
 
             this._loadChart().then(function (aModules) {
 
-                this._oInnerStructure = new VBox({
+                this._setInnerStructure(oMDCChart, new VBox({
                     justifyContent: "Center",
 				    alignItems: "Center",
                     height: "100%",
                     width: "100%"
-                });
+                }));
                 var oText = new Text();
                 oText.setText(oMDCChart.getNoDataText());
 
-                this._oInnerStructure.addItem(oText);
+                this._getInnerStructure(oMDCChart).addItem(oText);
 
-                resolve(this._oInnerStructure); //Not applicable in this case
+                this._setUpChartObserver(oMDCChart);
+
+                resolve(this._getInnerStructure(oMDCChart)); //Not applicable in this case
             }.bind(this));
         }.bind(this));
     };
@@ -341,38 +446,14 @@ sap.ui.define([
                 switch (oItem.getType()) {
                     case "groupable":
                         aVisibleDimensions.push(oItem.getName());
-                        var oDimension = new Dimension({name: oItem.getName(), label: oItem.getLabel(), role: "category"});
-
-                        if (oPropertyInfo.textProperty){
-                            oDimension.setTextProperty(oPropertyInfo.textProperty);
-                            oDimension.setDisplayText(true);
-                        }
-
-                        this._oInnerChart.addDimension(oDimension);
+                        this._addInnerDimension(oMDCChart, oItem, oPropertyInfo);
                         break;
                     case "aggregatable":
-
-                        var aggregationMethod = oPropertyInfo.aggregationMethod;
-                        var propertyPath = oPropertyInfo.propertyPath;
 
                         //TODO: Alias might be changing after backend request
                         aVisibleMeasures.push(this._getAggregatedMeasureNameForMDCItem(oItem));
 
-                        var oMeasureSettings = {
-                            name: this._getAggregatedMeasureNameForMDCItem(oItem),//"average" + oItem.getName(),
-                            label: oItem.getLabel(),
-                            role: oItem.getRole() ? oItem.getRole() : "axis1"
-                        };
-
-                        if (aggregationMethod && propertyPath) {
-                            oMeasureSettings.analyticalInfo = {
-                                propertyPath: propertyPath,
-                                "with": aggregationMethod
-                            };
-                        }
-
-                        var oMeasure = new Measure(oMeasureSettings);
-                        this._oInnerChart.addMeasure(oMeasure);
+                        this._addInnerMeasure(oMDCChart, oItem, oPropertyInfo);
                         break;
 
                     default:
@@ -382,16 +463,16 @@ sap.ui.define([
                 aColorPromises.push(this._prepareColoringForItem(oItem));
             }.bind(this));
 
-            aColMeasures.forEach(function(sKey) {
+            this._getState(oMDCChart).aColMeasures.forEach(function(sKey) {
 
-                if (aInSettings.indexOf(sKey) == -1) {
+                if (this._getState(oMDCChart).aInSettings.indexOf(sKey) == -1) {
 
                     var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
                         return oCurrentPropertyInfo.name === sKey;
                     });
 
                     var oMeasure = new Measure({
-                        name: this._getAggregatedMeasureNameForMDCItem(oPropertyInfo),//"average" + oItem.getName(),
+                        name: sKey,
                         label: oPropertyInfo.label,
                         role: "axis1",
                         analyticalInfo: {
@@ -401,45 +482,45 @@ sap.ui.define([
                     });
 
                     aVisibleMeasures.push();
-                    this._oInnerChart.addMeasure(oMeasure);
+                    this._getChart(oMDCChart).addMeasure(oMeasure);
                 }
 
             }.bind(this));
 
             Promise.all(aColorPromises).then(function(){
-                this._oInnerChart.setVisibleDimensions(aVisibleDimensions);
-                this._oInnerChart.setVisibleMeasures(aVisibleMeasures);
+                this._getChart(oMDCChart).setVisibleDimensions(aVisibleDimensions);
+                this._getChart(oMDCChart).setVisibleMeasures(aVisibleMeasures);
 
-                this._updateColoring(aVisibleDimensions, aVisibleMeasures);
-                this._updateSemanticalPattern(aProperties);
+                this._updateColoring(oMDCChart, aVisibleDimensions, aVisibleMeasures);
+                this._updateSemanticalPattern(oMDCChart, aProperties);
             }.bind(this));
 
         }.bind(this));
 
     };
 
-    ChartDelegate.getInnerChart = function () {
-        return this._oInnerChart;
+    ChartDelegate.getInnerChart = function (oMDCChart) {
+        return this._getChart(oMDCChart);
     };
 
 
     ChartDelegate._prepareColoringForItem = function(oItem) {
         //COLORING
         return this._addCriticality(oItem).then(function(){
-            aInSettings.push(oItem.getName());
+            this._getState(oItem.getParent()).aInSettings.push(oItem.getName());
 
             if (oItem.getType === "aggregatable") {
 
                 this._getPropertyInfosByName(oItem.getName(), oItem.getParent()).then(function (oPropertyInfo) {
                     for (var j = 0; j < this._getAdditionalColoringMeasuresForItem(oPropertyInfo); j++) {
 
-                        if (aColMeasures.indexOf(this._getAdditionalColoringMeasuresForItem(oPropertyInfo)[j]) == -1) {
-                            aColMeasures.push(this._getAdditionalColoringMeasuresForItem(oPropertyInfo)[j]);
+                        if (this._getState(oItem.getParent()).aColMeasures.indexOf(this._getAdditionalColoringMeasuresForItem(oPropertyInfo)[j]) == -1) {
+                            this._getState(oItem.getParent()).aColMeasures.push(this._getAdditionalColoringMeasuresForItem(oPropertyInfo)[j]);
                         }
                     }
                 }.bind(this));
             }
-        });
+        }.bind(this));
 
     };
 
@@ -470,7 +551,7 @@ sap.ui.define([
         return this._getPropertyInfosByName(oItem.getName(), oItem.getParent()).then(function (oPropertyInfo) {
 
             if (oPropertyInfo.criticality || (oPropertyInfo.datapoint && oPropertyInfo.datapoint.criticality)){
-                oColorings = oColorings || {
+                var oColorings = this._getState(oItem.getParent()).oColorings || {
                     Criticality: {
                         DimensionValues: {},
                         MeasureValues: {}
@@ -491,6 +572,7 @@ sap.ui.define([
                     }
 
                     oColorings.Criticality.DimensionValues[oItem.getName()] = mChartCrit;
+
                 } else {
                     var mCrit = oPropertyInfo.datapoint  && oPropertyInfo.datapoint.criticality ? oPropertyInfo.datapoint.criticality : [];
 
@@ -500,6 +582,11 @@ sap.ui.define([
 
                     oColorings.Criticality.MeasureValues[oItem.getName()] = mChartCrit;
                 }
+
+                var oState = this._getState(oItem.getParent());
+                oState.oColorings = oColorings;
+                this._setState(oItem.getParent(), oState);
+
             }
 
         });
@@ -516,8 +603,8 @@ sap.ui.define([
      * @private
      * @ui5-restricted Fiori Elements
      */
-    ChartDelegate._updateColoring = function (aVisibleDimensions, aVisibleMeasures) {
-        var oTempColorings = jQuery.extend(true, {}, oColorings), k;
+    ChartDelegate._updateColoring = function (oMDCChart, aVisibleDimensions, aVisibleMeasures) {
+        var oTempColorings = jQuery.extend(true, {}, this._getState(oMDCChart).oColorings), k;
 
         if (oTempColorings && oTempColorings.Criticality) {
             var oActiveColoring;
@@ -525,7 +612,7 @@ sap.ui.define([
             //dimensions overrule
             for (k = 0; k < aVisibleDimensions.length; k++) {
 
-                if (oColorings.Criticality.DimensionValues[aVisibleDimensions[k]]) {
+                if (this._getState(oMDCChart).oColorings.Criticality.DimensionValues[aVisibleDimensions[k]]) {
                     oActiveColoring = {
                         coloring: "Criticality",
                         parameters: {
@@ -557,8 +644,8 @@ sap.ui.define([
             }
 
             if (oActiveColoring) {
-                this._oInnerChart.setColorings(oTempColorings);
-                this._oInnerChart.setActiveColoring(oActiveColoring);
+                this._getChart(oMDCChart).setColorings(oTempColorings);
+                this._getChart(oMDCChart).setActiveColoring(oActiveColoring);
             }
         }
     };
@@ -574,9 +661,9 @@ sap.ui.define([
      * @private
      * @ui5-restricted Fiori Elements, sap.ui.mdc
      */
-    ChartDelegate._updateSemanticalPattern = function (aProperties) {
+    ChartDelegate._updateSemanticalPattern = function (oMDCChart, aProperties) {
 
-        var aVisibleMeasures = this._oInnerChart.getVisibleMeasures();
+        var aVisibleMeasures = this._getChart(oMDCChart).getVisibleMeasures();
 
         aVisibleMeasures.forEach(function(sVisibleMeasureName){
             //first draft only with semantic pattern
@@ -593,12 +680,12 @@ sap.ui.define([
             if (oDataPoint) {
 
                 if (oDataPoint.targetValue || oDataPoint.foreCastValue) {
-                    var oActualMeasure = this._oInnerChart.getMeasureByName(sVisibleMeasureName);
+                    var oActualMeasure = this._getChart(oMDCChart).getMeasureByName(sVisibleMeasureName);
 
                     oActualMeasure.setSemantics("actual");
 
                     if (oDataPoint.targetValue != null) {
-                        var oReferenceMeasure = this._oInnerChart.getMeasureByName(oDataPoint.targetValue);
+                        var oReferenceMeasure = this._getChart(oMDCChart).getMeasureByName(oDataPoint.targetValue);
 
                         if (oReferenceMeasure) {
                             oReferenceMeasure.setSemantics("reference");
@@ -608,7 +695,7 @@ sap.ui.define([
                     }
 
                     if (oDataPoint.foreCastValue) {
-                        var oProjectionMeasure = this._oInnerChart.getMeasureByName(oDataPoint.foreCastValue);
+                        var oProjectionMeasure = this._getChart(oMDCChart).getMeasureByName(oDataPoint.foreCastValue);
 
                         if (oProjectionMeasure) {
                             oProjectionMeasure.setSemantics("projected");
@@ -637,12 +724,12 @@ sap.ui.define([
      * @returns {object} information about the current chart type
      * @throws exception if inner chart is not yet ready
      */
-    ChartDelegate.getChartTypeInfo = function () {
-        if (!this._oInnerChart) {
+    ChartDelegate.getChartTypeInfo = function (oMDCChart) {
+        if (!this._getChart(oMDCChart)) {
             throw 'inner chart is not bound';
         }
 
-        var sType = this._oMDCChart.getChartType(),
+        var sType = oMDCChart.getChartType(),
             oMDCResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 
         var mInfo = {
@@ -664,11 +751,11 @@ sap.ui.define([
      * @private
      * @ui5-restricted Fiori Elements
      */
-    ChartDelegate.getAvailableChartTypes = function () {
+    ChartDelegate.getAvailableChartTypes = function (oMDCChart) {
         var aChartTypes = [];
 
-        if (this._oInnerChart) {
-            var aAvailableChartTypes = this._oInnerChart.getAvailableChartTypes().available;
+        if (this._getChart(oMDCChart)) {
+            var aAvailableChartTypes = this._getChart(oMDCChart).getAvailableChartTypes().available;
 
             if (aChartTypes) {
 
@@ -680,7 +767,7 @@ sap.ui.define([
                         key: sType,
                         icon: ChartTypeButton.mMatchingIcon[sType],
                         text: oChartResourceBundle.getText("info/" + sType),
-                        selected: (sType == this._oMDCChart.getChartType())
+                        selected: (sType == oMDCChart.getChartType())
                     });
                 }
             }
@@ -699,9 +786,9 @@ sap.ui.define([
      * The returned objects need at least a "label" and a "name" property
      * @returns {array} Array containing the drill stack
      */
-    ChartDelegate.getDrillStack = function () {
+    ChartDelegate.getDrillStack = function (oMDCChart) {
         //TODO: Generify the return values here for other chart frameworks
-        return this._oInnerChart.getDrillStack();
+        return this._getChart(oMDCChart).getDrillStack();
     };
 
     /**
@@ -750,8 +837,8 @@ sap.ui.define([
      * Is called by MDC Chart when <code>chartType</code> property is updated
      * @param {string} sChartType the new chart type
      */
-    ChartDelegate.setChartType = function (sChartType) {
-        this._oInnerChart.setChartType(sChartType);
+    ChartDelegate.setChartType = function (oMDCChart, sChartType) {
+        this._getChart(oMDCChart).setChartType(sChartType);
     };
 
     /**
@@ -759,47 +846,45 @@ sap.ui.define([
      */
     ChartDelegate.createInnerChartContent = function (oMDCChart, fnCallbackDataLoaded) {
 
-        //Create content based on propertyInfos and MDCChart items
-        //var oPropertyHelper = oMDCChart.getPropertyHelper();
-        //var aGroupableProperties = oPropertyHelper.getAllGroupableProperties();
-        //var aAggregatableProperties = oPropertyHelper.getAllAggregatableProperties();
-
-        //create inner instances for aggregations
-        //this.createInnerDimensions(aGroupableProperties);
-        //this.createInnerMeasures(aAggregatableProperties, oPropertyHelper);
-        //rebind after everything is ready
-
-        this._oInnerChart = new Chart({
+        this._setChart(oMDCChart, new Chart({
             id: oMDCChart.getId() + "--innerChart",
             chartType: "column",
             height: "330px",
             width: "100%",
             isAnalytical: true//,
-        });
+        }));
+
+        var oState = this._getState(oMDCChart);
+        oState.aColMeasures = [];
+        oState.aInSettings = [];
+        this._setState(oMDCChart, oState);
+
         //Create initial content during pre-processing
         this._createContentFromItems(oMDCChart);
 
         //Since zoom information is not yet available for sap.chart.Chart after data load is complete, do it on renderComplete instead
         //This is a workaround which is hopefully not needed in other chart libraries
-        this._oInnerChart.attachRenderComplete(function () {
+        this._getChart(oMDCChart).attachRenderComplete(function () {
             oMDCChart._updateToolbar();
         });
 
-        this._oInnerStructure.removeAllItems();
-        this._oInnerStructure.setJustifyContent(sap.m.FlexJustifyContent.Start);
-        this._oInnerStructure.setAlignItems(sap.m.FlexAlignItems.Stretch);
-        this._oInnerStructure.addItem(this._oInnerChart);
+        this._getInnerStructure(oMDCChart).removeAllItems();
+        this._getInnerStructure(oMDCChart).setJustifyContent(sap.m.FlexJustifyContent.Start);
+        this._getInnerStructure(oMDCChart).setAlignItems(sap.m.FlexAlignItems.Stretch);
+        this._getInnerStructure(oMDCChart).addItem(this._getChart(oMDCChart));
 
-        this._fnDataLoadedCallback = fnCallbackDataLoaded;
+        var oState = this._getState(oMDCChart);
+        oState.dataLoadedCallback = fnCallbackDataLoaded;
+
+        this._setState(oMDCChart, oState);
         var oBindingInfo = this._getBindingInfo(oMDCChart);
         this.updateBindingInfo(oMDCChart, oBindingInfo); //Applies filters
         this.rebindChart(oMDCChart, oBindingInfo);
     };
 
-    ChartDelegate.createInnerDimension = function (oMDCChartItem) {
+    ChartDelegate.createInnerDimension = function (oMDCChart, oMDCChartItem) {
         //TODO: Check for Hierachy and Time
         //TODO: Check for role annotation
-        //var aVisibleDimensions = [];
 
         this.fetchProperties(oMDCChartItem.getParent()).then(function (aProperties) {
 
@@ -807,63 +892,67 @@ sap.ui.define([
                 return oCurrentPropertyInfo.name === oMDCChartItem.getName();
             });
 
-            var oDimension = new Dimension({
-                name: oMDCChartItem.getName(),
-                role: oMDCChartItem.getRole() ? oMDCChartItem.getRole() : "category",
-                label: oMDCChartItem.getLabel()
-            });
-
-            if (oPropertyInfo.textProperty){
-                oDimension.setTextProperty(oPropertyInfo.textProperty);
-                oDimension.setDisplayText(true);
-            }
-
-            this._oInnerChart.addDimension(oDimension);
+            this._addInnerDimension(oMDCChart, oMDCChartItem, oPropertyInfo);
 
         }.bind(this));
 
-
-        //add to visibleDimensions
-        //TODO: Check this
-        /*
-        if (oProperty.isVisible()){
-            aVisibleDimensions.push(oProperty.getName());
-        }*/
-
-        //this._oInnerChart.setVisibleDimensions(aVisibleDimensions);
     };
 
-    ChartDelegate.createInnerMeasure = function (oMDChartItem) {
+    ChartDelegate.createInnerMeasure = function (oMDCChart, oMDCChartItem) {
 
-        this.fetchProperties(oMDChartItem.getParent()).then(function (aProperties) {
+        this.fetchProperties(oMDCChartItem.getParent()).then(function (aProperties) {
 
             var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
-                return oCurrentPropertyInfo.name === oMDChartItem.getName();
+                return oCurrentPropertyInfo.name === oMDCChartItem.getName();
             });
 
-            var aggregationMethod = oPropertyInfo.aggregationMethod;
-            var propertyPath = oPropertyInfo.propertyPath;
+            this._addInnerMeasure(oMDCChart, oMDCChartItem, oPropertyInfo);
 
-            //TODO: Check for Criticality, Coloring and so on
-
-            var oMeasureSettings = {
-                name: this._getAggregatedMeasureNameForMDCItem(oMDChartItem),//"average" + oItem.getName(),
-                label: oMDChartItem.getLabel(),
-                role: oMDChartItem.getRole() ? oMDChartItem.getRole() : "axis1"
-            };
-
-            if (aggregationMethod && propertyPath) {
-                oMeasureSettings.analyticalInfo = {
-                    propertyPath: propertyPath, //TODO: What to fill here without PropertyInfos? Consider property at MDC Item level
-                    "with": aggregationMethod
-                };
-            }
-
-
-            var oMeasure = new Measure(oMeasureSettings);
-            this._oInnerChart.addMeasure(oMeasure);
         }.bind(this));
 
+    };
+
+    /**
+     * @private
+     */
+    ChartDelegate._addInnerDimension = function(oMDCChart, oMDCChartItem, oPropertyInfo) {
+        var oDimension = new Dimension({
+            name: oMDCChartItem.getName(),
+            role: oMDCChartItem.getRole() ? oMDCChartItem.getRole() : "category",
+            label: oMDCChartItem.getLabel()
+        });
+
+        if (oPropertyInfo.textProperty){
+            oDimension.setTextProperty(oPropertyInfo.textProperty);
+            oDimension.setDisplayText(true);
+        }
+
+        this._getChart(oMDCChart).addDimension(oDimension);
+    };
+
+    /**
+     * @private
+     */
+    ChartDelegate._addInnerMeasure = function(oMDCChart, oMDCChartItem, oPropertyInfo) {
+        var aggregationMethod = oPropertyInfo.aggregationMethod;
+        var propertyPath = oPropertyInfo.propertyPath;
+
+        var oMeasureSettings = {
+            name: this._getAggregatedMeasureNameForMDCItem(oMDCChartItem),//"average" + oItem.getName(),
+            label: oMDCChartItem.getLabel(),
+            role: oMDCChartItem.getRole() ? oMDCChartItem.getRole() : "axis1"
+        };
+
+        if (aggregationMethod && propertyPath) {
+            oMeasureSettings.analyticalInfo = {
+                propertyPath: propertyPath,
+                "with": aggregationMethod
+            };
+        }
+
+
+        var oMeasure = new Measure(oMeasureSettings);
+        this._getChart(oMDCChart).addMeasure(oMeasure);
     };
 
     ChartDelegate._getAggregatedMeasureNameForProperty = function(oPoperty){
@@ -877,9 +966,9 @@ sap.ui.define([
      * @param {object} oBindingInfo The bindingInfo of the chart
      */
     ChartDelegate.rebindChart = function (oMDCChart, oBindingInfo) {
-        if (oMDCChart && oBindingInfo && this._oInnerChart) {
+        if (oMDCChart && oBindingInfo && this._getChart(oMDCChart)) {
             //TODO: bindData sap.chart.Chart specific and therefore needs to be changed to a general API.
-            this._addBindingListener(oBindingInfo, "change", this._onDataLoadComplete.bind(this));
+            this._addBindingListener(oBindingInfo, "change", this._getState(oMDCChart).dataLoadedCallback.bind(oMDCChart));
 
             //TODO: Clarify why sap.ui.model.odata.v4.ODataListBinding.destroy this.bHasAnalyticalInfo is false
             //TODO: on second call, as it leads to issues when changing layout options within the settings dialog.
@@ -889,16 +978,17 @@ sap.ui.define([
             }
 
 
-            this._oInnerChart.bindData(oBindingInfo);
-            this._oBindingInfo = oBindingInfo;
-            this._innerChartBound = true;
+            this._getChart(oMDCChart).bindData(oBindingInfo);
+            this._setBindingInfoForState(oMDCChart, oBindingInfo);
+            var oState = this._getState(oMDCChart);
+            oState.innerChartBound = true;
         }
     };
 
     ChartDelegate._getBindingInfo = function (oMDCChart) {
 
-        if (this._oBindingInfo) {
-            return this._oBindingInfo;
+        if (this._getBindingInfoFromState(oMDCChart)) {
+            return this._getBindingInfoFromState(oMDCChart);
         }
 
         var oMetadataInfo = oMDCChart.getDelegate().payload;
@@ -920,8 +1010,14 @@ sap.ui.define([
      * Returns whether the inner chart is currently bound
      * @returns {bool} true if inner chart is bound; false if not
      */
-    ChartDelegate.getInnerChartBound = function () {
-        return !!this._innerChartBound;
+    ChartDelegate.getInnerChartBound = function (oMDCChart) {
+        var oState = this._getState(oMDCChart);
+
+        if (!oState) {
+            return false;
+        }
+
+        return oState.innerChartBound ? true : false;
     };
 
     /**
@@ -1039,18 +1135,22 @@ sap.ui.define([
      * Sets tooltips visible/invisible on inner chart
      * @param {bool}  bFlag true for visible, false for invisible
      */
-    ChartDelegate.setChartTooltipVisibility = function (bFlag) {
+    ChartDelegate.setChartTooltipVisibility = function (oMDCChart, bFlag) {
 
-        if (this._oInnerChart) {
+        if (this._getChart(oMDCChart)) {
             if (bFlag) {
-                if (!this._vizTooltip) {
-                    this._vizTooltip = new VizTooltip();
+                if (!this._getState(oMDCChart).vizTooltip) {
+
+                    var oState = this._getState(oMDCChart);
+                    oState.vizTooltip = new VizTooltip();
+                    this._setState(oMDCChart, oState);
                 }
                 // Make this dynamic for setter calls
-                this._vizTooltip.connect(this._oInnerChart.getVizUid());
-            } else if (this._vizTooltip) {
-                    this._vizTooltip.destroy();
-                }
+                //this._vizTooltip.connect(this._oInnerChart.getVizUid());
+                this._getState(oMDCChart).vizTooltip.connect(this._getChart(oMDCChart).getVizUid());
+            } else if (this._getState(oMDCChart).vizTooltip) {
+                this._getState(oMDCChart).vizTooltip.destroy();
+            }
         } else {
             Log.error("Trying to set chart tooltip while inner chart was not yet initialized");
         }
@@ -1288,11 +1388,16 @@ sap.ui.define([
         }
     };
 
+    ChartDelegate.checkEventForDataLoaded = function(mEventParams) {
+        return (mEventParams.mParameters.reason === "change" && !mEventParams.mParameters.detailedReason);
+    };
+
+    /*
     ChartDelegate._onDataLoadComplete = function (mEventParams) {
         if (mEventParams.mParameters.reason === "change" && !mEventParams.mParameters.detailedReason) {
             this._fnDataLoadedCallback.call();
         }
-    };
+    };*/
 
     return ChartDelegate;
 });

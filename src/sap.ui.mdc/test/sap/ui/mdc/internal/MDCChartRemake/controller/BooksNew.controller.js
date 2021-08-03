@@ -12,6 +12,10 @@ sap.ui.define([
 			this.byId("bookChart").attachSelectionDetailsActionPressed(function(oEvent) {
 				MessageToast.show(oEvent.getParameter("action").getText() + " is pressed" + "\n " + oEvent.getParameter("itemContexts").length + " items selected" + "\n level is: " + oEvent.getParameter("level"));
 			});
+
+			this.byId("bookChart-2").attachSelectionDetailsActionPressed(function(oEvent) {
+				MessageToast.show(oEvent.getParameter("action").getText() + " is pressed" + "\n " + oEvent.getParameter("itemContexts").length + " items selected" + "\n level is: " + oEvent.getParameter("level"));
+			});
 		},
 
 		onFiltersChanged: function(oEvent) {

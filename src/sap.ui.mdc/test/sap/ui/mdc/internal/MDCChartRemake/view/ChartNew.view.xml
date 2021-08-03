@@ -455,6 +455,7 @@
 				</f2:DynamicPageHeader>
 			</f2:header>
 			<f2:content>
+				<VBox>
 					<mdc:ChartNew id="bookChart" filter="booksFilterBarNew" autoBindOnInit="false" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate="{
 							'name': 'sap/ui/mdc/odata/v4/vizChart/ChartDelegateNew',
 							'payload': {
@@ -488,7 +489,42 @@
 							<mdcc:ItemNew id="meas1" type="aggregatable" name="averagemetricsWords" role="axis1" label="Words (average)"/>
 						</mdc:items>
 					</mdc:ChartNew>
-				</f2:content>
+
+					<mdc:ChartNew id="bookChart-2" filter="booksFilterBarNew" autoBindOnInit="false" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate="{
+							'name': 'sap/ui/mdc/odata/v4/vizChart/ChartDelegateNew',
+							'payload': {
+								collectionName: 'Books'
+							}
+						}" chartType="column" header="Remake Chart" height="400px" width="100%">
+
+						 <mdc:selectionDetailsActions>
+							<mdcc:SelectionDetailsActionsNew>
+								<mdcc:detailsItemActions>
+									<core:Item key="ItemAction1" text="ItemAction 1"></core:Item>
+									<core:Item key="ItemAction2" text="ItemAction 2"></core:Item>
+								</mdcc:detailsItemActions>
+
+
+								<mdcc:detailsActions>
+									<core:Item key="Action1" text="Action 1"></core:Item>
+									<core:Item key="Action2" text="Action 2"></core:Item>
+								</mdcc:detailsActions>
+
+
+								<mdcc:actionGroups>
+									<core:Item key="GroupAction1" text="GroupAction 1"></core:Item>
+									<core:Item key="GroupAction2" text="GroupAction 2"></core:Item>
+								</mdcc:actionGroups>
+							</mdcc:SelectionDetailsActionsNew>
+						</mdc:selectionDetailsActions>
+
+						<mdc:items>
+							<mdcc:ItemNew id="dim1-chart2" type="groupable" name="title" role="category" label="Title"/>
+							<mdcc:ItemNew id="meas1-chart2" type="aggregatable" name="maxmetricsWords" role="axis1" label="Words (max)"/>
+						</mdc:items>
+					</mdc:ChartNew>
+				</VBox>
+			</f2:content>
 		</f2:DynamicPage>
 
 	</Page>
