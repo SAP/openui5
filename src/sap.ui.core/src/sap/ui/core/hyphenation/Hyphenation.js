@@ -92,70 +92,59 @@ sap.ui.define([
 	var oHyphenationInstance = null;
 	var fakeBody = null;
 	var oHyphenateMethods = {};
-	var oPromisesForLang = {};
-	var aLanguagesQueue = [];
 
 	/**
 	 * Calls Hyphenopoly to initialize a language.
 	 * Loads language-specific resources.
 	 *
 	 * @param {string} sLanguage What language to initialize
-	 * @param {object} oConfig What config to sent to Hyphenopoly
-	 * @param {function} resolve Callback to resolve the promise created on initialize
+	 * @returns {Promise} Promise that resolves with the hyphenator function for that language
 	 * @private
 	 */
-	function initializeLanguage(sLanguage, oConfig, resolve) {
+	function initializeLanguage(sLanguage) {
 		Log.info(
 			"[UI5 Hyphenation] Initializing third-party module for language " + getLanguageDisplayName(sLanguage),
 			"sap.ui.core.hyphenation.Hyphenation.initialize()"
 		);
 
-		window.hyphenopoly.initializeLanguage(oConfig)
-			.then(onLanguageInitialized.bind(this, sLanguage, resolve));
-	}
+		var oHyphenopolyConfig = createHyphenopolyConfig();
+		oHyphenopolyConfig.require[sLanguage] = "FORCEHYPHENOPOLY"; // force loading of the engine for this language
 
-	/**
-	 * A callback for when language initialization is ready.
-	 *
-	 * @param {string} sLanguage What language was initialized
-	 * @param {function} resolve Callback to resolve the promise created on initialize
-	 * @param {string} hyphenateMethod Is it asm or wasm
-	 * @private
-	 */
-	function onLanguageInitialized(sLanguage, resolve, hyphenateMethod) {
-		oHyphenateMethods[sLanguage] = hyphenateMethod;
-		oHyphenationInstance.bIsInitialized = true;
-		if (aLanguagesQueue.length > 0) {
-			aLanguagesQueue.forEach(function (oElement) {
-				initializeLanguage(oElement.sLanguage, oElement.oConfig, oElement.resolve);
+		return loadScript(sap.ui.require.toUrl("sap/ui/thirdparty/hyphenopoly/"), "Hyphenopoly_Loader.js")
+			.then(function () {
+				delete oHyphenopolyConfig.require[sLanguage];
+				return window.Hyphenopoly.hyphenators[sLanguage];
 			});
-			aLanguagesQueue = [];
-		}
-		oHyphenationInstance.bLoading = false;
-		resolve(
-			getLanguageFromPattern(sLanguage)
-		);
 	}
 
-	/**
-	 * Transforms the given config so it can be sent to Hyphenopoly.
-	 *
-	 * @param {string} sLanguage The language for which a config is prepared.
-	 * @returns {Object} {{require: [*], hyphen: string, path: (string|*)}}
-	 * @private
-	 */
-	function prepareConfig(sLanguage) {
-		//Creating default configuration
-		var oConfigurationForLanguage = {
-			"require": [sLanguage],
-			"hyphen": "\u00AD",
-			"leftmin": 3, // The minimum of chars to remain on the old line.
-			"rightmin": 3,// The minimum of chars to go on the new line
-			"compound": "all", // factory-made -> fac-tory-[ZWSP]made
-			"path": sap.ui.require.toUrl("sap/ui/thirdparty/hyphenopoly")
-		};
+	function createHyphenopolyConfig() {
+		if (!window.Hyphenopoly) {
+			window.Hyphenopoly = {
+				require: {},
+				setup: {
+					selectors: {
+						".hyphenate": { // .hyphenate is the default CSS class (hence this is the default configuration for all words and langs)
+							hyphen: "\u00AD",
+							leftmin: 3,
+							rightmin: 3,
+							compound: "all" // hyphenate the parts and insert a zero-width space after the hyphen
+						}
+					},
+					hide: "DONT_HIDE" // prevent visiblity: hidden; of html tag while the engine is loading
+				},
+				handleEvent: {
+					error: function (e) {
+						// Hyphenopoly will try to find DOM elements and hyphenate them,
+						// but since we use only the hyphenators, prevent the warning
+						if (e.msg.match(/engine for language .* loaded, but no elements found./)) {
+							e.preventDefault(); //don't show error message in console
+						}
+					}
+				}
+			};
+		}
 
-		return oConfigurationForLanguage;
+		return window.Hyphenopoly;
 	}
 
 	/**
@@ -191,7 +180,6 @@ sap.ui.define([
 			"visibility:hidden;",
 			"-moz-hyphens:auto;",
 			"-webkit-hyphens:auto;",
-			"-ms-hyphens:auto;",
 			"hyphens:auto;",
 			"width:48px;",
 			"font-size:12px;",
@@ -295,6 +283,8 @@ sap.ui.define([
 				break;
 			case "el":
 				sLanguage = "el-monoton";
+				break;
+			default:
 				break;
 		}
 
@@ -567,6 +557,7 @@ sap.ui.define([
 			fireError("Language " + getLanguageDisplayName(sLanguage) + " is not initialized. You have to initialize it first with method 'initialize()'");
 			return sText;
 		}
+
 		return oHyphenateMethods[sLanguage](sText);
 	};
 
@@ -610,41 +601,33 @@ sap.ui.define([
 	 */
 	Hyphenation.prototype.initialize = function (sLang) {
 		var sLanguage = getLanguage(sLang);
-		var oConfig = prepareConfig(sLanguage);
 
-		if (oThirdPartySupportedLanguages[sLanguage]) {
-			if (!oHyphenationInstance.bIsInitialized && !oHyphenationInstance.bLoading) {
-
-				oHyphenationInstance.bLoading = true;
-				oPromisesForLang[sLanguage] = new Promise(function (resolve, reject) {
-					loadScript(oConfig.path, "/hyphenopoly.bundle.js")
-						.then(initializeLanguage.bind(this, sLanguage, oConfig, resolve));
-				});
-
-				return oPromisesForLang[sLanguage];
-
-			} else if (oHyphenationInstance.bLoading && !oHyphenateMethods[sLanguage] && oPromisesForLang[sLanguage]) {
-				return oPromisesForLang[sLanguage];
-
-			} else if (!this.isLanguageInitialized(sLanguage)) {
-				oPromisesForLang[sLanguage] = new Promise(function (resolve, reject) {
-					if (!oHyphenationInstance.bIsInitialized) {
-						aLanguagesQueue.push({sLanguage:sLanguage, oConfig:oConfig, resolve:resolve });
-					} else {
-						initializeLanguage(sLanguage, oConfig, resolve);
-					}
-
-				});
-			}
-			oHyphenationInstance.bLoading = true;
-			return oPromisesForLang[sLanguage];
-		} else {
+		if (!oThirdPartySupportedLanguages[sLanguage]) {
 			var sMessage = "Language " + getLanguageDisplayName(sLang) + " can not be initialized. It is either not supported by the third-party module or an error occurred";
 			fireError(sMessage);
-			return new Promise(function (resolve, reject) {
-				reject(sMessage);
-			});
+			return Promise.reject(sMessage);
 		}
+
+		if (oHyphenateMethods[sLanguage]) {
+			return Promise.resolve();
+		}
+
+		var pInitLanguage;
+
+		if (!this._pInitLanguage) {
+			pInitLanguage = this._pInitLanguage = initializeLanguage(sLanguage)
+				.then(function (fnHyphenator) {
+					oHyphenateMethods[sLanguage] = fnHyphenator;
+					this._pInitLanguage = null;
+				}.bind(this));
+		} else {
+			// await the loading of the previous language, then initialize the current
+			pInitLanguage = this._pInitLanguage.then(function () {
+				return this.initialize(sLang);
+			}.bind(this));
+		}
+
+		return pInitLanguage;
 	};
 
 	/**
@@ -658,8 +641,6 @@ sap.ui.define([
 	Hyphenation.getInstance = function () {
 		if (!oHyphenationInstance) {
 			oHyphenationInstance = new Hyphenation();
-			oHyphenationInstance.bIsInitialized = false;
-			oHyphenationInstance.bLoading = false;
 		}
 
 		return oHyphenationInstance;

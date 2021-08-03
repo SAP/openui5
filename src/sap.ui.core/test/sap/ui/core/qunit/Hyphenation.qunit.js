@@ -1,12 +1,20 @@
-/*global QUnit */
+/*global QUnit, sinon */
 
 sap.ui.define("sap/ui/core/qunit/Hyphenation.qunit", [
     "sap/ui/core/hyphenation/Hyphenation",
     "sap/ui/core/hyphenation/HyphenationTestingWords",
+    "sap/ui/dom/includeScript",
     "sap/base/Log",
     "sap/ui/Device",
     "sap/ui/qunit/utils/createAndAppendDiv"
-], function(Hyphenation, HyphenationTestingWords, Log, Device, createAndAppendDiv) {
+], function(
+    Hyphenation,
+    HyphenationTestingWords,
+    includeScript,
+    Log,
+    Device,
+    createAndAppendDiv
+) {
     "use strict";
 
 var sSingleLangTest = "de",
@@ -58,7 +66,7 @@ var sSingleLangTest = "de",
         "de": ["Kindercarnavalsoptochtvoorbereidingswerkzaamheden", "Kin\u00ADder\u00ADcar\u00ADna\u00ADvals\u00ADop\u00ADtocht\u00ADvo\u00ADor\u00ADberei\u00ADdings\u00ADwerk\u00ADzaam\u00ADhe\u00ADden"], // original word was Kindercarnavalsoptochtvoorbereidingswerkzaamhedenplan
         "de-at": ["Kindercarnavalsoptochtvoorbereidingswerkzaamheden", "Kin\u00ADder\u00ADcar\u00ADna\u00ADvals\u00ADop\u00ADtocht\u00ADvo\u00ADor\u00ADberei\u00ADdings\u00ADwerk\u00ADzaam\u00ADhe\u00ADden"],
         "el": ["ηλεκτροεγκεφαλογράφημα", "ηλε\u00ADκτρο\u00ADε\u00ADγκε\u00ADφα\u00ADλο\u00ADγρά\u00ADφημα"],
-        "hi": ["किंकर्तव्यविमूढ़", "किं\u00ADक\u00ADर्\u00ADत\u00ADव्\u00ADय\u00ADवि\u00ADमूढ़"],
+        "hi": ["किंकर्तव्यविमूढ़", "किं\u00ADक\u00ADर्त\u00ADव्य\u00ADवि\u00ADमूढ़"],
         "hu": ["Megszentségteleníthetetlenségeskedéseitekért", "Meg\u00ADszent\u00ADség\u00ADte\u00ADle\u00ADnít\u00ADhe\u00ADtet\u00ADlen\u00ADsé\u00ADges\u00ADke\u00ADdé\u00ADse\u00ADi\u00ADte\u00ADkért"],
         "it": ["hippopotomonstrosesquippedaliofobia", "hip\u00ADpo\u00ADpo\u00ADto\u00ADmon\u00ADstro\u00ADse\u00ADsquip\u00ADpe\u00ADda\u00ADlio\u00ADfo\u00ADbia"],
         "lt": ["nebeprisikiškiakopūstlapiaujančiuosiuose", "nebe\u00ADpri\u00ADsi\u00ADkiš\u00ADkia\u00ADko\u00ADpūst\u00ADla\u00ADpiau\u00ADjan\u00ADčiuo\u00ADsiuose"],
@@ -68,7 +76,7 @@ var sSingleLangTest = "de",
         "sl": ["Dialektičnomaterialističen", "Dia\u00ADlek\u00ADtič\u00ADno\u00ADma\u00ADte\u00ADri\u00ADa\u00ADli\u00ADsti\u00ADčen"],
         "es": ["Electroencefalografistas", "Elec\u00ADtro\u00ADen\u00ADce\u00ADfa\u00ADlo\u00ADgra\u00ADfis\u00ADtas"],
         "sv": ["Realisationsvinstbeskattning", "Rea\u00ADli\u00ADsa\u00ADtions\u00ADvinst\u00ADbe\u00ADskatt\u00ADning"],
-        "th": ["ตัวอย่างข้อความที่จะใช้ใน", "ตัวอย่างข้อค\u00ADวามที่จะใช้ใน"],
+        "th": ["ตัวอย่างข้อความที่จะใช้ใน", "ตัว\u00ADอย่าง\u00ADข้อ\u00ADความ\u00ADที่จะ\u00ADใช้ใน"],
         "tr": ["Muvaffakiyetsizleştiricileştiriveremeyebileceklerimizdenmişsinizcesine", "Muvaffakiyetsizleştiricileştiriveremeyebileceklerimizdenmişsinizcesine"],
         "uk": ["Нікотинамідаденіндинуклеотидфосфат", "Ніко\u00ADти\u00ADна\u00ADмі\u00ADда\u00ADде\u00ADнін\u00ADди\u00ADну\u00ADкле\u00ADо\u00ADтид\u00ADфо\u00ADсфат"]
     },
@@ -103,7 +111,6 @@ var sSingleLangTest = "de",
     oTestDiv.style.cssText = [
         "-moz-hyphens:auto;",
         "-webkit-hyphens:auto;",
-        "-ms-hyphens:auto;",
         "hyphens:auto;",
         "width:48px;",
         "font-size:12px;",
@@ -167,13 +174,11 @@ var sSingleLangTest = "de",
     });
 
     QUnit.test("default initialize", function(assert) {
-        assert.expect(2);
+        assert.expect(1);
 
         var done = assert.async();
 
         this.oHyphenation.initialize().then(function() {
-            assert.strictEqual(this.oHyphenation.bIsInitialized, true, "hyphenation api is initialized with default params");
-
             var sDefaultLang = getDefaultLang();
             assert.strictEqual(this.oHyphenation.isLanguageInitialized(sDefaultLang), true, "default lang '" + sDefaultLang + "' was initialized");
 
@@ -326,7 +331,6 @@ var sSingleLangTest = "de",
         aLanguages.forEach(function(sLang) {
             that.oHyphenation.initialize(sLang).then(function() {
                 counter++;
-
                 assert.strictEqual(
                     that.oHyphenation.hyphenate(mWords[sLang][0], sLang),
                     mWords[sLang][1],
@@ -388,5 +392,42 @@ var sSingleLangTest = "de",
         Log.error.restore();
         this.oHyphenation.detachEvent("error", onError);
     });
+
+    QUnit.module("Hyphenopoly_Loader and Hyphenopoly.js overrides");
+
+    QUnit.test("No credentials are sent when request is made", function (assert) {
+        // Arrange
+        var done = assert.async();
+        var oFetchStub = sinon.stub(window, "fetch")
+                        .resolves(new Response(null, { status: 500}));
+
+        window.Hyphenopoly = {
+            require: {
+                en: "FORCEHYPHENOPOLY"
+            },
+            setup: {
+                hide: "DONT_HIDE"
+            },
+            handleEvent: {
+                error: function () {
+                    // Assert
+                    assert.notOk(
+                        oFetchStub.calledWith(sinon.match.any, { credentials: "include" }),
+                        "Credentials must NOT be included in the request"
+                    );
+
+                    // Clean up
+                    oFetchStub.restore();
+                    done();
+                }
+            }
+        };
+
+        // Act
+        includeScript({
+            url: sap.ui.require.toUrl("sap/ui/thirdparty/hyphenopoly/Hyphenopoly_Loader.js")
+        });
+    });
+
 
 });
