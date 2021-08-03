@@ -1863,8 +1863,8 @@ sap.ui.define([
 		var oModel;
 		var sKey = oItem.key;
 
-		// do not allow the deletion of the last entry
-		if (this.oManagementTable.getItems().length === 1) {
+		// do not allow the deletion of the standard
+		if (this.getStandardVariantKey() === sKey) {
 			return;
 		}
 

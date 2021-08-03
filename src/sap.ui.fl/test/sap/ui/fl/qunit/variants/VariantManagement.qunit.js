@@ -778,6 +778,54 @@ sap.ui.define([
 			assert.ok(!this.oVariantManagement.bFireSelect);
 		});
 
+		QUnit.test("Checking _handleManageSavePressed: deleted after search", function(assert) {
+			var oEvent = {
+				getParameters: function() { return { newValue: "One" }; }
+			};
+
+			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+
+			this.oVariantManagement._createManagementDialog();
+			assert.ok(this.oVariantManagement.oManagementDialog);
+			sinon.stub(this.oVariantManagement.oManagementDialog, "open");
+
+			this.oVariantManagement._openManagementDialog();
+
+			this.oVariantManagement._triggerSearchInManageDialog(oEvent, this.oVariantManagement.oManagementTable);
+
+			var oItemDel = this.oVariantManagement._getItemByKey("1");
+			assert.ok(oItemDel);
+
+			var aDeletedItems = this.oVariantManagement._getDeletedItems();
+			assert.ok(aDeletedItems);
+			assert.equal(aDeletedItems.length, 0);
+
+			this.oVariantManagement._handleManageDeletePressed(oItemDel);
+			aDeletedItems = this.oVariantManagement._getDeletedItems();
+			assert.ok(aDeletedItems);
+			assert.equal(aDeletedItems.length, 1);
+
+			// check for Standard
+			oItemDel = this.oVariantManagement._getItemByKey("Standard");
+			assert.ok(oItemDel);
+
+			this.oVariantManagement._clearDeletedItems();
+
+			oEvent = {
+				getParameters: function() { return { newValue: "Standard" }; }
+			};
+
+			this.oVariantManagement._triggerSearchInManageDialog(oEvent, this.oVariantManagement.oManagementTable);
+			aDeletedItems = this.oVariantManagement._getDeletedItems();
+			assert.ok(aDeletedItems);
+			assert.equal(aDeletedItems.length, 0);
+			this.oVariantManagement._handleManageDeletePressed(oItemDel);
+			aDeletedItems = this.oVariantManagement._getDeletedItems();
+			assert.ok(aDeletedItems);
+			assert.equal(aDeletedItems.length, 0);
+		});
+
+
 		QUnit.test("Checking _handleManageSavePressed; deleted item is selected", function(assert) {
 			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
 
