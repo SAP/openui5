@@ -19,7 +19,6 @@ sap.ui.define([
 	"sap/f/DynamicPageHeader",
 	"./DynamicPageRenderer",
 	"sap/base/Log",
-	"sap/ui/dom/getScrollbarSize",
 	"sap/ui/core/theming/Parameters",
 	'sap/ui/dom/units/Rem',
 	"sap/ui/core/library"
@@ -39,7 +38,6 @@ sap.ui.define([
 	DynamicPageHeader,
 	DynamicPageRenderer,
 	Log,
-	getScrollbarSize,
 	Parameters,
 	DomUnitsRem,
 	coreLibrary
@@ -1410,7 +1408,6 @@ sap.ui.define([
 			this.bHasScrollbar = bScrollBarNeeded;
 		}
 		setTimeout(this._updateFitContainer.bind(this), 0);
-		setTimeout(this._updateScrollBarOffset.bind(this), 0);
 	};
 
 	DynamicPage.prototype._updateFitContainer = function (bNeedsVerticalScrollBar) {
@@ -1419,23 +1416,6 @@ sap.ui.define([
 			bToggleClass = bFitContent || bNoScrollBar;
 
 		this.$contentFitContainer.toggleClass("sapFDynamicPageContentFitContainer", bToggleClass);
-	};
-
-
-	/**
-	 * Updates the title area/footer offset. Since the "real" scroll bar starts at just below the title and since the "fake"
-	 * <code>ScrollBar</code> doesn't shift the content of the title/footer, it is necessary to offset this ourselves, so it looks natural.
-	 * @private
-	 */
-	DynamicPage.prototype._updateScrollBarOffset = function () {
-		var sStyleAttribute = Core.getConfiguration().getRTL() ? "left" : "right",
-			iOffsetWidth = this._needsVerticalScrollBar() ? getScrollbarSize().width + "px" : 0,
-			oFooter = this.getFooter();
-
-		this.$titleArea.css("padding-" + sStyleAttribute, iOffsetWidth);
-		if (exists(oFooter)) {
-			oFooter.$().css(sStyleAttribute, iOffsetWidth);
-		}
 	};
 
 	/**

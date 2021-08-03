@@ -26,6 +26,16 @@
 	}
 }
 
+html[data-sap-ui-browser^="ff"].sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll {
+	 .sapFDynamicPageTitleWrapper {
+		padding-right: 17px;
+	}
+
+	.sapFDynamicPageFooter .sapFDynamicPageActualFooterControl {
+		right: 17px;
+	}
+}
+
 .sapFDynamicPageContent {
 	flex-grow: 1;
 	-webkit-flex-grow: 1;
@@ -166,6 +176,16 @@ html[data-sap-ui-browser^="ie"] {
 	-webkit-flex-direction: column;
 	flex-shrink: 0;
 	-webkit-flex-shrink: 0;
+}
+
+html.sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll {
+	.sapFDynamicPageTitleWrapper {
+		padding-right: 12px;
+	}
+
+	.sapFDynamicPageFooter .sapFDynamicPageActualFooterControl {
+		right: 12px;
+	}
 }
 
 .sapFDynamicPageContentWrapper {
