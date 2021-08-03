@@ -129,8 +129,24 @@ sap.ui.define([
 						}, {
 							author: "Me",
 							key: "variant1",
-							layer: Layer.USER,
+							layer: Layer.PUBLIC,
 							title: "variant B",
+							favorite: false,
+							visible: true,
+							executeOnSelect: true
+						}, {
+							author: "Not Me",
+							key: "variant2",
+							layer: Layer.PUBLIC,
+							title: "variant C",
+							favorite: false,
+							visible: true,
+							executeOnSelect: true
+						}, {
+							author: "Me",
+							key: "variant3",
+							layer: Layer.USER,
+							title: "variant D",
 							favorite: false,
 							visible: true,
 							executeOnSelect: true
@@ -208,7 +224,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'getData'", function(assert) {
-			var sExpectedJSON = '{"variantMgmtId1":{"currentVariant":"variant1","defaultVariant":"variant1","originalCurrentVariant":"variant1","originalDefaultVariant":"variant1","variants":[{"author":"' + VariantUtil.DEFAULT_AUTHOR + '","favorite":true,"key":"variantMgmtId1","layer":"VENDOR","originalFavorite":true,"originalTitle":"Standard","originalVisible":true,"originalExecuteOnSelect":false,"executeOnSelect":false,"title":"Standard","visible":true},{"author":"Me","favorite":true,"key":"variant0","layer":"' + Layer.CUSTOMER + '","originalFavorite":true,"originalTitle":"variant A","originalVisible":true,"originalExecuteOnSelect":false,"executeOnSelect":false,"title":"variant A","visible":true},{"author":"Me","favorite":false,"key":"variant1","layer":"' + Layer.USER + '","originalFavorite":false,"originalTitle":"variant B","originalVisible":true,"originalExecuteOnSelect":true,"executeOnSelect":true,"title":"variant B","visible":true}]}}';
+			var sExpectedJSON = '{"variantMgmtId1":{"currentVariant":"variant1","defaultVariant":"variant1","originalCurrentVariant":"variant1","originalDefaultVariant":"variant1","variants":[{"author":"' + VariantUtil.DEFAULT_AUTHOR + '","favorite":true,"key":"variantMgmtId1","layer":"VENDOR","originalFavorite":true,"originalTitle":"Standard","originalVisible":true,"originalExecuteOnSelect":false,"executeOnSelect":false,"title":"Standard","visible":true},{"author":"Me","favorite":true,"key":"variant0","layer":"' + Layer.CUSTOMER + '","originalFavorite":true,"originalTitle":"variant A","originalVisible":true,"originalExecuteOnSelect":false,"executeOnSelect":false,"title":"variant A","visible":true},{"author":"Me","favorite":false,"key":"variant1","layer":"' + Layer.PUBLIC + '","originalFavorite":false,"originalTitle":"variant B","originalVisible":true,"originalExecuteOnSelect":true,"executeOnSelect":true,"title":"variant B","visible":true},{"author":"Not Me","favorite":false,"key":"variant2","layer":"' + Layer.PUBLIC + '","originalFavorite":false,"originalTitle":"variant C","originalVisible":true,"originalExecuteOnSelect":true,"executeOnSelect":true,"title":"variant C","visible":true},{"author":"Me","favorite":false,"key":"variant3","layer":"' + Layer.USER + '","originalFavorite":false,"originalTitle":"variant D","originalVisible":true,"originalExecuteOnSelect":true,"executeOnSelect":true,"title":"variant D","visible":true}]}}';
 			var sCurrentVariant = this.oModel.getCurrentVariantReference("variantMgmtId1");
 			assert.deepEqual(this.oModel.getData(), JSON.parse(sExpectedJSON));
 			assert.equal(sCurrentVariant, "variant1", "then the key of the current variant is returned");
@@ -224,13 +240,13 @@ sap.ui.define([
 			this.oModel.getData()["variantMgmtId1"]._isEditable = true;
 			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 			assert.ok(this.oModel.getData()["variantMgmtId1"].variantsEditable, "the parameter variantsEditable is initially true");
-			assert.ok(this.oModel.getData()["variantMgmtId1"].variants[2].rename, "user variant can be renamed by default");
-			assert.ok(this.oModel.getData()["variantMgmtId1"].variants[2].remove, "user variant can be removed by default");
-			assert.ok(this.oModel.getData()["variantMgmtId1"].variants[2].change, "user variant can be changed by default");
+			assert.ok(this.oModel.getData()["variantMgmtId1"].variants[4].rename, "user variant can be renamed by default");
+			assert.ok(this.oModel.getData()["variantMgmtId1"].variants[4].remove, "user variant can be removed by default");
+			assert.ok(this.oModel.getData()["variantMgmtId1"].variants[4].change, "user variant can be changed by default");
 			setTimeout(function() {
-				assert.notOk(this.oModel.getData()["variantMgmtId1"].variants[2].rename, "user variant can not be renamed after flp setting is received");
-				assert.notOk(this.oModel.getData()["variantMgmtId1"].variants[2].remove, "user variant can not be removed after flp setting is received");
-				assert.notOk(this.oModel.getData()["variantMgmtId1"].variants[2].change, "user variant can not be changed after flp setting is received");
+				assert.notOk(this.oModel.getData()["variantMgmtId1"].variants[4].rename, "user variant can not be renamed after flp setting is received");
+				assert.notOk(this.oModel.getData()["variantMgmtId1"].variants[4].remove, "user variant can not be removed after flp setting is received");
+				assert.notOk(this.oModel.getData()["variantMgmtId1"].variants[4].change, "user variant can not be changed after flp setting is received");
 				done();
 			}.bind(this), 0);
 			this.oModel.setModelPropertiesForControl("variantMgmtId1", true, oDummyControl);
@@ -238,6 +254,46 @@ sap.ui.define([
 			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 			assert.ok(this.oModel.getData()["variantMgmtId1"].variantsEditable, "the parameter variantsEditable is set to true for bDesignTimeMode = false");
 			Settings.getInstance.restore();
+		});
+
+		QUnit.test("when calling 'setModelPropertiesForControl' of a PUBLIC variant", function(assert) {
+			var bIsKeyUser = false;
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isKeyUser: function () {
+					return bIsKeyUser;
+				}
+			});
+			this.oModel.getData()["variantMgmtId1"]._isEditable = true;
+			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, true, "the parameter variantsEditable is true");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[2].rename, true, "a user can renamed its own PUBLIC variant");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[2].remove, true, "a user can removed its own PUBLIC variant");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[2].change, true, "a user can changed its own PUBLIC variant");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].rename, true, "a user can renamed another users PUBLIC variant in case the ushell user cannot be determined");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].remove, true, "a user can removed another users PUBLIC variant in case the ushell user cannot be determined");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].change, true, "a user can changed another users PUBLIC variant in case the ushell user cannot be determined");
+
+			sandbox.stub(Utils, "getUshellContainer").returns({
+				getUser: function () {
+					return {
+						getId: function () {
+							return "Me";
+						}
+					};
+				}
+			});
+			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].rename, false, "a user cannot renamed another users PUBLIC variant");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].remove, false, "a user cannot removed another users PUBLIC variant");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].change, false, "a user cannot changed another users PUBLIC variant");
+
+			bIsKeyUser = true;
+			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].rename, true, "a key user can renamed another users PUBLIC variant");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].remove, true, "a key user can removed another users PUBLIC variant");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].change, true, "a eky user can changed another users PUBLIC variant");
+			Utils.getUshellContainer.restore();
+			Settings.getInstanceOrUndef.restore();
 		});
 
 		QUnit.test("when calling 'setModelPropertiesForControl' and variant management control has property editable=false", function(assert) {
@@ -1440,7 +1496,7 @@ sap.ui.define([
 			var fnUpdateCurrentVariantSpy = sandbox.spy(this.oModel, "updateCurrentVariant");
 			sandbox.stub(this.oModel.oChangePersistence, "getDirtyChanges").returns(aDummyDirtyChanges);
 
-			assert.equal(this.oModel.oData["variantMgmtId1"].variants.length, 3, "then initial length is 3");
+			assert.equal(this.oModel.oData["variantMgmtId1"].variants.length, 5, "then initial length is 5");
 			var mPropertyBag = {
 				variant: oVariant,
 				sourceVariantReference: "sourceVariant",
@@ -1449,7 +1505,7 @@ sap.ui.define([
 			};
 			return this.oModel.removeVariant(mPropertyBag)
 				.then(function() {
-					assert.equal(this.oModel.oData["variantMgmtId1"].variants.length, 2, "then one variant removed from VariantModel");
+					assert.equal(this.oModel.oData["variantMgmtId1"].variants.length, 4, "then one variant removed from VariantModel");
 					assert.ok(oRemoveVariantStub.calledOnce, "then function to remove variant from variants map was called");
 					assert.deepEqual(fnUpdateCurrentVariantSpy.getCall(0).args[0], {
 						variantManagementReference: mPropertyBag.variantManagementReference,
