@@ -2613,14 +2613,7 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
-	QUnit.module("Responsive padding support", {
-		beforeEach: function() {
-			sinon.config.useFakeTimers = false;
-		},
-		afterEach: function() {
-			sinon.config.useFakeTimers = true;
-		}
-	});
+	QUnit.module("Responsive padding support");
 
 	QUnit.test("_initResponsivePaddingsEnablement is called on init", function (assert) {
 		// Arrange
@@ -2643,29 +2636,31 @@ sap.ui.define([
 
 	QUnit.test("Correct Responsive padding is applied", function (assert) {
 		// Arrange
-		var done = assert.async();
-		var oDialog = new Dialog({
-			title: "Header",
-			subHeader: new OverflowToolbar({
-				content: new Text({ text: "Subheader text" })
+		var fnRequestAnimationFrameStub = sinon.stub(window, "requestAnimationFrame", function (fnCallback) {
+				fnCallback();
 			}),
-			content: new List({
-				items: [
-					new StandardListItem({ title: "Item" })
-				]
+			oDialog = new Dialog({
+				title: "Header",
+				subHeader: new OverflowToolbar({
+					content: new Text({ text: "Subheader text" })
+				}),
+				content: new List({
+					items: [
+						new StandardListItem({ title: "Item" })
+					]
+				}),
+				buttons: new Button({ text: "Button" })
 			}),
-			buttons: new Button({ text: "Button" })
-		});
-		var fnHasClass = function (sSelector, sClass) {
-			return oDialog.$().find(sSelector).hasClass(sClass);
-		};
-		var fnAssertCorrectPaddingsAppliedOnBreakpoint = function (sBreakpoint) {
-			var sClass = "sapUi-Std-Padding" + sBreakpoint;
-			assert.ok(fnHasClass(".sapMDialogTitle .sapMIBar", sClass), "Header has correct responsive padding class applied on " + sBreakpoint + " breakpoint");
-			assert.ok(fnHasClass(".sapMDialogSubHeader .sapMIBar", sClass), "Subheader has correct responsive padding class applied on " + sBreakpoint + " breakpoint");
-			assert.ok(fnHasClass(".sapMDialogScrollCont", sClass), "Content section has correct responsive padding class applied on " + sBreakpoint + " breakpoint");
-			assert.ok(fnHasClass(".sapMDialogFooter .sapMIBar", sClass), "Buttons have correct responsive padding class applied on " + sBreakpoint + " breakpoint");
-		};
+			fnHasClass = function (sSelector, sClass) {
+				return oDialog.$().find(sSelector).hasClass(sClass);
+			},
+			fnAssertCorrectPaddingsAppliedOnBreakpoint = function (sBreakpoint) {
+				var sClass = "sapUi-Std-Padding" + sBreakpoint;
+				assert.ok(fnHasClass(".sapMDialogTitle .sapMIBar", sClass), "Header has correct responsive padding class applied on " + sBreakpoint + " breakpoint");
+				assert.ok(fnHasClass(".sapMDialogSubHeader .sapMIBar", sClass), "Subheader has correct responsive padding class applied on " + sBreakpoint + " breakpoint");
+				assert.ok(fnHasClass(".sapMDialogScrollCont", sClass), "Content section has correct responsive padding class applied on " + sBreakpoint + " breakpoint");
+				assert.ok(fnHasClass(".sapMDialogFooter .sapMIBar", sClass), "Buttons have correct responsive padding class applied on " + sBreakpoint + " breakpoint");
+			};
 		Core.applyChanges();
 
 		oDialog.addStyleClass("sapUiResponsivePadding--header");
@@ -2676,36 +2671,33 @@ sap.ui.define([
 
 		oDialog.open();
 
-		setTimeout(function () {
-			// Act
-			oDialog.setContentWidth("0%"); // set S breakpoint width
+		// Arrange for size S
+		oDialog.setContentWidth("0%");
+		Core.applyChanges();
+		this.clock.tick(500);
 
-			setTimeout(function () {
-				// Assert
-				fnAssertCorrectPaddingsAppliedOnBreakpoint("S");
+		// Assert for size S
+		fnAssertCorrectPaddingsAppliedOnBreakpoint("S");
 
-				// Act
-				oDialog.setContentWidth("600px"); // set M breakpoint width
+		// Arrange for size M
+		oDialog.setContentWidth("600px");
+		Core.applyChanges();
+		this.clock.tick(500);
 
-				setTimeout(function () {
-					// Assert
-					fnAssertCorrectPaddingsAppliedOnBreakpoint("M");
+		// Assert for size M
+		fnAssertCorrectPaddingsAppliedOnBreakpoint("M");
 
-					// Act
-					oDialog.setContentWidth("0%"); // set it back to S breakpoint width
+		// Arrange for size S
+		oDialog.setContentWidth("0%");
+		Core.applyChanges();
+		this.clock.tick(500);
 
-					setTimeout(function () {
-						// Assert
-						fnAssertCorrectPaddingsAppliedOnBreakpoint("S");
+		// Assert for size S
+		fnAssertCorrectPaddingsAppliedOnBreakpoint("S");
 
-						// Clean up
-						oDialog.destroy();
-						done();
-					}, 300);
-				}, 300);
-			}, 300);
-		}, 300);
-
+		// Clean up
+		oDialog.destroy();
+		fnRequestAnimationFrameStub.restore();
 	});
 
 	QUnit.module("Close Dialog with ESC", {
@@ -2956,11 +2948,9 @@ sap.ui.define([
 	QUnit.module("Resize of Within Area", {
 		beforeEach: function () {
 			this.oDialog = new Dialog();
-			sinon.config.useFakeTimers = false;
 		},
 		afterEach: function () {
 			this.oDialog.destroy();
-			sinon.config.useFakeTimers = true;
 		}
 	});
 
@@ -2971,6 +2961,8 @@ sap.ui.define([
 		this.oDialog.setStretch(true).open();
 		Core.applyChanges();
 
+		this.clock.tick(500);
+
 		var oStub = this.stub(this.oDialog, "_getAreaDimensions").returns(
 			Object.assign(
 				oWindowDimensions,
@@ -2980,11 +2972,11 @@ sap.ui.define([
 
 		// Act
 		this.oDialog._onResize();
+		this.clock.tick(500);
 
 		// Assert
 		assert.ok(this.oDialog.$().width() < iNewWindowWidth, "max-width of the dialog wasn't recalculated on resize of window");
 
-		this.oDialog.close();
 		oStub.restore();
 	});
 });
