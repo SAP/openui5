@@ -454,6 +454,15 @@ function(
 							 */
 							selectedItem: {
 								type: "sap.ui.core.Item"
+							},
+
+
+							/**
+							 * The previous selected item.
+							 * @since 1.95
+							 */
+							 previousSelectedItem: {
+								type: "sap.ui.core.Item"
 							}
 						}
 					}
@@ -582,7 +591,7 @@ function(
 			var oItem = this.getSelectedItem();
 
 			if (this._oSelectionOnFocus !== oItem) {
-				this.fireChange({ selectedItem: oItem });
+				this.fireChange({ selectedItem: oItem, previousSelectedItem: this._oSelectionOnFocus });
 			}
 		};
 
@@ -1515,10 +1524,12 @@ function(
 		 * @private
 		 */
 		Select.prototype.onSelectionChange = function(oControlEvent) {
-			var oItem = oControlEvent.getParameter("selectedItem");
+			var oItem = oControlEvent.getParameter("selectedItem"),
+				oPreviousSelectedItem = this.getSelectedItem();
+
 			this.close();
 			this.setSelection(oItem);
-			this.fireChange({ selectedItem: oItem });
+			this.fireChange({ selectedItem: oItem, previousSelectedItem: oPreviousSelectedItem });
 			// check and update icon
 			this.setValue(this._getSelectedItemText());
 		};
