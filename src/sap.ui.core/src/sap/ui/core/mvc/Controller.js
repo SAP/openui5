@@ -734,30 +734,49 @@ sap.ui.define([
 		};
 
 		/**
-		 * Loads a Fragment by {@link sap.ui.core.Fragment.load}. If the controller will be destroyed before
-		 * the fragment content creation is done, the controller takes care of an asynchronous destroy of the
-		 * fragment content.
-		 * Otherwise the content must be destroyed by the caller as usual.
-		 * If the controller has an owner component, it is passed to the fragment content.
-		 * The fragment content will be prefixed with the view ID to avoid duplicate ID issues.
-		 * The prefixing is enabled by default and can be switched off by the <code>autoPrefixId</code> option.
-		 *
-		 * When <code>autoPrefixId</code> is enabled, the fragment content can be accessed by calling {@link sap.ui.core.mvc.Controller.byId}.
-		 *
-		 * Example (no mOptions.id given):
-		 * var myCOntrol = this.byId("myControl");
-		 *
-		 * Example (mOptions.id given):
-		 * var myCOntrol = this.byId("prefix--myControl");
+		 * Loads a Fragment by {@link sap.ui.core.Fragment.load}.
 		 *
 		 * The fragment content will be added to the <code>dependents</code> aggregation of the view by default.
 		 * This behavior can be suppressed by setting <code>mOptions.addToDependents</code> to false.
 		 *
-		 * Note: If the fragment content is not aggregated within a control, it must be destroyed manually in
-		 * the exit hook of the controller.
+		 * The controller is passed to the Fragment by default, so the (event handler) methods referenced in the
+		 * Fragment will be called on this Controller.
 		 *
-		 * The controller is passed to the Fragment by default so the (event handler) methods referenced in the Fragment will
-		 * be called on this Controller.
+		 * If the controller has an owner component, it is passed to the fragment content.
+		 * By default the fragment content will be prefixed with the view ID to avoid duplicate ID issues.
+		 * The prefixing can be switched off with the <code>autoPrefixId</code> option.
+		 *
+		 * When <code>autoPrefixId</code> is enabled, the fragment content can be accessed by calling
+		 * {@link sap.ui.core.mvc.Controller.byId}.
+		 *
+		 * <b>Destroy behavior</b>:
+		 * Different scenarios concerning the destruction of the fragment's content exist,
+		 * of which some must be addressed by the caller, while others are handled automatically.
+		 * <ul>
+		 * <li>The controller instance is destroyed before the fragment content creation has finished:
+		 *     In this case, the controller instance takes care of asynchronously destroying the fragment content</li>
+		 * <li>The fragment content is aggregated within a control (e.g. <code>dependents</code> aggregation by default):
+		 *     In this case, the content will be destroyed during the regular destroy lifecycle.</li>
+		 * <li>The fragment content is not aggregated within a control:
+		 *     In this case, <em>it must be destroyed manually</em> in the exit hook of the controller.</li>
+		 * </ul>
+		 *
+		 * @example <caption>Loading a fragment with no <code>mOptions.id</code> given</caption>
+		 * // In the following, "this" is an instance of sap.ui.core.mvc.Controller
+		 * var pFragment = this.loadFragment({
+		 *     name: "myFragment"
+		 * }).then(function() {
+		 *     var myControl = this.byId("myFragment");
+		 * }.bind(this));
+		 *
+		 * @example <caption>Loading a fragment with an <code>mOptions.id</code> given</caption>
+		 * // In the following, "this" is an instance of sap.ui.core.mvc.Controller
+		 * var pFragment = this.loadFragment({
+		 *     name: "myFragment",
+		 *     id: "somePrefix"
+		 * }).then(function() {
+		 *     var myControl = this.byId("somePrefix--myFragment");
+		 * }.bind(this));
 		 *
 		 * @param {object} mOptions Options regarding fragment loading
 		 * @param {string} mOptions.name The Fragment name, which must correspond to a Fragment which can be loaded via the module system
