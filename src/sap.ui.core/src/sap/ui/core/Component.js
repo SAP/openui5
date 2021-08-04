@@ -801,14 +801,20 @@ sap.ui.define([
 	 */
 	Component.prototype.getEventBus = function() {
 		if (!this._oEventBus) {
-			var sClassName = this.getMetadata().getName();
-			Log.warning("Synchronous loading of EventBus, due to #getEventBus() call on Component '" + sClassName + "'.", "SyncXHR", null, function() {
-				return {
-					type: "SyncXHR",
-					name: sClassName
-				};
-			});
-			var EventBus = sap.ui.requireSync("sap/ui/core/EventBus");
+			var EventBus = sap.ui.require("sap/ui/core/EventBus");
+			if (!EventBus) {
+				var sClassName = this.getMetadata().getName();
+				Log.warning("Synchronous loading of EventBus, due to #getEventBus() call on Component '" + sClassName + "'.", "SyncXHR", null, function() {
+					return {
+						type: "SyncXHR",
+						name: sClassName
+					};
+				});
+				// We don't expect the application to use this API anymore (see Dev-Guide)
+				// For the application it is recommended to declare the EventBus via sap.ui.require or sap.ui.define
+				EventBus = sap.ui.requireSync("sap/ui/core/EventBus"); // legacy-relevant
+			}
+
 			this._oEventBus = new EventBus();
 
 			if (!this.isActive()) {
