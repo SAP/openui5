@@ -45,9 +45,18 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @param obj
+		 * @param level
+		 * @param maxLevel
 		 * @returns {Object}
 		 */
-		var fnConvert = function(obj) {
+		var fnConvert = function(obj, level, maxLevel) {
+			if (level === undefined) {
+				level = 0;
+			}
+			if (maxLevel === undefined) {
+				maxLevel = 2;
+			}
+
 			// Null
 			if (obj == null) {
 				return obj;
@@ -59,20 +68,22 @@ sap.ui.define([
 				return oControl ? oControl : obj;
 			}
 
-			// Array
-			if (Array.isArray(obj)) {
-				return obj.map(fnConvert);
-			}
-
-			// Object
-			if (typeof obj === "object") {
-				var oResult = {};
-				for (var i in obj) {
-					if (obj.hasOwnProperty(i)) {
-						oResult[i] = fnConvert(obj[i]);
-					}
+			if (level < maxLevel) {
+				// Array
+				if (Array.isArray(obj)) {
+					return obj.map(fnConvert, level + 1, maxLevel);
 				}
-				return oResult;
+
+				// Object
+				if (typeof obj === "object") {
+					var oResult = {};
+					for (var i in obj) {
+						if (obj.hasOwnProperty(i)) {
+							oResult[i] = fnConvert(obj[i], level + 1, maxLevel);
+						}
+					}
+					return oResult;
+				}
 			}
 
 			// Anything else
@@ -259,10 +270,10 @@ sap.ui.define([
 			var oAttrProperties = this.getMetadata().getPropertiesByMapping("attribute");
 			for (var sPropName in oAttrProperties) {
 				var oPropData = oAttrProperties[sPropName];
+				var vPropValue = oPropData.get(this);
 
-				if (oPropData.type === "object") {
+				if (oPropData.type === "object" || typeof vPropValue === "object") {
 					var sWebComponentPropName = oPropData._sMapTo ? oPropData._sMapTo : sPropName;
-					var vPropValue = oPropData.get(this);
 					oDomRef[sWebComponentPropName] = vPropValue;
 				}
 			}
