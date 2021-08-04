@@ -197,4 +197,23 @@ sap.ui.define([
 		//Cleanup
 		oPCLegend.destroy();
 	});
+
+	QUnit.test("Legend header elements roles", function (assert) {
+		//Act
+		var myView = sap.ui.xmlview({viewContent: sPclNoDB}),
+				oPCLegend = myView.byId("PlanningCalendarLegend");
+		//Act
+		oPCLegend.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Assert --section header
+		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").length, 2, "Two header sections should be rendered");
+		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(0).getAttribute("role"), "heading", "The headers have a heading role");
+		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(0).getAttribute("aria-level"), "3", "The headers have aria-level - 3");
+		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(1).getAttribute("role"), "heading", "The headers have a heading role");
+		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(1).getAttribute("aria-level"), "3", "The headers have aria-level - 3");
+
+		//Cleanup
+		oPCLegend.destroy();
+	});
 });
