@@ -27,6 +27,7 @@
 		<f:GridContainer class="sapUiSmallMargin">
 			<w:Card
 				id="tablecard1"
+				baseUrl="./"
 				manifest="{manifests>/tablecard1}"
 				height="auto"
 				class="sapUiMediumMarginEnd">
@@ -36,6 +37,7 @@
 			</w:Card>
 			<w:Card
 				id="tablecard2"
+				baseUrl="./"
 				manifest="{manifests>/tablecard2}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="5" />
@@ -43,6 +45,7 @@
 			</w:Card>
 			<w:Card
 				id="tablecard3"
+				baseUrl="./"
 				manifest="{manifests>/tablecard3}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="5" />

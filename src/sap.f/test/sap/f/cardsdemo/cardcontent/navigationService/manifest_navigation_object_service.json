@@ -1,5 +1,6 @@
 {
 	"sap.app": {
+		"id": "cardsdemo.navigatioService.object1",
 		"type": "card",
 		"i18n": "i18n/i18n.properties"
 	},
@@ -14,7 +15,7 @@
 		"type": "Object",
 		"data": {
 			"request": {
-				"url": "./cardsdemo/cardcontent/objectcontent/datahandling_employee.json"
+				"url": "../objectcontent/datahandling_employee.json"
 			}
 		},
 		"header": {

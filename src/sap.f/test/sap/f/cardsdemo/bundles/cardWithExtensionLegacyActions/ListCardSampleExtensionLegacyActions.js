@@ -36,7 +36,7 @@ sap.ui.define(["sap/ui/integration/Extension", "sap/base/Log"], function (Extens
 			});
 
 			var pGetDataFromStaticFile = oCard.request({
-				"url": sap.ui.require.toUrl("cardWithExtensionLegacyActions/cities.json")
+				"url": "./cities.json"
 			});
 
 			var pGetDataFromDataSource = oCard.request({

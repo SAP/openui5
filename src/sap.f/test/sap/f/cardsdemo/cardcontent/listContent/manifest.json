@@ -1,9 +1,9 @@
 {
-	"sap.app": {
-		"type": "card",
-		"i18n": "i18n/i18n.properties"
-	},
 	"itemsContent": {
+		"sap.app": {
+			"id": "itemsContent",
+			"type": "card"
+		},
 		"sap.card": {
 			"type": "List",
 			"header": {
@@ -24,11 +24,9 @@
 						"src": "{icon}"
 					},
 					"title": {
-						"label": "{{title_label}}",
 						"value": "{Name}"
 					},
 					"description": {
-						"label": "{{description_label}}",
 						"value": "{Description}"
 					},
 					"highlight": "{state}",
@@ -41,6 +39,10 @@
 		}
 	},
 	"tasksContent": {
+		"sap.app": {
+			"id": "tasksContent",
+			"type": "card"
+		},
 		"sap.card": {
 			"type": "List",
 			"header": {
@@ -73,6 +75,10 @@
 		}
 	},
 	"paramsListCard": {
+		"sap.app": {
+			"id": "paramsListCard",
+			"type": "card"
+		},
 		"sap.card": {
 			"configuration": {
 				"parameters": {
@@ -97,7 +103,6 @@
 						"src": "{icon}"
 					},
 					"title": {
-						"label": "{{title_label}}",
 						"value": "{Name}, {{parameters.TODAY_ISO}}"
 					},
 					"description": {
@@ -109,6 +114,10 @@
 		}
 	},
 	"paramsDefaultParamFromManifest": {
+		"sap.app": {
+			"id": "paramsDefaultParamFromManifest",
+			"type": "card"
+		},
 		"sap.card": {
 			"configuration": {
 				"parameters": {
@@ -134,7 +143,6 @@
 						"src": "{icon}"
 					},
 					"title": {
-						"label": "{{title_label}}",
 						"value": "{Name}, {{parameters.TODAY_ISO}}"
 					},
 					"description": {
@@ -146,6 +154,10 @@
 		}
 	},
 	"paramsDefaultParamFromManifestOverwrite": {
+		"sap.app": {
+			"id": "paramsDefaultParamFromManifestOverwrite",
+			"type": "card"
+		},
 		"sap.card": {
 			"configuration": {
 				"parameters": {
@@ -173,7 +185,6 @@
 						"src": "{icon}"
 					},
 					"title": {
-						"label": "{{title_label}}",
 						"value": "{Name}, {{parameters.TODAY_ISO}}"
 					},
 					"description": {
@@ -185,6 +196,10 @@
 		}
 	},
 	"paramsInRequest": {
+		"sap.app": {
+			"id": "paramsInRequest",
+			"type": "card"
+		},
 		"sap.card": {
 			"configuration": {
 				"parameters": {
@@ -219,6 +234,10 @@
 		}
 	},
 	"paramsInManifestOnly": {
+		"sap.app": {
+			"id": "paramsInManifestOnly",
+			"type": "card"
+		},
 		"sap.card": {
 			"configuration": {
 				"parameters": {
@@ -246,7 +265,6 @@
 						"src": "{icon}"
 					},
 					"title": {
-						"label": "{{title_label}}",
 						"value": "{Name}, {{parameters.TODAY_ISO}}"
 					},
 					"description": {

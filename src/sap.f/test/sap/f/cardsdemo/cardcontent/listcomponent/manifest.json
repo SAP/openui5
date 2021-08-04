@@ -39,7 +39,7 @@
 			"type": "List",
 			"data": {
 				"request": {
-					"url": "./cardsdemo/cardcontent/someitems.json"
+					"url": "../someitems.json"
 				}
 			},
 			"item": {

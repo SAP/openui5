@@ -62,6 +62,7 @@
 						<w:Card
 							id="card2"
 							manifest="{manifests>/manifestTests/manifest}"
+							baseUrl="./"
 							width="500px"
 							height="auto">
 							<w:layoutData>

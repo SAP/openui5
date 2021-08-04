@@ -1,6 +1,7 @@
 {
   "_version": "1.8.0",
   "sap.app": {
+		"id": "cardsdemo.navigatioService.analytical2",
     "type": "card"
   },
   "sap.card": {
@@ -60,7 +61,7 @@
       "dimensionAxis": "color",
       "data": {
         "request": {
-          "url": "./cardsdemo/cardcontent/cost.json"
+          "url": "../cost.json"
         },
         "path": "/milk"
       },

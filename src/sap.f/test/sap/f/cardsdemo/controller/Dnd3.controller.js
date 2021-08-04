@@ -216,7 +216,8 @@ sap.ui.define([
 
 			if (oItemData.type === "card") {
 				var oCard = new Card(sID, {
-					layoutData: new GridContainerItemLayoutData({ rows: oItemData.rows, columns: oItemData.columns })
+					layoutData: new GridContainerItemLayoutData({ rows: oItemData.rows, columns: oItemData.columns }),
+					baseUrl: "./"
 				});
 				oCard.bindProperty("manifest", oItemData.manifest);
 				return oCard;

@@ -1,6 +1,10 @@
 {
 	"defaultHeader": {
 		"card1": {
+			"sap.app": {
+				"id": "cardsdemo.defaultHeader.card1",
+				"type": "card"
+			},
 			"sap.card": {
 				"header": {
 					"iconSrc": "sap-icon://accept",
@@ -16,6 +20,10 @@
 			}
 		},
 		"card2": {
+			"sap.app": {
+				"id": "cardsdemo.defaultHeader.card2",
+				"type": "card"
+			},
 			"sap.card": {
 				"header": {
 					"title": "This Line is a very very very very very very very very very very very very very very very very very very long one",
@@ -33,6 +41,10 @@
 			}
 		},
 		"card3": {
+			"sap.app": {
+				"id": "cardsdemo.defaultHeader.card3",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -49,6 +61,10 @@
 			}
 		},
 		"card4": {
+			"sap.app": {
+				"id": "cardsdemo.defaultHeader.card4",
+				"type": "card"
+			},
 			"sap.card": {
 				"header": {
 					"title": "This Line is the Title of sap.f.Card and a very very very very very very very very very very very very very very very very very very long one",
@@ -65,6 +81,10 @@
 			}
 		},
 		"defaultDataTimestamp": {
+			"sap.app": {
+				"id": "cardsdemo.defaultHeader.defaultDataTimestamp",
+				"type": "card"
+			},
 			"sap.card": {
 				"header": {
 					"title": "Card Title with dataTimestamp",
@@ -77,6 +97,10 @@
 	},
 	"splitter": {
 		"card1": {
+			"sap.app": {
+				"id": "cardsdemo.splitter.card1",
+				"type": "card"
+			},
 			"sap.card": {
 				"header": {
 					"icon": {
@@ -90,6 +114,10 @@
 			}
 		},
 		"card2": {
+			"sap.app": {
+				"id": "cardsdemo.splitter.card2",
+				"type": "card"
+			},
 			"sap.card": {
 				"header": {
 					"icon": {
@@ -103,6 +131,10 @@
 			}
 		},
 		"card3": {
+			"sap.app": {
+				"id": "cardsdemo.splitter.card3",
+				"type": "card"
+			},
 			"sap.card": {
 				"header": {
 					"icon": {
@@ -118,6 +150,10 @@
 	},
 	"listContent": {
 		"card13": {
+			"sap.app": {
+				"id": "cardsdemo.listContent.card13",
+				"type": "card"
+			},
 			"sap.card": {
 				"data": {
 					"request": {
@@ -164,6 +200,10 @@
 			}
 		},
 		"largeList": {
+			"sap.app": {
+				"id": "cardsdemo.listContent.largeList",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -205,6 +245,10 @@
 	},
 	"tableManifests": {
 		"tablecard1": {
+			"sap.app": {
+				"id": "cardsdemo.tableManifests.tablecard1",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "Table",
 				"header": {
@@ -247,6 +291,10 @@
 			}
 		},
 		"tablecard2": {
+			"sap.app": {
+				"id": "cardsdemo.tableManifests.tablecard2",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "Table",
 				"header": {
@@ -281,6 +329,10 @@
 			}
 		},
 		"tablecard3": {
+			"sap.app": {
+				"id": "cardsdemo.tableManifests.tablecard3",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "Table",
 				"header": {
@@ -321,6 +373,10 @@
 	},
 	"kpiManifests": {
 		"kpicard1": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.kpicard1",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -365,6 +421,10 @@
 			}
 		},
 		"kpicard2": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.kpicard2",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -395,6 +455,10 @@
 			}
 		},
 		"kpicard3": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.kpicard3",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -436,6 +500,10 @@
 			}
 		},
 		"kpicard4": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.kpicard4",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -471,6 +539,10 @@
 			}
 		},
 		"kpicard5": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.kpicard5",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "Numeric",
 				"header": {
@@ -480,6 +552,10 @@
 			}
 		},
 		"tablecard1": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.tablecard1",
+				"type": "card"
+			},
 			"sap.card": {
 				"headerPosition": "Bottom",
 				"header": {
@@ -540,6 +616,10 @@
 			}
 		},
 		"tablecard123": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.tablecard123",
+				"type": "card"
+			},
 			"sap.card": {
 				"headerPosition": "Top",
 				"header": {
@@ -579,6 +659,10 @@
 	},
 	"analyticalContent": {
 		"line": {
+			"sap.app": {
+				"id": "cardsdemo.analyticalContent.line",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "Analytical",
 				"header": {
@@ -658,6 +742,10 @@
 			}
 		},
 		"stackedColumn": {
+			"sap.app": {
+				"id": "cardsdemo.analyticalContent.stackedColumn",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "Analytical",
 				"header": {
@@ -737,6 +825,10 @@
 			}
 		},
 		"stackedBar": {
+			"sap.app": {
+				"id": "cardsdemo.analyticalContent.stackedBar",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "Analytical",
 				"header": {
@@ -810,6 +902,10 @@
 			}
 		},
 		"donut": {
+			"sap.app": {
+				"id": "cardsdemo.analyticalContent.donut",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "Analytical",
 				"header": {
@@ -881,6 +977,10 @@
 	},
 	"manifestTests": {
 		"manifest": {
+			"sap.app": {
+				"id": "cardsdemo.manifestTests.manifest",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -916,6 +1016,10 @@
 	},
 	"timelineContent": {
 		"card0": {
+			"sap.app": {
+				"id": "cardsdemo.timelineContent.card0",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "Timeline",
 				"header": {
@@ -961,6 +1065,10 @@
 			}
 		},
 		"card1": {
+			"sap.app": {
+				"id": "cardsdemo.timelineContent.card1",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "Timeline",
 				"header": {
@@ -1575,6 +1683,10 @@
 	},
 	"noHeaderNoContent": {
 		"i1": {
+			"sap.app": {
+				"id": "cardsdemo.noHeaderNoContent.i1",
+				"type": "card"
+			},
 			"sap.card": {
 				"data": {
 					"request": {
@@ -1605,6 +1717,10 @@
 			}
 		},
 		"i2": {
+			"sap.app": {
+				"id": "cardsdemo.noHeaderNoContent.i2",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -1620,6 +1736,10 @@
 			}
 		},
 		"i4": {
+			"sap.app": {
+				"id": "cardsdemo.noHeaderNoContent.i4",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "List",
 				"content": {
@@ -1667,6 +1787,10 @@
 	},
 	"minHeight": {
 		"donut": {
+			"sap.app": {
+				"id": "cardsdemo.minHeight.donut",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "Analytical",
 				"header": {
@@ -1737,6 +1861,10 @@
 			}
 		},
 		"largeList": {
+			"sap.app": {
+				"id": "cardsdemo.minHeight.largeList",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -1777,7 +1905,8 @@
 		},
 		"noContent": {
 			"sap.app": {
-				"id": "cardsdemo.minHeight.noContentCard"
+				"id": "cardsdemo.minHeight.noContentCard",
+				"type": "card"
 			},
 			"sap.card": {
 				"type": "List",
@@ -1922,6 +2051,10 @@
 	},
 	"filters": {
 		"filter": {
+			"sap.app": {
+				"id": "cardsdemo.filters.filter",
+				"type": "card"
+			},
 			"sap.card": {
 				"data": {
 					"request": {

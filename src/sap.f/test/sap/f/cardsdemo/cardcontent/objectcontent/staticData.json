@@ -1,4 +1,8 @@
 {
+	"sap.app": {
+		"id": "cardsdemo.object.cardStaticData",
+		"type": "card"
+	},
 	"sap.card": {
 		"type": "Object",
 		"header": {
@@ -32,7 +36,7 @@
 							"label": "Company Name",
 							"value": "SAP",
 							"icon": {
-								"src": "./images/Woman_avatar_02.png"
+								"src": "../../images/Woman_avatar_02.png"
 							}
 						}
 					]

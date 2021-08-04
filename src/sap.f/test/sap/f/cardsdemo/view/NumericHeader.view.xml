@@ -46,13 +46,13 @@
 					</f:header>
 				</f:Card>
 
-				<w:Card id="kpicard1" manifest="{manifests>/kpiManifests/kpicard1}" />
-				<w:Card id="kpicard2" manifest="{manifests>/kpiManifests/kpicard2}" />
-				<w:Card id="kpicard3" manifest="{manifests>/kpiManifests/kpicard3}" />
-				<w:Card id="kpicard4" manifest="{manifests>/kpiManifests/kpicard4}" />
-				<w:Card id="kpicard5" manifest="{manifests>/kpiManifests/kpicard5}" />
-				<w:Card id="tablecard1" manifest="{manifests>/kpiManifests/tablecard1}" />
-				<w:Card id="tablecard123" manifest="{manifests>/kpiManifests/tablecard123}" />
+				<w:Card id="kpicard1" manifest="{manifests>/kpiManifests/kpicard1}" baseUrl="./" />
+				<w:Card id="kpicard2" manifest="{manifests>/kpiManifests/kpicard2}" baseUrl="./" />
+				<w:Card id="kpicard3" manifest="{manifests>/kpiManifests/kpicard3}" baseUrl="./" />
+				<w:Card id="kpicard4" manifest="{manifests>/kpiManifests/kpicard4}" baseUrl="./" />
+				<w:Card id="kpicard5" manifest="{manifests>/kpiManifests/kpicard5}" baseUrl="./" />
+				<w:Card id="tablecard1" manifest="{manifests>/kpiManifests/tablecard1}" baseUrl="./" />
+				<w:Card id="tablecard123" manifest="{manifests>/kpiManifests/tablecard123}" baseUrl="./" />
 			</grid:CSSGrid>
 		</Panel>
 	</Page>

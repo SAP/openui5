@@ -18,8 +18,8 @@
 			<Panel>
 				<VBox>
 					<HBox>
-						<w:Card id="timeline" class="sapUiMediumMargin" manifest="{manifests>/timelineContent/card0}" width="300px" height="auto"/>
-						<w:Card id="timeline1" class="sapUiMediumMargin" manifest="{manifests>/timelineContent/card1}" width="300px" height="auto"/>
+						<w:Card id="timeline" class="sapUiMediumMargin" manifest="{manifests>/timelineContent/card0}" baseUrl="./" width="300px" height="auto"/>
+						<w:Card id="timeline1" class="sapUiMediumMargin" manifest="{manifests>/timelineContent/card1}" baseUrl="./" width="300px" height="auto"/>
 					</HBox>
 				</VBox>
 			</Panel>

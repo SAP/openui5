@@ -14,7 +14,7 @@
 		</subHeader>
 
 		<f:GridContainer id="grid1" class="sapUiSmallMargin">
-			<w:Card id="card" manifest="{manifests>/filters/filter}">
+			<w:Card id="card" manifest="{manifests>/filters/filter}" baseUrl="./">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>

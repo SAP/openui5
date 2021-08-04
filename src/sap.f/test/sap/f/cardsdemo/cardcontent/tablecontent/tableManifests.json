@@ -1,6 +1,7 @@
 {
 	"tablecard1": {
 		"sap.app": {
+			"id": "tablecard1",
 			"type": "card"
 		},
 		"sap.card": {
@@ -53,6 +54,7 @@
 	},
 	"tablecard2": {
 		"sap.app": {
+			"id": "tablecard2",
 			"type": "card"
 		},
 		"sap.card": {
@@ -100,6 +102,7 @@
 	},
 	"tablecard3": {
 		"sap.app": {
+			"id": "tablecard3",
 			"type": "card"
 		},
 		"sap.card": {

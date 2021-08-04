@@ -29,11 +29,13 @@
 			<w:Card
 				id="donutChart"
 				manifest="{manifests>/minHeight/donut}"
+				baseUrl="./"
 				width="400px"
 				class="sapUiTinyMargin" />
 			<w:Card
 				id="largeList"
 				manifest="{manifests>/minHeight/largeList}"
+				baseUrl="./"
 				width="400px"
 				class="sapUiTinyMargin" />
 			<w:Card
@@ -44,6 +46,7 @@
 			<w:Card
 				id="noContent"
 				manifest="{manifests>/minHeight/noContent}"
+				baseUrl="./"
 				width="400px"
 				class="sapUiTinyMargin" />
 			<f:Card

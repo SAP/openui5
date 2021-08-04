@@ -1,7 +1,7 @@
 {
 	"sap.app": {
-		"type": "card",
-		"i18n": "i18n/i18n.properties"
+		"id": "defaultManifestParameters",
+		"type": "card"
 	},
 	"sap.card": {
 		"configuration": {
@@ -22,7 +22,7 @@
 		"content": {
 			"data": {
 				"request": {
-					"url": "./cardsdemo/cardcontent/someitems.json"
+					"url": "./someitems.json"
 				}
 			},
 			"item": {
@@ -30,7 +30,6 @@
 					"src": "{icon}"
 				},
 				"title": {
-					"label": "{{title_label}}",
 					"value": "{Name}, {{parameters.TODAY_ISO}}"
 				},
 				"description": {
