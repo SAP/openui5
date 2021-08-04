@@ -892,6 +892,7 @@ sap.ui.define([
 		return oCachePromise.then(function (oCache) {
 			var bDataRequested = false,
 				oGroupLock,
+				sResolvedPath = that.getResolvedPath(),
 				sRelativePath = oCache || that.oOperation
 					? that.getRelativePath(sPath)
 					: undefined,
@@ -942,7 +943,7 @@ sap.ui.define([
 				}, function (oError) {
 					oGroupLock.unlock(true);
 					if (bDataRequested) {
-						that.oModel.reportError("Failed to read path " + that.sPath, sClassName,
+						that.oModel.reportError("Failed to read path " + sResolvedPath, sClassName,
 							oError);
 						that.fireDataReceived(oError.canceled ? {data : {}} : {error : oError});
 					}
