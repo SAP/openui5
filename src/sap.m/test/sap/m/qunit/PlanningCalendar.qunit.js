@@ -3002,7 +3002,7 @@ sap.ui.define([
 
 	QUnit.test("'_handleDateSelect()' sets a date to the row only if the selected date is new", function (assert) {
 		//prepare
-		var _rowSetDateSpy = this.spy(this.sut._oWeeksRow, 'setDate');
+		var _rowSetDateSpy = this.spy(this.sut._oWeeksRow, 'displayDate');
 
 		//act
 		this.sut._handleDateSelect({
