@@ -3405,8 +3405,22 @@ sap.ui.define([
 	 * @public
 	 */
 	Core.prototype.attachIntervalTimer = function(fnFunction, oListener) {
+		Log.warning(
+			"Usage of sap.ui.getCore().attachIntervalTimer() is deprecated. " +
+			"Please use 'IntervalTrigger.addListener()' from 'sap/ui/core/IntervalTrigger' module instead.",
+			"Deprecation",
+			null,
+			function() {
+				return {
+					type: "sap.ui.core.Core",
+					name: "Core"
+				};
+			});
+
 		if (!oIntervalTrigger) {
-			oIntervalTrigger = sap.ui.requireSync("sap/ui/core/IntervalTrigger");
+			// IntervalTrigger should be available via transitive dependency (sap/ui/core/ResizeHandler)
+			oIntervalTrigger = sap.ui.require("sap/ui/core/IntervalTrigger") ||
+				sap.ui.requireSync("sap/ui/core/IntervalTrigger"); // legacy-relevant: Sync fallback;
 		}
 		oIntervalTrigger.addListener(fnFunction, oListener);
 	};
