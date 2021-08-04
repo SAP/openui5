@@ -10,7 +10,7 @@ function(
 ) {
 	"use strict";
 
-	var SCROLLBAR_WIDTH = 11;
+	var SCROLLBAR_WIDTH = DOMUtil.getScrollbarWidth();
 	var RELATIVE_POS_LEFT = -35;
 
 	QUnit.module("Given that a container is rendered with a bigger content element (for scrollbars)", {
