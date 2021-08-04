@@ -206,19 +206,20 @@ sap.ui.define([
 	/**
 	 * Creates and appends div with CSS-hyphenated word.
 	 *
-	 * @param {string} sLang Language
+	 * @param {string} sLanguageOnThePage Language (<code>lang</code> attribute of the HTML page)
+	 * @param {string} sTestingWord Long word for that language
 	 * @private
 	 */
-	function createTest(sLang) {
-
+	function createTest(sLanguageOnThePage, sTestingWord) {
 		if (!fakeBody) {
 			fakeBody = document.createElement("body");
 		}
+
 		var testDiv = document.createElement("div");
-		testDiv.lang = sLang;
-		testDiv.id = sLang;
+		testDiv.lang = sLanguageOnThePage;
+		testDiv.id = sLanguageOnThePage;
 		testDiv.style.cssText = css;
-		testDiv.appendChild(document.createTextNode(HyphenationTestingWords[sLang.toLowerCase()]));
+		testDiv.appendChild(document.createTextNode(sTestingWord));
 		fakeBody.appendChild(testDiv);
 	}
 
@@ -281,7 +282,7 @@ sap.ui.define([
 
 		var sLanguage = oLocale.getLanguage().toLowerCase();
 
-		// adjustment of the language to corresponds to Hyphenopoly pattern files (.hpb files)
+		// adjustment of the language to correspond to Hyphenopoly pattern files (.hpb files)
 		switch (sLanguage) {
 			case "en":
 				sLanguage = "en-us";
@@ -301,7 +302,8 @@ sap.ui.define([
 	}
 
 	/**
-	 * The "lang" attribute of the "html" tag determines the behavior of the native hyphenation.
+	 * The <code>lang</code> attribute of the closest parent determines the behavior of the native hyphenation.
+	 * Typically this is the HTML tag and its value can be read with the <code>getLocale</code> function.
 	 *
 	 * @param {string} [sLang=sap.ui.getCore().getConfiguration().getLocale().toString()] The language to get. If left empty - the global application language will be returned
 	 * @returns {string} The language code
@@ -440,15 +442,16 @@ sap.ui.define([
 	 * @public
 	 */
 	Hyphenation.prototype.canUseNativeHyphenation = function (sLang) {
-		var sLanguageOnThePage = getLanguageAsSetOnThePage(sLang);
-		var bCanUseNativeHyphenation;
+		var sLanguageOnThePage = getLanguageAsSetOnThePage(sLang),
+			sMappedLanguage = getLanguage(sLang),
+			bCanUseNativeHyphenation;
 
-		if (!this.isLanguageSupported(sLang)) {
+		if (!this.isLanguageSupported(sMappedLanguage)) {
 			return null;
 		}
 
 		if (!oBrowserSupportCSS.hasOwnProperty(sLanguageOnThePage)) {
-			createTest(sLanguageOnThePage);
+			createTest(sLanguageOnThePage, HyphenationTestingWords[sMappedLanguage.toLowerCase()]);
 			var testContainer = appendTests(document.documentElement);
 			if (testContainer !== null) {
 				var el = document.getElementById(sLanguageOnThePage);
