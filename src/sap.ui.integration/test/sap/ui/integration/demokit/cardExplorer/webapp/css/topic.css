@@ -174,3 +174,13 @@ code {
 	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 	font-size: 0.875rem;
 }
+
+.overview .imageContainer {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+}
+
+.overview .imageContainer img {
+	padding: 0 0.5rem 0.5rem 0;
+}
