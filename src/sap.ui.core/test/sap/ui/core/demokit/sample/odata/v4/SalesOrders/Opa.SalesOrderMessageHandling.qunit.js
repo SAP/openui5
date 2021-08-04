@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/sample/odata/v4/SalesOrders/tests/MessageHandling",
 	"sap/ui/test/opaQunit"
 ], function (MessageHandling, opaTest) {

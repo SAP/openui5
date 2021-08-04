@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/sample/odata/v4/SalesOrders/tests/WriteNonDeferredGroup",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/TestUtils"
