@@ -2,6 +2,8 @@
  * ${copyright}
  */
 
+/* global Set */
+
 // Provides class sap.ui.base.DataType
 sap.ui.define([
 	'sap/base/util/ObjectPath',
@@ -612,30 +614,34 @@ sap.ui.define([
 
 	// ---- minimal support for interface types -------------------------------------------------------------------
 
-	var mInterfaces = {};
+	var oInterfaces = new Set();
 
 	/**
 	 * Registers the given array of type names as known interface types.
 	 * Only purpose is to enable the {@link #isInterfaceType} check.
 	 * @param {string[]} aTypes interface types to be registered
 	 * @private
-	 * @ui5-restricted sap.ui.base,sap.ui.core.Core
+	 * @ui5-restricted sap.ui.core.Core
 	 */
 	DataType.registerInterfaceTypes = function(aTypes) {
-		for (var i = 0; i < aTypes.length; i++) {
-			// eslint-disable-next-line no-new-wrappers
-			ObjectPath.set(aTypes[i], mInterfaces[aTypes[i]] = new String(aTypes[i]));
-		}
+		aTypes.forEach(function(sType) {
+			oInterfaces.add(sType);
+
+			// Defining the interface on global namespace for compatibility reasons.
+			// This has never been a public feature and it is strongly discouraged it be relied upon.
+			// An interface must always be referenced by a string literal, not via the global namespace.
+			ObjectPath.set(sType, sType);
+		});
 	};
 
 	/**
 	 * @param {string} sType name of type to check
 	 * @returns {boolean} whether the given type is known to be an interface type
 	 * @private
-	 * @ui5-restricted sap.ui.base,sap.ui.core.Core
+	 * @ui5-restricted sap.ui.base.ManagedObject
 	 */
 	DataType.isInterfaceType = function(sType) {
-		return mInterfaces.hasOwnProperty(sType) && ObjectPath.get(sType) === mInterfaces[sType];
+		return oInterfaces.has(sType);
 	};
 
 
