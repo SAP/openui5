@@ -142,239 +142,308 @@ function(
 	}, function() {
 		QUnit.test("the createControl is processing parameters and is working with default namespaces", function (assert) {
 			var sButtonText = "ButtonText";
-			var oButtonElement = XmlTreeModifier.createControl('sap.m.Button', this.oComponent, this.oXmlView, "testComponent---myView--MyButton", {'text' : sButtonText});
-			assert.equal(oButtonElement.getAttribute("text"), sButtonText);
-			assert.equal(oButtonElement.localName, "Button");
-			assert.equal(oButtonElement.namespaceURI, "sap.m");
-			assert.equal(oButtonElement.getAttribute("id"), "testComponent---myView--MyButton");
+			return XmlTreeModifier.createControl('sap.m.Button', this.oComponent, this.oXmlView, "testComponent---myView--MyButton", {'text' : sButtonText})
+				.then(function (oButtonElement) {
+					assert.equal(oButtonElement.getAttribute("text"), sButtonText);
+					assert.equal(oButtonElement.localName, "Button");
+					assert.equal(oButtonElement.namespaceURI, "sap.m");
+					assert.equal(oButtonElement.getAttribute("id"), "testComponent---myView--MyButton");
+				});
 		});
 
 		QUnit.test(" the createControl is adding missing namespaces ", function (assert) {
-			var oCustomDataElement = XmlTreeModifier.createControl('sap.ui.core.CustomData', this.oComponent, this.oXmlView, "", {'key' : "someKey", "value": "someValue"});
-			assert.equal(oCustomDataElement.localName, "CustomData");
-			assert.equal(oCustomDataElement.namespaceURI, "sap.ui.core");
+			return XmlTreeModifier.createControl('sap.ui.core.CustomData', this.oComponent, this.oXmlView, "", {'key' : "someKey", "value": "someValue"})
+				.then(function (oCustomDataElement) {
+					assert.equal(oCustomDataElement.localName, "CustomData");
+					assert.equal(oCustomDataElement.namespaceURI, "sap.ui.core");
+				});
 		});
 
 		QUnit.test(" the createControl is using existing namespaces ", function (assert) {
-			var oVerticalLayout = XmlTreeModifier.createControl('sap.ui.layout.VerticalLayout', this.oComponent, this.oXmlView);
-			assert.equal(oVerticalLayout.localName, "VerticalLayout");
-			assert.equal(oVerticalLayout.namespaceURI, "sap.ui.layout");
+			return XmlTreeModifier.createControl('sap.ui.layout.VerticalLayout', this.oComponent, this.oXmlView)
+				.then(function (oVerticalLayout) {
+					assert.equal(oVerticalLayout.localName, "VerticalLayout");
+					assert.equal(oVerticalLayout.namespaceURI, "sap.ui.layout");
+				});
 		});
 
 		QUnit.test(" the createControl is called for async return value", function (assert) {
-			var oPromise = XmlTreeModifier.createControl('sap.ui.layout.VerticalLayout', this.oComponent, this.oXmlView, undefined, undefined, true);
+			var oPromise = XmlTreeModifier.createControl('sap.ui.layout.VerticalLayout', this.oComponent, this.oXmlView, undefined, undefined);
 			assert.ok(oPromise instanceof Promise, "then a promise is returned");
 			return oPromise
-			.then(function(oVerticalLayout) {
-				assert.equal(oVerticalLayout.localName, "VerticalLayout", "then the promise contains the requested control");
-			});
+				.then(function(oVerticalLayout) {
+					assert.equal(oVerticalLayout.localName, "VerticalLayout", "then the promise contains the requested control");
+				});
 		});
 
 		QUnit.test(" the createControl is called for async return value and control is already created", function (assert) {
 			sandbox.stub(XmlTreeModifier, 'bySelector').returns(true);
-			var oPromise = XmlTreeModifier.createControl('sap.ui.layout.VerticalLayout', this.oComponent, this.oXmlView, undefined, undefined, true);
+			var oPromise = XmlTreeModifier.createControl('sap.ui.layout.VerticalLayout', this.oComponent, this.oXmlView, undefined, undefined);
 			assert.ok(oPromise instanceof Promise, "then a promise is returned");
 			return oPromise
-			.catch(function(oError) {
-				assert.equal(oError.message, "Can't create a control with duplicated ID undefined", "then the promise is rejected with the correct error message");
-			});
+				.catch(function(oError) {
+					assert.equal(oError.message, "Can't create a control with duplicated ID undefined", "then the promise is rejected with the correct error message");
+				});
 		});
 
 		QUnit.test(" the createControl is called for sync return value and control is already created", function (assert) {
-			sandbox.stub(XmlTreeModifier, 'bySelector').returns(true);
-			assert.throws(function() {
-				XmlTreeModifier.createControl('sap.ui.layout.VerticalLayout', this.oComponent, this.oXmlView);
-			}, /Can't create a control with duplicated ID undefined/,
-			"then the right exception is thrown");
+			sandbox.stub(XmlTreeModifier, 'bySelector').resolves(true);
+			return XmlTreeModifier.createControl('sap.ui.layout.VerticalLayout', this.oComponent, this.oXmlView)
+				.catch(function (vError) {
+					assert.ok(vError.message.indexOf("Can't create a control with duplicated ID undefined") > -1, "then the right exception is thrown");
+				});
 		});
 
 		QUnit.test("the default aggregation is returned if aggregation node is not available", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
-			var aDefaultAggregationElements = XmlTreeModifier.getAggregation(oVBox, 'items');
-			assert.equal(aDefaultAggregationElements.length, 2);
-			assert.equal(aDefaultAggregationElements[0].localName, "Label");
-			assert.equal(aDefaultAggregationElements[0].namespaceURI, "sap.m");
-			assert.equal(aDefaultAggregationElements[0].localName, "Label");
-			assert.equal(aDefaultAggregationElements[0].namespaceURI, "sap.m");
+			return XmlTreeModifier.getAggregation(oVBox, 'items')
+				.then(function (aDefaultAggregationElements) {
+					assert.equal(aDefaultAggregationElements.length, 2);
+					assert.equal(aDefaultAggregationElements[0].localName, "Label");
+					assert.equal(aDefaultAggregationElements[0].namespaceURI, "sap.m");
+					assert.equal(aDefaultAggregationElements[0].localName, "Label");
+					assert.equal(aDefaultAggregationElements[0].namespaceURI, "sap.m");
+				});
 		});
 
 		QUnit.test("the default aggregation is returned if aggregation node is available", function (assert) {
 			var oHBox = XmlTreeModifier._children(this.oXmlView)[1];
-			var aDefaultAggregationElements = XmlTreeModifier.getAggregation(oHBox, 'items');
-			assert.equal(aDefaultAggregationElements.length, 1);
-			assert.equal(aDefaultAggregationElements[0].localName, "Text");
+			return XmlTreeModifier.getAggregation(oHBox, 'items')
+				.then(function (aDefaultAggregationElements) {
+					assert.equal(aDefaultAggregationElements[0].localName, "Text");
+					assert.equal(aDefaultAggregationElements.length, 1);
+				});
 		});
 
 		QUnit.test("the empty non default aggregation is returned ", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
-			var aNonDefaultAggregationElements = XmlTreeModifier.getAggregation(oVBox, 'customData');
-			assert.equal(aNonDefaultAggregationElements.length, 0);
+			return XmlTreeModifier.getAggregation(oVBox, 'customData')
+				.then(function (aNonDefaultAggregationElements) {
+					assert.equal(aNonDefaultAggregationElements.length, 0);
+				});
 		});
 
 		QUnit.test("the empty non default aggregation is returned when no default aggregation exists", function (assert) {
 			var oBar = XmlTreeModifier._children(this.oXmlView)[2];
-			var aNonDefaultAggregationElements = XmlTreeModifier.getAggregation(oBar, 'contentRight');
-			assert.equal(aNonDefaultAggregationElements.length, 0);
+			return XmlTreeModifier.getAggregation(oBar, 'contentRight')
+				.then(function (aNonDefaultAggregationElements) {
+					assert.equal(aNonDefaultAggregationElements.length, 0);
+				});
 		});
 
 		QUnit.test("the empty single aggregation is returning nothing", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
-			var vAggregationElements = XmlTreeModifier.getAggregation(oVBox, 'tooltip');
-			assert.ok(!vAggregationElements);
+			return XmlTreeModifier.getAggregation(oVBox, 'tooltip')
+				.then(function (vAggregationElements) {
+					assert.ok(!vAggregationElements);
+				});
 		});
 
 		QUnit.test("the not in xml view available single aggregation is returning nothing", function (assert) {
 			var oLabel = XmlTreeModifier._children(this.oXmlView)[0].childNodes[2];
-			var vAggregationElements = XmlTreeModifier.getAggregation(oLabel, 'tooltip');
-			assert.ok(!vAggregationElements);
+			return XmlTreeModifier.getAggregation(oLabel, 'tooltip')
+				.then(function (vAggregationElements) {
+					assert.ok(!vAggregationElements);
+				});
 		});
 
 		QUnit.test("the single aggregation is returning the control node directly", function (assert) {
 			var oHBox = XmlTreeModifier._children(this.oXmlView)[1];
-			var oAggregationElements = XmlTreeModifier.getAggregation(oHBox, 'tooltip');
-			assert.equal(oAggregationElements.localName, "TooltipBase");
-			assert.equal(oAggregationElements.namespaceURI, "sap.ui.core");
+			return XmlTreeModifier.getAggregation(oHBox, 'tooltip')
+				.then(function (oAggregationElements) {
+					assert.equal(oAggregationElements.localName, "TooltipBase");
+					assert.equal(oAggregationElements.namespaceURI, "sap.ui.core");
+				});
 		});
 
 		QUnit.test("the altType aggregation returns the property value", function (assert) {
 			var oBar = XmlTreeModifier._children(this.oXmlView)[2];
-			var vAggregationElements = XmlTreeModifier.getAggregation(oBar, 'tooltip');
-			assert.equal(vAggregationElements, "barTooltip");
+			return XmlTreeModifier.getAggregation(oBar, 'tooltip')
+				.then(function (vAggregationElements) {
+					assert.equal(vAggregationElements, "barTooltip");
+				});
 		});
 
 		QUnit.test("attribute specified inline is returned in custom data aggregation", function (assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_INLINE_CUSTOM_DATA, this.oXmlView);
-			var aCustomData = XmlTreeModifier.getAggregation(oControl, 'customData');
-			assert.equal(aCustomData.length, 1, "the single custom data is returned");
-			assert.equal(XmlTreeModifier.getProperty(aCustomData[0], "key"), "someInlineAppCustomData", " inline specified custom data is available");
-			assert.equal(XmlTreeModifier.getProperty(aCustomData[0], "value"), "inlineValue", " inline specified custom data is available");
+			return XmlTreeModifier.getAggregation(oControl, 'customData')
+				.then(function (aCustomData) {
+					assert.equal(aCustomData.length, 1, "the single custom data is returned");
+					return Promise.all([
+						XmlTreeModifier.getProperty(aCustomData[0], "key"),
+						XmlTreeModifier.getProperty(aCustomData[0], "value")
+					]);
+				})
+				.then(function (aProperties) {
+					assert.equal(aProperties[0], "someInlineAppCustomData", " inline specified custom data is available");
+					assert.equal(aProperties[1], "inlineValue", " inline specified custom data is available");
+				});
 		});
 
 		QUnit.test("all the namespaced attributes are returned in custom data aggregation", function (assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_CUSTOM_DATA, this.oXmlView);
-			var aCustomData = XmlTreeModifier.getAggregation(oControl, 'customData');
-			assert.equal(aCustomData.length, 3, "all 3 cases for custom data are returned");
-			assert.equal(XmlTreeModifier.getProperty(aCustomData[0], "key"), "fullCustomData", " fully specified custom data is available");
-			assert.equal(XmlTreeModifier.getProperty(aCustomData[0], "value"), "full", " fully specified custom data is available");
-			assert.equal(XmlTreeModifier.getProperty(aCustomData[1], "key"), "someInlineAppCustomData", " inline specified custom data is available");
-			assert.equal(XmlTreeModifier.getProperty(aCustomData[1], "value"), "inlineValue", " inline specified custom data is available");
-			assert.equal(XmlTreeModifier.getProperty(aCustomData[2], "key"), "sap-ui-custom-settings", " fully specified custom data is available");
-			assert.deepEqual(XmlTreeModifier.getProperty(aCustomData[2], "value"), {
-				"sap.ui.fl" : {
-					"flexibility" : CHANGE_HANDLER_PATH
-				}
-			}, " sap-ui-custom-settings custom data is available");
+			return XmlTreeModifier.getAggregation(oControl, 'customData')
+				.then(function (aCustomData) {
+					assert.equal(aCustomData.length, 3, "all 3 cases for custom data are returned");
+					return Promise.all([
+						XmlTreeModifier.getProperty(aCustomData[0], "key"),
+						XmlTreeModifier.getProperty(aCustomData[0], "value"),
+						XmlTreeModifier.getProperty(aCustomData[1], "key"),
+						XmlTreeModifier.getProperty(aCustomData[1], "value"),
+						XmlTreeModifier.getProperty(aCustomData[2], "key"),
+						XmlTreeModifier.getProperty(aCustomData[2], "value")
+					]);
+				})
+				.then(function (aProperties) {
+					assert.equal(aProperties[0], "fullCustomData", " fully specified custom data is available");
+					assert.equal(aProperties[1], "full", " fully specified custom data is available");
+					assert.equal(aProperties[2], "someInlineAppCustomData", " inline specified custom data is available");
+					assert.equal(aProperties[3], "inlineValue", " inline specified custom data is available");
+					assert.equal(aProperties[4], "sap-ui-custom-settings", " fully specified custom data is available");
+					assert.deepEqual(aProperties[5], {
+						"sap.ui.fl" : {
+							"flexibility" : CHANGE_HANDLER_PATH
+						}
+					}, " sap-ui-custom-settings custom data is available");
+				});
 		});
 
 		QUnit.test("createAndAddCustomData adds the custom data properly, and getAggregation returns them", function(assert) {
 			assert.expect(2);
+			var fnCheck = function(oCustomData) {
+				return Promise.all([
+					XmlTreeModifier.getProperty(oCustomData, "key"),
+					XmlTreeModifier.getProperty(oCustomData, "value")
+				]).then(function (aProperties) {
+					if (aProperties[0] === "myKey") {
+						assert.equal(aProperties[1], "myValue", "the newly added custom data is returned");
+					}
+				});
+			};
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_CUSTOM_DATA, this.oXmlView);
-			XmlTreeModifier.createAndAddCustomData(oControl, "myKey", "myValue");
-			var aCustomData = XmlTreeModifier.getAggregation(oControl, 'customData');
-			assert.equal(aCustomData.length, 4, "the new custom data was returned");
-			aCustomData.some(function(oCustomData) {
-				if (XmlTreeModifier.getProperty(oCustomData, "key") === "myKey") {
-					assert.equal(XmlTreeModifier.getProperty(oCustomData, "value"), "myValue", "the newly added custom data is returned");
-					return true;
-				}
-			});
+			return XmlTreeModifier.createAndAddCustomData(oControl, "myKey", "myValue")
+				.then(XmlTreeModifier.getAggregation.bind(XmlTreeModifier, oControl, 'customData'))
+				.then(function (aCustomData) {
+					assert.equal(aCustomData.length, 4, "the new custom data was returned");
+					return Promise.all(aCustomData.map(fnCheck, Promise.resolve()));
+				});
 		});
 
 		QUnit.test("the first non default aggregation childNode is added under a newly created aggregation node ", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
-			var oCustomDataElement = XmlTreeModifier.createControl('sap.ui.core.CustomData', this.oComponent, this.oXmlView, "someId", {'key' : "someKey", "value": "someValue"});
-			XmlTreeModifier.insertAggregation(oVBox, "customData", oCustomDataElement, 0, this.oXmlView);
-			assert.equal(XmlTreeModifier._children(oVBox)[3].localName, "customData", "aggregation node is appended at the end");
-			assert.equal(XmlTreeModifier._children(oVBox)[3].namespaceURI, "sap.m", "aggregation node is added with parents namespaceURI");
-			var aNonDefaultAggregationElements = XmlTreeModifier.getAggregation(oVBox, 'customData');
-			assert.equal(aNonDefaultAggregationElements.length, 1);
-			assert.equal(aNonDefaultAggregationElements[0].localName, "CustomData");
-			assert.equal(aNonDefaultAggregationElements[0].namespaceURI, "sap.ui.core");
+			return XmlTreeModifier.createControl('sap.ui.core.CustomData', this.oComponent, this.oXmlView, "someId", {'key' : "someKey", "value": "someValue"})
+				.then(function (oCustomDataElement) {
+					return XmlTreeModifier.insertAggregation(oVBox, "customData", oCustomDataElement, 0, this.oXmlView);
+				}.bind(this))
+				.then(function () {
+					assert.equal(XmlTreeModifier._children(oVBox)[3].localName, "customData", "aggregation node is appended at the end");
+					assert.equal(XmlTreeModifier._children(oVBox)[3].namespaceURI, "sap.m", "aggregation node is added with parents namespaceURI");
+					return XmlTreeModifier.getAggregation(oVBox, 'customData');
+				})
+				.then(function (aNonDefaultAggregationElements) {
+					assert.equal(aNonDefaultAggregationElements.length, 1);
+					assert.equal(aNonDefaultAggregationElements[0].localName, "CustomData");
+					assert.equal(aNonDefaultAggregationElements[0].namespaceURI, "sap.ui.core");
+				});
 		});
 
 		QUnit.test("a child is added to the default aggregation ", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
-			var oCustomDataElement = XmlTreeModifier.createControl('sap.m.Text', this.oComponent, this.oXmlView);
-			XmlTreeModifier.insertAggregation(oVBox, "items", oCustomDataElement, 0, this.oXmlView);
-			var aChildNodes = XmlTreeModifier._children(oVBox);
-			assert.equal(aChildNodes.length, 4, "new control is added directly as child to the parent node");
-			assert.equal(aChildNodes[0].localName, "tooltip");
-			assert.equal(aChildNodes[0].namespaceURI, "sap.m");
-			assert.equal(aChildNodes[1].localName, "Text");
-			assert.equal(aChildNodes[1].namespaceURI, "sap.m");
-			assert.equal(aChildNodes[2].localName, "Label");
-			assert.equal(aChildNodes[2].namespaceURI, "sap.m");
-			assert.equal(aChildNodes[3].localName, "Label");
-			assert.equal(aChildNodes[3].namespaceURI, "sap.m");
-			var aNonDefaultAggregationElements = XmlTreeModifier.getAggregation(oVBox, 'items');
-			assert.equal(aNonDefaultAggregationElements.length, 3);
-			assert.equal(aNonDefaultAggregationElements[0].localName, "Text");
-			assert.equal(aNonDefaultAggregationElements[0].namespaceURI, "sap.m");
-			assert.equal(aNonDefaultAggregationElements[1].localName, "Label");
-			assert.equal(aNonDefaultAggregationElements[1].namespaceURI, "sap.m");
-			assert.equal(aNonDefaultAggregationElements[2].localName, "Label");
-			assert.equal(aNonDefaultAggregationElements[2].namespaceURI, "sap.m");
+			return XmlTreeModifier.createControl('sap.m.Text', this.oComponent, this.oXmlView)
+				.then(function (oCustomDataElement) {
+					return XmlTreeModifier.insertAggregation(oVBox, "items", oCustomDataElement, 0, this.oXmlView);
+				}.bind(this))
+				.then(function () {
+					var aChildNodes = XmlTreeModifier._children(oVBox);
+					assert.equal(aChildNodes.length, 4, "new control is added directly as child to the parent node");
+					assert.equal(aChildNodes[0].localName, "tooltip");
+					assert.equal(aChildNodes[0].namespaceURI, "sap.m");
+					assert.equal(aChildNodes[1].localName, "Text");
+					assert.equal(aChildNodes[1].namespaceURI, "sap.m");
+					assert.equal(aChildNodes[2].localName, "Label");
+					assert.equal(aChildNodes[2].namespaceURI, "sap.m");
+					assert.equal(aChildNodes[3].localName, "Label");
+					assert.equal(aChildNodes[3].namespaceURI, "sap.m");
+					return XmlTreeModifier.getAggregation(oVBox, 'items');
+				})
+				.then(function (aNonDefaultAggregationElements) {
+					assert.equal(aNonDefaultAggregationElements.length, 3);
+					assert.equal(aNonDefaultAggregationElements[0].localName, "Text");
+					assert.equal(aNonDefaultAggregationElements[0].namespaceURI, "sap.m");
+					assert.equal(aNonDefaultAggregationElements[1].localName, "Label");
+					assert.equal(aNonDefaultAggregationElements[1].namespaceURI, "sap.m");
+					assert.equal(aNonDefaultAggregationElements[2].localName, "Label");
+					assert.equal(aNonDefaultAggregationElements[2].namespaceURI, "sap.m");
+				});
 		});
 
 		QUnit.test("a child is removed from the default aggregation ", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
 			var oLabel = XmlTreeModifier._children(this.oXmlView)[0].childNodes[2];
-			XmlTreeModifier.removeAggregation(oVBox, "items", oLabel);
-			var aChildNodes = XmlTreeModifier._children(oVBox);
-			assert.equal(aChildNodes.length, 2);
-			assert.equal(aChildNodes[0].localName, "tooltip");
-			assert.equal(aChildNodes[0].namespaceURI, "sap.m");
-			assert.equal(aChildNodes[1].localName, "Label");
-			assert.equal(aChildNodes[1].namespaceURI, "sap.m");
+			return XmlTreeModifier.removeAggregation(oVBox, "items", oLabel)
+				.then(function () {
+					var aChildNodes = XmlTreeModifier._children(oVBox);
+					assert.equal(aChildNodes.length, 2);
+					assert.equal(aChildNodes[0].localName, "tooltip");
+					assert.equal(aChildNodes[0].namespaceURI, "sap.m");
+					assert.equal(aChildNodes[1].localName, "Label");
+					assert.equal(aChildNodes[1].namespaceURI, "sap.m");
+				});
 		});
 
 		QUnit.test("a child is removed from the aggregation and then destroyed + destroy without removing", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
 			var oLabel = XmlTreeModifier._children(this.oXmlView)[0].childNodes[2];
-			XmlTreeModifier.removeAggregation(oVBox, "items", oLabel);
-			var aChildNodes = XmlTreeModifier._children(oVBox);
-			assert.equal(aChildNodes.length, 2);
-			assert.equal(aChildNodes[0].localName, "tooltip");
-			assert.equal(aChildNodes[0].namespaceURI, "sap.m");
-			assert.equal(aChildNodes[1].localName, "Label");
-			assert.equal(aChildNodes[1].namespaceURI, "sap.m");
+			return XmlTreeModifier.removeAggregation(oVBox, "items", oLabel)
+				.then(function () {
+					var aChildNodes = XmlTreeModifier._children(oVBox);
+					assert.equal(aChildNodes.length, 2);
+					assert.equal(aChildNodes[0].localName, "tooltip");
+					assert.equal(aChildNodes[0].namespaceURI, "sap.m");
+					assert.equal(aChildNodes[1].localName, "Label");
+					assert.equal(aChildNodes[1].namespaceURI, "sap.m");
 
-			// destroy after remove
-			XmlTreeModifier.destroy(oLabel);
-			// nothing changes
-			aChildNodes = XmlTreeModifier._children(oVBox);
-			assert.equal(aChildNodes.length, 2);
-			assert.equal(aChildNodes[0].localName, "tooltip");
-			assert.equal(aChildNodes[0].namespaceURI, "sap.m");
-			assert.equal(aChildNodes[1].localName, "Label");
-			assert.equal(aChildNodes[1].namespaceURI, "sap.m");
+					// destroy after remove
+					XmlTreeModifier.destroy(oLabel);
+					// nothing changes
+					aChildNodes = XmlTreeModifier._children(oVBox);
+					assert.equal(aChildNodes.length, 2);
+					assert.equal(aChildNodes[0].localName, "tooltip");
+					assert.equal(aChildNodes[0].namespaceURI, "sap.m");
+					assert.equal(aChildNodes[1].localName, "Label");
+					assert.equal(aChildNodes[1].namespaceURI, "sap.m");
 
-			// destroy the other label
-			oLabel = aChildNodes[1];
-			XmlTreeModifier.destroy(oLabel);
+					// destroy the other label
+					oLabel = aChildNodes[1];
+					XmlTreeModifier.destroy(oLabel);
 
-			// the label is removed
-			aChildNodes = XmlTreeModifier._children(oVBox);
-			assert.equal(aChildNodes.length, 1);
-			assert.equal(aChildNodes[0].localName, "tooltip");
-			assert.equal(aChildNodes[0].namespaceURI, "sap.m");
+					// the label is removed
+					aChildNodes = XmlTreeModifier._children(oVBox);
+					assert.equal(aChildNodes.length, 1);
+					assert.equal(aChildNodes[0].localName, "tooltip");
+					assert.equal(aChildNodes[0].namespaceURI, "sap.m");
+				});
 		});
 
 		QUnit.test("removeAll from the default aggregation ", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
-			XmlTreeModifier.removeAllAggregation(oVBox, "items");
-			var aChildNodes = XmlTreeModifier._children(oVBox);
-			assert.equal(aChildNodes.length, 1);
-			assert.equal(aChildNodes[0].localName, "tooltip");
-			assert.equal(aChildNodes[0].namespaceURI, "sap.m");
+			return XmlTreeModifier.removeAllAggregation(oVBox, "items")
+				.then(function () {
+					var aChildNodes = XmlTreeModifier._children(oVBox);
+					assert.equal(aChildNodes.length, 1);
+					assert.equal(aChildNodes[0].localName, "tooltip");
+					assert.equal(aChildNodes[0].namespaceURI, "sap.m");
+				});
 		});
 
 		QUnit.test("removeAll from the default aggregation ", function (assert) {
 			var oHBox = XmlTreeModifier._children(this.oXmlView)[1];
-			XmlTreeModifier.removeAllAggregation(oHBox, "items");
-			assert.equal(oHBox.childNodes.length, 1);
-			assert.equal(oHBox.childNodes[0].localName, "tooltip");
-			assert.equal(oHBox.childNodes[0].namespaceURI, "sap.m");
+			return XmlTreeModifier.removeAllAggregation(oHBox, "items")
+				.then(function () {
+					assert.equal(oHBox.childNodes.length, 1);
+					assert.equal(oHBox.childNodes[0].localName, "tooltip");
+					assert.equal(oHBox.childNodes[0].namespaceURI, "sap.m");
+				});
 		});
 
 		QUnit.test("getVisible", function (assert) {
@@ -382,9 +451,15 @@ function(
 			var aChildNodes = XmlTreeModifier._children(oVBox);
 			var oVisibleLabel = aChildNodes[1];
 			var oInvisibleLabel = aChildNodes[2];
-			assert.strictEqual(XmlTreeModifier.getVisible(oVBox), true, "not stating visible in xml means visible");
-			assert.strictEqual(XmlTreeModifier.getVisible(oVisibleLabel), true, "visible in xml");
-			assert.strictEqual(XmlTreeModifier.getVisible(oInvisibleLabel), false, "invisible in xml");
+			return Promise.all([
+				XmlTreeModifier.getVisible(oVBox),
+				XmlTreeModifier.getVisible(oVisibleLabel),
+				XmlTreeModifier.getVisible(oInvisibleLabel)
+			]).then(function (aIsVisible) {
+				assert.strictEqual(aIsVisible[0], true, "not stating visible in xml means visible");
+				assert.strictEqual(aIsVisible[1], true, "visible in xml");
+				assert.strictEqual(aIsVisible[2], false, "invisible in xml");
+			});
 		});
 
 		QUnit.test("setVisible", function (assert) {
@@ -426,39 +501,55 @@ function(
 
 			var oVisibleLabel = aChildNodes[1];
 			var oInvisibleLabel = aChildNodes[2];
-			assert.strictEqual(XmlTreeModifier.getProperty(oVisibleLabel, "design"), "Standard", "default value, property not in xml");
-			assert.strictEqual(XmlTreeModifier.getProperty(oVisibleLabel, "text"), "", "default value, property not in xml");
-			assert.strictEqual(XmlTreeModifier.getProperty(oInvisibleLabel, "design"), "Bold", "property from xml");
+			return Promise.all([
+				XmlTreeModifier.getProperty(oVisibleLabel, "design"),
+				XmlTreeModifier.getProperty(oVisibleLabel, "text"),
+				XmlTreeModifier.getProperty(oInvisibleLabel, "design")
+			]).then(function (aProperties) {
+				assert.strictEqual(aProperties[0], "Standard", "default value, property not in xml");
+				assert.strictEqual(aProperties[1], "", "default value, property not in xml");
+				assert.strictEqual(aProperties[2], "Bold", "property from xml");
+			});
 		});
 
 		QUnit.test("getProperty for properties of type object (double escaped case)", function (assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
-			var mData = XmlTreeModifier.getProperty(oControl, "crossAppNavCallback");
-			assert.deepEqual(mData, { key : "value"}, "returns json value");
+			return XmlTreeModifier.getProperty(oControl, "crossAppNavCallback")
+				.then(function (mData) {
+					assert.deepEqual(mData, { key : "value"}, "returns json value");
+				});
 		});
 
 		QUnit.test("getProperty for properties of type object (single escaped case)", function (assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_2, this.oXmlView);
-			var mData = XmlTreeModifier.getProperty(oControl, "crossAppNavCallback");
-			assert.deepEqual(mData, { key : "value"}, "returns json value");
+			return XmlTreeModifier.getProperty(oControl, "crossAppNavCallback")
+				.then(function (mData) {
+					assert.deepEqual(mData, { key : "value"}, "returns json value");
+				});
 		});
 
 		QUnit.test("getProperty for properties of type object (single quote case)", function (assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_3, this.oXmlView);
-			var mData = XmlTreeModifier.getProperty(oControl, "crossAppNavCallback");
-			assert.deepEqual(mData, { key : "value"}, "returns json value");
+			return XmlTreeModifier.getProperty(oControl, "crossAppNavCallback")
+				.then(function (mData) {
+					assert.deepEqual(mData, { key : "value"}, "returns json value");
+				});
 		});
 
 		QUnit.test("getProperty for properties of type object with an array (curly braces escaped case)", function (assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_ARRAY, this.oXmlView);
-			var mData = XmlTreeModifier.getProperty(oControl, "crossAppNavCallback");
-			assert.deepEqual(mData, [{ "key" : "value"}], "returns array value");
+			return XmlTreeModifier.getProperty(oControl, "crossAppNavCallback")
+				.then(function (mData) {
+					assert.deepEqual(mData, [{ "key" : "value"}], "returns array value");
+				});
 		});
 
 		QUnit.test("getProperty for properties controlled by a binding", function(assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_BINDING, this.oXmlView);
-			var mData = XmlTreeModifier.getProperty(oControl, "crossAppNavCallback");
-			assert.equal(mData, undefined, "nothing is returned");
+			return XmlTreeModifier.getProperty(oControl, "crossAppNavCallback")
+				.then(function (mData) {
+					assert.equal(mData, undefined, "nothing is returned");
+				});
 		});
 
 		QUnit.test("setProperty for properties of type object", function (assert) {
@@ -529,33 +620,43 @@ function(
 		QUnit.test("applySettings", function (assert) {
 			var oVisibleLabel = getVisibleLabel(this.oXmlView);
 
-			XmlTreeModifier.applySettings(oVisibleLabel, {
+			return XmlTreeModifier.applySettings(oVisibleLabel, {
 				design: "Bold", //simple property type string
 				required: true, //property type is not string
 				labelFor: ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT //association
+			}).then(function () {
+				return Promise.all([
+					XmlTreeModifier.getProperty(oVisibleLabel, "design"),
+					XmlTreeModifier.getProperty(oVisibleLabel, "required")
+				]);
+			})
+			.then(function (aProperties) {
+				assert.strictEqual(aProperties[0], "Bold", "the design value is changed from applySettings");
+				assert.strictEqual(aProperties[1], true, "the required value is changed from applySettings");
+				var sAssociatedControlId = XmlTreeModifier.getAssociation(oVisibleLabel, "labelFor");
+				assert.strictEqual(sAssociatedControlId, ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT);
 			});
-			assert.strictEqual(XmlTreeModifier.getProperty(oVisibleLabel, "design"), "Bold", "the design value is changed from applySettings");
-			assert.strictEqual(XmlTreeModifier.getProperty(oVisibleLabel, "required"), true, "the required value is changed from applySettings");
-
-			var sAssociatedControlId = XmlTreeModifier.getAssociation(oVisibleLabel, "labelFor");
-			assert.strictEqual(sAssociatedControlId, ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT);
 		});
 
 		QUnit.test("applySetting with association as object", function (assert) {
 			var oVisibleLabel = getVisibleLabel(this.oXmlView);
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
-			XmlTreeModifier.applySettings(oVisibleLabel, {
+			return XmlTreeModifier.applySettings(oVisibleLabel, {
 				labelFor: oControl //association
+			}).then(function () {
+				var sAssociatedControlId = XmlTreeModifier.getAssociation(oVisibleLabel, "labelFor");
+				assert.strictEqual(sAssociatedControlId, ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT);
 			});
-			var sAssociatedControlId = XmlTreeModifier.getAssociation(oVisibleLabel, "labelFor");
-			assert.strictEqual(sAssociatedControlId, ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT);
 		});
 
 		QUnit.test("applySetting with property of type object", function (assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
 			var mData = { key2 : 2};
-			XmlTreeModifier.applySettings(oControl, {crossAppNavCallback: mData});
-			assert.deepEqual(XmlTreeModifier.getProperty(oControl, "crossAppNavCallback"), mData, "the property of type object returns in JSON notation");
+			return XmlTreeModifier.applySettings(oControl, {crossAppNavCallback: mData})
+				.then(XmlTreeModifier.getProperty.bind(XmlTreeModifier, oControl, "crossAppNavCallback"))
+				.then(function (oProperty) {
+					assert.deepEqual(oProperty, mData, "the property of type object returns in JSON notation");
+				});
 		});
 
 		QUnit.test("isPropertyInitial", function (assert) {
@@ -608,10 +709,11 @@ function(
 
 		QUnit.test("findIndexInParentAggregation returns the correct value: case 1 - control in aggregation 0..1 passed as parameter", function (assert) {
 			var oHBox = XmlTreeModifier._children(this.oXmlView)[1];
-
 			var oTooltip = oHBox.childNodes[0].childNodes[0];
-
-			assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oTooltip), 0, "The function returned the correct index.");
+			return XmlTreeModifier.findIndexInParentAggregation(oTooltip)
+				.then(function (iIndexInParentAggregation) {
+					assert.strictEqual(iIndexInParentAggregation, 0, "The function returned the correct index.");
+				});
 		});
 
 		function getButton(oXmlView) {
@@ -620,31 +722,41 @@ function(
 		}
 		QUnit.test("findIndexInParentAggregation returns the correct value: case 2 - default aggregation only in xml tree", function (assert) {
 			var oButton = getButton(this.oXmlView);
-
-			assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oButton), 2, "The function returned the correct index.");
+			return XmlTreeModifier.findIndexInParentAggregation(oButton)
+				.then(function (iIndexInParentAggregation) {
+					assert.strictEqual(iIndexInParentAggregation, 2, "The function returned the correct index.");
+				});
 		});
 
 		QUnit.test("findIndexInParentAggregation returns the correct value: case 3 - named aggregation only in xml tree", function (assert) {
 			var oDynamicPageTitle = XmlTreeModifier._children(this.oXmlView)[4];
 			var oButton = XmlTreeModifier._children(oDynamicPageTitle)[0].lastElementChild;
-
-			assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oButton), 2, "The function returned the correct index.");
+			return XmlTreeModifier.findIndexInParentAggregation(oButton)
+				.then(function (iIndexInParentAggregation) {
+					assert.strictEqual(iIndexInParentAggregation, 2, "The function returned the correct index.");
+				});
 		});
 
 		QUnit.test("findIndexInParentAggregation returns the correct value: case 4 - mixed node with aggregation and default aggregation", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[5];
 			var oButton = oVBox.lastElementChild;
-
-			assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oButton), 2, "The function returned the correct index.");
+			return XmlTreeModifier.findIndexInParentAggregation(oButton)
+				.then(function (iIndexInParentAggregation) {
+					assert.strictEqual(iIndexInParentAggregation, 2, "The function returned the correct index.");
+				});
 		});
 
 		QUnit.test("findIndexInParentAggregation returns the correct value: case 5 - mixed node with aggregation and named aggregation", function (assert) {
 			var oDynamicPageTitle = XmlTreeModifier._children(this.oXmlView)[6];
 			var oButton = oDynamicPageTitle.childNodes[0].lastElementChild;
 			var oText = oDynamicPageTitle.childNodes[1].childNodes[1];
-
-			assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oButton), 2, "The function returned the correct index.");
-			assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oText), 1, "The function returned the correct index.");
+			return Promise.all([
+				XmlTreeModifier.findIndexInParentAggregation(oButton),
+				XmlTreeModifier.findIndexInParentAggregation(oText)
+			]).then(function (aIndexInParentAggregation) {
+				assert.strictEqual(aIndexInParentAggregation[0], 2, "The function returned the correct index.");
+				assert.strictEqual(aIndexInParentAggregation[1], 1, "The function returned the correct index.");
+			});
 		});
 
 		QUnit.test("the modifier finds the index of the control in its parent aggregation correctly, case 7 - when stashed controls exist", function (assert) {
@@ -652,7 +764,10 @@ function(
 			var oFirstButton = oDynamicPageTitle.childNodes[0].firstElementChild;
 			var oLastButton = oDynamicPageTitle.childNodes[0].lastElementChild;
 			XmlTreeModifier.setProperty(oFirstButton, "stashed", true);
-			assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oLastButton), 1, "The function returned the correct index.");
+			return XmlTreeModifier.findIndexInParentAggregation(oLastButton)
+				.then(function (iIndexInParentAggregation) {
+					assert.strictEqual(iIndexInParentAggregation, 1, "The function returned the correct index.");
+				});
 		});
 
 		QUnit.test("findIndexInParentAggregation returns the correct value: case 8 - when extension point exists", function (assert) {
@@ -660,9 +775,13 @@ function(
 			var oPanel = XmlTreeModifier._children(this.oXmlView2)[1];
 			var oExtensionPoint1 = oHBox1.childNodes[0].childNodes[3];
 			var oExtensionPoint2 = oPanel.childNodes[0];
-
-			assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oExtensionPoint1), 3, "The function returned the correct index.");
-			assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oExtensionPoint2), 0, "The function returned the correct index.");
+			return Promise.all([
+				XmlTreeModifier.findIndexInParentAggregation(oExtensionPoint1),
+				XmlTreeModifier.findIndexInParentAggregation(oExtensionPoint2)
+			]).then(function (aIndexInParentAggregation) {
+				assert.strictEqual(aIndexInParentAggregation[0], 3, "The function returned the correct index.");
+				assert.strictEqual(aIndexInParentAggregation[1], 0, "The function returned the correct index.");
+			});
 		});
 
 		QUnit.test("getParentAggregationName returns the correct name: ", function (assert) {
@@ -677,11 +796,19 @@ function(
 				oButton = oDynamicPageTitle.childNodes[0].childNodes[0],
 				oText2 = oDynamicPageTitle.childNodes[1].childNodes[0];
 
-			assert.strictEqual(XmlTreeModifier.getParentAggregationName(oLabel, oVBox), "items", "The function returned the correct name - 'items'.");
-			assert.strictEqual(XmlTreeModifier.getParentAggregationName(oTooltip, oHBox), "tooltip", "The function returned the correct name - 'tooltip'.");
-			assert.strictEqual(XmlTreeModifier.getParentAggregationName(oText, oHBox), "items", "The function returned the correct name - 'items'.");
-			assert.strictEqual(XmlTreeModifier.getParentAggregationName(oButton, oDynamicPageTitle), "actions", "The function returned the correct name - 'actions'.");
-			assert.strictEqual(XmlTreeModifier.getParentAggregationName(oText2, oDynamicPageTitle), "snappedContent", "The function returned the correct name - 'snappedContent'.");
+			return Promise.all([
+				XmlTreeModifier.getParentAggregationName(oLabel, oVBox),
+				XmlTreeModifier.getParentAggregationName(oTooltip, oHBox),
+				XmlTreeModifier.getParentAggregationName(oText, oHBox),
+				XmlTreeModifier.getParentAggregationName(oButton, oDynamicPageTitle),
+				XmlTreeModifier.getParentAggregationName(oText2, oDynamicPageTitle)
+			]).then(function (aParentAggregationNames) {
+				assert.strictEqual(aParentAggregationNames[0], "items", "The function returned the correct name - 'items'.");
+				assert.strictEqual(aParentAggregationNames[1], "tooltip", "The function returned the correct name - 'tooltip'.");
+				assert.strictEqual(aParentAggregationNames[2], "items", "The function returned the correct name - 'items'.");
+				assert.strictEqual(aParentAggregationNames[3], "actions", "The function returned the correct name - 'actions'.");
+				assert.strictEqual(aParentAggregationNames[4], "snappedContent", "The function returned the correct name - 'snappedContent'.");
+			});
 		});
 
 		QUnit.test("when getParent is called for control inside an extension point", function (assert) {
@@ -711,17 +838,26 @@ function(
 
 		QUnit.test("when getBingingTemplate is called for an aggregation without nodes", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[5];
-			assert.notOk(XmlTreeModifier.getBindingTemplate(oVBox, "tooltip"), "then nothing is returned");
+			return XmlTreeModifier.getBindingTemplate(oVBox, "tooltip")
+				.then(function (oBindingTemplate) {
+					assert.notOk(oBindingTemplate, "then nothing is returned");
+				});
 		});
 
 		QUnit.test("when getBingingTemplate is called for an aggregation with multiple nodes", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
-			assert.notOk(XmlTreeModifier.getBindingTemplate(oVBox, "content"), "then nothing is returned");
+			return XmlTreeModifier.getBindingTemplate(oVBox, "content")
+				.then(function (oBindingTemplate) {
+					assert.notOk(oBindingTemplate, "then nothing is returned");
+				});
 		});
 
 		QUnit.test("when getBingingTemplate is called for an aggregation that has a single real control, but text nodes", function (assert) {
 			var oHBox = XmlTreeModifier._children(this.oXmlView)[1];
-			assert.ok(XmlTreeModifier.getBindingTemplate(oHBox, "items"), "then content inside item is returned");
+			return XmlTreeModifier.getBindingTemplate(oHBox, "items")
+				.then(function (oBindingTemplate) {
+					assert.ok(oBindingTemplate, "then content inside item is returned");
+				});
 		});
 
 		QUnit.test("when destroy is called for a control that is directly under the parent node", function (assert) {
@@ -737,10 +873,11 @@ function(
 				'<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">' +
 					'<Button id="' + HBOX_ID + '" text="Button1"></Button>' +
 				'</core:FragmentDefinition>';
-			assert.throws(function() {
-				XmlTreeModifier.instantiateFragment(sFragment, "foo", this.oXmlView);
-			}, Error("The following ID is already in the view: foo." + HBOX_ID),
-			"then the right exception is thrown");
+			return XmlTreeModifier.instantiateFragment(sFragment, "foo", this.oXmlView)
+				.catch(function (vError) {
+					assert.strictEqual(vError.message, "The following ID is already in the view: foo." + HBOX_ID,
+						"then the right exception is thrown");
+				});
 		});
 
 		QUnit.test("when instantiateFragment is called with a FragmentDefinition", function(assert) {
@@ -750,19 +887,23 @@ function(
 				'<Button id="button1234" text="Button2"></Button>' +
 			'</core:FragmentDefinition>';
 
-			var aControls = XmlTreeModifier.instantiateFragment(sFragment, "foo", this.oXmlView);
-			assert.equal(aControls.length, 2, "there are 2 controls returned");
-			assert.equal(aControls[0].getAttribute("id"), "foo.button123", "the ID got prefixed");
-			assert.equal(aControls[1].getAttribute("id"), "foo.button1234", "the ID got prefixed");
+			return XmlTreeModifier.instantiateFragment(sFragment, "foo", this.oXmlView)
+				.then(function (aControls) {
+					assert.equal(aControls.length, 2, "there are 2 controls returned");
+					assert.equal(aControls[0].getAttribute("id"), "foo.button123", "the ID got prefixed");
+					assert.equal(aControls[1].getAttribute("id"), "foo.button1234", "the ID got prefixed");
+				});
 		});
 
 		QUnit.test("when instantiateFragment is called with a Control", function(assert) {
 			var sFragment =
 				'<sap.m.Button id="button123" text="Button1" />';
 
-			var aControls = XmlTreeModifier.instantiateFragment(sFragment, "foo", this.oXmlView);
-			assert.equal(aControls.length, 1, "there is 1 control returned");
-			assert.equal(aControls[0].getAttribute("id"), "foo.button123", "the ID got prefixed");
+			return XmlTreeModifier.instantiateFragment(sFragment, "foo", this.oXmlView)
+				.then(function (aControls) {
+					assert.equal(aControls.length, 1, "there is 1 control returned");
+					assert.equal(aControls[0].getAttribute("id"), "foo.button123", "the ID got prefixed");
+				});
 		});
 
 		QUnit.test("when templating a fragment", function(assert) {
@@ -800,16 +941,20 @@ function(
 			var oSelector = {
 				id: "mytext"
 			};
-			var oText = XmlTreeModifier.createControl('sap.m.Text', this.oComponent, this.oXmlView2, oSelector);
-			XmlTreeModifier.insertAggregation(oHBox2, "items", oText, 6, this.oXmlView2, undefined);
-			var aChildNodes = XmlTreeModifier._children(oHBox2);
-			assert.equal(aChildNodes.length, 5, "new control is added to the aggregation");
-			assert.equal(aChildNodes[0].id, "button4");
-			assert.equal(aChildNodes[1].id, "button5");
-			assert.equal(aChildNodes[2].namespaceURI, "sap.ui.core");
-			assert.ok(aChildNodes[2].tagName.indexOf("ExtensionPoint") > 0);
-			assert.equal(aChildNodes[3].id, "mytext", "the new control is added at the correct position (adjust index took place)");
-			assert.equal(aChildNodes[4].id, "label3");
+			return XmlTreeModifier.createControl('sap.m.Text', this.oComponent, this.oXmlView2, oSelector)
+				.then(function (oText) {
+					return XmlTreeModifier.insertAggregation(oHBox2, "items", oText, 6, this.oXmlView2, undefined);
+				}.bind(this))
+				.then(function () {
+					var aChildNodes = XmlTreeModifier._children(oHBox2);
+					assert.equal(aChildNodes.length, 5, "new control is added to the aggregation");
+					assert.equal(aChildNodes[0].id, "button4");
+					assert.equal(aChildNodes[1].id, "button5");
+					assert.equal(aChildNodes[2].namespaceURI, "sap.ui.core");
+					assert.ok(aChildNodes[2].tagName.indexOf("ExtensionPoint") > 0);
+					assert.equal(aChildNodes[3].id, "mytext", "the new control is added at the correct position (adjust index took place)");
+					assert.equal(aChildNodes[4].id, "label3");
+				});
 		});
 
 		QUnit.test("when insertAggregation is called with bSkipAdjustIndex for an aggregation containing an extension point", function (assert) {
@@ -817,16 +962,20 @@ function(
 			var oSelector = {
 				id: "mytext"
 			};
-			var oText = XmlTreeModifier.createControl('sap.m.Text', this.oComponent, this.oXmlView2, oSelector);
-			XmlTreeModifier.insertAggregation(oHBox2, "items", oText, 3, this.oXmlView2, true);
-			var aChildNodes = XmlTreeModifier._children(oHBox2);
-			assert.equal(aChildNodes.length, 5, "new control is added to the aggregation");
-			assert.equal(aChildNodes[0].id, "button4");
-			assert.equal(aChildNodes[1].id, "button5");
-			assert.equal(aChildNodes[2].namespaceURI, "sap.ui.core");
-			assert.ok(aChildNodes[2].tagName.indexOf("ExtensionPoint") > 0);
-			assert.equal(aChildNodes[3].id, "mytext", "the new control is added at the correct position (no adjust index took place)");
-			assert.equal(aChildNodes[4].id, "label3");
+			return XmlTreeModifier.createControl('sap.m.Text', this.oComponent, this.oXmlView2, oSelector)
+				.then(function (oText) {
+					return XmlTreeModifier.insertAggregation(oHBox2, "items", oText, 3, this.oXmlView2, true);
+				}.bind(this))
+				.then(function () {
+					var aChildNodes = XmlTreeModifier._children(oHBox2);
+					assert.equal(aChildNodes.length, 5, "new control is added to the aggregation");
+					assert.equal(aChildNodes[0].id, "button4");
+					assert.equal(aChildNodes[1].id, "button5");
+					assert.equal(aChildNodes[2].namespaceURI, "sap.ui.core");
+					assert.ok(aChildNodes[2].tagName.indexOf("ExtensionPoint") > 0);
+					assert.equal(aChildNodes[3].id, "mytext", "the new control is added at the correct position (no adjust index took place)");
+					assert.equal(aChildNodes[4].id, "label3");
+				});
 		});
 
 		QUnit.test("when insertAggregation is called without bSkipAdjustIndex for an aggregation without an extension point", function (assert) {
@@ -834,38 +983,50 @@ function(
 			var oSelector = {
 				id: "mytext"
 			};
-			var oText = XmlTreeModifier.createControl('sap.m.Text', this.oComponent, this.oXmlView, oSelector);
-			XmlTreeModifier.insertAggregation(oVBox2, "items", oText, 2, this.oXmlView, undefined);
-			var aChildNodes = XmlTreeModifier._children(oVBox2);
-			assert.equal(aChildNodes.length, 5, "new control is added to the aggregation");
-			assert.equal(aChildNodes[3].id, "mytext", "the new control is added at the correct position (index offset = 0)");
+			return XmlTreeModifier.createControl('sap.m.Text', this.oComponent, this.oXmlView, oSelector)
+				.then(function (oText) {
+					return XmlTreeModifier.insertAggregation(oVBox2, "items", oText, 2, this.oXmlView, undefined);
+				}.bind(this))
+				.then(function () {
+					var aChildNodes = XmlTreeModifier._children(oVBox2);
+					assert.equal(aChildNodes.length, 5, "new control is added to the aggregation");
+					assert.equal(aChildNodes[3].id, "mytext", "the new control is added at the correct position (index offset = 0)");
+				});
 		});
 
 		QUnit.test("when getExtensionPointInfo is called", function (assert) {
-			var oExtensionPointInfo1 = XmlTreeModifier.getExtensionPointInfo("ExtensionPoint1", this.oXmlView2);
-			assert.equal(oExtensionPointInfo1.parent.getAttribute("id"), "hbox1", "then the returned object contains the parent control");
-			assert.equal(oExtensionPointInfo1.aggregationName, "items", "and the aggregation name");
-			assert.equal(oExtensionPointInfo1.index, 4, "and the index");
-			assert.ok(Array.isArray(oExtensionPointInfo1.defaultContent), "and the defaultContent is an Array");
-			assert.equal(oExtensionPointInfo1.defaultContent.length, 1, "and the defaultContent contains one item");
-			assert.equal(oExtensionPointInfo1.defaultContent[0].getAttribute("id"), "default-label1", "and the default label is returned");
+			return XmlTreeModifier.getExtensionPointInfo("ExtensionPoint1", this.oXmlView2)
+				.then(function (oExtensionPointInfo1) {
+					assert.equal(oExtensionPointInfo1.parent.getAttribute("id"), "hbox1", "then the returned object contains the parent control");
+					assert.equal(oExtensionPointInfo1.aggregationName, "items", "and the aggregation name");
+					assert.equal(oExtensionPointInfo1.index, 4, "and the index");
+					assert.ok(Array.isArray(oExtensionPointInfo1.defaultContent), "and the defaultContent is an Array");
+					assert.equal(oExtensionPointInfo1.defaultContent.length, 1, "and the defaultContent contains one item");
+					assert.equal(oExtensionPointInfo1.defaultContent[0].getAttribute("id"), "default-label1", "and the default label is returned");
 
-			var oExtensionPointInfo2 = XmlTreeModifier.getExtensionPointInfo("ExtensionPoint2", this.oXmlView2);
-			assert.equal(oExtensionPointInfo2.parent.getAttribute("id"), "panel", "then the returned object contains the parent control");
-			assert.equal(oExtensionPointInfo2.aggregationName, "content", "and the aggregation name");
-			assert.equal(oExtensionPointInfo2.index, 1, "and the index");
-			assert.ok(Array.isArray(oExtensionPointInfo2.defaultContent), "and the defaultContent is an Array");
-			assert.equal(oExtensionPointInfo2.defaultContent.length, 0, "and the defaultContent contains one item");
+					return XmlTreeModifier.getExtensionPointInfo("ExtensionPoint2", this.oXmlView2);
+				}.bind(this))
+				.then(function (oExtensionPointInfo2) {
+					assert.equal(oExtensionPointInfo2.parent.getAttribute("id"), "panel", "then the returned object contains the parent control");
+					assert.equal(oExtensionPointInfo2.aggregationName, "content", "and the aggregation name");
+					assert.equal(oExtensionPointInfo2.index, 1, "and the index");
+					assert.ok(Array.isArray(oExtensionPointInfo2.defaultContent), "and the defaultContent is an Array");
+					assert.equal(oExtensionPointInfo2.defaultContent.length, 0, "and the defaultContent contains one item");
+				});
 		});
 
 		QUnit.test("when getExtensionPointInfo is called with an extension point which is not on the view", function (assert) {
-			var oExtensionPointInfo = XmlTreeModifier.getExtensionPointInfo("notAvailableExtensionPoint", this.oXmlView2);
-			assert.notOk(oExtensionPointInfo, "then nothing is returned");
+			return XmlTreeModifier.getExtensionPointInfo("notAvailableExtensionPoint", this.oXmlView2)
+				.then(function (oExtensionPointInfo) {
+					assert.notOk(oExtensionPointInfo, "then nothing is returned");
+				});
 		});
 
 		QUnit.test("when getExtensionPointInfo is called with an extension point which exists multiple times on the view", function (assert) {
-			var oExtensionPointInfo = XmlTreeModifier.getExtensionPointInfo("ExtensionPoint3", this.oXmlView2);
-			assert.notOk(oExtensionPointInfo, "then nothing is returned");
+			return XmlTreeModifier.getExtensionPointInfo("ExtensionPoint3", this.oXmlView2)
+				.then(function (oExtensionPointInfo) {
+					assert.notOk(oExtensionPointInfo, "then nothing is returned");
+				});
 		});
 
 		function _getDelegate(mControlsDelegateInfo) {
@@ -950,108 +1111,103 @@ function(
 		}
 	}, function () {
 		QUnit.test("attachEvent() — basic case", function (assert) {
-			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1");
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1")
+				.then(function () {
+					this.oView = this.createView(this.oXmlView);
+					this.oView.byId("button1").firePress();
 
-			this.oView = this.createView(this.oXmlView);
-			this.oView.byId("button1").firePress();
-
-			assert.strictEqual(this.oSpy1.callCount, 1);
-			assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event)).callCount, 1);
+					assert.strictEqual(this.oSpy1.callCount, 1);
+					assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event)).callCount, 1);
+				}.bind(this));
 		});
 
 		QUnit.test("attachEvent() — basic case with parameters", function (assert) {
-			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1", { foo: "bar" }]);
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1", { foo: "bar" }])
+				.then(function () {
+					this.oView = this.createView(this.oXmlView);
+					this.oView.byId("button1").firePress();
 
-			this.oView = this.createView(this.oXmlView);
-			this.oView.byId("button1").firePress();
-
-			assert.strictEqual(this.oSpy1.callCount, 1);
-			assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param0", "param1", { foo: "bar" }]).callCount, 1);
+					assert.strictEqual(this.oSpy1.callCount, 1);
+					assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param0", "param1", { foo: "bar" }]).callCount, 1);
+				}.bind(this));
 		});
 
 		QUnit.test("attachEvent() — two different event handlers with different set of parameters for the same event name", function (assert) {
-			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"]);
-			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"]);
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"])
+				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"]))
+				.then(function () {
+					this.oView = this.createView(this.oXmlView);
+					this.oView.byId("button1").firePress();
 
-			this.oView = this.createView(this.oXmlView);
-			this.oView.byId("button1").firePress();
-
-			assert.strictEqual(this.oSpy1.callCount, 1);
-			assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param0", "param1"]).callCount, 1);
-			assert.strictEqual(this.oSpy2.callCount, 1);
-			assert.strictEqual(this.oSpy2.withArgs(sinon.match.instanceOf(Event), ["param2", "param3"]).callCount, 1);
+					assert.strictEqual(this.oSpy1.callCount, 1);
+					assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param0", "param1"]).callCount, 1);
+					assert.strictEqual(this.oSpy2.callCount, 1);
+					assert.strictEqual(this.oSpy2.withArgs(sinon.match.instanceOf(Event), ["param2", "param3"]).callCount, 1);
+				}.bind(this));
 		});
 
 		QUnit.test("attachEvent() — attempt to attach non-existent function", function (assert) {
-			assert.throws(
-				function () {
-					XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_non_existent_handler");
-				}.bind(this),
-				/function is not found/
-			);
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_non_existent_handler")
+				.catch(function (vError) {
+					assert.ok(vError.message.indexOf("function is not found") > -1);
+				});
 		});
 
 		QUnit.test("attachEvent() — two equal event handlers with a different set of parameters", function (assert) {
-			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"]);
-			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param2", "param3"]);
-
-			this.oView = this.createView(this.oXmlView);
-			this.oView.byId("button1").firePress();
-
-			assert.strictEqual(this.oSpy1.callCount, 2);
-			assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param0", "param1"]).callCount, 1);
-			assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param2", "param3"]).callCount, 1);
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"])
+				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler1", ["param2", "param3"]))
+				.then(function () {
+					this.oView = this.createView(this.oXmlView);
+					this.oView.byId("button1").firePress();
+					assert.strictEqual(this.oSpy1.callCount, 2);
+					assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param0", "param1"]).callCount, 1);
+					assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param2", "param3"]).callCount, 1);
+				}.bind(this));
 		});
 
 		QUnit.test("detachEvent() — basic case", function (assert) {
 			assert.notOk(this.oButton.hasAttribute("press"));
-
-			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1");
-			XmlTreeModifier.detachEvent(this.oButton, "press", "$sap__qunit_presshandler1");
-
-			assert.notOk(this.oButton.hasAttribute("press"));
-
-			this.oView = this.createView(this.oXmlView);
-			this.oView.byId("button1").firePress();
-
-			assert.strictEqual(this.oSpy1.callCount, 0);
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1")
+				.then(XmlTreeModifier.detachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler1"))
+				.then(function () {
+					assert.notOk(this.oButton.hasAttribute("press"));
+					this.oView = this.createView(this.oXmlView);
+					this.oView.byId("button1").firePress();
+					assert.strictEqual(this.oSpy1.callCount, 0);
+				}.bind(this));
 		});
 
 		QUnit.test("detachEvent() — basic case", function (assert) {
 			assert.notOk(this.oButton.hasAttribute("press"));
-
-			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1");
-			XmlTreeModifier.detachEvent(this.oButton, "press", "$sap__qunit_presshandler1");
-
-			assert.notOk(this.oButton.hasAttribute("press"));
-
-			this.oView = this.createView(this.oXmlView);
-			this.oView.byId("button1").firePress();
-
-			assert.strictEqual(this.oSpy1.callCount, 0);
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1")
+				.then(XmlTreeModifier.detachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler1"))
+				.then(function () {
+					assert.notOk(this.oButton.hasAttribute("press"));
+					this.oView = this.createView(this.oXmlView);
+					this.oView.byId("button1").firePress();
+					assert.strictEqual(this.oSpy1.callCount, 0);
+				}.bind(this));
 		});
 
 		QUnit.test("detachEvent() — three event handlers, two of them are with a different set of parameters", function (assert) {
-			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1");
-			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler2", ["param0", "param1"]);
-			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"]);
-			XmlTreeModifier.detachEvent(this.oButton, "press", "$sap__qunit_presshandler2");
-
-			this.oView = this.createView(this.oXmlView);
-			this.oView.byId("button1").firePress();
-
-			assert.strictEqual(this.oSpy1.callCount, 1);
-			assert.strictEqual(this.oSpy2.callCount, 1);
-			assert.strictEqual(this.oSpy2.withArgs(sinon.match.instanceOf(Event), ["param2", "param3"]).callCount, 1);
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1")
+				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2", ["param0", "param1"]))
+				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"]))
+				.then(XmlTreeModifier.detachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2"))
+				.then(function () {
+					this.oView = this.createView(this.oXmlView);
+					this.oView.byId("button1").firePress();
+					assert.strictEqual(this.oSpy1.callCount, 1);
+					assert.strictEqual(this.oSpy2.callCount, 1);
+					assert.strictEqual(this.oSpy2.withArgs(sinon.match.instanceOf(Event), ["param2", "param3"]).callCount, 1);
+				}.bind(this));
 		});
 
 		QUnit.test("detachEvent() — attempt to detach non-existent function", function (assert) {
-			assert.throws(
-				function () {
-					XmlTreeModifier.detachEvent(this.oButton, "press", "$sap__qunit_non_existent_handler");
-				}.bind(this),
-				/function is not found/
-			);
+			return XmlTreeModifier.detachEvent(this.oButton, "press", "$sap__qunit_non_existent_handler")
+				.catch(function (vError) {
+					assert.ok(vError.message.indexOf("function is not found") > -1);
+				});
 		});
 	});
 
@@ -1101,98 +1257,103 @@ function(
 		}
 	}, function () {
 		QUnit.test("bindAggregation - complex binding via binding string", function (assert) {
-			XmlTreeModifier.bindAggregation(
-				this.oButton,
-				"customData",
+			return XmlTreeModifier.createControl(
+				"sap.ui.core.CustomData",
+				this.oComponent,
+				this.oXmlView,
 				{
-					path: this.sModelName + ">/customData",
-					template: XmlTreeModifier.createControl(
-						"sap.ui.core.CustomData",
-						this.oComponent,
-						this.oXmlView,
-						{
-							id: XmlTreeModifier.getId(this.oButton) + '-customData'
-						},
-						{
-							key: "{path: '" + this.sModelName + ">key'}",
-							value: "{path: '" + this.sModelName + ">value'}"
-						}
-					)
+					id: XmlTreeModifier.getId(this.oButton) + '-customData'
 				},
-				this.oXmlView
-			);
-
-			this.oView = this.createView(this.oXmlView);
-			this.oView.setModel(this.oModel, this.sModelName);
-			this.oButtonInstance = this.oView.byId("button1");
-
-			assert.strictEqual(this.oButtonInstance.getCustomData()[0].getKey(), "foo");
-			assert.strictEqual(this.oButtonInstance.getCustomData()[0].getValue(), "bar");
+				{
+					key: "{path: '" + this.sModelName + ">key'}",
+					value: "{path: '" + this.sModelName + ">value'}"
+				}
+			).then(function (oTemplate) {
+				return XmlTreeModifier.bindAggregation(
+					this.oButton,
+					"customData",
+					{
+						path: this.sModelName + ">/customData",
+						template: oTemplate
+					},
+					this.oXmlView
+				);
+			}.bind(this))
+			.then(function () {
+				this.oView = this.createView(this.oXmlView);
+				this.oView.setModel(this.oModel, this.sModelName);
+				this.oButtonInstance = this.oView.byId("button1");
+				assert.strictEqual(this.oButtonInstance.getCustomData()[0].getKey(), "foo");
+				assert.strictEqual(this.oButtonInstance.getCustomData()[0].getValue(), "bar");
+			}.bind(this));
 		});
 
 		QUnit.test("bindAggregation - complex binding via plain object", function (assert) {
-			XmlTreeModifier.bindAggregation(
-				this.oButton,
-				"customData",
+			return XmlTreeModifier.createControl(
+				"sap.ui.core.CustomData",
+				this.oComponent,
+				this.oXmlView,
 				{
-					path: this.sModelName + ">/customData",
-					template: XmlTreeModifier.createControl(
-						"sap.ui.core.CustomData",
-						this.oComponent,
-						this.oXmlView,
-						{
-							id: XmlTreeModifier.getId(this.oButton) + '-customData'
-						},
-						{
-							key: {
-								path: this.sModelName + ">key"
-							},
-							value: {
-								path: this.sModelName + ">value"
-							}
-						}
-					)
+					id: XmlTreeModifier.getId(this.oButton) + '-customData'
 				},
-				this.oXmlView
-			);
-
-			this.oView = this.createView(this.oXmlView);
-			this.oView.setModel(this.oModel, this.sModelName);
-			this.oButtonInstance = this.oView.byId("button1");
-
-			assert.strictEqual(this.oButtonInstance.getCustomData()[0].getKey(), "foo");
-			assert.strictEqual(this.oButtonInstance.getCustomData()[0].getValue(), "bar");
+				{
+					key: {
+						path: this.sModelName + ">key"
+					},
+					value: {
+						path: this.sModelName + ">value"
+					}
+				}
+			).then(function (oTemplate) {
+				return XmlTreeModifier.bindAggregation(
+					this.oButton,
+					"customData",
+					{
+						path: this.sModelName + ">/customData",
+						template: oTemplate
+					},
+					this.oXmlView
+				);
+			}.bind(this))
+			.then(function () {
+				this.oView = this.createView(this.oXmlView);
+				this.oView.setModel(this.oModel, this.sModelName);
+				this.oButtonInstance = this.oView.byId("button1");
+				assert.strictEqual(this.oButtonInstance.getCustomData()[0].getKey(), "foo");
+				assert.strictEqual(this.oButtonInstance.getCustomData()[0].getValue(), "bar");
+			}.bind(this));
 		});
 
 		QUnit.test("unbindAggregation", function (assert) {
-			XmlTreeModifier.bindAggregation(
-				this.oButton,
-				"customData",
+			return XmlTreeModifier.createControl(
+				"sap.ui.core.CustomData",
+				this.oComponent,
+				this.oXmlView,
 				{
-					path: this.sModelName + ">/customData",
-					template: XmlTreeModifier.createControl(
-						"sap.ui.core.CustomData",
-						this.oComponent,
-						this.oXmlView,
-						{
-							id: XmlTreeModifier.getId(this.oButton) + '-customData'
-						},
-						{
-							key: "{path: '" + this.sModelName + ">key'}",
-							value: "{path: '" + this.sModelName + ">value'}"
-						}
-					)
+					id: XmlTreeModifier.getId(this.oButton) + '-customData'
 				},
-				this.oXmlView
-			);
-
-			XmlTreeModifier.unbindAggregation(this.oButton, "customData");
-
-			this.oView = this.createView(this.oXmlView);
-			this.oView.setModel(this.oModel, this.sModelName);
-			this.oButtonInstance = this.oView.byId("button1");
-
-			assert.strictEqual(this.oButtonInstance.getCustomData().length, 0);
+				{
+					key: "{path: '" + this.sModelName + ">key'}",
+					value: "{path: '" + this.sModelName + ">value'}"
+				}
+			).then(function (oTemplate) {
+				return XmlTreeModifier.bindAggregation(
+					this.oButton,
+					"customData",
+					{
+						path: this.sModelName + ">/customData",
+						template: oTemplate
+					},
+					this.oXmlView
+				);
+			}.bind(this))
+			.then(XmlTreeModifier.unbindAggregation.bind(XmlTreeModifier, this.oButton, "customData"))
+			.then(function () {
+				this.oView = this.createView(this.oXmlView);
+				this.oView.setModel(this.oModel, this.sModelName);
+				this.oButtonInstance = this.oView.byId("button1");
+				assert.strictEqual(this.oButtonInstance.getCustomData().length, 0);
+			}.bind(this));
 		});
 	});
 });

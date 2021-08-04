@@ -82,10 +82,12 @@ function (
 		}
 	}, function() {
 		QUnit.test("addAppliedCustomData", function (assert) {
-			FlexCustomData.sync.addAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag, false);
-			var oCustomData = getCustomData(this.oControl, createCustomDataKey(this.oChange, sAppliedKey));
-			assert.ok(oCustomData, "the custom data was added");
-			assert.equal(oCustomData.getValue(), "true", "the value is the standard 'true'");
+			return FlexCustomData.addAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag, false)
+				.then(function () {
+					var oCustomData = getCustomData(this.oControl, createCustomDataKey(this.oChange, sAppliedKey));
+					assert.ok(oCustomData, "the custom data was added");
+					assert.equal(oCustomData.getValue(), "true", "the value is the standard 'true'");
+				}.bind(this));
 		});
 
 		QUnit.test("addAppliedCustomData with saving revertData", function (assert) {
@@ -93,10 +95,12 @@ function (
 				value: "revert"
 			};
 			this.oChange.setRevertData(oRevertData);
-			FlexCustomData.sync.addAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag, true);
-			var oCustomData = getCustomData(this.oControl, createCustomDataKey(this.oChange, sAppliedKey));
-			assert.ok(oCustomData, "the custom data was added");
-			assert.equal(oCustomData.getValue(), '\\{\"value\":\"revert\"\\}', "the value is the standard 'true'");
+			return FlexCustomData.addAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag, true)
+				.then(function () {
+					var oCustomData = getCustomData(this.oControl, createCustomDataKey(this.oChange, sAppliedKey));
+					assert.ok(oCustomData, "the custom data was added");
+					assert.equal(oCustomData.getValue(), '\\{\"value\":\"revert\"\\}', "the value is the standard 'true'");
+				}.bind(this));
 		});
 
 		QUnit.test("addFailedCustomData", function (assert) {
@@ -165,9 +169,11 @@ function (
 		}
 	}, function() {
 		QUnit.test("addAppliedCustomData", function(assert) {
-			FlexCustomData.sync.addAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag, false);
-			var oCustomData = getCustomData(this.oControl, createCustomDataKey(this.oChange, sAppliedKey));
-			assert.equal(oCustomData.getValue(), "true", "the value got replaced");
+			return FlexCustomData.addAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag, false)
+				.then(function () {
+					var oCustomData = getCustomData(this.oControl, createCustomDataKey(this.oChange, sAppliedKey));
+					assert.equal(oCustomData.getValue(), "true", "the value got replaced");
+				}.bind(this));
 		});
 
 		QUnit.test("addAppliedCustomData with saving revert data", function(assert) {
@@ -175,9 +181,11 @@ function (
 				value: "revert2"
 			};
 			this.oChange.setRevertData(oRevertData);
-			FlexCustomData.sync.addAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag, true);
-			var oCustomData = getCustomData(this.oControl, createCustomDataKey(this.oChange, sAppliedKey));
-			assert.equal(oCustomData.getValue(), '\\{\"value\":\"revert2\"\\}', "the value got replaced");
+			return FlexCustomData.addAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag, true)
+				.then(function () {
+					var oCustomData = getCustomData(this.oControl, createCustomDataKey(this.oChange, sAppliedKey));
+					assert.equal(oCustomData.getValue(), '\\{\"value\":\"revert2\"\\}', "the value got replaced");
+				}.bind(this));
 		});
 
 		QUnit.test("getParsedRevertDataFromCustomData with js control tree modifier", function(assert) {

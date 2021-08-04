@@ -83,7 +83,12 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		getStashed: function (oControl) {
-			return XmlTreeModifier.getProperty(oControl, "stashed") || !XmlTreeModifier.getProperty(oControl, "visible");
+			return Promise.all([
+				XmlTreeModifier.getProperty(oControl, "stashed"),
+				XmlTreeModifier.getProperty(oControl, "visible")
+			]).then(function (aProperties) {
+				return !!aProperties[0] || !aProperties[1];
+			});
 		},
 
 		/**
@@ -123,35 +128,49 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		getProperty: function (oControl, sPropertyName) {
+			var oPropertyInfo;
+			var oType;
 			var vPropertyValue = oControl.getAttribute(sPropertyName);
-			var oPropertyInfo = XmlTreeModifier.getControlMetadata(oControl).getProperty(sPropertyName);
-			if (oPropertyInfo) { //not a property like aggregation
-				var oType = oPropertyInfo.getType();
-				if (
-					sPropertyName === "value"
-					&& XmlTreeModifier.getControlType(oControl) === "sap.ui.core.CustomData"
-					&& XmlTreeModifier.getProperty(oControl, "key") === "sap-ui-custom-settings"
-				) {
-					oType = DataType.getType("object");
-				}
-				if (vPropertyValue === null) {
-					vPropertyValue = oPropertyInfo.getDefaultValue() || oType.getDefaultValue();
-				} else {
-					// unescape binding like XMLTemplateProcessor
-					var vUnescaped = ManagedObject.bindingParser(vPropertyValue, undefined, true);
-					// if it is a binding, return undefined as it has to be handled differently
-					if (isPlainObject(vUnescaped)) {
-						if (vUnescaped.path || vUnescaped.parts) {
-							vPropertyValue = undefined;
-						} else {
-							vPropertyValue = vUnescaped;
+			return XmlTreeModifier.getControlMetadata(oControl)
+				.then(function (oMetadata) {
+					oPropertyInfo = oMetadata.getProperty(sPropertyName);
+					if (oPropertyInfo) { //not a property like aggregation
+						oType = oPropertyInfo.getType();
+						if (
+							sPropertyName === "value"
+							&& XmlTreeModifier.getControlType(oControl) === "sap.ui.core.CustomData"
+						) {
+							return XmlTreeModifier.getProperty(oControl, "key")
+								.then(function (oKeyProperty) {
+									if (oKeyProperty  === "sap-ui-custom-settings") {
+										oType = DataType.getType("object");
+									}
+								});
 						}
-					} else {
-						vPropertyValue = oType.parseValue(vUnescaped || vPropertyValue);
 					}
-				}
-			}
-			return vPropertyValue;
+					return undefined;
+				})
+				.then(function () {
+					if (oPropertyInfo) {
+						if (vPropertyValue === null) {
+							vPropertyValue = oPropertyInfo.getDefaultValue() || oType.getDefaultValue();
+						} else {
+							// unescape binding like XMLTemplateProcessor
+							var vUnescaped = ManagedObject.bindingParser(vPropertyValue, undefined, true);
+							// if it is a binding, return undefined as it has to be handled differently
+							if (isPlainObject(vUnescaped)) {
+								if (vUnescaped.path || vUnescaped.parts) {
+									vPropertyValue = undefined;
+								} else {
+									vPropertyValue = vUnescaped;
+								}
+							} else {
+								vPropertyValue = oType.parseValue(vUnescaped || vPropertyValue);
+							}
+						}
+					}
+					return vPropertyValue;
+				});
 		},
 
 		/**
@@ -183,6 +202,7 @@ sap.ui.define([
 					return vUnescaped;
 				}
 			}
+			return undefined;
 		},
 
 		/**
@@ -190,6 +210,7 @@ sap.ui.define([
 		 */
 		createAndAddCustomData: function(oControl, sCustomDataKey, sValue) {
 			oControl.setAttributeNS(CUSTOM_DATA_NS, "custom.data.via.modifier:" + sCustomDataKey, XmlTreeModifier._escapeCurlyBracketsInString(sValue));
+			return Promise.resolve();
 		},
 
 		/**
@@ -211,16 +232,19 @@ sap.ui.define([
 				if (sId) {
 					oNewElementNode.setAttribute("id", sId);
 				}
-				if (mSettings) {
-					XmlTreeModifier.applySettings(oNewElementNode, mSettings);
-				}
-				return bAsync ? Promise.resolve(oNewElementNode) : oNewElementNode;
+				return Promise.resolve()
+					.then(function () {
+						if (mSettings) {
+							return XmlTreeModifier.applySettings(oNewElementNode, mSettings);
+						}
+						return undefined;
+					})
+					.then(function () {
+						return Promise.resolve(oNewElementNode);
+					});
 			} else {
 				oError = new Error("Can't create a control with duplicated ID " + sId);
-				if (bAsync) {
-					return Promise.reject(oError);
-				}
-				throw oError;
+				return Promise.reject(oError);
 			}
 		},
 
@@ -228,27 +252,29 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		applySettings: function(oControl, mSettings) {
-			var oMetadata = XmlTreeModifier.getControlMetadata(oControl);
-			var mMetadata = oMetadata.getJSONKeys();
-			Object.keys(mSettings).forEach(function(sKey) {
-				var oKeyInfo = mMetadata[sKey];
-				var vValue = mSettings[sKey];
-				switch (oKeyInfo._iKind) {
-					case 0: // PROPERTY
-						// Settings provided as property could have some bindings that needs to be resolved by the core
-						// and therefore they shouldn't be escaped by setProperty function. In opposite to the common
-						// setProperty functionality!
-						XmlTreeModifier._setProperty(oControl, sKey, vValue, false);
-						break;
-					// case 1: // SINGLE_AGGREGATION
-					// 	XmlTreeModifier.insertAggregation(oControl, sKey, vValue);
-					case 3: // SINGLE_ASSOCIATION
-						XmlTreeModifier.setAssociation(oControl, sKey, vValue);
-						break;
-					default:
-						throw new Error("Unsupported in applySettings on XMLTreeModifier: " + sKey);
-				}
-			});
+			return XmlTreeModifier.getControlMetadata(oControl)
+				.then(function (oMetadata) {
+					var mMetadata = oMetadata.getJSONKeys();
+					Object.keys(mSettings).forEach(function(sKey) {
+						var oKeyInfo = mMetadata[sKey];
+						var vValue = mSettings[sKey];
+						switch (oKeyInfo._iKind) {
+							case 0: // PROPERTY
+								// Settings provided as property could have some bindings that needs to be resolved by the core
+								// and therefore they shouldn't be escaped by setProperty function. In opposite to the common
+								// setProperty functionality!
+								XmlTreeModifier._setProperty(oControl, sKey, vValue, false);
+								break;
+							// case 1: // SINGLE_AGGREGATION
+							// 	XmlTreeModifier.insertAggregation(oControl, sKey, vValue);
+							case 3: // SINGLE_ASSOCIATION
+								XmlTreeModifier.setAssociation(oControl, sKey, vValue);
+								break;
+							default:
+								throw new Error("Unsupported in applySettings on XMLTreeModifier: " + sKey);
+						}
+					});
+				});
 		},
 
 		/**
@@ -260,10 +286,10 @@ sap.ui.define([
 			if (oView) {
 				if (oView.ownerDocument && oView.ownerDocument.getElementById && oView.ownerDocument.getElementById(sId)) {
 					return oView.ownerDocument.getElementById(sId);
-				} else {
-					return oView.querySelector("[id='" + sId + "']");
 				}
+				return oView.querySelector("[id='" + sId + "']");
 			}
+			return undefined;
 		},
 
 		/**
@@ -322,111 +348,145 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		getAllAggregations: function (oControl) {
-			var oControlMetadata = XmlTreeModifier.getControlMetadata(oControl);
-			return oControlMetadata.getAllAggregations();
+			return XmlTreeModifier.getControlMetadata(oControl)
+				.then(function (oControlMetadata) {
+					return oControlMetadata.getAllAggregations();
+				});
 		},
 
 		/**
 		 * @inheritDoc
 		 */
 		getAggregation: function (oParent, sName) {
-			var oAggregationNode = XmlTreeModifier._findAggregationNode(oParent, sName);
-			var bSingleValueAggregation = XmlTreeModifier._isSingleValueAggregation(oParent, sName);
 			var aChildren = [];
-			if (oAggregationNode) {
-				aChildren = XmlTreeModifier._getControlsInAggregation(oParent, oAggregationNode);
-			} else if (XmlTreeModifier._isAltTypeAggregation(oParent, sName) && bSingleValueAggregation) {
-				aChildren.push(XmlTreeModifier.getProperty(oParent, sName));
-			}
-			if (sName === "customData") {
-				//check namespaced attributes:
-				var mCustomSettings;
-				var aNewCustomData = Array.prototype.slice.call(oParent.attributes).reduce(function(aNamespacedCustomData, oAttribute) {
-					var sLocalName = XmlTreeModifier._getLocalName(oAttribute);
-					if (oAttribute.namespaceURI === CUSTOM_DATA_NS) {
-						var oNewCustomData = oParent.ownerDocument.createElementNS("sap.ui.core","CustomData");
-						oNewCustomData.setAttribute("key", sLocalName);
-						oNewCustomData.setAttribute("value", oAttribute.value);
-						aNamespacedCustomData.push(oNewCustomData);
-					} else if (oAttribute.namespaceURI && oAttribute.name.indexOf("xmlns:") !== 0 ) { // other, unknown namespace and not an xml namespace alias definition
-						if (!mCustomSettings) {
-							mCustomSettings = {};
-						}
-						if (!mCustomSettings.hasOwnProperty(oAttribute.namespaceURI)) {
-							mCustomSettings[oAttribute.namespaceURI] = {};
-						}
-						mCustomSettings[oAttribute.namespaceURI][sLocalName] = oAttribute.nodeValue;
+			var bSingleValueAggregation;
+			return XmlTreeModifier._isSingleValueAggregation(oParent, sName)
+				.then(function (bSingleValueAggregationReturn) {
+					bSingleValueAggregation = bSingleValueAggregationReturn;
+					return XmlTreeModifier._findAggregationNode(oParent, sName);
+				})
+				.then(function (oAggregationNode) {
+					if (oAggregationNode) {
+						return XmlTreeModifier._getControlsInAggregation(oParent, oAggregationNode)
+							.then(function (aChildrenLocal) {
+								aChildren = aChildrenLocal;
+							});
 					}
-					return aNamespacedCustomData;
-				}, []);
-				aChildren = aChildren.concat(aNewCustomData);
-				//add custom settings as custom data "sap-ui-custom-settings"
-				if (mCustomSettings) {
-					var oNewCustomData = oParent.ownerDocument.createElementNS("sap.ui.core","CustomData");
-					oNewCustomData.setAttribute("key", "sap-ui-custom-settings");
-					XmlTreeModifier.setProperty(oNewCustomData, "value", mCustomSettings);
-					aChildren.push(oNewCustomData);
-				}
-			}
-			return bSingleValueAggregation ? aChildren[0] : aChildren;
+					return XmlTreeModifier._isAltTypeAggregation(oParent, sName)
+						.then(function (isAltTypeAggregation) {
+							if (isAltTypeAggregation && bSingleValueAggregation) {
+								return XmlTreeModifier.getProperty(oParent, sName)
+									.then(function (oChild) {
+										aChildren.push(oChild);
+									});
+							}
+							return undefined;
+						});
+				})
+				.then(function () {
+					if (sName === "customData") {
+						//check namespaced attributes:
+						var mCustomSettings;
+						var aNewCustomData = Array.prototype.slice.call(oParent.attributes).reduce(function(aNamespacedCustomData, oAttribute) {
+							var sLocalName = XmlTreeModifier._getLocalName(oAttribute);
+							if (oAttribute.namespaceURI === CUSTOM_DATA_NS) {
+								var oNewCustomData = oParent.ownerDocument.createElementNS("sap.ui.core","CustomData");
+								oNewCustomData.setAttribute("key", sLocalName);
+								oNewCustomData.setAttribute("value", oAttribute.value);
+								aNamespacedCustomData.push(oNewCustomData);
+							} else if (oAttribute.namespaceURI && oAttribute.name.indexOf("xmlns:") !== 0 ) { // other, unknown namespace and not an xml namespace alias definition
+								if (!mCustomSettings) {
+									mCustomSettings = {};
+								}
+								if (!mCustomSettings.hasOwnProperty(oAttribute.namespaceURI)) {
+									mCustomSettings[oAttribute.namespaceURI] = {};
+								}
+								mCustomSettings[oAttribute.namespaceURI][sLocalName] = oAttribute.nodeValue;
+							}
+							return aNamespacedCustomData;
+						}, []);
+						aChildren = aChildren.concat(aNewCustomData);
+						//add custom settings as custom data "sap-ui-custom-settings"
+						if (mCustomSettings) {
+							var oNewCustomData = oParent.ownerDocument.createElementNS("sap.ui.core","CustomData");
+							oNewCustomData.setAttribute("key", "sap-ui-custom-settings");
+							XmlTreeModifier.setProperty(oNewCustomData, "value", mCustomSettings);
+							aChildren.push(oNewCustomData);
+						}
+					}
+					return bSingleValueAggregation ? aChildren[0] : aChildren;
+				});
 		},
 
 		/**
 		 * @inheritDoc
 		 */
 		insertAggregation: function (oParent, sName, oObject, iIndex, oView, bSkipAdjustIndex) {
-			var oAggregationNode = XmlTreeModifier._findAggregationNode(oParent, sName);
-
-			if (!oAggregationNode) {
-				// named aggregation must have the same namespace as the parent
-				var sNamespaceURI = oParent.namespaceURI;
-				// no ids for aggregation nodes => no need pass id or component
-				oAggregationNode = XmlTreeModifier.createControl(sNamespaceURI + "." + sName, undefined, oView);
-				oParent.appendChild(oAggregationNode);
-			}
-
-			if (!bSkipAdjustIndex) {
-				var aChildren = oAggregationNode.children;
-				var iOffset = 0;
-				var iStopIndex = (iIndex < aChildren.length) ? iIndex : aChildren.length;
-				for (var i = 0; i < iStopIndex; i++) {
-					if (aChildren[i].namespaceURI === "sap.ui.core" && aChildren[i].tagName.indexOf("ExtensionPoint") > -1) {
-						iOffset = iOffset + 1 - aChildren[i].children.length;
+			return XmlTreeModifier._findAggregationNode(oParent, sName)
+				.then(function (oAggregationNode) {
+					if (!oAggregationNode) {
+						// named aggregation must have the same namespace as the parent
+						var sNamespaceURI = oParent.namespaceURI;
+						// no ids for aggregation nodes => no need pass id or component
+						return XmlTreeModifier.createControl(sNamespaceURI + "." + sName, undefined, oView)
+							.then(function (oAggregationNode) {
+								oParent.appendChild(oAggregationNode);
+								return oAggregationNode;
+							});
 					}
-				}
-				iIndex = iIndex + iOffset;
-			}
+					return oAggregationNode;
+				})
+				.then(function (oAggregationNode) {
+					if (!bSkipAdjustIndex) {
+						var aChildren = oAggregationNode.children;
+						var iOffset = 0;
+						var iStopIndex = (iIndex < aChildren.length) ? iIndex : aChildren.length;
+						for (var i = 0; i < iStopIndex; i++) {
+							if (aChildren[i].namespaceURI === "sap.ui.core" && aChildren[i].tagName.indexOf("ExtensionPoint") > -1) {
+								iOffset = iOffset + 1 - aChildren[i].children.length;
+							}
+						}
+						iIndex = iIndex + iOffset;
+					}
 
-			if (iIndex >= oAggregationNode.childElementCount) {
-				oAggregationNode.appendChild(oObject);
-			} else {
-				var oReferenceNode = XmlTreeModifier._getControlsInAggregation(oParent, oAggregationNode)[iIndex];
-				oAggregationNode.insertBefore(oObject, oReferenceNode);
-			}
-
+					if (iIndex >= oAggregationNode.childElementCount) {
+						oAggregationNode.appendChild(oObject);
+					} else {
+						return XmlTreeModifier._getControlsInAggregation(oParent, oAggregationNode)
+							.then(function (aReferenceNodes) {
+								oAggregationNode.insertBefore(oObject, aReferenceNodes[iIndex]);
+							});
+					}
+					return undefined;
+				});
 		},
 
 		/**
 		 * @inheritDoc
 		 */
 		removeAggregation: function (oParent, sName, oObject) {
-			var oAggregationNode = XmlTreeModifier._findAggregationNode(oParent, sName);
-			oAggregationNode.removeChild(oObject);
+			return XmlTreeModifier._findAggregationNode(oParent, sName)
+				.then(function (oAggregationNode) {
+					oAggregationNode.removeChild(oObject);
+				});
 		},
 
 		/**
 		 * @inheritDoc
 		 */
 		removeAllAggregation: function (oControl, sName) {
-			var oAggregationNode = XmlTreeModifier._findAggregationNode(oControl, sName);
-			if (oControl === oAggregationNode) {
-				var aChildControls = XmlTreeModifier._getControlsInAggregation(oControl, oControl);
-				aChildControls.forEach(function(oChildControl) {
-					oControl.removeChild(oChildControl);
+			return XmlTreeModifier._findAggregationNode(oControl, sName)
+				.then(function (oAggregationNode) {
+					if (oControl === oAggregationNode) {
+						return XmlTreeModifier._getControlsInAggregation(oControl, oControl)
+							.then(function (aChildControls) {
+								aChildControls.forEach(function(oChildControl) {
+									oControl.removeChild(oChildControl);
+								});
+							});
+					}
+					return oControl.removeChild(oAggregationNode);
 				});
-			} else {
-				oControl.removeChild(oAggregationNode);
-			}
 		},
 
 		/**
@@ -442,46 +502,64 @@ sap.ui.define([
 					break;
 				}
 			}
-			if (!oAggregationNode && XmlTreeModifier._isDefaultAggregation(oParent, sName)) {
-				oAggregationNode = oParent;
+			var oPromise = Promise.resolve(oAggregationNode);
+			if (!oAggregationNode) {
+				oPromise = oPromise
+					.then(XmlTreeModifier._isDefaultAggregation.bind(XmlTreeModifier, oParent, sName))
+					.then(function (bIsDefaultAggregation) {
+						if (bIsDefaultAggregation) {
+							return oParent;
+						}
+						return oAggregationNode;
+					});
 			}
-			return oAggregationNode;
+			return oPromise;
 		},
 
 		/**
 		 * @private
 		 */
 		_isDefaultAggregation: function(oParent, sAggregationName) {
-			var oControlMetadata = XmlTreeModifier.getControlMetadata(oParent);
-			var oDefaultAggregation = oControlMetadata.getDefaultAggregation();
-			return oDefaultAggregation && sAggregationName === oDefaultAggregation.name;
+			return XmlTreeModifier.getControlMetadata(oParent)
+				.then(function (oControlMetadata) {
+					var oDefaultAggregation = oControlMetadata.getDefaultAggregation();
+					return oDefaultAggregation && sAggregationName === oDefaultAggregation.name;
+				});
 		},
 
 		/**
 		 * @private
 		 */
 		_isNotNamedAggregationNode: function(oParent, oChildNode) {
-			var mAllAggregatiosnMetadata = XmlTreeModifier.getAllAggregations(oParent);
-			var oAggregation = mAllAggregatiosnMetadata[oChildNode.localName];
-			return oParent.namespaceURI !== oChildNode.namespaceURI || !oAggregation; //same check as in XMLTemplateProcessor (handleChild)
+			return XmlTreeModifier.getAllAggregations(oParent)
+				.then(function (mAllAggregatiosnMetadata) {
+					var oAggregation = mAllAggregatiosnMetadata[oChildNode.localName];
+					return oParent.namespaceURI !== oChildNode.namespaceURI || !oAggregation; //same check as in XMLTemplateProcessor (handleChild)
+				});
 		},
 
 		/**
 		 * @private
 		 */
 		_isSingleValueAggregation: function(oParent, sAggregationName) {
-			var mAllAggregatiosnMetadata = XmlTreeModifier.getAllAggregations(oParent);
-			var oAggregationMetadata = mAllAggregatiosnMetadata[sAggregationName];
-			return !oAggregationMetadata.multiple;
+			return XmlTreeModifier.getAllAggregations(oParent)
+				.then(function (mAllAggregatiosnMetadata) {
+					var oAggregationMetadata = mAllAggregatiosnMetadata[sAggregationName];
+					return !oAggregationMetadata.multiple;
+				});
 		},
 
 		/**
 		 * @private
 		 */
 		_isAltTypeAggregation: function(oParent, sAggregationName) {
-			var oControlMetadata = XmlTreeModifier.getControlMetadata(oParent);
-			var oAggregationMetadata = oControlMetadata.getAllAggregations()[sAggregationName];
-			return !!oAggregationMetadata.altTypes;
+			return XmlTreeModifier.getControlMetadata(oParent)
+				.then(function (oControlMetadata) {
+					return oControlMetadata.getAllAggregations()[sAggregationName];
+				})
+				.then(function (oAggregationMetadata) {
+					return !!oAggregationMetadata.altTypes;
+				});
 		},
 
 		/**
@@ -504,7 +582,15 @@ sap.ui.define([
 		_getControlsInAggregation: function(oParent, oAggregationNode) {
 			//convert NodeList to Array
 			var aChildren = Array.prototype.slice.call(XmlTreeModifier._children(oAggregationNode));
-			return aChildren.filter(XmlTreeModifier._isNotNamedAggregationNode.bind(this, oParent));
+			return Promise.all(aChildren.map(function (oChild) {
+				return XmlTreeModifier._isNotNamedAggregationNode(oParent, oChild)
+					.then(function (bIsNotNamedAggregationNode) {
+						return bIsNotNamedAggregationNode ? oChild : undefined;
+					});
+			}))
+			.then(function (aChildren) {
+				return aChildren.filter(function (oChild) { return !!oChild; });
+			});
 		},
 
 		/**
@@ -529,13 +615,16 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		getBindingTemplate: function (oControl, sAggregationName) {
-			var oAggregationNode = XmlTreeModifier._findAggregationNode(oControl, sAggregationName);
-			if (oAggregationNode) {
-				var aChildren = XmlTreeModifier._children(oAggregationNode);
-				if (aChildren.length === 1){
-					return aChildren[0];
-				}
-			}
+			return XmlTreeModifier._findAggregationNode(oControl, sAggregationName)
+				.then(function (oAggregationNode) {
+					if (oAggregationNode) {
+						var aChildren = XmlTreeModifier._children(oAggregationNode);
+						if (aChildren.length === 1){
+							return aChildren[0];
+						}
+					}
+					return undefined;
+				});
 		},
 
 		/**
@@ -549,82 +638,97 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		findIndexInParentAggregation: function (oControl) {
-			var oParent,
-				sAggregationName,
-				aControlsInAggregation;
-
 			// find the parent
-			oParent = XmlTreeModifier.getParent(oControl);
+			var oParent = XmlTreeModifier.getParent(oControl);
 
 			if (!oParent) {
-				return -1;
+				return Promise.resolve(-1);
 			}
 
 			// we need the aggregation name in order to find all control nodes in the parent
 			// which are relevant to this aggregation and skip all other possible nodes
-			sAggregationName = XmlTreeModifier.getParentAggregationName(oControl, oParent);
-
-			// get the relevant controls from the aggregation node
-			aControlsInAggregation = XmlTreeModifier.getAggregation(oParent, sAggregationName);
-
-			// if the result from the above is array:
-			if (Array.isArray(aControlsInAggregation)) {
-				// to harmonize behavior with JSControlTree, where stashed controls are not added to the parent aggregation
-				aControlsInAggregation = aControlsInAggregation.filter(function(oControl) {
-					if (XmlTreeModifier._isExtensionPoint(oControl)) {
-						return true;
+			return XmlTreeModifier.getParentAggregationName(oControl, oParent)
+				.then(function (sAggregationName) {
+					// get the relevant controls from the aggregation node
+					return XmlTreeModifier.getAggregation(oParent, sAggregationName);
+				})
+				.then(function (aControlsInAggregation) {
+					// if the result from the above is array:
+					if (Array.isArray(aControlsInAggregation)) {
+						// to harmonize behavior with JSControlTree, where stashed controls are not added to the parent aggregation
+						var aPromises = aControlsInAggregation.map(function (oControl) {
+							return Promise.resolve()
+								.then(function () {
+									if (XmlTreeModifier._isExtensionPoint(oControl)) {
+										return oControl;
+									}
+									return XmlTreeModifier.getProperty(oControl, "stashed")
+										.then(function (oProperty) {
+											return !oProperty ? oControl : undefined;
+										});
+								});
+						});
+						return Promise.all(aPromises)
+							.then(function (aControlsInAggregation) {
+								// find and return the correct index
+								return aControlsInAggregation.filter(function (oControl) {
+									return !!oControl;
+								}).indexOf(oControl);
+							});
+					} else {
+						// if aControlsInAggregation is not an array, then the aggregation is
+						// of type 0..1 and aControlsInAggregation is the oControl provided
+						// to the function initially, so its index is 0
+						return 0;
 					}
-					return !XmlTreeModifier.getProperty(oControl, "stashed");
 				});
-
-				// find and return the correct index
-				return aControlsInAggregation.indexOf(oControl);
-			} else {
-				// if aControlsInAggregation is not an array, then the aggregation is
-				// of type 0..1 and aControlsInAggregation is the oControl provided
-				// to the function initially, so its index is 0
-				return 0;
-			}
 		},
 
 		/**
 		 * @inheritDoc
 		 */
 		getParentAggregationName: function (oControl, oParent) {
-			var bNotNamedAggregation,
-				sAggregationName;
-
-			// check if the control is in named aggregatio node
-			if (!oParent.isSameNode(oControl.parentNode)) {
-				// the control is in named aggregation
-				bNotNamedAggregation = false;
-			} else {
-				// again check just in case
-				bNotNamedAggregation = XmlTreeModifier._isNotNamedAggregationNode(oParent, oControl);
-			}
-
-			// check if the the control is in default aggregation
-			// and get the name of the aggregation
-			if (bNotNamedAggregation) {
-				// the control is in the default aggregation of the parent
-				sAggregationName = XmlTreeModifier.getControlMetadata(oParent).getDefaultAggregationName();
-			} else {
-				// the agregation name is provided and we can simply take it from the xml node
-				sAggregationName = XmlTreeModifier._getLocalName(oControl.parentNode);
-			}
-
-			return sAggregationName;
+			return Promise.resolve()
+				.then(function () {
+					// check if the control is in named aggregatio node
+					if (!oParent.isSameNode(oControl.parentNode)) {
+						// the control is in named aggregation
+						return false;
+					} else {
+						// again check just in case
+						return XmlTreeModifier._isNotNamedAggregationNode(oParent, oControl);
+					}
+				})
+				.then(function (bNotNamedAggregation) {
+							// check if the the control is in default aggregation
+					// and get the name of the aggregation
+					if (bNotNamedAggregation) {
+						// the control is in the default aggregation of the parent
+						return XmlTreeModifier.getControlMetadata(oParent)
+							.then(function (oMetadata) {
+								return oMetadata.getDefaultAggregationName();
+							});
+					} else {
+						// the agregation name is provided and we can simply take it from the xml node
+						return XmlTreeModifier._getLocalName(oControl.parentNode);
+					}
+				});
 		},
 
 		/**
 		 * @inheritDoc
 		 */
 		findAggregation: function(oControl, sAggregationName) {
-			var oMetadata = XmlTreeModifier.getControlMetadata(oControl);
-			var oAggregations = oMetadata.getAllAggregations();
-			if (oAggregations) {
-				return oAggregations[sAggregationName];
-			}
+			return XmlTreeModifier.getControlMetadata(oControl)
+				.then(function (oMetadata) {
+					return oMetadata.getAllAggregations();
+				})
+				.then(function (oAggregations) {
+					if (oAggregations) {
+						return oAggregations[sAggregationName];
+					}
+					return undefined;
+				});
 		},
 
 		/**
@@ -633,44 +737,48 @@ sap.ui.define([
 		validateType: function(oControl, mAggregationMetadata, oParent, sFragment, iIndex) {
 			var sTypeOrInterface = mAggregationMetadata.type;
 
-			// if aggregation is not multiple and already has element inside, then it is not valid for element
-			if (mAggregationMetadata.multiple === false && XmlTreeModifier.getAggregation(oParent, mAggregationMetadata.name) &&
-					XmlTreeModifier.getAggregation(oParent, mAggregationMetadata.name).length > 0) {
-				return false;
-			}
-			var aControls = sap.ui.xmlfragment({fragmentContent: sFragment});
-			if (!Array.isArray(aControls)) {
-				aControls = [aControls];
-			}
-			var bReturn = aControls[iIndex].isA(sTypeOrInterface);
-			aControls.forEach(function(oFragmentControl) {
-				oFragmentControl.destroy();
-			});
-			return bReturn;
+			return XmlTreeModifier.getAggregation(oParent, mAggregationMetadata.name)
+				.then(function (oAggregation) {
+					// if aggregation is not multiple and already has element inside, then it is not valid for element
+					if (mAggregationMetadata.multiple === false && oAggregation && oAggregation.length > 0) {
+						return false;
+					}
+					var aControls = sap.ui.xmlfragment({fragmentContent: sFragment});
+					if (!Array.isArray(aControls)) {
+						aControls = [aControls];
+					}
+					var bReturn = aControls[iIndex].isA(sTypeOrInterface);
+					aControls.forEach(function(oFragmentControl) {
+						oFragmentControl.destroy();
+					});
+					return bReturn;
+				});
 		},
 
 		/**
 		 * @inheritDoc
 		 */
 		instantiateFragment: function(sFragment, sNamespace, oView) {
-			var aControls;
 			var oFragment = XMLHelper.parse(sFragment);
-			oFragment = XmlTreeModifier._checkAndPrefixIdsInFragment(oFragment, sNamespace);
+			return XmlTreeModifier._checkAndPrefixIdsInFragment(oFragment, sNamespace)
+				.then(function (oFragment) {
+					var aControls;
 
-			if (oFragment.localName === "FragmentDefinition") {
-				aControls = XmlTreeModifier._getElementNodeChildren(oFragment);
-			} else {
-				aControls = [oFragment];
-			}
+					if (oFragment.localName === "FragmentDefinition") {
+						aControls = XmlTreeModifier._getElementNodeChildren(oFragment);
+					} else {
+						aControls = [oFragment];
+					}
 
-			// check if there is already a field with the same ID and throw error if so
-			aControls.forEach(function(oNode) {
-				if (XmlTreeModifier._byId(oNode.getAttribute("id"), oView)) {
-					throw Error("The following ID is already in the view: " + oNode.getAttribute("id"));
-				}
-			});
+					// check if there is already a field with the same ID and throw error if so
+					aControls.forEach(function(oNode) {
+						if (XmlTreeModifier._byId(oNode.getAttribute("id"), oView)) {
+							throw Error("The following ID is already in the view: " + oNode.getAttribute("id"));
+						}
+					});
 
-			return aControls;
+					return aControls;
+				});
 		},
 
 		/**
@@ -707,25 +815,27 @@ sap.ui.define([
 		 */
 		attachEvent: function(oNode, sEventName, sFunctionPath, vData) {
 			if (typeof ObjectPath.get(sFunctionPath) !== "function") {
-				throw new Error("Can't attach event because the event handler function is not found or not a function.");
+				return Promise.reject(new Error("Can't attach event because the event handler function is not found or not a function."));
 			}
+			return XmlTreeModifier.getProperty(oNode, sEventName)
+				.then(function (sValue) {
+					sValue = sValue || "";
+					var aEventHandlers = EventHandlerResolver.parse(sValue);
+					var sEventHandler = sFunctionPath;
+					var aParams = ["$event"];
 
-			var sValue = XmlTreeModifier.getProperty(oNode, sEventName) || "";
-			var aEventHandlers = EventHandlerResolver.parse(sValue);
-			var sEventHandler = sFunctionPath;
-			var aParams = ["$event"];
+					if (vData) {
+						aParams.push(JSON.stringify(vData));
+					}
 
-			if (vData) {
-				aParams.push(JSON.stringify(vData));
-			}
+					sEventHandler += "(" + aParams.join(",") + ")";
 
-			sEventHandler += "(" + aParams.join(",") + ")";
+					if (!includes(aEventHandlers, sEventHandler)) {
+						aEventHandlers.push(sEventHandler);
+					}
 
-			if (!includes(aEventHandlers, sEventHandler)) {
-				aEventHandlers.push(sEventHandler);
-			}
-
-			oNode.setAttribute(sEventName, aEventHandlers.join(";"));
+					oNode.setAttribute(sEventName, aEventHandlers.join(";"));
+				});
 		},
 
 		/**
@@ -733,68 +843,86 @@ sap.ui.define([
 		 */
 		detachEvent: function(oNode, sEventName, sFunctionPath) {
 			if (typeof ObjectPath.get(sFunctionPath) !== "function") {
-				throw new Error("Can't attach event because the event handler function is not found or not a function.");
+				return Promise.reject(new Error("Can't attach event because the event handler function is not found or not a function."));
 			}
+			return XmlTreeModifier.getProperty(oNode, sEventName)
+				.then(function (sValue) {
+					sValue = sValue || "";
+					var aEventHandlers = EventHandlerResolver.parse(sValue);
 
-			var sValue = XmlTreeModifier.getProperty(oNode, sEventName) || "";
-			var aEventHandlers = EventHandlerResolver.parse(sValue);
+					var iEventHandlerIndex =  aEventHandlers.findIndex(function (sEventHandler) {
+						return sEventHandler.includes(sFunctionPath);
+					});
 
-			var iEventHandlerIndex =  aEventHandlers.findIndex(function (sEventHandler) {
-				return sEventHandler.includes(sFunctionPath);
-			});
+					if (iEventHandlerIndex > -1) {
+						aEventHandlers.splice(iEventHandlerIndex, 1);
+					}
 
-			if (iEventHandlerIndex > -1) {
-				aEventHandlers.splice(iEventHandlerIndex, 1);
-			}
-
-			if (aEventHandlers.length) {
-				oNode.setAttribute(sEventName, aEventHandlers.join(";"));
-			} else {
-				oNode.removeAttribute(sEventName);
-			}
+					if (aEventHandlers.length) {
+						oNode.setAttribute(sEventName, aEventHandlers.join(";"));
+					} else {
+						oNode.removeAttribute(sEventName);
+					}
+				});
 		},
 
 		/**
 		 * @inheritDoc
 		 */
 		bindAggregation: function (oNode, sAggregationName, vBindingInfos, oView) {
-			XmlTreeModifier.bindProperty(oNode, sAggregationName, vBindingInfos.path);
-			XmlTreeModifier.insertAggregation(oNode, sAggregationName, vBindingInfos.template, 0, oView);
+			return Promise.resolve()
+				.then(function () {
+					XmlTreeModifier.bindProperty(oNode, sAggregationName, vBindingInfos.path);
+					return XmlTreeModifier.insertAggregation(oNode, sAggregationName, vBindingInfos.template, 0, oView);
+				});
 		},
 
 		/**
 		 * @inheritDoc
 		 */
 		unbindAggregation: function (oNode, sAggregationName) {
-			if (oNode.hasAttribute(sAggregationName)) {
-				oNode.removeAttribute(sAggregationName);
-				XmlTreeModifier.removeAllAggregation(oNode, sAggregationName);
-			}
+			return Promise.resolve()
+				.then(function () {
+					if (oNode.hasAttribute(sAggregationName)) {
+						oNode.removeAttribute(sAggregationName);
+						return XmlTreeModifier.removeAllAggregation(oNode, sAggregationName);
+					}
+					return undefined;
+				});
 		},
 
 		/**
 		 * @inheritDoc
 		 */
 		getExtensionPointInfo: function(sExtensionPointName, oView) {
-			if (oView && sExtensionPointName) {
-				var aExtensionPoints = Array.prototype.slice.call(oView.getElementsByTagNameNS("sap.ui.core", "ExtensionPoint"));
-				var aFilteredExtensionPoints = aExtensionPoints.filter(function(oExtPoint) {
-					return oExtPoint.getAttribute("name") === sExtensionPointName;
-				});
-				var oExtensionPoint = (aFilteredExtensionPoints.length === 1) ? aFilteredExtensionPoints[0] : undefined;
-				if (oExtensionPoint) {
-					var oParent = XmlTreeModifier.getParent(oExtensionPoint);
-					// increase the index by 1 to get the index behind the extension point for xml-case
-					var oExtensionPointInfo = {
-						parent: oParent,
-						aggregationName: XmlTreeModifier.getParentAggregationName(oExtensionPoint, oParent),
-						index: XmlTreeModifier.findIndexInParentAggregation(oExtensionPoint) + 1,
-						defaultContent: Array.prototype.slice.call(XmlTreeModifier._children(oExtensionPoint))
-					};
+			return Promise.resolve()
+				.then(function () {
+					if (oView && sExtensionPointName) {
+						var aExtensionPoints = Array.prototype.slice.call(oView.getElementsByTagNameNS("sap.ui.core", "ExtensionPoint"));
+						var aFilteredExtensionPoints = aExtensionPoints.filter(function(oExtPoint) {
+							return oExtPoint.getAttribute("name") === sExtensionPointName;
+						});
+						var oExtensionPoint = (aFilteredExtensionPoints.length === 1) ? aFilteredExtensionPoints[0] : undefined;
+						if (oExtensionPoint) {
+							var oParent = XmlTreeModifier.getParent(oExtensionPoint);
 
-					return oExtensionPointInfo;
-				}
-			}
+							return Promise.all([
+								XmlTreeModifier.getParentAggregationName(oExtensionPoint, oParent),
+								XmlTreeModifier.findIndexInParentAggregation(oExtensionPoint)
+							]).then(function (aProperties) {
+								// increase the index by 1 to get the index behind the extension point for xml-case
+								var oExtensionPointInfo = {
+									parent: oParent,
+									aggregationName: aProperties[0],
+									index: aProperties[1] + 1,
+									defaultContent: Array.prototype.slice.call(XmlTreeModifier._children(oExtensionPoint))
+								};
+								return oExtensionPointInfo;
+							});
+						}
+					}
+					return undefined;
+				});
 		}
 	});
 

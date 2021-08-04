@@ -104,8 +104,10 @@ function(
 				}
 			};
 
-			var oControl = XmlTreeModifier.bySelector(oSelector, this.oComponent, this.oXmlView2);
-			assert.ok(oControl);
+			return XmlTreeModifier.bySelectorTypeIndependent(oSelector, this.oComponent, this.oXmlView2)
+				.then(function (oControl) {
+					assert.ok(oControl);
+				});
 		});
 
 		QUnit.test("can determine a selector for a given node", function (assert) {
@@ -244,8 +246,10 @@ function(
 					idIsLocal: false
 				}
 			};
-			var oControl = JsControlTreeModifier.bySelector(oSelector, this.oComponent);
-			assert.strictEqual(oControl.getId(), this.oHBox1.getId(), "then the correct parent control for the extension point selector is returned");
+			return JsControlTreeModifier.bySelectorTypeIndependent(oSelector, this.oComponent)
+				.then(function (oControl) {
+					assert.strictEqual(oControl.getId(), this.oHBox1.getId(), "then the correct parent control for the extension point selector is returned");
+				}.bind(this));
 		});
 	});
 
@@ -255,6 +259,8 @@ function(
 		}
 	}, function() {
 		QUnit.test("when checkAndPrefixIdsInFragment is called with various fragments", function(assert) {
+			var fnDone = assert.async(5);
+
 			var oXML1 = jQuery.sap.parseXML(
 				'<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">' +
 					// '<Label id="label123" text="These controls are within one multi-root Fragment:" />' +
@@ -364,63 +370,73 @@ function(
 				});
 			}
 
-			assert.throws(function() {
-				BaseTreeModifier._checkAndPrefixIdsInFragment(oXML1, "foo");
-			}, new Error("At least one control does not have a stable ID"), "missing stable ID error cought");
+			BaseTreeModifier._checkAndPrefixIdsInFragment(oXML1, "foo").catch(function (vError) {
+				assert.strictEqual(vError.message, "At least one control does not have a stable ID",
+					"missing stable ID error cought");
+				fnDone();
+			});
 
-			assert.throws(function() {
-				BaseTreeModifier._checkAndPrefixIdsInFragment(oXML2, "foo");
-			}, new Error("At least one control does not have a stable ID"), "missing stable ID error cought");
+			BaseTreeModifier._checkAndPrefixIdsInFragment(oXML2, "foo").catch(function (vError) {
+				assert.strictEqual(vError.message, "At least one control does not have a stable ID",
+					"missing stable ID error cought");
+				fnDone();
+			});
 
-			var sResult3 = BaseTreeModifier._checkAndPrefixIdsInFragment(oXML3, "foo");
-			var aChildren = BaseTreeModifier._getElementNodeChildren(sResult3);
-			aChildren.push(BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(aChildren[3])[0])[0]);
-			checkIdsOfAllChildren(aChildren, assert);
+			BaseTreeModifier._checkAndPrefixIdsInFragment(oXML3, "foo").then(function (sResult3) {
+				var aChildren = BaseTreeModifier._getElementNodeChildren(sResult3);
+				aChildren.push(BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(aChildren[3])[0])[0]);
+				checkIdsOfAllChildren(aChildren, assert);
+				fnDone();
+			});
 
-			var sResult4 = BaseTreeModifier._checkAndPrefixIdsInFragment(oXML4, "foo");
-			aChildren = BaseTreeModifier._getElementNodeChildren(sResult4);
-			aChildren.push(BaseTreeModifier._getElementNodeChildren(aChildren[3])[0]);
-			checkIdsOfAllChildren(aChildren, assert);
+			BaseTreeModifier._checkAndPrefixIdsInFragment(oXML4, "foo").then(function (sResult4) {
+				var aChildren = BaseTreeModifier._getElementNodeChildren(sResult4);
+				aChildren.push(BaseTreeModifier._getElementNodeChildren(aChildren[3])[0]);
+				checkIdsOfAllChildren(aChildren, assert);
+				fnDone();
+			});
 
-			var sResult5 = BaseTreeModifier._checkAndPrefixIdsInFragment(oXML5, "foo");
-			// get all controls which should be prefixed
-			aChildren = BaseTreeModifier._getElementNodeChildren(sResult5);
-			var oObjectPageLayout = aChildren[0];
+			BaseTreeModifier._checkAndPrefixIdsInFragment(oXML5, "foo").then(function (sResult5) {
+				// get all controls which should be prefixed
+				var aChildren = BaseTreeModifier._getElementNodeChildren(sResult5);
+				var oObjectPageLayout = aChildren[0];
 
-			// headerTitle
-			aChildren.push(BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(aChildren[0])[0])[0]);
+				// headerTitle
+				aChildren.push(BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(aChildren[0])[0])[0]);
 
-			// headerContent
-			var oVerticalLayout = BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(aChildren[0])[1])[0];
-			aChildren.push(oVerticalLayout);
-			var oFlexBox = BaseTreeModifier._getElementNodeChildren(oVerticalLayout)[0];
-			aChildren.push(oFlexBox);
-			oVerticalLayout = BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oFlexBox)[0])[0];
-			aChildren.push(oVerticalLayout);
-			aChildren.push(BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oVerticalLayout)[0])[0]);
-			aChildren.push(BaseTreeModifier._getElementNodeChildren(oVerticalLayout)[1]);
-			aChildren.push(BaseTreeModifier._getElementNodeChildren(oVerticalLayout)[2]);
-			aChildren.push(BaseTreeModifier._getElementNodeChildren(oVerticalLayout)[3]);
+				// headerContent
+				var oVerticalLayout = BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(aChildren[0])[1])[0];
+				aChildren.push(oVerticalLayout);
+				var oFlexBox = BaseTreeModifier._getElementNodeChildren(oVerticalLayout)[0];
+				aChildren.push(oFlexBox);
+				oVerticalLayout = BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oFlexBox)[0])[0];
+				aChildren.push(oVerticalLayout);
+				aChildren.push(BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oVerticalLayout)[0])[0]);
+				aChildren.push(BaseTreeModifier._getElementNodeChildren(oVerticalLayout)[1]);
+				aChildren.push(BaseTreeModifier._getElementNodeChildren(oVerticalLayout)[2]);
+				aChildren.push(BaseTreeModifier._getElementNodeChildren(oVerticalLayout)[3]);
 
-			// sections
-			var oSectionsAgg = BaseTreeModifier._getElementNodeChildren(oObjectPageLayout)[2];
-			var oSection1 = BaseTreeModifier._getElementNodeChildren(oSectionsAgg)[0];
-			aChildren.push(oSection1);
-			var oSubSection1 = BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oSection1)[0])[0];
-			aChildren.push(oSubSection1);
-			var oHBox1 = BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oSubSection1)[0])[0];
-			aChildren.push(oHBox1);
-			aChildren.push(BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oHBox1)[0])[0]);
+				// sections
+				var oSectionsAgg = BaseTreeModifier._getElementNodeChildren(oObjectPageLayout)[2];
+				var oSection1 = BaseTreeModifier._getElementNodeChildren(oSectionsAgg)[0];
+				aChildren.push(oSection1);
+				var oSubSection1 = BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oSection1)[0])[0];
+				aChildren.push(oSubSection1);
+				var oHBox1 = BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oSubSection1)[0])[0];
+				aChildren.push(oHBox1);
+				aChildren.push(BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oHBox1)[0])[0]);
 
-			var oSection2 = BaseTreeModifier._getElementNodeChildren(oSectionsAgg)[1];
-			aChildren.push(oSection2);
-			var oSubSection2 = BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oSection2)[0])[0];
-			aChildren.push(oSubSection2);
-			var oHBox2 = BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oSubSection2)[0])[0];
-			aChildren.push(oHBox2);
-			aChildren.push(BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oHBox2)[0])[0]);
+				var oSection2 = BaseTreeModifier._getElementNodeChildren(oSectionsAgg)[1];
+				aChildren.push(oSection2);
+				var oSubSection2 = BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oSection2)[0])[0];
+				aChildren.push(oSubSection2);
+				var oHBox2 = BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oSubSection2)[0])[0];
+				aChildren.push(oHBox2);
+				aChildren.push(BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oHBox2)[0])[0]);
 
-			checkIdsOfAllChildren(aChildren, assert);
+				checkIdsOfAllChildren(aChildren, assert);
+				fnDone();
+			});
 		});
 
 		QUnit.test("when getPropertyBindingOrProperty is called", function(assert) {
@@ -429,13 +445,22 @@ function(
 				.onCall(1).returns("propertyBinding")
 				.onCall(2).returns("propertyBinding");
 			sandbox.stub(BaseTreeModifier, "getProperty")
-				.onCall(0).returns("property")
-				.onCall(1).returns(undefined)
-				.onCall(2).returns("property");
+				.onCall(0).resolves("property")
+				.onCall(1).resolves(undefined)
+				.onCall(2).resolves("property");
 
-			assert.equal(BaseTreeModifier.getPropertyBindingOrProperty(), "property", "without propertyBinding the property is returned");
-			assert.equal(BaseTreeModifier.getPropertyBindingOrProperty(), "propertyBinding", "without property the propertyBinding is returned");
-			assert.equal(BaseTreeModifier.getPropertyBindingOrProperty(), "propertyBinding", "with both returning something the propertyBinding is returned");
+			return BaseTreeModifier.getPropertyBindingOrProperty()
+				.then(function (oPropertyOrBinding) {
+					assert.equal(oPropertyOrBinding, "property", "without propertyBinding the property is returned");
+					return BaseTreeModifier.getPropertyBindingOrProperty();
+				})
+				.then(function (oPropertyOrBinding) {
+					assert.equal(oPropertyOrBinding, "propertyBinding", "without property the propertyBinding is returned");
+					return BaseTreeModifier.getPropertyBindingOrProperty();
+				})
+				.then(function (oPropertyOrBinding) {
+					assert.equal(oPropertyOrBinding, "propertyBinding", "with both returning something the propertyBinding is returned");
+				});
 		});
 
 		QUnit.test("when setPropertyBindingOrProperty is called", function(assert) {

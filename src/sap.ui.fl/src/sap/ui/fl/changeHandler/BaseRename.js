@@ -53,8 +53,11 @@ sap.ui.define([
 					return Promise.resolve()
 						.then(function() {
 							if (oChangeDefinition.texts && sText && typeof (sValue) === "string") {
-								oChange.setRevertData(oModifier.getPropertyBindingOrProperty(oControl, sPropertyName));
-								return oModifier.setPropertyBindingOrProperty(oControl, sPropertyName, sValue);
+								return oModifier.getPropertyBindingOrProperty(oControl, sPropertyName)
+									.then(function (vPropertyValue) {
+										oChange.setRevertData(vPropertyValue);
+										return oModifier.setPropertyBindingOrProperty(oControl, sPropertyName, sValue);
+									});
 							}
 							Log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
 							//however subsequent changes should be applied
