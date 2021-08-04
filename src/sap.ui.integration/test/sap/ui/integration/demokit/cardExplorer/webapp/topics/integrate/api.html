@@ -3,9 +3,8 @@
 
 <head>
 	<title>Integration Cards</title>
-	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
 	<script src="../../scripts/boot.js"></script>
 </head>
 
@@ -16,6 +15,7 @@
 			<h1 id="cardApi">Integration Cards API</h1>
 			<p>
 				Card API is used by the host environment to:
+			</p>
 			<ul>
 				<li>Set manifest URL or manifest object and base URL to create the card</li>
 				<li>Provide handlers for different user interaction events</li>
@@ -23,9 +23,8 @@
 				<li>Set width and height which would work for the layout used in the host environment</li>
 				<li>Manage card state</li>
 			</ul>
-			</p>
 
-			<h1 id="handlingActions">Handling Action Event</h2>
+			<h1 id="handlingActions">Handling Action Event</h1>
 				<p>
 					A card instance can trigger an <code>action</code> event. This event should be handled by the host
 					environment to make the card interactions fully functional.
@@ -44,15 +43,15 @@
 				<p>
 					Adding handler for <code>action</code> event in the XML View
 				</p>
-				<pre class="prettyprint  lang-xml">
+				<pre class="lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
-	&lt;w:Card manifest="./manifest.json" action="onActionLog"/&gt;
+	&lt;w:Card manifest="./manifest.json" action=".onActionLog" /&gt;
 &lt;/mvc:View&gt;
 </pre>
 				<p>
 					on <code>action</code> handler code in the controller.
 				</p>
-				<pre class="prettyprint  lang-js">
+				<pre class="lang-js">
 ...
 onActionLog: function (oEvent) {
 	console.log(oEvent.getParameter("type")); // The type of the action
@@ -63,7 +62,7 @@ onActionLog: function (oEvent) {
 </pre>
 
 				<h2>When using &lt;ui-integration-card&gt; custom element</h2>
-				<pre class="prettyprint  lang-xml">
+				<pre class="language-html">
 &lt;body&gt;
 	&lt;ui-integration-card id="cardWithActions"
 		manifest="./some/location/my/card/manifest.json"&gt;
@@ -77,7 +76,7 @@ onActionLog: function (oEvent) {
 &lt;/body&gt;
 </pre>
 
-				<h1 id="passingParameters">Passing Parameters</h2>
+				<h1 id="passingParameters">Passing Parameters</h1>
 					<p>
 						A card developer can add parameters to the cards manifest. Such parameters are often optional
 						and allow to influence the cards content. Some parameters are mandatory, because the card relies
@@ -89,23 +88,23 @@ onActionLog: function (oEvent) {
 					</p>
 
 					<h2>When using UI5</h2>
-					<pre class="prettyprint  lang-js">
+					<pre class="lang-js">
 var oCard = new Card();
 // This manifest expects a city parameter to render a card with information for that city.
 oCard.setManifest("./manifest.json");
 var oParameters = {
-	"city": "Waldorf,de"
+	"city": "Walldorf, DE"
 };
 oCard.setParameters(oParameters);
 </pre>
 
 					<h2>When using &lt;ui-integration-card&gt; custom element</h2>
-					<pre class="prettyprint  lang-js">
+					<pre class="lang-js">
 var parameters = {
-	"city": "Waldorf,de"
+	"city": "Walldorf, DE"
 };
 var card = document.createElement("ui-integration-card");
-card.setAttribute('id', "myCard");
+card.setAttribute("id", "myCard");
 card.setAttribute("manifest", "./some/location/my/card/manifest.json");
 card.setAttribute("parameters", JSON.stringify(parameters));
 document.body.appendChild(card);
@@ -132,7 +131,7 @@ document.body.appendChild(card);
 					</p>
 
 					<h3>When using UI5</h3>
-					<pre class="prettyprint  lang-js">
+					<pre class="lang-js">
 // Make card inactive for 10 seconds
 var oCard = sap.ui.getCore().byId("myCard");
 oCard.setDataMode("Inactive");
@@ -142,12 +141,12 @@ setTimeout(function () {
 </pre>
 
 					<h3>When using &lt;ui-integration-card&gt; custom element</h3>
-					<pre class="prettyprint  lang-js">
+					<pre class="lang-js">
 // Make card inactive for 10 seconds
 var card = document.getElementById("myCard");
-card.setAttribute("data-mode", "Inactive");
+card.dataset.mode = "Inactive";
 setTimeout(function () {
-	card.setAttribute("data-mode", "Active");
+	card.dataset.mode = "Inactive";
 }, 10000);
 </pre>
 
@@ -167,12 +166,12 @@ setTimeout(function () {
 					</p>
 
 					<h3>When using UI5</h3>
-					<pre class="prettyprint  lang-js">
+					<pre class="lang-js">
 oCard.refresh();
 </pre>
 
 					<h3>When using &lt;ui-integration-card&gt; custom element</h3>
-					<pre class="prettyprint  lang-js">
+					<pre class="lang-js">
 customElements.whenDefined("ui-integration-card").then(function () {
 	var oCard = document.getElementById("myCard");
 	oCard.refresh();
@@ -189,7 +188,7 @@ customElements.whenDefined("ui-integration-card").then(function () {
 						To modify the height and width of the Card, set its respective attributes <code>height</code>
 						and <code>width</code>.
 					</p>
-					<pre class="prettyprint  lang-xml">
+					<pre class="lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card manifest="./manifest.json" width="360px" height="auto"/&gt;
 &lt;/mvc:View&gt;
@@ -204,7 +203,7 @@ customElements.whenDefined("ui-integration-card").then(function () {
 						<em>The attributes <code>height</code> and <code>width</code> are not available on the custom
 							element.</em>
 					</p>
-					<pre class="prettyprint  lang-xml">
+					<pre class="lang-xml">
 .myCard {
 	width: 380px;
 	height: 16rem;
@@ -223,8 +222,6 @@ customElements.whenDefined("ui-integration-card").then(function () {
 			<div><a href="../../index.html#/integrate/api/configuringDimensions" target="_parent">Configuring Card Dimensions</a></div>
 		</div>
 	</div>
-
-
 </body>
 
 </html>

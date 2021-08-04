@@ -3,9 +3,8 @@
 
 <head>
 	<title>WebPage Card</title>
-	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
 	<script src="../../../scripts/boot.js"></script>
 </head>
 
@@ -60,7 +59,7 @@
 
 			<h2 id="example">Example</h2>
 			<p>Define the <code>manifest.json</code> of the card:</p>
-			<pre class="prettyprint  lang-js">
+			<pre class="lang-json">
 {
 	"sap.app": {
 		"id": "card.explorer.webpage.card",
@@ -110,9 +109,9 @@
 </pre>
 
 			<p>Create the view to display the card:</p>
-			<pre class="prettyprint  lang-xml">
+			<pre class="lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
-	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
+	&lt;w:Card manifest="./manifest.json" width="400px" height="auto" /&gt;
 &lt;/mvc:View&gt;</pre>
 			<a class="try-button" href="../../../index.html#/explore/webPage" target="_parent">Try it Out</a>
 		</div>

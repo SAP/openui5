@@ -3,9 +3,8 @@
 
 <head>
 	<title>Integration Cards</title>
-	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
 	<script src="../../scripts/boot.js"></script>
 </head>
 
@@ -30,7 +29,7 @@
 				<br />
 				When there are host actions defined, an additional toolbar is displayed in the card:
 				<br />
-				<img src="../images/hostActions.png" />
+				<img src="../images/hostActions.png" alt="">
 				<br />
 				Each host action is represented as a button in the toolbar.
 				The button options can be specified.
@@ -113,7 +112,7 @@
 			<p>An example with a card and host actions would look like:</p>
 
 			Controller
-			<pre class="prettyprint  lang-js">
+			<pre class="lang-js">
 var oHost = new sap.ui.integration.Host({
 	actions: [
 		{
@@ -141,7 +140,7 @@ var oHost = new sap.ui.integration.Host({
 this.getView().byId('card1').setHost(oHost);</pre>
 
 			XML View
-			<pre class="prettyprint  lang-js">
+			<pre class="lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card id="card1" manifest="./manifest.json" /&gt;
 &lt;/mvc:View&gt;</pre>

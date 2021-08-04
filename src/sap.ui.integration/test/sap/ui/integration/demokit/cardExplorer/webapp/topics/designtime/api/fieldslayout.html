@@ -3,10 +3,9 @@
 
 <head>
 	<title>Integration Cards</title>
-	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
-	<script require-ui5-init src="../../../scripts/boot.js"></script>
+	<script data-require-ui5-init src="../../../scripts/boot.js"></script>
 
 	<style>
 		.tableWrapper td {
@@ -31,12 +30,11 @@
 			display: none ! important;
 		}
 
-		td[sample],
-		td[sample] .sapUiIntegrationCardEditor,
-		td[sample] .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm {
+		td[data-sample],
+		td[data-sample] .sapUiIntegrationCardEditor,
+		td[data-sample] .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm {
 			width: 400px;
 			height: 120px;
-
 		}
 	</style>
 	<script>
@@ -102,18 +100,18 @@
 							oAdvancedEditor.placeAt(domElement);
 						}.bind(null, oEditor, i));
 					};
-					var aSamples = document.querySelectorAll("td[sample]");
+					var aSamples = document.querySelectorAll("td[data-sample]");
 					for (var i = 0; i < aSamples.length; i++) {
 						try {
-							var iSample = aSamples[i].getAttribute("sample");
+							var iSample = aSamples[i].dataset.sample;
 							if (!iSample) {
-								var sItem = aSamples[i].getAttribute("item");
+								var sItem = aSamples[i].dataset.item;
 								if (!sItem) {
 									continue
 								}
 								placeAdvancedEditor(aSamples[i], sItem);
 							} else {
-								var sCode = document.querySelector("pre[sample='" + iSample + "']").innerText,
+								var sCode = document.querySelector("pre[data-sample='" + iSample + "']").innerText,
 								oConfig = JSON.parse(sCode);
 								if (!oConfig.param1) {
 									oConfig = {
@@ -170,11 +168,11 @@
 						<td>Simple String field</td>
 
 
-						<td sample="1">
+						<td data-sample="1">
 							Loading...
 						</td>
 						<td>
-							<pre class="prettyprint lang-js" sample="1">{
+							<pre class="lang-json" data-sample="1">{
 	"manifestpath": "/sap.card...param/value",
 	"label": "Fixed Label Text",
 	"type": "string"
@@ -185,11 +183,11 @@
 						<td>Simple Boolean field</td>
 
 
-						<td sample="2">
+						<td data-sample="2">
 							Loading...
 						</td>
 						<td>
-							<pre class="prettyprint lang-js" sample="2">{
+							<pre class="lang-json" data-sample="2">{
 	"manifestpath": "/sap.card...param/value",
 	"label": "Fixed Label Text",
 	"type": "boolean"
@@ -200,11 +198,11 @@
 						<td>Simple Integer field</td>
 
 
-						<td sample="3">
+						<td data-sample="3">
 							Loading...
 						</td>
 						<td>
-							<pre class="prettyprint lang-js" sample="3">{
+							<pre class="lang-json" data-sample="3">{
 	"manifestpath": "/sap.card...param/value",
 	"label": "Fixed Label Text",
 	"type": "integer"
@@ -215,11 +213,11 @@
 						<td>Simple Date field</td>
 
 
-						<td sample="4">
+						<td data-sample="4">
 							Loading...
 						</td>
 						<td>
-							<pre class="prettyprint lang-js" sample="4">{
+							<pre class="lang-json" data-sample="4">{
 	"param1": {
 		"manifestpath": "/sap.card/configuration/parameters/param1/value",
 		"label": "Fixed Label Text",
@@ -232,11 +230,11 @@
 						<td>Simple Date Time field</td>
 
 
-						<td sample="5">
+						<td data-sample="5">
 							Loading...
 						</td>
 						<td>
-							<pre class="prettyprint lang-js" sample="5">{
+							<pre class="lang-json" data-sample="5">{
 	"param1": {
 		"manifestpath": "/sap.card/configuration/parameters/param1/value",
 		"label": "Fixed Label Text",
@@ -250,11 +248,11 @@
 							each other</td>
 
 
-						<td sample="6">
+						<td data-sample="6">
 							Loading...
 						</td>
 						<td>
-							<pre class="prettyprint lang-js" sample="6">{
+							<pre class="lang-json" data-sample="6">{
 	"param1": {
 		"manifestpath": "/sap.card...param/value1",
 		"label": "Field 1",
@@ -273,11 +271,11 @@
 					<tr>
 						<td>Group header before a field</td>
 
-						<td sample="7">
+						<td data-sample="7">
 							Loading...
 						</td>
 						<td>
-							<pre class="prettyprint lang-js" sample="7">{
+							<pre class="lang-json" data-sample="7">{
 	"group": {
 		"label": "Group Header",
 		"type": "group"
@@ -294,11 +292,11 @@
 						<td>Simple Separator field</td>
 
 
-						<td sample="8">
+						<td data-sample="8">
 							Loading...
 						</td>
 						<td>
-							<pre class="prettyprint lang-js" sample="8">{
+							<pre class="lang-json" data-sample="8">{
 	"param1": {
 		"type": "separator"
 	},
@@ -316,11 +314,11 @@
 							designtime.js file.</td>
 
 
-						<td item="integer" sample>
+						<td data-item="integer" data-sample>
 							Loading...
 						</td>
 						<td>
-							<pre class="prettyprint lang-js" lines="13-24" sample>
+							<pre class="lang-js" data-sample>
 sap.ui.define(["sap/ui/integration/Designtime"], function (
 	Designtime
 ) {
@@ -332,7 +330,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"integer": {
 						"manifestpath": "/sap.card/.../integer/value",
 						"type": "integer",
-						"visualization": {
+						"visualization": {<mark>
 							"type": "sap/m/Slider",
 							"settings": {
 								"value: "{currentSettings>value}",
@@ -344,13 +342,12 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"inputsAsTooltips": true
 							}
 						}
-					}
+					}</mark>
 				}
 			}
 		});
 	};
-});
-</pre>
+});</pre>
 						</td>
 					</tr>
 					<tr>
@@ -358,11 +355,11 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							designtime.js file.</td>
 
 
-						<td item="boolean" sample>
+						<td data-item="boolean" data-sample>
 							Loading...
 						</td>
 						<td>
-							<pre class="prettyprint lang-js" sample lines="13-20" style="height:250px">
+							<pre class="lang-js" data-sample style="height:250px">
 sap.ui.define(["sap/ui/integration/Designtime"], function (
 	Designtime
 ) {
@@ -374,7 +371,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"boolean": {
 						"manifestpath": "/sap.card/.../boolean/value",
 						"type": "boolean",
-						"visualization": {
+						"visualization": {<mark>
 							"type": "sap/m/Switch",
 							"settings": {
 								"state": "{currentSettings>value}",
@@ -382,7 +379,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"customTextOff": "No"
 							}
 						}
-					}
+					}</mark>
 				}
 			}
 		});
@@ -392,9 +389,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					</tr>
 				</table>
 			</div>
-
-			</p>
-
 		</div>
 	</div>
 </body>

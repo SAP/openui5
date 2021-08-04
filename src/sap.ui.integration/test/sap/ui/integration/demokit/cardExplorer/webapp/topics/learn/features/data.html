@@ -3,9 +3,8 @@
 
 <head>
 	<title>Data Handling</title>
-	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
 	<script src="../../../scripts/boot.js"></script>
 </head>
 
@@ -306,7 +305,7 @@
 			</h2>
 
 			<p>Card level data section with static JSON where the header and content sets their own context path:</p>
-			<pre class="prettyprint  lang-js">{
+			<pre class="lang-json">{
 	"sap.card": {
 		"type": "List",
 		"data": {
@@ -351,7 +350,7 @@
 			<p>Content level data section with request and update interval:</p>
 
 			<p>The structure of the /api/items API response:</p>
-			<pre class="prettyprint  lang-js">{
+			<pre class="lang-json">{
 	"items": [
 		{
 			"name": "Item 1",
@@ -369,7 +368,7 @@
 }</pre>
 
 			<p>The manifest:</p>
-			<pre class="prettyprint  lang-js">{
+			<pre class="lang-json">{
 	"sap.card": {
 		"type": "List",
 		"header": {

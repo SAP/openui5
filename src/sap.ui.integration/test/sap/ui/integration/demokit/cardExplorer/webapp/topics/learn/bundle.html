@@ -3,9 +3,8 @@
 
 <head>
 	<title>Integration Cards</title>
-	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
 	<script src="../../scripts/boot.js"></script>
 </head>
 
@@ -26,6 +25,7 @@
 				Nevertheless there might be the necessity to add other resources needed for design-time or runtime
 				purposes.
 				Such files are:
+			</p>
 			<ul>
 				<li>Image resources that are used instead of icons from an icon font</li>
 				<li>Translations of texts for the card <a href="../../index.html#/learn/features/translation"
@@ -37,7 +37,6 @@
 				<li>JavaScript logic held in <a href="../../index.html#/learn/features/extension"
 						target="_parent">Extension</a> file</li>
 			</ul>
-			</p>
 
 			<h2 id="resolvingPaths">How are paths resolved?</h2>
 			<p>
@@ -51,8 +50,7 @@
 
 			<h2 id="conventions">Conventions</h2>
 			<p>
-				A Card Bundle should have the name:
-			<pre>[CARDNAME].card.zip</pre>
+				A Card Bundle should have the name: <code>[CARDNAME].card.zip</code>
 			</p>
 			<p>
 				Translation files and images should be stored in a separate folders for convenience.
@@ -64,7 +62,7 @@
 				files, an icon and designtime configuration.<br />
 				<a href="./resources/news.card.zip">Download the Card Bundle: news.card.zip</a>
 			</p>
-			<pre class="prettyprint lang-xml">
+			<pre class="lang-yaml">
 -  manifest.json
 -  images
    -  news.png
@@ -80,7 +78,7 @@
 				The manifest.json refers these files
 			</p>
 
-			<pre class="prettyprint  lang-js">{
+			<pre class="lang-json">{
 	"_version": "1.15.0",
 	"sap.app": {
 		"id": "cardexplorer.sample.news",

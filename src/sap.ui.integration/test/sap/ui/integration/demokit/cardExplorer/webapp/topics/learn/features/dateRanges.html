@@ -3,9 +3,8 @@
 
 <head>
 	<title>Date Ranges</title>
-	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
 	<script src="../../../scripts/boot.js"></script>
 </head>
 
@@ -280,7 +279,7 @@
 			</div>
 
 			<p>Date range in title:</p>
-			<pre class="prettyprint  lang-js">{
+			<pre class="lang-json">{
 	"header": {
 		"title": "Expectations for next 6 months",
 		"subTitle": "Until {= format.dateTime(dateRange.end('nextMonths', 6), {pattern: 'MMMM, y'})}"
@@ -288,7 +287,7 @@
 }</pre>
 
 			<p>Date range used in odata request:</p>
-			<pre class="prettyprint  lang-js">{
+			<pre class="lang-json">{
 	"data": {
 		"request": {
 			"url": "https/services.odata.org/V3/Northwind/Northwind.svc/Orders",

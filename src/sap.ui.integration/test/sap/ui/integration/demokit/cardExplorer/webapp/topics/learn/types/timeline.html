@@ -3,9 +3,8 @@
 
 <head>
 	<title>Timeline Card</title>
-	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
 	<script src="../../../scripts/boot.js"></script>
 </head>
 
@@ -87,7 +86,7 @@
 			<h2 id="example">Example</h2>
 			<p>Define the type and data for the card:
 			</p>
-			<pre class="prettyprint  lang-js">{
+			<pre class="lang-json">{
 	"sap.card": {
 		"type": "Timeline",
 		"content" :{
@@ -102,7 +101,7 @@
 			<p>
 				The content of the employees.json which we are requesting:
 			</p>
-			<pre class="prettyprint  lang-js">[
+			<pre class="lang-json">[
 	{
 	  "Name": "Laurent Dubois",
 	  "JobTitle": "Accounts Payable Manager",
@@ -137,14 +136,14 @@
 	}
 ]</pre>
 			<p>Define the header:</p>
-			<pre class="prettyprint  lang-js">"header": {
+			<pre class="lang-json">"header": {
 	"title": "New Team Members",
 	"icon": {
 		"src": "sap-icon://group"
 	}
 }</pre>
 			<p>Define the time content:</p>
-			<pre class="prettyprint  lang-js">"content": {
+			<pre class="lang-json">"content": {
 	"item": {
 		"dateTime" : {
 			"label": "{{hireDate_label}}",
@@ -172,7 +171,7 @@
 	}
 }</pre>
 			<p>Here is the final manifest definition:</p>
-			<pre class="prettyprint  lang-js">
+			<pre class="lang-json">
 {
 	"sap.card": {
 		"type": "Timeline",
@@ -217,9 +216,9 @@
 	}
 }</pre>
 			<p>Create the view to display the card:</p>
-			<pre class="prettyprint  lang-xml">
+			<pre class="lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
-	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
+	&lt;w:Card manifest="./manifest.json" width="400px" height="auto" /&gt;
 &lt;/mvc:View&gt;</pre>
 			<a class="try-button" href="../../../index.html#/explore/timeline" target="_parent">Try it Out</a>
 		</div>
