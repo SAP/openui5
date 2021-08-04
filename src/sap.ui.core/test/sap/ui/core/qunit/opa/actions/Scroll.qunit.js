@@ -42,10 +42,20 @@ sap.ui.define([
 		Then.waitFor({
 			controlType: "sap.uxap.ObjectPageSubSection",
 			properties: {
+				title: "Section 1"
+			},
+			success: function  (aControls) {
+				Opa5.assert.ok(isInViewport(aControls[0].getDomRef()), "The page is in initial state - Section 1 is visible");
+			}
+		});
+
+		Then.waitFor({
+			controlType: "sap.uxap.ObjectPageSubSection",
+			properties: {
 				title: "Section 20"
 			},
 			success: function  (aControls) {
-				Opa5.assert.ok(!isInViewport(aControls[0].getDomRef()), "The page is in initial state");
+				Opa5.assert.ok(!isInViewport(aControls[0].getDomRef()), "The page is in initial state - Section 20 is not visible");
 			}
 		});
 
@@ -60,16 +70,16 @@ sap.ui.define([
 		Then.waitFor({
 			controlType: "sap.uxap.ObjectPageSubSection",
 			properties: {
-				title: "Section 20"
+				title: "Section 1"
 			},
 			matchers: function(oControl) {
-				return isInViewport(oControl.getDomRef());
+				return !isInViewport(oControl.getDomRef());
 			},
 			success: function  () {
-				Opa5.assert.ok(true, "The page is scrolled");
+				Opa5.assert.ok(true, "The page is scrolled - Section 1 is not visible");
 			},
 			error: function  () {
-				Opa5.assert.ok(false, "The page is not scrolled");
+				Opa5.assert.ok(false, "The page is not scrolled  - Section 1 is still visible" );
 			}
 		});
 
