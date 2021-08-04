@@ -9,7 +9,7 @@
 
 				<!-- DynamicPage Actions -->
 				<f:navigationActions>
-					<OverflowToolbarButton type="Transparent" icon="sap-icon://decline" press="handleClose"  tooltip="Close page" />
+					<OverflowToolbarButton type="Transparent" icon="sap-icon://decline" press="handleClose"  tooltip="Close about page" />
 				</f:navigationActions>
 			</f:DynamicPageTitle>
 		</f:title>
