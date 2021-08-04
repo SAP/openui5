@@ -2166,6 +2166,7 @@ sap.ui.define([
 
 		// assert
 		assert.equal(oPC.getAggregation("table").getSticky().length, 2, "sticky property should be set on the info bar and on the toolbar inside Table");
+		assert.ok(oPC.getAggregation("table").getStickyFocusOffset() > 0, "The sticky UI element has proper focus offset");
 
 		// act
 		oPC.setStickyHeader(false);

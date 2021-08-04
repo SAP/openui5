@@ -753,7 +753,7 @@ sap.ui.define([
 				this._adjustColumnHeadersTopOffset();
 			}
 		}, false, this);
-
+		oTable.getStickyFocusOffset = getStickyFocusOffset.bind(this);
 		this.setAggregation("table", oTable, true);
 
 		this.setStartDate(new Date());
@@ -4704,6 +4704,23 @@ sap.ui.define([
 
 	function isThereAnIntervalInstance() {
 		return this._oTimesRow || this._oDatesRow || this._oMonthsRow || this._oWeeksRow || this._oOneMonthsRow;
+	}
+
+	function getStickyFocusOffset() {
+		if (!this._getHeader()) {
+			return 0;
+		}
+
+		var oPCHeaderContainer = this._getHeader().getDomRef(),
+			iPCHeaderContainerRectHeight = 0,
+			oPCHeaderContainerRect;
+
+		if (oPCHeaderContainer) {
+				oPCHeaderContainerRect = oPCHeaderContainer.getBoundingClientRect();
+				iPCHeaderContainerRectHeight = parseInt(oPCHeaderContainerRect.height);
+		}
+
+		return iPCHeaderContainerRectHeight;
 	}
 
 	return PlanningCalendar;

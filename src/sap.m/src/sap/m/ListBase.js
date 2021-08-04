@@ -1204,6 +1204,13 @@ function(
 		return this.getDomRef("listUl");
 	};
 
+	/*
+	 *  This hook method is called if a sticky header is activated and additional height needs to be added in the  calculation of the scrolling position.
+	 * @protected
+	 */
+	ListBase.prototype.getStickyFocusOffset = function() {
+		return 0;
+	};
 
 	ListBase.prototype.checkGrowingFromScratch = function() {};
 
@@ -2585,7 +2592,8 @@ function(
 			iInfoTBarContainerRectHeight = 0,
 			iInfoTBarContainerRectBottom = 0,
 			iHeaderToolbarRectHeight = 0,
-			iHeaderToolbarRectBottom = 0;
+			iHeaderToolbarRectBottom = 0,
+			iStickyFocusOffset = this.getStickyFocusOffset();
 
 		if (this._iStickyValue & 4 /* ColumnHeaders */) {
 			var oTblHeaderDomRef = this.getDomRef("tblHeader").firstChild;
@@ -2614,10 +2622,9 @@ function(
 		}
 
 		var iItemTop = Math.round(oItemDomRef.getBoundingClientRect().top);
-
 		if (iTHRectBottom > iItemTop || iInfoTBarContainerRectBottom > iItemTop || iHeaderToolbarRectBottom > iItemTop) {
 			window.requestAnimationFrame(function () {
-				oScrollDelegate.scrollToElement(oItemDomRef, 0, [0, -iTHRectHeight - iInfoTBarContainerRectHeight - iHeaderToolbarRectHeight]);
+				oScrollDelegate.scrollToElement(oItemDomRef, 0, [0, -iTHRectHeight - iInfoTBarContainerRectHeight - iHeaderToolbarRectHeight - iStickyFocusOffset]);
 			});
 		}
 	};
