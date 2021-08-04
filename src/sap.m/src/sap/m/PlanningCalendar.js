@@ -927,7 +927,7 @@ sap.ui.define([
 		var oRow = this._getRowInstanceByViewKey(this.getViewKey());
 
 		this.setStartDate(this._dateNav.getStart());
-		oRow.setDate(this._dateNav.getCurrent());
+		oRow.displayDate(this._dateNav.getCurrent());
 		this._updatePickerSelection();
 		this.fireStartDateChange();
 	};
@@ -2782,7 +2782,7 @@ sap.ui.define([
 			sControlRef = "_o" + sCurrentViewIntervalType + "sRow";
 
 			if (this[sControlRef]) {
-				this[sControlRef].setDate(oStartDate);
+				this[sControlRef].displayDate(oStartDate);
 			}
 		}
 	};
