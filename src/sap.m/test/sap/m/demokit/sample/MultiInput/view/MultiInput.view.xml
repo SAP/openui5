@@ -10,6 +10,7 @@
 		width="100%">
 		<Label text="Enter a search term, e.g. “Notebook”, and add matching products as tokens" width="100%" labelFor="multiInput"/>
 		<MultiInput width="70%"
+			showClearIcon="true"
 			id="multiInput"
 			suggestionItems="{
 				path: '/ProductCollection',

@@ -587,8 +587,19 @@ function(
 		 * @private
 		 */
 		StepInput.prototype._getIncrementButton = function () {
-			var endIcons = this._getInput().getAggregation("_endIcon");
-			return endIcons ? endIcons[0] : null; //value state icon comes from sap.m.Input constructor and is at index 0
+			var endIcons = this._getInput().getAggregation("_endIcon") || [];
+			var oIncrementIcon = null;
+
+			// sap.m.Input constructor provides some icons on its own.
+			// Clear icon is always at index 0;
+			// Value help icon is at index 1;
+			// Though in this case the Input is controlled by the StepInput's code, the safe approach
+			// will be to look for the increment button at the last index in the aggregation.
+			if (endIcons.length) {
+				oIncrementIcon = endIcons[endIcons.length - 1];
+			}
+
+			return oIncrementIcon;
 		};
 
 		/**

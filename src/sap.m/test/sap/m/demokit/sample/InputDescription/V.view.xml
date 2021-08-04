@@ -21,6 +21,7 @@
 			description="EUR"
 			width="250px"
 			fieldWidth="80%"
+			showClearIcon="true"
 			class="sapUiSmallMarginBottom" />
 		<Input
 			value="007"

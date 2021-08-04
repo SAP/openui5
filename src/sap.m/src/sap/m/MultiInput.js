@@ -245,6 +245,9 @@ function(
 	MultiInput.prototype.init = function () {
 		var that = this;
 		this._bShowListWithTokens = false;
+
+		this._getClearIcon();
+
 		Input.prototype.init.call(this);
 
 		this._bIsValidating = false;

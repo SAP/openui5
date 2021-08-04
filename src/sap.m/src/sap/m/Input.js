@@ -313,7 +313,20 @@ function(
 			 * <b>Note:</b> The autocomplete feature is disabled on Android devices due to a OS specific issue.
 			 * @since 1.61
 			 */
-			autocomplete: {type: "boolean", group: "Behavior", defaultValue: true}
+			autocomplete: {type: "boolean", group: "Behavior", defaultValue: true},
+
+			/**
+			 * Specifies whether clear icon is shown.
+			 * Pressing the icon will clear input's value and fire the change and liveChange events.
+			 * @since 1.94
+			 */
+			showClearIcon: { type: "boolean", defaultValue: false },
+
+			/**
+			 * Specifies whether the clear icon should be shown/hidden on user interaction.
+			 * @private
+			 */
+			effectiveShowClearIcon: { type: "boolean", defaultValue: false, visibility: "hidden" }
 		},
 		defaultAggregation : "suggestionItems",
 		aggregations : {
@@ -566,6 +579,11 @@ function(
 		// phase of the life cycle. Without this line, initially the condition fails and fires liveChange event
 		// even though there is no user input (check Input.prototype.onsapright).
 		this._setTypedInValue("");
+
+
+		// indicates whether input is clicked (on mobile) or the clear button
+		// used for identifying whether dialog should be open.
+		this._bClearButtonPressed = false;
 	};
 
 	/**
@@ -606,10 +624,10 @@ function(
 	 */
 	Input.prototype.onBeforeRendering = function() {
 		var sSelectedKey = this.getSelectedKey(),
-			bShowIcon = this.getShowValueHelp() && this.getEnabled() && this.getEditable(),
+			bShowValueHelpIcon = this.getShowValueHelp() && this.getEnabled() && this.getEditable(),
+			bShowClearIcon = this.getShowClearIcon(),
 			aEndIcons = this.getAggregation("_endIcon") || [],
-
-			oIcon = aEndIcons[0],
+			oIcon = aEndIcons.length && aEndIcons[1],
 			oSuggestionsPopover = this._getSuggestionsPopover(),
 			bSuggestionsPopoverIsOpen = oSuggestionsPopover && this._isSuggestionsPopoverOpen(),
 			oPopupInput = oSuggestionsPopover && oSuggestionsPopover.getInput(),
@@ -617,6 +635,10 @@ function(
 			sValueStateHeaderValueState = bSuggestionsPopoverIsOpen ?  oSuggestionsPopover._getValueStateHeader().getValueState() : "";
 
 		InputBase.prototype.onBeforeRendering.call(this);
+
+		if (bShowClearIcon) {
+			this._getClearIcon().setProperty("visible", this.getProperty("effectiveShowClearIcon"));
+		}
 
 		this._deregisterEvents();
 
@@ -637,7 +659,7 @@ function(
 			}
 		}
 
-		if (bShowIcon) {
+		if (bShowValueHelpIcon) {
 			// ensure the creation of an icon
 			oIcon = this._getValueHelpIcon();
 			oIcon.setProperty("visible", true, true);
@@ -1042,13 +1064,11 @@ function(
 	 */
 	Input.prototype._getValueHelpIcon = function () {
 		var that = this,
-			aEndIcons = this.getAggregation("_endIcon") || [],
-			sIconSrc = this.getValueHelpIconSrc(),
-			oValueStateIcon = aEndIcons[0];
+			sIconSrc = this.getValueHelpIconSrc();
 
 		// for backward compatibility - leave this method to return the instance
-		if (!oValueStateIcon) {
-			oValueStateIcon = this.addEndIcon({
+		if (!this._oValueHelpIcon) {
+			this._oValueHelpIcon = this.addEndIcon({
 				id: this.getId() + "-vhi",
 				src: sIconSrc,
 				useIconTooltip: false,
@@ -1077,13 +1097,50 @@ function(
 					}
 				}
 			});
-		} else if (oValueStateIcon.getSrc() !== sIconSrc) {
-			oValueStateIcon.setSrc(sIconSrc);
+		} else if (this._oValueHelpIcon.getSrc() !== sIconSrc) {
+			this._oValueHelpIcon.setSrc(sIconSrc);
 		}
 
-		return oValueStateIcon;
+		return this._oValueHelpIcon;
 	};
 
+	Input.prototype._getClearIcon = function () {
+		var that = this;
+
+		if (this._oClearButton) {
+			return this._oClearButton;
+		}
+
+		this._oClearButton = this.addEndIcon({
+			src: IconPool.getIconURI("decline"),
+			noTabStop: true,
+			visible: false,
+			press: function () {
+				if (that.getValue() !== "") {
+					that.fireChange({
+						value: ""
+					});
+
+					that.fireLiveChange({
+						value: ""
+					});
+
+					that.setValue("");
+
+					that._bClearButtonPressed = true;
+
+					setTimeout(function() {
+						if (Device.system.desktop) {
+							that.focus();
+							that._closeSuggestionPopup();
+						}
+					}, 0);
+				}
+			}
+		});
+
+		return this._oClearButton;
+	};
 	/**
 	 * Fire valueHelpRequest event.
 	 *
@@ -1138,9 +1195,12 @@ function(
 			 && this.getEditable()
 			 && this.getEnabled()
 			 && this.getShowSuggestion()
+			 && (!this._bClearButtonPressed)
 			 && oEvent.target.id !== this.getId() + "-vhi") {
 				this._openSuggestionsPopover();
 		}
+
+		this._bClearButtonPressed = false;
 	};
 
 	/**
@@ -1634,7 +1694,7 @@ function(
 	 * @param {jQuery.Event} oEvent The event.
 	 */
 	Input.prototype.onchange = function (oEvent) {
-		if (this.getShowValueHelp() || this.getShowSuggestion()) {
+		if (this.getShowValueHelp() || this.getShowSuggestion() || this.getProperty("effectiveShowClearIcon")) {
 			// can not handle browser change if value help or suggestions is enabled
 			// because change is fired before the value help is opened or when a link in suggestions is clicked
 			return;
@@ -1673,6 +1733,8 @@ function(
 
 		// always focus input field when typing in it
 		this.addStyleClass("sapMFocus");
+
+		this.setProperty("effectiveShowClearIcon", !!sValue);
 
 		// No need to fire suggest event when suggestion feature isn't enabled or runs on the phone.
 		// Because suggest event should only be fired by the input in dialog when runs on the phone.
@@ -2323,6 +2385,9 @@ function(
 		InputBase.prototype.setValue.call(this, sValue);
 		this._onValueUpdated(sValue);
 		this._setTypedInValue("");
+
+		this.setProperty("effectiveShowClearIcon", !!sValue);
+
 		return this;
 	};
 
@@ -2807,9 +2872,14 @@ function(
 				.attachBeforeOpen(function() {
 					var oSuggestionsInput = oSuggPopover.getInput();
 					// set the same placeholder and maxLength as the original input
-					oSuggestionsInput.setPlaceholder(this.getPlaceholder());
-					oSuggestionsInput.setMaxLength(this.getMaxLength());
-					oSuggestionsInput.setValue(this.getValue());
+					["placeholder",
+						"maxLength",
+						"value",
+						"showClearIcon",
+						"effectiveShowClearIcon"
+					].forEach(function(sPropName) {
+							oSuggestionsInput.setProperty(sPropName, this.getProperty(sPropName));
+						}, this);
 				}, this);
 		} else {
 			oPopover

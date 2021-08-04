@@ -2600,7 +2600,7 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent.getShowValueHelp(), "valueHelp enabled");
-		var oIcon = oContent.getAggregation("_endIcon", [])[0];
+		var oIcon = oContent.getAggregation("_endIcon", [])[1];
 		assert.equal(oIcon && oIcon.getSrc(), "sap-icon://slim-arrow-down", "ValueHelpIcon set");
 
 		// simulate select event to see if field is updated
@@ -2720,7 +2720,7 @@ sap.ui.define([
 
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
-		var oVHIcon = oContent && oContent.getAggregation("_endIcon")[0];
+		var oVHIcon = oContent && oContent.getAggregation("_endIcon")[1];
 
 		// cannot check for bValueHelpRequested as it is reset in onsapfocusleave
 		sinon.spy(oContent, "onsapfocusleave");
@@ -3966,7 +3966,7 @@ sap.ui.define([
 		var oFieldHelp = sap.ui.getCore().byId(oField.getFieldHelp());
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
-		var oVHIcon = oContent && oContent.getAggregation("_endIcon")[0];
+		var oVHIcon = oContent && oContent.getAggregation("_endIcon")[1];
 		var $FocusDomRef = jQuery(oField.getFocusDomRef());
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		var sText = oResourceBundle.getText("MULTIINPUT_ARIA_ROLE_DESCRIPTION");

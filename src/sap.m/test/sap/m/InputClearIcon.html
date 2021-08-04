@@ -1,0 +1,197 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+
+	<title>Input - sap.m</title>
+
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m, sap.ui.layout">
+	</script>
+
+	<script>
+
+		var app = new sap.m.App("myApp");
+
+
+		var fnChange = function (event) {
+			console.log("change: ", event.getParameter("value"));
+		};
+
+		var fnLiveChange = function (event) {
+			console.log("live change: ", event.getParameter("value"));
+		};
+
+		var page1 = new sap.m.Page("page1", {
+			title: "Mobile Input Control",
+			content: [
+				new sap.ui.layout.VerticalLayout("oVL", {
+					width: "100%",
+					content: [
+						new sap.m.Input({
+							placeholder: "Prompt Text",
+							showClearIcon: true,
+							change: fnChange,
+							liveChange: fnLiveChange,
+						}).addStyleClass('myInput'),
+						new sap.m.Input({
+							placeholder: "Prompt Text",
+							showClearIcon: true,
+							showValueHelp: true,
+							change: fnChange,
+							liveChange: fnLiveChange,
+						}).addStyleClass('myInput'),
+						new sap.m.Input({
+							placeholder: "Prompt Text",
+							showClearIcon: true,
+							showValueHelp: true,
+							change: fnChange,
+							liveChange: fnLiveChange,
+						}).addStyleClass('myInput'),
+
+						new sap.m.Input({
+							value: "Initial value is set",
+							showClearIcon: true,
+							change: fnChange,
+							liveChange: fnLiveChange,
+						}).addStyleClass('myInput'),
+
+						new sap.m.Input({
+							value: "Initial value is set",
+							showClearIcon: true,
+							showValueHelp: true,
+							change: fnChange,
+							liveChange: fnLiveChange,
+						}).addStyleClass('myInput'),
+
+						new sap.m.Input({
+							value: "Initial value is set and Suggestions",
+							showClearIcon: true,
+							showValueHelp: true,
+							showSuggestion: true,
+							suggestionItems: [
+								new sap.ui.core.Item({
+									text: "Albania",
+								}),
+								new sap.ui.core.Item({
+									text: "Bulgaria",
+								}),
+								new sap.ui.core.Item({
+									text: "Germany",
+								}),
+								new sap.ui.core.Item({
+									text: "Dryanovo",
+								}),
+								new sap.ui.core.Item({
+									text: "Gabrovo",
+								})
+							],
+							change: fnChange,
+							liveChange: fnLiveChange,
+						}).addStyleClass('myInput'),
+
+						new sap.m.Text({ text: "---------- Multi Inputs down there --------------" }).addStyleClass("myInput"),
+
+						new sap.m.MultiInput({
+							placeholder: "Prompt Text",
+							showClearIcon: true,
+							change: fnChange,
+							liveChange: fnLiveChange,
+						}).addStyleClass('myInput'),
+						new sap.m.MultiInput({
+							placeholder: "Prompt Text",
+							showClearIcon: true,
+							showValueHelp: true,
+							change: fnChange,
+							liveChange: fnLiveChange,
+						}).addStyleClass('myInput'),
+						new sap.m.MultiInput({
+							placeholder: "Prompt Text",
+							showClearIcon: true,
+							showValueHelp: true,
+							change: fnChange,
+							liveChange: fnLiveChange,
+						}).addStyleClass('myInput'),
+
+						new sap.m.MultiInput({
+							value: "Initial value is set",
+							showClearIcon: true,
+							change: fnChange,
+							liveChange: fnLiveChange,
+						}).addStyleClass('myInput'),
+
+						new sap.m.MultiInput({
+							value: "Initial value is set",
+							showClearIcon: true,
+							showValueHelp: true,
+							change: fnChange,
+							liveChange: fnLiveChange,
+						}).addStyleClass('myInput'),
+
+						new sap.m.MultiInput({
+							value: "Initial value is set",
+							showClearIcon: true,
+							showValueHelp: true,
+							tokens: [
+								new sap.m.Token({ text: "Token 1" }),
+								new sap.m.Token({ text: "Token 2" }),
+								new sap.m.Token({ text: "Token 3" }),
+							],
+							change: fnChange,
+							liveChange: fnLiveChange,
+						}).addStyleClass('myInput'),
+
+						new sap.m.Text({ text: "---------- Inputs with description --------------" }).addStyleClass("myInput"),
+
+						new sap.m.Input({
+							showClearIcon: true,
+							description: "Tempor proident commodo commodo duis irure ipsum amet.",
+							value: "Dryanovo na tri moreta",
+						}).addStyleClass('myInput'),
+
+						new sap.m.Input({
+							showClearIcon: true,
+							showValueHelp: true,
+							description: "Tempor proident commodo commodo duis irure ipsum amet.",
+							value: "Dryanovo na tri moreta",
+						}).addStyleClass('myInput'),
+
+						new sap.m.MultiInput({
+							value: "Initial value is set",
+							showClearIcon: true,
+							description: "Tempor proident commodo commodo duis irure ipsum amet.",
+							tokens: [
+								new sap.m.Token({ text: "Token 1" }),
+								new sap.m.Token({ text: "Token 2" }),
+								new sap.m.Token({ text: "Token 3" }),
+							],
+						}).addStyleClass('myInput'),
+					]
+
+				}).addStyleClass("sapUiContentPadding")
+			],
+		});
+
+		app.addPage(page1);
+		app.placeAt("body");
+	</script>
+	<style>
+		body {
+			margin: 0;
+		}
+
+		.sapMPageScroll {
+			padding: 1rem;
+		}
+
+		.sapMILI-CTX .sapMInputValHelp {
+			margin-right: 0rem;
+		}
+	</style>
+
+</head>
+
+<body id="body" class="sapUiBody">
+</body>
+
+</html>

@@ -89,3 +89,15 @@
 .sapMInputHighlight {
 	font-weight: bold;
 }
+
+/* Overrides due to experimental flex layouting after IE drop */
+
+.sapMInput.sapMInputBaseHasEndIcons .sapMInputBaseInner,
+.sapMInput.sapMInputBaseHasBeginIcons .sapMInputBaseInner {
+	width: auto;
+	flex: 1
+}
+
+.sapMInput .sapMInputBaseContentWrapper {
+	display: inline-flex;
+}

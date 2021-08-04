@@ -8,17 +8,20 @@
 			class="sapUiSmallMarginTopBottom" />
 
 		<Input
+			showClearIcon="true"
 			valueState="Success"
 			value="Value state Success"
 			class="sapUiSmallMarginTopBottom" />
 
 		<Input
+			showClearIcon="true"
 			valueState="Warning"
 			valueStateText="Warning message. Extra long text used as a warning message. Extra long text used as a warning message - 2. Extra long text used as a warning message - 3. Extra long text used as a warning message - 4. Extra long text used as a warning message - 5."
 			value="Value state Warning."
 			class="sapUiSmallMarginTopBottom" />
 
 		<Input
+			showClearIcon="true"
 			valueState="Warning"
 			value="Value state Warning with message containing a link."
 			class="sapUiSmallMarginTopBottom">
