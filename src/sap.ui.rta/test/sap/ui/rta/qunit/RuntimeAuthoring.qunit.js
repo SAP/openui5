@@ -100,14 +100,14 @@ sap.ui.define([
 			return oComponentPromise;
 		},
 		beforeEach: function() {
-			var oFlexSettings = {
+			this.oFlexSettings = {
 				layer: Layer.CUSTOMER,
 				developerMode: true,
 				qunitTestParameter: "qunitTestParameter"
 			};
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp,
-				flexSettings: oFlexSettings
+				flexSettings: this.oFlexSettings
 			});
 
 			this.oPreparePluginsSpy = sinon.spy(this.oRta.getPluginManager(), "preparePlugins");
@@ -150,6 +150,13 @@ sap.ui.define([
 			assert.equal(this.oRta.getToolbar().getControl("appVariantOverview").getEnabled(), false, "then the 'AppVariant Overview' Menu Button is not enabled");
 			assert.equal(this.oRta.getToolbar().getControl("saveAs").getVisible(), false, "then the saveAs Button is not visible");
 			assert.equal(this.oRta.getToolbar().getControl("saveAs").getEnabled(), false, "then the saveAs Button is not enabled");
+
+			var oExpectedSettings = {
+				flexSettings: this.oFlexSettings,
+				rootControl: this.oRta.getRootControlInstance(),
+				commandStack: this.oRta.getCommandStack()
+			};
+			assert.deepEqual(this.oRta.getToolbar().getRtaInformation(), oExpectedSettings, "the rta settings were passed to the toolbar");
 
 			var oInitialCommandStack = this.oRta.getCommandStack();
 			assert.ok(oInitialCommandStack, "the command stack is automatically created");
@@ -236,6 +243,16 @@ sap.ui.define([
 				assert.equal(this.oRta.getToolbar().getControl("restore").getEnabled(), true, "then the Restore Button is enabled");
 				assert.equal(this.oRta.getToolbar().getControl("exit").getVisible(), true, "then the Exit Button is visible");
 				assert.equal(this.oRta.getToolbar().getControl("exit").getEnabled(), true, "then the Exit Button is enabled");
+
+				var oExpectedSettings = {
+					flexSettings: {
+						layer: Layer.USER,
+						developerMode: true
+					},
+					rootControl: this.oRta.getRootControlInstance(),
+					commandStack: this.oRta.getCommandStack()
+				};
+				assert.deepEqual(this.oRta.getToolbar().getRtaInformation(), oExpectedSettings, "the rta settings were passed to the toolbar");
 			}.bind(this))
 			.then(function() {
 				this.oRta.getToolbar().getControl("exit").firePress();
@@ -335,23 +352,6 @@ sap.ui.define([
 				assert.equal(this.oRta.getToolbar().getControl("saveAs").getVisible(), true, "then the 'Save As' Button is visible");
 				assert.equal(this.oRta.getToolbar().getControl("manageApps").getEnabled(), false, "then the 'Save As' Button is not enabled");
 			}.bind(this));
-		});
-
-		QUnit.test("when _onGetAppVariantOverview is called", function(assert) {
-			var oMenuButton = {
-				getId: function() {
-					return "keyUser";
-				}
-			};
-
-			var oEmptyEvent = new sap.ui.base.Event("emptyEventId", oMenuButton, {
-				item: oMenuButton
-			});
-
-			var fnAppVariantFeatureSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").returns(Promise.resolve(true));
-			return this.oRta._onGetAppVariantOverview(oEmptyEvent).then(function() {
-				assert.ok(fnAppVariantFeatureSpy.calledOnce, "then the onGetOverview() method is called once and the key user view will be shown");
-			});
 		});
 	});
 

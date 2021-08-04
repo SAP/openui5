@@ -3,17 +3,16 @@
  */
 
 sap.ui.define([
-	'./BaseRenderer'
-],
-function(
+	"sap/ui/rta/toolbar/BaseRenderer"
+], function(
 	BaseRenderer
 ) {
 	"use strict";
 
-	var AdaptationRenderer = BaseRenderer.extend('sap.ui.rta.toolbar.AdaptationRenderer');
+	var AdaptationRenderer = BaseRenderer.extend("sap.ui.rta.toolbar.AdaptationRenderer");
 
 	AdaptationRenderer.render = function (oRM, oControl) {
-		oRM.addClass('sapUiRtaToolbarAdaptation');
+		oRM.addClass("sapUiRtaToolbarAdaptation");
 
 		BaseRenderer.render(oRM, oControl);
 	};

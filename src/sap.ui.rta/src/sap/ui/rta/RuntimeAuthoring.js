@@ -43,7 +43,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Fragment",
 	"sap/ui/rta/util/validateFlexEnabled",
 	"sap/ui/rta/util/changeVisualization/ChangeVisualization"
 ],
@@ -87,7 +86,6 @@ function(
 	Log,
 	KeyCodes,
 	JSONModel,
-	Fragment,
 	validateFlexEnabled,
 	ChangeVisualization
 ) {
@@ -305,7 +303,7 @@ function(
 	};
 
 	RuntimeAuthoring.prototype.onPopupClose = function(oEvent) {
-		if (oEvent.getParameters() instanceof sap.m.Dialog) {
+		if (oEvent.getParameters().isA("sap.m.Dialog")) {
 			this.getToolbar().setColor();
 		}
 	};
@@ -1002,45 +1000,40 @@ function(
 
 	RuntimeAuthoring.prototype._createToolsMenu = function(aButtonsVisibility) {
 		if (!this.getDependent("toolbar")) {
-			var ToolbarConstructor;
+			var bUserLayer = this.getLayer() === Layer.USER;
+			var oProperties = {
+				rtaInformation: {
+					flexSettings: this.getFlexSettings(),
+					rootControl: this.getRootControlInstance(),
+					commandStack: this.getCommandStack()
+				},
+				textResources: this._getTextResources(),
+				restore: this._onRestore.bind(this),
+				exit: this.stop.bind(this, false, bUserLayer)
+			};
 
-			if (this.getLayer() === Layer.USER) {
-				ToolbarConstructor = PersonalizationToolbar;
-			} else if (Utils.isOriginalFioriToolbarAccessible()) {
-				ToolbarConstructor = FioriToolbar;
-			} else if (Utils.getFiori2Renderer()) {
-				ToolbarConstructor = FioriLikeToolbar;
-			} else {
-				ToolbarConstructor = StandaloneToolbar;
+			if (!bUserLayer) {
+				oProperties.transport = this._onTransport.bind(this);
+				oProperties.undo = this._onUndo.bind(this);
+				oProperties.redo = this._onRedo.bind(this);
+				oProperties.modeChange = this._onModeChange.bind(this);
+				oProperties.activate = this._onActivate.bind(this);
+				oProperties.discardDraft = this._onDiscardDraft.bind(this);
+				oProperties.switchVersion = this._onSwitchVersion.bind(this);
+				oProperties.toggleChangeVisualization = this.getChangeVisualization
+					? this.getChangeVisualization().toggleActive.bind(this.getChangeVisualization())
+					: function () {};
 			}
+
 			var oToolbar;
-			if (this.getLayer() === Layer.USER) {
-				oToolbar = new ToolbarConstructor({
-					textResources: this._getTextResources(),
-					//events
-					exit: this.stop.bind(this, false, true),
-					restore: this._onRestore.bind(this)
-				});
+			if (bUserLayer) {
+				oToolbar = new PersonalizationToolbar(oProperties);
+			} else if (Utils.isOriginalFioriToolbarAccessible()) {
+				oToolbar = new FioriToolbar(oProperties);
+			} else if (Utils.getFiori2Renderer()) {
+				oToolbar = new FioriLikeToolbar(oProperties);
 			} else {
-				oToolbar = new ToolbarConstructor({
-					textResources: this._getTextResources(),
-					//events
-					exit: this.stop.bind(this, false, false),
-					transport: this._onTransport.bind(this),
-					restore: this._onRestore.bind(this),
-					undo: this._onUndo.bind(this),
-					redo: this._onRedo.bind(this),
-					modeChange: this._onModeChange.bind(this),
-					manageApps: RtaAppVariantFeature.onGetOverview.bind(null, true, this.getLayer()),
-					appVariantOverview: this._onGetAppVariantOverview.bind(this),
-					saveAs: RtaAppVariantFeature.onSaveAs.bind(RtaAppVariantFeature, true, true, this.getLayer(), null),
-					activate: this._onActivate.bind(this),
-					discardDraft: this._onDiscardDraft.bind(this),
-					switchVersion: this._onSwitchVersion.bind(this),
-					toggleChangeVisualization: this.getChangeVisualization
-						? this.getChangeVisualization().toggleActive.bind(this.getChangeVisualization())
-						: function () {}
-				});
+				oToolbar = new StandaloneToolbar(oProperties);
 			}
 			this.addDependent(oToolbar, "toolbar");
 
@@ -1084,13 +1077,6 @@ function(
 			}.bind(this));
 		}
 		return Promise.resolve();
-	};
-
-	RuntimeAuthoring.prototype._onGetAppVariantOverview = function(oEvent) {
-		var oItem = oEvent.getParameter("item");
-
-		var bTriggeredForKeyUser = oItem.getId() === "keyUser";
-		return RtaAppVariantFeature.onGetOverview(bTriggeredForKeyUser, this.getLayer());
 	};
 
 	/**

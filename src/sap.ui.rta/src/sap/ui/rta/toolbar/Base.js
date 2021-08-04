@@ -3,16 +3,15 @@
  */
 
 sap.ui.define([
-	"sap/ui/model/resource/ResourceModel",
 	"sap/m/HBox",
-	"sap/ui/rta/util/Animation",
-	"sap/ui/dt/util/ZIndexManager"
-],
-function(
-	ResourceModel,
+	"sap/ui/dt/util/ZIndexManager",
+	"sap/ui/model/resource/ResourceModel",
+	"sap/ui/rta/util/Animation"
+], function(
 	HBox,
-	Animation,
-	ZIndexManager
+	ZIndexManager,
+	ResourceModel,
+	Animation
 ) {
 	"use strict";
 
@@ -48,6 +47,17 @@ function(
 					type: "int"
 				},
 
+				/**
+				 * information from the rta instance needed for some Toolbar extensions.
+				 * Includes the flexSettings, command stack and the root control from the RuntimeAuthoring instance
+				 */
+				rtaInformation: {
+					type: "object",
+					defaultValue: {
+						flexSettings: {}
+					}
+				},
+
 				/** i18n bundle */
 				textResources: "object"
 			}
@@ -56,6 +66,7 @@ function(
 			// call parent constructor
 			HBox.apply(this, arguments);
 
+			this._oExtensions = {};
 			this.setAlignItems("Center");
 			this.setVisible(false);
 			this.placeToContainer();
@@ -88,6 +99,40 @@ function(
 		return this.buildContent();
 	};
 
+	Base.prototype.exit = function() {
+		Object.values(this._oExtensions).forEach(function(oExtension) {
+			oExtension.destroy();
+		});
+		this._oExtensions = {};
+
+		HBox.prototype.exit.apply(this, arguments);
+	};
+
+	/**
+	 * Adds an extension to the toolbar, if it is not already registered.
+	 * The new extension gets created with the toolbar itself as property 'context'.
+	 *
+	 * @param {string} sName - Name of the extension
+	 * @param {sap.ui.base.ManagedObject} Extension - Extension Class to be instantiated
+	 * @returns {sap.ui.base.ManagedObject} Returns the newly created module.
+	 */
+	Base.prototype.addExtension = function(sName, Extension) {
+		if (!Object.keys(this._oExtensions).includes(sName)) {
+			this._oExtensions[sName] = new Extension({context: this});
+		}
+		return this._oExtensions[sName];
+	};
+
+	/**
+	 * Returns the extension with the passed name
+	 *
+	 * @param {string} sName - Name of the extension
+	 * @returns {sap.ui.base.ManagedObject|undefined} Returns the extension or undefined if it does not exist
+	 */
+	Base.prototype.getExtension = function(sName) {
+		return this._oExtensions[sName];
+	};
+
 	/**
 	 * @override
 	 */
@@ -108,13 +153,13 @@ function(
 	 * @param {sap.ui.base.Event} oEvent - Event object
 	 */
 	Base.prototype.eventHandler = function (sEventName, oEvent) {
-		this['fire' + sEventName](oEvent.getParameters());
+		this["fire" + sEventName](oEvent.getParameters());
 	};
 
 	/**
 	 * Function provides controls which should be rendered into the Toolbar. Controls are going to be rendered
 	 * in the same order as provided in returned array.
-	 * @return {Array.<sap.ui.core.Control>} - returns an array of controls
+	 * @returns {Array.<sap.ui.core.Control>} An array of controls
 	 * @protected
 	 */
 	Base.prototype.buildControls = function () {
@@ -133,6 +178,7 @@ function(
 	/**
 	 * Adds content into the Toolbar
 	 * @protected
+	 * @returns {Promise} An empty Promise
 	 */
 	Base.prototype.buildContent = function () {
 		return this.buildControls().then(function (aControls) {
@@ -142,7 +188,7 @@ function(
 
 	/**
 	 * Makes the Toolbar visible
-	 * @return {Promise} - returns Promise which resolves after animation has been completed
+	 * @returns {Promise} A Promise which resolves after animation has been completed
 	 * @public
 	 */
 	Base.prototype.show = function() {
@@ -161,7 +207,7 @@ function(
 		// 2) animate DomRef
 		.then(function () {
 			return this.animation
-				? Animation.waitTransition(this.$(), this.addStyleClass.bind(this, 'is_visible'))
+				? Animation.waitTransition(this.$(), this.addStyleClass.bind(this, "is_visible"))
 				: Promise.resolve();
 		}.bind(this))
 		// 3) focus on Toolbar
@@ -173,7 +219,7 @@ function(
 	/**
 	 * Makes the Toolbar invisible
 	 * @param {boolean} bSkipTransition - skips the transition for cases like page reloads - where the animation won't be visible and can cause timing issues
-	 * @return {Promise} - returns Promise which resolves after animation has been completed
+	 * @returns {Promise} A Promise which resolves after animation has been completed
 	 * @public
 	 */
 	Base.prototype.hide = function(bSkipTransition) {
@@ -181,9 +227,9 @@ function(
 		// 1) animate DomRef
 		if (this.animation) {
 			if (bSkipTransition) {
-				this.removeStyleClass('is_visible');
+				this.removeStyleClass("is_visible");
 			} else {
-				oPromise = Animation.waitTransition(this.$(), this.removeStyleClass.bind(this, 'is_visible'));
+				oPromise = Animation.waitTransition(this.$(), this.removeStyleClass.bind(this, "is_visible"));
 			}
 		}
 		return oPromise
@@ -197,7 +243,7 @@ function(
 	 * Getter for inner controls
 	 *
 	 * @param {string} sName - Name of the control
-	 * @return {sap.ui.core.Control|undefined} - returns control or undefined if there is no control with provided name
+	 * @returns {sap.ui.core.Control|undefined} A control or undefined if there is no control with provided name
 	 * @public
 	 */
 	Base.prototype.getControl = function(sName) {
@@ -213,4 +259,4 @@ function(
 	};
 
 	return Base;
-}, true);
+});

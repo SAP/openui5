@@ -3,11 +3,12 @@
  */
 
 sap.ui.define([
+	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Fragment",
 	"sap/ui/rta/Utils",
 	"sap/ui/model/json/JSONModel"
-],
-function(
+], function(
+	ManagedObject,
 	Fragment,
 	Utils,
 	JSONModel
@@ -15,23 +16,18 @@ function(
 	"use strict";
 
 	var oDialog;
-	var oContext;
-
-	var oTranslationModel = new JSONModel({
-		sourceLanguage: "",
-		downloadChangedTexts: false
-	});
+	var oPopover;
 
 	function resetTranslationDialog() {
-		oTranslationModel.setProperty("/sourceLanguage", "");
-		oTranslationModel.setProperty("/downloadChangedTexts", false);
+		this._oTranslationModel.setProperty("/sourceLanguage", "");
+		this._oTranslationModel.setProperty("/downloadChangedTexts", false);
 		return Promise.resolve(oDialog);
 	}
 
 	function createDownloadTranslationDialog() {
 		return Fragment.load({
 			name: "sap.ui.rta.toolbar.translation.DownloadTranslationDialog",
-			id: oContext.getId() + "_download_translation_fragment",
+			id: this.getContext().getId() + "_download_translation_fragment",
 			controller: {
 				onDownloadFile: function () {
 					oDialog.close();
@@ -42,10 +38,10 @@ function(
 			}
 		}).then(function (oTranslationDialog) {
 			oDialog = oTranslationDialog;
-			oDialog.setModel(oTranslationModel, "translation");
+			oDialog.setModel(this._oTranslationModel, "translation");
 			oDialog.addStyleClass(Utils.getRtaStyleClassName());
-			oContext.addDependent(oDialog);
-		});
+			this.getContext().addDependent(oDialog);
+		}.bind(this));
 	}
 
 	/**
@@ -62,31 +58,50 @@ function(
 	 * @since 1.93
 	 * @alias sap.ui.rta.toolbar.translation.Translation
 	 */
-	var Translation = {};
+	var Translation = ManagedObject.extend("sap.ui.rta.toolbar.translation.Translation", {
+		metadata: {
+			properties: {
+				context: {
+					type: "sap.ui.rta.toolbar.Base"
+				}
+			}
+		},
+		constructor: function() {
+			ManagedObject.prototype.constructor.apply(this, arguments);
+			this._oTranslationModel = new JSONModel({
+				sourceLanguage: "",
+				downloadChangedTexts: false
+			});
+		}
+	});
 
-	Translation.showTranslationPopover = function (oEvent, oToolbar) {
+	Translation.prototype.exit = function() {
+		if (this._oDialogPromise) {
+			this._oDialogPromise.then(oDialog.destroy.bind(oDialog));
+		}
+		if (this._oPopoverPromise) {
+			this._oPopoverPromise.then(oPopover.destroy.bind(oPopover));
+		}
+	};
+
+	Translation.prototype.showTranslationPopover = function (oEvent) {
 		var oTranslationButton = oEvent.getSource();
 
-		// Will reset the dialog information after RTA toolbar was closed and opened again
-		if (oContext !== oToolbar) {
-			oContext = oToolbar;
-			oDialog = undefined;
-		}
-
-		if (!oContext.oTranslationPopoverPromise) {
-			oContext.oTranslationPopoverPromise = Fragment.load({
+		if (!this._oPopoverPromise) {
+			this._oPopoverPromise = Fragment.load({
 				name: "sap.ui.rta.toolbar.translation.TranslationPopover",
-				id: oContext.getId() + "_translationPopoverDialog",
+				id: this.getContext().getId() + "_translationPopoverDialog",
 				controller: {
-					openDownloadTranslationDialog: Translation.openDownloadTranslationDialog
+					openDownloadTranslationDialog: this.openDownloadTranslationDialog.bind(this)
 				}
-			}).then(function (oTranslationDialog) {
-				oTranslationButton.addDependent(oTranslationDialog);
-				return oTranslationDialog;
+			}).then(function (oTranslationPopover) {
+				oPopover = oTranslationPopover;
+				oTranslationButton.addDependent(oTranslationPopover);
+				return oTranslationPopover;
 			});
 		}
 
-		return oContext.oTranslationPopoverPromise.then(function (oTranslationDialog) {
+		return this._oPopoverPromise.then(function (oTranslationDialog) {
 			if (!oTranslationDialog.isOpen()) {
 				oTranslationDialog.openBy(oTranslationButton);
 			} else {
@@ -95,18 +110,16 @@ function(
 		});
 	};
 
-	Translation.openDownloadTranslationDialog = function () {
-		var oDialogPromise;
-
+	Translation.prototype.openDownloadTranslationDialog = function () {
 		if (oDialog) {
-			oDialogPromise = resetTranslationDialog();
+			this._oDialogPromise = resetTranslationDialog.call(this);
 		} else {
-			oDialogPromise = createDownloadTranslationDialog();
+			this._oDialogPromise = createDownloadTranslationDialog.call(this);
 		}
-		return oDialogPromise.then(function () {
-			oContext.addDependent(oDialog);
+		return this._oDialogPromise.then(function () {
+			this.getContext().addDependent(oDialog);
 			return oDialog.open();
-		});
+		}.bind(this));
 	};
 
 	return Translation;

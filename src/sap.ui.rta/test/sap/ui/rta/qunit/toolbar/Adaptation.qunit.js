@@ -1,30 +1,48 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/Core",
+	"sap/ui/core/Fragment",
+	"sap/ui/core/MessageType",
+	"sap/ui/fl/Layer",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/Device",
-	"sap/ui/core/Fragment",
-	"sap/ui/core/Control",
-	"sap/ui/core/format/DateFormat",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/MessageType",
-	"sap/ui/core/Core",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
+	DateFormatter,
+	Core,
+	Fragment,
+	MessageType,
+	Layer,
+	JSONModel,
+	AppVariantFeature,
 	Adaptation,
 	Device,
-	Fragment,
-	Control,
-	DateFormatter,
-	JSONModel,
-	MessageType,
-	Core,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
+
+	function createToolbarControlsModel() {
+		return new JSONModel({
+			undoEnabled: false,
+			redoEnabled: false,
+			publishVisible: false,
+			publishEnabled: false,
+			restoreEnabled: false,
+			appVariantsOverviewVisible: false,
+			appVariantsOverviewEnabled: false,
+			saveAsVisible: false,
+			saveAsEnabled: false,
+			manageAppsVisible: false,
+			manageAppsEnabled: false,
+			modeSwitcher: "adaptation"
+		});
+	}
 
 	QUnit.module("Different Screen Sizes", {
 		beforeEach: function() {
@@ -33,20 +51,7 @@ function(
 				versions: [],
 				draftAvailable: false
 			});
-			this.oToolbarControlsModel = new JSONModel({
-				undoEnabled: false,
-				redoEnabled: false,
-				publishVisible: false,
-				publishEnabled: false,
-				restoreEnabled: false,
-				appVariantsOverviewVisible: false,
-				appVariantsOverviewEnabled: false,
-				saveAsVisible: false,
-				saveAsEnabled: false,
-				manageAppsVisible: false,
-				manageAppsEnabled: false,
-				modeSwitcher: "adaptation"
-			});
+			this.oToolbarControlsModel = createToolbarControlsModel();
 			this.oGetCurrentRangeStub = sandbox.stub(Device.media, "getCurrentRange");
 
 			this.oToolbar = new Adaptation({
@@ -177,20 +182,7 @@ function(
 
 	QUnit.module("Versions Model binding & formatter for the restore button", {
 		before: function () {
-			this.oToolbarControlsModel = new JSONModel({
-				undoEnabled: false,
-				redoEnabled: false,
-				publishVisible: false,
-				publishEnabled: false,
-				restoreEnabled: false,
-				appVariantsOverviewVisible: false,
-				appVariantsOverviewEnabled: false,
-				saveAsVisible: false,
-				saveAsEnabled: false,
-				manageAppsVisible: false,
-				manageAppsEnabled: false,
-				modeSwitcher: "adaptation"
-			});
+			this.oToolbarControlsModel = createToolbarControlsModel();
 			this.oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		},
 		after: function() {
@@ -251,20 +243,7 @@ function(
 				draftAvailable: false,
 				displayedVersion: sap.ui.fl.Versions.Draft
 			});
-			this.oToolbarControlsModel = new JSONModel({
-				undoEnabled: false,
-				redoEnabled: false,
-				publishVisible: false,
-				publishEnabled: false,
-				restoreEnabled: false,
-				appVariantsOverviewVisible: false,
-				appVariantsOverviewEnabled: false,
-				saveAsVisible: false,
-				saveAsEnabled: false,
-				manageAppsVisible: false,
-				manageAppsEnabled: false,
-				modeSwitcher: "adaptation"
-			});
+			this.oToolbarControlsModel = createToolbarControlsModel();
 			this.oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			this.oToolbar = new Adaptation({
 				textResources: this.oTextResources
@@ -324,20 +303,7 @@ function(
 				draftAvailable: false,
 				displayedVersion: sap.ui.fl.Versions.Original
 			});
-			this.oToolbarControlsModel = new JSONModel({
-				undoEnabled: false,
-				redoEnabled: false,
-				publishVisible: false,
-				publishEnabled: false,
-				restoreEnabled: false,
-				appVariantsOverviewVisible: false,
-				appVariantsOverviewEnabled: false,
-				saveAsVisible: false,
-				saveAsEnabled: false,
-				manageAppsVisible: false,
-				manageAppsEnabled: false,
-				modeSwitcher: "adaptation"
-			});
+			this.oToolbarControlsModel = createToolbarControlsModel();
 			this.oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			this.oToolbar = new Adaptation({
 				textResources: this.oTextResources
@@ -475,20 +441,7 @@ function(
 			this.oToolbar = new Adaptation({
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 			});
-			this.oToolbarControlsModel = new JSONModel({
-				undoEnabled: false,
-				redoEnabled: false,
-				publishVisible: false,
-				publishEnabled: false,
-				restoreEnabled: false,
-				appVariantsOverviewVisible: false,
-				appVariantsOverviewEnabled: false,
-				saveAsVisible: false,
-				saveAsEnabled: false,
-				manageAppsVisible: false,
-				manageAppsEnabled: false,
-				modeSwitcher: "adaptation"
-			});
+			this.oToolbarControlsModel = createToolbarControlsModel();
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 
 			return this.oToolbar._pFragmentLoaded;
@@ -543,20 +496,7 @@ function(
 			this.oToolbar = new Adaptation({
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 			});
-			this.oToolbarControlsModel = new JSONModel({
-				undoEnabled: false,
-				redoEnabled: false,
-				publishVisible: false,
-				publishEnabled: false,
-				restoreEnabled: false,
-				appVariantsOverviewVisible: false,
-				appVariantsOverviewEnabled: false,
-				saveAsVisible: false,
-				saveAsEnabled: false,
-				manageAppsVisible: false,
-				manageAppsEnabled: false,
-				modeSwitcher: "adaptation"
-			});
+			this.oToolbarControlsModel = createToolbarControlsModel();
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			return this.oToolbar._pFragmentLoaded;
 		},
@@ -619,9 +559,8 @@ function(
 				return {
 					getBindingContext: function () {
 						if (!Number.isInteger(nVersion)) {
-							return;
+							return undefined;
 						}
-
 						return {
 							getProperty: function () {
 								return nVersion;
@@ -640,20 +579,7 @@ function(
 			this.oToolbar = new Adaptation({
 				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 			});
-			this.oToolbarControlsModel = new JSONModel({
-				undoEnabled: false,
-				redoEnabled: false,
-				publishVisible: false,
-				publishEnabled: false,
-				restoreEnabled: false,
-				appVariantsOverviewVisible: false,
-				appVariantsOverviewEnabled: false,
-				saveAsVisible: false,
-				saveAsEnabled: false,
-				manageAppsVisible: false,
-				manageAppsEnabled: false,
-				modeSwitcher: "adaptation"
-			});
+			this.oToolbarControlsModel = createToolbarControlsModel();
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 
 			return this.oToolbar._pFragmentLoaded;
@@ -679,20 +605,7 @@ function(
 	QUnit.module("Formatters", {
 		beforeEach: function () {
 			this.oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-			this.oToolbarControlsModel = new JSONModel({
-				undoEnabled: false,
-				redoEnabled: false,
-				publishVisible: false,
-				publishEnabled: false,
-				restoreEnabled: false,
-				appVariantsOverviewVisible: false,
-				appVariantsOverviewEnabled: false,
-				saveAsVisible: false,
-				saveAsEnabled: false,
-				manageAppsVisible: false,
-				manageAppsEnabled: false,
-				modeSwitcher: "adaptation"
-			});
+			this.oToolbarControlsModel = createToolbarControlsModel();
 			this.oToolbar = new Adaptation({
 				textResources: this.oMessageBundle
 			});
@@ -831,22 +744,14 @@ function(
 	QUnit.module("Setting AppVariant properties", {
 		beforeEach: function () {
 			this.oToolbar = new Adaptation({
-				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta"),
+				rtaInformation: {
+					flexSettings: {
+						layer: Layer.CUSTOMER
+					}
+				}
 			});
-			this.oControlsModel = new JSONModel({
-				undoEnabled: false,
-				redoEnabled: false,
-				publishVisible: false,
-				publishEnabled: false,
-				restoreEnabled: false,
-				appVariantsOverviewVisible: false,
-				appVariantsOverviewEnabled: false,
-				saveAsVisible: false,
-				saveAsEnabled: false,
-				manageAppsVisible: false,
-				manageAppsEnabled: false,
-				modeSwitcher: "adaptation"
-			});
+			this.oControlsModel = createToolbarControlsModel();
 			this.oToolbar.setModel(this.oControlsModel, "controls");
 			return this.oToolbar._pFragmentLoaded;
 		},
@@ -860,43 +765,74 @@ function(
 			this.oControlsModel.setProperty("/appVariantsOverviewVisible", false);
 			this.oControlsModel.setProperty("/manageAppsVisible", false);
 			this.oToolbar.animation = false;
-			return this.oToolbar.show()
-			.then(function () {
-				assert.notOk(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is not visible");
-				assert.notOk(this.oToolbar.getControl("appVariantOverview").getVisible(), "appVariantOverview is not visible");
-				assert.notOk(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is not visible");
+			return this.oToolbar.show().then(function() {
+				var oGetOverviewStub = sandbox.stub(AppVariantFeature, "onGetOverview");
+				var oSaveAsStub = sandbox.stub(AppVariantFeature, "onSaveAs");
+				var oSaveAsButton = this.oToolbar.getControl("saveAs");
+				var oManageAppsButton = this.oToolbar.getControl("manageApps");
+				var oOverviewButton = this.oToolbar.getControl("appVariantOverview");
+
+				assert.notOk(oSaveAsButton.getVisible(), "saveAs is not visible");
+				assert.notOk(oOverviewButton.getVisible(), "appVariantOverview is not visible");
+				assert.notOk(oManageAppsButton.getVisible(), "manageApps is not visible");
+
 				this.oControlsModel.setProperty("/saveAsVisible", true);
 				this.oControlsModel.setProperty("/saveAsEnabled", false);
 				this.oControlsModel.setProperty("/appVariantsOverviewVisible", false);
 				this.oControlsModel.setProperty("/manageAppsVisible", true);
 				this.oControlsModel.setProperty("/manageAppsEnabled", false);
-				assert.ok(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is visible");
-				assert.notOk(this.oToolbar.getControl("saveAs").getEnabled(), "saveAs is not enabled");
-				assert.notOk(this.oToolbar.getControl("appVariantOverview").getVisible(), "AppVariantOverview is not visible");
-				assert.ok(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is visible");
-				assert.notOk(this.oToolbar.getControl("manageApps").getEnabled(), "manageApps is not enabled");
+				assert.ok(oSaveAsButton.getVisible(), "saveAs is visible");
+				assert.notOk(oSaveAsButton.getEnabled(), "saveAs is not enabled");
+				assert.notOk(oOverviewButton.getVisible(), "AppVariantOverview is not visible");
+				assert.ok(oManageAppsButton.getVisible(), "manageApps is visible");
+				assert.notOk(oManageAppsButton.getEnabled(), "manageApps is not enabled");
+
 				this.oControlsModel.setProperty("/saveAsVisible", true);
 				this.oControlsModel.setProperty("/saveAsEnabled", true);
 				this.oControlsModel.setProperty("/appVariantsOverviewVisible", false);
 				this.oControlsModel.setProperty("/manageAppsVisible", true);
 				this.oControlsModel.setProperty("/manageAppsEnabled", true);
-				assert.ok(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is visible");
-				assert.ok(this.oToolbar.getControl("saveAs").getEnabled(), "saveAs is enabled");
-				assert.notOk(this.oToolbar.getControl("appVariantOverview").getVisible(), "AppVariantOverview is not visible");
-				assert.ok(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is visible");
-				assert.ok(this.oToolbar.getControl("manageApps").getEnabled(), "manageApps is enabled");
+				assert.ok(oSaveAsButton.getVisible(), "saveAs is visible");
+				assert.ok(oSaveAsButton.getEnabled(), "saveAs is enabled");
+				assert.notOk(oOverviewButton.getVisible(), "AppVariantOverview is not visible");
+				assert.ok(oManageAppsButton.getVisible(), "manageApps is visible");
+				assert.ok(oManageAppsButton.getEnabled(), "manageApps is enabled");
+
+				oManageAppsButton.firePress();
+				assert.strictEqual(oGetOverviewStub.callCount, 1, "the overview function was called");
+				assert.strictEqual(oGetOverviewStub.lastCall.args[0], true, "the first agrument is true");
+				assert.strictEqual(oGetOverviewStub.lastCall.args[1], Layer.CUSTOMER, "the second agrument is the current layer");
+
+				oSaveAsButton.firePress();
+				assert.strictEqual(oSaveAsStub.callCount, 1, "the save as function was called");
+				assert.deepEqual(oSaveAsStub.lastCall.args, [true, true, Layer.CUSTOMER, null], "the correct arguments got passed");
+
 				this.oControlsModel.setProperty("/saveAsVisible", true);
 				this.oControlsModel.setProperty("/saveAsEnabled", true);
 				this.oControlsModel.setProperty("/appVariantsOverviewVisible", true);
 				this.oControlsModel.setProperty("/appVariantsOverviewEnabled", true);
 				this.oControlsModel.setProperty("/manageAppsVisible", false);
 				this.oControlsModel.setProperty("/manageAppsEnabled", false);
-				assert.ok(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is visible");
-				assert.ok(this.oToolbar.getControl("saveAs").getEnabled(), "saveAs is enabled");
-				assert.ok(this.oToolbar.getControl("appVariantOverview").getVisible(), "AppVariantOverview is visible");
-				assert.ok(this.oToolbar.getControl("appVariantOverview").getVisible(), "AppVariantOverview is enabled");
-				assert.notOk(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is not visible");
-				assert.notOk(this.oToolbar.getControl("manageApps").getEnabled(), "manageApps is not enabled");
+				assert.ok(oSaveAsButton.getVisible(), "saveAs is visible");
+				assert.ok(oSaveAsButton.getEnabled(), "saveAs is enabled");
+				assert.ok(oOverviewButton.getVisible(), "AppVariantOverview is visible");
+				assert.ok(oOverviewButton.getEnabled(), "AppVariantOverview is enabled");
+				assert.notOk(oManageAppsButton.getVisible(), "manageApps is not visible");
+				assert.notOk(oManageAppsButton.getEnabled(), "manageApps is not enabled");
+
+				oOverviewButton.getMenu().fireItemSelected({
+					item: oOverviewButton.getMenu().getItems()[0]
+				});
+				assert.strictEqual(oGetOverviewStub.callCount, 2, "the overview function was called");
+				assert.strictEqual(oGetOverviewStub.lastCall.args[0], true, "the first agrument is true");
+				assert.strictEqual(oGetOverviewStub.lastCall.args[1], Layer.CUSTOMER, "the second agrument is the current layer");
+
+				oOverviewButton.getMenu().fireItemSelected({
+					item: oOverviewButton.getMenu().getItems()[1]
+				});
+				assert.strictEqual(oGetOverviewStub.callCount, 3, "the overview function was called");
+				assert.strictEqual(oGetOverviewStub.lastCall.args[0], false, "the first agrument is false");
+				assert.strictEqual(oGetOverviewStub.lastCall.args[1], Layer.CUSTOMER, "the second agrument is the current layer");
 			}.bind(this));
 		});
 
