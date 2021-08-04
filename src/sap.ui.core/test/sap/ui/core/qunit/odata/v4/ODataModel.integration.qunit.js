@@ -21237,9 +21237,9 @@ sap.ui.define([
 		}).then(function () {
 			var oMessageManager = sap.ui.getCore().getMessageManager();
 			// 4c. Patching a property via the wrong context must not succeed
-			// We're not interested in the exact error, only in some failure
+			// We're not interested in the exact errors, only in some failure
 
-			that.oLogMock.expects("error");
+			that.oLogMock.expects("error").twice();
 
 			return oReturnValueContext.getBinding().getBoundContext()
 				.setProperty("BestFriend/Name", "n/a")
@@ -27841,6 +27841,9 @@ sap.ui.define([
 	// Scenario: Call Context#setProperty for a property that is bound and has already been read
 	// from the back end. The request fails and property and binding are reset.
 	// BCP: 2070481590
+	//
+	// The error message is reported to the message model automatically.
+	// JIRA: CPOUI5ODATAV4-1106
 	QUnit.test("Context#setProperty: rejected", function (assert) {
 		var oContext, oPromise, that = this;
 
@@ -27858,7 +27861,18 @@ sap.ui.define([
 					payload : {Name : "Best Team Ever"},
 					url : "TEAMS('TEAM_01')"
 				}, createErrorInsideBatch())
+				.expectMessages([{
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}])
 				.expectChange("name", "Team #1");
+
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to update path /TEAMS('TEAM_01')/Name",
+					sinon.match("Request intentionally failed"), "sap.ui.model.odata.v4.Context");
 
 			return Promise.all([
 				that.oModel.submitBatch("update"),
@@ -28750,7 +28764,16 @@ sap.ui.define([
 			that.expectChange("city", ["Heidelberg"])
 				// CPOUI5ODATAV4-114
 				.expectChange("type", ["42"])
-				.expectChange("company", ["Nestle"]);
+				.expectChange("company", ["Nestle"])
+				.expectMessages([{
+					"message": "The entity will be created via group 'update'. Cannot patch via"
+						+ " group '$direct'",
+					"persistent": true,
+					"technical": true,
+					"type": "Error"
+				}]);
+
+			that.oLogMock.expects("error"); // don't care about console here
 
 			oCreatedContext = that.oView.byId("table").getBinding("items").create({
 				Address : {City : "Heidelberg"}
@@ -30334,6 +30357,18 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			var oContextBinding = oModel.bindContext("/TEAMS('42')");
+
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to update path /TEAMS('42')/Name",
+					sinon.match("Unexpected request: GET TEAMS('42')"),
+					"sap.ui.model.odata.v4.Context");
+
+			that.expectMessages([{
+				"message": "Unexpected request: GET TEAMS('42')",
+				"persistent": true,
+				"technical": true,
+				"type": "Error"
+			}]);
 
 			return Promise.all([
 				oContextBinding.getBoundContext().setProperty("Name", "changed", null)

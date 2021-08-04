@@ -1438,7 +1438,8 @@ sap.ui.define([
 	 * @since 1.67.0
 	 */
 	Context.prototype.setProperty = function (sPath, vValue, sGroupId, bRetry) {
-		var oGroupLock = null;
+		var oGroupLock = null,
+			that = this;
 
 		this.oBinding.checkSuspended();
 		if (typeof vValue === "function" || (vValue && typeof vValue === "object")) {
@@ -1454,6 +1455,8 @@ sap.ui.define([
 				if (oGroupLock) {
 					oGroupLock.unlock(true);
 				}
+				that.oModel.reportError("Failed to update path " + that.oModel.resolve(sPath, that),
+					sClassName, oError);
 				throw oError;
 			});
 	};

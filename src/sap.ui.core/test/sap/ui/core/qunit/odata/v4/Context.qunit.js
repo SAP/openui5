@@ -2851,7 +2851,9 @@ sap.ui.define([
 				lockGroup : function () {}
 			},
 			oModel = {
-				checkGroupId : function () {}
+				checkGroupId : function () {},
+				reportError : function () {},
+				resolve : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/ProductList('HT-1000')"),
 			oError = new Error("This call intentionally failed"),
@@ -2869,6 +2871,12 @@ sap.ui.define([
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("some/relative/path", "new value", sinon.match.same(oGroupLock), true)
 			.returns(SyncPromise.resolve(Promise.reject(oError)));
+		this.mock(oModel).expects("resolve")
+			.withExactArgs("some/relative/path", sinon.match.same(oContext))
+			.returns("/resolved/path");
+		this.mock(oModel).expects("reportError")
+			.withExactArgs("Failed to update path /resolved/path", "sap.ui.model.odata.v4.Context",
+				sinon.match.same(oError));
 
 		// code under test
 		oPromise = oContext.setProperty("some/relative/path", "new value", "group");
@@ -2890,7 +2898,11 @@ sap.ui.define([
 				checkSuspended : function () {},
 				lockGroup : function () {}
 			},
-			oContext = Context.create({/*oModel*/}, oBinding, "/ProductList('HT-1000')"),
+			oModel = {
+				reportError : function () {},
+				resolve : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/ProductList('HT-1000')"),
 			oError = {};
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
@@ -2898,6 +2910,12 @@ sap.ui.define([
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("some/relative/path", "new value", null, true)
 			.returns(SyncPromise.reject(oError));
+		this.mock(oModel).expects("resolve")
+			.withExactArgs("some/relative/path", sinon.match.same(oContext))
+			.returns("/resolved/path");
+		this.mock(oModel).expects("reportError")
+			.withExactArgs("Failed to update path /resolved/path", "sap.ui.model.odata.v4.Context",
+				sinon.match.same(oError));
 
 		// code under test
 		return oContext.setProperty("some/relative/path", "new value", null)
