@@ -102,7 +102,7 @@ sap.ui.define([
 	// shortcut for sap.m.FacetFilterType
 	var FacetFilterType = library.FacetFilterType;
 
-
+	var SCROLL_DURATION = 500;
 
 	/**
 	 * Constructor for a new <code>FacetFilter</code>.
@@ -1006,6 +1006,14 @@ sap.ui.define([
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
+
+		var oItems = this.oItemNavigation.aItemDomRefs,
+			iCurrentFocusIndex = this.oItemNavigation.getFocusedIndex(),
+			iNexFucusIndex = iCurrentFocusIndex - 1 >= 0 ? iCurrentFocusIndex - 1 : iCurrentFocusIndex,
+			oNextTarget = jQuery(oItems[iNexFucusIndex]).control(0),
+			iScrollOffset = this._calculateScrollIntoView(oNextTarget);
+
+		this._scroll(iScrollOffset, SCROLL_DURATION);
 	};
 
 	/**
@@ -1024,6 +1032,14 @@ sap.ui.define([
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
+
+		var oItems = this.oItemNavigation.aItemDomRefs,
+			iCurrentFocusIndex = this.oItemNavigation.getFocusedIndex(),
+			iNexFucusIndex = oItems.length > iCurrentFocusIndex + 1 ? iCurrentFocusIndex + 1 : iCurrentFocusIndex,
+			oNextTarget = jQuery(oItems[iNexFucusIndex]).control(0),
+			iScrollToPosition = this._calculateScrollIntoView(oNextTarget);
+
+		this._scroll(iScrollToPosition, SCROLL_DURATION);
 	};
 
 	/**
@@ -2201,6 +2217,26 @@ sap.ui.define([
 
 	// ---------------- Carousel Support ----------------
 
+	FacetFilter.prototype._calculateScrollIntoView = function (oItem) {
+		var iContainerWidth = this.$("head").width(),
+			iScrollOffset = 0;
+		if (!iContainerWidth || !oItem) {
+			return iScrollOffset;
+		}
+		var $item = oItem.$(),
+			iItemWidth = $item.outerWidth(true),
+			iItemPosLeft = $item.position().left,
+			iItemPosRight = iItemPosLeft + iItemWidth;
+
+		if (iItemPosRight > iContainerWidth) {
+			iScrollOffset = iItemPosRight - iContainerWidth;
+		} else if (iItemPosLeft < 0) {
+			iScrollOffset = iItemPosLeft;
+		}
+
+		return iScrollOffset;
+	};
+
 	/**
 	 * Returns arrows for the carousel.
 	 */
@@ -2213,7 +2249,7 @@ sap.ui.define([
 
 		if (sName === "left") {
 			oArrowIcon = this.getAggregation("arrowLeft");
-				if (!oArrowIcon) {
+			if (!oArrowIcon) {
 				mProperties.id = this.getId() + "-arrowScrollLeft";
 				oArrowIcon = IconPool.createControlByURI(mProperties);
 				var aCssClassesToAddLeft = [ "sapMPointer", "sapMFFArrowScroll", "sapMFFArrowScrollLeft" ];
@@ -2309,12 +2345,12 @@ sap.ui.define([
 				// scroll back/left button
 				oTarget.tabIndex = -1;
 				oTarget.focus();
-				this._scroll(-FacetFilter.SCROLL_STEP, 500);
+				this._scroll(-FacetFilter.SCROLL_STEP, SCROLL_DURATION);
 			} else if (sTargetId == sId + "-arrowScrollRight") {
 				// scroll forward/right button
 				oTarget.tabIndex = -1;
 				oTarget.focus();
-				this._scroll(FacetFilter.SCROLL_STEP, 500);
+				this._scroll(FacetFilter.SCROLL_STEP, SCROLL_DURATION);
 			}
 		}
 	};
@@ -2330,8 +2366,9 @@ sap.ui.define([
 	 */
 	FacetFilter.prototype._scroll = function(iDelta, iDuration) {
 
-		   var oDomRef = this.getDomRef("head");
-		   var iScrollLeft = oDomRef.scrollLeft;
+		var oDomRef = this.getDomRef("head");
+		var iScrollLeft = oDomRef.scrollLeft;
+
 		if (this._bRtl) {
 			iDelta = -iDelta;
 		} // RTL lives in the negative space
@@ -2421,7 +2458,7 @@ sap.ui.define([
 						window.clearInterval(this._iInertiaIntervalId);
 						this._iInertiaIntervalId = undefined;
 					}
-				}, dt);
+				}.bind(this), dt);
 
 			} else if (this._bTouchNotMoved === true) { // touchstart and touchend without move is a click; trigger it directly to avoid the usual delay
 				this.onclick(evt);
