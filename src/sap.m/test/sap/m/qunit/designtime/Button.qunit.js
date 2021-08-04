@@ -102,10 +102,11 @@ sap.ui.define([
 			afterRedo: fnConfirmButtonIsVisible
 		});
 
+		// Combine action
 		var fnPressEventFiredCorrectlyAfterCombine = function (oButton, oViewAfterAction, assert) {
 			var oCreatedMenuButton = oViewAfterAction.byId("bar0").getContentMiddle()[0];
 			var oFirstMenuItem = oCreatedMenuButton.getMenu().getItems()[0];
-			oFirstMenuItem.firePress();
+			oCreatedMenuButton.getMenu().fireItemSelected({item: oFirstMenuItem});
 			assert.strictEqual(window.oPressSpy.callCount, 1, "then the press event handler on the original button was called once");
 			window.oPressSpy.resetHistory();
 		};
@@ -157,6 +158,64 @@ sap.ui.define([
 			afterAction: fnPressEventFiredCorrectlyAfterCombine,
 			afterUndo: fnPressEventFiredCorrectlyAfterUndo,
 			afterRedo: fnPressEventFiredCorrectlyAfterCombine
+		});
+
+		var fnPreviousActionFiredCorrectlyAfterCombine = function (oButton, oViewAfterAction, assert) {
+			var oCreatedMenuButton = oViewAfterAction.byId("bar0").getContentMiddle()[0];
+			oCreatedMenuButton.setButtonMode("Split");
+			sap.ui.getCore().applyChanges();
+
+			var oFirstMenuItem = oCreatedMenuButton.getMenu().getItems()[0];
+			var oTextButton = sap.ui.getCore().byId(oCreatedMenuButton.getFocusDomRef().id);
+
+			// Select an item, then press the menu button
+			oCreatedMenuButton.getMenu().fireItemSelected({item: oFirstMenuItem});
+			oTextButton.firePress();
+
+			assert.strictEqual(window.oPressSpy.callCount, 2, "then the press event handler on the original button was called twice");
+			window.oPressSpy.resetHistory();
+		};
+
+		elementActionTest("Checking the press action for a MenuButton in Split mode (combine action)", {
+			jsOnly: true,
+			xmlView:
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+					'<Page id="page0" >' +
+						'<customHeader>' +
+							'<Bar id="bar0">' +
+								'<contentMiddle>' +
+									'<Button id="btn0" text="button0" press="oPressSpy" />' +
+									'<Button id="btn1" text="button1" />' +
+									'<Button id="btn2" text="button2" />' +
+								'</contentMiddle>' +
+							'</Bar>' +
+						'</customHeader>' +
+					'</Page>' +
+				'</mvc:View>',
+			action: {
+				name: "combine",
+				controlId: "btn0",
+				parameter: function(oView){
+					return {
+						source: oView.byId("btn0"),
+						combineElements : [
+							oView.byId("btn0"),
+							oView.byId("btn1"),
+							oView.byId("btn2")
+						]
+					};
+				}
+			},
+			layer: "VENDOR",
+			before: function () {
+				window.oPressSpy = sinon.spy();
+			},
+			after: function () {
+				delete window.oPressSpy;
+			},
+			afterAction: fnPreviousActionFiredCorrectlyAfterCombine,
+			afterUndo: fnPressEventFiredCorrectlyAfterUndo,
+			afterRedo: fnPreviousActionFiredCorrectlyAfterCombine
 		});
 
 		var fnEnableDisableAfterCombine = function (oButton, oViewAfterAction, assert) {
