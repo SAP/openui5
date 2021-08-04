@@ -135,7 +135,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/core/mvc/View
 							});
 						}
 					} else {
-						Fragment = Fragment || sap.ui.requireSync("sap/ui/core/Fragment");
+						Fragment = Fragment || sap.ui.requireSync("sap/ui/core/Fragment"); // legacy-relevant: Sync path
 						var oFragment = new Fragment(oFactoryConfig);
 						// make sure vResult is at least an empty array, if a Fragment is configured, the default content is not added
 						vResult = (Array.isArray(oFragment) ? oFragment : [oFragment]);

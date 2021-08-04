@@ -45,7 +45,7 @@
 		} else if ( sSrc.indexOf("require:") === 0 ) {
 			sSrc = sSrc.slice(8);
 			bCoreRequired = bCoreRequired || sSrc === "sap/ui/core/Core";
-			document.write("<script>sap.ui.requireSync(\"" + sSrc + "\");</script>");
+			document.write("<script>sap.ui.requireSync(\"" + sSrc + "\");</script>"); // legacy-relevant
 		}
 	}
 	if ( bCoreRequired ) {

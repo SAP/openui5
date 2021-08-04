@@ -587,7 +587,7 @@ sap.ui.define([
 							oSyncPoint2.finishTask(iLoadACBTask);
 						});
 					} else {
-						var AppCacheBuster = sap.ui.requireSync('sap/ui/core/AppCacheBuster');
+						var AppCacheBuster = sap.ui.requireSync('sap/ui/core/AppCacheBuster'); // legacy-relevant: Synchronous path
 						AppCacheBuster.boot(oSyncPoint2);
 					}
 				}
@@ -616,8 +616,8 @@ sap.ui.define([
 							};
 						});
 						fnCallbackSupportBootstrapInfo(
-							sap.ui.requireSync("sap/ui/core/support/Support"),
-							sap.ui.requireSync("sap/ui/support/Bootstrap")
+							sap.ui.requireSync("sap/ui/core/support/Support"), // legacy-relevant: Synchronous path
+							sap.ui.requireSync("sap/ui/support/Bootstrap") // legacy-relevant: Synchronous path
 						);
 					}
 				}
@@ -645,7 +645,7 @@ sap.ui.define([
 							};
 						});
 						fnCallbackTestRecorder(
-							sap.ui.requireSync("sap/ui/testrecorder/Bootstrap")
+							sap.ui.requireSync("sap/ui/testrecorder/Bootstrap") // legacy-relevant: Synchronous preloading
 						);
 					}
 				}
@@ -912,7 +912,7 @@ sap.ui.define([
 				this.loadLibrary(m[1]);
 			} else {
 				// data-sap-ui-modules might contain legacy jquery.sap.* modules
-				sap.ui.requireSync( /^jquery\.sap\./.test(mod) ?  mod : mod.replace(/\./g, "/"));
+				sap.ui.requireSync( /^jquery\.sap\./.test(mod) ?  mod : mod.replace(/\./g, "/")); // legacy-relevant: Sync loading of modules and libraries
 			}
 		}.bind(this));
 
@@ -1328,7 +1328,7 @@ sap.ui.define([
 				var oRootNode = document.getElementById(sRootNode);
 				if (oRootNode) {
 					Log.info("Creating ComponentContainer for Root Component: " + sRootComponent,null,METHOD);
-					var ComponentContainer = sap.ui.requireSync('sap/ui/core/ComponentContainer'),
+					var ComponentContainer = sap.ui.requireSync('sap/ui/core/ComponentContainer'), // legacy-relevant: Deprecated rootComponent API
 						oContainer = new ComponentContainer({
 						component: oComponent,
 						propagateModel: true /* TODO: is this a configuration or do this by default? right now it behaves like the application */
@@ -1352,7 +1352,7 @@ sap.ui.define([
 				});
 
 				Log.info("Loading Application: " + sApplication,null,METHOD);
-				sap.ui.requireSync(sApplication.replace(/\./g, "/"));
+				sap.ui.requireSync(sApplication.replace(/\./g, "/")); // legacy-relevant: deprecated
 				var oClass = ObjectPath.get(sApplication);
 				assert(oClass !== undefined, "The specified application \"" + sApplication + "\" could not be found!");
 				var oApplication = new oClass();
@@ -1845,7 +1845,7 @@ sap.ui.define([
 		if ( fileType !== 'json' /* 'js' or 'both', not forced to JSON */ ) {
 			var sPreloadModule = libPackage + '/library-preload';
 			try {
-				sap.ui.requireSync(sPreloadModule);
+				sap.ui.requireSync(sPreloadModule); // legacy-relevant: Synchronous preloading
 				dependencies = dependenciesFromManifest(lib);
 			} catch (e) {
 				Log.error("failed to load '" + sPreloadModule + "' (" + (e && e.message || e) + ")");
@@ -2018,7 +2018,7 @@ sap.ui.define([
 			}
 
 			// require the library module (which in turn will call initLibrary())
-			sap.ui.requireSync(sModule.replace(/\./g, "/"));
+			sap.ui.requireSync(sModule.replace(/\./g, "/")); // legacy-relevant
 
 			// check for legacy code
 			if ( !mLoadedLibraries[sLibrary] ) {
@@ -3323,7 +3323,7 @@ sap.ui.define([
 				name: "Core.prototype.getTemplate"
 			};
 		});
-		var Template = sap.ui.requireSync('sap/ui/core/tmpl/Template');
+		var Template = sap.ui.requireSync('sap/ui/core/tmpl/Template'); // legacy-relevant
 		return Template.byId(sId);
 	};
 
