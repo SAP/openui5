@@ -3228,12 +3228,20 @@ sap.ui.define([
 					aModuleNames.push(sViewClass);
 				}
 
-				// lookup router class
+				// lookup and loading of the router / targets and views class
+				// prevents synchronous loading in UIComponent#init
 				var oRouting = oManifest.getEntry("/sap.ui5/routing");
-				if (oRouting && oRouting.routes) {
-					var sRouterClass = oManifest.getEntry("/sap.ui5/routing/config/routerClass") || "sap.ui.core.routing.Router";
-					var sRouterClassModule = sRouterClass.replace(/\./g, "/");
-					aModuleNames.push(sRouterClassModule);
+				if (oRouting) {
+					if (oRouting.routes) {
+						var sRouterClass = oManifest.getEntry("/sap.ui5/routing/config/routerClass") || "sap.ui.core.routing.Router";
+						var sRouterClassModule = sRouterClass.replace(/\./g, "/");
+						aModuleNames.push(sRouterClassModule);
+					} else if (oRouting.targets) {
+						var sTargetClass = oManifest.getEntry("/sap.ui5/routing/config/targetsClass") || "sap.ui.core.routing.Targets";
+						var sTargetClassModule = sTargetClass.replace(/\./g, "/");
+						aModuleNames.push(sTargetClassModule);
+						aModuleNames.push("sap/ui/core/routing/Views");
+					}
 				}
 
 				// lookup model classes
