@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
