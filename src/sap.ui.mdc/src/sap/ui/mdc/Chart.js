@@ -348,6 +348,7 @@ sap.ui.define([
 		var _onSelectionMode = function(vValue) {
 
 			if (!this.oChartPromise) {
+				this._bNeedSelectionModeSet = true;
 				return;
 			}
 
@@ -581,7 +582,7 @@ sap.ui.define([
 
 			}.bind(this));
 
-			if (!mSettings || mSettings.selectionMode === undefined) {
+			if (!mSettings || mSettings.selectionMode === undefined || this._bNeedSelectionModeSet) {
 				_onSelectionMode.apply(this);
 			}
 
