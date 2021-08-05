@@ -37,7 +37,7 @@ sap.ui.define([
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
 		mFixture = {
-			"TEAMS('TEAM_01')/Name" : {source : "Name.json"},
+			"TEAMS('TEAM_01')/Name" : {"message" : {"value" : "Business Suite"}},
 			"TEAMS('UNKNOWN')" : {code : 404, source : "TEAMS('UNKNOWN').json"}
 		},
 		sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
