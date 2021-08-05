@@ -29,7 +29,7 @@
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="listTasks" manifest="{manifests>/tasksContent}" action=".onAction">
+			<w:Card id="listTasks" manifest="./cardsdemo/cardcontent/listContent/quickActions.json" action=".onAction">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>

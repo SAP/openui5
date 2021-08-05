@@ -1,5 +1,6 @@
 {
 	"sap.app": {
+		"id": "cardsdemo.manifestLoading.card1",
 		"type": "card"
 	},
 	"sap.card": {
@@ -15,7 +16,7 @@
 		"content": {
 			"data": {
 				"request": {
-					"url": "./cardsdemo/cardcontent/someitems.json"
+					"url": "../../cardcontent/someitems.json"
 				}
 			},
 			"item": {

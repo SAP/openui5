@@ -49,7 +49,7 @@ sap.ui.define(["sap/ui/integration/Extension", "sap/ui/integration/ActionDefinit
 			});
 
 			var pGetDataFromStaticFile = oCard.request({
-				"url": sap.ui.require.toUrl("cardWithExtension/cities.json")
+				"url": "./cities.json"
 			});
 
 			var pGetDataFromDestination = oCard.request({

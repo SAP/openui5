@@ -8,7 +8,7 @@
 		"type": "Object",
 		"data": {
 			"request": {
-				"url": "./cardsdemo/bundles/objectbundle/mockdata/employee.json"
+				"url": "./mockdata/employee.json"
 			}
 		},
 		"header": {

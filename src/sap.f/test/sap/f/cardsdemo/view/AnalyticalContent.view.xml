@@ -17,23 +17,27 @@
 			<w:Card
 				id="lineChart"
 				manifest="{manifests>/analyticalContent/line}"
+				baseUrl="./"
 				class="sapUiMediumMargin"
 				width="700px" />
 			<w:Card
 				id="stackedBarChart"
 				manifest="{manifests>/analyticalContent/stackedBar}"
+				baseUrl="./"
 				class="sapUiMediumMargin"
 				height="500px"
 				width="700px" />
 			<w:Card
 				id="stackedColumnChart"
 				manifest="{manifests>/analyticalContent/stackedColumn}"
+				baseUrl="./"
 				class="sapUiMediumMargin"
 				height="500px"
 				width="700px" />
 			<w:Card
 				id="donutChart"
 				manifest="{manifests>/analyticalContent/donut}"
+				baseUrl="./"
 				class="sapUiMediumMargin"
 				height="500px"
 				width="700px" />

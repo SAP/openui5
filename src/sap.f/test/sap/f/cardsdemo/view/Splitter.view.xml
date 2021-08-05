@@ -20,6 +20,7 @@
 					<w:Card
 						id="default2x2"
 						manifest="{manifests>/splitter/card1}"
+						baseUrl="./"
 						width="100%"
 						height="100%" />
 					<w:Card
@@ -31,11 +32,13 @@
 					<w:Card
 						id="default1x1"
 						manifest="{manifests>/splitter/card2}"
+						baseUrl="./"
 						width="100%"
 						height="100%" />
 					<w:Card
 						id="default2x1"
 						manifest="{manifests>/splitter/card3}"
+						baseUrl="./"
 						width="100%"
 						height="100%" />
 				</l:Splitter>

@@ -1,6 +1,7 @@
 {
 	"_version": "1.8.0",
 	"sap.app": {
+		"id": "cardsdemo.hiddenItems.list",
 		"type": "card"
 	},
 	"sap.ui5": {
@@ -14,7 +15,7 @@
 		"type": "List",
 		"data": {
 			"request": {
-				"url": "./cardsdemo/cardcontent/someitems_services.json"
+				"url": "../../someitems_services.json"
 			}
 		},
 		"header": {

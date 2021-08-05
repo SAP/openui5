@@ -1,5 +1,6 @@
 {
 	"sap.app": {
+		"id": "cardsdemo.object.datahandling",
 		"type": "card",
 		"i18n": "i18n/i18n.properties"
 	},
@@ -7,7 +8,7 @@
 		"type": "Object",
 		"data": {
 			"request": {
-				"url": "./cardsdemo/cardcontent/objectcontent/datahandling_employee.json"
+				"url": "./datahandling_employee.json"
 			}
 		},
 		"header": {

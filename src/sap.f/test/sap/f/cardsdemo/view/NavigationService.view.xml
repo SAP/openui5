@@ -114,6 +114,7 @@
 						id="timeline"
 						class="sapUiSmallMargin"
 						manifest="{manifests>/timelineContent/card0}"
+						baseUrl="./"
 						width="300px" />
 				</HBox>
 			</VBox>

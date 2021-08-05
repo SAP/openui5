@@ -1,6 +1,7 @@
 {
 	"_version": "1.8.0",
 	"sap.app": {
+		"id": "cardsdemo.navigatioService.card3",
 		"type": "card"
 	},
 	"sap.ui5": {
@@ -25,7 +26,7 @@
 		"content": {
 			"data": {
 				"request": {
-					"url": "./cardsdemo/cardcontent/salesOrders.json"
+					"url": "../salesOrders.json"
 				},
 				"path": "/items"
 			},

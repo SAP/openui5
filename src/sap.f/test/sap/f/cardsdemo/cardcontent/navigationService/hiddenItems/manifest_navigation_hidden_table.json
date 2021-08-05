@@ -1,6 +1,7 @@
 {
 	"_version": "1.8.0",
 	"sap.app": {
+		"id": "cardsdemo.hiddenItems.table",
 		"type": "card"
 	},
 	"sap.ui5": {
