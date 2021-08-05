@@ -44,56 +44,52 @@ var sSingleLangTest = "de",
     ],
     mWords = {
         // lang: [not hyphenated, hyphenated]
-        "bg": ["непротивоконституционствувателствувайте", "неп-ро-ти-во-кон-с-ти-ту-ци-он-с-т-ву-ва-тел-с-т-ву-вайте"],
-        "ca": ["Psiconeuroimmunoendocrinologia", "Psi-co-neu-roim-mu-no-en-do-cri-no-lo-gia"],
-        "hr": ["prijestolonasljednikovičičinima", "pri-jes-to-lo-na-s-ljed-ni-ko-vi-či-či-nima"],
-        "da": ["Gedebukkebensoverogundergeneralkrigskommander", "Gede-buk-ke-ben-soverogun-der-ge-ne-ral-krigskom-man-der"], // original word was Gedebukkebensoverogundergeneralkrigskommandersergenten
-        "nl": ["meervoudigepersoonlijkheidsstoornissen", "meer-vou-di-ge-per-soon-lijk-heids-stoor-nis-sen"],
-        "en": ["pneumonoultramicroscopicsilicovolcanoconiosis", "pneu-mo-noul-tra-mi-cro-scop-ic-sil-i-co-vol-canoco-nio-sis"],
-        "en-gb": ["pneumonoultramicroscopicsilicovolcanoconiosis", "pneu-mo-noul-tra-mi-cro-scop-ic-sil-i-co-vol-canoco-nio-sis"],
-        "en-us": ["pneumonoultramicroscopicsilicovolcanoconiosis", "pneu-mo-noul-tra-mi-cro-scop-ic-sil-i-co-vol-canoco-nio-sis"],
-        "et": ["Sünnipäevanädalalõpupeopärastlõunaväsimus", "Sün-ni-päe-va-nä-da-la-lõ-pu-peo-pä-rast-lõu-na-vä-si-mus"],
+        "bg": ["непротивоконституционствувателствувайте", "неп\u00ADро\u00ADти\u00ADво\u00ADкон\u00ADс\u00ADти\u00ADту\u00ADци\u00ADон\u00ADс\u00ADт\u00ADву\u00ADва\u00ADтел\u00ADс\u00ADт\u00ADву\u00ADвайте"],
+        "ca": ["Psiconeuroimmunoendocrinologia", "Psi\u00ADco\u00ADneu\u00ADroim\u00ADmu\u00ADno\u00ADen\u00ADdo\u00ADcri\u00ADno\u00ADlo\u00ADgia"],
+        "hr": ["prijestolonasljednikovičičinima", "pri\u00ADjes\u00ADto\u00ADlo\u00ADna\u00ADs\u00ADljed\u00ADni\u00ADko\u00ADvi\u00ADči\u00ADči\u00ADnima"],
+        "da": ["Gedebukkebensoverogundergeneralkrigskommander", "Gede\u00ADbuk\u00ADke\u00ADben\u00ADsoverogun\u00ADder\u00ADge\u00ADne\u00ADral\u00ADkrigskom\u00ADman\u00ADder"], // original word was Gedebukkebensoverogundergeneralkrigskommandersergenten
+        "nl": ["meervoudigepersoonlijkheidsstoornissen", "meer\u00ADvou\u00ADdi\u00ADge\u00ADper\u00ADsoon\u00ADlijk\u00ADheids\u00ADstoor\u00ADnis\u00ADsen"],
+        "en": ["pneumonoultramicroscopicsilicovolcanoconiosis", "pneu\u00ADmo\u00ADnoul\u00ADtra\u00ADmi\u00ADcro\u00ADscop\u00ADic\u00ADsil\u00ADi\u00ADco\u00ADvol\u00ADcanoco\u00ADnio\u00ADsis"],
+        "en-gb": ["pneumonoultramicroscopicsilicovolcanoconiosis", "pneu\u00ADmo\u00ADnoul\u00ADtra\u00ADmi\u00ADcro\u00ADscop\u00ADic\u00ADsil\u00ADi\u00ADco\u00ADvol\u00ADcanoco\u00ADnio\u00ADsis"],
+        "en-us": ["pneumonoultramicroscopicsilicovolcanoconiosis", "pneu\u00ADmo\u00ADnoul\u00ADtra\u00ADmi\u00ADcro\u00ADscop\u00ADic\u00ADsil\u00ADi\u00ADco\u00ADvol\u00ADcanoco\u00ADnio\u00ADsis"],
+        "et": ["Sünnipäevanädalalõpupeopärastlõunaväsimus", "Sün\u00ADni\u00ADpäe\u00ADva\u00ADnä\u00ADda\u00ADla\u00ADlõ\u00ADpu\u00ADpeo\u00ADpä\u00ADrast\u00ADlõu\u00ADna\u00ADvä\u00ADsi\u00ADmus"],
         "fi": ["kolmivaihekilowattituntimittari", "kolmivaihekilowattituntimittari"],
-        "fr": ["hippopotomonstrosesquippedaliophobie", "hip-po-po-to-mons-tro-ses-quip-pe-da-lio-pho-bie"],
-        "de": ["Kindercarnavalsoptochtvoorbereidingswerkzaamheden", "Kin-der-car-na-vals-op-tocht-vo-or-berei-dings-werk-zaam-he-den"], // original word was Kindercarnavalsoptochtvoorbereidingswerkzaamhedenplan
-        "de-at": ["Kindercarnavalsoptochtvoorbereidingswerkzaamheden", "Kin-der-car-na-vals-op-tocht-vo-or-berei-dings-werk-zaam-he-den"],
-        "el": ["ηλεκτροεγκεφαλογράφημα", "ηλε-κτρο-ε-γκε-φα-λο-γρά-φημα"],
-        "hi": ["किंकर्तव्यविमूढ़", "किं-क-र्-त-व्-य-वि-मूढ़"],
-        "hu": ["Megszentségteleníthetetlenségeskedéseitekért", "Meg-szent-ség-te-le-nít-he-tet-len-sé-ges-ke-dé-se-i-te-kért"],
-        "it": ["hippopotomonstrosesquippedaliofobia", "hip-po-po-to-mon-stro-se-squip-pe-da-lio-fo-bia"],
-        "lt": ["nebeprisikiškiakopūstlapiaujančiuosiuose", "nebe-pri-si-kiš-kia-ko-pūst-la-piau-jan-čiuo-siuose"],
-        "no": ["Omtrentlig", "Omtrent-lig"],
-        "pt": ["pneumoultramicroscopicossilicovulcanoconiose", "pneu-moul-tra-mi-cros-co-pi-cos-si-li-co-vul-ca-no-co-ni-ose"],
-        "ru": ["превысокомногорассмотрительствующий", "пре-вы-со-ком-но-го-рас-смот-ри-тель-ству-ю-щий"],
-        "sl": ["Dialektičnomaterialističen", "Dia-lek-tič-no-ma-te-ri-a-li-sti-čen"],
-        "es": ["Electroencefalografistas", "Elec-tro-en-ce-fa-lo-gra-fis-tas"],
-        "sv": ["Realisationsvinstbeskattning", "Rea-li-sa-tions-vinst-be-skatt-ning"],
-        "th": ["ตัวอย่างข้อความที่จะใช้ใน", "ตัวอย่างข้อค-วามที่จะใช้ใน"],
+        "fr": ["hippopotomonstrosesquippedaliophobie", "hip\u00ADpo\u00ADpo\u00ADto\u00ADmons\u00ADtro\u00ADses\u00ADquip\u00ADpe\u00ADda\u00ADlio\u00ADpho\u00ADbie"],
+        "de": ["Kindercarnavalsoptochtvoorbereidingswerkzaamheden", "Kin\u00ADder\u00ADcar\u00ADna\u00ADvals\u00ADop\u00ADtocht\u00ADvo\u00ADor\u00ADberei\u00ADdings\u00ADwerk\u00ADzaam\u00ADhe\u00ADden"], // original word was Kindercarnavalsoptochtvoorbereidingswerkzaamhedenplan
+        "de-at": ["Kindercarnavalsoptochtvoorbereidingswerkzaamheden", "Kin\u00ADder\u00ADcar\u00ADna\u00ADvals\u00ADop\u00ADtocht\u00ADvo\u00ADor\u00ADberei\u00ADdings\u00ADwerk\u00ADzaam\u00ADhe\u00ADden"],
+        "el": ["ηλεκτροεγκεφαλογράφημα", "ηλε\u00ADκτρο\u00ADε\u00ADγκε\u00ADφα\u00ADλο\u00ADγρά\u00ADφημα"],
+        "hi": ["किंकर्तव्यविमूढ़", "किं\u00ADक\u00ADर्\u00ADत\u00ADव्\u00ADय\u00ADवि\u00ADमूढ़"],
+        "hu": ["Megszentségteleníthetetlenségeskedéseitekért", "Meg\u00ADszent\u00ADség\u00ADte\u00ADle\u00ADnít\u00ADhe\u00ADtet\u00ADlen\u00ADsé\u00ADges\u00ADke\u00ADdé\u00ADse\u00ADi\u00ADte\u00ADkért"],
+        "it": ["hippopotomonstrosesquippedaliofobia", "hip\u00ADpo\u00ADpo\u00ADto\u00ADmon\u00ADstro\u00ADse\u00ADsquip\u00ADpe\u00ADda\u00ADlio\u00ADfo\u00ADbia"],
+        "lt": ["nebeprisikiškiakopūstlapiaujančiuosiuose", "nebe\u00ADpri\u00ADsi\u00ADkiš\u00ADkia\u00ADko\u00ADpūst\u00ADla\u00ADpiau\u00ADjan\u00ADčiuo\u00ADsiuose"],
+        "no": ["Omtrentlig", "Omtrent\u00ADlig"],
+        "pt": ["pneumoultramicroscopicossilicovulcanoconiose", "pneu\u00ADmoul\u00ADtra\u00ADmi\u00ADcros\u00ADco\u00ADpi\u00ADcos\u00ADsi\u00ADli\u00ADco\u00ADvul\u00ADca\u00ADno\u00ADco\u00ADni\u00ADose"],
+        "ru": ["превысокомногорассмотрительствующий", "пре\u00ADвы\u00ADсо\u00ADком\u00ADно\u00ADго\u00ADрас\u00ADсмот\u00ADри\u00ADтель\u00ADству\u00ADю\u00ADщий"],
+        "sl": ["Dialektičnomaterialističen", "Dia\u00ADlek\u00ADtič\u00ADno\u00ADma\u00ADte\u00ADri\u00ADa\u00ADli\u00ADsti\u00ADčen"],
+        "es": ["Electroencefalografistas", "Elec\u00ADtro\u00ADen\u00ADce\u00ADfa\u00ADlo\u00ADgra\u00ADfis\u00ADtas"],
+        "sv": ["Realisationsvinstbeskattning", "Rea\u00ADli\u00ADsa\u00ADtions\u00ADvinst\u00ADbe\u00ADskatt\u00ADning"],
+        "th": ["ตัวอย่างข้อความที่จะใช้ใน", "ตัวอย่างข้อค\u00ADวามที่จะใช้ใน"],
         "tr": ["Muvaffakiyetsizleştiricileştiriveremeyebileceklerimizdenmişsinizcesine", "Muvaffakiyetsizleştiricileştiriveremeyebileceklerimizdenmişsinizcesine"],
-        "uk": ["Нікотинамідаденіндинуклеотидфосфат", "Ніко-ти-на-мі-да-де-нін-ди-ну-кле-о-тид-фо-сфат"]
+        "uk": ["Нікотинамідаденіндинуклеотидфосфат", "Ніко\u00ADти\u00ADна\u00ADмі\u00ADда\u00ADде\u00ADнін\u00ADди\u00ADну\u00ADкле\u00ADо\u00ADтид\u00ADфо\u00ADсфат"]
     },
     mCompoundWords = {
-        "en": ["factory-made", "fac-tory-\u200bmade"],
-        "de": ["Geheimzahl-Aufschreiber", "Geheim-zahl-\u200bAuf-schrei-ber"]
+        "en": ["factory-made", "fac\u00ADtory-\u200bmade"],
+        "de": ["Geheimzahl-Aufschreiber", "Geheim\u00ADzahl-\u200bAuf\u00ADschrei\u00ADber"]
     },
     mTexts = {
         // lang: [not hyphenated, hyphenated]
         "en": [
             "A hyphenation algorithm is a set of rules that decides at which points a word can be broken over two lines with a hyphen.",
-            "A hyphen-ation algo-rithm is a set of rules that decides at which points a word can be bro-ken over two lines with a hyphen."
+            "A hyphen\u00ADation algo\u00ADrithm is a set of rules that decides at which points a word can be bro\u00ADken over two lines with a hyphen."
         ],
         "de": [
             "Die Worttrennung, auch Silbentrennung genannt, bezeichnet in der Orthographie die Art und Weise, wie die Wörter insbesondere am Zeilenende getrennt werden können.",
-            "Die Wort-tren-nung, auch Sil-ben-tren-nung genannt, bezeich-net in der Ortho-gra-phie die Art und Weise, wie die Wör-ter ins-be-son-dere am Zei-len-ende getrennt wer-den kön-nen."
+            "Die Wort\u00ADtren\u00ADnung, auch Sil\u00ADben\u00ADtren\u00ADnung genannt, bezeich\u00ADnet in der Ortho\u00ADgra\u00ADphie die Art und Weise, wie die Wör\u00ADter ins\u00ADbe\u00ADson\u00ADdere am Zei\u00ADlen\u00ADende getrennt wer\u00ADden kön\u00ADnen."
         ],
         "ru": [
             "Пример текста, который будет служить для проверки перевода.",
-            "При-мер тек-ста, кото-рый будет слу-жить для про-верки пере-вода."
+            "При\u00ADмер тек\u00ADста, кото\u00ADрый будет слу\u00ADжить для про\u00ADверки пере\u00ADвода."
         ]
-    },
-    mExceptionsEn = {
-        "hyphen": "h-y-p-h-e-n",
-        "example": "example"
     };
 
     function getDefaultLang() {
@@ -152,7 +148,7 @@ var sSingleLangTest = "de",
     });
 
     QUnit.test("default initialize", function(assert) {
-        assert.expect(3);
+        assert.expect(2);
 
         var done = assert.async();
 
@@ -161,7 +157,6 @@ var sSingleLangTest = "de",
 
             var sDefaultLang = getDefaultLang();
             assert.strictEqual(this.oHyphenation.isLanguageInitialized(sDefaultLang), true, "default lang '" + sDefaultLang + "' was initialized");
-            assert.deepEqual(this.oHyphenation.getExceptions(), {}, "there are no exceptions defined");
 
             done();
         }.bind(this));
@@ -301,22 +296,6 @@ var sSingleLangTest = "de",
         assert.strictEqual(canUseNativeHyphenationRaw(), this.oHyphenation.canUseNativeHyphenation(), "The Hyphenation instance should give the same result as the raw check.");
     });
 
-    QUnit.test("change hyphen symbol", function(assert) {
-        assert.expect(1);
-
-        var done = assert.async(),
-            that = this;
-
-        this.oHyphenation.initialize("en", {"hyphen": "-"}).then(function() {
-            assert.strictEqual(
-                that.oHyphenation.hyphenate("hyphenation", "en"),
-                "hyphen-ation",
-                "hyphenation symbol is changed to '-'"
-            );
-            done();
-        });
-    });
-
     QUnit.test("hyphenate example words", function(assert) {
         var done = assert.async(),
             that = this,
@@ -326,7 +305,7 @@ var sSingleLangTest = "de",
         assert.expect(aLanguages.length + Object.keys(mCompoundWords).length);
 
         aLanguages.forEach(function(sLang) {
-            that.oHyphenation.initialize(sLang, {"hyphen": "-"}).then(function() {
+            that.oHyphenation.initialize(sLang).then(function() {
                 counter++;
 
                 assert.strictEqual(
@@ -359,7 +338,7 @@ var sSingleLangTest = "de",
         assert.expect(aLanguages.length);
 
         aLanguages.forEach(function(sLang) {
-            that.oHyphenation.initialize(sLang, {"hyphen": "-"}).then(function() {
+            that.oHyphenation.initialize(sLang).then(function() {
                 counter++;
 
                 assert.strictEqual(
@@ -391,59 +370,4 @@ var sSingleLangTest = "de",
         this.oHyphenation.detachEvent("error", onError);
     });
 
-    QUnit.module("Word exceptions", {
-        before : function () {
-            this.oHyphenation = Hyphenation.getInstance();
-        }
-    });
-
-    QUnit.test("reinitialize a language to add exceptions", function(assert) {
-        assert.expect(3);
-
-        var done = assert.async(),
-            that = this;
-
-        this.oHyphenation.initialize("en", {hyphen: "-", exceptions: mExceptionsEn}).then(function() {
-            assert.deepEqual(that.oHyphenation.getExceptions("en"), mExceptionsEn, "get exceptions returns correct exceptions");
-
-            assert.strictEqual(that.oHyphenation.hyphenate("hyphen", "en"), "h-y-p-h-e-n", "exception for word 'hyphen' works");
-            assert.strictEqual(that.oHyphenation.hyphenate("example", "en"), "example", "exception for word 'example' works");
-
-            done();
-        });
-    });
-
-    QUnit.test("reinitialize a language to remove exceptions", function(assert) {
-        assert.expect(3);
-
-        var done = assert.async(),
-            that = this;
-
-        this.oHyphenation.initialize("en").then(function() {
-            assert.notDeepEqual(that.oHyphenation.getExceptions(), mExceptionsEn, "get exceptions returns correct exceptions");
-
-            assert.notEqual(that.oHyphenation.hyphenate("hyphen", "en"), "h-y-p-h-e-n", "there are no exceptions for word 'hyphen'");
-            assert.notEqual(that.oHyphenation.hyphenate("example", "en"), "example", "there are no exceptions for word 'example'");
-
-            done();
-        });
-    });
-
-    QUnit.test("add exceptions and get exceptions", function(assert) {
-        assert.expect(3);
-
-        var done = assert.async(),
-            that = this;
-
-        this.oHyphenation.initialize("en").then(function() {
-            that.oHyphenation.addExceptions("en", mExceptionsEn);
-
-            assert.deepEqual(that.oHyphenation.getExceptions("en"), mExceptionsEn, "get exceptions returns correct exceptions");
-
-            assert.strictEqual(that.oHyphenation.hyphenate("hyphen", "en"), "h-y-p-h-e-n", "exception for word 'hyphen' works");
-            assert.strictEqual(that.oHyphenation.hyphenate("example", "en"), "example", "exception for word 'example' works");
-
-            done();
-        });
-    });
 });

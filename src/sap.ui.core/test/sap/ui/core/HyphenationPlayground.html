@@ -211,17 +211,7 @@
 
 				var fnApplyConfig = function (evt) {
 					var lang = evt.getParameters().id.split("button-")[1];
-					//get input values and change config
-					var sExeption = sap.ui.getCore().byId("inpExc-" + lang).getValue();
-					var nMinWordLen = sap.ui.getCore().byId("inpMinWordLen-" + lang).getValue();
-					var sSymbol = sap.ui.getCore().byId("inpSym-" + lang).getValue();
-					var oExeptions = sExeption ? JSON.parse(sExeption) : {};
-					var oConfig = {
-						exceptions: oExeptions,
-						hyphen: sSymbol,
-						minWordLength: nMinWordLen
-					}
-					hyph.initialize(lang, oConfig).then(function (lang) {
+					hyph.initialize(lang).then(function (lang) {
 						var sNewText = sap.ui.getCore().byId("inpChTxt-" + lang).getValue();
 						sap.ui.getCore().byId("txt-" + lang).setContent("<div style='font-size: 14px; 'lang='" + lang +
 							"' class='sapUiHyphenation' >" + sNewText + "</div>");
@@ -272,28 +262,6 @@
 						text: "Change Text"
 					});
 
-					var oInputExc = new sap.m.Input({
-						id: "inpExc-" + lang,
-						placeholder: ' {"Example": "E-x-a-m-p-l-e", "word": "wo-rd"}',
-						value: "",
-						width: "60%",
-						visible: isSupportedBy3rdParty,
-					});
-
-					var oInputMinWordLen = new sap.m.Input({
-						id: "inpMinWordLen-" + lang,
-						value: 6,
-						width: "48px",
-						visible: isSupportedBy3rdParty,
-					});
-
-					var oInputSym = new sap.m.Input({
-						id: "inpSym-" + lang,
-						value: "-",
-						width: "48px",
-						visible: isSupportedBy3rdParty,
-					});
-
 					var oInputWord = new sap.m.Input({
 						id: "inpWord-" + lang,
 						value: oTestingWords[lang],
@@ -321,21 +289,6 @@
 								text: "Word used for testing browser hyphenation function"
 							}),
 							oInputWord,
-							new sap.m.Label({
-								text: "Exceptions",
-								visible: isSupportedBy3rdParty
-							}),
-							oInputExc,
-							new sap.m.Label({
-								text: "Min word length",
-								visible: isSupportedBy3rdParty
-							}),
-							oInputMinWordLen,
-							new sap.m.Label({
-								text: "Symbol",
-								visible: isSupportedBy3rdParty
-							}),
-							oInputSym,
 							new sap.m.Label({
 								text: "Apply configuration",
 								visible: isSupportedBy3rdParty
