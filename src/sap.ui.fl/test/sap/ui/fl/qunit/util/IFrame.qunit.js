@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/fl/library",
 	"sap/ui/fl/util/IFrame",
+	"sap/base/security/URLListValidator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView"
@@ -14,11 +15,13 @@ sap.ui.define([
 	createAndAppendDiv,
 	flexibleLibrary,
 	IFrame,
+	URLListValidator,
 	JSONModel,
 	Core,
 	XMLView
 ) {
-	var sBlankUrl = "about:blank";
+	"use strict";
+
 	var sTitle = "IFrame Title";
 	var sProtocol = "https";
 	var sFlavor = "openui5";
@@ -57,6 +60,11 @@ sap.ui.define([
 
 		QUnit.test("title", function (assert) {
 			assert.equal(this.oIFrame.getTitle(), sTitle, "Title is correct using 'equals()'!");
+		});
+
+		QUnit.test("when trying to set the url to an invalid value", function(assert) {
+			this.oIFrame.setUrl("javascript:someJs"); // eslint-disable-line no-script-url
+			assert.strictEqual(this.oIFrame.getUrl(), sOpenUI5Url, "then the value is rejected");
 		});
 	});
 
@@ -315,6 +323,28 @@ sap.ui.define([
 			var iFrame = this.myView.byId("iframe5");
 			assert.strictEqual(iFrame.getUrl(), sOpenUI5Url + "?domain=SAP", "Displayed URL is correct");
 			assert.strictEqual(iFrame.get_settings().url, sOpenUI5Url + "?domain=EXTERNAL", "Settings' URL looks corrupted");
+		});
+	});
+
+	QUnit.module("URL validation", function() {
+		QUnit.test("when providing a valid url", function(assert) {
+			assert.ok(IFrame.isValidUrl("https://example.com"));
+			assert.ok(IFrame.isValidUrl("someRelativeUrl.html"));
+		});
+
+		QUnit.test("when providing an invalid url", function(assert) {
+			assert.notOk(IFrame.isValidUrl("https://example."));
+		});
+
+		QUnit.test("when using a pseudo protocol", function(assert) {
+			assert.notOk(IFrame.isValidUrl("about:blank"));
+			assert.notOk(IFrame.isValidUrl("javascript:someJs")); // eslint-disable-line no-script-url
+		});
+
+		QUnit.test("when allowing the javascript pseudo protocol", function(assert) {
+			URLListValidator.add("javascript");
+			assert.notOk(IFrame.isValidUrl("javascript:someJs")); // eslint-disable-line no-script-url
+			URLListValidator.clear();
 		});
 	});
 
