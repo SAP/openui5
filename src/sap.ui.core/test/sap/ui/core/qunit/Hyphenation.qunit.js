@@ -402,8 +402,9 @@ var sSingleLangTest = "de",
                         .resolves(new Response(null, { status: 500}));
 
         window.Hyphenopoly = {
+            keepAlive: false,
             require: {
-                en: "FORCEHYPHENOPOLY"
+                "en-us": "FORCEHYPHENOPOLY"
             },
             setup: {
                 hide: "DONT_HIDE"
@@ -429,5 +430,35 @@ var sSingleLangTest = "de",
         });
     });
 
+    QUnit.test("Auto fallback to asm.js when wasm is not allowed", function (assert) {
+        // Arrange
+        var done = assert.async();
+        var oWasmInstanceStub = sinon.stub(WebAssembly, "Instance").throws("WebAssembly can't be used due to CSP restrictions.");
+
+        window.Hyphenopoly = {
+            keepAlive: false,
+            require: {
+                "en-us": "FORCEHYPHENOPOLY"
+            },
+            setup: {
+                hide: "DONT_HIDE"
+            },
+            handleEvent: {
+                engineReady: function (e) {
+                    // Assert
+                    assert.strictEqual(window.Hyphenopoly.cf.wasm, false);
+
+                    // Clean up
+                    oWasmInstanceStub.restore();
+                    done();
+                }
+            }
+        };
+
+        // Act
+        includeScript({
+            url: sap.ui.require.toUrl("sap/ui/thirdparty/hyphenopoly/Hyphenopoly_Loader.js")
+        });
+    });
 
 });

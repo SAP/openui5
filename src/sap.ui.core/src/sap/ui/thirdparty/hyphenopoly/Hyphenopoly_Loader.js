@@ -353,15 +353,22 @@
             typeof wa === "object" &&
             typeof wa.Instance === "function"
         ) {
-            /* eslint-disable array-element-newline */
-            var module = new wa.Module(Uint8Array.from([
-                0, 97, 115, 109, 1, 0, 0, 0, 1, 6, 1, 96, 1, 127, 1, 127,
-                3, 2, 1, 0, 5, 3, 1, 0, 1, 7, 5, 1, 1, 116, 0, 0,
-                10, 16, 1, 14, 0, 32, 0, 65, 1, 54, 2, 0, 32, 0, 40, 2,
-                0, 11
-            ]));
-            /* eslint-enable array-element-newline */
-            return (new wa.Instance(module).exports.t(4) !== 0);
+            // #### BEGIN MODIFIED BY SAP
+            // modification adds try-catch block to enable fallback to asm.js in restricted environments
+            try {
+                /* eslint-disable array-element-newline */
+                var module = new wa.Module(Uint8Array.from([
+                    0, 97, 115, 109, 1, 0, 0, 0, 1, 6, 1, 96, 1, 127, 1, 127,
+                    3, 2, 1, 0, 5, 3, 1, 0, 1, 7, 5, 1, 1, 116, 0, 0,
+                    10, 16, 1, 14, 0, 32, 0, 65, 1, 54, 2, 0, 32, 0, 40, 2,
+                    0, 11
+                ]));
+                /* eslint-enable array-element-newline */
+                return (new wa.Instance(module).exports.t(4) !== 0);
+            } catch (e) {
+                return false;
+            }
+            // #### END MODIFIED BY SAP
         }
         return false;
     }
