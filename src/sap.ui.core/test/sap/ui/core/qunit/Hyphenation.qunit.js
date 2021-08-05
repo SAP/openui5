@@ -114,15 +114,34 @@ var sSingleLangTest = "de",
     ].join("");
 
     function canUseNativeHyphenationRaw() {
-        var sCurrentLang = jQuery("html").attr("lang").toLowerCase();
+        var sLanguageOnThePage = jQuery("html").attr("lang").toLowerCase();
+        var sMappedLanguage = sap.ui.getCore().getConfiguration().getLocale().getLanguage().toLowerCase();
+
+        // adjustment of the language to correspond to Hyphenopoly pattern files (.hpb files)
+        switch (sMappedLanguage) {
+            case "en":
+                sMappedLanguage = "en-us";
+                break;
+            case "nb":
+                sMappedLanguage = "nb-no";
+                break;
+            case "no":
+                sMappedLanguage = "nb-no";
+                break;
+            case "el":
+                sMappedLanguage = "el-monoton";
+                break;
+            default:
+                break;
+        }
 
         // we don't have a word to test for this language
-        if (!HyphenationTestingWords[sCurrentLang]) {
+        if (!HyphenationTestingWords[sMappedLanguage]) {
             return false;
         }
 
-        oTestDiv.lang = sCurrentLang;
-        oTestDiv.innerText = HyphenationTestingWords[sCurrentLang];
+        oTestDiv.lang = sLanguageOnThePage;
+        oTestDiv.innerText = HyphenationTestingWords[sMappedLanguage];
 
         // Chrome on macOS partially supported native hyphenation. It didn't hyphenate one word more than once.
         if (Device.os.macintosh && Device.browser.chrome) {
