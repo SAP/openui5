@@ -102,20 +102,20 @@ sap.ui.define([
 		var sAggregationName;
 		var oXConfig;
 
-		return Promise.resolve()
-			.then(oModifier.getControlMetadata.bind(oModifier, oControl))
+		return oModifier.getControlMetadata(oControl)
 			.then(function(oRetrievedControlMetadata) {
 				oControlMetadata = oRetrievedControlMetadata;
 				sAggregationName = sAffectedAggregation ? sAffectedAggregation : oControlMetadata.getDefaultAggregation().name;
 				return oModifier.getAggregation(oControl, "customData");
 			})
 			.then(function(aCustomData) {
-				return aCustomData.find(function(oCustomData) {
-					return Promise.resolve()
-						.then(oModifier.getProperty.bind(oModifier, oCustomData, "key"))
-						.then(function(sKey) {
-							return sKey == "xConfig";
-						});
+
+				return Promise.all(aCustomData.map(function(oCustomData){
+					return oModifier.getProperty(oCustomData, "key");
+				})).then(function(aCustomDataKeys){
+					return aCustomData.reduce(function(oResult, mCustomData, iIndex){
+						return aCustomDataKeys[iIndex] === "xConfig" ? mCustomData : oResult;
+					}, undefined);
 				});
 			})
 			.then(function(oRetrievedXConfig) {
@@ -158,12 +158,12 @@ sap.ui.define([
 
 				var oAppComponent = mPropertyBag ? mPropertyBag.appComponent : undefined;
 
-				if (!oXConfig) {
-					return Promise.resolve()
-						.then(oModifier.createAndAddCustomData.bind(oModifier, oControl, "xConfig", oConfig, oAppComponent))
-						.then(function() {
-							return oConfig;
-						});
+				if (!oControl._bHasXConfig) {
+					oControl._bHasXConfig = true;
+					return oModifier.createAndAddCustomData(oControl, "xConfig", oConfig, oAppComponent)
+					.then(function() {
+						return oConfig;
+					});
 				} else {
 					oModifier.setProperty(oXConfig, "value", oConfig);
 					return oConfig;
@@ -185,21 +185,19 @@ sap.ui.define([
 
 		if (oModificationPayload) {
 			var oModifier = oModificationPayload.propertyBag ? oModificationPayload.propertyBag.modifier : JsControlTreeModifier;
-			return Promise.resolve()
-				.then(oModifier.getAggregation.bind(oModifier, oControl, "customData"))
+			return oModifier.getAggregation(oControl, "customData")
 				.then(function(aCustomData) {
-					return aCustomData.find(function(oCustomData) {
-						return Promise.resolve()
-							.then(oModifier.getProperty.bind(oModifier, oCustomData, "key"))
-							.then(function(sKey) {
-								return sKey == "xConfig";
-							});
+					return Promise.all(aCustomData.map(function(oCustomData){
+						return oModifier.getProperty(oCustomData, "key");
+					})).then(function(aCustomDataKeys){
+						return aCustomData.reduce(function(oResult, mCustomData, iIndex){
+							return aCustomDataKeys[iIndex] === "xConfig" ? mCustomData : oResult;
+						}, undefined);
 					});
 				})
 				.then(function(oAggregationConfig) {
 					if (oAggregationConfig) {
-						return Promise.resolve()
-							.then(oModifier.getProperty.bind(oModifier, oAggregationConfig, "value"))
+						return oModifier.getProperty(oAggregationConfig, "value")
 							.then(function(oValue) {
 								return merge({}, oValue);
 							});
