@@ -1407,6 +1407,7 @@ function(
 				verticalScrolling: true,
 				title: sTitle,
 				placement: PlacementType.VerticalPreferredBottom,
+				contentWidth: "20rem",
 				beginButton: new Button(this.getId() + "-OK", {
 					text: sOKButtonText,
 					type: ButtonType.Emphasized,
