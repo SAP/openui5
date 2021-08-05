@@ -184,6 +184,31 @@ sap.ui.require([
 			})
 		});
 
+		var aSuggestionsData = [
+			{
+				name: "Proctra X"
+			}, {
+				name: "PC Lock"
+			},{
+				name: "PC Power Station"
+			},{
+				name: "Power Pro Player 80"
+			}
+		],
+		oStartSuggestionsInput = new Input("inputStartSuggestions", {
+			showSuggestion: true,
+			startSuggestion: 2
+		});
+
+		var oModel = new JSONModel();
+
+		oModel.setData(aSuggestionsData);
+		oStartSuggestionsInput.setModel(oModel);
+		oStartSuggestionsInput.bindAggregation("suggestionItems", {
+			path: "/",
+			template: new Item({text: "{name}"})
+		});
+
 		var initialPage = new Page("inpPage", {
 			showHeader: false,
 			content: [
@@ -285,7 +310,9 @@ sap.ui.require([
 						new Label("suggestionsLabel", {text: "Input with suggestions", labelFor: "inputWithSuggestions"}),
 						oSuggestionsInput,
 						new Label({text: "Input with sticky column header suggestions", labelFor: "inputWithStickySuggestions"}),
-						oInputWithStickySuggestions
+						oInputWithStickySuggestions,
+						new Label({text: "Input with startSuggestions = 2", labelFor: "inputStartSuggestions"}),
+						oStartSuggestionsInput
 					]
 				})
 

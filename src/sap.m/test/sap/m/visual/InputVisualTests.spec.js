@@ -92,4 +92,24 @@ describe("sap.m.InputVisualTests", function() {
 			expect(takeScreenshot()).toLookAs("sticky_suggestions_visible");
 		});
 	});
+
+	it("Should visualize input with startSuggestions = 2", function () {
+		var oInput = element(by.id("inputStartSuggestions"));
+		browser.executeScript("document.getElementById('inputStartSuggestions').scrollIntoView()").then(function() {
+			oInput.click();
+
+			// Should show suggestions
+			browser.actions().sendKeys("Pr").perform();
+			expect(takeScreenshot()).toLookAs("suggestions_are_visible");
+
+			// Should hide suggestions
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+			expect(takeScreenshot()).toLookAs("suggestions_are_not_visible");
+
+			// Should show the updated suggestions
+			browser.actions().sendKeys("C").perform();
+			expect(takeScreenshot()).toLookAs("suggestions_updated_visible");
+		});
+	});
 });
