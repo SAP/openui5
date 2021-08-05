@@ -3202,6 +3202,18 @@ sap.ui.define([
 		assert.strictEqual(oToolbar.bIsDestroyed, true);
 	});
 
+	QUnit.test("No new toolbar created when the table is destroyed", function(assert) {
+		var oText = new Text({
+			text: "Sample Text"
+		});
+
+		this.oTable.addAction(oText);
+		this.oTable.destroy();
+		this.oTable.getActions();
+
+		assert.notOk(this.oTable._oToolbar, "Toolbar not created by the getter of the action aggregation");
+	});
+
 	QUnit.module("Inbuilt filter initialization", {
 		createTable: function(mSettings) {
 			this.oTable = new Table(mSettings);

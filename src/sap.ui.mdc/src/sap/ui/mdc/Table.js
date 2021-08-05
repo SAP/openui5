@@ -1401,6 +1401,10 @@ sap.ui.define([
 	};
 
 	Table.prototype._createToolbar = function() {
+		if (this.isDestroyStarted() || this.isDestroyed()) {
+			return;
+		}
+
 		if (!this._oToolbar) {
 			// Create Title
 			this._oTitle = new Title(this.getId() + "-title", {
