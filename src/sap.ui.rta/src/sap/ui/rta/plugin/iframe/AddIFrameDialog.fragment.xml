@@ -119,7 +119,7 @@
 								   class="sapUiRtaAddIFrameDialogEditUrlLabel" text="{/text/editUrlLabel}" design="Bold" />
 							<TextArea id="sapUiRtaAddIFrameDialog_EditUrlTA" ariaLabelledBy="sapUiRtaAddIFrameDialog_EditUrlLabel"
 									  class="sapUiRtaAddIFrameDialog_EditUrlTA"
-									  valueLiveUpdate="true" value="{/frameUrl/value}" rows="11" width="100%" />
+									  valueLiveUpdate="true" value="{/frameUrl/value}" liveChange="onUrlChange" rows="11" width="100%" />
 						</items>
 					</VBox>
 				</layout:Grid>
