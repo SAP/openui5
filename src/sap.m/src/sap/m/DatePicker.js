@@ -1099,6 +1099,7 @@ sap.ui.define([
 				showArrow: false,
 				showHeader: false,
 				placement: library.PlacementType.VerticalPreferedBottom,
+				contentWidth: "20rem",
 				beginButton: new Button({
 					type: library.ButtonType.Emphasized,
 					text: oResourceBundle.getText("DATEPICKER_SELECTION_CONFIRM"),
