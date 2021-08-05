@@ -168,7 +168,7 @@ sap.ui.define([
             return Promise.resolve(oInternalFilter);
         };
 
-        var oExternalFilterSpy = sinon.spy(oExternalFilter, "valid");
+        var oExternalFilterSpy = sinon.spy(oExternalFilter, "validate");
         var oRetrieveInnerSpy = sinon.spy(oSomeInstance, "retrieveInbuiltFilter");
 
         oSomeInstance.checkAndRebind();
@@ -227,7 +227,7 @@ sap.ui.define([
             return Promise.resolve(oInternalFilter);
         };
 
-        var oExternalFilterSpy = sinon.spy(oExternalFilter, "valid");
+        var oExternalFilterSpy = sinon.spy(oExternalFilter, "validate");
         var oRetrieveInnerSpy = sinon.spy(oSomeInstance, "retrieveInbuiltFilter");
 
         oSomeInstance.checkAndRebind();

@@ -732,7 +732,7 @@ sap.ui.define([
 			this._bSearchTriggered = true;
 			return Promise.resolve();
 		}
-		return this.valid().then(function(){
+		return this.validate().then(function(){
 			this.fireSearch();
 		}.bind(this));
 	};
@@ -747,24 +747,24 @@ sap.ui.define([
 	 * @returns {Promise} Returns a Promise which resolves after the validation of erroneous fields has been propagated.
 	 *
 	 */
-	FilterBarBase.prototype.valid = function() {
+	FilterBarBase.prototype.validate = function() {
 
 		return this.initialized().then(function() {
-			if (!this._oSearchPromise) {
+			if (!this._oValidationPromise) {
 
-				this._oSearchPromise = new Promise(function(resolve, reject) {
+				this._oValidationPromise = new Promise(function(resolve, reject) {
 					this._fResolvedSearchPromise = resolve;
 					this._fRejectedSearchPromise = reject;
 				}.bind(this));
 
 				var fDelayedFunction = function() {
 					this._validate();
-					this._oSearchPromise = null;
+					this._oValidationPromise = null;
 				};
 				setTimeout(fDelayedFunction.bind(this), 0);
 			}
 
-			return this._oSearchPromise;
+			return this._oValidationPromise;
 
 		}.bind(this));
 	};
@@ -1693,7 +1693,7 @@ sap.ui.define([
 
 		this._oInitialFiltersAppliedPromise = null;
 
-		this._oSearchPromise = null;
+		this._oValidationPromise = null;
 
 		this._aBindings = null;
 

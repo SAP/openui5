@@ -131,7 +131,7 @@ sap.ui.define([
     QUnit.test("Check 'valid' promise - do not provide parameter", function(assert){
         var done = assert.async();
 
-        var oValid = this.oFilterBarBase.valid();
+        var oValid = this.oFilterBarBase.validate();
 
         var oSearchSpy = sinon.spy(this.oFilterBarBase, "fireSearch");
 
@@ -159,7 +159,7 @@ sap.ui.define([
     QUnit.test("Check 'valid' promise - do not fire search", function(assert){
         var done = assert.async();
 
-        var oValid = this.oFilterBarBase.valid();
+        var oValid = this.oFilterBarBase.validate();
 
         var oSearchSpy = sinon.spy(this.oFilterBarBase, "fireSearch");
 
@@ -174,7 +174,7 @@ sap.ui.define([
 
         var done = assert.async();
 
-        var oValidPromise = this.oFilterBarBase.valid();
+        var oValidPromise = this.oFilterBarBase.validate();
 
         oValidPromise.then(function(){
             assert.ok(!this.oFilterBarBase._fResolvedSearchPromise, "Search resolve has been cleaned up");

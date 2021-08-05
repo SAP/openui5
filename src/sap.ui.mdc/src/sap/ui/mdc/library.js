@@ -138,7 +138,7 @@ sap.ui.define([
 	 *
 	 * <ul>
 	 * <li><code>getConditions</code> - Part of the {@link sap.ui.mdc.IFilterSource} interface.</li>
-	 * <li><code>valid</code> - The <code>valid</code> method should return a promise which resolves after the IFilter interface has handled its inner validation. The <code>getConditions</code> method will be called subsequently by the filtered control.</li>
+	 * <li><code>validate</code> - The <code>validate</code> method should return a promise which resolves after the IFilter interface has handled its inner validation. The <code>getConditions</code> method will be called subsequently by the filtered control.</li>
 	 * <li><code>getSearch</code> - <b>Note:</b> The <code>getSearch</code> method can optionally be implemented and should return a string for approximate string matching implemented in the backend.</li>
 	 * </ul>
 	 *
@@ -148,8 +148,6 @@ sap.ui.define([
 	 * <li><code>search</code> - This event should be fired once a filtering should be executed on the IFilter using control.</li>
 	 * <li><code>filtersChanged</code> - <b>Note:</b> The <code>filtersChanged</code> event can optionally be implemented and should be fired whenever a filter value has changed. This event will be used to display an overlay on the IFilter consuming control.</li>
 	 * </ul>
-	 *
-	 * The controls or entities have to implement the following APIs: <code>getSearch</code> & <code>getConditions</code> & <code>triggerSearch</code> methods along with the <code>search</code> & <code>filtersChanged</code> events
 	 *
 	 * @since 1.70
 	 * @extends sap.ui.mdc.IFilterSource
