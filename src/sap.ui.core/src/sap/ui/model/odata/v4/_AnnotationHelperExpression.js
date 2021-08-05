@@ -103,7 +103,8 @@ sap.ui.define([
 		 *       <li> when "constant": {any} the constant value (not escaped if string)
 		 *       <li> when "expression": {string} the expression unwrapped (no "{=" and "}")
 		 *     </ul>
-		 *   <li> <code>type</code>:  the EDM data type (like "Edm.String") if it could be determined
+		 *   <li> <code>type</code>:  the EDM data type (like "Edm.String") if it could be
+		 *      determined
 		 *   <li> <code>constraints</code>: {object} type constraints if result is "binding"
 		 * </ul>
 		 *
@@ -513,6 +514,12 @@ sap.ui.define([
 				return undefined;
 			}
 			return oModel.fetchObject(sPath + "/$").then(function (oTarget) {
+				var sCompositeConstraints =
+						oModel.getObject(oPathValue.path
+							+ "@com.sap.vocabularies.UI.v1.DoNotCheckScaleOfMeasureQuantity")
+						? ",constraints:{'skipDecimalsValidation':true}"
+						: "";
+
 				return {
 					result : "composite",
 					type : sCompositeType,
@@ -525,7 +532,7 @@ sap.ui.define([
 						+ getBinding(oModel.getConstraints(oTarget, sPath), oTarget.$Type,
 							sTargetPath)
 						+ ",{mode:'OneTime',path:'/##" + sComputedAnnotation + "',targetType:'any'}"
-						+ "],type:'" + sCompositeType + "'}"
+						+ "],type:'" + sCompositeType + "'" + sCompositeConstraints + "}"
 				};
 			});
 		},
