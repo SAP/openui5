@@ -79,7 +79,7 @@ function (
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
-			var oTextInput = document.getElementById("TextInput");
+			var oTextInput = document.querySelector("#TextInput ui5-input");
 
 			//Assert
 			assert.strictEqual(oTextInput.tagName.toLowerCase(), "ui5-input", "ui5-input webcomponent is rendered");
@@ -104,7 +104,7 @@ function (
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
-			var oTextArea = document.getElementById("TextArea");
+			var oTextArea = document.querySelector("#TextArea ui5-textarea");
 
 			//Assert
 			assert.strictEqual(oTextArea.tagName.toLowerCase(), "ui5-textarea", "ui5-textarea webcomponent is rendered");
@@ -127,7 +127,7 @@ function (
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
-			var oTelInput = document.getElementById("TelVal");
+			var oTelInput = document.querySelector("#TelVal ui5-input");
 
 			//Assert
 			assert.strictEqual(oTelInput.tagName.toLowerCase(), "ui5-input", "ui5-input webcomponent is rendered");
@@ -150,7 +150,7 @@ function (
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
-			var oUrlInput = document.getElementById("UrlVal");
+			var oUrlInput = document.querySelector("#UrlVal ui5-input");
 
 			//Assert
 			assert.strictEqual(oUrlInput.tagName.toLowerCase(), "ui5-input", "ui5-input webcomponent is rendered");
@@ -173,7 +173,7 @@ function (
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
-			var oUrlInput = document.getElementById("EmailVal");
+			var oUrlInput = document.querySelector("#EmailVal ui5-input");
 
 			//Assert
 			assert.strictEqual(oUrlInput.tagName.toLowerCase(), "ui5-input", "ui5-input webcomponent is rendered");

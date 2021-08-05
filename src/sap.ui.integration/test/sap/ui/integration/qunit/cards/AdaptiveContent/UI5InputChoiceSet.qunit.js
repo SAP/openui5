@@ -119,7 +119,7 @@ function (
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
-			var oSelect = document.getElementById("CompactSelectValWithValue"),
+			var oSelect = document.querySelector("#CompactSelectValWithValue ui5-select"),
 				aOptions = oSelect.children,
 				oSelectedOption = aOptions[0],
 				iCount = oSelect.childElementCount;
@@ -150,7 +150,7 @@ function (
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
-			var oRBContainer = document.getElementById("SingleSelectVal"),
+			var oRBContainer = document.querySelector("#SingleSelectVal .sapFCardAdaptiveContentChoiceSetWrapper"),
 				aRadioButtons = oRBContainer.children,
 				aToggleInputs = this.oAdaptiveContent.adaptiveCardInstance._items[3]._toggleInputs,
 				oSelectedRB = aRadioButtons[1];
@@ -183,7 +183,7 @@ function (
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
-			var oCBContainer = document.getElementById("MultiSelectVal"),
+			var oCBContainer = document.querySelector("#MultiSelectVal .sapFCardAdaptiveContentChoiceSetWrapper"),
 				aCheckBoxs = oCBContainer.children,
 				aToggleInputs = this.oAdaptiveContent.adaptiveCardInstance._items[5]._toggleInputs,
 				oFirstCheckedCB = aCheckBoxs[0],
@@ -215,6 +215,6 @@ function (
 			oDomRef = oChoiceSet.internalRender();
 
 		//Assert
-		assert.strictEqual(oDomRef.tagName.toLowerCase(), "div", "container is rendered");
+		assert.strictEqual(oDomRef.tagName.toLowerCase(), "ui5-select", "container is rendered");
 	});
 });

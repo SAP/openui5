@@ -30,11 +30,11 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 
 		this._numberInputElement.addEventListener("change", function (oEvent) {
 			// the logic for min and max value from the native number input is handled here, since there are no similar properties in the ui5-input web component
-			if (oEvent.target.value > this._max) {
-				oEvent.target.value = this._max;
+			if (oEvent.target.value > this.max) {
+				oEvent.target.value = this.max;
 			}
-			if (oEvent.target.value < this._min) {
-				oEvent.target.value = this._min;
+			if (oEvent.target.value < this.min) {
+				oEvent.target.value = this.min;
 			}
 			this.valueChanged();
 		}.bind(this));
@@ -42,5 +42,12 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 		return this._numberInputElement;
 
 	};
+
+	Object.defineProperty(UI5InputNumber.prototype, "value", {
+		get: function () {
+			return this._numberInputElement ? this._numberInputElement.value : undefined;
+		}
+	});
+
 	return UI5InputNumber;
 });

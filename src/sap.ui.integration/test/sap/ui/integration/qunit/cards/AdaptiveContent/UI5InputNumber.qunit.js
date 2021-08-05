@@ -22,7 +22,7 @@ function (
 				"type": "Input.Number",
 				"min": -5,
 				"max": 5,
-				"value": "1",
+				"value": 1,
 				"id": "WithValue"
 			},
 			{
@@ -54,8 +54,8 @@ function (
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
-			var oNumberInput = document.getElementById("WithValue");
-			var oNumInputWithoutValue = document.getElementById("ValueNotSpecified");
+			var oNumberInput = document.querySelector("#WithValue ui5-input");
+			var oNumInputWithoutValue = document.querySelector("#ValueNotSpecified ui5-input");
 
 
 			//Assert
@@ -63,7 +63,7 @@ function (
 			assert.ok(oNumberInput, "The number input is created");
 			assert.strictEqual(oNumberInput.placeholder, "", "The placeholder is not specified");
 			assert.strictEqual(oNumberInput.type, "Number", "The input type is number");
-			assert.strictEqual(oNumberInput.value, "1", "The initial value is correct");
+			assert.strictEqual(oNumberInput.value, 1, "The initial value is correct");
 			assert.strictEqual(oNumInputWithoutValue.value, "", "There is no initial value set.");
 			assert.strictEqual(oNumInputWithoutValue.placeholder, "Quantity", "The placeholder is correct.");
 

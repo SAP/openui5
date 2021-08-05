@@ -70,16 +70,17 @@ sap.ui.define([
 				},
 				success: function (oCard) {
 					var $oCard = oCard[0].$(),
-						aRadioButtons = $oCard.find('[name="SingleSelectVal"]');
+						aRadioButtonsContainer =  $oCard.find("#SingleSelectVal .sapFCardAdaptiveContentChoiceSetWrapper"),
+						aRadioButtons = aRadioButtonsContainer.children();
 
-					Opa5.assert.strictEqual($oCard.find("#SimpleVal").val(), oData["SimpleVal"], "The value is correct");
-					Opa5.assert.strictEqual($oCard.find("#UrlVal").val(), oData["UrlVal"], "The value is correct");
-					Opa5.assert.strictEqual($oCard.find("#EmailVal").val(), oData["EmailVal"], "The value is correct");
-					Opa5.assert.strictEqual($oCard.find("#TelVal").val(), oData["TelVal"], "The value is correct");
-					Opa5.assert.strictEqual($oCard.find("#MultiLineVal").val(), oData["MultiLineVal"], "The value is correct");
-					Opa5.assert.strictEqual($oCard.find("#NumVal").val(), oData["NumVal"], "The value is correct");
-					Opa5.assert.strictEqual($oCard.find("#DateVal").val(), oData["DateVal"], "The value is correct");
-					Opa5.assert.strictEqual($oCard.find("#TimeVal").val(), oData["TimeVal"], "The value is correct");
+					Opa5.assert.strictEqual($oCard.find("#SimpleVal ui5-input").val(), oData["SimpleVal"], "The value is correct");
+					Opa5.assert.strictEqual($oCard.find("#UrlVal ui5-input").val(), oData["UrlVal"], "The value is correct");
+					Opa5.assert.strictEqual($oCard.find("#EmailVal ui5-input").val(), oData["EmailVal"], "The value is correct");
+					Opa5.assert.strictEqual($oCard.find("#TelVal ui5-input").val(), oData["TelVal"], "The value is correct");
+					Opa5.assert.strictEqual($oCard.find("#MultiLineVal ui5-textarea").val(), oData["MultiLineVal"], "The value is correct");
+					Opa5.assert.strictEqual($oCard.find("#NumVal ui5-input").val(), oData["NumVal"], "The value is correct");
+					Opa5.assert.strictEqual($oCard.find("#DateVal ui5-datepicker").val(), oData["DateVal"], "The value is correct");
+					Opa5.assert.strictEqual($oCard.find("#TimeVal ui5-timepicker").val(), oData["TimeVal"], "The value is correct");
 
 					for (var i = 0; i < aRadioButtons.length; i++) {
 						if (aRadioButtons[i].selected) {
