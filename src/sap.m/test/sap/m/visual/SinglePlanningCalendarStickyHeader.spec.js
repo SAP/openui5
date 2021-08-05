@@ -11,7 +11,7 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 	performTests("");
 
 	it("Switching on Compact mode", function () {
-		_scrollToTop();
+		_scrollToTopInFullWeekView();
 		_checkForOverflowButton();
 		_selectDayView();
 		_checkForOverflowButton();
@@ -156,7 +156,7 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 			it("[Week view] Column headers should not stick for stickyMode: None after changing the start date", function () {
 				var oSPC = element(by.id("SinglePlanningCalendar"));
 
-				_scrollToTop();
+				_scrollToTopInFullWeekView();
 				element(by.id("SinglePlanningCalendar-Header-NavToolbar-NextBtn")).click();
 				_scrollToBottom();
 
@@ -169,7 +169,7 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 		it("[Week view] Whole header should stick stick for stickyMode: All", function () {
 			var oSPC = element(by.id("SinglePlanningCalendar"));
 
-			_scrollToTop();
+			_scrollToTopInFullWeekView();
 			_selectAllStickyMode();
 			_scrollToBottom();
 
@@ -180,7 +180,7 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 			it("[Week view] Column headers should stick for stickyMode: All after changing the start date", function () {
 				var oSPC = element(by.id("SinglePlanningCalendar"));
 
-				_scrollToTop();
+				_scrollToTopInFullWeekView();
 				element(by.id("SinglePlanningCalendar-Header-NavToolbar-NextBtn")).click();
 				_scrollToBottom();
 
@@ -193,7 +193,7 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 		it("[Week view] Only navigation toolbar & column headers should stick for stickyMode: NavigationAndColHeaders", function () {
 			var oSPC = element(by.id("SinglePlanningCalendar"));
 
-			_scrollToTop();
+			_scrollToTopInFullWeekView();
 			_selectNavBarAndColHeadersStickyMode();
 			_scrollToBottom();
 
@@ -204,7 +204,7 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 			it("[Week view] Column headers should stick for stickyMode: NavigationAndColHeaders after changing the start date", function () {
 				var oSPC = element(by.id("SinglePlanningCalendar"));
 
-				_scrollToTop();
+				_scrollToTopInFullWeekView();
 				element(by.id("SinglePlanningCalendar-Header-NavToolbar-NextBtn")).click();
 				_scrollToBottom();
 
@@ -217,11 +217,15 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 	}
 
 	function _scrollToTop() {
-		element(by.id("__appointment0-SinglePlanningCalendar-24")).click();
+		element(by.id("__appointment0-SinglePlanningCalendar-24-0_12")).click();
+	}
+
+	function _scrollToTopInFullWeekView() {
+		element(by.id("__appointment0-SinglePlanningCalendar-24-1_12")).click();
 	}
 
 	function _scrollToBottom() {
-		element(by.id("__appointment0-SinglePlanningCalendar-38")).click();
+		element(by.id("__appointment0-SinglePlanningCalendar-38-0_0")).click();
 	}
 
 	function _selectNoneStickyMode() {

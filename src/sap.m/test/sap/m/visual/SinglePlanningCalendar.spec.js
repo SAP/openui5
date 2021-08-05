@@ -119,8 +119,8 @@ describe("sap.m.SinglePlanningCalendar", function() {
 		//there is no keyboard on mobile
 		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
 			element(by.id("overrideTime")).click();
-			element(by.id("__appointment0-SinglePlanningCalendar-0")).click();
-			browser.actions().mouseMove(element(by.id("__appointment0-SinglePlanningCalendar-13"))).sendKeys(CTRL_KEY).click().sendKeys(CTRL_KEY).perform();
+			element(by.id("__appointment0-SinglePlanningCalendar-0-0_0")).click();
+			browser.actions().mouseMove(element(by.id("__appointment0-SinglePlanningCalendar-13-0_10"))).sendKeys(CTRL_KEY).click().sendKeys(CTRL_KEY).perform();
 
 			expect(takeScreenshot(oSPC)).toLookAs("2_selected_appointments_with_mouse");
 		}
@@ -132,7 +132,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 		//there is no keyboard on mobile
 		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
 			element(by.id("overrideTime")).click();
-			element(by.id("__appointment0-SinglePlanningCalendar-38")).click();
+			element(by.id("__appointment0-SinglePlanningCalendar-38-4_2")).click();
 
 			expect(takeScreenshot(oSPC)).toLookAs("1_selected_appointment_with_mouse");
 		}
@@ -144,8 +144,8 @@ describe("sap.m.SinglePlanningCalendar", function() {
 		//there is no keyboard on mobile
 		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
 			element(by.id("overrideTime")).click();
-			element(by.id("__appointment0-SinglePlanningCalendar-0")).sendKeys(protractor.Key.SPACE);
-			element(by.id("__appointment0-SinglePlanningCalendar-13")).sendKeys(CTRL_KEY, protractor.Key.SPACE, CTRL_KEY);
+			element(by.id("__appointment0-SinglePlanningCalendar-0-0_0")).sendKeys(protractor.Key.SPACE);
+			element(by.id("__appointment0-SinglePlanningCalendar-13-0_10")).sendKeys(CTRL_KEY, protractor.Key.SPACE, CTRL_KEY);
 
 			expect(takeScreenshot(oSPC)).toLookAs("2_selected_appointments_with_kb");
 		}
@@ -157,7 +157,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 		//there is no keyboard on mobile
 		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
 			element(by.id("overrideTime")).click();
-			element(by.id("__appointment0-SinglePlanningCalendar-38")).sendKeys(protractor.Key.ENTER);
+			element(by.id("__appointment0-SinglePlanningCalendar-38-4_2")).sendKeys(protractor.Key.ENTER);
 
 			expect(takeScreenshot(oSPC)).toLookAs("1_selected_appointment_with_kb");
 		}
@@ -190,19 +190,19 @@ describe("sap.m.SinglePlanningCalendar", function() {
 	});
 
 	it("should focus a cell in the right with ARROW RIGHT keyboard key", function () {
-		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25", "focused_cell_with_arrow_right_kb_app", protractor.Key.ARROW_RIGHT);
+		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25-1_8", "focused_cell_with_arrow_right_kb_app", protractor.Key.ARROW_RIGHT);
 	});
 
 	it("should focus a cell in the left with ARROW LEFT keyboard key", function () {
-		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25", "focused_cell_with_arrow_left_kb_app", protractor.Key.ARROW_LEFT);
+		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25-1_8", "focused_cell_with_arrow_left_kb_app", protractor.Key.ARROW_LEFT);
 	});
 
 	it("should focus a cell up with ARROW UP keyboard key", function () {
-		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25", "focused_cell_with_arrow_up_kb_app", protractor.Key.ARROW_UP);
+		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25-1_8", "focused_cell_with_arrow_up_kb_app", protractor.Key.ARROW_UP);
 	});
 
 	it("should focus a cell down with ARROW DOWN keyboard key", function () {
-		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25", "focused_cell_with_arrow_down_kb_app", protractor.Key.ARROW_DOWN);
+		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25-1_8", "focused_cell_with_arrow_down_kb_app", protractor.Key.ARROW_DOWN);
 	});
 
 	function _focusFromCellToCell(sSelector, sRefImage, iControl) {
