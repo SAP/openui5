@@ -1,7 +1,7 @@
 <mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" controllerName="sap.f.sample.FlexibleColumnLayoutSimple.controller.DetailDetail" height="100%">
 	<Page id="detailDetailPage" title="DetailDetail page" backgroundDesign="Transparent">
 		<headerContent>
-			<Button type="Transparent" icon="sap-icon://decline" press="handleClose"  tooltip="Close column" />
+			<Button type="Transparent" icon="sap-icon://decline" press="handleClose"  tooltip="Close end column" />
 		</headerContent>
 		<content>
 			<Table>
