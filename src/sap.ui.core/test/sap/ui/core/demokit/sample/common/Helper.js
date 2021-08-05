@@ -444,18 +444,22 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 */
 		qUnitModule : function (sName, iTestTimeout) {
 			var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
-				iTimeoutBefore = QUnit.config.testTimeout;
-
-			iTestTimeout = TestUtils.isRealOData() && iTestTimeout || QUnit.config.testTimeout;
+				iTimeoutBefore,
+				bSetTimeout = TestUtils.isRealOData() && iTestTimeout;
 
 			QUnit.module(sName, {
 				before : function () {
 					sap.ui.getCore().getConfiguration().setLanguage("en-US");
-					QUnit.config.testTimeout = iTestTimeout * 1000;
+					if (bSetTimeout) {
+						iTimeoutBefore = QUnit.config.testTimeout;
+						QUnit.config.testTimeout = iTestTimeout * 1000;
+					}
 				},
 				after : function () {
 					sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
-					QUnit.config.testTimeout = iTimeoutBefore;
+					if (bSetTimeout) {
+						QUnit.config.testTimeout = iTimeoutBefore;
+					}
 				}
 			});
 		}
