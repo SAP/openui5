@@ -30,32 +30,19 @@ sap.ui.define([
 			}
 		});
 
-		// give some time for proper initialization so scroll event is handled correctly
-		Then.waitFor({
-			controlType: "sap.m.Button",
-			properties: {
-				text: "Section 1"
-			},
-			actions: new Press()
-		});
-
 		Then.waitFor({
 			controlType: "sap.uxap.ObjectPageSubSection",
 			properties: {
 				title: "Section 1"
 			},
-			success: function  (aControls) {
-				Opa5.assert.ok(isInViewport(aControls[0].getDomRef()), "The page is in initial state - Section 1 is visible");
-			}
-		});
-
-		Then.waitFor({
-			controlType: "sap.uxap.ObjectPageSubSection",
-			properties: {
-				title: "Section 20"
+			matchers: function(oControl) {
+				return isInViewport(oControl.getDomRef());
 			},
-			success: function  (aControls) {
-				Opa5.assert.ok(!isInViewport(aControls[0].getDomRef()), "The page is in initial state - Section 20 is not visible");
+			success: function  () {
+				Opa5.assert.ok(true, "The page is in initial state - Section 1 is visible");
+			},
+			error: function  () {
+				Opa5.assert.ok(false, "The page is not in initial state - Section 1 is not visible" );
 			}
 		});
 
