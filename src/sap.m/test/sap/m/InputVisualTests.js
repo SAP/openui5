@@ -267,6 +267,31 @@ sap.ui.require([
 		oSuggestTableInput.setModel(oModel);
 		oSuggestTableInput.bindAggregation("suggestionRows", "/tabularSuggestionItems", oSuggestionRowTemplate);
 
+		var aSuggestionsData = [
+			{
+				name: "Proctra X"
+			}, {
+				name: "PC Lock"
+			},{
+				name: "PC Power Station"
+			},{
+				name: "Power Pro Player 80"
+			}
+		],
+		oStartSuggestionsInput = new Input("inputStartSuggestions", {
+			showSuggestion: true,
+			startSuggestion: 2
+		});
+
+		var oModel = new JSONModel();
+
+		oModel.setData(aSuggestionsData);
+		oStartSuggestionsInput.setModel(oModel);
+		oStartSuggestionsInput.bindAggregation("suggestionItems", {
+			path: "/",
+			template: new Item({text: "{name}"})
+		});
+
 		var oCustomCssButton = new sap.m.Button("customCssButton",{
 			text: "Toggle custom CSS for visual test",
 			press: function() {
@@ -395,7 +420,9 @@ sap.ui.require([
 						new Label({text: "Input with sticky column header suggestions", labelFor: "inputWithStickySuggestions"}),
 						oInputWithStickySuggestions,
 						new Label({text: "Input with table suggetions", labelFor: "oSuggestTableInput"}),
-						oSuggestTableInput
+						oSuggestTableInput,
+						new Label({text: "Input with startSuggestions = 2", labelFor: "inputStartSuggestions"}),
+						oStartSuggestionsInput
 					]
 				})
 
