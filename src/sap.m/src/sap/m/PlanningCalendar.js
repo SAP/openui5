@@ -379,7 +379,14 @@ sap.ui.define([
 				 * Therefore, all features and restrictions of the property in <code>sap.m.Table</code> apply to the <code>PlanningCalendar</code> as well.
 				 * @since 1.54
 				 */
-				stickyHeader : {type : "boolean", group : "Appearance", defaultValue : false}
+				stickyHeader : {type : "boolean", group : "Appearance", defaultValue : false},
+
+				/**
+				 * If set, the first day of the displayed week is this day. Valid values are 0 to 6.
+				 * If there is no valid value set, the default of the used locale is used.
+				 * @since 1.94
+				 */
+				firstDayOfWeek : {type : "int", group : "Appearance", defaultValue : -1}
 			},
 			aggregations : {
 
@@ -1686,6 +1693,11 @@ sap.ui.define([
 					throw new Error("Unknown IntervalType: " + sIntervalType + "; " + this);
 			}
 
+			var oContent = this.getAggregation("table").getInfoToolbar().getContent()[1];
+			if (oContent.setFirstDayOfWeek) {
+				oContent.setFirstDayOfWeek(this.getFirstDayOfWeek());
+			}
+
 			var aRows = this.getRows();
 			for (var i = 0; i < aRows.length; i++) {
 				var oRow = aRows[i];
@@ -1748,6 +1760,40 @@ sap.ui.define([
 
 		return this;
 
+	};
+
+	PlanningCalendar.prototype.setFirstDayOfWeek = function (iFirstDayOfWeek) {
+		var sCurrentPickerId = this._getHeader().getAssociation("currentPicker"),
+			oPicker = Core.byId(sCurrentPickerId),
+			sViewKey = this.getViewKey(),
+			oDateNav = this._dateNav,
+			oStart = oDateNav.getStart(),
+			oOldValue = this.getFirstDayOfWeek(),
+			bOneMonthViewOnSmallScreen = sViewKey === PlanningCalendarBuiltInView.OneMonth && this._iSize < 2,
+			oRow;
+
+		oPicker.setFirstDayOfWeek(iFirstDayOfWeek);
+
+		if (sViewKey === PlanningCalendarBuiltInView.Week || bOneMonthViewOnSmallScreen) {
+			oRow = this.getAggregation("table").getInfoToolbar().getContent()[1];
+
+			oRow.setFirstDayOfWeek(iFirstDayOfWeek);
+
+			if (!bOneMonthViewOnSmallScreen) {
+				if (oStart.getDay() < iFirstDayOfWeek) {
+					oStart.setDate(oStart.getDate() + iFirstDayOfWeek);
+				} else {
+					oStart.setDate(oStart.getDate() - oOldValue + iFirstDayOfWeek);
+				}
+				oRow.setStartDate(oStart);
+			}
+
+			this.getRows().forEach(function (oRow) {
+				this._updateRowTimeline(oRow);
+			}.bind(this));
+		}
+
+		return this.setProperty("firstDayOfWeek", iFirstDayOfWeek);
 	};
 
 	PlanningCalendar.prototype._handleFocus = function (oEvent) {
@@ -1823,9 +1869,16 @@ sap.ui.define([
 			 * is because the dates are timezone irrelevant), it should be called with the local datetime values presented
 			 * as UTC ones(e.g. if oStartDate is 21 Dec 1981, 13:00 GMT+02:00, it will be converted to 21 Dec 1981, 13:00 GMT+00:00)
 			 */
-			var oFirstDateOfWeek = CalendarUtils.getFirstDateOfWeek(CalendarUtils._createUniversalUTCDate(oStartDate, undefined, true));
-			//CalendarUtils.getFirstDateOfWeek works with UTC based date values, restore the result back in local timezone.
-			oStartDate.setTime(CalendarUtils._createLocalDate(oFirstDateOfWeek, true).getTime());
+			var oFirstDateOfWeek = CalendarUtils.getFirstDateOfWeek(CalendarUtils._createUniversalUTCDate(oStartDate, undefined, true)),
+				//CalendarUtils.getFirstDateOfWeek works with UTC based date values, restore the result back in local timezone.
+				oLocalDate = CalendarUtils._createLocalDate(oFirstDateOfWeek, true);
+			if (this.getFirstDayOfWeek() > -1) {
+				oLocalDate.setDate(oLocalDate.getDate() - oLocalDate.getDay() + this.getFirstDayOfWeek());
+			}
+			if (oLocalDate.getTime() > oStartDate.getTime()) {
+				oLocalDate.setDate(oLocalDate.getDate() - 7);
+			}
+			oStartDate.setTime(oLocalDate.getTime());
 		}
 
 		if ((this.getViewKey() === PlanningCalendarBuiltInView.OneMonth || this.getViewKey() === PlanningCalendarBuiltInView.Month)) {
