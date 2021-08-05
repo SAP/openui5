@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/library",
 	"sap/ui/rta/Utils",
+	"sap/ui/fl/util/IFrame",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/rta/plugin/iframe/urlCleaner"
@@ -14,6 +15,7 @@ sap.ui.define([
 	Controller,
 	coreLibrary,
 	Utils,
+	IFrame,
 	Filter,
 	FilterOperator,
 	urlCleaner
@@ -73,14 +75,20 @@ sap.ui.define([
 		 * Event handler for live change of the URL text area
 		 * Clears the Preview when the URL is empty
 		 */
-		onURLChange: function() {
+		onURLChange: function(oEvent) {
 			var sPreviewUrl = this._oJSONModel.getProperty("/previewUrl/value");
 			var sFrameUrl = this._oJSONModel.getProperty("/frameUrl/value");
 			var oPreviewButton = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_PreviewButton");
+			var oUrlInput = oEvent.getSource();
+			if (IFrame.isValidUrl(sFrameUrl)) {
+				oUrlInput.setValueState("None");
+			} else {
+				oUrlInput.setValueState("Error");
+			}
 			if (sFrameUrl === "" && sPreviewUrl !== "") {
 				//Clears the preview frame, collapses the panel, clears the preview URL
 				var oIFrame = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_PreviewFrame");
-				oIFrame.setUrl("about:blank"); // Resets the preview first
+				oIFrame.setUrl(""); // Resets the preview first
 				this._oJSONModel.setProperty("/previewUrl/value", sFrameUrl);
 				var oPanel = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_PreviewLinkPanel");
 				var oPanelButton = oPanel.getDependents()[0];
@@ -104,7 +112,8 @@ sap.ui.define([
 		 * Event handler for save button
 		 */
 		onSavePress: function() {
-			if (this._areAllTextFieldsValid() && this._areAllValueStateNones()) {
+			var sUrl = encodeURI(this._buildPreviewURL(this._buildReturnedURL()));
+			if (IFrame.isValidUrl(sUrl) && this._areAllTextFieldsValid() && this._areAllValueStateNones()) {
 				this._close(this._buildReturnedSettings());
 			} else {
 				this._setFocusOnInvalidInput();
@@ -117,8 +126,11 @@ sap.ui.define([
 		 */
 		onShowPreview: function(oEvent) {
 			var sURL = encodeURI(this._buildPreviewURL(this._buildReturnedURL()));
+			if (!IFrame.isValidUrl(sURL)) {
+				return;
+			}
 			var oIFrame = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_PreviewFrame");
-			oIFrame.setUrl("about:blank"); // Resets the preview first
+			oIFrame.setUrl(""); // Resets the preview first
 			//enable/disable expanding the Panel
 			var oPanel = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_PreviewLinkPanel");
 			var oPanelButton = oPanel.getDependents()[0];
@@ -252,7 +264,6 @@ sap.ui.define([
 		 * @private
 		 */
 		_areAllTextFieldsValid: function() {
-			//TODO: Validate URL
 			var oJSONModel = this._oJSONModel;
 			return _aTextInputFields.reduce(function(bAllValid, sFieldName) {
 				var sValuePath = "/" + sFieldName + "/value";

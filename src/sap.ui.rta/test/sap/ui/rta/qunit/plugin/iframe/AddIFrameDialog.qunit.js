@@ -318,6 +318,26 @@ sap.ui.define([
 			return this.oAddIFrameDialog.open();
 		});
 
+		QUnit.test("when a forbidden url is entered", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				var oUrlTextArea = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_EditUrlTA");
+				oUrlTextArea.setValue("javascript:someJs"); // eslint-disable-line no-script-url
+				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
+				sap.ui.getCore().applyChanges();
+
+				assert.strictEqual(oUrlTextArea.getValueState(), "Error", "then an error is displayed");
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.strictEqual(this.oAddIFrameDialog._oJSONModel.getProperty("/previewUrl/value"), "", "then the preview is not updated");
+				clickOnSave();
+				assert.strictEqual(this.oAddIFrameDialog._oController.getSettings(), undefined, "then saving is not possible");
+				clickOnCancel();
+			}.bind(this));
+			return this.oAddIFrameDialog.open(mTestURLBuilderData)
+				.then(function(oResponse) {
+					assert.strictEqual(oResponse, undefined, "then the dialog can only be closed via cancel");
+				});
+		});
+
 		QUnit.test("When OK button is clicked then the promise should return settings", function (assert) {
 			this.oAddIFrameDialog.attachOpened(function () {
 				aTextInputFields.forEach(function (sFieldName) {

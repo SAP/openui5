@@ -9,6 +9,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"./getContainerUserInfo",
 	"sap/base/util/extend",
+	"sap/base/security/URLWhitelist",
+	"sap/base/Log",
 	"sap/ui/core/library",
 	"./IFrameRenderer"
 ], function(
@@ -16,7 +18,9 @@ sap.ui.define([
 	Control,
 	JSONModel,
 	getContainerUserInfo,
-	extend
+	extend,
+	URLWhitelist,
+	Log
 ) {
 	"use strict";
 
@@ -95,6 +99,15 @@ sap.ui.define([
 			this.setModel(this._oUserModel, "$user");
 		},
 
+		setUrl: function(sUrl) {
+			if (IFrame.isValidUrl(sUrl)) {
+				this.setProperty("url", sUrl);
+			} else {
+				Log.error("Provided URL is not valid as an IFrame src");
+			}
+			return this;
+		},
+
 		applySettings: function (mSettings) {
 			Control.prototype.applySettings.apply(this, arguments);
 			if (mSettings) {
@@ -122,6 +135,16 @@ sap.ui.define([
 		}
 
 	});
+
+	IFrame.isValidUrl = function(sUrl) {
+		// Make sure that pseudo protocols are not allowed as IFrame src
+		return (
+			!URLWhitelist.entries().some(function(oValidatorEntry) {
+				return /javascript/i.test(oValidatorEntry.protocol);
+			})
+			&& URLWhitelist.validate(sUrl)
+		);
+	};
 
 	return IFrame;
 });
