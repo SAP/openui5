@@ -375,14 +375,14 @@ sap.ui.define([
 			var i = 0;
 			if (iStep >= 0) {
 				for (i = 0; i < aItems.length; i++) {
-					if (_filterText.call(this, aItems[i].getLabel(), sFilterValue)) {
+					if (aItems[i].getLabel && _filterText.call(this, aItems[i].getLabel(), sFilterValue)) {
 						iSelectedIndex = i;
 						break;
 					}
 				}
 			} else {
 				for (i = aItems.length - 1; i >= 0; i--) {
-					if (_filterText.call(this, aItems[i].getLabel(), sFilterValue)) {
+					if (aItems[i].getLabel && _filterText.call(this, aItems[i].getLabel(), sFilterValue)) {
 						iSelectedIndex = i;
 						break;
 					}
