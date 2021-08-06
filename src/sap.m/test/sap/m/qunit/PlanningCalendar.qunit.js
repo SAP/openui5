@@ -37,6 +37,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/utils/waitForThemeApplied",
+	'sap/base/Log',
 	"jquery.sap.keycodes"
 ], function(
 	qutils,
@@ -74,7 +75,8 @@ sap.ui.define([
 	Core,
 	Element,
 	InvisibleText,
-	waitForThemeApplied
+	waitForThemeApplied,
+	BaseLog
 ) {
 	"use strict";
 
@@ -2340,7 +2342,7 @@ sap.ui.define([
 
 	QUnit.test("firstDayOfWeek", function() {
 		var oStartDate = new Date(2015, 0, 1, 8),
-			sCurrentPickerId, oPicker, oRow, aDays, $24thDec;
+			sCurrentPickerId, oPicker, oRow, aDays, $Date, oErrorSpy;
 
 		// Prepare
 		this.oPC.placeAt("bigUiArea");
@@ -2410,10 +2412,10 @@ sap.ui.define([
 		Core.applyChanges();
 
 		aDays = oRow.getDomRef().querySelectorAll(".sapUiCalItem");
-		$24thDec = aDays[6];
+		$Date = aDays[6];
 
 		// Assert
-		assert.strictEqual($24thDec.getAttribute("data-sap-day"), "20141222", "passed startDate is always visible");
+		assert.strictEqual($Date.getAttribute("data-sap-day"), "20141222", "passed startDate is always visible");
 
 		// Act
 		this.oPC.setViewKey("One Month");
@@ -2447,7 +2449,30 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oPicker.getFirstDayOfWeek(), 5, "firstDayOfWeek in OneMonth view propagated to picker");
 		assert.strictEqual(oRow.getFirstDayOfWeek(), 5, "firstDayOfWeek of DatesRow changed");
-		assert.strictEqual(oRow.getStartDate().getTime(), oStartDate.getTime(), "startDate of DatesRow changed");
+		assert.strictEqual(oRow.getStartDate().getTime(), oStartDate.getTime(), "startDate of DatesRow not changed");
+
+		// Act
+		this.oPC.setFirstDayOfWeek(-1);
+		Core.applyChanges();
+
+		aDays = oRow.getDomRef().querySelectorAll(".sapUiCalItem");
+		$Date = aDays[0];
+
+		// Assert
+		assert.strictEqual(oPicker.getFirstDayOfWeek(), -1, "firstDayOfWeek in OneMonth view propagated to picker");
+		assert.strictEqual(oRow.getFirstDayOfWeek(), -1, "firstDayOfWeek of DatesRow changed");
+		assert.strictEqual($Date.getAttribute("data-sap-day"), "20141201", "correct first rendered date");
+		assert.strictEqual(oRow.getStartDate().getTime(), oStartDate.getTime(), "startDate of DatesRow not changed");
+
+		oErrorSpy = this.spy(BaseLog, "error");
+
+		// Act
+		this.oPC.setFirstDayOfWeek(10);
+
+		// Assert
+		assert.strictEqual(oErrorSpy.callCount, 1, "There is an error in the console when invalid value is passed.");
+		assert.strictEqual(this.oPC.getFirstDayOfWeek(), -1, "The value is not set.");
+
 	});
 
 	QUnit.module("NonWorking Special Dates", {

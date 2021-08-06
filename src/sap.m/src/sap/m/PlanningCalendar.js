@@ -382,8 +382,12 @@ sap.ui.define([
 				stickyHeader : {type : "boolean", group : "Appearance", defaultValue : false},
 
 				/**
-				 * If set, the first day of the displayed week is this day. Valid values are 0 to 6.
+				 * If set, the first day of the displayed week is this day. Valid values are 0 to 6 starting on Sunday.
 				 * If there is no valid value set, the default of the used locale is used.
+				 *
+				 * Note: this property will only have effect in the weekly – based views of the PlanningCalendar – Week view,
+				 * and OneMonth view (on small devices).
+				 *
 				 * @since 1.94
 				 */
 				firstDayOfWeek : {type : "int", group : "Appearance", defaultValue : -1}
@@ -1763,31 +1767,36 @@ sap.ui.define([
 	};
 
 	PlanningCalendar.prototype.setFirstDayOfWeek = function (iFirstDayOfWeek) {
+		if (iFirstDayOfWeek < -1 || iFirstDayOfWeek > 6) {
+			Log.error("" + iFirstDayOfWeek + " is not a valid value to the property firstDayOfWeek. Valid values are from -1 to 6.");
+			return;
+		}
 		var sCurrentPickerId = this._getHeader().getAssociation("currentPicker"),
 			oPicker = Core.byId(sCurrentPickerId),
 			sViewKey = this.getViewKey(),
 			oDateNav = this._dateNav,
-			oStart = oDateNav.getStart(),
-			oOldValue = this.getFirstDayOfWeek(),
+			oPCStart = oDateNav.getStart(),
+			iOldFirstDayOfWeek = this.getStartDate().getDay(),
 			bOneMonthViewOnSmallScreen = sViewKey === PlanningCalendarBuiltInView.OneMonth && this._iSize < 2,
-			oRow;
+			iResultFirstDayOfWeek = iFirstDayOfWeek,
+			oRow, oFirstUTCDateOfWeek, oFirstLocalDateOfWeek;
 
 		oPicker.setFirstDayOfWeek(iFirstDayOfWeek);
 
 		if (sViewKey === PlanningCalendarBuiltInView.Week || bOneMonthViewOnSmallScreen) {
 			oRow = this.getAggregation("table").getInfoToolbar().getContent()[1];
 
-			oRow.setFirstDayOfWeek(iFirstDayOfWeek);
-
-			if (!bOneMonthViewOnSmallScreen) {
-				if (oStart.getDay() < iFirstDayOfWeek) {
-					oStart.setDate(oStart.getDate() + iFirstDayOfWeek);
-				} else {
-					oStart.setDate(oStart.getDate() - oOldValue + iFirstDayOfWeek);
-				}
-				oRow.setStartDate(oStart);
+			if (iFirstDayOfWeek === -1) { // -1 is the default value of firstDayOfWeek property. It means that the Locale information should be used.
+				oFirstUTCDateOfWeek = CalendarUtils.getFirstDateOfWeek(CalendarUtils._createUniversalUTCDate(oPCStart, undefined, true));
+				oFirstLocalDateOfWeek = CalendarUtils._createLocalDate(oFirstUTCDateOfWeek, true);
+				iResultFirstDayOfWeek = oFirstLocalDateOfWeek.getDay();
 			}
 
+			oRow.setFirstDayOfWeek(iFirstDayOfWeek);
+			if (!bOneMonthViewOnSmallScreen) {
+				oPCStart.setDate(oPCStart.getDate() - iOldFirstDayOfWeek + iResultFirstDayOfWeek);
+				oRow.setStartDate(oPCStart);
+			}
 			this.getRows().forEach(function (oRow) {
 				this._updateRowTimeline(oRow);
 			}.bind(this));

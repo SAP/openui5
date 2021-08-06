@@ -573,6 +573,10 @@ sap.ui.define([
 				} else {
 					oLegend.setStandardItems(); //return defaults
 				}
+			},
+
+			onChange: function (oEvent) {
+				this.byId('PC1').setFirstDayOfWeek(Number(oEvent.getParameter("selectedItem").getKey()));
 			}
 		});
 
