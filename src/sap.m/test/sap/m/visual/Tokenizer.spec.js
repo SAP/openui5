@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect*/
+/*global describe,it,element,by,takeScreenshot,expect,browser*/
 
 describe('sap.m.Tokenizer', function() {
 	"use strict";
@@ -47,5 +47,11 @@ describe('sap.m.Tokenizer', function() {
 		element(by.id("longTokenNotEditable")).click();
 		expect(takeScreenshot(element(by.id("tokenizerReadOnlyLongToken")))).toLookAs("tokenizer-long-token-read-only");
 		element(by.id("longTokenNotEditable")).click();
+	});
+
+	// Not editable tokenizer n-more shown
+	it("should show not editable Tokenzier's n-more popover", function () {
+		browser.executeScript('document.getElementsByClassName("sapMTokenizerIndicator")[1].click()');
+		expect(takeScreenshot()).toLookAs("tokenizer-not-editable-n-more-shown");
 	});
 });
