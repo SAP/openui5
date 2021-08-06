@@ -52,9 +52,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("Should ignore long runners", function (assert) {
-			var iID = fnSetFunction(function () {}, 1001);
-			assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts");
-			fnClearFunction(iID);
+			var fnDone = assert.async();
+			var iID = fnSetFunction(function () {}, 1100);
+			// give some time for an eventual async flow in timeoutWaiter
+			fnSetFunction(function () {
+				assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts");
+				fnClearFunction(iID);
+				fnDone();
+			}, 50);
 		});
 
 		QUnit.test("Should have configurable max timeout delay", function (assert) {
