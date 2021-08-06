@@ -15,6 +15,25 @@
 	&.sapMDialog {
 		padding-bottom: 0;
 	}
+	.sapMPopoverCont .sapUiCal {
+		padding: 1rem 0 0 1rem;
+		&:not(.sapUiCalInt) {
+			width: 19rem;
+			min-width: 19rem;
+		}
+		.sapUiCalMonthView,
+		.sapUiCalMonthPicker,
+		.sapUiCalYearPicker {
+			padding-left: 0;
+			padding-right: 0;
+		}
+		.sapUiCalHeadPrev {
+			left: 0;
+		}
+		.sapUiCalHeadNext {
+			right: 0;
+		}
+	}
 }
 
 html.sap-phone, html.sapUiMedia-Std-Phone {
