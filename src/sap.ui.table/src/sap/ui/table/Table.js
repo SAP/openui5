@@ -1021,11 +1021,21 @@ sap.ui.define([
 		if (this._bExtensionsInitialized) {
 			return;
 		}
+
 		ExtensionBase.enrich(this, PointerExtension);
 		ExtensionBase.enrich(this, ScrollExtension);
 		ExtensionBase.enrich(this, KeyboardExtension);
 		ExtensionBase.enrich(this, AccExtension); // Must be registered after keyboard to reach correct delegate order
 		ExtensionBase.enrich(this, DragAndDropExtension);
+
+		if (Device.os.ios) {
+			sap.ui.require(["sap/ui/table/extensions/ScrollingIOS"], function(ScrollingIOSExtension) {
+				if (!this.bIsDestroyed) {
+					ExtensionBase.enrich(this, ScrollingIOSExtension);
+				}
+			}.bind(this));
+		}
+
 		this._bExtensionsInitialized = true;
 	};
 

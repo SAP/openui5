@@ -5184,28 +5184,46 @@ sap.ui.define([
 	QUnit.module("Extensions", {
 		beforeEach: function() {
 			createTable();
+			this.aExpectedExtensions = [
+				"sap.ui.table.extensions.Pointer",
+				"sap.ui.table.extensions.Scrolling",
+				"sap.ui.table.extensions.Keyboard",
+				"sap.ui.table.extensions.AccessibilityRender",
+				"sap.ui.table.extensions.Accessibility",
+				"sap.ui.table.extensions.DragAndDrop"
+			];
 		},
 		afterEach: function() {
 			destroyTable();
+		},
+		testAppliedExtensions: function(assert, aExpectedExtensions) {
+			var aActualExtensions = oTable._aExtensions.map(function(oExt){
+				return oExt.getMetadata()._sClassName;
+			});
+
+			assert.deepEqual(aActualExtensions, aExpectedExtensions || this.aExpectedExtensions, "The table has the expected extensions applied.");
 		}
 	});
 
 	QUnit.test("Applied extensions", function(assert) {
-		var aActualExtensions = [];
-		var aExpectedExtensions = [
-			"sap.ui.table.extensions.Pointer",
-			"sap.ui.table.extensions.Scrolling",
-			"sap.ui.table.extensions.Keyboard",
-			"sap.ui.table.extensions.AccessibilityRender",
-			"sap.ui.table.extensions.Accessibility",
-			"sap.ui.table.extensions.DragAndDrop"
-		];
+		this.testAppliedExtensions(assert);
+	});
 
-		oTable._aExtensions.forEach(function(oExtension) {
-			aActualExtensions.push(oExtension.getMetadata()._sClassName);
-		});
+	QUnit.test("Applied extensions (IOS)", function(assert) {
+		var bOriginalDeviceOsIos = Device.os.ios;
+		Device.os.ios = true;
+		oTable.destroy();
+		createTable();
+		sap.ui.getCore().applyChanges();
+		this.testAppliedExtensions(assert);
 
-		assert.deepEqual(aActualExtensions, aExpectedExtensions, "The table has the expected extensions applied.");
+		return new Promise(function(resolve) {
+			sap.ui.require(["sap/ui/table/extensions/ScrollingIOS"], function() {
+				this.testAppliedExtensions(assert, this.aExpectedExtensions.concat("sap.ui.table.extensions.ScrollingIOS"));
+				Device.os.ios = bOriginalDeviceOsIos;
+				resolve();
+			}.bind(this));
+		}.bind(this));
 	});
 
 	QUnit.test("Lifecycle", function(assert) {

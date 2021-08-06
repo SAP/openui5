@@ -207,6 +207,10 @@ sap.ui.define([
 				group: "Extensions",
 				module: "./extensions/{name}.qunit"
 			},
+			"ScrollingIOS": {
+				group: "Extensions",
+				module: "./extensions/{name}.qunit"
+			},
 			"DragAndDrop": {
 				group: "Extensions",
 				module: "./extensions/{name}.qunit"
