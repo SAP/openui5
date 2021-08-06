@@ -92,6 +92,7 @@ sap.ui.define([
 			return [];
 		}
 
+		// Returns a list of all invisible elements belonging to an aggregation including the aggregation name
 		var aInvisibleElements = ElementUtil.getAggregation(oParentElement, sAggregationName, oPlugin).filter(function(oControl) {
 			var oOverlay = OverlayRegistry.getOverlay(oControl);
 
@@ -123,7 +124,12 @@ sap.ui.define([
 			return oOverlay.getElementVisibility() === false;
 		}, this);
 
-		return aInvisibleElements;
+		return aInvisibleElements.map(function(oInvisibleElement) {
+			return {
+				element: oInvisibleElement,
+				sourceAggregation: sAggregationName
+			};
+		});
 	}
 
 	function defaultGetAggregationName(oParent, oChild) {
@@ -183,18 +189,23 @@ sap.ui.define([
 		}, Promise.resolve([]));
 	}
 
-	function getRevealActionFromAggregations(aParents, _mReveal, sAggregationName, oPlugin) {
+	// Return all elements that can be made visible in each aggregation (including elements from other aggregations)
+	function getRevealActionFromAggregations(aParents, _mReveal, sAggregationName, aAggregationNames, oPlugin) {
 		var aInvisibleElements = aParents.reduce(function(aInvisibleChildren, oParentOverlay) {
-			return oParentOverlay ? aInvisibleChildren.concat(getInvisibleElements.call(this, oParentOverlay, sAggregationName, oPlugin)) : aInvisibleChildren;
+			var aInvisibleChildrenPerAggregation = [];
+			aAggregationNames.forEach(function(sAggregation) {
+				aInvisibleChildrenPerAggregation = aInvisibleChildrenPerAggregation.concat(getInvisibleElements.call(this, oParentOverlay, sAggregation, oPlugin));
+			}.bind(this), []);
+			return oParentOverlay ? aInvisibleChildren.concat(aInvisibleChildrenPerAggregation) : aInvisibleChildren;
 		}.bind(this), []);
 
 		var oInitialRevealObject = {
 			elements: [],
 			controlTypeNames: []
 		};
-		var mRevealPromise = aInvisibleElements.reduce(function(oPreviousPromise, oInvisibleElement) {
+		var mRevealPromise = aInvisibleElements.reduce(function(oPreviousPromise, mInvisibleElement) {
 			return oPreviousPromise.then(function(mReveal) {
-				return checkAndEnrichReveal(mReveal, oInvisibleElement, oPlugin);
+				return checkAndEnrichReveal(mReveal, mInvisibleElement, oPlugin, sAggregationName);
 			});
 		}, Promise.resolve(oInitialRevealObject));
 
@@ -208,8 +219,9 @@ sap.ui.define([
 		});
 	}
 
-	function checkAndEnrichReveal(mReveal, oInvisibleElement, oPlugin) {
+	function checkAndEnrichReveal(mReveal, mInvisibleElement, oPlugin, sAggregationName) {
 		return Promise.resolve().then(function() {
+			var oInvisibleElement = mInvisibleElement.element;
 			var oDesignTimeMetadata;
 			var mRevealAction;
 			var bRevealEnabled = false;
@@ -227,10 +239,10 @@ sap.ui.define([
 					}
 
 					oHasChangeHandlerPromise = oPlugin.hasChangeHandler(mRevealAction.changeType, oRevealSelector).then(function(bHasChangeHandler) {
+						var mParents = AdditionalElementsUtils.getParents(true, oOverlay, oPlugin);
 						if (bHasChangeHandler) {
 							if (mRevealAction.changeOnRelevantContainer) {
 								//we have the child overlay, so we need the parents
-								var mParents = AdditionalElementsUtils.getParents(true, oOverlay, oPlugin);
 								bRevealEnabled = oPlugin.hasStableId(mParents.relevantContainerOverlay)
 									&& oPlugin.hasStableId(mParents.parentOverlay);
 							} else {
@@ -239,6 +251,8 @@ sap.ui.define([
 							if (!mRevealAction.getAggregationName) {
 								mRevealAction.getAggregationName = defaultGetAggregationName;
 							}
+							var oParent = oInvisibleElement.getParent();
+							bRevealEnabled = bRevealEnabled && ElementUtil.isValidForAggregation(oParent, sAggregationName, oInvisibleElement);
 						}
 					});
 				}
@@ -249,7 +263,9 @@ sap.ui.define([
 					mReveal.elements.push({
 						element: oInvisibleElement,
 						designTimeMetadata: oDesignTimeMetadata,
-						action: mRevealAction
+						action: mRevealAction,
+						sourceAggregation: mInvisibleElement.sourceAggregation,
+						targetAggregation: sAggregationName
 					});
 					var mName = oDesignTimeMetadata.getName(oInvisibleElement);
 					if (mName) {
@@ -274,7 +290,8 @@ sap.ui.define([
 	 *			elements : [{
 	 *				element : <invisible element>,
 	 *				designTimeMetadata : <sap.ui.dt.ElementDesignTimeMetadata of invisible element>,
-	 *				action : <reveal action section from designTimeMetadata>
+	 *				action : <reveal action section from designTimeMetadata>,
+	 *				sourceAggregation: <aggregation where this element is currently located>
 	 *			}],
 	 *			controlTypeNames : string[] <all controlTypeNames collected via designTimeMetadata>
 	 *		},
@@ -348,23 +365,20 @@ sap.ui.define([
 				return oOverlay;
 			});
 		}
-		var aAggregationNames;
-		if (bSibling) {
-			var oParentAggregationOverlay = mParents.responsibleElementOverlay.getParentAggregationOverlay();
-			aAggregationNames = oParentAggregationOverlay ? [mParents.responsibleElementOverlay.getParentAggregationOverlay().getAggregationName()] : [];
-		} else {
+		var aAggregationNames = [];
+		if (mParents.parentOverlay) {
 			aAggregationNames = mParents.parentOverlay.getAggregationOverlays().filter(function(oAggregationOverlay) {
 				return !oAggregationOverlay.getDesignTimeMetadata().isIgnored(mParents.parent);
 			}).map(function(oAggregationOverlay) {
 				return oAggregationOverlay.getAggregationName();
 			});
+			return aAggregationNames.reduce(function(oPreviousPromise, sAggregationName) {
+				return oPreviousPromise.then(function(mReveal) {
+					return getRevealActionFromAggregations(aParents, mReveal, sAggregationName, aAggregationNames, oPlugin);
+				});
+			}, Promise.resolve({}));
 		}
-
-		return aAggregationNames.reduce(function(oPreviousPromise, sAggregationName) {
-			return oPreviousPromise.then(function(mReveal) {
-				return getRevealActionFromAggregations(aParents, mReveal, sAggregationName, oPlugin);
-			});
-		}, Promise.resolve({}));
+		return Promise.resolve({});
 	};
 
 	/**

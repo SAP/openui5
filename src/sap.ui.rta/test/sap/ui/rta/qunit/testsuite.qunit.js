@@ -134,7 +134,23 @@ sap.ui.define([
 			"plugin/additionalElements/AdditionalElementsPlugin": {
 				group: "Plugin",
 				coverage: {
-					only: ["sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin"]
+					only: [
+						"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
+						"sap/ui/rta/plugin/additionalElements/ActionExtractor",
+						"sap/ui/rta/plugin/additionalElements/CommandBuilder",
+						"sap/ui/rta/plugin/additionalElements/AdditionalElementsUtils"
+					]
+				}
+			},
+			"plugin/additionalElements/AddElementsMultipleAggregations": {
+				group: "Plugin",
+				coverage: {
+					only: [
+						"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
+						"sap/ui/rta/plugin/additionalElements/ActionExtractor",
+						"sap/ui/rta/plugin/additionalElements/CommandBuilder",
+						"sap/ui/rta/plugin/additionalElements/AdditionalElementsUtils"
+					]
 				}
 			},
 			"plugin/iframe/AddIFrameDialog": {

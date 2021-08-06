@@ -4,12 +4,16 @@ sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
+	"sap/ui/rta/plugin/additionalElements/AdditionalElementsUtils",
+	"sap/ui/rta/plugin/additionalElements/ActionExtractor",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	AdditionalElementsPlugin,
 	AdditionalElementsAnalyzer,
 	AddElementsDialog,
+	AdditionalElementsUtils,
+	ActionExtractor,
 	CommandFactory,
 	sinon
 ) {
@@ -59,6 +63,13 @@ sap.ui.define([
 							};
 						}
 					};
+				},
+				getParentAggregationOverlay: function() {
+					return {
+						getAggregationName: function() {
+							return sAggregationName;
+						}
+					};
 				}
 			};
 
@@ -83,7 +94,7 @@ sap.ui.define([
 
 			var oIsEnabledStub = sandbox.stub(this.oPlugin, "isEnabled");
 
-			sandbox.stub(this.oPlugin, "getContextMenuTitle").returns(sExpectedContextMenuText);
+			sandbox.stub(this.oPlugin, "getContextMenuText").returns(sExpectedContextMenuText);
 			sandbox.stub(this.oPlugin, "enhanceItemWithResponsibleElement").returnsArg(0);
 
 			var oShowAvailableElementsStub = sandbox.stub(this.oPlugin, "showAvailableElements");
@@ -150,7 +161,7 @@ sap.ui.define([
 
 			var oIsEnabledStub = sandbox.stub(this.oPlugin, "isEnabled");
 
-			sandbox.stub(this.oPlugin, "getContextMenuTitle").returns(sExpectedContextMenuText);
+			sandbox.stub(this.oPlugin, "getContextMenuText").returns(sExpectedContextMenuText);
 			sandbox.stub(this.oPlugin, "enhanceItemWithResponsibleElement").returnsArg(0);
 
 			var oShowAvailableElementsStub = sandbox.stub(this.oPlugin, "showAvailableElements");
@@ -238,7 +249,6 @@ sap.ui.define([
 
 			var oIsEnabledStub = sandbox.stub(this.oPlugin, "isEnabled");
 
-			sandbox.stub(this.oPlugin, "getContextMenuTitle").returns(sExpectedContextMenuText);
 			sandbox.stub(this.oPlugin, "enhanceItemWithResponsibleElement").returnsArg(0);
 
 			var oShowAvailableElementsStub = sandbox.stub(this.oPlugin, "showAvailableElements");
@@ -322,7 +332,6 @@ sap.ui.define([
 
 			var oIsEnabledStub = sandbox.stub(this.oPlugin, "isEnabled");
 
-			sandbox.stub(this.oPlugin, "getContextMenuTitle").returns(sExpectedContextMenuText);
 			sandbox.stub(this.oPlugin, "enhanceItemWithResponsibleElement").returnsArg(0);
 
 			var oShowAvailableElementsStub = sandbox.stub(this.oPlugin, "showAvailableElements");
@@ -428,7 +437,6 @@ sap.ui.define([
 			sandbox.stub(this.oPlugin, "isAvailable").returns(true);
 			var oIsEnabledStub = sandbox.stub(this.oPlugin, "isEnabled");
 
-			sandbox.stub(this.oPlugin, "getContextMenuTitle").returns(sExpectedContextMenuText);
 			sandbox.stub(this.oPlugin, "enhanceItemWithResponsibleElement").returnsArg(0);
 
 			var oShowAvailableElementsStub = sandbox.stub(this.oPlugin, "showAvailableElements");
@@ -463,6 +471,98 @@ sap.ui.define([
 				assert.ok(oIsEnabledStub.calledWith(true, aSelectedOverlays, sSiblingAggregationName), "then isEnabled is called for the child aggregation");
 				oSubMenuItemSibling.handler(aSelectedOverlays);
 				assert.ok(oShowAvailableElementsStub.calledWith(true, sSiblingAggregationName, aSelectedOverlays), "then showAvailableElements is called for the sibling aggregation");
+			});
+		});
+
+		QUnit.test("when there are no elements available but extension fields is allowed - sibling case", function(assert) {
+			var sExpectedContextMenuText = "Expected Text";
+
+			var oDummyOverlay = {
+				getParentAggregationOverlay: function() {
+					return {
+						getAggregationName: function() {
+							return "dummyAggregation";
+						}
+					};
+				}
+			};
+
+			var aElementOverlays = [oDummyOverlay];
+			var aSelectedOverlays = ["DummySelectedOverlay"];
+
+			// "getAllElements" returns no elements
+			sandbox.stub(this.oPlugin, "getAllElements").returns([]);
+
+			sandbox.stub(this.oPlugin, "isAvailable").callsFake(function(bIsSibling) {
+				return bIsSibling;
+			});
+			sandbox.stub(this.oPlugin, "isEnabled").callsFake(function(bIsSibling) {
+				return bIsSibling;
+			});
+
+			sandbox.stub(AdditionalElementsUtils, "getParents").returns({
+				parent: "dummyParent"
+			});
+
+			sandbox.stub(ActionExtractor, "getActionsOrUndef").returns({
+				dummyAggregation: {
+					action: "dummyAction"
+				}
+			});
+
+			sandbox.stub(AdditionalElementsUtils, "getText").callsFake(function(sExpectedKey, mActions, sParent, bSingular) {
+				assert.equal(sExpectedKey, "CTX_ADD_ELEMENTS", "getText called with right key");
+				assert.equal(mActions.action, "dummyAction", "getText called with the right actions");
+				assert.equal(sParent, "dummyParent", "getText called with the right parent");
+				assert.ok(bSingular, "getText called with SINGULAR (true)");
+				return sExpectedContextMenuText;
+			});
+
+			// Return the menu item
+			sandbox.stub(this.oPlugin, "enhanceItemWithResponsibleElement").returnsArg(0);
+
+			var oShowAvailableElementsStub = sandbox.stub(this.oPlugin, "showAvailableElements");
+
+			return this.oPlugin.getMenuItems(aElementOverlays).then(function(aMenuItems) {
+				assert.strictEqual(aMenuItems.length, 1, "then only one menu item is returned");
+				var oMenuItem = aMenuItems[0];
+				assert.strictEqual(oMenuItem.id, "CTX_ADD_ELEMENTS_AS_SIBLING", "then the entry is for sibling");
+				assert.strictEqual(oMenuItem.text(), sExpectedContextMenuText, "then the expected text is returned");
+				oMenuItem.handler(aSelectedOverlays);
+				assert.ok(oShowAvailableElementsStub.calledWith(true, "dummyAggregation", aSelectedOverlays), "showAvailableElements is called with the right parameters");
+				assert.notOk(oMenuItem.submenu, "then the entry has no submenu");
+			});
+		});
+
+		QUnit.test("when there are no elements available but extension fields is allowed - child case", function(assert) {
+			var aElementOverlays = [{}];
+			var aSelectedOverlays = ["DummySelectedOverlay"];
+			var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			var sExpectedContextMenuText = oTextResources.getText("CTX_ADD_ELEMENTS", oTextResources.getText("MULTIPLE_CONTROL_NAME"));
+
+			// "getAllElements" returns no elements
+			sandbox.stub(this.oPlugin, "getAllElements").returns([]);
+
+			sandbox.stub(this.oPlugin, "isAvailable").callsFake(function(bIsSibling) {
+				return !bIsSibling;
+			});
+			sandbox.stub(this.oPlugin, "isEnabled").callsFake(function(bIsSibling) {
+				return !bIsSibling;
+			});
+
+			// Return the menu item
+			sandbox.stub(this.oPlugin, "enhanceItemWithResponsibleElement").returnsArg(0);
+
+			var oShowAvailableElementsStub = sandbox.stub(this.oPlugin, "showAvailableElements");
+
+			return this.oPlugin.getMenuItems(aElementOverlays).then(function(aMenuItems) {
+				assert.strictEqual(aMenuItems.length, 1, "then only one menu item is returned");
+				var oMenuItem = aMenuItems[0];
+				assert.strictEqual(oMenuItem.id, "CTX_ADD_ELEMENTS_AS_CHILD", "then the entry is for child");
+				assert.strictEqual(oMenuItem.text(), sExpectedContextMenuText, "then the expected text is returned");
+				oMenuItem.handler(aSelectedOverlays);
+				assert.ok(oShowAvailableElementsStub.calledWith(false, "$$OnlyChildCustomField$$", aSelectedOverlays), "showAvailableElements is called with the right parameters");
+				assert.notOk(oMenuItem.submenu, "then the entry has no submenu");
 			});
 		});
 	});
