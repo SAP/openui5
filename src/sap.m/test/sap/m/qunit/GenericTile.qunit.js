@@ -2941,6 +2941,23 @@ sap.ui.define([
 		spaceUp.keyCode = jQuery.sap.KeyCodes.SPACE;
 		this.oGenericTile.$().trigger(spaceUp);
 
+		//tile released and action not invoked, on shift or escape press
+		this.oGenericTile.$().trigger(spaceDown);
+		this.oGenericTile.$().trigger(shiftDown);
+		this.oGenericTile.$().trigger(shiftUp);
+		assert.ok(!this.oGenericTile.$().hasClass("sapMGTPressActive"), "Press action is not triggered on GenericTile");
+		this.oGenericTile.$().trigger(spaceUp);
+
+		var escapeDown = jQuery.Event("keydown");
+		escapeDown.keyCode = jQuery.sap.KeyCodes.ESCAPE;
+		var escapeUp = jQuery.Event("keyup");
+		escapeUp.keyCode = jQuery.sap.KeyCodes.ESCAPE;
+		this.oGenericTile.$().trigger(spaceDown);
+		this.oGenericTile.$().trigger(escapeDown);
+		this.oGenericTile.$().trigger(escapeUp);
+		assert.ok(!this.oGenericTile.$().hasClass("sapMGTPressActive"), "Press action is not triggered on GenericTile");
+		this.oGenericTile.$().trigger(spaceUp);
+
 		//simulating navigation using tab key when no tile is in selected state
 		tabDown = jQuery.Event("keydown");
 		tabDown.keyCode = jQuery.sap.KeyCodes.TAB;

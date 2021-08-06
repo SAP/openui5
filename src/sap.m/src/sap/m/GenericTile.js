@@ -872,7 +872,9 @@ sap.ui.define([
 		}
 	};
 
+	var preventPress = false;
 	GenericTile.prototype.onkeydown = function (event) {
+		preventPress = (event.keyCode === 16 || event.keyCode === 27) ? true : false;
 		var currentKey = keyPressed[event.keyCode];
 		if (!currentKey) {
 			keyPressed[event.keyCode] = true;
@@ -921,15 +923,19 @@ sap.ui.define([
 			};
 			bFirePress = true;
 		}
-		if (PseudoEvents.events.sapselect.fnCheck(event) && this.getState() !== LoadState.Disabled) {
+		if (keyPressed[16] && event.keyCode !== 16 && this.getState() !== LoadState.Disabled) {
+			preventPress === false;
+		}
+		if ((PseudoEvents.events.sapselect.fnCheck(event) || preventPress) && this.getState() !== LoadState.Disabled) {
 			this.removeStyleClass("sapMGTPressActive");
 			if (this.$("hover-overlay").length > 0) {
 				this.$("hover-overlay").removeClass("sapMGTPressActive");
 			}
 			oParams = this._getEventParams(event);
 			bFirePress = true;
+
 		}
-		if (bFirePress) {
+		if (!preventPress && bFirePress) {
 			this.firePress(oParams);
 			event.preventDefault();
 		}
