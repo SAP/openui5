@@ -22,6 +22,7 @@ sap.ui.define([
 
 			// Configure URL separator
 			this._URLSeparator = window['sap-ui-documentation-static'] ? "%23" : "#";
+			this._fnPopstateHandlerRef = this.popstateHandler.bind(this);
 
 			this.getRoute("entitySamplesLegacyRoute").attachPatternMatched(this._onOldEntityRouteMatched, this);
 			this.getRoute("entityAboutLegacyRoute").attachPatternMatched(this._onOldEntityRouteMatched, this);
@@ -229,17 +230,6 @@ sap.ui.define([
 			return;
 		}
 
-		if (
-			oElement.classList.contains("scrollToMethod") ||
-			oElement.classList.contains("scrollToEvent") ||
-			oElement.classList.contains("scrollToAnnotation")
-		) {
-			if (oEvent.preventDefault) {
-				oEvent.preventDefault();
-			}
-			return; // This is handled in the SubApiDetail controller
-		}
-
 		if (bCtrlHold) {
 			// if ctrl or command is pressed we want
 			// the default browser behavior (open in new tab)
@@ -346,8 +336,15 @@ sap.ui.define([
 
 	DocumentationRouter.prototype.attachPopstateHandler = function () {
 		if (!this._bPopstateHandlerAttached) {
-			window.addEventListener('popstate', this.popstateHandler.bind(this));
+			window.addEventListener('popstate', this._fnPopstateHandlerRef);
 			this._bPopstateHandlerAttached = true;
+		}
+	};
+
+	DocumentationRouter.prototype.detachPopstateHandler = function () {
+		if (this._bPopstateHandlerAttached) {
+			window.removeEventListener('popstate', this._fnPopstateHandlerRef);
+			this._bPopstateHandlerAttached = false;
 		}
 	};
 
@@ -613,8 +610,10 @@ sap.ui.define([
 			sPath = decodeURIComponent(sPath);
 			sPath = sPath.replace("#", this._URLSeparator);
 
+			// suspend the monitoring of hash changes
 			this.stop();
 			hasher.stop();
+			this.detachPopstateHandler();
 
 			if (bHistory) {
 				hasher.setHash(sPath);
@@ -622,8 +621,10 @@ sap.ui.define([
 				hasher.replaceHash(sPath);
 			}
 
+			// resume the monitoring of hash changes
 			hasher.init();
 			this.initialize(true);
+			this.attachPopstateHandler();
 		};
 
 	}

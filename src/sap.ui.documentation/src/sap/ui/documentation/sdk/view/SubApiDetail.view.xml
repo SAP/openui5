@@ -445,12 +445,7 @@
 														<custom:Row>
 															<custom:ParamText text="{event>name}"
 																		href="api/{data>/name}#events/{event>name}"
-																		deprecated="{= ${event>deprecated} !== undefined }"
-																		class="scrollToEvent jsdoclink">
-                                                                <custom:customData>
-                                                                    <core:CustomData writeToDom="true" key="target" value="{event>name}" />
-                                                                </custom:customData>
-                                                            </custom:ParamText>
+																		deprecated="{= ${event>deprecated} !== undefined }"/>
 															<custom:JSDocText sanitizeContent="false" text="{path: 'event>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 														</custom:Row>
 													</template:repeat>
@@ -550,12 +545,7 @@
 															<custom:ParamText text="{method>name}"
 																		href="{method>href}"
 																		deprecated="{= ${method>deprecated} !== undefined }"
-																        experimental="{= ${method>experimental} !== undefined }"
-																		class="scrollToMethod jsdoclink">
-                                                                <custom:customData>
-                                                                    <core:CustomData writeToDom="true" key="target" value="{method>name}" />
-                                                                </custom:customData>
-                                                            </custom:ParamText>
+																        experimental="{= ${method>experimental} !== undefined }"/>
 															<custom:JSDocText sanitizeContent="false" text="{path: 'method>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 														</custom:Row>
 													</template:repeat>
@@ -730,12 +720,7 @@
 											<template:repeat list="{data>/ui5-metadata/annotations}" var="annotation">
 												<custom:Row>
 													<m:Link text="{= ${annotation>annotation} !== 'undefined' ? ${annotation>annotation} : '(' + ${annotation>namespaceText} + ')' }"
-															class="scrollToAnnotation jsdoclink"
-															wrapping="false">
-                                                        <m:customData>
-                                                            <core:CustomData writeToDom="true" key="target" value="{= ${annotation>annotation} !== 'undefined' ? ${annotation>annotation} : ${annotation>namespaceText} }" />
-                                                        </m:customData>
-                                                    </m:Link>
+															wrapping="false"/>
 													<custom:JSDocText sanitizeContent="false" text="{path: 'annotation>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 												</custom:Row>
 											</template:repeat>

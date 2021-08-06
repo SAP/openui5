@@ -116,7 +116,7 @@ sap.ui.define([
 							sRoute = "api";
 						}
 
-						return '<a class="jsdoclink" href="' + sRoute + '/' + sTarget + '">' + sText + '</a>';
+						return '<a href="' + sRoute + '/' + sTarget + '">' + sText + '</a>';
 
 					}
 				});

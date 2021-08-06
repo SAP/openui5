@@ -55,15 +55,20 @@ sap.ui.define([
 			 */
 			_onTopicMatched: function (oEvent) {
 				var oArguments,
-					oComponent;
+					oComponent,
+					oController;
 
 				oArguments = this.getRouter()._decodeSpecialRouteArguments(oEvent);
 				oComponent = this.getOwnerComponent();
 
 				if (this._sTopicid === oArguments.id) {
-					// since we trigger <code>router.parse(new_path)</code> without checking the current path,
-					// it is possible to trigger navigation to the same path more than once
-					// => check if entity already displayed on controller level for now
+					// if topic already displayed, do not recreate the sub-view
+					// but only scroll to the requested entity
+					oController = this._oView && this._oView.getController();
+					if (oController) {
+						oController.scrollToEntity(oArguments.entityType, oArguments.entityId);
+					}
+					// return early as the topic is already displayed
 					return;
 				}
 

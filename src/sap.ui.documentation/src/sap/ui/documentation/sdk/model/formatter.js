@@ -204,7 +204,7 @@ sap.ui.define([
 						target = target.slice(0, iHashIndex) + '/methods/' + target.slice(iHashIndex + 1);
 					}
 
-					return "<a class=\"jsdoclink\" href=\"api/" + target + "\" target=\"_self\">" + text + "</a>";
+					return "<a href=\"api/" + target + "\" target=\"_self\">" + text + "</a>";
 
 				}
 			});
