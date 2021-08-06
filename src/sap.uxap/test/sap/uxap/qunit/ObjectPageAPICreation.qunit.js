@@ -3818,6 +3818,32 @@ function (
 		this.oObjectPage._snapHeader(true, true);
 	});
 
+	QUnit.test("The headerContentPinned property is preserved when screen is resized", function (assert) {
+
+		// Arrange
+		var oObjectPage = this.oObjectPage,
+			done = assert.async(),
+			vOriginalHeight = jQuery("#qunit-fixture").height();
+
+		assert.expect(3);
+
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
+			// Act
+			jQuery("#qunit-fixture").height("100"); // container small enough
+
+			setTimeout(function() {
+				// Assert
+				assert.strictEqual(oObjectPage._bPinned, false, "Header is unpinned /not by user interaction/");
+				assert.strictEqual(oObjectPage.getHeaderContentPinned(), true, "headerContentPinned property is preserved");
+				assert.strictEqual(oObjectPage._getHeaderContent()._getPinButton().getVisible(), false, "Pin button is hidden");
+
+				jQuery("#qunit-fixture").height(vOriginalHeight);
+				done();
+			}, 800);
+		});
+	});
+
 	function checkObjectExists(sSelector) {
 		var oObject = jQuery(sSelector);
 		return oObject.length !== 0;
