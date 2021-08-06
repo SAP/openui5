@@ -256,7 +256,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer"
 			bTitle = sWrapArea == "title" ? true : false,
 			sText = bTitle ? oLI.getTitle() : oLI.getDescription(),
 			bTextExpanded = bTitle ? oLI._bTitleTextExpanded : oLI._bDescriptionTextExpanded,
-			iMaxCharacters = Device.system.phone ? 100 : 300;
+			iMaxCharacters = oLI._getWrapCharLimit();
 
 		rm.openStart("span", sId + "-" + sWrapArea + "Text").attr("aria-live", "polite").openEnd();
 

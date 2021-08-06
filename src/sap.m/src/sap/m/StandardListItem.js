@@ -11,9 +11,10 @@ sap.ui.define([
 	"./library",
 	"./ListItemBase",
 	"./Image",
-	"./StandardListItemRenderer"
+	"./StandardListItemRenderer",
+	"sap/base/Log"
 ],
-	function(coreLibrary, IconPool, ThemeParameters, Device, library, ListItemBase, Image, StandardListItemRenderer) {
+	function(coreLibrary, IconPool, ThemeParameters, Device, library, ListItemBase, Image, StandardListItemRenderer, Log) {
 	"use strict";
 
 
@@ -124,7 +125,19 @@ sap.ui.define([
 			 *
 			 * @since 1.74
 			 */
-			infoStateInverted : {type : "boolean", group : "Appearance", defaultValue : false}
+			infoStateInverted : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * This property can be used to change the default character limits for the wrapping behavior.
+			 *
+			 * If this property is set to 0, then the default character limit used by the wrapping behavior is used. For details see {@link #getWrapping wrapping}.
+			 *
+			 * <b>Note:</b>
+			 *
+			 * 0 or a positive integer must be used for this property.
+			 * @since 1.94
+			 */
+			wrapCharLimit : {type : "int", group : "Behavior", defaultValue : 0}
 		},
 		designtime: "sap/m/designtime/StandardListItem.designtime"
 	}});
@@ -147,6 +160,21 @@ sap.ui.define([
 			this._oImage = undefined;
 		}
 
+		return this;
+	};
+
+	StandardListItem.prototype.setWrapCharLimit = function(iLimit) {
+		var iOldCharLimit = this.getWrapCharLimit();
+
+		if (iOldCharLimit === iLimit) {
+		  return this;
+		}
+		if (iLimit < 0) {
+		  Log.error("The property wrapCharLimit must be 0 or greater than 0 - " + this.getId());
+		  return this;
+		}
+
+		this.setProperty("wrapCharLimit", iLimit);
 		return this;
 	};
 
@@ -378,8 +406,11 @@ sap.ui.define([
 	 * @private
 	 */
 	StandardListItem.prototype._getCollapsedText = function(sText) {
-		var iMaxCharacters = Device.system.phone ? 100 : 300;
-		return sText.substr(0, iMaxCharacters);
+		return sText.substr(0, this._getWrapCharLimit());
+	};
+
+	StandardListItem.prototype._getWrapCharLimit = function() {
+		return this.getWrapCharLimit() || (Device.system.phone ? 100 : 300);
 	};
 
 	StandardListItem.prototype.onThemeChanged = function(oEvent) {

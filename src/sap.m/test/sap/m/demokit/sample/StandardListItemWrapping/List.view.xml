@@ -19,7 +19,8 @@
 				info="{info}"
 				infoState="{highlight}"
 				type="Detail"
-				wrapping="true" />
+				wrapping="true"
+				wrapCharLimit="{wrapCharLimit}"/>
 		</items>
 	</List>
 </mvc:View>

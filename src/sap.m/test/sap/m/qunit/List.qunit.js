@@ -24,8 +24,9 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Control",
-	"sap/m/ListItemBase"
-], function(jQuery, Core, EventExtension, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, KeyCodes, Control, ListItemBase) {
+	"sap/m/ListItemBase",
+	"sap/base/Log"
+], function(jQuery, Core, EventExtension, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, KeyCodes, Control, ListItemBase, Log) {
 	"use strict";
 	createAndAppendDiv("content");
 	var styleElement = document.createElement("style");
@@ -1805,6 +1806,28 @@ sap.ui.define([
 		assert.ok(oStdLI.$().hasClass("sapMSLIWrapping"), "Wrapping style class added");
 		assert.ok($titleText.innerText.length < oStdLI.getTitle().length, "Collapsed text is rendered which has less characters than the provided title text");
 		assert.equal($titleText.innerText.length, 300, "Desktop limit for collapsed text in wrapping behavior is set correctly to 300 characters");
+
+		sinon.spy(Log, "error");
+		oStdLI.setWrapCharLimit(150);
+		Core.applyChanges();
+		assert.equal(oStdLI._getWrapCharLimit(), 150, "WrapCharLimit is configured to 150 characters");
+		assert.equal($titleText.innerText.length, 150, "Desktop limit for collapsed text in wrapping behavior is configured to 150 characters");
+
+		oStdLI.setWrapCharLimit(-1);
+		Core.applyChanges();
+		assert.equal(Log.error.callCount, 1, "Error was logged");
+
+		oStdLI.setWrapCharLimit(0);
+		Core.applyChanges();
+		assert.equal(oStdLI._getWrapCharLimit(), 300, "WrapCharLimit is configured to Default Limit");
+		assert.equal($titleText.innerText.length, 300, "wrapping character limit is set to default value when the property is set to 0");
+
+		oStdLI.setWrapCharLimit(10);
+		Core.applyChanges();
+		oStdLI.setWrapCharLimit();
+		Core.applyChanges();
+		assert.equal($titleText.innerText.length, 300, "wrapping character limit is set to default value when the property is undefined");
+
 		// safari browser returns the inner text without spaces, hence trim()
 		assert.equal($titleThreeDots.innerText.trim(), "...", "three dots are rendered");
 		assert.equal($titleButton.innerText, oRb.getText("TEXT_SHOW_MORE"), "button rendered with the correct text");
