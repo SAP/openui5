@@ -169,7 +169,8 @@ sap.ui.define([
                     text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.RESET"),
                     press: function(oEvt) {
 
-                        var oControl = oEvt.getSource().getParent().getParent().getParent();
+                        var oDialog =  oEvt.getSource().getParent().getParent();
+                        var oControl = oDialog.getParent();
 
                         var sResetText = mSettings.warningText ? mSettings.warningText : sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filterbar.ADAPT_RESET_WARNING");
                         MessageBox.warning(sResetText, {
@@ -177,6 +178,8 @@ sap.ui.define([
                             emphasizedAction: MessageBox.Action.OK,
                             onClose: function (sAction) {
                                 if (sAction === MessageBox.Action.OK) {
+                                    // --> focus "OK" button after 'reset' has been triggered
+                                    oDialog.getButtons()[0].focus();
                                     mSettings.reset(oControl);
                                 }
                             }
