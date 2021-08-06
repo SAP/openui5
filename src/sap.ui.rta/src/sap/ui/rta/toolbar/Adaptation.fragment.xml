@@ -1,6 +1,7 @@
 <core:FragmentDefinition
 		xmlns="sap.m"
-		xmlns:core="sap.ui.core" >
+		xmlns:core="sap.ui.core"
+		xmlns:toolbar="sap.ui.rta.toolbar">
 	<HBox
 			id="sapUiRta_toolbarIconAndDraftSection"
 			class="sapUiRtaToolbarIconAndDraftSection" >
@@ -25,20 +26,22 @@
 						<OverflowToolbarLayoutData priority="NeverOverflow"/>
 					</layoutData>
 				</Button>
-				<Button
+				<toolbar:OverflowToolbarButton
 						id="sapUiRta_activate"
 						icon="sap-icon://activate"
 						press=".activate(${versions>/displayedVersion})"
 						visible="{versions>/versioningEnabled}"
 						enabled="{versions>/activateEnabled}"
 						type="Transparent"
+						text="{i18n>TOL_ACTIVATE}"
 						tooltip="{i18n>TOL_ACTIVATE}" />
-				<Button
+				<toolbar:OverflowToolbarButton
 						id="sapUiRta_discardDraft"
 						icon="sap-icon://delete"
 						press=".discardDraft"
 						visible="{parts: ['versions>/displayedVersion', 'versions>/versioningEnabled' ], formatter: '.formatDiscardDraftVisible'}"
 						type="Transparent"
+						text="{i18n>TOL_DISCARD_DRAFT}"
 						tooltip="{i18n>TOL_DISCARD_DRAFT}" />
 			</content>
 		</OverflowToolbar>
@@ -75,21 +78,22 @@
 			id="sapUiRta_toolbarActionsSection"
 			class="sapUiRtaToolbarActionsSection"
 			justifyContent="End" >
-		<OverflowToolbar id="sapUiRta_actionsToolbar" >
+		<OverflowToolbar id="sapUiRta_actionsToolbar">
 			<content>
 				<ToolbarSpacer />
-				<Button
+				<toolbar:OverflowToolbarButton
 						id="sapUiRta_translate"
 						icon="sap-icon://translate"
 						press=".showTranslationPopover"
 						visible="{controls>/translationVisible}"
 						enabled="{controls>/translationEnabled}"
 						type="Transparent"
+						text="{i18n>BTN_TRANSLATE}"
 						tooltip="{i18n>BTN_TRANSLATE}">
-					<layoutData>
+					<toolbar:layoutData>
 						<OverflowToolbarLayoutData priority="Low" />
-					</layoutData>
-				</Button>
+					</toolbar:layoutData>
+				</toolbar:OverflowToolbarButton>
 				<Button
 						id="sapUiRta_undo"
 						icon="sap-icon://undo"
@@ -112,50 +116,51 @@
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
 				</Button>
-				<Button
-					id="sapUiRta_toggleChangeVisualizationButton"
-					icon="sap-icon://show"
-					press=".toggleChangeVisualization"
-					enabled="{= ${controls>/modeSwitcher} === 'adaptation'}"
-					type="Transparent"
-					tooltip="{i18n>BUT_CHANGEVISUALIZATION_SHOWCHANGES}">
-					<layoutData>
+				<toolbar:OverflowToolbarButton
+						id="sapUiRta_toggleChangeVisualizationButton"
+						icon="sap-icon://show"
+						press=".toggleChangeVisualization"
+						enabled="{= ${controls>/modeSwitcher} === 'adaptation'}"
+						type="Transparent"
+						text="{i18n>BUT_CHANGEVISUALIZATION_SHOWCHANGES}"
+						tooltip="{i18n>BUT_CHANGEVISUALIZATION_SHOWCHANGES}">
+					<toolbar:layoutData>
 						<OverflowToolbarLayoutData priority="Low" />
-					</layoutData>
-				</Button>
-				<Button
+					</toolbar:layoutData>
+				</toolbar:OverflowToolbarButton>
+				<toolbar:OverflowToolbarButton
 						id="sapUiRta_publish"
 						enabled="{controls>/publishEnabled}"
 						visible="{controls>/publishVisible}"
 						press=".publish"
 						type="Transparent"
 						text="{i18n>BTN_PUBLISH}" >
-					<layoutData>
+					<toolbar:layoutData>
 						<OverflowToolbarLayoutData priority="High" />
-					</layoutData>
-				</Button>
-				<Button
+					</toolbar:layoutData>
+				</toolbar:OverflowToolbarButton>
+				<toolbar:OverflowToolbarButton
 						id="sapUiRta_restore"
 						enabled="{controls>/restoreEnabled}"
 						visible="{path: 'versions>/versioningEnabled', formatter: '.showRestore'}"
 						press=".restore"
 						type="Transparent"
 						text="{i18n>BTN_RESTORE}" >
-					<layoutData>
+					<toolbar:layoutData>
 						<OverflowToolbarLayoutData priority="High" />
-					</layoutData>
-				</Button>
-				<Button
+					</toolbar:layoutData>
+				</toolbar:OverflowToolbarButton>
+				<toolbar:OverflowToolbarButton
 						id="sapUiRta_manageApps"
 						press=".manageApps"
 						enabled="{controls>/manageAppsEnabled}"
 						visible="{controls>/manageAppsVisible}"
 						type="Transparent"
 						text="{i18n>BTN_MANAGE_APPS_TXT}" >
-					<layoutData>
+					<toolbar:layoutData>
 						<OverflowToolbarLayoutData priority="Low" />
-					</layoutData>
-				</Button>
+					</toolbar:layoutData>
+				</toolbar:OverflowToolbarButton>
 				<MenuButton
 						id="sapUiRta_appVariantOverview"
 						enabled="{controls>/appVariantsOverviewEnabled}"
@@ -178,23 +183,18 @@
 						<OverflowToolbarLayoutData priority="Low" />
 					</layoutData>
 				</MenuButton>
-				<Button
+				<toolbar:OverflowToolbarButton
 						id="sapUiRta_saveAs"
 						visible="{controls>/saveAsVisible}"
 						enabled="{controls>/saveAsEnabled}"
 						press=".saveAs"
 						type="Transparent"
 						text="{i18n>BTN_SAVE_AS}" >
-					<layoutData>
+					<toolbar:layoutData>
 						<OverflowToolbarLayoutData priority="Low" />
-					</layoutData>
-				</Button>
+					</toolbar:layoutData>
+				</toolbar:OverflowToolbarButton>
 			</content>
-			<!--layoutData>
-				<FlexItemData
-						growFactor="1"
-						minWidth="0" />
-			</layoutData-->
 		</OverflowToolbar>
 		<Button
 				id="sapUiRta_exit"
