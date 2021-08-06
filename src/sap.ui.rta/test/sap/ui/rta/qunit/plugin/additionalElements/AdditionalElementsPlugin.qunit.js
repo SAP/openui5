@@ -25,6 +25,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
+	"sap/ui/rta/plugin/additionalElements/ActionExtractor",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4"
@@ -53,6 +54,7 @@ sap.ui.define([
 	AdditionalElementsPlugin,
 	AdditionalElementsAnalyzer,
 	AddElementsDialog,
+	AdditionalElementsActionExtractor,
 	RTAPlugin,
 	RTAUtils,
 	sinon
@@ -129,6 +131,7 @@ sap.ui.define([
 					return sVariantManagementReference;
 				}};
 			}
+			return undefined;
 		}
 	};
 	var sandbox = sinon.sandbox.create();
@@ -299,11 +302,12 @@ sap.ui.define([
 			QUnit.test(sPrefix + test.msg, function (assert) {
 				return createOverlayWithAggregationActions.call(this, test.dtMetadata, sOverlayType)
 					.then(function (oOverlay) {
+						function fnReturnOverlay() {
+							return oOverlay;
+						}
 						this.oDesignTime.addPlugin(this.oPlugin);
 						this.oPlugin.registerElementOverlay(oOverlay);
-						return DtUtil.waitForSynced(this.oDesignTime, function () {
-							return oOverlay;
-						})();
+						return DtUtil.waitForSynced(this.oDesignTime, fnReturnOverlay)();
 					}.bind(this))
 					.then(function (oOverlay) {
 						var sExpectedText = this.oRTATexts.getText("CTX_ADD_ELEMENTS", "I18N_KEY_USER_FRIENDLY_CONTROL_NAME");
@@ -353,6 +357,7 @@ sap.ui.define([
 							changeType: "unhideControl"
 						};
 					}
+					return undefined;
 				}
 			}, ON_SIBLING)
 				.then(function (oOverlay) {
@@ -553,7 +558,8 @@ sap.ui.define([
 
 			QUnit.test(sPrefix + "when the control's dt metadata has NO addViaDelegate and a reveal action", function (assert) {
 				var done = assert.async();
-				this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
+
+				function fnExecuteAssertions(oEvent) {
 					var oCompositeCommand = oEvent.getParameter("command");
 					if (test.sibling) {
 						assert.equal(oCompositeCommand.getCommands().length, 2, "then for the one selected to be revealed element two commands are created");
@@ -569,7 +575,9 @@ sap.ui.define([
 						assert.equal(oCompositeCommand.getCommands()[1].getMovedElements()[0].targetIndex, 0, "then the move command moves the element to the first position");
 					}
 					done();
-				});
+				}
+
+				this.oPlugin.attachEventOnce("elementModified", fnExecuteAssertions);
 
 				return test.overlay.call(this, {
 					reveal: {
@@ -961,6 +969,7 @@ sap.ui.define([
 				if (arguments[1][0] === this.oPseudoPublicParentOverlay) {
 					return true;
 				}
+				return undefined;
 			}.bind(this));
 			return createOverlayWithAggregationActions.call(this,
 				{
@@ -982,11 +991,12 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("when the control's dt metadata has a disabled reveal action along with an enabled reveal action on the responsible element and _getActions() is called", function (assert) {
+		QUnit.test("when the control's dt metadata has a disabled reveal action along with an enabled reveal action on the responsible element and getActions() is called", function (assert) {
 			sandbox.stub(this.oPlugin, "isAvailable").callsFake(function () {
 				if (arguments[1][0] === this.oPseudoPublicParentOverlay) {
 					return true;
 				}
+				return undefined;
 			}.bind(this));
 			return createOverlayWithAggregationActions.call(this,
 				{
@@ -1006,13 +1016,13 @@ sap.ui.define([
 				ON_CONTAINER
 			)
 				.then(function (oCreatedOverlay) {
-					return this.oPlugin._getActions(true, oCreatedOverlay);
+					return AdditionalElementsActionExtractor.getActions(true, oCreatedOverlay, this.oPlugin);
 				}.bind(this)).then(function (mActions) {
 					assert.ok(isEmptyObject(mActions), "then no actions were returned");
 				});
 		});
 
-		QUnit.test("when the control's dt metadata has a reveal and addViaDelegate action on the responsible element and _getActions() is called", function (assert) {
+		QUnit.test("when the control's dt metadata has a reveal and addViaDelegate action on the responsible element and getActions() is called", function (assert) {
 			return createOverlayWithAggregationActions.call(this,
 				{
 					add: {
@@ -1030,14 +1040,14 @@ sap.ui.define([
 					}
 				}, ON_CONTAINER)
 				.then(function (oCreatedOverlay) {
-					return this.oPlugin._getActions(true, oCreatedOverlay);
+					return AdditionalElementsActionExtractor.getActions(true, oCreatedOverlay, this.oPlugin);
 				}.bind(this)).then(function (mActions) {
 					assert.equal(mActions['contentLeft'].reveal.elements.length, 2, "then the reveal actions has two elements from the responsible element");
 					assert.equal(mActions['contentLeft'].addViaDelegate.action.changeType, "addFields", "then the addViaDelegate action was retrieved from the responsible element");
 				});
 		});
 
-		QUnit.test("when the control's dt metadata has a custom add action on the responsible element and _getActions() is called", function (assert) {
+		QUnit.test("when the control's dt metadata has a custom add action on the responsible element and getActions() is called", function (assert) {
 			return createOverlayWithAggregationActions.call(this,
 				{
 					add: {
@@ -1052,14 +1062,14 @@ sap.ui.define([
 					}
 				}, ON_CONTAINER)
 				.then(function (oCreatedOverlay) {
-					return this.oPlugin._getActions(true, oCreatedOverlay);
+					return AdditionalElementsActionExtractor.getActions(true, oCreatedOverlay, this.oPlugin);
 				}.bind(this)).then(function (mActions) {
 					assert.equal(mActions['contentLeft'].addViaCustom.items.length, 2, "then the custom add action has two elements from the responsible element");
 					assert.ok(typeof mActions['contentLeft'].addViaCustom.action.getItems === "function", "then the custom add action was retrieved from the responsible element");
 				});
 		});
 
-		QUnit.test("when the control's dt metadata has an addViaDelegate action on the responsible element and _getActions() is called", function (assert) {
+		QUnit.test("when the control's dt metadata has an addViaDelegate action on the responsible element and _isEditableCheck is called", function (assert) {
 			return createOverlayWithAggregationActions.call(this,
 				{
 					add: {
@@ -1145,7 +1155,7 @@ sap.ui.define([
 				}
 			}, ON_CONTAINER)
 				.then(function (oCreatedOverlay) {
-					return this.oPlugin._getActions(true, oCreatedOverlay);
+					return AdditionalElementsActionExtractor.getActions(true, oCreatedOverlay, this.oPlugin);
 				}.bind(this)).then(function (mActions) {
 					assert.notOk(mActions["contentLeft"].hasOwnProperty("addViaDelegate"), "then the invalid add via delegate action is filtered");
 					assert.ok(mActions["contentLeft"].hasOwnProperty("reveal"), "then the reveal action is still available");
@@ -1183,7 +1193,7 @@ sap.ui.define([
 				delegateModulePath: "path/to/instancespecific/delegate"
 			}, ON_CONTAINER)
 				.then(function (oCreatedOverlay) {
-					return this.oPlugin._getActions(true, oCreatedOverlay);
+					return AdditionalElementsActionExtractor.getActions(true, oCreatedOverlay, this.oPlugin);
 				}.bind(this)).then(function (mActions) {
 					assert.ok(mActions["contentLeft"].hasOwnProperty("addViaDelegate"), "then the add via delegate action for the instance-sepcific delegate is available");
 				});
@@ -1551,10 +1561,10 @@ sap.ui.define([
 			this.oPlugin.registerElementOverlay(oSiblingOverlay);
 		});
 
-		QUnit.test("when '_getActions' is called multiple times without invalidate", function (assert) {
-			var oGetRevealActionsSpy = sandbox.spy(this.oPlugin, "_getRevealActions");
-			var oGetAddActionsSpy = sandbox.spy(this.oPlugin, "_getAddViaDelegateActions");
-			var oGetAddCustomActionsSpy = sandbox.spy(this.oPlugin, "_getCustomAddActions");
+		QUnit.test("when 'getActions' is called multiple times without invalidate", function (assert) {
+			var oGetRevealActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getRevealActions");
+			var oGetAddActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getAddViaDelegateActions");
+			var oGetAddCustomActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getCustomAddActions");
 
 			return createOverlayWithAggregationActions.call(this,
 				{
@@ -1571,14 +1581,14 @@ sap.ui.define([
 				ON_SIBLING
 			)
 				.then(function (oOverlay) {
-					return this.oPlugin._getActions(true, oOverlay, false)
+					return AdditionalElementsActionExtractor.getActions(true, oOverlay, this.oPlugin, false)
 						.then(function () {
 							assert.equal(oGetRevealActionsSpy.callCount, 1, "the reveal action was calculated once");
 							assert.equal(oGetAddActionsSpy.callCount, 1, "the add action was calculated once");
 							assert.equal(oGetAddCustomActionsSpy.callCount, 1, "the add custom action was calculated once");
 						})
 						.then(function () {
-							return this.oPlugin._getActions(true, oOverlay, false);
+							return AdditionalElementsActionExtractor.getActions(true, oOverlay, this.oPlugin, false);
 						}.bind(this))
 						.then(function () {
 							assert.equal(oGetRevealActionsSpy.callCount, 1, "the reveal action was not calculated again");
@@ -1588,10 +1598,10 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("when '_getActions' is called multiple times with invalidate", function (assert) {
-			var oGetRevealActionsSpy = sandbox.spy(this.oPlugin, "_getRevealActions");
-			var oGetAddActionsSpy = sandbox.spy(this.oPlugin, "_getAddViaDelegateActions");
-			var oGetAddCustomActionsSpy = sandbox.spy(this.oPlugin, "_getCustomAddActions");
+		QUnit.test("when 'getActions' is called multiple times with invalidate", function (assert) {
+			var oGetRevealActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getRevealActions");
+			var oGetAddActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getAddViaDelegateActions");
+			var oGetAddCustomActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getCustomAddActions");
 
 			return createOverlayWithAggregationActions.call(this,
 				{
@@ -1608,14 +1618,14 @@ sap.ui.define([
 				ON_SIBLING
 			)
 				.then(function (oOverlay) {
-					return this.oPlugin._getActions(true, oOverlay, true)
+					return AdditionalElementsActionExtractor.getActions(true, oOverlay, this.oPlugin, true)
 						.then(function () {
 							assert.equal(oGetRevealActionsSpy.callCount, 1, "the reveal action was calculated once");
 							assert.equal(oGetAddActionsSpy.callCount, 1, "the add action was calculated once");
 							assert.equal(oGetAddCustomActionsSpy.callCount, 1, "the add custom action was calculated once");
 						})
 						.then(function () {
-							return this.oPlugin._getActions(true, oOverlay, true);
+							return AdditionalElementsActionExtractor.getActions(true, oOverlay, this.oPlugin, true);
 						}.bind(this))
 						.then(function () {
 							assert.equal(oGetRevealActionsSpy.callCount, 2, "the reveal action was calculated again");
@@ -1990,7 +2000,7 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("when the control gets destroyed during isEditable", function (assert) {
 			var oUtilsSpy = sandbox.spy(RTAUtils, "doIfAllControlsAreAvailable");
-			sandbox.stub(this.oPlugin, "_getActions").callsFake(function () {
+			sandbox.stub(AdditionalElementsActionExtractor, "getActions").callsFake(function () {
 				if (!this.oButton._bIsBeingDestroyed) {
 					this.oButton.destroy();
 				}
