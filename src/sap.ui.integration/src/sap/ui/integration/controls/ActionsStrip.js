@@ -138,7 +138,6 @@ sap.ui.define([
 					tooltip: mConfig.tooltip || mConfig.text,
 					type: mConfig.buttonType,
 					ariaHasPopup: mConfig.ariaHasPopup,
-					enabled: mConfig.enabled,
 					visible: mConfig.visible
 				});
 			} else {
@@ -147,7 +146,6 @@ sap.ui.define([
 					tooltip: mConfig.tooltip,
 					type: mConfig.buttonType,
 					ariaHasPopup: mConfig.ariaHasPopup,
-					enabled: mConfig.enabled,
 					visible: mConfig.visible
 				});
 			}
