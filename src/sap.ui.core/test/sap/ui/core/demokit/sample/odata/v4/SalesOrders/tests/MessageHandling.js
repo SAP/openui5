@@ -19,6 +19,7 @@ sap.ui.define([
 					+ " discount w/o approver",
 				sItemNoteWarning = "Enter a Note",
 				aExpectedLogs = [],
+				sNoteSuccess = "This is your requested bound header message",
 				sNoteWarning = "Enter customer reference if available",
 				sNoteFailure = "Property `Note` value `RAISE_ERROR` not allowed!",
 				sQuantityError = "Minimum order quantity is 2",
@@ -51,6 +52,10 @@ sap.ui.define([
 			Then.onTheMainPage.checkMessageStrip("SalesOrderList", "Error");
 			Then.onTheMainPage.checkHighlight(1, "Error");
 
+			When.onTheMainPage.changeNoteInSalesOrders(0, "HEADER_MESSAGE");
+			When.onTheMainPage.pressSaveSalesOrdersButton();
+			Then.onTheMainPage.checkNoteValueState(0, "Success", sNoteSuccess);
+
 			When.onTheMainPage.pressMessagesButton();
 			Then.onTheMessagePopover.checkMessages([{
 				message : sUnboundInfo,
@@ -61,6 +66,9 @@ sap.ui.define([
 			}, {
 				message : sQuantityError,
 				type : MessageType.Error
+			}, {
+				message : sNoteSuccess,
+				type : MessageType.Success
 			}]);
 
 			When.onTheMessagePopover.selectMessage(sUnboundInfo);

@@ -22587,8 +22587,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// JIRA: CPOUI5UISERVICESV3-1153
+	// JIRA: CPOUI5ODATAV4-1082
 	["$direct", "$auto"].forEach(function (sGroupId) {
-		QUnit.test("Unbound messages in response: " + sGroupId, function (assert) {
+		QUnit.test("Header messages in response: " + sGroupId, function (assert) {
 			var aMessages = [{
 					code : "foo-42",
 					longtextUrl : "../Messages(1)/LongText/$value",
@@ -22603,7 +22604,12 @@ sap.ui.define([
 					code : "foo-22",
 					message : "text2",
 					numericSeverity : 1,
-					target : "n/a" // JIRA: CPOUI5ODATAV4-1086
+					target : "" // JIRA: CPOUI5ODATAV4-1082
+				}, {
+					code : "foo-13",
+					message : "text3",
+					numericSeverity : 1,
+					target : "Name" // JIRA: CPOUI5ODATAV4-1082
 				}],
 				oModel = createTeaBusiModel({groupId : sGroupId}),
 				sView = '\
@@ -22611,6 +22617,10 @@ sap.ui.define([
 	parameters : {custom : \'foo\'}}">\
 	<Text id="id" text="{ID}"/>\
 </FlexBox>';
+
+			function withTransition(oObject) {
+				return Object.assign({}, {transition : true}, oObject);
+			}
 
 			this.expectRequest("TEAMS('42')/TEAM_2_MANAGER?custom=foo", {ID : "23"}, {
 					"sap-messages" : JSON.stringify(aMessages)
@@ -22621,7 +22631,7 @@ sap.ui.define([
 					message : "text0",
 					persistent : true,
 					technicalDetails : {
-						originalMessage : aMessages[0]
+						originalMessage : withTransition(aMessages[0])
 					},
 					type : "Warning"
 				}, {
@@ -22629,15 +22639,25 @@ sap.ui.define([
 					message : "text1",
 					persistent : true,
 					technicalDetails : {
-						originalMessage : aMessages[1]
+						originalMessage : withTransition(aMessages[1])
 					},
 					type : "Information"
 				}, {
 					code : "foo-22",
 					message : "text2",
 					persistent : true,
+					target : "/TEAMS('42')/TEAM_2_MANAGER",
 					technicalDetails : {
-						originalMessage : aMessages[2]
+						originalMessage : withTransition(aMessages[2])
+					},
+					type : "Success"
+				}, {
+					code : "foo-13",
+					message : "text3",
+					persistent : true,
+					target : "/TEAMS('42')/TEAM_2_MANAGER/Name",
+					technicalDetails : {
+						originalMessage : withTransition(aMessages[3])
 					},
 					type : "Success"
 				}])

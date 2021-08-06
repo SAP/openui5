@@ -954,62 +954,26 @@ sap.ui.define([
 				oError = new Error("Failure"),
 				oHelperMock = this.mock(_Helper),
 				sLogMessage = "Failed to read path /Product('1')/Unknown",
-				oExtractedMessages = {
-					bound : [],
-					unbound : [{}]
-				},
 				oModel = this.createModel(),
 				oModelMock = this.mock(oModel);
 
 			oError.stack = oFixture.stack;
+			oError.resourcePath = "resource/path";
 
 			oHelperMock.expects("extractMessages").withExactArgs(sinon.match.same(oError))
-				.returns(oExtractedMessages);
+				.returns("~extractedMessages~");
 			this.oLogMock.expects("error").withExactArgs(sLogMessage, oFixture.message, sClassName)
 				.twice();
 			oModelMock.expects("reportStateMessages").never();
 			oModelMock.expects("reportTransitionMessages")
 				.once()// add each error only once to the MessageManager
-				.withExactArgs(sinon.match.same(oExtractedMessages.unbound));
+				.withExactArgs("~extractedMessages~", "resource/path");
 
 			// code under test
 			oModel.reportError(sLogMessage, sClassName, oError);
 			oModel.reportError(sLogMessage, sClassName, oError); // oError.$reported is now true
 		});
 	});
-
-	//*********************************************************************************************
-[false, true].forEach(function(bBoundMessages) {
-	QUnit.test("reportError: with OData error and extracted messages", function () {
-		var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
-			oError = {
-				error : {},
-				stack : "stack",
-				message : "message",
-				resourcePath : "/Product('1')?custom=foo"
-			},
-			sLogMessage = "Failed to read path /Product('1')/Unknown",
-			oExtractedMessages = {bound : [], unbound : []},
-			oModel = this.createModel();
-
-		if (bBoundMessages) {
-			oExtractedMessages.bound = ["~"];
-		}
-		this.oLogMock.expects("error")
-			.withExactArgs(sLogMessage, oError.message + "\n" + oError.stack, sClassName);
-		this.mock(_Helper).expects("extractMessages")
-			.withExactArgs(oError)
-			.returns(oExtractedMessages);
-		this.mock(oModel).expects("reportTransitionMessages")
-			.withExactArgs(oExtractedMessages.unbound);
-		this.mock(oModel).expects("reportStateMessages")
-			.exactly(bBoundMessages ? 1 : 0)
-			.withExactArgs("/Product('1')", {"" : oExtractedMessages.bound}, []);
-
-		// code under test
-		oModel.reportError(sLogMessage, sClassName, oError);
-	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("reportError on canceled error", function () {
@@ -1698,10 +1662,14 @@ sap.ui.define([
 			sResourcePath = "~res~";
 
 		oModelMock.expects("createUI5Message")
-			.withExactArgs(sinon.match.same(aMessages[0]), sResourcePath, undefined, true)
+			.withExactArgs(sinon.match(function (oMessage) {
+				return oMessage === aMessages[0] && oMessage.transition === true;
+			}), sResourcePath)
 			.returns("~UI5msg0~");
 		oModelMock.expects("createUI5Message")
-			.withExactArgs(sinon.match.same(aMessages[1]), sResourcePath, undefined, true)
+			.withExactArgs(sinon.match(function (oMessage) {
+				return oMessage === aMessages[1] && oMessage.transition === true;
+			}), sResourcePath)
 			.returns("~UI5msg1~");
 		oModelMock.expects("fireMessageChange")
 			.withExactArgs(sinon.match({newMessages: ["~UI5msg0~", "~UI5msg1~"]}));
@@ -2533,32 +2501,43 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[{
-	target : null
-}, {
-	target : "n/a"
-}, {
-	target : "n/a",
-	additionalTargets : ["add0", "add1"]
-}].forEach(function (oFixture, i) {
-	QUnit.test("createUI5Message: unbound: " + i, function (assert) {
-		var oModel = this.createModel(),
+	QUnit.test("createUI5Message: no resourcePath", function (assert) {
+		var oHelperMock = this.mock(_Helper),
+			oModel = this.createModel(),
 			oRawMessage = {
-				target : oFixture.target,
-				additionalTargets : oFixture.additionalTargets
+				target : "/foo"
 			},
 			oUI5Message;
 
-		this.mock(_Helper).expects("createTechnicalDetails"); // ignore details
-		this.mock(_Helper).expects("buildPath").never();
+		oHelperMock.expects("createTechnicalDetails"); // ignore details
 
 		// code under test
-		oUI5Message = oModel.createUI5Message(oRawMessage, "~resourcePath~", "n/a", true);
+		oUI5Message = oModel.createUI5Message(oRawMessage);
 
-		assert.deepEqual(oUI5Message.getTargets(), [""]);
-		assert.strictEqual(oUI5Message.getPersistent(), true);
+		assert.deepEqual(oUI5Message.getTargets(), ["/foo"]);
 	});
-});
+
+	//*********************************************************************************************
+	QUnit.test("createUI5Message: resource path w/ query string", function (assert) {
+		var oHelperMock = this.mock(_Helper),
+			oModel = this.createModel(),
+			oRawMessage = {
+				target : "foo",
+				additionalTargets : ["bar", "baz"]
+			},
+			oUI5Message;
+
+		oHelperMock.expects("createTechnicalDetails"); // ignore details
+
+		// code under test
+		oUI5Message = oModel.createUI5Message(oRawMessage, "~resourcePath~?foo=bar", "~cachePath~");
+
+		assert.deepEqual(oUI5Message.getTargets(), [
+			"/~resourcePath~/~cachePath~/foo",
+			"/~resourcePath~/~cachePath~/bar",
+			"/~resourcePath~/~cachePath~/baz"
+		]);
+	});
 });
 //TODO constructor: test that the service root URL is absolute?
 //TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId

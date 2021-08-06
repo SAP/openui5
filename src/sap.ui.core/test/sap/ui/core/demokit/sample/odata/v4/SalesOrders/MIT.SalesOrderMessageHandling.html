@@ -32,10 +32,17 @@
 			<li><b>Check:</b> When clicking into the <code>Note</code> field of the sales order with
 				the ID <code>0500000001</code> the warning "Enter customer reference if available"
 				is displayed.</li>
+			<li>Enter the value "HEADER_MESSAGE" in the <code>Note</code> input field for the
+				sales order with the ID <code>0500000000</code>.</li>
+			<li>Press the <code>Save sales orders</code> button in the <code>New Sales Orders</code>
+			</li>
+			<li><b>Check:</b> The <code>Note</code> field is highlighted as a success.</li>
 			<li>Click on the <code>Show Messages</code> button.</li>
-			<li><b>Check:</b> A popover is displayed containing 2 messages: an information message
-				with the text "Example for an unbound message" and a warning message with the text
-				"Enter customer reference if available".</li>
+			<li><b>Check:</b> A popover is displayed containing 4 messages: an information message
+				with the text "Example for an unbound message", a warning message with the text
+				"Enter customer reference if available", an error message with the text
+				"Minimum order quantity is 2", and a success message with the text
+				"This is your requested bound header message".</li>
 			<li><b>Check:</b>A message strip is displayed above the table indicating that there are
 				warnings for the table.</li>
 			<li>Click on the message "Example for an unbound message" to get to the message details.
