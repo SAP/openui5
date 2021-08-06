@@ -2,8 +2,9 @@
 sap.ui.define([
     "sap/ui/mdc/p13n/P13nBuilder",
     "sap/ui/mdc/p13n/panels/BasePanel",
-    "sap/ui/model/json/JSONModel"
-], function(P13nBuilder, BasePanel, JSONModel) {
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/core/Element"
+], function(P13nBuilder, BasePanel, JSONModel, Element) {
     "use strict";
 
     QUnit.module("API Tests", {
@@ -190,6 +191,50 @@ sap.ui.define([
             oDialog.destroy();
 
             done();
+        });
+
+    });
+
+    QUnit.test("Check focus handling after reset", function(assert){
+
+        var done = assert.async();
+
+        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+        var oModel = new JSONModel(oP13nData);
+        var oPanel = new BasePanel(oPanel);
+        var oResetBtn, oDialog;
+
+        oPanel.setP13nModel(oModel);
+
+        P13nBuilder.createP13nDialog(oPanel, {
+            title: "Test",
+            reset: {
+                onExecute: function() {
+
+                    //4) check if the current focused control is the P13nDialogs reset btn
+                    var nActiveElement = document.activeElement;
+                    assert.ok(oDialog.getButtons()[0].getFocusDomRef() === nActiveElement, "The OK button control of the p13n Dialog is focused");
+                    oDialog.destroy();
+                    done();
+
+                }
+            },
+            id: "myTestDialog"
+        }).then(function(oP13nDialog){
+            oDialog = oP13nDialog;
+            oDialog.placeAt("qunit-fixture");
+
+            //1) Trigger reset on Dialog
+            oResetBtn = oDialog.getCustomHeader().getContentRight()[0];
+            oResetBtn.firePress();
+
+            //2) --> Find MessageBox opened by Dialog
+            var oMessageBox = Element.registry.filter(function(oElement){return oElement.getMetadata().isA("sap.m.Dialog") && oElement.getTitle() === "Warning";})[0];
+
+            //3) confirm warning
+            oMessageBox.getButtons()[0].firePress();
+            sap.ui.getCore().applyChanges();
+
         });
 
     });
