@@ -458,11 +458,13 @@ sap.ui.define([
 			assert.ok(!this.oVariantManagement.oInputManualKey.getVisible());
 
 			assert.ok(!this.oVariantManagement._getShowExecuteOnSelection());
+			assert.ok(!this.oVariantManagement._getShowPublic());
 
 			var oGrid = fGetGrid(this.oVariantManagement.oSaveAsDialog);
+
 			var oGridContent = oGrid.getContent();
 			assert.ok(oGridContent);
-			assert.equal(oGridContent.length, 1);
+			assert.equal(oGridContent.length, 2);
 
 			this.oVariantManagement.oSaveAsDialog.destroy();
 			this.oVariantManagement.oSaveAsDialog = undefined;
@@ -470,6 +472,7 @@ sap.ui.define([
 			this.oVariantManagement.oPublic.destroy();
 
 			this.oVariantManagement._setShowExecuteOnSelection(true);
+			this.oVariantManagement._setShowPublic(true);
 			this.oVariantManagement._createSaveAsDialog();
 
 			assert.ok(this.oVariantManagement.oSaveAsDialog);
@@ -478,10 +481,12 @@ sap.ui.define([
 			this.oVariantManagement._openSaveAsDialog();
 
 			assert.ok(this.oVariantManagement._getShowExecuteOnSelection());
+			assert.ok(this.oVariantManagement._getShowPublic());
+
 			oGrid = fGetGrid(this.oVariantManagement.oSaveAsDialog);
 			oGridContent = oGrid.getContent();
 			assert.ok(oGridContent);
-			assert.equal(oGridContent.length, 2);
+			assert.equal(oGridContent.length, 3);
 
 			assert.ok(!this.oVariantManagement.getManualVariantKey());
 			assert.ok(!this.oVariantManagement.oInputManualKey.getVisible());
@@ -492,6 +497,31 @@ sap.ui.define([
 
 			assert.ok(this.oVariantManagement.oInputManualKey.getVisible());
 			assert.ok(this.oVariantManagement.oLabelKey.getVisible());
+		});
+
+		QUnit.test("Create public checkbox on SaveAs Dialog for End - and KeyUser", function(assert) {
+			//end user
+			assert.ok(!this.oVariantManagement.oSaveAsDialog);
+
+			this.oVariantManagement._setShowPublic(true);
+			this.oVariantManagement._createSaveAsDialog();
+
+			this.oVariantManagement._openSaveAsDialog();
+			assert.ok(this.oVariantManagement.oPublic.getVisible());
+
+			this.oVariantManagement.oSaveAsDialog.destroy();
+			this.oVariantManagement.oSaveAsDialog = undefined;
+			this.oVariantManagement.oExecuteOnSelect.destroy();
+			this.oVariantManagement.oPublic.destroy();
+			this.oVariantManagement._createSaveAsDialog();
+
+			//key user
+			this.oVariantManagement._setShowPublic(true);
+			assert.ok(!this.oVariantManagement._bShowPublic);
+			assert.ok(this.oVariantManagement.oPublic.getVisible());
+			this.oVariantManagement.openSaveAsDialogForKeyUser("KeyUserStyleClass");
+			assert.ok(this.oVariantManagement._bShowPublic);
+			assert.ok(!this.oVariantManagement.oPublic.getVisible());
 		});
 
 		QUnit.test("Checking openSaveAsDialogForKeyUser", function(assert) {
