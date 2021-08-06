@@ -47,17 +47,25 @@ sap.ui.define([
 		};
 
 		var oDynamicManifest = {
+			"sap.app": {
+				"id": "testsuite.adaptive.card1",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "AdaptiveCard",
 				"content": {
 					"request": {
-						"url": "test-resources/sap/ui/integration/qunit/manifests/adaptive-card.json"
+						"url": "./adaptive-card.json"
 					}
 				}
 			}
 		};
 
 		var oDynamicManifest2 = {
+			"sap.app": {
+				"id": "testsuite.adaptive.card2",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "AdaptiveCard",
 				"content": {
@@ -68,6 +76,10 @@ sap.ui.define([
 
 
 		var oTemplateManifest = {
+			"sap.app": {
+				"id": "testsuite.adaptive.card12",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "AdaptiveCard",
 				"content": {
@@ -90,6 +102,10 @@ sap.ui.define([
 		};
 
 		var oTemplateManifest2 = {
+			"sap.app": {
+				"id": "testsuite.adaptive.card13",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "AdaptiveCard",
 				"content": {
@@ -110,6 +126,10 @@ sap.ui.define([
 		};
 
 		var oTemplateManifest3 = {
+			"sap.app": {
+				"id": "testsuite.adaptive.card3",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "AdaptiveCard",
 				"content": {
@@ -118,7 +138,7 @@ sap.ui.define([
 					"version": "1.0",
 					"data": {
 						"request": {
-							"url": "test-resources/sap/ui/integration/qunit/manifests/adaptive-card-data.json"
+							"url": "./adaptive-card-data.json"
 						}
 					},
 					"body": [
@@ -136,6 +156,10 @@ sap.ui.define([
 		};
 
 		var oTemplateManifest4 = {
+			"sap.app": {
+				"id": "testsuite.adaptive.card4",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "AdaptiveCard",
 				"content": {
@@ -154,6 +178,10 @@ sap.ui.define([
 		};
 
 		var oTemplateManifest5 = {
+			"sap.app": {
+				"id": "testsuite.adaptive.card5",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "AdaptiveCard",
 				"content": {
@@ -174,6 +202,10 @@ sap.ui.define([
 		};
 
 		var oTemplateManifest6 = {
+			"sap.app": {
+				"id": "testsuite.adaptive.card6",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "AdaptiveCard",
 				"data": {
@@ -196,11 +228,15 @@ sap.ui.define([
 		};
 
 		var oTemplateManifest7 = {
+			"sap.app": {
+				"id": "testsuite.adaptive.card7",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "AdaptiveCard",
 				"data": {
 					"request": {
-						"url": "test-resources/sap/ui/integration/qunit/manifests/adaptive-card-data.json"
+						"url": "./adaptive-card-data.json"
 					}
 				},
 				"content": {
@@ -218,6 +254,10 @@ sap.ui.define([
 		};
 
 		var oTemplateManifest8 = {
+			"sap.app": {
+				"id": "testsuite.adaptive.card8",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "AdaptiveCard",
 				"data": {
@@ -248,6 +288,10 @@ sap.ui.define([
 		};
 
 		var oTemplateManifest9 = {
+			"sap.app": {
+				"id": "testsuite.adaptive.card9",
+				"type": "card"
+			},
 			"sap.card": {
 				"type": "AdaptiveCard",
 				"data": {
@@ -275,6 +319,10 @@ sap.ui.define([
 		};
 
 		var oMarkdownManifest1 = {
+			"sap.app": {
+				"id": "testsuite.adaptive.card14",
+				"type": "card"
+			},
 			"sap.card": {
 				"configuration": {
 					"enableMarkdown": true
@@ -295,6 +343,10 @@ sap.ui.define([
 		};
 
 		var oMarkdownManifest2 = {
+			"sap.app": {
+				"id": "testsuite.adaptive.card15",
+				"type": "card"
+			},
 			"sap.card": {
 				"configuration": {
 					"enableMarkdown": false
@@ -315,6 +367,10 @@ sap.ui.define([
 		};
 
 		var mActionSubmitManifest = {
+			"sap.app": {
+				"id": "testsuite.adaptive.card16",
+				"type": "card"
+			},
 			"sap.card": {
 				"configuration": {
 					"actionHandlers": {
@@ -380,7 +436,8 @@ sap.ui.define([
 		QUnit.test("Adaptive Card with dynamically loaded MS JSON descriptor", function (assert) {
 			var done = assert.async();
 			var oCard = new Card({
-				manifest: oDynamicManifest
+				manifest: oDynamicManifest,
+				baseUrl: sap.ui.require.toUrl("test-resources/sap/ui/integration/qunit/manifests")
 			});
 
 			var oLoadManifestFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_loadManifestFromUrl");
@@ -652,7 +709,8 @@ sap.ui.define([
 		QUnit.test("Templating with data feature on content level - request", function (assert) {
 			var done = assert.async();
 			var oCard = new Card({
-				manifest: oTemplateManifest3
+				manifest: oTemplateManifest3,
+				baseUrl: sap.ui.require.toUrl("test-resources/sap/ui/integration/qunit/manifests/")
 			});
 
 			var oSetupCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupMSCardContent");
@@ -697,7 +755,8 @@ sap.ui.define([
 		QUnit.test("Templating with data feature on card level - request", function (assert) {
 			var done = assert.async();
 			var oCard = new Card({
-				manifest: oTemplateManifest7
+				manifest: oTemplateManifest7,
+				baseUrl: sap.ui.require.toUrl("test-resources/sap/ui/integration/qunit/manifests/")
 			});
 
 			var oSetupCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupMSCardContent");
