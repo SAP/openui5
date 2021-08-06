@@ -316,6 +316,7 @@ sap.ui.define([
 			} else if ((iKey === KeyCodes.ARROW_UP || iKey === KeyCodes.ARROW_DOWN) && !oEvent.altKey && !oEvent.metaKey) {
 				// Arrows up/down increase/decrease currently active clock
 				oClock && oClock.getEnabled() && oClock.modifyValue(iKey === KeyCodes.ARROW_UP);
+				oEvent.preventDefault();
 			} else if ((iKey === KeyCodes.PAGE_UP || iKey === KeyCodes.PAGE_DOWN) && !oEvent.altKey && !oEvent.metaKey) {
 				oEvent.preventDefault();
 				if (!oEvent.shiftKey && !oEvent.ctrlKey) {
