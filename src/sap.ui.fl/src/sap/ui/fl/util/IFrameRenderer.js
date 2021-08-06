@@ -37,7 +37,7 @@ sap.ui.define([
 		oRm.style("display", "block");
 		oRm.style("border", "none");
 
-		oRm.attr("sandbox", "allow-forms allow-popups allow-scripts allow-same-origin");
+		oRm.attr("sandbox", "allow-forms allow-popups allow-scripts allow-same-origin allow-modals");
 		oRm.attr("src", oIFrame.getUrl());
 		var sTitle = oIFrame.getTitle();
 		if (sTitle) {
