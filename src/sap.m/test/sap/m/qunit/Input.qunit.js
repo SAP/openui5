@@ -4892,6 +4892,107 @@ sap.ui.define([
 		oStub.restore();
 	});
 
+	QUnit.module("Clear Icon");
+
+	QUnit.test("Clear icon should not be visible by default", function (assert) {
+		var oInput = new Input().placeAt("content");
+		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
+
+		assert.notOk(oInput._oClearButton, "clear icon should not be created by default");
+
+		oInput.setShowClearIcon(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(oInput._oClearButton.getVisible(), "clear icon should not be visible when value is empty");
+
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("G").trigger("input");
+		this.clock.tick(300);
+
+		assert.ok(oInput._oClearButton.getVisible(), "clear icon should be visible when value is not empty");
+
+		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
+		oInput._$input.val("").trigger("input");
+		this.clock.tick(300);
+
+		assert.notOk(oInput._oClearButton.getVisible(), "clear icon should not be visible when value is empty");
+
+		oInput.destroy();
+	});
+
+	QUnit.test("Clear icon should not be visible by default (default value not empty)", function (assert) {
+		var oInput = new Input({ value: "test" }).placeAt("content");
+
+		assert.notOk(oInput._oClearButton, "clear icon should not be created by default");
+
+		oInput.setShowClearIcon(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oInput._oClearButton.getVisible(), "clear icon should be visible after presetting API");
+
+		oInput.destroy();
+	});
+
+	QUnit.test("Clear icon should be visible when set (default value not empty)", function (assert) {
+		var oInput = new Input({
+			value: "test"
+		 }).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(oInput._oClearButton, "dialog's clear icon should be created");
+
+		oInput.setShowClearIcon(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oInput._oClearButton.getVisible(), "dialog's clear icon should be visible after presetting API");
+
+		oInput.destroy();
+	});
+
+	QUnit.test("Pressing clear icon should fire change and liveChange events", function (assert) {
+		var changeHandler = this.spy();
+		var liveChangeHandler = this.spy();
+
+		var oInput = new Input({
+			showClearIcon: true,
+			value: "Dryanovo",
+			change: changeHandler,
+			liveChange: liveChangeHandler
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		oInput._oClearButton.firePress();
+
+		assert.strictEqual(changeHandler.callCount, 1, "Change should be called once");
+		assert.strictEqual(liveChangeHandler.callCount, 1, "Live Change should be called once");
+		assert.strictEqual(oInput.getValue(), "", "Input's value should be cleared");
+
+		oInput.destroy();
+	});
+
+	QUnit.test("Check whether property is propagated to dialog's input on mobile", function (assert) {
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		var oInput = new Input({
+			value: "test",
+			showClearIcon: true
+		 }).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		oInput._openSuggestionsPopover();
+		this.clock.tick(300);
+
+		assert.ok(oInput._oSuggPopover.getInput().getShowClearIcon(), "Show clear icon property should be forwarded");
+
+		oInput.destroy();
+	});
+
 	QUnit.module("Type-ahead");
 
 	QUnit.test("Typeahead should be disabled on adroid devices", function (assert) {

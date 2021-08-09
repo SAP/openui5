@@ -32,6 +32,7 @@
 							placeholder="{i18n>searchPlaceholder}"
 							type="Text"
 							showSuggestion="true"
+							showClearIcon="true"
 							showValueHelp="true"
 							submit=".onEnter"
 							showTableSuggestionValueHelp="false"

@@ -27,20 +27,9 @@ html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw):not(.sapUiTheme-sap_beliz
 	font-size: 3rem;
 }
 
-/* margin for clear icon in search field*/
-.sapUiDemoIconExplorer .inputClear{
-	position: relative;
-	right: 2rem;
-}
-
 .sapContrastPlus .sapMInputBaseIcon:active {
 	background-color: #91c8f6;
     color: #2f3c48;
-}
-
-/* remove focus for this icon */
-.sapUiDemoIconExplorer .inputClear .sapUiIcon:focus {
-	outline-width: 0 !important;
 }
 
 .sapUiDemoIconExplorer .HomeHeaderText {

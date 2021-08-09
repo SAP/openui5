@@ -27,66 +27,16 @@ sap.ui.define([
 				return !!(oContext.name.indexOf(sValue) >= 0 || oContext.tagString.indexOf(sValue) >= 0);
 			});
 
-			var getValueHelpIcon = oSearchField._getValueHelpIcon();
-			if (getValueHelpIcon) {
-				getValueHelpIcon.setSrc("sap-icon://search");
-			}
-
+			oSearchField.setValueHelpIconSrc("sap-icon://search");
 			oSearchField.addEventDelegate({
-				// add clearIcon to the search field
-				onAfterRendering: function () {
-					// create a new icon once
-					if (!this.__clearIcon) {
-						this.__clearIcon = new Icon(this.getId() + "-__clearIcon", {
-							src : "sap-icon://sys-cancel",
-							press : function (oEvent) {
-								this.setValue("");
-								this.__clearIcon.$().addClass("sapMSFR");
-								this.closeSuggestions();
-								//activate press only for the icon, not for the whole input field
-								oEvent.cancelBubble();
-							}.bind(this)
-						}).addStyleClass("sapMInputValHelpInner sapMSFB sapMSFR sapMInputBaseIcon");
-						//add Icon to control tree
-						this.addDependent(this.__clearIcon);
-					}
-					// Create new div container
-					this.$("vhi").before('<div class="sapMInputValHelp inputClear" tabindex="-1"></div>');
-					var oNode = this.$().find(".inputClear")[0];
-					// render icon into created div
-					var oRenderManager = sap.ui.getCore().createRenderManager();
-					oRenderManager.renderControl(this.__clearIcon);
-					oRenderManager.flush(oNode);
-					oRenderManager.destroy();
-					this.__clearIcon.$().attr("tabindex", "-1");
-				//this pointer needs to point to the searchField
-				}.bind(oSearchField),
-
 				// re-open suggestions when pressing inside the search field again
 				ontap: function (oEvent) {
-					// skip when clicked on an icon
-					if (oEvent.srcControl instanceof Icon) {
-						return;
-					}
 					// open the suggestion popup when search value is valid
 					if (this.getValue().length >= this.getStartSuggestion()) {
 						this._oSuggestionPopup.open();
 					}
 				}.bind(oSearchField)
 			});
-		},
-
-		/**
-		 * Controls the visibility of clearIcon in searchField by enabling CSS classes
-		 * depending on value of input field
-		 * @param {sap.ui.base.Event} oEvent the liveChange event of input field
-		 * @public
-		 */
-		onSearch : function (oEvent) {
-			var sValue = oEvent.getParameter("value");
-			var oClearIcon = this.byId("search-__clearIcon");
-
-			oClearIcon.$().toggleClass("sapMSFR", !sValue);
 		},
 
 		/**
