@@ -277,9 +277,6 @@ sap.ui.define([
 			delete this._oItemNavigation;
 		}
 
-		this.removeEventDelegate(this._focusDelegate);
-		delete this._focusDelegate;
-
 		if (this._sInvalidateMonth) {
 			clearTimeout(this._sInvalidateMonth);
 		}
@@ -441,7 +438,7 @@ sap.ui.define([
 	Month.prototype.setDate = function(oDate){
 		if (oDate) {
 			var oCalDate = CalendarDate.fromLocalJSDate(oDate, this.getPrimaryCalendarType());
-			_changeDate.call(this, oCalDate, false);
+			_changeDate.call(this, oCalDate);
 		}
 
 		return this.setProperty("date", oDate);
@@ -473,7 +470,7 @@ sap.ui.define([
 	 */
 	Month.prototype.displayDate = function(oDate){
 		var oCalDate = CalendarDate.fromLocalJSDate(oDate, this.getPrimaryCalendarType());
-		_changeDate.call(this, oCalDate, true);
+		_changeDate.call(this, oCalDate);
 
 		return this;
 
@@ -2070,10 +2067,9 @@ sap.ui.define([
 	/**
 	 *
 	 * @param {sap.ui.unified.calendar.CalendarDate} oDate the calendar date
-	 * @param {boolean} bNoFocus Will the focusing of the date be skipped (true) or not (false)
 	 * @private
 	 */
-	function _changeDate (oDate, bNoFocus){
+	function _changeDate (oDate){
 
 		CalendarUtils._checkCalendarDate(oDate);
 
@@ -2087,19 +2083,6 @@ sap.ui.define([
 		} else {
 			this.invalidate();
 		}
-
-		// focus the new date after rendering
-		this.removeEventDelegate(this._focusDelegate);
-		this._focusDelegate = {
-			onAfterRendering: function() {
-				var bFocusable = this.checkDateFocusable(this._oDate.toLocalJSDate());
-				this._focusDate(this._oDate, true, bFocusable ? bNoFocus : true);
-
-				this.removeEventDelegate(this._focusDelegate);
-				delete this._focusDelegate;
-			}
-		};
-		this.addEventDelegate(this._focusDelegate, this);
 	}
 
 	/**

@@ -707,6 +707,7 @@ sap.ui.define([
 	Calendar.prototype.focusDate = function(oDate) {
 
 		_displayDate.call(this, oDate, false);
+		this._addMonthFocusDelegate();
 
 		return this;
 
