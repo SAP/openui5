@@ -287,20 +287,27 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Keep existing history state", function(assert){
+	QUnit.module("Initialization");
+
+	QUnit.test("Keep existing history state - Initialized HashChanger", function(assert){
+		History._aStateHistory = [];
 		var oHistoryStub = sinon.stub(History, "getInstance");
+		var oHashChanger = new HashChanger();
 
 		oHistoryStub.callsFake(function(){
 			return undefined;
 		});
 
-		this.oExtendedHashChanger.setHash("hashÄ");
-		history.pushState({
+		oHashChanger.setHash("hashÄ");
+		window.history.replaceState({
 			sap: {
 				history: ["hash1", "hash2", "hashÄ"]
 			}
 		}, "");
-		var oNewHistory = new History(this.oExtendedHashChanger);
+
+		oHashChanger.init();
+
+		var oNewHistory = new History(oHashChanger);
 
 		if (!History._bUsePushState) {
 			assert.equal(History._aStateHistory.length, 0, "There's no history state entry");
@@ -313,6 +320,45 @@ sap.ui.define([
 		}
 
 		oHistoryStub.restore();
+		oNewHistory.destroy();
+		oHashChanger.destroy();
+	});
+
+	QUnit.test("Keep existing history state - Not yet initialized HashChanger", function(assert){
+		History._aStateHistory = [];
+		var oHistoryStub = sinon.stub(History, "getInstance");
+		var oHashChanger = new HashChanger();
+
+		oHistoryStub.callsFake(function(){
+			return undefined;
+		});
+
+		oHashChanger.setHash("hashÄ");
+		window.history.replaceState({
+			sap: {
+				history: ["hash1", "hash2", "hashÄ"]
+			}
+		}, "");
+
+		var oNewHistory = new History(oHashChanger);
+
+		if (!History._bUsePushState) {
+			assert.equal(History._aStateHistory.length, 0, "There's no history state entry");
+		} else {
+			assert.equal(History._aStateHistory.length, 0, "There's no history state entry");
+
+			oHashChanger.init();
+
+			assert.equal(History._aStateHistory.length, 3, "There are three new history state entries");
+			assert.strictEqual(History._aStateHistory[0], "hash1", "The first history state entry is correctly 'hash1'");
+			assert.strictEqual(History._aStateHistory[1], "hash2", "The second history state entry is correctly 'hash2'");
+			assert.strictEqual(History._aStateHistory[2], "hashÄ", "The third history state entry is correctly 'hashÄ'");
+			assert.strictEqual(oNewHistory.getPreviousHash(), undefined, "The previous hash is correctly set");
+		}
+
+		oHistoryStub.restore();
+		oNewHistory.destroy();
+		oHashChanger.destroy();
 	});
 
 	QUnit.module("history management", {
