@@ -15,7 +15,8 @@ sap.ui.define([
 	'sap/ui/core/date/UniversalDate',
 	'sap/ui/core/date/UniversalDateUtils',
 	'sap/ui/core/format/DateFormat',
-	'sap/ui/model/json/JSONModel'
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/model/type/Integer'
 ],
 
 function(
@@ -32,7 +33,8 @@ function(
 		UniversalDate,
 		UniversalDateUtils,
 		DateFormat,
-		JSONModel
+		JSONModel,
+		Integer	// the Integer type must be  available for some of the RangeOperators
 	) {
 		"use strict";
 
