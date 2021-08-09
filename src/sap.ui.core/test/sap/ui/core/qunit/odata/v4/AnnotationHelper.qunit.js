@@ -28,10 +28,11 @@ sap.ui.define([
 						}
 					}]
 				},
-				"tea_busi.Product/Price" : {
-					"@Org.OData.Measures.V1.ISOCurrency" : { // test requires full namespace
+				"tea_busi.Product/Price" : { // test requires full namespaces
+					"@Org.OData.Measures.V1.ISOCurrency" : {
 						"$Path" : "Currency"
-					}
+					},
+					"@com.sap.vocabularies.UI.v1.DoNotCheckScaleOfMeasureQuantity" : true
 				},
 				"tea_busi.TEAM" : {
 					"@UI.LineItem" : [{
@@ -1028,7 +1029,8 @@ sap.ui.define([
 			+ ",constraints:{'nullable':false},formatOptions:{'parseKeepsEmptyString':true"
 			+ ",'maxLength':10},parameters:{'$$foo':'bar'}}"
 			+ ",{mode:'OneTime',path:'/##@@requestCurrencyCodes',targetType:'any'}]"
-			+ ",type:'sap.ui.model.odata.type.Currency'}"
+			+ ",type:'sap.ui.model.odata.type.Currency'"
+			+ ",constraints:{'skipDecimalsValidation':true}}"
 		);
 	});
 

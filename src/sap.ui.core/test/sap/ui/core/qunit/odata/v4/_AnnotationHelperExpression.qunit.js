@@ -232,8 +232,9 @@ sap.ui.define([
 			// with format option parseAsString=false
 			"Edm.Byte", "Edm.Double", "Edm.Int16", "Edm.Int32", "Edm.SByte", "Edm.Single"
 		].forEach(function (sType, i) {
-			var sTitle = "fetchCurrencyOrUnit: " + (bUnit ? "Measure" : "Amount") + " type = "
-					+ sType;
+			[false, true].forEach(function (bSkipDecimalsValidation) {
+				var sTitle = "fetchCurrencyOrUnit: " + (bUnit ? "Measure" : "Amount") + " type = "
+						+ sType + " bSkipDecimalsValidation = " + bSkipDecimalsValidation;
 
 			QUnit.test(sTitle, function (assert) {
 				var oBasicsMock = this.mock(Basics),
@@ -277,7 +278,11 @@ sap.ui.define([
 						value : "{" + (i > 1 ? "formatOptions:{parseAsString:false}," : "")
 							+ "mode:'TwoWay',parts:[~binding0~,~binding1~,{mode:'OneTime',"
 							+ "path:'/##@@requestUnitsOfMeasure',targetType:'any'}],"
-							+ "type:'sap.ui.model.odata.type.Unit'}"
+							+ "type:'sap.ui.model.odata.type.Unit'"
+							+ (bSkipDecimalsValidation
+								? ",constraints:{'skipDecimalsValidation':true}"
+								: "")
+							+ "}"
 					}
 					: {
 						result : "composite",
@@ -285,11 +290,19 @@ sap.ui.define([
 						value : "{" + (i > 1 ? "formatOptions:{parseAsString:false}," : "")
 							+ "mode:'TwoWay',parts:[~binding0~,~binding1~,{mode:'OneTime',"
 							+ "path:'/##@@requestCurrencyCodes',targetType:'any'}],"
-							+ "type:'sap.ui.model.odata.type.Currency'}"
+							+ "type:'sap.ui.model.odata.type.Currency'"
+							+ (bSkipDecimalsValidation
+								? ",constraints:{'skipDecimalsValidation':true}"
+								: "")
+							+ "}"
 					};
 				oModelMock.expects("fetchObject")
 					.withExactArgs(sPathForFetchObject)
 					.returns(SyncPromise.resolve(oTarget));
+				oModelMock.expects("getObject")
+					.withExactArgs(
+						"~path~@com.sap.vocabularies.UI.v1.DoNotCheckScaleOfMeasureQuantity")
+					.returns(bSkipDecimalsValidation || undefined);
 				oExpressionMock.expects("pathResult")
 					.withExactArgs(sinon.match.same(oPathValue), sType, "~value~",
 						sinon.match.same(mConstraints))
@@ -313,6 +326,8 @@ sap.ui.define([
 					.then(function (oResult0) {
 						assert.deepEqual(oResult0, oResult);
 					});
+			});
+
 			});
 		});
 	});
