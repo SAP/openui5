@@ -2256,6 +2256,28 @@ function (
 
 	});
 
+	QUnit.test("DynamicPage _getMaxScrollPosition() prevents 1px maxScrollPosition due to rounding", function (assert) {
+		// Arrange
+		var iScrollHeight = this.oDynamicPage.$wrapper[0].scrollHeight;
+		// mock the conditions of the tested scenario:
+		this.oDynamicPage.$wrapper[0] = {
+			scrollHeight: iScrollHeight,
+			// the browser returns a ceiled value for <code>clientHeight</code>
+			clientHeight: iScrollHeight,
+			getBoundingClientRect: function() {
+				return {
+					// the actual height is smaller than the scrollHeight
+					height: (iScrollHeight - 1.1)
+				};
+			}
+		};
+
+		// Assert
+		assert.strictEqual(this.oDynamicPage._getMaxScrollPosition(), 0,
+			"no scrollbar needed");
+
+	});
+
 	/* --------------------------- DynamicPage Toggle Header On Scroll ---------------------------------- */
 	QUnit.module("DynamicPage - Toggle Header On Scroll", {
 		beforeEach: function () {
