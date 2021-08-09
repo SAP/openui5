@@ -12,7 +12,7 @@ sap.ui.define([
 	'sap/base/util/deepEqual',
 	'./Condition',
 	'sap/ui/mdc/enum/ConditionValidated',
-	"sap/base/strings/escapeRegExp"
+	'sap/base/strings/escapeRegExp'
 ], function(
 		BaseObject,
 		Filter,
@@ -58,7 +58,7 @@ sap.ui.define([
 		 *                 If set to <code>Operator.ValueType.Static</code> a simple string type is used to display static text.<br>
 		 *                 If set to a name of a data type an instance of this data type will be used.<br>
 		 *                 If set to an object with the properties <code>name</code>, <code>formatOptions</code> and <code>constraints</code>
-		 *                 an instance of the corresponding data type will be used.<br>
+		 *                 an instance of the corresponding data type will be used. The type given via <code>name</code> must be required by the application.<br>
 		 * @param {string[]} [oConfiguration.paramTypes] Array of type parameters regexp
 		 * @param {string} [oConfiguration.longText] String representation of the operator as a long text.<br>
 		 *                If longText is not given , it is looked up in the resource bundle of the <code>sap.ui.mdc</code> library by the key
@@ -568,7 +568,7 @@ sap.ui.define([
 			}
 
 			if (!oUsedType) {
-				sap.ui.requireSync(sType.replace(/\./g, "/"));
+				// The used type must be required from the application.
 				var TypeClass = ObjectPath.get(sType || "");
 				oUsedType = new TypeClass(oFormatOptions, oConstraints);
 				oUsedType._bCreatedByOperator = true; // to distinguish in Field between original type and Operator type on Operator change
