@@ -74,8 +74,6 @@ sap.ui.define([], function () {
 	 */
 	NumericHeaderRenderer.renderHeaderText = function(oRm, oNumericHeader) {
 		var oTitle = oNumericHeader.getAggregation("_title"),
-			oSubtitle = oNumericHeader.getAggregation("_subtitle"),
-			oUnitOfMeasurement = oNumericHeader.getAggregation("_unitOfMeasurement"),
 			sStatus = oNumericHeader.getStatusText(),
 			oBindingInfos = oNumericHeader.mBindingInfos;
 
@@ -111,11 +109,33 @@ sap.ui.define([], function () {
 
 		oRm.close("div");
 
-		if (((oSubtitle && oSubtitle.getText()) || ( oBindingInfos && oBindingInfos.subtitle))
-			|| ((oUnitOfMeasurement && oUnitOfMeasurement.getText()) || ( oBindingInfos && oBindingInfos.unitOfMeasurement))) {
+		NumericHeaderRenderer.renderSubtitle(oRm, oNumericHeader);
+
+		oRm.close("div");
+	};
+
+	/**
+	 * Render subtitle and unit of measurement.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.f.cards.NumericHeader} oNumericHeader An object representation of the control that should be rendered
+	 */
+	NumericHeaderRenderer.renderSubtitle = function(oRm, oNumericHeader) {
+		var oBindingInfos = oNumericHeader.mBindingInfos,
+			oSubtitle = oNumericHeader.getAggregation("_subtitle"),
+			oUnitOfMeasurement = oNumericHeader.getAggregation("_unitOfMeasurement"),
+			bHasSubtitle = oSubtitle && oSubtitle.getText() || oBindingInfos && oBindingInfos.subtitle,
+			bHasUnitOfMeasurement = oUnitOfMeasurement && oUnitOfMeasurement.getText() || oBindingInfos && oBindingInfos.unitOfMeasurement;
+
+		if (bHasSubtitle || bHasUnitOfMeasurement) {
 			oRm.openStart("div")
-				.class("sapFCardSubtitle")
-				.openEnd();
+				.class("sapFCardSubtitle");
+
+			if (bHasSubtitle && oUnitOfMeasurement) {
+				oRm.class("sapFCardSubtitleAndUnit");
+			}
+
+			oRm.openEnd();
 
 			if (oSubtitle) {
 				if (oBindingInfos.subtitle) {
@@ -133,8 +153,6 @@ sap.ui.define([], function () {
 			}
 			oRm.close("div");
 		}
-
-		oRm.close("div");
 	};
 
 	/**
