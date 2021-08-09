@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/IconTabFilter",
 	"sap/m/IconTabSeparator",
 	"sap/m/Text",
+	"sap/m/VBox",
 	"sap/ui/core/Core",
 	"sap/ui/core/InvisibleMessage",
 	"sap/ui/core/CustomData",
@@ -22,6 +23,7 @@ sap.ui.define([
 	IconTabFilter,
 	IconTabSeparator,
 	Text,
+	VBox,
 	Core,
 	InvisibleMessage,
 	CustomData,
@@ -221,9 +223,31 @@ sap.ui.define([
 		oITH.destroy();
 	});
 
-	QUnit.module("tab properties");
+	QUnit.test("Tabs are correctly shifted with tabsOverflowMode=StartAndEnd", function (assert) {
+		// Arrange
+		var oITH = createHeaderWithItems(10);
+		oITH.setTabsOverflowMode(TabsOverflowMode.StartAndEnd);
 
-	QUnit.test("tabs with items aggregation and property enabled=false should not open their dropdown", function (assert) {
+		var oContainer = new VBox({
+			width: "300px",
+			items: oITH
+		});
+
+		// Act
+		oContainer.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oITH.getDomRef("head").querySelectorAll(".sapMITBFilter:not(.sapMITBFilterHidden)").length, 2, "Only two tabs should be visible");
+
+		// Clean-up
+		oITH.destroy();
+		oContainer.destroy();
+	});
+
+	QUnit.module("Tab properties");
+
+	QUnit.test("Tabs with items aggregation and property enabled=false should not open their dropdown", function (assert) {
 		// Arrange
 		var oITH = createHeaderWithItems(1);
 		var oTab = oITH.getItems()[0];
@@ -253,7 +277,7 @@ sap.ui.define([
 		oITH.destroy();
 	});
 
-	QUnit.module("properties");
+	QUnit.module("Properties");
 
 	QUnit.test("ariaTexts", function (assert) {
 		var oITH = createHeaderWithItems(10);
