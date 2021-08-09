@@ -682,7 +682,7 @@ sap.ui.define([
 
 	/**
 	 * Loads a given source (sap.ui.model.odata.v2.ODataAnnotations.Source) if necessary and returns a promise that resolves
-	 * if the source could be loaded or no laoding is necessary. In case the source type is neither "xml" nor "url" or
+	 * if the source could be loaded or no loading is necessary. In case the source type is neither "xml" nor "url" or
 	 * the loading of the source fails, the promise rejects.
 	 *
 	 * @param {sap.ui.model.odata.v2.ODataAnnotations.Source} mSource The source to be loaded
