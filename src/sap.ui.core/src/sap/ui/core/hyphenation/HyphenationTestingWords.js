@@ -7,37 +7,38 @@ sap.ui.define([], function () {
 
 	/**
 	 * Words which are suitable for testing of browser-native hyphenation.
+	 * Firefox doesn't hyphenate uppercase words (besides in German).
 	 * @type {Object<string,string>}
 	 * @private
 	 */
 	var oTestingWords = {
 		"bg": "непротивоконституционствувателствувайте",
-		"ca": "Psiconeuroimmunoendocrinologia",
+		"ca": "psiconeuroimmunoendocrinologia",
 		"hr": "prijestolonasljednikovičičinima",
 		"cs": "nejnezdevětadevadesáteronásobitelnějšími",
-		"da": "Gedebukkebensoverogundergeneralkrigskommandersergenten",
+		"da": "gedebukkebensoverogundergeneralkrigskommandersergenten",
 		"nl": "meervoudigepersoonlijkheidsstoornissen",
 		"en-us": "pneumonoultramicroscopicsilicovolcanoconiosis",
-		"et": "Sünnipäevanädalalõpupeopärastlõunaväsimus",
+		"et": "sünnipäevanädalalõpupeopärastlõunaväsimus",
 		"fi": "kolmivaihekilowattituntimittari",
 		"fr": "hippopotomonstrosesquippedaliophobie",
 		"de": "Kindercarnavalsoptochtvoorbereidingswerkzaamhedenplan",
 		"el-monoton": "ηλεκτροεγκεφαλογράφημα", // no native css hyphenation by documentation, but will be tested
 		"hi": "किंकर्तव्यविमूढ़", // no native css hyphenation by documentation, but will be tested
-		"hu": "Megszentségteleníthetetlenségeskedéseitekért",
+		"hu": "megszentségteleníthetetlenségeskedéseitekért",
 		"it": "hippopotomonstrosesquippedaliofobia",
 		"lt": "nebeprisikiškiakopūstlapiaujančiuosiuose",
 		"nb-no": "supercalifragilisticexpialidocious",
 		"pl": "dziewięćdziesięciokilkuletniemu",
 		"pt": "pneumoultramicroscopicossilicovulcanoconiose",
 		"ru": "превысокомногорассмотрительствующий",
-		"sr": "Семпаравиливичинаверсаламилитипиковски",
-		"sl": "Dialektičnomaterialističen",
-		"es": "Electroencefalografistas",
-		"sv": "Realisationsvinstbeskattning",
+		"sr": "семпаравиливичинаверсаламилитипиковски",
+		"sl": "dialektičnomaterialističen",
+		"es": "electroencefalografistas",
+		"sv": "realisationsvinstbeskattning",
 		"th": "ตัวอย่างข้อความที่จะใช้ในการยืนยันการถ่ายโอน", // no native css hyphenation by documentation, but will be tested
-		"tr": "Muvaffakiyetsizleştiricileştiriveremeyebileceklerimizdenmişsinizcesine",
-		"uk": "Нікотинамідаденіндинуклеотидфосфат"
+		"tr": "muvaffakiyetsizleştiricileştiriveremeyebileceklerimizdenmişsinizcesine",
+		"uk": "нікотинамідаденіндинуклеотидфосфат"
 	};
 
 	return oTestingWords;

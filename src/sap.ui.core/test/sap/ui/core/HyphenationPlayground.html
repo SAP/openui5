@@ -54,8 +54,13 @@
 	</style>
 
 	<script>
-		sap.ui.require(['sap/ui/core/hyphenation/Hyphenation', 'sap/m/FlexBox', "sap/base/util/UriParameters"],
-			function (HyphenationDelegate, FlexBox, UriParameters) {
+		sap.ui.require([
+			"sap/ui/core/hyphenation/Hyphenation",
+			"sap/ui/core/hyphenation/HyphenationTestingWords",
+			"sap/m/FlexBox",
+			"sap/base/util/UriParameters",
+		],
+			function (HyphenationDelegate, HyphenationTestingWords, FlexBox, UriParameters) {
 				"use strict";
 
 				// create and add app
@@ -69,36 +74,6 @@
 				}).addStyleClass("sapUiResponsiveContentPadding");
 				app.addPage(initialPage);
 
-				var oTestingWords = {
-					"bg": "непротивоконституционствувателствувайте",
-					"ca": "Psiconeuroimmunoendocrinologia",
-					"hr": "prijestolonasljednikovičičinima",
-					"cs": "nejnezdevětadevadesáteronásobitelnějšími",
-					"da": "Gedebukkebensoverogundergeneralkrigskommandersergenten",
-					"nl": "meervoudigepersoonlijkheidsstoornissen",
-					"en-us": "pneumonoultramicroscopicsilicovolcanoconiosis",
-					"et": "Sünnipäevanädalalõpupeopärastlõunaväsimus",
-					"fi": "kolmivaihekilowattituntimittari",
-					"fr": "hippopotomonstrosesquippedaliophobie",
-					"de": "Kindercarnavalsoptochtvoorbereidingswerkzaamhedenplan",
-					"el": "ηλεκτροεγκεφαλογράφημα", // no native css hyphenation by documentation, but will be tested
-					"hi": "किंकर्तव्यविमूढ़", // no native css hyphenation by documentation, but will be tested
-					"hu": "Megszentségteleníthetetlenségeskedéseitekért",
-					"it": "hippopotomonstrosesquippedaliofobia",
-					"lt": "nebeprisikiškiakopūstlapiaujančiuosiuose",
-					"nb-no": "supercalifragilisticexpialidocious",
-					"pl": "dziewięćdziesięciokilkuletniemu",
-					"pt": "pneumoultramicroscopicossilicovulcanoconiose",
-					"ru": "превысокомногорассмотрительствующий",
-					"sr": "Семпаравиливичинаверсаламилитипиковски",
-					"sl": "Dialektičnomaterialističen",
-					"es": "Electroencefalografistas",
-					"sv": "Realisationsvinstbeskattning",
-					"th": "ตัวอย่างข้อความที่จะใช้ในการยืนยันการถ่ายโอน", // no native css hyphenation by documentation, but will be tested
-					"tr": "Muvaffakiyetsizleştiricileştiriveremeyebileceklerimizdenmişsinizcesine",
-					"uk": "Нікотинамідаденіндинуклеотидфосфат"
-				};
-
 				var aLangCodes = [
 					"bg",
 					"ca",
@@ -111,7 +86,7 @@
 					"fi",
 					"fr",
 					"de",
-					"el",
+					"el-monoton",
 					"hi",
 					"hu",
 					"it",
@@ -141,7 +116,7 @@
 					"fi": "Finnish",
 					"fr": "French (FR)",
 					"de": "German",
-					"el": "Greek",
+					"el-monoton": "Greek",
 					"hi": "Hindi",
 					"hu": "Hungarian",
 					"it": "Italian",
@@ -171,7 +146,7 @@
 					"fi": "Typografia tarkoittaa nykyisin mitä tahansa tekstiin, tekstityyppiin, kirjainten asetteluun, väritykseen ja muuhun liittyvää suunnittelua.",
 					"fr": "En typographie, la coupure de mot (parfois aussi appelée césure) est l'opération qui consiste à couper en fin de ligne un mot qui n'entrerait pas dans la justification.",
 					"de": "Die Worttrennung, auch Silbentrennung genannt, bezeichnet in der Orthographie die Art und Weise, wie die Wörter insbesondere am Zeilenende getrennt werden können. [SAP specific terms follows] Zahlungskartendaten anzeigen Lastschriftankündigungen Rückzahlungsanforderungen anzeigen Rückzahlungsanforderung stornieren Forderungsberichtigungen umbuchen Fremdwährungsbewertungen anzeigen Korrespondenzhistorie anzeigen Geschäftspartnerpositionen bearbeiten Geschäftspartnerstammdaten verwalten Hauptbuchübernahme stornieren Kontierungsnachweis Einzelbelege Lücken in Belegnummernkreisen ermitteln Umgebuchte Forderungsberichtigungen anzeigen Ratenplanauswertung zum Stichtag Adress-Wiederverwendung Anforderungszuordnungen Angebotsbearbeitung Anlagenbewegungen Ansprechpartner-Schnellansicht Anwendungskataloge Anwendungsprotokoll(e/meldungen) Anwendungsrollenvorlagen APF-Konfigurationsmodellierer Basisschrittkomponente Kontoauszugspositionen Eingangszahlungsdateien verwalten Forderungsberichtigungen umbuchen Zahlungslauf/ Lastschriftlauf Lauf für Lastschriftankündigungen Datenänderungsbelege Cash-Pool-Umbuchungsreport Liquiditätspositionshierarchie Liquiditätspositionshierarchie Beschaffungsübersicht Nachbearbeitungsquote Lebensabschnittpartner Unabhaengigkeitserklaerungen Freundschaftsbezeugung Rechtsschutzversicherungsgesellschaften Kraftfahrzeug-Haftpflichtversicherung Donaudampfschifffahrtsgesellschaftskapitän Siebentausendzweihundertvierundfünfzig Bezirksschornsteinfegermeisterinnen Nachbearbeitungsquote Beschaffungsübersicht Liquiditätspositionshierarchie Cash-Pool-Umbuchungsreport Datenänderungsbelege",
-					"el": "Δείγμα κειμένου που θα χρησιμεύσει για την επαλήθευση της μεταφοράς",
+					"el-monoton": "Δείγμα κειμένου που θα χρησιμεύσει για την επαλήθευση της μεταφοράς",
 					"hi": "नमूना पाठ जो स्थानांतरण को सत्यापित करने के लिए काम करेगा",
 					"hu": "A weboldal nyelvét nem sikerült automatikusan megállapítani. Kérem adja meg a nyelvet.",
 					"it": "La storia della scrittura, quel processo lungo e tortuoso, ma anche estremamente affascinante e ricco di sorprese, che parte dai primi incerti disegni sulla roccia degli uomini primitivi e giunge ai moderni word processor, ha avuto proprio negli scribi, nei copisti e negli amanuensi dei solitari, silenziosi, laboriosi e importantissimi protagonisti.",
@@ -264,7 +239,7 @@
 
 					var oInputWord = new sap.m.Input({
 						id: "inpWord-" + lang,
-						value: oTestingWords[lang],
+						value: HyphenationTestingWords[lang],
 						editable: false,
 						width: "60%",
 					});
