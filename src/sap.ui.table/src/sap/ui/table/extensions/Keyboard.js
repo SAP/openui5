@@ -32,15 +32,13 @@ sap.ui.define([
 			var oIN = oTable._getItemNavigation();
 
 			if (oIN != null
-				&& !oTable._getKeyboardExtension()._isItemNavigationSuspended()
+				&& !oTable._getKeyboardExtension().isItemNavigationSuspended()
 				&& !oEvent.isMarked("sapUiTableSkipItemNavigation")) {
 
 				oIN["on" + oEvent.type](oEvent);
 			}
 		},
-		onfocusin: function(oEvent) {
-			ItemNavigationDelegate._forward(this, oEvent);
-		},
+		onfocusin: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
 		onsapfocusleave: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
 		onmousedown: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
 		onsapnext: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
@@ -54,7 +52,6 @@ sap.ui.define([
 		onsapend: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
 		onsapendmodifiers: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
 		onsapkeyup: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); }
-
 	};
 
 	/*
@@ -93,16 +90,17 @@ sap.ui.define([
 				if (bRenderedRows) {
 					this.applyFocusInfo(this._oStoredFocusInfo);
 				} else {
-					this._getKeyboardExtension().initItemNavigation();
+					ExtensionHelper.initItemNavigation(this._getKeyboardExtension(), true);
 				}
 			}
+
 			delete this._oStoredFocusInfo;
 		},
 		onfocusin: function(oEvent) {
 			var oExtension = this._getKeyboardExtension();
 
 			if (!oExtension._bIgnoreFocusIn) {
-				oExtension.initItemNavigation();
+				ExtensionHelper.initItemNavigation(this._getKeyboardExtension());
 			} else {
 				oEvent.setMarked("sapUiTableIgnoreFocusIn");
 			}
@@ -120,11 +118,17 @@ sap.ui.define([
 	 * Provides utility functions used this extension
 	 */
 	var ExtensionHelper = {
+		initItemNavigation: function(oExtension, bSkipInitFocusedIndex) {
+			if (ExtensionHelper.isItemNavigationInvalid(oExtension)) {
+				ExtensionHelper._initItemNavigation(oExtension, bSkipInitFocusedIndex);
+			}
+		},
+
 		/*
 		 * Initialize ItemNavigations (content and header) and transfer relevant dom elements.
 		 * TabIndexes are set by the ItemNavigation.
 		 */
-		_initItemNavigation: function(oExtension) {
+		_initItemNavigation: function(oExtension, bSkipInitFocusedIndex) {
 			var oTable = oExtension.getTable();
 
 			if (!oTable) {
@@ -235,7 +239,10 @@ sap.ui.define([
 			oExtension._itemNavigation.setColumns(iColumnCount);
 			oExtension._itemNavigation.setRootDomRef($Table.find(".sapUiTableCnt").get(0));
 			oExtension._itemNavigation.setItemDomRefs(aItemDomRefs);
-			oExtension._itemNavigation.setFocusedIndex(ExtensionHelper.getInitialItemNavigationIndex(oExtension));
+
+			if (!bSkipInitFocusedIndex) {
+				oExtension._itemNavigation.setFocusedIndex(ExtensionHelper.getInitialItemNavigationIndex(oExtension));
+			}
 
 			// revert invalidation flag
 			oExtension._itemNavigationInvalidated = false;
@@ -336,19 +343,13 @@ sap.ui.define([
 
 	/**
 	 * Check whether item navigation should be reapplied from scratch and initializes it if needed.
-	 *
-	 * @public
 	 */
 	KeyboardExtension.prototype.initItemNavigation = function() {
-		if (ExtensionHelper.isItemNavigationInvalid(this)) {
-			ExtensionHelper._initItemNavigation(this);
-		}
+		ExtensionHelper.initItemNavigation(this);
 	};
 
 	/**
 	 * Invalidates the item navigation (forces a re-initialization with the next initItemNavigation call).
-	 *
-	 * @public
 	 */
 	KeyboardExtension.prototype.invalidateItemNavigation = function() {
 		this._itemNavigationInvalidated = true;
@@ -367,7 +368,6 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bEnter If set to <code>true</code>, the table will try to enter the action mode, otherwise the table will leave the action
 	 *     mode.
-	 * @public (Part of the API for Table control only!)
 	 */
 	KeyboardExtension.prototype.setActionMode = function(bEnter) {
 		if (!this._delegate) {
@@ -385,7 +385,6 @@ sap.ui.define([
 	 * Returns whether the table is in action mode.
 	 *
 	 * @returns {boolean} Returns <code>true</code>, if the table is in action mode.
-	 * @public
 	 */
 	KeyboardExtension.prototype.isInActionMode = function() {
 		return this._actionMode;
@@ -397,7 +396,6 @@ sap.ui.define([
 	 * e.g. see Table.setShowOverlay -> tue to CSS changes the focused element might be hidden which forces a focus change).
 	 *
 	 * @param {HTMLElement} oPreviousFocusRef The previously focused element.
-	 * @public
 	 */
 	KeyboardExtension.prototype.updateNoDataAndOverlayFocus = function() {
 		var oTable = this.getTable();
@@ -470,19 +468,15 @@ sap.ui.define([
 
 	/**
 	 * Suspends the event handling of the item navigation.
-	 *
-	 * @protected
 	 */
-	KeyboardExtension.prototype._suspendItemNavigation = function() {
+	KeyboardExtension.prototype.suspendItemNavigation = function() {
 		this._itemNavigationSuspended = true;
 	};
 
 	/**
 	 * Resumes the event handling of the item navigation.
-	 *
-	 * @protected
 	 */
-	KeyboardExtension.prototype._resumeItemNavigation = function() {
+	KeyboardExtension.prototype.resumeItemNavigation = function() {
 		this._itemNavigationSuspended = false;
 	};
 
@@ -490,9 +484,8 @@ sap.ui.define([
 	 * Returns whether the item navigation is suspended.
 	 *
 	 * @returns {boolean} Returns <code>true</code>, if the item navigation is suspended.
-	 * @protected
 	 */
-	KeyboardExtension.prototype._isItemNavigationSuspended = function() {
+	KeyboardExtension.prototype.isItemNavigationSuspended = function() {
 		return this._itemNavigationSuspended;
 	};
 
@@ -500,9 +493,8 @@ sap.ui.define([
 	 * Returns the combined info about the last focused data cell (based on the item navigation).
 	 *
 	 * @returns {sap.ui.table.utils.TableUtils.FocusedItemInfo} The cell info of the last focused cell.
-	 * @protected
 	 */
-	KeyboardExtension.prototype._getLastFocusedCellInfo = function() {
+	KeyboardExtension.prototype.getLastFocusedCellInfo = function() {
 		var iHeader = TableUtils.getHeaderRowCount(this.getTable());
 		if (!this._oLastFocusedCellInfo || this._oLastFocusedCellInfo.header != iHeader) {
 			var oInfo = TableUtils.getFocusedItemInfo(this.getTable());
@@ -524,11 +516,10 @@ sap.ui.define([
 	 * Sets the focus to the specified element and marks the resulting focus event to be ignored.
 	 *
 	 * @param {jQuery|HTMLElement} oElement The element to be focused.
-	 * @protected
 	 */
-	KeyboardExtension.prototype._setSilentFocus = function(oElement) {
+	KeyboardExtension.prototype.setSilentFocus = function(oElement) {
 		this._bIgnoreFocusIn = true;
-		this._setFocus(oElement);
+		this.setFocus(oElement);
 		this._bIgnoreFocusIn = false;
 	};
 
@@ -536,9 +527,8 @@ sap.ui.define([
 	 * Sets the focus to the specified element.
 	 *
 	 * @param {jQuery|HTMLElement} oElement The element to be focused.
-	 * @protected
 	 */
-	KeyboardExtension.prototype._setFocus = function(oElement) {
+	KeyboardExtension.prototype.setFocus = function(oElement) {
 		if (!oElement) {
 			return;
 		}
@@ -564,16 +554,6 @@ sap.ui.define([
 		}
 
 		oElement.focus();
-	};
-
-	/*
-	 * Returns the type of the related table.
-	 *
-	 * @returns {sap.ui.table.extensions.ExtensionBase.TABLETYPES} The type of the table.
-	 * @protected
-	 */
-	KeyboardExtension.prototype._getTableType = function() {
-		return this._type;
 	};
 
 	return KeyboardExtension;

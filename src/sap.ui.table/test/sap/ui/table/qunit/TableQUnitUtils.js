@@ -864,7 +864,7 @@ sap.ui.define([
 		 * and is therefore useful when testing scrolling with touch events.
 		 */
 		oTable.qunit.preventFocusOnTouch = function() {
-			oTable._getKeyboardExtension()._suspendItemNavigation();
+			oTable._getKeyboardExtension().suspendItemNavigation();
 		};
 	}
 
