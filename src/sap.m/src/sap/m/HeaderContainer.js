@@ -15,6 +15,7 @@ sap.ui.define([
 		'sap/ui/core/Icon',
 		'./HeaderContainerRenderer',
 		"sap/base/Log",
+		"sap/ui/events/KeyCodes",
 		"sap/ui/events/PseudoEvents",
 		"sap/ui/thirdparty/jquery",
 		// jQuery Plugin "control"
@@ -40,6 +41,7 @@ sap.ui.define([
 		Icon,
 		HeaderContainerRenderer,
 		Log,
+		KeyCodes,
 		PseudoEvents,
 		jQuery
 	) {
@@ -474,6 +476,56 @@ sap.ui.define([
 		/* =========================================================== */
 		/* Private methods                                             */
 		/* =========================================================== */
+		/**
+		 * Handle the key dwon event for Arrow Naviagtion.
+		 * @param {jQuery.Event} oEvent - the keyboard event.
+		 * @private
+		 */
+		 HeaderContainer.prototype.onkeydown = function(oEvent) {
+			var bHorizontal = this.getOrientation() === Orientation.Horizontal,
+				$prevButton = this.$("prev-button-container"),
+				$nextButton = this.$("next-button-container"),
+				iScrollSize, iButtonSize = 0,
+				aItems = this._filterVisibleItems();
+			if (oEvent.which === KeyCodes.ARROW_RIGHT && bHorizontal) {
+				iScrollSize = aItems[oEvent.srcControl.mProperties.position - 1].$().parent().outerWidth(true);
+				if (iScrollSize < this._getSize($prevButton.is(":visible"))){
+					this._scroll((iScrollSize - iButtonSize), this.getScrollTime());
+				}
+			} else if (oEvent.which === KeyCodes.ARROW_LEFT && bHorizontal) {
+				iScrollSize = aItems[oEvent.srcControl.mProperties.position - 1].$().parent().outerWidth(true);
+				if (iScrollSize < this._getSize($nextButton.is(":visible"))) {
+					if (!$nextButton.is(":visible")) {
+						var OFFSET = 10;
+						if (iScrollSize + OFFSET < this._getSize(true)) {
+							iButtonSize = $nextButton.width() + OFFSET;
+						} else {
+							iButtonSize = $nextButton.width();
+						}
+					}
+					this._scroll(-(iScrollSize - iButtonSize), this.getScrollTime());
+				}
+			}
+			if (oEvent.which === KeyCodes.ARROW_DOWN && !bHorizontal) {
+				iScrollSize = aItems[oEvent.srcControl.mProperties.position - 1].$().parent().outerHeight(true);
+				if (iScrollSize < this._getSize($prevButton.is(":visible"))) {
+					this._scroll((iScrollSize - iButtonSize), this.getScrollTime());
+				}
+			} else if (oEvent.which === KeyCodes.ARROW_UP && !bHorizontal) {
+				iScrollSize = aItems[oEvent.srcControl.mProperties.position - 1].$().parent().outerHeight(true);
+				if (iScrollSize < this._getSize($nextButton.is(":visible"))) {
+					if (!$nextButton.is(":visible")) {
+						var OFFSET = 10;
+						if (iScrollSize + OFFSET < this._getSize(true)) {
+							iButtonSize = $nextButton.height() + OFFSET;
+						} else {
+							iButtonSize = $nextButton.wheightidth();
+						}
+					}
+					this._scroll(-(iScrollSize - iButtonSize), this.getScrollTime());
+				}
+			}
+		};
 		HeaderContainer.prototype._setScrollInProcess = function (value) {
 			this.bScrollInProcess = value;
 		};
