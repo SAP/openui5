@@ -1,7 +1,18 @@
 {
   "1.93.0": {
-    "date": "July 2021",
+    "date": "August 2021",
     "notes": [
+      {
+        "id": "8f2f2252366a65aef2a0fd9f2756f4f36f280168",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl VariantModel allows PUBLIC variant modifications correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180316854"
+          }
+        ]
+      },
       {
         "id": "550769f6961f73ade87fcabbc4e252713fb702d4",
         "type": "FIX",
