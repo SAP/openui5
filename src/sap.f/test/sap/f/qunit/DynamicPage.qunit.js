@@ -1698,6 +1698,50 @@ function (
 		assert.equal(oNavActionsToolbar.getStyle(), sap.m.ToolbarStyle.Clear, "nav-actions toolbar has correct style");
 	});
 
+	QUnit.test("DynamicPage _needsVerticalScrollBar() floors the current max scrollHeight", function (assert) {
+		// Arrange
+		var iScrollHeight = this.oDynamicPage.$wrapper[0].scrollHeight;
+		// mock the conditions of the tested scenario:
+		this.oDynamicPage.$wrapper[0] = {
+			scrollHeight: iScrollHeight,
+			// the browser returns a ceiled value for <code>clientHeight</code>
+			clientHeight: iScrollHeight - 1,
+			getBoundingClientRect: function() {
+				return {
+					// the actual height is only a fraction of a pixel smaller than the scrollHeight
+					height: (iScrollHeight - 0.1)
+				};
+			}
+		};
+
+		// Assert
+		assert.strictEqual(this.oDynamicPage._needsVerticalScrollBar(), false,
+			"no scrollbar needed");
+
+	});
+
+	QUnit.test("DynamicPage _getMaxScrollPosition() prevents 1px maxScrollPosition due to rounding", function (assert) {
+		// Arrange
+		var iScrollHeight = this.oDynamicPage.$wrapper[0].scrollHeight;
+		// mock the conditions of the tested scenario:
+		this.oDynamicPage.$wrapper[0] = {
+			scrollHeight: iScrollHeight,
+			// the browser returns a ceiled value for <code>clientHeight</code>
+			clientHeight: iScrollHeight,
+			getBoundingClientRect: function() {
+				return {
+					// the actual height is smaller than the scrollHeight
+					height: (iScrollHeight - 1.1)
+				};
+			}
+		};
+
+		// Assert
+		assert.strictEqual(this.oDynamicPage._getMaxScrollPosition(), 0,
+			"no scrollbar needed");
+
+	});
+
 	/* --------------------------- DynamicPage Toggle Header On Scroll ---------------------------------- */
 	QUnit.module("DynamicPage - Toggle Header On Scroll", {
 		beforeEach: function () {
