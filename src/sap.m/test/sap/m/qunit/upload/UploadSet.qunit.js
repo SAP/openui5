@@ -302,6 +302,19 @@ sap.ui.define([
 		oXMLHttpRequestOpenSpy.restore();
 	});
 
+	QUnit.test("Test incomplete items are empty after upload completed", function (assert) {
+		var oItem = this.oUploadSet.getItems()[0];
+		oItem.setUploadState("Ready");
+		this.oUploadSet.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		this.oUploadSet.uploadItem(oItem);
+
+		//Assert
+		assert.equal(this.oUploadSet.getIncompleteItems(), 0, "incomplete items are empty");
+	});
+
 	QUnit.module("Drag and drop", {
 		beforeEach: function () {
 			this.$RootNode = jQuery(document.body);
