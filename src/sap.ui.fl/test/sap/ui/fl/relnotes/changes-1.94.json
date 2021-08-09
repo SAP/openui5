@@ -3,6 +3,28 @@
     "date": "August 2021",
     "notes": [
       {
+        "id": "4432cb856cc221838f41c18656b02fff9ad84530",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl VariantModel allows PUBLIC variant modifications correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180316854"
+          }
+        ]
+      },
+      {
+        "id": "6d84f5b59b5477e2fd01729f93ffe0bccb0f46d4",
+        "type": "FIX",
+        "text": " fl.VariantManagement: fix check during deletion in Manage Views",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180301894"
+          }
+        ]
+      },
+      {
         "id": "550769f6961f73ade87fcabbc4e252713fb702d4",
         "type": "FIX",
         "text": "[INTERNAL] sap.ui.fl.Settings provides correct flag for public FL variants"

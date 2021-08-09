@@ -3,6 +3,11 @@
     "date": "August 2021",
     "notes": [
       {
+        "id": "503e9e2255b350ade2fca7fef336ce5a60c03712",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Stabilized qunit"
+      },
+      {
         "id": "3fb0a934a502b3623d96dce05bd56b9adc2342c8",
         "type": "FIX",
         "text": " Integration cards: Title of the card is now read out by screen readers",

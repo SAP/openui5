@@ -3,6 +3,28 @@
     "date": "August 2021",
     "notes": [
       {
+        "id": "50edea3dbcf89d965aa27c7a366218eea7f25d52",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.Context#setProperty: report error on failure",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180259145"
+          }
+        ]
+      },
+      {
+        "id": "b791e44cd0f7113e8b91f0f2cc13ca1a1db231c4",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataMetaModel#getObject: Annotations at enum members",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180316466"
+          }
+        ]
+      },
+      {
         "id": "5d822d4562527e3dd7642ce2a36641a08ca0586c",
         "type": "FIX",
         "text": " thirdparty.Crossroads: interpolate query parameter with pound sign",
