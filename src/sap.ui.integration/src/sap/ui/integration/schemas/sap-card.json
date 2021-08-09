@@ -2484,17 +2484,6 @@
             }
           ]
         },
-        "enabled": {
-          "description": "Determines whether the item is enabled",
-          "oneOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
-        },
         "visible": {
           "description": "Determines whether the item is visible",
           "oneOf": [
