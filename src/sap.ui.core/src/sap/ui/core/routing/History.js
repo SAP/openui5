@@ -5,11 +5,9 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'./HashChanger',
 	"sap/base/Log",
-	"sap/ui/thirdparty/URI",
 	"sap/ui/Device",
-	"sap/base/util/ObjectPath",
-	"sap/ui/thirdparty/hasher"
-], function(library, HashChanger, Log, URI, Device, ObjectPath, hasher) {
+	"sap/base/util/ObjectPath"
+], function(library, HashChanger, Log, Device, ObjectPath) {
 	"use strict";
 
 	// shortcut for enum(s)
@@ -36,22 +34,31 @@ sap.ui.define([
 		this.aHistory = [];
 		this._bIsInitial = true;
 
-		if (History._bUsePushState && !History.getInstance()) {
+		function initHistoryState(sCurrentHash) {
 			var oState = window.history.state === null ? {} : window.history.state;
 
 			if (typeof oState === "object") {
-				var sHash = hasher.getHash();
 				oState.sap = oState.sap ? oState.sap : {};
 
-				if (oState.sap.history && Array.isArray(oState.sap.history) && oState.sap.history[oState.sap.history.length - 1] === sHash) {
+				if (oState.sap.history && Array.isArray(oState.sap.history) && oState.sap.history[oState.sap.history.length - 1] === sCurrentHash) {
 					History._aStateHistory = oState.sap.history;
 				} else {
-					History._aStateHistory.push(sHash);
+					History._aStateHistory.push(sCurrentHash);
 					oState.sap.history = History._aStateHistory;
 					window.history.replaceState(oState, window.document.title);
 				}
 			} else {
 				Log.debug("Unable to determine HistoryDirection as history.state is already set: " + window.history.state, "sap.ui.core.routing.History");
+			}
+		}
+
+		if (History._bUsePushState && !History.getInstance()) {
+			if (oHashChanger._initialized) {
+				initHistoryState(oHashChanger.getHash());
+			} else {
+				oHashChanger.attachEventOnce("hashChanged", function(oEvent) {
+					initHistoryState(oEvent.getParameter("newHash"));
+				});
 			}
 		}
 
