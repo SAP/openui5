@@ -79,11 +79,9 @@ sap.ui.define([
 	 * Traverse the whole DOM tree and set tab indices to -1 for all elements
 	 */
 	TabHandling.prototype.removeTabIndex = function() {
-		var oDesignTime = this.getDesignTime();
-		var aRootElements = oDesignTime.getRootElements();
-		aRootElements.forEach(function(oRootElement) {
-			var oRootOverlay = OverlayRegistry.getOverlay(oRootElement);
-			var $RootElement = oRootOverlay && oRootOverlay.getAssociatedDomRef();
+		var aRootOverlays = this._getRootOverlays();
+		aRootOverlays.forEach(function(oRootOverlay) {
+			var $RootElement = oRootOverlay.getAssociatedDomRef();
 			if ($RootElement) {
 				$RootElement.find(":focusable:not([tabIndex=-1], #overlay-container *)").each(function(iIndex, oNode) {
 					oNode.setAttribute("data-sap-ui-dt-tabindex", oNode.tabIndex);
@@ -94,12 +92,46 @@ sap.ui.define([
 	};
 
 	/**
+	 * Traverse the whole DOM tree and set tab indices to -1 for all overlays
+	 */
+	TabHandling.prototype.removeOverlayTabIndex = function() {
+		var aRootOverlays = this._getRootOverlays();
+		aRootOverlays.forEach(function(oRootOverlay) {
+			var $RootOverlay = jQuery(oRootOverlay.getDomRef());
+			if ($RootOverlay) {
+				$RootOverlay.find("[tabindex]:not([tabindex='-1']").each(function(iIndex, oNode) {
+					oNode.setAttribute("data-sap-ui-overlay-tabindex", oNode.tabIndex);
+					oNode.setAttribute("tabindex", -1);
+				});
+			}
+		});
+	};
+
+	TabHandling.prototype._getRootOverlays = function() {
+		var oDesignTime = this.getDesignTime();
+		var aRootElements = oDesignTime.getRootElements();
+		return aRootElements.map(function(oRootElement) {
+			return OverlayRegistry.getOverlay(oRootElement);
+		});
+	};
+
+	/**
 	 * Restore the tab indices of all elements of the DOM tree
 	 */
 	TabHandling.prototype.restoreTabIndex = function() {
 		jQuery("[data-sap-ui-dt-tabindex]").each(function(iIndex, oNode) {
 			oNode.setAttribute("tabindex", oNode.getAttribute("data-sap-ui-dt-tabindex"));
 			oNode.removeAttribute("data-sap-ui-dt-tabindex");
+		});
+	};
+
+	/**
+	 * Restore the tab indices of all Overlays of the DOM tree
+	 */
+	TabHandling.prototype.restoreOverlayTabIndex = function() {
+		jQuery("[data-sap-ui-overlay-tabindex]").each(function(iIndex, oNode) {
+			oNode.setAttribute("tabindex", oNode.getAttribute("data-sap-ui-overlay-tabindex"));
+			oNode.removeAttribute("data-sap-ui-overlay-tabindex");
 		});
 	};
 

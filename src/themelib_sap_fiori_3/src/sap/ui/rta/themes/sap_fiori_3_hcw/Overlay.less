@@ -7,7 +7,15 @@
 @_sap_ui_rta_Overlay_HoverBorder: @sapUiBlackBG; //#000000
 
 .sapUiRta {
+	.sapUiDtOverlayTargetZone {
+		&:after {
+			transition: none;
+			box-shadow: none;
+		}
+	}
+}
 
+.sapUiRta:not(.sapUiRtaVisualizationMode) {
 	.sapUiDtOverlay {
 		&:focus {
 			outline: none;
@@ -55,12 +63,6 @@
 				transition: none;
 				box-shadow: none;
 			}
-		}
-	}
-	.sapUiDtOverlayTargetZone {
-		&:after {
-			transition: none;
-			box-shadow: none;
 		}
 	}
 }

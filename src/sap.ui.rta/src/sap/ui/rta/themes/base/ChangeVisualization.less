@@ -90,6 +90,22 @@
 	color: @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolid;
 }
 
+.sapUiRtaChangeIndicatorHovered {
+	-webkit-transition: background 0.1s cubic-bezier(1,.01,1,0);
+	-moz-transition: background 0.1s cubic-bezier(1,.01,1,0);
+	-o-transition: background 0.1s cubic-bezier(1,.01,1,0);
+	transition: background 0.1s cubic-bezier(1,.01,1,0);
+
+	&:after {
+		content: " ";
+		border: 0.0625rem solid @_sap_ui_rta_Overlay_HoverBorder!important; //1px
+		transition: box-shadow .25s;
+		box-shadow: @_sap_ui_rta_Overlay_BoxShadow;
+		outline: 0.0625rem solid @_sap_ui_rta_Overlay_Border!important; //1px
+		outline-offset: -0.0625rem; //1px
+	}
+}
+
 .sapUiRtaMode {
 	.sapUiRtaPopover {
 		.sapUiRtaChangesList {

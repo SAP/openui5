@@ -21,6 +21,8 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/rta/plugin/Selection",
 	"sap/ui/rta/Utils",
+	"sap/m/InstanceManager",
+	"sap/m/Popover",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
@@ -44,6 +46,8 @@ sap.ui.define([
 	Remove,
 	Selection,
 	Utils,
+	InstanceManager,
+	Popover,
 	jQuery,
 	sinon
 ) {
@@ -333,6 +337,18 @@ sap.ui.define([
 			assert.notOk(oOverlay.isSelected(), "then this overlay is not selected");
 		});
 
+		QUnit.test("Pressing any Keyboard-key on an Overlay and isActive is false", function (assert) {
+			// processing of the key-down event can be proofed by checking the calls of
+			// "getFocusedOverlay" function
+			this.oSelectionPlugin.setIsActive(false);
+			var oGetFocusedOverlayStub = sandbox.stub(Utils, "getFocusedOverlay");
+			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
+			oOverlay.focus();
+			this.oEvent.keyCode = KeyCodes.TAB;
+			oOverlay.getDomRef().dispatchEvent(this.oEvent);
+			assert.strictEqual(oGetFocusedOverlayStub.callCount, 0, "then KayDown Event is not processed");
+		});
+
 		QUnit.test("Pressing ENTER on an Overlay", function (assert) {
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
 			this.oSelectionManager.add(oOverlay1);
@@ -433,6 +449,34 @@ sap.ui.define([
 			assert.ok(document.activeElement === oOverlay.getDomRef(), "then the Overlay is focused");
 		});
 
+		QUnit.test("Invoking Mouse-Down on an Overlay which is selectable and isActive is false", function (assert) {
+			sandbox.stub(Device.browser, "name").value("ie");
+			this.oSelectionPlugin.setIsActive(false);
+			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
+			assert.notOk(document.activeElement === oOverlay.getDomRef(), "when the Overlay is initially not focused");
+			var oMouseEvent = new Event("mousedown");
+			oOverlay.getDomRef().dispatchEvent(oMouseEvent);
+			assert.notOk(document.activeElement === oOverlay.getDomRef(), "then the Overlay is not focused afterwards");
+		});
+
+		QUnit.test("Invoking Mouse-Down on an Overlay which is selectable and isActive is false and two PopOvers are open", function (assert) {
+			var fnDone = assert.async();
+			this.oSelectionPlugin.setIsActive(false);
+			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
+			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
+			var oPopOver1 = new Popover({}).openBy(oOverlay1);
+			var oPopOver2 = new Popover({}).openBy(oOverlay2);
+			oPopOver1._bOpenedByChangeIndicator = false;
+			oPopOver2._bOpenedByChangeIndicator = true;
+			assert.strictEqual(InstanceManager.getOpenPopovers().length, 2, "then 2 PopOvers are opened initially");
+			var oMouseEvent = new Event("mousedown");
+			oOverlay1.getDomRef().dispatchEvent(oMouseEvent);
+			oPopOver2.attachAfterClose(function () {
+				assert.strictEqual(InstanceManager.getOpenPopovers().length, 1, "then one PopOver is closed");
+				fnDone();
+			});
+		});
+
 		QUnit.test("Invoking Mouse-Down on an Overlay which is not selectable", function (assert) {
 			sandbox.stub(Device.browser, "name").value("ie");
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
@@ -454,6 +498,18 @@ sap.ui.define([
 			// this does not seem to work without jQuery
 			QUnitUtils.triggerEvent("mouseleave", oOverlay.getDomRef());
 			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the CSS class is removed again after mouse-leave event");
+		});
+
+		QUnit.test("Invoking Mouse-Over and Mouse-Leave on an Overlay which is selectable and isActive is false", function (assert) {
+			this.oSelectionPlugin.setIsActive(false);
+			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
+			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "initially the CSS class is not set");
+			var oMouseOverEvent = new Event("mouseover");
+			oOverlay.getDomRef().dispatchEvent(oMouseOverEvent);
+			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the CSS class is still not not set after mouse-over event");
+			// this does not seem to work without jQuery
+			QUnitUtils.triggerEvent("mouseleave", oOverlay.getDomRef());
+			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the CSS class is still not not set after mouse-leave event");
 		});
 
 		QUnit.test("Invoking Mouse-Over on an Overlay which is not selectable", function (assert) {

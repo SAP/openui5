@@ -5,7 +5,9 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/util/changeVisualization/ChangeIndicator",
 	"sap/ui/rta/util/changeVisualization/categories/RenameVisualization",
-	"sap/ui/core/mvc/View",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/includes"
 ],
@@ -14,7 +16,9 @@ function(
 	QUnitUtils,
 	ChangeIndicator,
 	RenameVisualization,
-	View,
+	DesignTime,
+	OverlayRegistry,
+	Button,
 	JSONModel,
 	includes
 ) {
@@ -22,7 +26,7 @@ function(
 
 	var sandbox = sinon.sandbox.create();
 
-	function createMockChange (sId, sCommandName, mPayload, sCommandCategory, sAffectedElementId) {
+	function createMockChange (sId, sAffectedElementId, sCommandName, sCommandCategory, mPayload) {
 		return {
 			id: sId,
 			commandName: sCommandName,
@@ -49,45 +53,51 @@ function(
 	}
 
 	QUnit.module("Basic tests", {
-		beforeEach: function () {
-			this.oView = new View("TestView");
-			this.oView.placeAt("qunit-fixture");
+		beforeEach: function (assert) {
+			var fnDone = assert.async();
+			this.oButton = new Button("TestButton");
+			this.oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
-			this.oChangeIndicator = new ChangeIndicator({
-				changes: "{changes}",
-				overlayId: "qunit-fixture"
-			});
-			this.oChangeIndicator.setModel(new JSONModel({
-				changes: []
-			}));
-			this.oChangeIndicator.bindElement("/");
-			this.oChangeIndicator.placeAt("qunit-fixture");
+			this.oDesignTime = new DesignTime();
 
-			// Mock designtime metadata
-			sandbox.stub(sap.ui.getCore(), "byId")
-				.callsFake(function (sId) {
-					return sId === "qunit-fixture"
-						? {
-							getDesignTimeMetadata: function () {
-								return {
-									getLabel: function () { return "Test Label"; }
-								};
-							}
-						}
-						: sap.ui.getCore().byId.wrappedMethod.apply(this, arguments);
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+				this.oButtonOverlay.setSelectable(true);
+
+				this.oChangeIndicator = new ChangeIndicator({
+					changes: "{changes}",
+					overlayId: this.oButtonOverlay.getId()
 				});
+				this.oChangeIndicator.setModel(new JSONModel({
+					changes: []
+				}));
+				this.oChangeIndicator.bindElement("/");
+				this.oChangeIndicator.placeAt("qunit-fixture");
+
+				fnDone();
+			}.bind(this));
+
+			this.oDesignTime.addRootElement(this.oButton);
 		},
+
 		afterEach: function () {
-			this.oView.destroy();
+			this.oButton.destroy();
 			this.oChangeIndicator.destroy();
+			this.oDesignTime.destroy();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when a change indicator with a single change is created", function (assert) {
 			var oRtaResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
+			var mPayload = {
+				originalLabel: "BeforeValue",
+				newLabel: "AfterValue"
+			};
+
 			this.oChangeIndicator.getModel().setData({
-				changes: [createMockChange("someChangeId", "rename")]
+				changes: [createMockChange("someChangeId", this.oButton.getId(), "rename", "rename", mPayload)]
 			});
 			sap.ui.getCore().applyChanges();
 			assert.notOk(
@@ -122,8 +132,8 @@ function(
 					assert.strictEqual(
 						this.oChangeIndicator.getAggregation("_popover").getContent()[1].getContent()[0].getText(),
 						oRtaResourceBundle.getText(
-							"TXT_CHANGEVISUALIZATION_CHANGE_RENAME",
-							"'Test Label'"
+							"TXT_CHANGEVISUALIZATION_CHANGE_RENAME_FROM_TO",
+							["AfterValue", "BeforeValue"]
 						),
 						"then a description for the change is displayed"
 					);
@@ -133,8 +143,8 @@ function(
 		QUnit.test("when a change indicator with multiple changes is created", function (assert) {
 			this.oChangeIndicator.getModel().setData({
 				changes: [
-					createMockChange("someChangeId", "move"),
-					createMockChange("someOtherChangeId", "rename")
+					createMockChange("someChangeId", this.oButton.getId(), "move"),
+					createMockChange("someOtherChangeId", this.oButton.getId(), "rename")
 				]
 			});
 			sap.ui.getCore().applyChanges();
@@ -207,7 +217,7 @@ function(
 		QUnit.test("when a dependent change indicator is created", function (assert) {
 			this.oChangeIndicator.getModel().setData({
 				changes: [
-					createMockChange("someChangeId", "move")
+					createMockChange("someChangeId", this.oButton.getId(), "move")
 				]
 			});
 			this.oChangeIndicator.getModel().setData({
@@ -221,6 +231,7 @@ function(
 		});
 
 		QUnit.test("when a change indicator is focused before it is rendered", function (assert) {
+			sandbox.stub(this.oChangeIndicator, "_toggleHoverStyleClasses").returns(true);
 			this.oChangeIndicator.focus();
 			sap.ui.getCore().applyChanges();
 			assert.strictEqual(
@@ -238,13 +249,13 @@ function(
 
 			sandbox.stub(RenameVisualization, "getDescription").callsFake(function(mPayloadParameter, sElementLabel) {
 				assert.deepEqual(mPayload, mPayloadParameter, "getDescription is called with the right payload");
-				assert.strictEqual(sElementLabel, "Test Label", "getDescription is called with the right element label");
+				assert.strictEqual(sElementLabel, "TestButton", "getDescription is called with the right element label");
 				return "Test Description";
 			});
 
 			this.oChangeIndicator.getModel().setData({
 				changes: [
-					createMockChange("someChangeId", "rename", mPayload, "rename")
+					createMockChange("someChangeId", this.oButton.getId(), "rename", "rename", mPayload)
 				]
 			});
 
@@ -267,18 +278,18 @@ function(
 				bindingInfo: "BeforeValue"
 			});
 
-			this.oView.setModel(oJSONModel);
+			this.oButton.setModel(oJSONModel);
 
 			sandbox.stub(RenameVisualization, "getDescription").callsFake(function(mPayloadParameter, sElementLabel) {
 				assert.strictEqual(mPayloadParameter.originalLabel, "BeforeValue", "getDescription is called with the right original label");
 				assert.strictEqual(mPayloadParameter.newLabel, "AfterValue", "getDescription is called with the right new label");
-				assert.strictEqual(sElementLabel, "Test Label", "getDescription is called with the right element label");
+				assert.strictEqual(sElementLabel, "TestButton", "getDescription is called with the right element label");
 				return "Test Description";
 			});
 
 			this.oChangeIndicator.getModel().setData({
 				changes: [
-					createMockChange("someChangeId", "rename", mPayload, "rename", "TestView")
+					createMockChange("someChangeId", this.oButton.getId(), "rename", "rename", mPayload)
 				]
 			});
 
@@ -302,18 +313,18 @@ function(
 				bindingInfo2: "AfterValue"
 			});
 
-			this.oView.setModel(oJSONModel);
+			this.oButton.setModel(oJSONModel);
 
 			sandbox.stub(RenameVisualization, "getDescription").callsFake(function(mPayloadParameter, sElementLabel) {
 				assert.strictEqual(mPayloadParameter.originalLabel, "BeforeValue", "getDescription is called with the right original label");
 				assert.strictEqual(mPayloadParameter.newLabel, "AfterValue", "getDescription is called with the right new label");
-				assert.strictEqual(sElementLabel, "Test Label", "getDescription is called with the right element label");
+				assert.strictEqual(sElementLabel, "TestButton", "getDescription is called with the right element label");
 				return "Test Description";
 			});
 
 			this.oChangeIndicator.getModel().setData({
 				changes: [
-					createMockChange("someChangeId", "rename", mPayload, "rename", "TestView")
+					createMockChange("someChangeId", this.oButton.getId(), "rename", "rename", mPayload)
 				]
 			});
 
@@ -326,7 +337,7 @@ function(
 			);
 		});
 
-		QUnit.test("when a change indicator is created with a change payload but the 'getDescription' method returns undefined", function(assert) {
+		QUnit.test("when a change indicator is created with a change payload but there is no specific visualization for that change type yet", function(assert) {
 			var mPayload = {
 				originalLabel: "BeforeValue",
 				newLabel: "Aftervalue"
@@ -334,11 +345,9 @@ function(
 
 			var oRtaResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
-			sandbox.stub(RenameVisualization, "getDescription").returns(undefined);
-
 			this.oChangeIndicator.getModel().setData({
 				changes: [
-					createMockChange("someChangeId", "rename", mPayload, "rename")
+					createMockChange("someChangeId", this.oButton.getId(), "remove", "remove", mPayload)
 				]
 			});
 
@@ -347,8 +356,8 @@ function(
 			assert.strictEqual(
 				this.oChangeIndicator._oDetailModel.oData[0].description,
 				oRtaResourceBundle.getText(
-					"TXT_CHANGEVISUALIZATION_CHANGE_RENAME",
-					"'Test Label'"
+					"TXT_CHANGEVISUALIZATION_CHANGE_REMOVE",
+					"'TestButton'"
 				),
 				"then the description is the previously used generic text"
 			);

@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/changeHandler/BaseAddViaDelegate"
+	"sap/ui/fl/changeHandler/BaseAddViaDelegate",
+	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
-	BaseAddViaDelegate
+	BaseAddViaDelegate,
+	JsControlTreeModifier
 ) {
 	"use strict";
 
@@ -28,29 +30,29 @@ sap.ui.define([
 		// This logic is for insertIndex being a desired index of a form element inside a container
 		// However we cannot allow that new fields are added inside other FormElements, therefore
 		// we must find the end of the FormElement to add the new FormElement there
-		if (aContent.length === 1 || aContent.length === iIndexOfHeader + 1){
+		if (aContent.length === 1 || aContent.length === iIndexOfHeader + 1) {
 			// Empty container (only header or toolbar)
 			iNewIndex = aContent.length;
 		} else {
 			var j = 0;
-			for (j = iIndexOfHeader + 1; j < aContent.length; j++){
+			for (j = iIndexOfHeader + 1; j < aContent.length; j++) {
 				var sControlType = oModifier.getControlType(aContent[j]);
 				// When the next control is a label (= end of FormElement)
-				if (sControlType === sTypeLabel || sControlType === sTypeSmartLabel ){
-					if (iFormElementIndex == insertIndex){
+				if (sControlType === sTypeLabel || sControlType === sTypeSmartLabel) {
+					if (iFormElementIndex === insertIndex) {
 						iNewIndex = j;
 						break;
 					}
 					iFormElementIndex++;
 				}
 				// Next control is a title or toolbar (= end of container)
-				if (sControlType === sTypeTitle || sControlType === sTypeToolBar){
+				if (sControlType === sTypeTitle || sControlType === sTypeToolBar) {
 					iNewIndex = j;
 					break;
 				}
 
 				// If there are no more titles, toolbars or labels (= this is the last FormElement) -> insert at end
-				if (j === (aContent.length - 1)){
+				if (j === (aContent.length - 1)) {
 					iNewIndex = aContent.length;
 				}
 			}
@@ -93,7 +95,7 @@ sap.ui.define([
 	 *               changed in future.
 	 */
 	var AddSimpleFormField = BaseAddViaDelegate.createAddViaDelegateChangeHandler({
-		addProperty : function(mPropertyBag) {
+		addProperty: function(mPropertyBag) {
 			var oSimpleForm = mPropertyBag.control;
 
 			var mInnerControls = mPropertyBag.innerControls;
@@ -132,7 +134,7 @@ sap.ui.define([
 					return undefined;
 				});
 		},
-		revertAdditionalControls : function(mPropertyBag) {
+		revertAdditionalControls: function(mPropertyBag) {
 			var oSimpleForm = mPropertyBag.control;
 			var oChange = mPropertyBag.change;
 			var oModifier = mPropertyBag.modifier;
@@ -166,6 +168,18 @@ sap.ui.define([
 		skipCreateLayout: true, //simple form needs field and label separately
 		supportsDefault: true
 	});
+
+	AddSimpleFormField.getChangeVisualizationInfo = function(oChange, oAppComponent) {
+		var oRevertData = oChange.getRevertData();
+		if (oRevertData && oRevertData.labelSelector) {
+			return {
+				affectedControls: [JsControlTreeModifier.bySelector(oRevertData.labelSelector, oAppComponent).getParent().getId()]
+			};
+		}
+		return {
+			affectedControls: [oChange.getContent().newFieldSelector]
+		};
+	};
 
 	return AddSimpleFormField;
 },

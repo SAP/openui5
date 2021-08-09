@@ -9,7 +9,24 @@
 @_sap_ui_rta_Overlay_Border: @sapUiDragAndDropActiveBorderColor; //#03b803
 
 .sapUiRta {
+	.sapUiDtOverlayTargetZone {
+		&:after {
+			transition: none;
+			box-shadow: none;
+		}
+	}
+}
 
+.sapUiRta:not(.sapUiRtaVisualizationMode) {
+	.sapUiRtaOverlayHover {
+		&:after {
+			outline: 0.125rem dotted @_sap_ui_rta_Overlay_BorderColor; //2px
+			outline-offset: -0.125rem; //2px
+			border: none;
+			transition: none;
+			box-shadow: none;
+		}
+	}
 	.sapUiDtOverlay {
 		&:focus {
 			outline: none;
@@ -23,7 +40,6 @@
 			}
 		}
 	}
-
 	.sapUiDtOverlaySelected {
 		transition: none;
 		box-shadow: none;
@@ -34,28 +50,11 @@
 				box-shadow: 0 0 0 4px @_sap_ui_rta_Overlay_BoxShadowColor inset;
 			}
 		}
-		&.sapUiRtaOverlayHover {
+		&.sapUiRtaOverlayHover{
 			&:after {
 				border: 0.125rem solid @_sap_ui_rta_Overlay_BorderColor!important; //2px
 				outline-offset: -0.25rem; //4px
 			}
-		}
-	}
-
-	.sapUiRtaOverlayHover {
-		&:after {
-			outline: 0.125rem dotted @_sap_ui_rta_Overlay_BorderColor; //2px
-			outline-offset: -0.125rem; //2px
-			border: none;
-			transition: none;
-			box-shadow: none;
-		}
-	}
-
-	.sapUiDtOverlayTargetZone {
-		&:after {
-			transition: none;
-			box-shadow: none;
 		}
 	}
 }

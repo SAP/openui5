@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/base/util/restricted/_difference",
 	"sap/base/util/deepEqual",
-	"sap/m/ButtonType",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Control",
 	"sap/ui/core/Fragment",
@@ -24,7 +23,6 @@ sap.ui.define([
 ], function(
 	difference,
 	deepEqual,
-	ButtonType,
 	JsControlTreeModifier,
 	Control,
 	Fragment,
@@ -121,6 +119,8 @@ sap.ui.define([
 				active: this.getIsActive()
 			});
 			this._oChangeIndicatorModel.setDefaultBindingMode("OneWay");
+			this._sSelectedCommandCategory = "all";
+			this._bSetModeChanged = false;
 		}
 	});
 
@@ -146,15 +146,6 @@ sap.ui.define([
 				active: bActiveState
 			});
 		}
-
-		if (this._oToolbarButton) {
-			this._oToolbarButton.setType(bActiveState ? ButtonType.Emphasized : ButtonType.Transparent);
-			this._oToolbarButton.setTooltip(this._oTextBundle.getText(
-				bActiveState
-					? "BUT_CHANGEVISUALIZATION_HIDECHANGES"
-					: "BUT_CHANGEVISUALIZATION_SHOWCHANGES"
-			));
-		}
 	};
 
 	ChangeVisualization.prototype.exit = function () {
@@ -163,25 +154,6 @@ sap.ui.define([
 
 	ChangeVisualization.prototype._reset = function () {
 		this._oChangeIndicatorRegistry.reset();
-	};
-
-	/**
-	 * Toggles whether change visualization should be displayed or not
-	 *
-	 * @param {event} oEvent - Event
-	 */
-	ChangeVisualization.prototype.toggleActive = function (oEvent) {
-		if (!this._oToolbarButton) {
-			// Event bubbled through the toolbar, get original source
-			this._oToolbarButton = sap.ui.getCore().byId(oEvent.getParameter("id"));
-		}
-
-		var bIsActive = this.getIsActive();
-		if (bIsActive) {
-			this.setIsActive(false);
-		} else {
-			this._togglePopover();
-		}
 	};
 
 	ChangeVisualization.prototype._updatePopoverModel = function () {
@@ -216,7 +188,16 @@ sap.ui.define([
 		return this._oTextBundle.getText(sLabelKey);
 	};
 
-	ChangeVisualization.prototype._togglePopover = function () {
+	/**
+	 * Toggles the Popover containing the Change-List
+	 *
+	 * @param {event} oEvent - Event
+	 */
+	ChangeVisualization.prototype.togglePopover = function (oEvent) {
+		if (!this._oToolbarButton) {
+			// Event bubbled through the toolbar, get original source
+			this._oToolbarButton = sap.ui.getCore().byId(oEvent.getParameter("id"));
+		}
 		var oPopover = this.getPopover();
 		if (!(oPopover && oPopover.isOpen())) {
 			this._updateChangeRegistry().then(this._updatePopoverModel.bind(this));
@@ -251,12 +232,18 @@ sap.ui.define([
 	 */
 	ChangeVisualization.prototype.onCommandCategorySelection = function (oEvent) {
 		var sSelectedCommandCategory = oEvent.getSource().getBindingContext("commandModel").getObject().key;
+		//set the text of the toolbar button
+		var sTextkey = "BTN_CHANGEVISUALIZATION_OVERVIEW_" + sSelectedCommandCategory.toUpperCase();
+		this._oToolbarButton.setText(this._oTextBundle.getText(sTextkey));
 		this._selectCommandCategory(sSelectedCommandCategory);
 	};
 
 	ChangeVisualization.prototype._selectCommandCategory = function (sSelectedCommandCategory) {
-		this.getPopover().close();
-		this.setIsActive(true);
+		this._sSelectedCommandCategory = sSelectedCommandCategory;
+		var oPopover = this.getPopover();
+		if (oPopover && oPopover.isOpen()) {
+			oPopover.close();
+		}
 
 		var aRelevantChanges = this._getChangesForCommandCategory(sSelectedCommandCategory);
 
@@ -554,10 +541,6 @@ sap.ui.define([
 			oOriginalEvent.stopPropagation();
 			oOriginalEvent.preventDefault();
 			this._setFocusedIndicator(oIndicator, 1);
-		} else if (
-			iKeyCode === KeyCodes.ESCAPE
-		) {
-			this.setIsActive(false);
 		}
 	};
 
@@ -587,6 +570,25 @@ sap.ui.define([
 			) % aVisibleIndicators.length
 			: 0;
 		aVisibleIndicators[iIndexToSelect].focus();
+	};
+
+	/**
+	 * Triggers the mode switch (on/off).
+	 *
+	 * @param {sap.ui.base.ManagedObject} oRootControl - Root control of the overlays
+	 * @private
+	 */
+	ChangeVisualization.prototype.triggerModeChange = function(oRootControl) {
+		if (this.getIsActive()) {
+			this.setIsActive(false);
+			return;
+		}
+		if (!this.getRootControlId()) {
+			this.setRootControlId(oRootControl);
+		}
+		this.setIsActive(true);
+		// show all change visualizations at startup
+		this._updateChangeRegistry().then(this._selectCommandCategory.bind(this, this._sSelectedCommandCategory));
 	};
 
 	return ChangeVisualization;

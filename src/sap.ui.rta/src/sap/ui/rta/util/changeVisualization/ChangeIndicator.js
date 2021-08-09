@@ -28,7 +28,6 @@ sap.ui.define([
 	resolveBinding
 ) {
 	"use strict";
-
 	/**
 	 * @class
 	 * Constructor for a new <code>sap.ui.rta.util.changeVisualization.ChangeIndicator</code> class.
@@ -184,6 +183,10 @@ sap.ui.define([
 
 		this.attachBrowserEvent("click", this._onSelect, this);
 		this.attachBrowserEvent("keydown", this._onKeyDown, this);
+		this.attachBrowserEvent("mouseleave", function() {this._toggleHoverStyleClasses(false); }, this);
+		this.attachBrowserEvent("focusout", function() {this._toggleHoverStyleClasses(false); }, this);
+		this.attachBrowserEvent("mouseover", function() {this._toggleHoverStyleClasses(true); }, this);
+		this.attachBrowserEvent("focusin", function() {this._toggleHoverStyleClasses(true); }, this);
 	};
 
 	ChangeIndicator.prototype.focus = function () {
@@ -211,6 +214,7 @@ sap.ui.define([
 		if (this._bScheduledForFocus) {
 			// Element was supposed to be focused before rendering
 			this.focus();
+			this._toggleHoverStyleClasses(true);
 		}
 	};
 
@@ -235,6 +239,7 @@ sap.ui.define([
 	};
 
 	ChangeIndicator.prototype._onSelect = function (oEvent) {
+		this.focus();
 		oEvent.stopPropagation();
 		if (
 			this.getModel().getData().selectedChange
@@ -258,6 +263,16 @@ sap.ui.define([
 		this.fireKeyPress({
 			originalEvent: oEvent
 		});
+	};
+
+	ChangeIndicator.prototype._toggleHoverStyleClasses = function(bAdd) {
+		var oOverlay = sap.ui.getCore().byId(this.getOverlayId());
+		if (oOverlay.getMetadata().getName() !== "sap.ui.dt.ElementOverlay") {
+			return;
+		}
+		var sFunctionName = bAdd ? "addStyleClass" : "removeStyleClass";
+		oOverlay[sFunctionName]("sapUiRtaOverlayHover");
+		oOverlay[sFunctionName]("sapUiRtaChangeIndicatorHovered");
 	};
 
 	ChangeIndicator.prototype._formatChangesModelItem = function (mChangeInformation) {
@@ -307,11 +322,15 @@ sap.ui.define([
 				name: "sap.ui.rta.util.changeVisualization.ChangeIndicatorPopover",
 				controller: this
 			}).then(function(oPopover) {
+				oPopover._bOpenedByChangeIndicator = true;
 				this.setAggregation("_popover", oPopover);
 				oPopover.setModel(this._oDetailModel, "details");
 				oPopover.openBy(this);
 			}.bind(this));
 		} else {
+			if (this.getAggregation("_popover").isOpen()) {
+				return this.getAggregation("_popover").close();
+			}
 			this.getAggregation("_popover").openBy(this);
 		}
 	};

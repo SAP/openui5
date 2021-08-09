@@ -140,7 +140,8 @@ sap.ui.define([
 				}
 			}
 		};
-		oChangeVisualization.toggleActive(oMockEvent);
+		oChangeVisualization.setIsActive(true);
+		oChangeVisualization.togglePopover(oMockEvent);
 	}
 
 	function waitForMethodCall (oObject, sMethodName) {
@@ -439,19 +440,9 @@ sap.ui.define([
 						3,
 						"then all indicators are visible before deactivation"
 					);
-					assert.strictEqual(
-						this.oVisualizationButton.getTooltip(),
-						oRtaResourceBundle.getText("BUT_CHANGEVISUALIZATION_HIDECHANGES"),
-						"then the tooltip is changed"
-					);
-					assert.strictEqual(
-						this.oVisualizationButton.getType(),
-						ButtonType.Emphasized,
-						"then the button type is changed"
-					);
 
 					// Deactivate
-					this.oChangeVisualization.toggleActive();
+					this.oChangeVisualization.setIsActive(false);
 					sap.ui.getCore().applyChanges();
 					assert.strictEqual(
 						collectIndicatorReferences().filter(function (oIndicator) {
@@ -459,16 +450,6 @@ sap.ui.define([
 						}).length,
 						0,
 						"then all indicators are hidden after deactivation"
-					);
-					assert.strictEqual(
-						this.oVisualizationButton.getTooltip(),
-						oRtaResourceBundle.getText("BUT_CHANGEVISUALIZATION_SHOWCHANGES"),
-						"then the tooltip is changed back"
-					);
-					assert.strictEqual(
-						this.oVisualizationButton.getType(),
-						ButtonType.Transparent,
-						"then the button type is changed back"
 					);
 
 					var fnReactivate = function () {
@@ -493,6 +474,35 @@ sap.ui.define([
 						this.oChangeVisualization.getPopover().attachEventOnce("afterClose", fnReactivate);
 					}
 				}.bind(this));
+		});
+
+		QUnit.test("when ChangeVisualization is inactive and mode change is triggered", function (assert) {
+			var fnDone = assert.async();
+			prepareChanges(this.aMockChanges);
+			this.oChangeVisualization.setRootControlId(undefined);
+			this.oChangeVisualization.setIsActive(false);
+			assert.strictEqual(this.oChangeVisualization.getRootControlId(), undefined, "then the RootControlId was not set before");
+			assert.strictEqual(this.oChangeVisualization.getIsActive(), false, "then the ChangeVisualization was inactive before");
+			waitForMethodCall(this.oChangeVisualization, "triggerModeChange")
+				.then(function() {
+					assert.strictEqual(this.oChangeVisualization.getRootControlId(), "MockComponent", "then the RootControlId is set afterwards");
+					assert.strictEqual(this.oChangeVisualization.getIsActive(), true, "then the ChangeVisualization is active afterwards");
+					fnDone();
+				}.bind(this));
+			this.oChangeVisualization.triggerModeChange("MockComponent");
+		});
+
+		QUnit.test("when ChangeVisualization is active and mode change is triggered", function (assert) {
+			var fnDone = assert.async();
+			prepareChanges(this.aMockChanges);
+			startChangeVisualization(this.oVisualizationButton, this.oChangeVisualization);
+			assert.strictEqual(this.oChangeVisualization.getIsActive(), true, "then the ChangeVisualization was active before");
+			waitForMethodCall(this.oChangeVisualization, "triggerModeChange")
+				.then(function() {
+					assert.strictEqual(this.oChangeVisualization.getIsActive(), false, "then the ChangeVisualization is inactive afterwards");
+					fnDone();
+				}.bind(this));
+			this.oChangeVisualization.triggerModeChange("MockComponent");
 		});
 
 		QUnit.test("when details are selected for a change", function (assert) {
@@ -595,19 +605,6 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when the Escape button is pressed", function (assert) {
-			QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ESCAPE);
-			sap.ui.getCore().applyChanges();
-			assert.notOk(
-				this.oChangeVisualization.getIsActive(),
-				"then the visualization is stopped"
-			);
-			assert.strictEqual(
-				collectIndicatorReferences().length,
-				0,
-				"then all indicators are hidden"
-			);
-		});
 
 		QUnit.test("when LEFT, UP or SHIFT TAB are pressed", function (assert) {
 			var aIndicators = collectIndicatorReferences();

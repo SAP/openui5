@@ -41,9 +41,14 @@ function(
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function () {
+				var oOverlay = this.oDesignTime.getElementOverlays()[1];
+				oOverlay.setEditable(true);
+				oOverlay.setMovable(true);
+				oOverlay.setSelectable(true);
 				sap.ui.getCore().applyChanges();
+				this.OverlayRoot = jQuery("#overlay-container");
 				done();
-			});
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oLayout.destroy();
@@ -52,6 +57,19 @@ function(
 	}, function () {
 		QUnit.test("when the TabHandling plugin is loaded", function (assert) {
 			assert.strictEqual(this.oLayout.$().find(":focusable:not([tabindex=-1])").length, 0, "then no UI5 controls are tabable");
+			assert.strictEqual(this.OverlayRoot.find("[tabindex]:not([tabindex='-1']").length, 1, "then one overlay is tabable");
+		});
+
+		QUnit.test("when the TabIndex of the overlay is disabled", function (assert) {
+			this.oTabHandling.removeOverlayTabIndex();
+			assert.strictEqual(this.OverlayRoot.find("[tabindex]:not([tabindex='-1']").length, 0, "then no overlay is tabable");
+		});
+
+		QUnit.test("when the TabIndex of the overlay is disabled and enabled again", function (assert) {
+			this.oTabHandling.removeOverlayTabIndex();
+			assert.strictEqual(this.OverlayRoot.find("[tabindex]:not([tabindex='-1']").length, 0, "first no overlay is tabable");
+			this.oTabHandling.restoreOverlayTabIndex();
+			assert.strictEqual(this.OverlayRoot.find("[tabindex]:not([tabindex='-1']").length, 1, "then one overlay is tabable again");
 		});
 
 		QUnit.test("when the TabHandling plugin is loaded and destroyed afterwards", function (assert) {

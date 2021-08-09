@@ -141,9 +141,7 @@ sap.ui.define([
 
 	RenameForm.getChangeVisualizationInfo = function(oChange, oAppComponent) {
 		var oElementSelector = oChange.getDefinition().content.elementSelector;
-		var oAffectedControlSelector = oChange.getChangeType() === "renameTitle"
-			? JsControlTreeModifier.bySelector(oElementSelector, oAppComponent).getParent().getId()
-			: oElementSelector;
+		var oAffectedControlSelector = JsControlTreeModifier.bySelector(oElementSelector, oAppComponent).getParent().getId();
 		return {
 			affectedControls: [oAffectedControlSelector]
 		};
