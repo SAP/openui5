@@ -3,10 +3,13 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/test/autowaiter/_timeoutWaiter"
-], function ($, timeoutWaiter) {
+	"sap/ui/test/autowaiter/_timeoutWaiter",
+	"sap/ui/test/_LogCollector",
+	"sap/ui/test/_OpaLogger"
+], function ($, timeoutWaiter, _LogCollector, _OpaLogger) {
 	"use strict";
 
+	var oLogCollector = _LogCollector.getInstance();
 	var fnSetTimeout = window["setTimeout"];
 	var fnClearTimeout = window["clearTimeout"];
 
@@ -19,7 +22,16 @@ sap.ui.define([
 			return;
 		}
 
-		QUnit.module("timeoutWaiter - no " + sFunctionUnderTest);
+		QUnit.module("timeoutWaiter - no " + sFunctionUnderTest, {
+			beforeEach: function () {
+				this.defaultLogLevel = _OpaLogger.getLevel();
+				_OpaLogger.setLevel("trace");
+			},
+			afterEach: function () {
+				_OpaLogger.setLevel(this.defaultLogLevel);
+				oLogCollector.getAndClearLog(); // cleanup
+			}
+		});
 
 		QUnit.test("Should make sure there is no pending timeout before starting these tests", function (assert) {
 			var fnDone = assert.async();
@@ -56,7 +68,9 @@ sap.ui.define([
 			var iID = fnSetFunction(function () {}, 1100);
 			// give some time for an eventual async flow in timeoutWaiter
 			fnSetFunction(function () {
-				assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts");
+				var bHasPending = timeoutWaiter.hasPending();
+				var sLogs = oLogCollector.getAndClearLog();
+				assert.ok(!bHasPending, "there are no pending timeouts, pending timeouts logs: " + sLogs);
 				fnClearFunction(iID);
 				fnDone();
 			}, 50);
