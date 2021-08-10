@@ -4,8 +4,9 @@
 sap.ui.define([
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/Opa5",
+	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press"
-], function (Helper, Opa5, Press) {
+], function (Helper, Opa5, EnterText, Press) {
 	"use strict";
 
 	var mIconForExpand = {
@@ -66,6 +67,18 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheMainPage : {
 			actions : {
+				enterSearch : function (sText) {
+					this.waitFor({
+						actions : new EnterText({clearTextFirst : true, text : sText}),
+						controlType : "sap.m.SearchField",
+						errorMessage : "Could not enter search text",
+						id : "search",
+						success : function () {
+							Opa5.assert.ok(true, "Entered: \"" + sText + "\" in search field.");
+						},
+						viewName : sViewName
+					});
+				},
 				scrollToRow : function (iRow, sComment) {
 					this.waitFor({
 						actions : function (oTable) {
