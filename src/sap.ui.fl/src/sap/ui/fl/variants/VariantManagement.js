@@ -533,6 +533,13 @@ sap.ui.define([
 		return false;
 	};
 
+	VariantManagement.prototype._setShowPublic = function(bValue) {
+		var oInnerModel = this.getModel(VariantManagement.INNER_MODEL_NAME);
+		if (oInnerModel) {
+			oInnerModel.setProperty("/showPublic", bValue);
+		}
+	};
+
 	VariantManagement.prototype._getShowExecuteOnSelection = function() {
 		var oModel = this.getModel(VariantManagement.INNER_MODEL_NAME);
 		if (oModel) {
@@ -1257,9 +1264,8 @@ sap.ui.define([
 				oSaveAsDialogOptionsGrid.addContent(this.oDefault);
 			}
 
-			if (this._getShowPublic()) {
-				oSaveAsDialogOptionsGrid.addContent(this.oPublic);
-			}
+
+			oSaveAsDialogOptionsGrid.addContent(this.oPublic);
 
 			if (this._getShowExecuteOnSelection()) {
 				oSaveAsDialogOptionsGrid.addContent(this.oExecuteOnSelect);
@@ -1271,6 +1277,7 @@ sap.ui.define([
 					this._bSaveOngoing = false;
 
 					if (this._sStyleClass) {
+						this._setShowPublic(this._bShowPublic);
 						this.oSaveAsDialog.removeStyleClass(this._sStyleClass);
 						this._sStyleClass = undefined;
 					}
@@ -1315,7 +1322,10 @@ sap.ui.define([
 	VariantManagement.prototype.openSaveAsDialogForKeyUser = function (sRtaStyleClassName) {
 		this._openSaveAsDialog(sRtaStyleClassName);
 		this.oSaveAsDialog.addStyleClass(sRtaStyleClassName);
-		this._sStyleClass = sRtaStyleClassName;
+		this._sStyleClass = sRtaStyleClassName; // indicates that dialog is running in key user scenario
+
+		this._bShowPublic = this._getShowPublic();
+		this._setShowPublic(false);
 	};
 
 	VariantManagement.prototype._openSaveAsDialog = function() {
@@ -1384,7 +1394,7 @@ sap.ui.define([
 			overwrite: false,
 			def: this.oDefault.getSelected(),
 			execute: this.oExecuteOnSelect.getSelected(),
-			"public": this.oPublic.getSelected()
+			"public": this._sStyleClass ? undefined : this.oPublic.getSelected()
 		});
 	};
 
