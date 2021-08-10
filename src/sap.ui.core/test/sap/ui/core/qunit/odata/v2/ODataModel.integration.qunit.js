@@ -9305,6 +9305,59 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: Set created context as binding context for a flex box with a relative context
+	// binding. The flex box becomes empty and there is no request.
+	// JIRA: CPOUI5MODELS-612
+	QUnit.test("ODCB: transient context, no request", function (assert) {
+		var oCreatedContext,
+			sView = '\
+<FlexBox id="salesOrder">\
+	<Text id="salesOrderId" text="{SalesOrderID}" />\
+	<FlexBox id="businessPartner" binding="{ToBusinessPartner}">\
+		<Text id="businessPartnerId" text="{BusinessPartnerID}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		return this.createView(assert, sView).then(function () {
+			that.expectValue("salesOrderId", "42");
+
+			// code under test - no requests are executed
+			oCreatedContext = that.oModel.createEntry("/SalesOrderSet",
+				{properties : {SalesOrderID : "42"}});
+			that.oView.byId("salesOrder").bindElement({path : oCreatedContext.getPath()});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectHeadRequest()
+				.expectRequest("SalesOrderSet('1')", {
+					SalesOrderID : "1"
+				})
+				.expectRequest("SalesOrderSet('1')/ToBusinessPartner", {
+					__metadata : {uri : "/BusinessPartnerSet('BP1')"},
+					BusinessPartnerID : "A"
+				})
+				.expectValue("salesOrderId", "1")
+				.expectValue("businessPartnerId", "A");
+
+			// code under test
+			that.oView.byId("salesOrder").bindElement({path : "/SalesOrderSet('1')"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("salesOrderId", "4711")
+				.expectValue("businessPartnerId", "");
+
+			// code under test - no requests are executed
+			oCreatedContext = that.oModel.createEntry("/SalesOrderSet",
+				{properties : {SalesOrderID : "4711"}});
+			that.oView.byId("salesOrder").bindElement({path : oCreatedContext.getPath()});
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: When scrolling in a table then, the ODataListBinding requests an appropriate number
 	// of items according to the defined threshold. See implementation of
 	// ODataUtils#_getReadIntervals.
