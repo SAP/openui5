@@ -42,7 +42,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			oRM.openStart("div", oControl.getId() + "-label");
 			oRM.class("sapMTimePickerContainerLabel");
 			oRM.openEnd();
-			oRM.style("display", "block");
 			oRM.text(sLabelText);
 			oRM.close("div");
 		}
