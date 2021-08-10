@@ -1,0 +1,26 @@
+/* =============================== */
+/* CSS for sap.ui.table/ScrollingIOS  */
+/* Base theme                      */
+/* =============================== */
+
+.sapUiTableVSbIOSActive {
+	.sapUiTableVSb,
+	.sapUiTableVSbExternal {
+		touch-action: none;
+	}
+}
+
+.sapUiTableVSbIOS {
+	position: absolute;
+	right: 0;
+	z-index: 5;
+	width: @_sap_ui_table_Scrolling_ScrollbarSizeMobile;
+}
+
+.sapUiTableVSbIOSThumb {
+	position: relative;
+	background-color: #949494;
+	border-radius: 0.25rem;
+	left: @_sap_ui_table_BaseBorderWidth;
+	width: calc(@_sap_ui_table_Scrolling_ScrollbarSizeMobile ~"-" calc(2 * @_sap_ui_table_BaseBorderWidth));
+}

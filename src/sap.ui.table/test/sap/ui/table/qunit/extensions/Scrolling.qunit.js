@@ -30,113 +30,6 @@ sap.ui.define([
 		PAGE: 2
 	};
 
-	function createMouseWheelEvent(iScrollDelta, iDeltaMode, bShift) {
-		return new window.WheelEvent("wheel", {
-			deltaY: bShift ? 0 : iScrollDelta,
-			deltaX: bShift ? iScrollDelta : 0,
-			deltaMode: iDeltaMode,
-			shiftKey: bShift,
-			bubbles: true,
-			cancelable: true
-		});
-	}
-
-	function createTouchEvent(sType, mParams) {
-		if (Device.browser.firefox || Device.browser.safari) {
-			return Object.assign(new Event(sType, {
-				bubbles: true,
-				cancelable: true
-			}), mParams);
-		} else {
-			return new window.TouchEvent(sType, Object.assign({
-				bubbles: true,
-				cancelable: true
-			}, mParams));
-		}
-	}
-
-	function createTouch(mParams) {
-		if (Device.browser.firefox || Device.browser.safari) {
-			var oTarget = mParams.target;
-
-			delete mParams.target;
-
-			return Object.assign(new Event({
-				bubbles: true,
-				cancelable: true,
-				target: oTarget
-			}), mParams);
-		} else {
-			return new window.Touch(mParams);
-		}
-	}
-
-	var iTouchPositionX;
-	var iTouchPositionY;
-	var oTouchTargetElement;
-
-	function initTouchScrolling(oTargetElement, iPageX, iPageY) {
-		oTouchTargetElement = oTargetElement;
-		iTouchPositionX = iPageX || 0;
-		iTouchPositionY = iPageY || 0;
-
-		var oTouchEvent = createTouchEvent("touchstart", {
-			touches: [
-				createTouch({
-					target: oTouchTargetElement,
-					identifier: Date.now(),
-					pageX: iTouchPositionX,
-					pageY: iTouchPositionY
-				})
-			]
-		});
-
-		oTouchTargetElement.dispatchEvent(oTouchEvent);
-
-		return oTouchEvent;
-	}
-
-	function doTouchScrolling(iScrollDeltaX, iScrollDeltaY) {
-		iTouchPositionX -= iScrollDeltaX || 0;
-		iTouchPositionY -= iScrollDeltaY || 0;
-
-		var oTouchEvent = createTouchEvent("touchmove", {
-			touches: [
-				createTouch({
-					target: oTouchTargetElement,
-					identifier: Date.now(),
-					pageX: iTouchPositionX,
-					pageY: iTouchPositionY
-				})
-			]
-		});
-
-		oTouchTargetElement.dispatchEvent(oTouchEvent);
-
-		return oTouchEvent;
-	}
-
-	function endTouchScrolling() {
-		var oTouchEvent = createTouchEvent("touchend", {
-			changedTouches: [
-				createTouch({
-					target: oTouchTargetElement,
-					identifier: Date.now(),
-					pageX: iTouchPositionX,
-					pageY: iTouchPositionY
-				})
-			]
-		});
-
-		oTouchTargetElement.dispatchEvent(oTouchEvent);
-
-		return oTouchEvent;
-	}
-
-	function createScrollEvent() {
-		return new window.Event("scroll");
-	}
-
 	//*******************************************************************
 
 	QUnit.module("Initialization", {
@@ -837,7 +730,7 @@ sap.ui.define([
 
 		function scrollWithMouseWheel(oTargetElement, iScrollDelta, iDeltaMode, bShift, iExpectedScrollPosition, bValidTarget) {
 			return new Promise(function(resolve) {
-				var oWheelEvent = createMouseWheelEvent(iScrollDelta, iDeltaMode, bShift);
+				var oWheelEvent = TableQUnitUtils.createMouseWheelEvent(iScrollDelta, iDeltaMode, bShift);
 				var oStopPropagationSpy = sinon.spy(oWheelEvent, "stopPropagation");
 				var bExpectScrolling = false;
 
@@ -904,48 +797,48 @@ sap.ui.define([
 		function scrollForwardAndBackToBeginning(oTargetElement) {
 			return oTable.qunit.scrollHSbTo(0).then(function() {
 				iCurrentScrollPosition = 0;
-				initTouchScrolling(oTargetElement, 200);
+				TableQUnitUtils.startTouchScrolling(oTargetElement, 200);
 				return scrollWithTouch(150, iCurrentScrollPosition + 150, true);
 			}).then(function() {
 				return scrollWithTouch(-150, iCurrentScrollPosition - 150, true);
 			}).then(function() {
-				endTouchScrolling();
+				TableQUnitUtils.endTouchScrolling();
 			});
 		}
 
 		function scrollBeyondBoundaries(oTargetElement) {
 			return oTable.qunit.scrollHSbTo(0).then(function() {
 				iCurrentScrollPosition = 0;
-				initTouchScrolling(oTargetElement, 200);
+				TableQUnitUtils.startTouchScrolling(oTargetElement, 200);
 				return scrollWithTouch(-150, 0, true);
 			}).then(function() {
-				endTouchScrolling();
+				TableQUnitUtils.endTouchScrolling();
 			}).then(oTable.qunit.$scrollHSbTo(oHSb.scrollWidth - oHSb.getBoundingClientRect().width)).then(function() {
 				iCurrentScrollPosition = oHSb.scrollLeft;
-				initTouchScrolling(oTargetElement, 200);
+				TableQUnitUtils.startTouchScrolling(oTargetElement, 200);
 				return scrollWithTouch(150, iCurrentScrollPosition, true);
 			}).then(function() {
-				endTouchScrolling();
+				TableQUnitUtils.endTouchScrolling();
 			});
 		}
 
 		function scrollOnInvalidTarget(oTargetElement) {
 			return oTable.qunit.scrollHSbTo(50).then(function() {
 				iCurrentScrollPosition = 50;
-				initTouchScrolling(oTargetElement, 200);
+				TableQUnitUtils.startTouchScrolling(oTargetElement, 200);
 				return scrollWithTouch(150, iCurrentScrollPosition, false);
 			}).then(function() {
-				endTouchScrolling();
-				initTouchScrolling(oTargetElement, 200);
+				TableQUnitUtils.endTouchScrolling();
+				TableQUnitUtils.startTouchScrolling(oTargetElement, 200);
 				return scrollWithTouch(-150, iCurrentScrollPosition, false);
 			}).then(function() {
-				endTouchScrolling();
+				TableQUnitUtils.endTouchScrolling();
 			});
 		}
 
 		function scrollWithTouch(iScrollDelta, iExpectedScrollPosition, bValidTarget) {
 			return new Promise(function(resolve) {
-				var oTouchEvent = doTouchScrolling(iScrollDelta);
+				var oTouchEvent = TableQUnitUtils.doTouchScrolling(iScrollDelta);
 				var bExpectScrolling = false;
 
 				// Touch move is also a swipe on touch devices. See the moveHandler method in jquery-mobile-custom.js, to know why
@@ -2259,11 +2152,11 @@ sap.ui.define([
 				// Test restarting the scrollbar scroll process.
 
 				oScrollbar.scrollTop = 100;
-				oScrollbar.dispatchEvent(createScrollEvent());
+				oScrollbar.dispatchEvent(TableQUnitUtils.createScrollEvent());
 
 				setTimeout(function() {
 					oScrollbar.scrollTop = 200;
-					oScrollbar.dispatchEvent(createScrollEvent());
+					oScrollbar.dispatchEvent(TableQUnitUtils.createScrollEvent());
 
 					// Avoid that scroll events triggered by the browser are processed.
 					oScrollbar.removeEventListener("scroll", oScrollExtension._onVerticalScrollEventHandler);
@@ -2334,11 +2227,11 @@ sap.ui.define([
 				// Test restarting the scrollbar scroll process.
 
 				oScrollbar.scrollTop = 100;
-				oScrollbar.dispatchEvent(createScrollEvent());
+				oScrollbar.dispatchEvent(TableQUnitUtils.createScrollEvent());
 
 				setTimeout(function() {
 					oScrollbar.scrollTop = 200;
-					oScrollbar.dispatchEvent(createScrollEvent());
+					oScrollbar.dispatchEvent(TableQUnitUtils.createScrollEvent());
 					oScrollbar.removeEventListener("scroll", oScrollExtension._onVerticalScrollEventHandler);
 				}, 0);
 
@@ -3025,7 +2918,7 @@ sap.ui.define([
 
 		function scrollWithMouseWheel(iScrollDelta, iDeltaMode) {
 			return function() {
-				oTable.qunit.getDataCell(0, 0).dispatchEvent(createMouseWheelEvent(iScrollDelta, iDeltaMode, false));
+				oTable.qunit.getDataCell(0, 0).dispatchEvent(TableQUnitUtils.createMouseWheelEvent(iScrollDelta, iDeltaMode, false));
 				return that.oTable.qunit.whenVSbScrolled().then(oTable.qunit.whenRenderingFinished);
 			};
 		}
@@ -3059,7 +2952,7 @@ sap.ui.define([
 
 		function scrollWithMouseWheel(iScrollDelta, iDeltaMode) {
 			return function() {
-				oTable.qunit.getDataCell(0, 0).dispatchEvent(createMouseWheelEvent(iScrollDelta, iDeltaMode, false));
+				oTable.qunit.getDataCell(0, 0).dispatchEvent(TableQUnitUtils.createMouseWheelEvent(iScrollDelta, iDeltaMode, false));
 				return that.oTable.qunit.whenVSbScrolled().then(oTable.qunit.whenRenderingFinished);
 			};
 		}
@@ -3113,7 +3006,7 @@ sap.ui.define([
 
 		function scrollWithMouseWheel(iScrollDelta, iDeltaMode) {
 			return function() {
-				oTable.qunit.getDataCell(0, 0).dispatchEvent(createMouseWheelEvent(iScrollDelta, iDeltaMode, false));
+				oTable.qunit.getDataCell(0, 0).dispatchEvent(TableQUnitUtils.createMouseWheelEvent(iScrollDelta, iDeltaMode, false));
 				return Promise.race([
 					that.oTable.qunit.whenVSbScrolled().then(oTable.qunit.whenRenderingFinished),
 					that.oTable.qunit.whenNextRenderingFinished()
@@ -3174,7 +3067,7 @@ sap.ui.define([
 
 		function scrollWithMouseWheel(iScrollDelta, iDeltaMode) {
 			return function() {
-				oTable.qunit.getDataCell(0, 0).dispatchEvent(createMouseWheelEvent(iScrollDelta, iDeltaMode, false));
+				oTable.qunit.getDataCell(0, 0).dispatchEvent(TableQUnitUtils.createMouseWheelEvent(iScrollDelta, iDeltaMode, false));
 				return Promise.race([
 					that.oTable.qunit.whenVSbScrolled().then(oTable.qunit.whenRenderingFinished),
 					that.oTable.qunit.whenNextRenderingFinished()
@@ -3244,7 +3137,7 @@ sap.ui.define([
 
 		function test(mConfig) {
 			return oTable.qunit.scrollVSbTo(0).then(function() {
-				oWheelEvent = createMouseWheelEvent(20, MouseWheelDeltaMode.PIXEL, false);
+				oWheelEvent = TableQUnitUtils.createMouseWheelEvent(20, MouseWheelDeltaMode.PIXEL, false);
 				oStopPropagationSpy = sinon.spy(oWheelEvent, "stopPropagation");
 				mConfig.element.dispatchEvent(oWheelEvent);
 			}).then(oTable.qunit.whenVSbScrolled).then(function() {
@@ -3293,7 +3186,7 @@ sap.ui.define([
 
 		function test(mConfig) {
 			var iScrollDelta = mConfig.scrollDelta == null ? 50 : mConfig.scrollDelta;
-			var oWheelEvent = createMouseWheelEvent(iScrollDelta, MouseWheelDeltaMode.PIXEL, false);
+			var oWheelEvent = TableQUnitUtils.createMouseWheelEvent(iScrollDelta, MouseWheelDeltaMode.PIXEL, false);
 			var oStopPropagationSpy = sinon.spy(oWheelEvent, "stopPropagation");
 			var iExpectedFirstVisibleRow = mConfig.firstVisibleRow == null ? 0 : mConfig.firstVisibleRow;
 			var iExpectedScrollTop = mConfig.scrollTop == null ? 0 : mConfig.scrollTop;
@@ -3360,14 +3253,14 @@ sap.ui.define([
 
 		function scrollWithTouch(iScrollDelta) {
 			return function() {
-				doTouchScrolling(0, iScrollDelta);
+				TableQUnitUtils.doTouchScrolling(0, iScrollDelta);
 				return that.oTable.qunit.whenVSbScrolled().then(oTable.qunit.whenRenderingFinished);
 			};
 		}
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTable.qunit.preventFocusOnTouch();
-			initTouchScrolling(oTable.qunit.getDataCell(0, 0));
+			TableQUnitUtils.startTouchScrolling(oTable.qunit.getDataCell(0, 0));
 		}).then(scrollWithTouch(20)).then(function() {
 			that.assertPosition(assert, 0, 20, 0, "Scrolled 20 pixels down");
 		}).then(scrollWithTouch(30)).then(function() {
@@ -3381,7 +3274,7 @@ sap.ui.define([
 		}).then(scrollWithTouch(-50)).then(function() {
 			that.assertPosition(assert, iMaxFirstVisibleRow - 1, iMaxScrollTop - 30, 0, "Scrolled 30 pixels up");
 		}).then(function() {
-			endTouchScrolling();
+			TableQUnitUtils.endTouchScrolling();
 		}).finally(function() {
 			Device.support.pointer = bOriginalPointerSupport;
 			Device.support.touch = bOriginalTouchSupport;
@@ -3404,14 +3297,14 @@ sap.ui.define([
 
 		function scrollWithTouch(iScrollDelta) {
 			return function() {
-				doTouchScrolling(0, iScrollDelta);
+				TableQUnitUtils.doTouchScrolling(0, iScrollDelta);
 				return that.oTable.qunit.whenVSbScrolled().then(oTable.qunit.whenRenderingFinished);
 			};
 		}
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTable.qunit.preventFocusOnTouch();
-			initTouchScrolling(oTable.qunit.getDataCell(0, 0));
+			TableQUnitUtils.startTouchScrolling(oTable.qunit.getDataCell(0, 0));
 		}).then(scrollWithTouch(20)).then(function() {
 			that.assertPosition(assert, 0, 20, 20, "Scrolled 20 pixels down");
 		}).then(scrollWithTouch(30)).then(function() {
@@ -3429,7 +3322,7 @@ sap.ui.define([
 		}).then(scrollWithTouch(-50)).then(function() {
 			that.assertPosition(assert, 87, 4279, 49, "Scrolled 50 pixels up");
 		}).then(function() {
-			endTouchScrolling();
+			TableQUnitUtils.endTouchScrolling();
 		}).finally(function() {
 			Device.support.pointer = bOriginalPointerSupport;
 			Device.support.touch = bOriginalTouchSupport;
@@ -3454,14 +3347,14 @@ sap.ui.define([
 
 		function scrollWithTouch(iScrollDelta) {
 			return function() {
-				doTouchScrolling(0, iScrollDelta);
+				TableQUnitUtils.doTouchScrolling(0, iScrollDelta);
 				return that.oTable.qunit.whenVSbScrolled().then(oTable.qunit.whenRenderingFinished);
 			};
 		}
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTable.qunit.preventFocusOnTouch();
-			initTouchScrolling(oTable.qunit.getDataCell(0, 0));
+			TableQUnitUtils.startTouchScrolling(oTable.qunit.getDataCell(0, 0));
 		}).then(scrollWithTouch(1)).then(function() {
 			that.assertPosition(assert, Math.floor(iRowsPerPixel), 1, 0, "Scrolled 1 pixel down");
 		}).then(scrollWithTouch(48)).then(function() {
@@ -3480,7 +3373,7 @@ sap.ui.define([
 			that.assertPosition(assert, Math.floor(iRowsPerPixel * (iMaxScrollTop - 500049)), iMaxScrollTop - 500049, 0,
 				"Scrolled 500000 pixels up");
 		}).then(function() {
-			endTouchScrolling();
+			TableQUnitUtils.endTouchScrolling();
 		}).finally(function() {
 			Device.support.pointer = bOriginalPointerSupport;
 			Device.support.touch = bOriginalTouchSupport;
@@ -3505,14 +3398,14 @@ sap.ui.define([
 
 		function scrollWithTouch(iScrollDelta) {
 			return function() {
-				doTouchScrolling(0, iScrollDelta);
+				TableQUnitUtils.doTouchScrolling(0, iScrollDelta);
 				return that.oTable.qunit.whenVSbScrolled().then(oTable.qunit.whenRenderingFinished);
 			};
 		}
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTable.qunit.preventFocusOnTouch();
-			initTouchScrolling(oTable.qunit.getDataCell(0, 0));
+			TableQUnitUtils.startTouchScrolling(oTable.qunit.getDataCell(0, 0));
 		}).then(scrollWithTouch(1)).then(function() {
 			that.assertPosition(assert, 1000, 1, 29, "Scrolled 1 pixel down");
 		}).then(scrollWithTouch(48)).then(function() {
@@ -3530,7 +3423,7 @@ sap.ui.define([
 		}).then(scrollWithTouch(-500000)).then(function() {
 			that.assertPosition(assert, 499754850, iMaxScrollTop - 500049, 42, "Scrolled 500000 pixels up");
 		}).then(function() {
-			endTouchScrolling();
+			TableQUnitUtils.endTouchScrolling();
 		}).finally(function() {
 			Device.support.pointer = bOriginalPointerSupport;
 			Device.support.touch = bOriginalTouchSupport;
@@ -3562,9 +3455,9 @@ sap.ui.define([
 
 		function test(mConfig) {
 			return oTable.qunit.scrollVSbTo(0).then(function() {
-				initTouchScrolling(mConfig.element);
-				oTouchMoveEvent = doTouchScrolling(0, 20);
-				endTouchScrolling();
+				TableQUnitUtils.startTouchScrolling(mConfig.element);
+				oTouchMoveEvent = TableQUnitUtils.doTouchScrolling(0, 20);
+				TableQUnitUtils.endTouchScrolling();
 				oStopPropagationSpy = sinon.spy(oTouchMoveEvent, "stopPropagation");
 			}).then(oTable.qunit.whenVSbScrolled).then(function() {
 				that.assertPosition(assert, 0, 20, 0, "Touch - " + mConfig.name + ": Scrolled");
@@ -3596,7 +3489,7 @@ sap.ui.define([
 				var iMaxScrollTop = that.getMaxScrollTop();
 
 				function testOutsideBoundaries(iScrollDelta) {
-					oTouchMoveEvent = doTouchScrolling(0, iScrollDelta);
+					oTouchMoveEvent = TableQUnitUtils.doTouchScrolling(0, iScrollDelta);
 					oStopPropagationSpy = sinon.spy(oTouchMoveEvent, "stopPropagation");
 
 					return TableQUnitUtils.wait(100).then(function() {
@@ -3605,7 +3498,7 @@ sap.ui.define([
 					});
 				}
 
-				initTouchScrolling(aTestConfigs[0].element);
+				TableQUnitUtils.startTouchScrolling(aTestConfigs[0].element);
 
 				return testOutsideBoundaries(iMaxScrollTop + 100).then(function() {
 					return testOutsideBoundaries(100);
@@ -3614,7 +3507,7 @@ sap.ui.define([
 				}).then(function() {
 					return testOutsideBoundaries(-100);
 				}).then(function() {
-					endTouchScrolling();
+					TableQUnitUtils.endTouchScrolling();
 				});
 			});
 
@@ -3650,12 +3543,12 @@ sap.ui.define([
 		function test(mConfig) {
 			var iScrollDelta = mConfig.scrollDelta == null ? 50 : mConfig.scrollDelta;
 
-			if (mConfig.skipInitTouchScrolling !== true) {
-				initTouchScrolling(mConfig.element);
+			if (mConfig.skipStartTouchScrolling !== true) {
+				TableQUnitUtils.startTouchScrolling(mConfig.element);
 			}
-			var oTouchMoveEvent = doTouchScrolling(0, iScrollDelta);
-			if (mConfig.skipInitTouchScrolling === true) {
-				endTouchScrolling();
+			var oTouchMoveEvent = TableQUnitUtils.doTouchScrolling(0, iScrollDelta);
+			if (mConfig.skipStartTouchScrolling === true) {
+				TableQUnitUtils.endTouchScrolling();
 			}
 
 			var oStopPropagationSpy = sinon.spy(oTouchMoveEvent, "stopPropagation");
@@ -3694,7 +3587,7 @@ sap.ui.define([
 					scrollDelta: -50
 				}).then(function() {
 					return test({
-						skipInitTouchScrolling: true,
+						skipStartTouchScrolling: true,
 						name: "Scrolling back down",
 						element: oTable.qunit.getDataCell(0, 1),
 						scrollDelta: 100
@@ -3711,7 +3604,7 @@ sap.ui.define([
 					scrollTop: 90 * oTable._getBaseRowHeight()
 				}).then(function() {
 					return test({
-						skipInitTouchScrolling: true,
+						skipStartTouchScrolling: true,
 						name: "Scrolling back up",
 						element: oTable.qunit.getDataCell(0, 1),
 						scrollDelta: -100,
@@ -5869,14 +5762,14 @@ sap.ui.define([
 		return oTable.qunit.focus(oCellContent).then(function() {
 			// Horizontal
 			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
-			oWheelEvent = createMouseWheelEvent(150, MouseWheelDeltaMode.PIXEL, true);
+			oWheelEvent = TableQUnitUtils.createMouseWheelEvent(150, MouseWheelDeltaMode.PIXEL, true);
 			oTableContainer.dispatchEvent(oWheelEvent);
 			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled horizontally -> Table is in Navigation Mode");
 			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus");
 		}).then(oTable.qunit.$focus(oCellContent)).then(function() {
 			// Vertical
 			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
-			oWheelEvent = createMouseWheelEvent(150, MouseWheelDeltaMode.PIXEL, false);
+			oWheelEvent = TableQUnitUtils.createMouseWheelEvent(150, MouseWheelDeltaMode.PIXEL, false);
 			oTableContainer.dispatchEvent(oWheelEvent);
 			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled vertically -> Table is in Navigation Mode again");
 			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus");
@@ -5897,17 +5790,17 @@ sap.ui.define([
 		return oTable.qunit.whenRenderingFinished().then(oTable.qunit.$focus(oTable.getRows()[0].getCells()[0].getDomRef())).then(function() {
 			// Horizontal
 			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
-			initTouchScrolling(oTable.getDomRef("tableCCnt"), 200);
-			doTouchScrolling(150);
-			endTouchScrolling();
+			TableQUnitUtils.startTouchScrolling(oTable.getDomRef("tableCCnt"), 200);
+			TableQUnitUtils.doTouchScrolling(150);
+			TableQUnitUtils.endTouchScrolling();
 			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled horizontally -> Table is in Navigation Mode");
 			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus");
 		}).then(oTable.qunit.$focus(oTable.getRows()[0].getCells()[0].getDomRef())).then(function() {
 			// Vertical
 			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
-			initTouchScrolling(oTable.getDomRef("tableCCnt"), 200);
-			doTouchScrolling(undefined, 150);
-			endTouchScrolling();
+			TableQUnitUtils.startTouchScrolling(oTable.getDomRef("tableCCnt"), 200);
+			TableQUnitUtils.doTouchScrolling(undefined, 150);
+			TableQUnitUtils.endTouchScrolling();
 			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled Vertically -> Table is in Navigation Mode");
 			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus");
 		}).finally(function() {

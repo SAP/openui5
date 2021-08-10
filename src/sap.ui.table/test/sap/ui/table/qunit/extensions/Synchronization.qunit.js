@@ -443,40 +443,10 @@ sap.ui.define([
 			});
 		}
 
-		function createTouchEvent(sType, mParams) {
-			if (Device.browser.firefox || Device.browser.safari) {
-				return Object.assign(new Event(sType, {
-					bubbles: true,
-					cancelable: true
-				}), mParams);
-			} else {
-				return new window.TouchEvent(sType, Object.assign({
-					bubbles: true,
-					cancelable: true
-				}, mParams));
-			}
-		}
-
-		function createTouch(mParams) {
-			if (Device.browser.firefox || Device.browser.safari) {
-				var oTarget = mParams.target;
-
-				delete mParams.target;
-
-				return Object.assign(new Event({
-					bubbles: true,
-					cancelable: true,
-					target: oTarget
-				}), mParams);
-			} else {
-				return new window.Touch(mParams);
-			}
-		}
-
 		function createTouchStartEvent(oTargetElement) {
-			return createTouchEvent("touchstart", {
+			return TableQUnitUtils.createTouchEvent("touchstart", {
 				touches: [
-					createTouch({
+					TableQUnitUtils.createTouchObject({
 						target: oTargetElement,
 						identifier: Date.now(),
 						pageX: 0,
@@ -489,9 +459,9 @@ sap.ui.define([
 		function createTouchMoveEvent(oTargetElement, iScrollDelta, bHorizontal) {
 			iScrollDelta *= -1;
 
-			return createTouchEvent("touchmove", {
+			return TableQUnitUtils.createTouchEvent("touchmove", {
 				touches: [
-					createTouch({
+					TableQUnitUtils.createTouchObject({
 						target: oTargetElement,
 						identifier: Date.now(),
 						pageX: bHorizontal ? iScrollDelta : 0,
@@ -594,7 +564,7 @@ sap.ui.define([
 
 			assert.notEqual(oExternalVSb, oInternalVSb, "The new external and the old internal scrollbars are different elements");
 			assert.strictEqual(sExternalVSbId, sInternalVSbId, "The external scrollbar has the same id as the old internal scrollbar");
-			assert.equal(Div.firstElementChild, oExternalVSb, "The external scrollbar is placed in the correct container");
+			assert.equal(Div.firstElementChild.firstElementChild, oExternalVSb, "The external scrollbar is placed in the correct container");
 			assert.equal(oDomRef.querySelector(sInternalVSbId), null, "The table's DOM does not contain the vertical scrollbar");
 			assert.ok(!oDomRef.classList.contains("sapUiTableVScr"), "The table's element does not contain the 'sapUiTableVScr' CSS class");
 
@@ -603,16 +573,16 @@ sap.ui.define([
 			// still have the reference to the external scrollbar in this situation and insert it back into the DOM.
 			oTable.invalidate();
 			oTableInvalidate.reset();
-			Div.removeChild(oExternalVSb);
+			Div.firstElementChild.removeChild(oExternalVSb);
 
 			sap.ui.getCore().applyChanges();
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			var oExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
-			oSyncInterface.placeVerticalScrollbarAt(Div);
+			oSyncInterface.placeVerticalScrollbarAt(Div.firstElementChild);
 
 			assert.ok(oTableInvalidate.notCalled, "The table was not invalidated");
-			assert.equal(Div.firstElementChild, oExternalVSb, "The external scrollbar is placed in the correct container");
+			assert.equal(Div.firstElementChild.firstElementChild, oExternalVSb, "The external scrollbar is placed in the correct container");
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			var oExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
@@ -624,11 +594,11 @@ sap.ui.define([
 			assert.strictEqual(oTable.getFirstVisibleRow(), 2, "Scrolling the external scrollbar correctly changes the table's first visible row");
 
 			var oOldExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
-			Div.removeChild(oOldExternalVSb);
-			oSyncInterface.placeVerticalScrollbarAt(Div);
+			Div.firstElementChild.removeChild(oOldExternalVSb);
+			oSyncInterface.placeVerticalScrollbarAt(Div.firstElementChild);
 
 			assert.ok(oTableInvalidate.notCalled, "The table was not invalidated");
-			assert.equal(Div.firstElementChild, oOldExternalVSb, "The new external and the old external scrollbars are the same elements");
+			assert.equal(Div.firstElementChild.firstElementChild, oOldExternalVSb, "The new external and the old external scrollbars are the same elements");
 
 		}).then(TableQUnitUtils.$wait(100)).then(function() {
 			var oVSb = oTable._getScrollExtension().getVerticalScrollbar();

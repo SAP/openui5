@@ -1240,10 +1240,16 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 	TableRenderer.renderVSbExternal = function(rm, oTable) {
 		if (ExtensionBase.isEnrichedWith(oTable, "sap.ui.table.extensions.Synchronization")) {
+			rm.openStart("div");
+			rm.style("position", "relative");
+			rm.openEnd();
+
 			this.renderVSb(rm, oTable, {
 				cssClass: "sapUiTableVSbExternal",
 				tabIndex: false
 			});
+
+			rm.close("div");
 		} else {
 			Log.error("This method can only be used with synchronization enabled.", oTable, "TableRenderer.renderVSbExternal");
 		}

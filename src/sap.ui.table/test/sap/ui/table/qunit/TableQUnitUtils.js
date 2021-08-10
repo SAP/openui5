@@ -8,12 +8,13 @@ sap.ui.define([
 	"sap/ui/table/RowActionItem",
 	"sap/ui/table/plugins/PluginBase",
 	"sap/ui/table/utils/TableUtils",
+	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Control",
 	"sap/base/util/merge",
 	"sap/ui/thirdparty/jquery"
 ], function(
-	TableLibrary, Table, TreeTable, AnalyticalTable, Column, RowAction, RowActionItem, PluginBase, TableUtils, JSONModel, Control, merge, jQuery
+	TableLibrary, Table, TreeTable, AnalyticalTable, Column, RowAction, RowActionItem, PluginBase, TableUtils, Device, JSONModel, Control, merge, jQuery
 ) {
 	"use strict";
 
@@ -22,6 +23,9 @@ sap.ui.define([
 	var oDataTemplate = {};
 	var mDefaultSettings = {};
 	var iNumberOfDataRows = 8;
+	var iTouchPositionX;
+	var iTouchPositionY;
+	var oTouchTargetElement;
 
 	var TestControl = Control.extend("sap.ui.table.test.TestControl", {
 		metadata: {
@@ -1428,6 +1432,109 @@ sap.ui.define([
 		}
 
 		return oColumn;
+	};
+
+	TableQUnitUtils.createMouseWheelEvent = function(iScrollDelta, iDeltaMode, bShift) {
+		return new window.WheelEvent("wheel", {
+			deltaY: bShift ? 0 : iScrollDelta,
+			deltaX: bShift ? iScrollDelta : 0,
+			deltaMode: iDeltaMode,
+			shiftKey: bShift,
+			bubbles: true,
+			cancelable: true
+		});
+	};
+
+	TableQUnitUtils.createTouchEvent = function(sType, mParams) {
+		if (Device.browser.firefox || Device.browser.safari) {
+			return Object.assign(new Event(sType, {
+				bubbles: true,
+				cancelable: true
+			}), mParams);
+		} else {
+			return new window.TouchEvent(sType, Object.assign({
+				bubbles: true,
+				cancelable: true
+			}, mParams));
+		}
+	};
+
+	TableQUnitUtils.createTouchObject = function(mParams) {
+		if (Device.browser.firefox || Device.browser.safari) {
+			var oTarget = mParams.target;
+
+			delete mParams.target;
+
+			return Object.assign(new Event({
+				bubbles: true,
+				cancelable: true,
+				target: oTarget
+			}), mParams);
+		} else {
+			return new window.Touch(mParams);
+		}
+	};
+
+	TableQUnitUtils.startTouchScrolling = function(oTargetElement, iPageX, iPageY) {
+		oTouchTargetElement = oTargetElement;
+		iTouchPositionX = iPageX || 0;
+		iTouchPositionY = iPageY || 0;
+
+		var oTouchEvent = this.createTouchEvent("touchstart", {
+			touches: [
+				this.createTouchObject({
+					target: oTouchTargetElement,
+					identifier: Date.now(),
+					pageX: iTouchPositionX,
+					pageY: iTouchPositionY
+				})
+			]
+		});
+
+		oTouchTargetElement.dispatchEvent(oTouchEvent);
+
+		return oTouchEvent;
+	};
+
+	TableQUnitUtils.doTouchScrolling = function(iScrollDeltaX, iScrollDeltaY) {
+		iTouchPositionX -= iScrollDeltaX || 0;
+		iTouchPositionY -= iScrollDeltaY || 0;
+
+		var oTouchEvent = this.createTouchEvent("touchmove", {
+			touches: [
+				this.createTouchObject({
+					target: oTouchTargetElement,
+					identifier: Date.now(),
+					pageX: iTouchPositionX,
+					pageY: iTouchPositionY
+				})
+			]
+		});
+
+		oTouchTargetElement.dispatchEvent(oTouchEvent);
+
+		return oTouchEvent;
+	};
+
+	TableQUnitUtils.endTouchScrolling = function() {
+		var oTouchEvent = this.createTouchEvent("touchend", {
+			changedTouches: [
+				this.createTouchObject({
+					target: oTouchTargetElement,
+					identifier: Date.now(),
+					pageX: iTouchPositionX,
+					pageY: iTouchPositionY
+				})
+			]
+		});
+
+		oTouchTargetElement.dispatchEvent(oTouchEvent);
+
+		return oTouchEvent;
+	};
+
+	TableQUnitUtils.createScrollEvent = function() {
+		return new window.Event("scroll");
 	};
 
 	var oTable, oTreeTable;
