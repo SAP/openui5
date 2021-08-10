@@ -717,8 +717,16 @@ sap.ui.define([
 	FilterBarBase.prototype.onReset = function(oEvent) {
 		this._getConditionModel().oConditionModel.removeAllConditions();
 	};
+
 	FilterBarBase.prototype.onSearch = function(oEvent) {
-		this.triggerSearch();
+		if (!this._bSearchPressed) {
+			this._bSearchPressed = true;
+			this.triggerSearch().then(function() {
+				this._bSearchPressed = false;
+			}.bind(this), function(){
+				this._bSearchPressed = false;
+			}.bind(this));
+		}
 	};
 
 	/**
@@ -841,7 +849,14 @@ sap.ui.define([
 		var oPromise = oEvent.getParameter("promise");
 		if (oPromise) {
 			oPromise.then(function() {
-				this.triggerSearch();
+				if (this._aCollectedChangePromises && this._aCollectedChangePromises.length > 0) {
+					var aChangePromises = this._aCollectedChangePromises.slice();
+					Promise.all(aChangePromises).then(function() {
+						this.triggerSearch();
+					}.bind(this));
+				} else {
+					this.triggerSearch();
+				}
 			}.bind(this));
 		}
 	};

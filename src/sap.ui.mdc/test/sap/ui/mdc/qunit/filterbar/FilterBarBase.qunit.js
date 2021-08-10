@@ -213,4 +213,68 @@ sap.ui.define([
 
     });
 
+    QUnit.test("Check multiple onSearch calls", function(assert){
+
+        var fnTriggerPromiseResolve = null;
+        var oTriggerPromise = new Promise(function(resolve, reject) { fnTriggerPromiseResolve = resolve; });
+
+        sinon.stub(this.oFilterBarBase, "triggerSearch").callsFake(function() {
+            return oTriggerPromise;
+        });
+
+        assert.ok(!this.oFilterBarBase._bSearchPressed, "not yet set");
+
+
+        this.oFilterBarBase.onSearch();
+        assert.ok(this.oFilterBarBase._bSearchPressed, "should be set");
+
+        this.oFilterBarBase.onSearch();
+        assert.ok(this.oFilterBarBase._bSearchPressed, "should be set");
+
+        fnTriggerPromiseResolve();
+        return oTriggerPromise.then(function(){
+            assert.ok(this.oFilterBarBase.triggerSearch.calledOnce, "should be called once");
+            assert.ok(!this.oFilterBarBase._bSearchPressed, "should be resetted");
+        }.bind(this));
+
+    });
+
+    QUnit.test("Check _handleFilterItemSubmit", function(assert){
+        sinon.stub(this.oFilterBarBase, "triggerSearch");
+
+        var fnSubmitPromiseResolve = null;
+        var oSubmitPromise = new Promise(function(resolve, reject) { fnSubmitPromiseResolve = resolve; });
+        var oEvent = {
+            getParameter: function() { fnSubmitPromiseResolve(); return oSubmitPromise; }
+        };
+
+        var done = assert.async();
+
+        this.oFilterBarBase._handleFilterItemSubmit(oEvent);
+        oSubmitPromise.then(function() {
+
+            assert.ok(this.oFilterBarBase.triggerSearch.calledOnce, "should be called once");
+
+            var fnChangePromiseResolve = null;
+            var oChangePromise = new Promise(function(resolve, reject) { fnChangePromiseResolve = resolve; });
+            this.oFilterBarBase._aCollectedChangePromises = [ Promise.resolve(), Promise.resolve(), oChangePromise];
+
+            oSubmitPromise = Promise.resolve();
+
+            oEvent = {
+               getParameter: function() { return oSubmitPromise; }
+            };
+            this.oFilterBarBase._handleFilterItemSubmit(oEvent);
+            oSubmitPromise.then(function() {
+
+                fnChangePromiseResolve();
+
+                Promise.all(this.oFilterBarBase._aCollectedChangePromises).then(function() {
+                    assert.ok(this.oFilterBarBase.triggerSearch.calledTwice, "should be called twice");
+                    done();
+                }.bind(this));
+            }.bind(this));
+        }.bind(this));
+    });
+
 });
