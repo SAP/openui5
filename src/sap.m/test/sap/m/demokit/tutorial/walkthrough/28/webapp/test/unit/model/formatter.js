@@ -21,12 +21,8 @@ sap.ui.define([
 	QUnit.test("Should return the translated texts", function (assert) {
 
 		// Arrange
-		// this.stub() does not support chaining and always returns the right data
-		// even if a wrong or empty parameter is passed.
-		var oModel = this.stub();
-		oModel.withArgs("i18n").returns(this._oResourceModel);
 		var oViewStub = {
-			getModel: oModel
+			getModel: this.stub().withArgs("i18n").returns(this._oResourceModel)
 		};
 		var oControllerStub = {
 			getView: this.stub().returns(oViewStub)

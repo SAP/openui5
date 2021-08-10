@@ -40,8 +40,9 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.90",
+			"minUI5Version": "1.93",
 			"libs": {
+				"sap.ui.core": {},
 				"sap.m": {}
 			}
 		},
@@ -66,6 +67,37 @@
 					"uri": "css/style.css"
 				}
 			]
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "sap.ui.demo.walkthrough.view",
+				"controlId": "app",
+				"controlAggregation": "pages"
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "overview",
+					"target": "overview"
+				},
+				{
+					"pattern": "detail",
+					"name": "detail",
+					"target": "detail"
+				}
+			],
+			"targets": {
+				"overview": {
+					"viewId": "overview",
+					"viewName": "Overview"
+				},
+				"detail": {
+					"viewId": "detail",
+					"viewName": "Detail"
+				}
+			}
 		}
 	}
 }

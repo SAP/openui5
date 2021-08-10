@@ -12,7 +12,6 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 						files: [
 							"webapp/controller/App.controller.js",
 							"webapp/controller/Detail.controller.js",
-							"webapp/controller/HelloDialog.js",
 							"webapp/controller/HelloPanel.controller.js",
 							"webapp/controller/InvoiceList.controller.js",
 							"webapp/css/style.css",

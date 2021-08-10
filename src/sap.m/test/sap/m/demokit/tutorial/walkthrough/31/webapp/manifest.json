@@ -40,8 +40,9 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.90",
+			"minUI5Version": "1.93",
 			"libs": {
+				"sap.ui.core": {},
 				"sap.m": {}
 			}
 		},
@@ -82,7 +83,7 @@
 					"target": "overview"
 				},
 				{
-					"pattern": "detail",
+					"pattern": "detail/{invoicePath}",
 					"name": "detail",
 					"target": "detail"
 				}

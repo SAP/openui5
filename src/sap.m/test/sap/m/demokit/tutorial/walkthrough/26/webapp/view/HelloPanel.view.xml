@@ -5,7 +5,7 @@
 	<Panel
 		headerText="{i18n>helloPanelTitle}"
 		class="sapUiResponsiveMargin"
-		width="auto" >
+		width="auto">
 		<content>
 			<Button
 				id="helloDialogButton"

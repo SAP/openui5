@@ -7,11 +7,10 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			metadata: {
 				config: {
 					sample: {
-						iframe: "webapp/test/mockServer.html",
+						iframe: "webapp/test/unit/unitTests.qunit.html",
 						stretch: true,
 						files: [
 							"webapp/controller/App.controller.js",
-							"webapp/controller/HelloDialog.js",
 							"webapp/controller/HelloPanel.controller.js",
 							"webapp/controller/InvoiceList.controller.js",
 							"webapp/css/style.css",
@@ -29,6 +28,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 							"webapp/manifest.json",
 							"webapp/test/mockServer.html",
 							"webapp/test/initMockServer.js",
+							"webapp/test/unit/model/formatter.js",
+							"webapp/test/unit/unitTests.qunit.html",
 							"ui5.yaml",
 							"package.json"
 						]

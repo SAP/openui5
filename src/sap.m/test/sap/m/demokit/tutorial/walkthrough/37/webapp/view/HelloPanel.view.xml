@@ -1,13 +1,15 @@
 <mvc:View
 	controllerName="sap.ui.demo.walkthrough.controller.HelloPanel"
 	xmlns="sap.m"
-	xmlns:mvc="sap.ui.core.mvc">
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core">
 	<Panel
 		headerText="{i18n>helloPanelTitle}"
 		class="sapUiResponsiveMargin"
 		width="auto"
 		expandable="{device>/system/phone}"
-		expanded="{= !${device>/system/phone} }">
+		expanded="{= !${device>/system/phone} }"
+		accessibleRole="Region">
 		<content>
 			<Button
 				id="helloDialogButton"
