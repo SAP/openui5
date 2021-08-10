@@ -1,0 +1,16 @@
+{
+	"@odata.count": "3",
+	"value": [{
+		"Segment": "Large",
+		"LocalCurrency": "GBP",
+		"SalesAmountLocalCurrency": "716262"
+	}, {
+		"Segment": "Mid-size",
+		"LocalCurrency": "GBP",
+		"SalesAmountLocalCurrency": "81628"
+	}, {
+		"Segment": "Small",
+		"LocalCurrency": "GBP",
+		"SalesAmountLocalCurrency": "17935"
+	}]
+}

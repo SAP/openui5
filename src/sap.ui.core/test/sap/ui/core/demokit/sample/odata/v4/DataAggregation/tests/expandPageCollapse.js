@@ -123,23 +123,23 @@ sap.ui.define([
 		}, {
 			level : 1,
 			expanded : false,
-			country : "United Kingdom",
-			region : "",
-			segment : "",
-			accountResponsible : "",
-			salesAmountLocalCurrency : "14,548,502.00",
-			localCurrency : "GBP",
-			salesNumber : "",
-			subtotal : true
-		}, {
-			level : 1,
-			expanded : false,
 			country : "USA",
 			region : "",
 			segment : "",
 			accountResponsible : "",
 			salesAmountLocalCurrency : "40,405,175.00",
 			localCurrency : "USD",
+			salesNumber : "",
+			subtotal : true
+		}, {
+			level : 1,
+			expanded : false,
+			country : "United Kingdom",
+			region : "",
+			segment : "",
+			accountResponsible : "",
+			salesAmountLocalCurrency : "14,548,502.00",
+			localCurrency : "GBP",
 			salesNumber : "",
 			subtotal : true
 		}, oGermany];
@@ -163,23 +163,23 @@ sap.ui.define([
 		}, {
 			level : 1,
 			expanded : false,
-			country : "United Kingdom",
-			region : "",
-			segment : "",
-			accountResponsible : "",
-			salesAmountLocalCurrency : "14,548,502.00",
-			localCurrency : "GBP",
-			salesNumber : "",
-			subtotal : true
-		}, {
-			level : 1,
-			expanded : false,
 			country : "USA",
 			region : "",
 			segment : "",
 			accountResponsible : "",
 			salesAmountLocalCurrency : "40,405,175.00",
 			localCurrency : "USD",
+			salesNumber : "",
+			subtotal : true
+		}, {
+			level : 1,
+			expanded : false,
+			country : "United Kingdom",
+			region : "",
+			segment : "",
+			accountResponsible : "",
+			salesAmountLocalCurrency : "14,548,502.00",
+			localCurrency : "GBP",
 			salesNumber : "",
 			subtotal : true
 		}, {
