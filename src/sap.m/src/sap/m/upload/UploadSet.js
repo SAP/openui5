@@ -726,6 +726,8 @@ sap.ui.define([
 	UploadSet.prototype._onUploadCompleted = function (oEvent) {
 		var oItem = oEvent.getParameter("item");
 		oItem.setProgress(100);
+		this.removeIncompleteItem(oItem);
+		this.addItem(oItem);
 		oItem.setUploadState(UploadState.Complete);
 		this.fireUploadCompleted({item: oItem});
 	};
