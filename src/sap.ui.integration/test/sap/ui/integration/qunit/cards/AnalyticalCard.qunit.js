@@ -1,11 +1,13 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/integration/cards/AnalyticalContent",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core",
 	"sap/ui/integration/util/CardActions",
 	"../services/SampleServices"
 ], function (
+	AnalyticalContent,
 	Card,
 	Core,
 	CardActions,
@@ -294,10 +296,94 @@ sap.ui.define([
 		}
 	};
 
+	var oManifest_Analytical_WithFeeds = {
+		"sap.app": {
+			"id": "test.cards.analytical.card3",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Analytical",
+			"header": {
+				"title": "Bubble"
+			},
+			"content": {
+				"chartType": "bubble",
+				"data": {
+					"json": [
+						{
+							"Week": "CW14",
+							"Revenue": 431000.22,
+							"Cost": 230000.00,
+							"Target": 500000.00,
+							"Budget": 210000.00
+						},
+						{
+							"Week": "CW15",
+							"Revenue": 494000.30,
+							"Cost": 238000.00,
+							"Target": 500000.00,
+							"Budget": 224000.00
+						}
+					]
+				},
+				"dimensions": [
+					{
+						"name": "Weeks",
+						"value": "{Week}"
+					}
+				],
+				"measures": [
+					{
+						"name": "Revenue",
+						"value": "{Revenue}"
+					},
+					{
+						"name": "Cost",
+						"value": "{Cost}"
+					},
+					{
+						"name": "Budget",
+						"value": "{Budget}"
+					}
+				],
+				"feeds": [
+					{
+						"uid": "valueAxis",
+						"type": "Measure",
+						"values": [
+							"Revenue"
+						]
+					},
+					{
+						"uid": "valueAxis2",
+						"type": "Measure",
+						"values": [
+							"Cost"
+						]
+					},
+					{
+						"uid": "bubbleWidth",
+						"type": "Measure",
+						"values": [
+							"Budget"
+						]
+					},
+					{
+						"uid": "color",
+						"type": "Dimension",
+						"values": [
+							"Weeks"
+						]
+					}
+				]
+			}
+		}
+	};
+
 	var oManifest_Analytical_No_Actions = {
 		"_version": "1.8.0",
 		"sap.app": {
-			"id": "test.cards.analytical.card3",
+			"id": "test.cards.analytical.card4",
 			"type": "card"
 		},
 		"sap.card": {
@@ -367,7 +453,7 @@ sap.ui.define([
 	var oManifest_Analytical_Service = {
 		"_version": "1.8.0",
 		"sap.app": {
-			"id": "test.cards.analytical.card4",
+			"id": "test.cards.analytical.card5",
 			"type": "card"
 		},
 		"sap.ui5": {
@@ -453,7 +539,7 @@ sap.ui.define([
 	var oManifest_Analytical_Url = {
 		"_version": "1.8.0",
 		"sap.app": {
-			"id": "test.cards.analytical.card5",
+			"id": "test.cards.analytical.card6",
 			"type": "card"
 		},
 		"sap.card": {
@@ -530,7 +616,7 @@ sap.ui.define([
 
 	var oManifest_Analytical_ChartActions = {
 		"sap.app": {
-			"id": "test.cards.analytical.card6"
+			"id": "test.cards.analytical.card7"
 		},
 		"sap.card": {
 			"type": "Analytical",
@@ -577,7 +663,7 @@ sap.ui.define([
 
 	var oManifest_Analytical_Popover = {
 		"sap.app": {
-			"id": "test.cards.analytical.card7"
+			"id": "test.cards.analytical.card8"
 		},
 		"sap.card": {
 			"type": "Analytical",
@@ -616,7 +702,7 @@ sap.ui.define([
 		}
 	};
 
-	function testChartCreation(oCard, oManifest, assert) {
+	function testStackedBarChartCreation(oCard, oManifest, assert) {
 		// Arrange
 		var done = assert.async(),
 			window = {
@@ -630,7 +716,6 @@ sap.ui.define([
 			var oVizProperites = oChart.getVizProperties();
 			Core.applyChanges();
 
-			// Assert aggregation sideIndicators
 			assert.ok(oContent, "Analytical Card content form manifest should be set");
 			assert.ok(oChart.getDomRef(), "Analytical Card content - chart should be rendered");
 			assert.equal(oChart.getVizType(), "stacked_bar", "Chart should have a vizType set");
@@ -698,7 +783,7 @@ sap.ui.define([
 			testContentInitialization(oManifest_AnalyticalCard, assert);
 		});
 
-		QUnit.module("Analytical Card", {
+		QUnit.module("Chart creation", {
 			beforeEach: function () {
 				this.oCard = new Card({
 					width: "400px",
@@ -715,11 +800,73 @@ sap.ui.define([
 		});
 
 		QUnit.test("Using manifest", function (assert) {
-			testChartCreation(this.oCard, oManifest_AnalyticalCard, assert);
+			testStackedBarChartCreation(this.oCard, oManifest_AnalyticalCard, assert);
 		});
 
 		QUnit.test("Using manifest with data on card level", function (assert) {
-			testChartCreation(this.oCard, oManifest_AnalyticalCard_DataOnCardLevel, assert);
+			testStackedBarChartCreation(this.oCard, oManifest_AnalyticalCard_DataOnCardLevel, assert);
+		});
+
+		QUnit.test("Creating chart with 'feeds'", function (assert) {
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				var oContent = this.oCard.getCardContent(),
+					oChart = oContent.getAggregation("_content");
+				Core.applyChanges();
+
+				assert.ok(oChart.getDomRef(), "Chart should be rendered");
+				assert.strictEqual(oChart.getVizType(), oManifest_Analytical_WithFeeds["sap.card"].content.chartType, "Chart should have correct 'vizType' set");
+				assert.strictEqual(oChart.getFeeds()[0].getUid(), "valueAxis", "Feed with correct 'uid' should be created");
+				assert.strictEqual(oChart.getFeeds()[0].getType(), "Measure", "Feed type should be 'Measure'");
+				assert.deepEqual(oChart.getFeeds()[0].getValues(), ["Revenue"], "Binding of feed values should be resolved");
+				assert.strictEqual(oChart.getFeeds()[1].getUid(), "valueAxis2", "Feed with correct 'uid' should be created");
+				assert.strictEqual(oChart.getFeeds()[1].getType(), "Measure", "Feed type should be 'Measure'");
+				assert.deepEqual(oChart.getFeeds()[1].getValues(), ["Cost"], "Binding of feed values should be resolved");
+				assert.strictEqual(oChart.getFeeds()[2].getUid(), "bubbleWidth", "Feed with correct 'uid' should be created");
+				assert.strictEqual(oChart.getFeeds()[2].getType(), "Measure", "Feed type should be 'Measure'");
+				assert.deepEqual(oChart.getFeeds()[2].getValues(), ["Budget"], "Binding of feed values should be resolved");
+				assert.strictEqual(oChart.getFeeds()[3].getUid(), "color", "Feed with correct 'uid' should be created");
+				assert.strictEqual(oChart.getFeeds()[3].getType(), "Dimension", "Feed type should be 'Dimension'");
+				assert.deepEqual(oChart.getFeeds()[3].getValues(), ["Weeks"], "Binding of feed values should be resolved");
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_Analytical_WithFeeds);
+		});
+
+		QUnit.module("vizProperties");
+
+		QUnit.test("There are default 'vizProperties'", function (assert) {
+			assert.ok(AnalyticalContent.prototype._getVizProperties.call(null, {}), "There should be default vizProperties");
+		});
+
+		QUnit.test("'chartProperties' are correctly merged into the 'vizProperties'", function (assert) {
+			// Arrange
+			var oConfiguration = {
+				legend: {
+					visible: true
+				},
+				chartProperties: {
+					title: {
+						text: "Bubble chart",
+						visible: true,
+						alignment: "left"
+					},
+					legend: {
+						visible: false
+					}
+				}
+			};
+
+			// Act
+			var oVizProperties = AnalyticalContent.prototype._getVizProperties.call(null, oConfiguration);
+
+			// Assert
+			assert.strictEqual(oVizProperties.title.text, oConfiguration.chartProperties.title.text, "Text should be taken from the 'chartProperties'");
+			assert.notStrictEqual(oVizProperties.legend.visible, oConfiguration.legend.visible, "Deprecated 'legend' property has lower precedence than 'chartProperties'");
+			assert.strictEqual(oVizProperties.legend.visible, oConfiguration.chartProperties.legend.visible, "Value from 'chartProperties' should be used");
 		});
 
 		QUnit.module("Actions - Analytical Content", {
@@ -811,7 +958,7 @@ sap.ui.define([
 				// Assert
 				assert.notOk(oCardContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
 				assert.notOk(oCardHeader.$().hasClass("sapFCardClickable"), "Card Content is clickable");
-				assert.ok(oCardContent._getVizPropertiesObject(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself also shouldn't be interactive");
+				assert.ok(oCardContent._getVizProperties(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself also shouldn't be interactive");
 				//Act
 				oCardContent.firePress();
 				oCardHeader.firePress();
@@ -835,7 +982,7 @@ sap.ui.define([
 				var oCardContent = this.oCard.getCardContent();
 				// Assert
 				assert.notOk(oCardContent.$().hasClass("sapFCardClickable"), "Content area shouldn't have class 'sapFCardClickable'");
-				assert.notOk(oCardContent._getVizPropertiesObject(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself should be interactive");
+				assert.notOk(oCardContent._getVizProperties(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself should be interactive");
 
 				done();
 			}.bind(this));
@@ -866,7 +1013,7 @@ sap.ui.define([
 			this.oCard.attachEvent("_ready", function () {
 				var oCardContent = this.oCard.getCardContent();
 				// Assert
-				assert.notOk(oCardContent._getVizPropertiesObject(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself should be interactive");
+				assert.notOk(oCardContent._getVizProperties(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself should be interactive");
 
 				done();
 			}.bind(this));

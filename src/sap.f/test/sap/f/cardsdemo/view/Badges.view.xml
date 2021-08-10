@@ -34,8 +34,7 @@
 				</w:layoutData>
 			</w:Card>
 
-			<w:Card manifest="{manifests>/analyticalContent/line}"
-				baseUrl="./">
+			<w:Card manifest="./cardsdemo/bundles/analyticalLine/manifest.json">
 				<w:customData>
 					<BadgeCustomData value="121" />
 				</w:customData>

@@ -77,7 +77,7 @@
 									<f:GridContainerItemLayoutData minRows="6" columns="3" />
 								</w:layoutData>
 							</w:Card>
-							<w:Card manifest="{manifests>/analyticalContent/line}" baseUrl="./">
+							<w:Card manifest="./cardsdemo/bundles/analyticalLine/manifest.json">
 								<w:layoutData>
 									<f:GridContainerItemLayoutData columns="4" />
 								</w:layoutData>
@@ -95,17 +95,17 @@
 									<f:GridContainerItemLayoutData columns="4" />
 								</w:layoutData>
 							</w:Card>
-							<w:Card manifest="{manifests>/analyticalContent/stackedBar}" baseUrl="./">
+							<w:Card manifest="./cardsdemo/bundles/analyticalLine/manifest.json">
 								<w:layoutData>
 									<f:GridContainerItemLayoutData rows="5" columns="4" />
 								</w:layoutData>
 							</w:Card>
-							<w:Card manifest="{manifests>/analyticalContent/stackedColumn}" baseUrl="./">
+							<w:Card manifest="./cardsdemo/bundles/analyticalLine/manifest.json">
 								<w:layoutData>
 									<f:GridContainerItemLayoutData columns="5" />
 								</w:layoutData>
 							</w:Card>
-							<w:Card manifest="{manifests>/analyticalContent/donut}" baseUrl="./">
+							<w:Card manifest="./cardsdemo/bundles/analyticalLine/manifest.json">
 								<w:layoutData>
 									<f:GridContainerItemLayoutData columns="6" />
 								</w:layoutData>
@@ -115,12 +115,12 @@
 									<f:GridContainerItemLayoutData columns="3" />
 								</w:layoutData>
 							</w:Card>
-							<w:Card manifest="{manifests>/analyticalContent/line}" baseUrl="./">
+							<w:Card manifest="./cardsdemo/bundles/analyticalLine/manifest.json">
 								<w:layoutData>
 									<f:GridContainerItemLayoutData columns="4" />
 								</w:layoutData>
 							</w:Card>
-							<w:Card manifest="{manifests>/analyticalContent/stackedBar}" baseUrl="./">
+							<w:Card manifest="./cardsdemo/bundles/analyticalLine/manifest.json">
 								<w:layoutData>
 									<f:GridContainerItemLayoutData columns="4" />
 								</w:layoutData>
@@ -146,7 +146,7 @@
 									<ImageContent src="sap-icon://activity-individual" />
 								</TileContent>
 							</GenericTile>
-							<w:Card manifest="{manifests>/analyticalContent/stackedColumn}" baseUrl="./">
+							<w:Card manifest="./cardsdemo/bundles/analyticalLine/manifest.json">
 								<w:layoutData>
 									<f:GridContainerItemLayoutData columns="3" />
 								</w:layoutData>

@@ -133,7 +133,7 @@ describe("sap.f.Card", function () {
 
 	it("Analytical Card", function () {
 		navigateTo("Analytical Card");
-		var aCardIds = ["lineChart", "stackedBarChart", "stackedColumnChart", "donutChart"];
+		var aCardIds = ["line", "stackedColumn", "stackedBar", "donut", "bubble"];
 
 		aCardIds.forEach(function (sId) {
 			takePictureOfElement({

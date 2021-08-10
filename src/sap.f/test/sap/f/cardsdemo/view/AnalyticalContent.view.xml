@@ -15,32 +15,45 @@
 
 		<Panel>
 			<w:Card
-				id="lineChart"
-				manifest="{manifests>/analyticalContent/line}"
+				id="line"
+				manifest="{analyticalContentManifests>/line}"
 				baseUrl="./"
 				class="sapUiMediumMargin"
-				width="700px" />
+				width="600px" />
 			<w:Card
-				id="stackedBarChart"
-				manifest="{manifests>/analyticalContent/stackedBar}"
+				id="stackedBar"
+				manifest="{analyticalContentManifests>/stackedColumn}"
 				baseUrl="./"
 				class="sapUiMediumMargin"
 				height="500px"
-				width="700px" />
+				width="600px" />
 			<w:Card
-				id="stackedColumnChart"
-				manifest="{manifests>/analyticalContent/stackedColumn}"
+				id="stackedColumn"
+				manifest="{analyticalContentManifests>/stackedBar}"
 				baseUrl="./"
 				class="sapUiMediumMargin"
 				height="500px"
-				width="700px" />
+				width="600px" />
 			<w:Card
-				id="donutChart"
-				manifest="{manifests>/analyticalContent/donut}"
+				id="donut"
+				manifest="{analyticalContentManifests>/donut}"
 				baseUrl="./"
 				class="sapUiMediumMargin"
 				height="500px"
-				width="700px" />
+				width="600px" />
+			<w:Card
+				manifest="{analyticalContentManifests>/heatmap}"
+				baseUrl="./"
+				class="sapUiMediumMargin"
+				height="500px"
+				width="600px" />
+			<w:Card
+				id="bubble"
+				manifest="{analyticalContentManifests>/bubble}"
+				baseUrl="./"
+				class="sapUiMediumMargin"
+				height="500px"
+				width="600px" />
 		</Panel>
 	</Page>
 </mvc:View>
