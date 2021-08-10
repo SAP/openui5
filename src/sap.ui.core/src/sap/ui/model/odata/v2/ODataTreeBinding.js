@@ -1953,23 +1953,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * Initialize binding. Fires a change if data is already available ($expand) or a refresh.
-	 * If metadata is not yet available, do nothing, method will be called again when
-	 * metadata is loaded.
+	 * Initializes the binding. Fires a refresh event once initialization is completed in case the
+	 * binding is resolved or immediately in case it is unresolved.
 	 *
 	 * @returns {sap.ui.model.odata.v2.ODataTreeBinding} The binding instance
+	 *
 	 * @public
 	 */
-	ODataTreeBinding.prototype.initialize = function() {
+	ODataTreeBinding.prototype.initialize = function () {
 		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && this.bInitial) {
-
-			// relative bindings will be properly initialized once the context is set
-			var bIsRelative = this.isRelative();
-			if (!bIsRelative || (bIsRelative && this.oContext)) {
-				this._initialize();
+			if (this.isResolved()) {
+				this._initialize(this._fireRefresh.bind(this, {reason : ChangeReason.Refresh}));
+			} else {
+				this._fireRefresh({reason : ChangeReason.Refresh});
 			}
-
-			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
 		return this;
 	};
@@ -1977,17 +1974,20 @@ sap.ui.define([
 	/**
 	 * Private initialize.
 	 * Triggers metadata checks for annotations and applies adapters if necessary.
+	 *
+	 * @param {function} fnFireEvent
+	 *   A function which fires an event once the adapter has been applied
+	 * @returns {sap.ui.model.odata.v2.ODataTreeBinding}
+	 *   The binding instance
+	 *
 	 * @private
 	 */
-	ODataTreeBinding.prototype._initialize = function () {
+	ODataTreeBinding.prototype._initialize = function (fnFireEvent) {
 		this.bInitial = false;
 		this.bHasTreeAnnotations = this._hasTreeAnnotations();
 		this.oEntityType = this._getEntityType();
-
-		// build up the $select, based on the given select-properties and the known/necessary annotated properties
 		this._processSelectParameters();
-
-		this._applyAdapter();
+		this._applyAdapter(fnFireEvent);
 
 		return this;
 	};
@@ -1996,9 +1996,10 @@ sap.ui.define([
 	 * Sets the binding context.
 	 *
 	 * @param {sap.ui.model.Context} [oContext] The new binding context
+	 *
 	 * @private
 	 */
-	ODataTreeBinding.prototype.setContext = function(oContext) {
+	ODataTreeBinding.prototype.setContext = function (oContext) {
 		if (oContext && oContext.isPreliminary() && !this.bUsePreliminaryContext) {
 			return;
 		}
@@ -2011,21 +2012,17 @@ sap.ui.define([
 
 		if (Context.hasChanged(this.oContext, oContext)) {
 			this.oContext = oContext;
-
 			if (!this.isRelative()) {
 				return;
 			}
 
 			if (this.getResolvedPath()) {
 				this.resetData();
-				this._initialize(); // triggers metadata/annotation check
-				this._fireChange({ reason: ChangeReason.Context });
-			} else {
-				// path could not be resolved, but some data was already available, so we fire a context-change
-				if (!isEmptyObject(this.oAllKeys) || !isEmptyObject(this.oKeys) || !isEmptyObject(this._aNodes)) {
-					this.resetData();
-					this._fireChange({ reason: ChangeReason.Context });
-				}
+				this._initialize(this._fireChange.bind(this, {reason : ChangeReason.Context}));
+			} else if (!isEmptyObject(this.oAllKeys) || !isEmptyObject(this.oKeys)
+					|| !isEmptyObject(this._aNodes)) { // binding is now unresolved, but has data
+				this.resetData();
+				this._fireChange({reason : ChangeReason.Context});
 			}
 		}
 	};
@@ -2076,57 +2073,68 @@ sap.ui.define([
 	};
 
 	/**
-	 * Applies a TreeBindingAdapter, depending on the metadata.
-	 * Either a hierarchical paging adapter (nav-props & annotations) or a
-	 * flat paging adapter (magnitude) is applied.
+	 * Applies a TreeBindingAdapter, depending on the metadata. Either a hierarchical paging adapter
+	 * (nav-props & annotations) or a flat paging adapter (magnitude) is applied.
+	 *
+	 * @param {function} fnFireEvent A function which is called after the adapter has been applied
 	 * @private
 	 */
-	ODataTreeBinding.prototype._applyAdapter = function () {
-		var sMagnitudeAnnotation = "hierarchy-node-descendant-count-for";
-		var sSiblingRankAnnotation = "hierarchy-sibling-rank-for";
-		var sPreorderRankAnnotation = "hierarchy-preorder-rank-for";
+	ODataTreeBinding.prototype._applyAdapter = function (fnFireEvent) {
+		var sAbsolutePath, oEntityType, i, j, sKeyProperty, sName,
+			sAdapterModuleName = "sap/ui/model/odata/ODataTreeBindingAdapter",
+			sMagnitudeAnnotation = "hierarchy-node-descendant-count-for",
+			sPreorderRankAnnotation = "hierarchy-preorder-rank-for",
+			sSiblingRankAnnotation = "hierarchy-sibling-rank-for",
+			that = this;
+
+		if (!this.bHasTreeAnnotations && !this.oNavigationPaths) {
+			Log.error("Neither hierarchy annotations, "
+				 + "nor navigation properties are specified to build the tree.", this);
+			return;
+		}
 
 		if (this.bHasTreeAnnotations) {
-
-			var sAbsolutePath = this.getResolvedPath();
+			sAbsolutePath = this.getResolvedPath();
 			// remove url parameters if any to get correct path for entity type resolving
 			if (sAbsolutePath.indexOf("?") !== -1) {
 				sAbsolutePath = sAbsolutePath.split("?")[0];
 			}
-			var oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sAbsolutePath);
-			var that = this;
-
+			oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sAbsolutePath);
 			//Check if all required properties are available
 			each(oEntityType.property, function(iIndex, oProperty) {
 				if (!oProperty.extensions) {
 					return true;
 				}
 				each(oProperty.extensions, function(iIndex, oExtension) {
-					var sName = oExtension.name;
+					sName = oExtension.name;
 					if (oExtension.namespace === that.oModel.oMetadata.mNamespaces["sap"] &&
-							(sName == sMagnitudeAnnotation || sName == sSiblingRankAnnotation || sName == sPreorderRankAnnotation)) {
+							(sName == sMagnitudeAnnotation || sName == sSiblingRankAnnotation
+								|| sName == sPreorderRankAnnotation)) {
 						that.oTreeProperties[sName] = oProperty.name;
 					}
 				});
 			});
-
 			//perform magnitude annotation check
-			this.oTreeProperties[sMagnitudeAnnotation] = this.oTreeProperties[sMagnitudeAnnotation] ||
-				(this.mParameters.treeAnnotationProperties && this.mParameters.treeAnnotationProperties.hierarchyNodeDescendantCountFor);
-
-			// apply the flat auto-expand mixin if the necessary annotations were found (in Server-Mode)
-			// exception: the binding runs in operation-mode "Client"
-			// In this case there is no need for the advanced auto expand, since everything is loaded anyway.
-			if (this.oTreeProperties[sMagnitudeAnnotation] && this.sOperationMode == OperationMode.Server) {
-				var i, j, sKeyProperty;
+			this.oTreeProperties[sMagnitudeAnnotation] = this.oTreeProperties[sMagnitudeAnnotation]
+				|| (this.mParameters.treeAnnotationProperties
+					&& this.mParameters.treeAnnotationProperties.hierarchyNodeDescendantCountFor);
+			// apply flat auto-expand mixin if the necessary annotations were found (in Server-Mode)
+			// exception: the binding runs in operation-mode "Client". In this case, there is no
+			// need for the advanced auto expand, since everything is loaded anyway.
+			if (this.oTreeProperties[sMagnitudeAnnotation]
+					&& this.sOperationMode == OperationMode.Server) {
 				// Add Flat-specific tree properties
-				this.oTreeProperties[sSiblingRankAnnotation] = this.oTreeProperties[sSiblingRankAnnotation] ||
-					(this.mParameters.treeAnnotationProperties && this.mParameters.treeAnnotationProperties.hierarchySiblingRankFor);
-				this.oTreeProperties[sPreorderRankAnnotation] = this.oTreeProperties[sPreorderRankAnnotation] ||
-					(this.mParameters.treeAnnotationProperties && this.mParameters.treeAnnotationProperties.hierarchyPreorderRankFor);
-
+				this.oTreeProperties[sSiblingRankAnnotation] =
+					this.oTreeProperties[sSiblingRankAnnotation]
+					|| (this.mParameters.treeAnnotationProperties
+						&& this.mParameters.treeAnnotationProperties.hierarchySiblingRankFor);
+				this.oTreeProperties[sPreorderRankAnnotation] =
+					this.oTreeProperties[sPreorderRankAnnotation]
+					|| (this.mParameters.treeAnnotationProperties
+						&& this.mParameters.treeAnnotationProperties.hierarchyPreorderRankFor);
 				if (this.mParameters.restoreTreeStateAfterChange) {
-					if (this.oTreeProperties[sSiblingRankAnnotation] && this.oTreeProperties[sPreorderRankAnnotation]) {
+					if (this.oTreeProperties[sSiblingRankAnnotation]
+							&& this.oTreeProperties[sPreorderRankAnnotation]) {
 						this._bRestoreTreeStateAfterChange = true;
 						// Collect entity type key properties
 						this._aTreeKeyProperties = [];
@@ -2134,21 +2142,23 @@ sap.ui.define([
 							this._aTreeKeyProperties.push(oEntityType.key.propertyRef[i].name);
 						}
 					} else {
-						Log.warning("Tree state restoration not possible: Missing annotation \"hierarchy-sibling-rank-for\" and/or \"hierarchy-preorder-rank-for\"");
+						Log.warning("Tree state restoration not possible: Missing annotation "
+							+ "\"hierarchy-sibling-rank-for\" and/or "
+							+ "\"hierarchy-preorder-rank-for\"");
 						this._bRestoreTreeStateAfterChange = false;
 					}
 				} else {
 					this._bRestoreTreeStateAfterChange = false;
 				}
-
-
-				// make sure the magnitude is added to the $select if it was not added by the application anyway
+				// make sure magnitude is added to $select if not added by the application anyway
 				if (this.mParameters && this.mParameters.select) {
-					if (this.mParameters.select.indexOf(this.oTreeProperties[sMagnitudeAnnotation]) === -1) {
+					if (this.mParameters.select.indexOf(this.oTreeProperties[sMagnitudeAnnotation])
+							=== -1) {
 						this.mParameters.select += "," + this.oTreeProperties[sMagnitudeAnnotation];
 					}
 					if (this._bRestoreTreeStateAfterChange) {
-						// Retrieve all key properties to allow filtering on them during tree state restoration (PreorderPosition requests)
+						// Retrieve all key properties to allow filtering on them during tree state
+						// restoration (PreorderPosition requests)
 						for (j = this._aTreeKeyProperties.length - 1; j >= 0; j--) {
 							sKeyProperty = this._aTreeKeyProperties[j];
 							if (this.mParameters.select.indexOf(sKeyProperty) === -1) {
@@ -2158,25 +2168,19 @@ sap.ui.define([
 					}
 					this.sCustomParams = this.oModel.createCustomParams(this.mParameters);
 				}
-				// apply flat paging adapter
-				var ODataTreeBindingFlat = sap.ui.requireSync("sap/ui/model/odata/ODataTreeBindingFlat");
-				ODataTreeBindingFlat.apply(this);
-			} else {
-				// apply hierarchical paging adapter
-				var ODataTreeBindingAdapter = sap.ui.requireSync("sap/ui/model/odata/ODataTreeBindingAdapter");
-				ODataTreeBindingAdapter.apply(this);
+				sAdapterModuleName = "sap/ui/model/odata/ODataTreeBindingFlat";
 			}
-		} else if (this.oNavigationPaths) {
-			// apply hierarchical paging adapter
-			var ODataTreeBindingAdapter = sap.ui.requireSync("sap/ui/model/odata/ODataTreeBindingAdapter");
-			ODataTreeBindingAdapter.apply(this);
-		} else {
-			Log.error("Neither hierarchy annotations, nor navigation properties are specified to build the tree.", this);
 		}
+		sap.ui.require([sAdapterModuleName], function (oAdapterModule) {
+			oAdapterModule.apply(that);
+			fnFireEvent();
+		});
 	};
 
 	/**
-	 * Internal function to evaluate the select parameters for the binding.
+	 * Internal function to build up the $select, based on the select from the binding parameters
+	 * and the properties being the target of the tree annotations.
+	 *
 	 * @private
 	 */
 	ODataTreeBinding.prototype._processSelectParameters = function () {

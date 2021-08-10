@@ -41,6 +41,22 @@
 				</Key>
 				<Property Name="UserId" Type="Edm.String" Nullable="false" MaxLength="255"/>
 			</EntityType>
+			<EntityType Name="DummyType">
+				<Key>
+					<PropertyRef Name="DummyID"/>
+				</Key>
+				<Property Name="DummyID" Type="Edm.String"/>
+				<NavigationProperty Name="to_C_RSHMaintSchedSmltdOrdAndOp"
+					Relationship="special.cases.assoc_C_RSHMaintSchedSmltdOrdAndOps"
+					FromRole="FromRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"
+					ToRole="ToRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
+			</EntityType>
+			<Association Name="assoc_C_RSHMaintSchedSmltdOrdAndOps">
+				<End Type="special.cases.DummyType" Multiplicity="1"
+					Role="FromRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
+				<End Type="special.cases.C_RSHMaintSchedSmltdOrdAndOpType" Multiplicity="*"
+					Role="ToRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
+			</Association>
 			<Association Name="assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE">
 				<End Type="special.cases.C_SubscrpnProductChargeTPType" Multiplicity="1"
 					Role="FromRole_assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"/>
@@ -62,6 +78,14 @@
 					EntityType="special.cases.I_UserContactCardType"
 					sap:addressable="false"/>
 				<EntitySet Name="UserAssignments" EntityType="special.cases.UserAssignment"/>
+				<EntitySet Name="DummySet" EntityType="special.cases.DummyType"/>
+				<AssociationSet Name="assoc_C_RSHMaintSchedSmltdOrdAndOps"
+					Association="special.cases.assoc_C_RSHMaintSchedSmltdOrdAndOps">
+					<End EntitySet="DummySet"
+						Role="FromRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
+					<End EntitySet="C_RSHMaintSchedSmltdOrdAndOp"
+						Role="ToRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
+				</AssociationSet>
 				<AssociationSet Name="assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"
 					Association="special.cases.assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE">
 					<End EntitySet="C_SubscrpnProductChargeTP"

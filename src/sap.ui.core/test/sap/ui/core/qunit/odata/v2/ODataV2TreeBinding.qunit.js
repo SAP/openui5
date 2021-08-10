@@ -58,6 +58,15 @@ sap.ui.define([
 		oBinding = oModel.bindTree(sPath, oContext, aFilters, mParameters, aSorters).initialize();
 	}
 
+	// request data
+	function requestData(oBinding, iStartIndex, iLength, iThreshold) {
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachEventOnce("refresh", function () {
+			oBinding.getContexts(iStartIndex, iLength, iThreshold);
+		});
+	}
+
 	QUnit.module("ODataTreeBinding with navigation properties", {
 		beforeEach: function() {
 			oNavPropMockServer.start();
@@ -1155,7 +1164,7 @@ sap.ui.define([
 		};
 
 		oBinding.attachChange(fnHandler1);
-		oBinding.getContexts(0, 9);
+		requestData(oBinding, 0, 9);
 	});
 
 	QUnit.test("_loadSubTree: Should abort repetitive identical requests", function(assert) {
@@ -1359,8 +1368,7 @@ sap.ui.define([
 		};
 
 		oBinding.attachChange(fnHandler);
-		oBinding.getContexts(0, 1);
-
+		requestData(oBinding, 0, 1);
 	});
 
 	QUnit.test("_createKeyMap: Should create key map", function(assert) {
@@ -1413,7 +1421,7 @@ sap.ui.define([
 		};
 
 		oBinding.attachChange(fnHandler1);
-		oBinding.getContexts(0, 9);
+		requestData(oBinding, 0, 9);
 	});
 
 	QUnit.test("Sequential expand over 3 levels", function(assert){
@@ -1735,10 +1743,14 @@ sap.ui.define([
 			done();
 		}
 
-		//call sort() and attach refresh handler
-		oBinding.attachRefresh(handler0);
-		oBinding.sort([new Sorter("HierarchyNode", true)]);
-
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		var fnCallbackRefresh = function () {
+			oBinding.attachRefresh(handler0);
+			//call sort() and attach refresh handler
+			oBinding.sort([new Sorter("HierarchyNode", true)]);
+		};
+		oBinding.attachEventOnce("refresh", fnCallbackRefresh);
 	});
 
 	/**
@@ -2476,9 +2488,13 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 9);
-		oBinding.resetData();
-		oBinding.getContexts(0, 9);
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachEventOnce("refresh", function () {
+			oBinding.getContexts(0, 9);
+			oBinding.resetData();
+			oBinding.getContexts(0, 9);
+		});
 	});
 
 	// Test if MockServer supports filtering on properties of type Edm.Guid!

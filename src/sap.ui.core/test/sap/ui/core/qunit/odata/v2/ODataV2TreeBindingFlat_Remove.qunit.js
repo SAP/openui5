@@ -36,6 +36,15 @@ sap.ui.define([
 		oModel.addBinding(oBinding);
 	}
 
+	// request data
+	function requestData(oBinding, iStartIndex, iLength, iThreshold) {
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachEventOnce("refresh", function () {
+			oBinding.getContexts(iStartIndex, iLength, iThreshold);
+		});
+	}
+
 	QUnit.module("Remove and reinsert", {
 		beforeEach: function() {
 			fnSetupNewMockServer();
@@ -79,7 +88,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 40, 0);
+		requestData(oBinding, 0, 40, 0);
 	});
 
 	QUnit.test("Move manually expanded nodes", function(assert){
@@ -153,7 +162,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 40, 0);
+		requestData(oBinding, 0, 40, 0);
 	});
 
 	QUnit.test("Length calculation - remove/reinsert - Simple 1", function(assert){
@@ -191,7 +200,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 100, 0);
+		requestData(oBinding, 0, 100, 0);
 	});
 
 	QUnit.test("Length calculation - remove/reinsert - Simple 2", function(assert){
@@ -233,7 +242,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 100, 0);
+		requestData(oBinding, 0, 100, 0);
 	});
 
 	QUnit.test("Length calculation - remove/reinsert - Simple 3", function(assert){
@@ -280,7 +289,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 100, 0);
+		requestData(oBinding, 0, 100, 0);
 	});
 
 	QUnit.test("Length calculation - remove deep node @ original position AND add in server-indexed parent node", function(assert){
@@ -356,7 +365,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 100, 0);
+		requestData(oBinding, 0, 100, 0);
 	});
 
 	QUnit.test("Length calculation - remove initially collapsed node, re-insert @ server-indexed parent - magnitude propagation", function(assert){
@@ -418,7 +427,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 200, 0);
+		requestData(oBinding, 0, 200, 0);
 	});
 
 	QUnit.test("Length calculation - cut/paste complex operations", function(assert){
@@ -506,7 +515,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 200, 0);
+		requestData(oBinding, 0, 200, 0);
 	});
 
 	QUnit.test("Length calculation - expand & remove initially collapsed node - no re-insert", function(assert){
@@ -552,7 +561,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 200, 0);
+		requestData(oBinding, 0, 200, 0);
 	});
 
 	QUnit.test("Length calculation - remove collapsed node - remove old parent - insert in initially collapsed node", function(assert){
@@ -629,7 +638,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 200, 0);
+		requestData(oBinding, 0, 200, 0);
 	});
 
 	QUnit.test("Length calculation - remove node A - insert in initially collapsed node B - remove node C - insert in first node A - remove node B", function(assert){
@@ -746,7 +755,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 200, 0);
+		requestData(oBinding, 0, 200, 0);
 	});
 
 	QUnit.test("Length calculation - Move Node from upper Subtree to a lower Subtree (index-wise) - remove old parent of moved node", function(assert){
@@ -810,7 +819,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 200, 0);
+		requestData(oBinding, 0, 200, 0);
 	});
 
 	QUnit.module("create new node", {
@@ -862,7 +871,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 10, 10);
+		requestData(oBinding, 0, 10, 10);
 	});
 
 	QUnit.test("Create new node and added to a leaf node", function(assert) {
@@ -901,7 +910,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 10);
+		requestData(oBinding, 0, 20, 10);
 	});
 
 	QUnit.test("Create a new node under a parent and move to another parent", function(assert) {
@@ -947,7 +956,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20);
+		requestData(oBinding, 0, 20);
 	});
 
 	QUnit.test("Create a new node, add to a parent, move some node to the new node, and finally collapse the top parent", function(assert) {
@@ -987,7 +996,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20);
+		requestData(oBinding, 0, 20);
 	});
 
 	QUnit.test("Nested newly created nodes", function(assert) {
@@ -1023,7 +1032,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20);
+		requestData(oBinding, 0, 20);
 	});
 
 	QUnit.test("Remove & Selection Index Calculation", function(assert) {
@@ -1063,6 +1072,6 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20);
+		requestData(oBinding, 0, 20);
 	});
 });

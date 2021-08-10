@@ -15,6 +15,15 @@ sap.ui.define([
 		oModel.addBinding(oBinding);
 	}
 
+	// request data
+	function requestData(oBinding, iStartIndex, iLength, iThreshold) {
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachEventOnce("refresh", function () {
+			oBinding.getContexts(iStartIndex, iLength, iThreshold);
+		});
+	}
+
 	QUnit.module("ODataTreeBindingFlat - Expand node to level", {
 		beforeEach: function() {
 			ODataTreeBindingFakeService.setup();
@@ -30,10 +39,10 @@ sap.ui.define([
 	QUnit.test("_loadSubTree: Request correct server index sections", function(assert) {
 		var done = assert.async();
 		createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='ENtL_UNIT_TEST')/Results", null, [], {
-			threshold: 10,
-			countMode: "Inline",
-			operationMode: "Server",
-			numberOfExpandedLevels: 0
+			threshold : 10,
+			countMode : "Inline",
+			operationMode : "Server",
+			numberOfExpandedLevels : 0
 		});
 
 		oBinding._aNodes = [];
@@ -51,37 +60,42 @@ sap.ui.define([
 		// -- Section 4 -- (only one node, 14 is the last node below 1)
 
 		var oFakeParentNode = {
-			serverIndex: 1,
-			magnitude: 13
+			serverIndex : 1,
+			magnitude : 13
 		};
 
-		var aLoadDataCalls = [];
-		oBinding._loadData = function(iSkip, iTop) {
-			aLoadDataCalls.push({
-				iSkip: iSkip,
-				iTop: iTop
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachRefresh(function () {
+			var aLoadDataCalls = [];
+			oBinding._loadData = function(iSkip, iTop) {
+				aLoadDataCalls.push({
+					iSkip : iSkip,
+					iTop : iTop
+				});
+			};
+
+			oBinding._requestSubTree = function () {
+				return Promise.reject(new Error("Dummy reject to stop further processing"));
+			};
+
+
+			oBinding._loadSubTree(oFakeParentNode, 4).then(function () {
+				assert.deepEqual(aLoadDataCalls, [{
+					iSkip : 2,
+					iTop : 3
+				}, {
+					iSkip : 8,
+					iTop : 2
+				}, {
+					iSkip : 12,
+					iTop : 1
+				}, {
+					iSkip : 14,
+					iTop : 1
+				}], "Correct sections requested");
+				done();
 			});
-		};
-
-		oBinding._requestSubTree = function() {
-			return Promise.reject(new Error("Dummy reject to stop further processing"));
-		};
-
-		oBinding._loadSubTree(oFakeParentNode, 4).then(function() {
-			assert.deepEqual(aLoadDataCalls, [{
-				iSkip: 2,
-				iTop: 3
-			}, {
-				iSkip: 8,
-				iTop: 2
-			}, {
-				iSkip: 12,
-				iTop: 1
-			}, {
-				iSkip: 14,
-				iTop: 1
-			}], "Correct sections requested");
-			done();
 		});
 	});
 
@@ -113,7 +127,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.test("Expand root node (initial expansion level 2) to level 4 (ENtL02)", function(assert) {
@@ -146,7 +160,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 5);
+		requestData(oBinding, 0, 5);
 	});
 
 	QUnit.test("Expand root node (initial expansion level 0 + first child and childrens child manually expanded) to level 4 (ENtL03)", function(assert) {
@@ -191,7 +205,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.test("Expand deep node to level 4 (ENtL04)", function(assert) {
@@ -225,7 +239,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.test("Expand root node (initial expansion level 0 + child and childrens childs manually expanded, some loaded only partially (paged)) to level 4 (ENtL05)", function(assert) {
@@ -286,7 +300,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.test("Manual expand root node, expand root node (initial expansion level 0) to level 4, manual collapse some nodes (ENtL06)", function(assert) {
@@ -339,7 +353,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.test("Correct binding length after expand node to level (ENtL07)", function(assert) {
@@ -363,7 +377,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.test("Expand root node (initial expansion level 0) to level 4 *twice* (ENtL08)", function(assert) {
@@ -399,7 +413,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.test("Expand root node (initial expansion level 2) to level 4 after it has been manually collapsed (ENtL09)", function(assert) {
@@ -438,7 +452,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.test("Expand deep node to level 4 after it has been manually expanded (ENtL10)", function(assert) {
@@ -483,7 +497,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.test("Expand level two node (initial expansion level 2) to level 4, expand root ndoe to level 4 (ENtL11)", function(assert) {
@@ -519,7 +533,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.test("Expand root node (initial expansion level 0) to level 4, collapse deep node and expand deep node to level 4 (ENtL12)", function(assert) {
@@ -558,7 +572,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.test("Expand root node (initial expansion level 0) to level 4, collapse deep node and expand deep node to level 4 (ENtL13)", function(assert) {
@@ -599,7 +613,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 });

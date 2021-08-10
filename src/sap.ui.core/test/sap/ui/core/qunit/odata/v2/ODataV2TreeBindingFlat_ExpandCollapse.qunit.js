@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/odata/v2/ODataModel",
 	"test-resources/sap/ui/core/qunit/odata/v2/data/ODataTreeBindingFakeService"
-], function(
+], function (
 	MockServer,
 	ODataModel,
 	ODataTreeBindingFakeService
@@ -38,6 +38,15 @@ sap.ui.define([
 		oModel.addBinding(oBinding);
 	}
 
+	// request data
+	function requestData(oBinding, iStartIndex, iLength, iThreshold) {
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachEventOnce("refresh", function () {
+			oBinding.getContexts(iStartIndex, iLength, iThreshold);
+		});
+	}
+
 	QUnit.module("ODataTreeBindingFlat - AutoExpand", {
 		beforeEach: function() {
 			fnSetupNewMockServer();
@@ -50,7 +59,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Manually expand a node", function(assert){
+	QUnit.test("Manually expand a node", function (assert) {
 
 		var done = assert.async();
 		createTreeBinding("/orgHierarchy", null, [], {
@@ -96,10 +105,10 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 10, 10);
+		requestData(oBinding, 0, 10, 10);
 	});
 
-	QUnit.test("Manually expand and collapse a node multiple times", function(assert){
+	QUnit.test("Manually expand and collapse a node multiple times", function (assert) {
 
 		var done = assert.async();
 		createTreeBinding("/orgHierarchy", null, [], {
@@ -141,7 +150,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 10, 10);
+		requestData(oBinding, 0, 10, 10);
 	});
 
 	QUnit.test("Manually expand two levels and collapse the parent", function(assert){
@@ -192,7 +201,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 10);
+		requestData(oBinding, 0, 10);
 	});
 
 	QUnit.test("Collapse all nodes at level 0", function(assert){
@@ -225,7 +234,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 10, 700);
+		requestData(oBinding, 0, 10, 700);
 	});
 
 	QUnit.test("Bug fix: when deepnode is collapsed, its parents' magnitude needs to be updated", function(assert) {
@@ -272,7 +281,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 10, 10);
+		requestData(oBinding, 0, 10, 10);
 	});
 
 	QUnit.test("expandToLevel: Expand one level", function(assert) {
@@ -308,7 +317,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 10, 10);
+		requestData(oBinding, 0, 10, 10);
 	});
 
 	QUnit.test("expandToLevel: Expand to same level fires change event", function(assert) {
@@ -344,7 +353,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 10, 10);
+		requestData(oBinding, 0, 10, 10);
 	});
 
 	QUnit.test("collapseToLevel: Collapse two levels", function(assert) {
@@ -379,7 +388,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 10, 10);
+		requestData(oBinding, 0, 10, 10);
 	});
 
 	QUnit.test("collapseToLevel: Collapse to same level fires change event", function(assert) {
@@ -416,6 +425,6 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 10, 10);
+		requestData(oBinding, 0, 10, 10);
 	});
 });

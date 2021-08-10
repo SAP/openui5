@@ -36,6 +36,15 @@ sap.ui.define([
 		oModel.addBinding(oBinding);
 	}
 
+	// request data
+	function requestData(oBinding, iStartIndex, iLength, iThreshold) {
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachEventOnce("refresh", function () {
+			oBinding.getContexts(iStartIndex, iLength, iThreshold);
+		});
+	}
+
 	QUnit.module("ODataTreeBinding - AutoExpand", {
 		beforeEach: function() {
 			fnSetupNewMockServer();
@@ -156,8 +165,12 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.attachSelectionChanged(handlerSelectionChanged);
-		oBinding.getContexts(0, 10);
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachEventOnce("refresh", function () {
+			oBinding.attachSelectionChanged(handlerSelectionChanged);
+			oBinding.getContexts(0, 10);
+		});
 	});
 
 	QUnit.test("Select All", function(assert) {
@@ -221,8 +234,12 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.attachSelectionChanged(handlerSelectionChanged);
-		oBinding.getContexts(0, 10);
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachEventOnce("refresh", function () {
+			oBinding.attachSelectionChanged(handlerSelectionChanged);
+			oBinding.getContexts(0, 10);
+		});
 	});
 
 	/*
@@ -257,7 +274,7 @@ sap.ui.define([
 		};
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 100);
+		requestData(oBinding, 0, 100);
 	});
 
 	QUnit.test("getSelectedNodesCount without recursive collapse - read only", function(assert){
@@ -291,7 +308,7 @@ sap.ui.define([
 		};
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 100);
+		requestData(oBinding, 0, 100);
 	});
 
 	QUnit.test("getSelectedNodesCount with expand - read only", function(assert){
@@ -325,7 +342,7 @@ sap.ui.define([
 		};
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 100);
+		requestData(oBinding, 0, 100);
 	});
 
 	QUnit.test("getSelectedNodesCount with expand to level", function(assert){
@@ -366,7 +383,7 @@ sap.ui.define([
 		};
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 100);
+		requestData(oBinding, 0, 100);
 	});
 
 	QUnit.test("getSelectedNodesCount with paging - read only", function(assert){
@@ -390,7 +407,7 @@ sap.ui.define([
 		};
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(128, 64);
+		requestData(oBinding, 128, 64);
 	});
 
 	/*
@@ -426,7 +443,7 @@ sap.ui.define([
 		};
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 100);
+		requestData(oBinding, 0, 100);
 	});
 
 	QUnit.test("getSelectedNodesCount without recursive collapse - write", function(assert){
@@ -461,7 +478,7 @@ sap.ui.define([
 		};
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 100);
+		requestData(oBinding, 0, 100);
 	});
 
 	QUnit.test("getSelectedNodesCount with paging - write", function(assert){
@@ -486,7 +503,7 @@ sap.ui.define([
 		};
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(128, 64);
+		requestData(oBinding, 128, 64);
 	});
 
 	QUnit.test("getSelectedIndices with initially collapsed (expanded) node and deep node (selected)", function(assert){
@@ -531,7 +548,7 @@ sap.ui.define([
 		};
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 128);
+		requestData(oBinding, 0, 128);
 	});
 
 	QUnit.test("getSelectedIndices with deep node (expanded) node and deep node (selected)", function(assert){
@@ -591,7 +608,7 @@ sap.ui.define([
 		};
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 128);
+		requestData(oBinding, 0, 128);
 	});
 
 	QUnit.test("selectionChanged event with collapse", function(assert) {
@@ -623,7 +640,7 @@ sap.ui.define([
 		};
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 128);
+		requestData(oBinding, 0, 128);
 	});
 
 	QUnit.test("selectionChanged event with collapse: deselect of lead selection", function(assert) {
@@ -655,7 +672,7 @@ sap.ui.define([
 		};
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 128);
+		requestData(oBinding, 0, 128);
 	});
 
 	QUnit.test("selectionChanged event with collapseToLevel", function(assert) {
@@ -692,7 +709,7 @@ sap.ui.define([
 		};
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 128);
+		requestData(oBinding, 0, 128);
 	});
 
 	QUnit.test("selectionChanged event with collapseToLevel: deselect of lead selection", function(assert) {
@@ -725,6 +742,6 @@ sap.ui.define([
 		};
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 128);
+		requestData(oBinding, 0, 128);
 	});
 });
