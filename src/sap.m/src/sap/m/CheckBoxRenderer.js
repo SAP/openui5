@@ -85,7 +85,7 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 
 		var sTooltip = this.getTooltipText(oCheckBox);
 
-		if (sTooltip && bEditableAndEnabled) {
+		if (sTooltip) {
 			oRm.attr("title", sTooltip);
 		}
 
@@ -177,13 +177,22 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 	 */
 	CheckBoxRenderer.getTooltipText = function (oCheckBox) {
 		var sValueStateText = oCheckBox.getProperty("valueStateText"),
-			sTooltipText = oCheckBox.getTooltip_AsString();
+			sTooltipText = oCheckBox.getTooltip_AsString(),
+			bEnabled = oCheckBox.getEnabled(),
+			bEditable = oCheckBox.getEditable();
 
 		if (sValueStateText) {
+			// custom value state text is set, concat to tooltip and return
 			return (sTooltipText ? sTooltipText + " - " : "") + sValueStateText;
-		} else {
+		} else if (bEditable && bEnabled) {
+			// the visual value state is only set for editable and enabled checkboxes
+			// the default value state text should only be set in those cases
 			return ValueStateSupport.enrichTooltip(oCheckBox, sTooltipText);
 		}
+
+		// if no value state text is provided or the checkbox
+		// is disabled only the custom tooltip is returned
+		return sTooltipText;
 	};
 
 	return CheckBoxRenderer;

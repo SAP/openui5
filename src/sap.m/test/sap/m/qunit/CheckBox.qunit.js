@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/message/Message"
-], function(
+], function (
 	QUtils,
 	createAndAppendDiv,
 	CheckBox,
@@ -45,7 +45,7 @@ sap.ui.define([
 	/* Test: Default Values                    */
 	/* --------------------------------------- */
 
-	QUnit.test("Default Values", function(assert) {
+	QUnit.test("Default Values", function (assert) {
 
 		var bEnabled = true;
 		var bEditable = true;
@@ -84,10 +84,10 @@ sap.ui.define([
 	/* Test: 'visible=true'                            */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'visible=true'", function(assert) {
+	QUnit.test("'visible=true'", function (assert) {
 
 		// system under test
-		var oCheckBox = new CheckBox({visible: true});
+		var oCheckBox = new CheckBox({ visible: true });
 
 		// arrange
 		oCheckBox.placeAt("content");
@@ -105,10 +105,10 @@ sap.ui.define([
 	/* Test: 'visible=false'                           */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'visible=false'", function(assert) {
+	QUnit.test("'visible=false'", function (assert) {
 
 		// system under test
-		var oCheckBox = new CheckBox({visible: false});
+		var oCheckBox = new CheckBox({ visible: false });
 
 		// arrange
 		oCheckBox.placeAt("content");
@@ -126,11 +126,11 @@ sap.ui.define([
 	/* Test: 'enabled=true'                            */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'enabled=true'", function(assert) {
+	QUnit.test("'enabled=true'", function (assert) {
 
 		// system under test
 		var bEnabled = true;
-		var oCheckBox = new CheckBox({enabled: bEnabled});
+		var oCheckBox = new CheckBox({ enabled: bEnabled });
 
 		// arrange
 		oCheckBox.placeAt("content");
@@ -140,7 +140,7 @@ sap.ui.define([
 		assert.ok(!oCheckBox.$("CbBg").hasClass("sapMCbBgDis"), "enabled=" + bEnabled + ": CheckBox should not have class sapMCbBgDis");
 		assert.strictEqual(oCheckBox.$("CB").attr("disabled"), undefined, "enabled=" + bEnabled + ": CheckBox should not have attribute 'disabled'");
 		var iTabindex = oCheckBox.getTabIndex();
-		assert.strictEqual(oCheckBox.$().attr("tabindex"), iTabindex.toString() , "enabled=" + bEnabled + ": CheckBox should have attribute 'tabindex=" + iTabindex + "'");
+		assert.strictEqual(oCheckBox.$().attr("tabindex"), iTabindex.toString(), "enabled=" + bEnabled + ": CheckBox should have attribute 'tabindex=" + iTabindex + "'");
 
 		// cleanup
 		oCheckBox.destroy();
@@ -151,11 +151,11 @@ sap.ui.define([
 	/* Test: 'enabled=false'                           */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'enabled=false'", function(assert) {
+	QUnit.test("'enabled=false'", function (assert) {
 
 		// system under test
 		var bEnabled = false;
-		var oCheckBox = new CheckBox({enabled: bEnabled});
+		var oCheckBox = new CheckBox({ enabled: bEnabled });
 
 		// arrange
 		oCheckBox.placeAt("content");
@@ -175,18 +175,18 @@ sap.ui.define([
 	/* Test: 'editable=false'                          */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'editable=false'", function(assert) {
+	QUnit.test("'editable=false'", function (assert) {
 
 		// system under test
 		var bEditable = false;
-		var oCheckBox = new CheckBox({editable: bEditable});
+		var oCheckBox = new CheckBox({ editable: bEditable });
 
 		// arrange
 		oCheckBox.placeAt("content");
 		Core.applyChanges();
 
 		// assertions
-		assert.strictEqual(oCheckBox.getTabIndex(), 0 , "'getTabindex' should return 0");
+		assert.strictEqual(oCheckBox.getTabIndex(), 0, "'getTabindex' should return 0");
 		assert.equal(oCheckBox.$().hasClass("sapMCbRo"), true, ": The CheckBox should have class sapMCbRo");
 		assert.strictEqual(oCheckBox.$("CB").attr("readonly"), "readonly", "The Checkbox should have attribute 'readonly=readonly'");
 		assert.strictEqual(oCheckBox.$().attr("aria-readonly"), "true", "Property 'aria-readonly' should be 'true'");
@@ -198,18 +198,18 @@ sap.ui.define([
 	/* ----------------------------------------------- */
 	/* Test: 'displayOnly=true'                        */
 	/* ----------------------------------------------- */
-	QUnit.test("'displayOnly=true'", function(assert) {
+	QUnit.test("'displayOnly=true'", function (assert) {
 
 		// system under test
 		var bDisplayOnly = true;
-		var oCheckBox = new CheckBox({displayOnly: bDisplayOnly});
+		var oCheckBox = new CheckBox({ displayOnly: bDisplayOnly });
 
 		// arrange
 		oCheckBox.placeAt("content");
 		Core.applyChanges();
 
 		// assertions
-		assert.strictEqual(oCheckBox.getTabIndex(), -1 , "'getTabindex' should return -1");
+		assert.strictEqual(oCheckBox.getTabIndex(), -1, "'getTabindex' should return -1");
 		assert.equal(oCheckBox.$().hasClass("sapMCbDisplayOnly"), true, ": The CheckBox should have class sapMCbDisplayOnly");
 		assert.strictEqual(oCheckBox.$().attr("aria-readonly"), "true", "Property 'aria-readonly' should be 'true'");
 
@@ -220,12 +220,12 @@ sap.ui.define([
 	/* ----------------------------------------------- */
 	/* Test: 'displayOnly=true&enabled=false'          */
 	/* ----------------------------------------------- */
-	QUnit.test("'displayOnly=true'", function(assert) {
+	QUnit.test("'displayOnly=true'", function (assert) {
 
 		// system under test
 		var bDisplayOnly = true;
 		var bEnabled = false;
-		var oCheckBox = new CheckBox({displayOnly: bDisplayOnly, enabled: bEnabled});
+		var oCheckBox = new CheckBox({ displayOnly: bDisplayOnly, enabled: bEnabled });
 
 		// arrange
 		oCheckBox.placeAt("content");
@@ -244,10 +244,10 @@ sap.ui.define([
 	/* Test: 'selected=true'                           */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'selected=true'", function(assert) {
+	QUnit.test("'selected=true'", function (assert) {
 
 		// system under test
-		var oCheckBox = new CheckBox({selected: true});
+		var oCheckBox = new CheckBox({ selected: true });
 
 		// arrange
 		oCheckBox.placeAt("content");
@@ -267,10 +267,10 @@ sap.ui.define([
 	/* Test: 'selected=false'						   */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'selected=false'", function(assert) {
+	QUnit.test("'selected=false'", function (assert) {
 
 		// system under test
-		var oCheckBox = new CheckBox({selected: false});
+		var oCheckBox = new CheckBox({ selected: false });
 
 		// arrange
 		oCheckBox.placeAt("content");
@@ -289,10 +289,10 @@ sap.ui.define([
 	/* Test: 'selected=false'						   */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'selected=null'", function(assert) {
+	QUnit.test("'selected=null'", function (assert) {
 
 		// system under test
-		var oCheckBox = new CheckBox({selected: false});
+		var oCheckBox = new CheckBox({ selected: false });
 
 		// arrange
 		oCheckBox.placeAt("content");
@@ -312,10 +312,10 @@ sap.ui.define([
 	/* Test: 'partiallySelected'				   */
 	/* ----------------------------------------------- */
 
-	QUnit.test("partiallySelected=true", function(assert) {
+	QUnit.test("partiallySelected=true", function (assert) {
 
 		// system under test
-		var oCheckBox = new CheckBox({partiallySelected: true});
+		var oCheckBox = new CheckBox({ partiallySelected: true });
 
 		// arrange
 		oCheckBox.placeAt("content");
@@ -339,10 +339,10 @@ sap.ui.define([
 	/* Test: wrapping property                         */
 	/* ----------------------------------------------- */
 
-	QUnit.test("wrapping property", function(assert) {
+	QUnit.test("wrapping property", function (assert) {
 
 		// system under test
-		var oCheckBox = new CheckBox({wrapping: true});
+		var oCheckBox = new CheckBox({ wrapping: true });
 
 		// arrange
 		oCheckBox.placeAt("content");
@@ -368,7 +368,7 @@ sap.ui.define([
 	/* Test: 'useEntireWidth functionality'            */
 	/* ----------------------------------------------- */
 
-	QUnit.test("useEntireWidth functionality", function(assert) {
+	QUnit.test("useEntireWidth functionality", function (assert) {
 
 		// system under test
 		var CHECKBOX_WIDTH = 50,
@@ -403,9 +403,9 @@ sap.ui.define([
 	/* Test: 'ValueState=Error'						   */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'ValueState=Error'", function(assert) {
+	QUnit.test("'ValueState=Error'", function (assert) {
 		// system under test
-		var oCheckBox = new CheckBox({valueState: ValueState.Error});
+		var oCheckBox = new CheckBox({ valueState: ValueState.Error });
 
 		// arrange
 		oCheckBox.placeAt("content");
@@ -423,9 +423,9 @@ sap.ui.define([
 	/* Test: 'ValueState=Warning'						   */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'ValueState=Warning'", function(assert) {
+	QUnit.test("'ValueState=Warning'", function (assert) {
 		// system under test
-		var oCheckBox = new CheckBox({valueState: ValueState.Warning});
+		var oCheckBox = new CheckBox({ valueState: ValueState.Warning });
 
 		// arrange
 		oCheckBox.placeAt("content");
@@ -442,9 +442,9 @@ sap.ui.define([
 	/* Test: 'ValueState=Success'						   */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'ValueState=Success'", function(assert) {
+	QUnit.test("'ValueState=Success'", function (assert) {
 		// system under test
-		var oCheckBox = new CheckBox({valueState: ValueState.Success});
+		var oCheckBox = new CheckBox({ valueState: ValueState.Success });
 
 		// arrange
 		oCheckBox.placeAt("content");
@@ -461,9 +461,9 @@ sap.ui.define([
 	/* Test: 'ValueState=Information'				   */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'ValueState=Information'", function(assert) {
+	QUnit.test("'ValueState=Information'", function (assert) {
 		// system under test
-		var oCheckBox = new CheckBox({valueState: ValueState.Information});
+		var oCheckBox = new CheckBox({ valueState: ValueState.Information });
 
 		// arrange
 		oCheckBox.placeAt("content");
@@ -480,12 +480,12 @@ sap.ui.define([
 	/* Test: 'name'                                    */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'name'", function(assert) {
+	QUnit.test("'name'", function (assert) {
 
 		var sName = "my Name";
 
 		// system under test
-		var oCheckBox = new CheckBox({name: sName});
+		var oCheckBox = new CheckBox({ name: sName });
 
 		// arrange
 		oCheckBox.placeAt("content");
@@ -504,13 +504,13 @@ sap.ui.define([
 	/* Test: getTabIndex (enabled=true)				   */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'getTabIndex (enabled=true)'", function(assert) {
+	QUnit.test("'getTabIndex (enabled=true)'", function (assert) {
 
 		// system under test
-		var oCheckBox = new CheckBox({enabled: true});
+		var oCheckBox = new CheckBox({ enabled: true });
 
 		// assertions
-		assert.strictEqual(oCheckBox.getTabIndex(), 0 , "'getTabindex' should return 0");
+		assert.strictEqual(oCheckBox.getTabIndex(), 0, "'getTabindex' should return 0");
 
 		// cleanup
 		oCheckBox.destroy();
@@ -521,13 +521,13 @@ sap.ui.define([
 	/* Test: getTabIndex (enabled=false				   */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'getTabIndex (enabled=false)'", function(assert) {
+	QUnit.test("'getTabIndex (enabled=false)'", function (assert) {
 
 		// system under test
-		var oCheckBox = new CheckBox({enabled: false});
+		var oCheckBox = new CheckBox({ enabled: false });
 
 		// assertions
-		assert.strictEqual(oCheckBox.getTabIndex(), -1 , "'getTabindex' should return -1");
+		assert.strictEqual(oCheckBox.getTabIndex(), -1, "'getTabindex' should return -1");
 
 		// cleanup
 		oCheckBox.destroy();
@@ -538,7 +538,7 @@ sap.ui.define([
 	/* Test: getTabIndex (tabIndex previously set explicitly via setTabIndex) */
 	/* ----------------------------------------------------------------------- */
 
-	QUnit.test("'getTabIndex (tabIndex previously set explicitly via setTabIndex)'", function(assert) {
+	QUnit.test("'getTabIndex (tabIndex previously set explicitly via setTabIndex)'", function (assert) {
 
 		// system under test
 		var oCheckBox = new CheckBox();
@@ -547,7 +547,7 @@ sap.ui.define([
 		oCheckBox.setTabIndex(2);
 
 		// assertions
-		assert.strictEqual(oCheckBox.getTabIndex(), 2 , "'getTabindex' should return 2");
+		assert.strictEqual(oCheckBox.getTabIndex(), 2, "'getTabindex' should return 2");
 
 		// cleanup
 		oCheckBox.destroy();
@@ -558,7 +558,7 @@ sap.ui.define([
 	/* Test: 'tabIndex' 							   */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'tabIndex'", function(assert) {
+	QUnit.test("'tabIndex'", function (assert) {
 
 		var iTabIndex = 2;
 
@@ -571,7 +571,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// assertions
-		assert.strictEqual(oCheckBox.$().attr("tabindex"), iTabIndex.toString() , "Property 'tabIndex=" + iTabIndex + "': CheckBox should have attribute 'tabindex=" + iTabIndex + "'");
+		assert.strictEqual(oCheckBox.$().attr("tabindex"), iTabIndex.toString(), "Property 'tabIndex=" + iTabIndex + "': CheckBox should have attribute 'tabindex=" + iTabIndex + "'");
 
 		// cleanup
 		oCheckBox.destroy();
@@ -619,7 +619,7 @@ sap.ui.define([
 		Label.prototype[sSetterMethod].restore();
 	}
 
-	QUnit.test("Should render the text of a Checkbox after rendering the checkbox without setting label properties", function(assert) {
+	QUnit.test("Should render the text of a Checkbox after rendering the checkbox without setting label properties", function (assert) {
 		// Arrange
 		var oCheckBox = new CheckBox();
 
@@ -642,7 +642,7 @@ sap.ui.define([
 	/* Test: 'text' - via Constructor                  */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'text' - via Constructor", function(assert) {
+	QUnit.test("'text' - via Constructor", function (assert) {
 
 		testSetLabelProperty("text", "my Text", "Constructor");
 	});
@@ -652,7 +652,7 @@ sap.ui.define([
 	/* Test: 'text' - via Setter Method                */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'text' - via Setter Method", function(assert) {
+	QUnit.test("'text' - via Setter Method", function (assert) {
 
 		testSetLabelProperty("text", "my Text", "Setter");
 	});
@@ -663,7 +663,7 @@ sap.ui.define([
 	/* Test: 'textDirection' - via Constructor         */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'textDirection' - via Constructor", function(assert) {
+	QUnit.test("'textDirection' - via Constructor", function (assert) {
 
 		testSetLabelProperty("textDirection", "RTL", "Constructor");
 		testSetLabelProperty("textDirection", "LTR", "Constructor");
@@ -675,7 +675,7 @@ sap.ui.define([
 	/* Test: 'textDirection' - via Setter Method         */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'textDirection' - via Setter Method", function(assert) {
+	QUnit.test("'textDirection' - via Setter Method", function (assert) {
 
 		testSetLabelProperty("textDirection", "RTL", "Setter");
 		testSetLabelProperty("textDirection", "LTR", "Setter");
@@ -686,7 +686,7 @@ sap.ui.define([
 	/* Test: 'textAlign' - via Constructor         */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'textAlign' - via Constructor", function(assert) {
+	QUnit.test("'textAlign' - via Constructor", function (assert) {
 		testSetLabelProperty("textAlign", "Begin", "Constructor");
 		testSetLabelProperty("textAlign", "End", "Constructor");
 		testSetLabelProperty("textAlign", "Left", "Constructor");
@@ -700,7 +700,7 @@ sap.ui.define([
 	/* Test: 'textAlign' - via Setter Method         */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'textAlign' - via Setter Method", function(assert) {
+	QUnit.test("'textAlign' - via Setter Method", function (assert) {
 		testSetLabelProperty("textAlign", "Begin", "Setter");
 		testSetLabelProperty("textAlign", "End", "Setter");
 		testSetLabelProperty("textAlign", "Left", "Setter");
@@ -714,7 +714,7 @@ sap.ui.define([
 	/* Test: 'width' - via Constructor                 */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'width' - via Constructor", function(assert) {
+	QUnit.test("'width' - via Constructor", function (assert) {
 
 		testSetLabelProperty("width", "100px", "Constructor");
 	});
@@ -724,12 +724,12 @@ sap.ui.define([
 	/* Test: 'width' - via Setter Method               */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'width' - via Setter Method", function(assert) {
+	QUnit.test("'width' - via Setter Method", function (assert) {
 
 		testSetLabelProperty("width", "100px", "Setter");
 	});
 
-	QUnit.test("valueState with enabled and editable set to false", function(assert) {
+	QUnit.test("valueState with enabled and editable set to false", function (assert) {
 		// system under test
 		var oCheckBox = new CheckBox({
 			enabled: false,
@@ -777,7 +777,7 @@ sap.ui.define([
 	/* Test: Existence                                 */
 	/* ----------------------------------------------- */
 
-	QUnit.test("Existence", function(assert) {
+	QUnit.test("Existence", function (assert) {
 
 		// system under test
 		var oCheckBox = new CheckBox();
@@ -799,7 +799,7 @@ sap.ui.define([
 	/* ----------------------------------------------- */
 	function testSapMCbHoverable(oThat, bDesktop, sMessage) {
 
-		var stub = oThat.stub(Device, "system", {desktop : bDesktop});
+		var stub = oThat.stub(Device, "system", { desktop: bDesktop });
 
 		// system under test
 		var oCheckBox = new CheckBox();
@@ -809,7 +809,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// assertions
-		if (bDesktop){
+		if (bDesktop) {
 			assert.ok(oCheckBox.$("CbBg").hasClass("sapMCbHoverable"), sMessage);
 		} else {
 			assert.ok(!oCheckBox.$("CbBg").hasClass("sapMCbHoverable"), sMessage);
@@ -824,7 +824,7 @@ sap.ui.define([
 	/* Test: sapMCbHoverable (non-desktop environment) */
 	/* ----------------------------------------------- */
 
-	QUnit.test("sapMCbHoverable (non-desktop environment)", function(assert) {
+	QUnit.test("sapMCbHoverable (non-desktop environment)", function (assert) {
 
 		testSapMCbHoverable(this, false, "CheckBox should not have class sapMCbHoverable");
 	});
@@ -834,7 +834,7 @@ sap.ui.define([
 	/* Test: sapMCbHoverable (desktop environment)     */
 	/* ----------------------------------------------- */
 
-	QUnit.test("sapMCbHoverable (desktop environment)", function(assert) {
+	QUnit.test("sapMCbHoverable (desktop environment)", function (assert) {
 		testSapMCbHoverable(this, true, "CheckBox should have class sapMCbHoverable");
 	});
 
@@ -846,7 +846,7 @@ sap.ui.define([
 	/* Test: tap                                       */
 	/* ----------------------------------------------- */
 
-	QUnit.test("tap", function(assert) {
+	QUnit.test("tap", function (assert) {
 
 		// system under test
 		var oCheckBox = new CheckBox();
@@ -890,10 +890,10 @@ sap.ui.define([
 	/* ------------------------------------------------------------------------------- */
 
 	function testTap(sTestName, oTestObject, oAssertion) {
-		QUnit.test(sTestName, function(assert) {
+		QUnit.test(sTestName, function (assert) {
 
 			// system under test
-			var oCheckBox = new CheckBox({selected: oTestObject.selected, partiallySelected: oTestObject.partiallySelected});
+			var oCheckBox = new CheckBox({ selected: oTestObject.selected, partiallySelected: oTestObject.partiallySelected });
 
 			// arrange
 			oCheckBox.placeAt("content");
@@ -916,37 +916,37 @@ sap.ui.define([
 
 	testTap(
 		"Tap when selected=true and partiallySelected=true",
-		{selected: true, partiallySelected: true},
-		{isSelected: true, isPartiallySelected: false, hasClass: true, isChecked: true, ariaChecked: "true"}
+		{ selected: true, partiallySelected: true },
+		{ isSelected: true, isPartiallySelected: false, hasClass: true, isChecked: true, ariaChecked: "true" }
 	);
 
 	testTap(
 		"Tap when selected=false and partiallySelected=true",
-		{selected: false, partiallySelected: true},
-		{isSelected: true, isPartiallySelected: false, hasClass: true, isChecked: true, ariaChecked: "true"}
+		{ selected: false, partiallySelected: true },
+		{ isSelected: true, isPartiallySelected: false, hasClass: true, isChecked: true, ariaChecked: "true" }
 	);
 
 	testTap(
 		"Tap when selected=true and partiallySelected=false",
-		{selected: true, partiallySelected: false},
-		{isSelected: false, isPartiallySelected: false, hasClass: false, isChecked: false, ariaChecked: "false"}
+		{ selected: true, partiallySelected: false },
+		{ isSelected: false, isPartiallySelected: false, hasClass: false, isChecked: false, ariaChecked: "false" }
 	);
 
 	testTap(
 		"Tap when selected=false and partiallySelected=false",
-		{selected: false, partiallySelected: false},
-		{isSelected: true, isPartiallySelected: false, hasClass: true, isChecked: true, ariaChecked: "true"}
+		{ selected: false, partiallySelected: false },
+		{ isSelected: true, isPartiallySelected: false, hasClass: true, isChecked: true, ariaChecked: "true" }
 	);
 
 	/* ----------------------------------------------- */
 	/* Test: SPACE key                                 */
 	/* ----------------------------------------------- */
 	function testSpaceKey(sTestName, oOptions) {
-		QUnit.test(sTestName, function(assert) {
+		QUnit.test(sTestName, function (assert) {
 
 			//Arrange
 			var oSpy = this.spy();
-			var oCheckBox = new CheckBox({select : oSpy, selected : oOptions.selected});
+			var oCheckBox = new CheckBox({ select: oSpy, selected: oOptions.selected });
 
 			// System under Test
 			oCheckBox.placeAt("qunit-fixture");
@@ -971,15 +971,15 @@ sap.ui.define([
 	}
 
 	testSpaceKey("Press Space on not selected checkBox", {
-		selected : false,
-		expectedSelection : true,
+		selected: false,
+		expectedSelection: true,
 		expectedMessage: "CheckBox should be selected",
 		expectedMessageAria: "Property 'aria-checked' should be 'true'"
 	});
 
 	testSpaceKey("Press Space on selected checkBox", {
-		selected : true,
-		expectedSelection : false,
+		selected: true,
+		expectedSelection: false,
 		expectedMessage: "CheckBox should be deselected",
 		expectedMessageAria: "Property 'aria-checked' should be 'false'"
 	});
@@ -989,11 +989,11 @@ sap.ui.define([
 	/* Test: ENTER key                                 */
 	/* ----------------------------------------------- */
 	function testEnterKey(sTestName, oOptions) {
-		QUnit.test(sTestName, function(assert) {
+		QUnit.test(sTestName, function (assert) {
 
 			//Arrange
 			var oSpy = this.spy();
-			var oCheckBox = new CheckBox({select : oSpy, selected : oOptions.selected});
+			var oCheckBox = new CheckBox({ select: oSpy, selected: oOptions.selected });
 
 			// System under Test
 			oCheckBox.placeAt("qunit-fixture");
@@ -1014,22 +1014,22 @@ sap.ui.define([
 	}
 
 	testEnterKey("Press Enter on not selected checkBox", {
-		selected : false,
-		expectedSelection : true,
+		selected: false,
+		expectedSelection: true,
 		expectedMessage: "CheckBox should be selected",
 		expectedMessageAria: "Property 'aria-checked' should be 'true'"
 	});
 
 	testEnterKey("Press Enter on selected checkBox", {
-		selected : true,
-		expectedSelection : false,
+		selected: true,
+		expectedSelection: false,
 		expectedMessage: "CheckBox should be deselected",
 		expectedMessageAria: "Property 'aria-checked' should be 'false'"
 	});
 
 	QUnit.module("Private API");
 
-	QUnit.test("_getSelectedState with different combinations of selected and partiallySelected properties", function(assert) {
+	QUnit.test("_getSelectedState with different combinations of selected and partiallySelected properties", function (assert) {
 
 		// system under test
 		var oCheckBox = new CheckBox(),
@@ -1066,7 +1066,7 @@ sap.ui.define([
 		oCheckBox.destroy();
 	});
 
-	QUnit.test("_getAriaChecked with different combinations of selected and partiallySelected properties", function(assert) {
+	QUnit.test("_getAriaChecked with different combinations of selected and partiallySelected properties", function (assert) {
 
 		// system under test
 		var oCheckBox = new CheckBox(),
@@ -1105,7 +1105,54 @@ sap.ui.define([
 
 	QUnit.module("Accessibility");
 
-	QUnit.test("Referencing labels enhancing", function(assert) {
+	QUnit.test("Tooltips", function (assert) {
+		// system under test
+		var oCheckBox = new CheckBox();
+
+		// act
+		oCheckBox.placeAt("content");
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oCheckBox.getDomRef().getAttribute("title"), null, "No tooltip or value state - title attribute is empty");
+
+		// act
+		oCheckBox.setTooltip("Sample tooltip");
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oCheckBox.getDomRef().getAttribute("title"), "Sample tooltip", "Tooltip set - title attribute is not empty");
+
+		// act
+		oCheckBox.setValueState("Error");
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oCheckBox.getDomRef().getAttribute("title"), "Sample tooltip - Invalid entry", "Tooltip and value state set - title attribute is correct");
+
+		// act
+		oCheckBox.setEditable(false);
+		oCheckBox.setEnabled(false);
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oCheckBox.getDomRef().getAttribute("title"), "Sample tooltip", "Checkbox not editable or enabled - title attribute is set with custom tooltip only");
+
+		oCheckBox.setEditable(true);
+		oCheckBox.setEnabled(true);
+
+		// act
+		oCheckBox.setValueStateText("Custom Value State");
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oCheckBox.getDomRef().getAttribute("title"), "Sample tooltip - Custom Value State", "Custom value state text set - title attribute is correct");
+
+		// cleanup
+		oCheckBox.destroy();
+	});
+
+	QUnit.test("Referencing labels enhancing", function (assert) {
 		// system under test
 		var oSpy = sinon.spy(CheckBox.prototype, "_handleReferencingLabels"),
 			oSpyHandler = sinon.spy(CheckBox.prototype, "_fnLabelTapHandler"),
@@ -1136,8 +1183,8 @@ sap.ui.define([
 		oCheckBox.destroy();
 	});
 
-	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oControl = new CheckBox({text: "Text"});
+	QUnit.test("getAccessibilityInfo", function (assert) {
+		var oControl = new CheckBox({ text: "Text" });
 		assert.ok(!!oControl.getAccessibilityInfo, "CheckBox has a getAccessibilityInfo function");
 		var oInfo = oControl.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
@@ -1161,7 +1208,7 @@ sap.ui.define([
 	QUnit.module("Message support", {
 		beforeEach: function () {
 			this.oCheckBox = new CheckBox({
-				selected:"{/selected}"
+				selected: "{/selected}"
 			});
 			this.oCheckBox.placeAt('qunit-fixture');
 			sap.ui.getCore().applyChanges();
@@ -1175,7 +1222,7 @@ sap.ui.define([
 		// arrange
 		var done = assert.async(),
 			oModel = new JSONModel({
-				selected:true
+				selected: true
 			}),
 			oMessageManager = sap.ui.getCore().getMessageManager(),
 			oMessage = new Message({
@@ -1190,7 +1237,7 @@ sap.ui.define([
 		oMessageManager.registerObject(this.oCheckBox, true);
 		oMessageManager.addMessages([oMessage]);
 
-		setTimeout(function() {
+		setTimeout(function () {
 			// assert
 			assert.strictEqual(this.oCheckBox.getValueState(), "Error");
 			assert.strictEqual(this.oCheckBox.$("Descr").text(), sExpectedTooltipText, "Default error message should be shown in the tooltip.");
@@ -1202,7 +1249,7 @@ sap.ui.define([
 		// arrange
 		var done = assert.async(),
 			oModel = new JSONModel({
-				selected:true
+				selected: true
 			}),
 			oMessageManager = sap.ui.getCore().getMessageManager(),
 			sMessage = "This error message should be shown in the tooltip instead of the default message from the Resource Bundle",
@@ -1218,7 +1265,7 @@ sap.ui.define([
 		oMessageManager.registerObject(this.oCheckBox, true);
 		oMessageManager.addMessages([oMessage]);
 
-		setTimeout(function() {
+		setTimeout(function () {
 			// assert
 			assert.strictEqual(this.oCheckBox.$("Descr").text(), sMessage, "The error message should be shown in the tooltip");
 			done();
@@ -1229,8 +1276,8 @@ sap.ui.define([
 	/* Test: 'aria-checked with different values of selected and partiallySelected properties   */
 	/* ---------------------------------------------------------------------------------------- */
 	function testAriaChecked(sTestName, oTestObject, sAssertion) {
-		QUnit.test(sTestName, function(assert) {
-			var oCheckBox = new CheckBox({selected: oTestObject.selected, partiallySelected: oTestObject.partiallySelected});
+		QUnit.test(sTestName, function (assert) {
+			var oCheckBox = new CheckBox({ selected: oTestObject.selected, partiallySelected: oTestObject.partiallySelected });
 
 			// arrange
 			oCheckBox.placeAt("content");
@@ -1246,25 +1293,25 @@ sap.ui.define([
 
 	testAriaChecked(
 		"Property 'aria-checked': Should be 'mixed'",
-		{selected: true, partiallySelected: true},
+		{ selected: true, partiallySelected: true },
 		"mixed"
 	);
 
 	testAriaChecked(
 		"Property 'aria-checked': Should be 'false'",
-		{selected: false, partiallySelected: true },
+		{ selected: false, partiallySelected: true },
 		"false"
 	);
 
 	testAriaChecked(
 		"Property 'aria-checked': Should be 'true'",
-		{selected: true, partiallySelected: false},
+		{ selected: true, partiallySelected: false },
 		"true"
 	);
 
 	testAriaChecked(
 		"Property 'aria-checked': Should be 'false'",
-		{selected: false, partiallySelected: false},
+		{ selected: false, partiallySelected: false },
 		"false"
 	);
 });
