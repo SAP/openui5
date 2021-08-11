@@ -424,12 +424,14 @@ sap.ui.define([
 		if (!this.getVisible()) {
 			return;
 		}
-
-		this._prepareDragEventDelegate();
-
 		var oIconTabHeader = this.getParent(),
-			oIconTabBar = oIconTabHeader.getParent(),
-			bHasIconTabBar = oIconTabHeader._isInsideIconTabBar(),
+			oIconTabBar = oIconTabHeader.getParent();
+
+		if (oIconTabHeader.getEnableTabReordering()) {
+			this._prepareDragEventDelegate();
+		}
+
+		var bHasIconTabBar = oIconTabHeader._isInsideIconTabBar(),
 			mAriaParams = { role: "tab" },
 			sId = this.getId(),
 			sCount = this.getCount(),
