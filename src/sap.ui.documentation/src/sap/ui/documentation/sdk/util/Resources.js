@@ -23,7 +23,8 @@
 		getResourceOriginPath: function (sPath) {
 			var oConfig, sOrigin,
 				oUri = URI(sPath),
-				sVersionPrefixPath = window.sessionStorage.getItem("versionPrefixPath") || "";
+				bUseUnifiedResourceOrigin = new window.URLSearchParams(window.location.search).get('sap-ui-xx-unifiedResources') != null,
+				sVersionPrefixPath = bUseUnifiedResourceOrigin && window.sessionStorage.getItem("versionPrefixPath") || "";
 			if (oUri && oUri.is("absolute")) {
 				return sPath;
 			}

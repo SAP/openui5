@@ -316,7 +316,7 @@ sap.ui.define([
 					this.sIFrameUrl = sap.ui.require.toUrl((sIframePath + "/" + sIframeWithoutUI5Ending).replace(/\./g, "/")) + sFileEnding || ".html";
 				} else if (this.bUseUnifiedResourceOrigin) {
 					var sSamplePath =  ResourcesUtil.getResourceOriginPath(sap.ui.require.toUrl(this._sId.replace(/\./g, "/"))),
-						sSampleOrigin = (window['sap-ui-documentation-config'] && window['sap-ui-documentation-config'].demoKitResourceOrigin),
+						sSampleOrigin = (window['sap-ui-documentation-config'] && window['sap-ui-documentation-config'].demoKitResourceOrigin) || "",
 						sSampleVersion = this._sSampleVersion || "";
 
 					this.sIFrameUrl = sap.ui.require.toUrl(
