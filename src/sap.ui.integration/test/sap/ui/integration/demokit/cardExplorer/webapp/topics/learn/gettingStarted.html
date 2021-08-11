@@ -3,9 +3,8 @@
 
 <head>
 	<title>Getting Started</title>
-	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
 	<script src="../../scripts/boot.js"></script>
 </head>
 
@@ -32,7 +31,7 @@
 				Set the type of the card to "List".
 			</p>
 
-			<pre class="prettyprint lang-js">{
+			<pre class="lang-json">{
 	"sap.app": {
 		"id": "my.new.card",
 		"type": "card",
@@ -53,23 +52,23 @@
 				Add a header property with title, subTitle, and icon.
 			</p>
 
-			<pre class="prettyprint lang-js" lines="11-17">{
+			<pre class="lang-json">{
 	"sap.app": {
 		"id": "my.new.card",
 		"type": "card",
 		"applicationVersion": {
-		  "version": "1.0.0"
+			"version": "1.0.0"
 		}
 	},
 	"sap.card": {
-		"type": "List",
+		"type": "List",<mark>
 		"header": {
 			"title": "My Sales Orders",
 			"subTitle": "New sales orders",
 			"icon": {
 				"src": "sap-icon://sales-order"
 			}
-		}
+		}</mark>
 	}
 }</pre>
 
@@ -82,7 +81,7 @@
 				is clicked.
 			</p>
 
-			<pre class="prettyprint  lang-js" lines="17-22">{
+			<pre class="lang-json">{
 	"sap.app": {
 		"id": "my.new.card",
 		"type": "card",
@@ -97,13 +96,13 @@
 			"subTitle": "New sales orders",
 			"icon": {
 				"src": "sap-icon://sales-order"
-			},
+			},<mark>
 			"actions": [
 				{
 					"type": "Navigation",
 					"url": "http://www.sap.com"
 				}
-			]
+			]</mark>
 		}
 	}
 }</pre>
@@ -117,11 +116,10 @@
 				sales orders.
 				After that add an item template that will be used for all items in the data section.
 				To bind the item title and description you can use UI5's binding syntax.
-				The binding also allows <a data-demokit-href="/topic/daf6852a04b44d118963968a1239d2c0"
-					target="_blank">expression binding</a>.
+				The binding also allows <a data-demokit-href="/topic/daf6852a04b44d118963968a1239d2c0" target="_blank">expression binding</a>.
 			</p>
 
-			<pre class="prettyprint  lang-js" lines="24-49">{
+			<pre class="lang-json">{
 	"sap.app": {
 		"id": "my.new.card",
 		"type": "card",
@@ -143,7 +141,7 @@
 					"url": "http://www.sap.com"
 				}
 			]
-		},
+		},<mark>
 		"content": {
 			"data": {
 				"json": [
@@ -170,7 +168,7 @@
 				}
 			}
 		}
-	}
+	}</mark>
 }</pre>
 
 			<h2 id="step5">
@@ -183,16 +181,16 @@
 			</h3>
 			<p>Create a UI Integration Card inside an HTML Page that points to the created manifest:</p>
 
-			<pre class="prettyprint lang-html" lines="3-6,9">
+			<pre class="lang-html">
 &lt;html&gt;
-	&lt;head&gt;
+	&lt;head&gt;<mark>
 		&lt;script
 			id="sap-ui-bootstrap"
 			src="https://ui5.sap.com/resources/sap-ui-integration.js"&gt;
-		&lt;/script&gt;
+		&lt;/script&gt;</mark>
 	&lt;/head&gt;
-	&lt;body&gt;
-		&lt;ui-integration-card manifest="./manifest.json"&gt;&lt;/ui-integration-card&gt;
+	&lt;body&gt;<mark>
+		&lt;ui-integration-card manifest="./manifest.json"&gt;&lt;/ui-integration-card&gt;</mark>
 	&lt;/body&gt;
 &lt;/html&gt;
 </pre>
@@ -202,7 +200,7 @@
 			</h3>
 			<p>Create a UI Integration Card inside an XML View that points to the created manifest:</p>
 
-			<pre class="prettyprint  lang-xml">
+			<pre class="lang-xml">
 &lt;mvc:View xmlns:ui-integration="sap.ui.integration.widgets"&gt;
 	&lt;ui-integration:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
 &lt;/mvc:View&gt;

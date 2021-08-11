@@ -3,10 +3,9 @@
 
 <head>
 	<title>Integration Cards</title>
-	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
-	<script require-ui5-init src="../../scripts/boot.js"></script>
+	<script data-require-ui5-init src="../../scripts/boot.js"></script>
 	<script>
 		function init() {
 			var sampleManifest = {
@@ -349,9 +348,9 @@
 
 					oSelect._showSampleCode = function () {
 						var oCode = mSamples[oSelect.getSelectedKey() || Object.keys(mSamples)[0]].code;
-						document.getElementById("codesample").innerHTML = JSON.stringify(oCode, null, "\t");
-						document.getElementById("codesample").classList.remove("prettyprinted");
-						window.PR.prettyPrint()
+						var oCodeSample = document.getElementById("codesample");
+						oCodeSample.innerHTML = JSON.stringify(oCode, null, "\t");
+						window.hljs.highlightBlock(oCodeSample);
 					}
 					oSelect._showSampleCode();
 					oSelect.placeAt("sampleselect");
@@ -433,10 +432,9 @@
 			<h3>Configuration Part of Configuration.js</h3>
 			<div id="code" style="display:inline-block; width:800px;height:230px;box-sizing:border-box">
 			</div>
-			<div id="samples"
-				style="display:inline-block; width:400px; height:175px; box-sizing:border-box">
+			<div id="samples" style="display:inline-block; width:400px; height:175px; box-sizing:border-box">
 				<div>
-					<pre id="codesample" class="prettyprint lang-js linenums" style="max-width: 450px; height:auto">
+					<pre id="codesample" style="max-width: 450px; height:auto">
 
 					</pre>
 				</div>
@@ -456,6 +454,7 @@
 				</div>
 			</div>
 		</div>
+	</div>
 </body>
 
 </html>

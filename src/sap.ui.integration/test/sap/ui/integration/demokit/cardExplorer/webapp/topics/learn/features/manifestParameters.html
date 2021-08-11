@@ -3,9 +3,8 @@
 
 <head>
 	<title>Manifest Parameters</title>
-	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
 	<script src="../../../scripts/boot.js"></script>
 </head>
 
@@ -21,8 +20,8 @@
 			<p>
 				Parameters are means to provide dynamic values for certain card attributes.
 				The manifest parameters are replaced during manifest processing and
-				can be used with a double bracket syntax like: "{{parameters.city}}".
-				Parameters can be used inside "sap.card" scope.
+				can be used with a double bracket syntax like: "<code>{{parameters.city}}</code>".
+				Parameters can be used inside "<code>sap.card</code>" scope.
 			</p>
 			<p>
 				There are two groups of parameters:
@@ -78,9 +77,9 @@
 						<td>string</td>
 						<td>No</td>
 						<td>string</td>
-						<td>The type of the value for the parameter. See 'Parameters types' below for list of available
-							types.</td>
+						<td>The type of the value for the parameter. See 'Parameters types' below for list of available types.</td>
 						<td>1.20.0</td>
+						<td></td>
 					</tr>
 				</table>
 			</div>
@@ -174,7 +173,7 @@
 
 			<p>User defined manifest parameters "city" and "weatherServices" with default values set.
 				The "city" value is used inside the request. The "weatherServices" value is used inside the title.</p>
-			<pre class="prettyprint  lang-js">{
+			<pre class="lang-js">{
 	"sap.card": {
 		"configuration": {
 			"parameters": {
@@ -210,7 +209,7 @@
 				"title": "{CompanyName}",
 				"description": "{ContactName}",
 			},
-			"maxItems": {{parameters.numberOfCustomers}}
+			"maxItems": "{{parameters.numberOfCustomers}}"
 		}
 	}
 }</pre>
@@ -219,7 +218,7 @@
 				Changing the city parameter can be done by using the API of the card. This will cause manifest
 				re-processing:
 			</p>
-			<pre class="prettyprint  lang-js">
+			<pre class="lang-js">
 var oParameters = {
 	"city": "Sofia"
 }
@@ -228,7 +227,7 @@ oCard.setParameters(oParameters);</pre>
 			<p>
 				Using the predefined manifest parameter "TODAY_ISO" inside the subtitle of the card:
 			</p>
-			<pre class="prettyprint  lang-js">{
+			<pre class="lang-json">{
 	"sap.card": {
 		"type": "List",
 		"header": {
@@ -241,7 +240,7 @@ oCard.setParameters(oParameters);</pre>
 			<p>
 				Parameters of type array can be used in expression binding:
 			</p>
-			<pre class="prettyprint  lang-js">{
+			<pre class="lang-json">{
 	"sap.card": {
 		"type": "Object",
 		"configuration": {

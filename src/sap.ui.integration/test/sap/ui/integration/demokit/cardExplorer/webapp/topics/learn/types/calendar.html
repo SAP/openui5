@@ -3,9 +3,8 @@
 
 <head>
 	<title>List Card</title>
-	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
 	<script src="../../../scripts/boot.js"></script>
 </head>
 
@@ -115,7 +114,7 @@
 						<td><a href="../../../index.html#/learn/features/cardActions" target="_parent">Actions[]</a></td>
 						<td></td>
 						<td>No</td>
-						<td>Actions that are triggered when item button is pressed.
+						<td>Defines actions that can be applied on the item.
 							<b>Note:</b> This property is experimental and may change!
 						</td>
 						<td>1.32.0</td>
@@ -423,8 +422,8 @@
 
 			<p>Using an extension, you can attach handlers to the following actions. Thus, you can set data fetching to
 				be dependent to the selected date/month. See the sample about
-				<a data-demokit-href="../../../index.html#/explore/calendar/extension"
-					target="_blank">Fetch Data with Extension</a>.</p>
+				<a data-demokit-href="../../../index.html#/explore/calendar/extension" target="_blank">Fetch Data with Extension</a>.
+			</p>
 
 			<div class="tableWrapper">
 				<table>
@@ -506,7 +505,7 @@
 			<h2 id="example">Example</h2>
 			<p>Define the type and data for the card:
 			</p>
-			<pre class="prettyprint  lang-js">
+			<pre class="lang-json">
 {
 	"sap.card": {
 	"type": "Calendar",
@@ -612,7 +611,7 @@
 			<p>
 				Define the header of the card:
 			</p>
-			<pre class="prettyprint  lang-js">
+			<pre class="lang-json">
 "header": {
   "title": "My calendar",
   "subTitle": "Team Balkan",
@@ -631,7 +630,7 @@
 			<p>
 				Define the content of the card:
 			</p>
-			<pre class="prettyprint  lang-js">
+			<pre class="lang-json">
 "content": {
   "date": "2019-09-02",
   "maxItems": 5,
@@ -677,10 +676,10 @@
   }
 }</pre>
 			<p>Create the view to display the card:</p>
-			<pre class="prettyprint  lang-xml">
-		&lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
-			&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
-		&lt;/mvc:View&gt;</pre>
+			<pre class="lang-xml">
+&lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
+&lt;/mvc:View&gt;</pre>
 			<a class="try-button" href="../../../index.html#/explore/calendar" target="_parent">Try it Out</a>
 		</div>
 		<div class="navigation">

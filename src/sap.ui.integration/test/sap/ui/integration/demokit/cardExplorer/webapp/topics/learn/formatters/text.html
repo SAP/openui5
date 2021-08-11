@@ -3,9 +3,8 @@
 
 <head>
 	<title>Text Formatter</title>
-	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
 	<script src="../../../scripts/boot.js"></script>
 </head>
 
@@ -80,11 +79,11 @@
 
 			<p>Card with <code>text</code> formatter using text from i18n resource bundle</p>
 			<p>i18n/i18n.properties</p>
-			<pre class="prettyprint lang-properties">
+			<pre class="lang-properties">
 subtitle=Showing {0} of Total {1} Items
 </pre>
 			<p>manifest.json</p>
-			<pre class="prettyprint lang-js" lines="11">
+			<pre class="lang-json">
 "sap.card": {
 	"type": "List",
 	"data": {
@@ -94,8 +93,8 @@ subtitle=Showing {0} of Total {1} Items
 		}
 	},
 	"header": {
-		"title": "Order Status",
-		"subTitle": "{= format.text(${i18n>subtitle}, [${/visibleItems}, ${/totalItems}]}"
+		"title": "Order Status",<mark>
+		"subTitle": "{= format.text(${i18n>subtitle}, [${/visibleItems}, ${/totalItems}]}"</mark>
 	},
 	"content": {...}
 }

@@ -3,9 +3,8 @@
 
 <head>
 	<title>Analytical Card</title>
-	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
 	<script src="../../../scripts/boot.js"></script>
 </head>
 
@@ -400,7 +399,7 @@
 			<h2 id="example">Example</h2>
 			<p>Define the type and data for the card:
 			</p>
-			<pre class="prettyprint  lang-js">{
+			<pre class="lang-json">{
 	"sap.card": {
 		"type": "Analytical",
 		"header": {},
@@ -410,9 +409,9 @@
 			<p>
 				Define the header of the card:
 			</p>
-			<pre class="prettyprint  lang-js">{
+			<pre class="lang-json">{
 	"header": {
-	   "type": "Numeric",
+		"type": "Numeric",
 		"data": {
 			"json": {
 				"n": "56",
@@ -447,7 +446,7 @@
 }</pre>
 			<p>Define the content of the card:
 			</p>
-			<pre class="prettyprint  lang-js">"content": {
+			<pre class="lang-json">"content": {
 	"chartType": "StackedColumn",
 	"legend": {
 		"visible": false
@@ -490,7 +489,7 @@
 }</pre>
 			<p>The content of the revenue.json which we are requesting:
 			</p>
-			<pre class="prettyprint  lang-js">"list": [
+			<pre class="lang-json">"list": [
 	{
 	  "Week": "CW14",
 	  "Revenue": 431000.22,
@@ -564,7 +563,7 @@
 ]</pre>
 
 			<p>Create the view to display the card:</p>
-			<pre class="prettyprint  lang-xml">
+			<pre class="lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
 &lt;/mvc:View&gt;</pre>

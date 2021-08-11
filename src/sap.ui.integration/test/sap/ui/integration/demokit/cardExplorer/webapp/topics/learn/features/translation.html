@@ -3,9 +3,8 @@
 
 <head>
 	<title>Translation</title>
-	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
 	<script src="../../../scripts/boot.js"></script>
 </head>
 
@@ -22,7 +21,7 @@
 				Overview
 			</h2>
 			<p>
-				Cards can be translated into other languages without changing the manifest. To achieve this you should create resource bundle.
+				Cards can be translated into other languages without changing the manifest. To achieve this you should create a resource bundle.
 				The resource bundle is a collection of <code>&lt;filename&gt;_&lt;locale&gt;.properties</code> files. Each file contains key-value
 				pairs, where the values are language-dependent texts and the keys are language independent.
 				Inside the manifest, the card developers should use the keys with special double curly bracket syntax.
@@ -32,7 +31,7 @@
 				Besides the double curly bracket syntax, translated texts can also be accessed through the i18n model the card automatically creates (see examples below).
 			</p>
 			<p>
-				<b>Note:</b> If a key from the resource bundle is used, but "i18n" property is not set, the default value "i18n/i18n.properties" is used to request a resource bundle.
+				<b>Note:</b> If a key from the resource bundle is used, but "i18n" property is not set, the default value "i18n/i18n.properties" will be used, to request a resource bundle.
 			</p>
 
 			<h2 id="predefinedTranslationKeys">
@@ -68,30 +67,30 @@
 
 			<h4>Translating properties during manifest processing</h4>
 			<p>i18n/i18n.properties</p>
-			<pre class="prettyprint lang-properties">
+			<pre class="lang-properties">
 TITLE=My Products
 SUBTITLE=Some Great Products
 </pre>
 			<p>i18n/i18n_de.properties</p>
-			<pre class="prettyprint lang-properties">
+			<pre class="lang-properties">
 TITLE=Meine Produkte
 SUBTITLE=Gro\u00DFartige Produkte
 </pre>
 			<p>manifest.json</p>
-			<pre class="prettyprint lang-js" lines="5,12,13">
+			<pre class="lang-json">
 {
 	"sap.app": {
 		"id": "card.explorer.translation.card",
-		"type": "card",
-		"i18n": "i18n/i18n.properties",
+		"type": "card",<mark>
+		"i18n": "i18n/i18n.properties",</mark>
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
 	"sap.card": {
-		"header": {
+		"header": {<mark>
 			"title": "{{TITLE}}",
-			"subTitle": "{{SUBTITLE}}",
+			"subTitle": "{{SUBTITLE}}",</mark>
 			...
 		},
 		...
@@ -100,7 +99,7 @@ SUBTITLE=Gro\u00DFartige Produkte
 
 			<h4>Translations in binding syntaxes by using the i18n model of the card (where the user i18n files contain
 				keys <code>EXPECTED_ITEMS</code> and <code>subtitle</code>):</h4>
-			<pre class="prettyprint lang-js" lines="17,18">
+			<pre class="lang-json">
 {
 	"sap.app": {
 		"id": "card.explorer.translation.card",
@@ -116,9 +115,9 @@ SUBTITLE=Gro\u00DFartige Produkte
 				"json": {
 					"numberOfItems": "17"
 				}
-			}
+			},<mark>
 			"title": "{i18n>EXPECTED_ITEMS} {/numberOfItems}",
-			"subTitle": "{i18n>SUBTITLE}",
+			"subTitle": "{i18n>SUBTITLE}",</mark>
 			...
 		},
 		...

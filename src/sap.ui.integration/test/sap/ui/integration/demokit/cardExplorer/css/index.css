@@ -615,7 +615,7 @@ b {
 	color: #fff;
 }
 
-.prettyprint.small {
+pre.small {
 	width: 439px;
 	padding: 1rem;
 	height: 250px;
@@ -624,22 +624,22 @@ b {
 	line-height: 1.1;
 }
 
-.prettyprint.small.fontWeightSmall {
+pre.small.fontWeightSmall {
 	font-size: 14px;
 }
 
-.prettyprint.small::-webkit-scrollbar {
+pre.small::-webkit-scrollbar {
 	background-color: transparent;
 	width: 8px;
 }
 
-.prettyprint.small::-webkit-scrollbar-thumb {
+pre.small::-webkit-scrollbar-thumb {
 	background-color: transparent;
 	border-radius: 3px;
 	width: 8px;
 }
 
-.prettyprint.small:hover::-webkit-scrollbar-thumb {
+pre.small:hover::-webkit-scrollbar-thumb {
 	background-color: #e0e0e0;
 	border-radius: 3px;
 	width: 8px;
@@ -772,7 +772,7 @@ b {
 		box-sizing: border-box;
 	}
 
-	.prettyprint.small {
+	pre.small {
 		width: 320px;
 		box-sizing: border-box;
 	}

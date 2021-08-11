@@ -3,9 +3,8 @@
 
 <head>
 	<title>Adaptive Card</title>
-	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
 	<script src="../../../scripts/boot.js"></script>
 	<style>
 		code {
@@ -123,7 +122,7 @@
 
 			<h2 id="example">Example</h2>
 			<p>Define the type of the card:</p>
-			<pre class="prettyprint">{
+			<pre class="lang-json">{
 	"sap.card": {
 		"type": "AdaptiveCard",
 		"content": {}
@@ -131,7 +130,7 @@
 }</pre>
 
 			<p>Define the content of the card by including the JSON-serialized card object model inline:</p>
-			<pre class="prettyprint">"content": {
+			<pre class="lang-json">"content": {
 	"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
 	"type": "AdaptiveCard",
 	"version": "1.0",
@@ -215,14 +214,14 @@
 
 			<p>Or load it from a JSON file:</p>
 
-			<pre class="prettyprint">"content": {
+			<pre class="lang-json">"content": {
 	"request": {
 		"url": "./adaptiveCard.json"
 	}
 }</pre>
 
 			<p>You could also include configuration for the <code>Action.Submit</code>:</p>
-			<pre class="prettyprint">{
+			<pre class="lang-json">{
 	"sap.card": {
 		"configuration": {
 			"actionHandlers": {
@@ -238,7 +237,7 @@
 }</pre>
 
 			<p>Create the view to display the card:</p>
-			<pre class="prettyprint">
+			<pre class="lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
 &lt;/mvc:View&gt;</pre>
