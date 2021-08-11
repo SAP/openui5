@@ -723,7 +723,7 @@ function(
 
 							return null;
 						},
-						createControl: function(oType, sPath, iIndex, sId)  {
+						createControl: function(oType, sPath, iIndex, sId, aClass)  {
 							var getMonthItems = function() {
 								if (!this._aMonthsItems) {
 									var aMonths = _getMonths.apply(this);
@@ -740,9 +740,14 @@ function(
 								return this._aMonthsItems;
 							}.bind(this);
 
+							var ListFieldHelp = sap.ui.require("sap/ui/mdc/field/ListFieldHelp");
+							var ListItem = sap.ui.require("sap/ui/core/ListItem");
+							var Field = sap.ui.require("sap/ui/mdc/Field");
+							if (!ListFieldHelp || !ListItem || !Field) {
+								Log.warning("Operator.createControl", "not able to create the control for the operator " + this.name);
+								return null;
+							}
 							if (!this._oListFieldHelp) {
-								var ListFieldHelp = sap.ui.requireSync("sap/ui/mdc/field/ListFieldHelp");
-								var ListItem = sap.ui.requireSync("sap/ui/core/ListItem");
 								this._oListFieldHelp = new ListFieldHelp({
 									id: "LFHForSpecificMonth",
 									items: {
@@ -760,7 +765,6 @@ function(
 								}).setModel(new JSONModel(getMonthItems()), "$items");
 							}
 
-							var Field = sap.ui.requireSync("sap/ui/mdc/Field");
 							var oField = new Field(sId, {
 								value: { path: sPath, type: oType, mode: 'TwoWay', targetType: 'raw' },
 								additionalValue: { path: sPath, formatter: function(iValue) { return this._oListFieldHelp.getTextForKey(iValue); }.bind(this), mode: 'OneWay' },

@@ -656,8 +656,10 @@ sap.ui.define([
 
 		var oControl;
 		if (oOperator.createControl) {
-			oControl = oOperator.createControl(oNullableType, "$this>", iIndex, sId);
-		} else {
+			oControl = oOperator.createControl(oNullableType, "$this>", iIndex, sId); // the returned control can be null, in this case the default Field will be used
+		}
+
+		if (!oControl) {
 			oControl = new Field(sId, {
 				delegate: _getDelegate.call(this),
 				value: { path: "$this>", type: oNullableType, mode: 'TwoWay', targetType: 'raw' },
