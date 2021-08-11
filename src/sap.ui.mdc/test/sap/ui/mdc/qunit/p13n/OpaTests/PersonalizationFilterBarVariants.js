@@ -63,7 +63,6 @@ sap.ui.define([
 			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
 			autoWait: true
 		});
-		Given.enableAndDeleteLrepLocalStorage();
 		When.iLookAtTheScreen();
 
 		//check buttons
@@ -229,6 +228,7 @@ sap.ui.define([
 		oFilterItems["Artists"][2].selected = false;
 		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Artists"], "Artists");
 
+		Given.enableAndDeleteLrepLocalStorage();
 		Then.iTeardownMyAppFrame();
 	});
 

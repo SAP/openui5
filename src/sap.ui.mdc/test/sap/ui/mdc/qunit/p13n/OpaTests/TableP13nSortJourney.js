@@ -37,7 +37,6 @@ sap.ui.define([
 			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
 			autoWait: true
 		});
-		Given.enableAndDeleteLrepLocalStorage();
 		When.iLookAtTheScreen();
 
 		Then.theVariantManagementIsDirty(false);
@@ -128,6 +127,7 @@ sap.ui.define([
         Then.iShouldSeeColumnSorted("Name", false);
 
 		//shut down app frame for next test
+		Given.enableAndDeleteLrepLocalStorage();
 		Then.iTeardownMyAppFrame();
     });
 

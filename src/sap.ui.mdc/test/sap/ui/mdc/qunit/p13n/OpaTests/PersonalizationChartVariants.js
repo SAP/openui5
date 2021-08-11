@@ -20,17 +20,13 @@ sap.ui.define([
 		assertions: new Assertion(),
 		viewNamespace: "view.",
 		autoWait: true,
-		executionDelay: 50,
-		appParams: {
-			"sap-ui-fl-max-layer": "USER"
-		}
+		executionDelay: 50
 	});
 
 	var sViewSettings = Arrangement.P13nDialog.Titles.settings;
 
 	// Apply a variant and switch back to the standard
 	opaTest("When I start the 'appUnderTestChart' app, the chart with some dimensions and measures appears", function(Given, When, Then) {
-		Given.enableAndDeleteLrepLocalStorage();
 		Given.iStartMyAppInAFrame({
 			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestChart/ChartOpaApp.html',
 			autoWait: true
@@ -279,6 +275,7 @@ sap.ui.define([
 		Then.iShouldSeeButtonWithIcon("sap-icon://vertical-bar-chart");
 		Then.theVariantManagementIsDirty(false);
 
+		Given.enableAndDeleteLrepLocalStorage();
 		Then.iTeardownMyAppFrame();
 	});
 });

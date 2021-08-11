@@ -46,7 +46,6 @@ sap.ui.define([
 			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
 			autoWait: true
 		});
-		Given.enableAndDeleteLrepLocalStorage();
 		When.iLookAtTheScreen();
 
 		//check icons
@@ -293,6 +292,7 @@ sap.ui.define([
 		Then.thePersonalizationDialogShouldBeClosed();
 
 		//tear down app
+		Given.enableAndDeleteLrepLocalStorage();
 		Then.iTeardownMyAppFrame();
 	});
 

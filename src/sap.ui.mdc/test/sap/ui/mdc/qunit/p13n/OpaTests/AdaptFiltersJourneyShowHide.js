@@ -63,7 +63,6 @@ sap.ui.define([
 			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
 			autoWait: true
 		});
-		Given.enableAndDeleteLrepLocalStorage();
 		When.iLookAtTheScreen();
 
 		//check buttons
@@ -140,6 +139,8 @@ sap.ui.define([
 		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Regions"], "Regions", true);
 		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Cities"], "Cities", true);
 
+
+		Given.enableAndDeleteLrepLocalStorage();
 		Then.iTeardownMyAppFrame();
 	});
 

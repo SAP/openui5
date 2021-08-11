@@ -121,6 +121,7 @@ sap.ui.define([
 		});
 
 		//shut down app frame for next test
+		Given.enableAndDeleteLrepLocalStorage();
 		Then.iTeardownMyAppFrame();
 	});
 });

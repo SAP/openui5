@@ -507,6 +507,8 @@ sap.ui.define([
 
 		Then.iShouldSeeP13nSortItems([]);
 		When.iPressDialogOk();
+
+		Given.enableAndDeleteLrepLocalStorage();
 		Then.iTeardownMyAppFrame();
 
 	});
