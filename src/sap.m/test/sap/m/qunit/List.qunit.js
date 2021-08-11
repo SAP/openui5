@@ -969,6 +969,56 @@ sap.ui.define([
 		assert.ok(jQuery.sap.domById("sapMList001-listUl").childNodes[0], "Overview ListItem should be rendered");
 	});
 
+	QUnit.test("StandardListItem wrappedItem more button-onTouchStart", function(assert) {
+		this.clock = sinon.useFakeTimers();
+		var oStdLI = new StandardListItem({
+			id: "sdf",
+			title : "Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat.",
+			wrapping: true,
+			wrapCharLimit: 10
+		});
+
+		oStdLI.setType("Navigation");
+		var oList = new List({
+			items : [oStdLI]
+		});
+
+		oList.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		function createEvent(sEventName, oTarget, oParams) {
+			var oEvent = jQuery.Event(sEventName);
+			oEvent.originalEvent = {};
+			oEvent.target = oTarget;
+			if (oParams) {
+				for (var x in oParams) {
+					oEvent[x] = oParams[x];
+					oEvent.originalEvent[x] = oParams[x];
+				}
+			}
+			return oEvent;
+		}
+
+		var oTouchStartSpy = sinon.spy(oStdLI, "ontouchstart");
+		var oTouchStart = createEvent("touchstart", document.getElementById(oStdLI.getId() + "-titleButton"), {
+			srcControl : oStdLI,
+			touches : [{
+				clientX: 0,
+				clientY: 0
+			}],
+			targetTouches : [{
+				clientX: 0,
+				clientY: 0
+			}]
+		});
+
+		oStdLI.ontouchstart(oTouchStart);
+		this.clock.tick(100);
+		assert.ok(oTouchStartSpy.calledWithExactly(oTouchStart), "Called Once");
+		assert.notOk(oStdLI.$().hasClass("sapMLIBActive"));
+		this.clock.restore();
+	});
+
 	QUnit.test("standardListThumb rendered - navigate from listitem no 1 to detail page", function(assert) {
 		var done = assert.async();
 		app.to("standardListThumb", "show");
@@ -1779,6 +1829,7 @@ sap.ui.define([
 		var oStdLI = new StandardListItem({
 			title: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, seddiamnonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.",
 			description: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, seddiamnonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.",
+			info: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, seddiamnonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.",
 			wrapping: true
 		});
 
@@ -1801,6 +1852,9 @@ sap.ui.define([
 		var $descText = oStdLI.getDomRef("descriptionText"),
 			$descThreeDots = oStdLI.getDomRef("descriptionThreeDots"),
 			$descButton = oStdLI.getDomRef("descriptionButton");
+
+		// variables for description elements
+		var $infoText = oStdLI.getDomRef("infoText");
 
 		// title text test
 		assert.ok(oStdLI.$().hasClass("sapMSLIWrapping"), "Wrapping style class added");
@@ -1838,6 +1892,9 @@ sap.ui.define([
 		// safari browser returns the inner text without spaces, hence trim()
 		assert.equal($descThreeDots.innerText.trim(), "...", "three dots are rendered");
 		assert.equal($descButton.innerText, oRb.getText("TEXT_SHOW_MORE"), "button rendered with the correct text");
+
+		// info text test
+		assert.strictEqual($infoText.innerText.length, oStdLI.getInfo().length, "The entire infoText is rendered by wrapping");
 
 		// trigger tap on tilte text
 		jQuery($titleButton).trigger("tap");
