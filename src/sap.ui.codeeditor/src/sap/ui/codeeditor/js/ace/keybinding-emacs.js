@@ -325,7 +325,7 @@ oop.inherits(IncrementalSearchKeyboardHandler, HashHandler);
     this.attach = function(editor) {
         var iSearch = this.$iSearch;
         HashHandler.call(this, exports.iSearchCommands, editor.commands.platform);
-        this.$commandExecHandler = editor.commands.addEventListener('exec', function(e) {
+        this.$commandExecHandler = editor.commands.on('exec', function(e) {
             if (!e.command.isIncrementalSearchCommand)
                 return iSearch.deactivate();
             e.stopPropagation();
@@ -340,7 +340,7 @@ oop.inherits(IncrementalSearchKeyboardHandler, HashHandler);
 
     this.detach = function(editor) {
         if (!this.$commandExecHandler) return;
-        editor.commands.removeEventListener('exec', this.$commandExecHandler);
+        editor.commands.off('exec', this.$commandExecHandler);
         delete this.$commandExecHandler;
     };
 
@@ -349,7 +349,7 @@ oop.inherits(IncrementalSearchKeyboardHandler, HashHandler);
         if (((hashId === 1/*ctrl*/ || hashId === 8/*command*/) && key === 'v')
          || (hashId === 1/*ctrl*/ && key === 'y')) return null;
         var cmd = handleKeyboard$super.call(this, data, hashId, key, keyCode);
-        if (cmd.command) { return cmd; }
+        if (cmd && cmd.command) { return cmd; }
         if (hashId == -1) {
             var extendCmd = this.commands.extendSearchTerm;
             if (extendCmd) { return {command: extendCmd, args: key}; }
@@ -406,27 +406,28 @@ function objectToRegExp(obj) {
 
 (function() {
 
-    this.activate = function(ed, backwards) {
-        this.$editor = ed;
-        this.$startPos = this.$currentPos = ed.getCursorPosition();
+    this.activate = function(editor, backwards) {
+        this.$editor = editor;
+        this.$startPos = this.$currentPos = editor.getCursorPosition();
         this.$options.needle = '';
         this.$options.backwards = backwards;
-        ed.keyBinding.addKeyboardHandler(this.$keyboardHandler);
-        this.$originalEditorOnPaste = ed.onPaste; ed.onPaste = this.onPaste.bind(this);
-        this.$mousedownHandler = ed.addEventListener('mousedown', this.onMouseDown.bind(this));
-        this.selectionFix(ed);
+        editor.keyBinding.addKeyboardHandler(this.$keyboardHandler);
+        this.$originalEditorOnPaste = editor.onPaste; 
+        editor.onPaste = this.onPaste.bind(this);
+        this.$mousedownHandler = editor.on('mousedown', this.onMouseDown.bind(this));
+        this.selectionFix(editor);
         this.statusMessage(true);
     };
 
     this.deactivate = function(reset) {
         this.cancelSearch(reset);
-        var ed = this.$editor;
-        ed.keyBinding.removeKeyboardHandler(this.$keyboardHandler);
+        var editor = this.$editor;
+        editor.keyBinding.removeKeyboardHandler(this.$keyboardHandler);
         if (this.$mousedownHandler) {
-            ed.removeEventListener('mousedown', this.$mousedownHandler);
+            editor.off('mousedown', this.$mousedownHandler);
             delete this.$mousedownHandler;
         }
-        ed.onPaste = this.$originalEditorOnPaste;
+        editor.onPaste = this.$originalEditorOnPaste;
         this.message('');
     };
 
@@ -548,8 +549,6 @@ function objectToRegExp(obj) {
         if (this.$editor.showCommandLine) {
             this.$editor.showCommandLine(msg);
             this.$editor.focus();
-        } else {
-            console.log(msg);
         }
     };
 
@@ -702,20 +701,20 @@ exports.handler.attach = function(editor) {
     editor.commands.addCommands(commands);
     exports.handler.platform = editor.commands.platform;
     editor.$emacsModeHandler = this;
-    editor.addEventListener('copy', this.onCopy);
-    editor.addEventListener('paste', this.onPaste);
+    editor.on('copy', this.onCopy);
+    editor.on('paste', this.onPaste);
 };
 
 exports.handler.detach = function(editor) {
     editor.renderer.$blockCursor = false;
     editor.session.$selectLongWords = $formerLongWords;
     editor.session.$useEmacsStyleLineStart = $formerLineStart;
-    editor.removeEventListener("click", $resetMarkMode);
-    editor.removeEventListener("changeSession", $kbSessionChange);
+    editor.off("click", $resetMarkMode);
+    editor.off("changeSession", $kbSessionChange);
     editor.unsetStyle("emacs-mode");
     editor.commands.removeCommands(commands);
-    editor.removeEventListener('copy', this.onCopy);
-    editor.removeEventListener('paste', this.onPaste);
+    editor.off('copy', this.onCopy);
+    editor.off('paste', this.onPaste);
     editor.$emacsModeHandler = null;
 };
 

@@ -489,6 +489,7 @@ oop.inherits(Mode, TextMode);
     };
 
     this.$id = "ace/mode/c_cpp";
+    this.snippetFileId = "ace/snippets/c_cpp";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
@@ -700,6 +701,7 @@ oop.inherits(Mode, CMode);
     this.lineCommentStart = "//";
     this.blockComment = {start: "/*", end: "*/"};
     this.$id = "ace/mode/dart";
+    this.snippetFileId = "ace/snippets/dart";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

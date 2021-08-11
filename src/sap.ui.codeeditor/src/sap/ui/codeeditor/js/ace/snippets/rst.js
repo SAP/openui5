@@ -26,8 +26,7 @@ snippet cont:\n\
 ";
 exports.scope = "rst";
 
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/snippets/rst"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

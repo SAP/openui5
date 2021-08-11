@@ -199,8 +199,7 @@ guard ^\\s*\n\
 ";
 exports.scope = "javascript";
 
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/snippets/javascript"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

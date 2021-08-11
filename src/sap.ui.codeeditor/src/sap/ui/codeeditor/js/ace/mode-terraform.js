@@ -40,11 +40,15 @@ var TerraformHighlightRules = function () {
 
             {
                 token: "singleline.comment.terraform",
-                regex: '#(.)*$'
+                regex: '#.*$'
+            },
+            {
+                token: "singleline.comment.terraform",
+                regex: '//.*$'
             },
             {
                 token: "multiline.comment.begin.terraform",
-                regex: '^\\s*\\/\\*',
+                regex: /\/\*/,
                 push: "blockComment"
             },
             {
@@ -52,12 +56,12 @@ var TerraformHighlightRules = function () {
                 regex: "^\\s*(locals|terraform)\\s*{"
             },
             {
-                token: "paren.lpar",
+                token: "paren.lparen",
                 regex: "[[({]"
             },
 
             {
-                token: "paren.rpar",
+                token: "paren.rparen",
                 regex: "[\\])}]"
             },
             {include: "constants"},
@@ -66,11 +70,7 @@ var TerraformHighlightRules = function () {
             {include: "variables"}
         ],
         blockComment: [{
-            regex: "^\\s*\\/\\*",
-            token: "multiline.comment.begin.terraform",
-            push: "blockComment"
-        }, {
-            regex: "\\*\\/\\s*$",
+            regex: /\*\//,
             token: "multiline.comment.end.terraform",
             next: "pop"
         }, {
@@ -164,11 +164,11 @@ var TerraformHighlightRules = function () {
         ],
         "parenthesis": [
             {
-                token: "paren.lpar",
+                token: "paren.lparen",
                 regex: "\\["
             },
             {
-                token: "paren.rpar",
+                token: "paren.rparen",
                 regex: "\\]"
             }
         ]
@@ -383,6 +383,9 @@ oop.inherits(Mode, TextMode);
 
 
 (function () {
+    this.lineCommentStart = ["#", "//"];
+    this.blockComment = {start: "/*", end: "*/"};
+    
     this.$id = "ace/mode/terraform";
 }).call(Mode.prototype);
 

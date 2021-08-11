@@ -30,7 +30,7 @@ var PuppetHighlightRules = function () {
                 regex: "\\b([a-zA-Z_]+)(\\s+=>)"
             },
             {
-                token: ["exported.resource.puppet", "keyword.name.resource.puppet", "paren.lpar"],
+                token: ["exported.resource.puppet", "keyword.name.resource.puppet", "paren.lparen"],
                 regex: "(\\@\\@)?(\\s*[a-zA-Z_]*)(\\s*\\{)"
             },
             {
@@ -44,7 +44,7 @@ var PuppetHighlightRules = function () {
             },
             {
                 token: "multiline.comment.begin.puppet",
-                regex: '^\\s*\\/\\*\\s*$',
+                regex: '^\\s*\\/\\*',
                 push: "blockComment"
             },
             {
@@ -65,11 +65,11 @@ var PuppetHighlightRules = function () {
             },
 
             {
-                token: "paren.lpar",
+                token: "paren.lparen",
                 regex: "[[({]"
             },
             {
-                token: "paren.rpar",
+                token: "paren.rparen",
                 regex: "[\\])}]"
             },
             {include: "variable"},
@@ -82,11 +82,7 @@ var PuppetHighlightRules = function () {
             }
         ],
         blockComment: [{
-            regex: "^\\s*\\/\\*\\s*$",
-            token: "multiline.comment.begin.puppet",
-            push: "blockComment"
-        }, {
-            regex: "^\\s*\\*\\/\\s*$",
+            regex: "\\*\\/",
             token: "multiline.comment.end.puppet",
             next: "pop"
         }, {
@@ -355,6 +351,9 @@ oop.inherits(Mode, TextMode);
 
 
 (function () {
+    this.lineCommentStart = "#";
+    this.blockComment = {start: "/*", end: "*/"};
+    
     this.$id = "ace/mode/puppet";
 }).call(Mode.prototype);
 

@@ -11217,7 +11217,7 @@ var functionMap = {
     ],
     "xmlwriter_write_element_ns": [
         "bool xmlwriter_write_element_ns(resource xmlwriter, string prefix, string name, string uri[, string content])",
-        "Write full namesapced element tag - returns FALSE on error"
+        "Write full namespaced element tag - returns FALSE on error"
     ],
     "xmlwriter_write_pi": [
         "bool xmlwriter_write_pi(resource xmlwriter, string target, string content)",
@@ -11702,6 +11702,7 @@ oop.inherits(Mode, TextMode);
     };
 
     this.$id = "ace/mode/javascript";
+    this.snippetFileId = "ace/snippets/javascript";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
@@ -12039,6 +12040,7 @@ oop.inherits(Mode, TextMode);
     };
 
     this.$id = "ace/mode/css";
+    this.snippetFileId = "ace/snippets/css";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
@@ -12931,6 +12933,7 @@ oop.inherits(Mode, TextMode);
     };
 
     this.$id = "ace/mode/html";
+    this.snippetFileId = "ace/snippets/html";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
@@ -13057,6 +13060,7 @@ oop.inherits(Mode, HtmlMode);
     };
 
     this.$id = "ace/mode/php";
+    this.snippetFileId = "ace/snippets/php";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

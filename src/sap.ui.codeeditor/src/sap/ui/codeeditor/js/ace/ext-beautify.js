@@ -43,9 +43,9 @@ exports.beautify = function(session) {
 
     var trimNext = function() {
         if (nextToken && nextToken.value && nextToken.type !== 'string.regexp')
-            nextToken.value = nextToken.value.trim();
+            nextToken.value = nextToken.value.replace(/^\s*/, "");
     };
-
+    
     var trimLine = function() {
         code = code.replace(/ +$/, "");
     };
@@ -264,6 +264,9 @@ exports.beautify = function(session) {
                         }
                     }
                 }
+                
+                if (token.type == "text")
+                    value = value.replace(/\s+$/, " ");
                 if (spaceBefore && !breakBefore) {
                     trimLine();
                     if (code.substr(-1) !== "\n")

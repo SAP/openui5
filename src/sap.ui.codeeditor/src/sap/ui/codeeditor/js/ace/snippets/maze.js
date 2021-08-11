@@ -13,8 +13,7 @@ scope maze\n\
 ";
 exports.scope = "maze";
 
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/snippets/maze"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

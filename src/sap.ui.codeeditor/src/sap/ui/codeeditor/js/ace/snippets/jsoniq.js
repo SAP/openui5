@@ -65,8 +65,7 @@ snippet module\n\
 ";
 exports.scope = "jsoniq";
 
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/snippets/jsoniq"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

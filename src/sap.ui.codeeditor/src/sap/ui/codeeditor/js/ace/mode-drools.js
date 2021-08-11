@@ -483,6 +483,7 @@ oop.inherits(Mode, TextMode);
 (function() {
     this.lineCommentStart = "//";
     this.$id = "ace/mode/drools";
+    this.snippetFileId = "ace/snippets/drools";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

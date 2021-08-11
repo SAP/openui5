@@ -254,7 +254,10 @@ ace.define("ace/mode/abc",["require","exports","module","ace/lib/oop","ace/mode/
     oop.inherits(Mode, TextMode);
 
     (function () {
+        this.lineCommentStart = "%";
+        
         this.$id = "ace/mode/abc";
+        this.snippetFileId = "ace/snippets/abc";
     }).call(Mode.prototype);
 
     exports.Mode = Mode;

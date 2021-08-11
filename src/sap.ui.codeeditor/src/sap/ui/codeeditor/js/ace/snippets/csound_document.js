@@ -14,8 +14,7 @@ snippet synth\n\
 ";
 exports.scope = "csound_document";
 
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/snippets/csound_document"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;
