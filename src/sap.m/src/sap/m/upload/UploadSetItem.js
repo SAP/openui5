@@ -168,7 +168,7 @@ sap.ui.define([
 				}
 				oRm.openEnd();
 
-				oRm.openStart("div").style("display", "flex").openEnd();
+				oRm.openStart("div").class("sapMUSTextInnerContainer").openEnd();
 				oRm.renderControl(oItem._bInEditMode ? oItem._getFileNameEdit() : oItem._getFileNameLink());
 				oItem._renderMarkers(oRm);
 				oRm.close("div");
