@@ -276,8 +276,8 @@ sap.ui.define([
 					return false;
 				}
 			}
+			this._hideValueState();
 		}
-		this._hideValueState();
 		return true;
 	};
 	/*
