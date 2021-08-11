@@ -110,7 +110,7 @@ sap.ui.define([
 
 	/**
 	 * Adds an extension to the toolbar, if it is not already registered.
-	 * The new extension gets created with the toolbar itself as property 'context'.
+	 * The new extension gets created with the toolbar itself as property 'toolbar'.
 	 *
 	 * @param {string} sName - Name of the extension
 	 * @param {sap.ui.base.ManagedObject} Extension - Extension Class to be instantiated
@@ -118,7 +118,7 @@ sap.ui.define([
 	 */
 	Base.prototype.addExtension = function(sName, Extension) {
 		if (!Object.keys(this._oExtensions).includes(sName)) {
-			this._oExtensions[sName] = new Extension({context: this});
+			this._oExtensions[sName] = new Extension({toolbar: this});
 		}
 		return this._oExtensions[sName];
 	};

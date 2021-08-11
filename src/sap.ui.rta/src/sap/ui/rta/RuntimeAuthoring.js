@@ -1095,11 +1095,12 @@ sap.ui.define([
 					}.bind(this));
 				}
 
-				/* TODO enable as soon as the code is ready
-				FeaturesAPI.isKeyUserTranslationEnabled(this.getLayer()).then(function(oResult) {
-					this._oToolbarControlsModel.setProperty("/translationVisible", oResult);
+				/*
+				FeaturesAPI.isKeyUserTranslationEnabled(this.getLayer()).then(function() {
+					this._oToolbarControlsModel.setProperty("/translationVisible", true);
 				}.bind(this));
 				*/
+
 
 				this.getToolbar().setModel(this._oVersionsModel, "versions");
 				this.getToolbar().setModel(this._oToolbarControlsModel, "controls");
