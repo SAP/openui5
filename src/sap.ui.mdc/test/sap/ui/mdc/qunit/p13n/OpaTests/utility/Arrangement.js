@@ -54,9 +54,12 @@ sap.ui.define([
 			});
 		},
 		enableAndDeleteLrepLocalStorage: function() {
-			// Init LRep for VariantManagement (we have to fake the connection to LRep in order to be independent from backend)
-			FakeLrepConnectorLocalStorage.enableFakeConnector();
-			FakeLrepConnectorLocalStorage.forTesting.synchronous.clearAll();
+            FakeLrepConnectorLocalStorage.forTesting.synchronous.clearAll();
+
+			// Note: prevent app restart for different layer
+			// (--> check why there are tests that are not cleaned up correctly)
+            window.sessionStorage.removeItem("sap.ui.rta.restart.CUSTOMER");
+            window.sessionStorage.removeItem("sap.ui.rta.restart.USER");
 		}
 
 	});
