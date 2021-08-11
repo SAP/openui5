@@ -781,8 +781,7 @@ sap.ui.define([
 
 		sap.ui.getCore().applyChanges();
 		assert.ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
-		//the { bracket in JSON is escaped with \ becaouse of the binding - when set to complex binding the "\" is not displayed
-		assert.deepEqual(oMessageBox.$().find(".sapMFT").text(), JSON.stringify(oJSON, null, '\t').replace(/{/gi, "\\{"));
+		assert.deepEqual(oMessageBox.$().find(".sapMFT").text(), JSON.stringify(oJSON, null, '\t'));
 		assert.ok(oMessageBox.$().hasClass(sClassName));
 		oMessageBox.destroy();
 	});
@@ -840,8 +839,7 @@ sap.ui.define([
 
 		sap.ui.getCore().applyChanges();
 		assert.ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
-		//the { bracket in JSON is escaped with \ becaouse of the binding - when set to complex binding the "\" is not displayed
-		assert.deepEqual(oMessageBox.$().find(".sapMFT").text(), JSON.stringify(oJSON, null, '\t').replace(/{/gi, "\\{"));
+		assert.deepEqual(oMessageBox.$().find(".sapMFT").text(), JSON.stringify(oJSON, null, '\t'));
 		assert.ok(oMessageBox.$().hasClass(sClassName));
 		oMessageBox.destroy();
 	});

@@ -381,7 +381,7 @@ sap.ui.define([
 							//covers JSON case
 							//Using stringify() with "tab" as space argument and escaping the JSON to prevent binding
 							mOptions.details = "<pre>" + JSON.stringify(mOptions.details, null, '\t')
-							.replace(/{/gi, "\\{") + "</pre>";
+							.replace(/{/gi, "&#x007B;") + "</pre>";
 						}
 						// html text is set by purpose with setter. If is set in the constructor there are issues with binding
 						oFT = new FormattedText().setVisible(false).setHtmlText(mOptions.details);
