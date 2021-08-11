@@ -1202,6 +1202,24 @@
 		  ]
 		},
 		{
+		"id": "sap.m.p13n.Container",
+			"name": "Container",
+			"category": "_PRIVATE_",
+			"since": "1.96",
+			"samples": [
+				"sap.m.sample.p13n.Container"
+			]
+		},
+		{
+		"id": "sap.m.P13nPanels",
+			"name": "Panels",
+			"category": "_PRIVATE_",
+			"since": "1.96",
+			"samples": [
+				"sap.m.sample.p13n.Panels"
+			]
+		},
+		{
 		  "id": "sap.m.P13nDialog",
 		  "name": "Personalization Dialog",
 		  "category": "Popup",
@@ -2438,6 +2456,16 @@
 		  "id": "sap.m.sample.MultiComboBoxTwoColumnsLayout",
 		  "name": "MultiComboBox - Two columns layout",
 		  "description": "Use the dropdown list with two columns layout if you need to display additional information to your options, like e.g. currencies to countries or abbreviations to systems."
+		},
+		{
+			"id": "sap.m.sample.p13n.Container",
+			"name": "p13n.Container usage in a Dialog/Popover",
+			"description": "Dialog & Popover with a sap.m.P13nContainer as content."
+		},
+		{
+			"id": "sap.m.sample.p13n.Panels",
+			"name": "p13n.*Panel usage in a Dialog",
+			"description": "Dialog with sap.m.p13n/* Panels"
 		},
 		{
 		  "id": "sap.m.sample.P13nDialog",

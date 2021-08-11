@@ -897,6 +897,69 @@ sap.ui.define([
 					language: "en" // one test depends on locale specific date formatting
 				}
 			},
+			"p13n.AbstractContainer": {
+				title: "Test Page for sap.m.p13n.AbstractContainer",
+				module: "test-resources/sap/m/qunit/p13n/AbstractContainer.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
+			"p13n.Container": {
+				title: "Test Page for sap.m.p13n.Container",
+				module: "test-resources/sap/m/qunit/p13n/Container.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
+			"p13n.BasePanel": {
+				title: "Test Page for sap.m.p13n.BasePanel",
+				module: "test-resources/sap/m/qunit/p13n/BasePanel.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
+			"p13n.QueryPanel": {
+				title: "Test Page for sap.m.p13n.QueryPanel",
+				module: "test-resources/sap/m/qunit/p13n/QueryPanel.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
+			"p13n.SelectionPanel": {
+				title: "Test Page for sap.m.p13n.SelectionPanel",
+				module: "test-resources/sap/m/qunit/p13n/SelectionPanel.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
+			"p13n.SortPanel": {
+				title: "Test Page for sap.m.p13n.SortPanel",
+				module: "test-resources/sap/m/qunit/p13n/SortPanel.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
+			"p13n.GroupPanel": {
+				title: "Test Page for sap.m.p13n.GroupPanel",
+				module: "test-resources/sap/m/qunit/p13n/GroupPanel.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
 			P13nDialog: {
 				title: "Test Page for sap.m.P13nDialog",
 				_alternativeTitle: "QUnit Page for sap.m.P13nDialog",

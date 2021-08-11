@@ -1,0 +1,32 @@
+//Display ':' for Labels in the 'list' view
+.sapMSelectionPanel.sapUiMDCAFLabelMarkingList tbody  .sapMLabel > .sapMLabelColonAndRequired::before{
+	content: attr(data-colon);
+}
+
+//Display checkbox at the top for items in the ListView
+.sapMSelectionPanel tbody .sapMListTblSelCol {
+    vertical-align: top;
+}
+
+//Remove padding for items in list view
+.sapMSelectionPanel.SelectionPanelHover .sapMListTblCell {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.sapMSelectionPanel .sapMPanelContent li {
+    align-items: start; //Checkbox should not be centered
+    display: flex; //Is the default for Lists - only needs to be set as the parent is a Table
+}
+
+//Align inner rows with the outer controls
+.sapMSelectionPanel table {
+    tr > td {
+        padding-left: 0.5rem;
+    }
+}
+
+//'Select All' should also be aligned correctly with the other controls in the panel
+.sapMSelectionPanel .sapMTableTH {
+    padding-left: 0.5rem;
+}
