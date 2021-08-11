@@ -59,7 +59,13 @@ sap.ui.define([
 
 			var iCurrentSourceIndex = aContainerElements.indexOf(sAffectedControlId);
 			var iTargetIndex = oCondenserInfo.getTargetIndex(oCondenserInfo.change);
-			aContainerElements.splice(iTargetIndex, 0, aContainerElements.splice(iCurrentSourceIndex, 1)[0]);
+
+			// if the move was done from a different container the element can't be found
+			if (iInitialSourceIndex === -1) {
+				aContainerElements.splice(iTargetIndex, 0, sAffectedControlId);
+			} else {
+				aContainerElements.splice(iTargetIndex, 0, aContainerElements.splice(iCurrentSourceIndex, 1)[0]);
+			}
 		}
 	};
 });
