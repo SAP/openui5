@@ -32,6 +32,10 @@
 
 			return sOrigin + sVersionPrefixPath + this._formatPath(sPath);
 		},
+		getHasProxy: function () {
+			var oConfig = self['sap-ui-documentation-config'];
+			return !!(oConfig && oConfig.demoKitResourceOrigin);
+		},
 		_formatPath: function(sPath) {
 			sPath = sPath.replace(/^\.\//, '/');
 

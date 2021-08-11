@@ -57,9 +57,11 @@ sap.ui.define([
 
 	var DocumentationLibraryInfo = LibraryInfo.extend("sap.ui.documentation.DocumentationLibraryInfo", {});
 
-		DocumentationLibraryInfo.prototype.getResourceUrl = function(sUrl) {
-			return ResourcesUtil.getResourceOriginPath(sUrl);
-		};
+		if (ResourcesUtil.getHasProxy()) {
+			DocumentationLibraryInfo.prototype.getResourceUrl = function(sUrl) {
+				return ResourcesUtil.getResourceOriginPath(sUrl);
+			};
+		}
 
 		thisLibrary._getLicense = function () {
 		var sUrl = "./LICENSE.txt";
