@@ -56,14 +56,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Verify 'move' subtype has already been added to the data structure before 'create' subtype
+	 * Verify 'move' subtype has already been added to the data structure before 'create' subtype and they both belong to the same targetContainer
 	 *
 	 * @param {Map} mSubtypes - Map of properties that holds key-value pairs. A key is a unique identifier. A value is an array object that contains changes
 	 * @param {object} oCondenserInfo - Condenser specific information that is delivered by the change handler
 	 * @returns {boolean} <code>true</code> if the 'move' subtype has been added to the data structure before 'create' subtype
 	 */
 	function isCreateAfterMoveSubtype(mSubtypes, oCondenserInfo) {
-		return oCondenserInfo.classification === sap.ui.fl.condenser.Classification.Create && mSubtypes[sap.ui.fl.condenser.Classification.Move];
+		var aMoveSubType = mSubtypes[sap.ui.fl.condenser.Classification.Move];
+		return oCondenserInfo.classification === sap.ui.fl.condenser.Classification.Create
+			&& aMoveSubType
+			&& aMoveSubType[aMoveSubType.length - 1].targetContainer === oCondenserInfo.targetContainer;
 	}
 
 	/**
@@ -378,6 +381,12 @@ sap.ui.define([
 		});
 	}
 
+	function sortCondenserInfosByInitialOrder(aChanges, aCondenserInfos) {
+		aCondenserInfos.sort(function(a, b) {
+			return aChanges.indexOf(a.change) - aChanges.indexOf(b.change);
+		});
+	}
+
 	function addAllIndexRelatedChanges(aReducedChanges, aIndexRelatedChanges) {
 		var aReducedChangeIds = aReducedChanges.map(function(oChange) {
 			return oChange.getId();
@@ -478,6 +487,7 @@ sap.ui.define([
 
 				var bSuccess = true;
 				var aCondenserInfos = getCondenserInfos(mReducedChanges, []);
+				sortCondenserInfosByInitialOrder(aChanges, aCondenserInfos);
 				try {
 					Measurement.start("Condenser_sort", "sort index related changes - CondenserClass", ["sap.ui.fl", "Condenser"]);
 					var aReducedIndexRelatedChanges = UIReconstruction.sortIndexRelatedChanges(mUIReconstructions, aCondenserInfos);
