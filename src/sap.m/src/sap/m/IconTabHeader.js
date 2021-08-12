@@ -1042,6 +1042,9 @@ sap.ui.define([
 		oOverflow.$().addClass("sapMITHOverflowVisible");
 		this.$().addClass("sapMITHEndOverflowList");
 
+		// width has changed after the overflow became visible
+		iTabStripWidth = oTabStrip.offsetWidth;
+
 		// has "end", but no "start" overflow
 		if (!bHasStartOverflow) {
 			iLastVisible = this._findLastVisibleItem(aItems, iTabStripWidth, mSelectedItem.width);
