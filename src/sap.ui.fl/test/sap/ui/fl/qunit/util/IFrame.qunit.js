@@ -282,7 +282,7 @@ sap.ui.define([
 			XMLView.create({
 				definition: '<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.fl.util">' +
 					'<IFrame id="iframe1" url="' + sOpenUI5Url + '" />' +
-					'<IFrame id="iframe2" url="' + sOpenUI5Url + '?domain={$user>/domain}" />' +
+					'<IFrame id="iframe2" url="' + sOpenUI5Url + '?fullName={$user>/fullName}" />' +
 					'<IFrame id="iframe3" url="' + sOpenUI5Url + '?domain={$user>/domain}&amp;{anyModel>/anyProperty}" />' +
 					'<IFrame id="iframe4" url="{= \'' + sOpenUI5Url + '?domain=\' + ${$user>/domain} }" />' +
 					'<IFrame id="iframe5" url="{= \'' + sOpenUI5Url + '?domain=\' + (${$user>/domain}.indexOf(\'sap.com\') !== -1 ? \'SAP\' : \'EXTERNAL\') }" />' +
@@ -306,8 +306,23 @@ sap.ui.define([
 		});
 		QUnit.test("Simple binding URL should be reverted back to binding in settings", function(assert) {
 			var iFrame = this.myView.byId("iframe2");
-			assert.strictEqual(iFrame.getUrl(), sOpenUI5Url + "?domain=sap.com", "Displayed URL is correct");
-			assert.strictEqual(iFrame.get_settings().url, sOpenUI5Url + "?domain={$user>/domain}", "Settings' URL is correct");
+			var sExpectedUrl = encodeURI(sOpenUI5Url + "?fullName=" + sUserFullName);
+			assert.strictEqual(
+				iFrame.getUrl(),
+				sExpectedUrl,
+				"Displayed URL is correct and parameters are properly encoded"
+			);
+			assert.strictEqual(iFrame.get_settings().url, sOpenUI5Url + "?fullName={$user>/fullName}", "Settings' URL is correct");
+		});
+		QUnit.test("when a passed  url is already encoded", function(assert) {
+			var iFrame = this.myView.byId("iframe2");
+			var sEncodedUrl = encodeURI(sOpenUI5Url + "?someParameter=" + sUserFullName);
+			iFrame.setUrl(sEncodedUrl);
+			assert.strictEqual(
+				iFrame.getUrl(),
+				sEncodedUrl,
+				"then it is not encoded again"
+			);
 		});
 		QUnit.test("Simple binding URL (with unexpected reference) should be reverted back to binding in settings", function(assert) {
 			var iFrame = this.myView.byId("iframe3");

@@ -100,8 +100,12 @@ sap.ui.define([
 		},
 
 		setUrl: function(sUrl) {
-			if (IFrame.isValidUrl(sUrl)) {
-				this.setProperty("url", sUrl);
+			// Could contain special characters from bindings that need to be encoded
+			// Make sure that it was not encoded before
+			var sEncodedUrl = decodeURI(sUrl) === sUrl ? encodeURI(sUrl) : sUrl;
+
+			if (IFrame.isValidUrl(sEncodedUrl)) {
+				this.setProperty("url", sEncodedUrl);
 			} else {
 				Log.error("Provided URL is not valid as an IFrame src");
 			}

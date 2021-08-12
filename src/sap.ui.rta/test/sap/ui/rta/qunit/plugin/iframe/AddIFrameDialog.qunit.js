@@ -117,7 +117,7 @@ sap.ui.define([
 		}, {
 			label: "Product_Category",
 			key: "{Product_Category}",
-			value: "Ice Cream"
+			value: "Ice Cream" // Make sure this includes a whitespace to test encoding
 		}, {
 			label: "Campaign_Name",
 			key: "{Campaign_Name}",
@@ -280,6 +280,21 @@ sap.ui.define([
 			return this.oAddIFrameDialog.open(mParameters);
 		});
 
+		QUnit.test("When URL parameter values contain characters that need to be encoded", function (assert) {
+			this.oAddIFrameDialog.attachOpened(function () {
+				var sUrl = "https://example.com/{Product_Category}";
+				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.strictEqual(
+					sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_PreviewFrame").getUrl(),
+					"https://example.com/Ice%20Cream",
+					"then the preview url is encoded properly"
+				);
+				clickOnCancel();
+			}, this);
+			return this.oAddIFrameDialog.open(mParameters);
+		});
+
 		QUnit.test("When Show Preview is clicked then preview URL is built correctly", function (assert) {
 			var sUrl;
 			this.oAddIFrameDialog.attachOpened(function () {
@@ -336,6 +351,19 @@ sap.ui.define([
 				.then(function(oResponse) {
 					assert.strictEqual(oResponse, undefined, "then the dialog can only be closed via cancel");
 				});
+		});
+
+		QUnit.test("when a url with bindings is entered", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				var oUrlTextArea = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_EditUrlTA");
+				oUrlTextArea.setValue("https://example.com/{productCategory}");
+				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
+				sap.ui.getCore().applyChanges();
+
+				assert.strictEqual(oUrlTextArea.getValueState(), "None", "then it is not showing an error");
+				clickOnCancel();
+			});
+			return this.oAddIFrameDialog.open(mTestURLBuilderData);
 		});
 
 		QUnit.test("When OK button is clicked then the promise should return settings", function (assert) {
