@@ -655,6 +655,23 @@
 					}
 				}
 			}
+		},
+		"unitOfMeasurementOnly": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.unitOfMeasurementOnly",
+				"type": "card"
+			},
+			"sap.card": {
+				"header": {
+					"type": "Numeric",
+					"title": "Numeric Header with title, mainindicator and unit of measurement",
+					"mainIndicator": {
+						"number": "15.6"
+					},
+					"unitOfMeasurement": "EUR"
+				},
+				"type": "List"
+			}
 		}
 	},
 	"analyticalContent": {

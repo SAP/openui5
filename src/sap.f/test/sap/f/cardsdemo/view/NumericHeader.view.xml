@@ -4,7 +4,6 @@
 	xmlns:f="sap.f"
 	xmlns:cards="sap.f.cards"
 	xmlns:w="sap.ui.integration.widgets"
-	xmlns:grid="sap.ui.layout.cssgrid"
 	displayBlock="true">
 	<Page title="{i18n>appTitle}">
 		<subHeader>
@@ -16,12 +15,11 @@
 		</subHeader>
 
 		<Panel>
-			<grid:CSSGrid>
-				<grid:customLayout>
-					<grid:GridBoxLayout boxMinWidth="400px" />
-				</grid:customLayout>
-
-				<f:Card id="fcard1" width="300px">
+			<f:GridContainer>
+				<f:Card id="fcard1">
+					<f:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</f:layoutData>
 					<f:header>
 						<cards:NumericHeader
 							title="Project Cloud Transformation"
@@ -46,14 +44,47 @@
 					</f:header>
 				</f:Card>
 
-				<w:Card id="kpicard1" manifest="{manifests>/kpiManifests/kpicard1}" baseUrl="./" />
-				<w:Card id="kpicard2" manifest="{manifests>/kpiManifests/kpicard2}" baseUrl="./" />
-				<w:Card id="kpicard3" manifest="{manifests>/kpiManifests/kpicard3}" baseUrl="./" />
-				<w:Card id="kpicard4" manifest="{manifests>/kpiManifests/kpicard4}" baseUrl="./" />
-				<w:Card id="kpicard5" manifest="{manifests>/kpiManifests/kpicard5}" baseUrl="./" />
-				<w:Card id="tablecard1" manifest="{manifests>/kpiManifests/tablecard1}" baseUrl="./" />
-				<w:Card id="tablecard123" manifest="{manifests>/kpiManifests/tablecard123}" baseUrl="./" />
-			</grid:CSSGrid>
+				<w:Card id="kpicard1" manifest="{manifests>/kpiManifests/kpicard1}" baseUrl="./">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="kpicard2" manifest="{manifests>/kpiManifests/kpicard2}" baseUrl="./" >
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="kpicard3" manifest="{manifests>/kpiManifests/kpicard3}" baseUrl="./">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="kpicard4" manifest="{manifests>/kpiManifests/kpicard4}" baseUrl="./">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="kpicard5" manifest="{manifests>/kpiManifests/kpicard5}" baseUrl="./">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="tablecard1" manifest="{manifests>/kpiManifests/tablecard1}" baseUrl="./">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="tablecard123" manifest="{manifests>/kpiManifests/tablecard123}" baseUrl="./">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="unitOfMeasurementOnly" manifest="{manifests>/kpiManifests/unitOfMeasurementOnly}" baseUrl="./">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+			</f:GridContainer>
 		</Panel>
 	</Page>
 </mvc:View>

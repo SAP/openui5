@@ -351,7 +351,7 @@ describe("sap.f.Card", function () {
 
 	it("Numeric Header", function () {
 		navigateTo("Numeric Header");
-		var aCardIds = ["fcard1", "kpicard1", "kpicard2", "kpicard3", "kpicard4", "kpicard5", "tablecard1", "tablecard123"];
+		var aCardIds = ["fcard1", "kpicard1", "kpicard2", "kpicard3", "kpicard4", "kpicard5", "tablecard1", "tablecard123", "unitOfMeasurementOnly"];
 
 		aCardIds.forEach(function (sId) {
 			takePictureOfElement({
