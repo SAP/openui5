@@ -2292,9 +2292,9 @@ sap.ui.define([
 				oEndButton = this.getEndButton(),
 				sButtonId = "";
 
-			if (oBeginButton && oBeginButton.getVisible()) {
+			if (oBeginButton && oBeginButton.getVisible() && oBeginButton.getEnabled()) {
 				sButtonId = oBeginButton.getId();
-			} else if (oEndButton && oEndButton.getVisible()) {
+			} else if (oEndButton && oEndButton.getVisible() && oEndButton.getEnabled()) {
 				sButtonId = oEndButton.getId();
 			}
 
