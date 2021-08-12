@@ -20,7 +20,7 @@ sap.ui.define([
 		assertions: new Assertion(),
 		viewNamespace: "view.",
 		autoWait: true,
-		executionDelay: 50
+		timeout: 45
 	});
 
 	var sViewSettings = Arrangement.P13nDialog.Titles.settings;

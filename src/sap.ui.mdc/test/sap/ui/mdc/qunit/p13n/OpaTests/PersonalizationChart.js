@@ -19,7 +19,8 @@ sap.ui.define([
 		actions: new Action(),
 		assertions: new Assertion(),
 		viewNamespace: "view.",
-		autoWait: true
+		autoWait: true,
+		timeout: 45
 	});
 
 	var aChartItems = [
