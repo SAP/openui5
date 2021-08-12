@@ -4,8 +4,12 @@
 
 // Provides the Design Time Metadata for the sap.ui.layout.form.SimpleForm control
 sap.ui.define([
+	"sap/m/Title",
+	"sap/ui/core/Title",
 	"sap/ui/fl/Utils"
 ], function(
+	MTitle,
+	CoreTitle,
 	FlexUtils
 ) {
 	"use strict";
@@ -191,11 +195,13 @@ sap.ui.define([
 							var aToolbarContent = oRemovedElement.getToolbar().getContent();
 							if (aToolbarContent.length > 1) {
 									bContent = true;
-							} else if ((aToolbarContent.length === 1) &&
-												(!aToolbarContent[0].getMetadata().isInstanceOf("sap.ui.core.Label") &&
-												// eslint-disable-next-line no-unsafe-negation
-												!aToolbarContent[0] instanceof sap.ui.core.Title && !aToolbarContent[0] instanceof sap.m.Title)) {
-									bContent = true;
+							} else if (
+								aToolbarContent.length === 1
+								&& !aToolbarContent[0].getMetadata().isInstanceOf("sap.ui.core.Label")
+								&& !(aToolbarContent[0] instanceof CoreTitle)
+								&& !(aToolbarContent[0] instanceof MTitle)
+							) {
+								bContent = true;
 							}
 						}
 						if (bContent) {

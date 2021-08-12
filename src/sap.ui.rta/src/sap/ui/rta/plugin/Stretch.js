@@ -377,8 +377,7 @@ function (
 			aChildrensChildrenOverlays = aChildrensChildrenOverlays.concat(OverlayUtil.getAllChildOverlays(oChildOverlay));
 		});
 
-		// eslint-disable-next-line no-unsafe-negation
-		if (!aChildrensChildrenOverlays.length > 0) {
+		if (!aChildrensChildrenOverlays.length) {
 			return false;
 		}
 		if (this._childrenAreSameSize(oReferenceOverlay, aChildrensChildrenOverlays)) {
