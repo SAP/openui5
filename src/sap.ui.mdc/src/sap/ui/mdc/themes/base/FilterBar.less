@@ -19,8 +19,8 @@
 	padding-left: 0.5rem;
 }
 
-.sapUiMdcFilterBarBase .sapUiMdcFilterBarBaseLabel::after {
-	content: ":";
+.sapUiMdcFilterBarBase .sapUiMdcFilterBarBaseLabel .sapMLabelColonAndRequired::before {
+	content: attr(data-colon);
 }
 
 .sapUiMdcFilterBarBaseAFLayout > .sapUiAFLayoutItem > div,

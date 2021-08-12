@@ -17,8 +17,8 @@
 }
 
 //Display ':' for Labels
-.sapUiMDCGroupView.sapUiMDCAFLabelMarking .sapMPanelContent .sapMLabel::after {
-	content: ":";
+.sapUiMDCGroupView.sapUiMDCAFLabelMarking .sapMPanelContent .sapMLabelColonAndRequired::before {
+	content: attr(data-colon);
 }
 
 //Custom bar that should look like 'ListView' background (mock columnheader)
