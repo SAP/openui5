@@ -21,6 +21,12 @@ sap.ui.define([
 	 *     <li><code>sap.m.TextArea</code></li>
 	 * </ul>
 	 *
+	 * @param {string}
+	 *            [sId] Optional ID for the new instance; generated automatically if
+	 *            no non-empty ID is given. Note: this can be omitted, no matter
+	 *            whether <code>mSettings</code> are given or not!
+	 * @param {object}
+	 *            [mSettings] Optional object with initial settings for the new instance
 	 * @extends sap.ui.test.actions.Action
 	 * @public
 	 * @name sap.ui.test.actions.EnterText
