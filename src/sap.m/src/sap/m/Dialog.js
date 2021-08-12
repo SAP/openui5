@@ -922,7 +922,11 @@ function(
 			}
 
 			var $this = this._$dialog,
-				mOffset = $this.offset(),
+				oBoundingClientRect = this.getDomRef().getBoundingClientRect(),
+				mOffset = {
+					left: oBoundingClientRect.x,
+					top: oBoundingClientRect.y
+				},
 				oAreaDimensions = this._getAreaDimensions(),
 				iDialogWidth = $this.width(),
 				iDialogHeight = $this.height(),
@@ -930,7 +934,6 @@ function(
 				bResize = oEvent.shiftKey,
 				mStyles,
 				iMaxHeight;
-
 
 			this._bDisableRepositioning = true;
 			$this.addClass('sapDialogDisableTransition');
@@ -1925,6 +1928,8 @@ function(
 				};
 
 				var oAreaDimensions = this._getAreaDimensions();
+				var oBoundingClientRect = this.getDomRef().getBoundingClientRect();
+
 				var initial = {
 					x: e.pageX,
 					y: e.pageY,
@@ -1937,8 +1942,8 @@ function(
 						y: e.offsetY ? e.offsetY : e.originalEvent.layerY
 					},
 					position: {
-						x: that._$dialog.offset().left,
-						y: that._$dialog.offset().top
+						x: oBoundingClientRect.x,
+						y: oBoundingClientRect.y
 					}
 				};
 				var mouseMoveHandler;
