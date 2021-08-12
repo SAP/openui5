@@ -146,22 +146,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Shifts the index-related change from the source index to the target index.
-	 *
-	 * @param {Map} mUIReconstructions - Map of UI reconstructions that holds key-value pairs. A key is a selector ID of the container. A value is a nested map which contains initial and target UI reconstructions
-	 * @param {Object} oCondenserInfo - Instance of condenser info object
-	 */
-	function shiftToTargetIndex(mUIReconstructions, oCondenserInfo) {
-		var sContainerKey = oCondenserInfo.targetContainer;
-		var sAffectedControlId = oCondenserInfo.affectedControl;
-		var iTargetIndex = oCondenserInfo.getTargetIndex(oCondenserInfo.change);
-		var aContainerElements = mUIReconstructions[sContainerKey][oCondenserInfo.targetAggregation];
-		Utils.extendArrayWithPlaceholders(aContainerElements, undefined, iTargetIndex);
-		var iSourceIndex = aContainerElements.indexOf(sAffectedControlId);
-		shiftElement(aContainerElements, iSourceIndex, iTargetIndex);
-	}
-
-	/**
 	 * Verifies whether the passed arrays are equal.
 	 *
 	 * @param {string[]} a - The first passed arrays of values
@@ -210,12 +194,6 @@ sap.ui.define([
 			}
 
 			INDEX_RELATED[oCondenserInfo.classification].simulate(mUIAggregationState[sAggregationName], oCondenserInfo, aInitialUIElementIds);
-		});
-
-		aCondenserInfos.forEach(function(oCondenserInfo) {
-			if (oCondenserInfo.classification === sap.ui.fl.condenser.Classification.Move) {
-				shiftToTargetIndex(mUISimulatedStates, oCondenserInfo);
-			}
 		});
 
 		var aSortedUIElementIds = mUISimulatedStates[sContainerKey][sAggregationName];

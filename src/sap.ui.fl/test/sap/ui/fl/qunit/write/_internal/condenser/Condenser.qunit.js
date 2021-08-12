@@ -234,6 +234,54 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("add and move between two groups - field ends up in the first group", function(assert) {
+			return loadApplyCondenseChanges.call(this, "addMoveTwoGroups.json", 5, 1, assert)
+			.then(revertAndApplyNew.bind(this))
+			.then(function() {
+				var oSmartForm = oAppComponent.byId(sLocalSmartFormId);
+				var aGroups = oSmartForm.getGroups();
+				var aFirstGroupElements = aGroups[0].getGroupElements();
+				// Initial UI [ Name, Victim, Code ]
+				// Target UI [ Name, ComplexProperty01, Victim, Code ]
+				assert.equal(aFirstGroupElements.length, 4, sContainerElementsMsg + 3);
+				assert.equal(aFirstGroupElements[0].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sNameFieldId);
+				assert.equal(aFirstGroupElements[1].getId(), getControlSelectorId(sComplexProperty01FieldId), getMessage(sAffectedControlMgs, undefined, 1) + sComplexProperty01FieldId);
+				assert.equal(aFirstGroupElements[2].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sVictimFieldId);
+				assert.equal(aFirstGroupElements[3].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 3) + sCompanyCodeFieldId);
+
+				// Initial UI [ Flexibility, Button35 ]
+				// Target UI [ Flexibility, Button35 ]
+				var aSecondGroupElements = aGroups[1].getGroupElements();
+				assert.equal(aSecondGroupElements.length, 2, sContainerElementsMsg + 2);
+				assert.equal(aSecondGroupElements[0].getId(), getControlSelectorId("Dates.SpecificFlexibility"), getMessage(sAffectedControlMgs, undefined, 0) + "SpecificFlexibility");
+				assert.equal(aSecondGroupElements[1].getId(), getControlSelectorId("Dates.BoundButton35"), getMessage(sAffectedControlMgs, undefined, 1) + "BoundButton35");
+			});
+		});
+
+		QUnit.test("add and move between two groups - field ends up in the second group", function(assert) {
+			return loadApplyCondenseChanges.call(this, "addMoveTwoGroups2.json", 6, 2, assert)
+			.then(revertAndApplyNew.bind(this))
+			.then(function() {
+				var oSmartForm = oAppComponent.byId(sLocalSmartFormId);
+				var aGroups = oSmartForm.getGroups();
+				var aFirstGroupElements = aGroups[0].getGroupElements();
+				// Initial UI [ Name, Victim, Code ]
+				// Target UI [ Name, Victim, Code ]
+				assert.equal(aFirstGroupElements.length, 3, sContainerElementsMsg + 3);
+				assert.equal(aFirstGroupElements[0].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sNameFieldId);
+				assert.equal(aFirstGroupElements[1].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sVictimFieldId);
+				assert.equal(aFirstGroupElements[2].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sCompanyCodeFieldId);
+
+				// Initial UI [ Flexibility, Button35 ]
+				// Target UI [ Flexibility, ComplexProperty01, Button35 ]
+				var aSecondGroupElements = aGroups[1].getGroupElements();
+				assert.equal(aSecondGroupElements.length, 3, sContainerElementsMsg + 3);
+				assert.equal(aSecondGroupElements[0].getId(), getControlSelectorId("Dates.SpecificFlexibility"), getMessage(sAffectedControlMgs, undefined, 0) + "SpecificFlexibility");
+				assert.equal(aSecondGroupElements[1].getId(), getControlSelectorId(sComplexProperty01FieldId), getMessage(sAffectedControlMgs, undefined, 1) + sComplexProperty01FieldId);
+				assert.equal(aSecondGroupElements[2].getId(), getControlSelectorId("Dates.BoundButton35"), getMessage(sAffectedControlMgs, undefined, 2) + "BoundButton35");
+			});
+		});
+
 		QUnit.test("move within one group", function(assert) {
 			return loadApplyCondenseChanges.call(this, "moveFirstAndLastControlsWithinOneGroup.json", 8, 2, assert)
 			.then(revertAndApplyNew.bind(this))
