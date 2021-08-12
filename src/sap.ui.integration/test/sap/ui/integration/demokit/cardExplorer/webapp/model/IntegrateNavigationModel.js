@@ -31,6 +31,12 @@ sap.ui.define([
 				key: 'layouts'
 			},
 			{
+				title: 'Caching (Experimental)',
+				icon: 'sap-icon://past',
+				target: 'integrate',
+				key: 'caching'
+			},
+			{
 				title: 'Destinations',
 				icon: 'sap-icon://connected',
 				target: 'integrate',

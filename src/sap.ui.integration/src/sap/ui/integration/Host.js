@@ -124,6 +124,10 @@ sap.ui.define([
 			}
 		});
 
+		Host.prototype.init = function () {
+			this._handlePostMessageBound = this._handlePostMessage.bind(this);
+		};
+
 		/**
 		 * Resolves the destination and returns its URL.
 		 *
@@ -250,6 +254,17 @@ sap.ui.define([
 		};
 
 		/**
+		 * Stops the usage of the experimental caching for all cards.
+		 * @private
+		 * @ui5-restricted
+		 * @experimental Since 1.91. The API might change.
+		 */
+		Host.prototype.stopUsingExperimentalCaching = function () {
+			this.bUseExperimentalCaching = false;
+			this.unsubscribeForMessages();
+		};
+
+		/**
 		 * Modify request headers before sending a data request.
 		 * Override if you need to change the default cache headers behavior.
 		 * @param {map} mHeaders The current map of headers.
@@ -264,7 +279,7 @@ sap.ui.define([
 			var oCacheSettings = mSettings.request.cache,
 				aCacheControl = [];
 
-			if (oCacheSettings.noStore) {
+			if (oCacheSettings.enabled === false) {
 				// cache disabled
 				aCacheControl.push("max-age=0");
 				aCacheControl.push("no-store");
@@ -297,11 +312,31 @@ sap.ui.define([
 				return;
 			}
 
-			navigator.serviceWorker.addEventListener('message', function (oEvent) {
-				this.fireMessage({
-					data: oEvent.data
-				});
-			}.bind(this));
+			navigator.serviceWorker.addEventListener("message", this._handlePostMessageBound);
+		};
+
+		/**
+		 * Unsubscribes from navigator.serviceWorker messages.
+		 * @private
+		 * @ui5-restricted
+		 */
+		Host.prototype.unsubscribeForMessages = function () {
+			if (!navigator || !navigator.serviceWorker) {
+				return;
+			}
+
+			navigator.serviceWorker.removeEventListener("message", this._handlePostMessageBound);
+		};
+
+		/**
+		 * Handler for a post message event
+		 * @private
+		 * @param {*} oEvent The post message event.
+		 */
+		Host.prototype._handlePostMessage = function (oEvent) {
+			this.fireMessage({
+				data: oEvent.data
+			});
 		};
 
 		return Host;

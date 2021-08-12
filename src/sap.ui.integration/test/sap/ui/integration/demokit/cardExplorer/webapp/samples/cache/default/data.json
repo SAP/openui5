@@ -1,0 +1,34 @@
+{
+	"items": [
+		{
+			"Name": "Comfort Easy",
+			"Description": "32 GB Digital Assistant with high-resolution color screen",
+			"Sales": "150",
+			"State": "Warning"
+		},
+		{
+			"Name": "ITelO Vault",
+			"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+			"Sales": "540",
+			"State": "Success"
+		},
+		{
+			"Name": "Notebook Professional 15",
+			"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+			"Sales": "350",
+			"State": "Success"
+		},
+		{
+			"Name": "Ergo Screen E-I",
+			"Description": "Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm",
+			"Sales": "100",
+			"State": "Error"
+		},
+		{
+			"Name": "Laser Professional Eco",
+			"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+			"Sales": "200",
+			"State": "Warning"
+		}
+	]
+}

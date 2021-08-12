@@ -863,6 +863,62 @@ sap.ui.define([
 						]
 					},
 					{
+						key: 'cache',
+						target: 'exploreSamples',
+						title: 'Cache',
+						experimental: true,
+						subSamples: [
+							{
+								title: 'Default',
+								experimental: true,
+								cache: true,
+								key: 'default',
+								settings: {
+									columns: 5
+								},
+								files: [
+									{
+										url: '/samples/cache/default/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Max Age: 1 Hour',
+								experimental: true,
+								cache: true,
+								key: 'maxAge',
+								settings: {
+									columns: 5
+								},
+								files: [
+									{
+										url: '/samples/cache/maxAge/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Disabled Cache',
+								experimental: true,
+								cache: true,
+								key: 'disabledCache',
+								settings: {
+									columns: 5
+								},
+								files: [
+									{
+										url: '/samples/cache/disabledCache/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							}
+						]
+					},
+					{
 						key: 'data',
 						target: 'exploreSamples',
 						title: 'Data',

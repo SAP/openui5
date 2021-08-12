@@ -170,7 +170,12 @@ sap.ui.define([
 			};
 		}
 
-		if (!oCache.noStore) {
+		if (oCache.noStore) {
+			// temporary needed for backward compatibility
+			oCache.enabled = false;
+		}
+
+		if (oCache.enabled) {
 			if (this._bCacheOnly) {
 				oCache.maxAge = SECONDS_IN_YEAR;
 				oCache.staleWhileRevalidate = false;
