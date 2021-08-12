@@ -150,16 +150,5 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	Extractor.createDownloadFile = function (oExport) {
-		try {
-			var sExportString = JSON.stringify(oExport);
-			File.save(sExportString, "flexibilityDataExtraction", "json");
-		} catch (e) {
-			MessageBox.error(
-				"The export of the flexibility data was not successful.\n" + e.message
-			);
-		}
-	};
-
 	return Extractor;
 });
