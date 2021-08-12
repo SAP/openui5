@@ -64,7 +64,10 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the 'move' subtype has been added to the data structure before 'create' subtype
 	 */
 	function isCreateAfterMoveSubtype(mSubtypes, oCondenserInfo) {
-		return oCondenserInfo.classification === sap.ui.fl.condenser.Classification.Create && mSubtypes[sap.ui.fl.condenser.Classification.Move];
+		var aMoveSubType = mSubtypes[sap.ui.fl.condenser.Classification.Move];
+		return oCondenserInfo.classification === sap.ui.fl.condenser.Classification.Create
+			&& aMoveSubType
+			&& aMoveSubType[aMoveSubType.length - 1].targetContainer === oCondenserInfo.targetContainer;
 	}
 
 	/**
@@ -374,6 +377,12 @@ sap.ui.define([
 		});
 	}
 
+	function sortCondenserInfosByInitialOrder(aChanges, aCondenserInfos) {
+		aCondenserInfos.sort(function(a, b) {
+			return aChanges.indexOf(a.change) - aChanges.indexOf(b.change);
+		});
+	}
+
 	function addAllIndexRelatedChanges(aReducedChanges, aIndexRelatedChanges) {
 		var aReducedChangeIds = aReducedChanges.map(function(oChange) {
 			return oChange.getId();
@@ -473,6 +482,7 @@ sap.ui.define([
 				Measurement.start("Condenser_handleIndexRelatedChanges", "handle index related changes - CondenserClass", ["sap.ui.fl", "Condenser"]);
 
 				var aCondenserInfos = getCondenserInfos(mReducedChanges, []);
+				sortCondenserInfosByInitialOrder(aChanges, aCondenserInfos);
 
 				Measurement.start("Condenser_sort", "sort index related changes - CondenserClass", ["sap.ui.fl", "Condenser"]);
 				var aReducedIndexRelatedChanges = UIReconstruction.sortIndexRelatedChanges(mUIReconstructions, aCondenserInfos);
