@@ -430,7 +430,7 @@ sap.ui.define([
 				return;
 			}
 
-			var oFilterBar = _getFilterBar.call(this);
+			var oFilterBar = this._getFilterBar();
 			if ((oDialog && oOrigin === oDialog) ||
 					(oFilterBar && oOrigin === oFilterBar)) {
 				if (oOrigin.bOutput && !this._bIsBeingDestroyed) {
@@ -757,7 +757,7 @@ sap.ui.define([
 	function _cleanupFilters() { // TODO: really needed or better use single requests if needed by getText or description?
 
 		// remove filters: update table only if filter exist
-		var oFilterBar = _getFilterBar.call(this);
+		var oFilterBar = this._getFilterBar();
 		var oConditions;
 
 		if (oFilterBar) {
@@ -1887,7 +1887,7 @@ sap.ui.define([
 			}
 			if (bFilters) {
 				// return filters for filtering
-				var oConditionTypes = _getTypesForConditions.call(this, oHelpParameters);
+				var oConditionTypes = this._getTypesForConditions(oHelpParameters);
 				var oFilter = FilterConverter.createFilters(oHelpParameters, oConditionTypes);
 				oHelpParameters = oFilter;
 			}
@@ -1944,7 +1944,7 @@ sap.ui.define([
 
 		var oWrapper = _getWrapper.call(this, bSuggestion);
 		if (oWrapper) {
-			var oFilterBar = _getFilterBar.call(this);
+			var oFilterBar = this._getFilterBar();
 			var oConditions;
 
 			if (oFilterBar) {
@@ -1954,7 +1954,7 @@ sap.ui.define([
 				oConditions = this._oConditions;
 			}
 
-			var oConditionTypes = _getTypesForConditions.call(this, oConditions);
+			var oConditionTypes = this._getTypesForConditions(oConditions);
 			var oFilter = FilterConverter.createFilters( oConditions, oConditionTypes, undefined, this.getCaseSensitive());
 			var aFilters = [];
 			var aSearchConditions = oConditions["$search"];
@@ -1973,7 +1973,14 @@ sap.ui.define([
 
 	}
 
-	function _getTypesForConditions(oConditions) {
+	/**
+	 * Returns a condition type map for the valuehelp filterbar
+	 *
+	 * @returns {object} condition types map
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelpContentWrapperBase
+	 */
+	FieldValueHelp.prototype._getTypesForConditions = function (oConditions) {
 
 		var oFilterBar = this.getFilterBar();
 		var aInParameters = this.getInParameters();
@@ -2005,7 +2012,8 @@ sap.ui.define([
 
 		return oConditionTypes;
 
-	}
+	};
+
 
 	FieldValueHelp.prototype.getMaxConditions = function() {
 
@@ -2089,6 +2097,26 @@ sap.ui.define([
 		}
 
 		return sKeyPath;
+
+	};
+
+
+	/**
+	 * Returns the relevant filterbar of this valuehelp.
+	 *
+	 * @returns {sap.ui.mdc.FilterBar} relevant filterbar
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelpContentWrapperBase
+	 */
+	 FieldValueHelp.prototype._getFilterBar = function() {
+
+		var oFilterBar = this.getFilterBar();
+
+		if (!oFilterBar) {
+			oFilterBar = this.getAggregation("_filterBar");
+		}
+
+		return oFilterBar;
 
 	};
 
@@ -2251,7 +2279,7 @@ sap.ui.define([
 	function _createValueHelpPanel() {
 
 		var oWrapper = _getWrapper.call(this, false);
-		var oFilterBar = _getFilterBar.call(this);
+		var oFilterBar = this._getFilterBar();
 
 		var oValueHelpPanel = new ValueHelpPanel(this.getId() + "-VHP", {
 			height: "100%",
@@ -2446,7 +2474,7 @@ sap.ui.define([
 
 	function _updateFiltersFromFilterBar(oEvent) {
 
-		var oFilterBar = _getFilterBar.call(this);
+		var oFilterBar = this._getFilterBar();
 
 		if (oFilterBar) {
 			// update FilterValue from SearchField
@@ -2471,7 +2499,7 @@ sap.ui.define([
 
 	function _initializeFilters() {
 
-		var oFilterBar = _getFilterBar.call(this);
+		var oFilterBar = this._getFilterBar();
 		if (oFilterBar) {
 			// remove old conditions
 			oFilterBar.setInternalConditions({});
@@ -2483,21 +2511,9 @@ sap.ui.define([
 
 	}
 
-	function _getFilterBar() {
-
-		var oFilterBar = this.getFilterBar();
-
-		if (!oFilterBar) {
-			oFilterBar = this.getAggregation("_filterBar");
-		}
-
-		return oFilterBar;
-
-	}
-
 	function _getConditions(sFieldPath) {
 
-		var oFilterBar = _getFilterBar.call(this);
+		var oFilterBar = this._getFilterBar();
 		var oConditions;
 
 		if (oFilterBar) {
@@ -2512,7 +2528,7 @@ sap.ui.define([
 
 	function _addCondition(sFieldPath, oCondition) {
 
-		var oFilterBar = _getFilterBar.call(this);
+		var oFilterBar = this._getFilterBar();
 		var oConditions;
 
 		if (oFilterBar) {
@@ -2534,7 +2550,7 @@ sap.ui.define([
 
 	function _removeConditions(sFieldPath) {
 
-		var oFilterBar = _getFilterBar.call(this);
+		var oFilterBar = this._getFilterBar();
 		var oConditions;
 
 		if (oFilterBar) {
@@ -2576,7 +2592,7 @@ sap.ui.define([
 		var oWrapper = _getWrapper.call(this, false); // without content it makes no sense to have a SearchField
 
 		if (sFilterFields && oWrapper) {
-			var oFilterBar = _getFilterBar.call(this);
+			var oFilterBar = this._getFilterBar();
 
 			if (!oFilterBar) {
 				oFilterBar = new FilterBar(this.getId() + "-FB", {
@@ -2765,7 +2781,7 @@ sap.ui.define([
 	function _assignCollectiveSearch(bInitializeKey) {
 
 		var oDialog = this.getAggregation("_dialog");
-		var oFilterBar = _getFilterBar.call(this);
+		var oFilterBar = this._getFilterBar();
 		if (oDialog && oFilterBar) {
 			var aCollectiveSearchItems = this.getCollectiveSearchItems();
 			if (aCollectiveSearchItems.length <= 1) {

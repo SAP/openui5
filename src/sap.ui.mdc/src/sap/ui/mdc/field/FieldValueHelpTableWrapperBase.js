@@ -527,12 +527,9 @@ sap.ui.define([
 		if (!oListBinding) {
 			this._oTablePromise.then(function(oTable) {
 				if (!this._bIsBeingDestroyed) {
-					this.applyFilters(aFilters, sSearch);
+					this.applyFilters(aFilters, sSearch, oFilterBar);
 				}
 			}.bind(this));
-
-			this.restoreBinding();
-
 			return;
 		}
 
@@ -967,10 +964,6 @@ sap.ui.define([
 	};
 
 	FieldValueHelpTableWrapperBase.prototype._getListBindingInfo = function() {
-		// Defaults to no-op.
-	};
-
-	FieldValueHelpTableWrapperBase.prototype.restoreBinding = function() {
 		// Defaults to no-op.
 	};
 
