@@ -646,7 +646,10 @@ sap.ui.define([
 				uploadStart: [this._onUploadStarted, this],
 				uploadProgress: [this._onUploadProgressed, this],
 				uploadComplete: [this._onUploadCompleted, this],
-				uploadAborted: [this._onUploadAborted, this]
+				uploadAborted: [this._onUploadAborted, this],
+				typeMissmatch: [this._fireFileTypeMismatch, this],
+				fileSizeExceed: [this._fireFileSizeExceed, this],
+				filenameLengthExceed: [this._fireFilenameLengthExceed, this]
 			});
 		}
 
@@ -1061,6 +1064,31 @@ sap.ui.define([
 		oItem._checkNameLengthRestriction(this.getMaxFileNameLength());
 		oItem._checkSizeRestriction(this.getMaxFileSize());
 		oItem._checkMediaTypeRestriction(this.getMediaTypes());
+	};
+
+	UploadSet.prototype._fireFileTypeMismatch = function (oItem) {
+		var aMediaTypes = this.getMediaTypes();
+		var aFileTypes = this.getFileTypes();
+
+		var sFileType = oItem.getParameter("fileType");
+		var sMediaType = oItem.getParameter("mimeType");
+
+		var bMediaRestricted = (!!aMediaTypes && (aMediaTypes.length > 0) && !!sMediaType && aMediaTypes.indexOf(sMediaType) === -1);
+		var bFileRestricted = (!!aFileTypes && (aFileTypes.length > 0) && !!sFileType && aFileTypes.indexOf(sFileType) === -1);
+
+		if (bMediaRestricted){
+			this.fireMediaTypeMismatch({item: oItem});
+		} else if (bFileRestricted){
+			this.fireFileTypeMismatch({item: oItem});
+		}
+	};
+
+	UploadSet.prototype._fireFileSizeExceed = function (oItem) {
+		this.fireFileSizeExceeded({item: oItem});
+	};
+
+	UploadSet.prototype._fireFilenameLengthExceed = function (oItem) {
+		this.fireFileNameLengthExceeded({item: oItem});
 	};
 
 	return UploadSet;
