@@ -17,7 +17,7 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 		buttonElement.style.display = "flex";
 		buttonElement.style.alignItems = "center";
 		buttonElement.style.justifyContent = "center";
-		var hasTitle = !AdaptiveCards.isNullOrEmpty(this.title);
+		var hasTitle = this.title;
 		var titleElement = document.createElement("div");
 		titleElement.style.overflow = "hidden";
 		titleElement.style.textOverflow = "ellipsis";
@@ -27,7 +27,7 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 		if (hasTitle) {
 			titleElement.innerText = this.title;
 		}
-		if (AdaptiveCards.isNullOrEmpty(this.iconUrl)) {
+		if (!this.iconUrl) {
 			buttonElement.classList.add("noIcon");
 			buttonElement.appendChild(titleElement);
 		} else {

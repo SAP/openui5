@@ -57,8 +57,8 @@ function (
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
-			var oUncheckedToggleInput = document.getElementById("ValueOffValueOn"),
-				oCheckedToggleInput = document.getElementById("Checked");
+			var oUncheckedToggleInput = document.querySelector("#ValueOffValueOn ui5-checkbox"),
+				oCheckedToggleInput = document.querySelector("#Checked ui5-checkbox");
 
 			//Assert
 			assert.strictEqual(oUncheckedToggleInput.tagName.toLowerCase(), "ui5-checkbox", "ui5-checkbox webcomponent is rendered");

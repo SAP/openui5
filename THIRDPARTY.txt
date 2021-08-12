@@ -376,7 +376,7 @@ License: Unicode-DFS-2015
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Unicode-DFS-2015.txt
 Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/webcomponents/Unicode-Data-Files-LICENSE.txt
 
-Component: Adaptive Cards, version: 1.2.3
+Component: Adaptive Cards, version: 2.9.0
 Copyright: 2017 Microsoft
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt

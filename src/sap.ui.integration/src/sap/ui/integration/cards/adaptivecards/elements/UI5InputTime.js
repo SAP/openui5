@@ -98,17 +98,17 @@ sap.ui.define([
 		 * @private
 		 */
 		UI5InputTime.prototype._handleMinMaxProps = function () {
-			this._isMinValid = this._min && this._isValidTime(this._min);
-			this._isMaxValid = this._max && this._isValidTime(this._max);
+			this._isMinValid = this.min && this._isValidTime(this.min);
+			this._isMaxValid = this.max && this._isValidTime(this.max);
 
 			if (this._isMinValid) {
-				this._aMinValue = this._min.split(":");
+				this._aMinValue = this.min.split(":");
 				this._iMinHour = Number(this._aMinValue[0]);
 				this._iMinMinute = Number(this._aMinValue[1]);
 			}
 
 			if (this._isMaxValid) {
-				this._aMaxValue = this._max.split(":");
+				this._aMaxValue = this.max.split(":");
 				this._iMaxHour = Number(this._aMaxValue[0]);
 				this._iMaxMinute = Number(this._aMaxValue[1]);
 			}

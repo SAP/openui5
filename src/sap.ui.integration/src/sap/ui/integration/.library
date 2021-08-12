@@ -63,7 +63,7 @@
             <copyright>1991-2014 Unicode, Inc.</copyright>
             <pattern>sap/ui/integration/thirdparty/webcomponents/Unicode-Data-Files-LICENSE.txt</pattern>
         </lib>
-        <lib name="adaptive-cards" displayName="Adaptive Cards" version="1.2.3" homepage="https://adaptivecards.io/">
+        <lib name="adaptive-cards" displayName="Adaptive Cards" version="2.9.0" homepage="https://adaptivecards.io/">
             <license url="https://github.com/microsoft/AdaptiveCards/blob/master/LICENSE" type="MIT"></license>
             <copyright>2017 Microsoft</copyright>
             <pattern>sap/ui/integration/thirdparty/adaptivecards.js</pattern>

@@ -337,30 +337,23 @@ sap.ui.define([
 		 */
 		AdaptiveContent.prototype._replaceElements = function () {
 			// Input.Text
-			AdaptiveCards.AdaptiveCard.elementTypeRegistry.unregisterType("Input.Text");
-			AdaptiveCards.AdaptiveCard.elementTypeRegistry.registerType("Input.Text", function () {
-				return new UI5InputText();
-			});
-			AdaptiveCards.AdaptiveCard.elementTypeRegistry.unregisterType("Input.Number");
-			AdaptiveCards.AdaptiveCard.elementTypeRegistry.registerType("Input.Number", function () {
-				return new UI5InputNumber();
-			});
-			AdaptiveCards.AdaptiveCard.elementTypeRegistry.unregisterType("Input.ChoiceSet");
-			AdaptiveCards.AdaptiveCard.elementTypeRegistry.registerType("Input.ChoiceSet", function () {
-				return new UI5InputChoiceSet();
-			});
-			AdaptiveCards.AdaptiveCard.elementTypeRegistry.unregisterType("Input.Time");
-			AdaptiveCards.AdaptiveCard.elementTypeRegistry.registerType("Input.Time", function () {
-				return new UI5InputTime();
-			});
-			AdaptiveCards.AdaptiveCard.elementTypeRegistry.unregisterType("Input.Date");
-			AdaptiveCards.AdaptiveCard.elementTypeRegistry.registerType("Input.Date", function () {
-				return new UI5InputDate();
-			});
-			AdaptiveCards.AdaptiveCard.elementTypeRegistry.unregisterType("Input.Toggle");
-			AdaptiveCards.AdaptiveCard.elementTypeRegistry.registerType("Input.Toggle", function () {
-				return new UI5InputToggle();
-			});
+			AdaptiveCards.GlobalRegistry.elements.unregister("Input.Text");
+			AdaptiveCards.GlobalRegistry.elements.register("Input.Text", UI5InputText);
+
+			AdaptiveCards.GlobalRegistry.elements.unregister("Input.Number");
+			AdaptiveCards.GlobalRegistry.elements.register("Input.Number", UI5InputNumber);
+
+			AdaptiveCards.GlobalRegistry.elements.unregister("Input.ChoiceSet");
+			AdaptiveCards.GlobalRegistry.elements.register("Input.ChoiceSet", UI5InputChoiceSet);
+
+			AdaptiveCards.GlobalRegistry.elements.unregister("Input.Time");
+			AdaptiveCards.GlobalRegistry.elements.register("Input.Time", UI5InputTime);
+
+			AdaptiveCards.GlobalRegistry.elements.unregister("Input.Date");
+			AdaptiveCards.GlobalRegistry.elements.register("Input.Date", UI5InputDate);
+
+			AdaptiveCards.GlobalRegistry.elements.unregister("Input.Toggle");
+			AdaptiveCards.GlobalRegistry.elements.register("Input.Toggle", UI5InputToggle);
 		};
 
 		/**

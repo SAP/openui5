@@ -55,8 +55,8 @@ function (
 			Core.applyChanges();
 
 			//Arrange
-			var oDateInput = document.getElementById("DateVal");
-			var oDateInputWithPlaceholder = document.getElementById("DateInputWithPlaceholder");
+			var oDateInput = document.querySelector("#DateVal ui5-datepicker");
+			var oDateInputWithPlaceholder = document.querySelector("#DateInputWithPlaceholder ui5-datepicker");
 
 			//Assert
 			assert.strictEqual(oDateInput.tagName.toLowerCase(), "ui5-datepicker", "ui5-datepicker webcomponent is rendered");
