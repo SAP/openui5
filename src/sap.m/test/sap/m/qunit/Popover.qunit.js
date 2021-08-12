@@ -742,6 +742,13 @@ sap.ui.define([
 			assert.equal(oBeginButtonFocusDom, document.activeElement, "beginButton should have the focus");
 		}
 		assert.ok(oBeginButton.$().closest("#" + oPopover.getId() + "-intHeader-BarLeft")[0], "Left button is set in the left side of the bar in iOS");
+
+		oBeginButton.setEnabled(false);
+		sap.ui.getCore().applyChanges();
+
+		if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
+			assert.equal(oPopover.getDomRef(), document.activeElement, "beginButton should not trap the focus");
+		}
 	});
 
 	QUnit.test("Add right button", function (assert){
@@ -749,6 +756,19 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.ok(jQuery.sap.domById("endButton"), "EndButton should be rendered");
 		assert.ok(oEndButton.$().closest("#" + oPopover.getId() + "-intHeader-BarRight")[0], "EndButton is set in the right side of the bar");
+
+		if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
+			assert.equal(oEndButton.getFocusDomRef(), document.activeElement, "endButton should be focused, when beginButton is disabled");
+		}
+
+		oEndButton.setEnabled(false);
+		sap.ui.getCore().applyChanges();
+
+		if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
+			assert.equal(oPopover.getDomRef(), document.activeElement, "endButton should not trap the focus");
+		}
+
+		oEndButton.setEnabled(true);
 	});
 
 	QUnit.test("Remove beginButton", function (assert){
