@@ -46,6 +46,14 @@ sap.ui.define(['sap/ui/core/Renderer', './CalendarRenderer'],
 			oRm.class("sapUiCalIntHead");
 		}
 
+		if (oCal.getShowDayNamesLine()) {
+			oRm.class("sapUiCalWithDayNamesLine");
+		}
+
+		if (oCal.getShowWeekNumbers()) {
+			oRm.class("sapUiCalWithWeekNumbers");
+		}
+
 	};
 
 	return CalendarDateIntervalRenderer;
