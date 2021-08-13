@@ -310,8 +310,9 @@ sap.ui.define([
 		 * @private
 		 */
 		DynamicPageHeader.prototype._focusCollapseButton = function () {
+			var sTextToAnnounce = this._getCollapseButton().getTooltip() + " " + DynamicPageHeader._getResourceBundle().getText("EXPANDED_HEADER");
 			this._getCollapseButton().$().trigger("focus");
-			this._oInvisibleMessage.announce(this._getCollapseButton().getTooltip(), InvisibleMessageMode.Polite);
+			this._oInvisibleMessage.announce(sTextToAnnounce, InvisibleMessageMode.Polite);
 		};
 
 		/**
