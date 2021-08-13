@@ -251,7 +251,7 @@ sap.ui.define([
 	 * Invalidates the LightBox.
 	 *
 	 * @public
-	 * @param {object} oOrigin Origin of the invalidation.
+	 * @param {sap.ui.base.ManagedObject} oOrigin Origin of the invalidation.
 	 * @returns {this} this LightBox reference for chaining.
 	 */
 	LightBox.prototype.invalidate = function (oOrigin) {
