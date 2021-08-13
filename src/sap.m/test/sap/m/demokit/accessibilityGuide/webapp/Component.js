@@ -1,10 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/IconPool",
 	"sap/ui/Device"
 ], function (
 	UIComponent,
-	IconPool,
 	Device
 ) {
 	"use strict";
