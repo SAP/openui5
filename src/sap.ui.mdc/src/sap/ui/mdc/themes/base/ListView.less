@@ -1,6 +1,6 @@
 //Display ':' for Labels in the 'list' view
-.sapUiMDCListView.sapUiMDCAFLabelMarkingList tbody  .sapMLabel > span:first-child::after {
-	content: ":";
+.sapUiMDCListView.sapUiMDCAFLabelMarkingList tbody  .sapMLabel > .sapMLabelColonAndRequired::before{
+	content: attr(data-colon);
 }
 
 //Display checkbox at the top for items in the ListView
