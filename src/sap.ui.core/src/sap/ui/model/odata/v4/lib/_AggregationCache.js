@@ -207,6 +207,8 @@ sap.ui.define([
 		}
 		_Helper.setPrivateAnnotation(oGroupNode, "spliced", aElements.splice(iIndex + 1, iCount));
 		aElements.$count -= iCount;
+		_Helper.updateAll(this.mChangeListeners, sGroupNodePath, oGroupNode,
+			{"@$ui5.node.groupLevelCount" : undefined});
 
 		return iCount;
 	};
@@ -313,7 +315,9 @@ sap.ui.define([
 					}
 				}
 			});
-
+			_Helper.updateAll(that.mChangeListeners, vGroupNodeOrPath, oGroupNode,
+				{"@$ui5.node.groupLevelCount" :
+					_Helper.getPrivateAnnotation(oGroupNode, "groupLevelCount")});
 			return SyncPromise.resolve(iCount);
 		}
 
@@ -346,6 +350,9 @@ sap.ui.define([
 			}
 
 			iCount = oResult.value.$count;
+			_Helper.setPrivateAnnotation(oGroupNode, "groupLevelCount", iCount);
+			_Helper.updateAll(that.mChangeListeners, vGroupNodeOrPath, oGroupNode,
+				{"@$ui5.node.groupLevelCount" : iCount});
 			if (bSubtotalsAtBottom) {
 				iCount += 1;
 			}

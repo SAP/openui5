@@ -13,6 +13,7 @@ sap.ui.define([
 		var aAfterExpandBwSmall,
 			oBw = {
 				level : 2,
+				groupLevelCount : "",
 				expanded : false,
 				country : "Germany",
 				region : "Baden-Württemberg",
@@ -25,6 +26,7 @@ sap.ui.define([
 			},
 			oBwSmall = {
 				level : 3,
+				groupLevelCount : "",
 				expanded : false,
 				country : "Germany",
 				region : "Baden-Württemberg",
@@ -37,6 +39,7 @@ sap.ui.define([
 			},
 			oGermany = {
 				level : 1,
+				groupLevelCount : "",
 				expanded : false,
 				country : "Germany",
 				region : "",
@@ -111,6 +114,7 @@ sap.ui.define([
 
 		aInitialTableState = [{
 			level : 0,
+			groupLevelCount : "",
 			expanded : true,
 			country : "",
 			region : "",
@@ -122,6 +126,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 1,
+			groupLevelCount : "",
 			expanded : false,
 			country : "USA",
 			region : "",
@@ -133,6 +138,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 1,
+			groupLevelCount : "",
 			expanded : false,
 			country : "United Kingdom",
 			region : "",
@@ -151,6 +157,7 @@ sap.ui.define([
 		toggleExpandInRow(3, "Expand Germany.");
 		checkTable([{
 			level : 0,
+			groupLevelCount : "",
 			expanded : true,
 			country : "",
 			region : "",
@@ -162,6 +169,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 1,
+			groupLevelCount : "",
 			expanded : false,
 			country : "USA",
 			region : "",
@@ -173,6 +181,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 1,
+			groupLevelCount : "",
 			expanded : false,
 			country : "United Kingdom",
 			region : "",
@@ -184,6 +193,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 1,
+			groupLevelCount : "7",
 			expanded : true,
 			country : "Germany",
 			region : "",
@@ -195,6 +205,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 2,
+			groupLevelCount : "",
 			expanded : false,
 			country : "Germany",
 			region : "Saxony",
@@ -209,6 +220,7 @@ sap.ui.define([
 		When.onTheMainPage.scrollToRow(6, "Scroll to B.-W.");
 		checkTable([{
 			level : 0,
+			groupLevelCount : "",
 			expanded : true,
 			country : "",
 			region : "",
@@ -220,6 +232,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 2,
+			groupLevelCount : "",
 			expanded : false,
 			country : "Germany",
 			region : "Hamburg",
@@ -231,6 +244,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 2,
+			groupLevelCount : "",
 			expanded : false,
 			country : "Germany",
 			region : "Berlin",
@@ -242,6 +256,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 2,
+			groupLevelCount : "",
 			expanded : false,
 			country : "Germany",
 			region : "Bavaria",
@@ -258,6 +273,7 @@ sap.ui.define([
 		When.onTheMainPage.scrollToRow(9, "Scroll to B.-W./Small.");
 		checkTable([{
 			level : 0,
+			groupLevelCount : "",
 			expanded : true,
 			country : "",
 			region : "",
@@ -269,6 +285,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 2,
+			groupLevelCount : "3",
 			expanded : true,
 			country : "Germany",
 			region : "Baden-Württemberg",
@@ -280,6 +297,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 3,
+			groupLevelCount : "",
 			expanded : false,
 			country : "Germany",
 			region : "Baden-Württemberg",
@@ -291,6 +309,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 3,
+			groupLevelCount : "",
 			expanded : false,
 			country : "Germany",
 			region : "Baden-Württemberg",
@@ -307,6 +326,7 @@ sap.ui.define([
 		When.onTheMainPage.scrollToRow(11, "Scroll to B.-W./Small/Winfried Maier.");
 		aAfterExpandBwSmall = [{
 			level : 0,
+			groupLevelCount : "",
 			expanded : true,
 			country : "",
 			region : "",
@@ -318,6 +338,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 3,
+			groupLevelCount : "",
 			expanded : false,
 			country : "Germany",
 			region : "Baden-Württemberg",
@@ -329,6 +350,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 3,
+			groupLevelCount : "2",
 			expanded : true,
 			country : "Germany",
 			region : "Baden-Württemberg",
@@ -340,6 +362,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 4,
+			groupLevelCount : "",
 			expanded : undefined,
 			country : "Germany",
 			region : "Baden-Württemberg",
@@ -351,6 +374,7 @@ sap.ui.define([
 			subtotal : false
 		}, {
 			level : 4,
+			groupLevelCount : "",
 			expanded : undefined,
 			country : "Germany",
 			region : "Baden-Württemberg",

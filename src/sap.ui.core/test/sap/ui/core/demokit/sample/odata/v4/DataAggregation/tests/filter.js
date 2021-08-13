@@ -11,6 +11,7 @@ sap.ui.define([
 	return function (Given, When, Then) {
 		var aInitialTableData = [{
 				level : 0,
+				groupLevelCount : "",
 				expanded : true,
 				country : "",
 				region : "",
@@ -22,6 +23,7 @@ sap.ui.define([
 				subtotal : true
 			}, {
 				level : 1,
+				groupLevelCount : "",
 				expanded : false,
 				country : "USA",
 				region : "",
@@ -33,6 +35,7 @@ sap.ui.define([
 				subtotal : true
 			}, {
 				level : 1,
+				groupLevelCount : "",
 				expanded : false,
 				country : "United Kingdom",
 				region : "",
@@ -44,6 +47,7 @@ sap.ui.define([
 				subtotal : true
 			}, {
 				level : 1,
+				groupLevelCount : "",
 				expanded : false,
 				country : "Germany",
 				region : "",
@@ -73,6 +77,7 @@ sap.ui.define([
 		When.onTheMainPage.scrollToRow(Infinity, "Scroll to Saxony/Small/Michael Meier.");
 		Then.onTheMainPage.checkTable([{
 			level : 0,
+			groupLevelCount : "",
 			expanded : true,
 			country : "",
 			region : "",
@@ -84,6 +89,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 3,
+			groupLevelCount : "",
 			expanded : false,
 			country : "Germany",
 			region : "Saxony",
@@ -95,6 +101,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 3,
+			groupLevelCount : "",
 			expanded : false,
 			country : "Germany",
 			region : "Saxony",
@@ -106,6 +113,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 3,
+			groupLevelCount : "1",
 			expanded : true,
 			country : "Germany",
 			region : "Saxony",
@@ -117,6 +125,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 4,
+			groupLevelCount : "",
 			expanded : undefined,
 			country : "Germany",
 			region : "Saxony",
@@ -134,6 +143,7 @@ sap.ui.define([
 		When.onTheMainPage.toggleExpandInRow(3, "Expand Large.");
 		Then.onTheMainPage.checkTable([{
 			level : 0,
+			groupLevelCount : "",
 			expanded : true,
 			country : "",
 			region : "",
@@ -145,6 +155,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 1,
+			groupLevelCount : "1",
 			expanded : true,
 			country : "United Kingdom",
 			region : "",
@@ -156,6 +167,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 2,
+			groupLevelCount : "3",
 			expanded : true,
 			country : "United Kingdom",
 			region : "Wales",
@@ -167,6 +179,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 3,
+			groupLevelCount : "1",
 			expanded : true,
 			country : "United Kingdom",
 			region : "Wales",
@@ -178,6 +191,7 @@ sap.ui.define([
 			subtotal : true
 		}, {
 			level : 4,
+			groupLevelCount : "",
 			expanded : undefined,
 			country : "United Kingdom",
 			region : "Wales",
