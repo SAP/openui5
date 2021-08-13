@@ -47,7 +47,12 @@ sap.ui.define([
 			sId = oSF.getId(),
 			bShowRefreshButton = oSF.getShowRefreshButton(),
 			bShowSearchBtn = oSF.getShowSearchButton(),
-			oAccAttributes = {}, // additional accessibility attributes
+			oAccAttributes = {
+				describedby: {
+					value: SearchFieldRenderer._getDescribedBy(oSF),
+					append: true
+				}
+			},
 			sToolTipValue,
 			sRefreshToolTip = oSF.getRefreshButtonTooltip(),
 			sResetToolTipValue;
@@ -121,17 +126,6 @@ sap.ui.define([
 
 			rm.attr("value", sValue);
 
-			// ARIA attributes
-			if (oSF.getEnabled() && bShowRefreshButton) {
-				var sAriaF5LabelId = InvisibleText.getStaticId("sap.m", "SEARCHFIELD_ARIA_F5");
-				if (sAriaF5LabelId) {
-					oAccAttributes.describedby = {
-						value: sAriaF5LabelId,
-						append: true
-					};
-				}
-			}
-
 			oAccAttributes.disabled = null;
 
 			rm.accessibilityState(oSF, oAccAttributes);
@@ -195,6 +189,16 @@ sap.ui.define([
 			}
 
 		rm.close("div");
+	};
+
+	SearchFieldRenderer._getDescribedBy = function (oSF) {
+		var sDescribedBy = InvisibleText.getStaticId("sap.m", "SEARCHFIELD_ARIA_DESCRIBEDBY");
+
+		if (oSF.getEnabled() && oSF.getShowRefreshButton()) {
+			sDescribedBy += " " + InvisibleText.getStaticId("sap.m", "SEARCHFIELD_ARIA_F5");
+		}
+
+		return sDescribedBy;
 	};
 
 	return SearchFieldRenderer;
