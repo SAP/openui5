@@ -1223,21 +1223,26 @@ sap.ui.define(["jquery.sap.script", "sap/base/util/isEmptyObject"], function(jQu
 
 	QUnit.test("valid expressions", function(assert) {
 		[
-			"{}",
-			"{test:'123'}",
-			"{test:\"123\"}",
-			"{23:'test'}",
-			"{aa:'123', bb:'456'}",
-			"{a1:123, b2:'456', c3:false}",
-			"{a:{}, b:[], c:'test'}",
-			"{a:{a:{a:{a:{a:{}}}}}}",
-			"{$a:{$a:{$a:{$a:{$a:{}}}}}}",
-			"{arr:[1,2,3,4]}",
-			"{arr:[1,'2',3,false]}",
-			"{test:'{test}'}",
-			"{test:'\\'\"\\\\'}"
+			["{}", {}],
+			["{test:'123'}", { test: "123" }],
+			["{test:456.00}", { test: 456.00 }],
+			["{test:-456}", { test: -456 }],
+			["{test:-456e9}", { test: -456e9 }],
+			["{test:77E-4}", { test: 77E-4 }],
+			["{test:\"123\"}", { test: "123" }],
+			["{23:'test'}", { 23: "test" }],
+			["{'23':'test'}", { "23": "test" }],
+			["{aa:'123', bb:'456'}", { aa: "123", bb: "456" }],
+			["{a1:123, b2:'456', c3:false, c4:true, d5:null}", { a1: 123, b2: "456", c3: false, c4: true, d5: null }],
+			["{a:{}, b:[], c:'test'}", { a: {}, b: [], c: "test" }],
+			["{a:{a:{a:{a:{a:{}}}}}}", { a: { a: { a: { a: { a: {}}}}}}],
+			["{$a:{$a:{$a:{$a:{$a:{}}}}}}", { $a: { $a: { $a: { $a: { $a: {}}}}}}],
+			["{arr:[1,2,3,4]}", { arr: [1, 2, 3, 4] }],
+			["{arr:[1,'2',3,false]}", { arr: [1, "2", 3, false] }],
+			["{test:'{test}'}", { test: "{test}" }],
+			["{test:'\\'\"\\\\'}", { test: "'\"\\"}]
 		].forEach(function(input) {
-			assert.deepEqual(jQuery.sap.parseJS(input), eval("(" + input + ")"), "Parse " + input); // eslint-disable-line no-eval
+			assert.deepEqual(jQuery.sap.parseJS(input[0]), input[1], "Parse " + input[0]);
 		});
 	});
 
