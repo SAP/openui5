@@ -2277,7 +2277,8 @@ sap.ui.define([
 					originalVisible: true,
 					executeOnSelect: false,
 					originalExecuteOnSelect: false,
-					author: VariantUtil.DEFAULT_AUTHOR
+					author: VariantUtil.DEFAULT_AUTHOR,
+					sharing: "public"
 				}]
 			};
 			var oReturnPromise = this.oModel.waitForVMControlInit("varMgmtRef1").then(function() {

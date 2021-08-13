@@ -56,6 +56,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Object with properties
 	 * @param {string} mPropertyBag.vmReference - Variant management reference
 	 * @param {sap.ui.fl.variants.VariantModel} mPropertyBag.model - Variant model instance
+	 * @returns {Promise<undefined>} Resolves with undefined
 	 *
 	 * @private
 	 */
@@ -276,6 +277,11 @@ sap.ui.define([
 			this.pSequentialImportCompleted = Promise.resolve();
 			JSONModel.apply(this, arguments);
 			this.bObserve = bObserve;
+
+			this.sharing = {
+				PRIVATE: "private",
+				PUBLIC: "public"
+			};
 
 			// FlexControllerFactory creates a FlexController instance for an application component,
 			// which creates a ChangePersistence instance.
@@ -654,7 +660,8 @@ sap.ui.define([
 			change: true,
 			remove: true,
 			visible: true,
-			originalVisible: true
+			originalVisible: true,
+			sharing: mPropertyBag.layer === Layer.USER ? this.sharing.PRIVATE : this.sharing.PUBLIC
 		};
 
 		var oVariant = VariantUtil.createVariant({
@@ -1083,8 +1090,9 @@ sap.ui.define([
 			this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
 				oVariant.rename = true;
 				oVariant.change = true;
+				oVariant.sharing = this.sharing.PUBLIC;
 				oVariant.remove = isVariantValidForRemove(oVariant, sVariantManagementReference, bDesignTimeModeToBeSet);
-			});
+			}.bind(this));
 		} else if (this.oData[sVariantManagementReference]._isEditable) { // Personalization settings
 			oControl.attachManage({
 				variantManagementReference: sVariantManagementReference
@@ -1100,6 +1108,7 @@ sap.ui.define([
 					case Layer.USER:
 						oVariant.rename = true;
 						oVariant.change = true;
+						oVariant.sharing = this.sharing.PRIVATE;
 						updatePersonalVariantPropertiesWithFlpSettings(oVariant);
 						break;
 					case Layer.PUBLIC:
@@ -1109,12 +1118,14 @@ sap.ui.define([
 						oVariant.remove = bUserIsAuthorized;
 						oVariant.rename = bUserIsAuthorized;
 						oVariant.change = bUserIsAuthorized;
+						oVariant.sharing = this.sharing.PUBLIC;
 						break;
 					default:
 						oVariant.rename = false;
 						oVariant.change = false;
+						oVariant.sharing = this.sharing.PUBLIC;
 				}
-			});
+			}.bind(this));
 		} else {
 			this.oData[sVariantManagementReference].variantsEditable = false;
 			this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
