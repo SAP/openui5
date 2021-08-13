@@ -14,6 +14,7 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/ObjectNumber",
 	"sap/m/ObjectMarker",
+	"sap/m/Label",
 	"jquery.sap.keycodes"
 ], function(
 	qutils,
@@ -28,7 +29,8 @@ sap.ui.define([
 	mobileLibrary,
 	jQuery,
 	ObjectNumber,
-	ObjectMarker
+	ObjectMarker,
+	Label
 ) {
 	// shortcut for sap.m.ObjectMarkerType
 	var ObjectMarkerType = mobileLibrary.ObjectMarkerType;
@@ -1093,6 +1095,21 @@ sap.ui.define([
 
 		// Clean up
 		oObjectHeader.destroy();
+	});
+
+	QUnit.test("Presence of ariaLabelledBy references", function (assert) {
+		var oLabel = new Label("label", { text: "Label" }),
+			oOH = new ObjectHeader("objectHeader", { title: "Title", titleActive: true, ariaLabelledBy: "label" });
+
+		oLabel.placeAt("qunit-fixture");
+		oOH.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(jQuery("#objectHeader>.sapMOH").attr("aria-labelledby").includes("label"), true,
+				"Reference added via ariaLabelledBy has been added in aria-labelledby");
+
+		oOH.destroy();
+		oLabel.destroy();
 	});
 
 	/******************************************************************/

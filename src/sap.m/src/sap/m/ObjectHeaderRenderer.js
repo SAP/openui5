@@ -696,18 +696,17 @@ sap.ui.define([
 		if (sTooltip) {
 			oRM.attr("title", sTooltip);
 		}
+
 		// ARIA attributes
-		oRM.accessibilityState({ role : "region" });
+		var mAccProps = {
+			role: "region"
+		};
 
 		if (oOH.getTitle()) {
-			oRM.accessibilityState({
-				labelledby: {
-					value: oOH.getId() + "-titleText-inner",
-					append: true
-				}
-			});
+			mAccProps.labelledby = { value: oOH.getId() + "-titleText-inner", append: true };
 		}
 
+		oRM.accessibilityState(oOH, mAccProps);
 		oRM.openEnd();
 
 		if (bCondensed) {
