@@ -1,70 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 	<title>Labeling</title>
-	<meta http-equiv="Content-Type" content="text/html">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
 	<script src="../../../scripts/boot.js"></script>
 </head>
-
 <body class="sapUiBody topicBody">
-<div class="topic">
-	<div class="content">
-		<h1 id="label">
-			When to label, when to tooltip?
-		</h1>
-		<p>Proper labeling of all UI elements is needed in order to ensure that the screen reader announces everything correctly.
-            <br>
-			Here you can find information about available options and how and when they should be used.</p>
-            <h2>Input elements should have labels.</h2>
-				<pre class="prettyprint lang-xml" lines="1">
-&lt;label text="First Name" labelFor="name"/>
-&lt;input id="name"/></pre>
-				<a class="try-button" href="../../../index.html#/explore/simpleForm" target="_parent">See Example</a>
-			<h2>Tables should have titles</h2>
-                <pre class="prettyprint lang-xml" lines="1-2">
-&lt;Title id="title" text="Products"/&gt;
-&lt;Table ariaLabelledBy="title"&gt;
-    &lt;columns&gt;
-        &lt;Column width="11rem"&gt;
-            &lt;Text text="Product Name"/&gt;
-        &lt;/Column&gt;
-        &lt;Column width="11rem">
-            &lt;Text text="Product Id"/&gt;
-        &lt;/Column&gt;
-    &lt;/columns&gt;
-    &lt;items&gt;
-        &lt;ColumnListItem&gt;
-            &lt;cells&gt;
-                &lt;ObjectIdentifier
-                        title="Notebook"/&gt;
-                &lt;ObjectIdentifier
-                        title="00001"/&gt;
-            &lt;/cells&gt;
-        &lt;/ColumnListItem&gt;
-    &lt;/items&gt;
-&lt;/Table&gt;</pre>
-            <h2>Non-decorative sap.m.Image/sap.ui.core.Icon should provide a meaningful alternative description in the <code>alt</code> property.</h2>
-                <pre class="prettyprint lang-xml">
-&lt;Image  src="IMAGE_PATH" alt="This is an image showing an elephant" decorative=false/&gt;
-</pre>
-            <h2>Icon-only sap.m.Button should have a tooltip.</h2>
-                <pre class="prettyprint lang-xml">
-&lt;Button icon="sap-icon://action" press="onPress" tooltip="Action Name" /&gt;
-</pre>
-            <h2>Dialog with static content should be labelled</h2>
-                <pre class="prettyprint lang-xml" lines="1,3">
-&lt;Dialog ariaLabelledBy="title" title="Product"&gt;
-    &lt;content&gt;
-        &lt;Text id="title" text="Notebook"/&gt;
-    &lt;/content&gt;
-&lt;/Dialog&gt;</pre>
-                <a class="try-button" href="../../../index.html#/explore/dialog" target="_parent">See Example</a>
-	</div>
-</div>
-</body>
+	<div class="topic">
+		<div class="content">
+			<h1 id="label">
+				When to label, when to tooltip?
+			</h1>
+			<p>Proper labeling of all UI elements is needed in order to ensure that the screen reader announces everything correctly.</p>
+			<p>Here you can find information about available options and how and when they should be used.</p>
 
+			<h2>Input elements should have labels.</h2>
+			<pre class="lang-xml">
+<mark>&lt;Label text="First Name" labelFor="name" /></mark>
+&lt;Input id="name" /></pre>
+			<a class="try-button" href="../../../index.html#/explore/simpleForm" target="_parent">See Example</a>
+
+			<h2>Tables should have titles</h2>
+			<pre class="lang-xml">
+<mark>&lt;Title id="title" text="Products" /&gt;
+&lt;Table ariaLabelledBy="title"&gt;</mark>
+	&lt;columns&gt;
+		&lt;Column width="11rem"&gt;
+			&lt;Text text="Product Name" /&gt;
+		&lt;/Column&gt;
+		&lt;Column width="11rem">
+			&lt;Text text="Product Id" /&gt;
+		&lt;/Column&gt;
+	&lt;/columns&gt;
+	&lt;items&gt;
+		&lt;ColumnListItem&gt;
+			&lt;cells&gt;
+				&lt;ObjectIdentifier title="Notebook" /&gt;
+				&lt;ObjectIdentifier title="00001" /&gt;
+			&lt;/cells&gt;
+		&lt;/ColumnListItem&gt;
+	&lt;/items&gt;
+&lt;/Table&gt;</pre>
+
+			<h2>Non-decorative sap.m.Image/sap.ui.core.Icon should provide a meaningful alternative description in the <code>alt</code> property.</h2>
+			<pre class="lang-xml">
+&lt;Image src="IMAGE_PATH" alt="This is an image showing an elephant" decorative=false /&gt;</pre>
+
+			<h2>Icon-only sap.m.Button should have a tooltip.</h2>
+			<pre class="lang-xml">
+&lt;Button icon="sap-icon://action" press=".onPress" tooltip="Action Name" /&gt;</pre>
+
+			<h2>Dialog with static content should be labeled</h2>
+			<pre class="lang-xml">
+<mark>&lt;Dialog ariaLabelledBy="title" title="Product"&gt;</mark>
+		&lt;content&gt;<mark>
+			&lt;Text id="title" text="Notebook" /&gt;</mark>
+		&lt;/content&gt;
+	&lt;/Dialog&gt;</pre>
+			<a class="try-button" href="../../../index.html#/explore/dialog" target="_parent">See Example</a>
+		</div>
+	</div>
+</body>
 </html>

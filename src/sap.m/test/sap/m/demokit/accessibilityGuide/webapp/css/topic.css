@@ -124,13 +124,10 @@
 	background-color: #1F69B0;
 }
 
-pre.prettyprint {
+pre {
 	background: #fff;
 	border: 1px solid #e0e0e0 !important;
 	border-radius: 5px;
-}
-
-.prettyprint {
 	overflow: auto;
 }
 
@@ -140,14 +137,14 @@ pre.prettyprint {
 
 .messageStripWarning {
 	background-color: #fef7f1;
-    color: #32363a;
+	color: #32363a;
 	border: 1px solid #e9730c;
-    border-radius: 0.1875rem;
-    box-sizing: border-box;
-    font-size: 0.875rem;
-    font-weight: normal;
-    padding: 0.4375rem 1rem;
-    position: relative;
+	border-radius: 0.1875rem;
+	box-sizing: border-box;
+	font-size: 0.875rem;
+	font-weight: normal;
+	padding: 0.4375rem 1rem;
+	position: relative;
 	min-height: 2rem;
 }
 
@@ -162,7 +159,7 @@ html.sap-phone .content {
 	padding: 0 1rem;
 }
 
-html.sap-phone .content ul{
+html.sap-phone .content ul {
 	padding-inline-start: 16px;
 }
 
