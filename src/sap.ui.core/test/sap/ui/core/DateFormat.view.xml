@@ -1,0 +1,117 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form"
+	displayBlock="true"> 
+	<App autoFocus="false">
+		<Page title="DateFormat" enableScrolling="false">
+			<HBox fitContainer="true">
+				<ScrollContainer width="100%" height="100%" horizontal="false" vertical="true">
+					<layoutData>
+						<FlexItemData baseSize="100%" />
+					</layoutData>
+					<content>
+						<form:SimpleForm layout="ResponsiveGridLayout" columnsL="1" width="100%" editable="true">
+
+
+							<core:Title text="Output" />
+
+							<Label text="" />
+							<Input class="large"
+									value="{
+										parts: ['/date', '/todate', '/type', '/formatOptions', '/locale', '/timezone'],
+										formatter: '.genericFormat'
+									}"
+									change=".genericParse"
+							/>
+
+
+							<core:Title text="Input" />
+
+							<Label text="Format Options" />
+							<TextArea id="formatOptions" class="large" rows="6"
+								liveChange=".onFormatOptionChange"
+							/>
+
+							<Label text="Type" />
+							<Select selectedKey="{/type}" change=".onTypeChange">
+								<core:Item key="Date" text="Date" />
+								<core:Item key="Time" text="Time" />
+								<core:Item key="DateTime" text="DateTime" />
+								<core:Item key="DateTimeWithTimezone" text="DateTimeWithTimezone" />
+							</Select>
+
+							<Label text="Sample" />
+							<Select selectedKey="{/sample}" items="{/samples}" change=".onSampleChange">
+								<core:Item key="{key}" text="{text}" />
+							</Select>
+
+							<Label text="Local Date/Time" />
+							<Input class="large largeinput" 
+									value="{
+											path: '/date',
+											type: 'sap.ui.model.type.DateTime',
+											formatOptions: {
+												calendarType: 'Gregorian',
+												pattern: 'yyyy-MM-dd HH:mm:ss'
+											}
+										}" />
+
+							<Label text="Timezone"
+									visible="{= ${/type} === 'DateTimeWithTimezone'}" />
+							<Input class="large largeinput" showSuggestion="true"
+									value="{
+										path: '/timezone',
+										type: 'sap.ui.model.type.String'
+									}"
+									suggestionItems="{/timezonesSuggestions}"
+									visible="{= ${/type} === 'DateTimeWithTimezone'}" >
+								<suggestionItems>
+									<core:ListItem additionalText="{diff}" text="{name}" />
+								</suggestionItems>
+							</Input>
+
+							<Label text="To Date/Time"
+									visible="{= ${/formatOptions}.interval === true}" />
+							<Input class="large largeinput"
+										value="{
+											path: '/todate',
+											type: 'sap.ui.model.type.DateTime',
+											formatOptions: {
+												calendarType: 'Gregorian',
+												pattern: 'yyyy-MM-dd HH:mm:ss'
+											}
+										}"
+									visible="{= ${/formatOptions}.interval === true}" />
+
+							<Label text="Locale" />
+							<Input class="large largeinput"
+									showSuggestion="true"
+									suggestionItems="{/localesSuggestions}"
+									value= "{path: '/locale', type: 'local.LocaleType'}"
+									change=".onLocaleChange" >
+								<suggestionItems>
+									<SuggestionItem icon="{path:'name', formatter: '.formatLocaleIcon'}" text="{name}" />
+								</suggestionItems>
+							</Input>
+						</form:SimpleForm>
+					</content>
+				</ScrollContainer>
+
+				<ScrollContainer width="400px" height="100%" horizontal="false" vertical="true">
+					<layoutData>
+						<FlexItemData baseSize="400px" />
+					</layoutData>
+					<content>
+						<List items="{/locales}">
+							<LocaleListItem xmlns="local"
+									locale="{}"
+									text="{
+										parts: ['/date', '/todate', '/formatOptions', '/type', '', '/timezone'],
+										formatter: '.formatLocaleText'
+									}"
+							/>
+						</List>
+					</content>
+				</ScrollContainer>
+			</HBox>
+		</Page>
+	</App>
+</mvc:View>
