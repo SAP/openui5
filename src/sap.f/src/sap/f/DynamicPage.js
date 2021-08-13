@@ -1243,13 +1243,15 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._getMaxScrollPosition = function() {
 		var $wrapperDom,
-			iClientHeightPrecise;
+			iClientHeight;
 
 		if (exists(this.$wrapper)) {
 			$wrapperDom = this.$wrapper[0];
-			iClientHeightPrecise = $wrapperDom.getBoundingClientRect().height;
-			// compare with precise height to avoid 1px difference due to rounding
-			return $wrapperDom.scrollHeight - iClientHeightPrecise;
+			// we obtain the ceiled <code>iClientHeight</code> value
+			// to avoid ending up with that <code>iClientHeight</code> that is only a single pixel
+			// bigger than <code>scrollHeight</code> due to rounding (=> will cause redundand scrollbar)
+			iClientHeight = Math.max($wrapperDom.clientHeight, Math.ceil($wrapperDom.getBoundingClientRect().height));
+			return $wrapperDom.scrollHeight - iClientHeight;
 		}
 		return 0;
 	};
