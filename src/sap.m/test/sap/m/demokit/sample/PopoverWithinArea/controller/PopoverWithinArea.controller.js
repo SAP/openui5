@@ -63,6 +63,30 @@ sap.ui.define([
 			});
 		},
 
+		handleInnerPopoverPress: function (oEvent) {
+			// Set the element that will serve as 'within area' for all popups
+			Popup.setWithinArea(this.byId("withinArea"));
+
+			var oButton = oEvent.getSource(),
+				oView = this.getView();
+
+			// Create popover
+			if (!this._pInnerPopover) {
+				this._pInnerPopover = Fragment.load({
+					id: oView.getId(),
+					name: "sap.m.sample.PopoverWithinArea.view.InnerPopoverWithinArea",
+					controller: this
+				}).then(function(oPopover) {
+					oView.addDependent(oPopover);
+					oPopover.bindElement("/ProductCollection/0");
+					return oPopover;
+				});
+			}
+			this._pInnerPopover.then(function(oPopover) {
+				oPopover.openBy(oButton);
+			});
+		},
+
 		handleAfterClose: function (oEvent) {
 			Popup.setWithinArea(null);
 		}

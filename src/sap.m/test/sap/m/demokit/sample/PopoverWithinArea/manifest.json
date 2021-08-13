@@ -24,6 +24,7 @@
 					"view/PopoverWithinArea.view.xml",
 					"controller/PopoverWithinArea.controller.js",
 					"view/ListPopoverWithinArea.fragment.xml",
+					"view/InnerPopoverWithinArea.fragment.xml",
 					"view/PopoverWithinArea.fragment.xml",
 					"manifest.json"
 				]

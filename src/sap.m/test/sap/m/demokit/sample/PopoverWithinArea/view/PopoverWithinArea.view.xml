@@ -9,12 +9,16 @@
 				press="handlePopoverPress"
 				class="sapUiLargeMargin"
 				ariaHasPopup="Dialog" />
-			<VBox id="withinArea" backgroundDesign="Solid" height="40rem" width="40rem">
+			<VBox id="withinArea" backgroundDesign="Solid" height="30rem" width="60rem" alignItems="Center" justifyContent="Center">
+				<Button
+					text="Show Inside Popover"
+					press="handleInnerPopoverPress"
+					ariaHasPopup="Dialog" />
 				<layoutData>
 					<FlexItemData backgroundDesign="Solid" />
 				</layoutData>
 			</VBox>
-			<FlexBox direction="Column" alignItems="End" justifyContent="End" height="40rem">
+			<FlexBox direction="Column" alignItems="End" justifyContent="End" height="30rem">
 				<Button
 					text="Show Popover with List"
 					press="handleListPopoverPress"

@@ -2,12 +2,11 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
 	<Popover
-		id="myListPopover"
-		title="Products"
+		id="myInnerPopover"
 		afterClose="handleAfterClose"
 		placement="Left">
 		<List
-			id="list"
+			id="inner-List"
 			items="{/ProductCollection}" >
 			<StandardListItem
 				title="{Name}"
