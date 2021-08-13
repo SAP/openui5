@@ -254,15 +254,11 @@ function(
 				oEvent.preventDefault();
 			}
 
-			if (oEvent.which === KeyCodes.ENTER) {
-				this._getTextButton().firePress({/* no parameters */ });
-			}
+			this._getTextButton().onkeydown(oEvent);
 		};
 
 		SplitButton.prototype.onkeyup = function(oEvent) {
-			if (oEvent.which === KeyCodes.SPACE) {
-				this._getTextButton().firePress({/* no parameters */ });
-			}
+			this._getTextButton().onkeyup(oEvent);
 		};
 
 		SplitButton.prototype.onsapup = function(oEvent) {
