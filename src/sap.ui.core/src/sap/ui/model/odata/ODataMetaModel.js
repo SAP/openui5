@@ -587,7 +587,7 @@ sap.ui.define([
 				oCodeListModel.read("/" + sCollectionPath, {
 					error : fnReject,
 					success : fnResolve,
-					urlParameters : {$skip : 0, $top : 5000} // avoid server side paging
+					urlParameters : {$skip : 0, $top : 5000} // avoid server-driven paging
 				});
 			});
 			oMappingPromise = new SyncPromise(function (fnResolve, fnReject) {
