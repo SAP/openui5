@@ -29,6 +29,11 @@ sap.ui.define([
 	var _aNumericInputFields = ["frameWidth", "frameHeight"];
 	var _aSelectInputFields = ["asNewSection", "frameWidthUnit", "frameHeightUnit"];
 
+
+	function isValidUrl(sUrl) {
+		return IFrame.isValidUrl(encodeURI(sUrl));
+	}
+
 	return Controller.extend("sap.ui.rta.plugin.iframe.AddIFrameDialogController", {
 		constructor: function(oJSONModel, mSettings) {
 			this._oJSONModel = oJSONModel;
@@ -75,8 +80,8 @@ sap.ui.define([
 		 * Event handler for save button
 		 */
 		onSavePress: function() {
-			var sUrl = encodeURI(this._buildPreviewURL(this._buildReturnedURL()));
-			if (IFrame.isValidUrl(sUrl) && this._areAllTextFieldsValid() && this._areAllValueStateNones()) {
+			var sUrl = this._buildPreviewURL(this._buildReturnedURL());
+			if (isValidUrl(sUrl) && this._areAllTextFieldsValid() && this._areAllValueStateNones()) {
 				this._close(this._buildReturnedSettings());
 			} else {
 				this._setFocusOnInvalidInput();
@@ -88,8 +93,8 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - Event
 		 */
 		onShowPreview: function() {
-			var sURL = encodeURI(this._buildPreviewURL(this._buildReturnedURL()));
-			if (!IFrame.isValidUrl(sURL)) {
+			var sURL = this._buildPreviewURL(this._buildReturnedURL());
+			if (!isValidUrl(sURL)) {
 				return;
 			}
 			var oIFrame = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_PreviewFrame");
@@ -118,6 +123,7 @@ sap.ui.define([
 		onParameterPress: function(oEvent) {
 			var sKey = oEvent.getSource().getBindingContext().getObject().key;
 			this._oJSONModel.setProperty("/frameUrl/value", this._addURLParameter(sKey));
+			this.onUrlChange();
 		},
 
 		/**
@@ -164,10 +170,10 @@ sap.ui.define([
 			return urlCleaner(this._oJSONModel.getProperty("/frameUrl/value"));
 		},
 
-		onUrlChange: function(oEvent) {
-			var sUrl = oEvent.getParameter("value");
-			var oUrlInput = oEvent.getSource();
-			if (IFrame.isValidUrl(sUrl)) {
+		onUrlChange: function() {
+			var sUrl = this._buildPreviewURL(this._buildReturnedURL());
+			var oUrlInput = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_EditUrlTA");
+			if (isValidUrl(sUrl)) {
 				oUrlInput.setValueState("None");
 			} else {
 				oUrlInput.setValueState("Error");
