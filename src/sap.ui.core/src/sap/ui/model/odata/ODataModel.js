@@ -32,13 +32,14 @@ sap.ui.define([
 	"sap/ui/model/Context",
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/Model",
+	"sap/ui/model/odata/ODataAnnotations",
 	"sap/ui/model/odata/ODataMetaModel",
 	"sap/ui/thirdparty/datajs",
 	"sap/ui/thirdparty/URI"
 ], function(CountMode, ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding,
 		ODataTreeBinding, ODataUtils, assert, Log, encodeURL, each, extend, isEmptyObject,
-		isPlainObject, merge, uid, BindingMode, Context, FilterProcessor, Model, ODataMetaModel,
-		OData, URI) {
+		isPlainObject, merge, uid, BindingMode, Context, FilterProcessor, Model, ODataAnnotations,
+		ODataMetaModel, OData, URI) {
 	"use strict";
 
 	/**
@@ -3439,13 +3440,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Singleton Lazy loading of the annotation parser on demand
+	 * Get or create the annotation parser instance.
+	 * @param {object} mAnnotationData The annotation data
 	 *
-	 * @return {sap.ui.model.odata.Annotations} The annotation parser instance
+	 * @return {sap.ui.model.odata.ODataAnnotations} The annotation parser instance
 	 */
 	ODataModel.prototype._getAnnotationParser = function(mAnnotationData) {
 		if (!this.oAnnotations) {
-			var ODataAnnotations = sap.ui.requireSync("sap/ui/model/odata/ODataAnnotations");
 			this.oAnnotations = new ODataAnnotations({
 				annotationData: mAnnotationData,
 				url: null,
