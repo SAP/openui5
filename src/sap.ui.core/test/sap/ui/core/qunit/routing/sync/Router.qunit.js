@@ -2409,6 +2409,9 @@ sap.ui.define([
 
 	QUnit.test("Hash 'page12' shouldn't match pattern 'page1/:context:'", function(assert) {
 		var oRouter = new Router([{
+				name: "page1query",
+				pattern: "page1/:context:/:?query:"
+			}, {
 				name: "page1",
 				pattern: "page1/:context:"
 			}, {
@@ -2489,6 +2492,82 @@ sap.ui.define([
 		});
 
 		oRouter.destroy();
+	});
+
+	QUnit.test("Correctly parse the hash with optional params", function(assert) {
+		var oRouter = new Router([{
+			pattern: "{r1}/{r2}/:o1:/:o2:/:?q:", // pattern with two optional params
+			name: "home"
+		}]);
+
+		var aExamples = [
+			{
+				hash: "v1/v2",
+				working: true
+			},
+			{
+				hash: "v1/v2/",
+				working: true
+			},
+			{
+				hash: "v1/v2//?a=b",
+				working: true
+			},
+			{
+				hash: "v1/v2///?a=b",
+				working: true
+			},
+			{
+				hash: "v1/v2/o1",
+				working: true
+			},
+			{
+				hash: "v1/v2/o1/",
+				working: true
+			},
+			{
+				hash: "v1/v2/o1/?a=b",
+				working: true
+			},
+			{
+				hash: "v1/v2/o1//?a=b",
+				working: true
+			},
+							 {
+				hash: "v1/v2/o1/o2",
+				working: true
+			},
+			{
+				hash: "v1/v2/o1/o2/",
+				working: true
+			},
+			{
+				hash: "v1/v2/o1/o2?a=b",
+				working: true
+			},
+			{
+				hash: "v1/v2/o1/o2/?a=b",
+				working: true
+			},
+			{
+				hash: "v1/v2/?a=b",
+				working: true
+			},
+			{
+				hash: "v1/v2/o1?a=b",
+				working: true
+			},
+			{
+				hash: "v1/v2?a=b",
+				working: true
+			}
+		];
+
+		var bMatched;
+		aExamples.forEach(function(oExpected) {
+			bMatched = oRouter.match(oExpected.hash);
+			assert.equal(bMatched, oExpected.working, "Hash should match");
+		});
 	});
 
 	QUnit.module("nested components", {
