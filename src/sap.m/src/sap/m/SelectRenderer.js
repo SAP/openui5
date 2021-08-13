@@ -197,11 +197,18 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				sTextDir = oSelect.getTextDirection(),
 				sTextAlign = Renderer.getTextAlign(oSelect.getTextAlign(), sTextDir),
 				CSS_CLASS = SelectRenderer.CSS_CLASS,
-				bEditabledAndEnabled = oSelect.getEnabled() && oSelect.getEditable();
+				bEditabledAndEnabled = oSelect.getEnabled() && oSelect.getEditable(),
+				sTooltip = oSelect.getTooltip_AsString();
 
 			oRm.openStart("span", oSelect.getId() + "-label");
 			oRm.attr("aria-hidden", true);
 			oRm.class(CSS_CLASS + "Label");
+
+			// since focusable element has sapUiPseudoInvisibleText class
+			// the tooltip is also set to the label element to be visually displayed
+			if (sTooltip) {
+				oRm.attr("title", sTooltip);
+			}
 
 			if (oSelect.getValueState() !== ValueState.None && bEditabledAndEnabled) {
 				oRm.class(CSS_CLASS + "LabelState");
