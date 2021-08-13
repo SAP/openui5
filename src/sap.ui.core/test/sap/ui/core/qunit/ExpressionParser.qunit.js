@@ -12,9 +12,10 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataUtils",
-	"sap/ui/performance/Measurement"
+	"sap/ui/performance/Measurement",
+	"sap/ui/thirdparty/URI"
 ], function (jQuery, Log, JSTokenizer, BindingParser, ExpressionParser, ManagedObject, Icon,
-		InvisibleText, JSONModel, ODataUtils, Measurement) {
+		InvisibleText, JSONModel, ODataUtils, Measurement, URI) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -595,24 +596,97 @@ sap.ui.define([
 	}]);
 
 	//*********************************************************************************************
-	QUnit.test("odata.compare", function (assert) {
-		this.mock(sap.ui).expects("requireSync")
-			.withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(ODataUtils);
-		this.mock(ODataUtils).expects("compare")
-			.withExactArgs(2, 3).returns("-1");
+[true, false].forEach(function (bPreloaded) {
+	QUnit.test("odata.compare, bPreloaded=" + bPreloaded, function (assert) {
+		var oDataUtils = {
+				compare : function () {}
+			},
+			oSapUiMock = this.mock(sap.ui);
 
+		oSapUiMock.expects("require")
+			.withExactArgs("sap/ui/model/odata/v4/ODataUtils")
+			.returns(bPreloaded ? oDataUtils : undefined);
+		oSapUiMock.expects("requireSync")
+			.withExactArgs("sap/ui/model/odata/v4/ODataUtils")
+			.exactly(bPreloaded ? 0 : 1)
+			.returns(oDataUtils);
+		this.mock(oDataUtils).expects("compare").withExactArgs(2, 3).returns("-1");
+		// While destroying the control used in the check function, require is sometimes called
+		oSapUiMock.expects("require")
+			.withExactArgs("sap/ui/core/ResizeHandler")
+			.atLeast(0)
+			.callThrough();
+
+		// code under test
 		check(assert, "{=odata.compare(2,3)}", "-1");
 	});
+});
 
 	//*********************************************************************************************
-	QUnit.test("odata.uriEncode", function (assert) {
-		this.mock(sap.ui).expects("requireSync")
-			.withExactArgs("sap/ui/model/odata/ODataUtils").returns(ODataUtils);
-		this.mock(ODataUtils).expects("formatValue")
-			.withExactArgs("foo", "Edm.String").returns("'foo'");
+[true, false].forEach(function (bPreloaded) {
+	QUnit.test("odata.uriEncode, bPreloaded=" + bPreloaded, function (assert) {
+		var oDataUtils = {
+				formatValue : function () {}
+			},
+			oSapUiMock = this.mock(sap.ui);
 
+		oSapUiMock.expects("require")
+			.withExactArgs("sap/ui/model/odata/ODataUtils")
+			.returns(bPreloaded ? oDataUtils : undefined);
+		oSapUiMock.expects("requireSync")
+			.withExactArgs("sap/ui/model/odata/ODataUtils")
+			.exactly(bPreloaded ? 0 : 1)
+			.returns(oDataUtils);
+		this.mock(oDataUtils).expects("formatValue")
+			.withExactArgs("foo", "Edm.String")
+			.returns("'foo'");
+		// While destroying the control used in the check function, require is sometimes called
+		oSapUiMock.expects("require")
+			.withExactArgs("sap/ui/core/ResizeHandler")
+			.atLeast(0)
+			.callThrough();
+
+		// code under test
 		check(assert, "{=odata.uriEncode('foo', 'Edm.String')}", "'foo'");
 	});
+});
+
+	//*********************************************************************************************
+[true, false].forEach(function (bPreloaded) {
+	QUnit.test("odata.fillUriTemplate, bPreloaded=" + bPreloaded, function (assert) {
+		var oOriginalExpand = URI.expand,
+			oSapUiMock = this.mock(sap.ui),
+			oURI = {
+				expand : function () {}
+			};
+
+		oSapUiMock.expects("requireSync")
+			.withExactArgs("sap/ui/thirdparty/URITemplate")
+			.exactly(bPreloaded ? 0 : 1)
+			.callsFake(function () {
+				URI.expand = oURI.expand;
+
+				return "~URITemplate";
+			});
+		this.mock(oURI).expects("expand")
+			.withExactArgs("http://foo/{t},{m}", {m : "tel", t : "mail"})
+			.returns("http://foo/mail,tel");
+		URI.expand = bPreloaded ? oURI.expand : undefined;
+		// While destroying the control used in the check function, require is sometimes called
+		oSapUiMock.expects("require")
+			.withExactArgs("sap/ui/core/ResizeHandler")
+			.atLeast(0)
+			.callThrough();
+
+		// code under test
+		check(assert,
+			"odata.fillUriTemplate('http://foo/{t},{m}', {'t': ${/mail}, 'm': ${/tel}})",
+			"http://foo/mail,tel");
+
+		// cleanup
+		URI.expand = oOriginalExpand;
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("errors during evaluation", function (assert) {
