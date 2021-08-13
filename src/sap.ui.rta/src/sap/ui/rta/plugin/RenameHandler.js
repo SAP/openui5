@@ -359,6 +359,7 @@ sap.ui.define([
 			})
 			.then(function() {
 				var oOverlay = this._oEditedOverlay;
+				oOverlay.setIgnoreEnterKeyUpOnce(false);
 				oOverlay.addStyleClass(RenameHandler.errorStyleClass);
 				this.stopEdit(bRestoreFocus);
 				this.startEdit(oOverlay);
@@ -403,6 +404,8 @@ sap.ui.define([
 		_onEditableFieldKeydown: function (oEvent) {
 			switch (oEvent.keyCode) {
 				case KeyCodes.ENTER:
+					// to prevent context menu from opening when rename is finished
+					this._oEditedOverlay.setIgnoreEnterKeyUpOnce(true);
 					return RenameHandler._handlePostRename.call(this, true, oEvent);
 				case KeyCodes.ESCAPE:
 					this._oEditedOverlay.removeStyleClass(RenameHandler.errorStyleClass);
