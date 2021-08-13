@@ -1015,23 +1015,29 @@ sap.ui.define([
 			oSpyTextButtonPress = this.spy(oSplitButtonMain, "firePress"),
 			oSpyArrowButtonPress = this.spy(oSplitButtonArrow, "firePress");
 
+		this.sut.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
 		//Act
 		this.keydown(KeyCodes.ENTER);
 
 		//Assert
 		assert.strictEqual(oSpyTextButtonPress.callCount, 1, "Main button firePress called");
+		assert.ok(oSplitButtonMain.$("inner").hasClass("sapMBtnActive"), "the main button is styled as active");
 
 		//Act
 		this.keyup(KeyCodes.ENTER);
 
 		//Assert
 		assert.strictEqual(oSpyTextButtonPress.callCount, 1, "Main button firePress called");
+		assert.notOk(oSplitButtonMain.$("inner").hasClass("sapMBtnActive"), "the main button is not active");
 
 		//Act
 		this.keydown(KeyCodes.SPACE);
 
 		//Assert
 		assert.strictEqual(oSpyTextButtonPress.callCount, 1, "Main button firePress called");
+		assert.ok(oSplitButtonMain.$("inner").hasClass("sapMBtnActive"), "the main button is styled as active");
 
 		//Act
 		this.keyup(KeyCodes.SPACE);
@@ -1039,6 +1045,7 @@ sap.ui.define([
 		//Assert
 		assert.strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress called");
 		assert.ok(!oSpyArrowButtonPress.called, "Arrow button firePress not called");
+		assert.notOk(oSplitButtonMain.$("inner").hasClass("sapMBtnActive"), "the main button is not active");
 
 		//Act
 		this.sut.onsapup();
