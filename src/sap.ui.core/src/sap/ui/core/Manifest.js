@@ -408,7 +408,8 @@ sap.ui.define([
 
 			var sComponentName = this.getComponentName();
 
-			// load JS files
+			// [Deprecated since 1.94]: Load JS files.
+			//                          Standard dependencies should be used instead.
 			var aJSResources = mResources["js"];
 			if (aJSResources) {
 				var requireAsync = function (sModule) {
