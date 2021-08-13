@@ -1522,19 +1522,19 @@ function(
 
 			this.getAggregation("tokenizer").addToken(oToken);
 			this.addAssociation("selectedItems", oNewItem, mOptions.suppressInvalidate);
+
+			var aSelectedKeys = this.getSelectedKeys();
+			var sKey = this.getKeys([oNewItem])[0];
+
+			// Rather strange, but we need to keep it for backwards compatibility- when there are selectedItems with
+			// empty keys, we need to append empty string, but if there's a key, it should be unique
+			if (sKey === "" || aSelectedKeys.indexOf(sKey) === -1) {
+				aSelectedKeys.push(sKey);
+				this.setProperty("selectedKeys", aSelectedKeys, mOptions.suppressInvalidate);
+		}
 		}, this);
 
 		this.setValue('');
-
-		var aSelectedKeys = this.getSelectedKeys();
-		var sKey = this.getKeys([mOptions.item])[0];
-
-		// Rather strange, but we need to keep it for backwards compatibility- when there are selectedItems with
-		// empty keys, we need to append empty string, but if there's a key, it should be unique
-		if (sKey === "" || aSelectedKeys.indexOf(sKey) === -1) {
-			aSelectedKeys.push(sKey);
-			this.setProperty("selectedKeys", aSelectedKeys, mOptions.suppressInvalidate);
-		}
 
 		if (mOptions.fireChangeEvent) {
 			this.fireSelectionChange({

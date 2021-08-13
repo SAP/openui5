@@ -8992,6 +8992,7 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getAggregation("tokenizer").getTokens().length, 3, "3 Tokens must be added");
+		assert.strictEqual(this.oMultiComboBox.getSelectedKeys().length, 3, "3 keys must be set as selected");
 		assert.strictEqual(this.oMultiComboBox.getAggregation("tokenizer").getTokens()[2].getText(), "Madagascar", "The last token's name is correct");
 		assert.strictEqual(this.oMultiComboBox._getList().getItems()[4].getDomRef(), document.activeElement, "The last selected item is focused");
 	});
