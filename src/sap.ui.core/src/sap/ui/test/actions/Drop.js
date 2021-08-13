@@ -23,8 +23,12 @@ sap.ui.define([
 	 * You can also set the traget to be the root DOM element of a given aggregation,
 	 * by specifying the aggregation name in the Drop constructor.
 	 *
-	 * * The <code>Drop</code> action is not supported in IE11!
-	 *
+	 * @param {string}
+	 *            [sId] Optional ID for the new instance; generated automatically if
+	 *            no non-empty ID is given. Note: this can be omitted, no matter
+	 *            whether <code>mSettings</code> are given or not!
+	 * @param {object}
+	 *            [mSettings] Optional object with initial settings for the new instance
 	 * @extends sap.ui.test.actions.Action
 	 * @public
 	 * @name sap.ui.test.actions.Drop
