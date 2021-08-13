@@ -1070,6 +1070,7 @@ sap.ui.define([
 
 	/**
 	 * Resolves the destination and returns its URL.
+	 * @public
 	 * @param {string} sKey The destination's key used in the configuration.
 	 * @returns {Promise} A promise which resolves with the URL of the destination.
 	 */
