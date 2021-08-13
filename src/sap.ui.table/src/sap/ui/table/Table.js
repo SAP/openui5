@@ -897,7 +897,7 @@ sap.ui.define([
 	 * </ul>
 	 *
 	 * @name sap.ui.table.Table#getDragDropConfig
-	 * @returns sap.ui.core.dnd.DragDropBase[]
+	 * @returns {sap.ui.core.dnd.DragDropBase[]}
 	 * @function
 	 * @public
 	 * @since 1.52
