@@ -276,87 +276,91 @@ sap.ui.define([
 		 * @private
 		 */
 		resolveContainerControl: function(oParentInfo) {
-			oParentInfo = oParentInfo || {};
+			// use a Promise.resovle() to delay the container resolve to occur after the current call stack because the
+			// oOptions.rootView can be available after the current call stack.
+			return Promise.resolve().then(function() {
+				oParentInfo = oParentInfo || {};
 
-			var oOptions = this._oOptions;
-			var vValid = this._isValid(oParentInfo);
-			var sErrorMessage;
+				var oOptions = this._oOptions;
+				var vValid = this._isValid(oParentInfo);
+				var sErrorMessage;
 
-			// validate config and log errors if necessary
-			if (vValid !== true) {
-				sErrorMessage = vValid;
-				return this._refuseInvalidTarget(oOptions._name, sErrorMessage);
-			}
-
-			var oViewContainingTheControl = oParentInfo.view,
-				oControl = oParentInfo.control,
-				pViewContainingTheControl,
-				pContainerControl;
-
-			// if the parent target loads a component, the oViewContainingTheControl is an instance of
-			// ComponentContainer. The root control of the component should be retrieved and set as
-			// oViewContainingTheControl
-			if (oViewContainingTheControl && oViewContainingTheControl.isA("sap.ui.core.ComponentContainer")) {
-				oViewContainingTheControl = oViewContainingTheControl.getComponentInstance().getRootControl();
-			}
-
-			//no parent view - see if container can be found by using oOptions.controlId under oOptions.rootView
-			if (!oViewContainingTheControl && oOptions.rootView) {
-				// oOptions.rootView can be either an id or a promise that resolves with the id
-				pViewContainingTheControl = Promise.resolve(oOptions.rootView)
-					.then(function(oRootViewId) {
-						var oView;
-
-						if (oRootViewId) {
-							oView = sap.ui.getCore().byId(oRootViewId);
-							oOptions.rootView = oRootViewId;
-						}
-
-						if (!oView) {
-							sErrorMessage = "Did not find the root view with the id " + oOptions.rootView;
-							return this._refuseInvalidTarget(oOptions._name, sErrorMessage);
-						} else {
-							return oView;
-						}
-					}.bind(this));
-			} else {
-				pViewContainingTheControl = Promise.resolve(oViewContainingTheControl);
-			}
-
-			pViewContainingTheControl = pViewContainingTheControl.then(function(oView) {
-				if (oView && oView.isA("sap.ui.core.mvc.View")) {
-					return oView.loaded();
-				} else {
-					return oView;
-				}
-			});
-
-			if (oOptions.controlId) {
-				pContainerControl = pViewContainingTheControl.then(function(oContainerView) {
-					var oContainerControl;
-
-					if (oContainerView) {
-						oContainerControl = oContainerView.byId(oOptions.controlId);
-					}
-
-					if (!oContainerControl) {
-						//Test if control exists in core (without prefix) since it was not found in the parent or root view
-						oContainerControl =  sap.ui.getCore().byId(oOptions.controlId);
-					}
-
-					return oContainerControl;
-				});
-			} else {
-				pContainerControl = Promise.resolve(oControl);
-			}
-
-			return pContainerControl.then(function(oContainerControl) {
-				if (!oContainerControl) {
-					sErrorMessage = "Control with ID " + oOptions.controlId + " could not be found";
+				// validate config and log errors if necessary
+				if (vValid !== true) {
+					sErrorMessage = vValid;
 					return this._refuseInvalidTarget(oOptions._name, sErrorMessage);
-				} else {
-					return oContainerControl;
 				}
+
+				var oViewContainingTheControl = oParentInfo.view,
+					oControl = oParentInfo.control,
+					pViewContainingTheControl,
+					pContainerControl;
+
+				// if the parent target loads a component, the oViewContainingTheControl is an instance of
+				// ComponentContainer. The root control of the component should be retrieved and set as
+				// oViewContainingTheControl
+				if (oViewContainingTheControl && oViewContainingTheControl.isA("sap.ui.core.ComponentContainer")) {
+					oViewContainingTheControl = oViewContainingTheControl.getComponentInstance().getRootControl();
+				}
+
+				//no parent view - see if container can be found by using oOptions.controlId under oOptions.rootView
+				if (!oViewContainingTheControl && oOptions.rootView) {
+					// oOptions.rootView can be either an id or a promise that resolves with the id
+					pViewContainingTheControl = Promise.resolve(oOptions.rootView)
+						.then(function(oRootViewId) {
+							var oView;
+
+							if (oRootViewId) {
+								oView = sap.ui.getCore().byId(oRootViewId);
+								oOptions.rootView = oRootViewId;
+							}
+
+							if (!oView) {
+								sErrorMessage = "Did not find the root view with the id " + oOptions.rootView;
+								return this._refuseInvalidTarget(oOptions._name, sErrorMessage);
+							} else {
+								return oView;
+							}
+						}.bind(this));
+				} else {
+					pViewContainingTheControl = Promise.resolve(oViewContainingTheControl);
+				}
+
+				pViewContainingTheControl = pViewContainingTheControl.then(function(oView) {
+					if (oView && oView.isA("sap.ui.core.mvc.View")) {
+						return oView.loaded();
+					} else {
+						return oView;
+					}
+				});
+
+				if (oOptions.controlId) {
+					pContainerControl = pViewContainingTheControl.then(function(oContainerView) {
+						var oContainerControl;
+
+						if (oContainerView) {
+							oContainerControl = oContainerView.byId(oOptions.controlId);
+						}
+
+						if (!oContainerControl) {
+							//Test if control exists in core (without prefix) since it was not found in the parent or root view
+							oContainerControl =  sap.ui.getCore().byId(oOptions.controlId);
+						}
+
+						return oContainerControl;
+					});
+				} else {
+					pContainerControl = Promise.resolve(oControl);
+				}
+
+				return pContainerControl.then(function(oContainerControl) {
+					if (!oContainerControl) {
+						sErrorMessage = "Control with ID " + oOptions.controlId + " could not be found";
+						return this._refuseInvalidTarget(oOptions._name, sErrorMessage);
+					} else {
+						return oContainerControl;
+					}
+				}.bind(this));
 			}.bind(this));
 		},
 
