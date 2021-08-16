@@ -1203,6 +1203,32 @@ sap.ui.define([
 			assert.ok(!this.oVariantManagement.getDisplayTextForExecuteOnSelectionForStandardVariant());
 		});
 
+		QUnit.test("Checking the sharing text", function(assert) {
+			var oConfiguration = sap.ui.getCore().getConfiguration();
+			var sLanguage = oConfiguration.getLanguage();
+
+			oConfiguration.setLanguage("en_EN");
+
+			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+
+			this.oVariantManagement._openManagementDialog();
+			var aRows = this.oVariantManagement.oManagementTable.getItems();
+			assert.ok(aRows);
+			assert.equal(aRows.length, 5);
+
+			var aCells = aRows[0].getCells();
+			assert.ok(aCells);
+			assert.equal(aCells.length, 8);
+
+			assert.ok(aCells[2].isA("sap.m.Text"));
+			assert.equal(aCells[2].getText(), "Public");
+
+			aCells = aRows[1].getCells();
+			assert.ok(aCells[2].isA("sap.m.Text"));
+			assert.equal(aCells[2].getText(), "Private");
+
+			oConfiguration.setLanguage(sLanguage);
+		});
 		QUnit.test("Checking the apply automatic text for standard", function(assert) {
 			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
 
@@ -1213,9 +1239,9 @@ sap.ui.define([
 
 			var aCells = aRows[0].getCells();
 			assert.ok(aCells);
-			assert.equal(aCells.length, 7);
+			assert.equal(aCells.length, 8);
 
-			assert.ok(aCells[VariantManagement.COLUMN_EXEC_IDX].isA("sap.m.CheckBox"));
+			assert.ok(aCells[4].isA("sap.m.CheckBox"));
 
 			////
 			this.oVariantManagement._bDeleteOccured = true;
@@ -1225,10 +1251,10 @@ sap.ui.define([
 			aRows = this.oVariantManagement.oManagementTable.getItems();
 			aCells = aRows[0].getCells();
 			assert.ok(aCells);
-			assert.equal(aCells.length, 7);
+			assert.equal(aCells.length, 8);
 
-			assert.ok(aCells[VariantManagement.COLUMN_EXEC_IDX].isA("sap.m.CheckBox"));
-			assert.equal(aCells[VariantManagement.COLUMN_EXEC_IDX].getText(), "TEST");
+			assert.ok(aCells[4].isA("sap.m.CheckBox"));
+			assert.equal(aCells[4].getText(), "TEST");
 		});
 
 		QUnit.test("check getApplyAutomaticallyOnVariant method", function(assert) {

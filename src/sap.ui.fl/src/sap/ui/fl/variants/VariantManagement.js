@@ -330,7 +330,6 @@ sap.ui.define([
 	VariantManagement.MAX_NAME_LEN = 100;
 	VariantManagement.COLUMN_FAV_IDX = 0;
 	VariantManagement.COLUMN_NAME_IDX = 1;
-	VariantManagement.COLUMN_EXEC_IDX = 3;
 
 	/*
 	 * Constructs and initializes the <code>VariantManagement</code> control.
@@ -1491,13 +1490,21 @@ sap.ui.define([
 						header: new Text({
 							text: this._oRb.getText("VARIANT_MANAGEMENT_NAME")
 						}),
-						width: "14rem"
+						width: "16rem"
+					}), new Column({
+						header: new Text({
+							text: this._oRb.getText("VARIANT_MANAGEMENT_VARIANTTYPE"),
+							wrappingType: "Hyphenated"
+						}),
+						demandPopin: true,
+						popinDisplay: PopinDisplay.Inline,
+						minScreenWidth: ScreenSize.Tablet
 					}), new Column({
 						header: new Text({
 							text: this._oRb.getText("VARIANT_MANAGEMENT_DEFAULT"),
 							wrappingType: "Hyphenated"
 						}),
-						hAlign: TextAlign.Begin,
+						hAlign: TextAlign.Center,
 						demandPopin: true,
 						popinDisplay: PopinDisplay.Block,
 						minScreenWidth: ScreenSize.Tablet,
@@ -1667,7 +1674,6 @@ sap.ui.define([
 			type: ButtonType.Transparent,
 			press: fPress,
 			tooltip: this._oRb.getText("VARIANT_MANAGEMENT_DELETE"),
-			// visible: "{:= ${remove} ? true : false }}"
 			visible: oItem.remove
 		});
 
@@ -1716,7 +1722,16 @@ sap.ui.define([
 
 		return new ColumnListItem({
 			cells: [
-				oFavoriteIcon, oNameControl, new RadioButton({
+				oFavoriteIcon, oNameControl, new Text({
+					text: {
+						path: "sharing",
+						model: this._sModelName,
+						formatter: function(sValue) {
+							return this._oRb.getText(sValue === "private" ? "VARIANT_MANAGEMENT_PRIVATE" : "VARIANT_MANAGEMENT_PUBLIC");
+						}.bind(this)
+					},
+					textAlign: "Center"
+				}), new RadioButton({
 					groupName: this.getId(),
 					select: fSelectRB,
 					selected: {
@@ -1732,7 +1747,6 @@ sap.ui.define([
 				}), oDeleteButton, new Text({
 					text: '{' + this._sModelName + ">key}"
 				})
-
 			]
 		});
 	};
