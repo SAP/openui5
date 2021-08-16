@@ -174,11 +174,19 @@
 										<Column>
 											<Label text="Name"></Label>
 										</Column>
+										<Column>
+											<Label text="Country"></Label>
+										</Column>
+										<Column>
+											<Label text="Region"></Label>
+										</Column>
 									</columns>
 									<items>
 										<ColumnListItem type="Active">
 											<Text text="{city}"></Text>
 											<Text text="{text}"></Text>
+											<Text text="{country_code}"></Text>
+											<Text text="{region_code}"></Text>
 										</ColumnListItem>
 									</items>
 								</Table>
