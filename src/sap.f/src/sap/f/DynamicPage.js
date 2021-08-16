@@ -443,7 +443,7 @@ sap.ui.define([
 		var bShouldSnapWithScroll,
 			iCurrentScrollPosition;
 
-		if (this._preserveHeaderStateOnScroll()) {
+		if (this.getPreserveHeaderStateOnScroll()) {
 			// Ensure that in this tick DP and it's aggregations are rendered
 			setTimeout(this._overridePreserveHeaderStateOnScroll.bind(this), 0);
 		}
@@ -665,13 +665,14 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._overridePreserveHeaderStateOnScroll = function () {
-		if (!this._shouldOverridePreserveHeaderStateOnScroll()) {
-			this._headerBiggerThanAllowedHeight = false;
+		var bOldValue = this._headerBiggerThanAllowedHeight, bChange;
+
+		this._headerBiggerThanAllowedHeight = this._headerBiggerThanAllowedToBeFixed();
+		bChange = bOldValue !== this._headerBiggerThanAllowedHeight;
+
+		if (!this._headerBiggerThanAllowedHeight || !bChange) {
 			return;
 		}
-
-		this._headerBiggerThanAllowedHeight = true;
-
 		//move the header to content
 		if (this.getHeaderExpanded()) {
 			this._moveHeaderToContentArea();
@@ -679,15 +680,6 @@ sap.ui.define([
 			this._adjustSnap(); // moves the snapped header to content if possible
 		}
 		this._updateScrollBar();
-	};
-
-	/**
-	 * Determines if the <code>preserveHeaderStateOnScroll</code> should be ignored.
-	 * @private
-	 * @returns {boolean}
-	 */
-	DynamicPage.prototype._shouldOverridePreserveHeaderStateOnScroll = function () {
-		return this._headerBiggerThanAllowedToBeFixed() && this._preserveHeaderStateOnScroll();
 	};
 
 	/**
@@ -1916,7 +1908,7 @@ sap.ui.define([
 		if (oHeader && oEvent.target.id === oHeader.getId()) {
 			bCurrentHeight = oEvent.size.height;
 			bOldHeight = oEvent.oldSize.height;
-			this._updateHeaderVisualState(bCurrentHeight !== bOldHeight && bCurrentHeight !== 0 && bOldHeight !== 0);
+			this._updateHeaderVisualState(bCurrentHeight !== bOldHeight);
 			this._adaptScrollPositionOnHeaderChange(bCurrentHeight, bOldHeight);
 		}
 	};
