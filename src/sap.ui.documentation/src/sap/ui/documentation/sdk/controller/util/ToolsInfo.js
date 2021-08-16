@@ -25,7 +25,7 @@ sap.ui.define([],
 			{
 				"id": "ui5Inspector",
 				"text": "UI5 Inspector",
-				"href": "https://chrome.google.com/webstore/detail/ui5-inspector/bebecogbafbighhaildooiibipcnbngo?hl=en"
+				"href": "https://github.com/SAP/ui5-inspector"
 			},
 			{
 				"id": "cardExplorer",
