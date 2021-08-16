@@ -6,6 +6,28 @@ sap.ui.define([
 ], function(merge, FilterOperatorUtil) {
 	"use strict";
 
+	/*
+	* NOTE: As the ConditionFlex is the central changehandler for filter condition
+	* processing, it might happen that the in/out handling of the ConditionModel
+	* might cause multiple condition changes to be applied in parallel. Due to the
+	* asynchronous modifier handling, we need to make sure to queue these changes in their
+	* incoming order as parallel processing might falsely overwrite the 'filterConditions'
+	* property causing the changehandler to break the controls housekeeping and the last
+	* parallel filter change would always win.
+	*/
+	var fnQueueChange = function(oControl, fTask) {
+		var fCleanupPromiseQueue = function(pOriginalPromise) {
+			if (oControl._pQueue === pOriginalPromise){
+				delete oControl._pQueue;
+			}
+		};
+
+		oControl._pQueue = oControl._pQueue instanceof Promise ? oControl._pQueue.then(fTask) : fTask();
+		oControl._pQueue.then(fCleanupPromiseQueue.bind(null, oControl._pQueue));
+
+		return oControl._pQueue;
+	};
+
 	var fDetermineFilterControl = function(oControl) {
 		var oController = oControl && oControl.getEngine ? oControl.getEngine().getController(oControl, "Filter") : null;
 		return oController ? oController.getFilterControl() : null;
@@ -19,54 +41,48 @@ sap.ui.define([
 			oFilterControl.applyConditionsAfterChangesApplied();
 		}
 
-		return new Promise(function(resolve, reject) {
-
+		return fnQueueChange(oControl, function(){
 			var mConditionsData, aConditions = null, oModifier = mPropertyBag.modifier;
 
-			Promise.resolve()
-				.then(oModifier.getProperty.bind(oModifier, oControl, "filterConditions"))
-				.then(function(mFilterConditions) {
+			return oModifier.getProperty(oControl, "filterConditions")
+			.then(function(mFilterConditions) {
+				// 'filterConditions' property needs to be updated for change selector
+				mConditionsData = merge({}, mFilterConditions);
+				if (mConditionsData) {
+					for (var sFieldPath in mConditionsData) {
+						if (sFieldPath === oChangeContent.name) {
+							aConditions = mConditionsData[sFieldPath];
+							break;
+						}
+					}
+				}
+
+				if (!aConditions) {
+					mConditionsData[oChangeContent.name] = [];
+					aConditions = mConditionsData[oChangeContent.name];
+				}
+
+				var nConditionIdx = FilterOperatorUtil.indexOfCondition(oChangeContent.condition, aConditions);
+				if (nConditionIdx < 0) {
+					aConditions.push(oChangeContent.condition);
+
 					// 'filterConditions' property needs to be updated for change selector
-					mConditionsData = merge({}, mFilterConditions);
-					if (mConditionsData) {
-						for (var sFieldPath in mConditionsData) {
-							if (sFieldPath === oChangeContent.name) {
-								aConditions = mConditionsData[sFieldPath];
-								break;
-							}
-						}
+					oModifier.setProperty(oControl, "filterConditions", mConditionsData);
+
+					if (!bIsRevert) {
+						// Set revert data on the change
+						oChange.setRevertData({
+							name: oChangeContent.name,
+							condition: oChangeContent.condition
+						});
 					}
 
-					if (!aConditions) {
-						mConditionsData[oChangeContent.name] = [];
-						aConditions = mConditionsData[oChangeContent.name];
+					// the control providing the filter functionality needs to be used to update the ConditionModel
+					if (oFilterControl && oFilterControl.addCondition) {
+						return oFilterControl.addCondition(oChangeContent.name, oChangeContent.condition);
 					}
-
-					var nConditionIdx = FilterOperatorUtil.indexOfCondition(oChangeContent.condition, aConditions);
-					if (nConditionIdx < 0) {
-						aConditions.push(oChangeContent.condition);
-
-						// 'filterConditions' property needs to be updated for change selector
-						oModifier.setProperty(oControl, "filterConditions", mConditionsData);
-
-						if (!bIsRevert) {
-							// Set revert data on the change
-							oChange.setRevertData({
-								name: oChangeContent.name,
-								condition: oChangeContent.condition
-							});
-						}
-
-						// the control providing the filter functionality needs to be used to update the ConditionModel
-						if (oFilterControl && oFilterControl.addCondition) {
-							return oFilterControl.addCondition(oChangeContent.name, oChangeContent.condition);
-						}
-					}
-				})
-				.then(resolve)
-				.catch(function(oError) {
-					reject(oError);
-				});
+				}
+			});
 		});
 	};
 
@@ -78,11 +94,10 @@ sap.ui.define([
 			oFilterControl.applyConditionsAfterChangesApplied();
 		}
 
-		return new Promise(function(resolve, reject) {
+		return fnQueueChange(oControl, function(){
 			var mConditionsData, aConditions, nDelIndex = -1, oModifier = mPropertyBag.modifier;
 
-			Promise.resolve()
-				.then(oModifier.getProperty.bind(oModifier, oControl, "filterConditions"))
+			return oModifier.getProperty(oControl, "filterConditions")
 				.then(function(mFilterConditions) {
 					// 'filterConditions' property needs to be updated for change selector
 					mConditionsData = merge({}, mFilterConditions);
@@ -121,10 +136,6 @@ sap.ui.define([
 							}
 						}
 					}
-				})
-				.then(resolve)
-				.catch(function(oError) {
-					reject(oError);
 				});
 		});
 	};
