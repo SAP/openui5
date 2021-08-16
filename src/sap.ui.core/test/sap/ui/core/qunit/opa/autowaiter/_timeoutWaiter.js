@@ -64,20 +64,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("Should ignore long runners", function (assert) {
-			var fnDone = assert.async();
 			var iID = fnSetFunction(function () {}, 1100);
-			// give some time for an eventual async flow in timeoutWaiter
-			fnSetFunction(function () {
-				var bHasPending = timeoutWaiter.hasPending();
-				var sLogs = oLogCollector.getAndClearLog();
-				assert.ok(!bHasPending, "there are no pending timeouts, pending timeouts logs: " + sLogs);
-				fnClearFunction(iID);
-				fnDone();
-			}, 50);
+
+			var bHasPending = timeoutWaiter.hasPending();
+			var sLogs = oLogCollector.getAndClearLog();
+			assert.ok(!bHasPending, "there are no pending timeouts, pending timeouts logs: " + sLogs);
+			fnClearFunction(iID);
 		});
 
-		/*
-		Disable this test temporary to confirm the change in maxDelay does not messup with the upper test
 		QUnit.test("Should have configurable max timeout delay", function (assert) {
 			timeoutWaiter.extendConfig({maxDelay: 3000});
 			var iID = fnSetFunction(function () {}, 1001);
@@ -89,7 +83,6 @@ sap.ui.define([
 			// reset to default value
 			timeoutWaiter.extendConfig({maxDelay: 1000});
 		});
-		*/
 
 		QUnit.module("timeoutWaiter - single " + sFunctionUnderTest);
 
