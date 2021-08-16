@@ -13,5 +13,25 @@
         "text": " sap.ui.fl StorageUtils orders comp changes by time"
       }
     ]
+  },
+  "1.90.5": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "41a00b0c7b8e3274c06708b9992809748dce3842",
+        "type": "FIX",
+        "text": " sap.ui.fl: condense create and move to different group correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002771422021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180245640"
+          }
+        ]
+      }
+    ]
   }
 }

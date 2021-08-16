@@ -155,5 +155,21 @@
         ]
       }
     ]
+  },
+  "1.90.5": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "b1cefef4f1fceec2a9aaacbd85b14a36fdb7e003",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: vertical alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005622642021"
+          }
+        ]
+      }
+    ]
   }
 }

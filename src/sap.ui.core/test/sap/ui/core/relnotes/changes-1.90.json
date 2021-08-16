@@ -280,5 +280,29 @@
         ]
       }
     ]
+  },
+  "1.90.5": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "fd9510489852df1f5fb230e15d34f153c30787cf",
+        "type": "FIX",
+        "text": " crossroads: Match patterns w/ optional parameters and optional slashes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180291823"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500005662652021"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500005654522021"
+          }
+        ]
+      }
+    ]
   }
 }
