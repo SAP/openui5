@@ -43,13 +43,6 @@ sap.ui.define([
 		return mRevealData;
 	}
 
-	function areLibDependenciesMissing(oComponent, mRequiredLibraries) {
-		var mAppsLibDependencies = oComponent.getManifestEntry("/sap.ui5/dependencies/libs");
-		return Object.keys(mRequiredLibraries).some(function(sRequiredLib) {
-			return !mAppsLibDependencies[sRequiredLib];
-		});
-	}
-
 	function createCommandsForInvisibleElement(mPropertyBag) {
 		var oCompositeCommand = mPropertyBag.compositeCommand;
 		var oSelectedElement = mPropertyBag.selectedElement;
@@ -57,11 +50,12 @@ sap.ui.define([
 		var oSiblingElement = mPropertyBag.siblingElement;
 		var mActions = mPropertyBag.actions;
 		var iIndex = mPropertyBag.index;
+		var sTargetAggregation = mPropertyBag.targetAggregation;
 		var oPlugin = mPropertyBag.plugin;
 		return createRevealCommandForInvisible(oSelectedElement, mActions, mParents, oPlugin)
 			.then(function(oRevealCommandForInvisible) {
 				oCompositeCommand.addCommand(oRevealCommandForInvisible);
-				return createMoveCommandForInvisible(oSelectedElement, mParents, oSiblingElement, iIndex, oPlugin);
+				return createMoveCommandForInvisible(oSelectedElement, mParents, oSiblingElement, iIndex, sTargetAggregation, oPlugin);
 			})
 			.then(function(oMoveCommandForInvisible) {
 				if (oMoveCommandForInvisible) {
@@ -69,27 +63,10 @@ sap.ui.define([
 				} else {
 					Log.warning("No move action configured for "
 						+ mParents.parent.getMetadata().getName()
-						+ ", aggregation: " + mActions.aggregation, "sap.ui.rta");
+						+ ", aggregation: " + oSelectedElement.aggregation, "sap.ui.rta");
 				}
 				return oCompositeCommand;
 			});
-	}
-
-	function createCommandForAddLibrary(mParents, mRequiredLibraries, oParentAggregationDTMetadata, oPlugin) {
-		if (mRequiredLibraries) {
-			var oComponent = FlUtils.getAppComponentForControl(mParents.relevantContainer);
-			var bLibsMissing = areLibDependenciesMissing(oComponent, mRequiredLibraries);
-			if (bLibsMissing) {
-				var mManifest = oComponent.getManifest();
-				var sReference = mManifest["sap.app"].id;
-				return oPlugin.getCommandFactory().getCommandFor(mParents.publicParent, "addLibrary", {
-					reference: sReference,
-					parameters: { libraries: mRequiredLibraries },
-					appComponent: oComponent
-				}, oParentAggregationDTMetadata);
-			}
-		}
-		return Promise.resolve();
 	}
 
 	function createRevealCommandForInvisible(mSelectedElement, mActions, mParents, oPlugin) {
@@ -120,19 +97,23 @@ sap.ui.define([
 		);
 	}
 
-	function createMoveCommandForInvisible(oSelectedElement, mParents, oSiblingElement, iIndex, oPlugin) {
+	function createMoveCommandForInvisible(oSelectedElement, mParents, oSiblingElement, iIndex, sTargetAggregationName, oPlugin) {
 		var oRevealedElement = ElementUtil.getElementInstance(oSelectedElement.elementId);
 		var oRevealedElementOverlay = OverlayRegistry.getOverlay(oRevealedElement);
-		var sParentAggregationName = oRevealedElementOverlay.getParentAggregationOverlay().getAggregationName();
+		//Elements can also be moved between aggregations inside the parent
+		var sSourceAggregationName = oSelectedElement.sourceAggregation;
 		var oSourceParent = oRevealedElementOverlay.getParentElementOverlay().getElement() || mParents.parent;
 		var oTargetParent = mParents.parent;
-		var iRevealTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, sParentAggregationName);
-		var iRevealedSourceIndex = Utils.getIndex(oSourceParent, oRevealedElement, sParentAggregationName) - 1;
+		var iRevealTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, sTargetAggregationName);
+		var iRevealedSourceIndex = Utils.getIndex(oSourceParent, oRevealedElement, sSourceAggregationName) - 1;
 
 		iRevealTargetIndex = iIndex !== undefined ?
 			iIndex : ElementUtil.adjustIndexForMove(oSourceParent, oTargetParent, iRevealedSourceIndex, iRevealTargetIndex);
 
-		if (iRevealTargetIndex !== iRevealedSourceIndex || mParents.parent !== oRevealedElement.getParent()) {
+		if (iRevealTargetIndex !== iRevealedSourceIndex
+			|| mParents.parent !== oRevealedElement.getParent()
+			|| sSourceAggregationName !== sTargetAggregationName
+		) {
 			var oSourceParentOverlay = OverlayRegistry.getOverlay(oRevealedElement) ?
 				OverlayRegistry.getOverlay(oRevealedElement).getParentAggregationOverlay() : mParents.relevantContainerOverlay;
 			var SourceParentDesignTimeMetadata = oSourceParentOverlay.getDesignTimeMetadata();
@@ -146,13 +127,37 @@ sap.ui.define([
 				}],
 				source: {
 					parent: oSourceParent,
-					aggregation: sParentAggregationName
+					aggregation: sSourceAggregationName
 				},
 				target: {
 					parent: oTargetParent,
-					aggregation: sParentAggregationName
+					aggregation: sTargetAggregationName
 				}
 			}, SourceParentDesignTimeMetadata, sVariantManagementReference);
+		}
+		return Promise.resolve();
+	}
+
+	function areLibDependenciesMissing(oComponent, mRequiredLibraries) {
+		var mAppsLibDependencies = oComponent.getManifestEntry("/sap.ui5/dependencies/libs");
+		return Object.keys(mRequiredLibraries).some(function(sRequiredLib) {
+			return !mAppsLibDependencies[sRequiredLib];
+		});
+	}
+
+	function createCommandForAddLibrary(mParents, mRequiredLibraries, oParentAggregationDTMetadata, oPlugin) {
+		if (mRequiredLibraries) {
+			var oComponent = FlUtils.getAppComponentForControl(mParents.relevantContainer);
+			var bLibsMissing = areLibDependenciesMissing(oComponent, mRequiredLibraries);
+			if (bLibsMissing) {
+				var mManifest = oComponent.getManifest();
+				var sReference = mManifest["sap.app"].id;
+				return oPlugin.getCommandFactory().getCommandFor(mParents.publicParent, "addLibrary", {
+					reference: sReference,
+					parameters: { libraries: mRequiredLibraries },
+					appComponent: oComponent
+				}, oParentAggregationDTMetadata);
+			}
 		}
 		return Promise.resolve();
 	}
@@ -256,10 +261,11 @@ sap.ui.define([
 	 * @param {object} mActions - Object containing data for the different add actions
 	 * @param {int} iIndex - Index where the element shall be inserted
 	 * @param {Array<sap.ui.core.Element>} aSelectedElements - Selected elements when the action was triggered
+	 * @param {string} sTargetAggregation - The aggregation where the element is being inserted
 	 * @param {sap.ui.rta.plugin.additionalElements.AdditionalElementsPlugin} oPlugin - Instance of the AdditionalElementsPlugin
 	 * @returns {Promise} Resolving when the commands are created
 	 */
-	CommandBuilder.createCommands = function(mParents, oSiblingElement, mActions, iIndex, aSelectedElements, oPlugin) {
+	CommandBuilder.createCommands = function(mParents, oSiblingElement, mActions, iIndex, aSelectedElements, sTargetAggregation, oPlugin) {
 		// sort elements by label in descending order. When added the fields will be in ascending order on the UI
 		aSelectedElements.sort(function(oElement1, oElement2) {
 			if (oElement1.label > oElement2.label) {
@@ -284,6 +290,7 @@ sap.ui.define([
 								siblingElement: oSiblingElement,
 								actions: mActions,
 								index: iIndex,
+								targetAggregation: sTargetAggregation,
 								plugin: oPlugin
 							};
 							switch (oSelectedElement.type) {

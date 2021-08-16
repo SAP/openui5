@@ -311,7 +311,7 @@ sap.ui.define([
 					}.bind(this))
 					.then(function (oOverlay) {
 						var sExpectedText = this.oRTATexts.getText("CTX_ADD_ELEMENTS", "I18N_KEY_USER_FRIENDLY_CONTROL_NAME");
-						assert.equal(this.oPlugin.getContextMenuTitle(test.sibling, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
+						assert.equal(this.oPlugin.getContextMenuText(test.sibling, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
 						assert.ok(this.oPlugin.isAvailable(test.sibling, [oOverlay]), "then the action is available");
 						assert.notOk(this.oPlugin.isEnabled(test.sibling, [oOverlay], sAggregationName), "then the action is disabled");
 						return this.oPlugin._isEditableCheck(oOverlay, test.sibling)
@@ -339,7 +339,7 @@ sap.ui.define([
 				.then(function (oOverlay) {
 					var sExpectedControlTypeText = this.oRTATexts.getText("MULTIPLE_CONTROL_NAME");
 					var sExpectedText = this.oRTATexts.getText("CTX_ADD_ELEMENTS", [sExpectedControlTypeText]);
-					assert.equal(this.oPlugin.getContextMenuTitle(true, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
+					assert.equal(this.oPlugin.getContextMenuText(true, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
 					assert.ok(this.oPlugin.isAvailable(true, [oOverlay]), "then the action is available");
 					assert.notOk(this.oPlugin.isEnabled(true, [oOverlay], "content"), "then the action is disabled");
 					return this.oPlugin._isEditableCheck(oOverlay, true)
@@ -409,16 +409,6 @@ sap.ui.define([
 				on: ON_SIBLING,
 				sibling: true,
 				msg: "when the control's dt metadata has NO addViaDelegate and NO reveal action"
-			},
-			{
-				dtMetadata: {
-					reveal: {
-						changeType: "unhideControl"
-					}
-				},
-				on: ON_IRRELEVANT,
-				sibling: true,
-				msg: " when the control's dt metadata has a reveal action but no invisible siblings"
 			}
 		].forEach(function (test) {
 			var sPrefix = test.sibling ? "On sibling: " : "On child: ";
@@ -434,6 +424,30 @@ sap.ui.define([
 						assert.notOk(bEditable, "then the overlay is not editable");
 					});
 			});
+		});
+
+		QUnit.test("On sibling, when the control's dt metadata has a reveal action but no invisible siblings", function(assert) {
+			var oDTMetadata = {
+				reveal: {
+					changeType: "unhideControl"
+				}
+			};
+
+			// Elements from other aggregations can also be revealed on this overlay
+			this.oUnsupportedInvisible.setVisible(true);
+			this.oInvisible1.setVisible(true);
+			this.oInvisible2.setVisible(true);
+
+			return createOverlayWithAggregationActions.call(this, oDTMetadata, ON_IRRELEVANT)
+				.then(function (oOverlay) {
+					sandbox.stub(oOverlay, "isVisible").returns(true);
+					sandbox.stub(oOverlay.getParentElementOverlay(), "isVisible").returns(true);
+					assert.notOk(this.oPlugin.isAvailable(true, [oOverlay]), "then the action is not available");
+					return this.oPlugin._isEditableCheck(oOverlay, true);
+				}.bind(this))
+				.then(function (bEditable) {
+					assert.notOk(bEditable, "then the overlay is not editable");
+				});
 		});
 	});
 
@@ -594,7 +608,7 @@ sap.ui.define([
 					}.bind(this))
 
 					.then(function () {
-						assert.ok(this.fnEnhanceInvisibleElementsStub.calledOnce, "then the analyzer is called to return the invisible elements");
+						assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 3, "then the analyzer is called to return the invisible elements for each aggregation");
 						assert.ok(this.fnGetUnrepresentedDelegateProperties.notCalled, "then the analyzer is NOT called to return the unbound odata properties");
 						assertDialogModelLength.call(this, assert, 2, "then both invisible elements are part of the dialog model");
 						assert.equal(this.oPlugin.getDialog().getElements()[0].label, "Invisible1", "then the first element is an invisible property");
@@ -957,7 +971,7 @@ sap.ui.define([
 				}.bind(this))
 
 				.then(function () {
-					assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 1, "then the analyzer is called to return the invisible elements");
+					assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 3, "then the analyzer is called to return the invisible elements for each aggregation");
 					assert.equal(this.fnGetUnrepresentedDelegateProperties.callCount, 0, "then the analyzer is NOT called to return the unbound odata properties");
 					assertDialogModelLength.call(this, assert, 2, "then all invisible elements and odata properties are part of the dialog model, excluding the duplicate properties");
 					assert.equal(this.oPlugin.getDialog().getElements()[0].label, "Invisible1", "then the first element is an invisible property");
@@ -1195,7 +1209,7 @@ sap.ui.define([
 				.then(function (oCreatedOverlay) {
 					return AdditionalElementsActionExtractor.getActions(true, oCreatedOverlay, this.oPlugin);
 				}.bind(this)).then(function (mActions) {
-					assert.ok(mActions["contentLeft"].hasOwnProperty("addViaDelegate"), "then the add via delegate action for the instance-sepcific delegate is available");
+					assert.ok(mActions["contentLeft"].hasOwnProperty("addViaDelegate"), "then the add via delegate action for the instance-specific delegate is available");
 				});
 		});
 
@@ -1948,7 +1962,7 @@ sap.ui.define([
 
 		QUnit.test("when getMenuItems and showAvailableElements are called,", function (assert) {
 			// we stub "setCachedElements" which is only called when getAllElements is processed.
-			// "setCachedElements" is not called, when there are Cashed Elements available
+			// "setCachedElements" is not called, when there are cached Elements available
 			var ogetAllElementsSpy = sandbox.spy(this.oPlugin, "setCachedElements");
 			var sAggregationName = "contentLeft";
 			return createOverlayWithAggregationActions.call(this, {
@@ -2016,6 +2030,10 @@ sap.ui.define([
 		});
 	});
 
+	//                                          PseudoPublicParent (VerticalLayout)
+	//                                                    oControl (Bar)
+	//                 contentLeft                                        contentMiddle         contentRight
+	// [oSibling, <oUnsupportedInvisible>, <oInvisible1>, <oInvisible2>        EMPTY          oIrrelevantChild]
 	function givenSomeBoundControls() {
 		sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 
@@ -2049,7 +2067,8 @@ sap.ui.define([
 				tooltip: "",
 				type: "invisible",
 				elementId: this.oInvisible1.getId(),
-				bindingPaths: ["Property01"]
+				bindingPaths: ["Property01"],
+				sourceAggregation: "contentLeft"
 			},
 			{
 				selected: true,
@@ -2057,7 +2076,8 @@ sap.ui.define([
 				tooltip: "",
 				type: "invisible",
 				elementId: this.oInvisible2.getId(),
-				bindingPaths: ["Property02"]
+				bindingPaths: ["Property02"],
+				sourceAggregation: "contentLeft"
 			}
 		]);
 
@@ -2161,6 +2181,10 @@ sap.ui.define([
 		}
 	}
 
+	//                                          PseudoPublicParent (VerticalLayout)
+	//                                                    oControl (Bar)
+	//                 contentLeft                                        contentMiddle         contentRight
+	// [oSibling, <oUnsupportedInvisible>, <oInvisible1>, <oInvisible2>        EMPTY          oIrrelevantChild]
 	function createOverlayWithAggregationActions(mActions, sOverlayType) {
 		var mChildNames = {
 			singular: "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",

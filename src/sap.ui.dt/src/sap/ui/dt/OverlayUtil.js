@@ -432,13 +432,13 @@ function(
 	};
 
 	/**
-	 * Gets all the Overlays inside the relevant container which are in the same aggregations
-	 * and have DesignTime Metadata.
+	 * Gets all the Overlays with DesignTime Metadata inside the relevant container
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay Overlay from which we get the aggregations
+	 * @param {boolean} bIncludeOtherAggregations Include also overlays from other aggregations from the parent
 	 * @returns {sap.ui.dt.ElementOverlay[]} Returns an array with all the overlays in it
 	 * @protected
 	 */
-	OverlayUtil.findAllOverlaysInContainer = function(oOverlay) {
+	OverlayUtil.findAllOverlaysInContainer = function(oOverlay, bIncludeOtherAggregations) {
 		// The root control has no relevant container, therefore we use the element itself
 		var oRelevantContainer = oOverlay.getRelevantContainer() || oOverlay.getElement();
 		var oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
@@ -450,16 +450,17 @@ function(
 		}
 
 		// Get all the siblings and parents of the overlay
-		var mRelevantOverlays = OverlayUtil._findAllSiblingsAndParents(oOverlay, oRelevantContainerOverlay, 0);
+		var mRelevantOverlays = OverlayUtil._findAllSiblingsAndParents(oOverlay, oRelevantContainerOverlay, 0, bIncludeOtherAggregations);
 
 		if (mRelevantOverlays[0]) {
 			for (var iLevel in mRelevantOverlays) {
 				aRelevantOverlays = aRelevantOverlays.concat(mRelevantOverlays[iLevel]);
 			}
 
-			// the overlay and its siblings are on the first level of the relevantOverlays. From those overlays we also need to get the children
 			var aChildren = [];
-			mRelevantOverlays[0].forEach(function(oOverlay) {
+			var aOverlaysToGetChildrenFrom = bIncludeOtherAggregations ? aRelevantOverlays : mRelevantOverlays[0];
+
+			aOverlaysToGetChildrenFrom.forEach(function(oOverlay) {
 				aChildren = aChildren.concat(OverlayUtil._findAllChildrenInContainer(oOverlay, oRelevantContainer));
 			});
 
@@ -478,23 +479,49 @@ function(
 	};
 
 	/**
-	 * This function returns all the siblings and parents inside the relevant container. Siblings in different aggregations are ignored.
+	 * This function returns all the siblings and parents inside the relevant container.
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay Overlay from which we get the aggregations
 	 * @param {sap.ui.dt.ElementOverlay} oRelevantContainerOverlay Relevant container overlay
 	 * @param {int} iLevel Current level in the hierarchy
+	 * @param {boolean} bIncludeOtherAggregations Include also overlays from other aggregations from the parent
 	 * @returns {object} Returns a map with all siblings sorted by the level
 	 * @private
 	 */
-	OverlayUtil._findAllSiblingsAndParents = function(oOverlay, oRelevantContainerOverlay, iLevel) {
-		var oParent = oOverlay.getParentElementOverlay();
-		if (!oParent) {
+	OverlayUtil._findAllSiblingsAndParents = function(oOverlay, oRelevantContainerOverlay, iLevel, bIncludeOtherAggregations) {
+		var oParentOverlay = oOverlay.getParentElementOverlay();
+		if (!oParentOverlay) {
 			return [];
 		}
 
-		if (oParent !== oRelevantContainerOverlay) {
-			var mParents = OverlayUtil._findAllSiblingsAndParents(oParent, oRelevantContainerOverlay, iLevel + 1);
-			var aOverlays = mParents[iLevel + 1].map(function(oParent) {
-				var oAggregationOverlay = oParent.getAggregationOverlay(oOverlay.getParentAggregationOverlay().getAggregationName());
+		function getChildrenFromAllAggregations(oParentOverlay) {
+			var aAllAggregationNames = oParentOverlay.getAggregationNames();
+			var aAllAggregationChildren = [];
+
+			// Collect children from all aggregations of the parent
+			aAllAggregationNames.forEach(function(sAggregationName) {
+				var oAggregationOverlay = oParentOverlay.getAggregationOverlay(sAggregationName);
+				var aAggregationChildren = oAggregationOverlay ? oAggregationOverlay.getChildren() : [];
+				aAllAggregationChildren = aAggregationChildren.concat(aAllAggregationChildren);
+			});
+
+			return aAllAggregationChildren;
+		}
+
+		if (oParentOverlay !== oRelevantContainerOverlay) {
+			var mParents;
+			var aOverlays;
+			mParents = OverlayUtil._findAllSiblingsAndParents(oParentOverlay, oRelevantContainerOverlay, iLevel + 1, bIncludeOtherAggregations);
+			if (bIncludeOtherAggregations) {
+				var aAllAggregationChildren = [];
+				mParents[iLevel + 1].forEach(function(oParent) {
+					aAllAggregationChildren.concat(getChildrenFromAllAggregations(oParent));
+				});
+				mParents[iLevel] = aAllAggregationChildren;
+				return mParents;
+			}
+			aOverlays = mParents[iLevel + 1].map(function(oParent) {
+				var sParentAggregationName = oOverlay.getParentAggregationOverlay().getAggregationName();
+				var oAggregationOverlay = oParent.getAggregationOverlay(sParentAggregationName);
 				return oAggregationOverlay ? oAggregationOverlay.getChildren() : [];
 			}).reduce(function(a, b) {
 				return a.concat(b);
@@ -503,7 +530,14 @@ function(
 			return mParents;
 		}
 
-		var aChildren = oOverlay.getParentElementOverlay().getAggregationOverlay(oOverlay.getParentAggregationOverlay().getAggregationName()).getChildren();
+		var aChildren = [];
+
+		if (bIncludeOtherAggregations) {
+			aChildren = getChildrenFromAllAggregations(oParentOverlay);
+		} else {
+			var sParentAggregationName = oOverlay.getParentAggregationOverlay().getAggregationName();
+			aChildren = oOverlay.getParentElementOverlay().getAggregationOverlay(sParentAggregationName).getChildren();
+		}
 		var mReturn = {};
 		mReturn[iLevel] = aChildren;
 		return mReturn;

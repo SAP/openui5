@@ -162,7 +162,8 @@ sap.ui.define([
 			bindingPath: oElement.__bindingPath, //used for OPA tests and debugging
 			//command relevant data
 			type: "invisible",
-			elementId: oElement.getId()
+			elementId: oElement.getId(),
+			sourceAggregation: mData.sourceAggregation
 		};
 	}
 
@@ -464,7 +465,8 @@ sap.ui.define([
 						if (bIncludeElement) {
 							aAllElementData.push({
 								element: oInvisibleElement,
-								action: mRevealAction
+								action: mRevealAction,
+								sourceAggregation: mInvisibleElement.sourceAggregation
 							});
 						}
 					});

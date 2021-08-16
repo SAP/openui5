@@ -198,7 +198,7 @@ function(
 	 * @public
 	 */
 	ElementDesignTimeMetadata.prototype.getAggregationDisplayName = function(sAggregationName, oElement) {
-		var vDisplayNames = this.getAggregation(sAggregationName).displayName;
+		var vDisplayNames = this.getAggregation(sAggregationName) && this.getAggregation(sAggregationName).displayName;
 		if (typeof vDisplayNames === "function") {
 			vDisplayNames = vDisplayNames(oElement);
 		}
