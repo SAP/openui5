@@ -115,7 +115,7 @@ sap.ui.define([
 			rm.write("</div>");
 
 			rm.write('<div class="sapUiPerformanceStatsDiv sapUiSupportIntHidden">');
-			rm.write('<div class="sapUiPerformanceTimeline" style="height: 50px;"></div>');
+			rm.write('<div class="sapUiPerformanceTimeline"></div>');
 			rm.write('<div class="sapUiPerformanceTop">');
 			rm.write('</div>');
 

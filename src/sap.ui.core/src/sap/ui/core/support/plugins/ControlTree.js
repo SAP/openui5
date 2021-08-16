@@ -192,11 +192,11 @@ sap.ui.define([
 		ControlTree.prototype.renderContentAreas = function() {
 			var rm = sap.ui.getCore().createRenderManager();
 
-			rm.write('<div style="padding: 0.5rem">You can find a control in this tree by clicking it in the application UI while pressing the Ctrl+Alt+Shift keys.</div>');
+			rm.write('<div class="sapUiSupportControlTreeTitle">You can find a control in this tree by clicking it in the application UI while pressing the Ctrl+Alt+Shift keys.</div>');
 
 			rm.write('<div id="sapUiSupportControlTreeArea"><ul class="sapUiSupportControlTreeList"></ul></div>');
 
-			rm.write('<div id="sapUiSupportControlTabs" style="visibility:hidden">');
+			rm.write('<div id="sapUiSupportControlTabs" class="sapUiSupportControlTabsHidden">');
 				rm.write('<button id="sapUiSupportControlTabProperties" class="sapUiSupportBtn sapUiSupportTab sapUiSupportTabLeft">Properties</button>');
 				rm.write('<button id="sapUiSupportControlTabBindingInfos" class="sapUiSupportBtn sapUiSupportTab">Binding Infos</button>');
 				rm.write('<button id="sapUiSupportControlTabBreakpoints" class="sapUiSupportBtn sapUiSupportTab">Breakpoints</button>');
@@ -216,10 +216,10 @@ sap.ui.define([
 				var bHasChildren = mElement.aggregation.length > 0 || mElement.association.length > 0;
 				rm.write("<li id=\"sap-debug-controltree-" + encode(mElement.id) + "\" class=\"sapUiControlTreeElement\">");
 				var sImage = bHasChildren ? "minus" : "space";
-				rm.write("<img class=\"sapUiControlTreeIcon\" style=\"height: 12px; width: 12px;\" src=\"../../debug/images/" + sImage + ".gif\">");
+				rm.write("<img class=\"sapUiControlTreeIcon\" src=\"../../debug/images/" + sImage + ".gif\">");
 
 				if (mElement.isAssociation) {
-					rm.write("<img title=\"Association\" class=\"sapUiControlTreeIcon\" style=\"height: 12px; width: 12px;\" src=\"../../debug/images/link.gif\">");
+					rm.write("<img title=\"Association\" class=\"sapUiControlTreeIcon\" src=\"../../debug/images/link.gif\">");
 				}
 
 				var sClass = basename(mElement.type);
@@ -227,7 +227,7 @@ sap.ui.define([
 				rm.write('<div>');
 
 				rm.write('<span class="name" title="' + encode(mElement.type) + '">' + encode(sClass) + ' - ' + encode(mElement.id) + '</span>');
-				rm.write('<span class="sapUiSupportControlTreeBreakpointCount" title="Number of active breakpoints / methods" style="display:none;"></span>');
+				rm.write('<span class="sapUiSupportControlTreeBreakpointCount sapUiSupportItemHidden" title="Number of active breakpoints / methods"></span>');
 
 				rm.write('</div>');
 
@@ -244,8 +244,8 @@ sap.ui.define([
 						if (oValue.isAssociationLink) {
 							var sType = basename(oValue.type);
 							rm.write("<li data-sap-ui-controlid=\"" + encode(oValue.id) + "\" class=\"sapUiControlTreeLink\">");
-							rm.write("<img class=\"sapUiControlTreeIcon\" style=\"height: 12px; width: 12px;\" align=\"middle\" src=\"../../debug/images/space.gif\">");
-							rm.write("<img class=\"sapUiControlTreeIcon\" style=\"height: 12px; width: 12px;\" align=\"middle\" src=\"../../debug/images/link.gif\">");
+							rm.write("<img class=\"sapUiControlTreeIcon\" align=\"middle\" src=\"../../debug/images/space.gif\">");
+							rm.write("<img class=\"sapUiControlTreeIcon\" align=\"middle\" src=\"../../debug/images/link.gif\">");
 							rm.write("<div><span title=\"Association '" + encode(oValue.name) + "' to '" + encode(oValue.id) + "' with type '" + encode(oValue.type) + "'\">" +
 								encode(sType) + " - " + encode(oValue.id) + " (" + encode(oValue.name) + ")</span></div>");
 							rm.write("</li>");
@@ -286,7 +286,7 @@ sap.ui.define([
 
 						rm.write("<tr><td>");
 						rm.write("<label class='sapUiSupportLabel'>" + encode(oProperty.name) + ((oProperty.isBound) ?
-								'<img title="Value is bound (see Binding Infos)" src="../../debug/images/link.gif" style="vertical-align:middle;margin-left:3px">' : "") + "</label>");
+								'<img title="Value is bound (see Binding Infos)" src="../../debug/images/link.gif">' : "") + "</label>");
 						rm.write("</td><td>");
 
 						if (oProperty.type === "boolean") {
@@ -384,7 +384,7 @@ sap.ui.define([
 			rm.flush(this.$().find("#sapUiSupportControlPropertiesArea").get(0));
 			rm.destroy();
 
-			this.$().find("#sapUiSupportControlTabs").css("visibility", "");
+			this.$().find("#sapUiSupportControlTabs").removeClass("sapUiSupportControlTabsHidden");
 
 			this.selectTab(this._tab.properties);
 		};
@@ -395,7 +395,7 @@ sap.ui.define([
 
 			if (mBindingInfos.contexts.length > 0) {
 
-				rm.write('<h2 style="padding-left:5px">Contexts</h2>');
+				rm.write('<h2>Contexts</h2>');
 
 				rm.write('<ul class="sapUiSupportControlTreeList" data-sap-ui-controlid="' + encode(sControlId) + '">');
 
@@ -420,9 +420,9 @@ sap.ui.define([
 					rm.write('<div><span');
 
 					if (oContext.invalidPath) {
-						rm.write(' style="color:red"');
+						rm.write(' class="sapUiSupportModelPathInvalid"');
 					} else if (oContext.unverifiedPath) {
-						rm.write(' style="color:orange"');
+						rm.write(' class="sapUiSupportModelPathUnverified"');
 					}
 
 					rm.write('>' + encode(oContext.path));
@@ -464,7 +464,7 @@ sap.ui.define([
 
 			if (mBindingInfos.bindings.length > 0) {
 
-				rm.write('<h2 style="padding-left:5px">Bindings</h2>');
+				rm.write('<h2>Bindings</h2>');
 
 				rm.write('<ul class="sapUiSupportControlTreeList" data-sap-ui-controlid="' + encode(sControlId) + '">');
 
@@ -474,9 +474,8 @@ sap.ui.define([
 
 					rm.write('<span>');
 
-					rm.write('<label class="sapUiSupportLabel" style="vertical-align: middle">' + encode(oBindingInfo.name) + '</label>');
-					rm.write('<img class="sapUiSupportRefreshBinding" title="Refresh Binding" ' +
-						'src="../../debug/images/refresh.gif" style="cursor:pointer;margin-left:5px;vertical-align:middle">');
+					rm.write('<label class="sapUiSupportLabel">' + encode(oBindingInfo.name) + '</label>');
+					rm.write('<img class="sapUiSupportRefreshBinding" title="Refresh Binding" src="../../debug/images/refresh.gif">');
 
 					rm.write('</span>');
 
@@ -497,9 +496,9 @@ sap.ui.define([
 						rm.write('<div><span');
 
 						if (oBinding.invalidPath) {
-							rm.write(' style="color:red"');
+							rm.write(' class="sapUiSupportModelPathInvalid"');
 						} else if (oBinding.unverifiedPath) {
-							rm.write(' style="color:orange"');
+							rm.write(' class="sapUiSupportModelPathUnverified"');
 						}
 
 						rm.write('>' + encode(oBinding.path));
@@ -686,8 +685,7 @@ sap.ui.define([
 				}
 
 				rm.write('<li><span>' + encode(oValue.name) + '</span>' +
-						 '<img class="remove-breakpoint" style="cursor:pointer;margin-left:5px" ' +
-						 'src="../../debug/images/delete.gif"></li>');
+						 '<img class="remove-breakpoint"  src="../../debug/images/delete.gif"></li>');
 			});
 
 			rm.write('</ul></div>');
@@ -726,11 +724,10 @@ sap.ui.define([
 			var $breakpoints = $("#sap-debug-controltree-" + sControlId + " > div span.sapUiSupportControlTreeBreakpointCount");
 
 			if (mBpCount.active > 0) {
-				$breakpoints.text(mBpCount.active + " / " + mBpCount.all).show();
+				$breakpoints.text(mBpCount.active + " / " + mBpCount.all).toggleClass("sapUiSupportItemHidden", false);
 			} else {
-				$breakpoints.text("").hide();
+				$breakpoints.text("").toggleClass("sapUiSupportItemHidden", true);
 			}
-
 		};
 
 		// -------------------------------
@@ -838,10 +835,10 @@ sap.ui.define([
 			var $source = $(oEvent.target);
 			if ($source.parent().attr("data-sap-ui-collapsed")) {
 				$source.attr("src", $source.attr("src").replace("plus", "minus")).parent().removeAttr("data-sap-ui-collapsed");
-				$source.siblings("ul").show();
+				$source.siblings("ul").toggleClass("sapUiSupportItemHidden", false);
 			} else {
 				$source.attr("src", $source.attr("src").replace("minus", "plus")).parent().attr("data-sap-ui-collapsed", "true");
-				$source.siblings("ul").hide();
+				$source.siblings("ul").toggleClass("sapUiSupportItemHidden", true);
 			}
 			if (oEvent.stopPropagation) {
 				oEvent.stopPropagation();

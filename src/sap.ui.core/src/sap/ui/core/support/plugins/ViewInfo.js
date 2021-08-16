@@ -63,7 +63,7 @@ sap.ui.define([
 
 			if (typeof this.supportInfo !== "function") {
 				this.$().get(0).innerHTML =
-					"<div class='sapUISupportLabel' style='padding: 5px;'>" +
+					"<div class='sapUISupportLabel'>" +
 						"View Info Support Tool is only available in <b>Support Mode.</b>" +
 						"<br>Turn it on by adding '<b>sap-ui-support=true</b>' to the url or your application." +
 					"</div>";

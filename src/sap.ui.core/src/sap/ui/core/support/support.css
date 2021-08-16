@@ -183,6 +183,15 @@ button.sapUiSupportHelpButton:hover {
 	padding: 0.25rem 0.5rem;
 }
 
+.sapUiSupportLabel img {
+	vertical-align: middle;
+	margin-left: 3px;
+}
+
+.sapUiSupportLabelBold {
+	font-weight: bold;
+}
+
 .sapUiSupportToolbar {
 	background-color: #F2F2F2;
 	height: 31px;
@@ -340,6 +349,10 @@ button.sapUiSupportHelpButton:hover {
 	overflow: hidden;
 }
 
+.sapUiSupportControlTreeTitle {
+	padding: 0.5rem;
+}
+
 .sapUISupportLabel {
 	margin: 0.25rem auto;
 }
@@ -356,6 +369,11 @@ button.sapUiSupportHelpButton:hover {
 	float: left;
 	position: relative;
 }
+
+#sapUiSupportControlPropertiesArea h2 {
+	padding-left: 5px;
+}
+
 .sapUiSupportContainer {
 	border: 0;
 	height: auto;
@@ -377,19 +395,21 @@ ul.sapUiSupportControlTreeList li {
 	padding: 0;
 }
 
+ul.sapUiSupportControlTreeList .sapUiSupportLabel {
+	vertical-align: middle;
+}
+
 #sapUiSupportControlTreeArea li {
 	overflow: hidden;
 	cursor: pointer;
 }
 
-#sapUiSupportControlTreeArea li img.sapUiControlTreeIcon,
-#sapUiSupportControlTreeArea li img.sapUiControlPicture {
-	float: left;
-}
-
 #sapUiSupportControlTreeArea li img.sapUiControlTreeIcon {
+	float: left;
 	margin-top: 5px;
 	margin-right: 3px;
+	width: 12px;
+	height: 12px;
 }
 
 #sapUiSupportControlTreeArea li div {
@@ -426,6 +446,14 @@ ul.sapUiSupportControlTreeList li {
 	float: right;
 }
 
+.sapUiSupportControlTabsHidden {
+	visibility: hidden;
+}
+
+.sapUiSupportItemHidden {
+	display: none;
+}
+
 #sapUiSupportControlPropertiesArea ul.sapUiSupportControlTreeList li span {
 	display: inline-block;
 	padding: 5px 0;
@@ -436,6 +464,7 @@ ul.sapUiSupportControlTreeList li {
 	position: relative;
 }
 
+#sapUiSupportViewInfo .sapUISupportLabel,
 .sapUiSupportControlProperties {
 	padding: 5px;
 }
@@ -463,6 +492,14 @@ ul.sapUiSupportControlTreeList li {
 .sapUiSupportControlProperties select {
 	width: 100%;
 	box-sizing: border-box;
+}
+
+.sapUiSupportControlProperties .sapUiSupportModelPathInvalid {
+	color: red;
+}
+
+.sapUiSupportControlProperties .sapUiSupportModelPathUnverified {
+	color: orange;
 }
 
 #sapUiSupportPerf > .sapUiSupportToolbar > button {
@@ -1365,4 +1402,26 @@ html[data-sap-ui-browser^="cr"] .sapUiSupportIntFupInputMask > input {
 	position: relative;
 	vertical-align: middle;
 	bottom: 1px;
+}
+
+.remove-breakpoint,
+.remove-class {
+	cursor:pointer;
+	margin-left:5px;
+}
+
+.sapUiSupportRefreshBinding {
+	cursor: pointer;
+	margin-left: 5px;
+	vertical-align: middle;
+}
+
+#sapUiSupportDebuggingClassContainer .sapUISupportLabel,
+#sapUiSupportDebuggingMethodContainer .sapUISupportLabel {
+	margin-right: 5px;
+}
+
+#sapUiSupportDebuggingMethodContainer p {
+	text-align: center;
+	font-weight: bold;
 }
