@@ -543,6 +543,7 @@ sap.ui.define([
 			IconTabHeader: {
 				title: "QUnit Page for sap.m.IconTabHeader",
 				sinon: {
+					version: 4,
 					useFakeTimers: true
 				}
 			},
