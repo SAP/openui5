@@ -434,9 +434,11 @@ sap.ui.define([
 					return;
 				}
 
+				this.sIFrameUrl = this.sIFrameUrl.replace(oIFrameURL.search, "");
+
 				oIFrameURL.searchParams.set(sSearchParam, sNewVal);
 
-				this.sIFrameUrl = oIFrameURL.origin + oIFrameURL.pathname + decodeURI(oIFrameURL.search);
+				this.sIFrameUrl = this.sIFrameUrl + decodeURI(oIFrameURL.search);
 			},
 
 			_loadRTA: function () {
