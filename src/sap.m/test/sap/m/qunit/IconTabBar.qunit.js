@@ -853,7 +853,6 @@ sap.ui.define([
 
 		// Clean up
 		oIconTabBar.destroy();
-
 	});
 
 	QUnit.test("Positive", function(assert) {
@@ -885,7 +884,6 @@ sap.ui.define([
 
 		// Clean up
 		oIconTabBar.destroy();
-
 	});
 
 	QUnit.test("Negative", function(assert) {
@@ -917,7 +915,6 @@ sap.ui.define([
 
 		// Clean up
 		oIconTabBar.destroy();
-
 	});
 
 	QUnit.test("Neutral", function(assert) {
@@ -949,7 +946,6 @@ sap.ui.define([
 
 		// Clean up
 		oIconTabBar.destroy();
-
 	});
 
 	QUnit.test("Critical", function(assert) {
@@ -1023,6 +1019,32 @@ sap.ui.define([
 			assert.strictEqual($Tab.find(".sapMITBFilter" + sIconColor).length, 0, "iconColor class is not set on any element in the tab");
 			// debugger
 			assert.strictEqual($Tab.text().includes(sIconColorLabel), false, "iconColor text is not conveyed");
+		});
+
+		// Clean up
+		oIconTabBar.destroy();
+	});
+
+	QUnit.test("Icon color description is rendered for 'Inline' header mode", function (assert) {
+		// Arrange
+		var oFilter = new IconTabFilter({
+				text: "Tab"
+			}),
+			oIconTabBar = new IconTabBar({
+				headerMode: IconTabHeaderMode.Inline,
+				items: [
+					oFilter
+				]
+			}),
+			aIconColors = [IconColor.Positive, IconColor.Negative, IconColor.Critical, IconColor.Neutral];
+		oIconTabBar.placeAt("qunit-fixture");
+
+		aIconColors.forEach(function (sColor) {
+			oFilter.setIconColor(sColor);
+			Core.applyChanges();
+
+			// Assert
+			assert.ok(oFilter.getDomRef("iconColor"), sColor + " color description should be added to the DOM");
 		});
 
 		// Clean up
