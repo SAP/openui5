@@ -30,10 +30,10 @@
 		title: "SearchField in a Dialog",
 		state: sap.ui.core.ValueState.Success,
 		subHeader: new sap.m.Bar({
-			contentLeft: new sap.m.SearchField("DialogSFHeader",{placeholder: "search...", ariaDescribedBy: ["SF_AD"]})
+			contentLeft: new sap.m.SearchField("DialogSFHeader",{placeholder: "search..."})
 		}),
 		content: [
-			new sap.m.SearchField("DialogSF",{placeholder: "search...", ariaDescribedBy: ["SF_AD"]})
+			new sap.m.SearchField("DialogSF",{placeholder: "search..."})
 		],
 		beginButton:
 			new sap.m.Button({
@@ -89,7 +89,6 @@
 			}),
 			new sap.m.SearchField("SF1", {
 				placeholder: "search for...",
-				ariaDescribedBy: ["SF_AD"],
 				ariaLabelledBy: "SF1Label",
 				search: onSearch
 			}),
@@ -101,7 +100,6 @@
 				value: "selectOnFocus:false",
 				placeholder: "selectOnFocus:false..",
 				selectOnFocus: false,
-				ariaDescribedBy: ["SF_AD"],
 				ariaLabelledBy: "SF2Label",
 				showRefreshButton: true, refreshButtonTooltip: "Reload..",
 				search: function(event){
@@ -121,7 +119,6 @@
 			new sap.m.SearchField("SF3", {
 				placeholder: "disabled...",
 				value: "disabled",
-				ariaDescribedBy: ["SF_AD"],
 				ariaLabelledBy: "SF3Label",
 				enabled: false,
 				showRefreshButton: true, refreshButtonTooltip: "Reload..",
@@ -134,7 +131,6 @@
 			new sap.m.SearchField("SF4", {
 				placeholder: "maxLength=5..",
 				maxLength: 5,
-				ariaDescribedBy: ["SF_AD"],
 				ariaLabelledBy: "SF4Label",
 				search: onSearch,
 				liveChange: onLiveChange
@@ -143,19 +139,25 @@
 				text: "SF5"
 			}),
 			new sap.m.SearchField("SF5", {
-				placeholder: "width=50%", width: "50%", ariaDescribedBy: ["SF_AD"], ariaLabelledBy: "SF5Label", search: onSearch, liveChange: onLiveChange
+				placeholder: "width=50%", width: "50%", ariaLabelledBy: "SF5Label", search: onSearch, liveChange: onLiveChange
 			}),
 			new sap.m.Label("SF6Label", {
 				text: "SF6"
 			}),
 			new sap.m.SearchField("SF6", { // remove default placeholder
-				placeholder: "", ariaDescribedBy: ["SF_AD"], ariaLabelledBy: "SF6Label", search: onSearch, liveChange: onLiveChange
+				placeholder: "", ariaLabelledBy: "SF6Label", search: onSearch, liveChange: onLiveChange
 			}),
 			new sap.m.Label("SF7Label", {
 				text: "SF7"
 			}),
 			new sap.m.SearchField("SF7", { // showSearchButton = false
-				placeholder: "Without search button..", ariaDescribedBy: ["SF_AD"], ariaLabelledBy: "SF7Label", showSearchButton: false, search: onSearch, liveChange:onLiveChange
+				placeholder: "Without search button..", ariaLabelledBy: "SF7Label", showSearchButton: false, search: onSearch, liveChange: onLiveChange
+			}),
+			new sap.m.Label("SF8Label", {
+				text: "SF8 custom aria-description"
+			}),
+			new sap.m.SearchField("SF8", {
+				ariaLabelledBy: "SF8Label", ariaDescribedBy: ["SF_AD"]
 			}),
 			new sap.m.Button("openDialog", {
 				text: "Open a Dialog",
@@ -180,7 +182,6 @@
 			contentLeft: [
 				new sap.m.SearchField( "SFB12", {
 					placeholder: "Search ...",
-					ariaDescribedBy: ["SF_AD"],
 					search: onSearch,
 					layoutData: new sap.m.FlexItemData({growFactor: 1})
 				})
@@ -190,7 +191,6 @@
 			contentMiddle: [
 				new sap.m.SearchField( "SFB22", {
 					placeholder: "Search ...",
-					ariaDescribedBy: ["SF_AD"],
 					search: onSearch,
 					width: "100%"
 				})
@@ -198,10 +198,10 @@
 		}),
 		content : [
 			new sap.m.SearchField("SF12", {
-				placeholder: "search for...", ariaDescribedBy: ["SF_AD"], search:onSearch, liveChange: onLiveChange
+				placeholder: "search for...", search: onSearch, liveChange: onLiveChange
 			}),
 			new sap.m.SearchField("SF22", {
-				placeholder: "search for..", ariaDescribedBy: ["SF_AD"], search:onSearch, liveChange: onLiveChange
+				placeholder: "search for..", search: onSearch, liveChange: onLiveChange
 			})
 		]
 	});
