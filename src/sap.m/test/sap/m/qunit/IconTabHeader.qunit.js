@@ -706,6 +706,7 @@ sap.ui.define([
 
 	QUnit.test("Badge is removed from the overflow tab when there are no more tabs with badges in it", function (assert) {
 		// Arrange
+		this.clock.restore();
 		this.oITH.getItems()[this.iSize - 1].addCustomData(new BadgeCustomData());
 
 		Core.applyChanges();
@@ -870,10 +871,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("CustomData is cloned to the overflow item", function (assert) {
+		this.clock.restore();
 		var oOverflowTab = this.oITH._getOverflow();
 
 		QUnitUtils.triggerKeydown(oOverflowTab.$(), KeyCodes.ENTER);
-		this.clock.tick(4000);
 
 		assert.strictEqual(oOverflowTab._oPopover.$().find("li[data-a]").attr('data-a'), "b", "custom data attribute is correctly cloned");
 
