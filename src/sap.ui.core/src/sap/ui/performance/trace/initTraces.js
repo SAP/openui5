@@ -40,7 +40,7 @@ sap.ui.define(["sap/ui/performance/trace/FESR", "sap/base/Log"], function(FESR, 
 		// TODO this should be part of a Configuration
 		// *********** Include E2E-Trace Scripts *************
 		if (/sap-ui-xx-e2e-trace=(true|x|X)/.test(location.search)) {
-			sap.ui.requireSync("sap/ui/core/support/trace/E2eTraceLib");
+			sap.ui.require(["sap/ui/core/support/trace/E2eTraceLib"]);
 		}
 	};
 });
