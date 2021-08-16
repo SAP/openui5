@@ -1092,5 +1092,47 @@
         ]
       }
     ]
+  },
+  "1.71.37": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "0c35d5d81ca92a735e0b8859321c3b69fb489955",
+        "type": "FIX",
+        "text": " sap.ui.VersionInfo: copy 'hasOwnPreload' flag for components",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180290030"
+          }
+        ]
+      },
+      {
+        "id": "201e1fc4d2b2bf2403fc144d4eb369e8d75cb767",
+        "type": "FIX",
+        "text": " core.qunit.routing.HistoryUtils: check for the usage of pushState",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180319180"
+          }
+        ]
+      },
+      {
+        "id": "49a604962fe48e4d1bd73760ee8c07b42a2d5131",
+        "type": "FIX",
+        "text": " sap.ui.core.routing: make history API related tests more robust",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180056979"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180316201"
+          }
+        ]
+      }
+    ]
   }
 }

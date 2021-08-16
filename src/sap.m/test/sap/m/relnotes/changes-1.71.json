@@ -2682,5 +2682,36 @@
         ]
       }
     ]
+  },
+  "1.71.37": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "0491f615d1876938f4d406f4948a8dfee0795ea6",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: now returns 24:00:00 when support2400 is on and 24:00:00 is entered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2040645554"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400003989092021"
+          }
+        ]
+      },
+      {
+        "id": "7786bf7f345ba4a299030aabdeae9efba9b58093",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection - fix correct filesize for range 1000-1023 Bytes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004631272021"
+          }
+        ]
+      }
+    ]
   }
 }

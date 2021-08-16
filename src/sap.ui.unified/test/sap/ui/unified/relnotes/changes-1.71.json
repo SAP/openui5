@@ -419,5 +419,21 @@
         ]
       }
     ]
+  },
+  "1.71.37": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "caabf19eea1152f22c00bf8b0336db0631f0c87b",
+        "type": "FIX",
+        "text": " sap.ui.FileUploader: destroyed properly on IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004703862021"
+          }
+        ]
+      }
+    ]
   }
 }
