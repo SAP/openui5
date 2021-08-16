@@ -167,7 +167,12 @@ sap.ui.define([
 					visibility: "hidden"
 				}
 			},
-			events: {}
+			events: {
+				/**
+				 * Event is fired if the user processes a condition. (Not known if changed.)
+				 */
+				conditionProcessed: {}
+			}
 		},
 		_oManagedObjectModel: null,
 
@@ -270,6 +275,8 @@ sap.ui.define([
 
 			aConditions.splice(iIndex, 1);
 			this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
+
+			this.fireConditionProcessed();
 		},
 
 		addCondition: function(oEvent) {
@@ -489,6 +496,8 @@ sap.ui.define([
 
 					FilterOperatorUtil.checkConditionsEmpty(aConditions);
 					this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
+
+					this.fireConditionProcessed();
 
 				}.bind(this), 0);
 			}
@@ -1449,6 +1458,8 @@ sap.ui.define([
 
 		// check if at least one condition has an error
 		_checkInvalidInput.call(this, bInvalid);
+
+		this.fireConditionProcessed();
 
 	}
 

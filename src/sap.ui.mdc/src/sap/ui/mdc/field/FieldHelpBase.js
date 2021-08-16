@@ -710,7 +710,7 @@ sap.ui.define([
 
 	/**
 	 * Calls initialization of the FieldHelp before the FieldHelp is really opened.
-	 * This is called in typeahead on first letter before the FieldHelp is opened with a delay. So the
+	 * This is called in Typeahead on first letter before the FieldHelp is opened with a delay. So the
 	 * content can be determined in the delegate coding early.
 	 *
 	 * <b>Note:</b> This function must only be called by the control the <code>FieldHelp</code> element
@@ -1089,7 +1089,7 @@ sap.ui.define([
 	 */
 	FieldHelpBase.prototype.isValidationSupported = function() {
 		// to be implemented by the concrete FieldHelp
-		return true;
+		return this.isUsableForValidation();
 	};
 
 	/**
@@ -1120,7 +1120,28 @@ sap.ui.define([
 	 */
 	FieldHelpBase.prototype.getItemForValue = function(vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName) {
 
-		return _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst && bCheckKey, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName);
+		if (typeof vValue !== "object" || !vValue.hasOwnProperty("value")) {
+			// not new config object -> map old properties to config
+			vValue = {
+					value: vValue,
+					parsedValue: vParsedValue,
+					inParameters: oInParameters, // TODO: needed?
+					outParameters: oOutParameters, // TODO: needed?
+					bindingContext: oBindingContext,
+					checkKeyFirst: bCheckKeyFirst, // TODO: not longer needed?
+					checkKey: bCheckKey,
+					checkDescription: bCheckDescription,
+					conditionModel: oConditionModel,
+					conditionModelName: sConditionModelName
+			};
+		}
+
+		if (vValue && typeof vValue === "object" && vValue.hasOwnProperty("value")) {
+			// map new Config to old API
+			return _getItemForValue.call(this, vValue.value, vValue.parsedValue, vValue.inParameters, vValue.outParameters, vValue.bindingContext, vValue.checkKeyFirst && vValue.checkKey, vValue.checkKey, vValue.checkDescription, vValue.conditionModel, vValue.conditionModelName);
+		} else {
+			return _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst && bCheckKey, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName);
+		}
 
 	};
 
@@ -1473,6 +1494,45 @@ sap.ui.define([
 		}
 
 	}
+
+	/// renaming of functions -> call original ones
+	FieldHelpBase.prototype.isTypeaheadSupported = function() {
+		return this.openByTyping();
+	};
+	FieldHelpBase.prototype.shouldOpenOnClick = function() {
+		return this.openByClick();
+	};
+	FieldHelpBase.prototype.onControlChange = function() {
+		return this.onFieldChange();
+	};
+
+	FieldHelpBase.prototype.getAriaAttributes = function(iMaxConditions) {
+
+		return {
+			contentId: this.getContentId(),
+			ariaHasPopup: this.getAriaHasPopup(),
+			role: "combobox",
+			roleDescription: this.getRoleDescription(iMaxConditions),
+			valueHelpEnabled: this.getValueHelpEnabled()
+		};
+
+	};
+
+	FieldHelpBase.prototype.attachEvent = function(sEventId, oData, fnFunction, oListener) {
+		if (sEventId === "navigated") {
+			return Element.prototype.attachEvent.apply(this, ["navigate", oData, fnFunction, oListener]);
+		} else {
+			return Element.prototype.attachEvent.apply(this, arguments);
+		}
+	};
+
+	FieldHelpBase.prototype.detachEvent = function(sEventId, fnFunction, oListener) {
+		if (sEventId === "navigated") {
+			return Element.prototype.detachEvent.apply(this, ["navigate", fnFunction, oListener]);
+		} else {
+			return Element.prototype.detachEvent.apply(this, arguments);
+		}
+	};
 
 	return FieldHelpBase;
 

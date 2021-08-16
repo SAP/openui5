@@ -88,10 +88,13 @@
 }
 
 // makes the IconTab Header hidden when only one tabs exist
-.sapMdcValueHelpPanel .sapMdcNoHeader .sapMITH {
-    visibility: hidden;
-    height: 0px;
-}
+// .sapMdcValueHelpPanel .sapMdcNoHeader .sapMITH {
+// 	display: none;
+// }
+
+.sapMdcNoHeader > div:first-child {
+	 display: none;
+ }
 
 .sapUiMdcDefineConditionPanel .sapUiMdcDefineConditionGrid {
 	margin-bottom: 0.5rem;
@@ -99,8 +102,8 @@
 
 // give the Filterbar the required padding and max height
 .sapMdcValueHelpPanelFilterbar {
-    margin-left: 2rem;
-    margin-right: 1rem;
+	margin-left: 2rem;
+	margin-right: 1rem;
 }
 
 // allign static text
@@ -139,12 +142,12 @@
 // hide the toolbar border and give some more top margin
 .sapMdcValueHelpPanel .sapMTBStandard {
 	margin-top: 0.5rem;
-    border-bottom: solid 1px transparent;
+	border-bottom: solid 1px transparent;
 }
 
 // hide the panel bottom border
 .sapMdcValueHelpPanel .sapMPanelContent:not(.sapMPanelBGTransparent) {
-    border-bottom: none;
+	border-bottom: none;
 }
 
 
@@ -160,29 +163,56 @@
 	font-size: @sapMFontHeader5Size
 }
 
-// scrollbar for Table if FixFlex is fix
-.sapMdcValueHelpPanel .sapUiFixFlexScrolling .sapMdcTablePanel {
-	height: 200px !important;
-}
-
 // make the title shadows transparent
 .sapMdcValueHelpTitle.sapMDialog:not(.sapMDialogWithSubHeader) > header:first-of-type .sapMIBar {
-    box-shadow: inset 0 -0.0625rem transparent;
+	box-shadow: inset 0 -0.0625rem transparent;
 }
 
 .sapMdcValueHelpTitle.sapMBar {
-    box-shadow: inset 0 -0.0625rem transparent;
+	box-shadow: inset 0 -0.0625rem transparent;
 }
 
 // remove some borders around the IconTabBar content
 .sapMdcValueHelpPanel .sapMITBContent {
-    border-left: none;
-    border-right: none;
-    border-bottom: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: none;
 }
 
 // set the 2rem padding also on the OK and Cancel buttons in the footer
 .sapMdcValueHelpTitle.sapMDialog footer .sapMTB {
-    padding: 0 2rem;
+	padding: 0 2rem;
 }
 
+
+.sapMdcValueHelpPanelTableBox {
+	padding: 0 2rem;
+}
+
+.sapMdcValueHelpPanelTableBox > .sapMFlexItem {
+	//min-height: 200px !important;
+	height: 100%;
+}
+
+.sapMdcValueHelpPanelTableBox .sapUiMdcTable .sapMTBStandard {
+	margin-top: 0;
+}
+
+.sapMdcValueHelpPanel .sapUiFixFlexScrolling .sapMdcValueHelpPanelTableBox {
+	height: 200px !important;
+}
+
+.sapMdcValueHelpPanelTableBox .sapUiMdcTable .sapMTitleTB {
+	font-size: 1rem;
+}
+
+.sapMdcValueHelpPopover.sapMdcValueHelpMultiSelect .sapUiMdcDefineConditionPanel {
+	margin-left: 1rem;
+	margin-top: 1rem;
+}
+
+.sapMdcValueHelpPopover.sapMdcValueHelpSingleSelect .sapUiMdcDefineConditionPanel {
+	margin-left: 0rem;
+	margin-right: 0.75rem;
+	margin-top: 1rem;
+}
