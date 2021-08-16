@@ -4654,7 +4654,7 @@ sap.ui.define([
 	 * <b>Note:</b> A ManagedObject inherits binding contexts from the Core only when it is a descendant of a UIArea.
 	 *
 	 * @param {string} [sModelName] the name of the model or <code>undefined</code>
-	 * @return {sap.ui.model.Context} The binding context of this object
+	 * @returns {sap.ui.model.Context|null|undefined} The binding context of this object
 	 * @public
 	 */
 	ManagedObject.prototype.getBindingContext = function(sModelName){
