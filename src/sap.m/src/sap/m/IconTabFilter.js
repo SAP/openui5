@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/core/Renderer",
 	"sap/ui/core/IconPool",
 	'sap/ui/core/InvisibleMessage',
-	"sap/ui/core/InvisibleText",
 	'sap/ui/Device',
 	"sap/m/BadgeCustomData",
 	"sap/m/Button",
@@ -30,7 +29,6 @@ sap.ui.define([
 	Renderer,
 	IconPool,
 	InvisibleMessage,
-	InvisibleText,
 	Device,
 	BadgeCustomData,
 	Button,
@@ -275,11 +273,6 @@ sap.ui.define([
 			Item.prototype.exit.call(this, oEvent);
 		}
 
-		if (this._invisibleText) {
-			this._invisibleText.destroy();
-			this._invisibleText = null;
-		}
-
 		if (this._oPopover) {
 			this._oPopover.destroy();
 			this._oPopover = null;
@@ -437,7 +430,7 @@ sap.ui.define([
 			oIcon = this.getIcon(),
 			sIconColor = this.getIconColor(),
 			bEnabled = this.getEnabled(),
-			bShouldReadIconColor = bEnabled && (sIconColor == "Positive" || sIconColor == "Critical" || sIconColor == "Negative" || sIconColor == "Neutral"),
+			bShouldReadIconColor = this._shouldReadIconColor(),
 			bHorizontalDesign = this.getDesign() === IconTabFilterDesign.Horizontal,
 			bTextOnly = oIconTabHeader._bTextOnly,
 			bInLine = oIconTabHeader._bInLine || oIconTabHeader.isInlineMode(),
@@ -531,6 +524,10 @@ sap.ui.define([
 
 		oRM.openEnd();
 
+		if (bShouldReadIconColor) {
+			this._renderIconColorDescription(oRM);
+		}
+
 		oRM.openStart("div")
 			.class("sapMITBFilterWrapper")
 			.openEnd();
@@ -541,14 +538,6 @@ sap.ui.define([
 				.openEnd();
 
 			if (!bShowAll || !oIcon) {
-				if (bShouldReadIconColor) {
-					oRM.openStart("div", sId + "-iconColor")
-						.style("display", "none")
-						.openEnd()
-						.text(oResourceBundle.getText("ICONTABBAR_ICONCOLOR_" + sIconColor.toUpperCase()))
-						.close("div");
-				}
-
 				var aCssClasses = ["sapMITBFilterIcon", "sapMITBBadgeHolder"];
 				if (bEnabled) {
 					aCssClasses.push("sapMITBFilter" + sIconColor);
@@ -666,11 +655,6 @@ sap.ui.define([
 	 * @protected
 	 */
 	IconTabFilter.prototype.renderInSelectList = function (oRM, oSelectList, iIndexInSet, iSetSize, fPaddingValue) {
-		if (this._invisibleText) {
-			this._invisibleText.destroy();
-			this._invisibleText = null;
-		}
-
 		if (!this.getVisible()) {
 			return;
 		}
@@ -725,7 +709,7 @@ sap.ui.define([
 		}
 
 		var sItemId = this.getId(),
-			bShouldReadIconColor = bEnabled && (sIconColor == "Positive" || sIconColor == "Critical" || sIconColor == "Negative" || sIconColor == "Neutral"),
+			bShouldReadIconColor = this._shouldReadIconColor(),
 			aLabelledByIds = [];
 
 		if (!bIconOnly) {
@@ -737,18 +721,14 @@ sap.ui.define([
 		}
 
 		if (bShouldReadIconColor) {
-			this._invisibleText = new InvisibleText({
-				text: oResourceBundle.getText('ICONTABBAR_ICONCOLOR_' + sIconColor.toUpperCase())
-			});
-
-			aLabelledByIds.push(this._invisibleText.getId());
+			aLabelledByIds.push(sItemId + "-iconColor");
 		}
 
 		oRM.accessibilityState({ labelledby: aLabelledByIds.join(" ") })
 			.openEnd();
 
-		if (this._invisibleText) {
-			oRM.renderControl(this._invisibleText);
+		if (bShouldReadIconColor) {
+			this._renderIconColorDescription(oRM);
 		}
 
 		if (!bTextOnly) {
@@ -798,6 +778,14 @@ sap.ui.define([
 		} else {
 			oRM.openStart("span").class("sapUiIcon").openEnd().close("span");
 		}
+	};
+
+	IconTabFilter.prototype._renderIconColorDescription = function (oRM) {
+		oRM.openStart("div", this.getId() + "-iconColor")
+			.style("display", "none")
+			.openEnd()
+			.text(oResourceBundle.getText("ICONTABBAR_ICONCOLOR_" + this.getIconColor().toUpperCase()))
+			.close("div");
 	};
 
 	/**
@@ -1384,6 +1372,13 @@ sap.ui.define([
 		} else if (this.getDomRef()) {
 			this.getDomRef().classList.add("sapMITBFilterBadgeMotion");
 		}
+	};
+
+	IconTabFilter.prototype._shouldReadIconColor = function () {
+		var sIconColor = this.getIconColor();
+
+		return this.getEnabled() &&
+			(sIconColor === "Positive" || sIconColor === "Critical" || sIconColor === "Negative" || sIconColor === "Neutral");
 	};
 
 	return IconTabFilter;
