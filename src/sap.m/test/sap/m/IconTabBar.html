@@ -89,7 +89,7 @@
 			label5.addStyleClass("label");
 
 			var label5a = new sap.m.Label({
-				text: "IconTabBar inline mode"
+				text: "IconTabBar Standard mode"
 			});
 			label5a.addStyleClass("label");
 
@@ -1347,6 +1347,34 @@
 						text: "Contrast IconTabBar with transparent backgrounds"
 					}),
 					contrastPlusIconTabBar,
+					new sap.m.Label({
+						text: "IconTabBar Inline mode"
+					}).addStyleClass("label"),
+					new sap.m.IconTabBar({
+						headerMode: "Inline",
+						items: [
+							new sap.m.IconTabFilter({
+								text: "Tab1",
+								iconColor: sap.ui.core.IconColor.Neutral
+							}),
+							new sap.m.IconTabFilter({
+								text: "Tab2",
+								iconColor: sap.ui.core.IconColor.Critical
+							}),
+							new sap.m.IconTabFilter({
+								text: "Tab3",
+								iconColor: sap.ui.core.IconColor.Positive
+							}),
+							new sap.m.IconTabFilter({
+								text: "Tab4",
+								iconColor: sap.ui.core.IconColor.Default
+							}),
+							new sap.m.IconTabFilter({
+								text: "Tab5",
+								iconColor: sap.ui.core.IconColor.Positive
+							})
+						]
+					}),
 					new sap.m.Label({
 						text: "IconTabBar with specific accesibility decription: 'Available spaces'"
 					}),
