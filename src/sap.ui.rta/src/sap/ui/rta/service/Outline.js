@@ -215,12 +215,28 @@ sap.ui.define([
 			//get necessary properties from overlay
 			var oData = this._getNodeProperties(oOverlay, oParentOverlay) || {};
 
+			var aChildren = oOverlay.getChildren();
 			//find aggregation binding template overlays
-			var aChildren = (
+			var aAggregationTemplateOverlays = (
 				oOverlay.getAggregationBindingTemplateOverlays
 				&& oOverlay.getAggregationBindingTemplateOverlays()
 			) || [];
-			aChildren = aChildren.concat(oOverlay.getChildren());
+
+			//for binding template overlays, do not include children of the
+			//corresponding aggregations on the outline (e.g. items)
+			if (aAggregationTemplateOverlays.length > 0) {
+				var aExcludedAggregations = [];
+				aChildren = aAggregationTemplateOverlays.reduce(function(aCollectedChildren, oAggregationTemplateOverlay) {
+					aExcludedAggregations.push(oAggregationTemplateOverlay.getAggregationName());
+					return oAggregationTemplateOverlay.getChildren().concat(aCollectedChildren);
+				}, aChildren)
+				.filter(function(oChild) {
+					if (oChild.getAggregationName && aExcludedAggregations.indexOf(oChild.getAggregationName()) > -1) {
+						return false;
+					}
+					return true;
+				});
+			}
 
 			//check if the tree should be traversed deeper and children overlays are present
 			if ((!bValidDepth || (bValidDepth && iDepth > 0))
@@ -281,13 +297,17 @@ sap.ui.define([
 				var oParentElementOverlay = oOverlay.getParentElementOverlay();
 				var oParentAggregationOverlay = oOverlay.getParent() && oOverlay.getParentAggregationOverlay();
 				var sParentAggregationName = (oParentAggregationOverlay && oParentAggregationOverlay.getAggregationName()) || "";
+				// Aggregation Binding Template
 				if (
 					oParentElementOverlay
 					&& sParentAggregationName
 					&& oParentElementOverlay.getAggregationOverlay(sParentAggregationName, "AggregationBindingTemplateOverlays") === oParentAggregationOverlay
 				) {
-					sIconType = "sap-icon://card";
-					oDtName.singular = "TEMPLATE-" + oDtName.singular;
+					var aTemplateChildrenOverlays =
+						oParentAggregationOverlay.getParent().getAggregationOverlay(sParentAggregationName).getChildren();
+					var iNoOfChildren = aTemplateChildrenOverlays.length;
+					oDtName.singular = oDtName.singular + " [" + iNoOfChildren + "]";
+					sIconType = "sap-icon://attachment-text-file";
 				}
 			} else {
 				sType = "aggregation";
