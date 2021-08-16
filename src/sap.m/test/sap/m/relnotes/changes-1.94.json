@@ -3,6 +3,121 @@
     "date": "August 2021",
     "notes": [
       {
+        "id": "8c08ae34122cf2949377e22a84e317b68defe5c4",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: correct visual indication for keydown interactions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170138971"
+          }
+        ]
+      },
+      {
+        "id": "96e9aa8166ac4094bb89bf31ca4ede63c17b403f",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: vertical alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005622642021"
+          }
+        ]
+      },
+      {
+        "id": "b0749d8f0ceb7ebf9a6dab334239480d3ddbe625",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Add the keys of all selected items in the range as set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180348401"
+          }
+        ]
+      },
+      {
+        "id": "21de921749ac07d0f9bfe3cde5c6161a30f4e249",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: focus navigation works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180274946"
+          }
+        ]
+      },
+      {
+        "id": "34f619177e489a02ea691cdc83828ed74088d508",
+        "type": "FIX",
+        "text": " sap.m.Popover: Focus handling corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180298943"
+          }
+        ]
+      },
+      {
+        "id": "700cd2ac47c9e25449baad796d80a1bb19f60f7b",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: with only text does not render space for icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180333915"
+          }
+        ]
+      },
+      {
+        "id": "52fcf25366a4f0bd9a07759348646e428b090045",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: navigation steps issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180211364"
+          }
+        ]
+      },
+      {
+        "id": "8c4c96d105a80ab52b1b083a14fafc34c27344cd",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Dragging does not cause errors",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180325769"
+          }
+        ]
+      },
+      {
+        "id": "2a019bfa49fe8cbe7fae200ba7ecd9b55add0392",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Calcutation for shifting tabs is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180328622"
+          }
+        ]
+      },
+      {
+        "id": "9a818aedbd3aecb3d8c9b6b2b827ac54a6024e09",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSliders: all inner parts are visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180307457"
+          }
+        ]
+      },
+      {
+        "id": "3112535072e7728a1000e67bf72e74c92e948c2e",
+        "type": "FEATURE",
+        "text": " sap.m.Input: Introduce showClearIcon property"
+      },
+      {
         "id": "acdab37a8cd30031267aeb05169421a7cfdae784",
         "type": "FIX",
         "text": " sap.m.TimePicker: fixed flickering of the popover scrollbars when height is reduced",
@@ -201,335 +316,6 @@
           {
             "type": "BCP",
             "reference": "2180316823"
-          }
-        ]
-      },
-      {
-        "id": "79a9ef4d35b532401830ee54f5f3babd20b577aa",
-        "type": "FEATURE",
-        "text": " sap.m.PlanningCalendar: Introducing relative views"
-      },
-      {
-        "id": "b9ac58b60dc0635c4b6c89e1283323d288f9e9a9",
-        "type": "FEATURE",
-        "text": " sap.m.MenuButton: new event 'beforeMenuOpen' added"
-      },
-      {
-        "id": "ff2d9f7f2a5183185fb96be15495144c20b32caa",
-        "type": "FEATURE",
-        "text": " ListBase: new property multiSelectMode added"
-      },
-      {
-        "id": "f4260c16d31b52995e3d73ea6accdceacec86eac",
-        "type": "FIX",
-        "text": " sap.m.Popover: Focus handling when opened from another control fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2170040819"
-          }
-        ]
-      },
-      {
-        "id": "caad29f3b96fe7ae437875c1fda102b857e19361",
-        "type": "FEATURE",
-        "text": " sap.m.MultiComboBox: Range selection is implemented"
-      },
-      {
-        "id": "c7dc49c967ec3d3057bc3c49f01bc90430fbfb97",
-        "type": "FIX",
-        "text": " sap.m.DateRangeSelection: No invalid message when ValueState is None",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180301803"
-          }
-        ]
-      },
-      {
-        "id": "017ba2fff29807d8fc6afe03573d1c28c19129ca",
-        "type": "FIX",
-        "text": " sap.m.SelectDialog,TableSelectDialog: Initial focus is now correct",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180209652"
-          }
-        ]
-      },
-      {
-        "id": "4e1bbd5e0eb1138a65b0353ae3953c2987287bd5",
-        "type": "FIX",
-        "text": " sap.m.ObjectStatus: When active the four side of focus are now visible",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180260374"
-          }
-        ]
-      },
-      {
-        "id": "97857cc607053e800e362bbef8a80a6803cc882e",
-        "type": "FIX",
-        "text": " sap.m.SearchField: \"Change\" event is now fired correctly",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180294828"
-          }
-        ]
-      },
-      {
-        "id": "dc406609899e56ae131e81e9c72582bf19d16005",
-        "type": "FIX",
-        "text": " sap.m.NavContainer: Fixed ComponentContainer height of Demo Kit sample",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180281943"
-          }
-        ]
-      },
-      {
-        "id": "352d56986aa3ed8cd9440f4563a21d4a2b330cef",
-        "type": "FIX",
-        "text": " sap.m.TextArea: Samples descriptions are enhanced",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180213675"
-          }
-        ]
-      },
-      {
-        "id": "2f62e4225ac9141ee253d44f7c3162e0098371d4",
-        "type": "FIX",
-        "text": " sap.m.RadioButton: width=100% now works correctly",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180300725"
-          }
-        ]
-      },
-      {
-        "id": "48c1f8e337e40ef196dda46c16d7c30bab44720a",
-        "type": "FIX",
-        "text": " sap.m.FlexBox: Change listeners are now removed correctly",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180300992"
-          }
-        ]
-      },
-      {
-        "id": "9a13c1b5f6695484271d94ead82becd48a51fc37",
-        "type": "FIX",
-        "text": " sap.m.Popover: Title's font-size is not correct",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180304802"
-          }
-        ]
-      },
-      {
-        "id": "a24fc7e06dc47b93a74383aed06655f25a256367",
-        "type": "FIX",
-        "text": " sap.m.ViewSettingsDialog: Title is with correct size",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180304549"
-          }
-        ]
-      },
-      {
-        "id": "25359d318584478c98b9f32fb149b1a912740047",
-        "type": "FIX",
-        "text": " sap.m.ExpandableText: Curly braces escaping",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180266429"
-          }
-        ]
-      },
-      {
-        "id": "efc4d945feb9bdefc0b4d717365f5e1720154db9",
-        "type": "FIX",
-        "text": "[INTERNAL] sap.m.ProgressIndicator: Fixed text contrast ratio",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180165340"
-          }
-        ]
-      },
-      {
-        "id": "f10b8f04fa14b05bc52347d9705126464c59ad97",
-        "type": "FIX",
-        "text": " Table: binding columns before items with growing=true option",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180281941"
-          },
-          {
-            "type": "BCP",
-            "reference": "2180261124"
-          }
-        ]
-      },
-      {
-        "id": "be46c812de5a8cd643f2bda8b6420151f3139a3c",
-        "type": "FIX",
-        "text": " sap.m.SinglePlanningCalendar: correct resizing of the appointments on more than one day in week views",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129400004487212021"
-          }
-        ]
-      },
-      {
-        "id": "272bdc454241ee113861cb0e74b41eee3bee5723",
-        "type": "FIX",
-        "text": " sap.m.ComboBox:  Suggestions with empty text are now shown",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180284382"
-          }
-        ]
-      },
-      {
-        "id": "a46a8f15068a5ef771bd0c081fe38275a717b5d1",
-        "type": "FIX",
-        "text": " sap.m.DateTimePicker: has stable unit tests",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180292309"
-          },
-          {
-            "type": "BCP",
-            "reference": "2180292333"
-          }
-        ]
-      },
-      {
-        "id": "800f8b9f4825fe40b5911dd2d3078d33b9ee4b33",
-        "type": "FIX",
-        "text": " sap.ui.unified.Calendar: specialDates are not indicated outside current month",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129500004921262021"
-          }
-        ]
-      },
-      {
-        "id": "7ffbedbf964a8a135ca169333fe4969126999a9b",
-        "type": "FEATURE",
-        "text": " sap.m.DateTimeField: controls has fully visible valueState message"
-      },
-      {
-        "id": "7be75888e8fdba4742b0a55939af9e4855a9b4d1",
-        "type": "FIX",
-        "text": " sap.m.RadioButton: focus in table is now correct",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180255666"
-          }
-        ]
-      },
-      {
-        "id": "d415482be25c0f364ebca9470ff9384f16da3615",
-        "type": "FIX",
-        "text": " sap.m.ViewSettingsDialog: sorting is reset correctly",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180244898"
-          }
-        ]
-      },
-      {
-        "id": "ffb65d221d569bd63264483cf21cd955fbb6a82b",
-        "type": "FIX",
-        "text": " sap.m.Slider: Tickmarks are now visible",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180246858"
-          }
-        ]
-      },
-      {
-        "id": "33a15facb33ff73abada4e9a6b45957022c91961",
-        "type": "FIX",
-        "text": " JSDoc: fix pseudo-fields, declare type for real fields"
-      },
-      {
-        "id": "9e6e56dc673a2988ce91f7488aa99bd2bfe5468f",
-        "type": "FEATURE",
-        "text": " sap.ui.unified.CalendarAppointment: has new customContent aggregation"
-      },
-      {
-        "id": "53b95e930a469fe26c16e0a3926207b21d2d254d",
-        "type": "FIX",
-        "text": " sap.m.MultiInput: NMore popup now receives focus",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180225509"
-          }
-        ]
-      },
-      {
-        "id": "14a11b62e067e16654e8641a6682aaf9753d9cce",
-        "type": "FIX",
-        "text": " sap.m.SearchField: Placeholder text is now changed when language is changed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180224875"
-          }
-        ]
-      },
-      {
-        "id": "f0bc2c7910ff7952c805cde78322932116332638",
-        "type": "FIX",
-        "text": "[INTERNAL] sap.m.Toolbar: Fixed focus color of icons",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180218347"
-          }
-        ]
-      },
-      {
-        "id": "e865ddcdb1c86320b769dd0c808dda9d3c7693fd",
-        "type": "FIX",
-        "text": " sap.m.ObjectHeader: title has an aria-labelled reference only when title is existing",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180224632"
-          }
-        ]
-      },
-      {
-        "id": "46e901ad6165fedb9d61d6e73039e9acc6fee37a",
-        "type": "FIX",
-        "text": " sap.m.Input: setSelectionRow called on sapenter",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180243832"
           }
         ]
       }

@@ -17,33 +17,6 @@
         "id": "d90fbe7ef235b41f63c7517b642f1182c7e64999",
         "type": "FIX",
         "text": " sap.m.MessagePage: increase CSS specificity of main icon"
-      },
-      {
-        "id": "79a9ef4d35b532401830ee54f5f3babd20b577aa",
-        "type": "FEATURE",
-        "text": " sap.m.PlanningCalendar: Introducing relative views"
-      },
-      {
-        "id": "efc4d945feb9bdefc0b4d717365f5e1720154db9",
-        "type": "FIX",
-        "text": "[INTERNAL] sap.m.ProgressIndicator: Fixed text contrast ratio",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180165340"
-          }
-        ]
-      },
-      {
-        "id": "f0bc2c7910ff7952c805cde78322932116332638",
-        "type": "FIX",
-        "text": "[INTERNAL] sap.m.Toolbar: Fixed focus color of icons",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180218347"
-          }
-        ]
       }
     ]
   }
