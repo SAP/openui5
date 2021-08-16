@@ -783,5 +783,65 @@
         ]
       }
     ]
+  },
+  "1.84.17": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "81c97b976765d9e7bf4ee91b17dbfa4cd3eb35a2",
+        "type": "FIX",
+        "text": " sap.m.Input: startSuggestions handled correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005182052021"
+          }
+        ]
+      },
+      {
+        "id": "fa9e121cc55b8ccbfd27b8a0e76f93029ff189e8",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Stabilize qUnit test",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180331211"
+          }
+        ]
+      },
+      {
+        "id": "8dfe37ab86293ecd22656aa6e5b7ed2316278ac5",
+        "type": "FIX",
+        "text": " sap.m.App: Fix error when App is invisible and has no parent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180221467"
+          }
+        ]
+      },
+      {
+        "id": "0c0a7801b6cd8a6d1d04fb1ef1f525a31d0947a5",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: unit tests are stabilized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180310583"
+          }
+        ]
+      },
+      {
+        "id": "0a15358ac28de43b417bdf758e2e9d4c58aba6bb",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: has correct title attributes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170047542"
+          }
+        ]
+      }
+    ]
   }
 }

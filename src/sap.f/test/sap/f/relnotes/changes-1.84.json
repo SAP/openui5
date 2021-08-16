@@ -147,5 +147,36 @@
         ]
       }
     ]
+  },
+  "1.84.17": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "cf185a8c6562fb793c05c17cd72711001042cb54",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Stabilized qunit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180334147"
+          }
+        ]
+      },
+      {
+        "id": "9eb98d64ca1fb7666ad3fdb7310ac0500de88369",
+        "type": "FIX",
+        "text": " sap.f.AvatarGroup: Fix IE infinite rerendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070469517"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180313498"
+          }
+        ]
+      }
+    ]
   }
 }

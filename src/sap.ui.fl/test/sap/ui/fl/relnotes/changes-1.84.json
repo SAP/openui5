@@ -57,5 +57,25 @@
         ]
       }
     ]
+  },
+  "1.84.17": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "4b606881ad4ac63db7fd376189c1b1a4187b1a2e",
+        "type": "FIX",
+        "text": " sap.ui.fl: condense create and move to different group correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002771422021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180245640"
+          }
+        ]
+      }
+    ]
   }
 }

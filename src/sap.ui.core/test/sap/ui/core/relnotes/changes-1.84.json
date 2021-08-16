@@ -414,5 +414,47 @@
         ]
       }
     ]
+  },
+  "1.84.17": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "3ff36de6c1685cb68ae3e232249f143dbde6ae6b",
+        "type": "FIX",
+        "text": " sap.ui.VersionInfo: copy 'hasOwnPreload' flag for components",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180290030"
+          }
+        ]
+      },
+      {
+        "id": "61a2d5510572834e64a69944f9e2ade3107e7271",
+        "type": "FIX",
+        "text": " core.qunit.routing.HistoryUtils: check for the usage of pushState",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180319180"
+          }
+        ]
+      },
+      {
+        "id": "df159d9ba8ef7d8473e2bf4505245bf59a8db848",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: check text-selection before calling 'preventDefault'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180148848"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180292257"
+          }
+        ]
+      }
+    ]
   }
 }
