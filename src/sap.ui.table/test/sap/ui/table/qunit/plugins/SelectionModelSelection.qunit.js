@@ -79,14 +79,26 @@ sap.ui.define([
 			oTable.setSelectionInterval(2, 6);
 		});
 
-		assert.deepEqual(this.oTable.getSelectedIndices(), [2, 3, 4, 5, 6], "Selection");
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			assert.deepEqual(this.oTable.getSelectedIndices(), [2, 3, 4, 5, 6], "Selection");
+		}.bind(this));
 	});
 
-	QUnit.test("Change total number of rows", function(assert) {
+	QUnit.test("Change total number of rows before rendering", function(assert) {
 		this.oTable.getBinding().getModel().getData().push({});
 		this.oTable.getBinding().refresh();
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			assert.deepEqual(this.oTable.getSelectedIndices(), [], "Selection");
+			assert.equal(this.oSelectionChangeSpy.callCount, 1, "rowSelectionChange event fired");
+		}.bind(this));
+	});
+
+	QUnit.test("Change total number of rows after rendering", function(assert) {
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			this.oTable.getBinding().getModel().getData().push({});
+			this.oTable.getBinding().refresh();
+		}.bind(this)).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			assert.deepEqual(this.oTable.getSelectedIndices(), [], "Selection");
 			assert.equal(this.oSelectionChangeSpy.callCount, 1, "rowSelectionChange event fired");
 		}.bind(this));
