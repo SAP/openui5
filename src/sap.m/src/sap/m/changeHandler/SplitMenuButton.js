@@ -119,9 +119,7 @@ sap.ui.define([
 							oModifier.bindProperty(oButton, "icon", sModelName + ">/icon");
 							oModifier.bindProperty(oButton, "enabled", sModelName + ">/enabled");
 							oModifier.bindProperty(oButton, "visible", sModelName + ">/visible");
-							return oModifier.bindAggregation(oButton, "customData", {
-								path: sModelName + ">/customData",
-								template: oModifier.createControl(
+							return oModifier.createControl(
 									"sap.ui.core.CustomData",
 									oAppComponent,
 									oView,
@@ -136,7 +134,12 @@ sap.ui.define([
 											path: sModelName + ">value"
 										}
 									}
-								),
+								);
+						})
+						.then(function(oTemplate){
+							return oModifier.bindAggregation(oButton, "customData", {
+								path: sModelName + ">/customData",
+								template: oTemplate,
 								templateShareable: false
 							});
 						})
