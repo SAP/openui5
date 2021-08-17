@@ -218,6 +218,53 @@ sap.ui.define([
 			afterRedo: fnPreviousActionFiredCorrectlyAfterCombine
 		});
 
+		var fnCheckIds = function(oButton, oViewAfterAction, assert) {
+			var aDependents = oViewAfterAction.getContent()[0].getCustomHeader().getContentMiddle()[0].getDependents();
+
+			assert.equal(aDependents[0].getId().indexOf("originalButtonId"), -1, "no suffix added to original ID");
+			assert.equal(aDependents[1].getId().indexOf("originalButtonId"), -1, "no suffix added to original ID");
+		};
+
+		var fnCheckNoDependents = function(oButton, oViewAfterAction, assert) {
+			var aDependents = oViewAfterAction.getContent()[0].getCustomHeader().getContentMiddle()[0].getDependents();
+
+			assert.equal(aDependents.length, 0, "then the buttons are removed from the dependents aggregation");
+		};
+
+		elementActionTest("Checking the ids to save after combine action", {
+			jsOnly: true,
+			xmlView:
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+					'<Page id="page0" >' +
+						'<customHeader>' +
+							'<Bar id="bar0">' +
+								'<contentMiddle>' +
+									'<Button id="btn0" text="button0" />' +
+									'<Button id="btn1" text="button1" />' +
+								'</contentMiddle>' +
+							'</Bar>' +
+						'</customHeader>' +
+					'</Page>' +
+				'</mvc:View>',
+			action: {
+				name: "combine",
+				controlId: "btn0",
+				parameter: function(oView){
+					return {
+						source: oView.byId("btn0"),
+						combineElements : [
+							oView.byId("btn0"),
+							oView.byId("btn1")
+						]
+					};
+				}
+			},
+			layer: "VENDOR",
+			afterAction: fnCheckIds,
+			afterUndo: fnCheckNoDependents,
+			afterRedo: fnCheckIds
+		});
+
 		var fnEnableDisableAfterCombine = function (oButton, oViewAfterAction, assert) {
 			var oButton = oViewAfterAction.byId("btn0");
 			var oCreatedMenuButton = oViewAfterAction.byId("bar0").getContentMiddle()[0];
