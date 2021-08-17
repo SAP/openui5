@@ -2703,6 +2703,45 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Special Asynchronity Combination Among Component, Root View", {
+		beforeEach: function() {
+			hasher.setHash("");
+		}
+	});
+
+	QUnit.test("Async Component with sync root view and router initialize in controller of root view", function(assert) {
+		var oFireRouteMatchedSpy = sinon.spy(Router.prototype, "fireRouteMatched");
+		return Component.create({
+			name: "test.routing.target.syncrootview",
+			manifest: false
+		}).then(function(oComponent){
+			return new Promise(function(resolve, reject) {
+				var oRootView = oComponent.getRootControl();
+				var oRouter = oComponent.getRouter();
+
+				function check() {
+					var oContainer = oRootView.byId("container");
+					assert.equal(oContainer.getPages().length, 1, "The target view is added to the container");
+
+					var oPanel = oContainer.getPages()[0].byId("panel");
+					assert.ok(oPanel.isA("sap.m.Panel"), "The home target is displayed");
+
+					oComponent.destroy();
+					oFireRouteMatchedSpy.restore();
+					resolve();
+				}
+
+				if (oFireRouteMatchedSpy.callCount == 1) {
+					check();
+				} else {
+					oRouter.attachRouteMatched(function() {
+						check();
+					});
+				}
+			});
+		});
+	});
+
 	QUnit.module("nested components", {
 		beforeEach: function() {
 			hasher.setHash("");
