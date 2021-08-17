@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>SAPUI5 Navigation</title>
+	<script>
+
+		var sSampleId = new window.URLSearchParams(window.location.search).get('sap-ui-xx-sample-id'),
+			sSamplePath = new window.URLSearchParams(window.location.search).get('sap-ui-xx-sample-path'),
+			sOrigin = new window.URLSearchParams(window.location.search).get('sap-ui-xx-sample-origin'),
+			sVersion = new window.URLSearchParams(window.location.search).get('sap-ui-xx-sample-version'),
+
+			oPath = {};
+		if (!sOrigin || sOrigin == ".") {
+			sOrigin = window.location.origin + (window.location.pathname.includes("testsuite") ? "/testsuite" : "");
+		} else {
+			sOrigin = sOrigin + sVersion;
+		}
+
+		oPath[sSampleId.replace(/\./g, "/")] = sSamplePath;
+		oPath["sap/ui/demo/mock"] = sOrigin + "/test-resources/sap/ui/documentation/sdk";
+		oPath["test-resources/sap/ui/documentation/sdk"] = ".";
+		oPath["sap/uxap/sample"] = sOrigin + "/test-resources/sap/uxap/demokit/sample";
+
+
+
+		document.write("<script src=" + sOrigin  + '/resources/sap-ui-core.js' + " id='sap-ui-bootstrap' " +
+				"data-sap-ui-libs='sap.m' data-sap-ui-bindingSyntax='complex' data-sap-ui-compatVersion='edge'></scr" + "ipt>");
+		document.write("<base href=" + sOrigin + "/>");
+
+	</script>
+</head>
+<body class="sapUiBody sapUiSizeCompact" id="content">
+<script>
+	sap.ui.getCore().attachInit(function () {
+		sap.ui.require([
+			"sap/ui/core/ComponentContainer"
+		], function (ComponentContainer) {
+
+			sap.ui.loader.config({
+				paths: oPath
+			});
+
+			var oContainer = new ComponentContainer({
+				name : sSampleId,
+				height : "100%",
+				manifest: false
+			}).placeAt('content');
+
+		});
+	});
+</script>
+</body>
+</html>

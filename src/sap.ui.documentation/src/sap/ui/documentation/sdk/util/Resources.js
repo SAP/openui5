@@ -20,21 +20,26 @@
 		 *
 		 * @param {string} sPath Relative path to resources
 		 */
+
 		getResourceOriginPath: function (sPath) {
-			var oConfig, sOrigin,
+			var sOrigin,
 				oUri = URI(sPath),
-				bUseUnifiedResourceOrigin = new window.URLSearchParams(window.location.search).get('sap-ui-xx-unifiedResources') != null,
-				sVersionPrefixPath = bUseUnifiedResourceOrigin && window.sessionStorage.getItem("versionPrefixPath") || "";
+				sVersionPrefixPath = this.getResourcesVersion();
 			if (oUri && oUri.is("absolute")) {
 				return sPath;
 			}
-			oConfig = self['sap-ui-documentation-config'];
-			sOrigin = (oConfig && oConfig.demoKitResourceOrigin) || '.';
+			sOrigin = this.getConfig() || '.';
 
 			return sOrigin + sVersionPrefixPath + this._formatPath(sPath);
 		},
 		getHasProxy: function () {
 			return new window.URLSearchParams(window.location.search).get('sap-ui-xx-unifiedResources') != null;
+		},
+		getResourcesVersion: function() {
+			return this.getHasProxy() && window.sessionStorage.getItem("versionPrefixPath") || "";
+		},
+		getConfig: function() {
+			return self['sap-ui-documentation-config'] && self['sap-ui-documentation-config'].demoKitResourceOrigin;
 		},
 		_formatPath: function(sPath) {
 			sPath = sPath.replace(/^\.\//, '/');

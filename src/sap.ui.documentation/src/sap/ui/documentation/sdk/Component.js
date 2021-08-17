@@ -179,8 +179,7 @@ sap.ui.define([
 					sVersionSuffix,
 					bIsInternal,
 					bSupportsSWA,
-					bUseUnifiedResourceOrigin = new window.URLSearchParams(window.location.search).get('sap-ui-xx-unifiedResources') != null,
-					sVersionPrefixPath = bUseUnifiedResourceOrigin && window.sessionStorage.getItem("versionPrefixPath");
+					sVersionPrefixPath = ResourcesUtil.getResourcesVersion();
 
 				this.aAllowedMembers = ["public", "protected"];
 
