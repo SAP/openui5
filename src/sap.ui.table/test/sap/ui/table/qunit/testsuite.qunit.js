@@ -275,6 +275,11 @@ sap.ui.define([
 					qunitBridge: true
 				}
 			},
+			"SelectionModelSelection with ODataV2": {
+				group: "Plugins",
+				module: "./plugins/SelectionModelSelection.ODataV2.qunit",
+				sinon: false /*uses Mockserver*/
+			},
 			"MultiSelectionPlugin": {
 				group: "Plugins",
 				module: "./plugins/{name}.qunit",

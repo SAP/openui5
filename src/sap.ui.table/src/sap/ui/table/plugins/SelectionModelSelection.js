@@ -311,6 +311,9 @@ sap.ui.define([
 		if (!this.hasOwnProperty("_bIgnoreNextTotalRowCountChange")) {
 			this._bIgnoreNextTotalRowCountChange = true;
 		}
+		if (!this.getTable()._bContextsAvailable) {
+			this._bWaitForBindingChange = true;
+		}
 		attachToBinding(this, oBinding);
 	};
 
@@ -346,6 +349,11 @@ sap.ui.define([
 
 		if (sReason === "sort" || sReason === "filter") {
 			this.clearSelection();
+		}
+
+		if (this._bWaitForBindingChange) {
+			this._bIgnoreNextTotalRowCountChange = true;
+			delete this._bWaitForBindingChange;
 		}
 	};
 
