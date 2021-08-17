@@ -7,6 +7,7 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.demo.walkthrough.Component", {
 
 		metadata : {
+			interfaces: ["sap.ui.core.IAsyncContentCreation"],
 			manifest: "json"
 		},
 
