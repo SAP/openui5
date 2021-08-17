@@ -1475,26 +1475,6 @@ function(
 
 		/**
 		 *
-		 * @param {string} sPos
-		 * @returns {string}
-		 * @private
-		 */
-		Dialog.prototype._composeAggreNameInHeader = function (sPos) {
-			var sHeaderAggregationName;
-
-			if (sPos === "Begin") {
-				sHeaderAggregationName = "contentLeft";
-			} else if (sPos === "End") {
-				sHeaderAggregationName = "contentRight";
-			} else {
-				sHeaderAggregationName = "content" + sPos;
-			}
-
-			return sHeaderAggregationName;
-		};
-
-		/**
-		 *
 		 * @returns {boolean}
 		 * @private
 		 */
@@ -1506,60 +1486,6 @@ function(
 
 			return filteredContent.length === 0;
 		};
-
-		/**
-		 *
-		 * @param {Object} oButton
-		 * @param {string} sPos
-		 * @param {boolean} bSkipFlag
-		 * @returns {Dialog}
-		 * @private
-		 */
-		Dialog.prototype._setButton = function (oButton, sPos, bSkipFlag) {
-			return this;
-		};
-
-		/**
-		 *
-		 * @param {string} sPos
-		 * @private
-		 */
-		Dialog.prototype._getButton = function (sPos) {
-			var sAggregationName = sPos.toLowerCase() + "Button",
-				sButtonName = "_o" + this._firstLetterUpperCase(sPos) + "Button";
-
-			if (Device.system.phone) {
-				return this.getAggregation(sAggregationName, null, /*avoid infinite loop*/true);
-			} else {
-				return this[sButtonName];
-			}
-		};
-
-		/**
-		 *
-		 * @param {string} sPos
-		 * @private
-		 */
-		Dialog.prototype._getButtonFromHeader = function (sPos) {
-			if (this._header) {
-				var sHeaderAggregationName = this._composeAggreNameInHeader(this._firstLetterUpperCase(sPos)),
-					aContent = this._header.getAggregation(sHeaderAggregationName);
-				return aContent && aContent[0];
-			} else {
-				return null;
-			}
-		};
-
-		/**
-		 *
-		 * @param {string} sValue
-		 * @returns {string}
-		 * @private
-		 */
-		Dialog.prototype._firstLetterUpperCase = function (sValue) {
-			return sValue.charAt(0).toUpperCase() + sValue.slice(1);
-		};
-
 
 		/**
 		 * Returns the custom header instance when the <code>customHeader</code> aggregation is set. Otherwise, it returns the internal managed
