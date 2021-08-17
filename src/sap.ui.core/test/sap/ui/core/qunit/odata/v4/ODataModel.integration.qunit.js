@@ -2562,24 +2562,27 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /SalesOrderList", [
-				[, "change", {detailedReason : "AddVirtualContext", reason : "change"}],
-				[, "change", {detailedReason : "RemoveVirtualContext", reason : "change"}],
-				[, "refresh", {reason : "refresh"}],
-				[, "dataRequested"],
-				[, "change", {reason : "change"}],
-				[, "dataReceived", {data : {}}]
-			])
-			.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=3", {
-				value : [
-					{SalesOrderID : "01", Note : "Note 1"},
-					{SalesOrderID : "02", Note : "Note 2"},
-					{SalesOrderID : "03", Note : "Note 3"}
-				]
-			})
-			.expectChange("note", ["Note 1", "Note 2", "Note 3"]);
+		// avoid that the metadata request disturbs the timing
+		return oModel.getMetaModel().requestObject("/").then(function () {
+			that.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /SalesOrderList", [
+					[, "change", {detailedReason : "AddVirtualContext", reason : "change"}],
+					[, "dataRequested"],
+					[, "change", {detailedReason : "RemoveVirtualContext", reason : "change"}],
+					[, "refresh", {reason : "refresh"}],
+					[, "change", {reason : "change"}],
+					[, "dataReceived", {data : {}}]
+				])
+				.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=3", {
+					value : [
+						{SalesOrderID : "01", Note : "Note 1"},
+						{SalesOrderID : "02", Note : "Note 2"},
+						{SalesOrderID : "03", Note : "Note 3"}
+					]
+				})
+				.expectChange("note", ["Note 1", "Note 2", "Note 3"]);
 
-		return this.createView(assert, sView, oModel).then(function () {
+			return that.createView(assert, sView, oModel);
+		}).then(function () {
 			var oBinding;
 
 			oTable = that.oView.byId("table");
@@ -23645,7 +23648,7 @@ sap.ui.define([
 			return oContext.delete().then(function () {
 				// Wait for the delete first, because it immediately clears the field and then the
 				// messages are checked before the response can remove.
-				that.waitForChanges(assert);
+				return that.waitForChanges(assert);
 			});
 		});
 	});
