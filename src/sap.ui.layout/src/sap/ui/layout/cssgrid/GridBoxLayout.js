@@ -5,13 +5,11 @@
 sap.ui.define([
 	"sap/ui/layout/cssgrid/GridLayoutBase",
 	"sap/ui/layout/cssgrid/GridSettings",
-	"sap/ui/layout/cssgrid/GridBoxLayoutStyleHelper",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery"
 ], function (
 	GridLayoutBase,
 	GridSettings,
-	GridBoxLayoutStyleHelper,
 	Device,
 	jQuery
 ) {
@@ -191,17 +189,28 @@ sap.ui.define([
 	 * @private
 	 */
 	GridBoxLayout.prototype._flattenHeight = function (oControl) {
-		var iMaxHeight = 0;
-
-		oControl.$().removeClass('sapUiLayoutCSSGridBoxLayoutFlattenHeight');
+		var iMaxHeight = 0,
+			sMaxHeight;
 
 		this._loopOverGridItems(oControl, function (oGridItem) {
-			iMaxHeight = Math.max(jQuery(oGridItem).outerHeight(), iMaxHeight);
+			if (!oGridItem.classList.contains("sapMGHLI")) {
+				oGridItem.style.height = "";
+			}
 		});
 
-		GridBoxLayoutStyleHelper.setItemHeight(oControl.getId(), iMaxHeight);
+		this._loopOverGridItems(oControl, function (oGridItem) {
+			if (!oGridItem.classList.contains("sapMGHLI")) {
+				iMaxHeight = Math.max(jQuery(oGridItem).outerHeight(), iMaxHeight);
+			}
+		});
 
-		oControl.$().addClass('sapUiLayoutCSSGridBoxLayoutFlattenHeight');
+		sMaxHeight = iMaxHeight + "px";
+
+		this._loopOverGridItems(oControl, function (oGridItem) {
+			if (!oGridItem.classList.contains("sapMGHLI")) {
+				oGridItem.style.height = sMaxHeight;
+			}
+		});
 	};
 
 	/**
