@@ -1281,18 +1281,10 @@ sap.ui.define([
 		// update the new value
 		this.Color.a = this.oAlphaSlider.getValue();
 
-		// Update Alpha Field if needed - it's visible only in HSL mode
-		if (this._bHSLMode) {
-			this.oAlphaField.setValue(this.Color.a);
-			this.oAlphaField2.setValue(this.Color.a);
-		}
+		this.oAlphaField.setValue(this.Color.a);
+		this.oAlphaField2.setValue(this.Color.a);
 
-		// process changes
-		if (!this.Color.formatHSL) {
-			this._processRGBChanges();
-		} else {
-			this._processChanges();
-		}
+		this._updateSelColorBackground();
 		this._updateColorStringProperty(oData === "change", oData === "liveChange");
 	};
 
