@@ -7,11 +7,12 @@ sap.ui.define([
 	"sap/ui/core/qunit/analytics/o4aMetadata",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
+	"sap/ui/model/analytics/AnalyticalVersionInfo",
 	"sap/ui/model/analytics/odata4analytics",
 	"sap/ui/model/analytics/ODataModelAdapter",
 	"sap/ui/model/odata/v2/ODataModel"
-], function (Log, isEmptyObject, o4aFakeService, Filter, FilterOperator, odata4analytics,
-	ODataModelAdapter, ODataModel) {
+], function (Log, isEmptyObject, o4aFakeService, Filter, FilterOperator, AnalyticalVersionInfo,
+     odata4analytics, ODataModelAdapter, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -1795,6 +1796,57 @@ sap.ui.define([
 			odata4analytics.helper.deepEqual(aOldColumns, aNewColumns, o.formatterChanged),
 			1);
 	});
+
+	//*********************************************************************************************
+[{
+	sModel : "sap/ui/model/odata/ODataModel",
+	iVersion : AnalyticalVersionInfo.V1
+}, {
+	sModel : "sap/ui/model/odata/v2/ODataModel",
+	iVersion : AnalyticalVersionInfo.V2
+}].forEach(function (oFixture) {
+	[true, false].forEach(function (bPreloaded) {
+	var sTitle = "Model#_init: requires " + oFixture.sModel + " instance, already loaded: "
+		+ bPreloaded;
+	QUnit.test(sTitle, function (assert) {
+		var oModel = {},
+			oModelReference = new odata4analytics.Model.ReferenceByURI("~sServiceURI"),
+			oODataModel = {
+				getServiceMetadata : function () {},
+				attachMetadataLoaded : function () {}
+			},
+			oODataModelClassMock = this.mock(),
+			oODataModelMock = this.mock(oODataModel),
+			mParameter = {modelVersion : oFixture.iVersion},
+			oSapUiMock = this.mock(sap.ui);
+
+		oSapUiMock.expects("require")
+			.withExactArgs(oFixture.sModel)
+			.returns(bPreloaded ? oODataModelClassMock : undefined);
+		oSapUiMock.expects("requireSync")
+			.withExactArgs(oFixture.sModel)
+			.exactly(bPreloaded ? 0 : 1)
+			.returns(oODataModelClassMock);
+		oODataModelClassMock
+			.withExactArgs("~sServiceURI")
+			.returns(oODataModel);
+		oODataModelMock.expects("getServiceMetadata")
+			.withExactArgs()
+			.exactly(2)
+			.returns(undefined);
+		oODataModelMock.expects("attachMetadataLoaded")
+			.withExactArgs(sinon.match.func);
+
+		// code under test
+		odata4analytics.Model.prototype._init.call(oModel, oModelReference, mParameter);
+
+		assert.strictEqual(oModel._mParameter, mParameter);
+		assert.deepEqual(oModel._oActivatedWorkarounds, {});
+		assert.strictEqual(oModel._oModel, oODataModel);
+		assert.strictEqual(oModel._iVersion, oFixture.iVersion);
+	});
+	});
+});
 });
 //TODO QueryResultRequest: aggregation level and measure handling, setResourcePath,
 // includeDimensionKeyTextAttributes, includeMeasureRawFormattedValueUnit
