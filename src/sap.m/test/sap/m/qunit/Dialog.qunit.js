@@ -993,18 +993,18 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
-	QUnit.test("Setting name aggregation title", function (assert) {
-		// Arrange
-		var oDialog = new Dialog();
+	// QUnit.test("Setting name aggregation title", function (assert) {
+	// 	// Arrange
+	// 	var oDialog = new Dialog();
 
-		// Assert
-		assert.strictEqual(oDialog._composeAggreNameInHeader('Begin'), 'contentLeft', '"Begin" should set the dialog in right position');
-		assert.strictEqual(oDialog._composeAggreNameInHeader('End'), 'contentRight', '"End" should set the dialog in right position');
-		assert.strictEqual(oDialog._composeAggreNameInHeader('-different'), 'content-different', 'Custom position will set custom header');
+	// 	// Assert
+	// 	assert.strictEqual(oDialog._composeAggreNameInHeader('Begin'), 'contentLeft', '"Begin" should set the dialog in right position');
+	// 	assert.strictEqual(oDialog._composeAggreNameInHeader('End'), 'contentRight', '"End" should set the dialog in right position');
+	// 	assert.strictEqual(oDialog._composeAggreNameInHeader('-different'), 'content-different', 'Custom position will set custom header');
 
-		// Clean up
-		oDialog.destroy();
-	});
+	// 	// Clean up
+	// 	oDialog.destroy();
+	// });
 
 	QUnit.test("Set role", function (assert) {
 		// Arrange
