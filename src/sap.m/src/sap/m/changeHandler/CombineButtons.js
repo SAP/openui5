@@ -24,12 +24,13 @@ sap.ui.define([
 	 */
 	var CombineButtons = {};
 
+	var sCombineButtonsModelName = "$sap.m.flexibility.CombineButtonsModel";
+
 	function fnHandleMenuItems(aButtons, oModifier, oAppComponent, oMenu, oParent, sParentAggregation, oView, oChangeDefinition, oRevertData) {
 		var sPropertyEnabled = "";
 		var sPropertyVisible = "";
 		var sOR = "";
 		var aMenuButtonModels = [];
-		var sCombineButtonsModelName = "$sap.m.flexibility.CombineButtonsModel";
 		var bIsRtl = sap.ui.getCore().getConfiguration().getRTL();
 		var aMenuButtonName = [];
 
@@ -54,17 +55,6 @@ sap.ui.define([
 				})
 				.then(function(iIndexInParentAggregation) {
 					oRevertData.insertIndexes[iIndex] = iIndexInParentAggregation;
-					return oModifier.attachEvent(
-							oMenuItem,
-							"press",
-							"sap.m.changeHandler.CombineButtons.pressHandler",
-							{
-								selector: oModifier.getSelector(oButton, oAppComponent),
-								appComponentId: oAppComponent.getId()
-							}
-						);
-				})
-				.then(function() {
 					return oModifier.createControl(
 						"sap.ui.fl.util.ManagedObjectModel",
 						oAppComponent,
@@ -237,6 +227,13 @@ sap.ui.define([
 			})
 			.then(function(oCreatedMenu){
 				oMenu = oCreatedMenu;
+				return oModifier.attachEvent(
+					oMenu,
+					"itemSelected",
+					"sap.m.changeHandler.CombineButtons.pressHandler"
+				);
+			})
+			.then(function(){
 				return fnHandleMenuItems(
 					aButtons,
 					oModifier,
@@ -402,8 +399,8 @@ sap.ui.define([
 	 * @param {object} mParameters - parameters containing the selector and appComponentId
 	 * while applying the change.
 	 */
-	CombineButtons.pressHandler = function (oEvent, mParameters) {
-		var oButton = JsControlTreeModifier.bySelector(mParameters.selector, Component.get(mParameters.appComponentId));
+	CombineButtons.pressHandler = function(oEvent) {
+		var oButton = oEvent.getParameter("item").getModel(sCombineButtonsModelName).getObject();
 		oButton.firePress();
 	};
 
