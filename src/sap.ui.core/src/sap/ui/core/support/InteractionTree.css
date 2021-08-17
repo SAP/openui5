@@ -386,3 +386,7 @@ li.sapUiInteractionItemExpanded {
 .sapUiSupportIntPopoverForm .sapUiForm .sapUiFormTitle {
 	width: calc(100% - 80px);
 }
+
+.sapUiPerformanceTimeline {
+	height: 50px;
+}

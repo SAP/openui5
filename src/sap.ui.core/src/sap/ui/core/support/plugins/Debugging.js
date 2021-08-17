@@ -92,8 +92,8 @@ sap.ui.define([
 
 			rm.write('<div id="sapUiSupportDebuggingRebootContainer" class="sapUiSupportContainer">');
 
-			rm.write('<div style="font-weight: bold" class="sapUISupportLabel">Note: Designed to work with apps loaded with the standard UI5 loading bootstrap script tag:</div>');
-			rm.write('<div style="font-weight: bold" class="sapUISupportLabel">&lt;script id="sap-ui-bootstrap" src="somepath/resources/sap-ui-core.js" ...<br/><br/></div>');
+			rm.write('<div class="sapUISupportLabel sapUISupportLabelBold">Note: Designed to work with apps loaded with the standard UI5 loading bootstrap script tag:</div>');
+			rm.write('<div class="sapUISupportLabel sapUISupportLabelBold">&lt;script id="sap-ui-bootstrap" src="somepath/resources/sap-ui-core.js" ...<br/><br/></div>');
 
 			rm.write('<div class="sapUISupportLabel">Boot application with different UI5 version on next reload:</div>');
 			rm.write('<select id="sapUiSupportDebuggingRebootSelect" class="sapUiSupportSelect">');
@@ -101,7 +101,7 @@ sap.ui.define([
 			rm.write('<option value="other" id="sapUiSupportDebuggingRebootOther">Other (enter URL to sap-ui-core.js below)...:</option>');
 			rm.write('</select>');
 			rm.write('<input type="text" id="sapUiSupportDebuggingRebootInput" disabled="disabled">');
-			rm.write('<button id="sapUiSupportDebuggingReboot" class="sapUiSupportRoundedButton" style="margin-right:0;">Activate Reboot URL</button>');
+			rm.write('<button id="sapUiSupportDebuggingReboot" class="sapUiSupportRoundedButton">Activate Reboot URL</button>');
 			rm.write('</div>');
 
 			rm.write('<div id="sapUiSupportDebuggingClassContainer" class="sapUiSupportContainer"></div>');
@@ -118,7 +118,7 @@ sap.ui.define([
 			var aClasses = this._aClasses;
 			var rm = sap.ui.getCore().createRenderManager();
 
-			rm.write('<div class="sapUISupportLabel" style="margin-right:5px">Select Class:</div>');
+			rm.write('<div class="sapUISupportLabel">Select Class:</div>');
 
 			rm.write('<select id="sapUiSupportDebuggingClassSelect" class="sapUiSupportAutocomplete  sapUiSupportSelect"><option></option>');
 
@@ -159,8 +159,7 @@ sap.ui.define([
 
 				rm.write('><div><span class="className">' + encodeXML(oValue + "") + '</span>' +
 						 '<span class="breakpoints">' + encodeXML(bpCountText + "") + '</span></div>' +
-						 '<img class="remove-class" style="cursor:pointer;margin-left:5px" ' +
-						 'src="../../debug/images/delete.gif" alt="X"></li>');
+						 '<img class="remove-class" src="../../debug/images/delete.gif" alt="X"></li>');
 			});
 
 			rm.write('</ul>');
@@ -174,13 +173,13 @@ sap.ui.define([
 			var rm = sap.ui.getCore().createRenderManager();
 
 			if (typeof (mMethods) === 'undefined') {
-				rm.write('<p style="text-align:center;font-weight: bold">Select a class in the list on the left side to add breakpoint.</p>');
+				rm.write('<p>Select a class in the list on the left side to add breakpoint.</p>');
 				rm.flush($("#sapUiSupportDebuggingMethodContainer").get(0));
 				rm.destroy();
 				return;
 			}
 
-			rm.write('<div class="sapUISupportLabel" style="margin-right:5px">Select Method:</div>');
+			rm.write('<div class="sapUISupportLabel">Select Method:</div>');
 
 			rm.write('<select id="sapUiSupportDebuggingMethodSelect" class="sapUiSupportAutocomplete sapUiSupportSelect"><option></option>');
 
@@ -207,8 +206,7 @@ sap.ui.define([
 				}
 
 				rm.write('<li data-method-type="' + encodeXML(oValue.type + "") + '"><span>' + encodeXML(oValue.name + "") + '</span>' +
-						 '<img class="remove-breakpoint" style="cursor:pointer;margin-left:5px" ' +
-						 'src="../../debug/images/delete.gif" alt="Remove"></li>');
+						 '<img class="remove-breakpoint" src="../../debug/images/delete.gif" alt="Remove"></li>');
 			});
 
 			rm.write('</ul>');
@@ -238,7 +236,7 @@ sap.ui.define([
 
 			// Update breakpoint-count
 			var $breakpoints = $('li[data-class-name="' + sClassName + '"] span.breakpoints');
-			$breakpoints.text(mBreakpointCount.active + " / " + mBreakpointCount.all).show();
+			$breakpoints.text(mBreakpointCount.active + " / " + mBreakpointCount.all);
 
 			$('#sapUiSupportDebuggingMethodInput').trigger("focus");
 		};
