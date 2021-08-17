@@ -22469,7 +22469,7 @@ sap.ui.define([
 					code : "foo-22",
 					message : "text2",
 					numericSeverity : 1,
-					target : "n/a" // JIRA: CPOUI5ODATAV4-1086
+					target : "headerMessage" // BCP: 002075129500005717402021
 				}],
 				oModel = createTeaBusiModel({groupId : sGroupId}),
 				sView = '\
@@ -22501,7 +22501,10 @@ sap.ui.define([
 				}, {
 					code : "foo-22",
 					message : "text2",
-					persistent : true,
+					persistent : false,
+					"targets": [
+						"/TEAMS('42')/TEAM_2_MANAGER?custom=foo/headerMessage"
+					  ],
 					technicalDetails : {
 						originalMessage : aMessages[2]
 					},
