@@ -75,7 +75,7 @@ sap.ui.define([
 	 */
 	SelectionModelSelection.prototype.onActivate = function(oTable) {
 		SelectionPlugin.prototype.onActivate.apply(this, arguments);
-		this.oSelectionModel.attachSelectionChanged(this._onSelectionChange, this);
+		this.oSelectionModel.attachSelectionChanged(onSelectionChange, this);
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.TotalRowCountChanged, onTotalRowCountChanged, this);
 		this._bIgnoreNextTotalRowCountChange = oTable._getTotalRowCount() === 0;
 	};
@@ -85,7 +85,7 @@ sap.ui.define([
 	 */
 	SelectionModelSelection.prototype.onDeactivate = function(oTable) {
 		SelectionPlugin.prototype.onDeactivate.apply(this, arguments);
-		this.oSelectionModel.detachSelectionChanged(this._onSelectionChange, this);
+		this.oSelectionModel.detachSelectionChanged(onSelectionChange, this);
 		this.oSelectionModel.clearSelection();
 		detachFromBinding(this, this.getTableBinding());
 		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.TotalRowCountChanged, onTotalRowCountChanged, this);
@@ -288,28 +288,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fires the selectionChange event
-	 *
-	 * @param {sap.ui.base.Event} oEvent
-	 * @private
-	 */
-	SelectionModelSelection.prototype._onSelectionChange = function(oEvent) {
-		var aRowIndices = oEvent.getParameter("rowIndices");
-		var bSelectAll = oEvent.getParameter("selectAll");
-
-		this.fireSelectionChange({
-			rowIndices: aRowIndices,
-			selectAll: bSelectAll
-		});
-	};
-
-	/**
 	 * @inheritDoc
 	 */
 	SelectionModelSelection.prototype.onTableRowsBound = function(oBinding) {
 		SelectionPlugin.prototype.onTableRowsBound.apply(this, arguments);
 		if (!this.hasOwnProperty("_bIgnoreNextTotalRowCountChange")) {
 			this._bIgnoreNextTotalRowCountChange = true;
+		}
+		if (!this.getTable()._bContextsAvailable) {
+			this._bWaitForBindingChange = true;
 		}
 		attachToBinding(this, oBinding);
 	};
@@ -324,30 +311,40 @@ sap.ui.define([
 		this._resume();
 	};
 
+	function onSelectionChange(oEvent) {
+		var aRowIndices = oEvent.getParameter("rowIndices");
+		var bSelectAll = oEvent.getParameter("selectAll");
+
+		this.fireSelectionChange({
+			rowIndices: aRowIndices,
+			selectAll: bSelectAll
+		});
+	}
+
 	function attachToBinding(oPlugin, oBinding) {
 		if (oBinding) {
-			oBinding.attachChange(oPlugin._onBindingChange, oPlugin);
+			oBinding.attachChange(onBindingChange, oPlugin);
 		}
 	}
 
 	function detachFromBinding(oPlugin, oBinding) {
 		if (oBinding) {
-			oBinding.detachChange(oPlugin._onBindingChange, oPlugin);
+			oBinding.detachChange(onBindingChange, oPlugin);
 		}
 	}
 
-	/**
-	 *
-	 * @param {sap.ui.base.Event} oEvent
-	 * @private
-	 */
-	SelectionModelSelection.prototype._onBindingChange = function(oEvent) {
+	function onBindingChange(oEvent) {
 		var sReason = typeof (oEvent) === "object" ? oEvent.getParameter("reason") : oEvent;
 
 		if (sReason === "sort" || sReason === "filter") {
 			this.clearSelection();
 		}
-	};
+
+		if (this._bWaitForBindingChange) {
+			this._bIgnoreNextTotalRowCountChange = true;
+			delete this._bWaitForBindingChange;
+		}
+	}
 
 	function onTotalRowCountChanged() {
 		if (!this._bIgnoreNextTotalRowCountChange) {
