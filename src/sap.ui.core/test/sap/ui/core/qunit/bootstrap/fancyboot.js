@@ -27,7 +27,8 @@
 		xhr.open('GET', url, false);
 		xhr.send();
 
-		window.eval(code); // eslint-disable-line no-eval
+		// eslint-disable-next-line no-eval
+		window.eval(code);  // legacy-relevant
 	}
 
 	loadAndExecSync('../../../../../../resources/ui5loader.js');
