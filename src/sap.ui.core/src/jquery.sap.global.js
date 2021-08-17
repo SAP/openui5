@@ -2152,6 +2152,9 @@ sap.ui.define([
 	 * This is a synchronous replacement for <code>jQuery.globalEval</code> which in some
 	 * browsers (e.g. FireFox) behaves asynchronously.
 	 *
+	 * <b>Note:</b>
+	 * To avoid potential violations of your content security policy (CSP), this API should not be used.
+	 *
 	 * @type void
 	 * @public
 	 * @static
