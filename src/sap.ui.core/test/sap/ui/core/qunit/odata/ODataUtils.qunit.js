@@ -607,14 +607,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-QUnit.test("_mergeIntervals", function (assert) {
-	// code under test: without interval
-	assert.strictEqual(ODataUtils._mergeIntervals([]), undefined);
+	QUnit.test("_mergeIntervals", function (assert) {
+		// code under test: without interval
+		assert.strictEqual(ODataUtils._mergeIntervals([]), undefined);
 
-	// code under test: with intervals
-	assert.deepEqual(ODataUtils._mergeIntervals(
-		[{start : 1, end : 3}, {start : 4, end : 5}, {start : 6, end : 9}]), {start : 1, end : 9});
-});
+		// code under test: with intervals
+		assert.deepEqual(ODataUtils._mergeIntervals(
+				[{start : 1, end : 3}, {start : 4, end : 5}, {start : 6, end : 9}]),
+			{start : 1, end : 9});
+	});
 
 	//*********************************************************************************************
 [{
