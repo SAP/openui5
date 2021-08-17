@@ -1137,7 +1137,7 @@ function(
 					}, 0);
 				}
 			}
-		});
+		}, 0);
 
 		return this._oClearButton;
 	};
