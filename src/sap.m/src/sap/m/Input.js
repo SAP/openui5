@@ -1573,7 +1573,7 @@ function(
 			// when compose a non ASCII character, in Chrome the value is updated in the next browser tick cycle
 			setTimeout(function () {
 				var sNewValue = this.getDOMValue() || '';
-				if (sNewValue < this.getStartSuggestion()) {
+				if (sNewValue.length < this.getStartSuggestion()) {
 					this._closeSuggestionPopup();
 				}
 			}.bind(this), 0);
