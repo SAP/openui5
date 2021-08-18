@@ -3312,18 +3312,13 @@ sap.ui.define([
 			var oNestedComponent = oShell.getContent()[0].getComponentInstance();
 			assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
 			assert.equal(that.oNestedRouteMatchedSpy.callCount, 1, "Route is matched once inside the nested component");
-
-			return {
-				container: oContainer
-			};
 		})
 		// Step1: display dynamic component target
-		.then(function(mParam) {
+		.then(function() {
 			// Add dynamic component target
 			oRouter.getTargets().addTarget(sDynamicComponentName, {
 				name: "namespace1.DynamicChildComponent" + count,
 				type: "Component",
-				rootView: mParam.container.getId(),
 				controlId: "shell",
 				controlAggregation: "content",
 				options: {
@@ -3441,18 +3436,13 @@ sap.ui.define([
 			var oNestedComponent = oShell.getContent()[0].getComponentInstance();
 			assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
 			assert.equal(that.oNestedRouteMatchedSpy.callCount, 1, "Route is matched once inside the nested component");
-
-			return {
-				container: oContainer
-			};
 		})
 		// Step1: display dynamic component target
-		.then(function(mParam) {
+		.then(function() {
 			oRouter.getTargets().addTarget(sParentTarget, {
 				name: "DynamicComponentTargetParent",
 				type: "View",
 				viewType: "JS",
-				rootView: mParam.container.getId(),
 				controlId: "shell",
 				controlAggregation: "content"
 			});
@@ -3582,18 +3572,13 @@ sap.ui.define([
 			var oNestedComponent = oShell.getContent()[0].getComponentInstance();
 			assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
 			assert.equal(that.oNestedRouteMatchedSpy.callCount, 1, "Route is matched once inside the nested component");
-
-			return {
-				container: oContainer
-			};
 		})
 		// Step1: display dynamic component target
-		.then(function(mParam) {
+		.then(function() {
 			// Add dynamic component target
 			oRouter.getTargets().addTarget(sDynamicComponentName, {
 				name: "namespace1.DynamicChildComponent" + count,
 				type: "Component",
-				rootView: mParam.container.getId(),
 				controlId: "shell",
 				controlAggregation: "content",
 				options: {
@@ -3701,18 +3686,13 @@ sap.ui.define([
 			var oNestedComponent = oShell.getContent()[0].getComponentInstance();
 			assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
 			assert.equal(that.oNestedRouteMatchedSpy.callCount, 1, "Route is matched once inside the nested component");
-
-			return {
-				container: oContainer
-			};
 		})
 		// Step1: Display dynamic component target
-		.then(function(mParam) {
+		.then(function() {
 			// Add dynamic component target
 			oRouter.getTargets().addTarget(sDynamicComponentName, {
 				name: "namespace1.DynamicChildComponent" + count,
 				type: "Component",
-				rootView: mParam.container.getId(),
 				controlId: "shell",
 				controlAggregation: "content",
 				options: {

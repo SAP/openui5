@@ -699,9 +699,17 @@ sap.ui.define([
 			 */
 			_createTarget : function (sName, oTargetOptions) {
 				var oTarget,
-					oOptions;
+					oOptions,
+					oDefaults = {
+						_name: sName
+					};
 
-				oOptions = deepExtend({ _name: sName }, this._oConfig, oTargetOptions);
+				if (this._vRootViewId) {
+					oDefaults.rootView = this._vRootViewId;
+				}
+
+				oOptions = deepExtend(oDefaults, this._oConfig, oTargetOptions);
+
 				oTarget = this._constructTarget(oOptions);
 				oTarget.attachDisplay(function (oEvent) {
 					var oParameters = oEvent.getParameters();
@@ -789,6 +797,9 @@ sap.ui.define([
 						}
 					}
 				}
+
+				// save the root view id for later added target
+				this._vRootViewId = vId;
 			},
 
 			/*
