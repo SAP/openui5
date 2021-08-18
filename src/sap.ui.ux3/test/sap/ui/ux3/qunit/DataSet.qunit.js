@@ -311,7 +311,7 @@ sap.ui.define([
 		var count = 0;
 
 		oDataSetLayout.$().children().each(function() {
-			var offset = jQuery(this)[0].offsetLeft;
+			var offset = this.getBoundingClientRect().left;
 			if (lastOffsetLeft < offset){
 				count++;
 				lastOffsetLeft = offset;
@@ -323,8 +323,10 @@ sap.ui.define([
 		return count;
 	}
 
-
 	QUnit.test("Floating Layout", function(assert) {
+		oDataSetLayout.setItemMinWidth(200);
+		sap.ui.getCore().applyChanges();
+
 		assert.ok(oDataSetLayout.$().hasClass("sapUiUx3DSSVFloating"), "class 'sapUiUx3DSSVFloating' is set");
 		var expectedItems = Math.floor(oDataSetLayout.$().width() / 200);
 		assert.equal(getNumberOfItemsPerRow(), expectedItems, expectedItems + " item(s) per row");
