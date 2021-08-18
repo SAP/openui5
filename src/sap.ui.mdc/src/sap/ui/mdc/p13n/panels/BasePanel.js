@@ -75,9 +75,15 @@ sap.ui.define([
 				 * This event is fired if there has been made any change within the <code>BasePanel</code> control.
 				 */
 				change: {
+					/**
+					 * Reason for the change (e.g. Add, Remove, Move, SelectAll, DeselectAll)
+					 */
 					reason: {
 						type: "string"
 					},
+					/**
+					 * The affected item (Note: this may only provided in case one item is affected)
+					 */
 					item: {
 						type: "object"
 					}
@@ -468,7 +474,10 @@ sap.ui.define([
 		}, this);
 
 		if (bSelectAll || bDeSelectAll) {
-			this.fireChange();
+			this.fireChange({
+				reason: bSelectAll ? "SelectAll" : "DeselectAll",
+				item: undefined //No direct item is affected
+			});
 		}
 
 		// in case of 'deselect all', the move buttons for positioning are going to be disabled
