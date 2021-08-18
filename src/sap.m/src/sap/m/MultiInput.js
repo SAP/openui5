@@ -116,6 +116,7 @@ function(
 	* <li> You can select single tokens or a range of tokens and you can copy/cut/delete them.</li>
 	* </ul>
 	* @extends sap.m.Input
+	* @implements sap.ui.core.ISemanticFormContent
 	*
 	* @author SAP SE
 	* @version ${version}
@@ -128,7 +129,9 @@ function(
 	*/
 	var MultiInput = Input.extend("sap.m.MultiInput", /** @lends sap.m.MultiInput.prototype */ {
 		metadata: {
-
+			interfaces: [
+				"sap.ui.core.ISemanticFormContent"
+			],
 			library: "sap.m",
 			designtime: "sap/m/designtime/MultiInput.designtime",
 			properties: {
@@ -148,7 +151,13 @@ function(
 				 * The max number of tokens that is allowed in MultiInput.
 				 * @since 1.36
 				 */
-				maxTokens: {type: "int", group: "Behavior"}
+				maxTokens: {type: "int", group: "Behavior"},
+
+				/**
+				 * Changed when tokens are changed. The value for sap.ui.core.ISemanticFormContent interface.
+				 * @private
+				 */
+				_semanticFormValue: {type: "string", group: "Behavior", defaultValue: "", visibility: "hidden"}
 			},
 			aggregations: {
 
@@ -305,6 +314,7 @@ function(
 					break;
 			}
 
+			this.updateFormValueProperty();
 			this.invalidate();
 		}.bind(this));
 
@@ -1966,6 +1976,42 @@ function(
 				fValidateCallback && fValidateCallback(false);
 			}
 		};
+	};
+
+	/**
+	 * Gets formatted form value.
+	 *
+	 * In the context of the MultiInput, this is the merged value of all the Tokens in the control.
+	 *
+	 * @since 1.94
+	 * @experimental
+	 */
+	MultiInput.prototype.getFormFormattedValue = function () {
+		return this.getTokens()
+			.map(function (oToken) {
+				return oToken.getText();
+			})
+			.join(", ");
+	};
+
+	/**
+	 * The property which triggers form display invalidation when changed
+	 *
+	 * @since 1.94
+	 * @experimental
+	 */
+	MultiInput.prototype.getFormValueProperty = function () {
+		return "_semanticFormValue";
+	};
+
+	/**
+	 * ISemanticFormContent interface works only with properties. The state of MultiInput is kept as Tokens.
+	 * Update _semanticFormValue property so it'd match MultiInput's state, but as a string which could be reused.
+	 *
+	 * @private
+	 */
+	MultiInput.prototype.updateFormValueProperty = function () {
+		this.setProperty("_semanticFormValue", this.getFormFormattedValue(), true);
 	};
 
 	return MultiInput;
