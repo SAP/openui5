@@ -131,9 +131,6 @@ sap.ui.define([
 				fallbackIcon: {type: "string", group: "Data", defaultValue: null},
 				/**
 				 * Determines the background color of the control.
-				 *
-				 * <b>Note:</b> By using background colors from the predefined sets,
-				 * your colors can later be customized from the Theme Designer.
 				 */
 				backgroundColor: {type: "sap.m.AvatarColor", group: "Appearance", defaultValue: AvatarColor.Accent6},
 
