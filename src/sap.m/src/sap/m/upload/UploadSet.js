@@ -1100,9 +1100,8 @@ sap.ui.define([
 	};
 
 	UploadSet.prototype._checkRestrictions = function () {
-		this.getItems().forEach(function (oItem) {
-			this._checkRestrictionsForItem(oItem);
-		}.bind(this));
+		// this will only check the restriction for the newly uploaded files
+		// or files for which the upload is pending
 		this.getIncompleteItems().forEach(function (oItem) {
 			this._checkRestrictionsForItem(oItem);
 		}.bind(this));
