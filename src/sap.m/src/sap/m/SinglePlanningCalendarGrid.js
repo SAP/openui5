@@ -1302,7 +1302,9 @@ sap.ui.define([
 			if (!this.getEndHour()) {
 				iEndHour = LAST_HOUR_OF_DAY;
 			}
-
+			if (iStartHour > iEndHour) {
+				 return iStartHour <= iHour || iHour < iEndHour;
+			}
 			return iStartHour <= iHour && iHour < iEndHour;
 		};
 
