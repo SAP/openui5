@@ -796,6 +796,10 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._handleSelectionLiveChange = function(oEvent) {
+		if (oEvent.getParameter("selectAll")) {
+			return;
+		}
+
 		var oListItem = oEvent.getParameter("listItem");
 		var aListItems = oEvent.getParameter("listItems");
 		var oListItemToFocus = aListItems && aListItems[aListItems.length - 1] || oListItem;
@@ -808,7 +812,9 @@ function(
 		if (aListItems && aListItems.length) {
 			aNewSelectedItems = [];
 			aListItems.forEach(function (oNewItem) {
-				aNewSelectedItems.push(ListHelpers.getItemByListItem(this.getItems(), oNewItem));
+				if (oNewItem.getType() === "Active") {
+					aNewSelectedItems.push(ListHelpers.getItemByListItem(this.getItems(), oNewItem));
+				}
 			}, this);
 		}
 
@@ -829,7 +835,7 @@ function(
 			items: aNewSelectedItems,
 			id: oNewSelectedItem.getId(),
 			key: oNewSelectedItem.getKey(),
-			selectAll: oEvent.getParameter("selectAll"),
+			selectAll: false,
 			fireChangeEvent: true,
 			suppressInvalidate: true,
 			listItemUpdated: true
@@ -1501,7 +1507,7 @@ function(
 			return;
 		}
 
-		if (!mOptions.items || !mOptions.items.length) {
+		if (!mOptions.items || !mOptions.items.length || mOptions.selectAll) {
 			aNewItems = [mOptions.item];
 		} else {
 			aNewItems = mOptions.items;
@@ -1531,19 +1537,18 @@ function(
 			if (sKey === "" || aSelectedKeys.indexOf(sKey) === -1) {
 				aSelectedKeys.push(sKey);
 				this.setProperty("selectedKeys", aSelectedKeys, mOptions.suppressInvalidate);
-		}
+			}
+			if (mOptions.fireChangeEvent) {
+				this.fireSelectionChange({
+					changedItem: mOptions.item,
+					changedItems: mOptions.items,
+					selectAll: mOptions.selectAll,
+					selected: true
+				});
+			}
 		}, this);
 
 		this.setValue('');
-
-		if (mOptions.fireChangeEvent) {
-			this.fireSelectionChange({
-				changedItem: mOptions.item,
-				changedItems: mOptions.items,
-				selectAll: mOptions.selectAll,
-				selected: true
-			});
-		}
 
 		if (mOptions.fireFinishEvent) {
 
@@ -1580,7 +1585,7 @@ function(
 			return;
 		}
 
-		if (!mOptions.items || !mOptions.items.length) {
+		if (!mOptions.items || !mOptions.items.length || mOptions.selectAll) {
 			aDeselectedItems = [mOptions.item];
 		} else {
 			aDeselectedItems = mOptions.items;
@@ -1607,16 +1612,16 @@ function(
 				oNewItem.data(ListHelpers.CSS_CLASS + "Token", null);
 				this.getAggregation("tokenizer").removeToken(oToken);
 			}
-		}, this);
 
-		if (mOptions.fireChangeEvent) {
-			this.fireSelectionChange({
-				changedItem: mOptions.item,
-				changedItems: mOptions.items,
-				selectAll: mOptions.selectAll,
-				selected: false
-			});
-		}
+			if (mOptions.fireChangeEvent) {
+				this.fireSelectionChange({
+					changedItem: mOptions.item,
+					changedItems: mOptions.items,
+					selectAll: mOptions.selectAll,
+					selected: false
+				});
+			}
+		}, this);
 
 		if (mOptions.fireFinishEvent) {
 			// Fire selectionFinish also if tokens are deleted directly in input field
@@ -1785,11 +1790,13 @@ function(
 		oListItem.addDelegate({
 			onkeydown: function(oEvent) {
 				// This delegate is needed for 'select all' functionality when Ctrl+A is pressed on a group header - it's not handled by the list
-				if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which == KeyCodes.A && (oListItem.isA("sap.ui.core.SeparatorItem") || oListItem.isA("sap.m.GroupHeaderListItem"))) {
+				if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which == KeyCodes.A) {
 					oEvent.setMarked();
 					oEvent.preventDefault();
 
-					var aVisibleItems = ListHelpers.getSelectableItems(this.getItems());
+					var aVisibleItems = ListHelpers.getSelectableItems(this.getItems()).filter(function(oItem) {
+						return !oItem.isA("sap.ui.core.SeparatorItem") && !oItem.isA("sap.m.GroupHeaderListItem");
+					});
 					var aSelectedItems = this._getSelectedItemsOf(aVisibleItems);
 
 					if (aSelectedItems.length !== aVisibleItems.length) {
