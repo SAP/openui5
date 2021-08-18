@@ -400,7 +400,7 @@ sap.ui.define([
 
 	QUnit.test("_focusElement", function(assert) {
 		var oElement, oPreviousElement;
-		var oSetSilentFocusSpy = this.spy(oTable._getKeyboardExtension(), "_setSilentFocus");
+		var oSetSilentFocusSpy = this.spy(oTable._getKeyboardExtension(), "setSilentFocus");
 		var sInputType;
 		var mInputTypes = {
 			text: {supportsTextSelection: true, value: "text", columnIndex: null},
@@ -4168,7 +4168,7 @@ sap.ui.define([
 			// Enter action mode
 			if (bTestedCellIsRowHeader) {
 				oTable._getKeyboardExtension()._actionMode = true;
-				oTable._getKeyboardExtension()._suspendItemNavigation();
+				oTable._getKeyboardExtension().suspendItemNavigation();
 				oTestedCell.focus();
 			} else {
 				TableUtils.getInteractiveElements(oTestedCell)[0].focus();
@@ -4265,7 +4265,7 @@ sap.ui.define([
 		TestControl: TableQUnitUtils.TestControl
 	});
 
-	QUnit.test("Add column", function(assert) {
+	QUnit.test("Add column (focus on data cell)", function(assert) {
 		var oTable = this.oTable;
 		var TestControl = this.TestControl;
 
@@ -4292,6 +4292,36 @@ sap.ui.define([
 
 			qutils.triggerKeydown(document.activeElement, Key.Arrow.RIGHT, false, false, false);
 			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(1, 2), "ArrowRight -> The cell to the right is focused");
+		});
+	});
+
+	QUnit.test("Add column (focus on header cell)", function(assert) {
+		var oTable = this.oTable;
+		var TestControl = this.TestControl;
+
+		oTable.qunit.getColumnHeaderCell(1).focus();
+		oTable.insertColumn(new Column({
+			template: new TestControl({text: "new"})
+		}), 0);
+		sap.ui.getCore().applyChanges();
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			assert.strictEqual(document.activeElement, oTable.qunit.getColumnHeaderCell(2), "The same cell is focused");
+
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.LEFT, false, false, false);
+			assert.strictEqual(document.activeElement, oTable.qunit.getColumnHeaderCell(1), "ArrowLeft -> The cell to the left is focused");
+
+			oTable.qunit.getColumnHeaderCell(1).focus();
+			oTable.addColumn(new Column({
+				template: new TestControl({text: "new"})
+			}));
+			sap.ui.getCore().applyChanges();
+
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.strictEqual(document.activeElement, oTable.qunit.getColumnHeaderCell(1), "The same cell is focused");
+
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.RIGHT, false, false, false);
+			assert.strictEqual(document.activeElement, oTable.qunit.getColumnHeaderCell(2), "ArrowRight -> The cell to the right is focused");
 		});
 	});
 
@@ -4921,75 +4951,60 @@ sap.ui.define([
 	QUnit.test("Default Test Table - Move columns", function(assert) {
 		var oFirstColumn = oTable.getColumns()[0];
 		var oLastColumn = oTable.getColumns()[oTable.columnCount - 1];
-		var iOldColumnIndex, iNewColumnIndex;
+		var iOldColumnIndex;
 
 		// First column.
-		iOldColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
+		iOldColumnIndex = oFirstColumn.getIndex();
+		oFirstColumn.focus();
 		qutils.triggerKeydown(getColumnHeader(0), Key.Arrow.LEFT, false, false, true);
 
 		return new Promise(function(resolve) {
 			window.setTimeout(function() {
-				iNewColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
-				assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "First column was not moved to the left");
-
+				assert.strictEqual(oFirstColumn.getIndex(), iOldColumnIndex, "First column was not moved to the left");
 				qutils.triggerKeydown(getColumnHeader(0), Key.Arrow.RIGHT, false, false, true);
-
 				resolve();
 			}, 0);
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
-					assert.strictEqual(iNewColumnIndex, iOldColumnIndex + 1, "First column was moved to the right");
-
-					iOldColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
+					assert.strictEqual(oFirstColumn.getIndex(), iOldColumnIndex + 1, "First column was moved to the right");
+					iOldColumnIndex = oFirstColumn.getIndex();
 					qutils.triggerKeydown(getColumnHeader(1), Key.Arrow.LEFT, false, false, true);
-
 					resolve();
 				}, 0);
 			});
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
-					assert.strictEqual(iNewColumnIndex, iOldColumnIndex - 1, "It was moved back to the left");
+					assert.strictEqual(oFirstColumn.getIndex(), iOldColumnIndex - 1, "It was moved back to the left");
 
 					// Last column.
-					iOldColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
+					iOldColumnIndex = oLastColumn.getIndex();
 					qutils.triggerKeydown(getColumnHeader(oTable.columnCount - 1), Key.Arrow.RIGHT, false, false, true);
-
 					resolve();
 				}, 0);
 			});
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
-					assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "Last column was not moved to the right");
-
+					assert.strictEqual(oLastColumn.getIndex(), iOldColumnIndex, "Last column was not moved to the right");
 					qutils.triggerKeydown(getColumnHeader(oTable.columnCount - 1), Key.Arrow.LEFT, false, false, true);
-
 					resolve();
 				}, 0);
 			});
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
-					assert.strictEqual(iNewColumnIndex, iOldColumnIndex - 1, "Last column was moved to the left");
-
-					iOldColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
+					assert.strictEqual(oLastColumn.getIndex(), iOldColumnIndex - 1, "Last column was moved to the left");
+					iOldColumnIndex = oLastColumn.getIndex();
 					qutils.triggerKeydown(getColumnHeader(oTable.columnCount - 2), Key.Arrow.RIGHT, false, false, true);
-
 					resolve();
 				}, 0);
 			});
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
-					assert.strictEqual(iNewColumnIndex, iOldColumnIndex + 1, "It was moved back to the right");
-
+					assert.strictEqual(oLastColumn.getIndex(), iOldColumnIndex + 1, "It was moved back to the right");
 					resolve();
 				}, 0);
 			});
@@ -5002,130 +5017,104 @@ sap.ui.define([
 
 		var oFirstFixedColumn = oTable.getColumns()[0];
 		var oLastFixedColumn = oTable.getColumns()[1];
-		var iOldColumnIndex, iNewColumnIndex;
+		var iOldColumnIndex;
 
 		// First fixed column.
-		iOldColumnIndex = +oFirstFixedColumn.$().attr("data-sap-ui-colindex");
+		iOldColumnIndex = oFirstFixedColumn.getIndex();
 		qutils.triggerKeydown(getColumnHeader(0), Key.Arrow.LEFT, false, false, true);
 
 		return new Promise(function(resolve) {
 			window.setTimeout(function() {
-				iNewColumnIndex = +oFirstFixedColumn.$().attr("data-sap-ui-colindex");
-				assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "First fixed column was not moved to the left");
-
+				assert.strictEqual(oFirstFixedColumn.getIndex(), iOldColumnIndex, "First fixed column was not moved to the left");
 				qutils.triggerKeydown(getColumnHeader(0), Key.Arrow.RIGHT, false, false, true);
-
 				resolve();
 			}, 0);
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = +oFirstFixedColumn.$().attr("data-sap-ui-colindex");
-					assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "First fixed column was not moved to the right");
+					assert.strictEqual(oFirstFixedColumn.getIndex(), iOldColumnIndex, "First fixed column was not moved to the right");
 
 					// Last fixed column.
-					iOldColumnIndex = +oLastFixedColumn.$().attr("data-sap-ui-colindex");
+					iOldColumnIndex = oLastFixedColumn.getIndex();
 					qutils.triggerKeydown(getColumnHeader(1), Key.Arrow.RIGHT, false, false, true);
-
 					resolve();
 				}, 0);
 			});
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = +oLastFixedColumn.$().attr("data-sap-ui-colindex");
-					assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "Last fixed column was not moved to the right");
-
+					assert.strictEqual(oLastFixedColumn.getIndex(), iOldColumnIndex, "Last fixed column was not moved to the right");
 					qutils.triggerKeydown(getColumnHeader(1), Key.Arrow.LEFT, false, false, true);
-					iNewColumnIndex = +oLastFixedColumn.$().attr("data-sap-ui-colindex");
-
 					resolve();
 				}, 0);
 			});
 		}).then(function() {
 			return new Promise(function(resolve) {
-				assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "Last fixed column was not moved to the left");
-
+				assert.strictEqual(oLastFixedColumn.getIndex(), iOldColumnIndex, "Last fixed column was not moved to the left");
 				resolve();
 			});
 		});
 	});
 
-	QUnit.test("Fixed Columns - Move movable columns", function(assert) {
+	QUnit.test("Fixed Columns - Move scrollable columns", function(assert) {
 		oTable.setFixedColumnCount(2);
 		sap.ui.getCore().applyChanges();
 
 		var oFirstColumn = oTable.getColumns()[2];
 		var oLastColumn = oTable.getColumns()[oTable.columnCount - 1];
-		var iOldColumnIndex, iNewColumnIndex;
+		var iOldColumnIndex;
 
-		// First normal column.
-		iOldColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
+		// First scrollable column.
+		iOldColumnIndex = oFirstColumn.getIndex();
 		qutils.triggerKeydown(getColumnHeader(2), Key.Arrow.LEFT, false, false, true);
 
 		return new Promise(function(resolve) {
 			window.setTimeout(function() {
-				iNewColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
-				assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "First movable column was not moved to the left");
-
+				assert.strictEqual(oFirstColumn.getIndex(), iOldColumnIndex, "First movable column was not moved to the left");
 				qutils.triggerKeydown(getColumnHeader(2), Key.Arrow.RIGHT, false, false, true);
-
 				resolve();
 			}, 0);
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
-					assert.strictEqual(iNewColumnIndex, iOldColumnIndex + 1, "First movable column was moved to the right");
-
-					iOldColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
+					assert.strictEqual(oFirstColumn.getIndex(), iOldColumnIndex + 1, "First movable column was moved to the right");
+					iOldColumnIndex = oFirstColumn.getIndex();
 					qutils.triggerKeydown(getColumnHeader(3), Key.Arrow.LEFT, false, false, true);
-
 					resolve();
 				}, 0);
 			});
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
-					assert.strictEqual(iNewColumnIndex, iOldColumnIndex - 1, "It was moved back to the left");
+					assert.strictEqual(oFirstColumn.getIndex(), iOldColumnIndex - 1, "It was moved back to the left");
 
-					// Last normal column.
-					iOldColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
+					// Last scrollable column.
+					iOldColumnIndex = oLastColumn.getIndex();
 					qutils.triggerKeydown(getColumnHeader(oTable.columnCount - 1), Key.Arrow.RIGHT, false, false, true);
-
 					resolve();
 				}, 0);
 			});
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
-					assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "Last movable column was not moved to the right");
-
+					assert.strictEqual(oLastColumn.getIndex(), iOldColumnIndex, "Last movable column was not moved to the right");
 					qutils.triggerKeydown(getColumnHeader(oTable.columnCount - 1), Key.Arrow.LEFT, false, false, true);
-
 					resolve();
 				}, 0);
 			});
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
-					assert.strictEqual(iNewColumnIndex, iOldColumnIndex - 1, "Last movable column was moved to the left");
-
-					iOldColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
+					assert.strictEqual(oLastColumn.getIndex(), iOldColumnIndex - 1, "Last movable column was moved to the left");
+					iOldColumnIndex = oLastColumn.getIndex();
 					qutils.triggerKeydown(getColumnHeader(oTable.columnCount - 2), Key.Arrow.RIGHT, false, false, true);
-
 					resolve();
 				}, 0);
 			});
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
-					assert.strictEqual(iNewColumnIndex, iOldColumnIndex + 1, "It was moved back to the right");
-
+					assert.strictEqual(oLastColumn.getIndex(), iOldColumnIndex + 1, "It was moved back to the right");
 					resolve();
 				}, 0);
 			});
@@ -6258,8 +6247,8 @@ sap.ui.define([
 
 			if (bTestLeaveActionMode) {
 				oTable._getKeyboardExtension()._actionMode = true;
-				oTable._getKeyboardExtension()._suspendItemNavigation();
-				assert.ok(oTable._getKeyboardExtension().isInActionMode() && oTable._getKeyboardExtension()._isItemNavigationSuspended(),
+				oTable._getKeyboardExtension().suspendItemNavigation();
+				assert.ok(oTable._getKeyboardExtension().isInActionMode() && oTable._getKeyboardExtension().isItemNavigationSuspended(),
 					"Table was programmatically set to Action Mode");
 				fEventTriggerer(oElem, key, bShift, bAlt, bCtrl);
 				checkFocus(getRowHeader(0), assert);
@@ -6288,8 +6277,8 @@ sap.ui.define([
 
 			if (bTestLeaveActionMode) {
 				oTable._getKeyboardExtension()._actionMode = true;
-				oTable._getKeyboardExtension()._suspendItemNavigation();
-				assert.ok(oTable._getKeyboardExtension().isInActionMode() && oTable._getKeyboardExtension()._isItemNavigationSuspended(),
+				oTable._getKeyboardExtension().suspendItemNavigation();
+				assert.ok(oTable._getKeyboardExtension().isInActionMode() && oTable._getKeyboardExtension().isItemNavigationSuspended(),
 					"Table was programmatically set to Action Mode");
 				fEventTriggerer(oElem, key, bShift, bAlt, bCtrl);
 				checkFocus(getRowHeader(0), assert);

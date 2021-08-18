@@ -283,7 +283,7 @@ sap.ui.define([
 		var bAllowSapFocusLeave = bActionMode && oCellInfo.isOfType(CellType.DATACELL);
 
 		if (bAllowSapFocusLeave) {
-			oTable._getKeyboardExtension()._setSilentFocus(oTable.getDomRef("focusDummy"));
+			oTable._getKeyboardExtension().setSilentFocus(oTable.getDomRef("focusDummy"));
 			setTimeout(function() {
 				oTable._getScrollExtension().scrollVertically(bDown === true, bPage);
 			}, 0);
@@ -383,7 +383,7 @@ sap.ui.define([
 	 */
 	function restoreFocusOnLastFocusedDataCell(oTable, oEvent) {
 		var oCellInfo = TableUtils.getFocusedItemInfo(oTable);
-		var oLastInfo = oTable._getKeyboardExtension()._getLastFocusedCellInfo();
+		var oLastInfo = oTable._getKeyboardExtension().getLastFocusedCellInfo();
 		TableUtils.focusItem(oTable, oCellInfo.cellInRow + (oCellInfo.columnCount * oLastInfo.row), oEvent);
 	}
 
@@ -407,7 +407,7 @@ sap.ui.define([
 	 * @static
 	 */
 	function forwardFocusToTabDummy(oTable, sTabDummyCSSClass) {
-		oTable._getKeyboardExtension()._setSilentFocus(oTable.$().find("." + sTabDummyCSSClass));
+		oTable._getKeyboardExtension().setSilentFocus(oTable.$().find("." + sTabDummyCSSClass));
 	}
 
 	/**
@@ -580,7 +580,7 @@ sap.ui.define([
 		TableUtils.deselectElementText(document.activeElement);
 
 		if (bSilentFocus) {
-			oTable._getKeyboardExtension()._setSilentFocus(oElement);
+			oTable._getKeyboardExtension().setSilentFocus(oElement);
 		} else {
 			oElement.focus();
 		}
@@ -610,7 +610,7 @@ sap.ui.define([
 		var oCell;
 
 		if (iCellType === CellType.ROWHEADER) {
-			oTable._getKeyboardExtension()._setFocus(oTable.getDomRef("rowsel" + iRowIndex));
+			oTable._getKeyboardExtension().setFocus(oTable.getDomRef("rowsel" + iRowIndex));
 			return;
 		} else if (iCellType === CellType.ROWACTION) {
 			oCell = oTable.getDomRef("rowact" + iRowIndex);
@@ -908,13 +908,13 @@ sap.ui.define([
 
 		if ($InteractiveElements) {
 			// Target is a data cell with interactive elements inside. Focus the first interactive element in the data cell.
-			oKeyboardExtension._suspendItemNavigation();
+			oKeyboardExtension.suspendItemNavigation();
 			oActiveElement.tabIndex = -1;
 			KeyboardDelegate._focusElement(this, $InteractiveElements[0], true);
 			return true;
 		} else if ($Cell) {
 			// Target is an interactive element inside a data cell.
-			this._getKeyboardExtension()._suspendItemNavigation();
+			this._getKeyboardExtension().suspendItemNavigation();
 			return true;
 		}
 
@@ -934,7 +934,7 @@ sap.ui.define([
 		var oActiveElement = document.activeElement;
 		var $Cell = TableUtils.getParentCell(this, oActiveElement);
 
-		oKeyboardExtension._resumeItemNavigation();
+		oKeyboardExtension.resumeItemNavigation();
 
 		if (bAdjustFocus) {
 			if ($Cell) {
@@ -951,7 +951,7 @@ sap.ui.define([
 					}
 				}
 
-				oKeyboardExtension._setSilentFocus(oActiveElement);
+				oKeyboardExtension.setSilentFocus(oActiveElement);
 			}
 		}
 	};
@@ -972,7 +972,7 @@ sap.ui.define([
 			if (!bNoData || bNoData && this.getColumnHeaderVisible()) {
 				setFocusOnColumnHeaderOfLastFocusedDataCell(this, oEvent);
 			} else {
-				this._getKeyboardExtension()._setSilentFocus(this.$("noDataCnt"));
+				this._getKeyboardExtension().setSilentFocus(this.$("noDataCnt"));
 			}
 
 		} else if ($Target.hasClass("sapUiTableCtrlAfter")) {
@@ -1255,7 +1255,7 @@ sap.ui.define([
 			forwardFocusToTabDummy(this, "sapUiTableCtrlAfter");
 
 		} else if (oEvent.target === this.getDomRef("overlay")) {
-			oKeyboardExtension._setSilentFocus(this.$().find(".sapUiTableOuterAfter"));
+			oKeyboardExtension.setSilentFocus(this.$().find(".sapUiTableOuterAfter"));
 
 		} else if (!oCellInfo.isOfType(CellType.ANY)) {
 			$Cell = TableUtils.getParentCell(this, oEvent.target);
@@ -1344,7 +1344,7 @@ sap.ui.define([
 			}
 
 		} else if (oEvent.target === this.getDomRef("overlay")) {
-			this._getKeyboardExtension()._setSilentFocus(this.$().find(".sapUiTableOuterBefore"));
+			this._getKeyboardExtension().setSilentFocus(this.$().find(".sapUiTableOuterBefore"));
 
 		} else if (!oCellInfo.isOfType(CellType.ANY)) {
 			$Cell = TableUtils.getParentCell(this, oEvent.target);

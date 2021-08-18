@@ -84,7 +84,7 @@ sap.ui.define([
 		var oExtension = oTable._getKeyboardExtension();
 		assert.ok(oExtension._itemNavigationInvalidated, "Item Navigation invalid due to initial rendering");
 		oExtension.initItemNavigation();
-		assert.ok(!oExtension._itemNavigationInvalidated, "Item Navigation not invalid after initItemNavigation");
+		assert.ok(!oExtension._itemNavigationInvalidated, "Item Navigation valid after initItemNavigation");
 		oExtension.invalidateItemNavigation();
 		assert.ok(oExtension._itemNavigationInvalidated, "Item Navigation invalid after invalidateItemNavigation");
 	});
@@ -129,7 +129,7 @@ sap.ui.define([
 		var oControl = setupItemNavigationFakeTest(assert);
 		var i;
 
-		oControl._getKeyboardExtension()._suspendItemNavigation();
+		oControl._getKeyboardExtension().suspendItemNavigation();
 
 		assert.expect(14);
 
@@ -139,7 +139,7 @@ sap.ui.define([
 			/*eslint-enable new-cap */
 		}
 
-		oControl._getKeyboardExtension()._resumeItemNavigation();
+		oControl._getKeyboardExtension().resumeItemNavigation();
 
 		for (i = 0; i < aEvents.length; i++) {
 			/*eslint-disable new-cap */
@@ -178,7 +178,7 @@ sap.ui.define([
 		oExtension._oLastFocusedCellInfo = null;
 		oExtension.initItemNavigation();
 
-		var oInfo = oExtension._getLastFocusedCellInfo();
+		var oInfo = oExtension.getLastFocusedCellInfo();
 		assert.strictEqual(oInfo.cell, oTable.columnCount + 2 /* 2* row header*/, "cell");
 		assert.strictEqual(oInfo.row, 1, "row");
 		assert.strictEqual(oInfo.columnCount, oTable.columnCount + 1 /*row header*/, "columnCount");
@@ -190,7 +190,7 @@ sap.ui.define([
 
 		getCell(1, 2, true, assert);
 
-		oInfo = oExtension._getLastFocusedCellInfo();
+		oInfo = oExtension.getLastFocusedCellInfo();
 		assert.strictEqual(oInfo.cell, 2 * (oTable.columnCount + 1) + 3, "cell");
 		assert.strictEqual(oInfo.row, 2, "row");
 		assert.strictEqual(oInfo.columnCount, oTable.columnCount + 1 /*row header*/, "columnCount");
@@ -219,7 +219,7 @@ sap.ui.define([
 		oTable.addEventDelegate(oDelegate);
 		assert.expect(1);
 		var oExtension = oTable._getKeyboardExtension();
-		oExtension._setSilentFocus(getCell(0, 0));
+		oExtension.setSilentFocus(getCell(0, 0));
 		oTable.removeEventDelegate(oDelegate);
 	});
 
@@ -289,15 +289,6 @@ sap.ui.define([
 		assert.ok(!oExtension.isInActionMode(), "Still not in action mode");
 
 		oControl.destroy();
-	});
-
-	QUnit.test("Table Type", function(assert) {
-		assert.strictEqual((new TreeTable())._getKeyboardExtension()._getTableType(),
-			ExtensionBase.TABLETYPES.TREE, "TREE");
-		assert.strictEqual((new Table())._getKeyboardExtension()._getTableType(),
-			ExtensionBase.TABLETYPES.STANDARD, "STANDARD");
-		assert.strictEqual((new AnalyticalTable())._getKeyboardExtension()._getTableType(),
-			ExtensionBase.TABLETYPES.ANALYTICAL, "ANALYTICAL");
 	});
 
 	QUnit.module("Focus handling", {
