@@ -340,6 +340,16 @@ sap.ui.define([
 		assert.strictEqual(oGrid._isVisibleHour(20), false, "start and end hour set, the passed value is the same as the end hour");
 		assert.strictEqual(oGrid._isVisibleHour(21), false, "start and end hour set, the passed value is outside visible range");
 
+		// Prepare
+		oGrid.setStartHour(21);
+		oGrid.setEndHour(11);
+
+		// Assert
+		assert.strictEqual(oGrid._isVisibleHour(0), true, "start hours and end hour in next day set, the passed value is inside visible range");
+		assert.strictEqual(oGrid._isVisibleHour(21), true, "start hours and end hour in next day set, the passed value is the same as the start hour");
+		assert.strictEqual(oGrid._isVisibleHour(11), false, "start hours and end hour in next day set, the passed value is the same as the end hour");
+		assert.strictEqual(oGrid._isVisibleHour(16), false, "start hours and end hour in next day set, the passed value is outside visible range");
+
 		// Destroy
 		oGrid.destroy();
 	});
