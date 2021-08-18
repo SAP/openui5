@@ -341,34 +341,21 @@ sap.ui.define([
 							this.clearCachedElements();
 							return Utils.doIfAllControlsAreAvailable([oOverlay, mParents.parentOverlay], function () {
 								var bEditable = false;
+								// For the sibling case, check if anything is available for the same aggregation
 								if (bOverlayIsSibling) {
 									bEditable = isThereAnAggregationActionForSameAggregation(mActions, mParents);
-								}
-
-								return Object.keys(mActions).some(function(sAggregationName) {
-									if (!bEditable && mActions[sAggregationName].reveal) {
-										// For the sibling case, check if anything is available for the same aggregation
-										if (bOverlayIsSibling) {
-											var oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
-											var sOverlayAggregationName = oParentAggregationOverlay && oParentAggregationOverlay.getAggregationName();
-											if (sOverlayAggregationName === sAggregationName) {
-												bEditable = true;
-											}
-										} else {
-											bEditable = true;
-										}
-									}
-
-									if (!bEditable && !bOverlayIsSibling) {
+								} else {
+									bEditable = Object.keys(mActions).some(function(sAggregationName) {
 										if (mActions[sAggregationName].addViaDelegate) {
 											bEditable = this.checkAggregationsOnSelf(mParents.parentOverlay, "add", undefined, "delegate");
 										}
-									}
-									if (!bEditable && !bOverlayIsSibling && mActions[sAggregationName].addViaCustom) {
-										bEditable = true;
-									}
-									return bEditable;
-								}.bind(this));
+										if (!bEditable && (mActions[sAggregationName].reveal || mActions[sAggregationName].addViaCustom)) {
+											return true;
+										}
+										return bEditable;
+									}.bind(this));
+								}
+								return bEditable;
 							}.bind(this));
 						}.bind(this))
 						.then(function (bEditable) {
@@ -488,8 +475,8 @@ sap.ui.define([
 			var oSelectedOverlay = aElementOverlays[0];
 
 			if (bOverlayIsSibling) {
-				var oParentAggregationOverlay = oSelectedOverlay.getParentAggregationOverlay();
-				sAggregationName = oParentAggregationOverlay && oParentAggregationOverlay.getAggregationName();
+				var mParents = AdditionalElementsUtils.getParents(bOverlayIsSibling, oSelectedOverlay, this);
+				sAggregationName = mParents.responsibleElementOverlay.getParentAggregationOverlay().getAggregationName();
 			} else {
 				// If there are no elements available but the action is still available, the dialog will open just to allow
 				// adding custom fields. When clicking on the parent, the aggregation name is irrelevant for the dialog

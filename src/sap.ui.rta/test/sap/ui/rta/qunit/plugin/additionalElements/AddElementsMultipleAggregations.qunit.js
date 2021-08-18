@@ -3,11 +3,15 @@
 sap.ui.define([
 	"sap/m/Bar",
 	"sap/m/Button",
+	"sap/m/Page",
+	"sap/ui/layout/VerticalLayout",
+	"sap/uxap/ObjectPageLayout",
+	"sap/uxap/ObjectPageSection",
+	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/fl/Utils",
-	"sap/ui/layout/VerticalLayout",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
@@ -17,11 +21,15 @@ sap.ui.define([
 ], function (
 	Bar,
 	Button,
+	Page,
+	VerticalLayout,
+	ObjectPageLayout,
+	ObjectPageSection,
+	ObjectPageSubSection,
 	DesignTime,
 	OverlayRegistry,
 	ElementUtil,
 	FlexUtils,
-	VerticalLayout,
 	CommandFactory,
 	AdditionalElementsPlugin,
 	AdditionalElementsAnalyzer,
@@ -249,8 +257,6 @@ sap.ui.define([
 			this.oVisibleRightButtonOverlay = OverlayRegistry.getOverlay(this.oVisibleRightButton);
 			var bWasCalled = false;
 
-			this.oVisibleMiddleButton1.setVisible(false);
-
 			this.oIsValidForAggregationStub = sandbox.stub(ElementUtil, "isValidForAggregation");
 			this.oIsValidForAggregationStub.withArgs(this.oBar, "contentRight")
 				.callsFake(function(oParent, sAggregationName, oInvisibleElement) {
@@ -260,6 +266,8 @@ sap.ui.define([
 					}
 					return true;
 				});
+
+			this.oVisibleMiddleButton1.setVisible(false);
 
 			this.oDesignTime.attachEventOnce("synced", function () {
 				this.oPlugin.showAvailableElements(true, "contentRight", [this.oVisibleRightButtonOverlay])
@@ -271,6 +279,99 @@ sap.ui.define([
 						done();
 					}.bind(this));
 			}.bind(this));
+		});
+	});
+
+	// 	Page
+	// 		ObjectPageLayout
+	//      	headerContent
+	//				Button
+	//			ObjectPageSection - visible
+	//				ObjectPageSubSection
+	//					Button
+	//			ObjectPageSection - invisible
+	//			ObjectPageSection - visible
+	function givenObjectPageWithHeaderAndSections() {
+		sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+
+		this.oHeaderButton = new Button({id: "HeaderContentButton", text: "HeaderContentButton"});
+
+		this.oSubSection = new ObjectPageSubSection({
+			id: "subsection1",
+			blocks: [new Button({text: "abc"})]
+		});
+
+		this.oObjectPageSection1 = new ObjectPageSection({
+			id: "section1",
+			title: "Section_1",
+			visible: true,
+			subSections: [this.oSubSection]
+		});
+
+		this.oObjectPageSection2 = new ObjectPageSection({
+			id: "section2",
+			title: "Section_2",
+			visible: false
+		});
+
+		this.oObjectPageSection3 = new ObjectPageSection({
+			id: "section3",
+			title: "Section_3",
+			visible: true
+		});
+
+		this.oObjectPageLayout = new ObjectPageLayout({
+			id: "ObjectPageLayout",
+			headerContent: [this.oHeaderButton],
+			sections: [
+				this.oObjectPageSection1,
+				this.oObjectPageSection2,
+				this.oObjectPageSection3
+			]
+		});
+
+		this.oPage = new Page({
+			id: "Page",
+			content: [this.oObjectPageLayout]
+		});
+
+		this.oPage.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+	}
+
+	QUnit.module("Given an ObjectPage with headerContent and one hidden section", {
+		beforeEach: function (assert) {
+			givenObjectPageWithHeaderAndSections.call(this);
+			var done = assert.async();
+			this.oDialog = new AddElementsDialog();
+
+			this.oPlugin = new AdditionalElementsPlugin({
+				analyzer: AdditionalElementsAnalyzer,
+				dialog: this.oDialog,
+				commandFactory: new CommandFactory()
+			});
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oPage],
+				plugins: [this.oPlugin]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function () {
+				this.oHeaderButtonOverlay = OverlayRegistry.getOverlay(this.oHeaderButton);
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.oPage.destroy();
+			this.oDesignTime.destroy();
+			this.oPlugin.destroy();
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("when checking if add action is available on the header content element", function (assert) {
+			return this.oPlugin._isEditableCheck(this.oHeaderButtonOverlay, true)
+				.then(function(bIsEditable) {
+					assert.notOk(bIsEditable, "the overlay should not be editable as no actions should be available for it");
+				});
 		});
 	});
 

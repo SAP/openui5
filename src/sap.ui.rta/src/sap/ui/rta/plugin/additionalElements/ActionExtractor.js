@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
+	"sap/ui/rta/plugin/RTAElementMover",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsUtils"
 ], function(
 	difference,
@@ -19,6 +20,7 @@ sap.ui.define([
 	ElementUtil,
 	OverlayRegistry,
 	DelegateMediatorAPI,
+	RTAElementMover,
 	AdditionalElementsUtils
 ) {
 	"use strict";
@@ -219,13 +221,14 @@ sap.ui.define([
 		});
 	}
 
-	function checkAndEnrichReveal(mReveal, mInvisibleElement, oPlugin, sAggregationName) {
+	function checkAndEnrichReveal(mReveal, mInvisibleElement, oPlugin, sTargetAggregation) {
 		return Promise.resolve().then(function() {
 			var oInvisibleElement = mInvisibleElement.element;
 			var oDesignTimeMetadata;
 			var mRevealAction;
 			var bRevealEnabled = false;
 			var oHasChangeHandlerPromise = Promise.resolve();
+			var sSourceAggregation = mInvisibleElement.sourceAggregation;
 
 			var oOverlay = OverlayRegistry.getOverlay(oInvisibleElement);
 			if (oOverlay) {
@@ -251,21 +254,26 @@ sap.ui.define([
 							if (!mRevealAction.getAggregationName) {
 								mRevealAction.getAggregationName = defaultGetAggregationName;
 							}
-							var oParent = oInvisibleElement.getParent();
-							bRevealEnabled = bRevealEnabled && ElementUtil.isValidForAggregation(oParent, sAggregationName, oInvisibleElement);
+
+							// Check if the invisible element can be moved to the target aggregation
+							if (bRevealEnabled && (sSourceAggregation !== sTargetAggregation)) {
+								var oAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(sTargetAggregation);
+								return RTAElementMover.prototype.checkTargetZone(oAggregationOverlay, oOverlay, false, oPlugin);
+							}
 						}
+						return bRevealEnabled;
 					});
 				}
 			}
 
-			return oHasChangeHandlerPromise.then(function() {
-				if (bRevealEnabled) {
+			return oHasChangeHandlerPromise.then(function(bIncludeReveal) {
+				if (bIncludeReveal) {
 					mReveal.elements.push({
 						element: oInvisibleElement,
 						designTimeMetadata: oDesignTimeMetadata,
 						action: mRevealAction,
-						sourceAggregation: mInvisibleElement.sourceAggregation,
-						targetAggregation: sAggregationName
+						sourceAggregation: sSourceAggregation,
+						targetAggregation: sTargetAggregation
 					});
 					var mName = oDesignTimeMetadata.getName(oInvisibleElement);
 					if (mName) {
