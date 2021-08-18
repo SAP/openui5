@@ -1309,9 +1309,9 @@ sap.ui.define([
 			/*mEntityTypes*/ {}, /*bBatch*/ false, "~aRequests");
 
 		assert.strictEqual(oRequest.deepPath, oFixture.resultDeepPath);
+		assert.strictEqual(oContext.bCreated, false);
 	});
 });
-
 
 	//*********************************************************************************************
 	QUnit.test("removeInternalMetadata", function (assert) {
@@ -2596,6 +2596,7 @@ sap.ui.define([
 		}
 		assert.deepEqual(oModel.mChangedEntities["~sKey"], oEntity);
 		assert.strictEqual(oResult, oCreatedContext);
+		// createEntry must set oContext.bCreated to true (mark as transient)
 		assert.deepEqual(oResult, {
 			bCreated : true
 		});

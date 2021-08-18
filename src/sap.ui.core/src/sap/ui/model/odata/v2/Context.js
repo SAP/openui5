@@ -42,8 +42,12 @@ sap.ui.define([
 	var Context = BaseContext.extend("sap.ui.model.odata.v2.Context", {
 			constructor : function (oModel, sPath, sDeepPath) {
 				BaseContext.call(this, oModel, sPath);
-				// whether a new entity was created by ODataModel#createEntry and not yet persisted
-				this.bCreated = false;
+				// whether this context references a newly created transient entity; supported
+				// values are:
+				// - undefined: entity has not been created on client side,
+				// - true: created on the client but not yet persisted in the back end,
+				// - false: created on the client and persisted in the back end
+				this.bCreated = undefined;
 				// the absolute path including all intermediate paths of the binding hierarchy;
 				// used to compute the full target of messages
 				this.sDeepPath = sDeepPath || sPath;
@@ -66,7 +70,7 @@ sap.ui.define([
 	 * @return {string} The deep path
 	 * @private
 	 */
-	 Context.prototype.getDeepPath = function () {
+	Context.prototype.getDeepPath = function () {
 		return this.sDeepPath;
 	};
 
@@ -79,7 +83,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v2.Context#isUpdated
 	 * @see sap.ui.model.odata.v2.Context#isRefreshForced
 	 */
-	 Context.prototype.hasChanged = function() {
+	Context.prototype.hasChanged = function() {
 		return this.bUpdated || this.bForceRefresh;
 	};
 
@@ -92,7 +96,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.suite.ui.generic
 	 */
-	 Context.prototype.isPreliminary = function () {
+	Context.prototype.isPreliminary = function () {
 		return this.bPreliminary;
 	};
 
@@ -103,8 +107,26 @@ sap.ui.define([
 	 * @return {boolean} Whether dependent bindings need to be refreshed
 	 * @private
 	 */
-	 Context.prototype.isRefreshForced = function () {
+	Context.prototype.isRefreshForced = function () {
 		return this.bForceRefresh;
+	};
+
+	/**
+	 * For a context created using {@link sap.ui.model.odata.v2.ODataModel#createEntry}, the method
+	 * returns <code>true</code> if the context is transient or <code>false</code> if the context is
+	 * not transient. A transient context represents an entity created on the client which has not
+	 * been persisted in the back end.
+	 *
+	 * @returns {boolean}
+	 *   Whether this context is transient if it is created using
+	 *   {@link sap.ui.model.odata.v2.ODataModel#createEntry}; <code>undefined</code> if it is not
+	 *   created using {@link sap.ui.model.odata.v2.ODataModel#createEntry}
+	 *
+	 * @public
+	 * @since 1.94.0
+	 */
+	Context.prototype.isTransient = function () {
+		return this.bCreated;
 	};
 
 	/**
@@ -114,7 +136,7 @@ sap.ui.define([
 	 * @return {boolean} Whether the context is updated
 	 * @private
 	 */
-	 Context.prototype.isUpdated = function () {
+	Context.prototype.isUpdated = function () {
 		return this.bUpdated;
 	};
 
