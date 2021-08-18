@@ -326,7 +326,7 @@ sap.ui.define([
 			allowWrapping: false
 		});
 		testLayout.placeAt('uiArea2');
-
+		sap.ui.getCore().applyChanges();
 
 		jQuery('#uiArea2').css('width', '400');
 
@@ -334,23 +334,17 @@ sap.ui.define([
 			var btn = oCtrl.getDomRef('mn');
 			btn.click();
 			setTimeout(function() {
+				var pu = oCtrl.getDomRef('pu');
+				// if the popup is still visible, it means resize was not triggered (causing the popup to close)
+				assert.equal(jQuery(pu).css('visibility'), 'visible', 'Popup is properly visible');
+				assert.equal(jQuery('#Toolbar4-pu button').length, 7, 'There are seven buttons in the popup.');
 				btn.click();
+				jQuery('#uiArea2').css('width', '600');
 				setTimeout(function() {
 					btn.click();
-					setTimeout(function() {
-						var pu = oCtrl.getDomRef('pu');
-						// if the popup is still visible, it means resize was not triggered (causing the popup to close)
-						assert.equal(jQuery(pu).css('visibility'), 'visible', 'Popup is properly visible');
-						assert.equal(jQuery('#Toolbar4-pu button').length, 7, 'There are seven buttons in the popup.');
-						btn.click();
-						jQuery('#uiArea2').css('width', '600');
-						setTimeout(function() {
-							btn.click();
-							assert.equal(jQuery('#Toolbar4-pu button').length, 3, 'There are three buttons in the popup - toolbar resizing still works after popup opening/closing.');
-							btn.click();
-							done();
-						}, 500);
-					}, 500);
+					assert.equal(jQuery('#Toolbar4-pu button').length, 3, 'There are three buttons in the popup - toolbar resizing still works after popup opening/closing.');
+					btn.click();
+					done();
 				}, 500);
 			}, 500);
 		}, 500);
