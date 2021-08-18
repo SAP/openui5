@@ -182,7 +182,7 @@ sap.ui.define([
 			oAssert.strictEqual(this.oCP.oHexField.getValue(), "427cac",
 				"The hex value won't change when changing the Alpha slider in RGB output mode");
 			oAssert.strictEqual(oPHSLCSpy.callCount, 0, "_processHSLChanges should not be called");
-			oAssert.strictEqual(oPRGBCSpy.callCount, 1, "_processRGBChanges should be called once");
+			oAssert.strictEqual(oPRGBCSpy.callCount, 0, "_processRGBChanges should not be called");
 
 			// Arrange
 			oPRGBCSpy.reset();
@@ -193,14 +193,14 @@ sap.ui.define([
 			this.oCP._handleAlphaSliderChange();
 
 			// Assert
-			oAssert.strictEqual(this.oCP.oHexField.getValue(), "427dae",
-				"The hex value will change when changing the Alpha slider in HSL output mode");
+			oAssert.strictEqual(this.oCP.oHexField.getValue(), "427cac",
+				"The hex value will not change when changing the Alpha slider in HSL output mode");
 			oAssert.strictEqual(this.oCP.oAlphaField.getValue(), "0.2",
 			"The alpha value will change when changing the Alpha slider in HSL output mode");
 			oAssert.strictEqual(this.oCP.oAlphaField2.getValue(), "0.2",
 			"The second alpha value will change when changing the Alpha slider in HSL output mode");
 
-			oAssert.strictEqual(oPHSLCSpy.callCount, 1, "_processHSLChanges should be called once");
+			oAssert.strictEqual(oPHSLCSpy.callCount, 0, "_processHSLChanges should not be called");
 			oAssert.strictEqual(oPRGBCSpy.callCount, 0, "_processRGBChanges should not be called");
 		});
 
