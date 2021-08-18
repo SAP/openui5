@@ -1,16 +1,24 @@
 /*global QUnit, sinon*/
 sap.ui.define([
 	"qunit/SemanticUtil",
+	"sap/m/Button",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/core/Core",
 	"sap/f/DynamicPageAccessibleLandmarkInfo",
+	"sap/f/semantic/DiscussInJamAction",
+	"sap/f/semantic/ShareInJamAction",
+	"sap/f/semantic/PrintAction",
 	"sap/ui/core/InvisibleText"
 ],
 function (
 	SemanticUtil,
+	Button,
 	ResourceModel,
 	Core,
 	DynamicPageAccessibleLandmarkInfo,
+	DiscussInJamAction,
+	ShareInJamAction,
+	PrintAction,
 	InvisibleText
 ) {
 	"use strict";
@@ -1123,6 +1131,122 @@ function (
 			sSemanticAddType + " should not be preprocessed");
 	});
 
+	QUnit.test("test if a Share menu button is hidden when there are no visible actions in it", function (assert) {
+		// Arrange
+		var oPrintAction = new PrintAction({visible: false}),
+			oDiscussInJamAction = new DiscussInJamAction({visible: false}),
+			oShareMenuButton;
+
+		this.oSemanticPage = oFactory.getSemanticPage({
+			discussInJamAction: oDiscussInJamAction,
+			shareInJamAction: new ShareInJamAction({visible: false}),
+			printAction: oPrintAction
+		});
+		oUtil.renderObject(this.oSemanticPage);
+		oShareMenuButton = this.oSemanticPage._getShareMenu()._getShareMenuButton();
+
+		// Assert
+		assert.strictEqual(oShareMenuButton.getVisible(), false, "Share menu button is hidden");
+
+		// Act
+		oPrintAction.setVisible(true);
+		oDiscussInJamAction.setVisible(true);
+
+		// Assert
+		assert.strictEqual(oShareMenuButton.getVisible(), true, "Share menu button is shown");
+
+		// Clean up
+		this.oSemanticPage.destroy();
+	});
+
+	QUnit.test("test if a Share menu button is hidden when there are no actions in it", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oShareMenuButton;
+
+		this.oSemanticPage = oFactory.getSemanticPage();
+		oUtil.renderObject(this.oSemanticPage);
+		oShareMenuButton = this.oSemanticPage._getShareMenu()._getShareMenuButton();
+
+		// Assert
+		assert.strictEqual(oShareMenuButton.getVisible(), false, "Share menu button is hidden");
+
+		// Act
+		this.oSemanticPage.setPrintAction(new PrintAction());
+		this.oSemanticPage.setDiscussInJamAction(new DiscussInJamAction());
+
+		this.oSemanticPage.addDelegate({"onAfterRendering": function () {
+			// Assert
+			assert.strictEqual(oShareMenuButton.getVisible(), true, "Share menu button is shown");
+
+			// Clean up
+			this.oSemanticPage.destroy();
+			done();
+		}.bind(this)});
+	});
+
+	QUnit.test("test if a single default Share menu action is displayed in Title Toolbar", function (assert) {
+		// Arrange
+		var oPrintAction = new PrintAction(),
+			oDiscussInJamAction = new DiscussInJamAction({visible: false}),
+			oSemanticTitle,
+			oTitleContainer,
+			oToolbar;
+
+		this.oSemanticPage = oFactory.getSemanticPage({
+			discussInJamAction: oDiscussInJamAction,
+			printAction: oPrintAction
+		});
+		oUtil.renderObject(this.oSemanticPage);
+		oSemanticTitle = this.oSemanticPage._getSemanticTitle();
+		oTitleContainer = oSemanticTitle._getContainer();
+		oToolbar = oTitleContainer._getActionsToolbar();
+
+		// Assert
+		assert.strictEqual(oToolbar.getContent().indexOf(oPrintAction._getControl()) > -1, true, "Single Print action is in the SemanticTitle");
+
+		// Act
+		oDiscussInJamAction.setVisible(true);
+
+		// Assert
+		assert.strictEqual(oToolbar.getContent().indexOf(oPrintAction._getControl()) === -1, true,
+			"Print action is not in the SemanticTitle, when there are more than one actions");
+
+		// Clean up
+		this.oSemanticPage.destroy();
+	});
+
+	QUnit.test("test if a single custom Share menu action is displayed in Title Toolbar", function (assert) {
+		// Arrange
+		var oCustomShareButton = new Button(),
+			oPrintAction = new PrintAction({visible: false}),
+			oSemanticTitle,
+			oTitleContainer,
+			oToolbar;
+
+		this.oSemanticPage = oFactory.getSemanticPage({
+			customShareActions: [oCustomShareButton],
+			printAction: oPrintAction
+		});
+
+		oUtil.renderObject(this.oSemanticPage);
+		oSemanticTitle = this.oSemanticPage._getSemanticTitle();
+		oTitleContainer = oSemanticTitle._getContainer();
+		oToolbar = oTitleContainer._getActionsToolbar();
+
+		// Assert
+		assert.strictEqual(oToolbar.getContent().indexOf(oCustomShareButton) > -1, true, "Single custom action is in the SemanticTitle");
+
+		// Act
+		oPrintAction.setVisible(true);
+
+		// Assert
+		assert.strictEqual(oToolbar.getContent().indexOf(oCustomShareButton) === -1, true,
+			"Custom action is not in the SemanticTitle, when there are more than one actions");
+
+		// Clean up
+		this.oSemanticPage.destroy();
+	});
 
 	/* --------------------------- Accessibility -------------------------------------- */
 	QUnit.module("Accessibility");

@@ -8,6 +8,7 @@
 sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/base/EventProvider",
+	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/m/OverflowToolbarButton",
@@ -16,6 +17,7 @@ sap.ui.define([
 ], function(
 	IconPool,
 	EventProvider,
+	ManagedObjectObserver,
 	coreLibrary,
 	mobileLibrary,
 	OverflowToolbarButton,
@@ -43,6 +45,8 @@ sap.ui.define([
 
 			this._aShareMenuActions = [];
 			this._aCustomShareActions = [];
+			this._oObserver = new ManagedObjectObserver(SemanticShareMenu.prototype._onShareMenuButtonChanges.bind(this));
+			this._onShareButtonClickRef = this._onShareButtonClick.bind(this);
 
 			this._setMode(SemanticShareMenu._Mode.initial);
 		}
@@ -71,6 +75,9 @@ sap.ui.define([
 
 	SemanticShareMenu.prototype.addCustomAction = function(oCustomControl) {
 		this._onControlAdded(oCustomControl);
+		this._oObserver.observe(oCustomControl, {
+			properties: ["visible"]
+		});
 
 		this._callContainerAggregationMethod("insertButton", oCustomControl, this._getCustomActionInsertIndex());
 		this._aCustomShareActions.push(oCustomControl);
@@ -78,10 +85,16 @@ sap.ui.define([
 	};
 
 	SemanticShareMenu.prototype.insertCustomAction = function(oCustomControl, iIndex) {
-		this._onControlAdded(oCustomControl);
+		if (this._aCustomShareActions.indexOf(oCustomControl) < 0) {
+			this._onControlAdded(oCustomControl);
+			this._oObserver.observe(oCustomControl, {
+				properties: ["visible"]
+			});
+			this._aCustomShareActions.splice(iIndex, 0, oCustomControl);
+		}
 
 		this._callContainerAggregationMethod("insertButton", oCustomControl, this._getCustomActionInsertIndex(iIndex));
-		this._aCustomShareActions.splice(iIndex, 0, oCustomControl);
+
 		return this;
 	};
 
@@ -95,6 +108,10 @@ sap.ui.define([
 
 	SemanticShareMenu.prototype.removeCustomAction = function(oCustomControl) {
 		var vResult = this._callContainerAggregationMethod("removeButton", oCustomControl);
+		this._oObserver.unobserve(oCustomControl, {
+			properties: ["visible"]
+		});
+
 		this._aCustomShareActions.splice(this._aCustomShareActions.indexOf(oCustomControl), 1);
 		this._onControlRemoved();
 		return vResult;
@@ -124,7 +141,6 @@ sap.ui.define([
 		return this;
 	};
 
-
 	/*
 	* SEMANTIC SHARE MENU ACTIONS
 	*/
@@ -138,8 +154,14 @@ sap.ui.define([
 	SemanticShareMenu.prototype.addContent = function (oSemanticControl) {
 		var oControl = this._getControl(oSemanticControl);
 
-		this._onControlAdded(oControl);
-		this._aShareMenuActions.push(oSemanticControl);
+		if (this._aShareMenuActions.indexOf(oSemanticControl) < 0) {
+			this._onControlAdded(oControl);
+			this._oObserver.observe(oControl, {
+				properties: ["visible"]
+			});
+			this._aShareMenuActions.push(oSemanticControl);
+		}
+
 		this._preProcessOverflowToolbarButton(oControl);
 		this._callContainerAggregationMethod("insertButton", oControl, this._getSemanticActionInsertIndex(oSemanticControl));
 		return this;
@@ -153,6 +175,9 @@ sap.ui.define([
 	*/
 	SemanticShareMenu.prototype.removeContent = function (oSemanticControl) {
 		var oControl = this._getControl(oSemanticControl);
+		this._oObserver.unobserve(oControl, {
+			properties: ["visible"]
+		});
 
 		this._callContainerAggregationMethod("removeButton", oControl);
 		this._aShareMenuActions.splice(this._aShareMenuActions.indexOf(oSemanticControl), 1);
@@ -168,11 +193,19 @@ sap.ui.define([
 	 * @returns {this}
 	 */
 	SemanticShareMenu.prototype.destroy = function() {
+		if (this._oShareMenuBtn) {
+			this._oShareMenuBtn.destroy();
+		}
 		this._oShareMenuBtn = null;
 		this._aShareMenuActions = null;
 		this._aCustomShareActions = null;
 
 		return SemanticContainer.prototype.destroy.call(this);
+	};
+
+	SemanticShareMenu.prototype.exit = function () {
+		this._oObserver.disconnect();
+		this._oObserver = null;
 	};
 
 	/*
@@ -228,6 +261,32 @@ sap.ui.define([
 	};
 
 
+	SemanticShareMenu.prototype._onShareButtonClick = function () {
+		var oContainer = this._getContainer();
+
+		oContainer.openBy(this._oShareMenuBtn);
+	};
+
+	SemanticShareMenu.prototype._getVisibleActions = function () {
+		var aAllActions = this._aShareMenuActions.concat(this._aCustomShareActions),
+			aVisibleActions = aAllActions.map(function (oAction) {
+				return this._getControl(oAction);
+			}, this).filter(function (oButton) {
+				return oButton.getVisible();
+			});
+
+		return aVisibleActions;
+	};
+
+	SemanticShareMenu.prototype._onShareMenuButtonChanges = function () {
+		var aVisibleActions = this._getVisibleActions();
+
+		this._getShareMenuButton().setVisible(aVisibleActions.length > 1);
+
+		this.fireEvent("_visibleActionsChanged", { "visibleActionsCount": aVisibleActions.length });
+	};
+
+
 	/*
 	* Retrieves the <code>ShareMenu</code> button.
 	*
@@ -246,9 +305,7 @@ sap.ui.define([
 				}),
 				text: sap.ui.getCore().getLibraryResourceBundle("sap.f").getText("SEMANTIC_CONTROL_ACTION_SHARE"),
 				type: ButtonType.Transparent,
-				press: function () {
-					oContainer.openBy(this._oShareMenuBtn);
-				}.bind(this)
+				press: this._onShareButtonClickRef
 			});
 		}
 
