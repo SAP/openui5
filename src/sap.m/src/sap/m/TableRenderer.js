@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListBaseRenderer", "./ColumnListItemRenderer"],
-	function(Renderer, Core, library, ListBaseRenderer, ColumnListItemRenderer) {
+sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/InvisibleText", "./library", "./ListBaseRenderer", "./ColumnListItemRenderer"],
+	function(Renderer, Core, InvisibleText, library, ListBaseRenderer, ColumnListItemRenderer) {
 	"use strict";
 
 
@@ -287,7 +287,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 	TableRenderer.renderListStartAttributes = function(rm, oControl) {
 		rm.openStart("table", oControl.getId("listUl"));
 		rm.class("sapMListTbl");
-		rm.attr("aria-labelledby", Core.getLibraryResourceBundle("sap.m").getText("TABLE_ARIA_LABEL"));
+		rm.attr("aria-labelledby", InvisibleText.getStaticId("sap.m", "TABLE_ARIA_LABEL"));
 		if (oControl.getFixedLayout() === false) {
 			rm.style("table-layout", "auto");
 		}
