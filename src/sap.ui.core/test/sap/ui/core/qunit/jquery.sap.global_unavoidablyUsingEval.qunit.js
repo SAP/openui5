@@ -716,8 +716,8 @@ sap.ui.define([
 			assert.expect(2);
 
 			/* eslint-disable no-implied-eval */
-			setTimeout("window.bTimeout = true", 0);
-			iInterval = setInterval("window.bInterval = true", 0);
+			setTimeout("window.bTimeout = true", 0); // legacy-relevant
+			iInterval = setInterval("window.bInterval = true", 0); // legacy-relevant
 			/* eslint-enable no-implied-eval */
 
 			setTimeout(function() {

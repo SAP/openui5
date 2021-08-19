@@ -103,7 +103,7 @@ sap.ui.define(function() {
 					qunitBridge: false // deactivate bridge as it can't handle QUnit.modules with callback functions
 				}
 			},
-			"ui/base/syncXHRFix": {
+			"ui/base/syncXHRFix_unavoidablyUsingEval": {
 				title: "QUnit Page for syncXHRFix"
 			},
 			"ui/base/syncXHRFix-error-handling": {

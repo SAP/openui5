@@ -16,7 +16,7 @@ sap.ui.define(function() {
 				title: "jquery.sap.global: External configuration",
 				beforeBootstrap: "test-resources/sap/ui/core/qunit/jquery.sap.global-config_beforeBootstrap.qunit"
 			},
-			"jquery.sap.global": {
+			"jquery.sap.global_unavoidablyUsingEval": {
 				title: "jQuery.sap.global",
 				ui5: {
 					libs: "sap.ui.core"
