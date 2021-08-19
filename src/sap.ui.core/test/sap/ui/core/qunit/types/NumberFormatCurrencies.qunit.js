@@ -1123,6 +1123,26 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.deepEqual(oFormat.parse("€12,345.679"), [12345.679, undefined], "Duplicated symbol found");
 	});
 
+	QUnit.test("Currency that is named with digits only", function(assert) {
+		var oFormat = getCurrencyInstance({
+			showNumber: true,
+			showMeasure: true,
+			customCurrencies: {
+				"180": {
+					decimals: 2
+				}
+			}
+		});
+
+		assert.deepEqual(oFormat.format(170123.45, "180"), "180\xa0170,123.45", "formatting [123, '180']");
+
+		assert.deepEqual(oFormat.parse("180\xa0170,123.45"), [170123.45, "180"], "parsing 170,123.45 (value from format)");
+		assert.deepEqual(oFormat.parse("170,123.45"), [170123.45, undefined], "parsing 170,123.45 (with thousands separator)");
+		assert.deepEqual(oFormat.parse("170123.45"), [170123.45, undefined], "parsing 170123.45 (without separator)");
+		assert.deepEqual(oFormat.parse("180,123.45"), null, "parsing 180,123.45 (with thousands separator) not possible because currencies which consist only of digits aren't supported");
+		assert.deepEqual(oFormat.parse("180123.45"), null, "parsing 180123.45 (without separator) not possible because currencies which consist only of digits aren't supported");
+	});
+
 	QUnit.test("Currencies with undefined symbol", function(assert) {
 		var oSpy = this.spy(Log, "error");
 

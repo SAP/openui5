@@ -2117,6 +2117,8 @@ sap.ui.define([
 		 * </code>
 		 *
 		 * Note: To unset the custom currencies: call with <code>undefined</code>
+		 * Custom currencies must not only consist of digits but contain at least one non-digit character, e.g. "a",
+		 * so that the measure part can be distinguished from the number part.
 		 * @public
 		 * @param {object} mCurrencies currency map which is set
 		 * @returns {sap.ui.core.Configuration.FormatSettings}

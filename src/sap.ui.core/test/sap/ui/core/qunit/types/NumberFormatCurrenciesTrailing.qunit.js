@@ -985,6 +985,24 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.deepEqual(oFormat.parse("€12,345.679"), [12345.679, undefined], "Duplicated symbol found");
 	});
 
+	QUnit.test("Currency that is named with digits only", function(assert) {
+		var oFormat = getCurrencyInstance({
+			showNumber: true,
+			showMeasure: true,
+			customCurrencies: {
+				"180": {
+					decimals: 2
+				}
+			}
+		});
+
+		assert.deepEqual(oFormat.format(123, "180"), "123.00\xa0180", "formatting [123, '180']");
+
+		assert.deepEqual(oFormat.parse("123.00 180"), [123, "180"], "parsing 123.00 180");
+		assert.deepEqual(oFormat.parse("123.00180"), [123, "180"], "parsing 123.00 180");
+		assert.deepEqual(oFormat.parse("12300180"), [12300, "180"], "parsing 123.00 180");
+	});
+
 	QUnit.test("Currencies with undefined symbol", function(assert) {
 		var oSpy = this.spy(Log, "error");
 
