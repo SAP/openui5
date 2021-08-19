@@ -766,7 +766,7 @@ sap.ui.define([
 			return;
 		}
 
-		//this._updateSelectedItems.call(this);
+		this._updateSelectedItems.call(this);
 
 		if (this._bNavigate) {
 			this._bNavigate = false;
