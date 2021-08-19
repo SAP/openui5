@@ -118,13 +118,15 @@ sap.ui.define([
 
 			this.oTitle0 = new Title({id : "component---Title0",  text : "Title 0"});
 			this.oLabel0 = new Label({id : "component---Label0", text : "Label 0", visible : false});
-			this.oLabel1 = new Label({id : "component---Label1", text : "Label 1"});
 			this.oInput0 = new Input({id : "component---Input0", visible : false});
+			this.oLabel1 = new Label({id : "component---Label1", text : "Label 1"});
 			this.oInput1 = new Input({id : "component---Input1"});
+			this.oLabel2 = new Label({id : "component---Label2", text : "Label 2", visible : false});
+			this.oInput2 = new Input({id : "component---Input2", visible : false});
 
 			this.oSimpleForm = new SimpleForm({
 				id : "component---SimpleForm", title : "Simple Form",
-				content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
+				content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1, this.oLabel2, this.oInput2]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
 
@@ -214,6 +216,7 @@ sap.ui.define([
 		return this.oChangeHandler.applyChange(this.oChangeWithGlobalIdWrapper, this.oSimpleForm, this.mPropertyBag)
 			.then(function() {
 				assert.ok(this.oFormElement.getLabel().getVisible(), "the FormElement is visible");
+				assert.notOk(this.oInput2.getVisible(), "other hidden fields are not visible");
 			}.bind(this));
 	});
 
