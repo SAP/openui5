@@ -332,7 +332,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 			this._oPayload = null;
 			this._oTypeUtil = null;
 
-			if (this._oPropertyHelper) {
+			if (this._oPropertyHelper && !this._oPropertyHelper.bIsDestroyed) {
 				this._oPropertyHelper.destroy();
 			}
 			this._oPropertyHelper = null;

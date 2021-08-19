@@ -7,9 +7,11 @@ sap.ui.define([
 	sap.ui.getCore().loadLibrary("sap.ui.fl");
 	var aPropertyInfo = [
 		{
-			name: "column0"
+			name: "column0",
+			typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
 		}, {
-			name: "column1"
+			name: "column1",
+			typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
 		}, {
 			name: "column2"
 		}, {
@@ -155,10 +157,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("addCondition (via AdaptationFilterBar)", function(assert){
-
-		aPropertyInfo.forEach(function(oProperty){
-			oProperty.typeConfig = TypeUtil.getTypeConfig("sap.ui.model.type.String");
-		});
 
 		var mNewConditions = {
 			column0: [

@@ -27,6 +27,9 @@ sap.ui.define([
     });
 
     QUnit.test("getCurrentState returns conditions based on the persistence setting", function(assert){
+        var done = assert.async();
+
+
         this.oFilterBarBase.setFilterConditions({
             "key1": [
                 {
@@ -38,14 +41,23 @@ sap.ui.define([
                 }
               ]
         });
-        var oCurrentState = this.oFilterBarBase.getCurrentState();
 
-        assert.ok(!oCurrentState.filter, "As the persistence for filter values is disabled, current state will not return filter conditions");
+        sinon.stub(this.oFilterBarBase, "_applyFilterConditionsChanges");
+        this.oFilterBarBase.initialized().then(function(){
+            sinon.stub(this.oFilterBarBase, "_getPropertyByName").returns({name: "key1", typeConfig: this.oFilterBarBase.getTypeUtil().getTypeConfig("sap.ui.model.type.String")});
 
-        this.oFilterBarBase._bPersistValues = true;
-        oCurrentState = this.oFilterBarBase.getCurrentState();
+            var oCurrentState = this.oFilterBarBase.getCurrentState();
 
-        assert.ok(oCurrentState.filter, "Filter values are returned once the persistence is given");
+            assert.ok(!oCurrentState.filter, "As the persistence for filter values is disabled, current state will not return filter conditions");
+
+
+            this.oFilterBarBase._bPersistValues = true;
+            oCurrentState = this.oFilterBarBase.getCurrentState();
+
+            assert.ok(oCurrentState.filter, "Filter values are returned once the persistence is given");
+
+            done();
+        }.bind(this));
     });
 
     QUnit.test("'getConditions' should always return the externalized conditions", function(assert){

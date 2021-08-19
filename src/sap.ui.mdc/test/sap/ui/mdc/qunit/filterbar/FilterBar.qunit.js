@@ -1152,9 +1152,10 @@ sap.ui.define([
 
 		oFilterBar.setP13nMode(["Item"]);
 
-		oFilterBar._oMetadataAppliedPromise.then(function () {
-			sinon.stub(oFilterBar, "getPropertyInfoSet").returns([oProperty1, oProperty2, oProperty3]);
-			sinon.stub(oFilterBar.getControlDelegate(), "fetchProperties").returns(Promise.resolve([oProperty1, oProperty2, oProperty3]));
+		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([oProperty1, oProperty2, oProperty3]);
+		sinon.stub(oFilterBar.getControlDelegate(), "fetchProperties").returns(Promise.resolve([oProperty1, oProperty2, oProperty3]));
+
+		oFilterBar._retrieveMetadata().then(function () {
 
 			oFilterBar.onAdaptFilters().then(function (oP13nContainer) {
 				assert.ok(oP13nContainer, "panel has been created");

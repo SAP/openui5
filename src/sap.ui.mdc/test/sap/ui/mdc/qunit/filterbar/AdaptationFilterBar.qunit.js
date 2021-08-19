@@ -60,8 +60,9 @@ sap.ui.define([
 		afterEach: function () {
 			this.oAdaptationFilterBar.destroy();
 			this.oAdaptationFilterBar = undefined;
-			this.oTestTable.destroy();
+
 			MDCQUnitUtils.restorePropertyInfos(this.oTestTable);
+			this.oTestTable.destroy();
 			this.oTestTable = null;
 		}
 	});
@@ -113,12 +114,17 @@ sap.ui.define([
 		//Init parent
 		this.oTestTable.initialized().then(function(){
 
-			assert.deepEqual(this.oAdaptationFilterBar._aProperties, [], "Inner FB has no properties if not initialzed");
+			try {
+				this.oAdaptationFilterBar.getPropertyHelper();
+				assert.ok(false, "PropertyHelper not expected");
+			} catch (ex) {
+				assert.ok(true, "Inner FB has no PropertyHelper if not initialzed");
+			}
 
 			//init AdaptationFilterBar
 			this.oAdaptationFilterBar.initialized().then(function(){
 				this.oTestTable.awaitPropertyHelper().then(function(oPropertyHelper){
-					assert.deepEqual(this.oAdaptationFilterBar._aProperties.length, oPropertyHelper.getProperties().length, "Property info has been passed from the Parent");
+					assert.deepEqual(this.oAdaptationFilterBar.getPropertyHelper(), oPropertyHelper, "PropertyHelper has been passed from the Parent");
 					done();
 				}.bind(this));
 			}.bind(this));
@@ -228,32 +234,39 @@ sap.ui.define([
 		var done = assert.async();
 		this.prepareTestSetup(true);
 
-		//Init parent
-		this.oParent.initControlDelegate().then(function(){
-			//init AdaptationFilterBar
-			oAdaptationFilterBar.initialized().then(function(){
+		Promise.all([
+			//1) Init Parent (Delegate + PropertyHelper)
+			this.oParent.initPropertyHelper(),
+			this.oParent.initControlDelegate()
+		])
+		.then(function(){
+			//2) Init AdaptationFilterBar
+			return oAdaptationFilterBar.initialized();
+		})
+		.then(function(){
 
-				oAdaptationFilterBar.setLiveMode(false);
+			//3) Add a condition
+			oAdaptationFilterBar.setLiveMode(false);
 
-				oAdaptationFilterBar.addCondition("key1", {
-					operator:"EQ",
-					values: [
-						"Externalized Test"
-					]
-				}).then(function(){
-
-					var aInnerConditions = oAdaptationFilterBar._getConditionModel().getAllConditions()["key1"];
-
-					assert.ok(aInnerConditions[0].hasOwnProperty("isEmpty"));
-
-					oAdaptationFilterBar.createConditionChanges().then(function(aChanges){
-						// isEmpty is cleaned up for externalized changes only --> indicator whether the changes are created in externalized format
-						assert.ok(!aChanges[0].changeSpecificData.content.condition.hasOwnProperty("isEmpty"));
-						done();
-					});
-
-				});
+			return oAdaptationFilterBar.addCondition("key1", {
+				operator:"EQ",
+				values: [
+					"Externalized Test"
+				]
 			});
+		})
+		.then(function(){
+
+			//4) Assertions
+
+			var aInnerConditions = oAdaptationFilterBar._getConditionModel().getAllConditions()["key1"];
+			assert.ok(aInnerConditions[0].hasOwnProperty("isEmpty"));
+			oAdaptationFilterBar.createConditionChanges().then(function(aChanges){
+				// isEmpty is cleaned up for externalized changes only --> indicator whether the changes are created in externalized format
+				assert.ok(!aChanges[0].changeSpecificData.content.condition.hasOwnProperty("isEmpty"));
+				done();
+			});
+
 		});
 	});
 
@@ -261,37 +274,44 @@ sap.ui.define([
 		var done = assert.async();
 		this.prepareTestSetup(true);
 
-		//Init parent
-		this.oParent.initControlDelegate().then(function(){
-			//init AdaptationFilterBar
-			oAdaptationFilterBar.initialized().then(function(){
+		Promise.all([
+			//1) Init Parent (Delegate + PropertyHelper)
+			this.oParent.initPropertyHelper(),
+			this.oParent.initControlDelegate()
+		])
+		.then(function(){
+			//2) Init AdaptationFilterBar
+			return oAdaptationFilterBar.initialized();
+		})
+		.then(function(){
 
-				oAdaptationFilterBar.setLiveMode(false);
+			//3) Add a condition
+			oAdaptationFilterBar.setLiveMode(false);
 
-				oAdaptationFilterBar.addCondition("key2", {
-					operator:"EQ",
-					values: [
-						"Dec 31, 2020, 11:59:58 PM"
-					]
-				}).then(function(){
-
-					var aInnerConditions = oAdaptationFilterBar._getConditionModel().getAllConditions()["key2"];
-
-					assert.ok(aInnerConditions[0].hasOwnProperty("isEmpty"));
-					assert.equal(typeof aInnerConditions[0], "object", "Internal format - type is not stringified");
-
-
-					oAdaptationFilterBar.createConditionChanges().then(function(aChanges){
-						// isEmpty is cleaned up for externalized changes only --> indicator whether the changes are created in externalized format
-						assert.ok(!aChanges[0].changeSpecificData.content.condition.hasOwnProperty("isEmpty"));
-						assert.equal(typeof aChanges[0].changeSpecificData.content.condition.values[0], "string", "Externalized format should be stringified");
-						done();
-					});
-
-				});
+			return oAdaptationFilterBar.addCondition("key2", {
+				operator:"EQ",
+				values: [
+					"Dec 31, 2020, 11:59:58 PM"
+				]
 			});
-		});
+		})
+		.then(function(){
 
+			//4) Assertions
+
+			var aInnerConditions = oAdaptationFilterBar._getConditionModel().getAllConditions()["key2"];
+
+			assert.ok(aInnerConditions[0].hasOwnProperty("isEmpty"));
+			assert.equal(typeof aInnerConditions[0], "object", "Internal format - type is not stringified");
+
+			oAdaptationFilterBar.createConditionChanges().then(function(aChanges){
+				// isEmpty is cleaned up for externalized changes only --> indicator whether the changes are created in externalized format
+				assert.ok(!aChanges[0].changeSpecificData.content.condition.hasOwnProperty("isEmpty"));
+				assert.equal(typeof aChanges[0].changeSpecificData.content.condition.values[0], "string", "Externalized format should be stringified");
+				done();
+			});
+
+		});
 	});
 
 	QUnit.test("Create filter fields", function(assert) {
@@ -310,7 +330,11 @@ sap.ui.define([
 			]
 		}));
 
-		this.oParent.initControlDelegate().then(function(){
+		Promise.all([
+			//1) Init Parent (Delegate + PropertyHelper)
+			this.oParent.initPropertyHelper(),
+			this.oParent.initControlDelegate()
+		]).then(function(){
 
 			oAdaptationFilterBar.createFilterFields().then(function(){
 				assert.ok(oAdaptationFilterBar.getFilterItems().length, 2, "FilterFields have been created");
@@ -359,8 +383,12 @@ sap.ui.define([
 			};
 		};
 
-		this.oParent.initControlDelegate().then(function(){
-
+		Promise.all([
+			//1) Init Parent (Delegate + PropertyHelper)
+			this.oParent.initPropertyHelper(),
+			this.oParent.initControlDelegate()
+		])
+		.then(function(){
 			oAdaptationFilterBar.createFilterFields().then(function(){
 				//key1 takes longer to create but should still be the first item to be displayed, as the order is reiterated after all promises have been resolved
 				assert.equal(oAdaptationFilterBar.getFilterItems()[0].getLabel(), "key1", "The order of filter items is similar to the provided p13n model");
@@ -408,7 +436,12 @@ sap.ui.define([
 			]
 		}));
 
-		this.oParent.initControlDelegate().then(function(){
+		Promise.all([
+			//1) Init Parent (Delegate + PropertyHelper)
+			this.oParent.initPropertyHelper(),
+			this.oParent.initControlDelegate()
+		])
+		.then(function(){
 
 			oAdaptationFilterBar.createFilterFields().then(function(){
 				assert.ok(oAdaptationFilterBar.getFilterItems().length, 3, "FilterFields have been created");
@@ -456,7 +489,12 @@ sap.ui.define([
 			]
 		}));
 
-		this.oParent.initControlDelegate().then(function(){
+		Promise.all([
+			//1) Init Parent (Delegate + PropertyHelper)
+			this.oParent.initPropertyHelper(),
+			this.oParent.initControlDelegate()
+		])
+		.then(function(){
 
 			oAdaptationFilterBar.createFilterFields().then(function(){
 				assert.ok(oAdaptationFilterBar.getFilterItems().length, 3, "FilterFields have been created");
@@ -503,7 +541,12 @@ sap.ui.define([
 			]
 		}));
 
-		this.oParent.initControlDelegate().then(function(){
+		Promise.all([
+			//1) Init Parent (Delegate + PropertyHelper)
+			this.oParent.initPropertyHelper(),
+			this.oParent.initControlDelegate()
+		])
+		.then(function(){
 
 			oAdaptationFilterBar.createFilterFields().then(function(oAdaptationFilterBar){
 
@@ -541,7 +584,12 @@ sap.ui.define([
 			]
 		}));
 
-		this.oParent.initControlDelegate().then(function(){
+		Promise.all([
+			//1) Init Parent (Delegate + PropertyHelper)
+			this.oParent.initPropertyHelper(),
+			this.oParent.initControlDelegate()
+		])
+		.then(function(){
 
 			oAdaptationFilterBar.createFilterFields().catch(function(oErr){
 
@@ -627,7 +675,12 @@ sap.ui.define([
 			]
 		}));
 
-		this.oParent.initControlDelegate().then(function(){
+		Promise.all([
+			//1) Init Parent (Delegate + PropertyHelper)
+			this.oParent.initPropertyHelper(),
+			this.oParent.initControlDelegate()
+		])
+		.then(function(){
 
 			this.oParent.getInbuiltFilter().createFilterFields().then(function(oAdaptationFilterBar){
 
@@ -655,7 +708,12 @@ sap.ui.define([
 			]
 		}));
 
-		this.oParent.initControlDelegate().then(function(){
+		Promise.all([
+			//1) Init Parent (Delegate + PropertyHelper)
+			this.oParent.initPropertyHelper(),
+			this.oParent.initControlDelegate()
+		])
+		.then(function(){
 
 			this.oParent.getInbuiltFilter().createFilterFields().then(function(oAdaptationFilterBar){
 
@@ -690,7 +748,12 @@ sap.ui.define([
 			]
 		}));
 
-		this.oParent.initControlDelegate().then(function(){
+		Promise.all([
+			//1) Init Parent (Delegate + PropertyHelper)
+			this.oParent.initPropertyHelper(),
+			this.oParent.initControlDelegate()
+		])
+		.then(function(){
 
 			this.oParent.getInbuiltFilter().createFilterFields().then(function(oAdaptationFilterBar){
 

@@ -141,6 +141,9 @@ sap.ui.define([
 		// FilterBar
 		required:  { // Whether there must be a filter condition for this property before firing a "search" event.
 			type: "boolean"
+		},
+		hiddenFilter:  { // Name of the property indicating if the filter is never to be shown on the UI.
+			type: "boolean"
 		}
 
 		// Reserved attributes
