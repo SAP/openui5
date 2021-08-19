@@ -134,10 +134,10 @@ sap.ui.define([
 					"</select>"
 				);
 				buffer.push("<button id='" + that.getId() + "-startE2ETrace' class='sapUiSupportRoundedButton " +
-						(oData["e2e-trace"].isStarted ? " active" : "") + "' style='margin-left: 10px;'>" + (oData["e2e-trace"].isStarted ? "Running..." : "Start") + "</button>");
-				buffer.push("<div style='margin-top:5px'>");
+						(oData["e2e-trace"].isStarted ? " active" : "") + "'>" + (oData["e2e-trace"].isStarted ? "Running..." : "Start") + "</button>");
+				buffer.push("<div class='sapUiSupportTechInfoXMLOutput'>");
 				buffer.push("<label class='sapUiSupportLabel'>XML Output:</label>");
-				buffer.push("<textarea id='" + that.getId() + "-outputE2ETrace' style='width:100%;height:50px;margin-top:5px;resize:none;box-sizing:border-box'></textarea>");
+				buffer.push("<textarea id='" + that.getId() + "-outputE2ETrace'></textarea>");
 				buffer.push("</div>");
 			});
 
@@ -310,7 +310,7 @@ sap.ui.define([
 
 		function multiline(buffer, right, border, label, content){
 			line(buffer, right, border, label, function(buffer){
-				buffer.push("<table border='0' cellspacing='0' cellpadding='3' style='width: 100%'>");
+				buffer.push("<table border='0' cellspacing='0' cellpadding='3'>");
 				jQuery.each(content, function(i,v){
 					var val = "";
 					if (v) {
