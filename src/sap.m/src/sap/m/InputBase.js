@@ -1089,17 +1089,23 @@ function(
 	 * Adds an icon to be rendered
 	 * @param {string} sIconPosition a position for the icon to be rendered - begin or end
 	 * @param {object} oIconSettings settings for creating an icon
+	 * @param {int} iPosition position to be inserted in the aggregation
 	 * @see sap.ui.core.IconPool.createControlByURI
 	 * @private
 	 * @returns {null|sap.ui.core.Icon}
 	 */
-	InputBase.prototype._addIcon = function (sIconPosition, oIconSettings) {
+	InputBase.prototype._addIcon = function (sIconPosition, oIconSettings, iPosition) {
 		if (["begin", "end"].indexOf(sIconPosition) === -1) {
 			log.error('icon position is not "begin", neither "end", please check again the passed setting');
 			return null;
 		}
 		var oIcon = IconPool.createControlByURI(oIconSettings).addStyleClass(InputBase.ICON_CSS_CLASS);
-		this.addAggregation("_" + sIconPosition + "Icon", oIcon);
+
+		if (iPosition !== undefined) {
+			this.insertAggregation("_" + sIconPosition + "Icon", oIcon, iPosition);
+		} else {
+			this.addAggregation("_" + sIconPosition + "Icon", oIcon);
+		}
 
 		return oIcon;
 	};
@@ -1118,12 +1124,13 @@ function(
 	/**
 	 * Adds an icon to the end of the input
 	 * @param {object} oIconSettings settings for creating an icon
+	 * @param {int} iPosition position to be inserted in the aggregation. If not provided, the icon gets inserted on last position.
 	 * @see sap.ui.core.IconPool.createControlByURI
 	 * @protected
 	 * @returns {null|sap.ui.core.Icon}
 	 */
-	InputBase.prototype.addEndIcon = function (oIconSettings) {
-		return this._addIcon("end", oIconSettings);
+	InputBase.prototype.addEndIcon = function (oIconSettings, iPosition) {
+		return this._addIcon("end", oIconSettings, iPosition);
 	};
 
 	// do not cache jQuery object and define _$input for compatibility reasons

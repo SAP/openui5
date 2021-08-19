@@ -4949,6 +4949,25 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Clear icon should be inserted before the value help icon", function (assert) {
+		var oInput = new Input({
+			value: "test",
+			showValueHelp: true
+		 }).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oInput.getAggregation("_endIcon")[0], oInput._getValueHelpIcon(), "Value help Icon should be inserted first");
+
+		oInput.setShowClearIcon(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oInput.getAggregation("_endIcon")[1], oInput._getValueHelpIcon(), "Value help Icon should be second");
+		assert.strictEqual(oInput.getAggregation("_endIcon")[0], oInput._oClearButton, "Clear Icon should be inserted first");
+
+		oInput.destroy();
+	});
+
 	QUnit.test("Pressing clear icon should fire change and liveChange events", function (assert) {
 		var changeHandler = this.spy();
 		var liveChangeHandler = this.spy();
