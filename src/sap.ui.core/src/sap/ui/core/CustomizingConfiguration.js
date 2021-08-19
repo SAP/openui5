@@ -100,7 +100,7 @@ sap.ui.define([
 			activateForComponent: function(sComponentName) {
 				Log.info("CustomizingConfiguration: activateForComponent('" + sComponentName + "')");
 				var sFullComponentName = sComponentName + ".Component";
-				sap.ui.requireSync(sFullComponentName.replace(/\./g, "/"));
+				sap.ui.requireSync(sFullComponentName.replace(/\./g, "/")); // legacy-relevant
 				var oCustomizingConfig = ObjectPath.get(sFullComponentName).getMetadata().getCustomizing();
 				mComponentConfigs[sComponentName] = oCustomizingConfig;
 

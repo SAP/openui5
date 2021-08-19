@@ -146,7 +146,7 @@ sap.ui.define([
 		this._iMaxContentDivSize = 1000000;  // small value that all browsers still can render without any problems
 
 		if (EventSimulation.touchEventMode === "ON") {
-			sap.ui.requireSync("sap/ui/thirdparty/zyngascroll");
+			sap.ui.requireSync("sap/ui/thirdparty/zyngascroll"); // legacy-relevant: sap.ui.core.ScrollBar is deprecated
 
 			// Remember last touch scroller position to prevent unneeded rendering
 			this._iLastTouchScrollerPosition = null;

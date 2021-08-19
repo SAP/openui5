@@ -450,7 +450,7 @@ function(
 					});
 				} else {
 					Object.keys(oRequireContext).forEach(function(sKey) {
-						oModules[sKey] = sap.ui.requireSync(oRequireContext[sKey]);
+						oModules[sKey] = sap.ui.requireSync(oRequireContext[sKey]); // legacy-relevant: Sync path
 					});
 
 					return SyncPromise.resolve(oModules);
@@ -796,7 +796,7 @@ function(
 						}, reject);
 					});
 				} else {
-					oClassObject = sap.ui.requireSync(sResourceName);
+					oClassObject = sap.ui.requireSync(sResourceName); // legacy-relevant: Sync path
 					oClassObject = getObjectFallback(oClassObject);
 				}
 			}
@@ -850,7 +850,7 @@ function(
 							}, reject);
 						});
 					} else {
-						var XMLView = sap.ui.requireSync("sap/ui/core/mvc/XMLView");
+						var XMLView = sap.ui.requireSync("sap/ui/core/mvc/XMLView"); // legacy-relevant: Sync path
 						return SyncPromise.resolve([fnCreateView(XMLView)]);
 					}
 				}

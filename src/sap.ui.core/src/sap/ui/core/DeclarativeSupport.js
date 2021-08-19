@@ -185,7 +185,8 @@ sap.ui.define([
 
 		var sType = $element.attr("data-sap-ui-type");
 		if (sType) {
-			var fnClass = sap.ui.requireSync(sType.replace(/\./g, "/")); // make sure fnClass.getMatadata() is available
+			// make sure fnClass.getMatadata() is available
+			var fnClass = sap.ui.requireSync(sType.replace(/\./g, "/")); // legacy-relevant
 			fnClass = fnClass || ObjectPath.get(sType);
 			assert(typeof fnClass !== "undefined", "Class not found: " + sType);
 

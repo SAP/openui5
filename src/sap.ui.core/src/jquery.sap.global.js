@@ -1879,7 +1879,7 @@ sap.ui.define([
 				vModuleName = ui5ToRJS(vModuleName);
 			}
 
-			sap.ui.requireSync(vModuleName);
+			sap.ui.requireSync(vModuleName); // legacy-relevant: deprecated jquery.sap.require
 
 		};
 

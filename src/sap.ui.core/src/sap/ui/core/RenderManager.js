@@ -1864,7 +1864,7 @@ sap.ui.define([
 	 * @deprecated Since 1.92. Instead use {@link sap.ui.core.RenderManager#icon} of the {@link sap.ui.core.RenderManager Semantic Rendering API}.
 	 */
 	RenderManager.prototype.writeIcon = function(sURI, aClasses, mAttributes){
-		var IconPool = sap.ui.requireSync("sap/ui/core/IconPool"),
+		var IconPool = sap.ui.requireSync("sap/ui/core/IconPool"), // legacy-relevant
 			bIconURI = IconPool.isIconURI(sURI),
 			bAriaLabelledBy = false,
 			sProp, oIconInfo, mDefaultAttributes, sLabel, sInvTextId;

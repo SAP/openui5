@@ -204,7 +204,7 @@ sap.ui.define([
 					} else {
 						Log.debug("lazy stub for constructor '" + sFullClass + "' called.");
 					}
-					sap.ui.requireSync(sModuleName.replace(/\./g, "/"));
+					sap.ui.requireSync(sModuleName.replace(/\./g, "/")); // legacy-relevant: 'sap.ui.lazyRequire' is deprecated
 					var oRealClass = oPackage[sClass];
 					assert(typeof oRealClass === "function", "lazyRequire: oRealClass must be a function after loading");
 					if ( oRealClass._sapUiLazyLoader ) {
@@ -265,7 +265,7 @@ sap.ui.define([
 					} else {
 						Log.debug("lazy stub for method '" + sFullClass + "." + sMethod + "' called.");
 					}
-					sap.ui.requireSync(sModuleName.replace(/\./g, "/"));
+					sap.ui.requireSync(sModuleName.replace(/\./g, "/")); // legacy-relevant: 'sap.ui.lazyRequire' is deprecated
 					var oRealClass = oPackage[sClass];
 					assert(typeof oRealClass === "function" || typeof oRealClass === "object", "lazyRequire: oRealClass must be a function or object after loading");
 					assert(typeof oRealClass[sMethod] === "function", "lazyRequire: method must be a function");
