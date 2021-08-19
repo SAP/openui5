@@ -19,7 +19,7 @@
 		},
 		after: function(assert) {
 			var iLoadedModuleIndex = 0;
-			var iExpectedMaxSyncCalls = 3;
+			var iExpectedMaxSyncCalls = 2;
 
 			var fnAssertRequireSync = function(sModuleName) {
 				assert.strictEqual(this.requireSyncStub.getCall(iLoadedModuleIndex).args[0], sModuleName, "At position " + iLoadedModuleIndex + " the module '" + sModuleName + "' should be loaded");
@@ -30,8 +30,6 @@
 				return this.requireSyncStub.getCall(iPosition).args[0];
 			}.bind(this);
 
-			// as the Core facade is created before boot(), the sync request for base/Objects occurs first
-			fnAssertRequireSync("sap/ui/base/Object");
 
 			// In case preloads are used, there is also an additional sync request for the sap.ui.core library-preload.js
 			if (fnGetModuleName(iLoadedModuleIndex) === "sap/ui/core/library-preload") {
