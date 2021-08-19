@@ -888,7 +888,7 @@ function (
 			var oSettings = new GridContainerSettings({columns: 2, rowSize: "80px", columnSize: "80px", gap: "16px"});
 
 			this.oScrollContainer = new ScrollContainer({
-				height: "100px",
+				height: "200px",
 				content: this.oGrid = new GridContainer({
 					layout: oSettings,
 					items: [
@@ -926,12 +926,16 @@ function (
 		},
 		afterEach: function () {
 			this.oScrollContainer.destroy();
+		},
+		isVerticallyScrolledTo: function (oElem) {
+			var oElemRect = oElem.getBoundingClientRect(),
+				oScrollContRect = this.oScrollContainer.getDomRef().getBoundingClientRect();
+
+			return oElemRect.top >= oScrollContRect.top && oElemRect.top <= oScrollContRect.bottom;
 		}
 	});
 
 	QUnit.test("Right Arrow navigation through grid container", function (assert) {
-
-
 		// Arrange
 		var oItemWrapper1 = this.oGrid.getDomRef().children[1],
 			oItemWrapper2 = this.oGrid.getDomRef().children[2],
@@ -960,10 +964,11 @@ function (
 
 	QUnit.test("Down Arrow navigating through grid container", function (assert) {
 		// Arrange
+		this.clock.restore();
+		var done = assert.async();
 		var oItemWrapper1 = this.oGrid.getDomRef().children[1],
 			oItemWrapper3 = this.oGrid.getDomRef().children[3],
-			oItemWrapper5 = this.oGrid.getDomRef().children[5],
-			oScrollSpy = sinon.spy(this.oGrid.getItems()[2].getCardHeader().getDomRef(), "scrollIntoView");
+			oItemWrapper5 = this.oGrid.getDomRef().children[5];
 
 		oItemWrapper1.focus();
 		Core.applyChanges();
@@ -978,16 +983,14 @@ function (
 		this.oGrid._oItemNavigation._onFocusLeave();
 		oItemWrapper5.focus();
 		Core.applyChanges();
-		qutils.triggerKeydown(oItemWrapper5, KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeydown(oItemWrapper5.firstElementChild, KeyCodes.ARROW_DOWN, false, false, false);
 
 		// Assert
 		assert.strictEqual(oItemWrapper5.getAttribute("tabindex"), "0", "Focus should remain on the fifth GridItem if there is no other item below it");
-
-		if (!Device.browser.firefox) {
-			assert.ok(oScrollSpy.called, "scrollIntoView is called");
-		}
-
-		oScrollSpy.reset();
+		setTimeout(function () {
+			assert.ok(this.isVerticallyScrolledTo(oItemWrapper5), "scrollIntoView is called 1");
+			done();
+		}.bind(this), 50);
 	});
 
 	QUnit.test("Left Arrow navigating through grid container", function (assert) {
