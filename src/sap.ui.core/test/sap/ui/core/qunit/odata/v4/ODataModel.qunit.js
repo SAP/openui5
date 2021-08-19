@@ -1698,10 +1698,10 @@ sap.ui.define([
 			sResourcePath = "~res~";
 
 		oModelMock.expects("createUI5Message")
-			.withExactArgs(sinon.match.same(aMessages[0]), sResourcePath, undefined, true)
+			.withExactArgs(sinon.match.same(aMessages[0]), sResourcePath)
 			.returns("~UI5msg0~");
 		oModelMock.expects("createUI5Message")
-			.withExactArgs(sinon.match.same(aMessages[1]), sResourcePath, undefined, true)
+			.withExactArgs(sinon.match.same(aMessages[1]), sResourcePath)
 			.returns("~UI5msg1~");
 		oModelMock.expects("fireMessageChange")
 			.withExactArgs(sinon.match({newMessages: ["~UI5msg0~", "~UI5msg1~"]}));
@@ -2533,19 +2533,10 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[{
-	target : null
-}, {
-	target : "n/a"
-}, {
-	target : "n/a",
-	additionalTargets : ["add0", "add1"]
-}].forEach(function (oFixture, i) {
-	QUnit.test("createUI5Message: unbound: " + i, function (assert) {
+	QUnit.test("createUI5Message: target null", function (assert) {
 		var oModel = this.createModel(),
 			oRawMessage = {
-				target : oFixture.target,
-				additionalTargets : oFixture.additionalTargets
+				target : null
 			},
 			oUI5Message;
 
@@ -2553,12 +2544,11 @@ sap.ui.define([
 		this.mock(_Helper).expects("buildPath").never();
 
 		// code under test
-		oUI5Message = oModel.createUI5Message(oRawMessage, "~resourcePath~", "n/a", true);
+		oUI5Message = oModel.createUI5Message(oRawMessage, "~resourcePath~", "n/a");
 
 		assert.deepEqual(oUI5Message.getTargets(), [""]);
 		assert.strictEqual(oUI5Message.getPersistent(), true);
 	});
-});
 });
 //TODO constructor: test that the service root URL is absolute?
 //TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId
