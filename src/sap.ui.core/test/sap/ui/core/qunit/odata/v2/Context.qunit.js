@@ -36,7 +36,7 @@ sap.ui.define([
 		assert.strictEqual(oContext.oModel, "~oModel");
 		assert.strictEqual(oContext.sPath, "/~sPath");
 		// additional properties
-		assert.strictEqual(oContext.bCreated, false);
+		assert.strictEqual(oContext.bCreated, undefined);
 		assert.strictEqual(oContext.sDeepPath, "/~sPath");
 		assert.strictEqual(oContext.bForceRefresh, false);
 		assert.strictEqual(oContext.bPreliminary, false);
@@ -106,5 +106,18 @@ sap.ui.define([
 			// code under test
 			assert.strictEqual(oContext.hasChanged(), oFixture.result);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isTransient", function (assert) {
+		var oContext = new Context("~oModel", "~sPath");
+
+		// code under test
+		assert.strictEqual(oContext.isTransient(), undefined);
+
+		oContext.bCreated = "~bCreated";
+
+		// code under test
+		assert.strictEqual(oContext.isTransient(), "~bCreated");
 	});
 });

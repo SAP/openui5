@@ -4895,15 +4895,16 @@ usePreliminaryContext : false}}">\
 	sTitle : "Create 2 entities with error response"
 }].forEach(function (oFixture) {
 	QUnit.test("ODataModel#createEntry: " + oFixture.sTitle, function (assert) {
-		var oModel = createSalesOrdersModelMessageScope({canonicalRequests : true}),
+		var oContext,
+			oModel = createSalesOrdersModelMessageScope({canonicalRequests : true}),
+			bWithError = oFixture.aExpectedMessages.length > 0,
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
 			var oEventHandlers = {
 					requestCompleted : function () {},
 					requestFailed : function () {}
-				},
-				bWithError = oFixture.aExpectedMessages.length > 0;
+				};
 
 			that.expectHeadRequest()
 				.expectRequest({
@@ -4950,7 +4951,9 @@ usePreliminaryContext : false}}">\
 			oModel.attachRequestFailed(oEventHandlers.requestFailed);
 
 			// code under test
-			oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {properties : {}});
+			oContext = oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {properties : {}});
+
+			assert.strictEqual(oContext.isTransient(), true);
 
 			// code under test
 			oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {properties : {}});
@@ -4960,6 +4963,8 @@ usePreliminaryContext : false}}">\
 			oModel.submitChanges();
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oContext.isTransient(), bWithError ? true : false);
 		});
 	});
 });
