@@ -9,8 +9,6 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 	'sap/ui/core/Element',
 	'sap/ui/core/ElementMetadata',
 	'sap/base/util/isEmptyObject',
-	'sap/base/util/ObjectPath',
-	'sap/base/strings/capitalize',
 	'sap/base/security/encodeXML',
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/dom/jquery/rect' // jQuery Plugin "rect"
@@ -21,8 +19,6 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 		Element,
 		ElementMetadata,
 		isEmptyObject,
-		ObjectPath,
-		capitalize,
 		encodeXML,
 		jQuery
 	) {
@@ -40,11 +36,11 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 	 * @version ${version}
 	 *
 	 * @param {sap.ui.core.Core}
-	 *            oCore the core instance to use for analysis
+	 *            oCore Core instance of the app; version might differ!
 	 * @param {Window}
-	 *            oWindow reference to the window object
+	 *            oWindow Window in which the app is running
 	 * @param {object}
-	 *            oParentDomRef reference to the parent DOM element
+	 *            oParentDomRef DOM element where the PropertyList will be rendered (part of testsuite window)
 	 *
 	 * @alias sap.ui.debug.PropertyList
 	 * @private
@@ -56,10 +52,15 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 			this.oParentDomRef = oParentDomRef;
 		//	this.oCore = oWindow.sap.ui.getCore();
 			this.oCore = oCore;
-			this.bEmbedded = top.window === oWindow;
-			this.mProperties = {};
-			this.onclick = PropertyList.prototype.onclick.bind(this);
-			oParentDomRef.addEventListener("click", this.onclick);
+			this.bEmbedded = window.top === oWindow;
+			// Note: window.top is assumed to refer to the app window in embedded mode or to the testsuite window otherwise
+			var link = window.top.document.createElement("link");
+			link.rel = "stylesheet";
+			link.href = window.top.sap.ui.require.toUrl("sap/ui/debug/PropertyList.css");
+			window.top.document.head.appendChild(link);
+
+			this.onchange = PropertyList.prototype.onchange.bind(this);
+			oParentDomRef.addEventListener("change", this.onchange);
 			this.onfocus = PropertyList.prototype.onfocus.bind(this);
 			oParentDomRef.addEventListener("focusin", this.onfocus);
 			this.onkeydown = PropertyList.prototype.onkeydown.bind(this);
@@ -82,7 +83,7 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 	 * @private
 	 */
 	PropertyList.prototype.exit = function() {
-		this.oParentDomRef.removeEventListener("click", this.onclick);
+		this.oParentDomRef.removeEventListener("change", this.onchange);
 		this.oParentDomRef.removeEventListener("focusin", this.onfocus);
 		this.oParentDomRef.removeEventListener("keydown", this.onkeydown);
 		if ( !this.bEmbedded ) {
@@ -96,7 +97,7 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 	 * @private
 	 */
 	PropertyList.prototype.update = function(oParams) {
-		var sControlId = oParams.getParameter("controlId");
+		var sControlId = this.sControlId = oParams.getParameter("controlId");
 		this.oParentDomRef.innerHTML = "";
 
 		var oControl = this.oCore.byId(sControlId);
@@ -104,150 +105,103 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 			this.oParentDomRef.innerHTML = "Please select a valid control";
 			return;
 		}
-		if (!oControl.getMetadata || !oControl.getMetadata()) {
-			this.oParentDomRef.innerHTML = "Control does not provide Metadata.";
-			return;
-		}
-		this.mProperties = {};
 		var oMetadata = oControl.getMetadata(),
 			aHTML = [];
 		aHTML.push("<span data-sap-ui-quickhelp='" + this._calcHelpId(oMetadata) + "'>Type : " + oMetadata.getName() + "</span><br >");
 		aHTML.push("Id : " + oControl.getId() + "<br >");
-		aHTML.push("<button id='sap-debug-propertylist-apply' data-id='" + sControlId + "' style='border:solid 1px gray;background-color:#d0d0d0;font-size:8pt;'>Apply Changes</button>");
 		if ( !this.bEmbedded ) {
-			aHTML.push("<div id='sap-ui-quickhelp' style='position:fixed;display:none;padding:5px;background-color:rgb(200,220,231);border:1px solid gray;overflow:hidden'>Help</div>");
+			aHTML.push("<div id='sap-ui-quickhelp' class='sapDbgQH'>Help</div>");
 		}
-		aHTML.push("<div style='border-bottom:1px solid gray'>&nbsp;</div><table cellspacing='1' style='font-size:8pt;width:100%;table-layout:fixed'>");
+		aHTML.push("<div class='sapDbgSeparator'>&nbsp;</div>");
+		aHTML.push("<table class='sapDbgPropertyList' cellspacing='1'><tbody>");
 
 		while ( oMetadata instanceof ElementMetadata ) {
-			var mProperties = oMetadata.getProperties();
-			var bHeaderCreated = false;
-			if ( !isEmptyObject(mProperties) ) {
-				if ( !bHeaderCreated && oMetadata !== oControl.getMetadata() ) {
-					aHTML.push("<tr><td colspan=\"2\">BaseType: ");
+			var oSettings = this.getPropertyLikeSettings(oMetadata);
+			if ( !isEmptyObject(oSettings) ) {
+				if ( oMetadata !== oControl.getMetadata() ) {
+					aHTML.push("<tr><td class='sapDbgPLSubheader' colspan=\"2\">BaseType: ");
 					aHTML.push(oMetadata.getName());
 					aHTML.push("</td></tr>");
-					bHeaderCreated = true;
 				}
-				this.printProperties(aHTML, oControl, mProperties);
-			}
-			var mProperties = this.getAggregationsAsProperties(oMetadata);
-			if ( !isEmptyObject(mProperties) ) {
-				if ( !bHeaderCreated && oMetadata !== oControl.getMetadata() ) {
-					aHTML.push("<tr><td colspan=\"2\">BaseType: ");
-					aHTML.push(oMetadata.getName());
-					aHTML.push("</td></tr>");
-					bHeaderCreated = true;
-				}
-				this.printProperties(aHTML, oControl, mProperties);
+				this.renderSettings(aHTML, oControl, oSettings);
 			}
 			oMetadata = oMetadata.getParent();
 		}
 
-		aHTML.push("</table>");
+		aHTML.push("</tbody></table>");
 		this.oParentDomRef.innerHTML = aHTML.join("");
 		this.mHelpDocs = {};
 	};
 
-	PropertyList.prototype.getAggregationsAsProperties = function(oMetadata) {
-
-		function isSimpleType(sType) {
-			if ( !sType ) {
-				return false;
+	PropertyList.prototype.getPropertyLikeSettings = function(oMetadata) {
+		var mSettings = {};
+		Object.values(oMetadata.getProperties()).forEach(function(oProp) {
+			mSettings[oProp.name] = oProp;
+		});
+		// also display 0..1 aggregations with a simple altType
+		Object.values(oMetadata.getAggregations()).forEach(function(oAggr) {
+			if ( oAggr.multiple === false
+				 && oAggr.altTypes && oAggr.altTypes.length
+				 && DataType.getType(oAggr.altTypes[0]) != null ) {
+				mSettings[oAggr.name] = oAggr;
 			}
-
-			while ( sType.endsWith("[]") ) {
-				sType = sType.slice(0, -"[]".length);
-			}
-
-			if ( sType === "boolean" || sType === "string" || sType === "int" || sType === "float" ) {
-				return true;
-			}
-
-			if ( sType === "void" ) {
-				return false;
-			}
-
-			// TODO check for enum
-
-			return false;
-		}
-
-		var oResult = {};
-		for (var sAggrName in oMetadata.getAggregations() ) {
-			var oAggr = oMetadata.getAggregations()[sAggrName];
-			if ( oAggr.altTypes && oAggr.altTypes[0] && isSimpleType(oAggr.altTypes[0]) ) {
-				oResult[sAggrName] = { name : sAggrName, type : oAggr.altTypes[0], _oParent : oAggr._oParent };
-			}
-		}
-		return oResult;
-
+		});
+		return mSettings;
 	};
 
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
 	 */
-	PropertyList.prototype.printProperties = function(aHTML, oControl, mProperties, bAggregation) {
-		for (var i in mProperties) {
-			var sName = i,
-				sType = mProperties[i].type,
-				oMethod =  oControl["get" + sName];
-			if (!oMethod) {
-				sName = capitalize(sName,0);
-			}
-			var oValue = oControl["get" + sName]();
+	PropertyList.prototype.renderSettings = function(aHTML, oControl, mSettings) {
+		Object.values(mSettings).forEach(function(oSetting) {
+			var sName = oSetting.name,
+				oValue = oSetting.get(oControl),
+				oType = oSetting.multiple === false ? DataType.getType(oSetting.altTypes[0]) : oSetting.getType();
+
 			aHTML.push("<tr><td>");
-			this.mProperties[sName] = sType;
-			aHTML.push("<span data-sap-ui-quickhelp='", this._calcHelpId(mProperties[i]._oParent, i), "' >", sName, '</span>');
+			aHTML.push("<span data-sap-ui-quickhelp='", this._calcHelpId(oSetting._oParent, sName), "' >", sName, '</span>');
 			aHTML.push("</td><td>");
 			var sTitle = "";
-			if (sType == "string" || sType == "int" || sType == "float" || sType.endsWith("[]")) {
-				var sColor = '';
-				if ( oValue === null ) {
-					sColor = 'color:#a5a5a5;';
-					oValue = '(null)';
-				} else if ( oValue instanceof Element ) {
-					sColor = 'color:#a5a5a5;';
-					if (Array.isArray(oValue)) {
-						// array type (copied from primitive values above and modified the value to string / comma separated)
-						oValue = oValue.join(", ");
-					} else {
-						oValue = oValue.toString();
-					}
-					sTitle = ' title="This aggregation currently references an Element. You can set a ' + sType +  ' value instead"';
-				}
-				aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;" + sColor + "' value='" + encodeXML("" + oValue) + "'" + sTitle + " data-name='" + sName + "'>");
-			} else if (sType == "boolean") {
+
+			if ( oType.getPrimitiveType().getName() === "boolean" ) {
 				aHTML.push("<input type='checkbox' data-name='" + sName + "' ");
 				if (oValue == true) {
 					aHTML.push("checked='checked'");
 				}
 				aHTML.push(">");
-			} else if (sType != "void") {
-				//Enum or Custom Type
-				var oEnum = ObjectPath.get(sType || "");
-				if (!oEnum || oEnum instanceof DataType) {
-					aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;' value='" + encodeXML("" + oValue) + "'" + sTitle + " data-name='" + sName + "'>");
-				} else {
-					aHTML.push("<select style='width:100%;font-size:8pt;background-color:#f5f5f5;' data-name='" + sName + "'>");
-					sType = sType.replace("/",".");
-					for (var n in oEnum) {
-						aHTML.push("<option ");
-						if (n == oValue) {
-							aHTML.push(" selected ");
-						}
-						aHTML.push("value='" + sType + "." + n + "'>");
-						aHTML.push(n);
-						aHTML.push("</option>");
+			} else if ( oType.isEnumType() ) {
+				var oEnum = oType.getEnumValues();
+				aHTML.push("<select data-name='" + sName + "'>");
+				for (var n in oEnum) {
+					aHTML.push("<option ");
+					if (n === oValue) {
+						aHTML.push(" selected ");
 					}
-					aHTML.push("</select>");
+					aHTML.push("value='" + encodeXML(n) + "'>");
+					aHTML.push(encodeXML(n));
+					aHTML.push("</option>");
 				}
+				aHTML.push("</select>");
 			} else {
-				aHTML.push("&nbsp;");
+				var sValueClass = '';
+				if ( oValue === null ) {
+					sValueClass = "class='sapDbgComplexValue'";
+					oValue = '(null)';
+				} else if ( oValue instanceof Element ) {
+					sValueClass = "class='sapDbgComplexValue'";
+					if (Array.isArray(oValue)) {
+						// array type (copied from primitive values above and modified the value to string / comma separated)
+						oValue = oValue.join(", ");
+					} else {
+						oValue = String(oValue);
+					}
+					sTitle = ' title="This aggregation currently references an Element. You can set a ' + oType.getName() +  ' value instead"';
+				}
+				aHTML.push("<input type='text' " + sValueClass + " value='" + encodeXML("" + oValue) + "'" + sTitle + " data-name='" + sName + "'>");
 			}
 			aHTML.push("</td></tr>");
-		}
+		}.bind(this));
 	};
 
 	/**
@@ -255,19 +209,20 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 	 * @private
 	 */
 	PropertyList.prototype.onkeydown = function(oEvent) {
-		if (oEvent.keyCode == 13) {
-			this.applyChanges("sap-debug-propertylist-apply");
+		var oSource = oEvent.target;
+		if (oEvent.keyCode == 13 && oSource.tagName === "INPUT" && oSource.type === "text") {
+			this.applyChange(oSource);
 		}
 	};
 
 	/**
-	 * TODO: missing internal JSDoc... @author please update
+	 * Listener for the 'change' event of editor controls.
 	 * @private
 	 */
-	PropertyList.prototype.onclick = function(oEvent) {
+	PropertyList.prototype.onchange = function(oEvent) {
 		var oSource = oEvent.target;
-		if (oSource.id == "sap-debug-propertylist-apply") {
-			this.applyChanges("sap-debug-propertylist-apply");
+		if (oSource.tagName === "SELECT" || oSource.tagName === "INPUT") {
+			this.applyChange(oSource);
 		}
 	};
 
@@ -286,48 +241,27 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 	};
 
 	/**
-	 * TODO: missing internal JSDoc... @author please update
+	 * Applies the current value from the given editor field
+	 * to the corresponding setting of the currently displayed control or element.
+	 * @param {HTMLInputElement|HTMLSelectElement} oField An editor field
 	 * @private
 	 */
-	PropertyList.prototype.applyChanges = function(sId) {
-		var oSource = this.oParentDomRef.ownerDocument.getElementById(sId),
-			sControlId = oSource.dataset.id,
-			oControl = this.oCore.byId(sControlId),
-			aInput = oSource.parentNode.getElementsByTagName("INPUT"),
-			aSelect = oSource.parentNode.getElementsByTagName("SELECT"),
-			oMethod;
+	PropertyList.prototype.applyChange = function(oField) {
+		var oControl = this.oCore.byId(this.sControlId),
+			sName = oField.dataset.name,
+			oSetting = oControl.getMetadata().getPropertyLikeSetting(sName);
 
-		for (var i = 0; i < aInput.length; i++) {
-			var oInput = aInput[i],
-				sName = oInput.dataset.name;
-				oMethod = oControl["set" + sName];
-			if (!oMethod) {
-				sName = capitalize(sName,0);
-			}
-			if (oControl["set" + sName]) {
-				var oType = DataType.getType(this.mProperties[sName]);
-				var vValue = this.mProperties[sName] === "boolean" ? oInput.checked : oType.parseValue(oInput.value);
+		if ( oSetting ) {
+			var sValue = oField.type === "checkbox" ? String(oField.checked) : oField.value,
+				oType = oSetting.multiple != null ? DataType.getType(oSetting.altTypes[0]) : oSetting.getType();
+			if (oType) {
+				var vValue = oType.parseValue(sValue);
 				if (oType.isValid(vValue) && vValue !== "(null)" ) {
-					oControl["set" + sName](vValue);
+					oSetting.set(oControl, vValue);
+					oField.classList.remove("sapDbgComplexValue");
 				}
 			}
 		}
-		for (var i = 0; i < aSelect.length; i++) {
-			var oSelect = aSelect[i],
-				sName = oSelect.dataset.name;
-			oMethod = oControl["set" + sName];
-			if (!oMethod) {
-				sName = capitalize(sName,0);
-			}
-			var oValue = null;
-			if (oSelect.value) {
-				/*eslint-disable no-eval */
-				eval("oValue = " + oSelect.value);
-				oControl["set" + sName](oValue);
-				/*eslint-enable no-eval */
-			}
-		}
-		this.oCore.applyChanges();
 	};
 
 	PropertyList.prototype.showQuickHelp = function(oSource) {
@@ -343,7 +277,6 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 			oTooltipDomRef.style.top = (oRect.top - 40) + "px";
 			oTooltipDomRef.style.display = 'block';
 			oTooltipDomRef.style.opacity = '0.2';
-			oTooltipDomRef.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(opacity=20)';
 			if ( this.mHelpDocs[this.sCurrentHelpId] ) {
 				this.updateQuickHelp(this.mHelpDocs[this.sCurrentHelpId], 2000);
 			} else {
@@ -399,8 +332,8 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 				if ( aDocumentation[0] ) {
 					if ( sName && aDocumentation[0] ) {
 						var doc = [];
-						doc.push("<div style='font-size:10pt;font-weight:bold;padding:5px 0px;margin-bottom:5px;border-bottom:1px solid gray'>", sName.replace('/', '.'), "</div>");
-						doc.push("<div style='padding:2px 0px;'>", aDocumentation[0].text || aDocumentation[0].textContent, "</div>");
+						doc.push("<div class='sapDbgQHClassTitle'>", sName.replace('/', '.'), "</div>");
+						doc.push("<div class='sapDbgQHDocPadding'>", aDocumentation[0].text || aDocumentation[0].textContent, "</div>");
 						this.mHelpDocs[this.sCurrentHelpDoc] = doc.join("");
 					}
 				}
@@ -416,10 +349,10 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 					var aDocumentation = get(oProperty, "documentation");
 					if ( sName && aDocumentation[0] ) {
 						var doc = [];
-						doc.push("<div style='font-size:10pt;font-weight:bold;padding:3px 0px;margin-bottom:3px;border-bottom:1px solid gray'>", sName, "</div>");
-						doc.push("<div style='padding:2px 0px;'><i><strong>Type</strong></i>: ", sType, "</div>");
-						doc.push("<div style='padding:2px 0px;'>", aDocumentation[0].text || aDocumentation[0].textContent, "</div>");
-						doc.push("<div style='padding:2px 0px;'><i><strong>Default Value</strong></i>: ", sDefaultValue, "</div>");
+						doc.push("<div class='sapDbgQHSettingDoc'>", sName, "</div>");
+						doc.push("<div class='sapDbgQHDocPadding'><i><strong>Type</strong></i>: ", sType, "</div>");
+						doc.push("<div class='sapDbgQHDocPadding'>", aDocumentation[0].text || aDocumentation[0].textContent, "</div>");
+						doc.push("<div class='sapDbgQHDocPadding'><i><strong>Default Value</strong></i>: ", sDefaultValue, "</div>");
 						this.mHelpDocs[this.sCurrentHelpDoc + "#" + sName] = doc.join("");
 					}
 				}
@@ -435,10 +368,10 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 					var aDocumentation = get(oProperty, "documentation");
 					if ( sName && aDocumentation[0] && !this.mHelpDocs[this.sCurrentHelpDoc + "#" + sName]) {
 						var doc = [];
-						doc.push("<div style='font-size:10pt;font-weight:bold;padding:3px 0px;margin-bottom:3px;border-bottom:1px solid gray'>", sName, "</div>");
-						doc.push("<div style='padding:2px 0px;'><i><strong>Type</strong></i>: ", sType, "</div>");
-						doc.push("<div style='padding:2px 0px;'>", aDocumentation[0].text || aDocumentation[0].textContent, "</div>");
-						doc.push("<div style='padding:2px 0px;'><i><strong>Default Value</strong></i>: ", sDefaultValue, "</div>");
+						doc.push("<div class='sapDbgQHSettingTitle'>", sName, "</div>");
+						doc.push("<div class='sapDbgQHDocPadding'><i><strong>Type</strong></i>: ", sType, "</div>");
+						doc.push("<div class='sapDbgQHDocPadding'>", aDocumentation[0].text || aDocumentation[0].textContent, "</div>");
+						doc.push("<div class='sapDbgQHDocPadding'><i><strong>Default Value</strong></i>: ", sDefaultValue, "</div>");
 						this.mHelpDocs[this.sCurrentHelpDoc + "#" + sName] = doc.join("");
 					}
 				}
@@ -465,10 +398,9 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 				oTooltipDomRef.style.display = 'none';
 			} else {
 				oTooltipDomRef.innerHTML = sNewContent;
-				var that = this;
 				this.oQuickHelpTimer = setTimeout(function () {
-					that.hideQuickHelp();
-				}, iTimeout);
+					this.hideQuickHelp();
+				}.bind(this), iTimeout);
 			}
 		}
 	};
@@ -506,7 +438,7 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 	PropertyList.prototype.onmouseover = function(oEvent) {
 		var oSource = oEvent.target;
 		if ( this._isChildOfQuickHelp(oSource) ) {
-			// if the user enteres the tooltip with the mouse, we don't close it automatically
+			// if the user enters the tooltip with the mouse, we don't close it automatically
 			if ( this.oQuickHelpTimer ) {
 				clearTimeout(this.oQuickHelpTimer);
 				this.oQuickHelpTimer = undefined;
@@ -515,7 +447,6 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 			var oTooltipDomRef = this.oParentDomRef.ownerDocument.getElementById("sap-ui-quickhelp");
 			if ( oTooltipDomRef ) {
 				oTooltipDomRef.style.opacity = '';
-				oTooltipDomRef.style.filter = '';
 			}
 		} else if ( oSource.getAttribute("data-sap-ui-quickhelp") ) {
 			this.showQuickHelp(oSource);
@@ -534,20 +465,18 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 				this.oQuickHelpTimer = undefined;
 			}
 			this.bMovedOverTooltip = false;
-			var that = this;
 			this.oQuickHelpTimer = setTimeout(function () {
-				that.hideQuickHelp();
-			}, 50);
+				this.hideQuickHelp();
+			}.bind(this), 50);
 		} else if (oSource.getAttribute("data-sap-ui-quickhelp")) {
 			if ( this.oQuickHelpTimer ) {
 				clearTimeout(this.oQuickHelpTimer);
 				this.oQuickHelpTimer = undefined;
 			}
 			if ( !this.bMovedOverTooltip ) {
-				var that = this;
 				this.oQuickHelpTimer = setTimeout(function () {
-					that.hideQuickHelp();
-				}, 800);
+					this.hideQuickHelp();
+				}.bind(this), 800);
 			}
 		}
 	};

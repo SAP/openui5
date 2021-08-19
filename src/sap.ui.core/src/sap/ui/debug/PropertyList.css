@@ -1,0 +1,55 @@
+.sapDbgSeparator {
+	border-bottom: 1px solid gray;
+}
+
+.sapDbgPropertyList {
+	font-size: 8pt;
+	width: 100%;
+	table-layout: fixed;
+}
+
+.sapDbgPLSubheader {
+	padding-top: 0.5rem;
+	font-style: italic;
+}
+
+.sapDbgPropertyList input[type='text'],
+.sapDbgPropertyList select {
+	width: 100%;
+	font-size: 8pt;
+	background-color: #f5f5f5;
+}
+
+.sapDbgPropertyList input.sapDbgComplexValue {
+	color: #a5a5a5;'
+}
+
+.sapDbgQH {
+	position: fixed;
+	display: none;
+	padding: 5px;
+	background-color: rgb(200,220,231);
+	border: 1px solid gray;
+	overflow: hidden;
+}
+
+.sapDbgQHClassTitle {
+	font-size: 10pt;
+	font-weight: bold;
+	padding: 5px 0px;
+	margin-bottom: 5px;
+	border-bottom: 1px solid gray;
+}
+
+.sapDbgQHDocPadding {
+	padding: 2px 0px;
+}
+
+.sapDbgQHSettingTitle {
+	font-size:10pt;
+	font-weight:bold;
+	padding:3px 0px;
+	margin-bottom:3px;
+	border-bottom:1px solid gray;
+}
+
