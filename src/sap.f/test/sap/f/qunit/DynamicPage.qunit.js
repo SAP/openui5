@@ -914,25 +914,65 @@ function (
 
 	QUnit.test("DynamicPage Header on tablet with header height bigger than 60% of DP height override 'preserveHeaderStateOnScroll' property", function (assert) {
 		var oDynamicPage = this.oDynamicPage;
+		// Setup
 		oDynamicPage.setPreserveHeaderStateOnScroll(true);
 
 		oUtil.renderObject(this.oDynamicPage);
 		Core.applyChanges();
 		this.clock.tick();
 
+		// Setup header too big to be preserved in the title area
 		oDynamicPage.$().height(1000);
 		oDynamicPage.getTitle().$().height(300);
 		oDynamicPage.getHeader().$().height(300);
 		oDynamicPage._headerBiggerThanAllowedHeight = false;
+		// Act
+		oDynamicPage._overridePreserveHeaderStateOnScroll();
 
-		assert.ok(oDynamicPage._shouldOverridePreserveHeaderStateOnScroll(), "preserveHeaderStateOnScroll should be overridden with 60% or bigger height");
+		assert.strictEqual(oDynamicPage._headerBiggerThanAllowedHeight, true, "flag is updated");
+		assert.strictEqual(oDynamicPage._preserveHeaderStateOnScroll(), false, "preserveHeaderStateOnScroll should be overridden with 60% or bigger height");
 
+		// Setup header ok to be preserved in the title area
 		oDynamicPage.$().height(1000);
 		oDynamicPage.getTitle().$().height(200);
 		oDynamicPage.getHeader().$().height(200);
-		oDynamicPage._headerBiggerThanAllowedHeight = false;
 
-		assert.ok(!oDynamicPage._shouldOverridePreserveHeaderStateOnScroll(), "preserveHeaderStateOnScroll should NOT be overridden with less than 60% height");
+		// Act
+		oDynamicPage._overridePreserveHeaderStateOnScroll();
+
+		assert.strictEqual(oDynamicPage._headerBiggerThanAllowedHeight, false, "flag is updated");
+		assert.strictEqual(oDynamicPage._preserveHeaderStateOnScroll(), true, "preserveHeaderStateOnScroll should NOT be overridden with less than 60% height");
+	});
+
+	QUnit.test("DynamicPage Header snapped with height bigger than 60% of DP height override 'preserveHeaderStateOnScroll' property", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oMockHeaderResizeWidthEvent = {size: {height: 300}, oldSize:{height: 0}, target: {id: this.oDynamicPage.getHeader().getId()}};
+		// Setup
+		oDynamicPage.setHeaderExpanded(false); // header is hidden
+		oDynamicPage.setPreserveHeaderStateOnScroll(true);
+
+		oUtil.renderObject(this.oDynamicPage);
+		Core.applyChanges();
+		this.clock.tick();
+
+		// Setup header too big to be preserved in the title area
+		oDynamicPage.$().height(1000);
+		oDynamicPage.getTitle().$().height(300);
+		oDynamicPage.getHeader().$().height(300);
+		// Act
+		oDynamicPage._overridePreserveHeaderStateOnScroll();
+
+		assert.strictEqual(oDynamicPage._headerBiggerThanAllowedHeight, true, "flag is updated");
+		assert.strictEqual(oDynamicPage._preserveHeaderStateOnScroll(), false, "preserveHeaderStateOnScroll should be overridden with 60% or bigger height");
+
+		// Setup header OK to be preserved in the title area
+		oDynamicPage.getHeader().$().height(100);
+
+		// Act
+		oDynamicPage._onChildControlsHeightChange(oMockHeaderResizeWidthEvent);
+
+		assert.strictEqual(oDynamicPage._headerBiggerThanAllowedHeight, false, "flag is updated");
+		assert.strictEqual(oDynamicPage._preserveHeaderStateOnScroll(), true, "preserveHeaderStateOnScroll should NOT be overridden with less than 60% height");
 	});
 
 	/* --------------------------- DynamicPage Tablet Rendering ---------------------------------- */
@@ -953,25 +993,38 @@ function (
 
 	QUnit.test("DynamicPage Header on tablet with header height bigger than 60% of DP height override 'preserveHeaderStateOnScroll' property", function (assert) {
 		var oDynamicPage = this.oDynamicPage;
+		// Setup
 		oDynamicPage.setPreserveHeaderStateOnScroll(true);
 
 		oUtil.renderObject(this.oDynamicPage);
 		Core.applyChanges();
 		this.clock.tick();
 
+		// Setup header too big to be preserved in the title area
 		oDynamicPage.$().height(1000);
 		oDynamicPage.getTitle().$().height(300);
 		oDynamicPage.getHeader().$().height(300);
 		oDynamicPage._headerBiggerThanAllowedHeight = false;
 
-		assert.ok(oDynamicPage._shouldOverridePreserveHeaderStateOnScroll(), "preserveHeaderStateOnScroll should be overridden with 60% or bigger height");
+		// Act
+		oDynamicPage._overridePreserveHeaderStateOnScroll();
 
+		// Check
+		assert.strictEqual(oDynamicPage._headerBiggerThanAllowedHeight, true, "flag is updated");
+		assert.strictEqual(oDynamicPage._preserveHeaderStateOnScroll(), false, "preserveHeaderStateOnScroll should be overridden with 60% or bigger height");
+
+		// Setup header ok to be preserved in the title area
 		oDynamicPage.$().height(1000);
 		oDynamicPage.getTitle().$().height(200);
 		oDynamicPage.getHeader().$().height(200);
-		oDynamicPage._headerBiggerThanAllowedHeight = false;
 
-		assert.ok(!oDynamicPage._shouldOverridePreserveHeaderStateOnScroll(), "preserveHeaderStateOnScroll should NOT be overridden with less than 60% height");
+		// Act
+		oDynamicPage._overridePreserveHeaderStateOnScroll();
+
+		// Check
+		assert.strictEqual(oDynamicPage._headerBiggerThanAllowedHeight, false, "flag is updated");
+		assert.strictEqual(oDynamicPage._preserveHeaderStateOnScroll(), true, "preserveHeaderStateOnScroll should NOT be overridden with less than 60% height");
+
 	});
 
 	/* --------------------------- DynamicPage Events and Handlers ---------------------------------- */
@@ -1523,14 +1576,17 @@ function (
 		oDynamicPage.setPreserveHeaderStateOnScroll(true);
 	});
 
-	QUnit.test("DynamicPage _overridePreserveHeaderStateOnScroll() should be called only once, when on resizing, Header is moved and 'preserveHeaderStateOnScroll' is 'true'",
+	QUnit.test("DynamicPage _headerBiggerThanAllowedHeight is updated when on resizing, Header is moved and 'preserveHeaderStateOnScroll' is 'true'",
 		function (assert) {
 		// Arrange
 		var oSpy,
+			oDynamicPage = this.oDynamicPage,
 			oMockResizeWidthEvent = {size: {height: 500}, oldSize:{height: 100}},
 			oMockHeaderResizeWidthEvent = {size: {height: 500}, oldSize:{height: 0}, target: {id: this.oDynamicPage.getHeader().getId()}},
-			done = assert.async(),
-			oDynamicPage = this.oDynamicPage;
+			oStub = sinon.stub(oDynamicPage, "_headerBiggerThanAllowedToBeFixed", function() {
+				return true;
+			}),
+			done = assert.async();
 
 		// Act
 		oDynamicPage.addEventDelegate({
@@ -1542,10 +1598,12 @@ function (
 					oDynamicPage._onChildControlsHeightChange(oMockHeaderResizeWidthEvent);
 
 					// Assert
-					assert.ok(oSpy.calledOnce, "_overridePreserveHeaderStateOnScroll should be called only once (from resizing), but not second time when header is moved");
+					assert.ok(oSpy.called, "check for header constraints is made");
+					assert.ok(oDynamicPage._headerBiggerThanAllowedHeight, "_headerBiggerThanAllowedHeight flag is correct");
 
 					// Clean Up
 					oSpy.reset();
+					oStub.restore();
 					done();
 				}, 200);
 			}
@@ -1565,9 +1623,6 @@ function (
 		oDynamicPage.addEventDelegate({
 			"onAfterRendering": function() {
 					// Act
-					oSandBox.stub(oDynamicPage, "_shouldOverridePreserveHeaderStateOnScroll", function () {
-						return true;
-					});
 					oSpy.reset();
 					oDynamicPage._overridePreserveHeaderStateOnScroll();
 
@@ -1583,12 +1638,9 @@ function (
 		oDynamicPage.setPreserveHeaderStateOnScroll(true);
 	});
 
-	QUnit.test("DynamicPage _shouldOverridePreserveHeaderStateOnScroll() should return 'true' for Desktop when needed", function (assert) {
+	QUnit.test("DynamicPage _headerBiggerThanAllowedHeight should be 'true' for Desktop when needed", function (assert) {
 		// Arrange
-		var oPreserveHeaderStateStub = this.stub(this.oDynamicPage, "_preserveHeaderStateOnScroll", function () {
-				return true;
-			}),
-			oBiggerHeaderStub = this.stub(this.oDynamicPage, "_headerBiggerThanAllowedToBeFixed", function () {
+		var oBiggerHeaderStub = this.stub(this.oDynamicPage, "_headerBiggerThanAllowedToBeFixed", function () {
 				return true;
 			}),
 			oDeviceStub = this.stub(Device, "system", {
@@ -1597,12 +1649,14 @@ function (
 					phone: false
 			});
 
+			//Act
+			this.oDynamicPage._overridePreserveHeaderStateOnScroll();
+
 			// Assert
-			assert.strictEqual(this.oDynamicPage._shouldOverridePreserveHeaderStateOnScroll(), true,
+			assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedHeight, true,
 				"Preserving header state on scroll is overriden for desktop too, when it is too big");
 
 			// Clean up
-			oPreserveHeaderStateStub.restore();
 			oBiggerHeaderStub.restore();
 			oDeviceStub.restore();
 	});
