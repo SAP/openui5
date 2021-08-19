@@ -117,6 +117,7 @@ sap.ui.define([
         aItems.forEach(function (oNonPresent, iIndex) {
             aAvailableItems.push(new Item({
                 key: oNonPresent.name,
+                tooltip: oNonPresent.tooltip,
                 text: oNonPresent.label,
                 enabled: {
                     path: this.P13N_MODEL + ">/items/" + iIndex + "/" + this._getPresenceAttribute(),

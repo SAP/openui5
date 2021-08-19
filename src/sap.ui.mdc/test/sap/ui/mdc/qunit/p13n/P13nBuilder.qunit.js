@@ -7,75 +7,60 @@ sap.ui.define([
 ], function(P13nBuilder, BasePanel, JSONModel, Element) {
     "use strict";
 
-    QUnit.module("API Tests", {
-        beforeEach: function(){
-            this.sDefaultGroup = "BASIC";
-            this.oExistingMock = {
-                items: [
-                    {
-                        name: "key1"
-                    },
-                    {
-                        name: "key2"
-                    },
-                    {
-                        name: "key3"
-                    }
-                ],
-                sorters: [
-                    {
-                        name: "key1",
-                        descending: true
-                    }
-                ],
-                filter: {
-                    key2: [
-                        {
-                            operator: "EQ",
-                            values: [
-                                "Test"
-                            ]
-                        }
-                    ]
+    var aVisible = ["key1", "key2", "key3"];
 
-                }
-            };
-            this.aMockInfo = [
-                {
-                    name: "key1",
-                    label: "Field 1"
-                },
-                {
-                    name: "key2",
-                    label: "Field 2"
-                },
-                {
-                    name: "key3",
-                    label: "Field 3"
-                },
-                {
-                    name: "key4",
-                    label: "Field 4"
-                },
-                {
-                    name: "key5",
-                    label: "Field 5"
-                },
-                {
-                    name: "key6",
-                    label: "Field 6"
-                }
-            ];
+    var aInfoData = [
+        {
+            name: "key1",
+            label: "Field 1"
         },
-        afterEach: function(){
+        {
+            name: "key2",
+            label: "Field 2"
+        },
+        {
+            name: "key3",
+            label: "Field 3"
+        },
+        {
+            name: "key4",
+            label: "Field 4"
+        },
+        {
+            name: "key5",
+            label: "Field 5"
+        },
+        {
+            name: "key6",
+            label: "Field 6",
+            tooltip: "Some Tooltip"
+        }
+    ];
+
+
+
+    QUnit.module("API Tests", {
+        fnEnhancer: function(mItem, oProperty) {
+            if (oProperty.name == "key2") {
+                mItem.isFiltered = true;
+            }
+            mItem.visible = aVisible.indexOf(oProperty.name) > -1;
+            return true;
+        },
+        before: function(){
+            this.sDefaultGroup = "BASIC";
+            this.aMockInfo = aInfoData;
+            sap.ui.getCore().applyChanges();
+        },
+        after: function(){
             this.sDefaultGroup = null;
-            this.oExistingMock = null;
+            this.oP13nData = null;
             this.aMockInfo = null;
         }
     });
 
-    QUnit.test("Test prepareP13nData - return object with two keys", function(assert){
-        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+    QUnit.test("Test prepareAdaptationData - return object with two keys", function(assert){
+        var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
         assert.ok(oP13nData.items instanceof Array, "Flat structure created");
         assert.ok(oP13nData.itemsGrouped instanceof Array, "Group structure created");
 
@@ -85,7 +70,7 @@ sap.ui.define([
         assert.equal(oP13nData.itemsGrouped[0].items.length, this.aMockInfo.length  , "All items are in group 'BASIC' as there is no group information provided");
     });
 
-    QUnit.test("Test prepareP13nData - check optional ignoring", function(assert){
+    QUnit.test("Test prepareAdaptationData - check optional ignoring", function(assert){
         this.aMockInfo[0]["someRandomAttribute"] = true;
 
         var bIgnore = false;
@@ -96,30 +81,42 @@ sap.ui.define([
         };
 
         //Ignore criteria not met
-        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo, fnIgnore);
+        var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, fnIgnore, true);
         assert.equal(oP13nData.items.length, this.aMockInfo.length, "correct amount of items created");
 
         //Ignore criteria met
         bIgnore = true;
-        oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo, fnIgnore);
+        oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, fnIgnore, true);
         assert.equal(oP13nData.items.length, this.aMockInfo.length - 1, "correct amount of items created");
     });
 
-    QUnit.test("Test prepareP13nData - check grouping", function(assert){
+    QUnit.test("Test prepareAdaptationData - check grouping", function(assert){
         this.aMockInfo[0]["group"] = "Group2";
         this.aMockInfo[3]["group"] = "Group2";
 
-        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+        var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
         assert.equal(oP13nData.itemsGrouped.length, 2, "Additional group created");
         assert.equal(oP13nData.itemsGrouped[1].items.length, this.aMockInfo.length - 2, "Basic group includes less items");
         assert.equal(oP13nData.itemsGrouped[0].items.length, 2, "Second group includes the rest");
     });
 
+    QUnit.test("Check tooltip propagation (only explicitly provided tooltips)", function(assert){
+        var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
+
+        for (var i = 0; i <= 4; i++) {
+            assert.strictEqual(oP13nData.items[i].tooltip, undefined, "No explicit tooltip provided --> no fallback");
+        }
+
+        assert.strictEqual(oP13nData.items[5].tooltip, "Some Tooltip", "Explicit tooltip taken over");
+
+    });
+
+
     QUnit.test("Test createP13nPopover", function(assert){
 
         var done = assert.async();
 
-        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+        var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
         var oModel = new JSONModel(oP13nData);
         var oPanel = new BasePanel(oPanel);
 
@@ -143,7 +140,7 @@ sap.ui.define([
 
         var done = assert.async();
 
-        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+        var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
         var oModel = new JSONModel(oP13nData);
         var oPanel = new BasePanel(oPanel);
 
@@ -169,7 +166,7 @@ sap.ui.define([
 
         var done = assert.async();
 
-        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+        var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
         var oModel = new JSONModel(oP13nData);
         var oPanel = new BasePanel(oPanel);
 
