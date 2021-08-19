@@ -121,8 +121,8 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Device', 'sap/ui/base/syncXHR
 			done = assert.async();
 
 		/* eslint-disable no-implied-eval */
-		setTimeout("window.bTimeout = true", 0);
-		iInterval = setInterval("window.bInterval = true", 0);
+		setTimeout("window.bTimeout = true", 0); // legacy-relevant
+		iInterval = setInterval("window.bInterval = true", 0); // legacy-relevant
 		/* eslint-enable no-implied-eval */
 
 		setTimeout(function() {
