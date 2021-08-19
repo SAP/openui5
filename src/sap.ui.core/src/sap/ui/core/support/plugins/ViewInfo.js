@@ -907,46 +907,6 @@ sap.ui.define([
 				oDomRef.nextSibling.style.display = "none";
 			}
 		};
-		ViewInfo.prototype.createTemplateTreeNodes = function(oRootNode) {
-			var oTemplateTree = (new DOMParser()).parseFromString("", "application/xml");
-			var aInfos = this.supportInfo.getAll();
-			var oCurrentNode = oTemplateTree;
-			var sCurrentAttributeName = "";
-			var sCurrentAttributeValue = "";
-			var aParents = [];
-			for (var i = 0; i < aInfos.length; i++) {
-				var oInfo = aInfos[i];
-				if (oInfo.env.before) {
-					if (oInfo.env.caller === "visitNode") {
-						var oProcessedNode = oInfo.context;
-						if (oCurrentNode === oProcessedNode) {
-							continue;
-						}
-						oTemplateTree.importNode(oProcessedNode);
-						oProcessedNode.removeAttribute("support:data");
-						oProcessedNode.removeAttribute("xmlns:support");
-						if (oTemplateTree === oCurrentNode) {
-							oCurrentNode.replaceChild(oProcessedNode, oCurrentNode.firstChild);
-							aParents.push(oCurrentNode);
-						} else {
-							oCurrentNode.appendChild(oProcessedNode);
-							aParents.push(oCurrentNode);
-						}
-						oCurrentNode = oProcessedNode;
-					} else if (oInfo.env.caller === "visitAttributes") {
-						sCurrentAttributeName = oInfo.env.before.name;
-						sCurrentAttributeValue = oInfo.env.before.value;
-						oCurrentNode.setAttribute(sCurrentAttributeName, sCurrentAttributeValue);
-					}
-				} else if (oInfo.env.after) {
-					if (oInfo.env.caller === "visitNode") {
-						oCurrentNode = oCurrentNode.parentNode || oInfo.env.parent;
-					}
-
-				}
-			}
-			return oTemplateTree.childNodes[0];
-		};
 
 		ViewInfo.prototype.getValidDebugStackIndices = function(oNode) {
 			var aResults = [],

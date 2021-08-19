@@ -10,6 +10,11 @@
 	display: none;
 }
 
+.sapUiSupportObjectViewerMarginLeft {
+	margin-left: 16px;
+}
+
+
 .viewxmlinfo {
 	width: 620px;
 	height: 300px;
