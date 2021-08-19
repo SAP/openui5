@@ -50,6 +50,7 @@
 
 .sapMDialog > .sapMDialogSection {
 	max-width: 100%;
+	background: @sapUiGroupContentBackground;
 }
 
 .sapMDialog .sapMDialogScrollCont > * {
@@ -274,10 +275,6 @@ html.sap-desktop .sapMDialog {
 		& header.sapMDialogSubHeader {
 			height: @_sap_m_Dialog_SubHeaderCompactHeight;
 			top: @_sap_m_Dialog_BarCompactHeight;
-
-			.sapMIBar {
-				height: @_sap_m_Dialog_SubHeaderCompactHeight;
-			}
 		}
 	}
 
@@ -355,7 +352,7 @@ html.sap-desktop .sapMDialog {
 	}
 
 	&.sapMDialogWithSubHeader {
-		padding-top: @_sap_m_Dialog_BarHeight + @_sap_m_Dialog_BarHeight;
+		padding-top: @_sap_m_Dialog_BarHeight + @_sap_m_Dialog_SubHeaderHeight;
 
 		&.sapMDialogSubHeaderInfoBar {
 			padding-top: @_sap_m_Dialog_BarHeight + @_sap_m_Dialog_InfoDesignBarHeight;
@@ -374,7 +371,6 @@ html.sap-desktop .sapMDialog {
 			}
 		}
 	}
-
 
 	& > .sapMDialogTitle {
 		height: @_sap_m_Dialog_BarHeight;
@@ -432,20 +428,17 @@ html[data-sap-ui-animation='off'] .sapMDialog {
 	transition: none;
 }
 
-.sapMDialog > .sapMDialogSection {
-	background: @sapUiGroupContentBackground;
+.sapMDialog.sapMDialogWithSubHeader .sapMDialogTitle .sapMIBar {
+	box-shadow: none;
 }
 
-.sapMDialog.sapMDialogWithSubHeader > header {
-	&:last-of-type .sapMIBar{
-		box-shadow: @_sap_m_Dialog_NoStateHeaderShadow;
-	}
+.sapMDialog > header:last-of-type .sapMIBar {
+	box-shadow: @_sap_m_Dialog_NoStateHeaderShadow;
 }
 
-.sapMDialog:not(.sapMDialogWithSubHeader) > header {
-	&:first-of-type .sapMIBar{
-		box-shadow: @_sap_m_Dialog_NoStateHeaderShadow;
-	}
+// invisible subheader
+.sapMDialog:not(.sapMDialogWithSubHeader) > header:first-of-type .sapMIBar {
+	box-shadow: @_sap_m_Dialog_NoStateHeaderShadow;
 }
 
 .sapMDialogWarning > header {
@@ -453,7 +446,7 @@ html[data-sap-ui-animation='off'] .sapMDialog {
 		color: @sapUiCriticalElement;
 	}
 
-	&:last-of-type .sapMIBar.sapMIBar { // .sapMIBar.sapMIBar - doubles the specificity in order to override other styles
+	&:last-of-type .sapMIBar {
 		box-shadow: @_sap_m_Dialog_WarningHeaderShadow;
 	}
 }
@@ -464,7 +457,7 @@ html[data-sap-ui-animation='off'] .sapMDialog {
 		color: @sapUiNegativeElement;
 	}
 
-	&:last-of-type .sapMIBar.sapMIBar { // .sapMIBar.sapMIBar - doubles the specificity in order to override other styles
+	&:last-of-type .sapMIBar {
 		box-shadow: @_sap_m_Dialog_ErrorHeaderShadow;
 	}
 }
@@ -474,7 +467,7 @@ html[data-sap-ui-animation='off'] .sapMDialog {
 		color: @sapUiPositiveElement;
 	}
 
-	&:last-of-type .sapMIBar.sapMIBar { // .sapMIBar.sapMIBar - doubles the specificity in order to override other styles
+	&:last-of-type .sapMIBar {
 		box-shadow: @_sap_m_Dialog_SuccessHeaderShadow;
 	}
 }
@@ -485,7 +478,7 @@ html[data-sap-ui-animation='off'] .sapMDialog {
 		color: @sapHighlightColor;
 	}
 
-	&:last-of-type .sapMIBar.sapMIBar { // .sapMIBar.sapMIBar - doubles the specificity in order to override other styles
+	&:last-of-type .sapMIBar {
 		box-shadow: @_sap_m_Dialog_InformationHeaderShadow;
 	}
 }
@@ -493,8 +486,4 @@ html[data-sap-ui-animation='off'] .sapMDialog {
 .sapMDialog .sapMDialogFirstFE,
 .sapMDialog .sapMDialogLastFE {
 	font-size: 0;
-}
-
-.sapMDialog.sapMDialogWithSubHeader .sapMDialogTitle .sapMIBar {
-	box-shadow: none;
 }

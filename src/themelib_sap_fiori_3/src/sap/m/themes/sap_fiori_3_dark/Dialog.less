@@ -9,8 +9,7 @@
 
 @_sap_m_Dialog_VerticalMargin: 3%;
 @_sap_m_Dialog_BarHeight: 2.75rem;
-@_sap_m_Dialog_SubHeaderHeight: 2.75rem;
-
+@_sap_m_Dialog_SubHeaderCompactHeight: 2.25rem;
 
 @_sap_m_Dialog_NoStateHeaderShadow: @sapUiShadowHeader;
 @_sap_m_Dialog_SuccessHeaderShadow: inset 0 -0.0625rem @sapUiSuccessBorder, @sapUiShadowHeader;
@@ -21,9 +20,10 @@
 // This parameter is used in sap.m.Select. TODO: remove it when it is removed from there.
 @_sap_m_Dialog_HeaderShadowColor: darken(@sapUiGroupContentBackground, 8);
 
-.sapMDialog.sapMPopup-CTX > header .sapMHeader-CTX,
-.sapMDialog.sapMPopup-CTX > header .sapMSubHeader-CTX {
-	background-color: @sapUiGroupContentBackground;
+.sapMDialogSubHeader .sapMIBar {
+	height: 100%;
+	padding-bottom: 0.25rem;
+	box-sizing: border-box;
 }
 
 .sapMDialog > header.sapMDialogTitle .sapMDialogIcon.sapUiIcon {
