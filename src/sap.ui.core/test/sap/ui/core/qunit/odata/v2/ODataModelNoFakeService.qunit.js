@@ -957,7 +957,7 @@ sap.ui.define([
 			/*mLocalGetEntities*/ {}, oResponse, "normalizedCannonicalPath",
 			/*sDeepPath*/"functionTarget", /*sKey*/ undefined, oEntityType && "isFunction");
 		}
-		oModelMock.expects("_getEntity").withExactArgs(sRequestKey). returns({__metadata : {}});
+		oModelMock.expects("_getEntity").withExactArgs(sRequestKey).returns({__metadata : {}});
 		oModelMock.expects("_removeEntity").withExactArgs(sRequestKey).never();
 		oModelMock.expects("_parseResponse").withExactArgs(oResponse, oRequest,
 			/*mLocalGetEntities*/ {}, /*mLocalChangeEntities*/ {});
@@ -1235,7 +1235,7 @@ sap.ui.define([
 }].forEach(function (oFixture, i) {
 	QUnit.test("_processSuccess for createEntry; " + i, function (assert) {
 		var oContext = {
-				bCreated : oFixture.created,
+				isTransient : function () {},
 				setUpdated : function () {}
 			},
 			oModel = {
@@ -1286,6 +1286,7 @@ sap.ui.define([
 		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oResponse.data))
 			.returns(oFixture.responseEntityKey);
 		oModelMock.expects("getContext").withExactArgs("/key('id-0-0')").returns(oContext);
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(oFixture.created);
 		oModelMock.expects("_updateContext")
 			.withExactArgs(sinon.match.same(oContext), "/" + oFixture.responseEntityKey,
 				oFixture.resultDeepPath);

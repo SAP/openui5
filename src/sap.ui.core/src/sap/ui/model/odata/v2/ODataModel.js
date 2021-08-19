@@ -4203,7 +4203,7 @@ sap.ui.define([
 						// rewrite context for new path
 						var oContext = this.getContext("/" + oRequest.key);
 						sDeepPath = oRequest.deepPath;
-						if (oContext.bCreated && sDeepPath.endsWith(")")) {
+						if (oContext.isTransient() && sDeepPath.endsWith(")")) {
 							oRequest.deepPath = sDeepPath.slice(0, sDeepPath.lastIndexOf("("))
 								+ sKey.slice(sKey.indexOf("("));
 						}
