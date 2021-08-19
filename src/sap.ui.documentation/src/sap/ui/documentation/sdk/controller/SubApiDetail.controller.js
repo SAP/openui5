@@ -166,7 +166,7 @@ sap.ui.define([
 					setTimeout(function () {
 
 						if (this._sEntityType) {
-							this._scrollToEntity(this._sEntityType, this._sEntityId);
+							this.scrollToEntity(this._sEntityType, this._sEntityId);
 						}
 
 						// Add listener's with a slight delay so they don't break scroll to entity
@@ -244,33 +244,12 @@ sap.ui.define([
 
 			onJSDocLinkClick: function (oEvent) {
 				var oClassList = oEvent.target.classList,
-					bJSDocLink = oClassList.contains("jsdoclink"),
-					bExternalLink = oClassList.contains("sapUISDKExternalLink"),
-					sLinkTarget = decodeURIComponent(oEvent.target.getAttribute("data-target")),
-					sEntityType;
-
-				// Not a JSDocLink - we do nothing
-				if (!bJSDocLink && !bExternalLink) {
-					return;
-				}
+					bExternalLink = oClassList.contains("sapUISDKExternalLink");
 
 				if (bExternalLink) {
 					this.onDisclaimerLinkPress(oEvent);
 					return;
 				}
-
-				if (oClassList.contains("scrollToMethod")) {
-					sEntityType = "methods";
-				} else if (oClassList.contains("scrollToEvent")) {
-					sEntityType = "events";
-				} else if (oClassList.contains("scrollToAnnotation")) {
-					sEntityType = "annotations";
-				} else {
-					// We do not scroll
-					return;
-				}
-
-				this._scrollToEntity(sEntityType, sLinkTarget);
 			},
 
 			/* =========================================================== */
@@ -303,19 +282,7 @@ sap.ui.define([
 				}
 			},
 
-			scrollToMethod: function (oEvent) {
-				this._scrollToEntity("methods", oEvent.getSource().getText());
-			},
-
-			scrollToEvent: function (oEvent) {
-				this._scrollToEntity("events", oEvent.getSource().getText());
-			},
-
-			scrollToAnnotation: function (oEvent) {
-				this._scrollToEntity("annotations", oEvent.getSource().getText());
-			},
-
-			_scrollToEntity: function (sSectionId, sSubSectionTitle) {
+			scrollToEntity: function (sSectionId, sSubSectionTitle) {
 
 				var aFilteredSubSections,
 					aSubSections,
@@ -677,7 +644,7 @@ sap.ui.define([
 			},
 
 			onAnnotationsLinkPress: function () {
-				this._scrollToEntity("annotations", "Summary");
+				this.scrollToEntity("annotations", "Summary");
 			},
 
 			backToSearch: function () {
