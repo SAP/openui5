@@ -56,7 +56,7 @@ sap.ui.define([
 								|| (oModifier.getControlType(oField) === "sap.m.Title")
 								|| (oModifier.getControlType(oField) === "sap.m.Toolbar")
 								|| (oModifier.getControlType(oField) === "sap.m.OverflowToolbar")) {
-								return undefined;
+								return true;
 							}
 							oModifier.setVisible(oField, true);
 						}
