@@ -207,16 +207,17 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype._refresh = function(bForceUpdate, mChangedEntities) {
-		var that = this, oData, sKey, oStoredEntry, bChangeDetected = false,
+		var oContext, sContextPath, oData, sKey, oStoredEntry,
+			bChangeDetected = false,
 			mParameters = this.mParameters,
-			bCreatedRelative = this.isRelative() && this.oContext && this.oContext.bCreated,
+			bRelativeAndTransient = this.isRelative()
+				&& this.oContext && this.oContext.isTransient && this.oContext.isTransient(),
 			sResolvedPath = this.getResolvedPath(),
-			sContextPath;
+			that = this;
 
-		if (this.bInitial || bCreatedRelative) {
+		if (this.bInitial || bRelativeAndTransient) {
 			return;
 		}
-
 		if (mChangedEntities) {
 			//get entry from model. If entry exists get key for update bindings
 			oStoredEntry = this.oModel._getObject(this.sPath, this.oContext);
@@ -239,19 +240,20 @@ sap.ui.define([
 				mParameters = extend({},this.mParameters);
 				mParameters.groupId = this.sRefreshGroupId;
 			}
-			var oContext = this.oModel.createBindingContext(this.sPath, this.oContext, mParameters, function(oContext) {
-				if (that.bCreatePreliminaryContext && oContext && that.oElementContext) {
+			oContext = this.oModel.createBindingContext(this.sPath, this.oContext, mParameters,
+					function (oNewContext) {
+				if (that.bCreatePreliminaryContext && oNewContext && that.oElementContext) {
 					that.oElementContext.setPreliminary(false);
-					that.oModel._updateContext(that.oElementContext, oContext.getPath());
+					that.oModel._updateContext(that.oElementContext, oNewContext.getPath());
 					that._fireChange({ reason: ChangeReason.Context }, false, true);
-				} else if (Context.hasChanged(oContext, that.oElementContext) || bForceUpdate) {
-					that.oElementContext = oContext;
+				} else if (Context.hasChanged(oNewContext, that.oElementContext) || bForceUpdate) {
+					that.oElementContext = oNewContext;
 					that._fireChange({ reason: ChangeReason.Context }, bForceUpdate);
 				}
 				if (that.oElementContext) {
 					oData = that.oElementContext.getObject(that.mParameters);
 				}
-				//register datareceived call as  callAfterUpdate
+				//register data received call as callAfterUpdate
 				if (sResolvedPath) {
 					that.oModel.callAfterUpdate(function() {
 						that.fireDataReceived({data: oData});
