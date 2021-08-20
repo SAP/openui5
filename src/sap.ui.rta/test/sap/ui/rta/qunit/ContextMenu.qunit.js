@@ -36,50 +36,50 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 	var oComp;
 
+	jQuery("<div></div>", {
+		id: "content"
+	}).css({
+		width: "600px",
+		height: "600px",
+		position: "fixed",
+		right: "0",
+		bottom: "0",
+		top: "auto"
+	}).appendTo(jQuery("body"));
+
+	RtaQunitUtils.renderTestAppAtAsync("content")
+		.then(function(oCompCont) {
+			oComp = oCompCont.getComponentInstance();
+			QUnit.start();
+		});
+
 	QUnit.module("Given RTA is started...", {
 		before: function(assert) {
-			jQuery("<div></div>", {
-				id: "content"
-			}).css({
-				width: "600px",
-				height: "600px",
-				position: "fixed",
-				right: "0",
-				bottom: "0",
-				top: "auto"
-			}).appendTo(jQuery("body"));
+			var fnDone = assert.async();
+			this.oPage = sap.ui.getCore().byId("Comp1---idMain1--mainPage");
+			this.oSmartForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
+			this.oGroup = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument");
+			this.oBoundGroupElement = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
+			this.oAnotherBoundGroupElement = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.Name");
+			this.oUnBoundGroupElement = sap.ui.getCore().byId("Comp1---idMain1--Victim");
+			this.oMultipleFieldTwoBoundGroupElements = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
+			this.oMultipleBoundFieldGroupElement = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
+			this.oFieldInGroupWithoutStableId = sap.ui.getCore().byId("Comp1---idMain1--FieldInGroupWithoutStableId");
+			this.oSimpleFormWithTitles = sap.ui.getCore().byId("Comp1---idMain1--SimpleForm");
 
-			return RtaQunitUtils.renderTestAppAtAsync("content")
-			.then(function(oCompCont) {
-				oComp = oCompCont.getComponentInstance();
-			})
-			.then(function() {
-				var fnDone = assert.async();
-				this.oPage = sap.ui.getCore().byId("Comp1---idMain1--mainPage");
-				this.oSmartForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
-				this.oGroup = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument");
-				this.oBoundGroupElement = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
-				this.oAnotherBoundGroupElement = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.Name");
-				this.oUnBoundGroupElement = sap.ui.getCore().byId("Comp1---idMain1--Victim");
-				this.oMultipleFieldTwoBoundGroupElements = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
-				this.oMultipleBoundFieldGroupElement = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
-				this.oFieldInGroupWithoutStableId = sap.ui.getCore().byId("Comp1---idMain1--FieldInGroupWithoutStableId");
-				this.oSimpleFormWithTitles = sap.ui.getCore().byId("Comp1---idMain1--SimpleForm");
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp.getAggregation("rootControl"),
+				showToolbars: false
+			});
 
-				this.oRta = new RuntimeAuthoring({
-					rootControl: oComp.getAggregation("rootControl"),
-					showToolbars: false
-				});
-
-				this.oRta.start().then(function() {
-					// wait for Binding Context of the Group before starting the Tests
-					// The Context-Menu entry for adding an element needs the Binding Context to determine entries
-					if (!this.oGroup.getBindingContext()) {
-						this.oGroup.attachModelContextChange(fnDone);
-					} else {
-						fnDone();
-					}
-				}.bind(this));
+			this.oRta.start().then(function() {
+				// wait for Binding Context of the Group before starting the Tests
+				// The Context-Menu entry for adding an element needs the Binding Context to determine entries
+				if (!this.oGroup.getBindingContext()) {
+					this.oGroup.attachModelContextChange(fnDone);
+				} else {
+					fnDone();
+				}
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -517,7 +517,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA is started for Object Page...", {
-		beforeEach: function() {
+		before: function() {
 			// View
 			// 	Page
 			// 		ObjectPageLayout
@@ -526,14 +526,20 @@ sap.ui.define([
 			//					Button
 			//			ObjectPageSection - invisible
 			//			ObjectPageSection - visible
-
+			//				ObjectPageSubSection
+			//					Button
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oComp);
 
 			var oEmbeddedView = sap.ui.getCore().byId("Comp1---idMain1");
 
 			var oSubSection = new ObjectPageSubSection({
 				id: oEmbeddedView.createId("subsection1"),
-				blocks: [new Button({text: "abc"})]
+				blocks: [new Button({text: "ButtonSubsection1"})]
+			});
+
+			var oSubSection2 = new ObjectPageSubSection({
+				id: oEmbeddedView.createId("subsection2"),
+				blocks: [new Button({text: "ButtonSubsection2"})]
 			});
 
 			this.oObjectPageSection1 = new ObjectPageSection({
@@ -552,7 +558,8 @@ sap.ui.define([
 			var oObjectPageSection3 = new ObjectPageSection({
 				id: oEmbeddedView.createId("section3"),
 				title: "Section_3",
-				visible: true
+				visible: true,
+				subSections: [oSubSection2]
 			});
 
 			var oEmbeddedPage = sap.ui.getCore().byId("Comp1---idMain1--mainPage");
@@ -575,9 +582,10 @@ sap.ui.define([
 
 			return this.oRta.start();
 		},
-		afterEach: function() {
+		after: function() {
 			this.oObjectPageLayout.destroy();
 			this.oRta.destroy();
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when context menu (context menu) is opened on ObjectPageSection", function(assert) {
@@ -595,6 +603,35 @@ sap.ui.define([
 					assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "rename section is enabled");
 					assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add section is available");
 					assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), true, "add section is enabled");
+					assert.equal(oContextMenuControl.getButtons()[1].getText(), "Add: Section", "add section has the correct text");
+					assert.equal(oContextMenuControl.getButtons()[2].data("id"), "CTX_REMOVE", "remove section is available");
+					assert.equal(oContextMenuControl.getButtons()[2].getEnabled(), true, "we can remove a section");
+					assert.equal(oContextMenuControl.getButtons()[3].data("id"), "CTX_CUT", "cut sections available");
+					assert.equal(oContextMenuControl.getButtons()[3].getEnabled(), true, "cut is enabled");
+					assert.equal(oContextMenuControl.getButtons()[4].data("id"), "CTX_PASTE", "paste is available");
+					assert.equal(oContextMenuControl.getButtons()[4].getEnabled(), false, "we cannot paste a section");
+				} else {
+					assert.ok(false, sText);
+				}
+			}.bind(this));
+		});
+
+		QUnit.test("when context menu (context menu) is opened on ObjectPageSection on the anchor bar", function(assert) {
+			var oOverlay = OverlayRegistry.getOverlay(this.oObjectPageLayout.getAggregation("_anchorBar").getContent()[0]);
+			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
+				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				var sText = "";
+				oContextMenuControl.getButtons().forEach(function(oButton) {
+					sText = sText + " - " + oButton.data("id");
+				});
+				assert.ok(oContextMenuControl.isPopupOpen(true), "then Menu gets opened");
+				if (oContextMenuControl.getButtons().length === 5) {
+					assert.equal(oContextMenuControl.getButtons().length, 5, " and 5 Menu Buttons are available");
+					assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "rename section is available");
+					assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "rename section is enabled");
+					assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add section is available");
+					assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), true, "add section is enabled");
+					assert.equal(oContextMenuControl.getButtons()[1].getText(), "Add: Section", "add section has the correct text");
 					assert.equal(oContextMenuControl.getButtons()[2].data("id"), "CTX_REMOVE", "remove section is available");
 					assert.equal(oContextMenuControl.getButtons()[2].getEnabled(), true, "we can remove a section");
 					assert.equal(oContextMenuControl.getButtons()[3].data("id"), "CTX_CUT", "cut sections available");
@@ -610,6 +647,8 @@ sap.ui.define([
 
 	QUnit.module("Given RTA is started for Object Page without stable ids...", {
 		beforeEach: function() {
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oComp);
+
 			var oSubSection = new ObjectPageSubSection({
 				id: "subsection1",
 				blocks: [new Button({text: "abc"})]
@@ -669,7 +708,7 @@ sap.ui.define([
 				if (oContextMenuControl.getButtons().length === 2) {
 					assert.equal(oContextMenuControl.getButtons().length, 2, " and 2 Menu Buttons are available");
 					assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "rename section is available");
-					assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "add section is enabled");
+					assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "rename section is enabled");
 					assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_REMOVE", "remove section is available");
 					assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), true, "we can remove a section");
 				} else {

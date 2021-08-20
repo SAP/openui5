@@ -49,29 +49,19 @@ sap.ui.define([
 			var iExpectedRank = 20;
 			var sExpectedIcon = "sap-icon://add";
 			var sAggregationName = "DummyAggregation";
+			var oDummyOverlay = "DummyOverlay";
 
-			var oDummyOverlay = {
-				getParentElementOverlay: function() {
-					return {
-						getDesignTimeMetadata: function() {
-							return {
-								getAggregationDisplayName: function() {
-									return {
-										singular: sExpectedContextMenuText
-									};
-								}
-							};
-						}
-					};
-				},
-				getParentAggregationOverlay: function() {
-					return {
-						getAggregationName: function() {
-							return sAggregationName;
-						}
-					};
+			sandbox.stub(AdditionalElementsUtils, "getParents").returns({
+				responsibleElementOverlay: {
+					getParentAggregationOverlay: function() {
+						return {
+							getAggregationName: function() {
+								return sAggregationName;
+							}
+						};
+					}
 				}
-			};
+			});
 
 			var aElementOverlays = [oDummyOverlay];
 			var aSelectedOverlays = ["DummySelectedOverlay"];
@@ -476,16 +466,20 @@ sap.ui.define([
 
 		QUnit.test("when there are no elements available but extension fields is allowed - sibling case", function(assert) {
 			var sExpectedContextMenuText = "Expected Text";
+			var oDummyOverlay = "DummyOverlay";
 
-			var oDummyOverlay = {
-				getParentAggregationOverlay: function() {
-					return {
-						getAggregationName: function() {
-							return "dummyAggregation";
-						}
-					};
-				}
-			};
+			sandbox.stub(AdditionalElementsUtils, "getParents").returns({
+				responsibleElementOverlay: {
+					getParentAggregationOverlay: function() {
+						return {
+							getAggregationName: function() {
+								return "dummyAggregation";
+							}
+						};
+					}
+				},
+				parent: "dummyParent"
+			});
 
 			var aElementOverlays = [oDummyOverlay];
 			var aSelectedOverlays = ["DummySelectedOverlay"];
@@ -498,10 +492,6 @@ sap.ui.define([
 			});
 			sandbox.stub(this.oPlugin, "isEnabled").callsFake(function(bIsSibling) {
 				return bIsSibling;
-			});
-
-			sandbox.stub(AdditionalElementsUtils, "getParents").returns({
-				parent: "dummyParent"
 			});
 
 			sandbox.stub(ActionExtractor, "getActionsOrUndef").returns({

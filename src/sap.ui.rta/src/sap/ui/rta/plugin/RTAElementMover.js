@@ -158,18 +158,18 @@ function(
 			});
 	}
 
-	function fnHasMoveAction(oAggregationOverlay, oElement, oRelevantContainer) {
+	function fnHasMoveAction(oAggregationOverlay, oElement, oRelevantContainer, oPlugin) {
 		var oAggregationDTMetadata = oAggregationOverlay.getDesignTimeMetadata();
 		var oMoveAction = oAggregationDTMetadata.getAction("move", oElement);
 		if (!oMoveAction) {
 			return Promise.resolve(false);
 		}
 		// moveChangeHandler information is always located on the relevant container
-		return this.oBasePlugin.hasChangeHandler(oMoveAction.changeType, oRelevantContainer);
+		return oPlugin.hasChangeHandler(oMoveAction.changeType, oRelevantContainer);
 	}
 
 	/**
-	 * @param	{sap.ui.dt.Overlay} oOverlay overlay object
+	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @return {sap.ui.dt.DesignTimeMetadata} oDesignTimeMetadata
 	 * @private
 	 */
@@ -204,11 +204,14 @@ function(
 
 	/**
 	 * Checks drop ability for aggregation overlays
-	 * @param  {sap.ui.dt.Overlay} oAggregationOverlay aggregation overlay object
-	 * @return {Promise.<boolean>} Promise with true value if aggregation overlay is droppable or false value if not.
+	 * @param {sap.ui.dt.Overlay} oAggregationOverlay Aggregation overlay object
+	 * @param {sap.ui.dt.ElementOverlay} [oOverlay] Overlay being moved/added
+	 * @param {boolean} [bOverlayNotInDom] Flag defining if overlay is not in DOM
+	 * @param {sap.ui.rta.Plugin} [oPlugin] RTA plugin calling this method, if not the RTAElementMover itself
+	 * @return {Promise.<boolean>} Promise with true value if overlay can be added to the aggregation overlay or false value if not.
 	 * @override
 	 */
-	RTAElementMover.prototype.checkTargetZone = function(oAggregationOverlay, oOverlay, bOverlayNotInDom) {
+	RTAElementMover.prototype.checkTargetZone = function(oAggregationOverlay, oOverlay, bOverlayNotInDom, oPlugin) {
 		var oMovedOverlay = oOverlay || this.getMovedOverlay();
 		return ElementMover.prototype.checkTargetZone.call(this, oAggregationOverlay, oMovedOverlay, bOverlayNotInDom)
 			.then(function(bTargetZone) {
@@ -232,11 +235,13 @@ function(
 				var vTargetRelevantContainerAfterMove = MetadataPropagationUtil.getRelevantContainerForPropagation(oAggregationDtMetadata.getData(), oMovedElement);
 				vTargetRelevantContainerAfterMove = vTargetRelevantContainerAfterMove || oTargetElement;
 
+				oPlugin = oPlugin || this.oBasePlugin;
+
 				// check for same relevantContainer
 				if (
 					!oMovedRelevantContainer
 					|| !vTargetRelevantContainerAfterMove
-					|| !this.oBasePlugin.hasStableId(oTargetOverlay)
+					|| !oPlugin.hasStableId(oTargetOverlay)
 					|| oMovedRelevantContainer !== vTargetRelevantContainerAfterMove
 				) {
 					return false;
@@ -251,7 +256,7 @@ function(
 				}
 
 				// check if movedOverlay is movable into the target aggregation
-				return fnHasMoveAction.call(this, oAggregationOverlay, oMovedElement, vTargetRelevantContainerAfterMove);
+				return fnHasMoveAction.call(this, oAggregationOverlay, oMovedElement, vTargetRelevantContainerAfterMove, oPlugin);
 			}.bind(this));
 	};
 

@@ -791,7 +791,8 @@ sap.ui.define([
 					},
 					qunit: {
 						reorder: false
-					}
+					},
+					autostart: false
 				},
 				"integration/EndToEnd": {
 					group: "Integration",
