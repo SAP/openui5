@@ -1230,7 +1230,7 @@ sap.ui.define([
 
 		this._setSectionsFocusValues();
 
-		if (this._preserveHeaderStateOnScroll()) {
+		if (this.getPreserveHeaderStateOnScroll()) {
 			this._overridePreserveHeaderStateOnScroll();
 		}
 
@@ -3011,7 +3011,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (this._preserveHeaderStateOnScroll()) {
+		if (this.getPreserveHeaderStateOnScroll()) {
 			this._overridePreserveHeaderStateOnScroll();
 		}
 
@@ -4363,10 +4363,6 @@ sap.ui.define([
 				&& this.getAlwaysShowContentHeader();
 	};
 
-	ObjectPageLayout.prototype._shouldOverridePreserveHeaderStateOnScroll = function () {
-		return !Device.system.desktop && this._headerBiggerThanAllowedToBeFixed();
-	};
-
 	ObjectPageLayout.prototype._headerBiggerThanAllowedToBeFixed = function () {
 		var iControlHeight = this._getOwnHeight();
 
@@ -4492,12 +4488,14 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._overridePreserveHeaderStateOnScroll = function () {
-		if (!this._shouldOverridePreserveHeaderStateOnScroll()) {
-			this._bHeaderBiggerThanAllowedHeight = false;
+		var bOldValue = this._bHeaderBiggerThanAllowedHeight, bChange;
+
+		this._bHeaderBiggerThanAllowedHeight = this._headerBiggerThanAllowedToBeFixed();
+		bChange = bOldValue !== this._bHeaderBiggerThanAllowedHeight;
+
+		if (!this._bHeaderBiggerThanAllowedHeight || !bChange) {
 			return;
 		}
-
-		this._bHeaderBiggerThanAllowedHeight = true;
 
 		//move the header to content
 		if (this._bHeaderExpanded) {
