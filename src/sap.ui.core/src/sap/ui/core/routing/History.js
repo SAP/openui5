@@ -222,7 +222,13 @@ sap.ui.define([
 		 * if you go from the Unknown to a defined state and then back is pressed we can be sure that the direction is backwards.
 		 * Because the only way from unknown to known state is a new entry in the history.
 		 */
-		this.aHistory[0] = this._oHashChanger.getHash();
+		if (!this._oHashChanger._initialized && History._bUsePushState && !History.getInstance()) {
+			this._oHashChanger.attachEventOnce("hashChanged", function(oEvent) {
+				this.aHistory[0] = oEvent.getParameter("newHash");
+			}.bind(this));
+		} else {
+			this.aHistory[0] = this._oHashChanger.getHash();
+		}
 	};
 
 	/**
