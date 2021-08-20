@@ -99,6 +99,14 @@ function (
 			assert.equal(oCustomData.getValue(), '\\{\"value\":\"revert\"\\}', "the value is the standard 'true'");
 		});
 
+		QUnit.test("addAppliedCustomData with saving undefined revertData", function (assert) {
+			this.oChange.setRevertData(undefined);
+			FlexCustomData.addAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag, true);
+			var oCustomData = getCustomData(this.oControl, createCustomDataKey(this.oChange, sAppliedKey));
+			assert.ok(oCustomData, "the custom data was added");
+			assert.strictEqual(oCustomData.getValue(), "true", "the value is the standard 'true'");
+		});
+
 		QUnit.test("addFailedCustomData", function (assert) {
 			FlexCustomData.addFailedCustomData(this.oControl, this.oChange, this.mPropertyBag, "my.identifier");
 			var oCustomData = getCustomData(this.oControl, "my.identifier.a1");
