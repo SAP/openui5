@@ -279,51 +279,42 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.setContext = function(oContext) {
-		var that = this,
-			oBindingContext,
-			oData,
-			sResolvedPath,
-			bCreated = oContext && oContext.bCreated,
-			bPreliminary = oContext && oContext.isPreliminary(),
+		var oBindingContext, sContextPath, oData, bReloadNeeded, sResolvedPath,
 			bForceUpdate = oContext && oContext.isRefreshForced(),
+			bPreliminary = oContext && oContext.isPreliminary(),
+			bTransient = oContext && oContext.isTransient && oContext.isTransient(),
 			bUpdated = oContext && oContext.isUpdated(),
-			sContextPath, bReloadNeeded;
+			that = this;
 
 		// If binding is initial or not a relative binding, nothing to do here
 		if (this.bInitial || !this.isRelative()) {
 			return;
 		}
-
 		// If context is preliminary and usePreliminary is not set, exit here
 		if (bPreliminary && !this.bUsePreliminaryContext) {
 			return;
 		}
-
 		if (bUpdated && this.bUsePreliminaryContext) {
 			this._fireChange({ reason: ChangeReason.Context });
+
 			return;
 		}
-
 		if (Context.hasChanged(this.oContext, oContext)) {
-
-
 			this.oContext = oContext;
-
 			sResolvedPath = this.getResolvedPath();
-
 			// If path doesn't resolve or parent context is created, reset current context
-			if (!sResolvedPath || bCreated) {
+			if (!sResolvedPath || bTransient) {
 				if (this.oElementContext !== null) {
 					this.oElementContext = null;
 					this._fireChange({ reason: ChangeReason.Context });
 				}
+
 				return;
 			}
-
 			// Create new binding context and fire change
 			oData = this.oModel._getObject(this.sPath, this.oContext);
-			bReloadNeeded =  bForceUpdate || this.oModel._isReloadNeeded(sResolvedPath, this.mParameters);
-
+			bReloadNeeded =  bForceUpdate
+				|| this.oModel._isReloadNeeded(sResolvedPath, this.mParameters);
 			if (sResolvedPath && bReloadNeeded) {
 				this.fireDataRequested();
 				this.bPendingRequest = true;
@@ -342,7 +333,7 @@ sap.ui.define([
 					if (that.oElementContext) {
 						oData = that.oElementContext.getObject(that.mParameters);
 					}
-					//register datareceived call as  callAfterUpdate
+					//register data received call as callAfterUpdate
 					that.oModel.callAfterUpdate(function() {
 						that.fireDataReceived({data: oData});
 					});

@@ -436,31 +436,27 @@ sap.ui.define([
 	QUnit.test("getBoundContext: oElementContext is returned", function (assert) {
 		var oBinding = {
 				oElementContext : "~elementContext"
-			}, oBoundContext;
+			};
 
 		// code under test
-		oBoundContext = ODataContextBinding.prototype.getBoundContext.call(oBinding);
-
-		assert.strictEqual(oBoundContext, "~elementContext");
+		assert.strictEqual(ODataContextBinding.prototype.getBoundContext.call(oBinding),
+			"~elementContext");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("setContext: unresolved context", function (assert) {
 		var oBinding = {
 				oContext : "~context",
+				oElementContext : "~oElementContext",
 				_fireChange : function () {},
 				getResolvedPath : function () {},
-				isRelative : function () {},
-				oElementContext : "~oElementContext"
-			},
-			oBoundContext;
+				isRelative : function () {}
+			};
 
 		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
-
 		this.mock(BaseContext).expects("hasChanged")
 			.withExactArgs("~context", undefined)
 			.returns(true);
-
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
 		this.mock(oBinding).expects("_fireChange")
 			.withExactArgs({ reason: ChangeReason.Context });
@@ -468,16 +464,47 @@ sap.ui.define([
 		// code under test
 		ODataContextBinding.prototype.setContext.call(oBinding);
 
-		assert.strictEqual(oBinding.oElementContext, null);
-
-		// code under test - getBoundContext returns V2 Context
-		oBoundContext = ODataContextBinding.prototype.getBoundContext.call(oBinding);
-
-		assert.strictEqual(oBoundContext, null);
+		assert.strictEqual(ODataContextBinding.prototype.getBoundContext.call(oBinding), null);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setContext: bound context cannot be determined synchronously", function (assert) {
+	QUnit.test("setContext: context is transient", function (assert) {
+		var oBinding = {
+				oContext : "~context",
+				oElementContext : "~oOldElementContext",
+				_fireChange : function () {},
+				getResolvedPath : function () {},
+				isRelative : function () {}
+			},
+			oNewContext = {
+				isPreliminary : function () {},
+				isRefreshForced : function () {},
+				isTransient : function () {},
+				isUpdated : function () {}
+			};
+
+		this.mock(oNewContext).expects("isRefreshForced").withExactArgs().returns(false);
+		this.mock(oNewContext).expects("isPreliminary").withExactArgs().returns(false);
+		this.mock(oNewContext).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oNewContext).expects("isUpdated").withExactArgs().returns(false);
+		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
+		this.mock(BaseContext).expects("hasChanged")
+			.withExactArgs("~context", sinon.match.same(oNewContext))
+			.returns(true);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason: ChangeReason.Context});
+
+		// code under test
+		ODataContextBinding.prototype.setContext.call(oBinding, oNewContext);
+
+		assert.strictEqual(ODataContextBinding.prototype.getBoundContext.call(oBinding), null);
+	});
+
+	//*********************************************************************************************
+[true, false].forEach(function (bV2Context) {
+	var sTitle = "setContext: bound context cannot be determined synchronously, use V2 context: "
+			+ bV2Context;
+	QUnit.test(sTitle, function (assert) {
 		var oModel = {
 				_getObject : function () {},
 				_isReloadNeeded : function () {},
@@ -485,23 +512,26 @@ sap.ui.define([
 			},
 			oBinding = {
 				oContext : "~context",
+				oElementContext : "~oOldElementContext",
 				oModel : oModel,
 				mParameters : "~parameters",
 				sPath : "~path",
 				_fireChange : function () {},
 				getResolvedPath : function () {},
-				isRelative : function () {},
-				oElementContext : "~oOldElementContext"
+				isRelative : function () {}
 			},
-			oBoundContext,
 			oNewContext = {
 				isPreliminary : function () {},
 				isRefreshForced : function () {},
 				isUpdated : function () {}
 			};
 
-		this.mock(oNewContext).expects("isPreliminary").withExactArgs().returns(false);
 		this.mock(oNewContext).expects("isRefreshForced").withExactArgs().returns(false);
+		this.mock(oNewContext).expects("isPreliminary").withExactArgs().returns(false);
+		if (bV2Context) {
+			oNewContext.isTransient = function () {};
+			this.mock(oNewContext).expects("isTransient").withExactArgs().returns(undefined);
+		}
 		this.mock(oNewContext).expects("isUpdated").withExactArgs().returns(false);
 		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
 		this.mock(BaseContext).expects("hasChanged")
@@ -509,10 +539,11 @@ sap.ui.define([
 			.returns(true);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
 		this.mock(oModel).expects("_getObject")
-		.withExactArgs("~path", sinon.match.same(oNewContext))
-		.returns("~oData");
-		this.mock(oModel).expects("_isReloadNeeded").withExactArgs("~resolvedPath", "~parameters")
-		.returns(false);
+			.withExactArgs("~path", sinon.match.same(oNewContext))
+			.returns("~oData");
+		this.mock(oModel).expects("_isReloadNeeded")
+			.withExactArgs("~resolvedPath", "~parameters")
+			.returns(false);
 		this.mock(oModel).expects("createBindingContext")
 			.withExactArgs("~path", sinon.match.same(oNewContext), "~parameters",
 				sinon.match.func, false)
@@ -522,17 +553,15 @@ sap.ui.define([
 		// code under test
 		ODataContextBinding.prototype.setContext.call(oBinding, oNewContext);
 
-		assert.strictEqual(oBinding.oElementContext, null);
-
-		// code under test - getBoundContext returns V2 Context
-		oBoundContext = ODataContextBinding.prototype.getBoundContext.call(oBinding);
-
-		assert.strictEqual(oBoundContext, null);
+		assert.strictEqual(ODataContextBinding.prototype.getBoundContext.call(oBinding), null);
 	});
+});
 
 	//*********************************************************************************************
-	QUnit.test("setContext: bound context is created preliminary", function (assert) {
-		var oBoundContext, oExpectation,
+[true, false].forEach(function (bV2Context) {
+	QUnit.test("setContext: bound context is created preliminary, use V2 context: " + bV2Context,
+			function (assert) {
+		var oExpectation,
 			oBaseContextMock = this.mock(BaseContext),
 			oModel = {
 				_getObject : function () {},
@@ -543,13 +572,13 @@ sap.ui.define([
 			oBinding = {
 				oContext : "~context",
 				bCreatePreliminaryContext: true,
+				oElementContext : "~oOldElementContext",
 				oModel : oModel,
 				mParameters : "~parameters",
 				sPath : "~path",
 				_fireChange : function () {},
 				getResolvedPath : function () {},
-				isRelative : function () {},
-				oElementContext : "~oOldElementContext"
+				isRelative : function () {}
 			},
 			oBindingContext = {
 				setPreliminary : function () {},
@@ -562,12 +591,20 @@ sap.ui.define([
 				isRefreshForced : function () {},
 				isUpdated : function () {}
 			};
-
-		this.mock(oNewContextFunctionArgument).expects("isPreliminary").withExactArgs()
+		this.mock(oNewContextFunctionArgument).expects("isRefreshForced")
+			.withExactArgs()
 			.returns(false);
-		this.mock(oNewContextFunctionArgument).expects("isRefreshForced").withExactArgs()
+		this.mock(oNewContextFunctionArgument).expects("isPreliminary")
+			.withExactArgs()
 			.returns(false);
-		this.mock(oNewContextFunctionArgument).expects("isUpdated").withExactArgs()
+		if (bV2Context) {
+			oNewContextFunctionArgument.isTransient = function () {};
+			this.mock(oNewContextFunctionArgument).expects("isTransient")
+				.withExactArgs()
+				.returns(undefined);
+		}
+		this.mock(oNewContextFunctionArgument).expects("isUpdated")
+			.withExactArgs()
 			.returns(false);
 		oBindingMock.expects("isRelative").withExactArgs().returns(true);
 		oBaseContextMock.expects("hasChanged")
@@ -577,7 +614,8 @@ sap.ui.define([
 		oModelMock.expects("_getObject")
 			.withExactArgs("~path", sinon.match.same(oNewContextFunctionArgument))
 			.returns("~oData");
-		oModelMock.expects("_isReloadNeeded").withExactArgs("~resolvedPath", "~parameters")
+		oModelMock.expects("_isReloadNeeded")
+			.withExactArgs("~resolvedPath", "~parameters")
 			.returns(false);
 		oExpectation = oModelMock.expects("createBindingContext")
 			.withExactArgs("~path", sinon.match.same(oNewContextFunctionArgument), "~parameters",
@@ -594,29 +632,21 @@ sap.ui.define([
 		// code under test
 		ODataContextBinding.prototype.setContext.call(oBinding, oNewContextFunctionArgument);
 
-		assert.strictEqual(oBinding.oElementContext, oBindingContext);
-
-		// code under test - getBoundContext returns V2 Context
-		oBoundContext = ODataContextBinding.prototype.getBoundContext.call(oBinding);
-
-		assert.strictEqual(oBoundContext, oBindingContext);
+		assert.strictEqual(ODataContextBinding.prototype.getBoundContext.call(oBinding),
+			oBindingContext);
 
 		oBinding.bCreatePreliminaryContext = false;
 		oBaseContextMock.expects("hasChanged")
-			.withExactArgs("~oContext", sinon.match.same(oBindingContext))
+			.withExactArgs("~oV2Context", sinon.match.same(oBindingContext))
 			.returns(true);
 		oBindingMock.expects("_fireChange")
 			.withExactArgs({reason: ChangeReason.Context}, false, false);
 
+		// code under test - call callback handler with a V2 context
+		oExpectation.callArgWith(3, "~oV2Context");
 
-		// code under test - call callback handler with a different context
-		oExpectation.callArgWith(3, "~oContext");
-
-		assert.strictEqual(oBinding.oElementContext, "~oContext");
-
-		// code under test - getBoundContext returns V2 Context
-		oBoundContext = ODataContextBinding.prototype.getBoundContext.call(oBinding);
-
-		assert.strictEqual(oBoundContext, "~oContext");
+		assert.strictEqual(ODataContextBinding.prototype.getBoundContext.call(oBinding),
+			"~oV2Context");
 	});
+});
 });
