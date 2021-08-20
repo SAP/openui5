@@ -55,7 +55,8 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 			this.enableInplaceControlSelection();// see below...
 			this.oCore.attachUIUpdated(this.renderDelayed, this);
 			this.sSelectedNodeId = "";
-			this.sResourcePath = bRunsEmbedded ? sap.ui.require.toUrl("") + "/" : (window.top.testfwk.sResourceRoot || "../");
+			// Note: window.top is assumed to refer to the app window in embedded mode or to the testsuite window otherwise
+			this.sResourcePath = window.top.sap.ui.require.toUrl("") + "/";
 			this.sTestResourcePath = this.sResourcePath + "../test-resources/";
 			this.sSpaceUrl = this.sResourcePath + "sap/ui/debug/images/space.gif";
 			this.sMinusUrl = this.sResourcePath + "sap/ui/debug/images/minus.gif";
@@ -120,7 +121,9 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 		var oDomNode = this.oParentDomRef.ownerDocument.createElement("DIV");
 		oDomNode.setAttribute("id","sap-debug-controltree-" + sId);
 		var sShortType = sType.substring(sType.lastIndexOf(".") >  -1 ? sType.lastIndexOf(".") + 1 : 0);
-		oDomNode.innerHTML = "<img style='height:12px;width:12px;display:none' src='" + this.sSpaceUrl + "' align='absmiddle'><img style='height:16px;width:16px' src='" + sIcon + "' align='absmiddle'>&nbsp;<span>" + sShortType + " - " + sId + "</span>";
+		oDomNode.innerHTML = "<img src='" + this.sSpaceUrl + "' align='absmiddle'><img src='" + sIcon + "' align='absmiddle'>&nbsp;<span>" + sShortType + " - " + sId + "</span>";
+		oDomNode.firstChild.style = "height:12px;width:12px;display:none;";
+		oDomNode.firstChild.nextSibling.style = "height:16px;width:16px;";
 		oDomNode.style.overflow = "hidden";
 		oDomNode.style.whiteSpace = "nowrap";
 		oDomNode.style.textOverflow = "ellipsis";
@@ -143,7 +146,10 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 		var oDomNode = this.oParentDomRef.ownerDocument.createElement("DIV");
 		oDomNode.setAttribute("id","sap-debug-controltreelink-" + sId);
 		var sShortType = sType ? sType.substring(sType.lastIndexOf(".") >  -1 ? sType.lastIndexOf(".") + 1 : 0) : "";
-		oDomNode.innerHTML = "<img style='height:12px;width:12px;display:none' src='" + this.sSpaceUrl + "' align='absmiddle'><img style='height:12px;width:12px' src='" + this.sLinkUrl + "' align='absmiddle'>&nbsp;<span style='color:#888;border-bottom:1px dotted #888;'>" + (sShortType ? sShortType + " - " : "") + sId + "</span>";
+		oDomNode.innerHTML = "<img src='" + this.sSpaceUrl + "' align='absmiddle'><img src='" + this.sLinkUrl + "' align='absmiddle'>&nbsp;<span>" + (sShortType ? sShortType + " - " : "") + sId + "</span>";
+		oDomNode.firstChild.style = "height:12px;width:12px;display:none;";
+		oDomNode.firstChild.nextSibling.style = "height:12px;width:12px;";
+		oDomNode.lastChild.style = "color:#888;border-bottom:1px dotted #888;";
 		oDomNode.style.overflow = "hidden";
 		oDomNode.style.whiteSpace = "nowrap";
 		oDomNode.style.textOverflow = "ellipsis";
