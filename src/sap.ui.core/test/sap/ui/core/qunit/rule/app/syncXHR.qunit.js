@@ -63,31 +63,6 @@ sap.ui.define([
 		expectedNumberOfIssues: fnIncrement(1)
 	});
 
-	QUnit.module("Component.prototype.getEventBus", {
-		beforeEach: function() {
-			var TestComp = Component.extend("test.Component", {
-				metadata: {
-					"properties" : {
-						"test" : "string"
-					},
-					"my.config" : {
-						"property1" : "value1"
-					}
-				}
-			});
-
-			new TestComp().getEventBus();
-		}
-	});
-
-	testRule({
-		executionScopeType: "global",
-		libName: "sap.ui.core",
-		ruleId: "globalSyncXHR",
-		async: true,
-		expectedNumberOfIssues: fnIncrement(1)
-	});
-
 	QUnit.module("IconPool.getIconInfo", {
 		beforeEach: function() {
 			this.jQueryAjaxStub = sinon.stub(jQuery, "ajax").returns();
