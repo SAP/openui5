@@ -3,8 +3,11 @@
  */
 
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/CustomData" // needs to be preloaded
-], function() {
+], function(
+	Log
+) {
 	"use strict";
 
 	/**
@@ -57,7 +60,12 @@ sap.ui.define([
 	 */
 	FlexCustomData.getParsedRevertDataFromCustomData = function(oControl, oChange, oModifier) {
 		var sCustomDataValue = this.getAppliedCustomDataValue(oControl, oChange, oModifier);
-		return sCustomDataValue && JSON.parse(sCustomDataValue);
+		try {
+			return sCustomDataValue && JSON.parse(sCustomDataValue);
+		} catch (oError) {
+			Log.error("Could not parse revert data from custom data", sCustomDataValue);
+			return undefined;
+		}
 	};
 
 	/**
@@ -100,8 +108,9 @@ sap.ui.define([
 	FlexCustomData.addAppliedCustomData = function(oControl, oChange, mPropertyBag, bSaveRevertData) {
 		var sCustomDataValue;
 		var sCustomDataKey = this._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey);
-		if (bSaveRevertData) {
-			sCustomDataValue = JSON.stringify(oChange.getRevertData());
+		var vRevertData = oChange.getRevertData();
+		if (bSaveRevertData && vRevertData !== undefined) {
+			sCustomDataValue = JSON.stringify(vRevertData);
 		} else {
 			sCustomDataValue = "true";
 		}
