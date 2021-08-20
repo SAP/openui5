@@ -196,7 +196,7 @@ sap.ui.define([
 
         var done = assert.async();
 
-        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+        var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
         var oModel = new JSONModel(oP13nData);
         var oPanel = new BasePanel(oPanel);
         var oResetBtn, oDialog;
