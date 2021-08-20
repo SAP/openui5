@@ -103,6 +103,16 @@ function (
 				}.bind(this));
 		});
 
+		QUnit.test("addAppliedCustomData with saving undefined revertData", function (assert) {
+			this.oChange.setRevertData(undefined);
+			return FlexCustomData.addAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag, true)
+				.then(function () {
+					var oCustomData = getCustomData(this.oControl, createCustomDataKey(this.oChange, sAppliedKey));
+					assert.ok(oCustomData, "the custom data was added");
+					assert.strictEqual(oCustomData.getValue(), "true", "the value is the standard 'true'");
+				}.bind(this));
+		});
+
 		QUnit.test("addFailedCustomData", function (assert) {
 			return FlexCustomData.addFailedCustomData(this.oControl, this.oChange, this.mPropertyBag, "my.identifier")
 				.then(function () {
