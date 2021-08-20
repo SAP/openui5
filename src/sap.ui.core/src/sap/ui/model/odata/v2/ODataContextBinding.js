@@ -71,57 +71,54 @@ sap.ui.define([
 	 * @see sap.ui.model.Binding.prototype.initialize
 	 */
 	ODataContextBinding.prototype.initialize = function() {
-		var that = this,
-			sResolvedPath,
-			bCreatedRelative = this.isRelative() && this.oContext && this.oContext.bCreated,
+		var oContext, bReloadNeeded, sResolvedPath,
 			bPreliminary = this.oContext && this.oContext.isPreliminary(),
-			bReloadNeeded;
+			bRelativeAndTransient = this.isRelative()
+				&& this.oContext && this.oContext.isTransient && this.oContext.isTransient(),
+			that = this;
 
 		// don't fire any requests if metadata is not loaded yet.
 		if (!this.oModel.oMetadata.isLoaded() || !this.bInitial) {
 			return;
 		}
-
 		this.bInitial = false;
-
 		// If context is preliminary and usePreliminary is not set, exit here
 		if (bPreliminary && !this.bUsePreliminaryContext) {
 			return;
 		}
-
 		// if path cannot be resolved or parent context is created, set element context to null
 		sResolvedPath = this.getResolvedPath();
-		if (!sResolvedPath || bCreatedRelative) {
+		if (!sResolvedPath || bRelativeAndTransient) {
 			this.oElementContext = null;
 			this._fireChange({ reason: ChangeReason.Context });
+
 			return;
 		}
-
 		// check whether a request is necessary and create binding context
 		bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, this.mParameters);
 		if (bReloadNeeded) {
 			this.fireDataRequested();
 			this.bPendingRequest = true;
 		}
-		var oContext = this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
+		oContext = this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters,
+				function (oNewContext) {
 			var oData,
-				bUpdated = oContext && oContext.isUpdated(),
-				bForceRefresh = oContext && oContext.isRefreshForced();
+				bForceRefresh = oNewContext && oNewContext.isRefreshForced(),
+				bUpdated = oNewContext && oNewContext.isUpdated();
 
-			if (that.bCreatePreliminaryContext && oContext && that.oElementContext) {
+			if (that.bCreatePreliminaryContext && oNewContext && that.oElementContext) {
 				that.oElementContext.setPreliminary(false);
-				that.oModel._updateContext(that.oElementContext, oContext.getPath());
+				that.oModel._updateContext(that.oElementContext, oNewContext.getPath());
 				that._fireChange({ reason: ChangeReason.Context }, false, true);
-			} else if (!oContext || Context.hasChanged(oContext, that.oElementContext)) {
-				that.oElementContext = oContext;
+			} else if (!oNewContext || Context.hasChanged(oNewContext, that.oElementContext)) {
+				that.oElementContext = oNewContext;
 				that._fireChange({ reason: ChangeReason.Context }, bForceRefresh, bUpdated);
 			}
-
 			if (bReloadNeeded) {
 				if (that.oElementContext) {
 					oData = that.oElementContext.getObject(that.mParameters);
 				}
-				// register datareceived call as callAfterUpdate
+				// register data received call as callAfterUpdate
 				that.oModel.callAfterUpdate(function() {
 					that.fireDataReceived({data: oData});
 				});
