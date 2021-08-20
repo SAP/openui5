@@ -4,9 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/Utils",
+	"sap/base/Log",
 	"sap/ui/core/CustomData" // needs to be preloaded
 ], function(
-	FlUtils
+	FlUtils,
+	Log
 ) {
 	"use strict";
 
@@ -75,7 +77,12 @@ sap.ui.define([
 	 */
 	FlexCustomData.sync.getParsedRevertDataFromCustomData = function(oControl, oChange) {
 		var sCustomDataValue = FlexCustomData.sync.getAppliedCustomDataValue(oControl, oChange);
-		return sCustomDataValue && JSON.parse(sCustomDataValue);
+		try {
+			return sCustomDataValue && JSON.parse(sCustomDataValue);
+		} catch (oError) {
+			Log.error("Could not parse revert data from custom data", sCustomDataValue);
+			return undefined;
+		}
 	};
 
 	/**
@@ -157,8 +164,9 @@ sap.ui.define([
 	};
 
 	function getCustomValueData(bSaveRevertData, oChange) {
-		if (bSaveRevertData) {
-			return JSON.stringify(oChange.getRevertData());
+		var vRevertData = oChange.getRevertData();
+		if (bSaveRevertData && vRevertData !== undefined) {
+			return JSON.stringify(vRevertData);
 		}
 		return "true";
 	}
