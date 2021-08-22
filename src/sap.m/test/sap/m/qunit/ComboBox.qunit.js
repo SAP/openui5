@@ -11826,11 +11826,12 @@ sap.ui.define([
 		assert.notOk(oListItem.getAriaLabelledBy().length, "The ListItem should not have an aria-labelledby.");
 	});
 
-	QUnit.test("Group header's labelledBy text", function (assert) {
+	QUnit.test("Group header's labelledBy text and aria-activedescendant reference", function (assert) {
 		var oGroupHeaderListItem, oInvisibleText,
 			oFocusDomRef = this.oComboBox.getFocusDomRef(),
 			oSeparatorItem = this.oComboBox._getList().getItems()[0],
-			oExpectedLabel = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIST_ITEM_GROUP_HEADER") + " " + oSeparatorItem.getTitle();
+			oExpectedLabel = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIST_ITEM_GROUP_HEADER") + " " + oSeparatorItem.getTitle(),
+			sExpectedActiveDescendantId;
 
 		// arrange
 		this.oComboBox.focus();
@@ -11845,9 +11846,11 @@ sap.ui.define([
 
 		oGroupHeaderListItem = this.oComboBox._getList().getItems()[0];
 		oInvisibleText = sap.ui.getCore().byId(oGroupHeaderListItem.getAriaLabelledBy()[0]);
+		sExpectedActiveDescendantId = oGroupHeaderListItem.getId();
 
 		// assert
 		assert.strictEqual(oInvisibleText.getText(), oExpectedLabel, "The correct invisible text is associated with the group item.");
+		assert.strictEqual(this.oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId, "aria-activedescendent is correctly set to the group header");
 	});
 
 	QUnit.test("Group header shown when filtering", function (assert) {
