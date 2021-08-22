@@ -160,6 +160,32 @@ function ($, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLayout, 
 		assert.equal($pinButtonDom, null, "The Dynamic Header Pin Button not rendered");
 	});
 
+	QUnit.test("Dynamic Header with exceeding height override 'preserveHeaderStateOnScroll' property", function (assert) {
+		var oObjectPage = this.oObjectPageWithPreserveHeaderStateOnScroll;
+
+		// Setup header too big to be preserved in the title area
+		oObjectPage.$().height(1000);
+		oObjectPage.getHeaderTitle().$().height(300);
+		oObjectPage._getHeaderContent().$().height(300);
+		oObjectPage._bHeaderBiggerThanAllowedHeight = false;
+		// Act
+		oObjectPage._overridePreserveHeaderStateOnScroll();
+
+		assert.strictEqual(oObjectPage._bHeaderBiggerThanAllowedHeight, true, "flag is updated");
+		assert.strictEqual(oObjectPage._preserveHeaderStateOnScroll(), false, "preserveHeaderStateOnScroll should be overridden with 60% or bigger height");
+
+		// Setup header ok to be preserved in the title area
+		oObjectPage.$().height(1000);
+		oObjectPage.getHeaderTitle().$().height(200);
+		oObjectPage._getHeaderContent().$().height(200);
+
+		// Act
+		oObjectPage._overridePreserveHeaderStateOnScroll();
+
+		assert.strictEqual(oObjectPage._bHeaderBiggerThanAllowedHeight, false, "flag is updated");
+		assert.strictEqual(oObjectPage._preserveHeaderStateOnScroll(), true, "preserveHeaderStateOnScroll should NOT be overridden with less than 60% height");
+	});
+
 	QUnit.module("Header content initialization");
 
 	QUnit.test("setShowHeaderContent before rendering", function (assert) {
