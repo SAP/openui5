@@ -485,6 +485,10 @@ sap.ui.define([
 				this.oHeaders["MaxDataServiceVersion"] = this.sMaxDataServiceVersion;
 			}
 
+			// indicate these requests are originating from an AJAX request
+			// with this header present @sap/approuter responds with a 401 on a GET request
+			this.oHeaders["X-Requested-With"] = "XMLHttpRequest";
+
 		},
 		metadata : {
 			publicMethods : ["read", "create", "update", "remove", "submitChanges", "getServiceMetadata", "metadataLoaded",

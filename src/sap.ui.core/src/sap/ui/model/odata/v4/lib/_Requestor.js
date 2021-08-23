@@ -113,7 +113,8 @@ sap.ui.define([
 		"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 		"OData-MaxVersion" : "4.0",
 		"OData-Version" : "4.0",
-		"X-CSRF-Token" : "Fetch"
+		"X-CSRF-Token" : "Fetch",
+		"X-Requested-With" : "XMLHttpRequest"
 	};
 
 	/**
