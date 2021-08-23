@@ -199,17 +199,6 @@
         ]
       },
       {
-        "id": "81ced37281e3702a4835641315d4b96669af3d88",
-        "type": "FIX",
-        "text": "[INTERNAL] filter-element too low in IconTabbar",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180141994"
-          }
-        ]
-      },
-      {
         "id": "0f711214763a9487bca2d88f7fd48ab224a66ba6",
         "type": "FEATURE",
         "text": " sap.m.BreadCrumbs: Unique labels provided"
