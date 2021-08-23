@@ -1206,6 +1206,10 @@ sap.ui.define([
 							mNext = mNext || {};
 							mNext[oItem._settingspath + "/editable"] = oItem._next.editable;
 						}
+						if (oItem._next.pageAdminValues) {
+							mNext = mNext || {};
+							mNext[oItem._settingspath + "/pageAdminValues"] = oItem._next.pageAdminValues;
+						}
 						if (typeof oItem._next.allowDynamicValues === "boolean" && this.getAllowDynamicValues()) {
 							mNext = mNext || {};
 							mNext[oItem._settingspath + "/allowDynamicValues"] = oItem._next.allowDynamicValues;
@@ -1666,19 +1670,44 @@ sap.ui.define([
 				this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
 				return;
 			}
+			// filter data for page admin
+			var sPath = oConfig.values.data.path,
+			    aPath,
+			    tResult = [];
+			if (sPath && sPath !== "/") {
+				if (sPath.startsWith("/")) {
+					sPath = sPath.substring(1);
+				}
+				if (sPath.endsWith("/")) {
+					sPath = sPath.substring(0, sPath.length - 1);
+				}
+				aPath = sPath.split("/");
+				tResult = ObjectPath.get(aPath, oData);
+			} else {
+				tResult = oData;
+			}
+			if (this.getMode() === "content" && oConfig.pageAdminValues && oConfig.pageAdminValues.length > 0) {
+				var paValues = oConfig.pageAdminValues,
+				    results = [],
+					pavItemKey = oConfig.values.item.key;
+				pavItemKey = pavItemKey.substring(1, pavItemKey.length - 1);
+				if (paValues.length > 0) {
+					for (var i = 0; i < paValues.length; i++) {
+						for (var j = 0; j < tResult.length; j++) {
+							if (paValues[i] === tResult[j][pavItemKey]) {
+								results.push(tResult[j]);
+							}
+						}
+					}
+				}
+				delete oData[aPath];
+				ObjectPath.set(aPath, results, oData);
+			}
 			//add group property "Selected" to each record for MultiComboBox in ListField
 			//user configration of the field since its value maybe changed
 			var oFieldConfig = oField.getConfiguration();
 			if (oConfig.type === "string[]") {
-				var sPath = oConfig.values.data.path;
 				if (sPath && sPath !== "/") {
-					if (sPath.startsWith("/")) {
-						sPath = sPath.substring(1);
-					}
-					if (sPath.endsWith("/")) {
-						sPath = sPath.substring(0, sPath.length - 1);
-					}
-					var aPath = sPath.split("/");
 					var oResult = ObjectPath.get(aPath, oData);
 					if (Array.isArray(oResult)) {
 						for (var n in oResult) {

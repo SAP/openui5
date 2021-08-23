@@ -21,7 +21,11 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/ui/integration/util/ParameterMap",
 	"sap/base/util/merge",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/m/Table",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
+	"sap/m/ScrollContainer"
 ], function (
 	Control,
 	Popover,
@@ -42,7 +46,11 @@ sap.ui.define([
 	Input,
 	ParameterMap,
 	merge,
-	Core
+	Core,
+	Table,
+	Column,
+	ColumnListItem,
+	ScrollContainer
 ) {
 	"use strict";
 
@@ -63,6 +71,23 @@ sap.ui.define([
 		},
 		renderer: null // Dialog-like control without renderer
 	});
+
+	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
+		oCurrentModel,
+		bCancel,
+		oCurrentInstance = null,
+		oDynamicPanel,
+		oSettingsPanel,
+		oDescriptionLabel,
+		oDynamicValueField,
+		oMenu,
+		aMenuItems,
+		oSelectFormat,
+		oFormatDescriptionLabel,
+		oSettingsButton,
+		oSegmentedButton,
+		oResetToDefaultButton,
+		oPopover;
 	Settings.prototype.setConfiguration = function (oConfig) {
 		this._originalConfig = oConfig;
 		oConfig = merge({}, oConfig);
@@ -74,6 +99,8 @@ sap.ui.define([
 	};
 
 	Settings.prototype.open = function (oField, oReferrer, oRightContent, oHost, oParent, fnApply, fnCancel) {
+		var oCurrentData = this.getModel("currentSettings").getData();
+		oPopover = createPopover(oCurrentData);
 		this.addDependent(oPopover);
 		this.oHost = oHost;
 		this.fnApply = fnApply;
@@ -82,6 +109,10 @@ sap.ui.define([
 		bCancel = true;
 		oField.addDependent(this);
 		oCurrentInstance = this;
+		//adjust page admin values table height
+		if (!oCurrentData.allowDynamicValues && oCurrentData.values) {
+			Core.byId("settings_scroll_container").setHeight("155px");
+		}
 		//force update of all bindings
 		this.getModel("currentSettings").checkUpdate(true, true);
 		applyVariableDescription(oResourceBundle.getText("EDITOR_SELECT_FROM_LIST"), []);
@@ -89,7 +120,7 @@ sap.ui.define([
 			var iOffsetWidth = (!oRightContent || oRightContent.getDomRef().offsetWidth === 0) ? 270 : oRightContent.getDomRef().offsetWidth;
 			var iOffsetHeight = (!oRightContent || oRightContent.getDomRef().offsetHeight === 0) ? 350 : oRightContent.getDomRef().offsetHeight;
 			oPopover.setContentWidth(iOffsetWidth + "px");
-			oPopover.setContentHeight((iOffsetHeight - 80) + "px");
+			oPopover.setContentHeight((iOffsetHeight - 50) + "px");
 			oPopover.setPlacement("Right");
 			oDynamicValueField.setValue(oField._label);
 			oPopover.openBy(oField);
@@ -108,18 +139,6 @@ sap.ui.define([
 		}
 	};
 
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
-		oCurrentModel,
-		bCancel,
-		oCurrentInstance = null,
-		oDynamicPanel,
-		oSettingsPanel,
-		oDescriptionLabel,
-		oDynamicValueField,
-		oMenu,
-		aMenuItems,
-		oSelectFormat,
-		oFormatDescriptionLabel;
 	Settings.prototype._applyCurrentSettings = function () {
 		this.fnApply(oCurrentModel.getData());
 	};
@@ -133,67 +152,228 @@ sap.ui.define([
 		return Control.prototype.destroy.apply(this, arguments);
 	};
 
-	var oPopover = new Popover({
-		showArrow: true,
-		contentWidth: "400px",
-		showHeader: false,
-		horizontalScrolling: false,
-		modal: false,
-		endButton: new Button({
-			text: oResourceBundle.getText("EDITOR_MORE_CANCEL"),
-			press: function () {
-				oPopover.close();
-			}
-		}),
-		beginButton: new Button({
-			text: oResourceBundle.getText("EDITOR_MORE_OK"),
-			type: "Emphasized",
-			press: function () {
-				oCurrentInstance._applyCurrentSettings();
-				bCancel = false;
-				oPopover.close();
-			}
-		}),
-		afterClose: function () {
-			if (bCancel) {
-				oCurrentInstance._cancelCurrentSettings();
-			}
-			bCancel = true;
-		}
-	});
-	oPopover.attachAfterOpen(function () {
-		var oFooter = this.getDomRef().querySelector("footer"),
-			oCVDom = oCurrentValue.getDomRef();
-		if (oCVDom.nextSibling !== oFooter) {
-			oFooter.parentNode.insertBefore(oCVDom, oFooter);
-			oFooter.style.marginTop = "0rem";
-			oCVDom.style.display = "flex";
-		}
-		var oResetToDefaultButtonDom = oResetToDefaultButton.getDomRef(),
-			oInsert = oFooter.querySelector("button").parentNode;
-		if (oResetToDefaultButtonDom) {
-			oInsert.insertBefore(oResetToDefaultButtonDom, oInsert.firstChild);
-		}
+	function createPopover(oData) {
+		var oHeader = createHeader(),
+		    oResetToDefaultButton = createResetBtn(oData),
+		    oDynamicPanel = createDynamicPanel(),
+			oCurrentValue = createCurrentValuesBox(),
+		    oSettingsPanel = createSettingPanel(oData),
+		    oPopover = new Popover({
+			id: "settings_popover",
+			showArrow: true,
+			contentWidth: "400px",
+			showHeader: false,
+			horizontalScrolling: false,
+			verticalScrolling: false,
+			modal: false,
+			endButton: new Button({
+				text: oResourceBundle.getText("EDITOR_MORE_CANCEL"),
+				press: function () {
+					oPopover.close();
+				}
+			}),
+			beginButton: new Button({
+				text: oResourceBundle.getText("EDITOR_MORE_OK"),
+				type: "Emphasized",
+				press: function () {
+					//handle page admin values
+					if (oData.values) {
+						var oTable = Core.byId("settings_pav_table"),
+						selectedContexts = oTable.getSelectedContexts(),
+						selectedKeys = [],
+						pavItemKey = oData.values.item.key;
+						pavItemKey = pavItemKey.substring(1, pavItemKey.length - 1);
+						if (oCurrentModel.getProperty("/selectedValues") === "Partion") {
+							for (var i = 0; i < selectedContexts.length; i++) {
+								selectedKeys.push(selectedContexts[i].getObject()[pavItemKey]);
+							}
+							setNextSetting("pageAdminValues", selectedKeys);
+						} else {
+							setNextSetting("pageAdminValues", []);
+						}
+					}
 
-		window.requestAnimationFrame(function () {
-			oPopover.getDomRef() && (oPopover.getDomRef().style.opacity = "1");
+					oCurrentInstance._applyCurrentSettings();
+					bCancel = false;
+					oPopover.close();
+				}
+			}),
+			afterClose: function () {
+				if (bCancel) {
+					oCurrentInstance._cancelCurrentSettings();
+				}
+				bCancel = true;
+				oPopover.destroy();
+			},
+			afterOpen: function () {
+				var oFooter = this.getDomRef().querySelector("footer");
+
+				var oResetToDefaultButtonDom = oResetToDefaultButton.getDomRef(),
+					oInsert = oFooter.querySelector("button").parentNode;
+				if (oResetToDefaultButtonDom) {
+					oInsert.insertBefore(oResetToDefaultButtonDom, oInsert.firstChild);
+				}
+
+				window.requestAnimationFrame(function () {
+					oPopover.getDomRef() && (oPopover.getDomRef().style.opacity = "1");
+				});
+
+				//handle page admin values selection
+				if (oData.values) {
+					var oTable = Core.byId("settings_pav_table"),
+					paValues = oCurrentModel.getProperty("/_next/pageAdminValues");
+					if (paValues !== undefined && paValues.length > 0) {
+						oTable.removeSelections();
+						oCurrentModel.setProperty("/selectedValues", "None");
+						var sItems = oCurrentModel.getProperty("/_next/pageAdminValues"),
+							aItems = oTable.getItems(),
+							pavItemKey = oData.values.item.key;
+						pavItemKey = pavItemKey.substring(1, pavItemKey.length - 1);
+						for (var i = 0; i < sItems.length; i++) {
+							for (var j = 0; j < aItems.length; j++) {
+								var aItemValue = aItems[j].getBindingContext("currentSettings").getObject();
+								if (sItems[i] === aItemValue[pavItemKey]) {
+									oTable.setSelectedItem(aItems[j]);
+								}
+							}
+						}
+						oCurrentModel.setProperty("/selectedValues", "Partion");
+					} else {
+						oTable.selectAll();
+						oCurrentModel.setProperty("/selectedValues", "All");
+					}
+				}
+			}
 		});
-	});
+		oPopover.setCustomHeader(oHeader);
+		oPopover.addContent(oResetToDefaultButton);
+		oPopover.addContent(oDynamicPanel);
+		oPopover.addContent(oCurrentValue);
+		oPopover.addContent(oSettingsPanel);
+
+		oPopover.addStyleClass("sapUiIntegrationFieldSettings");
+
+		return oPopover;
+	}
+
+	function createSettingsButton() {
+		oSettingsButton = new SegmentedButtonItem({
+			text: oResourceBundle.getText("EDITOR_MORE_SETTINGS"),
+			key: "settings",
+			icon: "sap-icon://action-settings",
+			width: "50%",
+			press: selectSettings
+		}).addStyleClass("setbtn");
+
+		return oSettingsButton;
+	}
+
+	function createSegmentedButton() {
+		oSettingsButton = createSettingsButton();
+		oSegmentedButton = new SegmentedButton("settings_Segment_btn", {
+			width: "100%",
+			visible: "{= ${currentSettings>allowDynamicValues} && ${currentSettings>allowSettings}}",
+			items: [
+				new SegmentedButtonItem({
+					text: oResourceBundle.getText("EDITOR_MORE_DYNAMICVALUES"),
+					key: "dynamic",
+					icon: "{= ${currentSettings>_hasDynamicValue} ? 'sap-icon://display-more' : 'sap-icon://enter-more'}",
+					width: "50%",
+					press: selectDynamic
+				}).addStyleClass("dynbtn sel"),
+				oSettingsButton
+			]
+		});
+
+		return oSegmentedButton;
+	}
+
+	function createHeader() {
+		oSegmentedButton = createSegmentedButton();
+		var oDynamicValueText = new Text({
+			text: oResourceBundle.getText("EDITOR_MORE_DYNAMICVALUES"),
+			visible: "{= ${currentSettings>allowDynamicValues} && !${currentSettings>allowSettings}}"
+		}).addStyleClass("sapUiTinyMagin");
+		var oSettingsText = new Text({
+			text: oResourceBundle.getText("EDITOR_MORE_SETTINGS"),
+			visible: "{= !${currentSettings>allowDynamicValues} && ${currentSettings>allowSettings}}"
+		}).addStyleClass("sapUiTinyMagin");
+
+		var oTitle = new HBox({
+			width: "100%",
+			items: [oSegmentedButton, oDynamicValueText, oSettingsText]
+		}).addStyleClass("headertitle");
+
+		return oTitle;
+	}
+
+	function createResetBtn(oData) {
+	    oResetToDefaultButton = new Button("settings_reset_to_default_btn", {
+			type: "Transparent",
+			text: oResourceBundle.getText("EDITOR_MORE_RESET"),
+			enabled: "{= ${currentSettings>_next/visible} === (typeof(${currentSettings>visibleToUser}) === 'undefined' ? false : !${currentSettings>visibleToUser}) || ${currentSettings>_next/editable} === (typeof(${currentSettings>editableToUser}) === 'undefined' ? false : !${currentSettings>editableToUser}) || ${currentSettings>_next/allowDynamicValues} === (typeof(${currentSettings>allowDynamicValues}) === 'undefined' ? false : !${currentSettings>allowDynamicValues}) || ${currentSettings>_beforeValue} !== ${currentSettings>value}}",
+			tooltip: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_RESET"),
+			press: function () {
+				var bVisibleDefault = typeof (oCurrentModel.getProperty("/visibleToUser")) === 'undefined' ? true : oCurrentModel.getProperty("/visibleToUser");
+				var bEditableDefault = typeof (oCurrentModel.getProperty("/editableToUser")) === 'undefined' ? true : oCurrentModel.getProperty("/editableToUser");
+				var bAllowDynamicValuesDefault = typeof (oCurrentModel.getProperty("/allowDynamicValues")) === 'undefined' ? true : oCurrentModel.getProperty("/allowDynamicValues");
+				var oPopover = Core.byId("settings_popover");
+				setNextSetting("visible", bVisibleDefault);
+				setNextSetting("editable", bEditableDefault);
+				setNextSetting("allowDynamicValues", bAllowDynamicValuesDefault);
+				if (oCurrentModel.getProperty("/translatable")) {
+					if (oCurrentModel.getProperty("/_translatedDefaultValue") && oCurrentModel.getProperty("/_translatedDefaultValue") !== "") {
+						oCurrentModel.setProperty("/value", oCurrentModel.getProperty("/_translatedDefaultValue"));
+					} else if (oCurrentModel.getProperty("/_translatedDefaultPlaceholder") && oCurrentModel.getProperty("/_translatedDefaultPlaceholder") !== "") {
+						oCurrentModel.setProperty("/value", oCurrentModel.getProperty("/_translatedDefaultPlaceholder"));
+					}
+					oCurrentModel.setProperty("/_changed", false);
+				} else {
+					oCurrentModel.setProperty("/value", oCurrentModel.getProperty("/_beforeValue"));
+				}
+
+				//reset table selection
+				if (oData.values) {
+					var oTable = Core.byId("settings_pav_table"),
+						sItems = oCurrentModel.getProperty("/_next/pageAdminValues"),
+						aItems = oTable.getItems(),
+						pavItemKey = oCurrentModel.getData().values.item.key;
+					pavItemKey = pavItemKey.substring(1, pavItemKey.length - 1);
+					if (sItems !== undefined && sItems.length > 0 && sItems.length < aItems.length) {
+						oTable.removeSelections();
+						for (var i = 0; i < sItems.length; i++) {
+							for (var j = 0; j < aItems.length; j++) {
+								var aItemValue = aItems[j].getBindingContext("currentSettings").getObject();
+								if (sItems[i] === aItemValue[pavItemKey]) {
+									oTable.setSelectedItem(aItems[j]);
+								}
+							}
+						}
+						oCurrentModel.setProperty("/selectedValues", "Partion");
+					} else {
+						oTable.selectAll();
+						oCurrentModel.setProperty("/selectedValues", "All");
+					}
+				}
+
+				oPopover.getBeginButton().firePress();
+			}
+		}).addStyleClass("resetbutton");
+		return oResetToDefaultButton;
+	}
 
 	function selectSettings() {
 		oSettingsPanel.setVisible(true);
 		oDynamicPanel.setVisible(false);
-		oSegmentedButton.setSelectedKey("settings");
-		var oCVDom = oCurrentValue.getDomRef();
-		window.requestAnimationFrame(function () {
-			oCVDom && (oCVDom.style.opacity = "0");
-		});
+		Core.byId("settings_Segment_btn").setSelectedKey("settings");
+		var oCurrentValue = Core.byId("settings_current_value");
+		oCurrentValue.setVisible(false);
 	}
 
 	function selectDynamic() {
 		oSettingsPanel.setVisible(false);
 		oDynamicPanel.setVisible(true);
-		oSegmentedButton.setSelectedKey("dynamic");
+		Core.byId("settings_Segment_btn").setSelectedKey("dynamic");
 		var oFlat = oCurrentInstance.getModel("contextflat"),
 			o = oFlat._getValueObject(oCurrentModel.getProperty("/value"));
 		if (o && o.object.label) {
@@ -204,111 +384,10 @@ sap.ui.define([
 			}
 			updateCurrentValue(o);
 		}
-		var oCVDom = oCurrentValue.getDomRef();
-		window.requestAnimationFrame(function () {
-			oCVDom && (oCVDom.style.opacity = "1");
-		});
+		//visible current value field
+		var oCurrentValue = Core.byId("settings_current_value");
+		oCurrentValue.setVisible(true);
 	}
-
-	oPopover.addStyleClass("sapUiIntegrationFieldSettings");
-	var oSegmentedButton = new SegmentedButton({
-		width: "100%",
-		visible: "{= ${currentSettings>allowDynamicValues} && ${currentSettings>allowSettings}}"
-	});
-
-	var oDynamicValueButton = new SegmentedButtonItem({
-		text: oResourceBundle.getText("EDITOR_MORE_DYNAMICVALUES"),
-		key: "dynamic",
-		icon: "{= ${currentSettings>_hasDynamicValue} ? 'sap-icon://display-more' : 'sap-icon://enter-more'}",
-		width: "50%",
-		press: selectDynamic
-	});
-
-	oDynamicValueButton.addStyleClass("dynbtn sel");
-
-	var oSettingsButton = new SegmentedButtonItem({
-		text: oResourceBundle.getText("EDITOR_MORE_SETTINGS"),
-		key: "settings",
-		icon: "sap-icon://action-settings",
-		width: "50%",
-		press: selectSettings
-	});
-	oSettingsButton.addStyleClass("setbtn");
-
-	oSegmentedButton.addItem(oDynamicValueButton);
-	oSegmentedButton.addItem(oSettingsButton);
-
-	var oDynamicValueText = new Text({
-		text: oResourceBundle.getText("EDITOR_MORE_DYNAMICVALUES"),
-		visible: "{= ${currentSettings>allowDynamicValues} && !${currentSettings>allowSettings}}"
-	});
-	oDynamicValueText.addStyleClass("sapUiTinyMagin");
-
-	var oSettingsText = new Text({
-		text: oResourceBundle.getText("EDITOR_MORE_SETTINGS"),
-		visible: "{= !${currentSettings>allowDynamicValues} && ${currentSettings>allowSettings}}"
-	});
-	oSettingsText.addStyleClass("sapUiTinyMagin");
-
-	var oTitle = new HBox({
-		width: "100%",
-		items: [oSegmentedButton, oDynamicValueText, oSettingsText]
-	});
-	oTitle.addStyleClass("headertitle");
-
-	var oCurrentValue = new VBox({
-		width: "100%",
-		items: [
-			new Text({
-				text: oResourceBundle.getText("EDITOR_ACTUAL_VALUE")
-			}),
-			new Input({
-				value: {
-					path: "currentSettings>_currentContextValue"
-				},
-				editable: false
-			})]
-	});
-	oCurrentValue.addStyleClass("currentval");
-	var oResetToDefaultButton = new Button({
-		type: "Transparent",
-		text: oResourceBundle.getText("EDITOR_MORE_RESET"),
-		enabled: "{= ${currentSettings>_next/visible} === (typeof(${currentSettings>visibleToUser}) === 'undefined' ? false : !${currentSettings>visibleToUser}) || ${currentSettings>_next/editable} === (typeof(${currentSettings>editableToUser}) === 'undefined' ? false : !${currentSettings>editableToUser}) || ${currentSettings>_next/allowDynamicValues} === (typeof(${currentSettings>allowDynamicValues}) === 'undefined' ? false : !${currentSettings>allowDynamicValues}) || ${currentSettings>_beforeValue} !== ${currentSettings>value}}",
-		tooltip: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_RESET"),
-		press: function () {
-			var bVisibleDefault = typeof (oCurrentModel.getProperty("/visibleToUser")) === 'undefined' ? true : oCurrentModel.getProperty("/visibleToUser");
-			var bEditableDefault = typeof (oCurrentModel.getProperty("/editableToUser")) === 'undefined' ? true : oCurrentModel.getProperty("/editableToUser");
-			var bAllowDynamicValuesDefault = typeof (oCurrentModel.getProperty("/allowDynamicValues")) === 'undefined' ? true : oCurrentModel.getProperty("/allowDynamicValues");
-			setNextSetting("visible", bVisibleDefault);
-			setNextSetting("editable", bEditableDefault);
-			setNextSetting("allowDynamicValues", bAllowDynamicValuesDefault);
-			if (oCurrentModel.getProperty("/translatable")) {
-				if (oCurrentModel.getProperty("/_translatedValue") && oCurrentModel.getProperty("/_translatedValue") !== "") {
-					oCurrentModel.setProperty("/value", oCurrentModel.getProperty("/_translatedValue"));
-				} else if (oCurrentModel.getProperty("/_translatedDefaultPlaceholder") && oCurrentModel.getProperty("/_translatedDefaultPlaceholder") !== "") {
-					oCurrentModel.setProperty("/value", oCurrentModel.getProperty("/_translatedDefaultPlaceholder"));
-				}
-				oCurrentModel.setProperty("/_changed", false);
-			} else {
-				oCurrentModel.setProperty("/value", oCurrentModel.getProperty("/_beforeValue"));
-			}
-
-			oPopover.getBeginButton().firePress();
-		}
-	});
-	oResetToDefaultButton.addStyleClass("resetbutton");
-
-	var oHeader = new VBox({
-		width: "100%",
-		items: [
-			oTitle,
-			oCurrentValue,
-			oResetToDefaultButton
-		]
-	});
-	oHeader.addStyleClass("tabs");
-
-	oPopover.setCustomHeader(oHeader);
 
 	function setNextSetting(sProperty, vValue) {
 		if (!oCurrentModel.getProperty("/_next")) {
@@ -316,6 +395,7 @@ sap.ui.define([
 		}
 		oCurrentModel.setProperty("/_next/" + sProperty, vValue);
 	}
+
 	function createMenuItems(oData, path) {
 		var a = [];
 		for (var n in oData) {
@@ -335,9 +415,44 @@ sap.ui.define([
 		return a;
 	}
 
-	function createPopupContent() {
+	var aFormatters = [
+		{
+			formatMethod: "format.DateTime",
+			sourceTypes: ["datetime", "date"],
+			label: "Relative date/datetime text of the value",
+			description: "Should be applied to dynamic values of type date or datetime or string values that represent a datetime in the format 'yyyy-MM-ddZhh:mm:ss'",
+			example: "4 weeks ago",
+			syntax: "handlebars",
+			binding: "{= format.dateTime('__|VALUE|__',{relative:true})}"
+		},
+		{
+			formatMethod: "format.DateTime",
+			sourceTypes: ["datetime", "date"],
+			label: "Short date/datetime text of the value",
+			description: "Should be applied to dynamic values of type date, date-time or text values that represent a datetime in the format 'yyyy-MM-ddZhh:mm:ss.sss'",
+			example: "9/18/20, 2:09 PM",
+			binding: "{= format.dateTime('__|VALUE|__',{style:'short'})}"
+		},
+		{
+			formatMethod: "format.DateTime",
+			sourceTypes: ["datetime", "date"],
+			label: "Medium date/datetime text of the value",
+			description: "Should be applied to dynamic values of type date, date-time or text values that represent a datetime in the format 'yyyy-MM-ddThh:mm:ss.sssZ'",
+			example: "Sep 18, 2020, 2:09:04 PM",
+			binding: "{= format.dateTime('__|VALUE|__',{style:'medium'})}"
+		},
+		{
+			formatMethod: "format.DateTime",
+			sourceTypes: ["datetime", "date"],
+			label: "Long date, date-time text of the value",
+			description: "Should be applied to dynamic values of type date or date-time or string values that represent a datetime in the format 'yyyy-MM-ddThh:mm:ss.sssZ'",
+			example: "Sep 18, 2020, 2:09:04 PM",
+			binding: "{= format.dateTime('__|VALUE|__',{style:'long'})}"
+		}
+	];
+
+	function createDynamicPanel() {
 		oDynamicPanel = new VBox({ visible: true });
-		oSettingsPanel = new VBox({ visible: false });
 		oDynamicPanel.addStyleClass("sapUiSmallMargin");
 		oDynamicValueField = new Input({
 			width: "100%",
@@ -417,12 +532,36 @@ sap.ui.define([
 		}
 		oDynamicPanel.getItems()[0].getItems()[0].addStyleClass("sapUiTinyMarginTop");
 
-		//create the settings content
-		oSettingsPanel.addStyleClass("sapUiSmallMargin");
-		oSettingsPanel.addItem(new Title({
+		return oDynamicPanel;
+	}
+
+	function createCurrentValuesBox() {
+		var oCurrentValue = new VBox("settings_current_value", {
+			width: "100%",
+			items: [
+				new Text({
+					text: oResourceBundle.getText("EDITOR_ACTUAL_VALUE")
+				}),
+				new Input({
+					value: {
+						path: "currentSettings>_currentContextValue"
+					},
+					editable: false
+				})]
+		});
+		oCurrentValue.addStyleClass("currentval");
+
+		return oCurrentValue;
+	}
+
+	function createSettingPanel(oData) {
+		oSettingsPanel = new VBox({ visible: false });
+		var oBox = new VBox().addStyleClass("commonSettings");
+		oSettingsPanel.addItem(oBox);
+		oBox.addItem(new Title({
 			text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN")
-		}));
-		oSettingsPanel.addItem(new HBox({
+		}).addStyleClass("stitle"));
+		oBox.addItem(new HBox({
 			items: [
 				new Label({
 					text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_VISIBLE")
@@ -434,8 +573,8 @@ sap.ui.define([
 					}
 				})
 			]
-		}));
-		oSettingsPanel.addItem(new HBox({
+		}).addStyleClass("cbrow"));
+		oBox.addItem(new HBox({
 			items: [
 				new Label({
 					text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_EDIT")
@@ -448,8 +587,8 @@ sap.ui.define([
 					}
 				})
 			]
-		}));
-		oSettingsPanel.addItem(new HBox({
+		}).addStyleClass("cbrow"));
+		oBox.addItem(new HBox({
 			visible: "{= ${currentSettings>allowDynamicValues}!== false}",
 			items: [
 				new Label({
@@ -463,53 +602,135 @@ sap.ui.define([
 					}
 				})
 			]
-		}));
+		}).addStyleClass("cbrow"));
 
-		var oItems = oSettingsPanel.getItems();
-		oItems[0].addStyleClass("stitle");
-		oItems[1].addStyleClass("cbrow");
-		oItems[2].addStyleClass("cbrow");
-		oItems[3].addStyleClass("cbrow");
+		//Binding page admin data to table
+		if (oData.values && oData.values.data) {
+			oBox.addItem(new HBox({
+				visible: "{= ${currentSettings>_next/visible} !== false && ${currentSettings>_next/editable} !== false}",
+				items: [
+					new Label({
+						text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_VALUES_LIST"),
+						tooltip: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_VALUES_LIST_TOOLTIPS"),
+						wrapping: false
+					}),
+					new Button({
+						type: "Transparent",
+						icon: {
+							path: "currentSettings>selectedValues",
+							formatter: function(values) {
+								if (values === "All") {
+									return "sap-icon://multiselect-all";
+								} else if (values === "Partion") {
+									return "sap-icon://multi-select";
+								} else if (values === "None") {
+									return "sap-icon://multiselect-none";
+								}
+							}
+						},
+						tooltip: {
+							path: "currentSettings>selectedValues",
+							formatter: function(values) {
+								if (values === "All") {
+									return oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_DESELECT_ALL");
+								} else {
+									return oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_SELECT_ALL");
+								}
+							}
+						},
+						press: onMultiSelectionClick
+					})
+				]
+			}).addStyleClass("cbrow"));
+			var pavTable = new Table({
+				id: "settings_pav_table",
+				mode: "MultiSelect",
+				width: "84%",
+				select: onTableSelection,
+				columns: [
+					new Column()
+				]
+			}).addStyleClass("tableHdr");
+			var pavItemText = oData.values.item.text,
+			    vLength = pavItemText.length,
+			    tText = pavItemText.substring(1, vLength - 1),
+			    tPath = "{currentSettings>" + tText + "}",
+				bPath,
+				sPath = oData.values.data.path,
+			    aPath;
+			if (sPath && sPath !== "/") {
+				if (sPath.startsWith("/")) {
+					sPath = sPath.substring(1);
+				}
+				if (sPath.endsWith("/")) {
+					sPath = sPath.substring(0, sPath.length - 1);
+				}
+				aPath = sPath.split("/");
+				bPath = "currentSettings>/_values/" + aPath + "/";
+			} else {
+				bPath = "currentSettings>/_values/";
+			}
+			pavTable.bindAggregation("items", {
+				path: bPath,
+				template: new ColumnListItem({
+					cells: [
+						new HBox({
+							items: [
+								new Text({
+									text: tPath
+								}).addStyleClass("pavTblCellText")
+							]
+						})
+					]
+				}).addStyleClass("pavlistItem")
+			});
+			var oScrollContainer = new ScrollContainer({
+				id: "settings_scroll_container",
+				height: "125px",
+				width: "94%",
+				vertical: true,
+				horizontal: false,
+				visible: "{= ${currentSettings>_next/visible} !== false && ${currentSettings>_next/editable} !== false}",
+				content: [pavTable]
+			}).addStyleClass("SettingsPAVTable");
+			oSettingsPanel.addItem(oScrollContainer);
+		}
 
-		oPopover.addContent(oDynamicPanel);
-		oPopover.addContent(oSettingsPanel);
+		return oSettingsPanel;
 	}
 
-	var aFormatters = [
-		{
-			formatMethod: "format.DateTime",
-			sourceTypes: ["datetime", "date"],
-			label: "Relative date/datetime text of the value",
-			description: "Should be applied to dynamic values of type date or datetime or string values that represent a datetime in the format 'yyyy-MM-ddZhh:mm:ss'",
-			example: "4 weeks ago",
-			syntax: "handlebars",
-			binding: "{= format.dateTime('__|VALUE|__',{relative:true})}"
-		},
-		{
-			formatMethod: "format.DateTime",
-			sourceTypes: ["datetime", "date"],
-			label: "Short date/datetime text of the value",
-			description: "Should be applied to dynamic values of type date, date-time or text values that represent a datetime in the format 'yyyy-MM-ddZhh:mm:ss.sss'",
-			example: "9/18/20, 2:09 PM",
-			binding: "{= format.dateTime('__|VALUE|__',{style:'short'})}"
-		},
-		{
-			formatMethod: "format.DateTime",
-			sourceTypes: ["datetime", "date"],
-			label: "Medium date/datetime text of the value",
-			description: "Should be applied to dynamic values of type date, date-time or text values that represent a datetime in the format 'yyyy-MM-ddThh:mm:ss.sssZ'",
-			example: "Sep 18, 2020, 2:09:04 PM",
-			binding: "{= format.dateTime('__|VALUE|__',{style:'medium'})}"
-		},
-		{
-			formatMethod: "format.DateTime",
-			sourceTypes: ["datetime", "date"],
-			label: "Long date, date-time text of the value",
-			description: "Should be applied to dynamic values of type date or date-time or string values that represent a datetime in the format 'yyyy-MM-ddThh:mm:ss.sssZ'",
-			example: "Sep 18, 2020, 2:09:04 PM",
-			binding: "{= format.dateTime('__|VALUE|__',{style:'long'})}"
+	function onMultiSelectionClick() {
+		var oTable = Core.byId("settings_pav_table"),
+		    oResetBtn = Core.byId("settings_reset_to_default_btn"),
+		    selectedValues = oCurrentModel.getProperty("/selectedValues");
+		if (selectedValues === "All") {
+			oTable.removeSelections();
+			oCurrentModel.setProperty("/selectedValues", "None");
+		} else {
+			oTable.selectAll();
+			oCurrentModel.setProperty("/selectedValues", "All");
 		}
-	];
+		if (!oResetBtn.getEnabled()) {
+			oResetBtn.setEnabled(true);
+		}
+	}
+
+	function onTableSelection(oEvent) {
+		var oTable = oEvent.getSource(),
+		    selectedItems = oTable.getSelectedItems(),
+		    allItems = oTable.getItems(),
+			oResetBtn = Core.byId("settings_reset_to_default_btn");
+		if (selectedItems.length === allItems.length) {
+			oCurrentModel.setProperty("/selectedValues", "All");
+		} else if (selectedItems.length < allItems.length && selectedItems.length > 0) {
+			oCurrentModel.setProperty("/selectedValues", "Partion");
+		} else {
+			oCurrentModel.setProperty("/selectedValues", "None");
+		}
+		if (!oResetBtn.getEnabled()) {
+			oResetBtn.setEnabled(true);
+		}
+	}
 
 	function applyFormatItems(aCustomize, sType) {
 		aCustomize = aCustomize || [];
@@ -538,10 +759,6 @@ sap.ui.define([
 		}
 	}
 
-
-
-	createPopupContent();
-
 	function applyVariableDescription(sText, aTags) {
 		aTags = aTags || [];
 		if (aTags.indexOf("technical") > -1) {
@@ -549,7 +766,6 @@ sap.ui.define([
 		}
 		oDescriptionLabel.setText(sText);
 	}
-
 
 	function updateFormatterSelect(oData) {
 		if (aFormatters.length === -1) {
@@ -614,6 +830,7 @@ sap.ui.define([
 			updateCurrentValue: updateCurrentValue,
 			oCurrentInstance: oCurrentInstance,
 			oDynamicValueField: oDynamicValueField,
+			oResetToDefaultButton: oResetToDefaultButton,
 			getMenuItems: function () {
 				return aMenuItems;
 			},
