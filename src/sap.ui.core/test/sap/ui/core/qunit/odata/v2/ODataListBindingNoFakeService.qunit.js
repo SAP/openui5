@@ -532,20 +532,44 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_refresh: getResolvedPath is called", function (assert) {
+[true, false].forEach(function (bV2Context) {
+	var sTitle = "_refresh: getResolvedPath is called, use V2 context: " + bV2Context;
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
-				oContext : "~oContext",
+				oContext : bV2Context
+					? {isTransient : function () {}}
+					: "~context",
 				getResolvedPath : function () {},
 				isRelative : function () {}
 			};
 
 		this.mock(oBinding).expects("isRelative").returns(true);
+		if (bV2Context) {
+			this.mock(oBinding.oContext).expects("isTransient").withExactArgs().returns(undefined);
+		}
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
 
 		// code under test
 		ODataListBinding.prototype._refresh.call(oBinding, undefined, undefined, "~mEntityTypes");
 
 		assert.strictEqual(oBinding.bPendingRefresh, false);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_refresh: parent context is transient", function (assert) {
+		var oBinding = {
+				oContext : {isTransient : function () {}},
+				isRelative : function () {}
+			};
+
+		this.mock(oBinding).expects("isRelative").returns(true);
+		this.mock(oBinding.oContext).expects("isTransient").withExactArgs().returns(true);
+
+		// code under test
+		ODataListBinding.prototype._refresh.call(oBinding);
+
+		assert.strictEqual(oBinding.bPendingRefresh, undefined);
 	});
 
 	//*********************************************************************************************
