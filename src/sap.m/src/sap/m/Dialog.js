@@ -77,6 +77,9 @@ function(
 		// shortcut for sap.ui.core.ValueState
 		var ValueState = coreLibrary.ValueState;
 
+		// shortcut for sap.ui.core.TitleLevel
+		var TitleLevel = coreLibrary.TitleLevel;
+
 		// shortcut for sap.m.TitleAlignment
 		var TitleAlignment = library.TitleAlignment;
 
@@ -511,7 +514,7 @@ function(
 		};
 
 		Dialog.prototype.onBeforeRendering = function () {
-			var oHeader = this.getCustomHeader() || this._header;
+			var oHeader = this._getAnyHeader();
 
 			if (!Dialog._bPaddingByDefault && this.hasStyleClass("sapUiPopupWithPadding")) {
 				Log.warning("Usage of CSS class 'sapUiPopupWithPadding' is deprecated. Use 'sapUiContentPadding' instead", null, "sap.m.Dialog");
@@ -548,6 +551,11 @@ function(
 			// title alignment
 			if (oHeader && oHeader.setTitleAlignment) {
 				oHeader.setProperty("titleAlignment", this.getTitleAlignment(), true);
+			}
+
+			if (oHeader && this._getTitles(oHeader).length === 0) {
+				oHeader._setRootAccessibilityRole("heading");
+				oHeader._setRootAriaLevel("2");
 			}
 		};
 
@@ -1287,8 +1295,6 @@ function(
 				this._header = new Bar(this.getId() + "-header", {
 					titleAlignment: this.getTitleAlignment()
 				});
-				this._header._setRootAccessibilityRole("heading");
-				this._header._setRootAriaLevel("2");
 
 				this.setAggregation("_header", this._header);
 			}
@@ -1305,7 +1311,7 @@ function(
 			} else {
 				this._headerTitle = new Title(this.getId() + "-title", {
 					text: sTitle,
-					level: "H2"
+					level: TitleLevel.H2
 				}).addStyleClass("sapMDialogTitle");
 
 				this._header.addContentMiddle(this._headerTitle);
@@ -1500,8 +1506,7 @@ function(
 			var oCustomHeader = this.getCustomHeader();
 
 			if (oCustomHeader) {
-				oCustomHeader._setRootAriaLevel("2");
-				return oCustomHeader._setRootAccessibilityRole("heading");
+				return oCustomHeader;
 			} else {
 				var bShowHeader = this.getShowHeader();
 				// if showHeader is set to false and not for standard dialog in iOS in theme sap_mvi, no header.
@@ -1781,9 +1786,7 @@ function(
 
 			var oSubHeader = this.getSubHeader();
 			if (oSubHeader) {
-				var aSubtitles = oSubHeader.findAggregatedObjects(true, function(oObject) {
-					return oObject.isA("sap.m.Title");
-				});
+				var aSubtitles = this._getTitles(oSubHeader);
 
 				// if there are titles in the subheader, add all of them to labels, else use the full subheader
 				if (aSubtitles.length) {
@@ -1794,9 +1797,7 @@ function(
 			}
 
 			if (oHeader) {
-				var aTitles = oHeader.findAggregatedObjects(true, function(oObject) {
-					return oObject.isA("sap.m.Title");
-				});
+				var aTitles = this._getTitles(oHeader);
 
 				// if there are titles in the header, add all of them to labels, else use the full header
 				if (aTitles.length) {
@@ -2073,6 +2074,12 @@ function(
 		 */
 		Dialog.prototype._applyContextualSettings = function () {
 			Control.prototype._applyContextualSettings.call(this);
+		};
+
+		Dialog.prototype._getTitles = function (oContainer) {
+			return oContainer.findAggregatedObjects(true, function(oObject) {
+				return oObject.isA("sap.m.Title");
+			});
 		};
 
 		return Dialog;
