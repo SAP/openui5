@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.Image",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.image.View",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"View.view.xml",
+					"Controller.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}
