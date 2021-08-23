@@ -142,7 +142,7 @@ sap.ui.define([
 		oModelMock.expects("_updateContext")
 			.withExactArgs(oV2Context, "~resolvedPath");
 		this.mock(oBinding).expects("_fireChange")
-			.withExactArgs({ reason: ChangeReason.Context }, undefined);
+			.withExactArgs({reason : ChangeReason.Context}, undefined);
 		oModelMock.expects("_updateContext")
 			.withExactArgs(oV2Context, "~oContextPath");
 
@@ -190,7 +190,7 @@ sap.ui.define([
 			.withExactArgs("~path", sinon.match.same(oBinding.oContext), "~parameters",
 				sinon.match.func, true);
 		this.mock(oBinding).expects("_fireChange")
-			.withExactArgs({ reason: ChangeReason.Context }, undefined);
+			.withExactArgs({reason : ChangeReason.Context}, undefined);
 		// createBindingContext callback mocks
 		this.mock(BaseContext).expects("hasChanged")
 			.withExactArgs(oElementContextArg, undefined)
@@ -247,7 +247,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("isRelative").withExactArgs().returns(false);
 		this.mock(oBinding.oModel.oMetadata).expects("isLoaded").withExactArgs().returns(true);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason: ChangeReason.Context});
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Context});
 
 		// code under test
 		ODataContextBinding.prototype.initialize.call(oBinding);
@@ -332,7 +332,7 @@ sap.ui.define([
 				/*this.mParameters*/undefined, /*fnCallBack*/sinon.match.func,
 				/*ReloadNeeded*/false)
 			.returns(null);
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason: ChangeReason.Context});
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Context});
 
 		// code under test
 		ODataContextBinding.prototype.initialize.call(oBinding);
@@ -396,7 +396,7 @@ sap.ui.define([
 			oV2Context);
 
 		// change event is fired asynchronously
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason: ChangeReason.Context});
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Context});
 
 		return oPromise.then(function () {/*nothing to do*/});
 	});
@@ -449,7 +449,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oV2Context), "~oldElementContext")
 			.returns(true);
 		this.mock(oBinding).expects("_fireChange")
-			.withExactArgs({reason: ChangeReason.Context}, "~bForceRefresh", "~bUpdated");
+			.withExactArgs({reason : ChangeReason.Context}, "~bForceRefresh", "~bUpdated");
 
 		// code under test - call back handler is called with a V2 context
 		oExpectation.args[0][3](oV2Context);
@@ -478,7 +478,7 @@ sap.ui.define([
 			.withExactArgs("~sPath", /*this.oContext*/undefined,
 				sinon.match.same(oBinding.mParameters))
 			.returns("~v2Context");
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason: ChangeReason.Context});
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Context});
 
 		// code under test
 		ODataContextBinding.prototype.checkUpdate.call(oBinding);
@@ -518,7 +518,7 @@ sap.ui.define([
 			.returns(true);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
 		this.mock(oBinding).expects("_fireChange")
-			.withExactArgs({ reason: ChangeReason.Context });
+			.withExactArgs({reason : ChangeReason.Context});
 
 		// code under test
 		ODataContextBinding.prototype.setContext.call(oBinding);
@@ -551,7 +551,7 @@ sap.ui.define([
 			.withExactArgs("~context", sinon.match.same(oNewContext))
 			.returns(true);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason: ChangeReason.Context});
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Context});
 
 		// code under test
 		ODataContextBinding.prototype.setContext.call(oBinding, oNewContext);
@@ -607,7 +607,7 @@ sap.ui.define([
 			.withExactArgs("~path", sinon.match.same(oNewContext), "~parameters",
 				sinon.match.func, false)
 			.returns(null);
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason: ChangeReason.Context});
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Context});
 
 		// code under test
 		ODataContextBinding.prototype.setContext.call(oBinding, oNewContext);
@@ -630,7 +630,7 @@ sap.ui.define([
 			},
 			oBinding = {
 				oContext : "~context",
-				bCreatePreliminaryContext: true,
+				bCreatePreliminaryContext : true,
 				oElementContext : "~oOldElementContext",
 				oModel : oModel,
 				mParameters : "~parameters",
@@ -641,7 +641,7 @@ sap.ui.define([
 			},
 			oBindingContext = {
 				setPreliminary : function () {},
-				sPath: "~oBindingContextPath"
+				sPath : "~oBindingContextPath"
 			},
 			oBindingMock = this.mock(oBinding),
 			oModelMock = this.mock(oModel),
@@ -684,7 +684,7 @@ sap.ui.define([
 		oModelMock.expects("_updateContext")
 			.withExactArgs(sinon.match.same(oBindingContext), "~resolvedPath");
 		oBindingMock.expects("_fireChange")
-			.withExactArgs({reason: ChangeReason.Context}, false);
+			.withExactArgs({reason : ChangeReason.Context}, false);
 		oModelMock.expects("_updateContext")
 			.withExactArgs(sinon.match.same(oBindingContext), "~oBindingContextPath");
 
@@ -699,7 +699,7 @@ sap.ui.define([
 			.withExactArgs("~oV2Context", sinon.match.same(oBindingContext))
 			.returns(true);
 		oBindingMock.expects("_fireChange")
-			.withExactArgs({reason: ChangeReason.Context}, false, false);
+			.withExactArgs({reason : ChangeReason.Context}, false, false);
 
 		// code under test - call callback handler with a V2 context
 		oExpectation.callArgWith(3, "~oV2Context");
