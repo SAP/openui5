@@ -49,28 +49,6 @@
         "references": []
       },
       {
-        "id": "8db223d5350a0eb16a83e18112d7abb5097c4beb",
-        "type": "FIX",
-        "text": "[INTERNAL] fixed failing test caused by error in scrolling logic",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680001942"
-          }
-        ]
-      },
-      {
-        "id": "6695e40449db9cad7f26377c39caf82ab55e7b98",
-        "type": "FIX",
-        "text": "[INTERNAL] sap.uxap.ObjectPageSubSection: added doc for insertAggregation method",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670069414"
-          }
-        ]
-      },
-      {
         "id": "f3ec2eb638c6059ce44e2f8bb32c0d38b7a8abb5",
         "type": "FIX",
         "text": "ObjectPageLayout would incorrectly modify its parent height",
