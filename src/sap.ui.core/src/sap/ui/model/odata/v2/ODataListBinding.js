@@ -315,42 +315,35 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.setContext = function(oContext) {
 		var sResolvedPath,
-			bCreated = oContext && oContext.bCreated,
 			bForceUpdate = oContext && oContext.isRefreshForced(),
-			bUpdated = oContext && oContext.isUpdated(),
-			bPreliminary = oContext && oContext.isPreliminary();
+			bPreliminary = oContext && oContext.isPreliminary(),
+			bTransient = oContext && oContext.isTransient && oContext.isTransient(),
+			bUpdated = oContext && oContext.isUpdated();
 
 		// If binding is initial or not a relative binding, nothing to do here
 		if (this.bInitial || !this.isRelative()) {
 			return;
 		}
-
 		// If context is preliminary and usePreliminary is not set, exit here
 		if (bPreliminary && !this.bUsePreliminaryContext) {
 			return;
 		}
-
 		if (bUpdated && this.bUsePreliminaryContext && this.oContext === oContext) {
 			this._fireChange({ reason: ChangeReason.Context });
+
 			return;
 		}
-
 		if (Context.hasChanged(this.oContext, oContext)) {
-
 			this.oContext = oContext;
-
 			sResolvedPath = this.getResolvedPath();
 			this.sDeepPath = this.oModel.resolveDeep(this.sPath, this.oContext);
-
 			if (!this._checkPathType()) {
 				Log.error("List Binding is not bound against a list for " + sResolvedPath);
 			}
-
 			// ensure that data state is updated with each change of the context
 			this.checkDataState();
-
 			// If path does not resolve or parent context is created, reset current list
-			if (!sResolvedPath || bCreated) {
+			if (!sResolvedPath || bTransient) {
 				if (this.aAllKeys || this.aKeys.length > 0 || this.iLength > 0) {
 					this.aAllKeys = null;
 					this.aKeys = [];
@@ -358,15 +351,15 @@ sap.ui.define([
 					this.bLengthFinal = true;
 					this._fireChange({ reason: ChangeReason.Context });
 				}
+
 				return;
 			}
-
 			// get new entity type with new context and init filters now correctly
 			this._initSortersFilters();
-
 			if (this.checkExpandedList() && !bForceUpdate) {
-				// if there are pending requests e.g. previous context requested data which returns null
-				// the pending requests need to be aborted such that the responded (previous) data doesn't overwrite the current one
+				// if there are pending requests e.g. previous context requested data which returns
+				// null the pending requests need to be aborted such that the responded (previous)
+				// data doesn't overwrite the current one
 				this.abortPendingRequest();
 				this._fireChange({ reason: ChangeReason.Context });
 			} else {

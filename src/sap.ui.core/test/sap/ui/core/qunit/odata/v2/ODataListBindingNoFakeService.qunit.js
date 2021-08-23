@@ -469,7 +469,10 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("setContext: calls checkDataState if context changes", function (assert) {
+[true, false].forEach(function (bV2Context) {
+	var sTitle = "setContext: calls checkDataState if context changes, use V2 context: "
+			+ bV2Context;
+	QUnit.test(sTitle, function (assert) {
 		var oModel = {resolveDeep : function () {}},
 			oBinding = {
 				oContext : "~oContext",
@@ -484,20 +487,23 @@ sap.ui.define([
 				getResolvedPath : function () {},
 				isRelative : function () {}
 			},
-			oContext = {
-				bCreated : false,
+			oNewContext = {
 				isPreliminary : function () { return false; },
 				isRefreshForced : function () { return false; },
 				isUpdated : function () { return false; }
 			};
 
+		if (bV2Context) {
+			oNewContext.isTransient = function () {};
+			this.mock(oNewContext).expects("isTransient").withExactArgs().returns(undefined);
+		}
 		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
 		this.mock(Context).expects("hasChanged")
-			.withExactArgs("~oContext", sinon.match.same(oContext))
+			.withExactArgs("~oContext", sinon.match.same(oNewContext))
 			.returns(true);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
 		this.mock(oModel).expects("resolveDeep")
-			.withExactArgs("~sPath", sinon.match.same(oContext))
+			.withExactArgs("~sPath", sinon.match.same(oNewContext))
 			.returns("~resolvedDeepPath");
 		this.mock(oBinding).expects("_checkPathType").withExactArgs().returns(true);
 		this.mock(oBinding).expects("checkDataState").withExactArgs();
@@ -506,9 +512,51 @@ sap.ui.define([
 		this.mock(oBinding).expects("_refresh").withExactArgs();
 
 		// code under test
-		ODataListBinding.prototype.setContext.call(oBinding, oContext);
+		ODataListBinding.prototype.setContext.call(oBinding, oNewContext);
 
-		assert.strictEqual(oBinding.oContext, oContext);
+		assert.strictEqual(oBinding.oContext, oNewContext);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("setContext: context is transient", function (assert) {
+		var oModel = {resolveDeep : function () {}},
+			oBinding = {
+				aAllKeys : null,
+				oContext : "~oContext",
+				aKeys : [],
+				iLength : 0,
+				oModel : oModel,
+				sPath : "~sPath",
+				_checkPathType : function () {},
+				checkDataState : function () {},
+				getResolvedPath : function () {},
+				isRelative : function () {}
+			},
+			oNewV2Context = {
+				isPreliminary : function () { return false; },
+				isRefreshForced : function () { return false; },
+				isTransient : function () {},
+				isUpdated : function () { return false; }
+			};
+
+		this.mock(oNewV2Context).expects("isRefreshForced").withExactArgs().returns(false);
+		this.mock(oNewV2Context).expects("isPreliminary").withExactArgs().returns(false);
+		this.mock(oNewV2Context).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oNewV2Context).expects("isUpdated").withExactArgs().returns(false);
+		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
+		this.mock(Context).expects("hasChanged")
+			.withExactArgs("~oContext", sinon.match.same(oNewV2Context))
+			.returns(true);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oModel).expects("resolveDeep")
+			.withExactArgs("~sPath", sinon.match.same(oNewV2Context))
+			.returns("~resolvedDeepPath");
+		this.mock(oBinding).expects("_checkPathType").withExactArgs().returns(true);
+		this.mock(oBinding).expects("checkDataState").withExactArgs();
+
+		// code under test
+		ODataListBinding.prototype.setContext.call(oBinding, oNewV2Context);
 	});
 
 	//*********************************************************************************************
