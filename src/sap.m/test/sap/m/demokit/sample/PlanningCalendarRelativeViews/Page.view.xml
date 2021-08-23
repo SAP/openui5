@@ -7,8 +7,8 @@
 	<VBox class="sapUiSmallMargin">
 		<PlanningCalendar
 			id="PC12"
-			startDate="{path: '/startDate', type: 'sap.ui.model.type.Date', formatOptions: { style: 'short' }}"
-			minDate="{path: '/minDate', type: 'sap.ui.model.type.Date', formatOptions: { style: 'short' }}"
+			startDate="{path: '/startDate'}"
+			minDate="{path: '/minDate'}"
 			rows="{path: '/people'}"
 			appointmentsVisualization="Filled"
 			builtInViews="Hour,Day">
