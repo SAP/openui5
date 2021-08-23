@@ -44,6 +44,18 @@ sap.ui.define([
 	}
 
 	/**
+	 * Prevents the event default and stops propagation if the event target is a table cell.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 */
+	function handleNavigationEvent(oEvent) {
+		if (TableUtils.getCellInfo(oEvent.target).isOfType(CellType.ANY)) {
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
+		}
+	}
+
+	/**
 	 * New Delegate for keyboard events of sap.ui.table.Table controls.
 	 *
 	 * @class Delegate for keyboard events of sap.ui.table.Table controls.
@@ -134,7 +146,7 @@ sap.ui.define([
 			var bScrolled = scrollDown(oTable, oEvent);
 
 			if (bScrolled) {
-				oEvent.preventDefault(); // Prevent scrolling the page.
+				oEvent.preventDefault(); // Prevent scrolling the page in action mode navigation.
 				return;
 			}
 		}
@@ -156,7 +168,7 @@ sap.ui.define([
 		}
 
 		focusCell(oTable, oCellInfo.type, oCellInfo.rowIndex + 1, oCellInfo.columnIndex, bActionModeNavigation);
-		oEvent.preventDefault(); // Prevent positioning the cursor. The text should be selected instead.
+		oEvent.preventDefault(); // Prevent positioning the cursor in action mode navigation. The text should be selected instead.
 	}
 
 	/**
@@ -192,7 +204,7 @@ sap.ui.define([
 			var bScrolled = scrollUp(oTable, oEvent);
 
 			if (bScrolled) {
-				oEvent.preventDefault(); // Prevent scrolling the page.
+				oEvent.preventDefault(); // Prevent scrolling the page in action mode navigation.
 				return;
 			}
 		}
@@ -212,7 +224,7 @@ sap.ui.define([
 		}
 
 		focusCell(oTable, oCellInfo.type, oCellInfo.rowIndex - 1, oCellInfo.columnIndex, bActionModeNavigation);
-		oEvent.preventDefault(); // Prevent positioning the cursor. The text should be selected instead.
+		oEvent.preventDefault(); // Prevent positioning the cursor in action mode navigation. The text should be selected instead.
 	}
 
 	function _canNavigateUpOrDown(oTable, oEvent) {
@@ -639,6 +651,7 @@ sap.ui.define([
 		if (bAllowActionMode) {
 			oTable._getKeyboardExtension()._bStayInActionMode = true;
 		}
+
 		oCell.focus();
 	}
 
@@ -1358,10 +1371,13 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsapdown = function(oEvent) {
+		handleNavigationEvent(oEvent);
 		navigateDown(this, oEvent);
 	};
 
 	KeyboardDelegate.prototype.onsapdownmodifiers = function(oEvent) {
+		handleNavigationEvent(oEvent);
+
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL)) {
 			navigateDown(this, oEvent);
 			return;
@@ -1384,7 +1400,6 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.SHIFT)) {
-			oEvent.preventDefault(); // Avoid text selection flickering.
 
 			/* Range Selection */
 
@@ -1436,10 +1451,13 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsapup = function(oEvent) {
+		handleNavigationEvent(oEvent);
 		navigateUp(this, oEvent);
 	};
 
 	KeyboardDelegate.prototype.onsapupmodifiers = function(oEvent) {
+		handleNavigationEvent(oEvent);
+
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL)) {
 			navigateUp(this, oEvent);
 			return;
@@ -1462,7 +1480,6 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.SHIFT)) {
-			oEvent.preventDefault(); // Avoid text selection flickering.
 
 			/* Range Selection */
 
@@ -1515,10 +1532,13 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsapleft = function(oEvent) {
+		handleNavigationEvent(oEvent);
 		navigateLeft(this, oEvent);
 	};
 
 	KeyboardDelegate.prototype.onsapleftmodifiers = function(oEvent) {
+		handleNavigationEvent(oEvent);
+
 		if (this._getKeyboardExtension().isInActionMode()) {
 			return;
 		}
@@ -1527,7 +1547,6 @@ sap.ui.define([
 		var bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.SHIFT)) {
-			oEvent.preventDefault(); // Avoid text selection flickering.
 
 			/* Range Selection */
 
@@ -1587,16 +1606,18 @@ sap.ui.define([
 			/* Column Reordering */
 
 			if (oCellInfo.isOfType(CellType.COLUMNHEADER)) {
-				oEvent.preventDefault();
-				oEvent.stopImmediatePropagation();
-
-				var oColumn = this.getColumns()[oCellInfo.columnIndex];
-				moveColumn(oColumn, bIsRTL);
+				preventItemNavigation(oEvent);
+				moveColumn(this.getColumns()[oCellInfo.columnIndex], bIsRTL);
 			}
+
+		} else if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.ALT)) {
+			preventItemNavigation(oEvent);
 		}
 	};
 
 	KeyboardDelegate.prototype.onsaprightmodifiers = function(oEvent) {
+		handleNavigationEvent(oEvent);
+
 		if (this._getKeyboardExtension().isInActionMode()) {
 			return;
 		}
@@ -1605,8 +1626,6 @@ sap.ui.define([
 		var bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.SHIFT)) {
-			oEvent.preventDefault(); // Avoid text selection flickering.
-
 			/* Range Selection */
 
 			if (oCellInfo.isOfType(CellType.DATACELL)) {
@@ -1656,16 +1675,18 @@ sap.ui.define([
 			/* Column Reordering */
 
 			if (oCellInfo.isOfType(CellType.COLUMNHEADER)) {
-				oEvent.preventDefault();
-				oEvent.stopImmediatePropagation();
-
-				var oColumn = this.getColumns()[oCellInfo.columnIndex];
-				moveColumn(oColumn, !bIsRTL);
+				preventItemNavigation(oEvent);
+				moveColumn(this.getColumns()[oCellInfo.columnIndex], !bIsRTL);
 			}
+
+		} else if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.ALT)) {
+			preventItemNavigation(oEvent);
 		}
 	};
 
 	KeyboardDelegate.prototype.onsaphome = function(oEvent) {
+		handleNavigationEvent(oEvent);
+
 		if (this._getKeyboardExtension().isInActionMode()) {
 			return;
 		}
@@ -1673,15 +1694,10 @@ sap.ui.define([
 		// If focus is on a group header, do nothing.
 		if (TableUtils.Grouping.isInGroupHeaderRow(oEvent.target)) {
 			preventItemNavigation(oEvent);
-			oEvent.preventDefault(); // Prevent scrolling the page.
 			return;
 		}
 
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
-
-		if (oCellInfo.isOfType(CellType.ANY)) {
-			oEvent.preventDefault(); // Prevent scrolling the page.
-		}
 
 		if (oCellInfo.isOfType(CellType.DATACELL | CellType.ROWACTION | CellType.COLUMNHEADER)) {
 			var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
@@ -1707,13 +1723,14 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsapend = function(oEvent) {
+		handleNavigationEvent(oEvent);
+
 		if (this._getKeyboardExtension().isInActionMode()) {
 			return;
 		}
 
 		// If focus is on a group header, do nothing.
 		if (TableUtils.Grouping.isInGroupHeaderRow(oEvent.target)) {
-			oEvent.preventDefault(); // Prevent scrolling the page.
 			preventItemNavigation(oEvent);
 			return;
 		}
@@ -1721,8 +1738,6 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 		if (oCellInfo.isOfType(CellType.ANY)) {
-			oEvent.preventDefault(); // Prevent scrolling the page.
-
 			var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
 			var iFocusedIndex = oFocusedItemInfo.cell;
 			var iColumnCount = oFocusedItemInfo.columnCount;
@@ -1768,12 +1783,13 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsaphomemodifiers = function(oEvent) {
+		handleNavigationEvent(oEvent);
+
 		if (this._getKeyboardExtension().isInActionMode()) {
 			return;
 		}
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL)) {
-			oEvent.preventDefault(); // Prevent scrolling the page.
 			var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNHEADER)) {
@@ -1825,12 +1841,13 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsapendmodifiers = function(oEvent) {
+		handleNavigationEvent(oEvent);
+
 		if (this._getKeyboardExtension().isInActionMode()) {
 			return;
 		}
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL)) {
-			oEvent.preventDefault(); // Prevent scrolling the page.
 			var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 			if (oCellInfo.isOfType(CellType.ANY)) {
@@ -1900,11 +1917,11 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsappageup = function(oEvent) {
+		handleNavigationEvent(oEvent);
+
 		if (this._getKeyboardExtension().isInActionMode()) {
 			return;
 		}
-
-		oEvent.preventDefault(); // Prevent scrolling the page.
 
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
@@ -1969,11 +1986,11 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsappagedown = function(oEvent) {
+		handleNavigationEvent(oEvent);
+
 		if (this._getKeyboardExtension().isInActionMode()) {
 			return;
 		}
-
-		oEvent.preventDefault(); // Prevent scrolling the page.
 
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
@@ -2042,6 +2059,8 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsappageupmodifiers = function(oEvent) {
+		handleNavigationEvent(oEvent);
+
 		if (this._getKeyboardExtension().isInActionMode()) {
 			return;
 		}
@@ -2083,6 +2102,8 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsappagedownmodifiers = function(oEvent) {
+		handleNavigationEvent(oEvent);
+
 		if (this._getKeyboardExtension().isInActionMode()) {
 			return;
 		}
