@@ -3,17 +3,6 @@
     "date": "October 2020",
     "notes": [
       {
-        "id": "ed2af10346ea394e3d5ffedc1cfc2ef02ee0b4d1",
-        "type": "FIX",
-        "text": "[INTERNAL] sap.m.Tokenizer: Adjust NMore's popup width to display elements' full text",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2070303103"
-          }
-        ]
-      },
-      {
         "id": "0aee3dc3ed93bbdad95586068e15e79f36d4cdaf",
         "type": "FEATURE",
         "text": " sap.m.ProgressIndicator: Added information popover"

@@ -37,12 +37,6 @@
         "references": []
       },
       {
-        "id": "ae3375c237288d960bc8a52d5562ea5924733ae6",
-        "type": "FIX",
-        "text": "[INTERNAL] sap.uxap.AnchorBar - missing hierarchicalSelect on ipad, needs delay",
-        "references": []
-      },
-      {
         "id": "70f9686c8912b29f8e279400e798cf94a7916b83",
         "type": "FIX",
         "text": "sap.uxap.ObjectPageLayout property showAnchorBarPopover now works",

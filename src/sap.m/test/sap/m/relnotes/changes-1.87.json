@@ -222,17 +222,6 @@
         ]
       },
       {
-        "id": "064bda288f824900d6cf05a9f0dff2f7dcf1a6a9",
-        "type": "FIX",
-        "text": "[INTERNAL] sap.m.Input: Propagate the correct value from Dialog's input",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180046567"
-          }
-        ]
-      },
-      {
         "id": "1fcf1b635cd08b168e42103caa492c95343e08c5",
         "type": "FIX",
         "text": " sap.m.SuggestionsPopover, sap.m.ComboBox: Unused references removed"
@@ -256,17 +245,6 @@
           {
             "type": "BCP",
             "reference": "2180030699"
-          }
-        ]
-      },
-      {
-        "id": "5606a999307281e398604d56ddcb8348f54889c6",
-        "type": "FIX",
-        "text": "[INTERNAL] sap.m.Input: Fix exceptions for typeahead on mobile",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180035368"
           }
         ]
       },
