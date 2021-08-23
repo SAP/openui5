@@ -12,6 +12,9 @@
 .sapMBtnEmphasized {
 	font-weight: @sapUiButtonEmphasizedFontWeight;
 	border: 0.125rem solid;
+	.sapMBtnContent {
+		line-height: 2rem;
+	}
 }
 
 .sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnEmphasized:not(.sapMBtnActive),
@@ -142,6 +145,10 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	.sapMBtnInner > img {
 		margin: 0;
 		padding: 0;
+	}
+
+	.sapMBtnEmphasized .sapMBtnContent {
+		line-height: 1.4rem;
 	}
 }
 
