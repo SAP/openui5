@@ -67,9 +67,14 @@ sap.ui.define([
 	});
 });
 	//*********************************************************************************************
-	QUnit.test("_refresh: Call getResolvedPath", function (assert) {
+[true, false].forEach(function (bV2Context) {
+	var sTitle = "_refresh: Call getResolvedPath; binding has a " + (bV2Context ? "V2" : "standard")
+			+ " parent context " + bV2Context;
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
-				oContext : "~context",
+				oContext : bV2Context
+					? {isTransient : function () {}}
+					: "~context",
 				oModel : {createBindingContext : function () {}},
 				mParameters : "~parameters",
 				sPath : "~path",
@@ -79,22 +84,33 @@ sap.ui.define([
 			};
 
 		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
+		if (bV2Context) {
+			this.mock(oBinding.oContext).expects("isTransient").withExactArgs().returns(undefined);
+		}
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
 		this.mock(oBinding).expects("fireDataRequested").withExactArgs();
 		this.mock(oBinding.oModel).expects("createBindingContext")
-			.withExactArgs("~path", "~context", "~parameters", sinon.match.func, true)
-			.returns("~context");
+			.withExactArgs("~path", sinon.match.same(oBinding.oContext), "~parameters",
+				sinon.match.func, true)
+			.returns("~oV2Context");
 
 		// code under test
 		ODataContextBinding.prototype._refresh.call(oBinding);
 
 		assert.strictEqual(oBinding.bPendingRequest, true);
 	});
+});
 
 	//*********************************************************************************************
-	QUnit.test("_refresh: Create preliminary context", function (assert) {
+[true, false].forEach(function (bV2Context) {
+	var sTitle = "_refresh: Create preliminary context; binding has a "
+			+ (bV2Context ? "V2" : "standard") + " parent context " + bV2Context;
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
-				oContext : "~context",
+				oContext : bV2Context
+					? {isTransient : function () {}}
+					: "~context",
+				bCreatePreliminaryContext : true,
 				oModel : {
 					createBindingContext : function () {},
 					_updateContext : function () {}
@@ -104,45 +120,50 @@ sap.ui.define([
 				_fireChange : function () {},
 				fireDataRequested : function () {},
 				getResolvedPath : function () {},
-				isRelative : function () {},
-				bCreatePreliminaryContext : true
+				isRelative : function () {}
 			},
-			oContext = {
-				sPath: "~oContextPath",
+			oV2Context = {
+				sPath : "~oContextPath",
 				setPreliminary : function() {}
 			},
-			oBoundContext,
 			oModelMock = this.mock(oBinding.oModel);
 
 		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
+		if (bV2Context) {
+			this.mock(oBinding.oContext).expects("isTransient").withExactArgs().returns(undefined);
+		}
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
 		this.mock(oBinding).expects("fireDataRequested").withExactArgs();
 		oModelMock.expects("createBindingContext")
-			.withExactArgs("~path", "~context", "~parameters", sinon.match.func, true)
-			.returns(oContext);
-		this.mock(oContext).expects("setPreliminary").withExactArgs(true);
+			.withExactArgs("~path", sinon.match.same(oBinding.oContext), "~parameters",
+				sinon.match.func, true)
+			.returns(oV2Context);
+		this.mock(oV2Context).expects("setPreliminary").withExactArgs(true);
 		oModelMock.expects("_updateContext")
-			.withExactArgs(oContext, "~resolvedPath");
+			.withExactArgs(oV2Context, "~resolvedPath");
 		this.mock(oBinding).expects("_fireChange")
 			.withExactArgs({ reason: ChangeReason.Context }, undefined);
 		oModelMock.expects("_updateContext")
-			.withExactArgs(oContext, "~oContextPath");
+			.withExactArgs(oV2Context, "~oContextPath");
 
 		// code under test
 		ODataContextBinding.prototype._refresh.call(oBinding);
 
-		assert.strictEqual(oBinding.oElementContext, oContext);
-
-		// code under test - getBoundContext returns V2 Context
-		oBoundContext = ODataContextBinding.prototype.getBoundContext.call(oBinding);
-
-		assert.strictEqual(oBoundContext, oContext);
+		assert.strictEqual(ODataContextBinding.prototype.getBoundContext.call(oBinding),
+			oV2Context);
 	});
+});
 
 	//*********************************************************************************************
-	QUnit.test("_refresh: createBindingContext set element context", function (assert) {
-		var oBinding = {
-				oContext : "~context",
+[true, false].forEach(function (bV2Context) {
+	var sTitle = "_refresh: createBindingContext set element context; binding has a "
+			+ (bV2Context ? "V2" : "standard") + " parent context " + bV2Context;
+	QUnit.test(sTitle, function (assert) {
+		var oExpectation,
+			oBinding = {
+				oContext : bV2Context
+					? {isTransient : function () {}}
+					: "~context",
 				oModel : {
 					createBindingContext : function () {},
 					_updateContext : function () {},
@@ -155,17 +176,19 @@ sap.ui.define([
 				getResolvedPath : function () {},
 				isRelative : function () {}
 			},
-			oBoundContext,
 			oElementContextArg = {
 				getObject : function () {}
-			},
-			oExpectation;
+			};
 
 		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
+		if (bV2Context) {
+			this.mock(oBinding.oContext).expects("isTransient").withExactArgs().returns(undefined);
+		}
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
 		this.mock(oBinding).expects("fireDataRequested").withExactArgs();
 		oExpectation = this.mock(oBinding.oModel).expects("createBindingContext")
-			.withExactArgs("~path", "~context", "~parameters", sinon.match.func, true);
+			.withExactArgs("~path", sinon.match.same(oBinding.oContext), "~parameters",
+				sinon.match.func, true);
 		this.mock(oBinding).expects("_fireChange")
 			.withExactArgs({ reason: ChangeReason.Context }, undefined);
 		// createBindingContext callback mocks
@@ -182,12 +205,27 @@ sap.ui.define([
 		ODataContextBinding.prototype._refresh.call(oBinding);
 		oExpectation.callArgWith(3, oElementContextArg);
 
-		assert.strictEqual(oBinding.oElementContext, oElementContextArg);
+		assert.strictEqual(ODataContextBinding.prototype.getBoundContext.call(oBinding),
+			oElementContextArg);
+	});
+});
 
-		// code under test - getBoundContext returns V2 Context
-		oBoundContext = ODataContextBinding.prototype.getBoundContext.call(oBinding);
+	//*********************************************************************************************
+	QUnit.test("_refresh: parent context is transient", function (assert) {
+		var oBinding = {
+				oContext : {
+					isTransient : function () {}
+				},
+				getResolvedPath : function () {},
+				isRelative : function () {}
+			};
 
-		assert.strictEqual(oBoundContext, oElementContextArg);
+		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
+		this.mock(oBinding.oContext).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+
+		// code under test
+		ODataContextBinding.prototype._refresh.call(oBinding);
 	});
 
 	//*********************************************************************************************
