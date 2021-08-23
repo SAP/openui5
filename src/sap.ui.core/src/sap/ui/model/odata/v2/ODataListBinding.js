@@ -791,20 +791,20 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype._refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
-		var bChangeDetected = false,
-			bCreatedRelative = this.isRelative() && this.oContext && this.oContext.bCreated;
+		var oEntityType, sResolvedPath,
+			bChangeDetected = false,
+			bRelativeAndTransient = this.isRelative()
+				&& this.oContext && this.oContext.isTransient && this.oContext.isTransient();
 
-		if (bCreatedRelative) {
+		if (bRelativeAndTransient) {
 			return;
 		}
-
 		this.bPendingRefresh = false;
-
 		if (!bForceUpdate) {
 			if (mEntityTypes){
-				var sResolvedPath = this.getResolvedPath();
+				sResolvedPath = this.getResolvedPath();
 				if (sResolvedPath) {
-					var oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sResolvedPath);
+					oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sResolvedPath);
 					if (oEntityType && (oEntityType.entityType in mEntityTypes)) {
 						bChangeDetected = true;
 					}
@@ -814,6 +814,7 @@ sap.ui.define([
 				each(this.aKeys, function(i, sKey) {
 					if (sKey in mChangedEntities) {
 						bChangeDetected = true;
+
 						return false;
 					}
 				});
@@ -825,11 +826,12 @@ sap.ui.define([
 		if (bForceUpdate || bChangeDetected) {
 			if (this.bSuspended && !this.bIgnoreSuspend && !bForceUpdate) {
 				this.bPendingRefresh = true;
+
 				return;
 			}
 			this.abortPendingRequest(true);
 			this.resetData();
-			this._fireRefresh({reason: ChangeReason.Refresh});
+			this._fireRefresh({reason : ChangeReason.Refresh});
 		}
 	};
 
