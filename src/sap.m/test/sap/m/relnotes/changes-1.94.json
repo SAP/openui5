@@ -3,6 +3,66 @@
     "date": "August 2021",
     "notes": [
       {
+        "id": "8f5e094c53cb71c50c7e3386b77dcdd2fcbd5aef",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Allow startHour to be greater than the endHour",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005693432021"
+          }
+        ]
+      },
+      {
+        "id": "70249f515236c15ee2197bfae9cbada467ae13ff",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Subheader padding is now correct in Quartz themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180314469"
+          }
+        ]
+      },
+      {
+        "id": "57873d9bfce9f8625091e42bcdb220491a3e1342",
+        "type": "FIX",
+        "text": " sap.m.Input: place the clear icon before the vh icon"
+      },
+      {
+        "id": "d019209a851929c47c12945efbbb9c8f9e28f2fe",
+        "type": "FIX",
+        "text": " sap.m.IcontabBar: Color of tabs in Inline mode is now announced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180337117"
+          }
+        ]
+      },
+      {
+        "id": "76c76d0c7aa74b156bf309b891d89ac4b9334fbc",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Improved aria-describedby",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170128516"
+          }
+        ]
+      },
+      {
+        "id": "960ee3204f0d3946928530f6a1ef98fb0e3071f7",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: ariaLabelledBy references are now added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180085329"
+          }
+        ]
+      },
+      {
         "id": "8c08ae34122cf2949377e22a84e317b68defe5c4",
         "type": "FIX",
         "text": " sap.m.MenuButton: correct visual indication for keydown interactions",

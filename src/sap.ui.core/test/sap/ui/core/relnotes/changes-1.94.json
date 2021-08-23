@@ -3,6 +3,43 @@
     "date": "August 2021",
     "notes": [
       {
+        "id": "e16a3bf5679508eaa8741a44da6fc426e3645dbd",
+        "type": "FIX",
+        "text": " sap.ui.core.routing.History: Keep aHistory and HistoryState in sync",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180361838"
+          }
+        ]
+      },
+      {
+        "id": "c3355383e302ea407904d18873380c519e8afdf7",
+        "type": "FIX",
+        "text": " core.routing: add option 'rootView' for dynamic Target",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180159152"
+          }
+        ]
+      },
+      {
+        "id": "3a135878fc2933fe6eda3b138fafd9240c0b8035",
+        "type": "FIX",
+        "text": " core.routing: resolving container after \"rootView\" option is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180345721"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180343370"
+          }
+        ]
+      },
+      {
         "id": "fcf483431df9df4473589f0141a31bf48c76de30",
         "type": "FIX",
         "text": " crossroads: Match patterns w/ optional parameters and optional slashes",

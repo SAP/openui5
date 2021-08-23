@@ -3,6 +3,17 @@
     "date": "August 2021",
     "notes": [
       {
+        "id": "c443749be765f54178ad2b65fe258cd2db93e826",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Alpha slider change does not change the color",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180352784"
+          }
+        ]
+      },
+      {
         "id": "7e0a5ec33eceae46751a53b71113e2df73f7d90c",
         "type": "FIX",
         "text": " sap.ui.unified.CalendarDateInterval: has correct min-height in all setups",

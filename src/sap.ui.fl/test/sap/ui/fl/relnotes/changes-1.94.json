@@ -3,6 +3,11 @@
     "date": "August 2021",
     "notes": [
       {
+        "id": "7e8fba32c70963a12799d784896a269512c7c0e2",
+        "type": "FEATURE",
+        "text": " fl.VariantManagement: display sharing info for variants"
+      },
+      {
         "id": "7b6d9c31b094209c8f920ed1d3704dfb9174315c",
         "type": "FIX",
         "text": " sap.ui.fl: condense create and move to different group correctly",
