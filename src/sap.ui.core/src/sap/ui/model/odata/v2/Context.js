@@ -118,9 +118,9 @@ sap.ui.define([
 	 * been persisted in the back end.
 	 *
 	 * @returns {boolean}
-	 *   Whether this context is transient if it is created using
-	 *   {@link sap.ui.model.odata.v2.ODataModel#createEntry}; <code>undefined</code> if it is not
-	 *   created using {@link sap.ui.model.odata.v2.ODataModel#createEntry}
+	 *   Whether this context is transient if it has been created using
+	 *   {@link sap.ui.model.odata.v2.ODataModel#createEntry}; returns <code>undefined</code> if the
+	 *   context has not been created using {@link sap.ui.model.odata.v2.ODataModel#createEntry}
 	 *
 	 * @public
 	 * @since 1.94.0
