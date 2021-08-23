@@ -150,7 +150,14 @@ sap.ui.define([
 						/**
 						 * This event is fired when there is an error loading the PDF file.
 						 */
-						error: {},
+						error: {
+							parameters : {
+								/**
+								 * The iframe element.
+								 */
+								target : {type: "any", defaultValue: null}
+							}
+						},
 						/**
 						 * This event is fired when the PDF viewer control cannot check the loaded content. For
 						 * example, the default configuration of the Mozilla Firefox browser may not allow checking
@@ -290,9 +297,11 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		PDFViewer.prototype._fireErrorEvent = function () {
+		PDFViewer.prototype._fireErrorEvent = function (oEventTarget) {
 			this._renderErrorState();
-			this.fireEvent("error", {}, true);
+			this.fireError({
+				target: oEventTarget || null
+			});
 		};
 
 		/**
@@ -360,7 +369,7 @@ sap.ui.define([
 				if (bContinue && PDFViewerRenderer._isSupportedMimeType(sCurrentContentType) && PDFViewerRenderer._isPdfPluginEnabled()) {
 					this._fireLoadedEvent();
 				} else {
-					this._fireErrorEvent();
+					this._fireErrorEvent(oEvent.target);
 				}
 			} catch (error) {
 				Log.fatal(false, "Fatal error during the handling of load event happened.");
