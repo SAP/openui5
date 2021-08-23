@@ -3,38 +3,6 @@
     "date": "July 2021",
     "notes": [
       {
-        "id": "550769f6961f73ade87fcabbc4e252713fb702d4",
-        "type": "FIX",
-        "text": "[INTERNAL] sap.ui.fl.Settings provides correct flag for public FL variants"
-      },
-      {
-        "id": "1196304e6ef0262310db65940b4b723005cb65d6",
-        "type": "FIX",
-        "text": "[INTERNAL]sap.ui.fl: BaseRename revertChange missing return"
-      },
-      {
-        "id": "bd27a8ea476eb12aaa58d5f760fb26fa9e485b6a",
-        "type": "FIX",
-        "text": "[INTERNAL]sap.ui.fl: iFrame missing unhide action",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180304861"
-          }
-        ]
-      },
-      {
-        "id": "a9d1317dc6af1c3d93ee052c05af74f33b40eef6",
-        "type": "FIX",
-        "text": "[INTERNAL] sap.ui.fl: Clean up cache after condenser delete",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180246530"
-          }
-        ]
-      },
-      {
         "id": "362d34cf4ef7d9ea676711218b123bfb344a5ce5",
         "type": "FIX",
         "text": " fl.VariantManagement: focus on field in error state",

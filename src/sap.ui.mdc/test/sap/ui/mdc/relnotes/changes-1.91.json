@@ -14,17 +14,6 @@
         ]
       },
       {
-        "id": "d6aae8ac20afc301c7eeb930739a08d9ea442ac2",
-        "type": "FIX",
-        "text": "[INTERNAL] FilterBar: consider changes when triggerSearch is called",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180166883"
-          }
-        ]
-      },
-      {
         "id": "20cd130c506b04b4d0e6b499cee4f00d7a3a905d",
         "type": "FIX",
         "text": " TableDelegate: suspend/resume on the root binding",

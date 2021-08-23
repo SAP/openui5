@@ -34,11 +34,6 @@
         "text": " Field: empty field - choose unit via field help stays empty"
       },
       {
-        "id": "210ef87102deb50e1c6a0c54d4945921b1762e03",
-        "type": "FIX",
-        "text": "[INTERNAL] MDC Chart: Fix for CharType button not being visible"
-      },
-      {
         "id": "391c0d0c39c6115282cd803518fb46395285119a",
         "type": "FIX",
         "text": " FieldValueHelp: don't update dialog if suggestContent changed",

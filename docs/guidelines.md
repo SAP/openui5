@@ -332,7 +332,7 @@ The commit message consists of two or three parts, separated by empty lines.
 The commit summary is the first line of the commit message.
 - It should be 50-70 characters long.
 - Must be prefixed by `[FIX]` or `[FEATURE]` and should start with the control/component which was the main subject of the change
--   Instead of `[FIX]`/`[FEATURE]` and at any other location in the commit message `[INTERNAL]` can be used for commits/explanations which should not be part of the change log. If you add `[INTERNAL]` as only prefix to the commit message, the entire message won't be part of the change log. If you add this prefix to the middle of the message everything after this prefix will be ignored for the change log.
+-   Instead of `[FIX]`/`[FEATURE]` an `[INTERNAL]` can be used for commits/explanations which should not be part of the change log. If this tag is used the message won’t appear in the release/patch notes.
 - Do not use any `[` or `]` within the summary but for the prefixes.
 
 ### Description
