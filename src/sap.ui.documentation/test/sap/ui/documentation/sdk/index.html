@@ -6,10 +6,16 @@
 	<title>SAPUI5 Navigation</title>
 	<script>
 
-		var sSampleId = new window.URLSearchParams(window.location.search).get('sap-ui-xx-sample-id'),
-			sSamplePath = new window.URLSearchParams(window.location.search).get('sap-ui-xx-sample-path'),
-			sOrigin = new window.URLSearchParams(window.location.search).get('sap-ui-xx-sample-origin'),
-			sVersion = new window.URLSearchParams(window.location.search).get('sap-ui-xx-sample-version'),
+		var extractSanitizeUrlParam = function(sParamName) {
+			var sParam = new window.URLSearchParams(window.location.search).get(sParamName);
+
+			return sParam.replace(/[/</>]/g, '');
+		};
+
+		var sSampleId = extractSanitizeUrlParam('sap-ui-xx-sample-id'),
+			sSamplePath = extractSanitizeUrlParam('sap-ui-xx-sample-path'),
+			sOrigin = extractSanitizeUrlParam('sap-ui-xx-sample-origin'),
+			sVersion = extractSanitizeUrlParam('sap-ui-xx-sample-version'),
 
 			oPath = {};
 		if (!sOrigin || sOrigin == ".") {
