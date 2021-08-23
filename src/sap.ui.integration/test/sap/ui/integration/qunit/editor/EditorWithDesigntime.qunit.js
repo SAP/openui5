@@ -3460,7 +3460,7 @@ sap.ui.define([
 						assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel is not visible after dynamic button press");
 						assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel is visible after dynamic button press");
 						testInterface.oDynamicValueField.fireValueHelpRequest();
-						assert.ok(testInterface.oSettingsPanel.getItems().length === 4, "Settings: Settings Panel has 4 items");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems().length === 4, "Settings: Settings Panel has 4 items");
 						var oItem = testInterface.getMenuItems()[3].getItems()[2];
 						testInterface.getMenu().fireItemSelected({ item: oItem });
 						testInterface.oPopover.getBeginButton().firePress();
@@ -3538,7 +3538,7 @@ sap.ui.define([
 						assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel is not visible after dynamic button press");
 						assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel is visible after dynamic button press");
 						testInterface.oDynamicValueField.fireValueHelpRequest();
-						assert.ok(testInterface.oSettingsPanel.getItems().length === 4, "Settings: Settings Panel has 4 items");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems().length === 4, "Settings: Settings Panel has 4 items");
 						var oItem = testInterface.getMenuItems()[0];
 						testInterface.getMenu().fireItemSelected({ item: oItem });
 						testInterface.oPopover.getEndButton().firePress();
@@ -3606,7 +3606,7 @@ sap.ui.define([
 						assert.ok(oField._oSettingsPanel._oOpener === oField, "Settings: Has correct owner");
 						var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
 						var testInterface = settingsClass._private();
-						var resetButton = testInterface.oPopover.getCustomHeader().getItems()[2];
+						var resetButton = testInterface.oResetToDefaultButton;
 						resetButton.firePress();
 						setTimeout(function () {
 							//this is delayed not to give time to show the tokenizer
@@ -3671,11 +3671,12 @@ sap.ui.define([
 						assert.ok(oField._oSettingsPanel._oOpener === oField, "Settings: Has correct owner");
 						var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
 						var testInterface = settingsClass._private();
-						var resetButton = testInterface.oPopover.getCustomHeader().getItems()[2];
+						var resetButton = testInterface.oResetToDefaultButton;
 						resetButton.firePress();
 						setTimeout(function () {
 							//this is delayed not to give time to show the tokenizer
-							assert.ok(oField.getAggregation("_field").getValue() === "StringParameter Value Trans in i18n", "Field: Value is reset");
+							// assert.ok(oField.getAggregation("_field").getValue() === "StringParameter Value Trans in i18n", "Field: Value is reset");
+							assert.ok(oField.getAggregation("_field").getValue() === "{{STRINGPARAMETERVALUE}}", "Field: Value is reset");
 							resolve();
 						}, 1000);
 					}, 1000);
@@ -3747,12 +3748,12 @@ sap.ui.define([
 						testInterface.oSegmentedButton.getItems()[1].firePress();
 						assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel is visible after settings button press");
 						assert.ok(testInterface.oDynamicPanel.getVisible() === false, "Settings: Dynamic Values Panel not visible after settings button press");
-						assert.ok(testInterface.oSettingsPanel.getItems().length === 4, "Settings: Settings Panel has 4 items");
-						assert.ok(testInterface.oSettingsPanel.getItems()[1].getItems()[1].getSelected() === true, "Settings: Allow visible option is selected by default");
-						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getSelected() === true, "Settings: Allow editing option is selected by default");
-						testInterface.oSettingsPanel.getItems()[1].getItems()[1].fireSelect({ selected: false });
-						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getEnabled() === false, "Settings: Allow editing option is not enabled after setting visible to false");
-						assert.ok(testInterface.oSettingsPanel.getItems()[3].getItems()[1].getEnabled() === false, "Settings: Allow dynamic value option is not enabled after setting visible to false");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems().length === 4, "Settings: Settings Panel has 4 items");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[1].getItems()[1].getSelected() === true, "Settings: Allow visible option is selected by default");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].getSelected() === true, "Settings: Allow editing option is selected by default");
+						testInterface.oSettingsPanel.getItems()[0].getItems()[1].getItems()[1].fireSelect({ selected: false });
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].getEnabled() === false, "Settings: Allow editing option is not enabled after setting visible to false");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[3].getItems()[1].getEnabled() === false, "Settings: Allow dynamic value option is not enabled after setting visible to false");
 						testInterface.oPopover.getBeginButton().firePress();
 						setTimeout(function () {
 							//this is delayed not to give time to show the tokenizer
@@ -3832,11 +3833,11 @@ sap.ui.define([
 						testInterface.oSegmentedButton.getItems()[1].firePress();
 						assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel is visible after settings button press");
 						assert.ok(testInterface.oDynamicPanel.getVisible() === false, "Settings: Dynamic Values Panel not visible after settings button press");
-						assert.ok(testInterface.oSettingsPanel.getItems().length === 4, "Settings: Settings Panel has 4 items");
-						assert.ok(testInterface.oSettingsPanel.getItems()[1].getItems()[1].getSelected() === true, "Settings: Allow visible option is selected by default");
-						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getSelected() === true, "Settings: Allow editing option is selected by default");
-						testInterface.oSettingsPanel.getItems()[2].getItems()[1].fireSelect({ selected: false });
-						assert.ok(testInterface.oSettingsPanel.getItems()[3].getItems()[1].getEnabled() === false, "Settings: Allow dynamic value option is not enabled after setting editing enable to false");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems().length === 4, "Settings: Settings Panel has 4 items");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[1].getItems()[1].getSelected() === true, "Settings: Allow visible option is selected by default");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].getSelected() === true, "Settings: Allow editing option is selected by default");
+						testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].fireSelect({ selected: false });
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[3].getItems()[1].getEnabled() === false, "Settings: Allow dynamic value option is not enabled after setting editing enable to false");
 						testInterface.oPopover.getBeginButton().firePress();
 						setTimeout(function () {
 							//this is delayed not to give time to show the tokenizer
@@ -3908,15 +3909,15 @@ sap.ui.define([
 						testInterface.oSegmentedButton.getItems()[1].firePress();
 						assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel is visible after settings button press");
 						assert.ok(testInterface.oDynamicPanel.getVisible() === false, "Settings: Dynamic Values Panel not visible after settings button press");
-						assert.ok(testInterface.oSettingsPanel.getItems().length === 4, "Settings: Settings Panel has 4 items");
-						assert.ok(testInterface.oSettingsPanel.getItems()[1].getItems()[1].getSelected() === false, "Settings: Allow visible option is unselected by visibleToUser");
-						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getEnabled() === false, "Settings: Allow editing option is disabled by visibleToUser");
-						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getSelected() === false, "Settings: Allow editing option is unselected by editableToUser");
-						testInterface.oSettingsPanel.getItems()[1].getItems()[1].fireSelect({ selected: true });
-						testInterface.oSettingsPanel.getItems()[2].getItems()[1].fireSelect({ selected: true });
-						assert.ok(testInterface.oSettingsPanel.getItems()[1].getItems()[1].getSelected() === true, "Settings: Allow visible option is selected after setting visible to true");
-						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getEnabled() === true, "Settings: Allow editing option is enabled after setting editing enable to true");
-						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getSelected() === true, "Settings: Allow editing option is selected by editableToUser");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems().length === 4, "Settings: Settings Panel has 4 items");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[1].getItems()[1].getSelected() === false, "Settings: Allow visible option is unselected by visibleToUser");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].getEnabled() === false, "Settings: Allow editing option is disabled by visibleToUser");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].getSelected() === false, "Settings: Allow editing option is unselected by editableToUser");
+						testInterface.oSettingsPanel.getItems()[0].getItems()[1].getItems()[1].fireSelect({ selected: true });
+						testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].fireSelect({ selected: true });
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[1].getItems()[1].getSelected() === true, "Settings: Allow visible option is selected after setting visible to true");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].getEnabled() === true, "Settings: Allow editing option is enabled after setting editing enable to true");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].getSelected() === true, "Settings: Allow editing option is selected by editableToUser");
 						testInterface.oPopover.getBeginButton().firePress();
 						setTimeout(function () {
 							//this is delayed not to give time to show the tokenizer
@@ -4160,15 +4161,15 @@ sap.ui.define([
 						testInterface.oSegmentedButton.getItems()[1].firePress();
 						assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel is visible after settings button press");
 						assert.ok(testInterface.oDynamicPanel.getVisible() === false, "Settings: Dynamic Values Panel not visible after settings button press");
-						assert.ok(testInterface.oSettingsPanel.getItems().length === 4, "Settings: Settings Panel has 4 items");
-						assert.ok(testInterface.oSettingsPanel.getItems()[1].getItems()[1].getSelected() === true, "Settings: Allow visible option is selected by visibleToUser");
-						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getEnabled() === true, "Settings: Allow editing option is enabled by visibleToUser");
-						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getSelected() === true, "Settings: Allow editing option is selected by editableToUser");
-						testInterface.oSettingsPanel.getItems()[2].getItems()[1].fireSelect({ selected: false });
-						testInterface.oSettingsPanel.getItems()[1].getItems()[1].fireSelect({ selected: false });
-						assert.ok(testInterface.oSettingsPanel.getItems()[1].getItems()[1].getSelected() === false, "Settings: Allow visible option is unselected after setting visible to false");
-						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getEnabled() === false, "Settings: Allow editing option is enabled after setting visible enable to false");
-						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getSelected() === false, "Settings: Allow editing option is unselected after setting editable to false");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems().length === 4, "Settings: Settings Panel has 4 items");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[1].getItems()[1].getSelected() === true, "Settings: Allow visible option is selected by visibleToUser");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].getEnabled() === true, "Settings: Allow editing option is enabled by visibleToUser");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].getSelected() === true, "Settings: Allow editing option is selected by editableToUser");
+						testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].fireSelect({ selected: false });
+						testInterface.oSettingsPanel.getItems()[0].getItems()[1].getItems()[1].fireSelect({ selected: false });
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[1].getItems()[1].getSelected() === false, "Settings: Allow visible option is unselected after setting visible to false");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].getEnabled() === false, "Settings: Allow editing option is enabled after setting visible enable to false");
+						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].getSelected() === false, "Settings: Allow editing option is unselected after setting editable to false");
 						testInterface.oPopover.getBeginButton().firePress();
 						setTimeout(function () {
 							//this is delayed not to give time to show the tokenizer
@@ -4351,6 +4352,210 @@ sap.ui.define([
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable changed from admin change");
 					assert.ok(oField.getAggregation("_field").getEditable() === false, "Field: Is NOT editable");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		//tests for page admin values
+		QUnit.test("check page admin values list exists in settings page", function (assert) {
+			this.oEditor.setMode("admin");
+			this.oEditor.setAllowSettings(true);
+			this.oEditor.setAllowDynamicValues(false);
+
+			var adminchanges = {
+				":designtime": {
+					"/form/items/1stringWithStaticList/editable": true
+				},
+				":layer": 0,
+				":errors": false
+			};
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringWithStaticList",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringWithStaticList": {
+									"value": "key1"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					var oEditor = this.oEditor;
+					assert.ok(oEditor.isReady(), "Editor is ready");
+					var oLabel = oEditor.getAggregation("_formContent")[1];
+					var oField = oEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringWithStaticList", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Filed contains a comboBox");
+					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
+					//settings button
+					var oButton = oButton = oField._settingsButton;
+					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
+					oButton.firePress();
+					oButton.focus();
+					setTimeout(function () {
+						assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
+						//popup is opened
+						assert.ok(oField._oSettingsPanel._oOpener === oField, "Settings: Has correct owner");
+						var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
+						var testInterface = settingsClass._private();
+						var oTable = testInterface.oSettingsPanel.getItems()[1].getContent()[0];
+						assert.ok(testInterface.oCurrentInstance === oField._oSettingsPanel, "Settings: Points to right settings panel");
+						assert.ok(testInterface.oPopover.isA("sap.m.ResponsivePopover"), "Settings: Has a Popover instance");
+						assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel initially visible");
+						assert.ok(oTable.isA("sap.m.Table"), "Settings: page admin values table exists.");
+						testInterface.oPopover.getBeginButton().firePress();
+						setTimeout(function() {
+							assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
+							resolve();
+						}, 1000);
+					}, 1000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("check page admin values list is invisible if the filed isn't editable or visible", function (assert) {
+			this.oEditor.setMode("admin");
+			this.oEditor.setAllowSettings(true);
+			this.oEditor.setAllowDynamicValues(false);
+
+			var adminchanges = {
+				":designtime": {
+					"/form/items/1stringWithStaticList/editable": true
+				},
+				":layer": 0,
+				":errors": false
+			};
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringWithStaticList",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringWithStaticList": {
+									"value": "key1"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					var oEditor = this.oEditor;
+					assert.ok(oEditor.isReady(), "Editor is ready");
+					var oLabel = oEditor.getAggregation("_formContent")[1];
+					var oField = oEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringWithStaticList", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Filed contains a comboBox");
+					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
+					//settings button
+					var oButton = oField._settingsButton;
+					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
+					oButton.firePress();
+					oButton.focus();
+					setTimeout(function () {
+						assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
+						//popup is opened
+						assert.ok(oField._oSettingsPanel._oOpener === oField, "Settings: Has correct owner");
+						var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
+						var testInterface = settingsClass._private();
+						var oTable = testInterface.oSettingsPanel.getItems()[1].getContent()[0];
+						assert.ok(testInterface.oCurrentInstance === oField._oSettingsPanel, "Settings: Points to right settings panel");
+						assert.ok(testInterface.oPopover.isA("sap.m.ResponsivePopover"), "Settings: Has a Popover instance");
+						assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel initially visible");
+						assert.ok(oTable.isA("sap.m.Table"), "Settings: page admin values table exists.");
+						assert.ok(oTable.getSelectedItems().length === 6, "Settings: all 6 records are selected by default.");
+						testInterface.oSettingsPanel.getItems()[0].getItems()[1].getItems()[1].fireSelect({ selected: false });
+						assert.ok(testInterface.oSettingsPanel.getItems()[1].getVisible() === false, "Settings: page admin values list is invisible.");
+						testInterface.oSettingsPanel.getItems()[0].getItems()[1].getItems()[1].fireSelect({ selected: true });
+						testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].fireSelect({ selected: false });
+						assert.ok(testInterface.oSettingsPanel.getItems()[1].getVisible() === false, "Settings: page admin values list is invisible.");
+						testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].fireSelect({ selected: true });
+						testInterface.oSettingsPanel.getItems()[0].getItems()[4].getItems()[1].firePress();
+						assert.ok(oTable.getSelectedItems().length === 0, "Settings: 0 record is selected.");
+						testInterface.oSettingsPanel.getItems()[0].getItems()[4].getItems()[1].firePress();
+						assert.ok(oTable.getSelectedItems().length === 6, "Settings: all 6 records are selected.");
+						testInterface.oPopover.getBeginButton().firePress();
+						setTimeout(function() {
+							assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
+							resolve();
+						}, 1000);
+					}, 1000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("check page admin values display correctly in content mode", function (assert) {
+			this.oEditor.setMode("content");
+			this.oEditor.setAllowSettings(true);
+			this.oEditor.setAllowDynamicValues(false);
+
+			var adminchanges = {
+				":designtime": {
+					"/form/items/1stringWithStaticList/pageAdminValues": ["key2", "key3"]
+				},
+				":layer": 0,
+				":errors": false
+			};
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringWithStaticList",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringWithStaticList": {
+									"value": "key1"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					var oEditor = this.oEditor;
+					assert.ok(oEditor.isReady(), "Editor is ready");
+					var oLabel = oEditor.getAggregation("_formContent")[1];
+					var oField = oEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringWithStaticList", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Filed contains a comboBox");
+					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
 					resolve();
 				}.bind(this));
 			}.bind(this));
