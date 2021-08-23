@@ -29,36 +29,32 @@ sap.ui.define([
 	 * @alias sap.ui.core.routing.History
 	 */
 	var History = function(oHashChanger) {
+		var that = this;
+
 		this._iHistoryLength = window.history.length;
 		this.aHistory = [];
 		this._bIsInitial = true;
 
-		function initHistoryState(sCurrentHash) {
-			var oState = window.history.state === null ? {} : window.history.state;
+		function initHistory(sCurrentHash) {
+			if (History._bUsePushState && !History.getInstance()) {
+				var oState = window.history.state === null ? {} : window.history.state;
 
-			if (typeof oState === "object") {
-				oState.sap = oState.sap ? oState.sap : {};
+				if (typeof oState === "object") {
+					oState.sap = oState.sap ? oState.sap : {};
 
-				if (oState.sap.history && Array.isArray(oState.sap.history) && oState.sap.history[oState.sap.history.length - 1] === sCurrentHash) {
-					History._aStateHistory = oState.sap.history;
+					if (oState.sap.history && Array.isArray(oState.sap.history) && oState.sap.history[oState.sap.history.length - 1] === sCurrentHash) {
+						History._aStateHistory = oState.sap.history;
+					} else {
+						History._aStateHistory.push(sCurrentHash);
+						oState.sap.history = History._aStateHistory;
+						window.history.replaceState(oState, window.document.title);
+					}
 				} else {
-					History._aStateHistory.push(sCurrentHash);
-					oState.sap.history = History._aStateHistory;
-					window.history.replaceState(oState, window.document.title);
+					Log.debug("Unable to determine HistoryDirection as history.state is already set: " + window.history.state, "sap.ui.core.routing.History");
 				}
-			} else {
-				Log.debug("Unable to determine HistoryDirection as history.state is already set: " + window.history.state, "sap.ui.core.routing.History");
 			}
-		}
 
-		if (History._bUsePushState && !History.getInstance()) {
-			if (oHashChanger._initialized) {
-				initHistoryState(oHashChanger.getHash());
-			} else {
-				oHashChanger.attachEventOnce("hashChanged", function(oEvent) {
-					initHistoryState(oEvent.getParameter("newHash"));
-				});
-			}
+			that._reset();
 		}
 
 		if (!oHashChanger) {
@@ -67,7 +63,13 @@ sap.ui.define([
 
 		this._setHashChanger(oHashChanger);
 
-		this._reset();
+		if (oHashChanger._initialized) {
+			initHistory(oHashChanger.getHash());
+		} else {
+			oHashChanger.attachEventOnce("hashChanged", function(oEvent) {
+				initHistory(oEvent.getParameter("newHash"));
+			});
+		}
 	};
 
 	/**
@@ -222,13 +224,7 @@ sap.ui.define([
 		 * if you go from the Unknown to a defined state and then back is pressed we can be sure that the direction is backwards.
 		 * Because the only way from unknown to known state is a new entry in the history.
 		 */
-		if (!this._oHashChanger._initialized && History._bUsePushState && !History.getInstance()) {
-			this._oHashChanger.attachEventOnce("hashChanged", function(oEvent) {
-				this.aHistory[0] = oEvent.getParameter("newHash");
-			}.bind(this));
-		} else {
-			this.aHistory[0] = this._oHashChanger.getHash();
-		}
+		this.aHistory[0] = this._oHashChanger.getHash();
 	};
 
 	/**
