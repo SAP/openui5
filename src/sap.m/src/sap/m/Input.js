@@ -1115,6 +1115,9 @@ function(
 			src: IconPool.getIconURI("decline"),
 			noTabStop: true,
 			visible: false,
+			alt: this._oRb.getText("INPUT_CLEAR_ICON_ALT"),
+			useIconTooltip: false,
+			decorative: false,
 			press: function () {
 				if (that.getValue() !== "") {
 					that.fireChange({

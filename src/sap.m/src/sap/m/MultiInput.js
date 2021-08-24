@@ -246,9 +246,9 @@ function(
 		var that = this;
 		this._bShowListWithTokens = false;
 
-		this._getClearIcon();
-
 		Input.prototype.init.call(this);
+
+		this._getClearIcon();
 
 		this._bIsValidating = false;
 
