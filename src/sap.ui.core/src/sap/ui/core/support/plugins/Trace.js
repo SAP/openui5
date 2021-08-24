@@ -96,9 +96,7 @@ sap.ui.define([
 			rm.openStart("select", this.getId() + "-loglevel")
 				.class("sapUiSupportTxtFld")
 				.class("sapUiSupportSelect")
-				.openEnd()
-				.text("Filter:")
-				.openStart();
+				.openEnd();
 
 			rm.openStart("option")
 				.attr("value", "0")
