@@ -223,27 +223,27 @@ sap.ui.define([
 
 	QUnit.test("ControlRendered", function(assert) {
 
-		assert.notEqual(jQuery.sap.domById(ohBasicId), null, "ObjectHeader Basic should be rendered.");
+		assert.notEqual(ohBasic.getDomRef(), null, "ObjectHeader Basic should be rendered.");
 	});
 
 	QUnit.test("TooltipRendered", function(assert) {
-		assert.equal(jQuery("#" + ohBasicId).children()[0].title, "Test tooltip for the header", "Tooltip should be rendered.");
+		assert.equal(ohBasic.$().children()[0].title, "Test tooltip for the header", "Tooltip should be rendered.");
 	});
 
 	QUnit.test("IntroRendered", function(assert) {
 
-		assert.notEqual(jQuery.sap.domById(ohBasicId + "-intro"), null, "Intro should be rendered.");
+		assert.notEqual(ohBasic.getDomRef("intro"), null, "Intro should be rendered.");
 	});
 
 	QUnit.test("TitleRendered", function(assert) {
 
-		assert.notEqual(jQuery.sap.domById(ohBasic._titleText.getId()), null, "Title should be rendered.");
+		assert.notEqual(ohBasic._titleText.getDomRef(), null, "Title should be rendered.");
 	});
 
 	QUnit.test("TitleArrowRendered", function(assert) {
 
-		assert.notEqual(jQuery.sap.domById(ohBasicId + "-titleArrow"), null, "Title Arrow Icon should be rendered.");
-		assert.equal(jQuery.sap.byId(ohBasic._oTitleArrowIcon.getId()).css("cursor"), "pointer", "The title arrow should have pointer cursor.");
+		assert.notEqual(ohBasic.getDomRef("titleArrow"), null, "Title Arrow Icon should be rendered.");
+		assert.equal(ohBasic._oTitleArrowIcon.$().css("cursor"), "pointer", "The title arrow should have pointer cursor.");
 	});
 
 	QUnit.test("Title rendered as active but it's not a link", function(assert) {
@@ -252,8 +252,8 @@ sap.ui.define([
 
 	QUnit.test("NumberRendered", function(assert) {
 
-		assert.notEqual(jQuery.sap.domById(ohBasicId + "-number"), null, "Number should be rendered.");
-		assert.ok(jQuery("#" + ohBasicId + "-number").hasClass("sapMObjectNumber"), "Number is sap.m.ObjectNumber");
+		assert.notEqual(ohBasic.getDomRef("number"), null, "Number should be rendered.");
+		assert.ok(ohBasic.$("number").hasClass("sapMObjectNumber"), "Number is sap.m.ObjectNumber");
 	});
 
 	QUnit.test("AttributesRendered", function(assert) {
@@ -332,8 +332,8 @@ sap.ui.define([
 
 	QUnit.test("NumberStateColorRendered", function(assert) {
 
-		assert.notEqual(jQuery.sap.domById(ohBasicId + "-number"), null, "Number should be rendered.");
-		assert.ok(jQuery("#" + ohBasicId + "-number").hasClass("sapMObjectNumberStatusSuccess"), "Number color uses value state success color.");
+		assert.notEqual(ohBasic.getDomRef("number"), null, "Number should be rendered.");
+		assert.ok(ohBasic.$("number").hasClass("sapMObjectNumberStatusSuccess"), "Number color uses value state success color.");
 	});
 
 	QUnit.test("Placeholders for invisible attributes", function(assert) {

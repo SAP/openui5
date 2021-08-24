@@ -139,7 +139,7 @@ sap.ui.define([
 	Column.prototype.setHeader = function(sHeader) {
 		this.setProperty("header", sHeader, true);
 		this._updateColumnHeaderControl();
-		var oLabelElement = document.getElementById(this.getId());
+		var oLabelElement = this.getDomRef();
 		if (oLabelElement) {
 			oLabelElement.textContent = this.getHeader();
 		}
@@ -210,7 +210,7 @@ sap.ui.define([
 	};
 
 	Column.prototype._removeAriaStaticDom = function() {
-		var oDomElement = document.getElementById(this.getId());
+		var oDomElement = this.getDomRef();
 
 		if (oDomElement) {
 			oDomElement.parentNode.removeChild(oDomElement);

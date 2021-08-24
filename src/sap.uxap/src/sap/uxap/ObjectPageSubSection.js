@@ -510,7 +510,7 @@ sap.ui.define([
 			return;
 		}
 
-		this._$spacer = jQuery(document.getElementById(oObjectPageLayout.getId() + "-spacer"));
+		this._$spacer = oObjectPageLayout.$("spacer");
 
 		if (this._bShouldFocusSeeMoreLessButton) {
 			this._bShouldFocusSeeMoreLessButton = false;

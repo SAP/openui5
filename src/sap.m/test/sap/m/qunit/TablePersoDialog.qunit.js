@@ -241,7 +241,7 @@ sap.ui.define([
 		var sTitle = sap.ui.getCore().byId(oTablePersoDialog.getId() + "-Dialog").getTitle();
 		assert.strictEqual(sTitle, oRb.getText("PERSODIALOG_COLUMNS_TITLE"), "Columns dialog title is 'Columns'");
 		//Check if Reset ALL Button is invisible
-		assert.ok(jQuery('#' + oTPC.getAggregation("_tablePersoDialog")._oDialog.getId() + '-header-BarRight').children().length == 0, 'Reset All button should be hidden');
+		assert.ok(oTPC.getAggregation("_tablePersoDialog")._oDialog.$('header-BarRight').children().length == 0, 'Reset All button should be hidden');
 		//Check if Select All is invisible
 		assert.ok(!jQuery('.sapMPersoDialogLIHeader').is(':visible'), 'Select All Header should be hidden');
 

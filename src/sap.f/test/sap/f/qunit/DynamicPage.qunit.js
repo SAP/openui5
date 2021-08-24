@@ -3112,7 +3112,7 @@ function (
 
 	QUnit.test("Toggling page visibility preserves the scroll", function(assert) {
 		var SCROLL_POSITION = 200,
-			oDynamicPageDOMElement = document.getElementById(this.oDynamicPage.getId()),
+			oDynamicPageDOMElement = this.oDynamicPage.getDomRef(),
 			iActualSetScrollPosition;
 
 		// arrange - store the actual reached scroll position, as the container might not have enough scroll height

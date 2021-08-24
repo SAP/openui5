@@ -327,7 +327,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(document.getElementById(this.oBusyInd.getId() + "-icon").style.width, "100px", "should be 100px");
+		assert.strictEqual(this.oBusyInd.getDomRef("icon").style.width, "100px", "should be 100px");
 	});
 
 	QUnit.test("setCustomIconHeight sets the correct height of the custom icon", function (assert) {
@@ -336,6 +336,6 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(document.getElementById(this.oBusyInd.getId() + "-icon").style.height, "100px", "should be 100px");
+		assert.strictEqual(this.oBusyInd.getDomRef("icon").style.height, "100px", "should be 100px");
 	});
 });

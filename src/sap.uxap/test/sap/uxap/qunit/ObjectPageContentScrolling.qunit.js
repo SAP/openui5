@@ -1050,8 +1050,8 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 	});
 
 	function isObjectPageHeaderStickied(oObjectPage) {
-		var oHeaderTitle = document.getElementById(oObjectPage.getId() + "-headerTitle");
-		var oHeaderContent = document.getElementById(oObjectPage.getId() + "-headerContent");
+		var oHeaderTitle = oObjectPage.getDomRef("headerTitle");
+		var oHeaderContent = oObjectPage.getDomRef("headerContent");
 		return oHeaderTitle.classList.contains("sapUxAPObjectPageHeaderStickied") &&
 				oHeaderContent.classList.contains("sapUxAPObjectPageHeaderDetailsHidden") &&
 				oHeaderContent.style["overflow"] == "hidden";

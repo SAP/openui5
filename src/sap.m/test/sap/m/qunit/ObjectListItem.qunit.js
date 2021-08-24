@@ -151,8 +151,8 @@ sap.ui.define([
 		list.addItem(lockedOlI);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.domById(lockedOlI.getId() + "-lock"), "Locked marker should be rendered.");
-		assert.ok(jQuery.sap.byId(lockedOlI.getId() + "-lock").hasClass("sapMObjectMarker"), "Locked is sapMObjectMarker.");
+		assert.ok(lockedOlI.getDomRef("lock"), "Locked marker should be rendered.");
+		assert.ok(lockedOlI.$("lock").hasClass("sapMObjectMarker"), "Locked is sapMObjectMarker.");
 
 		lockedOlI.destroy();
 	});

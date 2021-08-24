@@ -155,7 +155,7 @@ sap.ui.define([
 		this.oListBox.setBusyIndicatorDelay(0);
 		this.oListBox.setBusy(true);
 		simulateTabEvent(this.oFocusBefore.getDomRef());
-		oElem = jQuery.sap.domById(this.oListBox.getId() + "-busyIndicator");
+		oElem = this.oListBox.getDomRef("busyIndicator");
 		checkFocus(oElem, assert);
 		simulateTabEvent(oElem);
 		checkFocus(this.oFocusAfter.getDomRef(), assert);
@@ -184,12 +184,12 @@ sap.ui.define([
 
 		setTimeout(function() {
 			simulateTabEvent(this.oFocusBefore.getDomRef());
-			oElem = jQuery.sap.domById(this.oListBox.getId() + "-busyIndicator");
+			oElem = this.oListBox.getDomRef("busyIndicator");
 			checkFocus(oElem, assert);
 			simulateTabEvent(oElem);
 			checkFocus(this.oFocusAfter.getDomRef(), assert);
 			simulateTabEvent(this.oFocusAfter.getDomRef(), true);
-			oElem = jQuery.sap.domById(this.oListBox.getId() + "-busyIndicator");
+			oElem = this.oListBox.getDomRef("busyIndicator");
 			checkFocus(oElem, assert);
 			simulateTabEvent(oElem, true);
 			checkFocus(this.oFocusBefore.getDomRef(), assert);

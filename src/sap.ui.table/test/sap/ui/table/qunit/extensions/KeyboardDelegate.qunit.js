@@ -3860,7 +3860,7 @@ sap.ui.define([
 		var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus1");
 		simulateTabEvent(oElem, false);
 		// Due to changed BusyIndicator handling - BusyIndicator is now tabbable
-		oElem = document.getElementById(oTable.getId() + "-busyIndicator");
+		oElem = oTable.getDomRef("busyIndicator");
 		checkFocus(oElem, assert);
 		simulateTabEvent(oElem, false);
 		checkFocus(document.getElementById("Focus2"), assert);
@@ -3870,7 +3870,7 @@ sap.ui.define([
 		var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus2");
 		simulateTabEvent(oElem, true);
 		// Due to changed BusyIndicator handling - BusyIndicator is now tabbable
-		oElem = document.getElementById(oTable.getId() + "-busyIndicator");
+		oElem = oTable.getDomRef("busyIndicator");
 		checkFocus(oElem, assert);
 		simulateTabEvent(oElem, true);
 		checkFocus(document.getElementById("Focus1"), assert);

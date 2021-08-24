@@ -719,18 +719,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("Set title", function (assert){
-		assert.ok(jQuery.sap.domById(oPopover.getId() + "-title"), "Title is rendered");
-		assert.equal(jQuery.sap.byId(oPopover.getId() + "-title").text(), sOldTitleValue, "Title should be with the right value");
-		assert.ok(jQuery.sap.byId(oPopover.getId() + "-title").closest("#" + oPopover.getId() + "-intHeader-BarMiddle")[0], "Title should be rendered in the middle part of the bar");
+		assert.ok(oPopover.getDomRef("title"), "Title is rendered");
+		assert.equal(oPopover.$("title").text(), sOldTitleValue, "Title should be with the right value");
+		assert.ok(oPopover.$("title").closest("#" + oPopover.getId() + "-intHeader-BarMiddle")[0], "Title should be rendered in the middle part of the bar");
 		oPopover.setTitle(sNewTitleValue);
 		sap.ui.getCore().applyChanges();
-		assert.equal(jQuery.sap.byId(oPopover.getId() + "-title").text(), sNewTitleValue, "Title should be changed to the new value");
+		assert.equal(oPopover.$("title").text(), sNewTitleValue, "Title should be changed to the new value");
 	});
 
 	QUnit.test("Set title to empty string", function (assert){
 		oPopover.setTitle("");
 		sap.ui.getCore().applyChanges();
-		assert.equal(jQuery.sap.byId(oPopover.getId() + "-title").text(), "", "Title should be able to be set to empty string");
+		assert.equal(oPopover.$("title").text(), "", "Title should be able to be set to empty string");
 	});
 
 	QUnit.test("Add left button", function (assert){
@@ -801,7 +801,7 @@ sap.ui.define([
 		oPopover.setContentWidth("300px");
 		oPopover.setContentHeight("400px");
 		this.clock.tick(50);
-		var $content = jQuery.sap.byId(oPopover.getId() + "-cont");
+		var $content = oPopover.$("cont");
 		assert.ok($content.width() <= 300, "contentWidth " + $content.width() + " should be less or equal than the set width 300");
 		assert.ok($content.height() <= 400, "contentHeight " + $content.height() + " should be less or equal than the set height 400");
 	});
@@ -810,7 +810,7 @@ sap.ui.define([
 		oPopover.setContentWidth("50%");
 		oPopover.setContentHeight("50%");
 		this.clock.tick(50);
-		var $content = jQuery.sap.byId(oPopover.getId() + "-cont");
+		var $content = oPopover.$("cont");
 		assert.ok($content.width() <= (jQuery(window).width() * 0.5), "Calculated width " + $content.width() + " should be less or equal than the part of window width " + jQuery(window).width() * 0.5);
 		assert.ok($content.height() <= (jQuery(window).height() * 0.5), "Calculated height " + $content.height() + " should be less or equal than the part of window height " + jQuery(window).height() * 0.5);
 	});
@@ -832,8 +832,8 @@ sap.ui.define([
 		oPopover.setHorizontalScrolling(false);
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(jQuery.sap.domById(oPopover.getId()).className.indexOf("sapMPopoverVerScrollDisabled") != -1, true, "verticalScrolling should be disabled");
-		assert.equal(jQuery.sap.domById(oPopover.getId()).className.indexOf("sapMPopoverHorScrollDisabled") != -1, true, "horizontalScrolling should be disabled");
+		assert.equal(oPopover.getDomRef().className.indexOf("sapMPopoverVerScrollDisabled") != -1, true, "verticalScrolling should be disabled");
+		assert.equal(oPopover.getDomRef().className.indexOf("sapMPopoverHorScrollDisabled") != -1, true, "horizontalScrolling should be disabled");
 		assert.equal(oPopover.getVerticalScrolling(), false, "verticalScrolling should be disabled");
 		assert.equal(oPopover.getVerticalScrolling(), false, "horizontalScrolling should be disabled");
 
@@ -841,28 +841,28 @@ sap.ui.define([
 		oPopover.setHorizontalScrolling(true);
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(jQuery.sap.domById(oPopover.getId()).className.indexOf("sapMPopoverVerScrollDisabled") == -1, true, "verticalScrolling should be enabled");
-		assert.equal(jQuery.sap.domById(oPopover.getId()).className.indexOf("sapMPopoverHorScrollDisabled") == -1, true, "horizontalScrolling should be enabled");
+		assert.equal(oPopover.getDomRef().className.indexOf("sapMPopoverVerScrollDisabled") == -1, true, "verticalScrolling should be enabled");
+		assert.equal(oPopover.getDomRef().className.indexOf("sapMPopoverHorScrollDisabled") == -1, true, "horizontalScrolling should be enabled");
 		assert.equal(oPopover.getVerticalScrolling(), true, "verticalScrolling should be enabled");
 		assert.equal(oPopover.getVerticalScrolling(), true, "horizontalScrolling should be enabled");
 	});
 
 	QUnit.test("Set showHeader", function (assert){
-		assert.ok(jQuery.sap.domById(oPopover.getId() + "-intHeader"), "Internal header is rendered");
+		assert.ok(oPopover.getDomRef("intHeader"), "Internal header is rendered");
 		oPopover.setModal(true);
 		oPopover.setShowHeader(false);
 		sap.ui.getCore().applyChanges();
-		assert.ok(!jQuery.sap.domById(oPopover.getId() + "-intHeader"), "Internal header is removed");
+		assert.ok(!oPopover.getDomRef("intHeader"), "Internal header is removed");
 		oPopover.setShowHeader(true);
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.byId(oPopover.getId() + "-intHeader").css("display") !== "none", "Internal header is re-rendered");
+		assert.ok(oPopover.$("intHeader").css("display") !== "none", "Internal header is re-rendered");
 	});
 
 	QUnit.test("Set custom header", function (assert){
 		oPopover.setCustomHeader(oCustomHeader);
 		sap.ui.getCore().applyChanges();
 		assert.ok(jQuery.sap.domById("customHeader"), "Custom Header is rendered");
-		assert.ok(!jQuery.sap.domById(oPopover.getId() + "-intHeader"), "Internal header is destroyed");
+		assert.ok(!oPopover.getDomRef("intHeader"), "Internal header is destroyed");
 		oPopover.destroy();
 	});
 
@@ -2111,11 +2111,11 @@ sap.ui.define([
 		oPopover._setAriaRoleApplication(true);
 		oPopover.openBy(oButton);
 		this.clock.tick(400);
-		assert.equal(jQuery.sap.byId(oPopover.getId() + "-cont").attr("role"), "application", "Popover's content should have role application");
+		assert.equal(oPopover.$("cont").attr("role"), "application", "Popover's content should have role application");
 
 		oPopover._setAriaRoleApplication(false);
 		this.clock.tick(0);
-		assert.notOk(document.getElementById(oPopover.getId() + "-cont").attributes["role"], "Popover's content should not have role application");
+		assert.notOk(oPopover.getDomRef("cont").attributes["role"], "Popover's content should not have role application");
 
 		oPopover.destroy();
 		oButton.destroy();

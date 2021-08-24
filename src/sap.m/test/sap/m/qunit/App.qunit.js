@@ -19,7 +19,7 @@ sap.ui.define([
 	}
 
 	function getBgDomElement(oApp) {
-		return document.getElementById(oApp.getId() + "-BG");
+		return oApp.getDomRef("BG");
 	}
 
 	function getAbsoluteURL(sRelPath) {

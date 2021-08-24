@@ -976,7 +976,7 @@ sap.ui.define([
 
 			$aItems.eq(this._iSelectedItemIndex).addClass("sapMTimePickerItemSelected");
 			//WAI-ARIA region
-			oDescriptionElement = document.getElementById(this.getId() + "-valDescription");
+			oDescriptionElement = this.getDomRef("valDescription");
 			if (oDescriptionElement.innerHTML !== sAriaLabel) {
 				oDescriptionElement.innerHTML = sAriaLabel;
 			}

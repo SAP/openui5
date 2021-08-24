@@ -959,7 +959,7 @@ sap.ui.define([
 		var oRow = oTable.getRows()[0];
 		var $Ref = oRow.getDomRefs(true);
 		var $Cell = getRowHeader(0);
-		var $RowSelectorTextRef = jQuery(document.getElementById(oRow.getId() + "-rowselecttext"));
+		var $RowSelectorTextRef = oRow.$("rowselecttext");
 
 		if (sSelectionMode === "None") {
 			assert.ok(!$Cell[0].hasAttribute("title"), "The row header has no title because SelectionMode is \"None\"");
@@ -997,7 +997,7 @@ sap.ui.define([
 	QUnit.test("Title and selector text", function(assert) {
 		var oRow = oTable.getRows()[0];
 		var $Cell = getRowHeader(0);
-		var $RowSelectorTextRef = jQuery(document.getElementById(oRow.getId() + "-rowselecttext"));
+		var $RowSelectorTextRef = oRow.$("rowselecttext");
 		initRowActions(oTable, 1, 1);
 		initRowActions(oTreeTable, 1, 1);
 

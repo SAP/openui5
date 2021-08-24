@@ -173,7 +173,7 @@ sap.ui.define([
 
 	function checkControlsInDom(assert, aControls, sTargetId, bExpectExisting) {
 		for (var i = 0; i < aControls.length; i++) {
-			var $ControlRef = jQueryById(aControls[i].getId());
+			var $ControlRef = aControls[i].$();
 			if (bExpectExisting) {
 				assert.equal($ControlRef.length, 1, "Control is rendered already");
 				assert.equal($ControlRef.parent().attr("id"), sTargetId, "Control is child of Dom Ref with ID '" + sTargetId + "'");

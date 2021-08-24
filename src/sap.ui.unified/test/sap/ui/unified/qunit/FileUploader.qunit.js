@@ -755,7 +755,7 @@ sap.ui.define([
 		assert.equal(oFileUploader.getValue(), "", "Value should be empty string: ''");
 
 		//check if the text fields are empty as expected
-		domFileInputField = jQuery.sap.domById(oFileUploader.getId() + "-fu");
+		domFileInputField = oFileUploader.getDomRef("fu");
 		assert.equal(domFileInputField.value, "", "File-Input TextField should be empty now");
 		assert.equal(oSpy.callCount, 2, "setValue should now be called TWICE");
 

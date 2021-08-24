@@ -153,8 +153,7 @@ sap.ui.define([
 	QUnit.test("Destroy and remove control", function(assert) {
 		oShell.destroy();
 		sap.ui.getCore().applyChanges();
-		var oDomRef = oShell.getId() ? window.document.getElementById(oShell.getId()) : null;
-		assert.ok(!oDomRef, "Rendered Shell should not exist in the page after destruction");
+		assert.ok(!oShell.getDomRef(), "Rendered Shell should not exist in the page after destruction");
 	});
 
 
@@ -302,7 +301,7 @@ sap.ui.define([
 		oShell.placeAt("uiArea1");
 		sap.ui.getCore().applyChanges();
 
-		var jRef = jQuery(document.getElementById(oShell.getId()));
+		var jRef = oShell.$();
 		assert.ok(jRef.length == 1, "Rendered Shell should exist in the page");
 		assert.ok(jRef.hasClass("sapUiUx3Shell"), "Rendered Shell should have the class 'sapUiUx3Shell'");
 		assert.ok(jRef.hasClass("sapUiUx3ShellHeadStandard"), "Rendered Shell should have the class 'sapUiUx3ShellHeadStandard'");
@@ -312,7 +311,7 @@ sap.ui.define([
 	QUnit.test("Advanced Content", function(assert) {
 		var header = jQuery(".sapUiUx3ShellHeader")[0];
 		assert.ok(header.innerHTML.indexOf("") > -1, "Application Title must be present");
-		assert.equal(jQuery(document.getElementById(oShell.getId() + "-logoImg")).attr("src"), "http://www.sap.com/global/images/SAPLogo.gif", "Application Logo must be displayed");
+		assert.equal(oShell.$("logoImg").attr("src"), "http://www.sap.com/global/images/SAPLogo.gif", "Application Logo must be displayed");
 
 		assert.equal(jQuery(".sapUiUx3ShellHeader-logout").length, 1, "There should be a logout button");
 		assert.equal(jQuery(".sapUiUx3ShellHeaderSep").length, 0, "There should be no header item separator");
@@ -474,7 +473,7 @@ sap.ui.define([
 		assert.expect(8);
 
 		// pane should be closed
-		assert.equal(jQuery(document.getElementById(oShell.getId() + "-paneBar")).hasClass("sapUiUx3ShellPaneBarOpen"), false, "Pane bar should be closed");
+		assert.equal(oShell.$("paneBar").hasClass("sapUiUx3ShellPaneBarOpen"), false, "Pane bar should be closed");
 		assert.equal(jQuery(document.getElementById("paneContent")).length, 0, "Pane content should not yet exist");
 
 		// open pane
@@ -482,7 +481,7 @@ sap.ui.define([
 
 		setTimeout(function() {
 			// check whether pane is open now
-			assert.equal(jQuery(document.getElementById(oShell.getId() + "-paneBar")).hasClass("sapUiUx3ShellPaneBarOpen"), true, "Pane bar should be open");
+			assert.equal(oShell.$("paneBar").hasClass("sapUiUx3ShellPaneBarOpen"), true, "Pane bar should be open");
 			assert.equal(jQuery(document.getElementById("paneContent")).length, 1, "Pane content should exist");
 
 			assert.equal(document.activeElement.id, "paneContent", "Pane content has focus after opening");
@@ -492,7 +491,7 @@ sap.ui.define([
 
 			setTimeout(function() {
 				// check whether pane is closed
-				assert.equal(jQuery(document.getElementById(oShell.getId() + "-paneBar")).hasClass("sapUiUx3ShellPaneBarOpen"), false, "Pane bar should be closed");
+				assert.equal(oShell.$("paneBar").hasClass("sapUiUx3ShellPaneBarOpen"), false, "Pane bar should be closed");
 				done();
 			}, 3000);
 		}, 3000);

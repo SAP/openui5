@@ -911,7 +911,7 @@ sap.ui.define([
 
 			$aItems.eq(this._iSelectedItemIndex).addClass("sapMWSItemSelected");
 			//WAI-ARIA region
-			oDescriptionElement = document.getElementById(this.getId() + "-valDescription");
+			oDescriptionElement = this.getDomRef("valDescription");
 			if (oDescriptionElement.innerText !== sAriaLabel) {
 				oDescriptionElement.innerText = sAriaLabel;
 			}

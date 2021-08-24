@@ -622,7 +622,7 @@ sap.ui.define([
 
 					if (this._iCurrentScrollTimeout) {
 						clearTimeout(this._iCurrentScrollTimeout);
-						jQuery(document.getElementById(this.getId() + "-scroll")).parent().stop(true, false);
+						this.$("scroll").parent().stop(true, false);
 					}
 
 					this._iCurrentScrollTimeout = setTimeout(function () {

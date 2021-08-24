@@ -359,7 +359,7 @@ sap.ui.define([
 				"The control is registered to show a shortcut");
 
 			assert.equal(
-				document.getElementById(oCtrl.getId()).getAttribute("aria-keyshortcuts"),
+				oCtrl.getDomRef().getAttribute("aria-keyshortcuts"),
 				"Ctrl+S",
 				"The hint provider is OK"
 			);

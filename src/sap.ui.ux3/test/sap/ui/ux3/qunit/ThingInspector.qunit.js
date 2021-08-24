@@ -206,7 +206,7 @@ sap.ui.define([
 
 	QUnit.test("ThingInspector exists", function(assert) {
 		assert.equal(true, true, "...");
-		var oDomRef = oThingInspector.getId() ? window.document.getElementById(oThingInspector.getId()) : null;
+		var oDomRef = oThingInspector.getDomRef();
 		assert.ok(oDomRef, "Rendered ThingInspector should exist in the page");
 		assert.equal(oDomRef.className, "sapUiUx3Overlay sapUiUx3TI sapUiShd", "Rendered ThingInspector should have the class 'sapUiUx3TI'");
 	});
@@ -295,7 +295,7 @@ sap.ui.define([
 		assert.expect(7);
 		assert.ok(!oThingInspector.getFlagState(), "Flag State is false");
 		action = "flag";
-		//jQuery.sap.byId(oThingInspector.getId() + "-flag").trigger("focus");
+		//oThingInspector.$("flag").trigger("focus");
 		qutils.triggerKeyboardEvent(oThingInspector.getId() + "-actionBar-Flag", KeyCodes.ENTER, false, false, false);
 		assert.ok(oThingInspector.getFlagState(), "Flag State is true");
 		qutils.triggerKeyboardEvent(oThingInspector.getId() + "-actionBar-Flag", KeyCodes.SPACE, false, false, false);

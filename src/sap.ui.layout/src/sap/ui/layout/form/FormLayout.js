@@ -899,7 +899,7 @@ sap.ui.define([
 	FormLayout.prototype.getContainerRenderedDomRef = function(oContainer) {
 
 		if (this.getDomRef()) {
-			return (oContainer.getId() ? window.document.getElementById(oContainer.getId()) : null);
+			return oContainer.getDomRef();
 		} else  {
 			return null;
 		}
@@ -916,7 +916,7 @@ sap.ui.define([
 	FormLayout.prototype.getElementRenderedDomRef = function(oElement) {
 
 		if (this.getDomRef()) {
-			return (oElement.getId() ? window.document.getElementById(oElement.getId()) : null);
+			return oElement.getDomRef();
 		} else  {
 			return null;
 		}

@@ -1561,7 +1561,7 @@ sap.ui.define([
 				// Assert Card Content
 				assert.equal(oContentDomRef.getAttribute("role"), "group", "Card content should have a role - group");
 				assert.equal(oContentDomRef.getAttribute("aria-labelledby"), this.oCard.getId() + "-ariaContentText", "Card container should have aria-labelledby with the correct id");
-				assert.equal(document.getElementById(this.oCard.getId() + "-ariaContentText").innerText, this.oRb.getText("ARIA_LABEL_CARD_CONTENT"), "ARIA content hidden text should have the correct value");
+				assert.equal(this.oCard.getDomRef("ariaContentText").innerText, this.oRb.getText("ARIA_LABEL_CARD_CONTENT"), "ARIA content hidden text should have the correct value");
 				done();
 			}.bind(this));
 

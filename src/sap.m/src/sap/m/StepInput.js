@@ -428,7 +428,7 @@ function(
 			Input.prototype.setValue.apply(this, arguments);
 
 			if (this.getDomRef()) {
-				document.getElementById(this.getId() + "-inner").setAttribute("aria-valuenow", sValue);
+				this.getDomRef("inner").setAttribute("aria-valuenow", sValue);
 			}
 
 			return this;

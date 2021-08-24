@@ -93,7 +93,7 @@ sap.ui.define([
 			if (jQuery.contains(this.getDomRef(), oEvent.source)) {
 				return;
 			}
-			var oNewDomRef = oEvent.forward ? jQuery.sap.domById(this.getId() + "-input-1") : jQuery.sap.domById(this.getId() + "-input-3");
+			var oNewDomRef = oEvent.forward ? this.getDomRef("input-1") : this.getDomRef("input-3");
 			if (oNewDomRef) {
 				jQuery.sap.focus(oNewDomRef);
 				oEvent.preventDefault();

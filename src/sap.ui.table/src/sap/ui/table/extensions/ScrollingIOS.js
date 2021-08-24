@@ -162,7 +162,7 @@ sap.ui.define([
 	 */
 	ScrollIOSExtension.prototype.getVerticalScrollbar = function() {
 		var oTable = this.getTable();
-		return oTable ? document.getElementById(oTable.getId() + "-vsb-ios") : null;
+		return oTable ? oTable.getDomRef("vsb-ios") : null;
 	};
 
 	/**

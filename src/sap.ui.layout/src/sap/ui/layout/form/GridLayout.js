@@ -225,7 +225,7 @@ sap.ui.define(['sap/ui/layout/library', './FormLayout', './GridLayoutRenderer'],
 			var oContainerData = this.getLayoutDataForElement(oContainer, "sap.ui.layout.form.GridContainerData");
 
 			if ((bSingleColumn || !oContainerData || !oContainerData.getHalfGrid()) && !this.getRenderer().checkFullSizeElement(this, oElement) ) {
-				return (oElement.getId() ? window.document.getElementById(oElement.getId()) : null);
+				return oElement.getDomRef();
 			}
 		}
 

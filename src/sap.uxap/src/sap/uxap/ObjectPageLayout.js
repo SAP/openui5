@@ -1563,17 +1563,17 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._cacheDomElements = function () {
-		this._$footerWrapper = jQuery(document.getElementById(this.getId() + "-footerWrapper"));
-		this._$titleArea = jQuery(document.getElementById(this.getId() + "-headerTitle"));
-		this._$anchorBar = jQuery(document.getElementById(this.getId() + "-anchorBar"));
-		this._$stickyAnchorBar = jQuery(document.getElementById(this.getId() + "-stickyAnchorBar"));
-		this._$opWrapper = jQuery(document.getElementById(this.getId() + "-opwrapper"));
-		this._$spacer = jQuery(document.getElementById(this.getId() + "-spacer"));
-		this._$headerContent = jQuery(document.getElementById(this.getId() + "-headerContent"));
-		this._$stickyHeaderContent = jQuery(document.getElementById(this.getId() + "-stickyHeaderContent"));
-		this._$contentContainer = jQuery(document.getElementById(this.getId() + "-scroll"));
-		this._$sectionsContainer = jQuery(document.getElementById(this.getId() + "-sectionsContainer"));
-		this._$skipFastGroupAnchor = jQuery(document.getElementById(this.getId() + "-skipFastGroupAnchor"));
+		this._$footerWrapper = this.$("footerWrapper");
+		this._$titleArea = this.$("headerTitle");
+		this._$anchorBar = this.$("anchorBar");
+		this._$stickyAnchorBar = this.$("stickyAnchorBar");
+		this._$opWrapper = this.$("opwrapper");
+		this._$spacer = this.$("spacer");
+		this._$headerContent = this.$("headerContent");
+		this._$stickyHeaderContent = this.$("stickyHeaderContent");
+		this._$contentContainer = this.$("scroll");
+		this._$sectionsContainer = this.$("sectionsContainer");
+		this._$skipFastGroupAnchor = this.$("skipFastGroupAnchor");
 
 		// BCP 1870201875: explicitly set the latest scrollContainer dom ref
 		// (as the scroller obtains the latest scrollContainer dom ref in a LATER hook, which fails in conditions detailed in BCP 1870201875)
@@ -3296,12 +3296,12 @@ sap.ui.define([
 			if (iScrollTop === 0) {
 				// if we have arrow from the title inside the ContentHeader and the ContentHeader isn't scrolled we have to put higher z-index to the ContentHeader
 				// otherwise part of the arrow is cut off
-				jQuery(document.getElementById(this.getId() + "-scroll")).css("z-index", "1000");
+				this.$("scroll").css("z-index", "1000");
 				bScrolled = false;
 			} else if (!bScrolled) {
 				bScrolled = true;
 				// and we have to "reset" the z-index it when we start scrolling
-				jQuery(document.getElementById(this.getId() + "-scroll")).css("z-index", "0");
+				this.$("scroll").css("z-index", "0");
 			}
 		}
 	};

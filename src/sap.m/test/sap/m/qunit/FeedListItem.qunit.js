@@ -618,7 +618,7 @@ sap.ui.define([
 		//Arrange
 		var oItem = oFeedList.getItems()[0].oAvatar;
 		//Act
-		var $Image = document.getElementById(oItem.getId());
+		var $Image = oItem.getDomRef();
 		var sStyleClass = $Image.className;
 		//Assert
 		assert.ok(sStyleClass.indexOf("sapMFeedListItemImage") >= 0, "Css class 'sapMFeedListItemImage' is present");
@@ -630,7 +630,7 @@ sap.ui.define([
 		//Act
 		oItem.setIconActive(false);
 		oFeedList.rerender();
-		var $Image = document.getElementById(oItem.oAvatar.getId());
+		var $Image = oItem.oAvatar.getDomRef();
 		var sStyleClass = $Image.className;
 		//Assert
 		assert.ok(sStyleClass.indexOf("sapMFeedListItemImageInactive") >= 0, "Css class 'sapMFeedListItemImageInactive' is present");
