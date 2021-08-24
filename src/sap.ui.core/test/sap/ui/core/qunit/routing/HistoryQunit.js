@@ -418,6 +418,7 @@ sap.ui.define([
 
 	QUnit.test("Should return forward if you go back and ask for the direction of the next hash, before the hash is actually set", function (assert) {
 		var oHashChanger = new HashChanger();
+		oHashChanger.init();
 
 		// System under test
 		var oHistory = new History(oHashChanger);
@@ -448,6 +449,8 @@ sap.ui.define([
 		oHashChanger.getRelevantEventsInfo = function() {
 			return aEventsInfo;
 		};
+
+		oHashChanger.init();
 
 		aEventsInfo.forEach(function(oEventInfo) {
 			assert.ok(!oHashChanger.hasListeners(oEventInfo.name), "HashChanger doesn't have listener for event " + oEventInfo.name + " before History is attached to it");
