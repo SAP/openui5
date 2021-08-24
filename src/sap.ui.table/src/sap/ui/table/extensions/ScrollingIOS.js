@@ -122,27 +122,35 @@ sap.ui.define([
 	ScrollIOSExtension.prototype.attachScrollbar = function() {
 		var oTable = this.getTable();
 		var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
+		var oVSbIOS = this.getVerticalScrollbar();
+		var oVSbThumb = this.getVerticalScrollbarThumb();
 
-		if (!oVSb || this.getVerticalScrollbar()) {
-			// Cannot or is already attached.
-			return false;
+		if (!oVSb) {
+			return false; // Cannot attach
 		}
 
-		var oVSbIOS = document.createElement("div");
-		oVSbIOS.setAttribute("id", oTable.getId() + "-vsb-ios");
-		oVSbIOS.classList.add("sapUiTableVSbIOS");
-		this._onPointerDownEventHandler = this.onPointerDown.bind(this);
-		oVSbIOS.addEventListener("pointerdown", this._onPointerDownEventHandler);
+		// Render scrollbar
+		if (!oVSbIOS) {
+			oVSbIOS = document.createElement("div");
+			oVSbIOS.setAttribute("id", oTable.getId() + "-vsb-ios");
+			oVSbIOS.classList.add("sapUiTableVSbIOS");
 
-		var oVSbThumb = document.createElement("div");
-		oVSbThumb.classList.add("sapUiTableVSbIOSThumb");
-		oVSbIOS.append(oVSbThumb);
-		this._onTouchMoveEventHandler = this.onTouchMove.bind(this);
-		oVSbThumb.addEventListener("touchmove", this._onTouchMoveEventHandler);
+			oVSbThumb = document.createElement("div");
+			oVSbThumb.classList.add("sapUiTableVSbIOSThumb");
+			oVSbIOS.append(oVSbThumb);
 
-		oVSb.after(oVSbIOS);
-		this._onVerticalScrollEventHandler = this.updateVerticalScrollbarThumbPosition.bind(this);
-		oVSb.addEventListener("scroll", this._onVerticalScrollEventHandler);
+			oVSb.after(oVSbIOS);
+		}
+
+		// Attach events
+		if (!this._onPointerDownEventHandler) {
+			this._onPointerDownEventHandler = this.onPointerDown.bind(this);
+			oVSbIOS.addEventListener("pointerdown", this._onPointerDownEventHandler);
+			this._onTouchMoveEventHandler = this.onTouchMove.bind(this);
+			oVSbThumb.addEventListener("touchmove", this._onTouchMoveEventHandler);
+			this._onVerticalScrollEventHandler = this.updateVerticalScrollbarThumbPosition.bind(this);
+			oVSb.addEventListener("scroll", this._onVerticalScrollEventHandler);
+		}
 
 		return true;
 	};
