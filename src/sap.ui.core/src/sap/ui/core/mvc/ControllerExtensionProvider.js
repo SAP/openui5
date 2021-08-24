@@ -116,42 +116,40 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/Component"], function(Log, Component
 
 		var aControllerNames = [];
 
-		if (!sap.ui.getCore().getConfiguration().getDisableCustomizing()) {
-			if (oComponent) {
 
-				// Check if we have a delegate for this component.
-				oComponent = (oComponent.getExtensionComponent && oComponent.getExtensionComponent()) || oComponent;
+		// lookup config of "sap.ui.controllerExtensions" in Manifest
+		var mInstanceSpecificConfig = Component.getCustomizing(oComponent, {
+			type: "sap.ui.controllerExtensions",
+			name: sControllerName + "#" + sViewId
+		});
 
-				// lookup config of "sap.ui.controllerExtensions" in Manifest
-				var mInstanceSpecificConfig = oComponent._getManifestEntry("/sap.ui5/extends/extensions/sap.ui.controllerExtensions/" + sControllerName + "#" + sViewId, true);
+		// First check for instance-specific extension, if none exists look for base extension
+		var aControllerExtConfigs = [];
 
-				// First check for instance-specific extension, if none exists look for base extension
-				var aControllerExtConfigs = [];
+		if (mInstanceSpecificConfig) {
+			aControllerExtConfigs.push(mInstanceSpecificConfig);
+		} else {
+			var mDefaultConfig = Component.getCustomizing(oComponent, {
+				type: "sap.ui.controllerExtensions",
+				name: sControllerName
+			});
+			if (mDefaultConfig) {
+				aControllerExtConfigs.push(mDefaultConfig);
+			}
+		}
 
-				if (mInstanceSpecificConfig) {
-					aControllerExtConfigs.push(mInstanceSpecificConfig);
-				} else {
-					var mDefaultConfig = oComponent._getManifestEntry("/sap.ui5/extends/extensions/sap.ui.controllerExtensions/" + sControllerName, true);
-					if (mDefaultConfig) {
-						aControllerExtConfigs.push(mDefaultConfig);
-					}
+		for (var i = 0; i < aControllerExtConfigs.length; i++) {
+			var vControllerExtensions = aControllerExtConfigs[i];
+			if (vControllerExtensions) {
+				// Normalize the different legacy extension definitions, either:
+				//  - a string -> "my.ctrl.name"
+				//  - an object containing a controllerName:string property and/or a controllerNames:string[] property, e.g.
+				//    { controllerName: "my.ctrl.name0", controllerNames: ["my.ctrl.name1", "my.ctrl.name2"] }
+				var sExtControllerName = typeof vControllerExtensions === "string" ? vControllerExtensions : vControllerExtensions.controllerName;
+				aControllerNames = aControllerNames.concat(vControllerExtensions.controllerNames || []);
+				if (sExtControllerName) {
+					aControllerNames.unshift(sExtControllerName);
 				}
-
-				for (var i = 0; i < aControllerExtConfigs.length; i++) {
-					var vControllerExtensions = aControllerExtConfigs[i];
-					if (vControllerExtensions) {
-						// Normalize the different legacy extension definitions, either:
-						//  - a string -> "my.ctrl.name"
-						//  - an object containing a controllerName:string property and/or a controllerNames:string[] property, e.g.
-						//    { controllerName: "my.ctrl.name0", controllerNames: ["my.ctrl.name1", "my.ctrl.name2"] }
-						var sExtControllerName = typeof vControllerExtensions === "string" ? vControllerExtensions : vControllerExtensions.controllerName;
-						aControllerNames = aControllerNames.concat(vControllerExtensions.controllerNames || []);
-						if (sExtControllerName) {
-							aControllerNames.unshift(sExtControllerName);
-						}
-					}
-				}
-
 			}
 		}
 
