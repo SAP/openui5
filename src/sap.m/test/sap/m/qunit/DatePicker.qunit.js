@@ -2776,4 +2776,34 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
+	QUnit.module("displayFormat");
+
+	QUnit.test("Value is formatted even when out ot min and max range", function(assert) {
+		// Prepare
+		var oDP = new DatePicker("oDP", {
+			dateValue: new Date(2021, 8, 1),
+			minDate: new Date(2021, 10, 1),
+			maxDate: new Date(2021, 11, 1),
+			displayFormat: "MM-dd-yyyy",
+			valueFormat: "MM/dd/yyyy"
+		}).placeAt("qunit-fixture");
+
+		// Act
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(jQuery("#oDP").find("input").val(), "09-01-2021", "Input value is correct when it is before min value.");
+
+		// Act
+		oDP.setDateValue(new Date(2021, 11, 31));
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(jQuery("#oDP").find("input").val(), "12-31-2021", "Input value is correct when it is after max value.");
+
+		// Clean up
+		oDP.destroy();
+	});
+
+
 });
