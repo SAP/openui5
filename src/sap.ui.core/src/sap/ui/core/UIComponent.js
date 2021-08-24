@@ -380,7 +380,7 @@ sap.ui.define([
 			});
 			var fnTargetsConstructor;
 
-			// if a targets	classname is configured, the Targets class MUST be loaded
+			// if a targets classname is configured, the Targets class MUST be loaded
 			if (oRoutingConfig.targetsClass) {
 				fnTargetsConstructor = getConstructorFunctionFor(oRoutingConfig.targetsClass);
 			} else {
