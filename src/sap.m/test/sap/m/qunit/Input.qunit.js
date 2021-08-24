@@ -4990,6 +4990,21 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Setting showValueHelpIcon to false should hide the icon", function (assert) {
+		var oInput = new Input({
+			showValueHelp: true
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oInput._getValueHelpIcon().getVisible(), "Icon should be visible");
+
+		oInput.setShowValueHelp(false);
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(oInput._getValueHelpIcon().getVisible(), "Icon should not be visible");
+	});
+
 	QUnit.test("Check whether property is propagated to dialog's input on mobile", function (assert) {
 		this.stub(Device, "system", {
 			desktop: false,
