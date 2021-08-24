@@ -155,7 +155,7 @@ sap.ui.define([
 	 *        the structure of the given service
 	 *   </li>
 	 *   <li> modelVersion (deprecated) - Parameter to define which ODataModel version should be
-	 *        used, if you use {@link sap.ui.model.analytics.odata4analytics.Model.ReferenceByURI};
+	 *        used if you use {@link sap.ui.model.analytics.odata4analytics.Model.ReferenceByURI};
 	 *        supported values are: 1 (default), 2
 	 *   </li>
 	 *
@@ -222,7 +222,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @param {object} oModel
-	 *   Holding a reference to the OData model, obtained by
+	 *   Holds a reference to the OData model, obtained by
 	 *   {@link sap.ui.model.analytics.odata4analytics.Model.ReferenceByModel}, or by
 	 *   {@link sap.ui.model.analytics.odata4analytics.Model.ReferenceByURI} which is deprecated.
 	 * @param {string[]} aWorkaroundID
