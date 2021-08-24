@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/ui/fl/changeHandler/Base", "sap/ui/mdc/p13n/Engine"
-], function(FLBase, Engine) {
+	"sap/ui/fl/changeHandler/Base", "sap/ui/mdc/p13n/Engine", "sap/base/Log"
+], function(FLBase, Engine, Log) {
 	"use strict";
 
 	var ItemBaseFlex = {
@@ -106,22 +106,22 @@ sap.ui.define([
 
 		_getExistingAggregationItem: function(oChangeContent, mPropertyBag, oControl) {
 			var oModifier = mPropertyBag.modifier;
-			return Promise.resolve()
-				.then(this.determineAggregation.bind(this, oModifier, oControl))
-				.then(function(oAggregation) {
-					var aAggregationItems = oAggregation.items;
-
-					if (aAggregationItems) {
-						return this.findItem(oModifier, aAggregationItems, oChangeContent.name); //can return a promise
-					}
-				}.bind(this));
+			return this.determineAggregation(oModifier, oControl)
+			.then(function(oAggregation) {
+				var oExistingItem, aAggregationItems = oAggregation.items;
+				if (aAggregationItems) {
+					oExistingItem = this.findItem(oModifier, aAggregationItems, oChangeContent.name); //can return a promise
+				}
+				return oExistingItem;
+			}.bind(this));
 		},
 
-		_getDelegate: function(sDelegatePath, fSuccess, fFailure) {
-			// Get the delegate
-			sap.ui.require([
-				sDelegatePath
-			], fSuccess, fFailure);
+		_getDelegate: function(sDelegatePath) {
+			return new Promise(function(fResolveLoad, fRejectLoad){
+				sap.ui.require([
+					sDelegatePath
+				], fResolveLoad, fRejectLoad);
+			});
 		},
 
 		// Get appropriate text for revert/apply operation
@@ -159,80 +159,79 @@ sap.ui.define([
 			if (this._bSupressFlickering) {
 				this._delayInvalidate(oControl);
 			}
-			return new Promise(function(resolve, reject) {
-				var oModifier = mPropertyBag.modifier, oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-				var sDataPropertyName = oChangeContent.name;
-				var iIndex;
-				var aDefaultAggregation;
-				var oAggregation;
-				return Promise.resolve()
-					.then(this.determineAggregation.bind(this, oModifier, oControl))
-					.then(function(oRetrievedAggregation) {
-						oAggregation = oRetrievedAggregation;
-						aDefaultAggregation = oAggregation.items;
-						iIndex = oChangeContent.index > -1 ? oChangeContent.index : aDefaultAggregation.length;
-						return this._getExistingAggregationItem(oChangeContent, mPropertyBag, oControl);
+			var oModifier = mPropertyBag.modifier, oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
+			var sDataPropertyName = oChangeContent.name;
+			var iIndex;
+			var aDefaultAggregation;
+			var oAggregation;
+
+			var pAdd = this.determineAggregation(oModifier, oControl)
+
+			// 1) Check for existing item in the controls aggregation
+			.then(function(oRetrievedAggregation){
+				oAggregation = oRetrievedAggregation;
+				aDefaultAggregation = oAggregation.items;
+				iIndex = oChangeContent.index > -1 ? oChangeContent.index : aDefaultAggregation.length;
+				return this._getExistingAggregationItem(oChangeContent, mPropertyBag, oControl);
+			}.bind(this))
+
+			// 2) Provide either the existing item or request a new instance through AggregationBaseDelegate#addItem
+			.then(function(oControlAggregationItem){
+
+				if (oControlAggregationItem) {
+					// a) Item is already existing in aggregation
+					return oControlAggregationItem;
+				} else {
+					// b) A new item instance needs to be requested
+					return oModifier.getProperty(oControl, "delegate")
+					.then(function(oDelegate){
+						return this._getDelegate(oDelegate.name);
 					}.bind(this))
-					.then(function(oControlAggregationItem) {
-						return oControlAggregationItem ? Promise.resolve(oControlAggregationItem) : new Promise(function(resolve, reject) {
-							return Promise.resolve()
-								.then(oModifier.getProperty.bind(oModifier, oControl, "delegate"))
-								.then(function(oDelegate) {
-									this._getDelegate(oDelegate.name, function(Delegate) {
-										this.beforeAddItem(Delegate, sDataPropertyName, oControl, mPropertyBag, oChangeContent).then(function(oItem) {
-											if (oItem) {
-												// API returns a item from default aggregation --> resolve
-												resolve(oItem);
-											} else {
-												//item from default aggregation not returned --> reject the promise
-												reject();
-											}
-										});
-									}.bind(this), reject);
-								}.bind(this));
-						}.bind(this))
-						.then(function(oControlAggregationItem) {
-							if (!oControlAggregationItem) {
-								reject(new Error("No item in" + oAggregation.name + "  created. Change to " + this._getChangeTypeText(!bIsRevert) + "cannot be " + this._getOperationText(bIsRevert) + "at this moment"));
-							}
-
-							return Promise.resolve()
-								.then(function() {
-									// check if the item is already existing in the aggregation
-									if (aDefaultAggregation.indexOf(oControlAggregationItem) < 0) {
-										return oModifier.insertAggregation(oControl, oAggregation.name, oControlAggregationItem, iIndex);
-									} else {
-										// mark the change as not applicable since the item is already existing
-										return FLBase.markAsNotApplicable("Specified change is already existing", true);
-									}
-								})
-								.then(function() {
-									if (bIsRevert) {
-										// Clear the revert data on the change
-										oChange.resetRevertData();
-									} else {
-										// Set revert data on the change
-										oChange.setRevertData({
-											id: oModifier.getId(oControlAggregationItem),
-											name: oChangeContent.name,
-											index: iIndex
-										});
-									}
-
-									//Custom function after apply (for example table rebind)
-									this.afterApply(oChange.getChangeType(), oControl, bIsRevert);
-
-									resolve();
-								}.bind(this));
-						}.bind(this))
-						.catch(function() {
-							reject(new Error("Change to " + this._getChangeTypeText(!bIsRevert) + "cannot be" + this._getOperationText(bIsRevert) + "at this moment"));
-						}.bind(this));
+					.then(function(Delegate){
+						return this.beforeAddItem(Delegate, sDataPropertyName, oControl, mPropertyBag, oChangeContent);
 					}.bind(this))
-					.catch(function(oError) {
-						reject(oError);
+					.then(function(oRequestedItem){
+						return oRequestedItem;
 					});
+				}
+
+			}.bind(this))
+
+			// 3) Check & insert the item in the controls according aggregation
+			.then(function(oControlAggregationItem){
+				if (!oControlAggregationItem) {
+					throw new Error("No item in" + oAggregation.name + "  created. Change to " + this._getChangeTypeText(!bIsRevert) + "cannot be " + this._getOperationText(bIsRevert) + "at this moment");
+				}
+
+				if (aDefaultAggregation.indexOf(oControlAggregationItem) < 0) {
+					oModifier.insertAggregation(oControl, oAggregation.name, oControlAggregationItem, iIndex);
+				} else {
+					// In case the specified change is already existing we need to react gracefully --> no error
+					Log.warning("The specified change is already existing - change appliance ignored");
+				}
+
+				return oControlAggregationItem;
+			}.bind(this))
+
+			// 4) prepare revert data & call 'afterApply' hook
+			.then(function(){
+				if (bIsRevert) {
+					// Clear the revert data on the change
+					oChange.resetRevertData();
+				} else {
+					// Set revert data on the change
+					oChange.setRevertData({
+						name: oChangeContent.name,
+						index: iIndex
+					});
+				}
+
+				//Custom function after apply (for example table rebind)
+				this.afterApply(oChange.getChangeType(), oControl, bIsRevert);
 			}.bind(this));
+
+			return pAdd;
+
 		},
 
 		_applyRemove: function(oChange, oControl, mPropertyBag, bIsRevert) {
@@ -240,66 +239,75 @@ sap.ui.define([
 			if (this._bSupressFlickering) {
 				this._delayInvalidate(oControl);
 			}
-			return new Promise(function(resolve, reject) {
-				var oModifier = mPropertyBag.modifier, oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-				var oAggregation;
-				var iIndex;
-				var oControlAggregationItem;
 
-				return Promise.resolve()
-					.then(this.determineAggregation.bind(this, oModifier, oControl))
-					.then(function(oDeterminedAggregation) {
-						oAggregation = oDeterminedAggregation;
-						return this._getExistingAggregationItem(oChangeContent, mPropertyBag, oControl);
-					}.bind(this))
-					.then(function(oRetrievedControlAggregationItem) {
-						oControlAggregationItem = oRetrievedControlAggregationItem;
-						if (!oControlAggregationItem) {
-							if (bIsRevert) {
-								reject(new Error("No item found in " + oAggregation.name + ". Change to " + this._getChangeTypeText(bIsRevert) + "cannot be " + this._getOperationText(bIsRevert) + "at this moment"));
-								return Promise.reject();
-							} else {
-								return FLBase.markAsNotApplicable("Specified change is already existing", true);
-							}
+			var oModifier = mPropertyBag.modifier, oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
+			var oAggregation;
+			var iIndex;
+			var oControlAggregationItem;
+
+			// 1) Fetch the existimg item from the control
+			var pRemove = this.determineAggregation(oModifier, oControl)
+			.then(function(oDeterminedAggregation){
+				oAggregation = oDeterminedAggregation;
+				return this._getExistingAggregationItem(oChangeContent, mPropertyBag, oControl);
+			}.bind(this))
+
+			// 2) Check the existence of the item
+			.then(function(oRetrievedControlAggregationItem){
+				oControlAggregationItem = oRetrievedControlAggregationItem;
+				if (!oControlAggregationItem) {
+					if (bIsRevert) {
+						throw new Error("No item found in " + oAggregation.name + ". Change to " + this._getChangeTypeText(bIsRevert) + "cannot be " + this._getOperationText(bIsRevert) + "at this moment");
+					} else {
+						// In case the specified change is already existing we need to react gracefully --> no error
+						Log.warning("The specified change is already existing - change appliance ignored");
+					}
+					return -1;
+				}
+				return oModifier.findIndexInParentAggregation(oControlAggregationItem);
+			}.bind(this))
+
+			// 3) Remove the item from the aggregation (no destroy yet)
+			.then(function(iFoundIndex) {
+				iIndex = iFoundIndex;
+				return oModifier.removeAggregation(oControl, oAggregation.name, oControlAggregationItem);
+			})
+
+			// 4) Execute the AggregationBaseDelegate#removeItem hook which decides whether the item should be kept or destroyed
+			.then(function(){
+
+				return oModifier.getProperty(oControl, "delegate")
+				.then(function(oDelegate){
+					return this._getDelegate(oDelegate.name);
+				}.bind(this))
+				.then(function(Delegate){
+					return this.afterRemoveItem(Delegate, oControlAggregationItem, oControl, mPropertyBag).then(function(bContinue) {
+						// Continue? --> destroy the item (but only if it exists, it may not exist if an earlier layer removed it already)
+						if (bContinue && oControlAggregationItem) {
+							// destroy the item
+							oModifier.destroy(oControlAggregationItem);
 						}
-						return oModifier.findIndexInParentAggregation(oControlAggregationItem);
-					}.bind(this))
-					.then(function(iFoundIndex) {
-						iIndex = iFoundIndex;
-						return oModifier.removeAggregation(oControl, oAggregation.name, oControlAggregationItem);
-					})
-					.then(function() {
-						if (bIsRevert) {
-							// Clear the revert data on the change
-							oChange.resetRevertData();
-						} else {
-							// Set revert data on the change
-							oChange.setRevertData({
-								id: oModifier.getId(oControlAggregationItem),
-								name: oChangeContent.name,
-								index: iIndex
-							});
-						}
-						return oModifier.getProperty(oControl, "delegate");
-					})
-					.then(function(oDelegate) {
-						// Trigger a callback via delegate on remove to enable consumers to optionally preserved some items (as they see fit)
-						return this._getDelegate(oDelegate.name, function(Delegate) {
-							this.afterRemoveItem(Delegate, oControlAggregationItem, oControl, mPropertyBag).then(function(bContinue) {
-								// Continue? --> destroy the item
-								if (bContinue) {
-									// destroy the item
-									oModifier.destroy(oControlAggregationItem);
-								}
-								this.afterApply(oChange.getChangeType(), oControl, bIsRevert);
-								resolve();
-							}.bind(this));
-						}.bind(this), reject);
-					}.bind(this))
-					.catch(function(oError) {
-						reject(oError);
-					});
+						this.afterApply(oChange.getChangeType(), oControl, bIsRevert);
+					}.bind(this));
 				}.bind(this));
+			}.bind(this))
+
+			// 5) Prepare revert data
+			.then(function() {
+				if (bIsRevert) {
+					// Clear the revert data on the change
+					oChange.resetRevertData();
+				} else {
+					// Set revert data on the change
+					oChange.setRevertData({
+						name: oChangeContent.name,
+						index: iIndex
+					});
+				}
+			});
+
+			return pRemove;
+
 		},
 
 		_applyMove: function(oChange, oControl, mPropertyBag, bIsRevert) {
@@ -307,54 +315,60 @@ sap.ui.define([
 			if (this._bSupressFlickering) {
 				this._delayInvalidate(oControl);
 			}
-			return new Promise(function(resolve, reject) {
-				var oModifier = mPropertyBag.modifier;
-				var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-				var oControlAggregationItem;
-				var oAggregation;
-				var iOldIndex;
-				return this._getExistingAggregationItem(oChangeContent, mPropertyBag, oControl)
-					.then(function(oRetrievedontrolAggregationItem) {
-						oControlAggregationItem = oRetrievedontrolAggregationItem;
-						return this.determineAggregation(oModifier, oControl);
-					}.bind(this))
-					.then(function(oRetrievedAggregation) {
-						oAggregation = oRetrievedAggregation;
-						if (!oControlAggregationItem) {
-							reject(new Error("No corresponding item found in " + oAggregation.name + " found. Change to move item cannot be " + this._getOperationText(bIsRevert) + "at this moment"));
-							return Promise.reject();
-						}
-						return oModifier.findIndexInParentAggregation(oControlAggregationItem);
-					}.bind(this))
-					.then(function(iRetrievedIndex) {
-						iOldIndex = iRetrievedIndex;
-						// Call optimized JS API for runtime changes
-						if (oControl.moveColumn) {
-							oControl.moveColumn(oControlAggregationItem, oChangeContent.index);
-						} else {
-							return Promise.resolve()
-								.then(oModifier.removeAggregation.bind(oModifier, oControl, oAggregation.name, oControlAggregationItem))
-								.then(oModifier.insertAggregation.bind(oModifier, oControl, oAggregation.name, oControlAggregationItem, oChangeContent.index));
-						}
-					})
-					.then(function() {
-						if (bIsRevert) {
-							// Clear the revert data on the change
-							oChange.resetRevertData();
-						} else {
-							oChange.setRevertData({
-								id: oModifier.getId(oControlAggregationItem),
-								name: oChangeContent.name,
-								index: iOldIndex
-							});
-						}
-						this.afterApply(oChange.getChangeType(), oControl, bIsRevert);
-						resolve();
-					}.bind(this))
-					.catch(function(oError){
-						reject(oError);
+
+			var oModifier = mPropertyBag.modifier;
+			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
+			var oControlAggregationItem;
+			var oAggregation;
+			var iOldIndex;
+
+			// 1) Fetch existing item
+			var pMove = this.determineAggregation(oModifier, oControl)
+			.then(function(oRetrievedAggregation){
+				oAggregation = oRetrievedAggregation;
+				return this._getExistingAggregationItem(oChangeContent, mPropertyBag, oControl);
+			}.bind(this))
+			.then(function(oRetrievedControlAggregationItem){
+				oControlAggregationItem = oRetrievedControlAggregationItem;
+			})
+
+			// 2) Throw error if for some reason no item could be found (should not happen for a move operation)
+			.then(function() {
+				if (!oControlAggregationItem) {
+					throw new Error("No corresponding item in " + oAggregation.name + " found. Change to move item cannot be " + this._getOperationText(bIsRevert) + "at this moment");
+				}
+				return oModifier.findIndexInParentAggregation(oControlAggregationItem);
+			}.bind(this))
+
+			// 3) Trigger the move (remove&insert)
+			.then(function(iRetrievedIndex) {
+				iOldIndex = iRetrievedIndex;
+				// Call optimized JS API for runtime changes
+				if (oControl.moveColumn) {
+					return oControl.moveColumn(oControlAggregationItem, oChangeContent.index);
+				} else {
+					return oModifier.removeAggregation(oControl, oAggregation.name, oControlAggregationItem)
+					.then(function(){
+						return oModifier.insertAggregation(oControl, oAggregation.name, oControlAggregationItem, oChangeContent.index);
 					});
+				}
+			})
+
+			// 4) Prepare the revert data
+			.then(function() {
+				if (bIsRevert) {
+					// Clear the revert data on the change
+					oChange.resetRevertData();
+				} else {
+					oChange.setRevertData({
+						name: oChangeContent.name,
+						index: iOldIndex
+					});
+				}
+				this.afterApply(oChange.getChangeType(), oControl, bIsRevert);
 			}.bind(this));
+
+			return pMove;
 		},
 
 		_removeIndexFromChange: function(oChange) {

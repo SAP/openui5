@@ -432,7 +432,16 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			},
 			"SortFlex": {
 				group: "changehandler tests",
-				module: "./SortFlex.qunit",
+				module: "./flexibility/SortFlex.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.fl", "sap.ui.mdc"
+					]
+				}
+			},
+			"ItemBaseFlex": {
+				group: "changehandler tests",
+				module: "./flexibility/ItemBaseFlex.qunit",
 				ui5: {
 					libs: [
 						"sap.ui.fl", "sap.ui.mdc"
