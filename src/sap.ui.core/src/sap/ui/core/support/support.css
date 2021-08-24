@@ -285,7 +285,7 @@ button.sapUiSupportHelpButton:hover {
 
 /** Plugins **/
 
-#sapUiSupportTechInfo {
+#sapUiSupportTechInfo, #sapUiSupportTrace {
 	height: 350px;
 }
 
@@ -347,6 +347,29 @@ button.sapUiSupportHelpButton:hover {
 
 #sapUiSupportTrace .sapUiSupportTraceEntryLevel {
 	width: 70px;
+}
+
+.sapUiSupportTraceEntryLevel_unknown,
+.sapUiSupportTraceEntryLevel_unknown .sapUiSupportTraceEntryTime,
+.sapUiSupportTraceEntryLevel_TRACE,
+.sapUiSupportTraceEntryLevel_TRACE .sapUiSupportTraceEntryTime,
+.sapUiSupportTraceEntryLevel_DEBUG,
+.sapUiSupportTraceEntryLevel_DEBUG .sapUiSupportTraceEntryTime,
+.sapUiSupportTraceEntryLevel_INFO,
+.sapUiSupportTraceEntryLevel_INFO .sapUiSupportTraceEntryTime {
+	color: #000000
+}
+
+.sapUiSupportTraceEntryLevel_FATAL,
+.sapUiSupportTraceEntryLevel_FATAL .sapUiSupportTraceEntryTime,
+.sapUiSupportTraceEntryLevel_ERROR,
+.sapUiSupportTraceEntryLevel_ERROR .sapUiSupportTraceEntryTime {
+	color: #E60000;
+}
+
+.sapUiSupportTraceEntryLevel_WARNING,
+.sapUiSupportTraceEntryLevel_WARNING .sapUiSupportTraceEntryTime {
+	color: #FFAA00
 }
 
 #sapUiSupportTrace .sapUiSupportTraceEntry {

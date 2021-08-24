@@ -66,19 +66,91 @@ sap.ui.define([
 			var that = this;
 
 			var rm = sap.ui.getCore().createRenderManager();
-			rm.write("<div class='sapUiSupportToolbar'>");
-			rm.write("<button id='" + this.getId() + "-clear' class='sapUiSupportRoundedButton'>Clear</button>");
-			rm.write("<label class='sapUiSupportLabel'>Filter:</label><input type='text' id='" + this.getId() + "-filter' class='sapUiSupportTxtFld'>");
-			rm.write("<label class='sapUiSupportLabel'>Log Level:</label><select id='" + this.getId() + "-loglevel' class='sapUiSupportTxtFld sapUiSupportSelect'>");
-			rm.write("<option value='0'>FATAL</option>");
-			rm.write("<option value='1'>ERROR</option>");
-			rm.write("<option value='2'>WARNING</option>");
-			rm.write("<option value='3'>INFO</option>");
-			rm.write("<option value='4'>DEBUG</option>");
-			rm.write("<option value='5'>TRACE</option>");
-			rm.write("<option value='6' selected=''>ALL</option>");
-			rm.write("</select>");
-			rm.write("</div><div class='sapUiSupportTraceCntnt'></div>");
+			rm.openStart("div")
+				.class("sapUiSupportToolbar")
+				.openEnd();
+
+			rm.openStart("button", this.getId() + "-clear")
+				.class("sapUiSupportRoundedButton")
+				.openEnd()
+				.text("Clear")
+				.close("button");
+
+			rm.openStart("label")
+				.class("sapUiSupportLabel")
+				.openEnd()
+				.text("Filter:")
+				.close("label");
+
+			rm.voidStart("input", this.getId() + "-filter")
+				.class("sapUiSupportTxtFld")
+				.attr("type", "text")
+				.voidEnd();
+
+			rm.openStart("label")
+				.class("sapUiSupportLabel")
+				.openEnd()
+				.text("Log Level:")
+				.close("label");
+
+			rm.openStart("select", this.getId() + "-loglevel")
+				.class("sapUiSupportTxtFld")
+				.class("sapUiSupportSelect")
+				.openEnd()
+				.text("Filter:")
+				.openStart();
+
+			rm.openStart("option")
+				.attr("value", "0")
+				.openEnd()
+				.text("FATAL")
+				.close("option");
+
+			rm.openStart("option")
+				.attr("value", "1")
+				.openEnd()
+				.text("ERROR")
+				.close("option");
+
+			rm.openStart("option")
+				.attr("value", "2")
+				.openEnd()
+				.text("WARNING")
+				.close("option");
+
+			rm.openStart("option")
+				.attr("value", "3")
+				.openEnd()
+				.text("INFO")
+				.close("option");
+
+			rm.openStart("option")
+				.attr("value", "4")
+				.openEnd()
+				.text("DEBUG")
+				.close("option");
+
+			rm.openStart("option")
+				.attr("value", "5")
+				.openEnd()
+				.text("TRACE")
+				.close("option");
+
+			rm.openStart("option")
+				.attr("value", "6")
+				.attr("selected", "")
+				.openEnd()
+				.text("ALL")
+				.close("option");
+
+			rm.close("select");
+			rm.close("div");
+
+			rm.openStart("div")
+				.class("sapUiSupportTraceCntnt")
+				.openEnd()
+				.close("div");
+
 			rm.flush(this.$().get(0));
 			rm.destroy();
 
@@ -114,7 +186,6 @@ sap.ui.define([
 			this.$("loglevel").on("change", this._fLogLevelHandler);
 		};
 
-
 		Trace.prototype.exit = function(oSupportStub){
 			if (this.runsAsToolPlugin()) {
 				if (this._fClearHandler) {
@@ -136,7 +207,6 @@ sap.ui.define([
 			Plugin.prototype.exit.apply(this, arguments);
 		};
 
-
 		function log(oPlugin, oEntry){
 			var jContentRef = jQuery(".sapUiSupportTraceCntnt", oPlugin.$());
 			if (!oEntry) {
@@ -155,20 +225,17 @@ sap.ui.define([
 			}
 		}
 
-
 		function getEntryHTML(oPlugin, oEntry){
 			var aLevelInfo = oEntry._levelInfo;
-			var sStyle = " style='color:" + aLevelInfo[1] + ";'";
-			var sResult = "<div class='sapUiSupportTraceEntry'><span class='sapUiSupportTraceEntryLevel'" + sStyle + ">" + aLevelInfo[0] +
-					"</span><span class='sapUiSupportTraceEntryTime'" + sStyle + ">" + oPlugin._oDateFormat.format(new Date(oEntry.timestamp)) +
+			var sResult = "<div class='sapUiSupportTraceEntry'><span class='sapUiSupportTraceEntryLevel sapUiSupportTraceEntryLevel_" + aLevelInfo[0] + "'>" + aLevelInfo[0] +
+					"</span><span class='sapUiSupportTraceEntryTime'>" + oPlugin._oDateFormat.format(new Date(oEntry.timestamp)) +
 					"</span><span class='sapUiSupportTraceEntryMessage'>" + encodeXML(oEntry.message || "") + "</div>";
 			return sResult;
 		}
 
-
 		function applyFilter(sFilterValue, iLogLevel, oEntry){
 			var aLevelInfo = oEntry._levelInfo;
-			if (oEntry._levelInfo[2] <= iLogLevel) {
+			if (oEntry._levelInfo[1] <= iLogLevel) {
 				if (sFilterValue) {
 					var aParts = sFilterValue.split(" ");
 					var bResult = true;
@@ -182,26 +249,24 @@ sap.ui.define([
 			return false;
 		}
 
-
 		function getLevel(iLogLevel){
 			switch (iLogLevel) {
 				case Log.Level.FATAL:
-					return ["FATAL", "#E60000", iLogLevel];
+					return ["FATAL", iLogLevel];
 				case Log.Level.ERROR:
-					return ["ERROR", "#E60000", iLogLevel];
+					return ["ERROR", iLogLevel];
 				case Log.Level.WARNING:
-					return ["WARNING", "#FFAA00", iLogLevel];
+					return ["WARNING", iLogLevel];
 				case Log.Level.INFO:
-					return ["INFO", "#000000", iLogLevel];
+					return ["INFO", iLogLevel];
 				case Log.Level.DEBUG:
-					return ["DEBUG", "#000000", iLogLevel];
+					return ["DEBUG", iLogLevel];
 				case Log.Level.TRACE:
-					return ["TRACE", "#000000", iLogLevel];
+					return ["TRACE", iLogLevel];
+				default:
+					return ["unknown", iLogLevel];
 			}
-			return ["unknown", "#000000", iLogLevel];
 		}
-
-
 
 	return Trace;
 
