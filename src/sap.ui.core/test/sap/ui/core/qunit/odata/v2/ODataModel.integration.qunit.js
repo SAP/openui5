@@ -975,6 +975,7 @@ sap.ui.define([
 			}).then(function (oView) {
 				var sModelName;
 
+				that.oView = oView;
 				Object.keys(that.mChanges).forEach(function (sControlId) {
 					var oControl = oView.byId(sControlId);
 
@@ -999,7 +1000,6 @@ sap.ui.define([
 				// Place the view in the page so that it is actually rendered. In some situations,
 				// esp. for the table.Table this is essential.
 				oView.placeAt("qunit-fixture");
-				that.oView = oView;
 
 				return that.waitForChanges(assert);
 			});
@@ -1377,62 +1377,12 @@ sap.ui.define([
 		 * @param {boolean} [bInList] Whether the control resides in a list item
 		 */
 		observe : function (assert, oControl, sControlId, bInList) {
-			var oBindingInfo,
-				oConfiguration,
-				fnOriginalFormatter,
+			var oBindingInfo, bIsCompositeType, fnOriginalFormatter, oType,
 				sProperty = oControl.getBindingInfo("text") ? "text" : "value",
-				oType,
-				bIsCompositeType,
 				that = this;
 
-			function observeRow(oRow) {
-				var oCellControl;
-
-				//TODO find cell with observed control, currently assume 0
-				//TODO aggregation "cells" is only valid for sap.ui.table.Table
-				oCellControl = oRow.getAggregation("cells")[0];
-				that.checkValue(assert, oCellControl.getProperty(sProperty), sControlId,
-					oRow.getIndex());
-				that.oObserver.observe(oCellControl, {properties : [sProperty]});
-			}
-
 			if (this.bCheckValue) { // ManagedObjectObserver checks value changes on the control
-				this.oObserver = this.oObserver || new ManagedObjectObserver(function (oChange) {
-					var i,
-						sId = oChange.object.getId(),
-						oParent = oChange.object.getParent();
-
-					sId = sId.slice(sId.indexOf("--") + 2); // strip view ID
-					i = sId.indexOf("-");
-					if (i > 0) {
-						sId = sId.slice(0, i); // strip clone ID if available
-					}
-
-					that.checkValue(assert, oChange.current, sId,
-						/*TODO only for sap.ui.table.Row*/oParent.getIndex && oParent.getIndex());
-				});
-				if (bInList) {
-					this.oTemplateObserver = this.oTemplateObserver
-						|| new ManagedObjectObserver(function (oChange) {
-						if (oChange.mutation === "remove") {
-							that.oObserver.unobserve(oChange.child);
-						} else if (oChange.mutation === "insert") {
-							observeRow(oChange.child);
-						}
-					});
-					oControl = oControl.getParent().getParent();
-					//TODO aggregation "rows" is only valid for sap.ui.table.Table
-					oConfiguration = {aggregations : ["rows"]};
-					if (!this.oTemplateObserver.isObserved(oControl, oConfiguration)) {
-						this.oTemplateObserver.observe(oControl, oConfiguration);
-						oControl.getRows().forEach(observeRow); // observe initial rows (TreeTable)
-					}
-				} else {
-					oConfiguration = {properties : [sProperty]};
-					if (!this.oObserver.isObserved(oControl, oConfiguration)) {
-						this.oObserver.observe(oControl, oConfiguration);
-					}
-				}
+				this.observeValue(assert, oControl, sControlId, bInList);
 				return;
 			}
 			// formatter checks changes of values in model representation
@@ -1466,6 +1416,95 @@ sap.ui.define([
 
 				return sValue;
 			};
+		},
+
+		/**
+		 * Implementation of {@link #observe} when values are observed via managed object observer.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @param {sap.ui.base.ManagedObject} oControl The control
+		 * @param {string} sControlId The (symbolic) control ID for which changes are expected
+		 * @param {boolean} [bInList] Whether the control resides in a list item
+		 */
+		observeValue : function (assert, oControl, sControlId, bInList) {
+			var oConfiguration, aTables,
+				that = this;
+
+			/**
+			 * Helper to extract the control ID leaving out the view ID prefix and the optional
+			 * clone suffix in case the control is contained in a table and cloned from the table
+			 * row template.
+			 *
+			 * @param {string} sId The complete ID of the control, including the view and clone IDs
+			 * @returns {string} The extracted control ID as used in the XML view
+			 */
+			function extractControlId(sId) {
+				sId = sId.slice(sId.indexOf("--") + 2); // strip view ID
+
+				return sId.split("-")[0];
+			}
+
+			/**
+			 * Returns the index of the given table item/row in its table or <code>undefined</code>
+			 * in case the given item control is no table item
+			 *
+			 * @param {any} oItem The table item control
+			 * @returns {number} The index of the item control or <code>undefined</code>
+			 */
+			function getItemIndex(oItem) {
+				if (oItem.getIndex) { // sap.ui.table.Row
+					return oItem.getIndex();
+				} else if (oItem.getList) { // sap.m.ListItemBase
+					return oItem.getList().getItems().indexOf(oItem);
+				}
+			}
+
+			this.oObserver = this.oObserver || new ManagedObjectObserver(function (oChange) {
+				that.checkValue(assert, oChange.current, extractControlId(oChange.object.getId()),
+					getItemIndex(oChange.object.getParent()));
+			});
+			if (!bInList) {
+				oConfiguration = {properties : [
+					oControl.getBindingInfo("text") ? "text" : "value"]};
+				if (!this.oObserver.isObserved(oControl, oConfiguration)) {
+					this.oObserver.observe(oControl, oConfiguration);
+				}
+
+				return;
+			}
+
+			this.oListControlIds = this.oListControlIds || new Set();
+			this.oListControlIds.add(sControlId);
+			if (!this.oTemplateObserver) { //TODO support multiple tables in view?
+				this.oTemplateObserver = new ManagedObjectObserver(function (oChange) {
+					var oItem = oChange.child; // the table row or item control
+
+					if (oChange.mutation === "remove") {
+						that.oObserver.unobserve(oItem);
+					} else if (oChange.mutation === "insert") {
+						oItem.getAggregation("cells").forEach(function (oCell) {
+							var sCellId = extractControlId(oCell.getId()),
+								sCellProperty = oCell.getBindingInfo("text") ? "text" : "value";
+
+							if (that.oListControlIds.has(sCellId)) {
+								that.checkValue(assert, oCell.getProperty(sCellProperty),
+									sCellId, getItemIndex(oItem));
+								that.oObserver.observe(oCell, {properties : [sCellProperty]});
+							}
+						});
+					}
+				});
+				aTables = this.oView.findAggregatedObjects(true, function (oControl) {
+					return oControl.isA("sap.m.Table") || oControl.isA("sap.ui.table.Table");
+				});
+				if (aTables.length !== 1) {
+					throw new Error("Expected one table in view but found " + aTables.length);
+				}
+				oConfiguration = {
+					aggregations : [aTables[0].isA("sap.m.Table") ? "items" : "rows"]
+				};
+				this.oTemplateObserver.observe(aTables[0], oConfiguration);
+			}
 		},
 
 		/**
@@ -2057,7 +2096,7 @@ sap.ui.define([
 					{SalesOrderID : "0500000002"}
 				]
 			})
-			.expectChange("id", ["0500000001", "0500000002"]);
+			.expectValue("id", ["0500000001", "0500000002"]);
 
 		// code under test
 		return this.createView(assert, sView, oModel);
@@ -2079,7 +2118,7 @@ sap.ui.define([
 					{SalesOrderID : "0500000002"}
 				]
 			})
-			.expectChange("id", ["0500000001", "0500000002"]);
+			.expectValue("id", ["0500000001", "0500000002"]);
 
 		// code under test
 		return this.createView(assert, sView);
@@ -2249,8 +2288,7 @@ sap.ui.define([
 				target : "/$batch",
 				technical : true,
 				type : "Error"
-			}])
-			.expectChange("id", null); // no change as batch fails
+			}]);
 
 		// don't care about passed arguments
 		this.mock(oEventHandlers).expects("batchCompleted");
@@ -2462,30 +2500,27 @@ sap.ui.define([
 			.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=100", {
 				results : [{
 					__metadata : {
-						uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 					},
 					SalesOrderID : "1",
 					ItemPosition : "10"
 				}, {
 					__metadata : {
-						uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+						uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
 					},
 					SalesOrderID : "1",
 					ItemPosition : "20"
 				}]
 			})
-			.expectChange("salesOrderId", null)
-			.expectChange("salesOrderId", "1")
-			.expectChange("itemPosition", ["10", "20"])
-			.expectChange("productName", null) // expect a later change
-			.expectChange("supplierAddress", null); // expect a later change
+			.expectValue("salesOrderId", "1")
+			.expectValue("itemPosition", ["10", "20"]);
 
 		// code under test
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest({
 					deepPath : "/SalesOrderSet('1')"
-						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct",
-					requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10')/ToProduct",
+					requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 						+ "/ToProduct"
 				}, {
 					__metadata : {
@@ -2494,9 +2529,9 @@ sap.ui.define([
 					ProductID : "P1",
 					Name : "Product 1"
 				}, {"sap-message" : getMessageHeader(oMsgProductName)})
-				.expectChange("productName", "Product 1")
+				.expectValue("productName", "Product 1")
 				.expectMessage(oMsgProductName, "/ProductSet('P1')/",
-					"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')"
+					"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')"
 					+ "/ToProduct/");
 
 			// code under test
@@ -2508,7 +2543,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest({
 					deepPath : "/SalesOrderSet('1')"
-						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct"
+						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10')/ToProduct"
 						+ "/ToSupplier",
 					requestUri : "ProductSet('P1')/ToSupplier"
 				}, {
@@ -2520,9 +2555,9 @@ sap.ui.define([
 						City : "Walldorf"
 					}
 				}, {"sap-message" : getMessageHeader(oMsgSupplierAddress)})
-				.expectChange("supplierAddress", "Walldorf")
+				.expectValue("supplierAddress", "Walldorf")
 				.expectMessage(oMsgSupplierAddress, "/BusinessPartnerSet('BP1')/",
-					"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')"
+					"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')"
 					+ "/ToProduct/ToSupplier/");
 
 			// code under test
@@ -2712,9 +2747,8 @@ sap.ui.define([
 					{SalesOrderID : "1", ItemPosition : "2"}
 				]
 			}, {"sap-message" : getMessageHeader(oMsgSalesOrderItem1)})
-			.expectChange("id", null)
-			.expectChange("id", "1")
-			.expectChange("itemPosition", ["1", "2"])
+			.expectValue("id", "1")
+			.expectValue("itemPosition", ["1", "2"])
 			.expectMessage(oMsgSalesOrder, "/SalesOrderSet('1')")
 			.expectMessage(oMsgSalesOrderItem1, "/SalesOrderLineItemSet",
 				"/SalesOrderSet('1')/ToLineItems");
@@ -2754,7 +2788,7 @@ sap.ui.define([
 						oMsgProductAViaSalesOrderItem
 					])
 				})
-				.expectChange("itemPosition", ["2", "3"])
+				.expectValue("itemPosition", ["2", "3"])
 				.expectMessages([]) // clean all expected messages
 				.expectMessage(oMsgSalesOrder, "/SalesOrderSet('1')")
 				.expectMessage(oMsgSalesOrderItem3, "/SalesOrderLineItemSet",
@@ -2778,7 +2812,7 @@ sap.ui.define([
 						{SalesOrderID : "1", ItemPosition : "4"}
 					]
 				})
-				.expectChange("itemPosition", ["3", "4"])
+				.expectValue("itemPosition", ["3", "4"])
 				.expectMessages([]) // clean all expected messages
 				.expectMessage(oMsgSalesOrder, "/SalesOrderSet('1')");
 
@@ -2815,10 +2849,19 @@ sap.ui.define([
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2",
 				headers : {"sap-message-scope" : "BusinessObject"}
 			}, {
-				results : [
-					{SalesOrderID : "1", ItemPosition : "1"},
-					{SalesOrderID : "1", ItemPosition : "2"}
-				]
+				results : [{
+					__metadata : {
+						uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='1')"
+					},
+					SalesOrderID : "1",
+					ItemPosition : "1"
+				}, {
+					__metadata : {
+						uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='2')"
+					},
+					SalesOrderID : "1",
+					ItemPosition : "2"
+				}]
 			}, {
 				"sap-message" : getMessageHeader([
 					oMsgSalesOrderItem1,
@@ -2827,7 +2870,7 @@ sap.ui.define([
 					oMsgProductA
 				])
 			})
-			.expectChange("itemPosition", ["1", "2"])
+			.expectValue("itemPosition", ["1", "2"])
 			.expectMessage(oMsgSalesOrderItem1, "/SalesOrderLineItemSet",
 				"/SalesOrderSet('1')/ToLineItems")
 			.expectMessage(oMsgProductA, "/SalesOrderLineItemSet",
@@ -2841,10 +2884,19 @@ sap.ui.define([
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=2&$top=2",
 					headers : {"sap-message-scope" : "BusinessObject"}
 				}, {
-					results : [
-						{SalesOrderID : "1", ItemPosition : "3"},
-						{SalesOrderID : "1", ItemPosition : "4"}
-					]
+					results : [{
+						__metadata : {
+							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='3')"
+						},
+						SalesOrderID : "1",
+						ItemPosition : "3"
+					}, {
+						__metadata : {
+							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='4')"
+						},
+						SalesOrderID : "1",
+						ItemPosition : "4"
+					}]
 				}, {
 					"sap-message" : getMessageHeader([
 						oMsgSalesOrderItem3,
@@ -2853,8 +2905,8 @@ sap.ui.define([
 						oMsgProductB
 					])
 				})
-				.expectChange("itemPosition", ["3", "4"])
-				.expectChange("itemPosition", ["3", "4"]) // TODO: why twice?
+				.expectValue("itemPosition", "3", 2)
+				.expectValue("itemPosition", "4", 3)
 				.expectMessage(oMsgSalesOrderItem3, "/SalesOrderLineItemSet",
 					"/SalesOrderSet('1')/ToLineItems")
 				.expectMessage(oMsgProductB, "/SalesOrderLineItemSet",
@@ -3019,24 +3071,22 @@ usePreliminaryContext : false}}">\
 				GrossAmount : "0.00",
 				SalesOrderID : "1"
 			}, {"sap-message" : getMessageHeader(oSalesOrderGrossAmountError)})
-			.expectChange("salesOrderID", null)
-			.expectChange("salesOrderID", "1")
-			.expectChange("grossAmount", null)
-			.expectChange("grossAmount", "0.00")
+			.expectValue("salesOrderID", "1")
+			.expectValue("grossAmount", "0.00")
 			.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=100", {
 				results : [{
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 					},
 					CurrencyCode : "EUR",
 					GrossAmount : "0.00",
-					ItemPosition : "10~0~",
+					ItemPosition : "10",
 					SalesOrderID : "1"
 				}]
 			})
-			.expectChange("itemPosition", ["10~0~"])
-			.expectChange("grossAmount::item", ["0.00"])
-			.expectChange("currencyCode", ["EUR"])
+			.expectValue("itemPosition", ["10"])
+			.expectValue("grossAmount::item", ["0.00"])
+			.expectValue("currencyCode", ["EUR"])
 			.expectMessage(oSalesOrderGrossAmountError, "/SalesOrderSet('1')/");
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -3046,15 +3096,15 @@ usePreliminaryContext : false}}">\
 
 			that.expectRequest({
 					deepPath : "/SalesOrderSet('1')"
-						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')",
-					requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10')",
+					requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 						+ "?$expand=ToHeader"
 				}, {
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 					},
 					SalesOrderID : "1",
-					ItemPosition : "10~0~",
+					ItemPosition : "10",
 					GrossAmount : "1000.00",
 					ToHeader : {
 						__metadata : {uri : "SalesOrderSet('1')"},
@@ -3062,8 +3112,8 @@ usePreliminaryContext : false}}">\
 						GrossAmount : "1000.00"
 					}
 				}, {"sap-message" : getMessageHeader(oSalesOrderItemToHeaderGrossAmountError)})
-				.expectChange("grossAmount", "1000.00")
-				.expectChange("grossAmount::item", ["1000.00"])
+				.expectValue("grossAmount", "1000.00")
+				.expectValue("grossAmount::item", ["1000.00"])
 				.expectMessages([{
 					code : oSalesOrderItemToHeaderGrossAmountError.code,
 					fullTarget : "/SalesOrderSet('1')/GrossAmount",
@@ -3112,20 +3162,18 @@ usePreliminaryContext : false}}">\
 				ToLineItems : {
 					results : [{
 						__metadata : {
-							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 						},
-						ItemPosition : "10~0~",
+						ItemPosition : "10",
 						Note : "ItemNote",
 						SalesOrderID : "1"
 					}]
 				}
 			})
-			.expectChange("note", null)
-			.expectChange("note", "Note")
-			.expectChange("salesOrderID", null)
-			.expectChange("salesOrderID", "1")
-			.expectChange("itemPosition", ["10~0~"])
-			.expectChange("note::item", ["ItemNote"]);
+			.expectValue("note", "Note")
+			.expectValue("salesOrderID", "1")
+			.expectValue("itemPosition", ["10"])
+			.expectValue("note::item", ["ItemNote"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			// avoid MERGE on property change
@@ -3135,10 +3183,10 @@ usePreliminaryContext : false}}">\
 			);
 			oModel.setDeferredGroups(["change", "never"]);
 
-			that.expectChange("note::item", "ItemNote Changed", 0);
+			that.expectValue("note::item", "ItemNote Changed", 0);
 
 			// code under test: leads to __metadata.deepPath being set in the item data
-			oModel.setProperty("/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')/Note",
+			oModel.setProperty("/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/Note",
 				"ItemNote Changed");
 
 			return that.waitForChanges(assert);
@@ -3152,7 +3200,7 @@ usePreliminaryContext : false}}">\
 					ToLineItems : [{
 						Note : "ItemNote Changed",
 						__metadata : {
-							uri: "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+							uri: "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 							// Note: Payload must not contain deepPath
 						}
 					}]
@@ -3286,13 +3334,13 @@ usePreliminaryContext : false}}">\
 			oSalesOrderToBusinessPartnerAddress
 				= this.createResponseMessage("ToBusinessPartner/Address"),
 			oSalesOrderToItemNoteError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='10')/Note"),
 			oSalesOrderToItemPositionError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ItemPosition"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='10')/ItemPosition"),
 			oSalesOrderItemNoteError = cloneODataMessage(oSalesOrderToItemNoteError,
-				"(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+				"(SalesOrderID='1',ItemPosition='10')/Note"),
 			oSalesOrderItemPositionError = cloneODataMessage(oSalesOrderToItemPositionError,
-				"(SalesOrderID='1',ItemPosition='10~0~')/ItemPosition"),
+				"(SalesOrderID='1',ItemPosition='10')/ItemPosition"),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="salesOrderID" text="{SalesOrderID}" />\
@@ -3322,10 +3370,8 @@ usePreliminaryContext : false}}">\
 						oSalesOrderToItemNoteError, oSalesOrderToItemPositionError]
 					: [oSalesOrderNoteError])
 			})
-			.expectChange("note", null)
-			.expectChange("note", "Foo")
-			.expectChange("salesOrderID", null)
-			.expectChange("salesOrderID", "1")
+			.expectValue("note", "Foo")
+			.expectValue("salesOrderID", "1")
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers : bWithMessageScope
@@ -3335,15 +3381,15 @@ usePreliminaryContext : false}}">\
 			}, {
 				results : [{
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 					},
 					Note : "Bar",
-					ItemPosition : "10~0~",
+					ItemPosition : "10",
 					SalesOrderID : "1"
 				}]
 			})
-			.expectChange("itemPosition", ["10~0~"])
-			.expectChange("note::item", ["Bar"])
+			.expectValue("itemPosition", ["10"])
+			.expectValue("note::item", ["Bar"])
 			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/");
 
 		if (bWithMessageScope) {
@@ -3377,13 +3423,13 @@ usePreliminaryContext : false}}">\
 			oSalesOrderToBusinessPartnerAddress
 				= this.createResponseMessage("ToBusinessPartner/Address"),
 			oSalesOrderToItem10NoteError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='10')/Note"),
 			oSalesOrderToItem30NoteError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='30~2~')/Note"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='30')/Note"),
 			oSalesOrderItem10NoteError = cloneODataMessage(oSalesOrderToItem10NoteError,
-				"(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+				"(SalesOrderID='1',ItemPosition='10')/Note"),
 			oSalesOrderItem30NoteError = cloneODataMessage(oSalesOrderToItem30NoteError,
-				"(SalesOrderID='1',ItemPosition='30~2~')/Note"),
+				"(SalesOrderID='1',ItemPosition='30')/Note"),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="salesOrderID" text="{SalesOrderID}" />\
@@ -3414,10 +3460,8 @@ usePreliminaryContext : false}}">\
 						oSalesOrderToItem10NoteError, oSalesOrderToItem30NoteError]
 					: oSalesOrderNoteError)
 			})
-			.expectChange("note", null)
-			.expectChange("note", "Foo")
-			.expectChange("salesOrderID", null)
-			.expectChange("salesOrderID", "1")
+			.expectValue("note", "Foo")
+			.expectValue("salesOrderID", "1")
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers : bWithMessageScope
@@ -3427,24 +3471,24 @@ usePreliminaryContext : false}}">\
 			}, {
 				results : [{
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 					},
 					Note : "Bar",
-					ItemPosition : "10~0~",
+					ItemPosition : "10",
 					SalesOrderID : "1"
 				}, {
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
 					},
 					Note : "Baz",
-					ItemPosition : "20~1~",
+					ItemPosition : "20",
 					SalesOrderID : "1"
 				}]
 			}/*, { // message is not sent because of transitionMessagesOnly
 				"sap-message" : getMessageHeader(oSalesOrderItem10NoteError)
 			}*/)
-			.expectChange("itemPosition", ["10~0~", "20~1~"])
-			.expectChange("note::item", ["Bar", "Baz"])
+			.expectValue("itemPosition", ["10", "20"])
+			.expectValue("note::item", ["Bar", "Baz"])
 			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/");
 
 		if (bWithMessageScope) {
@@ -3466,24 +3510,24 @@ usePreliminaryContext : false}}">\
 			}, {
 				results : [{
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~2~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30')"
 					},
 					Note : "Qux",
-					ItemPosition : "30~2~",
+					ItemPosition : "30",
 					SalesOrderID : "1"
 				}, {
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='40~3~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='40')"
 					},
 					Note : "Quux",
-					ItemPosition : "40~3~",
+					ItemPosition : "40",
 					SalesOrderID : "1"
 				}]
 			})
-			.expectChange("itemPosition", "30~2~", 2)
-			.expectChange("itemPosition", "40~3~", 3)
-			.expectChange("note::item", "Qux", 2)
-			.expectChange("note::item", "Quux", 3);
+			.expectValue("itemPosition", "30", 2)
+			.expectValue("itemPosition", "40", 3)
+			.expectValue("note::item", "Qux", 2)
+			.expectValue("note::item", "Quux", 3);
 
 			// do paging
 			that.oView.byId("table").requestItems();
@@ -3510,20 +3554,20 @@ usePreliminaryContext : false}}">\
 			oSalesOrderToBusinessPartnerAddress
 				= this.createResponseMessage("ToBusinessPartner/Address"),
 			oSalesOrderToItem10GrossAmountError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/GrossAmount"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='10')/GrossAmount"),
 			oSalesOrderToItem20GrossAmountError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='20~1~')/GrossAmount"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='20')/GrossAmount"),
 			oSalesOrderToItem30GrossAmountError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='30~1~')/GrossAmount"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='30')/GrossAmount"),
 			oSalesOrderItem10GrossAmountError
 				= cloneODataMessage(oSalesOrderToItem10GrossAmountError,
-					"(SalesOrderID='1',ItemPosition='10~0~')/GrossAmount"),
+					"(SalesOrderID='1',ItemPosition='10')/GrossAmount"),
 			oSalesOrderItem20GrossAmountError
 				= cloneODataMessage(oSalesOrderToItem20GrossAmountError,
-					"(SalesOrderID='1',ItemPosition='20~1~')/GrossAmount"),
+					"(SalesOrderID='1',ItemPosition='20')/GrossAmount"),
 			oSalesOrderItem30GrossAmountError
 				= cloneODataMessage(oSalesOrderToItem30GrossAmountError,
-					"(SalesOrderID='1',ItemPosition='30~1~')/GrossAmount"),
+					"(SalesOrderID='1',ItemPosition='30')/GrossAmount"),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="salesOrderID" text="{SalesOrderID}" />\
@@ -3555,10 +3599,8 @@ usePreliminaryContext : false}}">\
 						oSalesOrderToItem30GrossAmountError]
 					: oSalesOrderNoteError)
 			})
-			.expectChange("note", null)
-			.expectChange("note", "Foo")
-			.expectChange("salesOrderID", null)
-			.expectChange("salesOrderID", "1")
+			.expectValue("note", "Foo")
+			.expectValue("salesOrderID", "1")
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers : bWithMessageScope
@@ -3568,22 +3610,22 @@ usePreliminaryContext : false}}">\
 			}, {
 				results : [{
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 					},
 					GrossAmount : "111.0",
-					ItemPosition : "10~0~",
+					ItemPosition : "10",
 					SalesOrderID : "1"
 				}, {
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
 					},
 					GrossAmount : "42.0",
-					ItemPosition : "20~1~",
+					ItemPosition : "20",
 					SalesOrderID : "1"
 				}]
 			})
-			.expectChange("itemPosition", ["10~0~", "20~1~"])
-			.expectChange("grossAmount", ["111.0", "42.0"])
+			.expectValue("itemPosition", ["10", "20"])
+			.expectValue("grossAmount", ["111.0", "42.0"])
 			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/");
 
 		if (bWithMessageScope) {
@@ -3609,22 +3651,22 @@ usePreliminaryContext : false}}">\
 				}, {
 					results : [{
 						__metadata : {
-							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 						},
 						GrossAmount : "111.0",
-						ItemPosition : "10~0~",
+						ItemPosition : "10",
 						SalesOrderID : "1"
 					}, {
 						__metadata : {
-							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~1~')"
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30')"
 						},
 						GrossAmount : "222.0",
-						ItemPosition : "30~1~",
+						ItemPosition : "30",
 						SalesOrderID : "1"
 					}]
 				})
-				.expectChange("itemPosition", "30~1~", 1)
-				.expectChange("grossAmount", "222.0", 1);
+				.expectValue("itemPosition", "30", 1)
+				.expectValue("grossAmount", "222.0", 1);
 
 			// Code under test
 			that.oView.byId("table").getBinding("items").filter([new Filter({
@@ -3865,13 +3907,13 @@ usePreliminaryContext : false}}">\
 			oSalesOrderToBusinessPartnerAddress
 				= this.createResponseMessage("ToBusinessPartner/Address"),
 			oSalesOrderToItem10NoteError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='10')/Note"),
 			oSalesOrderToItem30NoteError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='30~0~')/Note"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='30')/Note"),
 			oSalesOrderItem10NoteError = cloneODataMessage(oSalesOrderToItem10NoteError,
-				"(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+				"(SalesOrderID='1',ItemPosition='10')/Note"),
 			oSalesOrderItem30NoteError = cloneODataMessage(oSalesOrderToItem30NoteError,
-				"(SalesOrderID='1',ItemPosition='30~0~')/Note"),
+				"(SalesOrderID='1',ItemPosition='30')/Note"),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="salesOrderID" text="{SalesOrderID}" />\
@@ -3902,10 +3944,8 @@ usePreliminaryContext : false}}">\
 						oSalesOrderToItem10NoteError, oSalesOrderToItem30NoteError]
 					: oSalesOrderNoteError)
 			})
-			.expectChange("note", null)
-			.expectChange("note", "Foo")
-			.expectChange("salesOrderID", null)
-			.expectChange("salesOrderID", "1")
+			.expectValue("note", "Foo")
+			.expectValue("salesOrderID", "1")
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers : bWithMessageScope
@@ -3915,22 +3955,22 @@ usePreliminaryContext : false}}">\
 			}, {
 				results : [{
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 					},
 					Note : "Bar",
-					ItemPosition : "10~0~",
+					ItemPosition : "10",
 					SalesOrderID : "1"
 				}, {
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
 					},
 					Note : "Baz",
-					ItemPosition : "20~1~",
+					ItemPosition : "20",
 					SalesOrderID : "1"
 				}]
 			})
-			.expectChange("itemPosition", ["10~0~", "20~1~"])
-			.expectChange("note::item", ["Bar", "Baz"])
+			.expectValue("itemPosition", ["10", "20"])
+			.expectValue("note::item", ["Bar", "Baz"])
 			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/");
 
 		if (bWithMessageScope) {
@@ -3954,22 +3994,22 @@ usePreliminaryContext : false}}">\
 				}, {
 					results : [{
 						__metadata : {
-							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~0~')"
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30')"
 						},
 						Note : "Qux",
-						ItemPosition : "30~0~",
+						ItemPosition : "30",
 						SalesOrderID : "1"
 					}, {
 						__metadata : {
-							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='40~1~')"
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='40')"
 						},
 						Note : "Quux",
-						ItemPosition : "40~1~",
+						ItemPosition : "40",
 						SalesOrderID : "1"
 					}]
 				})
-				.expectChange("itemPosition", ["30~0~", "40~1~"])
-				.expectChange("note::item", ["Qux", "Quux"]);
+				.expectValue("itemPosition", ["30", "40"])
+				.expectValue("note::item", ["Qux", "Quux"]);
 
 			// Code under test
 			that.oView.byId("table").getBinding("items").sort(new Sorter("GrossAmount"));
@@ -4004,18 +4044,18 @@ usePreliminaryContext : false}}">\
 			oSalesOrderToBusinessPartnerAddress
 				= this.createResponseMessage("ToBusinessPartner/Address"),
 			oSalesOrderToItem10ToProductPriceError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='10')/ToProduct/Price"),
 			oSalesOrderToItem10NoteError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='10')/Note"),
 			oSalesOrderToItem30NoteError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='30~0~')/Note"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='30')/Note"),
 			oSalesOrderItem10NoteError = cloneODataMessage(oSalesOrderToItem10NoteError,
-				"(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+				"(SalesOrderID='1',ItemPosition='10')/Note"),
 			oSalesOrderItem30NoteError = cloneODataMessage(oSalesOrderToItem30NoteError,
-				"(SalesOrderID='1',ItemPosition='30~0~')/Note"),
+				"(SalesOrderID='1',ItemPosition='30')/Note"),
 			oSalesOrderItem10ToProductPriceError
 				= cloneODataMessage(oSalesOrderToItem10ToProductPriceError,
-					"(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+					"(SalesOrderID='1',ItemPosition='10')/ToProduct/Price"),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="salesOrderID" text="{SalesOrderID}" />\
@@ -4046,10 +4086,8 @@ usePreliminaryContext : false}}">\
 						oSalesOrderToItem30NoteError]
 					: oSalesOrderNoteError)
 			})
-			.expectChange("note", null)
-			.expectChange("note", "Foo")
-			.expectChange("salesOrderID", null)
-			.expectChange("salesOrderID", "1")
+			.expectValue("note", "Foo")
+			.expectValue("salesOrderID", "1")
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers : bWithMessageScope
@@ -4059,22 +4097,22 @@ usePreliminaryContext : false}}">\
 			}, {
 				results : [{
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 					},
 					Note : "Bar",
-					ItemPosition : "10~0~",
+					ItemPosition : "10",
 					SalesOrderID : "1"
 				}, {
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
 					},
 					Note : "Baz",
-					ItemPosition : "20~1~",
+					ItemPosition : "20",
 					SalesOrderID : "1"
 				}]
 			})
-			.expectChange("itemPosition", ["10~0~", "20~1~"])
-			.expectChange("note::item", ["Bar", "Baz"])
+			.expectValue("itemPosition", ["10", "20"])
+			.expectValue("note::item", ["Bar", "Baz"])
 			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/");
 
 		if (bWithMessageScope) {
@@ -4092,7 +4130,7 @@ usePreliminaryContext : false}}">\
 			var oItem10ToProductPriceError = cloneODataMessage(oSalesOrderItem10ToProductPriceError,
 					"ToProduct/Price");
 
-			that.expectChange("note::item", "Qux", 0)
+			that.expectValue("note::item", "Qux", 0)
 				.expectHeadRequest(bWithMessageScope
 					? {"sap-message-scope" : "BusinessObject"}
 					: {})
@@ -4100,17 +4138,17 @@ usePreliminaryContext : false}}">\
 					data : {
 						Note : "Qux",
 						__metadata : {
-							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 						}
 					},
 					deepPath :
-						"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')",
+						"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')",
 					headers : bWithMessageScope
 						? {"sap-message-scope" : "BusinessObject", "x-http-method" : "MERGE"}
 						: {"x-http-method" : "MERGE"},
-					key : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')",
+					key : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')",
 					method : "POST",
-					requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 				}, NO_CONTENT, bWithMessageScope
 					? {"sap-message" : getMessageHeader(oItem10ToProductPriceError)}
 					: undefined
@@ -4121,21 +4159,21 @@ usePreliminaryContext : false}}">\
 			if (bWithMessageScope) {
 				that.expectMessage(oSalesOrderToBusinessPartnerAddress, "/SalesOrderSet('1')/")
 					.expectMessage(oItem10ToProductPriceError,
-						"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')/",
-						"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/")
+						"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/",
+						"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')/")
 					.expectMessage(oSalesOrderItem30NoteError,
 						"/SalesOrderLineItemSet", "/SalesOrderSet('1')/ToLineItems");
 			}
 
 			// code under test - modify a sales order item
 			oModel.setProperty(
-				"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/Note",
+				"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')/Note",
 				"Qux");
 			oModel.submitChanges();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("note", "Quxx")
+			that.expectValue("note", "Quxx")
 				.expectRequest({
 					data : {
 						Note : "Quxx",
@@ -4185,18 +4223,18 @@ usePreliminaryContext : false}}">\
 			oSalesOrderToBusinessPartnerAddress
 				= this.createResponseMessage("ToBusinessPartner/Address"),
 			oSalesOrderToItem10ToProductPriceError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='10')/ToProduct/Price"),
 			oSalesOrderToItem10NoteError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='10')/Note"),
 			oSalesOrderToItem20NoteError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='20~1~')/Note"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='20')/Note"),
 			oSalesOrderItem10NoteError = cloneODataMessage(oSalesOrderToItem10NoteError,
-				"(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+				"(SalesOrderID='1',ItemPosition='10')/Note"),
 			oSalesOrderItem10ToProductPriceError
 				= cloneODataMessage(oSalesOrderToItem10ToProductPriceError,
-					"(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+					"(SalesOrderID='1',ItemPosition='10')/ToProduct/Price"),
 			oSalesOrderItem20NoteError = cloneODataMessage(oSalesOrderToItem20NoteError,
-				"(SalesOrderID='1',ItemPosition='20~1~')/Note"),
+				"(SalesOrderID='1',ItemPosition='20')/Note"),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="salesOrderID" text="{SalesOrderID}" />\
@@ -4228,10 +4266,8 @@ usePreliminaryContext : false}}">\
 						oSalesOrderToItem20NoteError]
 					: oSalesOrderNoteError)
 			})
-			.expectChange("note", null)
-			.expectChange("note", "Foo")
-			.expectChange("salesOrderID", null)
-			.expectChange("salesOrderID", "1")
+			.expectValue("note", "Foo")
+			.expectValue("salesOrderID", "1")
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers : bWithMessageScope
@@ -4241,22 +4277,22 @@ usePreliminaryContext : false}}">\
 			}, {
 				results : [{
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 					},
 					Note : "Bar",
-					ItemPosition : "10~0~",
+					ItemPosition : "10",
 					SalesOrderID : "1"
 				}, {
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
 					},
 					Note : "Baz",
-					ItemPosition : "20~1~",
+					ItemPosition : "20",
 					SalesOrderID : "1"
 				}]
 			})
-			.expectChange("itemPosition", ["10~0~", "20~1~"])
-			.expectChange("note::item", ["Bar", "Baz"])
+			.expectValue("itemPosition", ["10", "20"])
+			.expectValue("note::item", ["Bar", "Baz"])
 			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/");
 
 		if (bWithMessageScope) {
@@ -4273,15 +4309,15 @@ usePreliminaryContext : false}}">\
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
 					deepPath :
-						"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')",
+						"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')",
 					headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 					method : "DELETE",
-					requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 				}, NO_CONTENT)
 				// ODataModel#remove does not remove the item from the list. A refresh needs to be
 				// triggered or refreshAfterChange has to be true to trigger refresh automatically
-				.expectChange("itemPosition", undefined, 0)
-				.expectChange("note::item", undefined, 0)
+				.expectValue("itemPosition", "", 0)
+				.expectValue("note::item", "", 0)
 				.expectMessages([]) // clean all expected messages
 				.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/")
 				.expectMessage(bWithMessageScope ? oSalesOrderToBusinessPartnerAddress : null,
@@ -4319,12 +4355,12 @@ usePreliminaryContext : false}}">\
 
 	QUnit.test(sTitle, function (assert) {
 		var oModel = createSalesOrdersModelMessageScope({preliminaryContext : true}),
-			oSalesOrder1NoteError = this.createResponseMessage("('1~0~')/Note"),
+			oSalesOrder1NoteError = this.createResponseMessage("('1')/Note"),
 			oSalesOrder1ToBusinessPartnerAddress
-				= this.createResponseMessage("('1~0~')/ToBusinessPartner/Address"),
-			oSalesOrder2NoteError = this.createResponseMessage("('2~1~')/Note"),
+				= this.createResponseMessage("('1')/ToBusinessPartner/Address"),
+			oSalesOrder2NoteError = this.createResponseMessage("('2')/Note"),
 			oSalesOrder2ToBusinessPartnerAddress
-				= this.createResponseMessage("('2~1~')/ToBusinessPartner/Address"),
+				= this.createResponseMessage("('2')/ToBusinessPartner/Address"),
 			sView = '\
 <Table growing="true" growingThreshold="2" id="table" items="{/SalesOrderSet}">\
 	<Input id="note" value="{Note}" />\
@@ -4339,13 +4375,13 @@ usePreliminaryContext : false}}">\
 				requestUri : "SalesOrderSet?$skip=0&$top=2"
 			}, {
 				results : [{
-					__metadata : {uri : "SalesOrderSet('1~0~')"},
+					__metadata : {uri : "SalesOrderSet('1')"},
 					Note : "Foo",
-					SalesOrderID : "1~0~"
+					SalesOrderID : "1"
 				}, {
-					__metadata : {uri : "SalesOrderSet('2~1~')"},
+					__metadata : {uri : "SalesOrderSet('2')"},
 					Note : "Bar",
-					SalesOrderID : "2~1~"
+					SalesOrderID : "2"
 				}]
 			}, {
 				"sap-message" : getMessageHeader(bWithMessageScope
@@ -4353,7 +4389,7 @@ usePreliminaryContext : false}}">\
 						oSalesOrder2NoteError, oSalesOrder2ToBusinessPartnerAddress]
 					: [oSalesOrder1NoteError, oSalesOrder2NoteError])
 			})
-			.expectChange("note", ["Foo", "Bar"])
+			.expectValue("note", ["Foo", "Bar"])
 			.expectMessage(oSalesOrder1NoteError, "/SalesOrderSet")
 			.expectMessage(bWithMessageScope ? oSalesOrder1ToBusinessPartnerAddress : null,
 				"/SalesOrderSet")
@@ -4364,7 +4400,7 @@ usePreliminaryContext : false}}">\
 		oModel.setMessageScope(sMessageScope);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oSalesOrder3NoteError = that.createResponseMessage("('3~1~')/Note");
+			var oSalesOrder3NoteError = that.createResponseMessage("('3')/Note");
 
 			that.expectRequest({
 					deepPath : "/SalesOrderSet",
@@ -4373,18 +4409,18 @@ usePreliminaryContext : false}}">\
 						+ (bFilter ? "&$filter=GrossAmount gt 100.0m" : "")
 				}, {
 					results : [{
-						__metadata : {uri : "SalesOrderSet('1~0~')"},
+						__metadata : {uri : "SalesOrderSet('1')"},
 						Note : "Foo",
-						SalesOrderID : "1~0~"
+						SalesOrderID : "1"
 					},
-					// "SalesOrderSet('2~1~')" has been filtered out, or in case of a refresh the
+					// "SalesOrderSet('2')" has been filtered out, or in case of a refresh the
 					// entity has been removed in meantime
 					{
 						__metadata : {
-							uri : "SalesOrderSet('3~1~')"
+							uri : "SalesOrderSet('3')"
 						},
 						Note : "Baz",
-						SalesOrderID : "3~1~"
+						SalesOrderID : "3"
 					}]
 				}, {
 					"sap-message" : getMessageHeader(bWithMessageScope
@@ -4392,7 +4428,7 @@ usePreliminaryContext : false}}">\
 							oSalesOrder3NoteError]
 						: [oSalesOrder1NoteError, oSalesOrder3NoteError])
 				})
-				.expectChange("note", "Baz", 1)
+				.expectValue("note", "Baz", 1)
 				.expectMessages([]) // clean all expected messages
 				.expectMessage(oSalesOrder1NoteError, "/SalesOrderSet")
 				.expectMessage(bWithMessageScope ? oSalesOrder1ToBusinessPartnerAddress : null,
@@ -4428,9 +4464,9 @@ usePreliminaryContext : false}}">\
 		var oModel = createSalesOrdersModelMessageScope({preliminaryContext : true}),
 			oSalesOrderNoteError = this.createResponseMessage("Note"),
 			oSalesOrderToItem10NoteError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='10')/Note"),
 			oSalesOrderItem10NoteError = cloneODataMessage(oSalesOrderToItem10NoteError,
-				"(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+				"(SalesOrderID='1',ItemPosition='10')/Note"),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="salesOrderID" text="{SalesOrderID}" />\
@@ -4486,27 +4522,27 @@ usePreliminaryContext : false}}">\
 		var oModel = createSalesOrdersModelMessageScope({preliminaryContext : true}),
 			oItemsBinding,
 			oSalesOrderDeliveryStatusAndToItemError = this.createResponseMessage(
-				["DeliveryStatus", "ToLineItems(SalesOrderID='1',ItemPosition='40~2~')/Quantity"]),
+				["DeliveryStatus", "ToLineItems(SalesOrderID='1',ItemPosition='40')/Quantity"]),
 			oSalesOrderDeliveryStatusAndItemError =
 				cloneODataMessage(oSalesOrderDeliveryStatusAndToItemError,
-					"DeliveryStatus", ["(SalesOrderID='1',ItemPosition='40~2~')/Quantity"]),
+					"DeliveryStatus", ["(SalesOrderID='1',ItemPosition='40')/Quantity"]),
 			oSalesOrderNoteError = this.createResponseMessage("Note"),
 			oSalesOrderToItemsError = this.createResponseMessage("ToLineItems"),
 			oSalesOrderToItem10ToProductPriceError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='10')/ToProduct/Price"),
 			oSalesOrderToItem20NoteWarning = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='20~1~')/Note", undefined, "warning"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='20')/Note", undefined, "warning"),
 			oSalesOrderToItem30NoteError = this.createResponseMessage(
-				["ToLineItems(SalesOrderID='1',ItemPosition='30%20~1~')/Note",
-				 "ToLineItems(SalesOrderID='1',ItemPosition='30%20~1~')/GrossAmount"]),
+				["ToLineItems(SalesOrderID='1',ItemPosition='30%20')/Note",
+				"ToLineItems(SalesOrderID='1',ItemPosition='30%20')/GrossAmount"]),
 			oSalesOrderItem10ToProductPriceError
 				= cloneODataMessage(oSalesOrderToItem10ToProductPriceError,
-					"(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+					"(SalesOrderID='1',ItemPosition='10')/ToProduct/Price"),
 			oSalesOrderItem20NoteWarning = cloneODataMessage(oSalesOrderToItem20NoteWarning,
-				"(SalesOrderID='1',ItemPosition='20~1~')/Note"),
+				"(SalesOrderID='1',ItemPosition='20')/Note"),
 			oSalesOrderItem30NoteError = cloneODataMessage(oSalesOrderToItem30NoteError,
-				"(SalesOrderID='1',ItemPosition='30%20~1~')/Note",
-				["(SalesOrderID='1',ItemPosition='30%20~1~')/GrossAmount"]),
+				"(SalesOrderID='1',ItemPosition='30%20')/Note",
+				["(SalesOrderID='1',ItemPosition='30%20')/GrossAmount"]),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="salesOrderID" text="{SalesOrderID}" />\
@@ -4541,10 +4577,8 @@ usePreliminaryContext : false}}">\
 					oSalesOrderToItem30NoteError
 				])
 			})
-			.expectChange("note", null)
-			.expectChange("note", "Foo")
-			.expectChange("salesOrderID", null)
-			.expectChange("salesOrderID", "1")
+			.expectValue("note", "Foo")
+			.expectValue("salesOrderID", "1")
 			.expectRequest({
 				batchNo : 1,
 				deepPath : "/SalesOrderSet('1')/ToLineItems",
@@ -4554,22 +4588,22 @@ usePreliminaryContext : false}}">\
 			}, {
 				results : [{
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 					},
 					Note : "Bar",
-					ItemPosition : "10~0~",
+					ItemPosition : "10",
 					SalesOrderID : "1"
 				}, {
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
 					},
 					Note : "Baz",
-					ItemPosition : "20~1~",
+					ItemPosition : "20",
 					SalesOrderID : "1"
 				}]
 			})
-			.expectChange("itemPosition", ["10~0~", "20~1~"])
-			.expectChange("note::item", ["Bar", "Baz"])
+			.expectValue("itemPosition", ["10", "20"])
+			.expectValue("note::item", ["Bar", "Baz"])
 			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/")
 			.expectMessage(oSalesOrderToItemsError, "/SalesOrderSet('1')/")
 			.expectMessage(oSalesOrderItem10ToProductPriceError, "/SalesOrderLineItemSet",
@@ -4600,28 +4634,28 @@ usePreliminaryContext : false}}">\
 					headers :
 						{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
-						+ "&$filter=(SalesOrderID eq '1' and ItemPosition eq '40~2~')"
-						+ " or (SalesOrderID eq '1' and ItemPosition eq '10~0~')"
-						+ " or (SalesOrderID eq '1' and ItemPosition eq '30 ~1~')"
+						+ "&$filter=(SalesOrderID eq '1' and ItemPosition eq '40')"
+						+ " or (SalesOrderID eq '1' and ItemPosition eq '10')"
+						+ " or (SalesOrderID eq '1' and ItemPosition eq '30 ')"
 				}, {
 					results : [{
 						__metadata : {
-							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 						},
 						Note : "Bar",
-						ItemPosition : "10~0~",
+						ItemPosition : "10",
 						SalesOrderID : "1"
 					}, {
 						__metadata : {
-							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30%20~1~')"
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30%20')"
 						},
 						Note : "Qux",
-						ItemPosition : "30 ~1~",
+						ItemPosition : "30 ",
 						SalesOrderID : "1"
 					}]
 				})
-				.expectChange("itemPosition", "30 ~1~", 1)
-				.expectChange("note::item", "Qux", 1);
+				.expectValue("itemPosition", "30 ", 1)
+				.expectValue("note::item", "Qux", 1);
 
 			oItemsBinding.filter(oFilter);
 
@@ -4638,15 +4672,15 @@ usePreliminaryContext : false}}">\
 		var oItemsBinding,
 			oModel = createRMTSampleFlightModel({defaultOperationMode : "Client"}),
 			oCarrierToFlight10PriceError = this.createResponseMessage(
-				"carrierFlights(carrid='1',connid='10~0~',"
+				"carrierFlights(carrid='1',connid='10',"
 				+ "fldate=datetime'2015-05-30T13:47:26.253')/PRICE"),
 			oCarrierToFlight20PriceWarning = this.createResponseMessage(
-				"carrierFlights(carrid='1',connid='20~0~',"
+				"carrierFlights(carrid='1',connid='20',"
 				+ "fldate=datetime'2015-06-30T13:47:26.253')/PRICE", undefined, "warning"),
 			oFlight10PriceError = cloneODataMessage(oCarrierToFlight10PriceError,
-				"(carrid='1',connid='10~0~',fldate=datetime'2015-05-30T13:47:26.253')/PRICE"),
+				"(carrid='1',connid='10',fldate=datetime'2015-05-30T13:47:26.253')/PRICE"),
 			oFlight20PriceWarning = cloneODataMessage(oCarrierToFlight20PriceWarning,
-				"(carrid='1',connid='20~0~',fldate=datetime'2015-06-30T13:47:26.253')/PRICE"),
+				"(carrid='1',connid='20',fldate=datetime'2015-06-30T13:47:26.253')/PRICE"),
 			sView = '\
 <FlexBox binding="{/CarrierCollection(\'1\')}">\
 	<Text id="carrierID" text="{carrid}" />\
@@ -4678,8 +4712,7 @@ usePreliminaryContext : false}}">\
 					oCarrierToFlight20PriceWarning
 				])
 			})
-			.expectChange("carrierID", null)
-			.expectChange("carrierID", "1")
+			.expectValue("carrierID", "1")
 			.expectRequest({
 				deepPath : "/CarrierCollection('1')/carrierFlights",
 				headers :
@@ -4688,24 +4721,24 @@ usePreliminaryContext : false}}">\
 			}, {
 				results : [{
 					__metadata : {
-						uri : "FlightCollection(carrid='1',connid='10~0~',"
+						uri : "FlightCollection(carrid='1',connid='10',"
 							+ "fldate=datetime'2015-05-30T13:47:26.253')"
 					},
 					carrid : "1",
-					connid : "10~0~",
+					connid : "10",
 					fldate : new Date(1432993646253)
 				}, {
 					__metadata : {
-						uri : "FlightCollection(carrid='1',connid='20~0~',"
+						uri : "FlightCollection(carrid='1',connid='20',"
 							+ "fldate=datetime'2015-06-30T13:47:26.253')"
 					},
 					carrid : "1",
-					connid : "20~0~",
+					connid : "20",
 					fldate : new Date(1435672046253)
 				}]
 			})
-			.expectChange("connectionID", ["10~0~"])
-			.expectChange("flightDate", ["5/30/15, 1:47 PM"])
+			.expectValue("connectionID", ["10"])
+			.expectValue("flightDate", ["5/30/15, 1:47 PM"])
 			.expectMessage(oFlight10PriceError, "/FlightCollection",
 				"/CarrierCollection('1')/carrierFlights")
 			.expectMessage(oFlight20PriceWarning, "/FlightCollection",
@@ -4721,8 +4754,8 @@ usePreliminaryContext : false}}">\
 				return oMessage.getType() === MessageType.Warning;
 			});
 		}).then(function (oFilter) {
-			that.expectChange("connectionID", ["20~0~"])
-				.expectChange("flightDate", ["6/30/15, 1:47 PM"]);
+			that.expectValue("connectionID", ["20"])
+				.expectValue("flightDate", ["6/30/15, 1:47 PM"]);
 
 			oItemsBinding.filter(oFilter);
 
@@ -4739,10 +4772,10 @@ usePreliminaryContext : false}}">\
 		var oModel = createSalesOrdersModelMessageScope(),
 			oItemsBinding,
 			oSalesOrderToItem10ToProductPriceError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='10')/ToProduct/Price"),
 			oSalesOrderItem10ToProductPriceError
 				= cloneODataMessage(oSalesOrderToItem10ToProductPriceError,
-					"(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+					"(SalesOrderID='1',ItemPosition='10')/ToProduct/Price"),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Table growing="true" growingThreshold="20" id="table" items="{\
@@ -4776,10 +4809,10 @@ usePreliminaryContext : false}}">\
 			}, {
 				results : [{
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 					},
 					Note : "Bar",
-					ItemPosition : "10~0~",
+					ItemPosition : "10",
 					SalesOrderID : "1"
 				}]
 			})
@@ -4811,10 +4844,10 @@ usePreliminaryContext : false}}">\
 				}, {
 					results : [{
 						__metadata : {
-							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 						},
 						Note : "Bar",
-						ItemPosition : "10~0~",
+						ItemPosition : "10",
 						SalesOrderID : "1"
 					}]
 				});
@@ -5355,7 +5388,7 @@ usePreliminaryContext : false}}">\
 						__metadata : {
 							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 						},
-						ItemPosition : "10~0~",
+						ItemPosition : "10",
 						Note : "bar",
 						SalesOrderID : "1"
 					},
@@ -5720,10 +5753,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oModel = createSalesOrdersModelMessageScope(),
 			oSalesOrderNoteError = this.createResponseMessage("Note"),
 			oSalesOrderToItem10ToProductPriceError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+				"ToLineItems(SalesOrderID='1',ItemPosition='10')/ToProduct/Price"),
 			oSalesOrderItem10ToProductPriceError
 				= cloneODataMessage(oSalesOrderToItem10ToProductPriceError,
-					"(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+					"(SalesOrderID='1',ItemPosition='10')/ToProduct/Price"),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="salesOrderID" text="{SalesOrderID}" />\
@@ -5952,7 +5985,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectMessage(oNoteError, "/SalesOrderSet", "/BusinessPartnerSet('100')/ToSalesOrders")
 			.expectMessage(oItem10NoteError, "/SalesOrderLineItemSet",
 				"/BusinessPartnerSet('100')/ToSalesOrders('1')/ToLineItems")
-			.expectChange("soID", "1");
+			.expectValue("soID", ["1"]);
 
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
@@ -6037,7 +6070,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectMessage(oNoteError, "/SalesOrderSet", "/BusinessPartnerSet('100')/ToSalesOrders")
 			.expectMessage(oItem10NoteError, "/SalesOrderLineItemSet",
 				"/BusinessPartnerSet('100')/ToSalesOrders('1')/ToLineItems")
-			.expectChange("soID", "1");
+			.expectValue("soID", ["1"]);
 
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
@@ -6453,7 +6486,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					SalesOrderID : "42"
 				}]
 			})
-			.expectChange("soID", "42");
+			.expectValue("soID", ["42"]);
 
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
@@ -6621,14 +6654,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}, {
 				results : [{
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 					},
-					ItemPosition : "10~0~",
+					ItemPosition : "10",
 					Note : "Foo",
 					SalesOrderID : "1"
 				}]
 			})
-			.expectChange("note", "Foo", 0);
+			.expectValue("note", "Foo", 0);
 
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
@@ -6644,14 +6677,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					requestUri : "LineItem_Create?SalesOrderID='1'"
 				}, {
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
 					},
-					ItemPosition : "20~1~",
+					ItemPosition : "20",
 					Note : "Bar",
 					SalesOrderID : "1"
 				}, {
 					location : "/SalesOrderSrv/"
-						+ "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')",
+						+ "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')",
 					"sap-message" : getMessageHeader(oNoteError)
 				})
 				.expectRequest({
@@ -6664,31 +6697,31 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					results : [{
 						__metadata : {
-							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 						},
-						ItemPosition : "10~0~",
+						ItemPosition : "10",
 						Note : "Foo",
 						SalesOrderID : "1"
 					}, {
 						__metadata : {
-							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
 						},
-						ItemPosition : "20~1~",
+						ItemPosition : "20",
 						Note : "Bar",
 						SalesOrderID : "1"
 					}]
 				})
-				.expectChange("note", "Bar", 1)
+				.expectValue("note", "Bar", 1)
 				.expectMessage(oNoteError,
-					"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')/",
-					"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='20~1~')/");
+					"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')/",
+					"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='20')/");
 
 			// code under test
 			oPromise = oModel.callFunction("/LineItem_Create", {
 				adjustDeepPath : function (mParameters) {
 					assert.strictEqual(mParameters.deepPath,
-						"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')");
-					return "/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='20~1~')";
+						"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')");
+					return "/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='20')";
 				},
 				method : "POST",
 				urlParameters : {
@@ -6747,7 +6780,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectMessage(oNoteError, "/SalesOrderSet", "/BusinessPartnerSet('100')/ToSalesOrders")
 			.expectMessage(oItem10NoteError, "/SalesOrderLineItemSet",
 				"/BusinessPartnerSet('100')/ToSalesOrders('1')/ToLineItems")
-			.expectChange("soID", "1");
+			.expectValue("soID", ["1"]);
 
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
@@ -7155,7 +7188,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				__count : "550",
 				results : getItems(11)
 			});
-			// no expectChange required because only $skip&$top is relevant to be checked
+			// no expectValue required because only $skip&$top is relevant to be checked
 
 		return this.createView(assert, sView, oModel).then(function () {
 			// BEGIN: CPOUI5MODELS-576
@@ -7379,7 +7412,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			function (assert) {
 		var oModel = createSalesOrdersModelMessageScope(),
 			oQuantityError = this.createResponseMessage(
-				"(SalesOrderID='1',ItemPosition='20~1~')/Quantity"),
+				"(SalesOrderID='1',ItemPosition='20')/Quantity"),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Table items="{ToLineItems}">\
@@ -7404,23 +7437,23 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}, {
 				results : [{
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 					},
-					ItemPosition : "10~0~",
+					ItemPosition : "10",
 					Quantity : "2",
 					SalesOrderID : "1"
 				}, {
 					__metadata : {
-						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
 					},
-					ItemPosition : "20~1~",
+					ItemPosition : "20",
 					Quantity : "0",
 					SalesOrderID : "1"
 				}]
 			}, {
 				"sap-message" : getMessageHeader(oQuantityError)
 			})
-			.expectChange("quantity", ["2", "0"])
+			.expectValue("quantity", ["2", "0"])
 			.expectMessage(oQuantityError, "/SalesOrderLineItemSet",
 				"/SalesOrderSet('1')/ToLineItems");
 
@@ -7428,7 +7461,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oQuantitySuccess = that.createResponseMessage(
-					"(SalesOrderID='1',ItemPosition='20~1~')/Quantity", undefined, "success");
+					"(SalesOrderID='1',ItemPosition='20')/Quantity", undefined, "success");
 
 			that.expectRequest({
 					deepPath : "/SalesOrder_FixQuantities",
@@ -7439,16 +7472,16 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					results : [{
 						__metadata : {
-							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
 						},
-						ItemPosition : "20~1~",
+						ItemPosition : "20",
 						Quantity : "2",
 						SalesOrderID : "1"
 					}]
 				}, {
 					"sap-message" : getMessageHeader(oQuantitySuccess)
 				})
-				.expectChange("quantity", "2", 1)
+				.expectValue("quantity", "2", 1)
 				.expectMessage(oQuantitySuccess, "/SalesOrderLineItemSet",
 					"/SalesOrderSet('1')/ToLineItems", true);
 
@@ -7843,7 +7876,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}, {
 				__count : "1",
 				results : [{
-					__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('~0~')"},
+					__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('1')"},
 					MaintenanceOrder : "Foo"
 				}]
 			})
@@ -7854,14 +7887,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectRequest({
 					batchNo : 2,
 					data : {
-						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('~0~')"},
+						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('1')"},
 						MaintenanceOrder : "Bar"
 					},
-					deepPath : "/C_RSHMaintSchedSmltdOrdAndOp('~0~')",
+					deepPath : "/C_RSHMaintSchedSmltdOrdAndOp('1')",
 					headers : {},
-					key : "C_RSHMaintSchedSmltdOrdAndOp('~0~')",
+					key : "C_RSHMaintSchedSmltdOrdAndOp('1')",
 					method : "MERGE",
-					requestUri : "C_RSHMaintSchedSmltdOrdAndOp('~0~')"
+					requestUri : "C_RSHMaintSchedSmltdOrdAndOp('1')"
 				}, NO_CONTENT)
 				.expectRequest({
 					batchNo : 2,
@@ -7871,14 +7904,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					__count : "1",
 					results : [{
-						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('~0~')"},
+						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('1')"},
 						MaintenanceOrder : "Bar"
 					}]
 				})
 				.expectValue("maintenanceOrder", ["Bar"]);
 
 			// code under test
-			oModel.setProperty("/C_RSHMaintSchedSmltdOrdAndOp('~0~')/MaintenanceOrder", "Bar");
+			oModel.setProperty("/C_RSHMaintSchedSmltdOrdAndOp('1')/MaintenanceOrder", "Bar");
 			oModel.submitChanges();
 
 			return that.waitForChanges(assert);
@@ -7913,23 +7946,24 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 </FlexBox>',
 		that = this;
 
-			return this.createView(assert, sView, oModel).then(function () {
-				that.expectHeadRequest()
-					.expectRequest("DummySet('42')", {DummyID : "42"})
-					.expectRequest({
-						deepPath : "/DummySet('42')/to_C_RSHMaintSchedSmltdOrdAndOp",
-						requestUri : "DummySet('42')/to_C_RSHMaintSchedSmltdOrdAndOp"
-							+ "?$skip=0&$top=101&$inlinecount=allpages&"
-							+ "$filter=OrderOperationRowLevel%20le%200"
-					}, {
-						__count : "1",
-						results : [{
-							__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('~0~')"},
-							MaintenanceOrder : "Bar"
-						}]
-					})
-					.expectValue("maintenanceOrder", [""])
-					.expectValue("maintenanceOrder", ["Bar"]);
+		this.expectValue("maintenanceOrder", [""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectHeadRequest()
+				.expectRequest("DummySet('42')", {DummyID : "42"})
+				.expectRequest({
+					deepPath : "/DummySet('42')/to_C_RSHMaintSchedSmltdOrdAndOp",
+					requestUri : "DummySet('42')/to_C_RSHMaintSchedSmltdOrdAndOp"
+						+ "?$skip=0&$top=101&$inlinecount=allpages&"
+						+ "$filter=OrderOperationRowLevel%20le%200"
+				}, {
+					__count : "1",
+					results : [{
+						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('1')"},
+						MaintenanceOrder : "Bar"
+					}]
+				})
+				.expectValue("maintenanceOrder", ["Bar"]);
 
 			// code under test
 			that.oView.byId("box").bindElement({path : "/DummySet('42')"});
@@ -9137,7 +9171,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					persistent : true,
 					technical : true,
 					type : "Error"
-				  }]);
+				}]);
 
 			that.oView.byId("table").getRows()[0].getCells()[0].setValue("foo");
 			that.oView.byId("table").getRows()[1].getCells()[0].setValue("bar");
@@ -9233,7 +9267,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					{SalesOrderID : "0500000002"}
 				]
 			})
-			.expectChange("id", ["0500000001", "0500000002"]);
+			.expectValue("id", ["0500000001", "0500000002"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 
@@ -9277,13 +9311,13 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=102", {
 					results : [{
 						__metadata : {
-							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 						},
 						ItemPosition : "10",
 						SalesOrderID : "1"
 					}, {
 						__metadata : {
-							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
 						},
 						ItemPosition : "20",
 						SalesOrderID : "1"
