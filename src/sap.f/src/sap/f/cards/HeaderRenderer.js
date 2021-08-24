@@ -42,10 +42,10 @@ sap.ui.define([], function () {
 
 		//Accessibility state
 		oRm.accessibilityState(oHeader, {
-			role: oHeader._sAriaRole,
+			role: oHeader.getAriaRole(),
 			labelledby: { value: oHeader._getHeaderAccessibility(), append: true },
-			roledescription: { value: oHeader._sAriaRoleDescritoion, append: true },
-			level: { value: oHeader._sAriaHeadingLevel }
+			roledescription: { value: oHeader.getAriaRoleDescription(), append: true },
+			level: { value: oHeader.getAriaHeadingLevel() }
 		});
 		oRm.openEnd();
 

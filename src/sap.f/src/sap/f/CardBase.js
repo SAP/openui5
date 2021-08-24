@@ -247,5 +247,18 @@ sap.ui.define([
 		return sAriaLabelledBy.trim();
 	};
 
+	/**
+	 * @ui5-restricted
+	 */
+	CardBase.prototype.getAriaRoleDescription = function () {
+		var oHeader = this.getCardHeader();
+
+		if (oHeader) {
+			return oHeader.getAriaRoleDescription();
+		}
+
+		return null;
+	};
+
 	return CardBase;
 });

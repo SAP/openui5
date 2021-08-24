@@ -36,10 +36,10 @@ sap.ui.define([], function () {
 		oRm.attr("tabindex", sTabIndex);
 		//Accessibility state
 		oRm.accessibilityState(oNumericHeader, {
-			role: oNumericHeader._sAriaRole,
+			role: oNumericHeader.getAriaRole(),
 			labelledby: { value: oNumericHeader._getHeaderAccessibility(), append: true },
-			roledescription: { value: oNumericHeader._sAriaRoleDescritoion, append: true },
-			level: { value: oNumericHeader._sAriaHeadingLevel }
+			roledescription: { value: oNumericHeader.getAriaRoleDescription(), append: true },
+			level: { value: oNumericHeader.getAriaHeadingLevel() }
 		});
 		oRm.openEnd();
 

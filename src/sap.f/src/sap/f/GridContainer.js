@@ -387,6 +387,19 @@ sap.ui.define([
 		oContainer._setItemNavigationItems();
 
 		oContainer._applyItemAutoRows(this);
+
+		if (this.getAriaRoleDescription) {
+			var oListItemDomRef = this.getDomRef().parentElement,
+				sAriaRoleDesc = this.getAriaRoleDescription();
+
+			if (oListItemDomRef.classList.contains("sapFGridContainerItemWrapper")) {
+				if (sAriaRoleDesc) {
+					oListItemDomRef.setAttribute("aria-roledescription", sAriaRoleDesc);
+				} else {
+					oListItemDomRef.removeAttribute("aria-roledescription");
+				}
+			}
+		}
 	};
 
 	/**

@@ -217,5 +217,26 @@ sap.ui.define([
 		return BaseHeader._oTimestampIntervalTrigger;
 	};
 
+	/**
+	 * @ui5-restricted
+	 */
+	BaseHeader.prototype.getAriaRole = function () {
+		return this.hasListeners("press") ? "button" : "heading";
+	};
+
+	/**
+	 * @ui5-restricted
+	 */
+	BaseHeader.prototype.getAriaHeadingLevel = function () {
+		return this.hasListeners("press") ? undefined : "3";
+	};
+
+	/**
+	 * @ui5-restricted
+	 */
+	BaseHeader.prototype.getAriaRoleDescription = function () {
+		return this.hasListeners("press") ? this._oRb.getText("ARIA_ROLEDESCRIPTION_INTERACTIVE_CARD_HEADER") : this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER");
+	};
+
 	return BaseHeader;
 });

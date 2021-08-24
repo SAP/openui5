@@ -220,8 +220,6 @@ sap.ui.define([
 		oAvatar.setInitials(this.getIconInitials());
 		oAvatar.setTooltip(this.getIconAlt());
 		oAvatar.setBackgroundColor(this.getIconBackgroundColor());
-
-		this._setAccessibilityAttributes();
 	};
 
 	/**
@@ -259,23 +257,6 @@ sap.ui.define([
 	 */
 	Header.prototype.onsapselect = function () {
 		this.firePress();
-	};
-
-	/**
-	 * Sets accessibility to the header to the header.
-	 *
-	 * @private
-	 */
-	Header.prototype._setAccessibilityAttributes = function () {
-		if (this.hasListeners("press")) {
-			this._sAriaRole = "button";
-			this._sAriaHeadingLevel = undefined;
-			this._sAriaRoleDescritoion = this._oRb.getText("ARIA_ROLEDESCRIPTION_INTERACTIVE_CARD_HEADER");
-		} else {
-			this._sAriaRole = "heading";
-			this._sAriaHeadingLevel = "3";
-			this._sAriaRoleDescritoion = this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER");
-		}
 	};
 
 	Header.prototype.isLoading = function () {
