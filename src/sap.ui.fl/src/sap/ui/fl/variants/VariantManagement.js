@@ -1496,6 +1496,10 @@ sap.ui.define([
 							text: this._oRb.getText("VARIANT_MANAGEMENT_VARIANTTYPE"),
 							wrappingType: "Hyphenated"
 						}),
+						visible: {
+							path: "/showPublic",
+							model: VariantManagement.INNER_MODEL_NAME
+						},
 						demandPopin: true,
 						popinDisplay: PopinDisplay.Inline,
 						minScreenWidth: ScreenSize.Tablet
@@ -1565,6 +1569,13 @@ sap.ui.define([
 				title: this._oRb.getText("VARIANT_MANAGEMENT_MANAGEDIALOG"),
 				beginButton: this.oManagementSave,
 				endButton: this.oManagementCancel,
+				afterClose: function() {
+					if (this._sStyleClass) {
+						this._setShowPublic(this._bShowPublic);
+						this.oManagementDialog.removeStyleClass(this._sStyleClass);
+						this._sStyleClass = undefined;
+					}
+				}.bind(this),
 				content: [
 					this.oManagementTable
 				],
@@ -1779,6 +1790,9 @@ sap.ui.define([
 			});
 		}
 		if (sClass) {
+			this._sStyleClass = sClass;
+			this._bShowPublic = this._getShowPublic();
+			this._setShowPublic(false);
 			this.oManagementDialog.addStyleClass(sClass);
 		}
 		this.oManagementDialog.open();
