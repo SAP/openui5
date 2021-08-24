@@ -751,42 +751,46 @@ sap.ui.define([
 		/**
 		 * Gets the data cell element.
 		 *
-		 * @param {int} iRowIndex Index of the row.
-		 * @param {int} iColumnIndex Index of the column.
+		 * @param {int} iRowIndex Index of the row. Can be negative, for example -1 for the last row.
+		 * @param {int} iColumnIndex Index of the column. Can be negative, for example -1 for the last column.
 		 * @returns {HTMLElement} The cell DOM element.
 		 */
 		oTable.qunit.getDataCell = function(iRowIndex, iColumnIndex) {
+			iColumnIndex = iColumnIndex < 0 ? oTable.getColumns().length + iColumnIndex : iColumnIndex;
+			iRowIndex = iRowIndex < 0 ? oTable.getRows().length + iRowIndex : iRowIndex;
 			return oTable.getDomRef("rows-row" + iRowIndex + "-col" + iColumnIndex);
 		};
 
 		/**
 		 * Gets the column header cell element. In case of multi-headers, the cell in the first header row is returned.
 		 *
-		 * @param {int} iColumnIndex Index of the column in the list of visible columns.
+		 * @param {int} iColumnIndex Index of the column in the list of visible columns. Can be negative, for example -1 for the last column.
 		 * @returns {HTMLElement} The cell DOM element.
 		 */
 		oTable.qunit.getColumnHeaderCell = function(iColumnIndex) {
-			var sCellId = (oTable._getVisibleColumns()[iColumnIndex]).getId();
-			return document.getElementById(sCellId);
+			iColumnIndex = iColumnIndex < 0 ? oTable._getVisibleColumns().length + iColumnIndex : iColumnIndex;
+			return document.getElementById(oTable._getVisibleColumns()[iColumnIndex].getId());
 		};
 
 		/**
 		 * Gets the row header cell element.
 		 *
-		 * @param {int} iRowIndex Index of the row the cell is inside.
+		 * @param {int} iRowIndex Index of the row the cell is inside. Can be negative, for example -1 for the last row.
 		 * @returns {HTMLElement} The cell DOM element.
 		 */
 		oTable.qunit.getRowHeaderCell = function(iRowIndex) {
+			iRowIndex = iRowIndex < 0 ? oTable.getRows().length + iRowIndex : iRowIndex;
 			return oTable.getDomRef("rowsel" + iRowIndex);
 		};
 
 		/**
 		 * Gets the row action cell element.
 		 *
-		 * @param {int} iRowIndex Index of the row the cell is inside.
+		 * @param {int} iRowIndex Index of the row the cell is inside. Can be negative, for example -1 for the last row.
 		 * @returns {HTMLElement} Returns the DOM element.
 		 */
 		oTable.qunit.getRowActionCell = function(iRowIndex) {
+			iRowIndex = iRowIndex < 0 ? oTable.getRows().length + iRowIndex : iRowIndex;
 			return oTable.getDomRef("rowact" + iRowIndex);
 		};
 
@@ -1763,7 +1767,7 @@ sap.ui.define([
 
 		oTableInstance.rerender();
 		return new Promise(function(resolve) {
-			oTable.attachEventOnce("rowsUpdated", function() {
+			oTableInstance.attachEventOnce("rowsUpdated", function() {
 				resolve(getRowDomRefs(oTableInstance, iRow));
 			});
 		});
@@ -1781,7 +1785,7 @@ sap.ui.define([
 
 		oTableInstance.rerender();
 		return new Promise(function(resolve) {
-			oTable.attachEventOnce("rowsUpdated", function() {
+			oTableInstance.attachEventOnce("rowsUpdated", function() {
 				resolve(getRowDomRefs(oTableInstance, iRow));
 			});
 		});
