@@ -1,8 +1,8 @@
 /*
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/util/MockServer', 'sap/ui/model/odata/ODataModel'],
-	function(MockServer, ODataModel) {
+sap.ui.define(['sap/ui/model/odata/ODataModel'],
+	function(ODataModel) {
 		"use strict";
 		return {
 
@@ -11,6 +11,7 @@ sap.ui.define(['sap/ui/core/util/MockServer', 'sap/ui/model/odata/ODataModel'],
 					this._index = 0;
 				}
 				var sUri = "/annotationhandler" + this._index++ + "/";
+				var MockServer = sap.ui.require("sap/ui/core/util/MockServer");
 				var oMockStub = new MockServer({
 					rootUri: sUri,
 					requests: [{
