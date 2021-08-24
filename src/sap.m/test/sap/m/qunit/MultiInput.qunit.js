@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/Table",
 	"sap/m/List",
+	"sap/m/Button",
 	"sap/ui/core/Item",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/events/jquery/EventExtension",
@@ -41,6 +42,7 @@ sap.ui.define([
 	Column,
 	Table,
 	List,
+	Button,
 	Item,
 	KeyCodes,
 	EventExtension,
@@ -3810,5 +3812,51 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiInput.getTokens()[0].getKey(), "keyWithBraces{{}}", "Braces are escaped in token's key");
 	});
 
+
+	QUnit.module("Tabular");
+
+	QUnit.test("Checks focus after focus out via tab", function (assert) {
+		var oMultiInput = new MultiInput({
+			value: "d",
+			suggestionColumns: [
+				new Column({
+					header : new Label({
+						text : "City"
+					})
+				})
+			],
+			suggestionRows: [
+				new ColumnListItem({
+					cells: [
+						new Label({
+							text: "Dryanovo"
+						})
+					]
+				})
+			]
+		}).placeAt("content");
+
+		var oDummyBtn = new Button().placeAt("content");
+
+		Core.applyChanges();
+
+		// show suggestions
+		oMultiInput._openSuggestionsPopover();
+		this.clock.tick();
+
+		// arrow down
+		qutils.triggerKeydown(oMultiInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(300);
+		sap.ui.getCore().applyChanges();
+
+		oDummyBtn.focus();
+		this.clock.tick();
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(oMultiInput.hasStyleClass("sapMFocus"), "Input should not have focus class");
+
+		oMultiInput.destroy();
+		oDummyBtn.destroy();
+	});
 
 });

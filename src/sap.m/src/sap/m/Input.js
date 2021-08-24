@@ -2884,8 +2884,9 @@ function(
 		} else {
 			oPopover
 				.attachAfterClose(function() {
-					var oList = this._getSuggestionsPopover().getItemsContainer(),
-						oSelectedItem = oList && oList.getSelectedItem();
+					var oList = this._getSuggestionsPopover().getItemsContainer();
+					var oSelectedItem = oList && oList.getSelectedItem();
+					var oDomRef = this.getDomRef();
 
 					if (this.getSelectionUpdatedFromList()) {
 						this.updateSelectionFromList(oSelectedItem);
@@ -2904,7 +2905,10 @@ function(
 					}
 
 					this._deregisterPopupResize();
-					this.addStyleClass("sapMFocus");
+
+					if (oDomRef && oDomRef.contains(document.activeElement)) {
+						this.addStyleClass("sapMFocus");
+					}
 				}, this)
 				.attachBeforeOpen(function () {
 					oSuggPopover._sPopoverContentWidth = this.getMaxSuggestionWidth();
