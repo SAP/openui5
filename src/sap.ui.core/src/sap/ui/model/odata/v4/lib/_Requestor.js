@@ -86,10 +86,10 @@ sap.ui.define([
 		this.oModelInterface = oModelInterface;
 		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
 		this.mRunningChangeRequests = {}; // map from group ID to a SyncPromise[]
-		this.oSecurityTokenPromise = null; // be nice to Chrome v8
 		this.iSessionTimer = 0;
 		this.iSerialNumber = 0;
 		this.sServiceUrl = sServiceUrl;
+		this.processSecurityTokenHandler(); // sets this.oSecurityTokenPromise
 	}
 
 	/**
@@ -1283,6 +1283,37 @@ sap.ui.define([
 			this.aLockedGroupLocks.push(oGroupLock);
 		}
 		return oGroupLock;
+	};
+
+	/**
+	 * Calls the security token handler returned by
+	 * {@link sap.ui.core.Configuration#getSecurityTokenHandler} and sets
+	 * <code>this.oSecurityTokenPromise</code> in order to let other requests, which require a
+	 * security token, wait for (see {@link #sendRequest}). Checks the resolved headers retrieved by
+	 * the handler and stores them in <code>this.mHeaders</code> to be used with the next request.
+	 * <code>this.oSecurityTokenPromise</code> is rejected if a resolved header is not allowed.
+	 * If the security token handler itself is rejected then that error is logged, but
+	 * <code>this.oSecurityTokenPromise</code> is resolved.
+	 *
+	 * @private
+	 */
+	_Requestor.prototype.processSecurityTokenHandler = function () {
+		var aSecurityTokenHandlers = sap.ui.getCore().getConfiguration().getSecurityTokenHandler(),
+			that = this;
+
+		if (aSecurityTokenHandlers.length) {
+			that.oSecurityTokenPromise = aSecurityTokenHandlers[0]().then(function (mHeaders) {
+				that.checkHeaderNames(mHeaders);
+				// also overwrite this.mPredefinedRequestHeaders["X-CSRF-Token"] : "Fetch"
+				Object.assign(that.mHeaders, {"X-CSRF-Token" : undefined}, mHeaders);
+			}, function (oError) {
+				Log.error("security token handler rejected with: " + oError, undefined, sClassName);
+			}).finally(function () {
+				that.oSecurityTokenPromise = null;
+			});
+		} else {
+			that.oSecurityTokenPromise = null;
+		}
 	};
 
 	/**
