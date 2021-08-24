@@ -379,26 +379,28 @@ sap.ui.define([
 	},
 	bRelative : false
 }, {
-	oContext : {bCreated : true},
+	oContext : {isTransient : function () {}},
 	bInitial : true,
 	oMetadata : {
 		isLoaded : function () { return true; }
 	},
+	bMockIsTransient : true,
 	bRelative : true
 }].forEach(function (oFixture, i) {
 	QUnit.test("initialize: not yet ready for initialization, #" + i, function (assert) {
 		var oBinding = {
-				_checkPathType : function () {},
-				isRelative : function () {},
 				oContext : oFixture.oContext,
 				bInitial : oFixture.bInitial,
 				oModel : {
 					oMetadata : oFixture.oMetadata
-				}
+				},
+				isRelative : function () {}
 			};
 
 		this.mock(oBinding).expects("isRelative").withExactArgs().returns(oFixture.bRelative);
-		this.mock(oBinding).expects("_checkPathType").never();
+		if (oFixture.bMockIsTransient) {
+			this.mock(oBinding.oContext).expects("isTransient").returns(true);
+		}
 
 		// code under test
 		assert.strictEqual(ODataListBinding.prototype.initialize.call(oBinding), oBinding);
@@ -412,8 +414,16 @@ sap.ui.define([
 	//oContext : undefined
 	bRelative : true
 }, {
-	oContext : {bCreated : false},
+	oContext : "~oStandardContext",
 	bRelative : true
+}, {
+	oContext : {isTransient : function () {}},
+	bRelative : true,
+	bTransient : false
+}, {
+	oContext : {isTransient : function () {}},
+	bRelative : true,
+	bTransient : undefined
 }].forEach(function (oFixture, i) {
 	[true, false].forEach(function (bBoundToList) {
 		[true, false].forEach(function (bSuspended) {
@@ -443,20 +453,26 @@ sap.ui.define([
 			sResolvedPath = "~resolvedPath";
 
 		this.mock(oBinding).expects("isRelative").withExactArgs().returns(oFixture.bRelative);
+		if (oFixture.hasOwnProperty("bTransient")) {
+			this.mock(oBinding.oContext).expects("isTransient").returns(oFixture.bTransient);
+		}
 		this.mock(oBinding.oModel.oMetadata).expects("isLoaded").withExactArgs().returns(true);
 		this.mock(oBinding).expects("_checkPathType").withExactArgs().returns(bBoundToList);
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().exactly(bBoundToList ? 0 : 1)
+		this.mock(oBinding).expects("getResolvedPath")
+			.withExactArgs()
+			.exactly(bBoundToList ? 0 : 1)
 			.returns(sResolvedPath);
 		this.oLogMock.expects("error")
 			.withExactArgs("List Binding is not bound against a list for ~resolvedPath")
 			.exactly(bBoundToList ? 0 : 1);
 		this.mock(oBinding).expects("_initSortersFilters").withExactArgs();
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason: ChangeReason.Change})
+		this.mock(oBinding).expects("_fireChange")
+			.withExactArgs({reason: ChangeReason.Change})
 			.exactly(!bSuspended && bDataAvailable ? 1 : 0);
-		this.mock(oBinding).expects("_fireRefresh").withExactArgs({reason: ChangeReason.Refresh})
+		this.mock(oBinding).expects("_fireRefresh")
+			.withExactArgs({reason: ChangeReason.Refresh})
 			.exactly(!bSuspended && !bDataAvailable ? 1 : 0);
 		this.mock(oBinding).expects("checkDataState").withExactArgs();
-
 
 		// code under test
 		assert.strictEqual(ODataListBinding.prototype.initialize.call(oBinding), oBinding);

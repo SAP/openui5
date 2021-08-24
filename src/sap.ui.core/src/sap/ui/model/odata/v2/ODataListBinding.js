@@ -905,13 +905,14 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataListBinding.prototype.initialize = function() {
-		var bCreatedRelative = this.isRelative() && this.oContext && this.oContext.bCreated;
-		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && this.bInitial && !bCreatedRelative) {
+		var bRelativeAndTransient = this.isRelative()
+				&& this.oContext && this.oContext.isTransient && this.oContext.isTransient();
 
+		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && this.bInitial
+				&& !bRelativeAndTransient) {
 			if (!this._checkPathType()) {
 				Log.error("List Binding is not bound against a list for " + this.getResolvedPath());
 			}
-
 			this.bInitial = false;
 			this._initSortersFilters();
 			if (!this.bSuspended) {
@@ -921,10 +922,10 @@ sap.ui.define([
 					this._fireRefresh({reason: ChangeReason.Refresh});
 				}
 			}
-
 			// ensure that data state is updated after initialization
 			this.checkDataState();
 		}
+
 		return this;
 	};
 
