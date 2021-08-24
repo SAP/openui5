@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/ui/fl/changeHandler/Base", "sap/ui/mdc/p13n/Engine"
-], function(FLBase, Engine) {
+	"sap/ui/fl/changeHandler/Base", "sap/ui/mdc/p13n/Engine", "sap/base/Log"
+], function(FLBase, Engine, Log) {
 	"use strict";
 
 	var ItemBaseFlex = {
@@ -174,22 +174,27 @@ sap.ui.define([
 						return this._getExistingAggregationItem(oChangeContent, mPropertyBag, oControl);
 					}.bind(this))
 					.then(function(oControlAggregationItem) {
-						return oControlAggregationItem ? Promise.resolve(oControlAggregationItem) : new Promise(function(resolve, reject) {
-							return Promise.resolve()
+						return new Promise(function(resolveCreation, rejectCreation) {
+							if (oControlAggregationItem) {
+								resolveCreation(oControlAggregationItem);
+
+							} else {
+								Promise.resolve()
 								.then(oModifier.getProperty.bind(oModifier, oControl, "delegate"))
 								.then(function(oDelegate) {
 									this._getDelegate(oDelegate.name, function(Delegate) {
 										this.beforeAddItem(Delegate, sDataPropertyName, oControl, mPropertyBag, oChangeContent).then(function(oItem) {
 											if (oItem) {
 												// API returns a item from default aggregation --> resolve
-												resolve(oItem);
+												resolveCreation(oItem);
 											} else {
 												//item from default aggregation not returned --> reject the promise
-												reject();
+												rejectCreation();
 											}
 										});
-									}.bind(this), reject);
+									}.bind(this), rejectCreation);
 								}.bind(this));
+							}
 						}.bind(this))
 						.then(function(oControlAggregationItem) {
 							if (!oControlAggregationItem) {
@@ -203,7 +208,8 @@ sap.ui.define([
 										return oModifier.insertAggregation(oControl, oAggregation.name, oControlAggregationItem, iIndex);
 									} else {
 										// mark the change as not applicable since the item is already existing
-										return FLBase.markAsNotApplicable("Specified change is already existing", true);
+										Log.warning("Specified change is already existing");
+										//return FLBase.markAsNotApplicable("Specified change is already existing", true);
 									}
 								})
 								.then(function() {
@@ -213,7 +219,7 @@ sap.ui.define([
 									} else {
 										// Set revert data on the change
 										oChange.setRevertData({
-											id: oModifier.getId(oControlAggregationItem),
+											//id: oModifier.getId(oControlAggregationItem),
 											name: oChangeContent.name,
 											index: iIndex
 										});
@@ -259,8 +265,10 @@ sap.ui.define([
 								reject(new Error("No item found in " + oAggregation.name + ". Change to " + this._getChangeTypeText(bIsRevert) + "cannot be " + this._getOperationText(bIsRevert) + "at this moment"));
 								return Promise.reject();
 							} else {
-								return FLBase.markAsNotApplicable("Specified change is already existing", true);
+								Log.warning("Specified change is already existing");
+								//return FLBase.markAsNotApplicable("Specified change is already existing", true);
 							}
+							return -1;
 						}
 						return oModifier.findIndexInParentAggregation(oControlAggregationItem);
 					}.bind(this))
@@ -275,7 +283,7 @@ sap.ui.define([
 						} else {
 							// Set revert data on the change
 							oChange.setRevertData({
-								id: oModifier.getId(oControlAggregationItem),
+								//id: oModifier.getId(oControlAggregationItem),
 								name: oChangeContent.name,
 								index: iIndex
 							});
@@ -287,7 +295,7 @@ sap.ui.define([
 						return this._getDelegate(oDelegate.name, function(Delegate) {
 							this.afterRemoveItem(Delegate, oControlAggregationItem, oControl, mPropertyBag).then(function(bContinue) {
 								// Continue? --> destroy the item
-								if (bContinue) {
+								if (bContinue && oControlAggregationItem) {
 									// destroy the item
 									oModifier.destroy(oControlAggregationItem);
 								}
