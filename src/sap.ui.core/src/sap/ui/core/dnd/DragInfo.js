@@ -170,7 +170,7 @@ sap.ui.define(["./DragDropBase"],
 			if (oParent && oParent.bOutput == true) {
 				var sSourceAggregation = this.getSourceAggregation();
 				if (sSourceAggregation) {
-					[].concat(this.getAggregation(sSourceAggregation)).forEach(function(oAggregation) {
+					[].concat(oParent.getAggregation(sSourceAggregation)).forEach(function(oAggregation) {
 						if (oAggregation && oAggregation.bOutput == true) {
 							oAggregation.invalidate();
 						}
