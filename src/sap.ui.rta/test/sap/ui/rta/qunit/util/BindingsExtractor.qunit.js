@@ -120,6 +120,13 @@ sap.ui.define([
 			assert.strictEqual(aBindings.length, 0, "then no binding is found");
 		});
 
+		QUnit.test("when getting the Bindings for a table with bindings on the elements inside a template", function(assert) {
+			var oMainModel = this.oView.getModel();
+			var oTable = this.oView.byId("table");
+			var aBindings = BindingsExtractor.getBindings(oTable, oMainModel);
+			assert.strictEqual(aBindings.length, 0, "then no bindings are found (we don't return bindings of elements inside a template)");
+		});
+
 		QUnit.test("when collecting the BindingPaths for the Smart Form Group bound to EntityType02 and main data model", function(assert) {
 			var oMainModel = this.oView.getModel();
 			var oGroup = this.oView.byId("GroupEntityType02");

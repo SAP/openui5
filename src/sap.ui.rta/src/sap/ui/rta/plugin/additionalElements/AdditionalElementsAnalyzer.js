@@ -360,28 +360,21 @@ sap.ui.define([
 	 * @param {sap.ui.core.Element} oInvisibleElement - Invisible Element
 	 * @param {object[]} aProperties - Array of Fields
 	 * @param {string[]} aBindingPaths - Map of all binding paths and binding context paths of the passed invisible element
-	 * @param {boolean} bHasAddViaDelegate - If AddViaDelegate action is available
 	 *
 	 * @return {boolean} - whether this field should be included
 	 *
 	 * @private
 	 */
-	function _checkAndEnhanceByModelProperty(oInvisibleElement, aProperties, aBindingPaths, bHasAddViaDelegate) {
-		if (!_hasBindings(aBindingPaths)) {
-			// include it if the field has no bindings (bindings can be added in runtime)
-			return true;
-		}
-
-		var mModelProperty = _findModelProperty(aBindingPaths, aProperties);
-		if (mModelProperty) {
-			if (mModelProperty.hideFromReveal) {
+	function _checkAndEnhanceByModelProperty(oInvisibleElement, aProperties, aBindingPaths) {
+		if (_hasBindings(aBindingPaths)) {
+			var mModelProperty = _findModelProperty(aBindingPaths, aProperties);
+			if (!mModelProperty || mModelProperty.hideFromReveal) {
 				return false;
 			}
 			_enhanceInvisibleElement(oInvisibleElement, mModelProperty);
-			return true;
 		}
-		// if model property is not found, only hide for AddViaDelegate case
-		return !bHasAddViaDelegate;
+		// include it if the field has no bindings (bindings can be added in runtime)
+		return true;
 	}
 
 	function _enhanceByMetadata(oElement, sAggregationName, oInvisibleElement, mActions, aRepresentedProperties, aProperties) {
@@ -402,7 +395,7 @@ sap.ui.define([
 
 		if (bIncludeElement) {
 			oInvisibleElement.__duplicateName = _checkForDuplicateLabels(oInvisibleElement, aProperties);
-			bIncludeElement = _checkAndEnhanceByModelProperty(oInvisibleElement, aProperties, aBindingPaths, !!mAddViaDelegate);
+			bIncludeElement = _checkAndEnhanceByModelProperty(oInvisibleElement, aProperties, aBindingPaths);
 		}
 		return bIncludeElement;
 	}

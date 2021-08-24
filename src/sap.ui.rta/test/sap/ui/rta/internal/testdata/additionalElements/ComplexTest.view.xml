@@ -399,25 +399,25 @@
 							<Table growing="true" id="table" items="{path: 'to_EntityType01Nav'}">
 								<columns>
 									<Column id="Column0">
-										<Text text="{/#EntityTypeNav/id/@sap:label}" />
+										<Text id="tabletext0" text="{/#EntityTypeNav/id/@sap:label}" />
 									</Column>
 									<Column id="Column1">
-										<Text text="{/#EntityTypeNav/EntityTypeNav_Property01/@sap:label}" />
+										<Text id="tabletext1" text="{/#EntityTypeNav/EntityTypeNav_Property01/@sap:label}" />
 									</Column>
 									<Column id="Column2">
-										<Text text="{/#EntityTypeNav/EntityTypeNav_Property02/@sap:label}" />
+										<Text id="tabletext2" text="{/#EntityTypeNav/EntityTypeNav_Property02/@sap:label}" />
 									</Column>
 									<Column id="Column3">
-										<Text text="{/#EntityTypeNav/EntityTypeNav_Property03/@sap:label}" />
+										<Text id="tabletext3" text="{/#EntityTypeNav/EntityTypeNav_Property03/@sap:label}" />
 									</Column>
 								</columns>
 								<items>
 									<ColumnListItem id="CLI">
 										<cells>
-											<Text text="{id}" />
-											<Text text="{EntityTypeNav_Property01}" />
-											<Text text="{EntityTypeNav_Property02}" />
-											<Text text="{EntityTypeNav_Property03}" />
+											<Text id="celltext0" text="{id}" />
+											<Text id="celltext1" text="{EntityTypeNav_Property01}" />
+											<Text id="celltext2" text="{EntityTypeNav_Property02}" />
+											<Text id="celltext3" text="{EntityTypeNav_Property03}" />
 										</cells>
 									</ColumnListItem>
 								</items>

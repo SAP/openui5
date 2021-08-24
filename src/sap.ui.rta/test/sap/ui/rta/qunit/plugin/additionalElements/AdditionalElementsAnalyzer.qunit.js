@@ -439,7 +439,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when getting invisible elements of a bound group containing an invisible field with bindings inside belonging to the same context", function(assert) {
+		QUnit.test("when getting invisible elements of a bound group containing an invisible field that is a deleted custom field", function(assert) {
 			var oGroup = this.oView.byId("GroupEntityType01");
 			var oGroupElement1 = this.oView.byId("EntityType01.Prop9");
 			var oGroupElement2 = this.oView.byId("EntityType01.Prop10"); //deleted custom field
@@ -521,7 +521,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when getting invisible elements of a bound group containing a removed field with other binding context without addViaDelegate but with reveal action", function(assert) {
+		QUnit.test("when getting invisible elements of a bound group containing a removed field with bindings in another binding context", function(assert) {
 			var oGroup = this.oView.byId("OtherGroup");
 			var oGroupElement1 = this.oView.byId("NavForm.EntityType01.Prop1");
 			oGroupElement1.setVisible(false);
@@ -534,6 +534,11 @@ sap.ui.define([
 						element: oGroupElement1,
 						action: {} //not relevant for test
 					}]
+				},
+				addViaDelegate: {
+					delegateInfo: {
+						delegate: this.oDelegate
+					}
 				}
 			};
 
@@ -542,7 +547,7 @@ sap.ui.define([
 			this.sandbox.stub(BindingsExtractor, "getBindings").returns(["fakeBinding"]);
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
+				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field is not available on the dialog");
 			});
 		});
 
