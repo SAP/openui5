@@ -31,19 +31,6 @@
 		<f:formContainers>
 			<f:FormContainer>
 				<f:formElements>
-					<f:FormElement label="Render whitespaces as">
-						<f:fields>
-							<Select
-									selectedKey="{whitespace>/selectedCharacter}"
-									items="{path: 'whitespace>/characters'}"
-									change="handleWhiteSpaceChange">
-								<core:Item key="{whitespace>code}" text="{whitespace>name}"/>
-							</Select>
-						</f:fields>
-					</f:FormElement>
-					<f:FormElement>
-						<f:fields><Text text=""/></f:fields>
-					</f:FormElement>
 					<f:FormElement label="sap.m.Input">
 						<f:fields>
 							<Input placeholder="Type 'Text'"

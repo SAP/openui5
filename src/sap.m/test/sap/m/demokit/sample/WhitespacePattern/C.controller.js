@@ -5,29 +5,22 @@ sap.ui.define([
 
 	var CController = Controller.extend("sap.m.sample.WhitespacePattern.C", {
 		onInit: function () {
-			this._refreshModel();
+			this._initModel();
 		},
 
 		whitespace2Char: function (sOriginalText) {
-			var oWhitespaceModel = this.getView().getModel("whitespace");
-			var sWhitespaceChar = oWhitespaceModel.getProperty("/selectedCharacter");
+			var sWhitespace = " ",
+				sUnicodeWhitespaceCharacter = "\u00A0"; // Non-breaking whitespace
 
-			return (sOriginalText || "").replace(/ {2,}/g, function (match) {
-				return " ".padStart(match.length * sWhitespaceChar.length, sWhitespaceChar);
-			});
-		},
-
-		handleWhiteSpaceChange: function (oEvent) {
-			var oWhitespaceModel = this.getView().getModel("whitespace");
-			var oSelectedItem = oEvent.getParameter("selectedItem");
-
-			if (oSelectedItem) {
-				oWhitespaceModel.setProperty("/selectedCharacter", oSelectedItem.getKey());
-				this._refreshModel();
+			if (typeof sOriginalText !== "string") {
+				return sOriginalText;
 			}
+
+			return sOriginalText
+				.replaceAll((sWhitespace + sWhitespace), (sWhitespace + sUnicodeWhitespaceCharacter)); // replace spaces
 		},
 
-		_refreshModel: function () {
+		_initModel: function () {
 			var oModel = this.getView().getModel();
 			var oData = [];
 			var i, iInverted;
