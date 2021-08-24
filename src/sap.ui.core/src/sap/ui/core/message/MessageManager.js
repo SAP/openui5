@@ -402,15 +402,14 @@ sap.ui.define([
 	 * @public
 	 */
 	MessageManager.prototype.registerObject = function(oObject, bHandleValidation) {
-		// eslint-disable-next-line no-unsafe-negation
-		if (!oObject instanceof ManagedObject) {
+		if (!(oObject instanceof ManagedObject)) {
 			Log.error(this + " : " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
-			return;
+		} else {
+			oObject.attachValidationSuccess(bHandleValidation, this._handleSuccess, this);
+			oObject.attachValidationError(bHandleValidation, this._handleError, this);
+			oObject.attachParseError(bHandleValidation, this._handleError, this);
+			oObject.attachFormatError(bHandleValidation, this._handleError, this);
 		}
-		oObject.attachValidationSuccess(bHandleValidation, this._handleSuccess, this);
-		oObject.attachValidationError(bHandleValidation, this._handleError, this);
-		oObject.attachParseError(bHandleValidation, this._handleError, this);
-		oObject.attachFormatError(bHandleValidation, this._handleError, this);
 	};
 
 	/**
@@ -420,15 +419,14 @@ sap.ui.define([
 	 * @public
 	 */
 	MessageManager.prototype.unregisterObject = function(oObject) {
-		// eslint-disable-next-line no-unsafe-negation
-		if (!oObject instanceof ManagedObject) {
+		if (!(oObject instanceof ManagedObject)) {
 			Log.error(this + " : " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
-			return;
+		} else {
+			oObject.detachValidationSuccess(this._handleSuccess, this);
+			oObject.detachValidationError(this._handleError, this);
+			oObject.detachParseError(this._handleError, this);
+			oObject.detachFormatError(this._handleError, this);
 		}
-		oObject.detachValidationSuccess(this._handleSuccess, this);
-		oObject.detachValidationError(this._handleError, this);
-		oObject.detachParseError(this._handleError, this);
-		oObject.detachFormatError(this._handleError, this);
 	};
 
 	/**
