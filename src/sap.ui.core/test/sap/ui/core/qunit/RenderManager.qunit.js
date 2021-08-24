@@ -161,7 +161,7 @@ sap.ui.define([
 		if (!sAdditionalHTML){
 			sAdditionalHTML = "";
 		}
-		return "<div id=\"" + sId + "\" data-sap-ui=\"" + sId + "\"" + sAdditionalHTML + ">[" + sId + "]</div>";
+		return "<div id=\"" + sId + "\" data-sap-ui=\"" + sId + "\" data-sap-ui-render=\"\"" + sAdditionalHTML + ">[" + sId + "]</div>";
 	}
 
 	function checkControlsInDom(assert, aControls, sTargetId, bExpectExisting) {
@@ -288,7 +288,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager.writeControlData", function(assert) {
-		checkRMWriter(assert, " id=\"TestElem1\" data-sap-ui=\"TestElem1\"", true, 0, function(rm) {
+		checkRMWriter(assert, " id=\"TestElem1\" data-sap-ui=\"TestElem1\" data-sap-ui-render=\"\"", true, 0, function(rm) {
 			return rm.writeControlData(new Control("TestElem1"));
 		});
 	});
@@ -572,7 +572,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager.openStart with controlData", function(assert) {
-		checkRMWriter(assert, "<div id=\"TestElem123\" data-sap-ui=\"TestElem123\"", true, 0, function(rm) {
+		checkRMWriter(assert, "<div id=\"TestElem123\" data-sap-ui=\"TestElem123\" data-sap-ui-render=\"\"", true, 0, function(rm) {
 			return rm.openStart("div", new Control("TestElem123"));
 		});
 	});

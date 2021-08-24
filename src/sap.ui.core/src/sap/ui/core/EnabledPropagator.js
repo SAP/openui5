@@ -104,6 +104,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Invalidates the descendants of the provided root element that are implementing the EnabledPropagator mixin
+	 *
+	 * @param {sap.ui.core.Element} oRootElement The root element instance
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 */
+	EnabledPropagator.updateDescendants = function(oRootElement) {
+		oRootElement.isActive() && oRootElement.findElements(true, function(oElement) {
+			if (oElement._bUseEnabledPropagator && oElement.bOutput == true) {
+				oElement.invalidate();
+			}
+		});
+	};
+
+	/**
 	 * Determines whether an ancestor of the provided control implements getEnabled method and that returns false
 	 *
 	 * @param {sap.ui.core.Control} oControl A control instance

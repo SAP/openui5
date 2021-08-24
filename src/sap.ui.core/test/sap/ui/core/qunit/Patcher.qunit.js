@@ -889,6 +889,32 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Patching alignWithDom", function(assert) {
+
+		this.html(
+			"<ul>" +
+				"<li id='x'>1</li>" +
+				"<li id='y'>2</li>" +
+				"<li id='z'>3</li>" +
+			"</ul>"
+		).patch(function() {
+			oPatcher.openStart("ul").openEnd().
+				openStart("li", "x").text(1).close("li").
+				alignWithDom(document.getElementById("z"), function(oDomNode) {
+					assert.equal(oDomNode.id, "z", "list item z is skipped and not visited");
+					var oLI = document.createElement("li");
+					oLI.append("4");
+					oDomNode.after(oLI);
+					return oLI;
+				}).
+				openStart("li", "y").text(2).close("li").
+			close("ul");
+		}, function(aMutations, oElement) {
+			assert.equal(oElement.textContent, "1342", "Text content is correct");
+		});
+
+	});
+
 
 	QUnit.module("Rendering", {
 		before: function() {

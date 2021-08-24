@@ -331,6 +331,12 @@ sap.ui.define([
 			return;
 		}
 
+		// Mark the control that it is in a dirty state and requires rendering.
+		// This flag will be used by the RenderManager to determine whether the rendering
+		// is necessary for the child controls while they are getting rendered with their parents.
+		// This will be cleared by the RenderManager when the control is rendered completely.
+		this._bNeedsRendering = true;
+
 		if ( this.bOutput && (oUIArea = this.getUIArea()) ) {
 			// if this control has been rendered before (bOutput)
 			// and if it is contained in a UIArea (!!oUIArea)
@@ -389,6 +395,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Control.prototype.rerender = function() {
+		this._bNeedsRendering = true;
 		UIArea.rerenderControl(this);
 	};
 
