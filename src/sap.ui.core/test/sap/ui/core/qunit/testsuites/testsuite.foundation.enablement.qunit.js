@@ -19,6 +19,9 @@ sap.ui.define(function() {
 			"base/strings/capitalize": {
 				title: "QUnit Page for capitalize"
 			},
+			"base/strings/whitespaceReplacer": {
+				title: "QUnit Page for whitespaceReplacer"
+			},
 			"base/strings/escapeRegExp": {
 				title: "QUnit Page for escapeRegExp"
 			},
