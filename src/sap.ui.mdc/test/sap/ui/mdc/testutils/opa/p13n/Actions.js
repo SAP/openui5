@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/actions/EnterText",
-	"./waitForP13nButtonWithParentAndIcon",
+	"./waitForP13nButtonWithMatchers",
 	"./waitForP13nDialog",
 	"./waitForSelectWithSelectedTextOnPanel",
 	"./Util"
@@ -24,40 +24,60 @@ sap.ui.define([
 	PropertyStrictEquals,
 	Press,
 	EnterText,
-	waitForP13nButtonWithParentAndIcon,
+	waitForP13nButtonWithMatchers,
 	waitForP13nDialog,
 	waitForSelectWithSelectedTextOnPanel,
 	Util
 ) {
 	"use strict";
 
+	var oMDCBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+
 	var iOpenThePersonalizationDialog = function(oControl, oSettings) {
 		var sControlId = typeof oControl === "string" ? oControl : oControl.getId();
-		var aMatchers = [
-			new Properties({
-				title: "View Settings"
-			})
-		];
+		var aDialogMatchers = [];
+		var aButtonMatchers = [];
 		return this.waitFor({
 			id: sControlId,
 			success: function(oControlInstance) {
 				Opa5.assert.ok(oControlInstance);
 
+				aButtonMatchers.push(new Ancestor(oControlInstance));
+
 				if (oControlInstance.isA("sap.ui.comp.smartchart.SmartChart")) {
-					aMatchers.push(function(oP13nDialog) {
+					aDialogMatchers.push(function(oP13nDialog) {
 						return oP13nDialog.getParent().getChart() === oControlInstance.getChart().getId();
 					});
 				} else {
-					aMatchers.push(new Ancestor(oControlInstance, false));
+					aDialogMatchers.push(new Ancestor(oControlInstance, false));
 				}
 
-				waitForP13nButtonWithParentAndIcon.call(this, {
-					parent: oControlInstance,
-					icon: Util.icons.settings,
+				if (oControlInstance.isA("sap.ui.mdc.FilterBar")) {
+					// Add matcher for p13n button text
+					var oMatcher = new Matcher();
+					oMatcher.isMatching = function(oButton) {
+						return oButton.getText().includes(oMDCBundle.getText("filterbar.ADAPT"));
+					};
+					aButtonMatchers.push(oMatcher);
+					aDialogMatchers.push(new Properties({
+						title: oMDCBundle.getText("filterbar.ADAPT_TITLE")
+					}));
+				} else {
+					// Add matcher for p13n button icon
+					aButtonMatchers.push(new Properties({
+						icon: Util.icons.settings
+					}));
+					aDialogMatchers.push(new Properties({
+						title: oMDCBundle.getText("p13nDialog.VIEW_SETTINGS")
+					}));
+				}
+
+				waitForP13nButtonWithMatchers.call(this, {
 					actions: new Press(),
+					matchers: aButtonMatchers,
 					success: function() {
 						waitForP13nDialog.call(this, {
-							matchers: aMatchers,
+							matchers: aDialogMatchers,
 							success:  function(oP13nDialog) {
 								if (oSettings && typeof oSettings.success === "function") {
 									oSettings.success.call(this, oP13nDialog);
@@ -127,7 +147,7 @@ sap.ui.define([
 				success: function(aLists) {
 					Opa5.assert.equal(aLists.length, 1 , "One list found");
 					if (oSettings && typeof oSettings.success === "function") {
-						oSettings.succes.call(this, aLists[0]);
+						oSettings.success.call(this, aLists[0]);
 					}
 				}
 			});
@@ -430,7 +450,170 @@ sap.ui.define([
 		});
 	};
 
+	var iPersonalizeListViewItems = function(oP13nDialog, aItems) {
+		this.waitFor({
+			controlType: "sap.ui.mdc.p13n.panels.ListView",
+			matchers: new Ancestor(oP13nDialog, false),
+			success: function(aListViews) {
+				var oListView = aListViews[0];
+				this.waitFor({
+					controlType: "sap.m.ColumnListItem",
+					matchers: new Ancestor(oListView, false),
+					actions: function(oColumnListItem) {
+						this.waitFor({
+							controlType: "sap.m.Label",
+							matchers: new Ancestor(oColumnListItem, false),
+							success: function(aLabels) {
+								var oLabelControl = aLabels[0];
+								this.waitFor({
+									controlType: "sap.m.CheckBox",
+									matchers: [
+										new Ancestor(oColumnListItem, false)
+									],
+									actions: function(oCheckBox) {
+										if ((!oCheckBox.getSelected() && aItems.includes(oLabelControl.getText())) ||
+											(oCheckBox.getSelected() && !aItems.includes(oLabelControl.getText()))) {
+											new Press().executeOn(oCheckBox);
+										}
+									},
+									success: function(aCheckBoxes) {
+										if (aCheckBoxes[0].getSelected()) {
+											// click on columnlist item
+											new Press().executeOn(oColumnListItem);
+											// click on move to top
+											if (oColumnListItem.getParent().getItems().indexOf(oColumnListItem) > 0) {
+												this.waitFor({
+													controlType: "sap.m.Button",
+													matchers: [
+														new PropertyStrictEquals({
+															name: "icon",
+															value: Util.icons.movetotop
+														})
+													],
+													actions: new Press(),
+													success: function() {
+														var iIndex = aItems.indexOf(oLabelControl.getText());
+														while (iIndex > 0) {
+															this.waitFor({
+																controlType: "sap.m.Button",
+																matchers:  [
+																	new PropertyStrictEquals({
+																		name: "icon",
+																		value: Util.icons.movedown
+																	})
+																],
+																actions: new Press()
+															});
+															iIndex--;
+														}
+													}
+												});
+											}
+										}
+									}
+								});
+							}
+						});
+					}.bind(this),
+					success: function() {
+						iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
+					}
+				});
+			}
+		});
+	};
+
+	var iPersonalizeGroupViewItem = function(oGroupViewItem, mSettings) {
+		// Get sap.m.Panel of GroupViewItem
+		this.waitFor({
+			controlType: "sap.m.Panel",
+			matchers: new Ancestor(oGroupViewItem, true),
+			success: function(aPanels) {
+				var oGroupPanel = aPanels[0];
+				// Get the expand button for the panel
+				this.waitFor({
+					controlType: "sap.m.Button",
+					matchers: new Ancestor(oGroupPanel, true),
+					success: function(aButtons) {
+						var oButton = aButtons[0];
+						// click on expand button
+						if (!oGroupPanel.getExpanded()) {
+							new Press().executeOn(oButton);
+						}
+						this.waitFor({
+							controlType: "sap.m.Toolbar",
+							matchers: new Ancestor(oGroupPanel, true),
+							success: function(aToolbars) {
+								var oToolbar = aToolbars[0];
+								// Get label of the GroupViewItem
+								this.waitFor({
+									controlType: "sap.m.Label",
+									matchers: new Ancestor(oToolbar, true),
+									success: function(aToolbarLabels) {
+										var oToolbarLabel = aToolbarLabels[0];
+										this.waitFor({
+											controlType: "sap.m.List",
+											matchers: new Ancestor(oGroupPanel, true),
+											success: function(aLists) {
+												var oList = aLists[0];
+												// Get CustomListItems inside the GroupViewItem panel
+												this.waitFor({
+													controlType: "sap.m.CustomListItem",
+													matchers: new Ancestor(oList, true),
+													actions: function(oFilterItem) {
+														this.waitFor({
+															controlType: "sap.m.Label",
+															matchers: new Ancestor(oFilterItem, false),
+															success: function(aFilterItemLabels) {
+																var oFilterItemLabel = aFilterItemLabels[0];
+																this.waitFor({
+																	controlType: "sap.m.CheckBox",
+																	matchers: new Ancestor(oFilterItem, false),
+																	actions: function (oFilterItemCheckBox) {
+																		if (mSettings[oToolbarLabel.getText()]) {
+																			var aSettings = mSettings[oToolbarLabel.getText()];
+																			// check / uncheck item if needed and group is in mSettings
+																			if ((aSettings.includes(oFilterItemLabel.getText()) && !oFilterItemCheckBox.getSelected()) ||
+																				(!aSettings.includes(oFilterItemLabel.getText()) && oFilterItemCheckBox.getSelected())) {
+																					new Press().executeOn(oFilterItemCheckBox);
+																			}
+																		} else {
+																			// uncheck all items of group if it's not in mSettings
+																			if (oFilterItemCheckBox.getSelected()) {
+																				new Press().executeOn(oFilterItemCheckBox);
+																			}
+																		}
+																	}
+																});
+															}
+														});
+													}.bind(this),
+													// close group panel
+													success: function() {
+														if (oGroupPanel.getExpanded()) {
+															new Press().executeOn(oButton);
+														}
+													}
+												});
+											}
+										});
+									}
+								});
+							}
+						});
+					}
+				});
+			}
+		});
+	};
+
     return {
+		iPressTheOKButtonOnTheDialog: function(oDialog, oSettings) {
+			return iPressTheOKButtonOnTheDialog.call(this, oDialog, oSettings);
+		},
+		iOpenThePersonalizationDialog: function(oControl, oSettings) {
+			return iOpenThePersonalizationDialog.call(this, oControl, oSettings);
+		},
 		iPersonalizeChart: function(oControl, sChartType, aItems) {
 			return iPersonalize.call(this, oControl, Util.texts.chart, {
 				success: function(oP13nDialog) {
@@ -493,7 +676,7 @@ sap.ui.define([
 															});
 														}.bind(this),
 														success: function() {
-															iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
+															iPressTheOKButtonOnTheDialog.call(this,oP13nDialog);
 														}
 													});
 												}
@@ -516,78 +699,58 @@ sap.ui.define([
 		 iPersonalizeColumns: function(oControl, aColumns) {
 			return iPersonalize.call(this, oControl, Util.texts.column, {
 				success: function(oP13nDialog) {
+					iPersonalizeListViewItems.call(this, oP13nDialog, aColumns);
+				}
+			});
+		},
+		iPersonalizeFilterBar: function(oControl, mSettings) {
+			var sIcon = Util.icons.group;
+			return iOpenThePersonalizationDialog.call(this, oControl, {
+				success: function(oP13nDialog) {
 					this.waitFor({
-						controlType: "sap.ui.mdc.p13n.panels.ListView",
-						matchers: new Ancestor(oP13nDialog, false),
-						success: function(aListViews) {
-							var oListView = aListViews[0];
+						controlType: "sap.m.Button",
+						matchers: [
+							new Ancestor(oP13nDialog, false),
+							new PropertyStrictEquals({
+								name: "icon",
+								value: sIcon
+							})
+						],
+						actions: new Press(),
+						success: function() {
 							this.waitFor({
-								controlType: "sap.m.Label",
-								matchers: new Ancestor(oListView, false),
-								actions: function(oLabelControl) {
+								controlType: "sap.ui.mdc.p13n.panels.GroupView",
+								matchers: new Ancestor(oP13nDialog, false),
+								success: function(aGroupViews) {
+									var oGroupView = aGroupViews[0];
 									this.waitFor({
-										controlType: "sap.m.ColumnListItem",
-										matchers: [
-											new Ancestor(oP13nDialog, false),
-											new Descendant(oLabelControl)
-										],
-										success: function(aColumnListItems) {
-											var oColumnListItem = aColumnListItems[0];
+										controlType: "sap.m.VBox",
+										matchers: new Ancestor(oGroupView, true),
+										success: function(aVBoxes) {
+											var oVBox = aVBoxes[0];
 											this.waitFor({
-												controlType: "sap.m.CheckBox",
-												matchers: [
-													new Ancestor(oColumnListItem, false)
-												],
-												actions: function(oCheckBox) {
-													if ((!oCheckBox.getSelected() && aColumns.includes(oLabelControl.getText())) ||
-														(oCheckBox.getSelected() && !aColumns.includes(oLabelControl.getText()))) {
-														new Press().executeOn(oCheckBox);
-													}
-												},
-												success: function(aCheckBoxes) {
-													if (aCheckBoxes[0].getSelected()) {
-														// click on columnlist item
-														new Press().executeOn(oColumnListItem);
-														// click on move to top
-														if (oColumnListItem.getParent().getItems().indexOf(oColumnListItem) > 0) {
-															this.waitFor({
-																controlType: "sap.m.Button",
-																matchers: [
-																	new PropertyStrictEquals({
-																		name: "icon",
-																		value: Util.icons.movetotop
-																	})
-																],
-																actions: new Press(),
-																success: function() {
-																	var iIndex = aColumns.indexOf(oLabelControl.getText());
-																	while (iIndex > 0) {
-																		this.waitFor({
-																			controlType: "sap.m.Button",
-																			matchers:  [
-																				new PropertyStrictEquals({
-																					name: "icon",
-																					value: Util.icons.movedown
-																				})
-																			],
-																			actions: new Press()
-																		});
-																		iIndex--;
-																	}
-																}
-															});
+												controlType: "sap.m.List",
+												matchers: new Ancestor(oVBox, true),
+												success: function(aLists) {
+													var oList = aLists[0];
+													this.waitFor({
+														controlType: "sap.m.CustomListItem",
+														matchers: new Ancestor(oList, true),
+														actions: function(oGroupViewItem) {
+															iPersonalizeGroupViewItem.call(this, oGroupViewItem, mSettings);
+														}.bind(this),
+														success: function() {
+															iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
 														}
-													}
+													});
 												}
 											});
 										}
 									});
-								}.bind(this),
-								success: function() {
-									iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
 								}
 							});
-						}
+						},
+						errorMessage: "No button with icon '" + sIcon + "' found on P13nDialog"
 					});
 				}
 			});
@@ -722,7 +885,6 @@ sap.ui.define([
 											aConfigurations.forEach(function(oConfiguration, iIndex) {
 												iAddSortConfiguration.call(this, oSortPanel, oConfiguration);
 											}.bind(this));
-
 											iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
 										}
 									});

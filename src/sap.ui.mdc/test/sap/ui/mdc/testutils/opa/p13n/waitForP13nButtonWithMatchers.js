@@ -2,28 +2,15 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/test/Opa5",
-	"sap/ui/test/matchers/Ancestor",
-	"sap/ui/test/matchers/Properties"
+	"sap/ui/test/Opa5"
 ], function(
-	Opa5,
-	Ancestor,
-	Properties
+	Opa5
 ) {
 	"use strict";
 
-	return function waitForP13nButtonWithParentAndIcon(oSettings) {
-		var aMatchers = [];
-		if (oSettings.parent) {
-			aMatchers.push(new Ancestor(oSettings.parent, false));
-		}
-		if (oSettings.icon) {
-			aMatchers.push(
-				new Properties({
-					icon: oSettings.icon
-				})
-			);
-		}
+	return function waitForP13nButtonWithMatchers(oSettings) {
+		var aMatchers = oSettings.matchers ? oSettings.matchers : [];
+
 		return this.waitFor({
 			controlType: "sap.m.Button",
 			matchers: aMatchers,

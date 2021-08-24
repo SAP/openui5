@@ -56,14 +56,17 @@ sap.ui.define([
 		}
 	});
 
+	var iComponent = 0;
+
 	var oModuleSettings = {
 		beforeEach: function() {},
 		afterEach: function() {
-
+			iComponent++;
 			// in case the flex/variant changes are stored in the local browser storage
 			localStorage.clear();
 		}
 	};
+
 
 	QUnit.module("ListReport - Books Page Table", oModuleSettings);
 
@@ -237,8 +240,9 @@ sap.ui.define([
 
 	opaTest("I should see the filter fields", function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
+		var oFilterBar = "__component" + iComponent + "---books--booksFilterBar";
 		var aLabelNames = ["Author", "Title", "Stock range", "CreatedAt", "Language"];
-		Then.onTheBooksListReportPage.iShouldSeeTheFilterFieldsWithLabels(aLabelNames);
+		Then.onFilterBar.iShouldSeeFilters(oFilterBar, aLabelNames);
 
 		// cleanup
 		Then.iTeardownMyUIComponent();
@@ -255,26 +259,30 @@ sap.ui.define([
 	opaTest('I should see the "Book ID" and "Date of Birth" filter field', function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
 
-		//select item from default group
-		When.onTheBooksListReportPage.iPressOnTheAdaptFiltersButton();
-		When.onTheBooksListReportPage.iChangeAdaptFiltersView("group");
-		Then.onTheBooksListReportPage.iShouldSeeTheAdaptFiltersP13nDialog();
-		When.onTheBooksListReportPage.iSelectTheAdaptFiltersP13nItem("Book ID");
-		When.onTheBooksListReportPage.iPressAdaptFiltersOk();
+		var oFilterBar = "__component" + iComponent + "---books--booksFilterBar";
 
-		var aLabelNames = ["Author", "Title", "Stock range", "CreatedAt", "Language", "Book ID"];
-		Then.onTheBooksListReportPage.iShouldSeeTheFilterFieldsWithLabels(aLabelNames);
+		When.onFilterBar.iPersonalizeFilter(oFilterBar, {
+			Books: [
+				"Author ID", "Title", "Stock", "Created On", "Language", "Book ID"
+			]
+		});
 
-		//Select item from a different group
-		When.onTheBooksListReportPage.iPressOnTheAdaptFiltersButton();
-		When.onTheBooksListReportPage.iChangeAdaptFiltersView("group");
-		When.onTheBooksListReportPage.iToggleFilterPanel("Books");
-		When.onTheBooksListReportPage.iToggleFilterPanel("Authors");
-		When.onTheBooksListReportPage.iSelectTheAdaptFiltersP13nItem("Date of Birth");
-		When.onTheBooksListReportPage.iPressAdaptFiltersOk();
+		Then.onFilterBar.iShouldSeeFilters(oFilterBar, [
+			"Author", "Title", "Stock range", "CreatedAt", "Language", "Book ID"
+		]);
 
-		aLabelNames = ["Author", "Title", "Stock range", "CreatedAt", "Language", "Book ID", "Date of Birth"];
-		Then.onTheBooksListReportPage.iShouldSeeTheFilterFieldsWithLabels(aLabelNames);
+		When.onFilterBar.iPersonalizeFilter(oFilterBar, {
+			Books: [
+				"Author ID", "Title", "Stock", "Created On", "Language", "Book ID"
+			],
+			Authors: [
+				"Date of Birth"
+			]
+		});
+
+		Then.onFilterBar.iShouldSeeFilters(oFilterBar, [
+			"Author", "Title", "Stock range", "CreatedAt", "Language", "Book ID", "Date of Birth"
+		]);
 
 		// cleanup
 		Then.iTeardownMyUIComponent();
@@ -282,14 +290,17 @@ sap.ui.define([
 
 	opaTest('I should not see the "Stock" filter field', function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
-		When.onTheBooksListReportPage.iPressOnTheAdaptFiltersButton();
-		When.onTheBooksListReportPage.iChangeAdaptFiltersView("group");
-		Then.onTheBooksListReportPage.iShouldSeeTheAdaptFiltersP13nDialog();
-		When.onTheBooksListReportPage.iDeselectTheAdaptFiltersP13nItem("Stock");
-		When.onTheBooksListReportPage.iPressAdaptFiltersOk();
+
+		var oFilterBar = "__component" + iComponent + "---books--booksFilterBar";
+
+		When.onFilterBar.iPersonalizeFilter(oFilterBar, {
+			Books: [
+				"Author ID", "Title", "Created On", "Language"
+			]
+		});
 
 		var aLabelNames = ["Author", "Title", "CreatedAt", "Language"];
-		Then.onTheBooksListReportPage.iShouldSeeTheFilterFieldsWithLabels(aLabelNames);
+		Then.onFilterBar.iShouldSeeFilters(oFilterBar, aLabelNames);
 
 		// cleanup
 		Then.iTeardownMyUIComponent();
@@ -328,35 +339,35 @@ sap.ui.define([
 		Then.iTeardownMyUIComponent();
 	});*/
 
+
 	QUnit.module("ListReport - Books Page Variant", oModuleSettings);
 
 	opaTest("It should save a variant", function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
 
-		var sFieldLabelName = "Author",
-			sVariantDefaultName = "Standard",
+		var oFilterBar = "__component" + iComponent + "---books--booksFilterBar";
+
+		var sVariantDefaultName = "Standard",
 			sVariantNewName = "Standard2";
 
 		// make a change
-		When.onTheBooksListReportPage.iEnterTextOnTheFilterField(sFieldLabelName, "101");
-
-		var aConditions = [{
-			"operator": "EQ",
-			"values": [
-				101,
-				"Austen, Jane"
-			],
-			"isEmpty": null,
-			"validated": "Validated"
-		}];
-
-		var aFormattedValues = [
-			"Austen, Jane"
-		];
-
-		Then.onTheBooksListReportPage.iShouldSeeTheFilterFieldWithValues(sFieldLabelName, {
-			conditions: aConditions,
-			formattedValues: aFormattedValues
+		When.onFilterBar.iEnterFilterValue(oFilterBar, {
+			Books: {
+				label: "Author ID",
+				values: [ "101", "102" ]
+			}
+		});
+		Then.onFilterBar.iShouldSeeFilters(oFilterBar, {
+			"Author": [
+				{
+					operator: "EQ",
+					values: [ 101, "Austen, Jane" ]
+				},
+				{
+					operator: "EQ",
+					values: [ 102, "Gilman, Charlotte Perkins" ]
+				}
+			]
 		});
 
 		// save variant
@@ -367,7 +378,9 @@ sap.ui.define([
 		// change variant
 		When.onTheBooksListReportPage.iPressOnTheVariantManagerButton(sVariantNewName);
 		When.onTheBooksListReportPage.iSelectVariant(sVariantDefaultName);
-		Then.onTheBooksListReportPage.iShouldSeeTheFilterFieldWithValues(sFieldLabelName, [], []);
+		Then.onFilterBar.iShouldSeeFilters(oFilterBar, {
+			"Author": []
+		});
 
 		// cleanup
 		Then.iTeardownMyUIComponent();
@@ -377,6 +390,7 @@ sap.ui.define([
 
 	opaTest("It should create a condition", function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
+		var oFilterBar = "__component" + iComponent + "---books--booksFilterBar";
 		var sFieldLabelName = "Author",
 			sTitle = "Author Value Help";
 
@@ -388,27 +402,19 @@ sap.ui.define([
 			"Gilman, Charlotte Perkins"
 		];
 
-		var aFormattedValues = [
-			"Gilman, Charlotte Perkins"
-		];
-
-		var aConditions = [{
-			"operator": "EQ",
-			"values": [
-				102,
-				"Gilman, Charlotte Perkins"
-			],
-			"isEmpty": null,
-			"validated": "Validated"
-		}];
-
 		When.onTheBooksListReportPage.iSelectTheValueHelpCondition(aValues);
 		When.onTheBooksListReportPage.iPressOnTheValueHelpOKButton();
 
-		Then.onTheBooksListReportPage.iShouldSeeTheFilterFieldWithValues(sFieldLabelName, {
-			conditions: aConditions,
-			formattedValues: aFormattedValues
+		Then.onFilterBar.iShouldSeeFilters(oFilterBar, {
+			"Author": [
+				{
+					operator: "EQ",
+					values: [ 102, "Gilman, Charlotte Perkins" ]
+				}
+			]
 		});
+		When.onFilterBar.iExpectSearch(oFilterBar);
+
 		Then.onTheBooksListReportPage.iShouldSeeRowsWithData(2);
 		Then.onTheBooksListReportPage.iShouldSeeARowWithData(0, ListReport.books["The Yellow Wallpaper"]);
 		Then.onTheBooksListReportPage.iShouldSeeARowWithData(1, ListReport.books["Herland"]);
@@ -416,4 +422,5 @@ sap.ui.define([
 		// cleanup
 		Then.iTeardownMyUIComponent();
 	});
+
 });
