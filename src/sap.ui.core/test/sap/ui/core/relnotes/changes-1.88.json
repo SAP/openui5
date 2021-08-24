@@ -14,17 +14,6 @@
         ]
       },
       {
-        "id": "43b670cd00cd30afc0cf09bf87c2be589c189168",
-        "type": "FIX",
-        "text": " Revert \"[INTERNAL] core.routing: propagate hash change to component only when browser hash contains its part\"",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2170014800"
-          }
-        ]
-      },
-      {
         "id": "ce6c04ec2ff09299e8f1c59dfbcf9d2eb1484e7e",
         "type": "FIX",
         "text": " XMLTemplateProcessor: hide stashed objects only where supported"

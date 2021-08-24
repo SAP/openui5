@@ -3,17 +3,6 @@
     "data": "May 2017",
     "notes": [
       {
-        "id": "a654786535df357a73906acc595c0fcf445ef44c",
-        "type": "FIX",
-        "text": "[INTERNAL] sap.uxap.ObjectPageLayoyut: make use of selectedSection association",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770148914"
-          }
-        ]
-      },
-      {
         "id": "4f2622be8baa5e91a738319850202d6f91c203e0",
         "type": "FIX",
         "text": "sap.m.ObjectAttribute: displayed correctly in ObjectPage",

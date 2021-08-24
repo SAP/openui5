@@ -175,17 +175,6 @@
         "text": " sap.m.ObjectNumber: Inverted states and interactivity are added"
       },
       {
-        "id": "c9e0db5e33bb90963fbec9545278e373f43368b1",
-        "type": "FIX",
-        "text": "[INTERNAL] sap.m.ComboBoxBase: getEnabledItems restored",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080439838"
-          }
-        ]
-      },
-      {
         "id": "bdc51fb9dd8434d2f3f92475f8124bdd7338db8a",
         "type": "FIX",
         "text": " sap.m.ObjectStatus: icon isn't clipped in a table cell now",
