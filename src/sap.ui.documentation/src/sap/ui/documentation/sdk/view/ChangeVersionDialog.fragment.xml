@@ -5,12 +5,22 @@
 			title="{i18n>CHANGE_VERSION_DIALOG_TITLE}"
 			contentHeight="400px"
 			stretch="{appView>/bPhoneSize}">
-		<endButton>
+		<buttons>
 			<Button
-				text="{i18n>CHANGE_VERSION_DIALOG_CLOSE_BTN}"
-				press="onCloseVersionDialog">
+				text="CHANGE_VERSION_DIALOG_APPLY_BTN"
+				type="Emphasized"
+				press="onVersionItemPress">
 			</Button>
-		</endButton>
+			<Button
+					text="CHANGE_VERSION_DIALOG_LATEST_BTN"
+					type="Ghost"
+					press="onLatestVersionItemPress">
+			</Button>
+			<Button
+					text="{i18n>CHANGE_VERSION_DIALOG_CLOSE_BTN}"
+					press="onCloseVersionDialog">
+			</Button>
+		</buttons>
 		<subHeader>
 			<Bar>
 				<contentMiddle>
@@ -23,7 +33,7 @@
 		</subHeader>
 		<Tree
 				id="versionList"
-				itemPress="onVersionItemPress"
+				mode="SingleSelectMaster"
 				items="{
 					path: '/',
 					sorter: [{
@@ -37,7 +47,7 @@
 					}]
 				}">
 			<StandardTreeItem
-					title="{path: 'version'}"
+					title="{path: 'version'}{= ${path: 'version'} === ${versionData>/latestVersion} ? ' (Latest)' : ''}"
 					type="{= ${path: 'path'} ? 'Active' : 'Inactive'}">
 				<customData>
 					<core:CustomData key="path" value="{path: 'path'}" />
