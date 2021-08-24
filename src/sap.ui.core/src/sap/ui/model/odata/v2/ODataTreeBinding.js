@@ -1954,7 +1954,7 @@ sap.ui.define([
 
 	/**
 	 * Initializes the binding. Fires a refresh event once initialization is completed in case the
-	 * binding is resolved or immediately in case it is unresolved.
+	 * binding is resolved, or immediately in case it is unresolved.
 	 *
 	 * @returns {sap.ui.model.odata.v2.ODataTreeBinding} The binding instance
 	 *
