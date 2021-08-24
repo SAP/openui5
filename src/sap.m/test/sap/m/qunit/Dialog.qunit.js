@@ -31,7 +31,8 @@ sap.ui.define([
 	"sap/m/InstanceManager",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/events/KeyCodes",
-	"sap/m/Title"
+	"sap/m/Title",
+	"sap/ui/dom/units/Rem"
 ], function(
 	Log,
 	qutils,
@@ -63,7 +64,8 @@ sap.ui.define([
 	InstanceManager,
 	JSONModel,
 	KeyCodes,
-	Title
+	Title,
+	Rem
 ) {
 	"use strict";
 
@@ -78,6 +80,8 @@ sap.ui.define([
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
+
+	var DRAGRESIZE_STEP = Rem.toPx(1);
 
 	createAndAppendDiv("content");
 
@@ -1850,6 +1854,60 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
+	QUnit.test("Dragging works if the page is scrolled", function (assert) {
+		// Arrange
+		var oGrowingPageElement = createAndAppendDiv("growingPageElement");
+
+		// make the element scrollable, and scroll it down
+		oGrowingPageElement.style.height = "10000px";
+		window.scrollTo(0, 10000);
+
+		var oDialog = new Dialog({
+			draggable: true,
+			title: "Some title",
+			content: [
+				new Text({
+					text: "Some text"
+				})
+			]
+		});
+
+		oDialog.open();
+		this.clock.tick(500);
+
+		var oMockEvent = {
+			pageX: 608,
+			pageY: 646,
+			offsetX: 177,
+			offsetY: 35,
+			preventDefault: function () {},
+			stopPropagation: function () {},
+			target: oDialog._getFocusableHeader()
+		};
+
+		var oClientRect = oDialog.getDomRef().getBoundingClientRect();
+		var iInitialTop = oClientRect.top;
+		var iInitialLeft = oClientRect.left;
+
+		oDialog.onmousedown(oMockEvent);
+
+		this.clock.tick(500);
+
+		oClientRect = oDialog.getDomRef().getBoundingClientRect();
+		var iTopAfterDrag = oClientRect.top;
+		var iLeftAfterDrag = oClientRect.left;
+
+		// assert
+		assert.strictEqual(iInitialTop, iTopAfterDrag, "The top position of the dialog should not change after dragging it.");
+		assert.strictEqual(iInitialLeft, iLeftAfterDrag, "The left position of the dialog should not change after dragging it.");
+
+		// cleanup
+		window.scrollTo(0, 0);
+		oGrowingPageElement.remove();
+		jQuery(document).off("mouseup mousemove");
+		oDialog.destroy();
+	});
+
 	QUnit.module("Drag and resize in custom Within Area", {
 		beforeEach: function () {
 			this.oDialog = new Dialog({
@@ -2238,6 +2296,37 @@ sap.ui.define([
 		qutils.triggerKeydown(oTitle, KeyCodes.ARROW_DOWN, true);
 		this.clock.tick(500);
 		assert.strictEqual(height, this.oDialog.$().height(), "dialog is not resized");
+	});
+
+	QUnit.test("Dragging with keyboard works if the page is scrolled", function (assert) {
+		// Arrange
+		var oGrowingPageElement = createAndAppendDiv("growingPageElement");
+
+		// make the element scrollable, and scroll it down
+		oGrowingPageElement.style.height = "10000px";
+		window.scrollTo(0, 10000);
+
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		var oClientRect = this.oDialog.getDomRef().getBoundingClientRect();
+		var iInitialTop = oClientRect.top;
+		var iInitialLeft = oClientRect.left;
+
+		qutils.triggerKeydown(this.oDialog._getFocusableHeader(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+
+		oClientRect = this.oDialog.getDomRef().getBoundingClientRect();
+		var iTopAfterDrag = oClientRect.top;
+		var iLeftAfterDrag = oClientRect.left;
+
+		// assert
+		assert.strictEqual(iInitialTop + DRAGRESIZE_STEP, iTopAfterDrag, "The top position of the dialog should have changed with exactly " + DRAGRESIZE_STEP);
+		assert.strictEqual(iInitialLeft, iLeftAfterDrag, "The left position of the dialog should not change after dragging it");
+
+		// cleanup
+		window.scrollTo(0, 0);
+		oGrowingPageElement.remove();
 	});
 
 	QUnit.module("Setting Dialogs button origin",{
