@@ -1,11 +1,12 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/table/library",
 	'sap/ui/Device',
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/model/Filter"
-], function(Device, QUnitUtils, TableQUnitUtils, Filter) {
+], function(library, Device, QUnitUtils, TableQUnitUtils, Filter) {
 	"use strict";
 
 	QUnit.module("Initialization and Destruction", {
@@ -222,6 +223,26 @@ sap.ui.define([
 			oTarget.dispatchEvent(new PointerEvent("pointerdown", {
 				clientX: oTarget.getBoundingClientRect().x + 5,
 				clientY: oTarget.getBoundingClientRect().y + 400
+			}));
+		}).then(function() {
+			return that.oTable.qunit.whenVSbScrolled().then(that.oTable.qunit.whenRenderingFinished);
+		}).then(function() {
+			that.assertThumbPosition(assert);
+		});
+	});
+
+	QUnit.test("pointerDown on scrollbar after rendering only rows", function(assert) {
+		var that = this;
+		var oTable = this.oTable;
+		var oTarget;
+
+		oTable.setVisibleRowCountMode(library.VisibleRowCountMode.Auto);
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oTarget = oTable._getScrollIOSExtension().getVerticalScrollbar();
+			oTarget.dispatchEvent(new PointerEvent("pointerdown", {
+				clientX: oTarget.getBoundingClientRect().x + 5,
+				clientY: oTarget.getBoundingClientRect().y + 200
 			}));
 		}).then(function() {
 			return that.oTable.qunit.whenVSbScrolled().then(that.oTable.qunit.whenRenderingFinished);
