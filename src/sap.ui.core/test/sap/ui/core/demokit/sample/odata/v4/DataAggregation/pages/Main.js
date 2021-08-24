@@ -30,38 +30,41 @@ sap.ui.define([
 		Opa5.assert.strictEqual(aCells[0].getText(),
 			oExpected.level.toString(),
 			"Row " + iRowIndex + ": Level is " + aCells[0].getText());
-		Opa5.assert.strictEqual(aCells[1].getIcon(),
+		Opa5.assert.strictEqual(aCells[1].getText(),
+			oExpected.groupLevelCount.toString(),
+			"Row " + iRowIndex + ": GroupLevelCount is " + aCells[1].getText());
+		Opa5.assert.strictEqual(aCells[2].getIcon(),
 			mIconForExpand[oExpected.expanded],
-			"Row " + iRowIndex + ": Expanded is " + aCells[1].getIcon());
-		Opa5.assert.strictEqual(aCells[2].getText(),
-			oExpected.country,
-			"Row " + iRowIndex + ": Country is " + aCells[2].getText());
+			"Row " + iRowIndex + ": Expanded is " + aCells[2].getIcon());
 		Opa5.assert.strictEqual(aCells[3].getText(),
-			oExpected.region,
-			"Row " + iRowIndex + ": Region is " + aCells[3].getText());
+			oExpected.country,
+			"Row " + iRowIndex + ": Country is " + aCells[3].getText());
 		Opa5.assert.strictEqual(aCells[4].getText(),
-			oExpected.segment,
-			"Row " + iRowIndex + ": Segment is " + aCells[4].getText());
+			oExpected.region,
+			"Row " + iRowIndex + ": Region is " + aCells[4].getText());
 		Opa5.assert.strictEqual(aCells[5].getText(),
+			oExpected.segment,
+			"Row " + iRowIndex + ": Segment is " + aCells[5].getText());
+		Opa5.assert.strictEqual(aCells[6].getText(),
 			oExpected.accountResponsible,
 			"Row " + iRowIndex + ": Account Responsible is "
-				+ aCells[5].getText());
-		Opa5.assert.strictEqual(aCells[6].getText(),
-			oExpected.salesAmountLocalCurrency,
-			"Row " + iRowIndex + ": Sales Amount is "
 				+ aCells[6].getText());
 		Opa5.assert.strictEqual(aCells[7].getText(),
-			oExpected.localCurrency,
-			"Row " + iRowIndex + ": Local Currency is "
+			oExpected.salesAmountLocalCurrency,
+			"Row " + iRowIndex + ": Sales Amount is "
 				+ aCells[7].getText());
 		Opa5.assert.strictEqual(aCells[8].getText(),
+			oExpected.localCurrency,
+			"Row " + iRowIndex + ": Local Currency is "
+				+ aCells[8].getText());
+		Opa5.assert.strictEqual(aCells[9].getText(),
 			oExpected.salesNumber,
 			"Row " + iRowIndex + ": Sales Number is "
-				+ aCells[8].getText());
-		Opa5.assert.strictEqual(aCells[9].getSelected(),
+				+ aCells[9].getText());
+		Opa5.assert.strictEqual(aCells[10].getSelected(),
 			oExpected.subtotal,
 			"Row " + iRowIndex + ": Subtotal is "
-				+ aCells[9].getSelected());
+				+ aCells[10].getSelected());
 	}
 
 	Opa5.createPageObjects({

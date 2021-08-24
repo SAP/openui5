@@ -1825,16 +1825,20 @@ sap.ui.define([
 		 *   Number of rows which are reset
 		 * @param {number} [iMissingExpanded=0]
 		 *   Number of changes for "isExpanded" which will be missing (because already undefined)
+		 * @param {number} [iMissingGroupLevelCount=0]
+		 *   Number of changes for "groupLevelCount" which will be missing (because already
+		 *   undefined)
 		 * @returns {object} The test instance for chaining
 		 * @throws {Error} For unsupported IDs
 		 */
-		expectResets : function (oTable, iRowCount, iMissingExpanded) {
+		expectResets : function (oTable, iRowCount, iMissingExpanded, iMissingGroupLevelCount) {
 			var mValuesById = {
 					accountResponsible : null,
 					amountPerSale : undefined,
 					country : null,
 					currency : null,
 					grossAmount : undefined,
+					groupLevelCount : undefined,
 					isExpanded : undefined,
 					isTotal : undefined,
 					level : undefined,
@@ -1848,7 +1852,9 @@ sap.ui.define([
 				that = this;
 
 			function expectChange(sId) {
-				var i = sId === "isExpanded" && iMissingExpanded || 0;
+				var i = sId === "isExpanded" && iMissingExpanded
+						|| sId === "groupLevelCount" && iMissingGroupLevelCount
+						|| 0;
 
 				if (!(sId in mValuesById)) {
 					throw new Error("Unsupported ID: " + sId);
@@ -16778,6 +16784,7 @@ sap.ui.define([
 			$count : false,\
 			$orderby : \'Region desc,AccountResponsible\'\
 		}}">\
+	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -16801,6 +16808,7 @@ sap.ui.define([
 					{Region : "X", SalesAmount : "300"}
 				]
 			})
+			.expectChange("groupLevelCount", [undefined, undefined, undefined])
 			.expectChange("isExpanded", [false, false, false])
 			.expectChange("isTotal", [true, true, true])
 			.expectChange("level", [1, 1, 1])
@@ -16821,6 +16829,7 @@ sap.ui.define([
 						{AccountResponsible : "c", SalesAmount : "30", SalesNumber : 3}
 					]
 				})
+				.expectChange("groupLevelCount", [4, , , , ])
 				.expectChange("isExpanded", [true, undefined, undefined])
 				.expectChange("isTotal", [/*true*/, false, false])
 				.expectChange("level", [/*1*/, 2, 2])
@@ -16854,6 +16863,8 @@ sap.ui.define([
 						{AccountResponsible : "d", SalesAmount : "40", SalesNumber : 4}
 					]
 				})
+				.expectChange("groupLevelCount",
+					[/*4*/, /*undefined*/, /*undefined*/, undefined, undefined, undefined])
 				.expectChange("isExpanded", [,,, undefined, undefined, false])
 				.expectChange("isTotal", [,,, false, false, true])
 				.expectChange("level", [,,, 2, 2, 1])
@@ -16891,6 +16902,8 @@ sap.ui.define([
 				// first row is unchanged except isExpanded
 				// second row with "Y" was moved (E.C.D.)
 				// third row is *new*
+				.expectChange("groupLevelCount",
+					[undefined, /*undefined*/, undefined, undefined, undefined, undefined])
 				.expectChange("isExpanded", [false, /*false*/, false, false, false, false])
 				.expectChange("isTotal", [, /*true*/, true, true, true, true])
 				.expectChange("level", [, /*1*/, 1, 1, 1, 1])
@@ -16914,7 +16927,9 @@ sap.ui.define([
 				"/BusinessPartners(Region='U')"
 			]);
 
-			that.expectChange("isExpanded", [true, undefined, undefined, undefined, undefined])
+			that.expectChange("groupLevelCount",
+					[4, undefined, undefined, undefined, undefined])
+				.expectChange("isExpanded", [true, undefined, undefined, undefined, undefined])
 				.expectChange("isTotal", [/*true*/, false, false, false, false])
 				.expectChange("level", [/*1*/, 2, 2, 2, 2])
 				.expectChange("region", [/*"Z"*/, "Z", "Z", "Z", "Z"])
@@ -16968,6 +16983,7 @@ sap.ui.define([
 			}\
 		},\
 		filters : {path : \'AccountResponsible\', operator : \'GE\', value1 : \'a\'}}">\
+	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -16987,6 +17003,7 @@ sap.ui.define([
 					{Region : "X", SalesAmount : "300"}
 				]
 			})
+			.expectChange("groupLevelCount", [undefined, undefined, undefined])
 			.expectChange("isExpanded", [false, false, false])
 			.expectChange("isTotal", [true, true, true])
 			.expectChange("level", [1, 1, 1])
@@ -17014,6 +17031,7 @@ sap.ui.define([
 						{AccountResponsible : "c", SalesAmount : "30", SalesNumber : 3}
 					]
 				})
+				.expectChange("groupLevelCount", [4])
 				.expectChange("isExpanded", [true, undefined, undefined])
 				.expectChange("isTotal", [/*true*/, false, false])
 				.expectChange("level", [/*1*/, 2, 2])
@@ -17035,7 +17053,7 @@ sap.ui.define([
 						{AccountResponsible : "d", SalesAmount : "40", SalesNumber : 4}
 					]
 				})
-				.expectResets(oTable, 2, 1)
+				.expectResets(oTable, 2, 1, 1)
 				.expectChange("isExpanded", [,,,,, false])
 				.expectChange("isTotal", [,,, false, false, true])
 				.expectChange("level", [,,, 2, 2, 1])
@@ -17061,6 +17079,7 @@ sap.ui.define([
 					]
 				})
 				// no other changes because "Y" is the last visible row
+				.expectChange("groupLevelCount", [,,,,, 8])
 				.expectChange("isExpanded", [,,,,, true]);
 
 			// code under test
@@ -17083,7 +17102,7 @@ sap.ui.define([
 						{Region : "W", SalesAmount : "400"}
 					]
 				})
-				.expectResets(oTable, 2, 1)
+				.expectResets(oTable, 2, 1, 1)
 				.expectChange("isExpanded", [,,,,,,,,,,,,, /*undefined*/, false, false])
 				.expectChange("isTotal", [,,,,,,,,,,,,, false, true, true])
 				.expectChange("level", [,,,,,,,,,,,,, 2, 1, 1])
@@ -17108,7 +17127,7 @@ sap.ui.define([
 						{AccountResponsible : "f", SalesAmount : "60", SalesNumber : 6}
 					]
 				})
-				.expectResets(oTable, 3, 1)
+				.expectResets(oTable, 3, 1, 3)
 				.expectChange("isExpanded", [,,,,,,,,, /*undefined*/, /*undefined*/, /*undefined*/])
 				.expectChange("isTotal", [,,,,,,,,, false, false, false])
 				.expectChange("level", [,,,,,,,,, 2, 2, 2])
@@ -17123,7 +17142,8 @@ sap.ui.define([
 			return that.waitForChanges(assert, "scroll to the middle of 'Y': "
 				+ "'Y-d', 'Y-e', 'Y-f' visible");
 		}).then(function () {
-			that.expectChange("isExpanded", [true, /*undefined*/, /*undefined*/])
+			that.expectChange("groupLevelCount", [4, /*undefined*/, /*undefined*/])
+				.expectChange("isExpanded", [true, /*undefined*/, /*undefined*/])
 				.expectChange("isTotal", [true, /*false*/, /*false*/])
 				.expectChange("level", [1, /*2*/, /*2*/])
 				.expectChange("region", ["Z", "Z", "Z"])
@@ -17172,6 +17192,7 @@ sap.ui.define([
 			groupLevels : [\'Region\']\
 		}\
 	}}" threshold="0" visibleRowCount="3">\
+	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -17191,6 +17212,7 @@ sap.ui.define([
 					{Region : "X", SalesAmount : "300"}
 				]
 			})
+			.expectChange("groupLevelCount", [undefined, undefined, undefined])
 			.expectChange("isExpanded", [false, false, false])
 			.expectChange("isTotal", [true, true, true])
 			.expectChange("level", [1, 1, 1])
@@ -17233,7 +17255,7 @@ sap.ui.define([
 						]
 					});
 				}))
-				.expectResets(oTable, 3);
+				.expectResets(oTable, 3, 0, 3);
 
 			oTable.setFirstVisibleRow(3);
 
@@ -17359,6 +17381,7 @@ sap.ui.define([
 		$count : true,\
 		$orderby : \'Country desc,Region,Currency asc,LocalCurrency desc\'\
 	}}" threshold="0" visibleRowCount="4">\
+	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -17514,7 +17537,7 @@ sap.ui.define([
 						SalesAmountLocalCurrency : "400"
 					}]
 				})
-				.expectResets(oTable, 4)
+				.expectResets(oTable, 4, 0, 4)
 				.expectChange("isExpanded", [,,,,,,,,, false])
 				.expectChange("isTotal", [,,,,,, false, false, false, true])
 				.expectChange("level", [,,,,,, 2, 2, 2, 1])
@@ -17648,6 +17671,7 @@ sap.ui.define([
 			subtotalsAtBottomOnly : ' + bSubtotalsAtBottomOnly + '\
 		}\
 	}}">\
+	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -17706,9 +17730,9 @@ sap.ui.define([
 				"/BusinessPartners(Country='A')",
 				"/BusinessPartners($isTotal=true)"
 			], [
-				[true, true, 0, "", "", "3510", ""],
-				[false, true, 1, "A", "", "10", "EUR"],
-				[undefined, true, 0, "", "", "3510", ""]
+				[undefined, true, true, 0, "", "", "3510", ""],
+				[undefined, false, true, 1, "A", "", "10", "EUR"],
+				[undefined, undefined, true, 0, "", "", "3510", ""]
 			]);
 
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'A')"
@@ -17734,11 +17758,11 @@ sap.ui.define([
 				"/BusinessPartners(Country='A',$isTotal=true)",
 				"/BusinessPartners($isTotal=true)"
 			], [
-				[true, true, 0, "", "", "3510", ""],
-				[true, true, 1, "A", "", subtotalAtTop("10"), subtotalAtTop("EUR")],
-				[false, true, 2, "A", "", "10", "EUR"],
-				[undefined, true, 1, "", "", "10", "EUR"],
-				[undefined, true, 0, "", "", "3510", ""]
+				[undefined, true, true, 0, "", "", "3510", ""],
+				[1, true, true, 1, "A", "", subtotalAtTop("10"), subtotalAtTop("EUR")],
+				[undefined, false, true, 2, "A", "", "10", "EUR"],
+				[undefined, undefined, true, 1, "", "", "10", "EUR"],
+				[undefined, undefined, true, 0, "", "", "3510", ""]
 			]);
 
 			that.expectRequest("BusinessPartners"
@@ -17778,16 +17802,16 @@ sap.ui.define([
 				"/BusinessPartners(Country='A',$isTotal=true)",
 				"/BusinessPartners($isTotal=true)"
 			], [
-				[true, true, 0, "", "", "3510", ""],
-				[true, true, 1, "A", "", subtotalAtTop("10"), subtotalAtTop("EUR")],
+				[undefined, true, true, 0, "", "", "3510", ""],
+				[1, true, true, 1, "A", "", subtotalAtTop("10"), subtotalAtTop("EUR")],
 				// Note: "localCurrency" must not disappear here!
-				[true, true, 2, "A", "", subtotalAtTop("10"), "EUR"],
-				[false, true, 3, "A", "a", "1", "EUR"],
-				[false, true, 3, "A", "b", "2", "EUR"],
-				[false, true, 3, "A", "c", "3", "EUR"],
-				[undefined, true, 2, "", "", "10", "EUR"],
-				[undefined, true, 1, "", "", "10", "EUR"],
-				[undefined, true, 0, "", "", "3510", ""]
+				[3, true, true, 2, "A", "", subtotalAtTop("10"), "EUR"],
+				[undefined, false, true, 3, "A", "a", "1", "EUR"],
+				[undefined, false, true, 3, "A", "b", "2", "EUR"],
+				[undefined, false, true, 3, "A", "c", "3", "EUR"],
+				[undefined, undefined, true, 2, "", "", "10", "EUR"],
+				[undefined, undefined, true, 1, "", "", "10", "EUR"],
+				[undefined, undefined, true, 0, "", "", "3510", ""]
 			]);
 
 			that.expectChange("level", [,, 0]);
@@ -17803,9 +17827,9 @@ sap.ui.define([
 				"/BusinessPartners(Country='A')",
 				"/BusinessPartners($isTotal=true)"
 			], [
-				[true, true, 0, "", "", "3510", ""],
-				[false, true, 1, "A", "", "10", "EUR"],
-				[undefined, true, 0, "", "", "3510", ""]
+				[undefined, true, true, 0, "", "", "3510", ""],
+				[undefined, false, true, 1, "A", "", "10", "EUR"],
+				[undefined, undefined, true, 0, "", "", "3510", ""]
 			]);
 		});
 	});
@@ -17838,6 +17862,7 @@ sap.ui.define([
 			subtotalsAtBottomOnly : ' + bSubtotalsAtBottomOnly + '\
 		}\
 	}}">\
+	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -17889,9 +17914,9 @@ sap.ui.define([
 				"/BusinessPartners(Country='A')",
 				"/BusinessPartners($isTotal=true)"
 			], [
-				[true, true, 0, "", "", "3510", ""],
-				[false, false, 1, "A", "", "", ""],
-				[undefined, true, 0, "", "", "3510", ""]
+				[undefined, true, true, 0, "", "", "3510", ""],
+				[undefined, false, false, 1, "A", "", "", ""],
+				[undefined, undefined, true, 0, "", "", "3510", ""]
 			]);
 
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'A')"
@@ -17914,10 +17939,10 @@ sap.ui.define([
 				"/BusinessPartners(Country='A',LocalCurrency='EUR')",
 				"/BusinessPartners($isTotal=true)"
 			], [
-				[true, true, 0, "", "", "3510", ""],
-				[true, false, 1, "A", "", "", ""],
-				[false, false, 2, "A", "", "", "EUR"],
-				[undefined, true, 0, "", "", "3510", ""]
+				[undefined, true, true, 0, "", "", "3510", ""],
+				[1, true, false, 1, "A", "", "", ""],
+				[undefined, false, false, 2, "A", "", "", "EUR"],
+				[undefined, undefined, true, 0, "", "", "3510", ""]
 			]);
 
 			that.expectRequest("BusinessPartners"
@@ -17948,13 +17973,13 @@ sap.ui.define([
 				"/BusinessPartners(Country='A',LocalCurrency='EUR',Region='c')",
 				"/BusinessPartners($isTotal=true)"
 			], [
-				[true, true, 0, "", "", "3510", ""],
-				[true, false, 1, "A", "", "", ""],
-				[true, false, 2, "A", "", "", "EUR"],
-				[false, false, 3, "A", "a", "", "EUR"],
-				[false, false, 3, "A", "b", "", "EUR"],
-				[false, false, 3, "A", "c", "", "EUR"],
-				[undefined, true, 0, "", "", "3510", ""]
+				[undefined, true, true, 0, "", "", "3510", ""],
+				[1, true, false, 1, "A", "", "", ""],
+				[3, true, false, 2, "A", "", "", "EUR"],
+				[undefined, false, false, 3, "A", "a", "", "EUR"],
+				[undefined, false, false, 3, "A", "b", "", "EUR"],
+				[undefined, false, false, 3, "A", "c", "", "EUR"],
+				[undefined, undefined, true, 0, "", "", "3510", ""]
 			]);
 
 			that.expectChange("level", [,, 0]);
@@ -17970,9 +17995,9 @@ sap.ui.define([
 				"/BusinessPartners(Country='A')",
 				"/BusinessPartners($isTotal=true)"
 			], [
-				[true, true, 0, "", "", "3510", ""],
-				[false, false, 1, "A", "", "", ""],
-				[undefined, true, 0, "", "", "3510", ""]
+				[undefined, true, true, 0, "", "", "3510", ""],
+				[undefined, false, false, 1, "A", "", "", ""],
+				[undefined, undefined, true, 0, "", "", "3510", ""]
 			]);
 		});
 	});
@@ -18045,6 +18070,7 @@ sap.ui.define([
 			groupLevels : [\'Country\']\
 		}\
 	}}" threshold="0" visibleRowCount="4">\
+	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -18062,6 +18088,7 @@ sap.ui.define([
 					{Country : "UK", SalesAmount : "200"}
 				]
 			})
+			.expectChange("groupLevelCount", [undefined, undefined])
 			.expectChange("isExpanded", [false, false])
 			.expectChange("isTotal", [true, true])
 			.expectChange("level", [1, 1])
@@ -18082,6 +18109,7 @@ sap.ui.define([
 						{Region : "W", SalesAmount : "40"}
 					]
 				})
+				.expectChange("groupLevelCount", [, 12, undefined, undefined])
 				.expectChange("isExpanded", [, true, undefined, undefined])
 				.expectChange("isTotal", [,, false, false])
 				.expectChange("level", [,, 2, 2])
@@ -18096,7 +18124,8 @@ sap.ui.define([
 		}).then(function () {
 			var oThirdRow = oTable.getRows()[2].getBindingContext();
 
-			that.expectResets(oTable, 2, 2)
+			that.expectResets(oTable, 2, 2, 2)
+				.expectChange("groupLevelCount", [, undefined])
 				.expectChange("isExpanded", [, false]);
 
 			// code under test
@@ -18154,6 +18183,7 @@ sap.ui.define([
 		},\
 		$orderby : \'RegionText desc\'\
 	}}" threshold="0" visibleRowCount="4">\
+	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -18178,6 +18208,7 @@ sap.ui.define([
 					{Country : "IT", CountryText : "<IT>", SalesAmount : "400"}
 				]
 			})
+			.expectChange("groupLevelCount", [undefined, undefined, undefined, undefined])
 			.expectChange("isExpanded", [false, false, false, false])
 			.expectChange("isTotal", [true, true, true, true])
 			.expectChange("level", [1, 1, 1, 1])
@@ -18213,6 +18244,7 @@ sap.ui.define([
 						{Region : "X", RegionText : "<X>", SalesAmount : "30"}
 					]
 				})
+				.expectChange("groupLevelCount", [3])
 				.expectChange("isExpanded", [true])
 				.expectChange("level", [, 2, 2, 2])
 				.expectChange("country", [, "US", "US", "US"])
@@ -18236,6 +18268,7 @@ sap.ui.define([
 						{SalesAmount : "20", Segment : "y"}
 					]
 				})
+				.expectChange("groupLevelCount", [, 2])
 				.expectChange("isExpanded", [, true])
 				.expectChange("level", [,, 3, 3])
 				.expectChange("region", [,, "Z", "Z"])
@@ -18259,6 +18292,7 @@ sap.ui.define([
 						{AccountResponsible : "a", SalesAmount : "10", SalesNumber : 1}
 					]
 				})
+				.expectChange("groupLevelCount", [,, 1])
 				.expectChange("isExpanded", [,, true, undefined])
 				.expectChange("isTotal", [,,, false])
 				.expectChange("level", [,,, 4])
@@ -18274,7 +18308,8 @@ sap.ui.define([
 		}).then(function () {
 			assert.strictEqual(oRowsBinding.getLength(), 26 + 3 + 2 + 1);
 
-			that.expectChange("isExpanded", [false, false, false, false])
+			that.expectChange("groupLevelCount", [undefined, undefined, undefined])
+				.expectChange("isExpanded", [false, false, false, false])
 				.expectChange("isTotal", [,,, true])
 				.expectChange("level", [, 1, 1, 1])
 				.expectChange("country", [, "UK", "DE", "IT"])
@@ -18295,7 +18330,8 @@ sap.ui.define([
 			oUKContext = oRowsBinding.getCurrentContexts()[1];
 
 			// expectation: tree should be restored with all previously expanded nodes
-			that.expectChange("isExpanded", [true, true, true, undefined])
+			that.expectChange("groupLevelCount", [3, 2, 1])
+				.expectChange("isExpanded", [true, true, true, undefined])
 				.expectChange("isTotal", [,,, false])
 				.expectChange("level", [, 2, 3, 4])
 				.expectChange("country", [, "US", "US", "US"])
@@ -18326,7 +18362,8 @@ sap.ui.define([
 			assert.strictEqual(oUKContext0.getPath(), oUKContext.getPath());
 			assert.ok(oUKContext0 === oUKContext, "'UK' context is still the same instance");
 		}).then(function () {
-			that.expectChange("isExpanded", [, false, false, false])
+			that.expectChange("groupLevelCount", [, undefined, undefined])
+				.expectChange("isExpanded", [, false, false, false])
 				.expectChange("isTotal", [,,, true])
 				.expectChange("level", [,, 2, 2])
 				.expectChange("region", [,, "Y", "X"])
@@ -18373,6 +18410,7 @@ sap.ui.define([
 		$orderby :\
 \'BestPublication/DraftAdministrativeData/InProcessByUser desc,BestFriend/Name,Address/City asc\'\
 	}}" threshold="0" visibleRowCount="6">\
+	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -18407,6 +18445,7 @@ sap.ui.define([
 					IsActiveEntity : true
 				}]
 			})
+			.expectChange("groupLevelCount", [undefined, undefined])
 			.expectChange("isExpanded", [false, false])
 			.expectChange("isTotal", [false, false])
 			.expectChange("level", [1, 1])
@@ -18430,6 +18469,7 @@ sap.ui.define([
 						{BestFriend : {Name : "B's best friend"}, Name : "B"}
 					]
 				})
+				.expectChange("groupLevelCount", [, 2, undefined, undefined])
 				.expectChange("isExpanded", [, true, false, false])
 				.expectChange("isTotal", [,, false, false])
 				.expectChange("level", [,, 2, 2])
@@ -18461,6 +18501,7 @@ sap.ui.define([
 						sendsAutographs : true
 					}]
 				})
+				.expectChange("groupLevelCount", [,,, 2, undefined, undefined])
 				.expectChange("isExpanded", [,,, true, undefined, undefined])
 				.expectChange("isTotal", [,,,, false, false])
 				.expectChange("level", [,,,, 3, 3])
@@ -18508,6 +18549,7 @@ sap.ui.define([
 			subtotalsAtBottomOnly : false\
 		}\
 	}}" threshold="0" visibleRowCount="3">\
+	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -18525,6 +18567,7 @@ sap.ui.define([
 					{Region : "X"}
 				]
 			})
+			.expectChange("groupLevelCount", [undefined, undefined, undefined])
 			.expectChange("isExpanded", [false, false, false])
 			.expectChange("isTotal", [false, false, false])
 			.expectChange("level", [1, 1, 1])
@@ -18539,15 +18582,16 @@ sap.ui.define([
 			that.expectChange("isExpanded", [, true]);
 
 			if (!bSecondScroll) {
-				that.expectResets(oTable, 2)
+				that.expectResets(oTable, 2, 0, 2)
 					.expectChange("region", [,, "X"]) // "client side scrolling"
+					.expectChange("groupLevelCount", [,,])
 					.expectChange("isExpanded", [,, undefined])
 					.expectChange("level", [,, 2])
 					.expectChange("region", [,, "Y"])
 					.expectChange("accountResponsible", [,, "a"])
 					.expectChange("salesAmount", [,, "10"]);
 			} else {
-				that.expectResets(oTable, 3);
+				that.expectResets(oTable, 3, 0, 3);
 			}
 
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Y')"
@@ -18571,7 +18615,8 @@ sap.ui.define([
 				});
 
 			if (!bSecondScroll) {
-				that.expectChange("isExpanded", [,,, false, false])
+				that.expectChange("groupLevelCount", [,,,,])
+					.expectChange("isExpanded", [,,, false, false])
 					.expectChange("isTotal", [,,, false, false])
 					.expectChange("level", [,,, 1, 1])
 					.expectChange("region", [,,, "X", "W"])
@@ -18636,6 +18681,7 @@ sap.ui.define([
 			groupLevels : [\'Country\', \'Region\']\
 		}\
 	}}" threshold="0" visibleRowCount="8">\
+	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -18660,6 +18706,8 @@ sap.ui.define([
 					{Country : "LU", SalesAmount : "800"}
 				]
 			})
+			.expectChange("groupLevelCount", [undefined, undefined, undefined, undefined, undefined,
+				undefined, undefined, undefined])
 			.expectChange("isExpanded", [false, false, false, false, false, false, false, false])
 			.expectChange("isTotal", [true, true, true, true, true, true, true, true])
 			.expectChange("level", [1, 1, 1, 1, 1, 1, 1, 1])
@@ -18711,6 +18759,7 @@ sap.ui.define([
 			assert.ok(oUKContext0 === oUKContext, "'UK' context is still the same instance");
 
 			that.expectChange("isExpanded", [true])
+				.expectChange("groupLevelCount", [3])
 				.expectChange("level", [, 2, 2, 2])
 				.expectChange("country", [, "US", "US", "US", "UK", "DE", "IT", "FR"])
 				.expectChange("region", [, "Z", "Y", "X"])
@@ -18723,7 +18772,8 @@ sap.ui.define([
 		}).then(function () {
 			assert.strictEqual(oRowsBinding.getLength(), 26 + 3);
 
-			that.expectChange("isExpanded", [, true, true])
+			that.expectChange("groupLevelCount", [undefined])
+				.expectChange("isExpanded", [, true, true])
 				.expectChange("isExpanded", [false, false, false])
 				.expectChange("level", [, 1, 1, 1])
 				.expectChange("country", [, "UK", "DE", "IT", "FR", "BE", "NL", "LU"])
@@ -18764,7 +18814,8 @@ sap.ui.define([
 					- US-X
 				- UK
 			 */
-			that.expectChange("isExpanded", [true, true, undefined, undefined, true, undefined])
+			that.expectChange("groupLevelCount", [3, 2,,, 1])
+				.expectChange("isExpanded", [true, true, undefined, undefined, true, undefined])
 				.expectChange("isTotal", [,, false, false,, false])
 				.expectChange("level", [, 2, 3, 3, 2, 3, 2])
 				.expectChange("country", [, "US", "US", "US", "US", "US", "US", "UK"])
@@ -18803,6 +18854,7 @@ sap.ui.define([
 			groupLevels : [\'Country\']\
 		}\
 	}}" threshold="0" visibleRowCount="4">\
+	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -18819,6 +18871,7 @@ sap.ui.define([
 					{Country : "US", SalesAmount : "100"}
 				]
 			})
+			.expectChange("groupLevelCount", [undefined])
 			.expectChange("isExpanded", [false])
 			.expectChange("isTotal", [true])
 			.expectChange("level", [1])
@@ -18843,6 +18896,7 @@ sap.ui.define([
 						{Region : "W", SalesAmount : "40"}
 					]
 				})
+				.expectChange("groupLevelCount", [26, undefined, undefined, undefined])
 				.expectChange("isExpanded", [, undefined, undefined, undefined])
 				.expectChange("isTotal", [, false, false, false])
 				.expectChange("level", [, 2, 2, 2])
@@ -18857,7 +18911,7 @@ sap.ui.define([
 		}).then(function () {
 			assert.strictEqual(oRowsBinding.getLength(), 1 + 26);
 
-			that.expectResets(oTable, 4, 3)
+			that.expectResets(oTable, 4, 3, 3)
 				.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
 					+ "/groupby((Region),aggregate(SalesAmount))&$skip=4&$top=3",
 					function () {
@@ -18888,7 +18942,8 @@ sap.ui.define([
 		}).then(function () {
 			assert.strictEqual(oRowsBinding.getLength(), 1);
 
-			that.expectChange("isExpanded", [true])
+			that.expectChange("groupLevelCount", [26])
+				.expectChange("isExpanded", [true])
 				.expectChange("isTotal", [, false, false, false])
 				.expectChange("level", [, 2, 2, 2])
 				.expectChange("country", [, "US", "US", "US"])
@@ -18904,7 +18959,8 @@ sap.ui.define([
 
 			// Note: we only see the delta of row content compared to above, but then with a
 			// different row index!
-			that.expectChange("isExpanded", [,,,, undefined])
+			that.expectChange("groupLevelCount", [,,,, undefined])
+				.expectChange("isExpanded", [,,,, undefined])
 				.expectChange("isTotal", [,,,, false])
 				.expectChange("level", [,,,, 2])
 				.expectChange("region", [,,,, "W", "V", "U", "T"])
@@ -19708,6 +19764,7 @@ sap.ui.define([
 		},\
 		filters : {path : \'Name\', operator : \'EQ\', value1 : \'Foo\'}\
 	}" threshold="0" visibleRowCount="3">\
+	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -19730,6 +19787,7 @@ sap.ui.define([
 					{Country : "B", SalesNumber : 102}
 				]
 			})
+			.expectChange("groupLevelCount", [undefined, undefined, undefined])
 			.expectChange("isExpanded", [true, false, false])
 			.expectChange("isTotal", [true, true, true])
 			.expectChange("level", [0, 1, 1])
@@ -19756,6 +19814,7 @@ sap.ui.define([
 						{Region : "c", SalesNumber : 3}
 					]
 				})
+				.expectChange("groupLevelCount", [, 12])
 				.expectChange("isExpanded", [,, undefined])
 				.expectChange("isTotal", [,, false])
 				.expectChange("level", [,, 2])
@@ -19782,7 +19841,7 @@ sap.ui.define([
 						{Region : "h", SalesNumber : 8}
 					]
 				})
-				.expectResets(oTable, 3, 1)
+				.expectResets(oTable, 3, 1, 2)
 				.expectChange("isExpanded", [,,,,,,, /*undefined*/, /*undefined*/, /*undefined*/])
 				.expectChange("isTotal", [,,,,,,, false, false, false])
 				.expectChange("level", [,,,,,,, 2, 2, 2])

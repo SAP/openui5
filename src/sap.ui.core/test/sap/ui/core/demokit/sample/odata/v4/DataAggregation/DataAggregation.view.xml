@@ -33,6 +33,12 @@
 				really useful here -->
 			</template>
 		</Column>
+		<Column hAlign="Center" width="5em">
+			<m:Label text="Group Level Count"/>
+			<template>
+				<m:Label text="{= %{@$ui5.node.groupLevelCount} }"/>
+			</template>
+		</Column>
 		<Column width="4em">
 			<template>
 				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined}"
