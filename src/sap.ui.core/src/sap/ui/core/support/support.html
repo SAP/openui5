@@ -13,7 +13,10 @@
 			data-sap-ui-bindingsyntax="complex"
 			data-sap-ui-libs="sap.ui.core"
 			data-sap-ui-modules="sap.ui.core.support.Support"
-			data-sap-ui-oninit="sap.ui.core.support.Support.getStub(sap.ui.core.support.Support.StubType.TOOL)"></script>
+			data-sap-ui-oninit="module:sap/ui/core/support/BootSupportTool"
+			data-sap-ui-resourceroots='{
+				"sap.ui.core.support": "./"
+			}'></script>
 	<script src="bootstrapFallback.js"></script>
 </head>
 <body class="sapUiSupportBody">
