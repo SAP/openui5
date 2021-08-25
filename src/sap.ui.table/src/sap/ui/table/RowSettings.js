@@ -53,7 +53,8 @@ sap.ui.define([
 				highlight : {type : "string", group : "Appearance", defaultValue : "None"},
 
 				/**
-				 * Defines the semantics of the {@link sap.ui.table.RowSettings#setHighlight highlight} property for accessibility purposes.
+				 * Defines the semantics of the {@link sap.ui.table.RowSettings#setHighlight highlight} property for accessibility purposes. It is
+				 * only used as an invisible text for screen reader support and does not add a tooltip to the highlight.
 				 *
 				 * @since 1.62
 				 */
