@@ -2807,7 +2807,7 @@
 		{
 		  "id": "sap.m.sample.TableAlternateRowColors",
 		  "name": "Table - Alternate Row Colors",
-		  "description": "Table with alternating light and dark background colors. Note: The effect of this feature is only visible in the SAP Belize and Belize Deep themes."
+		  "description": "Table with alternating light and dark background colors. Note: The effect of this feature is only visible in some themes (e.g. SAP Belize or SAP Quartz)."
 		},
 		{
 		  "id": "sap.m.sample.TableDnD",

@@ -6,7 +6,6 @@
 	<Table id="idProductsTable"
 		inset="false"
 		mode="MultiSelect"
-		alternateRowColors="true"
 		items="{
 			path: '/ProductCollection',
 			sorter: {
