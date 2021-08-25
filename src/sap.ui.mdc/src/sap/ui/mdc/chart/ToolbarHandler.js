@@ -117,6 +117,7 @@ sap.ui.define([
 				this._legendBtn = new OverflowToggleButton(oChart.getId() + "-chart_legend", {
 					type: "Transparent",
 					text: MDCRb.getText("chart.LEGENDBTN_TEXT"),
+					tooltip: MDCRb.getText('chart.LEGENDBTN_TOOLTIP'),
 					icon: "sap-icon://legend",
 					enabled: false,
 					pressed: false
