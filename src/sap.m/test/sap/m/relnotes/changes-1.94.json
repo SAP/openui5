@@ -3,6 +3,28 @@
     "date": "August 2021",
     "notes": [
       {
+        "id": "cd01c7a435e4594ab03ac93f35a016233df87166",
+        "type": "FIX",
+        "text": " sap.m.Input: Hide value help icon when showValueHelp prop is false",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180363385"
+          }
+        ]
+      },
+      {
+        "id": "aba3438d56697d1a99116f2ef7ae827d889d09b6",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Dragging when the page is scrolled now works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180321625"
+          }
+        ]
+      },
+      {
         "id": "8f5e094c53cb71c50c7e3386b77dcdd2fcbd5aef",
         "type": "FIX",
         "text": " sap.m.SinglePlanningCalendar: Allow startHour to be greater than the endHour",
