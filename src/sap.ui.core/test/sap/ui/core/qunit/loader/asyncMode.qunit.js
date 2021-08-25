@@ -4,6 +4,21 @@
 
 	QUnit.config.autostart = false;
 	QUnit.config.seed = Math.random();
+	if ( QUnit.urlParams["rtf"] || QUnit.urlParams["repeat-to-failure"]) {
+		QUnit.done(function(results) {
+			if (results.failed === 0) {
+				setTimeout(function() {
+					location.reload();
+				}, 100);
+			}
+		});
+	}
+	QUnit.config.urlConfig.push({
+		id: "repeat-to-failure",
+		label: "Repeat",
+		value: false,
+		tooltip: "Whether this test should auto-repeat until it fails"
+	});
 
 	sap.ui.loader._.logger = {
 		/*eslint-disable no-console */
@@ -23,7 +38,6 @@
 		isLoggable: function() { return true; }
 	};
 	sap.ui.loader.config({
-		async: true,
 		paths: {
 			'fixture': 'fixture/'
 		}
@@ -293,7 +307,7 @@
 
 	// skip all tests in FF that require handling of global errors because document.currentScript is not supported during the window.error event
 	var Device = sap.ui.requireSync("sap/ui/Device");
-	var SKIP_ASYNC_ERROR_HANDLING = Device.browser.firefox ? "execution errors for asynchronoulsy executed legacy modules can't be associated with the executing module" : false;
+	var SKIP_ASYNC_ERROR_HANDLING = Device.browser.firefox ? "execution errors for asynchronously executed legacy modules can't be associated with the executing module" : false;
 
 	[
 		{
@@ -921,7 +935,7 @@
 			assert.deepEqual(sap.ui.require("fixture/inconsistent-naming/cycle-member1"), {id:"fixture/inconsistent-naming/cycle-member1"}, "the first member of the circle");
 			assert.deepEqual(sap.ui.require("fixture/inconsistent-naming/cycle-member2-inconsistently-named"), {id:"beautiful-butterfly"}, "the 2nd member of the circle");
 			assert.deepEqual(sap.ui.require("fixture/inconsistent-naming/cycle-member3"), {id:"fixture/inconsistent-naming/cycle-member3"}, "the 3rd member of the circle");
-			assert.deepEqual(sap.ui.require("beautiful-butterfly"), {id:"beautiful-butterfly"}, "the alioas of the 2nd member of the circle");
+			assert.deepEqual(sap.ui.require("beautiful-butterfly"), {id:"beautiful-butterfly"}, "the alias of the 2nd member of the circle");
 			done();
 		}, function() {
 			assert.notOk(true, "errback should not be called");
@@ -964,7 +978,7 @@
 			var expected2 = {
 				id: "fixture/multiple-modules-per-file/named-module-03"
 			};
-			assert.deepEqual(mod, expected1, "the required module should have the sme export as the first named module (alias)");
+			assert.deepEqual(mod, expected1, "the required module should have the same export as the first named module (alias)");
 			assert.ok(sap.ui.loader._.getModuleState(expected1.id + ".js") > 0, "first named module should be known to the loader");
 			assert.ok(sap.ui.loader._.getModuleState(expected2.id + ".js") > 0, "second named module should be known to the loader");
 			done();
@@ -1054,106 +1068,6 @@
 		}, function() {
 			assert.ok(false, "request should not fail");
 			done();
-		});
-	});
-
-
-	// ========================================================================================
-	// Unmanaged Module Definitions
-	// ========================================================================================
-
-	QUnit.module("Unmanaged Module Definitions");
-
-	QUnit.test("Unnamed Definition", function(assert) {
-		var done = assert.async();
-
-		// for adhoc defines, there's no module that could report the error -> throws
-		var origOnError = window.onerror;
-		window.onerror = sinon.stub().callsFake(function() {
-			assert.ok(window.onerror.calledOnce, "an error was thrown");
-			assert.ok(window.onerror.calledWith(sinon.match(/anonymous/).and(sinon.match(/require.*call/))), "...with the expected message");
-			window.onerror = origOnError;
-			done();
-			return true;
-		});
-
-		sap.ui.define(function() {
-			assert.ok(false, "should not be executed");
-		});
-	});
-
-	QUnit.test("Named Definition", function(assert) {
-		var done = assert.async();
-
-		// for adhoc defines, there's no module that could report the error -> throws
-		var origOnError = window.onerror;
-		window.onerror = sinon.stub().returns(true);
-
-		sap.ui.define("fixture/unmanaged-defines/module01", [], function() {
-			assert.ok(true, "named module definition should be executed");
-			return {
-				id: "fixture/unmanaged-defines/module01"
-			};
-		});
-
-		sap.ui.require(["fixture/unmanaged-defines/module01"], function(mod) {
-			var expected = {
-				id: "fixture/unmanaged-defines/module01"
-			};
-			assert.deepEqual(mod, expected, "export should be the expected one");
-			assert.strictEqual(window.onerror.callCount, 0, "no error was thrown");
-			window.onerror = origOnError;
-			done();
-		}, function(err) {
-			assert.ok(false, "errback should not be called");
-		});
-	});
-
-	QUnit.test("Repeated Named Definition", function(assert) {
-		var done = assert.async();
-
-		var origOnError = window.onerror;
-		window.onerror = sinon.stub().returns(true);
-		sinon.stub(sap.ui.loader._.logger, "warning");
-
-		function restoreAndDone() {
-			sap.ui.loader._.logger.warning.restore();
-			window.onerror = origOnError;
-			done();
-		}
-
-		sap.ui.define("fixture/unmanaged-defines/module02", [], function() {
-			assert.ok(true, "named module definition should be executed");
-			return {
-				id: "fixture/unmanaged-defines/module02#def-1"
-			};
-		});
-
-		sap.ui.define("fixture/unmanaged-defines/module02", [], function() {
-			assert.ok(false, "2nd module definition must not be executed");
-			return {
-				id: "fixture/unmanaged-defines/module02#def-2"
-			};
-		});
-
-		sap.ui.require(["fixture/unmanaged-defines/module02"], function(mod) {
-			var expected = {
-				id: "fixture/unmanaged-defines/module02#def-1"
-			};
-			assert.deepEqual(mod, expected, "export should be the expected one");
-			assert.strictEqual(window.onerror.callCount, 0, "no error was thrown");
-			assert.ok(
-				sap.ui.loader._.logger.warning.calledWith(
-					sinon.match(/fixture\/unmanaged-defines\/module02/)
-					.and(sinon.match(/defined more than once/))
-					.and(sinon.match(/will be ignored/))),
-				"a warning has been logged");
-
-			restoreAndDone();
-		}, function(err) {
-			assert.ok(false, "errback should not be called");
-
-			restoreAndDone();
 		});
 	});
 
