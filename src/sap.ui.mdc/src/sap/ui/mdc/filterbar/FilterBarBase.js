@@ -2,8 +2,51 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'sap/ui/mdc/p13n/subcontroller/FilterController', 'sap/ui/core/library', 'sap/ui/mdc/p13n/FlexUtil', 'sap/ui/Device', 'sap/ui/mdc/Control', 'sap/base/util/merge', 'sap/base/util/deepEqual', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/base/ManagedObjectObserver', 'sap/base/Log', 'sap/ui/mdc/condition/ConditionModel', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/condition/ConditionConverter', 'sap/m/MessageBox', "sap/ui/fl/write/api/ControlPersonalizationWriteAPI", "sap/ui/mdc/p13n/StateUtil", "sap/ui/mdc/condition/FilterConverter", "sap/ui/fl/apply/api/ControlVariantApplyAPI", "sap/ui/mdc/util/FilterUtil", "sap/m/Button", "sap/m/library", "sap/ui/core/ShortcutHintsMixin"
-], function(FilterController, coreLibrary, FlexUtil, Device, Control, merge, deepEqual, ManagedObjectModel, ManagedObjectObserver, Log, ConditionModel, Condition, IdentifierUtil, ConditionConverter, MessageBox, ControlPersonalizationWriteAPI, StateUtil, FilterConverter, ControlVariantApplyAPI, FilterUtil, Button, mLibrary, ShortcutHintsMixin) {
+	'sap/ui/mdc/p13n/subcontroller/FilterController',
+	'sap/ui/core/library',
+	'sap/ui/mdc/p13n/FlexUtil',
+	'sap/ui/Device',
+	'sap/ui/mdc/Control',
+	'sap/base/Log',
+	'sap/base/util/merge',
+	'sap/ui/model/base/ManagedObjectModel',
+	'sap/ui/base/ManagedObjectObserver',
+	'sap/ui/mdc/condition/ConditionModel',
+	'sap/ui/mdc/condition/Condition',
+	'sap/ui/mdc/util/IdentifierUtil',
+	'sap/ui/mdc/condition/ConditionConverter',
+	"sap/ui/mdc/p13n/StateUtil",
+	"sap/ui/mdc/condition/FilterConverter",
+	"sap/ui/mdc/util/FilterUtil",
+	"sap/ui/mdc/filterbar/PropertyHelper",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
+	"sap/m/library",
+	"sap/m/Button",
+	'sap/m/MessageBox',
+	"sap/ui/core/ShortcutHintsMixin"],
+	function(
+		FilterController,
+		coreLibrary,
+		FlexUtil,
+		Device,
+		Control,
+		Log,
+		merge,
+		ManagedObjectModel,
+		ManagedObjectObserver,
+		ConditionModel,
+		Condition,
+		IdentifierUtil,
+		ConditionConverter,
+		StateUtil,
+		FilterConverter,
+		FilterUtil,
+		PropertyHelper,
+		ControlVariantApplyAPI,
+		mLibrary,
+		Button,
+		MessageBox,
+		ShortcutHintsMixin) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
@@ -231,8 +274,6 @@ sap.ui.define([
 		this._createInnerLayout();
 
 		this._bPersistValues = false;
-
-		this._aProperties = null;
 
 		this._fResolveInitialFiltersApplied = undefined;
 		this._oInitialFiltersAppliedPromise = new Promise(function(resolve) {
@@ -1336,7 +1377,6 @@ sap.ui.define([
 		return oFilterField;
 	};
 
-
 	FilterBarBase.prototype._retrieveMetadata = function() {
 
 		if (this._oMetadataAppliedPromise) {
@@ -1352,26 +1392,16 @@ sap.ui.define([
 		this.initControlDelegate().then(function() {
 			if (!this._bIsBeingDestroyed) {
 
-				this._aProperties = [];
-
 				var fnResolveMetadata = function() {
 					this._fResolveMetadataApplied();
 					this._fResolveMetadataApplied = null;
 				}.bind(this);
 
 				if (this.bDelegateInitialized && this.getControlDelegate().fetchProperties) {
-					try {
-						this.getControlDelegate().fetchProperties(this).then(function(aProperties) {
-							this._aProperties = aProperties;
-							fnResolveMetadata();
-						}.bind(this), function(sMsg) {
-							Log.error(sMsg);
-							fnResolveMetadata();
-						});
-					} catch (ex) {
-						Log.error("Exception during fetchProperties occured: " + ex.message);
+					this.initPropertyHelper(PropertyHelper).then(function(oPropertyHelper) {
+						//this._oPropertyHelper = oPropertyHelper;
 						fnResolveMetadata();
-					}
+					});
 				} else {
 					Log.error("Provided delegate '" + this.getDelegate().path + "' not valid.");
 					fnResolveMetadata();
@@ -1402,7 +1432,12 @@ sap.ui.define([
 
 
 	FilterBarBase.prototype.getPropertyInfoSet = function() {
-		return this._aProperties || [];
+		try {
+			var oPropertyHelper = this.getPropertyHelper();
+			return oPropertyHelper ? oPropertyHelper.getProperties() : [];
+		} catch (ex) {
+			return [];
+		}
 	};
 
 	FilterBarBase.prototype._getNonHiddenPropertyInfoSet = function() {
@@ -1617,7 +1652,9 @@ sap.ui.define([
 
 	FilterBarBase.prototype._changesApplied = function() {
 
-		this._bIgnoreChanges = false;
+		if (!this._isChangeApplying()) {
+			this._bIgnoreChanges = false;
+		}
 
 		this._reportModelChange(this._bExecuteOnSelect, this._bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch);
 		this._bExecuteOnSelect = undefined;
@@ -1699,7 +1736,6 @@ sap.ui.define([
 		this._bPersistValues = null;
 
 		this._oDelegate = null;
-		this._aProperties = null;
 
 		this._oFlexPromise = null;
 

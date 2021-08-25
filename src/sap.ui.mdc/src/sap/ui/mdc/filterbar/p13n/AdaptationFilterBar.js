@@ -127,27 +127,11 @@ sap.ui.define([
 		this.triggerSearch();
 	};
 
-	/**
-	 * Method which will initialize the <code>AdaptationFilterBar</code> to retrieve the propertyinfo based on its parent
-	 *
-	 * @returns {Promise} A Promise which resolves once the propertyinfo has been propagated
-	 */
-	AdaptationFilterBar.prototype.initialized = function(){
 
-		var oParentPropertyInfoPromise = this.getAdaptationControl().awaitControlDelegate().then(function(oParentControl) {
-			return oParentControl.fetchProperties(this.getAdaptationControl()).then(function(aPropertyInfo){
-				return aPropertyInfo;
-			});
+	AdaptationFilterBar.prototype.initPropertyHelper = function(){
+		return this.getAdaptationControl().awaitPropertyHelper().then(function(oPropertyHelper) {
+			this._oPropertyHelper = oPropertyHelper;
 		}.bind(this));
-
-		return Promise.all([
-			oParentPropertyInfoPromise,
-			FilterBarBase.prototype.initialized.apply(this, arguments)
-		]).then(function(aResolvedValues){
-			var aPropertyInfo = aResolvedValues[0];
-			this._aProperties = aPropertyInfo;
-		}.bind(this));
-
 	};
 
 	/**
