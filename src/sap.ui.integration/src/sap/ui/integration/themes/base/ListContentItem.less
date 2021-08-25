@@ -78,7 +78,28 @@
 		}
 	}
 
-	.sapUiSizeCompact .sapMSLI.sapUiIntLCI {
+	.sapUiIntLCI:not(.sapMSLIThumbnail):not(.sapMSLIWithDescription).sapUiIntLCIIconSize {
+		&XS .sapMLIBContent {
+			height: ~"calc(2.5625rem - 1px)";
+		}
+
+		&S .sapMLIBContent {
+			height: ~"calc(3.5625rem - 1px)";
+		}
+
+		&M .sapMLIBContent {
+			height: ~"calc(4.5625rem - 1px)";
+		}
+	}
+}
+
+.sapUiSizeCompact.sapUiIntCard,
+.sapUiSizeCompact .sapUiIntCard {
+	.sapMSLI.sapUiIntLCI {
+		.sapMLIBContent {
+			height: ~"calc(2rem - 1px)";
+		}
+
 		&.sapMSLIThumbnail,
 		&.sapMSLINoIconInset,
 		&.sapMSLIWithDescription,
@@ -91,34 +112,20 @@
 				height: ~"calc(4rem - 1px)";
 			}
 		}
-	}
 
-	.sapUiSizeCompact .sapMSLI.sapUiIntLCI.sapMSLIWrapping {
-		&.sapMSLIWithDescription,
-		&.sapMSLINoIconInset,
-		&.sapMSLINoTitleAdapt {
-			.sapMLIBContent {
-				min-height: ~"calc(5rem - 1px)";
+		&.sapMSLIWrapping {
+			&.sapMSLIWithDescription,
+			&.sapMSLINoIconInset,
+			&.sapMSLINoTitleAdapt {
+				.sapMLIBContent {
+					min-height: ~"calc(5rem - 1px)";
+				}
 			}
-		}
 
-		.sapMLIBContent {
-			height: auto;
-			min-height: ~"calc(2rem - 1px)";
-		}
-	}
-
-	.sapUiIntLCI:not(.sapMSLIThumbnail):not(.sapMSLIWithDescription).sapUiIntLCIIconSize {
-		&XS .sapMLIBContent {
-			height: ~"calc(2.5625rem - 1px)";
-		}
-
-		&S .sapMLIBContent {
-			height: ~"calc(3.5625rem - 1px)";
-		}
-
-		&M .sapMLIBContent {
-			height: ~"calc(4.5625rem - 1px)";
+			.sapMLIBContent {
+				height: auto;
+				min-height: ~"calc(2rem - 1px)";
+			}
 		}
 	}
 }
