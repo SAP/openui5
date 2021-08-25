@@ -2599,6 +2599,8 @@ sap.ui.define([
 					liveMode: !oWrapper.isSuspended(), // if suspended, no live search
 					showGoButton: false
 				});
+				oFilterBar.setInternalConditions(this._oConditions); // if already InParameter or SearchValue set, move it to FilterBar
+				this._oConditions = {};
 				this.setAggregation("_filterBar", oFilterBar, true);
 			}
 
