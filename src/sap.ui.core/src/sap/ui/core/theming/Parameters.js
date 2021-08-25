@@ -629,7 +629,7 @@ sap.ui.define([
 		/**
 		 * Returns the current value for one or more theming parameters, depending on the given arguments.
 		 * <ul>
-		 * <li> <b>(deprecated since 1.92)<b> If no parameter is given a key-value map containing all parameters is returned</li>
+		 * <li> <b>(deprecated since 1.92)</b> If no parameter is given a key-value map containing all parameters is returned</li>
 		 * <li>If a <code>string</code> is given as first parameter the value is returned as a <code>string</code></li>
 		 * <li>If an <code>array</code> is given as first parameter a key-value map containing all parameters from the <code>array</code> is returned</li>
 		 * <li>If an <code>object</code> is given as first parameter the result is returned immediately in case all parameters are loaded and available or within the callback in case not all CSS files are already loaded.
