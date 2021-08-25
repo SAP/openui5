@@ -303,8 +303,7 @@ button.sapUiSupportHelpButton:hover {
 	right: 15px;
 }
 
-#sapUiSupportTrace,
-#sapUiSupportMessageTest {
+#sapUiSupportTrace {
 	overflow: hidden;
 }
 
@@ -317,14 +316,9 @@ button.sapUiSupportHelpButton:hover {
 	padding: 5px;
 }
 
-#sapUiSupportMessageTest > .sapUiSupportToolbar > button {
-	margin-left: 5px;
-}
-
 #sapUiSupportPerf .sapUiSupportPerfCntnt,
 #sapUiSupportTechInfo .sapUiSupportTechInfoCntnt,
-#sapUiSupportTrace .sapUiSupportTraceCntnt,
-#sapUiSupportMessageTest .sapUiSupportMessageCntnt {
+#sapUiSupportTrace .sapUiSupportTraceCntnt {
 	overflow: auto;
 	position: absolute;
 	top: 33px;
