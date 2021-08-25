@@ -389,7 +389,9 @@ sap.ui.define([
 			oType.validateValue("0012345");
 			oType.validateValue("324"); // shorter values are OK
 
-			// errors
+			// errors - if the value is nullable and parseKeepsEmptyString is not set, then empty
+			// string is parsed as null, that means "" should never occur and is therefore not valid
+			// as a digit sequence.
 			["", "0123.45", "0003ABC"].forEach(function (vValue) {
 				assert.throws(function () {
 					oType.validateValue(vValue);
@@ -405,6 +407,29 @@ sap.ui.define([
 			oType.validateValue("4711");
 			oType.validateValue("0");
 			oType.validateValue("002345");
+
+			// with parseKeepsEmptyString true
+			oType = new StringType({parseKeepsEmptyString : true}, {isDigitSequence : true});
+
+			// success - if parseKeepsEmptyString is true empty user input stays an empty user input
+			// and if the property is nullable, it is allowed to clear the value so "" has to be
+			// allowed as a valid digit sequence.
+			oType.validateValue("");
+
+			// error
+			["0123.45", "0003ABC"].forEach(function (vValue) {
+				assert.throws(function () {
+					oType.validateValue(vValue);
+				}, new ValidateException("EnterDigitsOnly"), "Invalid value: " + vValue);
+			});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parseKeepsEmptyString: empty string is valid", function (assert) {
+		var oType = new StringType({parseKeepsEmptyString : true});
+
+		// success
+		oType.validateValue("");
 	});
 });

@@ -237,6 +237,8 @@ sap.ui.define([
 			if (oConstraints.nullable !== false) {
 				return;
 			}
+		} else if (sValue === "" && this._sParsedEmptyString === "") {
+			return;
 		} else if (typeof sValue !== "string") {
 			throw new ValidateException("Illegal " + this.getName() + " value: " + sValue);
 		} else if (oConstraints.isDigitSequence) {
