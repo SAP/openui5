@@ -241,7 +241,5 @@ sap.ui.define([
 		setupMockServer();
 	}
 
-	QUnit.config.testTimeout = 180000;
-
 	TestUtils.setData("sap.ui.core.sample.odata.v4.SalesOrders.sandbox", oSandbox);
 }, /* bExport= */false);
