@@ -66,6 +66,23 @@ sap.ui.define(function() {
 				bootCore: false,
 				autostart: false
 			},
+			/*
+			 * asyncMode_unmanagedDefine.qunit.html is still an HTML page of its own as it wants to test the loader
+			 * without using the loader itself to setup the test.
+			 * (The generic starter Test.qunit.html and runTest.js script both use the loader internally)
+			 */
+			asyncMode_unmanagedDefine: {
+				/* separate test page as it only wants the loader, no core */
+				page: "test-resources/sap/ui/core/qunit/loader/asyncMode_unmanagedDefine.qunit.html",
+				title: "Test Page for Module Loading (ui5loader)",
+				loader: {
+					paths: {
+						'fixture': 'test-resources/sap/ui/core/qunit/loader/fixture/'
+					}
+				},
+				bootCore: false,
+				autostart: false
+			},
 			asyncModeUsingCoreFeatures: {
 				title: "Test Page for Module Loading (ui5loader), using Core features",
 				loader: {
