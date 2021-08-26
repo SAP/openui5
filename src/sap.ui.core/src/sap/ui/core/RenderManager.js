@@ -771,6 +771,9 @@ sap.ui.define([
 		 * <li><code>alt: ""</code></li>
 		 * </ul>
 		 *
+		 * <b>Note:</b> This function requires the {@link sap.ui.core.IconPool} module. Ensure that the module is
+		 * loaded before this function is called to avoid syncXHRs.
+		 *
 		 * @param {sap.ui.core.URI} sURI URI of an image or of an icon registered in {@link sap.ui.core.IconPool}
 		 * @param {array|string} [aClasses] Additional classes that are added to the rendered tag
 		 * @param {object} [mAttributes] Additional attributes that will be added to the rendered tag.
@@ -1864,8 +1867,19 @@ sap.ui.define([
 	 * @deprecated Since 1.92. Instead use {@link sap.ui.core.RenderManager#icon} of the {@link sap.ui.core.RenderManager Semantic Rendering API}.
 	 */
 	RenderManager.prototype.writeIcon = function(sURI, aClasses, mAttributes){
-		var IconPool = sap.ui.requireSync("sap/ui/core/IconPool"), // legacy-relevant
-			bIconURI = IconPool.isIconURI(sURI),
+		var IconPool = sap.ui.require("sap/ui/core/IconPool");
+		if (!IconPool) {
+			Log.warning("Synchronous loading of IconPool due to sap.ui.core.RenderManager#icon call. " +
+				"Ensure that 'sap/ui/core/IconPool is loaded before this function is called" , "SyncXHR", null, function() {
+				return {
+					type: "SyncXHR",
+					name: "rendermanager-icon"
+				};
+			});
+			IconPool = sap.ui.requireSync("sap/ui/core/IconPool"); // legacy-relevant: Sync fallback
+		}
+
+		var bIconURI = IconPool.isIconURI(sURI),
 			bAriaLabelledBy = false,
 			sProp, oIconInfo, mDefaultAttributes, sLabel, sInvTextId;
 
