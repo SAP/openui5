@@ -6861,11 +6861,26 @@ sap.ui.define([
 			.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
+		var oReadOnlyInput = new Input({
+			selectedKey: "{/selectedKey}",
+			editable: false,
+			showSuggestion: true,
+				suggestionItems: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
 		assert.strictEqual(oInput.getValue(), "Locations", "The value should come from the selected key");
+		assert.strictEqual(oReadOnlyInput.getValue(), "Locations", "The value should come from the selected key");
 
 		// Cleanup
+		oReadOnlyInput.destroy();
 		oInput.destroy();
 	});
 

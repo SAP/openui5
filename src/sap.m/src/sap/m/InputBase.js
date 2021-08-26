@@ -512,7 +512,7 @@ function(
 		mParameters = mParameters || this.getChangeEventParams();
 
 		// check the control is editable or not
-		if (!this.getEditable() || !this.getEnabled()) {
+		if (this.getDomRef() && (!this.getEditable() || !this.getEnabled())) {
 			return;
 		}
 
