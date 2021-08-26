@@ -3031,6 +3031,42 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("selectedKey should set the value to the matching item on initial loading in read-only input", function (assert) {
+		// Setup
+		this.oData = {
+			selectedKey: "2",
+			value: "zzzzzzz",
+			items: [
+				{status: "0", statusText: "Backups"},
+				{status: "1", statusText: "Equipment"},
+				{status: "2", statusText: "Locations"},
+				{status: "3", statusText: "Systems"}
+			]
+		};
+
+		this.oModel = new JSONModel(this.oData);
+		var oInput = new Input({
+			selectedKey: "{/selectedKey}",
+			editable: false,
+			showSuggestion: true,
+				suggestionItems: {
+				path: "/items",
+				template: new Item({key: "{status}", text: "{statusText}"})
+			}
+		})
+			.setModel(this.oModel)
+			.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
+		assert.strictEqual(oInput.getValue(), "Locations", "The value should come from the selected key");
+
+		// Cleanup
+		oInput.destroy();
+		this.oModel.destroy();
+	});
+
 	QUnit.test("Update selected key after bind data is changed", function(assert) {
 		var oModelData = new JSONModel([{text: "a1"}, {text: "a2"}]),
 			oInput = new Input({
