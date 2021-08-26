@@ -227,6 +227,9 @@
 		position: relative;
 		color: @_sap_m_IconTabBar_TextColor;
 		text-shadow: @_sap_m_IconTabBar_TextShadow;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 
 		.sapUiIcon {
 			font-size: 1rem;
@@ -243,11 +246,6 @@
 
 	&.sapMITHUnselectable:not(.sapMITBDisabled) .sapMITHTextContent {
 		position: relative;
-
-		.sapMITHStartOverflow &,
-		.sapMITHEndOverflow & {
-			bottom: 0.125rem;
-		}
 	}
 
 	.sapMITBCount {
@@ -674,7 +672,6 @@
 		}
 
 		.sapMITBText {
-			display: block;
 			padding: @_sap_m_IconTabBar_HorizontalTextPaddingTop 0 0 @_sap_m_IconTabBar_HorizontalTextPaddingLeft;
 			text-align: left;
 			top: 0.3125rem;
@@ -720,8 +717,6 @@
 
 	.sapMITBHead .sapMITBFilter .sapMITBText {
 		margin: @_sap_m_IconTabBar_InLineFilterMargin;
-		display: flex;
-		align-items: center;
 	}
 
 	&.sapMITBTextOnly .sapMITBHead .sapMITBVertical.sapMITBFilter {
