@@ -3,6 +3,7 @@ ace.define("ace/theme/textmate",["require","exports","module","ace/lib/dom"], fu
 
 exports.isDark = false;
 exports.cssClass = "ace-tm";
+// #### BEGIN MODIFIED BY SAP
 exports.cssText = ".ace-tm .ace_gutter {\
 background: #f0f0f0;\
 color: #333;\
@@ -120,9 +121,11 @@ background: rgb(250, 250, 255);\
 border: 1px solid rgb(200, 200, 250);\
 }\
 .ace-tm .ace_indent-guide {\
-background: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==\") right repeat-y;\
+background: url(" + sap.ui.require.toUrl("sap/ui/codeeditor/js/ace/assets/theme_textmate_indent_guide.png") + ") right repeat-y;\
 }\
 ";
+// #### END MODIFIED BY SAP
+
 exports.$id = "ace/theme/textmate";
 
 var dom = require("../lib/dom");

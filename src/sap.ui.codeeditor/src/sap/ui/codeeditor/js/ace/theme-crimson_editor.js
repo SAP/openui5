@@ -1,5 +1,6 @@
 ace.define("ace/theme/crimson_editor",["require","exports","module","ace/lib/dom"], function(require, exports, module) {
 exports.isDark = false;
+// #### BEGIN MODIFIED BY SAP
 exports.cssText = ".ace-crimson-editor .ace_gutter {\
 background: #ebebeb;\
 color: #333;\
@@ -108,8 +109,9 @@ border: 1px solid rgb(200, 200, 250);\
 color: rgb(192, 0, 192);\
 }\
 .ace-crimson-editor .ace_indent-guide {\
-background: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==\") right repeat-y;\
+background: url(" + sap.ui.require.toUrl("sap/ui/codeeditor/js/ace/assets/theme_crimson_indent_guide.png") + ") right repeat-y;\
 }";
+// #### END MODIFIED BY SAP
 
 exports.cssClass = "ace-crimson-editor";
 
