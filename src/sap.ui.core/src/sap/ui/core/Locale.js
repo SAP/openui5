@@ -3,8 +3,8 @@
  */
 
 //Provides the locale object sap.ui.core.Locale
-sap.ui.define(['sap/ui/base/Object', "sap/base/assert"],
-	function(BaseObject, assert) {
+sap.ui.define(['sap/ui/base/Object', 'sap/base/assert', './CalendarType'],
+	function(BaseObject, assert, CalendarType) {
 	"use strict";
 
 
@@ -289,8 +289,19 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/assert"],
 					|| M_LOCALE_TO_ABAP_LANGUAGE[getPseudoLanguageTag(this.sPrivateUse)]
 					|| sLanguage.toUpperCase()
 				);
-			}
+			},
 
+			/**
+			 *
+			 * @returns {sap.ui.core.CalendarType} The preferred Calendar type.
+			 * @private
+			 * @ui5-restricted sap.ui.core
+			 */
+			getPreferredCalendarType: function() {
+				return Locale._mPreferredCalendar[this.getLanguage() + "-" + this.getRegion()] ||
+					Locale._mPreferredCalendar[this.getLanguage()] ||
+					Locale._mPreferredCalendar["default"];
+			}
 		});
 
 		/*
@@ -363,6 +374,17 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/assert"],
 		 * @private
 		 */
 		Locale._cldrLocales = getDesigntimePropertyAsArray("$cldr-locales:ar,ar_EG,ar_SA,bg,ca,cy,cs,da,de,de_AT,de_CH,el,el_CY,en,en_AU,en_GB,en_HK,en_IE,en_IN,en_NZ,en_PG,en_SG,en_ZA,es,es_AR,es_BO,es_CL,es_CO,es_MX,es_PE,es_UY,es_VE,et,fa,fi,fr,fr_BE,fr_CA,fr_CH,fr_LU,he,hi,hr,hu,id,it,it_CH,ja,kk,ko,lt,lv,ms,nb,nl,nl_BE,pl,pt,pt_PT,ro,ru,ru_UA,sk,sl,sr,sr_Latn,sv,th,tr,uk,vi,zh_CN,zh_HK,zh_SG,zh_TW$");
+
+		/**
+		 * A map of preferred Calendar types according to the language.
+		 * @private
+		 */
+		Locale._mPreferredCalendar = {
+			"ar-SA": CalendarType.Islamic,
+			"fa": CalendarType.Persian,
+			"th": CalendarType.Buddhist,
+			"default": CalendarType.Gregorian
+		};
 
 		/**
 		 * List of locales for which translated texts have been bundled with the UI5 runtime.
