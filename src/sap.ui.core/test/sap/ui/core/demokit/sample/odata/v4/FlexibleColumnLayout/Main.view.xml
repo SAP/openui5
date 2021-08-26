@@ -23,7 +23,8 @@
 							{path : 'SalesOrderID', operator : 'GE', value1 : '0500000000'},
 							{path : 'LifecycleStatus', operator : 'EQ', value1 : 'N'}
 						],
-						parameters : {$count : true}}"
+							parameters : {$count : true},
+						suspended : true}"
 					mode="SingleSelectMaster" selectionChange="onSalesOrderSelect">
 					<headerToolbar>
 						<Toolbar id="salesOrderListToolbar">

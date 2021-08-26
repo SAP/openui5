@@ -34266,26 +34266,33 @@ sap.ui.define([
 	// an active entity visible in the list report. Afterwards the object page switches to the
 	// draft, a property is changed in the object page and side effects including messages are
 	// requested. The result must not be influenced by the different setups.
-	// (1) Initialize the list and afterwards set the list's row context at the object page.
-	//     setKeepAlive must request messages (JIRA: CPOUI5ODATAV4-981)
-	// (2)..(4) requires moveEntityTo -> CPOUI5ODATAV4-474
+	// (1) Read the entities in the list and then set a list's row context at the object page.
+	//     Context#setKeepAlive must request messages (JIRA: CPOUI5ODATAV4-981).
+	// (2) Read the entity in the object page and then move it to the list via ODCB#moveEntityTo
+	//     (JIRA: CPOUI5ODATAV4-1107).
+	// The properties Name and defaultChannel are in both bindings and have to be kept in sync,
+	// lastUsedChannel is only in the object page and must be requested as late property,
+	// sendsAutographs is only in the list report and must not get lost during moveEntityTo.
 [{
 	description : "(1) first list, then object page",
 	setup : function (assert, oListBinding) {
 		var that = this;
 
-		this.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name,defaultChannel"
+		this.expectRequest("Artists"
+				+ "?$select=ArtistID,IsActiveEntity,Name,defaultChannel,sendsAutographs"
 				+ "&$skip=0&$top=100", {
 				value : [{
 					"@odata.etag" : "etag.active1",
 					ArtistID : "A1",
 					IsActiveEntity : true,
 					Name : "Artist 1",
-					defaultChannel : "Channel 1"
+					defaultChannel : "Channel 1",
+					sendsAutographs : true
 				}]
 			})
 			.expectChange("listName", ["Artist 1"])
-			.expectChange("listChannel", ["Channel 1"]);
+			.expectChange("listChannel", ["Channel 1"])
+			.expectChange("sendsAutographs", ["Yes"]);
 
 		oListBinding.resume();
 
@@ -34322,6 +34329,68 @@ sap.ui.define([
 			return that.waitForChanges(assert, "initialize object page");
 		});
 	}
+}, {
+	description : "(2) first object page, then list",
+	setup : function (assert, oListBinding) {
+		var oHiddenBinding = this.oModel.bindContext("/Artists(ArtistID='A1',IsActiveEntity=true)",
+				null, {$select : ["Messages"]}),
+			that = this;
+
+		this.expectRequest("Artists(ArtistID='A1',IsActiveEntity=true)"
+				+ "?$select=ArtistID,IsActiveEntity,Messages,Name,defaultChannel,lastUsedChannel", {
+				"@odata.etag" : "etag.active1",
+				ArtistID : "A1",
+				IsActiveEntity : true,
+				Messages : [{
+					message : "Active message",
+					numericSeverity : 2,
+					target : "defaultChannel"
+				}],
+				Name : "Artist 1",
+				defaultChannel : "Channel 1",
+				lastUsedChannel : "Channel 2"
+			})
+			.expectRequest("Artists(ArtistID='A1',IsActiveEntity=true)/_Publication"
+				+ "?$select=PublicationID&$skip=0&$top=100",
+				{value : [{PublicationID : "P1"}]}
+			)
+			.expectChange("name", "Artist 1")
+			.expectChange("channel", "Channel 1")
+			.expectChange("lastUsedChannel", "Channel 2")
+			.expectChange("publication", ["P1"])
+			.expectMessages([{
+				message : "Active message",
+				type : "Information",
+				target : "/Artists(ArtistID='A1',IsActiveEntity=true)/defaultChannel"
+			}]);
+
+		this.oView.byId("objectPage").setBindingContext(oHiddenBinding.getBoundContext());
+
+		return this.waitForChanges(assert, "initialize object page").then(function () {
+			that.expectRequest("Artists"
+				+ "?$select=ArtistID,IsActiveEntity,Name,defaultChannel,sendsAutographs"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					"@odata.etag" : "etag.active1",
+					ArtistID : "A1",
+					IsActiveEntity : true,
+					Name : "Artist 1",
+					defaultChannel : "Channel 1",
+					sendsAutographs : true
+				}]
+			})
+			.expectChange("listName", ["Artist 1"])
+			.expectChange("listChannel", ["Channel 1"])
+			.expectChange("sendsAutographs", ["Yes"]);
+
+			// code under test
+			oHiddenBinding.getBoundContext().requestObject().then(function () {
+				oHiddenBinding.moveEntityTo(oListBinding);
+			});
+
+			return that.waitForChanges(assert, "initialize & moveEntityTo");
+		});
+	}
 }].forEach(function (oFixture) {
 	QUnit.test("FCL Safeguard: " + oFixture.description, function (assert) {
 		var oListBinding,
@@ -34332,6 +34401,7 @@ sap.ui.define([
 		parameters : {$$patchWithoutSideEffects : true}, suspended : true}">\
 	<Text id="listName" text="{Name}"/>\
 	<Text id="listChannel" text="{defaultChannel}"/>\
+	<Text id="sendsAutographs" text="{sendsAutographs}"/>\
 </Table>\
 <FlexBox id="objectPage">\
 	<Text id="name" text="{Name}"/>\
@@ -34345,6 +34415,7 @@ sap.ui.define([
 
 		this.expectChange("listName", [])
 			.expectChange("listChannel", [])
+			.expectChange("sendsAutographs", [])
 			.expectChange("name")
 			.expectChange("channel")
 			.expectChange("lastUsedChannel")
@@ -34365,7 +34436,7 @@ sap.ui.define([
 					method : "POST",
 					url : "Artists(ArtistID='A1',IsActiveEntity=true)/special.cases.EditAction"
 						+ "?$select=ArtistID,IsActiveEntity,Messages,Name,defaultChannel,"
-						+ "lastUsedChannel",
+						+ "lastUsedChannel,sendsAutographs",
 					headers : {"If-Match" : "etag.active1"},
 					payload : {}
 				}, {
@@ -34379,7 +34450,8 @@ sap.ui.define([
 					}],
 					Name : "Artist 1",
 					defaultChannel : "Channel 1",
-					lastUsedChannel : "Channel 2"
+					lastUsedChannel : "Channel 2",
+					sendsAutographs : true
 				})
 				.expectMessages([{
 					message : "Active message",
@@ -34463,6 +34535,100 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: Flexible column layout
+	// An entity is read in the object page via a hidden context and then moved to the list. The
+	// list's collection does not contain it. Then a property is changed.
+	// Afterwards refresh and reuse the hidden binding for another object page.
+	//
+	// JIRA: CPOUI5ODATAV4-1107
+	QUnit.test("moveEntity into kept-alive context outside collection", function (assert) {
+		var oHiddenBinding,
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="listReport"\ growing="true" growingThreshold="2" \
+		items="{path : \'/Artists\', suspended : true}">\
+	<Text id="listName" text="{Name}"/>\
+</Table>\
+<FlexBox id="objectPage">\
+	<Input id="name" value="{Name}"/>\
+</FlexBox>\
+<FlexBox id="anotherObjectPage">\
+	<Input id="anotherName" value="{Name}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("listName", [])
+			.expectChange("name")
+			.expectChange("anotherName");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("Artists(ArtistID='A3',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity,Name", {
+					ArtistID : "A3",
+					IsActiveEntity : false,
+					Name : "Artist 3"
+				})
+				.expectChange("name", "Artist 3");
+
+			oHiddenBinding = that.oModel.bindContext(
+				"/Artists(ArtistID='A3',IsActiveEntity=false)");
+			that.oView.byId("objectPage").setBindingContext(oHiddenBinding.getBoundContext());
+
+			return that.waitForChanges(assert, "initialize object page");
+		}).then(function () {
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name&$skip=0&$top=2", {
+					value : [{
+						ArtistID : "A1",
+						IsActiveEntity : true,
+						Name : "Artist 1"
+					}, {
+						ArtistID : "A2",
+						IsActiveEntity : true,
+						Name : "Artist 2"
+					}]
+				})
+				.expectChange("listName", ["Artist 1", "Artist 2"]);
+
+			// code under test
+			oHiddenBinding.getBoundContext().requestObject().then(function () {
+				oHiddenBinding.moveEntityTo(that.oView.byId("listReport").getBinding("items"));
+			});
+
+			return that.waitForChanges(assert, "initialize & moveEntityTo");
+		}).then(function () {
+			that.expectChange("name", "Artist 3*")
+				.expectRequest({
+					headers : {},
+					method : "PATCH",
+					payload : {
+						Name : "Artist 3*"
+					},
+					url : "Artists(ArtistID='A3',IsActiveEntity=false)"
+				});
+
+			// code under test
+			that.oView.byId("name").getBinding("value").setValue("Artist 3*");
+
+			return that.waitForChanges(assert, "initialize & moveEntityTo");
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='A3',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity,Name", {
+					ArtistID : "A3",
+					IsActiveEntity : false,
+					Name : "Artist 3"
+				})
+				.expectChange("anotherName", "Artist 3");
+
+			// code under test
+			oHiddenBinding.refresh();
+			that.oView.byId("anotherObjectPage")
+				.setBindingContext(oHiddenBinding.getBoundContext());
+
+			return that.waitForChanges(assert, "refresh & rebind");
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: List report with absolute binding, object page with a late property. Ensure that
