@@ -145,7 +145,7 @@ sap.ui.define([
 			};
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroupElement1.getParent(), oActionsObject).then(function(aAdditionalElements) {
-				// We expect only one element to be returned with a correct navigation property
+				// We expect only two elements to be returned with a correct navigation property
 				assert.equal(aAdditionalElements.length, 2, "then there are 1 additional Elements available");
 				assert.equal(aAdditionalElements[0].label, oGroupElement1.getLabel(), "the element with correct navigation binding should be in the list");
 				assert.equal(aAdditionalElements[0].tooltip, oGroupElement1.getLabel(), "the label is used as tooltip for elements with navigation binding");
@@ -171,12 +171,16 @@ sap.ui.define([
 						{
 							element: this.oView.byId("idMain1--ObjectPageSectionStashed2"),
 							action: {} //not relevant for test
+						},
+						{
+							element: this.oView.byId("idMain1--ObjectPageSectionForNavigationWithoutOtherGroup"),
+							action: {} //not relevant for test
 						}
 					]
 				}
 			};
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oObjectPageLayout, oActionsObject).then(function(aAdditionalElements) {
-				assert.equal(aAdditionalElements.length, 3, "then 3 additional sections are available");
+				assert.equal(aAdditionalElements.length, 4, "then 4 additional sections are available");
 				TestUtils.assertElementsEqual(aAdditionalElements[0], {
 					selected: false,
 					label: "Invisible ObjectPage Section",
@@ -201,6 +205,14 @@ sap.ui.define([
 					elementId: "idMain1--ObjectPageSectionStashed2",
 					bindingPath: undefined
 				}, "the 2. stashed section is found", assert);
+				TestUtils.assertElementsEqual(aAdditionalElements[3], {
+					selected: false,
+					label: "Object Page Section with only Form bound to navigation properties",
+					tooltip: "Object Page Section with only Form bound to navigation properties",
+					type: "invisible",
+					elementId: "idMain1--ObjectPageSectionForNavigationWithoutOtherGroup",
+					bindingPath: undefined
+				}, "the section with only navigation properties is found", assert);
 			});
 		});
 
@@ -521,7 +533,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when getting invisible elements of a bound group containing a removed field with other binding context without addViaDelegate but with reveal action", function(assert) {
+		QUnit.test("when getting invisible elements of a bound group containing a removed field with bindings in another binding context", function(assert) {
 			var oGroup = this.oView.byId("OtherGroup");
 			var oGroupElement1 = this.oView.byId("NavForm.EntityType01.Prop1");
 			oGroupElement1.setVisible(false);
@@ -534,6 +546,11 @@ sap.ui.define([
 						element: oGroupElement1,
 						action: {} //not relevant for test
 					}]
+				},
+				addViaDelegate: {
+					delegateInfo: {
+						delegate: this.oDelegate
+					}
 				}
 			};
 
@@ -542,7 +559,7 @@ sap.ui.define([
 			this.sandbox.stub(BindingsExtractor, "getBindings").returns(["fakeBinding"]);
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
+				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field is not available on the dialog");
 			});
 		});
 
