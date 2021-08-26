@@ -1,0 +1,20 @@
+<mvc:View
+	controllerName="sap.m.sample.popoverInitialFocus.Controller"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	height="100%">
+		<App>
+			<Page
+				showHeader="false"
+				id="page"
+				backgroundDesign="Solid">
+				<content>
+					<VBox>
+						<Button id="default" press=".fnOpenPopoverWithDefaultInitialFocus" text="Open popover with default initial focus" class="sapUiSmallMargin"/>
+						<Button id="custom" press=".fnOpenPopoverWithCustomInitialFocus" text="Open popover with custom initial focus" class="sapUiSmallMargin"/>
+					</VBox>
+				</content>
+			</Page>
+		</App>
+</mvc:View>

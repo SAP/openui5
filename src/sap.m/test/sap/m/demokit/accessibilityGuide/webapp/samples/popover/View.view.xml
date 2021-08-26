@@ -1,0 +1,17 @@
+<mvc:View
+	controllerName="sap.m.sample.popover.Controller"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	height="100%">
+		<App>
+			<Page
+				showHeader="false"
+				id="page"
+				backgroundDesign="Solid">
+				<content>
+					<Button press=".fnHandler" text="Open popover" class="sapUiSmallMargin"/>
+				</content>
+			</Page>
+		</App>
+</mvc:View>

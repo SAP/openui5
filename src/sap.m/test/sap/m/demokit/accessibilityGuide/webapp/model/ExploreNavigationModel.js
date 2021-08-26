@@ -233,6 +233,76 @@ sap.ui.define([
 							}
 						]
 					},
+					{
+						key: 'inputs',
+						target: 'exploreSamples',
+						title: 'User Inputs',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/inputs/View.view.xml',
+								name: 'View.view.xml',
+								key: 'View.view.xml'
+							},
+							{
+								url: '/samples/inputs/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/inputs/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								isApplicationManifest: true
+							},
+							{
+								url: '/samples/inputs/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							},
+							{
+								url: '/samples/inputs/Controller.controller.js',
+								name: 'Controller.controller.js',
+								key: 'Controller.controller.js'
+							}
+						]
+					},
+					{
+						key: 'popover',
+						target: 'exploreSamples',
+						title: 'Popover',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/popover/View.view.xml',
+								name: 'View.view.xml',
+								key: 'View.view.xml'
+							},
+							{
+								url: '/samples/popover/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/popover/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								isApplicationManifest: true
+							},
+							{
+								url: '/samples/popover/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							},
+							{
+								url: '/samples/popover/Controller.controller.js',
+								name: 'Controller.controller.js',
+								key: 'Controller.controller.js'
+							}
+						]
+					},
                     {
                         key: 'tooltipsText',
                         target: 'exploreSamples',
@@ -397,6 +467,41 @@ sap.ui.define([
                             },
                             {
                                 url: '/samples/dialogInitialFocus/Component.js',
+                                name: 'Component.js',
+                                key: 'Component.js'
+                            }
+                        ]
+                    },
+                    {
+                        key: 'popoverInitialFocus',
+                        target: 'exploreSamples',
+                        title: 'Popover initial focus position',
+                        useIFrame: true,
+                        isApplication: true,
+                        files: [
+                            {
+                                url: '/samples/popoverInitialFocus/Controller.controller.js',
+                                name: 'Controller.controller.js',
+                                key: 'Controller.controller.js'
+                            },
+                            {
+                                url: '/samples/popoverInitialFocus/View.view.xml',
+                                name: 'View.view.xml',
+                                key: 'View.view.xml'
+                            },
+                            {
+                                url: '/samples/popoverInitialFocus/index.html',
+                                name: 'index.html',
+                                key: 'index.html'
+                            },
+                            {
+                                url: '/samples/popoverInitialFocus/manifest.json',
+                                name: 'manifest.json',
+                                key: 'manifest.json',
+                                isApplicationManifest: true
+                            },
+                            {
+                                url: '/samples/popoverInitialFocus/Component.js',
                                 name: 'Component.js',
                                 key: 'Component.js'
                             }
@@ -572,11 +677,6 @@ sap.ui.define([
                                 key: 'index.html'
                             },
                             {
-                                url: '/samples/invisibleMessaging/i18n.properties',
-                                name: 'i18n.properties',
-                                key: 'i18n.properties'
-                            },
-                            {
                                 url: '/samples/invisibleMessaging/manifest.json',
                                 name: 'manifest.json',
                                 key: 'manifest.json',
@@ -730,9 +830,9 @@ sap.ui.define([
                 ]
             },
             {
-                title: 'Error Handling',
+                title: 'Message Handling',
                 icon: 'sap-icon://tag',
-                key: 'errorHandling',
+                key: 'messageHandling',
                 target: 'exploreOverview',
                 hasExpander: false,
                 items: [
@@ -759,11 +859,6 @@ sap.ui.define([
                                 key: 'index.html'
                             },
                             {
-                                url: '/samples/messageHandlingConcept/i18n.properties',
-                                name: 'i18n.properties',
-                                key: 'i18n.properties'
-                            },
-                            {
                                 url: '/samples/messageHandlingConcept/manifest.json',
                                 name: 'manifest.json',
                                 key: 'manifest.json',
@@ -773,9 +868,49 @@ sap.ui.define([
                                 url: '/samples/messageHandlingConcept/Component.js',
                                 name: 'Component.js',
                                 key: 'Component.js'
+                            },
+                            {
+                                url: '/samples/messageHandlingConcept/localService/mockdata/FormsModel.json',
+                                name: 'FormsModel.json',
+                                key: 'FormsModel.json'
                             }
                         ]
                     },
+					{
+						key: 'messageToast',
+						target: 'exploreSamples',
+						title: 'Message Toast',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/messageToast/Controller.controller.js',
+								name: 'Controller.controller.js',
+								key: 'Controller.controller.js'
+							},
+							{
+								url: '/samples/messageToast/View.view.xml',
+								name: 'View.view.xml',
+								key: 'View.view.xml'
+							},
+							{
+								url: '/samples/messageToast/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/messageToast/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								isApplicationManifest: true
+							},
+							{
+								url: '/samples/messageToast/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							}
+						]
+					},
                     {
                         key: 'messageBoxes',
                         target: 'exploreSamples',
