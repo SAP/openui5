@@ -117,9 +117,9 @@ sap.ui.define([
 							var iNumberOfItems = oList.getItems().length;
 							return this.waitFor({
 								id: "lineItemsTitle",
-								matchers: new Properties({
-									text: "<LineItemsPlural> (" + iNumberOfItems + ")"
-								}),
+								matchers: function(oControl){
+									return this.I18NTextExtended(oControl, "detailLineItemTableHeadingCount", "text", null, [iNumberOfItems]);
+								}.bind(this),
 								success: function () {
 									Opa5.assert.ok(true, "The line item list displays " + iNumberOfItems + " items");
 								},
