@@ -194,6 +194,21 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("visibleCurrentDateButton", function (assert) {
+			var oHeader = this.oHeader,
+				sHeaderId = "#" + oHeader.getId() + "-today";
+
+			// assert
+			assert.notOk(oHeader.getDomRef().querySelector(sHeaderId), "button is not rendered");
+
+			// act
+			oHeader.setVisibleCurrentDateButton(true);
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(oHeader.getDomRef().querySelector(sHeaderId), "button is rendered");
+		});
+
 		// Fake test to have a root module with at least one test, otherwise qunit-2 will fail
 		QUnit.test("Rendering module starts", function (assert) {
 			assert.ok(true, "assert ok");

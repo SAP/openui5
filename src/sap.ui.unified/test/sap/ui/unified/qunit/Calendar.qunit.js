@@ -1544,6 +1544,65 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 	}
 
+	QUnit.test("showCurrentDateButton", function (assert) {
+		var oFocusDateSpy;
+
+		// Prepare - day view
+		this.oCal1.displayDate(new Date(2020, 0, 1));
+		this.oCal1.setShowCurrentDateButton(true);
+		sap.ui.getCore().applyChanges();
+
+		oFocusDateSpy = this.spy(this.oCal1, "focusDate");
+
+		// Act
+		qutils.triggerEvent("click", this.oCal1.getId() + "--Head-today");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oFocusDateSpy.calledOnce, "Today is focused when used in day view");
+
+		// Prepare - month view
+		this.oCal1.displayDate(new Date(2020, 0, 1));
+		qutils.triggerEvent("click", "Cal1--Head-B1");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		qutils.triggerEvent("click", this.oCal1.getId() + "--Head-today");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oCal1.getProperty("_currentPicker"), "month", "Navigation from month to day view performed");
+		assert.ok(oFocusDateSpy.calledTwice, "Today is focused when used in month view");
+
+		// Prepare - year view
+		this.oCal1.displayDate(new Date(2020, 0, 1));
+		qutils.triggerEvent("click", "Cal1--Head-B2");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		qutils.triggerEvent("click", this.oCal1.getId() + "--Head-today");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oCal1.getProperty("_currentPicker"), "month", "Navigation from year to day view performed");
+		assert.ok(oFocusDateSpy.calledThrice, "Today is focused when used in year view");
+
+		// Prepare - year range view
+		this.oCal1.displayDate(new Date(2020, 0, 1));
+		qutils.triggerEvent("click", "Cal1--Head-B2");
+		sap.ui.getCore().applyChanges();
+		qutils.triggerEvent("click", "Cal1--Head-B2");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		qutils.triggerEvent("click", this.oCal1.getId() + "--Head-today");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oCal1.getProperty("_currentPicker"), "month", "Navigation from year range to day view performed");
+		assert.strictEqual(oFocusDateSpy.callCount, 4, "Today is focused when used in year range view");
+	});
+
 	QUnit.module("Misc");
 
 	QUnit.test("dates are correctly styled as special or not", function(assert) {

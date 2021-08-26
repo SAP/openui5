@@ -183,7 +183,7 @@
 			},
 			{
 				"id": "sap.ui.unified.sample.CalendarDateDeselection",
-				"name": "Date Deselection",
+				"name": "Date deselection with shortcut for today",
 				"description": "An example of recommended implementation of deselection logic when the calendar is in single selection mode."
 			},
 			{

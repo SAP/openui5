@@ -8,16 +8,14 @@ sap.ui.define([
 	"sap/ui/unified/Calendar",
 	'sap/ui/unified/CalendarRenderer',
 	"sap/ui/unified/calendar/Header",
-	"sap/ui/unified/DateRange",
-	"sap/ui/dom/containsOrEquals"
+	"sap/ui/unified/DateRange"
 ],
 	function(
 		Renderer,
 		Calendar,
 		CalendarRenderer,
 		Header,
-		DateRange,
-		containsOrEquals
+		DateRange
 	) {
 	"use strict";
 
@@ -123,6 +121,20 @@ sap.ui.define([
 		this._bActionTriggeredFromSecondHeader = false;
 	};
 
+	/**
+	 * Sets the visibility of the Current date button in the CustomMonthPicker.
+	 *
+	 * This functionality is not supported for CustomMonthPicker as there is no Day view in the Calendar.
+	 *
+	 * @param {boolean} bShow whether the Today button will be displayed
+	 * @return {this} <code>this</code> for method chaining
+	 * @public
+	 * @deprecated Not supported
+	 * @ui5-not-supported
+	 */
+	CustomMonthPicker.prototype.setShowCurrentDateButton = function(bShow){
+		return this;
+	};
 	return CustomMonthPicker;
 
 });
