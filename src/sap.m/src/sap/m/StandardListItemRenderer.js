@@ -216,7 +216,11 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer"
 		rm.style("min-width", oLI._getInfoTextMinWidth(fWidth));
 
 		rm.openEnd();
-		rm.text(oLI.getInfo());
+		if (oLI.getWrapping() && !bInfoStateInverted) {
+			this.renderWrapping(rm, oLI, "info");
+		} else {
+			rm.text(oLI.getInfo());
+		}
 		rm.close("div");
 	};
 
@@ -253,25 +257,33 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer"
 	 */
 	StandardListItemRenderer.renderWrapping = function(rm, oLI, sWrapArea) {
 		var sId = oLI.getId(),
-			bTitle = sWrapArea == "title" ? true : false,
-			sText = bTitle ? oLI.getTitle() : oLI.getDescription(),
-			bTextExpanded = bTitle ? oLI._bTitleTextExpanded : oLI._bDescriptionTextExpanded,
-			iMaxCharacters = oLI._getWrapCharLimit();
+			iMaxCharacters = oLI._getWrapCharLimit(),
+			sText, bTextExpanded;
+
+		if (sWrapArea === "title") {
+			sText = oLI.getTitle();
+			bTextExpanded = oLI._bTitleTextExpanded;
+		} else if (sWrapArea === "description") {
+			sText = oLI.getDescription();
+			bTextExpanded = oLI._bDescriptionTextExpanded;
+		} else {
+			sText = oLI.getInfo();
+		}
 
 		rm.openStart("span", sId + "-" + sWrapArea + "Text").attr("aria-live", "polite").openEnd();
 
-		if (!bTextExpanded) {
+		if (!bTextExpanded && sWrapArea !== "info") {
 			var sCollapsedText = oLI._getCollapsedText(sText);
 			rm.text(sCollapsedText);
-		} else if (bTitle) {
+		} else if (sWrapArea == "title") {
 			this.renderTitle(rm, oLI);
 		} else {
-			rm.text(oLI.getDescription());
+			rm.text(sText);
 		}
 
 		rm.close("span");
 
-		if (sText.length > iMaxCharacters) {
+		if (sText.length > iMaxCharacters && sWrapArea !== "info") {
 			this.renderExpandCollapse(rm, oLI, sWrapArea);
 		}
 	};

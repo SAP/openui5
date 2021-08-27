@@ -83,6 +83,8 @@ sap.ui.define([
 
 			/**
 			 * Defines an additional information text.
+			 * <b>Note:</b>
+			 * A wrapping of the information text is also supported since version 1.95, if <code>wrapping=true</code>. Although long strings are supported for the information text, it is recommended to use short strings. See {@link #getWrapping wrapping} for more details.
 			 */
 			info : {type : "string", group : "Misc", defaultValue : null},
 
@@ -115,6 +117,8 @@ sap.ui.define([
 			 * <b>Note:</b>
 			 *
 			 * In the desktop mode, initial rendering of the control contains 300 characters along with a button to expand and collapse the text whereas in the phone mode, the character limit is set to 100 characters.
+			 * A wrapping of information text is supported since 1.95. But expanding and collapsing the information text is not possible.
+			 * A wrapping of information text is disabled if <code>infoStateInverted</code> is set to <code>true</code>.
 			 * @since 1.67
 			 */
 			wrapping : {type : "boolean", group : "Behavior", defaultValue : false},
@@ -329,10 +333,19 @@ sap.ui.define([
 	StandardListItem.prototype.ontap = function(oEvent) {
 		this._checkExpandCollapse(oEvent);
 
-		if (!oEvent.isMarked()) {
-			return ListItemBase.prototype.ontap.apply(this, arguments);
-		}
+		return ListItemBase.prototype.ontap.apply(this, arguments);
 	};
+
+	StandardListItem.prototype.ontouchstart = function(oEvent) {
+		var sId = oEvent.target && oEvent.target.id,
+			sStdListId = this.getId();
+
+		if (sId === sStdListId + "-titleButton" || sId === sStdListId + "-descriptionButton") {
+			oEvent.setMarked();
+		}
+
+		return ListItemBase.prototype.ontouchstart.apply(this, arguments);
+	  };
 
 	StandardListItem.prototype.onsapspace = function(oEvent) {
 		// prevent default not to scroll down, hence 2nd parameter is true
