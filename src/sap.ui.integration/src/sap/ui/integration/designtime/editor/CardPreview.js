@@ -59,6 +59,9 @@ sap.ui.define([
 			if (isDark()) {
 				oRm.addClass("sapUiIntegrationDTPreviewDark");
 			}
+			if (oControl.getSettings().preview.position && (oControl.getSettings().preview.position === "top" || oControl.getSettings().preview.position === "bottom")) {
+				oRm.addClass("sapUiIntegrationDTPreviewMarginForAlignTopAndBottom");
+			}
 			oRm.writeClasses();
 			oRm.openEnd();
 			oRm.openStart("div");

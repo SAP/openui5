@@ -78,7 +78,7 @@ function deleteCurrentValues(id) {
 	loadCurrentValues(id);
 	updateAllLayerCard();
 }
-function createCardEditorTag(id, changes, mode, language, designtime) {
+function createCardEditorTag(id, changes, mode, language, designtime, previewPosition) {
 	language = language || "";
 	var card = {
 		"manifest": "manifest.json",
@@ -90,7 +90,9 @@ function createCardEditorTag(id, changes, mode, language, designtime) {
 		manifest["sap.card"].designtime = "withPreview/" + designtime;
 		card.manifest = manifest;
 	}
+	previewPosition = previewPosition || "right";
 	return '<ui-integration-card-editor id="' + id +
+		'" preview-position="' + previewPosition +
 		'" mode="' + mode +
 		'" language="' + language +
 		'" allow-dynamic-values="true" allow-settings="true" host="host"' +
@@ -108,7 +110,7 @@ function loadCurrentValues(id) {
 	} else {
 		sLanguage = this._sLanguage || dom.getAttribute("language") || "";
 	}
-	div.innerHTML = createCardEditorTag(id, [settings], dom.getAttribute("mode"), sLanguage, dom.getAttribute("designtime") || "");
+	div.innerHTML = createCardEditorTag(id, [settings], dom.getAttribute("mode"), sLanguage, dom.getAttribute("designtime") || "", dom.getAttribute("preview-position"));
 	dom.parentNode.replaceChild(div.firstChild, dom);
 }
 
@@ -185,7 +187,7 @@ function updateAllLayerCard() {
 		content = getItem("cardEditorContent"),
 		translation = getItem("cardEditorTranslation");
 	settings.push(admin, content, translation);
-	target.innerHTML = createCardEditorTag("cardEditorAll", settings, "all", this._sLanguage || "");
+	target.innerHTML = createCardEditorTag("cardEditorAll", settings, "all", this._sLanguage || "", undefined, "top");
 }
 
 function updateAdminContentLayerCard() {
@@ -196,7 +198,7 @@ function updateAdminContentLayerCard() {
 		admin = getItem("cardEditorAdmin"),
 		content = getItem("cardEditorContent");
 	settings.push(admin, content);
-	target.innerHTML = createCardEditorTag("cardEditorAdminContent", settings, "content", "");
+	target.innerHTML = createCardEditorTag("cardEditorAdminContent", settings, "content", "", undefined, "bottom");
 }
 function updateAdminContentTranslationLayerCard() {
 	var target = document.getElementById("admincontenttranslation");

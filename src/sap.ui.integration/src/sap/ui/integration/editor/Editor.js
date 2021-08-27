@@ -186,6 +186,10 @@ sap.ui.define([
 				},
 				json: {
 					type: "object"
+				},
+				previewPosition:{
+					type: "string",
+					defaultValue: "right" // value can be "top", "bottom", "left", "right"
 				}
 			},
 			aggregations: {
@@ -197,7 +201,7 @@ sap.ui.define([
 					multiple: true,
 					visibility: "hidden"
 				},
-				_rightContent: {
+				_preview: {
 					type: "sap.ui.core.Control",
 					multiple: false,
 					visibility: "hidden"
@@ -219,19 +223,40 @@ sap.ui.define([
 			}
 		},
 		renderer: function (oRm, oControl) {
+			var oPreview = oControl.getAggregation("_preview");
+			var bShowPreview = oControl.getMode() !== "translation" && oControl.hasPreview();
+			var sPreviewPosition = oControl.getPreviewPosition();
+			if (bShowPreview
+				&& (sPreviewPosition === "top" || sPreviewPosition === "bottom")) {
+				oRm.openStart("div");
+				oRm.writeElementData(oControl);
+				oRm.openEnd();
+				//render the additional content if alignment of it is "top"
+				if (oControl.isReady() && sPreviewPosition === "top") {
+					oRm.renderControl(oPreview);
+					oRm.close("div");
+				}
+			}
 			oRm.openStart("div");
 			oRm.addClass("sapUiIntegrationEditor");
-			oRm.writeClasses();
-			oRm.writeElementData(oControl);
-			oRm.openEnd();
+			if (bShowPreview && sPreviewPosition === "left") {
+				oRm.writeElementData(oControl);
+				oRm.openEnd();
+				if (oControl.isReady()){
+					oRm.renderControl(oPreview);
+					oRm.close("div");
+				}
+			} else if (bShowPreview
+				&& (sPreviewPosition === "bottom" || sPreviewPosition === "top")) {
+				oRm.openEnd();
+			} else {
+				oRm.writeElementData(oControl);
+				oRm.openEnd();
+			}
 			if (oControl.isReady()) {
 				//surrounding div tag for form <div class="sapUiIntegrationEditorForm"
 				oRm.openStart("div");
-				if (oControl.getMode() === "translation" || !oControl.hasRightContent()) {
-					oRm.addClass("sapUiIntegrationEditorForm");
-				} else {
-					oRm.addClass("sapUiIntegrationEditorFormWithRightContent");
-				}
+				oRm.addClass("sapUiIntegrationEditorForm");
 				if (oControl.getMode() !== "translation") {
 					oRm.addClass("settingsButtonSpace");
 				}
@@ -289,6 +314,13 @@ sap.ui.define([
 							// add style class for the hint under group and checkbox/toggle
 							if (oItem.isA("sap.m.FormattedText")) {
 								oPanel.addContent(oItem.addStyleClass("sapUiIntegrationEditorHint"));
+								if (i === aItems.length - 1) {
+									//add current col fields to panel, then empty the col fields list
+									addColFields();
+									if (oPanel.getContent().length > 0) {
+										oRm.renderControl(oPanel);
+									}
+								}
 								continue;
 							}
 
@@ -552,13 +584,17 @@ sap.ui.define([
 					}
 				}
 				oRm.close("div");
-				//render the right content
-				if (oControl.hasRightContent()) {
-					var oRightContent = oControl.getAggregation("_rightContent");
-					oRm.renderControl(oRightContent);
+				//render the additional content if alignment of it is "right"
+				if (bShowPreview && sPreviewPosition === "right") {
+					oRm.renderControl(oPreview);
 				}
 			}
 			oRm.close("div");
+			//render the additional content if alignment of it is "right"
+			if (oControl.isReady() && bShowPreview && sPreviewPosition === "bottom") {
+				oRm.renderControl(oPreview);
+				oRm.close("div");
+			}
 		}
 	});
 	/**
@@ -623,13 +659,12 @@ sap.ui.define([
 		return this._ready;
 	};
 
-	Editor.prototype.hasRightContent = function() {
-		var oRightContent = this.getAggregation("_rightContent");
-		var bHasRightContent = false;
-		if (oRightContent && oRightContent.visible !== false) {
-			bHasRightContent = true;
+	Editor.prototype.hasPreview = function() {
+		var oPreview = this.getAggregation("_preview");
+		if (oPreview && oPreview.visible !== false) {
+			return true;
 		}
-		return bHasRightContent;
+		return false;
 	};
 
 	Editor.prototype.flattenData = function(oData, s, a, path) {
@@ -1093,6 +1128,7 @@ sap.ui.define([
 			});
 		});
 	};
+
 	Editor.prototype.loadDesigntime = function () {
 		if (this._oDesigntime) {
 			return Promise.resolve(this._oDesigntime);
@@ -1579,11 +1615,11 @@ sap.ui.define([
 		var oSettingsPanel = this._getSettingsPanel(oField);
 		window.setTimeout(function () {
 			oSettingsPanel.setConfiguration(oField.getConfiguration());
-			var oRightContent = this.getAggregation("_rightContent");
+			var oPreview = this.getAggregation("_preview");
 			oSettingsPanel.open(
 				oSettingsButton,
 				oSettingsButton,
-				oRightContent,
+				oPreview,
 				oField.getHost(),
 				oField,
 				oField._applySettings.bind(oField),
@@ -1654,7 +1690,7 @@ sap.ui.define([
 				if (oConfig._dependentFields && oConfig._dependentFields.length > 0) {
 					this._updateEditor(oConfig._dependentFields);
 				}
-				this._updateRightContent();
+				this._updatePreview();
 			}
 		}.bind(this));
 		if (oField.isFilterBackend()) {
@@ -1699,13 +1735,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * updates the right content
-	 * TODO: Track changes and call update of the right content
+	 * updates the additional content
+	 * TODO: Track changes and call update of the additional content
 	 */
-	Editor.prototype._updateRightContent = function () {
-		var oRightContent = this.getAggregation("_rightContent");
-		if (oRightContent && oRightContent.update) {
-			oRightContent.update();
+	Editor.prototype._updatePreview = function () {
+		var oPreview = this.getAggregation("_preview");
+		if (oPreview && oPreview.update) {
+			oPreview.update();
 		}
 	};
 
@@ -2393,9 +2429,9 @@ sap.ui.define([
 			var oItem = aItems[n];
 			this._addItem(oItem);
 		}
-		//add right content
+		//add additional content
 		if (this.getMode() !== "translation") {
-			Promise.resolve(this._initRightContent()).then(function() {
+			Promise.resolve(this._initPreview()).then(function() {
 				Promise.all(this._aFieldReadyPromise).then(function () {
 					this._ready = true;
 					this.fireReady();
@@ -2418,9 +2454,9 @@ sap.ui.define([
 		if (this._oDesigntimeInstance) {
 			this._oDesigntimeInstance.destroy();
 		}
-		var oRightContent = this.getAggregation("_rightContent");
-		if (oRightContent && oRightContent.destroy) {
-			oRightContent.destroy();
+		var oPreview = this.getAggregation("_preview");
+		if (oPreview && oPreview.destroy) {
+			oPreview.destroy();
 		}
 		var oMessageStrip = Core.byId(MessageStripId);
 		if (oMessageStrip) {
@@ -2434,9 +2470,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Initializes the right content
+	 * Initializes the additional content
 	 */
-	 Editor.prototype._initRightContent = function () {
+	Editor.prototype._initPreview = function () {
 		return new Promise(function (resolve, reject) {
 			resolve();
 		});
