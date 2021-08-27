@@ -2529,7 +2529,6 @@ sap.ui.define([
 			var oInfo = this._oSectionInfo[oSectionBase.getId()],
 				$this = oSectionBase.$(),
 				oSection,
-				$title,
 				bPromoted = false;
 
 			if (!oInfo /* sectionBase is visible */ || !$this.length) {
@@ -2549,19 +2548,15 @@ sap.ui.define([
 			//the amount of scrolling required is the distance between their position().top and the bottom of the anchorBar
 			oInfo.positionTop = Math.ceil(realTop);
 
-			if (oInfo.isSection) {
-				$title = oSectionBase.$("header");
-			} else {
-				$title = oSectionBase.$("headerTitle");
-			}
-
-			bPromoted = $title.length === 0;
-
-			if (bPromoted && !oInfo.isSection && (oSection = oSectionBase.getParent())) {
-				// the scrollTop required to scroll to a promoted subsection
-				// is the top of the parent section (UX rule)
-				var parentRealTop = oSection.$().position().top;
-				oInfo.positionTop = Math.ceil(parentRealTop);
+			if (!oInfo.isSection && (oSection = oSectionBase.getParent())) {
+				// a promoted subSection borrows the title of its parent section
+				bPromoted = oSectionBase._getTitleDomId() === oSection.getId() + "-title";
+				if (bPromoted) {
+					// the scrollTop required to scroll to a promoted subsection
+					// is the top of the parent section (UX rule)
+					var parentRealTop = oSection.$().position().top;
+					oInfo.positionTop = Math.ceil(parentRealTop);
+				}
 			}
 
 			if (!this._bStickyAnchorBar && !this._bHeaderInTitleArea) { // in sticky mode the anchor bar is not part of the content
