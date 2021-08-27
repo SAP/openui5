@@ -4,11 +4,12 @@
 
 // Provides (optional) base class for all renderers
 sap.ui.define([
+	"sap/base/Log",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/ObjectPath",
 	"sap/base/assert",
 	"sap/base/util/extend"
-], function(isPlainObject, ObjectPath, assert, extend) {
+], function(Log, isPlainObject, ObjectPath, assert, extend) {
 	"use strict";
 
 	/**
@@ -216,8 +217,17 @@ sap.ui.define([
 	 */
 	Renderer.getTextAlign = function(oTextAlign, oTextDirection) {
 		// lazy require sap.ui.core library
+		sapUiCore = sap.ui.require("sap/ui/core/library");
+
 		if (!sapUiCore) {
-			sapUiCore = sap.ui.requireSync("sap/ui/core/library");
+			Log.warning("Synchronous loading of a library.js. Ensure that 'sap/ui/core/library.js' is loaded" +
+				" before sap.ui.core.Renderer#getTextAlign is called.", "SyncXHR", null, function() {
+				return {
+					type: "SyncXHR",
+					name: "renderer-getTextAlign"
+				};
+			});
+			sapUiCore = sap.ui.requireSync("sap/ui/core/library"); // legacy-relevant: core/library.js available via dependency in most cases
 		}
 
 		// create shortcuts for enums from sap.ui.core library
