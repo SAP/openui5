@@ -9982,14 +9982,14 @@ sap.ui.define([
 			oSelect.setType("Default");
 			oInfo = oSelect.getAccessibilityInfo();
 			assert.strictEqual(oInfo.role, "combobox", "AriaRole");
-			assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO"), "Type");
+			assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("SELECT_ROLE_DESCRIPTION"), "Type");
 			assert.strictEqual(oInfo.description, "Item1", "Description");
 			assert.strictEqual(oInfo.readonly, false, "Editable");
 
 			oSelect.setSelectedKey("Item2");
 			oInfo = oSelect.getAccessibilityInfo();
 			assert.strictEqual(oInfo.role, "combobox", "AriaRole");
-			assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO"), "Type");
+			assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("SELECT_ROLE_DESCRIPTION"), "Type");
 			assert.strictEqual(oInfo.description, "Item2", "Description");
 
 			oSelect.setEditable(false);
