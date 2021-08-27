@@ -1610,6 +1610,7 @@ sap.ui.define([
 		 *   context, in case that a change is expected for a single row of a list; in this case
 		 *   <code>vValue</code> must be a string
 		 * @returns {object} The test instance for chaining
+		 * @throws {Error} For unsupported or inconsistently used control IDs
 		 */
 		expectChange : function (sControlId, vValue, sRow) {
 			var aExpectations,
@@ -1623,9 +1624,13 @@ sap.ui.define([
 			}
 
 			function isList(bIsList) {
-				if (sControlId in that.mIsListByControlId
-						&& that.mIsListByControlId[sControlId] !== bIsList) {
-					throw new Error("Inconsistent usage of array values for " + sControlId);
+				var bSaved = that.mIsListByControlId[sControlId];
+
+				if (that.oView && bSaved !== bIsList && bSaved !== null && bIsList !== null) {
+					throw new Error(sControlId in that.mIsListByControlId
+						? "Inconsistent usage of array values for " + sControlId
+						: "The first expectChange must be before createView: " + sControlId
+					);
 				}
 				that.mIsListByControlId[sControlId] = bIsList;
 			}
@@ -1642,9 +1647,7 @@ sap.ui.define([
 					array(aExpectations, i).push(vRowValue);
 				});
 			} else {
-				if (vValue !== null) {
-					isList(false);
-				}
+				isList(vValue === null ? null : false);
 				aExpectations = array(this.mChanges, sControlId);
 				if (arguments.length > 1) {
 					aExpectations.push(vValue);
@@ -1948,6 +1951,7 @@ sap.ui.define([
 				bIsCompositeType = oType && oType.getMetadata().isA("sap.ui.model.CompositeType"),
 				that = this;
 
+			this.mIsListByControlId[sControlId] = !!bInList; // must be a boolean
 			oBindingInfo.formatter = function (sValue) {
 				var oContext = bInList && this.getBindingContext();
 
