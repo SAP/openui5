@@ -2820,9 +2820,10 @@ sap.ui.define([
 	 * attributes, use <code>{select: "*"}</code> instead.
 	 *
 	 * <b>Note:</b> If <code>mParameters.select</code> is given and not all selected properties are
-	 * available, this method returns <code>undefined</code> instead of incomplete data. If
-	 * <code>mParameters.select</code> is not given, all properties available on the client are
-	 * returned.
+	 * available, this method returns <code>undefined</code> instead of incomplete data.
+	 *
+	 * <b>Note:</b> If <code>mParameters.select</code> is not given, all properties and navigation
+	 * properties available on the client are returned.
 	 *
 	 * Example:<br>
 	 * With <code>mParameters</code> given as
