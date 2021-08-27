@@ -1,0 +1,44 @@
+#cont1 {
+	width: 400px;
+}
+
+#oHorizontalLayout {
+	display: block;
+}
+
+#oScrollContainer2, #oScrollContainer4-scroll {
+	white-space: nowrap;
+}
+
+#oScrollContainer2-scroll {
+	min-width: 650px;
+}
+
+#myLayout {
+	width: 100%;
+	margin-top: 80px;
+}
+
+#width {
+	width: 2000px;
+}
+
+#container {
+	height: 275px;
+	width: 400px;
+	overflow-x: auto;
+	max-height: 275px;
+}
+
+.contentStyling {
+	display: inline-block;
+	text-align: center;
+	color: white;
+	width: 50px;
+	height: 30px;
+	background-color: green;
+}
+
+.contentStylingOdd {
+	background-color: red;
+}
