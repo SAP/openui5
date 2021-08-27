@@ -584,6 +584,10 @@ function(
 		// indicates whether input is clicked (on mobile) or the clear button
 		// used for identifying whether dialog should be open.
 		this._bClearButtonPressed = false;
+
+		// indicates whether input's popover has finished opening
+		// we asume that after open its content has been rendered => we don't have the power user scenario
+		this._bAfterOpenFinisihed = false;
 	};
 
 	/**
@@ -1459,7 +1463,7 @@ function(
 		// There's no typeahead for mobile devices.
 		// If the popup has been focused, then the list would take care of that functionality.
 		// There should be a matching item (proposed text in order to continue)
-		if (!this.isMobileDevice() && this._sProposedItemText) {
+		if (!this.isMobileDevice() && this._sProposedItemText && !this._bAfterOpenFinisihed) {
 			// Update selections for poweruser
 			var oSelectedItem = this.getSuggestionItems()
 				.filter(function (oItem) {
@@ -2898,6 +2902,8 @@ function(
 						return;
 					}
 
+					this._bAfterOpenFinisihed = false;
+
 					// only destroy items in simple suggestion mode
 					if (oList instanceof Table) {
 						oSelectedItem && oSelectedItem.removeStyleClass("sapMLIBFocused");
@@ -2917,6 +2923,10 @@ function(
 
 					oSuggPopover.resizePopup(this);
 					this._registerPopupResize();
+					this._bAfterOpenFinisihed = false;
+				}, this)
+				.attachAfterOpen(function () {
+					this._bAfterOpenFinisihed = true;
 				}, this);
 		}
 

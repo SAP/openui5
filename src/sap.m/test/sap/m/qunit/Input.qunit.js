@@ -4419,6 +4419,46 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Focus handling - Leaving the input field (when picker is open) should trigger item selection once", function (assert) {
+		var fnSpy = this.spy();
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionItemSelected: fnSpy,
+			suggestionItems: [
+				new Item({text: "Item 1"}),
+				new Item({text: "Item 2"}),
+				new Item({text: "Item 3"})
+			]
+		}).placeAt("content");
+
+		var oBtn = new Button().placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Arrange
+		oInput._createSuggestionPopupContent();
+		oInput._$input.trigger("focus").val("it").trigger("input");
+		this.clock.tick(300);
+
+		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(300);
+		sap.ui.getCore().applyChanges();
+
+		oInput._sProposedItemText = "Item 1";
+		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.TAB);
+		this.clock.tick(300);
+		sap.ui.getCore().applyChanges();
+
+		oBtn.focus();
+		this.clock.tick(300);
+		sap.ui.getCore().applyChanges();
+
+
+		assert.strictEqual(fnSpy.callCount, 1, "Suggestion item select should be fired once.");
+
+
+	});
+
 	QUnit.test("Focus handling - pseudo focus should return to the input after selection from the list", function(assert) {
 		// Setup
 		var oInput = new Input({
