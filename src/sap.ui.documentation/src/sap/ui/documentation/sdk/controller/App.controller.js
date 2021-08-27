@@ -78,8 +78,11 @@ sap.ui.define([
 
 		// shortcut for sap.m.URLHelper
 		var URLHelper = mobileLibrary.URLHelper,
+			bUseUnifiedResourceOrigin =  new URLSearchParams(window.location.search).get('sap-ui-xx-unifiedResources') != null,
 			sNeoAppJsonPath = ResourcesUtil.getResourceOriginPath("/neo-app.json"), /* Load neo-app.json always from root URL */
-			sVersionOverviewJsonPath = ResourcesUtil.getResourceOriginPath("/versionoverview.json"), /* Load versionoverview.json always from root URL */
+			sVersionOverviewJsonPath = bUseUnifiedResourceOrigin && !self['sap-ui-documentation-config'] ?
+				window.origin + "/versionoverview.json" :
+				ResourcesUtil.getResourceOriginPath("/versionoverview.json"), /* Load versionoverview.json always from root URL */
 			ABOUT_TEXT = "about",
 			FEEDBACK_TEXT = "feedback",
 			FEEDBACK_URL = "https://demokit-feedback-proxy.cfapps.eu12.hana.ondemand.com/issue",
@@ -1030,8 +1033,8 @@ sap.ui.define([
 
 			onVersionItemPress: function (oEvent) {
 				var oSelectedItem = oEvent.getParameter("listItem"),
-					oCustomData = oSelectedItem.getCustomData()[0],
-					bUseUnifiedResourceOrigin =  new URLSearchParams(window.location.search).get('sap-ui-xx-unifiedResources') != null;
+					oCustomData = oSelectedItem.getCustomData()[0];
+
 
 				if (oCustomData && oCustomData.getKey() === "path") {
 
