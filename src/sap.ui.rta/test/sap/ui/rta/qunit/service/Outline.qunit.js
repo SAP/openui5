@@ -751,14 +751,7 @@ sap.ui.define([
 		});
 	});
 
-	function createController(sController) {
-		var oData = {
-			ProductCollection: [
-				{ ProductId: "HT-1000", Category: "Laptops"	},
-				{ ProductId: "HT-1001", Category: "Laptops" },
-				{ ProductId: "HT-1007", Category: "Accessories" }
-			]
-		};
+	function createController(sController, oData) {
 		var MyController = Controller.extend(sController, {
 			onInit: function () {
 				var oModel = new JSONModel(oData);
@@ -768,8 +761,12 @@ sap.ui.define([
 		return new MyController();
 	}
 
-	QUnit.module("Given that xmlView with table and extensionPoint (RuntimeAuthoring and outline service are started)", {
-		beforeEach: function () {
+	QUnit.module("Given that xmlView with table and extensionPoint (RuntimeAuthoring and outline service are started) - Template case", {
+		afterEach: function () {
+			return _afterEachExtensionPoint.call(this);
+		}
+	}, function() {
+		QUnit.test("for four products in the collection, when get() is called", function (assert) {
 			var oXmlTable =
 			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 				'<List id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\'}">' +
@@ -778,32 +775,123 @@ sap.ui.define([
 					'</items>' +
 				'</List>' +
 			'</mvc:View>';
-			var oController = createController("myController");
-			return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
-		},
-		afterEach: function () {
-			return _afterEachExtensionPoint.call(this);
-		}
-	}, function() {
-		QUnit.test("when get() is called", function (assert) {
-			return this.oOutline.get()
+
+			var oData = {
+				ProductCollection: [
+					{ ProductId: "HT-1000", Category: "Laptops" },
+					{ ProductId: "HT-1001", Category: "Laptops" },
+					{ ProductId: "HT-1007", Category: "Accessories" },
+					{ ProductId: "HT-1010", Category: "Memory" }
+				]
+			};
+			var oController = createController("myController", oData);
+			return _beforeEachExtensionPoint.call(this, oXmlTable, oController)
+				.then(function() {
+					return this.oOutline.get();
+				}.bind(this))
 				.then(function(aReceivedResponse) {
 					var aRootElements = aReceivedResponse[0].elements;
 					assert.strictEqual(aRootElements[0].technicalName, "content",
-						"then in the view elements the second item is an content aggregation");
+						"then in the view elements the second item is a content aggregation");
 					var oListElementInfo = aRootElements[0].elements[0];
 					assert.strictEqual(oListElementInfo.technicalName, "sap.m.List",
-						"then list is available in the view elements");
-					assert.strictEqual(oListElementInfo.elements.length, 4,
-						"then list contains 4 elements - 3 elements as given aggregations and 1 element for the template");
-					assert.strictEqual(oListElementInfo.elements[0].icon, "sap-icon://card",
-						"then the first list entry (aggregation) has the correct icon assigned");
-					assert.strictEqual(oListElementInfo.elements[0].elements[0].name, "TEMPLATE-List Item",
-						"then the first list entry aggregates one template");
-					assert.strictEqual(oListElementInfo.elements[0].elements[0].icon, "sap-icon://card",
-						"then the template element contained in the first list entry has the correct icon assigned");
-					assert.strictEqual(oListElementInfo.elements[1].elements.length, 3,
-						"then the second list entry aggregates 3 list items");
+						"then sap.m.List is available in the view elements");
+					assert.strictEqual(oListElementInfo.elements.length, 3,
+						"then list contains 3 entries: the template element + 2 empty aggregations from the control");
+					assert.strictEqual(oListElementInfo.elements[0].icon, "sap-icon://attachment-text-file",
+						"then the first list entry (aggregation binding template) has the correct icon assigned");
+					assert.strictEqual(oListElementInfo.elements[0].name, "List Item [4]",
+						"then the first list entry contains the template with the number of children on its name (List Item [4])");
+					assert.strictEqual(oListElementInfo.elements[1].icon, "sap-icon://card",
+						"then the second list entry (empty aggregation) has the correct icon assigned");
+					assert.strictEqual(oListElementInfo.elements[1].type, "aggregation",
+						"then the second list entry (empty aggregation) has the correct type (aggregation)");
+				});
+		});
+
+		QUnit.test("for empty product collection, when get() is called", function (assert) {
+			var oXmlTable =
+			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
+				'<List id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\'}">' +
+					'<items>' +
+						'<StandardListItem title="{Name}" />' +
+					'</items>' +
+				'</List>' +
+			'</mvc:View>';
+
+			var oData = {
+				ProductCollection: []
+			};
+			var oController = createController("myController", oData);
+			return _beforeEachExtensionPoint.call(this, oXmlTable, oController)
+				.then(function() {
+					return this.oOutline.get();
+				}.bind(this))
+				.then(function(aReceivedResponse) {
+					var aRootElements = aReceivedResponse[0].elements;
+					assert.strictEqual(aRootElements[0].technicalName, "content",
+						"then in the view elements the second item is a content aggregation");
+					var oListElementInfo = aRootElements[0].elements[0];
+					assert.strictEqual(oListElementInfo.technicalName, "sap.m.List",
+						"then sap.m.List is available in the view elements");
+					assert.strictEqual(oListElementInfo.elements.length, 3,
+						"then list contains 3 entries: the template element + 2 empty aggregations from the control");
+					assert.strictEqual(oListElementInfo.elements[0].icon, "sap-icon://attachment-text-file",
+						"then the first list entry (aggregation binding template) has the correct icon assigned");
+					assert.strictEqual(oListElementInfo.elements[0].name, "List Item [0]",
+						"then the first list entry contains the template with the number of children on its name (List Item [0])");
+				});
+		});
+
+		QUnit.test("for two lists, when get() is called", function (assert) {
+			var oXmlTable =
+			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
+				'<List id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\'}">' +
+					'<items>' +
+						'<StandardListItem title="{Name}" />' +
+					'</items>' +
+				'</List>' +
+				'<List id="ShortPotatoList" headerText="Potatoes" items="{path: \'/PotatoCollection\'}">' +
+					'<items>' +
+						'<StandardListItem title="{Name}" />' +
+					'</items>' +
+				'</List>' +
+			'</mvc:View>';
+
+			var oData = {
+				ProductCollection: [
+					{ ProductId: "HT-1000", Category: "Laptops" },
+					{ ProductId: "HT-1001", Category: "Laptops" }
+				],
+				PotatoCollection: [
+					{ PotatoId: "French Fries", Category: "Fried" }
+				]
+			};
+			var oController = createController("myController", oData);
+			return _beforeEachExtensionPoint.call(this, oXmlTable, oController)
+				.then(function() {
+					return this.oOutline.get();
+				}.bind(this))
+				.then(function(aReceivedResponse) {
+					var aRootElements = aReceivedResponse[0].elements;
+					assert.strictEqual(aRootElements[0].technicalName, "content",
+						"then in the view elements the second item is a content aggregation");
+					var oList1ElementInfo = aRootElements[0].elements[0];
+					assert.strictEqual(oList1ElementInfo.technicalName, "sap.m.List",
+						"then sap.m.List is available in the view elements");
+					assert.strictEqual(oList1ElementInfo.elements.length, 3,
+						"then first list contains 3 entries: the template element + 2 empty aggregations from the control");
+					assert.strictEqual(oList1ElementInfo.elements[0].icon, "sap-icon://attachment-text-file",
+						"then the first list entry (aggregation binding template) has the correct icon assigned");
+					assert.strictEqual(oList1ElementInfo.elements[0].name, "List Item [2]",
+						"then the first list entry contains the template with the number of children on its name (List Item [2])");
+					var oList2ElementInfo = aRootElements[0].elements[1];
+					assert.strictEqual(oList2ElementInfo.elements.length, 3,
+						"then second list contains 3 entries: the template element + 2 empty aggregations from the control");
+					assert.strictEqual(oList2ElementInfo.elements[0].icon, "sap-icon://attachment-text-file",
+						"then the first list entry (aggregation binding template) has the correct icon assigned");
+					assert.strictEqual(oList2ElementInfo.elements[0].name, "List Item [1]",
+						"then the first list entry contains the template with the number of children on its name (List Item [1])");
 				});
 		});
 	});
