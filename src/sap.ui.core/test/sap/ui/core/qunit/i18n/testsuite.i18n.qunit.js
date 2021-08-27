@@ -410,10 +410,15 @@ sap.ui.define(function() {
 					language: "xx_XX"
 				}
 			},
-
 			"Persian": {
 				coverage : {
 					only : "sap/ui/core/date/Persian"
+				}
+			},
+			"ResourceBundle": {
+				module: "./../base/i18n/ResourceBundle.qunit",
+				coverage : {
+					only : "sap/base/i18n/ResourceBundle"
 				}
 			},
 			"UniversalDate": {
