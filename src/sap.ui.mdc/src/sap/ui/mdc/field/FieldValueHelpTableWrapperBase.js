@@ -781,6 +781,11 @@ sap.ui.define([
 		}
 	};
 
+	FieldValueHelpTableWrapperBase.prototype._handleBusyStateChanged = function (oEvent) {
+        this._bBusy = oEvent.getParameter("busy");
+    };
+
+
 	FieldValueHelpTableWrapperBase.prototype._updateSelectedItems = function () {
 
 		if (this._bNoTableUpdate) {
