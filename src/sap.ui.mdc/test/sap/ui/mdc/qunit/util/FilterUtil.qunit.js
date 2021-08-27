@@ -29,6 +29,23 @@ sap.ui.define([
 		assert.ok(!oProperty);
 	});
 
+	QUnit.test("check getPropertyByKey method with path info", function(assert) {
+		var aPropertyMetadata = [{name: "Property0", path: "path0"}, {name: "Property1"}, {name: "Property2", path: "path2"}];
+		var oProperty = FilterUtil.getPropertyByKey(aPropertyMetadata, "Property1");
+		assert.ok(oProperty);
+
+		oProperty = FilterUtil.getPropertyByKey(aPropertyMetadata, "path2");
+		assert.ok(oProperty);
+		assert.ok(oProperty.name, aPropertyMetadata[2].name);
+
+		oProperty = FilterUtil.getPropertyByKey(aPropertyMetadata, "path0");
+		assert.ok(oProperty);
+		assert.ok(oProperty.name, aPropertyMetadata[0].name);
+
+		oProperty = FilterUtil.getPropertyByKey(aPropertyMetadata, "NIL");
+		assert.ok(!oProperty);
+	});
+
 	QUnit.test("check getConditionsMap method", function(assert) {
 		var oInnerConditions = {
 			"Filter1" : [{operator: "EQ", values: ["values1"]}, {operator: "BT", values: ["0", "10"]}],

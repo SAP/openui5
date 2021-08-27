@@ -61,6 +61,10 @@ sap.ui.define(['sap/ui/base/DataType'], function(DataType) {
 			return oProperty.name;
 		},
 
+		getPropertyKeyByPath:  function(oProperty) {
+			return oProperty.path;
+		},
+
 		/**
 		 * Static function that determines the key of the property<br>
 		 *
