@@ -997,19 +997,6 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
-	// QUnit.test("Setting name aggregation title", function (assert) {
-	// 	// Arrange
-	// 	var oDialog = new Dialog();
-
-	// 	// Assert
-	// 	assert.strictEqual(oDialog._composeAggreNameInHeader('Begin'), 'contentLeft', '"Begin" should set the dialog in right position');
-	// 	assert.strictEqual(oDialog._composeAggreNameInHeader('End'), 'contentRight', '"End" should set the dialog in right position');
-	// 	assert.strictEqual(oDialog._composeAggreNameInHeader('-different'), 'content-different', 'Custom position will set custom header');
-
-	// 	// Clean up
-	// 	oDialog.destroy();
-	// });
-
 	QUnit.test("Set role", function (assert) {
 		// Arrange
 		var oDialog = new Dialog();
@@ -1535,11 +1522,10 @@ sap.ui.define([
 		oDialogInformation.destroy();
 	});
 
-	QUnit.test("Check if header toolbar role is set correctly", function(assert) {
+	QUnit.test("Heading rendering when 'title' property is used", function(assert) {
 		// arrange
 		var oDialog = new Dialog({
-			title: "Some title",
-			beginButton: new Button({text: 'button'})
+			title: "Some title"
 		});
 
 		// act
@@ -1547,8 +1533,57 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assert
-		assert.strictEqual(oDialog.$('header').attr('role'), "heading", "The role of the header should be set to 'heading'");
-		assert.strictEqual(oDialog.$('header').attr('aria-level'), "2", "aria-level  should be set to the header");
+		assert.ok(oDialog.getDomRef("header").querySelector("h2"), "Semantic HTML heading is rendered for title");
+		assert.notStrictEqual(oDialog._getAnyHeader().$().attr("role"), "heading", "The role of the header shouldn't be set to 'heading'");
+		assert.notStrictEqual(oDialog._getAnyHeader().$().attr("aria-level"), "2", "There should be no aria-level be set to the header");
+
+		// cleanup
+		oDialog.destroy();
+	});
+
+	QUnit.test("Heading rendering when 'customHeader' aggregation is used without title", function(assert) {
+		// arrange
+		var oDialog = new Dialog({
+			customHeader: new Bar({
+				contentMiddle: [
+					new Text({
+						text: "Dialog custom header without heading semantic"
+					})
+				]
+			})
+		});
+
+		// act
+		oDialog.open();
+		this.clock.tick(500);
+
+		// assert
+		assert.strictEqual(oDialog._getAnyHeader().$().attr("role"), "heading", "The role of the header should be set to 'heading'");
+		assert.strictEqual(oDialog._getAnyHeader().$().attr("aria-level"), "2", "There should be aria-level set to the header");
+
+		// cleanup
+		oDialog.destroy();
+	});
+
+	QUnit.test("Heading rendering when 'customHeader' aggregation is used with title", function(assert) {
+		// arrange
+		var oDialog = new Dialog({
+			customHeader: new Bar({
+				contentMiddle: [
+					new Title({
+						text: "Dialog custom header with heading semantic"
+					})
+				]
+			})
+		});
+
+		// act
+		oDialog.open();
+		this.clock.tick(500);
+
+		// assert
+		assert.notStrictEqual(oDialog._getAnyHeader().$().attr("role"), "heading", "The role of the header shouldn't be set to 'heading'");
+		assert.notStrictEqual(oDialog._getAnyHeader().$().attr("aria-level"), "2", "There should be no aria-level be set to the header");
 
 		// cleanup
 		oDialog.destroy();
