@@ -610,12 +610,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should push the mid to the center of the remaining space, if the right content overlaps it", function(assert) {
-		var config = sap.ui.getCore().getConfiguration();
-
-		//turn on rtl for this test
-		this.stub(config, "getRTL", function() {
-			return false;
-		});
+		var bRtl = sap.ui.getCore().getConfiguration().getRTL(),
+			sLeftOrRight = bRtl ? "right" : "left";
 
 		//Arrange + System under Test + Act
 		//left | right | mid
@@ -631,42 +627,24 @@ sap.ui.define([
 
 		assert.strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
 
-		assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 -  iStartEndPadding * 2, "mid outerWidth is the remaining space");
-		assert.strictEqual(oBarInternals.$mid.css("left"), 0 +  iStartEndPadding + "px", "mid was positioned at the left edge");
+		assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 -  iStartEndPadding, "mid outerWidth is the remaining space");
+		assert.strictEqual(oBarInternals.$mid.css(sLeftOrRight), "0px", "mid was positioned at the " + sLeftOrRight + " edge");
 
 		assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
 
-		//Cleanup
-		sut.destroy();
-		jQuery("#qunit-fixture").width("");
-	});
-
-	QUnit.test("Should push the mid to the center of the remaining space, if the right content overlaps it RTL", function(assert) {
-		var config = sap.ui.getCore().getConfiguration();
-
-		//turn on rtl for this test
-		this.stub(config, "getRTL", function() {
-			return true;
-		});
-
-		//Arrange + System under Test + Act
-		//left | right | mid
-		var sut = createAndPlaceSUT(undefined, 225, 100);
-
-		//Act
-		jQuery("#qunit-fixture").width("500px");
-		sut.placeAt("qunit-fixture");
+		//Change to flexbox mode
+		sut.setEnableFlexBox(true);
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		var oBarInternals = getJqueryObjectsForBar(sut);
+		oBarInternals = getJqueryObjectsForBar(sut);
 
-		assert.strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
+		assert.strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct (flexbox)");
 
-		assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 -  iStartEndPadding * 2, "mid outerWidth is the remaining space");
-		assert.strictEqual(oBarInternals.$mid.css("left"), 225 + iStartEndPadding + "px", "mid was positioned at the right edge");
+		assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 -  iStartEndPadding, "mid outerWidth is the remaining space (flexbox)");
+		assert.strictEqual(oBarInternals.$mid.css(sLeftOrRight), "0px", "mid was positioned at the " + sLeftOrRight + " edge (flexbox)");
 
-		assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
+		assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct (flexbox)");
 
 		//Cleanup
 		sut.destroy();
@@ -735,12 +713,25 @@ sap.ui.define([
 
 		assert.strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct");
 
+		//Change to flexbox mode
+		sut.setEnableFlexBox(true);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		oBarInternals = getJqueryObjectsForBar(sut);
+
+		assert.strictEqual(oBarInternals.$left.outerWidth(), 100 + iStartEndPadding, "left outerWidth is correct (flexbox)");
+
+		assert.strictEqual(oBarInternals.$mid.outerWidth(), 300 -  iStartEndPadding * 2, "mid outerWidth is correct (flexbox)");
+
+		assert.strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct (flexbox)");
+
 		//Cleanup
 		sut.destroy();
 		jQuery("#qunit-fixture").width("");
 	});
 
-	testAlsoForRTL("Should push the mid content, right content that overlaps", function(assert) {
+	QUnit.test("Should push the mid content, right content that overlaps", function(assert) {
 		//Arrange + System under Test + Act
 		//left | right | mid
 		var sut = createAndPlaceSUT(undefined, 225, 100);
@@ -755,7 +746,7 @@ sap.ui.define([
 
 		assert.strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct");
 
-		assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 - iStartEndPadding * 2, "mid outerWidth was taking the remaining space");
+		assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 - iStartEndPadding, "mid outerWidth was taking the remaining space");
 
 		assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
 
