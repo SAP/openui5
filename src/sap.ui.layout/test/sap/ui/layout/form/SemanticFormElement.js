@@ -33,7 +33,10 @@ sap.ui.require([
 	"sap/m/CheckBox",
 	"sap/m/SegmentedButton",
 	"sap/m/SegmentedButtonItem",
-	"sap/m/Slider"
+	"sap/m/Slider",
+	"sap/m/MultiInput",
+	"sap/ui/core/Item",
+	"sap/m/Token"
 ],
 function(
 	CoreLib,
@@ -70,7 +73,10 @@ function(
 	CheckBox,
 	SegmentedButton,
 	SegmentedButtonItem,
-	Slider
+	Slider,
+	MultiInput,
+	Item,
+	Token
 ) {
 	"use strict";
 
@@ -175,6 +181,24 @@ function(
 					new SemanticFormElement("C2FE5", {
 						label: "text",
 						fields: [new Text({text: {path: "/text"}})]
+					}),
+
+					new SemanticFormElement("C2FE6", {
+						label: "MultiInput",
+						fields: [
+							new MultiInput({
+								showClearIcon: true,
+								suggestionItems: {
+									path: '/countries',
+									template: new Item({key: "{key}", text: "{text}"})
+								},
+								tokens: [
+									new Token({key: "{/countries/0/key}", text: "{/countries/0/text}"}),
+									new Token({key: "{/countries/1/key}", text: "{/countries/1/text}"})
+								],
+								showValueHelp: false
+							})
+						]
 					})
 				]
 			})
