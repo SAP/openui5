@@ -2249,6 +2249,65 @@ sap.ui.define([
 			oList.destroy();
 		});
 
+		QUnit.test("Mouse range selection with hidden items", function(assert) {
+			var oListItemTemplate = createListItem(),
+				oList = new List({
+					mode: library.ListMode.MultiSelect,
+					items: [
+						oListItemTemplate
+					]
+				});
+
+			bindListData(oList, data3, "/items", createTemplateListItem());
+
+			var aItems = oList.getItems();
+			for (var i = 5; i <= 7; i++) {
+				aItems[i].setVisible(false);
+			}
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			aItems[4].focus();
+			// select the item
+			qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
+			Core.applyChanges();
+			// trigger shift keydown so that oList._mRangeSelection object is available
+			qutils.triggerKeydown(document.activeElement, "", true, false, false);
+			var oCheckboxDomRef = aItems[8].getDomRef("selectMulti");
+			qutils.triggerMouseEvent(oCheckboxDomRef, "tap");
+			Core.applyChanges();
+
+			assert.strictEqual(oList.getSelectedItems().length, 2, "Invisible items are no selected");
+			oList.destroy();
+		});
+
+		QUnit.test("Mouse range selection with hidden items with includeItemInSelection=true", function(assert) {
+			var oListItemTemplate = createListItem(),
+				oList = new List({
+					mode: library.ListMode.MultiSelect,
+					includeItemInSelection: true,
+					items: [
+						oListItemTemplate
+					]
+				});
+
+			bindListData(oList, data3, "/items", createTemplateListItem());
+			var aItems = oList.getItems();
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			aItems[4].focus();
+			// select the item
+			qutils.triggerMouseEvent(document.activeElement, "tap");
+			Core.applyChanges();
+
+			// trigger shift keydown so that oList._mRangeSelection object is available
+			qutils.triggerKeydown(document.activeElement, "", true, false, false);
+			qutils.triggerMouseEvent(aItems[8].getDomRef(), "tap");
+			assert.strictEqual(oList.getSelectedItems().length, 5, "5 items selected also when the item was tapped with inckudeItemInSelection=true");
+			oList.destroy();
+		});
+
 		QUnit.test("Do not create range seletion object when CTRL + SHIFT is pressed", function(assert) {
 			var oListItemTemplate = createListItem(),
 				oList = new List({
