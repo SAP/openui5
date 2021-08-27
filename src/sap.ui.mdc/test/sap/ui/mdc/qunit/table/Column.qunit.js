@@ -91,7 +91,7 @@ sap.ui.define([
 		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
 		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), this.oColumn.getHeaderVisible(), "wrapping set on label control according to according to headerVisible");
 		assert.ok(!this.oColumn._oColumnHeaderLabel.getWidth(), "width set on label control according to according to headerVisible");
-		var oLabelElement = document.getElementById(this.oColumn.getId());
+		var oLabelElement = this.oColumn.getDomRef();
 		assert.strictEqual(oLabelElement && oLabelElement.textContent, this.oColumn.getHeader(), "header text forwarded to ACC label");
 
 		this.oColumn.setHeader("Text2");
@@ -102,7 +102,7 @@ sap.ui.define([
 		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
 		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), this.oColumn.getHeaderVisible(), "wrapping set on label control according to according to headerVisible");
 		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWidth(), "0px", "width set on label control according to according to headerVisible");
-		oLabelElement = document.getElementById(this.oColumn.getId());
+		oLabelElement = this.oColumn.getDomRef();
 		assert.strictEqual(oLabelElement && oLabelElement.textContent, this.oColumn.getHeader(), "header text forwarded to ACC label");
 
 		this.oColumn._removeAriaStaticDom();
@@ -127,7 +127,7 @@ sap.ui.define([
 		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
 		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), false, "no wrapping set on label control");
 		assert.ok(!this.oColumn._oColumnHeaderLabel.getWidth(), "width set on label control according to according to headerVisible");
-		var oLabelElement = document.getElementById(this.oColumn.getId());
+		var oLabelElement = this.oColumn.getDomRef();
 		assert.strictEqual(oLabelElement && oLabelElement.textContent, this.oColumn.getHeader(), "header text forwarded to ACC label");
 
 		this.oColumn.setHeader("Text2");
@@ -138,7 +138,7 @@ sap.ui.define([
 		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
 		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), false, "no wrapping set on label control");
 		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWidth(), "0px", "width set on label control according to according to headerVisible");
-		oLabelElement = document.getElementById(this.oColumn.getId());
+		oLabelElement = this.oColumn.getDomRef();
 		assert.strictEqual(oLabelElement && oLabelElement.textContent, this.oColumn.getHeader(), "header text forwarded to ACC label");
 
 		this.oColumn._removeAriaStaticDom();

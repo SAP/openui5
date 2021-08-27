@@ -225,10 +225,10 @@ sap.ui.define([
 		oFirstItem._status = "Edit";
 		this.oUploadCollection.rerender();
 		//Act
-		var $MarkerContainerFirstItem = jQuery.sap.domById(oMarkerFirstItem.getId()).parentNode;
-		var sMarkerFirstItemStyle = $MarkerContainerFirstItem.getAttribute("style");
-		var $MarkerContainerSecondItem = jQuery.sap.domById(oMarkerSecondItem.getId()).parentNode;
-		var sMarkerSecondItemStyle = $MarkerContainerSecondItem.getAttribute("style");
+		var oMarkerContainerFirstItem = oMarkerFirstItem.getDomRef().parentNode;
+		var sMarkerFirstItemStyle = oMarkerContainerFirstItem.getAttribute("style");
+		var oMarkerContainerSecondItem = oMarkerSecondItem.getDomRef().parentNode;
+		var sMarkerSecondItemStyle = oMarkerContainerSecondItem.getAttribute("style");
 
 		//Assert
 		assert.ok(sMarkerFirstItemStyle.indexOf("display: none") >= 0, "First Item in edit mode: Marker not displayed");
@@ -439,8 +439,8 @@ sap.ui.define([
 		//Act
 		sap.ui.getCore().applyChanges();
 		//Assert
-		assert.ok(jQuery.sap.domById(this.oUploadCollection.getId() + "-no-data-text"), "No data text is rendered in upload disabled state");
-		assert.notOk(jQuery.sap.domById(this.oUploadCollection.getId() + "-no-data-description"), "No data description is not rendered in upload disabled state");
+		assert.ok(this.oUploadCollection.getDomRef("no-data-text"), "No data text is rendered in upload disabled state");
+		assert.notOk(this.oUploadCollection.getDomRef("no-data-description"), "No data description is not rendered in upload disabled state");
 	});
 
 	QUnit.test("No data rendering - with default text", function(assert) {
@@ -453,8 +453,8 @@ sap.ui.define([
 		//Assert
 		assert.equal(this.oUploadCollection.getNoDataText(), sNoDataText, "default text is returned for getNoDataText");
 		assert.equal(this.oUploadCollection.getNoDataDescription(), sNoDataDescription, "default description is returned for getNoDataDescription");
-		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-text").text(), sNoDataText, "default no data text is rendered in upload collection");
-		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-description").text(), sNoDataDescription, "default no data description is rendered in upload collection");
+		assert.equal(this.oUploadCollection.$("no-data-text").text(), sNoDataText, "default no data text is rendered in upload collection");
+		assert.equal(this.oUploadCollection.$("no-data-description").text(), sNoDataDescription, "default no data description is rendered in upload collection");
 	});
 
 	QUnit.test("No data rendering - Accessibility test", function(assert) {
@@ -480,7 +480,7 @@ sap.ui.define([
 		//Act
 		sap.ui.getCore().applyChanges();
 		//Assert
-		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-text").text(), "myNoDataText", "The no data text set by user is rendered");
+		assert.equal(this.oUploadCollection.$("no-data-text").text(), "myNoDataText", "The no data text set by user is rendered");
 		assert.equal(sUCNoDataTextDescription, sListNoDataText, "Accessibility Nodata text matches after setter");
 	});
 
@@ -491,7 +491,7 @@ sap.ui.define([
 		//Act
 		sap.ui.getCore().applyChanges();
 		//Assert
-		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-description").text(), "myNoDataDescription", "The no data description set by user is rendered");
+		assert.equal(this.oUploadCollection.$("no-data-description").text(), "myNoDataDescription", "The no data description set by user is rendered");
 	});
 
 	QUnit.test("Reset renderNoData of the ListRenderer to the original function", function(assert) {
@@ -2690,7 +2690,7 @@ sap.ui.define([
 		assert.strictEqual(this.oUploadCollection.getProperty("mimeType"), sMimeType, "Property 'mimeType': default value is '" + sMimeType + "'");
 		assert.strictEqual(this.oUploadCollection.getProperty("multiple"), bMultiple, "Property 'multiple': default value is '" + bMultiple + "'");
 		assert.strictEqual(this.oUploadCollection.getProperty("noDataText"), sNoDataText, "Property 'noDataText': default value is '" + sNoDataText + "'");
-		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-text").text(), this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_NO_DATA_TEXT"), "Property 'noDataText' properly rendered in DOM");
+		assert.equal(this.oUploadCollection.$("no-data-text").text(), this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_NO_DATA_TEXT"), "Property 'noDataText' properly rendered in DOM");
 		assert.strictEqual(this.oUploadCollection.getProperty("sameFilenameAllowed"), bSameFilenameAllowed, "Property 'sameFilenameAllowed': default value is '" + bSameFilenameAllowed + "'");
 		assert.strictEqual(this.oUploadCollection.getProperty("showSeparators"), bShowSeparators, "Property 'showSeparators': default value is '" + bShowSeparators + "'");
 		assert.strictEqual(this.oUploadCollection.getProperty("uploadEnabled"), bUploadEnabled, "Property 'uploadEnabled': default value is '" + bUploadEnabled + "'");
@@ -2751,7 +2751,7 @@ sap.ui.define([
 		var sNoDataText = "myNoDataText";
 		testSetter(this.oUploadCollection, "noDataText", sNoDataText, true, assert);
 		sap.ui.getCore().applyChanges();
-		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-text").text(), sNoDataText, "Property 'noDataText' properly rendered in DOM");
+		assert.equal(this.oUploadCollection.$("no-data-text").text(), sNoDataText, "Property 'noDataText' properly rendered in DOM");
 	});
 
 	QUnit.test("sameFilenameAllowed", function(assert) {

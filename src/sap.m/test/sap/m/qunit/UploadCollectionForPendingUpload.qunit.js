@@ -428,13 +428,13 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 			newValue: "file1"// needed to enable IE9 support and non failing tests
 		});
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() + "-ta_filenameHL"), "FileName is rendered");
-		assert.ok(!jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() + "-ta_editFileName"), "No input field should be rendered if instantUpload = false ");
-		assert.ok(!jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() + "-okButton"), "No OK button should be rendered if instantUpload = false");
-		assert.ok(!jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() + "-cancelButton"), "No Cancel button should be rendered if instantUpload = false");
-		assert.ok(!jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() + "-editButton"), "No Edit button should be rendered if instantUpload = false");
-		assert.ok(jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() + "-deleteButton"), "Delete button should be rendered if instantUpload = false");
-		assert.ok(jQuery.sap.domById(this.oUploadCollection.getItems()[0].getId() + "-ia_iconHL"), "Icon should be rendered if instantUpload = false");
+		assert.ok(this.oUploadCollection.getItems()[0].getDomRef("ta_filenameHL"), "FileName is rendered");
+		assert.ok(!this.oUploadCollection.getItems()[0].getDomRef("ta_editFileName"), "No input field should be rendered if instantUpload = false ");
+		assert.ok(!this.oUploadCollection.getItems()[0].getDomRef("okButton"), "No OK button should be rendered if instantUpload = false");
+		assert.ok(!this.oUploadCollection.getItems()[0].getDomRef("cancelButton"), "No Cancel button should be rendered if instantUpload = false");
+		assert.ok(!this.oUploadCollection.getItems()[0].getDomRef("editButton"), "No Edit button should be rendered if instantUpload = false");
+		assert.ok(this.oUploadCollection.getItems()[0].getDomRef("deleteButton"), "Delete button should be rendered if instantUpload = false");
+		assert.ok(this.oUploadCollection.getItems()[0].getDomRef("ia_iconHL"), "Icon should be rendered if instantUpload = false");
 	});
 
 	QUnit.test("Setting of 'hidden' property on FileUploader instances", function(assert) {
@@ -444,18 +444,18 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 			newValue: "file1"// needed to enable IE9 support and non failing tests
 		});
 		sap.ui.getCore().applyChanges();// it leads to rerendering and thus a new FU instance is created in UploadCollection.prototype._getListHeader
-		assert.ok(jQuery(jQuery.sap.domById(oFileUploader1.getId())).is(":hidden"), "The first FileUploader instance should be set to hidden after the second instance has been created");
+		assert.ok(oFileUploader1.$().is(":hidden"), "The first FileUploader instance should be set to hidden after the second instance has been created");
 		var oFileUploader2 = this.oUploadCollection._oFileUploader; // take the current FU instance
-		assert.ok(!jQuery(jQuery.sap.domById(oFileUploader2.getId())).is(":hidden"), "The current FileUploader instance should not be hidden");
+		assert.ok(!oFileUploader2.$().is(":hidden"), "The current FileUploader instance should not be hidden");
 		oFileUploader2.fireChange({
 			files: this.aFiles,
 			newValue: "file1"// needed to enable IE9 support and non failing tests
 		});
 		sap.ui.getCore().applyChanges();// it leads to rerendering and thus a new FU instance is created in UploadCollection.prototype._getListHeader
-		assert.ok(jQuery(jQuery.sap.domById(oFileUploader1.getId())).is(":hidden"), "The first FileUploader instance should be still hidden");
-		assert.ok(jQuery(jQuery.sap.domById(oFileUploader2.getId())).is(":hidden"), "The second  FileUploader instance should be hidden now");
+		assert.ok(oFileUploader1.$().is(":hidden"), "The first FileUploader instance should be still hidden");
+		assert.ok(oFileUploader2.$().is(":hidden"), "The second  FileUploader instance should be hidden now");
 		var oFileUploader3 = this.oUploadCollection._oFileUploader;
-		assert.ok(!jQuery(jQuery.sap.domById(oFileUploader3.getId())).is(":hidden"), "The current  FileUploader instance should not be hidden");
+		assert.ok(!oFileUploader3.$().is(":hidden"), "The current  FileUploader instance should not be hidden");
 		assert.deepEqual(this.oUploadCollection._oHeaderToolbar.getContent()[4], oFileUploader1, "oFileUploader1 should be on the third position in the toolbar");
 		assert.deepEqual(this.oUploadCollection._oHeaderToolbar.getContent()[3], oFileUploader2, "oFileUploader2 should be on the fourth position in the toolbar");
 		assert.deepEqual(this.oUploadCollection._oHeaderToolbar.getContent()[2], oFileUploader3, "oFileUploader3 should be on the fifth position in the toolbar");

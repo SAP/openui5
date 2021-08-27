@@ -95,7 +95,7 @@ sap.ui.define([
 	  }
 
 	  // get the ProgressBar
-	  this.oBar = window.document.getElementById(this.getId() + '-bar');
+	  this.oBar = this.getDomRef('bar');
 
 	  // get the new Value and calculate Pixels
 	  VerticalPercent = iPercentage;
@@ -115,7 +115,7 @@ sap.ui.define([
 
 	  //set the ARIA property
 	  if (!this.oThis) {
-		this.oThis = jQuery(document.getElementById(this.getId()));
+		this.oThis = this.$();
 		}
 	  this.oThis.attr('aria-valuenow', iPercentage + '%');
 	  return this;

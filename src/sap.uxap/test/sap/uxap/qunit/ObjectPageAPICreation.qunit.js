@@ -2498,7 +2498,7 @@ function (
 	QUnit.test("ObjectPageDynamicHeaderTitle with snappedTitleOnMobile on desktop", function (assert) {
 		// Arrange
 		var oObjectPage = this.oObjectPage,
-			oDomObjectPageHeaderTitle = document.getElementById(oObjectPage.getId() + "-headerTitle"),
+			oDomObjectPageHeaderTitle = oObjectPage.getDomRef("headerTitle"),
 			oDynamicPageTitle = oObjectPage.getHeaderTitle();
 
 		// Act
@@ -2519,7 +2519,7 @@ function (
 	QUnit.test("ObjectPageDynamicHeaderTitle with snappedTitleOnMobile on tablet", function (assert) {
 		// Arrange
 		var oObjectPage = this.oObjectPage,
-			oDomObjectPageHeaderTitle = document.getElementById(oObjectPage.getId() + "-headerTitle"),
+			oDomObjectPageHeaderTitle = oObjectPage.getDomRef("headerTitle"),
 			oDynamicPageTitle = oObjectPage.getHeaderTitle();
 
 		// Act
@@ -2543,7 +2543,7 @@ function (
 	QUnit.test("ObjectPageDynamicHeaderTitle with snappedTitleOnMobile on phone", function (assert) {
 		// Arrange
 		var oObjectPage = this.oObjectPage,
-			oDomObjectPageHeaderTitle = document.getElementById(oObjectPage.getId() + "-headerTitle"),
+			oDomObjectPageHeaderTitle = oObjectPage.getDomRef("headerTitle"),
 			oDynamicPageTitle = oObjectPage.getHeaderTitle();
 
 		// Act
@@ -2783,10 +2783,10 @@ function (
 		assert.expect(2);
 
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-			assert.strictEqual(oObjectPage.iAnchorBarHeight, document.getElementById(this.getId() + "-anchorBar").offsetHeight, "correct anchorBar height");
+			assert.strictEqual(oObjectPage.iAnchorBarHeight, this.getDomRef("anchorBar").offsetHeight, "correct anchorBar height");
 
 			oObjectPage._snapHeader(true);
-			assert.strictEqual(oObjectPage.iAnchorBarHeight, document.getElementById(this.getId() + "-stickyAnchorBar").offsetHeight, "correct sticky anchorBar height");
+			assert.strictEqual(oObjectPage.iAnchorBarHeight, this.getDomRef("stickyAnchorBar").offsetHeight, "correct sticky anchorBar height");
 			done();
 		});
 	});
@@ -2799,7 +2799,7 @@ function (
 		assert.expect(1);
 
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-			var oAnchorBarDOM = document.getElementById(this.getId() + "-anchorBar"),
+			var oAnchorBarDOM = this.getDomRef("anchorBar"),
 				iPadding = parseInt(getComputedStyle(oAnchorBarDOM).paddingTop) || 0,
 				iABHeight = oObjectPage.iAnchorBarHeight,
 				iDiff = 10;

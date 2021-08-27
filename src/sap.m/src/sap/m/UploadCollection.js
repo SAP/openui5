@@ -2861,7 +2861,7 @@ sap.ui.define([
 					oItem._percentUploaded = iPercentUploaded;
 					// add ARIA attribute for screen reader support
 
-					$busyIndicator = jQuery(document.getElementById(oItem.getId() + "-ia_indicator"));
+					$busyIndicator = oItem.$("ia_indicator");
 					if (iPercentUploaded === 100) {
 						$busyIndicator.attr("aria-label", sPercentUploaded);
 					} else {

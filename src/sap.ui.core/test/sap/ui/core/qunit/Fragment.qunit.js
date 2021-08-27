@@ -401,7 +401,7 @@ sap.ui.define([
 		oHtmlFragmentWithIdInXmlView = aContent[5];
 
 
-		assert.ok(document.getElementById(oXmlView.getId()), "XMLView should be rendered");
+		assert.ok(oXmlView.getDomRef(), "XMLView should be rendered");
 	});
 
 

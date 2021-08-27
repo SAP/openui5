@@ -440,9 +440,9 @@ sap.ui.define([
 		this.clock.tick(600);
 		var $Dialog = jQuery.sap.byId("dialog"),
 			$ScrollDiv = this.oDialog.$("scroll"),
-			oTitleDom = jQuery.sap.domById(this.oDialog.getId() + "-title"),
+			oTitleDom = this.oDialog.getDomRef("title"),
 			oSubHeaderDom = $Dialog.children(".sapMDialogSubHeader")[0],
-			oIconDom = jQuery.sap.domById(this.oDialog.getId() + "-icon"),
+			oIconDom = this.oDialog.getDomRef("icon"),
 			oSearchField = Core.byId("__field0").getFocusDomRef();
 		assert.ok(jQuery.sap.domById("dialog"), "dialog is rendered after it's opened.");
 		assert.ok($Dialog.closest("#sap-ui-static")[0], "dialog should be rendered inside the static uiArea.");
@@ -544,8 +544,8 @@ sap.ui.define([
 		oDialog.setHorizontalScrolling(false);
 
 		Core.applyChanges();
-		assert.equal(jQuery.sap.domById(oDialog.getId()).className.indexOf("sapMDialogVerScrollDisabled") != -1, true, "verticalScrolling should be disabled");
-		assert.equal(jQuery.sap.domById(oDialog.getId()).className.indexOf("sapMDialogHorScrollDisabled") != -1, true, "horizontalScrolling should be disabled");
+		assert.equal(oDialog.getDomRef().className.indexOf("sapMDialogVerScrollDisabled") != -1, true, "verticalScrolling should be disabled");
+		assert.equal(oDialog.getDomRef().className.indexOf("sapMDialogHorScrollDisabled") != -1, true, "horizontalScrolling should be disabled");
 		assert.equal(oDialog.getVerticalScrolling(), false, "verticalScrolling should be disabled");
 		assert.equal(oDialog.getVerticalScrolling(), false, "horizontalScrolling should be disabled");
 		oDialog.destroy();
@@ -564,8 +564,8 @@ sap.ui.define([
 		oDialog.setHorizontalScrolling(true);
 
 		Core.applyChanges();
-		assert.equal(jQuery.sap.domById(oDialog.getId()).className.indexOf("sapMPopoverVerScrollDisabled") == -1, true, "verticalScrolling should be enabled");
-		assert.equal(jQuery.sap.domById(oDialog.getId()).className.indexOf("sapMPopoverHorScrollDisabled") == -1, true, "horizontalScrolling should be enabled");
+		assert.equal(oDialog.getDomRef().className.indexOf("sapMPopoverVerScrollDisabled") == -1, true, "verticalScrolling should be enabled");
+		assert.equal(oDialog.getDomRef().className.indexOf("sapMPopoverHorScrollDisabled") == -1, true, "horizontalScrolling should be enabled");
 		assert.equal(oDialog.getVerticalScrolling(), true, "verticalScrolling should be enabled");
 		assert.equal(oDialog.getVerticalScrolling(), true, "horizontalScrolling should be enabled");
 		oDialog.destroy();

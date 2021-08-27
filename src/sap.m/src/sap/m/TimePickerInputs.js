@@ -256,7 +256,7 @@ sap.ui.define([
 
 				this._kbdBuffer = "";
 				this._typeCooldownId = null;
-				aInputs && aInputs[this._activeInput] && document.getElementById(aInputs[this._activeInput].getId() + "-inner").select();
+				aInputs && aInputs[this._activeInput] && aInputs[this._activeInput].getDomRef("inner").select();
 			}.bind(this), TYPE_COOLDOWN_DELAY);
 		};
 
@@ -663,7 +663,7 @@ sap.ui.define([
 				aInputs = this.getAggregation("_inputs");
 				this._activeInput = this._inputIndexes[sSuffix];
 				aInputs[this._activeInput].addStyleClass("sapMFocus");
-				document.getElementById(aInputs[this._activeInput].getId() + "-inner").select();
+				aInputs[this._activeInput].getDomRef("inner").select();
 			}.bind(this);
 
 			oInput.onfocusout = function(oEvent) {

@@ -873,11 +873,11 @@ sap.ui.define([
 			// call method & do tests
 			sText = "Test1234567890!\"§$%&/()=?`´@€-_.:,;#'+*~1²³456{[]}\\";
 			assert.strictEqual(oList.setNoDataText(sText).getNoDataText(), sText, 'The control property "noDataText" is "' + sText + '" on ' + oList);
-			assert.strictEqual(jQuery.sap.byId(oList.getId() + "-nodata").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
+			assert.strictEqual(oList.$("nodata").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
 
 			sText = "";
 			assert.strictEqual(oList.setNoDataText(sText).getNoDataText(), oRB.getText("LIST_NO_DATA"), 'The control property "noDataText" is "' + sText + '" on ' + oList);
-			assert.strictEqual(jQuery.sap.byId(oList.getId() + "-nodata-text").text(), oRB.getText("LIST_NO_DATA"), 'The dom element has the text "' + sText + '" on ' + oList);
+			assert.strictEqual(oList.$("nodata-text").text(), oRB.getText("LIST_NO_DATA"), 'The dom element has the text "' + sText + '" on ' + oList);
 
 			// standard setter tests
 			assert.strictEqual(oList.setNoDataText(""), oList, 'Method returns this pointer on ' + oList);
@@ -997,17 +997,17 @@ sap.ui.define([
 			sText = "Test1234567890!\"§$%&/()=?`´@€-_.:,;#'+*~1²³456{[]}\\";
 			assert.strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'The control property "growingTriggerText" is "' + sText + '" on ' + oList);
 			Core.applyChanges();
-			assert.strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
+			assert.strictEqual(oList.$("trigger").find(".sapMSLITitle").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
 
 			sText = "~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>";
 			assert.strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'Javascript code injection is not possible on ' + oList);
 			Core.applyChanges();
-			assert.strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
+			assert.strictEqual(oList.$("trigger").find(".sapMSLITitle").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
 
 			sText = "";
 			assert.strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'The control property "growingTriggerText" is "' + sText + '" on ' + oList);
 			Core.applyChanges();
-			assert.strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), oRB.getText("LOAD_MORE_DATA"), 'The dom element has the text "' + sText + '" on ' + oList);
+			assert.strictEqual(oList.$("trigger").find(".sapMSLITitle").text(), oRB.getText("LOAD_MORE_DATA"), 'The dom element has the text "' + sText + '" on ' + oList);
 
 			// standard setter tests
 			assert.strictEqual(oList.setGrowingTriggerText(""), oList, 'Method returns this pointer on ' + oList);
@@ -2699,9 +2699,9 @@ sap.ui.define([
 			var oControl1 = oInputListItem.getContent()[1];
 
 			assert.ok(oControl.addAriaLabelledBy, "Control has ariaLabelledBy association");
-			assert.strictEqual(document.getElementById(oControl.getId() + "-inner").getAttribute("aria-labelledby"), oInputListItem.getId() + "-label", "aria-lablledBy is added to the control");
+			assert.strictEqual(oControl.getDomRef("inner").getAttribute("aria-labelledby"), oInputListItem.getId() + "-label", "aria-lablledBy is added to the control");
 			assert.notOk(oControl1.addAriaLabelledBy, "Control does not have ariaLabelledBy association");
-			assert.notOk(document.getElementById(oControl1.getId()).getAttribute("aria-labelledby"), "aria-lablledBy is not added to the control" );
+			assert.notOk(oControl1.getDomRef().getAttribute("aria-labelledby"), "aria-lablledBy is not added to the control" );
 		});
 
 		QUnit.test("CustomListItem - custom accessibility annoucement", function(assert) {

@@ -184,7 +184,7 @@ sap.ui.define([
 		oMN.addMessage(oMessage);
 		sap.ui.getCore().applyChanges();
 
-		var $InplaceText = jQuery(document.getElementById(oNotiBar.getId() + "-inplaceMessage"));
+		var $InplaceText = oNotiBar.$("inplaceMessage");
 		var bTest = $InplaceText.hasClass("sapUiInPlaceMessageSelectable");
 		assert.ok(!bTest, "Inplace text for common message is not selectable - there is no event listener");
 
@@ -192,7 +192,7 @@ sap.ui.define([
 		oMN.attachMessageSelected(function() {
 		});
 		sap.ui.getCore().applyChanges();
-		$InplaceText = jQuery(document.getElementById(oNotiBar.getId() + "-inplaceMessage"));
+		$InplaceText = oNotiBar.$("inplaceMessage");
 		bTest = $InplaceText.hasClass("sapUiInPlaceMessageSelectable");
 		assert.ok(bTest, "Inplace text for common message is selectable");
 
@@ -207,7 +207,7 @@ sap.ui.define([
 		oMN.addMessage(oReadOnlyMessage);
 		sap.ui.getCore().applyChanges();
 
-		$InplaceText = jQuery(document.getElementById(oNotiBar.getId() + "-inplaceMessage"));
+		$InplaceText = oNotiBar.$("inplaceMessage");
 		bTest = $InplaceText.hasClass("sapUiInPlaceMessageSelectable");
 		assert.ok(!bTest, "Inplace text is not selectable because it's read only");
 	});
@@ -300,7 +300,7 @@ sap.ui.define([
 		oNotiBar.addNotifier(oNotifier);
 		sap.ui.getCore().applyChanges();
 
-		var $notifier = jQuery(document.getElementById(oNotifier.getId()));
+		var $notifier = oNotifier.$();
 
 		var oEvt = jQuery.Event("mouseover");
 		$notifier.trigger(oEvt);

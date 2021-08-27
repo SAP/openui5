@@ -73,16 +73,16 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.ok(jQuery.sap.domById(sut.getId()), "ObjectIdentifier should be rendered.");
+		assert.ok(sut.getDomRef(), "ObjectIdentifier should be rendered.");
 
 		var childrenTitle = $("#" + sut.getId() + "-title").children();
 		var childrenText = $("#" + sut.getId() + "-text").children();
 		assert.equal($(childrenTitle[0]).text(), sTitle, "Title is rendered.");
 		assert.equal($(childrenText[0]).text(), sText, "Text is rendered.");
 
-		assert.ok(jQuery.sap.domById(sut.getId() + "-attachments-icon"), "Attachments icon is rendered.");
-		assert.ok(jQuery.sap.domById(sut.getId() + "-notes-icon"), "Notes icon is rendered.");
-		assert.ok(jQuery.sap.domById(sut.getId() + "-people-icon"), "People icon is rendered.");
+		assert.ok(sut.getDomRef("attachments-icon"), "Attachments icon is rendered.");
+		assert.ok(sut.getDomRef("notes-icon"), "Notes icon is rendered.");
+		assert.ok(sut.getDomRef("people-icon"), "People icon is rendered.");
 
 		//Cleanup
 		sut.destroy();
@@ -125,7 +125,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.ok(jQuery.sap.domById(sut.getId()), "ObjectIdentifier should be rendered.");
+		assert.ok(sut.getDomRef(), "ObjectIdentifier should be rendered.");
 
 		var childrenTitle = $("#" + sut.getId() + "-title").children();
 		var childrenText = $("#" + sut.getId() + "-text").children();
@@ -133,9 +133,9 @@ sap.ui.define([
 		assert.equal($(childrenTitle[0]).text(), sTitle, "Title is rendered.");
 		assert.equal($(childrenText[0]).text(), sText, "Text is rendered.");
 
-		assert.ok(jQuery.sap.domById(sut.getId() + "-attachments-icon"), "Attachments icon is rendered.");
-		assert.ok(jQuery.sap.domById(sut.getId() + "-notes-icon"), "Notes icon is rendered.");
-		assert.ok(jQuery.sap.domById(sut.getId() + "-people-icon"), "People icon is rendered.");
+		assert.ok(sut.getDomRef("attachments-icon"), "Attachments icon is rendered.");
+		assert.ok(sut.getDomRef("notes-icon"), "Notes icon is rendered.");
+		assert.ok(sut.getDomRef("people-icon"), "People icon is rendered.");
 
 		sut.destroy();
 

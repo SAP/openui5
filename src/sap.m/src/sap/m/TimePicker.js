@@ -1352,7 +1352,7 @@ function(
 				this._sMinutes = oPicker.getContent()[0]._sMinutes;
 				this._sSeconds = oPicker.getContent()[0]._sSeconds;
 				oPicker.close();
-				document.getElementById(this.getId() + "-inner").select();
+				this.getDomRef("inner").select();
 			} else {
 				Log.warning("There is no picker to close.");
 			}
@@ -1620,7 +1620,7 @@ function(
 			this.updateDomValue(sValue);
 			this._handleInputChange();
 
-			document.getElementById(this.getId() + "-inner").select();
+			this.getDomRef("inner").select();
 			this._closeNumericPicker();
 		};
 

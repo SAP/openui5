@@ -1162,10 +1162,10 @@ sap.ui.define([
 			Core.applyChanges();
 
 			setTimeout(function() {
-				var oContainer = jQuery.sap.domById(swipeContentList.getId() + "-swp");
+				var oContainer = swipeContentList.getDomRef("swp");
 				assert.ok(oContainer instanceof HTMLElement, "Swipe Content is rendered");
 				swipeContentList.swipeOut(function(li, swpcnt){
-					var oContainer = jQuery.sap.domById(swipeContentList.getId() + "-swp");
+					var oContainer = swipeContentList.getDomRef("swp");
 					assert.equal(oContainer, null, "Swipe Content is removed");
 					swipeContentList.setSwipeContent(swpcnt.setText("Disapprove").setType("Reject"));
 					done();

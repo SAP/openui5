@@ -849,7 +849,7 @@ sap.ui.define([
 	 * what's visible on the screen.
 	 */
 	FileUploader.prototype._updateAccDescription = function () {
-		var oAccDescriptionHolder = document.getElementById(this.getId() + "-AccDescr"),
+		var oAccDescriptionHolder = this.getDomRef("AccDescr"),
 			sNewDescription = this._generateAccDescriptionText();
 
 		if (oAccDescriptionHolder) {

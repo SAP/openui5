@@ -83,8 +83,8 @@ sap.ui.define([
 		}
 	});
 	QUnit.test("Initial Rendering", function(assert) {
-		assert.notEqual(jQuery.sap.domById(this.sut.getId()), null, "MenuButton HTML Element should be rendered");
-		assert.equal(jQuery.sap.domById(this.oMenu.getId()), null, "Menu HTML Element is not yet rendered");
+		assert.notEqual(this.sut.getDomRef(), null, "MenuButton HTML Element should be rendered");
+		assert.equal(this.oMenu.getDomRef(), null, "Menu HTML Element is not yet rendered");
 	});
 
 	QUnit.test("MenuButton sets a stableID to the internal button", function (assert) {

@@ -363,7 +363,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerClock.prototype._getClockCoverContainerDomRef = function() {
-			return document.getElementById(this.getId() + "-cover");
+			return this.getDomRef("cover");
 		};
 
 		/**
