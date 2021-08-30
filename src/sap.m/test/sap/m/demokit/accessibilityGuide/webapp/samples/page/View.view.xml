@@ -13,6 +13,8 @@
 						contentLabel="Product Description"
 						headerRole="Region"
 						headerLabel="Product Header"
+						subHeaderRole="Navigation"
+						subHeaderLabel="Navigation Sub Header"
 						footerRole="Region"
 						footerLabel="Product Footer"/>
 			</landmarkInfo>
@@ -33,6 +35,15 @@
 					</contentRight>
 				</Bar>
 			</customHeader>
+			<subHeader>
+				<Toolbar>
+					<Breadcrumbs currentLocationText="Flat Watch HD37" class="sapUiSmallMarginBegin">
+						<Link text="Products"/>
+						<Link text="Screens"/>
+					</Breadcrumbs>
+					<ToolbarSpacer/>
+				</Toolbar>
+			</subHeader>
 			<footer>
 				<Toolbar>
 					<ToolbarSpacer/>

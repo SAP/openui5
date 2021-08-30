@@ -2,7 +2,7 @@
 	"_version": "1.9.0",
 
 	"sap.app": {
-		"id": "sap.m.sample.panel",
+		"id": "sap.m.sample.inputs",
 		"type": "application",
 		"applicationVersion": {
 			"version": "1.0.0"
@@ -11,16 +11,9 @@
 
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.panel.View",
+			"viewName": "sap.m.sample.inputs.View",
 			"type": "XML",
 			"async": true
-		},
-		"dependencies": {
-			"minUI5Version": "1.60.0",
-			"libs": {
-				"sap.ui.core": {},
-				"sap.m": {}
-			}
 		}
 	}
 }
