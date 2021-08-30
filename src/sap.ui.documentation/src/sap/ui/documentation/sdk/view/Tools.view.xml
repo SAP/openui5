@@ -423,9 +423,9 @@
 										href="{/liveEditor/href}"
 										target="_blank"/>
 							</html:div>
-							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_10_TEXT}" />
+							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_13_TEXT}" />
 						</VBox>
-						<Image src="./resources/sap/ui/documentation/sdk/images/tools/Tools_LiveEditor.jpg" class="toolsPageImage" alt="{i18n>TOOLS_CARD_10_IMG_ALT}"/>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/Tools_LiveEditor.jpg" class="toolsPageImage" alt="{i18n>TOOLS_CARD_13_IMG_ALT}"/>
 					</VBox>
 				</f:content>
 			</f:Card>
