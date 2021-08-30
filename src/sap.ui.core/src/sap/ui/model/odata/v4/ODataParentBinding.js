@@ -92,6 +92,15 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Binding specific code for suspend.
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.doSuspend = function () {
+		// nothing to do here
+	};
+
+	/**
 	 * Fire event 'patchCompleted' to attached listeners, if the last PATCH request is completed.
 	 *
 	 * @param {boolean} bSuccess Whether the current PATCH request has been processed successfully
@@ -1346,6 +1355,7 @@ sap.ui.define([
 		});
 		this.oResumePromise.$resolve = fnResolve;
 		this.removeReadGroupLock();
+		this.doSuspend();
 	};
 
 	/**

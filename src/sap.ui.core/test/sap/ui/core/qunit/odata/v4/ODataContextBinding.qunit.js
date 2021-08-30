@@ -160,6 +160,30 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("bInitial, doSuspend", function (assert) {
+		var oBinding = this.bindContext("/EMPLOYEES('42')");
+
+		assert.strictEqual(oBinding.bInitial, true);
+		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
+
+		// code under test
+		oBinding.doSuspend();
+
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
+
+		return Promise.resolve().then(function () {
+			assert.strictEqual(oBinding.bInitial, false);
+
+			oBinding.sResumeChangeReason = "~";
+
+			// code under test
+			oBinding.doSuspend();
+
+			assert.strictEqual(oBinding.sResumeChangeReason, "~");
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("be V8-friendly", function (assert) {
 		var oParentBindingSpy = this.spy(asODataParentBinding, "call"),
 			oBinding = this.bindContext("/EMPLOYEES('42')");
@@ -179,11 +203,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bSuspended) {
-		QUnit.test("initialize: resolved, suspended = " + bSuspended, function () {
+		QUnit.test("initialize: resolved, suspended = " + bSuspended, function (assert) {
 			var oBinding = this.bindContext("/resolved"),
 				oRootBinding = {isSuspended : function () {}};
 
-			this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
+			assert.strictEqual(oBinding.bInitial, true);
+			this.mock(oBinding).expects("isResolved").withExactArgs()
+				.callsFake(function () {
+					assert.strictEqual(oBinding.bInitial, false);
+					return true;
+				});
 			this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
 			this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(bSuspended);
 
@@ -193,6 +222,8 @@ sap.ui.define([
 
 			// code under test
 			oBinding.initialize();
+
+			assert.strictEqual(oBinding.bInitial, false);
 		});
 	});
 
@@ -359,7 +390,7 @@ sap.ui.define([
 		var oBinding = this.bindContext("/EMPLOYEES('42')"),
 			oMixin = {},
 			aOverriddenFunctions = ["adjustPredicate", "destroy", "doDeregisterChangeListener",
-				"doSetProperty"];
+				"doSetProperty", "doSuspend"];
 
 		asODataParentBinding(oMixin);
 
@@ -3517,14 +3548,11 @@ sap.ui.define([
 			oBindingMock = this.mock(oBinding);
 
 		oBindingMock.expects("_fireChange").never();
-		oBinding.suspend();
-		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
 
 		// code under test
-		oBinding.initialize();
+		oBinding.suspend();
 
 		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
-
 		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
 
 		// code under test

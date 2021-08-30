@@ -2511,6 +2511,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("doSuspend", function () {
+		new ODataParentBinding().doSuspend(); // nothing more to test here :-)
+	});
+
+	//*********************************************************************************************
 	QUnit.test("suspend: root binding", function (assert) {
 		var oBinding = new ODataParentBinding({
 				toString : function () { return "~"; }
@@ -2521,6 +2526,7 @@ sap.ui.define([
 		oBindingMock.expects("isRoot").withExactArgs().returns(true);
 		oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
 		oBindingMock.expects("removeReadGroupLock").withExactArgs();
+		oBindingMock.expects("doSuspend").withExactArgs();
 
 		// code under test
 		oBinding.suspend();

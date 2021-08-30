@@ -126,7 +126,8 @@ sap.ui.define([
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding", {
 			constructor : function (oModel, sPath, oContext, mParameters) {
-				var iPos = sPath.indexOf("(...)");
+				var iPos = sPath.indexOf("(...)"),
+					that = this;
 
 				ContextBinding.call(this, oModel, sPath);
 				// initialize mixin members
@@ -176,6 +177,13 @@ sap.ui.define([
 				}
 				this.setContext(oContext);
 				oModel.bindingCreated(this);
+
+				Promise.resolve().then(function () {
+					// bInitial must be true initially, but false later. Then suspend on a just
+					// created binding causes a change event on resume; otherwise further changes
+					// on the suspended binding are required (see doSuspend)
+					that.bInitial = false;
+				});
 			},
 			metadata : {
 				publicMethods : []
@@ -763,6 +771,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#doSuspend
+	 */
+	ODataContextBinding.prototype.doSuspend = function () {
+		if (this.bInitial) {
+			// if the binding is still initial, it must fire an event in resume
+			this.sResumeChangeReason = ChangeReason.Change;
+		}
+	};
+
+	/**
 	 * Calls the OData operation that corresponds to this operation binding.
 	 *
 	 * Parameters for the operation must be set via {@link #setParameter} beforehand.
@@ -1100,12 +1119,11 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#initialize
 	ODataContextBinding.prototype.initialize = function () {
-		if (this.isResolved()) {
-			if (this.getRootBinding().isSuspended()) {
-				this.sResumeChangeReason = ChangeReason.Change;
-			} else {
-				this._fireChange({reason : ChangeReason.Change});
-			}
+		this.bInitial = false;
+		// Here no other code but the event for the ManagedObject is expected. The binding should be
+		// useable for controller code without calling initialize.
+		if (this.isResolved() && !this.getRootBinding().isSuspended()) {
+			this._fireChange({reason : ChangeReason.Change});
 		}
 	};
 
