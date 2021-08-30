@@ -2362,10 +2362,38 @@ sap.ui.define([
 [undefined, "~expand"].forEach(function (sExpand) {
 	[true, false].forEach(function (bWithCallbackHandlers) {
 		(!sExpand
-		? [function () {/*no further tests*/}]
+		? [ // successful creation without expand
+			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate) {
+				assert.ok(pCreate.isPending());
+
+				oEventHandlersMock.expects("fnSuccess")
+					.exactly(bWithCallbackHandlers ? 1 : 0)
+					.withExactArgs("~oData", "~oCreateResponse");
+
+				// code under test
+				fnSuccess("~oData", "~oCreateResponse");
+
+				assert.ok(pCreate.isFulfilled());
+
+				return pCreate.then(function (oResult) {
+					assert.strictEqual(oResult, undefined);
+				});
+			},
+			// aborted creation without expand
+			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate) {
+				assert.ok(pCreate.isPending());
+
+				// code under test
+				fnAbort("~oError");
+
+				assert.ok(pCreate.isRejected());
+				assert.strictEqual(pCreate.getResult(), "~oError");
+				// don't catch to test avoiding "Uncaught (in promise)"
+			}
+		]
 		: [
 			// POST and GET succeed
-			function (assert, oEventHandlersMock, fnError, fnSuccess) {
+			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate) {
 				var oDataGET = {GET : true},
 					oDataPOST = {POST : true},
 					oResponseGET = "~oResponseGET",
@@ -2374,15 +2402,22 @@ sap.ui.define([
 				// code under test - POST request succeeds
 				fnSuccess(oDataPOST, oResponsePOST);
 
+				assert.ok(pCreate.isPending());
 				oEventHandlersMock.expects("fnSuccess")
 					.exactly(bWithCallbackHandlers ? 1 : 0)
 					.withExactArgs({GET : true, POST : true}, oResponsePOST);
 
 				// code under test - GET request succeeds
 				fnSuccess(oDataGET, oResponseGET);
+
+				assert.ok(pCreate.isFulfilled());
+
+				return pCreate.then(function (oResult) {
+					assert.strictEqual(oResult, undefined);
+				});
 			},
 			// POST and GET fail; after retrying the creation both requests succeed
-			function (assert, oEventHandlersMock, fnError, fnSuccess) {
+			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate) {
 				var oDataGET = {GET : true},
 					oDataPOST = {POST : true},
 					oErrorGET = {},
@@ -2411,17 +2446,27 @@ sap.ui.define([
 					.exactly(bWithCallbackHandlers ? 1 : 0)
 					.withExactArgs({GET : true, POST : true}, oResponsePOST);
 
+				assert.ok(pCreate.isPending());
+
 				// code under test - GET request succeeds
 				fnSuccess(oDataGET, oResponseGET);
+
+				assert.ok(pCreate.isFulfilled());
+
+				return pCreate.then(function (oResult) {
+					assert.strictEqual(oResult, undefined);
+				});
 			},
 			// POST succeeds and GET fails
-			function (assert, oEventHandlersMock, fnError, fnSuccess) {
+			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate) {
 				var oDataPOST = "~oDataPOST",
 					oErrorGET = {},
 					oResponsePOST = {};
 
 				// code under test - POST request succeeds
 				fnSuccess(oDataPOST, oResponsePOST);
+
+				assert.ok(pCreate.isPending());
 
 				this.oLogMock.expects("error")
 					.withExactArgs("Entity creation was successful but expansion of navigation"
@@ -2438,9 +2483,14 @@ sap.ui.define([
 				fnError(oErrorGET);
 
 				assert.strictEqual(oErrorGET.expandAfterCreateFailed, true);
+				assert.ok(pCreate.isFulfilled());
+
+				return pCreate.then(function (oResult) {
+					assert.strictEqual(oResult, undefined);
+				});
 			},
 			// POST and GET fail; after retrying the creation both requests fail again
-			function (assert, oEventHandlersMock, fnError, fnSuccess) {
+			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate) {
 				var oErrorGET0 = {},
 					oErrorGET1 = {},
 					oErrorPOST0 = {},
@@ -2473,9 +2523,10 @@ sap.ui.define([
 				fnError(oErrorGET1);
 
 				assert.strictEqual(oErrorGET1.expandAfterCreateFailed, true);
+				assert.ok(pCreate.isPending());
 			},
 			// POST and GET fail; after retrying the creation POST succeeds and GET fails
-			function (assert, oEventHandlersMock, fnError, fnSuccess) {
+			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate) {
 				var oDataPOST = "~oDataPOST",
 					oErrorGET0 = {},
 					oErrorGET1 = {},
@@ -2493,6 +2544,7 @@ sap.ui.define([
 				fnError(oErrorGET0);
 
 				assert.strictEqual(oErrorGET0.expandAfterCreateFailed, true);
+				assert.ok(pCreate.isPending());
 
 				// retry after failed POST
 
@@ -2514,24 +2566,27 @@ sap.ui.define([
 				fnError(oErrorGET1);
 
 				assert.strictEqual(oErrorGET1.expandAfterCreateFailed, true);
+				assert.ok(pCreate.isFulfilled());
+
+				return pCreate.then(function (oResult) {
+					assert.strictEqual(oResult, undefined);
+				});
 			}
 		]).forEach(function (fnTestEventHandlers, i) {
 	var sTitle = "createEntry: expand = " + sExpand + ", "
 			+ (bWithCallbackHandlers ? "with" : "without") + " callback handlers, i = " + i;
 
 	QUnit.test(sTitle, function (assert) {
-		var fnAfterMetadataLoaded,
+		var fnAbort, fnAfterMetadataLoaded, pCreate, oEntity, fnError, mHeaders, oRequestHandle,
+			oResult, fnSuccess, sUid,
 			oCreatedContext = {/*sap.ui.model.odata.v2.Context*/},
-			oEntity,
 			oEntityMetadata = {entityType : "~entityType"},
-			fnError,
 			oEventHandlers = {
 				fnError : function () {},
 				fnSuccess : function () {}
 			},
 			oEventHandlersMock = this.mock(oEventHandlers),
 			oExpandRequest = {},
-			mHeaders,
 			mHeadersInput = {input : true},
 			oModel = {
 				mChangedEntities : {},
@@ -2561,11 +2616,7 @@ sap.ui.define([
 			},
 			oMetadataMock = this.mock(oModel.oMetadata),
 			oModelMock = this.mock(oModel),
-			oRequest = {},
-			oRequestHandle,
-			oResult,
-			fnSuccess,
-			sUid;
+			oRequest = {};
 
 		oEventHandlersMock.expects("fnError").never();
 		oEventHandlersMock.expects("fnSuccess").never();
@@ -2594,12 +2645,14 @@ sap.ui.define([
 		oModelMock.expects("_addEntity")
 			.withExactArgs(sinon.match(function (oEntity0) {
 				sUid = rTemporaryKey.exec(oEntity0.__metadata.deepPath)[1];
+				fnAbort = oEntity0.__metadata.created.abort;
 				fnError = oEntity0.__metadata.created.error;
 				mHeaders = oEntity0.__metadata.created.headers;
 				fnSuccess = oEntity0.__metadata.created.success;
 				oEntity = {
 					__metadata : {
 						created : {
+							abort : fnAbort,
 							changeSetId : "~changeSetId",
 							error : fnError,
 							eTag : "~eTag",
@@ -2625,9 +2678,9 @@ sap.ui.define([
 				assert.strictEqual(
 					fnError === (bWithCallbackHandlers ? oEventHandlers.fnError : undefined),
 					!sExpand);
-				assert.strictEqual(
-					fnSuccess === (bWithCallbackHandlers ? oEventHandlers.fnSuccess : undefined),
-					!sExpand);
+				assert.ok(fnAbort instanceof Function);
+				assert.ok(fnSuccess instanceof Function);
+
 				return true;
 			}))
 			.returns("~sKey");
@@ -2666,11 +2719,17 @@ sap.ui.define([
 					}), "GET", "~GETheaders", null, undefined, undefined, true)
 				.returns(oExpandRequest);
 		}
-
 		oModelMock.expects("getContext")
-			.withExactArgs("/~sKey", sinon.match(function (sDeepPath0) {
-				return sDeepPath0 === "~sDeepPath('" + sUid + "')";
-			}))
+			.withExactArgs("/~sKey",
+				sinon.match(function (sDeepPath0) {
+					return sDeepPath0 === "~sDeepPath('" + sUid + "')";
+				}),
+				sinon.match(function (pCreateParameter) {
+					pCreate = pCreateParameter;
+					assert.ok(pCreate instanceof SyncPromise);
+
+					return true;
+				}))
 			.returns(oCreatedContext);
 		oMetadataMock.expects("loaded").withExactArgs().returns({then : function (fnFunc) {
 			fnAfterMetadataLoaded = fnFunc;
@@ -2745,7 +2804,8 @@ sap.ui.define([
 			assert.strictEqual(oRequest.expandRequest._aborted, true);
 		}
 
-		fnTestEventHandlers.call(this, assert, oEventHandlersMock, fnError, fnSuccess);
+		return fnTestEventHandlers.call(this, assert, oEventHandlersMock, fnAbort, fnError,
+			fnSuccess, pCreate);
 	});
 		});
 	});
@@ -4944,7 +5004,13 @@ sap.ui.define([
 		{oEntityMetadata : undefined, bCallRemove : false},
 		{oEntityMetadata : {}, bCallRemove : false},
 		{oEntityMetadata : {created : undefined}, bCallRemove : false},
-		{oEntityMetadata : {created : {}}, bCallRemove : bDeleteCreatedEntities}
+		{oEntityMetadata : {created : {}}, bCallRemove : bDeleteCreatedEntities},
+		{
+			oEntityMetadata : {created : {abort : function () {}}},
+			bCallAbort : bDeleteCreatedEntities,
+			bCallRemove : bDeleteCreatedEntities,
+			bMockAbort : true
+		}
 	].forEach(function (oFixture, i) {
 	var sTitle = "_discardEntityChanges: bDeleteCreatedEntities=" + bDeleteCreatedEntities
 			+ ", oEntityMetadata=" + JSON.stringify(oFixture.oEntityMetadata);
@@ -4960,6 +5026,7 @@ sap.ui.define([
 					"~sKey" : "~changes"
 				},
 				oMetadata : oMetadata,
+				_createAbortedError : function () {},
 				_removeEntity : function () {},
 				_resolveGroup : function () {},
 				abortInternalRequest : function () {},
@@ -4979,12 +5046,21 @@ sap.ui.define([
 			.callsFake(function (sKey) {
 				delete this.mChangedEntities[sKey];
 			});
+		this.mock(ODataModel).expects("_createAbortedError")
+			.withExactArgs()
+			.exactly(oFixture.bCallAbort ? 1 : 0)
+			.returns("~oAbortedError");
+		if (oFixture.bMockAbort) {
+			this.mock(oFixture.oEntityMetadata.created).expects("abort")
+				.withExactArgs("~oAbortedError")
+				.exactly(oFixture.bCallAbort ? 1 : 0);
+		}
 		oModelMock.expects("getMessagesByEntity")
 			.withExactArgs("~sKey", true)
 			.returns("~aMessages");
 		oMessageManagerMock.expects("removeMessages").withExactArgs("~aMessages");
 
-		// code unter test
+		// code under test
 		assert.strictEqual(
 			ODataModel.prototype._discardEntityChanges.call(oModel, "~sKey",
 				bDeleteCreatedEntities, oFixture.oEntityMetadata),
@@ -5007,6 +5083,7 @@ sap.ui.define([
 	QUnit.test("_createAbortedError", function (assert) {
 		var oError0, oError1,
 			oAbortedError = {
+				aborted : true,
 				headers : {},
 				message : "Request aborted",
 				responseText : "",
@@ -5025,5 +5102,23 @@ sap.ui.define([
 		assert.deepEqual(oError1, oAbortedError);
 		assert.notStrictEqual(oError1, oError0);
 		assert.notStrictEqual(oError1.headers, oError0.headers);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getContext with create promise", function (assert) {
+		var oContext,
+			oModel = {mContexts : {}};
+
+		// code under test
+		oContext = ODataModel.prototype.getContext.call(oModel, "/~sPath", undefined,
+			"~oSyncCreatePromise");
+
+		assert.strictEqual(oModel.mContexts["/~sPath"], oContext);
+		// constructor cannot be mocked so check internal member
+		assert.strictEqual(oContext.oSyncCreatePromise, "~oSyncCreatePromise");
+
+		return oContext.created().then(function (oSyncPromise) {
+			assert.strictEqual(oSyncPromise, undefined);
+		});
 	});
 });

@@ -9645,4 +9645,185 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Successful creation of an entity results in a fulfilled promise on the
+	// corresponding context.
+	// JIRA: CPOUI5MODELS-615
+	QUnit.test("createEntry: Context#created fulfills", function (assert) {
+		var oCreatedContext,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox id="salesOrder">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+</FlexBox>',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectHeadRequest()
+				.expectRequest({
+					created : true,
+					data : {
+						__metadata : {
+							type : "GWSAMPLE_BASIC.SalesOrder"
+						}
+					},
+					deepPath : "/SalesOrderSet('~key~')",
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, {
+					data : {
+						__metadata : {
+							uri : "SalesOrderSet('42')"
+						},
+						SalesOrderID : "42"
+					},
+					statusCode : 201
+				});
+
+			oCreatedContext = oModel.createEntry("/SalesOrderSet", {properties : {}});
+			oModel.submitChanges();
+
+			return Promise.all([
+				that.waitForChanges(assert),
+				// code under test
+				oCreatedContext.created()
+			]);
+		}).then(function () {
+			that.expectValue("salesOrderID", "42");
+
+			// code under test
+			that.oView.byId("salesOrder").bindElement({
+				path : oCreatedContext.getPath(),
+				parameters : {select : "SalesOrderID"}
+			});
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Unsuccessful creation of an entity results in a pending promise on the
+	// corresponding context. On resetting the changes the promise is rejected with an aborted
+	// error.
+	// JIRA: CPOUI5MODELS-615
+	QUnit.test("createEntry: Context#created pending, then rejects", function (assert) {
+		var oCreatedContext,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox id="salesOrder">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+</FlexBox>',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectHeadRequest()
+				.expectRequest({
+					created : true,
+					data : {
+						SalesOrderID : "draftID",
+						__metadata : {
+							type : "GWSAMPLE_BASIC.SalesOrder"
+						}
+					},
+					deepPath : "/SalesOrderSet('~key~')",
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, createErrorResponse({message : "POST failed", statusCode : 400}))
+				.expectMessages([{
+					code : "UF0",
+					descriptionUrl : "",
+					fullTarget : "/SalesOrderSet('~key~')",
+					message : "POST failed",
+					persistent : false,
+					target : "/SalesOrderSet('~key~')",
+					technical : true,
+					type : "Error"
+				}]);
+
+			oCreatedContext = oModel.createEntry("/SalesOrderSet", {properties : {
+				SalesOrderID : "draftID"
+			}});
+			that.oLogMock.expects("error")
+				.withExactArgs("Request failed with status code 400: POST SalesOrderSet",
+					/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("salesOrderID", "draftID");
+
+			that.oView.byId("salesOrder").bindElement({
+				path : oCreatedContext.getPath(),
+				parameters : {select : "SalesOrderID"}
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var pCreated = oCreatedContext.created();
+
+			that.expectValue("salesOrderID", "")
+				.expectMessages([]);
+
+			// code under test
+			oModel.resetChanges([oCreatedContext.getPath()], undefined, true);
+
+			return Promise.all([
+				that.waitForChanges(assert),
+				// code under test
+				pCreated.then(function () {
+					assert.ok(false, "unexpected success");
+				}, function (oError) {
+					assert.strictEqual(oError.aborted, true);
+				})
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create an entity and immediately reset changes without deleting the created entity.
+	// Do some changes and then reset changes with deleting created entities. In that case the
+	// created promise is rejected with an aborted error.
+	// JIRA: CPOUI5MODELS-615
+	QUnit.test("createEntry: create - reset - modify - 'hard' reset", function (assert) {
+		var pCreated, oCreatedContext, bResolved,
+			oModel = createSalesOrdersModel(),
+			that = this;
+
+		return this.createView(assert, '', oModel).then(function () {
+			// code under test
+			oCreatedContext = oModel.createEntry("/SalesOrderSet", {properties : {
+				SalesOrderID : "draftID"
+			}});
+
+			pCreated = oCreatedContext.created().catch(function (oError) {
+				bResolved = true;
+				throw oError;
+			});
+
+			// code under test - reset changes without deleting created entities
+			oModel.resetChanges([oCreatedContext.getPath()]);
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.notOk(bResolved); // first resetChanges does not reject the promise
+
+			oModel.setProperty(oCreatedContext.getPath() + "/Note", "Foo");
+
+			// code under test - reset changes deleting also created entities
+			oModel.resetChanges([oCreatedContext.getPath()], undefined, true);
+
+			return Promise.all([
+				pCreated.then(function () {
+					assert.ok(false, "unexpected success");
+				}, function (oError) {
+					assert.strictEqual(oError.aborted, true);
+				}),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 });
