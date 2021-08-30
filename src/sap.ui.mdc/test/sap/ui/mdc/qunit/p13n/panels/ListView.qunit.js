@@ -6,8 +6,9 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "sap/ui/mdc/util/PropertyHelper",
     "sap/m/VBox",
-    "sap/ui/base/Event"
-], function(ListView, P13nBuilder, JSONModel, PropertyHelper, VBox, BaseEvent) {
+    "sap/ui/base/Event",
+    "sap/ui/thirdparty/sinon"
+], function(ListView, P13nBuilder, JSONModel, PropertyHelper, VBox, BaseEvent, sinon) {
     "use strict";
 
     var aVisible = ["key1", "key2", "key3"];
@@ -181,6 +182,27 @@ sap.ui.define([
         assert.notDeepEqual(this.oListView._oListControl.getItems()[1], this.oListView._getMoveButtonContainer().getParent(), "The hovered item does not hold the move buttons anymore");
         assert.equal(oIconSecondTableItem.getVisible(), true, "The filtered icon is visible again as the table item does no longer hold the move buttons");
     });
+
+    QUnit.test("Check deselectAll focus handling", function(assert){
+        //Arrange
+        this.oListView.setP13nModel(new JSONModel(this.oP13nData));
+        var oUpdateEnableOfMoveButtonsSpy = sinon.spy(this.oListView, "_updateEnableOfMoveButtons");
+
+        var oClearAllButton = this.oListView.getAggregation("_content").getItems()[0]._clearAllButton;
+
+        //Act
+        oClearAllButton.focus();
+        var oFocusedControl = sap.ui.getCore().getCurrentFocusedControlId();
+        oClearAllButton.firePress();
+        var oNewFocusedControl = sap.ui.getCore().getCurrentFocusedControlId();
+
+
+        //Assert
+        //Focus was set to "false"
+		assert.ok(oUpdateEnableOfMoveButtonsSpy.calledWith(sinon.match.any, false), "Focus was not changed");
+        assert.ok(this.oListView._oHoveredItem === undefined, "No hovered item set");
+        assert.equal(oFocusedControl, oNewFocusedControl, "Focused control stayed the same");
+	});
 
     QUnit.test("Check '_handleActivated'", function(assert){
         this.oListView.setP13nModel(new JSONModel(this.oP13nData));

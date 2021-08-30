@@ -609,7 +609,7 @@ sap.ui.define([
 	};
 
 	BasePanel.prototype._selectTableItem = function(oTableItem, bSelectAll) {
-		this._updateEnableOfMoveButtons(oTableItem, true);
+		this._updateEnableOfMoveButtons(oTableItem, bSelectAll ? false : true);
 		this._oSelectedItem = oTableItem;
 		if (!bSelectAll) {
 			var oItem = this.getP13nModel().getProperty(this._oSelectedItem.getBindingContext(this.P13N_MODEL).sPath);
