@@ -35,6 +35,13 @@ sap.ui.define([
 			"$$operationMode", "$$ownRequest", "$$patchWithoutSideEffects", "$$sharedRequest",
 			"$$updateGroupId"],
 		sClassName = "sap.ui.model.odata.v4.ODataListBinding",
+		oParentBinding = {
+			getRootBinding : function () {
+				return {
+					isSuspended : function () { return false; }
+				};
+			}
+		},
 		rTransientPredicate = /^\(\$uid=.+\)$/;
 
 	/**
@@ -578,7 +585,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("applyParameters: call from changeParameters, " + bSuspended, function (assert) {
-		var oBinding = this.bindList("TEAM_2_EMPLOYEES", Context.create(this.oModel, {}, "/TEAMS")),
+		var oBinding = this.bindList("TEAM_2_EMPLOYEES", Context.create(this.oModel, oParentBinding,
+				"/TEAMS")),
 			oModelMock = this.mock(this.oModel),
 			mParameters = {
 				$$operationMode : OperationMode.Server,
@@ -1079,7 +1087,7 @@ sap.ui.define([
 [false, true].forEach(function (bHasData) {
 	QUnit.test("fetchData: w/o cache, data=" + bHasData, function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES"),
-			oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')"),
+			oContext = Context.create({/*oModel*/}, oParentBinding, "/TEAMS('1')"),
 			aData = [{id : 0}, {id : 1}, {id : 2}, {id : 3}, {id : 4}, {id : 5}],
 			fnDataRequested = {/*function*/},
 			oGroupLock = {unlock : function () {}};
@@ -1114,7 +1122,7 @@ sap.ui.define([
 	QUnit.test("fetchData: context lost, cache=" + bHasCache, function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
-			oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')"),
+			oContext = Context.create({/*oModel*/}, oParentBinding, "/TEAMS('1')"),
 			oPromise;
 
 		oBindingMock.expects("checkSuspended").withExactArgs(true);
@@ -1211,7 +1219,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("fetchContexts: fetchData returns undefined", function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES",
-				Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')")),
+				Context.create({/*oModel*/}, oParentBinding, "/TEAMS('1')")),
 			fnDataRequested = {/*function*/},
 			oGroupLock = {},
 			oPromise;
@@ -1574,7 +1582,7 @@ sap.ui.define([
 			", use extended change detection:" + bUseExtendedChangeDetection;
 
 	QUnit.test(sTitle, function (assert) {
-		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')"),
+		var oContext = Context.create({/*oModel*/}, oParentBinding, "/TEAMS('1')"),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext),
 			oBindingMock = this.mock(oBinding),
 			aContexts,
@@ -1656,7 +1664,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Note: This happens for a list binding below another list binding during autoExpandSelect
 	QUnit.test("getContexts: below a virtual context", function (assert) {
-		var oContext = Context.create({/*oModel*/}, {/*oBinding*/},
+		var oContext = Context.create({/*oModel*/}, oParentBinding,
 				"/TEAMS('1')/" + Context.VIRTUAL, Context.VIRTUAL),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext);
 
@@ -1698,7 +1706,7 @@ sap.ui.define([
 	var sTitle = "getContexts: error in fetchContexts, " + JSON.stringify(oFixture);
 
 	QUnit.test(sTitle, function () {
-		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')"),
+		var oContext = Context.create({/*oModel*/}, oParentBinding, "/TEAMS('1')"),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext),
 			oError = {canceled : oFixture.bCanceled},
 			oFetchContextsCall,
@@ -1736,7 +1744,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getContexts: error in dataRequested", function () {
-		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')"),
+		var oContext = Context.create({/*oModel*/}, oParentBinding, "/TEAMS('1')"),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext),
 			oBindingMock = this.mock(oBinding),
 			oError = new Error(),
@@ -1768,7 +1776,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getContexts: error in dataReceived", function () {
-		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')"),
+		var oContext = Context.create({/*oModel*/}, oParentBinding, "/TEAMS('1')"),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext),
 			oBindingMock = this.mock(oBinding),
 			oError = new Error(),
@@ -1805,7 +1813,7 @@ sap.ui.define([
 ].forEach(function (oFixture) {
 	QUnit.test("getContexts: E.C.D, no diff yet, " + JSON.stringify(oFixture), function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES",
-				Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')")),
+				Context.create({/*oModel*/}, oParentBinding, "/TEAMS('1')")),
 			oBindingMock = this.mock(oBinding),
 			sChangeReason = {/*string*/},
 			aContexts,
@@ -1849,7 +1857,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getContexts: E.C.D, with diff", function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES",
-				Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')")),
+				Context.create({/*oModel*/}, oParentBinding, "/TEAMS('1')")),
 			aContexts = [],
 			aDiff = [],
 			aResults;
@@ -1879,7 +1887,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getContexts: E.C.D, with diff, length mismatch", function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES",
-				Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')"));
+				Context.create({/*oModel*/}, oParentBinding, "/TEAMS('1')"));
 
 		oBinding.enableExtendedChangeDetection();
 		oBinding.oDiff = {
@@ -1989,7 +1997,7 @@ sap.ui.define([
 		var oBinding,
 			oBindingMock = this.mock(ODataListBinding.prototype),
 			oCache = {},
-			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
+			oContext = Context.create(this.oModel, oParentBinding, "/TEAMS", 1);
 
 		oBindingMock.expects("checkSuspended").withExactArgs(true);
 		// fetchCache is called once from applyParameters before oBinding.oContext is set
@@ -2020,9 +2028,12 @@ sap.ui.define([
 	{aggregation : true, autoExpandSelect : true, backLink : true, newContext : true}
 ].forEach(function (oFixture, i) {
 	QUnit.test("setContext: relative path, " + JSON.stringify(oFixture), function (assert) {
-		var oBinding = this.bindList("Suppliers", Context.create(this.oModel, {}, "/foo")),
+		var oBinding = this.bindList("Suppliers", Context.create(this.oModel, oParentBinding,
+				"/foo")),
 			oBindingMock = this.mock(oBinding),
-			oContext = oFixture.newContext ? Context.create(this.oModel, {}, "/bar") : undefined,
+			oContext = oFixture.newContext
+				? Context.create(this.oModel, oParentBinding, "/bar")
+				: undefined,
 			sExpectedChangeReason = i === 0 ? "AddVirtualContext" : "sChangeReason",
 			oFetchCacheCall,
 			oNewHeaderContext = Context.create(this.oModel, oBinding, "/bar/Suppliers"),
@@ -2079,7 +2090,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("setContext: relative path with transient entities", function (assert) {
-		var oBinding = this.bindList("Bar", Context.create(this.oModel, {}, "/Foo('42')")),
+		var oBinding = this.bindList("Bar", Context.create(this.oModel, oParentBinding,
+				"/Foo('42')")),
 			oContext0 = Context.create(this.oModel, oBinding, "/Foo('42')/Bar($uid=id-1-23)", -1,
 				SyncPromise.resolve(Promise.resolve())),
 			oContext1 = Context.create(this.oModel, oBinding, "/Foo('42')/Bar($uid=id-1-24)", -2,
@@ -2115,11 +2127,47 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("setContext: implicit suspend", function (assert) {
+		var oBinding = this.bindList("Suppliers"),
+			oContext = {
+				getBinding : function () {}
+			},
+			oParentBinding = {
+				getRootBinding : function () {}
+			},
+			oRootBinding = {
+				isSuspended : function () {}
+			};
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs(true);
+		this.mock(oBinding).expects("reset").withExactArgs();
+		this.mock(oBinding).expects("resetKeepAlive").withExactArgs();
+		this.mock(oBinding).expects("fetchCache").withExactArgs(sinon.match.same(oContext));
+		this.mock(this.oModel).expects("resolve")
+			.withExactArgs(oBinding.sPath, sinon.match.same(oContext))
+			.returns("/resolved/path");
+		this.mock(Context).expects("create")
+			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
+				"/resolved/path")
+			.returns("~headerContext~");
+		this.mock(oContext).expects("getBinding").withExactArgs().returns(oParentBinding);
+		this.mock(oParentBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(true);
+		this.mock(Binding.prototype).expects("setContext").never();
+		this.mock(oBinding).expects("setResumeChangeReason").withExactArgs(ChangeReason.Context);
+
+		// code under test
+		oBinding.setContext(oContext);
+
+		assert.strictEqual(oBinding.oContext, oContext);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("preserve headerContext when ManagedObject temporarily removes context",
 		function (assert) {
 		var oBinding = this.bindList("Suppliers"),
 			oBindingMock = this.mock(oBinding),
-			oContext = Context.create(this.oModel, {}, "/bar"),
+			oContext = Context.create(this.oModel, oParentBinding, "/bar"),
 			oHeaderContext = Context.create(this.oModel, oBinding, "/bar/Suppliers");
 
 		oBindingMock.expects("checkSuspended").withExactArgs(true).thrice();
@@ -2182,7 +2230,7 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oBinding,
 			oBindingMock = this.mock(ODataListBinding.prototype),
-			oContext = Context.create(this.oModel, {}, "/TEAMS('1')"),
+			oContext = Context.create(this.oModel, oParentBinding, "/TEAMS('1')"),
 			oError = new Error(),
 			oHeaderContextCheckUpdatePromise = SyncPromise.resolve(Promise.resolve({})),
 			oKeptContext = {resetKeepAlive : function () {}},
@@ -2270,7 +2318,7 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oContext = bRelative
-				? Context.createNewContext(this.oModel, {}, "/TEAMS('42')")
+				? Context.createNewContext(this.oModel, oParentBinding, "/TEAMS('42')")
 				: undefined,
 			oBinding = this.bindList(bRelative ? "TEAM_2_EMPLOYEES" : "/EMPLOYEES", oContext,
 				null, null, {$$ownRequest : true}),
@@ -2364,7 +2412,7 @@ sap.ui.define([
 		+ bFetchResourcePathFails;
 
 	QUnit.test(sTitle, function (assert) {
-		var oContext = Context.createNewContext(this.oModel, {}, "/TEAMS('42')"),
+		var oContext = Context.createNewContext(this.oModel, oParentBinding, "/TEAMS('42')"),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext, null, null,
 				{$$ownRequest : true}),
 			oError = new Error(),
@@ -2422,7 +2470,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("refreshInternal: bKeepCacheOnError & canceled", function (assert) {
-		var oContext = Context.createNewContext(this.oModel, {}, "/TEAMS('42')"),
+		var oContext = Context.createNewContext(this.oModel, oParentBinding, "/TEAMS('42')"),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext, null, null,
 				{$$ownRequest : true}),
 			oError = new Error(),
@@ -2462,7 +2510,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("refreshInternal: relative without own cache", function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES",
-				Context.create(this.oModel, {}, "/TEAMS('1')"));
+				Context.create(this.oModel, oParentBinding, "/TEAMS('1')"));
 
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
 		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", false);
@@ -2573,7 +2621,7 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bCached) {
 	QUnit.test("fetchValue: relative binding, bCached = " + bCached, function (assert) {
-		var oContext = Context.create(this.oModel, {}, "/foo"),
+		var oContext = Context.create(this.oModel, oParentBinding, "/foo"),
 			oListener = {},
 			sPath = "/foo/42/bar",
 			oResult = {},
@@ -2605,7 +2653,7 @@ sap.ui.define([
 		var oBinding,
 			oBindingMock = this.mock(ODataListBinding.prototype),
 			bCached = {/*false,true*/},
-			oContext = Context.create(this.oModel, undefined, "/SalesOrderList('1')"),
+			oContext = Context.create(this.oModel, oParentBinding, "/SalesOrderList('1')"),
 			oGroupLock = {unlock : function () {}},
 			oListener = {},
 			sPath = "/SalesOrderList('1')/ID",
@@ -2792,7 +2840,7 @@ sap.ui.define([
 			QUnit.test("sort: " + sTitle, function (assert) {
 				var oBinding,
 					oModel = oFixture.oModel || this.oModel,
-					oContext = Context.createNewContext(oModel, {/*oBinding*/}, "/TEAMS", 1),
+					oContext = Context.createNewContext(oModel, oParentBinding, "/TEAMS", 1),
 					aSorters = [];
 
 				oBinding = oModel.bindList("TEAM_2_EMPLOYEES", undefined, undefined, undefined,
@@ -2867,7 +2915,7 @@ sap.ui.define([
 				this.oCache = {};
 				this.oCachePromise = SyncPromise.resolve(this.oCache);
 			});
-		oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
+		oContext = Context.create(this.oModel, oParentBinding, "/TEAMS", 1);
 		oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext, undefined, undefined,
 			{$$operationMode : OperationMode.Server});
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(true);
@@ -3008,7 +3056,7 @@ sap.ui.define([
 			oBinding.destroy();
 		});
 
-		oBinding = this.bindList("relative", Context.create(this.oModel, {}, "/foo"));
+		oBinding = this.bindList("relative", Context.create(this.oModel, oParentBinding, "/foo"));
 		oBinding.aContexts = [oBindingContext];
 		oBinding.aContexts.unshift(oTransientBindingContext);
 		oBindingContextMock.expects("destroy").withExactArgs();
@@ -3178,7 +3226,7 @@ sap.ui.define([
 					return oModel.createBindingContext(sPath);
 				}
 				if (sType === "v4") {
-					return Context.create(oModel, null/*oBinding*/, sPath);
+					return Context.create(oModel, oParentBinding, sPath);
 				}
 
 				return undefined;
@@ -4072,11 +4120,11 @@ sap.ui.define([
 
 		QUnit.test(sTitle, function (assert) {
 			var oBinding = this.bindList("TEAM_2_EMPLOYEES",
-					Context.create(this.oModel, /*oBinding*/ {}, "/TEAMS/1", 1)),
+					Context.create(this.oModel, oParentBinding, "/TEAMS/1", 1)),
 				oBindingMock = this.mock(oBinding),
 				aCacheResult = [{}, {}, {"@$ui5._" : {"predicate" : "('foo')"}}, {}],
 				oContext,
-				oContext2 = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS/2", 2),
+				oContext2 = Context.create(this.oModel, oParentBinding, "/TEAMS/2", 2),
 				aContexts,
 				oCreatedEntity = {},
 				oCreateGroupLock = {},
@@ -4286,7 +4334,7 @@ sap.ui.define([
 		oContext = oBinding.create(undefined, true, true);
 
 		oBinding = this.bindList("TEAM_2_EMPLOYEES",
-			Context.create(this.oModel, {/*oBinding*/}, "/TEAMS('42')"));
+			Context.create(this.oModel, oParentBinding, "/TEAMS('42')"));
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 
 		assert.throws(function () {
@@ -4472,7 +4520,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getDiff", function (assert) {
 		var oBinding = this.bindList("EMPLOYEE_2_EQUIPMENTS",
-				Context.create(this.oModel, {}, "/EMPLOYEES/0")),
+				Context.create(this.oModel, oParentBinding, "/EMPLOYEES/0")),
 			oBindingMock = this.mock(oBinding),
 			aContexts = [{}, {}],
 			aDiff = [],
@@ -5339,7 +5387,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getHeaderContext: setContext", function (assert) {
 		var oBinding = this.bindList("EMPLOYEES"),
-			oContext = Context.create(this.oModel, {}, "/TEAMS", 0);
+			oContext = Context.create(this.oModel, oParentBinding, "/TEAMS", 0);
 
 		assert.strictEqual(oBinding.getHeaderContext(), null);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs(true);
@@ -5996,7 +6044,7 @@ sap.ui.define([
 	[false, true].forEach(function (bInitial) {
 		QUnit.test("resumeInternal: initial=" + bInitial, function (assert) {
 			var sChangeReason = {/*Filter,Sort,Refresh,Change*/},
-				oContext = Context.create(this.oModel, {}, "/TEAMS"),
+				oContext = Context.create(this.oModel, oParentBinding, "/TEAMS"),
 				oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext),
 				oBindingMock = this.mock(oBinding),
 				oDependent0 = {resumeInternal : function () {}},
@@ -6731,7 +6779,7 @@ sap.ui.define([
 [undefined, {}].forEach(function (mCacheQueryOptions, i) {
 	QUnit.test("adjustPredicate # " + i, function (assert) {
 		var oBinding = this.bindList("SO_2_SOITEM",
-				Context.create({/*oModel*/}, {/*oBinding*/}, "/SalesOrderList($uid=1)")),
+				Context.create({/*oModel*/}, oParentBinding, "/SalesOrderList($uid=1)")),
 			oContext1 = {adjustPredicate : function () {}},
 			oContext2 = {adjustPredicate : function () {}},
 			oExpectation1,
@@ -6932,7 +6980,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("checkKeepAlive: relative", function (assert) {
 		var oBinding,
-			oParentContext = Context.createNewContext({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')");
+			oParentContext = Context.createNewContext({/*oModel*/}, oParentBinding, "/TEAMS('1')");
 
 		oBinding = this.bindList("TEAM_2_EMPLOYEES", oParentContext);
 
@@ -7169,7 +7217,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("fetchCache: kept-alive contexts", function (assert) {
 		var oAddKeptElementCall,
-			oParentContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')"),
+			oParentContext = Context.create({/*oModel*/}, oParentBinding, "/TEAMS('1')"),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oParentContext),
 			oCheckUpdateCall,
 			oContext1 = {
@@ -7392,7 +7440,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getGeneration", function (assert) {
 		var oBinding = this.bindList("/TEAMS"),
-			oContext = Context.createNewContext(this.oModel, {}, "/TEAMS('42')");
+			oContext = Context.createNewContext(this.oModel, oParentBinding, "/TEAMS('42')");
 
 		this.mock(oBinding.oHeaderContext).expects("getGeneration").withExactArgs(true)
 			.returns(42);
