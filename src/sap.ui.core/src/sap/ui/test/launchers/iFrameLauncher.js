@@ -184,8 +184,16 @@ sap.ui.define([
 	}
 
 	function registerAbsoluteModulePathInIframe(sModule) {
-		var sOpaLocation = jQuery.sap.getModulePath(sModule);
-		var sAbsoluteOpaPath = new URI(sOpaLocation).absoluteTo(document.baseURI).search("").toString();
+		var sAbsoluteOpaPath,
+			sBaseOrLoc,
+			sBaseURI = document.baseURI,
+			sOpaLocation = jQuery.sap.getModulePath(sModule);
+		// IE11 does not support document.baseURI
+		if (!document.baseURI) {
+			sBaseOrLoc = document.querySelector("base[href]") || window.location;
+			sBaseURI = sBaseOrLoc.href;
+		}
+		sAbsoluteOpaPath = new URI(sOpaLocation).absoluteTo(sBaseURI).search("").toString();
 		oFrameJQuery.sap.registerModulePath(sModule,sAbsoluteOpaPath);
 	}
 
