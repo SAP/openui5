@@ -990,6 +990,10 @@ function(
 		if (this._eventHandledByControl ||
 			oEvent.touches.length != 1 ||
 			!this.hasActiveType()) {
+			if (this.getListProperty("includeItemInSelection") && this.getList()._mRangeSelection) {
+				// prevet text selection when rangeSelection is detected
+				oEvent.preventDefault();
+			}
 			return;
 		}
 

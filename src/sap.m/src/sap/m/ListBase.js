@@ -1586,7 +1586,7 @@ function(
 
 		if (!this._mRangeSelection) {
 			this._mRangeSelection = {
-				index: aVisibleItems.indexOf(oItem),
+				index: this.indexOfItem(oItem),
 				selected: oItem.getSelected()
 			};
 		}
