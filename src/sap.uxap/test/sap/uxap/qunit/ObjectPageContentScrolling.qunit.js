@@ -687,6 +687,41 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 
 	});
 
+	QUnit.test("subSection without title", function (assert) {
+
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			oSection = oObjectPage.getSections()[1],
+			oSectionSubSection = oSection.getSubSections()[1],
+			iSectionPositionTop,
+			iSubSectionPositionTop,
+			done = assert.async(),
+			oSpy = sinon.spy(oObjectPage, "_requestAdjustLayout");
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			iSectionPositionTop = oObjectPage._computeScrollPosition(oSection);
+			iSubSectionPositionTop = oObjectPage._computeScrollPosition(oSectionSubSection);
+			// verify init state
+			assert.ok(iSubSectionPositionTop > iSectionPositionTop, "subSection position is bellow its parent section");
+
+			// Act
+			oSpy.reset();
+			oSectionSubSection.setShowTitle(false);
+			Core.applyChanges();
+
+			// Check
+			assert.ok(oSpy.called, "layout adjustment is requested");
+			oObjectPage._requestAdjustLayout(true); // call synchronously to save a timeout
+			iSectionPositionTop = oObjectPage._computeScrollPosition(oSection);
+			iSubSectionPositionTop = oObjectPage._computeScrollPosition(oSectionSubSection);
+			assert.ok(iSubSectionPositionTop > iSectionPositionTop, "subSection position is bellow its parent section");
+
+			done();
+			oSpy.restore();
+		});
+
+	});
+
 	QUnit.module("ObjectPage scrolling without view");
 
 	QUnit.test("auto-scroll on resize of last section", function (assert) {
