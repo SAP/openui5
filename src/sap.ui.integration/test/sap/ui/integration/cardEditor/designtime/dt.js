@@ -26,6 +26,30 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"description": "test",
 						"cols": 1
 					},
+					"contextModelSyntax": {
+						"manifestpath": "/sap.card/configuration/parameters/contextModelSyntax/value",
+						"type": "string[]",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address"
+									},
+									"headers": {
+										"test1": "{context>sap.successfactors/currentUser/id/value}",
+										"test2": "{context>sap.successfactors/currentUser/id/label}"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						}
+					},
 					"string": {
 						"manifestpath": "/sap.card/configuration/parameters/string/value",
 						"type": "string",

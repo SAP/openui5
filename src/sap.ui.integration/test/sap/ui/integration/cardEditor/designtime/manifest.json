@@ -22,6 +22,9 @@
 		"configuration": {
 			"editor": "dt",
 			"parameters": {
+				"contextModelSyntax": {
+					"value": []
+				},
 				"enableLearningCourses": {
 					"value": false
 				},
