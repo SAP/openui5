@@ -9,7 +9,12 @@
 		var extractSanitizeUrlParam = function(sParamName) {
 			var sParam = new window.URLSearchParams(window.location.search).get(sParamName);
 
-			return sParam.replace(/[/</>]/g, '');
+			return sParam
+			.replaceAll("&", "&amp;")
+			.replaceAll("<", "&lt;")
+			.replaceAll(">", "&gt;")
+			.replaceAll("\"", "&quot;")
+			.replaceAll("’", "&#x27;");
 		};
 
 		var sSampleId = extractSanitizeUrlParam('sap-ui-xx-sample-id'),
