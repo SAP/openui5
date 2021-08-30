@@ -278,7 +278,7 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 	border-left: 1px solid @sapList_TableFooterBorder;
 }
 
-:not(.sapMListHasGrowing) > .sapMTableTBody .sapMListTblRow:last-child > .sapMListTblDummyCell:last-child {
+:not(.sapMListHasGrowing):not(.sapMListShowSeparatorsInner):not(.sapMListShowSeparatorsNone) > .sapMTableTBody .sapMListTblRow:last-child > .sapMListTblDummyCell:last-child {
 	border-bottom: 1px solid @sapList_BorderColor;
 }
 

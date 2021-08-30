@@ -136,8 +136,8 @@
 	border-top: 1px solid @sapUiListBorderColor;
 }
 
-.sapMListShowSeparatorsNone .sapMLIBShowSeparator > td,
-.sapMListShowSeparatorsInner .sapMLIBShowSeparator:first-child > td {
+.sapMListShowSeparatorsNone .sapMLIBShowSeparator > td:not(.sapMListTblDummyCell),
+.sapMListShowSeparatorsInner .sapMLIBShowSeparator:first-child > td:not(.sapMListTblDummyCell) {
 	border-color: transparent;
 }
 
