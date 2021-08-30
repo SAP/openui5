@@ -363,11 +363,10 @@ html.sap-desktop .sapMDialog {
 		}
 
 		&.sapMDialog-NoHeader {
-			padding-top: @_sap_m_Dialog_BarHeight;
+			padding-top: @_sap_m_Dialog_SubHeaderHeight;
 
 			& > .sapMDialogSubHeader {
 				top: 0;
-
 			}
 		}
 	}
@@ -433,11 +432,6 @@ html[data-sap-ui-animation='off'] .sapMDialog {
 }
 
 .sapMDialog > header:last-of-type .sapMIBar {
-	box-shadow: @_sap_m_Dialog_NoStateHeaderShadow;
-}
-
-// invisible subheader
-.sapMDialog:not(.sapMDialogWithSubHeader) > header:first-of-type .sapMIBar {
 	box-shadow: @_sap_m_Dialog_NoStateHeaderShadow;
 }
 
