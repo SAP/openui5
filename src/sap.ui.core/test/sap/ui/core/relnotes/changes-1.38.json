@@ -3733,5 +3733,32 @@
         ]
       }
     ]
+  },
+  "1.38.51": {
+    "date": "August 2021",
+    "notes": [
+      {
+        "id": "d9d1e084cdcde1af14f8d035cc9d0335aeca3c7c",
+        "type": "FIX",
+        "text": " jQuery.sap.trace: fix instable tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180270225"
+          }
+        ]
+      },
+      {
+        "id": "73a6b7d73d50cab8da2a426468ff4d00b0b406e2",
+        "type": "FIX",
+        "text": " theming/Parameters.js: Remove 'startsWith' usage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180264544"
+          }
+        ]
+      }
+    ]
   }
 }
