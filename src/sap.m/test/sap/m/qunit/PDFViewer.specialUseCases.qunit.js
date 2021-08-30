@@ -55,7 +55,7 @@ sap.ui.define( [
 	}
 
 	QUnit.test('Error state of component is rendered.', function (assert) {
-		assert.expect(2);
+		assert.expect(3);
 		var done = assert.async();
 
 		var oOptions = {
@@ -63,8 +63,9 @@ sap.ui.define( [
 			"loaded": function () {
 				assert.ok(false, "'Load' event fired but should not.");
 			},
-			"error": function () {
+			"error": function (oEvent) {
 				assert.ok(true, "'Error' event fired");
+				assert.ok(oEvent.getParameter("target"), "iFrame element is returned");
 			}
 		};
 		oPDFViewer = TestUtils.createPdfViewer(oOptions);
@@ -82,8 +83,9 @@ sap.ui.define( [
 			fnLoadedFailListener = function () {
 				assert.ok(false, "'Load' event fired but should not.");
 			},
-			fnErrorOkListener = function () {
+			fnErrorOkListener = function (oEvent) {
 				assert.ok(true, "'Error' event fired");
+				assert.ok(oEvent.getParameter("target"), "iFrame element is returned");
 			},
 			oErrorOptions = {
 				"source": "test-resources/sap/m/qunit/pdfviewer/not-existing",
