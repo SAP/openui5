@@ -64,6 +64,11 @@
 					<f:GridContainerItemLayoutData columns="3" />
 				</w:layoutData>
 			</w:Card>
+			<w:Card id="listCardWithProducts" baseUrl="./" manifest="{manifests>/listCardWithProducts}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="3" />
+				</w:layoutData>
+			</w:Card>
 			<w:Card manifest="./cardsdemo/cardcontent/listContent/manifestUrl.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="3" />
