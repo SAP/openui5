@@ -4257,11 +4257,11 @@ sap.ui.define([
 
 		// Arrange
 		var oIconTabBar = new IconTabBar({
+			headerMode: "Inline",
 			items: [
 				new IconTabFilter({
 					text: "Tab with icon",
-					icon: "sap-icon://home",
-					headerMode: "Inline"
+					icon: "sap-icon://home"
 				})
 			]
 		});
@@ -4272,11 +4272,42 @@ sap.ui.define([
 		// Assert
 		var $itbf = oIconTabBar.getItems()[0].$();
 
-		assert.ok($itbf.find("span.sapMITBInlineIcon"), "The icon is rendered");
+		assert.ok($itbf.find("span.sapMITBInlineIcon").length, "The icon is rendered");
 
 		// Clean up
 		oIconTabBar.destroy();
-
 	});
 
+	QUnit.module("Tickets");
+
+	QUnit.test("Unnecessary invalidation", function(assert) {
+
+		// Arrange
+		var oButton = new Button({text: "Button 2"}),
+			oIconTabBar = new IconTabBar({
+				items: [
+					new IconTabFilter({
+						text: "Tab 1",
+						content: new Button({text: "Button 1"})
+					}),
+					new IconTabFilter({
+						text: "Tab 2",
+						content: oButton
+					})
+				]
+			});
+
+		oIconTabBar.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+
+		// Assert
+		oButton.setText("New text");
+
+		// Assert
+		assert.notOk(oIconTabBar.getUIArea().mInvalidatedControls[oIconTabBar.getId()], "itb.is not invalidated");
+
+		// Clean up
+		oIconTabBar.destroy();
+	});
 });
