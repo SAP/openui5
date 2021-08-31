@@ -1367,6 +1367,10 @@ sap.ui.define([
 				if (oWrapper) {
 					var oValueHelpPanel = oDialog.getContent()[0];
 					_setContentOnValueHelpPanel.call(this, oValueHelpPanel, oWrapper.getDialogContent());
+					if (!this._bApplyFilter && !this._bClosing && (this.isOpen() || this._bOpen) && !oWrapper.isSuspended()) {
+						// in case ListBinding changed or is not longer suspended
+						this._bApplyFilter = true;
+          }
 				}
 			}
 		}
