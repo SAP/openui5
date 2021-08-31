@@ -1183,6 +1183,10 @@ function(
 		if (this.getEnabled() && this.getEditable() && !(this.getValueHelpOnly() && this.getShowValueHelp())) {
 			this.fireSubmit({value: this.getValue()});
 		}
+
+		if (!Device.system.phone) {
+			this._getSuggestionsPopover()._resetTypeAhead();
+		}
 	};
 
 	/**
@@ -2373,6 +2377,9 @@ function(
 
 		if (!this._hasTabularSuggestions() && !bTabular) {
 			this._oSuggPopover._oList.attachItemPress(function (oEvent) {
+
+				this._oSuggPopover._resetTypeAhead();
+
 				if (Device.system.desktop) {
 					this.focus();
 				}
@@ -2447,6 +2454,7 @@ function(
 			onsapenter: function () {
 				if (this.getAutocomplete()) {
 					this._oSuggPopover._finalizeAutocomplete();
+					this._oSuggPopover._resetTypeAhead();
 				}
 				this._closeSuggestionPopup();
 			}
