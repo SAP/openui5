@@ -45,7 +45,7 @@ sap.ui.define(["sap/ui/integration/Extension", "sap/base/Log"], function (Extens
 				});
 			}
 
-			oCard.refresh();
+			oCard.refreshData();
 		},
 		getData: function () {
 			return Promise.resolve(aTasks);

@@ -2,6 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
+	"sap/ui/integration/cards/BaseContent",
+	"sap/ui/integration/cards/Header",
+	"sap/ui/integration/cards/Filter",
+	"sap/ui/integration/util/DataProvider",
 	"sap/ui/core/Core",
 	"sap/ui/core/Manifest",
 	"sap/base/Log",
@@ -17,6 +21,10 @@ sap.ui.define([
 ],
 	function (
 		Card,
+		BaseContent,
+		Header,
+		Filter,
+		DataProvider,
 		Core,
 		CoreManifest,
 		Log,
@@ -2136,6 +2144,197 @@ sap.ui.define([
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			this.oCard.setManifest(this.oManifest);
+		});
+
+		QUnit.module("Refreshing data", {
+			beforeEach: function () {
+				this.oCard = new Card();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Inner level data", function (assert) {
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEventOnce("_ready", function () {
+				var oContentSpy = sinon.spy(BaseContent.prototype, "refreshData"),
+					oHeaderSpy = sinon.spy(Header.prototype, "refreshData"),
+					oFilterSpy = sinon.spy(Filter.prototype, "refreshData"),
+					oDataProviderSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
+
+				Core.applyChanges();
+				this.oCard.refreshData();
+				assert.ok(oContentSpy.called, "content refreshData method is called");
+				assert.ok(oHeaderSpy.called, "header refreshData method is called");
+				assert.strictEqual(oFilterSpy.callCount, 2, "filter refreshData method is called twice");
+				assert.strictEqual(oDataProviderSpy.callCount, 4, "dataprovider triggerDataUpdate method is called 4 times");
+
+				oContentSpy.restore();
+				oHeaderSpy.restore();
+				oFilterSpy.restore();
+				oDataProviderSpy.restore();
+				done();
+			}.bind(this));
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.refreshing.card1"
+				},
+				"sap.card": {
+					"configuration": {
+						"filters": {
+							"f1": {
+								"data": {
+									"json": [
+										{ "Name": "Product 1" }
+									]
+								}
+							},
+							"f2": {
+								"data": {
+									"json": [
+										{ "Name": "Product 1" }
+									]
+								}
+							}
+						}
+					},
+					"type": "List",
+					"header": {
+						"title": "L3 Request list content Card",
+						"data": {
+							"json": [
+								{ "Name": "Product 1" }
+							]
+						}
+					},
+					"content": {
+						"data": {
+							"json": [
+								{ "Name": "Product 1" },
+								{ "Name": "Product 2" },
+								{ "Name": "Product 3" }
+							]
+						},
+						"item": {
+							"title": "{Name}"
+						}
+					}
+				}
+			});
+		});
+
+		QUnit.test("Root(card) level data", function (assert) {
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEventOnce("_ready", function () {
+				var oContentSpy = sinon.spy(BaseContent.prototype, "refreshData"),
+					oHeaderSpy = sinon.spy(Header.prototype, "refreshData"),
+					oFilterSpy = sinon.spy(Filter.prototype, "refreshData"),
+					oDataProviderSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
+
+				Core.applyChanges();
+				this.oCard.refreshData();
+				assert.ok(oContentSpy.called, "content refreshData method is called");
+				assert.ok(oHeaderSpy.called, "header refreshData method is called");
+				assert.strictEqual(oFilterSpy.callCount, 2, "filter refreshData method is called twice");
+				assert.strictEqual(oDataProviderSpy.callCount, 1, "dataprovider triggerDataUpdate method is called once");
+
+				oContentSpy.restore();
+				oHeaderSpy.restore();
+				oFilterSpy.restore();
+				oDataProviderSpy.restore();
+				done();
+			}.bind(this));
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.refreshing.card1"
+				},
+				"sap.card": {
+					"data": {
+						"json": [
+							{ "Name": "Product 1" }
+						]
+					},
+					"configuration": {
+						"filters": {
+							"f1": {
+
+							},
+							"f2": {
+
+							}
+						}
+					},
+					"type": "List",
+					"header": {
+						"title": "L3 Request list content Card"
+					},
+					"content": {
+						"item": {
+							"title": "{Name}"
+						}
+					}
+				}
+			});
+		});
+
+		QUnit.test("No data", function (assert) {
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEventOnce("_ready", function () {
+				var oContentSpy = sinon.spy(BaseContent.prototype, "refreshData"),
+					oHeaderSpy = sinon.spy(Header.prototype, "refreshData"),
+					oFilterSpy = sinon.spy(Filter.prototype, "refreshData"),
+					oDataProviderSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
+
+				Core.applyChanges();
+				this.oCard.refreshData();
+				assert.ok(oContentSpy.called, "content refreshData method is called");
+				assert.ok(oHeaderSpy.called, "header refreshData method is called");
+				assert.strictEqual(oFilterSpy.callCount, 2, "filter refreshData method is called twice");
+				assert.ok(oDataProviderSpy.notCalled, "dataprovider triggerDataUpdate method is not called");
+
+				oContentSpy.restore();
+				oHeaderSpy.restore();
+				oFilterSpy.restore();
+				oDataProviderSpy.restore();
+				done();
+			}.bind(this));
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.refreshing.card1"
+				},
+				"sap.card": {
+					"configuration": {
+						"filters": {
+							"f1": {
+
+							},
+							"f2": {
+
+							}
+						}
+					},
+					"type": "List",
+					"header": {
+						"title": "L3 Request list content Card"
+					},
+					"content": {
+						"item": {
+							"title": "{Name}"
+						}
+					}
+				}
+			});
 		});
 
 		QUnit.module("Data mode", {
