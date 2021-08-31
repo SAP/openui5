@@ -4802,6 +4802,10 @@ sap.ui.define([
 				if (sParam === "listItem") {
 					return oList.getItems()[0];
 				}
+				if (sParam === "selectAll") {
+					return false;
+				}
+
 				return true;
 			}
 		};
@@ -9017,6 +9021,30 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getAggregation("tokenizer").getTokens().length, 6, "All Tokens must be added");
 		assert.strictEqual(fnFireSelectionChangeSpy.args[0][0].selectAll, true, "All Tokens must be added");
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 6, "selectionChange must be fired for every selected item");
+
+		// Clean
+		fnFireSelectionChangeSpy.restore();
+	});
+
+	QUnit.test("Should select only the filtered items when 'select all' is used", function (assert) {
+		// Arrange
+		var oList, oItemToFocus, oItemDOM;
+		var fnFireSelectionChangeSpy = this.spy(this.oMultiComboBox, "fireSelectionChange");
+
+		// Act
+		this.oMultiComboBox._$input.focus().val("b").trigger("input");
+
+		oList = this.oMultiComboBox._getList();
+		oItemToFocus = oList.getItems()[2];
+		oItemDOM = oItemToFocus.getFocusDomRef();
+		oItemToFocus.focus();
+
+		sap.ui.test.qunit.triggerKeyboardEvent(oItemDOM, KeyCodes.A, false, false, true);
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox._oTokenizer.getTokens().length, 2, "Only the filtered items are selected with select all");
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 2, "selectionChange must be fired for every selected item");
 
 		// Clean
 		fnFireSelectionChangeSpy.restore();
