@@ -382,6 +382,64 @@ sap.ui.define([
 	});
 
 	/**
+	 * Helper function to retrieve owner (extension) component holding the customizing configuration.
+	 * @param {string|sap.ui.core.Component|sap.ui.base.ManagedObject} vObject Component Id, component instance or ManagedObject
+	 * @throws {Error} If 'getExtensionComponent' function is given, but does not return an instance.
+	 * @returns {sap.ui.core.Component|undefined} The owner component or <code>undefined</code>
+	 */
+	function getCustomizingComponent(vObject) {
+		var oComponent, sComponentId;
+
+		if (!sap.ui.getCore().getConfiguration().getDisableCustomizing()) {
+			if (typeof vObject === "string") {
+				sComponentId = vObject;
+			} else if (vObject && typeof vObject.isA === "function" && !vObject.isA("sap.ui.core.Component")) {
+				sComponentId = Component.getOwnerIdFor(vObject);
+			} else {
+				oComponent = vObject;
+			}
+
+			if (sComponentId) {
+				oComponent = Component.get(sComponentId);
+			}
+
+			if (oComponent) {
+				if (oComponent.getExtensionComponent) {
+					oComponent = oComponent.getExtensionComponent();
+					if (!oComponent) {
+						throw new Error("getExtensionComponent() must return an instance.");
+					}
+				}
+			}
+		}
+		return oComponent;
+	}
+
+	/**
+	 * @param {string|sap.ui.base.ManagedObject|sap.ui.core.Component} vObject Either Component Id, ManagedObject or component instance
+	 * @param {object} mOptions Info object to retrieve the customizing config
+	 * @param {object} mOptions.type Either <code>sap.ui.viewExtension</code>, <code>sap.ui.controllerReplacement</code>, <code>sap.ui.viewReplacement</code>, <code>sap.ui.viewModification</code> or <code>sap.ui.controllerExtension</code>
+	 * @param {object} mOptions.name Name of the customizing configuration
+	 * @param {object} [mOptions.extensionName] If type <code>sap.ui.viewExtension</code>, the extension name must be provided
+	 * @param {object} oExtInfo Config object containing the view/fragment and extension name
+	 * @throws {Error} If 'getExtensionComponent' function is given, but does not return an instance.
+	 * @returns {object|undefined} Object containing the customizing config or <code>undefined</code>
+	 * @static
+	 * @private ui5-restricted sap.ui.core
+	 */
+	Component.getCustomizing = function(vObject, mOptions) {
+		var sType = mOptions.type,
+			sPath = "/sap.ui5/extends/extensions/" + sType + "/" + mOptions.name;
+
+		if (sType === "sap.ui.viewExtensions") {
+			sPath += "/" + mOptions.extensionName;
+		}
+
+		var oComponent = getCustomizingComponent(vObject);
+		return oComponent ? oComponent._getManifestEntry(sPath, true) : undefined;
+	};
+
+	/**
 	 * Returns the metadata for the Component class.
 	 *
 	 * @return {sap.ui.core.ComponentMetadata} Metadata for the Component class.

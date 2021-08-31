@@ -68,7 +68,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/core/mvc/View
 	 * @private
 	 */
 	ExtensionPoint._factory = function(oContainer, sExtName, fnCreateDefaultContent, oTargetControl, sAggregationName, bAsync) {
-		var oExtensionConfig, oView, vResult, sViewOrFragmentName, oOwnerComponent;
+		var oExtensionConfig, oView, vResult, sViewOrFragmentName;
 
 		// do we have a view to check or do we need to check for configuration for a fragment?
 		if (oContainer) {
@@ -81,18 +81,11 @@ sap.ui.define(["sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/core/mvc/View
 			}
 
 			// if customizing is enabled we read the extension-point from the merged manifests of the owner component
-			if (!sap.ui.getCore().getConfiguration().getDisableCustomizing()) {
-				oOwnerComponent = Component.getOwnerComponentFor(oContainer);
-				if (oOwnerComponent) {
-					if (oOwnerComponent.getExtensionComponent) {
-						oOwnerComponent = oOwnerComponent.getExtensionComponent();
-						if (!oOwnerComponent) {
-							throw new Error("getExtensionComponent() must return an instance.");
-						}
-					}
-					oExtensionConfig = oOwnerComponent._getManifestEntry("/sap.ui5/extends/extensions/sap.ui.viewExtensions/" + sViewOrFragmentName + "/" + sExtName, true);
-				}
-			}
+			oExtensionConfig = Component.getCustomizing(oContainer, {
+				type: "sap.ui.viewExtensions",
+				name: sViewOrFragmentName,
+				extensionName: sExtName
+			});
 		}
 
 		// Extension Point - is something configured?
