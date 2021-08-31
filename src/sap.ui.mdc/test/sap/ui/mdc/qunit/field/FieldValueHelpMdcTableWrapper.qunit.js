@@ -1,7 +1,7 @@
 // Use this test page to test the API and features of the FieldHelp.
 // The interaction with the Field is tested on the field test page.
 
-/* global QUnit */
+/* global QUnit, sinon */
 /*eslint max-nested-callbacks: [2, 6]*/
 
 sap.ui.define([
@@ -101,6 +101,9 @@ sap.ui.define([
 			},
 			getPayload: function() {
 				return {};
+			},
+			_getFilterBar: function () {
+				return oValueHelp.getFilterBar();
 			},
 			getFilterBar: function () {
 				oFilterBar = oFilterBar || new FilterBar({
@@ -244,6 +247,31 @@ sap.ui.define([
 
 		oWrapper._oInnerWrapperClassPromise.then(function () {
 			assert.ok(oWrapper.OInnerWrapperClass.getMetadata().getName() === "sap.ui.mdc.field.FieldValueHelpMTableWrapper", "oWrapper inner class");
+			fnDone();
+		});
+	});
+
+	QUnit.test("_handleSelectionChange", function(assert) {
+		var fnDone = assert.async();
+
+		_initTable(false, new sap.ui.mdc.table.GridTableType({rowCountMode: "Fixed"}));
+		oWrapper.initialize();
+		sinon.stub(oWrapper,"_isTableReady").returns(true);
+		sinon.spy(oWrapper, "_fireSelectionChange");
+		oTable._fullyInitialized().then(function () {
+			oWrapper._bIsModifyingTableSelection = true;
+
+			oTable._oTable.fireRowSelectionChange();
+			assert.notOk(oWrapper._fireSelectionChange.called, "_fireSelectionChange is not triggered when wrapper is modifying selections.");
+
+			oWrapper._bIsModifyingTableSelection = false;
+
+			oTable._oTable.fireRowSelectionChange();
+			assert.ok(oWrapper._fireSelectionChange.calledOnce, "_fireSelectionChange is triggered.");
+
+			oWrapper._bBusy = true;
+			oTable._oTable.fireRowSelectionChange();
+			assert.ok(oWrapper._fireSelectionChange.calledOnce, "_fireSelectionChange is not triggered while table is busy.");
 			fnDone();
 		});
 	});

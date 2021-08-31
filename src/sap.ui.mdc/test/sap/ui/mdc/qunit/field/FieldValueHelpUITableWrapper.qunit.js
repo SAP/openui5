@@ -1592,5 +1592,14 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("update busy state", function(assert) {
+		oFieldHelp.open(false);
+		assert.notOk(oWrapper._bBusy, "oWrapper is not busy");
+		oTable.fireBusyStateChanged({busy: true});
+		assert.ok(oWrapper._bBusy, "oWrapper is busy");
+		oTable.fireBusyStateChanged({busy: false});
+		assert.notOk(oWrapper._bBusy, "oWrapper is not busy");
+	});
+
 
 });
