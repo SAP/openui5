@@ -1083,8 +1083,9 @@ sap.ui.define([
 			that._settingsModel = new JSONModel(that._oDesigntimeInstance.getSettings());
 			that.setModel(that._settingsModel, "currentSettings");
 			that.setModel(that._settingsModel, "items");
-			that._applyDesigntimeLayers(); //changes done from admin to content on the dt values
+			return that._loadValueContextInDesigntime();
 		}).then(function () {
+			that._applyDesigntimeLayers(); //changes done from admin to content on the dt values
 			return that._requestExtensionData();
 		}).then(function () {
 			that._requireFields().then(function () {
@@ -1287,9 +1288,10 @@ sap.ui.define([
 			oContextModel = new JSONModel({}),
 			oFlatContextModel = new JSONModel([]);
 
-		//add the models in any case
+			//add the models in any case
 		this.setModel(oContextModel, "context");
 		this.setModel(oFlatContextModel, "contextflat");
+		oContextModel._aPendingPromises = [];
 		oFlatContextModel._getPathObject = function (sPath) {
 			var a = this.getData().filter(function (o) {
 				if (o.path === sPath) {
@@ -1339,7 +1341,11 @@ sap.ui.define([
 
 		//async update of the value via host call
 		oContextModel.getProperty = function (sPath, oContext) {
-			var sAbsolutePath = this.resolve(sPath, oContext);
+			if (sPath && !sPath.startsWith("/") && !oContext) {
+				sPath = "/" + sPath;
+			}
+			var sAbsolutePath = this.resolve(sPath, oContext),
+				pGetProperty;
 			if (sAbsolutePath.endsWith("/value")) {
 				this._mValues = this._mValues || {};
 				if (this._mValues.hasOwnProperty(sAbsolutePath)) {
@@ -1347,11 +1353,19 @@ sap.ui.define([
 					//when should this be invalidated?
 				}
 				this._mValues[sAbsolutePath] = undefined;
-				//ask the host
-				oHost.getContextValue(sAbsolutePath.substring(1)).then(function (vValue) {
-					this._mValues[sAbsolutePath] = vValue;
-					this.checkUpdate();
-				}.bind(this));
+				// ask the host and timeout if it does not respond
+				pGetProperty = Utils.timeoutPromise(oHost.getContextValue(sAbsolutePath.substring(1)));
+				pGetProperty = pGetProperty.then(function (vValue) {
+						this._mValues[sAbsolutePath] = vValue;
+						this.checkUpdate();
+					}.bind(this))
+					.catch(function (sReason) {
+						this._mValues[sAbsolutePath] = null;
+						this.checkUpdate();
+						Log.error("Path " + sAbsolutePath + " could not be resolved. Reason: " + sReason);
+					}.bind(this));
+
+				this._aPendingPromises.push(pGetProperty);
 				return undefined;
 			} else {
 				//resolve dt data locally
@@ -1371,6 +1385,36 @@ sap.ui.define([
 		//editor internal
 		oData["editor.internal"] = Editor._contextEntries["editor.internal"];
 		return oData;
+	};
+
+	Editor.prototype._loadValueContextInDesigntime = function () {
+		var oContextModel = this.getModel("context");
+		var oSettings = this._oDesigntimeInstance.getSettings();
+		var sItemsString;
+		if (oSettings && oSettings.form && oSettings.form.items) {
+			sItemsString = JSON.stringify(oSettings.form.items);
+		}
+		if (sItemsString) {
+			var contextParamRegExp = /\{context\>[\/?\w+.]+\}/g;
+			var aResult = sItemsString.match(contextParamRegExp);
+			var aContextEntries;
+			if (aResult && aResult.length > 0) {
+				// only value context need to load
+				aResult = aResult.filter(function (sResult) {
+					return sResult.endsWith("value}");
+				});
+				aContextEntries = aResult.map(function (sResult) {
+					return sResult.substring("{context>".length, sResult.length - 1);
+				});
+				aContextEntries.forEach(function (sContextEntry) {
+					oContextModel.getProperty(sContextEntry);
+				});
+				return Promise.all(oContextModel._aPendingPromises).then(function () {
+					oContextModel._aPendingPromises = [];
+				});
+			}
+		}
+		return Promise.resolve();
 	};
 
 	//map editors for a specific type
@@ -1416,6 +1460,9 @@ sap.ui.define([
 				},
 				items: {
 					path: "items>/form/items"
+				},
+				context: {
+					path: "context>/"
 				}
 			}
 		});
@@ -1445,6 +1492,9 @@ sap.ui.define([
 				},
 				items: {
 					path: "items>/form/items"
+				},
+				context: {
+					path: "context>/"
 				}
 			}
 		});
@@ -1476,6 +1526,9 @@ sap.ui.define([
 				},
 				items: {
 					path: "items>/form/items"
+				},
+				context: {
+					path: "context>/"
 				}
 			}
 		});
@@ -1506,6 +1559,9 @@ sap.ui.define([
 				},
 				items: {
 					path: "items>/form/items"
+				},
+				context: {
+					path: "context>/"
 				}
 			}
 		});
@@ -1566,6 +1622,9 @@ sap.ui.define([
 				},
 				items: {
 					path: "items>/form/items"
+				},
+				context: {
+					path: "context>/"
 				}
 			},
 			visible: oConfig.visible
@@ -1662,6 +1721,9 @@ sap.ui.define([
 		});
 		oDataProvider.bindObject({
 			path: "currentSettings>" + oConfig._settingspath
+		});
+		oDataProvider.bindObject({
+			path: "context>/"
 		});
 		var oPromise = oDataProvider.getData();
 		oPromise.then(function (oData) {
@@ -1957,6 +2019,9 @@ sap.ui.define([
 					},
 					items: {
 						path: "items>/form/items"
+					},
+					context: {
+						path: "context>/"
 					}
 				},
 				expand: function (oEvent) {
