@@ -2035,14 +2035,28 @@ sap.ui.define([
 	 *   };
 	 * });
 	 * </pre>
-	 * <b>ATTENTION:</b> This hook must only be used by UI flexibility (library:
-	 * sap.ui.fl) and will be replaced with a more generic solution!
+	 * <b>ATTENTION:</b> This hook must only be used by UI flexibility (sap.ui.fl)
+	 * or the sap.ui.integration library.
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.fl
+	 * @ui5-restricted sap.ui.fl,sap.ui.integration
 	 * @since 1.43.0
 	 */
-	Component._fnOnInstanceCreated = null;
+	var _aInstanceCreatedListeners = [];
+
+	// [Compatibility]: We need to accept multiple onInstanceCreated listeners,
+	//                  but still want to support the definition via assignment
+	Object.defineProperty(Component, "_fnOnInstanceCreated", {
+		get : function () { return _aInstanceCreatedListeners[0]; },
+		set : function (fn) {
+			if (typeof fn === "function") {
+				_aInstanceCreatedListeners.push(fn);
+			} else {
+				// falsy values clear the list of listeners (a null assignment is used in different unit-tests)
+				_aInstanceCreatedListeners = [];
+			}
+		}
+	});
 
 	/**
 	 * Callback handler which will be executed once the manifest.json was
@@ -2277,14 +2291,26 @@ sap.ui.define([
 			}
 		}
 
+		// collect instance-created listeners
+		function callInstanceCreatedListeners(oInstance, vConfig) {
+			return _aInstanceCreatedListeners.map(function(fn) {
+				return fn(oInstance, vConfig);
+			});
+		}
+
 		function notifyOnInstanceCreated(oInstance, vConfig) {
 			if (vConfig.async) {
 				var pRootControlReady = oInstance.rootControlLoaded ? oInstance.rootControlLoaded() : Promise.resolve();
-				var pOnInstanceCreated = typeof Component._fnOnInstanceCreated === "function" ? Component._fnOnInstanceCreated(oInstance, vConfig) : Promise.resolve();
 
-				return Promise.all([pRootControlReady, pOnInstanceCreated]);
-			} else if (typeof Component._fnOnInstanceCreated === "function") {
-				Component._fnOnInstanceCreated(oInstance, vConfig);
+				// collect instance-created listeners
+				var aOnInstanceCreatedPromises = callInstanceCreatedListeners(oInstance, vConfig);
+
+				// root control loaded promise
+				aOnInstanceCreatedPromises.push(pRootControlReady);
+
+				return Promise.all(aOnInstanceCreatedPromises);
+			} else {
+				callInstanceCreatedListeners(oInstance, vConfig);
 			}
 			return oInstance;
 		}

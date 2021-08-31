@@ -512,7 +512,7 @@ sap.ui.define([
 
 		},
 		afterEach : function() {
-			delete Component._fnOnInstanceCreated;
+			Component._fnOnInstanceCreated = null;
 		}
 	});
 
@@ -934,10 +934,10 @@ sap.ui.define([
 			async: true
 		}).then(function(oComponent) {
 			assert.ok(false, "Promise should not resolve");
-			delete Component._fnOnInstanceCreated;
+			Component._fnOnInstanceCreated = null;
 		}, function(oError) {
 			assert.equal(oError.message, "Error from _fnOnInstanceCreated", "Promise should reject with error from hook");
-			delete Component._fnOnInstanceCreated;
+			Component._fnOnInstanceCreated = null;
 		});
 	});
 
