@@ -1695,7 +1695,7 @@ sap.ui.define([
 						// methods it must be possible to insert the ETag from the header
 						vResponse = sMethod === "GET" ? null : {};
 					}
-					if (sETag) {
+					if (sETag && typeof vResponse === "object") {
 						vResponse["@odata.etag"] = sETag;
 					}
 

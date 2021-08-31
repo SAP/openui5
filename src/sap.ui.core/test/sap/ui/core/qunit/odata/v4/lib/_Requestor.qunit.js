@@ -517,6 +517,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// BCP:2180370654
+	QUnit.test("sendRequest: ignore unexpected ETag response header in $batch", function (assert) {
+		var oRequestor = _Requestor.create("/", oModelInterface);
+
+		this.mock(jQuery).expects("ajax")
+			.withExactArgs("/$batch", sinon.match({headers : {"X-CSRF-Token" : "Fetch"}}))
+			.returns(createMock(assert, "--batch-id...", "OK", {
+				"OData-Version" : "4.0",
+				"ETag" : "unexpected"
+			}));
+
+		return oRequestor.sendRequest("POST", "$batch").then(function (oResult) {
+			assert.strictEqual(oResult.body, "--batch-id...");
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("sendRequest(): setSessionContext", function (assert) {
 		var oJQueryMock = this.mock(jQuery),
 			oRequestor = _Requestor.create("/", oModelInterface);
