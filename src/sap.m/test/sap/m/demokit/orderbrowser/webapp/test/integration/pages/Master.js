@@ -4,9 +4,8 @@ sap.ui.define([
 	"./Common",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/matchers/AggregationLengthEquals",
-	"sap/ui/test/matchers/AggregationFilled",
-	"sap/ui/test/matchers/Properties"
-], function(Opa5, Press, Common, EnterText, AggregationLengthEquals, AggregationFilled, Properties) {
+	"sap/ui/test/matchers/AggregationFilled"
+], function(Opa5, Press, Common, EnterText, AggregationLengthEquals, AggregationFilled) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -140,25 +139,25 @@ sap.ui.define([
 							this.waitFor({
 								searchOpenDialogs: true,
 								controlType: "sap.m.StandardListItem",
-								matchers: new Properties({
-									title: "Orders"
-								}),
+								matchers: function(oControl){
+									return this.I18NTextExtended(oControl, "filterName", "title");
+								}.bind(this),
 								actions: new Press(),
 								success: function () {
 									this.waitFor({
 										searchOpenDialogs: true,
 										controlType: "sap.m.StandardListItem",
-										matchers: new Properties({
-											title: sOption
-										}),
+										matchers: function(oControl){
+											return this.I18NTextExtended(oControl, sOption, "title");
+										}.bind(this),
 										actions: new Press(),
 										success: function () {
 											this.waitFor({
 												searchOpenDialogs: true,
 												controlType: "sap.m.Button",
-												matchers: new Properties({
-													text: "OK"
-												}),
+												matchers: function(oControl){
+													return this.I18NTextExtended(oControl, "VIEWSETTINGS_ACCEPT", "text", "sap.m");
+												}.bind(this),
 												actions: new Press(),
 												errorMessage: "The OK button in the filter dialog could not be pressed"
 											});
@@ -181,17 +180,17 @@ sap.ui.define([
 							return this.waitFor({
 								searchOpenDialogs: true,
 								controlType: "sap.m.Button",
-								matchers: new Properties({
-									text: "Reset"
-								}),
+								matchers: function(oControl){
+									return this.I18NTextExtended(oControl, "VIEWSETTINGS_RESET", "text", "sap.m");
+								}.bind(this),
 								actions: new Press(),
 								success: function () {
 									return this.waitFor({
 										searchOpenDialogs: true,
 										controlType: "sap.m.Button",
-										matchers:  new Properties({
-											text: "OK"
-										}),
+										matchers: function(oControl){
+											return this.I18NTextExtended(oControl, "VIEWSETTINGS_ACCEPT", "text", "sap.m");
+										}.bind(this),
 										actions: new Press(),
 										errorMessage: "Did not find the ViewSettingDialog's 'OK' button."
 									});
@@ -204,37 +203,37 @@ sap.ui.define([
 				},
 
 				iGroupTheList: function () {
-					return this.iChooseGrouping("Group by Customer");
+					return this.iChooseGrouping("masterGroupCustomer");
 				},
 
 				iResetGrouping: function () {
-					return this.iChooseGrouping("(Not Grouped)");
+					return this.iChooseGrouping("VIEWSETTINGS_NONE_ITEM", "sap.m");
 				},
 
-				iChooseGrouping: function (sGroupBy) {
+				iChooseGrouping: function (sResourceId, sLibrary) {
 					return this.waitFor({
 						id: "groupButton",
 						actions: new Press(),
 						success: function () {
 							this.waitFor({
 								controlType: "sap.m.StandardListItem",
-								matchers: new Properties({
-									title: sGroupBy
-								}),
+								matchers: function(oControl){
+									return this.I18NTextExtended(oControl, sResourceId, "title", sLibrary);
+								}.bind(this),
 								searchOpenDialogs: true,
 								actions: new Press(),
 								success: function () {
 									this.waitFor({
 										controlType: "sap.m.Button",
-										matchers: new Properties({
-											text: "OK"
-										}),
+										matchers: function(oControl){
+											return this.I18NTextExtended(oControl, "VIEWSETTINGS_ACCEPT", "text", "sap.m");
+										}.bind(this),
 										searchOpenDialogs: true,
 										actions: new Press(),
 										errorMessage: "The ok button in the grouping dialog could not be pressed"
 									});
 								},
-								errorMessage: "Did not find the " +  sGroupBy + " element in grouping dialog"
+								errorMessage: "Did not find the " +  sResourceId + " element in grouping dialog"
 							});
 						},
 						errorMessage: "Did not find the group button"
@@ -336,9 +335,9 @@ sap.ui.define([
 				theHeaderShouldDisplayOrders: function (iOrders) {
 					return this.waitFor({
 						id: "masterHeaderTitle",
-						matchers: new Properties({
-							text: "Orders (" + iOrders + ")"
-						}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "masterTitleCount", "text", null, [iOrders]);
+						}.bind(this),
 						success: function () {
 							Opa5.assert.ok(true, "The master page header displays " + iOrders + " orders");
 						},
