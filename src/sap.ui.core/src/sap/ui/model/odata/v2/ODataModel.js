@@ -5923,18 +5923,27 @@ sap.ui.define([
 
 	/**
 	 * Discards the changes for the given entity key, that means aborts internal requests, removes
-	 * the changes from the shadow cache, and removes all messages for that entity.
+	 * the changes from the shadow cache, and removes all messages for that entity. If the entity
+	 * has been created via {@link #createEntry} and it is not yet persisted in the back end, remove
+	 * also the entry from the data cache and the corresponding context from the context cache.
 	 *
 	 * @param {string} sKey The entity key
+	 * @param {object} [oEntityMetadata] The entity metadata
+
 	 * @private
 	 */
-	 ODataModel.prototype._discardEntityChange = function (sKey) {
-		var that = this;
+	ODataModel.prototype._discardEntityChange = function (sKey, oEntityMetadata) {
+		var bIsCreated = oEntityMetadata && oEntityMetadata.created,
+			that = this;
 
 		this.oMetadata.loaded().then(function () {
 			that.abortInternalRequest(that._resolveGroup(sKey).groupId, {requestKey : sKey});
 		});
-		delete this.mChangedEntities[sKey];
+		if (bIsCreated) {
+			this._removeEntity(sKey);
+		} else {
+			delete this.mChangedEntities[sKey];
+		}
 		sap.ui.getCore().getMessageManager().removeMessages(this.getMessagesByEntity(sKey, true));
 	};
 
@@ -6001,7 +6010,7 @@ sap.ui.define([
 						delete that.mChangedEntities[sKey].__metadata;
 						if (isEmptyObject(that.mChangedEntities[sKey])
 								|| !oEntityInfo.propertyPath) {
-							that._discardEntityChange(sKey);
+							that._discardEntityChange(sKey, oEntityMetadata);
 						} else {
 							that.mChangedEntities[sKey].__metadata = oEntityMetadata;
 						}
@@ -6009,8 +6018,8 @@ sap.ui.define([
 				}
 			});
 		} else {
-			each(this.mChangedEntities, function (sKey) {
-				that._discardEntityChange(sKey);
+			each(this.mChangedEntities, function (sKey, oChangedEntity) {
+				that._discardEntityChange(sKey, oChangedEntity.__metadata);
 			});
 		}
 		this.checkUpdate(true);

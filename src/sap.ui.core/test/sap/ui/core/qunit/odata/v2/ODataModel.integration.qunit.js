@@ -2941,7 +2941,7 @@ usePreliminaryContext : false}}">\
 	<FlexBox binding="{path : \'to_AdminData\',\
 			parameters : {usePreliminaryContext : true, createPreliminaryContext : false}}">\
 		<Text id="id" text="{ObjectInternalID}" />\
-		<FlexBox binding="{path :\'to_CreatedByUserContactCard\',\
+		<FlexBox binding="{path : \'to_CreatedByUserContactCard\',\
 				parameters : {select : \'FullName\', createPreliminaryContext : false,\
 					usePreliminaryContext : false}\
 			}">\
@@ -2950,7 +2950,7 @@ usePreliminaryContext : false}}">\
 	</FlexBox>\
 	<FlexBox binding="{path : \'to_AdminData\',\
 			parameters : {usePreliminaryContext : true, createPreliminaryContext : false}}">\
-		<FlexBox binding="{path :\'to_LastChangedByUserContactCard\',\
+		<FlexBox binding="{path : \'to_LastChangedByUserContactCard\',\
 				parameters : {select : \'FullName\', createPreliminaryContext : false,\
 					usePreliminaryContext : false}\
 			}">\
@@ -3200,7 +3200,7 @@ usePreliminaryContext : false}}">\
 					ToLineItems : [{
 						Note : "ItemNote Changed",
 						__metadata : {
-							uri: "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 							// Note: Payload must not contain deepPath
 						}
 					}]
@@ -4690,8 +4690,8 @@ usePreliminaryContext : false}}">\
 		}">\
 		<Text id="connectionID" text="{connid}" />\
 		<Text id="flightDate" text="{\
-			path:\'fldate\',\
-			type: \'sap.ui.model.odata.type.DateTime\',\
+			path : \'fldate\',\
+			type : \'sap.ui.model.odata.type.DateTime\',\
 			formatOptions: {style : \'short\', UTC : true}\
 		}" />\
 	</Table>\
@@ -5003,33 +5003,152 @@ usePreliminaryContext : false}}">\
 });
 
 	//*********************************************************************************************
-	// Scenario: Create a new entity and immediately reset all changes or call deleteCreatedEntry.
-	// The created entity is deleted and no request is sent.
-	// JIRA: CPOUI5MODELS-198
-	QUnit.test("ODataModel#createEntry: discard created entity", function (assert) {
-		var oModel = createSalesOrdersModelMessageScope(),
+	// Scenario: Create a new entity and call resetChanges either immediately or after a failed
+	// attempt to submit the creation. The created entity is deleted and no request is sent after
+	// deletion.
+	// JIRA: CPOUI5MODELS-198, CPOUI5MODELS-614
+[false, true].forEach(function (bWithFailedPOST) {
+	[false, true].forEach(function (bWithPath) {
+	var sTitle = "ODataModel#createEntry: discard created entity by using ODataModel#resetChanges "
+			+ (bWithPath ? "called with the context path " : "")
+			+ (bWithFailedPOST ? "after failed submit" : "immediately");
+
+	QUnit.test(sTitle, function (assert) {
+		var oCreatedContext,
+			oModel = createSalesOrdersModelMessageScope(),
 			that = this;
 
 		return this.createView(assert, /*sView*/"", oModel).then(function () {
 			// code under test
-			oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {properties : {}});
+			oCreatedContext = oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {
+				properties : {}
+			});
 
-			// code under test
-			oModel.resetChanges();
+			if (bWithFailedPOST) {
+				that.expectHeadRequest()
+					.expectRequest({
+						created : true,
+						data : {
+							__metadata : {
+								type : "gwsample_basic.SalesOrderLineItem"
+							}
+						},
+						deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
+						headers : {"Content-ID" : "~key~"},
+						method : "POST",
+						requestUri : "SalesOrderSet('1')/ToLineItems"
+					}, createErrorResponse({message : "POST failed", statusCode : 400}))
+					.expectMessages([{
+						code : "UF0",
+						fullTarget : "/SalesOrderSet('1')/ToLineItems('~key~')",
+						message : "POST failed",
+						persistent : false,
+						target : "/SalesOrderLineItemSet('~key~')",
+						technical : true,
+						type : "Error"
+					}]);
 
-			oModel.submitChanges();
+				that.oLogMock.expects("error")
+					.withExactArgs("Request failed with status code 400: "
+							+ "POST SalesOrderSet('1')/ToLineItems",
+						/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
+
+				oModel.submitChanges();
+			}
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oContext;
+			var oResetPromise;
+
+			that.expectMessages([]);
 
 			// code under test
-			oContext = oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {properties : {}});
+			oResetPromise = oModel.resetChanges(bWithPath
+				? [oCreatedContext.getPath()]
+				: undefined);
 
-			// code under test
-			oModel.deleteCreatedEntry(oContext);
+			// check that data cache is cleaned synchronously
+			assert.strictEqual(oModel.getObject(oCreatedContext.getPath()), undefined);
+
+			oModel.submitChanges(); // no request is sent
+
+			return Promise.all([
+				oResetPromise,
+				that.waitForChanges(assert)
+			]);
 		});
 	});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Create a new entity and call deleteCreatedEntry either immediately or after a
+	// failed attempt to submit the creation. The created entity is deleted and no request is sent
+	// after deletion.
+	// JIRA: CPOUI5MODELS-198, CPOUI5MODELS-614
+[false, true].forEach(function (bWithFailedPOST) {
+	var sTitle = "ODataModel#createEntry: discard created entity by using "
+			+ "ODataModel#deleteCreatedEntry "
+			+ (bWithFailedPOST ? "after failed submit" : "immediately");
+
+	QUnit.test(sTitle, function (assert) {
+		var oCreatedContext,
+			oModel = createSalesOrdersModelMessageScope(),
+			that = this;
+
+		return this.createView(assert, /*sView*/"", oModel).then(function () {
+			// code under test
+			oCreatedContext = oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {
+				properties : {}
+			});
+			if (bWithFailedPOST) {
+				that.expectHeadRequest()
+					.expectRequest({
+						created : true,
+						data : {
+							__metadata : {
+								type : "gwsample_basic.SalesOrderLineItem"
+							}
+						},
+						deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
+						headers : {"Content-ID" : "~key~"},
+						method : "POST",
+						requestUri : "SalesOrderSet('1')/ToLineItems"
+					}, createErrorResponse({message : "POST failed", statusCode : 400}))
+					.expectMessages([{
+						code : "UF0",
+						fullTarget : "/SalesOrderSet('1')/ToLineItems('~key~')",
+						message : "POST failed",
+						persistent : false,
+						target : "/SalesOrderLineItemSet('~key~')",
+						technical : true,
+						type : "Error"
+					}]);
+
+				that.oLogMock.expects("error")
+					.withExactArgs("Request failed with status code 400: "
+							+ "POST SalesOrderSet('1')/ToLineItems",
+						/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
+
+				oModel.submitChanges();
+			}
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectMessages([]);
+
+			// code under test
+			oModel.deleteCreatedEntry(oCreatedContext);
+
+			// check that data cache is cleaned synchronously
+			assert.strictEqual(oModel.getObject(oCreatedContext.getPath()), undefined);
+
+			oModel.submitChanges(); // no request is sent
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario: The creation (POST) of a new entity leads to an automatic expand of the given
@@ -5054,7 +5173,7 @@ usePreliminaryContext : false}}">\
 					}
 				},
 				deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
-				headers : {"Content-ID": "~key~", "sap-messages": "transientOnly"},
+				headers : {"Content-ID" : "~key~", "sap-messages" : "transientOnly"},
 				method : "POST",
 				requestUri : "SalesOrderSet('1')/ToLineItems"
 			},
@@ -5199,7 +5318,7 @@ usePreliminaryContext : false}}">\
 						}
 					},
 					deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
-					headers : {"Content-ID": "~key~", "sap-messages": "transientOnly"},
+					headers : {"Content-ID" : "~key~", "sap-messages" : "transientOnly"},
 					method : "POST",
 					requestUri : "SalesOrderSet('1')/ToLineItems"
 				};
@@ -5898,10 +6017,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
-					"deepPath": "/" + oFixture.functionName,
-					"headers": {},
-					"method": oFixture.method,
-					"requestUri": oFixture.functionName
+					"deepPath" : "/" + oFixture.functionName,
+					"headers" : {},
+					"method" : oFixture.method,
+					"requestUri" : oFixture.functionName
 				}, oRequestPromise);
 
 			// code under test
@@ -6447,8 +6566,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// BCP: 2070289685, 2070333970
 	// JIRA: CPOUI5MODELS-230
 [
-	{method: "GET", functionName : "/SalesOrder_Confirm_GET"},
-	{method: "POST", functionName : "/SalesOrder_Confirm"}
+	{method : "GET", functionName : "/SalesOrder_Confirm_GET"},
+	{method : "POST", functionName : "/SalesOrder_Confirm"}
 ].forEach(function (oFixture) {
 	var sTitle = "Messages: function import with lazy parameter determination, method="
 			+ oFixture.method;
@@ -6576,9 +6695,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					deepPath : "/SalesOrder_Confirm",
 					encodeRequestUri : false,
 					headers : {
-						"Content-ID": "~key~",
+						"Content-ID" : "~key~",
 						"sap-message-scope" : "BusinessObject",
-						"sap-messages": "transientOnly"
+						"sap-messages" : "transientOnly"
 					},
 					method : "POST",
 					requestUri : "SalesOrder_Confirm?SalesOrderID='42'"
@@ -7699,10 +7818,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			that.mock(oEventHandlers).expects("error")
 				.withExactArgs(sinon.match({
-					message: "HTTP request failed",
-					responseText: oErrorPOST.body,
-					statusCode: 400,
-					statusText: "FAILED"
+					message : "HTTP request failed",
+					responseText : oErrorPOST.body,
+					statusCode : 400,
+					statusText : "FAILED"
 				}));
 			that.mock(oEventHandlers).expects("success").never();
 			that.oLogMock.expects("error")
@@ -8157,10 +8276,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}]);
 
 			sap.ui.getCore().getMessageManager().addMessages(new Message({
-				message: "Some message",
-				processor: oModel,
-				target: "/Note",
-				type: "Error"
+				message : "Some message",
+				processor : oModel,
+				target : "/Note",
+				type : "Error"
 			}));
 
 			return Promise.all([
@@ -8199,10 +8318,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}]);
 
 			sap.ui.getCore().getMessageManager().addMessages(new Message({
-				message: "Some message",
-				processor: oModel,
-				target: "/Note",
-				type: "Error"
+				message : "Some message",
+				processor : oModel,
+				target : "/Note",
+				type : "Error"
 			}));
 
 			return Promise.all([
@@ -8533,7 +8652,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oControl.setValue("");
 
 			that.expectMessages([{
-					descriptionUrl: undefined,
+					descriptionUrl : undefined,
 					message : "EnterNumberFraction 3",
 					target : oControl.getId() + "/value",
 					type : "Error"
@@ -8633,7 +8752,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oControl.setValue("");
 
 			that.expectMessages([{
-					descriptionUrl: undefined,
+					descriptionUrl : undefined,
 					message : "EnterNumberFraction 2",
 					target : oControl.getId() + "/value",
 					type : "Error"
@@ -8982,7 +9101,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		}).then(function () {
 			that.expectValue("currency", "foo")
 				.expectMessages([{
-					descriptionUrl: undefined,
+					descriptionUrl : undefined,
 					message : "Currency.InvalidMeasure",
 					target : oControl.getId() + "/value",
 					type : "Error"
@@ -9226,10 +9345,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}]);
 
 			sap.ui.getCore().getMessageManager().addMessages(new Message({
-				message: "Some message",
-				processor: oModel,
-				target: "/RequestedQuantity",
-				type: "Error"
+				message : "Some message",
+				processor : oModel,
+				target : "/RequestedQuantity",
+				type : "Error"
 			}));
 
 			return Promise.all([
