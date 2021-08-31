@@ -4,9 +4,8 @@ sap.ui.define([
 	"./Common",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/matchers/AggregationLengthEquals",
-	"sap/ui/test/matchers/AggregationFilled",
-	"sap/ui/test/matchers/Properties"
-], function (Opa5, Press, Common, EnterText, AggregationLengthEquals, AggregationFilled, Properties) {
+	"sap/ui/test/matchers/AggregationFilled"
+], function (Opa5, Press, Common, EnterText, AggregationLengthEquals, AggregationFilled) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -17,22 +16,22 @@ sap.ui.define([
 			actions: {
 
 				iSortTheListOnName: function () {
-					return this.iChooseASorter("sortButton", "Sort By <Name>");
+					return this.iChooseASorter("sortButton", "masterSort1");
 				},
 				iSortTheListOnUnitNumber: function () {
-					return this.iChooseASorter("sortButton", "Sort By <UnitNumber>");
+					return this.iChooseASorter("sortButton", "masterSort2");
 				},
 
 				iFilterTheListOnUnitNumber: function () {
-					return this.iMakeASelection("filterButton", "<UnitNumber>", "<100 <UnitOfMeasure>");
+					return this.iMakeASelection("filterButton", "masterFilterName", "masterFilter1");
 				},
 
 				iGroupTheList: function () {
-					return this.iChooseASorter("groupButton", "<UnitNumber> Group");
+					return this.iChooseASorter("groupButton", "masterGroup1");
 				},
 
 				iRemoveListGrouping: function () {
-					return this.iChooseASorter("groupButton", "(Not Grouped)");
+					return this.iChooseASorter("groupButton", "VIEWSETTINGS_NONE_ITEM", "sap.m");
 				},
 				iOpenViewSettingsDialog: function () {
 					return this.waitFor({
@@ -45,9 +44,9 @@ sap.ui.define([
 					return this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.Button",
-						matchers:  new Properties({
-							text: "OK"
-						}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "VIEWSETTINGS_ACCEPT", "text", "sap.m");
+						}.bind(this),
 						actions: new Press(),
 						errorMessage: "Did not find the ViewSettingDialog's 'OK' button."
 					});
@@ -57,9 +56,9 @@ sap.ui.define([
 					return this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.Button",
-						matchers: new Properties({
-							text: "Reset"
-						}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "VIEWSETTINGS_RESET", "text", "sap.m");
+						}.bind(this),
 						actions: new Press(),
 						errorMessage: "Did not find the ViewSettingDialog's 'Reset' button."
 					});
@@ -72,25 +71,25 @@ sap.ui.define([
 						success: function () {
 							this.waitFor({
 								controlType: "sap.m.StandardListItem",
-								matchers: new Properties({
-									title: sItem
-								}),
+								matchers: function(oControl){
+									return this.I18NTextExtended(oControl, sItem, "title");
+								}.bind(this),
 								searchOpenDialogs: true,
 								actions: new Press(),
 								success: function () {
 									this.waitFor({
 										controlType: "sap.m.StandardListItem",
-										matchers: new Properties({
-											title: sOption
-										}),
+										matchers: function(oControl){
+											return this.I18NTextExtended(oControl, sOption, "title");
+										}.bind(this),
 										searchOpenDialogs: true,
 										actions: new Press(),
 										success: function () {
 											this.waitFor({
 												controlType: "sap.m.Button",
-												matchers: new Properties({
-													text: "OK"
-												}),
+												matchers: function(oControl){
+													return this.I18NTextExtended(oControl, "VIEWSETTINGS_ACCEPT", "text", "sap.m");
+												}.bind(this),
 												searchOpenDialogs: true,
 												actions: new Press(),
 												errorMessage: "The ok button in the dialog was not found and could not be pressed"
@@ -119,24 +118,24 @@ sap.ui.define([
 					});
 				},
 
-				iChooseASorter: function (sSelect, sSort) {
+				iChooseASorter: function (sSelect, sSort, sLibrary) {
 					return this.waitFor({
 						id: sSelect,
 						actions: new Press(),
 						success: function () {
 							this.waitFor({
 								controlType: "sap.m.StandardListItem",
-								matchers: new Properties({
-									title: sSort
-								}),
+								matchers: function(oControl){
+									return this.I18NTextExtended(oControl, sSort, "title", sLibrary);
+								}.bind(this),
 								searchOpenDialogs: true,
 								actions: new Press(),
 								success: function () {
 									this.waitFor({
 										controlType: "sap.m.Button",
-										matchers: new Properties({
-											text: "OK"
-										}),
+										matchers: function(oControl){
+											return this.I18NTextExtended(oControl, "VIEWSETTINGS_ACCEPT", "text", "sap.m");
+										}.bind(this),
 										searchOpenDialogs: true,
 										actions: new Press(),
 										errorMessage: "The ok button in the dialog was not found and could not be pressed"
@@ -269,9 +268,9 @@ sap.ui.define([
 					return this.waitFor({
 						id: "masterPageTitle",
 						autoWait: false,
-						matchers: new Properties({
-							text: "<Objects> (0)"
-						}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "<Objects> (0)", "text");
+						}.bind(this),
 						success: function () {
 							Opa5.assert.ok(true, "The list header displays zero hits");
 						},
@@ -411,9 +410,9 @@ sap.ui.define([
 							var iExpectedLength = oList.getBinding("items").getLength();
 							this.waitFor({
 								id: "masterPageTitle",
-								matchers: new Properties({
-									text: "<Objects> (" + iExpectedLength + ")"
-								}),
+								matchers: function(oControl){
+									return this.I18NTextExtended(oControl, "masterTitleCount", "text", null, [iExpectedLength]);
+								}.bind(this),
 								success: function () {
 									Opa5.assert.ok(true, "The master page header displays " + iExpectedLength + " items");
 								},
