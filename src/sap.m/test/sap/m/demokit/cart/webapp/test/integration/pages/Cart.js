@@ -1,19 +1,19 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
+	"./Common",
 	"sap/ui/test/matchers/AggregationFilled",
 	"sap/ui/test/matchers/AggregationEmpty",
 	"sap/ui/test/matchers/Properties",
-	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/AggregationContainsPropertyEqual",
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/BindingPath",
 	"sap/ui/test/actions/Press"
 ], function (
 	Opa5,
+	Common,
 	AggregationFilled,
 	AggregationEmpty,
 	Properties,
-	PropertyStrictEquals,
 	AggregationContainsPropertyEqual,
 	AggregationLengthEquals,
 	BindingPath,
@@ -22,6 +22,7 @@ sap.ui.define([
 
 	Opa5.createPageObjects({
 		onTheCart : {
+			baseClass: Common,
 			viewName : "Cart",
 
 			actions : {
@@ -49,7 +50,9 @@ sap.ui.define([
 				iPressOnTheSaveChangesButton : function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						matchers : new Properties({ text : "Save Changes"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "cartDoneButtonText", "text");
+						}.bind(this),
 						actions : new Press(),
 						errorMessage : "The accept button could not be pressed"
 					});
@@ -270,7 +273,9 @@ sap.ui.define([
 				iShouldSeeTheTotalPriceEqualToZero : function () {
 					return this.waitFor({
 						id: "totalPriceText",
-						matchers: new PropertyStrictEquals({name: "text", value: "Total: 0,00 EUR"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "cartTotalPrice", "text", null, ["0,00 EUR"]);
+						}.bind(this),
 						success: function () {
 							Opa5.assert.ok(true, "Total price is updated correctly");
 						},
@@ -281,7 +286,9 @@ sap.ui.define([
 				iShouldSeeTheTotalPriceUpdated: function () {
 					return this.waitFor({
 						id: "totalPriceText",
-						matchers: new PropertyStrictEquals({name: "text", value: "Total: 250,00 EUR"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "cartTotalPrice", "text", null, ["250,00 EUR"]);
+						}.bind(this),
 						success: function () {
 							Opa5.assert.ok(true, "Total price is updated correctly");
 						},

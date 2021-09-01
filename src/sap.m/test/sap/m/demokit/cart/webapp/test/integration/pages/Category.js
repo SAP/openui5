@@ -1,5 +1,6 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
+	"./Common",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/AggregationFilled",
 	"sap/ui/test/matchers/AggregationLengthEquals",
@@ -8,6 +9,7 @@ sap.ui.define([
 	"sap/ui/test/actions/Press"
 ], function (
 	Opa5,
+	Common,
 	PropertyStrictEquals,
 	AggregationFilled,
 	AggregationLengthEquals,
@@ -18,6 +20,7 @@ sap.ui.define([
 
 	Opa5.createPageObjects({
 		onTheCategory : {
+			baseClass: Common,
 			viewName: "Category",
 
 			actions: {
@@ -51,7 +54,9 @@ sap.ui.define([
 				iSelectTheAvailabilityFilteringOption: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
-						matchers: new PropertyStrictEquals({name: "title", value: "Availability"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "availabilityFilterTitle", "title");
+						}.bind(this),
 						actions: new Press(),
 						errorMessage: "The Availability filtering option was not found and could not be pressed"
 					});
@@ -59,7 +64,9 @@ sap.ui.define([
 				iSelectTheSupplierFilteringOption: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
-						matchers: new PropertyStrictEquals({name: "title", value: "Supplier"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "supplierFilterTitle", "title");
+						}.bind(this),
 						actions: new Press(),
 						errorMessage: "The supplier filtering option was not found and could not be pressed"
 					});
@@ -67,7 +74,9 @@ sap.ui.define([
 				iSelectTheAvailableFilter: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
-						matchers: new PropertyStrictEquals({name: "title", value: "Available"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "statusA", "title");
+						}.bind(this),
 						actions: new Press(),
 						errorMessage: "The available check box was not found and could not be selected"
 					});
@@ -76,7 +85,9 @@ sap.ui.define([
 				iSelectTheDiscontinuedFilter: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
-						matchers: new PropertyStrictEquals({name: "title", value: "Discontinued"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "statusD", "title");
+						}.bind(this),
 						actions: new Press(),
 						errorMessage: "The discontinued check box was not found and could not be selected"
 					});
@@ -93,7 +104,9 @@ sap.ui.define([
 				iSelectTheOutOfStockFilter: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
-						matchers: new PropertyStrictEquals({name: "title", value: "Out of Stock"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "statusO", "title");
+						}.bind(this),
 						actions: new Press(),
 						errorMessage: "The out of stock check box was not found and could not be selected"
 					});
@@ -102,7 +115,9 @@ sap.ui.define([
 				iDeselectTheAvailableFilter: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
-						matchers: new PropertyStrictEquals({name: "title", value: "Available"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "statusA", "title");
+						}.bind(this),
 						actions: new Press(),
 						errorMessage: "The available check box was not found and could not be deselected"
 					});
@@ -111,7 +126,9 @@ sap.ui.define([
 				iDeselectTheDiscontinuedFilter: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
-						matchers: new PropertyStrictEquals({name: "title", value: "Discontinued"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "statusD", "title");
+						}.bind(this),
 						actions: new Press(),
 						errorMessage: "The discontinued check box was not found and could not be deselected"
 					});
@@ -127,7 +144,9 @@ sap.ui.define([
 				iPressOkButton: function () {
 					this.waitFor({
 						controlType: "sap.m.Button",
-						matchers: new PropertyStrictEquals({name: "text", value: "OK"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "VIEWSETTINGS_ACCEPT", "text", "sap.m");
+						}.bind(this),
 						actions: new Press(),
 						errorMessage: "The ok button in the dialog was not found and could not be pressed"
 					});
@@ -135,7 +154,9 @@ sap.ui.define([
 				iPressCancelButton: function () {
 					this.waitFor({
 						controlType: "sap.m.Button",
-						matchers: new PropertyStrictEquals({name: "text", value: "Cancel"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "VIEWSETTINGS_CANCEL", "text", "sap.m");
+						}.bind(this),
 						actions: new Press(),
 						errorMessage: "The cancel button in the dialog was not found and could not be pressed"
 					});
@@ -159,7 +180,9 @@ sap.ui.define([
 				iPressResetButton: function () {
 					this.waitFor({
 						controlType: "sap.m.Button",
-						matchers: new PropertyStrictEquals({name: "text", value: "Reset"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "VIEWSETTINGS_RESET", "text", "sap.m");
+						}.bind(this),
 						actions: new Press(),
 						errorMessage: "The reset button in the dialog was not found and could not be pressed"
 					});
@@ -167,7 +190,9 @@ sap.ui.define([
 				iSelectThePriceFilteringOption: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
-						matchers: new PropertyStrictEquals({name: "title", value: "Price"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "priceFilterTitle", "title");
+						}.bind(this),
 						actions: new Press(),
 						errorMessage: "The price filtering option was not found and could not be pressed"
 					});
@@ -436,7 +461,9 @@ sap.ui.define([
 
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
-						matchers: new PropertyStrictEquals({name: "title", value: "Price"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "priceFilterTitle", "title");
+						}.bind(this),
 						success: function(oItem) {
 							Opa5.assert.ok(oItem[0].getCounter() === iCountNumber, sSuccessMessage);
 						},
@@ -469,7 +496,9 @@ sap.ui.define([
 				iShouldSeeCompareLinkOnListEntry: function () {
 					this.waitFor({
 						controlType: "sap.m.ObjectAttribute",
-						matchers: new Properties({text : "Compare"}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "CompareWith", "text");
+						}.bind(this),
 						success: function () {
 							Opa5.assert.ok(true, "List entry has an compare link");
 						},
