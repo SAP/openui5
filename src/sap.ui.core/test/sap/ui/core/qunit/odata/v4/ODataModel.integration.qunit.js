@@ -12601,8 +12601,8 @@ sap.ui.define([
 				template : new CustomListItem({content : [oText]})
 			});
 
-			// Increase the timeout for this test to 12 seconds to run also in IE
-			return that.waitForChanges(assert, "", undefined, 12000);
+			// Increase the timeout for this test to 24 seconds to run also in IE
+			return that.waitForChanges(assert, "", undefined, 24000);
 		});
 	});
 
@@ -12645,8 +12645,8 @@ sap.ui.define([
 				new Promise(function (resolve, reject) {
 					fnDone = resolve;
 				}),
-				// Increase the timeout for this test to 12 seconds to run also in IE
-				that.waitForChanges(assert, "", undefined, 12000)
+				// Increase the timeout for this test to 24 seconds to run also in IE
+				that.waitForChanges(assert, "", undefined, 24000)
 			]);
 		});
 	});
@@ -27799,7 +27799,8 @@ sap.ui.define([
 							.getBoundContext());
 					fnRespond();
 				}, 10),
-				that.waitForChanges(assert)
+				// Increase the timeout for this test to 6 seconds to run also in IE
+				that.waitForChanges(assert, "", undefined, 6000)
 			]);
 		});
 	});
