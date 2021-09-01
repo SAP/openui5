@@ -319,7 +319,7 @@ sap.ui.define([
 				assert.ok(oSettingsCommand, "... which contains a settings command");
 				done();
 			});
-			return this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton });
+			return this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton }, {});
 		});
 
 		QUnit.test("when the handle settings function is called and the handler returns a an empty change object,", function(assert) {
@@ -379,6 +379,55 @@ sap.ui.define([
 			.catch(function() {
 				assert.notOk(this.oSettingsCommand, "... command is not created");
 			}.bind(this));
+		});
+
+		[true, false].forEach(function(bVariantIndependent) {
+			var sMessage = "when the handle settings function is called and a variantManagementReference is present";
+			if (bVariantIndependent) {
+				sMessage += " and variantIndependent is set";
+			}
+			QUnit.test(sMessage, function(assert) {
+				var done = assert.async();
+				var oSettingsChange = {
+					selectorElement: this.oButton,
+					changeSpecificData: {
+						changeType: "changeSettings",
+						content: "testchange"
+					}
+				};
+
+				var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
+					isEnabled: true,
+					handler: function() {
+						return new Promise(function(resolve) {
+							resolve([oSettingsChange]);
+						});
+					}
+				});
+				// this mix-in would normally be done by the ControlVariant plugin
+				oButtonOverlay.getVariantManagement = function() {
+					return "myVMR";
+				};
+				sandbox.stub(oMockedAppComponent, "getModel").returns({
+					getCurrentVariantReference: function() {
+						return "currentVR";
+					}
+				});
+				var aSelectedOverlays = [oButtonOverlay];
+
+				this.oSettingsPlugin.attachEventOnce("elementModified", function() {
+					var oChangeSpecificData = ChangesWriteAPI.create.firstCall.args[0].changeSpecificData;
+					if (bVariantIndependent) {
+						assert.notOk(oChangeSpecificData.variantManagementReference, "the variantManagementReference is not part of the changeSpecificData");
+						assert.notOk(oChangeSpecificData.variantReference, "the variantReference is not part of the changeSpecificData");
+					} else {
+						assert.deepEqual(oChangeSpecificData.variantManagementReference, "myVMR", "the variantManagementReference is part of the changeSpecificData");
+						assert.deepEqual(oChangeSpecificData.variantReference, "currentVR", "the variantReference is part of the changeSpecificData");
+					}
+					done();
+				});
+				return this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton }, {CAUTION_variantIndependent: bVariantIndependent});
+			});
 		});
 
 		QUnit.test("when two changes are on the command stack,", function(assert) {
@@ -544,7 +593,7 @@ sap.ui.define([
 				assert.equal(oFlexCommand.getContent(), mSettingsChange.changeSpecificData.content, "with the correct parameters");
 				done();
 			});
-			return this.oSettingsPlugin.handler([oButtonOverlay], { eventItem: {}, contextElement: this.oButton });
+			return this.oSettingsPlugin.handler([oButtonOverlay], { eventItem: {}, contextElement: this.oButton }, {});
 		});
 
 		QUnit.test("when retrieving the context menu item for single 'settings' action", function(assert) {
