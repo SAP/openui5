@@ -1671,43 +1671,56 @@ sap.ui.define([
 				return;
 			}
 			// filter data for page admin
-			var sPath = oConfig.values.data.path,
+			var oPath = oConfig.values.data.path,
 			    aPath,
 			    tResult = [];
-			if (sPath && sPath !== "/") {
-				if (sPath.startsWith("/")) {
-					sPath = sPath.substring(1);
+			if (oPath && oPath !== "/") {
+				if (oPath.startsWith("/")) {
+					oPath = oPath.substring(1);
 				}
-				if (sPath.endsWith("/")) {
-					sPath = sPath.substring(0, sPath.length - 1);
+				if (oPath.endsWith("/")) {
+					oPath = oPath.substring(0, oPath.length - 1);
 				}
-				aPath = sPath.split("/");
+				aPath = oPath.split("/");
 				tResult = ObjectPath.get(aPath, oData);
 			} else {
 				tResult = oData;
 			}
 			if (this.getMode() === "content" && oConfig.pageAdminValues && oConfig.pageAdminValues.length > 0) {
 				var paValues = oConfig.pageAdminValues,
-				    results = [],
-					pavItemKey = oConfig.values.item.key;
-				pavItemKey = pavItemKey.substring(1, pavItemKey.length - 1);
+				    results = [];
+				this.prepareFieldsInKey(oConfig);
 				if (paValues.length > 0) {
 					for (var i = 0; i < paValues.length; i++) {
 						for (var j = 0; j < tResult.length; j++) {
-							if (paValues[i] === tResult[j][pavItemKey]) {
+							var keyValue = this.getKeyFromItem(tResult[j]);
+							if (paValues[i] === keyValue) {
 								results.push(tResult[j]);
 							}
 						}
 					}
 				}
-				delete oData[aPath];
-				ObjectPath.set(aPath, results, oData);
+				if (oConfig.values.data.path && oConfig.values.data.path !== "/") {
+					delete oData[aPath];
+					ObjectPath.set(aPath, results, oData);
+				} else {
+					oData = [];
+					oData = results;
+				}
 			}
 			//add group property "Selected" to each record for MultiComboBox in ListField
 			//user configration of the field since its value maybe changed
 			var oFieldConfig = oField.getConfiguration();
 			if (oConfig.type === "string[]") {
+				var sPath = oConfig.values.data.path;
 				if (sPath && sPath !== "/") {
+					if (sPath.startsWith("/")) {
+						sPath = sPath.substring(1);
+					}
+					if (sPath.endsWith("/")) {
+						sPath = sPath.substring(0, sPath.length - 1);
+					}
+					var aPath = sPath.split("/");
 					var oResult = ObjectPath.get(aPath, oData);
 					if (Array.isArray(oResult)) {
 						for (var n in oResult) {
@@ -2660,6 +2673,36 @@ sap.ui.define([
 			oStyle.innerHTML = ".sapUiIntegrationEditor, .sapUiIntegrationFieldSettings, .sapUiIntegrationIconSelectList {" + aResult.join(";") + "}";
 			document.body.appendChild(oStyle);
 		}
+	};
+
+	Editor.prototype.prepareFieldsInKey = function(oConfig) {
+		//get field names in the item key
+		this._sKeySeparator = oConfig.values.keySeparator;
+		if (!this._sKeySeparator) {
+			this._sKeySeparator = "#";
+		}
+		var sKey = oConfig.values.item.key;
+		this._aFields = sKey.split(this._sKeySeparator);
+		for (var n in this._aFields) {
+			//remove the {} in the field
+			if (this._aFields[n].startsWith("{")) {
+				this._aFields[n] = this._aFields[n].substring(1);
+			}
+			if (this._aFields[n].endsWith("}")) {
+				this._aFields[n] = this._aFields[n].substring(0, this._aFields[n].length - 1);
+			}
+		}
+	};
+
+	Editor.prototype.getKeyFromItem = function(oItem) {
+		var sItemKey = "";
+		this._aFields.forEach(function (field) {
+			sItemKey += oItem[field].toString() + this._sKeySeparator;
+		}.bind(this));
+		if (sItemKey.endsWith(this._sKeySeparator)) {
+			sItemKey = sItemKey.substring(0, sItemKey.length - this._sKeySeparator.length);
+		}
+		return sItemKey;
 	};
 
 	//initializes global settings
