@@ -103,11 +103,11 @@
 
 
                 var oDateRangePicker7Button = new Button({
-                    text: "getFirstDateValue",
+                    text: "getEndDateValue",
                     click: function(oEvent) {
-                        console.log("Calling getFirstDateValue...");
-                        var result = oDateRangePicker.getFirstDateValue();
-                        console.log("... getFirstDateValue returned: ", result);
+                        console.log("Calling getEndDateValue...");
+                        var result = oDateRangePicker.getEndDateValue();
+                        console.log("... getEndDateValue returned: ", result);
                     }
                 });
                 oDateRangePicker7Button.placeAt("methodButtons");
@@ -115,11 +115,11 @@
 
 
                 var oDateRangePicker8Button = new Button({
-                    text: "getLastDateValue",
+                    text: "getStartDateValue",
                     click: function(oEvent) {
-                        console.log("Calling getLastDateValue...");
-                        var result = oDateRangePicker.getLastDateValue();
-                        console.log("... getLastDateValue returned: ", result);
+                        console.log("Calling getStartDateValue...");
+                        var result = oDateRangePicker.getStartDateValue();
+                        console.log("... getStartDateValue returned: ", result);
                     }
                 });
                 oDateRangePicker8Button.placeAt("methodButtons");

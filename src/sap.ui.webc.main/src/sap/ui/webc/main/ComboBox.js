@@ -55,6 +55,21 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Sets the accessible aria name of the component.
+				 */
+				accessibleName: {
+					type: "string"
+				},
+
+				/**
+				 * Receives id(or many ids) of the elements that label the combo box
+				 */
+				accessibleNameRef: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
 				 * Defines whether the component is in disabled state. <br>
 				 * <br>
 				 * <b>Note:</b> A disabled component is completely uninteractive.
@@ -70,20 +85,6 @@ sap.ui.define([
 				filter: {
 					type: "string",
 					defaultValue: "StartsWithPerTerm"
-				},
-
-				/**
-				 * Defines the "live" value of the component. <br>
-				 * <br>
-				 * <b>Note:</b> The property is updated upon typing.
-				 *
-				 * <br>
-				 * <br>
-				 * <b>Note:</b> Initially the filter value is synced with value.
-				 */
-				filterValue: {
-					type: "string",
-					defaultValue: ""
 				},
 
 				/**
@@ -196,14 +197,18 @@ sap.ui.define([
 				/**
 				 * Fired when the input operation has finished by pressing Enter, focusout or an item is selected.
 				 */
-				change: {},
+				change: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired when typing in input. <br>
 				 * <br>
 				 * <b>Note:</b> filterValue property is updated, input is changed.
 				 */
-				input: {},
+				input: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired when selection is changed by user interaction

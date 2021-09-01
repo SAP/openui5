@@ -36,9 +36,6 @@ sap.ui.define([
 						}
 					})
 				],
-				loadMore: function(oEvent) {
-					// console.log("Event loadMore fired for Carousel with parameters: ", oEvent.getParameters());
-				},
 				navigate: function(oEvent) {
 					// console.log("Event navigate fired for Carousel with parameters: ", oEvent.getParameters());
 				}

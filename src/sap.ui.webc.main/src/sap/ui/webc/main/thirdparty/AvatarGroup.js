@@ -39,10 +39,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: String,
 				defaultValue: AvatarGroupType.Group,
 			},
-			avatarSize: {
-				type: String,
-				defaultValue: AvatarSize.S,
-			},
 			ariaHaspopup: {
 				type: String,
 			},
@@ -167,6 +163,21 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			return button.offsetWidth;
 		}
+		get firstAvatarSize() {
+			return this.items[0].size;
+		}
+		get classes() {
+			return {
+				overflowButton: {
+					"ui5-avatar-group-overflow-btn": true,
+					"ui5-avatar-group-overflow-btn-xs": this.firstAvatarSize === "XS",
+					"ui5-avatar-group-overflow-btn-s": this.firstAvatarSize === "S",
+					"ui5-avatar-group-overflow-btn-m": this.firstAvatarSize === "M",
+					"ui5-avatar-group-overflow-btn-l": this.firstAvatarSize === "L",
+					"ui5-avatar-group-overflow-btn-xl": this.firstAvatarSize === "XL",
+				},
+			};
+		}
 		onAfterRendering() {
 			this._overflowItems();
 		}
@@ -229,9 +240,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				avatar.interactive = !this._isGroup;
 				if (!avatar.getAttribute("_color-scheme")) {
 					avatar.setAttribute("_color-scheme", AvatarColorScheme[`Accent${colorIndex}`]);
-				}
-				if (!avatar.getAttribute("size")) {
-					avatar.setAttribute("_size", this.avatarSize);
 				}
 				if (index !== this._itemsCount - 1 || this._customOverflowButton) {
 					avatar.style[`margin-${RTL ? "left" : "right"}`] = offsets[avatar._effectiveSize][this.type];

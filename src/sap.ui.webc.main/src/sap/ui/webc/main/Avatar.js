@@ -11,7 +11,6 @@ sap.ui.define([
 	"use strict";
 
 	var AvatarColorScheme = library.AvatarColorScheme;
-	var AvatarFitType = library.AvatarFitType;
 	var AvatarShape = library.AvatarShape;
 	var AvatarSize = library.AvatarSize;
 
@@ -70,7 +69,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the background color of the content. <br>
+				 * Defines the background color of the desired image. <br>
 				 * <br>
 				 * Available options are:
 				 * <ul>
@@ -94,7 +93,7 @@ sap.ui.define([
 
 				/**
 				 * Defines the name of the UI5 Icon, that would be displayed. <br>
-				 * <b>Note:</b> If <code>image</code> is set, the property would be ignored. <br>
+				 * <b>Note:</b> If <code>image</code> slot is provided, the property would be ignored. <br>
 				 * <b>Note:</b> You should import the desired icon first, then use its name as "icon". <br>
 				 * <br>
 				 * import "@ui5/webcomponents-icons/dist/{icon_name}.js" <br>
@@ -105,28 +104,6 @@ sap.ui.define([
 				icon: {
 					type: "string",
 					defaultValue: ""
-				},
-
-				/**
-				 * Defines the source path to the desired image.
-				 */
-				image: {
-					type: "string",
-					defaultValue: ""
-				},
-
-				/**
-				 * Defines the fit type of the desired image. <br>
-				 * <br>
-				 * Available options are:
-				 * <ul>
-				 *     <li><code>Cover</code></li>
-				 *     <li><code>Contain</code></li>
-				 * </ul>
-				 */
-				imageFitType: {
-					type: "sap.ui.webc.main.AvatarFitType",
-					defaultValue: AvatarFitType.Cover
 				},
 
 				/**
@@ -175,6 +152,19 @@ sap.ui.define([
 				size: {
 					type: "sap.ui.webc.main.AvatarSize",
 					defaultValue: AvatarSize.S
+				}
+			},
+			defaultAggregation: "content",
+			aggregations: {
+
+				/**
+				 * Receives the desired <code>&lt;img&gt;</code> tag
+				 *
+				 * <b>Note:</b> If you experience flickering of the provided image, you can hide the component until it is being defined with the following CSS: <br /> <br /> <code> ui5-avatar:not(:defined) { <br /> visibility: hidden; <br /> } <br /> </code>
+				 */
+				content: {
+					type: "sap.ui.core.Control",
+					multiple: false
 				}
 			}
 		}

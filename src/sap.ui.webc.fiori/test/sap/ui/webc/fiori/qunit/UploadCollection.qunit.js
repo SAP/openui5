@@ -175,8 +175,8 @@ sap.ui.define([
 				drop: function(oEvent) {
 					// console.log("Event drop fired for UploadCollection with parameters: ", oEvent.getParameters());
 				},
-				fileDeleted: function(oEvent) {
-					// console.log("Event fileDeleted fired for UploadCollection with parameters: ", oEvent.getParameters());
+				itemDelete: function(oEvent) {
+					// console.log("Event itemDelete fired for UploadCollection with parameters: ", oEvent.getParameters());
 				},
 				selectionChange: function(oEvent) {
 					// console.log("Event selectionChange fired for UploadCollection with parameters: ", oEvent.getParameters());

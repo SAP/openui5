@@ -13,33 +13,39 @@
         sap.ui.getCore().attachInit(function() {
             sap.ui.require([
                 "sap/ui/webc/main/Avatar",
-                "sap/ui/webc/main/AvatarGroup",
                 "sap/ui/webc/main/Button",
+                "sap/ui/webc/main/AvatarGroup",
                 "sap/ui/webc/main/Badge",
                 "sap/ui/webc/main/Icon",
+                "sap/ui/webc/main/Breadcrumbs",
+                "sap/ui/webc/main/BreadcrumbsItem",
                 "sap/ui/webc/main/BusyIndicator",
                 "sap/ui/webc/main/Calendar",
                 "sap/ui/webc/main/CalendarDate",
                 "sap/ui/webc/main/Card",
+                "sap/ui/webc/main/CardHeader",
                 "sap/ui/webc/main/Carousel",
                 "sap/ui/webc/main/CheckBox",
                 "sap/ui/webc/main/ColorPalette",
                 "sap/ui/webc/main/ColorPaletteItem",
                 "sap/ui/webc/main/ColorPicker",
                 "sap/ui/webc/main/ComboBox",
+                "sap/ui/webc/main/ComboBoxGroupItem",
                 "sap/ui/webc/main/ComboBoxItem",
                 "sap/ui/webc/main/DatePicker",
                 "sap/ui/webc/main/DateRangePicker",
                 "sap/ui/webc/main/DateTimePicker",
                 "sap/ui/webc/main/Dialog",
-                "sap/ui/webc/main/DurationPicker",
                 "sap/ui/webc/main/FileUploader",
                 "sap/ui/webc/main/Input",
+                "sap/ui/webc/main/SuggestionGroupItem",
                 "sap/ui/webc/main/SuggestionItem",
                 "sap/ui/webc/main/Label",
                 "sap/ui/webc/main/Link",
                 "sap/ui/webc/main/List",
                 "sap/ui/webc/main/CustomListItem",
+                "sap/ui/webc/main/GroupHeaderListItem",
+                "sap/ui/webc/main/StandardListItem",
                 "sap/ui/webc/main/MessageStrip",
                 "sap/ui/webc/main/MultiComboBox",
                 "sap/ui/webc/main/MultiComboBoxItem",
@@ -53,6 +59,7 @@
                 "sap/ui/webc/main/RatingIndicator",
                 "sap/ui/webc/main/ResponsivePopover",
                 "sap/ui/webc/main/SegmentedButton",
+                "sap/ui/webc/main/SegmentedButtonItem",
                 "sap/ui/webc/main/Select",
                 "sap/ui/webc/main/Option",
                 "sap/ui/webc/main/Slider",
@@ -60,8 +67,10 @@
                 "sap/ui/webc/main/Switch",
                 "sap/ui/webc/main/TabContainer",
                 "sap/ui/webc/main/Tab",
+                "sap/ui/webc/main/TabSeparator",
                 "sap/ui/webc/main/Table",
                 "sap/ui/webc/main/TableColumn",
+                "sap/ui/webc/main/TableGroupRow",
                 "sap/ui/webc/main/TableRow",
                 "sap/ui/webc/main/TableCell",
                 "sap/ui/webc/main/TextArea",
@@ -71,11 +80,18 @@
                 "sap/ui/webc/main/Tree",
                 "sap/ui/webc/main/TreeItem"
             ], function(
-                Avatar, AvatarGroup, Button, Badge, Icon, BusyIndicator, Calendar, CalendarDate, Card, Carousel, CheckBox, ColorPalette, ColorPaletteItem, ColorPicker, ComboBox, ComboBoxItem, DatePicker, DateRangePicker, DateTimePicker, Dialog, DurationPicker, FileUploader, Input, SuggestionItem, Label, Link, List, CustomListItem, MessageStrip, MultiComboBox, MultiComboBoxItem, MultiInput, Token, Panel, Popover, ProgressIndicator, RadioButton, RangeSlider, RatingIndicator, ResponsivePopover, SegmentedButton, Select, Option, Slider, StepInput, Switch, TabContainer, Tab, Table, TableColumn, TableRow, TableCell, TextArea, TimePicker, Title, Toast, Tree, TreeItem
+                Avatar, Button, AvatarGroup, Badge, Icon, Breadcrumbs, BreadcrumbsItem, BusyIndicator, Calendar, CalendarDate, Card, CardHeader, Carousel, CheckBox, ColorPalette, ColorPaletteItem, ColorPicker, ComboBox, ComboBoxGroupItem, ComboBoxItem, DatePicker, DateRangePicker, DateTimePicker, Dialog, FileUploader, Input, SuggestionGroupItem, SuggestionItem, Label, Link, List, CustomListItem, GroupHeaderListItem, StandardListItem, MessageStrip, MultiComboBox, MultiComboBoxItem, MultiInput, Token, Panel, Popover, ProgressIndicator, RadioButton, RangeSlider, RatingIndicator, ResponsivePopover, SegmentedButton, SegmentedButtonItem, Select, Option, Slider, StepInput, Switch, TabContainer, Tab, TabSeparator, Table, TableColumn, TableGroupRow, TableRow, TableCell, TextArea, TimePicker, Title, Toast, Tree, TreeItem
             ) {
 
                 var oAvatar = new Avatar({
-                    icon: "employee"
+                    icon: "employee",
+                    content: new Button({
+                        icon: "employee",
+                        text: "Some text...",
+                        click: function(oEvent) {
+                            console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                        }
+                    })
                 });
                 oAvatar.placeAt("testAvatar");
 
@@ -105,13 +121,34 @@
                 var oAvatarGroup = new AvatarGroup({
                     items: [
                         new Avatar({
-                            icon: "employee"
+                            icon: "employee",
+                            content: new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            })
                         }),
                         new Avatar({
-                            icon: "employee"
+                            icon: "employee",
+                            content: new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            })
                         }),
                         new Avatar({
-                            icon: "employee"
+                            icon: "employee",
+                            content: new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            })
                         })
                     ],
                     overflowButton: new Button({
@@ -141,6 +178,25 @@
                     })
                 });
                 oBadge.placeAt("testBadge");
+
+
+                var oBreadcrumbs = new Breadcrumbs({
+                    items: [
+                        new BreadcrumbsItem({
+                            text: "Some text..."
+                        }),
+                        new BreadcrumbsItem({
+                            text: "Some text..."
+                        }),
+                        new BreadcrumbsItem({
+                            text: "Some text..."
+                        })
+                    ],
+                    itemClick: function(oEvent) {
+                        console.log("Event itemClick fired for Breadcrumbs with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oBreadcrumbs.placeAt("testBreadcrumbs");
 
 
                 var oBusyIndicator = new BusyIndicator({
@@ -202,6 +258,57 @@
 
 
                 var oCard = new Card({
+                    content: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    header: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ]
+                });
+                oCard.placeAt("testCard");
+
+
+                var oCardHeader = new CardHeader({
                     subtitleText: "Some text...",
                     titleText: "Some text...",
                     action: [
@@ -250,35 +357,22 @@
                             }
                         })
                     ],
-                    content: [
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        })
-                    ],
-                    headerClick: function(oEvent) {
-                        console.log("Event headerClick fired for Card with parameters: ", oEvent.getParameters());
+                    click: function(oEvent) {
+                        console.log("Event click fired for CardHeader with parameters: ", oEvent.getParameters());
                     }
                 });
-                oCard.placeAt("testCard");
+                oCardHeader.placeAt("testCardHeader");
 
+
+                var oCarousel0Button = new Button({
+                    text: "navigateTo",
+                    click: function(oEvent) {
+                        console.log("Calling navigateTo...");
+                        var result = oCarousel.navigateTo();
+                        console.log("... navigateTo returned: ", result);
+                    }
+                });
+                oCarousel0Button.placeAt("methodsCarousel");
 
                 var oCarousel = new Carousel({
                     content: [
@@ -304,9 +398,6 @@
                             }
                         })
                     ],
-                    loadMore: function(oEvent) {
-                        console.log("Event loadMore fired for Carousel with parameters: ", oEvent.getParameters());
-                    },
                     navigate: function(oEvent) {
                         console.log("Event navigate fired for Carousel with parameters: ", oEvent.getParameters());
                     }
@@ -325,7 +416,6 @@
 
 
                 var oColorPalette = new ColorPalette({
-                    value: "blue",
                     colors: [
                         new ColorPaletteItem({
                             value: "blue"
@@ -337,8 +427,8 @@
                             value: "blue"
                         })
                     ],
-                    change: function(oEvent) {
-                        console.log("Event change fired for ColorPalette with parameters: ", oEvent.getParameters());
+                    itemClick: function(oEvent) {
+                        console.log("Event itemClick fired for ColorPalette with parameters: ", oEvent.getParameters());
                     }
                 });
                 oColorPalette.placeAt("testColorPalette");
@@ -364,16 +454,14 @@
                         }
                     }),
                     items: [
-                        new ComboBoxItem({
-                            additionalText: "Some text...",
+                        new ComboBoxGroupItem({
                             text: "Some text..."
                         }),
                         new ComboBoxItem({
                             additionalText: "Some text...",
                             text: "Some text..."
                         }),
-                        new ComboBoxItem({
-                            additionalText: "Some text...",
+                        new ComboBoxGroupItem({
                             text: "Some text..."
                         })
                     ],
@@ -572,11 +660,11 @@
 
 
                 var oDateRangePicker7Button = new Button({
-                    text: "getFirstDateValue",
+                    text: "getEndDateValue",
                     click: function(oEvent) {
-                        console.log("Calling getFirstDateValue...");
-                        var result = oDateRangePicker.getFirstDateValue();
-                        console.log("... getFirstDateValue returned: ", result);
+                        console.log("Calling getEndDateValue...");
+                        var result = oDateRangePicker.getEndDateValue();
+                        console.log("... getEndDateValue returned: ", result);
                     }
                 });
                 oDateRangePicker7Button.placeAt("methodsDateRangePicker");
@@ -584,11 +672,11 @@
 
 
                 var oDateRangePicker8Button = new Button({
-                    text: "getLastDateValue",
+                    text: "getStartDateValue",
                     click: function(oEvent) {
-                        console.log("Calling getLastDateValue...");
-                        var result = oDateRangePicker.getLastDateValue();
-                        console.log("... getLastDateValue returned: ", result);
+                        console.log("Calling getStartDateValue...");
+                        var result = oDateRangePicker.getStartDateValue();
+                        console.log("... getStartDateValue returned: ", result);
                     }
                 });
                 oDateRangePicker8Button.placeAt("methodsDateRangePicker");
@@ -742,11 +830,11 @@
 
 
                 var oDialog3Button = new Button({
-                    text: "open",
+                    text: "show",
                     click: function(oEvent) {
-                        console.log("Calling open...");
-                        var result = oDialog.open();
-                        console.log("... open returned: ", result);
+                        console.log("Calling show...");
+                        var result = oDialog.show();
+                        console.log("... show returned: ", result);
                     }
                 });
                 oDialog3Button.placeAt("methodsDialog");
@@ -838,79 +926,6 @@
                 oDialog.placeAt("testDialog");
 
 
-                var oDurationPicker0Button = new Button({
-                    text: "closePicker",
-                    click: function(oEvent) {
-                        console.log("Calling closePicker...");
-                        var result = oDurationPicker.closePicker();
-                        console.log("... closePicker returned: ", result);
-                    }
-                });
-                oDurationPicker0Button.placeAt("methodsDurationPicker");
-
-
-
-                var oDurationPicker1Button = new Button({
-                    text: "formatValue",
-                    click: function(oEvent) {
-                        console.log("Calling formatValue...");
-                        var result = oDurationPicker.formatValue();
-                        console.log("... formatValue returned: ", result);
-                    }
-                });
-                oDurationPicker1Button.placeAt("methodsDurationPicker");
-
-
-
-                var oDurationPicker2Button = new Button({
-                    text: "isOpen",
-                    click: function(oEvent) {
-                        console.log("Calling isOpen...");
-                        var result = oDurationPicker.isOpen();
-                        console.log("... isOpen returned: ", result);
-                    }
-                });
-                oDurationPicker2Button.placeAt("methodsDurationPicker");
-
-
-
-                var oDurationPicker3Button = new Button({
-                    text: "isValid",
-                    click: function(oEvent) {
-                        console.log("Calling isValid...");
-                        var result = oDurationPicker.isValid();
-                        console.log("... isValid returned: ", result);
-                    }
-                });
-                oDurationPicker3Button.placeAt("methodsDurationPicker");
-
-
-
-                var oDurationPicker4Button = new Button({
-                    text: "openPicker",
-                    click: function(oEvent) {
-                        console.log("Calling openPicker...");
-                        var result = oDurationPicker.openPicker();
-                        console.log("... openPicker returned: ", result);
-                    }
-                });
-                oDurationPicker4Button.placeAt("methodsDurationPicker");
-
-                var oDurationPicker = new DurationPicker({
-                    placeholder: "This is my placeholder value",
-                    value: "Control value",
-                    valueState: "Warning",
-                    valueStateMessage: "Value State Message",
-                    change: function(oEvent) {
-                        console.log("Event change fired for DurationPicker with parameters: ", oEvent.getParameters());
-                    },
-                    input: function(oEvent) {
-                        console.log("Event input fired for DurationPicker with parameters: ", oEvent.getParameters());
-                    }
-                });
-                oDurationPicker.placeAt("testDurationPicker");
-
-
                 var oFileUploader0Button = new Button({
                     text: "getFiles",
                     click: function(oEvent) {
@@ -987,9 +1002,7 @@
                         }
                     }),
                     suggestionItems: [
-                        new SuggestionItem({
-                            additionalText: "Some text...",
-                            icon: "employee",
+                        new SuggestionGroupItem({
                             text: "Some text..."
                         }),
                         new SuggestionItem({
@@ -997,9 +1010,7 @@
                             icon: "employee",
                             text: "Some text..."
                         }),
-                        new SuggestionItem({
-                            additionalText: "Some text...",
-                            icon: "employee",
+                        new SuggestionGroupItem({
                             text: "Some text..."
                         })
                     ],
@@ -1093,60 +1104,15 @@
                                 console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
                             }
                         }),
-                        new CustomListItem({
-                            content: [
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
-                                }),
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
-                                }),
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
-                                })
-                            ],
-                            detailClick: function(oEvent) {
-                                console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
-                            }
+                        new GroupHeaderListItem({
+                            text: "Some text..."
                         }),
-                        new CustomListItem({
-                            content: [
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
-                                }),
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
-                                }),
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
-                                })
-                            ],
+                        new StandardListItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text...",
                             detailClick: function(oEvent) {
-                                console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
+                                console.log("Event detailClick fired for StandardListItem with parameters: ", oEvent.getParameters());
                             }
                         })
                     ],
@@ -1260,9 +1226,7 @@
                         }
                     }),
                     suggestionItems: [
-                        new SuggestionItem({
-                            additionalText: "Some text...",
-                            icon: "employee",
+                        new SuggestionGroupItem({
                             text: "Some text..."
                         }),
                         new SuggestionItem({
@@ -1270,9 +1234,7 @@
                             icon: "employee",
                             text: "Some text..."
                         }),
-                        new SuggestionItem({
-                            additionalText: "Some text...",
-                            icon: "employee",
+                        new SuggestionGroupItem({
                             text: "Some text..."
                         })
                     ],
@@ -1431,11 +1393,11 @@
 
 
                 var oPopover3Button = new Button({
-                    text: "openBy",
+                    text: "showAt",
                     click: function(oEvent) {
-                        console.log("Calling openBy...");
-                        var result = oPopover.openBy(oPopover3Button);
-                        console.log("... openBy returned: ", result);
+                        console.log("Calling showAt...");
+                        var result = oPopover.showAt();
+                        console.log("... showAt returned: ", result);
                     }
                 });
                 oPopover3Button.placeAt("methodsPopover");
@@ -1537,8 +1499,8 @@
                     text: "Some text...",
                     value: "Control value",
                     valueState: "Warning",
-                    select: function(oEvent) {
-                        console.log("Event select fired for RadioButton with parameters: ", oEvent.getParameters());
+                    change: function(oEvent) {
+                        console.log("Event change fired for RadioButton with parameters: ", oEvent.getParameters());
                     }
                 });
                 oRadioButton.placeAt("testRadioButton");
@@ -1600,26 +1562,14 @@
 
 
                 var oResponsivePopover3Button = new Button({
-                    text: "open",
+                    text: "showAt",
                     click: function(oEvent) {
-                        console.log("Calling open...");
-                        var result = oResponsivePopover.open();
-                        console.log("... open returned: ", result);
+                        console.log("Calling showAt...");
+                        var result = oResponsivePopover.showAt();
+                        console.log("... showAt returned: ", result);
                     }
                 });
                 oResponsivePopover3Button.placeAt("methodsResponsivePopover");
-
-
-
-                var oResponsivePopover4Button = new Button({
-                    text: "openBy",
-                    click: function(oEvent) {
-                        console.log("Calling openBy...");
-                        var result = oResponsivePopover.openBy(oResponsivePopover4Button);
-                        console.log("... openBy returned: ", result);
-                    }
-                });
-                oResponsivePopover4Button.placeAt("methodsResponsivePopover");
 
                 var oResponsivePopover = new ResponsivePopover({
                     headerText: "Some text...",
@@ -1709,36 +1659,36 @@
 
 
                 var oSegmentedButton0Button = new Button({
-                    text: "getSelectedButton",
+                    text: "getSelectedItem",
                     click: function(oEvent) {
-                        console.log("Calling getSelectedButton...");
-                        var result = oSegmentedButton.getSelectedButton();
-                        console.log("... getSelectedButton returned: ", result);
+                        console.log("Calling getSelectedItem...");
+                        var result = oSegmentedButton.getSelectedItem();
+                        console.log("... getSelectedItem returned: ", result);
                     }
                 });
                 oSegmentedButton0Button.placeAt("methodsSegmentedButton");
 
                 var oSegmentedButton = new SegmentedButton({
-                    buttons: [
-                        new Button({
+                    items: [
+                        new SegmentedButtonItem({
                             icon: "employee",
                             text: "Some text...",
                             click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                console.log("Event click fired for SegmentedButtonItem with parameters: ", oEvent.getParameters());
                             }
                         }),
-                        new Button({
+                        new SegmentedButtonItem({
                             icon: "employee",
                             text: "Some text...",
                             click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                console.log("Event click fired for SegmentedButtonItem with parameters: ", oEvent.getParameters());
                             }
                         }),
-                        new Button({
+                        new SegmentedButtonItem({
                             icon: "employee",
                             text: "Some text...",
                             click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                console.log("Event click fired for SegmentedButtonItem with parameters: ", oEvent.getParameters());
                             }
                         })
                     ],
@@ -1848,33 +1798,8 @@
                                 })
                             ]
                         }),
-                        new Tab({
-                            additionalText: "Some text...",
-                            icon: "employee",
-                            text: "Some text...",
-                            content: [
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
-                                }),
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
-                                }),
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
-                                })
-                            ]
+                        new TabSeparator({
+
                         }),
                         new Tab({
                             additionalText: "Some text...",
@@ -2004,84 +1929,8 @@
                         })
                     ],
                     rows: [
-                        new TableRow({
-                            cells: [
-                                new TableCell({
-                                    content: [
-                                        new Button({
-                                            icon: "employee",
-                                            text: "Some text...",
-                                            click: function(oEvent) {
-                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                            }
-                                        }),
-                                        new Button({
-                                            icon: "employee",
-                                            text: "Some text...",
-                                            click: function(oEvent) {
-                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                            }
-                                        }),
-                                        new Button({
-                                            icon: "employee",
-                                            text: "Some text...",
-                                            click: function(oEvent) {
-                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                            }
-                                        })
-                                    ]
-                                }),
-                                new TableCell({
-                                    content: [
-                                        new Button({
-                                            icon: "employee",
-                                            text: "Some text...",
-                                            click: function(oEvent) {
-                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                            }
-                                        }),
-                                        new Button({
-                                            icon: "employee",
-                                            text: "Some text...",
-                                            click: function(oEvent) {
-                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                            }
-                                        }),
-                                        new Button({
-                                            icon: "employee",
-                                            text: "Some text...",
-                                            click: function(oEvent) {
-                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                            }
-                                        })
-                                    ]
-                                }),
-                                new TableCell({
-                                    content: [
-                                        new Button({
-                                            icon: "employee",
-                                            text: "Some text...",
-                                            click: function(oEvent) {
-                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                            }
-                                        }),
-                                        new Button({
-                                            icon: "employee",
-                                            text: "Some text...",
-                                            click: function(oEvent) {
-                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                            }
-                                        }),
-                                        new Button({
-                                            icon: "employee",
-                                            text: "Some text...",
-                                            click: function(oEvent) {
-                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                            }
-                                        })
-                                    ]
-                                })
-                            ]
+                        new TableGroupRow({
+                            text: "Some text..."
                         }),
                         new TableRow({
                             cells: [
@@ -2162,84 +2011,8 @@
                                 })
                             ]
                         }),
-                        new TableRow({
-                            cells: [
-                                new TableCell({
-                                    content: [
-                                        new Button({
-                                            icon: "employee",
-                                            text: "Some text...",
-                                            click: function(oEvent) {
-                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                            }
-                                        }),
-                                        new Button({
-                                            icon: "employee",
-                                            text: "Some text...",
-                                            click: function(oEvent) {
-                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                            }
-                                        }),
-                                        new Button({
-                                            icon: "employee",
-                                            text: "Some text...",
-                                            click: function(oEvent) {
-                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                            }
-                                        })
-                                    ]
-                                }),
-                                new TableCell({
-                                    content: [
-                                        new Button({
-                                            icon: "employee",
-                                            text: "Some text...",
-                                            click: function(oEvent) {
-                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                            }
-                                        }),
-                                        new Button({
-                                            icon: "employee",
-                                            text: "Some text...",
-                                            click: function(oEvent) {
-                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                            }
-                                        }),
-                                        new Button({
-                                            icon: "employee",
-                                            text: "Some text...",
-                                            click: function(oEvent) {
-                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                            }
-                                        })
-                                    ]
-                                }),
-                                new TableCell({
-                                    content: [
-                                        new Button({
-                                            icon: "employee",
-                                            text: "Some text...",
-                                            click: function(oEvent) {
-                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                            }
-                                        }),
-                                        new Button({
-                                            icon: "employee",
-                                            text: "Some text...",
-                                            click: function(oEvent) {
-                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                            }
-                                        }),
-                                        new Button({
-                                            icon: "employee",
-                                            text: "Some text...",
-                                            click: function(oEvent) {
-                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                            }
-                                        })
-                                    ]
-                                })
-                            ]
+                        new TableGroupRow({
+                            text: "Some text..."
                         })
                     ],
                     loadMore: function(oEvent) {
@@ -2758,253 +2531,259 @@
     <br><br>
 
 
-    <h1>3. BusyIndicator</h1>
+    <h1>3. Breadcrumbs</h1>
+    <div id="methodsBreadcrumbs"></div>
+    <div id="testBreadcrumbs"></div>
+    <br><br>
+
+
+    <h1>4. BusyIndicator</h1>
     <div id="methodsBusyIndicator"></div>
     <div id="testBusyIndicator"></div>
     <br><br>
 
 
-    <h1>4. Button</h1>
+    <h1>5. Button</h1>
     <div id="methodsButton"></div>
     <div id="testButton"></div>
     <br><br>
 
 
-    <h1>5. Calendar</h1>
+    <h1>6. Calendar</h1>
     <div id="methodsCalendar"></div>
     <div id="testCalendar"></div>
     <br><br>
 
 
-    <h1>6. Card</h1>
+    <h1>7. Card</h1>
     <div id="methodsCard"></div>
     <div id="testCard"></div>
     <br><br>
 
 
-    <h1>7. Carousel</h1>
+    <h1>8. CardHeader</h1>
+    <div id="methodsCardHeader"></div>
+    <div id="testCardHeader"></div>
+    <br><br>
+
+
+    <h1>9. Carousel</h1>
     <div id="methodsCarousel"></div>
     <div id="testCarousel"></div>
     <br><br>
 
 
-    <h1>8. CheckBox</h1>
+    <h1>10. CheckBox</h1>
     <div id="methodsCheckBox"></div>
     <div id="testCheckBox"></div>
     <br><br>
 
 
-    <h1>9. ColorPalette</h1>
+    <h1>11. ColorPalette</h1>
     <div id="methodsColorPalette"></div>
     <div id="testColorPalette"></div>
     <br><br>
 
 
-    <h1>10. ColorPicker</h1>
+    <h1>12. ColorPicker</h1>
     <div id="methodsColorPicker"></div>
     <div id="testColorPicker"></div>
     <br><br>
 
 
-    <h1>11. ComboBox</h1>
+    <h1>13. ComboBox</h1>
     <div id="methodsComboBox"></div>
     <div id="testComboBox"></div>
     <br><br>
 
 
-    <h1>12. DatePicker</h1>
+    <h1>14. DatePicker</h1>
     <div id="methodsDatePicker"></div>
     <div id="testDatePicker"></div>
     <br><br>
 
 
-    <h1>13. DateRangePicker</h1>
+    <h1>15. DateRangePicker</h1>
     <div id="methodsDateRangePicker"></div>
     <div id="testDateRangePicker"></div>
     <br><br>
 
 
-    <h1>14. DateTimePicker</h1>
+    <h1>16. DateTimePicker</h1>
     <div id="methodsDateTimePicker"></div>
     <div id="testDateTimePicker"></div>
     <br><br>
 
 
-    <h1>15. Dialog</h1>
+    <h1>17. Dialog</h1>
     <div id="methodsDialog"></div>
     <div id="testDialog"></div>
     <br><br>
 
 
-    <h1>16. DurationPicker</h1>
-    <div id="methodsDurationPicker"></div>
-    <div id="testDurationPicker"></div>
-    <br><br>
-
-
-    <h1>17. FileUploader</h1>
+    <h1>18. FileUploader</h1>
     <div id="methodsFileUploader"></div>
     <div id="testFileUploader"></div>
     <br><br>
 
 
-    <h1>18. Icon</h1>
+    <h1>19. Icon</h1>
     <div id="methodsIcon"></div>
     <div id="testIcon"></div>
     <br><br>
 
 
-    <h1>19. Input</h1>
+    <h1>20. Input</h1>
     <div id="methodsInput"></div>
     <div id="testInput"></div>
     <br><br>
 
 
-    <h1>20. Label</h1>
+    <h1>21. Label</h1>
     <div id="methodsLabel"></div>
     <div id="testLabel"></div>
     <br><br>
 
 
-    <h1>21. Link</h1>
+    <h1>22. Link</h1>
     <div id="methodsLink"></div>
     <div id="testLink"></div>
     <br><br>
 
 
-    <h1>22. List</h1>
+    <h1>23. List</h1>
     <div id="methodsList"></div>
     <div id="testList"></div>
     <br><br>
 
 
-    <h1>23. MessageStrip</h1>
+    <h1>24. MessageStrip</h1>
     <div id="methodsMessageStrip"></div>
     <div id="testMessageStrip"></div>
     <br><br>
 
 
-    <h1>24. MultiComboBox</h1>
+    <h1>25. MultiComboBox</h1>
     <div id="methodsMultiComboBox"></div>
     <div id="testMultiComboBox"></div>
     <br><br>
 
 
-    <h1>25. MultiInput</h1>
+    <h1>26. MultiInput</h1>
     <div id="methodsMultiInput"></div>
     <div id="testMultiInput"></div>
     <br><br>
 
 
-    <h1>26. Panel</h1>
+    <h1>27. Panel</h1>
     <div id="methodsPanel"></div>
     <div id="testPanel"></div>
     <br><br>
 
 
-    <h1>27. Popover</h1>
+    <h1>28. Popover</h1>
     <div id="methodsPopover"></div>
     <div id="testPopover"></div>
     <br><br>
 
 
-    <h1>28. ProgressIndicator</h1>
+    <h1>29. ProgressIndicator</h1>
     <div id="methodsProgressIndicator"></div>
     <div id="testProgressIndicator"></div>
     <br><br>
 
 
-    <h1>29. RadioButton</h1>
+    <h1>30. RadioButton</h1>
     <div id="methodsRadioButton"></div>
     <div id="testRadioButton"></div>
     <br><br>
 
 
-    <h1>30. RangeSlider</h1>
+    <h1>31. RangeSlider</h1>
     <div id="methodsRangeSlider"></div>
     <div id="testRangeSlider"></div>
     <br><br>
 
 
-    <h1>31. RatingIndicator</h1>
+    <h1>32. RatingIndicator</h1>
     <div id="methodsRatingIndicator"></div>
     <div id="testRatingIndicator"></div>
     <br><br>
 
 
-    <h1>32. ResponsivePopover</h1>
+    <h1>33. ResponsivePopover</h1>
     <div id="methodsResponsivePopover"></div>
     <div id="testResponsivePopover"></div>
     <br><br>
 
 
-    <h1>33. SegmentedButton</h1>
+    <h1>34. SegmentedButton</h1>
     <div id="methodsSegmentedButton"></div>
     <div id="testSegmentedButton"></div>
     <br><br>
 
 
-    <h1>34. Select</h1>
+    <h1>35. Select</h1>
     <div id="methodsSelect"></div>
     <div id="testSelect"></div>
     <br><br>
 
 
-    <h1>35. Slider</h1>
+    <h1>36. Slider</h1>
     <div id="methodsSlider"></div>
     <div id="testSlider"></div>
     <br><br>
 
 
-    <h1>36. StepInput</h1>
+    <h1>37. StepInput</h1>
     <div id="methodsStepInput"></div>
     <div id="testStepInput"></div>
     <br><br>
 
 
-    <h1>37. Switch</h1>
+    <h1>38. Switch</h1>
     <div id="methodsSwitch"></div>
     <div id="testSwitch"></div>
     <br><br>
 
 
-    <h1>38. TabContainer</h1>
+    <h1>39. TabContainer</h1>
     <div id="methodsTabContainer"></div>
     <div id="testTabContainer"></div>
     <br><br>
 
 
-    <h1>39. Table</h1>
+    <h1>40. Table</h1>
     <div id="methodsTable"></div>
     <div id="testTable"></div>
     <br><br>
 
 
-    <h1>40. TextArea</h1>
+    <h1>41. TextArea</h1>
     <div id="methodsTextArea"></div>
     <div id="testTextArea"></div>
     <br><br>
 
 
-    <h1>41. TimePicker</h1>
+    <h1>42. TimePicker</h1>
     <div id="methodsTimePicker"></div>
     <div id="testTimePicker"></div>
     <br><br>
 
 
-    <h1>42. Title</h1>
+    <h1>43. Title</h1>
     <div id="methodsTitle"></div>
     <div id="testTitle"></div>
     <br><br>
 
 
-    <h1>43. Toast</h1>
+    <h1>44. Toast</h1>
     <div id="methodsToast"></div>
     <div id="testToast"></div>
     <br><br>
 
 
-    <h1>44. Tree</h1>
+    <h1>45. Tree</h1>
     <div id="methodsTree"></div>
     <div id="testTree"></div>
     <br><br>

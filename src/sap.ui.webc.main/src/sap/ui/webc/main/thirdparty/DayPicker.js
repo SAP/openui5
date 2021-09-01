@@ -69,6 +69,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/we
 			this._weeks = [];
 			const firstDayOfWeek = this._getFirstDayOfWeek();
 			const monthsNames = localeData.getMonths("wide", this._primaryCalendarType);
+			const secondaryMonthsNames = this.hasSecondaryCalendarType && localeData.getMonths("wide", this.secondaryCalendarType);
 			const nonWorkingDayLabel = this.i18nBundle.getText(i18nDefaults.DAY_PICKER_NON_WORKING_DAY);
 			const todayLabel = this.i18nBundle.getText(i18nDefaults.DAY_PICKER_TODAY);
 			const tempDate = this._getFirstDay();
@@ -76,6 +77,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/we
 			const calendarDate = this._calendarDate;
 			const minDate = this._minDate;
 			const maxDate = this._maxDate;
+			const tempSecondDate = this.hasSecondaryCalendarType && this._getSecondaryDay(tempDate);
 			let week = [];
 			for (let i = 0; i < DAYS_IN_WEEK * 6; i++) {
 				const timestamp = tempDate.valueOf() / 1000;
@@ -93,14 +95,19 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/we
 				const isFirstDayOfWeek = tempDate.getDay() === firstDayOfWeek;
 				const nonWorkingAriaLabel = isWeekend ? `${nonWorkingDayLabel} ` : "";
 				const todayAriaLabel = isToday ? `${todayLabel} ` : "";
+				const ariaLabel = this.hasSecondaryCalendarType
+					? `${todayAriaLabel}${nonWorkingAriaLabel}${monthsNames[tempDate.getMonth()]} ${tempDate.getDate()}, ${tempDate.getYear()} ${secondaryMonthsNames[tempSecondDate.getMonth()]} ${tempSecondDate.getDate()}, ${tempSecondDate.getYear()}`
+					: `${todayAriaLabel}${nonWorkingAriaLabel}${monthsNames[tempDate.getMonth()]} ${tempDate.getDate()}, ${tempDate.getYear()}`;
 				const day = {
 					timestamp: timestamp.toString(),
 					focusRef: isFocused,
 					_tabIndex: isFocused ? "0" : "-1",
 					selected: isSelected,
-					iDay: tempDate.getDate(),
+					day: tempDate.getDate(),
+					secondDay: this.hasSecondaryCalendarType && tempSecondDate.getDate(),
+					_isSecondaryCalendarType: this.hasSecondaryCalendarType,
 					classes: `ui5-dp-item ui5-dp-wday${dayOfTheWeek}`,
-					ariaLabel: `${todayAriaLabel}${nonWorkingAriaLabel}${monthsNames[tempDate.getMonth()]} ${tempDate.getDate()}, ${tempDate.getYear()}`,
+					ariaLabel,
 					ariaSelected: isSelected ? "true" : "false",
 					ariaDisabled: isOtherMonth ? "true" : undefined,
 					disabled: isDisabled,
@@ -138,6 +145,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/we
 					week = [];
 				}
 				tempDate.setDate(tempDate.getDate() + 1);
+				if (this.hasSecondaryCalendarType) {
+					tempSecondDate.setDate(tempSecondDate.getDate() + 1);
+				}
 			}
 		}
 		_buildDayNames(localeData) {
@@ -177,6 +187,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/we
 		}
 		_onfocusin() {
 			this._autoFocus = true;
+		}
+		_onfocusout() {
+			this._autoFocus = false;
 		}
 		_isDaySelected(timestamp) {
 			if (this.selectionMode === CalendarSelectionMode.Single) {
@@ -311,9 +324,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/we
 				this._modifyTimestampBy(-1, "month");
 			} else if (Keys.isPageDown(event)) {
 				this._modifyTimestampBy(1, "month");
-			} else if (Keys.isPageUpShift(event)) {
+			} else if (Keys.isPageUpShift(event) || Keys.isPageUpAlt(event)) {
 				this._modifyTimestampBy(-1, "year");
-			} else if (Keys.isPageDownShift(event)) {
+			} else if (Keys.isPageDownShift(event) || Keys.isPageDownAlt(event)) {
 				this._modifyTimestampBy(1, "year");
 			} else if (Keys.isPageUpShiftCtrl(event)) {
 				this._modifyTimestampBy(-10, "year");
@@ -392,6 +405,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/we
 			}
 			return this.hideWeekNumbers;
 		}
+		get hasSecondaryCalendarType() {
+			return !!this.secondaryCalendarType;
+		}
 		_isWeekend(oDate) {
 			const localeData = getCachedLocaleDataInstance__default(getLocale__default());
 			const iWeekDay = oDate.getDay(),
@@ -403,6 +419,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/we
 		_isDayPressed(target) {
 			const targetParent = target.parentNode;
 			return (target.className.indexOf("ui5-dp-item") > -1) || (targetParent && targetParent.classList && targetParent.classList.contains("ui5-dp-item"));
+		}
+		_getSecondaryDay(tempDate) {
+			return new CalendarDate__default(tempDate, this.secondaryCalendarType);
 		}
 		_getFirstDay() {
 			let daysFromPreviousMonth;

@@ -74,11 +74,45 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Sets the accessible aria name of the component.
+				 */
+				accessibleName: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
+				 * Receives id(or many ids) of the elements that label the input
+				 */
+				accessibleNameRef: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
+				 * Defines the accessible role of the component. <br>
+				 * <br>
+				 * <b>Note:</b> If you use notification list items, it's recommended to set <code>accessible-role="list"</code> for better accessibility.
+				 */
+				accessibleRole: {
+					type: "string",
+					defaultValue: "listbox"
+				},
+
+				/**
 				 * Defines if the component would display a loading indicator over the list.
 				 */
 				busy: {
 					type: "boolean",
 					defaultValue: false
+				},
+
+				/**
+				 * Defines the delay in milliseconds, after which the busy indicator will show up for this component.
+				 */
+				busyDelay: {
+					type: "int",
+					defaultValue: 1000
 				},
 
 				/**
@@ -271,7 +305,9 @@ sap.ui.define([
 				 * <br>
 				 * <b>Note:</b> The event is fired when the <code>growing='Scroll'</code> property is enabled.
 				 */
-				loadMore: {},
+				loadMore: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired when selection is changed by user interaction in <code>SingleSelect</code>, <code>SingleSelectBegin</code>, <code>SingleSelectEnd</code> and <code>MultiSelect</code> modes.

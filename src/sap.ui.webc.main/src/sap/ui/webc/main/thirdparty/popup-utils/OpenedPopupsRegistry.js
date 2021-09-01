@@ -28,7 +28,7 @@ sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/Keys'], function (
 			return;
 		}
 		if (Keys.isEscape(event)) {
-			openedRegistry.pop().instance.close(true);
+			openedRegistry[openedRegistry.length - 1].instance.close(true);
 		}
 	};
 	const attachGlobalListener = () => {

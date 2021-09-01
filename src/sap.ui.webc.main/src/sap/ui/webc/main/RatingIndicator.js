@@ -43,6 +43,13 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Sets the accessible aria name of the component.
+				 */
+				accessibleName: {
+					type: "string"
+				},
+
+				/**
 				 * Defines whether the component is disabled.
 				 *
 				 * <br>
@@ -57,7 +64,7 @@ sap.ui.define([
 				/**
 				 * The number of displayed rating symbols
 				 */
-				maxValue: {
+				max: {
 					type: "int",
 					defaultValue: 5
 				},
@@ -92,7 +99,9 @@ sap.ui.define([
 				/**
 				 * The event is fired when the value changes.
 				 */
-				change: {}
+				change: {
+					parameters: {}
+				}
 			}
 		}
 	});

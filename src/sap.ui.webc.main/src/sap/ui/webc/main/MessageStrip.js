@@ -120,7 +120,9 @@ sap.ui.define([
 				/**
 				 * Fired when the close button is pressed either with a click/tap or by using the Enter or Space key.
 				 */
-				close: {}
+				close: {
+					parameters: {}
+				}
 			}
 		}
 	});

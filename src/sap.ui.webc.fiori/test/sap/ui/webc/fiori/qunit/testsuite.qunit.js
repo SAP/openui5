@@ -36,9 +36,21 @@ sap.ui.define(function() {
 				}
 			},
 
+			"BarcodeScannerDialog": {
+				coverage: {
+					only: ["sap/ui/webc/fiori/BarcodeScannerDialog"]
+				}
+			},
+
 			"FlexibleColumnLayout": {
 				coverage: {
 					only: ["sap/ui/webc/fiori/FlexibleColumnLayout"]
+				}
+			},
+
+			"IllustratedMessage": {
+				coverage: {
+					only: ["sap/ui/webc/fiori/IllustratedMessage"]
 				}
 			},
 
@@ -81,6 +93,12 @@ sap.ui.define(function() {
 			"UploadCollection": {
 				coverage: {
 					only: ["sap/ui/webc/fiori/UploadCollection"]
+				}
+			},
+
+			"ViewSettingsDialog": {
+				coverage: {
+					only: ["sap/ui/webc/fiori/ViewSettingsDialog"]
 				}
 			},
 

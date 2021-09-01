@@ -25,10 +25,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element'], function (UI5El
 			branching: {
 				type: Boolean,
 			},
-			ariaLabel: {
+			accessibleName: {
 				type: String,
 			},
-			ariaLabelledby: {
+			accessibleNameRef: {
 				type: String,
 			},
 		},

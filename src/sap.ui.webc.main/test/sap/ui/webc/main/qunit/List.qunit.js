@@ -5,8 +5,10 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/webc/main/List",
 	"sap/ui/webc/main/Button",
-	"sap/ui/webc/main/CustomListItem"
-], function(createAndAppendDiv, Core, List, Button, CustomListItem) {
+	"sap/ui/webc/main/CustomListItem",
+	"sap/ui/webc/main/GroupHeaderListItem",
+	"sap/ui/webc/main/StandardListItem"
+], function(createAndAppendDiv, Core, List, Button, CustomListItem, GroupHeaderListItem, StandardListItem) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
@@ -69,60 +71,15 @@ sap.ui.define([
 							// console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
 						}
 					}),
-					new CustomListItem({
-						content: [
-							new Button({
-								icon: "employee",
-								text: "Some text...",
-								click: function(oEvent) {
-									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-								}
-							}),
-							new Button({
-								icon: "employee",
-								text: "Some text...",
-								click: function(oEvent) {
-									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-								}
-							}),
-							new Button({
-								icon: "employee",
-								text: "Some text...",
-								click: function(oEvent) {
-									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-								}
-							})
-						],
-						detailClick: function(oEvent) {
-							// console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
-						}
+					new GroupHeaderListItem({
+						text: "Some text..."
 					}),
-					new CustomListItem({
-						content: [
-							new Button({
-								icon: "employee",
-								text: "Some text...",
-								click: function(oEvent) {
-									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-								}
-							}),
-							new Button({
-								icon: "employee",
-								text: "Some text...",
-								click: function(oEvent) {
-									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-								}
-							}),
-							new Button({
-								icon: "employee",
-								text: "Some text...",
-								click: function(oEvent) {
-									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-								}
-							})
-						],
+					new StandardListItem({
+						additionalText: "Some text...",
+						icon: "employee",
+						text: "Some text...",
 						detailClick: function(oEvent) {
-							// console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
+							// console.log("Event detailClick fired for StandardListItem with parameters: ", oEvent.getParameters());
 						}
 					})
 				],

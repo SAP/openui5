@@ -26,13 +26,16 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/mai
 			fileNameClickable: {
 				type: Boolean,
 			},
-			noDelete: {
+			disableDeleteButton: {
 				type: Boolean,
 			},
-			noRetry: {
+			hideDeleteButton: {
 				type: Boolean,
 			},
-			noTerminate: {
+			hideRetryButton: {
+				type: Boolean,
+			},
+			hideTerminateButton: {
 				type: Boolean,
 			},
 			progress: {
@@ -89,88 +92,65 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/mai
 		constructor() {
 			super();
 			this.i18nFioriBundle = i18nBundle.getI18nBundle("@ui5/webcomponents-fiori");
-			this._editPressed = false;
-			this.doNotCloseInput = false;
-			this.isEnter = false;
 		}
-		onAfterRendering() {
-			if (this._editPressed) {
-				this._editing = true;
-				this._editPressed = false;
-				this.focusAndSelectText();
-			}
-		}
-		async focusAndSelectText() {
-			await this.focus();
-			const inp = this.shadowRoot.getElementById("ui5-uci-edit-input");
+		async _initInputField() {
 			await Render.renderFinished();
-			if (inp.getFocusDomRef()) {
-				inp.getFocusDomRef().setSelectionRange(0, this._fileNameWithoutExtension.length);
+			const inp = this.shadowRoot.getElementById("ui5-uci-edit-input");
+			inp.value = this._fileNameWithoutExtension;
+			await Render.renderFinished();
+			const inpFocusDomRef = inp.getFocusDomRef();
+			if (inpFocusDomRef) {
+				inpFocusDomRef.focus();
+				inpFocusDomRef.setSelectionRange(0, this._fileNameWithoutExtension.length);
 			}
 		}
-		onDetailClick(event) {
+		async onDetailClick(event) {
 			super.onDetailClick(event);
 			this._editing = true;
+			await this._initInputField();
 		}
 		_onDetailKeyup(event) {
 			if (Keys.isSpace(event)) {
 				this.onDetailClick(event);
 			}
 		}
-		_onfocusout(event) {
-			super._onfocusout(event);
-			const path = event.path || (event.composedPath && event.composedPath());
-			this._editPressed = this.isDetailPressed(event);
-			if (!this._editPressed && path.indexOf(this) > -1) {
-				this._editing = false;
-			}
+		_onInputFocusin(event) {
+			event.stopPropagation();
 		}
-		_onInputKeydown(event) {
-			this.isEnter = Keys.isEnter(event);
-			this.isEscape = Keys.isEscape(event);
-		}
-		_onInputKeyUp(event) {
-			this.doNotCloseInput = true;
-			this.tempValue = event.target.value + this._fileExtension;
-			if (this.isEscape) {
-				[this.fileName, this.tempValue] = [this.tempValue, this.fileName];
-				return this._onRenameCancel();
-			}
-		}
-		isDetailPressed(event) {
-			const path = event.path || (event.composedPath && event.composedPath());
-			return path.some(e => {
-				return e.classList && e.classList.contains("ui5-uci-edit");
-			});
-		}
-		_onInputChange(event) {
-			if (this.shadowRoot.getElementById("ui5-uci-edit-cancel").active) {
-				return;
-			}
-			if ((!this.isEnter && this.doNotCloseInput) || this.isEscape) {
-				[this.fileName, this.tempValue] = [this.tempValue, this.fileName];
-				this.isEscape = false;
-				return;
-			}
-			this._editing = false;
-			this.fileName = event.target.value + this._fileExtension;
-			this.fireEvent("rename");
-			if (this.isEnter) {
-				this._focus();
+		_onInputKeyDown(event) {
+			if (Keys.isEscape(event)) {
+				this._onRenameCancel(event);
+			} else if (Keys.isEnter(event)) {
+				this._onRename();
+			} else if (Keys.isSpace(event)) {
+				event.stopImmediatePropagation();
 			}
 		}
 		_onRename(event) {
-			this.doNotCloseInput = false;
+			const inp = this.shadowRoot.getElementById("ui5-uci-edit-input");
+			this.fileName = inp.value + this._fileExtension;
+			this.fireEvent("rename");
 			this._editing = false;
 			this._focus();
 		}
-		_onRenameCancel(event) {
-			if (!this.isEscape) {
-				[this.fileName, this.tempValue] = [this.tempValue, this.fileName];
+		_onRenameKeyup(event) {
+			if (Keys.isSpace(event)) {
+				this._onRename(event);
 			}
+		}
+		async _onRenameCancel(event) {
 			this._editing = false;
-			this.doNotCloseInput = false;
-			this._focus();
+			if (Keys.isEscape(event)) {
+				await Render.renderFinished();
+				this.shadowRoot.getElementById(`${this._id}-editing-button`).focus();
+			} else {
+				this._focus();
+			}
+		}
+		_onRenameCancelKeyup(event) {
+			if (Keys.isSpace(event)) {
+				this._onRenameCancel(event);
+			}
 		}
 		_focus() {
 			this.fireEvent("_focus-requested");
@@ -181,8 +161,21 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/mai
 		_onRetry(event) {
 			this.fireEvent("retry");
 		}
+		_onRetryKeyup(event) {
+			if (Keys.isSpace(event)) {
+				this._onRetry(event);
+			}
+		}
 		_onTerminate(event) {
 			this.fireEvent("terminate");
+		}
+		_onTerminateKeyup(event) {
+			if (Keys.isSpace(event)) {
+				this._onTerminate(event);
+			}
+		}
+		getFocusDomRef() {
+			return this.getDomRef();
 		}
 		get list() {
 			return this.assignedSlot.parentElement;
@@ -198,8 +191,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/mai
 				},
 			};
 		}
-		get disableDeleteButton() {
-			return this.noDelete;
+		get renderDeleteButton() {
+			return !this.hideDeleteButton;
+		}
+		get placeSelectionElementAfter() {
+			return true;
+		}
+		get placeSelectionElementBefore() {
+			return false;
 		}
 		get _fileNameWithoutExtension() {
 			return this.fileName.substring(0, this.fileName.length - this._fileExtension.length);
@@ -226,10 +225,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/mai
 			return this.i18nFioriBundle.getText(i18nDefaults.UPLOADCOLLECTIONITEM_READY_STATE);
 		}
 		get _showRetry() {
-			return !this.noRetry && this.uploadState === UploadState.Error;
+			return !this.hideRetryButton && this.uploadState === UploadState.Error;
 		}
 		get _showTerminate() {
-			return !this.noTerminate && this.uploadState === UploadState.Uploading;
+			return !this.hideTerminateButton && this.uploadState === UploadState.Uploading;
 		}
 		get _retryButtonTooltip() {
 			return this.i18nFioriBundle.getText(i18nDefaults.UPLOADCOLLECTIONITEM_RETRY_BUTTON_TEXT);

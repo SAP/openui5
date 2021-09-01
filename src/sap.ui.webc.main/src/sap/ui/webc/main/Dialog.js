@@ -31,6 +31,8 @@ sap.ui.define([
 	 *
 	 * <b>Note:</b> We don't recommend nesting popup-like components (<code>sap.ui.webc.main.Dialog</code>, <code>sap.ui.webc.main.Popover</code>) inside <code>sap.ui.webc.main.Dialog</code>. Ideally you should create all popups on the same level inside your HTML page and just open them from one another, rather than nesting them.
 	 *
+	 * <b>Note:</b> We don't recommend nesting popup-like components (<code>sap.ui.webc.main.Dialog</code>, <code>sap.ui.webc.main.Popover</code>) inside other components containing z-index. This might break z-index management.
+	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
@@ -48,11 +50,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines the accessible name of the dialog when <code>header</code> slot is provided. <br>
-				 * <br>
-				 *
-				 *
-				 * <b>Note:</b> If <code>aria-label</code> is provided, <code>accessibleName</code> will be ignored.
+				 * Sets the accessible aria name of the component.
 				 */
 				accessibleName: {
 					type: "string",
@@ -170,12 +168,16 @@ sap.ui.define([
 				/**
 				 * Fired after the component is closed. <b>This event does not bubble.</b>
 				 */
-				afterClose: {},
+				afterClose: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired after the component is opened. <b>This event does not bubble.</b>
 				 */
-				afterOpen: {},
+				afterOpen: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired before the component is closed. This event can be cancelled, which will prevent the popup from closing. <b>This event does not bubble.</b>
@@ -196,10 +198,11 @@ sap.ui.define([
 				 * Fired before the component is opened. This event can be cancelled, which will prevent the popup from opening. <b>This event does not bubble.</b>
 				 */
 				beforeOpen: {
-					allowPreventDefault: true
+					allowPreventDefault: true,
+					parameters: {}
 				}
 			},
-			methods: ["applyFocus", "close", "isOpen", "open"]
+			methods: ["applyFocus", "close", "isOpen", "show"]
 		}
 	});
 
@@ -225,10 +228,10 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Opens the dialog
+	 * Shows the dialog.
 	 * @param {boolean} preventInitialFocus Prevents applying the focus inside the popup
 	 * @public
-	 * @name sap.ui.webc.main.Dialog#open
+	 * @name sap.ui.webc.main.Dialog#show
 	 * @function
 	 */
 

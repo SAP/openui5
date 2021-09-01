@@ -48,6 +48,21 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Sets the accessible aria name of the component.
+				 */
+				accessibleName: {
+					type: "string"
+				},
+
+				/**
+				 * Receives id(or many ids) of the elements that label the input
+				 */
+				accessibleNameRef: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
 				 * Defines whether the component is in disabled state. <br>
 				 * <br>
 				 * <b>Note:</b> A disabled component is completely noninteractive.
@@ -106,7 +121,7 @@ sap.ui.define([
 				/**
 				 * Defines whether the component should show suggestions, if such are present. <br>
 				 * <br>
-				 * <b>Note:</b> Don`t forget to import the <code>InputSuggestions</code> module from <code>"@ui5/webcomponents/dist/features/InputSuggestions.js"</code> to enable this functionality.
+				 * <b>Note:</b> You need to import the <code>InputSuggestions</code> module from <code>"@ui5/webcomponents/dist/features/InputSuggestions.js"</code> to enable this functionality.
 				 */
 				showSuggestions: {
 					type: "boolean",
@@ -213,12 +228,16 @@ sap.ui.define([
 				/**
 				 * Fired when the input operation has finished by pressing Enter or on focusout.
 				 */
-				change: {},
+				change: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired when the value of the component changes at each keystroke, and when a suggestion item has been selected.
 				 */
-				input: {},
+				input: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired when the user navigates to a suggestion item via the ARROW keys, as a preview, before the final selection.
@@ -293,7 +312,9 @@ sap.ui.define([
 				/**
 				 * Fired when the value help icon is pressed and F4 or ALT/OPTION + ARROW_UP/ARROW_DOWN keyboard keys are used.
 				 */
-				valueHelpTrigger: {}
+				valueHelpTrigger: {
+					parameters: {}
+				}
 			},
 			getters: ["previewItem"]
 		}

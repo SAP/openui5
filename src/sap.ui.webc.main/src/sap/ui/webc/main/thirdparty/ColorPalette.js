@@ -18,7 +18,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			showMoreColors: {
 				type: Boolean,
 			},
-			value: {
+			_selectedColor: {
 				type: CSSColor__default,
 			},
 		},
@@ -31,7 +31,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			},
 		},
 		events:  {
-			change: {
+			"item-click": {
 				details: {
 					color: {
 						type: String,
@@ -97,16 +97,16 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._setColor(item.value);
 		}
 		_setColor(color) {
-			this.value = color;
-			if (this._recentColors[0] !== this.value) {
-				if (this._recentColors.includes(this.value)) {
-					this._recentColors.unshift(this._recentColors.splice(this._recentColors.indexOf(this.value), 1)[0]);
+			this._selectedColor = color;
+			if (this._recentColors[0] !== this._selectedColor) {
+				if (this._recentColors.includes(this._selectedColor)) {
+					this._recentColors.unshift(this._recentColors.splice(this._recentColors.indexOf(this._selectedColor), 1)[0]);
 				} else {
-					this._recentColors.unshift(this.value);
+					this._recentColors.unshift(this._selectedColor);
 				}
 			}
-			this.fireEvent("change", {
-				color: this.value,
+			this.fireEvent("item-click", {
+				color: this._selectedColor,
 			});
 		}
 		_onclick(event) {
@@ -136,7 +136,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		async _openMoreColorsDialog() {
 			const dialog = await this._getDialog();
-			dialog.open();
+			dialog.show();
+		}
+		get selectedColor() {
+			return this._selectedColor;
 		}
 		get displayedColors() {
 			return this.colors.filter(item => item.value).slice(0, 15);

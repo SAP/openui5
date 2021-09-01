@@ -169,12 +169,16 @@ sap.ui.define([
 				/**
 				 * Fired when the value changes and the user has finished interacting with the slider.
 				 */
-				change: {},
+				change: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired when the value changes due to user interaction that is not yet finished - during mouse/touch dragging.
 				 */
-				input: {}
+				input: {
+					parameters: {}
+				}
 			}
 		}
 	});

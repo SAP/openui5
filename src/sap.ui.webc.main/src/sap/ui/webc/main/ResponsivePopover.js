@@ -44,6 +44,14 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Sets the accessible aria name of the component.
+				 */
+				accessibleName: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
 				 * Determines if there is no enough space, the component can be placed over the target.
 				 */
 				allowTargetOverlap: {
@@ -183,12 +191,16 @@ sap.ui.define([
 				/**
 				 * Fired after the component is closed. <b>This event does not bubble.</b>
 				 */
-				afterClose: {},
+				afterClose: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired after the component is opened. <b>This event does not bubble.</b>
 				 */
-				afterOpen: {},
+				afterOpen: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired before the component is closed. This event can be cancelled, which will prevent the popup from closing. <b>This event does not bubble.</b>
@@ -209,10 +221,11 @@ sap.ui.define([
 				 * Fired before the component is opened. This event can be cancelled, which will prevent the popup from opening. <b>This event does not bubble.</b>
 				 */
 				beforeOpen: {
-					allowPreventDefault: true
+					allowPreventDefault: true,
+					parameters: {}
 				}
 			},
-			methods: ["applyFocus", "close", "isOpen", "open", "openBy"]
+			methods: ["applyFocus", "close", "isOpen", "showAt"]
 		}
 	});
 
@@ -238,19 +251,11 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Opens popover on desktop and dialog on mobile.
-	 * @param {HTMLElement} opener the element that the popover is opened by
+	 * Shows popover on desktop and dialog on mobile.
+	 * @param {HTMLElement} opener the element that the popover is shown at
+	 * @param {boolean} preventInitialFocus Prevents applying the focus inside the popup
 	 * @public
-	 * @name sap.ui.webc.main.ResponsivePopover#open
-	 * @function
-	 */
-
-	/**
-	 * Opens the popover.
-	 * @param {HTMLElement} opener the element that the popover is opened by
-	 * @param {boolean} preventInitialFocus prevents applying the focus inside the popover
-	 * @public
-	 * @name sap.ui.webc.main.ResponsivePopover#openBy
+	 * @name sap.ui.webc.main.ResponsivePopover#showAt
 	 * @function
 	 */
 

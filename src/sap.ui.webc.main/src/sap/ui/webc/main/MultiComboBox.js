@@ -199,17 +199,23 @@ sap.ui.define([
 				/**
 				 * Fired when the input operation has finished by pressing Enter or on focusout.
 				 */
-				change: {},
+				change: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired when the value of the component changes at each keystroke.
 				 */
-				input: {},
+				input: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired when the dropdown is opened or closed.
 				 */
-				openChange: {},
+				openChange: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired when selection is changed by user interaction in <code>SingleSelect</code> and <code>MultiSelect</code> modes.

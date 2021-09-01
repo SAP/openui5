@@ -55,6 +55,10 @@ sap.ui.define(['exports', '../getSharedResource'], function (exports, getSharedR
 		if (collection === "SAP-icons-TNT") {
 			collection = "tnt";
 		}
+		if (collection === "BusinessSuiteInAppSymbols") {
+			collection = "business-suite";
+			name = name.replace("icon-", "");
+		}
 		const registryKey = `${collection}/${name}`;
 		return { name, collection, registryKey };
 	};
@@ -81,6 +85,7 @@ sap.ui.define(['exports', '../getSharedResource'], function (exports, getSharedR
 	const _getRegisteredNames = async () => {
 		await getIconData("edit");
 		await getIconData("tnt/arrow");
+		await getIconData("business-suite/3d");
 		return Array.from(registry.keys());
 	};
 

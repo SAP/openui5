@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/thirdparty/base/Device', './generated/i18n/i18n-defaults', './ToggleButton', './generated/templates/SegmentedButtonTemplate.lit', './generated/themes/SegmentedButton.css'], function (UI5Element, ItemNavigation, litRender, i18nBundle, ResizeHandler, Render, Device, i18nDefaults, ToggleButton, SegmentedButtonTemplate_lit, SegmentedButton_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/Keys', './generated/i18n/i18n-defaults', './SegmentedButtonItem', './generated/templates/SegmentedButtonTemplate.lit', './generated/themes/SegmentedButton.css'], function (UI5Element, ItemNavigation, litRender, i18nBundle, ResizeHandler, Render, Device, Keys, i18nDefaults, SegmentedButtonItem, SegmentedButtonTemplate_lit, SegmentedButton_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -15,14 +15,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		managedSlots: true,
 		slots:  {
 			"default": {
-				propertyName: "buttons",
+				propertyName: "items",
 				type: HTMLElement,
 			},
 		},
 		events:  {
 			"selection-change": {
 				detail: {
-					selectedButton: { type: HTMLElement },
+					selectedItem: { type: HTMLElement },
 				},
 			},
 		},
@@ -41,7 +41,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return SegmentedButton_css;
 		}
 		static get dependencies() {
-			return [ToggleButton];
+			return [SegmentedButtonItem];
 		}
 		static async onDefine() {
 			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
@@ -49,7 +49,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		constructor() {
 			super();
 			this._itemNavigation = new ItemNavigation__default(this, {
-				getItemsCallback: () => this.getSlottedNodes("buttons"),
+				getItemsCallback: () => this.getSlottedNodes("items"),
 			});
 			this.absoluteWidthSet = false;
 			this.percentageWidthSet = false;
@@ -61,25 +61,32 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			ResizeHandler__default.register(this.parentNode, this._handleResizeBound);
 		}
 		onExitDOM() {
-			ResizeHandler__default.deregister(this.parentNode, this._handleResizeBound);
+			if (this.parentNode) {
+				ResizeHandler__default.deregister(this.parentNode, this._handleResizeBound);
+			}
 		}
 		onBeforeRendering() {
+			const items = this.getSlottedNodes("items");
+			items.forEach((item, index, arr) => {
+				item.posInSet = index + 1;
+				item.sizeOfSet = arr.length;
+			});
 			this.normalizeSelection();
 		}
 		async onAfterRendering() {
 			await this._doLayout();
 		}
-		prepareToMeasureButtons() {
+		prepareToMeasureItems() {
 			this.style.width = "";
-			this.buttons.forEach(button => {
-				button.style.width = "";
+			this.items.forEach(item => {
+				item.style.width = "";
 			});
 		}
-		async measureButtonsWidth() {
+		async measureItemsWidth() {
 			await Render.renderFinished();
-			this.prepareToMeasureButtons();
-			this.widths = this.buttons.map(button => {
-				let width = button.offsetWidth + 1;
+			this.prepareToMeasureItems();
+			this.widths = this.items.map(item => {
+				let width = item.offsetWidth + 1;
 				if (Device.isIE()) {
 					width += 1;
 				}
@@ -87,62 +94,80 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			});
 		}
 		normalizeSelection() {
-			this._selectedButton = this.buttons.filter(button => button.pressed).pop();
-			if (this._selectedButton) {
-				this.buttons.forEach(button => {
-					button.pressed = false;
+			this._selectedItem = this.items.filter(item => item.pressed).pop();
+			if (this._selectedItem) {
+				this.items.forEach(item => {
+					item.pressed = false;
 				});
-				this._selectedButton.pressed = true;
+				this._selectedItem.pressed = true;
 			}
 		}
-		_onclick(event) {
+		_selectItem(event) {
 			if (event.target.disabled || event.target === this.getDomRef()) {
 				return;
 			}
-			if (event.target !== this._selectedButton) {
-				if (this._selectedButton) {
-					this._selectedButton.pressed = false;
+			if (event.target !== this._selectedItem) {
+				if (this._selectedItem) {
+					this._selectedItem.pressed = false;
 				}
-				this._selectedButton = event.target;
+				this._selectedItem = event.target;
 				this.fireEvent("selection-change", {
-					selectedButton: this._selectedButton,
+					selectedItem: this._selectedItem,
 				});
 			}
-			this._selectedButton.pressed = true;
-			this._itemNavigation.setCurrentItem(this._selectedButton);
+			this._selectedItem.pressed = true;
+			this._itemNavigation.setCurrentItem(this._selectedItem);
 			return this;
+		}
+		_onclick(event) {
+			this._selectItem(event);
+		}
+		_onkeydown(event) {
+			if (Keys.isEnter(event)) {
+				this._selectItem(event);
+			} else if (Keys.isSpace(event)) {
+				event.preventDefault();
+			}
+		}
+		_onkeyup(event) {
+			if (Keys.isSpace(event)) {
+				this._selectItem(event);
+			}
 		}
 		_onfocusin(event) {
 			if (this.hasPreviouslyFocusedItem) {
 				this._itemNavigation.setCurrentItem(event.target);
 				return;
 			}
-			if (this.selectedButton) {
-				this.selectedButton.focus();
-				this._itemNavigation.setCurrentItem(this._selectedButton);
+			if (this.selectedItem) {
+				this.selectedItem.focus();
+				this._itemNavigation.setCurrentItem(this._selectedItem);
 				this.hasPreviouslyFocusedItem = true;
 			}
 		}
 		async _doLayout() {
-			const buttonsHaveWidth = this.widths && this.widths.some(button => button.offsetWidth > 2);
-			if (!buttonsHaveWidth) {
-				await this.measureButtonsWidth();
+			const itemsHaveWidth = this.widths && this.widths.some(item => item.offsetWidth > 2);
+			if (!itemsHaveWidth) {
+				await this.measureItemsWidth();
 			}
-			const parentWidth = this.parentNode.offsetWidth;
+			const parentWidth = this.parentNode ? this.parentNode.offsetWidth : 0;
 			if (!this.style.width || this.percentageWidthSet) {
-				this.style.width = `${Math.max(...this.widths) * this.buttons.length}px`;
+				this.style.width = `${Math.max(...this.widths) * this.items.length}px`;
 				this.absoluteWidthSet = true;
 			}
-			this.buttons.forEach(button => {
-				button.style.width = "100%";
+			this.items.forEach(item => {
+				item.style.width = "100%";
 			});
 			if (parentWidth <= this.offsetWidth && this.absoluteWidthSet) {
 				this.style.width = "100%";
 				this.percentageWidthSet = true;
 			}
 		}
-		get selectedButton() {
-			return this._selectedButton;
+		get selectedItem() {
+			return this._selectedItem;
+		}
+		get ariaDescribedBy() {
+			return this.i18nBundle.getText(i18nDefaults.SEGMENTEDBUTTON_ARIA_DESCRIBEDBY);
 		}
 		get ariaDescription() {
 			return this.i18nBundle.getText(i18nDefaults.SEGMENTEDBUTTON_ARIA_DESCRIPTION);

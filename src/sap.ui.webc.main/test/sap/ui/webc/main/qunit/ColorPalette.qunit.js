@@ -13,7 +13,6 @@ sap.ui.define([
 	QUnit.module("Rendering", {
 		beforeEach: function() {
 			this.oColorPalette = new ColorPalette({
-				value: "blue",
 				colors: [
 					new ColorPaletteItem({
 						value: "blue"
@@ -25,8 +24,8 @@ sap.ui.define([
 						value: "blue"
 					})
 				],
-				change: function(oEvent) {
-					// console.log("Event change fired for ColorPalette with parameters: ", oEvent.getParameters());
+				itemClick: function(oEvent) {
+					// console.log("Event itemClick fired for ColorPalette with parameters: ", oEvent.getParameters());
 				}
 			});
 			this.oColorPalette.placeAt("uiArea");

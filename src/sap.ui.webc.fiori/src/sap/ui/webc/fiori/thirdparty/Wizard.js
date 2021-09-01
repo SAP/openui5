@@ -28,7 +28,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		tag: "ui5-wizard",
 		managedSlots: true,
 		properties:  {
-			ariaLabel: {
+			accessibleName: {
 				type: String,
 				defaultValue: undefined,
 			},
@@ -289,7 +289,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this._groupedTabs.push(tabs[i]);
 			}
 			const responsivePopover = await this._respPopover();
-			responsivePopover.open(oDomTarget);
+			responsivePopover.showAt(oDomTarget);
 		}
 		async _onGroupedTabClick(event) {
 			if (this._isGroupAtStart(event.target)) {
@@ -415,6 +415,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get navAriaLabelText() {
 			return this.i18nBundle.getText(i18nDefaults.WIZARD_NAV_ARIA_LABEL);
 		}
+		get navAriaDescribedbyText() {
+			return this.i18nBundle.getText(i18nDefaults.WIZARD_LIST_ARIA_DESCRIBEDBY);
+		}
 		get listAriaLabelText() {
 			return this.i18nBundle.getText(i18nDefaults.WIZARD_LIST_ARIA_LABEL);
 		}
@@ -427,8 +430,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get optionalStepText() {
 			return this.i18nBundle.getText(i18nDefaults.WIZARD_OPTIONAL_STEP_ARIA_LABEL);
 		}
+		get activeStepText() {
+			return this.i18nBundle.getText(i18nDefaults.WIZARD_STEP_ACTIVE);
+		}
+		get inactiveStepText() {
+			return this.i18nBundle.getText(i18nDefaults.WIZARD_STEP_INACTIVE);
+		}
 		get ariaLabelText() {
-			return this.ariaLabel || this.i18nBundle.getText(i18nDefaults.WIZARD_NAV_ARIA_ROLE_DESCRIPTION);
+			return this.accessibleName || this.i18nBundle.getText(i18nDefaults.WIZARD_NAV_ARIA_ROLE_DESCRIPTION);
 		}
 		get effectiveStepSwitchThreshold() {
 			return clamp__default(this.stepSwitchThreshold, STEP_SWITCH_THRESHOLDS.MIN, STEP_SWITCH_THRESHOLDS.MAX);
@@ -444,7 +453,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				const pos = idx + 1;
 				const hideSeparator = (idx === stepsCount - 1) && !step.branching;
 				const isOptional = step.subtitleText ? this.optionalStepText : "";
-				const ariaLabel = (step.titleText ? `${pos} ${step.titleText} ${isOptional}` : `${this.navStepDefaultHeading} ${pos} ${isOptional}`).trim();
+				const stepStateText = step.disabled ? this.inactiveStepText : this.activeStepText;
+				const ariaLabel = (step.titleText ? `${pos} ${step.titleText} ${stepStateText} ${isOptional}` : `${this.navStepDefaultHeading} ${pos} ${stepStateText} ${isOptional}`).trim();
 				const isAfterCurrent = (idx > selectedStepIndex);
 				accInfo = {
 					"ariaSetsize": stepsCount,

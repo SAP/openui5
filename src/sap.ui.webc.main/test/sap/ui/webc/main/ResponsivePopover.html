@@ -55,26 +55,14 @@
 
 
                 var oResponsivePopover3Button = new Button({
-                    text: "open",
+                    text: "showAt",
                     click: function(oEvent) {
-                        console.log("Calling open...");
-                        var result = oResponsivePopover.open();
-                        console.log("... open returned: ", result);
+                        console.log("Calling showAt...");
+                        var result = oResponsivePopover.showAt();
+                        console.log("... showAt returned: ", result);
                     }
                 });
                 oResponsivePopover3Button.placeAt("methodButtons");
-
-
-
-                var oResponsivePopover4Button = new Button({
-                    text: "openBy",
-                    click: function(oEvent) {
-                        console.log("Calling openBy...");
-                        var result = oResponsivePopover.openBy(oResponsivePopover4Button);
-                        console.log("... openBy returned: ", result);
-                    }
-                });
-                oResponsivePopover4Button.placeAt("methodButtons");
 
 
                 var oResponsivePopover = new ResponsivePopover({

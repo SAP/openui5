@@ -10,7 +10,7 @@ sap.ui.define(['./renderer/executeTemplate', './theming/getConstructableStyle', 
 		} else if (!isLegacyBrowser()) {
 			styleToPrepend = getEffectiveStyle(element.constructor, forStaticArea);
 		}
-		element.constructor.render(renderResult, shadowRoot, styleToPrepend, { eventContext: element });
+		element.constructor.render(renderResult, shadowRoot, styleToPrepend, { host: element });
 	};
 
 	return updateShadowRoot;

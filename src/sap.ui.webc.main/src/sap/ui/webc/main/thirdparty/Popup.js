@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/util/FocusableElements', 'sap/ui/webc/common/thirdparty/base/util/createStyleInHead', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/util/PopupUtils', './generated/templates/PopupTemplate.lit', './generated/templates/PopupBlockLayerTemplate.lit', './popup-utils/OpenedPopupsRegistry', './generated/themes/Popup.css', './generated/themes/PopupStaticAreaStyles.css'], function (Render, litRender, UI5Element, FocusableElements, createStyleInHead, Keys, PopupUtils, PopupTemplate_lit, PopupBlockLayerTemplate_lit, OpenedPopupsRegistry, Popup_css, PopupStaticAreaStyles_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/util/FocusableElements', 'sap/ui/webc/common/thirdparty/base/util/createStyleInHead', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/util/PopupUtils', './generated/templates/PopupTemplate.lit', './generated/templates/PopupBlockLayerTemplate.lit', './popup-utils/OpenedPopupsRegistry', './generated/themes/Popup.css', './generated/themes/PopupStaticAreaStyles.css'], function (Render, litRender, UI5Element, Device, FocusableElements, createStyleInHead, Keys, PopupUtils, PopupTemplate_lit, PopupBlockLayerTemplate_lit, OpenedPopupsRegistry, Popup_css, PopupStaticAreaStyles_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -24,7 +24,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 			opened: {
 				type: Boolean,
 			},
-			ariaLabel: {
+			accessibleName: {
 				type: String,
 				defaultValue: undefined,
 			},
@@ -63,6 +63,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 		customBlockingStyleInserted = true;
 	};
 	createBlockingStyle();
+	let bodyScrollingBlockers = 0;
 	class Popup extends UI5Element__default {
 		static get metadata() {
 			return metadata;
@@ -100,10 +101,20 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 			event.preventDefault();
 		}
 		static blockBodyScrolling() {
-			document.body.style.top = `-${window.pageYOffset}px`;
+			bodyScrollingBlockers++;
+			if (bodyScrollingBlockers !== 1) {
+				return;
+			}
+			if (window.pageYOffset > 0) {
+				document.body.style.top = `-${window.pageYOffset}px`;
+			}
 			document.body.classList.add("ui5-popup-scroll-blocker");
 		}
 		static unblockBodyScrolling() {
+			bodyScrollingBlockers--;
+			if (bodyScrollingBlockers !== 0) {
+				return;
+			}
 			document.body.classList.remove("ui5-popup-scroll-blocker");
 			window.scrollTo(0, -parseFloat(document.body.style.top));
 			document.body.style.top = "";
@@ -121,7 +132,24 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 		}
 		_onfocusout(e) {
 			if (!e.relatedTarget) {
-				this._root.focus();
+				this._shouldFocusRoot = true;
+			}
+		}
+		_onmousedown(e) {
+			this._root.removeAttribute("tabindex");
+			if (this.shadowRoot.contains(e.target)) {
+				this._shouldFocusRoot = true;
+			} else {
+				this._shouldFocusRoot = false;
+			}
+		}
+		_onmouseup() {
+			this._root.tabIndex = -1;
+			if (this._shouldFocusRoot) {
+				if (Device.isChrome()) {
+					this._root.focus();
+				}
+				this._shouldFocusRoot = false;
 			}
 		}
 		async forwardToFirst() {
@@ -150,6 +178,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 				|| await FocusableElements.getFirstFocusableElement(this)
 				|| this._root;
 			if (element) {
+				if (element === this._root) {
+					element.tabIndex = -1;
+				}
 				element.focus();
 			}
 		}
@@ -159,7 +190,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 		isFocusWithin() {
 			return PopupUtils.isFocusedElementWithinNode(this.shadowRoot.querySelector(".ui5-popup-root"));
 		}
-		async open(preventInitialFocus) {
+		async _open(preventInitialFocus) {
 			const prevented = !this.fireEvent("before-open", {}, true, false);
 			if (prevented) {
 				return;
@@ -172,7 +203,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 			this._zIndex = PopupUtils.getNextZIndex();
 			this.style.zIndex = this._zIndex;
 			this._focusedElementBeforeOpen = PopupUtils.getFocusedElement();
-			this.show();
+			this._show();
 			if (!this._disableInitialFocus && !preventInitialFocus) {
 				this.applyInitialFocus();
 			}
@@ -216,7 +247,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 			this._focusedElementBeforeOpen.focus();
 			this._focusedElementBeforeOpen = null;
 		}
-		show() {
+		_show() {
 			this.style.display = this._displayProp;
 		}
 		hide() {
@@ -227,7 +258,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 		get _ariaLabelledBy() {}
 		get _ariaModal() {}
 		get _ariaLabel() {
-			return this.ariaLabel || undefined;
+			return this.accessibleName || undefined;
 		}
 		get _root() {
 			return this.shadowRoot.querySelector(".ui5-popup-root");

@@ -6,10 +6,12 @@
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
 	"./library",
+	"sap/ui/core/library",
 	"./thirdparty/Calendar"
-], function(WebComponent, library) {
+], function(WebComponent, library, coreLibrary) {
 	"use strict";
 
+	var CalendarType = coreLibrary.CalendarType;
 	var CalendarSelectionMode = library.CalendarSelectionMode;
 
 	/**
@@ -145,6 +147,14 @@ sap.ui.define([
 				 */
 				primaryCalendarType: {
 					type: "sap.ui.core.CalendarType"
+				},
+
+				/**
+				 * Defines the secondary calendar type. If not set, the calendar will only show the primary calendar type.
+				 */
+				secondaryCalendarType: {
+					type: "sap.ui.core.CalendarType",
+					defaultValue: CalendarType.undefined
 				},
 
 				/**

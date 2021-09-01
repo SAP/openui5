@@ -13,43 +13,44 @@
         sap.ui.getCore().attachInit(function() {
             sap.ui.require([
                 "sap/ui/webc/main/SegmentedButton",
+                "sap/ui/webc/main/SegmentedButtonItem",
                 "sap/ui/webc/main/Button"
             ], function(
-                SegmentedButton, Button
+                SegmentedButton, SegmentedButtonItem, Button
             ) {
 
                 var oSegmentedButton0Button = new Button({
-                    text: "getSelectedButton",
+                    text: "getSelectedItem",
                     click: function(oEvent) {
-                        console.log("Calling getSelectedButton...");
-                        var result = oSegmentedButton.getSelectedButton();
-                        console.log("... getSelectedButton returned: ", result);
+                        console.log("Calling getSelectedItem...");
+                        var result = oSegmentedButton.getSelectedItem();
+                        console.log("... getSelectedItem returned: ", result);
                     }
                 });
                 oSegmentedButton0Button.placeAt("methodButtons");
 
 
                 var oSegmentedButton = new SegmentedButton({
-                    buttons: [
-                        new Button({
+                    items: [
+                        new SegmentedButtonItem({
                             icon: "employee",
                             text: "Some text...",
                             click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                console.log("Event click fired for SegmentedButtonItem with parameters: ", oEvent.getParameters());
                             }
                         }),
-                        new Button({
+                        new SegmentedButtonItem({
                             icon: "employee",
                             text: "Some text...",
                             click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                console.log("Event click fired for SegmentedButtonItem with parameters: ", oEvent.getParameters());
                             }
                         }),
-                        new Button({
+                        new SegmentedButtonItem({
                             icon: "employee",
                             text: "Some text...",
                             click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                console.log("Event click fired for SegmentedButtonItem with parameters: ", oEvent.getParameters());
                             }
                         })
                     ],

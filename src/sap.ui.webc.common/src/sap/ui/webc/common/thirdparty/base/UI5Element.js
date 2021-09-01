@@ -1,4 +1,4 @@
-sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventProvider', './util/getSingletonElementInstance', './StaticAreaItem', './updateShadowRoot', './Render', './CustomElementsRegistry', './DOMObserver', './config/NoConflict', './locale/getEffectiveDir', './types/Integer', './types/Float', './util/StringHelper', './util/isValidPropertyName', './util/SlotsHelper', './util/arraysAreEqual', './util/getClassCopy', './locale/RTLAwareRegistry', './isLegacyBrowser'], function (merge, Boot, UI5ElementMetadata, EventProvider, getSingletonElementInstance, StaticAreaItem, updateShadowRoot, Render, CustomElementsRegistry, DOMObserver, NoConflict, getEffectiveDir, Integer, Float, StringHelper, isValidPropertyName, SlotsHelper, arraysAreEqual, getClassCopy, RTLAwareRegistry, isLegacyBrowser) { 'use strict';
+sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventProvider', './util/getSingletonElementInstance', './StaticAreaItem', './updateShadowRoot', './Render', './CustomElementsRegistry', './DOMObserver', './config/NoConflict', './locale/getEffectiveDir', './types/DataType', './util/StringHelper', './util/isValidPropertyName', './util/isDescendantOf', './util/SlotsHelper', './util/arraysAreEqual', './util/getClassCopy', './locale/RTLAwareRegistry', './isLegacyBrowser'], function (merge, Boot, UI5ElementMetadata, EventProvider, getSingletonElementInstance, StaticAreaItem, updateShadowRoot, Render, CustomElementsRegistry, DOMObserver, NoConflict, getEffectiveDir, DataType, StringHelper, isValidPropertyName, isDescendantOf, SlotsHelper, arraysAreEqual, getClassCopy, RTLAwareRegistry, isLegacyBrowser) { 'use strict';
 
 	let autoId = 0;
 	const elementTimeouts = new Map();
@@ -10,7 +10,7 @@ sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventP
 		this.onInvalidation(changeInfo);
 		this._changedState.push(changeInfo);
 		Render.renderDeferred(this);
-		this._eventProvider.fireEvent("change", { ...changeInfo, target: this });
+		this._eventProvider.fireEvent("invalidate", { ...changeInfo, target: this });
 	}
 	class UI5Element extends HTMLElement {
 		constructor() {
@@ -41,15 +41,11 @@ sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventP
 		}
 		async connectedCallback() {
 			this.setAttribute(this.constructor.getMetadata().getPureTag(), "");
-			const needsShadowDOM = this.constructor._needsShadowDOM();
 			const slotsAreManaged = this.constructor.getMetadata().slotsAreManaged();
 			this._inDOM = true;
 			if (slotsAreManaged) {
 				this._startObservingDOMChildren();
 				await this._processChildren();
-			}
-			if (needsShadowDOM && !this.shadowRoot) {
-				await Promise.resolve();
 			}
 			if (!this._inDOM) {
 				return;
@@ -62,19 +58,16 @@ sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventP
 			}
 		}
 		disconnectedCallback() {
-			const needsShadowDOM = this.constructor._needsShadowDOM();
 			const slotsAreManaged = this.constructor.getMetadata().slotsAreManaged();
 			this._inDOM = false;
 			if (slotsAreManaged) {
 				this._stopObservingDOMChildren();
 			}
-			if (needsShadowDOM) {
-				if (this._fullyConnected) {
-					if (typeof this.onExitDOM === "function") {
-						this.onExitDOM();
-					}
-					this._fullyConnected = false;
+			if (this._fullyConnected) {
+				if (typeof this.onExitDOM === "function") {
+					this.onExitDOM();
 				}
+				this._fullyConnected = false;
 			}
 			if (this.staticAreaItem && this.staticAreaItem.parentElement) {
 				this.staticAreaItem.parentElement.removeChild(this.staticAreaItem);
@@ -149,7 +142,7 @@ sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventP
 				}
 				child = this.constructor.getMetadata().constructor.validateSlotValue(child, slotData);
 				if (child.isUI5Element && slotData.invalidateOnChildChange) {
-					child._attachChange(this._getChildChangeListener(slotName));
+					child.attachInvalidate(this._getChildChangeListener(slotName));
 				}
 				if (SlotsHelper.isSlot(child)) {
 					this._attachSlotChange(child, slotName);
@@ -190,7 +183,7 @@ sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventP
 			const children = this._state[propertyName];
 			children.forEach(child => {
 				if (child && child.isUI5Element) {
-					child._detachChange(this._getChildChangeListener(slotName));
+					child.detachInvalidate(this._getChildChangeListener(slotName));
 				}
 				if (SlotsHelper.isSlot(child)) {
 					this._detachSlotChange(child, slotName);
@@ -198,11 +191,11 @@ sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventP
 			});
 			this._state[propertyName] = [];
 		}
-		_attachChange(callback) {
-			this._eventProvider.attachEvent("change", callback);
+		attachInvalidate(callback) {
+			this._eventProvider.attachEvent("invalidate", callback);
 		}
-		_detachChange(callback) {
-			this._eventProvider.detachEvent("change", callback);
+		detachInvalidate(callback) {
+			this._eventProvider.detachEvent("invalidate", callback);
 		}
 		_onChildChange(slotName, childChangeInfo) {
 			if (!this.constructor.getMetadata().shouldInvalidateOnChildChange(slotName, childChangeInfo.type, childChangeInfo.name)) {
@@ -223,12 +216,8 @@ sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventP
 				const propertyTypeClass = properties[nameInCamelCase].type;
 				if (propertyTypeClass === Boolean) {
 					newValue = newValue !== null;
-				}
-				if (propertyTypeClass === Integer) {
-					newValue = parseInt(newValue);
-				}
-				if (propertyTypeClass === Float) {
-					newValue = parseFloat(newValue);
+				} else if (isDescendantOf(propertyTypeClass, DataType)) {
+					newValue = propertyTypeClass.attributeToProperty(newValue);
 				}
 				this[nameInCamelCase] = newValue;
 			}
@@ -237,19 +226,22 @@ sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventP
 			if (!this.constructor.getMetadata().hasAttribute(name)) {
 				return;
 			}
-			if (typeof newValue === "object") {
-				return;
-			}
+			const properties = this.constructor.getMetadata().getProperties();
+			const propertyTypeClass = properties[name].type;
 			const attrName = StringHelper.camelToKebabCase(name);
 			const attrValue = this.getAttribute(attrName);
-			if (typeof newValue === "boolean") {
+			if (propertyTypeClass === Boolean) {
 				if (newValue === true && attrValue === null) {
 					this.setAttribute(attrName, "");
 				} else if (newValue === false && attrValue !== null) {
 					this.removeAttribute(attrName);
 				}
-			} else if (attrValue !== newValue) {
-				this.setAttribute(attrName, newValue);
+			} else if (isDescendantOf(propertyTypeClass, DataType)) {
+				this.setAttribute(attrName, propertyTypeClass.propertyToAttribute(newValue));
+			} else if (typeof newValue !== "object") {
+				if (attrValue !== newValue) {
+					this.setAttribute(attrName, newValue);
+				}
 			}
 		}
 		_upgradeProperty(prop) {
@@ -465,6 +457,8 @@ sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventP
 						const oldState = this._state[prop];
 						if (propData.multiple && propData.compareValues) {
 							isDifferent = !arraysAreEqual(oldState, value);
+						} else if (isDescendantOf(propData.type, DataType)) {
+							isDifferent = !propData.type.valuesAreEqual(oldState, value);
 						} else {
 							isDifferent = oldState !== value;
 						}

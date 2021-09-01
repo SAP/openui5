@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/webc/main/TabContainer",
 	"sap/ui/webc/main/Tab",
-	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, TabContainer, Tab, Button) {
+	"sap/ui/webc/main/Button",
+	"sap/ui/webc/main/TabSeparator"
+], function(createAndAppendDiv, Core, TabContainer, Tab, Button, TabSeparator) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
@@ -43,33 +44,8 @@ sap.ui.define([
 							})
 						]
 					}),
-					new Tab({
-						additionalText: "Some text...",
-						icon: "employee",
-						text: "Some text...",
-						content: [
-							new Button({
-								icon: "employee",
-								text: "Some text...",
-								click: function(oEvent) {
-									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-								}
-							}),
-							new Button({
-								icon: "employee",
-								text: "Some text...",
-								click: function(oEvent) {
-									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-								}
-							}),
-							new Button({
-								icon: "employee",
-								text: "Some text...",
-								click: function(oEvent) {
-									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-								}
-							})
-						]
+					new TabSeparator({
+
 					}),
 					new Tab({
 						additionalText: "Some text...",

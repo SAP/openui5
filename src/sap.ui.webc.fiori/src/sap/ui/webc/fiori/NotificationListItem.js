@@ -12,6 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	var Priority = mainLibrary.Priority;
+	var WrappingType = mainLibrary.WrappingType;
 
 	/**
 	 * Constructor for a new <code>NotificationListItem</code>.
@@ -25,13 +26,13 @@ sap.ui.define([
 	 * <h3>Overview</h3> The <code>sap.ui.webc.fiori.NotificationListItem</code> is a type of list item, meant to display notifications. <br>
 	 *
 	 *
-	 * The component has a rich set of various properties that allows the user to set <code>avatar</code>, <code>heading</code>, descriptive <code>content</code> and <code>footnotes</code> to fully describe a notification. <br>
+	 * The component has a rich set of various properties that allows the user to set <code>avatar</code>, <code>titleText</code>, descriptive <code>content</code> and <code>footnotes</code> to fully describe a notification. <br>
 	 *
 	 *
 	 * The user can:
 	 * <ul>
 	 *     <li>display a <code>Close</code> button</li>
-	 *     <li>can control whether the <code>heading</code> and <code>description</code> should wrap or truncate and display a <code>ShowMore</code> button to switch between less and more information</li>
+	 *     <li>can control whether the <code>titleText</code> and <code>description</code> should wrap or truncate and display a <code>ShowMore</code> button to switch between less and more information</li>
 	 *     <li>add custom actions by using the <code>sap.ui.webc.fiori.NotificationAction</code> component</li>
 	 * </ul>
 	 *
@@ -42,7 +43,7 @@ sap.ui.define([
 	 * <ui5-link target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/CSS/::part">CSS Shadow Parts</ui5-link> allow developers to style elements inside the Shadow DOM. <br>
 	 * The <code>sap.ui.webc.fiori.NotificationListItem</code> exposes the following CSS Shadow Parts:
 	 * <ul>
-	 *     <li>heading - Used to style the heading of the notification list item</li>
+	 *     <li>title-text - Used to style the titleText of the notification list item</li>
 	 * </ul>
 	 *
 	 * @author SAP SE
@@ -75,20 +76,20 @@ sap.ui.define([
 				},
 
 				/**
+				 * Defines the delay in milliseconds, after which the busy indicator will show up for this component.
+				 */
+				busyDelay: {
+					type: "int",
+					defaultValue: 1000
+				},
+
+				/**
 				 * Defines the content of the control
 				 */
 				description: {
 					type: "string",
 					defaultValue: "",
 					mapping: "textContent"
-				},
-
-				/**
-				 * Defines the <code>heading</code> of the item.
-				 */
-				heading: {
-					type: "string",
-					defaultValue: ""
 				},
 
 				/**
@@ -108,7 +109,7 @@ sap.ui.define([
 				/**
 				 * Defines if the <code>notification</code> is new or has been already read. <br>
 				 * <br>
-				 * <b>Note:</b> if set to <code>false</code> the <code>heading</code> has bold font, if set to true - it has a normal font.
+				 * <b>Note:</b> if set to <code>false</code> the <code>titleText</code> has bold font, if set to true - it has a normal font.
 				 */
 				read: {
 					type: "boolean",
@@ -124,15 +125,23 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines if the <code>heading</code> and <code>description</code> should wrap, they truncate by default.
+				 * Defines the <code>titleText</code> of the item.
+				 */
+				titleText: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
+				 * Defines if the <code>titleText</code> and <code>description</code> should wrap, they truncate by default.
 				 *
 				 * <br>
 				 * <br>
-				 * <b>Note:</b> by default the <code>heading</code> and <code>decription</code>, and a <code>ShowMore/Less</code> button would be displayed.
+				 * <b>Note:</b> by default the <code>titleText</code> and <code>decription</code>, and a <code>ShowMore/Less</code> button would be displayed.
 				 */
-				wrap: {
-					type: "boolean",
-					defaultValue: false
+				wrappingType: {
+					type: "sap.ui.webc.main.WrappingType",
+					defaultValue: WrappingType.None
 				}
 			},
 			aggregations: {
@@ -163,7 +172,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the elements, dipalyed in the footer of the of the <code>sap.ui.webc.fiori.NotificationListItem</code>.
+				 * Defines the elements, displayed in the footer of the of the component.
 				 */
 				footnotes: {
 					type: "sap.ui.core.Control",
@@ -176,7 +185,9 @@ sap.ui.define([
 				/**
 				 * Fired when the <code>Close</code> button is pressed.
 				 */
-				close: {}
+				close: {
+					parameters: {}
+				}
 			}
 		}
 	});

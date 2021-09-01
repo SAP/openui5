@@ -1,56 +1,13 @@
-sap.ui.define(['exports', '../lit-html', '../lib/directive', '../lib/parts'], function (exports, litHtml, directive, parts) { 'use strict';
+sap.ui.define(['exports', '../lit-html', '../directive-d4211b63'], function (exports, litHtml, directive) { 'use strict';
 
-    /**
-     * @license
-     * Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-     * This code may only be used under the BSD style license found at
-     * http://polymer.github.io/LICENSE.txt
-     * The complete set of authors may be found at
-     * http://polymer.github.io/AUTHORS.txt
-     * The complete set of contributors may be found at
-     * http://polymer.github.io/CONTRIBUTORS.txt
-     * Code distributed by Google as part of the polymer project is also
-     * subject to an additional IP rights grant found at
-     * http://polymer.github.io/PATENTS.txt
-     */
-    const previousStylePropertyCache = new WeakMap();
-    const styleMap = directive.directive((styleInfo) => (part) => {
-        if (!(part instanceof parts.AttributePart) || (part instanceof parts.PropertyPart) ||
-            part.committer.name !== 'style' || part.committer.parts.length > 1) {
-            throw new Error('The `styleMap` directive must be used in the style attribute ' +
-                'and must be the only part in the attribute.');
-        }
-        const { committer } = part;
-        const { style } = committer.element;
-        let previousStyleProperties = previousStylePropertyCache.get(part);
-        if (previousStyleProperties === undefined) {
-            style.cssText = committer.strings.join(' ');
-            previousStylePropertyCache.set(part, previousStyleProperties = new Set());
-        }
-        previousStyleProperties.forEach((name) => {
-            if (!(name in styleInfo)) {
-                previousStyleProperties.delete(name);
-                if (name.indexOf('-') === -1) {
-                    style[name] = null;
-                }
-                else {
-                    style.removeProperty(name);
-                }
-            }
-        });
-        for (const name in styleInfo) {
-            previousStyleProperties.add(name);
-            if (name.indexOf('-') === -1) {
-                style[name] = styleInfo[name];
-            }
-            else {
-                style.setProperty(name, styleInfo[name]);
-            }
-        }
-    });
+	/**
+	 * @license
+	 * Copyright 2018 Google LLC
+	 * SPDX-License-Identifier: BSD-3-Clause
+	 */const i=directive.i(class extends directive.s{constructor(t){var e;if(super(t),t.type!==directive.t.ATTRIBUTE||"style"!==t.name||(null===(e=t.strings)||void 0===e?void 0:e.length)>2)throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.")}render(t){return Object.keys(t).reduce(((e,r)=>{const s=t[r];return null==s?e:e+`${r=r.replace(/(?:^(webkit|moz|ms|o)|)(?=[A-Z])/g,"-$&").toLowerCase()}:${s};`}),"")}update(e,[r]){const{style:s}=e.element;if(void 0===this.St){this.St=new Set;for(const t in r)this.St.add(t);return this.render(r)}this.St.forEach((t=>{null==r[t]&&(this.St.delete(t),t.includes("-")?s.removeProperty(t):s[t]="");}));for(const t in r){const e=r[t];null!=e&&(this.St.add(t),t.includes("-")?s.setProperty(t,e):s[t]=e);}return litHtml.noChange}});
 
-    exports.styleMap = styleMap;
+	exports.styleMap = i;
 
-    Object.defineProperty(exports, '__esModule', { value: true });
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

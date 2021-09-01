@@ -99,7 +99,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		async _openOverflowPopover() {
 			if (this.showPopover) {
 				const popover = await this.getPopover();
-				popover.open(this.morePopoverOpener || this);
+				popover.showAt(this.morePopoverOpener || this);
 			}
 			this.fireEvent("show-more-items-press");
 		}

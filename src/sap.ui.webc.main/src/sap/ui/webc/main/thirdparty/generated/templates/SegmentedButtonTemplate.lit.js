@@ -1,16 +1,7 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/ifDefined', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], function (ifDefined, litRender) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], function (litRender) { 'use strict';
 
-	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+	const block0 = (context, tags, suffix) => litRender.html`<ul @click="${context._onclick}" @keydown="${context._onkeydown}" @keyup="${context._onkeyup}" @focusin="${context._onfocusin}" class="ui5-segmented-button-root" role="listbox" dir="${litRender.ifDefined(context.effectiveDir)}" aria-multiselectable="true" aria-describedby="${litRender.ifDefined(context._id)}-invisibleText" aria-roledescription=${litRender.ifDefined(context.ariaDescription)}><slot></slot><span id="${litRender.ifDefined(context._id)}-invisibleText" class="ui5-hidden-text">${litRender.ifDefined(context.ariaDescribedBy)}</span></ul>`;
 
-	var ifDefined__default = /*#__PURE__*/_interopDefaultLegacy(ifDefined);
-
-	const block0 = (context) => { return litRender.html`<div @click="${context._onclick}" @focusin="${context._onfocusin}" class="ui5-segmented-button-root" role="group" dir="${ifDefined__default(context.effectiveDir)}" aria-roledescription="${ifDefined__default(context.ariaDescription)}"><slot></slot></div>`; };
-	const main = (context, tags, suffix) => {
-		litRender.setTags(tags);
-		litRender.setSuffix(suffix);
-		return block0(context);
-	};
-
-	return main;
+	return block0;
 
 });

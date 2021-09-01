@@ -20,7 +20,6 @@
 
 
                 var oColorPalette = new ColorPalette({
-                    value: "blue",
                     colors: [
                         new ColorPaletteItem({
                             value: "blue"
@@ -32,8 +31,8 @@
                             value: "blue"
                         })
                     ],
-                    change: function(oEvent) {
-                        console.log("Event change fired for ColorPalette with parameters: ", oEvent.getParameters());
+                    itemClick: function(oEvent) {
+                        console.log("Event itemClick fired for ColorPalette with parameters: ", oEvent.getParameters());
                     }
                 });
                 oColorPalette.placeAt("testControl");

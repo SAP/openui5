@@ -14,11 +14,12 @@
             sap.ui.require([
                 "sap/ui/webc/main/MultiInput",
                 "sap/ui/webc/main/Icon",
+                "sap/ui/webc/main/SuggestionGroupItem",
                 "sap/ui/webc/main/SuggestionItem",
                 "sap/ui/webc/main/Token",
                 "sap/ui/webc/main/Button"
             ], function(
-                MultiInput, Icon, SuggestionItem, Token, Button
+                MultiInput, Icon, SuggestionGroupItem, SuggestionItem, Token, Button
             ) {
 
                 var oMultiInput0Button = new Button({
@@ -44,9 +45,7 @@
                         }
                     }),
                     suggestionItems: [
-                        new SuggestionItem({
-                            additionalText: "Some text...",
-                            icon: "employee",
+                        new SuggestionGroupItem({
                             text: "Some text..."
                         }),
                         new SuggestionItem({
@@ -54,9 +53,7 @@
                             icon: "employee",
                             text: "Some text..."
                         }),
-                        new SuggestionItem({
-                            additionalText: "Some text...",
-                            icon: "employee",
+                        new SuggestionGroupItem({
                             text: "Some text..."
                         })
                     ],

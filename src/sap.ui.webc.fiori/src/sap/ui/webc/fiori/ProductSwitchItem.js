@@ -110,7 +110,9 @@ sap.ui.define([
 				/**
 				 * Fired when the <code>sap.ui.webc.fiori.ProductSwitchItem</code> is activated either with a click/tap or by using the Enter or Space key.
 				 */
-				click: {}
+				click: {
+					parameters: {}
+				}
 			}
 		}
 	});

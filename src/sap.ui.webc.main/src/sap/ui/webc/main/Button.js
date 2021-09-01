@@ -64,6 +64,13 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Sets the accessible aria name of the component.
+				 */
+				accessibleName: {
+					type: "string"
+				},
+
+				/**
 				 * Defines the component design.
 				 *
 				 * <br>
@@ -77,6 +84,7 @@ sap.ui.define([
 				 *     <li><code>Positive</code></li>
 				 *     <li><code>Negative</code></li>
 				 *     <li><code>Transparent</code></li>
+				 *     <li><code>Attention</code></li>
 				 * </ul>
 				 */
 				design: {
@@ -158,7 +166,9 @@ sap.ui.define([
 				 * <br>
 				 * <b>Note:</b> The event will not be fired if the <code>disabled</code> property is set to <code>true</code>.
 				 */
-				click: {}
+				click: {
+					parameters: {}
+				}
 			}
 		}
 	});

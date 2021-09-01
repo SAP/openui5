@@ -68,6 +68,14 @@ sap.ui.define([
 				},
 
 				/**
+				 * Defines the delay in milliseconds, after which the busy indicator will be visible on the screen.
+				 */
+				delay: {
+					type: "int",
+					defaultValue: 1000
+				},
+
+				/**
 				 * Defines whether the control will be rendered as a block or inline HTML element
 				 */
 				display: {

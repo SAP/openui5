@@ -176,7 +176,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		async openValueStatePopover() {
 			const popover = await this._getPopover();
 			if (popover) {
-				popover.openBy(this);
+				popover.showAt(this);
 			}
 		}
 		async closeValueStatePopover() {

@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/types/NavigationMode', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/debounce', 'sap/ui/webc/common/thirdparty/base/util/isElementInView', './types/TableGrowingMode', './BusyIndicator', './types/TableMode', './generated/i18n/i18n-defaults', './generated/templates/TableTemplate.lit', './generated/themes/Table.css'], function (UI5Element, litRender, ResizeHandler, ItemNavigation, NavigationMode, Device, Keys, i18nBundle, debounce, isElementInView, TableGrowingMode, BusyIndicator, TableMode, i18nDefaults, TableTemplate_lit, Table_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/types/NavigationMode', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/debounce', 'sap/ui/webc/common/thirdparty/base/util/isElementInView', './types/TableGrowingMode', './BusyIndicator', './types/TableMode', './generated/i18n/i18n-defaults', './generated/templates/TableTemplate.lit', './generated/themes/Table.css'], function (UI5Element, litRender, ResizeHandler, ItemNavigation, Integer, NavigationMode, Device, Keys, i18nBundle, debounce, isElementInView, TableGrowingMode, BusyIndicator, TableMode, i18nDefaults, TableTemplate_lit, Table_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -6,6 +6,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	var litRender__default = /*#__PURE__*/_interopDefaultLegacy(litRender);
 	var ResizeHandler__default = /*#__PURE__*/_interopDefaultLegacy(ResizeHandler);
 	var ItemNavigation__default = /*#__PURE__*/_interopDefaultLegacy(ItemNavigation);
+	var Integer__default = /*#__PURE__*/_interopDefaultLegacy(Integer);
 	var NavigationMode__default = /*#__PURE__*/_interopDefaultLegacy(NavigationMode);
 	var debounce__default = /*#__PURE__*/_interopDefaultLegacy(debounce);
 	var isElementInView__default = /*#__PURE__*/_interopDefaultLegacy(isElementInView);
@@ -48,6 +49,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			},
 			busy: {
 				type: Boolean,
+			},
+			busyDelay: {
+				type: Integer__default,
+				defaultValue: 1000,
 			},
 			stickyColumnHeader: {
 				type: Boolean,
@@ -135,11 +140,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		onBeforeRendering() {
 			const columnSettings = this.getColumnPropagationSettings();
 			const columnSettingsString = JSON.stringify(columnSettings);
-			this.rows.forEach(row => {
+			const rowsCount = this.rows.length;
+			this.rows.forEach((row, index) => {
 				if (row._columnsInfoString !== columnSettingsString) {
 					row._columnsInfo = columnSettings;
 					row._columnsInfoString = JSON.stringify(row._columnsInfo);
 				}
+				row._ariaPosition = this.i18nBundle.getText(i18nDefaults.TABLE_ROW_POSITION, index + 1, rowsCount);
 				row._busy = this.busy;
 				row.removeEventListener("ui5-_focused", this.fnOnRowFocused);
 				row.addEventListener("ui5-_focused", this.fnOnRowFocused);

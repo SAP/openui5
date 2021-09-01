@@ -8,7 +8,7 @@ sap.ui.define(['./StandardListItem', './generated/templates/SuggestionListItemTe
 				type: HTMLElement,
 			},
 			"default": {
-				propertyName: "title",
+				propertyName: "titleText",
 			},
 		},
 	};
@@ -21,10 +21,10 @@ sap.ui.define(['./StandardListItem', './generated/templates/SuggestionListItemTe
 		}
 		onBeforeRendering(...params) {
 			super.onBeforeRendering(...params);
-			this.hasTitle = !!this.title.length;
+			this.hasTitle = !!this.titleText.length;
 		}
 		get effectiveTitle() {
-			return this.title.map(el => el.textContent).join("");
+			return this.titleText.filter(node => node.nodeType !== Node.COMMENT_NODE).map(el => el.textContent).join("");
 		}
 		get hasDescription() {
 			return this.richDescription.length || this.description;

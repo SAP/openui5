@@ -17,7 +17,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/u
 		slots:  {
 			tokens: {
 				type: HTMLElement,
-				multiple: true,
 			},
 		},
 		events:  {

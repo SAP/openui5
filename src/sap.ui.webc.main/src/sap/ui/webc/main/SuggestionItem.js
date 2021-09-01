@@ -70,16 +70,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the item to be displayed as a group item. <br>
-				 * <br>
-				 * <b>Note:</b> When set, the other properties, such as <code>image</code>, <code>icon</code>, <code>description</code>, etc. will be omitted and only the <code>text</code> will be displayed.
-				 */
-				group: {
-					type: "boolean",
-					defaultValue: false
-				},
-
-				/**
 				 * Defines the <code>icon</code> source URI. <br>
 				 * <br>
 				 * <b>Note:</b> SAP-icons font provides numerous built-in icons. To find all the available icons, see the <ui5-link target="_blank" href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html" class="api-table-content-cell-link">Icon Explorer</ui5-link>.

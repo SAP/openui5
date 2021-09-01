@@ -12,6 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
+	var WrappingType = library.WrappingType;
 
 	/**
 	 * Constructor for a new <code>RadioButton</code>.
@@ -24,7 +25,7 @@ sap.ui.define([
 	 *
 	 * <h3>Overview</h3>
 	 *
-	 * The <code>sap.ui.webc.main.RadioButton</code> component enables users to select a single option from a set of options. When a <code>sap.ui.webc.main.RadioButton</code> is selected by the user, the <code>select</code> event is fired. When a <code>sap.ui.webc.main.RadioButton</code> that is within a group is selected, the one that was previously selected gets automatically deselected. You can group radio buttons by using the <code>name</code> property. <br>
+	 * The <code>sap.ui.webc.main.RadioButton</code> component enables users to select a single option from a set of options. When a <code>sap.ui.webc.main.RadioButton</code> is selected by the user, the <code>change</code> event is fired. When a <code>sap.ui.webc.main.RadioButton</code> that is within a group is selected, the one that was previously selected gets automatically deselected. You can group radio buttons by using the <code>name</code> property. <br>
 	 * <b>Note:</b> If <code>sap.ui.webc.main.RadioButton</code> is not part of a group, it can be selected once, but can not be deselected back.
 	 *
 	 * <h3>Keyboard Handling</h3>
@@ -46,11 +47,21 @@ sap.ui.define([
 	var RadioButton = WebComponent.extend("sap.ui.webc.main.RadioButton", {
 		metadata: {
 			library: "sap.ui.webc.main",
-			tag: "ui5-radiobutton-ui5",
+			tag: "ui5-radio-button-ui5",
 			properties: {
 
 				/**
-				 * Determines whether the component is disabled. <br>
+				 * Defines whether the component is checked or not. <br>
+				 * <br>
+				 * <b>Note:</b> The property value can be changed with user interaction, either by clicking/tapping on the component, or by using the Space or Enter key.
+				 */
+				checked: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/**
+				 * Defines whether the component is disabled. <br>
 				 * <br>
 				 * <b>Note:</b> A disabled component is completely noninteractive.
 				 */
@@ -81,21 +92,11 @@ sap.ui.define([
 				},
 
 				/**
-				 * Determines whether the component is read-only. <br>
+				 * Defines whether the component is read-only. <br>
 				 * <br>
 				 * <b>Note:</b> A read-only component is not editable, but still provides visual feedback upon user interaction.
 				 */
 				readonly: {
-					type: "boolean",
-					defaultValue: false
-				},
-
-				/**
-				 * Determines whether the component is selected or not. <br>
-				 * <br>
-				 * <b>Note:</b> The property value can be changed with user interaction, either by cliking/tapping on the component, or by using the Space or Enter key.
-				 */
-				selected: {
 					type: "boolean",
 					defaultValue: false
 				},
@@ -134,19 +135,25 @@ sap.ui.define([
 				/**
 				 * Defines whether the component text wraps when there is not enough space. <br>
 				 * <br>
-				 * <b>Note:</b> By default, the text truncates when there is not enough space.
+				 * Available options are:
+				 * <ul>
+				 *     <li><code>None</code> - The text will be truncated with an ellipsis.</li>
+				 *     <li><code>Normal</code> - The text will wrap. The words will not be broken based on hyphenation.</li>
+				 * </ul>
 				 */
-				wrap: {
-					type: "boolean",
-					defaultValue: false
+				wrappingType: {
+					type: "sap.ui.webc.main.WrappingType",
+					defaultValue: WrappingType.None
 				}
 			},
 			events: {
 
 				/**
-				 * Fired when the component selected state changes.
+				 * Fired when the component checked state changes.
 				 */
-				select: {}
+				change: {
+					parameters: {}
+				}
 			}
 		}
 	});

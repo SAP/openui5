@@ -6,9 +6,10 @@ sap.ui.define([
 	"sap/ui/webc/main/Table",
 	"sap/ui/webc/main/TableColumn",
 	"sap/ui/webc/main/Button",
+	"sap/ui/webc/main/TableGroupRow",
 	"sap/ui/webc/main/TableRow",
 	"sap/ui/webc/main/TableCell"
-], function(createAndAppendDiv, Core, Table, TableColumn, Button, TableRow, TableCell) {
+], function(createAndAppendDiv, Core, Table, TableColumn, Button, TableGroupRow, TableRow, TableCell) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
@@ -100,84 +101,8 @@ sap.ui.define([
 					})
 				],
 				rows: [
-					new TableRow({
-						cells: [
-							new TableCell({
-								content: [
-									new Button({
-										icon: "employee",
-										text: "Some text...",
-										click: function(oEvent) {
-											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-										}
-									}),
-									new Button({
-										icon: "employee",
-										text: "Some text...",
-										click: function(oEvent) {
-											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-										}
-									}),
-									new Button({
-										icon: "employee",
-										text: "Some text...",
-										click: function(oEvent) {
-											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-										}
-									})
-								]
-							}),
-							new TableCell({
-								content: [
-									new Button({
-										icon: "employee",
-										text: "Some text...",
-										click: function(oEvent) {
-											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-										}
-									}),
-									new Button({
-										icon: "employee",
-										text: "Some text...",
-										click: function(oEvent) {
-											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-										}
-									}),
-									new Button({
-										icon: "employee",
-										text: "Some text...",
-										click: function(oEvent) {
-											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-										}
-									})
-								]
-							}),
-							new TableCell({
-								content: [
-									new Button({
-										icon: "employee",
-										text: "Some text...",
-										click: function(oEvent) {
-											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-										}
-									}),
-									new Button({
-										icon: "employee",
-										text: "Some text...",
-										click: function(oEvent) {
-											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-										}
-									}),
-									new Button({
-										icon: "employee",
-										text: "Some text...",
-										click: function(oEvent) {
-											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-										}
-									})
-								]
-							})
-						]
+					new TableGroupRow({
+						text: "Some text..."
 					}),
 					new TableRow({
 						cells: [
@@ -258,84 +183,8 @@ sap.ui.define([
 							})
 						]
 					}),
-					new TableRow({
-						cells: [
-							new TableCell({
-								content: [
-									new Button({
-										icon: "employee",
-										text: "Some text...",
-										click: function(oEvent) {
-											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-										}
-									}),
-									new Button({
-										icon: "employee",
-										text: "Some text...",
-										click: function(oEvent) {
-											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-										}
-									}),
-									new Button({
-										icon: "employee",
-										text: "Some text...",
-										click: function(oEvent) {
-											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-										}
-									})
-								]
-							}),
-							new TableCell({
-								content: [
-									new Button({
-										icon: "employee",
-										text: "Some text...",
-										click: function(oEvent) {
-											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-										}
-									}),
-									new Button({
-										icon: "employee",
-										text: "Some text...",
-										click: function(oEvent) {
-											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-										}
-									}),
-									new Button({
-										icon: "employee",
-										text: "Some text...",
-										click: function(oEvent) {
-											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-										}
-									})
-								]
-							}),
-							new TableCell({
-								content: [
-									new Button({
-										icon: "employee",
-										text: "Some text...",
-										click: function(oEvent) {
-											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-										}
-									}),
-									new Button({
-										icon: "employee",
-										text: "Some text...",
-										click: function(oEvent) {
-											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-										}
-									}),
-									new Button({
-										icon: "employee",
-										text: "Some text...",
-										click: function(oEvent) {
-											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-										}
-									})
-								]
-							})
-						]
+					new TableGroupRow({
+						text: "Some text..."
 					})
 				],
 				loadMore: function(oEvent) {

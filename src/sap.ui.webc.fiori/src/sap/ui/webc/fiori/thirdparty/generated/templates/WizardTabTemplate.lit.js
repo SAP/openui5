@@ -1,20 +1,11 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/ifDefined', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], function (ifDefined, litRender) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], function (litRender) { 'use strict';
 
-	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+	const block0 = (context, tags, suffix) => litRender.html`<div class="ui5-wiz-step-root" role="listitem" tabindex="${litRender.ifDefined(context.tabIndex)}" aria-current="${litRender.ifDefined(context.accInfo.ariaCurrent)}" aria-setsize="${litRender.ifDefined(context.accInfo.ariaSetsize)}" aria-posinset="${litRender.ifDefined(context.accInfo.ariaPosinset)}" aria-disabled="${litRender.ifDefined(context.accInfo.ariaDisabled)}" aria-label="${litRender.ifDefined(context.accInfo.ariaLabel)}" @click="${context._onclick}" @keydown="${context._onkeydown}" @keyup="${context._onkeyup}" @focusin="${context._onfocusin}"><div class="ui5-wiz-step-main"><div class="ui5-wiz-step-icon-circle">${ context.icon ? block1(context, tags, suffix) : block2(context) }</div>${ context.hasTexts ? block3(context) : undefined }</div>${ !context.hideSeparator ? block4() : undefined }</div>`;
+	const block1 = (context, tags, suffix) => litRender.html`<${litRender.scopeTag("ui5-icon", tags, suffix)} class="ui5-wiz-step-icon" name="${litRender.ifDefined(context.icon)}"></${litRender.scopeTag("ui5-icon", tags, suffix)}>`;
+	const block2 = (context, tags, suffix) => litRender.html`<span class="ui5-wiz-step-number">${litRender.ifDefined(context.number)}</span>`;
+	const block3 = (context, tags, suffix) => litRender.html`<div class="ui5-wiz-step-texts"><div class="ui5-wiz-step-title-text">${litRender.ifDefined(context.titleText)}</div><div class="ui5-wiz-step-subtitle-text">${litRender.ifDefined(context.subtitleText)}</div></div>`;
+	const block4 = (context, tags, suffix) => litRender.html`<div class="ui5-wiz-step-hr"></div>`;
 
-	var ifDefined__default = /*#__PURE__*/_interopDefaultLegacy(ifDefined);
-
-	const block0 = (context) => { return litRender.html`<div class="ui5-wiz-step-root" role="listitem" tabindex="${ifDefined__default(context.tabIndex)}" aria-current="${ifDefined__default(context.accInfo.ariaCurrent)}" aria-setsize="${ifDefined__default(context.accInfo.ariaSetsize)}" aria-posinset="${ifDefined__default(context.accInfo.ariaPosinset)}" aria-disabled="${ifDefined__default(context.accInfo.ariaDisabled)}" aria-label="${ifDefined__default(context.accInfo.ariaLabel)}" @click="${context._onclick}" @keydown="${context._onkeydown}" @keyup="${context._onkeyup}" @focusin="${context._onfocusin}"><div class="ui5-wiz-step-main"><div class="ui5-wiz-step-icon-circle">${ context.icon ? block1(context) : block2(context) }</div>${ context.hasTexts ? block3(context) : undefined }</div>${ !context.hideSeparator ? block4() : undefined }</div>`; };
-	const block1 = (context) => { return litRender.html`<ui5-icon class="ui5-wiz-step-icon" name="${ifDefined__default(context.icon)}"></ui5-icon>`; };
-	const block2 = (context) => { return litRender.html`<span class="ui5-wiz-step-number">${ifDefined__default(context.number)}</span>`; };
-	const block3 = (context) => { return litRender.html`<div class="ui5-wiz-step-texts"><div class="ui5-wiz-step-title-text">${ifDefined__default(context.titleText)}</div><div class="ui5-wiz-step-subtitle-text">${ifDefined__default(context.subtitleText)}</div></div>`; };
-	const block4 = (context) => { return litRender.html`<div class="ui5-wiz-step-hr"></div>`; };
-	const main = (context, tags, suffix) => {
-		litRender.setTags(tags);
-		litRender.setSuffix(suffix);
-		return block0(context);
-	};
-
-	return main;
+	return block0;
 
 });

@@ -55,11 +55,11 @@
 
 
                 var oPopover3Button = new Button({
-                    text: "openBy",
+                    text: "showAt",
                     click: function(oEvent) {
-                        console.log("Calling openBy...");
-                        var result = oPopover.openBy(oPopover3Button);
-                        console.log("... openBy returned: ", result);
+                        console.log("Calling showAt...");
+                        var result = oPopover.showAt();
+                        console.log("... showAt returned: ", result);
                     }
                 });
                 oPopover3Button.placeAt("methodButtons");

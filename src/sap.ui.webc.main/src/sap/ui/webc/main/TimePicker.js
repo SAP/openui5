@@ -169,12 +169,16 @@ sap.ui.define([
 				/**
 				 * Fired when the input operation has finished by clicking the "OK" button or when the text in the input field has changed and the focus leaves the input field.
 				 */
-				change: {},
+				change: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired when the value of the <code>sap.ui.webc.main.TimePicker</code> is changed at each key stroke.
 				 */
-				input: {}
+				input: {
+					parameters: {}
+				}
 			},
 			methods: ["closePicker", "formatValue", "isOpen", "isValid", "openPicker"],
 			getters: ["dateValue"]

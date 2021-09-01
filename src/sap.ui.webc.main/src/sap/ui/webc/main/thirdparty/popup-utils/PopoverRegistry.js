@@ -30,7 +30,7 @@ sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/util/PopupUtils', 
 	};
 	const clickHandler = event => {
 		const openedPopups = OpenedPopupsRegistry.getOpenedPopups();
-		const isTopPopupPopover = openedPopups[openedPopups.length - 1].instance.openBy;
+		const isTopPopupPopover = openedPopups[openedPopups.length - 1].instance.showAt;
 		if (openedPopups.length === 0 || !isTopPopupPopover) {
 			return;
 		}

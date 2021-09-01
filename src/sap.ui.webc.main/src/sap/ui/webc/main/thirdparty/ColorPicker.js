@@ -313,12 +313,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				x: ((Math.round(hslColours.l * 100) * 2.56)) - 6.5,
 				y: (256 - (Math.round(hslColours.s * 100) * 2.56)) - 6.5,
 			};
-			if (this.selectedHue) {
-				this._hue = this.selectedHue;
-				this.selectedHue = undefined;
-			} else {
-				this._hue = Math.round(hslColours.h * 4.25);
-			}
+			this._hue = this.selectedHue ? this.selectedHue : Math.round(hslColours.h * 4.25);
 			this._setMainColor(this._hue);
 		}
 		get inputsDisabled() {

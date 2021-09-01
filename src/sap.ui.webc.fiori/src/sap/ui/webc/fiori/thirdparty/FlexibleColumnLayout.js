@@ -112,6 +112,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		onExitDOM() {
 			ResizeHandler__default.deregister(this, this._handleResize);
+			["start", "mid", "end"].forEach(column => {
+				this[`${column}ColumnDOM`].removeEventListener("transitionend", this.columnResizeHandler);
+			});
 		}
 		onAfterRendering() {
 			if (this.initialRendering) {
@@ -177,15 +180,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			if (currentlyHidden) {
 				columnDOM.style.width = columnWidth;
-				setTimeout(() => {
-					columnDOM.classList.add("ui5-fcl-column--hidden");
-				}, FlexibleColumnLayout.ANIMATION_DURATION);
+				columnDOM.addEventListener("transitionend", this.columnResizeHandler);
 				return;
 			}
 			if (previouslyHidden) {
+				columnDOM.removeEventListener("transitionend", this.columnResizeHandler);
 				columnDOM.classList.remove("ui5-fcl-column--hidden");
 				columnDOM.style.width = columnWidth;
 			}
+		}
+		columnResizeHandler(event) {
+			event.target.classList.add("ui5-fcl-column--hidden");
 		}
 		nextLayout(layout, arrowsInfo = {}) {
 			if (arrowsInfo.start) {

@@ -95,13 +95,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 			const target = event.target;
 			return target === this._opener || (target.getFocusDomRef && target.getFocusDomRef() === this._opener) || event.composedPath().indexOf(this._opener) > -1;
 		}
-		async openBy(opener, preventInitialFocus = false) {
+		async showAt(opener, preventInitialFocus = false) {
 			if (!opener || this.opened) {
 				return;
 			}
 			this._opener = opener;
 			this._openerRect = opener.getBoundingClientRect();
-			await super.open(preventInitialFocus);
+			await super._open(preventInitialFocus);
 		}
 		_addOpenedPopup() {
 			PopoverRegistry.addOpenedPopover(this);
@@ -120,7 +120,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 			const closedPopupParent = PopupUtils.getClosedPopupParent(this._opener);
 			let overflowsBottom = false;
 			let overflowsTop = false;
-			if (closedPopupParent.openBy) {
+			if (closedPopupParent.showAt) {
 				const contentRect = closedPopupParent.contentDOM.getBoundingClientRect();
 				overflowsBottom = openerRect.top > (contentRect.top + contentRect.height);
 				overflowsTop = (openerRect.top + openerRect.height) < contentRect.top;
@@ -139,9 +139,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 			}
 		}
 		reposition() {
-			this.show();
+			this._show();
 		}
-		show() {
+		_show() {
 			let placement;
 			const popoverSize = this.getPopoverSize();
 			if (popoverSize.width === 0 || popoverSize.height === 0) {
@@ -160,7 +160,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 				return this.close();
 			}
 			if (this._oldPlacement && (this._oldPlacement.left === placement.left) && (this._oldPlacement.top === placement.top) && stretching) {
-				super.show();
+				super._show();
 				this.style.width = this._width;
 				return;
 			}
@@ -197,7 +197,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 				top: `${top}px`,
 				left: `${left}px`,
 			});
-			super.show();
+			super._show();
 			if (stretching && this._width) {
 				this.style.width = this._width;
 			}
@@ -416,7 +416,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 			return this.hideBackdrop;
 		}
 		get _ariaLabelledBy() {
-			return this.ariaLabel ? undefined : "ui5-popup-header";
+			return this.accessibleName ? undefined : "ui5-popup-header";
 		}
 		get _ariaModal() {
 			return true;

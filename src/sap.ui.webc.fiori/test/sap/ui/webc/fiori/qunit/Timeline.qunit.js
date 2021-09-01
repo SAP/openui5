@@ -42,8 +42,8 @@ sap.ui.define([
 								}
 							})
 						],
-						itemNameClick: function(oEvent) {
-							// console.log("Event itemNameClick fired for TimelineItem with parameters: ", oEvent.getParameters());
+						nameClick: function(oEvent) {
+							// console.log("Event nameClick fired for TimelineItem with parameters: ", oEvent.getParameters());
 						}
 					}),
 					new TimelineItem({
@@ -73,8 +73,8 @@ sap.ui.define([
 								}
 							})
 						],
-						itemNameClick: function(oEvent) {
-							// console.log("Event itemNameClick fired for TimelineItem with parameters: ", oEvent.getParameters());
+						nameClick: function(oEvent) {
+							// console.log("Event nameClick fired for TimelineItem with parameters: ", oEvent.getParameters());
 						}
 					}),
 					new TimelineItem({
@@ -104,8 +104,8 @@ sap.ui.define([
 								}
 							})
 						],
-						itemNameClick: function(oEvent) {
-							// console.log("Event itemNameClick fired for TimelineItem with parameters: ", oEvent.getParameters());
+						nameClick: function(oEvent) {
+							// console.log("Event nameClick fired for TimelineItem with parameters: ", oEvent.getParameters());
 						}
 					})
 				]

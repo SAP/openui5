@@ -21,9 +21,9 @@ sap.ui.define([
 	 *
 	 * <h3>Overview</h3>
 	 *
-	 * The <code>sap.ui.webc.main.SegmentedButton</code> shows a group of buttons. When the user clicks or taps one of the buttons, it stays in a pressed state. It automatically resizes the buttons to fit proportionally within the component. When no width is set, the component uses the available width. <br>
+	 * The <code>sap.ui.webc.main.SegmentedButton</code> shows a group of items. When the user clicks or taps one of the items, it stays in a pressed state. It automatically resizes the items to fit proportionally within the component. When no width is set, the component uses the available width. <br>
 	 * <br>
-	 * <b>Note:</b> There can be just one selected <code>button</code> at a time.
+	 * <b>Note:</b> There can be just one selected <code>item</code> at a time.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -39,45 +39,45 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.webc.main",
 			tag: "ui5-segmented-button-ui5",
-			defaultAggregation: "buttons",
+			defaultAggregation: "items",
 			aggregations: {
 
 				/**
-				 * Defines the buttons of component. <br>
+				 * Defines the items of <code>sap.ui.webc.main.SegmentedButton</code>. <br>
 				 * <br>
-				 * <b>Note:</b> Multiple buttons are allowed. <br>
+				 * <b>Note:</b> Multiple items are allowed. <br>
 				 * <br>
-				 * <b>Note:</b> Use the <code>sap.ui.webc.main.ToggleButton</code> for the intended design.
+				 * <b>Note:</b> Use the <code>sap.ui.webc.main.SegmentedButtonItem</code> for the intended design.
 				 */
-				buttons: {
-					type: "sap.ui.webc.main.IButton",
+				items: {
+					type: "sap.ui.webc.main.ISegmentedButtonItem",
 					multiple: true
 				}
 			},
 			events: {
 
 				/**
-				 * Fired when the selected button changes.
+				 * Fired when the selected item changes.
 				 */
 				selectionChange: {
 					parameters: {
 						/**
-						 * the pressed button.
+						 * the pressed item.
 						 */
-						selectedButton: {
+						selectedItem: {
 							type: "HTMLElement"
 						}
 					}
 				}
 			},
-			getters: ["selectedButton"]
+			getters: ["selectedItem"]
 		}
 	});
 
 	/**
-	 * Returns the currently selected button.
+	 * Returns the currently selected item.
 	 * @public
-	 * @name sap.ui.webc.main.SegmentedButton#getSelectedButton
+	 * @name sap.ui.webc.main.SegmentedButton#getSelectedItem
 	 * @function
 	 */
 

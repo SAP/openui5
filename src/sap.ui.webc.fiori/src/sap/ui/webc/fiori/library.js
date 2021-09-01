@@ -34,12 +34,16 @@ sap.ui.define([
 			types: [
 				"sap.ui.webc.fiori.BarDesign",
 				"sap.ui.webc.fiori.FCLLayout",
+				"sap.ui.webc.fiori.IllustrationMessageType",
 				"sap.ui.webc.fiori.PageBackgroundDesign",
+				"sap.ui.webc.fiori.TimelineLayout",
 				"sap.ui.webc.fiori.UploadState"
 			],
 			controls: [
 				"sap.ui.webc.fiori.Bar",
+				"sap.ui.webc.fiori.BarcodeScannerDialog",
 				"sap.ui.webc.fiori.FlexibleColumnLayout",
+				"sap.ui.webc.fiori.IllustratedMessage",
 				"sap.ui.webc.fiori.NotificationAction",
 				"sap.ui.webc.fiori.NotificationListGroupItem",
 				"sap.ui.webc.fiori.NotificationListItem",
@@ -55,6 +59,7 @@ sap.ui.define([
 				"sap.ui.webc.fiori.TimelineItem",
 				"sap.ui.webc.fiori.UploadCollection",
 				"sap.ui.webc.fiori.UploadCollectionItem",
+				"sap.ui.webc.fiori.ViewSettingsDialog",
 				"sap.ui.webc.fiori.Wizard",
 				"sap.ui.webc.fiori.WizardStep"
 			],
@@ -63,7 +68,7 @@ sap.ui.define([
 		});
 
 		/**
-		 * UI5 library: sap.ui.webc.fiori
+		 * SAPUI5 library with controls based on UI5 Web Components
 		 *
 		 * @namespace
 		 * @alias sap.ui.webc.fiori
@@ -296,6 +301,85 @@ Use to display both a master and a detail page when the user should focus on the
 
 
 		/**
+		 * Different illustration types of Illustrated Message.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		thisLib.IllustrationMessageType = {
+
+			/**
+			 * "BeforeSearch" illustration type.
+			 * @public
+			 */
+			BeforeSearch: "BeforeSearch",
+
+			/**
+			 * "NoActivities" illustration type.
+			 * @public
+			 */
+			NoActivities: "NoActivities",
+
+			/**
+			 * "NoData" illustration type.
+			 * @public
+			 */
+			NoData: "NoData",
+
+			/**
+			 * "NoEntries" illustration type.
+			 * @public
+			 */
+			NoEntries: "NoEntries",
+
+			/**
+			 * "NoMail" illustration type.
+			 * @public
+			 */
+			NoMail: "NoMail",
+
+			/**
+			 * "NoNotifications" illustration type.
+			 * @public
+			 */
+			NoNotifications: "NoNotifications",
+
+			/**
+			 * "NoSavedItems" illustration type.
+			 * @public
+			 */
+			NoSavedItems: "NoSavedItems",
+
+			/**
+			 * "NoSearchResults" illustration type.
+			 * @public
+			 */
+			NoSearchResults: "NoSearchResults",
+
+			/**
+			 * "NoTasks" illustration type.
+			 * @public
+			 */
+			NoTasks: "NoTasks",
+
+			/**
+			 * "UnableToLoad" illustration type.
+			 * @public
+			 */
+			UnableToLoad: "UnableToLoad",
+
+			/**
+			 * "UnableToUpload" illustration type.
+			 * @public
+			 */
+			UnableToUpload: "UnableToUpload"
+		};
+
+
+		/**
 		 * undefined
 		 *
 		 * @enum {string}
@@ -323,6 +407,31 @@ Use to display both a master and a detail page when the user should focus on the
 			 * @public
 			 */
 			Transparent: "Transparent"
+		};
+
+
+		/**
+		 * Different types of Timeline.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		thisLib.TimelineLayout = {
+
+			/**
+			 * Horizontal layout
+			 * @public
+			 */
+			Horizontal: "Horizontal",
+
+			/**
+			 * Vertical layout Default type
+			 * @public
+			 */
+			Vertical: "Vertical"
 		};
 
 

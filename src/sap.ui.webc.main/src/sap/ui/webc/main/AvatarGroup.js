@@ -11,7 +11,6 @@ sap.ui.define([
 	"use strict";
 
 	var AvatarGroupType = library.AvatarGroupType;
-	var AvatarSize = library.AvatarSize;
 
 	/**
 	 * Constructor for a new <code>AvatarGroup</code>.
@@ -88,23 +87,6 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines predefined size of the <code>sap.ui.webc.main.Avatar</code>. <br>
-				 * <br>
-				 * Available options are:
-				 * <ul>
-				 *     <li><code>XS</code></li>
-				 *     <li><code>S</code></li>
-				 *     <li><code>M</code></li>
-				 *     <li><code>L</code></li>
-				 *     <li><code>XL</code></li>
-				 * </ul>
-				 */
-				avatarSize: {
-					type: "sap.ui.webc.main.AvatarSize",
-					defaultValue: AvatarSize.S
-				},
-
-				/**
 				 * Defines the mode of the <code>AvatarGroup</code>. <br>
 				 * <br>
 				 * Available options are:
@@ -168,7 +150,9 @@ sap.ui.define([
 				/**
 				 * Fired when the count of visible <code>sap.ui.webc.main.Avatar</code> elements in the component has changed
 				 */
-				overflow: {}
+				overflow: {
+					parameters: {}
+				}
 			},
 			getters: ["colorScheme", "hiddenItems"]
 		}

@@ -114,14 +114,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines when the <code>load-more</code> event is fired. If not applied the event will not be fired.
-				 */
-				infiniteScrollOffset: {
-					type: "int",
-					defaultValue: 1
-				},
-
-				/**
 				 * Defines the number of items per page on large size (more than 1024px). One item per page shown by default.
 				 */
 				itemsPerPageL: {
@@ -143,14 +135,6 @@ sap.ui.define([
 				itemsPerPageS: {
 					type: "int",
 					defaultValue: 1
-				},
-
-				/**
-				 * Defines the index of the initially selected item.
-				 */
-				selectedIndex: {
-					type: "int",
-					defaultValue: 0
 				}
 			},
 			defaultAggregation: "content",
@@ -167,26 +151,30 @@ sap.ui.define([
 			events: {
 
 				/**
-				 * Fired for the last items of the component if it is scrolled and the direction of scrolling is to the end. The number of items for which the event is fired is controlled by the <code>infiniteScrollOffset</code> property.
-				 */
-				loadMore: {},
-
-				/**
-				 * Fired whenever the <code>selectedIndex</code> changes due to user interaction, when the user clicks on the navigation arrows or while resizing, based on the <code>items-per-page-l</code>, <code>items-per-page-m</code> and <code>items-per-page-s</code> properties.
+				 * Fired whenever the page changes due to user interaction, when the user clicks on the navigation arrows or while resizing, based on the <code>items-per-page-l</code>, <code>items-per-page-m</code> and <code>items-per-page-s</code> properties.
 				 */
 				navigate: {
 					parameters: {
 						/**
-						 * the current <code>selectedIndex</code>.
+						 * the current selected index
 						 */
 						selectedIndex: {
 							type: "int"
 						}
 					}
 				}
-			}
+			},
+			methods: ["navigateTo"]
 		}
 	});
+
+	/**
+	 * Changes the currently displayed page.
+	 * @param {int} itemIndex The index of the target page
+	 * @public
+	 * @name sap.ui.webc.main.Carousel#navigateTo
+	 * @function
+	 */
 
 	return Carousel;
 });

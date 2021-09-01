@@ -30,6 +30,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			collapsed: {
 				type: Boolean,
 			},
+			 noAnimation: {
+				type: Boolean,
+			},
 			accessibleRole: {
 				type: PanelAccessibleRole,
 				defaultValue: PanelAccessibleRole.Form,
@@ -97,8 +100,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			return true;
 		}
-		shouldAnimate() {
-			return AnimationMode.getAnimationMode() !== AnimationMode__default.None;
+		shouldNotAnimate() {
+			return this.noAnimation || AnimationMode.getAnimationMode() === AnimationMode__default.None;
 		}
 		_headerClick(event) {
 			if (!this.shouldToggle(event.target)) {
@@ -135,7 +138,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				return;
 			}
 			this.collapsed = !this.collapsed;
-			if (!this.shouldAnimate()) {
+			if (this.shouldNotAnimate()) {
 				this.fireEvent("toggle");
 				return;
 			}
@@ -165,7 +168,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get classes() {
 			return {
 				headerBtn: {
-					"ui5-panel-header-button-animated": this.shouldAnimate(),
+					"ui5-panel-header-button-animated": !this.shouldNotAnimate(),
 				},
 			};
 		}

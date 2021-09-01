@@ -109,6 +109,9 @@ sap.ui.define([
 			constructor : function(sId, mSettings) {
 				Control.apply(this, arguments);
 
+				this.__onInvalidationHandlerAttached = false;
+				this.__onInvalidationBound = this.__onInvalidation.bind(this);
+
 				// After the DOM element is rendered for the first time, attach the invalidation callback (in __onAfterRenderingDelegate)
 				this.__delegates = {
 					onAfterRendering: this.__onAfterRenderingDelegate
@@ -233,11 +236,18 @@ sap.ui.define([
 		 */
 		WebComponent.prototype.__onAfterRenderingDelegate = function() {
 			var oDomRef = this.getDomRef();
-			oDomRef.onInvalidation = this.__onInvalidation.bind(this);
-			if (oDomRef._individualSlot) {
-				this.__slot = oDomRef._individualSlot; // If the component creates individual slots for children, f.e. columns-3 or default-1, update the __slot property, otherwise RenderManager will set the normal slot name, f.e. columns or ""
-			}
-			this.__updateObjectProperties(oDomRef);
+
+			window.customElements.whenDefined(oDomRef.localName).then(function() {
+				if (!this.__onInvalidationHandlerAttached) {
+					oDomRef.attachInvalidate(this.__onInvalidationBound);
+					this.__onInvalidationHandlerAttached = true;
+				}
+
+				if (oDomRef._individualSlot) {
+					this.__slot = oDomRef._individualSlot; // If the component creates individual slots for children, f.e. columns-3 or default-1, update the __slot property, otherwise RenderManager will set the normal slot name, f.e. columns or ""
+				}
+				this.__updateObjectProperties(oDomRef);
+			}.bind(this));
 		};
 
 		/**
@@ -342,8 +352,14 @@ sap.ui.define([
 
 
 		WebComponent.prototype.destroy = function() {
+			var oDomRef = this.getDomRef();
+
 			this.__detachCustomEventsListeners();
-			this.detachBrowserEvent("_property-change", this.__onPropertyChange, this);
+
+			if (this.__onInvalidationHandlerAttached) {
+				oDomRef.detachInvalidate(this.__onInvalidationBound);
+			}
+
 			return Control.prototype.destroy.call(this, arguments);
 		};
 

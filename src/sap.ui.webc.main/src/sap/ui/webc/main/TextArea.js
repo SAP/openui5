@@ -53,6 +53,21 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Sets the accessible aria name of the component.
+				 */
+				accessibleName: {
+					type: "string"
+				},
+
+				/**
+				 * Receives id(or many ids) of the elements that label the textarea.
+				 */
+				accessibleNameRef: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
 				 * Indicates whether the user can interact with the component or not. <br>
 				 * <br>
 				 * <b>Note:</b> Disabled components cannot be focused and they are out of the tab chain.
@@ -218,12 +233,16 @@ sap.ui.define([
 				/**
 				 * Fired when the text has changed and the focus leaves the component.
 				 */
-				change: {},
+				change: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired when the value of the component changes at each keystroke or when something is pasted.
 				 */
-				input: {}
+				input: {
+					parameters: {}
+				}
 			}
 		}
 	});

@@ -112,7 +112,9 @@ sap.ui.define([
 				/**
 				 * Fired when the component checked state changes.
 				 */
-				change: {}
+				change: {
+					parameters: {}
+				}
 			}
 		}
 	});

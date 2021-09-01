@@ -12,14 +12,22 @@
     <script>
         sap.ui.getCore().attachInit(function() {
             sap.ui.require([
-                "sap/ui/webc/main/Avatar"
+                "sap/ui/webc/main/Avatar",
+                "sap/ui/webc/main/Button"
             ], function(
-                Avatar
+                Avatar, Button
             ) {
 
 
                 var oAvatar = new Avatar({
-                    icon: "employee"
+                    icon: "employee",
+                    content: new Button({
+                        icon: "employee",
+                        text: "Some text...",
+                        click: function(oEvent) {
+                            console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                        }
+                    })
                 });
                 oAvatar.placeAt("testControl");
             });

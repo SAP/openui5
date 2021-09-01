@@ -1,18 +1,9 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/ifDefined', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], function (ifDefined, litRender) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], function (litRender) { 'use strict';
 
-	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+	const block0 = (context, tags, suffix) => litRender.html`<${litRender.scopeTag("ui5-li-custom", tags, suffix)} id="${litRender.ifDefined(context._id)}" class="${litRender.ifDefined(context.overflowClasses)}" type="${litRender.ifDefined(context.overflowState)}" ?selected="${context.effectiveSelected}" ?disabled="${context.effectiveDisabled}" aria-disabled="${litRender.ifDefined(context.effectiveDisabled)}" aria-selected="${litRender.ifDefined(context.effectiveSelected)}" aria-labelledby="${litRender.ifDefined(context.ariaLabelledBy)}"><div class="ui5-tab-overflow-itemContent">${ context.icon ? block1(context, tags, suffix) : undefined }${litRender.ifDefined(context.text)}${ context.additionalText ? block2(context) : undefined }</div></${litRender.scopeTag("ui5-li-custom", tags, suffix)}>`;
+	const block1 = (context, tags, suffix) => litRender.html`<${litRender.scopeTag("ui5-icon", tags, suffix)} name="${litRender.ifDefined(context.icon)}"></${litRender.scopeTag("ui5-icon", tags, suffix)}>`;
+	const block2 = (context, tags, suffix) => litRender.html` (${litRender.ifDefined(context.additionalText)}) `;
 
-	var ifDefined__default = /*#__PURE__*/_interopDefaultLegacy(ifDefined);
-
-	const block0 = (context) => { return litRender.html`<ui5-li-custom id="${ifDefined__default(context._id)}" class="${ifDefined__default(context.overflowClasses)}" type="${ifDefined__default(context.overflowState)}" ?selected="${context.effectiveSelected}" ?disabled="${context.effectiveDisabled}" aria-disabled="${ifDefined__default(context.effectiveDisabled)}" aria-selected="${ifDefined__default(context.effectiveSelected)}" aria-labelledby="${ifDefined__default(context.ariaLabelledBy)}"><div class="ui5-tab-overflow-itemContent">${ context.icon ? block1(context) : undefined }${ifDefined__default(context.text)}${ context.additionalText ? block2(context) : undefined }</div></ui5-li-custom>`; };
-	const block1 = (context) => { return litRender.html`<ui5-icon name="${ifDefined__default(context.icon)}"></ui5-icon>`; };
-	const block2 = (context) => { return litRender.html` (${ifDefined__default(context.additionalText)}) `; };
-	const main = (context, tags, suffix) => {
-		litRender.setTags(tags);
-		litRender.setSuffix(suffix);
-		return block0(context);
-	};
-
-	return main;
+	return block0;
 
 });

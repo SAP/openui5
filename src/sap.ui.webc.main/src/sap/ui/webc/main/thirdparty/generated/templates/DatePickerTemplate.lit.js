@@ -1,18 +1,9 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/ifDefined', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], function (ifDefined, litRender) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], function (litRender) { 'use strict';
 
-	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+	const block0 = (context, tags, suffix) => litRender.html`<div class="ui5-date-picker-root" style="${litRender.styleMap(context.styles.main)}"><!-- INPUT --><${litRender.scopeTag("ui5-input", tags, suffix)} id="${litRender.ifDefined(context._id)}-inner" class="ui5-date-picker-input" placeholder="${litRender.ifDefined(context._placeholder)}" type="${litRender.ifDefined(context.type)}" value="${litRender.ifDefined(context.value)}" ?disabled="${context.disabled}" ?required="${context.required}" ?readonly="${context.readonly}" value-state="${litRender.ifDefined(context.valueState)}" data-sap-focus-ref ._inputAccInfo ="${litRender.ifDefined(context.accInfo)}" @ui5-change="${litRender.ifDefined(context._onInputChange)}" @ui5-input="${litRender.ifDefined(context._onInputInput)}" @ui5-submit="${litRender.ifDefined(context._onInputSubmit)}" @keydown="${context._onkeydown}">${ context.valueStateMessage.length ? block1() : undefined }${ !context.readonly ? block2(context, tags, suffix) : undefined }</${litRender.scopeTag("ui5-input", tags, suffix)}><slot name="formSupport"></slot></div>`;
+	const block1 = (context, tags, suffix) => litRender.html`<slot name="valueStateMessage" slot="valueStateMessage"></slot>`;
+	const block2 = (context, tags, suffix) => litRender.html`<${litRender.scopeTag("ui5-icon", tags, suffix)} slot="icon" name="${litRender.ifDefined(context.openIconName)}" tabindex="-1" accessible-name="${litRender.ifDefined(context.openIconTitle)}" show-tooltip @click="${context.togglePicker}" input-icon ?pressed="${context._isPickerOpen}" dir="${litRender.ifDefined(context.effectiveDir)}"></${litRender.scopeTag("ui5-icon", tags, suffix)}>`;
 
-	var ifDefined__default = /*#__PURE__*/_interopDefaultLegacy(ifDefined);
-
-	const block0 = (context) => { return litRender.html`<div class="ui5-date-picker-root" style="${litRender.styleMap(context.styles.main)}"><!-- INPUT --><ui5-input id="${ifDefined__default(context._id)}-inner" class="ui5-date-picker-input" placeholder="${ifDefined__default(context._placeholder)}" type="${ifDefined__default(context.type)}" value="${ifDefined__default(context.value)}" ?disabled="${context.disabled}" ?required="${context.required}" ?readonly="${context.readonly}" value-state="${ifDefined__default(context.valueState)}" data-sap-focus-ref ._inputAccInfo ="${ifDefined__default(context.accInfo)}" @ui5-change="${ifDefined__default(context._onInputChange)}" @ui5-input="${ifDefined__default(context._onInputInput)}" @ui5-submit="${ifDefined__default(context._onInputSubmit)}" @keydown="${context._onkeydown}">${ context.valueStateMessage.length ? block1() : undefined }${ !context.readonly ? block2(context) : undefined }</ui5-input><slot name="formSupport"></slot></div>`; };
-	const block1 = (context) => { return litRender.html`<slot name="valueStateMessage" slot="valueStateMessage"></slot>`; };
-	const block2 = (context) => { return litRender.html`<ui5-icon slot="icon" name="${ifDefined__default(context.openIconName)}" tabindex="-1" accessible-name="${ifDefined__default(context.openIconTitle)}" show-tooltip @click="${context.togglePicker}" input-icon ?pressed="${context._isPickerOpen}" dir="${ifDefined__default(context.effectiveDir)}"></ui5-icon>`; };
-	const main = (context, tags, suffix) => {
-		litRender.setTags(tags);
-		litRender.setSuffix(suffix);
-		return block0(context);
-	};
-
-	return main;
+	return block0;
 
 });

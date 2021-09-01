@@ -1,19 +1,10 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/ifDefined', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], function (ifDefined, litRender) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], function (litRender) { 'use strict';
 
-	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+	const block0 = (context, tags, suffix) => litRender.html`<div class="ui5-combobox-root">${ context.hasValueState ? block1(context) : undefined }<input id="ui5-combobox-input" .value="${litRender.ifDefined(context.value)}" inner-input placeholder="${litRender.ifDefined(context.placeholder)}" ?disabled=${context.disabled} ?readonly=${context.readonly} value-state="${litRender.ifDefined(context.valueState)}" @input="${context._input}" @change="${context._inputChange}" @click=${context._click} @keydown="${context._keydown}" @focusin="${context._focusin}" @focusout="${context._focusout}" aria-expanded="${litRender.ifDefined(context.open)}" role="combobox" aria-haspopup="listbox" aria-autocomplete="both" aria-describedby="${litRender.ifDefined(context.valueStateTextId)}" aria-label="${litRender.ifDefined(context.ariaLabelText)}" aria-required="${litRender.ifDefined(context.required)}" data-sap-focus-ref />${ context.icon ? block2() : undefined }${ !context.readonly ? block3(context, tags, suffix) : undefined }</div>`;
+	const block1 = (context, tags, suffix) => litRender.html`<span id="${litRender.ifDefined(context._id)}-valueStateDesc" class="ui5-hidden-text">${litRender.ifDefined(context.valueStateText)}</span>`;
+	const block2 = (context, tags, suffix) => litRender.html`<slot name="icon"></slot>`;
+	const block3 = (context, tags, suffix) => litRender.html`<${litRender.scopeTag("ui5-icon", tags, suffix)} name="slim-arrow-down" slot="icon" tabindex="-1" input-icon ?pressed="${context._iconPressed}" @click="${context._arrowClick}" dir="${litRender.ifDefined(context.effectiveDir)}" accessible-name="${litRender.ifDefined(context._iconAccessibleNameText)}"></${litRender.scopeTag("ui5-icon", tags, suffix)}>`;
 
-	var ifDefined__default = /*#__PURE__*/_interopDefaultLegacy(ifDefined);
-
-	const block0 = (context) => { return litRender.html`<div class="ui5-combobox-root">${ context.hasValueState ? block1(context) : undefined }<input id="ui5-combobox-input" .value="${ifDefined__default(context._tempValue)}" inner-input placeholder="${ifDefined__default(context.placeholder)}" ?disabled=${context.disabled} ?readonly=${context.readonly} value-state="${ifDefined__default(context.valueState)}" @input="${context._input}" @change="${context._inputChange}" @click=${context._click} @keydown="${context._keydown}" @focusin="${context._focusin}" @focusout="${context._focusout}" aria-expanded="${ifDefined__default(context.open)}" role="combobox" aria-haspopup="listbox" aria-autocomplete="both" aria-describedby="${ifDefined__default(context.valueStateTextId)}" aria-label="${ifDefined__default(context.ariaLabelText)}" aria-required="${ifDefined__default(context.required)}" />${ context.icon ? block2() : undefined }${ !context.readonly ? block3(context) : undefined }</div>`; };
-	const block1 = (context) => { return litRender.html`<span id="${ifDefined__default(context._id)}-valueStateDesc" class="ui5-hidden-text">${ifDefined__default(context.valueStateText)}</span>`; };
-	const block2 = (context) => { return litRender.html`<slot name="icon"></slot>`; };
-	const block3 = (context) => { return litRender.html`<ui5-icon name="slim-arrow-down" slot="icon" tabindex="-1" input-icon ?pressed="${context._iconPressed}" @click="${context._arrowClick}" dir="${ifDefined__default(context.effectiveDir)}" accessible-name="${ifDefined__default(context._iconAccessibleNameText)}"></ui5-icon>`; };
-	const main = (context, tags, suffix) => {
-		litRender.setTags(tags);
-		litRender.setSuffix(suffix);
-		return block0(context);
-	};
-
-	return main;
+	return block0;
 
 });

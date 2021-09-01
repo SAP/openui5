@@ -18,6 +18,16 @@
                 Carousel, Button
             ) {
 
+                var oCarousel0Button = new Button({
+                    text: "navigateTo",
+                    click: function(oEvent) {
+                        console.log("Calling navigateTo...");
+                        var result = oCarousel.navigateTo();
+                        console.log("... navigateTo returned: ", result);
+                    }
+                });
+                oCarousel0Button.placeAt("methodButtons");
+
 
                 var oCarousel = new Carousel({
                     content: [
@@ -43,9 +53,6 @@
                             }
                         })
                     ],
-                    loadMore: function(oEvent) {
-                        console.log("Event loadMore fired for Carousel with parameters: ", oEvent.getParameters());
-                    },
                     navigate: function(oEvent) {
                         console.log("Event navigate fired for Carousel with parameters: ", oEvent.getParameters());
                     }

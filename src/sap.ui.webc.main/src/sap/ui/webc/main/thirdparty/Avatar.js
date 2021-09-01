@@ -1,23 +1,20 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/encodeCSS', 'sap/ui/webc/common/thirdparty/base/Keys', './generated/templates/AvatarTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/Avatar.css', './Icon', './types/AvatarSize', './types/AvatarShape', './types/AvatarFitType', './types/AvatarColorScheme'], function (UI5Element, litRender, i18nBundle, encodeCSS, Keys, AvatarTemplate_lit, i18nDefaults, Avatar_css, Icon, AvatarSize, AvatarShape, AvatarFitType, AvatarColorScheme) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Keys', './generated/templates/AvatarTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/Avatar.css', './Icon', './types/AvatarSize', './types/AvatarShape', './types/AvatarColorScheme'], function (UI5Element, litRender, i18nBundle, Keys, AvatarTemplate_lit, i18nDefaults, Avatar_css, Icon, AvatarSize, AvatarShape, AvatarColorScheme) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
 	var UI5Element__default = /*#__PURE__*/_interopDefaultLegacy(UI5Element);
 	var litRender__default = /*#__PURE__*/_interopDefaultLegacy(litRender);
-	var encodeCSS__default = /*#__PURE__*/_interopDefaultLegacy(encodeCSS);
 
 	const metadata = {
 		tag: "ui5-avatar",
 		languageAware: true,
+		managedSlots: true,
 		properties:  {
 			interactive: {
 				type: Boolean,
 			},
 			focused: {
 				type: Boolean,
-			},
-			image: {
-				type: String,
 			},
 			icon: {
 				type: String,
@@ -37,10 +34,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: String,
 				defaultValue: AvatarSize.S,
 			},
-			imageFitType: {
-				type: AvatarFitType,
-				defaultValue: AvatarFitType.Cover,
-			},
 			colorScheme: {
 				type: AvatarColorScheme,
 				defaultValue: AvatarColorScheme.Accent6,
@@ -59,8 +52,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: String,
 				noAttribute: true,
 			},
+			_hasImage: {
+				type: Boolean,
+			},
 		},
 		slots:  {
+			"default": {
+				propertyName: "image",
+				type: HTMLElement,
+			},
 		},
 		events:  {
 			click: {},
@@ -117,12 +117,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			return this.i18nBundle.getText(i18nDefaults.AVATAR_TOOLTIP) || undefined;
 		}
-		get styles() {
-			return {
-				img: {
-					"background-image": `url("${encodeCSS__default(this.image)}")`,
-				},
-			};
+		get hasImage() {
+			this._hasImage = !!this.image.length;
+			return this._hasImage;
 		}
 		_onclick(event) {
 			if (this.interactive) {

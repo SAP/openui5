@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/icons/accept', './Icon', './Label', './types/WrappingType', './generated/i18n/i18n-defaults', './generated/templates/CheckBoxTemplate.lit', './generated/themes/CheckBox.css'], function (Device, UI5Element, litRender, i18nBundle, AriaLabelHelper, ValueState, FeaturesRegistry, Keys, accept, Icon, Label, WrappingType, i18nDefaults, CheckBoxTemplate_lit, CheckBox_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/icons/accept', './Icon', './Label', './types/WrappingType', './generated/i18n/i18n-defaults', './generated/templates/CheckBoxTemplate.lit', './generated/themes/CheckBox.css'], function (Device, UI5Element, litRender, i18nBundle, ValueState, FeaturesRegistry, Keys, accept, Icon, Label, WrappingType, i18nDefaults, CheckBoxTemplate_lit, CheckBox_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -29,22 +29,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 				type: ValueState__default,
 				defaultValue: ValueState__default.None,
 			},
-			wrap: {
-				type: Boolean,
+			 wrappingType: {
+				type: WrappingType,
+				defaultValue: WrappingType.None,
 			},
 			name: {
 				type: String,
-			},
-			ariaLabel: {
-				type: String,
-				defaultValue: undefined,
-			},
-			ariaLabelledby: {
-				type: String,
-				defaultValue: "",
-			},
-			_label: {
-				type: Object,
 			},
 		},
 		events:  {
@@ -71,18 +61,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 		}
 		constructor() {
 			super();
-			this._label = {};
 			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		onBeforeRendering() {
-			this.syncLabel();
 			this._enableFormSupport();
-		}
-		syncLabel() {
-			this._label = { ...this._label };
-			this._label.text = this.text;
-			this._label.wrappingType = this.wrap ? WrappingType.Normal : WrappingType.None;
-			this._label.textDirection = this.textDirection;
 		}
 		_enableFormSupport() {
 			const FormSupport = FeaturesRegistry.getFeature("FormSupport");
@@ -148,17 +130,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 		get ariaDisabled() {
 			return this.disabled ? "true" : undefined;
 		}
-		get ariaLabelText() {
-			return AriaLabelHelper.getEffectiveAriaLabelText(this);
-		}
 		get ariaChecked() {
 			return this.indeterminate && this.checked ? "mixed" : this.checked;
 		}
 		get ariaLabelledBy() {
-			if (!this.ariaLabelText) {
-				return this.text ? `${this._id}-label` : undefined;
-			}
-			return undefined;
+			return this.text ? `${this._id}-label` : undefined;
 		}
 		get ariaDescribedBy() {
 			return this.hasValueState ? `${this._id}-descr` : undefined;

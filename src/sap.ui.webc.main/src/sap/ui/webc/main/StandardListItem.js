@@ -149,7 +149,9 @@ sap.ui.define([
 				/**
 				 * Fired when the user clicks on the detail button when type is <code>Detail</code>.
 				 */
-				detailClick: {}
+				detailClick: {
+					parameters: {}
+				}
 			}
 		}
 	});
