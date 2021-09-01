@@ -844,6 +844,7 @@ sap.ui.define([
 				delete mHeaders["MaxDataServiceVersion"];
 				delete mHeaders["sap-cancel-on-close"];
 				delete mHeaders["sap-contextid-accept"];
+				delete mHeaders["X-Requested-With"];
 				delete oActualRequest["_handle"];
 				delete oActualRequest["adjustDeepPath"];
 				delete oActualRequest["async"];

@@ -237,7 +237,8 @@ sap.ui.define([
 			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 			"OData-MaxVersion" : "4.0",
 			"OData-Version" : "4.0",
-			"X-CSRF-Token" : "Fetch"
+			"X-CSRF-Token" : "Fetch",
+			"X-Requested-With": "XMLHttpRequest"
 		}
 	}, {
 		sODataVersion : "2.0",
@@ -251,7 +252,8 @@ sap.ui.define([
 			"Accept" : "application/json",
 			"MaxDataServiceVersion" : "2.0",
 			"DataServiceVersion" : "2.0",
-			"X-CSRF-Token" : "Fetch"
+			"X-CSRF-Token" : "Fetch",
+			"X-Requested-With": "XMLHttpRequest"
 		}
 	}].forEach(function (oFixture) {
 		var sTest = "factory function: check members for OData version = " + oFixture.sODataVersion;

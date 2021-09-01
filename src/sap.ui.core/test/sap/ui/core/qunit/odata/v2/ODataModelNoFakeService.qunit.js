@@ -108,6 +108,14 @@ sap.ui.define([
 
 		assert.strictEqual(oModel.mCodeListModelParams, "~codeListModelParameters");
 		assert.strictEqual(oModel.sMetadataUrl, "~metadataUrl");
+		assert.deepEqual(oModel.oHeaders, {
+			"Accept": "application/json",
+			"Accept-Language": sap.ui.getCore().getConfiguration().getLanguageTag(),
+			"DataServiceVersion": "2.0",
+			"MaxDataServiceVersion": "2.0",
+			"sap-contextid-accept": "header",
+			"X-Requested-With": "XMLHttpRequest"
+		});
 	});
 
 	//*********************************************************************************************

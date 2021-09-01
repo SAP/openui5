@@ -46,7 +46,8 @@ sap.ui.define([
 			"Accept" : "foo",
 			"MaxDataServiceVersion" : "foo",
 			"DataServiceVersion" : "foo",
-			"X-CSRF-Token" : "foo"
+			"X-CSRF-Token" : "foo",
+			"X-Requested-With": "foo"
 		}
 	}].forEach(function (oRequestor) {
 		QUnit.test("check headers (V2): ", function (assert) {
@@ -63,7 +64,8 @@ sap.ui.define([
 				"Accept" : "application/json",
 				"MaxDataServiceVersion" : "2.0",
 				"DataServiceVersion" : "2.0",
-				"X-CSRF-Token" : "Fetch"
+				"X-CSRF-Token" : "Fetch",
+				"X-Requested-With": "XMLHttpRequest"
 			});
 		});
 	});
