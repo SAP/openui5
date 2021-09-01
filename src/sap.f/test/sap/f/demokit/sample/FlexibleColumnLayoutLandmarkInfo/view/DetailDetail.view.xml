@@ -1,0 +1,5 @@
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" height="100%">
+	<Page title="Last Column">
+		<Button class="sapUiTinyMargin" text="Last Column Button"/>
+	</Page>
+</mvc:View>

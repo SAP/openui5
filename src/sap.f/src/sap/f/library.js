@@ -78,6 +78,7 @@ sap.ui.define(["sap/ui/base/DataType",
 		elements: [
 			"sap.f.DynamicPageAccessibleLandmarkInfo",
 			"sap.f.GridContainerItemLayoutData",
+			"sap.f.FlexibleColumnLayoutAccessibleLandmarkInfo",
 			"sap.f.semantic.AddAction",
 			"sap.f.semantic.CloseAction",
 			"sap.f.semantic.CopyAction",

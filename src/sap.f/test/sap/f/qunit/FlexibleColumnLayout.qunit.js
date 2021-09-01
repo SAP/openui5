@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/f/FlexibleColumnLayout",
+	"sap/f/FlexibleColumnLayoutAccessibleLandmarkInfo",
 	"sap/f/FlexibleColumnLayoutSemanticHelper",
 	"sap/m/Page",
 	"sap/m/Button",
@@ -12,6 +13,7 @@ sap.ui.define([
 function (
 	$,
 	FlexibleColumnLayout,
+	FlexibleColumnLayoutAccessibleLandmarkInfo,
 	FlexibleColumnLayoutSemanticHelper,
 	Page,
 	Button,
@@ -1072,9 +1074,9 @@ function (
 		}
 	});
 
-	QUnit.test("Each column has correct region role and it's labeled correctly", function (assert) {
+	QUnit.test("Each column has correct region role and it's labeled correctly when there is no Landmark Info", function (assert) {
 		var fnGetLabelText = function (sColumnName) {
-			return Core.byId(this.oFCL.$(sColumnName).attr("aria-labelledby")).getText();
+			return this.oFCL.$(sColumnName).attr("aria-label");
 		}.bind(this);
 
 		assert.strictEqual(this.oFCL.$("beginColumn").attr("role"), "region", "Begin column has correct role");
@@ -1084,6 +1086,30 @@ function (
 		assert.strictEqual(fnGetLabelText("beginColumn"), fnGetResourceBundleText("FCL_BEGIN_COLUMN_REGION_TEXT"), "Begin column is labeled correctly");
 		assert.strictEqual(fnGetLabelText("midColumn"), fnGetResourceBundleText("FCL_MID_COLUMN_REGION_TEXT"), "Middle column is labeled correctly");
 		assert.strictEqual(fnGetLabelText("endColumn"), fnGetResourceBundleText("FCL_END_COLUMN_REGION_TEXT"), "End column is labeled correctly");
+	});
+
+	QUnit.test("Each column is labeled correctly when there is Landmark Info", function (assert) {
+		// Arrange
+		var sTestFirstColumnLabel = "This is test first column label",
+			sTestLastColumnLabel = "This is custom last column label",
+			oLandmarkInfo = new FlexibleColumnLayoutAccessibleLandmarkInfo({
+				firstColumnLabel: sTestFirstColumnLabel,
+				lastColumnLabel: sTestLastColumnLabel
+			});
+
+		// Act
+		this.oFCL.setLandmarkInfo(oLandmarkInfo);
+		Core.applyChanges();
+
+		// Helper function
+		var fnGetLabelText = function (sColumnName) {
+			return this.oFCL.$(sColumnName).attr("aria-label");
+		}.bind(this);
+
+		// Assert
+		assert.strictEqual(fnGetLabelText("beginColumn"), sTestFirstColumnLabel, "Begin column has its label changed by the Landmark Info");
+		assert.strictEqual(fnGetLabelText("midColumn"), fnGetResourceBundleText("FCL_MID_COLUMN_REGION_TEXT"), "Middle column remains untouched with its default label");
+		assert.strictEqual(fnGetLabelText("endColumn"), sTestLastColumnLabel, "End column has its label changed by the Landmark Info");
 	});
 
 	QUnit.test("Navigation buttons have correct tooltips", function (assert) {
