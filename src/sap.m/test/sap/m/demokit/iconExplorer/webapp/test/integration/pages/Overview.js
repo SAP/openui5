@@ -1,5 +1,6 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
+	"./Common",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/matchers/Ancestor",
@@ -8,6 +9,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/PropertyStrictEquals"
 ], function(Opa5,
+			Common,
 			Press,
 			EnterText,
 			Ancestor,
@@ -139,6 +141,7 @@ sap.ui.define([
 	Opa5.createPageObjects({
 
 		onTheOverviewPage: {
+			baseClass: Common,
 			actions: {
 				iPressTheNavigationBackButton: function(){
 					return this.waitFor({
@@ -357,10 +360,9 @@ sap.ui.define([
 					return this.waitFor({
 						id: "fontSelector",
 						viewName: sViewName,
-						matchers : new PropertyStrictEquals({
-							name : "text",
-							value : "SAP Fiori Tools"
-						}),
+						matchers: function(oControl){
+							return this.I18NTextExtended(oControl, "fontName_SAPIconsTNT", "text");
+						}.bind(this),
 						success: function () {
 							Opa5.assert.ok(true, "Showing the TNT font page");
 						},
