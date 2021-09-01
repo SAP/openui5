@@ -46,13 +46,14 @@ sap.ui.define([
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/UpdateMethod",
 	"sap/ui/thirdparty/datajs",
-	"sap/ui/thirdparty/URI"
+	"sap/ui/thirdparty/URI",
+	"sap/ui/util/isCrossOriginURL"
 ], function(Context, ODataAnnotations, ODataContextBinding, ODataListBinding, ODataTreeBinding,
 		assert, Log, encodeURL, deepEqual, deepExtend, each, extend, isEmptyObject, isPlainObject,
 		merge, uid, UriParameters, coreLibrary, Message, MessageParser, BindingMode, BaseContext,
 		FilterProcessor, Model, CountMode, MessageScope, ODataMetadata, ODataMetaModel,
 		ODataMessageParser, ODataPropertyBinding, ODataUtils, OperationMode, UpdateMethod, OData,
-		URI
+	    URI, isCrossOriginURL
 ) {
 
 	"use strict";
@@ -485,6 +486,13 @@ sap.ui.define([
 				this.oHeaders["MaxDataServiceVersion"] = this.sMaxDataServiceVersion;
 			}
 
+			// "XMLHttpRequest" indicates that a data request is performed.
+			// Gets only applied to non-crossOrigin requests because cross origin requests could
+			// result in unwanted preflight requests if this header is set.
+			// This behaviour is in sync with jQuery.ajax which is used by OData V4.
+			if (!this.mCustomHeaders["X-Requested-With"] && !isCrossOriginURL(this.sServiceUrl)) {
+				this.oHeaders["X-Requested-With"] = "XMLHttpRequest";
+			}
 		},
 		metadata : {
 			publicMethods : ["read", "create", "update", "remove", "submitChanges", "getServiceMetadata", "metadataLoaded",

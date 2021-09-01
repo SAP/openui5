@@ -62,8 +62,33 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("constructor: codeListModelParameters and sMetadataUrl stored", function (assert) {
+[{
+	sExpectedRequestedWithHeader : "XMLHttpRequest",
+	sServiceUrl : "/foo/bar"
+}, {
+	sServiceUrl : "/foo/bar",
+	oHeaderParameter : {
+		"X-Requested-With" : "~X-Requested-With"
+	}
+}, {
+	sServiceUrl : "https://example.com/foo/bar"
+}, {
+	oHeaderParameter : {
+		"X-Requested-With" : "~X-Requested-With"
+	},
+	sServiceUrl : "https://example.com/foo/bar"
+}].forEach(function (oFixture, i) {
+	var sTitle = "constructor: codeListModelParameters and sMetadataUrl stored #" + i
+		+ ", sServiceUrl: " + oFixture.sServiceUrl;
+	QUnit.test(sTitle, function (assert) {
 		var oDataModelMock = this.mock(ODataModel),
+			oExpectedHeaders = {
+				"Accept" : "application/json",
+				"Accept-Language" : "~languageTag",
+				"DataServiceVersion" : "2.0",
+				"MaxDataServiceVersion" : "2.0",
+				"sap-contextid-accept" : "header"
+			},
 			oMetadata = {
 				oMetadata : {
 					isLoaded : function () {},
@@ -72,7 +97,8 @@ sap.ui.define([
 			},
 			mParameters = {
 				annotationURI : "~annotationURI",
-				serviceUrl : "/foo/bar",
+				headers : oFixture.oHeaderParameter || {},
+				serviceUrl : oFixture.sServiceUrl,
 				skipMetadataAnnotationParsing : true,
 				tokenHandling : false
 			},
@@ -90,7 +116,7 @@ sap.ui.define([
 			.returns("~serverUrl");
 		oDataModelMock.expects("_getSharedData").withExactArgs("server", "~serverUrl")
 			.returns(undefined);
-		oDataModelMock.expects("_getSharedData").withExactArgs("service", "/foo/bar")
+		oDataModelMock.expects("_getSharedData").withExactArgs("service", oFixture.sServiceUrl)
 			.returns(undefined);
 		oDataModelMock.expects("_getSharedData").withExactArgs("meta", "~metadataUrl")
 			.returns(oMetadata);
@@ -102,13 +128,21 @@ sap.ui.define([
 		this.mock(oMetadata.oMetadata).expects("isLoaded").withExactArgs().returns(true);
 		this.mock(ODataAnnotations.prototype).expects("addSource")
 			.withExactArgs(["~annotationURI"]);
+		this.mock(sap.ui.getCore().getConfiguration()).expects("getLanguageTag").withExactArgs()
+			.returns("~languageTag");
+		if (oFixture.sExpectedRequestedWithHeader) {
+			oExpectedHeaders["X-Requested-With"] = oFixture.sExpectedRequestedWithHeader;
+		}
 
 		// code under test
 		var oModel = new ODataModel(mParameters);
 
 		assert.strictEqual(oModel.mCodeListModelParams, "~codeListModelParameters");
 		assert.strictEqual(oModel.sMetadataUrl, "~metadataUrl");
+		assert.deepEqual(oModel.oHeaders, oExpectedHeaders);
+		assert.deepEqual(oModel.mCustomHeaders, oFixture.oHeaderParameter || {});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("read: updateAggregatedMessages passed to _createRequest", function (assert) {

@@ -12,7 +12,7 @@ sap.ui.define([], function() {
 	 * @param {sap.ui.core.URI} sHref The URL to check
 	 * @returns {boolean} Whether the URL is a cross-origin URL
 	 * @private
-	 * @ui5-restricted
+	 * @ui5-restricted sap.ui.model.odata.v2.ODataModel,sap.ushell
 	 * @alias module:sap/ui/util/isCrossOriginURL
 	 * @since 1.84
 	 */
