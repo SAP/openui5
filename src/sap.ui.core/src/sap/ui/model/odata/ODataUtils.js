@@ -105,7 +105,8 @@ sap.ui.define([
 	 * same path are ORed and filters on different paths are ANDed with each other
 	 * @see ODataUtils._createFilterParams
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} vFilter the root filter or filter array
-	 * @param {object} oEntityType the entity metadata object
+	 * @param {object} oMetadata the entity metadata object
+	 * @param {object} oEntityType the entity type object
 	 * @return {string} the URL encoded filter parameters
 	 * @private
 	 */
@@ -128,7 +129,8 @@ sap.ui.define([
 	 * Creates a string of logically (or/and) linked filter options,
 	 * which will be used as URL query parameters for filtering.
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} vFilter the root filter or filter array
-	 * @param {object} oEntityType the entity metadata object
+	 * @param {object} oMetadata the entity metadata object
+	 * @param {object} oEntityType the entity type object
 	 * @return {string} the URL encoded filter parameters
 	 * @private
 	 */
@@ -187,7 +189,7 @@ sap.ui.define([
 	 * If vParams is an object map, it will be also encoded properly.
 	 *
 	 * @private
-	 * @param {string|object|array} vParams
+	 * @param {string|object|array} vParams parameters
 	 */
 	ODataUtils._createUrlParamsArray = function(vParams) {
 		var aUrlParams, sType = typeof vParams, sParams;
@@ -367,9 +369,9 @@ sap.ui.define([
 				sFinalAnnotationURL = sAnnotationWithOrigin + sAnnotationUrlRest;
 			}
 		} else if (iHanaXsSegmentIndex >= 0) {
-			// Hana XS case: the Hana XS engine can provide static Annotation files for its services.
-			// The services can be identifed by their URL segment ".xsodata"; if such a service uses the origin feature
-			// the Annotation URLs need also adaption.
+			// Hana XS case: the Hana XS engine can provide static Annotation files for its
+			// services. The services can be identified by their URL segment ".xsodata"; if such a
+			// service uses the origin feature the Annotation URLs need also adaption.
 			sFinalAnnotationURL = ODataUtils.setOrigin(sAnnotationURL, vParameters);
 
 		} else {
@@ -487,10 +489,10 @@ sap.ui.define([
 	 * <a href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * EDM type</a>.
 	 *
-	 * @param {any} vValue the value to format
-	 * @param {string} sType the EDM type (e.g. Edm.Decimal)
-	 * @param {boolean} bCaseSensitive Wether strings gets compared case sensitive or not
-	 * @return {string} the formatted value
+	 * @param {any} vValue The value to format
+	 * @param {string} sType The EDM type (e.g. Edm.Decimal)
+	 * @param {boolean} bCaseSensitive Whether strings gets compared case sensitive or not
+	 * @return {string} The formatted value
 	 * @public
 	 */
 	ODataUtils.formatValue = function(vValue, sType, bCaseSensitive) {
