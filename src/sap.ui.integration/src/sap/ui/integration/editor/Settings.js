@@ -25,7 +25,9 @@ sap.ui.define([
 	"sap/m/Table",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
-	"sap/m/ScrollContainer"
+	"sap/m/ScrollContainer",
+	"sap/base/util/ObjectPath",
+	"sap/ui/integration/util/BindingHelper"
 ], function (
 	Control,
 	Popover,
@@ -50,14 +52,16 @@ sap.ui.define([
 	Table,
 	Column,
 	ColumnListItem,
-	ScrollContainer
+	ScrollContainer,
+	ObjectPath,
+	BindingHelper
 ) {
 	"use strict";
 
 	/**
 	 * @class
 	 * @extends sap.ui.core.Control
-	 * @alias sap.ui.integration.editor.fields.Settings
+	 * @alias sap.ui.integration.editor.Settings
 	 * @author SAP SE
 	 * @since 1.83.0
 	 * @version ${version}
@@ -65,7 +69,7 @@ sap.ui.define([
 	 * @experimental since 1.83.0
 	 * @ui5-restricted
 	 */
-	var Settings = Control.extend("sap.ui.integration.editor.fields.Settings", {
+	var Settings = Control.extend("sap.ui.integration.editor.Settings", {
 		metadata: {
 			library: "sap.ui.integration"
 		},
@@ -100,6 +104,11 @@ sap.ui.define([
 
 	Settings.prototype.open = function (oField, oReferrer, oRightContent, oHost, oParent, fnApply, fnCancel) {
 		var oCurrentData = this.getModel("currentSettings").getData();
+		//prepare fields in key
+		if (oCurrentData.values) {
+			this.prepareFieldsInKey(oCurrentData);
+		}
+		oCurrentInstance = this;
 		oPopover = createPopover(oCurrentData);
 		this.addDependent(oPopover);
 		this.oHost = oHost;
@@ -108,7 +117,6 @@ sap.ui.define([
 		this._oOpener = oParent;
 		bCancel = true;
 		oField.addDependent(this);
-		oCurrentInstance = this;
 		//adjust page admin values table height
 		if (!oCurrentData.allowDynamicValues && oCurrentData.values) {
 			Core.byId("settings_scroll_container").setHeight("155px");
@@ -117,8 +125,8 @@ sap.ui.define([
 		this.getModel("currentSettings").checkUpdate(true, true);
 		applyVariableDescription(oResourceBundle.getText("EDITOR_SELECT_FROM_LIST"), []);
 		if (oReferrer) {
-			var iOffsetWidth = (!oRightContent || oRightContent.getDomRef().offsetWidth === 0) ? 270 : oRightContent.getDomRef().offsetWidth;
-			var iOffsetHeight = (!oRightContent || oRightContent.getDomRef().offsetHeight === 0) ? 350 : oRightContent.getDomRef().offsetHeight;
+			var iOffsetWidth = (!oRightContent || oRightContent.getDomRef() === null || oRightContent.getDomRef().offsetWidth === 0) ? 270 : oRightContent.getDomRef().offsetWidth;
+			var iOffsetHeight = (!oRightContent || oRightContent.getDomRef() === null || oRightContent.getDomRef().offsetHeight === 0) ? 350 : oRightContent.getDomRef().offsetHeight;
 			oPopover.setContentWidth(iOffsetWidth + "px");
 			oPopover.setContentHeight((iOffsetHeight - 50) + "px");
 			oPopover.setPlacement("Right");
@@ -180,12 +188,11 @@ sap.ui.define([
 					if (oData.values) {
 						var oTable = Core.byId("settings_pav_table"),
 						selectedContexts = oTable.getSelectedContexts(),
-						selectedKeys = [],
-						pavItemKey = oData.values.item.key;
-						pavItemKey = pavItemKey.substring(1, pavItemKey.length - 1);
+						selectedKeys = [];
 						if (oCurrentModel.getProperty("/selectedValues") === "Partion") {
 							for (var i = 0; i < selectedContexts.length; i++) {
-								selectedKeys.push(selectedContexts[i].getObject()[pavItemKey]);
+								var selectedKey = oCurrentInstance.getKeyFromItem(selectedContexts[i].getObject());
+								selectedKeys.push(selectedKey);
 							}
 							setNextSetting("pageAdminValues", selectedKeys);
 						} else {
@@ -226,13 +233,11 @@ sap.ui.define([
 						oTable.removeSelections();
 						oCurrentModel.setProperty("/selectedValues", "None");
 						var sItems = oCurrentModel.getProperty("/_next/pageAdminValues"),
-							aItems = oTable.getItems(),
-							pavItemKey = oData.values.item.key;
-						pavItemKey = pavItemKey.substring(1, pavItemKey.length - 1);
+							aItems = oTable.getItems();
 						for (var i = 0; i < sItems.length; i++) {
 							for (var j = 0; j < aItems.length; j++) {
-								var aItemValue = aItems[j].getBindingContext("currentSettings").getObject();
-								if (sItems[i] === aItemValue[pavItemKey]) {
+								var aItemValue = oCurrentInstance.getKeyFromItem(aItems[j].getBindingContext().getObject());
+								if (sItems[i] === aItemValue) {
 									oTable.setSelectedItem(aItems[j]);
 								}
 							}
@@ -336,15 +341,16 @@ sap.ui.define([
 				if (oData.values) {
 					var oTable = Core.byId("settings_pav_table"),
 						sItems = oCurrentModel.getProperty("/_next/pageAdminValues"),
-						aItems = oTable.getItems(),
-						pavItemKey = oCurrentModel.getData().values.item.key;
-					pavItemKey = pavItemKey.substring(1, pavItemKey.length - 1);
+						aItems = oTable.getItems();
+					// 	pavItemKey = oCurrentModel.getData().values.item.key;
+					// pavItemKey = pavItemKey.substring(1, pavItemKey.length - 1);
 					if (sItems !== undefined && sItems.length > 0 && sItems.length < aItems.length) {
 						oTable.removeSelections();
 						for (var i = 0; i < sItems.length; i++) {
 							for (var j = 0; j < aItems.length; j++) {
-								var aItemValue = aItems[j].getBindingContext("currentSettings").getObject();
-								if (sItems[i] === aItemValue[pavItemKey]) {
+								// var aItemValue = aItems[j].getBindingContext("currentSettings").getObject();
+								var aItemValue = oCurrentInstance.getKeyFromItem(aItems[j].getBindingContext().getObject());
+								if (sItems[i] === aItemValue) {
 									oTable.setSelectedItem(aItems[j]);
 								}
 							}
@@ -652,12 +658,9 @@ sap.ui.define([
 				]
 			}).addStyleClass("tableHdr");
 			var pavItemText = oData.values.item.text,
-			    vLength = pavItemText.length,
-			    tText = pavItemText.substring(1, vLength - 1),
-			    tPath = "{currentSettings>" + tText + "}",
-				bPath,
 				sPath = oData.values.data.path,
-			    aPath;
+			    aPath,
+				vData;
 			if (sPath && sPath !== "/") {
 				if (sPath.startsWith("/")) {
 					sPath = sPath.substring(1);
@@ -666,24 +669,24 @@ sap.ui.define([
 					sPath = sPath.substring(0, sPath.length - 1);
 				}
 				aPath = sPath.split("/");
-				bPath = "currentSettings>/_values/" + aPath + "/";
+				vData = ObjectPath.get(["_values", aPath], oData);
 			} else {
-				bPath = "currentSettings>/_values/";
+				vData = ObjectPath.get(["_values"], oData);
 			}
-			pavTable.bindAggregation("items", {
-				path: bPath,
-				template: new ColumnListItem({
-					cells: [
-						new HBox({
-							items: [
-								new Text({
-									text: tPath
-								}).addStyleClass("pavTblCellText")
-							]
-						})
+			var pavItemText = oData.values.item.text,
+			    vModel = new JSONModel(vData);
+			pavTable.setModel(vModel);
+			var oTemplate = new ColumnListItem().addStyleClass("pavlistItem");
+			for (var i = 0; i < vData.length; i++) {
+				oTemplate.addCell(new HBox({
+					items: [
+						new Text({
+							text: BindingHelper.createBindingInfos(pavItemText)
+						}).addStyleClass("pavTblCellText")
 					]
-				}).addStyleClass("pavlistItem")
-			});
+				})).addStyleClass("pavlistItem");
+			}
+			pavTable.bindItems("/", oTemplate);
 			var oScrollContainer = new ScrollContainer({
 				id: "settings_scroll_container",
 				height: "125px",
@@ -839,6 +842,36 @@ sap.ui.define([
 
 			}
 		};
+	};
+
+	Settings.prototype.prepareFieldsInKey = function(oConfig) {
+		//get field names in the item key
+		this._sKeySeparator = oConfig.values.keySeparator;
+		if (!this._sKeySeparator) {
+			this._sKeySeparator = "#";
+		}
+		var sKey = oConfig.values.item.key;
+		this._aFields = sKey.split(this._sKeySeparator);
+		for (var n in this._aFields) {
+			//remove the {} in the field
+			if (this._aFields[n].startsWith("{")) {
+				this._aFields[n] = this._aFields[n].substring(1);
+			}
+			if (this._aFields[n].endsWith("}")) {
+				this._aFields[n] = this._aFields[n].substring(0, this._aFields[n].length - 1);
+			}
+		}
+	};
+
+	Settings.prototype.getKeyFromItem = function(oItem) {
+		var sItemKey = "";
+		this._aFields.forEach(function (field) {
+			sItemKey += oItem[field].toString() + this._sKeySeparator;
+		}.bind(this));
+		if (sItemKey.endsWith(this._sKeySeparator)) {
+			sItemKey = sItemKey.substring(0, sItemKey.length - this._sKeySeparator.length);
+		}
+		return sItemKey;
 	};
 
 	return Settings;
