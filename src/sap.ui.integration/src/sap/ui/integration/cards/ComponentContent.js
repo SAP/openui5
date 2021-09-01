@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/integration/cards/BaseContent",
 	"./ComponentContentRenderer",
-	"sap/ui/core/ComponentContainer"
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Component"
 ], function (
 	BaseContent,
 	ComponentContentRenderer,
-	ComponentContainer
+	ComponentContainer,
+	Component
 ) {
 	"use strict";
 
@@ -39,6 +41,17 @@ sap.ui.define([
 		renderer: ComponentContentRenderer
 	});
 
+	/**
+	 * Global hook when a new component instance of any kind is created.
+	 * @param {sap.ui.core.Component} oInstance The created component instance.
+	 */
+	Component._fnOnInstanceCreated = function (oInstance) {
+		var oCompData = oInstance.getComponentData();
+		if (oCompData && oCompData["__sapUiIntegration_card"] && oInstance.onCardReady) {
+			oInstance.onCardReady(oCompData["__sapUiIntegration_card"]);
+		}
+	};
+
 	ComponentContent.prototype.setConfiguration = function (oConfiguration) {
 		BaseContent.prototype.setConfiguration.apply(this, arguments);
 
@@ -49,14 +62,12 @@ sap.ui.define([
 		var oContainer = new ComponentContainer({
 			manifest: oConfiguration.componentManifest,
 			async: true,
-			componentCreated: function (oEvent) {
-				var oComponent = oEvent.getParameter("component"),
-					oCard = this.getParent();
-
-				if (oComponent.onCardReady) {
-					oComponent.onCardReady(oCard);
+			settings: {
+				componentData: {
+					"__sapUiIntegration_card": this.getCardInstance()
 				}
-
+			},
+			componentCreated: function () {
 				// TODO _updated event is always needed, so that the busy indicator knows when to stop. We should review this for contents which do not have data.
 				this.fireEvent("_actionContentReady");
 				this.fireEvent("_updated");

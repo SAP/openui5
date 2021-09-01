@@ -1685,12 +1685,36 @@ sap.ui.define([
 
 		QUnit.module("Component Card");
 
-		QUnit.test("Component Card - card and component manifests are in the same file", function (assert) {
+		QUnit.test("Card and component manifests are in the same file", function (assert) {
 			testComponentContentCreation(
 				oManifest_ComponentCardAllInOne,
 				oManifest_ComponentCardAllInOne,
 				assert
 			);
+		});
+
+		QUnit.test("Controller must have access to the card during onInit", function (assert) {
+
+			// Arrange
+			var done = assert.async(),
+				oCard = new Card();
+
+			oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+
+				var oContent = oCard.getCardContent();
+
+				// Assert
+				assert.strictEqual(oContent.$().find(".sapMText").text(), "Berlin", "Controller has access to card parameters during onInit.");
+
+				// Clean up
+				oCard.destroy();
+
+				done();
+			});
+
+			oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/component/cardAccess/manifest.json");
+			oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
 		QUnit.module("Parameters", {
