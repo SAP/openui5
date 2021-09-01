@@ -3,15 +3,63 @@
  */
 
 sap.ui.define([
+	"sap/base/util/deepClone",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/Utils"
 ], function(
+	deepClone,
 	ManifestUtils,
 	ApplyStorage,
 	Utils
 ) {
 	"use strict";
+
+	function getIdIsLocalTrueObject(vSelector) {
+		if (typeof vSelector === "string") {
+			vSelector = {id: vSelector};
+		}
+		vSelector.idIsLocal = true;
+
+		return vSelector;
+	}
+
+	function _migrateSelectorFlags(bMigrationNeeded, mFlexData) {
+		if (bMigrationNeeded) {
+			[
+				mFlexData.changes,
+				mFlexData.variantChanges,
+				mFlexData.variantDependentControlChanges,
+				mFlexData.variantManagementChanges
+			].forEach(function (aFlexItems) {
+				// a for is used due to the alteration of the array and its length
+				for (var i = aFlexItems.length - 1; i >= 0; i--) {
+					var oFlexItem = aFlexItems[i];
+					if (!oFlexItem.selector.idIsLocal) {
+						var oFlexItemCopy = deepClone(oFlexItem);
+						// ensure a UID of the change for dependency handling
+						oFlexItemCopy.fileName = oFlexItemCopy.fileName + "_localIdClone";
+						oFlexItemCopy.selector = getIdIsLocalTrueObject(oFlexItemCopy.selector);
+
+						// do the same for dependentSelectors
+						if (oFlexItemCopy.dependentSelector) {
+							Object.keys(oFlexItemCopy.dependentSelector).forEach(function (oFlexItemCopy, sCategory) {
+								oFlexItemCopy.dependentSelector[sCategory] = oFlexItemCopy.dependentSelector[sCategory].map(getIdIsLocalTrueObject);
+							}.bind(undefined, oFlexItemCopy));
+						}
+
+						aFlexItems.splice(i, 0, oFlexItemCopy);
+					}
+				}
+			});
+		}
+
+		return mFlexData;
+	}
+
+	function _getMigrationFlagFromManifest(oManifest) {
+		return oManifest && !!oManifest["sap.ovp"];
+	}
 
 	function _formatFlexData(mFlexData) {
 		// TODO: rename "changes" everywhere to avoid oResponse.changes.changes calls
@@ -72,7 +120,7 @@ sap.ui.define([
 				appDescriptor: mPropertyBag.manifest.getRawJson ? mPropertyBag.manifest.getRawJson() : mPropertyBag.manifest,
 				version: mPropertyBag.version,
 				allContexts: mPropertyBag.allContexts
-			}).then(_formatFlexData);
+			}).then(_migrateSelectorFlags.bind(undefined, _getMigrationFlagFromManifest(mPropertyBag.manifest))).then(_formatFlexData);
 		}
 	};
 });
