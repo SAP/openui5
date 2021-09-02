@@ -1570,7 +1570,10 @@ sap.ui.define([
 					}
 					return iColumnsWidth;
 				}.bind(this), 0);
-				var bDummyColumnHasWidth = iTableWidth > iColumnsWidth;
+				var bDummyColumnHasWidth = iTableWidth > iColumnsWidth + 1;
+				// when the column widths contain subpixels, iTableWidth might be higher than iColumnsWidth
+				// for just a fraction of a pixel even though no dummy column is needed. To avoid left positioning
+				// of the row actions instead of absolute right, the calculation is adjusted with +1 pixel.
 
 				if (!bHasFlexibleRowActions && bDummyColumnHasWidth) {
 					var iRowActionPos = iColumnsWidth + oTableSizes.tableRowHdrScrWidth + oTableSizes.tableCtrlFixedWidth;
