@@ -25,6 +25,7 @@ sap.ui.define(['../Keys', '../util/getActiveElement', '../types/NavigationMode',
 			this._behavior = options.behavior || ItemNavigationBehavior.Static;
 			this._navigationMode = options.navigationMode || NavigationMode.Auto;
 			this._affectedPropertiesNames = options.affectedPropertiesNames || [];
+			this._skipItemsSize = options.skipItemsSize || null;
 		}
 		setCurrentItem(current) {
 			const currentItemIndex = this._getItems().indexOf(current);
@@ -61,6 +62,10 @@ sap.ui.define(['../Keys', '../util/getActiveElement', '../types/NavigationMode',
 				this._handleHome();
 			} else if (Keys.isEnd(event)) {
 				this._handleEnd();
+			} else if (Keys.isPageUp(event)) {
+				this._handlePageUp();
+			} else if (Keys.isPageDown(event)) {
+				this._handlePageDown();
 			} else {
 				return;
 			}
@@ -128,6 +133,39 @@ sap.ui.define(['../Keys', '../util/getActiveElement', '../types/NavigationMode',
 		_handleEnd() {
 			const homeEndRange = this._rowSize > 1 ? this._rowSize : this._getItems().length;
 			this._currentIndex += (homeEndRange - 1 - this._currentIndex % homeEndRange);
+		}
+		_handlePageUp() {
+			if (this._rowSize > 1) {
+				return;
+			}
+			this._handlePageUpFlat();
+		}
+		_handlePageDown() {
+			if (this._rowSize > 1) {
+				return;
+			}
+			this._handlePageDownFlat();
+		}
+		_handlePageUpFlat() {
+			if (this._skipItemsSize === null) {
+				this._currentIndex -= this._currentIndex;
+			}
+			if (this._currentIndex + 1 > this._skipItemsSize) {
+				this._currentIndex -= this._skipItemsSize;
+			} else {
+				this._currentIndex -= this._currentIndex;
+			}
+		}
+		_handlePageDownFlat() {
+			if (this._skipItemsSize === null) {
+				this._currentIndex = this._getItems().length - 1;
+			}
+			const currentToEndRange = this._getItems().length - this._currentIndex - 1;
+			if (currentToEndRange > this._skipItemsSize) {
+				this._currentIndex += this._skipItemsSize;
+			} else {
+				this._currentIndex = this._getItems().length - 1;
+			}
 		}
 		_applyTabIndex() {
 			const items = this._getItems();

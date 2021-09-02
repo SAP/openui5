@@ -64,6 +64,21 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Sets the accessible aria name of the component.
+				 */
+				accessibleName: {
+					type: "string"
+				},
+
+				/**
+				 * Receives id(or many ids) of the elements that label the component.
+				 */
+				accessibleNameRef: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
 				 * Determines whether the component is displayed as disabled.
 				 */
 				disabled: {
@@ -189,7 +204,9 @@ sap.ui.define([
 				/**
 				 * Fired when the input operation has finished by pressing Enter or on focusout.
 				 */
-				change: {}
+				change: {
+					parameters: {}
+				}
 			}
 		}
 	});

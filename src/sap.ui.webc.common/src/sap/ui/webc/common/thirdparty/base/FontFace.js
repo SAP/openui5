@@ -17,7 +17,7 @@ sap.ui.define(['./util/createStyleInHead', './FeaturesRegistry'], function (crea
 			url(${font72RegularWoff2}) format("woff2"),
 			url(${font72RegularWoff}) format("woff");
 	}
-
+	
 	@font-face {
 		font-family: "72full";
 		font-style: normal;
@@ -25,9 +25,9 @@ sap.ui.define(['./util/createStyleInHead', './FeaturesRegistry'], function (crea
 		src: local('72-full'),
 			url(${font72RegularFullWoff2}) format("woff2"),
 			url(${font72RegularFullWoff}) format("woff");
-
+		
 	}
-
+	
 	@font-face {
 		font-family: "72";
 		font-style: normal;
@@ -36,7 +36,7 @@ sap.ui.define(['./util/createStyleInHead', './FeaturesRegistry'], function (crea
 			url(${font72BoldWoff2}) format("woff2"),
 			url(${font72BoldWoff}) format("woff");
 	}
-
+	
 	@font-face {
 		font-family: "72full";
 		font-style: normal;

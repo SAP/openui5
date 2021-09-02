@@ -13,6 +13,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: String,
 				defaultValue: "1",
 			},
+			_hasIcon: {
+				type: Boolean,
+			},
+			_iconOnly: {
+				type: Boolean,
+			},
 		},
 		managedSlots: true,
 		slots:  {
@@ -45,17 +51,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
 		}
 		onBeforeRendering() {
-			if (this.hasIcon) {
-				this.setAttribute("__has-icon", "");
-			} else {
-				this.removeAttribute("__has-icon");
-			}
+			this._hasIcon = this.hasIcon;
+			this._iconOnly = this.iconOnly;
 		}
 		get hasText() {
 			return !!this.textContent.trim().length;
 		}
 		get hasIcon() {
 			return !!this.icon.length;
+		}
+		get iconOnly() {
+			return this.hasIcon && !this.hasText;
 		}
 		get badgeDescription() {
 			return this.i18nBundle.getText(i18nDefaults.BADGE_DESCRIPTION);

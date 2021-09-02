@@ -25,10 +25,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 		static get styles() {
 			return [DatePicker.styles, DateRangePicker_css];
 		}
-		get _firstDateTimestamp() {
+		get _startDateTimestamp() {
 			return this._extractFirstTimestamp(this.value);
 		}
-		get _lastDateTimestamp() {
+		get _endDateTimestamp() {
 			return this._extractLastTimestamp(this.value);
 		}
 		get _tempTimestamp() {
@@ -38,7 +38,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 			return "Range";
 		}
 		get _calendarTimestamp() {
-			return this._tempTimestamp || this._firstDateTimestamp || getTodayUTCTimestamp__default(this._primaryCalendarType);
+			return this._tempTimestamp || this._startDateTimestamp || getTodayUTCTimestamp__default(this._primaryCalendarType);
 		}
 		get _calendarSelectedDates() {
 			if (this._tempValue) {
@@ -49,11 +49,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 			}
 			return [];
 		}
-		get firstDateValue() {
-			return CalendarDate__default.fromTimestamp(this._firstDateTimestamp * 1000).toLocalJSDate();
+		get startDateValue() {
+			return CalendarDate__default.fromTimestamp(this._startDateTimestamp * 1000).toLocalJSDate();
 		}
-		get lastDateValue() {
-			return CalendarDate__default.fromTimestamp(this._lastDateTimestamp * 1000).toLocalJSDate();
+		get endDateValue() {
+			return CalendarDate__default.fromTimestamp(this._endDateTimestamp * 1000).toLocalJSDate();
 		}
 		get _placeholder() {
 			return this.placeholder !== undefined ? this.placeholder : `${this._displayFormat} ${this._effectiveDelimiter} ${this._displayFormat}`;
@@ -98,28 +98,27 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 			}
 			const newValue = this._buildValue(...event.detail.dates);
 			this._updateValueAndFireEvents(newValue, true, ["change", "value-changed"]);
-			this._focusInputAfterClose = true;
 			this.closePicker();
 		}
 		async _modifyDateValue(amount, unit) {
-			if (!this._lastDateTimestamp) {
+			if (!this._endDateTimestamp) {
 				return super._modifyDateValue(amount, unit);
 			}
 			const input = this._getInput();
 			let caretPos = input.getCaretPosition();
 			let newValue;
 			if (caretPos <= this.value.indexOf(this._effectiveDelimiter)) {
-				const firstDateModified = modifyDateBy__default(CalendarDate__default.fromTimestamp(this._firstDateTimestamp * 1000), amount, unit, this._minDate, this._maxDate);
-				const newFirstDateTimestamp = firstDateModified.valueOf() / 1000;
-				if (newFirstDateTimestamp > this._lastDateTimestamp) {
+				const startDateModified = modifyDateBy__default(CalendarDate__default.fromTimestamp(this._startDateTimestamp * 1000), amount, unit, this._minDate, this._maxDate);
+				const newStartDateTimestamp = startDateModified.valueOf() / 1000;
+				if (newStartDateTimestamp > this._endDateTimestamp) {
 					caretPos += Math.ceil(this.value.length / 2);
 				}
-				newValue = this._buildValue(newFirstDateTimestamp, this._lastDateTimestamp);
+				newValue = this._buildValue(newStartDateTimestamp, this._endDateTimestamp);
 			} else {
-				const lastDateModified = modifyDateBy__default(CalendarDate__default.fromTimestamp(this._lastDateTimestamp * 1000), amount, unit, this._minDate, this._maxDate);
-				const newLastDateTimestamp = lastDateModified.valueOf() / 1000;
-				newValue = this._buildValue(this._firstDateTimestamp, newLastDateTimestamp);
-				if (newLastDateTimestamp < this._firstDateTimestamp) {
+				const endDateModified = modifyDateBy__default(CalendarDate__default.fromTimestamp(this._endDateTimestamp * 1000), amount, unit, this._minDate, this._maxDate);
+				const newEndDateTimestamp = endDateModified.valueOf() / 1000;
+				newValue = this._buildValue(this._startDateTimestamp, newEndDateTimestamp);
+				if (newEndDateTimestamp < this._startDateTimestamp) {
 					caretPos -= Math.ceil(this.value.length / 2);
 				}
 			}

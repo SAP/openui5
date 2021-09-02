@@ -44,7 +44,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		},
 		events:  {
 			drop: {},
-			"file-deleted": {
+			"item-delete": {
 				detail: {
 					item: { type: HTMLElement },
 				},
@@ -132,7 +132,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._dndOverlayMode = UploadCollectionDnDMode.Drag;
 		}
 		_onItemDelete(event) {
-			this.fireEvent("file-deleted", { item: event.detail.item });
+			this.fireEvent("item-delete", { item: event.detail.item });
 		}
 		_onSelectionChange(event) {
 			this.fireEvent("selection-change", { selectedItems: event.detail.selectedItems });

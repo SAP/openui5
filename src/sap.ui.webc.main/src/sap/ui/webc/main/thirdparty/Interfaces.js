@@ -1,6 +1,7 @@
 sap.ui.define(['exports'], function (exports) { 'use strict';
 
 	const IAvatar = "sap.ui.webcomponents.main.IAvatar";
+	const IBreadcrumbsItem = "sap.ui.webcomponents.main.IBreadcrumbsItem";
 	const IButton = "sap.ui.webcomponents.main.IButton";
 	const ICalendarDate = "sap.ui.webcomponents.main.ICalendarDate";
 	const IComboBoxItem = "sap.ui.webcomponents.main.IComboBoxItem";
@@ -10,6 +11,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 	const IInputSuggestionItem = "sap.ui.webcomponents.main.IInputSuggestionItem";
 	const IListItem = "sap.ui.webcomponents.main.IListItem";
 	const IMultiComboBoxItem = "sap.ui.webcomponents.main.IMultiComboBoxItem";
+	const ISegmentedButtonItem = "sap.ui.webcomponents.main.ISegmentedButtonItem";
 	const ISelectOption = "sap.ui.webcomponents.main.ISelectOption";
 	const ITab = "sap.ui.webcomponents.main.ITab";
 	const ITableRow = "sap.ui.webcomponents.main.ITableRow";
@@ -19,6 +21,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 	const ITreeItem = "sap.ui.webcomponents.main.ITreeItem";
 
 	exports.IAvatar = IAvatar;
+	exports.IBreadcrumbsItem = IBreadcrumbsItem;
 	exports.IButton = IButton;
 	exports.ICalendarDate = ICalendarDate;
 	exports.IColorPaletteItem = IColorPaletteItem;
@@ -28,6 +31,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 	exports.IInputSuggestionItem = IInputSuggestionItem;
 	exports.IListItem = IListItem;
 	exports.IMultiComboBoxItem = IMultiComboBoxItem;
+	exports.ISegmentedButtonItem = ISegmentedButtonItem;
 	exports.ISelectOption = ISelectOption;
 	exports.ITab = ITab;
 	exports.ITableCell = ITableCell;

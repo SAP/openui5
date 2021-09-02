@@ -7,11 +7,11 @@ sap.ui.define(function () { 'use strict';
 		static getGroup(groupName) {
 			return this.groups.get(groupName);
 		}
-		static getSelectedRadioFromGroup(groupName) {
-			return this.selectedRadios.get(groupName);
+		static getCheckedRadioFromGroup(groupName) {
+			return this.checkedRadios.get(groupName);
 		}
 		static removeGroup(groupName) {
-			this.selectedRadios.delete(groupName);
+			this.checkedRadios.delete(groupName);
 			return this.groups.delete(groupName);
 		}
 		static addToGroup(radioBtn, groupName) {
@@ -28,14 +28,14 @@ sap.ui.define(function () { 'use strict';
 				return;
 			}
 			const group = this.getGroup(groupName);
-			const selectedRadio = this.getSelectedRadioFromGroup(groupName);
+			const checkedRadio = this.getCheckedRadioFromGroup(groupName);
 			group.forEach((_radioBtn, idx, arr) => {
 				if (radioBtn._id === _radioBtn._id) {
 					return arr.splice(idx, 1);
 				}
 			});
-			if (selectedRadio === radioBtn) {
-				this.selectedRadios.set(groupName, null);
+			if (checkedRadio === radioBtn) {
+				this.checkedRadios.set(groupName, null);
 			}
 			if (!group.length) {
 				this.removeGroup(groupName);
@@ -43,8 +43,8 @@ sap.ui.define(function () { 'use strict';
 			this.updateTabOrder(groupName);
 		}
 		static createGroup(radioBtn, groupName) {
-			if (radioBtn.selected) {
-				this.selectedRadios.set(groupName, radioBtn);
+			if (radioBtn.checked) {
+				this.checkedRadios.set(groupName, radioBtn);
 			}
 			this.groups.set(groupName, [radioBtn]);
 		}
@@ -63,10 +63,10 @@ sap.ui.define(function () { 'use strict';
 				return;
 			}
 			const group = this.getGroup(groupName);
-			const hasSelectedRadio = group.some(radioBtn => radioBtn.selected);
+			const hasCheckedRadio = group.some(radioBtn => radioBtn.checked);
 			group.filter(radioBtn => !radioBtn.disabled).forEach((radioBtn, idx) => {
-				if (hasSelectedRadio) {
-					radioBtn._tabIndex = radioBtn.selected ? "0" : "-1";
+				if (hasCheckedRadio) {
+					radioBtn._tabIndex = radioBtn.checked ? "0" : "-1";
 				} else {
 					radioBtn._tabIndex = idx === 0 ? "0" : "-1";
 				}
@@ -87,22 +87,22 @@ sap.ui.define(function () { 'use strict';
 			this.updateTabOrder(groupName);
 		}
 		static updateSelectionInGroup(radioBtnToSelect, groupName) {
-			const selectedRadio = this.getSelectedRadioFromGroup(groupName);
-			this._deselectRadio(selectedRadio);
+			const checkedRadio = this.getCheckedRadioFromGroup(groupName);
+			this._deselectRadio(checkedRadio);
 			this._selectRadio(radioBtnToSelect);
-			this.selectedRadios.set(groupName, radioBtnToSelect);
+			this.checkedRadios.set(groupName, radioBtnToSelect);
 		}
 		static _deselectRadio(radioBtn) {
 			if (radioBtn) {
-				radioBtn.selected = false;
+				radioBtn.checked = false;
 			}
 		}
 		static _selectRadio(radioBtn) {
 			if (radioBtn) {
 				radioBtn.focus();
-				radioBtn.selected = true;
-				radioBtn._selected = true;
-				radioBtn.fireEvent("select");
+				radioBtn.checked = true;
+				radioBtn._checked = true;
+				radioBtn.fireEvent("change");
 			}
 		}
 		static _nextSelectable(pos, group) {
@@ -136,16 +136,16 @@ sap.ui.define(function () { 'use strict';
 			return previousRadioToSelect;
 		}
 		static enforceSingleSelection(radioBtn, groupName) {
-			const selectedRadio = this.getSelectedRadioFromGroup(groupName);
-			if (radioBtn.selected) {
-				if (!selectedRadio) {
-					this.selectedRadios.set(groupName, radioBtn);
-				} else if (radioBtn !== selectedRadio) {
-					this._deselectRadio(selectedRadio);
-					this.selectedRadios.set(groupName, radioBtn);
+			const checkedRadio = this.getCheckedRadioFromGroup(groupName);
+			if (radioBtn.checked) {
+				if (!checkedRadio) {
+					this.checkedRadios.set(groupName, radioBtn);
+				} else if (radioBtn !== checkedRadio) {
+					this._deselectRadio(checkedRadio);
+					this.checkedRadios.set(groupName, radioBtn);
 				}
-			} else if (radioBtn === selectedRadio) {
-				this.selectedRadios.set(groupName, null);
+			} else if (radioBtn === checkedRadio) {
+				this.checkedRadios.set(groupName, null);
 			}
 			this.updateTabOrder(groupName);
 		}
@@ -155,11 +155,11 @@ sap.ui.define(function () { 'use strict';
 			}
 			return this._groups;
 		}
-		static get selectedRadios() {
-			if (!this._selectedRadios) {
-				this._selectedRadios = new Map();
+		static get checkedRadios() {
+			if (!this._checkedRadios) {
+				this._checkedRadios = new Map();
 			}
-			return this._selectedRadios;
+			return this._checkedRadios;
 		}
 	}
 

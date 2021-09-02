@@ -148,7 +148,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		async openPicker() {
 			this.tempValue = this.value && this.isValid(this.value) ? this.value : this.getFormat().format(new Date());
 			const responsivePopover = await this._getPopover();
-			responsivePopover.open(this);
+			responsivePopover.showAt(this);
 			this._isPickerOpen = true;
 		}
 		togglePicker() {

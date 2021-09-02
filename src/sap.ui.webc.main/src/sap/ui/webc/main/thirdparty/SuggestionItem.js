@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/types/ValueState', './SuggestionListItem', './GroupHeaderListItem', './types/ListItemType'], function (UI5Element, ValueState, SuggestionListItem, GroupHeaderListItem, ListItemType) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/types/ValueState', './SuggestionListItem', './types/ListItemType'], function (UI5Element, ValueState, SuggestionListItem, ListItemType) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -34,9 +34,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: ValueState__default,
 				defaultValue: ValueState__default.None,
 			},
-			group: {
-				type: Boolean,
-			},
 		},
 		slots:  {
 		},
@@ -50,7 +47,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		static get dependencies() {
 			return [
 				SuggestionListItem,
-				GroupHeaderListItem,
 			];
 		}
 	}

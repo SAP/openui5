@@ -1,85 +1,13 @@
-sap.ui.define(['exports', '../lit-html', '../lib/directive', '../lib/parts'], function (exports, litHtml, directive, parts) { 'use strict';
+sap.ui.define(['exports', '../lit-html', '../directive-d4211b63'], function (exports, litHtml, directive) { 'use strict';
 
-    /**
-     * @license
-     * Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-     * This code may only be used under the BSD style license found at
-     * http://polymer.github.io/LICENSE.txt
-     * The complete set of authors may be found at
-     * http://polymer.github.io/AUTHORS.txt
-     * The complete set of contributors may be found at
-     * http://polymer.github.io/CONTRIBUTORS.txt
-     * Code distributed by Google as part of the polymer project is also
-     * subject to an additional IP rights grant found at
-     * http://polymer.github.io/PATENTS.txt
-     */
-    class ClassList {
-        constructor(element) {
-            this.classes = new Set();
-            this.changed = false;
-            this.element = element;
-            const classList = (element.getAttribute('class') || '').split(/\s+/);
-            for (const cls of classList) {
-                this.classes.add(cls);
-            }
-        }
-        add(cls) {
-            this.classes.add(cls);
-            this.changed = true;
-        }
-        remove(cls) {
-            this.classes.delete(cls);
-            this.changed = true;
-        }
-        commit() {
-            if (this.changed) {
-                let classString = '';
-                this.classes.forEach((cls) => classString += cls + ' ');
-                this.element.setAttribute('class', classString);
-            }
-        }
-    }
-    const previousClassesCache = new WeakMap();
-    const classMap = directive.directive((classInfo) => (part) => {
-        if (!(part instanceof parts.AttributePart) || (part instanceof parts.PropertyPart) ||
-            part.committer.name !== 'class' || part.committer.parts.length > 1) {
-            throw new Error('The `classMap` directive must be used in the `class` attribute ' +
-                'and must be the only part in the attribute.');
-        }
-        const { committer } = part;
-        const { element } = committer;
-        let previousClasses = previousClassesCache.get(part);
-        if (previousClasses === undefined) {
-            element.setAttribute('class', committer.strings.join(' '));
-            previousClassesCache.set(part, previousClasses = new Set());
-        }
-        const classList = (element.classList || new ClassList(element));
-        previousClasses.forEach((name) => {
-            if (!(name in classInfo)) {
-                classList.remove(name);
-                previousClasses.delete(name);
-            }
-        });
-        for (const name in classInfo) {
-            const value = classInfo[name];
-            if (value != previousClasses.has(name)) {
-                if (value) {
-                    classList.add(name);
-                    previousClasses.add(name);
-                }
-                else {
-                    classList.remove(name);
-                    previousClasses.delete(name);
-                }
-            }
-        }
-        if (typeof classList.commit === 'function') {
-            classList.commit();
-        }
-    });
+	/**
+	 * @license
+	 * Copyright 2018 Google LLC
+	 * SPDX-License-Identifier: BSD-3-Clause
+	 */const e=directive.i(class extends directive.s{constructor(t){var s;if(super(t),t.type!==directive.t.ATTRIBUTE||"class"!==t.name||(null===(s=t.strings)||void 0===s?void 0:s.length)>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(t){return Object.keys(t).filter((s=>t[s])).join(" ")}update(s,[r]){if(void 0===this.bt){this.bt=new Set;for(const t in r)r[t]&&this.bt.add(t);return this.render(r)}const i=s.element.classList;this.bt.forEach((t=>{t in r||(i.remove(t),this.bt.delete(t));}));for(const t in r){const s=!!r[t];s!==this.bt.has(t)&&(s?(i.add(t),this.bt.add(t)):(i.remove(t),this.bt.delete(t)));}return litHtml.noChange}});
 
-    exports.classMap = classMap;
+	exports.classMap = e;
 
-    Object.defineProperty(exports, '__esModule', { value: true });
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

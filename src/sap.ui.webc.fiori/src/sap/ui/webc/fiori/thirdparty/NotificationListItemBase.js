@@ -1,14 +1,15 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/main/thirdparty/ListItemBase', 'sap/ui/webc/main/thirdparty/types/Priority', 'sap/ui/webc/common/thirdparty/icons/decline', 'sap/ui/webc/common/thirdparty/icons/message-success', 'sap/ui/webc/common/thirdparty/icons/message-error', 'sap/ui/webc/common/thirdparty/icons/message-warning', 'sap/ui/webc/common/thirdparty/icons/overflow', './generated/templates/NotifactionOverflowActionsPopoverTemplate.lit', './generated/themes/NotifactionOverflowActionsPopover.css'], function (Keys, i18nBundle, ListItemBase, Priority, decline, messageSuccess, messageError, messageWarning, overflow, NotifactionOverflowActionsPopoverTemplate_lit, NotifactionOverflowActionsPopover_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/main/thirdparty/ListItemBase', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/main/thirdparty/types/Priority', 'sap/ui/webc/common/thirdparty/icons/decline', 'sap/ui/webc/common/thirdparty/icons/message-success', 'sap/ui/webc/common/thirdparty/icons/message-error', 'sap/ui/webc/common/thirdparty/icons/message-warning', 'sap/ui/webc/common/thirdparty/icons/overflow', './generated/templates/NotifactionOverflowActionsPopoverTemplate.lit', './generated/themes/NotifactionOverflowActionsPopover.css'], function (Keys, i18nBundle, ListItemBase, Integer, Priority, decline, messageSuccess, messageError, messageWarning, overflow, NotifactionOverflowActionsPopoverTemplate_lit, NotifactionOverflowActionsPopover_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
 	var ListItemBase__default = /*#__PURE__*/_interopDefaultLegacy(ListItemBase);
+	var Integer__default = /*#__PURE__*/_interopDefaultLegacy(Integer);
 	var Priority__default = /*#__PURE__*/_interopDefaultLegacy(Priority);
 
 	const metadata = {
 		managedSlots: true,
 		properties:  {
-			heading: {
+			titleText: {
 				type: String,
 			},
 			priority: {
@@ -23,6 +24,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 			},
 			busy: {
 				type: Boolean,
+			},
+			busyDelay: {
+				type: Integer__default,
+				defaultValue: 1000,
 			},
 		},
 		slots:  {
@@ -55,8 +60,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 				"Low": "message-success",
 			};
 		}
-		get hasHeading() {
-			return !!this.heading.length;
+		get hasTitleText() {
+			return !!this.titleText.length;
 		}
 		get hasPriority() {
 			return this.priority !== Priority__default.None;
@@ -123,7 +128,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 		}
 		async openOverflow() {
 			const overflowPopover = await this.getOverflowPopover();
-			overflowPopover.openBy(this.overflowButtonDOM);
+			overflowPopover.showAt(this.overflowButtonDOM);
 		}
 		async closeOverflow() {
 			const overflowPopover = await this.getOverflowPopover();

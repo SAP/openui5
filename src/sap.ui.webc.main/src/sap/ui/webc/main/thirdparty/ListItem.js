@@ -10,6 +10,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 			active: {
 				type: Boolean,
 			},
+			title: {
+				type: String,
+			},
 			actionable: {
 				type: Boolean,
 			},
@@ -174,6 +177,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 		}
 		get modeDelete() {
 			return this._mode === ListMode.Delete;
+		}
+		get renderDeleteButton() {
+			return this.modeDelete;
 		}
 		get disableDeleteButton() {
 			return false;

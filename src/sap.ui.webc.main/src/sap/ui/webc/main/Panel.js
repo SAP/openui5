@@ -132,6 +132,14 @@ sap.ui.define([
 				},
 
 				/**
+				 * Indicates whether the transition between the expanded and the collapsed state of the component is animated. By default the animation is enabled.
+				 */
+				noAnimation: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/**
 				 * Defines the width of the control
 				 */
 				width: {
@@ -167,7 +175,9 @@ sap.ui.define([
 				/**
 				 * Fired when the component is expanded/collapsed by user interaction.
 				 */
-				toggle: {}
+				toggle: {
+					parameters: {}
+				}
 			}
 		}
 	});

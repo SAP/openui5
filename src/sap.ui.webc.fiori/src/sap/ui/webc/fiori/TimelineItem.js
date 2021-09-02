@@ -56,17 +56,17 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the name of the item.
+				 * Defines the name of the item, displayed before the <code>title-text</code>.
 				 */
-				itemName: {
+				name: {
 					type: "string",
 					defaultValue: ""
 				},
 
 				/**
-				 * Defines whether the <code>itemName</code> is clickable.
+				 * Defines if the <code>name</code> is clickable.
 				 */
-				itemNameClickable: {
+				nameClickable: {
 					type: "boolean",
 					defaultValue: false
 				},
@@ -103,9 +103,11 @@ sap.ui.define([
 				/**
 				 * Fired when the item name is pressed either with a click/tap or by using the Enter or Space key. <br>
 				 * <br>
-				 * <b>Note:</b> The event will not be fired if the <code>item-name-clickable</code> attribute is not set.
+				 * <b>Note:</b> The event will not be fired if the <code>name-clickable</code> attribute is not set.
 				 */
-				itemNameClick: {}
+				nameClick: {
+					parameters: {}
+				}
 			}
 		}
 	});

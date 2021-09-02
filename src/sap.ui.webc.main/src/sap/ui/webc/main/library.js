@@ -22,6 +22,7 @@ sap.ui.define([
 			designtime: "sap/ui/webc/main/designtime/library.designtime",
 			interfaces: [
 				"sap.ui.webc.main.IAvatar",
+				"sap.ui.webc.main.IBreadcrumbsItem",
 				"sap.ui.webc.main.IButton",
 				"sap.ui.webc.main.ICalendarDate",
 				"sap.ui.webc.main.IColorPaletteItem",
@@ -31,6 +32,7 @@ sap.ui.define([
 				"sap.ui.webc.main.IInputSuggestionItem",
 				"sap.ui.webc.main.IListItem",
 				"sap.ui.webc.main.IMultiComboBoxItem",
+				"sap.ui.webc.main.ISegmentedButtonItem",
 				"sap.ui.webc.main.ISelectOption",
 				"sap.ui.webc.main.ITab",
 				"sap.ui.webc.main.ITableCell",
@@ -41,10 +43,11 @@ sap.ui.define([
 			],
 			types: [
 				"sap.ui.webc.main.AvatarColorScheme",
-				"sap.ui.webc.main.AvatarFitType",
 				"sap.ui.webc.main.AvatarGroupType",
 				"sap.ui.webc.main.AvatarShape",
 				"sap.ui.webc.main.AvatarSize",
+				"sap.ui.webc.main.BreadcrumbsDesign",
+				"sap.ui.webc.main.BreadcrumbsSeparatorStyle",
 				"sap.ui.webc.main.BusyIndicatorSize",
 				"sap.ui.webc.main.ButtonDesign",
 				"sap.ui.webc.main.CalendarSelectionMode",
@@ -76,24 +79,27 @@ sap.ui.define([
 				"sap.ui.webc.main.Avatar",
 				"sap.ui.webc.main.AvatarGroup",
 				"sap.ui.webc.main.Badge",
+				"sap.ui.webc.main.Breadcrumbs",
+				"sap.ui.webc.main.BreadcrumbsItem",
 				"sap.ui.webc.main.BusyIndicator",
 				"sap.ui.webc.main.Button",
 				"sap.ui.webc.main.Calendar",
 				"sap.ui.webc.main.CalendarDate",
 				"sap.ui.webc.main.Card",
+				"sap.ui.webc.main.CardHeader",
 				"sap.ui.webc.main.Carousel",
 				"sap.ui.webc.main.CheckBox",
 				"sap.ui.webc.main.ColorPalette",
 				"sap.ui.webc.main.ColorPaletteItem",
 				"sap.ui.webc.main.ColorPicker",
 				"sap.ui.webc.main.ComboBox",
+				"sap.ui.webc.main.ComboBoxGroupItem",
 				"sap.ui.webc.main.ComboBoxItem",
 				"sap.ui.webc.main.CustomListItem",
 				"sap.ui.webc.main.DatePicker",
 				"sap.ui.webc.main.DateRangePicker",
 				"sap.ui.webc.main.DateTimePicker",
 				"sap.ui.webc.main.Dialog",
-				"sap.ui.webc.main.DurationPicker",
 				"sap.ui.webc.main.FileUploader",
 				"sap.ui.webc.main.GroupHeaderListItem",
 				"sap.ui.webc.main.Icon",
@@ -114,10 +120,12 @@ sap.ui.define([
 				"sap.ui.webc.main.RatingIndicator",
 				"sap.ui.webc.main.ResponsivePopover",
 				"sap.ui.webc.main.SegmentedButton",
+				"sap.ui.webc.main.SegmentedButtonItem",
 				"sap.ui.webc.main.Select",
 				"sap.ui.webc.main.Slider",
 				"sap.ui.webc.main.StandardListItem",
 				"sap.ui.webc.main.StepInput",
+				"sap.ui.webc.main.SuggestionGroupItem",
 				"sap.ui.webc.main.SuggestionItem",
 				"sap.ui.webc.main.Switch",
 				"sap.ui.webc.main.Tab",
@@ -125,6 +133,7 @@ sap.ui.define([
 				"sap.ui.webc.main.Table",
 				"sap.ui.webc.main.TableCell",
 				"sap.ui.webc.main.TableColumn",
+				"sap.ui.webc.main.TableGroupRow",
 				"sap.ui.webc.main.TableRow",
 				"sap.ui.webc.main.TabSeparator",
 				"sap.ui.webc.main.TextArea",
@@ -141,7 +150,7 @@ sap.ui.define([
 		});
 
 		/**
-		 * UI5 library: sap.ui.webc.main
+		 * SAPUI5 library with controls based on UI5 Web Components
 		 *
 		 * @namespace
 		 * @alias sap.ui.webc.main
@@ -149,7 +158,7 @@ sap.ui.define([
 		 * @version ${version}
 		 * @public
 		 * @since 1.92.0
-		 * @experimental Since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
 		 */
 		var thisLib = sap.ui.webc.main;
 
@@ -158,6 +167,17 @@ sap.ui.define([
 		 * Interface for components that represent an avatar and may be slotted in numerous higher-order components such as <code>ui5-avatar-group</code>
 		 *
 		 * @name sap.ui.webc.main.IAvatar
+		 * @interface
+		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+
+		/**
+		 * Interface for components that may be slotted inside <code>ui5-breadcrumbs</code> as options
+		 *
+		 * @name sap.ui.webc.main.IBreadcrumbsItem
 		 * @interface
 		 * @public
 		 * @since 1.92.0
@@ -257,6 +277,17 @@ sap.ui.define([
 		 * Interface for components that may be slotted inside a <code>ui5-multi-combobox</code> as items
 		 *
 		 * @name sap.ui.webc.main.IMultiComboBoxItem
+		 * @interface
+		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+
+		/**
+		 * Interface for components that may be slotted inside <code>ui5-segmented-button</code> as items
+		 *
+		 * @name sap.ui.webc.main.ISegmentedButtonItem
 		 * @interface
 		 * @public
 		 * @since 1.92.0
@@ -421,31 +452,6 @@ sap.ui.define([
 
 
 		/**
-		 * Different types of AvatarFitType.
-		 *
-		 * @enum {string}
-		 * @public
-		 * @since 1.92.0
-		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
-		 */
-		thisLib.AvatarFitType = {
-
-			/**
-			 *
-			 * @public
-			 */
-			Contain: "Contain",
-
-			/**
-			 *
-			 * @public
-			 */
-			Cover: "Cover"
-		};
-
-
-		/**
 		 * Different types of AvatarGroupType.
 		 *
 		 * @enum {string}
@@ -539,6 +545,80 @@ sap.ui.define([
 
 
 		/**
+		 * Different types of <code>Breadcrumbs</code>.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		thisLib.BreadcrumbsDesign = {
+
+			/**
+			 * All items are displayed as links.
+			 * @public
+			 */
+			NoCurrentPage: "NoCurrentPage",
+
+			/**
+			 * Shows the current page as the last item in the trail. The last item contains only plain text and is not a link.
+			 * @public
+			 */
+			Standard: "Standard"
+		};
+
+
+		/**
+		 * Different types of <code>Breadcrumbs</code> separator.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		thisLib.BreadcrumbsSeparatorStyle = {
+
+			/**
+			 * The separator appears as "\".
+			 * @public
+			 */
+			BackSlash: "BackSlash",
+
+			/**
+			 * The separator appears as "\\".
+			 * @public
+			 */
+			DoubleBackSlash: "DoubleBackSlash",
+
+			/**
+			 * The separator appears as ">>".
+			 * @public
+			 */
+			DoubleGreaterThan: "DoubleGreaterThan",
+
+			/**
+			 * The separator appears as "//".
+			 * @public
+			 */
+			DoubleSlash: "DoubleSlash",
+
+			/**
+			 * The separator appears as ">".
+			 * @public
+			 */
+			GreaterThan: "GreaterThan",
+
+			/**
+			 * The separator appears as "/".
+			 * @public
+			 */
+			Slash: "Slash"
+		};
+
+
+		/**
 		 * Different types of BusyIndicator.
 		 *
 		 * @enum {string}
@@ -579,6 +659,12 @@ sap.ui.define([
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.ButtonDesign = {
+
+			/**
+			 * attention type
+			 * @public
+			 */
+			Attention: "Attention",
 
 			/**
 			 * default type (no special styling)

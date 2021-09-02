@@ -55,11 +55,11 @@
 
 
                 var oDialog3Button = new Button({
-                    text: "open",
+                    text: "show",
                     click: function(oEvent) {
-                        console.log("Calling open...");
-                        var result = oDialog.open();
-                        console.log("... open returned: ", result);
+                        console.log("Calling show...");
+                        var result = oDialog.show();
+                        console.log("... show returned: ", result);
                     }
                 });
                 oDialog3Button.placeAt("methodButtons");

@@ -48,6 +48,12 @@ sap.ui.define(function() {
 				}
 			},
 
+			"Breadcrumbs": {
+				coverage: {
+					only: ["sap/ui/webc/main/Breadcrumbs"]
+				}
+			},
+
 			"BusyIndicator": {
 				coverage: {
 					only: ["sap/ui/webc/main/BusyIndicator"]
@@ -69,6 +75,12 @@ sap.ui.define(function() {
 			"Card": {
 				coverage: {
 					only: ["sap/ui/webc/main/Card"]
+				}
+			},
+
+			"CardHeader": {
+				coverage: {
+					only: ["sap/ui/webc/main/CardHeader"]
 				}
 			},
 
@@ -123,12 +135,6 @@ sap.ui.define(function() {
 			"Dialog": {
 				coverage: {
 					only: ["sap/ui/webc/main/Dialog"]
-				}
-			},
-
-			"DurationPicker": {
-				coverage: {
-					only: ["sap/ui/webc/main/DurationPicker"]
 				}
 			},
 

@@ -5,9 +5,10 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/webc/main/Input",
 	"sap/ui/webc/main/Icon",
+	"sap/ui/webc/main/SuggestionGroupItem",
 	"sap/ui/webc/main/SuggestionItem",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, Input, Icon, SuggestionItem, Button) {
+], function(createAndAppendDiv, Core, Input, Icon, SuggestionGroupItem, SuggestionItem, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
@@ -26,9 +27,7 @@ sap.ui.define([
 					}
 				}),
 				suggestionItems: [
-					new SuggestionItem({
-						additionalText: "Some text...",
-						icon: "employee",
+					new SuggestionGroupItem({
 						text: "Some text..."
 					}),
 					new SuggestionItem({
@@ -36,9 +35,7 @@ sap.ui.define([
 						icon: "employee",
 						text: "Some text..."
 					}),
-					new SuggestionItem({
-						additionalText: "Some text...",
-						icon: "employee",
+					new SuggestionGroupItem({
 						text: "Some text..."
 					})
 				],

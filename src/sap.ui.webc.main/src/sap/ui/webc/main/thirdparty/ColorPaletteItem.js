@@ -13,9 +13,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			value: {
 				type: CSSColor__default,
 			},
-			stableDomRef: {
-				type: String,
-			},
 			_tabIndex: {
 				type: String,
 				defaultValue: "-1",

@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/Keys', './Label', './types/WrappingType', './RadioButtonGroup', './generated/templates/RadioButtonTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/RadioButton.css'], function (Device, FeaturesRegistry, UI5Element, litRender, i18nBundle, ValueState, Keys, Label, WrappingType, RadioButtonGroup, RadioButtonTemplate_lit, i18nDefaults, RadioButton_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/Keys', './Label', './RadioButtonGroup', './types/WrappingType', './generated/templates/RadioButtonTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/RadioButton.css'], function (Device, FeaturesRegistry, UI5Element, litRender, i18nBundle, ValueState, Keys, Label, RadioButtonGroup, WrappingType, RadioButtonTemplate_lit, i18nDefaults, RadioButton_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -7,7 +7,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 	var ValueState__default = /*#__PURE__*/_interopDefaultLegacy(ValueState);
 
 	const metadata = {
-		tag: "ui5-radiobutton",
+		tag: "ui5-radio-button",
+		altTag: "ui5-radiobutton",
 		languageAware: true,
 		properties:  {
 			disabled: {
@@ -16,7 +17,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			readonly: {
 				type: Boolean,
 			},
-			selected: {
+			checked: {
 				type: Boolean,
 			},
 			text: {
@@ -32,8 +33,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			value: {
 				type: String,
 			},
-			wrap: {
-				type: Boolean,
+			wrappingType: {
+				type: WrappingType,
+				defaultValue: WrappingType.None,
 			},
 			_tabIndex: {
 				type: String,
@@ -47,7 +49,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			},
 		},
 		events:  {
-			select: {},
+			change: {},
 		},
 	};
 	class RadioButton extends UI5Element__default {
@@ -75,14 +77,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 		}
 		onBeforeRendering() {
 			this.syncGroup();
-			this._wrappingType = this.wrap ? WrappingType.Normal : WrappingType.None;
 			this._enableFormSupport();
 		}
 		syncGroup() {
 			const oldGroup = this._name;
 			const currentGroup = this.name;
-			const oldSelected = this._selected;
-			const currentSelected = this.selected;
+			const oldChecked = this._checked;
+			const currentChecked = this.checked;
 			if (currentGroup !== oldGroup) {
 				if (oldGroup) {
 					RadioButtonGroup.removeFromGroup(this, oldGroup);
@@ -93,18 +94,18 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			} else if (currentGroup) {
 				RadioButtonGroup.enforceSingleSelection(this, currentGroup);
 			}
-			if (this.name && currentSelected !== oldSelected) {
+			if (this.name && currentChecked !== oldChecked) {
 				RadioButtonGroup.updateTabOrder(this.name);
 			}
 			this._name = this.name;
-			this._selected = this.selected;
+			this._checked = this.checked;
 		}
 		_enableFormSupport() {
 			const FormSupport = FeaturesRegistry.getFeature("FormSupport");
 			if (FormSupport) {
 				FormSupport.syncNativeHiddenInput(this, (element, nativeInput) => {
-					nativeInput.disabled = element.disabled || !element.selected;
-					nativeInput.value = element.selected ? element.value : "";
+					nativeInput.disabled = element.disabled || !element.checked;
+					nativeInput.value = element.checked ? element.value : "";
 				});
 			} else if (this.value) {
 				console.warn(`In order for the "value" property to have effect, you should also: import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";`);
@@ -153,15 +154,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 				return this;
 			}
 			if (!this.name) {
-				this.selected = !this.selected;
-				this.fireEvent("select");
+				this.checked = !this.checked;
+				this.fireEvent("change");
 				return this;
 			}
 			RadioButtonGroup.selectItem(this, this.name);
 			return this;
 		}
 		canToggle() {
-			return !(this.disabled || this.readonly || this.selected);
+			return !(this.disabled || this.readonly || this.checked);
 		}
 		valueStateTextMappings() {
 			const i18nBundle = this.i18nBundle;
@@ -172,6 +173,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 		}
 		get classes() {
 			return {
+				main: {},
 				inner: {
 					"ui5-radio-inner--hoverable": !this.disabled && !this.readonly && Device.isDesktop(),
 				},

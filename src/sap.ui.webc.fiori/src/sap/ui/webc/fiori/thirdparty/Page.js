@@ -1,9 +1,11 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', './types/PageBackgroundDesign', './generated/templates/PageTemplate.lit', './generated/themes/Page.css'], function (UI5Element, litRender, PageBackgroundDesign, PageTemplate_lit, Page_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/MediaRange', './types/PageBackgroundDesign', './generated/templates/PageTemplate.lit', './generated/themes/Page.css'], function (UI5Element, litRender, ResizeHandler, MediaRange, PageBackgroundDesign, PageTemplate_lit, Page_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
 	var UI5Element__default = /*#__PURE__*/_interopDefaultLegacy(UI5Element);
 	var litRender__default = /*#__PURE__*/_interopDefaultLegacy(litRender);
+	var ResizeHandler__default = /*#__PURE__*/_interopDefaultLegacy(ResizeHandler);
+	var MediaRange__default = /*#__PURE__*/_interopDefaultLegacy(MediaRange);
 
 	const metadata = {
 		tag: "ui5-page",
@@ -22,6 +24,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			},
 			hideFooter: {
 				type: Boolean,
+			},
+			mediaRange: {
+				type: String,
 			},
 		},
 		slots:  {
@@ -52,6 +57,19 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		static get template() {
 			return PageTemplate_lit;
 		}
+		constructor() {
+			super();
+			this._updateMediaRange = this.updateMediaRange.bind(this);
+		}
+		onEnterDOM() {
+			ResizeHandler__default.register(this, this._updateMediaRange);
+		}
+		onExitDOM() {
+			ResizeHandler__default.deregister(this, this._updateMediaRange);
+		}
+		updateMediaRange() {
+			this.mediaRange = MediaRange__default.getCurrentRange(MediaRange__default.RANGESETS.RANGE_4STEPS, this.getDomRef().offsetWidth);
+		}
 		get _contentBottom() {
 			return !this.floatingFooter && !this.hideFooter ? "2.75rem" : "0";
 		}
@@ -68,6 +86,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					"bottom": this.footer.length && this._contentBottom,
 					"top": this._contentTop,
 				},
+				footer: {},
 			};
 		}
 	}

@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/i18nBundle', '../List', '../ResponsivePopover', '../SuggestionItem', '../Button', '../GroupHeaderListItem', '../SuggestionListItem', '../generated/i18n/i18n-defaults'], function (FeaturesRegistry, i18nBundle, List, ResponsivePopover, SuggestionItem, Button, GroupHeaderListItem, SuggestionListItem, i18nDefaults) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/i18nBundle', '../List', '../ResponsivePopover', '../SuggestionItem', '../SuggestionGroupItem', '../Button', '../GroupHeaderListItem', '../SuggestionListItem', '../generated/i18n/i18n-defaults'], function (FeaturesRegistry, i18nBundle, List, ResponsivePopover, SuggestionItem, SuggestionGroupItem, Button, GroupHeaderListItem, SuggestionListItem, i18nDefaults) { 'use strict';
 
 	class Suggestions {
 		constructor(component, slotName, highlight, handleFocus) {
@@ -29,7 +29,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 					type: suggestion.type || undefined,
 					additionalText: suggestion.additionalText || undefined,
 					additionalTextState: suggestion.additionalTextState,
-					group: suggestion.group,
+					groupItem: suggestion.groupItem,
 					key: idx,
 				});
 			});
@@ -60,6 +60,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			}
 			return false;
 		}
+		onTab(event) {
+			if (this._isItemOnTarget()) {
+				this.onItemSelected(null, true);
+				return true;
+			}
+			return false;
+		}
 		toggle(bToggle, { preventFocusRestore }) {
 			const toggle = bToggle !== undefined ? bToggle : !this.isOpened();
 			if (toggle) {
@@ -76,7 +83,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			this.responsivePopover = await this._respPopover();
 			this._beforeOpen();
 			if (this._getItems().length) {
-				this.responsivePopover.open(this._getComponent());
+				this.responsivePopover.showAt(this._getComponent());
 			}
 		}
 		async close(preventFocusRestore = false) {
@@ -302,6 +309,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 		static get dependencies() {
 			return [
 				SuggestionItem,
+				SuggestionGroupItem,
 				ResponsivePopover,
 				List,
 				SuggestionListItem,

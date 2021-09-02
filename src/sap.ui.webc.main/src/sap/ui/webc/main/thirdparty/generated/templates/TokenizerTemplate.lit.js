@@ -1,18 +1,9 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/ifDefined', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], function (ifDefined, litRender) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], function (litRender) { 'use strict';
 
-	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+	const block0 = (context, tags, suffix) => litRender.html`<div dir="${litRender.ifDefined(context.effectiveDir)}" class="${litRender.classMap(context.classes.wrapper)}"><span id="${litRender.ifDefined(context._id)}-hiddenText" class="ui5-hidden-text">${litRender.ifDefined(context.tokenizerLabel)}</span><div class="${litRender.classMap(context.classes.content)}" @ui5-delete="${litRender.ifDefined(context._tokenDelete)}" @click="${context._click}" @mousedown="${context._onmousedown}" @keydown="${context._onkeydown}" role="listbox" aria-labelledby="${litRender.ifDefined(context._id)}-hiddenText">${ litRender.repeat(context.tokens, (item, index) => item._id || index, (item, index) => block1(item)) }</div>${ context.showNMore ? block2(context) : undefined }</div>`;
+	const block1 = (item, index, context, tags, suffix) => litRender.html`<slot name="${litRender.ifDefined(item._individualSlot)}"></slot>`;
+	const block2 = (context, tags, suffix) => litRender.html`<span @click="${context._openOverflowPopover}" class="ui5-tokenizer-more-text">${litRender.ifDefined(context._nMoreText)}</span>`;
 
-	var ifDefined__default = /*#__PURE__*/_interopDefaultLegacy(ifDefined);
-
-	const block0 = (context) => { return litRender.html`<div dir="${ifDefined__default(context.effectiveDir)}" class="${litRender.classMap(context.classes.wrapper)}"><span id="${ifDefined__default(context._id)}-hiddenText" class="ui5-hidden-text">${ifDefined__default(context.tokenizerLabel)}</span><div class="${litRender.classMap(context.classes.content)}" @ui5-delete="${ifDefined__default(context._tokenDelete)}" @click="${context._click}" @mousedown="${context._onmousedown}" @keydown="${context._onkeydown}" role="listbox" aria-labelledby="${ifDefined__default(context._id)}-hiddenText">${ litRender.repeat(context.tokens, (item, index) => item._id || index, (item, index) => block1(item)) }</div>${ context.showNMore ? block2(context) : undefined }</div>`; };
-	const block1 = (item, index, context) => { return litRender.html`<slot name="${ifDefined__default(item._individualSlot)}"></slot>`; };
-	const block2 = (context) => { return litRender.html`<span @click="${context._openOverflowPopover}" class="ui5-tokenizer-more-text">${ifDefined__default(context._nMoreText)}</span>`; };
-	const main = (context, tags, suffix) => {
-		litRender.setTags(tags);
-		litRender.setSuffix(suffix);
-		return block0(context);
-	};
-
-	return main;
+	return block0;
 
 });

@@ -15,8 +15,8 @@ sap.ui.define([
 				text: "Some text...",
 				value: "Control value",
 				valueState: "Warning",
-				select: function(oEvent) {
-					// console.log("Event select fired for RadioButton with parameters: ", oEvent.getParameters());
+				change: function(oEvent) {
+					// console.log("Event change fired for RadioButton with parameters: ", oEvent.getParameters());
 				}
 			});
 			this.oRadioButton.placeAt("uiArea");

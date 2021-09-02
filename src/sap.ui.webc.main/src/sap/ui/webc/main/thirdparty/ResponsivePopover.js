@@ -16,6 +16,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			_hideHeader: {
 				type: Boolean,
 			},
+			_hideCloseButton: {
+				type: Boolean,
+			},
 		},
 	};
 	class ResponsivePopover extends Popover {
@@ -47,7 +50,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 				Title,
 			];
 		}
-		async open(opener) {
+		async showAt(opener, preventInitialFocus = false) {
 			this.style.display = this._isPhone ? "contents" : "";
 			if (this.isOpen() || (this._dialog && this._dialog.isOpen())) {
 				return;
@@ -56,10 +59,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 				if (!this.noStretch) {
 					this._minWidth = Math.max(POPOVER_MIN_WIDTH, opener.getBoundingClientRect().width);
 				}
-				await this.openBy(opener);
+				await super.showAt(opener, preventInitialFocus);
 			} else {
 				this.style.zIndex = PopupUtils.getNextZIndex();
-				await this._dialog.open();
+				await this._dialog.show();
 			}
 		}
 		close(escPressed = false, preventRegistryUpdate = false, preventFocusRestore = false) {
@@ -73,7 +76,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			if (this.isOpen()) {
 				return this.close();
 			}
-			this.open(opener);
+			this.showAt(opener);
 		}
 		isOpen() {
 			return Device.isPhone() ? this._dialog.isOpen() : super.isOpen();

@@ -10,6 +10,8 @@ sap.ui.define([
 ], function(WebComponent, library) {
 	"use strict";
 
+	var TimelineLayout = library.TimelineLayout;
+
 	/**
 	 * Constructor for a new <code>Timeline</code>.
 	 *
@@ -46,6 +48,22 @@ sap.ui.define([
 					type: "sap.ui.core.CSSSize",
 					defaultValue: null,
 					mapping: "style"
+				},
+
+				/**
+				 * Defines the items orientation.
+				 *
+				 * <br>
+				 * <br>
+				 * <b>Note:</b> Available options are:
+				 * <ul>
+				 *     <li><code>Vertical</code></li>
+				 *     <li><code>Horizontal</code></li>
+				 * </ul>
+				 */
+				layout: {
+					type: "sap.ui.webc.fiori.TimelineLayout",
+					defaultValue: TimelineLayout.Vertical
 				},
 
 				/**

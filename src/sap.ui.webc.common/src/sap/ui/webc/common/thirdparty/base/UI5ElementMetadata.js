@@ -73,7 +73,7 @@ sap.ui.define(['./types/DataType', './util/isDescendantOf', './util/StringHelper
 		}
 		hasAttribute(propName) {
 			const propData = this.getProperties()[propName];
-			return propData.type !== Object && !propData.noAttribute;
+			return propData.type !== Object && !propData.noAttribute && !propData.multiple;
 		}
 		getPropertiesList() {
 			return Object.keys(this.getProperties());

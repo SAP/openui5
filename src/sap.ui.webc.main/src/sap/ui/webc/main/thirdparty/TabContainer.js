@@ -270,7 +270,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (this.responsivePopover.opened) {
 				this.responsivePopover.close();
 			} else {
-				this.responsivePopover.open(button);
+				this.responsivePopover.showAt(button);
 			}
 		}
 		_onHeaderBackArrowClick() {

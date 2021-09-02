@@ -53,10 +53,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			name: {
 				type: String,
 			},
-			ariaLabel: {
+			accessibleName: {
 				type: String,
 			},
-			ariaLabelledby: {
+			accessibleNameRef: {
 				type: String,
 			},
 			focused: {
@@ -195,7 +195,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		async openPopover() {
 			this.popover = await this._getPopover();
-			this.popover && this.popover.openBy(this.shadowRoot.querySelector(".ui5-textarea-inner"));
+			this.popover && this.popover.showAt(this.shadowRoot.querySelector(".ui5-textarea-inner"));
 		}
 		async closePopover() {
 			this.popover = await this._getPopover();

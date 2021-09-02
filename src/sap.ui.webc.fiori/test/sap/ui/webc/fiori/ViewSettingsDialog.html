@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>ViewSettingsDialog - sap.ui.webc.fiori</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.fiori, sap.ui.webc.main">
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            sap.ui.require([
+                "sap/ui/webc/fiori/ViewSettingsDialog",
+                "sap/ui/webc/main/CustomListItem",
+                "sap/ui/webc/main/Button",
+                "sap/ui/webc/main/GroupHeaderListItem",
+                "sap/ui/webc/main/StandardListItem"
+            ], function(
+                ViewSettingsDialog, CustomListItem, Button, GroupHeaderListItem, StandardListItem
+            ) {
+
+                var oViewSettingsDialog0Button = new Button({
+                    text: "show",
+                    click: function(oEvent) {
+                        console.log("Calling show...");
+                        var result = oViewSettingsDialog.show();
+                        console.log("... show returned: ", result);
+                    }
+                });
+                oViewSettingsDialog0Button.placeAt("methodButtons");
+
+
+                var oViewSettingsDialog = new ViewSettingsDialog({
+                    sortItems: [
+                        new CustomListItem({
+                            content: [
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                })
+                            ],
+                            detailClick: function(oEvent) {
+                                console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new GroupHeaderListItem({
+                            text: "Some text..."
+                        }),
+                        new StandardListItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text...",
+                            detailClick: function(oEvent) {
+                                console.log("Event detailClick fired for StandardListItem with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    cancel: function(oEvent) {
+                        console.log("Event cancel fired for ViewSettingsDialog with parameters: ", oEvent.getParameters());
+                    },
+                    confirm: function(oEvent) {
+                        console.log("Event confirm fired for ViewSettingsDialog with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oViewSettingsDialog.placeAt("testControl");
+            });
+        });
+    </script>
+</head>
+
+<body id="body" class="sapUiBody">
+    <div id="methodButtons"></div>
+    <br><br>
+    <div id="testControl"></div>
+</body>
+
+</html>

@@ -16,6 +16,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			primaryCalendarType: {
 				type: CalendarType__default,
 			},
+			secondaryCalendarType: {
+				type: CalendarType__default,
+			},
 			minDate: {
 				type: String,
 			},

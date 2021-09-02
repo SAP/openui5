@@ -15,6 +15,7 @@ sap.ui.define([
 	QUnit.module("Rendering", {
 		beforeEach: function() {
 			this.oNotificationListItem = new NotificationListItem({
+				titleText: "Some text...",
 				actions: [
 					new NotificationAction({
 						icon: "employee",
@@ -30,7 +31,14 @@ sap.ui.define([
 					})
 				],
 				avatar: new Avatar({
-					icon: "employee"
+					icon: "employee",
+					content: new Button({
+						icon: "employee",
+						text: "Some text...",
+						click: function(oEvent) {
+							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+						}
+					})
 				}),
 				footnotes: [
 					new Button({

@@ -51,8 +51,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			},
 		},
 	};
-	const CELL_SIZE_COMPACT = 2;
-	const CELL_SIZE_COZY = 2.875;
+	const CELL_SIZE_COMPACT = 32;
+	const CELL_SIZE_COZY = 46;
 	class WheelSlider extends UI5Element__default {
 		static get metadata() {
 			return metadata;
@@ -123,17 +123,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.fireEvent("collapse", {});
 		}
 		get _itemCellHeight() {
-			const defaultSize = getEffectiveContentDensity__default(this) === "compact" ? CELL_SIZE_COMPACT : CELL_SIZE_COZY;
+			const defaultSize = getEffectiveContentDensity__default(document.body) === "compact" ? CELL_SIZE_COMPACT : CELL_SIZE_COZY;
 			if (this.shadowRoot.querySelectorAll(".ui5-wheelslider-item").length) {
 				const itemComputedStyle = getComputedStyle(this.shadowRoot.querySelector(".ui5-wheelslider-item"));
 				const itemHeightValue = itemComputedStyle.getPropertyValue("--_ui5_wheelslider_item_height");
-				const onlyDigitsValue = itemHeightValue.replace("rem", "");
+				const onlyDigitsValue = itemHeightValue.replace("px", "");
 				return Number(onlyDigitsValue) || defaultSize;
 			}
 			return defaultSize;
 		}
 		_updateScrolling() {
-			const cellSizeInPx = this._itemCellHeight * 16,
+			const cellSizeInPx = this._itemCellHeight,
 				scrollWhere = this._scroller.scrollContainer.scrollTop;
 			let offsetIndex;
 			if (!scrollWhere) {
@@ -172,7 +172,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_selectElementByIndex(currentIndex) {
 			let index = currentIndex;
 			const itemsCount = this._itemsToShow.length;
-			const cellSizeInPx = this._itemCellHeight * 16;
+			const cellSizeInPx = this._itemCellHeight;
 			const scrollBy = cellSizeInPx * index;
 			if (this.cyclic) {
 				index = this._handleArrayBorderReached(index);

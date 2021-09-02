@@ -40,6 +40,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/localization/dates/CalendarDate', 
 					values: { type: Array },
 				},
 			},
+			"show-month-press": {},
+			"show-year-press": {},
 		},
 	};
 	class Calendar extends CalendarPart {
@@ -75,11 +77,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/localization/dates/CalendarDate', 
 			this._previousButtonDisabled = !this._currentPickerDOM._hasPreviousPage();
 			this._nextButtonDisabled = !this._currentPickerDOM._hasNextPage();
 		}
-		onHeaderShowMonthPress() {
+		onHeaderShowMonthPress(event) {
+			this._currentPickerDOM._autoFocus = false;
 			this._currentPicker = "month";
+			this.fireEvent("show-month-press", event);
 		}
-		onHeaderShowYearPress() {
+		onHeaderShowYearPress(event) {
+			this._currentPickerDOM._autoFocus = false;
 			this._currentPicker = "year";
+			this.fireEvent("show-year-press", event);
 		}
 		get _currentPickerDOM() {
 			return this.shadowRoot.querySelector(`[ui5-${this._currentPicker}picker]`);
@@ -118,19 +124,21 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/localization/dates/CalendarDate', 
 		onSelectedMonthChange(event) {
 			this.timestamp = event.detail.timestamp;
 			this._currentPicker = "day";
+			this._currentPickerDOM._autoFocus = true;
 		}
 		onSelectedYearChange(event) {
 			this.timestamp = event.detail.timestamp;
 			this._currentPicker = "day";
+			this._currentPickerDOM._autoFocus = true;
 		}
 		onNavigate(event) {
 			this.timestamp = event.detail.timestamp;
 		}
 		_onkeydown(event) {
-			if (Keys.isF4(event) && this._currentPicker === "day") {
+			if (Keys.isF4(event) && this._currentPicker !== "month") {
 				this._currentPicker = "month";
 			}
-			if (Keys.isF4Shift(event) && this._currentPicker === "day") {
+			if (Keys.isF4Shift(event) && this._currentPicker !== "year") {
 				this._currentPicker = "year";
 			}
 		}

@@ -1,4 +1,4 @@
-sap.ui.define(['./StaticArea', './updateShadowRoot', './Render', './util/getEffectiveContentDensity', './CustomElementsScope'], function (StaticArea, updateShadowRoot, Render, getEffectiveContentDensity, CustomElementsScope) { 'use strict';
+sap.ui.define(['./StaticArea', './updateShadowRoot', './Render', './util/getEffectiveContentDensity', './CustomElementsScope', './locale/getEffectiveDir'], function (StaticArea, updateShadowRoot, Render, getEffectiveContentDensity, CustomElementsScope, getEffectiveDir) { 'use strict';
 
 	class StaticAreaItem extends HTMLElement {
 		constructor() {
@@ -13,6 +13,7 @@ sap.ui.define(['./StaticArea', './updateShadowRoot', './Render', './util/getEffe
 		update() {
 			if (this._rendered) {
 				this._updateContentDensity();
+				this._updateDirection();
 				updateShadowRoot(this.ownerElement, true);
 			}
 		}
@@ -23,6 +24,14 @@ sap.ui.define(['./StaticArea', './updateShadowRoot', './Render', './util/getEffe
 			} else {
 				this.classList.remove("sapUiSizeCompact");
 				this.classList.remove("ui5-content-density-compact");
+			}
+		}
+		_updateDirection() {
+			const dir = getEffectiveDir(this.ownerElement);
+			if (dir) {
+				this.setAttribute("dir", dir);
+			} else {
+				this.removeAttribute("dir");
 			}
 		}
 		async getDomRef() {

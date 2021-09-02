@@ -14,9 +14,10 @@
             sap.ui.require([
                 "sap/ui/webc/main/ComboBox",
                 "sap/ui/webc/main/Icon",
+                "sap/ui/webc/main/ComboBoxGroupItem",
                 "sap/ui/webc/main/ComboBoxItem"
             ], function(
-                ComboBox, Icon, ComboBoxItem
+                ComboBox, Icon, ComboBoxGroupItem, ComboBoxItem
             ) {
 
 
@@ -32,16 +33,14 @@
                         }
                     }),
                     items: [
-                        new ComboBoxItem({
-                            additionalText: "Some text...",
+                        new ComboBoxGroupItem({
                             text: "Some text..."
                         }),
                         new ComboBoxItem({
                             additionalText: "Some text...",
                             text: "Some text..."
                         }),
-                        new ComboBoxItem({
-                            additionalText: "Some text...",
+                        new ComboBoxGroupItem({
                             text: "Some text..."
                         })
                     ],

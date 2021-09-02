@@ -62,7 +62,9 @@ sap.ui.define([
 				/**
 				 * Fired when the the selected color is changed
 				 */
-				change: {}
+				change: {
+					parameters: {}
+				}
 			}
 		}
 	});

@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
 	"sap/ui/webc/main/SegmentedButton",
+	"sap/ui/webc/main/SegmentedButtonItem",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, SegmentedButton, Button) {
+], function(createAndAppendDiv, Core, SegmentedButton, SegmentedButtonItem, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
@@ -13,26 +14,26 @@ sap.ui.define([
 	QUnit.module("Rendering", {
 		beforeEach: function() {
 			this.oSegmentedButton = new SegmentedButton({
-				buttons: [
-					new Button({
+				items: [
+					new SegmentedButtonItem({
 						icon: "employee",
 						text: "Some text...",
 						click: function(oEvent) {
-							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+							// console.log("Event click fired for SegmentedButtonItem with parameters: ", oEvent.getParameters());
 						}
 					}),
-					new Button({
+					new SegmentedButtonItem({
 						icon: "employee",
 						text: "Some text...",
 						click: function(oEvent) {
-							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+							// console.log("Event click fired for SegmentedButtonItem with parameters: ", oEvent.getParameters());
 						}
 					}),
-					new Button({
+					new SegmentedButtonItem({
 						icon: "employee",
 						text: "Some text...",
 						click: function(oEvent) {
-							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+							// console.log("Event click fired for SegmentedButtonItem with parameters: ", oEvent.getParameters());
 						}
 					})
 				],

@@ -146,7 +146,7 @@ sap.ui.define([
 				 * <br>
 				 * <b>Note:</b> A Delete button is displayed on each item, when the <code>sap.ui.webc.fiori.UploadCollection</code> <code>mode</code> property is set to <code>Delete</code>.
 				 */
-				fileDeleted: {
+				itemDelete: {
 					parameters: {
 						/**
 						 * The <code>sap.ui.webc.fiori.UploadCollectionItem</code> which was renamed.

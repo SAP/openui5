@@ -13,54 +13,6 @@ sap.ui.define([
 	QUnit.module("Rendering", {
 		beforeEach: function() {
 			this.oCard = new Card({
-				subtitleText: "Some text...",
-				titleText: "Some text...",
-				action: [
-					new Button({
-						icon: "employee",
-						text: "Some text...",
-						click: function(oEvent) {
-							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-						}
-					}),
-					new Button({
-						icon: "employee",
-						text: "Some text...",
-						click: function(oEvent) {
-							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-						}
-					}),
-					new Button({
-						icon: "employee",
-						text: "Some text...",
-						click: function(oEvent) {
-							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-						}
-					})
-				],
-				avatar: [
-					new Button({
-						icon: "employee",
-						text: "Some text...",
-						click: function(oEvent) {
-							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-						}
-					}),
-					new Button({
-						icon: "employee",
-						text: "Some text...",
-						click: function(oEvent) {
-							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-						}
-					}),
-					new Button({
-						icon: "employee",
-						text: "Some text...",
-						click: function(oEvent) {
-							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-						}
-					})
-				],
 				content: [
 					new Button({
 						icon: "employee",
@@ -84,9 +36,29 @@ sap.ui.define([
 						}
 					})
 				],
-				headerClick: function(oEvent) {
-					// console.log("Event headerClick fired for Card with parameters: ", oEvent.getParameters());
-				}
+				header: [
+					new Button({
+						icon: "employee",
+						text: "Some text...",
+						click: function(oEvent) {
+							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+						}
+					}),
+					new Button({
+						icon: "employee",
+						text: "Some text...",
+						click: function(oEvent) {
+							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+						}
+					}),
+					new Button({
+						icon: "employee",
+						text: "Some text...",
+						click: function(oEvent) {
+							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+						}
+					})
+				]
 			});
 			this.oCard.placeAt("uiArea");
 			Core.applyChanges();

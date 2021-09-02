@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/delegate/ScrollEnablement', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/types/AnimationMode', 'sap/ui/webc/common/thirdparty/base/config/AnimationMode', './generated/i18n/i18n-defaults', './types/CarouselArrowsPlacement', './generated/templates/CarouselTemplate.lit', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-left', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-right', './Button', './Label', './generated/themes/Carousel.css'], function (UI5Element, litRender, Integer, Keys, i18nBundle, ScrollEnablement, ResizeHandler, Device, AnimationMode$1, AnimationMode, i18nDefaults, CarouselArrowsPlacement, CarouselTemplate_lit, slimArrowLeft, slimArrowRight, Button, Label, Carousel_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/delegate/ScrollEnablement', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/types/AnimationMode', 'sap/ui/webc/common/thirdparty/base/config/AnimationMode', './generated/i18n/i18n-defaults', './types/CarouselArrowsPlacement', './generated/templates/CarouselTemplate.lit', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-left', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-right', './Button', './Label', './generated/themes/Carousel.css'], function (UI5Element, litRender, Integer, Keys, i18nBundle, ScrollEnablement, ResizeHandler, Render, Device, AnimationMode$1, AnimationMode, i18nDefaults, CarouselArrowsPlacement, CarouselTemplate_lit, slimArrowLeft, slimArrowRight, Button, Label, Carousel_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -34,13 +34,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			hidePageIndicator: {
 				type: Boolean,
 			},
-			selectedIndex: {
+			_selectedIndex: {
 				type: Integer__default,
 				defaultValue: 0,
-			},
-			infiniteScrollOffset: {
-				type: Integer__default,
-				defaultValue: 1,
 			},
 			arrowsPlacement: {
 				type: CarouselArrowsPlacement,
@@ -71,7 +67,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					selectedIndex: { type: Integer__default },
 				},
 			},
-			"load-more": {},
 		},
 	};
 	class Carousel extends UI5Element__default {
@@ -99,6 +94,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 			this._onResizeBound = this._onResize.bind(this);
 			this._resizing = false;
+			this._lastFocusedElements = [];
+			this._orderOfLastFocusedPages = [];
 		}
 		onBeforeRendering() {
 			if (this.arrowsPlacement === CarouselArrowsPlacement.Navigation) {
@@ -117,9 +114,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			ResizeHandler__default.deregister(this, this._onResizeBound);
 		}
 		validateSelectedIndex() {
-			if (!this.isIndexInRange(this.selectedIndex)) {
-				this.selectedIndex = 0;
-				console.warn(`The "selectedIndex" is out of range, changed to: ${0}`);
+			if (!this.isIndexInRange(this._selectedIndex)) {
+				this._selectedIndex = 0;
 			}
 		}
 		_onResize() {
@@ -130,9 +126,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (this.effectiveItemsPerPage === previousItemsPerPage) {
 				return;
 			}
-			if (this.selectedIndex > this.pagesCount - 1) {
-				this.selectedIndex = this.pagesCount - 1;
-				this.fireEvent("navigate", { selectedIndex: this.selectedIndex });
+			if (this._selectedIndex > this.pagesCount - 1) {
+				this._selectedIndex = this.pagesCount - 1;
+				this.fireEvent("navigate", { selectedIndex: this._selectedIndex });
 			}
 		}
 		_updateScrolling(event) {
@@ -145,14 +141,44 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.navigateRight();
 			}
 		}
-		_onkeydown(event) {
+		async _onkeydown(event) {
+			if (Keys.isF7(event)) {
+				this._handleF7Key(event);
+				return;
+			}
 			if (event.target !== this.getDomRef()) {
 				return;
 			}
 			if (Keys.isLeft(event) || Keys.isDown(event)) {
 				this.navigateLeft();
+				await Render.renderFinished();
+				this.getDomRef().focus();
 			} else if (Keys.isRight(event) || Keys.isUp(event)) {
 				this.navigateRight();
+				await Render.renderFinished();
+				this.getDomRef().focus();
+			}
+		}
+		_onfocusin(event) {
+			if (event.target === this.getDomRef()) {
+				return;
+			}
+			let pageIndex = -1;
+			for (let i = 0; i < this.content.length; i++) {
+				if (this.content[i].contains(event.target)) {
+					pageIndex = i;
+					break;
+				}
+			}
+			if (pageIndex === -1) {
+				return;
+			}
+			this._lastFocusedElements[pageIndex] = event.target;
+			const sortedPageIndex = this._orderOfLastFocusedPages.indexOf(pageIndex);
+			if (sortedPageIndex === -1) {
+				this._orderOfLastFocusedPages.unshift(pageIndex);
+			} else {
+				this._orderOfLastFocusedPages.splice(0, 0, this._orderOfLastFocusedPages.splice(sortedPageIndex, 1)[0]);
 			}
 		}
 		_onmouseout() {
@@ -165,38 +191,56 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this._visibleNavigationArrows = true;
 			}
 		}
+		_handleF7Key(event) {
+			const lastFocusedElement = this._lastFocusedElements[this._getLastFocusedActivePageIndex];
+			if (event.target === this.getDomRef() && lastFocusedElement) {
+				lastFocusedElement.focus();
+			} else {
+				this.getDomRef().focus();
+			}
+		}
+		get _getLastFocusedActivePageIndex() {
+			for (let i = 0; i < this._orderOfLastFocusedPages.length; i++) {
+				const pageIndex = this._orderOfLastFocusedPages[i];
+				if (this.isItemInViewport(pageIndex)) {
+					return pageIndex;
+				}
+			}
+			return this._selectedIndex;
+		}
 		navigateLeft() {
 			this._resizing = false;
-			const previousSelectedIndex = this.selectedIndex;
-			if (this.selectedIndex - 1 < 0) {
+			const previousSelectedIndex = this._selectedIndex;
+			if (this._selectedIndex - 1 < 0) {
 				if (this.cyclic) {
-					this.selectedIndex = this.pagesCount - 1;
+					this._selectedIndex = this.pagesCount - 1;
 				}
 			} else {
-				--this.selectedIndex;
+				--this._selectedIndex;
 			}
-			if (previousSelectedIndex !== this.selectedIndex) {
-				this.fireEvent("navigate", { selectedIndex: this.selectedIndex });
+			if (previousSelectedIndex !== this._selectedIndex) {
+				this.fireEvent("navigate", { selectedIndex: this._selectedIndex });
 			}
 		}
 		navigateRight() {
 			this._resizing = false;
-			const previousSelectedIndex = this.selectedIndex;
-			if (this.selectedIndex + 1 > this.pagesCount - 1) {
+			const previousSelectedIndex = this._selectedIndex;
+			if (this._selectedIndex + 1 > this.pagesCount - 1) {
 				if (this.cyclic) {
-					this.selectedIndex = 0;
+					this._selectedIndex = 0;
 				} else {
 					return;
 				}
 			} else {
-				++this.selectedIndex;
+				++this._selectedIndex;
 			}
-			if (previousSelectedIndex !== this.selectedIndex) {
-				this.fireEvent("navigate", { selectedIndex: this.selectedIndex });
+			if (previousSelectedIndex !== this._selectedIndex) {
+				this.fireEvent("navigate", { selectedIndex: this._selectedIndex });
 			}
-			if (this.pagesCount - this.selectedIndex <= this.infiniteScrollOffset + 1) {
-				this.fireEvent("load-more");
-			}
+		}
+		navigateTo(itemIndex) {
+			this._resizing = false;
+			this._selectedIndex = itemIndex;
 		}
 		get items() {
 			return this.content.map((item, idx) => {
@@ -222,7 +266,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.itemsPerPageL;
 		}
 		isItemInViewport(index) {
-			return index >= this.selectedIndex && index <= this.selectedIndex + this.effectiveItemsPerPage - 1;
+			return index >= this._selectedIndex && index <= this._selectedIndex + this.effectiveItemsPerPage - 1;
 		}
 		isIndexInRange(index) {
 			return index >= 0 && index <= this.pagesCount - 1;
@@ -245,7 +289,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get styles() {
 			return {
 				content: {
-					transform: `translateX(${this._isRTL ? "" : "-"}${this.selectedIndex * this._itemWidth}px`,
+					transform: `translateX(${this._isRTL ? "" : "-"}${this._selectedIndex * this._itemWidth}px`,
 				},
 			};
 		}
@@ -285,7 +329,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const pages = this.pagesCount;
 			for (let index = 0; index < pages; index++) {
 				dots.push({
-					active: index === this.selectedIndex,
+					active: index === this._selectedIndex,
 					ariaLabel: this.i18nBundle.getText(i18nDefaults.CAROUSEL_DOT_TEXT, [index + 1], [pages]),
 				});
 			}
@@ -299,10 +343,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			};
 		}
 		get hasPrev() {
-			return this.cyclic || this.selectedIndex - 1 >= 0;
+			return this.cyclic || this._selectedIndex - 1 >= 0;
 		}
 		get hasNext() {
-			return this.cyclic || this.selectedIndex + 1 <= this.pagesCount - 1;
+			return this.cyclic || this._selectedIndex + 1 <= this.pagesCount - 1;
 		}
 		get suppressAnimation() {
 			return this._resizing || AnimationMode.getAnimationMode() === AnimationMode__default.None;
@@ -311,19 +355,28 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.effectiveDir === "rtl";
 		}
 		get selectedIndexToShow() {
-			return this._isRTL ? this.pagesCount - (this.pagesCount - this.selectedIndex) + 1 : this.selectedIndex + 1;
+			return this._isRTL ? this.pagesCount - (this.pagesCount - this._selectedIndex) + 1 : this._selectedIndex + 1;
 		}
 		get ofText() {
 			return this.i18nBundle.getText(i18nDefaults.CAROUSEL_OF_TEXT);
 		}
 		get ariaActiveDescendant() {
-			return this.content.length ? `${this._id}-carousel-item-${this.selectedIndex + 1}` : undefined;
+			return this.content.length ? `${this._id}-carousel-item-${this._selectedIndex + 1}` : undefined;
 		}
 		get nextPageText() {
 			return this.i18nBundle.getText(i18nDefaults.CAROUSEL_NEXT_ARROW_TEXT);
 		}
 		get previousPageText() {
 			return this.i18nBundle.getText(i18nDefaults.CAROUSEL_PREVIOUS_ARROW_TEXT);
+		}
+		get visibleItemsIndices() {
+			const visibleItemsIndices = [];
+			this.items.forEach((item, index) => {
+				if (this.isItemInViewport(index)) {
+					visibleItemsIndices.push(index);
+				}
+			});
+			return visibleItemsIndices;
 		}
 		static get dependencies() {
 			return [

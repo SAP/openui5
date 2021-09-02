@@ -50,10 +50,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: Integer__default,
 				defaultValue: 0,
 			},
-			ariaLabel: {
+			accessibleName: {
 				type: String,
 			},
-			ariaLabelledby: {
+			accessibleNameRef: {
 				type: String,
 				defaultValue: "",
 			},
@@ -234,8 +234,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return Math.round(value * pow) / pow;
 		}
 		_fireChangeEvent() {
-			this._previousValue = this.value;
-			this.fireEvent("change", { value: this.value });
+			if (this._previousValue !== this.value) {
+				this._previousValue = this.value;
+				this.fireEvent("change", { value: this.value });
+			}
 		}
 		_modifyValue(modifier, fireChangeEvent) {
 			let value;
@@ -274,6 +276,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 		}
 		_onInputChange(event) {
+			if (this.input.value === "") {
+				this.input.value = this.min || 0;
+			}
 			const inputValue = this._preciseValue(parseFloat(this.input.value));
 			if (this.value !== this._previousValue || this.value !== inputValue) {
 				this.value = inputValue;

@@ -11,6 +11,7 @@ sap.ui.define([
 ], function(WebComponent, library, coreLibrary) {
 	"use strict";
 
+	var CalendarType = coreLibrary.CalendarType;
 	var ValueState = coreLibrary.ValueState;
 
 	/**
@@ -83,6 +84,21 @@ sap.ui.define([
 			library: "sap.ui.webc.main",
 			tag: "ui5-datetime-picker-ui5",
 			properties: {
+
+				/**
+				 * Defines the aria-label attribute for the component.
+				 */
+				accessibleName: {
+					type: "string"
+				},
+
+				/**
+				 * Receives id(or many ids) of the elements that label the component.
+				 */
+				accessibleNameRef: {
+					type: "string",
+					defaultValue: ""
+				},
 
 				/**
 				 * Determines whether the component is displayed as disabled.
@@ -177,6 +193,14 @@ sap.ui.define([
 				},
 
 				/**
+				 * Defines the secondary calendar type. If not set, the calendar will only show the primary calendar type.
+				 */
+				secondaryCalendarType: {
+					type: "sap.ui.core.CalendarType",
+					defaultValue: CalendarType.undefined
+				},
+
+				/**
 				 * Defines a formatted date value.
 				 */
 				value: {
@@ -232,12 +256,46 @@ sap.ui.define([
 				/**
 				 * Fired when the input operation has finished by pressing Enter or on focusout.
 				 */
-				change: {},
+				change: {
+					allowPreventDefault: true,
+					parameters: {
+						/**
+						 * The submitted value.
+						 */
+						value: {
+							type: "string"
+						},
+
+						/**
+						 * Indicator if the value is in correct format pattern and in valid range.
+						 */
+						valid: {
+							type: "boolean"
+						}
+					}
+				},
 
 				/**
 				 * Fired when the value of the component is changed at each key stroke.
 				 */
-				input: {}
+				input: {
+					allowPreventDefault: true,
+					parameters: {
+						/**
+						 * The submitted value.
+						 */
+						value: {
+							type: "string"
+						},
+
+						/**
+						 * Indicator if the value is in correct format pattern and in valid range.
+						 */
+						valid: {
+							type: "boolean"
+						}
+					}
+				}
 			},
 			methods: ["closePicker", "formatValue", "isInValidRange", "isOpen", "isValid", "openPicker"],
 			getters: ["dateValue"]

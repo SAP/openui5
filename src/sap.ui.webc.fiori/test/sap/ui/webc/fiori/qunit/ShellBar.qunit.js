@@ -6,12 +6,15 @@ sap.ui.define([
 	"sap/ui/webc/fiori/ShellBar",
 	"sap/ui/webc/fiori/ShellBarItem",
 	"sap/ui/webc/main/Avatar",
-	"sap/ui/webc/main/CustomListItem",
 	"sap/ui/webc/main/Button",
+	"sap/ui/webc/main/CustomListItem",
+	"sap/ui/webc/main/GroupHeaderListItem",
+	"sap/ui/webc/main/StandardListItem",
 	"sap/ui/webc/main/Input",
 	"sap/ui/webc/main/Icon",
+	"sap/ui/webc/main/SuggestionGroupItem",
 	"sap/ui/webc/main/SuggestionItem"
-], function(createAndAppendDiv, Core, ShellBar, ShellBarItem, Avatar, CustomListItem, Button, Input, Icon, SuggestionItem) {
+], function(createAndAppendDiv, Core, ShellBar, ShellBarItem, Avatar, Button, CustomListItem, GroupHeaderListItem, StandardListItem, Input, Icon, SuggestionGroupItem, SuggestionItem) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
@@ -43,7 +46,14 @@ sap.ui.define([
 					})
 				],
 				logo: new Avatar({
-					icon: "employee"
+					icon: "employee",
+					content: new Button({
+						icon: "employee",
+						text: "Some text...",
+						click: function(oEvent) {
+							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+						}
+					})
 				}),
 				menuItems: [
 					new CustomListItem({
@@ -74,65 +84,27 @@ sap.ui.define([
 							// console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
 						}
 					}),
-					new CustomListItem({
-						content: [
-							new Button({
-								icon: "employee",
-								text: "Some text...",
-								click: function(oEvent) {
-									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-								}
-							}),
-							new Button({
-								icon: "employee",
-								text: "Some text...",
-								click: function(oEvent) {
-									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-								}
-							}),
-							new Button({
-								icon: "employee",
-								text: "Some text...",
-								click: function(oEvent) {
-									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-								}
-							})
-						],
-						detailClick: function(oEvent) {
-							// console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
-						}
+					new GroupHeaderListItem({
+						text: "Some text..."
 					}),
-					new CustomListItem({
-						content: [
-							new Button({
-								icon: "employee",
-								text: "Some text...",
-								click: function(oEvent) {
-									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-								}
-							}),
-							new Button({
-								icon: "employee",
-								text: "Some text...",
-								click: function(oEvent) {
-									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-								}
-							}),
-							new Button({
-								icon: "employee",
-								text: "Some text...",
-								click: function(oEvent) {
-									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-								}
-							})
-						],
+					new StandardListItem({
+						additionalText: "Some text...",
+						icon: "employee",
+						text: "Some text...",
 						detailClick: function(oEvent) {
-							// console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
+							// console.log("Event detailClick fired for StandardListItem with parameters: ", oEvent.getParameters());
 						}
 					})
 				],
 				profile: new Avatar({
-					icon: "employee"
+					icon: "employee",
+					content: new Button({
+						icon: "employee",
+						text: "Some text...",
+						click: function(oEvent) {
+							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+						}
+					})
 				}),
 				searchField: new Input({
 					placeholder: "This is my placeholder value",
@@ -146,9 +118,7 @@ sap.ui.define([
 						}
 					}),
 					suggestionItems: [
-						new SuggestionItem({
-							additionalText: "Some text...",
-							icon: "employee",
+						new SuggestionGroupItem({
 							text: "Some text..."
 						}),
 						new SuggestionItem({
@@ -156,9 +126,7 @@ sap.ui.define([
 							icon: "employee",
 							text: "Some text..."
 						}),
-						new SuggestionItem({
-							additionalText: "Some text...",
-							icon: "employee",
+						new SuggestionGroupItem({
 							text: "Some text..."
 						})
 					],

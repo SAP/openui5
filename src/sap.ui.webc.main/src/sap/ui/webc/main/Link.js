@@ -53,6 +53,14 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Receives id(or many ids) of the elements that label the input
+				 */
+				accessibleNameRef: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
 				 * Defines the component design. <br>
 				 * <br>
 				 * <b>Note:</b> Avaialble options are <code>Default</code>, <code>Subtle</code>, and <code>Emphasized</code>.
@@ -129,7 +137,9 @@ sap.ui.define([
 				/**
 				 * Fired when the component is triggered either with a mouse/tap or by using the Enter key.
 				 */
-				click: {}
+				click: {
+					parameters: {}
+				}
 			}
 		}
 	});

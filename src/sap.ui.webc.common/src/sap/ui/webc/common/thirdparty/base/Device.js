@@ -62,6 +62,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 	const supportsTouch = () => touch;
 	const isIE = () => ie;
 	const isSafari = () => safari;
+	const isChrome = () => chrome;
 	const isTablet = () => {
 		detectTablet();
 		return (touch || isWindows8OrAbove()) && tablet;
@@ -74,6 +75,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		return (!isTablet() && !isPhone()) || isWindows8OrAbove();
 	};
 
+	exports.isChrome = isChrome;
 	exports.isDesktop = isDesktop;
 	exports.isIE = isIE;
 	exports.isPhone = isPhone;

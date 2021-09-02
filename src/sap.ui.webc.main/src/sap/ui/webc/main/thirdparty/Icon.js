@@ -24,6 +24,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			showTooltip: {
 				type: Boolean,
 			},
+			role: {
+				type: String,
+			},
+			ariaHidden: {
+				type: String,
+			},
 			pathData: {
 				type: String,
 				noAttribute: true,
@@ -40,6 +46,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			},
 			effectiveAccessibleName: {
 				type: String,
+				defaultValue: undefined,
 				noAttribute: true,
 			},
 		},
@@ -102,10 +109,19 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			return this.effectiveDir;
 		}
+		get effectiveAriaHidden() {
+			if (this.ariaHidden === "") {
+				return;
+			}
+			return this.ariaHidden;
+		}
 		get tabIndex() {
 			return this.interactive ? "0" : "-1";
 		}
-		get role() {
+		get effectiveAccessibleRole() {
+			if (this.role) {
+				return this.role;
+			}
 			if (this.interactive) {
 				return "button";
 			}

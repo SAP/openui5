@@ -65,6 +65,14 @@ sap.ui.define([
 				},
 
 				/**
+				 * Defines the delay in milliseconds, after which the busy indicator will show up for this component.
+				 */
+				busyDelay: {
+					type: "int",
+					defaultValue: 1000
+				},
+
+				/**
 				 * Defines whether the table will have growing capability either by pressing a <code>More</code> button, or via user scroll. In both cases <code>load-more</code> event is fired. <br>
 				 * <br>
 				 *
@@ -215,7 +223,9 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> The event will be fired if <code>growing</code> is set to <code>Button</code> or <code>Scroll</code>.
 				 */
-				loadMore: {},
+				loadMore: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired when <code>sap.ui.webc.main.TableColumn</code> is shown as a pop-in instead of hiding it.

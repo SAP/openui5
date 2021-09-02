@@ -44,7 +44,15 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Holds <code>File</code>, associated with this item.
+				 * Disables the delete button.
+				 */
+				disableDeleteButton: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/**
+				 * Holds an instance of <code>File</code> associated with this item.
 				 */
 				file: {
 					type: "object",
@@ -68,17 +76,9 @@ sap.ui.define([
 				},
 
 				/**
-				 * Removes delete option from <code>sap.ui.webc.fiori.UploadCollection</code> with <code>mode</code> <code>Delete</code> for this item.
-				 */
-				noDelete: {
-					type: "boolean",
-					defaultValue: false
-				},
-
-				/**
 				 * Hides the retry button when <code>uploadState</code> property is <code>Error</code>.
 				 */
-				noRetry: {
+				hideRetryButton: {
 					type: "boolean",
 					defaultValue: false
 				},
@@ -86,7 +86,7 @@ sap.ui.define([
 				/**
 				 * Hides the terminate button when <code>uploadState</code> property is <code>Uploading</code>.
 				 */
-				noTerminate: {
+				hideTerminateButton: {
 					type: "boolean",
 					defaultValue: false
 				},
@@ -138,28 +138,36 @@ sap.ui.define([
 				 * <br>
 				 * <b>Note:</b> This event is only available when <code>fileNameClickable</code> property is <code>true</code>.
 				 */
-				fileNameClick: {},
+				fileNameClick: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired when the <code>fileName</code> property gets changed. <br>
 				 * <br>
 				 * <b>Note:</b> An edit button is displayed on each item, when the <code>sap.ui.webc.fiori.UploadCollectionItem</code> <code>type</code> property is set to <code>Detail</code>.
 				 */
-				rename: {},
+				rename: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired when the retry button is pressed. <br>
 				 * <br>
 				 * <b>Note:</b> Retry button is displayed when <code>uploadState</code> property is set to <code>Error</code>.
 				 */
-				retry: {},
+				retry: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired when the terminate button is pressed. <br>
 				 * <br>
 				 * <b>Note:</b> Terminate button is displayed when <code>uploadState</code> property is set to <code>Uploading</code>.
 				 */
-				terminate: {}
+				terminate: {
+					parameters: {}
+				}
 			}
 		}
 	});

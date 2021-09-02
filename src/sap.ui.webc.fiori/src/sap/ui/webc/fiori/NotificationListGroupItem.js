@@ -29,7 +29,7 @@ sap.ui.define([
 	 * <ul>
 	 *     <li><code>Toggle</code> button to expand and collapse the group</li>
 	 *     <li><code>Priority</code> icon to display the priority of the group</li>
-	 *     <li><code>Heading</code> to entitle the group</li>
+	 *     <li><code>TitleText</code> to entitle the group</li>
 	 *     <li>Custom actions - with the use of <code>sap.ui.webc.fiori.NotificationAction</code></li>
 	 *     <li>Items of the group</li>
 	 * </ul>
@@ -41,7 +41,7 @@ sap.ui.define([
 	 * <ui5-link target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/CSS/::part">CSS Shadow Parts</ui5-link> allow developers to style elements inside the Shadow DOM. <br>
 	 * The <code>sap.ui.webc.fiori.NotificationListGroupItem</code> exposes the following CSS Shadow Parts:
 	 * <ul>
-	 *     <li>heading - Used to style the heading of the notification list group item</li>
+	 *     <li>title-text - Used to style the titleText of the notification list group item</li>
 	 * </ul>
 	 *
 	 * @author SAP SE
@@ -73,19 +73,19 @@ sap.ui.define([
 				},
 
 				/**
+				 * Defines the delay in milliseconds, after which the busy indicator will show up for this component.
+				 */
+				busyDelay: {
+					type: "int",
+					defaultValue: 1000
+				},
+
+				/**
 				 * Defines if the group is collapsed or expanded.
 				 */
 				collapsed: {
 					type: "boolean",
 					defaultValue: false
-				},
-
-				/**
-				 * Defines the <code>heading</code> of the item.
-				 */
-				heading: {
-					type: "string",
-					defaultValue: ""
 				},
 
 				/**
@@ -105,7 +105,7 @@ sap.ui.define([
 				/**
 				 * Defines if the <code>notification</code> is new or has been already read. <br>
 				 * <br>
-				 * <b>Note:</b> if set to <code>false</code> the <code>heading</code> has bold font, if set to true - it has a normal font.
+				 * <b>Note:</b> if set to <code>false</code> the <code>titleText</code> has bold font, if set to true - it has a normal font.
 				 */
 				read: {
 					type: "boolean",
@@ -126,6 +126,14 @@ sap.ui.define([
 				showCounter: {
 					type: "boolean",
 					defaultValue: false
+				},
+
+				/**
+				 * Defines the <code>titleText</code> of the item.
+				 */
+				titleText: {
+					type: "string",
+					defaultValue: ""
 				}
 			},
 			defaultAggregation: "items",
@@ -155,12 +163,16 @@ sap.ui.define([
 				/**
 				 * Fired when the <code>Close</code> button is pressed.
 				 */
-				close: {},
+				close: {
+					parameters: {}
+				},
 
 				/**
 				 * Fired when the <code>sap.ui.webc.fiori.NotificationListGroupItem</code> is expanded/collapsed by user interaction.
 				 */
-				toggle: {}
+				toggle: {
+					parameters: {}
+				}
 			}
 		}
 	});

@@ -11,6 +11,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	var Popover__default = /*#__PURE__*/_interopDefaultLegacy(Popover);
 	var Button__default = /*#__PURE__*/_interopDefaultLegacy(Button);
 
+	const HANDLE_RESIZE_DEBOUNCE_RATE = 200;
 	const metadata = {
 		tag: "ui5-shellbar",
 		languageAware: true,
@@ -183,16 +184,25 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					this._updateClonedMenuItems();
 					if (this.hasMenuItems) {
 						const menuPopover = await this._getMenuPopover();
-						menuPopover.openBy(this.shadowRoot.querySelector(".ui5-shellbar-menu-button"));
+						menuPopover.showAt(this.shadowRoot.querySelector(".ui5-shellbar-menu-button"));
 					}
 				},
 			};
 			this._handleResize = async event => {
-				await this._getResponsivePopover();
-				this.overflowPopover.close();
-				this._overflowActions();
+				this._debounce(async () => {
+					await this._getResponsivePopover();
+					this.overflowPopover.close();
+					this._overflowActions();
+				}, HANDLE_RESIZE_DEBOUNCE_RATE);
 			};
 			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents-fiori");
+		}
+		_debounce(fn, delay) {
+			clearTimeout(this._debounceInterval);
+			this._debounceInterval = setTimeout(() => {
+				this._debounceInterval = null;
+				fn();
+			}, delay);
 		}
 		_menuItemPress(event) {
 			this.menuPopover.close();
@@ -348,7 +358,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		_toggleActionPopover() {
 			const overflowButton = this.shadowRoot.querySelector(".ui5-shellbar-overflow-button");
-			this.overflowPopover.openBy(overflowButton);
+			this.overflowPopover.showAt(overflowButton);
 		}
 		onEnterDOM() {
 			ResizeHandler__default.register(this, this._handleResize);
@@ -356,6 +366,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		onExitDOM() {
 			this.menuItemsObserver.disconnect();
 			ResizeHandler__default.deregister(this, this._handleResize);
+			clearTimeout(this._debounceInterval);
+			this._debounceInterval = null;
 		}
 		_handleSearchIconPress(event) {
 			this.showSearchField = !this.showSearchField;
@@ -536,6 +548,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					"ui5-shellbar-menu-button--interactive": this.hasMenuItems,
 					"ui5-shellbar-menu-button": true,
 				},
+				title: {},
 				items: {
 					notification: {
 						"ui5-shellbar-hidden-button": this.isIconHidden("bell"),

@@ -83,7 +83,9 @@ sap.ui.define([
 				/**
 				 * Fired when the the component is selected by user interaction with mouse or by clicking space.
 				 */
-				select: {}
+				select: {
+					parameters: {}
+				}
 			}
 		}
 	});

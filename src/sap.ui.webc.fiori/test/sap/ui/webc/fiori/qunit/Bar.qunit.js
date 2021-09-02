@@ -13,7 +13,7 @@ sap.ui.define([
 	QUnit.module("Rendering", {
 		beforeEach: function() {
 			this.oBar = new Bar({
-				endContent: [
+				content: [
 					new Button({
 						icon: "employee",
 						text: "Some text...",
@@ -36,7 +36,7 @@ sap.ui.define([
 						}
 					})
 				],
-				middleContent: [
+				endContent: [
 					new Button({
 						icon: "employee",
 						text: "Some text...",

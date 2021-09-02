@@ -120,6 +120,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		handleListItemClick(event) {
 			const listItem = event.detail.item;
 			const item = listItem.associatedItem;
+			item.fireEvent("click");
 			if (item.selected) {
 				return;
 			}
@@ -131,7 +132,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		async openPicker(opener) {
 			const responsivePopover = await this.getPicker();
-			responsivePopover.open(opener);
+			responsivePopover.showAt(opener);
 		}
 		async closePicker(opener) {
 			const responsivePopover = await this.getPicker();

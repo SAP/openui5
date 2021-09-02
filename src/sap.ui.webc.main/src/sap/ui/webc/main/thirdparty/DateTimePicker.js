@@ -168,7 +168,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap
 				this.fireEvent("change", { value: this.value, valid });
 				this.fireEvent("value-changed", { value: this.value, valid });
 			}
-			this._focusInputAfterClose = true;
 			this._updateValueState();
 			this.closePicker();
 		}

@@ -19,9 +19,11 @@ sap.ui.define([
 	 * @extends sap.ui.webc.common.WebComponent
 	 * @class
 	 *
-	 * <h3>Overview</h3> The ColorPalette provides the users with a range of predefined colors. The colors are fixed and do not change with the theme. You can set them by using the ColorPaletteItem items as slots.
+	 * <h3>Overview</h3> The ColorPalette provides the users with a range of predefined colors. The colors are fixed and do not change with the theme.
 	 *
-	 * <h3>Usage</h3> The Colorpalette is intended for users that needs to select a color from a predefined set of colors. To allow users select any color from a color picker, enable the <code>show-more-colors</code> property. And, to display the most recent color selection, enable the <code>show-recent-colors</code> property.
+	 * <h3>Usage</h3>
+	 *
+	 * The Colorpalette is meant for users that needs to select a color from a predefined set. To define the colors, use the <code>sap.ui.webc.main.ColorPaletteItem</code> component inside the default slot of the <code>sap.ui.webc.main.ColorPalette</code>.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -37,29 +39,6 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.webc.main",
 			tag: "ui5-color-palette-ui5",
-			properties: {
-
-				/**
-				 * Defines whether the user can choose a custom color from a color picker <b>Note:</b> In order to use this property you need to import the following module: <code>"@ui5/webcomponents/dist/features/ColorPaletteMoreColors.js"</code>
-				 */
-				showMoreColors: {
-					type: "boolean"
-				},
-
-				/**
-				 * Defines whether the user can see the last used colors in the bottom of the component
-				 */
-				showRecentColors: {
-					type: "boolean"
-				},
-
-				/**
-				 * The selected color.
-				 */
-				value: {
-					type: "sap.ui.core.CSSColor"
-				}
-			},
 			defaultAggregation: "colors",
 			aggregations: {
 
@@ -76,7 +55,7 @@ sap.ui.define([
 				/**
 				 * Fired when the user selects a color.
 				 */
-				change: {
+				itemClick: {
 					parameters: {
 						/**
 						 * the selected color

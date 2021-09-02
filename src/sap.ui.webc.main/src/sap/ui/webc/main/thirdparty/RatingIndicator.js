@@ -15,7 +15,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: Float__default,
 				defaultValue: 0,
 			},
-			maxValue: {
+			max: {
 				type: Integer__default,
 				defaultValue: 5,
 			},
@@ -25,7 +25,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			readonly: {
 				type: Boolean,
 			},
-			ariaLabel: {
+			accessibleName: {
 				type: String,
 				defaultValue: undefined,
 			},
@@ -69,7 +69,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		calcState() {
 			this._stars = [];
-			for (let i = 1; i < this.maxValue + 1; i++) {
+			for (let i = 1; i < this.max + 1; i++) {
 				const remainder = Math.round((this.value - Math.floor(this.value)) * 10);
 				let halfStar = false,
 					tempValue = this.value;
@@ -111,7 +111,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				if (down && this.value > 0) {
 					this.value = Math.round(this.value - 1);
 					this.fireEvent("change");
-				} else if (up && this.value < this.maxValue) {
+				} else if (up && this.value < this.max) {
 					this.value = Math.round(this.value + 1);
 					this.fireEvent("change");
 				}

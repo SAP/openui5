@@ -1,16 +1,16 @@
 sap.ui.define(['exports', './findNodeOwner'], function (exports, findNodeOwner) { 'use strict';
 
 	const getEffectiveAriaLabelText = el => {
-		if (!el.ariaLabelledby) {
-			if (el.ariaLabel) {
-				return el.ariaLabel;
+		if (!el.accessibleNameRef) {
+			if (el.accessibleName) {
+				return el.accessibleName;
 			}
 			return undefined;
 		}
 		return getAriaLabelledByTexts(el);
 	};
 	const getAriaLabelledByTexts = (el, ownerDocument, readyIds = "") => {
-		const ids = (readyIds && readyIds.split(" ")) || el.ariaLabelledby.split(" ");
+		const ids = (readyIds && readyIds.split(" ")) || el.accessibleNameRef.split(" ");
 		const owner = ownerDocument || findNodeOwner(el);
 		let result = "";
 		ids.forEach((elementId, index) => {

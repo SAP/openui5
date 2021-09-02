@@ -30,6 +30,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: ValueState__default,
 				defaultValue: ValueState__default.None,
 			},
+			title: {
+				type: String,
+			},
 		},
 		managedSlots: true,
 		slots:  {

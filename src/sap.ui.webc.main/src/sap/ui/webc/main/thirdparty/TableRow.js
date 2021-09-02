@@ -41,6 +41,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			_busy: {
 				type: Boolean,
 			},
+			_ariaPosition: {
+				type: String,
+				defaultValue: "",
+				noAttribute: true,
+			},
 		},
 		events:  {
 			"row-click": {},
@@ -195,11 +200,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return visibleCellsCount;
 		}
 		get ariaLabelText() {
-			return this.cells.map((cell, index) => {
+			const ariaLabel = this.cells.map((cell, index) => {
 				const columText = this.getColumnTextByIdx(index);
 				const cellText = this.getCellText(cell);
 				return `${columText} ${cellText}`;
 			}).join(" ");
+			return `${ariaLabel}. ${this._ariaPosition}`;
 		}
 		get ariaLabelRowSelection() {
 			return this.i18nBundle.getText(i18nDefaults.ARIA_LABEL_ROW_SELECTION);

@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/webc/main/ComboBox",
 	"sap/ui/webc/main/Icon",
+	"sap/ui/webc/main/ComboBoxGroupItem",
 	"sap/ui/webc/main/ComboBoxItem"
-], function(createAndAppendDiv, Core, ComboBox, Icon, ComboBoxItem) {
+], function(createAndAppendDiv, Core, ComboBox, Icon, ComboBoxGroupItem, ComboBoxItem) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
@@ -25,16 +26,14 @@ sap.ui.define([
 					}
 				}),
 				items: [
-					new ComboBoxItem({
-						additionalText: "Some text...",
+					new ComboBoxGroupItem({
 						text: "Some text..."
 					}),
 					new ComboBoxItem({
 						additionalText: "Some text...",
 						text: "Some text..."
 					}),
-					new ComboBoxItem({
-						additionalText: "Some text...",
+					new ComboBoxGroupItem({
 						text: "Some text..."
 					})
 				],

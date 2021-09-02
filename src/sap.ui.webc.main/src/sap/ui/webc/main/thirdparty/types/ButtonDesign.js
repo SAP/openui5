@@ -10,6 +10,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/DataType'], function (D
 		Negative: "Negative",
 		Transparent: "Transparent",
 		Emphasized: "Emphasized",
+		Attention: "Attention",
 	};
 	class ButtonDesign extends DataType__default {
 		static isValid(value) {

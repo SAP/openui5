@@ -78,6 +78,14 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Sets the accessible aria name of the component.
+				 */
+				accessibleName: {
+					type: "string",
+					defaultValue: undefined
+				},
+
+				/**
 				 * Defines the height of the control
 				 */
 				height: {

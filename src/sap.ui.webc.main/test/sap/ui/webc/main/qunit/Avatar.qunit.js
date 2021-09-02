@@ -3,8 +3,9 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
-	"sap/ui/webc/main/Avatar"
-], function(createAndAppendDiv, Core, Avatar) {
+	"sap/ui/webc/main/Avatar",
+	"sap/ui/webc/main/Button"
+], function(createAndAppendDiv, Core, Avatar, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
@@ -12,7 +13,14 @@ sap.ui.define([
 	QUnit.module("Rendering", {
 		beforeEach: function() {
 			this.oAvatar = new Avatar({
-				icon: "employee"
+				icon: "employee",
+				content: new Button({
+					icon: "employee",
+					text: "Some text...",
+					click: function(oEvent) {
+						// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+					}
+				})
 			});
 			this.oAvatar.placeAt("uiArea");
 			Core.applyChanges();

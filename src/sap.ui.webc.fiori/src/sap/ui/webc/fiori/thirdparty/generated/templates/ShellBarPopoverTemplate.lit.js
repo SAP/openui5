@@ -1,18 +1,9 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/ifDefined', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], function (ifDefined, litRender) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], function (litRender) { 'use strict';
 
-	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+	const block0 = (context, tags, suffix) => litRender.html`<${litRender.scopeTag("ui5-popover", tags, suffix)} class="ui5-shellbar-menu-popover" placement-type="Bottom" @ui5-before-open=${litRender.ifDefined(context._menuPopoverBeforeOpen)} @ui5-after-close=${litRender.ifDefined(context._menuPopoverAfterClose)}><${litRender.scopeTag("ui5-list", tags, suffix)} separators="None" mode="SingleSelect" @ui5-item-press=${litRender.ifDefined(context._menuItemPress)}>${ litRender.repeat(context._menuPopoverItems, (item, index) => item._id || index, (item, index) => block1(item)) }</${litRender.scopeTag("ui5-list", tags, suffix)}></${litRender.scopeTag("ui5-popover", tags, suffix)}><${litRender.scopeTag("ui5-popover", tags, suffix)} class="ui5-shellbar-overflow-popover" placement-type="Bottom" horizontal-align="${litRender.ifDefined(context.popoverHorizontalAlign)}" hide-arrow @ui5-before-open=${litRender.ifDefined(context._overflowPopoverBeforeOpen)} @ui5-after-close=${litRender.ifDefined(context._overflowPopoverAfterClose)}><${litRender.scopeTag("ui5-list", tags, suffix)} separators="None" @ui5-item-press="${litRender.ifDefined(context._actionList.itemPress)}">${ litRender.repeat(context._hiddenIcons, (item, index) => item._id || index, (item, index) => block2(item, index, context, tags, suffix)) }</${litRender.scopeTag("ui5-list", tags, suffix)}></${litRender.scopeTag("ui5-popover", tags, suffix)}>`;
+	const block1 = (item, index, context, tags, suffix) => litRender.html`${litRender.ifDefined(item)}`;
+	const block2 = (item, index, context, tags, suffix) => litRender.html`<${litRender.scopeTag("ui5-li", tags, suffix)} data-ui5-external-action-item-id="${litRender.ifDefined(item.refItemid)}" icon="${litRender.ifDefined(item.icon)}" type="Active" @ui5-_press="${litRender.ifDefined(item.press)}">${litRender.ifDefined(item.text)}</${litRender.scopeTag("ui5-li", tags, suffix)}>`;
 
-	var ifDefined__default = /*#__PURE__*/_interopDefaultLegacy(ifDefined);
-
-	const block0 = (context) => { return litRender.html`<ui5-popover class="ui5-shellbar-menu-popover" placement-type="Bottom" @ui5-before-open=${ifDefined__default(context._menuPopoverBeforeOpen)} @ui5-after-close=${ifDefined__default(context._menuPopoverAfterClose)}><ui5-list separators="None" mode="SingleSelect" @ui5-item-press=${ifDefined__default(context._menuItemPress)}>${ litRender.repeat(context._menuPopoverItems, (item, index) => item._id || index, (item, index) => block1(item)) }</ui5-list></ui5-popover><ui5-popover class="ui5-shellbar-overflow-popover" placement-type="Bottom" horizontal-align="${ifDefined__default(context.popoverHorizontalAlign)}" hide-arrow @ui5-before-open=${ifDefined__default(context._overflowPopoverBeforeOpen)} @ui5-after-close=${ifDefined__default(context._overflowPopoverAfterClose)}><ui5-list separators="None" @ui5-item-press="${ifDefined__default(context._actionList.itemPress)}">${ litRender.repeat(context._hiddenIcons, (item, index) => item._id || index, (item, index) => block2(item)) }</ui5-list></ui5-popover>`; };
-	const block1 = (item, index, context) => { return litRender.html`${ifDefined__default(item)}`; };
-	const block2 = (item, index, context) => { return litRender.html`<ui5-li data-ui5-external-action-item-id="${ifDefined__default(item.refItemid)}" icon="${ifDefined__default(item.icon)}" type="Active" @ui5-_press="${ifDefined__default(item.press)}">${ifDefined__default(item.text)}</ui5-li>`; };
-	const main = (context, tags, suffix) => {
-		litRender.setTags(tags);
-		litRender.setSuffix(suffix);
-		return block0(context);
-	};
-
-	return main;
+	return block0;
 
 });

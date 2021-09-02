@@ -39,10 +39,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			hideWeekNumbers: {
 				type: Boolean,
 			},
-			ariaLabel: {
+			accessibleName: {
 				type: String,
 			},
-			ariaLabelledby: {
+			accessibleNameRef: {
 				type: String,
 				defaultValue: "",
 			},
@@ -67,8 +67,26 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			},
 		},
 		events:  {
-			change: {},
-			input: {},
+			change: {
+				details: {
+					value: {
+						type: String,
+					},
+					valid: {
+						type: Boolean,
+					},
+				},
+			},
+			input: {
+				details: {
+					value: {
+						type: String,
+					},
+					valid: {
+						type: Boolean,
+					},
+				},
+			},
 		},
 	};
 	class DatePicker extends DateComponentBase {
@@ -91,9 +109,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			this._isPickerOpen = false;
 			if (Device.isPhone()) {
 				this.blur();
-			} else if (this._focusInputAfterClose) {
+			} else {
 				this._getInput().focus();
-				this._focusInputAfterClose = false;
 			}
 		}
 		onBeforeRendering() {
@@ -108,6 +125,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			} else if (this.name) {
 				console.warn(`In order for the "name" property to have effect, you should also: import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";`);
 			}
+			this.liveValue = this.value;
 		}
 		get _calendarSelectionMode() {
 			return "Single";
@@ -172,13 +190,20 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			if (valid && normalizeValue) {
 				value = this.normalizeValue(value);
 			}
+			let executeEvent = true;
+			this.liveValue = value;
+			events.forEach(event => {
+				if (!this.fireEvent(event, { value, valid }, true)) {
+					executeEvent = false;
+				}
+			});
+			if (!executeEvent) {
+				return;
+			}
 			if (updateValue) {
 				this.value = value;
 				this._updateValueState();
 			}
-			events.forEach(event => {
-				this.fireEvent(event, { value, valid });
-			});
 		}
 		_updateValueState() {
 			const isValid = this._checkValueValidity(this.value);
@@ -210,7 +235,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 		}
 		_click(event) {
 			if (Device.isPhone()) {
-				this.responsivePopover.open(this);
+				this.responsivePopover.showAt(this);
 				event.preventDefault();
 			}
 		}
@@ -289,8 +314,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			event.preventDefault();
 			const newValue = event.detail.values && event.detail.values[0];
 			this._updateValueAndFireEvents(newValue, true, ["change", "value-changed"]);
-			this._focusInputAfterClose = true;
 			this.closePicker();
+		}
+		onHeaderShowMonthPress() {
+			this._calendarCurrentPicker = "month";
+		}
+		onHeaderShowYearPress() {
+			this._calendarCurrentPicker = "year";
 		}
 		formatValue(date) {
 			return this.getFormat().format(date);
@@ -302,7 +332,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			this._isPickerOpen = true;
 			this._calendarCurrentPicker = "day";
 			this.responsivePopover = await this._respPopover();
-			this.responsivePopover.open(this);
+			this.responsivePopover.showAt(this);
 		}
 		togglePicker() {
 			if (this.isOpen()) {
@@ -315,10 +345,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			return !!this._isPickerOpen;
 		}
 		get dateValue() {
-			return this.getFormat().parse(this.value);
+			return this.liveValue ? this.getFormat().parse(this.liveValue) : this.getFormat().parse(this.value);
 		}
 		get dateValueUTC() {
-			return this.getFormat().parse(this.value, true);
+			return this.liveValue ? this.getFormat().parse(this.liveValue, true) : this.getFormat().parse(this.value);
 		}
 		get styles() {
 			return {

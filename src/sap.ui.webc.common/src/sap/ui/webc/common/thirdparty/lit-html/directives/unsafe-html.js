@@ -1,37 +1,14 @@
-sap.ui.define(['exports', '../lib/parts', '../lit-html', '../lib/directive'], function (exports, parts, litHtml, directive) { 'use strict';
+sap.ui.define(['exports', '../lit-html', '../directive-d4211b63'], function (exports, litHtml, directive) { 'use strict';
 
-    /**
-     * @license
-     * Copyright (c) 2017 The Polymer Project Authors. All rights reserved.
-     * This code may only be used under the BSD style license found at
-     * http://polymer.github.io/LICENSE.txt
-     * The complete set of authors may be found at
-     * http://polymer.github.io/AUTHORS.txt
-     * The complete set of contributors may be found at
-     * http://polymer.github.io/CONTRIBUTORS.txt
-     * Code distributed by Google as part of the polymer project is also
-     * subject to an additional IP rights grant found at
-     * http://polymer.github.io/PATENTS.txt
-     */
-    const previousValues = new WeakMap();
-    const unsafeHTML = directive.directive((value) => (part) => {
-        if (!(part instanceof parts.NodePart)) {
-            throw new Error('unsafeHTML can only be used in text bindings');
-        }
-        const previousValue = previousValues.get(part);
-        if (previousValue !== undefined && parts.isPrimitive(value) &&
-            value === previousValue.value && part.value === previousValue.fragment) {
-            return;
-        }
-        const template = document.createElement('template');
-        template.innerHTML = value;
-        const fragment = document.importNode(template.content, true);
-        part.setValue(fragment);
-        previousValues.set(part, { value, fragment });
-    });
+	/**
+	 * @license
+	 * Copyright 2017 Google LLC
+	 * SPDX-License-Identifier: BSD-3-Clause
+	 */class n extends directive.s{constructor(i){if(super(i),this.vt=litHtml.nothing,i.type!==directive.t.CHILD)throw Error(this.constructor.directiveName+"() can only be used in child bindings")}render(r){if(r===litHtml.nothing)return this.Vt=void 0,this.vt=r;if(r===litHtml.noChange)return r;if("string"!=typeof r)throw Error(this.constructor.directiveName+"() called with a non-string value");if(r===this.vt)return this.Vt;this.vt=r;const s=[r];return s.raw=s,this.Vt={_$litType$:this.constructor.resultType,strings:s,values:[]}}}n.directiveName="unsafeHTML",n.resultType=1;const o=directive.i(n);
 
-    exports.unsafeHTML = unsafeHTML;
+	exports.UnsafeHTMLDirective = n;
+	exports.unsafeHTML = o;
 
-    Object.defineProperty(exports, '__esModule', { value: true });
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

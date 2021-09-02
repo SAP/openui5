@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/thirdparty/base/util/TabbableElements', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/NavigationMode', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/debounce', 'sap/ui/webc/common/thirdparty/base/util/isElementInView', './types/ListMode', './types/ListGrowingMode', './types/ListSeparators', './BusyIndicator', './generated/templates/ListTemplate.lit', './generated/themes/List.css', './generated/i18n/i18n-defaults'], function (UI5Element, litRender, ResizeHandler, ItemNavigation, Device, Render, TabbableElements, Keys, NavigationMode, AriaLabelHelper, i18nBundle, debounce, isElementInView, ListMode, ListGrowingMode, ListSeparators, BusyIndicator, ListTemplate_lit, List_css, i18nDefaults) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/thirdparty/base/util/TabbableElements', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/types/NavigationMode', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/debounce', 'sap/ui/webc/common/thirdparty/base/util/isElementInView', './types/ListMode', './types/ListGrowingMode', './types/ListSeparators', './BusyIndicator', './generated/templates/ListTemplate.lit', './generated/themes/List.css', './generated/i18n/i18n-defaults'], function (UI5Element, litRender, ResizeHandler, ItemNavigation, Device, Render, TabbableElements, Keys, Integer, NavigationMode, AriaLabelHelper, i18nBundle, debounce, isElementInView, ListMode, ListGrowingMode, ListSeparators, BusyIndicator, ListTemplate_lit, List_css, i18nDefaults) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -6,11 +6,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	var litRender__default = /*#__PURE__*/_interopDefaultLegacy(litRender);
 	var ResizeHandler__default = /*#__PURE__*/_interopDefaultLegacy(ResizeHandler);
 	var ItemNavigation__default = /*#__PURE__*/_interopDefaultLegacy(ItemNavigation);
+	var Integer__default = /*#__PURE__*/_interopDefaultLegacy(Integer);
 	var NavigationMode__default = /*#__PURE__*/_interopDefaultLegacy(NavigationMode);
 	var debounce__default = /*#__PURE__*/_interopDefaultLegacy(debounce);
 	var isElementInView__default = /*#__PURE__*/_interopDefaultLegacy(isElementInView);
 
 	const INFINITE_SCROLL_DEBOUNCE_RATE = 250;
+	const PAGE_UP_DOWN_SIZE = 10;
 	const metadata = {
 		tag: "ui5-list",
 		managedSlots: true,
@@ -51,14 +53,18 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			busy: {
 				type: Boolean,
 			},
-			ariaLabel: {
+			busyDelay: {
+				type: Integer__default,
+				defaultValue: 1000,
+			},
+			accessibleName: {
 				type: String,
 			},
-			ariaLabelledby: {
+			accessibleNameRef: {
 				type: String,
 				defaultValue: "",
 			},
-			accRole: {
+			 accessibleRole: {
 				type: String,
 				defaultValue: "listbox",
 			},
@@ -183,7 +189,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.mode === ListMode.MultiSelect;
 		}
 		get ariaLabelledBy() {
-			if (this.ariaLabelledby || this.ariaLabel) {
+			if (this.accessibleNameRef || this.accessibleName) {
 				return undefined;
 			}
 			return this.shouldRenderH1 ? this.headerID : undefined;
@@ -221,6 +227,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		initItemNavigation() {
 			this._itemNavigation = new ItemNavigation__default(this, {
+				skipItemsSize: PAGE_UP_DOWN_SIZE,
 				navigationMode: NavigationMode__default.Vertical,
 				getItemsCallback: () => this.getEnabledItems(),
 			});

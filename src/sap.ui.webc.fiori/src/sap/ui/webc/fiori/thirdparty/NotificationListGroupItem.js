@@ -109,8 +109,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/mai
 		get ariaLabelledBy() {
 			const id = this._id;
 			const ids = [];
-			if (this.hasHeading) {
-				ids.push(`${id}-heading`);
+			if (this.hasTitleText) {
+				ids.push(`${id}-title-text`);
 			}
 			ids.push(`${id}-invisibleText`);
 			return ids.join(" ");

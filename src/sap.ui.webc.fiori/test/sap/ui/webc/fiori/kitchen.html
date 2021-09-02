@@ -14,7 +14,9 @@
             sap.ui.require([
                 "sap/ui/webc/fiori/Bar",
                 "sap/ui/webc/main/Button",
+                "sap/ui/webc/fiori/BarcodeScannerDialog",
                 "sap/ui/webc/fiori/FlexibleColumnLayout",
+                "sap/ui/webc/fiori/IllustratedMessage",
                 "sap/ui/webc/fiori/NotificationListItem",
                 "sap/ui/webc/fiori/NotificationAction",
                 "sap/ui/webc/main/Avatar",
@@ -24,8 +26,11 @@
                 "sap/ui/webc/fiori/ShellBar",
                 "sap/ui/webc/fiori/ShellBarItem",
                 "sap/ui/webc/main/CustomListItem",
+                "sap/ui/webc/main/GroupHeaderListItem",
+                "sap/ui/webc/main/StandardListItem",
                 "sap/ui/webc/main/Input",
                 "sap/ui/webc/main/Icon",
+                "sap/ui/webc/main/SuggestionGroupItem",
                 "sap/ui/webc/main/SuggestionItem",
                 "sap/ui/webc/fiori/SideNavigation",
                 "sap/ui/webc/fiori/SideNavigationItem",
@@ -34,14 +39,15 @@
                 "sap/ui/webc/fiori/TimelineItem",
                 "sap/ui/webc/fiori/UploadCollection",
                 "sap/ui/webc/fiori/UploadCollectionItem",
+                "sap/ui/webc/fiori/ViewSettingsDialog",
                 "sap/ui/webc/fiori/Wizard",
                 "sap/ui/webc/fiori/WizardStep"
             ], function(
-                Bar, Button, FlexibleColumnLayout, NotificationListItem, NotificationAction, Avatar, Page, ProductSwitch, ProductSwitchItem, ShellBar, ShellBarItem, CustomListItem, Input, Icon, SuggestionItem, SideNavigation, SideNavigationItem, SideNavigationSubItem, Timeline, TimelineItem, UploadCollection, UploadCollectionItem, Wizard, WizardStep
+                Bar, Button, BarcodeScannerDialog, FlexibleColumnLayout, IllustratedMessage, NotificationListItem, NotificationAction, Avatar, Page, ProductSwitch, ProductSwitchItem, ShellBar, ShellBarItem, CustomListItem, GroupHeaderListItem, StandardListItem, Input, Icon, SuggestionGroupItem, SuggestionItem, SideNavigation, SideNavigationItem, SideNavigationSubItem, Timeline, TimelineItem, UploadCollection, UploadCollectionItem, ViewSettingsDialog, Wizard, WizardStep
             ) {
 
                 var oBar = new Bar({
-                    endContent: [
+                    content: [
                         new Button({
                             icon: "employee",
                             text: "Some text...",
@@ -64,7 +70,7 @@
                             }
                         })
                     ],
-                    middleContent: [
+                    endContent: [
                         new Button({
                             icon: "employee",
                             text: "Some text...",
@@ -112,6 +118,39 @@
                     ]
                 });
                 oBar.placeAt("testBar");
+
+
+                var oBarcodeScannerDialog0Button = new Button({
+                    text: "close",
+                    click: function(oEvent) {
+                        console.log("Calling close...");
+                        var result = oBarcodeScannerDialog.close();
+                        console.log("... close returned: ", result);
+                    }
+                });
+                oBarcodeScannerDialog0Button.placeAt("methodsBarcodeScannerDialog");
+
+
+
+                var oBarcodeScannerDialog1Button = new Button({
+                    text: "show",
+                    click: function(oEvent) {
+                        console.log("Calling show...");
+                        var result = oBarcodeScannerDialog.show();
+                        console.log("... show returned: ", result);
+                    }
+                });
+                oBarcodeScannerDialog1Button.placeAt("methodsBarcodeScannerDialog");
+
+                var oBarcodeScannerDialog = new BarcodeScannerDialog({
+                    scanError: function(oEvent) {
+                        console.log("Event scanError fired for BarcodeScannerDialog with parameters: ", oEvent.getParameters());
+                    },
+                    scanSuccess: function(oEvent) {
+                        console.log("Event scanSuccess fired for BarcodeScannerDialog with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oBarcodeScannerDialog.placeAt("testBarcodeScannerDialog");
 
 
                 var oFlexibleColumnLayout0Button = new Button({
@@ -201,7 +240,45 @@
                 oFlexibleColumnLayout.placeAt("testFlexibleColumnLayout");
 
 
+                var oIllustratedMessage = new IllustratedMessage({
+                    subtitleText: "Some text...",
+                    titleText: "Some text...",
+                    actions: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    subtitle: new Button({
+                        icon: "employee",
+                        text: "Some text...",
+                        click: function(oEvent) {
+                            console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                        }
+                    })
+                });
+                oIllustratedMessage.placeAt("testIllustratedMessage");
+
+
                 var oNotificationListItem = new NotificationListItem({
+                    titleText: "Some text...",
                     actions: [
                         new NotificationAction({
                             icon: "employee",
@@ -217,7 +294,14 @@
                         })
                     ],
                     avatar: new Avatar({
-                        icon: "employee"
+                        icon: "employee",
+                        content: new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
                     }),
                     footnotes: [
                         new Button({
@@ -389,7 +473,14 @@
                         })
                     ],
                     logo: new Avatar({
-                        icon: "employee"
+                        icon: "employee",
+                        content: new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
                     }),
                     menuItems: [
                         new CustomListItem({
@@ -420,65 +511,27 @@
                                 console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
                             }
                         }),
-                        new CustomListItem({
-                            content: [
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
-                                }),
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
-                                }),
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
-                                })
-                            ],
-                            detailClick: function(oEvent) {
-                                console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
-                            }
+                        new GroupHeaderListItem({
+                            text: "Some text..."
                         }),
-                        new CustomListItem({
-                            content: [
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
-                                }),
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
-                                }),
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
-                                })
-                            ],
+                        new StandardListItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text...",
                             detailClick: function(oEvent) {
-                                console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
+                                console.log("Event detailClick fired for StandardListItem with parameters: ", oEvent.getParameters());
                             }
                         })
                     ],
                     profile: new Avatar({
-                        icon: "employee"
+                        icon: "employee",
+                        content: new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
                     }),
                     searchField: new Input({
                         placeholder: "This is my placeholder value",
@@ -492,9 +545,7 @@
                             }
                         }),
                         suggestionItems: [
-                            new SuggestionItem({
-                                additionalText: "Some text...",
-                                icon: "employee",
+                            new SuggestionGroupItem({
                                 text: "Some text..."
                             }),
                             new SuggestionItem({
@@ -502,9 +553,7 @@
                                 icon: "employee",
                                 text: "Some text..."
                             }),
-                            new SuggestionItem({
-                                additionalText: "Some text...",
-                                icon: "employee",
+                            new SuggestionGroupItem({
                                 text: "Some text..."
                             })
                         ],
@@ -725,8 +774,8 @@
                                     }
                                 })
                             ],
-                            itemNameClick: function(oEvent) {
-                                console.log("Event itemNameClick fired for TimelineItem with parameters: ", oEvent.getParameters());
+                            nameClick: function(oEvent) {
+                                console.log("Event nameClick fired for TimelineItem with parameters: ", oEvent.getParameters());
                             }
                         }),
                         new TimelineItem({
@@ -756,8 +805,8 @@
                                     }
                                 })
                             ],
-                            itemNameClick: function(oEvent) {
-                                console.log("Event itemNameClick fired for TimelineItem with parameters: ", oEvent.getParameters());
+                            nameClick: function(oEvent) {
+                                console.log("Event nameClick fired for TimelineItem with parameters: ", oEvent.getParameters());
                             }
                         }),
                         new TimelineItem({
@@ -787,8 +836,8 @@
                                     }
                                 })
                             ],
-                            itemNameClick: function(oEvent) {
-                                console.log("Event itemNameClick fired for TimelineItem with parameters: ", oEvent.getParameters());
+                            nameClick: function(oEvent) {
+                                console.log("Event nameClick fired for TimelineItem with parameters: ", oEvent.getParameters());
                             }
                         })
                     ]
@@ -958,14 +1007,76 @@
                     drop: function(oEvent) {
                         console.log("Event drop fired for UploadCollection with parameters: ", oEvent.getParameters());
                     },
-                    fileDeleted: function(oEvent) {
-                        console.log("Event fileDeleted fired for UploadCollection with parameters: ", oEvent.getParameters());
+                    itemDelete: function(oEvent) {
+                        console.log("Event itemDelete fired for UploadCollection with parameters: ", oEvent.getParameters());
                     },
                     selectionChange: function(oEvent) {
                         console.log("Event selectionChange fired for UploadCollection with parameters: ", oEvent.getParameters());
                     }
                 });
                 oUploadCollection.placeAt("testUploadCollection");
+
+
+                var oViewSettingsDialog0Button = new Button({
+                    text: "show",
+                    click: function(oEvent) {
+                        console.log("Calling show...");
+                        var result = oViewSettingsDialog.show();
+                        console.log("... show returned: ", result);
+                    }
+                });
+                oViewSettingsDialog0Button.placeAt("methodsViewSettingsDialog");
+
+                var oViewSettingsDialog = new ViewSettingsDialog({
+                    sortItems: [
+                        new CustomListItem({
+                            content: [
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                })
+                            ],
+                            detailClick: function(oEvent) {
+                                console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new GroupHeaderListItem({
+                            text: "Some text..."
+                        }),
+                        new StandardListItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text...",
+                            detailClick: function(oEvent) {
+                                console.log("Event detailClick fired for StandardListItem with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    cancel: function(oEvent) {
+                        console.log("Event cancel fired for ViewSettingsDialog with parameters: ", oEvent.getParameters());
+                    },
+                    confirm: function(oEvent) {
+                        console.log("Event confirm fired for ViewSettingsDialog with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oViewSettingsDialog.placeAt("testViewSettingsDialog");
 
 
                 var oWizard = new Wizard({
@@ -1073,55 +1184,73 @@
     <br><br>
 
 
-    <h1>1. FlexibleColumnLayout</h1>
+    <h1>1. BarcodeScannerDialog</h1>
+    <div id="methodsBarcodeScannerDialog"></div>
+    <div id="testBarcodeScannerDialog"></div>
+    <br><br>
+
+
+    <h1>2. FlexibleColumnLayout</h1>
     <div id="methodsFlexibleColumnLayout"></div>
     <div id="testFlexibleColumnLayout"></div>
     <br><br>
 
 
-    <h1>2. NotificationListItem</h1>
+    <h1>3. IllustratedMessage</h1>
+    <div id="methodsIllustratedMessage"></div>
+    <div id="testIllustratedMessage"></div>
+    <br><br>
+
+
+    <h1>4. NotificationListItem</h1>
     <div id="methodsNotificationListItem"></div>
     <div id="testNotificationListItem"></div>
     <br><br>
 
 
-    <h1>3. Page</h1>
+    <h1>5. Page</h1>
     <div id="methodsPage"></div>
     <div id="testPage"></div>
     <br><br>
 
 
-    <h1>4. ProductSwitch</h1>
+    <h1>6. ProductSwitch</h1>
     <div id="methodsProductSwitch"></div>
     <div id="testProductSwitch"></div>
     <br><br>
 
 
-    <h1>5. ShellBar</h1>
+    <h1>7. ShellBar</h1>
     <div id="methodsShellBar"></div>
     <div id="testShellBar"></div>
     <br><br>
 
 
-    <h1>6. SideNavigation</h1>
+    <h1>8. SideNavigation</h1>
     <div id="methodsSideNavigation"></div>
     <div id="testSideNavigation"></div>
     <br><br>
 
 
-    <h1>7. Timeline</h1>
+    <h1>9. Timeline</h1>
     <div id="methodsTimeline"></div>
     <div id="testTimeline"></div>
     <br><br>
 
 
-    <h1>8. UploadCollection</h1>
+    <h1>10. UploadCollection</h1>
     <div id="methodsUploadCollection"></div>
     <div id="testUploadCollection"></div>
     <br><br>
 
 
-    <h1>9. Wizard</h1>
+    <h1>11. ViewSettingsDialog</h1>
+    <div id="methodsViewSettingsDialog"></div>
+    <div id="testViewSettingsDialog"></div>
+    <br><br>
+
+
+    <h1>12. Wizard</h1>
     <div id="methodsWizard"></div>
     <div id="testWizard"></div>
     <br><br>

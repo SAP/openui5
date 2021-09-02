@@ -64,10 +64,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			maxlength: {
 				type: Integer__default,
 			},
-			ariaLabel: {
+			accessibleName: {
 				type: String,
 			},
-			ariaLabelledby: {
+			accessibleNameRef: {
 				type: String,
 				defaultValue: "",
 			},
@@ -145,6 +145,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.valueBeforeItemSelection = "";
 			this.valueBeforeItemPreview = "";
 			this.suggestionSelectionCanceled = false;
+			this._changeFired = false;
 			this.previousValue = undefined;
 			this.firstRendering = true;
 			this.highlightValue = "";
@@ -203,6 +204,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (Keys.isSpace(event)) {
 				return this._handleSpace(event);
 			}
+			if (Keys.isTabNext(event)) {
+				return this._handleTab(event);
+			}
 			if (Keys.isEnter(event)) {
 				return this._handleEnter(event);
 			}
@@ -235,6 +239,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_handleSpace(event) {
 			if (this.Suggestions) {
 				this.Suggestions.onSpace(event);
+			}
+		}
+		_handleTab(event) {
+			if (this.Suggestions && (this.previousValue !== this.value)) {
+				this.Suggestions.onTab(event);
 			}
 		}
 		_handleEnter(event) {
@@ -273,12 +282,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		_click(event) {
 			if (Device.isPhone() && !this.readonly && this.Suggestions) {
-				this.Suggestions.open(this);
+				this.Suggestions.open();
 				this.isRespPopoverOpen = true;
 			}
 		}
 		_handleChange(event) {
-			this.fireEvent(this.EVENT_CHANGE);
+			if (!this._changeFired) {
+				this.fireEvent(this.EVENT_CHANGE);
+			}
+			this._changeFired = false;
 		}
 		_scroll(event) {
 			const detail = event.detail;
@@ -346,7 +358,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const popover = await this._getPopover();
 			if (popover) {
 				this._isPopoverOpen = true;
-				popover.openBy(this);
+				popover.showAt(this);
 			}
 		}
 		async closePopover() {
@@ -388,6 +400,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.valueBeforeItemSelection = itemText;
 				this.fireEvent(this.EVENT_INPUT);
 				this.fireEvent(this.EVENT_CHANGE);
+				this._changeFired = true;
 			}
 			this.valueBeforeItemPreview = "";
 			this.suggestionSelectionCanceled = false;

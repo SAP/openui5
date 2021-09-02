@@ -12,6 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
+	var WrappingType = library.WrappingType;
 
 	/**
 	 * Constructor for a new <code>CheckBox</code>.
@@ -32,7 +33,7 @@ sap.ui.define([
 	 *
 	 * <h3>Usage</h3>
 	 *
-	 * You can define the checkbox text with via the <code>text</code> property. If the text exceeds the available width, it is truncated by default. In case you prefer text to wrap, use the <code>wrap</code> property. The touchable area for toggling the <code>sap.ui.webc.main.CheckBox</code> ends where the text ends. <br>
+	 * You can define the checkbox text with via the <code>text</code> property. If the text exceeds the available width, it is truncated by default. In case you prefer text to wrap, set the <code>wrappingType</code> property to "Normal". The touchable area for toggling the <code>sap.ui.webc.main.CheckBox</code> ends where the text ends. <br>
 	 * <br>
 	 * You can disable the <code>sap.ui.webc.main.CheckBox</code> by setting the <code>disabled</code> property to <code>true</code>, or use the <code>sap.ui.webc.main.CheckBox</code> in read-only mode by setting the <code>readonly</code> property to <code>true</code>.
 	 *
@@ -152,11 +153,15 @@ sap.ui.define([
 				/**
 				 * Defines whether the component text wraps when there is not enough space. <br>
 				 * <br>
-				 * <b>Note:</b> By default, the text truncates when there is not enough space.
+				 * Available options are:
+				 * <ul>
+				 *     <li><code>None</code> - The text will be truncated with an ellipsis.</li>
+				 *     <li><code>Normal</code> - The text will wrap. The words will not be broken based on hyphenation.</li>
+				 * </ul>
 				 */
-				wrap: {
-					type: "boolean",
-					defaultValue: false
+				wrappingType: {
+					type: "sap.ui.webc.main.WrappingType",
+					defaultValue: WrappingType.None
 				}
 			},
 			events: {
@@ -164,7 +169,9 @@ sap.ui.define([
 				/**
 				 * Fired when the component checked state changes.
 				 */
-				change: {}
+				change: {
+					parameters: {}
+				}
 			}
 		}
 	});
