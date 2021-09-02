@@ -12,8 +12,8 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"layout": {
 							"label-width": "50%",
 							"alignment": {
-								"field": "End",
-								"label": "End"
+								"field": "end",
+								"label": "end"
 							}
 						},
 						"cols": 1
@@ -34,8 +34,8 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"layout": {
 							"label-width": "50%",
 							"alignment": {
-								"field": "End",
-								"label": "End"
+								"field": "end",
+								"label": "end"
 							}
 						},
 						"cols": 1
@@ -46,8 +46,8 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"layout": {
 							"label-width": "50%",
 							"alignment": {
-								"field": "End",
-								"label": "End"
+								"field": "end",
+								"label": "end"
 							}
 						},
 						"cols": 1
@@ -58,8 +58,8 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"layout": {
 							"label-width": "50%",
 							"alignment": {
-								"field": "End",
-								"label": "End"
+								"field": "end",
+								"label": "end"
 							}
 						},
 						"cols": 1
@@ -70,8 +70,8 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"layout": {
 							"label-width": "50%",
 							"alignment": {
-								"field": "End",
-								"label": "End"
+								"field": "end",
+								"label": "end"
 							}
 						},
 						"cols": 1
@@ -99,8 +99,8 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"layout": {
 							"label-width": "50%",
 							"alignment": {
-								"field": "End",
-								"label": "End"
+								"field": "end",
+								"label": "end"
 							}
 						},
 						"cols": 1
@@ -111,8 +111,8 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"layout": {
 							"label-width": "50%",
 							"alignment": {
-								"field": "End",
-								"label": "End"
+								"field": "end",
+								"label": "end"
 							}
 						},
 						"cols": 1
@@ -124,8 +124,8 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"layout": {
 							"label-width": "50%",
 							"alignment": {
-								"field": "End",
-								"label": "End"
+								"field": "end",
+								"label": "end"
 							}
 						},
 						"cols": 1

@@ -12,17 +12,17 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "string",
 						"layout": {
 							"alignment": {
-								"field": "End"
+								"field": "end"
 							}
 						}
 					},
 					"param2": {
 						"manifestpath": "/sap.card/configuration/parameters/param2/value",
-						"label": "Label alignment: End",
+						"label": "Label alignment: end",
 						"type": "string",
 						"layout": {
 							"alignment": {
-								"label": "End"
+								"label": "end"
 							}
 						}
 					},
@@ -31,7 +31,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "Field first",
 						"type": "string",
 						"layout": {
-							"position": "field-lable"
+							"position": "field-label"
 						}
 					},
 					"param4": {
@@ -57,7 +57,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "boolean",
 						"layout": {
 							"label-width": "92.4%",
-							"position": "field-lable"
+							"position": "field-label"
 						}
 					},
 					"booleanLabel2": {
@@ -66,7 +66,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "boolean",
 						"layout": {
 							"label-width": "83%",
-							"position": "field-lable"
+							"position": "field-label"
 						},
 						"cols": 1
 					}
