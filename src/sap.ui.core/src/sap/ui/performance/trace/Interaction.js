@@ -183,6 +183,7 @@ sap.ui.define([
 			oPendingInteraction = null;
 			oCurrentBrowserEvent = null;
 			isNavigation = false;
+			bMatched = false;
 		}
 	}
 
@@ -215,6 +216,8 @@ sap.ui.define([
 	var bInteractionActive = false,
 		bInteractionProcessed = false,
 		oCurrentBrowserEvent,
+		oBrowserElement,
+		bMatched = false,
 		iInteractionStepTimer,
 		bIdle = false,
 		bSuspended = false,
@@ -587,20 +590,26 @@ sap.ui.define([
 		 */
 		notifyStepStart : function(sEventId, oElement, bForce) {
 			if (bInteractionActive) {
-				if ((!oPendingInteraction && oCurrentBrowserEvent && !bInteractionProcessed) || bForce) {
+				if ((!oPendingInteraction && oCurrentBrowserEvent && oCurrentBrowserEvent.srcControl.getId() === oElement.getId() && !bInteractionProcessed) || bForce) {
 					var sType;
 					if (bForce) {
 						sType = "startup";
 					} else {
 						sType = sEventId;
 					}
-
 					Interaction.start(sType, oElement);
 					oPendingInteraction = Interaction.getPending();
 
 					// update pending interaction infos
 					if (oPendingInteraction && !oPendingInteraction.completed && Interaction.onInteractionStarted) {
 						oPendingInteraction.passportAction = Interaction.onInteractionStarted(oPendingInteraction, bForce);
+					}
+					// if browser event matches the first control event we take it for trigger/event determination (step name)
+					if (oElement && oElement.getId && oElement.getId() === oBrowserElement.getId()) {
+						bMatched = true;
+					}
+					if (oCurrentBrowserEvent) {
+						oBrowserElement = oCurrentBrowserEvent.srcControl;
 					}
 					oCurrentBrowserEvent = null;
 					//only handle the first browser event within a call stack. Ignore virtual/harmonization events.
@@ -611,7 +620,26 @@ sap.ui.define([
 						oCurrentBrowserEvent = null;
 						bInteractionProcessed = false;
 					}, 0);
+				} else if (oPendingInteraction && oBrowserElement && !bMatched) {
+					// if browser event matches one of the next control events we take it for trigger/event determination (step name)
+					var elem = oBrowserElement;
+					if (elem && oElement.getId() === elem.getId()) {
+						oPendingInteraction.trigger = oElement.getId();
+						oPendingInteraction.event = sEventId;
+					    bMatched = true;
+					} else {
+						while (elem && elem.getParent()) {
+							elem = elem.getParent();
+							if (oElement.getId() === elem.getId()) {
+								oPendingInteraction.trigger = oElement.getId();
+								oPendingInteraction.event = sEventId;
+								//if we find no direct match we consider the last control event for the trigger/event (step name)
+								break;
+							}
+						}
+					}
 				}
+
 			}
 		},
 
