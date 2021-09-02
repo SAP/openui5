@@ -2783,10 +2783,8 @@ function(
 				bPreviosFocusOnGroup = oPreviousItem && oPreviousItem.isA("sap.m.GroupHeaderListItem"),
 				iSelectionStart = calculateSelectionStart(selectionRange(oFocusDomRef, bPreviosFocusOnGroup), sNewValue, sTypedValue, bPreviosFocusOnGroup);
 
-			if (!oItem) { // When out of the list, reset to user's input
+			if (!oItem || bIsGroupItem) { // When out of the list or a GroupHeader item, reset to user's input
 				this.setDOMValue(sTypedValue);
-			} else if (bIsGroupItem) { // If it's a GroupHeader item, reset the input
-				this.setDOMValue("");
 			} else { // Replace the value and highlight it
 				this.setDOMValue(sNewValue);
 
