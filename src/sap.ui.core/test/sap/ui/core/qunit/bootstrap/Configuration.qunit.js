@@ -1142,4 +1142,30 @@ sap.ui.define([
 		assert.equal(oCfg["frameOptionsConfig"].whitelist, LIST, "Deprecated frameOptionsConfig.whitelist should be set");
 		assert.equal(oCfg["frameOptionsConfig"].allowlist, LIST, "Successor frameOptionsConfig.allowlist should be set");
 	});
+
+	QUnit.module("OData V4");
+
+	QUnit.test("securityTokenHandler", function(assert) {
+		var fnSecurityTokenHandler1 = function () {},
+			fnSecurityTokenHandler2 = function () {};
+
+		var oCfg = new Configuration();
+		assert.deepEqual(oCfg.getSecurityTokenHandler(), []);
+
+		window["sap-ui-config"]["securitytokenhandler"] = fnSecurityTokenHandler1;
+		oCfg = new Configuration();
+		assert.strictEqual(oCfg.getSecurityTokenHandler().length, 1);
+		assert.strictEqual(oCfg.getSecurityTokenHandler()[0], fnSecurityTokenHandler1);
+
+		oCfg.setSecurityTokenHandler(fnSecurityTokenHandler2);
+		assert.strictEqual(oCfg.getSecurityTokenHandler().length, 1);
+		assert.strictEqual(oCfg.getSecurityTokenHandler()[0], fnSecurityTokenHandler2);
+
+		assert.throws(function () {
+			oCfg.setSecurityTokenHandler("foo");
+		}, /securityTokenHandler must be a function/);
+
+		oCfg.setSecurityTokenHandler(undefined);
+		assert.deepEqual(oCfg.getSecurityTokenHandler(), []);
+	});
 });

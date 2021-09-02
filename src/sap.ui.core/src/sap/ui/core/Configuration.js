@@ -139,6 +139,7 @@ sap.ui.define([
 					"support"               : { type : "string[]", defaultValue : null },
 					"testRecorder"          : { type : "string[]", defaultValue : null },
 					"activeTerminologies"   : { type : "string[]", defaultValue: undefined},
+					"securityTokenHandler"  : { type : "function", defaultValue: undefined },
 					"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
 					"xx-appCacheBusterMode" : { type : "string",   defaultValue : "sync" },
 					"xx-appCacheBusterHooks": { type : "object",   defaultValue : undefined, noUrl:true }, // e.g.: { handleURL: fn, onIndexLoad: fn, onIndexLoaded: fn }
@@ -1516,6 +1517,35 @@ sap.ui.define([
 		 */
 		getActiveTerminologies : function() {
 			return this["activeTerminologies"];
+		},
+
+		/**
+		 * Returns the handlers for security tokens of an OData V4 model. Currently there is at most
+		 * one.
+		 *
+		 * @returns {function[]} the security token handlers (an empty array if there are none)
+		 * @public
+		 * @since 1.95.0
+		 * @see #setSecurityTokenHandler
+		 */
+		getSecurityTokenHandler : function () {
+			return this.securityTokenHandler ? [this.securityTokenHandler] : [];
+		},
+
+		/**
+		 * Sets the security token handler for an OData V4 model. This function is expected
+		 * to return a Promise resolving with an array of headers that the model is expected to send
+		 * with each request.
+		 *
+		 * @param {function|undefined} fnSecurityTokenHandler - The security token handler
+		 * @public
+		 * @since 1.95.0
+		 */
+		setSecurityTokenHandler : function (fnSecurityTokenHandler) {
+			check(fnSecurityTokenHandler === undefined
+					|| typeof fnSecurityTokenHandler === "function",
+				"securityTokenHandler must be a function");
+			this.securityTokenHandler = fnSecurityTokenHandler;
 		},
 
 		/**
