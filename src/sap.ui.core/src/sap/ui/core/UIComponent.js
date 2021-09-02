@@ -296,7 +296,7 @@ sap.ui.define([
 		}
 
 		function setRootControl(vRootControl) {
-			var fnFireInstanceCreated = function() {
+			var fnFireInstanceInitialized = function() {
 				if (typeof UIComponent._fnOnInstanceInitialized === "function") {
 					UIComponent._fnOnInstanceInitialized(that);
 				}
@@ -307,19 +307,19 @@ sap.ui.define([
 			if (vRootControl instanceof Promise) {
 				that.pRootControlLoaded = that.pRootControlLoaded.then(function(oRootControl) {
 					fnAggregateRootControl(oRootControl);
-					fnFireInstanceCreated();
+					fnFireInstanceInitialized();
 					return oRootControl;
 				});
 			} else if (vRootControl instanceof View && vRootControl.oAsyncState && vRootControl.oAsyncState.promise) {
 				fnAggregateRootControl(vRootControl);
 				that.pRootControlLoaded = that.pRootControlLoaded.then(function(oRootControl) {
 					// notify Component initialization callback handler
-					fnFireInstanceCreated();
+					fnFireInstanceInitialized();
 					return oRootControl;
 				});
 			} else {
 				fnAggregateRootControl(vRootControl);
-				fnFireInstanceCreated();
+				fnFireInstanceInitialized();
 			}
 		}
 
