@@ -6,16 +6,23 @@
 	<title>SAPUI5 Navigation</title>
 	<script>
 
-		var extractSanitizeUrlParam = function(sParamName) {
-			var sParam = new window.URLSearchParams(window.location.search).get(sParamName);
-
-			return sParam.replace(/[/</>]/g, '');
+		var getUrlParam = function(sParamName) {
+			return new window.URLSearchParams(window.location.search).get(sParamName);
+		}
+		var encodeOrigin = function (sResourceOrigin) {
+			return sResourceOrigin
+					.replaceAll("&", "&amp;")
+					.replaceAll("<", "&lt;")
+					.replaceAll(">", "&gt;")
+					.replaceAll("\"", "&quot;")
+					.replaceAll("’", "&#x27;");
 		};
 
-		var sSampleId = extractSanitizeUrlParam('sap-ui-xx-sample-id'),
-			sSamplePath = extractSanitizeUrlParam('sap-ui-xx-sample-path'),
-			sOrigin = extractSanitizeUrlParam('sap-ui-xx-sample-origin'),
-			sVersion = extractSanitizeUrlParam('sap-ui-xx-sample-version'),
+
+		var sSampleId = getUrlParam('sap-ui-xx-sample-id'),
+			sSamplePath = getUrlParam('sap-ui-xx-sample-path'),
+			sOrigin = getUrlParam('sap-ui-xx-sample-origin'),
+			sVersion = getUrlParam('sap-ui-xx-sample-version'),
 
 			oPath = {};
 		if (!sOrigin || sOrigin == ".") {
@@ -31,9 +38,9 @@
 
 
 
-		document.write("<script src=" + sOrigin  + '/resources/sap-ui-core.js' + " id='sap-ui-bootstrap' " +
+		document.write("<script src=" + encodeOrigin(sOrigin)  + '/resources/sap-ui-core.js' + " id='sap-ui-bootstrap' " +
 				"data-sap-ui-libs='sap.m' data-sap-ui-bindingSyntax='complex' data-sap-ui-compatVersion='edge'></scr" + "ipt>");
-		document.write("<base href=" + sOrigin + "/>");
+		document.write("<base href=" + encodeOrigin(sOrigin) + "/>");
 
 	</script>
 </head>

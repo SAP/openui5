@@ -76,13 +76,18 @@ sap.ui.define([
 				home: MAIN_WEB_PAGE_TITLE
 			};
 
+		function getResourcePath(sResource) {
+
+			return bUseUnifiedResourceOrigin && !self['sap-ui-documentation-config'] ?
+				window.origin + sResource :
+				ResourcesUtil.getResourceOriginPath(sResource);
+
+		}
 		// shortcut for sap.m.URLHelper
-		var URLHelper = mobileLibrary.URLHelper,
-			bUseUnifiedResourceOrigin =  new URLSearchParams(window.location.search).get('sap-ui-xx-unifiedResources') != null,
-			sNeoAppJsonPath = ResourcesUtil.getResourceOriginPath("/neo-app.json"), /* Load neo-app.json always from root URL */
-			sVersionOverviewJsonPath = bUseUnifiedResourceOrigin && !self['sap-ui-documentation-config'] ?
-				window.origin + "/versionoverview.json" :
-				ResourcesUtil.getResourceOriginPath("/versionoverview.json"), /* Load versionoverview.json always from root URL */
+		var bUseUnifiedResourceOrigin =  new URLSearchParams(window.location.search).get('sap-ui-xx-unifiedResources') != null,
+			URLHelper = mobileLibrary.URLHelper,
+			sNeoAppJsonPath = getResourcePath("/neo-app.json"), /* Load neo-app.json always from root URL */
+			sVersionOverviewJsonPath = getResourcePath("/versionoverview.json"), /* Load versionoverview.json always from root URL */
 			ABOUT_TEXT = "about",
 			FEEDBACK_TEXT = "feedback",
 			FEEDBACK_URL = "https://demokit-feedback-proxy.cfapps.eu12.hana.ondemand.com/issue",
