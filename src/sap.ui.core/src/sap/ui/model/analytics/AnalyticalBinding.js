@@ -333,13 +333,16 @@ sap.ui.define([
 
 			// considering different count mode settings
 			if (mParameters && mParameters.countMode == CountMode.None) {
-				oLogger.fatal("requested count mode is ignored; OData requests will include $inlinecout options");
+				oLogger.fatal("requested count mode is ignored; OData requests will include"
+					+ " $inlinecount options");
 			} else if (mParameters
 					&& (mParameters.countMode == CountMode.Request
 						|| mParameters.countMode == CountMode.Both)) {
-				oLogger.warning("default count mode is ignored; OData requests will include $inlinecout options");
+				oLogger.warning("default count mode is ignored; OData requests will include"
+					+ " $inlinecount options");
 			} else if (this.oModel.sDefaultCountMode == CountMode.Request) {
-				oLogger.warning("default count mode is ignored; OData requests will include $inlinecout options");
+				oLogger.warning("default count mode is ignored; OData requests will include"
+					+ " $inlinecount options");
 			}
 
 			// detect ODataModel version

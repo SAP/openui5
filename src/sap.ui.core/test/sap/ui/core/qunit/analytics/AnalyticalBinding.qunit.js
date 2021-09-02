@@ -1278,7 +1278,7 @@ sap.ui.define([
 			ODataModelAdapter.apply(oModel);
 			this.oLogMock.expects("warning")
 				.withExactArgs("default count mode is ignored; OData requests will include"
-					+ " $inlinecout options");
+					+ " $inlinecount options");
 
 			oBinding = new AnalyticalBinding(oModel, sPath, null, [], [], {
 				analyticalInfo : oFixture.analyticalInfo,
