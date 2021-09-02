@@ -39,7 +39,7 @@
 				<li>Provide "path" only to specify the context path of the current level.</li>
 			</ol>
 
-			<p>Data:</p>
+			<h3 id="data">Data:</h3>
 
 			<div class="tableWrapper">
 				<table>
@@ -115,7 +115,7 @@
 				</table>
 			</div>
 
-			<p id="request">Request:</p>
+			<h3 id="request">Request:</h3>
 
 			<div class="tableWrapper">
 				<table>
@@ -218,10 +218,22 @@
 						<td>1.33.0</td>
 						<td>1.90</td>
 					</tr>
+					<tr>
+						<td>cache</td>
+						<td><a href="#cache">Cache</a></td>
+						<td>No</td>
+						<td>
+							An object defining the cache behaviour for the requested data.
+							<br>
+							<b>Note:</b> This property is experimental.<br>
+						</td>
+						<td>1.35.0</td>
+						<td>1.94</td>
+					</tr>
 				</table>
 			</div>
 
-			<p id="batch">Batch (Experimental):</p>
+			<h3 id="batch">Batch (Experimental):</h3>
 
 			<div class="tableWrapper">
 				<table>
@@ -268,7 +280,74 @@
 				</table>
 			</div>
 
-			<p id="extension">Extension:</p>
+			<h3 id="cache">Cache (Experimental):</h3>
+
+			<p>
+				<b>Note:</b> This feature is dependent on the host environment and if it’s not prepared, the card data requests will work without caching. If you are developing a host environment - see the instructions in the Integrate section.
+			</p>
+
+			<p>
+				Caching reflects how data requests are performed, and in the card’s configuration it is enabled by default.
+			</p>
+
+			<p>
+				With the “cache” property you can specify how your card will behave about caching. You can control how long does the cached data is considered fresh and therefore shown to the user. You can also set whether a stale cache (one which is not fresh) can be shown to the user while fresh data is fetched.
+			</p>
+
+			<p>
+				For example, if maxAge is 3600 and staleWhileRevalidate is true, each time when the users open the page in up to one hour, they will see the cached data from their first visit. When the page is opened again after one hour, the user will briefly see the old, cached data, while the fresh data is being fetched. Then the fresh data will be shown and saved in the cache to be used in next one hour.
+			</p>
+
+			<p>
+				The default behavior for the card is maxAge: 0 and staleWhileRevalidate: true.
+			</p>
+
+			<p>
+				See the <a target="_parent" href="../../../index.html#/explore/cache">samples in the Explore section</a>.
+			</p>
+
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Default Value</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>enabled</td>
+						<td>boolean</td>
+						<td>No</td>
+						<td>true</td>
+						<td>If set to false the cache is disabled and it will not be stored in the browser's cache.</td>
+						<td>1.35.0</td>
+						<td>1.94</td>
+					</tr>
+					<tr>
+						<td>maxAge</td>
+						<td>integer</td>
+						<td>No</td>
+						<td>0</td>
+						<td>The maximum number of seconds for which the cached data is considered fresh and can be shown to the user.</td>
+						<td>1.35.0</td>
+						<td>1.94</td>
+					</tr>
+					<tr>
+						<td>staleWhileRevalidate</td>
+						<td>boolean</td>
+						<td>No</td>
+						<td>true</td>
+						<td>A stale cache can be shown to the user until the fresh data is fetched.</td>
+						<td>1.35.0</td>
+						<td>1.94</td>
+					</tr>
+				</table>
+			</div>
+
+			<h3 id="extension">Extension:</h3>
 
 			<div class="tableWrapper">
 				<table>
@@ -394,6 +473,11 @@
 		<div class="navigation">
 			<h4>Table of Contents</h4>
 			<div><a href="../../../index.html#/learn/features/data/overview" target="_parent">Overview</a></div>
+			<div><a href="#data">Data</a></div>
+			<div><a href="#request">Request</a></div>
+			<div><a href="#batch">Batch</a></div>
+			<div><a href="#cache">Cache</a></div>
+			<div><a href="#extension">Extension</a></div>
 			<div><a href="../../../index.html#/learn/features/data/examples" target="_parent">Examples</a></div>
 		</div>
 	</div>

@@ -1829,7 +1829,12 @@
           "default": false
         },
         "noStore": {
-          "description": "Set to true to disable caching for this card.",
+          "description": "[Deprecated] Set to true to disable caching for this card.",
+          "type": "boolean",
+          "default": false
+        },
+        "enabled": {
+          "description": "Set to false to disable caching for this card.",
           "type": "boolean",
           "default": false
         }

@@ -1,0 +1,55 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.cache.default",
+		"type": "card",
+		"title": "Sample for Default Cache",
+		"subTitle": "Sample for Default Cache",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this card",
+		"info": "Additional information about this card",
+		"description": "A long description for this card",
+		"tags": {
+			"keywords": [
+				"List",
+				"Numeric",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"designtime": "dt/Configuration",
+		"data": {
+			"request": {
+				"url": "./data.json"
+			}
+		},
+		"header": {
+			"title": "Default Behavior - Stale While Revalidate",
+			"subTitle": "Cached data is displayed while a request for fresh data is done",
+			"icon": {
+				"src": "sap-icon://desktop-mobile"
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/items"
+			},
+			"maxItems": 5,
+			"item": {
+				"title": "{Name}",
+				"description": "{Description}"
+			}
+		}
+	}
+}

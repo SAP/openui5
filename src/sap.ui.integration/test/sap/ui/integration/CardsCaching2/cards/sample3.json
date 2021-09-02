@@ -32,7 +32,7 @@
 			"request": {
 				"url": "../mock/data3.json",
 				"cache": {
-					"noStore": true
+					"enabled": false
 				}
 			}
 		},

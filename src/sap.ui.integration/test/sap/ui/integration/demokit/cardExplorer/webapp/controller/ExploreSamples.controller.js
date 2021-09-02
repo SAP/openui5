@@ -586,7 +586,7 @@ sap.ui.define([
 			this._oCurrSample = oCurrentSample;
 
 			Promise.all([
-				this._initCardSample(),
+				this._initCardSample(oCurrentSample),
 				this._initMockServers(oCurrentSample)
 			]).then(this._cancelIfSampleChanged(function () {
 				this._oFileEditor
@@ -665,7 +665,7 @@ sap.ui.define([
 			this._bMockServersCreated = false;
 		},
 
-		_initCardSample: function () {
+		_initCardSample: function (oSample) {
 			if (!this._pInitCardSample) {
 				this._pInitCardSample = Core.loadLibrary("sap.ui.integration", { async: true })
 					.then(function () {
@@ -682,6 +682,12 @@ sap.ui.define([
 					.then(function (aArgs) {
 						var oCard = aArgs[0],
 							oHost = aArgs[1];
+
+						if (oSample.cache) {
+							oHost.useExperimentalCaching();
+						} else {
+							oHost.stopUsingExperimentalCaching();
+						}
 
 						this.byId("cardContainer").addItem(oCard);
 
