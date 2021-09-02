@@ -216,100 +216,90 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when getting unrepresented elements from delegate for EntityType01 Group,", function(assert) {
-			var oGroup = this.oView.byId("DelegateGroupEntityType01");
-			var mActionObject = {
-				action: {
-					aggregation: "formElements",
-					getLabel: this.mAddViaDelegateAction.getLabel
-				},
-				delegateInfo: {
-					payload: {},
-					delegate: this.oDelegate
-				},
-				relevantContainer: this.mAddViaDelegateAction.relevantContainer
-			};
-
-			return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
-				assert.equal(aAdditionalElements.length, 4, "then 4 additional properties are available");
-				assert.deepEqual(aAdditionalElements[0], {
-					selected: false,
-					label: "Entity1-Property06-Unbound",
-					tooltip: "Unbound Property6",
-					type: "delegate",
-					entityType: "EntityType01",
-					name: "Property06",
-					bindingPath: "Property06",
-					originalLabel: "",
-					duplicateName: false,
-					parentPropertyName: ""
-				}, "the unbound property is found");
-				assert.deepEqual(aAdditionalElements[1], {
-					selected: false,
-					label: "Entity1-Property07-ignored-unbound", //available, because there is no ignore filtering implemented
-					tooltip: "Unbound Property7",
-					type: "delegate",
-					entityType: "EntityType01",
-					name: "Property07",
-					bindingPath: "Property07",
-					originalLabel: "",
-					duplicateName: false,
-					parentPropertyName: ""
-				}, "the 2nd unbound property is found");
-				assert.deepEqual(aAdditionalElements[2], {
-					selected: false,
-					label: "Property08",
-					tooltip: "Property without sap:label",
-					type: "delegate",
-					entityType: "EntityType01",
-					name: "Property08",
-					bindingPath: "Property08",
-					originalLabel: "",
-					duplicateName: false,
-					parentPropertyName: ""
-				}, "the 3rd unbound property without sap:label is returned with technical name as label");
-			});
-		});
-
-		QUnit.test("when getting unrepresented elements from delegate for EntityType01 Group without a relevant container,", function(assert) {
-			var oGroup = this.oView.byId("DelegateGroupEntityType01");
-			var mActionObject = {
-				action: {
-					aggregation: "formElements",
-					getLabel: this.mAddViaDelegateAction.getLabel
-				},
-				delegateInfo: {
-					payload: {},
-					delegate: this.oDelegate
+		[true, false].forEach(function(bRelevantContainer) {
+			var sMessage = "when getting unrepresented elements from delegate for EntityType01 Group";
+			if (bRelevantContainer) {
+				sMessage += "without a relevant container";
+			}
+			QUnit.test(sMessage, function(assert) {
+				var oGroup = this.oView.byId("DelegateGroupEntityType01");
+				var mActionObject = {
+					action: {
+						aggregation: "formElements",
+						getLabel: this.mAddViaDelegateAction.getLabel
+					},
+					delegateInfo: {
+						payload: {},
+						delegate: this.oDelegate
+					}
+				};
+				if (bRelevantContainer) {
+					mActionObject.relevantContainer = this.mAddViaDelegateAction.relevantContainer;
 				}
-			};
 
-			return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
-				assert.equal(aAdditionalElements.length, 4, "then all properties of EntityType01 are available, because the GroupElements are not bound to any of them");
-				assert.deepEqual(aAdditionalElements[0], {
-					selected: false,
-					label: "Entity1-Property06-Unbound",
-					tooltip: "Unbound Property6",
-					type: "delegate",
-					entityType: "EntityType01",
-					name: "Property06",
-					bindingPath: "Property06",
-					originalLabel: "",
-					duplicateName: false,
-					parentPropertyName: ""
-				}, "the unbound property is found");
-				assert.deepEqual(aAdditionalElements[1], {
-					selected: false,
-					label: "Entity1-Property07-ignored-unbound",
-					tooltip: "Unbound Property7",
-					type: "delegate",
-					entityType: "EntityType01",
-					name: "Property07",
-					bindingPath: "Property07",
-					originalLabel: "",
-					duplicateName: false,
-					parentPropertyName: ""
-				}, "the 2nd unbound property is found");
+				return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
+					assert.equal(aAdditionalElements.length, 5, "then 5 additional properties are available");
+					assert.deepEqual(aAdditionalElements[0], {
+						selected: false,
+						label: "Entity1-Property06-Unbound",
+						tooltip: "Unbound Property6",
+						type: "delegate",
+						entityType: "EntityType01",
+						name: "Property06",
+						bindingPath: "Property06",
+						originalLabel: "",
+						duplicateName: false,
+						parentPropertyName: ""
+					}, "the unbound property is found");
+					assert.deepEqual(aAdditionalElements[1], {
+						selected: false,
+						label: "Entity1-Property07-ignored-unbound", //available, because there is no ignore filtering implemented
+						tooltip: "Unbound Property7",
+						type: "delegate",
+						entityType: "EntityType01",
+						name: "Property07",
+						bindingPath: "Property07",
+						originalLabel: "",
+						duplicateName: false,
+						parentPropertyName: ""
+					}, "the 2nd unbound property is found");
+					assert.deepEqual(aAdditionalElements[2], {
+						selected: false,
+						label: "Property08",
+						tooltip: "Property without sap:label",
+						type: "delegate",
+						entityType: "EntityType01",
+						name: "Property08",
+						bindingPath: "Property08",
+						originalLabel: "",
+						duplicateName: false,
+						parentPropertyName: ""
+					}, "the 3rd unbound property without sap:label is returned with technical name as label");
+					assert.deepEqual(aAdditionalElements[3], {
+						selected: false,
+						label: "Property10b - name starting like Property10",
+						tooltip: "Revealable property with name starting like hidden property name",
+						type: "delegate",
+						entityType: "EntityType01",
+						name: "Property10b",
+						bindingPath: "Property10b",
+						originalLabel: "",
+						duplicateName: false,
+						parentPropertyName: ""
+					}, "the 4th unbound property is found");
+					assert.deepEqual(aAdditionalElements[4], {
+						selected: false,
+						label: "Property11 - visible via Field Control",
+						tooltip: "Property with FieldControl",
+						type: "delegate",
+						entityType: "EntityType01",
+						name: "Property11-visible-via-Field-Control",
+						bindingPath: "Property11-visible-via-Field-Control",
+						originalLabel: "",
+						duplicateName: false,
+						parentPropertyName: ""
+					}, "the 5th unbound property is found");
+				});
 			});
 		});
 

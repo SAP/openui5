@@ -64,6 +64,10 @@
 					sap:label="Property10"
 					Nullable="false" MaxLength="25" sap:quickinfo="Property10 - hidden by annotation"
 					sap:creatable="false" sap:sortable="false"/>
+				<Property Name="Property11-visible-via-Field-Control" Type="Edm.String"
+					sap:label="Property11 - visible via Field Control"
+					Nullable="false" MaxLength="25" sap:quickinfo="Property with FieldControl"
+					sap:creatable="false" sap:sortable="false" sap:field-control="UxFcThatMakeFieldVisible"/>
 				<Property Name="EntityType01_Complex" Type="AdditionalElementsTest.ComplexType03"
 					Nullable="false" />
 				<Property Name="CommonPropertyName" Type="Edm.String"
@@ -72,6 +76,11 @@
 					sap:creatable="false" sap:sortable="false" />
 				<Property Name="EntityType01_TechnicalInvisibleProperty" Type="Edm.String"
 					sap:label="Technical Invisible Property by old Annotations only"/>
+				<Property Name="UxFcThatMakeFieldVisible" Type="Edm.Byte"
+					Nullable="false" sap:label="UI Field Control"
+					sap:quickinfo="UI Field Control Byte (Should be defined centrally)"
+					sap:heading="not addOData" sap:creatable="false"
+					sap:updatable="false" sap:visible="false"/>
 				<NavigationProperty Name="to_EntityType01Nav"
 					Relationship="AdditionalElementsTest.assoc_CF154B42F01DD8BEC0415968198AF5FE"
 					FromRole="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FE"
