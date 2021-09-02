@@ -2,40 +2,38 @@ sap.ui.define(function () { 'use strict';
 
 	class EventProvider {
 		constructor() {
-			this._eventRegistry = {};
+			this._eventRegistry = new Map();
 		}
 		attachEvent(eventName, fnFunction) {
 			const eventRegistry = this._eventRegistry;
-			let eventListeners = eventRegistry[eventName];
+			const eventListeners = eventRegistry.get(eventName);
 			if (!Array.isArray(eventListeners)) {
-				eventRegistry[eventName] = [];
-				eventListeners = eventRegistry[eventName];
+				eventRegistry.set(eventName, [fnFunction]);
+				return;
 			}
-			eventListeners.push({
-				"function": fnFunction,
-			});
+			if (!eventListeners.includes(fnFunction)) {
+				eventListeners.push(fnFunction);
+			}
 		}
 		detachEvent(eventName, fnFunction) {
 			const eventRegistry = this._eventRegistry;
-			let eventListeners = eventRegistry[eventName];
+			let eventListeners = eventRegistry.get(eventName);
 			if (!eventListeners) {
 				return;
 			}
-			eventListeners = eventListeners.filter(event => {
-				return event["function"] !== fnFunction;
-			});
+			eventListeners = eventListeners.filter(fn => fn !== fnFunction);
 			if (eventListeners.length === 0) {
-				delete eventRegistry[eventName];
+				eventRegistry.delete(eventName);
 			}
 		}
 		fireEvent(eventName, data) {
 			const eventRegistry = this._eventRegistry;
-			const eventListeners = eventRegistry[eventName];
+			const eventListeners = eventRegistry.get(eventName);
 			if (!eventListeners) {
 				return [];
 			}
-			return eventListeners.map(event => {
-				return event["function"].call(this, data);
+			return eventListeners.map(fn => {
+				return fn.call(this, data);
 			});
 		}
 		fireEventAsync(eventName, data) {
@@ -43,20 +41,14 @@ sap.ui.define(function () { 'use strict';
 		}
 		isHandlerAttached(eventName, fnFunction) {
 			const eventRegistry = this._eventRegistry;
-			const eventListeners = eventRegistry[eventName];
+			const eventListeners = eventRegistry.get(eventName);
 			if (!eventListeners) {
 				return false;
 			}
-			for (let i = 0; i < eventListeners.length; i++) {
-				const event = eventListeners[i];
-				if (event["function"] === fnFunction) {
-					return true;
-				}
-			}
-			return false;
+			return eventListeners.includes(fnFunction);
 		}
 		hasListeners(eventName) {
-			return !!this._eventRegistry[eventName];
+			return !!this._eventRegistry.get(eventName);
 		}
 	}
 
