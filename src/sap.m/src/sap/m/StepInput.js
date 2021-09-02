@@ -459,7 +459,7 @@ function(
 		StepInput.prototype.onBeforeRendering = function () {
 			var fMin = this._getMin(),
 				fMax = this._getMax(),
-				vValue = this._getInput()._$input.val() || this.getValue(),
+				vValue = this._sOriginalValue || this.getValue(),
 				bEditable = this.getEditable();
 
 			this._iRealPrecision = this._getRealValuePrecision();
@@ -484,6 +484,7 @@ function(
 
 		StepInput.prototype.exit = function () {
 			this.$().off(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
+			this._sOriginalValue = null;
 		};
 
 		StepInput.prototype.setProperty = function (sPropertyName, oValue, bSuppressInvalidate) {
@@ -917,6 +918,7 @@ function(
 				return this;
 			}
 
+			this._sOriginalValue = oValue;
 			this._applyValue(oValue);
 			this._disableButtons(Number(this._getInput().getValue()), this._getMax(), this._getMin());
 

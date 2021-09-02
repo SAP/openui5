@@ -780,6 +780,7 @@ sap.ui.define([
 
 		// act
 		this.stepInput.setDisplayValuePrecision(2);
+		oCore.applyChanges();
 		oInput.onfocusin();
 		oInput._$input.trigger("focus").val("6.1267").trigger("input");
 		this.clock.tick(300);
@@ -790,6 +791,7 @@ sap.ui.define([
 
 		// act
 		this.stepInput.setDisplayValuePrecision(3);
+		oCore.applyChanges();
 		oInput.onfocusin();
 		oInput._$input.trigger("focus").val("9.12588").trigger("input");
 		this.clock.tick(300);
@@ -954,6 +956,26 @@ sap.ui.define([
 
 		// Clean
 		oUpdateValueSpy.restore();
+	});
+
+	QUnit.test("Correct value is set after changing the displayValuePrecision", function (assert) {
+		// Prepare
+		var oStepInput = new StepInput({
+			value: 0
+		}).placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Act
+		oStepInput.setValue(1.23);
+		oCore.applyChanges();
+		oStepInput.setDisplayValuePrecision(1);
+		oCore.applyChanges();
+
+		// Assert
+		assert.equal(oStepInput.getAggregation("_input")._getInputValue(), "1.2", "The input is set correctly");
+
+		// Clean up
+		oStepInput.destroy();
 	});
 
 	QUnit.module("Keyboard Handling", {
@@ -1142,6 +1164,7 @@ sap.ui.define([
 	QUnit.test("up/down increases/decreases the value when in warning value state", function (assert) {
 		//arrange
 		this.stepInput.setValueState("Warning");
+		oCore.applyChanges();
 
 		//act
 		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
