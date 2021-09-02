@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/integration/util/loadCardEditor",
 	"sap/base/util/restricted/_debounce",
 	"sap/ui/integration/designtime/editor/CardEditor",
-	"sap/base/util/ObjectPath"
+	"sap/base/util/ObjectPath",
+	"sap/base/Log"
 ], function (
 	BaseController,
 	Constants,
@@ -39,7 +40,8 @@ sap.ui.define([
 	loadCardEditor,
 	_debounce,
 	CardEditor,
-	ObjectPath
+	ObjectPath,
+	Log
 ) {
 	"use strict";
 
@@ -80,6 +82,7 @@ sap.ui.define([
 		onExit: function () {
 			this._deregisterResize();
 			this._destroyMockServers();
+			this._unregisterCachingServiceWorker();
 		},
 
 		/**
@@ -587,7 +590,8 @@ sap.ui.define([
 
 			Promise.all([
 				this._initCardSample(oCurrentSample),
-				this._initMockServers(oCurrentSample)
+				this._initMockServers(oCurrentSample),
+				this._initCaching(oCurrentSample)
 			]).then(this._cancelIfSampleChanged(function () {
 				this._oFileEditor
 					.setFiles(oCurrentSample.files || [{
@@ -695,10 +699,24 @@ sap.ui.define([
 						oCard.attachEvent("_error", this._onCardError, this);
 						oCard.setHost(oHost);
 						this._oCardSample = oCard;
+						this._oHost = oHost;
 					}.bind(this));
 			}
 
 			return this._pInitCardSample;
+		},
+
+		_initCaching: function (oSample) {
+			return this._pInitCardSample.then(function () {
+				if (oSample.cache) {
+					this._oHost.useExperimentalCaching();
+					return this._registerCachingServiceWorker();
+				} else {
+					this._oHost.stopUsingExperimentalCaching();
+					this._unregisterCachingServiceWorker();
+					return Promise.resolve();
+				}
+			}.bind(this));
 		},
 
 		_initIFrameCreation: function () {
@@ -820,6 +838,24 @@ sap.ui.define([
 		onEditorDialogClose: function (oEvent) {
 			var oDialog = oEvent.getSource().getParent();
 			oDialog.destroy();
+		},
+
+		_registerCachingServiceWorker: function () {
+			if (this._oCachingSWRegistration) {
+				return;
+			}
+
+			return navigator.serviceWorker.register("./cachingServiceWorker.js")
+				.then(function (oRegistration) {
+					this._oCachingSWRegistration = oRegistration;
+				}.bind(this));
+		},
+
+		_unregisterCachingServiceWorker: function () {
+			if (this._oCachingSWRegistration) {
+				this._oCachingSWRegistration.unregister();
+				this._oCachingSWRegistration = null;
+			}
 		}
 	});
 });
