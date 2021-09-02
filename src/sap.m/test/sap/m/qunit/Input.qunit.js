@@ -6320,7 +6320,7 @@ sap.ui.define([
 
 		// assert
 		// go to the header group item
-		assert.strictEqual(this.oInput.getValue(), "", "The typed in value should be reset.");
+		assert.strictEqual(this.oInput.getValue(), "A", "The typed in value should be reset.");
 
 		// act
 		// go to the next list item
@@ -6446,7 +6446,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(this.oInput.getValue(), "", "User's input is reset.");
+		assert.strictEqual(this.oInput.getValue(), "A I", "User's input is not reset.");
 
 		// Act
 		// Go back to the input. The "focus" is moved to the input
@@ -6457,7 +6457,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(this.oInput.getValue(), "", "The input is reset");
+		assert.strictEqual(this.oInput.getValue(), "A I", "The input value should not be reset");
 	});
 
 	QUnit.module("showItems functionality: List", {
