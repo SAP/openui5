@@ -318,6 +318,20 @@
 						</uxap:ObjectPageSubSection>
 					</uxap:ObjectPageSection>
 
+					<uxap:ObjectPageSection id="ObjectPageSectionForNavigationWithoutOtherGroup" title="Object Page Section with only Form bound to navigation properties"
+						visible="false">
+						<uxap:ObjectPageSubSection id="ObjectPageSubSectionForNavigationWithoutOtherGroup" blocks="{ path: 'to_EntityType01Nav', length: 1, templateShareable: false }">
+							<!-- This form is bound to EntityTypeNav through navigation in the controller -->
+							<smartForm:SmartForm id="OnlyNavPropertyForm" title="Smart Form bound to EntityTypeNav using navigation only">
+									<smartForm:Group id="OnlyNavPropertyGroup" label="Group for navigation property only">
+										<smartForm:GroupElement id="OnlyNavPropertyGroupElement" label="Relative navigation property only">
+											<smartField:SmartField value="{NavProperty}"/>
+										</smartForm:GroupElement>
+									</smartForm:Group>
+							</smartForm:SmartForm>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+
 					<uxap:ObjectPageSection id="ObjectPageSectionForAggrBinding" title="Object Page Section Aggregation Binding">
 						<uxap:ObjectPageSubSection id="ObjectPageSubSectionForAggrBinding" blocks="{ path: 'to_EntityType01Nav', templateShareable: false }">
 							<!-- This form is bound to EntityTypeNav through navigation in the controller -->
