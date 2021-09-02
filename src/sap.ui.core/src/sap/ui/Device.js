@@ -335,14 +335,18 @@ if (typeof window.sap.ui !== "object") {
 				var rVersion = /Windows NT (\d+).(\d)/i;
 				var uaResult = userAgent.match(rVersion);
 				var sVersionStr = "";
-				if (uaResult[1] == "6") {
-					if (uaResult[2] == 1) {
-						sVersionStr = "7";
-					} else if (uaResult[2] > 1) {
-						sVersionStr = "8";
+				// Using Lighthouse tool within chrome on windows does not provide a valid userAgent
+				// navigator.platform is 'Win' but navigator.userAgent indicates macOS
+				if (uaResult) {
+					if (uaResult[1] == "6") {
+						if (uaResult[2] == 1) {
+							sVersionStr = "7";
+						} else if (uaResult[2] > 1) {
+							sVersionStr = "8";
+						}
+					} else {
+						sVersionStr = uaResult[1];
 					}
-				} else {
-					sVersionStr = uaResult[1];
 				}
 				return {
 					"name": OS.WINDOWS,
