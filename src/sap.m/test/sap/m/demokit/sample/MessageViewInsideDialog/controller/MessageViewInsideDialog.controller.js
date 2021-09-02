@@ -8,8 +8,8 @@ sap.ui.define([
 	'sap/m/Button',
 	'sap/m/Dialog',
 	'sap/m/Bar',
-	'sap/m/Text'
-], function(Controller, IconPool, JSONModel, Link, MessageItem, MessageView, Button, Dialog, Bar, Text) {
+	'sap/m/Title'
+], function(Controller, IconPool, JSONModel, Link, MessageItem, MessageView, Button, Dialog, Bar, Title) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.MessageViewInsideDialog.controller.MessageViewInsideDialog", {
@@ -103,10 +103,10 @@ sap.ui.define([
 					text: "Close"
 				}),
 				customHeader: new Bar({
+					contentLeft: [oBackButton],
 					contentMiddle: [
-						new Text({ text: "Error"})
-					],
-					contentLeft: [oBackButton]
+						new Title({text: "Error"})
+					]
 				}),
 				contentHeight: "50%",
 				contentWidth: "50%",

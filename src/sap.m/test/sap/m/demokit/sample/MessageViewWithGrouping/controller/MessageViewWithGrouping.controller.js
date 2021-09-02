@@ -140,10 +140,10 @@ sap.ui.define([
 					}
 				}),
 				customHeader: new Bar({
+					contentLeft: [oBackButton],
 					contentMiddle: [
-						new Text({ text: "Publish order"})
-					],
-					contentLeft: [oBackButton]
+						new Text({text: "Publish order"})
+					]
 				}),
 				verticalScrolling: false
 			});
