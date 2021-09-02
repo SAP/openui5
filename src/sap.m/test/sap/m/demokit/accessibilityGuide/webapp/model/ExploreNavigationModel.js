@@ -147,7 +147,7 @@ sap.ui.define([
 				]
 			},
 			{
-				title: 'Labeling',
+				title: 'Labeling and Description',
 				icon: 'sap-icon://tag',
 				key: 'labeling',
 				target: 'exploreOverview',
@@ -269,6 +269,36 @@ sap.ui.define([
 						]
 					},
 					{
+						key: 'inputsDescription',
+						target: 'exploreSamples',
+						title: 'Input with aria-describedby',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/inputsDescription/View.view.xml',
+								name: 'View.view.xml',
+								key: 'View.view.xml'
+							},
+							{
+								url: '/samples/inputsDescription/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/inputsDescription/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								isApplicationManifest: true
+							},
+							{
+								url: '/samples/inputsDescription/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							}
+						]
+					},
+					{
 						key: 'popover',
 						target: 'exploreSamples',
 						title: 'Popover',
@@ -298,6 +328,41 @@ sap.ui.define([
 							},
 							{
 								url: '/samples/popover/Controller.controller.js',
+								name: 'Controller.controller.js',
+								key: 'Controller.controller.js'
+							}
+						]
+					},
+					{
+						key: 'popoverDescribedby',
+						target: 'exploreSamples',
+						title: 'Popover with aria-describedby',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/popoverDescribedby/View.view.xml',
+								name: 'View.view.xml',
+								key: 'View.view.xml'
+							},
+							{
+								url: '/samples/popoverDescribedby/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/popoverDescribedby/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								isApplicationManifest: true
+							},
+							{
+								url: '/samples/popoverDescribedby/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							},
+							{
+								url: '/samples/popoverDescribedby/Controller.controller.js',
 								name: 'Controller.controller.js',
 								key: 'Controller.controller.js'
 							}
@@ -697,11 +762,6 @@ sap.ui.define([
                         isApplication: true,
                         files: [
                             {
-                                url: '/samples/invisibleText/Controller.controller.js',
-                                name: 'Controller.controller.js',
-                                key: 'Controller.controller.js'
-                            },
-                            {
                                 url: '/samples/invisibleText/View.view.xml',
                                 name: 'View.view.xml',
                                 key: 'View.view.xml'
@@ -710,11 +770,6 @@ sap.ui.define([
                                 url: '/samples/invisibleText/index.html',
                                 name: 'index.html',
                                 key: 'index.html'
-                            },
-                            {
-                                url: '/samples/invisibleText/i18n.properties',
-                                name: 'i18n.properties',
-                                key: 'i18n.properties'
                             },
                             {
                                 url: '/samples/invisibleText/manifest.json',
