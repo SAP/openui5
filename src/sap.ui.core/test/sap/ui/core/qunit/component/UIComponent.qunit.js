@@ -400,6 +400,33 @@ sap.ui.define([
 				}
 			};
 
+			var oManifestMissingViewType = {
+				"sap.app" : {
+					"id" : "my.own.missingViewType"
+				},
+				"sap.ui5" : {
+					"rootView" : {
+						"viewName" : "my.own.View",
+						"id" : "theView"
+						// type -> no view type given
+					}
+				}
+			};
+
+			var oManifestMissingViewTypeForTypedView = {
+				"sap.app" : {
+					"id" : "my.own.missingViewType"
+				},
+				"sap.ui5" : {
+					"rootView" : {
+						"viewName" : "module:my/own/TypedView",
+						"id" : "theView"
+						// type -> no view type given, ok since typed view is used
+					}
+				}
+			};
+
+
 			// define the XMLView
 			var sXMLView = '\
 				<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" \
@@ -415,6 +442,8 @@ sap.ui.define([
 			oServer.xhr.filters = [];
 			oServer.xhr.addFilter(function(method, url) {
 				return (!/^\/anylocation\/autoid\/manifest\.json/.test(url) &&
+						!/^\/anylocation\/missingViewType\/manifest\.json/.test(url) &&
+						!/^\/anylocation\/missingViewTypeForTypedView\/manifest\.json/.test(url) &&
 						!/^\/anylocation\/prefixid\/manifest\.json/.test(url) &&
 						!/^\/anylocation\/mf1st\/autoid\/manifest\.json/.test(url) &&
 						!/^\/anylocation\/mf1st\/prefixid\/manifest\.json/.test(url) &&
@@ -437,6 +466,20 @@ sap.ui.define([
 					"Content-Type": "application/json"
 				},
 				JSON.stringify(oManifestPrefixId)
+			]);
+			oServer.respondWith("GET", /^\/anylocation\/missingViewType\/manifest\.json/, [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oManifestMissingViewType)
+			]);
+			oServer.respondWith("GET", /^\/anylocation\/missingViewTypeForTypedView\/manifest\.json/, [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oManifestMissingViewTypeForTypedView)
 			]);
 
 			// define the response for manifest.json for the manifest first test for autoid and prefixid
@@ -504,6 +547,18 @@ sap.ui.define([
 				});
 
 			});
+			sap.ui.predefine("my/own/missingViewType/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+
+				return UIComponent.extend("my.own.missingViewType.Component", {
+					metadata: {
+						manifest: "json",
+						interfaces: [
+							"sap.ui.core.IAsyncContentCreation"
+						]
+					}
+				});
+
+			});
 
 			sap.ui.predefine("error/test/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 
@@ -513,6 +568,15 @@ sap.ui.define([
 					}
 				});
 
+			});
+
+			// define a simple typed view
+			sap.ui.predefine("my/own/TypedView", ["sap/ui/core/mvc/View", "sap/ui/core/Icon"], function(View, Icon) {
+				return View.extend("my.own.TypedView", {
+					createContent: function() {
+						return [new Icon({src: "sap-icon://accept" })];
+					}
+				});
 			});
 
 			// defined the controller
@@ -656,6 +720,38 @@ sap.ui.define([
 		assert.strictEqual(oComponent.getRootControl(), oComponent.getAggregation("rootControl"));
 
 		oComponent.destroy();
+	});
+
+	QUnit.test("UIComponent check for defaulting of root-view type", function(assert) {
+		assert.expect(1);
+
+		return Component.create({
+			name: "my.own.missingViewType"
+		}).then(function(oComponent) {
+			// a missing type in the root-view definition should be defaulted to XML
+			assert.ok(oComponent.getRootControl().isA("sap.ui.core.mvc.XMLView"));
+			oComponent.destroy();
+		}, function() {
+			assert.ok(false, "Error handler must not be called");
+		});
+	});
+
+	QUnit.test("UIComponent check NO-defaulting of root-view type if root-view is a typed view", function(assert) {
+		assert.expect(2);
+
+		// start component with a manifest that configures a typed root-view
+		return Component.create({
+			manifest: "/anylocation/missingViewTypeForTypedView/manifest.json"
+		}).then(function(oComponent) {
+			// a missing type in the root-view definition should NOT be defaulted to XML
+			assert.notOk(oComponent.getRootControl().isA("sap.ui.core.mvc.XMLView"));
+			// root control must be of the typed view class
+			assert.ok(oComponent.getRootControl().isA("my.own.TypedView"));
+
+			oComponent.destroy();
+		}, function() {
+			assert.ok(false, "Error handler must not be called");
+		});
 	});
 
 	sap.ui.require(["sap/ui/core/UIComponent", "sap/m/Button"], function (UIComponent, Button) {
