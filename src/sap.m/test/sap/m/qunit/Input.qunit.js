@@ -4919,6 +4919,23 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Clear icon should hide after setting property to false", function (assert) {
+		var oInput = new Input({
+			showClearIcon: true,
+			value: "Dryanovo"
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oInput._oClearButton.getVisible(), "clear icon should be visible when value is not empty");
+
+		oInput.setShowClearIcon(false);
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(oInput._oClearButton.getVisible(), "clear icon should not be visible after property change");
+
+		oInput.destroy();
+	});
+
 	QUnit.test("Clear icon should not be visible by default (default value not empty)", function (assert) {
 		var oInput = new Input({ value: "test" }).placeAt("content");
 

@@ -637,6 +637,8 @@ function(
 
 		if (bShowClearIcon) {
 			this._getClearIcon().setProperty("visible", this.getProperty("effectiveShowClearIcon"));
+		} else if (this._oClearButton) {
+			this._getClearIcon().setProperty("visible", false);
 		}
 
 		this._deregisterEvents();
