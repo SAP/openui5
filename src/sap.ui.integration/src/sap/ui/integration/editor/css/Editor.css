@@ -528,7 +528,7 @@
 	height: 15px;
 }
 .sapUiIntegrationEditorItem .sapUiIntegrationEditorFieldAlignEnd {
-	text-align: End;
+	text-align: end;
 }
 .sapUiIntegrationEditorItem .sapUiIntegrationEditorSettingBox {
 	max-width: 5rem;

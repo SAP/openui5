@@ -11,7 +11,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"type": "boolean",
 						"layout": {
 							"label-width": "50%",
-							"position": "field-lable"
+							"position": "field-label"
 						}
 					},
 					"booleanParameterWithSwitch": {
@@ -29,7 +29,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						},
 						"layout": {
 							"label-width": "50%",
-							"position": "field-lable"
+							"position": "field-label"
 						}
 					},
 					"dateParameter": {
@@ -37,7 +37,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"type": "date",
 						"layout": {
 							"label-width": "50%",
-							"position": "field-lable"
+							"position": "field-label"
 						}
 					},
 					"datetimeParameter": {
@@ -45,7 +45,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"type": "datetime",
 						"layout": {
 							"label-width": "50%",
-							"position": "field-lable"
+							"position": "field-label"
 						}
 					},
 					"integerParameter": {
@@ -53,7 +53,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"type": "integer",
 						"layout": {
 							"label-width": "50%",
-							"position": "field-lable"
+							"position": "field-label"
 						}
 					},
 					"stringArray": {
@@ -78,7 +78,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						},
 						"layout": {
 							"label-width": "50%",
-							"position": "field-lable"
+							"position": "field-label"
 						}
 					},
 					"numberParameter": {
@@ -86,7 +86,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"type": "number",
 						"layout": {
 							"label-width": "50%",
-							"position": "field-lable"
+							"position": "field-label"
 						}
 					},
 					"stringParameter": {
@@ -95,7 +95,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"allowDynamicValues": true,
 						"layout": {
 							"label-width": "50%",
-							"position": "field-lable"
+							"position": "field-label"
 						}
 					}
 				}

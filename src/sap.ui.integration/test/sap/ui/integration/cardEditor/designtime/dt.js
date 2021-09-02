@@ -1253,8 +1253,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"visibleToUser": false,
 						"layout": {
 							"alignment": {
-								"field": "End",
-								"label": "End"
+								"field": "end",
+								"label": "end"
 							},
 							"label-width": "40%"
 						},
@@ -1266,10 +1266,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "boolean",
 						"description": "aaa",
 						"layout": {
-							"position": "field-lable",
+							"position": "field-label",
 							"alignment": {
-								"field": "Start",
-								"label": "End"
+								"label": "end"
 							},
 							"label-width": "80%"
 						},
@@ -1282,8 +1281,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "boolean",
 						"layout": {
 							"alignment": {
-								"field": "End",
-								"label": "End"
+								"field": "end",
+								"label": "end"
 							},
 							"label-width": "50%"
 						},
@@ -1296,7 +1295,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"layout": {
 							"label-width": "50%",
 							"alignment": {
-								"label": "End"
+								"label": "end"
 							}
 						},
 						"description": "bbb",
@@ -1317,7 +1316,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "boolean",
 						"layout": {
 							"label-width": "83%",
-							"position": "field-lable"
+							"position": "field-label"
 						},
 						"cols": 1
 					},
@@ -1327,7 +1326,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "boolean",
 						"layout": {
 							"label-width": "92%",
-							"position": "field-lable"
+							"position": "field-label"
 						}
 					},
 					"integerParameter1": {
@@ -1344,7 +1343,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"layout": {
 							"label-width": "40%",
 							"alignment": {
-								"label": "End"
+								"label": "end"
 							}
 						}
 					},
@@ -1370,9 +1369,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						},
 						"layout": {
 							"label-width": "50%",
-							"position": "field-lable",
+							"position": "field-label",
 							"alignment": {
-								"label": "End"
+								"label": "end"
 							}
 						}
 					},
@@ -1394,7 +1393,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "number",
 						"layout": {
 							"label-width": "30%",
-							"position": "field-lable"
+							"position": "field-label"
 						}
 					}
 				}

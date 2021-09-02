@@ -296,7 +296,7 @@ sap.ui.define([
 							if (oItem.isA("sap.m.Label")) {
 								oItem.addStyleClass("sapUiIntegrationEditorItemLabel");
 								if (oLayout && !deepEqual(oLayout, {})) {
-									if (oLayout.alignment && oLayout.alignment.label === "End") {
+									if (oLayout.alignment && oLayout.alignment.label === "end") {
 										oItem.setTextAlign("End");
 									}
 									oLabelItemForNotWrapping = oItem;
@@ -356,10 +356,10 @@ sap.ui.define([
 										iFieldWidth = iFieldWidth - 0.5;
 									}
 
-									if (oLayout.alignment && oLayout.alignment.field === "End") {
+									if (oLayout.alignment && oLayout.alignment.field === "end") {
 										oItem.addStyleClass("sapUiIntegrationEditorFieldAlignEnd");
 									}
-									if (oLayout.alignment && oLayout.alignment.label === "End") {
+									if (oLayout.alignment && oLayout.alignment.label === "end") {
 										oLabelItemForNotWrapping.setLayoutData(new FlexItemData({
 											maxWidth: "calc(100% - " + iInfoHBoxWidth + "rem)",
 											minWidth: "calc(100% - " + iInfoHBoxWidth + "rem)"
@@ -378,7 +378,7 @@ sap.ui.define([
 									} else {
 										oLabelHBox = oLabelItemForNotWrapping;
 									}
-									if (oLayout && oLayout.position && oLayout.position === "field-lable") {
+									if (oLayout && oLayout.position && oLayout.position === "field-label") {
 										oLabelHBox.setLayoutData(oFlexItemDataForSettings);
 										oFlexBox = new HBox({
 											alignItems: "Start",
