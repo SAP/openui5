@@ -476,7 +476,10 @@ sap.ui.define([
 				this._mStoredActions = aActions;
 
 				//Toolbar needs settings to be applied before creation to read properties like header/title
-				ToolbarHandler.createToolbar(this, aActions, true);
+				if (!this._oToolbarHandler) {
+					this._oToolbarHandler = new ToolbarHandler();
+				}
+				this._oToolbarHandler.createToolbar(this, aActions, true);
 				this._createTempNoData();
 			}
 
@@ -560,10 +563,14 @@ sap.ui.define([
 
 			.then(function createDrillBreadcrumbs(oInnerChart) {
 
+				if (!this._oToolbarHandler) {
+					this._oToolbarHandler = new ToolbarHandler();
+				}
+
 				if (this.getAutoBindOnInit()){
-					ToolbarHandler.createToolbar(this, aActions);
+					this._oToolbarHandler.createToolbar(this, aActions);
 				} else {
-					ToolbarHandler.updateToolbar(this);
+					this._oToolbarHandler.updateToolbar(this);
 				}
 
 				this._createDrillBreadcrumbs();

@@ -19,6 +19,9 @@ sap.ui.define([
 
 	var oQUnitModuleDefaultSettings = {
 		beforeEach: function() {
+
+			this.oToolbarHandler = new ToolbarHandler();
+
 			this.oZoomInButton = new OverflowToolbarButton({
 				enabled: true,
 				icon: "sap-icon://zoom-in"
@@ -53,7 +56,7 @@ sap.ui.define([
 		};
 
 		// act
-		ToolbarHandler.toggleZoomButtonsEnabledState(oZoomInfoMock, this.oZoomInButton, this.oZoomOutButton);
+		this.oToolbarHandler.toggleZoomButtonsEnabledState(oZoomInfoMock, this.oZoomInButton, this.oZoomOutButton);
 
 		// assert
 		assert.strictEqual(this.oZoomInButton.getEnabled(), false, 'the "Zoom In" button should be disabled');
@@ -69,7 +72,7 @@ sap.ui.define([
 		};
 
 		// act
-		ToolbarHandler.handleInnerChartRenderCompleted(oZoomInfoMock, this.oZoomInButton, this.oZoomOutButton);
+		this.oToolbarHandler.handleInnerChartRenderCompleted(oZoomInfoMock, this.oZoomInButton, this.oZoomOutButton);
 
 		// assert
 		assert.strictEqual(this.oZoomInButton.getEnabled(), false, 'the "Zoom In" button should be disabled');
@@ -96,7 +99,7 @@ sap.ui.define([
 		this.oZoomOutButton.focus();
 
 		// act
-		ToolbarHandler.toggleZoomButtonsEnabledState(oZoomInfoMock, this.oZoomInButton, this.oZoomOutButton);
+		this.oToolbarHandler.toggleZoomButtonsEnabledState(oZoomInfoMock, this.oZoomInButton, this.oZoomOutButton);
 
 		// assert
 		assert.strictEqual(this.oZoomInButton.getEnabled(), true, 'the "Zoom In" button should be enabled');
@@ -121,7 +124,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act
-		ToolbarHandler.handleInnerChartRenderCompleted(oZoomInfoMock, this.oZoomInButton, this.oZoomOutButton);
+		this.oToolbarHandler.handleInnerChartRenderCompleted(oZoomInfoMock, this.oZoomInButton, this.oZoomOutButton);
 
 		// assert
 		assert.strictEqual(this.oZoomInButton.getEnabled(), true, 'the "Zoom In" button should be enabled');
@@ -149,7 +152,7 @@ sap.ui.define([
 		this.oZoomInButton.focus();
 
 		// act
-		ToolbarHandler.toggleZoomButtonsEnabledState(oZoomInfoMock, this.oZoomInButton, this.oZoomOutButton);
+		this.oToolbarHandler.toggleZoomButtonsEnabledState(oZoomInfoMock, this.oZoomInButton, this.oZoomOutButton);
 
 		// assert
 		assert.strictEqual(this.oZoomInButton.getEnabled(), false, 'the "Zoom In" button should be disabled');
@@ -166,7 +169,7 @@ sap.ui.define([
 		};
 
 		// act
-		ToolbarHandler.toggleZoomButtonsEnabledState(oZoomInfoMock, this.oZoomInButton, this.oZoomOutButton);
+		this.oToolbarHandler.toggleZoomButtonsEnabledState(oZoomInfoMock, this.oZoomInButton, this.oZoomOutButton);
 
 		// assert
 		assert.strictEqual(this.oZoomInButton.getEnabled(), true, 'the "Zoom In" button should be enabled');
@@ -182,7 +185,7 @@ sap.ui.define([
 		var oInnerChartZoomSpy = this.spy(oInnerChart, "zoom");
 
 		// act
-		ToolbarHandler.handleZoomIn(oInnerChart, this.oZoomInButton, this.oZoomOutButton);
+		this.oToolbarHandler.handleZoomIn(oInnerChart, this.oZoomInButton, this.oZoomOutButton);
 
 		// assert
 		assert.strictEqual(oInnerChartZoomSpy.args[0][0].direction, "in");
@@ -198,7 +201,7 @@ sap.ui.define([
 		var oInnerChartZoomSpy = this.spy(oInnerChart, "zoom");
 
 		// act
-		ToolbarHandler.handleZoomOut(oInnerChart, this.oZoomInButton, this.oZoomOutButton);
+		this.oToolbarHandler.handleZoomOut(oInnerChart, this.oZoomInButton, this.oZoomOutButton);
 
 		// assert
 		assert.strictEqual(oInnerChartZoomSpy.args[0][0].direction, "out");
