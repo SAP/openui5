@@ -70,12 +70,12 @@ sap.ui.define([
 			var oAttrProperties = oWebComponent.getMetadata().getPropertiesByMapping("attribute");
 			for (var sPropName in oAttrProperties) {
 				var oPropData = oAttrProperties[sPropName];
-				if (oPropData.type === "object") {
-					continue; // Properties of type "object" are set during onAfterRendering
+				var vPropValue = oPropData.get(oWebComponent);
+				if (oPropData.type === "object" || typeof vPropValue === "object") {
+					continue; // Properties of type "object" and custom-type properties with object values are set during onAfterRendering
 				}
 
 				var sAttrName = oPropData._sMapTo ? oPropData._sMapTo : hyphenate(sPropName);
-				var vPropValue = oPropData.get(oWebComponent);
 				if (oPropData._fnMappingFormatter) {
 					vPropValue = oWebComponent[oPropData._fnMappingFormatter].call(oWebComponent, vPropValue);
 				}
