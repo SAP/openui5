@@ -1,15 +1,10 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/demo/orderbrowser/localService/mockserver",
 	"sap/base/strings/capitalize"
-], function (Opa5, mockserver, capitalize) {
+], function (Opa5, capitalize) {
 	"use strict";
 
-	return Opa5.extend("sap.ui.demo.orderbrowser.test.integration.pages.Common", {
-
-		getEntitySet: function  (sEntitySet) {
-			return mockserver.getMockServer().getEntitySetData(sEntitySet);
-		},
+	return Opa5.extend("sap.ui.demo.cart.test.integration.pages.Common", {
 		I18NTextExtended: function(oControl, sResourceId, sPropertyName, sLibrary, aParams){
 			var oModel, oResourceBundle, sText;
 			var fnProperty = oControl["get" + capitalize(sPropertyName, 0)];
@@ -23,9 +18,9 @@ sap.ui.define([
 
 			if (sLibrary) {
 				oResourceBundle = sap.ui
-					.getCore()
+				.getCore()
 					.getLibraryResourceBundle(sLibrary);
-			} else {
+				} else {
 				oModel = oControl.getModel("i18n");
 				oResourceBundle = oModel.getResourceBundle();
 			}
@@ -35,5 +30,4 @@ sap.ui.define([
 			return sText === sPropertyValue;
 		}
 	});
-
 });

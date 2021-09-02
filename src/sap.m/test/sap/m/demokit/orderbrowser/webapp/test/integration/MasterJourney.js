@@ -55,7 +55,7 @@ sap.ui.define([
 
 	opaTest("MasterList Filtering on Shipped Orders", function(Given, When, Then) {
 		// Action
-		When.onTheMasterPage.iFilterTheListOn("Only Shipped Orders");
+		When.onTheMasterPage.iFilterTheListOn("masterFilterShipped");
 
 		// Assertion
 		Then.onTheMasterPage.theListShouldBeFilteredOnShippedOrders();
