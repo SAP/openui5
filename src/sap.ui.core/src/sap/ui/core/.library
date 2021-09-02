@@ -110,7 +110,7 @@
         <raw-module name="sap/ui/thirdparty/URITemplate.js" depends="sap/ui/thirdparty/URI.js"/>
         <raw-module name="sap/ui/thirdparty/vkbeautify.js" />
         <raw-module name="sap/ui/thirdparty/zyngascroll.js" requiresTopLevelScope="false" />
-        <raw-module name="sap/ui/thirdparty/hyphenopoly/hyphenopoly.bundle.js" depends="sap/ui/thirdparty/hyphenopoly/hyphenEngine.asm.js" />
+        <raw-module name="sap/ui/thirdparty/hyphenopoly/Hyphenopoly.js" depends="sap/ui/thirdparty/hyphenopoly/hyphenEngine.asm.js" />
         <raw-module name="sap/ui/thirdparty/hyphenopoly/hyphenEngine.asm.js" requiresTopLevelScope="false" />
         <raw-module name="ui5loader.js" />
         <raw-module name="ui5loader-autoconfig.js" depends="ui5loader.js" />
@@ -468,9 +468,9 @@
             <copyright>OpenJS Foundation and other contributors</copyright>
             <pattern>sap/ui/base/util/restricted/_/lodash.custom.js</pattern>
         </lib>
-        <lib name="hyphenopoly" displayName="Hyphenopoly" version="2.4.0" homepage="https://github.com/mnater/Hyphenopoly">
+        <lib name="hyphenopoly" displayName="Hyphenopoly" version="3.4.0" homepage="https://github.com/mnater/Hyphenopoly">
             <license url="https://github.com/mnater/Hyphenopoly/blob/master/LICENSE" type="MIT" />
-            <copyright>2018 Mathias Nater</copyright>
+            <copyright>2019 Mathias Nater</copyright>
             <pattern>sap/ui/thirdparty/hyphenopoly/*</pattern>
         </lib>
         <lib name="p-cancelable" displayName="p-cancelable" version="2.0.0" homepage="https://github.com/sindresorhus/p-cancelable/tree/v2.0.0">
