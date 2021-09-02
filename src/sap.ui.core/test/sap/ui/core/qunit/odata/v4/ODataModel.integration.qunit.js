@@ -34922,7 +34922,12 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	// Scenario: Absolute property binding for $count
+	// Scenario: Absolute property bindings for $count
+	// 1. Refresh a simple absolute property binding for $count.
+	// 2. Request absolute side effects that affect that simple binding twice - last one wins.
+	// 3. (Quasi-)absolute property bindings for $count with system query options
+	//    (JIRA: CPOUI5ODATAV4-1001)
+	// 4. Request absolute side effects that affect all bindings for $count.
 [false, true].forEach(function (bAutoExpandSelect) {
 	var sTitle = "ODPrB: /SalesOrderList/$count, autoExpandSelect=" + bAutoExpandSelect;
 
@@ -34943,7 +34948,7 @@ sap.ui.define([
 			// code under test
 			that.oView.byId("count").getBinding("text").refresh();
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "1");
 		}).then(function () {
 			// load $metadata for #requestSideEffects
 			// (normally, this is done by auto-$expand/$select, but we have no real UI here)
@@ -34966,10 +34971,53 @@ sap.ui.define([
 				oListBinding.getHeaderContext().requestSideEffects([
 					sEntityContainer + "/SalesOrderList/$count"
 				]),
-				that.waitForChanges(assert)
+				that.waitForChanges(assert, "2")
 			]);
-		}).then(function () {
+		}).then(function () { // JIRA: CPOUI5ODATAV4-1001
+			var oContext = oModel.createBindingContext("/SalesOrderList"),
+				// code under test
+				oCountBinding0 = oModel.bindProperty("/SalesOrderList/$count", null, {
+					$apply : "A.P.P.L.E.",
+					$filter : "GrossAmount gt 123",
+					$search : "covfefe"
+				}),
+				// code under test
+				oCountBinding1 = oModel.bindProperty("$count", oContext, {
+					$apply : "A.P.P.L.E.",
+					$filter : "GrossAmount gt 456",
+					$search : "covfefe"
+				}),
+				// code under test
+				oCountBinding2 = oModel.bindProperty("$count", null, {
+					$apply : "A.P.P.L.E.",
+					$filter : "GrossAmount gt 789",
+					$search : "covfefe"
+				});
+
+			oCountBinding2.setContext(oContext);
+
+			that.expectRequest("SalesOrderList/$count?$apply=A.P.P.L.E.&$filter=GrossAmount gt 123"
+					+ "&$search=covfefe", 123)
+				.expectRequest("SalesOrderList/$count?$apply=A.P.P.L.E.&$filter=GrossAmount gt 456"
+					+ "&$search=covfefe", 456)
+				.expectRequest("SalesOrderList/$count?$apply=A.P.P.L.E.&$filter=GrossAmount gt 789"
+					+ "&$search=covfefe", 789);
+
+			return Promise.all([
+				oCountBinding0.requestValue(),
+				oCountBinding1.requestValue(),
+				oCountBinding2.requestValue(),
+				that.waitForChanges(assert, "3")
+			]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0], 123);
+			assert.strictEqual(aResults[1], 456);
+			assert.strictEqual(aResults[2], 789);
+
 			that.expectRequest("SalesOrderList/$count", 1234)
+				//TODO quasi-absolute bindings not affected?!
+				.expectRequest("SalesOrderList/$count?$apply=A.P.P.L.E.&$filter=GrossAmount gt 123"
+					+ "&$search=covfefe", 101)
 				.expectChange("count", "1,234");
 
 			return Promise.all([
@@ -34977,7 +35025,7 @@ sap.ui.define([
 				oListBinding.getHeaderContext().requestSideEffects([
 					sEntityContainer + "/SalesOrderList"
 				]),
-				that.waitForChanges(assert)
+				that.waitForChanges(assert, "4")
 			]);
 		});
 	});

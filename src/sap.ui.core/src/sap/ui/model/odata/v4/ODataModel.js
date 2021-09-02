@@ -597,7 +597,7 @@ sap.ui.define([
 	 * resolve to an absolute OData path for an entity set.
 	 *
 	 * @param {string} sPath
-	 *   The binding path in the model; must not be empty or end with a slash
+	 *   The binding path in the model; must not end with a slash
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [vSorters]
@@ -724,15 +724,20 @@ sap.ui.define([
 	 * be {@link sap.ui.model.BindingMode.OneTime}.
 	 *
 	 * @param {string} sPath
-	 *   The binding path in the model; must not be empty. Must not end with a '/' unless the
-	 *   binding points to metadata.
+	 *   The binding path in the model; must not end with a slash
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
-	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameter "$$groupId".
-	 *   All "5.2 Custom Query Options" are allowed except for those with a name starting with
-	 *   "sap-" (unless starting with "sap-valid-"). All other query options lead to an error.
+	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters as specified
+	 *   below. The following OData query options are allowed:
+	 *   <ul>
+	 *     <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
+	 *       (unless starting with "sap-valid-")
+	 *     <li> The $apply, $filter, and $search "5.1 System Query Options" if the path ends with a
+	 *       "$count" segment.
+	 *   </ul>
+	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
 	 *   Note: The binding only creates its own data service request if it is absolute or if it is
 	 *   relative to a context created via {@link #createBindingContext}. The binding parameters are
