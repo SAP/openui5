@@ -627,7 +627,27 @@ sap.ui.define([
 		};
 
 		/**
+		 * <p>
 		 * Returns the current value for one or more theming parameters, depending on the given arguments.
+		 * </p>
+		 *
+		 * <p>
+		 * The theming parameters are immutable and cannot be changed at runtime.
+		 * Multiple <code>Parameters.get()</code> API calls for the same parameter name will always result in the same parameter value.
+		 * </p>
+		 *
+		 * <p>
+		 * <b>Important, since 1.93:</b>
+		 * When using the <code>Parameters.get()</code> API to retrieve theming parameters defined as CSS variables,
+		 * please be aware that the API can also unknowingly retrieve arbitrary CSS variables defined in the DOM.
+		 * All CSS variables defined via the <code>:root</code> pseudo-class can be retrieved this way.
+		 * Please make sure to only access theming parameters defined in a UI5 theme/library.
+		 * </p>
+		 *
+		 * <br/>
+		 *
+		 * <p>
+		 * The following API variants are available (see also the below examples):
 		 * <ul>
 		 * <li> <b>(deprecated since 1.92)<b> If no parameter is given a key-value map containing all parameters is returned</li>
 		 * <li>If a <code>string</code> is given as first parameter the value is returned as a <code>string</code></li>
@@ -636,6 +656,8 @@ sap.ui.define([
 		 * This is the <b>only asynchronous</b> API variant. This variant is the preferred way to retrieve theming parameters.
 		 * The structure of the return value is the same as listed above depending on the type of the name property within the <code>object</code>.</li>
 		 * </ul>
+		 * </p>
+		 *
 		 * <p>The returned key-value maps are a copy so changing values in the map does not have any effect</p>
 		 *
 		 * <p>
