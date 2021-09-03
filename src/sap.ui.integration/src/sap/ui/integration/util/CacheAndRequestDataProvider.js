@@ -128,7 +128,9 @@ sap.ui.define([
 	CacheAndRequestDataProvider.prototype.refreshWithoutCache = function () {
 		var oCardHeader = this.getCardInstance().getCardHeader();
 
-		oCardHeader.setDataTimestampUpdating(true);
+		if (oCardHeader) {
+			oCardHeader.setDataTimestampUpdating(true);
+		}
 
 		setTimeout(function () {
 			this._bCacheOnly = false;
@@ -143,7 +145,9 @@ sap.ui.define([
 	CacheAndRequestDataProvider.prototype.refreshFromCache = function () {
 		var oCardHeader = this.getCardInstance().getCardHeader();
 
-		oCardHeader.setDataTimestampUpdating(true);
+		if (oCardHeader) {
+			oCardHeader.setDataTimestampUpdating(true);
+		}
 
 		setTimeout(function () {
 			this._bCacheOnly = true;
@@ -279,6 +283,10 @@ sap.ui.define([
 		var oCard = this.getCardInstance(),
 			oHeader = oCard.getCardHeader(),
 			$timestamp = this.getCardInstance().$().find(".sapFCardDataTimestamp");
+
+		if (!oHeader) {
+			return;
+		}
 
 		$timestamp.off("click", this._oRefreshWithoutCacheBound);
 
