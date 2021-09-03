@@ -36,8 +36,7 @@ snippet enum\n\
 ";
 exports.scope = "graphqlschema";
 
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/snippets/graphqlschema"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

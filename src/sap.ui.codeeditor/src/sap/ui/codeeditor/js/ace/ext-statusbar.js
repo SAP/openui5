@@ -1,7 +1,7 @@
 ace.define("ace/ext/statusbar",["require","exports","module","ace/lib/dom","ace/lib/lang"], function(require, exports, module) {
 "use strict";
-var dom = require("ace/lib/dom");
-var lang = require("ace/lib/lang");
+var dom = require("../lib/dom");
+var lang = require("../lib/lang");
 
 var StatusBar = function(editor, parentNode) {
     this.element = dom.createElement("div");

@@ -1,7 +1,5 @@
-ace.define("ace/ext/rtl",["require","exports","module","ace/lib/dom","ace/lib/lang","ace/editor","ace/config"], function(require, exports, module) {
+ace.define("ace/ext/rtl",["require","exports","module","ace/editor","ace/config"], function(require, exports, module) {
 "use strict";
-var dom = require("ace/lib/dom");
-var lang = require("ace/lib/lang");
 
 var commands = [{
     name: "leftToRight",

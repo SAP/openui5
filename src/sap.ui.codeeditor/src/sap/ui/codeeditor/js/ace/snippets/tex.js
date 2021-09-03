@@ -194,8 +194,7 @@ snippet sum\n\
 	\\sum^{${1:n}}_{${2:i=1}}{${3}}";
 exports.scope = "tex";
 
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/snippets/tex"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

@@ -21,7 +21,7 @@ var CirruHighlightRules = function() {
             next: 'line'
         }, {
             token: 'support.function',
-            regex: /[^\(\)"\s]+/,
+            regex: /[^\(\)"\s{}\[\]]+/,
             next: 'line'
         }, {
             token: 'string.quoted.double',
@@ -66,7 +66,7 @@ var CirruHighlightRules = function() {
             next: 'start'
         }, {
             token: 'variable.parameter',
-            regex: /[^\(\)"\s]+/
+            regex: /[^\(\)"\s{}\[\]]+/
         }, {
             token: 'storage.modifier',
             regex: /\(/,

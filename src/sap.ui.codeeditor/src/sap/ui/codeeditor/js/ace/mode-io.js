@@ -7,13 +7,7 @@ var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 var IoHighlightRules = function() {
 
     this.$rules = { start: 
-       [ { token: [ 'text', 'meta.empty-parenthesis.io' ],
-           regex: '(\\()(\\))',
-           comment: 'we match this to overload return inside () --Allan; scoping rules for what gets the scope have changed, so we now group the ) instead of the ( -- Rob' },
-         { token: [ 'text', 'meta.comma-parenthesis.io' ],
-           regex: '(\\,)(\\))',
-           comment: 'We want to do the same for ,) -- Seckar; same as above -- Rob' },
-         { token: 'keyword.control.io',
+       [ { token: 'keyword.control.io',
            regex: '\\b(?:if|ifTrue|ifFalse|ifTrueIfFalse|for|loop|reverseForeach|foreach|map|continue|break|while|do|return)\\b' },
          { token: 'punctuation.definition.comment.io',
            regex: '/\\*',
@@ -240,6 +234,7 @@ oop.inherits(Mode, TextMode);
     this.lineCommentStart = "//";
     this.blockComment = {start: "/*", end: "*/"};
     this.$id = "ace/mode/io";
+    this.snippetFileId = "ace/snippets/io";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
