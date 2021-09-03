@@ -26,8 +26,7 @@
 		},
 		{
 			"files": [
-				"test/sap/ui/core/qunit/test/starter/find/*.js",
-				"test/sap/ui/core/qunit/test/starter/migrate/*.js"
+				"test/sap/ui/core/qunit/test/starter/find/*.js"
 			],
 			"parserOptions": {
 				"ecmaVersion": 6
