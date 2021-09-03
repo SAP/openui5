@@ -582,6 +582,47 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[true, false].forEach(function (bBatch) {
+	QUnit.test("_processAborted: calls _createAbortedError, batch = " + bBatch, function (assert) {
+		var oEventInfo = {},
+			oModel = {
+				_createEventInfo : function () {},
+				_decreaseDeferredRequestCount : function () {},
+				decreaseLaundering : function () {},
+				fireBatchRequestCompleted : function () {},
+				fireRequestCompleted : function () {},
+				getKey : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oRequest = {data : "~data"};
+
+		oModelMock.expects("getKey")
+			.withExactArgs("~data")
+			.exactly(bBatch ? 0 : 1)
+			.returns("~sKey");
+		oModelMock.expects("decreaseLaundering")
+			.withExactArgs("/~sKey", "~data")
+			.exactly(bBatch ? 0 : 1);
+		oModelMock.expects("_decreaseDeferredRequestCount")
+			.withExactArgs(sinon.match.same(oRequest))
+			.exactly(bBatch ? 0 : 1);
+		this.mock(ODataModel).expects("_createAbortedError").withExactArgs().returns("~oError");
+		oModelMock.expects("_createEventInfo")
+			.withExactArgs(sinon.match.same(oRequest), "~oError")
+			.returns(oEventInfo);
+		oModelMock.expects("fireBatchRequestCompleted")
+			.withExactArgs(sinon.match.same(oEventInfo).and(sinon.match.has("success", false)))
+			.exactly(bBatch ? 1 : 0);
+		oModelMock.expects("fireRequestCompleted")
+			.withExactArgs(sinon.match.same(oEventInfo).and(sinon.match.has("success", false)))
+			.exactly(bBatch ? 0 : 1);
+
+		// code under test
+		ODataModel.prototype._processAborted.call(oModel, oRequest, {}, bBatch);
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("_processChange: ", function (assert) {
 		var oData = {__metadata : {etag : "~changedETag"}},
 			sDeepPath = "~deepPath",
@@ -4808,4 +4849,28 @@ sap.ui.define([
 		return oPromise;
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_createAbortedError", function (assert) {
+		var oError0, oError1,
+			oAbortedError = {
+				headers : {},
+				message : "Request aborted",
+				responseText : "",
+				statusCode : 0,
+				statusText : "abort"
+			};
+
+		// code under test
+		oError0 = ODataModel._createAbortedError();
+
+		assert.deepEqual(oError0, oAbortedError);
+
+		// code under test
+		oError1 = ODataModel._createAbortedError();
+
+		assert.deepEqual(oError1, oAbortedError);
+		assert.notStrictEqual(oError1, oError0);
+		assert.notStrictEqual(oError1.headers, oError0.headers);
+	});
 });
