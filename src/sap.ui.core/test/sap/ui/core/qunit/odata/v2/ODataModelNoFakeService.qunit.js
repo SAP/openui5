@@ -2255,7 +2255,6 @@ sap.ui.define([
 			undefined);
 	});
 
-
 	//*********************************************************************************************
 [undefined, "~expand"].forEach(function (sExpand) {
 	[true, false].forEach(function (bWithCallbackHandlers) {
@@ -4579,5 +4578,219 @@ sap.ui.define([
 
 		// code under test - empty deep path
 		oContext1 = ODataModel.prototype.getContext.call(oModel, "/~sPath", "");
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bAll) {
+	QUnit.test("resetChanges: no paths; bAll=" + bAll, function (assert) {
+		var oModel = {
+				mChangedEntities : {
+					"key('Bar')" : {},
+					"key('Foo')" : {}
+				},
+				mDeferredGroups : {
+					deferred0 : {},
+					deferred1 : {}
+				},
+				oMetadata : {
+					loaded : function () {}
+				},
+				_discardEntityChange : function () {},
+				abortInternalRequest : function () {},
+				checkUpdate : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			fnResolve,
+			oPromise = new Promise(function (resolve) {
+				fnResolve = resolve;
+			});
+
+		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns(oPromise);
+		oModelMock.expects("_discardEntityChange")
+			.withExactArgs("key('Bar')")
+			.callsFake(function (sKey) {
+				delete this.mChangedEntities[sKey];
+			});
+		oModelMock.expects("_discardEntityChange")
+			.withExactArgs("key('Foo')")
+			.callsFake(function (sKey) {
+				delete this.mChangedEntities[sKey];
+			});
+		oModelMock.expects("checkUpdate").withExactArgs(true);
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype.resetChanges.call(oModel, undefined, bAll),
+			oPromise);
+
+		assert.deepEqual(oModel.mChangedEntities, {});
+
+		oModelMock.expects("abortInternalRequest").withExactArgs("deferred0").exactly(bAll ? 1 : 0);
+		oModelMock.expects("abortInternalRequest").withExactArgs("deferred1").exactly(bAll ? 1 : 0);
+
+		// test code that depends on metadata promise
+		fnResolve();
+
+		return oPromise;
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bAll) {
+	QUnit.test("resetChanges: with paths; bAll=" + bAll, function (assert) {
+		var oBarMetadata = {},
+			oModel = {
+				mChangedEntities : {
+					"key('Bar')" : {__metadata : oBarMetadata, P : "prop0", Q : "prop1"},
+					"key('Foo')" : {},
+					"key('Qux')" : {__metadata : {}, R : "prop2"}
+				},
+				mDeferredGroups : {
+					deferred0 : {},
+					deferred1 : {}
+				},
+				oMetadata : {
+					loaded : function () {}
+				},
+				_discardEntityChange : function () {},
+				abortInternalRequest : function () {},
+				checkUpdate : function () {},
+				getEntityByPath : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			fnResolve,
+			oPromise = new Promise(function (resolve) {
+				fnResolve = resolve;
+			});
+
+		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns(oPromise);
+		oModelMock.expects("getEntityByPath")
+			.withExactArgs("/Z", null, {})
+			.callsFake(function (sPath, oContext, oEntityInfo) {
+				oEntityInfo.key = "key('Z')";
+				oEntityInfo.propertyPath = "";
+				return "~oZEntity";
+			});
+		oModelMock.expects("getEntityByPath")
+			.withExactArgs("/Z/Y/X", null, {})
+			.callsFake(function (sPath, oContext, oEntityInfo) {
+				oEntityInfo.key = "key('Z')";
+				oEntityInfo.propertyPath = "Y/X";
+				return "~oZEntity";
+			});
+		oModelMock.expects("getEntityByPath")
+			.withExactArgs("/Bar/P", null, {})
+			.callsFake(function (sPath, oContext, oEntityInfo) {
+				oEntityInfo.key = "key('Bar')";
+				oEntityInfo.propertyPath = "P";
+				return "~oBarEntity";
+			});
+		oModelMock.expects("getEntityByPath")
+			.withExactArgs("/Baz", null, {})
+			.callsFake(function () {
+				return null;
+			});
+		oModelMock.expects("getEntityByPath")
+			.withExactArgs("/Bar/Q/X", null, {})
+			.callsFake(function (sPath, oContext, oEntityInfo) {
+				oEntityInfo.key = "key('Bar')";
+				oEntityInfo.propertyPath = "Q/X";
+				return "~oBarEntity";
+			});
+		oModelMock.expects("getEntityByPath")
+			.withExactArgs("/Qux", null, {})
+			.callsFake(function (sPath, oContext, oEntityInfo) {
+				oEntityInfo.key = "key('Qux')";
+				oEntityInfo.propertyPath = "";
+				return "~oQuxEntity";
+			});
+		oModelMock.expects("_discardEntityChange")
+			.withExactArgs("key('Qux')")
+			.callsFake(function (sKey) {
+				delete this.mChangedEntities[sKey];
+			});
+		oModelMock.expects("checkUpdate").withExactArgs(true);
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype.resetChanges.call(oModel,
+				["/Z", "/Z/Y/X", "/Bar/P", "/Baz", "/Bar/Q/X", "/Qux"],
+				bAll),
+			oPromise);
+
+		assert.deepEqual(oModel.mChangedEntities, {
+			"key('Bar')" : {__metadata : oBarMetadata, Q : "prop1"},
+			"key('Foo')" : {}
+		});
+		assert.strictEqual(oModel.mChangedEntities["key('Bar')"].__metadata, oBarMetadata);
+
+		if (bAll) {
+			oModelMock.expects("abortInternalRequest").withExactArgs("deferred0", {path : "Z"});
+			oModelMock.expects("abortInternalRequest").withExactArgs("deferred1", {path : "Z"});
+			oModelMock.expects("abortInternalRequest").withExactArgs("deferred0", {path : "Z/Y/X"});
+			oModelMock.expects("abortInternalRequest").withExactArgs("deferred1", {path : "Z/Y/X"});
+			oModelMock.expects("abortInternalRequest").withExactArgs("deferred0", {path : "Bar/P"});
+			oModelMock.expects("abortInternalRequest").withExactArgs("deferred1", {path : "Bar/P"});
+			oModelMock.expects("abortInternalRequest").withExactArgs("deferred0", {path : "Baz"});
+			oModelMock.expects("abortInternalRequest").withExactArgs("deferred1", {path : "Baz"});
+			oModelMock.expects("abortInternalRequest")
+				.withExactArgs("deferred0", {path : "Bar/Q/X"});
+			oModelMock.expects("abortInternalRequest")
+				.withExactArgs("deferred1", {path : "Bar/Q/X"});
+			oModelMock.expects("abortInternalRequest").withExactArgs("deferred0", {path : "Qux"});
+			oModelMock.expects("abortInternalRequest").withExactArgs("deferred1", {path : "Qux"});
+		} else {
+			oModelMock.expects("abortInternalRequest").never(); // called in _discardEntityChange
+		}
+
+		// test code that depends on metadata promise
+		fnResolve();
+
+		return oPromise;
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_discardEntityChange", function (assert) {
+		var oMessageManagerMock = this.mock(sap.ui.getCore().getMessageManager()),
+			oMetadata = {
+				loaded : function () {}
+			},
+			oModel = {
+				mChangedEntities : {
+					foo : "bar",
+					"~sKey" : "~changes"
+				},
+				oMetadata : oMetadata,
+				_resolveGroup : function () {},
+				abortInternalRequest : function () {},
+				getMessagesByEntity : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			fnResolve,
+			oPromise = new Promise(function (resolve) {
+				fnResolve = resolve;
+			});
+
+		this.mock(oMetadata).expects("loaded").withExactArgs().returns(oPromise);
+		oModelMock.expects("getMessagesByEntity")
+			.withExactArgs("~sKey", true)
+			.returns("~aMessages");
+		oMessageManagerMock.expects("removeMessages").withExactArgs("~aMessages");
+
+		// code under test
+		ODataModel.prototype._discardEntityChange.call(oModel, "~sKey");
+
+		assert.deepEqual(oModel.mChangedEntities, {foo : "bar"});
+
+		oModelMock.expects("_resolveGroup")
+			.withExactArgs("~sKey")
+			.returns({groupId : "~groupId"});
+		oModelMock.expects("abortInternalRequest")
+			.withExactArgs("~groupId", {requestKey : "~sKey"});
+
+		// test code that depends on metadata promise
+		fnResolve();
+
+		return oPromise;
 	});
 });
