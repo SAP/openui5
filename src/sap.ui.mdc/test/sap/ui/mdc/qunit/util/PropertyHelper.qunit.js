@@ -167,7 +167,7 @@ sap.ui.define([
 				label: "bar",
 				additionalAttribute: null
 			}], null, null, {
-				additionalAttribute: {type: "object", mandatory: true, defaultValue: {}}
+				additionalAttribute: {type: "object", mandatory: true, "default": {value: {}}}
 			});
 		}, "Error thrown if mandatory attribute of type 'object' is set to 'null'");
 
@@ -539,6 +539,37 @@ sap.ui.define([
 		}, "Error thrown if 'propertyInfos' is 'null'");
 	});
 
+	QUnit.test("Complex property with nested attribute including attributes with allowedForComplexProperty=false", function(assert) {
+		new PropertyHelper([{
+			name: "propA",
+			label: "prop A"
+		}, {
+			name: "propB",
+			label: "prop B",
+			propertyInfos: ["propA"],
+			foo: {
+				bar: {
+					propB: 2
+				}
+			}
+		}], null, null, {
+			foo: {
+				type: {
+					bar: {
+						type: {
+							propA: {type: "string"},
+							propB: {type: "int", allowedForComplexProperty: false}
+						},
+						"default": {value: {}}
+					}
+				},
+				allowedForComplexProperty: true,
+				"default": {value: {}}
+			}
+		});
+		assert.equal(this.logWarning.callCount, 1, "Warning logged");
+	});
+
 	QUnit.module("Validation of extension attributes", {
 		beforeEach: function() {
 			this.logWarning = sinon.spy(Log, "warning");
@@ -860,28 +891,37 @@ sap.ui.define([
 			}
 		};
 		var oPropertyHelper = new PropertyHelper(aPropertyInfos, mExtensions, null, {
-			additionalAttribute: {type: "string", defaultValue: "AttributeDefault", valueForComplexProperty: "DefaultForComplex"},
+			additionalAttribute: {
+				type: "string",
+				"default": {value: "AttributeDefault"},
+				valueForComplexProperty: "DefaultForComplex"
+			},
 			additionalComplexAttribute: {
 				type: {
 					subAttribute: {type: "string"}
 				}
 			},
-			additionalDefaultWithDeepPath: {type: "string", defaultValue: "attribute:additionalComplexAttribute.subAttribute"}
+			additionalDefaultWithDeepPath: {
+				type: "string",
+				"default": {value: "attribute:additionalComplexAttribute.subAttribute"}
+			}
 		}, {
 			complexAttr: {
 				type: {
-					intAttr: {type: "int", defaultValue: 2, allowedForComplexProperty: true},
-					refAttr: {type: "PropertyReference", defaultValue: "attribute:unit"},
-					objectAttr: {type: "object", defaultValue: {}},
+					intAttr: {type: "int", "default": {value: 2}, allowedForComplexProperty: true},
+					refAttr: {type: "PropertyReference", "default": {value: "attribute:unit"}},
+					objectAttr: {type: "object", "default": {value: {}}},
 					arrayAttr: {type: "string[]"}
 				},
-				defaultValue: {
-					intAttr: 1
+				"default": {
+					value: {
+						intAttr: 1
+					}
 				},
 				allowedForComplexProperty: true
 			},
-			stringAttr: {type: "string", defaultValue: "test"},
-			defaultWithDeepPath: {type: "int", defaultValue: "attribute:extension.complexAttr.intAttr"}
+			stringAttr: {type: "string", "default": {value: "test"}},
+			defaultWithDeepPath: {type: "int", "default": {value: "attribute:extension.complexAttr.intAttr"}}
 		});
 
 		this.deepEqualProperties(assert, oPropertyHelper, [{
@@ -1042,7 +1082,7 @@ sap.ui.define([
 		}, null, null, {
 			foo: {
 				type: {
-					bar: {type: "PropertyReference[]", defaultValue: "attribute:propertyInfos", allowedForComplexProperty: true}
+					bar: {type: "PropertyReference[]", "default": {value: "attribute:propertyInfos"}, allowedForComplexProperty: true}
 				},
 				allowedForComplexProperty: true
 			}
@@ -1083,7 +1123,7 @@ sap.ui.define([
 		}, null, {
 			foo: {
 				type: {
-					props: {type: "PropertyReference[]", defaultValue: "attribute:extension.bar.props"}
+					props: {type: "PropertyReference[]", "default": {value: "attribute:extension.bar.props"}}
 				}
 			}
 		}, {
@@ -1157,12 +1197,12 @@ sap.ui.define([
 		}], null, null, {
 			foo: {
 				type: {
-					bar: {type: "PropertyReference[]", defaultValue: "attribute:propertyInfos", allowedForComplexProperty: true},
+					bar: {type: "PropertyReference[]", "default": {value: "attribute:propertyInfos"}, allowedForComplexProperty: true},
 					baz: {type: "PropertyReference[]", allowedForComplexProperty: true}
 				},
 				allowedForComplexProperty: true
 			},
-			bar: {type: "PropertyReference", defaultValue: "attribute:baz"},
+			bar: {type: "PropertyReference", "default": {value: "attribute:baz"}},
 			baz: {type: "PropertyReference"}
 		});
 
@@ -1180,6 +1220,162 @@ sap.ui.define([
 			"Cached property reference of default value");
 		assert.strictEqual(oPropertyHelper.getProperty("prop").bazProperty, oPropertyHelper.getProperty("prop2"),
 			"Cached property reference of specified value");
+	});
+
+	QUnit.test("Propagate allowedForComplexProperty to child nodes", function(assert){
+		var aPropertyInfos = [{
+			name: "prop",
+			label: "prop",
+			foo: {
+				bar: {
+					propA: "PropA",
+					propB: 10
+				}
+			}
+		}, {
+			name: "complexProp",
+			label: "Complex property",
+			propertyInfos: ["prop"]
+		}];
+		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, null, {
+			foo: {
+				type: {
+					bar: {
+						type: {
+							propA: {type: "string", "default": {value: "XYZ"}},
+							propB: {type: "int", "default": {value: 2}, allowedForComplexProperty: false}
+						}
+					}
+				},
+				"default": {value: {bar: {}}},
+				allowedForComplexProperty: true
+			}
+		});
+
+		this.deepEqualProperties(assert, oPropertyHelper, [{
+			name: "prop",
+			label: "prop",
+			foo: {
+				bar: {
+					propA: "PropA",
+					propB: 10
+				}
+			}
+		}, {
+			name: "complexProp",
+			label: "Complex property",
+			propertyInfos: ["prop"],
+			foo: {
+				bar: {
+					propA: "XYZ"
+				}
+			}
+		}]);
+	});
+
+	QUnit.test("Ignore default values if ignoreIfNull = true", function(assert){
+		var aPropertyInfos = [{
+			name: "propX",
+			label: "prop X",
+			foo: {
+				bar: null,
+				lot: undefined
+			}
+		}, {
+			name: "propY",
+			label: "prop Y",
+			propertyInfos: ["propX"],
+			foo: {
+				bar: undefined,
+				lot: "Test"
+			}
+		}, {
+			name: "propK",
+			label: "prop K",
+			foo: {
+				bar: {
+					propA: null,
+					propB: null
+				},
+				lot: null
+			}
+		}, {
+			name: "propZ",
+			label: "prop Z",
+			foo: null
+		}, {
+			name: "propJ",
+			label: "prop J",
+			propertyInfos: ["propZ"],
+			foo: undefined
+		}];
+		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, null, {
+			foo: {
+				type: {
+					bar: {
+						type: {
+							propA: {type: "string", "default": {value: "XYZ"}},
+							propB: {type: "int", "default": {value: 2, ignoreIfNull: true}}
+						},
+						"default": {value: {}, ignoreIfNull: true}
+					},
+					lot: {type: "string", "default": {ignoreIfNull: true}}
+				},
+				"default": {value: {}},
+				allowedForComplexProperty: true
+			}
+		});
+
+		this.deepEqualProperties(assert, oPropertyHelper, [{
+			name: "propX",
+			label: "prop X",
+			foo: {
+				bar: null,
+				lot: ""
+			}
+		}, {
+			name: "propY",
+			label: "prop Y",
+			propertyInfos: ["propX"],
+			foo: {
+				bar: {
+					propA: "XYZ",
+					propB: 2
+				},
+				lot: "Test"
+			}
+		}, {
+			name: "propK",
+			label: "prop K",
+			foo: {
+				bar: {
+					propA: "XYZ",
+					propB: null
+				},
+				lot: ""
+			}
+		}, {
+			name: "propZ",
+			label: "prop Z",
+			foo: {
+				bar: {
+					propA: "XYZ",
+					propB: 2
+				},
+				lot: ""
+			}
+		}, {
+			name: "propJ",
+			label: "prop J",
+			propertyInfos: ["propZ"],
+			foo: {
+				bar: {
+					propA: "XYZ",
+					propB: 2
+				},
+				lot: ""
+			}
+		}]);
 	});
 
 	QUnit.test("Not modifying original property infos", function(assert) {
