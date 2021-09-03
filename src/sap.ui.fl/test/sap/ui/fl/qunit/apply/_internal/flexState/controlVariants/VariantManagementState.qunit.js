@@ -858,24 +858,24 @@ sap.ui.define([
 				foo: "bar"
 			};
 
-			VariantManagementState.addFakeStandardVariant(sReference, oVariant);
+			VariantManagementState.addFakeStandardVariant(sReference, "id", oVariant);
 			assert.deepEqual(VariantManagementState.getContent(sReference), oVariant, "the fake standard is also part of the map");
 			assert.deepEqual(VariantManagementState.getContent(sReference), oVariant, "no difference the second time the content is fetched");
 
-			VariantManagementState.clearFakedStandardVariants(sReference);
+			VariantManagementState.clearFakedStandardVariants(sReference, "id");
 			assert.deepEqual(VariantManagementState.getContent(sReference), oVariant, "the faked variant is still in the map");
 		});
 
 		QUnit.test("adding the same variant twice to the same reference", function(assert) {
 			this.oGetContentStub.returns({});
-			var sReference = "reference";
+			var sReference = "reference2";
 			var oVariant = {
 				foo: "bar"
 			};
-			VariantManagementState.addFakeStandardVariant(sReference, oVariant);
+			VariantManagementState.addFakeStandardVariant(sReference, "id2", oVariant);
 			assert.equal(this.oErrorStub.callCount, 0, "no error was logged");
 
-			VariantManagementState.addFakeStandardVariant(sReference, oVariant);
+			VariantManagementState.addFakeStandardVariant(sReference, "id2", oVariant);
 			assert.equal(this.oErrorStub.callCount, 1, "one error was logged");
 		});
 
@@ -883,21 +883,60 @@ sap.ui.define([
 			this.oGetContentStub.returns({
 				bar: "already available"
 			});
-			var sReference = "reference";
+			var sReference = "reference3";
 			var oVariant1 = {
 				foo: "bar"
 			};
 			var oVariant2 = {
 				bar: "foobar"
 			};
-			VariantManagementState.addFakeStandardVariant(sReference, oVariant1);
-			VariantManagementState.addFakeStandardVariant(sReference, oVariant2);
+			VariantManagementState.addFakeStandardVariant(sReference, "id", oVariant1);
+			VariantManagementState.addFakeStandardVariant(sReference, "id", oVariant2);
 
 			var oExpectedContent = {
 				bar: "already available",
 				foo: "bar"
 			};
 			assert.deepEqual(VariantManagementState.getContent(sReference), oExpectedContent, "one fake variant was added");
+		});
+
+		QUnit.test("adding fake variants for components with the same reference but different IDs", function(assert) {
+			this.oGetContentStub.returns({});
+			var sReference = "reference4";
+			var sComponentId1 = "componentId1";
+			var sComponentId2 = "componentId2";
+			var oVariant1 = {
+				foo: "bar"
+			};
+			var oVariant2 = {
+				bar: "foobar"
+			};
+			VariantManagementState.addFakeStandardVariant(sReference, sComponentId1, oVariant1);
+			VariantManagementState.addFakeStandardVariant(sReference, sComponentId2, oVariant2);
+
+			this.oGetContentStub.reset();
+			this.oGetContentStub.returns({});
+			assert.deepEqual(VariantManagementState.getContent(sReference, sComponentId2), oVariant2, "one fake variant is still available");
+		});
+
+		QUnit.test("adding fake variants and resetting the variants map", function(assert) {
+			this.oGetContentStub.returns({});
+			var sReference = "reference5";
+			var sComponentId1 = "componentId1";
+			var sComponentId2 = "componentId2";
+			var oVariant1 = {
+				foo: "bar"
+			};
+			var oVariant2 = {
+				foobar: "bar"
+			};
+			VariantManagementState.addFakeStandardVariant(sReference, sComponentId1, oVariant1);
+			VariantManagementState.addFakeStandardVariant(sReference, sComponentId2, oVariant2);
+			VariantManagementState.clearFakedStandardVariants(sReference, sComponentId1);
+
+			this.oGetContentStub.reset();
+			this.oGetContentStub.returns({});
+			assert.deepEqual(VariantManagementState.getContent(sReference), oVariant2, "one fake variant is still available");
 		});
 	});
 

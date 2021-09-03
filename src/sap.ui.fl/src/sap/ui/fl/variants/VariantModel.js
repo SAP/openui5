@@ -1048,7 +1048,7 @@ sap.ui.define([
 			// TODO: To be removed in a separate change
 			// try-catch added to prevent FlexState initialize checks, since many tests use fake components / fake responses
 			try {
-				VariantManagementState.addFakeStandardVariant(this.sFlexReference, oStandardVariant);
+				VariantManagementState.addFakeStandardVariant(this.sFlexReference, this.oAppComponent.getId(), oStandardVariant);
 			} catch (oError) {
 				Log.error("Variants Map was not found: " + oError.message);
 			}
@@ -1448,7 +1448,7 @@ sap.ui.define([
 		}.bind(this));
 		return this._oVariantSwitchPromise
 			.then(function() {
-				VariantManagementState.clearFakedStandardVariants(this.sFlexReference);
+				VariantManagementState.clearFakedStandardVariants(this.sFlexReference, this.oAppComponent.getId());
 				VariantManagementState.resetContent(this.sFlexReference);
 				//re-initialize hash data and remove existing parameters
 				if (!bSkipURLHandling) {
