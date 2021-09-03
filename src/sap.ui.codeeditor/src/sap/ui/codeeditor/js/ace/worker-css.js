@@ -4275,10 +4275,18 @@ function PropertyValuePart(text, line, col){
         this.type   = "function";
         this.name   = RegExp.$1;
         this.value  = text;
-    } else if (/^["'][^"']*["']/.test(text)){    //string
+    } 
+    // #### BEGIN MODIFIED BY SAP
+    // This modification won't be needed in the next version of ace. See https://github.com/ajaxorg/ace/pull/4465
+    else if (/^"([^\n\r\f\\"]|\\\r\n|\\[^\r0-9a-f]|\\[0-9a-f]{1,6}(\r\n|[ \n\r\t\f])?)*"/i.test(text)) {    // double-quoted string
         this.type   = "string";
-        this.value  = eval(text);
-    } else if (Colors[text.toLowerCase()]){  //named color
+        this.value  = PropertyValuePart.parseString(text);
+    } else if (/^'([^\n\r\f\\']|\\\r\n|\\[^\r0-9a-f]|\\[0-9a-f]{1,6}(\r\n|[ \n\r\t\f])?)*'/i.test(text)) {    // single-quoted string
+        this.type   = "string";
+        this.value  = PropertyValuePart.parseString(text);
+    }
+     // #### END MODIFIED BY SAP
+     else if (Colors[text.toLowerCase()]){  //named color
         this.type   = "color";
         temp        = Colors[text.toLowerCase()].substring(1);
         this.red    = parseInt(temp.substring(0,2),16);
@@ -4299,6 +4307,36 @@ PropertyValuePart.prototype.constructor = PropertyValuePart;
 PropertyValuePart.fromToken = function(token){
     return new PropertyValuePart(token.value, token.startLine, token.startCol);
 };
+
+// #### BEGIN MODIFIED BY SAP
+// This modification won't be needed in the next version of ace. See https://github.com/ajaxorg/ace/pull/4465
+
+/**
+ * Helper method to parse a CSS string.
+ */
+ PropertyValuePart.parseString = function(str) {
+    str = str.slice(1, -1); // Strip surrounding single/double quotes
+    var replacer = function(match, esc) {
+        if (/^(\n|\r\n|\r|\f)$/.test(esc)) {
+            return "";
+        }
+        var m = /^[0-9a-f]{1,6}/i.exec(esc);
+        if (m) {
+            var codePoint = parseInt(m[0], 16);
+            if (String.fromCodePoint) {
+                return String.fromCodePoint(codePoint);
+            } else {
+                // XXX No support for surrogates on old JavaScript engines.
+                return String.fromCharCode(codePoint);
+            }
+        }
+        return esc;
+    };
+    return str.replace(/\\(\r\n|[^\r0-9a-f]|[0-9a-f]{1,6}(\r\n|[ \n\r\t\f])?)/ig,
+                       replacer);
+};
+
+// #### END MODIFIED BY SAP
 var Pseudos = {
     ":first-letter": 1,
     ":first-line":   1,

@@ -199,6 +199,7 @@ sap.ui.define([
 	//configure the source paths
 	var sPath = sap.ui.require.toUrl("sap/ui/codeeditor/js/ace");
 	ace.config.set("basePath", sPath);
+	ace.config.set("loadWorkerFromBlob", false);
 
 	// require language tools
 	var oLangTools = ace.require("ace/ext/language_tools");
