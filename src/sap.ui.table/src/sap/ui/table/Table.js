@@ -1037,7 +1037,7 @@ sap.ui.define([
 		var bLangChanged = oChanges.hasOwnProperty("language");
 		this._adaptLocalization(bRtlChanged, bLangChanged).then(function() {
 			this.invalidate();
-		}.bind(this));
+		}.bind(this)).catch(function() {});
 	};
 
 	/**
