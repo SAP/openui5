@@ -210,12 +210,6 @@ sap.ui.define([
 			"aria-labelledby of cell [" + iRow + ", " + iCol + "]"
 		);
 
-		assert.strictEqual(
-			($Cell.attr("headers") || "").trim(),
-			oColumn.getId(),
-			"headers attribute of cell [" + iRow + ", " + iCol + "]"
-		);
-
 		var sText = oTable.$("rownumberofrows").text().trim();
 		if (bFirstTime || bRowChange) {
 			assert.ok(sText.length > 0, "Number of rows are set on row change: " + sText);
@@ -248,12 +242,6 @@ sap.ui.define([
 			($Cell.attr("aria-labelledby") || "").trim(),
 			aLabels.join(" "),
 			"aria-labelledby of cell [" + iRow + ", " + iCol + "]"
-		);
-
-		assert.strictEqual(
-			($Cell.attr("headers") || "").trim(),
-			oColumn.getId(),
-			"headers attribute of cell [" + iRow + ", " + iCol + "]"
 		);
 	}
 
