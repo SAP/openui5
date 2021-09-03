@@ -178,6 +178,31 @@ customElements.whenDefined("ui-integration-card").then(function () {
 });
 </pre>
 
+			<h2 id="refreshData">Refreshing Data</h2>
+			<p>
+				When you want to refresh the card data without rerendering the whole card,
+				but only the part which shows the new data, you can
+				call the <code>refreshData</code> function of the card. It retriggers all data requests.
+			</p>
+			<p>
+				For more information, see <a
+					data-demokit-href="/api/sap.ui.integration.widgets.Card/methods/refreshData"
+					target="_blank"><code>refreshData</code> method API</a>.
+			</p>
+
+			<h3>When using UI5</h3>
+			<pre class="lang-js">
+oCard.refreshData();
+</pre>
+
+			<h3>When using &lt;ui-integration-card&gt; custom element</h3>
+			<pre class="lang-js">
+customElements.whenDefined("ui-integration-card").then(function () {
+	var oCard = document.getElementById("myCard");
+	oCard.refreshData();
+});
+</pre>
+
 					<h1 id="configuringDimensions">Configuring Card Dimensions</h1>
 					<p>
 						To configure the height and width of the card, you can set any value that the CSS properties

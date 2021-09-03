@@ -77,7 +77,7 @@ sap.ui.define([
 				// remove this item from database
 				this._removeItem(oParameters.id)
 					.then(function () {
-						oCard.refresh();
+						oCard.refreshData();
 					});
 			}
 		},

@@ -282,7 +282,16 @@ sap.ui.define([
 	 */
 	BaseContent.prototype.onDataRequestComplete = function () {
 		this.fireEvent("_dataReady");
-	 };
+	};
+
+	/**
+	 * @ui5-restricted
+	 */
+	BaseContent.prototype.refreshData = function () {
+		if (this._oDataProvider) {
+			this._oDataProvider.triggerDataUpdate();
+		}
+	};
 
 	/**
 	 * @private

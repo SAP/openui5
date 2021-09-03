@@ -1079,6 +1079,22 @@ sap.ui.define([
 										key: 'NorthwindImageExtension.js'
 									}
 								]
+							},
+							{
+								title: 'Refresh Data',
+								key: 'refreshData',
+								files: [
+									{
+										url: '/samples/extension/refreshData/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/extension/refreshData/DataExtension.js',
+										name: 'DataExtension.js',
+										key: 'DataExtension.js'
+									}
+								]
 							}
 						]
 					},

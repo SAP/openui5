@@ -409,6 +409,7 @@ sap.ui.define([
 		 * @borrows sap.ui.integration.widgets.Card#resolveDestination as resolveDestination
 		 * @borrows sap.ui.integration.widgets.Card#request as request
 		 * @borrows sap.ui.integration.widgets.Card#refresh as refresh
+		 * @borrows sap.ui.integration.widgets.Card#refreshData as refreshData
 		 * @borrows sap.ui.integration.widgets.Card#showMessage as showMessage
 		 * @borrows sap.ui.integration.widgets.Card#getBaseUrl as getBaseUrl
 		 * @borrows sap.ui.integration.widgets.Card#getRuntimeUrl as getRuntimeUrl
@@ -433,6 +434,7 @@ sap.ui.define([
 			"resolveDestination",
 			"request",
 			"refresh",
+			"refreshData",
 			"showMessage",
 			"getBaseUrl",
 			"getRuntimeUrl",
@@ -846,6 +848,36 @@ sap.ui.define([
 		if (this.getDataMode() === CardDataMode.Active) {
 			this._bApplyManifest = true;
 			this.invalidate();
+		}
+	};
+
+	/**
+	 * Refreshes the card data by triggering all data requests.
+	 *
+	 * @public
+	 * @since 1.95
+	 */
+	Card.prototype.refreshData = function () {
+		var oHeader = this.getCardHeader(),
+			oContent = this.getCardContent(),
+			oFilterBar = this.getAggregation("_filterBar");
+
+		if (this._oDataProvider) {
+			this._oDataProvider.triggerDataUpdate();
+		}
+
+		if (oHeader) {
+			oHeader.refreshData();
+		}
+
+		if (oContent) {
+			oContent.refreshData();
+		}
+
+		if (oFilterBar) {
+			oFilterBar.getItems().forEach(function (oFilter) {
+				oFilter.refreshData();
+			});
 		}
 	};
 

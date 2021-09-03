@@ -248,6 +248,12 @@ sap.ui.define([
 		}
 	};
 
+	Header.prototype.refreshData = function () {
+		if (this._oDataProvider) {
+			this._oDataProvider.triggerDataUpdate();
+		}
+	};
+
 	/**
 	 * @private
 	 * @ui5-restricted

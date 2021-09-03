@@ -301,6 +301,12 @@ sap.ui.define([
 		return oSelect;
 	};
 
+	Filter.prototype.refreshData = function () {
+		if (this._oDataProvider) {
+			this._oDataProvider.triggerDataUpdate();
+		}
+	};
+
 	/**
 	 * Gets the card instance of which this element is part of.
 	 * @ui5-restricted
