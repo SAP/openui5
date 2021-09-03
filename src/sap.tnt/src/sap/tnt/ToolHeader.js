@@ -46,11 +46,10 @@ sap.ui.define([
 	 * Only the following controls are supported:
 		<div>
 		<table>
-
 		<tr>
-			<th style="text-align: left;">Control name</th>
-			<th style="text-align: left;">Supported</th>
-			<th style="text-align: left;">Not supported</th>
+			<th>Control name</th>
+			<th>Supported</th>
+			<th>Not supported</th>
 		</tr>
 		<tr>
 			<td>sap.m.Text</td>
