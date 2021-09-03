@@ -4277,37 +4277,4 @@ sap.ui.define([
 		// Clean up
 		oIconTabBar.destroy();
 	});
-
-	QUnit.module("Tickets");
-
-	QUnit.test("Unnecessary invalidation", function(assert) {
-
-		// Arrange
-		var oButton = new Button({text: "Button 2"}),
-			oIconTabBar = new IconTabBar({
-				items: [
-					new IconTabFilter({
-						text: "Tab 1",
-						content: new Button({text: "Button 1"})
-					}),
-					new IconTabFilter({
-						text: "Tab 2",
-						content: oButton
-					})
-				]
-			});
-
-		oIconTabBar.placeAt("qunit-fixture");
-		Core.applyChanges();
-
-
-		// Assert
-		oButton.setText("New text");
-
-		// Assert
-		assert.notOk(oIconTabBar.getUIArea().mInvalidatedControls[oIconTabBar.getId()], "itb.is not invalidated");
-
-		// Clean up
-		oIconTabBar.destroy();
-	});
 });

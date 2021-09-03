@@ -626,19 +626,6 @@ sap.ui.define([
 		}
 	};
 
-	IconTabBar.prototype.invalidate = function (oOrigin) {
-		// oOrigin is undefined when IconTabBar invalidates itself.
-		// Otherwise, it's set with the control that triggers the invalidates.
-		if (!this.getDomRef() ||
-			!oOrigin ||
-			oOrigin.getDomRef() ||
-			oOrigin.isA("sap.m.IconTabHeader") ||
-			oOrigin.isA("sap.m.IconTabFilter")) {
-			return Control.prototype.invalidate.apply(this, arguments);
-		}
-		return this;
-	};
-
 	/* =========================================================== */
 	/*           begin: reflectors for header properties           */
 	/* =========================================================== */
