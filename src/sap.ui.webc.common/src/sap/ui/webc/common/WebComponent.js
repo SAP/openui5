@@ -120,7 +120,6 @@ sap.ui.define([
 			constructor : function(sId, mSettings) {
 				Control.apply(this, arguments);
 
-				this.__onInvalidationHandlerAttached = false;
 				this.__onInvalidationBound = this.__onInvalidation.bind(this);
 
 				// After the DOM element is rendered for the first time, attach the invalidation callback (in __onAfterRenderingDelegate)
@@ -249,10 +248,7 @@ sap.ui.define([
 			var oDomRef = this.getDomRef();
 
 			window.customElements.whenDefined(oDomRef.localName).then(function() {
-				if (!this.__onInvalidationHandlerAttached) {
-					oDomRef.attachInvalidate(this.__onInvalidationBound);
-					this.__onInvalidationHandlerAttached = true;
-				}
+				oDomRef.attachInvalidate(this.__onInvalidationBound);
 
 				if (oDomRef._individualSlot) {
 					this.__slot = oDomRef._individualSlot; // If the component creates individual slots for children, f.e. columns-3 or default-1, update the __slot property, otherwise RenderManager will set the normal slot name, f.e. columns or ""
@@ -364,10 +360,8 @@ sap.ui.define([
 
 		WebComponent.prototype.destroy = function() {
 			var oDomRef = this.getDomRef();
-
 			this.__detachCustomEventsListeners();
-
-			if (this.__onInvalidationHandlerAttached) {
+			if (oDomRef && typeof oDomRef.detachInvalidate === "function") {
 				oDomRef.detachInvalidate(this.__onInvalidationBound);
 			}
 
