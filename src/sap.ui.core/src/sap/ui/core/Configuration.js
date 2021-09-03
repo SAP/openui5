@@ -35,9 +35,6 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	// lazy dependencies. Can't be declared as this would result in cyclic dependencies
-	var LocaleData;
-
 	/**
 	 * Creates a new Configuration object.
 	 *
@@ -858,11 +855,6 @@ sap.ui.define([
 		getCalendarType :  function() {
 			var sName;
 
-			// lazy load of LocaleData to avoid cyclic dependencies
-			if ( !LocaleData ) {
-				LocaleData = sap.ui.requireSync("sap/ui/core/LocaleData");
-			}
-
 			if (this.calendarType) {
 				for (sName in CalendarType) {
 					if (sName.toLowerCase() === this.calendarType.toLowerCase()) {
@@ -894,7 +886,7 @@ sap.ui.define([
 					return CalendarType.Persian;
 			}
 
-			return LocaleData.getInstance(this.getLocale()).getPreferredCalendarType();
+			return this.getLocale().getPreferredCalendarType();
 		},
 
 		/**
