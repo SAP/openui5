@@ -237,6 +237,33 @@ sap.ui.define([
 			return null;
 		},
 
+		/**
+		 * Gets the aria-relevant numbers of columns and rows in the table, taking into account virtualization and internal columns like the row
+		 * action column.
+		 *
+		 * @returns {{columnCount: int, rowCount: int}}
+		 */
+		getGridSize: function(oTable) {
+			var bHasRowHeader = TableUtils.hasRowHeader(oTable);
+			var bHasRowActions = TableUtils.hasRowActions(oTable);
+			var iColumnCount = TableUtils.getVisibleColumnCount(oTable) + (bHasRowHeader ? 1 : 0) + (bHasRowActions ? 1 : 0);
+			var iContentRowCount = TableUtils.isNoDataVisible(oTable) ? 0 : Math.max(oTable._getTotalRowCount(), oTable._getRowCounts().count);
+
+			return {
+				columnCount: iColumnCount,
+				rowCount: TableUtils.getHeaderRowCount(oTable) + iContentRowCount
+			};
+		},
+
+		/**
+		 * Gets the aria-relevant index of a row, taking into account virtualization and the number of header rows.
+		 *
+		 * @returns {int}
+		 */
+		getRowIndex: function(oRow) {
+			return oRow.getIndex() + 1 + TableUtils.getHeaderRowCount(oRow.getTable());
+		},
+
 		/*
 		 * Determines the current row and column and updates the hidden description texts of the table accordingly.
 		 */
@@ -246,25 +273,21 @@ sap.ui.define([
 				bIsRowChanged = false,
 				bIsColChanged = false,
 				bIsInitial = false,
-				bHasRowHeader = TableUtils.hasRowHeader(oTable),
-				bHasRowActions = TableUtils.hasRowActions(oTable);
+				bHasRowHeader = TableUtils.hasRowHeader(oTable);
 
 			if (oIN) {
 				// +1 -> we want to announce a count and not the index, the action column is handled like a normal column
 				var iColumnNumber = ExtensionHelper.getColumnIndexOfFocusedCell(oExtension) + 1 + (bHasRowHeader ? 1 : 0);
-				// same here + take virtualization into account
-				var iRowNumber = TableUtils.getRowIndexOfFocusedCell(oTable) + oTable._getFirstRenderedRowIndex() + 1;
-				var iColCount = TableUtils.getVisibleColumnCount(oTable) + (bHasRowHeader ? 1 : 0) + (bHasRowActions ? 1 : 0);
-				var iRowCount = TableUtils.isNoDataVisible(oTable) ? 0 : Math.max(oTable._getTotalRowCount(), oTable._getRowCounts().count);
+				var oRow = oTable.getRows()[TableUtils.getRowIndexOfFocusedCell(oTable)];
+				var iRowNumber = oRow ? ExtensionHelper.getRowIndex(oRow) : 0;
+				var mGridSize = ExtensionHelper.getGridSize(oTable);
 
-				bIsRowChanged = oExtension._iLastRowNumber != iRowNumber || (oExtension._iLastRowNumber == iRowNumber
-																			 && oExtension._iLastColumnNumber == iColumnNumber);
+				bIsRowChanged = oExtension._iLastRowNumber != iRowNumber || (oExtension._iLastRowNumber == iRowNumber && oExtension._iLastColumnNumber == iColumnNumber);
 				bIsColChanged = oExtension._iLastColumnNumber != iColumnNumber;
 				bIsInitial = oExtension._iLastRowNumber == null && oExtension._iLastColumnNumber == null;
-
-				oTable.$("rownumberofrows").text(bIsRowChanged && iRowNumber > 0 ? TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [iRowNumber, iRowCount]) : " ");
-				oTable.$("colnumberofcols").text(bIsColChanged ? TableUtils.getResourceText("TBL_COL_COLCOUNT", [iColumnNumber, iColCount]) : " ");
-				oTable.$("ariacount").text(bIsInitial ? TableUtils.getResourceText("TBL_DATA_ROWS_COLS", [iRowCount, iColCount]) : " ");
+				oTable.$("rownumberofrows").text(bIsRowChanged && iRowNumber > 0 ? TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [iRowNumber, mGridSize.rowCount]) : " ");
+				oTable.$("colnumberofcols").text(bIsColChanged ? TableUtils.getResourceText("TBL_COL_COLCOUNT", [iColumnNumber, mGridSize.columnCount]) : " ");
+				oTable.$("ariacount").text(bIsInitial ? TableUtils.getResourceText("TBL_DATA_ROWS_COLS", [mGridSize.rowCount, mGridSize.columnCount]) : " ");
 
 				oExtension._iLastRowNumber = iRowNumber;
 				oExtension._iLastColumnNumber = iColumnNumber;
@@ -736,6 +759,7 @@ sap.ui.define([
 					var bHasFixedBottomRows = mRowCounts.fixedBottom > 0;
 					var bHasRowHeader = TableUtils.hasRowHeader(oTable);
 					var bHasRowActions = TableUtils.hasRowActions(oTable);
+					var mGridSize = ExtensionHelper.getGridSize(oTable);
 
 					mAttributes["aria-owns"] = [sTableId + "-table"];
 					if (bHasFixedColumns) {
@@ -760,8 +784,8 @@ sap.ui.define([
 						mAttributes["aria-owns"].push(sTableId + "-sapUiTableRowActionScr");
 					}
 
-					mAttributes["aria-rowcount"] = oTable._getTotalRowCount();
-					mAttributes["aria-colcount"] = oTable._getVisibleColumns().length + (bHasRowHeader ? 1 : 0) + (bHasRowActions ? 1 : 0);
+					mAttributes["aria-rowcount"] = mGridSize.rowCount;
+					mAttributes["aria-colcount"] = mGridSize.columnCount;
 
 					if (oTable.isA("sap.ui.table.AnalyticalTable")) {
 						mAttributes["aria-roledescription"] = TableUtils.getResourceText("TBL_ANALYTICAL_TABLE_ROLE_DESCRIPTION");
@@ -1058,7 +1082,7 @@ sap.ui.define([
 
 		for (i = 0; i < aRows.length; i++) {
 			oRow = aRows[i];
-			oRow.getDomRefs(true).row.attr("aria-rowindex", oRow.getIndex() + 1);
+			oRow.getDomRefs(true).row.attr("aria-rowindex", ExtensionHelper.getRowIndex(oRow));
 		}
 	};
 
@@ -1071,7 +1095,7 @@ sap.ui.define([
 		var $Table = oTable.$("sapUiTableGridCnt");
 
 		if ($Table) {
-			$Table.attr("aria-rowcount", oTable._getTotalRowCount());
+			$Table.attr("aria-rowcount", ExtensionHelper.getGridSize(oTable).rowCount);
 		}
 	};
 
