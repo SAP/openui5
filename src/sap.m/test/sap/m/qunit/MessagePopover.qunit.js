@@ -1376,6 +1376,8 @@ sap.ui.define([
 			var aMessages = [oMessage];
 			var oMessageModel = Core.getModel("messageSummary");
 			oMessageModel.setData(aMessages);
+
+			oMessagePopover.navigateBack();
 		};
 
 		Core.setModel(new JSONModel([]), "messageSummary");
