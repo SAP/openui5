@@ -179,7 +179,7 @@ sap.ui.define([
 										control: oMDCChart,
 										chartType: oObj.key
 									}));
-									FlexUtil.handleChanges(aChanges, oMDCChart);
+									FlexUtil.handleChanges(aChanges);
 								});
 							}
 						}
