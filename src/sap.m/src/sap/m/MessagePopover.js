@@ -463,9 +463,6 @@ function(
 					// update the MessageView's items as well
 					item._updateProperties(function () {
 						that._bItemsChanged = true;
-
-						// navigate back if a property is changed
-						that.navigateBack();
 					});
 
 					// we need to clone the item along with its bindings and aggregations
