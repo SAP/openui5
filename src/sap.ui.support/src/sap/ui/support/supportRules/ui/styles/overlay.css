@@ -1,8 +1,18 @@
 @import url("ControlTree.css");
 
+html {
+	height: 100%;
+}
+
 body {
-	background: #fff;
+	height: 100%;
+	background-color: #3f5161;
+	overflow: hidden;
 	content: "SupportTools loading...";
+}
+
+.sapUiSupportToolContent {
+	height: 100%;
 }
 
 .sapUiSupportToolSettingsPopoverPadding {
