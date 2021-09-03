@@ -233,7 +233,7 @@
         <exclude name="sap.ui.qunit." />
         <exclude name="sap.ui.thirdparty." />
         <exclude name="sap.ui.model.odata.datajs" /> <!-- legacy redirect, only part of internal core overlay -->
-        <exclude name="sap.ui.core.designtime.mvc.ControllerExtensionTemplate" /> <!-- template file with partially unexpected content --> 
+        <exclude name="sap.ui.core.designtime.mvc.ControllerExtensionTemplate" /> <!-- template file with partially unexpected content -->
     </jsdoc>
     <!-- excludes for the JSCoverage -->
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
@@ -470,7 +470,7 @@
         </lib>
         <lib name="hyphenopoly" displayName="Hyphenopoly" version="3.4.0" homepage="https://github.com/mnater/Hyphenopoly">
             <license url="https://github.com/mnater/Hyphenopoly/blob/master/LICENSE" type="MIT" />
-            <copyright>2019 Mathias Nater</copyright>
+            <copyright>2021 Mathias Nater</copyright>
             <pattern>sap/ui/thirdparty/hyphenopoly/*</pattern>
         </lib>
         <lib name="p-cancelable" displayName="p-cancelable" version="2.0.0" homepage="https://github.com/sindresorhus/p-cancelable/tree/v2.0.0">

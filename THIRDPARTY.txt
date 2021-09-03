@@ -6,7 +6,7 @@ The full text of all referenced licenses is appended at the end of this file.
 
 Library: sap.ui.codeeditor:
 
-Component: Ace (Ajax.org Cloud9 Editor), version: 1.4.4
+Component: Ace (Ajax.org Cloud9 Editor), version: 1.4.12
 Copyright: 2010, Ajax.org B.V.
 License: BSD-3-Clause
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
@@ -280,7 +280,7 @@ License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/base/util/restricted/_/lodash.custom.js
 
 Component: Hyphenopoly, version: 3.4.0
-Copyright: 2019 Mathias Nater
+Copyright: 2021 Mathias Nater
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/hyphenopoly/*

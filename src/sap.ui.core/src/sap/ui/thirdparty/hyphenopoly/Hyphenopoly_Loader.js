@@ -5,6 +5,7 @@
  *
  * Released under the MIT license
  * http://mnater.github.io/Hyphenopoly/LICENSE
+ * Modifications SAP SE or an SAP affiliate company and OpenUI5 contributors. All rights reserved.
  */
 
 /* globals Hyphenopoly:readonly */
