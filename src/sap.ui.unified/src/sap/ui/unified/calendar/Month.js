@@ -262,6 +262,8 @@ sap.ui.define([
 
 		// Currently visible days
 		this._aVisibleDays = [];
+
+		this._bAlwaysShowSpecialDates = false;
 	};
 
 	Month.prototype._getAriaRole = function(){
@@ -282,6 +284,7 @@ sap.ui.define([
 		}
 
 		this._aVisibleDays = null;
+		this._bAlwaysShowSpecialDates = null;
 
 	};
 
@@ -764,6 +767,29 @@ sap.ui.define([
 
 		return aNonWorkingDays;
 
+	};
+
+	/*
+	 * Checks if a date have to be rendered as special date.
+	 *
+	 * In Month and OneMonthDatesRow on small screen scenarios only the special dates inside current month are marked as special.
+	 * In DatesRow and OneMonthDatesRow on large screen scenarios all special dates are rendered as such.
+	 *
+	 * @param {sap.ui.unified.calendar.CalendarDate} the date to be checked
+	 * @return {boolean} if the given date should be rendered as special date
+	 * @private
+	 */
+	Month.prototype._isSpecialDateMarkerEnabled = function(oDay) {
+		var oMonthDate;
+		if (this.getStartDate) {
+			oMonthDate = this.getStartDate();
+		} else if (this.getDate()) {
+			oMonthDate = this.getDate();
+		} else {
+			oMonthDate = new Date();
+		}
+
+		return this._bAlwaysShowSpecialDates || CalendarUtils._isSameMonthAndYear(oDay, CalendarDate.fromLocalJSDate(oMonthDate));
 	};
 
 	/*

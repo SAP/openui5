@@ -873,6 +873,20 @@ sap.ui.define([
 		oHeader = null;
 	});
 
+	QUnit.test("special days", function(assert) {
+		// Arrange
+		this.oCal.setStartDate(new Date("2015", "0", "31"));
+		this.oCal.addSpecialDate(new DateTypeRange({
+			startDate: new Date("2015", "0", "31"),
+			endDate: new Date("2015", "1", "1"),
+			type: "Type01"
+		}));
+		sap.ui.getCore().applyChanges();
+		// Assert
+		assert.ok(jQuery("#myCal--Month0-20150131").hasClass("sapUiCalItemType01"), "special date from start date month rendered");
+		assert.ok(jQuery("#myCal--Month0-20150201").hasClass("sapUiCalItemType01"), "special date outside start date month rendered");
+	});
+
 	QUnit.module("Calendar Picker", {
 		beforeEach: function () {
 			this.oCal = new CalendarDateInterval("CalP", {

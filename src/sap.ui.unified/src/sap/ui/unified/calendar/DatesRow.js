@@ -76,6 +76,8 @@ sap.ui.define([
 		//example: [{ len: 3, number: 12 }, { len: 7, number: 13 }, ...]
 		this._aWeekNumbers = [];
 
+		this._bAlwaysShowSpecialDates = true;
+
 	};
 
 	DatesRow.prototype._setAriaRole = function(sRole){

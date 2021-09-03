@@ -69,6 +69,8 @@ sap.ui.define([
 			oSelectedDates[0].setProperty('startDate', oStartDate);
 		}
 
+		this.iMode < 2 ? this._bAlwaysShowSpecialDates = false : this._bAlwaysShowSpecialDates = true;
+
 		return this;
 	};
 
