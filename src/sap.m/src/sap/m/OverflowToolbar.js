@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"./OverflowToolbarRenderer",
 	"sap/base/Log",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "lastFocusableDomRef"
 ], function(
 	coreLibrary,
@@ -39,7 +40,8 @@ sap.ui.define([
 	DomUnitsRem,
 	Device,
 	OverflowToolbarRenderer,
-	Log
+	Log,
+	jQuery
 ) {
 	"use strict";
 
@@ -1069,6 +1071,10 @@ sap.ui.define([
 	 */
 	OverflowToolbar.prototype._popOverClosedHandler = function () {
 		this._getOverflowButton().setPressed(false); // Turn off the toggle button
+		if (jQuery(document.activeElement).control(0)) {
+			return;
+		}
+		this._getOverflowButton().focus();
 	};
 
 	/**

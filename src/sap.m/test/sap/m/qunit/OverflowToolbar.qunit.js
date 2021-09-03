@@ -3370,4 +3370,36 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 	});
+
+	QUnit.test("Set invalidation-triggering property of a control inside OTB Popover", function (assert) {
+		var done = assert.async(),
+			oOverflowButton,
+			oButtonWithPressFunc;
+		assert.expect(1);
+
+
+
+		// Click the overflow button
+		oOverflowButton = this.otb._getOverflowButton();
+		oButtonWithPressFunc = new Button({
+			text: "Test text 1",
+			press: function() {
+				this.setText("Test text 2");
+			}
+		});
+		this.otb.addContent(oButtonWithPressFunc);
+
+
+		this.otb.setWidth('200px');
+		sap.ui.getCore().applyChanges();
+
+		oOverflowButton.firePress();
+		oButtonWithPressFunc.firePress();
+
+		setTimeout(function() {
+			assert.equal(document.activeElement, oOverflowButton.getDomRef(), "After closing the Popover by changed property" +
+				"of a content control the focus is back to OTB button");
+			done();
+		}, 1000);
+	});
 });
