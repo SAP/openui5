@@ -4290,6 +4290,7 @@ sap.ui.define([
 	ManagedObject.prototype.updateBindings = function(bUpdateAll, sModelName) {
 		var that = this,
 			sName,
+			bCanCreate,
 			oBindingInfo;
 
 		/*
@@ -4374,14 +4375,18 @@ sap.ui.define([
 		// create object bindings if they don't exist yet
 		for ( sName in this.mObjectBindingInfos ) {
 			oBindingInfo = this.mObjectBindingInfos[sName];
-
+			bCanCreate = canCreate(oBindingInfo);
 			// if there is a binding and if it became invalid through the current model change, then remove it
 			if ( oBindingInfo.binding && becameInvalid(oBindingInfo) ) {
 				removeBinding(oBindingInfo);
+				// if model does not exists anymore, also delete the BindingContext
+				if (!bCanCreate) {
+					delete this.mElementBindingContexts[sName];
+				}
 			}
 
 			// if there is no binding and if all required information is available, create a binding object
-			if ( !oBindingInfo.binding && canCreate(oBindingInfo) ) {
+			if ( !oBindingInfo.binding && bCanCreate ) {
 				this._bindObject(oBindingInfo);
 			}
 		}

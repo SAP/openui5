@@ -2506,6 +2506,54 @@ sap.ui.define([
 		oTestManagedObject.destroy();
 	});
 
+	QUnit.test("ObjectBindings Elementcontext should be removed if model is not available anymore", function(assert){
+		var oTestManagedObjectParent = new TestManagedObject("ParentObject", {
+			models: {
+				"undefined": oModel
+			}
+		});
+		var oTestManagedObjectChild = new TestManagedObject("testObjectWithDefaultModelObjectBinding", {
+			objectBindings : {
+				undefined: {path: "/list/0"}
+			}
+		});
+		oTestManagedObjectParent.addAggregation("subObjects", oTestManagedObjectChild);
+		assert.ok(oTestManagedObjectChild.getBindingContext(), "BindingContext should be created");
+		assert.equal(oTestManagedObjectChild.getBindingContext(), oTestManagedObjectChild.mElementBindingContexts["undefined"], "BindingContext is ElementbindingContext");
+
+		oTestManagedObjectParent.setModel();
+		assert.notOk(oTestManagedObjectChild.getBindingContext(), "BindingContext should be removed");
+
+		oTestManagedObjectParent.destroy();
+	});
+
+	QUnit.test("ObjectBindings Elementcontext should not be removed if model is still available", function(assert){
+		var oTestManagedObjectParent = new TestManagedObject("ParentObject", {
+			models: {
+				"undefined": oModel
+			}
+		});
+		var oTestManagedObjectChild1 = new TestManagedObject("ParentObject", {
+			models: {
+				"undefined": oModel
+			}
+		});
+		var oTestManagedObjectChild2 = new TestManagedObject("testObjectWithDefaultModelObjectBinding", {
+			objectBindings : {
+				undefined: {path: "/list/0"}
+			}
+		});
+		oTestManagedObjectParent.addAggregation("subObjects", oTestManagedObjectChild1);
+		oTestManagedObjectChild1.addAggregation("subObjects", oTestManagedObjectChild2);
+		assert.ok(oTestManagedObjectChild2.getBindingContext(), "BindingContext should be created");
+		assert.equal(oTestManagedObjectChild2.getBindingContext(), oTestManagedObjectChild2.mElementBindingContexts["undefined"], "BindingContext is ElementbindingContext");
+
+		oTestManagedObjectChild1.setModel();
+		assert.ok(oTestManagedObjectChild2.getBindingContext(), "BindingContext should still exist, as model is again propagated from the parent");
+
+		oTestManagedObjectParent.destroy();
+	});
+
 	QUnit.module("ManagedObjectMetadata", {
 		beforeEach: function() {
 			this.obj = new TestManagedObject();
