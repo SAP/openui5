@@ -2,6 +2,7 @@ ace.define("ace/theme/xcode",["require","exports","module","ace/lib/dom"], funct
 
 exports.isDark = false;
 exports.cssClass = "ace-xcode";
+// #### BEGIN MODIFIED BY SAP
 exports.cssText = "\
 .ace-xcode .ace_gutter {\
 background: #e8e8e8;\
@@ -80,8 +81,9 @@ color: #DF0002\
 color: #008E00\
 }\
 .ace-xcode .ace_indent-guide {\
-background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==) right repeat-y\
+background: url(" + sap.ui.require.toUrl("sap/ui/codeeditor/js/ace/assets/theme_xcode_indent_guide.png") + ") right repeat-y\
 }";
+// #### END MODIFIED BY SAP
 
 var dom = require("../lib/dom");
 dom.importCssString(exports.cssText, exports.cssClass);
