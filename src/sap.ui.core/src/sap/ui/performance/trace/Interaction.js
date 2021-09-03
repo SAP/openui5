@@ -604,12 +604,12 @@ sap.ui.define([
 					if (oPendingInteraction && !oPendingInteraction.completed && Interaction.onInteractionStarted) {
 						oPendingInteraction.passportAction = Interaction.onInteractionStarted(oPendingInteraction, bForce);
 					}
-					// if browser event matches the first control event we take it for trigger/event determination (step name)
-					if (oElement && oElement.getId && oElement.getId() === oBrowserElement.getId()) {
-						bMatched = true;
-					}
 					if (oCurrentBrowserEvent) {
 						oBrowserElement = oCurrentBrowserEvent.srcControl;
+					}
+					// if browser event matches the first control event we take it for trigger/event determination (step name)
+					if (oElement && oElement.getId && oBrowserElement && oElement.getId() === oBrowserElement.getId()) {
+						bMatched = true;
 					}
 					oCurrentBrowserEvent = null;
 					//only handle the first browser event within a call stack. Ignore virtual/harmonization events.
