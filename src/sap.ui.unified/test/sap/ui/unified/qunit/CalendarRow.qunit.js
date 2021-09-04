@@ -760,6 +760,9 @@ sap.ui.define([
 
 		aSubintervals = jQuery("#Row1-AppsInt1").children(".sapUiCalendarRowAppsSubInt");
 		assert.equal(aSubintervals.length, 28, "28 subintervals rendered (second month)");
+		assert.ok(jQuery(aSubintervals[0]).hasClass("sapUiCalendarRowAppsNoWork"), "Subinterval0 non-working interval");
+		assert.ok(!jQuery(aSubintervals[1]).hasClass("sapUiCalendarRowAppsNoWork"), "Subinterval1 working interval");
+
 		var sStyle = jQuery(aSubintervals[0]).attr("style");
 		var aTest = sStyle.match(/width:(\s?)(\d+(.?)(\d+))/);
 		var iWidth = Math.floor(aTest[2] * 100) / 100;
