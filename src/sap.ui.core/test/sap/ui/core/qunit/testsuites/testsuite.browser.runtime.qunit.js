@@ -61,8 +61,11 @@ sap.ui.define(function() {
 				},
 				bootCore: false
 			},
+			"util/isCrossOriginURL": {
+				title: "sap/ui/util/isCrossOriginURL"
+			},
 			"util/openWindow": {
-				title: "sap.ui.util.openWindow"
+				title: "sap/ui/util/openWindow"
 			}
 		}
 	};
