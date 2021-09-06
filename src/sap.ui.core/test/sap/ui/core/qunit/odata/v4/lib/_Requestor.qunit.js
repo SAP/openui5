@@ -155,15 +155,21 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("constructor", function (assert) {
+[false, true].forEach(function (bStatistics) {
+	QUnit.test("constructor, 'sap-statistics' present: " + bStatistics, function (assert) {
 		var mHeaders = {},
 			oHelperMock = this.mock(_Helper),
 			mQueryParams = {},
-			oRequestor;
+			oRequestor,
+			vStatistics = {};
 
+		if (bStatistics) {
+			mQueryParams["sap-statistics"] = vStatistics;
+		}
 		oHelperMock.expects("buildQuery")
 			.withExactArgs(sinon.match.same(mQueryParams)).returns("?~");
 
+		// code under test
 		oRequestor = _Requestor.create(sServiceUrl, oModelInterface, mHeaders, mQueryParams);
 
 		assert.deepEqual(oRequestor.mBatchQueue, {});
@@ -176,13 +182,19 @@ sap.ui.define([
 		assert.strictEqual(oRequestor.iSessionTimer, 0);
 		assert.strictEqual(oRequestor.iSerialNumber, 0);
 		assert.strictEqual(oRequestor.sServiceUrl, sServiceUrl);
+		assert.strictEqual(oRequestor.vStatistics, bStatistics ? vStatistics : undefined);
+		assert.ok("vStatistics" in oRequestor);
 
 		oHelperMock.expects("buildQuery").withExactArgs(undefined).returns("");
 
+		// code under test
 		oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
 
 		assert.deepEqual(oRequestor.mHeaders, {});
+		assert.strictEqual(oRequestor.vStatistics, undefined);
+		assert.ok("vStatistics" in oRequestor);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("destroy", function () {
@@ -735,8 +747,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[undefined, "false"].forEach(function (vStatistics) {
 	[undefined, "$direct"].forEach(function (sGroupId) {
-		QUnit.test("request: sGroupId=" + sGroupId, function (assert) {
+		var sTitle = "request: sGroupId=" + sGroupId + ", sap-statistics=" + vStatistics;
+
+		QUnit.test(sTitle, function (assert) {
 			var fnCancel = this.spy(),
 				oConvertedResponse = {},
 				oGroupLock,
@@ -748,6 +763,7 @@ sap.ui.define([
 				oResponse = {body : {}, messages : {}, resourcePath : "Employees?custom=value"},
 				fnSubmit = this.spy();
 
+			oRequestor.vStatistics = vStatistics;
 			if (sGroupId) {
 				oGroupLock = this.createGroupLock(sGroupId);
 			}
@@ -757,7 +773,11 @@ sap.ui.define([
 			this.mock(JSON).expects("stringify").withExactArgs(sinon.match.same(oPayload))
 				.returns("~payload~");
 			this.mock(oRequestor).expects("sendRequest")
-				.withExactArgs("METHOD", "~Employees~?custom=value", {
+				.withExactArgs("METHOD",
+					vStatistics
+						? "~Employees~?custom=value&sap-statistics=false"
+						: "~Employees~?custom=value",
+					{
 						"header" : "value",
 						"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 					}, "~payload~", "~Employees~?custom=value")
@@ -782,6 +802,7 @@ sap.ui.define([
 			});
 		});
 	});
+});
 
 	//*********************************************************************************************
 	[{ // predefined headers can be overridden, but are not modified for later

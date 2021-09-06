@@ -219,6 +219,7 @@ sap.ui.define([
 						sParameter,
 						sServiceUrl,
 						oUri,
+						mUriParameters,
 						that = this;
 
 					// do not pass any parameters to Model
@@ -253,7 +254,13 @@ sap.ui.define([
 					}
 					this.sOperationMode = mParameters.operationMode;
 					// Note: strict checking for model's URI parameters, but "sap-*" is allowed
-					this.mUriParameters = this.buildQueryOptions(oUri.query(true), false, true);
+					mUriParameters = this.buildQueryOptions(oUri.query(true), false, true);
+					// BEWARE: these are shared across all bindings!
+					this.mUriParameters = mUriParameters;
+					if (sap.ui.getCore().getConfiguration().getStatistics()) {
+						// Note: this way, "sap-statistics" is not sent within $batch
+						mUriParameters = Object.assign({"sap-statistics" : true}, mUriParameters);
+					}
 					this.sServiceUrl = oUri.query("").toString();
 					this.sGroupId = mParameters.groupId;
 					if (this.sGroupId === undefined) {
@@ -295,7 +302,7 @@ sap.ui.define([
 					// BEWARE: do not share mHeaders between _MetadataRequestor and _Requestor!
 					this.oMetaModel = new ODataMetaModel(
 						_MetadataRequestor.create(this.mMetadataHeaders, sODataVersion,
-							Object.assign({}, this.mUriParameters, mParameters.metadataUrlParams)),
+							Object.assign({}, mUriParameters, mParameters.metadataUrlParams)),
 						this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
 						mParameters.supportReferences);
 					this.oInterface = {
@@ -316,7 +323,7 @@ sap.ui.define([
 						reportTransitionMessages : this.reportTransitionMessages.bind(this)
 					};
 					this.oRequestor = _Requestor.create(this.sServiceUrl, this.oInterface,
-						this.mHeaders, this.mUriParameters, sODataVersion);
+						this.mHeaders, mUriParameters, sODataVersion);
 					this.changeHttpHeaders(mParameters.httpHeaders);
 					if (mParameters.earlyRequests) {
 						this.oMetaModel.fetchEntityContainer(true);

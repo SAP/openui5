@@ -89,6 +89,7 @@ sap.ui.define([
 		this.iSessionTimer = 0;
 		this.iSerialNumber = 0;
 		this.sServiceUrl = sServiceUrl;
+		this.vStatistics = mQueryParams && mQueryParams["sap-statistics"];
 		this.processSecurityTokenHandler(); // sets this.oSecurityTokenPromise
 	}
 
@@ -1620,6 +1621,9 @@ sap.ui.define([
 			return oPromise;
 		}
 
+		if (this.vStatistics !== undefined) {
+			mQueryOptions = Object.assign({"sap-statistics" : this.vStatistics}, mQueryOptions);
+		}
 		if (mQueryOptions) {
 			sResourcePath = that.addQueryString(sResourcePath, sMetaPath, mQueryOptions);
 		}
