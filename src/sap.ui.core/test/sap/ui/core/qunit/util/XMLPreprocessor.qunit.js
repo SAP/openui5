@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/CustomizingConfiguration",
+	"sap/ui/core/Component",
 	"sap/ui/core/XMLTemplateProcessor",
 	"sap/ui/core/util/XMLPreprocessor",
 	"sap/ui/model/BindingMode",
@@ -16,9 +16,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/performance/Measurement",
 	"sap/ui/util/XMLHelper"
-], function (Log, ObjectPath, BindingParser, ManagedObject, SyncPromise,
-		CustomizingConfiguration, XMLTemplateProcessor, XMLPreprocessor, BindingMode, ChangeReason,
-		Context, JSONModel, Measurement, XMLHelper) {
+], function (Log, ObjectPath, BindingParser, ManagedObject, SyncPromise, Component,
+		XMLTemplateProcessor, XMLPreprocessor, BindingMode, ChangeReason, Context, JSONModel,
+		Measurement, XMLHelper) {
 	/*global QUnit, sinon, window */
 	/*eslint consistent-this: 0, max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0*/
 	"use strict";
@@ -814,7 +814,7 @@ sap.ui.define([
 				function (assert) {
 					var oError = new Error("deliberate failure");
 
-					this.mock(CustomizingConfiguration).expects("getViewExtension").never();
+					this.mock(Component).expects("getCustomizing").never();
 					if (!bWarn) {
 						Log.setLevel(Log.Level.ERROR, sComponent);
 					}
@@ -904,7 +904,7 @@ sap.ui.define([
 				vExpected = oFixture.vExpected && oFixture.vExpected.slice();
 
 			QUnit.test(aViewContent[1] + ", warn = " + bWarn, function (assert) {
-				this.mock(CustomizingConfiguration).expects("getViewExtension").never();
+				this.mock(Component).expects("getCustomizing").never();
 				if (!bWarn) {
 					Log.setLevel(Log.Level.ERROR, sComponent);
 				}
@@ -2477,9 +2477,6 @@ sap.ui.define([
 				'<In src="fragment"/>',
 				'</FragmentDefinition>'
 			]));
-			// debug output for dynamic names must still appear!
-			this.oSapUiMock.expects("require").on(sap.ui).twice()
-				.withExactArgs("sap/ui/core/CustomizingConfiguration"); // not yet loaded
 
 			this.checkTracing(assert, bDebug, [
 				{m : "[ 0] Start processing qux"},
@@ -2530,24 +2527,18 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[
-		CustomizingConfiguration, // symbolic value, see below!
 		undefined,
 		{className : "sap.ui.core.Fragment", type : "JSON"},
 		{className : "sap.ui.core.mvc.View", type : "XML"}
 	].forEach(function (oViewExtension, i) {
 		QUnit.test("<ExtensionPoint>: no (supported) configuration, " + i, function (assert) {
-			if (oViewExtension === CustomizingConfiguration) {
-				this.oSapUiMock.expects("require").on(sap.ui)
-					.withExactArgs("sap/ui/core/CustomizingConfiguration")
-					.returns(); // not yet loaded
-			} else {
-				this.oSapUiMock.expects("require").on(sap.ui)
-					.withExactArgs("sap/ui/core/CustomizingConfiguration")
-					.returns(CustomizingConfiguration);
-				this.mock(CustomizingConfiguration).expects("getViewExtension")
-					.withExactArgs("this.sViewName", "myExtensionPoint", "this._sOwnerId")
-					.returns(oViewExtension);
-			}
+			this.mock(Component).expects("getCustomizing")
+				.withExactArgs("this._sOwnerId", {
+					extensionName : "myExtensionPoint",
+					name : "this.sViewName",
+					type : "sap.ui.viewExtensions"
+				})
+				.returns(oViewExtension);
 
 			this.check(assert, [
 					mvcView(),
@@ -2569,7 +2560,7 @@ sap.ui.define([
 	["outerExtensionPoint", "{:= 'outerExtensionPoint' }"].forEach(function (sName) {
 		QUnit.test("<ExtensionPoint name='" + sName + "'>: XML fragment configured",
 			function (assert) {
-				var oCustomizingConfigurationMock = this.mock(CustomizingConfiguration),
+				var oComponentMock = this.mock(Component),
 					aOuterReplacement = [
 						'<template:if test="true" xmlns="sap.ui.core" xmlns:template='
 							+ '"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
@@ -2578,13 +2569,13 @@ sap.ui.define([
 						'</template:if>'
 					];
 
-				this.oSapUiMock.expects("require").on(sap.ui).exactly(5)
-					.withExactArgs("sap/ui/core/CustomizingConfiguration")
-					.returns(CustomizingConfiguration);
-
 				// <ExtensionPoint name="outerExtensionPoint">
-				oCustomizingConfigurationMock.expects("getViewExtension")
-					.withExactArgs("this.sViewName", "outerExtensionPoint", "this._sOwnerId")
+				oComponentMock.expects("getCustomizing")
+					.withExactArgs( "this._sOwnerId", {
+						extensionName : "outerExtensionPoint",
+						name : "this.sViewName",
+						type : "sap.ui.viewExtensions"
+					})
 					.returns({
 						className : "sap.ui.core.Fragment",
 						fragmentName : "acme.OuterReplacement",
@@ -2597,8 +2588,12 @@ sap.ui.define([
 
 				// <ExtensionPoint name="outerReplacement">
 				// --> nothing configured, just check that it is processed
-				oCustomizingConfigurationMock.expects("getViewExtension")
-					.withExactArgs("acme.OuterReplacement", "outerReplacement", "this._sOwnerId");
+				oComponentMock.expects("getCustomizing")
+					.withExactArgs( "this._sOwnerId", {
+						extensionName : "outerReplacement",
+						name : "acme.OuterReplacement",
+						type : "sap.ui.viewExtensions"
+					});
 
 				// <Fragment fragmentName="myFragment" type="XML"/>
 				this.expectLoad(false, "myFragment", xml(assert, [
@@ -2607,8 +2602,12 @@ sap.ui.define([
 
 				// <ExtensionPoint name="innerExtensionPoint"/>
 				// --> fragment name is used here!
-				oCustomizingConfigurationMock.expects("getViewExtension")
-					.withExactArgs("myFragment", "innerExtensionPoint", "this._sOwnerId")
+				oComponentMock.expects("getCustomizing")
+					.withExactArgs( "this._sOwnerId", {
+						extensionName : "innerExtensionPoint",
+						name : "myFragment",
+						type : "sap.ui.viewExtensions"
+					})
 					.returns({
 						className : "sap.ui.core.Fragment",
 						fragmentName : "acme.InnerReplacement",
@@ -2620,13 +2619,21 @@ sap.ui.define([
 
 				// <ExtensionPoint name="innerReplacement">
 				// --> nothing configured, just check that it is processed
-				oCustomizingConfigurationMock.expects("getViewExtension")
-					.withExactArgs("acme.InnerReplacement", "innerReplacement", "this._sOwnerId");
+				oComponentMock.expects("getCustomizing")
+					.withExactArgs( "this._sOwnerId", {
+						extensionName : "innerReplacement",
+						name : "acme.InnerReplacement",
+						type : "sap.ui.viewExtensions"
+					});
 
 				// <ExtensionPoint name="lastExtensionPoint">
 				// --> nothing configured, just check that view name is used again
-				oCustomizingConfigurationMock.expects("getViewExtension")
-					.withExactArgs("this.sViewName", "lastExtensionPoint", "this._sOwnerId");
+				oComponentMock.expects("getCustomizing")
+					.withExactArgs( "this._sOwnerId", {
+						extensionName : "lastExtensionPoint",
+						name : "this.sViewName",
+						type : "sap.ui.viewExtensions"
+					});
 
 				this.check(assert, [
 						mvcView(),
@@ -3830,8 +3837,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("async extension point", function (assert) {
-		var oCustomizingConfigurationMock = this.mock(CustomizingConfiguration),
-			aReplacement = [
+		var aReplacement = [
 				'<Text text=\"{/foo}\"/>'
 			],
 			aViewContent = [
@@ -3841,11 +3847,12 @@ sap.ui.define([
 				'</mvc:View>'
 			];
 
-		this.oSapUiMock.expects("require").on(sap.ui)
-			.withExactArgs("sap/ui/core/CustomizingConfiguration")
-			.returns(CustomizingConfiguration);
-		oCustomizingConfigurationMock.expects("getViewExtension")
-			.withExactArgs("this.sViewName", "world", "this._sOwnerId")
+		this.mock(Component).expects("getCustomizing")
+			.withExactArgs("this._sOwnerId", {
+				extensionName : "world",
+				name : "this.sViewName",
+				type : "sap.ui.viewExtensions"
+			})
 			.returns({
 				className : "sap.ui.core.Fragment",
 				fragmentName : "acme.Replacement",
