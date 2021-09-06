@@ -1425,13 +1425,13 @@ sap.ui.define([
 		var done = assert.async();
 
 		assert.strictEqual($Elem.attr("role"), "grid", "role");
-		assert.strictEqual($Elem.attr("aria-rowcount"), "8", "aria-rowcount");
+		assert.strictEqual($Elem.attr("aria-rowcount"), "9", "aria-rowcount");
 		assert.strictEqual($Elem.attr("aria-colcount"), "6", "aria-colcount");
 		assert.strictEqual($Elem.attr("aria-multiselectable"), "true", "aria-multiselectable");
 		assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getAriaLabelledBy() + " " + oTable.getTitle().getId(), "aria-labelledby");
 
 		oTable.attachEventOnce("rowsUpdated", function() {
-			assert.strictEqual($Elem.attr("aria-rowcount"), "1", "aria-rowcount after filter is applied");
+			assert.strictEqual($Elem.attr("aria-rowcount"), "4", "aria-rowcount after filter is applied");
 
 			oTable.setRowActionTemplate(new sap.ui.table.RowAction());
 			oTable.setRowActionCount(1);
@@ -1454,13 +1454,13 @@ sap.ui.define([
 		var done = assert.async();
 
 		assert.strictEqual($Elem.attr("role"), "treegrid", "role");
-		assert.strictEqual($Elem.attr("aria-rowcount"), "8", "aria-rowcount");
+		assert.strictEqual($Elem.attr("aria-rowcount"), "9", "aria-rowcount");
 		assert.strictEqual($Elem.attr("aria-colcount"), "6", "aria-colcount");
 		assert.ok(!$Elem.attr("aria-multiselectable"), "aria-multiselectable");
 		assert.strictEqual($Elem.attr("aria-labelledby"), oTreeTable.getAriaLabelledBy() + " " + oTreeTable.getTitle().getId(), "aria-labelledby");
 
 		oTable.attachEventOnce("rowsUpdated", function() {
-			assert.strictEqual($Elem.attr("aria-rowcount"), "1", "aria-rowcount after filter is applied");
+			assert.strictEqual($Elem.attr("aria-rowcount"), "4", "aria-rowcount after filter is applied");
 
 			oTreeTable.setRowActionTemplate(new sap.ui.table.RowAction());
 			oTreeTable.setRowActionCount(1);
@@ -1525,13 +1525,13 @@ sap.ui.define([
 			for (i = 0; i < iNumberOfRows; i++) {
 				$Elem = getCell(i, 0, false, assert).parent();
 				assert.strictEqual($Elem.attr("aria-rowindex"),
-					"" + (oTable.getFirstVisibleRow() + i + 1), "row " + i + ": aria-rowindex of the tr element");
+					"" + (oTable.getFirstVisibleRow() + i + 2), "row " + i + ": aria-rowindex of the tr element");
 				$Elem = oTable.$("rowsel" + i).parent();
 				assert.strictEqual($Elem.attr("aria-rowindex"),
-					"" + (oTable.getFirstVisibleRow() + i + 1), "row " + i + ": aria-rowindex of the row header");
+					"" + (oTable.getFirstVisibleRow() + i + 2), "row " + i + ": aria-rowindex of the row header");
 				$Elem = oTable.$("rowact" + i).parent();
 				assert.strictEqual($Elem.attr("aria-rowindex"),
-					"" + (oTable.getFirstVisibleRow() + i + 1), "row " + i + ": aria-rowindex of the row action");
+					"" + (oTable.getFirstVisibleRow() + i + 2), "row " + i + ": aria-rowindex of the row action");
 			}
 			done();
 		}
