@@ -31,6 +31,10 @@ sap.ui.define(['sap/ui/fl/changeHandler/JsControlTreeModifier', "sap/base/Log"],
 		}
 	};
 
+	function _isXmlModifier(mPropertyBag) {
+		return mPropertyBag.modifier.targets === "xmlTree";
+	}
+
 	/**
 	 * Hides a control.
 	 *
@@ -41,6 +45,12 @@ sap.ui.define(['sap/ui/fl/changeHandler/JsControlTreeModifier', "sap/base/Log"],
 	 * @public
 	 */
 	HideForm.applyChange = function(oChange, oControl, mPropertyBag) {
+		// in case of custom fields the application needs to be on JS.
+		// In the other case the visuality of the hidden control will be overriden by the custom field binding afterwards
+		if (_isXmlModifier(mPropertyBag)) {
+			throw Error("Change cannot be applied in XML. Retrying in JS.");
+		}
+
 		try {
 			var oModifier = mPropertyBag.modifier;
 			var oView = mPropertyBag.view;

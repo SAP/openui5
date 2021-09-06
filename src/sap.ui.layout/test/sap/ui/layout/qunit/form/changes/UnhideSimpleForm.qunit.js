@@ -101,12 +101,14 @@ sap.ui.define([
 		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0];
 		this.oXmlLabel0 = this.oXmlSimpleForm.childNodes[0].childNodes[1];
 
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, {
-			appComponent: this.oMockedComponent,
-			modifier : XmlTreeModifier,
-			view : this.oXmlDocument
-		}), "no errors occur");
-		assert.strictEqual(this.oXmlLabel0.getAttribute("visible"), null, "the FormElement is visible");
+		assert.throws(function () {
+			this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, {
+				appComponent: this.oMockedComponent,
+				modifier : XmlTreeModifier,
+				view : this.oXmlDocument
+			});
+		}, /Change cannot be applied in XML. Retrying in JS./, "no errors occur");
+		assert.strictEqual(this.oXmlLabel0.getAttribute("visible"), "false", "the FormElement is not visible");
 	});
 
 	QUnit.module("using sap.ui.layout.changeHandler.UnhideSimpleForm with new change format", {
@@ -227,12 +229,14 @@ sap.ui.define([
 		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0];
 		this.oXmlLabel0 = this.oXmlSimpleForm.childNodes[0].childNodes[1];
 
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWithGlobalIdWrapper, this.oXmlSimpleForm, {
-			appComponent: this.oMockedComponent,
-			modifier : XmlTreeModifier,
-			view : this.oXmlDocument
-		}), "no errors occur");
-		assert.strictEqual(this.oXmlLabel0.getAttribute("visible"), null, "the FormElement is visible");
+		assert.throws(function () {
+			this.oChangeHandler.applyChange(this.oChangeWithGlobalIdWrapper, this.oXmlSimpleForm, {
+				appComponent: this.oMockedComponent,
+				modifier : XmlTreeModifier,
+				view : this.oXmlDocument
+			});
+		}, /Change cannot be applied in XML. Retrying in JS./, "no errors occur");
+		assert.strictEqual(this.oXmlLabel0.getAttribute("visible"), "false", "the FormElement is visible");
 	});
 
 	QUnit.test("applyChange shall raise an exception if the control does not have the required methods", function (assert) {

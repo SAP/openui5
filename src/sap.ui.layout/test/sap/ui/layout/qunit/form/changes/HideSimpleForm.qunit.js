@@ -198,12 +198,14 @@ sap.ui.define([
 		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0];
 		this.oXmlLabel0 = this.oXmlSimpleForm.childNodes[0].childNodes[1];
 
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWithGlobalIdsWrapper, this.oXmlSimpleForm, {
-			modifier : this.oXmlTreeModifier,
-			appComponent: this.oMockedComponent,
-			view : this.oXmlDocument
-		}), "no errors occur");
-		assert.ok(this.oXmlLabel0.getAttribute("visible"), "the FormElement is hidden");
+		assert.throws(function () {
+			this.oChangeHandler.applyChange(this.oChangeWithGlobalIdsWrapper, this.oXmlSimpleForm, {
+				modifier : this.oXmlTreeModifier,
+				appComponent: this.oMockedComponent,
+				view : this.oXmlDocument
+			});
+		}, /Change cannot be applied in XML. Retrying in JS./, "no errors occur");
+		assert.strictEqual(this.oXmlLabel0.getAttribute("visible"), "true", "the FormElement is visible");
 	});
 
 	QUnit.test("applyChange shall not return true if the control does not have the required methods", function (assert) {
@@ -367,9 +369,11 @@ sap.ui.define([
 				view : this.oXmlDocument
 		};
 
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, mPropertyBag), "no errors occur");
-		assert.ok(this.oXmlLabel0.getAttribute("visible"), "the FormElement is hidden");
-		assert.ok(Array.prototype.slice.call(this.oXmlSimpleForm.childNodes).some(function(oChildDom) {
+		assert.throws(function () {
+			this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, mPropertyBag);
+		}, /Change cannot be applied in XML. Retrying in JS./, "no errors occur");
+		assert.strictEqual(this.oXmlLabel0.getAttribute("visible"), "true", "the FormElement is visible");
+		assert.notOk(Array.prototype.slice.call(this.oXmlSimpleForm.childNodes).some(function(oChildDom) {
 			if (oChildDom.localName === "dependents") {
 				return oChildDom.childNodes[0].getAttribute("id") === this.oChangeWrapper.getContent().elementSelector;
 			}
