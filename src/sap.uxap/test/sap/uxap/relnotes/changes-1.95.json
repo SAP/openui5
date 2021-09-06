@@ -1,7 +1,18 @@
 {
   "1.95.0": {
-    "date": "August 2021",
+    "date": "September 2021",
     "notes": [
+      {
+        "id": "b007c0e005b7adbc1b1f8198585b7ff985d60588",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected scroll to subSection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180373220"
+          }
+        ]
+      },
       {
         "id": "b9bf1089ce0b40bd499876f5b9dbb7ba95cc612c",
         "type": "FIX",

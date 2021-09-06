@@ -1,7 +1,29 @@
 {
   "1.95.0": {
-    "date": "August 2021",
+    "date": "September 2021",
     "notes": [
+      {
+        "id": "07e825fb13ee36eda32e58f6d57f4b6e840b1cd9",
+        "type": "FIX",
+        "text": " Interaction:  BrowserElement not defined.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170180359"
+          }
+        ]
+      },
+      {
+        "id": "52e57f80a976edce4e26186e89dfef7888e3db85",
+        "type": "FIX",
+        "text": " Component: Accept multiple onInstanceCreated listeners",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180375313"
+          }
+        ]
+      },
       {
         "id": "c694f4e5583b6a0ebde4d230136360911575fcaf",
         "type": "FIX",

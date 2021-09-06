@@ -1,7 +1,18 @@
 {
   "1.95.0": {
-    "date": "August 2021",
+    "date": "September 2021",
     "notes": [
+      {
+        "id": "610837f686ab128babc3507c522e7a3e14fdb1d3",
+        "type": "FIX",
+        "text": " sap.ui.unidied.CalendarDateInterval: shows special dates outside start date's month",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180369369"
+          }
+        ]
+      },
       {
         "id": "c443749be765f54178ad2b65fe258cd2db93e826",
         "type": "FIX",

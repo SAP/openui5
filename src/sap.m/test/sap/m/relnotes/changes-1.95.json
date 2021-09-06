@@ -1,7 +1,67 @@
 {
   "1.95.0": {
-    "date": "August 2021",
+    "date": "September 2021",
     "notes": [
+      {
+        "id": "806aab06b79b2c23e313dd0f9831788b3e41c4b0",
+        "type": "FIX",
+        "text": " sap.m.StepInput: formats its value correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006083982021"
+          }
+        ]
+      },
+      {
+        "id": "8dd94fd68ff9e5b3badabf5f9c828f90fe76638c",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Display initially bound value when in read-only mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005050852021"
+          }
+        ]
+      },
+      {
+        "id": "115486d998058eb79bb5d5ca0284fb5b62eea4c5",
+        "type": "FIX",
+        "text": " sap.m.Input: Input value is not cleared when focus is over a group header",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170176927"
+          }
+        ]
+      },
+      {
+        "id": "f7393b79e42d780083f7d7d3216cede47a8e19c7",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Unnecessary invalidation is now avoided",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970240933"
+          }
+        ]
+      },
+      {
+        "id": "744adca90ef794dea90db27e3801136d8b0f9115",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: activedescendant is now set when group header is focused",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180360232"
+          }
+        ]
+      },
+      {
+        "id": "ef421329e236f7ef048ed7c19b63e87009be8d2c",
+        "type": "FIX",
+        "text": " sap.m.Input: Hide clear icon when setShowClarIcon is called with false"
+      },
       {
         "id": "bbbb51259042eb6bf51100995a48d7781f4038da",
         "type": "FIX",
@@ -21,6 +81,17 @@
           {
             "type": "BCP",
             "reference": "002075129500005668632021"
+          }
+        ]
+      },
+      {
+        "id": "2ab3ecd76ebdb75bb429e3f742e280d6fa02b339",
+        "type": "FIX",
+        "text": " sap.m.TextArea: correct mirror font-size when browser font-size is changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180375336"
           }
         ]
       },
