@@ -5922,97 +5922,100 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resets changes that have been collected.
+	 * Discards the changes for the given entity key, that means aborts internal requests, removes
+	 * the changes from the shadow cache, and removes all messages for that entity.
 	 *
-	 * By default, only client data changes triggered through:
-	 * {@link #createEntry}
-	 * {@link #setProperty}
-	 * are taken into account.
+	 * @param {string} sKey The entity key
+	 * @private
+	 */
+	 ODataModel.prototype._discardEntityChange = function (sKey) {
+		var that = this;
+
+		this.oMetadata.loaded().then(function () {
+			that.abortInternalRequest(that._resolveGroup(sKey).groupId, {requestKey : sKey});
+		});
+		delete this.mChangedEntities[sKey];
+		sap.ui.getCore().getMessageManager().removeMessages(this.getMessagesByEntity(sKey, true));
+	};
+
+	/**
+	 * Resets pending changes and aborts corresponding requests.
 	 *
-	 * If <code>bAll</code> is set to <code>true</code>, also deferred requests triggered through:
-	 * {@link #create}
-	 * {@link #update}
-	 * {@link #remove}
-	 * are taken into account.
+	 * By default, only changes triggered through {@link #createEntry} or {@link #setProperty} are
+	 * taken into account. If <code>bAll</code> is set, also deferred requests triggered through
+	 * {@link #create}, {@link #update} or {@link #remove} are taken into account.
 	 *
-	 * @param {array} [aPath] 	Array of paths that should be reset.
-	 * 							If no array is passed, all changes will be reset.
-	 * @param {boolean}[bAll=false] If set to true, also deferred requests are taken into account.
-	 * @returns {Promise} Resolves when all regarded changes have been reset.
+	 * @param {array} [aPath]
+	 *   Paths to be be reset; if no array is passed, all changes are reset
+	 * @param {boolean} [bAll=false]
+	 *   Whether also deferred requests are taken into account
+	 * @returns {Promise}
+	 *   Resolves when all regarded changes have been reset.
 	 * @public
 	 */
-	ODataModel.prototype.resetChanges = function(aPath, bAll) {
-		var that = this, aParts, oEntityInfo = {}, oChangeObject, oEntityMetadata;
+	ODataModel.prototype.resetChanges = function (aPath, bAll) {
+		var pMetaDataLoaded = this.oMetadata.loaded(),
+			that = this;
 
 		if (bAll) {
-			if (aPath) {
-				aPath.forEach(function(sPath){
-					that.oMetadata.loaded().then(function () {
-						each(that.mDeferredGroups, function (sGroupId) {
-							that.abortInternalRequest(sGroupId, {path: sPath.substring(1)});
+			pMetaDataLoaded.then(function () {
+				each(that.mDeferredGroups, function (sGroupId) {
+					if (aPath) {
+						aPath.forEach(function(sPath) {
+							that.abortInternalRequest(sGroupId, {path : sPath.substring(1)});
 						});
-					});
-				});
-			} else {
-				this.oMetadata.loaded().then(function () {
-					each(that.mDeferredGroups, function (sGroupId) {
+					} else {
 						that.abortInternalRequest(sGroupId);
-					});
+					}
 				});
-			}
+			});
 		}
 		if (aPath) {
 			each(aPath, function (iIndex, sPath) {
-				that.getEntityByPath(sPath, null, oEntityInfo);
-				if (oEntityInfo && oEntityInfo.propertyPath !== undefined){
-					aParts = oEntityInfo.propertyPath.split("/");
-					var sKey = oEntityInfo.key;
-					oChangeObject = that.mChangedEntities[sKey];
-					for (var i = 0; i < aParts.length - 1; i++) {
-						if (oChangeObject.hasOwnProperty(aParts[i])) {
-							oChangeObject = oChangeObject[aParts[i]];
-						} else {
-							oChangeObject = undefined;
+				var oChangedEntity, oEntityMetadata, i, sKey, sLastSegment, aPathSegments,
+					oEntityInfo = {};
+
+				if (that.getEntityByPath(sPath, null, oEntityInfo)) {
+					aPathSegments = oEntityInfo.propertyPath.split("/");
+					sLastSegment = aPathSegments[aPathSegments.length - 1];
+					sKey = oEntityInfo.key;
+					oChangedEntity = that.mChangedEntities[sKey];
+					if (oChangedEntity) {
+						// follow path to the object containing the property to reset
+						for (i = 0; i < aPathSegments.length - 1; i += 1) {
+							if (oChangedEntity && oChangedEntity.hasOwnProperty(aPathSegments[i])) {
+								oChangedEntity = oChangedEntity[aPathSegments[i]];
+							} else {
+								// path may point to a property of a complex type and complex type
+								// might not be set; there is no property to reset
+								oChangedEntity = undefined;
+								break;
+							}
 						}
-					}
+						if (oChangedEntity && oChangedEntity.hasOwnProperty(sLastSegment)) {
+							delete oChangedEntity[sLastSegment];
+						}
 
-					if (oChangeObject) {
-						delete oChangeObject[aParts[aParts.length - 1]];
-					}
-
-					if (that.mChangedEntities[sKey]) {
-						//delete metadata to check if object has changes
+						// delete metadata to check if object has changes
 						oEntityMetadata = that.mChangedEntities[sKey].__metadata;
 						delete that.mChangedEntities[sKey].__metadata;
-						if (isEmptyObject(that.mChangedEntities[sKey]) || !oEntityInfo.propertyPath) {
-							that.oMetadata.loaded().then(function () {
-								that.abortInternalRequest(that._resolveGroup(sKey).groupId, {requestKey: sKey});
-							});
-							delete that.mChangedEntities[sKey];
-							//cleanup Messages for created Entry
-							sap.ui.getCore().getMessageManager().removeMessages(that.getMessagesByEntity(sKey, true));
+						if (isEmptyObject(that.mChangedEntities[sKey])
+								|| !oEntityInfo.propertyPath) {
+							that._discardEntityChange(sKey);
 						} else {
 							that.mChangedEntities[sKey].__metadata = oEntityMetadata;
 						}
-					} else {
-						Log.warning(that + " - resetChanges: " + sPath + " is not changed");
 					}
 				}
 			});
 		} else {
-			each(this.mChangedEntities, function (sKey, oObject) {
-				that.oMetadata.loaded().then(function () {
-					that.abortInternalRequest(that._resolveGroup(sKey).groupId, {requestKey: sKey});
-				});
-				delete that.mChangedEntities[sKey];
-				//cleanup Messages for created Entry
-				sap.ui.getCore().getMessageManager().removeMessages(that.getMessagesByEntity(sKey, true));
+			each(this.mChangedEntities, function (sKey) {
+				that._discardEntityChange(sKey);
 			});
-
 		}
 		this.checkUpdate(true);
 
-		return this.oMetadata.loaded();
+		return pMetaDataLoaded;
 	};
 
 	/**
