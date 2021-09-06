@@ -16,6 +16,10 @@ sap.ui.define([
 	 */
 	var UnhideForm = { };
 
+	function _isXmlModifier(mPropertyBag) {
+		return mPropertyBag.modifier.targets === "xmlTree";
+	}
+
 	/**
 	 * Unhides a control
 	 *
@@ -32,6 +36,12 @@ sap.ui.define([
 		var oAppComponent = mPropertyBag.appComponent;
 
 		var oChangeDefinition = oChangeWrapper.getDefinition();
+
+		// in case of custom fields the application needs to be on JS.
+		// In the other case the visuality of the control will be overriden by the custom field binding afterwards
+		if (_isXmlModifier(mPropertyBag)) {
+			return Promise.reject(Error("Change cannot be applied in XML. Retrying in JS."));
+		}
 
 		// !important : sUnhideId was used in 1.40, do not remove for compatibility reasons!
 		var oControlToUnhide = oModifier.bySelector(oChangeDefinition.content.elementSelector || oChangeDefinition.content.sUnhideId, oAppComponent, oView);

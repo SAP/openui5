@@ -218,9 +218,9 @@ sap.ui.define([
 			appComponent: this.oMockedComponent,
 			view : this.oXmlDocument
 		})
-		.then(function(){
-			assert.ok(this.oXmlLabel0.getAttribute("visible"), "the FormElement is hidden");
-		}.bind(this));
+			.catch(function (vError){
+				assert.strictEqual(vError.message, "Change cannot be applied in XML. Retrying in JS.");
+			});
 	});
 
 	QUnit.test("applyChange shall fail if the control is invalid", function (assert) {
@@ -387,15 +387,14 @@ sap.ui.define([
 				view : this.oXmlDocument
 		};
 
-		return this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, mPropertyBag)
-			.then(function() {
-				assert.ok(this.oXmlLabel0.getAttribute("visible"), "the FormElement is hidden");
-				assert.ok(Array.prototype.slice.call(this.oXmlSimpleForm.childNodes).some(function(oChildDom) {
-					if (oChildDom.localName === "dependents") {
-						return oChildDom.childNodes[0].getAttribute("id") === this.oChangeWrapper.getContent().elementSelector;
-					}
-				}.bind(this)), "then removed element was added to the dependents aggregation");
-			}.bind(this));
+		return this.oChangeHandler.applyChange(
+			this.oChangeWrapper,
+			this.oXmlSimpleForm,
+			mPropertyBag
+		)
+			.catch(function (vError){
+				assert.strictEqual(vError.message, "Change cannot be applied in XML. Retrying in JS.");
+			});
 	});
 
 	QUnit.module("using HideSimpleForm with a simpleform with toolbar", {

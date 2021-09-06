@@ -224,11 +224,15 @@ sap.ui.define([
 			},
 			remove: {
 				changeType: "hideSimpleFormField",
-				changeOnRelevantContainer: true
+				changeOnRelevantContainer: true,
+				 // SimpleForm field visibility changes could be invalidated by custom field visibility settings
+				jsOnly: true
 			},
 			reveal: {
 				changeType: "unhideSimpleFormField",
-				changeOnRelevantContainer: true
+				changeOnRelevantContainer: true,
+				 // SimpleForm field visibility changes could be invalidated by custom field visibility settings
+				jsOnly: true
 			}
 		},
 		getStableElements: getStableElements
