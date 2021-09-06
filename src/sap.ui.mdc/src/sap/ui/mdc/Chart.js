@@ -633,7 +633,7 @@ sap.ui.define([
 		};
 
 		Chart.prototype._onDataLoadComplete = function(mEventParams) {
-			if (mEventParams.mParameters.reason === "change" && !mEventParams.mParameters.detailedReason) {
+			if ((mEventParams.mParameters.reason === "change" || mEventParams.mParameters.reason === "filter" ) && !mEventParams.mParameters.detailedReason) {
 				this.setBusy(false);
 			}
 		};
