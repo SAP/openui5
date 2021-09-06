@@ -509,7 +509,7 @@ function(
 		var pFragment = fragmentFactory(mParameters);
 
 		return pFragment.then(function(oFragment) {
-			return oFragment._parsed();
+			return oFragment._pContentPromise;
 		});
 	};
 
@@ -524,24 +524,6 @@ function(
 	 */
 	Fragment.getType = function (sType) {
 		return mTypes[sType];
-	};
-
-	/**
-	 * Returns a promise which resolves when the content of the fragment is parsed
-	 *
-	 * @private
-	 * @returns {Promise} resolves when the content of the fragment is parsed
-	 */
-	Fragment.prototype._parsed = function() {
-		if (this._bAsync) {
-			return this._pContentPromise;
-		}
-		// sync path: make sure to reject the Fragment promise if the SyncPromise throws an error
-		try {
-			return Promise.resolve(this._pContentPromise.unwrap());
-		} catch (err) {
-			return Promise.reject(err);
-		}
 	};
 
 	/**
@@ -823,7 +805,7 @@ function(
 			// IMPORTANT:
 			// this call can be triggered with both "async = true" and "async = false"
 			// In case of sync processing, the XMLTemplateProcessor makes sure to only use SyncPromises.
-			return XMLTemplateProcessor.parseTemplatePromise(this._xContent, this, this._bAsync, oParseConfig).then(function(aContent) {
+			var pContentPromise = XMLTemplateProcessor.parseTemplatePromise(this._xContent, this, this._bAsync, oParseConfig).then(function(aContent) {
 				this._aContent = aContent;
 				/*
 				 * If content was parsed and an objectBinding at the fragment was defined
@@ -841,6 +823,20 @@ function(
 
 				return this._aContent.length > 1 ? this._aContent : this._aContent[0];
 			}.bind(this));
+			// in sync case we must get a SyncPromise and need to unwrap for error logging
+			if (!this._bAsync) {
+				try {
+					pContentPromise.unwrap();
+				} catch (e) {
+					Log.error("An Error occured during XML processing of '" +
+							this.getMetadata().getName() +
+							"' with id '" +
+							this.getId() +
+							"':\n" +
+							e.stack);
+				}
+			}
+			return pContentPromise;
 		}
 	});
 
