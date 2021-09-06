@@ -136,7 +136,7 @@ sap.ui.define([
 					"support"               : { type : "string[]", defaultValue : null },
 					"testRecorder"          : { type : "string[]", defaultValue : null },
 					"activeTerminologies"   : { type : "string[]", defaultValue: undefined},
-					"securityTokenHandler"  : { type : "function", defaultValue: undefined },
+					"securityTokenHandler"  : { type : "function", defaultValue: undefined,  noUrl: true },
 					"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
 					"xx-appCacheBusterMode" : { type : "string",   defaultValue : "sync" },
 					"xx-appCacheBusterHooks": { type : "object",   defaultValue : undefined, noUrl:true }, // e.g.: { handleURL: fn, onIndexLoad: fn, onIndexLoaded: fn }
