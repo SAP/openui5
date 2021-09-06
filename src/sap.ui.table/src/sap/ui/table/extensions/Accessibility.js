@@ -710,12 +710,8 @@ sap.ui.define([
 					mAttributes["role"] = "gridcell";
 					mAttributes["aria-colindex"] = mParams.index + 1 + (TableUtils.hasRowHeader(oTable) ? 1 : 0);
 
-					var aLabels = [],
-						oColumn = mParams && mParams.column ? mParams.column : null;
-
-					if (oColumn) {
-						aLabels = ExtensionHelper.getRelevantColumnHeaders(oTable, oColumn);
-						mAttributes["headers"] = aLabels.join(" ");
+					if (mParams.column) {
+						var aLabels = ExtensionHelper.getRelevantColumnHeaders(oTable, mParams.column);
 
 						for (var i = 0; i < aLabels.length; i++) {
 							aLabels[i] = aLabels[i] + "-inner";
@@ -724,9 +720,9 @@ sap.ui.define([
 						if (mParams && mParams.fixed) {
 							aLabels.push(sTableId + "-ariafixedcolumn");
 						}
-					}
 
-					mAttributes["aria-labelledby"] = aLabels;
+						mAttributes["aria-labelledby"] = aLabels;
+					}
 					break;
 
 				case AccExtension.ELEMENTTYPES.ROOT: //The tables root dom element
