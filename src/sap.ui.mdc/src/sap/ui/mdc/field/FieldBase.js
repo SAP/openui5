@@ -1022,12 +1022,12 @@ sap.ui.define([
 
 	}
 
-	function _removeUIMessage() {
+	FieldBase.prototype._removeUIMessage = function() {
 
 		this.setValueState(ValueState.None);
 		this.setValueStateText();
 
-	}
+	};
 
 	/**
 	 * Observes changes.
@@ -1661,7 +1661,7 @@ sap.ui.define([
 		if (this._bParseError) {
 			// as wrong input get lost if content control is destroyed.
 			this._bParseError = false;
-			_removeUIMessage.call(this);
+			this._removeUIMessage();
 		}
 
 		if (this._oContentFactory.isMeasure()) {
@@ -1991,7 +1991,7 @@ sap.ui.define([
 
 		if (bUpdateConditions) {
 			// text typed in MultiInput
-			_removeUIMessage.call(this);
+			this._removeUIMessage();
 			var oConditionType;
 			var oMyChange;
 
@@ -2540,7 +2540,7 @@ sap.ui.define([
 			// after selection input cannot be wrong
 			if (this._bParseError) { // only remove messages set by Field itself, message from outside should stay.
 				this._bParseError = false;
-				_removeUIMessage.call(this);
+				this._removeUIMessage();
 			}
 		}
 
