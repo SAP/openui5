@@ -1501,23 +1501,29 @@ sap.ui.define([
 	/**
 	 * Applies the given filters to the ODataTreeBinding.
 	 *
-	 * Please note that filters of type <code>FilterType.Control</code> are not supported for <code>OperationMode.Server</code>,
-	 * here only filters of type <code>FilterType.Application</code> are allowed. Filters given via the constructor are always
-	 * of type <code>Application</code> and will be sent with every backend request.
-	 * See the constructor documentation for more information.
+	 * Please note that filters of type <code>FilterType.Control</code> are not supported for
+	 * <code>OperationMode.Server</code>,
+	 * here only filters of type <code>FilterType.Application</code> are allowed. Filters given via
+	 * {@link sap.ui.model.odata.v2.ODataModel#bindTree} are always
+	 * of type <code>Application</code> and will be sent with every back-end request.
+	 * For more information, see {@link sap.ui.model.odata.v2.ODataModel#bindTree}.
 	 *
-	 * Since 1.34.0, complete client-side filtering is supported for <code>OperationMode.Client</code> and also in
-	 * <code>OperationMode.Auto</code> if the backend count is lower than the threshold.
+	 * Since 1.34.0, complete client-side filtering is supported for
+	 * <code>OperationMode.Client</code> and also in <code>OperationMode.Auto</code> if the
+	 * back-end count is lower than the threshold.
 	 * In this case, all types of filters will be applied on the client.
-	 * See also: {@link sap.ui.model.odata.OperationMode.Auto}, {@link sap.ui.model.FilterType}.
+	 * See also: {@link sap.ui.model.odata.OperationMode.Auto} and {@link sap.ui.model.FilterType}.
 	 *
-	 * For the <code>OperationMode.Client</code> and <code>OperationMode.Auto</code>, you may also specify the
-	 * binding parameter <code>useServersideApplicationFilters</code> in the constructor. If it is set, the filters of type
-	 * <code>Application</code> will always be applied on the backend and trigger an OData request.
-	 * See the constructor documentation for more information.
+	 * For the <code>OperationMode.Client</code> and <code>OperationMode.Auto</code>, you may also
+	 * specify the <code>useServersideApplicationFilters</code>  binding parameter when creating an
+	 * instance. If it is set, the filters of type <code>Application</code> will always be applied
+	 * on the back end and trigger an OData request.
+	 * For more information, see {@link sap.ui.model.odata.v2.ODataModel#bindTree}.
 	 *
-	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} aFilters Filter or array of filters to apply
-	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted. If it is not given,
+	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} aFilters
+	 *   Filter or array of filters to apply
+	 * @param {sap.ui.model.FilterType} sFilterType
+	 *   Type of the filter which should be adjusted. If it is not given,
 	 *   the type <code>FilterType.Control</code> is assumed
 	 * @return {this} Returns <code>this</code> to facilitate method chaining
 	 * @see sap.ui.model.TreeBinding.prototype.filter
@@ -2315,10 +2321,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the rootLevel
-	 * The root level is the level of the topmost tree nodes, which will be used as an entry point for OData services.
-	 * This is only possible (and necessary) for OData services implementing the hierarchy annotation specification,
-	 * or when providing the annotation information locally as a binding parameter. See the constructor for API documentation on this.
+	 * Sets the <code>rootLevel</code>.
+	 * The root level is the level of the topmost tree nodes that will be used as an entry point
+	 * for OData services.
+	 * This is only possible (and necessary) for OData services implementing the hierarchy
+	 * annotation specification,
+	 * or when providing the annotation information locally as a binding parameter.
+	 * For more information, see {@link sap.ui.model.odata.v2.ODataModel#bindTree}.
 	 * @param {int} iRootLevel
 	 *
 	 * @public
