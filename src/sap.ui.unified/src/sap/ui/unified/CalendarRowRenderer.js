@@ -192,6 +192,8 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 						break;
 
 					case CalendarIntervalType.Month:
+						iSubStartOffset = oIntervalNextStartDate.getUTCDay();
+
 						oIntervalNextStartDate.setUTCMonth(oIntervalNextStartDate.getUTCMonth() + 1);
 						if (oIntervalNextStartDate.getUTCMonth() == 0) {
 							bLastOfType = true;
