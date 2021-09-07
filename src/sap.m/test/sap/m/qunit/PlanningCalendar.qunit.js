@@ -1709,6 +1709,19 @@ sap.ui.define([
 		assert.equal(oRowHeader.getIcon(), "sap-icon://sap-ui5", "row header icon");
 	});
 
+	QUnit.test("Row header icon", function(assert) {
+		var oRow = sap.ui.getCore().byId("PC1-Row1");
+		var oRowHeader = _getRowHeader(oRow);
+
+		oRow.setIcon("sap-icon://sap-ui5");
+		sap.ui.getCore().applyChanges();
+
+		oRow.setIcon("../../ui/unified/images/m_01.png");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oRowHeader.getDomRef().querySelector("img"), "row header icon is set to an image");
+	});
+
 	QUnit.test("specialDates in relative period not rendered", function(assert){
 		// arrange
 		var oPC11 = createPlanningCalendar("PC11");

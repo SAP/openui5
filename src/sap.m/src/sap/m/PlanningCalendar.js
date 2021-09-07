@@ -3409,8 +3409,12 @@ sap.ui.define([
 				title: function (oChanges) {
 					oRowHeader.setProperty(oChanges.name, oChanges.current);
 				},
-				icon: function (oChanges) {
-					oRowHeader.setProperty(oChanges.name, oChanges.current);
+				icon: function(oChanges) {
+					if (oRowHeader.setIcon) {
+						oRowHeader.setIcon(oChanges.current);
+					} else {
+						oRowHeader.setProperty(oChanges.name, oChanges.current);
+					}
 				},
 				text: function (oChanges) {
 					// Large row style class
