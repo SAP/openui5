@@ -431,6 +431,22 @@ function (
 		assert.strictEqual(oItemPositionBeforeBusy.left, oItemPositionAfterBusy.left, "The element should NOT be moved horizontally after it gets busy");
 	});
 
+	QUnit.test("No data", function (assert) {
+		// Arrange
+		var oGridList = this.oGridList,
+			$noDataItem;
+
+		// Act
+		oGridList.destroyItems();
+		Core.applyChanges();
+
+		$noDataItem = oGridList.$("nodata");
+
+		// Assert
+		assert.ok($noDataItem.length, "No data item is rendered.");
+		assert.strictEqual($noDataItem.attr("role"), "option", "No data item has role option.");
+	});
+
 	QUnit.module("Keyboard handling", {
 		beforeEach: function () {
 			this.oGridList = new GridList({
