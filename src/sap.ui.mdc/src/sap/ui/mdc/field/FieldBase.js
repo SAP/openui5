@@ -1999,6 +1999,10 @@ sap.ui.define([
 				// remove filter value from input and don't use it as input
 				this._bIgnoreInputValue = false;
 				oSource.setDOMValue("");
+				if (oSource.getMetadata().hasProperty("value")) {
+					// clear "value" property of MultiInput as there might be an old value from a invalid input before
+					oSource.setValue();
+				}
 				return;
 			}
 
@@ -2529,7 +2533,10 @@ sap.ui.define([
 				}
 				this._sFilterValue = "";
 			} else if (bClose) {
-				// remove typed value from MultiInput
+				if (this.getMaxConditions() !== 1 && !this._oContentFactory.getBoundProperty() && oContent.getMetadata().hasProperty("value") && oContent.getProperty("value")) {
+					// clear "value" property of MultiInput as there might be an old value from a invalid input before
+					oContent.setValue();
+				}
 				oContent.setDOMValue("");
 				this._sFilterValue = "";
 				this._bIgnoreInputValue = false; // just clean up
@@ -2656,6 +2663,10 @@ sap.ui.define([
 			var oContent = this.getControlForSuggestion();
 			this._bIgnoreInputValue = false;
 			oContent.setDOMValue("");
+			if (this.getMaxConditions() !== 1 && !this._oContentFactory.getBoundProperty() && oContent.getMetadata().hasProperty("value") && oContent.getProperty("value")) {
+				// clear "value" property of MultiInput as there might be an old value from a invalid input before
+				oContent.setValue();
+			}
 		}
 
 		_setAriaAttributes.call(this, false);
