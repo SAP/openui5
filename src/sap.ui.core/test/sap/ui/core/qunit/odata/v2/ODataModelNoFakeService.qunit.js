@@ -721,6 +721,34 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_processRequest: calls _createAbortedError on abort", function (assert) {
+		var fnError = sinon.stub(),
+			oModel = {
+				oMetadata : {
+					loaded : function () {}
+				}
+			},
+			oRequestHandle;
+
+		this.mock(oModel.oMetadata).expects("loaded")
+			.withExactArgs()
+			.returns({then : function () {/*not relevant*/}});
+
+		// code under test
+		oRequestHandle = ODataModel.prototype._processRequest.call(oModel, "~fnProcessRequest",
+			fnError, false);
+
+		assert.strictEqual(fnError.called, false);
+
+		this.mock(ODataModel).expects("_createAbortedError").withExactArgs().returns("~oError");
+
+		// code under test
+		oRequestHandle.abort();
+
+		assert.ok(fnError.calledOnceWithExactly("~oError"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("_writePathCache", function (assert) {
 		var oModel = {
 				mPathCache : {}

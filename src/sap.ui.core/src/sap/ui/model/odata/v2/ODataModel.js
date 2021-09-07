@@ -4762,36 +4762,44 @@ sap.ui.define([
 	};
 
 	/**
-	 * Executes the passed process request method when the metadata is available and takes care
-	 * of properly wrapping the response handler and allow request abortion
+	 * Executes the passed process request method when the metadata is available, takes care of
+	 * properly wrapping the response handler to allow request abortion, and processes the request
+	 * queue asynchronously.
 	 *
-	 * @param {function} [fnProcessRequest] Function to prepare the request and add it to the request queue
-	 * @return {object} An object which has an <code>abort</code> function to abort the current request.
+	 * @param {function} fnProcessRequest
+	 *   Function to prepare the request and add it to the request queue; it is called with the
+	 *   request handle object returned by {@link #_processRequest}
+	 * @param {function} [fnError]
+	 *   Error callback which is called when the request is aborted
+	 * @param {boolean} [bDeferred]
+	 *   Whether the request belongs to a deferred group
+	 * @returns {object}
+	 *   A request handle object which has an <code>abort</code> function to abort the current
+	 *   request
+	 * @private
 	 */
-	ODataModel.prototype._processRequest = function(fnProcessRequest, fnError, bDeferred) {
-		var oRequestHandle, oRequest,
+	ODataModel.prototype._processRequest = function (fnProcessRequest, fnError, bDeferred) {
+		var oRequest, oRequestHandle,
 			bAborted = false,
 			that = this;
 
 		if (this.bWarmup) {
-			return {
-				abort: function() {}
-			};
+			return {abort : function () {}};
 		}
 
-		if (bDeferred){
-			this.iPendingDeferredRequests++;
+		if (bDeferred) {
+			this.iPendingDeferredRequests += 1;
 		}
-
 		oRequestHandle = {
-				abort: function() {
+				abort : function () {
 					if (bDeferred && !bAborted){
-						// Since in some scenarios no request object was created yet, the counter is decreased manually.
-						that.iPendingDeferredRequests--;
+						// Since in some scenarios no request object was created yet, the counter is
+						// decreased manually
+						that.iPendingDeferredRequests -= 1;
 					}
 					// Call error handler synchronously
 					if (!bAborted && fnError) {
-						fnError(oAbortedError);
+						fnError(ODataModel._createAbortedError());
 					}
 					if (oRequest) {
 						oRequest._aborted = true;
@@ -4799,25 +4807,20 @@ sap.ui.define([
 							oRequest._handle.abort();
 						}
 					}
-
 					bAborted = true;
 				}
 		};
-
-		this.oMetadata.loaded().then(function() {
-
+		this.oMetadata.loaded().then(function () {
 			oRequest = fnProcessRequest(oRequestHandle);
-
 			if (oRequest) {
 				oRequest.deferred = !!bDeferred;
 			}
-
 			that._processRequestQueueAsync(that.mRequests);
-
 			if (bAborted) {
 				oRequestHandle.abort();
 			}
 		});
+
 		return oRequestHandle;
 	};
 
