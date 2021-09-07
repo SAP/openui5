@@ -731,6 +731,12 @@ sap.ui.define([
 				type: ViewType.XML
 			});
 		} else if (oRootView && typeof oRootView === "object") {
+
+			// default ViewType to XML, except for typed views
+			if (!oRootView.type && !View._getModuleName(oRootView)) {
+				oRootView.type = ViewType.XML;
+			}
+
 			// make sure to prefix the ID of the rootView
 			if (oRootView.id) {
 				oRootView.id = this.createId(oRootView.id);
