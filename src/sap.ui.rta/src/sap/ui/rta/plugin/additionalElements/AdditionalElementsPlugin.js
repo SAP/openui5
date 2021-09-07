@@ -170,8 +170,8 @@ sap.ui.define([
 			}
 
 			var oCachedElements = this.getCachedElements(bOverlayIsSibling);
-			var bElementsAvailable = oCachedElements && oCachedElements.length > 0;
-			bIsEnabled = bIsEnabled && !!bElementsAvailable;
+			var bElementsAvailable = !!(oCachedElements && oCachedElements.length > 0);
+			bIsEnabled = bIsEnabled && bElementsAvailable;
 			return bIsEnabled;
 		},
 

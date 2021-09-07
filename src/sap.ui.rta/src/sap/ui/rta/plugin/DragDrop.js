@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/ui/dt/plugin/ControlDragDrop",
 	"sap/ui/dt/Util",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/rta/plugin/RTAElementMover",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/Utils"
@@ -12,6 +13,7 @@ sap.ui.define([
 function(
 	ControlDragDrop,
 	DtUtil,
+	OverlayRegistry,
 	RTAElementMover,
 	Plugin,
 	Utils
@@ -121,7 +123,8 @@ function(
 	};
 
 	/**
-	 * Additionally to super->onDragEnd this method takes care about moving the element
+	 * Additionally to super->onDragEnd this method takes care of moving the element
+	 * and updating the relevant overlays on the source and target aggregations.
 	 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
@@ -138,6 +141,8 @@ function(
 			oOverlay.focus();
 
 			ControlDragDrop.prototype.onDragEnd.apply(this, arguments);
+
+			this._updateRelevantOverlays();
 		}.bind(this))
 
 		.catch(function(vError) {
@@ -156,6 +161,51 @@ function(
 	 */
 	DragDrop.prototype.onMovableChange = function() {
 		ControlDragDrop.prototype.onMovableChange.apply(this, arguments);
+	};
+
+	/**
+	 * Triggers evaluateEditable on the relevant overlays from the source and target
+	 * container of the last move, to ensure that they are up-to-date.
+	 * For example: if one element is removed from an aggregation and there is a single
+	 * element left on the this aggregation, that element should no longer be movable.
+	 */
+	DragDrop.prototype._updateRelevantOverlays = function() {
+		var mParentInformation = this.getElementMover().getSourceAndTargetParentInformation();
+		var oSourceParent = mParentInformation.sourceParentInformation.parent;
+		var oTargetParent = mParentInformation.targetParentInformation.parent;
+		var sSourceAggregation = mParentInformation.sourceParentInformation.aggregation;
+		var sTargetAggregation = mParentInformation.targetParentInformation.aggregation;
+		var aSourceChildren = oSourceParent && oSourceParent.getAggregation(sSourceAggregation);
+		var aRelevantOverlays = [];
+		if (aSourceChildren && aSourceChildren.length > 0) {
+			var oSourceChildOverlay = OverlayRegistry.getOverlay(aSourceChildren[0]);
+			aRelevantOverlays = this._getRelevantOverlays(oSourceChildOverlay, sSourceAggregation);
+		}
+		if (
+			oTargetParent &&
+			(
+				oTargetParent !== oSourceParent ||
+				((oTargetParent === oSourceParent) && (sSourceAggregation !== sTargetAggregation))
+			)
+		) {
+			var aTargetChildren = oTargetParent && oTargetParent.getAggregation(sTargetAggregation);
+			if (aTargetChildren && aTargetChildren.length > 1) {
+				var iTargetIndex = mParentInformation.targetParentInformation.index;
+				// We can't pass the moved overlay to _getRelevantOverlays as it returns the siblings before the move
+				// we need a previously existing element from the target aggregation - before or after the insert index
+				var oTargetChild = aTargetChildren[iTargetIndex + 1] || aTargetChildren[iTargetIndex - 1];
+				var oTargetChildOverlay = OverlayRegistry.getOverlay(oTargetChild);
+				var aTargetRelevantOverlays = this._getRelevantOverlays(oTargetChildOverlay, sTargetAggregation);
+				aRelevantOverlays = aRelevantOverlays.concat(aTargetRelevantOverlays);
+			}
+		}
+		if (aRelevantOverlays.length > 0) {
+			//Remove duplicates (e.g. when the parent is the same)
+			aRelevantOverlays = aRelevantOverlays.filter(function(oRelevantOverlay, iIndex, aSource) {
+				return iIndex === aSource.indexOf(oRelevantOverlay);
+			});
+			this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
+		}
 	};
 
 	return DragDrop;

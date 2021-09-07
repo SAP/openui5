@@ -257,28 +257,12 @@ sap.ui.define([
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oLayout1Overlay = OverlayRegistry.getOverlay(this.oLayout1);
-				this.oLayout2Overlay = OverlayRegistry.getOverlay(this.oLayout2);
 				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 				this.oButtonOverlay.setMovable(true);
 				this.oAggregationOverlay = this.oLayout1Overlay.getParentAggregationOverlay();
 				this.oAggregationOverlay.setTargetZone(true);
 				done();
 			}.bind(this));
-
-			// this.oLayout1Overlay = new ElementOverlay({element : this.oLayout1, designTimeMetadata : {}});
-
-			// this.oLayout2Overlay = new ElementOverlay({element : this.oLayout2, designTimeMetadata : {}});
-			// this.oLayout2Overlay.placeInOverlayContainer();
-			// this.oAggregationOverlay = this.oLayout2Overlay.getAggregationOverlay("content");
-			// this.oButtonOverlay = new ElementOverlay({element : this.oButton, designTimeMetadata : {}});
-			// this.oButtonOverlay.setMovable(true);
-
-			// sap.ui.getCore().applyChanges();
-			// this.oDragDrop = new DragDrop();
-			// this.oDragDrop.registerElementOverlay(this.oButtonOverlay);
-			// this.oDragDrop.registerElementOverlay(this.oLayout1Overlay);
-			// this.oDragDrop.registerAggregationOverlay(this.oAggregationOverlay);
-			// this.oAggregationOverlay.setTargetZone(true);
 
 			this.mFakeTouchEvents = {
 				touchstart: {
@@ -310,7 +294,6 @@ sap.ui.define([
 		afterEach: function() {
 			this.oButtonOverlay.destroy();
 			this.oLayout1Overlay.destroy();
-			this.oLayout2Overlay.destroy();
 			this.oLayout2.destroy();
 			this.oDragDrop.destroy();
 			this.oDesignTime.destroy();
