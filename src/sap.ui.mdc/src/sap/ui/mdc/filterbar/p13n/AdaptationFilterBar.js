@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/filterbar/p13n/GroupContainer", "sap/ui/mdc/filterbar/p13n/FilterGroupLayout","sap/ui/mdc/filterbar/p13n/TableContainer", "sap/ui/mdc/filterbar/p13n/FilterColumnLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer"
-], function( GroupContainer, FilterGroupLayout, TableContainer, FilterColumnLayout, FilterBarBase, FilterBarBaseRenderer) {
+	"sap/ui/mdc/filterbar/p13n/GroupContainer", "sap/ui/mdc/filterbar/p13n/FilterGroupLayout","sap/ui/mdc/filterbar/p13n/TableContainer", "sap/ui/mdc/filterbar/p13n/FilterColumnLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", 'sap/base/Log'
+], function( GroupContainer, FilterGroupLayout, TableContainer, FilterColumnLayout, FilterBarBase, FilterBarBaseRenderer, Log) {
 	"use strict";
 
 	/**
@@ -125,29 +125,6 @@ sap.ui.define([
 	AdaptationFilterBar.prototype.applyConditionsAfterChangesApplied = function() {
 		FilterBarBase.prototype.applyConditionsAfterChangesApplied.apply(this, arguments);
 		this.triggerSearch();
-	};
-
-	/**
-	 * Method which will initialize the <code>AdaptationFilterBar</code> to retrieve the propertyinfo based on its parent
-	 *
-	 * @returns {Promise} A Promise which resolves once the propertyinfo has been propagated
-	 */
-	AdaptationFilterBar.prototype.initialized = function(){
-
-		var oParentPropertyInfoPromise = this.getAdaptationControl().awaitControlDelegate().then(function(oParentControl) {
-			return oParentControl.fetchProperties(this.getAdaptationControl()).then(function(aPropertyInfo){
-				return aPropertyInfo;
-			});
-		}.bind(this));
-
-		return Promise.all([
-			oParentPropertyInfoPromise,
-			FilterBarBase.prototype.initialized.apply(this, arguments)
-		]).then(function(aResolvedValues){
-			var aPropertyInfo = aResolvedValues[0];
-			this._aProperties = aPropertyInfo;
-		}.bind(this));
-
 	};
 
 	/**
@@ -326,6 +303,54 @@ sap.ui.define([
 		}
 		this._mOriginalsForClone = null;
 		this.oAdaptationModel = null;
+	};
+
+	AdaptationFilterBar.prototype._retrieveMetadata = function() {
+
+		if (this._oMetadataAppliedPromise) {
+			return this._oMetadataAppliedPromise;
+		}
+
+		this._fResolveMetadataApplied = undefined;
+		this._oMetadataAppliedPromise = new Promise(function(resolve) {
+			this._fResolveMetadataApplied = resolve;
+		}.bind(this));
+
+		var oAdaptationControl = this.getAdaptationControl();
+
+		Promise.all([oAdaptationControl && oAdaptationControl.awaitControlDelegate && oAdaptationControl.awaitControlDelegate(), this.initControlDelegate()]).then(function() {
+			if (!this._bIsBeingDestroyed) {
+
+				this._aProperties = [];
+
+				var fnResolveMetadata = function() {
+					this._fResolveMetadataApplied();
+					this._fResolveMetadataApplied = null;
+				}.bind(this);
+
+				var oParentDelegate = oAdaptationControl.getControlDelegate();
+
+				if (oParentDelegate && oParentDelegate.fetchProperties) {
+					try {
+						oParentDelegate.fetchProperties(oAdaptationControl).then(function(aProperties) {
+							this._aProperties = aProperties;
+							fnResolveMetadata();
+						}.bind(this), function(sMsg) {
+							Log.error(sMsg);
+							fnResolveMetadata();
+						});
+					} catch (ex) {
+						Log.error("Exception during fetchProperties occured: " + ex.message);
+						fnResolveMetadata();
+					}
+				} else {
+					Log.error("Provided delegate '" + this.getDelegate().path + "' not valid.");
+					fnResolveMetadata();
+				}
+			}
+		}.bind(this));
+
+		return this._oMetadataAppliedPromise;
 	};
 
 	return AdaptationFilterBar;
