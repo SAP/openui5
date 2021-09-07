@@ -292,7 +292,7 @@ sap.ui.define([
 		}
 	};
 
-	IconTabFilter.prototype.invalidate = function(oOrigin) {
+	IconTabFilter.prototype.invalidate = function() {
 		var oIconTabHeader = this.getParent(),
 			oIconTabBar,
 			oObjectHeader;
@@ -305,7 +305,7 @@ sap.ui.define([
 		oIconTabBar = oIconTabHeader.getParent();
 
 		if (!(oIconTabBar instanceof sap.m.IconTabBar)) {
-			oIconTabHeader.invalidate(oOrigin);
+			oIconTabHeader.invalidate();
 			return;
 		}
 
@@ -313,9 +313,9 @@ sap.ui.define([
 
 		if (oObjectHeader instanceof sap.m.ObjectHeader) {
 			// invalidate the object header to re-render IconTabBar content and header
-			oObjectHeader.invalidate(oOrigin);
+			oObjectHeader.invalidate();
 		} else {
-			oIconTabBar.invalidate(oOrigin);
+			oIconTabBar.invalidate();
 		}
 	};
 
