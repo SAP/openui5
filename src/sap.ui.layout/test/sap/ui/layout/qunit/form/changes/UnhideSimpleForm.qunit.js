@@ -108,9 +108,9 @@ sap.ui.define([
 			modifier : XmlTreeModifier,
 			view : this.oXmlDocument
 		})
-			.then(function() {
-				assert.strictEqual(this.oXmlLabel0.getAttribute("visible"), null, "the FormElement is visible");
-			}.bind(this));
+			.catch(function (vError){
+				assert.strictEqual(vError.message, "Change cannot be applied in XML. Retrying in JS.");
+			});
 	});
 
 	QUnit.module("using sap.ui.layout.changeHandler.UnhideSimpleForm with new change format", {
@@ -245,10 +245,10 @@ sap.ui.define([
 			modifier : XmlTreeModifier,
 			view : this.oXmlDocument
 		})
-			.then(function() {
-				assert.strictEqual(this.oXmlLabel0.getAttribute("visible"), null, "the FormElement is visible");
-			}.bind(this));
-	});
+			.catch(function (vError){
+				assert.strictEqual(vError.message, "Change cannot be applied in XML. Retrying in JS.");
+			});
+});
 
 	QUnit.test("applyChange shall raise an error if the control is invalid", function (assert) {
 		var oControl = {};

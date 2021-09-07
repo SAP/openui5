@@ -38,6 +38,10 @@ sap.ui.define([
 		return undefined;
 	};
 
+	function _isXmlModifier(mPropertyBag) {
+		return mPropertyBag.modifier.targets === "xmlTree";
+	}
+
 	/**
 	 * Hides a control.
 	 *
@@ -53,6 +57,12 @@ sap.ui.define([
 		var oAppComponent = mPropertyBag.appComponent;
 
 		var oChangeDefinition = oChange.getDefinition();
+
+		// in case of custom fields the application needs to be on JS.
+		// In the other case the visuality of the hidden control will be overriden by the custom field binding afterwards
+		if (_isXmlModifier(mPropertyBag)) {
+			return Promise.reject(Error("Change cannot be applied in XML. Retrying in JS."));
+		}
 
 		// !important : sHideId was used in 1.40, do not remove for compatibility!
 		var oRemovedElement = oModifier.bySelector(oChangeDefinition.content.elementSelector || oChangeDefinition.content.sHideId, oAppComponent, oView);

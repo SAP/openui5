@@ -313,6 +313,7 @@ sap.ui.define([
 
 			elementActionTest("Checking the remove action for SimpleForm with Layout=" + sSimpleFormLayout + "when removing a group", {
 				xmlView: buildXMLForSimpleForm(),
+				jsOnly: true,
 				action: {
 					name: "Remove",
 					control: function(oView) {
