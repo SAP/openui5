@@ -30187,6 +30187,56 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Test whether UI5 configuration "securityTokenHandler" is used to set security token headers
+	//
+	// CPOUI5ODATAV4-1083
+[false, true].forEach(function (bEarlyRequests) {
+	QUnit.test("securityTokenHandler: earlyRequests: " + bEarlyRequests, function (assert) {
+		var oModel,
+			mExpectedHeaders = {
+				SomeSecurityTokenHeader : "foo",
+				SomeOtherSecurityTokenHeader : "bar",
+				 "X-CSRF-Token": undefined // Note: this is not sent by jQuery.ajax()
+			},
+			sView = '<Text id="name" text="{/EMPLOYEES(0)/Name}"/>',
+			that = this;
+
+		function securityTokenHandler() {
+			// code under test
+			return Promise.resolve({
+				SomeSecurityTokenHeader : "foo",
+				SomeOtherSecurityTokenHeader : "bar"
+			});
+		}
+
+		sap.ui.getCore().getConfiguration().setSecurityTokenHandler(securityTokenHandler);
+
+		oModel = createTeaBusiModel({autoExpandSelect : true, earlyRequests : bEarlyRequests});
+
+		this.expectRequest({
+					headers : mExpectedHeaders,
+					method : "GET",
+					url : "EMPLOYEES(0)/Name"
+				}, {value : "Frederic Fall"})
+			.expectChange("name", "Frederic Fall");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					headers : mExpectedHeaders,
+					method : "GET",
+					url : "EMPLOYEES(0)/Name"
+				} , {value : "Frederic Fall"});
+
+			that.oView.byId("name").getBinding("text").refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			sap.ui.getCore().getConfiguration().setSecurityTokenHandler();
+		});
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: Server-driven paging with sap.m.Table
 	// We expect a "growing" table to only load data when triggered by the end-user via the "More"
 	// button: There are no repeated requests in case the server-side page size is 2 and thus

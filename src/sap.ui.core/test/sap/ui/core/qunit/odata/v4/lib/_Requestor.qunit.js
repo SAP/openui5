@@ -1311,6 +1311,118 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[{
+	headers : {
+		securityToken0 : "foo",
+		securityToken1 : "bar"
+	},
+	expectedHeaders : {
+		"Accept-Language" : "en",
+		"X-CSRF-Token" : undefined, // Note: this is not sent by jQuery.ajax()
+		securityToken0 : "foo",
+		securityToken1 : "bar"
+	}
+}, {
+	headers : undefined,
+	expectedHeaders : {
+		"Accept-Language" : "en",
+		"X-CSRF-Token" : undefined // Note: this is not sent by jQuery.ajax()
+	}
+}, {
+	headers : {
+		"X-CSRF-Token" : "X-CSRF-Token from handler"
+	},
+	expectedHeaders : {
+		"Accept-Language" : "en",
+		"X-CSRF-Token" : "X-CSRF-Token from handler"
+	}
+}, {
+	headers : {
+		"x-csRf-toKen" : "x-csRf-toKen from handler"
+	},
+	expectedHeaders : {
+		"Accept-Language" : "en",
+		"X-CSRF-Token" : undefined, // Note: this is not sent by jQuery.ajax()
+		"x-csRf-toKen" : "x-csRf-toKen from handler"
+	}
+}].forEach(function (oFixture) {
+	QUnit.test("processSecurityTokenHandler: ", function (assert) {
+		var oRequestor;
+
+		function securityTokenHandler () {
+			return Promise.resolve(oFixture.headers);
+		}
+
+		this.mock(sap.ui.getCore().getConfiguration()).expects("getSecurityTokenHandler")
+			.withExactArgs()
+			.returns([securityTokenHandler]);
+		this.mock(_Requestor.prototype).expects("checkHeaderNames")
+			.withExactArgs(sinon.match.same(oFixture.headers));
+
+		// code under test
+		oRequestor = _Requestor.create("/Service/", oModelInterface, {"Accept-Language" : "en"});
+
+		assert.notStrictEqual(oRequestor.oSecurityTokenPromise, null);
+
+		return oRequestor.oSecurityTokenPromise.then(function (oResult) {
+			assert.deepEqual(oRequestor.mHeaders, oFixture.expectedHeaders);
+			assert.strictEqual(oResult, undefined);
+			assert.strictEqual(oRequestor.oSecurityTokenPromise, null);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("processSecurityTokenHandler: handler rejects", function (assert) {
+		var oRequestor;
+
+		function securityTokenHandler () {
+			return Promise.reject("foo");
+		}
+
+		this.mock(sap.ui.getCore().getConfiguration()).expects("getSecurityTokenHandler")
+			.withExactArgs()
+			.returns([securityTokenHandler]);
+		this.oLogMock.expects("error")
+			.withExactArgs("security token handler rejected with: foo", undefined, sClassName);
+
+		// code under test
+		oRequestor = _Requestor.create();
+
+		return oRequestor.oSecurityTokenPromise.then(function() {
+			assert.strictEqual(oRequestor.oSecurityTokenPromise, null);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("processSecurityTokenHandler: checkHeaderNames throws", function (assert) {
+		var oError = new Error("checkHeaderNames fails"),
+			oRequestor,
+			mNotAllowedHeaders = {};
+
+		function securityTokenHandler () {
+			return Promise.resolve(mNotAllowedHeaders);
+		}
+
+		this.mock(sap.ui.getCore().getConfiguration()).expects("getSecurityTokenHandler")
+			.withExactArgs()
+			.returns([securityTokenHandler]);
+
+		this.mock(_Requestor.prototype).expects("checkHeaderNames")
+			.withExactArgs(sinon.match.same(mNotAllowedHeaders)).throws(oError);
+
+		// code under test
+		oRequestor = _Requestor.create();
+
+		return oRequestor.oSecurityTokenPromise.then(function () {
+			assert.notOk(true);
+		}, function (oError0) {
+			assert.strictEqual(oError0, oError);
+			assert.strictEqual(oRequestor.oSecurityTokenPromise, null);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("processBatch(...): with empty group", function (assert) {
 		var oRequestor = _Requestor.create("/Service/", oModelInterface),
 			that = this;
