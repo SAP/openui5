@@ -50,6 +50,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.maxConditions] Maximum number of allowed conditions
 	 * @param {sap.ui.model.Context} [oFormatOptions.bindingContext] BindingContext of field. Used to get key or description from the value help using in/out parameters. (In table, the value help might be connected to different row)
 	 * @param {sap.ui.model.Type} [oFormatOptions.originalDateType] Type used on field. E.g. for date types internally a different type is used internally to have different <code>formatOptions</code>
+	 * @param {sap.ui.model.Type} [oFormatOptions.additionalType] additional Type used on other part of a field. (This is the case for unit fields.)
 	 * @param {function} [oFormatOptions.getConditions] Function to get the existing conditions of the field. Only used if <code>isUnit</code> is set. TODO: better solution
 	 * @param {function} [oFormatOptions.asyncParsing] Callback function to tell the <code>Field</code> the parsing is asynchronous.
 	 * @param {object} [oFormatOptions.navigateCondition] Condition of keyboard navigation. If this is filled, no real parsing is needed as the condition has already been determined. Just return it
