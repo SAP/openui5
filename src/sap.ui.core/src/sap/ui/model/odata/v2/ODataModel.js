@@ -3585,7 +3585,7 @@ sap.ui.define([
 			for (var i = 0; i < oRequest.parts.length; i++) {
 				fnError = oRequest.parts[i].fnError;
 				if (!oRequest.parts[i].request._aborted && fnError) {
-					fnError(oAbortedError);
+					fnError(ODataModel._createAbortedError());
 				}
 			}
 		}
@@ -3602,7 +3602,7 @@ sap.ui.define([
 					}
 				});
 				if (fnError && !bSuppressErrorHandlerCall) {
-					fnError(oAbortedError);
+					fnError(ODataModel._createAbortedError());
 				}
 				oBatchRequestHandle.abort();
 			}
@@ -4302,14 +4302,6 @@ sap.ui.define([
 			this.fireRequestFailed(oEventInfo);
 		}
 
-	};
-
-	var oAbortedError = {
-		message: "Request aborted",
-		statusCode: 0,
-		statusText: "abort",
-		headers: {},
-		responseText: ""
 	};
 
 	/**

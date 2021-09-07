@@ -3055,6 +3055,89 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[false, true].forEach(function (bSuppressErrorHandlerCall) {
+	var sTitle = "_submitBatchRequest: calls _createAbortedError on abort;"
+			+ " bSuppressErrorHandlerCall=" + bSuppressErrorHandlerCall;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBatchRequest = {},
+			oBatchRequestHandle = {
+				abort : function () {}
+			},
+			fnError = sinon.stub(),
+			i = -1,
+			oPart0_AlreadyAborted = {request : {_aborted : true}},
+			oPart0_NoErrorHandler = {request : {}},
+			oPart0_WithErrorHandler = {
+				fnError : function () {},
+				request : {}
+			},
+			oPart1_NoErrorHandler = {request : {}},
+			oPart1_WithErrorHandler = {
+				fnError : function () {},
+				request : {}
+			},
+			oPart2_AlreadyAborted = {request : {_aborted : true}},
+			oPart2_WithErrorHandler = {
+				fnError : function () {},
+				request : {}
+			},
+			oRequest0 = {
+				parts : [oPart0_NoErrorHandler, oPart0_AlreadyAborted, oPart0_WithErrorHandler]
+			},
+			oRequest1 = {parts : [oPart1_NoErrorHandler, oPart1_WithErrorHandler]},
+			oRequest2 = {parts : [oPart2_WithErrorHandler, oPart2_AlreadyAborted]},
+			aRequests = [
+				// changeset
+				[oRequest1, oRequest2],
+				// single request
+				oRequest0
+			],
+			oEventInfo = {
+				batch : true,
+				requests : aRequests
+			},
+			oModel = {
+				_submitRequest : function () {}
+			},
+			oRequestHandle;
+
+		this.mock(oModel).expects("_submitRequest")
+			.withExactArgs(
+				sinon.match.same(oBatchRequest).and(sinon.match.has("eventInfo", oEventInfo)),
+				sinon.match.func, sinon.match.func)
+			.returns(oBatchRequestHandle);
+
+		// code under test
+		oRequestHandle = ODataModel.prototype._submitBatchRequest.call(oModel, oBatchRequest,
+			aRequests, "~fnSuccess", fnError);
+
+		assert.strictEqual(fnError.called, false);
+
+		this.mock(ODataModel).expects("_createAbortedError")
+			.withExactArgs()
+			.exactly(bSuppressErrorHandlerCall ? 3 : 4)
+			.callsFake(function () {
+				i += 1;
+				return "~oError" + i;
+			});
+		this.mock(oPart0_WithErrorHandler).expects("fnError").withExactArgs("~oError2");
+		this.mock(oPart1_WithErrorHandler).expects("fnError").withExactArgs("~oError0");
+		this.mock(oPart2_WithErrorHandler).expects("fnError").withExactArgs("~oError1");
+		this.mock(oBatchRequestHandle).expects("abort").withExactArgs();
+
+		// code under test
+		oRequestHandle.abort(bSuppressErrorHandlerCall);
+
+		if (bSuppressErrorHandlerCall) {
+			assert.strictEqual(fnError.called, false);
+		} else {
+			assert.ok(fnError.calledOnceWithExactly("~oError3"));
+		}
+	});
+});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bReported) {
 	QUnit.test("_handleError: $reported = " + bReported, function (assert) {
 		var oError = {
