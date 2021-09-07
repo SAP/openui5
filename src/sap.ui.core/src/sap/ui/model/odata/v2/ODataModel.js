@@ -4320,23 +4320,23 @@ sap.ui.define([
 	 * @param {boolean} bBatch Process success for single/batch request
 	 * @private
 	 */
-	ODataModel.prototype._processAborted = function(oRequest, oResponse, bBatch) {
-		var sPath;
+	ODataModel.prototype._processAborted = function (oRequest, oResponse, bBatch) {
+		var oEventInfo, sPath;
+
 		if (!bBatch) {
 			// decrease laundering
 			sPath = '/' + this.getKey(oRequest.data);
 			this.decreaseLaundering(sPath, oRequest.data);
 			this._decreaseDeferredRequestCount(oRequest);
 		}
-
 		// If no response is contained, request was never sent and completes event can be omitted
 		if (oResponse) {
-			var oEventInfo = this._createEventInfo(oRequest, oAbortedError);
+			oEventInfo = this._createEventInfo(oRequest, ODataModel._createAbortedError());
 			oEventInfo.success = false;
 			if (bBatch) {
 				this.fireBatchRequestCompleted(oEventInfo);
 			} else {
-				 this.fireRequestCompleted(oEventInfo);
+				this.fireRequestCompleted(oEventInfo);
 			}
 		}
 	};
@@ -7864,6 +7864,22 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.getMetadataUrl = function () {
 		return this.sMetadataUrl;
+	};
+
+	/**
+	 * Creates an error object for an aborted request.
+	 *
+	 * @returns {object} An error object for an aborted request
+	 * @private
+	 */
+	ODataModel._createAbortedError = function () {
+		return {
+			headers : {},
+			message : "Request aborted",
+			responseText : "",
+			statusCode : 0,
+			statusText : "abort"
+		};
 	};
 
 	return ODataModel;
