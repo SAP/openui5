@@ -1050,8 +1050,9 @@ sap.ui.define([
 
 	/**
 	 * Assigns conditions to the inner condition model.
-	 * This method is only called for filling the in parameters for value help scenarios.
-	 * @protected
+	 * <br><b>Node:</b>This method is only called for filling the in parameters for value help scenarios.
+	 * @private
+	 * @ui5-restricted sap.mdc
 	 * @param {map} mConditions A map containing the conditions
 	 */
 	FilterBarBase.prototype.setInternalConditions = function(mConditions) {
@@ -1062,9 +1063,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the conditions of the inner condition model.<br>
-	 * <b>Note:</b>This method must only be used for value help scenarios.
-	 * @protected
+	 * Returns the conditions of the inner condition model.
+	 * @private
+	 * @ui5-restricted sap.mdc
 	 * @returns {map} A map containing the conditions
 	 */
 	FilterBarBase.prototype.getInternalConditions = function() {
@@ -1501,7 +1502,7 @@ sap.ui.define([
 
 	FilterBarBase.prototype._cleanUpFilterFieldInErrorState = function(oFilterField) {
 
-		if (oFilterField.getRequired() && (oFilterField.getValueState() !== ValueState.None)) {
+		if (oFilterField && (oFilterField.getValueState() !== ValueState.None)) {
 			oFilterField.setValueState(ValueState.None);
 		}
 
