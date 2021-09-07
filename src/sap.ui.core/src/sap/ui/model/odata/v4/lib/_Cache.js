@@ -2301,7 +2301,7 @@ sap.ui.define([
 				oKeptElement = this.aElements.$byPredicate[sPredicate];
 				if (oKeptElement) {
 					if (oElement["@odata.etag"] === oKeptElement["@odata.etag"]) {
-						oElement = oKeptElement;
+						_Helper.merge(oElement, oKeptElement);
 					} else if (this.hasPendingChangesForPath(sPredicate)) {
 						throw new Error("Modified on client and on server: "
 							+ this.sResourcePath + sPredicate);
