@@ -1,7 +1,18 @@
 {
   "1.94.0": {
-    "date": "August 2021",
+    "date": "September 2021",
     "notes": [
+      {
+        "id": "83fccacec48a15bec397946159a9f55e8aba7cdb",
+        "type": "FIX",
+        "text": " mdc.IdentifierUtil: use path with fallback to name",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180375827"
+          }
+        ]
+      },
       {
         "id": "a6cb5b734a0c052fc7dcce0d9a1d7fa4e7235302",
         "type": "FEATURE",

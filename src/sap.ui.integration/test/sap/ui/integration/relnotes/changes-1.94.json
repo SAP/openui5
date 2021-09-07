@@ -1,7 +1,18 @@
 {
   "1.94.0": {
-    "date": "August 2021",
+    "date": "September 2021",
     "notes": [
+      {
+        "id": "8ed84ef800dccde6999796af2533a4502ff93993",
+        "type": "FIX",
+        "text": " Component: Accept multiple onInstanceCreated listeners",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180375313"
+          }
+        ]
+      },
       {
         "id": "3fb0a934a502b3623d96dce05bd56b9adc2342c8",
         "type": "FIX",

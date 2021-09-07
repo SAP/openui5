@@ -1,7 +1,18 @@
 {
   "1.94.0": {
-    "date": "August 2021",
+    "date": "September 2021",
     "notes": [
+      {
+        "id": "67db83b9a35be8eee462254f26e5145f8852f7d4",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: 'selectionChange' is fired properly on 'selectAll'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180358601"
+          }
+        ]
+      },
       {
         "id": "cd01c7a435e4594ab03ac93f35a016233df87166",
         "type": "FIX",
