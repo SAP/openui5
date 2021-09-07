@@ -645,7 +645,7 @@ sap.ui.define([
 		if (oDataStateIndicator) {
 			oDataStateIndicator[sAction + "ApplyFilter"](this._onApplyMessageFilter, this);
 			oDataStateIndicator[sAction + "ClearFilter"](this._onClearMessageFilter, this);
-			oDataStateIndicator[sAction + "Event"]("filterInfoPress", this._showFilter, this);
+			oDataStateIndicator[sAction + "Event"]("filterInfoPress", onShowFilterDialog, this);
 		}
 	};
 
@@ -1135,9 +1135,7 @@ sap.ui.define([
 					wrapping: false
 				})
 			],
-			press: function() {
-				TableSettings.showPanel(oTable, "Filter", oFilterInfoToolbar);
-			}
+			press: [onShowFilterDialog, oTable]
 		});
 
 		// If the toolbar is hidden while it has the focus, the focus moves to the body. This can happen, for example, when all filters are removed in
@@ -1561,12 +1559,10 @@ sap.ui.define([
 		var aP13nMode = this.getP13nMode();
 		var aButtons = [];
 
-		//Note: 'Aggregate' does not have a p13n UI, if only 'Aggregate' is enabled no settings icon is necessary
+		// Note: 'Aggregate' does not have a p13n UI, if only 'Aggregate' is enabled no settings icon is necessary
 		var bAggregateP13nOnly = aP13nMode.length === 1 && aP13nMode[0] === "Aggregate";
 		if (aP13nMode.length > 0 && !bAggregateP13nOnly) {
-			aButtons.push(TableSettings["createSettingsButton"](this.getId(), [
-				this._showSettings, this
-			]));
+			aButtons.push(TableSettings.createSettingsButton(this.getId(), [onShowSettingsDialog, this]));
 		}
 
 		return aButtons;
@@ -1996,7 +1992,7 @@ sap.ui.define([
 				var oFilter = new ColumnPopoverSelectListItem({
 					label: oResourceBundle.getText("table.SETTINGS_FILTER"),
 					icon: "sap-icon://filter",
-					action: [this._showFilter, this]
+					action: [onShowFilterDialog, this]
 				});
 				aHeaderItems.unshift(oFilter);
 			}
@@ -2610,27 +2606,13 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Just for test purpose --> has to be finalised
-	 *
-	 * @param {object} oEvt Event object that gets processed
-	 * @experimental
-	 */
-	Table.prototype._showSettings = function(oEvt) {
-		TableSettings.showPanel(this, "Columns", oEvt.getSource());
-	};
+	function onShowSettingsDialog(oEvent) {
+		TableSettings.showPanel(this, "Columns", oEvent.getSource());
+	}
 
-	Table.prototype._showSort = function(oEvt) {
-		TableSettings.showPanel(this, "Sort", oEvt.getSource());
-	};
-
-	Table.prototype._showFilter = function(oEvt) {
-		TableSettings.showPanel(this, "Filter", oEvt.getSource());
-	};
-
-	Table.prototype._showGroup = function (oEvt) {
-		TableSettings.showPanel(this, "Group", oEvt.getSource());
-	};
+	function onShowFilterDialog(oEvent) {
+		TableSettings.showPanel(this, "Filter", oEvent.getSource());
+	}
 
 	// TODO: move to a base util that can be used by most aggregations
 	Table.prototype._getSorters = function() {
