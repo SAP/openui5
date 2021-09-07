@@ -21,6 +21,10 @@ sap.ui.define([
 	function _adaptDeepChildObservation(caller, oControl, oAggregation, bObserve) {
 		var aChildren = oAggregation.get(oControl) || [], oChild, bRecord;
 
+		if (aChildren && !Array.isArray(aChildren) && !oAggregation.multiple) {
+			aChildren = [aChildren];
+		}
+
 		for (var i = 0; i < aChildren.length; i++) {
 			oChild = aChildren[i];
 			if (!(oChild instanceof ManagedObject)) {

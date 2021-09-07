@@ -584,10 +584,15 @@ sap.ui.define([
 			oBinding.detachChange(fHandler);
 		};
 		oBinding.attachChange(fHandler);
+		this.subObj.setSingleAggr(this.subObj2); // to have child hierarchy
 		this.obj.setSingleAggr(this.subObj);
 
 		// check that no additional event is called
 		assert.equal(this.oManagedObjectModel.getProperty("/singleAggr"), this.subObj, "Aggregation can be accessed");
+
+		// check childs are observed
+		assert.ok(this.oManagedObjectModel._oObserver.isObserved(this.subObj), "Child is observed");
+		assert.ok(this.oManagedObjectModel._oObserver.isObserved(this.subObj2), "Child of child is observed");
 
 		// bind to an aggregation that does not exist
 		var oBinding = this.oManagedObjectModel.bindAggregation("/notExist");
@@ -613,11 +618,16 @@ sap.ui.define([
 		oBinding.attachChange(fHandler);
 
 		iLength = 1;
+		this.subObj.addSubObj(this.subObj3); // to have child hierarchy
 		this.obj.addSubObj(this.subObj);
 		assert.equal(iCalls, iCount, "Binding change event fired for list aggregation");
 
 		aContexts = oBinding.getContexts();
 		assert.equal(that.oManagedObjectModel.getProperty("", aContexts[0]) === that.subObj, true, "Contexts are correctly applied");
+
+		// check childs are observed
+		assert.ok(this.oManagedObjectModel._oObserver.isObserved(this.subObj), "Child is observed");
+		assert.ok(this.oManagedObjectModel._oObserver.isObserved(this.subObj3), "Child of child is observed");
 
 		iCount = 1;
 		iLength = 1;
