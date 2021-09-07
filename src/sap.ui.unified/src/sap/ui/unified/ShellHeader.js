@@ -156,7 +156,13 @@ sap.ui.define([
 				rm.writeAttributeEscaped("alt", sLogoTooltip);
 				rm.write("src='");
 				rm.writeEscaped(sIco);
-				rm.write("' style='", sIco ? "" : "display:none;","'>");
+				rm.write("'");
+
+				if (!sIco) {
+					rm.addStyle("display", "none");
+					rm.writeStyles();
+				}
+				rm.write(">");
 				rm.write("</div>");
 			}
 		}
