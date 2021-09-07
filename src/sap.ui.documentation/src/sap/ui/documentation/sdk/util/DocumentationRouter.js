@@ -236,7 +236,7 @@ sap.ui.define([
 			return;
 		}
 
-		oAnchorElement = getClosestParentLink(oElement);
+		oAnchorElement = getClosestParentLink(oElement, true);
 
 		if (!oAnchorElement) {
 			return;
@@ -291,7 +291,8 @@ sap.ui.define([
 			oTarget = oEvent.target,
 			oAnchorElement = getClosestParentLink(oTarget),
 			bCtrlHold = oEvent.ctrlKey || oEvent.metaKey,
-			sTargetHref;
+			sTargetHref,
+			bNewWindow;
 
 		if (oAnchorElement) {
 			// The links from the static documentation are already preprocessed at build-time
@@ -300,6 +301,7 @@ sap.ui.define([
 				return;
 			}
 			sTargetHref = getHref(oAnchorElement);
+			bNewWindow = bCtrlHold || !getSameWindow(oAnchorElement);
 		}
 
 		// Do not change href if it's already changed or if it's a stand-alone HTML page
@@ -310,7 +312,7 @@ sap.ui.define([
 		// When context menu of the Browser is opened or when the aux button is clicked,
 		// or if the ctrl is hold and left mouse button is clicked
 		// we change the href of the anchor element
-		if (iPressedButton === 2 || iPressedButton === 4 || (bCtrlHold && iPressedButton === 1)) {
+		if (iPressedButton === 2 || iPressedButton === 4 || (bNewWindow && iPressedButton === 1)) {
 			sTargetHref = this.convertToStaticFormat(sTargetHref);
 			oAnchorElement.setAttribute("href", sTargetHref);
 		}
@@ -647,21 +649,21 @@ sap.ui.define([
 	};
 
 	// util
-	function getClosestParentLink(oAnchorElement, iMaxDrillUp) {
-		var bIsAnchor = isAnchorElement(oAnchorElement), iDrillUp = 0;
+	function getClosestParentLink(oAnchorElement, bSameWindow, iMaxDrillUp) {
+		var bIsAnchor = isAnchorElement(oAnchorElement, bSameWindow), iDrillUp = 0;
 		iMaxDrillUp || (iMaxDrillUp = 3);
 
 		while (!bIsAnchor && iDrillUp++ < iMaxDrillUp) {
 			oAnchorElement = oAnchorElement && oAnchorElement.parentElement;
-			bIsAnchor = isAnchorElement(oAnchorElement);
+			bIsAnchor = isAnchorElement(oAnchorElement, bSameWindow);
 		}
 
 		return oAnchorElement;
 	}
 
-	function isAnchorElement(oAnchorElement) {
-		if (oAnchorElement && oAnchorElement.nodeName === "A" && oAnchorElement.getAttribute("target") !== "_blank") {
-			return true;
+	function isAnchorElement(oAnchorElement, bSameWindow) {
+		if (oAnchorElement && oAnchorElement.nodeName === "A") {
+			return bSameWindow ? getSameWindow(oAnchorElement) : true;
 		}
 
 		return false;
@@ -669,6 +671,10 @@ sap.ui.define([
 
 	function getHref(oAnchorElement) {
 		return oAnchorElement.getAttribute("href");
+	}
+
+	function getSameWindow(oAnchorElement) {
+		return oAnchorElement.getAttribute("target") !== "_blank";
 	}
 
 	return DocumentationRouter;
