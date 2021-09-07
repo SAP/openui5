@@ -94,7 +94,7 @@ sap.ui.define([
 			}
 
 			// Definition of supported settings
-			// Valid property types are: string, boolean, string[], code, object, function.
+			// Valid property types are: string, boolean, string[], code, object, function, function[].
 			// Objects as an enumeration list of valid values can also be provided (e.g. Configuration.AnimationMode).
 			var M_SETTINGS = {
 					"theme"                 : { type : "string",   defaultValue : "base" },
@@ -136,7 +136,7 @@ sap.ui.define([
 					"support"               : { type : "string[]", defaultValue : null },
 					"testRecorder"          : { type : "string[]", defaultValue : null },
 					"activeTerminologies"   : { type : "string[]", defaultValue: undefined},
-					"securityTokenHandler"  : { type : "function", defaultValue: undefined,  noUrl: true },
+					"securityTokenHandlers"  : { type : "function[]", defaultValue: [],  noUrl: true },
 					"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
 					"xx-appCacheBusterMode" : { type : "string",   defaultValue : "sync" },
 					"xx-appCacheBusterHooks": { type : "object",   defaultValue : undefined, noUrl:true }, // e.g.: { handleURL: fn, onIndexLoad: fn, onIndexLoaded: fn }
@@ -183,40 +183,48 @@ sap.ui.define([
 			var config = this;
 			/*eslint-enable consistent-this */
 
-			function setValue(sName, sValue) {
-				if ( typeof sValue === "undefined" || sValue === null ) {
+			function setValue(sName, vValue) {
+				if ( typeof vValue === "undefined" || vValue === null ) {
 					return;
 				}
 				switch (M_SETTINGS[sName].type) {
 				case "boolean":
-					if ( typeof sValue === "string" ) {
+					if ( typeof vValue === "string" ) {
 						if (M_SETTINGS[sName].defaultValue) {
-							config[sName] = sValue.toLowerCase() != "false";
+							config[sName] = vValue.toLowerCase() != "false";
 						} else {
-							config[sName] = sValue.toLowerCase() === "true" || sValue.toLowerCase() === "x";
+							config[sName] = vValue.toLowerCase() === "true" || vValue.toLowerCase() === "x";
 						}
 					} else {
 						// boolean etc.
-						config[sName] = !!sValue;
+						config[sName] = !!vValue;
 					}
 					break;
 				case "string":
-					config[sName] = "" + sValue; // enforce string
+					config[sName] = "" + vValue; // enforce string
 					break;
 				case "code":
-					config[sName] = typeof sValue === "function" ? sValue : String(sValue);
+					config[sName] = typeof vValue === "function" ? vValue : String(vValue);
 					break;
 				case "function":
-					if ( typeof sValue !== "function" ) {
+					if ( typeof vValue !== "function" ) {
 						throw new Error("unsupported value");
 					}
-					config[sName] = sValue;
+					config[sName] = vValue;
+					break;
+				case "function[]":
+					vValue.forEach(function(fnFunction) {
+						if ( typeof fnFunction !== "function" ) {
+							throw new Error("Not a function: " + fnFunction);
+						}
+					});
+					config[sName] = vValue.slice();
 					break;
 				case "string[]":
-					if ( Array.isArray(sValue) ) {
-						config[sName] = sValue;
-					} else if ( typeof sValue === "string" ) {
-						config[sName] = sValue.split(/[ ,;]/).map(function(s) {
+					if ( Array.isArray(vValue) ) {
+						config[sName] = vValue;
+					} else if ( typeof vValue === "string" ) {
+						config[sName] = vValue.split(/[ ,;]/).map(function(s) {
 							return s.trim();
 						});
 					} else {
@@ -224,13 +232,13 @@ sap.ui.define([
 					}
 					break;
 				case "object":
-					if ( typeof sValue !== "object" ) {
+					if ( typeof vValue !== "object" ) {
 						throw new Error("unsupported value");
 					}
-					config[sName] = sValue;
+					config[sName] = vValue;
 					break;
 				case "Locale":
-					var oLocale = convertToLocaleOrNull(sValue);
+					var oLocale = convertToLocaleOrNull(vValue);
 					if ( oLocale || M_SETTINGS[sName].defaultValue == null ) {
 						config[sName] = oLocale;
 					} else {
@@ -241,8 +249,8 @@ sap.ui.define([
 					// When the type is none of the above types, check if an object as enum is provided to validate the value.
 					var vType = M_SETTINGS[sName].type;
 					if (typeof vType === "object") {
-						checkEnum(vType, sValue, sName);
-						config[sName] = sValue;
+						checkEnum(vType, vValue, sName);
+						config[sName] = vValue;
 					} else {
 						throw new Error("illegal state");
 					}
@@ -1512,32 +1520,33 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the handlers for security tokens of an OData V4 model. Currently there is at most
-		 * one.
+		 * Returns the security token handlers of an OData V4 model.
 		 *
 		 * @returns {function[]} the security token handlers (an empty array if there are none)
 		 * @public
 		 * @since 1.95.0
-		 * @see #setSecurityTokenHandler
+		 * @see #setSecurityTokenHandlers
 		 */
-		getSecurityTokenHandler : function () {
-			return this.securityTokenHandler ? [this.securityTokenHandler] : [];
+		getSecurityTokenHandlers : function () {
+			return this.securityTokenHandlers.slice();
 		},
 
 		/**
-		 * Sets the security token handler for an OData V4 model. This function is expected
-		 * to return a Promise resolving with an array of headers that the model is expected to send
-		 * with each request.
+		 * Sets the security token handlers for an OData V4 model. See chapter "Security Token
+		 * Handling" in
+		 * {@link topic:9613f1f2d88747cab21896f7216afdac Model Instantiation and Data Access}.
 		 *
-		 * @param {function|undefined} fnSecurityTokenHandler - The security token handler
+		 * @param {function[]} aSecurityTokenHandlers - The security token handlers
 		 * @public
 		 * @since 1.95.0
+		 * @see #getSecurityTokenHandlers
 		 */
-		setSecurityTokenHandler : function (fnSecurityTokenHandler) {
-			check(fnSecurityTokenHandler === undefined
-					|| typeof fnSecurityTokenHandler === "function",
-				"securityTokenHandler must be a function");
-			this.securityTokenHandler = fnSecurityTokenHandler;
+		setSecurityTokenHandlers : function (aSecurityTokenHandlers) {
+			aSecurityTokenHandlers.forEach(function (fnSecurityTokenHandler) {
+				check(typeof fnSecurityTokenHandler === "function",
+					"Not a function: " + fnSecurityTokenHandler);
+			});
+			this.securityTokenHandlers = aSecurityTokenHandlers.slice();
 		},
 
 		/**

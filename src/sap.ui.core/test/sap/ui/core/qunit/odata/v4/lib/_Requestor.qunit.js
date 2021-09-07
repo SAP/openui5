@@ -1367,16 +1367,24 @@ sap.ui.define([
 		"x-csRf-toKen" : "x-csRf-toKen from handler"
 	}
 }].forEach(function (oFixture) {
-	QUnit.test("processSecurityTokenHandler: ", function (assert) {
+	QUnit.test("processSecurityTokenHandlers: ", function (assert) {
 		var oRequestor;
 
-		function securityTokenHandler () {
+		function securityTokenHandler0 () {
+			return undefined;
+		}
+
+		function securityTokenHandler1 () {
 			return Promise.resolve(oFixture.headers);
 		}
 
-		this.mock(sap.ui.getCore().getConfiguration()).expects("getSecurityTokenHandler")
+		function securityTokenHandler2 () {
+			return Promise.resolve({"This should change" : "nothing!"});
+		}
+
+		this.mock(sap.ui.getCore().getConfiguration()).expects("getSecurityTokenHandlers")
 			.withExactArgs()
-			.returns([securityTokenHandler]);
+			.returns([securityTokenHandler0, securityTokenHandler1, securityTokenHandler2]);
 		this.mock(_Requestor.prototype).expects("checkHeaderNames")
 			.withExactArgs(sinon.match.same(oFixture.headers));
 
@@ -1401,17 +1409,21 @@ sap.ui.define([
 			return Promise.reject("foo");
 		}
 
-		this.mock(sap.ui.getCore().getConfiguration()).expects("getSecurityTokenHandler")
+		this.mock(sap.ui.getCore().getConfiguration()).expects("getSecurityTokenHandlers")
 			.withExactArgs()
 			.returns([securityTokenHandler]);
 		this.oLogMock.expects("error")
-			.withExactArgs("security token handler rejected with: foo", undefined, sClassName);
+			.withExactArgs("An error occurred within security token handler: "
+				+ securityTokenHandler, "foo" , sClassName);
 
 		// code under test
 		oRequestor = _Requestor.create();
 
 		return oRequestor.oSecurityTokenPromise.then(function() {
+			assert.notOk(true);
 			assert.strictEqual(oRequestor.oSecurityTokenPromise, null);
+		}, function (oError0) {
+			assert.strictEqual(oError0, "foo");
 		});
 	});
 
@@ -1425,21 +1437,25 @@ sap.ui.define([
 			return Promise.resolve(mNotAllowedHeaders);
 		}
 
-		this.mock(sap.ui.getCore().getConfiguration()).expects("getSecurityTokenHandler")
+		this.mock(sap.ui.getCore().getConfiguration()).expects("getSecurityTokenHandlers")
 			.withExactArgs()
 			.returns([securityTokenHandler]);
 
 		this.mock(_Requestor.prototype).expects("checkHeaderNames")
 			.withExactArgs(sinon.match.same(mNotAllowedHeaders)).throws(oError);
 
+		this.oLogMock.expects("error")
+			.withExactArgs("An error occurred within security token handler: "
+				+ securityTokenHandler, oError , sClassName);
+
 		// code under test
 		oRequestor = _Requestor.create();
 
 		return oRequestor.oSecurityTokenPromise.then(function () {
 			assert.notOk(true);
+			assert.strictEqual(oRequestor.oSecurityTokenPromise, null);
 		}, function (oError0) {
 			assert.strictEqual(oError0, oError);
-			assert.strictEqual(oRequestor.oSecurityTokenPromise, null);
 		});
 	});
 
