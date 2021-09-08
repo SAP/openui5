@@ -462,6 +462,10 @@
 					"viewLevel": 2,
 					"controlAggregation": "detailPages"
 				},
+				"sampleNotFound": {
+				  "viewName": "SampleNotFound",
+				  "viewId": "sampleNotFound"
+				},
 				"notFound": {
 					"viewName": "NotFound",
 					"viewId": "notFound"
