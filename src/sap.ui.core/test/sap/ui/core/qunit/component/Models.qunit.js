@@ -147,7 +147,6 @@ sap.ui.define([
 					sap.ui.require([
 						"sap/ui/commons/Label",
 						"sap/ui/core/CustomData",
-						"sap/ui/core/CustomizingConfiguration",
 						"sap/ui/core/mvc/XMLView",
 						"sap/ui/core/routing/Router",
 						"sap/ui/model/odata/ODataAnnotations"
@@ -3686,7 +3685,6 @@ sap.ui.define([
 				sap.ui.require([
 					"sap/ui/commons/Label",
 					"sap/ui/core/CustomData",
-					"sap/ui/core/CustomizingConfiguration",
 					"sap/ui/core/mvc/XMLView",
 					"sap/ui/core/routing/Router",
 					"sap/ui/model/odata/ODataAnnotations"

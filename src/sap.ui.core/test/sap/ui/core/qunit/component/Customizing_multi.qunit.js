@@ -87,48 +87,6 @@ sap.ui.define([
 		}
 	});
 
-
-
-	// TESTS
-
-	QUnit.test("CustomizingConfiguration available", function(assert) {
-		assert.expect(1);
-
-		var CustomizingConfiguration = sap.ui.require("sap/ui/core/CustomizingConfiguration");
-		assert.ok(CustomizingConfiguration, "CustomizingConfiguration should be available now without requiring it");
-	});
-
-	QUnit.test("CustomizingConfiguration returning the customizing data", function(assert) {
-		assert.expect(8);
-
-		var CustomizingConfiguration = sap.ui.require("sap/ui/core/CustomizingConfiguration");
-		assert.equal(CustomizingConfiguration.getViewReplacement("testdata.customizing.sap.Sub1", oCompSub.getId()).viewName,
-				"testdata.customizing.customer.CustomSub1",
-				"CustomizingConfiguration should return the View replacement data");
-		assert.equal(CustomizingConfiguration.getViewExtension("testdata.customizing.sap.Sub2", "extension2", oCompSub.getId()).fragmentName,
-				"testdata.customizing.customer.CustomFrag1WithCustomerAction",
-				"CustomizingConfiguration should return the View extension data");
-		assert.equal(CustomizingConfiguration.getControllerExtension("testdata.customizing.sap.Sub2").controllerName,
-				"testdata.customizing.sap.Sub2",
-				"CustomizingConfiguration should return the Controller extension data (using the lookup magic)");
-		assert.equal(CustomizingConfiguration.getControllerExtension("testdata.customizing.sap.Sub2", oCompSub.getId()),
-				"testdata.customizing.customersub.Sub2SubControllerExtension",
-				"CustomizingConfiguration should return the Controller extension data");
-		assert.equal(CustomizingConfiguration.getControllerExtension("testdata.customizing.sap.Sub2", oAnotherCompSub.getId()).controllerName,
-				"testdata.customizing.sap.Sub2",
-				"CustomizingConfiguration should return the Controller extension data (using the lookup magic)");
-		assert.strictEqual(CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub3", "customizableText", oCompSub.getId()).visible,
-				false,
-				"CustomizingConfiguration should return the View modification data");
-		assert.strictEqual(CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub4", "customizableText1", oCompSub.getId()).visible,
-				false,
-				"CustomizingConfiguration should return the View modification data");
-		assert.strictEqual(CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub5", "Button2", oCompSub.getId()).visible,
-				false,
-				"CustomizingConfiguration should return the View modification data");
-	});
-
-
 	// View Replacement
 
 	QUnit.test("View Replacement", function(assert) {
@@ -325,7 +283,8 @@ sap.ui.define([
 
 	/**
 	 * This test depicts the "legacy-else" case.
-	 * Only runs on CustomizingConfiguration with its global Component registry.
+	 * Previously only ran via the CustomizingConfiguration and its global Component registry.
+	 * Now runs fully on a component instance basis.
 	 */
 	QUnit.skip("Controller Extension of component name is used", function(assert){
 		var oCompA = sap.ui.component({
@@ -450,7 +409,8 @@ sap.ui.define([
 
 	/**
 	 * This test depicts the "legacy-else" case.
-	 * Only runs on CustomizingConfiguration with its global Component registry.
+	 * Previously only ran via the CustomizingConfiguration and its global Component registry.
+	 * Now runs fully on a component instance basis.
 	 */
 	QUnit.skip("Controller Extension of component name is used", function(assert){
 		var pCompA = Component.create({
