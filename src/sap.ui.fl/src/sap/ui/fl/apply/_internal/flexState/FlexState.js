@@ -338,11 +338,8 @@ sap.ui.define([
 		_mExternalCompVariantInputData[sReference][sPersistencyKey].variants = aVariants;
 	};
 
-	FlexState.getInitialNonFlCompVariantData = function(sReference, sPersistencyKey) {
-		if (_mExternalCompVariantInputData[sReference] && _mExternalCompVariantInputData[sReference][sPersistencyKey]) {
-			return _mExternalCompVariantInputData[sReference][sPersistencyKey];
-		}
-		return undefined;
+	FlexState.getInitialNonFlCompVariantData = function(sReference) {
+		return _mExternalCompVariantInputData[sReference];
 	};
 
 	/**
