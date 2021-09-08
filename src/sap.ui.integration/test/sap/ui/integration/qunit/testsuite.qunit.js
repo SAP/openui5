@@ -322,6 +322,17 @@ sap.ui.define(function () {
 					version: "edge"
 				}
 			},
+			"util/CacheAndRequestDataProvider": {
+				coverage: {
+					only: [
+						"sap/ui/integration/util/CacheAndRequestDataProvider"
+					]
+				},
+				sinon: {
+					version: "edge",
+					useFakeTimers: true
+				}
+			},
 			"util/Destinations": {
 				coverage: {
 					only: ["sap/ui/integration/util/Destinations"]
