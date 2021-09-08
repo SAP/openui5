@@ -420,19 +420,21 @@ sap.ui.define([
 	};
 
 	RatingIndicator.prototype._toPx = function (cssSize) {
-		var scopeVal = Math.round(cssSize),
-			scopeTest;
+		var vScopeVal = Math.round(cssSize),
+			oScopeTest;
 
-		if (isNaN(scopeVal)) {
+		if (isNaN(vScopeVal)) {
 			if (RegExp("^(auto|0)$|^[+-\.]?[0-9].?([0-9]+)?(px|em|rem|ex|%|in|cm|mm|pt|pc)$").test(cssSize)) {
-				scopeTest = jQuery('<div style="display: none; width: ' + cssSize + '; margin: 0; padding:0; height: auto; line-height: 1; font-size: 1; border:0; overflow: hidden">&nbsp;</div>').appendTo(sap.ui.getCore().getStaticAreaRef());
-				scopeVal = scopeTest.width();
-				scopeTest.remove();
+				oScopeTest = jQuery('<div>&nbsp;</div>')
+					.css({"display": "none", "width": cssSize, "margin": 0, "padding": 0, "height": "auto", "line-height": 1, "border": 0, "overflow": "hidden"})
+					.appendTo(sap.ui.getCore().getStaticAreaRef());
+				vScopeVal = oScopeTest.width();
+				oScopeTest.remove();
 			} else {
 				return false;
 			}
 		}
-		return Math.round(scopeVal);
+		return Math.round(vScopeVal);
 	};
 
 	/**

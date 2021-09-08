@@ -599,13 +599,13 @@ sap.ui.define([
 		var sCloseBtnDescr = this._oResourceBundle.getText("MESSAGEPOPOVER_CLOSE");
 		var sCloseBtnDescrId = this.getId() + "-CloseBtnDescr";
 		var oCloseBtnARIAHiddenDescr = new HTML(sCloseBtnDescrId, {
-			content: "<span id=\"" + sCloseBtnDescrId + "\" style=\"display: none;\">" + sCloseBtnDescr + "</span>"
+			content: "<span id=\"" + sCloseBtnDescrId + "\" class=\"sapMMsgViewHiddenContainer\">" + sCloseBtnDescr + "</span>"
 		});
 
 		var sHeadingDescr = this._oResourceBundle.getText("MESSAGEPOPOVER_ARIA_HEADING");
 		var sHeadingDescrId = this.getId() + "-HeadingDescr";
 		var oHeadingARIAHiddenDescr = new HTML(sHeadingDescrId, {
-			content: "<span id=\"" + sHeadingDescrId + "\" style=\"display: none;\" role=\"heading\">" + sHeadingDescr + "</span>"
+			content: "<span id=\"" + sHeadingDescrId + "\" class=\"sapMMsgViewHiddenContainer\" role=\"heading\">" + sHeadingDescr + "</span>"
 		});
 
 		this._oSegmentedButton = new SegmentedButton(this.getId() + "-segmented", {}).addStyleClass("sapMSegmentedButtonNoAutoWidth");
@@ -627,14 +627,14 @@ sap.ui.define([
 		var sCloseBtnDescr = this._oResourceBundle.getText("MESSAGEPOPOVER_CLOSE");
 		var sCloseBtnDescrId = this.getId() + "-CloseBtnDetDescr";
 		var oCloseBtnARIAHiddenDescr = new HTML(sCloseBtnDescrId, {
-			content: "<span id=\"" + sCloseBtnDescrId + "\" style=\"display: none;\">" + sCloseBtnDescr + "</span>"
+			content: "<span id=\"" + sCloseBtnDescrId + "\" class=\"sapMMsgViewHiddenContainer\">" + sCloseBtnDescr + "</span>"
 		});
 
 		var sBackBtnTooltipDescr = this._oResourceBundle.getText("MESSAGEPOPOVER_ARIA_BACK_BUTTON_TOOLTIP");
 		var sBackBtnDescr = this._oResourceBundle.getText("MESSAGEPOPOVER_ARIA_BACK_BUTTON");
 		var sBackBtnDescrId = this.getId() + "-BackBtnDetDescr";
 		var oBackBtnARIAHiddenDescr = new HTML(sBackBtnDescrId, {
-			content: "<span id=\"" + sBackBtnDescrId + "\" style=\"display: none;\">" + sBackBtnDescr + "</span>"
+			content: "<span id=\"" + sBackBtnDescrId + "\" class=\"sapMMsgViewHiddenContainer\">" + sBackBtnDescr + "</span>"
 		});
 
 		this._oBackButton = new Button({
