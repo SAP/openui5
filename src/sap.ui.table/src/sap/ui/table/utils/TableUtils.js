@@ -1390,8 +1390,22 @@ sap.ui.define([
 			// Converting the row height CSS parameters (e.g. _sap_ui_table_RowHeight) is too complex (CSS calc()).
 			// Therefore, the base sizes are used and calculation is done in JavaScript.
 
+			var mParams = ThemeParameters.get({
+				name: [
+					"_sap_ui_table_BaseSize",
+					"_sap_ui_table_BaseSizeCozy",
+					"_sap_ui_table_BaseSizeCompact",
+					"_sap_ui_table_BaseSizeCondensed",
+					"_sap_ui_table_BaseBorderWidth",
+					"_sap_ui_table_NavigationIcon",
+					"_sap_ui_table_DeleteIcon",
+					"_sap_ui_table_ClearSelectionIcon",
+					"_sap_ui_table_NavIndicatorWidth"
+				]
+			});
+
 			function getPixelValue(sThemeParameterName) {
-				return TableUtils.convertCSSSizeToPixel(ThemeParameters.get(sThemeParameterName));
+				return TableUtils.convertCSSSizeToPixel(mParams[sThemeParameterName]);
 			}
 
 			mBaseSize.undefined = getPixelValue("_sap_ui_table_BaseSize");
@@ -1406,9 +1420,9 @@ sap.ui.define([
 			mDefaultRowHeight.sapUiSizeCompact = mBaseSize.sapUiSizeCompact + iRowHorizontalFrameSize;
 			mDefaultRowHeight.sapUiSizeCondensed = mBaseSize.sapUiSizeCondensed + iRowHorizontalFrameSize;
 
-			mThemeParameters.navigationIcon = ThemeParameters.get("_sap_ui_table_NavigationIcon");
-			mThemeParameters.deleteIcon = ThemeParameters.get("_sap_ui_table_DeleteIcon");
-			mThemeParameters.clearSelectionIcon = ThemeParameters.get("_sap_ui_table_ClearSelectionIcon");
+			mThemeParameters.navigationIcon = mParams["_sap_ui_table_NavigationIcon"];
+			mThemeParameters.deleteIcon = mParams["_sap_ui_table_DeleteIcon"];
+			mThemeParameters.clearSelectionIcon = mParams["_sap_ui_table_ClearSelectionIcon"];
 			mThemeParameters.navIndicatorWidth = getPixelValue("_sap_ui_table_NavIndicatorWidth");
 		},
 

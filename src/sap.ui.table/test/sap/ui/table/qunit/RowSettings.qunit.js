@@ -95,7 +95,8 @@ sap.ui.define([
 					"The highlight element of row " + (iRowIndex + 1) + " is " + (bRendered ? "" : "not ") + "in the DOM");
 			}
 		},
-		hexToRgb: function(sHexColor) {
+		getColorRgb: function(sThemeParameterName) {
+			var sHexColor = ThemeParameters.get({name: sThemeParameterName});
 			// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
 			var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
 			sHexColor = sHexColor.replace(shorthandRegex, function(m, r, g, b) {
@@ -145,40 +146,40 @@ sap.ui.define([
 
 					switch (sHighlight) {
 						case MessageType.Success:
-							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiSuccessBorder"));
+							sRGBBackgroundColor = this.getColorRgb("sapUiSuccessBorder");
 							break;
 						case MessageType.Warning:
-							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiWarningBorder"));
+							sRGBBackgroundColor = this.getColorRgb("sapUiWarningBorder");
 							break;
 						case MessageType.Error:
-							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiErrorBorder"));
+							sRGBBackgroundColor = this.getColorRgb("sapUiErrorBorder");
 							break;
 						case MessageType.Information:
-							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiInformationBorder"));
+							sRGBBackgroundColor = this.getColorRgb("sapUiInformationBorder");
 							break;
 						case IndicationColor.Indication01:
-							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiIndication1"));
+							sRGBBackgroundColor = this.getColorRgb("sapUiIndication1");
 							break;
 						case IndicationColor.Indication02:
-							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiIndication2"));
+							sRGBBackgroundColor = this.getColorRgb("sapUiIndication2");
 							break;
 						case IndicationColor.Indication03:
-							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiIndication3"));
+							sRGBBackgroundColor = this.getColorRgb("sapUiIndication3");
 							break;
 						case IndicationColor.Indication04:
-							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiIndication4"));
+							sRGBBackgroundColor = this.getColorRgb("sapUiIndication4");
 							break;
 						case IndicationColor.Indication05:
-							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiIndication5"));
+							sRGBBackgroundColor = this.getColorRgb("sapUiIndication5");
 							break;
 						case IndicationColor.Indication06:
-							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiIndication6"));
+							sRGBBackgroundColor = this.getColorRgb("sapUiIndication6");
 							break;
 						case IndicationColor.Indication07:
-							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiIndication7"));
+							sRGBBackgroundColor = this.getColorRgb("sapUiIndication7");
 							break;
 						case IndicationColor.Indication08:
-							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiIndication8"));
+							sRGBBackgroundColor = this.getColorRgb("sapUiIndication8");
 							break;
 						default:
 							sRGBBackgroundColor = "transparent"; // transparent
@@ -276,7 +277,7 @@ sap.ui.define([
 	QUnit.test("setHighlight", function(assert) {
 		var oOnAfterRenderingEventListener = this.spy();
 
-		this.assertColor(assert, 0, this.hexToRgb(ThemeParameters.get("sapUiSuccessBorder")));
+		this.assertColor(assert, 0, this.getColorRgb("sapUiSuccessBorder"));
 		this.assertText(assert, 0, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_SUCCESS"));
 
 		oTable.addEventDelegate({onAfterRendering: oOnAfterRenderingEventListener});
@@ -284,7 +285,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(oOnAfterRenderingEventListener.notCalled, "The table did not re-render after changing a highlight");
-		this.assertColor(assert, 0, this.hexToRgb(ThemeParameters.get("sapUiErrorBorder")));
+		this.assertColor(assert, 0, this.getColorRgb("sapUiErrorBorder"));
 		this.assertText(assert, 0, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_ERROR"));
 	});
 
