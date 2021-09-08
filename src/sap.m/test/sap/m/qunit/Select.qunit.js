@@ -9748,6 +9748,32 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test("'change' event is triggered with two params - selectedItem and previousSelectedItem", function (assert) {
+			var oItem1 =  new Item({key: "1", text : "1"}),
+				oItem2 = new Item({key: "2", text : "2"}),
+				oSelect = new Select({
+					items: [oItem1, oItem2]
+				}),
+				fnFireChangeSpy = this.spy(oSelect, "fireEvent");
+
+			// arrange
+			oSelect.placeAt("content");
+			Core.applyChanges();
+			oSelect.focus();
+			oSelect.open();
+
+			// act
+			// select the second item
+			qutils.triggerEvent("tap", oItem2.getDomRef());
+
+			// assert
+			assert.ok(fnFireChangeSpy.calledWith("change", { selectedItem: oItem2, previousSelectedItem: oItem1, id: oSelect.getId() }),
+				"The change event is fired with selectedItem and previousSelectedItem");
+
+			// cleanup
+			oSelect.destroy();
+		});
+
 		QUnit.module("Text direction");
 
 		QUnit.test("textDirection set to RTL", function (assert) {
