@@ -1,4 +1,4 @@
-ace.define("ace/ext/rtl",["require","exports","module","ace/editor","ace/config"], function(require, exports, module) {
+ace.define("ace/ext/rtl",[], function(require, exports, module) {
 "use strict";
 
 var commands = [{

@@ -1,5 +1,6 @@
-ace.define("ace/snippets",["require","exports","module","ace/lib/oop","ace/lib/event_emitter","ace/lib/lang","ace/range","ace/range_list","ace/keyboard/hash_handler","ace/tokenizer","ace/clipboard","ace/lib/dom","ace/editor"], function(require, exports, module) {
+ace.define("ace/snippets",[], function(require, exports, module) {
 "use strict";
+var dom = require("./lib/dom");
 var oop = require("./lib/oop");
 var EventEmitter = require("./lib/event_emitter").EventEmitter;
 var lang = require("./lib/lang");
@@ -981,14 +982,14 @@ var moveRelative = function(point, start) {
 };
 
 
-require("./lib/dom").importCssString("\
+dom.importCssString("\
 .ace_snippet-marker {\
     -moz-box-sizing: border-box;\
     box-sizing: border-box;\
     background: rgba(194, 193, 208, 0.09);\
     border: 1px dotted rgba(211, 208, 235, 0.62);\
     position: absolute;\
-}");
+}", "snippets.css", false);
 
 exports.snippetManager = new SnippetManager();
 
@@ -1005,7 +1006,7 @@ var Editor = require("./editor").Editor;
 
 });
 
-ace.define("ace/ext/emmet",["require","exports","module","ace/keyboard/hash_handler","ace/editor","ace/snippets","ace/range","ace/config","resources","resources","tabStops","resources","utils","actions"], function(require, exports, module) {
+ace.define("ace/ext/emmet",[], function(require, exports, module) {
 "use strict";
 var HashHandler = require("../keyboard/hash_handler").HashHandler;
 var Editor = require("../editor").Editor;

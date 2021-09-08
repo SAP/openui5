@@ -1,8 +1,7 @@
-ace.define("ace/theme/sqlserver",["require","exports","module","ace/lib/dom"], function(require, exports, module) {
+ace.define("ace/theme/sqlserver",[], function(require, exports, module) {
 
 exports.isDark = false;
 exports.cssClass = "ace-sqlserver";
-// #### BEGIN MODIFIED BY SAP
 exports.cssText = ".ace-sqlserver .ace_gutter {\
 background: #ebebeb;\
 color: #333;\
@@ -130,13 +129,12 @@ color: #FF0000;\
 color: #994409;\
 }\
 .ace-sqlserver .ace_indent-guide {\
-background: url(" + sap.ui.require.toUrl("sap/ui/codeeditor/js/ace/assets/theme_sqlserver_indent_guide.png") + ") right repeat-y;\
+background: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==\") right repeat-y;\
 }\
 ";
-// #### END MODIFIED BY SAP
 
 var dom = require("../lib/dom");
-dom.importCssString(exports.cssText, exports.cssClass);
+dom.importCssString(exports.cssText, exports.cssClass, false);
 });                (function() {
                     ace.require(["ace/theme/sqlserver"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {

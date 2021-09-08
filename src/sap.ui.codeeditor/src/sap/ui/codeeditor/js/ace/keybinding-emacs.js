@@ -1,4 +1,4 @@
-ace.define("ace/occur",["require","exports","module","ace/lib/oop","ace/range","ace/search","ace/edit_session","ace/search_highlight","ace/lib/dom"], function(require, exports, module) {
+ace.define("ace/occur",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("./lib/oop");
@@ -98,13 +98,13 @@ dom.importCssString(".ace_occur-highlight {\n\
 .ace_dark .ace_occur-highlight {\n\
     background-color: rgb(80, 140, 85);\n\
     box-shadow: 0 0 4px rgb(60, 120, 70);\n\
-}\n", "incremental-occur-highlighting");
+}\n", "incremental-occur-highlighting", false);
 
 exports.Occur = Occur;
 
 });
 
-ace.define("ace/commands/occur_commands",["require","exports","module","ace/config","ace/occur","ace/keyboard/hash_handler","ace/lib/oop"], function(require, exports, module) {
+ace.define("ace/commands/occur_commands",[], function(require, exports, module) {
 
 var config = require("../config"),
     Occur = require("../occur").Occur;
@@ -183,7 +183,7 @@ exports.occurStartCommand = occurStartCommand;
 
 });
 
-ace.define("ace/commands/incremental_search_commands",["require","exports","module","ace/config","ace/lib/oop","ace/keyboard/hash_handler","ace/commands/occur_commands"], function(require, exports, module) {
+ace.define("ace/commands/incremental_search_commands",[], function(require, exports, module) {
 
 var config = require("../config");
 var oop = require("../lib/oop");
@@ -364,7 +364,7 @@ exports.IncrementalSearchKeyboardHandler = IncrementalSearchKeyboardHandler;
 
 });
 
-ace.define("ace/incremental_search",["require","exports","module","ace/lib/oop","ace/range","ace/search","ace/search_highlight","ace/commands/incremental_search_commands","ace/lib/dom","ace/commands/command_manager","ace/editor","ace/config"], function(require, exports, module) {
+ace.define("ace/incremental_search",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("./lib/oop");
@@ -558,7 +558,7 @@ function objectToRegExp(obj) {
 exports.IncrementalSearch = IncrementalSearch;
 
 var dom = require('./lib/dom');
-dom.importCssString && dom.importCssString("\
+dom.importCssString("\
 .ace_marker-layer .ace_isearch-result {\
   position: absolute;\
   z-index: 6;\
@@ -572,7 +572,7 @@ div.ace_isearch-result {\
 .ace_dark div.ace_isearch-result {\
   background-color: rgb(100, 110, 160);\
   box-shadow: 0 0 4px rgb(80, 90, 140);\
-}", "incremental-search-highlighting");
+}", "incremental-search-highlighting", false);
 var commands = require("./commands/command_manager");
 (function() {
     this.setupIncrementalSearch = function(editor, val) {
@@ -599,7 +599,7 @@ require("./config").defineOptions(Editor.prototype, "editor", {
 
 });
 
-ace.define("ace/keyboard/emacs",["require","exports","module","ace/lib/dom","ace/incremental_search","ace/commands/incremental_search_commands","ace/keyboard/hash_handler","ace/lib/keys"], function(require, exports, module) {
+ace.define("ace/keyboard/emacs",[], function(require, exports, module) {
 "use strict";
 
 var dom = require("../lib/dom");

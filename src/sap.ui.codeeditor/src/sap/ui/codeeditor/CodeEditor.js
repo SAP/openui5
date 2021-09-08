@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/ResizeHandler",
+	"sap/ui/dom/includeStylesheet",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/codeeditor/js/ace/ace",
 	"sap/ui/codeeditor/js/ace/ext-language_tools",
@@ -40,6 +41,7 @@ sap.ui.define([
 	Control,
 	RenderManager,
 	ResizeHandler,
+	includeStylesheet,
 	jQuery,
 	ace
 ) {
@@ -197,6 +199,7 @@ sap.ui.define([
 	var sPath = sap.ui.require.toUrl("sap/ui/codeeditor/js/ace");
 	ace.config.set("basePath", sPath);
 	ace.config.set("loadWorkerFromBlob", false);
+	ace.config.set("useStrictCSP", true);
 
 	// require language tools
 	var oLangTools = ace.require("ace/ext/language_tools");
@@ -223,6 +226,11 @@ sap.ui.define([
 		oSession.setUseWrapMode(true);
 		oSession.setMode("ace/mode/javascript");
 
+		includeStylesheet(
+			sap.ui.require.toUrl("sap/ui/codeeditor/js/ace/css/ace.css"),
+			"sap-ui-codeeditor-ace"
+		);
+
 		var sUiTheme = Core.getConfiguration().getTheme().toLowerCase();
 		var sEditorTheme = "tomorrow";
 		if (sUiTheme.indexOf("hcb") > -1) {
@@ -234,7 +242,7 @@ sap.ui.define([
 		} else if (sUiTheme === "sap_fiori_3_dark") {
 			sEditorTheme = "clouds_midnight";
 		}
-		this._oEditor.setTheme("ace/theme/" + sEditorTheme);
+		this.setColorTheme(sEditorTheme);
 
 		this._oEditor.setOptions({
 			enableBasicAutocompletion: true,
@@ -396,6 +404,7 @@ sap.ui.define([
 	 */
 	CodeEditor.prototype.setColorTheme = function(sTheme) {
 		this.setProperty("colorTheme", sTheme, true);
+
 		if (sTheme === "default") {
 			sTheme = "tomorrow";
 		} else if (sTheme === "hcb") {
@@ -405,7 +414,13 @@ sap.ui.define([
 		} else if (sTheme === "hcb_blue") {
 			sTheme = "tomorrow_night_blue";
 		}
+
 		this._oEditor.setTheme("ace/theme/" + sTheme);
+		includeStylesheet(
+			sap.ui.require.toUrl("sap/ui/codeeditor/js/ace/css/theme/" + sTheme + ".css"),
+			"sap-ui-codeeditor-theme-" + sTheme
+		);
+
 		return this;
 	};
 	/**

@@ -1,4 +1,4 @@
-ace.define("ace/ext/menu_tools/overlay_page",["require","exports","module","ace/lib/dom"], function(require, exports, module) {
+ace.define("ace/ext/menu_tools/overlay_page",[], function(require, exports, module) {
 'use strict';
 var dom = require("../../lib/dom");
 var cssText = "#ace_settingsmenu, #kbshortcutmenu {\
@@ -61,7 +61,7 @@ margin: 0px;\
 .ace_optionsMenuEntry button:hover{\
 background: #f0f0f0;\
 }";
-dom.importCssString(cssText);
+dom.importCssString(cssText, "settings_menu.css", false);
 
 module.exports.overlayPage = function overlayPage(editor, contentElement, callback) {
     var closer = document.createElement('div');
@@ -119,7 +119,7 @@ module.exports.overlayPage = function overlayPage(editor, contentElement, callba
 
 });
 
-ace.define("ace/ext/modelist",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/ext/modelist",[], function(require, exports, module) {
 "use strict";
 
 var modes = [];
@@ -165,7 +165,7 @@ var supportedModes = {
     Apex:        ["apex|cls|trigger|tgr"],
     AQL:         ["aql"],
     AsciiDoc:    ["asciidoc|adoc"],
-    ASL:         ["dsl|asl"],
+    ASL:         ["dsl|asl|asl.json"],
     Assembly_x86:["asm|a"],
     AutoHotKey:  ["ahk"],
     BatchFile:   ["bat|cmd"],
@@ -232,6 +232,7 @@ var supportedModes = {
     Julia:       ["jl"],
     Kotlin:      ["kt|kts"],
     LaTeX:       ["tex|latex|ltx|bib"],
+    Latte:       ["latte"],
     LESS:        ["less"],
     Liquid:      ["liquid"],
     Lisp:        ["lisp"],
@@ -248,6 +249,7 @@ var supportedModes = {
     Maze:        ["mz"],
     MediaWiki:   ["wiki|mediawiki"],
     MEL:         ["mel"],
+    MIPS:        ["s|asm"],
     MIXAL:       ["mixal"],
     MUSHCode:    ["mc|mush"],
     MySQL:       ["mysql"],
@@ -260,7 +262,6 @@ var supportedModes = {
     OCaml:       ["ml|mli"],
     Pascal:      ["pas|p"],
     Perl:        ["pl|pm"],
-    Perl6:       ["p6|pl6|pm6"],
     pgSQL:       ["pgsql"],
     PHP:         ["php|inc|phtml|shtml|php3|php4|php5|phps|phpt|aw|ctp|module"],
     PHP_Laravel_blade: ["blade.php"],
@@ -275,6 +276,7 @@ var supportedModes = {
     Python:      ["py"],
     QML:         ["qml"],
     R:           ["r"],
+    Raku:        ["raku|rakumod|rakutest|p6|pl6|pm6"],
     Razor:       ["cshtml|asp"],
     RDoc:        ["Rd"],
     Red:         ["red|reds"],
@@ -286,11 +288,13 @@ var supportedModes = {
     SCAD:        ["scad"],
     Scala:       ["scala|sbt"],
     Scheme:      ["scm|sm|rkt|oak|scheme"],
+    Scrypt:      ["scrypt"],
     SCSS:        ["scss"],
     SH:          ["sh|bash|^.bashrc"],
     SJS:         ["sjs"],
     Slim:        ["slim|skim"],
     Smarty:      ["smarty|tpl"],
+    Smithy:      ["smithy"],
     snippets:    ["snippets"],
     Soy_Template:["soy"],
     Space:       ["space"],
@@ -306,7 +310,7 @@ var supportedModes = {
     Textile:     ["textile"],
     Toml:        ["toml"],
     TSX:         ["tsx"],
-    Twig:        ["latte|twig|swig"],
+    Twig:        ["twig|swig"],
     Typescript:  ["ts|typescript|str"],
     Vala:        ["vala"],
     VBScript:    ["vbs|vb"],
@@ -338,6 +342,7 @@ var nameOverrides = {
     Perl6: "Perl 6",
     AutoHotKey: "AutoHotkey / AutoIt"
 };
+
 var modesByName = {};
 for (var name in supportedModes) {
     var data = supportedModes[name];
@@ -356,7 +361,7 @@ module.exports = {
 
 });
 
-ace.define("ace/ext/themelist",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/ext/themelist",[], function(require, exports, module) {
 "use strict";
 
 var themeData = [
@@ -389,6 +394,7 @@ var themeData = [
     ["Mono Industrial"      ,"mono_industrial"         ,  "dark"],
     ["Monokai"              ,"monokai"                 ,  "dark"],
     ["Nord Dark"            ,"nord_dark"               ,  "dark"],
+    ["One Dark"             ,"one_dark"                ,  "dark"],
     ["Pastel on dark"       ,"pastel_on_dark"          ,  "dark"],
     ["Solarized Dark"       ,"solarized_dark"          ,  "dark"],
     ["Terminal"             ,"terminal"                ,  "dark"],
@@ -416,7 +422,7 @@ exports.themes = themeData.map(function(data) {
 
 });
 
-ace.define("ace/ext/options",["require","exports","module","ace/ext/menu_tools/overlay_page","ace/lib/dom","ace/lib/oop","ace/config","ace/lib/event_emitter","ace/ext/modelist","ace/ext/themelist"], function(require, exports, module) {
+ace.define("ace/ext/options",[], function(require, exports, module) {
 "use strict";
 
 require("./menu_tools/overlay_page");

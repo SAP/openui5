@@ -1634,9 +1634,7 @@ cloneableTags[errorTag] = cloneableTags[funcTag] =
 cloneableTags[weakMapTag] = false;
 var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
 var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
-// #### BEGIN MODIFIED BY SAP
-var root = freeGlobal || freeSelf;
-// #### END MODIFIED BY SAP
+var root = freeGlobal || freeSelf || Function('return this')();
 var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
 var freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module;
 var moduleExports = freeModule && freeModule.exports === freeExports;
@@ -2422,11 +2420,10 @@ module.exports = slice;
   	exports.noConflict = function() { global._ = current; return exports; };
   })();
 }(this, (function () {
-  // #### BEGIN MOFIDIED BY SAP
   var root = typeof self == 'object' && self.self === self && self ||
             typeof global == 'object' && global.global === global && global ||
+            Function('return this')() ||
             {};
-  // #### END MOFIDIED BY SAP
   var ArrayProto = Array.prototype, ObjProto = Object.prototype;
   var SymbolProto = typeof Symbol !== 'undefined' ? Symbol.prototype : null;
   var push = ArrayProto.push,
@@ -3533,11 +3530,52 @@ module.exports = slice;
   var escapeChar = function(match) {
     return '\\' + escapes[match];
   };
-  // #### BEGIN MODIFIED BY SAP
   function template(text, settings, oldSettings) {
+    if (!settings && oldSettings) settings = oldSettings;
+    settings = defaults({}, settings, _.templateSettings);
+    var matcher = RegExp([
+      (settings.escape || noMatch).source,
+      (settings.interpolate || noMatch).source,
+      (settings.evaluate || noMatch).source
+    ].join('|') + '|$', 'g');
+    var index = 0;
+    var source = "__p+='";
+    text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
+      source += text.slice(index, offset).replace(escapeRegExp, escapeChar);
+      index = offset + match.length;
 
+      if (escape) {
+        source += "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'";
+      } else if (interpolate) {
+        source += "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'";
+      } else if (evaluate) {
+        source += "';\n" + evaluate + "\n__p+='";
+      }
+      return match;
+    });
+    source += "';\n";
+    if (!settings.variable) source = 'with(obj||{}){\n' + source + '}\n';
+
+    source = "var __t,__p='',__j=Array.prototype.join," +
+      "print=function(){__p+=__j.call(arguments,'');};\n" +
+      source + 'return __p;\n';
+
+    var render;
+    try {
+      render = new Function(settings.variable || 'obj', '_', source);
+    } catch (e) {
+      e.source = source;
+      throw e;
+    }
+
+    var template = function(data) {
+      return render.call(this, data, _);
+    };
+    var argument = settings.variable || 'obj';
+    template.source = 'function(' + argument + '){\n' + source + '}';
+
+    return template;
   }
-  // #### END MODIFIED BY SAP
   function chain(obj) {
     var instance = _(obj);
     instance._chain = true;
@@ -14898,14 +14936,6 @@ oop.inherits(JavaScriptWorker, Mirror);
         this.doc.getValue() && this.deferredUpdate.schedule(100);
     };
 
-    // #### BEGIN MODIFIED BY SAP
-    // Don't validate the JS code, JSHint already parses it well enough
-    // This modification won't be needed in the next version of ace. See https://github.com/ajaxorg/ace/pull/4540
-    this.isValidJS = function(str) {
-        return false;
-    };
-    // #### END MODIFIED BY SAP
-
     this.onUpdate = function() {
         var value = this.doc.getValue();
         value = value.replace(/^#!.*\n/, "\n");
@@ -14913,7 +14943,6 @@ oop.inherits(JavaScriptWorker, Mirror);
             return this.sender.emit("annotate", []);
 
         var errors = [];
-        var maxErrorLevel = this.isValidJS(value) ? "warning" : "error";
         lint(value, this.options, this.options.globals);
         var results = lint.errors;
 
@@ -14928,7 +14957,7 @@ oop.inherits(JavaScriptWorker, Mirror);
             if (raw == "Missing semicolon.") {
                 var str = error.evidence.substr(error.character);
                 str = str.charAt(str.search(/\S/));
-                if (maxErrorLevel == "error" && str && /[\w\d{(['"]/.test(str)) {
+                if (str && /[\w\d{(['"]/.test(str)) {
                     error.reason = 'Missing ";" before statement';
                     type = "error";
                 } else {
@@ -14943,7 +14972,7 @@ oop.inherits(JavaScriptWorker, Mirror);
             }
             else if (errorsRe.test(raw)) {
                 errorAdded  = true;
-                type = maxErrorLevel;
+                type = "error";
             }
             else if (raw == "'{a}' is not defined.") {
                 type = "warning";

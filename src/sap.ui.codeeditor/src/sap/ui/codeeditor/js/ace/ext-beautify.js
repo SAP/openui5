@@ -1,4 +1,4 @@
-ace.define("ace/ext/beautify",["require","exports","module","ace/token_iterator"], function(require, exports, module) {
+ace.define("ace/ext/beautify",[], function(require, exports, module) {
 "use strict";
 var TokenIterator = require("../token_iterator").TokenIterator;
 
@@ -40,6 +40,7 @@ exports.beautify = function(session) {
     var inBlock = false;
     var levels = {0: 0};
     var parents = [];
+    var caseBody = false;
 
     var trimNext = function() {
         if (nextToken && nextToken.value && nextToken.type !== 'string.regexp')
@@ -201,6 +202,9 @@ exports.beautify = function(session) {
                     trimLine();
                     if(value === "/>")
                         spaceBefore = true;
+                } else if (token.type === "keyword" && value.match(/^(case|default)$/)) {
+                    if (caseBody)
+                        unindent = 1;
                 }
                 if (breakBefore && !(token.type.match(/^(comment)$/) && !value.substr(0, 1).match(/^[/#]$/)) && !(token.type.match(/^(string)$/) && !value.substr(0, 1).match(/^['"]$/))) {
 
@@ -229,16 +233,16 @@ exports.beautify = function(session) {
                         code += tabString;
                 }
 
-
                 if (token.type === "keyword" && value.match(/^(case|default)$/)) {
-                    parents[depth] = value;
-                    depth++;
-                }
-
-
-                if (token.type === "keyword" && value.match(/^(break)$/)) {
+                    if (caseBody === false) {
+                        parents[depth] = value;
+                        depth++;
+                        caseBody = true;
+                    }
+                } else if (token.type === "keyword" && value.match(/^(break)$/)) {
                     if(parents[depth-1] && parents[depth-1].match(/^(case|default)$/)) {
                         depth--;
+                        caseBody = false;
                     }
                 }
                 if (token.type === "paren.lparen") {

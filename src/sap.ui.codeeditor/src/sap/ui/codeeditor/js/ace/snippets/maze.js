@@ -1,4 +1,4 @@
-ace.define("ace/snippets/maze",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/snippets/maze",[], function(require, exports, module) {
 "use strict";
 
 exports.snippetText = "snippet >\n\

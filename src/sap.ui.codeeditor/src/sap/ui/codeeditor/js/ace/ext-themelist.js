@@ -1,4 +1,4 @@
-ace.define("ace/ext/themelist",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/ext/themelist",[], function(require, exports, module) {
 "use strict";
 
 var themeData = [
@@ -31,6 +31,7 @@ var themeData = [
     ["Mono Industrial"      ,"mono_industrial"         ,  "dark"],
     ["Monokai"              ,"monokai"                 ,  "dark"],
     ["Nord Dark"            ,"nord_dark"               ,  "dark"],
+    ["One Dark"             ,"one_dark"                ,  "dark"],
     ["Pastel on dark"       ,"pastel_on_dark"          ,  "dark"],
     ["Solarized Dark"       ,"solarized_dark"          ,  "dark"],
     ["Terminal"             ,"terminal"                ,  "dark"],

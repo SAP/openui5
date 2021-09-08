@@ -1,4 +1,4 @@
-ace.define("ace/mode/doc_comment_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/doc_comment_highlight_rules",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
@@ -48,7 +48,7 @@ exports.DocCommentHighlightRules = DocCommentHighlightRules;
 
 });
 
-ace.define("ace/mode/c_cpp_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/doc_comment_highlight_rules","ace/mode/text_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/c_cpp_highlight_rules",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
@@ -65,7 +65,7 @@ var c_cppHighlightRules = function() {
     
     var storageType = (
         "asm|__asm__|auto|bool|_Bool|char|_Complex|double|enum|float|" +
-        "_Imaginary|int|long|short|signed|struct|typedef|union|unsigned|void|" +
+        "_Imaginary|int|int8_t|int16_t|int32_t|int64_t|long|short|signed|size_t|struct|typedef|uint8_t|uint16_t|uint32_t|uint64_t|union|unsigned|void|" +
         "class|wchar_t|template|char16_t|char32_t"
     );
 
@@ -242,7 +242,7 @@ oop.inherits(c_cppHighlightRules, TextHighlightRules);
 exports.c_cppHighlightRules = c_cppHighlightRules;
 });
 
-ace.define("ace/mode/matching_brace_outdent",["require","exports","module","ace/range"], function(require, exports, module) {
+ace.define("ace/mode/matching_brace_outdent",[], function(require, exports, module) {
 "use strict";
 
 var Range = require("../range").Range;
@@ -282,7 +282,7 @@ var MatchingBraceOutdent = function() {};
 exports.MatchingBraceOutdent = MatchingBraceOutdent;
 });
 
-ace.define("ace/mode/folding/cstyle",["require","exports","module","ace/lib/oop","ace/range","ace/mode/folding/fold_mode"], function(require, exports, module) {
+ace.define("ace/mode/folding/cstyle",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../../lib/oop");
@@ -422,7 +422,7 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 });
 
-ace.define("ace/mode/c_cpp",["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/c_cpp_highlight_rules","ace/mode/matching_brace_outdent","ace/range","ace/mode/behaviour/cstyle","ace/mode/folding/cstyle"], function(require, exports, module) {
+ace.define("ace/mode/c_cpp",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
@@ -495,7 +495,7 @@ oop.inherits(Mode, TextMode);
 exports.Mode = Mode;
 });
 
-ace.define("ace/mode/nix_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/nix_highlight_rules",[], function(require, exports, module) {
     "use strict";
 
     var oop = require("../lib/oop");
@@ -614,7 +614,7 @@ ace.define("ace/mode/nix_highlight_rules",["require","exports","module","ace/lib
     exports.NixHighlightRules = NixHighlightRules;
 });
 
-ace.define("ace/mode/nix",["require","exports","module","ace/lib/oop","ace/mode/c_cpp","ace/mode/nix_highlight_rules","ace/mode/folding/cstyle"], function(require, exports, module) {
+ace.define("ace/mode/nix",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");

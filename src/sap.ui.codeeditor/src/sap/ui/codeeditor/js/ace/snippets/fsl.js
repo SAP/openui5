@@ -1,4 +1,4 @@
-ace.define("ace/snippets/fsl",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/snippets/fsl",[], function(require, exports, module) {
 "use strict";
 
 exports.snippetText =undefined;

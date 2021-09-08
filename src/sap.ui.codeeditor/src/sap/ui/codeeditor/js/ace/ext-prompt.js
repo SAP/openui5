@@ -1,4 +1,4 @@
-ace.define("ace/ext/menu_tools/get_editor_keyboard_shortcuts",["require","exports","module","ace/lib/keys"], function(require, exports, module) {
+ace.define("ace/ext/menu_tools/get_editor_keyboard_shortcuts",[], function(require, exports, module) {
 "use strict";
 var keys = require("../../lib/keys");
 module.exports.getEditorKeybordShortcuts = function(editor) {
@@ -29,7 +29,7 @@ module.exports.getEditorKeybordShortcuts = function(editor) {
 
 });
 
-ace.define("ace/autocomplete/popup",["require","exports","module","ace/virtual_renderer","ace/editor","ace/range","ace/lib/event","ace/lib/lang","ace/lib/dom"], function(require, exports, module) {
+ace.define("ace/autocomplete/popup",[], function(require, exports, module) {
 "use strict";
 
 var Renderer = require("../virtual_renderer").VirtualRenderer;
@@ -364,13 +364,13 @@ dom.importCssString("\
     line-height: 1.4;\
     background: #25282c;\
     color: #c1c1c1;\
-}", "autocompletion.css");
+}", "autocompletion.css", false);
 
 exports.AcePopup = AcePopup;
 exports.$singleLineEditor = $singleLineEditor;
 });
 
-ace.define("ace/autocomplete/util",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/autocomplete/util",[], function(require, exports, module) {
 "use strict";
 
 exports.parForEach = function(array, fn, callback) {
@@ -430,8 +430,9 @@ exports.getCompletionPrefix = function (editor) {
 
 });
 
-ace.define("ace/snippets",["require","exports","module","ace/lib/oop","ace/lib/event_emitter","ace/lib/lang","ace/range","ace/range_list","ace/keyboard/hash_handler","ace/tokenizer","ace/clipboard","ace/lib/dom","ace/editor"], function(require, exports, module) {
+ace.define("ace/snippets",[], function(require, exports, module) {
 "use strict";
+var dom = require("./lib/dom");
 var oop = require("./lib/oop");
 var EventEmitter = require("./lib/event_emitter").EventEmitter;
 var lang = require("./lib/lang");
@@ -1413,14 +1414,14 @@ var moveRelative = function(point, start) {
 };
 
 
-require("./lib/dom").importCssString("\
+dom.importCssString("\
 .ace_snippet-marker {\
     -moz-box-sizing: border-box;\
     box-sizing: border-box;\
     background: rgba(194, 193, 208, 0.09);\
     border: 1px dotted rgba(211, 208, 235, 0.62);\
     position: absolute;\
-}");
+}", "snippets.css", false);
 
 exports.snippetManager = new SnippetManager();
 
@@ -1437,7 +1438,7 @@ var Editor = require("./editor").Editor;
 
 });
 
-ace.define("ace/autocomplete",["require","exports","module","ace/keyboard/hash_handler","ace/autocomplete/popup","ace/autocomplete/util","ace/lib/lang","ace/lib/dom","ace/snippets","ace/config"], function(require, exports, module) {
+ace.define("ace/autocomplete",[], function(require, exports, module) {
 "use strict";
 
 var HashHandler = require("./keyboard/hash_handler").HashHandler;
@@ -1695,19 +1696,14 @@ var Autocomplete = function() {
             return this.openPopup(this.editor, "", keepPopupPosition);
         }
         var _id = this.gatherCompletionsId;
-        this.gatherCompletions(this.editor, function(err, results) {
-            var detachIfFinished = function() {
-                if (!results.finished) return;
-                return this.detach();
-            }.bind(this);
+        var detachIfFinished = function(results) {
+            if (!results.finished) return;
+            return this.detach();
+        }.bind(this);
 
+        var processResults = function(results) {
             var prefix = results.prefix;
-            var matches = results && results.matches;
-
-            if (!matches || !matches.length)
-                return detachIfFinished();
-            if (prefix.indexOf(results.prefix) !== 0 || _id != this.gatherCompletionsId)
-                return;
+            var matches = results.matches;
 
             this.completions = new FilteredList(matches);
 
@@ -1717,14 +1713,39 @@ var Autocomplete = function() {
             this.completions.setFilter(prefix);
             var filtered = this.completions.filtered;
             if (!filtered.length)
-                return detachIfFinished();
+                return detachIfFinished(results);
             if (filtered.length == 1 && filtered[0].value == prefix && !filtered[0].snippet)
-                return detachIfFinished();
+                return detachIfFinished(results);
             if (this.autoInsert && filtered.length == 1 && results.finished)
                 return this.insertMatch(filtered[0]);
 
             this.openPopup(this.editor, prefix, keepPopupPosition);
+        }.bind(this);
+
+        var isImmediate = true;
+        var immediateResults = null;
+        this.gatherCompletions(this.editor, function(err, results) {
+            var prefix = results.prefix;
+            var matches = results && results.matches;
+
+            if (!matches || !matches.length)
+                return detachIfFinished(results);
+            if (prefix.indexOf(results.prefix) !== 0 || _id != this.gatherCompletionsId)
+                return;
+            if (isImmediate) {
+                immediateResults = results;
+                return;
+            }
+
+            processResults(results);
         }.bind(this));
+        
+        isImmediate = false;
+        if (immediateResults) {
+            var results = immediateResults;
+            immediateResults = null;
+            processResults(results);
+        }
     };
 
     this.cancelContextMenu = function() {
@@ -1950,7 +1971,7 @@ exports.FilteredList = FilteredList;
 
 });
 
-ace.define("ace/ext/menu_tools/overlay_page",["require","exports","module","ace/lib/dom"], function(require, exports, module) {
+ace.define("ace/ext/menu_tools/overlay_page",[], function(require, exports, module) {
 'use strict';
 var dom = require("../../lib/dom");
 var cssText = "#ace_settingsmenu, #kbshortcutmenu {\
@@ -2013,7 +2034,7 @@ margin: 0px;\
 .ace_optionsMenuEntry button:hover{\
 background: #f0f0f0;\
 }";
-dom.importCssString(cssText);
+dom.importCssString(cssText, "settings_menu.css", false);
 
 module.exports.overlayPage = function overlayPage(editor, contentElement, callback) {
     var closer = document.createElement('div');
@@ -2071,7 +2092,7 @@ module.exports.overlayPage = function overlayPage(editor, contentElement, callba
 
 });
 
-ace.define("ace/ext/modelist",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/ext/modelist",[], function(require, exports, module) {
 "use strict";
 
 var modes = [];
@@ -2117,7 +2138,7 @@ var supportedModes = {
     Apex:        ["apex|cls|trigger|tgr"],
     AQL:         ["aql"],
     AsciiDoc:    ["asciidoc|adoc"],
-    ASL:         ["dsl|asl"],
+    ASL:         ["dsl|asl|asl.json"],
     Assembly_x86:["asm|a"],
     AutoHotKey:  ["ahk"],
     BatchFile:   ["bat|cmd"],
@@ -2184,6 +2205,7 @@ var supportedModes = {
     Julia:       ["jl"],
     Kotlin:      ["kt|kts"],
     LaTeX:       ["tex|latex|ltx|bib"],
+    Latte:       ["latte"],
     LESS:        ["less"],
     Liquid:      ["liquid"],
     Lisp:        ["lisp"],
@@ -2200,6 +2222,7 @@ var supportedModes = {
     Maze:        ["mz"],
     MediaWiki:   ["wiki|mediawiki"],
     MEL:         ["mel"],
+    MIPS:        ["s|asm"],
     MIXAL:       ["mixal"],
     MUSHCode:    ["mc|mush"],
     MySQL:       ["mysql"],
@@ -2212,7 +2235,6 @@ var supportedModes = {
     OCaml:       ["ml|mli"],
     Pascal:      ["pas|p"],
     Perl:        ["pl|pm"],
-    Perl6:       ["p6|pl6|pm6"],
     pgSQL:       ["pgsql"],
     PHP:         ["php|inc|phtml|shtml|php3|php4|php5|phps|phpt|aw|ctp|module"],
     PHP_Laravel_blade: ["blade.php"],
@@ -2227,6 +2249,7 @@ var supportedModes = {
     Python:      ["py"],
     QML:         ["qml"],
     R:           ["r"],
+    Raku:        ["raku|rakumod|rakutest|p6|pl6|pm6"],
     Razor:       ["cshtml|asp"],
     RDoc:        ["Rd"],
     Red:         ["red|reds"],
@@ -2238,11 +2261,13 @@ var supportedModes = {
     SCAD:        ["scad"],
     Scala:       ["scala|sbt"],
     Scheme:      ["scm|sm|rkt|oak|scheme"],
+    Scrypt:      ["scrypt"],
     SCSS:        ["scss"],
     SH:          ["sh|bash|^.bashrc"],
     SJS:         ["sjs"],
     Slim:        ["slim|skim"],
     Smarty:      ["smarty|tpl"],
+    Smithy:      ["smithy"],
     snippets:    ["snippets"],
     Soy_Template:["soy"],
     Space:       ["space"],
@@ -2258,7 +2283,7 @@ var supportedModes = {
     Textile:     ["textile"],
     Toml:        ["toml"],
     TSX:         ["tsx"],
-    Twig:        ["latte|twig|swig"],
+    Twig:        ["twig|swig"],
     Typescript:  ["ts|typescript|str"],
     Vala:        ["vala"],
     VBScript:    ["vbs|vb"],
@@ -2290,6 +2315,7 @@ var nameOverrides = {
     Perl6: "Perl 6",
     AutoHotKey: "AutoHotkey / AutoIt"
 };
+
 var modesByName = {};
 for (var name in supportedModes) {
     var data = supportedModes[name];
@@ -2308,7 +2334,7 @@ module.exports = {
 
 });
 
-ace.define("ace/ext/prompt",["require","exports","module","ace/range","ace/lib/dom","ace/ext/menu_tools/get_editor_keyboard_shortcuts","ace/autocomplete","ace/autocomplete/popup","ace/autocomplete/popup","ace/undomanager","ace/tokenizer","ace/ext/menu_tools/overlay_page","ace/ext/modelist"], function(require, exports, module) {
+ace.define("ace/ext/prompt",[], function(require, exports, module) {
 "use strict";
 
 var Range = require("../range").Range;
@@ -2605,13 +2631,10 @@ prompt.commands = function(editor, callback) {
             var platform = handler.platform;
             var cbn = handler.byName;
             for (var i in cbn) {
-                var key;
-                if (cbn[i].bindKey && cbn[i].bindKey[platform] !== null) {
-                    key = cbn[i].bindKey["win"];
-                } else {
-                    key = "";
+                var key = cbn[i].bindKey;
+                if (typeof key !== "string") {
+                    key = key && key[platform] || "";
                 }
-
                 var commands = cbn[i];
                 var description = commands.description || normalizeName(commands.name);
                 if (!Array.isArray(commands))
@@ -2768,7 +2791,7 @@ dom.importCssString(".ace_prompt_container {\
     background: white;\
     border-radius: 2px;\
     box-shadow: 0px 2px 3px 0px #555;\
-}");
+}", "promtp.css", false);
 
 
 exports.prompt = prompt;

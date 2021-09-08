@@ -1,4 +1,4 @@
-ace.define("ace/snippets/razor",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/snippets/razor",[], function(require, exports, module) {
 "use strict";
 
 exports.snippetText = "snippet if\n\

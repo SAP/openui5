@@ -1,4 +1,4 @@
-ace.define("ace/snippets/html",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/snippets/html",[], function(require, exports, module) {
 "use strict";
 
 exports.snippetText = "# Some useful Unicode entities\n\
@@ -237,9 +237,7 @@ snippet button:s\n\
 snippet button:r\n\
 	<button type=\"reset\">${1}</button>\n\
 snippet canvas\n\
-	<canvas>\n\
-		${1}\n\
-	</canvas>\n\
+	<canvas id=\"${1:canvas}\"></canvas>\n\
 snippet caption\n\
 	<caption>${1}</caption>\n\
 snippet cite\n\
@@ -853,7 +851,7 @@ snippet ul+\n\
 snippet var\n\
 	<var>${1}</var>\n\
 snippet video\n\
-	<video src=\"${1} height=\"${2}\" width=\"${3}\" preload=\"${5:none}\" autoplay=\"${6:autoplay}>${7}</video>${8}\n\
+	<video src=\"${1}\" height=\"${2}\" width=\"${3}\" preload=\"${5:none}\" autoplay=\"${6:autoplay}\">${7}</video>${8}\n\
 snippet wbr\n\
 	<wbr />${1}\n\
 ";

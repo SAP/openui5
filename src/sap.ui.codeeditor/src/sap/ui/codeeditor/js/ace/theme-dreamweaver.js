@@ -1,7 +1,6 @@
-ace.define("ace/theme/dreamweaver",["require","exports","module","ace/lib/dom"], function(require, exports, module) {
+ace.define("ace/theme/dreamweaver",[], function(require, exports, module) {
 exports.isDark = false;
 exports.cssClass = "ace-dreamweaver";
-// #### BEGIN MODIFIED BY SAP
 exports.cssText = ".ace-dreamweaver .ace_gutter {\
 background: #e8e8e8;\
 color: #333;\
@@ -134,12 +133,11 @@ color:#099;\
 color: rgb(255, 0, 0)\
 }\
 .ace-dreamweaver .ace_indent-guide {\
-background: url(" + sap.ui.require.toUrl("sap/ui/codeeditor/js/ace/assets/theme_dreamweaver_indent_guide.png") + ") right repeat-y;\
+background: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==\") right repeat-y;\
 }";
-// #### END MODIFIED BY SAP
 
 var dom = require("../lib/dom");
-dom.importCssString(exports.cssText, exports.cssClass);
+dom.importCssString(exports.cssText, exports.cssClass, false);
 });                (function() {
                     ace.require(["ace/theme/dreamweaver"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {

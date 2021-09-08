@@ -1,4 +1,4 @@
-ace.define("ace/keyboard/sublime",["require","exports","module","ace/keyboard/hash_handler"], function(require, exports, module) {
+ace.define("ace/keyboard/sublime",[], function(require, exports, module) {
 "use strict";
 
 var HashHandler = require("../keyboard/hash_handler").HashHandler;

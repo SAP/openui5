@@ -1,4 +1,4 @@
-ace.define("ace/theme/nord_dark",["require","exports","module","ace/lib/dom"], function(require, exports, module) {
+ace.define("ace/theme/nord_dark",[], function(require, exports, module) {
 
 exports.isDark = true;
 exports.cssClass = "ace-nord-dark";
@@ -91,7 +91,7 @@ box-shadow: inset -1px 0 0 0 #434c5eb3;\
 exports.$selectionColorConflict = true;
 
 var dom = require("../lib/dom");
-dom.importCssString(exports.cssText, exports.cssClass);
+dom.importCssString(exports.cssText, exports.cssClass, false);
 });                (function() {
                     ace.require(["ace/theme/nord_dark"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {

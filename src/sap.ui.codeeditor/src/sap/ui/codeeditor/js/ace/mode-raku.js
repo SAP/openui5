@@ -1,10 +1,10 @@
-ace.define("ace/mode/perl6_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/raku_highlight_rules",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
-var Perl6HighlightRules = function() {
+var RakuHighlightRules = function() {
 
     var keywords = (
         "my|our|class|role|grammar|is|does|sub|method|submethod|try|" +
@@ -34,7 +34,7 @@ var Perl6HighlightRules = function() {
         "Pod::Block|Pod::Block::Code|Pod::Block::Comment|Pod::Block::Declarator|"+
         "Pod::Block::Named|Pod::Block::Para|Pod::Block::Table|Pod::Heading|Pod::Item|"+
         "Positional|PositionalBindFailover|Proc|Proc::Async|Promise|Proxy|PseudoStash|"+
-        "QuantHash|Range|Rat|Rational|RatStr|Real|Regex|Routine|Scalar|Scheduler|"+
+        "Raku|QuantHash|Range|Rat|Rational|RatStr|Real|Regex|Routine|Scalar|Scheduler|"+
         "Semaphore|Seq|Set|SetHash|Setty|Signature|Slip|Stash|Str|StrDistance|Stringy|"+
         "Sub|Submethod|Supplier|Supplier::Preserving|Supply|Systemic|Tap|Telemetry|"+
         "Telemetry::Instrument::Thread|Telemetry::Instrument::Usage|Telemetry::Period|"+
@@ -120,7 +120,7 @@ var Perl6HighlightRules = function() {
         "positional|posix|postfix|postmatch|precomp-ext|precomp-target|pred|prefix|prematch|prepend|"+
         "print|printf|print-nl|print-to|private|private_method_table|proc|produce|Promise|prompt|"+
         "protect|pull-one|push|push-all|push-at-least|push-exactly|push-until-lazy|put|"+
-        "qualifier-type|quit|r|race|radix|rand|range|raw|re|read|readchars|readonly|"+
+        "qualifier-type|quit|r|race|radix|raku|rand|range|raw|re|read|readchars|readonly|"+
         "ready|Real|reallocate|reals|reason|rebless|receive|recv|redispatcher|redo|reduce|"+
         "rel2abs|relative|release|rename|repeated|replacement|report|reserved|resolve|"+
         "restore|result|resume|rethrow|reverse|right|rindex|rmdir|roles_to_compose|"+
@@ -339,12 +339,12 @@ var Perl6HighlightRules = function() {
 	};
 };
 
-oop.inherits(Perl6HighlightRules, TextHighlightRules);
+oop.inherits(RakuHighlightRules, TextHighlightRules);
 
-exports.Perl6HighlightRules = Perl6HighlightRules;
+exports.RakuHighlightRules = RakuHighlightRules;
 });
 
-ace.define("ace/mode/matching_brace_outdent",["require","exports","module","ace/range"], function(require, exports, module) {
+ace.define("ace/mode/matching_brace_outdent",[], function(require, exports, module) {
 "use strict";
 
 var Range = require("../range").Range;
@@ -384,7 +384,7 @@ var MatchingBraceOutdent = function() {};
 exports.MatchingBraceOutdent = MatchingBraceOutdent;
 });
 
-ace.define("ace/mode/folding/cstyle",["require","exports","module","ace/lib/oop","ace/range","ace/mode/folding/fold_mode"], function(require, exports, module) {
+ace.define("ace/mode/folding/cstyle",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../../lib/oop");
@@ -524,17 +524,17 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 });
 
-ace.define("ace/mode/perl6",["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/perl6_highlight_rules","ace/mode/matching_brace_outdent","ace/mode/folding/cstyle"], function(require, exports, module) {
+ace.define("ace/mode/raku",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
 var TextMode = require("./text").Mode;
-var Perl6HighlightRules = require("./perl6_highlight_rules").Perl6HighlightRules;
+var RakuHighlightRules = require("./raku_highlight_rules").RakuHighlightRules;
 var MatchingBraceOutdent = require("./matching_brace_outdent").MatchingBraceOutdent;
 var CStyleFoldMode = require("./folding/cstyle").FoldMode;
 
 var Mode = function() {
-    this.HighlightRules = Perl6HighlightRules;
+    this.HighlightRules = RakuHighlightRules;
 
     this.$outdent = new MatchingBraceOutdent();
     this.foldingRules = new CStyleFoldMode({start: "^=(begin)\\b", end: "^=(end)\\b"});
@@ -579,12 +579,12 @@ oop.inherits(Mode, TextMode);
         this.$outdent.autoOutdent(doc, row);
     };
 
-    this.$id = "ace/mode/perl6";
+    this.$id = "ace/mode/raku";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
 });                (function() {
-                    ace.require(["ace/mode/perl6"], function(m) {
+                    ace.require(["ace/mode/raku"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;
                         }

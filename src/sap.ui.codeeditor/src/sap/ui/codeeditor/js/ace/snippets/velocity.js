@@ -1,4 +1,4 @@
-ace.define("ace/snippets/velocity",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/snippets/velocity",[], function(require, exports, module) {
 "use strict";
 
 exports.snippetText = "# macro\n\
