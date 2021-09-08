@@ -3624,10 +3624,7 @@ sap.ui.define([
 			var iIntervalId;
 
 			oFilterInfoBar.firePress();
-
-			assert.equal(oTableSettingsShowPanelSpy.callCount, 1, "TableSettings.showPanel is called once");
-			assert.ok(oTableSettingsShowPanelSpy.calledWithExactly(that.oTable, "Filter", oFilterInfoBar),
-				"TableSettings.showPanel is called with the correct arguments");
+			assert.ok(oTableSettingsShowPanelSpy.calledOnceWithExactly(that.oTable, "Filter", oFilterInfoBar), "TableSettings.showPanel call");
 
 			that.oTable.setFilterConditions({
 				name: []
