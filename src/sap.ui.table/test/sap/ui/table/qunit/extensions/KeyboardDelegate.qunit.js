@@ -5347,39 +5347,60 @@ sap.ui.define([
 		test.call(this, assert);
 	});
 
-	QUnit.test("TreeTable - Expand/Collapse Group", function(assert) {
+	QUnit.test("TreeTable - Expand/Collapse", function(assert) {
 		var oRowToggleExpandedState = this.spy(oTreeTable.getRows()[0], "toggleExpandedState");
 
-		function testCollapseExpandAndFocus(assert, oElement) {
-			oElement.focus();
+		function testCollapseExpandAndFocus(assert, $Element) {
+			$Element.focus();
 
 			oRowToggleExpandedState.reset();
-			qutils.triggerKeyup(oElement, Key.SPACE, false, false, false);
+			qutils.triggerKeyup($Element, Key.SPACE, false, false, false);
 			assert.equal(oRowToggleExpandedState.callCount, 1, "Space: Row#toggleExpandedState called once");
-			checkFocus(oElement, assert);
+			checkFocus($Element, assert);
 
 			oRowToggleExpandedState.reset();
-			qutils.triggerKeydown(oElement, Key.ENTER, false, false, false);
+			qutils.triggerKeydown($Element, Key.ENTER, false, false, false);
 			assert.equal(oRowToggleExpandedState.callCount, 1, "Enter: Row#toggleExpandedState called once");
-			checkFocus(oElement, assert);
+			checkFocus($Element, assert);
 		}
 
-		function testNoCollapseExpand(assert, oElement) {
-			oElement.focus();
+		function testNoCollapseExpand(assert, $Element) {
+			$Element.focus();
 
 			oRowToggleExpandedState.reset();
-			qutils.triggerKeyup(oElement, Key.SPACE, false, false, false);
+			qutils.triggerKeyup($Element, Key.SPACE, false, false, false);
 			assert.ok(oRowToggleExpandedState.notCalled, "Space: Row#toggleExpandedState not called");
 
 			oRowToggleExpandedState.reset();
-			qutils.triggerKeydown(oElement, Key.ENTER, false, false, false);
+			qutils.triggerKeydown($Element, Key.ENTER, false, false, false);
 			assert.ok(oRowToggleExpandedState.notCalled, "Enter: Row#toggleExpandedState not called");
 		}
 
-		testCollapseExpandAndFocus(assert, getCell(0, 0, null, null, oTreeTable));
-		testCollapseExpandAndFocus(assert, getCell(0, 0, null, null, oTreeTable).find(".sapUiTableTreeIcon"));
-		testNoCollapseExpand(assert, getCell(0, 1, null, null, oTreeTable));
-		testNoCollapseExpand(assert, getRowHeader(0, null, null, oTreeTable));
+		testCollapseExpandAndFocus(assert, getCell(0, 0, false, null, oTreeTable));
+		testCollapseExpandAndFocus(assert, getCell(0, 0, false, null, oTreeTable).find(".sapUiTableTreeIcon"));
+		testNoCollapseExpand(assert, getCell(0, 1, false, null, oTreeTable));
+		testNoCollapseExpand(assert, getRowHeader(0, false, null, oTreeTable));
+	});
+
+	QUnit.test("TreeTable - Focus if expanded row turns into leaf", function(assert) {
+		oTreeTable.expand([6, 7]);
+		oTreeTable.setFirstVisibleRow(8);
+
+		return new Promise(function(resolve) {
+			oTreeTable.attachEventOnce("rowsUpdated", resolve);
+		}).then(function() {
+			var $Element = getCell(1, 0, false, null, oTreeTable).find(".sapUiTableTreeIcon");
+
+			$Element.focus();
+			qutils.triggerKeydown($Element, Key.ENTER, false, false, false);
+
+			return new Promise(function(resolve) {
+				oTreeTable.attachEventOnce("rowsUpdated", resolve);
+			});
+		}).then(function() {
+			checkFocus(getCell(1, 0, false, null, oTreeTable), assert);
+			assert.ok(!oTreeTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+		});
 	});
 
 	QUnit.module("Interaction > Ctrl+A (Select/Deselect All)", {
