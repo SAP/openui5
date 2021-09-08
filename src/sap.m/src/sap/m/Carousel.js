@@ -567,9 +567,17 @@ sap.ui.define([
 	 * @private
 	 */
 	Carousel.prototype._setWidthOfPages = function (iNumberOfItemsToShow) {
-		var iItemWidth = this._calculatePagesWidth(iNumberOfItemsToShow);
+		var $items = this.$().find(".sapMCrslItem"),
+			iItemWidth;
 
-		this.$().find(".sapMCrslItem").each(function (iIndex, oPage) {
+		if (!$items.length) {
+			// pages are not yet rendered, calculation will be done in the next onAfterRendering
+			return;
+		}
+
+		iItemWidth = this._calculatePagesWidth(iNumberOfItemsToShow);
+
+		$items.each(function (iIndex, oPage) {
 			oPage.style.width = iItemWidth  + "%";
 		});
 	};
