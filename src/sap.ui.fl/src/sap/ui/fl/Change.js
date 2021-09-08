@@ -1032,6 +1032,9 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.setRevertData = function(vData) {
+		if (vData === undefined) {
+			throw new Error("Change cannot be applied in XML as revert data is not available yet. Retrying in JS.");
+		}
 		this._vRevertData = vData;
 	};
 

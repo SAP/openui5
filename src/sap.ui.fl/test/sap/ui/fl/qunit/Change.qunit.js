@@ -956,9 +956,13 @@ function(
 			assert.ok(oChange.hasRevertData(), "hasRevertData returns true");
 			assert.equal(oChange.getRevertData(), "", "getRevertData returns the correct data");
 
-			oChange.setRevertData(undefined);
-			assert.ok(oChange.hasRevertData(), "hasRevertData returns true");
-			assert.equal(oChange.getRevertData(), undefined, "getRevertData returns the correct data");
+			oChange.resetRevertData();
+			assert.throws(function () {
+				oChange.setRevertData(undefined);
+			}, /Change cannot be applied in XML as revert data is not available yet. Retrying in JS./,
+			"'undefined' value results in an exception");
+			assert.notOk(oChange.hasRevertData(), "hasRevertData returns false");
+			assert.equal(oChange.getRevertData(), null, "getRevertData returns the correct data");
 		});
 	});
 
