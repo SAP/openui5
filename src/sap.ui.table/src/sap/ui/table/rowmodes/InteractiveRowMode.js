@@ -313,13 +313,23 @@ sap.ui.define([
 		var width = $Splitter.width();
 		var bTouch = oTable._isTouchEvent(oEvent);
 
-		$Body.append(
-			"<div id=\"" + oTable.getId() + "-ghost\" class=\"sapUiTableInteractiveResizerGhost\" style =\" height:" + height + "px; width:"
-			+ width + "px; left:" + offset.left + "px; top:" + offset.top + "px\" ></div>");
+		var oGhostDiv = document.createElement("div");
+		oGhostDiv.style.width = width + "px";
+		oGhostDiv.style.height = height + "px";
+		oGhostDiv.style.left = offset.left + "px";
+		oGhostDiv.style.top = offset.top + "px";
+		oGhostDiv.className = "sapUiTableInteractiveResizerGhost";
+		oGhostDiv.id = oTable.getId() + "-ghost";
+		$Body.append(oGhostDiv);
 
-		// Append overlay over splitter to enable correct functionality of moving the splitter
-		$Splitter.append(
-			"<div id=\"" + oTable.getId() + "-rzoverlay\" style =\"left: 0px; right: 0px; bottom: 0px; top: 0px; position:absolute\" ></div>");
+		var oOverlayDiv = document.createElement("div");
+		oOverlayDiv.style.top = "0px";
+		oOverlayDiv.style.bottom = "0px";
+		oOverlayDiv.style.left = "0px";
+		oOverlayDiv.style.right = "0px";
+		oOverlayDiv.style.position = "absolute";
+		oOverlayDiv.id = oTable.getId() + "-rzoverlay";
+		$Splitter.append(oOverlayDiv);
 
 		$Document.on((bTouch ? "touchend" : "mouseup") + ".sapUiTableInteractiveResize",
 			ResizeHelper.exitInteractiveResizing.bind(oTable, oMode));
