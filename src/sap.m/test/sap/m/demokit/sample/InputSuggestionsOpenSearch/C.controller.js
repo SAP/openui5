@@ -24,14 +24,12 @@ sap.ui.define([
 			var sTerm = oEvent.getParameter("suggestValue");
 
 			this._oOpenSearchProvider.suggest(sTerm, function (sValue, aSuggestions) {
-				if (sValue === this.getValue()) {
-					this.destroySuggestionItems();
+				this.destroySuggestionItems();
 
-					for (var i = 0; i < aSuggestions.length; i++) {
-						this.addSuggestionItem(new Item({
-							text: aSuggestions[i]
-						}));
-					}
+				for (var i = 0; i < aSuggestions.length; i++) {
+					this.addSuggestionItem(new Item({
+						text: aSuggestions[i]
+					}));
 				}
 			}.bind(oEvent.getSource()));
 		}
