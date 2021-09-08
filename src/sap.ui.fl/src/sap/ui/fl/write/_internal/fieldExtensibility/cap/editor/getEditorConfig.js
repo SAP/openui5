@@ -10,12 +10,12 @@ sap.ui.define([
 
 	return function(oCustomConfig) {
 		return {
-			context: "/",
+			context: "/element",
 			properties: {
 				entityType: {
 					tags: ["general"],
 					label: "Entity Type",
-					path: "entityType",
+					path: "/extend",
 					type: "select",
 					items: (oCustomConfig.entityTypes || []).map(function(sEntityType) {
 						return {
@@ -77,7 +77,7 @@ sap.ui.define([
 					path: "precision",
 					type: "number",
 					defaultValue: "",
-					visible: "{= ${/type} === 'cds.Decimal' }"
+					visible: "{= ${/element/type} === 'cds.Decimal' }"
 				},
 				numberScale: {
 					tags: ["general"],
@@ -85,7 +85,7 @@ sap.ui.define([
 					path: "scale",
 					type: "number",
 					defaultValue: "",
-					visible: "{= ${/type} === 'cds.Decimal' }"
+					visible: "{= ${/element/type} === 'cds.Decimal' }"
 				},
 				stringLength: {
 					tags: ["general"],
@@ -93,14 +93,14 @@ sap.ui.define([
 					path: "length",
 					type: "number",
 					defaultValue: "",
-					visible: "{= ${/type} === 'cds.String' }"
+					visible: "{= ${/element/type} === 'cds.String' }"
 				},
 				defaultValue: {
 					tags: ["general"],
 					label: "Default",
 					path: "default/val",
 					defaultValue: "",
-					type: "{/type}" //"{path: '/type', formatter: '._getEditorForType'}"
+					type: "{/element/type}" //"{path: '/element/type', formatter: '._getEditorForType'}"
 				},
 				readonly: {
 					tags: ["validation"],
@@ -120,25 +120,25 @@ sap.ui.define([
 					path: "@assert.format",
 					type: "string",
 					defaultValue: "",
-					visible: "{= ${/type} === 'cds.String' }"
+					visible: "{= ${/element/type} === 'cds.String' }"
 				},
 				stringRange: {
 					tags: ["validation"],
 					label: "Allowed Values",
 					path: "@assert.range",
 					type: "list",
-					visible: "{= ${/type} === 'cds.String' }",
-					active: "{= ${/type} === 'cds.String' }"
+					visible: "{= ${/element/type} === 'cds.String' }",
+					active: "{= ${/element/type} === 'cds.String' }"
 				},
 				arrayRange: {
 					tags: ["validation"],
 					label: "Range",
 					path: "@assert.range",
 					type: "range",
-					rangeType: "{/type}",
+					rangeType: "{/element/type}",
 					// TODO: Once expression bindings are supported, check for ordinal types differently
-					visible: "{= ${/type} === 'cds.Integer' || ${/type} === 'cds.Decimal' || ${/type} === 'cds.DateTime' || ${/type} === 'cds.Date' || ${/type} === 'cds.Time'}",
-					active: "{= ${/type} === 'cds.Integer' || ${/type} === 'cds.Decimal' || ${/type} === 'cds.DateTime' || ${/type} === 'cds.Date' || ${/type} === 'cds.Time'}"
+					visible: "{= ${/element/type} === 'cds.Integer' || ${/element/type} === 'cds.Decimal' || ${/element/type} === 'cds.DateTime' || ${/element/type} === 'cds.Date' || ${/element/type} === 'cds.Time'}",
+					active: "{= ${/element/type} === 'cds.Integer' || ${/element/type} === 'cds.Decimal' || ${/element/type} === 'cds.DateTime' || ${/element/type} === 'cds.Date' || ${/element/type} === 'cds.Time'}"
 				},
 				annotations: {
 					tags: ["advanced"],

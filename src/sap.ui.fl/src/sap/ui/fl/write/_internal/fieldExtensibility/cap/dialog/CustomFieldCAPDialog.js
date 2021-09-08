@@ -32,31 +32,38 @@ sap.ui.define([
 	}
 
 	function prepareJsonOutput(oOriginalJson) {
-		if (!oOriginalJson) {
+		if (!oOriginalJson || !oOriginalJson.element) {
 			return {};
 		}
 		var oJson = deepClone(oOriginalJson);
 
 		// Format enum input validation
-		var vRange = ObjectPath.get(["@assert.range"], oJson);
+		var vRange = ObjectPath.get(["element", "@assert.range"], oJson);
 		if (
-			oJson.type === "cds.String"
+			ObjectPath.get(["element", "type"], oJson) === "cds.String"
 			&& Array.isArray(vRange)
 		) {
-			ObjectPath.set(["enum"], vRange.reduce(function (enumMap, enumOption) {
+			ObjectPath.set(["element", "enum"], vRange.reduce(function (enumMap, enumOption) {
 				enumMap[enumOption] = {};
 				return enumMap;
 			}, {}), oJson);
-			ObjectPath.set(["@assert.range"], true, oJson);
+			ObjectPath.set(["element", "@assert.range"], true, oJson);
 		}
 
 		// Flatten additional annotations
-		if (oJson.annotations) {
-			oJson = Object.assign({}, oJson, oJson.annotations);
-			delete oJson.annotations;
+		if (oJson.element.annotations) {
+			oJson.element = Object.assign({}, oJson.element, oJson.element.annotations);
+			delete oJson.element.annotations;
 		}
 
-		return oJson;
+		// Format CSN extension
+		var oCsnOutput = {
+			extend: oJson.extend,
+			elements: {}
+		};
+		oCsnOutput.elements[oJson.element.name] = oJson.element;
+
+		return oCsnOutput;
 	}
 
 	/**
@@ -83,9 +90,11 @@ sap.ui.define([
 
 	CustomFieldCAPDialog.prototype.open = function(mEntitySetInformation, sRtaStyleClassName) {
 		var oInitialJson = {
-			name: "NewField",
-			type: "cds.String",
-			entityType: mEntitySetInformation.boundEntitySet.$Type
+			element: {
+				name: "NewField",
+				type: "cds.String"
+			},
+			extend: mEntitySetInformation.boundEntitySet.$Type
 		};
 
 		var oDialog = this.getProperty("_dialog");
@@ -126,12 +135,12 @@ sap.ui.define([
 
 	CustomFieldCAPDialog.prototype.onSave = function() {
 		var oPayload = {
-			definition: JSON.stringify(this._oJson)
+			extensions: [JSON.stringify(this._oJson)]
 		};
 
 		var oAddFieldPromise = new Promise(function(resolve, reject) {
 			var oXhr = new XMLHttpRequest();
-			oXhr.open("POST", "http://localhost:4004/extensibility/addField");
+			oXhr.open("POST", "http://localhost:4004/extensibility/addExtension");
 			oXhr.setRequestHeader("Content-Type", "application/json");
 			oXhr.onload = function() {
 				if (oXhr.status >= 200 && oXhr.status < 400) {

@@ -21,6 +21,13 @@ sap.ui.define([
 			"SampleType", "SomeOtherType"
 		]
 	};
+	var oDefaultDefinition = {
+		element: {
+			name: "NewField",
+			type: "cds.String"
+		},
+		extend: "SampleType"
+	};
 
 	function waitForDialog(oCAPDialog) {
 		return new Promise(function(resolve) {
@@ -54,11 +61,7 @@ sap.ui.define([
 							assert.ok(oEditor.isReady(), "then the editor is initialized");
 							assert.deepEqual(
 								oEditor.getJson(),
-								{
-									entityType: "SampleType",
-									name: "NewField",
-									type: "cds.String"
-								},
+								oDefaultDefinition,
 								"then the default definition is loaded"
 							);
 						});
@@ -74,18 +77,16 @@ sap.ui.define([
 					return oEditor.ready()
 						.then(function() {
 							oEditor.setJson({
-								name: "TestField",
-								type: "cds.String",
-								entityType: "SampleType"
+								element: {
+									name: "TestField",
+									type: "cds.String"
+								},
+								extend: "SampleType"
 							});
 							this.oCAPDialog.onCancel();
 							this.oCAPDialog.open(oSampleEntityTypeInfo);
 							assert.deepEqual(oEditor.getJson(),
-								{
-									entityType: "SampleType",
-									name: "NewField",
-									type: "cds.String"
-								},
+								oDefaultDefinition,
 								"then the editor data is reset"
 							);
 						}.bind(this));
@@ -118,22 +119,37 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when a field is created", function(assert) {
 			var oSuccessSpy = sandbox.spy(MessageToast, "show");
-			var oTestPayload = {
-				name: "TestField",
-				type: "cds.String",
-				entityType: "SampleType"
-			};
-			this.oCAPDialog._oEditor.setJson(oTestPayload);
+			this.oCAPDialog._oEditor.setJson({
+				element: {
+					name: "TestField",
+					type: "cds.String"
+				},
+				extend: "SampleType"
+			});
 			this.oCAPDialog.onSave();
 
 			assert.ok(
-				this.aRequests[0].url.endsWith("/extensibility/addField"),
+				this.aRequests[0].url.endsWith("/extensibility/addExtension"),
 				"then the addField endpoint is called"
 			);
+			var oResponse = JSON.parse(this.aRequests[0].requestBody);
+			assert.strictEqual(
+				oResponse.extensions.length,
+				1,
+				"then the csn for one extension is created"
+			);
 			assert.deepEqual(
-				JSON.parse(JSON.parse(this.aRequests[0].requestBody).definition),
-				oTestPayload,
-				"then the proper payload is passed"
+				JSON.parse(oResponse.extensions[0]),
+				{
+					elements: {
+						TestField: {
+							name: "TestField",
+							type: "cds.String"
+						}
+					},
+					extend: "SampleType"
+				},
+				"then the proper csn payload is passed"
 			);
 			this.aRequests[0].respond(200);
 			return Promise.resolve().then(function () {
@@ -142,12 +158,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the field creation is canceled", function(assert) {
-			var oTestPayload = {
-				name: "TestField",
-				type: "cds.String",
-				entityType: "SampleType"
-			};
-			this.oCAPDialog._oEditor.setJson(oTestPayload);
+			this.oCAPDialog._oEditor.setJson({
+				element: {
+					name: "TestField",
+					type: "cds.String"
+				},
+				extend: "SampleType"
+			});
 			this.oCAPDialog.onCancel();
 
 			assert.strictEqual(
@@ -186,25 +203,32 @@ sap.ui.define([
 
 		QUnit.test("when a string field with a range assertion is created", function(assert) {
 			this.oCAPDialog._oEditor.setJson({
-				name: "TestField",
-				type: "cds.String",
-				entityType: "SampleType",
-				"@assert.range": ["a", "b", "c"]
+				element: {
+					name: "TestField",
+					type: "cds.String",
+					"@assert.range": ["a", "b", "c"]
+				},
+				extend: "SampleType"
 			});
 			this.oCAPDialog.onSave();
 
+			var oResponse = JSON.parse(this.aRequests[0].requestBody);
 			assert.deepEqual(
-				JSON.parse(JSON.parse(this.aRequests[0].requestBody).definition),
+				JSON.parse(oResponse.extensions[0]),
 				{
-					"@assert.range": true,
-					entityType: "SampleType",
-					"enum": {
-						a: {},
-						b: {},
-						c: {}
+					elements: {
+						TestField: {
+							name: "TestField",
+							type: "cds.String",
+							"@assert.range": true,
+							"enum": {
+								a: {},
+								b: {},
+								c: {}
+							}
+						}
 					},
-					name: "TestField",
-					type: "cds.String"
+					extend: "SampleType"
 				},
 				"then the custom annotation is added to the payload"
 			);
