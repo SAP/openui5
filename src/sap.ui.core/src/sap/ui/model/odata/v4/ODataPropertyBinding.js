@@ -83,16 +83,18 @@ sap.ui.define([
 					this.setIgnoreMessages(mParameters.$$ignoreMessages);
 				} else {
 					this.sGroupId = undefined;
+					this.bNoPatch = false;
 				}
 				this.oCheckUpdateCallToken = undefined;
-				// Note: no system query options supported at property binding
-				this.mQueryOptions = this.oModel.buildQueryOptions(_Helper.clone(mParameters),
-					/*bSystemQueryOptionsAllowed*/false);
-				this.fetchCache(oContext);
 				this.oContext = oContext;
 				this.bHasDeclaredType = undefined; // whether the binding info declares a type
 				this.bInitial = true;
+				// Note: system query options supported at property binding only for ".../$count"
+				this.mQueryOptions = this.oModel.buildQueryOptions(_Helper.clone(mParameters),
+					/*bSystemQueryOptionsAllowed*/sPath.endsWith("$count"));
 				this.vValue = undefined;
+				// BEWARE: #doFetchQueryOptions uses #isRoot which relies on this.oContext!
+				this.fetchCache(oContext);
 				oModel.bindingCreated(this);
 			},
 			metadata : {

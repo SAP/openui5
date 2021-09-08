@@ -191,6 +191,10 @@ sap.ui.define([
 			assert.strictEqual(oBinding.sGroupId, undefined);
 			assert.strictEqual(oBinding.hasOwnProperty("oCheckUpdateCallToken"), true);
 			assert.strictEqual(oBinding.oCheckUpdateCallToken, undefined);
+			assert.strictEqual(oBinding.hasOwnProperty("bHasDeclaredType"), true);
+			assert.strictEqual(oBinding.bHasDeclaredType, undefined);
+			assert.strictEqual(oBinding.hasOwnProperty("vValue"), true);
+			assert.strictEqual(oBinding.vValue, undefined);
 			assert.ok(oBindingSpy.calledOnceWithExactly(sinon.match.same(oBinding)));
 		});
 	});
@@ -203,7 +207,10 @@ sap.ui.define([
 			sPath = "Name";
 
 		this.mock(ODataPropertyBinding.prototype).expects("fetchCache")
-			.withExactArgs(sinon.match.same(oContext));
+			.withExactArgs(sinon.match.same(oContext))
+			.callsFake(function () {
+				assert.strictEqual(this.oContext, oContext);
+			});
 
 		//code under test
 		oBinding = this.oModel.bindProperty(sPath, oContext);
@@ -245,6 +252,33 @@ sap.ui.define([
 			this.oModel.bindProperty("/EMPLOYEES(ID='1')/Name", null, mParameters);
 		}, oError);
 	});
+
+	//*********************************************************************************************
+["$count", "/SalesOrderList/$count"].forEach(function (sPath) {
+	QUnit.test("bindProperty with system query options: " + sPath, function (assert) {
+		var oBinding,
+			mClonedParameters = {},
+			oContext = {},
+			mParameters = {
+				$apply : "A.P.P.L.E.",
+				$filter : "GrossAmount gt 123",
+				$search : "covfefe"
+			},
+			mQueryOptions = {};
+
+		this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(mParameters))
+			.returns(mClonedParameters);
+		this.mock(this.oModel).expects("buildQueryOptions")
+			.withExactArgs(sinon.match.same(mClonedParameters), true).returns(mQueryOptions);
+		this.mock(ODataPropertyBinding.prototype).expects("fetchCache")
+			.withExactArgs(sinon.match.same(oContext));
+
+		// code under test
+		oBinding = this.oModel.bindProperty(sPath, oContext, mParameters);
+
+		assert.strictEqual(oBinding.mQueryOptions, mQueryOptions);
+	});
+});
 
 	//*********************************************************************************************
 	["/", "foo/"].forEach(function (sPath) {
@@ -1487,7 +1521,7 @@ sap.ui.define([
 		var oBinding = this.oModel.bindProperty("/foo");
 
 		// code under test
-		assert.strictEqual(oBinding.bNoPatch, undefined);
+		assert.strictEqual(oBinding.bNoPatch, false);
 
 		oBinding = this.oModel.bindProperty("/foo", undefined, {$$noPatch : true});
 
