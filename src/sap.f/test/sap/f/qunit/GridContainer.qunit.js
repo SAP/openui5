@@ -22,7 +22,8 @@ sap.ui.define([
 	"sap/ui/integration/cards/Header",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/model/json/JSONModel",
-	"sap/f/dnd/GridDragOver"
+	"sap/f/dnd/GridDragOver",
+	"sap/ui/core/ResizeHandler"
 ],
 function (
 	jQuery,
@@ -46,7 +47,8 @@ function (
 	Header,
 	IntegrationCard,
 	JSONModel,
-	GridDragOver
+	GridDragOver,
+	ResizeHandler
 ) {
 	"use strict";
 
@@ -551,6 +553,25 @@ function (
 		assert.strictEqual(oItem.$().parent().css("grid-row-start"), "span 5", "Item has 5 rows after resize");
 	});
 
+	QUnit.test("Item resize handler is deregistered and registered on invalidation", function (assert) {
+		// Arrange
+		var fnRegisterSpy = sinon.spy(ResizeHandler, "register"),
+			fnDeregisterSpy = sinon.spy(ResizeHandler, "deregister"),
+			oItem = new Card();
+
+		this.oGrid.addItem(oItem);
+		Core.applyChanges();
+		fnRegisterSpy.reset();
+
+		// Act
+		oItem.invalidate();
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(fnDeregisterSpy.callCount, 1, "ResizeHandler.deregister() is called once");
+		assert.strictEqual(fnRegisterSpy.callCount, 1, "ResizeHandler.register() is called once");
+		assert.ok(fnRegisterSpy.calledWith(oItem), "ResizeHandler.register() is called for the correct item");
+	});
 
 	QUnit.test("Item height should be no less than the minRows", function (assert) {
 		// Arrange

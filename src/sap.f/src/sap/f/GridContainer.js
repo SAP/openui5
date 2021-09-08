@@ -364,6 +364,12 @@ sap.ui.define([
 	 */
 	GridContainer.prototype._onBeforeItemRendering = function () {
 		var oContainer = this.getParent();
+
+		if (oContainer._resizeListeners[this.getId()]) {
+			ResizeHandler.deregister(oContainer._resizeListeners[this.getId()]);
+			delete oContainer._resizeListeners[this.getId()];
+		}
+
 		oContainer._reflectItemVisibilityToWrapper(this);
 	};
 
@@ -372,19 +378,15 @@ sap.ui.define([
 	 * @private
 	 */
 	GridContainer.prototype._onAfterItemRendering = function () {
-		var container = this.getParent();
+		var oContainer = this.getParent();
 
-		container._checkOwnVisualFocus(this);
+		oContainer._checkOwnVisualFocus(this);
 
-		// register resize listener for that item only once
-		if (!container._resizeListeners[this.getId()]) {
-			container._resizeListeners[this.getId()] = ResizeHandler.register(this, container._resizeItemHandler);
-		}
+		oContainer._resizeListeners[this.getId()] = ResizeHandler.register(this, oContainer._resizeItemHandler);
 
-		container._setItemNavigationItems();
+		oContainer._setItemNavigationItems();
 
-
-		container._applyItemAutoRows(this);
+		oContainer._applyItemAutoRows(this);
 	};
 
 	/**
