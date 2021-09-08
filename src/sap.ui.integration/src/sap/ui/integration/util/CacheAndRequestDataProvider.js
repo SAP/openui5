@@ -4,8 +4,9 @@
 sap.ui.define([
 	"sap/ui/integration/util/RequestDataProvider",
 	"sap/base/Log",
-	"sap/ui/core/Core"
-], function (RequestDataProvider, Log, Core) {
+	"sap/ui/core/Core",
+	"sap/base/util/merge"
+], function (RequestDataProvider, Log, Core, merge) {
 	"use strict";
 	/*global URL*/
 
@@ -160,15 +161,13 @@ sap.ui.define([
 	CacheAndRequestDataProvider.prototype._prepareHeaders = function (mHeaders, oSettings) {
 		var oCard = this.getCardInstance(),
 			oHost = oCard.getHostInstance(),
-			oNewSettings = Object.assign({}, oSettings),
-			oCache = oNewSettings.request.cache;
-
-		if (!oCache) {
-			oCache = {
+			oDefault = {
+				enabled: true,
 				maxAge: 0,
 				staleWhileRevalidate: true
-			};
-		}
+			},
+			oNewSettings = merge({request: { cache: oDefault }}, oSettings),
+			oCache = oNewSettings.request.cache;
 
 		if (oCache.noStore) {
 			// temporary needed for backward compatibility
