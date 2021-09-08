@@ -9,7 +9,7 @@ sap.ui.define([
 ], function(Controller, Popover, Button, VBox, Text, Toolbar, ToolbarSpacer) {
 	"use strict";
 
-	return Controller.extend("sap.m.sample.popover.Controller", {
+	return Controller.extend("sap.m.sample.popoverDescribedby.Controller", {
 		fnHandler: function (oEvent) {
 			this.getPopover().openBy(oEvent.oSource);
 		},
@@ -23,12 +23,12 @@ sap.ui.define([
 							items: [
 								new Text({
 									id: "popoverContentText",
-									text: "This text will be read out by the screen reader, as it is internally connected to the Popover via the aria-labelledby attribute."
+									text: "This text will be read out by the screen reader, as it is internally connected to the Popover via the aria-describedby attribute."
 								}).addStyleClass("sapUiSmallMarginTopBottom")
 							]
 						})
 					],
-					ariaLabelledBy: [
+					ariaDescribedBy: [
 						"popoverContentText"
 					],
 					contentWidth: "30%",

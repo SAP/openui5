@@ -1,12 +1,6 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
-	"sap/m/Popover",
-	"sap/m/Button",
-	"sap/m/VBox",
-	"sap/m/Text",
-	"sap/m/Toolbar",
-	"sap/m/ToolbarSpacer"
-], function(Controller, Popover, Button, VBox, Text, Toolbar, ToolbarSpacer) {
+	"sap/ui/core/mvc/Controller"
+], function(Controller) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.inputs.Controller", {
