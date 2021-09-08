@@ -129,7 +129,6 @@ sap.ui.define([
 	 * Returns variant management state for the passed component reference.
 	 *
 	 * @param {string} sReference - Component reference
-	 *
 	 * @returns {object} Variant management state
 	 * @private
 	 * @ui5-restricted
@@ -137,27 +136,33 @@ sap.ui.define([
 	VariantManagementState.getContent = function(sReference) {
 		var oVariantsState = FlexState.getVariantsState(sReference);
 		each(_mFakedStandardVariants[sReference], function(sVariantManagementReference, oContent) {
-			if (!oVariantsState[sVariantManagementReference]) {
+			if (sVariantManagementReference !== "currentComponentIdUsedForFakeVariants" && !oVariantsState[sVariantManagementReference]) {
 				oVariantsState[sVariantManagementReference] = oContent;
 			}
 		});
 		return oVariantsState;
 	};
 
-	VariantManagementState.addFakeStandardVariant = function(sReference, oStandardVariant) {
+	VariantManagementState.addFakeStandardVariant = function(sReference, sComponentId, oStandardVariant) {
 		var oVariantsMap = VariantManagementState.getContent(sReference);
 		if (!oVariantsMap[Object.keys(oStandardVariant)[0]]) {
 			merge(oVariantsMap, oStandardVariant);
 
-			_mFakedStandardVariants[sReference] = _mFakedStandardVariants[sReference] || {};
+			if (!_mFakedStandardVariants[sReference] || _mFakedStandardVariants[sReference].currentComponentIdUsedForFakeVariants !== sComponentId) {
+				_mFakedStandardVariants[sReference] = {};
+				_mFakedStandardVariants[sReference].currentComponentIdUsedForFakeVariants = sComponentId;
+			}
+
 			merge(_mFakedStandardVariants[sReference], oStandardVariant);
 		} else {
 			Log.error("Error in VariantManagementState.addFakeStandardVariant: Variant already in map");
 		}
 	};
 
-	VariantManagementState.clearFakedStandardVariants = function(sReference) {
-		delete _mFakedStandardVariants[sReference];
+	VariantManagementState.clearFakedStandardVariants = function(sReference, sComponentId) {
+		if (_mFakedStandardVariants[sReference] && _mFakedStandardVariants[sReference].currentComponentIdUsedForFakeVariants === sComponentId) {
+			delete _mFakedStandardVariants[sReference];
+		}
 	};
 
 	/**
