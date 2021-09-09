@@ -2811,6 +2811,7 @@ sap.ui.define([
 		return {
 			valueType: this._oContentFactory.retrieveDataType(),
 			originalDateType: this._oContentFactory.getDateOriginalType() || this._oContentFactory.getUnitOriginalType(),
+			additionalType: this._oContentFactory.getUnitType(), // only set if unit
 			display: this._oContentFactory.isMeasure() ? FieldDisplay.Value : this.getDisplay(),
 			fieldHelpID: this._oContentFactory.isMeasure() ? undefined : this.getFieldHelp() || this._sDefaultFieldHelp,
 			operators: this._getOperators(),
@@ -2884,7 +2885,8 @@ sap.ui.define([
 
 		return {
 			valueType: this._oContentFactory.getUnitType(),
-			originalDateType: this._oContentFactory.retrieveDataType(), // use type of measure for currentValue
+			originalDateType: this._oContentFactory.getDateOriginalType() || this._oContentFactory.getUnitOriginalType(),
+			additionalType: this._oContentFactory.retrieveDataType(), // use type of measure for currentValue
 			display: this.getDisplay(),
 			fieldHelpID: this.getFieldHelp() || this._sDefaultFieldHelp,
 			operators: ["EQ"],
