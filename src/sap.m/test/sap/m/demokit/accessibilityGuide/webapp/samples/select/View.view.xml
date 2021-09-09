@@ -1,0 +1,37 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.select.Controller"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	class="sapUiContentPadding">
+	<core:InvisibleText text="Hello World" id="select-inv-text"></core:InvisibleText>
+
+	<l:VerticalLayout class="sapUiContentPadding">
+		<Label text="Using Label and labelFor property:" labelFor="select"></Label>
+		<Select
+				id="select"
+				forceSelection="false"
+				selectedKey="{/SelectedProduct}"
+				items="{
+					path: '/ProductCollection',
+					sorter: { path: 'Name' }
+				}">
+			<core:Item key="{ProductId}" text="{Name}" />
+		</Select>
+	</l:VerticalLayout>
+	<l:VerticalLayout class="sapUiContentPadding">
+		<Label text="Using InvisbleText and ariaLabelledBy:"></Label>
+		<Select
+				ariaLabelledBy="select-inv-text"
+				forceSelection="false"
+				selectedKey="{/SelectedProduct1}"
+				items="{
+					path: '/ProductCollection1',
+					sorter: { path: 'Name' }
+				}">
+			<core:Item key="{ProductId}" text="{Name}" />
+		</Select>
+	</l:VerticalLayout>
+</mvc:View>

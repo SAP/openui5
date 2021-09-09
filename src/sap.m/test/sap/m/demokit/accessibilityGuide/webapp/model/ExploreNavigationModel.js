@@ -154,6 +154,41 @@ sap.ui.define([
 				hasExpander: false,
 				items: [
                     {
+                        key: 'select',
+                        target: 'exploreSamples',
+                        title: 'Select',
+                        useIFrame: true,
+                        isApplication: true,
+                        files: [
+                            {
+                                url: '/samples/select/Controller.controller.js',
+                                name: 'Controller.controller.js',
+                                key: 'Controller.controller.js'
+                            },
+                            {
+                                url: '/samples/select/View.view.xml',
+                                name: 'View.view.xml',
+                                key: 'View.view.xml'
+                            },
+                            {
+                                url: '/samples/select/index.html',
+                                name: 'index.html',
+                                key: 'index.html'
+                            },
+                            {
+                                url: '/samples/select/manifest.json',
+                                name: 'manifest.json',
+                                key: 'manifest.json',
+                                isApplicationManifest: true
+                            },
+                            {
+                                url: '/samples/select/Component.js',
+                                name: 'Component.js',
+                                key: 'Component.js'
+                            }
+                        ]
+                    },
+                    {
                         key: 'dialog',
                         target: 'exploreSamples',
                         title: 'Dialog',
@@ -456,19 +491,34 @@ sap.ui.define([
                         isApplication: true,
                         files: [
                             {
+                                url: '/samples/nonDecorativeImages/Controller.controller.js',
+                                name: 'Controller.controller.js',
+                                key: 'Controller.controller.js'
+                            },
+                            {
                                 url: '/samples/nonDecorativeImages/View.view.xml',
                                 name: 'View.view.xml',
                                 key: 'View.view.xml'
                             },
                             {
+                                url: '/samples/nonDecorativeImages/images/HT-6120-large.jpg',
+                                name: 'images/HT-6120-large.jpg',
+                                key: 'HT-6120-large.jpg'
+                            },
+                            {
+                                url: '/samples/nonDecorativeImages/images/HT-7777-large.jpg',
+                                name: 'images/HT-7777-large.jpg',
+                                key: 'HT-7777-large.jpg'
+                            },
+                            {
+                                url: '/samples/nonDecorativeImages/img.json',
+                                name: 'img.json',
+                                key: 'img.json'
+                            },
+                            {
                                 url: '/samples/nonDecorativeImages/index.html',
                                 name: 'index.html',
                                 key: 'index.html'
-                            },
-                            {
-                                url: '/samples/nonDecorativeImages/i18n.properties',
-                                name: 'i18n.properties',
-                                key: 'i18n.properties'
                             },
                             {
                                 url: '/samples/nonDecorativeImages/manifest.json',
@@ -480,11 +530,6 @@ sap.ui.define([
                                 url: '/samples/nonDecorativeImages/Component.js',
                                 name: 'Component.js',
                                 key: 'Component.js'
-                            },
-                            {
-                                url: '/samples/nonDecorativeImages/Controller.controller.js',
-                                name: 'Controller.controller.js',
-                                key: 'Controller.controller.js'
                             }
                         ]
                     }
@@ -567,6 +612,41 @@ sap.ui.define([
                             },
                             {
                                 url: '/samples/popoverInitialFocus/Component.js',
+                                name: 'Component.js',
+                                key: 'Component.js'
+                            }
+                        ]
+                    },
+                    {
+                        key: 'toolbarActive',
+                        target: 'exploreSamples',
+                        title: 'Active Toolbar',
+                        useIFrame: true,
+                        isApplication: true,
+                        files: [
+                            {
+                                url: '/samples/toolbarActive/Controller.controller.js',
+                                name: 'Controller.controller.js',
+                                key: 'Controller.controller.js'
+                            },
+                            {
+                                url: '/samples/toolbarActive/View.view.xml',
+                                name: 'View.view.xml',
+                                key: 'View.view.xml'
+                            },
+                            {
+                                url: '/samples/toolbarActive/index.html',
+                                name: 'index.html',
+                                key: 'index.html'
+                            },
+                            {
+                                url: '/samples/toolbarActive/manifest.json',
+                                name: 'manifest.json',
+                                key: 'manifest.json',
+                                isApplicationManifest: true
+                            },
+                            {
+                                url: '/samples/toolbarActive/Component.js',
                                 name: 'Component.js',
                                 key: 'Component.js'
                             }

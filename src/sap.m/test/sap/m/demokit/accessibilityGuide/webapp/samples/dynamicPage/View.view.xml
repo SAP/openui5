@@ -3,8 +3,11 @@
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m"
 		xmlns:f="sap.f"
+		xmlns:core="sap.ui.core"
 		xmlns:layout="sap.ui.layout"
 		height="100%">
+	<core:InvisibleText id="inv-text-desc" text="Additional description"/>
+
 	<f:DynamicPage id="dynamicPageId"
 				   stickySubheaderProvider="iconTabBar"
 				   class="sapUiNoContentPadding"
@@ -15,13 +18,13 @@
 					rootLabel="Product Details"
 					contentRole="Main"
 					contentLabel="Product Description"
-					footerRole="Banner"
+					footerRole="ContentInfo"
 					footerLabel="Product Footer"
 					headerRole="Banner"
 					headerLabel="Product Header"/>
 		</f:landmarkInfo>
 		<f:title>
-			<f:DynamicPageTitle>
+			<f:DynamicPageTitle ariaDescribedBy="inv-text-desc">
 				<f:heading>
 					<Title text="Header Title"/>
 				</f:heading>
