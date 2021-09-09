@@ -859,13 +859,13 @@ sap.ui.define([
 						],
 						"specialDate": [
 							{
-								"start": "2019-09-13",
-								"end": "2019-09-14",
+								"start": "2019-08-13",
+								"end": "2019-08-14",
 								"type": "Type08"
 							},
 							{
-								"start": "2019-09-24",
-								"end": "2019-09-24",
+								"start": "2019-08-24",
+								"end": "2019-08-24",
 								"type": "Type13"
 							}
 						],
@@ -1343,12 +1343,13 @@ sap.ui.define([
 				this.oCard.attachAction(function (oEvent) {
 					if (oEvent.getParameter("type") === "MonthChange") {
 						bMonthChangeFired = true;
+						assert.equal(oEvent.getParameter("parameters").firstDate.getTime(), new Date(2019, 6, 28).getTime(), "parameter firstDate is correct");
 					}
 				});
 
 				// Act
-				oCalendar._setFocusedDate(CalendarDate.fromLocalJSDate(new Date(2019, 8, 1)));
-				oCalendar.displayDate(new Date(2019, 8, 1));
+				oCalendar._setFocusedDate(CalendarDate.fromLocalJSDate(new Date(2019, 7, 1)));
+				oCalendar.displayDate(new Date(2019, 7, 1));
 				Core.applyChanges();
 				oCalendar.fireStartDateChange({
 					getSource: function () {
