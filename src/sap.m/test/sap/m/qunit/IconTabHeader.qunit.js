@@ -36,6 +36,9 @@ sap.ui.define([
 	// shortcut for sap.m.TabsOverflowMode
 	var TabsOverflowMode = Library.TabsOverflowMode;
 
+	// shortcut for sap.m.IconTabHeaderMode
+	var IconTabHeaderMode = Library.IconTabHeaderMode;
+
 	var DOM_RENDER_LOCATION = "content";
 	var oRB = Core.getLibraryResourceBundle("sap.m");
 
@@ -1016,5 +1019,45 @@ sap.ui.define([
 		// Assert
 		assert.ok(oLastVisibleItem.$().hasClass("sapMITBFilterHidden"), "the last item is not visible");
 		assert.ok(oLastVisibleSeparator.$().hasClass("sapMITBFilterHidden"), "the last item separator is not visible");
+	});
+
+	QUnit.module("Accessibility", {
+		beforeEach: function () {
+			this.oITH = new IconTabHeader();
+			this.oITH.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oITH.destroy();
+		}
+	});
+
+	QUnit.test("Count in aria-labelledby in default and inline mode", function (assert) {
+		// Arrange
+		var oITH = this.oITH,
+			oFilter = new IconTabFilter({
+				text: "Tab 1",
+				key: "tab1",
+				count: "33"
+			}),
+			sAriaLabelledBy,
+			sCountElementId = oFilter.getId() + "-count";
+
+		oITH.addItem(oFilter);
+		Core.applyChanges();
+
+		sAriaLabelledBy = oFilter.getDomRef().getAttribute("aria-labelledby");
+
+		// Assert
+		assert.ok(sAriaLabelledBy.indexOf(sCountElementId) !== -1, "Count is part of aria-labelledby in default mode.");
+
+		// Act
+		oITH.setMode(IconTabHeaderMode.Inline);
+		Core.applyChanges();
+
+		sAriaLabelledBy = oFilter.getDomRef().getAttribute("aria-labelledby");
+
+		// Assert
+		assert.ok(sAriaLabelledBy.indexOf(sCountElementId) === -1, "Count is not part of aria-labelledby in inline mode.");
 	});
 });
