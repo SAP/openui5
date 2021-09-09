@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/Object",
 	"sap/ui/dt/Util",
+	"sap/ui/dt/DOMUtil",
 	"sap/ui/core/Element",
 	"sap/ui/core/Component",
 	"sap/base/util/isPlainObject",
@@ -16,6 +17,7 @@ function(
 	jQuery,
 	BaseObject,
 	Util,
+	DOMUtil,
 	Element,
 	Component,
 	isPlainObject,
@@ -544,6 +546,55 @@ function(
 			return iTargetIndex - 1;
 		}
 		return iTargetIndex;
+	};
+
+	/**
+	 * Checks if an aggregation is valid for an element being moved
+	 *
+	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay - Aggregation overlay to be checked for target zone
+	 * @param {sap.ui.dt.ElementOverlay} oMovedOverlay - Overlay being moved
+	 * @param {boolean} bOverlayNotInDom - Flag defining if overlay is not in DOM
+	 * @returns {Promise.<boolean>} Resolved promise with <code>true</code> if the aggregation overlay is a valid target zone for the overlay
+	 */
+	 ElementUtil.checkTargetZone = function(oAggregationOverlay, oMovedOverlay, bOverlayNotInDom) {
+		var oGeometry = oAggregationOverlay.getGeometry();
+		var bGeometryVisible = oGeometry && oGeometry.size.height > 0 && oGeometry.size.width > 0;
+		var oParentElement = oAggregationOverlay.getElement();
+
+		var oMovedElement = oMovedOverlay.getElement();
+		var sAggregationName = oAggregationOverlay.getAggregationName();
+		if (!oMovedElement || !ElementUtil.isValidForAggregation(oParentElement, sAggregationName, oMovedElement)) {
+			return Promise.resolve(false);
+		}
+
+		// checks related to visibility
+		function fnCheckAggregationOverlayVisibility(oAggregationOverlay, oParentElement) {
+			// this function can get called on overlay registration, when there are no overlays in dom yet. In this case, DOMUtil.isVisible is always false.
+			var oAggregationOverlayDomRef = oAggregationOverlay.getDomRef();
+			var bAggregationOverlayVisibility = DOMUtil.isVisible(oAggregationOverlayDomRef);
+
+			// if there is no aggregation overlay domRef available the further check for domRef of the corresponding element is not required
+			if (!oAggregationOverlayDomRef) {
+				return bAggregationOverlayVisibility;
+			}
+			// additional check for corresponding element DomRef visibiltiy required for target zone checks during navigation mode.
+			// during navigation mode the domRef of valid overlays is given and the offsetWidth is 0. Therefor we need to check the visibility of the corresponding element additionally
+			var oParentElementDomRef = oParentElement && oParentElement.getDomRef && oParentElement.getDomRef();
+			var bAggregationElementVisibility = oParentElementDomRef ? DOMUtil.isVisible(oParentElementDomRef) : true;
+			return bAggregationOverlayVisibility || bAggregationElementVisibility;
+		}
+
+		if (
+			(bOverlayNotInDom && !bGeometryVisible)
+			|| !bOverlayNotInDom && !fnCheckAggregationOverlayVisibility(oAggregationOverlay, oParentElement)
+			|| !(oParentElement && oParentElement.getVisible && oParentElement.getVisible())
+			// an aggregation can still have visible = true even if it has been removed from its parent
+			|| !oParentElement.getParent()
+		) {
+			return Promise.resolve(false);
+		}
+
+		return Promise.resolve(true);
 	};
 
 	return ElementUtil;

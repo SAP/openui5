@@ -10,6 +10,9 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/DOMUtil",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/MetadataPropagationUtil",
+	"sap/ui/rta/util/hasStableId",
 	"sap/m/MessageBox",
 	"sap/ui/rta/util/BindingsExtractor",
 	"sap/base/util/restricted/_omit",
@@ -24,6 +27,9 @@ function(
 	FlexLayerUtils,
 	OverlayUtil,
 	DOMUtil,
+	ElementUtil,
+	MetadataPropagationUtil,
+	hasStableId,
 	MessageBox,
 	BindingsExtractor,
 	_omit,
@@ -549,6 +555,72 @@ function(
 			mMap[oItem[sKeyFieldName]] = oItem[sValueFieldName];
 			return mMap;
 		}, {});
+	};
+
+	/**
+	 * Checks drop ability for aggregation overlays
+	 * @param {sap.ui.dt.Overlay} oAggregationOverlay Aggregation overlay object
+	 * @param {sap.ui.dt.ElementOverlay} oMovedOverlay Overlay being moved/added
+	 * @param {sap.ui.rta.Plugin} oPlugin RTA plugin calling this method
+	 * @param {boolean} [bOverlayNotInDom] Flag defining if overlay is not in DOM
+	 * @return {Promise.<boolean>} Promise with true value if overlay can be added to the aggregation overlay or false value if not.
+	 * @override
+	 */
+	Utils.checkTargetZone = function(oAggregationOverlay, oMovedOverlay, oPlugin, bOverlayNotInDom) {
+		function fnHasMoveAction(oAggregationOverlay, oElement, oRelevantContainer, oPlugin) {
+			var oAggregationDTMetadata = oAggregationOverlay.getDesignTimeMetadata();
+			var oMoveAction = oAggregationDTMetadata.getAction("move", oElement);
+			if (!oMoveAction) {
+				return Promise.resolve(false);
+			}
+			// moveChangeHandler information is always located on the relevant container
+			return oPlugin.hasChangeHandler(oMoveAction.changeType, oRelevantContainer);
+		}
+
+		return ElementUtil.checkTargetZone(oAggregationOverlay, oMovedOverlay, bOverlayNotInDom)
+			.then(function(bTargetZone) {
+				if (!bTargetZone) {
+					return false;
+				}
+
+				var oMovedElement = oMovedOverlay.getElement();
+				var oTargetOverlay = oAggregationOverlay.getParent();
+				var oMovedRelevantContainer = oMovedOverlay.getRelevantContainer();
+
+				// the element or the parent overlay might be destroyed or not available
+				if (!oMovedElement || !oTargetOverlay) {
+					return false;
+				}
+
+				var oTargetElement = oTargetOverlay.getElement();
+				var oAggregationDtMetadata = oAggregationOverlay.getDesignTimeMetadata();
+
+				// determine target relevantContainer
+				var vTargetRelevantContainerAfterMove = MetadataPropagationUtil.getRelevantContainerForPropagation(oAggregationDtMetadata.getData(), oMovedElement);
+				vTargetRelevantContainerAfterMove = vTargetRelevantContainerAfterMove || oTargetElement;
+
+				// check for same relevantContainer
+				if (
+					!oMovedRelevantContainer
+					|| !vTargetRelevantContainerAfterMove
+					|| !hasStableId(oTargetOverlay)
+					|| oMovedRelevantContainer !== vTargetRelevantContainerAfterMove
+				) {
+					return false;
+				}
+
+				// check if binding context is the same
+				if (
+					// binding context is not relevant if the element is being moved inside its parent
+					oMovedOverlay.getParent().getElement() !== oTargetElement
+					&& !Utils.checkSourceTargetBindingCompatibility(oMovedElement, oTargetElement)
+				) {
+					return false;
+				}
+
+				// check if movedOverlay is movable into the target aggregation
+				return fnHasMoveAction(oAggregationOverlay, oMovedElement, vTargetRelevantContainerAfterMove, oPlugin);
+			});
 	};
 
 	return Utils;

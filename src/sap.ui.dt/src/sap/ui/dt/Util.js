@@ -6,15 +6,11 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObject",
-	"sap/base/util/includes",
-	"sap/base/util/isPlainObject",
 	"sap/ui/dt/DesignTimeStatus"
 ], function(
 	jQuery,
 	Device,
 	ManagedObject,
-	includes,
-	isPlainObject,
 	DesignTimeStatus
 ) {
 	"use strict";
