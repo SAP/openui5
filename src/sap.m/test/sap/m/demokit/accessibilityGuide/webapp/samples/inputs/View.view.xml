@@ -16,6 +16,7 @@
 							<Input id="input" value="Some input" description="with description"/>
 						</HBox>
 						<HBox alignItems="Center">
+							<!-- The control below is labeled from within the controller -->
 							<Label id="labelMultiInput" width="150px" class="sapUiSmallMarginBeginEnd" text="MultiInput:"/>
 							<MultiInput id="multiInput" >
 								<tokens>
