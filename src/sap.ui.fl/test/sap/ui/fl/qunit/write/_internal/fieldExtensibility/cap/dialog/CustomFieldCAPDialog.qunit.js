@@ -96,20 +96,29 @@ sap.ui.define([
 		});
 	});
 
+	function findAddFieldRequest(aRequests) {
+		return aRequests.find(function(oRequest) {
+			return oRequest.url.endsWith("/addExtension");
+		});
+	}
+
 	QUnit.module("Custom field creation", {
 		beforeEach: function() {
 			this.oCAPDialog = new CustomFieldCAPDialog();
 			var oDialogPromise = waitForDialog(this.oCAPDialog);
 			this.oCAPDialog.open(oSampleEntityTypeInfo);
 			this.aRequests = [];
+			var oFakeXHR = sandbox.useFakeXMLHttpRequest();
+			oFakeXHR.useFilters = true;
+			oFakeXHR.addFilter(function(sMethod, sUrl) {
+				return !sUrl.endsWith("/addExtension");
+			});
+			oFakeXHR.onCreate = function(xhr) {
+				this.aRequests.push(xhr);
+			}.bind(this);
 
 			return oDialogPromise.then(function() {
-				return this.oCAPDialog._oEditor.ready().then(function () {
-					var oFakeXHR = sandbox.useFakeXMLHttpRequest();
-					oFakeXHR.onCreate = function(xhr) {
-						this.aRequests.push(xhr);
-					}.bind(this);
-				}.bind(this));
+				return this.oCAPDialog._oEditor.ready();
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -118,7 +127,11 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when a field is created", function(assert) {
-			var oSuccessSpy = sandbox.spy(MessageToast, "show");
+			var fnDone = assert.async();
+			sandbox.stub(MessageToast, "show").callsFake(function() {
+				assert.ok(true, "then a success message is displayed");
+				fnDone();
+			});
 			this.oCAPDialog._oEditor.setJson({
 				element: {
 					name: "TestField",
@@ -128,11 +141,12 @@ sap.ui.define([
 			});
 			this.oCAPDialog.onSave();
 
+			var oAddFieldRequest = findAddFieldRequest(this.aRequests);
 			assert.ok(
-				this.aRequests[0].url.endsWith("/extensibility/addExtension"),
+				oAddFieldRequest.url.endsWith("/extensibility/addExtension"),
 				"then the addField endpoint is called"
 			);
-			var oResponse = JSON.parse(this.aRequests[0].requestBody);
+			var oResponse = JSON.parse(oAddFieldRequest.requestBody);
 			assert.strictEqual(
 				oResponse.extensions.length,
 				1,
@@ -151,10 +165,7 @@ sap.ui.define([
 				},
 				"then the proper csn payload is passed"
 			);
-			this.aRequests[0].respond(200);
-			return Promise.resolve().then(function () {
-				assert.ok(oSuccessSpy.calledOnce, "then a success message is displayed");
-			});
+			oAddFieldRequest.respond(200);
 		});
 
 		QUnit.test("when the field creation is canceled", function(assert) {
@@ -168,38 +179,43 @@ sap.ui.define([
 			this.oCAPDialog.onCancel();
 
 			assert.strictEqual(
-				this.aRequests.length,
-				0,
+				findAddFieldRequest(this.aRequests),
+				undefined,
 				"then the create request is not sent"
 			);
 		});
 
-		// Currently broken because files are loaded which interfer with sinon xhr stub
-		// Filtering the xhr doesn't seem to work for some reason
-		// QUnit.test("when a field is created with a custom annotation", function(assert) {
-		// 	this.oCAPDialog._oEditor.setJson({
-		// 		name: "TestField",
-		// 		type: "cds.Integer",
-		// 		entityType: "SampleType",
-		// 		"@assert.range": [0, 1],
-		// 		annotations: {
-		// 			"@custom.annotation": 123
-		// 		}
-		// 	});
-		// 	this.oCAPDialog.onSave();
+		QUnit.test("when a field is created with a custom annotation", function(assert) {
+			this.oCAPDialog._oEditor.setJson({
+				element: {
+					name: "TestField",
+					type: "cds.Integer",
+					"@assert.range": [0, 1],
+					annotations: {
+						"@custom.annotation": 123
+					}
+				},
+				extend: "SampleType"
+			});
+			this.oCAPDialog.onSave();
 
-		// 	assert.deepEqual(
-		// 		JSON.parse(JSON.parse(this.aRequests[0].requestBody).definition),
-		// 		{
-		// 			name: "TestField",
-		// 			type: "cds.Integer",
-		// 			entityType: "SampleType",
-		// 			"@assert.range": [0, 1],
-		// 			"@custom.annotation": 123
-		// 		},
-		// 		"then the custom annotation is added to the payload"
-		// 	);
-		// });
+			var oResponse = JSON.parse(findAddFieldRequest(this.aRequests).requestBody);
+			assert.deepEqual(
+				JSON.parse(oResponse.extensions[0]),
+				{
+					elements: {
+						TestField: {
+							name: "TestField",
+							type: "cds.Integer",
+							"@assert.range": [0, 1],
+							"@custom.annotation": 123
+						}
+					},
+					extend: "SampleType"
+				},
+				"then the custom annotation is added to the payload"
+			);
+		});
 
 		QUnit.test("when a string field with a range assertion is created", function(assert) {
 			this.oCAPDialog._oEditor.setJson({
@@ -212,7 +228,7 @@ sap.ui.define([
 			});
 			this.oCAPDialog.onSave();
 
-			var oResponse = JSON.parse(this.aRequests[0].requestBody);
+			var oResponse = JSON.parse(findAddFieldRequest(this.aRequests).requestBody);
 			assert.deepEqual(
 				JSON.parse(oResponse.extensions[0]),
 				{
