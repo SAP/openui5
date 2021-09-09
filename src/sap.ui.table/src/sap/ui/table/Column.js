@@ -355,6 +355,8 @@ sap.ui.define([
 
 		_private(this).oSorter = null;
 		_private(this).mCellContentVisibilitySettings = normalizeCellContentVisibilitySettings(this);
+		_private(this).bHasDefaultLabel = false;
+		_private(this).bHasDefaultTemplate = false;
 
 		// for performance reasons, the cloned column templates shall be stored for later reuse
 		this._initTemplateClonePool();
@@ -434,11 +436,20 @@ sap.ui.define([
 	 */
 	Column.prototype.setLabel = function(vLabel) {
 		var oLabel = vLabel;
-		if (typeof (vLabel) === "string") {
+
+		if (typeof vLabel === "string") {
+			if (_private(this).bHasDefaultLabel) {
+				this.getLabel().setText(vLabel);
+				return this;
+			}
 			oLabel = library.TableHelper.createLabel({text: vLabel});
+			_private(this).bHasDefaultLabel = true;
+		} else if (_private(this).bHasDefaultLabel) {
+			this.destroyLabel();
+			_private(this).bHasDefaultLabel = false;
 		}
-		this.setAggregation("label", oLabel);
-		return this;
+
+		return this.setAggregation("label", oLabel);
 	};
 
 	/*
@@ -448,12 +459,24 @@ sap.ui.define([
 		var oTemplate = vTemplate;
 		var oTable = this._getTable();
 		var oOldTemplate = this.getTemplate();
+		var bNewTemplate = true;
 
 		if (typeof vTemplate === "string") {
-			oTemplate = library.TableHelper.createTextView().bindProperty("text", vTemplate);
+			if (_private(this).bHasDefaulTemplate) {
+				this.getTemplate().bindProperty("text", vTemplate);
+				bNewTemplate = false;
+			} else {
+				oTemplate = library.TableHelper.createTextView().bindProperty("text", vTemplate);
+				_private(this).bHasDefaulTemplate = true;
+			}
+		} else if (_private(this).bHasDefaulTemplate) {
+			this.destroyTemplate();
+			_private(this).bHasDefaulTemplate = false;
 		}
 
-		this.setAggregation("template", oTemplate, true);
+		if (bNewTemplate) {
+			this.setAggregation("template", oTemplate, true);
+		}
 
 		// manually invalidate the Column (because of the invalidate decoupling to
 		// prevent invalidations from the databinding part)

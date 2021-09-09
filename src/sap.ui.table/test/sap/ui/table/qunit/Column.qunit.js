@@ -156,7 +156,7 @@ sap.ui.define([
 		assert.ok(oInvalidate.notCalled, "Column is not invalidated");
 	});
 
-	QUnit.module("Lazy Aggregations", {
+	QUnit.module("Lazy aggregations", {
 		beforeEach: function() {
 			this._oColumn = new Column();
 		},
@@ -166,45 +166,91 @@ sap.ui.define([
 	});
 
 	QUnit.test("Label", function(assert) {
+		var oDefaultLabel;
+		var oCustomLabel;
+		var oOldCustomLabel;
+
 		assert.equal(this._oColumn.getLabel(), null, "The column has no label defined");
 
 		this._oColumn.setLabel("labelstring");
-		var oLabel = this._oColumn.getLabel();
-		assert.notEqual(oLabel, null, "Added label by passing a string");
-		assert.strictEqual(oLabel.getText(), "labelstring", "The text of the label is correct");
+		oDefaultLabel = this._oColumn.getLabel();
+		assert.ok(oDefaultLabel.isA("sap.ui.core.Control"), "Set string: Default label created and added to the aggregation");
+		assert.strictEqual(oDefaultLabel.getText(), "labelstring", "Text of the default label");
 
-		var oNewLabel = new TableQUnitUtils.TestControl({text: "labelinstance"});
-		this._oColumn.setLabel(oNewLabel);
-		assert.notEqual(oNewLabel, null, "Added label by passing a sap.m.Label instance");
-		assert.notEqual(oLabel, oNewLabel, "The column has a new label");
-		assert.strictEqual(oNewLabel.getText(), "labelinstance", "The text of the label is correct");
+		this._oColumn.setLabel("newlabelstring");
+		assert.equal(oDefaultLabel, this._oColumn.getLabel(), "Set string: Label is the same instance");
+		assert.strictEqual(oDefaultLabel.getText(), "newlabelstring", "Text of the default label");
+		assert.notOk(oDefaultLabel.isDestroyed(), "Default label not destroyed");
+
+		oCustomLabel = new TableQUnitUtils.TestControl({text: "labelinstance"});
+		this._oColumn.setLabel(oCustomLabel);
+		assert.equal(this._oColumn.getLabel(), oCustomLabel, "Set control: Custom label added to the aggregation");
+		assert.strictEqual(oCustomLabel.getText(), "labelinstance", "Text of the custom label");
+		assert.ok(oDefaultLabel.isDestroyed(), "Default label destroyed");
+
+		oOldCustomLabel = oCustomLabel;
+		oCustomLabel = new TableQUnitUtils.TestControl({text: "newlabelinstance"});
+		this._oColumn.setLabel(oCustomLabel);
+		assert.equal(this._oColumn.getLabel(), oCustomLabel, "Set control: New custom label added to the aggregation");
+		assert.strictEqual(oCustomLabel.getText(), "newlabelinstance", "Text of the custom label");
+		assert.notOk(oOldCustomLabel.isDestroyed(), "Old custom label not destroyed");
+
+		this._oColumn.setLabel("labelstring");
+		oDefaultLabel = this._oColumn.getLabel();
+		assert.ok(oDefaultLabel.isA("sap.ui.core.Control") && oDefaultLabel !== oCustomLabel,
+			"Set string: Default label created and added to the aggregation");
+		assert.strictEqual(oDefaultLabel.getText(), "labelstring", "Text of the default label");
+		assert.notOk(oCustomLabel.isDestroyed(), "Custom label not destroyed");
+
+		oOldCustomLabel.destroy();
+		oCustomLabel.destroy();
 	});
 
 	QUnit.test("Template", function(assert) {
+		var oDefaultTemplate;
+		var oCustomTemplate;
+		var oOldCustomTemplate;
+
 		assert.equal(this._oColumn.getTemplate(), null, "The column has no template defined");
 
 		this._oColumn.setTemplate("bindingpath");
-		var oTemplate = this._oColumn.getTemplate();
-		assert.notEqual(oTemplate, null, "Added template by passing a string");
-		assert.strictEqual(oTemplate.getBindingPath("text"), "bindingpath", "The binding path of the template is correct");
+		oDefaultTemplate = this._oColumn.getTemplate();
+		assert.ok(oDefaultTemplate.isA("sap.ui.core.Control"), "Set string: Default template created and added to the aggregation");
+		assert.strictEqual(oDefaultTemplate.getBindingPath("text"), "bindingpath", "Binding path of the default template");
 
-		var oNewTemplate = new TableQUnitUtils.TestControl({text: "{anotherbindingpath}"});
-		this._oColumn.setTemplate(oNewTemplate);
-		assert.notEqual(oNewTemplate, null, "Added template by passing a sap.m.Text instance");
-		assert.notEqual(oTemplate, oNewTemplate, "The column has a new template");
-		assert.strictEqual(oNewTemplate.getBindingPath("text"), "anotherbindingpath", "The binding path of the template is correct");
+		this._oColumn.setTemplate("newbindingpath");
+		assert.equal(oDefaultTemplate, this._oColumn.getTemplate(), "Set string: Template is the same instance");
+		assert.strictEqual(oDefaultTemplate.getBindingPath("text"), "newbindingpath", "Binding path of the default template");
+		assert.notOk(oDefaultTemplate.isDestroyed(), "Default template not destroyed");
+
+		oCustomTemplate = new TableQUnitUtils.TestControl({text: "{anotherbindingpath}"});
+		this._oColumn.setTemplate(oCustomTemplate);
+		assert.equal(this._oColumn.getTemplate(), oCustomTemplate, "Set control: Custom template added to the aggregation");
+		assert.strictEqual(oCustomTemplate.getBindingPath("text"), "anotherbindingpath", "Binding path of the custom template");
+		assert.ok(oDefaultTemplate.isDestroyed(), "Default template destroyed");
+
+		oOldCustomTemplate = oCustomTemplate;
+		oCustomTemplate = new TableQUnitUtils.TestControl({text: "{yetanotherbindingpath}"});
+		this._oColumn.setTemplate(oCustomTemplate);
+		assert.equal(this._oColumn.getTemplate(), oCustomTemplate, "Set control: New custom template added to the aggregation");
+		assert.strictEqual(oCustomTemplate.getBindingPath("text"), "yetanotherbindingpath", "Binding path of the custom template");
+		assert.notOk(oOldCustomTemplate.isDestroyed(), "Old custom template not destroyed");
+
+		this._oColumn.setTemplate("bindingpath");
+		oDefaultTemplate = this._oColumn.getTemplate();
+		assert.ok(oDefaultTemplate.isA("sap.ui.core.Control") && oDefaultTemplate !== oCustomTemplate,
+			"Set string: Default template created and added to the aggregation");
+		assert.strictEqual(oDefaultTemplate.getBindingPath("text"), "bindingpath", "Binding path of the default template");
+		assert.notOk(oCustomTemplate.isDestroyed(), "Custom template not destroyed");
+
+		oOldCustomTemplate.destroy();
+		oCustomTemplate.destroy();
 	});
 
 	QUnit.test("CreationTemplate", function(assert) {
-		var bErrorThrown = false;
-
-		try {
+		assert.throws(function() {
 			this._oColumn.setCreationTemplate("bindingpath");
-		} catch (e) {
-			bErrorThrown = true;
-		}
-
-		assert.ok(bErrorThrown, "The creationTemplate is not a lazy aggregation. Passing a string in the setter should throw an error.");
+		}.bind(this), "'creationTemplate' is not a lazy aggregation. Passing a string in the setter throws an error.");
 	});
 
 	QUnit.module("Column Menu Items", {
