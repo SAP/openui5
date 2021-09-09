@@ -1,8 +1,0 @@
-{
-	"@odata.metadataEtag" : "W/\"20181031121319\"",
-	"@odata.count" : "1",
-	"value" : [{
-		"Id" : "10",
-		"Content" : "Test Data 10"
-	}]
-}

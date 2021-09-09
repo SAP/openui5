@@ -19,7 +19,7 @@ sap.ui.define([
 					source : "equipments2.json"
 				},
 				"GetEmployeeMaxAge()" : {
-					source : "GetEmployeeMaxAge.json"
+					message : {"value" : 56}
 				},
 				"$metadata" : {source : "metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata" : {source : "metadata_product.xml"},
@@ -34,7 +34,7 @@ sap.ui.define([
 					source : "Team01_skip1_top1.json"
 				},
 				"TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=2&$top=1" : {
-					source : "Team_no_more_data.json"
+					message : {"value" : []}
 				},
 				"TEAMS('TEAM_02')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=0&$top=1" : {
 					source : "Team02_skip0_top1.json"
@@ -43,7 +43,7 @@ sap.ui.define([
 					source : "Team02_skip1_top1.json"
 				},
 				"TEAMS('TEAM_02')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=2&$top=1" : {
-					source : "Team_no_more_data.json"
+					message : {"value" : []}
 				},
 				"TEAMS('TEAM_03')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=0&$top=1" : {
 					source : "Team03_skip0_top1.json"
@@ -52,7 +52,7 @@ sap.ui.define([
 					source : "Team03_skip1_top1.json"
 				},
 				"TEAMS('TEAM_03')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=2&$top=1" : {
-					source : "Team_no_more_data.json"
+					message : {"value" : []}
 				}
 			},
 			sFilterBase : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
