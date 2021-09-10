@@ -2355,8 +2355,13 @@ sap.ui.define([
 	Table.prototype._getRowContexts = function(iRequestLength, bSuppressAdjustToBindingLength, bSecondCall) {
 		var oBinding = this.getBinding();
 		var iRowCount = this.getRows().length;
+		var iThreshold = this.getThreshold();
 
 		iRequestLength = iRequestLength == null ? iRowCount : iRequestLength;
+
+		// If the threshold is not explicitly disabled by setting it to 0, the default threshold should be the number of rows.
+		iThreshold = iThreshold > 0 ? Math.max(iRequestLength, iThreshold) : 0;
+
 		iRequestLength = Math.max(iRequestLength, this._getRowMode().getMinRequestLength());
 
 		if (!oBinding || iRequestLength <= 0) {
@@ -2377,10 +2382,6 @@ sap.ui.define([
 		var iLength = iRequestLength - mRowCounts.fixedBottom;
 		var iMergeOffsetScrollRows = 0;
 		var iMergeOffsetBottomRow = iLength;
-
-		// If the threshold is not explicitly disabled by setting it to 0, the default threshold should be the number of rows.
-		var iThreshold = this.getThreshold();
-		iThreshold = iThreshold ? Math.max(iRowCount, iThreshold) : 0;
 
 		// data can be requested with a single getContexts call if the fixed rows and the scrollable rows overlap.
 		var iStartIndex = iFirstRenderedRowIndex;

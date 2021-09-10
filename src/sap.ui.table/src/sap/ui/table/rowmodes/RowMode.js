@@ -576,9 +576,9 @@ sap.ui.define([
 		// There is no need to have rows in the aggregation if the NoData overlay is enabled and no binding is available.
 		if (TableUtils.isNoDataVisible(oTable) && !oTable.getBinding()) {
 			iNewNumberOfRows = 0;
-		} else if (TableUtils.isVariableRowHeightEnabled(oTable)) {
+		} else if (TableUtils.isVariableRowHeightEnabled(oTable) && iNewNumberOfRows > 0) {
 			// TODO: Move this to VariableRowMode#getComputedRowCounts
-			iNewNumberOfRows = iNewNumberOfRows + 1; // Create one additional row for partial row scrolling.
+			iNewNumberOfRows++; // Create one additional row for partial row scrolling.
 		}
 
 		// Destroy rows if they are invalid, but keep the DOM in case the table is going to render.
@@ -783,11 +783,12 @@ sap.ui.define([
 	 */
 	function updateBindingContextsOfRows(oMode, aRows) {
 		var oTable = oMode.getTable();
-		var aContexts = oMode.getRowContexts(aRows.length);
 
 		if (!oTable || aRows.length === 0) {
 			return;
 		}
+
+		var aContexts = oMode.getRowContexts(aRows.length);
 
 		for (var i = 0; i < aRows.length; i++) {
 			aRows[i].setRowBindingContext(aContexts[i], oTable);

@@ -35,11 +35,9 @@ sap.ui.define([
 	QUnit.test("Initialization if metadata not yet loaded", function(assert) {
 		var oTable = TableQUnitUtils.createTable({models: TableQUnitUtils.createODataModel(null, true)});
 		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished);
 
 		// render, refreshRows, updateRows
-		return pReady.then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls consider the row count");
 			oTable.destroy();
@@ -52,11 +50,9 @@ sap.ui.define([
 			_bVariableRowHeightEnabled: true
 		});
 		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished);
 
 		// render, refreshRows, updateRows
-		return pReady.then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 11, 100), "All calls consider the row count");
 			oTable.destroy();
@@ -66,25 +62,21 @@ sap.ui.define([
 	QUnit.test("Initialization if metadata already loaded", function(assert) {
 		var oTable = TableQUnitUtils.createTable();
 		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished);
 
 		// refreshRows, render, updateRows
-		return pReady.then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls consider the row count");
 			oTable.destroy();
 		});
 	});
 
-	QUnit.skip("Initialization if metadata already loaded; Variable row heights", function(assert) {
+	QUnit.test("Initialization if metadata already loaded; Variable row heights", function(assert) {
 		var oTable = TableQUnitUtils.createTable({_bVariableRowHeightEnabled: true});
 		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished);
 
 		// refreshRows, render, updateRows
-		return pReady.then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
 			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 10, 100), "First call");
 			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 11, 100), "Second call");
@@ -93,16 +85,68 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Initialization if metadata already loaded; Bound on initialization; threshold = 1", function(assert) {
+		var oTable = TableQUnitUtils.createTable({threshold: 1});
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		// refreshRows, render, updateRows
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 10, 100), "First call"); // #applySettings: Binding init before setThreshold
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 10, 10), "Second call");
+			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, 10, 10), "Third call");
+			oTable.destroy();
+		});
+	});
+
+	QUnit.test("Initialization if metadata already loaded; Bound on initialization; Variable row heights; threshold = 1", function(assert) {
+		var oTable = TableQUnitUtils.createTable({threshold: 1, _bVariableRowHeightEnabled: true});
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		// refreshRows, render, updateRows
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 10, 100), "First call"); // #applySettings: Binding init before setThreshold
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 11, 11), "Second call");
+			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, 11, 11), "Third call");
+			oTable.destroy();
+		});
+	});
+
+	QUnit.test("Initialization if metadata already loaded; Bound between initialization and rendering; threshold = 1", function(assert) {
+		var oTable = TableQUnitUtils.createTable({threshold: 1, rows: undefined}, function(oTable) {
+			oTable.bindRows({path : "/Products"});
+		});
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		// refreshRows, render, updateRows
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
+			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 10), "All calls consider the row count");
+			oTable.destroy();
+		});
+	});
+
+	QUnit.test("Initialization if metadata already loaded; Bound after rendering; threshold = 1", function(assert) {
+		var oTable = TableQUnitUtils.createTable({threshold: 1, rows: undefined});
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		oTable.bindRows({path : "/Products"});
+
+		// refreshRows, updateRows
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			assert.equal(oGetContextsSpy.callCount, 2, "Method to get contexts called 2 times");
+			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 10), "All calls consider the row count");
+			oTable.destroy();
+		});
+	});
+
 	QUnit.test("Refresh", function(assert) {
 		var oTable = TableQUnitUtils.createTable();
 		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished)
-						   .then(function() {
-							   oGetContextsSpy.reset();
-						   });
 
-		return pReady.then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oGetContextsSpy.reset();
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 2, "Method to get contexts called 2 times"); // refreshRows, updateRows
@@ -115,13 +159,9 @@ sap.ui.define([
 	QUnit.test("Refresh; Variable row heights", function(assert) {
 		var oTable = TableQUnitUtils.createTable({_bVariableRowHeightEnabled: true});
 		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished)
-						   .then(function() {
-							   oGetContextsSpy.reset();
-						   });
 
-		return pReady.then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oGetContextsSpy.reset();
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 2, "Method to get contexts called 2 times"); // refreshRows, updateRows
