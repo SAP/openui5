@@ -350,6 +350,36 @@ function (
 		});
 	});
 
+	QUnit.test("Patterns are not loaded if not explicitly included in the metadata JSON", function (assert) {
+		// Arrange
+		var fnLoadAssetSpy = sinon.spy(IllustrationPool, "loadAsset");
+
+		// Act - Simulating metadata which is lacking "requireCustomPatterns" property
+		IllustrationPool._metadataLoaded("tnt", {symbols: []}, false);
+
+		// Assert
+		assert.strictEqual(fnLoadAssetSpy.callCount, 0, "loadAsset is not called in _metadataLoaded when there are no Patterns");
+
+		// End
+		fnLoadAssetSpy.restore();
+	});
+
+	QUnit.test("Patterns are loaded if explicitly included in the metadata JSON", function (assert) {
+		// Arrange
+		var fnLoadAssetSpy = sinon.spy(IllustrationPool, "loadAsset");
+
+		// Act - Simulating metadata which is has "requireCustomPatterns" property set to true
+		IllustrationPool._metadataLoaded("tnt", {requireCustomPatterns: true}, false);
+
+		// Assert
+		assert.ok(fnLoadAssetSpy.calledOnce, "loadAsset is called in _metadataLoaded when there are Patterns");
+		assert.ok(fnLoadAssetSpy.calledWithExactly("tnt" + SAP_ILLUSTRATION_PATTERNS_NAME),
+			"loadAsset is called with the file name reserved for patterns");
+
+		// End
+		fnLoadAssetSpy.restore();
+	});
+
 	QUnit.module("_updateDOMPool");
 
 	QUnit.test("adding new asset to the DOM node of the IllustrationPool", function (assert) {
