@@ -1,20 +1,11 @@
-/*global QUnit */
 sap.ui.define([
 	"sap/m/Link",
-	'sap/m/changeHandler/ChangeLinkTarget',
 	"sap/ui/dt/enablement/elementDesigntimeTest",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/rta/enablement/elementActionTest",
-	"sap/ui/core/mvc/View",
-	"sap/ui/fl/Change"
+	"sap/ui/rta/enablement/elementActionTest"
 ], function (
 	Link,
-	ChangeLinkTarget,
 	elementDesigntimeTest,
-	JsControlTreeModifier,
-	elementActionTest,
-	View,
-	Change
+	elementActionTest
 ) {
 	"use strict";
 
@@ -98,52 +89,33 @@ sap.ui.define([
 			afterRedo: fnConfirmLinkIsVisible
 		});
 
+		// ChangeLinkTarget (settings action)
+		function confirmLinkTarget1(oUiComponent, oViewAfterAction, assert) {
+			assert.deepEqual(oViewAfterAction.byId("myLink").getTarget(), "_top", "the target was changed");
+		}
 
-		QUnit.module("Checking the ChangeLinkTarget action: ", {
-			beforeEach: function () {
-				this.oMockedAppComponent = {
-					getLocalId: function () {
-						return undefined;
-					},
-					createId: function (id) {
-						return id;
-					}
-				};
+		function confirmLinkTarget2(oUiComponent, oViewAfterAction, assert) {
+			assert.deepEqual(oViewAfterAction.byId("myLink").getTarget(), "_blank", "the target was changed back");
+		}
+
+		elementActionTest("Checking the changeLinkTarget settings action for a Link", {
+			xmlView:
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
+					'<Link id="myLink" text="Open SAP Homepage" target="_blank" href="http://www.sap.com" visible="false"/>' +
+				'</mvc:View>'
+			,
+			action: {
+				name: "settings",
+				controlId: "myLink",
+				parameter: {
+					changeType: "changeLinkTarget",
+					content: "_top"
+				}
 			},
-			afterEach: function () {
-			}
+			layer: "VENDOR",
+			afterAction: confirmLinkTarget1,
+			afterUndo: confirmLinkTarget2,
+			afterRedo: confirmLinkTarget1
 		});
-
-		QUnit.test('Checking the ChangeLinkTarget action', function (assert) {
-			// Arrange
-			this.oLink = new Link({
-				id: "btn1",
-				text: "link",
-				href: "www.sap.com",
-				target: "_self"
-			});
-
-			var oView = new View({content : [
-				this.oLink
-			]});
-
-			var oChange = new Change({"changeType" : "changeLinkTarget", "content" : "_blank"});
-
-			return Promise.resolve()
-				.then(ChangeLinkTarget.applyChange.bind(this, oChange, this.oLink, {modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}))
-				.then(function(){
-					assert.equal(this.oLink.getTarget(), "_blank", "After applying the change the Link target is _blank");
-				}.bind(this))
-				.then(ChangeLinkTarget.revertChange.bind(this, oChange, this.oLink, {modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}))
-				.then(function() {
-					assert.equal(this.oLink.getTarget(), "_self", "After reverting the change the Link target is _self");
-				}.bind(this))
-				.then(ChangeLinkTarget.applyChange.bind(this, oChange, this.oLink, {modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}))
-				.then(function(){
-					assert.equal(this.oLink.getTarget(), "_blank", "After applying the change again the Link target is _blank");
-					this.oLink.destroy();
-				}.bind(this));
-		});
-
 	});
 });
