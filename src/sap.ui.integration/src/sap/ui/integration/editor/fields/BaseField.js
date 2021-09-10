@@ -164,6 +164,22 @@ sap.ui.define([
 		return Core.byId(sMessageStripId);
 	};
 
+	BaseField.prototype.getMessageIcon = function () {
+		var sMessageIconId = this.getAssociation("_messageIcon");
+		return Core.byId(sMessageIconId);
+	};
+
+	BaseField.prototype._removeValidationMessage = function () {
+		var oField = this.control,
+		    oMessageIcon = oField.getParent().getMessageIcon();
+		if (oMessageIcon) {
+			oMessageIcon.setVisible(false);
+		}
+		if (oField.getEnabled()) {
+			oField.setEnabled(false);
+		}
+	};
+
 	BaseField.prototype.setConfiguration = function (oConfig, bSuppress) {
 		if (oResourceBundle && oResourceBundle.sLocale !== Core.getConfiguration().getLanguage()) {
 			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
@@ -408,7 +424,8 @@ sap.ui.define([
 		if (oSettings["validate"]) {
 			var oContext = {
 				control: this.getAggregation("_field"),
-				requestData: this._requestData
+				requestData: this._requestData,
+				removeValidationMessage: this._removeValidationMessage
 			};
 			var fnValidate = oSettings["validate"];
 			Promise.resolve(fnValidate(oValue, oConfig, oContext)).then(function(result) {

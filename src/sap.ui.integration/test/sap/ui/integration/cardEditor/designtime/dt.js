@@ -657,6 +657,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								}).then(function (minLength){
 									if (value.length < minLength) {
 										context["control"].setEditable(false);
+										context["removeValidationMessage"]();
 										return {
 											"isValid": false,
 											"data": minLength
