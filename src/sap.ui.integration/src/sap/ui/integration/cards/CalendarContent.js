@@ -661,7 +661,7 @@ sap.ui.define([
 		CalendarContent.prototype._handleStartDateChange = function (oFocusedDate) {
 			var oCardActions = this.getActions(),
 				oCalFocusedDate = CalendarDate.fromLocalJSDate(oFocusedDate),
-				oCalFirstRenderedDate = CalendarUtils._getFirstDateOfWeek(oCalFocusedDate),
+				oCalFirstRenderedDate = CalendarUtils._getFirstDateOfWeek(CalendarUtils._getFirstDateOfMonth(oCalFocusedDate)),
 				oCalLastDateInMonth = new CalendarDate(oFocusedDate.getFullYear(), oFocusedDate.getMonth() + 1, 1),
 				oCalLastRenderedDate;
 
