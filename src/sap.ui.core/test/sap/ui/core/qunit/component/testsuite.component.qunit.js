@@ -76,7 +76,7 @@ sap.ui.define(function() {
 				}
 			},
 			Customizing: {
-				title: "CustomizingConfiguration and Customizing in general - sap.ui.core",
+				title: "Customizing in general - sap.ui.core",
 				qunit: {
 					// Test makes assumptions about when CustomizingData is loaded
 					reorder: false
@@ -97,23 +97,14 @@ sap.ui.define(function() {
 					version: 4
 				}
 			},
-			"Customizing_debug": {
-				page: "resources/sap/ui/test/starter/Test.qunit.html?testsuite={suite}&test={name}&sap-ui-xx-debugCustomizing",
-				title: "CustomizingConfiguration and Customizing in general - sap.ui.core",
-				qunit: {
-					// Test seems to make assumptions when customizing data is loaded
-					reorder: false
-				},
-				module: "test-resources/sap/ui/core/qunit/component/Customizing.qunit"
-			},
 			"Customizing_disabled": {
-				title: "CustomizingConfiguration and Customizing in general - sap.ui.core (customizing disabled)",
+				title: "Customizing in general - sap.ui.core (customizing disabled)",
 				ui5: {
 					"xx-disableCustomizing": true
 				}
 			},
 			"Customizing_multi": {
-				title: "CustomizingConfiguration and Customizing in general - sap.ui.core"
+				title: "Customizing in general - sap.ui.core"
 			},
 			Manifest: {
 				title: "QUnit tests: Component Manifest"

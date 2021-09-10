@@ -60,35 +60,6 @@ sap.ui.define([
 		}
 	});
 
-
-	// TESTS
-
-	QUnit.test("CustomizingConfiguration available", function(assert) {
-		assert.expect(1);
-
-		var CustomizingConfiguration = sap.ui.require("sap/ui/core/CustomizingConfiguration");
-		assert.ok(CustomizingConfiguration, "CustomizingConfiguration should be available now without requiring it");
-	});
-
-	QUnit.test("CustomizingConfiguration returning no customizing data", function(assert) {
-		assert.expect(4);
-
-		var CustomizingConfiguration = sap.ui.require("sap/ui/core/CustomizingConfiguration");
-		assert.strictEqual(CustomizingConfiguration.getViewReplacement("samples.components.ext.sap.Sub1"),
-				undefined,
-				"CustomizingConfiguration should return no View replacement data");
-		assert.strictEqual(CustomizingConfiguration.getViewExtension("testdata.customizing.sap.Sub2", "extension2"),
-				undefined,
-				"CustomizingConfiguration should return no View extension data");
-		assert.strictEqual(CustomizingConfiguration.getControllerExtension("testdata.customizing.sap.Sub2"),
-				undefined,
-				"CustomizingConfiguration should return no Controller extension data");
-		assert.strictEqual(CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub3", "customizableText"),
-				undefined,
-				"CustomizingConfiguration should return no View modification data");
-	});
-
-
 	// View Replacement
 
 	QUnit.test("View Replacement", function(assert) {

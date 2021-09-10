@@ -57,49 +57,9 @@ sap.ui.define([
 	}
 
 	// TESTS
-	QUnit.module("CustomizingConfiguration", {
+	QUnit.module("Customizing", {
 		before: createComponentAndContainer,
 		after: destroyComponentAndContainer
-	});
-
-	QUnit.test("CustomizingConfiguration available", function(assert) {
-		assert.expect(1);
-
-		var CustomizingConfiguration = sap.ui.require("sap/ui/core/CustomizingConfiguration");
-		assert.ok(CustomizingConfiguration, "CustomizingConfiguration should be available now without requiring it");
-	});
-
-	QUnit.test("CustomizingConfiguration returning the customizing data", function(assert) {
-		assert.expect(9);
-
-		var CustomizingConfiguration = sap.ui.require("sap/ui/core/CustomizingConfiguration");
-		assert.equal(CustomizingConfiguration.getViewReplacement("testdata.customizing.sap.Sub1").viewName,
-				"testdata.customizing.customer.CustomSub1",
-				"CustomizingConfiguration should return the View replacement data");
-		assert.equal(CustomizingConfiguration.getViewExtension("testdata.customizing.sap.Sub2", "extension2").fragmentName,
-				"testdata.customizing.customer.CustomFrag1WithCustomerAction",
-				"CustomizingConfiguration should return the View extension data");
-		assert.equal(CustomizingConfiguration.getViewExtension("testdata.customizing.sap.Frag1", "extensionPointInFragment").fragmentName,
-				"testdata.customizing.customer.CustomFrag1",
-				"CustomizingConfiguration should return the Fragment extension data");
-		assert.equal(CustomizingConfiguration.getControllerReplacement("testdata.customizing.sap.Main"),
-				"testdata.customizing.customer.Main",
-				"CustomizingConfiguration should return the Controller replacement data");
-		assert.equal(CustomizingConfiguration.getControllerExtension("testdata.customizing.sap.Sub2").controllerName,
-				"testdata.customizing.customer.Sub2ControllerExtension",
-				"CustomizingConfiguration should return the Controller extension data");
-		assert.strictEqual(CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub3", "customizableText").visible,
-				false,
-				"CustomizingConfiguration should return the View modification data");
-		assert.strictEqual(CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub4", "customizableText1").visible,
-				false,
-				"CustomizingConfiguration should return the View modification data");
-		assert.strictEqual(CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub4Typed", "typedCustomizableText1").visible,
-				false,
-				"CustomizingConfiguration should return the View modification data");
-		assert.strictEqual(CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub5", "Button2").visible,
-				false,
-				"CustomizingConfiguration should return the View modification data");
 	});
 
 

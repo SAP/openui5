@@ -18,7 +18,7 @@ sap.ui.define([
 	// UI Construction
 	var oComponent, oComponentContainer;
 
-	function createComponentAndContainer(bWithExtensionProvider, bSync, bLoadCustomizingConfiguration, bWithEmptyExtensionProvider) {
+	function createComponentAndContainer(bWithExtensionProvider, bSync, bWithEmptyExtensionProvider) {
 		// load and start the customized application
 		if (bWithExtensionProvider) {
 			ExtensionPoint.registerExtensionProvider(function() {
@@ -27,10 +27,6 @@ sap.ui.define([
 		}
 
 		if (bSync) {
-			if (bLoadCustomizingConfiguration) {
-				sap.ui.requireSync('sap/ui/core/CustomizingConfiguration');
-			}
-
 			oComponent = sap.ui.component({
 				name: "testdata.customizing.customer.ext.sync",
 				id: "ExtComponent",
@@ -43,21 +39,10 @@ sap.ui.define([
 			oComponentContainer.placeAt("content");
 			sap.ui.getCore().applyChanges();
 		} else {
-			var p = Promise.resolve();
-			if (bLoadCustomizingConfiguration) {
-				p = new Promise(function(resolve) {
-					sap.ui.require(['sap/ui/core/CustomizingConfiguration'], function() {
-						resolve();
-					});
-				});
-			}
-
-			return p.then(function() {
-				return Component.create({
+			return Component.create({
 					name: "testdata.customizing.customer.ext",
 					id: "ExtComponent",
 					manifest: false
-				});
 			}).then(function(_oComp) {
 				oComponent = _oComp;
 				oComponentContainer = new ComponentContainer({
@@ -78,7 +63,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("ExtensionPoints with Provider (Async)", {
-		beforeEach: createComponentAndContainer.bind(null, true, false, true, false),
+		beforeEach: createComponentAndContainer.bind(null, true, false, false),
 		afterEach: destroyComponentAndContainer
 	});
 
@@ -190,7 +175,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ExtensionPoints with Provider BUT no module is returned (Async)", {
-		before: createComponentAndContainer.bind(null, true, false, true, true),
+		before: createComponentAndContainer.bind(null, true, false, true),
 		after: destroyComponentAndContainer
 	});
 
@@ -256,7 +241,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ExtensionPoint w/o Provider (Async)", {
-		before: createComponentAndContainer.bind(null, false, false, true, false),
+		before: createComponentAndContainer.bind(null, false, false, false),
 		after: destroyComponentAndContainer
 	});
 
@@ -545,7 +530,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ExtensionPoints with Provider (Sync)", {
-		before: createComponentAndContainer.bind(null, true, true, true, false),
+		before: createComponentAndContainer.bind(null, true, true, false),
 		after: destroyComponentAndContainer
 	});
 
@@ -689,7 +674,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ExtensionPoints with Provider BUT no module is returned (Sync)", {
-		before: createComponentAndContainer.bind(null, true, true, true, true),
+		before: createComponentAndContainer.bind(null, true, true, true),
 		after: destroyComponentAndContainer
 	});
 
@@ -760,7 +745,7 @@ sap.ui.define([
 
 
 	QUnit.module("ExtensionPoints w/o Provider (Sync)", {
-		before: createComponentAndContainer.bind(null, false, true, true, false),
+		before: createComponentAndContainer.bind(null, false, true, false),
 		after: destroyComponentAndContainer
 	});
 
