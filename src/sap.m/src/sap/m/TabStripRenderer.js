@@ -314,7 +314,7 @@ sap.ui.define([
 		mAccAttributes["describedby"] = sDescribedBy;
 		mAccAttributes["posinset"] = iIndex + 1;
 		mAccAttributes["setsize"] = aItems.length;
-		mAccAttributes["labelledby"] = getTabTextDomId(oItem) + "-addText " + getTabTextDomId(oItem) + "-text";
+
 		if (oTabStripParent && oTabStripParent.getRenderer && oTabStripParent.getRenderer().getContentDomId) {
 			mAccAttributes["controls"] = oTabStripParent.getRenderer().getContentDomId(oTabStripParent);
 		}

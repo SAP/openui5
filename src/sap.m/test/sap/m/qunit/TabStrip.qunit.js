@@ -720,7 +720,22 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("TabStripItem has correct aria-labelledby", function (assert) {
+		this.sut.addItem(new TabStripItem({
+			icon: "sap-icon://notes",
+			text: "dummy text",
+			additionalText: "dummy additional text"
+		}));
+		this.sut.addItem(new TabStripItem({
+			icon: "sap-icon://notes"
+		}));
+		oCore.applyChanges();
 
+		var aTabs = this.sut.getItems();
+
+		assert.ok(aTabs[3].getAggregation("_image").getDecorative(), "TabStripItem has a decorative icon");
+		assert.notOk(aTabs[4].getAggregation("_image").getDecorative(), "TabStripItem has a non-decorative icon");
+	});
 
 	QUnit.module("TabSelect PHONE", {
 		beforeEach: function() {
