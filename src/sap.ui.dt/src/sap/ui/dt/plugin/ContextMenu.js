@@ -470,6 +470,13 @@ sap.ui.define([
 	 */
 	ContextMenu.prototype._onKeyUp = function (oEvent) {
 		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
+		// Prevents that the context menu opens after finishing a rename with ENTER
+		if (oEvent.keyCode === KeyCodes.ENTER && oOverlay.getIgnoreEnterKeyUpOnce()) {
+			oOverlay.setIgnoreEnterKeyUpOnce(false);
+			oEvent.stopPropagation();
+			oEvent.preventDefault();
+			return;
+		}
 		if ((oEvent.keyCode === KeyCodes.SPACE || oEvent.keyCode === KeyCodes.ENTER) &&
 			(oEvent.shiftKey === false) &&
 			(oEvent.altKey === false) &&

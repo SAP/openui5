@@ -122,6 +122,13 @@ sap.ui.define([
 				},
 				metadataScope: {
 					type: "string"
+				},
+				/**
+				 * Whether the next KeyUp event on the overlay should be ignored (e.g. for Rename)
+				 */
+				ignoreEnterKeyUpOnce: {
+					type: "boolean",
+					defaultValue: false
 				}
 			},
 			events: {

@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"qunit/RtaQunitUtils",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/changeHandler/PropertyChange",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
@@ -14,9 +15,11 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
-	"sap/uxap/ObjectPageSubSection"
+	"sap/uxap/ObjectPageSubSection",
+	"sap/ui/qunit/QUnitUtils"
 ], function(
 	RtaQunitUtils,
+	KeyCodes,
 	OverlayRegistry,
 	PropertyChange,
 	ChangesWriteAPI,
@@ -29,7 +32,8 @@ sap.ui.define([
 	jQuery,
 	ObjectPageLayout,
 	ObjectPageSection,
-	ObjectPageSubSection
+	ObjectPageSubSection,
+	QUnitUtils
 ) {
 	"use strict";
 
@@ -404,6 +408,35 @@ sap.ui.define([
 					assert.ok(false, sText);
 				}
 			}.bind(this));
+		});
+
+		QUnit.test("when trying to open ContextMenu (via keyboard using ENTER) after an Overlay was renamed (finishing with ENTER)", function(assert) {
+			var fnDone = assert.async();
+			var oLabel = this.oSimpleFormWithTitles.getContent()[3];
+			var oFormElement = oLabel.getParent();
+			var oFormElementOverlay = OverlayRegistry.getOverlay(oFormElement);
+			oFormElementOverlay.focus();
+			oFormElementOverlay.setSelected(true);
+			oFormElementOverlay.setIgnoreEnterKeyUpOnce(true); // flag that the Overlay has just been renamed
+			var oParams = {};
+			oParams.keyCode = KeyCodes.ENTER;
+			oParams.which = oParams.keyCode;
+			oParams.shiftKey = false;
+			oParams.altKey = false;
+			oParams.metaKey = false;
+			oParams.ctrlKey = false;
+			var bFirstCallIgnored;
+
+			function fnExecuteChecks() {
+				assert.ok(bFirstCallIgnored, "the context menu only opens when ENTER is pressed again after the rename is completed");
+				assert.notOk(oFormElementOverlay.getIgnoreEnterKeyUpOnce(), "the 'ignoreEnterKeyUpOnce' property on the Overlay was set to false by the first call");
+				fnDone();
+			}
+
+			this.oRta.getPlugins()["contextMenu"].attachEventOnce("openedContextMenu", fnExecuteChecks);
+			QUnitUtils.triggerEvent("keyup", oFormElementOverlay.getDomRef(), oParams); // should be ignored
+			bFirstCallIgnored = true;
+			QUnitUtils.triggerEvent("keyup", oFormElementOverlay.getDomRef(), oParams);
 		});
 
 		QUnit.test("when context menu (context menu) is opened (via keyboard) for a SimpleForm with Title", function(assert) {

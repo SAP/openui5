@@ -395,6 +395,7 @@ sap.ui.define([
 					var oRenameCommand = oEvent.getParameter("command");
 					assert.equal(this.oButton.getId(), oRenameCommand.getSelector().id, "then a command is created for the responsible element");
 					assert.equal(oRenameCommand.getName(), "rename", "then a rename command was created");
+					assert.ok(this.oLayoutOverlay.getIgnoreEnterKeyUpOnce(), "the overlay is marked as just renamed (to prevent opening of context menu when pressing ENTER)");
 					oMockAppComponent.destroy();
 					fnDone();
 				}, this);
