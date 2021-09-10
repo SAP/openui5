@@ -398,27 +398,28 @@ var sSingleLangTest = "de",
     QUnit.test("No credentials are sent when request is made", function (assert) {
         // Arrange
         var done = assert.async();
-        var oFetchStub = sinon.stub(window, "fetch")
-                        .resolves(new Response(null, { status: 500}));
+        var oFetchSpy = sinon.spy(window, "fetch");
 
         window.Hyphenopoly = {
-            keepAlive: false,
             require: {
                 "en-us": "FORCEHYPHENOPOLY"
             },
             setup: {
+                keepAlive: false,
                 hide: "DONT_HIDE"
             },
             handleEvent: {
                 error: function () {
                     // Assert
                     assert.notOk(
-                        oFetchStub.calledWith(sinon.match.any, { credentials: "include" }),
+                        oFetchSpy.calledWith(sinon.match.any, { credentials: "include" }),
                         "Credentials must NOT be included in the request"
                     );
 
                     // Clean up
-                    oFetchStub.restore();
+                    oFetchSpy.restore();
+                },
+                hyphenopolyEnd: function () {
                     done();
                 }
             }
@@ -436,11 +437,11 @@ var sSingleLangTest = "de",
         var oWasmInstanceStub = sinon.stub(WebAssembly, "Instance").throws("WebAssembly can't be used due to CSP restrictions.");
 
         window.Hyphenopoly = {
-            keepAlive: false,
             require: {
                 "en-us": "FORCEHYPHENOPOLY"
             },
             setup: {
+                keepAlive: false,
                 hide: "DONT_HIDE"
             },
             handleEvent: {
@@ -450,6 +451,8 @@ var sSingleLangTest = "de",
 
                     // Clean up
                     oWasmInstanceStub.restore();
+                },
+                hyphenopolyEnd: function () {
                     done();
                 }
             }
