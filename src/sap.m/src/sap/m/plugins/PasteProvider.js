@@ -14,7 +14,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/core/util/PasteHelper
 	 * sap.ui.require(["sap/m/Button", "sap/m/plugins/PasteProvider"], function(Button, PasteProvider) {
 	 *   var oPasteButton = new Button();
 	 *   oPasteButton.addDependent(new PasteProvider({
-	 *     pasteFor: oTable.getId() // Reference the control the paste is associated with, e.g. a sap.m.Table
+	 *     pasteFor: oTable.getId() // Reference to the control the paste is associated with, e.g. a sap.m.Table
 	 *   }));
 	 * });
 	 *
