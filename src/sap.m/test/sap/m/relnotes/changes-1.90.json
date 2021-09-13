@@ -155,5 +155,32 @@
         ]
       }
     ]
+  },
+  "1.90.6": {
+    "date": "September 2021",
+    "notes": [
+      {
+        "id": "cd7a748e4fb22db1a36ec9cda45310abca96fd3b",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Allow startHour to be greater than the endHour",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005693432021"
+          }
+        ]
+      },
+      {
+        "id": "fa1077066590d82a50fb4b2c7091b34160fb5855",
+        "type": "FIX",
+        "text": " sap.m.Input: startSuggestions handled correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005182052021"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -58,5 +58,21 @@
         ]
       }
     ]
+  },
+  "1.90.6": {
+    "date": "September 2021",
+    "notes": [
+      {
+        "id": "803dfa140b40e07214c3b26fd476ee85cc4dd3ed",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Correct maxScrollHeight computation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180305489"
+          }
+        ]
+      }
+    ]
   }
 }

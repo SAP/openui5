@@ -304,5 +304,25 @@
         ]
       }
     ]
+  },
+  "1.90.6": {
+    "date": "September 2021",
+    "notes": [
+      {
+        "id": "bd6e3b6555706bfdf86923aea08cfb711bc407a7",
+        "type": "FIX",
+        "text": " routing.History: use HashChanger to fetch hash and wait it till init",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180169665"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180299462"
+          }
+        ]
+      }
+    ]
   }
 }
