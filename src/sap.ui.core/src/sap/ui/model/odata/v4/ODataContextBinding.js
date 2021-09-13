@@ -66,8 +66,8 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @class Context binding for an OData V4 model.
 	 *   An event handler can only be attached to this binding for the following events:
-	 *   'AggregatedDataStateChange', 'change', 'dataReceived', 'dataRequested', and
-	 *   'DataStateChange'. For other events, an error is thrown.
+	 *   'AggregatedDataStateChange', 'change', 'dataReceived', 'dataRequested', 'DataStateChange',
+	 *   'patchCompleted', and 'patchSent'. For other events, an error is thrown.
 	 *
 	 *   A context binding can also be used as an <i>operation binding</i> to support bound actions,
 	 *   action imports, bound functions and function imports. If you want to control the execution
