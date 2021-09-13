@@ -20,8 +20,15 @@ sap.ui.define([
 					: {source : "CurrencyList.json"},
 				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_bp_role-fv/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-BUSINESSPARTNER.BP_ROLE%27/$metadata"
 					: {source : "metadata_bp_role.xml"},
-				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_bp_role-fv/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-BUSINESSPARTNER.BP_ROLE%27/D_BP_ROLE_FV_Set?$select=FIELD_VALUE&$skip=0&$top=100"
-					: {source : "RoleList.json"}
+				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_bp_role-fv/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-BUSINESSPARTNER.BP_ROLE%27/D_BP_ROLE_FV_Set?$select=FIELD_VALUE&$skip=0&$top=100" : {
+					message : {
+						"value" : [{
+							"FIELD_VALUE" : "01"
+						}, {
+							"FIELD_VALUE" : "02"
+						}]
+					}
+				}
 			},
 			sFilterBase : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 			sSourceBase : "sap/ui/core/sample/odata/v4/SalesOrdersTemplate/data"

@@ -16,13 +16,21 @@ sap.ui.define([
 					source : "metadata.xml"
 				},
 				"ContactList(42010aef-0de5-1eea-af8f-5bce865f0879)?$select=ContactGUID,EmailAddress,FirstName,LastName" : {
-					source : "Contact.json"
+					message : {
+						"ContactGUID" : "42010aef-0de5-1eea-af8f-5bce865f0879",
+						"FirstName" : "Karl",
+						"LastName" : "Müller",
+						"EmailAddress" : "customer-do.not.reply@sap.com"
+					}
 				},
 				"PATCH ContactList(42010aef-0de5-1eea-af8f-5bce865f0879)" : {
 					code : 204
 				},
 				"ContactList(42010aef-0de5-1eea-af8f-5bce865f0879)?$select=FirstName,LastName" : {
-					source : "Contact_SideEffects.json"
+					message: {
+						"FirstName" : "Karl*",
+						"LastName" : "Müller*"
+					}
 				}
 			},
 			sFilterBase : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",

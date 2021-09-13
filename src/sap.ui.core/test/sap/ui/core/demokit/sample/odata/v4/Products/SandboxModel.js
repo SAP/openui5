@@ -19,7 +19,7 @@ sap.ui.define([
 					source : "common_metadata.xml"
 				},
 				"ProductList('H-1001')?custom-option=value&$select=CurrencyCode,Messages,Name,Price,ProductID,WeightMeasure,WeightUnit" : {
-					source : "ProductList(H-1001).json"
+					source : "ProductList('H-1001').json"
 				},
 				"ProductList?custom-option=value&$count=true&$select=CurrencyCode,Messages,Name,Price,ProductID,WeightMeasure,WeightUnit&$skip=0&$top=5" : {
 					source : "ProductList.json"
@@ -33,10 +33,21 @@ sap.ui.define([
 				"POST ProductList?custom-option=value" : [{
 					code : 400,
 					ifMatch : /,"ProductID":"H-100",/g,
-					source : "POST-ProductList('H-100').Error.json"
+					message : {
+						"error" : {
+							"code" : "/IWBEP/CM_V4_GWS/005",
+							"message" : "Error occurred while processing the request",
+							"details" : [{
+								"code" : "SEPM_BO_COMMON/032",
+								"message" : "Value 'H-100' is not unique",
+								"target" : "ProductID",
+								"@Common.numericSeverity" : 4
+							}]
+						}
+					}
 				}, {
 					code : 200,
-					source : "POST-ProductList('H-1001').json"
+					source : "ProductList('H-1001').json"
 				}]
 			},
 			sFilterBase : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",

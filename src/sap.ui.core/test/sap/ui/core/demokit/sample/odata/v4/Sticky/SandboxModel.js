@@ -16,17 +16,29 @@ sap.ui.define([
 					source : "metadata.xml"
 				},
 				"GET Sticky?$count=true&$select=Content,Id&$skip=0&$top=5" : {
-					source : "Sticky_Skip0_Top5.json"
+					message : {
+						"@odata.count" : "1",
+						"value" : [{
+							"Id" : "10",
+							"Content" : "Test Data 10"
+						}]
+					}
 				},
 				"GET Sticky('10')?$select=Content,Id" : {
-					source : "Sticky(10)_refresh.json"
+					message : {
+						"Id" : "10",
+						"Content" : "Test Data 10"
+					}
 				},
 				"PATCH Sticky('10')" : [{
 					headers : {"SAP-ContextId" : "session1"},
 					ifMatch : function (oRequest) {
 						return oRequest.requestHeaders["SAP-ContextId"] === "session1";
 					},
-					source : "PATCH-Sticky(10)_with_some_input.json"
+					message : {
+						"Id" : "10",
+						"Content" : "returned from server"
+					}
 				}, {
 					code : 400,
 					headers : {"Content-Type" : "text/plain"},
@@ -34,7 +46,10 @@ sap.ui.define([
 				}],
 				"POST Sticky('10')/com.sap.gateway.srvd.zrc_rap_sticky.v0001.PrepareForEdit" : {
 					headers : {"SAP-ContextId" : "session1"},
-					source : "Sticky(10)_PrepareForEdit.json"
+					message : {
+						"Id" : "10",
+						"Content" : "prepared for edit"
+					}
 				}
 			},
 			sFilterBase : "/sap/opu/odata4/sap/zrc_rap_sticky/srvd/sap/zrc_rap_sticky/0001/",
