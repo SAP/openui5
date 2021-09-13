@@ -1637,11 +1637,13 @@ sap.ui.define([
 		try {
 			oPromise = this.fetchValue(_GroupLock.$cached, sEntityPath);
 		} catch (oError) {
-			if (!oError.$cached) {
+			if (!oError.$cached || this.oPromise !== null) {
 				throw oError;
 			}
-			// Note: we need a unique "entity" instance to avoid merging of PATCH requests!
-			oPromise = SyncPromise.resolve({"@odata.etag" : "*"});
+			// data has not been read, fake it
+			// Note: we need a unique "entity" instance to avoid merging of unrelated PATCH requests
+			// and sharing of data across bindings - the instance is modified below!
+			oPromise = this.oPromise = SyncPromise.resolve({"@odata.etag" : "*"});
 		}
 
 		return oPromise.then(function (oEntity) {
@@ -2882,8 +2884,8 @@ sap.ui.define([
 			if (this.bPost) {
 				throw new Error("Cannot fetch a value before the POST request");
 			}
-			this.bSentRequest = true;
 			this.oPromise = SyncPromise.all([
+				// Note: for _GroupLock.$cached, this may fail synchronously
 				this.oRequestor.request("GET", sResourcePath, oGroupLock, undefined, undefined,
 					fnDataRequested, undefined, this.sMetaPath),
 				this.fetchTypes()
@@ -2891,6 +2893,7 @@ sap.ui.define([
 				that.visitResponse(aResult[0], aResult[1]);
 				return aResult[0];
 			});
+			this.bSentRequest = true;
 		}
 		return this.oPromise.then(function (oResult) {
 			if (oResult && oResult["$ui5.deleted"]) {

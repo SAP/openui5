@@ -1548,6 +1548,7 @@ sap.ui.define([
 			oFetchValueExpectation = oCacheMock.expects("fetchValue")
 				.withExactArgs(sinon.match.same(_GroupLock.$cached), sEntityPath);
 			if (oFixture.$cached) {
+				oCache.oPromise = null;
 				oFetchCachedError.$cached = true;
 				oFetchValueExpectation.throws(oFetchCachedError);
 				oEntityMatcher = {"@odata.etag" : "*"};
@@ -1643,6 +1644,10 @@ sap.ui.define([
 					assert.strictEqual(oResult, oError);
 				});
 
+			if (oFixture.$cached) {
+				assert.deepEqual(oCache.oPromise.getResult(), {"@odata.etag" : "*"});
+			}
+
 			this.mock(this.oRequestor).expects("lockGroup")
 				.withExactArgs("group", sinon.match.same(oCache), true)
 				.returns(oRequestLock);
@@ -1657,6 +1662,32 @@ sap.ui.define([
 			return oCacheUpdatePromise;
 		});
 	});
+
+	//*********************************************************************************************
+[undefined, SyncPromise.resolve()].forEach(function (oPromise) {
+	var sTitle = "_Cache#update: oError.$cached but this.oPromise === " + oPromise;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCache = new _Cache(this.oRequestor, "BusinessPartnerList"),
+			oError = new Error();
+
+		oError.$cached = true;
+		oCache.oPromise = oPromise;
+		oCache.fetchValue = function () {};
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to/entity")
+			.throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			oCache.update({/*oGroupLock*/}, "Address/City", "Walldorf", /*fnError*/null,
+				"/~/BusinessPartnerList('0')", "path/to/entity");
+		}, oError);
+
+		assert.strictEqual(oCache.oPromise, oPromise);
+	});
+});
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bTransient) {
@@ -8279,8 +8310,9 @@ sap.ui.define([
 		assert.strictEqual(oCache.bSortExpandSelect, "bSortExpandSelect");
 		assert.strictEqual(oCache.bSharedRequest, "bSharedRequest");
 		assert.strictEqual(oCache.fnGetOriginalResourcePath, fnGetOriginalResourcePath);
-		assert.strictEqual(oCache.bPost, "bPost");
 		assert.strictEqual(oCache.sMetaPath, "/meta/path");
+		assert.strictEqual(oCache.bPost, "bPost");
+		assert.strictEqual(oCache.bPosting, false);
 		assert.strictEqual(oCache.oPromise, null);
 	});
 
@@ -8379,6 +8411,23 @@ sap.ui.define([
 		return Promise.all(aPromises);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_SingleCache#fetchValue: GET fails due to $cached", function (assert) {
+		var oCache = this.createSingle("Employees('1')"),
+			oError = new Error();
+
+		this.oRequestorMock.expects("request")
+			.withArgs("GET", "Employees('1')", sinon.match.same(_GroupLock.$cached))
+			.throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			oCache.fetchValue(_GroupLock.$cached, "");
+		}, oError);
+
+		assert.strictEqual(oCache.bSentRequest, false);
+	});
 
 	//*********************************************************************************************
 	QUnit.test("_SingleCache#getValue: drillDown asynchronous", function (assert) {
