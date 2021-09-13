@@ -42,7 +42,6 @@ sap.ui.define([
 		}
 
 		if (!bSuggestion && !oWrapper.getTable()) {
-
 			var oDialogTable =  new sap.ui.mdc.Table(oFieldHelp.getId() + "--dialog--mdcTable", {
 				header: "",
 				p13nMode: ['Column','Sort'],

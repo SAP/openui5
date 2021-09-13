@@ -1,0 +1,72 @@
+// Use this test page to test the API and features of the ValueHelp.
+// The interaction with the Field is tested on the field test page.
+
+/* global QUnit */
+/*eslint max-nested-callbacks: [2, 5]*/
+
+sap.ui.define([
+	"sap/ui/mdc/ValueHelpDelegate",
+	"sap/ui/mdc/valuehelp/base/FilterableListContent",
+	"sap/ui/mdc/condition/Condition",
+	"sap/ui/mdc/filterbar/vh/FilterBar",
+	"sap/ui/mdc/condition/FilterOperatorUtil",
+	"sap/ui/mdc/condition/Operator",
+	"sap/ui/mdc/enum/SelectType",
+	"sap/ui/mdc/enum/ConditionValidated",
+	"sap/ui/core/Icon",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/library",
+	"sap/m/Popover"
+], function (
+		ValueHelpDelegate,
+		FilterableListContent,
+		Condition,
+		FilterBar,
+		FilterOperatorUtil,
+		Operator,
+		SelectType,
+		ConditionValidated,
+		Icon,
+		JSONModel,
+		mLibrary,
+		Popover
+	) {
+	"use strict";
+
+	var oContent;
+
+	var _teardown = function() {
+		oContent.destroy();
+		oContent = null;
+	};
+
+	QUnit.module("basic features", {
+		beforeEach: function() {
+			oContent = new FilterableListContent();
+		},
+		afterEach: _teardown
+	});
+
+	QUnit.test("_createDefaultFilterBar", function(assert) {
+		var fnDone = assert.async();
+		oContent._createDefaultFilterBar().then(function (oFilterBar) {
+			assert.ok(oFilterBar, "FilterBar is created");
+			assert.equal(oFilterBar, oContent.mAggregations._defaultFilterBar, "FilerBar is set as defaultFilterBar");
+			fnDone();
+		});
+	});
+
+	QUnit.test("_getPriorityFilterBar", function(assert) {
+		var fnDone = assert.async();
+		oContent._createDefaultFilterBar().then(function () {
+			var oFilterBar = oContent._getPriorityFilterBar();
+			assert.equal(oFilterBar, oContent.mAggregations._defaultFilterBar, "returns defaultFilterBar if none is set");
+			var oMyFilterBar = new FilterBar();
+			oContent.setFilterBar(oMyFilterBar);
+			oFilterBar = oContent._getPriorityFilterBar();
+			assert.equal(oFilterBar, oMyFilterBar, "returns dedicated filterbar, if available");
+			fnDone();
+		});
+	});
+
+});

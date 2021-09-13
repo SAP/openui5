@@ -1,167 +1,307 @@
 sap.ui.define([
 	"sap/ui/mdc/odata/v4/FieldValueHelpDelegate",
 	"sap/ui/mdc/FilterField",
-	"sap/ui/mdc/filterbar/vh/FilterBar"
-], function (ODataFieldValueHelpDelegate, FilterField, FilterBar) {
+	"sap/ui/mdc/filterbar/vh/FilterBar",
+	"sap/ui/mdc/valuehelp/content/MTable",
+	"sap/m/Table",
+	'sap/m/library'
+], function (ODataFieldValueHelpDelegate, FilterField, FilterBar, MTable, Table, mLibrary) {
 	"use strict";
 	var Delegate = Object.assign({}, ODataFieldValueHelpDelegate);
 
-	Delegate.contentRequest = function(oPayload, oFieldHelp, bSuggestion, oProperties) {
-		var isSuggest = bSuggestion;
-		var sKey = !bSuggestion && oProperties && oProperties.collectiveSearchKey;
-		var oTable;
-		var oFilterBar;
+	Delegate.retrieveContent = function (oContainer) {
+		var oValueHelp = oContainer && oContainer.getParent();
 
-		var fnUpdateSuggestTable = function(oSuggestWrapper) {
-			var oSuggestTable = oSuggestWrapper.getTable();
-			if (!oSuggestTable) {
-				oSuggestTable = new sap.m.Table({
-					autoPopinMode: true,
-					contextualWidth: "Auto",
-					hiddenInPopin: ["Low"],
-					columns: [
-						new sap.m.Column({width: '5rem', importance:"High", header: new sap.m.Text({text : "ID"})}),
-						new sap.m.Column({header: new sap.m.Text({text : "Name "})}),
-						new sap.m.Column({width: '8rem', visible: !isSuggest, importance:"Low", header: new sap.m.Text({text : "Date of Birth"})})
-					],
-					items: {
-						path : "/Authors",
-						length: 10,
-						template : new sap.m.ColumnListItem({
-							type: "Active",
-							cells: [new sap.m.Text({text: "{ID}"}),
-									new sap.m.Text({text: "{name}"}),
-									new sap.m.Text({text: "{dateOfBirth}"})]
+		// var oParams = UriParameters.fromQuery(location.search);
+		// var oParamSuspended = oParams.get("suspended");
+		var bSuspended = false; // oParamSuspended ? oParamSuspended === "true" : false;
+
+		var aCurrentContent = oContainer && oContainer.getContent();
+		var oCurrentContent = aCurrentContent && aCurrentContent[0];
+
+		var bMultiSelect = oValueHelp.getMaxConditions() === -1;
+
+		// if (oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
+
+		// 	if (!oCurrentContent) {
+		// 		oCurrentContent = new MTable({keyPath: "ID", descriptionPath: "name"});
+		// 		oContainer.addContent(oCurrentContent);
+		// 	}
+
+		// 	if (!oCurrentContent.getTable()) {
+		// 		oCurrentContent.setTable(new Table("mTable1", {
+		// 			width: "30rem",
+		// 			mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
+		// 			columns: [
+		// 				new sap.m.Column({header: new sap.m.Text({text : "ID"})}),
+		// 				new sap.m.Column({header: new sap.m.Text({text : "Name"})})
+		// 			],
+		// 			items: {
+		// 				path : "/Authors",
+		// 				length: 10,
+		// 				suspended: bSuspended,
+		// 				template : new sap.m.ColumnListItem({
+		// 					type: "Active",
+		// 					cells: [
+		// 						new sap.m.Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.String'}"}),
+		// 						new sap.m.Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"})
+		// 					]
+		// 				})
+		// 			}
+		// 		}));
+		// 	}
+		// }
+
+		if (oContainer.isA("sap.ui.mdc.valuehelp.Dialog")) {
+
+			// if (!oCurrentContent) {
+
+			// 	oCurrentContent = new MTable({title: "Select from List", keyPath: "ID", descriptionPath: "name", collectiveSearchItems: [
+			// 		new sap.ui.core.Item({text: "Default Search Template", key: "default"}),
+			// 		new sap.ui.core.Item({text: "Search Template 1", key: "template1"})
+			// 	]});
+
+			// 	oContainer.addContent(oCurrentContent);
+
+			// 	// var oAdditionalContent = new Conditions({
+			// 	// 	title:"Define Conditions",
+			// 	// 	subTitle:"Conditions",
+			// 	// 	label:"Label of Field"
+			// 	// });
+			// 	// oContainer.addContent(oAdditionalContent);
+
+			// }
+
+			var oCurrentTable = oCurrentContent.getTable();
+			if (oCurrentTable) {
+				oCurrentTable.destroy();
+			}
+
+			var oCollectiveSearchContent;
+
+			switch (oCurrentContent.getCollectiveSearchKey()) {
+				case "template1":
+
+					oCurrentContent.setFilterBar(
+						new FilterBar({
+							liveMode: false,
+							delegate: {name: "sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate", payload: {}},
+							basicSearchField: new FilterField({
+								delegate: {name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}},
+								dataType: "Edm.String",
+								conditions: "{$filters>/conditions/$search}",
+								width: "50%",
+								maxConditions: 1,
+								placeholder: "Search"
+							}),
+							filterItems: [
+								new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"ID", dataType:"Edm.Int32", conditions:"{$filters>/conditions/ID}" }),
+								new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Name", conditions:"{$filters>/conditions/name}" }),
+								new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Country of Origin", maxConditions:-1, conditions:"{$filters>/conditions/countryOfOrigin_code}"})
+							]
 						})
-					},
-					width: "30rem"
-				});
-				oSuggestWrapper.setTable(oSuggestTable);
-			}
+					);
 
-			return oSuggestTable;
-		};
+					oCollectiveSearchContent = new Table(oCurrentContent.getId() + "--" +  "template1", {
+						width: "100%",
+						growing: true,
+						growingScrollToLoad: true,
+						growingThreshold: 20,
+						mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
+						columns: [
+							new sap.m.Column({header: new sap.m.Text({text : "ID"})}),
+							new sap.m.Column({header: new sap.m.Text({text : "Name"})}),
+							new sap.m.Column({header: new sap.m.Text({text : "Country of Origin"})})
+						],
+						items: {
+							path : "/Authors",
+							suspended: bSuspended,
+							template : new sap.m.ColumnListItem({
+								type: "Active",
+								cells: [
+									new sap.m.Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32'}"}),
+									new sap.m.Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"}),
+									new sap.m.Text({text: "{path: 'countryOfOrigin_code', type:'sap.ui.model.odata.type.String'}"})
+								]
+							})
+						}
+					});
+					break;
 
-		var fncGetDefaultSearchTemplateTable = function() {
-			if (!this._oDefaultSearchTemplateTable) {
-				this._oDefaultSearchTemplateTable = new sap.m.Table({
-					growing: true, growingScrollToLoad: true, growingThreshold: 20,
-					autoPopinMode: true,
-					contextualWidth: "Auto",
-					hiddenInPopin: ["Low"],
-					columns: [
-						new sap.m.Column({width: '5rem', importance:"High", header: new sap.m.Text({text : "ID"})}),
-						new sap.m.Column({header: new sap.m.Text({text : "Name "})}),
-						new sap.m.Column({width: '8rem', visible: !isSuggest, importance:"Low", header: new sap.m.Text({text : "Date of Birth"})})
-					],
-					items: {
-						path : "/Authors",
-						template : new sap.m.ColumnListItem({
-							type: "Active",
-							cells: [new sap.m.Text({text: "{ID}"}),
-									new sap.m.Text({text: "{name}"}),
-									new sap.m.Text({text: "{dateOfBirth}"})]
+				default:
+
+					oCurrentContent.setFilterBar(
+						new FilterBar({
+							liveMode: false,
+							delegate: {name: "sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate", payload: {}},
+							basicSearchField: new FilterField({
+								delegate: {	name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}},
+								dataType: "Edm.String",
+								conditions: "{$filters>/conditions/$search}",
+								width: "50%",
+								maxConditions: 1,
+								placeholder: "Search"
+							}),
+							filterItems: [
+								new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"ID", dataType:"Edm.Int32", conditions:"{$filters>/conditions/ID}" }),
+								new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Name", conditions:"{$filters>/conditions/name}" }),
+								new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Date of Birth", maxConditions:-1, dataType:"Edm.Date", conditions:"{$filters>/conditions/dateOfBirth}"})
+							]
 						})
-					},
-					width: "100%"
-				});
+					);
+
+					oCollectiveSearchContent = new Table(oCurrentContent.getId() + "--" +  "default", {
+						width: "100%",
+						growing: true,
+						growingScrollToLoad: true,
+						growingThreshold: 20,
+						mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
+						columns: [
+							new sap.m.Column({header: new sap.m.Text({text : "ID"})}),
+							new sap.m.Column({header: new sap.m.Text({text : "Name"})}),
+							new sap.m.Column({header: new sap.m.Text({text : "Date of Birth"})})
+						],
+						items: {
+							path : "/Authors",
+							suspended: bSuspended,
+							template : new sap.m.ColumnListItem({
+								type: "Active",
+								cells: [
+									new sap.m.Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32'}"}),
+									new sap.m.Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"}),
+									new sap.m.Text({text: "{path: 'dateOfBirth', type:'sap.ui.model.odata.type.Date'}"})
+								]
+							})
+						}
+					});
+					break;
 			}
-			return this._oDefaultSearchTemplateTable;
-		}.bind(this);
-
-		var fncGetMySearchTemplate1Table = function() {
-			if (!this.MySearchTemplate1Table) {
-				this.MySearchTemplate1Table = new sap.m.Table({
-					growing: true, growingScrollToLoad: true, growingThreshold: 20,
-					autoPopinMode: true,
-					contextualWidth: "Auto",
-					hiddenInPopin: ["Low"],
-					columns: [
-						new sap.m.Column({width: '5rem', importance:"High", header: new sap.m.Text({text : "ID"})}),
-						new sap.m.Column({header: new sap.m.Text({text : "Name "})}),
-						new sap.m.Column({width: '8rem', visible: !isSuggest, importance:"Low", header: new sap.m.Text({text : "Country"})})
-					],
-					items: {
-						path : "/Authors",
-						template : new sap.m.ColumnListItem({
-							type: "Active",
-							cells: [new sap.m.Text({text: "{ID}"}),
-									new sap.m.Text({text: "{name}"}),
-									new sap.m.Text({text: "{countryOfOrigin_code}"})]
-						})
-					},
-					width: "100%"
-				});
-			}
-			return this.MySearchTemplate1Table;
-		}.bind(this);
-
-		var fncGetMySearchTemplate1Filterbar = function() {
-			if (!this.MySearchTemplate1Filterbar) {
-				this.MySearchTemplate1Filterbar = new FilterBar(
-				{
-					liveMode: false,
-					delegate: {name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}},
-					basicSearchField: new FilterField({
-						delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
-						dataType: "Edm.String",
-						conditions: "{$filters>/conditions/$search}",
-						width:"50%",
-						maxConditions:1,
-						placeholder:"Search"}),
-					filterItems: [new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"myID", dataType:"Edm.Int32", conditions:"{$filters>/conditions/ID}" }),
-								  new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Name", conditions:"{$filters>/conditions/name}" }),
-								  new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Country", maxConditions:-1, conditions:"{$filters>/conditions/countryOfOrigin_code}"})]
-				});
-			}
-			return this.MySearchTemplate1Filterbar;
-		}.bind(this);
-
-		switch (sKey) {
-		case "template1":
-			this._odefaultFilterBar = oFieldHelp.getFilterBar();
-
-			oTable = fncGetMySearchTemplate1Table();
-			oFilterBar = fncGetMySearchTemplate1Filterbar();
-			break;
-
-		default:
-			oTable = fncGetDefaultSearchTemplateTable();
-			oFilterBar = this._odefaultFilterBar;
-		break;
-		}
-
-		var oWrapper = oFieldHelp.getContent();
-		var oCurrentTable = oWrapper.getTable();
-		var oCurrentFilterBar = oFieldHelp.getFilterBar();
-		if (oTable !== oCurrentTable) {
-			oWrapper.setTable(oTable);
-			oWrapper.addDependent(oCurrentTable);
-		}
-		if (oFilterBar && oFilterBar !== oCurrentFilterBar) {
-			oFieldHelp.setFilterBar(oFilterBar);
-			oFieldHelp.addDependent(oCurrentFilterBar);
-		}
-
-
-		oFieldHelp.setFilterFields("$search");
-
-		oTable.getColumns()[2].setVisible(!isSuggest);
-		if (isSuggest) {
-			var oSuggestWrapper = oFieldHelp.getSuggestContent();
-			fnUpdateSuggestTable(oSuggestWrapper);
-
-		} else {
-			var oTableWrapper = oFieldHelp.getContent();
-			oTable = oTableWrapper.getTable();
-
-			oTable.setWidth("100%");
-			oTable.getColumns()[1].setWidth(null);
-			oTable.getColumns()[2].setVisible(true);
+			oCurrentContent.setTable(oCollectiveSearchContent);
 		}
 
 		return Promise.resolve();
 	};
+
+	// Delegate.contentRequest = function(oPayload, oFieldHelp, bSuggestion, oProperties) {
+	// 	var isSuggest = bSuggestion;
+	// 	var sKey = !bSuggestion && oProperties && oProperties.collectiveSearchKey;
+	// 	var oTable;
+	// 	var oFilterBar;
+
+	// 	var fncGetDefaultSearchTemplateTable = function() {
+	// 		if (!this._oDefaultSearchTemplateTable) {
+	// 			this._oDefaultSearchTemplateTable = new sap.m.Table({
+	// 				growing: true, growingScrollToLoad: true, growingThreshold: 20,
+	// 				autoPopinMode: true,
+	// 				contextualWidth: "Auto",
+	// 				hiddenInPopin: ["Low"],
+	// 				columns: [
+	// 					new sap.m.Column({width: '5rem', importance:"High", header: new sap.m.Text({text : "ID"})}),
+	// 					new sap.m.Column({header: new sap.m.Text({text : "Name "})}),
+	// 					new sap.m.Column({width: '8rem', visible: !isSuggest, importance:"Low", header: new sap.m.Text({text : "Date of Birth"})})
+	// 				],
+	// 				items: {
+	// 					path : "/Authors",
+	// 					template : new sap.m.ColumnListItem({
+	// 						type: "Active",
+	// 						cells: [new sap.m.Text({text: "{ID}"}),
+	// 								new sap.m.Text({text: "{name}"}),
+	// 								new sap.m.Text({text: "{dateOfBirth}"})]
+	// 					})
+	// 				},
+	// 				width: "100%"
+	// 			});
+	// 		}
+	// 		return this._oDefaultSearchTemplateTable;
+	// 	}.bind(this);
+
+	// 	var fncGetMySearchTemplate1Table = function() {
+	// 		if (!this.MySearchTemplate1Table) {
+	// 			this.MySearchTemplate1Table = new sap.m.Table({
+	// 				growing: true, growingScrollToLoad: true, growingThreshold: 20,
+	// 				autoPopinMode: true,
+	// 				contextualWidth: "Auto",
+	// 				hiddenInPopin: ["Low"],
+	// 				columns: [
+	// 					new sap.m.Column({width: '5rem', importance:"High", header: new sap.m.Text({text : "ID"})}),
+	// 					new sap.m.Column({header: new sap.m.Text({text : "Name "})}),
+	// 					new sap.m.Column({width: '8rem', visible: !isSuggest, importance:"Low", header: new sap.m.Text({text : "Country"})})
+	// 				],
+	// 				items: {
+	// 					path : "/Authors",
+	// 					template : new sap.m.ColumnListItem({
+	// 						type: "Active",
+	// 						cells: [new sap.m.Text({text: "{ID}"}),
+	// 								new sap.m.Text({text: "{name}"}),
+	// 								new sap.m.Text({text: "{countryOfOrigin_code}"})]
+	// 					})
+	// 				},
+	// 				width: "100%"
+	// 			});
+	// 		}
+	// 		return this.MySearchTemplate1Table;
+	// 	}.bind(this);
+
+	// 	var fncGetMySearchTemplate1Filterbar = function() {
+	// 		if (!this.MySearchTemplate1Filterbar) {
+	// 			this.MySearchTemplate1Filterbar = new FilterBar(
+	// 			{
+	// 				liveMode: false,
+	// 				delegate: {name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}},
+	// 				basicSearchField: new FilterField({
+	// 					delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
+	// 					dataType: "Edm.String",
+	// 					conditions: "{$filters>/conditions/$search}",
+	// 					width:"50%",
+	// 					maxConditions:1,
+	// 					placeholder:"Search"}),
+	// 				filterItems: [new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"ID", dataType:"Edm.Int32", conditions:"{$filters>/conditions/ID}" }),
+	// 							  new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Name", conditions:"{$filters>/conditions/name}" }),
+	// 							  new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Country", maxConditions:-1, conditions:"{$filters>/conditions/countryOfOrigin_code}"})]
+	// 			});
+	// 		}
+	// 		return this.MySearchTemplate1Filterbar;
+	// 	}.bind(this);
+
+	// 	switch (sKey) {
+	// 	case "template1":
+	// 		this._odefaultFilterBar = oFieldHelp.getFilterBar();
+
+	// 		oTable = fncGetMySearchTemplate1Table();
+	// 		oFilterBar = fncGetMySearchTemplate1Filterbar();
+	// 		break;
+
+	// 	default:
+	// 		oTable = fncGetDefaultSearchTemplateTable();
+	// 		oFilterBar = this._odefaultFilterBar;
+	// 	break;
+	// 	}
+
+	// 	var oWrapper = oFieldHelp.getContent();
+	// 	var oCurrentTable = oWrapper.getTable();
+	// 	var oCurrentFilterBar = oFieldHelp.getFilterBar();
+	// 	if (oTable !== oCurrentTable) {
+	// 		oWrapper.setTable(oTable);
+	// 		oWrapper.addDependent(oCurrentTable);
+	// 	}
+	// 	if (oFilterBar && oFilterBar !== oCurrentFilterBar) {
+	// 		oFieldHelp.setFilterBar(oFilterBar);
+	// 		oFieldHelp.addDependent(oCurrentFilterBar);
+	// 	}
+
+
+	// 	oFieldHelp.setFilterFields("$search");
+
+	// 	oTable.getColumns()[2].setVisible(!isSuggest);
+	// 	var oTableWrapper = oFieldHelp.getContent();
+	// 	oTable = oTableWrapper.getTable();
+
+	// 	oTable.setWidth("100%");
+	// 	oTable.getColumns()[1].setWidth(null);
+	// 	oTable.getColumns()[2].setVisible(true);
+
+	// 	return Promise.resolve();
+	// };
 
 	Delegate.determineSearchSupported = function(oPayload, oFieldHelp) {
 		oFieldHelp.setFilterFields("$search");

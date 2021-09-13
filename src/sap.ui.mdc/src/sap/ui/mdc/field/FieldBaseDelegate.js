@@ -182,10 +182,17 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	FieldBaseDelegate.getItemForValue = function(oPayload, oFieldHelp, vValue, vParsedValue, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName) {
+//	FieldBaseDelegate.getItemForValue = function(oPayload, oFieldHelp, vValue, vParsedValue, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName) {
+//
+//		if (oFieldHelp) {
+//			return oFieldHelp.getItemForValue(vValue, vParsedValue, undefined, undefined, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName);
+//		}
+//
+//	};
+	FieldBaseDelegate.getItemForValue = function(oPayload, oFieldHelp, oConfig) {
 
 		if (oFieldHelp) {
-			return oFieldHelp.getItemForValue(vValue, vParsedValue, undefined, undefined, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName);
+			return oFieldHelp.getItemForValue(oConfig);
 		}
 
 	};

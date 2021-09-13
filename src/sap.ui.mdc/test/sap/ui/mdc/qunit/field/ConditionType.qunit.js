@@ -474,13 +474,21 @@ sap.ui.define([
 			oStub.withArgs("Item1").returns("I1");
 			oStub.withArgs("Item2").returns({key: "i2", description: "Item 2", inParameters: {in1: "I2"}, outParameters: {out1: "I2"}});
 			oStub.withArgs("Item3").returns("I3");
-			oStub = sinon.stub(oFieldHelp, "getItemForValue");
-			oStub.withArgs("I1").returns({key: "I1", description: "Item1"});
-			oStub.withArgs("I2").returns({key: "i2", description: "Item 2", inParameters: {in1: "I2"}, outParameters: {out1: "I2"}});
-			oStub.withArgs("I3").returns({key: "I3", description: "Item3"});
-			oStub.withArgs("Item1").returns({key: "I1", description: "Item1"});
-			oStub.withArgs("Item2").returns({key: "i2", description: "Item 2", inParameters: {in1: "I2"}, outParameters: {out1: "I2"}});
-			oStub.withArgs("Item3").returns({key: "I3", description: "Item3"});
+			var fnGetItemsForValue = function(oConfig) {
+				if (oConfig.value === "I1" || oConfig.value === "Item1") {
+					return {key: "I1", description: "Item1"};
+				} else if (oConfig.value === "I2" || oConfig.value === "Item2") {
+					return {key: "i2", description: "Item 2", inParameters: {in1: "I2"}, outParameters: {out1: "I2"}};
+				} else if (oConfig.value === "I3" || oConfig.value === "Item3") {
+					return {key: "I3", description: "Item3"};
+				} else if (oConfig.value === "YY") {
+					throw new Error("myError");
+				} else if (oConfig.value === "ZZZ") {
+					throw new ParseException("myParseException");
+				}
+				return null;
+			};
+			oStub = sinon.stub(oFieldHelp, "getItemForValue").callsFake(fnGetItemsForValue);
 
 			oConditionType = new ConditionType({
 				display: FieldDisplay.Description,
@@ -727,7 +735,7 @@ sap.ui.define([
 		assert.deepEqual(oCondition.inParameters, {in1: "I2"} , "in-parameters returned");
 		assert.deepEqual(oCondition.outParameters, {out1: "I2"} , "out-parameters returned");
 		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
-		assert.ok(oFieldHelp.getItemForValue.calledWith("I2", "I2", undefined, undefined, "BC", true, true, true, "CM", "Name"), "getTextForKey called");
+		assert.ok(oFieldHelp.getItemForValue.calledWith({value: "I2", parsedValue: "I2", inParameters: undefined, outParameters: undefined, bindingContext: "BC", checkKeyFirst: true, checkKey: true, checkDescription: true, conditionModel: "CM", conditionModelName: "Name", exception: ParseException}), "getTextForKey called");
 
 		oCondition = oConditionType.parseValue("Item3");
 		assert.ok(oCondition, "Result returned");
@@ -790,7 +798,6 @@ sap.ui.define([
 		// test own error (like runtime error) just forwarded
 		oFieldHelp.getItemForValue.resetHistory();
 		oException = null;
-		oFieldHelp.getItemForValue.withArgs("YY").throws(new Error("myError"));
 		try {
 			oConditionType.parseValue("YY");
 		} catch (e) {
@@ -851,7 +858,6 @@ sap.ui.define([
 		// test own error (like runtime error) just forwarded
 		oFieldHelp.getItemForValue.resetHistory();
 		oException = null;
-		oFieldHelp.getItemForValue.withArgs("YY").throws(new Error("myError-TextForKey"));
 		try {
 			oConditionType.parseValue("YY");
 		} catch (e) {
@@ -859,13 +865,12 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
-		assert.equal(oException && oException.message, "myError-TextForKey", "error text");
+		assert.equal(oException && oException.message, "myError", "error text");
 		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 		// test own error (like runtime error) just forwarded
 		oFieldHelp.getItemForValue.resetHistory();
 		oException = null;
-		oFieldHelp.getItemForValue.withArgs("YY").throws(new Error("myError-KeyForText"));
 		try {
 			oConditionType.parseValue("YY");
 		} catch (e) {
@@ -873,13 +878,12 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
-		assert.equal(oException && oException.message, "myError-KeyForText", "error text");
+		assert.equal(oException && oException.message, "myError", "error text");
 		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 		// test invalid key because of type validation
 		oFieldHelp.getItemForValue.resetHistory();
 		oException = null;
-		oFieldHelp.getItemForValue.withArgs("ZZZ").throws(new ParseException("myParseException"));
 		try {
 			oConditionType.parseValue("ZZZ");
 		} catch (e) {
@@ -1026,11 +1030,11 @@ sap.ui.define([
 		oFieldHelp.getItemForValue.restore();
 		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
 
-		oStub.callsFake(function(sText) {
+		oStub.callsFake(function(oConfig) {
 			var oPromise = new Promise(function(fResolve) {
 				setTimeout(function () { // simulate request
 					var vKey;
-					switch (sText) {
+					switch (oConfig.value) {
 					case "Item1":
 						vKey = "I1";
 						break;
@@ -1049,7 +1053,7 @@ sap.ui.define([
 
 					var oResult;
 					if (vKey) {
-						oResult = {key: vKey, description: sText};
+						oResult = {key: vKey, description: oConfig.value};
 					}
 					fResolve(oResult);
 				}, 0);
@@ -1082,12 +1086,12 @@ sap.ui.define([
 		oFieldHelp.getItemForValue.restore();
 		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
 
-		oStub.callsFake(function(vKey) {
+		oStub.callsFake(function(oConfig) {
 			var oPromise = new Promise(function(fResolve, fReject) {
 				setTimeout(function () { // simulate request
-					switch (vKey) {
+					switch (oConfig.parsedValue) {
 					case "I1":
-						fResolve({key: vKey, description: "Item1"});
+						fResolve({key: oConfig.parsedValue, description: "Item1"});
 						break;
 
 					case "I2":
@@ -1154,13 +1158,13 @@ sap.ui.define([
 		oFieldHelp.getItemForValue.restore();
 		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
 
-		oStub.callsFake(function(sText) {
+		oStub.callsFake(function(oConfig) {
 			var oPromise = new Promise(function(fResolve, fReject) {
 				var oException;
-				if (sText === "Item2") {
-					oException = new ParseException("Cannot parse value " + sText);
+				if (oConfig.value === "Item2") {
+					oException = new ParseException("Cannot parse value " + oConfig.value);
 				} else {
-					oException = new ParseException("not Unique " + sText);
+					oException = new ParseException("not Unique " + oConfig.value);
 					oException._bNotUnique = true;
 				}
 				throw oException;
@@ -1253,9 +1257,9 @@ sap.ui.define([
 		oFieldHelp.getItemForValue.restore();
 		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
 
-		oStub.callsFake(function(sText) {
+		oStub.callsFake(function(oConfig) {
 			var oPromise = new Promise(function(fResolve, fReject) {
-				throw new ParseException("Cannot parse value " + sText);
+				throw new ParseException("Cannot parse value " + oConfig.value);
 			});
 			return oPromise;
 		});
@@ -1291,24 +1295,24 @@ sap.ui.define([
 		oFieldHelp.getItemForValue.restore();
 		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
 
-		oStub.callsFake(function(vKey) {
+		oStub.callsFake(function(oConfig) {
 			var oPromise = new Promise(function(fResolve, fReject) {
 				setTimeout(function () { // simulate request
-					switch (vKey) {
+					switch (oConfig.parsedValue) {
 					case "I1":
-						fResolve({key: vKey, description: "Item1"});
+						fResolve({key: oConfig.parsedValue, description: "Item1"});
 						break;
 
 					case "I2":
-						fResolve({key: vKey, description: "Item2"});
+						fResolve({key: oConfig.parsedValue, description: "Item2"});
 						break;
 
 					case "I3":
-						fResolve({key: vKey, description: "Item3"});
+						fResolve({key: oConfig.parsedValue, description: "Item3"});
 						break;
 
 					default:
-						fReject(new ParseException("Cannot parse value " + vKey));
+						fReject(new ParseException("Cannot parse value " + oConfig.parsedValue));
 					}
 				}, 0);
 			});
@@ -1378,9 +1382,9 @@ sap.ui.define([
 		oFieldHelp.getItemForValue.restore();
 		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
 
-		oStub.callsFake(function(vKey) {
+		oStub.callsFake(function(oConfig) {
 			var oPromise = new Promise(function(fResolve, fReject) {
-				throw new ParseException("Cannot parse value " + vKey);
+				throw new ParseException("Cannot parse value " + oConfig.parsedValue);
 			});
 			return oPromise;
 		});
@@ -1442,7 +1446,12 @@ sap.ui.define([
 
 	QUnit.test("Parsing: empty string -> key and description", function(assert) {
 
-		oFieldHelp.getItemForValue.withArgs("").returns({key: "", description: "Empty"});
+		oFieldHelp.getItemForValue.restore();
+		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
+			if (oConfig.parsedValue === "") {
+				return {key: "", description: "Empty"};
+			}
+		});
 
 		var oCondition = oConditionType.parseValue("");
 		assert.ok(oCondition, "Result returned");
@@ -1461,7 +1470,12 @@ sap.ui.define([
 		var oType = new StringType({}, {maxLength: 6, isDigitSequence: true, nullable: false}); // use digsequencce to test internal format for check
 		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
 
-		oFieldHelp.getItemForValue.withArgs("", "000000").returns({key: "000000", description: "Empty"});
+		oFieldHelp.getItemForValue.restore();
+		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
+			if (oConfig.parsedValue === "000000" && oConfig.value === "") {
+				return {key: "000000", description: "Empty"};
+			}
+		});
 
 		var oCondition = oConditionType.parseValue("");
 		assert.ok(oCondition, "Result returned");
@@ -1517,7 +1531,12 @@ sap.ui.define([
 	QUnit.test("Parsing: empty string -> key only", function(assert) {
 
 		oConditionType.oFormatOptions.display = FieldDisplay.Value; // fake setting directly
-		oFieldHelp.getItemForValue.withArgs("", "").returns({key: "", description: "Empty"});
+		oFieldHelp.getItemForValue.restore();
+		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
+			if (oConfig.parsedValue === "" && oConfig.value === "") {
+				return {key: "", description: "Empty"};
+			}
+		});
 
 		var oCondition = oConditionType.parseValue("");
 		assert.ok(oCondition, "Result returned");
@@ -1548,10 +1567,10 @@ sap.ui.define([
 		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
 		var bExist = true;
 
-		oStub.callsFake(function(vKey) {
+		oStub.callsFake(function(oConfig) {
 			var oPromise = new Promise(function(fResolve, fReject) {
 				setTimeout(function () { // simulate request
-					switch (vKey) {
+					switch (oConfig.parsedValue) {
 					case "":
 						if (bExist) {
 							fResolve({key: "", description: "Empty"});
@@ -1561,7 +1580,7 @@ sap.ui.define([
 						break;
 
 					default:
-						fReject(new ParseException("Cannot parse value " + vKey));
+						fReject(new ParseException("Cannot parse value " + oConfig.parsedValue));
 					}
 				}, 0);
 			});
@@ -1608,10 +1627,10 @@ sap.ui.define([
 		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
 		var bExist = true;
 
-		oStub.callsFake(function(vKey) {
+		oStub.callsFake(function(oConfig) {
 			var oPromise = new Promise(function(fResolve, fReject) {
 				setTimeout(function () { // simulate request
-					switch (vKey) {
+					switch (oConfig.parsedValue) {
 					case "":
 						if (bExist) {
 							fResolve({key: "", description: "Empty"});
@@ -1621,7 +1640,7 @@ sap.ui.define([
 						break;
 
 					default:
-						fReject(new ParseException("Cannot parse value " + vKey));
+						fReject(new ParseException("Cannot parse value " + oConfig.parsedValue));
 					}
 				}, 0);
 			});
@@ -1915,8 +1934,11 @@ sap.ui.define([
 	QUnit.test("Parsing: unit from FieldHelp", function(assert) {
 
 		oFieldHelp = new FieldHelpBase("FH1");
-		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
-		oStub.withArgs("Euro").returns({key: "EUR", description: "Euro"});
+		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
+			if (oConfig.value === "Euro") {
+				return {key: "EUR", description: "Euro"};
+			}
+		});
 		oUnitConditionType.oFormatOptions.fieldHelpID = "FH1"; // fake setting directly
 		oUnitConditionType.oFormatOptions.display = FieldDisplay.Description; // fake setting directly
 		oUnitType._aCurrentValue = [1, "USD"]; // fake existing value
@@ -2312,9 +2334,17 @@ sap.ui.define([
 		var oPromise3 = new Promise(function(fResolve, fReject) {
 			fResolve3 = fResolve;
 		});
-		oFieldHelp.getItemForValue.withArgs("1").returns(oPromise1);
-		oFieldHelp.getItemForValue.withArgs("2").returns(oPromise2);
-		oFieldHelp.getItemForValue.withArgs("3").returns(oPromise3);
+		oFieldHelp.getItemForValue.restore();
+		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
+			if (oConfig.value === "1") {
+				return oPromise1;
+			} else if (oConfig.value === "2") {
+				return oPromise2;
+			} else if (oConfig.value === "3") {
+				return oPromise3;
+			}
+			return null;
+		});
 
 		var vResult1 = oConditionType.parseValue("1");
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
@@ -2359,9 +2389,17 @@ sap.ui.define([
 		var oPromise3 = new Promise(function(fResolve, fReject) {
 			fReject3 = fReject;
 		});
-		oFieldHelp.getItemForValue.withArgs("1").returns(oPromise1);
-		oFieldHelp.getItemForValue.withArgs("2").returns(oPromise2);
-		oFieldHelp.getItemForValue.withArgs("3").returns(oPromise3);
+		oFieldHelp.getItemForValue.restore();
+		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
+			if (oConfig.value === "1") {
+				return oPromise1;
+			} else if (oConfig.value === "2") {
+				return oPromise2;
+			} else if (oConfig.value === "3") {
+				return oPromise3;
+			}
+			return null;
+		});
 
 		var vResult1 = oConditionType.parseValue("1");
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
@@ -2428,9 +2466,17 @@ sap.ui.define([
 		var oPromise3 = new Promise(function(fResolve, fReject) {
 			fResolve3 = fResolve;
 		});
-		oFieldHelp.getItemForValue.withArgs("1").returns(oPromise1);
-		oFieldHelp.getItemForValue.withArgs("2").returns(oPromise2);
-		oFieldHelp.getItemForValue.withArgs("3").returns(oPromise3);
+		oFieldHelp.getItemForValue.restore();
+		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
+			if (oConfig.value === "1") {
+				return oPromise1;
+			} else if (oConfig.value === "2") {
+				return oPromise2;
+			} else if (oConfig.value === "3") {
+				return oPromise3;
+			}
+			return null;
+		});
 
 		var vResult1 = oConditionType.parseValue("1");
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
@@ -2491,8 +2537,15 @@ sap.ui.define([
 		var oPromise2 = new Promise(function(fResolve, fReject) {
 			fResolve2 = fResolve;
 		});
-		oFieldHelp.getItemForValue.withArgs("1").returns(oPromise1);
-		oFieldHelp.getItemForValue.withArgs("2").returns(oPromise2);
+		oFieldHelp.getItemForValue.restore();
+		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
+			if (oConfig.value === "1") {
+				return oPromise1;
+			} else if (oConfig.value === "2") {
+				return oPromise2;
+			}
+			return null;
+		});
 
 		var vResult1 = oConditionType.parseValue("1");
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
@@ -2532,7 +2585,15 @@ sap.ui.define([
 			fResolve2 = fResolve;
 		});
 		oFieldHelp.getTextForKey.withArgs("1").returns(oPromise1);
-		oFieldHelp.getItemForValue.withArgs("2").returns(oPromise2);
+		oFieldHelp.getItemForValue.restore();
+		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
+			if (oConfig.value === "1") {
+				return oPromise1;
+			} else if (oConfig.value === "2") {
+				return oPromise2;
+			}
+			return null;
+		});
 
 		var oCondition = Condition.createCondition("EQ", ["1"], undefined, undefined, ConditionValidated.Validated);
 		var vResult1 = oConditionType.formatValue(oCondition);
@@ -2569,7 +2630,15 @@ sap.ui.define([
 		var oPromise2 = new Promise(function(fResolve, fReject) {
 			fResolve2 = fResolve;
 		});
-		oFieldHelp.getItemForValue.withArgs("1").returns(oPromise1);
+		oFieldHelp.getItemForValue.restore();
+		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
+			if (oConfig.value === "1") {
+				return oPromise1;
+			} else if (oConfig.value === "2") {
+				return oPromise2;
+			}
+			return null;
+		});
 		oFieldHelp.getTextForKey.withArgs("2").returns(oPromise2);
 
 		var vResult1 = oConditionType.parseValue("1");
