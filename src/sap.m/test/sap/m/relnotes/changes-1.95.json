@@ -3,6 +3,72 @@
     "date": "September 2021",
     "notes": [
       {
+        "id": "0d3c7bbfabe01662e94fff700614126dfffcc295",
+        "type": "FIX",
+        "text": " sap.m.Bar: Middle content aligned properly when there is left or right content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180337099"
+          }
+        ]
+      },
+      {
+        "id": "db67f4dceb72a55e0cd0a8c53763b5776630e3e2",
+        "type": "FIX",
+        "text": "sap.m.Input: Input with OSP sample update",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005182052021"
+          }
+        ]
+      },
+      {
+        "id": "7916c40abf93185a8777cae8ecadc6ac61299622",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Racing condition with invalidating content fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170174725"
+          }
+        ]
+      },
+      {
+        "id": "2f8a6da701ab3c73a9bd7be93c37d8043151ca54",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Correctly switches row header icon to image",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180379501"
+          }
+        ]
+      },
+      {
+        "id": "0f7fa59c5072e7e708170c4991f3a266026ec4d6",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: navigateBack should be called by the application when model is updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180372956"
+          }
+        ]
+      },
+      {
+        "id": "81dd0e2ec058a29aee7072f8e2da623c8c9a1147",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: vertical alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180228319"
+          }
+        ]
+      },
+      {
         "id": "806aab06b79b2c23e313dd0f9831788b3e41c4b0",
         "type": "FIX",
         "text": " sap.m.StepInput: formats its value correctly",
@@ -34,6 +100,11 @@
             "reference": "2170176927"
           }
         ]
+      },
+      {
+        "id": "f95ca6889b56d9d4b7d9283055d588e3113b187a",
+        "type": "FEATURE",
+        "text": " sap.m.Select: Add previously selected item in change event"
       },
       {
         "id": "f7393b79e42d780083f7d7d3216cede47a8e19c7",

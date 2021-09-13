@@ -3,6 +3,28 @@
     "date": "September 2021",
     "notes": [
       {
+        "id": "247b617e06665a886fb0a0fa00a2ce653d51e529",
+        "type": "FIX",
+        "text": " Field: if in table changing number changes unit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170173084"
+          }
+        ]
+      },
+      {
+        "id": "e37748704f34caba26a78ff30b8c8101f3203b97",
+        "type": "FIX",
+        "text": " FieldValueHelp: apply filters if ListBinding updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180339565"
+          }
+        ]
+      },
+      {
         "id": "7baa77dd10f37d0df22b86b304c37d5f0a3e41ca",
         "type": "FIX",
         "text": " mdc.IdentifierUtil: use path with fallback to name",

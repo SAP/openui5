@@ -3,6 +3,17 @@
     "date": "September 2021",
     "notes": [
       {
+        "id": "b590e4e23645be6d8eafbd4edc1aca7e1c059fd8",
+        "type": "FIX",
+        "text": " CalendarCard: MonthChange action has correct firstDate parameter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170185686"
+          }
+        ]
+      },
+      {
         "id": "29b73d92789fa35da499366793a9b03fc3c163c0",
         "type": "FEATURE",
         "text": " Integration cards: Added \"refreshData\" method"

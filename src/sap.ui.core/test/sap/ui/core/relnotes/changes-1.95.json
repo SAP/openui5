@@ -3,6 +3,39 @@
     "date": "September 2021",
     "notes": [
       {
+        "id": "3844cdec14d11771c0501413ae8bc82d9f748a4d",
+        "type": "FIX",
+        "text": " Log errors when XML processing fails for view/fragments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170182614"
+          }
+        ]
+      },
+      {
+        "id": "15acac7a37fa913f2077f1e1c4c8f77ddb3ae67c",
+        "type": "FIX",
+        "text": " v2.ODataModel: Set \"X-Requested-With\" header",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170172149"
+          }
+        ]
+      },
+      {
+        "id": "194d18b71cbaa47541695ddb2ce47256b0c4536d",
+        "type": "FIX",
+        "text": " ManagedObject: remove ElementBindingContext if model is removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180305466"
+          }
+        ]
+      },
+      {
         "id": "07e825fb13ee36eda32e58f6d57f4b6e840b1cd9",
         "type": "FIX",
         "text": " Interaction:  BrowserElement not defined.",

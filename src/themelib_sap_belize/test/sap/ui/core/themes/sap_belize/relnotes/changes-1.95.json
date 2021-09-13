@@ -3,6 +3,17 @@
     "date": "September 2021",
     "notes": [
       {
+        "id": "d8e807530727b0bf28017e05c9866512843e2b61",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: inverted state on multiple lines has full background",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180376452"
+          }
+        ]
+      },
+      {
         "id": "02412ae4ad9dadb9066728bf117413ee0bff1f98",
         "type": "FIX",
         "text": " sap.ui.commons.Tree: has all needed images",
