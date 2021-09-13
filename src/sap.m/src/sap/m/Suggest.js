@@ -2,24 +2,29 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global',
-		'./Toolbar',
-		'./Button',
-		'./SuggestionsList',
-		'./SuggestionItem',
-		'sap/ui/Device',
-		'sap/m/library',
-		'sap/ui/core/Core',
-		'sap/ui/core/InvisibleText'],
-	function(jQuery,
-			 Toolbar,
-			 Button,
-			 SuggestionsList,
-			 SuggestionItem,
-			 Device,
-			 library,
-			 Core,
-			 InvisibleText) {
+sap.ui.define([
+	"./Toolbar",
+	"./Button",
+	"./Dialog",
+	"./Popover",
+	"./SuggestionsList",
+	"./SuggestionItem",
+	"sap/ui/Device",
+	"sap/m/library",
+	"sap/ui/core/Core",
+	"sap/ui/core/InvisibleText"
+], function (
+	Toolbar,
+	Button,
+	Dialog,
+	Popover,
+	SuggestionsList,
+	SuggestionItem,
+	Device,
+	library,
+	Core,
+	InvisibleText
+) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -50,11 +55,6 @@ sap.ui.define(['jquery.sap.global',
 			listUpdateTimeout,		// list is updated after a timeout to accumulate simultaneous updates
 			bUseDialog = Device.system.phone,
 			self = this;
-
-		// 1. Conditional loading depending on the device type.
-		// 2. Resolve circular dependency Dialog -> OverflowToolbar -> SearchField:
-		//TODO: global jquery call found
-		jQuery.sap.require(bUseDialog ? "sap.m.Dialog" : "sap.m.Popover");
 
 		/* =========================================================== */
 		/* events processing                                           */
@@ -131,7 +131,7 @@ sap.ui.define(['jquery.sap.global',
 				}
 			});
 
-			dialog = new (sap.ui.require('sap/m/Dialog'))({
+			dialog = new Dialog({
 				stretch: true,
 				customHeader: customHeader,
 				content: getList(),
@@ -162,7 +162,7 @@ sap.ui.define(['jquery.sap.global',
 		}
 
 		function createPopover() {
-			var popover = self._oPopover =  new (sap.ui.require('sap/m/Popover'))({
+			var popover = self._oPopover = new Popover({
 				showArrow: false,
 				showHeader: false,
 				horizontalScrolling: false,
