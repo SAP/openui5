@@ -144,6 +144,30 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("Get - Given no flex objects are present in the CompVariantState + ChangePersistence but only Standard variant and invalidateCache is true", function(assert) {
+			var sPersistencyKey = "persistency.key";
+			var oControl = new Control();
+			oControl.getPersistencyKey = function() {
+				return sPersistencyKey;
+			};
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
+			sandbox.stub(oChangePersistence, "getChangesForComponent").resolves([]);
+			FlexState.setInitialNonFlCompVariantData(sReference, sPersistencyKey,
+				{
+					executeOnSelection: false,
+					id: "*standard*",
+					name: "Standard"
+				});
+			return FlexObjectState.getFlexObjects({
+				selector: this.appComponent,
+				invalidateCache: true
+			})
+				.then(function (aFlexObjects) {
+					assert.equal(aFlexObjects.length, 1, "an array with 1 entries is returned");
+					assert.equal(aFlexObjects[0].getFileName(), "*standard*", "the standard variant is present");
+				});
+		});
+
 		QUnit.test("Get - Given flex objects are present in the CompVariantState + ChangePersistence + invalidateCache is true", function(assert) {
 			var sPersistencyKey = "persistency.key";
 			var oControl = new Control();

@@ -93,7 +93,7 @@ sap.ui.define([
 				variants: aVariants
 			})
 			.then(function (oResponse) {
-				assert.deepEqual(FlexState.getInitialNonFlCompVariantData("sap.ui.core.Component", "variantManagement1"), oExternalDataStored, "external data is stored correctly");
+				assert.deepEqual(FlexState.getInitialNonFlCompVariantData("sap.ui.core.Component"), {variantManagement1: oExternalDataStored}, "external data is stored correctly");
 				var oStandardVariant = oResponse.standardVariant;
 				assert.equal(oStandardVariant.getId(), "*standard*", "the first is the standard variant passed");
 				assert.equal(oStandardVariant.getText("variantName"), sStandardVariantTitle, "with the passed title");

@@ -284,7 +284,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when external comp variant data is stored and retrieved", function(assert) {
-			var oStoredData = FlexState.getInitialNonFlCompVariantData("reference.Component", "persistencyKey");
+			var oStoredData = FlexState.getInitialNonFlCompVariantData("reference.Component");
 			assert.equal(oStoredData, undefined, "when no external data is stored, retrieve function return undefined");
 			var aVariants1 = [{
 				id: "variant_1",
@@ -311,11 +311,11 @@ sap.ui.define([
 				standardVariant: oStandardVariant2
 			};
 			FlexState.setInitialNonFlCompVariantData("reference.Component", "persistencyKey", oStandardVariant1, aVariants1);
-			oStoredData = FlexState.getInitialNonFlCompVariantData("reference.Component", "persistencyKey");
-			assert.deepEqual(oStoredData, oStoredData1, "retrieve function return stored data correctly");
+			oStoredData = FlexState.getInitialNonFlCompVariantData("reference.Component");
+			assert.deepEqual(oStoredData, {persistencyKey: oStoredData1}, "retrieve function return stored data correctly");
 			FlexState.setInitialNonFlCompVariantData("reference.Component", "persistencyKey", oStandardVariant2, aVariants2);
-			oStoredData = FlexState.getInitialNonFlCompVariantData("reference.Component", "persistencyKey");
-			assert.deepEqual(oStoredData, oStoredData2, "store the data will overwrite existing stored data");
+			oStoredData = FlexState.getInitialNonFlCompVariantData("reference.Component");
+			assert.deepEqual(oStoredData, {persistencyKey: oStoredData2}, "store the data will overwrite existing stored data");
 		});
 	});
 
