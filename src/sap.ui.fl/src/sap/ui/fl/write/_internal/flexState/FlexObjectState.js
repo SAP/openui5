@@ -50,15 +50,18 @@ sap.ui.define([
 	function getCompVariantEntities(mPropertyBag) {
 		var mCompEntities = FlexState.getCompVariantsMap(mPropertyBag.reference);
 		var aEntities = [];
-		for (var sPersistencyKey in mCompEntities) {
-			//Enhance CompVariantsMap with external data and standard variant after FlexState has been cleared and reinitialized
-			if (mPropertyBag.invalidateCache) {
-				var oDataToRestore = FlexState.getInitialNonFlCompVariantData(mPropertyBag.reference, sPersistencyKey);
-				if (oDataToRestore) {
-					mCompEntities._initialize(sPersistencyKey, oDataToRestore.variants);
-					CompVariantMerger.merge(sPersistencyKey, mCompEntities[sPersistencyKey], oDataToRestore.standardVariant);
-				}
+		//Enhance CompVariantsMap with external data and standard variant after FlexState has been cleared and reinitialized
+		if (mPropertyBag.invalidateCache) {
+			var oDataToRestore = FlexState.getInitialNonFlCompVariantData(mPropertyBag.reference);
+			if (oDataToRestore) {
+				Object.keys(oDataToRestore).forEach(function(sPersistencyKey) {
+					mCompEntities._initialize(sPersistencyKey, oDataToRestore[sPersistencyKey].variants);
+					CompVariantMerger.merge(sPersistencyKey, mCompEntities[sPersistencyKey], oDataToRestore[sPersistencyKey].standardVariant);
+				});
 			}
+		}
+
+		for (var sPersistencyKey in mCompEntities) {
 			var mCompVariantsOfPersistencyKey = mCompEntities[sPersistencyKey];
 			for (var sId in mCompVariantsOfPersistencyKey.byId) {
 				aEntities.push(mCompVariantsOfPersistencyKey.byId[sId]);
