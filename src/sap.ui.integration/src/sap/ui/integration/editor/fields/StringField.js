@@ -33,6 +33,12 @@ sap.ui.define([
 	BaseField, Input, Text, Title, Select, ComboBox, Popover, Button, OverflowToolbar, ToolbarSpacer, ListItem, List, CustomListItem, VBox, IconSelect, each, _debounce, Core, JSONModel, EditorResourceBundles, deepClone, Sorter, SeparatorItem, includes, merge, CustomData
 ) {
 	"use strict";
+	var REGEXP_PARAMETERS = /parameters\.([^\}\}]+)/g;
+	var aSpecParameters = [
+		"TODAY_ISO",
+		"NOW_ISO",
+		"LOCALE"
+	];
 
 	/**
 	 * @class
@@ -55,6 +61,56 @@ sap.ui.define([
 	StringField.prototype.initVisualization = function (oConfig) {
 		var oVisualization = oConfig.visualization;
 		if (!oVisualization) {
+			// check if value contains {{parameters.XX}} syntax
+			var aResult = oConfig.value ? oConfig.value.match(REGEXP_PARAMETERS) : undefined;
+			var aParts,
+				oValue,
+				fnChange;
+			if (aResult && aResult.length > 0) {
+				// filter out TODAY_ISO NOW_ISO LOCALE
+				aResult = aResult.filter(function (oResult) {
+					var oParameter = oResult.substring(11);
+					return !includes(aSpecParameters, oParameter);
+				});
+			}
+			if (aResult && aResult.length > 0) {
+				// format the {{parameters.XX}} syntax to {items>XX/value} syntax for data binding
+				aParts = aResult.map(function (oResult) {
+					if (this.isOrigLangField) {
+						return "items>" + oResult.substring(11) + "/_language/value";
+					}
+					return "items>" + oResult.substring(11) + "/value";
+				}.bind(this));
+				aParts.unshift("currentSettings>value");
+				oValue = {
+					parts: aParts,
+					formatter: function(sValue) {
+						// get the parameter values, then use them to replace the {{parameters.XX}} syntax in current parameter value.
+						var aArguments = Array.prototype.slice.call(arguments, 1);
+						for (var i = 0; i < aArguments.length; i++) {
+							if (aArguments[i]) {
+								sValue = sValue.replaceAll("{{" + aResult[i] + "}}", aArguments[i]);
+							}
+						}
+						return sValue;
+					}
+				};
+				fnChange = function (oEvent) {
+					var sValue = oEvent.getSource().getValue();
+					var sSettingspath = this.getBindingContext("currentSettings").sPath;
+					var oSettingsModel = this.getModel("currentSettings");
+					//clean the value in data model
+					oSettingsModel.setProperty(sSettingspath + "/value", sValue);
+					//update the dependent fields via bindings
+					var aBindings = oSettingsModel.getBindings();
+					var sParameter = sSettingspath.substring(sSettingspath.lastIndexOf("/") + 1);
+					each(aBindings, function(iIndex, oBinding) {
+						if (oBinding.sPath === "/form/items/" + sParameter + "/value") {
+							oBinding.checkUpdate(true);
+						}
+					});
+				}.bind(this);
+			}
 			if (this.getMode() === "translation") {
 				if (oConfig.editable) {
 					oVisualization = {
@@ -85,6 +141,15 @@ sap.ui.define([
 							wrapping: false
 						}
 					};
+				}
+				if (aParts) {
+					delete oVisualization.settings.tooltip;
+					if (oConfig.editable) {
+						oVisualization.settings.value = oValue;
+						oVisualization.settings.change = fnChange;
+					} else {
+						oVisualization.settings.text = oValue;
+					}
 				}
 			} else if (oConfig.enum) {
 				var oItem = new ListItem({
@@ -197,6 +262,11 @@ sap.ui.define([
 						placeholder: oConfig.placeholder
 					}
 				};
+				if (aParts) {
+					delete oVisualization.settings.tooltip;
+					oVisualization.settings.value = oValue;
+					oVisualization.settings.change = fnChange;
+				}
 			}
 		}
 		this._visualization = oVisualization;

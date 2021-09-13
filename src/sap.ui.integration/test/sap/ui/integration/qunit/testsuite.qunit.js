@@ -711,7 +711,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/EditorWithParameters": {
+			"editor/NoDesigntime": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -720,7 +720,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/EditorWithDesigntime": {
+			"editor/Basic": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -729,7 +729,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/EditorWithDesigntimeLayout": {
+			"editor/Layout": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -738,7 +738,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/EditorWithDesigntimeRequestValues": {
+			"editor/RequestValues": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -747,7 +747,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/EditorWithDesigntimeTrans": {
+			"editor/Translation": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -756,7 +756,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/EditorWithDesigntimeValidation": {
+			"editor/Validation": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -765,7 +765,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/EditorForSectionSapCard1": {
+			"editor/SectionSapCard1": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -774,7 +774,16 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/EditorForSectionTemp": {
+			"editor/SectionTemp": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/ParameterSyntax": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
