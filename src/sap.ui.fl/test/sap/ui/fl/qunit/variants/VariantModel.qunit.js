@@ -1397,7 +1397,8 @@ sap.ui.define([
 
 			this.oModel.setData({});
 			var oVariantsMap = {};
-			sandbox.stub(VariantManagementState, "getContent").returns(oVariantsMap);
+			FlexState.getVariantsState.restore();
+			sandbox.stub(FlexState, "getVariantsState").returns(oVariantsMap);
 			this.oModel._ensureStandardVariantExists("mockVariantManagement");
 
 			assert.deepEqual(this.oModel.oData["mockVariantManagement"], oVariantModelResponse, "then standard variant entry created for variant model");

@@ -1449,7 +1449,7 @@ sap.ui.define([
 		return this._oVariantSwitchPromise
 			.then(function() {
 				VariantManagementState.clearFakedStandardVariants(this.sFlexReference, this.oAppComponent.getId());
-				VariantManagementState.resetContent(this.sFlexReference);
+				VariantManagementState.resetContent(this.sFlexReference, this.oAppComponent.getId());
 				//re-initialize hash data and remove existing parameters
 				if (!bSkipURLHandling) {
 					URLHandler.initialize({model: this});

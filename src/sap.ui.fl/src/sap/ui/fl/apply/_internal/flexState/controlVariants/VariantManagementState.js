@@ -49,8 +49,6 @@ sap.ui.define([
 	 */
 	var VariantManagementState = {};
 
-	var _mFakedStandardVariants = {};
-
 	function getReferencedChanges(mPropertyBag) {
 		var aReferencedVariantChanges = [];
 		if (mPropertyBag.variantData.content.variantReference) {
@@ -134,35 +132,15 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	VariantManagementState.getContent = function(sReference) {
-		var oVariantsState = FlexState.getVariantsState(sReference);
-		each(_mFakedStandardVariants[sReference], function(sVariantManagementReference, oContent) {
-			if (sVariantManagementReference !== "currentComponentIdUsedForFakeVariants" && !oVariantsState[sVariantManagementReference]) {
-				oVariantsState[sVariantManagementReference] = oContent;
-			}
-		});
-		return oVariantsState;
+		return FlexState.getVariantsState(sReference);
 	};
 
 	VariantManagementState.addFakeStandardVariant = function(sReference, sComponentId, oStandardVariant) {
-		var oVariantsMap = VariantManagementState.getContent(sReference);
-		if (!oVariantsMap[Object.keys(oStandardVariant)[0]]) {
-			merge(oVariantsMap, oStandardVariant);
-
-			if (!_mFakedStandardVariants[sReference] || _mFakedStandardVariants[sReference].currentComponentIdUsedForFakeVariants !== sComponentId) {
-				_mFakedStandardVariants[sReference] = {};
-				_mFakedStandardVariants[sReference].currentComponentIdUsedForFakeVariants = sComponentId;
-			}
-
-			merge(_mFakedStandardVariants[sReference], oStandardVariant);
-		} else {
-			Log.error("Error in VariantManagementState.addFakeStandardVariant: Variant already in map");
-		}
+		FlexState.setFakeStandardVariant(sReference, sComponentId, oStandardVariant);
 	};
 
 	VariantManagementState.clearFakedStandardVariants = function(sReference, sComponentId) {
-		if (_mFakedStandardVariants[sReference] && _mFakedStandardVariants[sReference].currentComponentIdUsedForFakeVariants === sComponentId) {
-			delete _mFakedStandardVariants[sReference];
-		}
+		FlexState.resetFakedStandardVariants(sReference, sComponentId);
 	};
 
 	/**
@@ -173,10 +151,10 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 */
-	VariantManagementState.resetContent = function(sReference) {
+	VariantManagementState.resetContent = function(sReference, sComponentId) {
 		// reset on component destroy() should be handled more centrally
 		// once all maps are prepared in flex state
-		FlexState.clearFilteredResponse(sReference);
+		FlexState.clearFilteredResponse(sReference, sComponentId);
 	};
 
 	/**

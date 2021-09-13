@@ -52,6 +52,51 @@ sap.ui.define([
 		}, []);
 	}
 
+	QUnit.module("Given a VariantManagementState", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when fake Standard Variants are used", function(assert) {
+			var oSetStub = sandbox.stub(FlexState, "setFakeStandardVariant");
+			var oResetStub = sandbox.stub(FlexState, "resetFakedStandardVariants");
+
+			var oVariant = {foo: "bar"};
+			var sReference = "flexReference";
+			var sComponentId = "componentId";
+			VariantManagementState.addFakeStandardVariant(sReference, sComponentId, oVariant);
+			assert.strictEqual(oSetStub.callCount, 1, "the FlexState was called once");
+			assert.strictEqual(oSetStub.lastCall.args[0], sReference, "the reference was passed");
+			assert.strictEqual(oSetStub.lastCall.args[1], sComponentId, "the component ID was passed");
+			assert.strictEqual(oSetStub.lastCall.args[2], oVariant, "the Variant was passed");
+
+			VariantManagementState.clearFakedStandardVariants(sReference, sComponentId);
+			assert.strictEqual(oResetStub.callCount, 1, "the FlexState was called once");
+			assert.strictEqual(oResetStub.lastCall.args[0], sReference, "the reference was passed");
+			assert.strictEqual(oResetStub.lastCall.args[1], sComponentId, "the component ID was passed");
+		});
+
+		QUnit.test("when resetContent is called", function(assert) {
+			var oClearStub = sandbox.stub(FlexState, "clearFilteredResponse");
+
+			var sReference = "flexReference";
+			var sComponentId = "componentId";
+			VariantManagementState.resetContent(sReference, sComponentId);
+			assert.strictEqual(oClearStub.callCount, 1, "the FlexState was called once");
+			assert.strictEqual(oClearStub.lastCall.args[0], sReference, "the reference was passed");
+			assert.strictEqual(oClearStub.lastCall.args[1], sComponentId, "the component ID was passed");
+		});
+
+		QUnit.test("when getContent is called", function(assert) {
+			var oClearStub = sandbox.stub(FlexState, "getVariantsState");
+
+			var sReference = "flexReference";
+			VariantManagementState.getContent(sReference);
+			assert.strictEqual(oClearStub.callCount, 1, "the FlexState was called once");
+			assert.strictEqual(oClearStub.lastCall.args[0], sReference, "the reference was passed");
+		});
+	});
+
 	QUnit.module("Given a backend response from storage", {
 		beforeEach: function() {
 			return Promise.all([
@@ -839,104 +884,6 @@ sap.ui.define([
 				content: {}
 			});
 			assert.equal(this.oResponse.variantChanges.length, 0, "then the variants related change was deleted from the flex state response");
-		});
-	});
-
-	QUnit.module("Fake Standard Variants", {
-		beforeEach: function() {
-			this.oErrorStub = sandbox.stub(Log, "error");
-			this.oGetContentStub = sandbox.stub(FlexState, "getVariantsState");
-		},
-		afterEach: function() {
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("adding a fake variant", function(assert) {
-			this.oGetContentStub.returns({});
-			var sReference = "reference";
-			var oVariant = {
-				foo: "bar"
-			};
-
-			VariantManagementState.addFakeStandardVariant(sReference, "id", oVariant);
-			assert.deepEqual(VariantManagementState.getContent(sReference), oVariant, "the fake standard is also part of the map");
-			assert.deepEqual(VariantManagementState.getContent(sReference), oVariant, "no difference the second time the content is fetched");
-
-			VariantManagementState.clearFakedStandardVariants(sReference, "id");
-			assert.deepEqual(VariantManagementState.getContent(sReference), oVariant, "the faked variant is still in the map");
-		});
-
-		QUnit.test("adding the same variant twice to the same reference", function(assert) {
-			this.oGetContentStub.returns({});
-			var sReference = "reference2";
-			var oVariant = {
-				foo: "bar"
-			};
-			VariantManagementState.addFakeStandardVariant(sReference, "id2", oVariant);
-			assert.equal(this.oErrorStub.callCount, 0, "no error was logged");
-
-			VariantManagementState.addFakeStandardVariant(sReference, "id2", oVariant);
-			assert.equal(this.oErrorStub.callCount, 1, "one error was logged");
-		});
-
-		QUnit.test("adding fake variants with a variant section already available", function(assert) {
-			this.oGetContentStub.returns({
-				bar: "already available"
-			});
-			var sReference = "reference3";
-			var oVariant1 = {
-				foo: "bar"
-			};
-			var oVariant2 = {
-				bar: "foobar"
-			};
-			VariantManagementState.addFakeStandardVariant(sReference, "id", oVariant1);
-			VariantManagementState.addFakeStandardVariant(sReference, "id", oVariant2);
-
-			var oExpectedContent = {
-				bar: "already available",
-				foo: "bar"
-			};
-			assert.deepEqual(VariantManagementState.getContent(sReference), oExpectedContent, "one fake variant was added");
-		});
-
-		QUnit.test("adding fake variants for components with the same reference but different IDs", function(assert) {
-			this.oGetContentStub.returns({});
-			var sReference = "reference4";
-			var sComponentId1 = "componentId1";
-			var sComponentId2 = "componentId2";
-			var oVariant1 = {
-				foo: "bar"
-			};
-			var oVariant2 = {
-				bar: "foobar"
-			};
-			VariantManagementState.addFakeStandardVariant(sReference, sComponentId1, oVariant1);
-			VariantManagementState.addFakeStandardVariant(sReference, sComponentId2, oVariant2);
-
-			this.oGetContentStub.reset();
-			this.oGetContentStub.returns({});
-			assert.deepEqual(VariantManagementState.getContent(sReference, sComponentId2), oVariant2, "one fake variant is still available");
-		});
-
-		QUnit.test("adding fake variants and resetting the variants map", function(assert) {
-			this.oGetContentStub.returns({});
-			var sReference = "reference5";
-			var sComponentId1 = "componentId1";
-			var sComponentId2 = "componentId2";
-			var oVariant1 = {
-				foo: "bar"
-			};
-			var oVariant2 = {
-				foobar: "bar"
-			};
-			VariantManagementState.addFakeStandardVariant(sReference, sComponentId1, oVariant1);
-			VariantManagementState.addFakeStandardVariant(sReference, sComponentId2, oVariant2);
-			VariantManagementState.clearFakedStandardVariants(sReference, sComponentId1);
-
-			this.oGetContentStub.reset();
-			this.oGetContentStub.returns({});
-			assert.deepEqual(VariantManagementState.getContent(sReference), oVariant2, "one fake variant is still available");
 		});
 	});
 

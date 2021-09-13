@@ -650,6 +650,87 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Fake Standard Variants", {
+		beforeEach: function() {
+			sComponentId = "componentId";
+			this.sReference = "flexReference";
+			this.oVariant = {foo: "bar"};
+			sandbox.stub(Loader, "loadFlexData").resolves(mResponse);
+			sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(false);
+			this.oAppComponent = new UIComponent(sComponentId);
+			FlexState.clearFilteredResponse(this.sReference);
+			return FlexState.initialize({
+				reference: this.sReference,
+				componentId: sComponentId
+			});
+		},
+		afterEach: function() {
+			sandbox.restore();
+			this.oAppComponent.destroy();
+			FlexState.clearFilteredResponse(this.sReference);
+		}
+	}, function() {
+		QUnit.test("adding a fake variant", function(assert) {
+			var oExpectedMap = {
+				foo: "bar"
+			};
+
+			assert.deepEqual(FlexState.getVariantsState(this.sReference), {}, "initially the variants map is empty");
+			FlexState.setFakeStandardVariant(this.sReference, sComponentId, this.oVariant);
+			assert.deepEqual(FlexState.getVariantsState(this.sReference), oExpectedMap, "the fake standard is also part of the map");
+			assert.deepEqual(FlexState.getVariantsState(this.sReference), oExpectedMap, "no difference the second time the content is fetched");
+
+			FlexState.resetFakedStandardVariants(this.sReference, sComponentId);
+			assert.deepEqual(FlexState.getVariantsState(this.sReference), oExpectedMap, "the faked variant is still in the map");
+		});
+
+		QUnit.test("adding the same variant twice to the same reference", function(assert) {
+			var oExpectedMap = {
+				foo: "bar"
+			};
+			assert.deepEqual(FlexState.getVariantsState(this.sReference), {}, "initially the variants map is empty");
+			FlexState.setFakeStandardVariant(this.sReference, sComponentId, this.oVariant);
+			assert.deepEqual(FlexState.getVariantsState(this.sReference), oExpectedMap, "the fake standard is also part of the map");
+			FlexState.setFakeStandardVariant(this.sReference, sComponentId, this.oVariant);
+			assert.deepEqual(FlexState.getVariantsState(this.sReference), oExpectedMap, "the map has not changed");
+		});
+
+		QUnit.test("adding fake variants with a variant section already available", function(assert) {
+			merge(FlexState.getVariantsState(this.sReference), {bar: "already available"});
+			var oVariant2 = {
+				bar: "foobar"
+			};
+			FlexState.setFakeStandardVariant(this.sReference, sComponentId, this.oVariant);
+			FlexState.setFakeStandardVariant(this.sReference, sComponentId, oVariant2);
+
+			var oExpectedContent = {
+				bar: "already available",
+				foo: "bar"
+			};
+			assert.deepEqual(FlexState.getVariantsState(this.sReference), oExpectedContent, "one fake variant was added");
+		});
+
+		QUnit.test("adding fake variants for components with the same reference but different IDs", function(assert) {
+			var sComponentId2 = "componentId2";
+			var oAppComponent2 = new UIComponent(sComponentId2);
+			return FlexState.initialize({
+				reference: this.sReference,
+				componentId: sComponentId2
+			}).then(function() {
+				var oVariant2 = {
+					bar: "foobar"
+				};
+				FlexState.setFakeStandardVariant(this.sReference, sComponentId, this.oVariant);
+				FlexState.setFakeStandardVariant(this.sReference, sComponentId2, oVariant2);
+
+				FlexState.clearFilteredResponse(this.sReference);
+				assert.deepEqual(FlexState.getVariantsState(this.sReference), oVariant2, "only one fake variant is available");
+
+				oAppComponent2.destroy();
+			}.bind(this));
+		});
+	});
+
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});

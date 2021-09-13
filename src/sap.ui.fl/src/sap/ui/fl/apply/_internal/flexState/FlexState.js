@@ -3,7 +3,9 @@
  */
 
 sap.ui.define([
+	"sap/base/util/restricted/_omit",
 	"sap/base/util/each",
+	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath",
 	"sap/base/Log",
@@ -18,7 +20,9 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils"
 ], function(
+	_omit,
 	each,
+	isEmptyObject,
 	merge,
 	ObjectPath,
 	Log,
@@ -95,7 +99,11 @@ sap.ui.define([
 			pathInResponse: ["comp.variants", "comp.standardVariants", "comp.defaultVariants", "comp.changes"]
 		}
 	};
-	var _mExternalCompVariantInputData = {};
+	// some runtime data is only fetched once (e.g. during control init) and has to survive an invalidation of the FlexState
+	var _mExternalData = {
+		compVariants: {},
+		variants: {}
+	};
 
 	function updateComponentData(mPropertyBag) {
 		var oComponent = Component.get(mPropertyBag.componentId);
@@ -332,14 +340,31 @@ sap.ui.define([
 	};
 
 	FlexState.setInitialNonFlCompVariantData = function(sReference, sPersistencyKey, oStandardVariant, aVariants) {
-		_mExternalCompVariantInputData[sReference] = {};
-		_mExternalCompVariantInputData[sReference][sPersistencyKey] = {};
-		_mExternalCompVariantInputData[sReference][sPersistencyKey].standardVariant = oStandardVariant;
-		_mExternalCompVariantInputData[sReference][sPersistencyKey].variants = aVariants;
+		_mExternalData.compVariants[sReference] = {};
+		_mExternalData.compVariants[sReference][sPersistencyKey] = {};
+		_mExternalData.compVariants[sReference][sPersistencyKey].standardVariant = oStandardVariant;
+		_mExternalData.compVariants[sReference][sPersistencyKey].variants = aVariants;
 	};
 
 	FlexState.getInitialNonFlCompVariantData = function(sReference) {
-		return _mExternalCompVariantInputData[sReference];
+		return _mExternalData.compVariants[sReference];
+	};
+
+	FlexState.setFakeStandardVariant = function(sReference, sComponentId, oStandardVariant) {
+		var oVariantsMap = FlexState.getVariantsState(sReference);
+		if (!oVariantsMap[Object.keys(oStandardVariant)[0]]) {
+			merge(oVariantsMap, oStandardVariant);
+
+			_mExternalData.variants[sReference] = _mExternalData.variants[sReference] || {};
+			_mExternalData.variants[sReference][sComponentId] = _mExternalData.variants[sReference][sComponentId] || {};
+			merge(_mExternalData.variants[sReference][sComponentId], oStandardVariant);
+		}
+	};
+
+	FlexState.resetFakedStandardVariants = function(sReference, sComponentId) {
+		if (_mExternalData.variants[sReference]) {
+			delete _mExternalData.variants[sReference][sComponentId];
+		}
 	};
 
 	/**
@@ -348,8 +373,11 @@ sap.ui.define([
 	 *
 	 * @param {string} sReference - Flex reference of the app
 	 */
-	FlexState.clearFilteredResponse = function(sReference) {
-		if (_mInstances[sReference]) {
+	FlexState.clearFilteredResponse = function(sReference, sComponentId) {
+		if (
+			_mInstances[sReference]
+			&& (!sComponentId || sComponentId === _mInstances[sReference].componentId)
+		) {
 			clearPreparedMaps(sReference);
 			delete _mInstances[sReference].storageResponse;
 		}
@@ -364,7 +392,21 @@ sap.ui.define([
 	};
 
 	FlexState.getVariantsState = function(sReference) {
-		return getVariantsMap(sReference);
+		var oVariantsMap = getVariantsMap(sReference);
+		if (_mExternalData.variants[sReference]) {
+			each(_mExternalData.variants[sReference], function(sComponentId, oContent) {
+				// the faked variants could belong to a component that is not the currently active one
+				// if multiple apps with the same reference are loaded
+				if (_mInstances[sReference].componentId === sComponentId) {
+					each(oContent, function(sVariantManagementReference, oVariants) {
+						if (!oVariantsMap[sVariantManagementReference]) {
+							oVariantsMap[sVariantManagementReference] = oVariants;
+						}
+					});
+				}
+			});
+		}
+		return oVariantsMap;
 	};
 
 	FlexState.getUI2Personalization = function(sReference) {
