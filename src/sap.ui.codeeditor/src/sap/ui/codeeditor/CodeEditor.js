@@ -53,11 +53,8 @@ sap.ui.define([
 	 *
 	 * @class
 	 * Allows to visualize source code of various types with syntax highlighting, line numbers in editable and read only mode.
-	 * Use this controls in scenarios where the user should be able to inspect and edit source code.
+	 * Use this control in scenarios where the user should be able to inspect and edit source code.
 	 * The control currently uses the third-party code editor Ace.
-	 * NOTE: There is a known limitation where CodeEditor won't work within IconTabBar on Internet Explorer. There
-	 * is a way to achieve the same functionality - an example of IconTabHeader and a CodeEditor can be found
-	 * in the CodeEditor's samples.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -74,11 +71,11 @@ sap.ui.define([
 			library: "sap.ui.codeeditor",
 			properties: {
 				/**
-				 * The value displayed in the code editor
+				 * The value displayed in the code editor.
 				 */
 				value: { type: "string", group: "Misc", defaultValue: "" },
 				/**
-				 * The type of the code in the editor used for syntax highlighting
+				 * The type of the code in the editor used for syntax highlighting.
 				 * Possible types are: abap, abc, actionscript, ada, apache_conf, applescript, asciidoc, assembly_x86,
 				 * autohotkey, batchfile, bro, c9search, c_cpp, cirru, clojure, cobol, coffee, coldfusion, csharp, css,
 				 * curly, d, dart, diff, django, dockerfile, dot, drools, eiffel, ejs, elixir, elm, erlang, forth, fortran,
@@ -90,11 +87,11 @@ sap.ui.define([
 				 * razor, rdoc, rhtml, rst, ruby, rust, sass, scad, scala, scheme, scss, sh, sjs, smarty, snippets,
 				 * soy_template, space, sql, sqlserver, stylus, svg, swift, swig, tcl, tex, text, textile, toml, tsx,
 				 * twig, typescript, vala, vbscript, velocity, verilog, vhdl, wollok, xml, xquery, yaml, terraform, slim, redshift,
-				 * red, puppet, php_laravel_blade, mixal, jssm, fsharp, edifact, csp, cssound_score, cssound_orchestra, cssound_document,
+				 * red, puppet, php_laravel_blade, mixal, jssm, fsharp, edifact, csp, cssound_score, cssound_orchestra, cssound_document
 				 */
 				type: { type: "string", group: "Appearance", defaultValue: "javascript" },
 				/**
-				 * The width of the code editor
+				 * The width of the code editor.
 				 */
 				width: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "100%" },
 				/**
@@ -103,15 +100,15 @@ sap.ui.define([
 				 */
 				height: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "100%" },
 				/**
-				 * Sets whether the code in the editor can be changed by the user
+				 * Sets whether the code in the editor can be changed by the user.
 				 */
 				editable: { type: "boolean", group: "Behavior", defaultValue: true },
 				/**
-				 * Sets whether line numbers should be shown
+				 * Sets whether line numbers should be shown.
 				 */
 				lineNumbers: { type: "boolean", group: "Behavior", defaultValue: true },
 				/**
-				 * Sets whether the code is automatically selected if a value is set
+				 * Sets whether the code is automatically selected if a value is set.
 				 */
 				valueSelection: { type: "boolean", group: "Behavior", defaultValue: false },
 				/**
@@ -125,7 +122,7 @@ sap.ui.define([
 				 */
 				maxLines: { type: "int", group: "Behavior", defaultValue: 0 },
 				/**
-				 * Sets the editors color theme
+				 * Sets the editor color theme.
 				 * Possible values are: default, hcb, hcb_bright, hcb_blue,
 				 * theme-ambiance, chaos, chrome, clouds, clouds_midnight, cobalt, crimson_editor, dawn, dreamweaver, eclipse,
 				 * github, gob, gruvbox, idle_fingers, iplastic, katzenmilch, kr_theme, kuroir, merbivore, merbivore_soft,
@@ -135,7 +132,7 @@ sap.ui.define([
 				 */
 				colorTheme: { type: "string", group: "Behavior", defaultValue: "default" },
 				/**
-				 * Sets whether to show syntax hints the editor. This flag is only available if line numbers are shown.
+				 * Sets whether to show syntax hints in the editor. This flag is only available if line numbers are shown.
 				 */
 				syntaxHints: { type: "boolean", group: "Behavior", defaultValue: true }
 			},
