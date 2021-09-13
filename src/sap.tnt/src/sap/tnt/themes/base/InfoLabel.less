@@ -3,29 +3,29 @@
 /* Base theme                        */
 /* ================================= */
 
-@_sap_tnt_InfoLabel_Margin: 0.9375rem;
-@_sap_tnt_InfoLabel_NoTextPadding: 0.5625rem;
-@_sap_tnt_InfoLabel_NoTextDisplayOnlyPadding: 0.5rem;
-@_sap_tnt_InfoLabel_LineHeight: 1rem;
+@_sap_tnt_InfoLabel_NarrowPadding: 0 0.1875rem;
+@_sap_tnt_InfoLabel_LineHeight: normal;
 @_sap_tnt_InfoLabel_LineHeightDisplayOnly: 1rem;
-@_sap_tnt_InfoLabel_NarrowPadding: 0 0.3125rem;
+@_sap_tnt_InfoLabel_HeightWithoutBorders: 0.875rem;
+@_sap_tnt_InfoLabel_PaddingWhenEmpty: 0 @_sap_tnt_InfoLabel_HeightWithoutBorders/2;
 
 /* ==========================================================================
    Root element
    ========================================================================== */
 .sapTntInfoLabel {
 	box-sizing: border-box;
-	padding: 0 0.625rem;
+	padding: 0 0.3125rem;
 	text-align: center;
-	border-radius: 1.125rem;
-	height: 1.125rem;
+	border-radius: 0.5rem;
+	height: 1rem;
 	display: inline-block;
 	max-width: 100%;
+	line-height: @_sap_tnt_InfoLabel_LineHeight;
 
 	.sapTntInfoLabelInner {
-		font-size: @sapMFontSmallSize;
+		font-size: @sapFontSmallSize;
+		font-weight: bold;
 		vertical-align: top;
-		line-height: @_sap_tnt_InfoLabel_LineHeight;
 		letter-spacing: 0.0125rem;
 		text-transform: uppercase;
 		display: inline-block;
@@ -36,7 +36,7 @@
 	}
 }
 
-.sapTntInfoLabelRenderModeNarrow{
+.sapTntInfoLabelRenderModeNarrow { // Recommended for numeric labels (Numeric Mode)
 	padding: @_sap_tnt_InfoLabel_NarrowPadding
 }
 
@@ -44,9 +44,11 @@
    InfoLabel Display Only
    ========================================================================== */
 .sapTntInfoLabel.sapTntInfoLabelDisplayOnly {
-	height: 1rem;
+	border: none;
+	background: @sapTextColor;
 
 	.sapTntInfoLabelInner {
+		color: @sapContent_ContrastTextColor;
 		line-height: @_sap_tnt_InfoLabel_LineHeightDisplayOnly;
 	}
 }
@@ -55,11 +57,7 @@
    InfoLabel No Text
    ========================================================================== */
    .sapTntInfoLabel.sapTntInfoLabelNoText {
-	padding: 0 @_sap_tnt_InfoLabel_NoTextPadding;
-
-		&.sapTntInfoLabelDisplayOnly{
-			padding: 0 @_sap_tnt_InfoLabel_NoTextDisplayOnlyPadding;
-		}
+	padding: 0 0.1875rem;
    }
 
    /* ==========================================================================
@@ -67,50 +65,59 @@
    ========================================================================== */
 
 .sapTntInfoLabel.sapTntInfoLabelWithIcon {
-	padding: @_sap_tnt_InfoLabel_NarrowPadding;
 
 	.sapTntInfoLabelInner .sapTntInfoLabelText {
 		vertical-align: top;
 	}
 
 	.sapUiIcon {
-		padding-right: 0.1875rem;
-		line-height: @_sap_tnt_InfoLabel_LineHeight;
+		padding-right: 0.125rem;
+		line-height: @_sap_tnt_InfoLabel_HeightWithoutBorders;
+		vertical-align: top;
 	}
 
 	&.sapTntInfoLabelNoText {
 		padding: @_sap_tnt_InfoLabel_NarrowPadding;
 
 		.sapUiIcon {
-				padding-right: 0;
+			padding-right: 0;
+		}
+	}
+
+	&.sapTntInfoLabelDisplayOnly {
+		.sapUiIcon {
+			line-height: @_sap_tnt_InfoLabel_LineHeightDisplayOnly;
 		}
 	}
 }
 
 /* ==========================================================================
+   Empty InfoLabel
+   ========================================================================== */
+
+// It is recommended for the empty InfoLabel to be circle
+.sapTntInfoLabel.sapTntInfoLabelNoText:not(.sapTntInfoLabelWithIcon) {
+	&:not(.sapTntInfoLabelDisplayOnly) {
+		padding: @_sap_tnt_InfoLabel_PaddingWhenEmpty;
+	}
+	&.sapTntInfoLabelDisplayOnly {
+		padding: 0 @_sap_tnt_InfoLabel_LineHeightDisplayOnly/2;
+	}
+};
+
+/* ==========================================================================
    InfoLabel in Form
    ========================================================================== */
 
-.sapUiFormM:not(.sapUiFormEdit) .sapUiFormResGridCont > div .sapTntInfoLabel {
-	font-size: 1rem;
-}
-
-.sapUiFormM:not(.sapUiFormEdit) .sapUiFormResGridCont > div .sapTntInfoLabel.sapTntInfoLabelWithIcon .sapUiIcon {
-	font-size: @sapMFontSmallSize;
-}
-
 .sapUiFormEdit .sapTntInfoLabel:not(.sapTntInfoLabelDisplayOnly) {
-	margin: @_sap_tnt_InfoLabel_Margin 0;
+	margin-top: 0.875rem;
 }
 
 /* Compact size */
 .sapUiSizeCompact .sapUiFormEdit .sapTntInfoLabel:not(.sapTntInfoLabelDisplayOnly) {
-	margin: 0.4375rem 0;
+	margin-top: 0.5rem;
 }
 
-.sapUiFormResGridCont .sapTntInfoLabel.sapTntInfoLabelWithIcon.sapTntInfoLabelDisplayOnly .sapUiIcon {
-	line-height: 0.875rem;
-}
 
 /* ==========================================================================
    InfoLabel in Table
