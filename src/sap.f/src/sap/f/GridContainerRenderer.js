@@ -89,14 +89,19 @@ sap.ui.define([], function () {
 	GridContainerRenderer.renderItem = function (oRM, oItem, oControl, iIndex) {
 		var mStylesInfo = this.getStylesForItemWrapper(oItem, oControl),
 			mStyles = mStylesInfo.styles,
-			aClasses = mStylesInfo.classes;
+			aClasses = mStylesInfo.classes,
+			mAccState = {
+				role: "listitem",
+				labelledby: oItem.getId()
+			};
+
+		if (oItem.getAriaRoleDescription) {
+			mAccState.roledescription = oItem.getAriaRoleDescription();
+		}
 
 		oRM.openStart("div", oControl.getId() + "-item-" + iIndex)
 			.attr("tabindex", "0")
-			.accessibilityState(oControl, {
-				role: "listitem",
-				labelledby: oItem.getId()
-			});
+			.accessibilityState(oControl, mAccState);
 
 		mStyles.forEach(function (sValue, sKey) {
 			oRM.style(sKey, sValue);

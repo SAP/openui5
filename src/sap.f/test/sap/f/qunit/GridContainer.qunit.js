@@ -1687,6 +1687,10 @@ function (
 					new GenericTile({
 						header: "Tile 2",
 						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new IntegrationCard({
+						manifest: oIntegrationCardManifest,
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
 					})
 				]
 			});
@@ -1700,10 +1704,19 @@ function (
 	});
 
 	QUnit.test("Wrapper attributes", function (assert) {
-		var oWrapper = this.oGrid.$().children().eq(1);
+		this.clock.restore();
+
+		var done = assert.async(),
+			oWrapper = this.oGrid.$().children().eq(1);
 
 		assert.notOk(oWrapper.attr("aria-keyshortcuts"), "there is not aria-keyshortcuts attribute");
 		assert.strictEqual(oWrapper.attr("tabindex"), "-1", "tabindex is set");
+
+		setTimeout(function () {
+			oWrapper = this.oGrid.$().children().eq(3);
+			assert.ok(oWrapper.attr("aria-roledescription"), "aria-roledescription attribute is set");
+			done();
+		}.bind(this), 100);
 	});
 
 	QUnit.module("2D Navigation", {

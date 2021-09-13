@@ -165,16 +165,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Called before the control is rendered.
-	 * @private
-	 */
-	NumericHeader.prototype.onBeforeRendering = function () {
-		BaseHeader.prototype.onBeforeRendering.apply(this, arguments);
-
-		this._setAccessibilityAttributes();
-	};
-
-	/**
 	 * Sets the title.
 	 *
 	 * @public
@@ -421,23 +411,6 @@ sap.ui.define([
 		// remove whitespace from both sides
 		// and merge the consecutive whitespaces into one
 		return sIds.replace(/ {2,}/g, ' ').trim();
-	};
-
-	/**
-	 * Sets accessibility to the header to the header.
-	 *
-	 * @private
-	 */
-	NumericHeader.prototype._setAccessibilityAttributes = function () {
-		if (this.hasListeners("press")) {
-			this._sAriaRole = "button";
-			this._sAriaHeadingLevel = undefined;
-			this._sAriaRoleDescritoion = this._oRb.getText("ARIA_ROLEDESCRIPTION_INTERACTIVE_CARD_HEADER");
-		} else {
-			this._sAriaRole = "heading";
-			this._sAriaHeadingLevel = "3";
-			this._sAriaRoleDescritoion = this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER");
-		}
 	};
 
 	/**
