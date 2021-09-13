@@ -2311,6 +2311,9 @@ sap.ui.define([
 		// calls refreshInternal on all given bindings and returns an array of promises
 		function refreshAll(aBindings) {
 			return aBindings.map(function (oBinding) {
+				if (oBinding.bIsBeingDestroyed) {
+					return;
+				}
 				// Call refreshInternal with bCheckUpdate = false because property bindings
 				// should not check for updates yet, otherwise they will cause a "Failed to
 				// drill down..." when the row is no longer part of the collection. They get
