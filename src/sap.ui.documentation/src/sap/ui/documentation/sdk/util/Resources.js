@@ -34,8 +34,7 @@
 			return sOrigin + sVersionPrefixPath + this._formatPath(sPath);
 		},
 		getHasProxy: function () {
-			var oConfig = self['sap-ui-documentation-config'];
-			return !!(oConfig && oConfig.demoKitResourceOrigin);
+			return new window.URLSearchParams(window.location.search).get('sap-ui-xx-unifiedResources') != null;
 		},
 		_formatPath: function(sPath) {
 			sPath = sPath.replace(/^\.\//, '/');

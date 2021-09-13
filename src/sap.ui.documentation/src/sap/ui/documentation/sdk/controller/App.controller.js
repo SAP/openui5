@@ -1527,7 +1527,8 @@ sap.ui.define([
 			},
 
 			_getUI5Version: function () {
-				return this.getModel("versionData").getProperty("/version");
+				return bUseUnifiedResourceOrigin && window.sessionStorage.getItem("versionPrefixPath") ?
+					window.sessionStorage.getItem("versionPrefixPath") : this.getModel("versionData").getProperty("/version");
 			},
 
 			_getUI5VersionGav: function () {

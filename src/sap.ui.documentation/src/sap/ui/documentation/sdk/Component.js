@@ -178,7 +178,9 @@ sap.ui.define([
 					bOpenUI5,
 					sVersionSuffix,
 					bIsInternal,
-					bSupportsSWA;
+					bSupportsSWA,
+					bUseUnifiedResourceOrigin = new window.URLSearchParams(window.location.search).get('sap-ui-xx-unifiedResources') != null,
+					sVersionPrefixPath = bUseUnifiedResourceOrigin && window.sessionStorage.getItem("versionPrefixPath");
 
 				this.aAllowedMembers = ["public", "protected"];
 
@@ -205,7 +207,7 @@ sap.ui.define([
 					versionName: oVersionInfo.name,
 					version: [oVersion.getMajor(), oVersion.getMinor(), oVersion.getPatch()].join("."),
 					fullVersion: oVersionInfo.version,
-					openUi5Version: sap.ui.version,
+					openUi5Version: sVersionPrefixPath || sap.ui.version,
 					isOpenUI5: bOpenUI5,
 					isSnapshotVersion: bSnapshot,
 					isDevVersion: bSnapshot,

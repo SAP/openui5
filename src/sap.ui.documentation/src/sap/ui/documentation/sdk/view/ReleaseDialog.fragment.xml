@@ -16,7 +16,7 @@
 			contentWidth="40%"
 			contentHeight="40%"
 			stretch="{appView>/bPhoneSize}">
-			<Text text="{i18n>RELEASE_DIALOG_NO_DATA_TEXT}" class="sapUiSmallMargin" visible="{/noDataMessage}"/>
+			<Text text="{i18n>RELEASE_DIALOG_NO_DATA_TEXT}" class="sapUiSmallMargin" visible="{=!!${/noData}}"/>
 		<beginButton>
 			<Button text="{i18n>RELEASE_DIALOG_CLOSE_BTN}" press="onReleaseDialogClose"/>
 		</beginButton>
