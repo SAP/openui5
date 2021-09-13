@@ -392,7 +392,7 @@ sap.ui.define([
 			return;
 		}
 
-		oInvText = getInvisibleText();
+		oInvText = getInvisibleText(oControl);
 		sInvTextId = oInvText.getId();
 
 		oInvText.setText(_getShortcutHintText(oHintInfo.id));
@@ -500,15 +500,22 @@ sap.ui.define([
 	}
 
 	/**
-	 * Gets or creates an InvisibleText for the shortcut's accessiblity.
+	 * Gets or creates an InvisibleText for the control's shortcut accessiblity.
+	 *
+	 * @param {sap.ui.core.Control} oControl A control that have shortcut assigned
 	 */
-	function getInvisibleText() {
-		if (!ShortcutHintsMixin._invisibleText) {
-			ShortcutHintsMixin._invisibleText = new InvisibleText();
-			ShortcutHintsMixin._invisibleText.toStatic();
+	function getInvisibleText(oControl) {
+		if (!oControl._shortcutInvisibleText) {
+			var oFunc = oControl.exit;
+			oControl._shortcutInvisibleText = new InvisibleText();
+			oControl._shortcutInvisibleText.toStatic();
+			oControl.exit = function() {
+				this._shortcutInvisibleText.destroy();
+				oFunc.call(this);
+			};
 		}
 
-		return ShortcutHintsMixin._invisibleText;
+		return oControl._shortcutInvisibleText;
 	}
 
 	/**
