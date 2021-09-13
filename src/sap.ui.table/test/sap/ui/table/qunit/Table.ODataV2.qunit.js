@@ -32,13 +32,9 @@ sap.ui.define([
 	QUnit.test("Refresh", function(assert) {
 		var oTable = TableQUnitUtils.createTable();
 		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished)
-						   .then(function() {
-							   oGetContextsSpy.reset();
-						   });
 
-		return pReady.then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oGetContextsSpy.reset();
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 2, "Method to get contexts called 2 times");
@@ -54,13 +50,9 @@ sap.ui.define([
 			fixedBottomRowCount: 1
 		});
 		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished)
-						   .then(function() {
-							   oGetContextsSpy.reset();
-						   });
 
-		return pReady.then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oGetContextsSpy.reset();
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
@@ -80,13 +72,9 @@ sap.ui.define([
 			threshold: 1
 		});
 		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished)
-						   .then(function() {
-							   oGetContextsSpy.reset();
-						   });
 
-		return pReady.then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oGetContextsSpy.reset();
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			return new Promise(function(resolve) {
@@ -107,13 +95,9 @@ sap.ui.define([
 	QUnit.test("Sort", function(assert) {
 		var oTable = TableQUnitUtils.createTable();
 		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished)
-						   .then(function() {
-							   oGetContextsSpy.reset();
-						   });
 
-		return pReady.then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oGetContextsSpy.reset();
 			oTable.getBinding().sort();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 2, "Method to get contexts called 2 times");
@@ -129,13 +113,9 @@ sap.ui.define([
 			fixedBottomRowCount: 1
 		});
 		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished)
-						   .then(function() {
-							   oGetContextsSpy.reset();
-						   });
 
-		return pReady.then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oGetContextsSpy.reset();
 			oTable.getBinding().sort();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			return new Promise(function(resolve) {
@@ -161,13 +141,9 @@ sap.ui.define([
 			threshold: 1
 		});
 		var oGetContextsSpy = this.oGetContextsSpy;
-		var pReady = oTable.qunit.whenBindingChange()
-						   .then(oTable.qunit.whenRenderingFinished)
-						   .then(function() {
-							   oGetContextsSpy.reset();
-						   });
 
-		return pReady.then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oGetContextsSpy.reset();
 			oTable.getBinding().sort();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			return new Promise(function(resolve) {
@@ -685,7 +661,7 @@ sap.ui.define([
 
 		this.oTable.getBinding().filter(new Filter({path: "Name", operator: "EQ", value1: "DoesNotExist"}));
 		this.oTable.rerender();
-		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(function() {
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Filter");
 			that.assertNoDataVisibilityChangeCount(assert, 1);
 			that.oTable.rerender();
@@ -694,7 +670,7 @@ sap.ui.define([
 			that.assertNoDataVisibilityChangeCount(assert, 0);
 			that.oTable.getBinding().filter();
 			that.oTable.rerender();
-		}).then(this.oTable.qunit.whenBindingChange).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Remove Filter");
 			that.assertNoDataVisibilityChangeCount(assert, 1);
 			that.oTable.rerender();
@@ -725,7 +701,7 @@ sap.ui.define([
 
 		this.oTable.unbindRows();
 		this.oTable.rerender();
-		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(function() {
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Unbind");
 			that.assertNoDataVisibilityChangeCount(assert, 1);
 			that.oTable.rerender();
@@ -734,7 +710,7 @@ sap.ui.define([
 			that.assertNoDataVisibilityChangeCount(assert, 0);
 			that.oTable.bindRows(oBindingInfo);
 			that.oTable.rerender();
-		}).then(this.oTable.qunit.whenBindingChange).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Bind");
 			that.assertNoDataVisibilityChangeCount(assert, 1);
 			that.oTable.rerender();
