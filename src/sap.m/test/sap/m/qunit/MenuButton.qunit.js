@@ -147,6 +147,56 @@ sap.ui.define([
 			"aria-haspopup is set on the internal button");
 	});
 
+	QUnit.test("MenuButton (Regular) aria-expanded attribute", function (assert) {
+		var oButton = this.sut._getButtonControl();
+
+		// assert
+		assert.strictEqual(oButton.$().attr("aria-expanded"), "false",
+			"aria-expanded is initially set to false on the internal button");
+
+		// act
+		oButton.firePress();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oButton.$().attr("aria-expanded"), "true",
+			"aria-expanded is set to false on the internal button when it is pressed");
+
+		// act
+		this.sut.getMenu().close();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oButton.$().attr("aria-expanded"), "false",
+			"aria-expanded is set to false on the internal button when the menu is closed");
+	});
+
+	QUnit.test("MenuButton (Split) aria-expanded attribute", function (assert) {
+		this.sut.setButtonMode("Split");
+		var oButton = this.sut._getButtonControl()._getArrowButton();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oButton.$().attr("aria-expanded"), "false",
+			"aria-expanded is initially set to false on the internal button");
+
+		// act
+		oButton.firePress();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oButton.$().attr("aria-expanded"), "true",
+			"aria-expanded is set to false on the internal button when it is pressed");
+
+		// act
+		this.sut.getMenu().close();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oButton.$().attr("aria-expanded"), "false",
+			"aria-expanded is set to false on the internal button when the menu is closed");
+	});
+
 	QUnit.test("MenuButton (Regular) aria-controls placement", function (assert) {
 		var $buttonReference = this.sut._getButtonControl().$(),
 			oGetMenuSub = this.stub(this.sut, "getMenu", function () {
