@@ -540,11 +540,9 @@ sap.ui.define([
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 
 			// These metadata files are _always_ faked, the query option "realOData" is ignored
-			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit", {
+			this.useFakeServer({
 				"/aggregation/$metadata"
 					: {source : "odata/v4/data/metadata_aggregation.xml"},
-				"/invalid/model/" : {code : 500},
-				"/invalid/model/$metadata" : {code : 500},
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
 					: {source : "model/GWSAMPLE_BASIC.metadata.xml"},
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
@@ -553,13 +551,9 @@ sap.ui.define([
 					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?sap-client=123"
 					: {source : "odata/v4/data/metadata.xml"},
-				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?sap-client=279&sap-context-token=20200716120000&sap-language=en"
-					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?c1=a&c2=b"
 					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
-					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
-				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata?sap-client=279&sap-language=en"
 					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata?c1=a&c2=b"
 					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
@@ -2016,6 +2010,24 @@ sap.ui.define([
 		},
 
 		/**
+		 * Sets up a SinonJS fake server using the given fixture.
+		 *
+		 * @param {map} mFixture
+		 *   The fixture. See {@link sap.ui.test.TestUtils.useFakeServer}
+		 * @returns {object}
+		 *   The SinonJS fake server instance
+		 */
+		useFakeServer : function (mFixture) {
+			if (this.oFakeServer) {
+				this.oFakeServer.restore();
+			}
+			this.oFakeServer = TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit",
+				mFixture, [/*aRegExps*/], /*sServiceUrl*/undefined, /*bStrict*/true);
+
+			return this.oFakeServer;
+		},
+
+		/**
 		 * Waits for the expected requests and changes.
 		 *
 		 * @param {object} assert The QUnit assert object
@@ -2094,13 +2106,23 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// verify that error responses are processed correctly for direct requests
+	//
+	// Also check sap-statistics (JIRA: CPOUI5ODATAV4-1165)
 	QUnit.test("error response: $direct (framework test)", function (assert) {
-		var dRetryAfter = new Date(),
+		var oModel,
+			dRetryAfter = new Date(),
 			sView = '<Text text="{/EMPLOYEES(\'1\')/ID}"/>';
 
+		this.useFakeServer({
+			"/sap/statistics/$metadata?sap-statistics=true"
+				: {source : "odata/v4/data/metadata.xml"} // same as TEA_BUSI
+		});
+		this.mock(sap.ui.getCore().getConfiguration()).expects("getStatistics").withExactArgs()
+			.returns(true);
+		oModel = createModel("/sap/statistics/", {groupId : "$direct"});
 		this.oLogMock.expects("error").withArgs("Failed to read path /EMPLOYEES('1')/ID");
-
-		this.expectRequest("EMPLOYEES('1')/ID", createError({}, 503, dRetryAfter))
+		this.expectRequest("EMPLOYEES('1')/ID?sap-statistics=true",
+				createError({}, 503, dRetryAfter))
 			.expectMessages([{
 				code : "CODE",
 				message : "Request intentionally failed",
@@ -2117,7 +2139,7 @@ sap.ui.define([
 				type : "Error"
 			}]);
 
-		return this.createView(assert, sView, createTeaBusiModel({groupId : "$direct"}));
+		return this.createView(assert, sView, oModel);
 	});
 
 	//*********************************************************************************************
@@ -2148,6 +2170,39 @@ sap.ui.define([
 			}]);
 
 		return this.createView(assert, sView);
+	});
+
+	//*********************************************************************************************
+	// Check sap-statistics for $batch and $metadata (JIRA: CPOUI5ODATAV4-1165)
+	QUnit.test("sap-statistics for $batch", function (assert) {
+		var oModel;
+
+		this.useFakeServer({
+			"HEAD /sap/statistics/?sap-statistics=true" : {},
+			"/sap/statistics/$metadata?sap-statistics=true"
+				: {source : "odata/v4/data/metadata.xml"} // same as TEA_BUSI
+		});
+		this.mock(sap.ui.getCore().getConfiguration()).expects("getStatistics").withExactArgs()
+			.returns(true);
+		oModel = createModel("/sap/statistics/", {earlyRequests : true});
+		oModel.submitBatch = false; // @see #createView
+		this.mock(oModel.oRequestor).expects("sendRequest")
+			.withArgs("POST", "$batch?sap-statistics=true").rejects();
+		this.oLogMock.expects("error").withArgs("$batch failed");
+		this.oLogMock.expects("error").withArgs("Failed to read path /EMPLOYEES('1')/ID");
+		this.expectMessages([{
+			message : "Error",
+			persistent : true,
+			technical : true,
+			type : "Error"
+		}, {
+			message : "HTTP request was not processed because $batch failed",
+			persistent : true,
+			technical : true,
+			type : "Error"
+		}]);
+
+		return this.createView(assert, '<Text text="{/EMPLOYEES(\'1\')/ID}"/>', oModel);
 	});
 
 	//*********************************************************************************************
@@ -26980,8 +27035,11 @@ sap.ui.define([
 	// Scenario: list binding with auto-$expand/$select and filter (so that metadata is required to
 	// build the query string), but the metadata could not be loaded (CPOUI5UISERVICESV3-1723)
 	QUnit.test("Auto-$expand/$select with dynamic filter, but no metadata", function (assert) {
-		var oModel = createModel(sInvalidModel, {autoExpandSelect : true}),
-			sView = '\
+		var oModel, sView;
+
+		this.useFakeServer({"/invalid/model/$metadata" : {code : 500}});
+		oModel = createModel(sInvalidModel, {autoExpandSelect : true});
+		sView = '\
 <Table items="{path : \'/Artists\', \
 		filters : {path : \'IsActiveEntity\', operator : \'EQ\', value1 : \'true\'}}">\
 	<Text id="id" text="{path : \'ID\', type : \'sap.ui.model.odata.type.String\'}"/>\
@@ -31322,6 +31380,10 @@ sap.ui.define([
 	QUnit.test("CPOUI5ODATAV4-231: ODLB#create failed due to failed $metadata", function (assert) {
 		var that = this;
 
+		this.useFakeServer({
+			"/invalid/model/$metadata" : {code : 500}
+		});
+
 		return this.createView(assert, "", createModel(sInvalidModel)).then(function () {
 			var oListBinding = that.oModel.bindList("/People");
 
@@ -32626,18 +32688,27 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Create a model with metadataUrlParams. See that the main $metadata request contains
-	// sap-context-token, sap-language, and sap-client -> see above TestUtils.useFakeServer().
+	// sap-context-token, sap-language, and sap-client -> see this.useFakeServer() below.
 	// Further requests for $metadata references must not use sap-context-token.
 	//
 	// JIRA: CPOUI5ODATAV4-279
 	QUnit.test("CPOUI5ODATAV4-279", function (assert) {
-		var oModel = createModel(sTeaBusi + "?sap-client=279", {
-				earlyRequests : true,
-				metadataUrlParams : {
-					"sap-context-token" : "20200716120000",
-					"sap-language" : "en"
-				}
-			});
+		var oModel;
+
+		this.useFakeServer({
+			"HEAD /sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/?sap-client=279" : {},
+			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?sap-client=279&sap-context-token=20200716120000&sap-language=en"
+				: {source : "odata/v4/data/metadata.xml"},
+			"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata?sap-client=279&sap-language=en"
+				: {source : "odata/v4/data/metadata_tea_busi_product.xml"}
+		});
+		oModel = createModel(sTeaBusi + "?sap-client=279", {
+			earlyRequests : true,
+			metadataUrlParams : {
+				"sap-context-token" : "20200716120000",
+				"sap-language" : "en"
+			}
+		});
 
 		return oModel.getMetaModel()
 			.requestObject("/Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY/$Type")

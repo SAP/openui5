@@ -101,11 +101,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
-		var oMetadataRequestor = {},
-			oMetaModel,
-			oModel,
-			oModelPrototypeMock = this.mock(ODataModel.prototype),
-			mUriParameters = {"sap-client" : "279"};
+		var oModel;
 
 		assert.throws(function () {
 			return new ODataModel();
@@ -124,21 +120,33 @@ sap.ui.define([
 				synchronizationMode : "None"});
 		}, new Error("Unsupported operation mode: Auto"), "Unsupported OperationMode");
 
-		oModelPrototypeMock.expects("initializeSecurityToken").never();
+		this.mock(ODataModel.prototype).expects("initializeSecurityToken").never();
 
 		// code under test: operation mode Server must not throw an error
 		oModel = this.createModel("", {operationMode : OperationMode.Server, serviceUrl : "/foo/",
 			synchronizationMode : "None"});
 
 		assert.strictEqual(oModel.sOperationMode, OperationMode.Server);
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bStatistics) {
+	QUnit.test("c'tor, sap-statistics=" + bStatistics, function (assert) {
+		var oMetadataRequestor = {},
+			oMetaModel,
+			oModel;
 
 		this.mock(ODataModel.prototype).expects("buildQueryOptions")
-			.withExactArgs({}, false, true).returns(mUriParameters);
+			.withExactArgs({}, false, true).returns({"sap-client" : "279"});
+		this.mock(sap.ui.getCore().getConfiguration()).expects("getStatistics").withExactArgs()
+			.returns(bStatistics);
 		this.mock(_MetadataRequestor).expects("create")
-			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", mUriParameters)
+			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", bStatistics
+				? {"sap-client" : "279", "sap-statistics" : true}
+				: {"sap-client" : "279"})
 			.returns(oMetadataRequestor);
 		this.mock(ODataMetaModel.prototype).expects("fetchEntityContainer").withExactArgs(true);
-		oModelPrototypeMock.expects("initializeSecurityToken").withExactArgs();
+		this.mock(ODataModel.prototype).expects("initializeSecurityToken").withExactArgs();
 
 		// code under test
 		oModel = this.createModel("",
@@ -146,7 +154,7 @@ sap.ui.define([
 
 		assert.strictEqual(oModel.sServiceUrl, getServiceUrl());
 		assert.strictEqual(oModel.toString(), sClassName + ": " + getServiceUrl());
-		assert.strictEqual(oModel.mUriParameters, mUriParameters);
+		assert.deepEqual(oModel.mUriParameters, {"sap-client" : "279"});
 		assert.strictEqual(oModel.getDefaultBindingMode(), BindingMode.TwoWay);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneTime), true);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneWay), true);
@@ -160,6 +168,7 @@ sap.ui.define([
 		assert.strictEqual(oMetaModel.sUrl, getServiceUrl() + "$metadata");
 		assert.deepEqual(oMetaModel.aAnnotationUris, ["my/annotations.xml"]);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("metadataUrlParams", function () {
@@ -456,7 +465,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Model creates _Requestor", function (assert) {
+[false, true].forEach(function (bStatistics) {
+	QUnit.test("Model creates _Requestor, sap-statistics=" + bStatistics, function (assert) {
 		var oExpectedBind0,
 			oExpectedBind1,
 			oExpectedBind2,
@@ -476,6 +486,8 @@ sap.ui.define([
 			},
 			fnSubmitAuto = function () {};
 
+		this.mock(sap.ui.getCore().getConfiguration()).expects("getStatistics").withExactArgs()
+			.returns(bStatistics);
 		oExpectedCreate
 			.withExactArgs(getServiceUrl(), {
 					fetchEntityContainer : sinon.match.same(fnFetchEntityContainer),
@@ -487,7 +499,10 @@ sap.ui.define([
 					reportTransitionMessages : sinon.match.same(fnreportTransitionMessages)
 				},
 				{"Accept-Language" : "ab-CD"},
-				{"sap-client" : "123"}, "4.0")
+				bStatistics
+					? {"sap-client" : "123", "sap-statistics" : true}
+					: {"sap-client" : "123"},
+				"4.0")
 			.returns(oRequestor);
 		oExpectedBind0 = this.mock(ODataMetaModel.prototype.fetchEntityContainer).expects("bind")
 			.returns(fnFetchEntityContainer);
@@ -529,6 +544,7 @@ sap.ui.define([
 		// code under test - call fireSessionTimeout
 		oModelInterface.fireSessionTimeout();
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("Property access from ManagedObject w/o context binding", function (assert) {

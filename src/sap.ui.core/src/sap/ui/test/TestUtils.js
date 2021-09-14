@@ -270,8 +270,12 @@ sap.ui.define([
 		 *   The service URL which determines a prefix for all requests the fake server responds to;
 		 *   it responds with an error for requests not given in the fixture, except DELETE, MERGE,
 		 *   PATCH, or POST. A missing URL is ignored.
+		 * @param {boolean} [bStrict]
+		 *   Whether responses are created from the given fixture only, without defaults per method.
+		 * @returns {object}
+		 *   The SinonJS fake server instance
 		 */
-		useFakeServer : function (oSandbox, sBase, mFixture, aRegExps, sServiceUrl) {
+		useFakeServer : function (oSandbox, sBase, mFixture, aRegExps, sServiceUrl, bStrict) {
 			// a map from "method path" incl. service URL to a list of response objects with
 			// properties code, headers, ifMatch and message
 			var aRegexpResponses, mUrlToResponses;
@@ -361,7 +365,8 @@ sap.ui.define([
 
 			// Logs and returns a response for the given error
 			function error(iCode, oRequest, sMessage) {
-				Log.error(oRequest.requestLine, sMessage, "sap.ui.test.TestUtils");
+				Log.error(oRequest.requestLine || oRequest.method + " " + oRequest.url, sMessage,
+					"sap.ui.test.TestUtils");
 
 				return {
 					code : iCode,
@@ -507,7 +512,7 @@ sap.ui.define([
 					if (oMatch.responses.length > 1) {
 						iAlternative = oMatch.responses.indexOf(oResponse);
 					}
-				} else {
+				} else if (!bStrict) {
 					switch (oRequest.method) {
 						case "HEAD":
 							oResponse = {code : 200};
@@ -709,12 +714,14 @@ sap.ui.define([
 					// must return true if the request is NOT processed by the fake server
 					return !bOurs;
 				});
+
+				return oServer;
 			}
 
 			// ensure to always search the fake data in test-resources, remove cache buster token
 			sBase = sap.ui.require.toUrl(sBase)
 				.replace(/(^|\/)resources\/(~[-a-zA-Z0-9_.]*~\/)?/, "$1test-resources/") + "/";
-			setupServer();
+			return setupServer();
 		},
 
 		/**
