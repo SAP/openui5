@@ -3044,6 +3044,7 @@ sap.ui.define([
 		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 0, "Change Event not fired");
 		assert.equal(oContent.getDOMValue(), "", "no value shown in inner control");
+		assert.equal(oContent.getProperty("value"), "", "no value set in inner control"); // as getValue returns DomValue, not property
 		aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 
@@ -3054,7 +3055,7 @@ sap.ui.define([
 		oField.setValueState("Error"); // simulate wrong input before
 		oField.setValueStateText("Error");
 		oField._bParseError = true;
-		oContent.setDOMValue("I"); // to test clearing of content
+		oContent.setValue("I"); // to test clearing of content
 		oFieldHelp.fireSelect({ conditions: [oCondition], add: true, close: false });
 		assert.equal(iCount, 1, "Change Event fired once");
 		assert.ok(bValid, "Change event valid");
@@ -3077,16 +3078,17 @@ sap.ui.define([
 		oFieldHelp.fireAfterClose();
 		assert.equal(iCount, 0, "Change Event not fired");
 		assert.equal(oContent.getDOMValue(), "", "no value shown in inner control");
+		assert.equal(oContent.getProperty("value"), "", "no value set in inner control"); // as getValue returns DomValue, not property
 		aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 2, "two condition in Codition model");
 
-		// simulate select event to see if field is updated
+		// simulate select event with close to see if field is updated
 		oCondition = Condition.createItemCondition("I1", "Item1");
 		iCount = 0;
 		sValue = ""; bValid = undefined;
 		oField.setValueState("Error"); // simulate error set by application
 		oField.setValueStateText("Error");
-		oContent.setDOMValue("I"); // to test clearing of content
+		oContent.setValue("I"); // to test clearing of content
 		oFieldHelp.fireSelect({ conditions: [oCondition], add: true, close: true });
 		assert.equal(iCount, 1, "Change Event fired once");
 		assert.ok(bValid, "Change event valid");
@@ -3100,6 +3102,7 @@ sap.ui.define([
 		assert.equal(aConditions[1] && aConditions[1].operator, "EQ", "condition operator");
 		assert.notOk(oFieldHelp.getKeyForText.called, "getKeyForText not called");
 		assert.equal(oContent.getDOMValue(), "", "no value shown in inner control");
+		assert.equal(oContent.getProperty("value"), "", "no value set in inner control"); // as getValue returns DomValue, not property
 		assert.equal(oField.getValueState(), "Error", "ValueState");
 		assert.equal(oField.getValueStateText(), "Error", "ValueStateText");
 
