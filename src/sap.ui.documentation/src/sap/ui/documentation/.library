@@ -50,11 +50,6 @@
         <copyright>2013 Ariya Hidayat and other contributors</copyright>
         <pattern>sap/ui/documentation/sdk/thirdparty/esprima.js</pattern>
       </lib>
-      <lib name="google-code-prettify" displayName="google-code-prettify" version="20130304" homepage="https://github.com/googlearchive/code-prettify">
-        <license url="http://www.apache.org/licenses/LICENSE-2.0" type="Apache-2.0" />
-        <copyright>2006 Google Inc.</copyright>
-        <pattern>sap/ui/documentation/sdk/thirdparty/google-code-prettify/*</pattern>
-      </lib>
       <lib name="highlight.js" displayName="highlight.js" version="10.4.1" homepage="https://highlightjs.org/">
         <license url="https://github.com/highlightjs/highlight.js/blob/10.4.1/LICENSE" type="BSD-3-Clause" />
         <copyright>2006-2020, Ivan Sagalaev</copyright>

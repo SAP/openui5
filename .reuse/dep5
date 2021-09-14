@@ -347,11 +347,6 @@ Copyright: 2013 Ariya Hidayat and other contributors
 License: BSD-2-Clause
 Comment: these files belong to: Esprima
 
-Files: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/google-code-prettify/*
-Copyright: 2006 Google Inc.
-License: Apache-2.0
-Comment: these files belong to: google-code-prettify
-
 Files: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/highlight.js/*
 Copyright: 2006-2020, Ivan Sagalaev
 License: BSD-3-Clause

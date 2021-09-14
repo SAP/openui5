@@ -32,7 +32,6 @@ sap.ui.define([
 				oRouter.getRoute("since").attachPatternMatched(this._onTopicMatched, this);
 
 				this._hasMatched = false;
-				this._aVisitedTabs = [];
 			},
 
 			_onTopicMatched: function (oEvent) {
@@ -41,8 +40,7 @@ sap.ui.define([
 					experimental: APIInfo.getExperimentalPromise,
 					deprecated: APIInfo.getDeprecatedPromise,
 					since: APIInfo.getSincePromise
-				}[sRouteName],
-				oPage;
+				}[sRouteName];
 
 				if (this._hasMatched) {
 					return;
@@ -51,40 +49,12 @@ sap.ui.define([
 
 				// Cache allowed members for the filtering
 				this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
-				oPage = this.getView().byId("objectPage");
 
 				fnDataGetterRef().then(function (oData) {
 					oData = this._filterVisibleElements(oData);
 					this._oModel.setData(oData);
 
-					oPage.addEventDelegate({"onAfterRendering": this._prettify.bind(this)});
-					if (oPage.getUseIconTabBar()) {
-						// add support to prettify tab content lazily (i.e. only for *opened* tabs) to avoid traversing *all* tabs in advance
-						oPage.attachNavigate(this._attachPrettifyTab.bind(this));
-					}
 				}.bind(this));
-			},
-
-			/**
-			 * Attach listeners that prettify the tab content upon its rendering
-			 * @param {oEvent} tab navigate event
-			 * @private
-			 */
-			_attachPrettifyTab: function(oEvent) {
-				// in our use-case each tab contains a single subSection => only this subSection needs to be processed
-				var oSubSection = oEvent.getParameter("subSection"),
-					sId = oSubSection.getId(),
-					aBlocks;
-
-				//attach listeners that prettify the tab content upon its rendering
-				if (this._aVisitedTabs.indexOf(sId) < 0) { // avoid adding listeners to the same tab twice
-					aBlocks = oSubSection.getBlocks();
-					aBlocks.forEach(function(oBlock) {
-						oBlock.addEventDelegate({"onAfterRendering": this._prettify.bind(this)});
-					}.bind(this));
-
-					this._aVisitedTabs.push(sId);
-				}
 			},
 
 			/**
@@ -112,13 +82,6 @@ sap.ui.define([
 				}.bind(this));
 
 				return oFilteredData;
-			},
-
-			_prettify: function () {
-				// Google Prettify requires this class
-				jQuery('pre').addClass('prettyprint');
-
-				window.prettyPrint();
 			},
 
 			/**

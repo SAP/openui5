@@ -1508,11 +1508,6 @@ html.sapUiTheme-sap_belize_hcb .sapUiDocumentationTopicsIframe {
 	background: #fff;
 }
 
-/* Prettified text looks bigger when viewed from mac, even if it has the same font size */
-html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
-	font-size: 0.8rem;
-}
-
 /*
  * API Detail page specific CSS improving readability
  * Note: Keep in mind this is applicable only for the sap_belize and sap_belize_plus themes

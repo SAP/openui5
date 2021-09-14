@@ -152,7 +152,7 @@ sap.ui.define([
 						}
 						this._sHljsDelayedCallID = setTimeout(function () {
 							//The event is called even if all the sub-sections are un-stashed so apply the class and highlights only when we have un-processed targets.
-							var $aNotApplied = jQuery('.sapUxAPObjectPageContainer .APIDetailMethodsSection pre:not(.hljs)', this._objectPage.$());
+							var $aNotApplied = this._objectPage.$().find("pre:not(.hljs)");
 							if ($aNotApplied.length > 0 && window.hljs) {
 								$aNotApplied.addClass('hljs');
 								document.querySelectorAll('pre').forEach(function(block) {
