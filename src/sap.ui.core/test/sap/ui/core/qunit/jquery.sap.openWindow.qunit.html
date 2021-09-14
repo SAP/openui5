@@ -27,21 +27,22 @@
 	<!-- Initialization -->
 	<script>
 		/*global QUnit */
-		sap.ui.define(['jquery.sap.script'], function(jQuery) {
+		sap.ui.define(['jquery.sap.script', 'sap/ui/Device'], function(jQuery, Device) {
 			"use strict";
 			QUnit.module("jQuery.sap.openWindow");
+			if (!Device.browser.msie && !Device.browser.edge) {
+				QUnit.test("Noopener noreferrer", function (assert) {
+					//Arrange
+					var oStubWindowOpen = sinon.sandbox.stub(window, 'open');
 
-			QUnit.test("Noopener noreferrer", function(assert) {
-				//Arrange
-				var oStubWindowOpen = sinon.sandbox.stub(window, 'open');
+					//Act
+					jQuery.sap.openWindow("about:blank", "newWindow");
 
-				//Actopen
-				jQuery.sap.openWindow("about:blank", "newWindow");
-
-				//Assert
-				assert.ok(oStubWindowOpen.calledWith("about:blank", "newWindow", "noopener,noreferrer"),
-						"window.open is called with predefined windowFeatures");
-			});
+					//Assert
+					assert.ok(oStubWindowOpen.calledWith("about:blank", "newWindow", "noopener,noreferrer"),
+							"window.open is called with predefined windowFeatures");
+				});
+			}
 		});
 	</script>
 

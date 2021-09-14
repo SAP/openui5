@@ -1163,7 +1163,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device',
 
 			// ensure that, in IE11 or Edge, opener cannot be accessed by early code
 			if (Device.browser.msie || Device.browser.edge) {
-				var oNewWindow = window.open("about:blank", sWindowName, sWindowFeatures);
+				var oNewWindow = window.open("about:blank", sWindowName);
 
 				if (oNewWindow) {
 					oNewWindow.opener = null;
