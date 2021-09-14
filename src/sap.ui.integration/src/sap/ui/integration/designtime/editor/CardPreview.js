@@ -123,26 +123,25 @@ sap.ui.define([
 	CardPreview.prototype.onAfterRendering = function () {
 		var oCard = this.getCard(),
 		    sModes = this._getModes(),
-			cardType = null,
 			chartType = null;
-		if (oCard.getManifestEntry("/sap.card/header")) {
-			cardType = oCard.getManifestEntry("/sap.card/header/type");
-		}
 		if (oCard.getManifestEntry("/sap.card/content")) {
 			chartType = oCard.getManifestEntry("/sap.card/content/chartType");
 		}
-		if (sModes.indexOf("Live") > -1 && cardType !== null & chartType !== null) {
+
+		if (sModes.indexOf("Live") > -1 && chartType && chartType.toUpperCase === "DONUT") {
 			var oPreview = this._getCardPreview();
-			if (oPreview.getCardContent()) {
-				var oFrame = oPreview.getCardContent().getAggregation("_content");
-				try {
-					if (oFrame.getVizProperties() && oFrame.getVizProperties().legendGroup.layout.position === "bottom" && oFrame.getVizProperties().legendGroup.layout.alignment === "center") {
-						oFrame.getDomRef().getElementsByClassName("v-m-legend")[0].transform.baseVal[0].matrix.e = 110;
+			setTimeout(function() {
+				if (oPreview.getCardContent()) {
+					var oFrame = oPreview.getCardContent().getAggregation("_content");
+					try {
+						if (oFrame.getVizProperties() && oFrame.getVizProperties().legendGroup.layout.position === "bottom" && oFrame.getVizProperties().legendGroup.layout.alignment === "center") {
+							oFrame.getDomRef().getElementsByClassName("v-m-legend")[0].transform.baseVal[0].matrix.e = 110;
+						}
+					} catch (error) {
+						//do nothing
 					}
-				} catch (error) {
-					//do nothing
 				}
-			}
+			}, 2000);
 		}
 	};
 
