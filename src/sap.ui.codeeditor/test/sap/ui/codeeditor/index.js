@@ -1,3 +1,10 @@
+sap.ui.loader.config({
+	shim: {
+		"sap/ui/codeeditor/js/ace/ext-themelist": {
+			deps: ["sap/ui/codeeditor/js/ace/ace"]
+		}
+	}
+});
 
 sap.ui.require([
 	"sap/ui/codeeditor/CodeEditor",
@@ -6,8 +13,20 @@ sap.ui.require([
 	"sap/m/Label",
 	"sap/m/Button",
 	"sap/m/Select",
-	"sap/ui/core/Item"
-], function (CodeEditor, App, Page, Label, Button, Select, Item) {
+	"sap/ui/core/Item",
+	"sap/ui/codeeditor/js/ace/ace",
+	"sap/ui/codeeditor/js/ace/ext-themelist"
+], function (
+	CodeEditor,
+	App,
+	Page,
+	Label,
+	Button,
+	Select,
+	Item,
+	ace
+	// ext-themelist
+) {
 	"use strict";
 
 	var mValues = {
@@ -45,6 +64,17 @@ sap.ui.require([
 						change: function (e) {
 							var sKey = e.getSource().getSelectedKey();
 							oCodeEditor.setType(sKey).setValue(mValues[sKey]);
+						}
+					}),
+					new Label({ text: "theme:"}),
+					new Select({
+						selectedKey: oCodeEditor.getColorTheme(),
+						items: ace.require("ace/ext/themelist").themes.map(function (mTheme) {
+							return new Item({ key: mTheme.name, text: mTheme.name });
+						}),
+						change: function (e) {
+							var sKey = e.getSource().getSelectedKey();
+							oCodeEditor.setColorTheme(sKey);
 						}
 					}),
 					oInvalidateBtn
