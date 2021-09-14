@@ -1206,6 +1206,7 @@ sap.ui.define([
 		QUnit.test("updates change status if change was already applied (viewCache)", function(assert) {
 			this.oApplyChangeOnControlStub.resolves({success: true});
 			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").resolves(true);
+			sandbox.stub(FlexCustomData, "getParsedRevertDataFromCustomData").resolves({});
 			var oMarkFinishedSpy = sandbox.spy(this.oChange, "markFinished");
 
 			return Applier.applyAllChangesForXMLView(this.mPropertyBag, [this.oChange]).then(function() {
