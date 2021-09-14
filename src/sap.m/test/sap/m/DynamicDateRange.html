@@ -141,8 +141,10 @@
 	var oBefore5Days = new Date(oToday.getFullYear(), oToday.getMonth(), oToday.getDate() - 5);
 	var oAfter5Days = new Date(oToday.getFullYear(), oToday.getMonth(), oToday.getDate() + 6);
 
+	var iWidth = sap.ui.Device.system.phone ? '100%' : '350px';
+
 	var oDDR1 = new sap.m.DynamicDateRange({
-			width: '350px',
+			width: iWidth,
 			options: StandardKeys,
 			value: {
 				path: '/val1',
@@ -154,7 +156,7 @@
 			change: handleValueChange
 		}),
 		oDDR2 = new sap.m.DynamicDateRange({
-			width: '350px',
+			width: iWidth,
 			options: ["DATE", "TODAY", "LASTDAYS", "LASTQUARTERS", "TODAYFROMTO", "On", "Before full moons"],
 			value: {
 				path: '/val2',
@@ -163,7 +165,7 @@
 			change: handleValueChange
 		}),
 		oDDR3 = new sap.m.DynamicDateRange({
-			width: '350px',
+			width: iWidth,
 			options: ["DATE", "TODAY", "LASTDAYS", "LASTQUARTERS", "TODAYFROMTO", "SPECIFICMONTH"],
 			value: {
 				path: '/val3',
@@ -182,7 +184,7 @@
 			change: handleValueChange
 		}),
 		oDDR4 = new sap.m.DynamicDateRange({
-			width: '350px',
+			width: iWidth,
 			options: StandardKeys,
 			enableGroupHeaders: false,
 			value: {
@@ -197,15 +199,15 @@
 		oPage1 = new sap.m.Page("myPage1", {
 			title: "DynamicDateRange Control",
 			content: [
-				new sap.m.Label({ text: "All keys & message handling:"}),
+				new sap.m.Label({ labelFor: oDDR1, text: "All keys & message handling"}),
 				oDDR1,
-				new sap.m.Label({ text: "Custom options:"}),
+				new sap.m.Label({ labelFor: oDDR2, text: "Custom options"}),
 				oDDR2,
-				new sap.m.Label({ text: "Different format:"}),
+				new sap.m.Label({ labelFor: oDDR3, text: "Different format"}),
 				oDDR3,
-				new sap.m.Label({ text: "No group headers:"}),
+				new sap.m.Label({ labelFor: oDDR4, text: "No group headers"}),
 				oDDR4,
-				new sap.m.TextArea("txt1", { width: "350px", height: "300px"})
+				new sap.m.TextArea("txt1", { width: iWidth, height: "300px"})
 			]
 		});
 
