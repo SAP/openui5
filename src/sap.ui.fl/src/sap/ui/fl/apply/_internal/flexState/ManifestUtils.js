@@ -78,6 +78,10 @@ function(
 			return appendComponentToReference(Utils.getAppIdFromManifest(oManifest));
 		},
 
+		getOvpEntry: function (oManifest) {
+			return oManifest.getEntry ? oManifest.getEntry("sap.ovp") : oManifest["sap.ovp"];
+		},
+
 		getCacheKeyFromAsyncHints: function(sReference, oAsyncHints) {
 			if (oAsyncHints && oAsyncHints.requests && Array.isArray(oAsyncHints.requests)) {
 				var oFlAsyncHint = getFlAsyncHint(oAsyncHints);

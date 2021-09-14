@@ -148,72 +148,80 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when loadFlexData is called with a ovp app", function (assert) {
-			var mPropertyBag = {
-				manifest: Object.assign({"sap.ovp": {}}, this.oManifest),
-				otherValue: "a",
-				reference: "reference",
-				componentData: {}
-			};
+		[{
+			details: "with a manifest object",
+			manifest: new Manifest({"sap.ovp": {}})
+		}, {
+			details: "with a manifest JSON",
+			manifest: {"sap.ovp": {}}
+		}].forEach(function (oTestData) {
+			QUnit.test("when loadFlexData is called with a ovp app and " + oTestData.details, function (assert) {
+				var mPropertyBag = {
+					manifest: oTestData.manifest,
+					otherValue: "a",
+					reference: "reference",
+					componentData: {}
+				};
 
-			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
-				var aChanges = oResult.changes.changes;
-				assert.equal(aChanges.length, 5, "five changes are loaded");
-				assert.equal(aChanges[0].fileName, "1_localIdClone", "the file name of the first change is correct");
-				assert.deepEqual(aChanges[0].selector, {
-					id: "ProductDetail--GeneralForm--generalForm",
-					idIsLocal: true
-				}, "the selector of the first change is correct");
-				assert.deepEqual(aChanges[0].dependentSelector, {
-					movedElements: [{
-						id: "ProductDetail--GeneralForm--productLabel",
+				return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
+					var aChanges = oResult.changes.changes;
+					assert.equal(aChanges.length, 5, "five changes are loaded");
+					assert.equal(aChanges[0].fileName, "1_localIdClone", "the file name of the first change is correct");
+					assert.deepEqual(aChanges[0].selector, {
+						id: "ProductDetail--GeneralForm--generalForm",
 						idIsLocal: true
-					}, {
-						id: "ProductDetail--GeneralForm--productLabel2",
-						idIsLocal: true
-					}]
-				}, "the dependent selector of the first change is correct");
-				assert.equal(aChanges[1].fileName, "1", "the file name of the second change is correct");
-				assert.deepEqual(aChanges[1].selector, {
-					id: "ProductDetail--GeneralForm--generalForm",
-					idIsLocal: false
-				}, "the selector of the second change is correct");
-				assert.deepEqual(aChanges[1].dependentSelector, {
-					movedElements: [{
-						id: "ProductDetail--GeneralForm--productLabel",
+					}, "the selector of the first change is correct");
+					assert.deepEqual(aChanges[0].dependentSelector, {
+						movedElements: [{
+							id: "ProductDetail--GeneralForm--productLabel",
+							idIsLocal: true
+						}, {
+							id: "ProductDetail--GeneralForm--productLabel2",
+							idIsLocal: true
+						}]
+					}, "the dependent selector of the first change is correct");
+					assert.equal(aChanges[1].fileName, "1", "the file name of the second change is correct");
+					assert.deepEqual(aChanges[1].selector, {
+						id: "ProductDetail--GeneralForm--generalForm",
 						idIsLocal: false
-					}, {
-						id: "ProductDetail--GeneralForm--productLabel2",
-						idIsLocal: false
-					}]
-				}, "the dependent selector of the second change is correct");
-				assert.equal(aChanges[2].fileName, "2", "the file name of the third change is correct");
-				assert.deepEqual(aChanges[2].selector, {
-					id: "ProductDetail--GeneralForm--generalForm",
-					idIsLocal: true
-				}, "the selector of the third change is correct");
-				assert.deepEqual(aChanges[2].dependentSelector, {
-					movedElements: [{
-						id: "ProductDetail--GeneralForm--productLabel",
+					}, "the selector of the second change is correct");
+					assert.deepEqual(aChanges[1].dependentSelector, {
+						movedElements: [{
+							id: "ProductDetail--GeneralForm--productLabel",
+							idIsLocal: false
+						}, {
+							id: "ProductDetail--GeneralForm--productLabel2",
+							idIsLocal: false
+						}]
+					}, "the dependent selector of the second change is correct");
+					assert.equal(aChanges[2].fileName, "2", "the file name of the third change is correct");
+					assert.deepEqual(aChanges[2].selector, {
+						id: "ProductDetail--GeneralForm--generalForm",
 						idIsLocal: true
-					}]
-				}, "the dependent selector of the third change is correct");
-				assert.equal(aChanges[3].fileName, "3_localIdClone", "the file name of the forth change is correct");
-				assert.deepEqual(aChanges[3].selector, {
-					id: "ProductDetail--GeneralForm--generalForm",
-					idIsLocal: true
-				}, "the selector of the forth change is correct");
-				assert.deepEqual(aChanges[3].dependentSelector, {
-					movedElements: [{
-						id: "ProductDetail--GeneralForm--productLabel",
+					}, "the selector of the third change is correct");
+					assert.deepEqual(aChanges[2].dependentSelector, {
+						movedElements: [{
+							id: "ProductDetail--GeneralForm--productLabel",
+							idIsLocal: true
+						}]
+					}, "the dependent selector of the third change is correct");
+					assert.equal(aChanges[3].fileName, "3_localIdClone", "the file name of the forth change is correct");
+					assert.deepEqual(aChanges[3].selector, {
+						id: "ProductDetail--GeneralForm--generalForm",
 						idIsLocal: true
-					}]
-				}, "the dependent selector of the forth change is correct");
-				assert.equal(aChanges[4].fileName, "3", "the file name of the fifth change is correct");
-				assert.deepEqual(aChanges[4].selector, "ProductDetail--GeneralForm--generalForm", "the selector of the fifth change is correct");
-				assert.deepEqual(aChanges[4].dependentSelector, {
-					movedElements: ["ProductDetail--GeneralForm--productLabel"]
-				}, "the dependent selector of the fifth change is correct");
+					}, "the selector of the forth change is correct");
+					assert.deepEqual(aChanges[3].dependentSelector, {
+						movedElements: [{
+							id: "ProductDetail--GeneralForm--productLabel",
+							idIsLocal: true
+						}]
+					}, "the dependent selector of the forth change is correct");
+					assert.equal(aChanges[4].fileName, "3", "the file name of the fifth change is correct");
+					assert.deepEqual(aChanges[4].selector, "ProductDetail--GeneralForm--generalForm", "the selector of the fifth change is correct");
+					assert.deepEqual(aChanges[4].dependentSelector, {
+						movedElements: ["ProductDetail--GeneralForm--productLabel"]
+					}, "the dependent selector of the fifth change is correct");
+				});
 			});
 		});
 

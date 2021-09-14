@@ -236,6 +236,23 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("ManifestUtils.getOvpEntity", {}, function() {
+		QUnit.test("with a manifest JSON", function(assert) {
+			var oOvpEntry = {};
+			assert.equal(ManifestUtils.getOvpEntry({"sap.ovp": oOvpEntry}), oOvpEntry, "the sap.ovp object is returned");
+		});
+
+		QUnit.test("with a manifest object", function(assert) {
+			var oOvpEntry = {
+				property: "value"
+			};
+			var oManifest = new Manifest({
+				"sap.ovp": oOvpEntry
+			});
+			assert.deepEqual(ManifestUtils.getOvpEntry(oManifest), oOvpEntry, "the sap.ovp object is returned");
+		});
+	});
+
 	QUnit.module("ManifestUtils.isFlexExtensionPointHandlingEnabled", {
 		afterEach: function() {
 			sandbox.restore();
