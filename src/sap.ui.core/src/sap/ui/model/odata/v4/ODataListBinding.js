@@ -66,8 +66,9 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @class List binding for an OData V4 model.
 	 *   An event handler can only be attached to this binding for the following events:
-	 *   'AggregatedDataStateChange', 'change', 'dataReceived', 'dataRequested', 'DataStateChange'
-	 *   and 'refresh'. For other events, an error is thrown.
+	 *   'AggregatedDataStateChange', 'change', 'createCompleted', 'createSent', 'dataReceived',
+	 *   'dataRequested', 'DataStateChange', 'patchCompleted', 'patchSent', and 'refresh'. For
+	 *   other events, an error is thrown.
 	 * @extends sap.ui.model.ListBinding
 	 * @hideconstructor
 	 * @mixes sap.ui.model.odata.v4.ODataParentBinding
