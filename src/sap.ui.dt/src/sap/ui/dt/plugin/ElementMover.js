@@ -7,14 +7,12 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/dt/ElementUtil",
-	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/Util"
 ], function(
 	BaseObject,
 	ManagedObject,
 	ElementUtil,
-	DOMUtil,
 	OverlayUtil,
 	DtUtil
 ) {
@@ -144,22 +142,6 @@ sap.ui.define([
 			});
 	};
 
-	ElementMover.prototype._checkAggregationOverlayVisibility = function (oAggregationOverlay, oParentElement) {
-		// this function can get called on overlay registration, when there are no overlays in dom yet. In this case, DOMUtil.isVisible is always false.
-		var oAggregationOverlayDomRef = oAggregationOverlay.getDomRef();
-		var bAggregationOverlayVisibility = DOMUtil.isVisible(oAggregationOverlayDomRef);
-
-		// if there is no aggregation overlay domRef available the further check for domRef of the corresponding element is not required
-		if (!oAggregationOverlayDomRef) {
-			return bAggregationOverlayVisibility;
-		}
-		// additional check for corresponding element DomRef visibiltiy required for target zone checks during navigation mode.
-		// during navigation mode the domRef of valid overlays is given and the offsetWidth is 0. Therefor we need to check the visibility of the corresponding element additionally
-		var oParentElementDomRef = oParentElement && oParentElement.getDomRef && oParentElement.getDomRef();
-		var bAggregationElementVisibility = oParentElementDomRef ? DOMUtil.isVisible(oParentElementDomRef) : true;
-		return bAggregationOverlayVisibility || bAggregationElementVisibility;
-	};
-
 	/**
 	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay - Aggregation overlay to be checked for target zone
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Overlay being moved
@@ -168,30 +150,8 @@ sap.ui.define([
 	 * @protected
 	 */
 	ElementMover.prototype.checkTargetZone = function(oAggregationOverlay, oOverlay, bOverlayNotInDom) {
-		var oGeometry = oAggregationOverlay.getGeometry();
-		var bGeometryVisible = oGeometry && oGeometry.size.height > 0 && oGeometry.size.width > 0;
-		var oParentElement = oAggregationOverlay.getElement();
-
-		if (
-			(bOverlayNotInDom && !bGeometryVisible)
-			|| !bOverlayNotInDom && !this._checkAggregationOverlayVisibility(oAggregationOverlay, oParentElement)
-			|| !(oParentElement && oParentElement.getVisible && oParentElement.getVisible())
-		) {
-			return Promise.resolve(false);
-		}
-
-		// an aggregation can still have visible = true even if it has been removed from its parent
-		if (!oParentElement.getParent()) {
-			return Promise.resolve(false);
-		}
-
 		var oMovedOverlay = oOverlay || this.getMovedOverlay();
-		var oMovedElement = oMovedOverlay.getElement();
-		var sAggregationName = oAggregationOverlay.getAggregationName();
-		if (oMovedElement && ElementUtil.isValidForAggregation(oParentElement, sAggregationName, oMovedElement)) {
-			return Promise.resolve(true);
-		}
-		return Promise.resolve(false);
+		return ElementUtil.checkTargetZone(oAggregationOverlay, oMovedOverlay, bOverlayNotInDom);
 	};
 
 	/**

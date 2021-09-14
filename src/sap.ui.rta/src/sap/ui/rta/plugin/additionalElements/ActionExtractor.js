@@ -10,8 +10,8 @@ sap.ui.define([
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
-	"sap/ui/rta/plugin/RTAElementMover",
-	"sap/ui/rta/plugin/additionalElements/AdditionalElementsUtils"
+	"sap/ui/rta/plugin/additionalElements/AdditionalElementsUtils",
+	"sap/ui/rta/Utils"
 ], function(
 	difference,
 	merge,
@@ -20,8 +20,8 @@ sap.ui.define([
 	ElementUtil,
 	OverlayRegistry,
 	DelegateMediatorAPI,
-	RTAElementMover,
-	AdditionalElementsUtils
+	AdditionalElementsUtils,
+	Utils
 ) {
 	"use strict";
 
@@ -258,7 +258,7 @@ sap.ui.define([
 							// Check if the invisible element can be moved to the target aggregation
 							if (bRevealEnabled && (sSourceAggregation !== sTargetAggregation)) {
 								var oAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(sTargetAggregation);
-								return RTAElementMover.prototype.checkTargetZone(oAggregationOverlay, oOverlay, false, oPlugin);
+								return Utils.checkTargetZone(oAggregationOverlay, oOverlay, oPlugin);
 							}
 						}
 						return bRevealEnabled;
