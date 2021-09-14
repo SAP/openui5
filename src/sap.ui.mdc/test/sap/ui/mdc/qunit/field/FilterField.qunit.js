@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/field/FieldValueHelp",
+	"sap/ui/mdc/field/FieldInput", // async. loading of content control tested in FieldBase test
 	"sap/ui/mdc/field/FieldMultiInput", // async. loading of content control tested in FieldBase test
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/enum/BaseType",
@@ -19,6 +20,7 @@ sap.ui.define([
 		qutils,
 		FilterField,
 		FieldValueHelp,
+		FieldInput,
 		FieldMultiInput,
 		FilterOperatorUtil,
 		BaseType,
@@ -33,6 +35,7 @@ sap.ui.define([
 	var bValid;
 	var aChangedConditions;
 	var iCount = 0;
+	var oPromise;
 
 	var _myChangeHandler = function(oEvent) {
 		iCount++;
@@ -40,6 +43,7 @@ sap.ui.define([
 		sValue = oEvent.getParameter("value");
 		bValid = oEvent.getParameter("valid");
 		aChangedConditions = oEvent.getParameter("conditions");
+		oPromise = oEvent.getParameter("promise");
 	};
 
 	var sLiveId;
@@ -96,6 +100,7 @@ sap.ui.define([
 			sValue = null;
 			bValid = null;
 			aChangedConditions = null;
+			oPromise = null;
 			iLiveCount = 0;
 			sLiveId = null;
 			sLiveValue = null;
@@ -136,6 +141,93 @@ sap.ui.define([
 		assert.equal(iCount, 2, "change event fired again");
 		assert.notOk(bValid, "Value is not valid");
 		assert.equal(sValue, "1000", "change event wrongValue");
+
+	});
+
+	QUnit.test("clenaup wrong input for single value", function(assert) {
+
+		var fnDone = assert.async();
+		sap.ui.getCore().getMessageManager().registerObject(oFilterField, true); // to test valueState
+		oFilterField.setDataType("sap.ui.model.type.Date");
+		oFilterField.setMaxConditions(1);
+		oFilterField.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var aContent = oFilterField.getAggregation("_content");
+		var oContent = aContent && aContent.length > 0 && aContent[0];
+		oContent.focus();
+		jQuery(oContent.getFocusDomRef()).val("XXXX");
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+		assert.ok(oFilterField._bParseError, "ParseError fired");
+		assert.equal(iCount, 1, "change event fired again");
+		assert.notOk(bValid, "Value is not valid");
+		assert.equal(sValue, "XXXX", "Value of change event");
+		assert.deepEqual(oFilterField.getConditions(), [], "FilterField conditions");
+		assert.ok(oPromise, "Promise returned");
+		setTimeout(function() { // to wait for valueStateMessage
+			oPromise.then(function(vResult) {
+				assert.notOk(true, "Promise must not be resolved");
+				fnDone();
+			}).catch(function(oException) {
+				assert.ok(true, "Promise rejected");
+				assert.equal(oException, "XXXX", "wrongValue");
+				assert.equal(oFilterField.getValueState(), "Error", "ValueState");
+
+				// cleanup should remove valueState
+				oFilterField.setConditions([]);
+				setTimeout(function() { // to wait for ManagedObjectModel update
+					setTimeout(function() { // to wait for Message update
+						assert.equal(jQuery(oContent.getFocusDomRef()).val(), "", "no value shown");
+						assert.equal(oFilterField.getValueState(), "None", "ValueState removed");
+
+						fnDone();
+					}, 0);
+				}, 0);
+			});
+		}, 0);
+
+	});
+
+	QUnit.test("clenaup wrong input for multi value", function(assert) {
+
+		var fnDone = assert.async();
+		sap.ui.getCore().getMessageManager().registerObject(oFilterField, true); // to test valueState
+		oFilterField.setDataType("sap.ui.model.type.Date");
+		oFilterField.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var aContent = oFilterField.getAggregation("_content");
+		var oContent = aContent && aContent.length > 0 && aContent[0];
+		oContent.focus();
+		jQuery(oContent.getFocusDomRef()).val("XXXX");
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+		assert.ok(oFilterField._bParseError, "ParseError fired");
+		assert.equal(iCount, 1, "change event fired again");
+		assert.notOk(bValid, "Value is not valid");
+		assert.equal(sValue, "XXXX", "Value of change event");
+		assert.deepEqual(oFilterField.getConditions(), [], "FilterField conditions");
+		assert.ok(oPromise, "Promise returned");
+		setTimeout(function() { // to wait for valueStateMessage
+			oPromise.then(function(vResult) {
+				assert.notOk(true, "Promise must not be resolved");
+				fnDone();
+			}).catch(function(oException) {
+				assert.ok(true, "Promise rejected");
+				assert.equal(oException, "XXXX", "wrongValue");
+				assert.equal(oFilterField.getValueState(), "Error", "ValueState");
+
+				// cleanup should remove valueState
+				oFilterField.setConditions([]);
+				setTimeout(function() { // to wait for ManagedObjectModel update
+					setTimeout(function() { // to wait for Message update
+						assert.equal(jQuery(oContent.getFocusDomRef()).val(), "", "no value shown");
+						assert.equal(oFilterField.getValueState(), "None", "ValueState removed");
+
+						fnDone();
+					}, 0);
+				}, 0);
+			});
+		}, 0);
 
 	});
 
