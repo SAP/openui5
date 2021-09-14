@@ -1171,8 +1171,6 @@ sap.ui.define([
 			var iLength = this._oInput.getValue().length;
 			this._oInput.selectText(iLength, iLength);
 		}
-
-		this._resetTypeAhead();
 	};
 
 	/**

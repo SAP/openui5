@@ -390,6 +390,152 @@ sap.ui.define([
 		assert.strictEqual(spy.callCount, 1, "The value help was requested by pressing F4");
 	});
 
+	QUnit.test("sTypedInValue should be reset on item press", function(assert) {
+		// Arrange
+		var oSuggPopover, oSpy;
+		var oData = {
+			data: [
+				{key: "1", text: "Text 1"},
+				{key: "2", text: "Text 2"}
+			]
+		};
+		var oModel = new JSONModel(oData);
+		var oInput = new Input({
+			suggestionItems: {
+				path: "/data",
+				template: new Item({key: "{key}", text: "{text}"})
+			},
+			showSuggestion: true
+		});
+
+		oInput.setModel(oModel);
+		oSuggPopover = oInput._getSuggestionsPopover();
+		oSuggPopover._bDoTypeAhead = true;
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.onfocusin();
+		oInput._$input.trigger("focus").val("t").trigger("input");
+		oSuggPopover._oPopover.open();
+		this.clock.tick(300);
+
+		assert.strictEqual(oSuggPopover._sTypedInValue, "t", "_sTypedInValue is not empty");
+
+		// Act
+		oSpy = this.spy(oSuggPopover, "_resetTypeAhead");
+		qutils.triggerEvent("tap", oSuggPopover._oList.getItems()[0]);
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(300);
+
+		// Assert
+		assert.strictEqual(oSuggPopover._sTypedInValue, "", "_sTypedInValue is empty");
+		assert.strictEqual(oSpy.callCount, 1, "_resetTypeAhead was called exactly 1 time.");
+
+		// Clean
+		oInput.destroy();
+	});
+
+	QUnit.test("sTypedInValue should be reset on enter", function(assert) {
+		// Arrange
+		var oSuggPopover, oSpy;
+		var oData = {
+			data: [
+				{key: "1", text: "Text 1"},
+				{key: "2", text: "Text 2"}
+			]
+		};
+		var oModel = new JSONModel(oData);
+		var oInput = new Input({
+			suggestionItems: {
+				path: "/data",
+				template: new Item({key: "{key}", text: "{text}"})
+			},
+			showSuggestion: true
+		});
+
+		oInput.setModel(oModel);
+		oSuggPopover = oInput._getSuggestionsPopover();
+		oSuggPopover._bDoTypeAhead = true;
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.onfocusin();
+		oInput._$input.trigger("focus").val("t").trigger("input");
+		oSuggPopover._oPopover.open();
+		this.clock.tick(300);
+
+		assert.strictEqual(oSuggPopover._sTypedInValue, "t", "_sTypedInValue is not empty");
+
+		// Act
+		oSpy = this.spy(oSuggPopover, "_resetTypeAhead");
+		qutils.triggerKeyboardEvent(oInput._$input[0], KeyCodes.ENTER);
+		this.clock.tick();
+
+		// Assert
+		assert.strictEqual(oSuggPopover._sTypedInValue, "", "_sTypedInValue is empty");
+		assert.strictEqual(oSpy.callCount, 1, "_resetTypeAhead was called exactly 1 time.");
+
+		// Clean
+		oInput.destroy();
+	});
+
+	QUnit.test("sTypedInValue should be reset on enter - mobile", function(assert) {
+		// Arrange
+		var oSystem = {
+			desktop: false,
+			phone: true,
+			tablet: false
+		};
+		this.stub(Device, "system", oSystem);
+
+		var oData = {
+			data: [
+				{key: "1", text: "Text 1"},
+				{key: "2", text: "Text 2"}
+			]
+		};
+		var oModel = new JSONModel(oData);
+		var oInput = new Input({
+			suggestionItems: {
+				path: "/data",
+				template: new Item({key: "{key}", text: "{text}"})
+			},
+			showSuggestion: true
+		});
+		var oSuggPopover, oSpy, oPopupInput;
+
+		oInput.setModel(oModel);
+		oSuggPopover = oInput._getSuggestionsPopover();
+		oSuggPopover._bDoTypeAhead = true;
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.onfocusin();
+		oSuggPopover._oPopover.open();
+
+		oPopupInput = oSuggPopover._getInput();
+
+		oPopupInput._$input.trigger("focus").val("t").trigger("input");
+		this.clock.tick(300);
+
+		assert.strictEqual(oSuggPopover._sTypedInValue, "t", "_sTypedInValue is not empty");
+
+		// Act
+		oSpy = this.spy(oSuggPopover, "_resetTypeAhead");
+		qutils.triggerKeyboardEvent(oPopupInput._$input[0], KeyCodes.ENTER);
+		this.clock.tick(300);
+
+		// Assert
+		assert.strictEqual(oSuggPopover._sTypedInValue, "", "_sTypedInValue is empty");
+		assert.strictEqual(oSpy.callCount, 1, "_resetTypeAhead was called exactly 1 time.");
+
+		// Clean
+		oInput.destroy();
+	});
+
 	QUnit.test("Submit Event", function(assert) {
 
 		var sEvents = "";
