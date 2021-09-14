@@ -1032,16 +1032,21 @@ sap.ui.define([
 		oClickSpy = this.spy(oFileUploader.oFileUpload, "click");
 
 		// Act
+		oFileUploader.onkeydown(oFakeEvent);
 		oFileUploader.onkeyup(oFakeEvent);
+
 		// Assert
-		assert.strictEqual(oClickSpy.callCount, 1, "keyup executes click on the browse button");
+		assert.strictEqual(oClickSpy.callCount, 1, "SPACE key executes click on the browse button on key up");
 
 		//Prepare
 		oFakeEvent.keyCode = 13; // enter
+
 		// Act
 		oFileUploader.onkeydown(oFakeEvent);
+		oFileUploader.onkeyup(oFakeEvent);
+
 		// Assert
-		assert.strictEqual(oClickSpy.callCount, 2, "keyup executes click on the browse button");
+		assert.strictEqual(oClickSpy.callCount, 2, "ENTER key executes click on the browse button on key down");
 
 		// Clean
 		oFileUploader.destroy();
