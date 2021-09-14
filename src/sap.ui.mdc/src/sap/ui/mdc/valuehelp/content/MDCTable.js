@@ -534,7 +534,7 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	MDCTable.prototype.getListBinding = function() {
+	MDCTable.prototype._getListBinding = function() {
 		var oTable = this.getTable();
 		return oTable && oTable.getRowBinding();
 	};
@@ -549,7 +549,7 @@ sap.ui.define([
 		var oFilterBar = this._getPriorityFilterBar();
 
 		if (oTable && oFilterBar) {
-			var oListBinding = this.getListBinding();
+			var oListBinding = this._getListBinding();
 			var bListBindingSuspended = oListBinding && oListBinding.isSuspended();
 
 			if (oListBinding && !bListBindingSuspended && !this._bSearchTriggered) {

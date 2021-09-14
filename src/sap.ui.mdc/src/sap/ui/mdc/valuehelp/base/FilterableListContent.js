@@ -322,6 +322,17 @@ sap.ui.define([
 
 	FilterableListContent.prototype.onShow = function () {
 		ListContent.prototype.onShow.apply(this, arguments);
+
+		var oListBinding = this._getListBinding();
+		var oListBindingInfo = this._getListBindingInfo();
+
+		var bBindingSuspended = oListBinding && oListBinding.isSuspended();
+		var bBindingWillBeSuspended = !oListBinding && oListBindingInfo && oListBindingInfo.suspended;
+
+		if (bBindingSuspended || bBindingWillBeSuspended) {
+			return;
+		}
+
 		this.applyFilters(this.get_filterValue());
 	};
 
@@ -435,6 +446,10 @@ sap.ui.define([
 	};
 
 	FilterableListContent.prototype._getListBinding = function () {
+		throw new Error("FilterableListContent: Every filterable listcontent must implement this method.");
+	};
+
+	FilterableListContent.prototype._getListBindingInfo = function () {
 		throw new Error("FilterableListContent: Every filterable listcontent must implement this method.");
 	};
 
