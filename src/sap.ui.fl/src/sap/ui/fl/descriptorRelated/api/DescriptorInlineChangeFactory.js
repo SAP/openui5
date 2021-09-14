@@ -884,5 +884,22 @@ sap.ui.define([
 		return AppVariantInlineChangeFactory.create_ui5_setFlexExtensionPointEnabled(mPropertyBag);
 	};
 
+	/**
+	 * Creates an inline change of change type <code>appdescr_fiori_setAbstract</code>
+	 *
+	 * @param {object} mParameters - Parameters of the change type
+	 * @param {boolean} mParameters.abstract - Abstract property
+	 *
+	 * @return {Promise} Resolving when the descriptor inline change was created successfully (without back-end access)
+	 *
+	 * @private
+	 * @deprecated Since version 1.78
+	 * @ui5-restricted WebIDE
+	 */
+	 DescriptorInlineChangeFactory.create_fiori_setAbstract = function(mParameters) {
+		var mPropertyBag = _preparePropertyBag("appdescr_fiori_setAbstract", mParameters);
+		return AppVariantInlineChangeFactory.create_fiori_setAbstract(mPropertyBag);
+	};
+
 	return DescriptorInlineChangeFactory;
 });
