@@ -2,12 +2,13 @@
 sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/ui/core/IconPool",
+	"sap/ui/core/_IconRegistry",
 	"sap/base/Log",
 	"sap/ui/Device",
 	"sap/ui/core/library",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils"
-], function(Icon, IconPool, Log, Device, library, jQuery, qutils) {
+], function(Icon, IconPool, _IconRegistry, Log, Device, library, jQuery, qutils) {
 	"use strict";
 
 	// shortcut for type from sap.ui.core
@@ -22,7 +23,7 @@ sap.ui.define([
 	document.getElementById("dummy").style.display = "none";
 
 	var oIcon = new Icon("icon1", {
-		src: IconPool.getIconURI("wrench"),
+		src: _IconRegistry.getIconURI("wrench"),
 		size: "20px",
 		color: "#666666",
 		backgroundColor: "#FFFFFF",
@@ -139,7 +140,7 @@ sap.ui.define([
 	QUnit.test("Attach press handler", function(assert) {
 		var fn1 = function(){}, fn2 = function(){};
 		var oIcon = new Icon({
-			src: IconPool.getIconURI("manager"),
+			src: _IconRegistry.getIconURI("manager"),
 			press: fn1
 		});
 
@@ -164,7 +165,7 @@ sap.ui.define([
 
 	QUnit.test("Set mark on the tap/click event", function(assert) {
 		var oIcon = new Icon({
-			src: IconPool.getIconURI("manager")
+			src: _IconRegistry.getIconURI("manager")
 		});
 
 		var fnClick = oIcon.ontap ? oIcon.ontap : oIcon.onclick;
@@ -191,7 +192,7 @@ sap.ui.define([
 			oErrorLogSpy = sinon.spy(Log, "error");
 
 		var oIcon = new Icon({
-			src: IconPool.getIconURI("manager"),
+			src: _IconRegistry.getIconURI("manager"),
 			color: sInvalidColor
 		});
 
@@ -213,7 +214,7 @@ sap.ui.define([
 
 	QUnit.test("Set color with values in sap.ui.core.IconColor enum", function(assert) {
 		var oIcon = new Icon({
-			src: IconPool.getIconURI("manager"),
+			src: _IconRegistry.getIconURI("manager"),
 			color: IconColor.Critical
 		});
 
@@ -242,7 +243,7 @@ sap.ui.define([
 
 	QUnit.test("Set background-color with values in sap.ui.core.IconColor enum", function(assert) {
 		var oIcon = new Icon({
-			src: IconPool.getIconURI("manager"),
+			src: _IconRegistry.getIconURI("manager"),
 			backgroundColor: IconColor.Critical
 		});
 
@@ -271,7 +272,7 @@ sap.ui.define([
 
 	QUnit.test("set src should also change the tooltip", function(assert) {
 		var oIcon = new Icon({
-			src: IconPool.getIconURI("delete")
+			src: _IconRegistry.getIconURI("delete")
 		});
 
 		oIcon.placeAt("uiAreaA");
@@ -285,7 +286,7 @@ sap.ui.define([
 		assert.ok(!sLabel, "aria-label hasn't been set");
 		assert.ok(!sLabelledBy, "No aria-labelledby has been set");
 
-		oIcon.setSrc(IconPool.getIconURI("add"));
+		oIcon.setSrc(_IconRegistry.getIconURI("add"));
 		sap.ui.getCore().applyChanges();
 
 		assert.notEqual(oIcon.$().attr("title"), sTitle, "Tooltip should have changed when changing the icon src.");
@@ -298,7 +299,7 @@ sap.ui.define([
 	QUnit.test("set src should not change aria-label when 'labelledby' is set", function(assert) {
 		var sLabelledById = "foo",
 			oIcon = new Icon({
-				src: IconPool.getIconURI("delete"),
+				src: _IconRegistry.getIconURI("delete"),
 				ariaLabelledBy: sLabelledById
 			});
 
@@ -320,7 +321,7 @@ sap.ui.define([
 		assert.equal(aLabels.length, 1, "ARIA labelledby should only have the set ariaLabelledBy");
 		assert.equal(aLabels[0], sLabelledById, "The first label id in aLabelledBy should be the one set to ariaLabelledBy");
 
-		oIcon.setSrc(IconPool.getIconURI("add"));
+		oIcon.setSrc(_IconRegistry.getIconURI("add"));
 		sap.ui.getCore().applyChanges();
 
 		assert.notEqual(oIcon.$().attr("title"), sTitle, "Tooltip should have changed when changing the icon src.");
@@ -354,7 +355,7 @@ sap.ui.define([
 			this.sTooltip = "tooltip";
 			this.sAlt = "alt";
 			this.oAriaIcon = new Icon({
-				src: IconPool.getIconURI(this.sIconName)
+				src: _IconRegistry.getIconURI(this.sIconName)
 			});
 
 			this.oAriaIcon.placeAt("qunit-fixture");
@@ -559,7 +560,7 @@ sap.ui.define([
 	QUnit.test("useIconTooltip = true (default) / with tooltip", function (assert) {
 		var sTooltip = "this is a tooltip";
 		this.createIcon({
-			src: IconPool.getIconURI("add"),
+			src: _IconRegistry.getIconURI("add"),
 			tooltip: sTooltip
 		});
 		assert.equal(this.oIcon.$().attr("title"), sTooltip, "title should be set");
@@ -569,7 +570,7 @@ sap.ui.define([
 
 	QUnit.test("useIconTooltip = false / without tooltip", function (assert) {
 		this.createIcon({
-			src: IconPool.getIconURI("add"),
+			src: _IconRegistry.getIconURI("add"),
 			useIconTooltip: false
 		});
 		assert.equal(this.oIcon.$().attr("title"), undefined, "title should be undefined");
@@ -580,7 +581,7 @@ sap.ui.define([
 	QUnit.test("useIconTooltip = false / with tooltip", function (assert) {
 		var sTooltip = "this is a tooltip";
 		this.createIcon({
-			src: IconPool.getIconURI("add"),
+			src: _IconRegistry.getIconURI("add"),
 			useIconTooltip: false,
 			tooltip: sTooltip
 		});
@@ -621,14 +622,14 @@ sap.ui.define([
 			lazy: true
 		});
 
-		var oLoadFontMetadataSpy = sinon.spy(IconPool, "_loadFontMetadata");
+		var oLoadFontMetadataSpy = sinon.spy(_IconRegistry, "_loadFontMetadata");
 
 		// instantiate icon
 		this.createIcon({src: "sap-icon://tnt/technicalsystem"});
 		assert.strictEqual(this.oIcon.$().attr("data-sap-ui-icon-content"), undefined, "The icon content attribute is not set yet while the font is loading");
 		assert.ok(oLoadFontMetadataSpy.called, "The loading of metadata for new font is triggered");
 
-		return IconPool.getIconInfo("sap-icon://tnt/technicalsystem", "async").then(function() {
+		return _IconRegistry.getIconInfo("sap-icon://tnt/technicalsystem", "async").then(function() {
 			sap.ui.getCore().applyChanges();
 
 			assert.strictEqual(this.oIcon.$().attr("data-sap-ui-icon-content"), String.fromCharCode(0xe000), "Icon content has been set properly after the font is loaded");

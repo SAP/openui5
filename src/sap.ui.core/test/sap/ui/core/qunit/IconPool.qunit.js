@@ -342,13 +342,14 @@ sap.ui.define([
 			lazy: true
 		});
 
-		IconPool._loadFontMetadata("wrong", true).then(function() {
+		IconPool.getIconInfo("dummy", "wrong", "async").then(function() {
 			assert.ok(true, "The _loadFontMetadata promise failed");
 			assert.strictEqual(oErrorSpy.callCount, 1, "Loading a font with wrong metadata triggers an error");
 
 			done();
 		});
 	});
+
 
 	QUnit.test("registerFont (lazy loading)", function(assert) {
 		// stub the ajax method

@@ -7,7 +7,7 @@ sap.ui.define([
 	'sap/base/assert',
 	'../Device',
 	'./Control',
-	'./IconPool',
+	'./_IconRegistry',
 	'./InvisibleText',
 	'./library',
 	"./IconRenderer",
@@ -19,7 +19,7 @@ sap.ui.define([
 		assert,
 		Device,
 		Control,
-		IconPool,
+		_IconRegistry,
 		InvisibleText,
 		library,
 		IconRenderer,
@@ -393,7 +393,7 @@ sap.ui.define([
 	/* =========================================================== */
 
 	Icon.prototype.setSrc = function(sSrc) {
-		assert(sSrc == null || IconPool.isIconURI(sSrc), this + ": Property 'src' (value: '" + sSrc + "') should be a valid Icon URI (sap-icon://...)");
+		assert(sSrc == null || _IconRegistry.isIconURI(sSrc), this + ": Property 'src' (value: '" + sSrc + "') should be a valid Icon URI (sap-icon://...)");
 
 		return this.setProperty("src", sSrc);
 	};
@@ -565,7 +565,7 @@ sap.ui.define([
 		}
 
 		var bHasPressListeners = this.hasListeners("press");
-		var oIconInfo = IconPool.getIconInfo(this.getSrc(), undefined, "sync");
+		var oIconInfo = _IconRegistry.getIconInfo(this.getSrc(), undefined, "sync");
 
 		return {
 			role: bHasPressListeners ? "button" : "img",
