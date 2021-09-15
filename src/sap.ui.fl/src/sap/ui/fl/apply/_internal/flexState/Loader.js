@@ -24,7 +24,7 @@ sap.ui.define([
 		return vSelector;
 	}
 
-	function _migrateSelectorFlags(bMigrationNeeded, mFlexData) {
+	function migrateSelectorFlags(bMigrationNeeded, mFlexData) {
 		if (bMigrationNeeded) {
 			[
 				mFlexData.changes,
@@ -57,11 +57,11 @@ sap.ui.define([
 		return mFlexData;
 	}
 
-	function _getMigrationFlagFromManifest(oManifest) {
-		return oManifest && !!oManifest["sap.ovp"];
+	function isMigrationNeeded(oManifest) {
+		return oManifest && !!ManifestUtils.getOvpEntry(oManifest);
 	}
 
-	function _formatFlexData(mFlexData) {
+	function formatFlexData(mFlexData) {
 		// TODO: rename "changes" everywhere to avoid oResponse.changes.changes calls
 		return {
 			changes: mFlexData,
@@ -106,7 +106,7 @@ sap.ui.define([
 					reference: mPropertyBag.reference,
 					componentName: sComponentName,
 					partialFlexData: mPropertyBag.partialFlexData
-				}).then(_formatFlexData);
+				}).then(formatFlexData);
 			}
 
 			// the cache key cannot be used in case of a reinitialization
@@ -120,7 +120,7 @@ sap.ui.define([
 				appDescriptor: mPropertyBag.manifest.getRawJson ? mPropertyBag.manifest.getRawJson() : mPropertyBag.manifest,
 				version: mPropertyBag.version,
 				allContexts: mPropertyBag.allContexts
-			}).then(_migrateSelectorFlags.bind(undefined, _getMigrationFlagFromManifest(mPropertyBag.manifest))).then(_formatFlexData);
+			}).then(migrateSelectorFlags.bind(undefined, isMigrationNeeded(mPropertyBag.manifest))).then(formatFlexData);
 		}
 	};
 });
