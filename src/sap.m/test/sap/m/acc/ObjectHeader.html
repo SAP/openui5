@@ -236,7 +236,14 @@
 
 		new sap.m.App({
 			pages: new sap.m.Page({
-				landmarkInfo: new sap.m.PageAccessibleLandmarkInfo(),
+				landmarkInfo: new sap.m.PageAccessibleLandmarkInfo({
+					rootRole: "Region",
+					rootLabel: "Object Header Accessiblity Test Page",
+					contentRole: "Main",
+					contentLabel: "Object Header Instances",
+					headerRole: "Region",
+					headerLabel: "Object Header Accessibility Test Page Header"
+				}),
 				title: "ObjectHeader Accessibility Test Page",
 				titleLevel: "H1",
 				content: oLayout
