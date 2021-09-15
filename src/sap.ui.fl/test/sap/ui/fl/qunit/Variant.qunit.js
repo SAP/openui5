@@ -218,6 +218,7 @@ sap.ui.define([
 					creation: "",
 					originalLanguage: Utils.getCurrentLanguage(),
 					conditions: {},
+					contexts: {},
 					support: {
 						generator: "Change.createInitialFileContent",
 						service: "",
@@ -263,6 +264,7 @@ sap.ui.define([
 					creation: "",
 					originalLanguage: Utils.getCurrentLanguage(),
 					conditions: {},
+					contexts: {},
 					support: {
 						generator: sGenerator,
 						service: "",

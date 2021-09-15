@@ -117,7 +117,8 @@ sap.ui.define([
 							title: "Standard",
 							favorite: true,
 							visible: true,
-							executeOnSelect: false
+							executeOnSelect: false,
+							contexts: {}
 						}, {
 							author: "Me",
 							key: "variant0",
@@ -125,7 +126,8 @@ sap.ui.define([
 							title: "variant A",
 							favorite: true,
 							visible: true,
-							executeOnSelect: false
+							executeOnSelect: false,
+							contexts: { role: ["ADMINISTRATOR", "HR"], country: ["DE"] }
 						}, {
 							author: "Me",
 							key: "variant1",
@@ -133,7 +135,8 @@ sap.ui.define([
 							title: "variant B",
 							favorite: false,
 							visible: true,
-							executeOnSelect: true
+							executeOnSelect: true,
+							contexts: { role: ["ADMINISTRATOR"], country: ["DE"] }
 						}, {
 							author: "Not Me",
 							key: "variant2",
@@ -141,7 +144,8 @@ sap.ui.define([
 							title: "variant C",
 							favorite: false,
 							visible: true,
-							executeOnSelect: true
+							executeOnSelect: true,
+							contexts: {}
 						}, {
 							author: "Me",
 							key: "variant3",
@@ -149,7 +153,8 @@ sap.ui.define([
 							title: "variant D",
 							favorite: false,
 							visible: true,
-							executeOnSelect: true
+							executeOnSelect: true,
+							contexts: { role: [], country: [] }
 						}
 					]
 				}
@@ -229,7 +234,28 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'getData'", function(assert) {
-			var sExpectedJSON = '{"variantMgmtId1":{"currentVariant":"variant1","defaultVariant":"variant1","originalCurrentVariant":"variant1","originalDefaultVariant":"variant1","variants":[{"author":"' + VariantUtil.DEFAULT_AUTHOR + '","favorite":true,"key":"variantMgmtId1","layer":"VENDOR","originalFavorite":true,"originalTitle":"Standard","originalVisible":true,"originalExecuteOnSelect":false,"executeOnSelect":false,"title":"Standard","visible":true},{"author":"Me","favorite":true,"key":"variant0","layer":"' + Layer.CUSTOMER + '","originalFavorite":true,"originalTitle":"variant A","originalVisible":true,"originalExecuteOnSelect":false,"executeOnSelect":false,"title":"variant A","visible":true},{"author":"Me","favorite":false,"key":"variant1","layer":"' + Layer.PUBLIC + '","originalFavorite":false,"originalTitle":"variant B","originalVisible":true,"originalExecuteOnSelect":true,"executeOnSelect":true,"title":"variant B","visible":true},{"author":"Not Me","favorite":false,"key":"variant2","layer":"' + Layer.PUBLIC + '","originalFavorite":false,"originalTitle":"variant C","originalVisible":true,"originalExecuteOnSelect":true,"executeOnSelect":true,"title":"variant C","visible":true},{"author":"Me","favorite":false,"key":"variant3","layer":"' + Layer.USER + '","originalFavorite":false,"originalTitle":"variant D","originalVisible":true,"originalExecuteOnSelect":true,"executeOnSelect":true,"title":"variant D","visible":true}]}}';
+			var sExpectedJSON = '{"variantMgmtId1":' +
+				'{' +
+					'"currentVariant": "variant1",' +
+					'"defaultVariant": "variant1",' +
+					'"originalCurrentVariant": "variant1",' +
+					'"originalDefaultVariant": "variant1",' +
+					'"variants":[' +
+						'{' +
+							'"author":"' + VariantUtil.DEFAULT_AUTHOR + '",' +
+							'"favorite":true,' +
+							'"key":"variantMgmtId1",' +
+							'"layer":"VENDOR",' +
+							'"originalFavorite":true,' +
+							'"originalTitle":"Standard",' +
+							'"originalVisible":true,' +
+							'"originalExecuteOnSelect":false,' +
+							'"executeOnSelect":false,' +
+							'"title":"Standard",' +
+							'"visible":true,' +
+							'"contexts":{},' +
+							'"originalContexts":{}' +
+						'},{"author":"Me","favorite":true,"key":"variant0","layer":"' + Layer.CUSTOMER + '","originalFavorite":true,"originalTitle":"variant A","originalVisible":true,"originalExecuteOnSelect":false,"executeOnSelect":false,"title":"variant A","visible":true, "contexts":{ "role": ["ADMINISTRATOR", "HR"], "country": ["DE"] }, "originalContexts":{ "role": ["ADMINISTRATOR", "HR"], "country": ["DE"] }},{"author":"Me","favorite":false,"key":"variant1","layer":"' + Layer.PUBLIC + '","originalFavorite":false,"originalTitle":"variant B","originalVisible":true,"originalExecuteOnSelect":true,"executeOnSelect":true,"title":"variant B","visible":true, "contexts":{ "role": ["ADMINISTRATOR"], "country": ["DE"] }, "originalContexts": { "role": ["ADMINISTRATOR"], "country": ["DE"] }},{"author":"Not Me","favorite":false,"key":"variant2","layer":"' + Layer.PUBLIC + '","originalFavorite":false,"originalTitle":"variant C","originalVisible":true,"originalExecuteOnSelect":true,"executeOnSelect":true,"title":"variant C","visible":true, "contexts": {}, "originalContexts": {}},{"author":"Me","favorite":false,"key":"variant3","layer":"' + Layer.USER + '","originalFavorite":false,"originalTitle":"variant D","originalVisible":true,"originalExecuteOnSelect":true,"executeOnSelect":true,"title":"variant D","visible":true, "contexts":{ "role": [], "country": [] }, "originalContexts":{ "role": [], "country": [] }}]}}';
 			var sCurrentVariant = this.oModel.getCurrentVariantReference("variantMgmtId1");
 			assert.deepEqual(this.oModel.getData(), JSON.parse(sExpectedJSON));
 			assert.equal(sCurrentVariant, "variant1", "then the key of the current variant is returned");
@@ -423,7 +449,7 @@ sap.ui.define([
 			assert.equal(sPropertyValue, this.oData["variantMgmtId1"].variants[2].title, "then the correct title value is returned");
 		});
 
-		QUnit.test("when calling 'setVariantProperties' for 'setTitle' to add a change", function(assert) {
+		QUnit.test("when calling 'addVariantChange' for 'setTitle' to add a change", function(assert) {
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
@@ -435,7 +461,7 @@ sap.ui.define([
 				appComponent: this.oComponent
 			};
 
-			var oChange = this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, true);
+			var oChange = this.oModel.addVariantChange("variantMgmtId1", mPropertyBag);
 			assert.equal(oChange.getText("title"), mPropertyBag.title, "then the new change created with the new title");
 			assert.equal(oChange.getChangeType(), "setTitle", "then the new change created with 'setTitle' as changeType");
 			assert.equal(oChange.getFileType(), "ctrl_variant_change", "then the new change created with 'ctrl_variant_change' as fileType");
@@ -445,7 +471,7 @@ sap.ui.define([
 			assert.equal(fnUpdateChangesForVariantManagementInMap.callCount, 1, "then VariantManagementState.updateChangesForVariantManagementInMap() was called");
 		});
 
-		QUnit.test("when calling 'setVariantProperties' for 'setTitle' to delete a change", function(assert) {
+		QUnit.test("when calling 'deleteVariantChange' for 'setTitle' to delete a change", function(assert) {
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnChangeStub = sandbox.stub().returns({
@@ -455,19 +481,18 @@ sap.ui.define([
 			var mPropertyBag = {
 				changeType: "setTitle",
 				title: "Old Title",
-				variantReference: "variant1",
-				change: fnChangeStub()
+				variantReference: "variant1"
 			};
 
-			var oChange = this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, false);
+			var oChange = this.oModel.deleteVariantChange("variantMgmtId1", mPropertyBag, fnChangeStub());
 			assert.notOk(oChange, "then no change returned");
-			assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change), "then 'FlexController.deleteChange' called with the passed change");
+			assert.ok(fnDeleteChangeStub.calledWith(fnChangeStub()), "then 'FlexController.deleteChange' called with the passed change");
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[1].title, mPropertyBag.title, "then the new title updated in the VariantModel");
 			assert.equal(fnSetVariantDataStub.callCount, 1, "then VariantManagementState.setVariant() was called");
 			assert.equal(fnUpdateChangesForVariantManagementInMap.callCount, 1, "then VariantManagementState.updateChangesForVariantManagementInMap() was called");
 		});
 
-		QUnit.test("when calling 'setVariantProperties' for 'setFavorite' to add a change", function(assert) {
+		QUnit.test("when calling 'addVariantChange' for 'setFavorite' to add a change", function(assert) {
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
@@ -479,7 +504,7 @@ sap.ui.define([
 				appComponent: this.oComponent
 			};
 
-			var oChange = this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, true);
+			var oChange = this.oModel.addVariantChange("variantMgmtId1", mPropertyBag);
 			assert.equal(oChange.getContent().favorite, mPropertyBag.favorite, "then the new change created with the parameter 'favorite' in content");
 			assert.equal(oChange.getChangeType(), "setFavorite", "then the new change created with 'setFavorite' as changeType");
 			assert.equal(oChange.getFileType(), "ctrl_variant_change", "then the new change created with 'ctrl_variant_change' as fileType");
@@ -489,7 +514,7 @@ sap.ui.define([
 			assert.equal(fnUpdateChangesForVariantManagementInMap.callCount, 1, "then VariantManagementState.updateChangesForVariantManagementInMap() was called");
 		});
 
-		QUnit.test("when calling 'setVariantProperties' for 'setFavorite' to delete a change", function(assert) {
+		QUnit.test("when calling 'deleteVariantChange' for 'setFavorite' to delete a change", function(assert) {
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnChangeStub = sandbox.stub().returns({
@@ -499,19 +524,18 @@ sap.ui.define([
 			var mPropertyBag = {
 				changeType: "setFavorite",
 				favorite: true,
-				variantReference: "variant1",
-				change: fnChangeStub()
+				variantReference: "variant1"
 			};
 
-			var oChange = this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, false);
+			var oChange = this.oModel.deleteVariantChange("variantMgmtId1", mPropertyBag, fnChangeStub());
 			assert.notOk(oChange, "then no change returned");
-			assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change), "then 'FlexController.deleteChange' called with the passed change");
+			assert.ok(fnDeleteChangeStub.calledWith(fnChangeStub()), "then 'FlexController.deleteChange' called with the passed change");
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[1].favorite, mPropertyBag.favorite, "then the parameter 'favorite' updated in the VariantModel");
 			assert.equal(fnSetVariantDataStub.callCount, 1, "then VariantManagementState.setVariant() was called");
 			assert.equal(fnUpdateChangesForVariantManagementInMap.callCount, 1, "then VariantManagementState.updateChangesForVariantManagementInMap() was called");
 		});
 
-		QUnit.test("when calling 'setVariantProperties' for 'setVisible' to add a change", function(assert) {
+		QUnit.test("when calling 'addVariantChange' for 'setVisible' to add a change", function(assert) {
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
@@ -523,7 +547,7 @@ sap.ui.define([
 				appComponent: this.oComponent
 			};
 
-			var oChange = this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, true);
+			var oChange = this.oModel.addVariantChange("variantMgmtId1", mPropertyBag);
 			assert.equal(oChange.getContent().visible, mPropertyBag.visible, "then the new change created with the parameter 'visible' in content");
 			assert.equal(oChange.getChangeType(), "setVisible", "then the new change created with 'setVisible' as changeType");
 			assert.equal(oChange.getFileType(), "ctrl_variant_change", "then the new change created with 'ctrl_variant_change' as fileType");
@@ -533,7 +557,7 @@ sap.ui.define([
 			assert.equal(fnUpdateChangesForVariantManagementInMap.callCount, 1, "then VariantManagementState.updateChangesForVariantManagementInMap() was called");
 		});
 
-		QUnit.test("when calling 'setVariantProperties' for 'setVisible' to delete a change", function(assert) {
+		QUnit.test("when calling 'deleteVariantChange' for 'setVisible' to delete a change", function(assert) {
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnChangeStub = sandbox.stub().returns({
@@ -543,19 +567,18 @@ sap.ui.define([
 			var mPropertyBag = {
 				changeType: "setVisible",
 				visible: true,
-				variantReference: "variant1",
-				change: fnChangeStub()
+				variantReference: "variant1"
 			};
 
-			var oChange = this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, false);
+			var oChange = this.oModel.deleteVariantChange("variantMgmtId1", mPropertyBag, fnChangeStub());
 			assert.notOk(oChange, "then no change returned");
-			assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change), "then 'FlexController.deleteChange' called with the passed change");
+			assert.ok(fnDeleteChangeStub.calledWith(fnChangeStub()), "then 'FlexController.deleteChange' called with the passed change");
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[1].visible, mPropertyBag.visible, "then the parameter 'visible' updated in the VariantModel");
 			assert.equal(fnSetVariantDataStub.callCount, 1, "then VariantManagementState.setVariant() was called");
 			assert.equal(fnUpdateChangesForVariantManagementInMap.callCount, 1, "then VariantManagementState.updateChangesForVariantManagementInMap() was called");
 		});
 
-		QUnit.test("when calling 'setVariantProperties' for 'setExecuteOnSelect' to add a change", function(assert) {
+		QUnit.test("when calling 'addVariantChange' for 'setExecuteOnSelect' to add a change", function(assert) {
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(1);
 			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
@@ -567,7 +590,7 @@ sap.ui.define([
 				appComponent: this.oComponent
 			};
 
-			var oChange = this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, true);
+			var oChange = this.oModel.addVariantChange("variantMgmtId1", mPropertyBag);
 			assert.equal(oChange.getContent().executeOnSelect, mPropertyBag.executeOnSelect, "then the new change created with the parameter 'executeOnSelect' in content");
 			assert.equal(oChange.getChangeType(), "setExecuteOnSelect", "then the new change created with 'setExecuteOnSelect' as changeType");
 			assert.equal(oChange.getFileType(), "ctrl_variant_change", "then the new change created with 'ctrl_variant_change' as fileType");
@@ -577,7 +600,7 @@ sap.ui.define([
 			assert.ok(fnUpdateChangesForVariantManagementInMap.calledOnce, "then VariantManagementState.updateChangesForVariantManagementInMap() was called");
 		});
 
-		QUnit.test("when calling 'setVariantProperties' for 'setExecuteOnSelect' to delete a change", function(assert) {
+		QUnit.test("when calling 'deleteVariantChange' for 'setExecuteOnSelect' to delete a change", function(assert) {
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(1);
 			var fnChangeStub = sandbox.stub().returns({
@@ -587,19 +610,18 @@ sap.ui.define([
 			var mPropertyBag = {
 				changeType: "setExecuteOnSelect",
 				executeOnSelect: false,
-				variantReference: "variant1",
-				change: fnChangeStub()
+				variantReference: "variant1"
 			};
 
-			var oChange = this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, false);
+			var oChange = this.oModel.deleteVariantChange("variantMgmtId1", mPropertyBag, fnChangeStub());
 			assert.notOk(oChange, "then no change returned");
-			assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change), "then 'FlexController.deleteChange' called with the passed change");
+			assert.ok(fnDeleteChangeStub.calledWith(fnChangeStub()), "then 'FlexController.deleteChange' called with the passed change");
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[1].executeOnSelect, mPropertyBag.executeOnSelect, "then the parameter 'executeOnSelect' updated in the VariantModel");
 			assert.ok(fnSetVariantDataStub.callCount, 0, "then '_setVariantData' of VariantController not called");
 			assert.ok(fnUpdateChangesForVariantManagementInMap.calledOnce, "then VariantManagementState.updateChangesForVariantManagementInMap() was called");
 		});
 
-		QUnit.test("when calling 'setVariantProperties' for 'setDefault' to add a change", function(assert) {
+		QUnit.test("when calling 'addVariantChange' for 'setDefault' to add a change", function(assert) {
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
 			var mPropertyBag = {
@@ -610,7 +632,7 @@ sap.ui.define([
 				appComponent: this.oComponent
 			};
 
-			var oChange = this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, true);
+			var oChange = this.oModel.addVariantChange("variantMgmtId1", mPropertyBag);
 			assert.equal(oChange.getContent().defaultVariant, mPropertyBag.defaultVariant, "then the new change created with the parameter 'visible' in content");
 			assert.equal(oChange.getChangeType(), "setDefault", "then the new change created with 'setDefault' as changeType");
 			assert.equal(oChange.getFileType(), "ctrl_variant_management_change", "then the new change created with 'ctrl_variant_change' as fileType");
@@ -619,7 +641,7 @@ sap.ui.define([
 			assert.equal(fnUpdateChangesForVariantManagementInMap.callCount, 1, "then VariantManagementState.updateChangesForVariantManagementInMap() was called");
 		});
 
-		QUnit.test("when calling 'setVariantProperties' for 'setDefault' to delete a change", function(assert) {
+		QUnit.test("when calling 'deleteVariantChange' for 'setDefault' to delete a change", function(assert) {
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnChangeStub = sandbox.stub().returns({
 				getDefinition: function() {}
@@ -628,18 +650,17 @@ sap.ui.define([
 			var mPropertyBag = {
 				changeType: "setDefault",
 				defaultVariant: "variant1",
-				variantManagementReference: "variantMgmtId1",
-				change: fnChangeStub()
+				variantManagementReference: "variantMgmtId1"
 			};
 
-			var oChange = this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, false);
+			var oChange = this.oModel.deleteVariantChange("variantMgmtId1", mPropertyBag, fnChangeStub());
 			assert.notOk(oChange, "then no change returned");
-			assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change), "then 'FlexController.deleteChange' called with the passed change");
+			assert.ok(fnDeleteChangeStub.calledWith(fnChangeStub()), "then 'FlexController.deleteChange' called with the passed change");
 			assert.equal(this.oModel.getData()["variantMgmtId1"].defaultVariant, mPropertyBag.defaultVariant, "then the parameter 'defaultVariant' updated in the VariantModel");
 			assert.equal(fnUpdateChangesForVariantManagementInMap.callCount, 1, "then VariantManagementState.updateChangesForVariantManagementInMap() was called");
 		});
 
-		QUnit.test("when calling 'setVariantProperties' for 'setDefault' to delete a change while current variant is not the default variant", function(assert) {
+		QUnit.test("when calling 'deleteVariantChange' for 'setDefault' to delete a change while current variant is not the default variant", function(assert) {
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnChangeStub = sandbox.stub().returns({
 				getDefinition: function() {}
@@ -649,14 +670,13 @@ sap.ui.define([
 			var mPropertyBag = {
 				changeType: "setDefault",
 				defaultVariant: "variant0",
-				variantManagementReference: "variantMgmtId1",
-				change: fnChangeStub()
+				variantManagementReference: "variantMgmtId1"
 			};
 
-			var oChange = this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, false);
+			var oChange = this.oModel.deleteVariantChange("variantMgmtId1", mPropertyBag, fnChangeStub());
 			assert.ok(fnUpdateCurrentVariantStub.calledOnce, "then 'updateCurrentVariant' called");
 			assert.notOk(oChange, "then no change returned");
-			assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change), "then 'FlexController.deleteChange' called with the passed change");
+			assert.ok(fnDeleteChangeStub.calledWith(fnChangeStub()), "then 'FlexController.deleteChange' called with the passed change");
 			assert.equal(this.oModel.getData()["variantMgmtId1"].defaultVariant, mPropertyBag.defaultVariant, "then the parameter 'defaultVariant' updated in the VariantModel");
 			assert.ok(fnUpdateChangesForVariantManagementInMap.calledOnce, "then VariantManagementState.updateChangesForVariantManagementInMap() was called");
 		});
@@ -683,7 +703,7 @@ sap.ui.define([
 			// mock current variant id to make it different
 			this.oModel.oData["variantMgmtId1"].currentVariant = "variantCurrent";
 
-			this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, true);
+			this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag);
 			assert.ok(URLHandler.update.calledWithExactly({
 				parameters: [this.oModel.oData["variantMgmtId1"].currentVariant],
 				updateURL: !this.oModel._bDesignTimeMode,
@@ -712,7 +732,7 @@ sap.ui.define([
 			// set adaptation mode false
 			this.oModel._bDesignTimeMode = false;
 
-			this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, true);
+			this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag);
 			assert.ok(URLHandler.update.calledWithExactly({
 				parameters: [],
 				updateURL: !this.oModel._bDesignTimeMode,
@@ -873,6 +893,9 @@ sap.ui.define([
 					content: {
 						title: "variant A"
 					},
+					contexts: {
+						role: ["testRole"]
+					},
 					selector: {},
 					layer: Layer.CUSTOMER,
 					namespace: "Dummy.Component"
@@ -886,7 +909,10 @@ sap.ui.define([
 				sourceVariantReference: "variant0",
 				variantManagementReference: "variantMgmtId1",
 				layer: Layer.CUSTOMER,
-				title: "variant A Copy"
+				title: "variant A Copy",
+				contexts: {
+					role: ["testRole"]
+				}
 			};
 
 			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
@@ -909,6 +935,7 @@ sap.ui.define([
 					content: {
 						title: "variant A"
 					},
+					contexts: {},
 					selector: {},
 					layer: Layer.VENDOR,
 					namespace: "Dummy.Component"
@@ -922,7 +949,8 @@ sap.ui.define([
 				sourceVariantReference: "variant0",
 				variantManagementReference: "variantMgmtId1",
 				layer: Layer.CUSTOMER,
-				title: "variant A Copy"
+				title: "variant A Copy",
+				contexts: {}
 			};
 
 			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
@@ -966,6 +994,7 @@ sap.ui.define([
 					content: {
 						title: "variant A"
 					},
+					contexts: {},
 					selector: {},
 					layer: Layer.VENDOR,
 					namespace: "Dummy.Component"
@@ -979,7 +1008,8 @@ sap.ui.define([
 				sourceVariantReference: "variant0",
 				variantManagementReference: "variantMgmtId1",
 				layer: Layer.CUSTOMER,
-				title: "variant A Copy"
+				title: "variant A Copy",
+				contexts: {}
 			};
 
 			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
@@ -1037,6 +1067,7 @@ sap.ui.define([
 					content: {
 						title: "variant A"
 					},
+					contexts: {},
 					selector: {},
 					layer: Layer.VENDOR,
 					namespace: "Dummy.Component"
@@ -1050,7 +1081,8 @@ sap.ui.define([
 				sourceVariantReference: "variant0",
 				variantManagementReference: "variantMgmtId1",
 				title: "variant A Copy",
-				layer: Layer.USER
+				layer: Layer.USER,
+				contexts: {}
 			};
 
 			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
@@ -1081,6 +1113,7 @@ sap.ui.define([
 					content: {
 						title: "variant A"
 					},
+					contexts: {},
 					selector: {},
 					namespace: "Dummy.Component"
 				},
@@ -1093,7 +1126,8 @@ sap.ui.define([
 				sourceVariantReference: "variant0",
 				variantManagementReference: "variantMgmtId1",
 				layer: Layer.CUSTOMER,
-				title: "variant A Copy"
+				title: "variant A Copy",
+				contexts: {}
 			};
 
 			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns([]);
@@ -1119,6 +1153,7 @@ sap.ui.define([
 						title: "variant A"
 					},
 					selector: {},
+					contexts: {},
 					namespace: "Dummy.Component"
 				},
 				controlChanges: [],
@@ -1130,7 +1165,8 @@ sap.ui.define([
 				sourceVariantReference: "variant0",
 				variantManagementReference: "variantMgmtId1",
 				layer: Layer.USER,
-				title: "variant A Copy"
+				title: "variant A Copy",
+				contexts: {}
 			};
 
 			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns([]);
@@ -1174,6 +1210,7 @@ sap.ui.define([
 					content: {
 						title: "variant A"
 					},
+					contexts: {},
 					selector: {},
 					layer: Layer.CUSTOMER,
 					namespace: "Dummy.Component"
@@ -1187,7 +1224,8 @@ sap.ui.define([
 				sourceVariantReference: "variant0",
 				variantManagementReference: "variantMgmtId1",
 				layer: Layer.CUSTOMER,
-				title: "variant A Copy"
+				title: "variant A Copy",
+				contexts: {}
 			};
 
 			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
@@ -1236,6 +1274,7 @@ sap.ui.define([
 					content: {
 						title: "variant A"
 					},
+					contexts: {},
 					selector: {},
 					layer: Layer.PUBLIC,
 					namespace: "Dummy.Component"
@@ -1249,7 +1288,8 @@ sap.ui.define([
 				sourceVariantReference: "variant0",
 				variantManagementReference: "variantMgmtId1",
 				layer: Layer.PUBLIC,
-				title: "variant A Copy"
+				title: "variant A Copy",
+				contexts: {}
 			};
 
 			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
@@ -1298,6 +1338,7 @@ sap.ui.define([
 					content: {
 						title: "variant A"
 					},
+					contexts: {},
 					selector: {},
 					layer: Layer.USER,
 					namespace: "Dummy.Component"
@@ -1328,7 +1369,8 @@ sap.ui.define([
 				sourceVariantReference: "variant0",
 				variantManagementReference: "variantMgmtId1",
 				layer: Layer.PUBLIC,
-				title: "variant A Copy"
+				title: "variant A Copy",
+				contexts: {}
 			};
 
 			sandbox.stub(this.oModel, "getVariant").callsFake(function (sId) {
@@ -1369,6 +1411,7 @@ sap.ui.define([
 							visible: true,
 							executeOnSelect: false
 						},
+						contexts: {},
 						support: {
 							user: VariantUtil.DEFAULT_AUTHOR
 						}
@@ -1394,6 +1437,8 @@ sap.ui.define([
 					originalFavorite: true,
 					visible: true,
 					originalVisible: true,
+					contexts: {},
+					originalContexts: {},
 					executeOnSelect: false,
 					originalExecuteOnSelect: false,
 					author: VariantUtil.DEFAULT_AUTHOR
@@ -1434,6 +1479,7 @@ sap.ui.define([
 					creation: "",
 					originalLanguage: "EN",
 					conditions: {},
+					contexts: {},
 					support: {
 						generator: "myFancyGenerator",
 						service: "",
@@ -1575,19 +1621,22 @@ sap.ui.define([
 			this.oModel.getData()["variantMgmtId1"].variants[1].favorite = false;
 			this.oModel.getData()["variantMgmtId1"].variants[1].visible = false;
 			this.oModel.getData()["variantMgmtId1"].variants[1].executeOnSelect = true;
+			this.oModel.getData()["variantMgmtId1"].variants[1].contexts = { role: ["ADMIN"], country: ["DE"] };
 			this.oModel.getData()["variantMgmtId1"].defaultVariant = "variant0";
 
 			var aChanges = this.oModel.collectModelChanges("variantMgmtId1", Layer.CUSTOMER);
-			assert.equal(aChanges.length, 5, "then 5 changes with mPropertyBags were created");
+			assert.equal(aChanges.length, 6, "then 6 changes with mPropertyBags were created");
 		});
 
 		QUnit.test("when calling 'manageVariants' in Adaptation mode once with changes and then without changes", function(assert) {
 			var sVariantManagementReference = "variantMgmtId1";
 			var oVariantManagement = new VariantManagement(sVariantManagementReference);
 			var sLayer = Layer.CUSTOMER;
+			var sDummyClass = "DummyClass";
+			var oFakeComponentContainerPromise = {property: "fake"};
 			oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
 
-			sandbox.stub(oVariantManagement, "openManagementDialog").callsFake(oVariantManagement.fireManage);
+			var oOpenManagementDialogStub = sandbox.stub(oVariantManagement, "openManagementDialog").callsFake(oVariantManagement.fireManage);
 			sandbox.stub(VariantManagementState, "setVariantData");
 			sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap");
 
@@ -1598,11 +1647,12 @@ sap.ui.define([
 			this.oModel.getData()[sVariantManagementReference].variants[1].visible = false;
 			this.oModel.getData()[sVariantManagementReference].defaultVariant = "variant0";
 
-			return this.oModel.manageVariants(oVariantManagement, sVariantManagementReference, sLayer).then(function(aChanges) {
+			return this.oModel.manageVariants(oVariantManagement, sVariantManagementReference, sLayer, sDummyClass, oFakeComponentContainerPromise).then(function(aChanges) {
 				assert.equal(aChanges.length, 4, "then 4 changes were returned since changes were made in the manage dialog");
 				aChanges.forEach(this.oModel.setVariantProperties.bind(this.oModel, sVariantManagementReference));
 				return this.oModel.manageVariants(oVariantManagement, sVariantManagementReference, sLayer).then(function(aChanges) {
 					assert.equal(aChanges.length, 0, "then no changes were returned the since no changes were made in the manage dialog");
+					assert.ok(oOpenManagementDialogStub.calledWith(true, sDummyClass, oFakeComponentContainerPromise), "then openManagementControl is called with the right parameters");
 					oVariantManagement.destroy();
 				});
 			}.bind(this));
@@ -1700,7 +1750,10 @@ sap.ui.define([
 					title: "Personalization Test Variant",
 					variantManagementReference: sVMReference,
 					variantReference: sCopyVariantName,
-					layer: Layer.USER
+					layer: Layer.USER,
+					contexts: {
+						role: ["testRole"]
+					}
 				}
 			};
 			var oCopiedVariant = new Variant(oCopiedVariantContent);
@@ -1710,7 +1763,10 @@ sap.ui.define([
 						overwrite: false,
 						name: "Test",
 						def: true,
-						execute: true
+						execute: true,
+						contexts: {
+							role: ["testRole"]
+						}
 					};
 				},
 				getSource: function() {
@@ -1738,7 +1794,7 @@ sap.ui.define([
 			sandbox.stub(VariantManagementState, "removeChangeFromVariant");
 			sandbox.stub(this.oModel.oFlexController, "deleteChange");
 			sandbox.stub(this.oModel, "copyVariant").resolves([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
-			sandbox.stub(this.oModel, "setVariantProperties").returns({fileName: "changeWithSetDefault"});
+			sandbox.stub(this.oModel, "addVariantChange").returns({fileName: "changeWithSetDefault"});
 			sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves(oResponse);
 			sandbox.spy(Utils, "createDefaultFileName");
 
@@ -1751,13 +1807,16 @@ sap.ui.define([
 						appComponent: this.oComponent,
 						layer: Layer.USER,
 						generator: undefined,
+						contexts: {
+							role: ["testRole"]
+						},
 						newVariantReference: sNewVariantReference,
 						sourceVariantReference: oCopiedVariant.getVariantReference(),
 						title: "Test",
 						variantManagementReference: sVMReference
 					}, "then copyVariant() was called with the right parameters");
 
-					assert.equal(this.oModel.setVariantProperties.callCount, 2, "then setVariantProperties() was called twice; for setDefault and setExecuteOnSelect");
+					assert.equal(this.oModel.addVariantChange.callCount, 2, "then addVariantChange() was called twice; for setDefault and setExecuteOnSelect");
 					assert.equal(this.oModel.oChangePersistence.saveDirtyChanges.callCount, 1, "then dirty changes were saved");
 					assert.equal(this.oModel.oChangePersistence.saveDirtyChanges.args[0][2].length, 6, "then six dirty changes were saved (new variant, 3 copied ctrl changes, setDefault change, setExecuteOnSelect change");
 					assert.equal(this.oModel.oChangePersistence.saveDirtyChanges.args[0][2][4].fileName, "changeWithSetDefault", "the last change was 'setDefault'");
@@ -1810,7 +1869,10 @@ sap.ui.define([
 					title: "Personalization Test Variant",
 					variantManagementReference: sVMReference,
 					variantReference: "variant1",
-					layer: Layer.USER
+					layer: Layer.USER,
+					contexts: {
+						role: ["testRole"]
+					}
 				}
 			};
 			var oCopiedVariant = new Variant(oCopiedVariantContent);
@@ -1846,12 +1908,12 @@ sap.ui.define([
 			sandbox.stub(VariantManagementState, "removeChangeFromVariant");
 			sandbox.stub(this.oModel.oFlexController, "deleteChange");
 			sandbox.stub(this.oModel, "copyVariant").resolves([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
-			sandbox.stub(this.oModel, "setVariantProperties").returns({fileName: "changeWithSetDefault"});
+			sandbox.stub(this.oModel, "addVariantChange").returns({fileName: "changeWithSetDefault"});
 			sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves();
 
 			return this.oModel._handleSaveEvent(oEvent).then(function() {
 				assert.equal(this.oModel.copyVariant.callCount, 1, "then copyVariant() was called once");
-				assert.equal(this.oModel.setVariantProperties.callCount, 0, "then setVariantProperties() was not called");
+				assert.equal(this.oModel.addVariantChange.callCount, 0, "then addVariantChange() was not called");
 				assert.equal(this.oModel.oChangePersistence.saveDirtyChanges.callCount, 1, "then dirty changes were saved");
 				assert.notOk(this.oModel.getData()[sVMReference].modified, "finally the model property 'modified' is set to false");
 				assert.ok(this.oModel.oFlexController.deleteChange.calledBefore(this.oModel.oChangePersistence.saveDirtyChanges), "the changes were deleted from default variant before the copied variant is saved");
@@ -2012,7 +2074,10 @@ sap.ui.define([
 				execute: true,
 				layer: Layer.CUSTOMER,
 				newVariantReference: sNewVariantReference,
-				generator: "myFancyGenerator"
+				generator: "myFancyGenerator",
+				contexts: {
+					role: ["testRole"]
+				}
 			};
 			var sUserName = "testUser";
 			var oResponse = {response: [{fileName: sCopyVariantName, support: {user: sUserName}}]};
@@ -2033,7 +2098,7 @@ sap.ui.define([
 			sandbox.stub(VariantManagementState, "removeChangeFromVariant");
 			sandbox.stub(this.oModel.oFlexController, "deleteChange");
 			sandbox.stub(this.oModel, "copyVariant").resolves([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
-			sandbox.stub(this.oModel, "setVariantProperties").returns({fileName: "changeWithSetDefault"});
+			sandbox.stub(this.oModel, "addVariantChange").returns({fileName: "changeWithSetDefault"});
 			sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves(oResponse);
 			sandbox.spy(Utils, "createDefaultFileName");
 
@@ -2047,9 +2112,12 @@ sap.ui.define([
 						newVariantReference: sNewVariantReference,
 						sourceVariantReference: oCopiedVariant.getVariantReference(),
 						title: "Key User Test Variant",
-						variantManagementReference: sVMReference
+						variantManagementReference: sVMReference,
+						contexts: {
+							role: ["testRole"]
+						}
 					}, "then copyVariant() was called with the right parameters");
-					assert.equal(this.oModel.setVariantProperties.callCount, 2, "then setVariantProperties() was called twice; for setDefault and setExecuteOnSelect");
+					assert.equal(this.oModel.addVariantChange.callCount, 2, "then addVariantChange() was called twice; for setDefault and setExecuteOnSelect");
 					assert.equal(this.oModel.oChangePersistence.saveDirtyChanges.callCount, 0, "then dirty changes were not saved");
 					assert.equal(aDirtyChanges.length, 6, "then six dirty changes were created (new variant, 3 copied ctrl changes, setDefault change, setExecuteOnSelect change");
 					assert.equal(aDirtyChanges[5].fileName, "changeWithSetDefault", "the last change was 'setDefault'");
@@ -2289,7 +2357,9 @@ sap.ui.define([
 					executeOnSelect: false,
 					originalExecuteOnSelect: false,
 					author: VariantUtil.DEFAULT_AUTHOR,
-					sharing: "public"
+					sharing: "public",
+					contexts: {},
+					originalContexts: {}
 				}]
 			};
 			var oReturnPromise = this.oModel.waitForVMControlInit("varMgmtRef1").then(function() {

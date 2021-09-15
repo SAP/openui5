@@ -5,12 +5,14 @@ sap.ui.define([
 	"sap/ui/rta/command/BaseCommand",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/rta/Utils",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/write/api/ContextSharingAPI"
 ], function(
 	BaseCommand,
 	JsControlTreeModifier,
 	rtaUtils,
-	flUtils
+	flUtils,
+	ContextSharingAPI
 ) {
 	"use strict";
 
@@ -75,7 +77,8 @@ sap.ui.define([
 		return new Promise(function(resolve) {
 			this.oVariantManagementControl.attachSave({resolve: resolve}, storeEventParameters, this);
 			this.oVariantManagementControl.attachCancel({resolve: resolve}, handleCancel, this);
-			this.oVariantManagementControl.openSaveAsDialogForKeyUser(rtaUtils.getRtaStyleClassName());
+			this.oVariantManagementControl.openSaveAsDialogForKeyUser(rtaUtils.getRtaStyleClassName(),
+				ContextSharingAPI.createComponent(mFlexSettings));
 		}.bind(this))
 			.then(function(bState) {
 				return bState;

@@ -70,7 +70,7 @@ sap.ui.define([
 		this.getChanges().forEach(function(mChangeProperties) {
 			mChangeProperties.appComponent = this.oAppComponent;
 			mChangeProperties.generator = sap.ui.rta.GENERATOR_NAME;
-			this._aPreparedChanges.push(this.oModel.setVariantProperties(this.sVariantManagementReference, mChangeProperties, true));
+			this._aPreparedChanges.push(this.oModel.addVariantChange(this.sVariantManagementReference, mChangeProperties));
 		}.bind(this));
 
 		return Promise.resolve().then(function() {
@@ -98,8 +98,8 @@ sap.ui.define([
 					mPropertyBag[sProperty] = mChangeProperties[sProperty];
 				}
 			});
-			mPropertyBag.change = this._aPreparedChanges[index];
-			this.oModel.setVariantProperties(this.sVariantManagementReference, mPropertyBag, false);
+			var oChange = this._aPreparedChanges[index];
+			this.oModel.deleteVariantChange(this.sVariantManagementReference, mPropertyBag, oChange);
 		}.bind(this));
 
 		return Promise.resolve().then(function() {

@@ -78,7 +78,7 @@ sap.ui.define([
 			generator: sap.ui.rta.GENERATOR_NAME
 		};
 
-		return Promise.resolve(this.oModel.setVariantProperties(this.sVariantManagementReference, mPropertyBag, true))
+		return Promise.resolve(this.oModel.addVariantChange(this.sVariantManagementReference, mPropertyBag))
 			.then(function(oChange) {
 				this._oVariantChange = oChange;
 				oVariantManagementControlBinding.checkUpdate(true); /*Force Update as binding key stays same*/
@@ -95,13 +95,13 @@ sap.ui.define([
 		var mPropertyBag = {
 			variantReference: this.sCurrentVariant,
 			changeType: "setTitle",
-			title: this.getOldText(),
-			change: this._oVariantChange
+			title: this.getOldText()
 		};
+		var oChange = this._oVariantChange;
 
-		return Promise.resolve(this.oModel.setVariantProperties(this.sVariantManagementReference, mPropertyBag, false))
-			.then(function(oChange) {
-				this._oVariantChange = oChange;
+		return Promise.resolve(this.oModel.deleteVariantChange(this.sVariantManagementReference, mPropertyBag, oChange))
+			.then(function() {
+				this._oVariantChange = null;
 				oVariantManagementControlBinding.checkUpdate(true); /*Force Update as binding key stays same*/
 			}.bind(this));
 	};

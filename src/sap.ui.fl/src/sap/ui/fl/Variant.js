@@ -604,6 +604,7 @@ sap.ui.define([
 				creation: "",
 				originalLanguage: Utils.getCurrentLanguage(),
 				conditions: {},
+				contexts: oPropertyBag.content.contexts || {},
 				support: {
 					generator: oPropertyBag.generator || "Change.createInitialFileContent",
 					service: oPropertyBag.service || "",

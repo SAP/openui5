@@ -158,7 +158,15 @@ function(
 				variantReference: "variant0",
 				visible: false
 			};
-			var aChanges = [oTitleChange, oFavoriteChange, oVisibleChange];
+			var oContextsChange = {
+				appComponent: this.oMockedAppComponent,
+				changeType: "setContexts",
+				layer: Layer.CUSTOMER,
+				variantReference: "variant0",
+				contexts: { role: ["ROLE1", "ROLE2"], country: ["DE", "IT"] },
+				originalContexts: { role: ["OGROLE1", "OGROLE2"], country: ["OR"] }
+			};
+			var aChanges = [oTitleChange, oFavoriteChange, oVisibleChange, oContextsChange];
 			var oControlVariantConfigureCommand;
 			var aPreparedChanges;
 			var iDirtyChangesCount;
@@ -175,14 +183,15 @@ function(
 				.then(function() {
 					var aConfigureChanges = oControlVariantConfigureCommand.getChanges();
 					aPreparedChanges = oControlVariantConfigureCommand.getPreparedChange();
-					assert.equal(aPreparedChanges.length, 3, "then the prepared changes are available");
+					assert.equal(aPreparedChanges.length, 4, "then the four prepared changes are available");
 					checkGeneratorInChanges(aPreparedChanges, assert);
 					assert.deepEqual(aConfigureChanges, aChanges, "then the changes are correctly set in change");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].title, oTitleChange.title, "then title is correctly set in model");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.favorite, "then favorite is correctly set in model");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].visible, oVisibleChange.visible, "then visibility is correctly set in model");
+					assert.deepEqual(this.oData["variantMgmtId1"].variants[1].contexts, oContextsChange.contexts, "then the contexts are correctly set in model");
 					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
-					assert.strictEqual(iDirtyChangesCount, 3, "then there are three dirty changes in the flex persistence");
+					assert.strictEqual(iDirtyChangesCount, 4, "then there are four dirty changes in the flex persistence");
 					return oControlVariantConfigureCommand.undo();
 				}.bind(this))
 				.then(function() {
@@ -191,6 +200,7 @@ function(
 					assert.equal(this.oData["variantMgmtId1"].variants[1].title, oTitleChange.originalTitle, "then title is correctly reverted in model");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.originalFavorite, "then favorite is correctly set in model");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].visible, !oVisibleChange.visible, "then visibility is correctly reverted in model");
+					assert.deepEqual(this.oData["variantMgmtId1"].variants[1].contexts, oContextsChange.originalContexts, "then the contexts are correctly reverted in model");
 					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
 					assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 				}.bind(this))
