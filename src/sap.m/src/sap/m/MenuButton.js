@@ -252,6 +252,10 @@ sap.ui.define([
 			if (this._needsWidth() && sap.ui.getCore().isThemeApplied() && this._getTextBtnContentDomRef() && this._getInitialTextBtnWidth() > 0) {
 				this._getTextBtnContentDomRef().style.width = this._getInitialTextBtnWidth() + 'px';
 			}
+			if (this._activeButton) {
+				this._activeButton.$().attr("aria-expanded", "false");
+				this._activeButton = null;
+			}
 		};
 
 		MenuButton.prototype.onThemeChanged = function(oEvent) {
@@ -496,6 +500,7 @@ sap.ui.define([
 			}
 
 			bOpeningMenuButton.$().removeAttr("aria-controls");
+			bOpeningMenuButton.$().attr("aria-expanded", "false");
 		};
 
 		MenuButton.prototype._menuItemSelected = function(oEvent) {
@@ -751,6 +756,7 @@ sap.ui.define([
 
 			if (oMenu) {
 				oOpeningMenuButton.$().attr("aria-controls", oMenu.getDomRefId());
+				oOpeningMenuButton.$().attr("aria-expanded", "true");
 			}
 		};
 
