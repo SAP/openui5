@@ -1487,7 +1487,7 @@ sap.ui.define([
 			if (this.oFileUpload) {
 				this.setValue("", true);
 			}
-		} else if (iKeyCode == eKC.SPACE || iKeyCode == eKC.ENTER) {
+		} else if (iKeyCode === eKC.SPACE) {
 			this.oFileUpload.click();
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
