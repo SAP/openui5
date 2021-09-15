@@ -99,12 +99,36 @@
 						<OverflowToolbarLayoutData priority="Low" />
 					</toolbar:layoutData>
 				</toolbar:OverflowToolbarButton>
+				<MenuButton
+						id="sapUiRta_toggleChangeVisualizationMenuButton"
+						visible="{= ${controls>/modeSwitcher} === 'visualization'}"
+						text="{visualizationModel>/commandCategoryText}"
+						type="Transparent"
+						tooltip="{i18n>BUT_CHANGEVISUALIZATION_SELECTCHANGES}">
+					<menu>
+						<Menu
+								id="sapUiRta_changesList"
+								items="{visualizationModel>/commandCategories/}"
+								itemSelected=".onCommandCategorySelection"
+								class="sapUiRtaToolbarVisualizationSelection">
+							<MenuItem
+									id="sapUiRta_changesListItem" 
+									text="{visualizationModel>title}"
+									key="{visualizationModel>key}"
+									icon="{visualizationModel>icon}"
+									enabled="{= ${visualizationModel>count} > 0}"/>
+						</Menu>
+					</menu>
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" />
+					</layoutData>
+				</MenuButton>
 				<Button
 						id="sapUiRta_undo"
 						icon="sap-icon://undo"
 						press=".undo"
 						enabled="{controls>/undoEnabled}"
-						visible="{= (${controls>/modeSwitcher} === 'visualization' || ${controls>/modeSwitcher} === 'adaptation')}"
+						visible="{= ${controls>/modeSwitcher} === 'adaptation'}"
 						type="Transparent"
 						tooltip="{i18n>BTN_UNDO}" >
 					<layoutData>
@@ -116,25 +140,13 @@
 						icon="sap-icon://redo"
 						press=".redo"
 						enabled="{controls>/redoEnabled}"
-						visible="{= (${controls>/modeSwitcher} === 'visualization' || ${controls>/modeSwitcher} === 'adaptation')}"
+						visible="{= ${controls>/modeSwitcher} === 'adaptation'}"
 						type="Transparent"
 						tooltip="{i18n>BTN_REDO}" >
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
 				</Button>
-				<toolbar:OverflowToolbarButton
-						id="sapUiRta_toggleChangeVisualizationPopoverButton"
-						icon="sap-icon://show"
-						press=".toggleChangeVisualizationPopover"
-						visible="{= ${controls>/modeSwitcher} === 'visualization'}"
-						type="Transparent"
-						text="{i18n>BTN_CHANGEVISUALIZATION_OVERVIEW_ALL}"
-						tooltip="{i18n>BUT_CHANGEVISUALIZATION_SELECTCHANGES}">
-					<toolbar:layoutData>
-						<OverflowToolbarLayoutData priority="Low" />
-					</toolbar:layoutData>
-				</toolbar:OverflowToolbarButton>
 				<toolbar:OverflowToolbarButton
 						id="sapUiRta_publish"
 						enabled="{controls>/publishEnabled}"

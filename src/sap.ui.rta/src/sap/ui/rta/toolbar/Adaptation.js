@@ -63,7 +63,7 @@ function(
 				activate: {},
 				discardDraft: {},
 				switchVersion: {},
-				toggleChangeVisualizationPopover: {}
+				onCommandCategorySelection: {}
 			}
 		}
 	});
@@ -333,7 +333,7 @@ function(
 				showTranslationPopover: this.showTranslationPopover.bind(this),
 				undo: this.eventHandler.bind(this, "Undo"),
 				redo: this.eventHandler.bind(this, "Redo"),
-				toggleChangeVisualizationPopover: this.eventHandler.bind(this, "ToggleChangeVisualizationPopover"),
+				onCommandCategorySelection: this.eventHandler.bind(this, "OnCommandCategorySelection"),
 				manageApps: onManageAppsPressed.bind(this),
 				appVariantOverview: onOverviewPressed.bind(this),
 				saveAs: onSaveAsPressed.bind(this),

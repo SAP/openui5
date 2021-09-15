@@ -1,44 +1,56 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"qunit/RtaQunitUtils",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
-	"sap/m/Button",
-	"sap/m/ButtonType",
-	"sap/m/VBox",
-	"sap/m/HBox",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/Utils",
+	"sap/m/VBox",
+	"sap/m/HBox",
+	"sap/m/Button",
+	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/events/KeyCodes",
 	"sap/base/util/restricted/_merge",
-	"sap/ui/dt/DesignTime"
+	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/dt/OverlayRegistry"
 ], function(
+	RtaQunitUtils,
 	sinon,
 	QUnitUtils,
 	ChangeVisualization,
-	Button,
-	ButtonType,
-	VBox,
-	HBox,
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
 	ChangesUtils,
 	FlUtils,
+	VBox,
+	HBox,
+	Button,
+	DesignTime,
 	DesignTimeMetadata,
 	KeyCodes,
 	merge,
-	DesignTime
+	RuntimeAuthoring,
+	OverlayRegistry
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
 	var oRtaResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+	var oComp;
+	var oCompCont;
+	QUnit.config.fixture = null;
 
-	// Make sure to bind caller context
+	var oComponentPromise = RtaQunitUtils.renderTestAppAtAsync("qunit-fixture")
+		.then(function(oCompContainer) {
+			oCompCont = oCompContainer;
+			oComp = oCompCont.getComponentInstance();
+		});
+
 	function setupTest(fnCallback, oRootElement) {
 		this.oChangeVisualization = new ChangeVisualization({
 			rootControlId: "MockComponent"
@@ -69,7 +81,6 @@ sap.ui.define([
 		});
 	}
 
-	// Make sure to bind caller context
 	function cleanupTest() {
 		this.oChangeVisualization.destroy();
 		this.oVisualizationButton.destroy();
@@ -77,6 +88,35 @@ sap.ui.define([
 		sandbox.restore();
 	}
 
+
+	function prepareMockEvent(sKey) {
+		var oMockEvent = {
+			getParameter: function (sParameterName) {
+				if (sParameterName === "item") {
+					return {
+						getKey: function () {
+							return sKey;
+						}
+					};
+				}
+			}
+		};
+		return oMockEvent;
+	}
+
+	function checkModel(assert, oModelPart, oCheckValues) {
+		assert.equal(oModelPart.key, oCheckValues.key, "'key' is set correctly to the model");
+		assert.equal(oModelPart.title, oCheckValues.title, "'text' is set correctly to the model");
+		assert.equal(oModelPart.icon, oCheckValues.icon, "'icon' is set correctly to the model");
+		assert.equal(oModelPart.count, oCheckValues.count, "there are no changes for this category available");
+	}
+
+	function checkBinding(assert, oModelPart, oMenuData) {
+		assert.equal(oMenuData.getKey(), oModelPart.key, "'key' is bound correctly to the control");
+		assert.equal(oMenuData.getText(), oModelPart.title, "'text' is bound correctly to the control");
+		assert.equal(oMenuData.getIcon(), oModelPart.icon, "'icon' is bound correctly to the control");
+		assert.equal(oMenuData.getEnabled(), oModelPart.count !== 0, "'enabled' is false because no changes are available");
+	}
 
 	function prepareChanges(aMockChanges, oRootComponent, oChangeHandler) {
 		// Stub changes, root component and change handler
@@ -129,21 +169,6 @@ sap.ui.define([
 		}, oCustomChange);
 	}
 
-	function startChangeVisualization (oStartVisualizationButton, oChangeVisualization) {
-		oStartVisualizationButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		var oMockEvent = {
-			getParameter: function (sParameterName) {
-				if (sParameterName === "id") {
-					return oStartVisualizationButton.getId();
-				}
-			}
-		};
-		oChangeVisualization.setIsActive(true);
-		oChangeVisualization.togglePopover(oMockEvent);
-	}
-
 	function waitForMethodCall (oObject, sMethodName) {
 		// Returns a promise which is resolved with the return value
 		// of the given method after it was first called
@@ -160,40 +185,6 @@ sap.ui.define([
 			});
 	}
 
-	function getChangesListEntry (oPopover, sKey) {
-		// Get the given entry from the change list popover
-		return oPopover.getContent()[0].getItems().find(function (oItem) {
-			return oItem.getBindingContext("commandModel").getObject().key === sKey;
-		});
-	}
-
-	function selectCommandCategory (oVisualizationButton, oChangeVisualization, sKeyToSelect) {
-		// Simulate click event on the change visualization button,
-		// select the given category and wait for the visualization to update
-		var oSelectionPromise = waitForMethodCall(oChangeVisualization, "_selectCommandCategory");
-
-		var fnWaitForPopover = function () {
-			return new Promise(function (resolve) {
-				var oPopover = oChangeVisualization.getPopover();
-				oPopover.attachEventOnce("afterOpen", function () {
-					var oCategoryButton = getChangesListEntry(oPopover, sKeyToSelect);
-					QUnitUtils.triggerEvent("tap", oCategoryButton.getDomRef());
-					resolve(oSelectionPromise);
-				});
-			});
-		};
-
-		var oPopoverPromise = oChangeVisualization.getPopover()
-			? fnWaitForPopover()
-			: waitForMethodCall(oChangeVisualization, "setPopover")
-				.then(function () {
-					return fnWaitForPopover();
-				});
-
-		startChangeVisualization(oVisualizationButton, oChangeVisualization);
-		return oPopoverPromise;
-	}
-
 	function collectIndicatorReferences () {
 		// Get all visible change indicator elements on the screen
 		return Array.from(document.getElementsByClassName("sapUiRtaChangeIndicator")).map(function (oDomRef) {
@@ -201,79 +192,114 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.module("Changes list popover", {
+	QUnit.module("Change Viz - Menu Button & Model Test", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
-			this.oChangeVisualization = new ChangeVisualization({
-				rootControlId: "MockComponent"
+			this.oCheckModelAll = {
+				key: "all",
+				title: oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_ALL", [0]),
+				icon: "sap-icon://show",
+				count: 0
+			};
+			this.oCheckModelMove = {
+				key: "move",
+				title: oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_MOVE", [0]),
+				icon: "sap-icon://move",
+				count: 0
+			};
+			this.aMockChanges = [
+				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1"),
+				createMockChange("testReveal", "reveal", "Comp1---idMain1--rb2"),
+				createMockChange("testRename", "rename", "Comp1---idMain1--lb1")
+			];
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp,
+				flexSettings: this.oFlexSettings
 			});
-			this.oVisualizationButton = new Button({ text: "Test visualization" });
+			return RtaQunitUtils.clear()
+			.then(this.oRta.start.bind(this.oRta))
+			.then(function() {
+				this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
+				this.oChangeVisualization = this.oRta.getChangeVisualization();
+			}.bind(this));
 		},
 		afterEach: function() {
-			this.oChangeVisualization.destroy();
-			this.oVisualizationButton.destroy();
+			this.oRta.destroy();
 			sandbox.restore();
+			return RtaQunitUtils.clear();
 		}
 	}, function() {
-		QUnit.test("when the change visualization is started without changes", function (assert) {
-			prepareChanges();
-			startChangeVisualization(this.oVisualizationButton, this.oChangeVisualization);
-
-			return waitForMethodCall(this.oChangeVisualization, "setPopover")
-				.then(function () {
-					var oPopover = this.oChangeVisualization.getPopover();
-					assert.ok(oPopover.getVisible(), "then the change list popover is opened");
-					var oAllCommandsCategory = getChangesListEntry(oPopover, "all");
-					assert.strictEqual(
-						oAllCommandsCategory.getTitle(),
-						oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_ALL"),
-						"then the categories have proper titles"
-					);
-					assert.strictEqual(
-						oAllCommandsCategory.getCounter(),
-						0,
-						"then no changes are available in the list"
-					);
-					assert.strictEqual(
-						oAllCommandsCategory.getType(),
-						"Inactive",
-						"then categories without changes are disabled"
-					);
+		QUnit.test("Without changes - Check if Menu is bound correctly to the model", function (assert) {
+			var fnDone = assert.async();
+			waitForMethodCall(this.oRta.getToolbar(), "setModel")
+				.then(function() {
+					sap.ui.getCore().applyChanges();
+					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().commandCategories;
+					var aMenuItems = this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton")
+						.getMenu().getItems();
+					checkModel(assert, aVizModel[0], this.oCheckModelAll);
+					checkModel(assert, aVizModel[2], this.oCheckModelMove);
+					checkBinding(assert, aVizModel[0], aMenuItems[0]);
+					checkBinding(assert, aVizModel[2], aMenuItems[2]);
+					fnDone();
 				}.bind(this));
+			this.oRta.setMode("visualization");
 		});
-
-		QUnit.test("when the change visualization is started with changes", function (assert) {
-			var aMockChanges = [
-				createMockChange("testAdd", "addDelegateProperty"),
-				createMockChange("testReveal", "reveal"),
-				createMockChange("testRename", "rename")
-			];
-			prepareChanges(aMockChanges);
-			startChangeVisualization(this.oVisualizationButton, this.oChangeVisualization);
-
-			return waitForMethodCall(this.oChangeVisualization, "setPopover")
-				.then(function () {
-					var oPopover = this.oChangeVisualization.getPopover();
-					assert.strictEqual(
-						getChangesListEntry(oPopover, "all").getType(),
-						"Active",
-						"then categories with changes get enabled"
-					);
-					assert.strictEqual(
-						getChangesListEntry(oPopover, "all").getCounter(),
-						aMockChanges.length,
-						"then the all category contains all changes"
-					);
-					assert.strictEqual(
-						getChangesListEntry(oPopover, "add").getCounter(),
-						2,
-						"then both add changes are categorized properly"
-					);
-					assert.strictEqual(
-						getChangesListEntry(oPopover, "rename").getCounter(),
-						1,
-						"then the rename change is categorized properly"
-					);
+		QUnit.test("With changes - Check if Menu is bound correctly to the model", function (assert) {
+			var fnDone = assert.async();
+			prepareChanges(this.aMockChanges);
+			this.oCheckModelAll.title = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_ALL", [3]);
+			this.oCheckModelAll.count = 3;
+			waitForMethodCall(this.oRta.getToolbar(), "setModel")
+				.then(function() {
+					sap.ui.getCore().applyChanges();
+					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().commandCategories;
+					var aMenuItems = this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton")
+						.getMenu().getItems();
+					checkModel(assert, aVizModel[0], this.oCheckModelAll);
+					checkModel(assert, aVizModel[2], this.oCheckModelMove);
+					checkBinding(assert, aVizModel[0], aMenuItems[0]);
+					checkBinding(assert, aVizModel[2], aMenuItems[2]);
+					fnDone();
 				}.bind(this));
+			this.oRta.setMode("visualization");
+		});
+		QUnit.test("Menu & Model are in correct order", function (assert) {
+			var fnDone = assert.async();
+			waitForMethodCall(this.oRta.getToolbar(), "setModel")
+				.then(function() {
+					sap.ui.getCore().applyChanges();
+					var aMenuItems = this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton")
+						.getMenu().getItems();
+					assert.equal(aMenuItems[0].getKey(), "all", "'all' is on first position");
+					assert.equal(aMenuItems[1].getKey(), "add", "'add' is on second position");
+					assert.equal(aMenuItems[2].getKey(), "move", "'move' is on third position");
+					assert.equal(aMenuItems[3].getKey(), "rename", "'rename' is on fourth position");
+					assert.equal(aMenuItems[4].getKey(), "combinesplit", "'combinesplit' is on fifth position");
+					assert.equal(aMenuItems[5].getKey(), "remove", "'remove' is on sixth position");
+					fnDone();
+				}.bind(this));
+			this.oRta.setMode("visualization");
+		});
+		QUnit.test("Menu Button Text will change on category selection", function (assert) {
+			var fnDone = assert.async();
+			var sMenuButtonText;
+			waitForMethodCall(this.oRta.getToolbar(), "setModel")
+				.then(function() {
+					sap.ui.getCore().applyChanges();
+					sMenuButtonText = this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").getText();
+					assert.strictEqual(sMenuButtonText, oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_OVERVIEW_ALL"));
+					return this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("move"));
+				}.bind(this))
+				.then(function() {
+					sap.ui.getCore().applyChanges();
+					sMenuButtonText = this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").getText();
+					assert.equal(sMenuButtonText, oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_OVERVIEW_MOVE"));
+					fnDone();
+				}.bind(this));
+			this.oRta.setMode("visualization");
 		});
 	});
 
@@ -303,6 +329,7 @@ sap.ui.define([
 			});
 
 			var fnDone = assert.async();
+
 			setupTest.call(this, function () {
 				fnDone();
 			}, oContainer);
@@ -312,6 +339,7 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("when the command type is not defined in the change", function (assert) {
+			var fnDone = assert.async();
 			// Stub getCommandName to simulate special usecases
 			var oGetCommandNameStub = sandbox.stub(DesignTimeMetadata.prototype, "getCommandName");
 			oGetCommandNameStub.callsFake(function (sChangeType, oElement, sAggregationName) {
@@ -367,51 +395,65 @@ sap.ui.define([
 					}
 				})
 			]);
-			startChangeVisualization(this.oVisualizationButton, this.oChangeVisualization);
-
-			return waitForMethodCall(this.oChangeVisualization, "setPopover")
-				.then(function () {
-					var oPopover = this.oChangeVisualization.getPopover();
+			this.oChangeVisualization.triggerModeChange("MockComponent", {
+				setModel: function(oData) {
 					assert.strictEqual(
-						getChangesListEntry(oPopover, "rename").getCounter(),
+						oData.getData().commandCategories[3].count,
 						1,
 						"then changes where the command is defined on the element are properly categorized"
 					);
 					assert.strictEqual(
-						getChangesListEntry(oPopover, "add").getCounter(),
+						oData.getData().commandCategories[1].count,
 						1,
-						"then changes where the command is defined on the parent overlay are properly categorized"
+						"then changes where the command is defined on the element are properly categorized"
 					);
 					assert.strictEqual(
-						getChangesListEntry(oPopover, "move").getCounter(),
+						oData.getData().commandCategories[2].count,
 						1,
-						"then changes where the command is defined on an overlay which was created during runtime are properly categorized"
+						"then changes where the command is defined on the element are properly categorized"
 					);
-				}.bind(this));
+					fnDone();
+				}
+			});
 		});
 	});
 
 	QUnit.module("Change indicator management", {
-		beforeEach: function(assert) {
-			var fnDone = assert.async();
-			setupTest.call(this, function () {
-				this.aMockChanges = [
-					createMockChange("testAdd", "addDelegateProperty", "button1"),
-					createMockChange("testReveal", "reveal", "button2"),
-					createMockChange("testRename", "rename", "button3")
-				];
-				fnDone();
-			}.bind(this));
+		before: function () {
+			return oComponentPromise;
+		},
+		beforeEach: function() {
+			this.aMockChanges = [
+				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1"),
+				createMockChange("testReveal", "reveal", "Comp1---idMain1--rb2"),
+				createMockChange("testRename", "rename", "Comp1---idMain1--lb1")
+			];
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp,
+				flexSettings: this.oFlexSettings
+			});
+			return RtaQunitUtils.clear()
+				.then(this.oRta.start.bind(this.oRta))
+				.then(function() {
+					this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
+					this.oChangeVisualization = this.oRta.getChangeVisualization();
+					this.oToolbar = this.oRta.getToolbar();
+				}.bind(this));
 		},
 		afterEach: function() {
-			cleanupTest.call(this);
+			this.oRta.destroy();
+			sandbox.restore();
+			return RtaQunitUtils.clear();
 		}
 	}, function() {
 		QUnit.test("when a command category is selected", function (assert) {
+			var fnDone = assert.async();
 			prepareChanges(this.aMockChanges);
-			return selectCommandCategory(this.oVisualizationButton, this.oChangeVisualization, "all")
-				.then(function () {
+			this.oRta.setMode("visualization");
+			waitForMethodCall(this.oRta.getToolbar(), "setModel")
+				.then(function() {
 					sap.ui.getCore().applyChanges();
+					//startChangeVisualization(this.oVisualizationButton, this.oChangeVisualization);
 					var aIndicators = collectIndicatorReferences();
 					assert.strictEqual(
 						aIndicators.length,
@@ -424,13 +466,15 @@ sap.ui.define([
 						}),
 						"then all indicators are visible 2/2"
 					);
+					fnDone();
 				});
 		});
 
 		QUnit.test("when change visualization is deactivated and activated again", function (assert) {
 			var fnDone = assert.async();
 			prepareChanges(this.aMockChanges);
-			selectCommandCategory(this.oVisualizationButton, this.oChangeVisualization, "all")
+			this.oRta.setMode("visualization");
+			waitForMethodCall(this.oRta.getToolbar(), "setModel")
 				.then(function () {
 					sap.ui.getCore().applyChanges();
 					assert.strictEqual(
@@ -452,27 +496,20 @@ sap.ui.define([
 						"then all indicators are hidden after deactivation"
 					);
 
-					var fnReactivate = function () {
-						// Activate again and select a different category
-						selectCommandCategory(this.oVisualizationButton, this.oChangeVisualization, "add")
-							.then(function () {
-								sap.ui.getCore().applyChanges();
-								assert.strictEqual(
-									collectIndicatorReferences().filter(function (oIndicator) {
-										return oIndicator.getVisible();
-									}).length,
-									2,
-									"then all indicators are visible again after reactivation"
-								);
-								fnDone();
-							});
-					}.bind(this);
-
-					if (!this.oChangeVisualization.getPopover().isOpen()) {
-						fnReactivate();
-					} else {
-						this.oChangeVisualization.getPopover().attachEventOnce("afterClose", fnReactivate);
-					}
+					// Activate again and select a different category
+					return this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("add"))
+						.then(function () {
+							this.oChangeVisualization.setIsActive(true);
+							sap.ui.getCore().applyChanges();
+							assert.strictEqual(
+								collectIndicatorReferences().filter(function (oIndicator) {
+									return oIndicator.getVisible();
+								}).length,
+								2,
+								"then all indicators are visible again after reactivation"
+							);
+							fnDone();
+						}.bind(this));
 				}.bind(this));
 		});
 
@@ -485,41 +522,46 @@ sap.ui.define([
 			assert.strictEqual(this.oChangeVisualization.getIsActive(), false, "then the ChangeVisualization was inactive before");
 			waitForMethodCall(this.oChangeVisualization, "triggerModeChange")
 				.then(function() {
-					assert.strictEqual(this.oChangeVisualization.getRootControlId(), "MockComponent", "then the RootControlId is set afterwards");
+					assert.strictEqual(this.oChangeVisualization.getRootControlId(), "Comp", "then the RootControlId is set afterwards");
 					assert.strictEqual(this.oChangeVisualization.getIsActive(), true, "then the ChangeVisualization is active afterwards");
 					fnDone();
 				}.bind(this));
-			this.oChangeVisualization.triggerModeChange("MockComponent");
+			this.oChangeVisualization.triggerModeChange("Comp", this.oRta.getToolbar());
 		});
 
 		QUnit.test("when ChangeVisualization is active and mode change is triggered", function (assert) {
 			var fnDone = assert.async();
 			prepareChanges(this.aMockChanges);
-			startChangeVisualization(this.oVisualizationButton, this.oChangeVisualization);
+			this.oRta.setMode("visualization");
+			sap.ui.getCore().applyChanges();
 			assert.strictEqual(this.oChangeVisualization.getIsActive(), true, "then the ChangeVisualization was active before");
 			waitForMethodCall(this.oChangeVisualization, "triggerModeChange")
 				.then(function() {
 					assert.strictEqual(this.oChangeVisualization.getIsActive(), false, "then the ChangeVisualization is inactive afterwards");
 					fnDone();
 				}.bind(this));
-			this.oChangeVisualization.triggerModeChange("MockComponent");
+			this.oChangeVisualization.triggerModeChange("Comp", this.oRta.getToolbar());
 		});
 
 		QUnit.test("when details are selected for a change", function (assert) {
 			prepareChanges(
-				[createMockChange("testMove", "move", "button1")],
+				[createMockChange("testMove", "move", "Comp1---idMain1--rb1")],
 				undefined,
 				{
 					getChangeVisualizationInfo: function () {
 						return {
-							dependentControls: [sap.ui.getCore().byId("button2")], // Test if vis can handle elements
-							affectedControls: ["button1"] // Test if vis can handle IDs
+							dependentControls: [sap.ui.getCore().byId("Comp1---idMain1--rb2")], // Test if vis can handle elements
+							affectedControls: ["Comp1---idMain1--rb1"] // Test if vis can handle IDs
 						};
 					}
 				}
 			);
-			return selectCommandCategory(this.oVisualizationButton, this.oChangeVisualization, "all")
+			return this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("all"))
 				.then(function () {
+					this.oRta.setMode("visualization");
+					return waitForMethodCall(this.oToolbar, "setModel");
+				}.bind(this))
+				.then(function() {
 					sap.ui.getCore().applyChanges();
 					var oSelectChangePromise = waitForMethodCall(this.oChangeVisualization, "_selectChange");
 					var oChangeIndicator = collectIndicatorReferences()[0];
@@ -557,49 +599,48 @@ sap.ui.define([
 	}
 
 	QUnit.module("Keyboard and focus handling", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function(assert) {
-			var oContainer = new VBox("container", {
-				items: [
-					new Button("topButton", {
-						text: "First button"
-					}),
-					new HBox("nestedContainer", {
-						items: [
-							new Button("bottomLeftButton", {
-								text: "Second button"
-							}),
-							new Button("bottomRightButton", {
-								text: "Third button"
-							})
-						]
-					})
-				]
-			});
-
 			var fnDone = assert.async();
-			setupTest.call(this, function () {
-				// Pass changes in a mixed up order to check if they are properly sorted for tab handling
-				prepareChanges([
-					createMockChange("testAdd", "addDelegateProperty", "bottomRightButton"),
-					createMockChange("testReveal", "reveal", "topButton"),
-					createMockChange("testRename", "rename", "bottomLeftButton")
-				]);
-				selectCommandCategory(this.oVisualizationButton, this.oChangeVisualization, "all")
-					.then(function () {
-						sap.ui.getCore().applyChanges();
-						fnDone();
-					});
-			}.bind(this), oContainer);
+			prepareChanges([
+				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1"),
+				createMockChange("testReveal", "reveal", "Comp1---idMain1--rb2"),
+				createMockChange("testRename", "rename", "Comp1---idMain1--Label1")
+			]);
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp,
+				flexSettings: this.oFlexSettings
+			});
+			RtaQunitUtils.clear()
+				.then(this.oRta.start.bind(this.oRta))
+				.then(function() {
+					this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
+					this.oChangeVisualization = this.oRta.getChangeVisualization();
+					this.oToolbar = this.oRta.getToolbar();
+					this.oRta.setMode("visualization");
+					waitForMethodCall(this.oToolbar, "setModel");
+				}.bind(this))
+				.then(function() {
+					return this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("all"));
+				}.bind(this))
+				.then(function () {
+					sap.ui.getCore().applyChanges();
+					fnDone();
+				});
 		},
 		afterEach: function() {
-			cleanupTest.call(this);
+			this.oRta.destroy();
+			sandbox.restore();
+			return RtaQunitUtils.clear();
 		}
 	}, function() {
 		QUnit.test("when the visualization is started", function (assert) {
 			var aIndicators = collectIndicatorReferences();
 			// Overlay 1 has lowest y, thus should be focused first
 			assert.strictEqual(
-				getIndicatorForElement(aIndicators, "topButton"),
+				getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1"),
 				document.activeElement,
 				"then the indicators are sorted and the first is focused"
 			);
@@ -610,19 +651,19 @@ sap.ui.define([
 			var aIndicators = collectIndicatorReferences();
 			QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ARROW_LEFT);
 			assert.strictEqual(
-				getIndicatorForElement(aIndicators, "bottomRightButton"),
+				getIndicatorForElement(aIndicators, "Comp1---idMain1--Label1"),
 				document.activeElement,
 				"then the previous indicator is focused 1/3"
 			);
 			QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP);
 			assert.strictEqual(
-				getIndicatorForElement(aIndicators, "bottomLeftButton"),
+				getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2"),
 				document.activeElement,
 				"then the previous indicator is focused 2/3"
 			);
 			QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.TAB, true);
 			assert.strictEqual(
-				getIndicatorForElement(aIndicators, "topButton"),
+				getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1"),
 				document.activeElement,
 				"then the previous indicator is focused 3/3"
 			);
@@ -632,19 +673,19 @@ sap.ui.define([
 			var aIndicators = collectIndicatorReferences();
 			QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ARROW_RIGHT);
 			assert.strictEqual(
-				getIndicatorForElement(aIndicators, "bottomLeftButton"),
+				getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2"),
 				document.activeElement,
 				"then the next indicator is focused 1/3"
 			);
 			QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
 			assert.strictEqual(
-				getIndicatorForElement(aIndicators, "bottomRightButton"),
+				getIndicatorForElement(aIndicators, "Comp1---idMain1--Label1"),
 				document.activeElement,
 				"then the next indicator is focused 2/3"
 			);
 			QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.TAB);
 			assert.strictEqual(
-				getIndicatorForElement(aIndicators, "topButton"),
+				getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1"),
 				document.activeElement,
 				"then the next indicator is focused 3/3"
 			);
@@ -652,21 +693,39 @@ sap.ui.define([
 	});
 
 	QUnit.module("Cleanup", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
-			setupTest.call(this, function () {
-				prepareChanges([
-					createMockChange("testAdd", "addDelegateProperty", "button1")
-				]);
-				selectCommandCategory(this.oVisualizationButton, this.oChangeVisualization, "all")
-					.then(function () {
-						sap.ui.getCore().applyChanges();
-						fnDone();
-					});
-			}.bind(this));
+			prepareChanges([
+				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1")
+			]);
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp,
+				flexSettings: this.oFlexSettings
+			});
+			RtaQunitUtils.clear()
+				.then(this.oRta.start.bind(this.oRta))
+				.then(function() {
+					this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
+					this.oChangeVisualization = this.oRta.getChangeVisualization();
+					this.oToolbar = this.oRta.getToolbar();
+					this.oRta.setMode("visualization");
+					waitForMethodCall(this.oToolbar, "setModel");
+				}.bind(this))
+				.then(function() {
+					return this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("all"));
+				}.bind(this))
+				.then(function () {
+					sap.ui.getCore().applyChanges();
+					fnDone();
+				});
 		},
 		afterEach: function() {
-			cleanupTest.call(this);
+			this.oRta.destroy();
+			sandbox.restore();
+			return RtaQunitUtils.clear();
 		}
 	}, function() {
 		QUnit.test("when the change visualization is destroyed", function (assert) {
@@ -677,15 +736,19 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the change visualization is created a second time", function (assert) {
-			this.oChangeVisualization.destroy();
-			this.oChangeVisualization = new ChangeVisualization({
-				rootControlId: "MockComponent"
-			});
-			return selectCommandCategory(this.oVisualizationButton, this.oChangeVisualization, "all")
+			var fnDone = assert.async();
+			this.oRta.setMode("adaptation");
+			sap.ui.getCore().applyChanges();
+			this.oRta.setMode("visualization");
+			waitForMethodCall(this.oToolbar, "setModel")
+				.then(function() {
+					return this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("all"));
+				}.bind(this))
 				.then(function () {
 					sap.ui.getCore().applyChanges();
 					assert.strictEqual(collectIndicatorReferences().length, 1, "then indicators are created again");
 					this.oChangeVisualization.destroy();
+					fnDone();
 				}.bind(this));
 		});
 

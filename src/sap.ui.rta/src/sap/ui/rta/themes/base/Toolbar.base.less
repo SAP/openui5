@@ -4,6 +4,8 @@
 @_sap_ui_rta_Toolbar_Base_SegBBtnHoverBG: lighten(@sapSelectedColor,32%); //#c2e2f9
 @_sap_ui_rta_Toolbar_Base_TextColor: @sapUiWhite; //#fff
 @_sap_ui_rta_Toolbar_Base_BaseColor: darken(desaturate(@sapChart_OrderedColor_1, 48%), 14%); //#435060
+@_sap_ui_rta_Toolbar_Base_BorderColor: @sapUiMediumBG;
+@_sap_ui_rta_Toolbar_Base_BtnHoverColor: @sapUiButtonHoverTextColor;
 
 .sapUiRtaMode {
 
@@ -28,9 +30,15 @@
 
 		.sapMBtnTransparent,
 		:not(.sapMBtnDisabled) .sapMBtnTransparent > .sapMBtnIcon,
-		:not(.sapMBtnDisabled) .sapMBtnGhost > .sapMBtnIcon {
+		:not(.sapMBtnDisabled) .sapMBtnGhost > .sapMBtnIcon,
+		:not(.sapMBtnDisabled) .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
 			color: @_sap_ui_rta_Toolbar_Base_TextColor;
 		}
+
+		:not(.sapMBtnDisabled) .sapMMenuBtn:hover.sapMMenuBtnRegular .sapMBtnInner::after {
+			color: @_sap_ui_rta_Toolbar_Base_BtnHoverColor;
+		}
+
 
 		.sapMSegB > .sapMSegBBtn .sapMSegBBtnInner {
 			background-color: @_sap_ui_rta_Toolbar_Base_BaseColor;
@@ -109,6 +117,9 @@
 				}
 			}
 		}
+	}
+	.sapUiRtaToolbarVisualizationSelection li:first-child {
+		border-bottom: 1px solid @_sap_ui_rta_Toolbar_Base_BorderColor;
 	}
 }
 .sapUiSizeCozy {

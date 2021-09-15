@@ -932,7 +932,7 @@ sap.ui.define([
 					assert.ok(this.oToolbar.getControl("discardDraft").getVisible(), "discardDraft is visible");
 					assert.ok(this.oToolbar.getControl("undo").getVisible(), "undo is visible");
 					assert.ok(this.oToolbar.getControl("redo").getVisible(), "redo is visible");
-					assert.notOk(this.oToolbar.getControl("toggleChangeVisualizationPopoverButton").getVisible(), "toggleChangeVisualizationPopoverButton is not visible");
+					assert.notOk(this.oToolbar.getControl("toggleChangeVisualizationMenuButton").getVisible(), "toggleChangeVisualizationMenuButton is not visible");
 					assert.ok(this.oToolbar.getControl("publish").getVisible(), "publish is visible");
 					assert.notOk(this.oToolbar.getControl("restore").getVisible(), "restore is not visible");
 					assert.ok(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is visible");
@@ -950,7 +950,7 @@ sap.ui.define([
 					assert.notOk(this.oToolbar.getControl("discardDraft").getVisible(), "discardDraft is not visible");
 					assert.notOk(this.oToolbar.getControl("undo").getVisible(), "undo is not visible");
 					assert.notOk(this.oToolbar.getControl("redo").getVisible(), "redo is not visible");
-					assert.notOk(this.oToolbar.getControl("toggleChangeVisualizationPopoverButton").getVisible(), "toggleChangeVisualizationPopoverButton is not visible");
+					assert.notOk(this.oToolbar.getControl("toggleChangeVisualizationMenuButton").getVisible(), "toggleChangeVisualizationMenuButton is not visible");
 					assert.notOk(this.oToolbar.getControl("publish").getVisible(), "publish is not visible");
 					assert.notOk(this.oToolbar.getControl("restore").getVisible(), "restore is not visible");
 					assert.notOk(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is not visible");
@@ -967,9 +967,9 @@ sap.ui.define([
 					assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "versionButton is not visible");
 					assert.notOk(this.oToolbar.getControl("activate").getVisible(), "activate is not visible");
 					assert.notOk(this.oToolbar.getControl("discardDraft").getVisible(), "discardDraft is not visible");
-					assert.ok(this.oToolbar.getControl("undo").getVisible(), "undo is visible");
-					assert.ok(this.oToolbar.getControl("redo").getVisible(), "redo is visible");
-					assert.ok(this.oToolbar.getControl("toggleChangeVisualizationPopoverButton").getVisible(), "toggleChangeVisualizationPopoverButton is visible");
+					assert.notOk(this.oToolbar.getControl("undo").getVisible(), "undo is not visible");
+					assert.notOk(this.oToolbar.getControl("redo").getVisible(), "redo is not visible");
+					assert.ok(this.oToolbar.getControl("toggleChangeVisualizationMenuButton").getVisible(), "toggleChangeVisualizationMenuButton is visible");
 					assert.notOk(this.oToolbar.getControl("publish").getVisible(), "publish is not visible");
 					assert.ok(this.oToolbar.getControl("restore").getVisible(), "restore is visible");
 					assert.notOk(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is not visible");
