@@ -563,7 +563,10 @@ sap.ui.define([
 		// Field accepts values that are not found -> must be checked by caller
 		// if user input fits to the type, let the caller validate it
 		var oOperator;
-		if (aOperators.length === 1) {
+		if (_isUnit(oType)) {
+			// in unit case just use EQ operator
+			oOperator = FilterOperatorUtil.getEQOperator("EQ");
+		} else if (aOperators.length === 1) {
 			// just use the one supported type
 			oOperator = FilterOperatorUtil.getOperator(aOperators[0]);
 		} else {
@@ -582,6 +585,10 @@ sap.ui.define([
 
 		if (oCondition) {
 			oCondition.validated = ConditionValidated.NotValidated;
+			if (_isUnit(oType) && Array.isArray(oCondition.values[0])) {
+				// user input is valid for type -> just return unit for further processing
+				oCondition.values[0] = oCondition.values[0][1];
+			}
 		}
 
 		return oCondition;

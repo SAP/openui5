@@ -1933,10 +1933,12 @@ sap.ui.define([
 
 	QUnit.test("Parsing: unit from FieldHelp", function(assert) {
 
-		oFieldHelp = new FieldHelpBase("FH1");
+		oFieldHelp = new FieldHelpBase("FH1", {validateInput: false}); // test invalid input returned if OK for Type
 		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
 			if (oConfig.value === "Euro") {
 				return {key: "EUR", description: "Euro"};
+			} else if (oConfig.value === "USD" || oConfig.value === "X") {
+				throw new ParseException("Cannot parse value " + oConfig.parsedValue);
 			}
 		});
 		oUnitConditionType.oFormatOptions.fieldHelpID = "FH1"; // fake setting directly
@@ -1953,6 +1955,31 @@ sap.ui.define([
 		assert.equal(oCondition.values[0].length, 2, "Values0 length");
 		assert.equal(oCondition.values[0][0], 1, "Values entry0");
 		assert.equal(oCondition.values[0][1], "EUR", "Values entry1");
+		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+
+		oCondition = oUnitConditionType.parseValue("USD"); // valid currency for type but not for Help
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.equal(oCondition.values[0].length, 2, "Values0 length");
+		assert.equal(oCondition.values[0][0], 1, "Values entry0");
+		assert.equal(oCondition.values[0][1], "USD", "Values entry1");
+		assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
+
+		var oException;
+
+		try {
+			oCondition = undefined;
+			oCondition = oUnitConditionType.parseValue("X"); // invalid currency
+		} catch (e) {
+			oException = e;
+		}
+
+		assert.notOk(oCondition, "No Result returned");
+		assert.ok(oException, "Exception returned");
+		assert.ok(oException instanceof ParseException, "Exception is a ParseException");
 
 //		oCondition = oUnitConditionType.parseValue("");
 //		assert.ok(oCondition, "Result returned");
