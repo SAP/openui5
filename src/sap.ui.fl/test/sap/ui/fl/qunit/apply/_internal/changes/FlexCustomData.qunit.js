@@ -99,7 +99,7 @@ function (
 				.then(function () {
 					var oCustomData = getCustomData(this.oControl, createCustomDataKey(this.oChange, sAppliedKey));
 					assert.ok(oCustomData, "the custom data was added");
-					assert.equal(oCustomData.getValue(), '\\{\"value\":\"revert\"\\}', "the value is the standard 'true'");
+					assert.equal(oCustomData.getValue(), '\\{\"value\":\"revert\"\\}', "the custom data got replaced");
 				}.bind(this));
 		});
 
