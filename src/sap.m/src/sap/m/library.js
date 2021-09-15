@@ -474,9 +474,8 @@ sap.ui.define([
 					"unhideControl": "default",
 					"moveControls": "default"
 				},
-				"sap.m.IconTabBar": {
-					"moveControls": "default"
-				},
+				"sap.m.IconTabBar": "sap/m/flexibility/IconTabBar",
+
 				"sap.m.IconTabFilter": "sap/m/flexibility/IconTabFilter",
 				"sap.m.Image": {
 					"hideControl": "default",

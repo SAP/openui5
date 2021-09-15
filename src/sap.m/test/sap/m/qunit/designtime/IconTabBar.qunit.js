@@ -85,6 +85,14 @@ sap.ui.define([
 			};
 		};
 
+		var fnGetConfirmSelectedElementAssert = function (sTabBarId, iSelectedKey) {
+			return function (oUiComponent, oViewAfterAction, assert) {
+				assert.strictEqual(oViewAfterAction.byId(sTabBarId).getSelectedKey(),
+				iSelectedKey,
+				"then the proper element has been selected");
+			};
+		};
+
 		// Move action for items
 		elementActionTest("Checking the move action for IconTabBar control items", {
 			xmlView: fnGetTabBarView("tabbar"),
@@ -102,6 +110,21 @@ sap.ui.define([
 			afterUndo: fnGetConfirmElementPositionAssert("tabbar2", 0, "first-content", "Content"),
 			afterRedo: fnGetConfirmElementPositionAssert("tabbar2", 2, "first-content", "Content")
 		});
-	});
 
+		// Settings action to select tab
+		elementActionTest("Checking the select tab action for IconTabBar control", {
+			xmlView: fnGetTabBarView("tabbar"),
+			action: {
+				name: "settings",
+				controlId: "tabbar",
+				parameter: {
+					changeType: "selectIconTabBarFilter",
+					content: "comp---view--second"
+				}
+			},
+			afterAction: fnGetConfirmSelectedElementAssert("tabbar", "comp---view--second"),
+			afterUndo: fnGetConfirmSelectedElementAssert("tabbar", "comp---view--first"),
+			afterRedo: fnGetConfirmSelectedElementAssert("tabbar", "comp---view--second")
+		});
+	});
 });
