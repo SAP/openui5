@@ -17,6 +17,7 @@
 					<Title text="Payments" level="H2"/>
 					<ToolbarSpacer/>
 
+					<Label visible="false" text="Transaction date" labelFor="dynamic-range"/>
 					<DynamicDateRange
 						id="dynamic-range"
 						change="onChange"
@@ -32,7 +33,7 @@
 		</infoToolbar>
 		<columns>
 			<Column>
-				<Text text="Transaction date and time" />
+				<Text text="Transaction date" />
 			</Column>
 			<Column
 				hAlign="Center">
