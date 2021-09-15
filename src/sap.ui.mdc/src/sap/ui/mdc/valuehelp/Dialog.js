@@ -187,6 +187,7 @@ sap.ui.define([
 					};
 					oDialog.addStyleClass("sapMdcValueHelp");
 					oDialog.addStyleClass("sapMdcValueHelpTitle");
+					oDialog.addStyleClass("sapMdcValueHelpTitleShadow");
 
 					var oVBox = new VBox({ fitContainer: true});
 					oVBox.addStyleClass("sapMdcValueHelpPanel");
@@ -274,10 +275,10 @@ sap.ui.define([
 							function(aContent) {
 								if (aContent && aContent.length == 1) {
 									this.addStyleClass("sapMdcNoHeader"); // hide the IconTabBar header
-									oDialog.removeStyleClass("sapMdcValueHelpTitle"); // make the Header border visible
+									oDialog.removeStyleClass("sapMdcValueHelpTitleShadow"); // make the Header border visible
 								} else {
 									this.removeStyleClass("sapMdcNoHeader");
-									oDialog.addStyleClass("sapMdcValueHelpTitle"); // make the Header border invisible
+									oDialog.addStyleClass("sapMdcValueHelpTitleShadow"); // make the Header border invisible
 								}
 								return true;
 							}
@@ -335,7 +336,7 @@ sap.ui.define([
 				this.oTokenizerPanel = new Panel( {
 					backgroundDesign: "Transparent",
 					expanded: true,
-					visible: { parts: ['$valueHelp>/_config/maxConditions'], formatter: function(iMaxConditions) {
+					visible: { parts: ['$valueHelp>/_config/maxConditions'], formatter:	function(iMaxConditions) {
 						return iMaxConditions === -1;
 					}},
 					headerText: {parts: ['$i18n>valuehelp.TOKENIZERTITLE', '$valueHelp>/conditions'], formatter:
