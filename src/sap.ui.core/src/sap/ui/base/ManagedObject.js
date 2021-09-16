@@ -1149,7 +1149,7 @@ sap.ui.define([
 					if (oBindingInfo && typeof oBindingInfo === "object") {
 						this.bindProperty(sKey, oBindingInfo);
 					} else {
-						this[oKeyInfo._sMutator](oBindingInfo || oValue);
+						this[oKeyInfo._sMutator](typeof oBindingInfo === "string" ? oBindingInfo : oValue);
 					}
 					break;
 				case 1: // SINGLE_AGGREGATION
@@ -1164,7 +1164,7 @@ sap.ui.define([
 							}
 							oValue = oValue[0];
 						}
-						this[oKeyInfo._sMutator](makeObject(oBindingInfo || oValue, oKeyInfo, oScope));
+						this[oKeyInfo._sMutator](makeObject(typeof oBindingInfo === "string" ? oBindingInfo : oValue, oKeyInfo, oScope));
 					}
 					break;
 				case 2: // MULTIPLE_AGGREGATION
@@ -1172,7 +1172,7 @@ sap.ui.define([
 					if (oBindingInfo && typeof oBindingInfo === "object" ) {
 						this.bindAggregation(sKey, oBindingInfo);
 					} else {
-						oValue = oBindingInfo || oValue; // could be an unescaped string if altTypes contains 'string'
+						oValue = typeof oBindingInfo === "string" ? oBindingInfo : oValue; // could be an unescaped string if altTypes contains 'string'
 						if ( oValue ) {
 							if ( Array.isArray(oValue) ) {
 								addAllToAggregation(oValue); // wrap a single object as array
