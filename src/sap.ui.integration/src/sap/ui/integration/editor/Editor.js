@@ -1786,7 +1786,11 @@ sap.ui.define([
 			}
 			if (this.getMode() === "content" && oConfig.pageAdminValues && oConfig.pageAdminValues.length > 0) {
 				var paValues = oConfig.pageAdminValues,
-				    results = [];
+				    selValues = oConfig.value,
+					selValueItems = oConfig.valueItems,
+				    results = [],
+					selResults = [],
+					selItemsResults = [];
 				this.prepareFieldsInKey(oConfig);
 				if (paValues.length > 0) {
 					for (var i = 0; i < paValues.length; i++) {
@@ -1796,6 +1800,27 @@ sap.ui.define([
 								results.push(tResult[j]);
 							}
 						}
+						if (Array.isArray(selValues)) {
+							for (var k = 0; k < selValues.length; k++) {
+								if (paValues[i] === selValues[k]) {
+									selResults.push(selValues[k]);
+								}
+							}
+							for (var l = 0; l < selValueItems.length; l++) {
+								var kValue = this.getKeyFromItem(selValueItems[l]);
+								if (paValues[i] === kValue) {
+									selItemsResults.push(selValueItems[l]);
+								}
+							}
+						}
+					}
+					if (selResults.length > 0) {
+						oConfig.value = [];
+						oConfig.value = selResults;
+					}
+					if (selItemsResults.length > 0) {
+						oConfig.valueItems = [];
+						oConfig.valueItems = selItemsResults;
 					}
 				}
 				if (oConfig.values.data.path && oConfig.values.data.path !== "/") {

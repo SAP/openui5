@@ -131,9 +131,9 @@ sap.ui.define([
 			chartType = oCard.getManifestEntry("/sap.card/content/chartType");
 		}
 
-		if (sModes.indexOf("Live") > -1 && chartType && chartType.toUpperCase === "DONUT") {
+		if (sModes.indexOf("Live") > -1 && chartType && chartType.toUpperCase() === "DONUT") {
 			var oPreview = this._getCardPreview();
-			setTimeout(function() {
+			window.setTimeout(function() {
 				if (oPreview.getCardContent()) {
 					var oFrame = oPreview.getCardContent().getAggregation("_content");
 					try {
