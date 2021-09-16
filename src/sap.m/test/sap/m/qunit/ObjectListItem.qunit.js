@@ -537,13 +537,18 @@ sap.ui.define([
 		list.addItem(imageOLIImg);
 		sap.ui.getCore().applyChanges();
 
-		setTimeout(function() {
-			var imageWidth = imageOLIImg.$('img').width();
-			var imageHeight = imageOLIImg.$('img').height();
-			assert.ok(imageWidth > imageHeight, "The image still has different width and height");
+		new Promise(function(resolve) {
+			var img = imageOLIImg.$('img')[0];
+			img.onload = function() {
+				resolve(img);
+			};
+		}).then(function(img) {
+			assert.ok(img.width > img.height, "The image still has different width and height");
+		}).finally(function(){
 			imageOLIImg.destroy();
 			done();
-		},1000);
+		});
+
 	});
 
 	/******************************************************************/
