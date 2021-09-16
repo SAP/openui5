@@ -160,8 +160,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("bInitial, doSuspend", function (assert) {
-		var oBinding = this.bindContext("/EMPLOYEES('42')");
+[false, true].forEach(function (bOperation) {
+	QUnit.test("bInitial, doSuspend, bAction: " + bOperation, function (assert) {
+		var oBinding = bOperation ? this.bindContext("/OperationImport(...)")
+				: this.bindContext("/EMPLOYEES('42')");
 
 		assert.strictEqual(oBinding.bInitial, true);
 		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
@@ -169,7 +171,8 @@ sap.ui.define([
 		// code under test
 		oBinding.doSuspend();
 
-		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
+		assert.strictEqual(oBinding.sResumeChangeReason,
+			bOperation ? undefined : ChangeReason.Change);
 
 		return Promise.resolve().then(function () {
 			assert.strictEqual(oBinding.bInitial, false);
@@ -182,6 +185,7 @@ sap.ui.define([
 			assert.strictEqual(oBinding.sResumeChangeReason, "~");
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("be V8-friendly", function (assert) {
@@ -319,6 +323,7 @@ sap.ui.define([
 
 				assert.strictEqual(oBinding.mQueryOptions, mQueryOptions, "mQueryOptions");
 				assert.strictEqual(oBinding.mParameters, mParameters);
+				assert.strictEqual(oBinding.sResumeChangeReason, undefined);
 
 				return oPromise.catch(function () {
 					if (bExecuteOperation) {
@@ -3526,19 +3531,29 @@ sap.ui.define([
 	//*********************************************************************************************
 	[undefined, false, true].forEach(function (bAction) {
 		QUnit.test("resumeInternal: operation binding, bAction=" + bAction, function () {
-			var oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
+			var bCheckUpdate = {},
+				oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
 				oBinding = this.bindContext("name.space.Operation(...)", oContext),
-				oBindingMock = this.mock(oBinding);
+				oBindingMock = this.mock(oBinding),
+				oDependent0 = {resumeInternal : function () {}},
+				oDependent1 = {resumeInternal : function () {}};
+
 
 			oBinding.oOperation.bAction = bAction;
 
 			oBindingMock.expects("fetchCache").never();
-			this.mock(oBinding).expects("getDependentBindings").never();
+			this.mock(oBinding).expects("getDependentBindings")
+				.withExactArgs()
+				.returns([oDependent0, oDependent1]);
+			this.mock(oDependent0).expects("resumeInternal")
+				.withExactArgs(sinon.match.same(bCheckUpdate), false);
+			this.mock(oDependent1).expects("resumeInternal")
+				.withExactArgs(sinon.match.same(bCheckUpdate), false);
 			oBindingMock.expects("_fireChange").never();
 			oBindingMock.expects("execute").never();
 
 			// code under test
-			oBinding.resumeInternal(true);
+			oBinding.resumeInternal(bCheckUpdate);
 		});
 	});
 
