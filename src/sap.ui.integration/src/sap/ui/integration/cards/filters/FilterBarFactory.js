@@ -2,15 +2,17 @@
  * ${copyright}
  */
 sap.ui.define([
+	"./SelectFilter",
+	"./DateRangeFilter",
 	"sap/ui/base/Object",
 	"sap/m/library",
-	"sap/m/HBox",
-	"sap/ui/integration/cards/Filter"
+	"sap/m/HBox"
 ], function (
+	SelectFilter,
+	DateRangeFilter,
 	BaseObject,
 	mLibrary,
-	HBox,
-	Filter
+	HBox
 ) {
 	"use strict";
 
@@ -45,29 +47,37 @@ sap.ui.define([
 	});
 
 	/**
-	 * Creates a new filter bar which holds drop-down menus for filtering. Those drop-down menus are created based on the parameters configuration.
+	 * Creates a new filter bar which holds fields for filtering.
+	 * Each field is bound to the given model.
 	 *
-	 * @param {map} mFiltersConfig A map of the parameters config - the same that is defined in sap.card/configuration/parameters.
-	 * @param {map} mFiltersValues The combined (runtime + manifest) values of the parameters.
+	 * @param {map} mFiltersConfig A map of the parameters config - the same that is defined in sap.card/configuration/filters.
+	 * @param {sap.ui.model.json.JSONModel} oModel The model for filters.
 	 * @returns {sap.m.HBox} The Filter bar.
 	 */
-	FilterBarFactory.prototype.create = function (mFiltersConfig, mFiltersValues) {
+	FilterBarFactory.prototype.create = function (mFiltersConfig, oModel) {
 		var aFilters = [],
 			aReadyPromises = [],
 			mConfig,
 			sKey,
 			oFilter,
-			oFilterBarStrip;
+			oFilterBarStrip,
+			FilterClass = null;
 
 		for (sKey in mFiltersConfig) {
 			mConfig = mFiltersConfig[sKey];
+			FilterClass = this._getClass(mConfig.type);
 
-			oFilter = new Filter({
+			oFilter = new FilterClass({
 				card: this._oCard,
 				key: sKey,
 				config: mConfig,
-				value: mFiltersValues[sKey] ? mFiltersValues[sKey].value : mConfig.value
+				value: {
+					model: "filters",
+					path: "/" + sKey
+				}
 			});
+
+			oModel.setProperty("/" + sKey, oFilter.getValueForModel());
 
 			this._awaitEvent(aReadyPromises, oFilter, "_ready");
 			oFilter._setDataConfiguration(mConfig.data);
@@ -110,6 +120,21 @@ sap.ui.define([
 				resolve();
 			});
 		}));
+	};
+
+	FilterBarFactory.prototype._getClass = function (sType) {
+		sType = sType || "select";
+
+		switch (sType.toLowerCase()) {
+			case "string": // backwards compatibility
+			case "integer": // backwards compatibility
+			case "select":
+				return SelectFilter;
+			case "daterange":
+				return DateRangeFilter;
+			default:
+				return undefined;
+		}
 	};
 
 	return FilterBarFactory;
