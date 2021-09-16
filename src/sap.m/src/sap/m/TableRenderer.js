@@ -287,7 +287,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/Invisibl
 	TableRenderer.renderListStartAttributes = function(rm, oControl) {
 		rm.openStart("table", oControl.getId("listUl"));
 		rm.class("sapMListTbl");
-		rm.attr("aria-labelledby", InvisibleText.getStaticId("sap.m", "TABLE_ARIA_LABEL"));
+		rm.attr("aria-labelledby", oControl.getAriaLabelledBy().concat(this.getAriaLabelledBy(oControl), InvisibleText.getStaticId("sap.m", "TABLE_ARIA_LABEL")).join(" "));
 		if (oControl.getFixedLayout() === false) {
 			rm.style("table-layout", "auto");
 		}

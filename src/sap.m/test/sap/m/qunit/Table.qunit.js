@@ -1022,9 +1022,13 @@ sap.ui.define([
 
 		assert.equal(sut.$().attr("role"), "application", "Container has correct ARIA role");
 
-		assert.equal(sut.$().attr("aria-labelledby"), "idTitle", "aria-labelledby - Table");
-		assert.equal(sut.$().attr("aria-roledescription"), Core.getLibraryResourceBundle("sap.m").getText("TABLE_CONTAINER_ROLE_DESCRIPTION"), "aria-roledescription - Table");
-		assert.equal( document.getElementById(sut.$("listUl").attr("aria-labelledby")).innerText, Core.getLibraryResourceBundle("sap.m").getText("TABLE_ARIA_LABEL"), "Table aria-labelledby");
+		assert.equal(sut.$().attr("aria-labelledby"), "idTitle", "aria-labelledby - Table container");
+		assert.equal(sut.$().attr("aria-roledescription"), Core.getLibraryResourceBundle("sap.m").getText("TABLE_CONTAINER_ROLE_DESCRIPTION"),
+			"aria-roledescription - Table container");
+
+		var aLabels = sut.$("listUl").attr("aria-labelledby").split(" ");
+		assert.ok(aLabels[0] === "idTitle" && document.getElementById(aLabels[2]).innerText === Core.getLibraryResourceBundle("sap.m").getText("TABLE_ARIA_LABEL"),
+			"aria-labelledby - Table element");
 		assert.ok(!sut.$("listUl").attr("role"), "Table has no ARIA role");
 
 		function checkCells(sCellType) {
