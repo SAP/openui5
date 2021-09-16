@@ -8,20 +8,26 @@ function networkFetch(event, cache, broadcast) {
 	var request = event.request,
 		cacheControl = readCacheHeader(request);
 
-	return fetch(request).then(function (networkResponse) {
-		if (networkResponse.ok && cache && cacheControl.isCacheEnabled()) {
-			cache.put(request, networkResponse.clone());
+	return fetch(request)
+		.then(function (networkResponse) {
+			return randomize(networkResponse); // randomize the response for demonstration
+		})
+		.then(function (networkResponse) {
+			if (networkResponse.ok && cache && cacheControl.isCacheEnabled()) {
 
-			console.log("[CARDS CACHING SW] data revalidated - broadcast to card (" + request.url + ")");
-			if (broadcast) {
-				postMessage(event, {
-					type: "ui-integration-card-update",
-					url: request.url
-				});
+				cache.put(request, networkResponse.clone());
+
+				console.log("[CARDS CACHING SW] data revalidated - broadcast to card (" + request.url + ")");
+				if (broadcast) {
+					postMessage(event, {
+						type: "ui-integration-card-update",
+						url: request.url
+					});
+				}
 			}
-		}
-		return networkResponse;
-	});
+
+			return networkResponse;
+		});
 }
 
 function delayedNetworkFetch(event, cache, broadcast) {
@@ -30,6 +36,33 @@ function delayedNetworkFetch(event, cache, broadcast) {
 			networkFetch(event, cache, broadcast).then(resolve, reject);
 		}, 2000); // simulate response delay
 	});
+}
+
+function randomize(response) {
+	var clonedResponse = response.clone();
+
+	return clonedResponse.json()
+		.then(function (data) {
+			if (!data.items) {
+				return clonedResponse;
+			}
+
+			var items = data.items;
+
+			items.sort(function () { return Math.random() - 0.5 });
+			items = items.slice(Math.floor(Math.random() * items.length));
+
+			data.items = items;
+
+			return new Response(
+				JSON.stringify(data),
+				{
+					status: clonedResponse.status,
+					statusText: clonedResponse.statusText,
+					headers: clonedResponse.headers
+				}
+			);
+		});
 }
 
 function postMessage(event, message) {
