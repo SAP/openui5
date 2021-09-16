@@ -927,5 +927,20 @@ sap.ui.define([
 		return this._bFileTypeRestricted || this._bNameLengthRestricted || this._bSizeRestricted || this._bMediaTypeRestricted;
 	};
 
+	UploadSetItem.prototype.exit = function() {
+		if (this._oProgressIndicator) {
+			this._oProgressIndicator.destroy();
+			this._oProgressIndicator = null;
+		}
+		if (this._oStateLabel) {
+			this._oStateLabel.destroy();
+			this._oStateLabel = null;
+		}
+		if (this._oProgressBox) {
+			this._oProgressBox.destroy();
+			this._oProgressBox = null;
+		}
+	};
+
 	return UploadSetItem;
 });
