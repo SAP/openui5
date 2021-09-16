@@ -221,6 +221,67 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Check blank filename", function (assert) {
+        //Arrange
+		this.oUploadSet.attachEventOnce("beforeItemAdded", function (oEvent) {
+			assert.ok(true, "beforeItemAdded event should have been called.");
+			assert.equal(oEvent.getParameter("item").getFileName(), "", "File name should be correct.");
+		});
+		this.oUploadSet.attachEventOnce("afterItemAdded", function (oEvent) {
+			assert.ok(true, "afterItemAdded event should have been called.");
+			assert.equal(oEvent.getParameter("item").getFileName(), "", "File name should be correct.");
+		});
+		this.oUploadSet._onFileUploaderChange({
+			getParameter: function () {
+				return {
+					length: 1,
+					0: {name: ""}
+				};
+			}
+		});
+	});
+
+	QUnit.test("Rename filename with no extension", function (assert) {
+		assert.expect(2);
+		var oItem = this.oUploadSet.getItems()[0];
+
+		this.oUploadSet.placeAt("qunit-fixture");
+
+		this.oUploadSet.attachEventOnce("afterItemEdited", function (oEvent) {
+			assert.ok(true, "afterItemEdited event should have been called.");
+			assert.equal(oEvent.getParameter("item").getFileName(), "testFileName", "File name should be correct.");
+		});
+		oItem._getEditButton().firePress();
+		sap.ui.getCore().applyChanges();
+
+		oItem.setFileName("testFileName");
+
+		oItem._getConfirmRenameButton().firePress();
+		sap.ui.getCore().applyChanges();
+
+	});
+
+
+	QUnit.test("Check filename with no extension", function (assert) {
+        //Arrange
+		this.oUploadSet.attachEventOnce("beforeItemAdded", function (oEvent) {
+			assert.ok(true, "beforeItemAdded event should have been called.");
+			assert.equal(oEvent.getParameter("item").getFileName(), "testFileName", "File name should be correct.");
+		});
+		this.oUploadSet.attachEventOnce("afterItemAdded", function (oEvent) {
+			assert.ok(true, "afterItemAdded event should have been called.");
+			assert.equal(oEvent.getParameter("item").getFileName(), "testFileName", "File name should be correct.");
+		});
+		this.oUploadSet._onFileUploaderChange({
+			getParameter: function () {
+				return {
+					length: 1,
+					0: {name: "testFileName"}
+				};
+			}
+		});
+	});
+
 	QUnit.test("Check multi-part form data in XMLHttpRequest", function (assert) {
 		//Setup
 		var oUploader = new Uploader({
