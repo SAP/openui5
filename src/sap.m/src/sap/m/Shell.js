@@ -11,9 +11,9 @@ sap.ui.define([
 	'sap/m/ShellRenderer',
 	"sap/ui/util/Mobile",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/core/theming/Parameters"
 ],
-	function(library, Core, Control, coreLibrary, ShellRenderer, Mobile, Log, jQuery) {
+	function(library, Core, Control, coreLibrary, ShellRenderer, Mobile, Log, ThemeParameters) {
 		"use strict";
 
 
@@ -152,7 +152,7 @@ sap.ui.define([
 
 		Shell.prototype.init = function() {
 			// theme change might change the logo
-			Core.attachThemeChanged(jQuery.proxy(function(){
+			Core.attachThemeChanged(function(){
 				var $hdr = this.$("hdr"),
 					sImgSrc = this._getImageSrc();
 
@@ -160,7 +160,7 @@ sap.ui.define([
 					this._getImage().setSrc(sImgSrc);
 					this._getImage().rerender();
 				}
-			}, this));
+			}, this);
 
 
 			Mobile.init({
@@ -177,14 +177,13 @@ sap.ui.define([
 		};
 
 		Shell.prototype.onAfterRendering = function () {
-			var ref = this.getDomRef().parentNode,
-				$ref;
+			var ref = this.getDomRef().parentNode;
+
 			// set all parent elements to 100% height this *should* be done by the application in CSS, but people tend to forget it...
 			if (ref && !ref._sapui5_heightFixed) {
 				ref._sapui5_heightFixed = true;
 				while (ref && ref !== document.documentElement) {
-					$ref = jQuery(ref);
-					if ($ref.attr("data-sap-ui-root-content")) { // some parents (e.g. Unified Shell) do this already
+					if (ref.getAttribute("data-sap-ui-root-content")) { // some parents (e.g. Unified Shell) do this already
 						break;
 					}
 					if (!ref.style.height) {
@@ -263,14 +262,7 @@ sap.ui.define([
 		};
 
 		Shell.prototype._getImageSrc = function() {
-			var sImage = this.getLogo(); // configured logo
-			if (!sImage) {
-				//TODO: global jquery call found
-				jQuery.sap.require("sap.ui.core.theming.Parameters");
-				sImage = sap.ui.require("sap/ui/core/theming/Parameters")._getThemeImage(); // theme logo
-			}
-
-			return sImage;
+			return this.getLogo() ? this.getLogo() : ThemeParameters._getThemeImage();
 		};
 
 		return Shell;
