@@ -8,9 +8,9 @@ sap.ui.define([
 	'sap/m/MessageView',
 	'sap/m/Button',
 	'sap/m/Bar',
-	'sap/m/Text',
+	'sap/m/Title',
 	'sap/m/Popover'
-], function(Controller, IconPool, JSONModel, Icon, Link, MessageItem, MessageView, Button, Bar, Text, Popover) {
+], function(Controller, IconPool, JSONModel, Icon, Link, MessageItem, MessageView, Button, Bar, Title, Popover) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.MessageViewInsidePopover.controller.MessageViewInsidePopover", {
@@ -97,16 +97,14 @@ sap.ui.define([
 					press: function () {
 						that._oPopover.close();
 					}
-				}),
+				}).addStyleClass("sapUiTinyMarginEnd"),
 				oPopoverFooter = new Bar({
 					contentRight: oCloseButton
 				}),
 				oPopoverBar = new Bar({
 					contentLeft: [oBackButton],
 					contentMiddle: [
-						new Text({
-							text: "Messages"
-						})
+						new Title({text: "Messages"})
 					]
 				});
 
