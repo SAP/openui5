@@ -183,6 +183,7 @@ sap.ui.define([
 
 		onOpenConfigurationEditor: function (oEvent) {
 			var sMode = oEvent.getSource().data("mode");
+			var sPreviewPosition = oEvent.getSource().data("previewPosition");
 			var sEditorTitle = {
 				admin: "Administrator",
 				content: "Page/Content Administrator",
@@ -208,6 +209,7 @@ sap.ui.define([
 								+ "You can edit it to adjust editor fields.<p>",
 						cardId: this._oCardSample.getId(),
 						mode: sMode,
+						previewPosition: sPreviewPosition,
 						designtime: this._extractDesigntimeMetadata(aArgs[1]),
 						language: Core.getConfiguration().getLanguage()
 					}), "config");
@@ -583,6 +585,11 @@ sap.ui.define([
 			exploreSettingsModel.getData().configMode = "All";
 			if (oCurrentSample.configMode) {
 				exploreSettingsModel.getData().configMode = oCurrentSample.configMode;
+				exploreSettingsModel.refresh();
+			}
+			exploreSettingsModel.getData().previewPosition = "right";
+			if (oCurrentSample.previewPosition) {
+				exploreSettingsModel.getData().previewPosition = oCurrentSample.previewPosition;
 				exploreSettingsModel.refresh();
 			}
 			this.oModel.setProperty("/currentSampleKey", oCurrentSample.key);

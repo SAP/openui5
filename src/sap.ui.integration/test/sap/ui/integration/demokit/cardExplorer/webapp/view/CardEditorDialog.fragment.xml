@@ -26,6 +26,7 @@
                 </items>
 			</Select>
 			<editor:CardEditor
+				previewPosition="{config>/previewPosition}"
 				card="{config>/cardId}"
 				mode="{config>/mode}"
 				designtime="{config>/designtime}"

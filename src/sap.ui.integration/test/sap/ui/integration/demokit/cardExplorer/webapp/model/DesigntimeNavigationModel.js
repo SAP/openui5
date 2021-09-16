@@ -30,9 +30,9 @@ sap.ui.define([
 						key: 'fieldslayout'
 					},
 					{
-						title: 'Preview Images',
+						title: 'Preview',
 						target: 'designtime',
-						key: 'previewimage'
+						key: 'preview'
 					}
 				]
 			},

@@ -857,7 +857,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Card Preview", {
+	QUnit.module("Card Preview Mode", {
 		beforeEach: function () {
 			this.oHost = new Host("host");
 			this.oContextHost = new ContextHost("contexthost");
@@ -909,7 +909,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var cardPreview = this.oCardEditor.getAggregation("_rightContent");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
 							var card = cardPreview._getCardPreview();
@@ -948,7 +948,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var cardPreview = this.oCardEditor.getAggregation("_rightContent");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
 							var card = cardPreview._getCardPreview();
@@ -988,7 +988,7 @@ sap.ui.define([
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
 					setTimeout(function () {
-						var cardPreview = this.oCardEditor.getAggregation("_rightContent");
+						var cardPreview = this.oCardEditor.getAggregation("_preview");
 						var card = cardPreview._getCardPreview();
 						assert.ok(card === null, "Preview mode card is OK");
 						resolve();
@@ -1019,7 +1019,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var cardPreview = this.oCardEditor.getAggregation("_rightContent");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
 							var card = cardPreview._getCardPreview();
@@ -1058,7 +1058,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var cardPreview = this.oCardEditor.getAggregation("_rightContent");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
 							var card = cardPreview._getCardPreview();
@@ -1099,7 +1099,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var cardPreview = this.oCardEditor.getAggregation("_rightContent");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
 							var card = cardPreview._getCardPreview();
@@ -1138,7 +1138,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var cardPreview = this.oCardEditor.getAggregation("_rightContent");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
 							var card = cardPreview._getCardPreview();
@@ -1160,7 +1160,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var cardPreview = this.oCardEditor.getAggregation("_rightContent");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
 							var card = cardPreview._getCardPreview();
@@ -1173,6 +1173,230 @@ sap.ui.define([
 							assert.ok(modeToggleButton.getTooltip() === "Live Preview", "Preview mode button: Tooltip is OK");
 							resolve();
 						}
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Card Preview Position", {
+		beforeEach: function () {
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oCardEditor = new CardEditor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oCardEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oCardEditor.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("Default position", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties",
+						"type": "card",
+						"title": "Test Card for Parameters",
+						"subTitle": "Test Card for Parameters"
+					},
+					"sap.card": {
+						"designtime": "designtime/previewLiveAbstract",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
+					cardPreview.addEventDelegate({
+						onAfterRendering: function () {
+							var oEditorDom = this.oCardEditor.getDomRef();
+							assert.ok(oEditorDom.children.length === 2, "Editor children length: OK");
+							assert.ok(oEditorDom.children[1].id === cardPreview.getId(), "Preview Position: OK");
+							resolve();
+						}.bind(this)
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Position: top", function (assert) {
+			this.oCardEditor.setPreviewPosition("top");
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties",
+						"type": "card",
+						"title": "Test Card for Parameters",
+						"subTitle": "Test Card for Parameters"
+					},
+					"sap.card": {
+						"designtime": "designtime/previewLiveAbstract",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
+					cardPreview.addEventDelegate({
+						onAfterRendering: function () {
+							var oEditorDom = this.oCardEditor.getDomRef();
+							assert.ok(oEditorDom.children.length === 2, "Editor children length: OK");
+							assert.ok(oEditorDom.children[0].id === cardPreview.getId(), "Preview Position: OK");
+							assert.ok(oEditorDom.children[0].classList.contains("sapUiIntegrationDTPreviewMarginForAlignTopAndBottom"), "Preview style class: margin OK");
+							resolve();
+						}.bind(this)
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Position: bottom", function (assert) {
+			this.oCardEditor.setPreviewPosition("bottom");
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties",
+						"type": "card",
+						"title": "Test Card for Parameters",
+						"subTitle": "Test Card for Parameters"
+					},
+					"sap.card": {
+						"designtime": "designtime/previewLiveAbstract",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
+					cardPreview.addEventDelegate({
+						onAfterRendering: function () {
+							var oEditorDom = this.oCardEditor.getDomRef();
+							assert.ok(oEditorDom.children.length === 2, "Editor children length: OK");
+							assert.ok(oEditorDom.children[1].id === cardPreview.getId(), "Preview Position: OK");
+							assert.ok(oEditorDom.children[1].classList.contains("sapUiIntegrationDTPreviewMarginForAlignTopAndBottom"), "Preview style class: margin OK");
+							resolve();
+						}.bind(this)
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Position: left", function (assert) {
+			this.oCardEditor.setPreviewPosition("left");
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties",
+						"type": "card",
+						"title": "Test Card for Parameters",
+						"subTitle": "Test Card for Parameters"
+					},
+					"sap.card": {
+						"designtime": "designtime/previewLiveAbstract",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
+					cardPreview.addEventDelegate({
+						onAfterRendering: function () {
+							var oEditorDom = this.oCardEditor.getDomRef();
+							assert.ok(oEditorDom.children.length === 2, "Editor children length: OK");
+							assert.ok(oEditorDom.children[0].id === cardPreview.getId(), "Preview Position: OK");
+							resolve();
+						}.bind(this)
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Position: right", function (assert) {
+			this.oCardEditor.setPreviewPosition("right");
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties",
+						"type": "card",
+						"title": "Test Card for Parameters",
+						"subTitle": "Test Card for Parameters"
+					},
+					"sap.card": {
+						"designtime": "designtime/previewLiveAbstract",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
+					cardPreview.addEventDelegate({
+						onAfterRendering: function () {
+							var oEditorDom = this.oCardEditor.getDomRef();
+							assert.ok(oEditorDom.children.length === 2, "Editor children length: OK");
+							assert.ok(oEditorDom.children[1].id === cardPreview.getId(), "Preview Position: OK");
+							resolve();
+						}.bind(this)
 					});
 				}.bind(this));
 			}.bind(this));

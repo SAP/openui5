@@ -1843,22 +1843,116 @@ sap.ui.define([
 					{
 						key: 'designtimePreview',
 						target: 'exploreSamples',
-						title: 'Editor Preview Settings ',
-						files: [
+						title: 'Editor Preview Settings',
+						subSamples: [
 							{
-								url: '/samples/designtimePreview/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
+								title: 'Default preview',
+								key: 'defaultPreview',
+								files: [
+									{
+										url: '/samples/designtimePreview/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimePreview/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimePreview/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									}
+								]
 							},
 							{
-								url: '/samples/designtimePreview/manifest.json',
-								name: 'manifest.json',
-								key: 'cardManifest.json'
+								title: 'Preview position: left',
+								key: 'previewPositionLeft',
+								previewPosition: 'left',
+								files: [
+									{
+										url: '/samples/designtimePreviewPositionLeft/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimePreviewPositionLeft/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimePreviewPositionLeft/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									}
+								]
 							},
 							{
-								url: '/samples/designtimePreview/i18n/i18n.properties',
-								name: 'i18n/i18n.properties',
-								key: 'i18n.properties'
+								title: 'Preview position: right',
+								key: 'previewPositionRight',
+								previewPosition: 'right',
+								files: [
+									{
+										url: '/samples/designtimePreviewPositionRight/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimePreviewPositionRight/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimePreviewPositionRight/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									}
+								]
+							},
+							{
+								title: 'Preview position: top',
+								key: 'previewPositionTop',
+								previewPosition: 'top',
+								files: [
+									{
+										url: '/samples/designtimePreviewPositionTop/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimePreviewPositionTop/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimePreviewPositionTop/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									}
+								]
+							},
+							{
+								title: 'Preview position: bottom',
+								key: 'previewPositionBottom',
+								previewPosition: 'bottom',
+								files: [
+									{
+										url: '/samples/designtimePreviewPositionBottom/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimePreviewPositionBottom/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimePreviewPositionBottom/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									}
+								]
 							}
 						]
 					},

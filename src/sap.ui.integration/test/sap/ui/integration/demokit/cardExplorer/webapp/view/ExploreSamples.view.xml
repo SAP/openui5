@@ -70,9 +70,11 @@
 									<Menu>
 										<MenuItem text="Administrator" press=".onOpenConfigurationEditor" visible="{=  ${settings>/configMode} === 'Admin' || ${settings>/configMode} === 'All'}">
 											<customData><core:CustomData key="mode" value="admin" /></customData>
+											<customData><core:CustomData key="previewPosition" value="{settings>/previewPosition}" /></customData>
 										</MenuItem>
 										<MenuItem text="Page/Content Administrator" press=".onOpenConfigurationEditor" visible="{=  ${settings>/configMode} === 'Content' || ${settings>/configMode} === 'All'}">
 											<customData><core:CustomData key="mode" value="content" /></customData>
+											<customData><core:CustomData key="previewPosition" value="{settings>/previewPosition}" /></customData>
 										</MenuItem>
 										<MenuItem text="Translator" press=".onOpenConfigurationEditor" visible="{=  ${settings>/configMode} === 'Translation' || ${settings>/configMode} === 'All'}">
 											<customData><core:CustomData key="mode" value="translation" /></customData>

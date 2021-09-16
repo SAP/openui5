@@ -65,13 +65,12 @@ sap.ui.define([
 		renderer: Editor.getMetadata().getRenderer().render
 	});
 
-	CardEditor.prototype.hasRightContent = function() {
-		var oPreview = this.getAggregation("_rightContent");
-		var bHasRightContent = true;
+	CardEditor.prototype.hasPreview = function() {
+		var oPreview = this.getAggregation("_preview");
 		if (oPreview && oPreview.getSettings() && oPreview.getSettings().preview && oPreview.getSettings().preview.modes === "None") {
-			bHasRightContent = false;
+			return false;
 		}
-		return bHasRightContent;
+		return true;
 	};
 
 	/**
@@ -123,16 +122,19 @@ sap.ui.define([
 	};
 
 	/**
-	 * Initializes the right content
+	 * Initializes the additional content
 	 */
-	CardEditor.prototype._initRightContent = function () {
+	CardEditor.prototype._initPreview = function () {
+		var oSettings = this._oDesigntimeInstance.getSettings() || {};
+		oSettings.preview = oSettings.preview || {};
+		oSettings.preview.position = this.getPreviewPosition();
 		return new Promise(function (resolve, reject) {
 			sap.ui.require(["sap/ui/integration/designtime/editor/CardPreview"], function (Preview) {
 				var oPreview = new Preview({
-					settings: this._oDesigntimeInstance.getSettings(),
+					settings: oSettings,
 					card: this._oEditorCard
 				});
-				this.setAggregation("_rightContent", oPreview);
+				this.setAggregation("_preview", oPreview);
 				resolve();
 			}.bind(this));
 		}.bind(this));

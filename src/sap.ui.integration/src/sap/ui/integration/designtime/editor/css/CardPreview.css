@@ -11,6 +11,10 @@
 	border-radius: 2px;
 }
 
+.sapUiIntegrationDTPreviewMarginForAlignTopAndBottom {
+	margin-left: calc(50% - 135px);
+}
+
 .sapUiIntegrationDTPreview>.before {
 	position: absolute;
 	min-width: calc(190px + 5rem);

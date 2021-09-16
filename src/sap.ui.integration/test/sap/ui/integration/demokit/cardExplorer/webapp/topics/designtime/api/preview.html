@@ -33,7 +33,7 @@
 	<div class="topic">
 		<div class="content">
 
-			<h1 id="overview">Preview Images</h1>
+			<h1 id="overview">Preview</h1>
 			<h3 id="configure">Configure the Editor's Preview</h3>
 			<p>An additional section in the configuration allows to influence the preview shown in the Configuration Editor
 			</p>
@@ -82,16 +82,16 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						<td>string</td>
 						<td>No</td>
 						<td>"Abstract"</td>
-						<td>Possible values are <br> <code>"None"</code> : No preview is shown<br>
+						<td>Possible values are <br> <code>"None"</code> : No preview is shown.<br>
 							<code>"Abstract"</code> : An
 							abstract preview
-							is shown with placeholders for the possible result<br> <code>"Live"</code> : A small scaled
+							is shown with placeholders for the possible result.<br> <code>"Live"</code> : A small scaled
 							preview of
 							the real Card is shown.<br> <code>"AbstractLive"</code> : The
 							user will be able to toggle between abstract and live preview, starting with the abstract
-							preview<br>
+							preview.<br>
 							<code>"LiveAbstract"</code> : The user will be able to toggle between live and abstract
-							preview, starting with the live preview
+							preview, starting with the live preview.
 							<br>
 							<pre class="lang-js">modes : "AbstractLive"</pre>
 						</td>
@@ -129,17 +129,17 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					<img src="../../images/CardDTAbstractOwnPreview.png" alt=""><br><br>
 				</li>
 				<li>AbstractLive: The user is able to switch from an abstract preview to a live preview and back. If an
-					own image is provided in the src property, it will be used for the abstract preview..
+					own image is provided in the src property, it will be used for the abstract preview.
 					<br><br><img src="../../images/CardDTAbstractPreview.png" alt="">
 					<img src="../../images/CardDTLivePreview.png" alt=""><br><br>
 				</li>
 				<li>LiveAbstract: The user is able to switch from an abstract preview to a live preview and back. If an
-					own image is provided in the src property, it will be used for the abstract preview..
+					own image is provided in the src property, it will be used for the abstract preview.
 					<br><br><img src="../../images/CardDTLivePreview.png" alt="">
 					<img src="../../images/CardDTAbstractPreview.png" alt=""><br><br>
 				</li>
 				<li>Live: The user is able to switch from an abstract preview to a live preview and back. If an own
-					image is provided in the src property, it will be used for the abstract preview..
+					image is provided in the src property, it will be used for the abstract preview.
 					<br><br><img src="../../images/CardDTLivePreview.png" alt=""><br>
 				</li>
 			</ul>
@@ -184,6 +184,32 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 			}</mark>
 		});
 	};
+});</pre>
+
+			<h3>Preview Position</h3>
+			<p>
+				When creating the Card Editor, we can set the preview position via parameter "previewPosition".
+			</p>
+			<ul>
+				<li>left: Align the preview at the left of Card Editor.
+					<br><br><img src="../img/ConfigurationEditorPreviewAlignmentLeft.png" alt="" style="width:400px;border:1px solid #f5f5f5"><br><br>
+				</li>
+				<li>right: (default) Align the preview at the right of Card Editor.
+					<br><br><img src="../img/ConfigurationEditorPreviewAlignmentRight.png" alt="" style="width:400px;border:1px solid #f5f5f5"><br><br>
+				</li>
+				<li>top: Align the preview above Card Editor.
+					<br><br><img src="../img/ConfigurationEditorPreviewAlignmentTop.png" alt="" style="width:400px;border:1px solid #f5f5f5"><br><br>
+				</li>
+				<li>bottom: Align the preview under Card Editor.
+					<br><br><img src="../img/ConfigurationEditorPreviewAlignmentBottom.png" alt="" style="width:400px;border:1px solid #f5f5f5"><br><br>
+				</li>
+			</ul>
+
+			<pre class="lang-js collapsed" data-caption="Define the preview position">
+var oEditor = new CardEditor({<mark>
+	previewPosition: "right",</mark>
+	card: document.getElementById("card")._getControl(),
+	mode: "admin"
 });</pre>
 			<br><br>
 			<a class="try-button" href="../../../index.html#/explore/designtimePreview" target="_parent">Try it Out</a>

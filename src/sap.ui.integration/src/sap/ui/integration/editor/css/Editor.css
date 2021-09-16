@@ -3,23 +3,11 @@
 	padding: 1rem 1rem 1rem 0.5rem;
 	display: flex;
 	box-sizing: border-box;
-	width: 713px;
 }
 
 .sapUiIntegrationEditor .sapUiIntegrationEditorForm {
 	height: 350px;
-	min-width: 680px;
-	box-sizing: border-box;
-	margin:0 0.5rem;
-	overflow-y: auto;
-	overflow-x: hidden;
-	padding: 0;
-	position: relative;
-}
-
-.sapUiIntegrationEditor .sapUiIntegrationEditorFormWithRightContent {
-	height: 350px;
-	min-width: 400px;
+	width: 100%;
 	box-sizing: border-box;
 	margin:0 0.5rem;
 	overflow-y: auto;
@@ -452,7 +440,7 @@
 	vertical-align:top;
 }
 
-.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapMMsgStrip,  .sapUiIntegrationEditor .sapUiIntegrationEditorFormWithRightContent  .sapMMsgStrip {
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapMMsgStrip {
 	margin: -0.3rem 0 0 0.1rem;
 	padding: 0 0.5rem;
 	position: absolute;
@@ -461,20 +449,20 @@
 	transition: opacity 0.3s;
 	z-index:1;
 }
-.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapMMsgStrip .sapMText, .sapUiIntegrationEditor .sapUiIntegrationEditorFormWithRightContent .sapMMsgStrip .sapMText {
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapMMsgStrip .sapMText {
 	font-size: 0.75rem;
 	vertical-align: middle;
 }
-.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapMMsgStrip .sapUiIcon, .sapUiIntegrationEditor .sapUiIntegrationEditorFormWithRightContent .sapMMsgStrip .sapUiIcon {
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapMMsgStrip .sapUiIcon {
 	font-size: 0.75rem;
 }
-.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapMMsgStrip .sapMMsgStripIcon, .sapUiIntegrationEditor .sapUiIntegrationEditorFormWithRightContent .sapMMsgStrip .sapMMsgStripIcon {
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapMMsgStrip .sapMMsgStripIcon {
 	width: 1.4rem;
 	margin: 0.20rem 0.4rem;
 	vertical-align: top;
 	padding-top: 6px;
 }
-.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapMMsgStrip .sapMMsgStripIcon ~ .sapMMsgStripMessage, .sapUiIntegrationEditor .sapUiIntegrationEditorFormWithRightContent .sapMMsgStrip .sapMMsgStripIcon ~ .sapMMsgStripMessage {
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapMMsgStrip .sapMMsgStripIcon ~ .sapMMsgStripMessage {
     margin-left: 0.85rem;
 }
 
