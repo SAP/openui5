@@ -1022,8 +1022,15 @@ sap.ui.define([
 		}
 
 		if (vRetErrorState === ErrorState.NoError) {
-			this._fResolvedSearchPromise();
-			fnCleanup();
+			if (this._isChangeApplying()) {
+				this._oFlexPromise.then(function() {
+				 this._fResolvedSearchPromise();
+				 fnCleanup();
+				}.bind(this));
+			} else {
+				this._fResolvedSearchPromise();
+				fnCleanup();
+			}
 		} else {
 			if (vRetErrorState === ErrorState.RequiredHasNoValue) {
 				sErrorMessage = this._oRb.getText("filterbar.REQUIRED_CONDITION_MISSING");
