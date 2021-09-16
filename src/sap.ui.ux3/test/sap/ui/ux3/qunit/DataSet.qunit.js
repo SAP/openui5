@@ -76,7 +76,7 @@ sap.ui.define([
 		renderer: function(rm, ctrl){
 			rm.write("<div");
 			rm.writeControlData(ctrl);
-			rm.writeAttribute("style", "display:inline-block;min-width:200px;height:20px;padding:5px;position:relative;box-sizing:border-box;-moz-box-sizing:border-box;");
+			rm.writeAttribute("style", "display:inline-block;width:200px;min-width:200px;height:20px;padding:5px;position:relative;box-sizing:border-box;-moz-box-sizing:border-box;");
 			rm.write("><div");
 			rm.writeAttribute("style", "background-color:red;height:100%;");
 			rm.write("></div></div>");
