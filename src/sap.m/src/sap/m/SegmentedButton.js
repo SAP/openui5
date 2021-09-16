@@ -6,6 +6,7 @@
 sap.ui.define([
 	'./library',
 	'./Button',
+	'./Select',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/delegate/ItemNavigation',
@@ -17,6 +18,7 @@ sap.ui.define([
 function(
 	library,
 	Button,
+	Select,
 	Control,
 	EnabledPropagator,
 	ItemNavigation,
@@ -855,24 +857,14 @@ function(
 		oEvent.preventDefault();
 	};
 
-	/** Select form function **/
-
 	/**
-	 * Lazy loader for the select hidden aggregation.
+	 * Hidden select aggregation factory function.
 	 * @private
 	 */
-	SegmentedButton.prototype._lazyLoadSelectForm = function() {
-		var oSelect = this.getAggregation("_select");
-
-		if (!oSelect) {
-			// lazy load sap.m.Select, TODO should be loaded async
-			jQuery.sap.require("sap.m.Select");
-			var Select = sap.ui.require("sap/m/Select");
-			oSelect = new Select(this.getId() + "-select");
-			oSelect.attachChange(this._selectChangeHandler, this);
-			oSelect.addStyleClass("sapMSegBSelectWrapper");
-			this.setAggregation("_select", oSelect, true);
-		}
+	SegmentedButton.prototype._fnSelectFormFactory = function() {
+		return new Select(this.getId() + "-select")
+			.attachChange(this._selectChangeHandler, this)
+			.addStyleClass("sapMSegBSelectWrapper");
 	};
 
 	/**
@@ -935,7 +927,10 @@ function(
 	SegmentedButton.prototype._toSelectMode = function() {
 		this._bInOverflow = true;
 		this.addStyleClass("sapMSegBSelectWrapper");
-		this._lazyLoadSelectForm();
+		if (!this.getAggregation("_select")) {
+			this.setAggregation("_select", this._fnSelectFormFactory(), true);
+		}
+
 		this._syncSelect();
 		this._syncAriaAssociations();
 	};
