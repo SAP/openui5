@@ -2449,7 +2449,7 @@ sap.ui.define([
 			assert.equal(sDeleteIcon, "sap-icon://sys-cancel", "Delete icon is correct");
 
 			var oThemeStub = this.stub(ThemeParameters, "get");
-			oThemeStub.withArgs("_sap_m_ListItemBase_DeleteIcon").returns("decline");
+			oThemeStub.withArgs({name: "_sap_m_ListItemBase_DeleteIcon"}).returns("decline");
 			var oEvent = new jQuery.Event();
 			oEvent.theme = "sap_fiori_3";
 			oListItem1.onThemeChanged(oEvent);

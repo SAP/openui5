@@ -281,15 +281,21 @@ sap.ui.define([
 		}
 
 		if (!StandardListItem._themeInfo.sFontFamily || bThemeChanged) {
-			StandardListItem._themeInfo.sFontFamily = ThemeParameters.get("sapUiFontFamily");
+			StandardListItem._themeInfo.sFontFamily = ThemeParameters.get({
+				name: "sapUiFontFamily"
+			}) || "Arial";
 		}
 
 		if (!StandardListItem._themeInfo.sFontStyleInfoStateInverted || bThemeChanged) {
-			StandardListItem._themeInfo.sFontStyleInfoStateInverted = "bold " + parseFloat(ThemeParameters.get("sapMFontSmallSize")) * 16 + "px" + " " + StandardListItem._themeInfo.sFontFamily;
+			StandardListItem._themeInfo.sFontStyleInfoStateInverted = "bold " + (ThemeParameters.get({
+				name: "sapMFontSmallSize"
+			}) || "0.75rem") + " " + StandardListItem._themeInfo.sFontFamily;
 		}
 
 		if (!StandardListItem._themeInfo.sFontStyle || bThemeChanged) {
-			StandardListItem._themeInfo.sFontStyle = parseFloat(ThemeParameters.get("sapMFontMediumSize")) * 16 + "px" + " " + StandardListItem._themeInfo.sFontFamily;
+			StandardListItem._themeInfo.sFontStyle = (ThemeParameters.get({
+				name: "sapMFontMediumSize"
+			}) || "0.875rem") + " " + StandardListItem._themeInfo.sFontFamily;
 		}
 
 		if (!StandardListItem._themeInfo.iBaseFontSize || bThemeChanged) {

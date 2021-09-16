@@ -503,7 +503,9 @@ function(
 		}
 
 		if (!this.DeleteIconURI) {
-			ListItemBase.prototype.DeleteIconURI = IconPool.getIconURI(ThemeParameters.get("_sap_m_ListItemBase_DeleteIcon"));
+			ListItemBase.prototype.DeleteIconURI = IconPool.getIconURI(
+				ThemeParameters.get({name: "_sap_m_ListItemBase_DeleteIcon"}) || "decline"
+			);
 		}
 
 		this._oDeleteControl = new Button({
@@ -524,7 +526,9 @@ function(
 	};
 
 	ListItemBase.prototype.onThemeChanged = function() {
-		ListItemBase.prototype.DeleteIconURI = IconPool.getIconURI(ThemeParameters.get("_sap_m_ListItemBase_DeleteIcon"));
+		ListItemBase.prototype.DeleteIconURI = IconPool.getIconURI(
+			ThemeParameters.get({name: "_sap_m_ListItemBase_DeleteIcon"})
+		);
 		if (this._oDeleteControl) {
 			this._oDeleteControl.setIcon(this.DeleteIconURI);
 		}

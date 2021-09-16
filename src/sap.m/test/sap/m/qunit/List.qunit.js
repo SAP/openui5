@@ -1114,13 +1114,13 @@ sap.ui.define([
 		},50);
 	});
 
-	QUnit.test("standardListThumb rendered - unread indicatior, counter, info should be rendered", function(assert) {
+	QUnit.test("standardListThumb rendered - unread indicator, counter, info should be rendered", function(assert) {
 		app.back();
 		Core.applyChanges();
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[0].getId();
 
-		var _bShowUnreadBubble = (Parameters.get("sapUiLIUnreadAsBubble") == "true");
+		var _bShowUnreadBubble = (Parameters.get({name: "sapUiLIUnreadAsBubble"}) == "true");
 		if (_bShowUnreadBubble) {
 			assert.ok(jQuery.sap.domById(listItemId + "-unread"), "standardListThumb unread indicator should be rendered");
 		}
