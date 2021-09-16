@@ -498,6 +498,14 @@ sap.ui.define([
 						this._oRTA.start();
 					}
 				}.bind(this));
+			},
+
+			onRouteNotFound: function() {
+				var sNotFoundTitle = this.getModel("i18n").getProperty("NOT_FOUND_SAMPLE_TITLE");
+
+				this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.SampleNotFound", "XML", false);
+				setTimeout(this.appendPageTitle.bind(this, sNotFoundTitle));
+				return;
 			}
 		});
 	}
