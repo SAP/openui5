@@ -1800,6 +1800,29 @@
 					}
 				}
 			}
+		},
+		"i5": {
+			"sap.app": {
+				"id": "cardsdemo.noHeaderNoContent.i5",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"title": "No Content and Custom Height",
+					"subTitle": "Tickets currently in escalation.",
+					"mainIndicator": {
+						"number": "10",
+						"unit": "Tickets"
+					},
+					"details": "",
+					"actions": [{
+						"type": "Navigation",
+						"parameters": {}
+					}]
+				}
+			}
 		}
 	},
 	"minHeight": {

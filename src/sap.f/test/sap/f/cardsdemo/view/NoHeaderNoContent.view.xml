@@ -44,6 +44,12 @@
 						<f:GridContainerItemLayoutData columns="4" />
 					</w:layoutData>
 				</w:Card>
+
+				<w:Card height="220px" id="i5" manifest="{manifests>/noHeaderNoContent/i5}" baseUrl="./">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="3" />
+					</w:layoutData>
+				</w:Card>
 			</f:GridContainer>
 		</Panel>
 	</Page>
