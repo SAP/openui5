@@ -28223,14 +28223,22 @@ sap.ui.define([
 	// Scenario: Create a context binding for an entity and call setProperty at its bound context
 	// w/o reading before. A PATCH request for the property should be sent.
 	// JIRA: CPOUI5UISERVICESV3-1790
+	//
+	// See that additional calls to #setProperty get merged into a single PATCH request and that
+	// #getProperty returns the current value.
+	// BCP: 2170193264
 	QUnit.test("Context#setProperty: write only", function (assert) {
-		var iNoPatchCompleted = 0,
+		var oContext,
+			iNoPatchCompleted = 0,
 			iNoPatchSent = 0,
+			oYetAnotherContext,
 			that = this;
 
 		return this.createView(assert).then(function () {
-			var oContextBinding = that.oModel.bindContext("/TEAMS('TEAM_01')"),
-				oContext = oContextBinding.getBoundContext();
+			var oContextBinding = that.oModel.bindContext("/TEAMS('TEAM_01')");
+
+			oContext = oContextBinding.getBoundContext();
+			oYetAnotherContext = that.oModel.bindContext("/TEAMS('TEAM_02')").getBoundContext();
 
 			oContextBinding.attachPatchCompleted(function (oEvent) {
 				iNoPatchCompleted += 1;
@@ -28242,18 +28250,42 @@ sap.ui.define([
 			that.expectRequest({
 					headers : {"If-Match" : "*"},
 					method : "PATCH",
-					payload : {Name : "Best Team Ever"},
+					payload : {MEMBER_COUNT : 99, Name : "Best Team Ever"},
 					url : "TEAMS('TEAM_01')"
+				})
+				.expectRequest({
+					headers : {"If-Match" : "*"},
+					method : "PATCH",
+					payload : {Name : "Yet another team!"},
+					url : "TEAMS('TEAM_02')"
 				});
 
 			return Promise.all([
+				// code under test (BCP: 2170193264)
+				oContext.setProperty("MEMBER_COUNT", 99),
+				oContext.setProperty("Name", "n/a"),
 				// code under test
 				oContext.setProperty("Name", "Best Team Ever"),
+				// code under test
+				oYetAnotherContext.setProperty("Name", "Yet another team!"),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
 			assert.strictEqual(iNoPatchCompleted, 1);
 			assert.strictEqual(iNoPatchSent, 1);
+
+			// code under test
+			assert.strictEqual(oContext.getProperty("MEMBER_COUNT"), 99);
+			assert.strictEqual(oContext.getProperty("Name"), "Best Team Ever");
+			assert.strictEqual(oYetAnotherContext.getProperty("Name"), "Yet another team!");
+
+			that.oLogMock.expects("error").withExactArgs(
+				"Failed to drill-down into MEMBER_COUNT, invalid segment: MEMBER_COUNT",
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/TEAMS('TEAM_02')",
+				"sap.ui.model.odata.v4.lib._Cache");
+
+			// code under test
+			assert.strictEqual(oYetAnotherContext.getProperty("MEMBER_COUNT"), undefined);
 		});
 	});
 
