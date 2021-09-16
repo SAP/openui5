@@ -292,7 +292,7 @@ sap.ui.define([
 					}
 				});
 			} else if (!ControllerClass) {
-				ControllerClass = sap.ui.requireSync(sControllerName);
+				ControllerClass = sap.ui.requireSync(sControllerName); // legacy-relevant: Sync path
 				return resolveClass(ControllerClass);
 			} else {
 				return ControllerClass;

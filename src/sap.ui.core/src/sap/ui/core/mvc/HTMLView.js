@@ -105,7 +105,7 @@ sap.ui.define([
 	 * @ui5-global-only
 	 */
 	sap.ui.htmlview = function(sId, vView) {
-		return sap.ui.view(sId, vView, ViewType.HTML);
+		return sap.ui.view(sId, vView, ViewType.HTML); // legacy-relevant
 	};
 
 	/**

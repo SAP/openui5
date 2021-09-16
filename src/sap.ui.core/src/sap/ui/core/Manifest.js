@@ -436,7 +436,7 @@ sap.ui.define([
 							if (bAsync) {
 								oPromise = oPromise.then(requireAsync(sJsUrl));
 							} else {
-								sap.ui.requireSync(sJsUrl);
+								sap.ui.requireSync(sJsUrl); // legacy-relevant: Sync path
 							}
 						}
 					}
