@@ -150,7 +150,8 @@ sap.ui.define([
 								"sap.m.changeHandler.SplitMenuButton.pressHandler",
 								{
 									selector: oModifier.getSelector(oMenuItem, oAppComponent),
-									appComponentId: oAppComponent.getId()
+									appComponentId: oAppComponent.getId(),
+									menu: oMenu
 								}
 							);
 						})
@@ -254,6 +255,8 @@ sap.ui.define([
 	SplitMenuButton.pressHandler = function (oEvent, mParameters) {
 		var oMenuItem = JsControlTreeModifier.bySelector(mParameters.selector, Component.get(mParameters.appComponentId));
 		oMenuItem.firePress();
+
+		mParameters.menu.fireItemSelected({ item: oMenuItem });
 	};
 
 	return SplitMenuButton;
