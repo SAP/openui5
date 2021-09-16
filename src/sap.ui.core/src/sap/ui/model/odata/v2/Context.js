@@ -83,7 +83,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v2.Context#isUpdated
 	 * @see sap.ui.model.odata.v2.Context#isRefreshForced
 	 */
-	Context.prototype.hasChanged = function() {
+	Context.prototype.hasChanged = function () {
 		return this.bUpdated || this.bForceRefresh;
 	};
 
