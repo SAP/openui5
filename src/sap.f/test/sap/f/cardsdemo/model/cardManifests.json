@@ -709,7 +709,8 @@
 						{
 							"title": "Deviation",
 							"number": "{deviation/number}",
-							"unit": "%"
+							"unit": "%",
+							"state": "{deviation/state}"
 						}
 					]
 				},

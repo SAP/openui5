@@ -34,7 +34,8 @@
 								<cards:NumericSideIndicator
 									title="Target"
 									number="100"
-									unit="K" />
+									unit="K"
+									state="Good"/>
 								<cards:NumericSideIndicator
 									title="Deviation"
 									number="34.7"
