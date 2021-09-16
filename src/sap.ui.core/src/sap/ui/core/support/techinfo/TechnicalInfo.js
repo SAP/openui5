@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/support/techinfo/moduleTreeHelper",
 	"sap/ui/Device",
 	"sap/ui/Global",
+	"sap/ui/VersionInfo",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/model/json/JSONModel",
@@ -18,11 +19,13 @@ sap.ui.define([
 	"sap/ui/util/Storage",
 	"sap/ui/core/syncStyleClass",
 	"sap/base/Log",
+	"sap/ui/core/Fragment",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	moduleTreeHelper,
 	Device,
 	Global,
+	VersionInfo,
 	DateFormat,
 	ResourceModel,
 	JSONModel,
@@ -35,6 +38,7 @@ sap.ui.define([
 	Storage,
 	syncStyleClass,
 	Log,
+	Fragment,
 	jQuery
 ) {
 	"use strict";
@@ -66,8 +70,8 @@ sap.ui.define([
 		 * @param{function} fnCallback Callback that can be executed to fetch library and module information
 		 */
 		open: function (fnCallback) {
-			// early out if already open
-			if (this._oDialog && this._oDialog.isOpen()) {
+			// early out if already loading or open
+			if (this._pOpenDialog) {
 				return;
 			}
 
@@ -75,32 +79,45 @@ sap.ui.define([
 			this._oModuleSystemInfo = fnCallback() || {};
 
 			// create dialog lazily
-			if (!this._oDialog) {
-				this._oDialog = sap.ui.xmlfragment(this._TECHNICAL_INFO_DIALOG_ID, "sap.ui.core.support.techinfo.TechnicalInfo", this);
-			}
-
-			// refresh configuration data and open dialog
-			this._initialize();
-			this._oDialog.open();
+			this._loadAndInitialize().then(function() {
+				this._oDialog.open();
+				this._bIsBeingClosed = false;
+			}.bind(this));
 		},
 
 		/**
-		 * Closes the technical information dialog
+		 * Closes the technical information dialog.
 		 */
 		close: function() {
-			this._oDialog.close();
-			this._oDialog.destroy();
-			this._oDialog = null;
-
-			if (this._oAssistantPopover) {
-				this._oAssistantPopover.destroy();
-				this._oAssistantPopover = null;
+			if ( !this._pDestroyDialog ) {
+				this._bIsBeingClosed = true;
+				this._pDestroyDialog = Promise.all([
+					Promise.resolve(this._pAssistantPopover)
+						.then(function() {
+							if (this._oAssistantPopover) {
+								this._oAssistantPopover.destroy();
+								this._oAssistantPopover = null;
+							}
+							this._pAssistantPopover = null;
+						}.bind(this)),
+					Promise.resolve(this._pDebugPopover)
+						.then(function() {
+							if (this._oDebugPopover) {
+								this._oDebugPopover.destroy();
+								this._oDebugPopover = null;
+							}
+							this._pDebugPopover = null;
+						}.bind(this))
+				]).then(function() {
+					this._oDialog.close();
+					this._oDialog.destroy();
+					this._oDialog = null;
+					this._pOpenDialog = null;
+					this._pDestroyDialog = null;
+				}.bind(this));
 			}
 
-			if (this._oDebugPopover) {
-				this._oDebugPopover.destroy();
-				this._oDebugPopover = null;
-			}
+			return this._pDestroyDialog;
 		},
 
 		/* =========================================================== */
@@ -183,10 +200,11 @@ sap.ui.define([
 			this._updateTreeInfos();
 
 			// create dialog lazily
-			if (!this._oDebugPopover) {
-				this._oDebugPopover = sap.ui.xmlfragment(this._DEBUG_MODULES_ID, "sap.ui.core.support.techinfo.TechnicalInfoDebugDialog", this);
-				this._oDialog.addDependent(this._oDebugPopover);
-				syncStyleClass(this._getContentDensityClass(), this._oDialog, this._oDebugPopover);
+			this._loadDebugPopover().then(function() {
+				// out early if TechnicalInfo is closing
+				if (this._bIsBeingClosed) {
+					return;
+				}
 				var oControl = this._getControl("customDebugValue", this._DEBUG_MODULES_ID);
 				try {
 					this._validateCustomDebugValue(oControl.getValue());
@@ -194,13 +212,12 @@ sap.ui.define([
 					this._showError(oControl, oException.message);
 					return;
 				}
-			}
+				// adopt tree depth to the deepest currently selected module
+				this._getControl("tree", this._DEBUG_MODULES_ID).expandToLevel(Math.max(this._MIN_EXPAND_LEVEL_DEBUG_MODULES, oTreeResults.depth));
 
-			// adopt tree depth to the deepest currently selected module
-			this._getControl("tree", this._DEBUG_MODULES_ID).expandToLevel(Math.max(this._MIN_EXPAND_LEVEL_DEBUG_MODULES, oTreeResults.depth));
-
-			// open dialog
-			this._oDebugPopover.open();
+				// open dialog
+				this._oDebugPopover.open();
+			}.bind(this));
 		},
 
 		/**
@@ -409,36 +426,30 @@ sap.ui.define([
 				return;
 			}
 			// create dialog lazily
-			if (!this._oAssistantPopover) {
-				this._oAssistantPopover = sap.ui.xmlfragment(this._SUPPORT_ASSISTANT_POPOVER_ID, "sap.ui.core.support.techinfo.TechnicalInfoAssistantPopover", this);
-				this._oAssistantPopover.attachAfterOpen(this._onAssistantPopoverOpened, this);
-				this._oDialog.addDependent(this._oAssistantPopover);
-				syncStyleClass(this._getContentDensityClass(), this._oDialog, this._oAssistantPopover);
+			this._loadAssistantPopover().then(function() {
+				// out early if TechnicalInfo is closing
+				if (this._bIsBeingClosed) {
+					return;
+				}
+				// enable or disable default option for version >= 1.48
+				var oCurrentItem = this._getControl("standardBootstrapURL", this._SUPPORT_ASSISTANT_POPOVER_ID).getItems()[0];
+				if (this._isVersionBiggerThanMinSupported()) {
+					var sAppVersion = sap.ui.getCore().getConfiguration().getVersion().toString();
+					oCurrentItem.setText(oCurrentItem.getText().replace("[[version]]", sAppVersion));
+					oCurrentItem.setEnabled(true);
+				} else {
+					oCurrentItem.setText(oCurrentItem.getText().replace("[[version]]", "not supported"));
+					oCurrentItem.setEnabled(false);
+				}
 
-				// register message validation and trigger it once to validate the value coming from local storage
-				var oCustomBootstrapURL =  this._getControl("customBootstrapURL", this._SUPPORT_ASSISTANT_POPOVER_ID);
-				sap.ui.getCore().getMessageManager().registerObject(oCustomBootstrapURL, true);
+				var oModel = this._oDialog.getModel("view"),
+					sSelectedLocation = oModel.getProperty("/SelectedLocation");
 
-			}
+				this._setActiveLocations(sSelectedLocation);
 
-			// enable or disable default option for version >= 1.48
-			var oCurrentItem = this._getControl("standardBootstrapURL", this._SUPPORT_ASSISTANT_POPOVER_ID).getItems()[0];
-			if (this._isVersionBiggerThanMinSupported()) {
-				var sAppVersion = sap.ui.getCore().getConfiguration().getVersion().toString();
-				oCurrentItem.setText(oCurrentItem.getText().replace("[[version]]", sAppVersion));
-				oCurrentItem.setEnabled(true);
-			} else {
-				oCurrentItem.setText(oCurrentItem.getText().replace("[[version]]", "not supported"));
-				oCurrentItem.setEnabled(false);
-			}
-
-			var oModel = this._oDialog.getModel("view"),
-				sSelectedLocation = oModel.getProperty("/SelectedLocation");
-
-			this._setActiveLocations(sSelectedLocation);
-
-			var oSupportAssistantSettingsButton = this._getControl("supportAssistantSettingsButton", this._TECHNICAL_INFO_DIALOG_ID);
-			this._oAssistantPopover.openBy(oSupportAssistantSettingsButton);
+				var oSupportAssistantSettingsButton = this._getControl("supportAssistantSettingsButton", this._TECHNICAL_INFO_DIALOG_ID);
+				this._oAssistantPopover.openBy(oSupportAssistantSettingsButton);
+			}.bind(this));
 		},
 
 		/* =========================================================== */
@@ -579,8 +590,33 @@ sap.ui.define([
 				});
 		},
 
+		_loadAndInitialize: function() {
+			// create dialog lazily
+			this._pOpenDialog =
+				Promise.all([
+					sap.ui.getCore().loadLibraries(["sap.ui.core", "sap.ui.layout", "sap.m"]),
+					this._loadVersionInfo(),
+					this._pDestroyDialog // wait for a pending destroy to finish
+				]).then(function() {
+					return Fragment.load({
+						id: this._TECHNICAL_INFO_DIALOG_ID,
+						name: "sap.ui.core.support.techinfo.TechnicalInfo",
+						controller: this
+					});
+				}.bind(this)).then(function(oDialog) {
+					this._oDialog = oDialog;
+					// refresh configuration data and open dialog
+					return this._initialize();
+				}.bind(this)).then(function() {
+					this._oDialog.open();
+					this._bIsBeingClosed = false;
+				}.bind(this));
+
+			return this._pOpenDialog;
+		},
+
 		/**
-		 * Initalizes the technical information dialog
+		 * Initalizes the technical information dialog.
 		 * @private
 		 */
 		_initialize: function () {
@@ -593,6 +629,18 @@ sap.ui.define([
 
 			// set compact/cozy style class
 			this._oDialog.addStyleClass(this._getContentDensityClass());
+		},
+
+		_loadVersionInfo: function() {
+			return VersionInfo.load().catch(function(err) {
+				Log.error("failed to load global version info", err);
+				return {
+					name: "",
+					version: ""
+				};
+			}).then(function(oVersionInfo) {
+				this._oVersionInfo = oVersionInfo;
+			}.bind(this));
 		},
 
 		/**
@@ -621,23 +669,16 @@ sap.ui.define([
 			});
 
 			// load version info into view model
-			var oVersionInfo = {};
-			try {
-				oVersionInfo = Global.getVersionInfo();
-				oViewModel.setProperty("/ProductName", oVersionInfo.name);
-				oViewModel.setProperty("/ProductVersion", oVersionInfo.version);
-			} catch (oException) {
-				oVersionInfo.version = "";
-				Log.error("failed to load global version info");
-			}
+			oViewModel.setProperty("/ProductName", this._oVersionInfo.name);
+			oViewModel.setProperty("/ProductVersion", this._oVersionInfo.version);
 
 			try {
-				oViewModel.setProperty("/ProductTimestamp", this._generateLocalizedBuildDate(oVersionInfo.buildTimestamp));
+				oViewModel.setProperty("/ProductTimestamp", this._generateLocalizedBuildDate(this._oVersionInfo.buildTimestamp));
 			} catch (oException) {
 				Log.error("failed to parse build timestamp from global version info");
 			}
 
-			if (!/openui5/i.test(oVersionInfo.name)) {
+			if (!/openui5/i.test(this._oVersionInfo.name)) {
 				oViewModel.setProperty("/OpenUI5ProductVersion", Global.version);
 				// convert build timestamp
 				try {
@@ -649,7 +690,7 @@ sap.ui.define([
 
 			var sAppVersion;
 			try {
-				sAppVersion = this._getText("TechInfo.SupportAssistantConfigPopup.AppVersionOption", oVersionInfo.version);
+				sAppVersion = this._getText("TechInfo.SupportAssistantConfigPopup.AppVersionOption", this._oVersionInfo.version);
 			} catch (oException) {
 				sAppVersion = "Application";
 			}
@@ -938,6 +979,42 @@ sap.ui.define([
 			oModel.setProperty("/DebugModuleSelectionCount", this._treeHelper.getSelectionCount(oTreeData));
 			sDisplayCount = oModel.getProperty("/DebugModuleSelectionCount").toString();
 			oModel.setProperty("/DebugModulesTitle", this._getText("TechInfo.DebugModulesConfigPopup.SelectionCounter", sDisplayCount));
+		},
+
+		_loadDebugPopover: function() {
+			// create dialog lazily
+			if (!this._pDebugPopover) {
+				this._pDebugPopover = Fragment.load({
+					id: this._DEBUG_MODULES_ID,
+					name: "sap.ui.core.support.techinfo.TechnicalInfoDebugDialog",
+					controller: this
+				}).then(function(oDebugPopover) {
+					this._oDebugPopover = oDebugPopover;
+					this._oDialog.addDependent(this._oDebugPopover);
+					syncStyleClass(this._getContentDensityClass(), this._oDialog, this._oDebugPopover);
+				}.bind(this));
+			}
+			return this._pDebugPopover;
+		},
+
+		_loadAssistantPopover: function() {
+			if (!this._pAssistantPopover) {
+				this._pAssistantPopover = Fragment.load({
+					id: this._SUPPORT_ASSISTANT_POPOVER_ID,
+					name: "sap.ui.core.support.techinfo.TechnicalInfoAssistantPopover",
+					controller: this
+				}).then(function(oAssistantPopover) {
+					this._oAssistantPopover = oAssistantPopover;
+					this._oAssistantPopover.attachAfterOpen(this._onAssistantPopoverOpened, this);
+					this._oDialog.addDependent(this._oAssistantPopover);
+					syncStyleClass(this._getContentDensityClass(), this._oDialog, this._oAssistantPopover);
+
+					// register message validation and trigger it once to validate the value coming from local storage
+					var oCustomBootstrapURL =  this._getControl("customBootstrapURL", this._SUPPORT_ASSISTANT_POPOVER_ID);
+					sap.ui.getCore().getMessageManager().registerObject(oCustomBootstrapURL, true);
+				}.bind(this));
+			}
+			return this._pAssistantPopover;
 		}
 	};
 });

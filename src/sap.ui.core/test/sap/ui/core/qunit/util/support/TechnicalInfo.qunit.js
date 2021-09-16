@@ -4,11 +4,12 @@
  */
 
 sap.ui.define([
+	"sap/ui/Device",
 	"sap/ui/core/support/techinfo/TechnicalInfo",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/core/date/Gregorian",
 	"sap/ui/model/ValidateException"
-], function (TechnicalInfo, ResourceModel, Gregorian, ValidateException) {
+], function (Device, TechnicalInfo, ResourceModel, Gregorian, ValidateException) {
 	"use strict";
 
 	QUnit.module("Parsing and formatting");
@@ -35,14 +36,14 @@ sap.ui.define([
 
 	QUnit.test("Content Density class: Cozy", function(assert) {
 		delete TechnicalInfo._sContentDensityClass;
-		this.stub(sap.ui.Device.support, "touch").value(true);
+		this.stub(Device.support, "touch").value(true);
 
 		assert.strictEqual(TechnicalInfo._getContentDensityClass(), "sapUiSizeCozy", "The content density is set to 'Cozy'");
 	});
 
 	QUnit.test("Content Density class: Compact", function(assert) {
 		delete TechnicalInfo._sContentDensityClass;
-		this.stub(sap.ui.Device.support, "touch").value(false);
+		this.stub(Device.support, "touch").value(false);
 
 		assert.strictEqual(TechnicalInfo._getContentDensityClass(), "sapUiSizeCompact", "The content density is set to 'Compact'");
 	});
@@ -139,18 +140,15 @@ sap.ui.define([
 
 	QUnit.module("Set active location", {
 		beforeEach: function () {
-			var oI18nModel = new ResourceModel({
-				bundleName: "sap.ui.core.messagebundle"
-			});
 			TechnicalInfo._storage.clear();
-			TechnicalInfo._oDialog = sap.ui.xmlfragment(TechnicalInfo._TECHNICAL_INFO_DIALOG_ID, "sap.ui.core.support.techinfo.TechnicalInfo", this);
-			TechnicalInfo._oDialog.setModel(oI18nModel, "i18n");
-			TechnicalInfo._oDialog.setModel(TechnicalInfo._createViewModel(), "view");
-			TechnicalInfo._oAssistantPopover = sap.ui.xmlfragment(TechnicalInfo._SUPPORT_ASSISTANT_POPOVER_ID, "sap.ui.core.support.techinfo.TechnicalInfoAssistantPopover", TechnicalInfo);
-			TechnicalInfo._oDialog.addDependent(TechnicalInfo._oAssistantPopover);
+			return TechnicalInfo._loadAndInitialize().then(function() {
+				return TechnicalInfo._loadAssistantPopover();
+			});
 		},
 		afterEach: function () {
+			TechnicalInfo._pOpenDialog = null;
 			TechnicalInfo._oDialog.destroy();
+			TechnicalInfo._pAssistantPopover = null;
 			TechnicalInfo._oAssistantPopover.destroy();
 		}
 	});
@@ -186,72 +184,68 @@ sap.ui.define([
 	QUnit.module("View model");
 
 	QUnit.test("Initialization", function(assert) {
-		var oI18nModel = new ResourceModel({
-			bundleName: "sap.ui.core.messagebundle"
-		});
 		TechnicalInfo._storage.clear();
-		TechnicalInfo._oDialog = sap.ui.xmlfragment(TechnicalInfo._TECHNICAL_INFO_DIALOG_ID, "sap.ui.core.support.techinfo.TechnicalInfo", this);
-		TechnicalInfo._oDialog.setModel(oI18nModel, "i18n");
-		var oViewModel = TechnicalInfo._createViewModel();
-		var aKeys = Object.keys(oViewModel.getData());
-		assert.deepEqual(
-			aKeys,
-			[
-				"ProductName",
-				"StandardBootstrapURL",
-				"CustomBootstrapURL",
-				"OpenSupportAssistantInNewWindow",
-				"SelectedLocation",
-				"OpenUI5ProductVersion",
-				"OpenUI5ProductTimestamp",
-				"DebugModuleSelectionCount",
-				"ProductVersion",
-				"ProductTimestamp",
-				"DebugModulesTitle",
-				"SupportAssistantPopoverURLs",
-				"ApplicationURL",
-				"UserAgent",
-				"DebugMode"
-			],
-			"The view model has all technical information keys: " + aKeys.toString());
+		return TechnicalInfo._loadAndInitialize().then(function() {
+			var oViewModel = TechnicalInfo._oDialog.getModel("view");
+			var aKeys = Object.keys(oViewModel.getData());
+			assert.deepEqual(
+				aKeys,
+				[
+					"ProductName",
+					"StandardBootstrapURL",
+					"CustomBootstrapURL",
+					"OpenSupportAssistantInNewWindow",
+					"SelectedLocation",
+					"OpenUI5ProductVersion",
+					"OpenUI5ProductTimestamp",
+					"DebugModuleSelectionCount",
+					"ProductVersion",
+					"ProductTimestamp",
+					"DebugModulesTitle",
+					"SupportAssistantPopoverURLs",
+					"ApplicationURL",
+					"UserAgent",
+					"DebugMode"
+				],
+				"The view model has all technical information keys: " + aKeys.toString());
 
-		assert.ok(oViewModel.getProperty("/ProductName").length > 0, "The product name is set");
-		assert.ok(oViewModel.getProperty("/ProductVersion").length > 0, "The product version is set");
-		assert.ok(oViewModel.getProperty("/SupportAssistantPopoverURLs") instanceof Array, "The support assistant popover urls is a Array");
-		assert.ok(oViewModel.getProperty("/SupportAssistantPopoverURLs").length > 0, "The standard url for support assistant popover is set");
+			assert.ok(oViewModel.getProperty("/ProductName").length > 0, "The product name is set");
+			assert.ok(oViewModel.getProperty("/ProductVersion").length > 0, "The product version is set");
+			assert.ok(oViewModel.getProperty("/SupportAssistantPopoverURLs") instanceof Array, "The support assistant popover urls is a Array");
+			assert.ok(oViewModel.getProperty("/SupportAssistantPopoverURLs").length > 0, "The standard url for support assistant popover is set");
 
-		var aUrls = oViewModel.getProperty("/SupportAssistantPopoverURLs");
-		for (var i = 0; i < aUrls.length; i++) {
-			var aBootstrapKeys = Object.keys(aUrls[i]);
-			assert.deepEqual(aBootstrapKeys,["DisplayName","Value"], "The URL " + i + " form SupportAssistantPopoverURLs has the right format keys: " + aBootstrapKeys.toString() );
-		}
-		assert.ok(oViewModel.getProperty("/SelectedLocation") === "standard" || oViewModel.getProperty("/SelectedLocation") === "custom", "The selected location is set");
-		assert.ok(oViewModel.getProperty("/OpenUI5ProductVersion") === null || oViewModel.getProperty("/OpenUI5ProductVersion").length > 0, "The OpenUI5 product version is null or set");
-		assert.strictEqual(oViewModel.getProperty("/ApplicationURL"), document.location.href, "The application URL is equal to the 'document.location.href' property");
-		assert.strictEqual(oViewModel.getProperty("/UserAgent"), navigator.userAgent, "The user agent is equal to the 'navigator.userAgent' property");
-		assert.strictEqual(typeof oViewModel.getProperty("/DebugMode"), "boolean", "The debug mode is a boolean");
-		assert.strictEqual(typeof oViewModel.getProperty("/OpenSupportAssistantInNewWindow"), "boolean", "The open support assistant in new window is a boolean");
-		assert.strictEqual(oViewModel.getProperty("/DebugMode"), sap.ui.getCore().getConfiguration().getDebug(), "The debug mode is equal to the UI5 core value");
+			var aUrls = oViewModel.getProperty("/SupportAssistantPopoverURLs");
+			for (var i = 0; i < aUrls.length; i++) {
+				var aBootstrapKeys = Object.keys(aUrls[i]);
+				assert.deepEqual(aBootstrapKeys,["DisplayName","Value"], "The URL " + i + " form SupportAssistantPopoverURLs has the right format keys: " + aBootstrapKeys.toString() );
+			}
+			assert.ok(oViewModel.getProperty("/SelectedLocation") === "standard" || oViewModel.getProperty("/SelectedLocation") === "custom", "The selected location is set");
+			assert.ok(oViewModel.getProperty("/OpenUI5ProductVersion") === null || oViewModel.getProperty("/OpenUI5ProductVersion").length > 0, "The OpenUI5 product version is null or set");
+			assert.strictEqual(oViewModel.getProperty("/ApplicationURL"), document.location.href, "The application URL is equal to the 'document.location.href' property");
+			assert.strictEqual(oViewModel.getProperty("/UserAgent"), navigator.userAgent, "The user agent is equal to the 'navigator.userAgent' property");
+			assert.strictEqual(typeof oViewModel.getProperty("/DebugMode"), "boolean", "The debug mode is a boolean");
+			assert.strictEqual(typeof oViewModel.getProperty("/OpenSupportAssistantInNewWindow"), "boolean", "The open support assistant in new window is a boolean");
+			assert.strictEqual(oViewModel.getProperty("/DebugMode"), sap.ui.getCore().getConfiguration().getDebug(), "The debug mode is equal to the UI5 core value");
 
-		TechnicalInfo._oDialog.destroy();
+			TechnicalInfo._oDialog.destroy();
+		});
 	});
 
 	QUnit.module("Closing and destroying dialog");
 
-	QUnit.test("After close method is called the dialog should be destroyed", function(assert) {
+	QUnit.test("After close method is called, the dialog should be destroyed", function(assert) {
 		TechnicalInfo._storage.clear();
-		TechnicalInfo._oDialog = sap.ui.xmlfragment(TechnicalInfo._TECHNICAL_INFO_DIALOG_ID, "sap.ui.core.support.techinfo.TechnicalInfo", this);
-		TechnicalInfo._oAssistantPopover = sap.ui.xmlfragment(TechnicalInfo._SUPPORT_ASSISTANT_POPOVER_ID, "sap.ui.core.support.techinfo.TechnicalInfoAssistantPopover", TechnicalInfo);
-		TechnicalInfo._oDialog.addDependent(TechnicalInfo._oAssistantPopover);
-		TechnicalInfo._oDebugPopover = sap.ui.xmlfragment(TechnicalInfo._DEBUG_MODULES_ID, "sap.ui.core.support.techinfo.TechnicalInfoDebugDialog", this);
-		TechnicalInfo._oDialog.addDependent(TechnicalInfo._oDebugPopover);
-
-		TechnicalInfo.close();
-
-		assert.ok(!TechnicalInfo._oDialog, "The dialog is destroyed");
-		assert.ok(!TechnicalInfo._oAssistantPopover, "The Support Assistant popover is destroyed");
-		assert.ok(!TechnicalInfo._oDebugPopover, "The debug popover is destroyed");
-
+		return TechnicalInfo._loadAndInitialize().then(function(oDialog) {
+			return TechnicalInfo._loadAssistantPopover();
+		}).then(function() {
+			return TechnicalInfo._loadDebugPopover();
+		}).then(function() {
+			return TechnicalInfo.close().then(function() {
+				assert.ok(!TechnicalInfo._oDialog, "The dialog is destroyed");
+				assert.ok(!TechnicalInfo._oAssistantPopover, "The Support Assistant popover is destroyed");
+				assert.ok(!TechnicalInfo._oDebugPopover, "The debug popover is destroyed");
+			});
+		});
 	});
 
 });

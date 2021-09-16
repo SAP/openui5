@@ -33,6 +33,7 @@
 			adjustLabelSpan="false"
 			ariaLabelledBy="title"
 			layout="ResponsiveGridLayout"
+			core:require="{RGL:'sap/ui/layout/form/ResponsiveGridLayout'}"
 			editable="true">
 			<f:content>
 				<!-- Product Version info -->
