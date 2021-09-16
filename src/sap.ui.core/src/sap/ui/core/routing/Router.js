@@ -433,10 +433,14 @@ sap.ui.define([
 				// shouldn't be processed.
 				this.oHashChanger.attachEvent("hashChanged", this.fnHashChanged);
 
-				// The HashChanger returns an InvalidHash when one of its ancestors is currently in
-				// the collect mode of preparing the next hash change. In this case, the Router should
-				// not be initialized and wait for the next 'hashChanged' event.
-				if (!bIgnoreInitialHash && sHash !== RouterHashChanger.InvalidHash) {
+				if (bIgnoreInitialHash) {
+					if (this._oMatchedRoute) {
+						this._oMatchedRoute._resume();
+					}
+				} else if (sHash !== RouterHashChanger.InvalidHash) {
+					// The HashChanger returns an InvalidHash when one of its ancestors is currently in
+					// the collect mode of preparing the next hash change. In this case, the Router should
+					// not parse the current hash and wait for the next 'hashChanged' event.
 					this.parse(sHash);
 				}
 
@@ -488,7 +492,6 @@ sap.ui.define([
 
 				if (this._oMatchedRoute) {
 					this._oMatchedRoute._routeSwitched();
-					this._oMatchedRoute = null;
 				}
 
 				this._bIsInitialized = false;
