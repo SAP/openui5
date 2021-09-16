@@ -584,11 +584,12 @@ function(
 				return sap.ui.fragment({fragmentName: vFragment, sId: sId, type: "XML"}, oController);
 
 			} else { // no ID, sId is actually the name and vFragment the optional Controller
-				return sap.ui.fragment(sId, "XML", vFragment);
+				return sap.ui.fragment(sId, "XML", vFragment); // legacy-relevant
 			}
 		} else { // advanced call
 			sId.type = "XML";
-			return sap.ui.fragment(sId, vFragment); // second parameter "vFragment" is the optional Controller
+			 // second parameter "vFragment" is the optional Controller
+			return sap.ui.fragment(sId, vFragment); // legacy-relevant
 		}
 	};
 
@@ -662,21 +663,21 @@ function(
 
 			} else {
 				// plain instantiation: name[+oController]
-				return sap.ui.fragment(vName, "JS", vFragmentDefinition);
+				return sap.ui.fragment(vName, "JS", vFragmentDefinition); // legacy-relevant
 			}
 
 		} else if (typeof vName === "string" && vFragmentDefinition === undefined) {
 			// plain instantiation: name only
-			return sap.ui.fragment(vName, "JS");
+			return sap.ui.fragment(vName, "JS"); // legacy-relevant
 
 		} else if (typeof vName === "object") {
 			// advanced mode: oConfig+[oController]
 			vName.type = "JS";
-			return sap.ui.fragment(vName, vFragmentDefinition);
+			return sap.ui.fragment(vName, vFragmentDefinition); // legacy-relevant
 
 		} else if (arguments.length >= 3) {
 			// must be plain instantiation mode: ID+Name[+Controller]
-			return sap.ui.fragment({id: vName, fragmentName: vFragmentDefinition, type: "JS"}, oController);
+			return sap.ui.fragment({id: vName, fragmentName: vFragmentDefinition, type: "JS"}, oController);  // legacy-relevant
 
 		} else {
 			Log.error("sap.ui.jsfragment() was called with wrong parameter set: " + vName + " + " + vFragmentDefinition);
@@ -737,14 +738,15 @@ function(
 
 		if (typeof (sId) === "string") { // basic call
 			if (typeof (vFragment) === "string") { // with ID
-				return sap.ui.fragment({fragmentName: vFragment, sId: sId, type: "HTML"}, oController);
+				return sap.ui.fragment({fragmentName: vFragment, sId: sId, type: "HTML"}, oController);  // legacy-relevant
 
 			} else { // no ID, sId is actually the name and vFragment the optional Controller
-				return sap.ui.fragment(sId, "HTML", vFragment);
+				return sap.ui.fragment(sId, "HTML", vFragment); // legacy-relevant
 			}
 		} else { // advanced call
 			sId.type = "HTML";
-			return sap.ui.fragment(sId, vFragment); // second parameter "vFragment" is the optional Controller
+			// second parameter "vFragment" is the optional Controller
+			return sap.ui.fragment(sId, vFragment); // legacy-relevant
 		}
 	};
 
@@ -862,7 +864,7 @@ function(
 			} else {
 				/*** require fragment definition if not yet done... ***/
 				if (!mRegistry[mSettings.fragmentName]) {
-					sap.ui.requireSync(mSettings.fragmentName.replace(/\./g, "/") + ".fragment");
+					sap.ui.requireSync(mSettings.fragmentName.replace(/\./g, "/") + ".fragment"); // legacy-relevant: Sync path
 				}
 				/*** Step 2: merge() ***/
 				merge(this, mRegistry[mSettings.fragmentName]);

@@ -189,7 +189,7 @@ sap.ui.define([
 	 * @ui5-global-only
 	 */
 	sap.ui.xmlview = function(sId, vView) {
-		return sap.ui.view(sId, vView, ViewType.XML);
+		return sap.ui.view(sId, vView, ViewType.XML); // legacy-relevant
 	};
 
 	/**

@@ -118,7 +118,7 @@ sap.ui.define([
 	 * @ui5-global-only
 	 */
 	sap.ui.jsonview = function(sId, vView) {
-		return sap.ui.view(sId, vView, ViewType.JSON);
+		return sap.ui.view(sId, vView, ViewType.JSON); // legacy-relevant
 	};
 
 	/**

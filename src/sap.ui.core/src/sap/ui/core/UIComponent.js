@@ -365,7 +365,8 @@ sap.ui.define([
 				fnRouterConstructor = getConstructorFunctionFor(sRouterClassName);
 			} else {
 				// require default Router class
-				fnRouterConstructor = sap.ui.require("sap/ui/core/routing/Router") || sap.ui.requireSync("sap/ui/core/routing/Router");
+				fnRouterConstructor = sap.ui.require("sap/ui/core/routing/Router")
+					|| sap.ui.requireSync("sap/ui/core/routing/Router"); // legacy-relevant: Sync path
 			}
 			this._oRouter = new fnRouterConstructor(vRoutes, oRoutingConfig, this, oRoutingManifestEntry.targets, this._oRouterHashChanger);
 			this._oTargets = this._oRouter.getTargets();
@@ -373,7 +374,8 @@ sap.ui.define([
 		} else if (oRoutingManifestEntry.targets) {
 			// legacy-relevant: Sync path via sync component factory.
 			// For async, no sync request is triggered as the class is already loaded by the component factory.
-			var Views = sap.ui.require("sap/ui/core/routing/Views") || sap.ui.requireSync("sap/ui/core/routing/Views");
+			var Views = sap.ui.require("sap/ui/core/routing/Views")
+				|| sap.ui.requireSync("sap/ui/core/routing/Views"); // legacy-relevant: Sync path
 
 			this._oViews = new Views({
 				component: this
@@ -385,7 +387,8 @@ sap.ui.define([
 				fnTargetsConstructor = getConstructorFunctionFor(oRoutingConfig.targetsClass);
 			} else {
 				// For async, no sync request is triggered as the class is already loaded by the component factory.
-				fnTargetsConstructor = sap.ui.require("sap/ui/core/routing/Targets") || sap.ui.requireSync("sap/ui/core/routing/Targets");
+				fnTargetsConstructor = sap.ui.require("sap/ui/core/routing/Targets")
+					|| sap.ui.requireSync("sap/ui/core/routing/Targets"); // legacy-relevant: Sync path
 			}
 			this._oTargets = new fnTargetsConstructor({
 				targets: oRoutingManifestEntry.targets,

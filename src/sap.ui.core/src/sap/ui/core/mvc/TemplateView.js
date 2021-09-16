@@ -69,7 +69,7 @@ function(View, TemplateViewRenderer, ViewType, Log) {
 		 */
 		sap.ui.templateview = function(sId, vView) {
 			Log.warning("sap.ui.core.mvc.TemplateView is deprecated. Use XMLView or JSView instead.");
-			return sap.ui.view(sId, vView, ViewType.Template);
+			return sap.ui.view(sId, vView, ViewType.Template); // legacy-relevant
 		};
 
 		/**

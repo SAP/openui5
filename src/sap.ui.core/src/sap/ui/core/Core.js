@@ -2089,7 +2089,7 @@ sap.ui.define([
 		}
 
 		function requireLibsSync() {
-			getLibraryModuleNames().forEach(sap.ui.requireSync);
+			getLibraryModuleNames().forEach(sap.ui.requireSync); // legacy-relevant: Sync path
 		}
 
 		if ( bAsync ) {
@@ -2164,7 +2164,7 @@ sap.ui.define([
 		}
 
 		// use deprecated factory for sync use case or when legacy options are used
-		return sap.ui.component(vComponent);
+		return sap.ui.component(vComponent); // legacy-relevant
 
 	};
 
@@ -2328,7 +2328,7 @@ sap.ui.define([
 			Log.debug("resolve Dependencies to " + sDepLib, null, METHOD);
 			if ( mLoadedLibraries[sDepLib] !== true ) {
 				Log.warning("Dependency from " + sLibName + " to " + sDepLib + " has not been resolved by library itself", null, METHOD);
-				this.loadLibrary(sDepLib);
+				this.loadLibrary(sDepLib); // legacy-relevant: Sync fallback for missing manifest/AMD dependencies
 			}
 		}
 
@@ -3764,7 +3764,7 @@ sap.ui.define([
 						name: "core-eventbus"
 					};
 				});
-				EventBus = sap.ui.requireSync('sap/ui/core/EventBus');
+				EventBus = sap.ui.requireSync('sap/ui/core/EventBus'); // legacy-relevant: fallback for missing dependency
 			}
 			var oEventBus = this.oEventBus = new EventBus();
 			this._preserveHandler = function(event) {

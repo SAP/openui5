@@ -224,7 +224,7 @@ sap.ui.define([
 						sap.ui.require([sModuleName], resolve, reject);
 					});
 				} else {
-					sap.ui.requireSync(sModuleName);
+					sap.ui.requireSync(sModuleName); // legacy-relevant: Sync path
 				}
 			}
 			// extend 'this' with view from registry which should now or then be available

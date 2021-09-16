@@ -183,7 +183,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/Component"], function(Log, Component
 					}, reject);
 				});
 			} else {
-				var ExtensionProviderClass = sap.ui.requireSync(sProviderName);
+				var ExtensionProviderClass = sap.ui.requireSync(sProviderName); // legacy-relevant: Sync path
 				oProvider = new ExtensionProviderClass();
 				mExtensionProvider[sProviderName] = oProvider;
 				return oProvider;

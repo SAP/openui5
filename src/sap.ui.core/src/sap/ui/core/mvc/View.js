@@ -334,7 +334,7 @@ sap.ui.define([
 					}, reject);
 				});
 			} else {
-				return sap.ui.requireSync(sPreprocessorName);
+				return sap.ui.requireSync(sPreprocessorName); // legacy-relevant: Sync path
 			}
 		} else if (typeof oPreprocessor.preprocessor === "function" && !oPreprocessor.preprocessor.process) {
 			oPreprocessorImpl = {
@@ -464,7 +464,7 @@ sap.ui.define([
 					if (bAsync) {
 						oController = Controller.create({name: defaultController, _viewId: oThis.sId});
 					} else {
-						oController = sap.ui.controller(defaultController, true, false, oThis.sId);
+						oController = sap.ui.controller(defaultController, true, false, oThis.sId); // legacy-relevant: Sync path
 					}
 				}
 			} else if (oController) {
@@ -1278,7 +1278,7 @@ sap.ui.define([
 	function createView(sViewClass, oViewSettings) {
 		var ViewClass = sap.ui.require(sViewClass);
 		if (!ViewClass) {
-			ViewClass = sap.ui.requireSync(sViewClass);
+			ViewClass = sap.ui.requireSync(sViewClass);// legacy-relevant: sync fallback for missing dependency
 			if (oViewSettings.async) {
 				//not supported
 				Log.warning("sap.ui.view was called without requiring the according view class.");

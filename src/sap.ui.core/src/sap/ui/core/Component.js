@@ -3425,7 +3425,7 @@ sap.ui.define([
 
 		// synchronously load the controller class, prepare and return it
 		return prepareControllerClass(
-			sap.ui.requireSync( getControllerModuleName() )
+			sap.ui.requireSync( getControllerModuleName() ) // legacy-relevant: Sync path
 		);
 	}
 
