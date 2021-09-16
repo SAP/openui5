@@ -1680,8 +1680,9 @@ sap.ui.define([
 		beforeEach: function() {
 			oValueType = new CurrencyType({showMeasure: false});
 			oUnitType = new CurrencyType({showNumber: false});
-			oConditionType = new ConditionType({valueType: oValueType, operators: ["EQ"], delegate: FieldBaseDelegate});
-			oUnitConditionType = new ConditionType({valueType: oUnitType, operators: ["EQ"], hideOperator: true, originalDateType: oValueType, delegate: FieldBaseDelegate});
+			oOriginalType = new CurrencyType();
+			oConditionType = new ConditionType({valueType: oValueType, additionalType: oUnitType, operators: ["EQ"], originalDateType: oOriginalType, delegate: FieldBaseDelegate});
+			oUnitConditionType = new ConditionType({valueType: oUnitType, additionalType: oValueType, operators: ["EQ"], hideOperator: true, originalDateType: oOriginalType, delegate: FieldBaseDelegate});
 			oOneFieldType = new CurrencyType();
 			oOneFieldConditionType = new ConditionType({valueType: oOneFieldType, operators: ["EQ", "BT"], delegate: FieldBaseDelegate});
 		},

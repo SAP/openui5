@@ -60,6 +60,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.maxConditions] Maximum number of allowed conditions
 	 * @param {sap.ui.model.Context} [oFormatOptions.bindingContext] BindingContext of field. Used to get key or description from the value help using in/out parameters. (In table, the value help might be connected to different row)
 	 * @param {sap.ui.model.Type} [oFormatOptions.originalDateType] Type used on field. E.g. for date types internally a different type is used internally to have different <code>formatOptions</code>
+	 * @param {sap.ui.model.Type} [oFormatOptions.additionalType] additional Type used on other part of a field. (This is the case for unit fields.)
 	 * @param {function} [oFormatOptions.getConditions] Function to get the existing conditions of the field. Only used if <code>isUnit</code> is set. // TODO: better solution
 	 * @param {function} [oFormatOptions.asyncParsing] Callback function to tell the <code>Field</code> the parsing is asynchronous.
 	 * @param {object} [oFormatOptions.navigateCondition] Condition of keyboard navigation. If this is filled, no real parsing is needed as the condition has already been determined. Just return it
@@ -112,12 +113,10 @@ sap.ui.define([
 		}
 
 		var oType = _getValueType.call(this);
-		var oOriginalDateType = _getOriginalDateType.call(this);
 		var bIsUnit = _isUnit(oType);
 		var bPreventGetDescription = this.oFormatOptions.preventGetDescription;
 
-		_attachCurrentValueAtType.call(this, oCondition, oOriginalDateType); // use original condition
-		_attachCurrentValueAtType.call(this, oCondition, oType);
+		_attachCurrentValueAtType.call(this, oCondition, oType); // use original condition
 
 		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
@@ -265,7 +264,7 @@ sap.ui.define([
 		var sDisplay = _getDisplay.call(this);
 		var bInputValidationEnabled = _isInputValidationEnabled.call(this);
 		var oType = _getValueType.call(this);
-		var oOriginalDateType = _getOriginalDateType.call(this);
+		var oOriginalType = _getOriginalType.call(this);
 		var aOperators = _getOperators.call(this);
 		var bIsUnit = _isUnit(oType);
 		var sDefaultOperator;
@@ -277,8 +276,6 @@ sap.ui.define([
 		}
 
 		_initCurrentValueAtType.call(this, oType);
-		_initCurrentValueAtType.call(this, oOriginalDateType);
-		_useCurrentValueFromOriginalType.call(this, oType, oOriginalDateType);
 
 		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
@@ -347,12 +344,12 @@ sap.ui.define([
 							}
 						} catch (oException) {
 							var oMyException = oException;
-							if (oMyException instanceof ParseException && oOriginalDateType) {
+							if (oMyException instanceof ParseException && oOriginalType) {
 								// As internal yyyy-MM-dd is used as pattern for dates (times similar) the
 								// parse exception might contain this as pattern. The user should see the pattern thats shown
 								// So try to parse date with the original type to get parseException with right pattern.
 								try {
-									oOriginalDateType.parseValue(vValue, "string", oOriginalDateType._aCurrentValue);
+									oOriginalType.parseValue(vValue, "string", oOriginalType._aCurrentValue);
 								} catch (oOriginalException) {
 									oMyException = oOriginalException;
 								}
@@ -393,7 +390,6 @@ sap.ui.define([
 	function _finishParseFromString(oCondition, oType) {
 
 		var bIsUnit = _isUnit(oType);
-		var oOriginalDateType = _getOriginalDateType.call(this);
 
 		if (oCondition && !bIsUnit) {
 			var sName = oType.getMetadata().getName();
@@ -411,7 +407,6 @@ sap.ui.define([
 		}
 
 		_attachCurrentValueAtType.call(this, oCondition, oType);
-		_attachCurrentValueAtType.call(this, oCondition, oOriginalDateType);
 
 		return oCondition;
 
@@ -603,7 +598,7 @@ sap.ui.define([
 	ConditionType.prototype.validateValue = function(oCondition) {
 
 		var oType = _getValueType.call(this);
-		var oOriginalDateType = _getOriginalDateType.call(this);
+		var oOriginalType = _getOriginalType.call(this);
 		var aOperators = _getOperators.call(this);
 		var bIsUnit = _isUnit(oType);
 
@@ -652,11 +647,11 @@ sap.ui.define([
 		try {
 			oOperator.validate(oCondition.values, oType);
 		} catch (oException) {
-			if (oException instanceof ValidateException && oOriginalDateType) {
+			if (oException instanceof ValidateException && oOriginalType) {
 				// As internal yyyy-MM-dd is used as pattern for dates (times similar) the
 				// ValidateException might contain this as pattern. The user should see the pattern thats shown
 				// So try to validate date with the original type to get ValidateException with right pattern.
-				oOperator.validate(oCondition.values, oOriginalDateType);
+				oOperator.validate(oCondition.values, oOriginalType);
 			}
 			throw oException;
 		}
@@ -696,9 +691,15 @@ sap.ui.define([
 
 	}
 
-	function _getOriginalDateType() {
+	function _getOriginalType() {
 
 		return this.oFormatOptions.originalDateType;
+
+	}
+
+	function _getAdditionalType() {
+
+		return this.oFormatOptions.additionalType;
 
 	}
 
@@ -751,23 +752,32 @@ sap.ui.define([
 	function _attachCurrentValueAtType(oCondition, oType) {
 
 		if (_isCompositeType.call(this, oType) && oCondition && oCondition.values[0]) {
-				oType._aCurrentValue = oCondition.values[0];
+			oType._aCurrentValue = oCondition.values[0];
+
+			var oAdditionalType = _getAdditionalType.call(this);
+			if (_isCompositeType.call(this, oAdditionalType)) { // store in corresponding unit or measure type too
+				oAdditionalType._aCurrentValue = oCondition.values[0];
+			}
+
+			var oOriginalType = _getOriginalType.call(this);
+			if (_isCompositeType.call(this, oOriginalType)) { // store in original type too (Currently not used in Unit/Currency type, but basically in CompositeType for parsing)
+				oOriginalType._aCurrentValue = oCondition.values[0];
+			}
 		}
 
 	}
 
 	function _initCurrentValueAtType(oType) {
 
-		if (_isCompositeType.call(this, oType) && !oType._aCurrentValue) {
-				oType._aCurrentValue = [];
-		}
+		if (_isCompositeType.call(this, oType)) {
+			var oAdditionalType = _getAdditionalType.call(this);
+			if (_isCompositeType.call(this, oAdditionalType)) {
+				if (!oAdditionalType._aCurrentValue) {
+					oAdditionalType._aCurrentValue = [];
+				}
 
-	}
-
-	function _useCurrentValueFromOriginalType(oType, oOriginalDateType) {
-
-		if (_isCompositeType.call(this, oType) && _isCompositeType.call(this, oOriginalDateType) && oOriginalDateType._aCurrentValue) {
-				oType._aCurrentValue = oOriginalDateType._aCurrentValue;
+				oType._aCurrentValue = oAdditionalType._aCurrentValue; // to use before entered corresponding number or unit
+			}
 		}
 
 	}
