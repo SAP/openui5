@@ -3525,7 +3525,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Should suspend a dynamic displayed target when router navigates away from it - routeRelevant: false", function(assert) {
+	QUnit.test("Should not suspend a dynamic displayed target when router navigates away from it - routeRelevant: false", function(assert) {
 		sap.ui.predefine("namespace1/DynamicChildComponent" + count + "/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 			return UIComponent.extend("namespace1.DynamicChildComponent" + count, {
 				metadata : {
@@ -3761,6 +3761,102 @@ sap.ui.define([
 
 				oResetHashSpy.restore();
 			});
+		});
+	});
+
+	QUnit.test("Should initialize a dynamic displayed target when parent router is initialized without parsing the current hash", function(assert) {
+		sap.ui.predefine("namespace1/DynamicChildComponent" + count + "/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("namespace1.DynamicChildComponent" + count, {
+				metadata : {
+					routing:  {
+						config: {
+							async: true
+						},
+						routes: [
+							{
+								pattern: "product/{id}",
+								name: "product"
+							},
+							{
+								pattern: "",
+								name: "nestedHome"
+							}
+						]
+					}
+				},
+				init : function() {
+					UIComponent.prototype.init.apply(this, arguments);
+					var oRouter = this.getRouter();
+
+					oRouter.initialize();
+				}
+			});
+		});
+
+		var that = this,
+			oRouter = this.oParentComponent.getRouter(),
+			sDynamicComponentName = "DynamicChildComponent" + count;
+
+		return waitTillRouteMatched(oRouter, "home").then(function(oParams) {
+			var oContainer = that.oParentComponent.getRootControl(),
+				oShell = oContainer.byId("shell");
+			assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
+			assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
+
+			var oNestedComponent = oShell.getContent()[0].getComponentInstance();
+			assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
+			assert.equal(that.oNestedRouteMatchedSpy.callCount, 1, "Route is matched once inside the nested component");
+		})
+		// Step1: display dynamic component target
+		.then(function() {
+			// Add dynamic component target
+			oRouter.getTargets().addTarget(sDynamicComponentName, {
+				name: "namespace1.DynamicChildComponent" + count,
+				type: "Component",
+				controlId: "shell",
+				controlAggregation: "content",
+				options: {
+					manifest: false
+				}
+			});
+
+			var fnDisplayed1 = function (oEvent) {
+				oRouter.getTargets().detachDisplay(fnDisplayed1);
+				assert.equal(oEvent.getParameter("name"), sDynamicComponentName, "correct target is displayed");
+			};
+			oRouter.getTargets().attachDisplay(fnDisplayed1);
+
+			return oRouter.getTargets().display({
+				name: sDynamicComponentName,
+				prefix: "dynamic",
+				routeRelevant: true
+			});
+		})
+		// Step2: stop the router and check whether the dynamic target is suspended
+		.then(function(aTargetInfos) {
+			var oTarget = oRouter.getTarget(sDynamicComponentName);
+			var oTargetSuspendSpy = that.spy(oTarget, "suspend");
+
+			var oNestedComponent = aTargetInfos[0].view.getComponentInstance();
+			var oNestedRouter = oNestedComponent.getRouter();
+
+			oRouter.stop();
+
+			assert.equal(oTargetSuspendSpy.callCount, 1, "dynamic displayed target is suspended");
+			assert.ok(oNestedRouter.isStopped, "nested router is also stopped");
+
+			return oNestedRouter;
+		})
+		// Step3: initialize the router without parsing the hash and check the status of the nested router
+		.then(function(oNestedRouter) {
+			var oNestedInitializeSpy = that.spy(oNestedRouter, "initialize");
+			oRouter.initialize(true);
+
+			assert.ok(oNestedRouter.isInitialized(), "nested router is initialized");
+			assert.equal(oNestedInitializeSpy.callCount, 1, "the 'initialize' method is called once");
+			assert.equal(oNestedInitializeSpy.getCall(0).args[0], true, "The method is called with parameter 'true'");
+
+			oNestedInitializeSpy.restore();
 		});
 	});
 
@@ -4337,6 +4433,89 @@ sap.ui.define([
 				});
 				oRouter.navTo("category");
 			});
+		});
+	});
+
+	QUnit.test("Suspend nested routers after parent Router stops, initialize the nested routers after parent router initlaizes without parsing the current hash", function(assert) {
+		this.buildNestedComponentStructure(3, "StopAndInitializeLevel3");
+
+		var that = this,
+			oRouter = this.oParentComponent.getRouter(),
+			iHomeRouteMatchCount = 0;
+
+		var pHomeRouteMatched = new Promise(function(resolve, reject) {
+			oRouter.getRoute("home").attachMatched(function() {
+				iHomeRouteMatchCount++;
+				var oContainer = that.oParentComponent.getRootControl(),
+					oShell = oContainer.byId("shell"),
+					oNestedComponent = oShell.getContent()[0].getComponentInstance();
+
+				resolve(oNestedComponent);
+			});
+		});
+
+		return pHomeRouteMatched.then(function(oNestedComponent) {
+			assert.equal(iHomeRouteMatchCount, 1, "home route is matched once");
+			var oNestedRouter = oNestedComponent.getRouter(),
+				sId = "productA";
+
+			return new Promise(function(resolve, reject) {
+				oNestedRouter.getRoute("product").attachMatched(function(oEvent) {
+					assert.equal(iHomeRouteMatchCount, 1, "home route is still matched only once");
+					var oParameters = oEvent.getParameter("arguments"),
+						aViews = oEvent.getParameter("views");
+
+					assert.equal(oParameters.id, sId, "correct route is matched with parameter");
+
+					assert.equal(aViews.length, 1, "A target instance is created");
+					assert.ok(aViews[0] instanceof sap.ui.core.ComponentContainer, "The target instance is an ComponentContainer");
+
+					var oDeepNestedComponent = aViews[0].getComponentInstance(),
+						oDeepNestedRouter = oDeepNestedComponent.getRouter();
+
+					assert.ok(oDeepNestedRouter.isInitialized(), "The router in nested component is started");
+					assert.equal(oDeepNestedRouter._getLastMatchedRouteName(), "product", "The correct route is matched");
+
+					resolve([oRouter, oNestedRouter, oDeepNestedRouter]);
+				});
+				oRouter.navTo("home", {}, {
+					home: {
+						route: "product",
+						parameters: {
+							id: sId
+						},
+						componentTargetInfo: {
+							nestedComp: {
+								route: "product",
+								parameters: {
+									id: sId + "-nested"
+								}
+							}
+						}
+					}
+				});
+			});
+		}).then(function(aRouterHierarchy) {
+			aRouterHierarchy[0].stop();
+
+			assert.ok(aRouterHierarchy[0].isStopped(), "top level router is stopped");
+			assert.ok(aRouterHierarchy[1].isStopped(), "nested router is stopped");
+			assert.ok(aRouterHierarchy[2].isStopped(), "deeply nested router is stopped");
+
+			var oNestedRouterInitializeSpy = that.spy(aRouterHierarchy[1], "initialize");
+			var oDeepNestedRouterInitializeSpy = that.spy(aRouterHierarchy[2], "initialize");
+
+			aRouterHierarchy[0].initialize(true);
+
+			assert.ok(aRouterHierarchy[0].isInitialized(), "top level router is initialized");
+			assert.ok(aRouterHierarchy[1].isInitialized(), "nested router is initialized");
+			assert.ok(aRouterHierarchy[2].isInitialized(), "deeply nested router is initialized");
+
+			assert.equal(oNestedRouterInitializeSpy.callCount, 1, "the method 'initialize' is called once");
+			assert.equal(oDeepNestedRouterInitializeSpy.callCount, 1, "the method 'initialize' is called once");
+
+			assert.equal(oNestedRouterInitializeSpy.getCall(0).args[0], true, "the method 'initialize' is called with parameter true");
+			assert.equal(oDeepNestedRouterInitializeSpy.getCall(0).args[0], true, "the method 'initialize' is called with parameter true");
 		});
 	});
 

@@ -232,7 +232,16 @@ sap.ui.define([
 					// suspend the dynamic targets
 					if (this._oConfig.dynamicTarget) {
 						this._oRouter._oTargets.suspend(this._oConfig.dynamicTarget);
-						delete this._oConfig.dynamicTarget;
+					}
+				}
+			},
+
+			_resume: function() {
+				if (this._oRouter._oTargets) {
+					this._oRouter._oTargets.resume(this._oConfig.target);
+
+					if (this._oConfig.dynamicTarget) {
+						this._oRouter._oTargets.resume(this._oConfig.dynamicTarget);
 					}
 				}
 			},

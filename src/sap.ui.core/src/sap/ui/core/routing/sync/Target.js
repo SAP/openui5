@@ -49,6 +49,21 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 		},
 
 		/**
+		 * Resumes the object which is loaded by the target.
+		 *
+		 * Currently this function doesn't do anything because the sync
+		 * version of the Target can only load Views but no Components.
+		 *
+		 * @return {sap.ui.core.routing.Target} The 'this' to chain the call
+		 * @private
+		 */
+		resume : function () {
+			// the sync target can only load view and not component
+			// therefore it's not needed to do anything in this function
+			return this;
+		},
+
+		/**
 		 * Places the target on the screen
 		 *
 		 * @param {object} [oParentInfo] The information about the target parent
