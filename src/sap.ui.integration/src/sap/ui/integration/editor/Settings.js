@@ -102,7 +102,7 @@ sap.ui.define([
 		});
 	};
 
-	Settings.prototype.open = function (oField, oReferrer, oRightContent, oHost, oParent, fnApply, fnCancel) {
+	Settings.prototype.open = function (oField, oReferrer, oPreview, oHost, oParent, fnApply, fnCancel) {
 		var oCurrentData = this.getModel("currentSettings").getData();
 		//prepare fields in key
 		if (oCurrentData.values) {
@@ -125,11 +125,15 @@ sap.ui.define([
 		this.getModel("currentSettings").checkUpdate(true, true);
 		applyVariableDescription(oResourceBundle.getText("EDITOR_SELECT_FROM_LIST"), []);
 		if (oReferrer) {
-			var iOffsetWidth = (!oRightContent || oRightContent.getDomRef() === null || oRightContent.getDomRef().offsetWidth === 0) ? 270 : oRightContent.getDomRef().offsetWidth;
-			var iOffsetHeight = (!oRightContent || oRightContent.getDomRef() === null || oRightContent.getDomRef().offsetHeight === 0) ? 350 : oRightContent.getDomRef().offsetHeight;
+			var iOffsetWidth = (!oPreview || oPreview.getDomRef() === null || oPreview.getDomRef().offsetWidth === 0) ? 270 : oPreview.getDomRef().offsetWidth;
+			var iOffsetHeight = (!oPreview || oPreview.getDomRef() === null || oPreview.getDomRef().offsetHeight === 0) ? 350 : oPreview.getDomRef().offsetHeight;
 			oPopover.setContentWidth(iOffsetWidth + "px");
 			oPopover.setContentHeight((iOffsetHeight - 50) + "px");
-			oPopover.setPlacement("Right");
+			if (oPreview && oPreview.getSettings().preview.position === "right") {
+				oPopover.setPlacement("Right");
+			} else {
+				oPopover.setPlacement("Left");
+			}
 			oDynamicValueField.setValue(oField._label);
 			oPopover.openBy(oField);
 		} else {
