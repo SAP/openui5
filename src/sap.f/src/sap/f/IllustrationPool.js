@@ -261,12 +261,15 @@ sap.ui.define([
 		 * @private
 		 */
 		IllustrationPool._metadataLoaded = function(sName, oMetadataJSON, bLoadAllResources) {
-			var aSymbols = oMetadataJSON.symbols;
+			var aSymbols = oMetadataJSON.symbols,
+				bHasPatterns = oMetadataJSON.requireCustomPatterns;
 
 			oSetRegistry[sName].aSymbols = aSymbols;
 
-			// Load the patterns as soon as possible, since they can be used in any of the symbols.
-			IllustrationPool.loadAsset(sName + SAP_ILLUSTRATION_PATTERNS_NAME);
+			// Load the patterns (if available) as soon as possible, since they can be used in any of the symbols.
+			if (bHasPatterns) {
+				IllustrationPool.loadAsset(sName + SAP_ILLUSTRATION_PATTERNS_NAME);
+			}
 
 			if (bLoadAllResources) {
 				IllustrationPool.loadRestOfTheAssets(sName);
