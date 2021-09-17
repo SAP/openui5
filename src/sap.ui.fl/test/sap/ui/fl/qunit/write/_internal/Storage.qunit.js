@@ -494,6 +494,52 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("and the changes are updated and reordered by condenser", function (assert) {
+			var aAllChanges = createChangesAndSetState(["delete", "update", "update"]);
+			var mCondenseExpected = {
+				namespace: "a.name.space",
+				layer: this.sLayer,
+				"delete": {
+					change: []
+				},
+				update: {
+					change: [
+						{1: {
+							content: {
+								prop: "some Content 1"
+							}}
+						},
+						{2: {
+							content: {
+								prop: "some Content 2"
+							}}
+						}
+					]
+				},
+				reorder: {
+					change: ["2", "1"]
+				},
+				create: {
+					change: [],
+					ctrl_variant_change: [],
+					ctrl_variant_management_change: []
+				}
+			};
+			var mPropertyBag = {
+				layer: this.sLayer,
+				allChanges: aAllChanges,
+				condensedChanges: [aAllChanges[2], aAllChanges[1]],
+				reference: "reference"
+			};
+
+			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense").resolves({});
+
+			return Storage.condense(mPropertyBag).then(function () {
+				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
+				assert.propEqual(oWriteCallArgs.flexObjects, mCondenseExpected, "then flexObject is filled correctly");
+			});
+		});
+
 		QUnit.test("and no condensed changes are returned by condenser", function (assert) {
 			var aAllChanges = createChangesAndSetState(["delete", "delete", "delete"]);
 			var mCondenseExpected = {

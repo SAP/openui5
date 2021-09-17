@@ -147,7 +147,7 @@ sap.ui.define([
 					} else if (mPropertyBag.condensedChanges.length) {
 						bDifferentOrder = mPropertyBag.allChanges[index].getFileName() !== mPropertyBag.condensedChanges[index - iOffset].getFileName();
 					}
-					if (oChange.condenserState === "select" && bDifferentOrder && !bAlreadyReordered) {
+					if ((oChange.condenserState === "select" || oChange.condenserState === "update") && bDifferentOrder && !bAlreadyReordered) {
 						var aReorderedChanges = mPropertyBag.condensedChanges.slice(index - iOffset).map(function(oChange) {
 							return oChange.getFileName();
 						});
