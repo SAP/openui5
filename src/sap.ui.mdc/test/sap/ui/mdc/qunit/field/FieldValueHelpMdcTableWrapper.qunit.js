@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column",
 	"sap/m/Text",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/mdc/FilterBar"
 ], function (
 		FieldValueHelpMdcTableWrapper,
 		FieldValueHelpDelegate,
@@ -21,7 +22,8 @@ sap.ui.define([
 		Table,
 		Column,
 		Text,
-		JSONModel
+		JSONModel,
+		FilterBar
 	) {
 	"use strict";
 
@@ -104,13 +106,14 @@ sap.ui.define([
 				return oValueHelp.getFilterBar();
 			},
 			getFilterBar: function () {
-				oFilterBar = oFilterBar || new sap.ui.mdc.filterbar.vh.FilterBar({
+				oFilterBar = oFilterBar || new FilterBar({
 					liveMode: false,
 					delegate: {name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}},
+					filterConditions: { myfilter: [{ operator: "EQ", values: ["a"] }] },
 					filterItems: [
 						new sap.ui.mdc.FilterField({
 							delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
-							conditions: "{$filters>/conditions/text}"
+							conditions: "{$filters>/conditions/myfilter}"
 						})
 					],
 					basicSearchField: new sap.ui.mdc.FilterField({

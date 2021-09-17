@@ -8,14 +8,16 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/mdc/library",
 	"sap/ui/mdc/enum/PersistenceMode",
-	"sap/ui/mdc/p13n/Engine"
+	"sap/ui/mdc/p13n/Engine",
+	'sap/ui/mdc/condition/FilterConverter'
 	], function(
 		FieldValueHelpTableWrapperBase,
 		loadModules,
 		deepEqual,
 		library,
 		PersistenceMode,
-		Engine
+		Engine,
+		FilterConverter
 	) {
 	"use strict";
 
@@ -94,7 +96,6 @@ sap.ui.define([
 
 	FieldValueHelpMdcTableWrapper.prototype.fieldHelpOpen = function(bSuggestion) {
 		var oTable = this.getTable();
-
 		if (oTable) {
 			if (this.OInnerWrapperClass) {
 				return this.OInnerWrapperClass.prototype.fieldHelpOpen.call(this, bSuggestion);
@@ -117,7 +118,7 @@ sap.ui.define([
 			this._sInnerWrapperType = sTableType;
 
 			if (this.OInnerWrapperClass) {
-				this.OInnerWrapperClass.dispose.apply(this);
+				this.OInnerWrapperClass.prototype.dispose.apply(this);
 				this.OInnerWrapperClass = null;
 			}
 
@@ -142,6 +143,14 @@ sap.ui.define([
 			if (oParent) {
 				oTable.setHeight("100%");
 				oTable.setSelectionMode(this._getMaxConditions() === 1 ? SelectionMode.Single : SelectionMode.Multi);
+
+				var oFieldHelp = this._getFieldHelp();
+				var oFilterBar = oFieldHelp._getFilterBar();
+				var bFilterChange = oFilterBar && oTable.getFilter() !== oFilterBar.getId();
+				if (bFilterChange) {
+					oTable.setFilter(oFilterBar);
+				}
+
 			}
 
 			if (this.OInnerWrapperClass) {
@@ -163,12 +172,20 @@ sap.ui.define([
 			this._oInnerWrapperClassPromise = null;
 		}
 		if (this.OInnerWrapperClass) {
+			this.OInnerWrapperClass.prototype.dispose.apply(this);
 			this.OInnerWrapperClass = null;
 		}
 
 		this._sInnerWrapperType = null;
+		this._bSearchTriggered = null;
 
 		FieldValueHelpTableWrapperBase.prototype.exit.apply(this, arguments);
+	};
+
+	FieldValueHelpMdcTableWrapper.prototype.isSuspended = function() {
+		var oTable = this.getTable();
+		var oListBinding = this.getListBinding();
+		return oListBinding ? oListBinding.isSuspended() : oTable && !oTable.getAutoBindOnInit();
 	};
 
 	FieldValueHelpMdcTableWrapper.prototype.getListBinding = function() {
@@ -254,34 +271,42 @@ sap.ui.define([
 		var oTable = this.getTable();
 
 		if (oTable && oFilterBar) {
-			if (oTable.getFilter() !== oFilterBar.getId()) {
-				oTable.setFilter(oFilterBar);
-			}
-
-			this._oCurrentConditions = this._oCurrentConditions || {};
-
-			var oCurrentConditions = oFilterBar.getConditions();
-			if (!deepEqual(this._oCurrentConditions, oCurrentConditions) || (oTable._oTable && oTable._oTable.getShowOverlay())) {
-				oTable.initialized().then(function() {
-					this._oCurrentConditions = oCurrentConditions;
-					this._handleScrolling(); // reset scrolling to prevent skip parameters being added
-					oFilterBar.valid().then(function(){
-						oFilterBar.fireSearch();
-					});
-				}.bind(this));
-			}
-
 			var oListBinding = this.getListBinding();
-			if (oListBinding && oListBinding.isSuspended()) {
+			var bListBindingSuspended = oListBinding && oListBinding.isSuspended();
+			var oFieldHelp = this._getFieldHelp();
+
+			if (oListBinding && !bListBindingSuspended && !this._bSearchTriggered) {
+				var sFBSearch = oFilterBar.getSearch() || "";
+				var sBindingSearch = oListBinding.mParameters.$search || "";
+				var oCurrentFilterBarConditions = oFilterBar.getConditions();
+				var oConditionTypes = oFieldHelp._getTypesForConditions(oCurrentFilterBarConditions);
+				var oCreatedFBFilters = oCurrentFilterBarConditions && oConditionTypes && FilterConverter.createFilters(oCurrentFilterBarConditions, oConditionTypes, undefined, oFieldHelp.getCaseSensitive());
+				var aFBFilters = oCreatedFBFilters ? [].concat(oCreatedFBFilters) : [];
+				var aBindingFilters = oListBinding.aApplicationFilters.reduce(function (aResult, oFilter) {
+					return aResult.concat(oFilter._bMultiFilter ? oFilter.aFilters : oFilter);
+				}, []);
+				var bFiltersChanged = !deepEqual(aFBFilters, aBindingFilters);
+				var bSearchChanged = sFBSearch !== sBindingSearch;
+				var bTableHasOverlay = oTable._oTable && oTable._oTable.getShowOverlay && oTable._oTable.getShowOverlay();
+
+
+				if (bFiltersChanged || bSearchChanged || bTableHasOverlay) {
+					this._handleScrolling();
+					oFilterBar.triggerSearch();
+					this._bSearchTriggered = true;
+				}
+			}
+
+			if (bListBindingSuspended) {
 				oListBinding.resume();
-			} else if (!oListBinding) {
-				this._oTablePromise.then(function(oTable) {
+			}
+
+			if (!oListBinding && oTable.getAutoBindOnInit()) {
+				this._oTablePromise.then(function () {
 					if (!this._bIsBeingDestroyed) {
 						this.applyFilters(aFilters, sSearch, oFilterBar);
 					}
 				}.bind(this));
-
-				this.restoreBinding();
 			}
 		}
 	};
@@ -300,6 +325,7 @@ sap.ui.define([
 	};
 
 	FieldValueHelpMdcTableWrapper.prototype._handleUpdateFinished = function (oEvent) {
+		this._bSearchTriggered = false;
 		return this.OInnerWrapperClass.prototype._handleUpdateFinished.apply(this, arguments);
 	};
 
@@ -368,14 +394,6 @@ sap.ui.define([
 
 	FieldValueHelpMdcTableWrapper.prototype.getSuggestionContent = function() {
 		return this.getTable();
-	};
-
-
-	FieldValueHelpMdcTableWrapper.prototype.restoreBinding = function() {
-		var oTable = this.getTable();
-		if (oTable) {
-			oTable.checkAndRebind();
-		}
 	};
 
 	return FieldValueHelpMdcTableWrapper;
