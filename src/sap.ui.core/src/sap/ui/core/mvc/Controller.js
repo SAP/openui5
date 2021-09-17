@@ -181,6 +181,11 @@ sap.ui.define([
 						} else if (sOverrideMember in mLifecycleConfig) {
 							//apply lifecycle hooks even if they don't exist on controller
 							ControllerExtension.overrideMethod(sOverrideMember, oController, oOverrides, oExtension, oControllerMetadata.getOverrideExecution(sOverrideMember));
+						/* legacy support: hooks defined as null instead of a function and starting with 'extHook' must not be ignored.
+							Some legacy applications defined possible extension hooks in this way. As ControllerExtensions rely on Interface usage
+							legacy scenarios will break. */
+						} else if (sOverrideMember.startsWith("extHook") && oController[sOverrideMember] === null) {
+							ControllerExtension.overrideMethod(sOverrideMember, oController, oOverrides, oExtension);
 						} else {
 							Log.error("Method '" + sOverrideMember + "' does not exist in controller " + oController.getMetadata().getName() + " and cannot be overridden");
 						}
