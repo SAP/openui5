@@ -1036,10 +1036,20 @@ sap.ui.define([
 				this.oRouter.navTo("sitemap", {});
 			},
 
-			onVersionItemPress: function (oEvent) {
-				var oSelectedItem = oEvent.getParameter("listItem"),
-					oCustomData = oSelectedItem.getCustomData()[0];
+			onLatestVersionItemPress: function() {
+				var bUseUnifiedResourceOrigin =  new URLSearchParams(window.location.search).get('sap-ui-xx-unifiedResources') != null;
+				if (bUseUnifiedResourceOrigin) {
+					window.sessionStorage.removeItem("versionPrefixPath");
+					window.location.reload();
+				} else {
+					window.location.href = "/";
+				}
+			},
 
+			onVersionItemPress: function (oEvent) {
+				var oSelectedItem = sap.ui.getCore().byId("versionList").getSelectedItem(),
+					oCustomData = oSelectedItem.getCustomData()[0],
+					bUseUnifiedResourceOrigin =  new URLSearchParams(window.location.search).get('sap-ui-xx-unifiedResources') != null;
 
 				if (oCustomData && oCustomData.getKey() === "path") {
 
@@ -1515,6 +1525,7 @@ sap.ui.define([
 							this._aNeoAppVersions = aNeoAppVersions;
 							// Make version select visible
 							this._updateVersionSwitchVisibility();
+							this.getModel("versionData").setProperty("/latestVersion", this._aNeoAppVersions[0].version);
 						} else {
 							Log.warning("No multi-version environment detected");
 						}

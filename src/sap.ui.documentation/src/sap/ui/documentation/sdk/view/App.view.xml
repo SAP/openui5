@@ -72,7 +72,15 @@
 							</items>
 						</IconTabHeader>
 
-						<ObjectStatus text="{= ${versionData>/isBetaVersion} ? ${i18n>APP_VERSION_BETA_VERSION} : ${i18n>APP_VERSION_VERSION}} {versionData>/version} {= ${versionData>/isBetaVersion} ? ${i18n>APP_VERSION_NOT_PRODUCTIVE} : ${versionData>/isDevVersion} ? ${i18n>APP_VERSION_IN_PROGRESS} : ''}" state="{= ${versionData>/isBetaVersion} ? 'Error' : ${versionData>/isDevVersion} ? 'Warning' : 'None'}" visible="{=!${appView>/bPhoneSize}}" />
+						<ObjectStatus text="{= ${versionData>/isBetaVersion} ? ${i18n>APP_VERSION_BETA_VERSION} :
+											${i18n>APP_VERSION_VERSION}}
+											{versionData>/version}
+											{= ${versionData>/isBetaVersion} ? ${i18n>APP_VERSION_NOT_PRODUCTIVE} :
+											${versionData>/isDevVersion} ? ${i18n>APP_VERSION_IN_PROGRESS} :
+											${versionData>/latestVersion} === ${versionData>/version} ? '(Latest)' :
+											''}" state="{= ${versionData>/isBetaVersion} ? 'Error' :
+											${versionData>/isDevVersion} ? 'Warning' :
+											'None'}" visible="{=!${appView>/bPhoneSize}}" />
 
 						<Button id="changeVersionButton" press="onChangeVersionButtonPress" type="Transparent" text="{i18n>APP_CHANGE_VERSION_BTN}" visible="{appView>/bShowVersionSwitchInHeader}">
 							<layoutData>
