@@ -17,6 +17,9 @@ sap.ui.define([
 
 			var oCardManifests = new JSONModel(sap.ui.require.toUrl("sap/f/cardsdemo/model/cardManifests.json"));
 			oView.setModel(oCardManifests, "manifests");
+
+			var oAnalyticalContentManifests = new JSONModel(sap.ui.require.toUrl("sap/f/cardsdemo/model/analyticalContentManifests.json"));
+			oView.setModel(oAnalyticalContentManifests, "analyticalContentManifests");
 		},
 
 		onAfterRendering: function () {
