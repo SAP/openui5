@@ -924,5 +924,24 @@ sap.ui.define([
 		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
+	/**
+	 * Creates an inline change of change type <code>appdescr_fiori_setAbstract</code>.
+	 *
+	 * @param {object} mPropertyBag - Parameters of the change type
+	 * @param {string} mPropertyBag.changeType - Inline change type of an app variant
+	 * @param {object} mPropertyBag.content - Content of an inline change
+	 * @param {boolean} mPropertyBag.content.abstract - Abstract property to be disabled (only allowd value is <code>false</code>)
+	 *
+	 * @return {Promise} Resolving when the descriptor inline change was created successfully (without back-end access)
+	 *
+	 * @private
+	 * @ui5-restricted WebIDE
+	 */
+	 AppVariantInlineChangeFactory.create_fiori_setAbstract = function(mPropertyBag) {
+		Utils.checkParameterAndType(mPropertyBag.content, "abstract", "boolean");
+		Utils.checkParameterAndType(mPropertyBag, "changeType", "string");
+		return _createAppVariantInlineChange(mPropertyBag);
+	};
+
 	return AppVariantInlineChangeFactory;
 });

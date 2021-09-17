@@ -1585,6 +1585,38 @@ sap.ui.define([
 				});
 			});
 		});
+
+		QUnit.test("create_fiori_setAbstract", function(assert) {
+			return DescriptorInlineChangeFactory.create_fiori_setAbstract({
+				"abstract": false
+			}).then(function(oDescriptorInlineChange) {
+				assert.notEqual(oDescriptorInlineChange, null);
+				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_fiori_setAbstract");
+			});
+		});
+
+		QUnit.test("create_fiori_setAbstract failure", function (assert) {
+			assert.throws(function() {
+				DescriptorInlineChangeFactory.create_fiori_setAbstract({
+					"abstract": []
+				});
+			});
+			assert.throws(function() {
+				DescriptorInlineChangeFactory.create_fiori_setAbstract({
+					"abstract": { }
+				});
+			});
+			assert.throws(function() {
+				DescriptorInlineChangeFactory.create_fiori_setAbstract({
+					"abstract": "string"
+				});
+			});
+			assert.throws(function() {
+				DescriptorInlineChangeFactory.create_fiori_setAbstract({
+					"abstract": 1234
+				});
+			});
+		});
 	});
 
 

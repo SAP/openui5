@@ -1889,6 +1889,53 @@ sap.ui.define([
 				});
 			});
 		});
+
+		QUnit.test("create_fiori_setAbstract correct change", function(assert) {
+			return AppVariantInlineChangeFactory.create_fiori_setAbstract({
+				changeType: "appdescr_fiori_setAbstract",
+				content: {
+					"abstract": false
+				}
+			}).then(function(oDescriptorInlineChange) {
+				assert.notEqual(oDescriptorInlineChange, null);
+				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_fiori_setAbstract");
+				assert.equal(oDescriptorInlineChange.getContent().abstract, false);
+			});
+		});
+
+		QUnit.test("create_fiori_setAbstract incorrect change content", function (assert) {
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_fiori_setAbstract({
+					content: {
+						"abstract": []
+					}
+				});
+			});
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_fiori_setAbstract({
+					content: {
+						"abstract": {}
+					}
+				});
+			});
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_fiori_setAbstract({
+					content: {
+						"abstract": true
+					}
+				});
+			});
+		});
+
+		QUnit.test("create_fiori_setAbstract without changetype", function (assert) {
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_fiori_setAbstract({
+					content: {
+						"abstract": false
+					}
+				});
+			});
+		});
 	});
 
 	QUnit.done(function () {

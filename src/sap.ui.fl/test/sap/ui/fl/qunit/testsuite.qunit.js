@@ -224,6 +224,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ui5/SetFlexExtensionPointEnabled"]
 				}
 			},
+			"apply/_internal/changes/descriptor/fiori/SetAbstract": {
+				group: "Apply Internal - Descriptor Change Merger",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/fiori/SetAbstract"]
+				}
+			},
 			"apply/_internal/changes/descriptor/Preprocessor": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
