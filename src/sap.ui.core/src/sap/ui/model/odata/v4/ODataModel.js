@@ -722,8 +722,7 @@ sap.ui.define([
 	 * transformed into a metadata context (see
 	 * {@link sap.ui.model.odata.v4.ODataMetaModel#getMetaContext}). The part following the
 	 * separator is then interpreted relative to this metadata context, even if it starts with
-	 * a '/'; a trailing '/' is allowed here, see
-	 * {@link sap.ui.model.odata.v4.ODataMetaModel#requestObject} for the effect it has.
+	 * a '/'; see {@link sap.ui.model.odata.v4.ODataMetaModel#requestObject} for more details.
 	 *
 	 * If the target type specified in the corresponding control property's binding info is "any"
 	 * and the binding is relative or points to metadata, the binding may have an object value;
