@@ -273,6 +273,23 @@
 	}
 }
 
+// Value colors for the Side Indicators in the Numeric header
+.sapFCard .sapFCardHeaderSideIndicatorStateCritical .sapFCardHeaderSINumber span {
+	color: @sapUiCriticalText;
+}
+
+.sapFCard .sapFCardHeaderSideIndicatorStateError .sapFCardHeaderSINumber span {
+	color: @sapUiNegativeText;
+}
+
+.sapFCard .sapFCardHeaderSideIndicatorStateGood .sapFCardHeaderSINumber span {
+	color: @sapUiPositiveText;
+}
+
+.sapFCard .sapFCardHeaderSideIndicatorStateNeutral .sapFCardHeaderSINumber span {
+	color: @sapUiNeutralText;
+}
+
 .sapFCard .sapFCardContent {
 	flex: 1 1 auto;
 	overflow: hidden;

@@ -472,6 +472,19 @@
         "unit": {
           "description": "Represents unit of measurement of the side indicator",
           "type": "string"
+        },
+        "state": {
+          "description": "The state color of the side indicator",
+          "type": "string",
+          "oneOf": [
+            {
+              "description": "The state color of the side indicator",
+              "$ref": "#/definitions/Enums.ValueColor"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         }
       }
     },

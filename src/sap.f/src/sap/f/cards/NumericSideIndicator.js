@@ -50,7 +50,14 @@ sap.ui.define([
 				/**
 				 * Defines the unit of measurement (scaling prefix) for the numeric value
 				 */
-				unit: { "type": "string", group : "Data" }
+				unit: { "type": "string", group : "Data" },
+
+				/**
+				 * The semantic color which represents the state of the side indicator.
+				 * @experimental since 1.95
+				 * Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+				 */
+				state: { "type": "sap.m.ValueColor", group: "Appearance", defaultValue : "Neutral" }
 			},
 			aggregations: {
 
@@ -138,7 +145,7 @@ sap.ui.define([
 	 * @private
 	 * @return {sap.m.Text} The number aggregation
 	 */
-	NumericSideIndicator.prototype._getNumber = function () {
+	 NumericSideIndicator.prototype._getNumber = function () {
 		var oControl = this.getAggregation("_number");
 
 		if (!oControl) {

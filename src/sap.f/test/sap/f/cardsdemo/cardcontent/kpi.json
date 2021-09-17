@@ -10,7 +10,8 @@
 				"unit": "K"
 			},
 			"deviation": {
-				"number": 34.7
+				"number": 34.7,
+				"state": "Critical"
 			},
 			"details": "Q1, 2018"
 		}

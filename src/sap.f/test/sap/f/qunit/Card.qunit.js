@@ -212,6 +212,29 @@ function (
 		oNumericHeader.destroy();
 	});
 
+	QUnit.test("Side Indicator \"state\" property ", function (assert) {
+		// Arrange
+		var oHeader = new CardNumericHeader({
+			sideIndicators:{
+				number: "5",
+				state: "Error"
+			}
+		});
+
+		// Act
+		oHeader.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Assert
+
+		assert.ok(oHeader.getSideIndicators()[0].getDomRef().classList.contains("sapFCardHeaderSideIndicatorStateError"), "SideIndicator has the right class applied");
+		assert.notOk(oHeader.getSideIndicators()[0].getDomRef().classList.contains("sapFCardHeaderSideIndicatorStateGood"), "SideIndicator has the right class applied");
+
+		// Clean up
+		oHeader.destroy();
+	});
+
+
 	QUnit.test("Card has correct class when header is not visible", function (assert) {
 		// Arrange
 		var oCard = createCard(CardHeader);
