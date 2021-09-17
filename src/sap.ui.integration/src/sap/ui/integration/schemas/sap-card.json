@@ -612,16 +612,22 @@
           "$ref": "#/definitions/data"
         },
         "chartType": {
-          "description": "Describes the type of the chart",
+          "description": "The type of the chart",
           "type": "string",
           "oneOf": [
             {
-              "enum": [
-                "Line",
-                "StackedColumn",
-                "StackedBar",
-                "Donut"
-              ]
+             "type": "string"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "chartProperties": {
+          "description": "[Experimental] Chart configuration",
+          "oneOf": [
+            {
+              "type": "object"
             },
             {
               "$ref": "#/definitions/simpleBinding"
@@ -635,7 +641,7 @@
           "$ref": "#/definitions/ContentType.Analytical.Legend"
         },
         "plotArea": {
-          "description": "Describes the plotArea properties",
+          "description": "[Deprecated] Describes the plotArea properties",
           "type": "object",
           "additionalProperties": false,
           "properties": {
@@ -651,7 +657,7 @@
           }
         },
         "title": {
-          "description": "Represents title attributes",
+          "description": "[Deprecated] Represents title attributes",
           "type": "object",
           "additionalProperties": false,
           "properties": {
@@ -690,23 +696,30 @@
           }
         },
         "measureAxis": {
-          "description": "Represents the value set for measure axis",
+          "description": "[Deprecated] Represents the value set for measure axis",
           "type": "string"
         },
         "dimensionAxis": {
-          "description": "Represents the value set for dimension axis",
+          "description": "[Deprecated] Represents the value set for dimension axis",
           "type": "string"
         },
         "dimensions": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/field"
+            "$ref": "#/definitions/ContentType.Analytical.MeasureAndDimension"
           }
         },
         "measures": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/field"
+            "$ref": "#/definitions/ContentType.Analytical.MeasureAndDimension"
+          }
+        },
+        "feeds": {
+          "description": "Feeds for the chart.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ContentType.Analytical.Field"
           }
         },
         "actions": {
@@ -735,7 +748,7 @@
           "additionalProperties": false,
           "description": "Configuration for a popover, which will open while pressing chart points",
           "properties": {
-            "connected": {
+            "active": {
               "description": "Whether the popover is connected to the chart. If it's not it won't open",
               "oneOf": [
                 {
@@ -778,7 +791,7 @@
       }
     },
     "ContentType.Analytical.Legend": {
-      "description": "Represents chart legend attributes",
+      "description": "[Deprecated] Represents chart legend attributes",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -819,6 +832,56 @@
               "$ref": "#/definitions/simpleBinding"
             }
           ]
+        }
+      }
+    },
+    "ContentType.Analytical.Field": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "description": "The type of the feed",
+          "oneOf": [
+            {
+              "enum": [
+                "Measure",
+                "Dimension"
+              ]
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "uid": {
+          "description": "The uid of the feed",
+          "type": "string"
+        },
+        "values": {
+          "description": "The names of the measures or dimensions that are used for this feed",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ContentType.Analytical.MeasureAndDimension": {
+      "description": "Measure/dimension for the dataset",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "The name of the measure/dimension",
+          "type": "string"
+        },
+        "label": {
+          "description": "[Deprecated] Label for the measure/dimension",
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "description": "Binding path to the data"
         }
       }
     },

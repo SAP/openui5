@@ -196,6 +196,66 @@ sap.ui.define([
 								]
 							},
 							{
+								title: 'Bubble',
+								key: 'bubble',
+								settings: {
+									rows: 5,
+									columns: 6
+								},
+								files: [
+									{
+										url: '/samples/analytical/bubble/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/analytical/bubble/data.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
+							},
+							{
+								title: 'Bar with Reference Lines',
+								key: 'barWithReferenceLines',
+								settings: {
+									rows: 5,
+									columns: 6
+								},
+								files: [
+									{
+										url: '/samples/analytical/barWithReferenceLines/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/analytical/barWithReferenceLines/data.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
+							},
+							{
+								title: 'Column with Conditional Colors',
+								key: 'columnWithConditionalColors',
+								settings: {
+									rows: 5,
+									columns: 6
+								},
+								files: [
+									{
+										url: '/samples/analytical/columnWithConditionalColors/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/analytical/columnWithConditionalColors/data.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
+							},
+							{
 								title: 'Navigation from Chart Sectors',
 								key: 'chartActions',
 								experimental: true,

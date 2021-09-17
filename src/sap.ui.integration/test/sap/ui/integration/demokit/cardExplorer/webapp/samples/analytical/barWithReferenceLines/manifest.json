@@ -1,0 +1,116 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.analytical.barWithReferenceLines.card",
+		"type": "card",
+		"title": "Sample of Bar Chart with Reference Lines",
+		"subTitle": "Sample of Bar Chart with Reference Lines",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Analytical",
+				"Card",
+				"Bar",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5"
+	},
+	"sap.card": {
+		"type": "Analytical",
+		"header": {
+			"title": "Milk Stores Profit"
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "./data.json"
+				},
+				"path": "/milk"
+			},
+			"chartType": "bar",
+			"chartProperties": {
+				"title": {
+					"visible": false
+				},
+				"legend": {
+					"visible": false
+				},
+				"plotArea": {
+					"referenceLine": {
+						"line": {
+							"valueAxis": [{
+								"value": 40000,
+								"visible": true,
+								"label": {
+									"text": "Low Performance",
+									"visible": true,
+									"background": "sapUiNegativeElement"
+								},
+								"color": "sapUiNegativeElement"
+							},{
+								"value": 120000,
+								"visible": true,
+								"label": {
+									"text": "Medium Performance",
+									"visible": true,
+									"background": "sapUiCriticalElement"
+								},
+								"color": "sapUiCriticalElement"
+							},{
+								"value": 230000,
+								"visible": true,
+								"label": {
+									"text": "High Performance",
+									"visible": true,
+									"background": "sapUiPositiveElement"
+								},
+								"color": "sapUiPositiveElement"
+							}]
+						}
+					}
+				}
+			},
+			"minHeight": "20rem",
+			"dimensions": [
+				{
+					"name": "Store Name",
+					"value": "{Store Name}"
+				}
+			],
+			"measures": [
+				{
+					"name": "Cost",
+					"value": "{Cost}"
+				},
+				{
+					"name": "Profit",
+					"value": "{Profit}"
+				}
+			],
+			"feeds": [
+				{
+					"uid": "valueAxis",
+					"type": "Measure",
+					"values": [
+						"Profit"
+					]
+				},
+				{
+					"uid": "categoryAxis",
+					"type": "Dimension",
+					"values": [
+						"Store Name"
+					]
+				}
+			]
+		}
+	}
+}

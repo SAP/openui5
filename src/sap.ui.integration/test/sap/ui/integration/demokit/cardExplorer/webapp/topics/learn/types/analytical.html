@@ -12,8 +12,17 @@
 	<div class="topic">
 		<div class="content">
 			<h1 id="overview">Analytical Card</h1>
-			Analytical Card displays a chart. Supported chart types are Line, StackedBar, StackedColumn and Donut.
-			<p>Usage:</p>
+			<h2>Overview</h2>
+			<p>Analytical Card displays business data visualized in different charts.</p>
+			<p>The charts are rendered with the sap.viz library, which is part of SAPUI5 distribution and is not available in OpenUI5.</p>
+			<p>
+				In the card manifest charts are defined by the <code>chartType</code>, <code>measures</code>, <code>dimensions</code> and <code>feeds</code> properties.
+				These properties and their values are derived from and follow
+				the <a data-demokit-href="/api/sap.viz" target="_blank">sap.viz charting library</a> definitions.
+				With the optional <code>chartProperties</code> property charts can be customized with all the options from the <a data-demokit-href="/docs/vizdocs/index.html" target="_blank">VizDocs</a>.
+				Samples of the sap.viz library can be found <a data-demokit-href="/entity/sap.viz.ui5.controls.VizFrame" target="_blank">here</a>.
+			</p>
+			<h3>Usage</h3>
 			<ul>
 				<li>Use this card type if you want to visualize analytics data.</li>
 				<li>The card itself will always load the header content, but the chart will only be loaded if the used
@@ -39,27 +48,61 @@
 						<td>string</td>
 						<td></td>
 						<td>Yes</td>
-						<td>Can be one of "Line", "StackedBar", "StackedColumn" or "Donut."</td>
+						<td>
+							The type of the chart, for example "stacked_column", "bar", "donut".
+							The full list of supported types can be found in the <a data-demokit-href="/docs/vizdocs/index.html" target="_blank">VizDocs</a>.
+							Values "Line", "StackedBar", "StackedColumn" and "Donut" are also allowed, but deprecated.
+						</td>
 						<td>1.14.0</td>
 						<td>1.62</td>
 					</tr>
 					<tr>
+						<td>chartProperties</td>
+						<td>object</td>
+						<td></td>
+						<td>No</td>
+						<td>
+							Configuration for the chart. Different chart types have different configurations.
+							For each type see its "Properties" documentation in the <a data-demokit-href="/docs/vizdocs/index.html" target="_blank">VizDocs</a>.
+							<br>
+							<b>Note:</b> This property is experimental and may change!<br>
+							<b>Note:</b> Some properties might require additional coding, which should be implemented by the card developer.<br>
+							<b>Note:</b> Some values are set by default by the card.<br>
+							<b>Note:</b> Functions are not supported.<br>
+						</td>
+						<td>1.36.0</td>
+						<td>1.95</td>
+					</tr>
+					<tr>
 						<td>measures</td>
-						<td><a href="#feedItemProperties">FeedItem[]</a></td>
+						<td><a href="#measureAndDimensionProperties">Measure[]</a></td>
 						<td></td>
 						<td>Yes</td>
-						<td>List of definitions of all measures in the dataset.</td>
+						<td>Definitions of all measures in the dataset.</td>
 						<td>1.14.0</td>
 						<td>1.62</td>
 					</tr>
 					<tr>
 						<td>dimensions</td>
+						<td><a href="#measureAndDimensionProperties">Dimension[]</a></td>
+						<td></td>
+						<td>Yes</td>
+						<td>Definitions of all dimensions in the dataset.</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>feeds</td>
 						<td><a href="#feedItemProperties">FeedItem[]</a></td>
 						<td></td>
 						<td>Yes</td>
-						<td>List of definitions of all dimensions in this dataset.</td>
-						<td>1.14.0</td>
-						<td>1.62</td>
+						<td>
+							Feeds for the chart.
+							<br>
+							<b>Note:</b> This property is experimental and may change!
+						</td>
+						<td>1.36.0</td>
+						<td>1.95</td>
 					</tr>
 					<tr>
 						<td>minHeight</td>
@@ -69,51 +112,6 @@
 						<td>Defines the minimum height of the chart.</td>
 						<td>1.16.0</td>
 						<td>1.85</td>
-					</tr>
-					<tr>
-						<td>legend</td>
-						<td><a href="#legendProperties">Legend</a></td>
-						<td></td>
-						<td>No</td>
-						<td>Configuration for the legend.</td>
-						<td>1.14.0</td>
-						<td>1.62</td>
-					</tr>
-					<tr>
-						<td>plotArea</td>
-						<td><a href="#plotAreaProperties">PlotArea</a></td>
-						<td></td>
-						<td>No</td>
-						<td>Plot configuration.</td>
-						<td>1.14.0</td>
-						<td>1.62</td>
-					</tr>
-					<tr>
-						<td>title</td>
-						<td><a href="#titleProperties">Title</a></td>
-						<td></td>
-						<td>No</td>
-						<td>Configuration for the title of the chart.</td>
-						<td>1.14.0</td>
-						<td>1.62</td>
-					</tr>
-					<tr>
-						<td>measureAxis</td>
-						<td>string</td>
-						<td></td>
-						<td>Yes</td>
-						<td>Represents the value set for the measure axis.</td>
-						<td>1.14.0</td>
-						<td>1.62</td>
-					</tr>
-					<tr>
-						<td>dimensionAxis</td>
-						<td>string</td>
-						<td></td>
-						<td>Yes</td>
-						<td>Represents the value set for the dimension axis.</td>
-						<td>1.14.0</td>
-						<td>1.62</td>
 					</tr>
 					<tr>
 						<td>actions</td>
@@ -154,10 +152,116 @@
 						<td>1.92</td>
 					</tr>
 				</table>
+
+				<p>Deprecated properties</p>
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>legend</td>
+						<td><a href="#legendProperties">Legend</a></td>
+						<td></td>
+						<td>No</td>
+						<td>
+							This property is deprecated. Use <code>chartProperties</code> instead.
+							<br>
+							Configuration for the legend.
+						</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>plotArea</td>
+						<td><a href="#plotAreaProperties">PlotArea</a></td>
+						<td></td>
+						<td>No</td>
+						<td>
+							This property is deprecated. Use <code>chartProperties</code> instead.
+							<br>
+							Plot configuration.
+					</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>title</td>
+						<td><a href="#titleProperties">Title</a></td>
+						<td></td>
+						<td>No</td>
+						<td>
+							This property is deprecated. Use <code>chartProperties</code> instead.
+							<br>
+							Configuration for the title of the chart.
+						</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>measureAxis</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>
+							This property is deprecated. Use <code>feeds</code> instead.
+							<br>
+							Represents the value set for the measure axis.
+						</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>dimensionAxis</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>
+							This property is deprecated. Use <code>feeds</code> instead.
+							<br>
+							Represents the value set for the dimension axis.
+						</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+				</table>
 			</div>
 
-			<h4 id="feedItemProperties">FeedItem properties</h4>
+			<h4 id="measureAndDimensionProperties">Measure and Dimension Properties</h4>
 			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>Value of the field.</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>A name of the measure/dimension. It should be referenced later in the <code>feeds</code>.</td>
+						<td>1.36.0</td>
+						<td>1.95</td>
+					</tr>
+				</table>
+
+				<p>Deprecated properties</p>
 				<table>
 					<tr>
 						<th>Property</th>
@@ -171,22 +275,88 @@
 						<td>label</td>
 						<td>string</td>
 						<td>Yes</td>
-						<td>Name of the measure/dimension. This value will be used as label for the corresponding axis.</td>
-						<td>1.14.0</td>
-						<td>1.62</td>
-					</tr>
-					<tr>
-						<td>value</td>
-						<td>string</td>
-						<td>Yes</td>
-						<td>Value of the field.</td>
+						<td>
+							This property is deprecated. Use <code>name</code> instead.
+							<br>
+							Name of the measure/dimension. This value will be used as label for the corresponding axis.
+						</td>
 						<td>1.14.0</td>
 						<td>1.62</td>
 					</tr>
 				</table>
 			</div>
 
-			<h4 id="legendProperties">Legend properties</h4>
+			<h4 id="feedItemProperties">FeedItem Properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>type</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>The type of the feed. Either "Measure" or "Dimension"</td>
+						<td>1.36.0</td>
+						<td>1.95</td>
+					</tr>
+					<tr>
+						<td>uid</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>The <code>uid</code> instructs the charting library what this feed is used for. It can be different for the different chart types.
+							For example for "donut" chart it can be used for color or size by setting the <code>uid</code> to "color" or "size" respectively.
+							For each chart type see the section "Bindings" in the <a data-demokit-href="/docs/vizdocs/index.html" target="_blank">VizDocs</a>.
+						</td>
+						<td>1.36.0</td>
+						<td>1.95</td>
+					</tr>
+					<tr>
+						<td>values</td>
+						<td>string[]</td>
+						<td>Yes</td>
+						<td>The names of the measures or dimensions that are used for this feed.</td>
+						<td>1.36.0</td>
+						<td>1.95</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4 id="popoverSettings">Popover Properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>active</td>
+						<td>boolean</td>
+						<td>false</td>
+						<td>No</td>
+						<td>
+							Whether the popover is active. If it's not it won't open.
+							<b>Note:</b> If there are actions attached, they will take precedence over the opening of the popover.
+						</td>
+						<td>1.34.0</td>
+						<td>1.92</td>
+					</tr>
+				</table>
+			</div>
+
+			<h3>Deprecated Properties</h3>
+
+			<h4 id="legendProperties">Legend Properties</h4>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -228,7 +398,7 @@
 				</table>
 			</div>
 
-			<h4 id="plotAreaProperties">PlotArea properties</h4>
+			<h4 id="plotAreaProperties">PlotArea Properties</h4>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -270,7 +440,7 @@
 				</table>
 			</div>
 
-			<h4 id="dataLabelProperties">DataLabel properties</h4>
+			<h4 id="dataLabelProperties">DataLabel Properties</h4>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -303,7 +473,7 @@
 				</table>
 			</div>
 
-			<h4 id="axisTextProperties">AxisText properties</h4>
+			<h4 id="axisTextProperties">AxisText Properties</h4>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -327,7 +497,7 @@
 				</table>
 			</div>
 
-			<h4 id="titleProperties">Title properties</h4>
+			<h4 id="titleProperties">Title Properties</h4>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -365,33 +535,6 @@
 						<td>The position of the title. Possible values are "Left", "Center" and "Right".</td>
 						<td>1.14.0</td>
 						<td>1.62</td>
-					</tr>
-				</table>
-			</div>
-
-			<h4 id="popoverSettings">Popover properties</h4>
-			<div class="tableWrapper">
-				<table>
-					<tr>
-						<th>Property</th>
-						<th>Type</th>
-						<th>Default Value</th>
-						<th>Required</th>
-						<th>Description</th>
-						<th>Schema Version</th>
-						<th>Since</th>
-					</tr>
-					<tr>
-						<td>active</td>
-						<td>boolean</td>
-						<td>false</td>
-						<td>No</td>
-						<td>
-							Whether the popover is active. If it's not it won't open.
-							<b>Note:</b> If there are actions attached, they will take precedence over the opening of the popover.
-						</td>
-						<td>1.34.0</td>
-						<td>1.92</td>
 					</tr>
 				</table>
 			</div>
@@ -447,23 +590,22 @@
 			<p>Define the content of the card:
 			</p>
 			<pre class="lang-json">"content": {
-	"chartType": "StackedColumn",
-	"legend": {
-		"visible": false
-	},
-	"plotArea": {
-		"dataLabel": {
-			"visible": false,
-			"showTotal": true
+	"chartType": "stacked_column",
+	"chartProperties": {
+		"legend": {
+			"visible": false
+		},
+		"plotArea": {
+			"dataLabel": {
+				"visible": false,
+				"showTotal": true
+			}
+		},
+		"title": {
+			"text": "Stacked column chart",
+			"alignment": "bottom"
 		}
 	},
-	"title": {
-		"text": "Stacked column chart",
-		"visible": true,
-		"alignment": "Bottom"
-	},
-	"measureAxis": "valueAxis",
-	"dimensionAxis": "categoryAxis",
 	"data": {
 		"request": {
 			"url": "./cardcontent/revenue.json"
@@ -472,18 +614,35 @@
 	},
 	"dimensions": [
 		{
-			"label": "Weeks",
+			"name": "Weeks",
 			"value": "{Week}"
 		}
 	],
 	"measures": [
 		{
-			"label": "Revenue",
+			"name": "Revenue",
 			"value": "{Revenue}"
 		},
 		{
-			"label": "Cost",
+			"name": "Cost",
 			"value": "{Cost}"
+		}
+	],
+	"feeds": [
+		{
+			"type": "Dimension",
+			"uid": "categoryAxis",
+			"values": [
+				"Weeks"
+			]
+		},
+		{
+			"type": "Measure",
+			"uid": "valueAxis",
+			"values": [
+				"Revenue",
+				"Cost"
+			]
 		}
 	]
 }</pre>
