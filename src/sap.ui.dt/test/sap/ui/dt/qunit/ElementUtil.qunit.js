@@ -945,6 +945,14 @@ function(
 		QUnit.test("when getAggregationBindingTemplate() is called without parameters", function(assert) {
 			assert.equal(ElementUtil.getAggregationBindingTemplate(), undefined, "then undefined is returned");
 		});
+
+		QUnit.test("when 'isElementDirectTemplateChild()' is called for the list item (direct clone)", function(assert) {
+			assert.ok(ElementUtil.isElementDirectTemplateChild(this.oListItem0), "... then true is returned");
+		});
+
+		QUnit.test("when 'isElementDirectTemplateChild()' is called for the text inside the template", function(assert) {
+			assert.notOk(ElementUtil.isElementDirectTemplateChild(this.oText1), "... then false is returned");
+		});
 	});
 
 	QUnit.module("Given a bound list control and a control inside of the list which is not in the template", {

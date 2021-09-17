@@ -356,6 +356,27 @@ function(
 	};
 
 	/**
+	 * Checks whether specified Element is a direct template clone (e.g. the list items of a sap.m.ListItem)
+	 *
+	 * @param {sap.ui.base.Object} oObject - Object for validation
+	 * @returns {boolean} <code>true</code> if object is a direct clone of the template
+	 */
+	 ElementUtil.isElementDirectTemplateChild = function (oObject) {
+		var mLocationInTemplate = ElementUtil.getAggregationInformation(oObject);
+
+		if (mLocationInTemplate.templateId) {
+			var sTemplateId = ElementUtil.extractTemplateId(mLocationInTemplate);
+
+			// If the stack only has one element, this element is a direct child of the template aggregation
+			if (sTemplateId && mLocationInTemplate.stack.length === 1) {
+				return true;
+			}
+		}
+
+		return false;
+	};
+
+	/**
 	 * Checks whether specified Element is a valid ManagedObject. The allowed objects must be
 	 * descendants of sap.ui.core.Element or sap.ui.core.Component classes.
 	 *

@@ -10,6 +10,8 @@ sap.ui.define([
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/dt/plugin/ElementMover",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/m/List",
+	"sap/m/CustomListItem",
 	"sap/ui/comp/smartform/SmartForm",
 	"sap/ui/comp/smartform/Group",
 	"sap/ui/comp/smartform/GroupElement",
@@ -17,6 +19,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Bar",
 	"sap/ui/core/ComponentContainer",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CommandFactory,
@@ -28,6 +31,8 @@ sap.ui.define([
 	ElementDesignTimeMetadata,
 	DtElementMover,
 	ChangesWriteAPI,
+	List,
+	CustomListItem,
 	SmartForm,
 	Group,
 	GroupElement,
@@ -35,6 +40,7 @@ sap.ui.define([
 	Button,
 	Bar,
 	ComponentContainer,
+	JSONModel,
 	sinon
 ) {
 	"use strict";
@@ -824,6 +830,81 @@ sap.ui.define([
 			return this.oElementMover.isMoveAvailableForChildren(this.oButton1Overlay)
 				.then(function(bMoveAvailableForChildren) {
 					assert.notOk(bMoveAvailableForChildren, "then the result is 'false'");
+				});
+		});
+	});
+
+	QUnit.module("Given a list with template", {
+		beforeEach: function(assert) {
+			var fnDone = assert.async();
+			// create list with bound items
+			var oData = [
+				{text: "item1-bound"},
+				{text: "item2-bound"}
+			];
+			var oModel = new JSONModel(oData);
+			this.oCustomListItemTemplate = new CustomListItem("boundListItem",
+				{
+					content: [
+						new VerticalLayout("verticalLayoutInTemplate",
+							{
+								content: [
+									new Button("boundListItemBoundButton", {text: '{text}'}),
+									new Button("bounListItemUnboundButton", {text: 'UnboundButton'})
+								]
+							}
+						)
+					]
+				}
+			);
+			this.oBoundList = new List("boundlist").setModel(oModel);
+			this.oBoundList.bindAggregation("items", {
+				path: "/",
+				template: this.oCustomListItemTemplate,
+				templateShareable: false
+			});
+
+			//create a VerticalLayout containing the list
+			this.oVerticalLayout = new VerticalLayout("parentVerticalLayout", {
+				content: [this.oBoundList]
+			});
+			this.oVerticalLayout.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oDragDropPlugin = new DragDropPlugin({
+				commandFactory: new CommandFactory()
+			});
+
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oVerticalLayout],
+				plugins: [this.oDragDropPlugin]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", fnDone);
+		},
+		afterEach: function() {
+			this.oDesignTime.destroy();
+			this.oVerticalLayout.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when checking if a direct child (item) from the list template aggregation is movable", function(assert) {
+			this.oElementMover = this.oDragDropPlugin.getElementMover();
+			var oListItemOverlay = OverlayRegistry.getOverlay(this.oBoundList.getItems()[0]);
+			return this.oElementMover.checkMovable(oListItemOverlay)
+				.then(function(bResult) {
+					assert.notOk(bResult, "then the item is not movable");
+				});
+		});
+
+		QUnit.test("when checking if an element inside the template is movable", function(assert) {
+			this.oElementMover = this.oDragDropPlugin.getElementMover();
+			var oVerticalLayout = this.oBoundList.getItems()[0].getContent()[0];
+			var oButton = oVerticalLayout.getContent()[0];
+			var oButtonOverlay = OverlayRegistry.getOverlay(oButton);
+			return this.oElementMover.checkMovable(oButtonOverlay)
+				.then(function(bResult) {
+					assert.ok(bResult, "then the element inside the template is movable");
 				});
 		});
 	});

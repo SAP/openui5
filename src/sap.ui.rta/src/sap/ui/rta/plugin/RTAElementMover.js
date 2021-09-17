@@ -6,6 +6,7 @@
 sap.ui.define([
 	"sap/ui/dt/plugin/ElementMover",
 	"sap/ui/dt/OverlayUtil",
+	"sap/ui/dt/ElementUtil",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Plugin",
@@ -14,6 +15,7 @@ sap.ui.define([
 function(
 	ElementMover,
 	OverlayUtil,
+	ElementUtil,
 	Utils,
 	CommandFactory,
 	Plugin,
@@ -99,6 +101,13 @@ function(
 		var bNotAdaptable = oDesignTimeMetadata.markedAsNotAdaptable();
 
 		if (!oDesignTimeMetadata || !oParentElementOverlay || bNotAdaptable) {
+			return Promise.resolve(false);
+		}
+
+		// Direct children of template aggregations should not be movable
+		// because their order is defined based on the underlying data
+		var oElement = oOverlay.getElement();
+		if (ElementUtil.isElementDirectTemplateChild(oElement)) {
 			return Promise.resolve(false);
 		}
 
