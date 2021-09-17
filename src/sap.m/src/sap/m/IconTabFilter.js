@@ -453,7 +453,7 @@ sap.ui.define([
 
 			var aId = [];
 
-			if (sCount !== "") {
+			if (sCount !== "" && !bInLine) {
 				aId.push(sId + "-count");
 			}
 			if (sText.length) {
