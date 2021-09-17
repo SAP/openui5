@@ -43,7 +43,7 @@ sap.ui.define([], function () {
 		//Accessibility state
 		oRm.accessibilityState(oHeader, {
 			role: oHeader.getAriaRole(),
-			labelledby: { value: oHeader._getHeaderAccessibility(), append: true },
+			labelledby: { value: oHeader._getAriaLabelledBy(), append: true },
 			roledescription: { value: oHeader.getAriaRoleDescription(), append: true },
 			level: { value: oHeader.getAriaHeadingLevel() }
 		});
