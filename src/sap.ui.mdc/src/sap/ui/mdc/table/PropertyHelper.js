@@ -3,9 +3,15 @@
  */
 
 sap.ui.define([
-	"../util/PropertyHelper"
+	"../util/PropertyHelper",
+	"sap/ui/core/Core",
+	"sap/ui/core/theming/Parameters",
+	"sap/m/library"
 ], function(
-	PropertyHelperBase
+	PropertyHelperBase,
+	Core,
+	ThemeParameters,
+	MLibrary
 ) {
 	"use strict";
 
@@ -41,7 +47,7 @@ sap.ui.define([
 	 */
 	var PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.table.PropertyHelper", {
 		constructor: function(aProperties, mExtensions, oParent, mExtensionAttributeMetadata) {
-			var aAllowedAttributes = ["filterable", "sortable", "groupable", "key", "unit", "text", "exportSettings", "propertyInfos"];
+			var aAllowedAttributes = ["filterable", "sortable", "groupable", "key", "unit", "text", "exportSettings", "propertyInfos", "visualSettings"];
 			PropertyHelperBase.call(this, aProperties, mExtensions, oParent, aAllowedAttributes, mExtensionAttributeMetadata);
 		}
 	});
@@ -202,6 +208,172 @@ sap.ui.define([
 
 		return oExportObj;
 	}
+
+	/**
+	 * Measures the given text width in a canvas and returns the converted rem value.
+	 *
+	 * @param {string} [sText] The text to be measured
+	 * @returns {float} The text width converted to rem
+	 * @private
+	 */
+	var measureText = (function() {
+		var fBaseFontSize = parseFloat(MLibrary.BaseFontSize);
+		var oCanvasContext = document.createElement("canvas").getContext("2d");
+		var fnUpdateFont = function() {
+			oCanvasContext.font = [
+				ThemeParameters.get({ name: "sapMFontMediumSize" }) || "0.875rem",
+				ThemeParameters.get({ name: "sapUiFontFamily" }) || "Arial"
+			].join(" ");
+		};
+
+		Core.attachThemeChanged(fnUpdateFont);
+		fnUpdateFont();
+
+		return function(sText) {
+			return oCanvasContext.measureText(sText || "").width / fBaseFontSize;
+		};
+	})();
+
+	/**
+	 * Sets the width of the provided column based on the <code>visualSettings</code> of the relevant <code>PropertyInfo</code>.
+	 *
+	 * @param {sap.ui.mdc.table.Column} oMDCColumn The MDCColumn instance for which to set the width
+	 * @public
+	 * @since 1.95
+	 */
+	PropertyHelper.prototype.setColumnWidth = function(oMDCColumn) {
+		var sPropertyName = oMDCColumn.getDataProperty();
+		var oProperty = this.getProperty(sPropertyName);
+		if (!oProperty) {
+			return;
+		}
+
+		var mPropertyInfoVisualSettings = oProperty.getVisualSettings(sPropertyName);
+		if (mPropertyInfoVisualSettings && mPropertyInfoVisualSettings.widthCalculation === false) {
+			return;
+		}
+
+		var fWidth = this._calcColumnWidth(oProperty) + 1; // add 1rem extra for padding and border
+		oMDCColumn._updateColumnWidth(fWidth + "rem");
+	};
+
+	/**
+	 * Calculates the column width based on the provided <code>PropertyInfo</code>
+	 *
+	 * @param {object} oProperty The properties of PropertyInfo of MDCColumn instance for which to set the width for
+	 * @param {object} [mWidthCalculation] The configuration object for the width calculation
+	 * @param {int} [mWidthCalculation.minWidth=2] The minimum content width in rem
+	 * @param {int} [mWidthCalculation.maxWidth=19] The maximum content width in rem
+	 * @param {int} [mWidthCalculation.defaultWidth=8] The default column content width when type check fails
+	 * @param {boolean} [mWidthCalculation.includeLabel=true] Whether the label should be taken into account
+	 * @param {float} [mWidthCalculation.gap=0] The additional content width in rem
+	 * @param {boolean} [mWidthCalculation.verticalArrangement=false] Whether the referenced properties are arranged vertically
+	 * @param {string|array[]} [mWidthCalculation.excludeProperties=[]] A list of invisible referenced property names
+	 * @return {float} [fWidth] Calculated width
+	 * @since 1.95
+	 * @private
+	 */
+	PropertyHelper.prototype._calcColumnWidth = function (oProperty, mWidthCalculation) {
+		var fWidth = 0;
+		var fLabelWidth = 0;
+		var mPropertyInfoWidthCalculation = oProperty.getVisualSettings() ? oProperty.getVisualSettings().widthCalculation : {};
+
+		mWidthCalculation = Object.assign({
+			minWidth: 2,
+			maxWidth: 19,
+			defaultWidth: 8,
+			gap: 0,
+			includeLabel: true,
+			excludeProperties: [],
+			verticalArrangement: false
+		}, mPropertyInfoWidthCalculation);
+
+		var iMinWidth = Math.max(1, mWidthCalculation.minWidth);
+		var iMaxWidth = Math.max(iMinWidth, mWidthCalculation.maxWidth);
+
+		if (oProperty.isComplex()) {
+			oProperty.getReferencedProperties().forEach(function(oReferencedProperty) {
+				if ([].concat(mWidthCalculation.excludeProperties).includes(oReferencedProperty.getName())) {
+					return;
+				}
+
+				var fReferencedPropertyWidth = this._calcColumnWidth(oReferencedProperty, {
+					minWidth: 1,
+					maxWidth: iMaxWidth - fWidth,
+					includeLabel: false
+				});
+
+				if (mWidthCalculation.verticalArrangement) {
+					fWidth = Math.max(fReferencedPropertyWidth, fWidth);
+				} else {
+					fWidth = fWidth + fReferencedPropertyWidth + 0.5; // add 0.5rem for some extra spacing in h-alignment
+				}
+			}, this);
+		} else {
+			var oTypeConfig = oProperty.getTypeConfig();
+			var oType = oTypeConfig.typeInstance;
+			var sBaseType = oTypeConfig.baseType;
+			var sChar = "A";
+			var vSample;
+
+			if (sBaseType === "Boolean") {
+				var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.core");
+				var fTrueWidth = measureText(oResourceBundle.getText("YES"));
+				var fFalseWidth = measureText(oResourceBundle.getText("NO"));
+				fWidth = Math.max(fTrueWidth, fFalseWidth);
+			} else if (sBaseType === "Numeric") {
+				var iPrecision = oType.getConstraints().precision;
+				var iScale = oType.getConstraints().scale;
+				var mNumericLimits = {
+					"Edm.Byte" : 3,
+					"Edm.SByte" : 3,
+					"Edm.Int16" : 5,
+					"Edm.Int32" : 9,
+					"Edm.Int64" : 12,
+					"Edm.Float" : 6,
+					"Edm.Single" : 6,
+					"Edm.Double" : 13,
+					"Edm.Decimal" : 15,
+					"Numeric" : 10
+				};
+				iPrecision = Math.min(iPrecision || 20, mNumericLimits[oTypeConfig.className] || mNumericLimits.Numeric);
+				vSample = 2 * Math.pow(10, iPrecision - (iScale || 0) - 1);
+			} else if (sBaseType === "Date" || sBaseType === "Time" || sBaseType === "DateTime") {
+				vSample = new Date(2023, 12, 26, 22, 47, 58);
+			} else if (sBaseType === "String") {
+				var iMaxLength = oType.getConstraints().maxLength;
+				if (!iMaxLength) {
+					fWidth = iMaxWidth * 0.7;
+				} else {
+					vSample = sChar.repeat(Math.min(8, iMaxLength)) + sChar.toLowerCase().repeat(Math.max(0, iMaxLength - 8));
+				}
+			} else {
+				fWidth = mWidthCalculation.defaultWidth;
+			}
+
+			if (vSample) {
+				var sSample = oType.formatValue(vSample, "string");
+				fWidth = measureText(sSample);
+			}
+			if (oProperty.getUnitProperty()) {
+				fWidth += measureText(sChar.repeat(4));
+			}
+		}
+
+		fWidth += mWidthCalculation.gap;
+
+		if (mWidthCalculation.includeLabel && fWidth < iMaxWidth) {
+			var sLabel = oProperty.getLabel();
+			var fMaxLabelWidth = fWidth * Math.max(1, 1 - Math.log(Math.max(fWidth - 1.71, 0.2)) / Math.log(iMaxWidth * 0.62) + 1);
+			fLabelWidth = Math.min(measureText(sLabel), fMaxLabelWidth);
+		}
+
+		fWidth = Math.max(iMinWidth, fWidth, fLabelWidth);
+		fWidth = Math.min(fWidth, iMaxWidth);
+		fWidth = Math.round(fWidth * 100) / 100;
+
+		return fWidth;
+	};
 
 	return PropertyHelper;
 });

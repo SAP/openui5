@@ -362,6 +362,24 @@ sap.ui.define([
 					type: "sap.ui.mdc.MultiSelectMode",
 					group: "Behavior",
 					defaultValue: MultiSelectMode.Default
+				},
+
+				/**
+				 * Enables automatic column width calculation based on metadata information if set to <code>true</code>.
+				 * The column width calculation takes the type, column label, referenced properties, and many other metadata parameters into account.
+				 * Providing a more precise <code>maxLength</code> value for the <code>String</code> type or <code>precision</code> value for numeric types can help this algorithm to produce better results.
+				 * The calculated column widths can have a minimum of 3rem and a maximum of 20rem.
+				 *
+				 * <b>Note:</b> To customize the automatic column width calculation the <code>visualSettings.widthSettings</code> key of the <code>PropertyInfo</code> can be used.
+				 * To avoid the heuristic column width calculation for a particular column, the <code>visualSettings.widthSettings</code> key of the <code>PropertyInfo</code> can be set to <code>false</code>.
+				 * This feature has no effect if the <code>width</code> property of the column is bound or its value is set.
+				 *
+				 * @since 1.95
+				 */
+				enableAutoColumnWidth: {
+					type: "boolean",
+					group: "Behavior",
+					defaultValue: false
 				}
 			},
 			aggregations: {
@@ -2044,10 +2062,25 @@ sap.ui.define([
 		TableSettings.createAggregation(this, sSortProperty);
 	};
 
+	Table.prototype._setColumnWidth = function(oMDCColumn) {
+		if (!this.getEnableAutoColumnWidth() || oMDCColumn.getWidth() || oMDCColumn.isBound("width")) {
+			return;
+		}
+
+		var oPropertyHelper = this._oPropertyHelper;
+		if (oPropertyHelper) {
+			oPropertyHelper.setColumnWidth(oMDCColumn);
+		} else {
+			this.awaitPropertyHelper().then(this._setColumnWidth.bind(this, oMDCColumn));
+		}
+	};
+
 	Table.prototype._insertInnerColumn = function(oMDCColumn, iIndex) {
 		if (!this._oTable) {
 			return;
 		}
+
+		this._setColumnWidth(oMDCColumn);
 
 		var oColumn = this._createColumn(oMDCColumn);
 		setColumnTemplate(this, oMDCColumn, oColumn, iIndex);

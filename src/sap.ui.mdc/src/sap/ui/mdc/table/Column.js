@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Element", "sap/m/Label", "sap/ui/core/Core", "sap/base/Log"
-], function(Element, Label, Core, Log) {
+	"sap/ui/core/Element", "sap/m/Label", "sap/ui/core/Core"
+], function(Element, Label, Core) {
 	"use strict";
 
 	/**
@@ -151,6 +151,22 @@ sap.ui.define([
 		this.setProperty("hAlign", sHAlign, true);
 		this._updateColumnHeaderControl();
 		return this;
+	};
+
+	/**
+	 * Updates the width of the column based on the auto column width calculation.
+	 * @private
+	 */
+	Column.prototype._updateColumnWidth = function(sWidth) {
+		var oInnerColumn = Core.byId(this.getId() + "-innerColumn");
+		if (!oInnerColumn || !this.getWidth()) {
+			this.setProperty("width", sWidth);
+		}
+
+		// set the inner column width only if there is no user(flex) changes has been applied
+		if (oInnerColumn && !oInnerColumn.getWidth()) {
+			oInnerColumn.setWidth(sWidth);
+		}
 	};
 
 	/**

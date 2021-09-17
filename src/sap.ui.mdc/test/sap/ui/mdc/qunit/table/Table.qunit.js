@@ -34,7 +34,8 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/m/plugins/DataStateIndicator",
 	"sap/ui/core/message/Message",
-	"sap/ui/model/odata/v2/ODataModel"
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/core/theming/Parameters"
 ], function(
 	MDCQUnitUtils,
 	QUtils,
@@ -68,7 +69,8 @@ sap.ui.define([
 	ControlPersonalizationWriteAPI,
 	DataStateIndicator,
 	Message,
-	ODataModel
+	ODataModel,
+	ThemeParameters
 ) {
 	"use strict";
 
@@ -3212,6 +3214,202 @@ sap.ui.define([
 		this.oTable.getActions();
 
 		assert.notOk(this.oTable._oToolbar, "Toolbar not created by the getter of the action aggregation");
+	});
+
+	QUnit.test("Test enableAutoColumnWidth property", function(assert) {
+		var done = assert.async();
+		var oCanvasContext = document.createElement("canvas").getContext("2d");
+		oCanvasContext.font = [
+			ThemeParameters.get({ name: "sapMFontMediumSize" }) || "0.875rem",
+			ThemeParameters.get({ name: "sapUiFontFamily" }) || "Arial"
+		].join(" ");
+
+		var oPropertyHelper;
+		var fPadding = 1;
+		this.oTable.setEnableAutoColumnWidth(true);
+		Core.applyChanges();
+
+		assert.ok(this.oTable.getEnableAutoColumnWidth(), "enableAutoColumnWidth=true");
+
+		var check = function(sRefText, fOrigWidth, fRange) {
+			// length of 5 chars  ~ 3.159rem
+			// length of 10 chars ~ 6.318rem
+			var fRefTextWidth = oCanvasContext.measureText(sRefText).width / 16;
+			return Math.abs(fRefTextWidth - fOrigWidth) <= (fRange || 0.5);
+		};
+
+		this.oTable.addColumn(new Column({
+			id: "firstName",
+			width: "10rem",
+			header: "First name",
+			dataProperty: "firstName"
+		}));
+
+		this.oTable.addColumn(new Column({
+			id: "lastName",
+			header: "Last name",
+			dataProperty: "lastName"
+		}));
+
+		this.oTable.addColumn(new Column({
+			id: "fullName",
+			header: "Full name",
+			dataProperty: "fullName"
+		}));
+
+		this.oTable.addColumn(new Column({
+			id: "numberValue",
+			header: "Number value",
+			dataProperty: "numberValue"
+		}));
+
+		this.oTable.addColumn(new Column({
+			id: "booleanValue",
+			header: "Boolean value",
+			dataProperty: "booleanValue"
+		}));
+
+		this.oTable.addColumn(new Column({
+			id: "columnGap1",
+			header: "Test gap",
+			dataProperty: "columnGap1"
+		}));
+
+		this.oTable.addColumn(new Column({
+			id: "columnGap2",
+			header: "Test gap",
+			dataProperty: "columnGap2"
+		}));
+
+		this.oTable.addColumn(new Column({
+			id: "noWidthCalculation",
+			header: "No Width Calculation",
+			dataProperty: "noWidthCalculation"
+		}));
+
+		this.oTable._pInitPropertyHelper.then(function() {
+			oPropertyHelper = this.oTable.getPropertyHelper();
+		}.bind(this));
+
+		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
+			{
+				name: "firstName",
+				path: "firstName",
+				label: "First name",
+				typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
+					maxLength: 30
+				}),
+				visualSettings: {
+					widthCalculation: {
+						minWidth: 4,
+						maxWidth: 10
+					}
+				}
+			}, {
+				name: "lastName",
+				path: "lastName",
+				label: "Last name",
+				typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
+					maxLength: 30
+				}),
+				visualSettings: {
+					widthCalculation: {
+						minWidth: 6,
+						maxWidth: 8
+					}
+				}
+			}, {
+				name: "fullName",
+				label: "Full name",
+				typeConfig: TypeUtil.getTypeConfig("Edm.String"),
+				propertyInfos: ["firstName", "lastName"],
+				visualSettings: {
+					widthCalculation: {
+						verticalArrangement: true
+					}
+				}
+			}, {
+				name: "numberValue",
+				label: "Number value",
+				typeConfig: TypeUtil.getTypeConfig("Edm.Byte"),
+				visualSettings: {
+					widthCalculation: {
+						includeLabel: false
+					}
+				}
+			}, {
+				name: "booleanValue",
+				label: "Boolean value",
+				typeConfig: TypeUtil.getTypeConfig("Edm.Boolean"),
+				visualSettings: {
+					widthCalculation: {
+						includeLabel: false,
+						minWidth: 1
+					}
+				}
+			}, {
+				name: "columnGap1",
+				label: "Test gap",
+				typeConfig: TypeUtil.getTypeConfig("Edm.String"),
+				visualSettings: {
+					widthCalculation: {
+						gap: 2
+					}
+				}
+			}, {
+				name: "columnGap2",
+				label: "Test gap",
+				typeConfig: TypeUtil.getTypeConfig("Edm.String")
+			}, {
+				name: "noWidthCalculation",
+				label: "No Width Calculation",
+				typeConfig: TypeUtil.getTypeConfig("Edm.String"),
+				visualSettings: {
+					widthCalculation: false
+				}
+			}
+		]);
+
+		this.oTable._fullyInitialized().then(function() {
+			var getInnerColumnWidth = function(oMDCColumn) {
+				return Core.byId(oMDCColumn.getId() + "-innerColumn").getWidth();
+			};
+
+			var aColumns = this.oTable.getColumns();
+			// 1st column must have a width of 10rem due of its predefined
+			assert.equal("10rem", aColumns[0].getWidth(), "Column firstName width is 10rem");
+
+			// 2nd column maxLength of 30 exceeds a maxWidth of 8
+			assert.notOk(check("A".repeat(30), parseFloat(aColumns[1].getWidth())), "Column lastName would exceed maxWidth of 8rem");
+			assert.equal("8rem", (parseFloat(aColumns[1].getWidth()) - fPadding) + "rem", "Column lastName width is 8rem");
+			assert.equal("8rem", (parseFloat(getInnerColumnWidth(aColumns[1])) - fPadding) + "rem", "Table inner column lastName width is 8rem");
+
+			// 3th column is complex with vertical alignment and exceed maxWidth of 10rem of column firstName
+			assert.notOk(check("A".repeat(30), parseFloat(aColumns[2].getWidth())), "Column fullName would exceed maxWidth of 10rem");
+			assert.equal("10rem", (parseFloat(aColumns[2].getWidth()) - fPadding) + "rem", "Column fullName calculated width is 10rem");
+			assert.equal("10rem", (parseFloat(getInnerColumnWidth(aColumns[2])) - fPadding) + "rem", "Table inner column fullName calculated width is 10rem");
+
+			// 4th column width is 2rem, the default minWidth, due Edm.Byte has a limit of 3 chars ~ 1.459rem
+			var sPropertyName = aColumns[3].getDataProperty();
+			var oProperty = oPropertyHelper.getProperty(sPropertyName);
+			var fWidth = oPropertyHelper._calcColumnWidth(oProperty);
+			assert.equal(fWidth + "rem", (parseFloat(aColumns[3].getWidth()) - fPadding) + "rem", "Column numberValue width is " + fWidth + "rem");
+			assert.equal(fWidth + "rem", (parseFloat(getInnerColumnWidth(aColumns[3])) - fPadding) + "rem", "Column numberValue width is " + fWidth + "rem");
+
+			// 5th column is in correct range due of type boolean
+			assert.ok(check("Yes", parseFloat(aColumns[4].getWidth()) - fPadding), "Column booleanValue width calculated correctly");
+
+			// by side of the gap, columnGap1 and columnGap2 are identical
+			sPropertyName = aColumns[5].getDataProperty();
+			oProperty = oPropertyHelper.getProperty(sPropertyName);
+			assert.equal(parseFloat(aColumns[6].getWidth()) + oProperty.getVisualSettings().widthCalculation.gap + "rem", aColumns[5].getWidth(), "Additional gap of " + oProperty.getVisualSettings().widthCalculation.gap + "rem for Column columnGap1 is calculated correctly");
+
+			// visualSettings.widthCalculation=false
+			assert.notOk(aColumns[7].getWidth(), "There is not width set since visualSettings.widthCalculation=false");
+
+			done();
+		}.bind(this));
+
 	});
 
 	QUnit.module("Inbuilt filter initialization", {

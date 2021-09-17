@@ -52,7 +52,6 @@ sap.ui.define([
 
 			if (oProperty.unit) {
 				oColumnInfo.hAlign = "Right";
-				oColumnInfo.width = "15rem";
 			}
 
 			return new Column(oTable.getId() + "--" + oProperty.name, oColumnInfo);

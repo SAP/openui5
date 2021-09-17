@@ -33,9 +33,9 @@
 				<Property Name="TypeCode" Type="Edm.String" Nullable="false"
 						  MaxLength="2" />
 				<Property Name="Category" Type="Edm.String" Nullable="false"
-						  MaxLength="40" />
+						  MaxLength="20" />
 				<Property Name="Name" Type="Edm.String" Nullable="false"
-						  MaxLength="255" />
+						  MaxLength="30" />
 				<Property Name="NameLanguage" Type="Edm.String" Nullable="false"
 						  MaxLength="2" />
 				<Property Name="Description" Type="Edm.String" Nullable="false"
@@ -45,24 +45,24 @@
 				<Property Name="SupplierID" Type="Edm.String" Nullable="false"
 						  MaxLength="10" />
 				<Property Name="SupplierName" Type="Edm.String" Nullable="false"
-						  MaxLength="80" />
+						  MaxLength="30" />
 				<Property Name="TaxTarifCode" Type="Edm.Byte" Nullable="false" />
 				<Property Name="MeasureUnit" Type="Edm.String" Nullable="false"
 						  MaxLength="3" />
 				<Property Name="WeightMeasure" Type="Edm.Decimal" Nullable="false"
-						  Precision="13" Scale="3" />
+						  Precision="7" Scale="3" />
 				<Property Name="WeightUnit" Type="Edm.String" Nullable="false"
 						  MaxLength="3" />
 				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false"
 						  MaxLength="5" />
 				<Property Name="Price" Type="Edm.Decimal" Nullable="false"
-						  Precision="16" Scale="variable" />
+						  Precision="10" Scale="variable" />
 				<Property Name="Width" Type="Edm.Decimal" Nullable="false"
-						  Precision="13" Scale="3" />
+						  Precision="7" Scale="3" />
 				<Property Name="Depth" Type="Edm.Decimal" Nullable="false"
-						  Precision="13" Scale="3" />
+						  Precision="7" Scale="3" />
 				<Property Name="Height" Type="Edm.Decimal" Nullable="false"
-						  Precision="13" Scale="3" />
+						  Precision="7" Scale="3" />
 				<Property Name="DimUnit" Type="Edm.String" Nullable="false"
 						  MaxLength="3" />
 				<Property Name="CreatedAt" Type="Edm.DateTimeOffset"
