@@ -561,6 +561,7 @@ sap.ui.define([
 		assert.equal(sut.$().attr("role"), "application", "Container has correct ARIA role");
 
 		assert.equal(sut.$().attr("aria-labelledby"), "idTitle " + InvisibleText.getStaticId("sap.m", "TABLE_ROLE_DESCRIPTION"), "aria-labelledby - Table");
+		assert.ok(sut.$("listUl").attr("aria-labelledby").indexOf("idTitle") > -1, "aria-labelledby - Table element");
 		assert.ok(!sut.$("listUl").attr("role"), "Table has no ARIA role");
 
 		function checkCells(sCellType) {

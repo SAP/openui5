@@ -222,6 +222,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 	TableRenderer.renderListStartAttributes = function(rm, oControl) {
 		rm.openStart("table", oControl.getId("listUl"));
 		rm.class("sapMListTbl");
+		rm.attr("aria-labelledby", oControl.getAriaLabelledBy().concat(this.getAriaLabelledBy(oControl)).join(" "));
 		if (oControl.getFixedLayout() === false) {
 			rm.style("table-layout", "auto");
 		}
