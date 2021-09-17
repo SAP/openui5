@@ -1456,6 +1456,8 @@ sap.ui.define([
 	QUnit.module("Accessibility");
 
 	QUnit.test("Check if ValueState is present", function (assert) {
+		this.clock.restore();
+
 		// Arrange
 		var oDialogSuccess = new Dialog({
 			state: ValueState.Success
@@ -1465,7 +1467,6 @@ sap.ui.define([
 
 		// Act
 		oDialogSuccess.open();
-		this.clock.tick(1500);
 
 		var sInvisibleTextContent = oDialogSuccess.getAggregation("_valueState").getText();
 
@@ -1484,7 +1485,6 @@ sap.ui.define([
 
 		// Act
 		oDialogWarning.open();
-		this.clock.tick(500);
 		sInvisibleTextContent = oDialogWarning.getAggregation("_valueState").getText();
 
 		// Assert
@@ -1502,7 +1502,6 @@ sap.ui.define([
 
 		// Act
 		oDialogError.open();
-		this.clock.tick(500);
 		sInvisibleTextContent = oDialogError.getAggregation("_valueState").getText();
 
 		// Assert
@@ -1521,7 +1520,6 @@ sap.ui.define([
 
 		// Act
 		oDialogInformation.open();
-		this.clock.tick(500);
 		sInvisibleTextContent = oDialogInformation.getAggregation("_valueState").getText();
 
 		// Assert
