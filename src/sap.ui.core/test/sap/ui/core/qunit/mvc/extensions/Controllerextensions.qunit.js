@@ -212,6 +212,7 @@ sap.ui.define([
 		callbackMethod: function() {
 			return "callbackOfBase";
 		},
+		extHookLegacy: null,
 		extension1: ControllerExt1,
 		extension2: ControllerExt1.override({
 			finalMethod: function() {
@@ -285,6 +286,9 @@ sap.ui.define([
 			myAfter: function() {
 			},
 			override: {
+				extHookLegacy: function() {
+					return "extHookLegacy App implementation";
+				},
 				callbackMethod: function() {
 					return "callbackOfProviderExt1";
 				},
@@ -797,6 +801,7 @@ sap.ui.define([
 				var oController = this.view.getController(),
 					oExtension = oController.extension1;
 				assert.strictEqual(oController.publicWithCallbackMethod(), "callbackOfProviderExt2", "controller.publicWithCallbackMethod returns 'callbackOfProviderExt2'");
+				assert.strictEqual(oController.extHookLegacy(), "extHookLegacy App implementation", "extHookLegacy correctly extended");
 				assert.strictEqual(oExtension.getBase().publicWithCallbackMethod(), "callbackOfProviderExt2", "extension.getBase().publicWithCallbackMethod returns 'callbackOfProviderExt2'");
 				done();
 			}.bind(this));
