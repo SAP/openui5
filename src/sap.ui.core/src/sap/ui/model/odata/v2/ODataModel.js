@@ -5926,28 +5926,46 @@ sap.ui.define([
 
 	/**
 	 * Discards the changes for the given entity key, that means aborts internal requests, removes
-	 * the changes from the shadow cache, and removes all messages for that entity. If the entity
-	 * has been created via {@link #createEntry} and it is not yet persisted in the back end, remove
-	 * also the entry from the data cache and the corresponding context from the context cache.
+	 * the changes from the shadow cache, and removes all messages for that entity.
 	 *
-	 * @param {string} sKey The entity key
-	 * @param {object} [oEntityMetadata] The entity metadata
-
+	 * If <code>bDeleteCreatedEntities</code> is set, remove the entry also from the data cache and
+	 * the corresponding context from the context cache, if the entity has been created
+	 * <ul>
+	 *   <li>via {@link #createEntry} and it is not yet persisted in the back end, or</li>
+	 *   <li>via {@link #callFunction}.</li>
+	 * </ul>
+	 *
+	 * @param {string} sKey
+	 *   The entity key
+	 * @param {boolean} [bDeleteCreatedEntities=false]
+	 *   Whether to delete the entities created via {@link #createEntry} or {@link #callFunction}
+	 * @param {object} [oEntityMetadata]
+	 *   The entity metadata
+	 * @returns {Promise}
+	 *   Resolves when all changes have been discarded
 	 * @private
 	 */
-	ODataModel.prototype._discardEntityChange = function (sKey, oEntityMetadata) {
-		var bIsCreated = oEntityMetadata && oEntityMetadata.created,
+	ODataModel.prototype._discardEntityChanges = function (sKey, bDeleteCreatedEntities,
+			oEntityMetadata) {
+		var // created either via #createEntry or via #callFunction
+			oCreated = oEntityMetadata && oEntityMetadata.created,
+			// determine group synchronously otherwise #_resolveGroup might return a different group
+			// if for example the entity has been deleted already
+			sGroupId = this._resolveGroup(sKey).groupId,
+			pMetaDataLoaded = this.oMetadata.loaded(),
 			that = this;
 
-		this.oMetadata.loaded().then(function () {
-			that.abortInternalRequest(that._resolveGroup(sKey).groupId, {requestKey : sKey});
+		pMetaDataLoaded.then(function () {
+			that.abortInternalRequest(sGroupId, {requestKey : sKey});
 		});
-		if (bIsCreated) {
+		if (bDeleteCreatedEntities && oCreated) {
 			this._removeEntity(sKey);
 		} else {
 			delete this.mChangedEntities[sKey];
 		}
 		sap.ui.getCore().getMessageManager().removeMessages(this.getMessagesByEntity(sKey, true));
+
+		return pMetaDataLoaded;
 	};
 
 	/**
@@ -5957,15 +5975,25 @@ sap.ui.define([
 	 * taken into account. If <code>bAll</code> is set, also deferred requests triggered through
 	 * {@link #create}, {@link #update} or {@link #remove} are taken into account.
 	 *
+	 * If <code>bDeleteCreatedEntities</code> is set, the entity is completely removed, provided it
+	 * has been created
+	 * <ul>
+	 *   <li>via {@link #createEntry} and it is not yet persisted in the back end, or</li>
+	 *   <li>via {@link #callFunction}.</li>
+	 * </ul>
+	 *
 	 * @param {array} [aPath]
 	 *   Paths to be be reset; if no array is passed, all changes are reset
 	 * @param {boolean} [bAll=false]
 	 *   Whether also deferred requests are taken into account
+	 * @param {boolean} [bDeleteCreatedEntities=false]
+	 *   Whether to delete the entities created via {@link #createEntry} or {@link #callFunction};
+	 *   since 1.95.0
 	 * @returns {Promise}
 	 *   Resolves when all regarded changes have been reset.
 	 * @public
 	 */
-	ODataModel.prototype.resetChanges = function (aPath, bAll) {
+	ODataModel.prototype.resetChanges = function (aPath, bAll, bDeleteCreatedEntities) {
 		var pMetaDataLoaded = this.oMetadata.loaded(),
 			that = this;
 
@@ -6013,7 +6041,8 @@ sap.ui.define([
 						delete that.mChangedEntities[sKey].__metadata;
 						if (isEmptyObject(that.mChangedEntities[sKey])
 								|| !oEntityInfo.propertyPath) {
-							that._discardEntityChange(sKey, oEntityMetadata);
+							that._discardEntityChanges(sKey, bDeleteCreatedEntities,
+								oEntityMetadata);
 						} else {
 							that.mChangedEntities[sKey].__metadata = oEntityMetadata;
 						}
@@ -6022,7 +6051,7 @@ sap.ui.define([
 			});
 		} else {
 			each(this.mChangedEntities, function (sKey, oChangedEntity) {
-				that._discardEntityChange(sKey, oChangedEntity.__metadata);
+				that._discardEntityChanges(sKey, bDeleteCreatedEntities, oChangedEntity.__metadata);
 			});
 		}
 		this.checkUpdate(true);
@@ -6375,10 +6404,16 @@ sap.ui.define([
 
 	/**
 	 * Deletes a created entry from the request queue and from the model.
+	 *
+	 * <b>Note:</b> Controls are not updated. Use {@link #resetChanges} instead to update also the
+	 * controls, for example:<br />
+	 * <code>oModel.resetChanges([oContext.getPath()], undefined, true);</code>
+	 *
 	 * @param {sap.ui.model.Context} oContext The context object pointing to the created entry
 	 * @public
+	 * @deprecated since 1.95.0; use {@link #resetChanges} instead
 	 */
-	ODataModel.prototype.deleteCreatedEntry = function(oContext) {
+	ODataModel.prototype.deleteCreatedEntry = function (oContext) {
 		var that = this, sKey, sGroupId;
 		if (oContext) {
 			var sKey = oContext.getPath().substr(1);
@@ -6399,7 +6434,8 @@ sap.ui.define([
 	 *
 	 * For each created entry a request is created and stored in a request queue.
 	 * The request queue can be submitted by calling {@link #submitChanges}. To delete a created
-	 * entry from the request queue call {@link #deleteCreatedEntry}.
+	 * entry from the request queue call {@link #resetChanges} with the context path and the
+	 * <code>bDeleteCreatedEntities</code> parameter set to <code>true</code>.
 	 *
 	 * The optional parameter <code>mParameters.properties</code> can be used as follows:
 	 * <ul>
