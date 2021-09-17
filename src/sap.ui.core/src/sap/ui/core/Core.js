@@ -2135,6 +2135,8 @@ sap.ui.define([
 	 * @param {string} [sId] the ID for the component instance
 	 * @param {object} [mSettings] the settings object for the component
 	 * @public
+	 * @returns {sap.ui.core.Component} the created Component instance
+	 * @deprecated Since 1.95. Please use {@link sap.ui.core.Component.create Component.create} instead.
 	 */
 	Core.prototype.createComponent = function(vComponent, sUrl, sId, mSettings) {
 
@@ -2173,6 +2175,7 @@ sap.ui.define([
 	 *
 	 * @return {sap.ui.core.Component} instance of the current root component
 	 * @public
+	 * @deprecated Since 1.95. Please use {@link module:sap/ui/core/ComponentSupport} instead. See also {@link topic:82a0fcecc3cb427c91469bc537ebdddf Declarative API for Initial Components}.
 	 */
 	Core.prototype.getRootComponent = function() {
 		return this.oRootComponent;
@@ -3305,6 +3308,7 @@ sap.ui.define([
 	 * @return {sap.ui.core.Component} the component for the given id
 	 * @function
 	 * @public
+	 * @deprecated Since 1.95. Please use {@link sap.ui.core.Component.get Component.get} instead.
 	 */
 	Core.prototype.getComponent = Component.registry.get;
 
