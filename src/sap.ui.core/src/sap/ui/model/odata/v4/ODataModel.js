@@ -173,6 +173,8 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @class Model implementation for OData V4.
 	 *
+	 *   This model is not prepared to be inherited from.
+	 *
 	 *   Every resource path (relative to the service root URL, no query options) according to
 	 *   "4 Resource Path" in specification "OData Version 4.0 Part 2: URL Conventions" is
 	 *   a valid data binding path within this model if a leading slash is added; for example

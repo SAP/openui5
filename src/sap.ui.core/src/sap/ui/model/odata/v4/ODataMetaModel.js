@@ -650,6 +650,8 @@ sap.ui.define([
 	 *
 	 *   This model is read-only.
 	 *
+	 *   This model is not prepared to be inherited from.
+	 *
 	 * @extends sap.ui.model.MetaModel
 	 * @hideconstructor
 	 * @public

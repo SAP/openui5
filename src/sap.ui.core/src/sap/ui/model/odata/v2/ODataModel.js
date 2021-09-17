@@ -194,6 +194,8 @@ sap.ui.define([
 	 * See chapter {@link topic:6c47b2b39db9404582994070ec3d57a2 OData V2 Model} for a general
 	 * introduction.
 	 *
+	 * This model is not prepared to be inherited from.
+	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *

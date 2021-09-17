@@ -87,6 +87,8 @@ sap.ui.define([
 	 * as a foundation and merges V4 annotations from the existing
 	 * {@link sap.ui.model.odata.ODataAnnotations} directly into the corresponding model element.
 	 *
+	 * This model is not prepared to be inherited from.
+	 *
 	 * Also, annotations from the "http://www.sap.com/Protocols/SAPData" namespace are lifted up
 	 * from the <code>extensions</code> array and transformed from objects into simple properties
 	 * with an "sap:" prefix for their name. Note that this happens in addition, thus the

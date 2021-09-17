@@ -202,7 +202,10 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.resource.ResourceModel
 	 * @author SAP SE
-	 * @class Model implementation for resource bundles.
+	 * @class
+	 * Model implementation for resource bundles.
+	 *
+	 * This model is not prepared to be inherited from.
 	 *
 	 * This model allows to bind control properties against translatable texts. Its data is taken
 	 * from a {@link module:sap/base/i18n/ResourceBundle} and it only supports property bindings.
