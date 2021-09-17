@@ -80,6 +80,32 @@ sap.ui.define([
 				Log.warning("The target with name '" + this._oOptions._name + "' can't be suspended because it's being loaded or not loaded yet");
 			}
 
+			return this;
+		},
+
+		/**
+		 * Resumes the object which is loaded by the target.
+		 *
+		 * Currently this function initializes the router of the component without parsing the current hash when
+		 * the object which is loaded by this target is an instance of
+		 * UIComponent.
+		 *
+		 * @return {sap.ui.core.routing.Target} The 'this' to chain the call
+		 * @private
+		 */
+		resume: function() {
+			if (this._oParent) {
+				this._oParent.resume();
+			}
+
+			if (this._isLoaded()) {
+				var oObject = this._get(),
+					oRouter;
+
+				if (oObject.isA("sap.ui.core.UIComponent") && (oRouter = oObject.getRouter()) && oObject.hasNativeRouter()) {
+					oRouter.initialize(true);
+				}
+			}
 
 			return this;
 		},

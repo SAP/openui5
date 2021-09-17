@@ -510,6 +510,32 @@ sap.ui.define([
 			},
 
 			/**
+			 * Resumes the targets which are specified by the parameter
+			 *
+			 * @param {string|string[]|object|object[]} vTargets The key of the target
+			 *  or an object which has the key of the target under property 'name' as
+			 *  specified in the {@link #constructor}. To suspend multiple targets you
+			 *  may also pass an array of keys or objects which have the key saved
+			 *  under the 'name' property
+			 * @return {sap.ui.core.routing.Targets} The 'this' for call chaining
+			 * @private
+			 */
+			resume : function (vTargets) {
+				var aTargetsInfo = this._alignTargetsInfo(vTargets);
+
+				aTargetsInfo.forEach(function(oTargetInfo) {
+					var sTargetName = oTargetInfo.name;
+					var oTarget = this.getTarget(sTargetName);
+
+					if (oTarget) {
+						oTarget.resume();
+					}
+				}.bind(this));
+
+				return this;
+			},
+
+			/**
 			 * Will be fired when a target is displayed.
 			 *
 			 * Could be triggered by calling the display function or by the {@link sap.ui.core.routing.Router} when a target is referenced in a matching route.
