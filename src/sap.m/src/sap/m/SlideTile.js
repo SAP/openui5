@@ -180,6 +180,23 @@ sap.ui.define([
 			this._hasNewsContent(this._iCurrentTile)) {
 			this.addStyleClass("sapMSTDarkBackground");
 		}
+
+		// Slide Navigation through bullet click
+		var oCurrentBullet;
+		for (var i = 0; i < this.getTiles().length; i++) {
+			oCurrentBullet = document.querySelector('span[id$="tileIndicator-' + i + '"]');
+			if (oCurrentBullet) {
+				oCurrentBullet.addEventListener("click", function(event) {
+					var sId = event.currentTarget.id,
+						iCurrentIndex = parseInt(sId.substring(sId.lastIndexOf("-") + 1)),
+						bIsbackward = this._iCurrentTile > iCurrentIndex;
+
+					if (this._iCurrentTile !== iCurrentIndex) {
+						this._scrollToNextTile(this._bAnimationPause, bIsbackward, iCurrentIndex);
+					}
+				}.bind(this));
+			}
+		}
 	};
 
 	/**
@@ -477,8 +494,9 @@ sap.ui.define([
 	 * @private
 	 * @param {boolean} pause Triggers if the animation gets paused or not
 	 * @param {boolean} backward Sets the direction backward or forward
+	 * @param {integer} iNextTile Scrolls to custom tile
 	 */
-	SlideTile.prototype._scrollToNextTile = function (pause, backward) {
+	SlideTile.prototype._scrollToNextTile = function (pause, backward, iNextTile) {
 		var iTransitionTime = this._iCurrAnimationTime - this.getDisplayTime(),
 			bFirstAnimation, iNxtTile, oWrapperFrom, oWrapperTo, sWidthFrom, fWidthTo, fWidthFrom, bChangeSizeBefore, sDir, oDir;
 
@@ -493,6 +511,10 @@ sap.ui.define([
 			}
 			this._iPreviousTile = this._iCurrentTile;
 			this._iCurrentTile = iNxtTile;
+		}
+
+		if (iNextTile >= 0) {
+			this._iCurrentTile = iNextTile;
 		}
 
 		oWrapperTo = this.$("wrapper-" + this._iCurrentTile);
