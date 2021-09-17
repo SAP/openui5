@@ -256,6 +256,7 @@ sap.ui.define([
 			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.afterMove) {
 				oAggregationDesignTimeMetadata.afterMove(oRelevantContainerElement, oMovedElement);
 			}
+			this._setSourceAndTargetParentInformation();
 		}
 	};
 
@@ -297,6 +298,7 @@ sap.ui.define([
 			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.afterMove) {
 				oAggregationDesignTimeMetadata.afterMove(oRelevantContainerElement, oMovedElement);
 			}
+			this._setSourceAndTargetParentInformation();
 		}
 	};
 
@@ -313,6 +315,41 @@ sap.ui.define([
 		}
 
 		return true;
+	};
+
+	ElementMover.prototype._setSourceAndTargetParentInformation = function() {
+		var oMovedOverlay = this.getMovedOverlay();
+		if (!oMovedOverlay) {
+			delete this._mSourceParentInformation;
+			delete this._mTargetParentInformation;
+			return;
+		}
+		var mSource = this._getSource();
+		if (mSource) {
+			this._mSourceParentInformation = {};
+			Object.assign(this._mSourceParentInformation, mSource);
+		} else {
+			delete this._mSourceParentInformation;
+		}
+		var mTarget = OverlayUtil.getParentInformation(oMovedOverlay);
+		if (mTarget) {
+			this._mTargetParentInformation = mTarget;
+		} else {
+			delete this._mTargetParentInformation;
+		}
+	};
+
+	/**
+	 * Returns a structure with objects containing information about the source and target
+	 * parents of the move. The structure contains the parent element, the aggregation name
+	 * and the index.
+	 * @returns {object} Object containing the move source and target parent information
+	 */
+	ElementMover.prototype.getSourceAndTargetParentInformation = function() {
+		return {
+			sourceParentInformation: this._mSourceParentInformation,
+			targetParentInformation: this._mTargetParentInformation
+		};
 	};
 
 	return ElementMover;

@@ -214,6 +214,12 @@ sap.ui.define([
 					only: ["sap/ui/rta/plugin/CutPaste"]
 				}
 			},
+			"plugin/DragDrop": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/DragDrop"]
+				}
+			},
 			"plugin/EasyAdd": {
 				group: "Plugin",
 				coverage: {
