@@ -336,7 +336,8 @@ sap.ui.define([
 					}
 				}
 			}
-		}
+		},
+		renderer: Renderer
 	});
 
 	var UploadState = MobileLibrary.UploadState;

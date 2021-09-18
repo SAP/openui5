@@ -7,10 +7,10 @@ sap.ui.define([
 	"sap/ui/layout/cssgrid/GridLayoutBase",
 	"sap/ui/layout/cssgrid/GridBasicLayout",
 	"sap/ui/layout/cssgrid/GridLayoutDelegate",
+	"./CSSGridRenderer",
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/layout/library",
-	"./CSSGridRenderer"
-], function (Control, GridLayoutBase, GridBasicLayout, GridLayoutDelegate, ManagedObjectObserver) {
+	"sap/ui/layout/library"
+], function (Control, GridLayoutBase, GridBasicLayout, GridLayoutDelegate, CSSGridRenderer, ManagedObjectObserver) {
 	"use strict";
 
 	/**
@@ -104,72 +104,75 @@ sap.ui.define([
 	 * @alias sap.ui.layout.cssgrid.CSSGrid
 	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) designtime metamodel
 	 */
-	var CSSGrid = Control.extend("sap.ui.layout.cssgrid.CSSGrid", { metadata: {
-		library: "sap.ui.layout",
-		defaultAggregation: "items",
-		interfaces: ["sap.ui.layout.cssgrid.IGridConfigurable"],
-		properties: {
+	var CSSGrid = Control.extend("sap.ui.layout.cssgrid.CSSGrid", {
+		metadata: {
+			library: "sap.ui.layout",
+			defaultAggregation: "items",
+			interfaces: ["sap.ui.layout.cssgrid.IGridConfigurable"],
+			properties: {
 
-			/**
-			 * The width of the control
-			 */
-			width: { type: "sap.ui.core.CSSSize", defaultValue: "100%" },
+				/**
+				 * The width of the control
+				 */
+				width: { type: "sap.ui.core.CSSSize", defaultValue: "100%" },
 
-			/**
-			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns MDN web docs: grid-template-columns}
-			 */
-			gridTemplateColumns: { type: "sap.ui.layout.cssgrid.CSSGridTrack", defaultValue: "" },
+				/**
+				 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns MDN web docs: grid-template-columns}
+				 */
+				gridTemplateColumns: { type: "sap.ui.layout.cssgrid.CSSGridTrack", defaultValue: "" },
 
-			/**
-			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-rows MDN web docs: grid-template-rows}
-			 */
-			gridTemplateRows: { type: "sap.ui.layout.cssgrid.CSSGridTrack", defaultValue: "" },
+				/**
+				 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-rows MDN web docs: grid-template-rows}
+				 */
+				gridTemplateRows: { type: "sap.ui.layout.cssgrid.CSSGridTrack", defaultValue: "" },
 
-			/**
-			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-gap MDN web docs: grid-row-gap}
-			 */
-			gridRowGap: { type: "sap.ui.core.CSSSize", defaultValue: "" },
+				/**
+				 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-gap MDN web docs: grid-row-gap}
+				 */
+				gridRowGap: { type: "sap.ui.core.CSSSize", defaultValue: "" },
 
-			/**
-			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-gap MDN web docs: grid-column-gap}
-			 */
-			gridColumnGap: { type: "sap.ui.core.CSSSize", defaultValue: "" },
+				/**
+				 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-gap MDN web docs: grid-column-gap}
+				 */
+				gridColumnGap: { type: "sap.ui.core.CSSSize", defaultValue: "" },
 
-			/**
-			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-gap MDN web docs: grid-gap}
-			 * It is a shorthand for gridRowGap and gridColumnGap. If some of them is set, the gridGap value will have less priority and will be overwritten.
-			 */
-			gridGap: { type: "sap.ui.layout.cssgrid.CSSGridGapShortHand", defaultValue: "" },
+				/**
+				 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-gap MDN web docs: grid-gap}
+				 * It is a shorthand for gridRowGap and gridColumnGap. If some of them is set, the gridGap value will have less priority and will be overwritten.
+				 */
+				gridGap: { type: "sap.ui.layout.cssgrid.CSSGridGapShortHand", defaultValue: "" },
 
-			/**
-			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-rows MDN web docs: grid-auto-rows}
-			 */
-			gridAutoRows: { type: "sap.ui.layout.cssgrid.CSSGridTrack", defaultValue: "" },
+				/**
+				 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-rows MDN web docs: grid-auto-rows}
+				 */
+				gridAutoRows: { type: "sap.ui.layout.cssgrid.CSSGridTrack", defaultValue: "" },
 
-			/**
-			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-columns MDN web docs: grid-auto-columns}
-			 */
-			gridAutoColumns: { type: "sap.ui.layout.cssgrid.CSSGridTrack", defaultValue: "" },
+				/**
+				 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-columns MDN web docs: grid-auto-columns}
+				 */
+				gridAutoColumns: { type: "sap.ui.layout.cssgrid.CSSGridTrack", defaultValue: "" },
 
-			/**
-			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow MDN web docs: grid-auto-flow}
-			 */
-			gridAutoFlow: { type: "sap.ui.layout.cssgrid.CSSGridAutoFlow", defaultValue: "Row" }
+				/**
+				 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow MDN web docs: grid-auto-flow}
+				 */
+				gridAutoFlow: { type: "sap.ui.layout.cssgrid.CSSGridAutoFlow", defaultValue: "Row" }
+			},
+			aggregations: {
+
+				/**
+				 * Defines a custom Grid layout for the control. If provided, it will override all of the grid properties.
+				 */
+				customLayout: { type: "sap.ui.layout.cssgrid.GridLayoutBase", multiple: false },
+
+				/**
+				 * The items contained by the control.
+				 */
+				items: { type: "sap.ui.core.Control", multiple: true, singularName: "item", dnd: true }
+			},
+			dnd: { draggable: false, droppable: true }
 		},
-		aggregations: {
-
-			/**
-			 * Defines a custom Grid layout for the control. If provided, it will override all of the grid properties.
-			 */
-			customLayout: { type: "sap.ui.layout.cssgrid.GridLayoutBase", multiple: false },
-
-			/**
-			 * The items contained by the control.
-			 */
-			items: { type: "sap.ui.core.Control", multiple: true, singularName: "item", dnd: true }
-		},
-		dnd: { draggable: false, droppable: true }
-	}});
+		renderer: CSSGridRenderer
+	});
 
 	/**
 	 * =================== START of IGridConfigurable interface implementation ===================
