@@ -1975,11 +1975,11 @@ sap.ui.define([
 	 *     });
 	 * </pre>
 	 *
-	 * @param {string} sLibrary name of the library to load
+	 * @param {string} sLibrary Name of the library to load
 	 * @param {string|boolean|object} [vUrl] URL to load the library from or the async flag or a complex configuration object
-	 * @param {string} [vUrl.url] URL to load the library from
 	 * @param {boolean} [vUrl.async] Whether to load the library asynchronously
-	 * @returns {Object|Promise} An info object for the library (sync) or a Promise (async)
+	 * @param {string} [vUrl.url] URL to load the library from
+	 * @returns {object|Promise<object>} An info object for the library (sync) or a Promise on it (async).
 	 * @public
 	 */
 	Core.prototype.loadLibrary = function(sLibrary, vUrl) {
@@ -1998,7 +1998,9 @@ sap.ui.define([
 				if ( vUrl.url && mLibraryPreloadBundles[sLibrary] == null ) { // only if lib has not been loaded yet
 					registerModulePath(sLibrary, vUrl.url);
 				}
-				return this.loadLibraries([sLibrary]);
+				return this.loadLibraries([sLibrary]).then(function() {
+					return this.mLibraries[sLibrary];
+				}.bind(this));
 			}
 			vUrl = vUrl.url;
 		}
