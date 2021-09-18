@@ -22,6 +22,18 @@
 	}
 }
 
+.sapMObjStatus:not(.sapMObjStatusInverted).sapMObjStatusActive .sapMObjStatusIcon:only-child > .sapUiIcon,
+.sapMObjStatus:not(.sapMObjStatusInverted).sapMObjStatusActive .sapMObjStatusLink .sapMObjStatusText {
+	text-decoration: underline;
+}
+
+.sapMObjStatus:not(.sapMObjStatusInverted).sapMObjStatusActive:hover .sapMObjStatusIcon:only-child > .sapUiIcon,
+.sapMObjStatus:not(.sapMObjStatusInverted).sapMObjStatusActive:hover .sapMObjStatusLink .sapMObjStatusText,
+.sapMObjStatus:not(.sapMObjStatusInverted).sapMObjStatusActive:focus .sapMObjStatusLink .sapMObjStatusText,
+.sapMObjStatus:not(.sapMObjStatusInverted).sapMObjStatusActive:focus .sapMObjStatusIcon:only-child > .sapUiIcon{
+	text-decoration: none;
+}
+
 .sapMObjStatus:not(.sapMObjStatusInverted) .sapMObjStatusIcon {
 	height: 1rem;
 }
