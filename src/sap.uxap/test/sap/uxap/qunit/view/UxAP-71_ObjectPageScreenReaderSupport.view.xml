@@ -12,7 +12,7 @@
 		<sections>
 			<ObjectPageSection id="testSection" title="Anchor1">
 				<ObjectPageSubSection id="testSubSection" title="Anchor summary">
-					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					<html:div class="dummyBlockContentA"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 		</sections>

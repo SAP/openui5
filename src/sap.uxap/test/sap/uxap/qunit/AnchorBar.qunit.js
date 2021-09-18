@@ -5,10 +5,11 @@ sap.ui.define([
 	'./ObjectPageLayoutUtils',
 	"sap/ui/Device",
 	"sap/ui/core/Core",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/json/JSONModel",
 	"sap/uxap/AnchorBar",
 	"sap/m/Button"
-], function ($, utils, Device, Core, JSONModel, AnchorBar, Button) {
+], function ($, utils, Device, Core, XMLView, JSONModel, AnchorBar, Button) {
 	"use strict";
 
 	var iRenderingDelay = 2000,
@@ -31,13 +32,16 @@ sap.ui.define([
 	QUnit.module("properties", {
 		beforeEach: function () {
 			this.clock = sinon.useFakeTimers();
-			this.anchorBarView = sap.ui.xmlview("UxAP-69_anchorBar", {
+			return XMLView.create({
+				id: "UxAP-69_anchorBar",
 				viewName: "view.UxAP-69_AnchorBar"
-			});
-			this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
-			this.anchorBarView.placeAt('qunit-fixture');
-			Core.applyChanges();
-			this.clock.tick(iRenderingDelay);
+			}).then(function(oView) {
+				this.anchorBarView = oView;
+				this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
+				this.anchorBarView.placeAt('qunit-fixture');
+				Core.applyChanges();
+				this.clock.tick(iRenderingDelay);
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.anchorBarView.destroy();
@@ -342,14 +346,17 @@ sap.ui.define([
 	QUnit.module("simple binding", {
 		beforeEach: function () {
 			this.clock = sinon.useFakeTimers();
-			this.anchorBarView = sap.ui.xmlview("UxAP-69_anchorBarBinding", {
+			return XMLView.create({
+				id: "UxAP-69_anchorBarBinding",
 				viewName: "view.UxAP-69_AnchorBarBinding"
-			});
-			this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
-			this.anchorBarView.setModel(oModel);
-			this.anchorBarView.placeAt('qunit-fixture');
-			Core.applyChanges();
-			this.clock.tick(iRenderingDelay);
+			}).then(function(oView) {
+				this.anchorBarView = oView;
+				this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
+				this.anchorBarView.setModel(oModel);
+				this.anchorBarView.placeAt('qunit-fixture');
+				Core.applyChanges();
+				this.clock.tick(iRenderingDelay);
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.anchorBarView.destroy();
@@ -484,14 +491,17 @@ sap.ui.define([
 	QUnit.module("complex binding", {
 		beforeEach: function () {
 			this.clock = sinon.useFakeTimers();
-			this.anchorBarView = sap.ui.xmlview("UxAP-69_anchorBarBinding", {
+			return XMLView.create({
+				id: "UxAP-69_anchorBarBinding",
 				viewName: "view.UxAP-69_AnchorBarBinding"
-			});
-			this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
-			this.anchorBarView.setModel(oModel);
-			this.anchorBarView.placeAt('qunit-fixture');
-			Core.applyChanges();
-			this.clock.tick(iRenderingDelay);
+			}).then(function(oView) {
+				this.anchorBarView = oView;
+				this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
+				this.anchorBarView.setModel(oModel);
+				this.anchorBarView.placeAt('qunit-fixture');
+				Core.applyChanges();
+				this.clock.tick(iRenderingDelay);
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.anchorBarView.destroy();
@@ -554,13 +564,16 @@ sap.ui.define([
 
 	QUnit.module("Accessibility", {
 		beforeEach: function () {
-			this.anchorBarView = sap.ui.xmlview("UxAP-69_anchorBarBinding", {
+			return XMLView.create({
+				id: "UxAP-69_anchorBarBinding",
 				viewName: "view.UxAP-69_AnchorBarBinding"
-			});
-			this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
-			this.anchorBarView.setModel(oModel);
-			this.anchorBarView.placeAt('qunit-fixture');
-			Core.applyChanges();
+			}).then(function(oView) {
+				this.anchorBarView = oView;
+				this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
+				this.anchorBarView.setModel(oModel);
+				this.anchorBarView.placeAt('qunit-fixture');
+				Core.applyChanges();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.anchorBarView.destroy();

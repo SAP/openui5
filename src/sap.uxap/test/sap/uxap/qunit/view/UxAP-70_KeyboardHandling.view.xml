@@ -15,56 +15,56 @@
 			<ObjectPageSection title="2014 Goals Plan">
 				<subSections>
 					<ObjectPageSubSection title="Goal summary">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
 
 			<ObjectPageSection title="Anchor1">
 				<ObjectPageSubSection title="Anchor summary">
-					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					<html:div class="dummyBlockContentA"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 			<ObjectPageSection title="Anchor2">
 				<ObjectPageSubSection title="Anchor summary">
-					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					<html:div class="dummyBlockContentA"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 			<ObjectPageSection title="Anchor3">
 				<ObjectPageSubSection title="Anchor summary">
-					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					<html:div class="dummyBlockContentA"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 
 			<ObjectPageSection title="Anchor4">
 				<ObjectPageSubSection title="Anchor summary">
-					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					<html:div class="dummyBlockContentA"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 			<ObjectPageSection title="Anchor5">
 				<ObjectPageSubSection title="Anchor summary">
-					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					<html:div class="dummyBlockContentA"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 			<ObjectPageSection title="Anchor6">
 				<ObjectPageSubSection title="Anchor summary">
-					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					<html:div class="dummyBlockContentA"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 			<ObjectPageSection title="Personal">
 				<subSections>
 					<ObjectPageSubSection title="Connect">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="Payment information">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
@@ -72,43 +72,43 @@
 			<ObjectPageSection title="Employment">
 				<subSections>
 					<ObjectPageSubSection title="Job information">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection1">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection2">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection3">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection4">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection5">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection6">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection7">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="Employee Details" mode="Collapsed">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="Job Relationship" mode="Collapsed">
-						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>

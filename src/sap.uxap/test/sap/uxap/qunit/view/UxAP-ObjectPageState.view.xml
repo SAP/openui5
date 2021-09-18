@@ -65,7 +65,7 @@
 					<ObjectPageSubSection id="goalsSectionSS1" title=" ">
 						<blocks>
 							<m:Panel height="300px">
-								<html:div style="height:100%;background-color: #DFF0F7;">goalsSectionSS1</html:div>
+								<html:div class="dummyBlockContent100Pct7">goalsSectionSS1</html:div>
 							</m:Panel>
 						</blocks>
 					</ObjectPageSubSection>
@@ -77,7 +77,7 @@
 					<ObjectPageSubSection id="personalSectionSS1" title="Connect">
 						<blocks>
 							<m:Panel height="300px">
-								<html:div style="height:100%; background-color: #DFF0F7;">personalSectionSS1</html:div>
+								<html:div class="dummyBlockContent100Pct7">personalSectionSS1</html:div>
 							</m:Panel>
 						</blocks>
 					</ObjectPageSubSection>
@@ -85,12 +85,12 @@
 					<ObjectPageSubSection id="personalSectionSS2" title="Payment information">
 						<blocks>
 							<m:Panel height="300px">
-								<html:div style="height:100%; background-color: #DFF0F7;">personalSectionSS2</html:div>
+								<html:div class="dummyBlockContent100Pct7">personalSectionSS2</html:div>
 							</m:Panel>
 						</blocks>
 						<moreBlocks>
 							<m:Panel height="300px">
-								<html:div style="height:100%; background-color: #DFF0F7;">personalSectionSS2 more block</html:div>
+								<html:div class="dummyBlockContent100Pct7">personalSectionSS2 more block</html:div>
 							</m:Panel>
 						</moreBlocks>
 					</ObjectPageSubSection>
@@ -102,7 +102,7 @@
 					<ObjectPageSubSection id="employmentSectionSS1" title="Job information">
 						<blocks>
 							<m:Panel height="300px">
-								<html:div style="height:100%; background-color: #DFF0F7;">employmentSectionSS1</html:div>
+								<html:div class="dummyBlockContent100Pct7">employmentSectionSS1</html:div>
 							</m:Panel>
 						</blocks>
 					</ObjectPageSubSection>
@@ -110,12 +110,12 @@
 					<ObjectPageSubSection id="employmentSectionSS2" title="Employee Details" mode="Collapsed" importance="Medium">
 						<blocks>
 							<m:Panel height="300px">
-								<html:div style="height:100%; background-color: #DFF0F7;">employmentSectionSS2</html:div>
+								<html:div class="dummyBlockContent100Pct7">employmentSectionSS2</html:div>
 							</m:Panel>
 						</blocks>
 						<moreBlocks>
 							<m:Panel height="300px">
-								<html:div style="height:100%; background-color: #DFF0F7;">employmentSectionSS2 more blocks</html:div>
+								<html:div class="dummyBlockContent100Pct7">employmentSectionSS2 more blocks</html:div>
 							</m:Panel>
 						</moreBlocks>
 					</ObjectPageSubSection>
@@ -123,7 +123,7 @@
 					<ObjectPageSubSection id="employmentSectionSS3" title="Job Relationship" mode="Collapsed" importance="Low">
 						<blocks>
 							<m:Panel height="300px">
-								<html:div style="height:100%; background-color: #DFF0F7;">employmentSectionSS3</html:div>
+								<html:div class="dummyBlockContent100Pct7">employmentSectionSS3</html:div>
 							</m:Panel>
 						</blocks>
 					</ObjectPageSubSection>
