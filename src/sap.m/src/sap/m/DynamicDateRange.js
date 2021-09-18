@@ -256,7 +256,8 @@ sap.ui.define([
 						}
 					}
 				}
-			}
+			},
+			renderer: DynamicDateRangeRenderer
 		});
 
 		MessageMixin.call(DynamicDateRange.prototype);

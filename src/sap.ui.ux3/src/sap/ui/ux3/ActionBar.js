@@ -78,138 +78,141 @@ sap.ui.define([
 	 * @alias sap.ui.ux3.ActionBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ActionBar = Control.extend("sap.ui.ux3.ActionBar", /** @lends sap.ui.ux3.ActionBar.prototype */ { metadata : {
+	var ActionBar = Control.extend("sap.ui.ux3.ActionBar", /** @lends sap.ui.ux3.ActionBar.prototype */ {
+		metadata : {
 
-		deprecated: true,
-		library : "sap.ui.ux3",
-		properties : {
+			deprecated: true,
+			library : "sap.ui.ux3",
+			properties : {
 
-			/**
-			 * Keeps track of the actionBars Follow/Unfollow button’s state. Its value is one of
-			 * - FollowActionState.Default
-			 * - FollowActionState.Follow
-			 * - FollowActionState.Hold
-			 */
-			followState : {type : "sap.ui.ux3.FollowActionState", group : "Misc", defaultValue : FollowActionState.Default},
+				/**
+				 * Keeps track of the actionBars Follow/Unfollow button’s state. Its value is one of
+				 * - FollowActionState.Default
+				 * - FollowActionState.Follow
+				 * - FollowActionState.Hold
+				 */
+				followState : {type : "sap.ui.ux3.FollowActionState", group : "Misc", defaultValue : FollowActionState.Default},
 
-			/**
-			 * Indicates whether “Mark for Follow Up” is active
-			 */
-			flagState : {type : "boolean", group : "Misc", defaultValue : null},
+				/**
+				 * Indicates whether “Mark for Follow Up” is active
+				 */
+				flagState : {type : "boolean", group : "Misc", defaultValue : null},
 
-			/**
-			 * Indicates whether “Favorite” is active
-			 */
-			favoriteState : {type : "boolean", group : "Misc", defaultValue : null},
+				/**
+				 * Indicates whether “Favorite” is active
+				 */
+				favoriteState : {type : "boolean", group : "Misc", defaultValue : null},
 
-			/**
-			 * Indicates whether “Update” is active
-			 */
-			updateState : {type : "boolean", group : "Misc", defaultValue : null},
+				/**
+				 * Indicates whether “Update” is active
+				 */
+				updateState : {type : "boolean", group : "Misc", defaultValue : null},
 
-			/**
-			 * The thing icon uri. Icon will be displayed in Feeder
-			 */
-			thingIconURI : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
+				/**
+				 * The thing icon uri. Icon will be displayed in Feeder
+				 */
+				thingIconURI : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
 
-			/**
-			 * If true, business actions are rendered as menu items of the 'More' menu button. Otherwise, 'More' menu button is only displayed for overflow and business actions are rendered as inidividual buttons.
-			 */
-			alwaysShowMoreMenu : {type : "boolean", group : "Misc", defaultValue : true},
+				/**
+				 * If true, business actions are rendered as menu items of the 'More' menu button. Otherwise, 'More' menu button is only displayed for overflow and business actions are rendered as inidividual buttons.
+				 */
+				alwaysShowMoreMenu : {type : "boolean", group : "Misc", defaultValue : true},
 
-			/**
-			 * Indicates whether social action “Update” is shown, default is ‘true’
-			 */
-			showUpdate : {type : "boolean", group : "Misc", defaultValue : true},
+				/**
+				 * Indicates whether social action “Update” is shown, default is ‘true’
+				 */
+				showUpdate : {type : "boolean", group : "Misc", defaultValue : true},
 
-			/**
-			 * Indicates whether social action “Follow” is shown, default is ‘true’
-			 */
-			showFollow : {type : "boolean", group : "Misc", defaultValue : true},
+				/**
+				 * Indicates whether social action “Follow” is shown, default is ‘true’
+				 */
+				showFollow : {type : "boolean", group : "Misc", defaultValue : true},
 
-			/**
-			 * Indicates whether social action “Mark for Follow Up” is shown, default is ‘true’
-			 */
-			showFlag : {type : "boolean", group : "Misc", defaultValue : true},
+				/**
+				 * Indicates whether social action “Mark for Follow Up” is shown, default is ‘true’
+				 */
+				showFlag : {type : "boolean", group : "Misc", defaultValue : true},
 
-			/**
-			 * Indicates whether social action “Favorite” is shown, default is ‘true’
-			 */
-			showFavorite : {type : "boolean", group : "Misc", defaultValue : true},
+				/**
+				 * Indicates whether social action “Favorite” is shown, default is ‘true’
+				 */
+				showFavorite : {type : "boolean", group : "Misc", defaultValue : true},
 
-			/**
-			 * Indicates whether social action “Open” is shown, default is ‘true’
-			 */
-			showOpen : {type : "boolean", group : "Misc", defaultValue : true},
+				/**
+				 * Indicates whether social action “Open” is shown, default is ‘true’
+				 */
+				showOpen : {type : "boolean", group : "Misc", defaultValue : true},
 
-			/**
-			 * The minimum width of ActionBar's the social actions part: business action controls have to be rendered outside this area
-			 */
-			dividerWidth : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null}
-		},
-		aggregations : {
-
-			/**
-			 * Displayed on the actionBar's right hand-side, either as menu item under 'More' or as individual buttons
-			 */
-			businessActions : {type : "sap.ui.ux3.ThingAction", multiple : true, singularName : "businessAction"},
-
-			/**
-			 * Buttons for the business actions - managed by this ActionBar
-			 */
-			_businessActionButtons : {type : "sap.ui.commons.Button", multiple : true, singularName : "_businessActionButton", visibility : "hidden"},
-
-			/**
-			 * The social actions which are managed by this ActionBar
-			 */
-			_socialActions : {type : "sap.ui.ux3.ThingAction", multiple : true, singularName : "_socialAction", visibility : "hidden"}
-		},
-		events : {
-
-			/**
-			 * Fired when any of the social action’s toolbar buttons except ‘Update’ or any of the business action’s menu items resp. buttons is pressed. The selected action can be identified by its id and newState (the latter if applicable only)
-			 * ‘Follow’ button + menu: id: follow, newState: Follow/Hold/Default
-			 * ‘Mark for follow up’ button: id: flag, newState: true/false
-			 * ‘Favorite’ button: id: favorite, newState: true/false
-			 * ‘Open Thing Inspector’ button id: open
-			 * Business Actions: id: the ThingAction id
-			 *
-			 * For ‘Update’, please refer to event ‘feedSubmit’
-			 */
-			actionSelected : {
-				parameters : {
-
-					/**
-					 * Id of selected ThingAction
-					 */
-					id : {type : "string"},
-
-					/**
-					 * Selected ThingAction
-					 */
-					action : {type : "sap.ui.ux3.ThingAction"},
-
-					/**
-					 * New State of the selected action.Only filled if the respective action maintains a state property, for example 'FollowUp' or 'Favorite'
-					 */
-					newState : {type : "string"}
-				}
+				/**
+				 * The minimum width of ActionBar's the social actions part: business action controls have to be rendered outside this area
+				 */
+				dividerWidth : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null}
 			},
+			aggregations : {
 
-			/**
-			 * Fired when a new feed entry is submitted.
-			 */
-			feedSubmit : {
-				parameters : {
+				/**
+				 * Displayed on the actionBar's right hand-side, either as menu item under 'More' or as individual buttons
+				 */
+				businessActions : {type : "sap.ui.ux3.ThingAction", multiple : true, singularName : "businessAction"},
 
-					/**
-					 * Feed text
-					 */
-					text : {type : "string"}
+				/**
+				 * Buttons for the business actions - managed by this ActionBar
+				 */
+				_businessActionButtons : {type : "sap.ui.commons.Button", multiple : true, singularName : "_businessActionButton", visibility : "hidden"},
+
+				/**
+				 * The social actions which are managed by this ActionBar
+				 */
+				_socialActions : {type : "sap.ui.ux3.ThingAction", multiple : true, singularName : "_socialAction", visibility : "hidden"}
+			},
+			events : {
+
+				/**
+				 * Fired when any of the social action’s toolbar buttons except ‘Update’ or any of the business action’s menu items resp. buttons is pressed. The selected action can be identified by its id and newState (the latter if applicable only)
+				 * ‘Follow’ button + menu: id: follow, newState: Follow/Hold/Default
+				 * ‘Mark for follow up’ button: id: flag, newState: true/false
+				 * ‘Favorite’ button: id: favorite, newState: true/false
+				 * ‘Open Thing Inspector’ button id: open
+				 * Business Actions: id: the ThingAction id
+				 *
+				 * For ‘Update’, please refer to event ‘feedSubmit’
+				 */
+				actionSelected : {
+					parameters : {
+
+						/**
+						 * Id of selected ThingAction
+						 */
+						id : {type : "string"},
+
+						/**
+						 * Selected ThingAction
+						 */
+						action : {type : "sap.ui.ux3.ThingAction"},
+
+						/**
+						 * New State of the selected action.Only filled if the respective action maintains a state property, for example 'FollowUp' or 'Favorite'
+						 */
+						newState : {type : "string"}
+					}
+				},
+
+				/**
+				 * Fired when a new feed entry is submitted.
+				 */
+				feedSubmit : {
+					parameters : {
+
+						/**
+						 * Feed text
+						 */
+						text : {type : "string"}
+					}
 				}
 			}
-		}
-	}});
+		},
+		renderer: ActionBarRenderer
+	});
 
 
 	/**
