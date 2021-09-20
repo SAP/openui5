@@ -228,15 +228,38 @@ sap.ui.define([
 	 * @private
 	 * @returns {string} IDs of controls
 	 */
-	Header.prototype._getHeaderAccessibility = function () {
-		var sTitleId = this.getTitle() ? this._getTitle().getId() : "",
-			sSubtitleId = this.getSubtitle() ? this._getSubtitle().getId() : "",
-			sStatusTextId = this.getStatusText() ? this.getId() + "-status" : "",
-			sAvatarId = this.getIconSrc() || this.getIconInitials() ? this.getId() + "-ariaAvatarText " : "",
-			sIds = sTitleId + " " + sSubtitleId + " " + sStatusTextId + " " + sAvatarId;
+	Header.prototype._getAriaLabelledBy = function () {
+		var sCardTypeId = "",
+			sTitleId = "",
+			sSubtitleId = "",
+			sStatusTextId = "",
+			sAvatarId = "",
+			sIds;
+
+		if (this.getParent() && this.getParent()._ariaText) {
+			sCardTypeId = this.getParent()._ariaText.getId();
+		}
+
+		if (this.getTitle()) {
+			sTitleId = this._getTitle().getId();
+		}
+
+		if (this.getSubtitle()) {
+			sSubtitleId = this._getSubtitle().getId();
+		}
+
+		if (this.getStatusText()) {
+			sStatusTextId = this.getId() + "-status";
+		}
+
+		if (this.getIconSrc() || this.getIconInitials()) {
+			sAvatarId = this.getId() + "-ariaAvatarText";
+		}
+
+		sIds = sCardTypeId + " " + sTitleId + " " + sSubtitleId + " " + sStatusTextId + " " + sAvatarId;
 
 		// remove whitespace from both sides
-		// and merge the consecutive whitespaces into one
+		// and merge consecutive spaces into one
 		return sIds.replace(/ {2,}/g, ' ').trim();
 	};
 

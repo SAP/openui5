@@ -80,7 +80,6 @@ sap.ui.define([
 		this._ariaContentText = new InvisibleText({id: this.getId() + "-ariaContentText"});
 		this._ariaContentText.setText(this._oRb.getText("ARIA_LABEL_CARD_CONTENT"));
 
-
 		this._ariaText = new InvisibleText({id: this.getId() + "-ariaText"});
 		this._ariaText.setText(this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD"));
 
@@ -241,10 +240,13 @@ sap.ui.define([
 	 */
 	CardBase.prototype._getAriaLabelledIds = function () {
 		var oHeader = this.getCardHeader(),
-			sTitleId = oHeader && oHeader._getTitle() ? oHeader._getTitle().getId() : "",
-			sAriaLabelledBy = this.getId() + "-ariaText " + sTitleId;
+			sAriaLabelledBy = "";
 
-		return sAriaLabelledBy.trim();
+		if (oHeader && oHeader._getTitle()) {
+			sAriaLabelledBy = oHeader._getTitle().getId();
+		}
+
+		return sAriaLabelledBy;
 	};
 
 	/**

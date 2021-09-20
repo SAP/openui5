@@ -398,18 +398,45 @@ sap.ui.define([
 	 * @private
 	 * @returns {string} IDs of controls
 	 */
-	NumericHeader.prototype._getHeaderAccessibility = function () {
-		var sTitleId = this.getTitle() ? this._getTitle().getId() : "",
-			sSubtitleId = this.getSubtitle() ? this._getSubtitle().getId() : "",
-			sStatusTextId = this.getStatusText() ? this.getId() + "-status" : "",
-			sUnitOfMeasureId = this._getUnitOfMeasurement() ? this._getUnitOfMeasurement().getId() : "",
-			sSideIndicatorsIds = this.getSideIndicators() ? this._getSideIndicatorIds() : "",
-			sDetailsId = this.getDetails() ? this._getDetails().getId() : "",
-			sMainIndicatorId = this.getNumber() || this.getScale() ? this._getMainIndicator().getId() : "",
-			sIds = sTitleId + " " + sSubtitleId + " " + sStatusTextId + " " + sUnitOfMeasureId + " " + sMainIndicatorId + sSideIndicatorsIds + " " + sDetailsId;
+	NumericHeader.prototype._getAriaLabelledBy = function () {
+		var sCardTypeId = "",
+			sTitleId = "",
+			sSubtitleId = "",
+			sStatusTextId = "",
+			sUnitOfMeasureId = this._getUnitOfMeasurement().getId(),
+			sMainIndicatorId = "",
+			sSideIndicatorsIds = this._getSideIndicatorIds(),
+			sDetailsId = "",
+			sIds;
+
+		if (this.getParent() && this.getParent()._ariaText) {
+			sCardTypeId = this.getParent()._ariaText.getId();
+		}
+
+		if (this.getTitle()) {
+			sTitleId = this._getTitle().getId();
+		}
+
+		if (this.getSubtitle()) {
+			sSubtitleId = this._getSubtitle().getId();
+		}
+
+		if (this.getStatusText()) {
+			sStatusTextId = this.getId() + "-status";
+		}
+
+		if (this.getDetails()) {
+			sDetailsId = this._getDetails().getId();
+		}
+
+		if (this.getNumber() || this.getScale()) {
+			sMainIndicatorId = this._getMainIndicator().getId();
+		}
+
+		sIds = sCardTypeId + " " + sTitleId + " " + sSubtitleId + " " + sStatusTextId + " " + sUnitOfMeasureId + " " + sMainIndicatorId + " " + sSideIndicatorsIds + " " + sDetailsId;
 
 		// remove whitespace from both sides
-		// and merge the consecutive whitespaces into one
+		// and merge the consecutive spaces into one
 		return sIds.replace(/ {2,}/g, ' ').trim();
 	};
 
@@ -420,12 +447,9 @@ sap.ui.define([
 	 * @returns {string} IDs of controls
 	 */
 	NumericHeader.prototype._getSideIndicatorIds = function () {
-		var sSideIndicatorIds = "";
-		this.getSideIndicators().forEach(function(oSideIndicator) {
-			sSideIndicatorIds += " " + oSideIndicator.getId();
-		});
-
-		return sSideIndicatorIds;
+		return this.getSideIndicators()
+			.map(function(oSideIndicator) { return oSideIndicator.getId(); })
+			.join(" ");
 	};
 
 	NumericHeader.prototype.isLoading = function () {
