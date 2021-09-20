@@ -219,18 +219,22 @@ sap.ui.define([
 			var oEndItemDomRef,
 				oObserverEntry = aObserverEntries[0],
 				bWidthChangedSignificantly = hasWidthChangedSignificantly(this.fLayoutWidth, oObserverEntry, oDomRef),
-				fNewWidth = oObserverEntry.contentRect.width;
+				fNewWidth = oObserverEntry.contentRect.width,
+				fNewHeight = oObserverEntry.contentRect.height;
 
 			if (bWidthChangedSignificantly) {
 				this.fLayoutWidth = fNewWidth;
+				this.fLayoutHeight = fNewHeight;
 			} else {
 				oEndItemDomRef = this.getDomRef("endItem");
 				bWidthChangedSignificantly = hasWidthChangedSignificantly(this.fEndItemWidth, oObserverEntry, oEndItemDomRef);
 
 				if (bWidthChangedSignificantly) {
 					this.fEndItemWidth = fNewWidth;
+					this.fLayoutHeight = fNewHeight;
+				} else if (this.fLayoutHeight !== fNewHeight) {	// we may still have relevant height changes
+					this.fLayoutHeight = fNewHeight;
 				} else {
-
 					// avoid cyclic dependencies and/or infinite resizing callback loops
 					return;
 				}
