@@ -54,7 +54,7 @@
 							delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
 							<mdc:typeahead>
 								<mdcv:Popover >
-									<mdcvc:MTable keyPath="Order Number">
+									<mdcvc:MTable keyPath="OrderNo">
 										<Table items='{path : "/Orders", length: 10}' width="30rem">
 											<columns>
 												<Column>
