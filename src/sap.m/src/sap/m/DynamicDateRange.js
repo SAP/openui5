@@ -909,7 +909,17 @@ sap.ui.define([
 			}
 
 			oElementToFocus.focus();
+
+			this._reApplyFocusToElement(oToPage, oValue);
 		};
+
+		/**
+		 * A hook that provides an option to reapply the focus to another element if needed.
+		 *
+		 * @ui5-restricted sap.ui.comp.config.condition.DateRangeType
+		 * @private
+		 */
+		DynamicDateRange.prototype._reApplyFocusToElement = function (oToPage, oValue) {};
 
 		/**
 		 * Creates the title text for the options page.
