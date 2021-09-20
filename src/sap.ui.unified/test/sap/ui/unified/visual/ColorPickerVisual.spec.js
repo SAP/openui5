@@ -10,6 +10,24 @@ describe("sap.ui.unified.ColorPickerVisual", function() {
 		expect(takeScreenshot(element(by.id("cp")))).toLookAs("Default_ColorPicker_HSL_RGB");
 	});
 
+	it("alpha slider background should be adjusted on RGB changes", function() {
+		element(by.id("cp-gF-inner")).click();
+
+		//clear the green field
+		browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
+		browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
+		browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
+		browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+		browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+		browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+
+		// enter 0
+		browser.actions().sendKeys("0").perform();
+		browser.actions().sendKeys(protractor.Key.ENTER).perform();
+
+		expect(takeScreenshot(element(by.id("cp-aSLD-inner")))).toLookAs("AlphaSlider_Background_Is_Pink");
+	});
+
 	it("should render default mode HSV color picker with RGB output", function() {
 		element(by.id("hsv_hsl_btn")).click();
 		element(by.id("remove_focus_btn")).click();
