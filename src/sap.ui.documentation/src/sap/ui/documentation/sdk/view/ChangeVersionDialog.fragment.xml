@@ -7,12 +7,12 @@
 			stretch="{appView>/bPhoneSize}">
 		<buttons>
 			<Button
-				text="CHANGE_VERSION_DIALOG_APPLY_BTN"
+				text="{i18n>CHANGE_VERSION_DIALOG_APPLY_BTN}"
 				type="Emphasized"
 				press="onVersionItemPress">
 			</Button>
 			<Button
-					text="CHANGE_VERSION_DIALOG_LATEST_BTN"
+					text="{i18n>CHANGE_VERSION_DIALOG_LATEST_BTN}"
 					type="Ghost"
 					press="onLatestVersionItemPress">
 			</Button>
