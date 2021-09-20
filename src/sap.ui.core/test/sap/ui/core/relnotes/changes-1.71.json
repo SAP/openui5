@@ -1134,5 +1134,55 @@
         ]
       }
     ]
+  },
+  "1.71.38": {
+    "date": "September 2021",
+    "notes": [
+      {
+        "id": "9fc99af90df316f0a219fdf9d993ecd01fa3c1c2",
+        "type": "FIX",
+        "text": " core/testsuite.util.qunit: remove test jquery.sap.history",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "8c5aa2a111747c960db0e4c442fdd9ce781d6e0a",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: clean up the tap handler on 'mouseout'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970532711"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970554912"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180363967"
+          }
+        ]
+      },
+      {
+        "id": "5c526e6ac461da8af78663620b3efda9a193b7cd",
+        "type": "FIX",
+        "text": " routing.History: use HashChanger to fetch hash and wait it till init",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180169665"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180299462"
+          }
+        ]
+      }
+    ]
   }
 }

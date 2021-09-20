@@ -2713,5 +2713,106 @@
         ]
       }
     ]
+  },
+  "1.71.38": {
+    "date": "September 2021",
+    "notes": [
+      {
+        "id": "02689976d7c5550ef652d638ba9cb19f51aa47ad",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendarHeader: Popover's hidden label changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070198541"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180219901"
+          }
+        ]
+      },
+      {
+        "id": "b7221189a04d2bb24b8dca9b6c5560a92382303c",
+        "type": "FIX",
+        "text": " ColumnListItem: Headers attribute of cells must point to header cell",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080049826"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070449878"
+          }
+        ]
+      },
+      {
+        "id": "05169607827361f84756d0a0b3f80b7c3ae288ce",
+        "type": "FIX",
+        "text": " sap.m.Input: Suggestion are visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005168542021"
+          }
+        ]
+      },
+      {
+        "id": "ce4f937b5d22860c74d7f4f510e07ff2c5d48c58",
+        "type": "FIX",
+        "text": " UploadSet multiple files uplaod enabled for upload button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005981182021"
+          }
+        ]
+      },
+      {
+        "id": "0506f47d84468cc50d7cf328bd76eaa5accf62ac",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Display initially bound value when in read-only mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005050852021"
+          }
+        ]
+      },
+      {
+        "id": "e677c61935345f4b539e5aac51a8c6492a8a8fa7",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Buttons are now hidden from screen readers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700018588972021"
+          }
+        ]
+      },
+      {
+        "id": "b47edea138409d27b6d8287193385cff1712d34a",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Range selection adoption",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180348349"
+          }
+        ]
+      },
+      {
+        "id": "1454db8811a55b7cf25b7d45016d302cb289c6cf",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Tokenizer and model syncronized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980347222"
+          }
+        ]
+      }
+    ]
   }
 }
