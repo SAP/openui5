@@ -93,7 +93,11 @@ sap.ui.define([
 				},
 				requestDelegateContent: {},
 				requestSwitchToDialog: {},
-				confirm: {},
+				confirm: {
+					parameters: {
+						close: { type: "boolean" }
+					}
+				},
 				cancel: {},
 				navigated: {
 					parameters: {

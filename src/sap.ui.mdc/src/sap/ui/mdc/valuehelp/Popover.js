@@ -221,7 +221,7 @@ sap.ui.define([
 	};
 
 	Popover.prototype._handleConfirmed = function (oEvent) {
-		this.fireConfirm({close: this._isSingleSelect()});
+		this.fireConfirm({close: oEvent.getParameter("close") || this._isSingleSelect()});
 	};
 
 	Popover.prototype._handleClosed = function (oEvent) {
