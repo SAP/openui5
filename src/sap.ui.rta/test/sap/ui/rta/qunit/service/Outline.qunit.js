@@ -802,6 +802,8 @@ sap.ui.define([
 						"then the first list entry (aggregation binding template) has the correct icon assigned");
 					assert.strictEqual(oListElementInfo.elements[0].name, "List Item [4]",
 						"then the first list entry contains the template with the number of children on its name (List Item [4])");
+					assert.strictEqual(oListElementInfo.elements[0].type, "aggregationBindingTemplate",
+						"then the first list entry contains the template with the type 'aggregationBindingTemplate'");
 					assert.strictEqual(oListElementInfo.elements[1].icon, "sap-icon://card",
 						"then the second list entry (empty aggregation) has the correct icon assigned");
 					assert.strictEqual(oListElementInfo.elements[1].type, "aggregation",
@@ -840,6 +842,8 @@ sap.ui.define([
 						"then the first list entry (aggregation binding template) has the correct icon assigned");
 					assert.strictEqual(oListElementInfo.elements[0].name, "List Item [0]",
 						"then the first list entry contains the template with the number of children on its name (List Item [0])");
+					assert.strictEqual(oListElementInfo.elements[0].type, "aggregationBindingTemplate",
+						"then the first list entry contains the template with the type 'aggregationBindingTemplate'");
 				});
 		});
 
@@ -885,13 +889,18 @@ sap.ui.define([
 						"then the first list entry (aggregation binding template) has the correct icon assigned");
 					assert.strictEqual(oList1ElementInfo.elements[0].name, "List Item [2]",
 						"then the first list entry contains the template with the number of children on its name (List Item [2])");
+					assert.strictEqual(oList1ElementInfo.elements[0].type, "aggregationBindingTemplate",
+						"then the first list entry contains the template with the type 'aggregationBindingTemplate'");
+
 					var oList2ElementInfo = aRootElements[0].elements[1];
 					assert.strictEqual(oList2ElementInfo.elements.length, 3,
 						"then second list contains 3 entries: the template element + 2 empty aggregations from the control");
 					assert.strictEqual(oList2ElementInfo.elements[0].icon, "sap-icon://attachment-text-file",
 						"then the first list entry (aggregation binding template) has the correct icon assigned");
 					assert.strictEqual(oList2ElementInfo.elements[0].name, "List Item [1]",
-						"then the first list entry contains the template with the number of children on its name (List Item [1])");
+						"then the frist list entry contains the template with the number of children on its name (List Item [1])");
+					assert.strictEqual(oList2ElementInfo.elements[0].type, "aggregationBindingTemplate",
+						"then the first list entry contains the template with the type 'aggregationBindingTemplate'");
 				});
 		});
 	});

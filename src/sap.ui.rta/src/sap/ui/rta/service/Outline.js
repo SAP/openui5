@@ -261,6 +261,92 @@ sap.ui.define([
 			return cleanupData(oData);
 		};
 
+		function isAggregationBindingTemplate(oOverlay, oParentAggregationOverlay, sParentAggregationName) {
+			var oParentElementOverlay = oOverlay.getParentElementOverlay();
+			return oParentElementOverlay
+				&& sParentAggregationName
+				&& oParentElementOverlay.getAggregationOverlay(sParentAggregationName, "AggregationBindingTemplateOverlays") === oParentAggregationOverlay;
+		}
+
+		function getNumberOfTemplateChildrenOverlays(oParentAggregationOverlay, sParentAggregationName) {
+			return oParentAggregationOverlay.getParent().getAggregationOverlay(sParentAggregationName).getChildren().length;
+		}
+
+		function getElementOverlayData(oOverlay, oElement, oDtMetadata) {
+			var oData = {
+				editable: oOverlay.getEditable(),
+				bIsView: oOverlay.getElement() instanceof View
+			};
+			if (typeof oOverlay.isVisible() === "boolean") {
+				oData.visible = oOverlay.isVisible();
+			}
+			var oParentAggregationOverlay = oOverlay.getParent() && oOverlay.getParentAggregationOverlay();
+			var sParentAggregationName = (oParentAggregationOverlay && oParentAggregationOverlay.getAggregationName()) || "";
+			var sDtNameSuffix = "";
+			// Aggregation Binding Template
+			if (isAggregationBindingTemplate(oOverlay, oParentAggregationOverlay, sParentAggregationName)) {
+				var iNoOfChildren = getNumberOfTemplateChildrenOverlays(oParentAggregationOverlay, sParentAggregationName);
+				sDtNameSuffix = " [" + iNoOfChildren + "]";
+				oData.type = "aggregationBindingTemplate";
+				oData.icon = "sap-icon://attachment-text-file";
+			} else {
+				oData.type = "element";
+			}
+
+			var oDtName = oDtMetadata.getName(oElement);
+			if (oDtName && oDtName.singular) {
+				oData.name = (oDtName && oDtName.singular) + sDtNameSuffix;
+			}
+			return oData;
+		}
+
+		function getAggregationOverlayData(oOverlay, oParentOverlay, oElement) {
+			var sAggregationName = oOverlay.getAggregationName();
+			var oData = {
+				technicalName: oOverlay.getAggregationName(),
+				editable: false,
+				type: "aggregation",
+				bIsView: oOverlay.getElement() instanceof View
+			};
+			if (oParentOverlay.getAggregation(sAggregationName)) {
+				var oAggregationDescription = oParentOverlay.getDesignTimeMetadata().getAggregationDescription(sAggregationName, oElement);
+				if (oAggregationDescription.singular) {
+					oData.name = oAggregationDescription.singular;
+				}
+			}
+			if (oParentOverlay.getAggregationBindingTemplateOverlays().length) {
+				oData.icon = "sap-icon://card";
+			}
+			return oData;
+		}
+
+		function getDefaultData(oElement, oDtMetadata) {
+			var oData = {
+				id: oElement.getId(),
+				technicalName: oElement.getMetadata().getName(),
+				editable: false,
+				type: null
+			};
+
+			var sDefaultIcon = getDefaultIcon(oDtMetadata);
+			if (sDefaultIcon) {
+				oData.icon = sDefaultIcon;
+			}
+			var sInstanceName = oDtMetadata.getLabel(oElement);
+			if (sInstanceName && sInstanceName !== oData.id) {
+				oData.instanceName = sInstanceName;
+			}
+			return oData;
+		}
+
+		function getDefaultIcon(oDtMetadata) {
+			var oDtMetadataData = oDtMetadata.getData();
+			return oDtMetadataData.palette
+				&& oDtMetadataData.palette.icons
+				&& oDtMetadataData.palette.icons.svg
+				|| undefined;
+		}
+
 		/**
 		 * Collects the necessary data for a node without the <code>childNodes</code>.
 		 *
@@ -268,74 +354,15 @@ sap.ui.define([
 		 * @param {sap.ui.dt.Overlay} [oParentOverlay] - Parent overlay (if present) for the passed overlay
 		 * @returns {object} Data containing applicable properties
 		 */
-		oOutline._getNodeProperties = function (oOverlay, oParentOverlay) {
-			var oDtName;
-			var sAggregationName;
-			var sType;
-			var bVisible;
-			var bIsEditable = false; //default for aggregation overlays
+		 oOutline._getNodeProperties = function (oOverlay, oParentOverlay) {
 			var oElement = oOverlay.getElement();
-			var sId = oElement.getId();
-			var sElementClass = oElement.getMetadata().getName();
 			var oDtMetadata = oOverlay.getDesignTimeMetadata();
-			var oDtMetadataData = oDtMetadata.getData();
-			var sInstanceName = oDtMetadata.getLabel(oElement);
-			var sIconType = (
-				oDtMetadataData.palette
-				&& oDtMetadataData.palette.icons
-				&& oDtMetadataData.palette.icons.svg
-				|| undefined
-			);
+			var oData = getDefaultData(oElement, oDtMetadata);
 
-			var bIsView;
 			if (oOverlay instanceof ElementOverlay) {
-				sType = "element";
-				bIsEditable = oOverlay.getEditable();
-				oDtName = oDtMetadata.getName(oElement);
-				bVisible = oOverlay.isVisible();
-				bIsView = oOverlay.getElement() instanceof View;
-				var oParentElementOverlay = oOverlay.getParentElementOverlay();
-				var oParentAggregationOverlay = oOverlay.getParent() && oOverlay.getParentAggregationOverlay();
-				var sParentAggregationName = (oParentAggregationOverlay && oParentAggregationOverlay.getAggregationName()) || "";
-				// Aggregation Binding Template
-				if (
-					oParentElementOverlay
-					&& sParentAggregationName
-					&& oParentElementOverlay.getAggregationOverlay(sParentAggregationName, "AggregationBindingTemplateOverlays") === oParentAggregationOverlay
-				) {
-					var aTemplateChildrenOverlays =
-						oParentAggregationOverlay.getParent().getAggregationOverlay(sParentAggregationName).getChildren();
-					var iNoOfChildren = aTemplateChildrenOverlays.length;
-					oDtName.singular = oDtName.singular + " [" + iNoOfChildren + "]";
-					sIconType = "sap-icon://attachment-text-file";
-				}
-			} else {
-				sType = "aggregation";
-				sAggregationName = oOverlay.getAggregationName();
-				oDtName = oParentOverlay.getAggregation(sAggregationName)
-					? oParentOverlay.getDesignTimeMetadata().getAggregationDescription(sAggregationName, oElement)
-					: undefined;
-				if (oParentOverlay.getAggregationBindingTemplateOverlays().length) {
-					sIconType = "sap-icon://card";
-				}
+				return Object.assign(oData, getElementOverlayData(oOverlay, oElement, oDtMetadata));
 			}
-
-			//add all mandatory info to data
-			var oData = Object.assign(
-				{
-					id: sId,
-					technicalName: sAggregationName || sElementClass,
-					editable: bIsEditable,
-					type: sType //either "element" or "aggregation"
-				},
-				sInstanceName !== sId && sInstanceName !== undefined && { instanceName: sInstanceName }, // element's id should not be set as instanceName
-				oDtName && oDtName.singular && { name: oDtName.singular }, // designTime metadata name.singular
-				sIconType !== undefined && { icon: sIconType }, // designTime metadata icon type
-				typeof bVisible === "boolean" && { visible: bVisible }, // visible
-				bIsView && { bIsView: bIsView }
-			);
-
-			return oData;
+			return Object.assign(oData, getAggregationOverlayData(oOverlay, oParentOverlay, oElement));
 		};
 
 		/**
