@@ -762,11 +762,19 @@ sap.ui.define([
 		this._oInvisibleTextField = new InvisibleText({
 			text: this._oRb.getText("CONDITIONPANEL_FIELD_LABEL")
 		});
+		this._oInvisibleTextOperatorInputValue = new InvisibleText({
+			text: this._oRb.getText("CONDITIONPANEL_FIELD_VALUE_LABEL")
+		});
 		this._oInvisibleTextOperator = new InvisibleText({
 			text: this._oRb.getText("CONDITIONPANEL_OPERATOR_LABEL")
 		});
+		this._oInvisibleTextOperatorAddButton = new InvisibleText({
+			text: this._oRb.getText("CONDITIONPANEL_ADD_SCREENREADER_DESCRIPTION")
+		});
 		this.addAggregation("content", this._oInvisibleTextField);
+		this.addAggregation("content", this._oInvisibleTextOperatorInputValue);
 		this.addAggregation("content", this._oInvisibleTextOperator);
+		this.addAggregation("content", this._oInvisibleTextOperatorAddButton);
 
 		this.addAggregation("content", this._oConditionsGrid);
 
@@ -851,7 +859,6 @@ sap.ui.define([
 
 		this._oAddButton = new Button({
 			icon: IconPool.getIconURI("add"),
-			tooltip: this._oRb.getText("CONDITIONPANEL_ADD" + (this._sAddRemoveIconTooltipKey ? "_" + this._sAddRemoveIconTooltipKey : "") + "_TOOLTIP"),
 			visible: true,
 			press: function(oEvent) {
 				var oConditionGrid = that._createConditionRow(that._oConditionsGrid, undefined, null, 0);
@@ -866,7 +873,8 @@ sap.ui.define([
 			},
 			layoutData: new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.Low
-			})
+			}),
+			ariaDescribedBy: this._oInvisibleTextOperatorAddButton
 		});
 
 		this._oHeaderText = new Text({
