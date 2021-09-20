@@ -3,6 +3,11 @@
     "date": "September 2021",
     "notes": [
       {
+        "id": "736748b0a87a763a44df4ee15cb12441eb36cacf",
+        "type": "FEATURE",
+        "text": " sap.f.Card: New property \"state\" for the SideIndicators implemented"
+      },
+      {
         "id": "b590e4e23645be6d8eafbd4edc1aca7e1c059fd8",
         "type": "FIX",
         "text": " CalendarCard: MonthChange action has correct firstDate parameter",

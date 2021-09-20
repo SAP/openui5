@@ -3,6 +3,72 @@
     "date": "September 2021",
     "notes": [
       {
+        "id": "1b8f962a318b86fc52081637e5930b4d146ebfd3",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: aria-hidden attribute added when there are no tokens",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700018628612021"
+          }
+        ]
+      },
+      {
+        "id": "5ad7e0f41317b92f41b841523245381a2ad4abd7",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Fixed value color regression",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170198963"
+          }
+        ]
+      },
+      {
+        "id": "cf9d8c392c94da477d37b56a659ca1a15b7fa64a",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Accessibility test page inludes region labels",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180274947"
+          }
+        ]
+      },
+      {
+        "id": "46c2f33769653f995875ad8f7c409fd79b492c30",
+        "type": "FIX",
+        "text": " sap.m.Menu: Splitting into buttons defines correct press handlers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170199101"
+          }
+        ]
+      },
+      {
+        "id": "96f1eef4180c85dfbb8520606e8a76285376a4ca",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: added aria-expanded attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170138972"
+          }
+        ]
+      },
+      {
+        "id": "124ac9e9a1af8b076c75598c1c6fdc8ea32a446f",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Adjust documentation for the 'growing' property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180349498"
+          }
+        ]
+      },
+      {
         "id": "0d3c7bbfabe01662e94fff700614126dfffcc295",
         "type": "FIX",
         "text": " sap.m.Bar: Middle content aligned properly when there is left or right content",
@@ -43,6 +109,17 @@
           {
             "type": "BCP",
             "reference": "2180379501"
+          }
+        ]
+      },
+      {
+        "id": "8c8e04834055a4add4877f89129479831704ff78",
+        "type": "FIX",
+        "text": " sap.m.Input: Prevent calling SuggestionItemSelected twice on tab",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180367145"
           }
         ]
       },

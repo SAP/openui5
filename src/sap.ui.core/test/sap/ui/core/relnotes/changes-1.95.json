@@ -3,6 +3,28 @@
     "date": "September 2021",
     "notes": [
       {
+        "id": "790387342cb3ef3a5dd47ebf3a6926c403db48c1",
+        "type": "FIX",
+        "text": " core.routing: initialize nested routers when parent router initialized without hash parsing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170180471"
+          }
+        ]
+      },
+      {
+        "id": "fa7f1f2a5e7c768b0744eebaf4472499e9533ede",
+        "type": "FIX",
+        "text": " Shortcuts now create separate hidden text for each control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180199485"
+          }
+        ]
+      },
+      {
         "id": "3844cdec14d11771c0501413ae8bc82d9f748a4d",
         "type": "FIX",
         "text": " Log errors when XML processing fails for view/fragments",
