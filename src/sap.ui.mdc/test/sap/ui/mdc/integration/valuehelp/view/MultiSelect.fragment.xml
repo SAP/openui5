@@ -55,7 +55,7 @@
 				</mdc:typeahead>
 				<mdc:dialog>
 					<mdcv:Dialog title="Label of Field">
-						<mdcvc:MTable title="Select from List" subTitle="Select" keyPath="ID" descriptionPath="name" filterFields="$search">
+						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search">
 							<mdcvc:collectiveSearchItems>
 								<core:Item text="Default Search Template" key="default"/>
 								<core:Item text="Search Template 1" key="template1"/>
@@ -106,7 +106,7 @@
 								</items>
 							</Table>
 						</mdcvc:MTable>
-						<mdcvc:Conditions title="Define Conditions" subTitle="Conditions" label="Label of Field"></mdcvc:Conditions>
+						<mdcvc:Conditions label="Label of Field"></mdcvc:Conditions>
 					</mdcv:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
@@ -149,7 +149,7 @@
 				delegate="{name: 'sap/ui/v4demo/delegate/FB0-FH1-2-ValueHelp.delegate', payload: {}}">
 				<mdc:dialog>
 					<mdcv:Dialog title="Label of Field">
-						<mdcvc:Conditions title="Define Conditions" subTitle="Conditions" label="Label of Field"></mdcvc:Conditions>
+						<mdcvc:Conditions label="Label of Field"></mdcvc:Conditions>
 					</mdcv:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
@@ -187,7 +187,7 @@
 				</mdc:typeahead>
 				<mdc:dialog>
 					<mdcv:Dialog title="MDC Table with ui.Table">
-						<mdcvc:MDCTable title="Select from List" subTitle="Select" keyPath="ID" descriptionPath="name" filterFields="$search">
+						<mdcvc:MDCTable keyPath="ID" descriptionPath="name" filterFields="$search">
 							<mdcvc:collectiveSearchItems>
 								<core:Item text="Default Search Template" key="default"/>
 								<core:Item text="Search Template 1" key="template1"/>
@@ -237,7 +237,7 @@
 								</mdc:columns>
 							</mdc:Table>
 						</mdcvc:MDCTable>
-						<mdcvc:Conditions title="Define Conditions" subTitle="Conditions" label="Label of Field"></mdcvc:Conditions>
+						<mdcvc:Conditions label="Label of Field"></mdcvc:Conditions>
 					</mdcv:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
@@ -275,7 +275,7 @@
 				</mdc:typeahead>
 				<mdc:dialog>
 					<mdcv:Dialog title="MDC Table with m.Table">
-						<mdcvc:MDCTable title="Select from List" subTitle="Select" keyPath="ID" descriptionPath="name" filterFields="$search">
+						<mdcvc:MDCTable keyPath="ID" descriptionPath="name" filterFields="$search">
 							<mdcvc:collectiveSearchItems>
 								<core:Item text="Default Search Template" key="default"/>
 								<core:Item text="Search Template 1" key="template1"/>
@@ -324,7 +324,7 @@
 								</mdc:columns>
 							</mdc:Table>
 						</mdcvc:MDCTable>
-						<mdcvc:Conditions title="Define Conditions" subTitle="Conditions" label="Label of Field"></mdcvc:Conditions>
+						<mdcvc:Conditions label="Label of Field"></mdcvc:Conditions>
 					</mdcv:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
@@ -544,7 +544,7 @@
 				</mdc:typeahead>
 				<mdc:dialog>
 					<mdcv:Dialog id="FB0-FH-City-Dialog" title="Region">
-						<mdcvc:MDCTable id="FB0-FH-City-Dialog-MDCTable" title="Select from List" subTitle="Select" keyPath="city" descriptionPath="text" filterFields="$search" >
+						<mdcvc:MDCTable id="FB0-FH-City-Dialog-MDCTable" keyPath="city" descriptionPath="text" filterFields="$search" >
 							<mdcvc:filterBar>
 								<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {}}">
 									<vhfb:basicSearchField>

@@ -80,6 +80,15 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 				sinon: {
 					qunitBridge: true
 				}
+			},
+			"Dialog": {
+				module: "./Dialog.qunit",
+				ui5: {
+					animationMode: "none"
+				},
+				sinon: {
+					qunitBridge: true
+				}
 			}
 		}
 	};

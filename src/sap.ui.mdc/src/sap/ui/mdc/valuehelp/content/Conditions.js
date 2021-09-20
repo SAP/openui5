@@ -170,12 +170,12 @@ sap.ui.define([
 		return sTitle;
 	};
 
-	Conditions.prototype.getFormattedSubTitle = function() {
-		var sSubTitle = this.getSubTitle();
-		if (!sSubTitle) {
-			sSubTitle = this._oResourceBundle.getText("valuehelp.DEFINECONDITIONS.Subtitle");
+	Conditions.prototype.getFormattedShortTitle = function() {
+		var sShortTitle = this.getShortTitle();
+		if (!sShortTitle) {
+			sShortTitle = this._oResourceBundle.getText("valuehelp.DEFINECONDITIONS.Shorttitle");
 		}
-		return sSubTitle;
+		return sShortTitle;
 	};
 
 	Conditions.prototype.getAriaAttributes = function(iMaxConditions) {

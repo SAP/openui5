@@ -24,7 +24,7 @@ sap.ui.define([
 
 				oCurrentContent = new Conditions({
 					title: "Define Conditions",
-					subTitle: "Conditions",
+					shortTitle: "Conditions",
 					label: "Label of Field"
 				});
 

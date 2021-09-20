@@ -174,15 +174,6 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	Popover.prototype.getDomRef = function() {
-
-		var oPopover = this.getAggregation("_container");
-		if (oPopover) {
-			return oPopover.getDomRef();
-		}
-
-	};
-
 	Popover.prototype._open = function (oPopover) {
 		if (oPopover.isOpen()) {
 			return;

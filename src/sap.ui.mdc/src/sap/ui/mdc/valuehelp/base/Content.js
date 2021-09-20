@@ -45,16 +45,17 @@ sap.ui.define([
 			library: "sap.ui.mdc",
 			properties: {
                 /**
-				 * Title text that appears in the dialog or tab header.
-				 *
-				 * @since 1.60.0
+				 * Title text that appears tab header.
 				 */
 				title: {
 					type: "string",
 					group: "Appearance",
 					defaultValue: ""
 				},
-				subTitle: {
+                /**
+				 * Title text that appears in the dialog header.
+				 */
+				 shortTitle: {
 					type: "string",
 					group: "Appearance",
 					defaultValue: ""
@@ -421,8 +422,8 @@ sap.ui.define([
 		return sTitle;
 	};
 
-	Content.prototype.getFormattedSubTitle = function() {
-		return this.getSubTitle();
+	Content.prototype.getFormattedShortTitle = function() {
+		return this.getShortTitle();
 	};
 
 	Content.prototype._getMaxConditions = function() {
