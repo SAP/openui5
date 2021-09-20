@@ -5005,14 +5005,17 @@ usePreliminaryContext : false}}">\
 
 	//*********************************************************************************************
 	// Scenario: Create a new entity and call resetChanges either immediately or after a failed
-	// attempt to submit the creation. The created entity is deleted and no request is sent after
-	// deletion.
-	// JIRA: CPOUI5MODELS-198, CPOUI5MODELS-614
+	// attempt to submit the creation. The created entity is deleted if bDeleteCreatedEntities is
+	// set and no request is sent after deletion.
+	// JIRA: CPOUI5MODELS-198, CPOUI5MODELS-614, CPOUI5MODELS-615
+	// BCP: 2170206361; delete entity only if explicitly requested
 [false, true].forEach(function (bWithFailedPOST) {
 	[false, true].forEach(function (bWithPath) {
+		[false, true].forEach(function (bDeleteCreatedEntities) {
 	var sTitle = "ODataModel#createEntry: discard created entity by using ODataModel#resetChanges "
 			+ (bWithPath ? "called with the context path " : "")
-			+ (bWithFailedPOST ? "after failed submit" : "immediately");
+			+ (bWithFailedPOST ? "after failed submit " : " immediately ")
+			+ (bDeleteCreatedEntities ? "; delete" : "; keep") + " cache data";
 
 	QUnit.test(sTitle, function (assert) {
 		var oCreatedContext,
@@ -5022,7 +5025,7 @@ usePreliminaryContext : false}}">\
 		return this.createView(assert, /*sView*/"", oModel).then(function () {
 			// code under test
 			oCreatedContext = oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {
-				properties : {}
+				properties : {Note : "Foo"}
 			});
 
 			if (bWithFailedPOST) {
@@ -5032,7 +5035,8 @@ usePreliminaryContext : false}}">\
 						data : {
 							__metadata : {
 								type : "gwsample_basic.SalesOrderLineItem"
-							}
+							},
+							Note : "Foo"
 						},
 						deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
 						headers : {"Content-ID" : "~key~"},
@@ -5065,11 +5069,18 @@ usePreliminaryContext : false}}">\
 
 			// code under test
 			oResetPromise = oModel.resetChanges(bWithPath
-				? [oCreatedContext.getPath()]
-				: undefined);
+					? [oCreatedContext.getPath()]
+					: undefined,
+				/*bAll*/undefined,
+				bDeleteCreatedEntities);
 
-			// check that data cache is cleaned synchronously
-			assert.strictEqual(oModel.getObject(oCreatedContext.getPath()), undefined);
+			// check that data cache is cleaned synchronously if bDeleteCreatedEntities is true
+			if (bDeleteCreatedEntities) {
+				assert.strictEqual(oModel.getObject(oCreatedContext.getPath()), undefined);
+			} else {
+				assert.ok(oModel.getObject(oCreatedContext.getPath()));
+				assert.strictEqual(oModel.getObject(oCreatedContext.getPath() + "/Note"), "Foo");
+			}
 
 			oModel.submitChanges(); // no request is sent
 
@@ -5079,6 +5090,7 @@ usePreliminaryContext : false}}">\
 			]);
 		});
 	});
+		});
 	});
 });
 

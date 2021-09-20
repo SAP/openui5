@@ -4781,7 +4781,7 @@ sap.ui.define([
 				oMetadata : {
 					loaded : function () {}
 				},
-				_discardEntityChange : function () {},
+				_discardEntityChanges : function () {},
 				abortInternalRequest : function () {},
 				checkUpdate : function () {}
 			},
@@ -4792,20 +4792,22 @@ sap.ui.define([
 			});
 
 		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns(oPromise);
-		oModelMock.expects("_discardEntityChange")
-			.withExactArgs("key('Bar')", "~oBarMetadata")
+		oModelMock.expects("_discardEntityChanges")
+			.withExactArgs("key('Bar')", "~bDeleteCreatedEntities", "~oBarMetadata")
 			.callsFake(function (sKey) {
 				delete this.mChangedEntities[sKey];
 			});
-		oModelMock.expects("_discardEntityChange")
-			.withExactArgs("key('Foo')", "~oFooMetadata")
+		oModelMock.expects("_discardEntityChanges")
+			.withExactArgs("key('Foo')", "~bDeleteCreatedEntities", "~oFooMetadata")
 			.callsFake(function (sKey) {
 				delete this.mChangedEntities[sKey];
 			});
 		oModelMock.expects("checkUpdate").withExactArgs(true);
 
 		// code under test
-		assert.strictEqual(ODataModel.prototype.resetChanges.call(oModel, undefined, bAll),
+		assert.strictEqual(
+			ODataModel.prototype.resetChanges.call(oModel, undefined, bAll,
+				"~bDeleteCreatedEntities"),
 			oPromise);
 
 		assert.deepEqual(oModel.mChangedEntities, {});
@@ -4838,7 +4840,7 @@ sap.ui.define([
 				oMetadata : {
 					loaded : function () {}
 				},
-				_discardEntityChange : function () {},
+				_discardEntityChanges : function () {},
 				abortInternalRequest : function () {},
 				checkUpdate : function () {},
 				getEntityByPath : function () {}
@@ -4890,8 +4892,8 @@ sap.ui.define([
 				oEntityInfo.propertyPath = "";
 				return "~oQuxEntity";
 			});
-		oModelMock.expects("_discardEntityChange")
-			.withExactArgs("key('Qux')", sinon.match.same(oQuxMetadata))
+		oModelMock.expects("_discardEntityChanges")
+			.withExactArgs("key('Qux')", "~bDeleteCreatedEntities", sinon.match.same(oQuxMetadata))
 			.callsFake(function (sKey) {
 				delete this.mChangedEntities[sKey];
 			});
@@ -4901,7 +4903,7 @@ sap.ui.define([
 		assert.strictEqual(
 			ODataModel.prototype.resetChanges.call(oModel,
 				["/Z", "/Z/Y/X", "/Bar/P", "/Baz", "/Bar/Q/X", "/Qux"],
-				bAll),
+				bAll, "~bDeleteCreatedEntities"),
 			oPromise);
 
 		assert.deepEqual(oModel.mChangedEntities, {
@@ -4926,7 +4928,7 @@ sap.ui.define([
 			oModelMock.expects("abortInternalRequest").withExactArgs("deferred0", {path : "Qux"});
 			oModelMock.expects("abortInternalRequest").withExactArgs("deferred1", {path : "Qux"});
 		} else {
-			oModelMock.expects("abortInternalRequest").never(); // called in _discardEntityChange
+			oModelMock.expects("abortInternalRequest").never(); // called in _discardEntityChanges
 		}
 
 		// test code that depends on metadata promise
@@ -4937,13 +4939,17 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[
-	{oEntityMetadata : undefined, bCallRemove : false},
-	{oEntityMetadata : {}, bCallRemove : false},
-	{oEntityMetadata : {created : undefined}, bCallRemove : false},
-	{oEntityMetadata : {created : {}}, bCallRemove : true}
-].forEach(function (oFixture, i) {
-	QUnit.test("_discardEntityChange: #i=" + i, function (assert) {
+[true, false].forEach(function (bDeleteCreatedEntities) {
+	[
+		{oEntityMetadata : undefined, bCallRemove : false},
+		{oEntityMetadata : {}, bCallRemove : false},
+		{oEntityMetadata : {created : undefined}, bCallRemove : false},
+		{oEntityMetadata : {created : {}}, bCallRemove : bDeleteCreatedEntities}
+	].forEach(function (oFixture, i) {
+	var sTitle = "_discardEntityChanges: bDeleteCreatedEntities=" + bDeleteCreatedEntities
+			+ ", oEntityMetadata=" + JSON.stringify(oFixture.oEntityMetadata);
+
+	QUnit.test(sTitle, function (assert) {
 		var oMessageManagerMock = this.mock(sap.ui.getCore().getMessageManager()),
 			oMetadata = {
 				loaded : function () {}
@@ -4965,6 +4971,7 @@ sap.ui.define([
 				fnResolve = resolve;
 			});
 
+		oModelMock.expects("_resolveGroup").withExactArgs("~sKey").returns({groupId : "~groupId"});
 		this.mock(oMetadata).expects("loaded").withExactArgs().returns(oPromise);
 		oModelMock.expects("_removeEntity")
 			.withExactArgs("~sKey")
@@ -4977,14 +4984,14 @@ sap.ui.define([
 			.returns("~aMessages");
 		oMessageManagerMock.expects("removeMessages").withExactArgs("~aMessages");
 
-		// code under test
-		ODataModel.prototype._discardEntityChange.call(oModel, "~sKey", oFixture.oEntityMetadata);
+		// code unter test
+		assert.strictEqual(
+			ODataModel.prototype._discardEntityChanges.call(oModel, "~sKey",
+				bDeleteCreatedEntities, oFixture.oEntityMetadata),
+			oPromise);
 
 		assert.deepEqual(oModel.mChangedEntities, {foo : "bar"});
 
-		oModelMock.expects("_resolveGroup")
-			.withExactArgs("~sKey")
-			.returns({groupId : "~groupId"});
 		oModelMock.expects("abortInternalRequest")
 			.withExactArgs("~groupId", {requestKey : "~sKey"});
 
@@ -4993,6 +5000,7 @@ sap.ui.define([
 
 		return oPromise;
 	});
+});
 });
 
 	//*********************************************************************************************
