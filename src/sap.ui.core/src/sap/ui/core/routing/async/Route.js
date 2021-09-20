@@ -33,12 +33,15 @@ sap.ui.define(["sap/base/Log", "sap/base/util/extend", "sap/ui/core/Component"],
 				oTargetData,
 				oCurrentPromise,
 				aAlignedTargets,
-				bRepeated = false;
+				bRepeated = (oRouter._oMatchedRoute === this);
 
 			oRouter._stopWaitingTitleChangedFromChild();
-			if (oRouter._oMatchedRoute === this) {
-				bRepeated = true;
+
+			if (oRouter._oMatchedRoute) {
+				// clear the dynamicTarget of the previous matched route
+				delete oRouter._oMatchedRoute._oConfig.dynamicTarget;
 			}
+
 			oRouter._oMatchedRoute = this;
 			oRouter._bMatchingProcessStarted = true;
 
