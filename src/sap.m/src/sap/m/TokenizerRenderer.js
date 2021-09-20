@@ -42,6 +42,7 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 		var aTokens = oControl.getTokens();
 		if (!aTokens.length) {
 			oRm.class("sapMTokenizerEmpty");
+			oRm.attr("aria-hidden", "true");
 		}
 
 		oRm.style("max-width", oControl.getMaxWidth());
