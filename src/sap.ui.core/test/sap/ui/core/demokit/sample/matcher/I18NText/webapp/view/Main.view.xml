@@ -22,6 +22,9 @@
 									<Button
 										text="{i18n>loadButtonText}"
 										press="onLoadProducts" />
+									<Button
+										text="OK"
+										press="onShowMessageBox" />
 								</content>
 							</Toolbar>
 						</headerToolbar>

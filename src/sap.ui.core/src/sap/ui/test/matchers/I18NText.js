@@ -11,7 +11,7 @@ sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], f
 	 * The matcher automatically:
 	 * <ul>
 	 *     <li>
-	 *         retrieves the text from the assigned 'i18n' model (name can be changed)
+	 *         retrieves the text from the assigned 'i18n' model (name can be changed) or library resource bundle
 	 *     </li>
 	 *     <li>
 	 *         checks that the I18N key does actually exist in the file
@@ -31,6 +31,9 @@ sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], f
 	 *     }
 	 * }
 	 * </code></pre>
+	 *
+	 * As of version 1.96 if the flag useLibraryBundle is true the library resource bundle
+	 * of the control is used to resolve the i18n key
 	 *
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new I18NText
@@ -68,6 +71,12 @@ sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], f
 				modelName: {
 					type: "string",
 					defaultValue: "i18n"
+				},
+				/**
+				 * The boolean flag to indicate whether to utiliize the library bundle of the control
+				 */
+				useLibraryBundle: {
+					type: "boolean"
 				}
 			}
 		},
@@ -86,6 +95,7 @@ sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], f
 				aParameters = this.getParameters(),
 				sModelName = this.getModelName(),
 				oModel = oControl.getModel(sModelName),
+				bUseLibraryBundle = this.getUseLibraryBundle(),
 				fnProperty = oControl["get" + capitalize(sPropertyName, 0)];
 
 			// check model existence
@@ -102,16 +112,24 @@ sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], f
 
 			// check resource bundle
 			var oAppWindow = this._getApplicationWindow();
-			var oBundle = oModel.getResourceBundle();
-			if (oBundle instanceof oAppWindow.Promise) {
-				if (oModel._oResourceBundle instanceof oAppWindow.Object && oModel._oResourceBundle.getText) {
-					// we access the loaded bundle from the internal variable of the resource model
-					// ... instead of using the asynchronous promises which is no option for a synchronous matcher
-					// !!! we have a qunit in place that ensures this internal implementation of the ResourceModel
-					oBundle = oModel._oResourceBundle;
-				} else {
-					this._oLogger.debug("The model '" + sModelName + "' of '" + oControl + "' is in async mode and not loaded yet");
-					return false;
+			var oBundle;
+			if (bUseLibraryBundle) {
+				var sLibraryName = oControl.getMetadata().getLibraryName();
+
+				oBundle = sap.ui.getCore().getLibraryResourceBundle(sLibraryName);
+			} else {
+				oBundle = oModel.getResourceBundle();
+
+				if (oBundle instanceof oAppWindow.Promise) {
+					if (oModel._oResourceBundle instanceof oAppWindow.Object && oModel._oResourceBundle.getText) {
+						// we access the loaded bundle from the internal variable of the resource model
+						// ... instead of using the asynchronous promises which is no option for a synchronous matcher
+						// !!! we have a qunit in place that ensures this internal implementation of the ResourceModel
+						oBundle = oModel._oResourceBundle;
+					} else {
+						this._oLogger.debug("The model '" + sModelName + "' of '" + oControl + "' is in async mode and not loaded yet");
+						return false;
+					}
 				}
 			}
 

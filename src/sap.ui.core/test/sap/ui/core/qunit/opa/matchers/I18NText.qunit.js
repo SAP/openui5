@@ -164,6 +164,28 @@ sap.ui.define([
 		assert.ok(bResult, "Did match");
 	});
 
+	QUnit.test("Should match when using the use library bundle flag", function(assert){
+		this.oButton.setText("OK");
+		this.oMatcher.setUseLibraryBundle(true);
+		this.oMatcher.setPropertyName("text");
+		this.oMatcher.setKey("VIEWSETTINGS_ACCEPT");
+
+		// Act
+		var bResult = this.oMatcher.isMatching(this.oButton);
+		// Assert
+		assert.ok(bResult, "Did match");
+	});
+
+	QUnit.test("Should not match when use library bundle flag is not set", function(assert){
+		this.oButton.setText("OK");
+		this.oMatcher.setPropertyName("text");
+		this.oMatcher.setKey("VIEWSETTINGS_ACCEPT");
+
+		// Act
+		var bResult = this.oMatcher.isMatching(this.oButton);
+		// Assert
+		assert.ok(!bResult, "Did match");
+	});
 
 	/**
 	 *

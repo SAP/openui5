@@ -65,6 +65,20 @@ sap.ui.require([
 			errorMessage: "Failed to find the load button"
 		});
 
+		Then.waitFor({
+			viewName: "Main",
+			controlType: "sap.m.Button",
+			matchers: new I18NText({
+				propertyName: "text",
+				key: "VIEWSETTINGS_ACCEPT",
+				useLibraryBundle: true
+			}),
+			success: function () {
+				Opa5.assert.ok(true, "Found the OK button");
+			},
+			errorMessage: "Failed to find the OK button"
+		});
+
 		// Tear down should always be done in real use case
 		// In this sample we commented it out so you can see the result.
 		// If no globals is activated,

@@ -4,8 +4,9 @@ sap.ui.define([
 	"./Common",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/matchers/AggregationLengthEquals",
-	"sap/ui/test/matchers/AggregationFilled"
-], function (Opa5, Press, Common, EnterText, AggregationLengthEquals, AggregationFilled) {
+	"sap/ui/test/matchers/AggregationFilled",
+	"sap/ui/test/matchers/I18NText"
+], function (Opa5, Press, Common, EnterText, AggregationLengthEquals, AggregationFilled, I18NText) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -31,7 +32,7 @@ sap.ui.define([
 				},
 
 				iRemoveListGrouping: function () {
-					return this.iChooseASorter("groupButton", "VIEWSETTINGS_NONE_ITEM", "sap.m");
+					return this.iChooseASorter("groupButton", "VIEWSETTINGS_NONE_ITEM", true);
 				},
 				iOpenViewSettingsDialog: function () {
 					return this.waitFor({
@@ -118,24 +119,28 @@ sap.ui.define([
 					});
 				},
 
-				iChooseASorter: function (sSelect, sSort, sLibrary) {
+				iChooseASorter: function (sSelect, sSort, bLibrary) {
 					return this.waitFor({
 						id: sSelect,
 						actions: new Press(),
 						success: function () {
 							this.waitFor({
 								controlType: "sap.m.StandardListItem",
-								matchers: function(oControl){
-									return this.I18NTextExtended(oControl, sSort, "title", sLibrary);
-								}.bind(this),
+								matchers: new I18NText({
+									propertyName: "title",
+									key: sSort,
+									useLibraryBundle: bLibrary
+								}),
 								searchOpenDialogs: true,
 								actions: new Press(),
 								success: function () {
 									this.waitFor({
 										controlType: "sap.m.Button",
-										matchers: function(oControl){
-											return this.I18NTextExtended(oControl, "VIEWSETTINGS_ACCEPT", "text", "sap.m");
-										}.bind(this),
+										matchers: new I18NText({
+											propertyName: "text",
+											key: "VIEWSETTINGS_ACCEPT",
+											useLibraryBundle: true
+										}),
 										searchOpenDialogs: true,
 										actions: new Press(),
 										errorMessage: "The ok button in the dialog was not found and could not be pressed"
