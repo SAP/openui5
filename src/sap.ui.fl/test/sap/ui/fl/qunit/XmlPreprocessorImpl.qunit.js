@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
 	"sap/base/Log",
+	"sap/ui/core/Component",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
 ],
@@ -17,6 +18,7 @@ function(
 	FlexControllerFactory,
 	Utils,
 	Log,
+	Component,
 	sinon,
 	jQuery
 ) {
@@ -58,7 +60,7 @@ function(
 				return Promise.resolve(oView);
 			}
 		});
-		sandbox.stub(sap.ui.getCore(), "getComponent").returns(oMockedComponent);
+		sandbox.stub(Component, "get").returns(oMockedComponent);
 		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 		sandbox.stub(Utils, "getComponentName").returns(sFlexReference);
 		sandbox.stub(Utils, "isApplication").returns(true);
@@ -95,7 +97,7 @@ function(
 				return Promise.resolve(oView);
 			}
 		});
-		sandbox.stub(sap.ui.getCore(), "getComponent").returns(oMockedComponent);
+		sandbox.stub(Component, "get").returns(oMockedComponent);
 		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 		sandbox.stub(Utils, "getComponentName").returns(sFlexReference);
 		sandbox.stub(Utils, "isApplication").returns(true);
@@ -120,7 +122,7 @@ function(
 			getManifestEntry: function () {}
 		};
 		var oChangePersistence = new ChangePersistence({name: sFlexReference});
-		sandbox.stub(sap.ui.getCore(), "getComponent");
+		sandbox.stub(Component, "get");
 		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 		sandbox.stub(Utils, "getComponentName");
 		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
@@ -150,7 +152,7 @@ function(
 			},
 			getManifestEntry: function () {}
 		};
-		sandbox.stub(sap.ui.getCore(), "getComponent");
+		sandbox.stub(Component, "get");
 		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 
 		return XmlPreprocessorImpl.getCacheKey(mProperties).then(function (response) {
@@ -200,7 +202,7 @@ function(
 				return Promise.resolve(oView);
 			}
 		});
-		sandbox.stub(sap.ui.getCore(), "getComponent").returns(oMockedComponent);
+		sandbox.stub(Component, "get").returns(oMockedComponent);
 		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 		sandbox.stub(Utils, "isApplication").returns(true);
 		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
@@ -262,7 +264,7 @@ function(
 			}
 		};
 
-		sandbox.stub(sap.ui.getCore(), "getComponent").returns(oMockedAppComponent);
+		sandbox.stub(Component, "get").returns(oMockedAppComponent);
 		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 		sandbox.stub(Utils, "isApplication").returns(true);
 

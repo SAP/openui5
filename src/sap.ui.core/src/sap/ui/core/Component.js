@@ -2316,9 +2316,9 @@ sap.ui.define([
 		if (typeof vConfig === 'string') {
 			Log.warning("Do not use deprecated function 'sap.ui.component' (" + vConfig + ") + for Component instance lookup. " +
 				"Use 'Component.get' instead", "sap.ui.component", null, fnLogProperties.bind(null, vConfig));
-			// when only a string is given then this function behaves like a
+			// when only a string is given, then this function behaves like a
 			// getter and returns an existing component instance
-			return sap.ui.getCore().getComponent(vConfig);
+			return Component.get(vConfig);
 		}
 
 		if (vConfig.async) {
@@ -2561,7 +2561,7 @@ sap.ui.define([
 	 */
 	Component.get = function (sId) {
 		// lookup and return the component
-		return sap.ui.getCore().getComponent(sId);
+		return Component.registry.get(sId);
 	};
 
 	/**
