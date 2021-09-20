@@ -207,7 +207,7 @@ sap.ui.define([
 		var oCondition = this._createCondition(oValues.key, oValues.description, oValues.inParameters, oValues.outParameters);
 		this.fireSelect({type: sSelectType, conditions: [oCondition]});
 		if (this.isTypeahead()) {
-			this.fireConfirm();
+			this.fireConfirm({close: true});
 		}
 	};
 
