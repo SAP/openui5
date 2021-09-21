@@ -114,6 +114,8 @@ sap.ui.define([
 
 		ListContent.prototype.init.apply(this, arguments);
 
+		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+
 		this._oObserver.observe(this, {
 			aggregations: ["_defaultFilterBar", "filterBar"],
 			properties: ["_inConditions"]
@@ -173,6 +175,7 @@ sap.ui.define([
 		var sDescriptionPath = (oOptions && oOptions.descriptionPath) || this.getDescriptionPath();
 		var vKey;
 		var sDescription;
+		var sPath;
 
 		if (!sKeyPath) {
 			throw new Error("KeyPath missing"); // as we cannot determine key without keyPath
@@ -180,7 +183,7 @@ sap.ui.define([
 
 		var aInParameters = oOptions && oOptions.inParameters || [];
 		if (aInParameters.length === 0) {
-			for ( var sPath in this.getProperty("_inConditions")) {
+			for (sPath in this.getProperty("_inConditions")) {
 				aInParameters.push(sPath);
 			}
 		}
@@ -188,7 +191,6 @@ sap.ui.define([
 		var aOutParameters = oOptions && oOptions.outParameters || this.getProperty("_outParameters");
 		var oInParameters = aInParameters.length > 0 ? {} : null;
 		var oOutParameters = aOutParameters.length > 0 ? {} : null;
-		var sPath;
 
 		if (oBindingContext) {
 			vKey = sKeyPath ? oBindingContext.getProperty(sKeyPath) : undefined;
@@ -510,6 +512,23 @@ sap.ui.define([
 		}
 
 	}
+
+	FilterableListContent.prototype.getFormattedTitle = function(iCount) {
+		var sTitle = ListContent.prototype.getFormattedTitle.apply(this, arguments);
+		if (!sTitle) {
+			sTitle = this._oResourceBundle.getText(iCount ? "valuehelp.SELECTFROMLIST" : "valuehelp.SELECTFROMLISTNONUMBER", iCount);
+		}
+		return sTitle;
+	};
+
+	FilterableListContent.prototype.getFormattedSubTitle = function() {
+		var sSubTitle = this.getSubTitle();
+		if (!sSubTitle) {
+			sSubTitle = this._oResourceBundle.getText("valuehelp.SELECTFROMLIST.Subtitle");
+		}
+		return sSubTitle;
+	};
+
 
 	return FilterableListContent;
 

@@ -82,7 +82,7 @@
 							</mdc:typeahead>
 							<mdc:dialog>
 								<mdcv:Dialog title="Order Number">
-									<mdcvc:MTable title="Select from List" subTitle="Select" keyPath="OrderNo" filterFields="$search">
+									<mdcvc:MTable keyPath="OrderNo" filterFields="$search">
 										<mdcvc:filterBar>
 											<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {}}">
 												<vhfb:basicSearchField>
@@ -123,7 +123,7 @@
 										</Table>
 									</mdcvc:MTable>
 
-									<mdcvc:MDCTable title="Select from List" subTitle="Select" keyPath="OrderNo" filterFields="$search">
+									<mdcvc:MDCTable keyPath="OrderNo" filterFields="$search">
 										<mdcvc:filterBar>
 											<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {}}">
 												<vhfb:basicSearchField>
@@ -162,7 +162,7 @@
 										</mdc:Table>
 									</mdcvc:MDCTable>
 
-									<mdcvc:Conditions title="Define Conditions" subTitle="Conditions" label="Order Number"/>
+									<mdcvc:Conditions label="Order Number"/>
 								</mdcv:Dialog>
 							</mdc:dialog>
 						</mdc:ValueHelp>

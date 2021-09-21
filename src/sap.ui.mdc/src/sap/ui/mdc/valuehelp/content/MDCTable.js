@@ -296,7 +296,7 @@ sap.ui.define([
 
 	var handleTableHeader = function () {
 		if (this._oTable && !this._oTable.getHeader()) {
-			this._oTable.setHeader(this.getModel("$i18n").getResourceBundle().getText("valuehelp.TABLETITLENONUMBER"));
+			this._oTable.setHeader( this._oResourceBundle.getText("valuehelp.TABLETITLENONUMBER"));
 		}
 	};
 

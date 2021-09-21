@@ -56,7 +56,7 @@ sap.ui.define([
 
 			// if (!oCurrentContent) {
 
-			// 	oCurrentContent = new MTable({title: "Select from List", keyPath: "ID", descriptionPath: "name", collectiveSearchItems: [
+			// 	oCurrentContent = new MTable({keyPath: "ID", descriptionPath: "name", collectiveSearchItems: [
 			// 		new sap.ui.core.Item({text: "Default Search Template", key: "default"}),
 			// 		new sap.ui.core.Item({text: "Search Template 1", key: "template1"})
 			// 	]});
@@ -64,8 +64,6 @@ sap.ui.define([
 			// 	oContainer.addContent(oCurrentContent);
 
 			// 	// var oAdditionalContent = new Conditions({
-			// 	// 	title:"Define Conditions",
-			// 	// 	subTitle:"Conditions",
 			// 	// 	label:"Label of Field"
 			// 	// });
 			// 	// oContainer.addContent(oAdditionalContent);

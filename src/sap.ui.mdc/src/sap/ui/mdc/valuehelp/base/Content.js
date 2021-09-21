@@ -9,7 +9,8 @@ sap.ui.define([
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/condition/Operator',
-	'sap/ui/mdc/enum/ConditionValidated'
+	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/base/strings/formatMessage'
 ], function(
 	Element,
 	PromiseMixin,
@@ -17,7 +18,8 @@ sap.ui.define([
 	Condition,
 	FilterOperatorUtil,
 	Operator,
-	ConditionValidated
+	ConditionValidated,
+	formatMessage
 ) {
 	"use strict";
 
@@ -410,6 +412,18 @@ sap.ui.define([
 	function _getOperator() {
 		return this._oOperator;
 	}
+
+	Content.prototype.getFormattedTitle = function(iCount) {
+		var sTitle = this.getTitle();
+		if (sTitle) {
+			sTitle = formatMessage(sTitle, iCount ? iCount : "");
+		}
+		return sTitle;
+	};
+
+	Content.prototype.getFormattedSubTitle = function() {
+		return this.getSubTitle();
+	};
 
 	Content.prototype._getMaxConditions = function() {
 
