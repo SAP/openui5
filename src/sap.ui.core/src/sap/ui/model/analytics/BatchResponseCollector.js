@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 /**
  * Internal Component of the AnalyticalBinding, only used there
  *

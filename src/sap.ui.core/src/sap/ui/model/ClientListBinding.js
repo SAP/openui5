@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides the JSON model implementation of a list binding
 sap.ui.define([
 	'./ChangeReason',

@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], function(DataState, deepEqual, each) {
 	"use strict";
 

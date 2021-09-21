@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides a filter for list bindings
 sap.ui.define([
 	'sap/ui/base/Object',

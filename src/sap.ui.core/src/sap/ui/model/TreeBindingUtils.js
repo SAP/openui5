@@ -1,6 +1,7 @@
 /*!
  * ${copyright}
  */
+/*eslint-disable max-len */
 sap.ui.define(function() {
 	"use strict";
 

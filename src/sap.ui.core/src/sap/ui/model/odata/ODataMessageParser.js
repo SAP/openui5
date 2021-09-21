@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 sap.ui.define([
 	"sap/ui/model/odata/ODataMetadata",
 	"sap/ui/model/odata/ODataUtils",

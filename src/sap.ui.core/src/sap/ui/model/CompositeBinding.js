@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides an abstract property binding.
 sap.ui.define([
 	"./BindingMode",

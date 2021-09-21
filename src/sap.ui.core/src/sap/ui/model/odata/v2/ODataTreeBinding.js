@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides the OData model implementation of a tree binding
 sap.ui.define([
 	"sap/base/assert",

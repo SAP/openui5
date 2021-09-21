@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides the XML model implementation of a list binding
 sap.ui.define([
 	'sap/ui/model/ChangeReason',

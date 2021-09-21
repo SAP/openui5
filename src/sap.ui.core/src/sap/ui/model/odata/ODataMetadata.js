@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 
 
 // Provides class sap.ui.model.odata.ODataMetadata

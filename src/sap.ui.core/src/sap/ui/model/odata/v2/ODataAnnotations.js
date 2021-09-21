@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides class sap.ui.model.odata.v2.ODataAnnotations
 sap.ui.define([
 	"sap/base/assert",

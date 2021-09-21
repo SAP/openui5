@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides the base implementation for all composite type implementations
 sap.ui.define(['./SimpleType'],
 	function (SimpleType) {

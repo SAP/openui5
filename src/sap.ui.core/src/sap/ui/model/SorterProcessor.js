@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 sap.ui.define(['./Sorter', "sap/base/util/each"],
 	function(Sorter, each) {
 	"use strict";
