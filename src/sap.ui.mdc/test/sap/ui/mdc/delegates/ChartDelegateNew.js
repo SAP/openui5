@@ -112,11 +112,10 @@ sap.ui.define([
         return new Promise(function (resolve, reject) {
 
             this._loadChart().then(function (aModules) {
+
                 this._oInnerChart = new Chart({});
                 resolve(this._oInnerChart);
-            }.bind(this)).then(function() {
-                oMDCChart._innerChartDataLoadComplete();
-            });
+            }.bind(this));
         }.bind(this));
     };
 
