@@ -8,16 +8,16 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new TableTypeBase.
+	 * Constructor for a new <code>TableTypeBase</code>.
 	 *
-	 * @param {string} [sId] ID for the new object, generated automatically if no ID is given
+	 * @param {string} [sId] Optional ID for the new object; generated automatically if no non-empty ID is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 * @class The table type info base class for the metadata driven table. Dummy/Base class with no implementation.
-	 *        <h3><b>Note:</b></h3>
-	 *        The control is experimental and the API/behaviour is not finalised and hence this should not be used for productive usage.
 	 * @extends sap.ui.core.Element
 	 * @author SAP SE
 	 * @private
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
 	 * @abstract
 	 * @experimental
 	 * @since 1.65

@@ -697,6 +697,7 @@ sap.ui.define([
 	 * @name sap.ui.mdc.IFilterSource
 	 * @interface
 	 * @private
+	 * @ui5-restricted sap.fe
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
@@ -824,6 +825,8 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @private
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
 	 * @since 1.62
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -865,6 +868,8 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * MDC_PUBLIC_CANDIDATE
 	 * @since 1.65
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -895,6 +900,8 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * MDC_PUBLIC_CANDIDATE
 	 * @since 1.65
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -986,6 +993,8 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * MDC_PUBLIC_CANDIDATE
 	 * @since 1.58
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1012,6 +1021,8 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * MDC_PUBLIC_CANDIDATE
 	 * @since 1.60
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */

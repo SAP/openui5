@@ -33,11 +33,11 @@ sap.ui.define([
 	var TableMap = new window.WeakMap(); // To store table-related information for easy access in the delegate.
 
 	/**
-	 * Delegate class for sap.ui.mdc.Table and ODataV4.
+	 * Delegate class for <code>sap.ui.mdc.Table</code> and <code>ODataV4</code>.
 	 * Enables additional analytical capabilities.
-	 * <b>Note:</b> The class is experimental and the API/behavior is not finalized.
 	 *
 	 * @author SAP SE
+	 * @experimental
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
@@ -47,12 +47,30 @@ sap.ui.define([
 	var Delegate = Object.assign({}, TableDelegate);
 
 	/**
-	 * Fetches the model-specific property helper class or instance.
+	 * Fetches the model-specific <code>PropertyHelper</code> class or instance.
+	 *
+	 * <b>Note:</b> The PropertyHelper adds the extension of a property to the reserved attribute "extension". It is not allowed to add an "extension"
+	 * attribute in the standard property infos.
+	 *
+	 * @example <caption>Initialize a PropertyHelper with extensions:</caption>
+	 * new PropertyHelper(
+	 *     [{
+	 *         name: "propA",
+	 *         label: "Property A",
+	 *         extension: {
+	 *             messageType: "Success"
+	 *         }
+	 *     }, {
+	 *         name: "propB",
+	 *         label: "Property B"
+	 *     }]
+	 * )
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
 	 * @param {object[]} aProperties The property infos
 	 * @param {Promise<object<string, object>|null>} mExtensions The property extensions
-	 * @returns {Promise<sap.ui.mdc.table.V4AnalyticsPropertyHelper>} A promise that resolves with the property helper class or instance
+	 * @returns {Promise<sap.ui.mdc.table.V4AnalyticsPropertyHelper>} A <code>Promise</code> that resolves with the <code>PropertyHelper</code> class
+	 * or instance
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
@@ -64,7 +82,11 @@ sap.ui.define([
 
 	/**
 	 * Fetches the property extensions.
-	 * TODO: document structure of the extension
+	 *
+	 * <b>Note:</b> Property extensions are adding model-specific information. To ensure a clear separation from the standard property information,
+	 * the extensions need to be passed separately to the constructor, together with their attribute metadata. An extension has to be provided as a
+	 * key-value pair, where the key is the name of the property and the value is the extension of this property. It is not allowed to provide
+	 * extensions without the corresponding attribute metadata.
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
 	 * @param {object[]} aProperties The property infos
@@ -77,11 +99,11 @@ sap.ui.define([
 
 	/**
 	 * Retrieves the relevant metadata that will be used for the table binding, and returns the property info array.
-	 * If not overriden, this method return the same as <code>fetchProperties</code>.
-	 * When overridding, make sure the returned result is consistent with what is returned by <code>fetchProperties</code>.
+	 * If it is not overridden, this method returns the same as <code>fetchProperties</code>.
+	 * When overriding the method make sure the returned result is consistent with what is returned by <code>fetchProperties</code>.
 	 *
-	 * @param {Object} oControl MDC Control instance
-	 * @returns {Promise} Once resolved, an array of property info objects is returned
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @returns {Promise} Once resolved, an array of <code>PropertyInfo</code> objects is returned
 	 * @protected
 	*/
 	Delegate.fetchPropertiesForBinding = function(oTable) {
@@ -90,8 +112,8 @@ sap.ui.define([
 
 	/**
 	 * Fetches the property extensions that will be used for the table binding.
-	 * If not overriden, this method eturn the same as <code>fetchPropertyExtensions</code>.
-	 * When overridding, make sure the returned result is consistent with what is returned by <code>fetchPropertyExtensions</code>.
+	 * If it is not overridden, this method returns the same as <code>fetchPropertyExtensions</code>.
+	 * When overriding the method make sure the returned result is consistent with what is returned by <code>fetchPropertyExtensions</code>.
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
 	 * @param {object[]} aProperties The property infos
@@ -109,6 +131,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} oContext Binding context
 	 * @param {string} sProperty The name of the grouped property
 	 * @returns {string | undefined} The group header title. If <code>undefined</code> is returned, the default group header title is set.
+	 * @private
 	 */
 	Delegate.formatGroupHeader = function(oTable, oContext, sProperty) {};
 
@@ -183,7 +206,7 @@ sap.ui.define([
 	 * <b>Note:</b> To remove a binding info parameter, the value must be set to <code>undefined</code>. For more information, see
 	 * {@link sap.ui.model.odata.v4.ODataListBinding#changeParameters}.
 	 *
-	 * @param {sap.ui.mdc.Table} oMDCTable The MDC table instance
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
 	 * @param {object} oDelegatePayload The delegate payload
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
 	 * @function
@@ -201,7 +224,7 @@ sap.ui.define([
 	 * <code>model</code>... must be provided in the {@link #updateBindingInfo updateBindingInfo} method always,
 	 * and those keys must not be changed conditionally.
 	 *
-	 * @param {sap.ui.mdc.Table} oMDCTable The MDC table instance
+	 * @param {sap.ui.mdc.Table} oMDCTable Instance of the MDC table
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model.
 	 * @param {sap.ui.model.ListBinding} [oBinding] The binding instance of the table
 	 * @protected
@@ -557,9 +580,9 @@ sap.ui.define([
 	/**
 	 * Compares the message type and returns the message with higher priority.
 	 *
-	 * @param {Object} oBaseState message set by the base table delegate.
-	 * @param {Object} oValidationState message set by the odata v4 delegate.
-	 * @return {Object} A message with higher priority.
+	 * @param {Object} oBaseState Message set by the base <code>TableDelegate</code>
+	 * @param {Object} oValidationState Message set by the <code>ODataV4Delegate</code>
+	 * @return {Object} The message with higher priority
 	 * @private
 	 */
 	function mergeValidation(oBaseState, oValidationState) {
@@ -573,10 +596,10 @@ sap.ui.define([
 	}
 
 	/**
-	 * Configures the inner table to support the p13n settings of the MDC table.
+	 * Configures the inner table to support the personalization settings of the MDC table.
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
-	 * @return {Promise} A promise that revolves when the inner table is configured
+	 * @return {Promise} A <code>Promise</code> that revolves when the inner table is configured
 	 */
 	function configureInnerTable(oTable) {
 		return oTable._isOfType(TableType.Table) ? configureGridTable(oTable) : configureResponsiveTable(oTable);

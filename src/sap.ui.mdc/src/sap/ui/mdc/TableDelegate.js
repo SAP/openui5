@@ -12,21 +12,22 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Base delegate class for sap.ui.mdc.Table.<br>
-	 * <b>Note:</b> The class is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
+	 * Base delegate class for <code>sap.ui.mdc.Table</code>.
 	 *
 	 * @author SAP SE
-	 * @private
 	 * @experimental
 	 * @since 1.60
 	 * @alias sap.ui.mdc.TableDelegate
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
 	 */
 	var TableDelegate = Object.assign({}, AggregationBaseDelegate);
 
 	/**
-	 * Provides hook to update the binding info object that is used to bind the table to the model.
+	 * Provides a hook to update the binding info object that is used to bind the table to the model.
 	 *
-	 * @param {sap.ui.mdc.Table} oMDCTable The MDC table instance
+	 * @param {sap.ui.mdc.Table} oMDCTable Instance of the MDC table
 	 * @param {object} oDelegatePayload The delegate payload
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
 	 * @protected
@@ -45,9 +46,10 @@ sap.ui.define([
 	/**
 	 * Updates the row binding of the table.
 	 *
-	 * The default implementation rebinds the table but model-specific subclasses must call dedicated binding methods to update the binding instead of using {@link #rebindTable}.
+	 * The default implementation rebinds the table, but model-specific subclasses must call dedicated binding methods to update the binding instead
+	 * of using {@link #rebindTable}.
 	 *
-	 * @param {sap.ui.mdc.Table} oMDCTable The MDC table instance
+	 * @param {sap.ui.mdc.Table} oMDCTable Instance of the MDC table
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
 	 * @param {sap.ui.model.ListBinding} [oBinding] The binding instance of the table
 	 * @protected
@@ -71,7 +73,7 @@ sap.ui.define([
 	/**
 	 * Rebinds the table.
 	 *
-	 * @param {sap.ui.mdc.Table} oMDCTable The MDC table instance
+	 * @param {sap.ui.mdc.Table} oMDCTable Instance of the MDC table
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
 	 * @protected
 	 */
@@ -82,9 +84,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Provides the table's filter delegate that provides basic filter functionality such as adding filter fields.
-	 * <b>Note:</b> The functionality provided in this delegate should act as a subset of a FilterBarDelegate
-	 * to enable the table for inbuilt filtering.
+	 * Returns the filter delegate of the table that provides basic filter functionality such as adding filter fields.
+	 * <b>Note:</b> The functionality provided in this delegate should act as a subset of a <code>FilterBarDelegate</code> to enable the
+	 * table for inbuilt filtering.
 	 *
 	 * @example <caption>Example usage of <code>getFilterDelegate</code></caption>
 	 * oFilterDelegate = {

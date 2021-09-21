@@ -8,17 +8,17 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new Column.
+	 * Constructor for a new <code>Column</column>.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {string} [sId] Optional ID for the new object; generated automatically if no non-empty ID is given
 	 * @param {object} [mSettings] initial settings for the new control
-	 * @class The column for the metadata driven table, that hold the template to be shown when the rows has data.
-	 *        <h3><b>Note:</b></h3>
-	 *        The control is experimental and the API/behaviour is not finalised and hence this should not be used for productive usage.
+	 * @class The column for the metadata driven table, that holds the template to be shown when the rows has data.
 	 * @extends sap.ui.core.Element
 	 * @author SAP SE
 	 * @private
 	 * @experimental
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
 	 * @since 1.58
 	 * @alias sap.ui.mdc.table.Column
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -29,16 +29,25 @@ sap.ui.define([
 			library: "sap.ui.mdc",
 			defaultAggregation: "template",
 			properties: {
+				/**
+				 * Width of the column
+				 */
 				width: {
 					type: "sap.ui.core.CSSSize",
 					group: "Dimension",
 					defaultValue: null
 				},
+				/**
+				 * Minimal width of the column
+				 */
 				minWidth: {
 					type: "float",
 					group: "Behavior",
 					defaultValue: 8
 				},
+				/**
+				 * The column header text
+				 */
 				header: {
 					type: "string"
 				},
@@ -51,10 +60,16 @@ sap.ui.define([
 					group: "Misc",
 					defaultValue: true
 				},
+				/**
+				 * Horizontal alignment of the content
+				 */
 				hAlign: {
 					type: "sap.ui.core.HorizontalAlign",
 					defaultValue: "Begin"
 				},
+				/**
+				 * Importance of the column. It is used to show or hide the column based on the <code>MDCTable</code> configuration.
+				 */
 				importance: {
 					type: "sap.ui.core.Priority",
 					group: "Behavior",
@@ -68,16 +83,26 @@ sap.ui.define([
 					type: "int",
 					defaultValue: -1
 				},
+				/**
+				 * The data property related to the column
+				 */
 				dataProperty: {
 					type: "string"
 				}
 			},
 			events: {},
 			aggregations: {
+				/**
+				 * Template for the column
+				 */
 				template: {
 					type: "sap.ui.core.Control",
 					multiple: false
 				},
+				/**
+				 * <code>CreationRow</code> template
+				 * <b>Note:</b> Once the binding implements support for creating transient records, this aggregation will be removed.
+				 */
 				creationTemplate: {
 					type: "sap.ui.core.Control",
 					multiple: false
@@ -213,10 +238,10 @@ sap.ui.define([
 
 	/**
 	 * Creates and returns the column header control.
-	 * If <code>headerVisible=false</code> then, <code>width=0px</code> is applied to the sap.m.Label control for accessibility purpose.
-	 * @param {boolean} bMobileTable - indicates the type of the table
-	 * @param {boolean} bResizing - indicates whether the column is resizable
-	 * @returns {object} column header control
+	 * If <code>headerVisible=false</code> then, <code>width=0px</code> is applied to the <code>sap.m.Label</code> control for accessibility purpose.
+	 * @param {boolean} bMobileTable The type of the table
+	 * @param {boolean} bResizing Indicates whether the column is resizable
+	 * @returns {object} The column header control
 	 * @private
 	 */
 	Column.prototype.getColumnHeaderControl = function(bMobileTable, bResizing) {
