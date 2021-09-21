@@ -196,34 +196,40 @@ sap.ui.define(['./Filter', 'sap/base/Log'],
 					bResult = false;
 					break;
 				}
-			} else {
+			} else if (bMatch) {
 				// if operator is OR, first matching filter breaks
-				if (bMatch) {
-					bResult = true;
-					break;
-				}
+				bResult = true;
+				break;
 			}
 		}
 		return bResult;
 	};
 
 	/**
-	 * Normalize filter value
+	 * Normalize filter value.
+	 *
+	 * @param {any} vValue
+	 *   The value to normalize
+	 * @param {boolean} [bCaseSensitive=false]
+	 *   Whether the case should be considered when normalizing; only relevant when
+	 *   <code>oValue</code> is a string
+	 *
+	 * @returns {any} The normalized value
 	 *
 	 * @private
 	 * @static
 	 */
-	FilterProcessor.normalizeFilterValue = function(oValue, bCaseSensitive){
+	FilterProcessor.normalizeFilterValue = function(vValue, bCaseSensitive){
 		var sResult;
 
-		if (typeof oValue == "string") {
+		if (typeof vValue == "string") {
 			if (bCaseSensitive === undefined) {
 				bCaseSensitive = false;
 			}
-			if (this._normalizeCache[bCaseSensitive].hasOwnProperty(oValue)) {
-				return this._normalizeCache[bCaseSensitive][oValue];
+			if (this._normalizeCache[bCaseSensitive].hasOwnProperty(vValue)) {
+				return this._normalizeCache[bCaseSensitive][vValue];
 			}
-			sResult = oValue;
+			sResult = vValue;
 			if (!bCaseSensitive) {
 				sResult = sResult.toUpperCase();
 			}
@@ -232,17 +238,21 @@ sap.ui.define(['./Filter', 'sap/base/Log'],
 			// http://www.w3.org/TR/2012/WD-charmod-norm-20120501/#sec-ChoiceNFC
 			sResult = sResult.normalize("NFC");
 
-			this._normalizeCache[bCaseSensitive][oValue] = sResult;
+			this._normalizeCache[bCaseSensitive][vValue] = sResult;
 			return sResult;
 		}
-		if (oValue instanceof Date) {
-			return oValue.getTime();
+		if (vValue instanceof Date) {
+			return vValue.getTime();
 		}
-		return oValue;
+		return vValue;
 	};
 
 	/**
-	 * Provides a JS filter function for the given filter
+	 * Provides a JS filter function for the given filter.
+	 *
+	 * @param {sap.ui.model.Filter} oFilter The filter to provide the function for
+	 *
+	 * @returns {function} The filter function
 	 * @private
 	 * @static
 	 */

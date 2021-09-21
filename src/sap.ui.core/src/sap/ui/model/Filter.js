@@ -14,22 +14,27 @@ sap.ui.define([
 	/**
 	 * Constructor for Filter.
 	 *
-	 * You either pass a single object literal with the filter parameters or use the individual constructor arguments.
-	 * No matter which variant is used, only certain combinations of parameters are supported
-	 * (the following list uses the names from the object literal):
+	 * You either pass a single object literal with the filter parameters or use the individual
+	 * constructor arguments. No matter which variant is used, only certain combinations of
+	 * parameters are supported (the following list uses the names from the object literal):
 	 * <ul>
-	 * <li>A <code>path</code>, <code>operator</code> and one or two values (<code>value1</code>, <code>value2</code>), depending on the operator</li>
+	 * <li>A <code>path</code>, <code>operator</code> and one or two values (<code>value1</code>,
+	 *   <code>value2</code>), depending on the operator</li>
 	 * <li>A <code>path</code> and a custom filter function <code>test</code></li>
-	 * <li>An array of other filters named <code>filters</code> and a Boolean flag <code>and</code> that specifies whether to combine
-	 *     the filters with an AND (<code>true</code>) or an OR (<code>false</code>) operator.</li>
+	 * <li>An array of other filters named <code>filters</code> and a Boolean flag <code>and</code>
+	 *   that specifies whether to combine the filters with an AND (<code>true</code>) or an OR
+	 *   (<code>false</code>) operator.</li>
 	 * </ul>
 	 * An error will be logged to the console if an invalid combination of parameters is provided.
-	 * Please note that a model implementation may not support a custom filter function, e.g. if the model does not perform client side filtering.
-	 * It also depends on the model implementation if the filtering is case sensitive or not. Client models filter case insensitive compared to the
+	 * Please note that a model implementation may not support a custom filter function, e.g. if the
+	 * model does not perform client side filtering. It also depends on the model implementation if
+	 * the filtering is case sensitive or not. Client models filter case insensitive compared to the
 	 * OData models which filter case sensitive by default.
 	 * See particular model documentation for details
-	 * The filter operators <code>Any</code> and <code>All</code> are only supported in V4 OData models.
-	 * When creating a filter instance with these filter operators, the argument <code>variable</code> only accepts a string identifier and <code>condition</code> needs to be another filter instance.
+	 * The filter operators <code>Any</code> and <code>All</code> are only supported in V4 OData
+	 * models. When creating a filter instance with these filter operators, the argument
+	 * <code>variable</code> only accepts a string identifier and <code>condition</code> needs to be
+	 * another filter instance.
 	 *
 	 * @example <caption>Using an object with a path, an operator and one or two values</caption>
 	 *
@@ -71,8 +76,10 @@ sap.ui.define([
 	 *     and: true|false
 	 *   })
 	 *
-	 * @example <caption>The filter operators <code>Any</code> and <code>All</code> map to the OData V4 lambda operators <code>any</code> and <code>all</code>.
-	 * They take a variable and another filter as parameter and evaluate it on either a collection property or a collection of entities.</caption>
+	 * @example <caption>The filter operators <code>Any</code> and <code>All</code> map to the OData
+	 *   V4 lambda operators <code>any</code> and <code>all</code>. They take a variable and another
+	 *   filter as parameter and evaluate it on either a collection property or a collection of
+	 *   entities.</caption>
 	 *
 	 *   // find Orders where all of the 'Items' in the order have a 'Quantity' > 100
 	 *   // (assumes that Filter and FilterOperator have been declared as dependencies, see previous examples)
@@ -87,13 +94,16 @@ sap.ui.define([
 	 *     })
 	 *   });
 	 *
-	 * @example <caption>For the filter operator <code>Any</code> either both a lambda <code>variable</code> and a <code>condition</code> have to be given or neither.</caption>
+	 * @example <caption>For the filter operator <code>Any</code> either both a lambda
+	 *   <code>variable</code> and a <code>condition</code> have to be given or neither.</caption>
 	 *   new Filter({
 	 *     path: 'Items',
 	 *     operator: FilterOperator.Any
 	 *   });
 	 *
-	 * @example <caption>Legacy signature: Same as above, but using individual constructor arguments. Not supported for filter operators <code>Any</code> and <code>All</code>.</caption>
+	 * @example <caption>Legacy signature: Same as above, but using individual constructor
+	 *   arguments. Not supported for filter operators <code>Any</code> and <code>All</code>.
+	 *   </caption>
 	 *
 	 *     new sap.ui.model.Filter(sPath, sOperator, vValue1, vValue2);
 	 *   OR
@@ -104,21 +114,41 @@ sap.ui.define([
 	 * @class
 	 * Filter for the list binding.
 	 *
-	 * @param {object|string|sap.ui.model.Filter[]} vFilterInfo Filter info object or a path or an array of filters
-	 * @param {string} [vFilterInfo.path] Binding path for this filter
-	 * @param {function} [vFilterInfo.test] Function which is used to filter the items and which should return a Boolean value to indicate whether the current item passes the filter
-	 * @param {function} [vFilterInfo.comparator] Function which is used to compare two values, this is used for processing of equal, less than and greater than operators
-	 * @param {sap.ui.model.FilterOperator} [vFilterInfo.operator] Operator used for the filter
-	 * @param {any} [vFilterInfo.value1] First value to use with the given filter operator
-	 * @param {any} [vFilterInfo.value2=null] Second value to use with the filter operator (only for some operators)
-	 * @param {string} [vFilterInfo.variable] The variable used in lambda operators (<code>Any</code> and <code>All</code>)
-	 * @param {sap.ui.model.Filter} [vFilterInfo.condition] A <code>Filter</code> instance which will be used as the condition for the lambda operator
-	 * @param {sap.ui.model.Filter[]} [vFilterInfo.filters] Array of filters on which logical conjunction is applied
-	 * @param {boolean} [vFilterInfo.and=false] Indicates whether an "AND" logical conjunction is applied on the filters. If it's not set or set to <code>false</code>, an "OR" conjunction is applied
-	 * @param {boolean} [vFilterInfo.caseSensitive] Indicates whether a string value should be compared case sensitive or not.
-	 * @param {sap.ui.model.FilterOperator|function|boolean} [vOperator] Either a filter operator or a custom filter function or a Boolean flag that defines how to combine multiple filters
-	 * @param {any} [vValue1] First value to use with the given filter operator
-	 * @param {any} [vValue2] Second value to use with the given filter operator (only for some operators)
+	 * @param {object|string|sap.ui.model.Filter[]} vFilterInfo
+	 *   Filter info object or a path or an array of filters
+	 * @param {string} [vFilterInfo.path]
+	 *   Binding path for this filter
+	 * @param {function} [vFilterInfo.test]
+	 *   Function which is used to filter the items and which should return a Boolean value to
+	 *   indicate whether the current item passes the filter
+	 * @param {function} [vFilterInfo.comparator]
+	 *   Function which is used to compare two values, this is used for processing of equal, less
+	 *   than and greater than operators
+	 * @param {sap.ui.model.FilterOperator} [vFilterInfo.operator]
+	 *   Operator used for the filter
+	 * @param {any} [vFilterInfo.value1]
+	 *   First value to use with the given filter operator
+	 * @param {any} [vFilterInfo.value2=null]
+	 *   Second value to use with the filter operator (only for some operators)
+	 * @param {string} [vFilterInfo.variable]
+	 *   The variable used in lambda operators (<code>Any</code> and <code>All</code>)
+	 * @param {sap.ui.model.Filter} [vFilterInfo.condition]
+	 *   A <code>Filter</code> instance which will be used as the condition for the lambda operator
+	 * @param {sap.ui.model.Filter[]} [vFilterInfo.filters]
+	 *   Array of filters on which logical conjunction is applied
+	 * @param {boolean} [vFilterInfo.and=false]
+	 *   Indicates whether an "AND" logical conjunction is applied on the filters. If it's not set
+	 *   or set to <code>false</code>, an "OR" conjunction is applied
+	 * @param {boolean} [vFilterInfo.caseSensitive]
+	 *   Indicates whether a string value should be compared case sensitive or not.
+	 * @param {sap.ui.model.FilterOperator|function|boolean} [vOperator]
+	 *   Either a filter operator or a custom filter function or a Boolean flag that defines how to
+	 *   combine multiple filters
+	 * @param {any} [vValue1]
+	 *   First value to use with the given filter operator
+	 * @param {any} [vValue2]
+	 *   Second value to use with the given filter operator (only for some operators)
+	 *
 	 * @public
 	 * @alias sap.ui.model.Filter
 	 * @extends sap.ui.base.Object
@@ -173,18 +203,18 @@ sap.ui.define([
 				}
 			} else if (this.sOperator === FilterOperator.All) {
 				this._checkLambdaArgumentTypes();
-			} else {
-				// multi-filters
-				if (Array.isArray(this.aFilters) && !this.sPath && !this.sOperator && !this.oValue1 && !this.oValue2) {
-					this._bMultiFilter = true;
-					if ( !this.aFilters.every(isFilter) ) {
-						Log.error("Filter in Aggregation of Multi filter has to be instance of sap.ui.model.Filter");
-					}
-				} else if (!this.aFilters && this.sPath !== undefined && ((this.sOperator && this.oValue1 !== undefined) || this.fnTest)) {
-					this._bMultiFilter = false;
-				} else {
-					Log.error("Wrong parameters defined for filter.");
+			} else if (Array.isArray(this.aFilters) && !this.sPath && !this.sOperator
+					&& !this.oValue1 && !this.oValue2) {
+				this._bMultiFilter = true;
+				if ( !this.aFilters.every(isFilter) ) {
+					Log.error("Filter in Aggregation of Multi filter has to be instance of"
+						+ " sap.ui.model.Filter");
 				}
+			} else if (!this.aFilters && this.sPath !== undefined
+					&& ((this.sOperator && this.oValue1 !== undefined) || this.fnTest)) {
+				this._bMultiFilter = false;
+			} else {
+				Log.error("Wrong parameters defined for filter.");
 			}
 		}
 	});
@@ -237,7 +267,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns an AST for the filter
+	 * Returns an AST for the filter.
+	 *
+	 * @param {boolean} bIncludeOrigin Whether the origin should be included in the AST
+	 *
+	 * @returns {object} An AST for the filter
 	 * @private
 	 */
 	Filter.prototype.getAST = function (bIncludeOrigin) {
@@ -303,7 +337,7 @@ sap.ui.define([
 			sOp = this.bAnd ? Op.And : Op.Or;
 			sOrigOp = this.bAnd ? "AND" : "OR";
 			oResult = this.aFilters[this.aFilters.length - 1].getAST(bIncludeOrigin);
-			for (var i = this.aFilters.length - 2; i >= 0 ; i--) {
+			for (var i = this.aFilters.length - 2; i >= 0; i--) {
 				oResult = logical(sOp, this.aFilters[i].getAST(bIncludeOrigin), oResult);
 			}
 		} else { // other filter
