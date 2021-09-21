@@ -381,6 +381,19 @@ sap.ui.define([
 
 	};
 
+
+	/**
+	 * Determines if value help dialog should show the tokenizer for the content.
+	 *
+	 * @returns {boolean} if for one content the value is true, the dialog shows the tokenizer.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
+	 */
+	 Content.prototype.getRequiresTokenizer = function() {
+		return true;
+	};
+
 	function _configChanged(oConfig) {
 
 		_determineOperator.call(this, oConfig.operators);
