@@ -430,6 +430,24 @@ sap.ui.define([
 		assert.ok(this.oTPS._getHoursSlider().getId().indexOf("-listHours") !== -1, "id of the slider should contain listHours");
 	});
 
+	QUnit.test("_getHoursSlider should return TimePickerSlider if format creates Hours Slider with KK", function (assert) {
+		// arrange
+		this.oTPS.setDisplayFormat("KK:mm");
+
+		// assert
+		assert.ok(this.oTPS._getHoursSlider() instanceof sap.m.TimePickerSlider, "should be instance of sap.m.TimePickerSlider");
+		assert.ok(this.oTPS._getHoursSlider().getId().indexOf("-listHours") !== -1, "id of the slider should contain listHours");
+	});
+
+	QUnit.test("_getHoursSlider should return TimePickerSlider if format creates Hours Slider with K", function (assert) {
+		// arrange
+		this.oTPS.setDisplayFormat("K:mm");
+
+		// assert
+		assert.ok(this.oTPS._getHoursSlider() instanceof sap.m.TimePickerSlider, "should be instance of sap.m.TimePickerSlider");
+		assert.ok(this.oTPS._getHoursSlider().getId().indexOf("-listHours") !== -1, "id of the slider should contain listHours");
+	});
+
 	QUnit.test("_getMinutesSlider should return null if format does not create Minutes Slider", function (assert) {
 		// arrange
 		this.oTPS.setDisplayFormat("hh");

@@ -743,6 +743,15 @@ sap.ui.define([
 				bHours = true;
 				iFrom = 1;
 				iTo = 12;
+			} else if (sFormat.indexOf("KK") !== -1) {
+				bHours = true;
+				iFrom = 0;
+				iTo = 11;
+				bHoursTrailingZero = true;
+			} else if (sFormat.indexOf("K") !== -1) {
+				bHours = true;
+				iFrom = 0;
+				iTo = 11;
 			}
 
 			if (bHours) {

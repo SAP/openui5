@@ -1369,7 +1369,8 @@ function(
 			}
 
 			this.b24H = sDisplayFormat.indexOf("H") !== -1;
-			this.bLeadingZero = sDisplayFormat.indexOf("HH") !== -1 || sDisplayFormat.indexOf("hh") !== -1;
+			this.bLeadingZero = sDisplayFormat.indexOf("HH") !== -1 || sDisplayFormat.indexOf("hh") !== -1
+				|| sDisplayFormat.indexOf("KK") !== -1;
 			this.sLeadingChar = this.bLeadingZero ? "0" : " ";
 			this.sAlternativeLeadingChar = this.bLeadingZero ? " " : "0";
 			this.sLeadingRegexChar = this.bLeadingZero ? "0" : "\\s";
@@ -1377,7 +1378,7 @@ function(
 			oTimePicker.setPlaceholderSymbol(PLACEHOLDER_SYMBOL);
 
 			//set hours allowed chars in the mask
-			sMask = sMask.replace(/hh/ig, "h").replace(/h/ig, "h9");
+			sMask = sMask.replace(/hh/ig, "h").replace(/KK/ig, "K").replace(/K/ig, "h").replace(/h/ig, "h9");
 			if (this.b24H) {
 				sAllowedHourChars = "[" + this.sLeadingRegexChar + "012]";
 			} else {
@@ -1477,6 +1478,10 @@ function(
 				var iStart = b24H ? 0 : 1,
 					b2400 = this._oTimePicker.getSupport2400() ? 24 : 23,//if getSupport2400, the user could type 24 in the input
 					iEnd = b24H ? b2400 : 12;
+
+				if (this._oTimePicker.getDisplayFormat().indexOf("K") > -1) {
+					iEnd = 11;
+				}
 
 				return genValues(iStart, iEnd, sLeadingChar);
 			}
