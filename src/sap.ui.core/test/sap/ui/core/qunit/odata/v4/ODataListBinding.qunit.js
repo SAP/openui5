@@ -2536,6 +2536,8 @@ sap.ui.define([
 				oChild1Refreshed = false,
 				oChild2 = {refreshInternal : function () {}},
 				oChild2Refreshed = false,
+				oChild3 = {refreshInternal : function () {}},
+				oChild3RefreshedIfSuspended = false,
 				oRefreshResult,
 				sResourcePathPrefix = "foo";
 
@@ -2546,9 +2548,13 @@ sap.ui.define([
 			this.mock(oBinding).expects("createReadGroupLock").exactly(bSuspended ? 0 : 1)
 				.withExactArgs("myGroup", true);
 			this.mock(oBinding).expects("reset").exactly(bSuspended ? 0 : 1)
-				.withExactArgs(ChangeReason.Refresh);
+				.withExactArgs(ChangeReason.Refresh)
+				.callsFake(function () {
+					// BCP: 002075129400006474012021 reset may result in a destroyed child binding
+					oChild3.bIsBeingDestroyed = true;
+				});
 			this.mock(oBinding).expects("getDependentBindings").withExactArgs()
-				.returns([oChild0, oChild1, oChild2]);
+				.returns([oChild0, oChild1, oChild2, oChild3]);
 			this.mock(oChild0).expects("refreshInternal")
 				.withExactArgs(sResourcePathPrefix, "myGroup", false, undefined)
 				.returns(new Promise(function (resolve) {
@@ -2573,6 +2579,14 @@ sap.ui.define([
 						resolve();
 					});
 				}));
+			this.mock(oChild3).expects("refreshInternal").exactly(bSuspended ? 1 : 0)
+				.withExactArgs(sResourcePathPrefix, "myGroup", false, undefined)
+				.returns(new Promise(function (resolve) {
+					setTimeout(function () {
+						oChild3RefreshedIfSuspended = true;
+						resolve();
+					});
+				}));
 
 			// code under test
 			oRefreshResult = oBinding.refreshInternal(sResourcePathPrefix, "myGroup", false);
@@ -2584,6 +2598,7 @@ sap.ui.define([
 				assert.strictEqual(oChild0Refreshed, true);
 				assert.strictEqual(oChild1Refreshed, true);
 				assert.strictEqual(oChild2Refreshed, true);
+				assert.strictEqual(oChild3RefreshedIfSuspended, bSuspended ? true : false);
 			});
 		});
 	});

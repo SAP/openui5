@@ -35442,4 +35442,57 @@ sap.ui.define([
 
 		return this.createView(assert, sView);
 	});
+
+	//*********************************************************************************************
+	// Scenario: Use an aggregation binding with no special refresher implementation.
+	//
+	// Background: Aggregation#refresh (in sap.ui.base.ManagedObjectMetadata) calls a refresher
+	// implementation like sap.m.ListBase#refreshItems if available. The default behavior simply
+	// falls back to sap.ui.base.ManagedObject#updateAggregation which calls ODLB#getContexts and
+	// gets [] while the refresh request is in flight. It thus destroys all child controls because
+	// it thinks there are too many of them. This in turn destroys their bindings, but our code
+	// still tried to refresh those dependent bindings after we fired the "refresh" event.
+	//
+	// BCP: 002075129400006474012021
+	QUnit.test("Do not refresh destroyed dependent bindings", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<IconTabBar id="employees" items="{/EMPLOYEES}">\
+	<items>\
+		<IconTabFilter key="foo">\
+			<Text id="id" text="{ID}"/>\
+			<Table items="{path : \'EMPLOYEE_2_EQUIPMENTS\', templateShareable : false}">\
+				<Text text="{Name}"/>\
+			</Table>\
+		</IconTabFilter>\
+	</items>\
+</IconTabBar>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$select=ID"
+				+ "&$expand=EMPLOYEE_2_EQUIPMENTS($select=Category,ID,Name)&$skip=0&$top=100", {
+					value : [{
+						ID : "1",
+						EMPLOYEE_2_EQUIPMENTS : []
+					}]
+			})
+			.expectChange("id", ["1"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("EMPLOYEES?$select=ID"
+					+ "&$expand=EMPLOYEE_2_EQUIPMENTS($select=Category,ID,Name)&$skip=0&$top=100", {
+						value : [{
+							ID : "2",
+							EMPLOYEE_2_EQUIPMENTS : []
+						}]
+				})
+				.expectChange("id", ["2"]);
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("employees").getBinding("items").requestRefresh(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 });
