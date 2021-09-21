@@ -438,6 +438,72 @@ sap.ui.define([
 		},
 
 		/**
+		 * Updates the visibility, position and scroll range of the horizontal scrollbar.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 */
+		updateScrollbar: function(oTable) {
+			var oScrollExtension = oTable._getScrollExtension();
+			var oHSb = oScrollExtension.getHorizontalScrollbar();
+
+			if (!oHSb) {
+				return;
+			}
+
+			var mTableSizes = oTable._collectTableSizes();
+			var $Table = oTable.$();
+			var iColsWidth = mTableSizes.tableCtrlScrollWidth;
+
+			if (Device.browser.safari) {
+				iColsWidth = Math.max(iColsWidth, oTable._getColumnsWidth(oTable.getComputedFixedColumnCount()));
+			}
+
+			var bHorizontalScrollbarRequired = iColsWidth > mTableSizes.tableCtrlScrWidth;
+
+			if (bHorizontalScrollbarRequired) {
+				// Show the horizontal scrollbar, if it is not already visible.
+				if (!oScrollExtension.isHorizontalScrollbarVisible()) {
+					$Table.addClass("sapUiTableHScr");
+					oHSb.classList.remove("sapUiTableHidden");
+
+					if (Device.browser.safari) {
+						var $sapUiTableColHdr = $Table.find(".sapUiTableCtrlScroll, .sapUiTableColHdrScr > .sapUiTableColHdr");
+						// min-width on table elements does not work for safari
+						$sapUiTableColHdr.outerWidth(iColsWidth);
+					}
+				}
+
+				var iScrollPadding = mTableSizes.tableCtrlFixedWidth;
+				if ($Table.find(".sapUiTableRowHdrScr").length > 0) {
+					iScrollPadding += mTableSizes.tableRowHdrScrWidth;
+				}
+
+				if (oTable._bRtlMode) {
+					oHSb.style.marginRight = iScrollPadding + "px";
+					oHSb.style.marginLeft = "";
+				} else {
+					oHSb.style.marginLeft = iScrollPadding + "px";
+					oHSb.style.marginRight = "";
+				}
+
+				var oHSbContent = oTable.getDomRef("hsb-content");
+				if (oHSbContent) {
+					oHSbContent.style.width = iColsWidth + "px";
+				}
+			}
+
+			if (!bHorizontalScrollbarRequired && oScrollExtension.isHorizontalScrollbarVisible()) {
+				// Hide the horizontal scrollbar, if it is visible.
+				$Table.removeClass("sapUiTableHScr");
+				oHSb.classList.add("sapUiTableHidden");
+				if (Device.browser.safari) {
+					// min-width on table elements does not work for safari
+					$Table.find(".sapUiTableCtrlScroll, .sapUiTableColHdr").css("width", "");
+				}
+			}
+		},
+
+		/**
 		 * Will be called if the horizontal scrollbar is clicked.
 		 *
 		 * @param {jQuery.Event} oEvent The mouse event object.
@@ -1465,7 +1531,7 @@ sap.ui.define([
 		onRowsUpdated: function(oEvent) {
 			log("VerticalScrollingHelper.onRowsUpdated: Reason " + oEvent.getParameters().reason, this);
 
-			this._getScrollExtension().updateVerticalScrollbarVisibility();
+			VerticalScrollingHelper.updateScrollbarVisibility(this);
 
 			if (_private(this).aOnRowsUpdatedPreprocessors.length > 0) {
 				log("VerticalScrollingHelper.onRowsUpdated (preprocessors)", this);
@@ -1576,7 +1642,8 @@ sap.ui.define([
 			var oScrollExtension = oTable._getScrollExtension();
 
 			log("VerticalScrollingHelper.adjustToTotalRowCount", oTable);
-			oScrollExtension.updateVerticalScrollbarVisibility();
+			VerticalScrollingHelper.updateScrollbarVisibility(oTable);
+			HorizontalScrollingHelper.updateScrollbar(oTable);
 			oScrollExtension.updateVerticalScrollHeight();
 
 			VerticalScrollProcess.start(oTable, VerticalScrollProcess.AdjustToTotalRowCount, function(resolve, reject, oProcessInterface) {
@@ -1614,6 +1681,67 @@ sap.ui.define([
 					});
 				}
 			});
+		},
+
+		/**
+		 * This hook is called when the table layout is updated, for example when resizing.
+		 *
+		 * @param {sap.ui.table.utils.TableUtils.RowsUpdateReason} sReason The reason for updating the table sizes.
+		 * @private
+		 */
+		onUpdateTableSizes: function(sReason) {
+			VerticalScrollingHelper.updateScrollbarPosition(this);
+			VerticalScrollingHelper.updateScrollbarVisibility(this);
+			HorizontalScrollingHelper.updateScrollbar(this);
+		},
+
+		updateScrollbarPosition: function(oTable) {
+			var oScrollExtension = oTable._getScrollExtension();
+			var oVSb = oScrollExtension.getVerticalScrollbar();
+			var oTableCCnt = oTable.getDomRef("tableCCnt");
+
+			if (!oVSb || !oTableCCnt) {
+				return;
+			}
+
+			var iTop = oTableCCnt.offsetTop;
+
+			var oVSbBg = oTable.getDomRef("vsb-bg");
+			if (oVSbBg) {
+				oVSbBg.style.top = iTop + "px";
+			}
+
+			if (oTable._getRowCounts().fixedTop > 0) {
+				iTop += oTable._iVsbTop;
+			}
+
+			oVSb.style.top = iTop + "px";
+		},
+
+		updateScrollbarVisibility: function(oTable) {
+			var oScrollExtension = oTable._getScrollExtension();
+			var oVSb = oScrollExtension.getVerticalScrollbar();
+			var oTableElement = oTable ? oTable.getDomRef() : null;
+
+			if (!oVSb || !oTableElement) {
+				return;
+			}
+
+			var bVerticalScrollbarRequired = oScrollExtension.isVerticalScrollbarRequired();
+
+			// Show the currently invisible scrollbar.
+			if (bVerticalScrollbarRequired && !oScrollExtension.isVerticalScrollbarVisible()) {
+				if (!oScrollExtension.isVerticalScrollbarExternal()) {
+					oTableElement.classList.add("sapUiTableVScr");
+				}
+				oVSb.classList.remove("sapUiTableHidden");
+			}
+
+			// Hide the currently visible scrollbar.
+			if (!bVerticalScrollbarRequired && oScrollExtension.isVerticalScrollbarVisible()) {
+				oTableElement.classList.remove("sapUiTableVScr");
+				oVSb.classList.add("sapUiTableHidden");
+			}
 		},
 
 		/**
@@ -2210,6 +2338,7 @@ sap.ui.define([
 			VerticalScrollingHelper.addEventListeners(oTable);
 			ScrollingHelper.addEventListeners(oTable);
 			TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.TotalRowCountChanged, VerticalScrollingHelper.onTotalRowCountChanged, oTable);
+			TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.UpdateSizes, VerticalScrollingHelper.onUpdateTableSizes, oTable);
 		},
 
 		/**
@@ -2223,6 +2352,7 @@ sap.ui.define([
 			VerticalScrollingHelper.removeEventListeners(oTable);
 			ScrollingHelper.removeEventListeners(oTable);
 			TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.TotalRowCountChanged, VerticalScrollingHelper.onTotalRowCountChanged, oTable);
+			TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.UpdateSizes, VerticalScrollingHelper.onUpdateTableSizes, oTable);
 		},
 
 		/**
@@ -2403,71 +2533,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the visibility, position and range of the horizontal scrollbar.
-	 *
-	 * @param {Object} oTableSizes The object containing the table sizes.
-	 */
-	ScrollExtension.prototype.updateHorizontalScrollbar = function(oTableSizes) {
-		var oTable = this.getTable();
-		var oHSb = this.getHorizontalScrollbar();
-
-		if (!oTable || !oHSb || !oTableSizes) {
-			return;
-		}
-
-		// get the width of the container
-		var $Table = oTable.$();
-		var iColsWidth = oTableSizes.tableCtrlScrollWidth;
-		if (Device.browser.safari) {
-			iColsWidth = Math.max(iColsWidth, oTable._getColumnsWidth(oTable.getComputedFixedColumnCount()));
-		}
-
-		var bHorizontalScrollbarRequired = iColsWidth > oTableSizes.tableCtrlScrWidth;
-
-		if (bHorizontalScrollbarRequired) {
-			// Show the horizontal scrollbar, if it is not already visible.
-			if (!this.isHorizontalScrollbarVisible()) {
-				$Table.addClass("sapUiTableHScr");
-				oHSb.classList.remove("sapUiTableHidden");
-
-				if (Device.browser.safari) {
-					var $sapUiTableColHdr = $Table.find(".sapUiTableCtrlScroll, .sapUiTableColHdrScr > .sapUiTableColHdr");
-					// min-width on table elements does not work for safari
-					$sapUiTableColHdr.outerWidth(iColsWidth);
-				}
-			}
-
-			var iScrollPadding = oTableSizes.tableCtrlFixedWidth;
-			if ($Table.find(".sapUiTableRowHdrScr").length > 0) {
-				iScrollPadding += oTableSizes.tableRowHdrScrWidth;
-			}
-
-			if (oTable._bRtlMode) {
-				oHSb.style.marginRight = iScrollPadding + "px";
-				oHSb.style.marginLeft = "";
-			} else {
-				oHSb.style.marginLeft = iScrollPadding + "px";
-				oHSb.style.marginRight = "";
-			}
-
-			var oHSbContent = oTable.getDomRef("hsb-content");
-			if (oHSbContent) {
-				oHSbContent.style.width = iColsWidth + "px";
-			}
-		}
-
-		if (!bHorizontalScrollbarRequired && this.isHorizontalScrollbarVisible()) {
-			// Hide the horizontal scrollbar, if it is visible.
-			$Table.removeClass("sapUiTableHScr");
-			oHSb.classList.add("sapUiTableHidden");
-			if (Device.browser.safari) {
-				// min-width on table elements does not work for safari
-				$Table.find(".sapUiTableCtrlScroll, .sapUiTableColHdr").css("width", "");
-			}
-		}
-	};
-
-	/**
 	 * Updates the height of the vertical scrollbar.
 	 */
 	ScrollExtension.prototype.updateVerticalScrollbarHeight = function() {
@@ -2495,35 +2560,6 @@ sap.ui.define([
 		}
 
 		return oTable._getRowCounts()._scrollSize * oTable._getBaseRowHeight();
-	};
-
-	/**
-	 * Updates the position of the vertical scrollbar.
-	 */
-	ScrollExtension.prototype.updateVerticalScrollbarPosition = function() {
-		var oTable = this.getTable();
-		var oVSb = this.getVerticalScrollbar();
-
-		if (!oTable || !oVSb) {
-			return;
-		}
-
-		var oTableCCnt = oTable.getDomRef("tableCCnt");
-
-		if (oTableCCnt) {
-			var iTop = oTableCCnt.offsetTop;
-
-			var oVSbBg = oTable.getDomRef("vsb-bg");
-			if (oVSbBg) {
-				oVSbBg.style.top = iTop + "px";
-			}
-
-			if (oTable._getRowCounts().fixedTop > 0) {
-				iTop += oTable._iVsbTop;
-			}
-
-			oVSb.style.top = iTop + "px";
-		}
 	};
 
 	/**
@@ -2599,35 +2635,6 @@ sap.ui.define([
 			return iScrollHeight;
 		} else {
 			return Math.min(MAX_VERTICAL_SCROLL_HEIGHT, iScrollHeight);
-		}
-	};
-
-	/**
-	 * Updates the visibility of the vertical scrollbar.
-	 */
-	ScrollExtension.prototype.updateVerticalScrollbarVisibility = function() {
-		var oTable = this.getTable();
-		var oTableElement = oTable ? oTable.getDomRef() : null;
-		var oVSb = this.getVerticalScrollbar();
-
-		if (!oTableElement || !oVSb) {
-			return;
-		}
-
-		var bVerticalScrollbarRequired = this.isVerticalScrollbarRequired();
-
-		// Show the currently invisible scrollbar.
-		if (bVerticalScrollbarRequired && !this.isVerticalScrollbarVisible()) {
-			if (!this.isVerticalScrollbarExternal()) {
-				oTableElement.classList.add("sapUiTableVScr");
-			}
-			oVSb.classList.remove("sapUiTableHidden");
-		}
-
-		// Hide the currently visible scrollbar.
-		if (!bVerticalScrollbarRequired && this.isVerticalScrollbarVisible()) {
-			oTableElement.classList.remove("sapUiTableVScr");
-			oVSb.classList.add("sapUiTableHidden");
 		}
 	};
 
