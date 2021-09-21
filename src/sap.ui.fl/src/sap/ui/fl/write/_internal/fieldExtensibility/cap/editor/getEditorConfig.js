@@ -146,7 +146,8 @@ sap.ui.define([
 					allowedTypes: ["string", "json"],
 					path: "annotations",
 					type: "annotations",
-					allowTypeChange: false
+					allowTypeChange: false,
+					addItemLabelI18n: "CAP_ADD_FIELD_EDITOR.ANNOTATION"
 				}
 			},
 			layout: {
@@ -201,7 +202,8 @@ sap.ui.define([
 				"cds.Time": "sap/ui/fl/write/_internal/fieldExtensibility/cap/editor/propertyEditor/timeEditor/TimeEditor",
 				"cds.DateTime": "sap/ui/fl/write/_internal/fieldExtensibility/cap/editor/propertyEditor/dateTimeEditor/DateTimeEditor",
 				"cds.Boolean": "sap/ui/fl/write/_internal/fieldExtensibility/cap/editor/propertyEditor/booleanEditor/BooleanEditor"
-			}
+			},
+			i18n: "sap/ui/fl/messagebundle.properties"
 		};
 	};
 });
