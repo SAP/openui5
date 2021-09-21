@@ -336,8 +336,18 @@ sap.ui.define([
 				this.oTokenizerPanel = new Panel( {
 					backgroundDesign: "Transparent",
 					expanded: true,
-					visible: { parts: ['$valueHelp>/_config/maxConditions'], formatter:	function(iMaxConditions) {
-						return iMaxConditions === -1;
+					visible: { parts: ['$valueHelp>/_config/maxConditions', '$help>/content'], formatter:
+					function(iMaxConditions, aContent) {
+						var bVisible = false;
+
+						if (aContent && aContent.some(function(oContent) {
+							// make the tokenizer visible when at least one content request the tokenizer
+							return oContent.getRequiresTokenizer();
+						})) {
+							bVisible = true;
+						}
+
+						return bVisible && iMaxConditions === -1;
 					}},
 					headerText: {parts: ['$i18n>valuehelp.TOKENIZERTITLE', '$valueHelp>/conditions'], formatter:
 						function(sText, aConditions) {

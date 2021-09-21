@@ -157,6 +157,11 @@ sap.ui.define([
 
 	};
 
+	Conditions.prototype.getRequiresTokenizer = function() {
+		// when only the conditions content is on the dialog the tokenizer should be hidden.
+		return false;
+	};
+
 	Conditions.prototype.getAriaAttributes = function(iMaxConditions) {
 
 		return { // return default values, but needs to be implemented by specific content
