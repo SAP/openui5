@@ -1,7 +1,7 @@
 <core:FragmentDefinition
 	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
-	<ColumnListItem
+	<ColumnListItem vAlign="Middle"
 		type="{
 			path: 'ProductId',
 			formatter: 'sap.m.sample.TableBreadcrumb.Formatter.listItemType'

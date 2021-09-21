@@ -61,7 +61,7 @@
 			</Column>
 		</columns>
 		<items>
-			<ColumnListItem>
+			<ColumnListItem vAlign="Middle">
 				<cells>
 					<ObjectIdentifier title="{Name}" text="{ProductId}" />
 					<Text text="{Description}" />

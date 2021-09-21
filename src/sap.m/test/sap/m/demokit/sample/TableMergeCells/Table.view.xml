@@ -44,7 +44,7 @@
 				</header>
 			</Column>
 		</columns>
-		<ColumnListItem>
+		<ColumnListItem vAlign="Middle">
 			<Text text="{SupplierName}" />
 			<ObjectIdentifier title="{Name}" text="{ProductId}" />
 			<Text text="{Width} x {Depth} x {Height} {DimUnit}" />

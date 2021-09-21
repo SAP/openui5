@@ -49,7 +49,7 @@
 					</Column>
 				</columns>
 				<items>
-					<ColumnListItem type="Navigation" press="onListItemPress">
+					<ColumnListItem type="Navigation" press="onListItemPress" vAlign="Middle">
 						<cells>
 							<ObjectIdentifier title="{products>Name}" text="{products>ProductId}" />
 							<ObjectIdentifier text="{products>Quantity}" />

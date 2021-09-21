@@ -13,6 +13,7 @@
 		<items>
 			<ColumnListItem
 				type="Active"
+				vAlign="Middle"
 				navigated="{
 						parts: [
 							'settings>/navigatedItem',
@@ -22,7 +23,7 @@
 					}"
 				press="onPress">
 				<cells>
-					<ObjectIdentifier title="{Name}" text="{ProductId}" class="sapUiTinyMarginTopBottom" />
+					<ObjectIdentifier title="{Name}" text="{ProductId}" />
 					<Text text="{SupplierName}" />
 					<Text text="{Width} x {Depth} x {Height} {DimUnit}" />
 				</cells>

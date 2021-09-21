@@ -104,14 +104,16 @@
 	color: @sapUiListTextColor;
 	background-color: @sapUiListBackground;
 	border-bottom: 1px solid @sapUiListBorderColor;
-	padding: 0 1rem !important;
-	height:3rem;
+	padding: 0.5rem 1rem !important;
+	min-height: 3rem;
+	line-height: 1.4;
 }
 
 .sapMListNoDataText {
 	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+    overflow: clip;
+	white-space: pre-wrap;
+	text-align: center;
 }
 
 .sapMListShowSeparatorsAll {
@@ -306,7 +308,7 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 
 /* Compact size */
 .sapUiSizeCompact .sapMListNoData {
-	height: 2rem;
+	min-height: 2rem;
 	font-size: @sapMFontMediumSize;
 }
 
