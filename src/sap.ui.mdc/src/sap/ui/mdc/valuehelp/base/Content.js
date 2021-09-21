@@ -136,7 +136,7 @@ sap.ui.define([
 
 		// don't rerender content or parent-container on conditions change. This needs only be updated on
 		// content control inside (Table, List, DefineConditionPanel...).
-		if (sPropertyName === "_conditions") {
+		if (sPropertyName === "_conditions" || sPropertyName === "_filterValue" || sPropertyName === "_config") {
 			bSuppressInvalidate = true;
 		}
 
@@ -324,8 +324,7 @@ sap.ui.define([
 	};
 
 	Content.prototype._isSingleSelect = function (oEvent) {
-		var oConfig = this.getProperty("_config");
-		return oConfig && oConfig.maxConditions === 1;
+		return this._getMaxConditions() === 1;
 	};
 
 	/**
