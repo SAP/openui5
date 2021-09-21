@@ -218,7 +218,10 @@ sap.ui.define([
 
 	/**
 	 * Makes sure the path is prepended and appended with a "/" if necessary.
-	 * @param {string} sContextPath the path to be checked
+	 *
+	 * @param {string} sContextPath The path to be checked
+	 *
+	 * @returns {string} The sanitized path
 	 */
 	ClientTreeBinding.prototype._sanitizePath = function (sContextPath) {
 		if (!sContextPath.endsWith("/")) {
@@ -289,7 +292,6 @@ sap.ui.define([
 		}
 		this._mLengthsCache = {};
 		this._fireChange({reason: "filter"});
-		// TODO remove this if the filter event is removed
 		this._fireFilter({filters: aFilters});
 
 		return this;
@@ -361,11 +363,12 @@ sap.ui.define([
 
 	/**
 	 * Sorts the contexts of this ClientTreeBinding.
-	 * The tree will be sorted level by level. So the nodes are NOT sorted absolute, but relative to their parent node,
-	 * to keep the hierarchy untouched.
+	 * The tree will be sorted level by level. So the nodes are NOT sorted absolute, but relative to
+	 * their parent node, to keep the hierarchy untouched.
 	 *
-	 * @param {sap.ui.model.Sorter[]} an array of Sorter instances which will be applied
-	 * @return {this} returns <code>this</code> to facilitate method chaining
+	 * @param {sap.ui.model.Sorter[]} aSorters An array of Sorter instances which will be applied
+	 *
+	 * @return {this} Returns <code>this</code> to facilitate method chaining
 	 * @public
 	 */
 	ClientTreeBinding.prototype.sort = function (aSorters) {
@@ -394,7 +397,10 @@ sap.ui.define([
 
 	/**
 	 * Sets the length cache.
-	 * Called by get*Contexts() to keep track of the child count (after filtering)
+	 * Called by get*Contexts() to keep track of the child count (after filtering).
+	 *
+	 * @param {string} sKey The cache entry to set the length for
+	 * @param {number} iLength The new length
 	 */
 	ClientTreeBinding.prototype._setLengthCache = function (sKey, iLength) {
 		// keep track of the child count for each context (after filtering)
@@ -405,7 +411,7 @@ sap.ui.define([
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
 	 *
-	 * @param {boolean} bForceupdate
+	 * @param {boolean} bForceupdate Not used in this method
 	 *
 	 */
 	ClientTreeBinding.prototype.checkUpdate = function(bForceupdate){
