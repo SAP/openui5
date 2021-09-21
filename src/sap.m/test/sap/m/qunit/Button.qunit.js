@@ -1524,6 +1524,38 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
+	QUnit.test("aria-live attribute", function (assert) {
+		// text
+		var oTextButton = new Button({
+			text:'text'
+		}).placeAt('qunit-fixture');
+
+		// icon
+		var oIconButton = new Button({
+			icon:'sap-icon://save'
+		}).placeAt('qunit-fixture');
+
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(oTextButton.$("BDI-content").attr("aria-live"), "Button with only text doesn't have initially aria-live attribute set");
+		assert.notOk(oIconButton.$("tooltip").attr("aria-live"), "Button with only icon doesn't have initially aria-live attribute set");
+
+		oTextButton.onfocusin();
+		oIconButton.onfocusin();
+
+		assert.strictEqual(oTextButton.$("BDI-content").attr("aria-live"), "polite", "Button with only text has aria-live attribute properly set");
+		assert.strictEqual(oIconButton.$("tooltip").attr("aria-live"), "polite", "Button with only icon has aria-live attribute properly set");
+
+		oTextButton.onfocusout();
+		oIconButton.onfocusout();
+
+		assert.strictEqual(oTextButton.$("BDI-content").attr("aria-live"), "off", "Button with only text doesn't have aria-live attribute set");
+		assert.strictEqual(oIconButton.$("tooltip").attr("aria-live"), "off", "Button with only icon doesn't have aria-live attribute set");
+
+		oTextButton.destroy();
+		oIconButton.destroy();
+	});
+
 	QUnit.module("Badge on Button", {
 		beforeEach: function () {
 			this.oButton = new Button("badgedButton", {
