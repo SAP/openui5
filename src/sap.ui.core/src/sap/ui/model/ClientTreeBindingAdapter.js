@@ -48,14 +48,6 @@ sap.ui.define([
 
 			this._invalidTree = true;
 
-			// TODO: Decide if the tree state feature should be available for ClientModels
-			//-> remove comments if yes
-
-			// restore old tree state if given
-			//if (this.mParameters.treeState) {
-			//	this.setTreeState(this.mParameters.treeState);
-			//}
-
 			//set the default auto expand mode
 			this.setNumberOfExpandedLevels(this.mParameters.numberOfExpandedLevels || 0);
 		};
@@ -203,30 +195,39 @@ sap.ui.define([
 		};
 
 		/**
-		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a findNode operation.
-		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
+		 * Find the first node in the tree matching the search criteria. In case the tree structure
+		 * is invalid, it is rebuilt before finding the node.
+		 *
+		 * @param {any} vParam The search criteria
+		 *
+		 * @returns {object} A tree node which may be a cached sum row
 		 */
-		ClientTreeBindingAdapter.prototype.findNode = function () {
+		ClientTreeBindingAdapter.prototype.findNode = function (vParam) {
 			this._buildTree();
 			return TreeBindingAdapter.prototype.findNode.apply(this, arguments);
 		};
 
 		/**
-		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a setSelectedIndex operation.
-		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
+		 * Marks a single node as selected. In case the tree structure is invalid, it is rebuilt
+		 * before a <code>setSelectedIndex</code> operation.
+		 *
+		 * @param {number} iRowIndex Row to mark as selected
 		 */
-		ClientTreeBindingAdapter.prototype.setSelectedIndex = function () {
+		ClientTreeBindingAdapter.prototype.setSelectedIndex = function (iRowIndex) {
 			this._buildTree();
-			return TreeBindingAdapter.prototype.setSelectedIndex.apply(this, arguments);
+			TreeBindingAdapter.prototype.setSelectedIndex.apply(this, arguments);
 		};
 
 		/**
-		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a setSelctionInterval operation.
-		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
+		 * Marks multiple nodes as selected. In case the tree structure is invalid, it is rebuilt
+		 * before a <code>setSelctionInterval</code> operation.
+		 *
+		 * @param {number} iFromIndex The first index to mark as selected
+		 * @param {number} iToIndex The last index to mark as selected
 		 */
-		ClientTreeBindingAdapter.prototype.setSelectionInterval = function () {
+		ClientTreeBindingAdapter.prototype.setSelectionInterval = function (iFromIndex, iToIndex) {
 			this._buildTree();
-			return TreeBindingAdapter.prototype.setSelectionInterval.apply(this, arguments);
+			TreeBindingAdapter.prototype.setSelectionInterval.apply(this, arguments);
 		};
 
 		/**
@@ -266,11 +267,15 @@ sap.ui.define([
 		};
 
 		/**
-		 * Calculate the request length based on the given information
+		 * Calculate the request length based on the given information.
 		 *
-		 * Because client treebinding knows all of the data from the very beginning, it should simply return the the
-		 * maximum group size without looking at the current section.
+		 * Because client treebinding knows the complete data from the very beginning, it returns
+		 * the maximum group size, the current section is not considered.
 		 *
+		 * @param {number} iMaxGroupSize The maximum group size
+		 * @param {object} oSection Information of the current section
+		 *
+		 * @returns {number} The request length
 		 */
 		ClientTreeBindingAdapter.prototype._calculateRequestLength = function(iMaxGroupSize, oSection) {
 			return iMaxGroupSize;
