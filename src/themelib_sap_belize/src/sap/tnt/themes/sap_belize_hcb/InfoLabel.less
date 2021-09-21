@@ -3,17 +3,18 @@
 /* Belize HCB theme                  */
 /* ================================= */
 
-.sapTntInfoLabel {
-	background-color: @sapUiGroupContentBackground;
-	border: 1px solid @sapUiGroupContentBorderColor;
-	line-height: 85%;
-}
 
 /* ==========================================================================
-   InfoLabel Display Only
+   Variables and mixins
    ========================================================================== */
-.sapTntInfoLabel.sapTntInfoLabelDisplayOnly .sapTntInfoLabelInner {
-	line-height: 0.875rem;
+
+@_sap_tnt_InfoLabel_LineHeightDisplayOnly: 0.875rem;
+
+
+.sapTntInfoLabel,
+.sapTntInfoLabel.sapTntInfoLabelDisplayOnly {
+	background-color: @sapUiGroupContentBackground;
+	border: 1px solid @sapUiGroupContentBorderColor;
 }
 
 /* ==========================================================================
