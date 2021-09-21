@@ -90,7 +90,7 @@ sap.ui.define([
 		this.iSerialNumber = 0;
 		this.sServiceUrl = sServiceUrl;
 		this.vStatistics = mQueryParams && mQueryParams["sap-statistics"];
-		this.processSecurityTokenHandler(); // sets this.oSecurityTokenPromise
+		this.processSecurityTokenHandlers(); // sets this.oSecurityTokenPromise
 	}
 
 	/**
@@ -1287,34 +1287,35 @@ sap.ui.define([
 	};
 
 	/**
-	 * Calls the security token handler returned by
-	 * {@link sap.ui.core.Configuration#getSecurityTokenHandler} and sets
-	 * <code>this.oSecurityTokenPromise</code> in order to let other requests, which require a
-	 * security token, wait for (see {@link #sendRequest}). Checks the resolved headers retrieved by
-	 * the handler and stores them in <code>this.mHeaders</code> to be used with the next request.
-	 * <code>this.oSecurityTokenPromise</code> is rejected if a resolved header is not allowed.
-	 * If the security token handler itself is rejected then that error is logged, but
-	 * <code>this.oSecurityTokenPromise</code> is resolved.
+	 * Calls the security token handlers returned by
+	 * {@link sap.ui.core.Configuration#getSecurityTokenHandlers} one by one with the requestor's
+	 * service URL. The first handler not returning <code>undefined</code> but a
+	 * <code>Promise</code> is used to determine the required security tokens.
 	 *
 	 * @private
 	 */
-	_Requestor.prototype.processSecurityTokenHandler = function () {
-		var aSecurityTokenHandlers = sap.ui.getCore().getConfiguration().getSecurityTokenHandler(),
-			that = this;
+	_Requestor.prototype.processSecurityTokenHandlers = function () {
+		var that = this;
 
-		if (aSecurityTokenHandlers.length) {
-			that.oSecurityTokenPromise = aSecurityTokenHandlers[0]().then(function (mHeaders) {
-				that.checkHeaderNames(mHeaders);
-				// also overwrite this.mPredefinedRequestHeaders["X-CSRF-Token"] : "Fetch"
-				Object.assign(that.mHeaders, {"X-CSRF-Token" : undefined}, mHeaders);
-			}, function (oError) {
-				Log.error("security token handler rejected with: " + oError, undefined, sClassName);
-			}).finally(function () {
-				that.oSecurityTokenPromise = null;
-			});
-		} else {
-			that.oSecurityTokenPromise = null;
-		}
+		this.oSecurityTokenPromise = null;
+
+		sap.ui.getCore().getConfiguration().getSecurityTokenHandlers().some(function (fnHandler) {
+			var oSecurityTokenPromise = fnHandler(that.sServiceUrl);
+
+			if (oSecurityTokenPromise !== undefined) {
+				that.oSecurityTokenPromise = oSecurityTokenPromise.then(function (mHeaders) {
+					that.checkHeaderNames(mHeaders);
+					// also overwrite this.mPredefinedRequestHeaders["X-CSRF-Token"] : "Fetch"
+					Object.assign(that.mHeaders, {"X-CSRF-Token" : undefined}, mHeaders);
+					that.oSecurityTokenPromise = null;
+				}).catch(function (oError) {
+					Log.error("An error occurred within security token handler: " + fnHandler,
+						oError, sClassName);
+					throw oError;
+				});
+				return true;
+			}
+		});
 	};
 
 	/**

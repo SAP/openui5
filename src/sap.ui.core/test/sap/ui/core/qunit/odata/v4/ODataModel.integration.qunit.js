@@ -30277,11 +30277,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Test whether UI5 configuration "securityTokenHandler" is used to set security token headers
+	// Test whether UI5 configuration "securityTokenHandlers" is used to set security token headers
 	//
-	// CPOUI5ODATAV4-1083
+	// JIRA: CPOUI5ODATAV4-1083
 [false, true].forEach(function (bEarlyRequests) {
-	QUnit.test("securityTokenHandler: earlyRequests: " + bEarlyRequests, function (assert) {
+	QUnit.test("securityTokenHandlers: earlyRequests: " + bEarlyRequests, function (assert) {
 		var oModel,
 			mExpectedHeaders = {
 				SomeSecurityTokenHeader : "foo",
@@ -30291,15 +30291,33 @@ sap.ui.define([
 			sView = '<Text id="name" text="{/EMPLOYEES(0)/Name}"/>',
 			that = this;
 
-		function securityTokenHandler() {
-			// code under test
+		function securityTokenHandler0(sServiceUrl) {
+			assert.strictEqual(sServiceUrl,
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/");
+			return undefined; // not responsible
+		}
+
+		function securityTokenHandler1(sServiceUrl) {
+			assert.strictEqual(sServiceUrl,
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/");
 			return Promise.resolve({
 				SomeSecurityTokenHeader : "foo",
 				SomeOtherSecurityTokenHeader : "bar"
 			});
 		}
 
-		sap.ui.getCore().getConfiguration().setSecurityTokenHandler(securityTokenHandler);
+		function securityTokenHandler2() {
+			return Promise.resolve({
+				SomeSecurityTokenHeader : "only first matching handler wins"
+			});
+		}
+
+		// code under test
+		sap.ui.getCore().getConfiguration().setSecurityTokenHandlers([
+			securityTokenHandler0,
+			securityTokenHandler1,
+			securityTokenHandler2
+		]);
 
 		oModel = createTeaBusiModel({autoExpandSelect : true, earlyRequests : bEarlyRequests});
 
@@ -30320,8 +30338,8 @@ sap.ui.define([
 			that.oView.byId("name").getBinding("text").refresh();
 
 			return that.waitForChanges(assert);
-		}).then(function () {
-			sap.ui.getCore().getConfiguration().setSecurityTokenHandler();
+		}).finally(function () {
+			sap.ui.getCore().getConfiguration().setSecurityTokenHandlers([]);
 		});
 	});
 });

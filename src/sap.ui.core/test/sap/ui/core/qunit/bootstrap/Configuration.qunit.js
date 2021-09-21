@@ -1145,27 +1145,93 @@ sap.ui.define([
 
 	QUnit.module("OData V4");
 
-	QUnit.test("securityTokenHandler", function(assert) {
-		var fnSecurityTokenHandler1 = function () {},
-			fnSecurityTokenHandler2 = function () {};
+	QUnit.test("securityTokenHandlers", function(assert) {
+		var oCfg,
+			fnSecurityTokenHandler1 = function () {},
+			fnSecurityTokenHandler2 = function () {},
+			aSecurityTokenHandlers = [fnSecurityTokenHandler1];
 
-		var oCfg = new Configuration();
-		assert.deepEqual(oCfg.getSecurityTokenHandler(), []);
-
-		window["sap-ui-config"]["securitytokenhandler"] = fnSecurityTokenHandler1;
+		// code under test
 		oCfg = new Configuration();
-		assert.strictEqual(oCfg.getSecurityTokenHandler().length, 1);
-		assert.strictEqual(oCfg.getSecurityTokenHandler()[0], fnSecurityTokenHandler1);
 
-		oCfg.setSecurityTokenHandler(fnSecurityTokenHandler2);
-		assert.strictEqual(oCfg.getSecurityTokenHandler().length, 1);
-		assert.strictEqual(oCfg.getSecurityTokenHandler()[0], fnSecurityTokenHandler2);
+		assert.deepEqual(oCfg.getSecurityTokenHandlers(), []);
+
+		// bootstrap does some magic and converts to lower case, test does not :-(
+		window["sap-ui-config"].securitytokenhandlers = [];
+
+		// code under test
+		oCfg = new Configuration();
+
+		assert.strictEqual(oCfg.getSecurityTokenHandlers().length, 0, "check length");
+
+		window["sap-ui-config"].securitytokenhandlers = aSecurityTokenHandlers;
+
+		// code under test
+		oCfg = new Configuration();
+
+		assert.notStrictEqual(aSecurityTokenHandlers, oCfg.securityTokenHandlers);
+		assert.strictEqual(oCfg.getSecurityTokenHandlers().length, 1, "check length");
+		assert.strictEqual(oCfg.getSecurityTokenHandlers()[0], fnSecurityTokenHandler1, "check Fn");
+
+		window["sap-ui-config"].securitytokenhandlers
+			= [fnSecurityTokenHandler1, fnSecurityTokenHandler2];
+
+		// code under test
+		oCfg = new Configuration();
+
+		assert.strictEqual(oCfg.getSecurityTokenHandlers().length, 2, "check length");
+		assert.strictEqual(oCfg.getSecurityTokenHandlers()[0], fnSecurityTokenHandler1, "check Fn");
+		assert.strictEqual(oCfg.getSecurityTokenHandlers()[1], fnSecurityTokenHandler2, "check Fn");
+
+		window["sap-ui-config"].securitytokenhandlers = fnSecurityTokenHandler1;
 
 		assert.throws(function () {
-			oCfg.setSecurityTokenHandler("foo");
-		}, /securityTokenHandler must be a function/);
+			// code under test
+			oCfg = new Configuration();
+		}); // aSecurityTokenHandlers.forEach is not a function
 
-		oCfg.setSecurityTokenHandler(undefined);
-		assert.deepEqual(oCfg.getSecurityTokenHandler(), []);
+		window["sap-ui-config"].securitytokenhandlers = [fnSecurityTokenHandler1, "foo"];
+
+		assert.throws(function () {
+			// code under test
+			oCfg = new Configuration();
+		}, "Not a function: foo");
+
+		// code under test
+		oCfg.setSecurityTokenHandlers(aSecurityTokenHandlers);
+
+		assert.notStrictEqual(aSecurityTokenHandlers, oCfg.securityTokenHandlers);
+		assert.notStrictEqual(oCfg.getSecurityTokenHandlers(), oCfg.securityTokenHandlers);
+		assert.strictEqual(oCfg.getSecurityTokenHandlers().length, 1);
+		assert.strictEqual(oCfg.getSecurityTokenHandlers()[0], fnSecurityTokenHandler1);
+
+		assert.throws(function () {
+			// code under test
+			oCfg.setSecurityTokenHandlers([fnSecurityTokenHandler1, "foo"]);
+		}, "Not a function: foo");
+
+		assert.throws(function () {
+			// code under test
+			oCfg.setSecurityTokenHandlers([undefined]);
+		}, "Not a function: undefined");
+
+		assert.throws(function () {
+			// code under test
+			oCfg.setSecurityTokenHandlers("foo");
+		}); // aSecurityTokenHandlers.forEach is not a function
+
+		// code under test
+		oCfg.setSecurityTokenHandlers([fnSecurityTokenHandler1, fnSecurityTokenHandler2]);
+
+		assert.strictEqual(oCfg.getSecurityTokenHandlers().length, 2);
+		assert.strictEqual(oCfg.getSecurityTokenHandlers()[0], fnSecurityTokenHandler1);
+		assert.strictEqual(oCfg.getSecurityTokenHandlers()[1], fnSecurityTokenHandler2);
+
+		// code under test
+		oCfg.setSecurityTokenHandlers([]);
+
+		assert.deepEqual(oCfg.getSecurityTokenHandlers(), []);
+
+		delete window["sap-ui-config"].securitytokenhandlers;
 	});
 });
