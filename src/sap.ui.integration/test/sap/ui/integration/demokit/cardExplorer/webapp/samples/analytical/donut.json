@@ -31,24 +31,20 @@
 		},
 		"content": {
 			"chartType": "Donut",
-			"legend": {
-				"visible": false,
-				"position": "Top",
-				"alignment": "Center"
-			},
-			"plotArea": {
-				"dataLabel": {
-					"visible": true,
-					"showTotal": true
+			"chartProperties": {
+				"legend": {
+					"visible": false
+				},
+				"plotArea": {
+					"dataLabel": {
+						"visible": true,
+						"showTotal": true
+					}
+				},
+				"title": {
+					"visible": false
 				}
 			},
-			"title": {
-				"text": "Donut chart",
-				"visible": false,
-				"alignment": "Left"
-			},
-			"measureAxis": "size",
-			"dimensionAxis": "color",
 			"data": {
 				"json": {
 					"milk": [
@@ -88,14 +84,30 @@
 			},
 			"dimensions": [
 				{
-					"label": "Store Name",
+					"name": "Store Name",
 					"value": "{Store Name}"
 				}
 			],
 			"measures": [
 				{
-					"label": "Revenue",
+					"name": "Revenue",
 					"value": "{Revenue}"
+				}
+			],
+			"feeds": [
+				{
+					"type": "Dimension",
+					"uid": "color",
+					"values": [
+						"Store Name"
+					]
+				},
+				{
+					"type": "Measure",
+					"uid": "size",
+					"values": [
+						"Revenue"
+					]
 				}
 			]
 		}

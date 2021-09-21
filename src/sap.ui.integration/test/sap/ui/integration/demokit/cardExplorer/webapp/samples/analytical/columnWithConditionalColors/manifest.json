@@ -1,0 +1,115 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.analytical.column.card",
+		"type": "card",
+		"title": "Sample of a Column Chart",
+		"subTitle": "Sample of a Column Chart",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Analytical",
+				"Card",
+				"Column",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5"
+	},
+	"sap.card": {
+		"type": "Analytical",
+		"header": {
+			"type": "Numeric",
+			"title": "Project Cloud Revenue"
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "./data.json"
+				},
+				"path": "/list"
+			},
+			"chartType": "column",
+			"chartProperties": {
+				"legendGroup": {
+					"layout": {
+						"position": "bottom"
+					} 
+				},
+				"title": {
+					"visible": false
+				},
+				"plotArea": {
+					"dataPointStyle": {
+						"rules": [
+							{
+								"dataContext": {
+									"Revenue": {
+										"max": 479999
+									}
+								},
+								"properties": {
+									"color": "sapUiChartPaletteSemanticBad"
+								},
+								"displayName": "Revenue < 480k"
+							},
+							{
+								"dataContext": {
+									"Revenue": {
+										"min": 480000,
+										"max": 540000
+									}
+								},
+								"properties": {
+									"color": "sapUiChartPaletteSemanticCritical"
+								},
+								"displayName": "480k <= Revenue < 540k"
+							}
+						],
+						"others": {
+							"properties": {
+								"color": "sapUiChartPaletteSemanticGood"
+							},
+							"displayName": "Revenue >= 540k"
+						}
+					}
+				}
+			},
+			"dimensions": [
+				{
+					"name": "Weeks",
+					"value": "{Week}"
+				}
+			],
+			"measures": [
+				{
+					"name": "Revenue",
+					"value": "{Revenue}"
+				}
+			],
+			"feeds": [
+				{
+					"type": "Dimension",
+					"uid": "categoryAxis",
+					"values": [
+						"Weeks"
+					]
+				},
+				{
+					"type": "Measure",
+					"uid": "valueAxis",
+					"values": [
+						"Revenue"
+					]
+				}
+			]
+		}
+	}
+}

@@ -60,28 +60,31 @@
 		},
 		"content": {
 			"chartType": "StackedColumn",
-			"legend": {
-				"visible": true,
-				"position": "Bottom",
-				"alignment": "TopLeft"
-			},
-			"plotArea": {
-				"dataLabel": {
-					"visible": false,
-					"showTotal": true
+			"chartProperties": {
+				"legendGroup": {
+					"position": "bottom",
+					"alignment": "topLeft"
 				},
-				"categoryAxisText": {
-					"visible": false
+				"plotArea": {
+					"dataLabel": {
+						"visible": false,
+						"showTotal": true
+					}
 				},
-				"valueAxisText": {
+				"categoryAxis": {
+					"title": {
+						"visible": false
+					}
+				},
+				"valueAxis": {
+					"title": {
+						"visible": false
+					}
+				},
+				"title": {
 					"visible": false
 				}
 			},
-			"title": {
-				"visible": false
-			},
-			"measureAxis": "valueAxis",
-			"dimensionAxis": "categoryAxis",
 			"data": {
 				"request": {
 					"url": "./data.json"
@@ -92,18 +95,35 @@
 			},
 			"dimensions": [
 				{
-					"label": "Weeks",
+					"name": "Weeks",
 					"value": "{Week}"
 				}
 			],
 			"measures": [
 				{
-					"label": "Revenue",
+					"name": "Revenue",
 					"value": "{Revenue}"
 				},
 				{
-					"label": "Cost",
+					"name": "Cost",
 					"value": "{Cost}"
+				}
+			],
+			"feeds": [
+				{
+					"type": "Dimension",
+					"uid": "categoryAxis",
+					"values": [
+						"Weeks"
+					]
+				},
+				{
+					"type": "Measure",
+					"uid": "valueAxis",
+					"values": [
+						"Revenue",
+						"Cost"
+					]
 				}
 			]
 		}

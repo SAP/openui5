@@ -1,0 +1,32 @@
+{
+	"list": [
+		{
+			"Week": "CW14",
+			"Revenue": 431000.22
+		},
+		{
+			"Week": "CW15",
+			"Revenue": 494000.30
+		},
+		{
+			"Week": "CW16",
+			"Revenue": 491000.17
+		},
+		{
+			"Week": "CW17",
+			"Revenue": 536000.34
+		},
+		{
+			"Week": "CW18",
+			"Revenue": 675000.00
+		},
+		{
+			"Week": "CW19",
+			"Revenue": 680000.00
+		},
+		{
+			"Week": "CW20",
+			"Revenue": 659000.14
+		}
+	]
+}

@@ -30,23 +30,23 @@
 		"type": "Analytical",
 		"header": {
 			"type": "Numeric",
-		  "data": {
-			"json": {
-			  "number": "65.34",
-			  "unit": "K",
-			  "trend": "Down",
-			  "state": "Error",
-			  "target": {
-				"number": 100,
-				"unit": "K"
-			  },
-			  "deviation": {
-				"number": 34.7,
-				"state": "Critical"
-			  },
-			  "details": "Q1, 2018"
-			}
-		  },
+			"data": {
+				"json": {
+					"number": "65.34",
+					"unit": "K",
+					"trend": "Down",
+					"state": "Error",
+					"target": {
+						"number": 100,
+						"unit": "K"
+					},
+					"deviation": {
+						"number": 34.7,
+						"state": "Critical"
+					},
+					"details": "Q1, 2018"
+				}
+			},
 			"title": "Project Cloud Transformation",
 			"subTitle": "Revenue",
 			"unitOfMeasurement": "EUR",
@@ -73,29 +73,37 @@
 		},
 		"content": {
 			"chartType": "Line",
-			"legend": {
-				"visible": "{legend/visible}",
-				"position": "{legend/position}",
-				"alignment": "{legend/alignment}"
-			},
-			"plotArea": {
-				"dataLabel": {
-					"visible": true
+			"chartProperties": {
+				"title": {
+					"text": "Line chart",
+					"visible": true,
+					"alignment": "left"
 				},
-				"categoryAxisText": {
-					"visible": false
+				"legend": {
+					"visible": "{legend/visible}"
 				},
-				"valueAxisText": {
-					"visible": false
+				"legendGroup": {
+					"layout": {
+						"position": "{legend/position}",
+						"alignment": "{legend/alignment}"
+					}
+				},
+				"plotArea": {
+					"dataLabel": {
+						"visible": true
+					}
+				},
+				"categoryAxis": {
+					"title": {
+						"visible": false
+					}
+				},
+				"valueAxis": {
+					"title": {
+						"visible": false
+					}
 				}
 			},
-			"title": {
-				"text": "Line chart",
-				"visible": true,
-				"alignment": "Left"
-			},
-			"measureAxis": "valueAxis",
-			"dimensionAxis": "categoryAxis",
 			"data": {
 				"json": {
 					"dimensions": {
@@ -107,8 +115,8 @@
 					},
 					"legend": {
 						"visible": true,
-						"position": "Bottom",
-						"alignment": "TopLeft"
+						"position": "bottom",
+						"alignment": "topLeft"
 					},
 					"list": [
 						{
@@ -187,18 +195,35 @@
 			},
 			"dimensions": [
 				{
-					"label": "{dimensions/weekLabel}",
+					"name": "{dimensions/weekLabel}",
 					"value": "{Week}"
 				}
 			],
 			"measures": [
 				{
-					"label": "{measures/revenueLabel}",
+					"name": "{measures/revenueLabel}",
 					"value": "{Revenue}"
 				},
 				{
-					"label": "{measures/costLabel}",
+					"name": "{measures/costLabel}",
 					"value": "{Cost}"
+				}
+			],
+			"feeds": [
+				{
+					"uid": "valueAxis",
+					"type": "Measure",
+					"values": [
+						"{measures/revenueLabel}",
+						"{measures/costLabel}"
+					]
+				},
+				{
+					"uid": "categoryAxis",
+					"type": "Dimension",
+					"values": [
+						"{dimensions/weekLabel}"
+					]
 				}
 			]
 		}
