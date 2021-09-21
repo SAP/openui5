@@ -151,7 +151,7 @@
 						</mdc:typeahead>
 						<mdc:dialog>
 							<mdcv:Dialog title="Regions">
-								<mdcvc:MTable  title="Select from List" subTitle="Select" keyPath="code" descriptionPath="text" filterFields="$search">
+								<mdcvc:MTable  keyPath="code" descriptionPath="text" filterFields="$search">
 									<mdcvc:filterBar>
 										<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
 											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="VHFFBTextFFCountry" label="Country" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/country_code}" >
@@ -180,7 +180,7 @@
 										</items>
 									</Table>
 								</mdcvc:MTable>
-								<mdcvc:Conditions title="Define Conditions" subTitle="Conditions" label="Regions"/>
+								<mdcvc:Conditions label="Regions"/>
 							</mdcv:Dialog>
 						</mdc:dialog>
 					</mdc:ValueHelp>

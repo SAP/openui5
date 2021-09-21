@@ -162,6 +162,22 @@ sap.ui.define([
 		return false;
 	};
 
+	Conditions.prototype.getFormattedTitle = function(iCount) {
+		var sTitle = Content.prototype.getFormattedTitle.apply(this, arguments);
+		if (!sTitle) {
+			sTitle = this._oResourceBundle.getText(iCount ? "valuehelp.DEFINECONDITIONS" : "valuehelp.DEFINECONDITIONSNONUMBER", iCount);
+		}
+		return sTitle;
+	};
+
+	Conditions.prototype.getFormattedSubTitle = function() {
+		var sSubTitle = this.getSubTitle();
+		if (!sSubTitle) {
+			sSubTitle = this._oResourceBundle.getText("valuehelp.DEFINECONDITIONS.Subtitle");
+		}
+		return sSubTitle;
+	};
+
 	Conditions.prototype.getAriaAttributes = function(iMaxConditions) {
 
 		return { // return default values, but needs to be implemented by specific content

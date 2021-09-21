@@ -161,9 +161,9 @@ sap.ui.define([
 										return oItem.getKey() === sSelectedContent;
 									})) {
 										var oContent = aContent[iIndex];
-										var sDlgTitle = oContent.getSubTitle() ? oContent.getSubTitle() : oContent.getTitle();
+										var sDlgTitle = oContent.getFormattedSubTitle() ? oContent.getFormattedSubTitle() : oContent.getTitle();
 										if (sDlgTitle) {
-											sTitle = sDlgTitle + ": " + sTitle;
+											sTitle = this._oResourceBundle.getText("valuehelp.DIALOGSUBTITLECOLONTITLE", [sDlgTitle, sTitle]);
 										}
 									}
 								}
@@ -292,14 +292,7 @@ sap.ui.define([
 						content: new DialogTab(this.getId() + "-DT", {content: {path: "$help>_displayContent"}}),
 						text: {parts: ['$help>', '$valueHelp>/conditions'], formatter:
 							function(oContent, aConditions) {
-								var sTitle = oContent ? oContent.getTitle() : "none";
-
-								var iCount = oContent.getCount(aConditions);
-								if (iCount !== 0) {
-									sTitle +=  " (" + iCount + ")";
-								}
-
-								return sTitle;
+								return oContent ? oContent.getFormattedTitle(oContent.getCount(aConditions)) : "none";
 							}
 						}
 					});
