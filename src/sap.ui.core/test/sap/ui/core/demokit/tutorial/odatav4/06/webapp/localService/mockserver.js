@@ -102,14 +102,14 @@ sap.ui.define([
 	/**
 	 * Retrieves a user name from a given request URL.
 	 * @param {string} sUrl - the request URL.
-	 * @returns {string} the user name.
+	 * @returns {string} the user name or undefined if no user was found.
 	 */
 	function getUserKeyFromUrl(sUrl) {
-		var aMatches = sUrl.match(/People\('(.*)'\)/);
-		if (!Array.isArray(aMatches) || aMatches.length !== 2) {
-			throw new Error("Could not find a user key in " + sUrl);
-		}
-		return aMatches[1];
+		var aMatches = [];
+
+		aMatches = sUrl.match(/People\('(.*)'\)/);
+
+		return aMatches ? aMatches[1] : undefined;
 	}
 
 	/**
@@ -334,21 +334,57 @@ sap.ui.define([
 	 */
 	function handleGetUserRequests(oXhr, bCount) {
 		var iCount,
-			sKey,
-			iIndex,
 			sCount = "",
+			aExpand,
+			sExpand,
+			iIndex,
+			sKey,
+			oResponse,
+			sResponseBody,
 			aResult,
-			sResponseBody;
+			aSelect,
+			sSelect,
+			aSubSelects;
+
+		// Get expand parameter
+		aExpand = oXhr.url.match(/\$expand=([^&]+)/);
+
+		// Sort out expand parameter values + subSelects in brackets
+		if (aExpand) {
+			sExpand = aExpand[0];
+			sExpand = sExpand.substring(8);
+
+			// Sort out subselects (e.g. BestFriend($select=Age,UserName),Friend)
+			aSubSelects = sExpand.match(/\([^\)]*\)/g);
+			for (var i = 0; i < aSubSelects.length; i++) {
+				aSubSelects[i] =
+					aSubSelects[i].replace(/\(\$select=/, '').replace(/\)/, '').split(',');
+			}
+			sExpand = sExpand.replace(/\([^\)]*\)/g, '');
+			aExpand = sExpand.split(',');
+		}
+
+		// Get select parameter
+		aSelect = oXhr.url.match(/[^(]\$select=([\w|,]+)/);
+
+		// Sort out select parameter values
+		if (Array.isArray(aSelect)) {
+			sSelect = aSelect[0];
+			sSelect = sSelect.replace(/&/, '').replace(/\?/, '').substring(8);
+			aSelect = sSelect.split(',');
+		}
 
 		// Check if an individual user or a user range is requested
-		try {
-			sKey = getUserKeyFromUrl(oXhr.url); // If this throws an error, then a user range was requested
-
+		sKey = getUserKeyFromUrl(oXhr.url);
+		if (sKey) {
+			// specific user was requested
 			iIndex = findUserIndex(sKey);
+			oResponse = getUserObject(iIndex, aSelect, aExpand, aSubSelects);
+
 			if (iIndex > -1) {
 				sResponseBody = '{"@odata.context": "' + getBaseUrl(oXhr.url) +
 					'$metadata#People(Age,FirstName,LastName,UserName)/$entity",' +
-					JSON.stringify(aUsers[iIndex]).slice(1);
+					JSON.stringify(oResponse).slice(1);
 				return getSuccessResponse(sResponseBody);
 			} else {
 				sResponseBody = invalidKeyError(sKey);
@@ -360,9 +396,8 @@ sap.ui.define([
 					sResponseBody
 				];
 			}
-		} catch (oException) {
-			// If getUserKeyFromUrl throws an error, then a user range was requested
-			// Get the data filtered, sorted and reduced according to skip + top
+		} else {
+			// all users requested
 			aResult = applyFilter(oXhr, aUsers);
 			iCount = aResult.length; // the total no. of people found, after filtering
 			aResult = applySort(oXhr, aResult);
@@ -372,14 +407,97 @@ sap.ui.define([
 				sCount = '"@odata.count": ' + iCount + ',';
 			}
 
+			// generate sResponse
+			oResponse = {value : []};
+			aResult.forEach(function (oUser) {
+				var iUserIndex = findUserIndex(oUser.UserName);
+
+				oResponse.value.push(getUserObject(iUserIndex, aSelect, aExpand, aSubSelects));
+			});
+
 			sResponseBody = '{"@odata.context": "' + getBaseUrl(oXhr.url) +
 				'$metadata#People(Age,FirstName,LastName,UserName)",' +
-				sCount +
-				'"value": ' + JSON.stringify(aResult) +
-				"}";
+				sCount + JSON.stringify(oResponse).slice(1);
 			return getSuccessResponse(sResponseBody);
 		}
+
+
 	}
+
+	/**
+	 * Returns a specific user in the aUsers array.
+	 * @param {Number} iIndex - index of the requested user in the aUsers array
+	 * @param {string[]} aProperties - array with properties from select parameter of request
+	 * @returns {Object} object containing the selected user information
+	 */
+	function getUserByIndex(iIndex, aProperties) {
+		var oHelper = {},
+			oUser = aUsers[iIndex];
+
+		aProperties.forEach(function (selectProperty) {
+			oHelper[selectProperty] = oUser[selectProperty];
+
+		});
+
+		return oHelper;
+	}
+	/**
+	 * Returns the user with iIndex in the aUsers array with all its information
+	 * @param  {Number} iIndex index of user in aUsers
+	 * @param  {string[]} aSelect properties of user which should be returned
+	 * @param  {string[]} aExpand navigation properties of user which should be expanded
+	 * @param  {string[]} aSubSelects select parameters according to the expand parameters
+	 * @returns {Object} user with all its requested information
+	 */
+	function getUserObject(iIndex, aSelect, aExpand, aSubSelects) {
+		var sBestFriend,
+			iFriendIndex,
+			aFriends,
+			oObject = {},
+			oUser;
+
+		oObject = getUserByIndex(iIndex, aSelect);
+		if (aExpand) {
+			oUser = aUsers[iIndex];
+			for (var i = 0; i < aExpand.length; i++) {
+				switch (aExpand[i]) {
+					case "Friends" :
+						oObject.Friends = [];
+						aFriends = oUser.Friends;
+						oObject.Friends = createFriendsArray(aFriends, aSubSelects[i]);
+						break;
+					case "BestFriend" :
+						sBestFriend = oUser.BestFriend;
+						iFriendIndex = findUserIndex(sBestFriend);
+						oObject.BestFriend = getUserByIndex(iFriendIndex, aSubSelects[i]);
+						break;
+					default:
+						break;
+				}
+			}
+		}
+		return oObject;
+	}
+
+
+	/**
+	 * creates array of friends for a given user
+	 * @param  {string[]} aFriends array containing the usernames of the friends
+	 * @param  {string[]} aSubSelects array containing the select parameters for the expand on friends
+	 * @returns {Object[]} array containing the friends as objects
+	 */
+	function createFriendsArray(aFriends, aSubSelects) {
+		var aArray = [],
+			iFriendIndex;
+
+		aFriends.forEach(function (sFriend) {
+			iFriendIndex = findUserIndex(sFriend);
+			aArray.push(getUserByIndex(iFriendIndex, aSubSelects));
+		});
+
+		return aArray;
+	}
+
 
 	/**
 	 * Handles PATCH requests for users and returns a fitting response.
