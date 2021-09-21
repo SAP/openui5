@@ -57,7 +57,9 @@ sap.ui.define(['./PropertyBinding'],
 	};
 
 	/**
-	 * Setter for context
+	 * Setter for context.
+	 *
+	 * @param {sap.ui.model.Context} oContext The new context to set
 	 */
 	ClientPropertyBinding.prototype.setContext = function(oContext) {
 		if (this.oContext != oContext) {
