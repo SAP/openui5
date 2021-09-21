@@ -201,7 +201,9 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/util/isPlainObject"],
 	};
 
 	/**
-	 * toString method returns path for compatibility
+	 * Returns the path of this Context instance.
+	 *
+	 * @returns {string} The path
 	 */
 	Context.prototype.toString = function() {
 		return this.sPath;
