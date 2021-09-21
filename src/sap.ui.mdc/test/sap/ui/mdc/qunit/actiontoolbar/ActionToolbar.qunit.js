@@ -36,7 +36,7 @@ sap.ui.define([
 	QUnit.test("Instantiation", function(assert) {
 		assert.ok(this.oToolbar);
 		checkAggregation(assert, this.oToolbar, "content", [
-			this.oToolbar._oTitleSeparator, this.oToolbar._oSpacer
+			this.oToolbar._oBeginSeparator, this.oToolbar._oSpacer, this.oToolbar._oEndActionsBeginSeparator, this.oToolbar._oEndActionsEndSeparator
 		], "Default Content");
 	});
 
@@ -91,36 +91,36 @@ sap.ui.define([
 	});
 
 	QUnit.test("Title Separator", function(assert) {
-		assert.ok(this.oToolbar._oTitleSeparator);
-		assert.strictEqual(this.oToolbar._oTitleSeparator.getVisible(), false);
+		assert.ok(this.oToolbar._oBeginSeparator);
+		assert.strictEqual(this.oToolbar._oBeginSeparator.getVisible(), false);
 
 		var t1 = new Title();
 		this.oToolbar.addBegin(t1);
 
-		assert.strictEqual(this.oToolbar._oTitleSeparator.getVisible(), false);
+		assert.strictEqual(this.oToolbar._oBeginSeparator.getVisible(), false);
 
 		var txt1 = new Text();
 		this.oToolbar.addBetween(txt1);
-		assert.strictEqual(this.oToolbar._oTitleSeparator.getVisible(), true);
+		assert.strictEqual(this.oToolbar._oBeginSeparator.getVisible(), true);
 
 		t1.setVisible(false);
-		assert.strictEqual(this.oToolbar._oTitleSeparator.getVisible(), false);
+		assert.strictEqual(this.oToolbar._oBeginSeparator.getVisible(), false);
 
 		t1.setVisible(true);
-		assert.strictEqual(this.oToolbar._oTitleSeparator.getVisible(), true);
+		assert.strictEqual(this.oToolbar._oBeginSeparator.getVisible(), true);
 
 		t1.setWidth("0px");
-		assert.strictEqual(this.oToolbar._oTitleSeparator.getVisible(), false);
+		assert.strictEqual(this.oToolbar._oBeginSeparator.getVisible(), false);
 
 		t1.setWidth();
-		assert.strictEqual(this.oToolbar._oTitleSeparator.getVisible(), true);
+		assert.strictEqual(this.oToolbar._oBeginSeparator.getVisible(), true);
 
 		this.oToolbar.destroyBegin();
-		assert.strictEqual(this.oToolbar._oTitleSeparator.getVisible(), false);
+		assert.strictEqual(this.oToolbar._oBeginSeparator.getVisible(), false);
 	});
 
 	QUnit.test("Destroy", function(assert) {
-		var oTitleSeparator = this.oToolbar._oTitleSeparator;
+		var oBeginSeparator = this.oToolbar._oBeginSeparator;
 		var oSpacer = this.oToolbar._oSpacer;
 		var oButtonBegin1 = new Button();
 		this.oToolbar.addBegin(oButtonBegin1);
@@ -133,15 +133,16 @@ sap.ui.define([
 		});
 		this.oToolbar.addAction(oAction1);
 		checkAggregation(assert, this.oToolbar, "content", [
-			oButtonBegin1, oTitleSeparator, oButtonBetween1, oSpacer, oAction1, oAction1.getSeparatorAfter(), oButtonEnd1
+			oButtonBegin1, oBeginSeparator, oButtonBetween1, oSpacer, oAction1, this.oToolbar._oEndActionsBeginSeparator, oButtonEnd1, this.oToolbar._oEndActionsEndSeparator
 		], "After creation");
 
 		this.oToolbar.destroy();
 
 		assert.ok(this.oToolbar.bIsDestroyed, "Toolbar destroyed");
-		assert.ok(oTitleSeparator.bIsDestroyed, "Separator1 destroyed");
+		assert.ok(oBeginSeparator.bIsDestroyed, "Separator1 destroyed");
 		assert.ok(oSpacer.bIsDestroyed, "Spacer destroyed");
-		assert.ok(!oAction1.getSeparatorAfter(), "Action - Separator destroyed");
+		assert.ok(this.oToolbar._oEndActionsBeginSeparator.bIsDestroyed, "Action - Separator destroyed");
+		assert.ok(this.oToolbar._oEndActionsEndSeparator.bIsDestroyed, "Action - Separator destroyed");
 		assert.ok(oButtonBegin1.bIsDestroyed, "Begin destroyed");
 		assert.ok(oButtonEnd1.bIsDestroyed, "End destroyed");
 		assert.ok(oAction1.bIsDestroyed, "Actions destroyed");
@@ -157,19 +158,27 @@ sap.ui.define([
 				width: "100%"
 			});
 			this.oToolbarAddAggregations.placeAt("content");
-			this.oTitleSeparator = this.oToolbarAddAggregations._oTitleSeparator;
+			this.oBeginSeparator = this.oToolbarAddAggregations._oBeginSeparator;
 			this.oSpacer = this.oToolbarAddAggregations._oSpacer;
+			this.oEndActionsBeginSeparator = this.oToolbarAddAggregations._oEndActionsBeginSeparator;
+			this.oEndActionsEndSeparator = this.oToolbarAddAggregations._oEndActionsEndSeparator;
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
 			if (this.oToolbarAddAggregations) {
 				this.oToolbarAddAggregations.destroy();
 			}
-			if (this.oTitleSeparator) {
-				this.oTitleSeparator = undefined;
+			if (this.oBeginSeparator) {
+				this.oBeginSeparator = undefined;
 			}
 			if (this.oSpacer) {
 				this.oSpacer = undefined;
+			}
+			if (this.oEndActionsBeginSeparator) {
+				this.oEndActionsBeginSeparator = undefined;
+			}
+			if (this.oEndActionsEndSeparator) {
+				this.oEndActionsEndSeparator = undefined;
 			}
 		}
 	});
@@ -180,7 +189,7 @@ sap.ui.define([
 
 		this.oToolbarAddAggregations.addBegin(oButtonBegin1);
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
-			oButtonBegin1, this.oTitleSeparator, this.oSpacer
+			oButtonBegin1, this.oBeginSeparator, this.oSpacer, this.oEndActionsBeginSeparator, this.oEndActionsEndSeparator
 		], "After addBegin");
 		checkAggregation(assert, this.oToolbarAddAggregations, "begin", [
 			oButtonBegin1
@@ -188,7 +197,7 @@ sap.ui.define([
 
 		this.oToolbarAddAggregations.addBegin(oButtonBegin2);
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
-			oButtonBegin1, oButtonBegin2, this.oTitleSeparator, this.oSpacer
+			oButtonBegin1, oButtonBegin2, this.oBeginSeparator, this.oSpacer, this.oEndActionsBeginSeparator, this.oEndActionsEndSeparator
 		], "After addBegin");
 		checkAggregation(assert, this.oToolbarAddAggregations, "begin", [
 			oButtonBegin1, oButtonBegin2
@@ -201,7 +210,7 @@ sap.ui.define([
 
 		this.oToolbarAddAggregations.addBetween(oButtonBetween1);
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
-			this.oTitleSeparator, oButtonBetween1, this.oSpacer
+			this.oBeginSeparator, oButtonBetween1, this.oSpacer, this.oEndActionsBeginSeparator, this.oEndActionsEndSeparator
 		], "After addBetween");
 		checkAggregation(assert, this.oToolbarAddAggregations, "between", [
 			oButtonBetween1
@@ -209,7 +218,7 @@ sap.ui.define([
 
 		this.oToolbarAddAggregations.addBetween(oButtonBetween2);
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
-			this.oTitleSeparator, oButtonBetween1, oButtonBetween2, this.oSpacer
+			this.oBeginSeparator, oButtonBetween1, oButtonBetween2, this.oSpacer, this.oEndActionsBeginSeparator, this.oEndActionsEndSeparator
 		], "After addBetween");
 		checkAggregation(assert, this.oToolbarAddAggregations, "between", [
 			oButtonBetween1, oButtonBetween2
@@ -222,7 +231,7 @@ sap.ui.define([
 
 		this.oToolbarAddAggregations.addEnd(oButtonEnd1);
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
-			this.oTitleSeparator, this.oSpacer, oButtonEnd1
+			this.oBeginSeparator, this.oSpacer, this.oEndActionsBeginSeparator, oButtonEnd1, this.oEndActionsEndSeparator
 		], "After addEnd");
 		checkAggregation(assert, this.oToolbarAddAggregations, "end", [
 			oButtonEnd1
@@ -230,7 +239,7 @@ sap.ui.define([
 
 		this.oToolbarAddAggregations.addEnd(oButtonEnd2);
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
-			this.oTitleSeparator, this.oSpacer, oButtonEnd1, oButtonEnd2
+			this.oBeginSeparator, this.oSpacer, this.oEndActionsBeginSeparator, oButtonEnd1, oButtonEnd2, this.oEndActionsEndSeparator
 		], "After addEnd");
 		checkAggregation(assert, this.oToolbarAddAggregations, "end", [
 			oButtonEnd1, oButtonEnd2
@@ -282,54 +291,54 @@ sap.ui.define([
 
 		this.oToolbarAddAggregations.addAction(oAction1);
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
-			this.oTitleSeparator, this.oSpacer, oButtonEnd1, oAction1.getSeparatorBefore(), oAction1
+			this.oBeginSeparator, this.oSpacer, this.oEndActionsBeginSeparator, oButtonEnd1, this.oEndActionsEndSeparator, oAction1
 		], "After addAction 'end' alignment 'right'");
 		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [ oAction1 ], "After addAction 'end' alignment 'end' - getActions correct");
-		checkAggregation(assert, this.oToolbarAddAggregations, "end", [
-			oButtonEnd1, oAction1.getSeparatorBefore(), oAction1
+		checkAggregation(assert, this.oToolbarAddAggregations, "actions", [
+			oAction1
 		], "After addAction", oAction1);
 
 		this.oToolbarAddAggregations.addAction(oAction2);
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
-			this.oTitleSeparator, this.oSpacer, oAction2, oAction2.getSeparatorAfter(), oButtonEnd1, oAction1.getSeparatorBefore(), oAction1
+			this.oBeginSeparator, this.oSpacer, oAction2, this.oEndActionsBeginSeparator, oButtonEnd1, this.oEndActionsEndSeparator, oAction1
 		], "After addAction 'end' alignment 'left'");
 		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [ oAction1, oAction2 ], "After addAction 'end' alignment 'begin' - getActions correct");
-		checkAggregation(assert, this.oToolbarAddAggregations, "end", [
-			oAction2, oAction2.getSeparatorAfter(), oButtonEnd1, oAction1.getSeparatorBefore(), oAction1
+		checkAggregation(assert, this.oToolbarAddAggregations, "actions", [
+			oAction1, oAction2
 		], "After After addAction", oAction2);
 
 		this.oToolbarAddAggregations.addAction(oAction3);
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
-			this.oTitleSeparator, this.oSpacer, oAction2, oAction2.getSeparatorAfter(), oButtonEnd1, oAction1.getSeparatorBefore(), oAction1, oAction3
+			this.oBeginSeparator, this.oSpacer, oAction2, this.oEndActionsBeginSeparator, oButtonEnd1, this.oEndActionsEndSeparator, oAction1, oAction3
 		], "After addAction 'end' alignment 'right'");
 		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [ oAction1, oAction2, oAction3 ], "After addAction 'end' alignment 'end' - getActions correct");
-		checkAggregation(assert, this.oToolbarAddAggregations, "end", [
-			oAction2, oAction2.getSeparatorAfter(), oButtonEnd1, oAction1.getSeparatorBefore(), oAction1, oAction3
+		checkAggregation(assert, this.oToolbarAddAggregations, "actions", [
+			oAction1, oAction2, oAction3
 		], "After addAction", oAction2);
 
 		this.oToolbarAddAggregations.addAction(oAction4);
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
-			this.oTitleSeparator, this.oSpacer, oAction2, oAction4, oAction2.getSeparatorAfter(), oButtonEnd1, oAction1.getSeparatorBefore(), oAction1, oAction3
+			this.oBeginSeparator, this.oSpacer, oAction2, oAction4, this.oEndActionsBeginSeparator, oButtonEnd1, this.oEndActionsEndSeparator, oAction1, oAction3
 		], "After addAction 'end' alignment 'left'");
 		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [ oAction1, oAction2, oAction3, oAction4 ], "After addAction 'end' alignment 'begin' - getActions correct");
-		checkAggregation(assert, this.oToolbarAddAggregations, "end", [
-			oAction2, oAction4, oAction2.getSeparatorAfter(), oButtonEnd1, oAction1.getSeparatorBefore(), oAction1, oAction3
+		checkAggregation(assert, this.oToolbarAddAggregations, "actions", [
+			oAction1, oAction2, oAction3, oAction4
 		], "After addAction", oAction2);
 
 		this.oToolbarAddAggregations.addAction(null);
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
-			this.oTitleSeparator, this.oSpacer, oAction2, oAction4, oAction2.getSeparatorAfter(), oButtonEnd1, oAction1.getSeparatorBefore(), oAction1, oAction3
+			this.oBeginSeparator, this.oSpacer, oAction2, oAction4, this.oEndActionsBeginSeparator, oButtonEnd1, this.oEndActionsEndSeparator, oAction1, oAction3
 		], "After addAction of null");
 		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [ oAction1, oAction2, oAction3, oAction4 ], "After addAction 'end' alignment 'begin' - getActions correct");
-		checkAggregation(assert, this.oToolbarAddAggregations, "end", [
-			oAction2, oAction4, oAction2.getSeparatorAfter(), oButtonEnd1, oAction1.getSeparatorBefore(), oAction1, oAction3
+		checkAggregation(assert, this.oToolbarAddAggregations, "actions", [
+			oAction1, oAction2, oAction3, oAction4
 		], "After addAction", oAction2);
 	});
 
 	QUnit.module("sap.ui.mdc.ActionToolbar - indexOfAggregations", {
 		before: function(assert) {
 			this.oToolbaIndexOfAggregations = new ActionToolbar();
-			this.oTitleSeparator = this.oToolbaIndexOfAggregations._oTitleSeparator;
+			this.oBeginSeparator = this.oToolbaIndexOfAggregations._oBeginSeparator;
 			this.oSpacer = this.oToolbaIndexOfAggregations._oSpacer;
 
 			this.oButtonNotContainer = new Button();
@@ -349,8 +358,8 @@ sap.ui.define([
 			if (this.oToolbaIndexOfAggregations) {
 				this.oToolbaIndexOfAggregations.destroy();
 			}
-			if (this.oTitleSeparator) {
-				this.oTitleSeparator = undefined;
+			if (this.oBeginSeparator) {
+				this.oBeginSeparator = undefined;
 			}
 			if (this.oSpacer) {
 				this.oSpacer = undefined;
@@ -386,25 +395,33 @@ sap.ui.define([
 		assert.strictEqual(this.oToolbaIndexOfAggregations.indexOfEnd(this.oButtonNotContainer), -1, "Index of End (Not contained)");
 		assert.strictEqual(this.oToolbaIndexOfAggregations.indexOfEnd(this.oButtonBegin), -1, "Index of End (Begin Content)");
 		assert.strictEqual(this.oToolbaIndexOfAggregations.indexOfEnd(this.oButtonBetween), -1, "Index of End (Between Content)");
-		assert.strictEqual(this.oToolbaIndexOfAggregations.indexOfEnd(this.oAction), 0, "Index of End (Action Content)");
-		assert.strictEqual(this.oToolbaIndexOfAggregations.indexOfEnd(this.oButtonEnd), 2, "Index of End (End Content)");
+		assert.strictEqual(this.oToolbaIndexOfAggregations.indexOfEnd(this.oAction), -1, "Index of End (Action Content)");
+		assert.strictEqual(this.oToolbaIndexOfAggregations.indexOfEnd(this.oButtonEnd), 0, "Index of End (End Content)");
 	});
 
 	QUnit.module("sap.ui.mdc.ActionToolbar - insertAggregations", {
 		beforeEach: function() {
 			this.oToolbarInsertAggregation = new ActionToolbar();
-			this.oTitleSeparator = this.oToolbarInsertAggregation._oTitleSeparator;
+			this.oBeginSeparator = this.oToolbarInsertAggregation._oBeginSeparator;
 			this.oSpacer = this.oToolbarInsertAggregation._oSpacer;
+			this.oEndActionsBeginSeparator = this.oToolbarInsertAggregation._oEndActionsBeginSeparator;
+			this.oEndActionsEndSeparator = this.oToolbarInsertAggregation._oEndActionsEndSeparator;
 		},
 		afterEach: function() {
 			if (this.oToolbarInsertAggregation) {
 				this.oToolbarInsertAggregation.destroy();
 			}
-			if (this.oTitleSeparator) {
-				this.oTitleSeparator = undefined;
+			if (this.oBeginSeparator) {
+				this.oBeginSeparator = undefined;
 			}
 			if (this.oSpacer) {
 				this.oSpacer = undefined;
+			}
+			if (this.oEndActionsBeginSeparator) {
+				this.oEndActionsBeginSeparator = undefined;
+			}
+			if (this.oEndActionsEndSeparator) {
+				this.oEndActionsEndSeparator = undefined;
 			}
 		}
 	});
@@ -413,7 +430,7 @@ sap.ui.define([
 		var oButtonBegin1 = new Button();
 		this.oToolbarInsertAggregation.insertBegin(oButtonBegin1, 0);
 		checkAggregation(assert, this.oToolbarInsertAggregation, "content", [
-			oButtonBegin1, this.oTitleSeparator, this.oSpacer
+			oButtonBegin1, this.oBeginSeparator, this.oSpacer, this.oEndActionsBeginSeparator, this.oEndActionsEndSeparator
 		], "After insertBegin");
 		checkAggregation(assert, this.oToolbarInsertAggregation, "begin", [
 			oButtonBegin1
@@ -422,7 +439,7 @@ sap.ui.define([
 		var oButtonBegin2 = new Button();
 		this.oToolbarInsertAggregation.insertBegin(oButtonBegin2, -5);
 		checkAggregation(assert, this.oToolbarInsertAggregation, "content", [
-			oButtonBegin2, oButtonBegin1, this.oTitleSeparator, this.oSpacer
+			oButtonBegin2, oButtonBegin1, this.oBeginSeparator, this.oSpacer, this.oEndActionsBeginSeparator, this.oEndActionsEndSeparator
 		], "After insertBegin");
 		checkAggregation(assert, this.oToolbarInsertAggregation, "begin", [
 			oButtonBegin2, oButtonBegin1
@@ -431,7 +448,7 @@ sap.ui.define([
 		var oButtonBegin3 = new Button();
 		this.oToolbarInsertAggregation.insertBegin(oButtonBegin3, 100);
 		checkAggregation(assert, this.oToolbarInsertAggregation, "content", [
-			oButtonBegin2, oButtonBegin1, oButtonBegin3, this.oTitleSeparator, this.oSpacer
+			oButtonBegin2, oButtonBegin1, oButtonBegin3, this.oBeginSeparator, this.oSpacer, this.oEndActionsBeginSeparator, this.oEndActionsEndSeparator
 		], "After insertBegin");
 		checkAggregation(assert, this.oToolbarInsertAggregation, "begin", [
 			oButtonBegin2, oButtonBegin1, oButtonBegin3
@@ -442,7 +459,7 @@ sap.ui.define([
 		var oButtonBetween1 = new Button();
 		this.oToolbarInsertAggregation.insertBetween(oButtonBetween1, 0);
 		checkAggregation(assert, this.oToolbarInsertAggregation, "content", [
-			this.oTitleSeparator, oButtonBetween1 ,this.oSpacer
+			this.oBeginSeparator, oButtonBetween1 ,this.oSpacer, this.oEndActionsBeginSeparator, this.oEndActionsEndSeparator
 		], "After insertBegin");
 		checkAggregation(assert, this.oToolbarInsertAggregation, "between", [
 			oButtonBetween1
@@ -451,7 +468,7 @@ sap.ui.define([
 		var oButtonBetween2 = new Button();
 		this.oToolbarInsertAggregation.insertBetween(oButtonBetween2, -5);
 		checkAggregation(assert, this.oToolbarInsertAggregation, "content", [
-			this.oTitleSeparator, oButtonBetween2, oButtonBetween1, this.oSpacer
+			this.oBeginSeparator, oButtonBetween2, oButtonBetween1, this.oSpacer, this.oEndActionsBeginSeparator, this.oEndActionsEndSeparator
 		], "After insertBegin");
 		checkAggregation(assert, this.oToolbarInsertAggregation, "between", [
 			oButtonBetween2, oButtonBetween1
@@ -460,7 +477,7 @@ sap.ui.define([
 		var oButtonBetween3 = new Button();
 		this.oToolbarInsertAggregation.insertBetween(oButtonBetween3, 100);
 		checkAggregation(assert, this.oToolbarInsertAggregation, "content", [
-			this.oTitleSeparator, oButtonBetween2, oButtonBetween1, oButtonBetween3, this.oSpacer
+			this.oBeginSeparator, oButtonBetween2, oButtonBetween1, oButtonBetween3, this.oSpacer, this.oEndActionsBeginSeparator, this.oEndActionsEndSeparator
 		], "After insertBegin");
 		checkAggregation(assert, this.oToolbarInsertAggregation, "between", [
 			oButtonBetween2, oButtonBetween1, oButtonBetween3
@@ -471,7 +488,7 @@ sap.ui.define([
 		var oButtonEnd1 = new Button();
 		this.oToolbarInsertAggregation.insertEnd(oButtonEnd1, 0);
 		checkAggregation(assert, this.oToolbarInsertAggregation, "content", [
-			this.oTitleSeparator, this.oSpacer, oButtonEnd1
+			this.oBeginSeparator, this.oSpacer, this.oEndActionsBeginSeparator, oButtonEnd1, this.oEndActionsEndSeparator
 		], "After insertEnd");
 		checkAggregation(assert, this.oToolbarInsertAggregation, "end", [
 			oButtonEnd1
@@ -480,7 +497,7 @@ sap.ui.define([
 		var oButtonEnd2 = new Button();
 		this.oToolbarInsertAggregation.insertEnd(oButtonEnd2, -5);
 		checkAggregation(assert, this.oToolbarInsertAggregation, "content", [
-			this.oTitleSeparator, this.oSpacer, oButtonEnd2, oButtonEnd1
+			this.oBeginSeparator, this.oSpacer, this.oEndActionsBeginSeparator, oButtonEnd2, oButtonEnd1, this.oEndActionsEndSeparator
 		], "After insertEnd");
 		checkAggregation(assert, this.oToolbarInsertAggregation, "end", [
 			oButtonEnd2, oButtonEnd1
@@ -489,7 +506,7 @@ sap.ui.define([
 		var oButtonEnd3 = new Button();
 		this.oToolbarInsertAggregation.insertEnd(oButtonEnd3, 100);
 		checkAggregation(assert, this.oToolbarInsertAggregation, "content", [
-			this.oTitleSeparator, this.oSpacer, oButtonEnd2, oButtonEnd1, oButtonEnd3
+			this.oBeginSeparator, this.oSpacer, this.oEndActionsBeginSeparator, oButtonEnd2, oButtonEnd1, oButtonEnd3, this.oEndActionsEndSeparator
 		], "After insertEnd");
 		checkAggregation(assert, this.oToolbarInsertAggregation, "end", [
 			oButtonEnd2, oButtonEnd1, oButtonEnd3
@@ -504,7 +521,7 @@ sap.ui.define([
 		});
 		this.oToolbarInsertAggregation.insertAction(oAction1, 0);
 		checkAggregation(assert, this.oToolbarInsertAggregation, "content", [
-			this.oTitleSeparator, this.oSpacer, oAction1, oAction1.getSeparatorAfter(), oButtonEnd1
+			this.oBeginSeparator, this.oSpacer, oAction1, this.oEndActionsBeginSeparator, oButtonEnd1, this.oEndActionsEndSeparator
 		], "After insertAction");
 		checkAggregation(assert, this.oToolbarInsertAggregation, "actions", [
 			oAction1
@@ -515,10 +532,10 @@ sap.ui.define([
 		});
 		this.oToolbarInsertAggregation.insertAction(oAction2, -5);
 		checkAggregation(assert, this.oToolbarInsertAggregation, "content", [
-			this.oTitleSeparator, this.oSpacer, oAction1, oAction2, oAction1.getSeparatorAfter(), oButtonEnd1
+			this.oBeginSeparator, this.oSpacer, oAction2, oAction1, this.oEndActionsBeginSeparator, oButtonEnd1, this.oEndActionsEndSeparator
 		], "After insertAction");
 		checkAggregation(assert, this.oToolbarInsertAggregation, "actions", [
-			oAction1, oAction2
+			oAction2, oAction1
 		], "After insertAction", oAction2);
 
 		var oAction3 = new ActionToolbarAction({
@@ -526,23 +543,25 @@ sap.ui.define([
 		});
 		this.oToolbarInsertAggregation.insertAction(oAction3, 100);
 		checkAggregation(assert, this.oToolbarInsertAggregation, "content", [
-			this.oTitleSeparator, this.oSpacer, oAction1, oAction2, oAction3, oAction1.getSeparatorAfter(), oButtonEnd1
+			this.oBeginSeparator, this.oSpacer, oAction2, oAction1, oAction3, this.oEndActionsBeginSeparator, oButtonEnd1, this.oEndActionsEndSeparator
 		], "After insertAction");
 		checkAggregation(assert, this.oToolbarInsertAggregation, "actions", [
-			oAction1, oAction2, oAction3
+			oAction2, oAction1, oAction3
 		], "After insertAction", oAction3);
 
 		this.oToolbarInsertAggregation.insertAction(null);
 		checkAggregation(assert, this.oToolbarInsertAggregation, "content", [
-			this.oTitleSeparator, this.oSpacer, oAction1, oAction2, oAction3, oAction1.getSeparatorAfter(), oButtonEnd1
+			this.oBeginSeparator, this.oSpacer, oAction2, oAction1, oAction3, this.oEndActionsBeginSeparator, oButtonEnd1, this.oEndActionsEndSeparator
 		], "After insertAction of nothing");
 	});
 
 	QUnit.module("sap.ui.mdc.ActionToolbar - removeAggregations", {
 		beforeEach: function() {
 			this.oToolbarRemoveAggregation = new ActionToolbar();
-			this.oTitleSeparator = this.oToolbarRemoveAggregation._oTitleSeparator;
+			this.oBeginSeparator = this.oToolbarRemoveAggregation._oBeginSeparator;
 			this.oSpacer = this.oToolbarRemoveAggregation._oSpacer;
+			this.oEndActionsBeginSeparator = this.oToolbarRemoveAggregation._oEndActionsBeginSeparator;
+			this.oEndActionsEndSeparator = this.oToolbarRemoveAggregation._oEndActionsEndSeparator;
 
 			this.oButtonBegin1 = new Button();
 			this.oButtonBegin2 = new Button();
@@ -570,11 +589,17 @@ sap.ui.define([
 			if (this.oToolbarRemoveAggregation) {
 				this.oToolbarRemoveAggregation.destroy();
 			}
-			if (this.oTitleSeparator) {
-				this.oTitleSeparator = undefined;
+			if (this.oBeginSeparator) {
+				this.oBeginSeparator = undefined;
 			}
 			if (this.oSpacer) {
 				this.oSpacer = undefined;
+			}
+			if (this.oEndActionsBeginSeparator) {
+				this.oEndActionsBeginSeparator = undefined;
+			}
+			if (this.oEndActionsEndSeparator) {
+				this.oEndActionsEndSeparator = undefined;
 			}
 		}
 	});
@@ -582,7 +607,7 @@ sap.ui.define([
 	QUnit.test("removeBegin", function(assert) {
 		var oResult = this.oToolbarRemoveAggregation.removeBegin(this.oButtonBegin1);
 		checkAggregation(assert, this.oToolbarRemoveAggregation, "content", [
-			this.oButtonBegin2, this.oTitleSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer, this.oAction1, this.oAction2, this.oAction1.getSeparatorAfter(), this.oButtonEnd1, this.oButtonEnd2
+			this.oButtonBegin2, this.oBeginSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer, this.oAction1, this.oAction2, this.oEndActionsBeginSeparator, this.oButtonEnd1, this.oButtonEnd2, this.oEndActionsEndSeparator
 		], "After removeBegin");
 		checkAggregation(assert, this.oToolbarRemoveAggregation, "begin", [
 			this.oButtonBegin2
@@ -593,7 +618,7 @@ sap.ui.define([
 	QUnit.test("removeBetween", function(assert) {
 		var oResult = this.oToolbarRemoveAggregation.removeBetween(this.oButtonBetween1);
 		checkAggregation(assert, this.oToolbarRemoveAggregation, "content", [
-			this.oButtonBegin1, this.oButtonBegin2, this.oTitleSeparator, this.oButtonBetween2, this.oSpacer, this.oAction1, this.oAction2, this.oAction1.getSeparatorAfter(), this.oButtonEnd1, this.oButtonEnd2
+			this.oButtonBegin1, this.oButtonBegin2, this.oBeginSeparator, this.oButtonBetween2, this.oSpacer, this.oAction1, this.oAction2, this.oEndActionsBeginSeparator, this.oButtonEnd1, this.oButtonEnd2, this.oEndActionsEndSeparator
 		], "After removeBegin");
 		checkAggregation(assert, this.oToolbarRemoveAggregation, "between", [
 			this.oButtonBetween2
@@ -604,7 +629,7 @@ sap.ui.define([
 	QUnit.test("removeAction", function(assert) {
 		var oResult = this.oToolbarRemoveAggregation.removeAction(this.oAction1);
 		checkAggregation(assert, this.oToolbarRemoveAggregation, "content", [
-			this.oButtonBegin1, this.oButtonBegin2, this.oTitleSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer, this.oAction2, this.oAction2.getSeparatorAfter(), this.oButtonEnd1, this.oButtonEnd2
+			this.oButtonBegin1, this.oButtonBegin2, this.oBeginSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer, this.oAction2, this.oEndActionsBeginSeparator, this.oButtonEnd1, this.oButtonEnd2, this.oEndActionsEndSeparator
 		], "After removeAction");
 		checkAggregation(assert, this.oToolbarRemoveAggregation, "actions", [
 			this.oAction2
@@ -615,10 +640,10 @@ sap.ui.define([
 	QUnit.test("removeEnd", function(assert) {
 		var oResult = this.oToolbarRemoveAggregation.removeEnd(this.oButtonEnd1);
 		checkAggregation(assert, this.oToolbarRemoveAggregation, "content", [
-			this.oButtonBegin1, this.oButtonBegin2, this.oTitleSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer, this.oAction1, this.oAction2, this.oAction1.getSeparatorAfter(), this.oButtonEnd2
+			this.oButtonBegin1, this.oButtonBegin2, this.oBeginSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer, this.oAction1, this.oAction2, this.oEndActionsBeginSeparator, this.oButtonEnd2, this.oEndActionsEndSeparator
 		], "After removeEnd");
 		checkAggregation(assert, this.oToolbarRemoveAggregation, "end", [
-			this.oAction1, this.oAction2, this.oAction1.getSeparatorAfter(), this.oButtonEnd2
+			this.oButtonEnd2
 		], "After removeEnd", this.oButtonEnd1);
 		assert.ok(oResult === this.oButtonEnd1, "After removeEnd - removed content");
 	});
@@ -626,8 +651,10 @@ sap.ui.define([
 	QUnit.module("sap.ui.mdc.ActionToolbar - removeAllAggregations", {
 		beforeEach: function() {
 			this.oToolbarRemoveAllAggregation = new ActionToolbar();
-			this.oTitleSeparator = this.oToolbarRemoveAllAggregation._oTitleSeparator;
+			this.oBeginSeparator = this.oToolbarRemoveAllAggregation._oBeginSeparator;
 			this.oSpacer = this.oToolbarRemoveAllAggregation._oSpacer;
+			this.oEndActionsBeginSeparator = this.oToolbarRemoveAllAggregation._oEndActionsBeginSeparator;
+			this.oEndActionsEndSeparator = this.oToolbarRemoveAllAggregation._oEndActionsEndSeparator;
 
 			this.oButtonBegin1 = new Button();
 			this.oButtonBegin2 = new Button();
@@ -655,11 +682,17 @@ sap.ui.define([
 			if (this.oToolbarRemoveAllAggregation) {
 				this.oToolbarRemoveAllAggregation.destroy();
 			}
-			if (this.oTitleSeparator) {
-				this.oTitleSeparator = undefined;
+			if (this.oBeginSeparator) {
+				this.oBeginSeparator = undefined;
 			}
 			if (this.oSpacer) {
 				this.oSpacer = undefined;
+			}
+			if (this.oEndActionsBeginSeparator) {
+				this.oEndActionsBeginSeparator = undefined;
+			}
+			if (this.oEndActionsEndSeparator) {
+				this.oEndActionsEndSeparator = undefined;
 			}
 		}
 	});
@@ -667,7 +700,7 @@ sap.ui.define([
 	QUnit.test("removeAllBegin", function(assert) {
 		var oResult = this.oToolbarRemoveAllAggregation.removeAllBegin();
 		checkAggregation(assert, this.oToolbarRemoveAllAggregation, "content", [
-			this.oTitleSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer, this.oAction1, this.oAction2, this.oAction1.getSeparatorAfter(), this.oButtonEnd1, this.oButtonEnd2
+			this.oBeginSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer, this.oAction1, this.oAction2, this.oEndActionsBeginSeparator, this.oButtonEnd1, this.oButtonEnd2, this.oEndActionsEndSeparator
 		], "After removeAllBegin");
 		checkAggregation(assert, this.oToolbarRemoveAllAggregation, "begin", [], "After removeAllBegin");
 		assert.ok(oResult.length === 2, "After removeAllBegin - removed content");
@@ -676,7 +709,7 @@ sap.ui.define([
 	QUnit.test("removeAllBetween", function(assert) {
 		var oResult = this.oToolbarRemoveAllAggregation.removeAllBetween();
 		checkAggregation(assert, this.oToolbarRemoveAllAggregation, "content", [
-			this.oButtonBegin1, this.oButtonBegin2, this.oTitleSeparator, this.oSpacer, this.oAction1, this.oAction2, this.oAction1.getSeparatorAfter(), this.oButtonEnd1, this.oButtonEnd2
+			this.oButtonBegin1, this.oButtonBegin2, this.oBeginSeparator, this.oSpacer, this.oAction1, this.oAction2, this.oEndActionsBeginSeparator, this.oButtonEnd1, this.oButtonEnd2, this.oEndActionsEndSeparator
 		], "After removeAllBetween");
 		checkAggregation(assert, this.oToolbarRemoveAllAggregation, "between", [], "After removeAllBetween");
 		assert.ok(oResult.length === 2, "After removeAllBetween - removed content");
@@ -685,7 +718,7 @@ sap.ui.define([
 	QUnit.test("removeAllActions", function(assert) {
 		var oResult = this.oToolbarRemoveAllAggregation.removeAllActions();
 		checkAggregation(assert, this.oToolbarRemoveAllAggregation, "content", [
-			this.oButtonBegin1, this.oButtonBegin2, this.oTitleSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer, this.oButtonEnd1, this.oButtonEnd2
+			this.oButtonBegin1, this.oButtonBegin2, this.oBeginSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer, this.oEndActionsBeginSeparator, this.oButtonEnd1, this.oButtonEnd2, this.oEndActionsEndSeparator
 		], "After removeAllActions");
 		checkAggregation(assert, this.oToolbarRemoveAllAggregation, "actions", [], "After removeAllActions");
 		assert.ok(oResult.length === 2, "After removeAllActions - removed content");
@@ -694,17 +727,19 @@ sap.ui.define([
 	QUnit.test("removeAllEnd", function(assert) {
 		var oResult = this.oToolbarRemoveAllAggregation.removeAllEnd();
 		checkAggregation(assert, this.oToolbarRemoveAllAggregation, "content", [
-			this.oButtonBegin1, this.oButtonBegin2, this.oTitleSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer
+			this.oButtonBegin1, this.oButtonBegin2, this.oBeginSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer, this.oAction1, this.oAction2, this.oEndActionsBeginSeparator, this.oEndActionsEndSeparator
 		], "After removeAllEnd");
 		checkAggregation(assert, this.oToolbarRemoveAllAggregation, "end", [], "After removeAllEnd");
-		assert.ok(oResult.length === 5, "After removeAllEnd - removed content");
+		assert.ok(oResult.length === 2, "After removeAllEnd - removed content");
 	});
 
 	QUnit.module("sap.ui.mdc.ActionToolbar - destroyAggregation", {
 		beforeEach: function() {
 			this.oToolbarDestroyAggregation = new ActionToolbar();
-			this.oTitleSeparator = this.oToolbarDestroyAggregation._oTitleSeparator;
+			this.oBeginSeparator = this.oToolbarDestroyAggregation._oBeginSeparator;
 			this.oSpacer = this.oToolbarDestroyAggregation._oSpacer;
+			this.oEndActionsBeginSeparator = this.oToolbarDestroyAggregation._oEndActionsBeginSeparator;
+			this.oEndActionsEndSeparator = this.oToolbarDestroyAggregation._oEndActionsEndSeparator;
 
 			this.oButtonBegin1 = new Button();
 			this.oButtonBegin2 = new Button();
@@ -732,11 +767,17 @@ sap.ui.define([
 			if (this.oToolbarDestroyAggregation) {
 				this.oToolbarDestroyAggregation.destroy();
 			}
-			if (this.oTitleSeparator) {
-				this.oTitleSeparator = undefined;
+			if (this.oBeginSeparator) {
+				this.oBeginSeparator = undefined;
 			}
 			if (this.oSpacer) {
 				this.oSpacer = undefined;
+			}
+			if (this.oEndActionsBeginSeparator) {
+				this.oEndActionsBeginSeparator = undefined;
+			}
+			if (this.oEndActionsEndSeparator) {
+				this.oEndActionsEndSeparator = undefined;
 			}
 		}
 	});
@@ -744,7 +785,7 @@ sap.ui.define([
 	QUnit.test("destroyBegin", function(assert) {
 		this.oToolbarDestroyAggregation.destroyBegin();
 		checkAggregation(assert, this.oToolbarDestroyAggregation, "content", [
-			this.oTitleSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer, this.oAction1, this.oAction2, this.oAction1.getSeparatorAfter(), this.oButtonEnd1, this.oButtonEnd2
+			this.oBeginSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer, this.oAction1, this.oAction2, this.oEndActionsBeginSeparator, this.oButtonEnd1, this.oButtonEnd2, this.oEndActionsEndSeparator
 		], "After destroyBegin");
 		checkAggregation(assert, this.oToolbarDestroyAggregation, "begin", [], "After destroyBegin");
 	});
@@ -752,7 +793,7 @@ sap.ui.define([
 	QUnit.test("destroyBetween", function(assert) {
 		this.oToolbarDestroyAggregation.destroyBetween();
 		checkAggregation(assert, this.oToolbarDestroyAggregation, "content", [
-			this.oButtonBegin1, this.oButtonBegin2, this.oTitleSeparator, this.oSpacer, this.oAction1, this.oAction2, this.oAction1.getSeparatorAfter(), this.oButtonEnd1, this.oButtonEnd2
+			this.oButtonBegin1, this.oButtonBegin2, this.oBeginSeparator, this.oSpacer, this.oAction1, this.oAction2, this.oEndActionsBeginSeparator, this.oButtonEnd1, this.oButtonEnd2, this.oEndActionsEndSeparator
 		], "After destroyBetween");
 		checkAggregation(assert, this.oToolbarDestroyAggregation, "between", [], "After destroyBetween");
 	});
@@ -760,7 +801,7 @@ sap.ui.define([
 	QUnit.test("destroyActions", function(assert) {
 		this.oToolbarDestroyAggregation.destroyActions();
 		checkAggregation(assert, this.oToolbarDestroyAggregation, "content", [
-			this.oButtonBegin1, this.oButtonBegin2, this.oTitleSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer, this.oButtonEnd1, this.oButtonEnd2
+			this.oButtonBegin1, this.oButtonBegin2, this.oBeginSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer, this.oEndActionsBeginSeparator, this.oButtonEnd1, this.oButtonEnd2, this.oEndActionsEndSeparator
 		], "After destroyActions");
 		assert.deepEqual(this.oToolbarDestroyAggregation.getActions(), [], "After destroyActions");
 	});
@@ -768,7 +809,7 @@ sap.ui.define([
 	QUnit.test("destroyEnd", function(assert) {
 		this.oToolbarDestroyAggregation.destroyEnd();
 		checkAggregation(assert, this.oToolbarDestroyAggregation, "content", [
-			this.oButtonBegin1, this.oButtonBegin2, this.oTitleSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer
+			this.oButtonBegin1, this.oButtonBegin2, this.oBeginSeparator, this.oButtonBetween1, this.oButtonBetween2, this.oSpacer,this.oAction1, this.oAction2, this.oEndActionsBeginSeparator, this.oEndActionsEndSeparator
 		], "After destroyEnd");
 		checkAggregation(assert, this.oToolbarDestroyAggregation, "end", [], "After destroyEnd");
 	});

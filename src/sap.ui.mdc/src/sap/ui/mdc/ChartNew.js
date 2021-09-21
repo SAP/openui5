@@ -19,7 +19,8 @@ sap.ui.define([
         "sap/ui/mdc/p13n/subcontroller/ChartItemController",
         "sap/ui/mdc/p13n/subcontroller/SortController",
         "sap/ui/base/ManagedObjectObserver",
-        "sap/ui/mdc/chartNew/DrillBreadcrumbsNew"
+        "sap/ui/mdc/chartNew/DrillBreadcrumbsNew",
+        "sap/ui/mdc/actiontoolbar/ActionToolbarAction"
     ],
     function (
         Core,
@@ -38,7 +39,8 @@ sap.ui.define([
         ChartItemController,
         SortController,
         ManagedObjectObserver,
-        Breadcrumbs
+        Breadcrumbs,
+        ActionToolbarAction
     ) {
         "use strict";
 
@@ -217,7 +219,7 @@ sap.ui.define([
                         type: "sap.ui.core.Control",
                         multiple: true,
                         forwarding: {
-                            idSuffix: "--toolbar",
+                            getter: "_getToolbar",
                             aggregation: "actions"
                         }
                     },
@@ -381,18 +383,6 @@ sap.ui.define([
          * @ui5-restricted sap.ui.mdc
          */
         Chart.prototype.applySettings = function (mSettings, oScope) {
-			// Note: In the mdc.Chart control metadata, the "action" aggregation
-			// is defined as a forwarded aggregation.
-			// However, the automatic forwarding of aggregations only works when
-			// the target aggregation exists.
-			// So, the actions are removed from the settings argument to prevent
-			// an exception to happen when an aggregation is forwarded to a
-			// target control that has not been created.
-			if (mSettings) {
-				this._aInitialToolbarActions = mSettings.actions;
-				delete mSettings.actions;
-			}
-
             Control.prototype.applySettings.apply(this, arguments);
 
             this.initializedPromise = new Promise(function (resolve, reject) {
@@ -450,7 +440,7 @@ sap.ui.define([
             }.bind(this));
 
             //independent from fetchProperties
-            this._createToolbar();
+            this._getToolbar().createToolbarContent(this);
         };
 
         /**
@@ -596,24 +586,17 @@ sap.ui.define([
          *
          * @private
          */
-        Chart.prototype._createToolbar = function () {
-            var toolbar = new ChartToolbar(this.getId() + "--toolbar", {
-                design: "Transparent"
-            });
+        Chart.prototype._getToolbar = function () {
+            if (this.getAggregation("_toolbar")) {
+                return this.getAggregation("_toolbar");
+            } else {
+                var oToolbar = new ChartToolbar(this.getId() + "--toolbar", {
+                    design: "Transparent"
+                });
 
-            toolbar.createToolbarContent(this);
-
-            this.setAggregation("_toolbar", toolbar);
-        };
-
-        /**
-         * Gets initial actions for toolbar as they cannot not be forwarded on init due to sorting issues
-         * @returns {array} intial actions
-         *
-         * @private
-         */
-        Chart.prototype._getInitialToolbarActions = function() {
-            return this._aInitialToolbarActions ? this._aInitialToolbarActions : [];
+                this.setAggregation("_toolbar", oToolbar);
+                return oToolbar;
+            }
         };
 
         /**
@@ -1080,6 +1063,16 @@ sap.ui.define([
 				}
 			}
 		};
+
+        Chart.prototype.addAction = function(oControl) {
+            if (oControl.getMetadata().getName() !== "sap.ui.mdc.actiontoolbar.ActionToolbarAction") {
+                oControl = new ActionToolbarAction(oControl.getId() + "-action", {
+                    action: oControl
+                });
+            }
+
+            return Control.prototype.addAggregation.apply(this, ["actions", oControl]);
+        };
 
         return Chart;
     }, true);
