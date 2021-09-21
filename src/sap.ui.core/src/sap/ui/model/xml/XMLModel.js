@@ -38,7 +38,9 @@ sap.ui.define([
 	 * Constructor for a new XMLModel.
 	 *
 	 * @class
-	 * Model implementation for XML format
+	 * Model implementation for the XML format.
+	 *
+	 * This model is not prepared to be inherited from.
 	 *
 	 * @extends sap.ui.model.ClientModel
 	 *

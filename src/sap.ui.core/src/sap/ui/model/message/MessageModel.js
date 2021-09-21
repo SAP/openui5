@@ -20,7 +20,9 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientModel', 'sap/ui/m
 	 * Constructor for a new JSONModel.
 	 *
 	 * @class
-	 * Model implementation for Messages
+	 * Model implementation for Messages.
+	 *
+	 * This model is not prepared to be inherited from.
 	 *
 	 * @extends sap.ui.model.ClientModel
 	 *

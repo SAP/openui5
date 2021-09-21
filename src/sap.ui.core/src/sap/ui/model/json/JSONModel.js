@@ -35,7 +35,9 @@ sap.ui.define([
 	 * @param {boolean} [bObserve] Whether to observe the JSON data for property changes (experimental)
 	 *
 	 * @class
-	 * Model implementation for JSON format
+	 * Model implementation for the JSON format.
+	 *
+	 * This model is not prepared to be inherited from.
 	 *
 	 * @extends sap.ui.model.ClientModel
 	 *
