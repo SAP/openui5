@@ -13,8 +13,7 @@ sap.ui.define([
 	"sap/ui/mdc/chart/ChartSettings",
 	"sap/ui/core/library",
 	"sap/ui/Device",
-	"sap/ui/core/ShortcutHintsMixin",
-	"sap/ui/mdc/actiontoolbar/ActionToolbarAction"
+	"sap/ui/core/ShortcutHintsMixin"
 ], function(
 	Element,
 	MDCLib,
@@ -26,8 +25,7 @@ sap.ui.define([
 	ChartSettings,
 	CoreLibrary,
 	Device,
-	ShortcutHintsMixin,
-	ActionToolbarAction
+	ShortcutHintsMixin
 ) {
 	"use strict";
 

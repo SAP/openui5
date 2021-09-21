@@ -131,7 +131,7 @@ function(
 			this.oMDCChart.setAggregation("_toolbar", undefined);
 			assert.ok(this.oMDCChart.getAggregation("_toolbar") == undefined, "Toolbar aggregation is empty");
 
-			this.oMDCChart._getToolbar();
+			this.oMDCChart._createToolbar();
 			assert.ok(this.oMDCChart.getAggregation("_toolbar"), "Toolbar was created");
 			assert.ok(this.oMDCChart.getAggregation("_toolbar").getMetadata().getName() == "sap.ui.mdc.chartNew.ChartToolbarNew", "Toolbar is instance of sap.ui.mdc.chartNew.ChartToolbarNew");
 
@@ -399,14 +399,27 @@ function(
 
     });
 
+	QUnit.test("MDC Chart _getInitialToolbarActions", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+
+			assert.ok(this.oMDCChart._getInitialToolbarActions().length === 1, "Initial toolbar actions are returned");
+			assert.ok(this.oMDCChart._getInitialToolbarActions()[0].getAction().getText() === "testButtonText", "Initial toolbar actions are returned");
+
+			done();
+		}.bind(this));
+	});
+
 	QUnit.test("MDC Chart Initial Action is added to toolbar with the correct layout", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
 
 			assert.ok(this.oMDCChart.getAggregation("_toolbar"), "Toolbar exists");
-			assert.equal(this.oMDCChart.getAggregation("_toolbar").getActions().length, 1, "Toolbar has correct amount of actions in actions aggregation");
-			assert.equal(this.oMDCChart.getAggregation("_toolbar").getActions()[0].getAction().getText(), "testButtonText", "Action from constructor property is correctly aligned");
+			assert.ok(this.oMDCChart.getAggregation("_toolbar").getEnd().length === 7, "Toolbar has correct amount of actions in end aggregation");
+			assert.ok(this.oMDCChart.getAggregation("_toolbar").getEnd()[6].getAction().getText() === "testButtonText", "Action from constructor property is correctly aligned");
+			assert.ok(this.oMDCChart.getAggregation("_toolbar").getEnd()[5] instanceof ToolbarSeparator, "Action has seperator to the left");
 
 			done();
 		}.bind(this));
