@@ -6,7 +6,11 @@
 		}
 	},
 	"sap.ui5": {
-		"rootView": "sap.m.sample.TableBreadcrumb.Page",
+		"rootView": {
+			"viewName": "sap.m.sample.TableBreadcrumb.Page",
+			"type": "XML",
+			"async": true
+		},
 		"dependencies": {
 			"libs": {
 				"sap.m": {}
@@ -15,7 +19,7 @@
 		"resources": {
 			"css": [
 				{
-					"uri": "TableBreadcrumb/style.css"
+					"uri": "style.css"
 				}
 			]
 		},

@@ -6,7 +6,11 @@
 		}
 	},
 	"sap.ui5": {
-		"rootView": "sap.m.sample.TableDnD.View",
+		"rootView": {
+			"viewName": "sap.m.sample.TableDnD.View",
+			"type": "XML",
+			"async": true
+		},
 		"dependencies": {
 			"libs": {
 				"sap.m": {}
