@@ -743,7 +743,9 @@ sap.ui.define([
 		var oResourceModel = this.getModel("i18n");
 
 		if (oResourceModel) {
-			oResourceModel.enhance(oResourceBundle);
+			if (oResourceModel.getResourceBundle().oUrlInfo.url !== oResourceBundle.oUrlInfo.url) {
+				oResourceModel.enhance(oResourceBundle);
+			}
 			return;
 		}
 
