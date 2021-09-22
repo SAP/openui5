@@ -147,11 +147,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * @see sap.ui.model.Model.prototype.destroyBindingContext
+	 * Does nothing.
 	 *
+	 * @param {sap.ui.model.Context} oContext The context to destroy
 	 */
 	ClientModel.prototype.destroyBindingContext = function(oContext) {
-		// TODO: what todo here?
 	};
 
 	/**
