@@ -3900,7 +3900,7 @@ sap.ui.define([
 		if (oContext) {
 			// set unique node ID if the context was created and we did not assign an ID yet
 			var sNewlyGeneratedID = oContext.getProperty(this.oTreeProperties["hierarchy-node-for"]);
-			if (oContext.bCreated && !sNewlyGeneratedID) {
+			if (oContext.isTransient() && !sNewlyGeneratedID) {
 				this.oModel.setProperty(this.oTreeProperties["hierarchy-node-for"], uid(), oContext);
 			}
 		}

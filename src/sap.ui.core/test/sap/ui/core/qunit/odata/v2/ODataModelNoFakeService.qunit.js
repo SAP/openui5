@@ -1413,7 +1413,6 @@ sap.ui.define([
 			/*mEntityTypes*/ {}, /*bBatch*/ false, "~aRequests");
 
 		assert.strictEqual(oRequest.deepPath, oFixture.resultDeepPath);
-		assert.strictEqual(oContext.bCreated, false);
 	});
 });
 
@@ -2758,10 +2757,6 @@ sap.ui.define([
 		}
 		assert.deepEqual(oModel.mChangedEntities["~sKey"], oEntity);
 		assert.strictEqual(oResult, oCreatedContext);
-		// createEntry must set oContext.bCreated to true (mark as transient)
-		assert.deepEqual(oResult, {
-			bCreated : true
-		});
 		assert.deepEqual(oRequest, sExpand
 			? {
 				contentID : sUid,

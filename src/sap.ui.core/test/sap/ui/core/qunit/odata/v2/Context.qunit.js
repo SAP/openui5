@@ -37,7 +37,6 @@ sap.ui.define([
 		assert.strictEqual(oContext.oModel, "~oModel");
 		assert.strictEqual(oContext.sPath, "/~sPath");
 		// additional properties
-		assert.strictEqual(oContext.bCreated, undefined);
 		assert.strictEqual(oContext.oCreatePromise, undefined);
 		assert.strictEqual(oContext.sDeepPath, "/~sPath");
 		assert.strictEqual(oContext.bForceRefresh, false);
@@ -117,16 +116,49 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("isTransient", function (assert) {
+	QUnit.test("isTransient: without create promise", function (assert) {
 		var oContext = new Context("~oModel", "~sPath");
 
 		// code under test
 		assert.strictEqual(oContext.isTransient(), undefined);
+	});
 
-		oContext.bCreated = "~bCreated";
+	//*********************************************************************************************
+	QUnit.test("isTransient: successful creation", function (assert) {
+		var fnResolve,
+			oSyncPromise = new SyncPromise(function (resolve, reject) {
+				fnResolve = resolve;
+			}),
+			oContext = new Context("~oModel", "~sPath", /*sDeepPath*/undefined, oSyncPromise);
 
 		// code under test
-		assert.strictEqual(oContext.isTransient(), "~bCreated");
+		assert.strictEqual(oContext.isTransient(), true);
+
+		fnResolve();
+
+		// code under test
+		assert.strictEqual(oContext.isTransient(), false);
+
+		return oSyncPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isTransient: failed creation", function (assert) {
+		var fnReject,
+			oSyncPromise = new SyncPromise(function (resolve, reject) {
+				fnReject = reject;
+			}),
+			oContext = new Context("~oModel", "~sPath", /*sDeepPath*/undefined, oSyncPromise);
+
+		// code under test
+		assert.strictEqual(oContext.isTransient(), true);
+
+		fnReject();
+
+		// code under test
+		assert.strictEqual(oContext.isTransient(), false);
+
+		return oSyncPromise.catch(function () {});
 	});
 
 	//*********************************************************************************************
