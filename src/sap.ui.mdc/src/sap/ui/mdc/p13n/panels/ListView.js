@@ -227,7 +227,7 @@ sap.ui.define([
     };
 
 	ListView.prototype._updateCount = function() {
-        this.getP13nModel().setProperty("/selectedItems", this._oListControl.getSelectedItems().length);
+        this.getP13nModel().setProperty("/selectedItems", this._oListControl.getSelectedContexts(true).length);
 	};
 
 	ListView.prototype._selectTableItem = function(oTableItem, bSelectAll) {
