@@ -369,7 +369,7 @@ sap.ui.define([
 			} catch (ex) {
 				return {error: "Property " + sName + " - Invalid Binding:" + ex.message};
 			}
-			var vValue = sValue = oBindingInfo || sValue; // oBindingInfo could be an unescaped string
+			var vValue = sValue = typeof oBindingInfo === "string" ? oBindingInfo : sValue; // oBindingInfo could be an unescaped string
 			var oType = DataType.getType(sType);
 			if (oType) {
 				if (oType instanceof DataType) {
