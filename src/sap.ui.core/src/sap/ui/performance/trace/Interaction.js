@@ -222,7 +222,6 @@ sap.ui.define([
 		bIdle = false,
 		bSuspended = false,
 		iInteractionCounter = 0,
-		iScrollEventDelayId = 0,
 		descScriptSrc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, "src");
 
 	/* As UI5 resources gets also loaded via script tags we need to
@@ -754,19 +753,7 @@ sap.ui.define([
 		 * @private
 		 */
 		notifyScrollEvent : function(oEvent) {
-			if (bInteractionActive) {
-				// notify for a newly started interaction, but not more often than every 250ms.
-				if (!iScrollEventDelayId) {
-					Interaction.notifyEventStart(oEvent);
-				} else {
-					clearTimeout(iScrollEventDelayId);
-				}
-				iScrollEventDelayId = setTimeout(function(){
-					Interaction.notifyStepStart(oEvent.sourceElement);
-					iScrollEventDelayId = 0;
-					Interaction.notifyStepEnd();
-				}, 250);
-			}
+			/* Scrolling is disabled as it does not work properly for non user triggered scrolling */
 		},
 
 		/**
