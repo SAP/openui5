@@ -301,7 +301,7 @@ sap.ui.define([
 	 * @see {ChangePersistence#saveDirtyChanges};
 	 *
 	 * If the given change is already in the dirty changes and
-	 * has pending action 'NEW' it will be removed, assuming,
+	 * has the 'NEW' state it will be removed, assuming,
 	 * it has just been created in the current session;
 	 *
 	 * Otherwise it will be marked for deletion.

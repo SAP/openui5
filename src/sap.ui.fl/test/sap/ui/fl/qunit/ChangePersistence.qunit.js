@@ -2635,7 +2635,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("shall delete a change from the dirty changes, if it has just been added to the dirty changes, having a pending action of NEW", function(assert) {
+		QUnit.test("shall delete a change from the dirty changes, if it has just been added to the dirty changes, having a NEW state", function(assert) {
 			var oChangeContent = {
 				fileName: "Gizorillus",
 				layer: Layer.VENDOR,
@@ -2688,7 +2688,7 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("shall keep a change in the dirty changes, if it has a pending action of DELETE", function(assert) {
+		QUnit.test("shall keep a change in the dirty changes, if it has a DELETE state", function(assert) {
 			var oChangeContent = {
 				fileName: "Gizorillus",
 				layer: Layer.VENDOR,

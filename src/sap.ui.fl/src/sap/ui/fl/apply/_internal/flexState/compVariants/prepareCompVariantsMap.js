@@ -4,13 +4,15 @@
 
 sap.ui.define([
 	"sap/ui/fl/Change",
-	"sap/ui/fl/apply/_internal/flexObjects/UpdatableChange",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexObjects/UpdatableChange",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger"
 ], function(
 	Change,
-	UpdatableChange,
 	CompVariant,
+	States,
+	UpdatableChange,
 	CompVariantMerger
 ) {
 	"use strict";
@@ -55,7 +57,7 @@ sap.ui.define([
 		var oClass = sSubSection === "variants" ? CompVariant : UpdatableChange;
 		var aFlexObjects = mCompSection[sSubSection].map(function (oCompVariantChangeDefinition) {
 			var oFlexObject = new oClass(oCompVariantChangeDefinition);
-			oFlexObject.setState(Change.states.PERSISTED); // prevent persisting these anew
+			oFlexObject.setState(States.PERSISTED); // prevent persisting these anew
 			return oFlexObject;
 		});
 

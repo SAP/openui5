@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/fl/DefaultVariant",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	DefaultVariant,
 	Change,
+	States,
 	sinon,
 	jQuery
 ) {
@@ -62,7 +64,7 @@ sap.ui.define([
 		};
 
 		assert.strictEqual(this.oDefaultVariant.getDefaultVariantId(mChanges), expectedDefaultVariantId);
-		assert.strictEqual(mChanges.firstChange.getPendingAction(), 'DELETE');
+		assert.strictEqual(mChanges.firstChange.getState(), States.DELETE);
 	});
 
 	QUnit.test("getDefaultVariantId - GIVEN multiple defaultVariant changes, one with an empty string as creation WHEN getting the id THEN the id of the change with empty string as creation should be returned", function(assert) {
@@ -192,13 +194,13 @@ sap.ui.define([
 				namespace: 'localchange'
 			})
 		};
-		mChanges.firstChange.setState(Change.states.PERSISTED);
+		mChanges.firstChange.setState(States.PERSISTED);
 
 		var oUpdatedChange = this.oDefaultVariant.updateDefaultVariantId(mChanges, newDefaultVariantId);
 
 		assert.strictEqual(oUpdatedChange, mChanges.firstChange);
 		assert.strictEqual(mChanges.firstChange.getContent().defaultVariantName, newDefaultVariantId);
-		assert.equal(mChanges.firstChange.getState(), Change.states.DIRTY);
+		assert.equal(mChanges.firstChange.getState(), States.DIRTY);
 	});
 
 	QUnit.test('updateDefaultVariantChange shall return undefined if no default variant change has been found', function(assert) {
@@ -238,7 +240,7 @@ sap.ui.define([
 
 		this.oDefaultVariant.updateDefaultVariantId(mChanges, newDefaultVariantId);
 
-		assert.strictEqual(mChanges.firstChange.getPendingAction(), 'DELETE');
+		assert.strictEqual(mChanges.firstChange.getState(), States.DELETE);
 	});
 
 	QUnit.done(function () {

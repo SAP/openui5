@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/base/util/restricted/_pick",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/registry/Settings",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils"
 ], function (
 	_pick,
+	States,
 	Change,
 	Layer,
 	Settings,
@@ -232,7 +234,7 @@ sap.ui.define([
 		} else {
 			delete this._oDefinition.favorite;
 		}
-		this.setState(Change.states.DIRTY);
+		this.setState(States.DIRTY);
 		this.setFavorite(bFavorite);
 	};
 
@@ -273,7 +275,7 @@ sap.ui.define([
 	 */
 	CompVariant.prototype.storeContent = function (oContent) {
 		this._oDefinition.content = oContent || {};
-		this.setState(Change.states.DIRTY);
+		this.setState(States.DIRTY);
 		this.setContent(oContent);
 	};
 
@@ -293,7 +295,7 @@ sap.ui.define([
 			delete this._oDefinition.executeOnSelection;
 		}
 		delete this._oDefinition.content.executeOnSelection;
-		this.setState(Change.states.DIRTY);
+		this.setState(States.DIRTY);
 		this.setExecuteOnSelection(bExecuteOnSelection);
 	};
 
@@ -309,7 +311,7 @@ sap.ui.define([
 	CompVariant.prototype.storeName = function (sName) {
 		this._oDefinition.texts.variantName.value = sName;
 
-		this.setState(Change.states.DIRTY);
+		this.setState(States.DIRTY);
 		this.setName(sName);
 	};
 
@@ -328,7 +330,7 @@ sap.ui.define([
 			delete this._oDefinition.contexts;
 		}
 		this.setContexts(mContexts);
-		this.setState(Change.states.DIRTY);
+		this.setState(States.DIRTY);
 	};
 
 	CompVariant.createInitialFileContent = function (oPropertyBag) {

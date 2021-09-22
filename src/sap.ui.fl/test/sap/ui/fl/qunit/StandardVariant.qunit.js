@@ -1,11 +1,13 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/StandardVariant",
 	"sap/ui/fl/Change",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
 ], function(
+	States,
 	StandardVariant,
 	Change,
 	sinon,
@@ -64,7 +66,7 @@ sap.ui.define([
 		};
 
 		assert.strictEqual(this.oStandardVariant.getExecuteOnSelect(mChanges), expectedFlag);
-		assert.strictEqual(mChanges.firstChange.getPendingAction(), 'DELETE');
+		assert.strictEqual(mChanges.firstChange.getState(), States.DELETE);
 	});
 
 	QUnit.test("getExecuteOnSelect - GIVEN multiple standardVariant changes, one with an empty string as creation WHEN getting the id THEN the id of the change with empty string as creation should be returned", function(assert) {
@@ -240,7 +242,7 @@ sap.ui.define([
 
 		this.oStandardVariant.updateExecuteOnSelect(mChanges, newExecuteOnSelect);
 
-		assert.strictEqual(mChanges.firstChange.getPendingAction(), 'DELETE');
+		assert.strictEqual(mChanges.firstChange.getState(), Change.states.DELETE);
 	});
 
 	QUnit.done(function () {

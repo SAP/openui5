@@ -719,7 +719,7 @@ sap.ui.define([
 
 		QUnit.test("when 'updateVariantsState' is called to add variant related changes", function(assert) {
 			var oVariantDependentControlChange = {
-				getPendingAction: function() {return "NEW";},
+				getState: function() {return Change.states.NEW;},
 				getDefinition: function() {
 					return {fileType: "change"};
 				}
@@ -732,7 +732,7 @@ sap.ui.define([
 			assert.deepEqual(this.oResponse.variantDependentControlChanges[0], oVariantDependentControlChange.getDefinition(), "then the variants related change was added to flex state response");
 
 			var oVariant = {
-				getPendingAction: function() {return "NEW";},
+				getState: function() {return Change.states.NEW;},
 				getDefinition: function() {
 					return {fileType: "ctrl_variant"};
 				}
@@ -745,7 +745,7 @@ sap.ui.define([
 			assert.deepEqual(this.oResponse.variants[0], oVariant.getDefinition(), "then the variants related change was added to flex state response");
 
 			var oVariantManagementChange = {
-				getPendingAction: function() {return "NEW";},
+				getState: function() {return Change.states.NEW;},
 				getDefinition: function() {
 					return {fileType: "ctrl_variant_management_change"};
 				}
@@ -758,7 +758,7 @@ sap.ui.define([
 			assert.deepEqual(this.oResponse.variantManagementChanges[0], oVariantManagementChange.getDefinition(), "then the variants related change was added to flex state response");
 
 			var oVariantChange = {
-				getPendingAction: function() {return "NEW";},
+				getState: function() {return Change.states.NEW;},
 				getDefinition: function() {
 					return {fileType: "ctrl_variant_change"};
 				}
@@ -773,7 +773,7 @@ sap.ui.define([
 
 		QUnit.test("when 'updateVariantsState' is called to delete variant related changes", function(assert) {
 			var oVariantDependentControlChange = {
-				getPendingAction: function() {return "DELETE";},
+				getState: function() {return Change.states.DELETE;},
 				getDefinition: function() {
 					return {
 						fileType: "change",
@@ -790,7 +790,7 @@ sap.ui.define([
 			assert.equal(this.oResponse.variantDependentControlChanges.length, 0, "then the variants related change was deleted from the flex state response");
 
 			var oVariant = {
-				getPendingAction: function() {return "DELETE";},
+				getState: function() {return Change.states.DELETE;},
 				getDefinition: function() {
 					return {
 						fileType: "ctrl_variant",
@@ -807,7 +807,7 @@ sap.ui.define([
 			assert.equal(this.oResponse.variants.length, 0, "then the variants related change was deleted from the flex state response");
 
 			var oVariantManagementChange = {
-				getPendingAction: function() {return "DELETE";},
+				getState: function() {return Change.states.DELETE;},
 				getDefinition: function() {
 					return {
 						fileType: "ctrl_variant_management_change",
@@ -824,7 +824,7 @@ sap.ui.define([
 			assert.equal(this.oResponse.variantManagementChanges.length, 0, "then the variants related change was deleted from the flex state response");
 
 			var oVariantChange = {
-				getPendingAction: function() {return "DELETE";},
+				getState: function() {return Change.states.DELETE;},
 				getDefinition: function() {
 					return {
 						fileType: "ctrl_variant_change",

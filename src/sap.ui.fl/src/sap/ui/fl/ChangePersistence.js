@@ -665,9 +665,9 @@ sap.ui.define([
 		var aChangesClone = aAllChanges.slice(0);
 		var aDirtyChangesClone = aDirtyChanges.slice(0);
 		var aRequests = this._getRequests(aDirtyChanges);
-		var aPendingActions = this._getPendingActions(aDirtyChanges);
+		var aStates = this._getStates(aDirtyChanges);
 
-		if (aPendingActions.length === 1 && aRequests.length === 1 && aPendingActions[0] === Change.states.NEW) {
+		if (aStates.length === 1 && aRequests.length === 1 && aStates[0] === Change.states.NEW) {
 			var oCondensedChangesPromise = Promise.resolve(aChangesClone);
 			if (shouldCondensingBeEnabled(oAppComponent, aChangesClone)) {
 				oCondensedChangesPromise = Condenser.condense(oAppComponent, aChangesClone);
@@ -724,7 +724,7 @@ sap.ui.define([
 			// in case of changes saved for a draft only the first writing operation must have the parentVersion targeting the basis
 			// followup changes must point the the existing draft created with the first request
 			var aNewChanges = aDirtyChanges.filter(function (oChange) {
-				return oChange.getPendingAction() === "NEW";
+				return oChange.getState() === Change.states.NEW;
 			});
 			oFirstNewChange = [].concat(aNewChanges).shift();
 		}
@@ -738,24 +738,23 @@ sap.ui.define([
 
 	ChangePersistence.prototype._performSingleSaveAction = function(oDirtyChange, oFirstChange, nParentVersion) {
 		return function() {
-			if (oDirtyChange.getPendingAction() === "NEW") {
-				if (nParentVersion !== undefined) {
-					nParentVersion = oDirtyChange === oFirstChange ? nParentVersion : sap.ui.fl.Versions.Draft;
-				}
-				return Storage.write({
-					layer: oDirtyChange.getLayer(),
-					flexObjects: [oDirtyChange.getDefinition()],
-					transport: oDirtyChange.getRequest(),
-					parentVersion: nParentVersion
-				});
-			}
-
-			if (oDirtyChange.getPendingAction() === "DELETE") {
-				return Storage.remove({
-					flexObject: oDirtyChange.getDefinition(),
-					layer: oDirtyChange.getLayer(),
-					transport: oDirtyChange.getRequest()
-				});
+			switch (oDirtyChange.getState()) {
+				case Change.states.NEW:
+					if (nParentVersion !== undefined) {
+						nParentVersion = oDirtyChange === oFirstChange ? nParentVersion : sap.ui.fl.Versions.Draft;
+					}
+					return Storage.write({
+						layer: oDirtyChange.getLayer(),
+						flexObjects: [oDirtyChange.getDefinition()],
+						transport: oDirtyChange.getRequest(),
+						parentVersion: nParentVersion
+					});
+				case Change.states.DELETED:
+					return Storage.remove({
+						flexObject: oDirtyChange.getDefinition(),
+						layer: oDirtyChange.getLayer(),
+						transport: oDirtyChange.getRequest()
+					});
 			}
 		};
 	};
@@ -773,14 +772,20 @@ sap.ui.define([
 					reference: this._mComponent.name,
 					changeToBeAddedOrDeleted: oDirtyChange
 				});
-			} else if (oDirtyChange.getPendingAction() === Change.states.NEW) {
-				oDirtyChange.setState(Change.states.PERSISTED);
-				Cache.addChange(this._mComponent, oDirtyChange.getDefinition());
-			} else if (oDirtyChange.getPendingAction() === Change.states.DELETED) {
-				Cache.deleteChange(this._mComponent, oDirtyChange.getDefinition());
-			} else if (oDirtyChange.getPendingAction() === Change.states.DIRTY) {
-				oDirtyChange.setState(Change.states.PERSISTED);
-				Cache.updateChange(this._mComponent, oDirtyChange.getDefinition());
+			} else {
+				switch (oDirtyChange.getState()) {
+					case Change.states.NEW:
+						oDirtyChange.setState(Change.states.PERSISTED);
+						Cache.addChange(this._mComponent, oDirtyChange.getDefinition());
+						break;
+					case Change.states.DELETED:
+						Cache.deleteChange(this._mComponent, oDirtyChange.getDefinition());
+						break;
+					case Change.states.DIRTY:
+						oDirtyChange.setState(Change.states.PERSISTED);
+						Cache.updateChange(this._mComponent, oDirtyChange.getDefinition());
+						break;
+				}
 			}
 		}
 
@@ -812,17 +817,17 @@ sap.ui.define([
 		return aRequests;
 	};
 
-	ChangePersistence.prototype._getPendingActions = function(aDirtyChanges) {
-		var aPendingActions = [];
+	ChangePersistence.prototype._getStates = function(aDirtyChanges) {
+		var aStates = [];
 
 		aDirtyChanges.forEach(function(oChange) {
-			var sPendingAction = oChange.getPendingAction();
-			if (aPendingActions.indexOf(sPendingAction) === -1) {
-				aPendingActions.push(sPendingAction);
+			var sState = oChange.getState();
+			if (aStates.indexOf(sState) === -1) {
+				aStates.push(sState);
 			}
 		});
 
-		return aPendingActions;
+		return aStates;
 	};
 
 	ChangePersistence.prototype._prepareDirtyChanges = function(aDirtyChanges) {
@@ -844,7 +849,7 @@ sap.ui.define([
 	 * @see {ChangePersistence#saveDirtyChanges};
 	 *
 	 * If the given change is already in the dirty changes and
-	 * has pending action 'NEW' it will be removed, assuming,
+	 * has the 'NEW' state it will be removed, assuming,
 	 * it has just been created in the current session;
 	 *
 	 * Otherwise it will be marked for deletion.
@@ -856,7 +861,7 @@ sap.ui.define([
 		var nIndexInDirtyChanges = this._aDirtyChanges.indexOf(oChange);
 
 		if (nIndexInDirtyChanges > -1) {
-			if (oChange.getPendingAction() === "DELETE") {
+			if (oChange.getState() === Change.states.DELETED) {
 				return;
 			}
 			this._aDirtyChanges.splice(nIndexInDirtyChanges, 1);
@@ -1064,4 +1069,4 @@ sap.ui.define([
 	};
 
 	return ChangePersistence;
-}, true);
+});

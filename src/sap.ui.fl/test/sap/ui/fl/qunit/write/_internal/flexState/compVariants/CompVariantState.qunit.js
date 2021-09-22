@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/registry/Settings",
@@ -21,6 +22,7 @@ sap.ui.define([
 	CompVariantMerger,
 	FlexState,
 	CompVariant,
+	States,
 	CompVariantUtils,
 	ManifestUtils,
 	Settings,
@@ -336,14 +338,14 @@ sap.ui.define([
 				assert.equal(oWriteStub.callCount, 3, "then the write method was called 3 times,");
 				assert.equal(oUpdateStub.callCount, 0, "no update was called");
 				assert.equal(oRemoveStub.callCount, 0, "and no delete was called");
-				assert.equal(oCompVariantStateMapForPersistencyKey.variants[0].getState(), Change.states.PERSISTED, "the variant is persisted");
+				assert.equal(oCompVariantStateMapForPersistencyKey.variants[0].getState(), States.PERSISTED, "the variant is persisted");
 				assert.equal(oCompVariantStateMapForPersistencyKey.changes[0].getState(), Change.states.PERSISTED, "the addFavorite change is persisted");
 				assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariants[0].getState(), Change.states.PERSISTED, "the set default variant is persisted");
 				assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariants[0].getNamespace(), "apps/the.app.component/changes/", "the set default variant change has namespace in the content");
 			})
 			.then(function () {
+				oCompVariantStateMapForPersistencyKey.variants[0].setState(States.DELETED);
 				oCompVariantStateMapForPersistencyKey.changes[0].setState(Change.states.DIRTY);
-				oCompVariantStateMapForPersistencyKey.variants[0].setState(Change.states.DELETED);
 				oCompVariantStateMapForPersistencyKey.defaultVariants[0].setState(Change.states.DELETED);
 			})
 			.then(CompVariantState.persist.bind(undefined, {
@@ -714,7 +716,7 @@ sap.ui.define([
 				persistencyKey: sPersistencyKey
 			}).then(function () {
 				assert.equal(oVariant.getRevertInfo().length, 0, "no revert data is present");
-				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
+				assert.equal(oVariant.getState(), States.PERSISTED, "the variant has the correct state");
 
 				assert.ok(true, "STEP: <<UPDATE>>, update, revert, update, revert, revert");
 				CompVariantState.updateVariant({
@@ -726,7 +728,7 @@ sap.ui.define([
 					executeOnSelection: true
 				});
 				assert.equal(oVariant.getRevertInfo().length, 1, "one revert data entry is present");
-				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
+				assert.equal(oVariant.getState(), States.DIRTY, "the variant has the correct state");
 				assert.equal(oVariant.getFavorite(), true, "the favorite flag was set correct");
 				assert.equal(oVariant._oDefinition.favorite, true, "the favorite flag was set correct in the definition");
 				assert.equal(oVariant._oDefinition.executeOnSelection, true, "the executeOnSelect flag was set correct in the definition");
@@ -748,7 +750,7 @@ sap.ui.define([
 					name: "myNewName"
 				});
 				assert.equal(oVariant.getRevertInfo().length, 2, "two revert data entries are present");
-				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
+				assert.equal(oVariant.getState(), States.DIRTY, "the variant has the correct state");
 				assert.equal(oVariant.getFavorite(), false, "the favorite flag was set correct");
 				assert.equal(oVariant._oDefinition.favorite, false, "the favorite flag was set correct in the definition");
 				assert.deepEqual(oVariant.getContent(), {
@@ -764,7 +766,7 @@ sap.ui.define([
 					persistencyKey: sPersistencyKey
 				});
 				assert.equal(oVariant.getRevertInfo().length, 1, "one revert data entry is present");
-				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
+				assert.equal(oVariant.getState(), States.DIRTY, "the variant has the correct state");
 				assert.equal(oVariant.getFavorite(), true, "the favorite flag was set correct");
 				assert.equal(oVariant._oDefinition.favorite, true, "the favorite flag was set correct in the definition");
 				assert.equal(oVariant._oDefinition.executeOnSelection, true, "the executeOnSelect flag was set correct in the definition");
@@ -792,7 +794,7 @@ sap.ui.define([
 					someKey: "someValue"
 				}, "the content is correct");
 				assert.equal(oVariant.getRevertInfo().length, 2, "two revert data entries are present");
-				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
+				assert.equal(oVariant.getState(), States.DIRTY, "the variant has the correct state");
 				assert.equal(oVariant.getContexts().role[0], "someOtherRole", "the variant has the correct contexts");
 
 				assert.ok(true, "STEP: update, update, revert, update, <<REVERT>>, revert");
@@ -802,7 +804,7 @@ sap.ui.define([
 					persistencyKey: sPersistencyKey
 				});
 				assert.equal(oVariant.getRevertInfo().length, 1, "one revert data entry is present");
-				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
+				assert.equal(oVariant.getState(), States.DIRTY, "the variant has the correct state");
 				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
 				assert.equal(oVariant.getFavorite(), true, "the favorite flag was set correct");
 				assert.equal(oVariant._oDefinition.favorite, true, "the favorite flag was set correct in the definition");
@@ -817,7 +819,7 @@ sap.ui.define([
 				});
 				assert.equal(oVariant.getFavorite(), false, "the favorite flag was set correct");
 				assert.equal(oVariant.getRevertInfo().length, 0, "no revert data entries are present");
-				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
+				assert.equal(oVariant.getState(), States.PERSISTED, "the variant has the correct state");
 				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
 				assert.deepEqual(oVariant.getContent(), {}, "the content was set correct");
 				assert.deepEqual(oVariant._oDefinition.content, {}, "the content was set correct in the definition");
@@ -847,7 +849,7 @@ sap.ui.define([
 				persistencyKey: sPersistencyKey
 			}).then(function () {
 				assert.equal(oVariant.getRevertInfo().length, 0, "no revert data is present");
-				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
+				assert.equal(oVariant.getState(), States.PERSISTED, "the variant has the correct state");
 
 				assert.ok(true, "STEP: <<UPDATE>>, update, revert, update, revert, revert");
 				CompVariantState.updateVariant({
@@ -861,7 +863,7 @@ sap.ui.define([
 				});
 				assertTheVariantDefinitionIsTheSame(assert, oVariant, oVariantData);
 				assert.equal(oVariant.getRevertInfo().length, 1, "one revert data entry is present");
-				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
+				assert.equal(oVariant.getState(), States.PERSISTED, "the variant has the correct state");
 				assert.equal(oVariant.getFavorite(), true, "the favorite flag was set correct");
 				assert.equal(oVariant.getChanges().length, 1, "the changes list contains one entry");
 				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
@@ -884,7 +886,7 @@ sap.ui.define([
 				});
 				assertTheVariantDefinitionIsTheSame(assert, oVariant, oVariantData);
 				assert.equal(oVariant.getRevertInfo().length, 2, "two revert data entries are present");
-				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
+				assert.equal(oVariant.getState(), States.PERSISTED, "the variant has the correct state");
 				assert.equal(oVariant.getFavorite(), false, "the favorite flag was set correct");
 				assert.equal(oVariant.getChanges().length, 2, "the changes list contains two entries");
 				assert.deepEqual(oVariant.getContent(), {
@@ -901,7 +903,7 @@ sap.ui.define([
 				});
 				assertTheVariantDefinitionIsTheSame(assert, oVariant, oVariantData);
 				assert.equal(oVariant.getRevertInfo().length, 1, "one revert data entry is present");
-				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
+				assert.equal(oVariant.getState(), States.PERSISTED, "the variant has the correct state");
 				assert.equal(oVariant.getFavorite(), true, "the favorite flag was set correct");
 				assert.equal(oVariant.getChanges().length, 1, "the changes list contains one entry");
 				assert.deepEqual(oVariant.getContent(), {}, "the content is correct");
@@ -929,7 +931,7 @@ sap.ui.define([
 					someKey: "someValue"
 				}, "the content is correct");
 				assert.equal(oVariant.getRevertInfo().length, 2, "two revert data entries are present");
-				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
+				assert.equal(oVariant.getState(), States.PERSISTED, "the variant has the correct state");
 				assert.equal(oVariant.getContexts().role[0], "someOtherRole", "the variant has the correct contexts");
 
 				assert.ok(true, "STEP: update, update, revert, update, <<REVERT>>, revert");
@@ -940,7 +942,7 @@ sap.ui.define([
 				});
 				assertTheVariantDefinitionIsTheSame(assert, oVariant, oVariantData);
 				assert.equal(oVariant.getRevertInfo().length, 1, "one revert data entry is present");
-				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
+				assert.equal(oVariant.getState(), States.PERSISTED, "the variant has the correct state");
 				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
 				assert.equal(oVariant.getFavorite(), true, "the favorite flag was set correct");
 				assert.equal(oVariant.getChanges().length, 1, "the changes list contains one entry");
@@ -955,7 +957,7 @@ sap.ui.define([
 				assertTheVariantDefinitionIsTheSame(assert, oVariant, oVariantData);
 				assert.equal(oVariant.getFavorite(), false, "the favorite flag was set correct");
 				assert.equal(oVariant.getRevertInfo().length, 0, "no revert data entries are present");
-				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
+				assert.equal(oVariant.getState(), States.PERSISTED, "the variant has the correct state");
 				assert.equal(oVariant.getChanges().length, 0, "the changes list contains no entries");
 				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
 				assert.deepEqual(oVariant.getContent(), {}, "the content was set correct");
@@ -997,7 +999,7 @@ sap.ui.define([
 			var oVariant = CompVariantState.addVariant(oVariantData);
 
 			// simulate an already persisted state
-			oVariant.setState(Change.states.PERSISTED);
+			oVariant.setState(States.PERSISTED);
 
 			CompVariantState.removeVariant({
 				reference: sComponentId,
@@ -1006,12 +1008,12 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			});
 
-			assert.equal(oVariant.getState(), Change.states.DELETED, "the variant is flagged for deletion");
+			assert.equal(oVariant.getState(), States.DELETED, "the variant is flagged for deletion");
 			var aRevertData = oVariant.getRevertInfo();
 			assert.equal(aRevertData.length, 1, "revertData was stored");
 			var oLastRevertData = aRevertData[0];
 			assert.equal(oLastRevertData.getType(), CompVariantState.operationType.StateUpdate, "it is stored that the state was updated ...");
-			assert.deepEqual(oLastRevertData.getContent(), {previousState: Change.states.PERSISTED}, "... to PERSISTED");
+			assert.deepEqual(oLastRevertData.getContent(), {previousState: States.PERSISTED}, "... to PERSISTED");
 
 			CompVariantState.revert({
 				reference: sComponentId,
@@ -1022,7 +1024,7 @@ sap.ui.define([
 
 			aRevertData = oVariant.getRevertInfo();
 			assert.equal(aRevertData.length, 0, "after a revert... the revert data is no longer available");
-			assert.equal(oVariant.getState(), Change.states.PERSISTED, "and the change is flagged as new");
+			assert.equal(oVariant.getState(), States.PERSISTED, "and the change is flagged as new");
 		});
 	});
 

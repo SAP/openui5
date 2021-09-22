@@ -494,16 +494,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the pending action on the variant item
-	 * @returns {string} contains one of these values: DELETE/NEW/UPDATE/NONE
-	 *
-	 * @public
-	 */
-	Variant.prototype.getPendingAction = function () {
-		return this.getState();
-	};
-
-	/**
 	 * Gets the JSON definition of the variant
 	 * @returns {object} the content of the variant
 	 *

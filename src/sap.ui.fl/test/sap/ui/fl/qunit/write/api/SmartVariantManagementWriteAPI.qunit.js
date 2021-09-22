@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/registry/Settings",
@@ -24,6 +25,7 @@ sap.ui.define([
 	Control,
 	CompVariantState,
 	FlexState,
+	States,
 	InitialStorage,
 	WriteStorage,
 	Settings,
@@ -483,11 +485,11 @@ sap.ui.define([
 						assert.equal(oVariant.getChanges().length, 1, "one change was added");
 						assert.equal(oVariant.getChanges()[0].getPackage(), "PACKAGE_A", "the packageName was set correct");
 						assert.equal(oVariant.getChanges()[0].getRequest(), "transport1", "the transportId was set correct");
-						assert.equal(oVariant.getState(), Change.states.PERSISTED, "the change is not flagged as dirty");
+						assert.equal(oVariant.getState(), States.PERSISTED, "the change is not flagged as dirty");
 					} else {
 						assert.equal(oVariant.getChanges().length, 0, "no change was added");
 						assert.equal(oVariant.getRequest(), "transport1", "the transportId was set correct");
-						assert.equal(oVariant.getState(), Change.states.DIRTY, "the change is not flagged as dirty");
+						assert.equal(oVariant.getState(), States.DIRTY, "the change is not flagged as dirty");
 					}
 				});
 			});
@@ -734,7 +736,7 @@ sap.ui.define([
 					assert.deepEqual(oVariant.getContent(), testData.expected.content, "the content is correct");
 					assert.equal(oVariant.getFavorite(), testData.expected.favorite, "the favorite flag is correct");
 					assert.equal(oVariant.getExecuteOnSelection(), testData.expected.executeOnSelection, "the executeOnSelection flag is correct");
-					assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant is marked for an update");
+					assert.equal(oVariant.getState(), States.DIRTY, "the variant is marked for an update");
 				});
 			});
 		});
@@ -891,12 +893,12 @@ sap.ui.define([
 					control: oControl
 				});
 			}).then(function (oRemovedVariant) {
-				assert.equal(oRemovedVariant.getState(), Change.states.DELETED, "the variant is flagged for deletion");
+				assert.equal(oRemovedVariant.getState(), States.DELETED, "the variant is flagged for deletion");
 				var aRevertData = oRemovedVariant.getRevertInfo();
 				assert.equal(aRevertData.length, 1, "revertData was stored");
 				var oLastRevertData = aRevertData[0];
 				assert.equal(oLastRevertData.getType(), CompVariantState.operationType.StateUpdate, "it is stored that the state was updated ...");
-				assert.deepEqual(oLastRevertData.getContent(), {previousState: Change.states.PERSISTED}, "... to PERSISTED");
+				assert.deepEqual(oLastRevertData.getContent(), {previousState: States.PERSISTED}, "... to PERSISTED");
 
 				SmartVariantManagementWriteAPI.revert({
 					reference: sReference,
@@ -907,7 +909,7 @@ sap.ui.define([
 
 				aRevertData = oRemovedVariant.getRevertInfo();
 				assert.equal(aRevertData.length, 0, "after a revert... the revert data is no longer available");
-				assert.equal(oRemovedVariant.getState(), Change.states.PERSISTED, "and the change is flagged as new");
+				assert.equal(oRemovedVariant.getState(), States.PERSISTED, "and the change is flagged as new");
 			});
 		});
 	});
