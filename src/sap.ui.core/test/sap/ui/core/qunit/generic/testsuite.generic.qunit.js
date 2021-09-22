@@ -39,17 +39,7 @@ sap.ui.define(function() {
 				}
 			},
 			ControlMemoryLeaks: {
-				title: "QUnit Page for memory leak detection in UI5 controls",
-				ui5: {
-					libs: "sap.m,sap.ui.commons,sap.ui.unified",
-					bindingSyntax: "complex"
-				},
-				qunit: {
-					// make sure results are consistent/stable and the "statistics" test in the end is actually run in the end
-					reorder: false
-				},
-				// tests are added asynchronously, hence autostart is disabled and QUnit.start is called later
-				autostart: false
+				title: "QUnit Page for memory leak detection in UI5 controls"
 			},
 			ControlRenderer: {
 				title: "QUnit Page for memory leak detection in UI5 controls",
@@ -63,24 +53,15 @@ sap.ui.define(function() {
 			},
 			ControlMemoryLeaksUsingIterator: {
 				title: "QUnit Page for memory leak detection in UI5 controls",
-				ui5: {
-					libs: "sap.m,sap.ui.commons,sap.ui.unified",
-					bindingSyntax: "complex"
-				},
 				qunit: {
 					// MemoryLeakCheck loads qunit-1
-					version: 1,
-					// make sure results are consistent/stable and the "statistics" test in the end is actually run in the end
-					reorder: false
+					version: 1
 				},
 				// tests are added asynchronously, hence autostart is disabled and QUnit.start is called later
 				autostart: false
 			},
 			DuplicateIdCheck: {
-				title: "QUnit Page for duplicate ID issues detection in UI5 controls",
-				ui5: {
-					libs: "sap.m,sap.ui.commons,sap.ui.unified"
-				}
+				title: "QUnit Page for duplicate ID issues detection in UI5 controls"
 			},
 			SettersContextReturn: {
 				title: "All setters should return correct context (Reason: https://github.com/SAP/openui5/blob/master/docs/guidelines.md#creating-classes)"
