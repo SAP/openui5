@@ -103,8 +103,8 @@
 
 				new sap.m.Text({width: "100%"}),new sap.m.Text({width: "100%"}), // 2 empty lines
 
-				new sap.m.Label({text: "DRS2 - DateRangeSelection control with given range:", labelFor: "DRS2"}),
-				new sap.m.DateRangeSelection("DRS2", { delimiter: "#", displayFormat: "yyyy/MM/dd", dateValue: dateFrom, secondDateValue: dateTo, change: handleChange}),
+				new sap.m.Label({text: "DRS2 - DateRangeSelection control with given range and with shortcut for today:", labelFor: "DRS2"}),
+				new sap.m.DateRangeSelection("DRS2", { delimiter: "#", displayFormat: "yyyy/MM/dd", dateValue: dateFrom, secondDateValue: dateTo, showCurrentDateButton: true, change: handleChange}),
 				new sap.m.ToggleButton("TB1", { text: "specialDates", press: toggleSpecialDates}),
 
 				new sap.m.Label({text: "DRS3 - DateRangeSelection control with placeholder from CLDR:", labelFor: "DRS3", width: "100%"}),

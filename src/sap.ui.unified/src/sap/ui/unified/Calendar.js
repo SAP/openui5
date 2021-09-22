@@ -181,6 +181,14 @@ sap.ui.define([
 			showWeekNumbers : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
+			 * Determines whether there is a shortcut navigation to Today. When used in Month, Year or
+			 * Year-range picker view, the calendar navigates to Day picker view.
+			 *
+			 * @since 1.95
+			 */
+			showCurrentDateButton : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
 			 * Holds a reference to the currently shown picker. Possible values: month, monthPicker, yearPicker and yearRangePicker.
 			 *
 			 * @since 1.84.0
@@ -389,6 +397,7 @@ sap.ui.define([
 
 		oHeader.attachEvent("pressPrevious", this._handlePrevious, this);
 		oHeader.attachEvent("pressNext", this._handleNext, this);
+		oHeader.attachEvent("pressCurrentDate", this._handleCurrentDate, this);
 		oHeader.attachEvent("pressButton1", this._handleButton1, this);
 		oHeader.attachEvent("pressButton2", this._handleButton2, this);
 		oHeader.attachEvent("pressButton3", this._handleButton1, this);
@@ -1012,6 +1021,18 @@ sap.ui.define([
 
 		return this;
 
+	};
+
+	/**
+	 * Sets the visibility of the Current date button in the calendar.
+	 *
+	 * @param {boolean} bShow whether the Today button will be displayed
+	 * @return {this} <code>this</code> for method chaining
+	 * @public
+	 */
+	Calendar.prototype.setShowCurrentDateButton = function(bShow){
+		this.getAggregation("header").setVisibleCurrentDateButton(bShow);
+		return this.setProperty("showCurrentDateButton", bShow);
 	};
 
 	/**
@@ -1685,6 +1706,16 @@ sap.ui.define([
 			// no default
 		}
 
+	};
+
+	/**
+	 * Handles navigation to today.
+	 *
+	 * @private
+	 */
+	Calendar.prototype._handleCurrentDate = function() {
+		this.setProperty("_currentPicker", CURRENT_PICKERS.MONTH);
+		this.focusDate(new Date());
 	};
 
 	Calendar.prototype._getYearString = function () {

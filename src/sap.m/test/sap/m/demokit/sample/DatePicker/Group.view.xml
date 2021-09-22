@@ -48,10 +48,11 @@
 			displayFormat="short"
 			change="handleChange"
 			class="sapUiSmallMarginBottom"/>
-		<Label text="DatePicker with non-working days - 05.11.2015 - 25.11.2015" labelFor="DP7"/>
+		<Label text="DatePicker with non-working days - 05.11.2015 - 25.11.2015 and with shortcut for today" labelFor="DP7"/>
 		<DatePicker
 			id="DP7"
 			value="2015-11-23"
+			showCurrentDateButton="true"
 			change="handleChange"
 			class="sapUiSmallMarginBottom"/>
 		<Text id="textResult" text="Change event result" class="sapUiSmallMargin"/>

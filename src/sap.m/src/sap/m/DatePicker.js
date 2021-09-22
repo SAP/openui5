@@ -202,7 +202,17 @@ sap.ui.define([
 			 *
 			 * @since 1.70
 			 */
-			showFooter : {type : "boolean", group : "Misc", defaultValue : false}
+			showFooter : {type : "boolean", group : "Misc", defaultValue : false},
+
+			/**
+			 * Determines whether there is a shortcut navigation to Today. When used in Month, Year or
+			 * Year-range picker view, the calendar navigates to Day picker view.
+			 *
+			 * Note: The Current date button appears if the <code>displayFormat</code> property allows entering day.
+			 *
+			 * @since 1.95
+			 */
+			showCurrentDateButton : {type : "boolean", group : "Behavior", defaultValue : false}
 
 		},
 
@@ -713,6 +723,12 @@ sap.ui.define([
 
 	};
 
+	DatePicker.prototype.setCurrentDateButton = function(bShow) {
+		var oCalendar = this._getCalendar();
+		oCalendar && oCalendar.setCurrentDateButton(bShow);
+		return this.setProperty("showCurrentDateButton", bShow);
+	};
+
 	DatePicker.prototype._checkMinMaxDate = function () {
 
 		if (this._oMinDate.getTime() > this._oMaxDate.getTime()) {
@@ -1193,6 +1209,7 @@ sap.ui.define([
 					}.bind(this)
 				});
 
+			this._oCalendar.setShowCurrentDateButton(this.getShowCurrentDateButton());
 			this._oDateRange = new DateRange();
 			this._getCalendar().addSelectedDate(this._oDateRange);
 			this._getCalendar()._setSpecialDatesControlOrigin(this);

@@ -17,9 +17,10 @@
 			id="DRS2"
 			change="handleChange"/>
 
-		<Label text="DateRangeSelection with OK button in the footer:" labelFor="DRS3"/>
+		<Label text="DateRangeSelection with OK button in the footer and with shortcut for today:" labelFor="DRS3"/>
 		<DateRangeSelection
 			id="DRS3"
+			showCurrentDateButton="true"
 			showFooter="true"
 			change="handleChange"/>
 

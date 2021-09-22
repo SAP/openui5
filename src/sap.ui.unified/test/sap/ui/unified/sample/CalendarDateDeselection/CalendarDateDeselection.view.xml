@@ -8,6 +8,7 @@
 	<l:VerticalLayout>
 		<u:Calendar
 				id="calendar"
+				showCurrentDateButton="true"
 				select="handleCalendarSelect" />
 		<l:HorizontalLayout>
 			<Label

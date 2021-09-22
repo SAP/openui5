@@ -114,6 +114,21 @@ sap.ui.define([
 		this.fireCancel();
 	};
 
+	/**
+	 * Sets the visibility of the Current date button in the CustomYearPicker.
+	 *
+	 * This functionality is not supported for CustomYearPicker as there is no Day view in the Calendar.
+	 *
+	 * @param {boolean} bShow whether the Today button will be displayed
+	 * @return {this} <code>this</code> for method chaining
+	 * @public
+	 * @deprecated Not supported
+	 * @ui5-not-supported
+	 */
+	CustomYearPicker.prototype.setShowCurrentDateButton = function(bShow){
+		return this;
+	};
+
 	return CustomYearPicker;
 
 });

@@ -954,6 +954,40 @@ sap.ui.define([
 		oDP2.destroy();
 	});
 
+	QUnit.test("showCurrentDateButton - button existence", function(assert) {
+		// Prepare
+		var oDP = new DatePicker({
+				value: "20170101",
+				valueFormat: "yyyyMMdd",
+				displayFormat: "yyyyMMdd",
+				showCurrentDateButton: true
+			}).placeAt("uiArea6");
+
+		sap.ui.getCore().applyChanges();
+		oDP.toggleOpen();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oDP._getCalendar().getShowCurrentDateButton(), "Today button visibility is propagated to calendar when the displayFormat allows days");
+
+		// Prepare
+		oDP.setDisplayFormat("yyyyMM");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(oDP._getCalendar().getShowCurrentDateButton(), "Today button visibility is not propagated to calendar when the displayFormat does not allow day");
+
+		// Prepare
+		oDP.setDisplayFormat("yyyy");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(oDP._getCalendar().getShowCurrentDateButton(), "Today button visibility is not propagated to calendar when the displayFormat does not allow day");
+
+		// Cleanup
+		oDP.destroy();
+	});
+
 	QUnit.module("initialFocusedDate property", {
 		beforeEach: function () {
 			this.oDp = new DatePicker();

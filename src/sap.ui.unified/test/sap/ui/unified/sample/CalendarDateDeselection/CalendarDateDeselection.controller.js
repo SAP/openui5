@@ -9,6 +9,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/core/format/DateFormat', 's
 
 		onInit: function() {
 			this.oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyy-MM-dd", calendarType: CalendarType.Gregorian});
+			this.getView().byId("calendar").displayDate(new Date(2021, 6, 1));
 		},
 
 		handleCalendarSelect: function(oEvent) {
