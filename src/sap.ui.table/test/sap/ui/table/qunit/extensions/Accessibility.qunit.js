@@ -1401,13 +1401,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("ARIA Attributes of Container Element", function(assert) {
-		var $Elem = oTable.$("sapUiTableCnt");
-		$Elem.each(function() {
-			assert.strictEqual(jQuery(this).attr("role"), "application", "role");
-		});
-	});
-
 	QUnit.test("ARIA Attributes of Content Element", function(assert) {
 		var $Elem = oTable.$("sapUiTableGridCnt");
 		var done = assert.async();
