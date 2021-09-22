@@ -173,6 +173,8 @@ sap.ui.define([
 		fnRequest = _Helper.createRequestMethod("fetch");
 
 		assert.strictEqual(fnRequest.apply(oContext, aArguments), oResult);
+
+		Promise.resolve.restore();
 	});
 
 	//*********************************************************************************************
@@ -1942,29 +1944,30 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("clone", function (assert) {
-		var vClone = {},
-			oJSONMock = this.mock(JSON),
-			fnReplacer = function () {},
-			sStringified = "{}",
-			vValue = {};
+		var oResult,
+			oSource = {k1 : "v1", k2 : "v2"};
+
+		function replacer(sKey, vValue) {
+			if (sKey === "") {
+				return vValue; // the whole object
+			}
+			return sKey === "k1" ? "w1" : undefined;
+		}
 
 		// code under test
 		assert.strictEqual(_Helper.clone(null), null);
 
-		oJSONMock.expects("stringify").withExactArgs(sinon.match.same(vValue), undefined)
-			.returns(sStringified);
-		oJSONMock.expects("parse").withExactArgs(sStringified).returns(vClone);
+		// code under test
+		assert.deepEqual(_Helper.clone({}), {});
 
 		// code under test
-		assert.strictEqual(_Helper.clone(vValue), vClone);
+		oResult = _Helper.clone(oSource);
 
-		oJSONMock.expects("stringify")
-			.withExactArgs(sinon.match.same(vValue), sinon.match.same(fnReplacer))
-			.returns(sStringified);
-		oJSONMock.expects("parse").withExactArgs(sStringified).returns(vClone);
+		assert.deepEqual(oResult, oSource);
+		assert.notStrictEqual(oResult, oSource);
 
 		// code under test
-		assert.strictEqual(_Helper.clone(vValue, fnReplacer), vClone);
+		assert.deepEqual(_Helper.clone(oSource, replacer), {k1 : "w1"});
 
 		// code under test
 		assert.strictEqual(_Helper.clone(undefined), undefined);

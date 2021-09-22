@@ -34176,7 +34176,7 @@ sap.ui.define([
 				.withExactArgs("Failed to execute /ChangeTeamBudgetByID(...)",
 					sinon.match(sMessage), sODCB);
 
-			oAction.execute().then(mustFail(assert), function (oError) {
+			return oAction.execute().then(mustFail(assert), function (oError) {
 				assert.strictEqual(oError.message, sMessage);
 			});
 		});

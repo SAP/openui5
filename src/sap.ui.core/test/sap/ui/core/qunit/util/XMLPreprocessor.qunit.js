@@ -1378,8 +1378,7 @@ sap.ui.define([
 			 * @param {number} i
 			 */
 			function checkInterfaceForPart(oInterface, i) {
-				var oCreateBindingContextExpectation,
-					oInterface2Part,
+				var oInterface2Part,
 					oModel = oInterface.getModel(i);
 
 				// interface to ith part
@@ -1428,8 +1427,7 @@ sap.ui.define([
 				assert.strictEqual(oInterface2Part.getSetting("bindTexts"), true, "settings");
 
 				try {
-					oCreateBindingContextExpectation = that.mock(oModel)
-						.expects("createBindingContext").callThrough();
+					that.mock(oModel).expects("createBindingContext").callThrough();
 
 					// "drill-down" into ith part with absolute path
 					oInterface2Part = oInterface.getInterface(i, "/absolute/path");
@@ -1438,13 +1436,12 @@ sap.ui.define([
 					assert.strictEqual(oInterface2Part.getPath(), "/absolute/path");
 					assert.strictEqual(oInterface2Part.getSetting("bindTexts"), true, "settings");
 				} finally {
-					oCreateBindingContextExpectation.restore();
+					oModel.createBindingContext.restore();
 				}
 
 				try {
 					// simulate a model which creates the context asynchronously
-					oCreateBindingContextExpectation = that.mock(oModel)
-						.expects("createBindingContext").twice();
+					that.mock(oModel).expects("createBindingContext").twice();
 
 					oInterface2Part = oInterface.getInterface(i, "String");
 
@@ -1453,7 +1450,7 @@ sap.ui.define([
 					assert.strictEqual(e.message,
 						"Model could not create binding context synchronously: " + oModel);
 				} finally {
-					oCreateBindingContextExpectation.restore();
+					oModel.createBindingContext.restore();
 				}
 			}
 

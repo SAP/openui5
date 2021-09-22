@@ -188,6 +188,11 @@
             <copyright>jQuery Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/qunit-2.*</pattern>
         </lib>
+        <lib name="qunit-2.18" displayName="QUnit 2.18" version="2.18.0" homepage="https://qunitjs.com">
+            <license url="http://jQuery.org/license" type="MIT" />
+            <copyright>jQuery Foundation and other contributors</copyright>
+            <pattern>../test/sap/ui/core/qunit/thirdparty/qunit-2.18.*</pattern>
+        </lib>
         <lib name="jquery-migrate" displayName="jQuery-Migrate" version="3.3.1" homepage="https://github.com/jquery/jquery-migrate/">
             <license url="https://github.com/jquery/jquery-migrate/blob/3.3.1/LICENSE.txt" type="MIT" />
             <copyright>OpenJS Foundation and other contributors</copyright>
@@ -286,6 +291,11 @@
             <license url="https://raw.github.com/cjohansen/Sinon.JS/master/LICENSE" type="BSD-3-Clause" />
             <copyright>2010-2017, Christian Johansen, christian@cjohansen.no</copyright>
             <pattern>sap/ui/thirdparty/sinon-4.js</pattern>
+        </lib>
+        <lib name="sinonjs14" displayName="SinonJS 14" version="14.0.0" homepage="http://sinonjs.org">
+            <license url="https://raw.github.com/cjohansen/Sinon.JS/master/LICENSE" type="BSD-3-Clause" />
+            <copyright>2010-2022, Christian Johansen, christian@cjohansen.no</copyright>
+            <pattern>../test/sap/ui/core/qunit/thirdparty/sinon-14.0.*</pattern>
         </lib>
         <lib name="sinon-qunit" displayName="Sinon-qunit" version="2.0.0" homepage="http://sinonjs.org">
             <license url="https://raw.github.com/cjohansen/Sinon.JS/master/LICENSE" type="BSD-3-Clause" />

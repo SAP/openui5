@@ -6,11 +6,25 @@ sap.ui.define(function () {
 		defaults : {
 			group : "OData V4",
 			qunit : {
-				version : "edge",
+				versions : {
+					"2.18" : {
+						module : "test-resources/sap/ui/core/qunit/thirdparty/qunit-2.18",
+						css : "test-resources/sap/ui/core/qunit/thirdparty/qunit-2.18.css"
+					}
+				},
+				version : "2.18",
 				reorder : false
 			},
 			sinon : {
-				version : "edge"
+				versions : {
+					"14.0" : {
+						module : "test-resources/sap/ui/core/qunit/thirdparty/sinon-14.0",
+						bridge : "sap/ui/qunit/sinon-qunit-bridge"
+					}
+				},
+				version : "14.0",
+				qunitBridge : true,
+				useFakeTimer : false
 			},
 			ui5 : {
 				language : "en-US",

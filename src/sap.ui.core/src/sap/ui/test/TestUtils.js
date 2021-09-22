@@ -679,7 +679,11 @@ sap.ui.define([
 
 				// set up the fake server
 				oServer = sinon.fakeServer.create();
-				oSandbox.add(oServer);
+				if (oSandbox.getFakes) { // Sinon.JS version >= 5
+					oSandbox.getFakes().push(oServer); // not a public API of Sinon.JS
+				} else {
+					oSandbox.add(oServer); // not a public API of Sinon.JS
+				}
 				oServer.autoRespond = true;
 				if (sAutoRespondAfter) {
 					oServer.autoRespondAfter = parseInt(sAutoRespondAfter);
@@ -772,7 +776,13 @@ sap.ui.define([
 		 * @since 1.27.1
 		 */
 		withNormalizedMessages : function (fnCodeUnderTest) {
-			var oSandbox = sinon.sandbox.create();
+			var oSandbox;
+
+			if (sinon.createSandbox) {
+				oSandbox = sinon.createSandbox();
+			} else {
+				oSandbox = sinon.sandbox.create();
+			}
 
 			try {
 				var oCore = sap.ui.getCore(),

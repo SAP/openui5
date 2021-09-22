@@ -137,6 +137,11 @@ Copyright: jQuery Foundation and other contributors
 License: MIT
 Comment: these files belong to: QUnit 2
 
+Files: src/sap.ui.core/test/sap/ui/core/qunit/thirdparty/qunit-2.18.*
+Copyright: jQuery Foundation and other contributors
+License: MIT
+Comment: these files belong to: QUnit 2.18
+
 Files: src/sap.ui.core/src/sap/ui/thirdparty/jquery-compat.js
 Copyright: OpenJS Foundation and other contributors
 License: MIT
@@ -233,6 +238,11 @@ Files: src/sap.ui.core/src/sap/ui/thirdparty/sinon-4.js
 Copyright: 2010-2017, Christian Johansen, christian@cjohansen.no
 License: BSD-3-Clause
 Comment: these files belong to: SinonJS
+
+Files: src/sap.ui.core/test/sap/ui/core/qunit/thirdparty/sinon-14.0.*
+Copyright: 2010-2022, Christian Johansen, christian@cjohansen.no
+License: BSD-3-Clause
+Comment: these files belong to: SinonJS 14
 
 Files: src/sap.ui.core/src/sap/ui/thirdparty/sinon-qunit.js
 Copyright: 2010-2011, Christian Johansen
