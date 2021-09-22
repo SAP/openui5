@@ -3,8 +3,13 @@
  */
 
 sap.ui.define([
-	"sap/m/OverflowToolbar", "sap/m/OverflowToolbarRenderer", "sap/m/ToolbarSpacer", "sap/m/ToolbarSeparator", "sap/ui/mdc/enum/ActionToolbarActionAlignment", "sap/ui/mdc/actiontoolbar/ActionToolbarAction"
-], function(OverflowToolbar, OverflowToolbarRenderer, ToolbarSpacer, ToolbarSeparator, ActionToolbarActionAlignment, ActionToolbarAction) {
+	"sap/m/OverflowToolbar",
+	"sap/m/OverflowToolbarRenderer",
+	"sap/m/OverflowToolbarPriority",
+	"sap/m/ToolbarSpacer",
+	"sap/m/ToolbarSeparator",
+	"sap/ui/mdc/enum/ActionToolbarActionAlignment"
+], function(OverflowToolbar, OverflowToolbarRenderer, OverflowToolbarPriority, ToolbarSpacer, ToolbarSeparator, ActionToolbarActionAlignment) {
 	"use strict";
 
 	/**
@@ -63,7 +68,7 @@ sap.ui.define([
 				 * Further actions in the toolbar.
 				 */
 				actions: {
-					type: "sap.ui.core.Control",
+					type: "sap.ui.mdc.actiontoolbar.ActionToolbarAction",
 					multiple: true
 				},
 
@@ -79,127 +84,159 @@ sap.ui.define([
 		renderer: OverflowToolbarRenderer
 	});
 
-	var _aAggregations = [
-		"begin", "between", "end"
+	var aAggregations = [
+		"begin",
+		"between",
+		"actions",
+		"end"
 	];
 
-	function _getAggregationIndex(oToolbar, sAggregationName) {
-		var iAggregationIndex = _aAggregations.indexOf(sAggregationName);
-		if (iAggregationIndex >= 0 && oToolbar._oSpacer /* Only return an index if the toolbar is not yet destroyed */) {
-			return iAggregationIndex;
-		}
-		return -1;
-	}
+	var fnGetOverflowToolbarConfig = function() {
+		var oConfig = {
+			canOverflow: true,
+			getCustomImportance: function() {
+				return OverflowToolbarPriority.NeverOverflow;
+			}
+		};
 
-	function _add(oToolbar, oObj) {
-		oToolbar._editctx = true;
-		var res = oToolbar.addContent(oObj);
-		oToolbar._editctx = false;
-		return res;
-	}
-
-	function _insert(oToolbar, oObj, iIndex) {
-		oToolbar._editctx = true;
-		var res = oToolbar.insertContent(oObj, iIndex);
-		oToolbar._editctx = false;
-		return res;
-	}
-
-	function _remove(oToolbar, oObj) {
-		oToolbar._editctx = true;
-		var res = oToolbar.removeContent(oObj);
-		oToolbar._editctx = false;
-		return res;
-	}
-
-	function _destroy(oToolbar) {
-		oToolbar._editctx = true;
-		var res = oToolbar.destroyContent();
-		oToolbar._editctx = false;
-		return res;
-	}
-
-	function _checkModifyContent(oToolbar, sAggregationName) {
-		if (sAggregationName === "content" && !oToolbar._editctx) {
-			throw new Error("Mutator functions of the content aggregation of the ActionToolbar '" + oToolbar.getId() + "' must not be used.");
-		}
-	}
+		return oConfig;
+	};
 
 	ActionToolbar.prototype.init = function() {
+		OverflowToolbar.prototype.init.apply(this, arguments);
 		// Separator between begin (title) and between (variant) content of the toolbar.
-		this._oTitleSeparator = new ToolbarSeparator({
+		this._oBeginSeparator = new ToolbarSeparator({
 			visible: false
 		});
+		this._oBeginSeparator.getOverflowToolbarConfig = fnGetOverflowToolbarConfig;
+		// Separator between actions and end content of the toolbar.
+		this._oEndActionsBeginSeparator = new ToolbarSeparator({
+			visible: false
+		});
+		this._oEndActionsBeginSeparator.getOverflowToolbarConfig = fnGetOverflowToolbarConfig;
+		// Separator between end and actions content of the toolbar.
+		this._oEndActionsEndSeparator = new ToolbarSeparator({
+			visible: false
+		});
+		this._oEndActionsEndSeparator.getOverflowToolbarConfig = fnGetOverflowToolbarConfig;
 		// Spacer added to right align actions and end aggregation of the toolbar.
 		this._oSpacer = new ToolbarSpacer();
 
-		if (OverflowToolbar.prototype.init) {
-			OverflowToolbar.prototype.init.apply(this, arguments);
-		}
-		// Add TitleSeparator, Spacer and ActionSeparator(not yet used) to the content of the toolbar (ordered)
-		_add(this, this._oTitleSeparator);
-		_add(this, this._oSpacer);
-
 		this.setUseAsHeader(true);
-		this._aActions = [];
 	};
 
 	ActionToolbar.prototype.exit = function() {
-		this._oSpacer = null;
-		this._oTitleSeparator = null;
-		this._aActions = undefined;
-		_destroy(this);
-
-		if (OverflowToolbar.prototype.exit) {
-			OverflowToolbar.prototype.exit.apply(this, arguments);
+		OverflowToolbar.prototype.exit.apply(this, arguments);
+		if (this._oBeginSeparator) {
+			this._oBeginSeparator.destroy();
+		}
+		if (this._oEndActionsBeginSeparator) {
+			this._oEndActionsBeginSeparator.destroy();
+		}
+		if (this._oEndActionsEndSeparator) {
+			this._oEndActionsEndSeparator.destroy();
+		}
+		if (this._oSpacer) {
+			this._oSpacer.destroy();
 		}
 	};
 
-	ActionToolbar.prototype._getState = function(sAggregationName) {
-		var iAggregationIndex = _getAggregationIndex(this, sAggregationName);
-		if (iAggregationIndex >= 0) {
-			return {
-				aggregationIndex: iAggregationIndex,
-				separatorIndex: [
-					this.indexOfContent(this._oTitleSeparator), this.indexOfContent(this._oSpacer)
-				]
-			};
+	ActionToolbar.prototype.addAggregation = function(sAggregationName, oControl) {
+		if (sAggregationName === "content") {
+			throw new Error("Mutator functions of the content aggregation of the ActionToolbar '" + this.getId() + "' must not be used.");
 		}
-		return null;
+
+		var aArguments = arguments;
+		if (aAggregations.includes(sAggregationName)) {
+			this._registerControlListener(oControl);
+			this._resetAndInvalidateToolbar(false);
+
+			if (oControl) {
+				this._moveControlInSuitableCollection(oControl, this._getControlPriority(oControl));
+			}
+
+			this._informNewFlexibleContentAdded(oControl);
+
+			var vContent = this._callToolbarMethod("addAggregation", aArguments);
+			this._updateSeparators();
+
+			return vContent;
+		}
+
+		return OverflowToolbar.prototype.addAggregation.apply(this, arguments);
 	};
 
-	// According to visual designs currently no separator between actions and end content, only title separator is handled below
-	/* Begin Title Separator handling */
-	ActionToolbar.prototype.onAfterRendering = function() {
-		OverflowToolbar.prototype.onAfterRendering.apply(this, arguments);
-		this._updateSeparator();
+	ActionToolbar.prototype.destroyAggregation = function(sAggregationName) {
+		if (sAggregationName === "content") {
+			throw new Error("Mutator functions of the content aggregation of the ActionToolbar '" + this.getId() + "' must not be used.");
+		}
+
+		if (aAggregations.includes(sAggregationName)) {
+			var aContentToDelete = this.removeAllAggregation(sAggregationName);
+			for (var i = 0; i < aContentToDelete.length; i++) {
+				aContentToDelete[i].destroy();
+			}
+			this._updateSeparators();
+
+			return this;
+		}
+
+		return OverflowToolbar.prototype.destroyAggregation.apply(this, arguments);
 	};
 
-	ActionToolbar.prototype._onContentPropertyChangedOverflowToolbar = function(oEvent) {
-		if (this._bIsBeingDestroyed) {
-			return;
+	ActionToolbar.prototype.insertAggregation = function(sAggregationName, oControl, iIndex) {
+		if (sAggregationName === "content") {
+			throw new Error("Mutator functions of the content aggregation of the ActionToolbar '" + this.getId() + "' must not be used.");
 		}
-		OverflowToolbar.prototype._onContentPropertyChangedOverflowToolbar.apply(this, arguments);
-		if (oEvent.getParameter("name") === "visible" || oEvent.getParameter("name") === "width" && oEvent.getSource() != this._oTitleSeparator) {
-			this._updateSeparator();
+
+		if (aAggregations.includes(sAggregationName)) {
+			this._registerControlListener(oControl);
+			this._resetAndInvalidateToolbar(false);
+
+			if (oControl) {
+				this._moveControlInSuitableCollection(oControl, this._getControlPriority(oControl));
+			}
+
+			this._informNewFlexibleContentAdded(oControl);
+
+			var vContent = this._callToolbarMethod("insertAggregation", arguments);
+			this._updateSeparators();
+
+			return vContent;
 		}
+
+		return OverflowToolbar.prototype.insertAggregation.apply(this, arguments);
 	};
 
-	ActionToolbar.prototype._updateSeparator = function() {
-		if (this._oTitleSeparator && !this._editctx) {
-			var fHasVisible = function(aArray) {
-				return aArray ? aArray.some(function(oCtr) {
-					// visible="true" and does not have "0px" width
-					var bHasWidth = oCtr.getWidth ? oCtr.getWidth() !== "0px" : true;
-					return oCtr.getVisible() && bHasWidth;
-				}) : false;
-			};
-			var bHasBegin = fHasVisible(this.getBegin());
-			var bHasBetween = fHasVisible(this.getBetween());
-			this._oTitleSeparator.setVisible(bHasBegin && bHasBetween);
+	ActionToolbar.prototype.removeAllAggregation = function(sAggregationName) {
+		if (sAggregationName === "content") {
+			throw new Error("Mutator functions of the content aggregation of the ActionToolbar '" + this.getId() + "' must not be used.");
 		}
+
+		return OverflowToolbar.prototype.removeAllAggregation.apply(this, arguments);
 	};
-	/* End Separator handling */
+
+	ActionToolbar.prototype.removeAggregation = function(sAggregationName, vObject) {
+		if (sAggregationName === "content") {
+			throw new Error("Mutator functions of the content aggregation of the ActionToolbar '" + this.getId() + "' must not be used.");
+		}
+
+		if (aAggregations.includes(sAggregationName)) {
+			var vContent = this._callToolbarMethod("removeAggregation", arguments);
+			if (vContent) {
+				this._getPopover().removeAssociatedContent(vContent.getId());
+			}
+			this._resetAndInvalidateToolbar(false);
+
+			this._deregisterControlListener(vContent);
+			this._removeContentFromControlsCollections(vContent);
+			this._updateSeparators();
+
+			return vContent;
+		}
+
+		return OverflowToolbar.prototype.removeAggregation.apply(this, arguments);
+	};
 
 	ActionToolbar.prototype.setUseAsHeader = function(bHeader) {
 		this.setProperty("useAsHeader", bHeader, true);
@@ -207,283 +244,96 @@ sap.ui.define([
 		return this;
 	};
 
-	ActionToolbar.prototype.indexOfAggregation = function(sAggregationName, oObject) {
-		if (sAggregationName === "action" && oObject) {
-			return this._aActions.indexOf(oObject);
-		}
-		var oInfo = this._getState(sAggregationName);
-		if (oInfo) {
-			var iIdx = this.indexOfContent(oObject);
-			if (iIdx < 0) {
-				return -1;
-			}
-			var iPrevSepIdx = oInfo.aggregationIndex == 0 ? -1 : oInfo.separatorIndex[oInfo.aggregationIndex - 1];
-			var iNextSepIdx = oInfo.aggregationIndex == 2 ? this.getContent().length : oInfo.separatorIndex[oInfo.aggregationIndex];
-			if (iIdx < iPrevSepIdx || iIdx > iNextSepIdx) {
-				return -1;
-			}
-			return iIdx - iPrevSepIdx - 1;
-		}
-		return OverflowToolbar.prototype.indexOfAggregation.apply(this, arguments);
-	};
-
-	ActionToolbar.prototype.indexOfAction = function(oObject) {
-		return this._aActions.indexOf(oObject);
-	};
-
-	ActionToolbar.prototype.getAggregation = function(sAggregationName) {
-		var oInfo = this._getState(sAggregationName);
-		if (oInfo) {
-			var aContent = this.getContent();
-			return aContent.slice(oInfo.aggregationIndex === 0 ? 0 : (oInfo.separatorIndex[oInfo.aggregationIndex - 1] + 1), oInfo.aggregationIndex >= oInfo.separatorIndex.length ? aContent.length : oInfo.separatorIndex[oInfo.aggregationIndex]);
-		}
-		return OverflowToolbar.prototype.getAggregation.apply(this, arguments);
-	};
-
-	ActionToolbar.prototype.getActions = function() {
-		return this._aActions;
-	};
-
-	ActionToolbar.prototype.addAggregation = function(sAggregationName, oObject) {
-		if (sAggregationName === "actions" && oObject) {
-			if (oObject.getMetadata().getName() === "sap.ui.mdc.actiontoolbar.ActionToolbarAction") {
-				return this._addAction(oObject);
-			}
-			return this._addAction(new ActionToolbarAction({
-				action: oObject
-			}));
-		}
-		var oInfo = this._getState(sAggregationName);
-		if (oInfo) {
-			if (!oObject) {
-				return this;
-			}
-			var iIdx = this.indexOfContent(oObject);
-			if (iIdx >= 0) {
-				_remove(this, oObject);
-				this.addAggregation(sAggregationName, oObject);
-			} else {
-				_insert(this, oObject, oInfo.aggregationIndex >= oInfo.separatorIndex.length ? this.getContent().length : oInfo.separatorIndex[oInfo.aggregationIndex]);
-			}
-			this._updateSeparator();
-			return this;
-		}
-		_checkModifyContent(this, sAggregationName);
-		return OverflowToolbar.prototype.addAggregation.apply(this, arguments);
-	};
-
-	ActionToolbar.prototype.insertAggregation = function(sAggregationName, oObject, iIndex) {
-		if (sAggregationName === "actions" && oObject) {
-			if (oObject.getMetadata().getName() === "sap.ui.mdc.actiontoolbar.ActionToolbarAction") {
-				return this._addAction(oObject);
-			}
-			return this._addAction(new ActionToolbarAction({
-				action: oObject
-			}));
-		}
-		var oInfo = this._getState(sAggregationName);
-		if (oInfo) {
-			if (!oObject) {
-				return this;
-			}
-			var iIdx = this.indexOfContent(oObject);
-			if (iIdx >= 0) {
-				iIdx = this.indexOfAggregation(sAggregationName, oObject);
-				if (iIdx >= 0 && iIndex > iIdx) {
-					iIndex--;
-				}
-				_remove(this, oObject);
-				this.insertAggregation(sAggregationName, oObject, iIndex);
-			} else {
-				var iLen = this.getAggregation(sAggregationName).length;
-				if (iIndex < 0) {
-					iIdx = 0;
-				} else if (iIndex > iLen) {
-					iIdx = iLen;
-				} else {
-					iIdx = iIndex;
-				}
-				var iPrevSepIdx = oInfo.aggregationIndex == 0 ? -1 : oInfo.separatorIndex[oInfo.aggregationIndex - 1];
-				_insert(this, oObject, iIdx + iPrevSepIdx + 1);
-			}
-			this._updateSeparator();
-			return this;
-		}
-		_checkModifyContent(this, sAggregationName);
-		return OverflowToolbar.prototype.insertAggregation.apply(this, arguments);
-	};
-
-	ActionToolbar.prototype._addAction = function(oActionToolbarAction) {
-		var sAggregationName = oActionToolbarAction.getLayoutInformation().aggregationName;
-		var sAlignment = oActionToolbarAction.getLayoutInformation().alignment;
-		var aAggregation = this.getAggregation(sAggregationName);
-		var aActionsInAggregation;
-		var oLastAddedAction;
-		var iActionIndex = 0;
-
-		if (sAlignment === ActionToolbarActionAlignment.End) {
-			if (oActionToolbarAction.getVisible() && !this._aggregationContainsActionSeparatorBefore(sAggregationName)) {
-				this.addAggregation(sAggregationName, oActionToolbarAction.getSeparatorBefore());
-			}
-			this.addAggregation(sAggregationName, oActionToolbarAction);
-			if (!this._aActions.includes(oActionToolbarAction)) {
-				this._aActions.push(oActionToolbarAction);
-			}
-		} else if (sAlignment === ActionToolbarActionAlignment.Begin && aAggregation[0] !== oActionToolbarAction) {
-			aActionsInAggregation = this._getActionsInAggregationWithAlignment(sAggregationName, sAlignment);
-			if (aActionsInAggregation.length) {
-				oLastAddedAction = aActionsInAggregation[aActionsInAggregation.length - 1];
-				iActionIndex = this.indexOfAggregation(sAggregationName, oLastAddedAction) + 1;
-			}
-			this.insertAggregation(sAggregationName, oActionToolbarAction, iActionIndex);
-
-			if (oActionToolbarAction.getVisible() && !this._aggregationContainsActionSeparatorAfter(sAggregationName)) {
-				this.insertAggregation(sAggregationName, oActionToolbarAction.getSeparatorAfter(), iActionIndex + 1);
-			}
-			if (!this._aActions.includes(oActionToolbarAction)) {
-				this._aActions.push(oActionToolbarAction);
-			}
-		}
-		oActionToolbarAction.updateSeparators();
-		return this;
-	};
-
-	ActionToolbar.prototype._aggregationContainsActionSeparator = function (sAggregationName, sAlignment) {
-		var aActionsInAggregation =  this._getActionsInAggregation(sAggregationName);
-
-		return aActionsInAggregation.some(function(oActionInAggregation) {
-			return oActionInAggregation['getSeparator' + sAlignment]().getVisible() && !oActionInAggregation.bIsDestroyed;
+	ActionToolbar.prototype.getEndActionsBegin = function() {
+		return this.getActionsWithLayoutInformation({
+			aggregationName: "end",
+			alignment: ActionToolbarActionAlignment.Begin
 		});
 	};
 
-	ActionToolbar.prototype._aggregationContainsActionSeparatorBefore = function (sAggregationName) {
-		return this._aggregationContainsActionSeparator(sAggregationName, "Before");
-	};
-
-	ActionToolbar.prototype._aggregationContainsActionSeparatorAfter = function (sAggregationName) {
-		return this._aggregationContainsActionSeparator(sAggregationName, "After");
-	};
-
-	ActionToolbar.prototype._getActionsInAggregation = function (sAggregationName) {
-		return this._aActions.filter(function(oAction) {
-			return oAction.getLayoutInformation().aggregationName === sAggregationName && !oAction.bIsDestroyed;
+	ActionToolbar.prototype.getEndActionsEnd = function() {
+		return this.getActionsWithLayoutInformation({
+			aggregationName: "end",
+			alignment: ActionToolbarActionAlignment.End
 		});
 	};
 
-	ActionToolbar.prototype._getActionsInAggregationWithAlignment = function(sAggregationName, sAlignment) {
-		return this._getActionsInAggregation(sAggregationName).filter(function(oAction) {
-			return oAction.getLayoutInformation().alignment === sAlignment;
+	ActionToolbar.prototype.getActionsWithLayoutInformation = function(oLayoutInformation) {
+		return this.getActions().filter(function(oActionToolbarAction) {
+			var oActionLayoutInformation = oActionToolbarAction.getLayoutInformation();
+			return oActionLayoutInformation.aggregationName === oLayoutInformation.aggregationName && oActionLayoutInformation.alignment === oLayoutInformation.alignment;
 		});
 	};
 
-	ActionToolbar.prototype.removeAggregation = function(sAggregationName, vObject) {
-		if (sAggregationName !== "content" && vObject && vObject.getMetadata().getName() === "sap.ui.mdc.actiontoolbar.ActionToolbarAction" ) {
-			return this._removeAction(vObject);
-		}
-		return this._removeAggregation(sAggregationName, vObject);
+	// According to visual designs currently no separator between actions and end content, only title separator is handled below
+	/* Begin Title Separator handling */
+	ActionToolbar.prototype.onAfterRendering = function() {
+		OverflowToolbar.prototype.onAfterRendering.apply(this, arguments);
+		this._updateSeparators();
 	};
 
-	ActionToolbar.prototype._removeAggregation = function(sAggregationName, vObject) {
-		if (_getAggregationIndex(this, sAggregationName) >= 0) {
-			var oRemoved = _remove(this, vObject);
-			this._updateSeparator();
-			return oRemoved;
+	ActionToolbar.prototype._onContentPropertyChangedOverflowToolbar = function(oEvent) {
+		if (this._bIsBeingDestroyed) {
+			return;
 		}
-		_checkModifyContent(this, sAggregationName);
-		return OverflowToolbar.prototype.removeAggregation.apply(this, arguments);
+		OverflowToolbar.prototype._onContentPropertyChangedOverflowToolbar.apply(this, arguments);
+		if (oEvent.getParameter("name") === "visible" || oEvent.getParameter("name") === "width" && oEvent.getSource() != this._oBeginSeparator) {
+			this._updateSeparators();
+		}
 	};
 
-	ActionToolbar.prototype._removeAction = function(oActionToolbarAction) {
-		var sAggregationName = oActionToolbarAction.getLayoutInformation().aggregationName;
-		var sAlignment = oActionToolbarAction.getLayoutInformation().alignment;
-		var aActionsInAggregation;
-		var oActionInAggregation;
-		var oRemoved;
-		var iSeparatorIndex;
+	ActionToolbar.prototype._hasVisible = function(aArray) {
+		var aPopoverContent = this.getAggregation("_popover") ? this.getAggregation("_popover")._getAllContent() : [];
 
-		var iIndex = this._aActions.indexOf(oActionToolbarAction);
-		if (iIndex > -1) {
-			this._aActions.splice(iIndex, 1);
-		}
-
-		oRemoved = this._removeAggregation(sAggregationName, oActionToolbarAction);
-
-		aActionsInAggregation =  this._getActionsInAggregation(sAggregationName).filter(function(oActionInAggregation) {
-			return oActionInAggregation.getLayoutInformation().alignment === sAlignment;
+		var aVisibleContent = aArray.filter(function (oControl) {
+			return aPopoverContent.indexOf(oControl) === -1;
 		});
-		if (aActionsInAggregation.length > 0) {
-			oActionInAggregation = aActionsInAggregation[0];
-			iSeparatorIndex = this.indexOfAggregation(sAggregationName, oActionInAggregation);
-			if (sAlignment === ActionToolbarActionAlignment.Begin && oActionToolbarAction.getVisible() && !this._aggregationContainsActionSeparatorAfter(sAggregationName)) {
-				iSeparatorIndex = iSeparatorIndex + 1;
-				this.insertAggregation(sAggregationName, oActionInAggregation.getSeparatorAfter(), iSeparatorIndex);
-			} else if (sAlignment === ActionToolbarActionAlignment.End && oActionToolbarAction.getVisible() && !this._aggregationContainsActionSeparatorBefore(sAggregationName)) {
-				this.insertAggregation(sAggregationName, oActionInAggregation.getSeparatorBefore(), iSeparatorIndex);
-			}
-			oActionInAggregation.updateSeparators();
-		}
-
-		return oRemoved;
+		return aVisibleContent.some(function(oControl) {
+			// visible="true" and does not have "0px" width
+			var bHasWidth = oControl.getWidth ? oControl.getWidth() !== "0px" : true;
+			return oControl.getVisible() && bHasWidth;
+		});
 	};
 
-	ActionToolbar.prototype.removeAllAggregation = function(sAggregationName) {
-		if (sAggregationName === "actions") {
-			return this._removeAllActions();
+	ActionToolbar.prototype._updateSeparators = function() {
+		var bHasEnd = this._hasVisible(this.getEnd());
+
+		if (this._oBeginSeparator) {
+			var bHasBegin = this._hasVisible(this.getBegin());
+			var bHasBetween = this._hasVisible(this.getBetween());
+			this._oBeginSeparator.setVisible(bHasBegin && bHasBetween);
 		}
-		if (_getAggregationIndex(this, sAggregationName) >= 0) {
-			var aContentToRemove = this.getAggregation(sAggregationName);
-			for (var i = 0; i < aContentToRemove.length; i++) {
-				this.removeAggregation(sAggregationName, aContentToRemove[i]);
-			}
-			this._updateSeparator();
-			return aContentToRemove;
+		if (this._oEndActionsBeginSeparator) {
+			var bHasEndActionsBegin = this._hasVisible(this.getEndActionsBegin());
+			this._oEndActionsBeginSeparator.setVisible(bHasEnd && bHasEndActionsBegin);
 		}
-		_checkModifyContent(this, sAggregationName);
-		return OverflowToolbar.prototype.removeAllAggregation.apply(this, arguments);
+		if (this._oEndActionsEndSeparator) {
+			var bHasEndActionsEnd = this._hasVisible(this.getEndActionsEnd());
+			this._oEndActionsEndSeparator.setVisible(bHasEnd && bHasEndActionsEnd);
+		}
 	};
 
-	ActionToolbar.prototype._removeAllActions = function() {
-		var aRemovedContent = [];
-		while (this._aActions && this._aActions.length > 0) {
-			aRemovedContent.push(this._removeAction(this._aActions[0]));
-		}
-		return aRemovedContent;
+	/*
+		* Overwrite generated functions to use internal array to look for aggregation
+		*/
+	ActionToolbar.prototype.indexOfContent = function(oObject) {
+		return this.getContent().indexOf(oObject);
 	};
 
-	ActionToolbar.prototype.destroyAggregation = function(sAggregationName) {
-		if (_getAggregationIndex(this, sAggregationName) >= 0 || sAggregationName === "actions") {
-			var aContentToDelete = this.removeAllAggregation(sAggregationName);
-			for (var i = 0; i < aContentToDelete.length; i++) {
-				aContentToDelete[i].destroy();
-			}
-			this._updateSeparator();
-			return this;
-		}
-		_checkModifyContent(this, sAggregationName);
-		return OverflowToolbar.prototype.destroyAggregation.apply(this, arguments);
-	};
+	// Overwrite content aggregation functions
+	ActionToolbar.prototype.getContent = function() {
+		var aContent = this.getBegin();
+		aContent.push(this._oBeginSeparator);
+		aContent = aContent.concat(this.getBetween());
+		aContent.push(this._oSpacer);
+		aContent = aContent.concat(this.getEndActionsBegin());
+		aContent.push(this._oEndActionsBeginSeparator);
+		aContent = aContent.concat(this.getEnd());
+		aContent.push(this._oEndActionsEndSeparator);
+		aContent = aContent.concat(this.getEndActionsEnd());
 
-	ActionToolbar.prototype.propagateProperties = function() {
-		// TODO: When the toolbar is used with aggregation forwarding (see aggregation actions of MDCTable) the propagation does not happen
-		// because the actions are finally stored in the content aggregation and access to mAggregations["actions"] does not have any effect.
-		var aContent = this.getContent();
-		var iIndex;
-		for (iIndex = 0; iIndex < aContent.length; iIndex++) {
-			if (aContent[iIndex].aAPIParentInfos) {
-				aContent[iIndex].__aAPIParentInfos = aContent[iIndex].aAPIParentInfos;
-				aContent[iIndex].aAPIParentInfos = null;
-			}
-		}
-		var res = OverflowToolbar.prototype.propagateProperties.apply(this, arguments);
-		for (iIndex = 0; iIndex < aContent.length; iIndex++) {
-			if (aContent[iIndex].__aAPIParentInfos) {
-				aContent[iIndex].aAPIParentInfos = aContent[iIndex].__aAPIParentInfos;
-				aContent[iIndex].__aAPIParentInfos = null;
-			}
-		}
-		return res;
+		return aContent;
 	};
 
 	return ActionToolbar;
-
-}, true);
+});

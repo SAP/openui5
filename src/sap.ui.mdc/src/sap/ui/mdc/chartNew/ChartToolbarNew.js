@@ -158,10 +158,6 @@ sap.ui.define([
                 this.addEnd(this._oChartTypeBtn);
             }
 
-            //Add initial actions from MDC Chart
-            oMDCChart._getInitialToolbarActions().forEach(function(oAction){
-                this.addAction(oAction);
-            }.bind(this));
         };
 
         ChartToolbar.prototype.toggleZoomButtons = function (oMDCChart) {
