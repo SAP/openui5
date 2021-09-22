@@ -12,7 +12,7 @@ sap.ui.define([
 
 	var oMockData = {
 			mFixture : {
-				"$metadata" : {
+				"$metadata?sap-language=EN" : {
 					source : "metadata.xml"
 				},
 				"GET Sticky?$count=true&$select=Content,Id&$skip=0&$top=5" : {

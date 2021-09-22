@@ -12,10 +12,10 @@ sap.ui.define([
 
 	var oMockData = {
 			mFixture : {
-				"/sap/opu/odata4/sap/sepm_odata_ref/sadl/sap/sepm_c_slsorder_tp_100/0001/$metadata" : {
+				"/sap/opu/odata4/sap/sepm_odata_ref/sadl/sap/sepm_c_slsorder_tp_100/0001/$metadata?sap-language=EN" : {
 					source : "metadataV4.xml"
 				},
-				"/sap/opu/odata4/sap/sepm_odata_ref/sadl/sap/sepm_c_slsorderitem_tp_100/0001/$metadata" : {
+				"/sap/opu/odata4/sap/sepm_odata_ref/sadl/sap/sepm_c_slsorderitem_tp_100/0001/$metadata?sap-language=EN" : {
 					source : "metadataV4_item.xml"
 				},
 				"SEPM_C_SLSORDER_TP_100?$count=true&$expand=_Item($select=GrossAmount,Product,SalesOrder,SalesOrderItem,SalesOrderItemUUID,SalesOrderUUID)&$select=Customer,OverallStatus,SalesOrder,SalesOrderUUID&$skip=0&$top=5" : {

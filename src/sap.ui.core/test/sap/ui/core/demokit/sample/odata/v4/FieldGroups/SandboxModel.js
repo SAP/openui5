@@ -12,7 +12,7 @@ sap.ui.define([
 
 	var oMockData = {
 			mFixture : {
-				"$metadata" : {
+				"$metadata?sap-language=EN" : {
 					source : "metadata.xml"
 				},
 				"ContactList(42010aef-0de5-1eea-af8f-5bce865f0879)?$select=ContactGUID,EmailAddress,FirstName,LastName" : {

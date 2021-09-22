@@ -13,7 +13,7 @@ sap.ui.define([
 
 	var oMockData = {
 			mFixture : {
-				"$metadata" : {
+				"$metadata?sap-language=EN" : {
 					source : "metadata.xml"
 				},
 				"SalesOrderList?$count=true&$filter=SalesOrderID%20ge%20'0500000000'%20and%20LifecycleStatus%20eq%20'N'&$select=CurrencyCode,GrossAmount,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=5" : {

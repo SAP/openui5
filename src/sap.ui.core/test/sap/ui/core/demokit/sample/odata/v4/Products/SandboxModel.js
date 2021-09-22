@@ -12,7 +12,7 @@ sap.ui.define([
 
 	var oMockData = {
 			mFixture : {
-				"$metadata?custom-option=value" : {
+				"$metadata?custom-option=value&sap-language=EN" : {
 					source : "metadata.xml"
 				},
 				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/$metadata" : {

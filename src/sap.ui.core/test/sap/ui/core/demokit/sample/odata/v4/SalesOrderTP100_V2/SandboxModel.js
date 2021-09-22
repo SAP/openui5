@@ -12,7 +12,7 @@ sap.ui.define([
 
 	var oMockData = {
 			mFixture : {
-				"$metadata" : {
+				"$metadata?sap-language=EN" : {
 					source : "metadataV2.xml"
 				},
 				"SEPM_C_SLSORDER_TP_100?$inlinecount=allpages&$expand=to_Item&$filter=SalesOrder%20ge%20'500000000'&$select=Customer,OverallStatus,SalesOrder,SalesOrderUUID,to_Item/GrossAmount,to_Item/Product,to_Item/SalesOrder,to_Item/SalesOrderItem,to_Item/SalesOrderItemUUID,to_Item/SalesOrderUUID&$skip=0&$top=5" : {

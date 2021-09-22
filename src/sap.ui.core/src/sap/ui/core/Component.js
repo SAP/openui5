@@ -930,9 +930,17 @@ sap.ui.define([
 	 * @private
 	 */
 	Component.prototype._initComponentModels = function(mModels, mDataSources, mCacheTokens) {
+		var sComponentName = this.getManifestObject().getComponentName();
+
+		var mAllModelConfigs = Component._findManifestModelClasses({
+			models: mModels,
+			dataSources: mDataSources,
+			componentName: sComponentName
+		});
+		Component._loadManifestModelClasses(mAllModelConfigs, sComponentName);
 
 		var mAllModelConfigurations = Component._createManifestModelConfigurations({
-			models: mModels,
+			models: mAllModelConfigs,
 			dataSources: mDataSources,
 			component: this,
 			mergeParent: true,
@@ -954,7 +962,7 @@ sap.ui.define([
 		}
 
 		// create all models which are not created, yet.
-		var mCreatedModels = Component._createManifestModels(mModelConfigurations, this.toString());
+		var mCreatedModels = Component._createManifestModels(mModelConfigurations, sComponentName);
 		for (sModelName in mCreatedModels) {
 			// keep the model instance to be able to destroy the created models on component destroy
 			this._mManifestModels[sModelName] = mCreatedModels[sModelName];
@@ -1429,30 +1437,7 @@ sap.ui.define([
 
 	};
 
-	/**
-	 * Creates model configurations by processing "/sap.app/dataSources" and "/sap.ui5/models" manifest entries.
-	 * Result can be handed over to {@link sap.ui.core.Component._createManifestModels} in order to create instances.
-	 *
-	 * @param {object} mOptions Configuration object (see below)
-	 * @param {object} mOptions.models Manifest models section (/sap.ui5/models)
-	 * @param {object} mOptions.dataSources Manifest dataSources section (/sap.app/dataSources)
-	 * @param {sap.ui.core.Component} [mOptions.component] Corresponding component instance
-	 * @param {sap.ui.core.Manifest} [mOptions.manifest] Component manifest instance (defaults to component's manifest if not set)
-	 * @param {boolean} [mOptions.mergeParent=false] Whether the component's parent configuration should be taken into account (only relevant when component is set)
-	 * @param {object} [mOptions.componentData] componentData object which should be used to create the configurations (only relevant when component is not set, defaults to componentData of provided component)
-	 * @param {string[]} [mOptions.activeTerminologies] optional list of active terminologies.
-	 * @return {object} key-value map with model name as key and model configuration as value
-	 * @private
-	 */
-	Component._createManifestModelConfigurations = function(mOptions) {
-		var oComponent = mOptions.component;
-		var oManifest = mOptions.manifest || oComponent.getManifestObject();
-		var bMergeParent = mOptions.mergeParent;
-		var mCacheTokens = mOptions.cacheTokens || {};
-		var sLogComponentName = oComponent ? oComponent.toString() : oManifest.getComponentName();
-		var oConfig = sap.ui.getCore().getConfiguration();
-		var aActiveTerminologies = mOptions.activeTerminologies;
-
+	Component._findManifestModelClasses = function(mOptions) {
 		if (!mOptions.models) {
 			// skipping model creation because of missing sap.ui5 models manifest entry
 			return null;
@@ -1471,32 +1456,15 @@ sap.ui.define([
 				dataSources: {},
 				models: {}
 			}
-
 		};
 
-		if (oComponent && bMergeParent) {
-			// identify the configuration in parent chain
-			var oMeta = oComponent.getMetadata();
-			while (oMeta instanceof ComponentMetadata) {
-				var oCurrentManifest = oMeta.getManifestObject();
-
-				var mCurrentDataSources = oMeta.getManifestEntry("/sap.app/dataSources");
-				mergeDefinitionSource(mConfig.dataSources, mConfig.origin.dataSources, mCurrentDataSources, oCurrentManifest);
-
-				var mCurrentModelConfigs = oMeta.getManifestEntry("/sap.ui5/models");
-				mergeDefinitionSource(mConfig.models, mConfig.origin.models, mCurrentModelConfigs, oCurrentManifest);
-
-				oMeta = oMeta.getParent();
-			}
-		}
-
+		var sLogComponentName = mOptions.componentName;
 		var mModelConfigurations = {};
+
 		// create a model for each ["sap.ui5"]["models"] entry
 		for (var sModelName in mConfig.models) {
 
 			var oModelConfig = mConfig.models[sModelName];
-			var bIsDataSourceUri = false;
-			var mMetadataUrlParams = null;
 
 			// normalize dataSource shorthand, e.g.
 			// "myModel": "myDataSource" => "myModel": { dataSource: "myDataSource" }
@@ -1549,11 +1517,129 @@ sap.ui.define([
 								// for custom dataSource types, the class should already be specified in the sap.ui5 models config
 						}
 					}
+				}
+			}
+
+			// model type is required!
+			if (!oModelConfig.type) {
+				Log.error("Component Manifest: Missing \"type\" for model \"" + sModelName + "\"", "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sLogComponentName);
+				continue;
+			}
+
+			// Add final configuration to result map
+			mModelConfigurations[sModelName] = oModelConfig;
+		}
+
+		return mModelConfigurations;
+	};
+
+	/**
+	 * Creates model configurations by processing "/sap.app/dataSources" and "/sap.ui5/models" manifest entries.
+	 * Result can be handed over to {@link sap.ui.core.Component._createManifestModels} in order to create instances.
+	 *
+	 * @param {object} mOptions Configuration object (see below)
+	 * @param {object} mOptions.models Manifest models section (/sap.ui5/models)
+	 * @param {object} mOptions.dataSources Manifest dataSources section (/sap.app/dataSources)
+	 * @param {sap.ui.core.Component} [mOptions.component] Corresponding component instance
+	 * @param {sap.ui.core.Manifest} [mOptions.manifest] Component manifest instance (defaults to component's manifest if not set)
+	 * @param {boolean} [mOptions.mergeParent=false] Whether the component's parent configuration should be taken into account (only relevant when component is set)
+	 * @param {object} [mOptions.componentData] componentData object which should be used to create the configurations (only relevant when component is not set, defaults to componentData of provided component)
+	 * @param {string[]} [mOptions.activeTerminologies] optional list of active terminologies.
+	 * @return {object} key-value map with model name as key and model configuration as value
+	 * @private
+	 */
+	Component._createManifestModelConfigurations = function(mOptions) {
+		var oComponent = mOptions.component;
+		var oManifest = mOptions.manifest || oComponent.getManifestObject();
+		var bMergeParent = mOptions.mergeParent;
+		var mCacheTokens = mOptions.cacheTokens || {};
+		var sLogComponentName = oComponent ? oComponent.getMetadata().getComponentName() : oManifest.getComponentName();
+		var oConfig = sap.ui.getCore().getConfiguration();
+		var aActiveTerminologies = mOptions.activeTerminologies;
+
+		if (!mOptions.models) {
+			// skipping model creation because of missing sap.ui5 models manifest entry
+			return null;
+		}
+
+		var mConfig = {
+
+			// ui5 model definitions
+			models: mOptions.models,
+
+			// optional dataSources from "sap.app" manifest
+			dataSources: mOptions.dataSources || {},
+
+			// to identify where the dataSources/models have been originally defined
+			origin: {
+				dataSources: {},
+				models: {}
+			}
+
+		};
+
+		if (oComponent && bMergeParent) {
+			// identify the configuration in parent chain
+			var oMeta = oComponent.getMetadata();
+			while (oMeta instanceof ComponentMetadata) {
+				var oCurrentManifest = oMeta.getManifestObject();
+
+				var mCurrentDataSources = oMeta.getManifestEntry("/sap.app/dataSources");
+				mergeDefinitionSource(mConfig.dataSources, mConfig.origin.dataSources, mCurrentDataSources, oCurrentManifest);
+
+				var mCurrentModelConfigs = oMeta.getManifestEntry("/sap.ui5/models");
+				mergeDefinitionSource(mConfig.models, mConfig.origin.models, mCurrentModelConfigs, oCurrentManifest);
+
+				oMeta = oMeta.getParent();
+			}
+		}
+
+		var mModelConfigurations = {};
+		// create a model for each ["sap.ui5"]["models"] entry
+		for (var sModelName in mConfig.models) {
+
+			var oModelConfig = mConfig.models[sModelName];
+			var fnClass = sap.ui.require(oModelConfig.type.replace(/\./g, "/"));
+			if (!fnClass) {
+				fnClass =  ObjectPath.get(oModelConfig.type);
+			}
+			// class could not be loaded by _loadManifestModelClasses
+			if (!fnClass) {
+				Log.error("Component Manifest: Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be found", "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sLogComponentName);
+				continue;
+			}
+			var oClassMetadata = fnClass.getMetadata();
+
+			var bIsV1Model = oClassMetadata.isA("sap.ui.model.odata.ODataModel");
+			var bIsV2Model = oClassMetadata.isA("sap.ui.model.odata.v2.ODataModel");
+			var bIsV4Model = oClassMetadata.isA("sap.ui.model.odata.v4.ODataModel");
+			var bIsResourceModel = oClassMetadata.isA("sap.ui.model.resource.ResourceModel");
+
+			var bIsDataSourceUri = false;
+			var mMetadataUrlParams = null;
+
+			// normalize dataSource shorthand, e.g.
+			// "myModel": "myDataSource" => "myModel": { dataSource: "myDataSource" }
+			if (typeof oModelConfig === 'string') {
+				oModelConfig = {
+					dataSource: oModelConfig
+				};
+			}
+
+			// check for referenced dataSource entry and read out settings/uri/type
+			// if not already provided in model config
+			if (oModelConfig.dataSource) {
+
+				var oDataSource = mConfig.dataSources && mConfig.dataSources[oModelConfig.dataSource];
+				if (typeof oDataSource === 'object') {
+
+					// default type is OData
+					if (oDataSource.type === undefined) {
+						oDataSource.type = 'OData';
+					}
 
 					// pass OData service version (e.g. "2.0"), if specified, to the OData V4 model
-					if (oModelConfig.type === 'sap.ui.model.odata.v4.ODataModel'
-							&& oDataSource.settings
-							&& oDataSource.settings.odataVersion) {
+					if (bIsV4Model && oDataSource.settings && oDataSource.settings.odataVersion) {
 						oModelConfig.settings = oModelConfig.settings || {};
 						oModelConfig.settings.odataVersion = oDataSource.settings.odataVersion;
 					}
@@ -1598,20 +1684,16 @@ sap.ui.define([
 
 							var oAnnotationUri = new URI(oAnnotation.uri);
 
-							if (oModelConfig.type === 'sap.ui.model.odata.v2.ODataModel' ||
-								oModelConfig.type === 'sap.ui.model.odata.v4.ODataModel') {
+							if (bIsV2Model || bIsV4Model) {
+								/* eslint-disable no-loop-func */
+								["sap-language", "sap-client"].forEach(function(sName) {
+									if (!oAnnotationUri.hasQuery(sName) && oConfig.getSAPParam(sName)) {
+										oAnnotationUri.setQuery(sName, oConfig.getSAPParam(sName));
+									}
+								});
+								/* eslint-enable no-loop-func */
 
 								var sCacheTokenForAnnotation = mCacheTokens.dataSources && mCacheTokens.dataSources[oAnnotation.uri];
-								if (sCacheTokenForAnnotation || oModelConfig.type === 'sap.ui.model.odata.v2.ODataModel') {
-									/* eslint-disable no-loop-func */
-									["sap-language", "sap-client"].forEach(function(sName) {
-										if (!oAnnotationUri.hasQuery(sName) && oConfig.getSAPParam(sName)) {
-											oAnnotationUri.setQuery(sName, oConfig.getSAPParam(sName));
-										}
-									});
-									/* eslint-enable no-loop-func */
-								}
-
 								if (sCacheTokenForAnnotation) {
 									Component._applyCacheToken(oAnnotationUri, {
 										cacheToken: sCacheTokenForAnnotation,
@@ -1638,24 +1720,16 @@ sap.ui.define([
 				}
 			}
 
-			// model type is required!
-			if (!oModelConfig.type) {
-				Log.error("Component Manifest: Missing \"type\" for model \"" + sModelName + "\"", "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sLogComponentName);
-				continue;
-			}
-
 			// set mode of old ODataModel to "json" (default is xml).
 			// as the automatic model creation is a new feature, this is not incompatible here
-			if (oModelConfig.type === 'sap.ui.model.odata.ODataModel' &&
-					(!oModelConfig.settings || oModelConfig.settings.json === undefined)) {
+			if (bIsV1Model && (!oModelConfig.settings || oModelConfig.settings.json === undefined)) {
 					// do not overwrite the flag if it was explicitly defined!
-
 					oModelConfig.settings = oModelConfig.settings || {};
 					oModelConfig.settings.json = true;
 			}
 
 			// Check resource models for bundleUrl configuration
-			if (oModelConfig.type === "sap.ui.model.resource.ResourceModel") {
+			if (bIsResourceModel) {
 				if (oModelConfig.uri && oModelConfig.settings && oModelConfig.settings.bundleUrl) {
 					Log.warning("Defining both model uri and bundleUrl is not supported. Only model uri will be resolved.");
 				}
@@ -1683,8 +1757,7 @@ sap.ui.define([
 				if (oModelConfig.dataSource) {
 					addSapParams(oUri);
 
-					if (oModelConfig.type === 'sap.ui.model.odata.v2.ODataModel' ||
-						oModelConfig.type === 'sap.ui.model.odata.v4.ODataModel') {
+					if (bIsV2Model || bIsV4Model) {
 
 						var oModelDataSource = mConfig.dataSources && mConfig.dataSources[oModelConfig.dataSource];
 						var sCacheToken = mCacheTokens.dataSources && mCacheTokens.dataSources[oModelDataSource.uri];
@@ -1695,7 +1768,7 @@ sap.ui.define([
 							&& !oUri.hasQuery('sap-language')
 							&& oConfig.getSAPParam('sap-language');
 
-						if ((bNeedsLanguage && oModelConfig.type === 'sap.ui.model.odata.v2.ODataModel') || sCacheToken) {
+						if (bNeedsLanguage || sCacheToken) {
 							// Lazy initialize settings and metadataUrlParams objects
 							oModelConfig.settings = oModelConfig.settings || {};
 							mMetadataUrlParams = oModelConfig.settings.metadataUrlParams = oModelConfig.settings.metadataUrlParams || {};
@@ -1723,17 +1796,12 @@ sap.ui.define([
 			// set model specific "uri" property names which should be used to map "uri" to model specific constructor
 			// (only if it wasn't specified before)
 			if (oModelConfig.uriSettingName === undefined) {
-				switch (oModelConfig.type) {
-					case 'sap.ui.model.odata.ODataModel':
-					case 'sap.ui.model.odata.v2.ODataModel':
-					case 'sap.ui.model.odata.v4.ODataModel':
-						oModelConfig.uriSettingName = 'serviceUrl';
-						break;
-					case 'sap.ui.model.resource.ResourceModel':
-						oModelConfig.uriSettingName = 'bundleUrl';
-						break;
-					default:
-						// default 'undefined' is already set in this case
+				if (bIsV1Model || bIsV2Model || bIsV4Model) {
+					oModelConfig.uriSettingName = 'serviceUrl';
+				} else if (bIsResourceModel) {
+					oModelConfig.uriSettingName = 'bundleUrl';
+				} else {
+					// default 'undefined' is already set in this case
 				}
 			}
 
@@ -1754,9 +1822,9 @@ sap.ui.define([
 			// lazy load the ODataUtils if systemParameter is given
 			var bAddOrigin = false;
 			var ODataUtils;
-			if (sSystemParameter && ["sap.ui.model.odata.ODataModel", "sap.ui.model.odata.v2.ODataModel"].indexOf(oModelConfig.type) != -1) {
+			if (sSystemParameter && (bIsV1Model || bIsV2Model)) {
 				bAddOrigin = true;
-				ODataUtils = sap.ui.requireSync("sap/ui/model/odata/ODataUtils");
+				ODataUtils = sap.ui.require("sap/ui/model/odata/ODataUtils");
 			}
 
 			// include "uri" property in "settings" object, depending on "uriSettingName"
@@ -1813,7 +1881,7 @@ sap.ui.define([
 			// resolve the bundleUrl of the enhancing resource bundle relative to
 			// the component (default) or relative to manifest, e.g.:
 			// bundleUrlRelativeTo: 'component|manifest'
-			if (oModelConfig.type === 'sap.ui.model.resource.ResourceModel' && oModelConfig.settings) {
+			if (bIsResourceModel && oModelConfig.settings) {
 				if (aActiveTerminologies) {
 					oModelConfig.settings.activeTerminologies = aActiveTerminologies;
 				}
@@ -1840,6 +1908,21 @@ sap.ui.define([
 		return mModelConfigurations;
 	};
 
+	Component._loadManifestModelClasses = function(mModelConfigurations, sLogComponentName) {
+		for (var sModelName in mModelConfigurations) {
+			var oModelConfig = mModelConfigurations[sModelName];
+
+			// load model class and log error message if it couldn't be loaded.
+			// error gets caught to continue creating the other models and not breaking the execution here
+			try {
+				sap.ui.requireSync(oModelConfig.type.replace(/\./g, "/"));
+			} catch (oError) {
+				Log.error("Component Manifest: Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be loaded. " + oError, "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sLogComponentName);
+				continue;
+			}
+		}
+	};
+
 	/**
 	 * Creates model instances using a configuration provided by {@link sap.ui.core.Component._createManifestModelConfigurations}.
 	 *
@@ -1853,24 +1936,9 @@ sap.ui.define([
 		for (var sModelName in mModelConfigurations) {
 			var oModelConfig = mModelConfigurations[sModelName];
 
-			// load model class and log error message if it couldn't be loaded.
-			// error gets caught to continue creating the other models and not breaking the execution here
-			try {
-				sap.ui.requireSync(oModelConfig.type.replace(/\./g, "/"));
-			} catch (oError) {
-				Log.error("Component Manifest: Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be loaded. " + oError, "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sLogComponentName);
-				continue;
-			}
-
-			// TODO: We don't use the return value of sap.ui.requireSync here yet.
 			// The tests for the Model creation make use of a constructor stub,
 			// and this only works from the global namespace export.
 			var fnModelClass = ObjectPath.get(oModelConfig.type);
-			if (!fnModelClass) {
-				// this could be the case if the required module doesn't register itself in the defined namespace
-				Log.error("Component Manifest: Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be found", "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sLogComponentName);
-				continue;
-			}
 
 			// create arguments array with leading "null" value so that it can be passed to the apply function
 			var aArgs = [null].concat(oModelConfig.settings || []);
@@ -1907,7 +1975,7 @@ sap.ui.define([
 	 * @param {string[]} [aActiveTerminologies] optional list of active terminologies
 	 * @returns {object} object with two maps, see above
 	 */
-	function getPreloadModelConfigsFromManifest(oManifest, oComponentData, mCacheTokens, aActiveTerminologies) {
+	function getPreloadModelConfigsFromManifest(oManifest) {
 		var mModelConfigs = {
 			afterManifest: {},
 			afterPreload: {}
@@ -1916,14 +1984,11 @@ sap.ui.define([
 		// deep clone is needed as manifest only returns a read-only copy (frozen object)
 		var oManifestDataSources = merge({}, oManifest.getEntry("/sap.app/dataSources"));
 		var oManifestModels = merge({}, oManifest.getEntry("/sap.ui5/models"));
-
-		var mAllModelConfigurations = Component._createManifestModelConfigurations({
+		var sComponentName = oManifest.getComponentName();
+		var mAllModelConfigurations = Component._findManifestModelClasses({
 			models: oManifestModels,
 			dataSources: oManifestDataSources,
-			manifest: oManifest,
-			componentData: oComponentData,
-			cacheTokens: mCacheTokens,
-			activeTerminologies: aActiveTerminologies
+			componentName: sComponentName
 		});
 
 		// Read internal URI parameter to enable model preload for testing purposes
@@ -1942,14 +2007,13 @@ sap.ui.define([
 			if (!mModelConfig.preload && aPreloadModels && aPreloadModels.indexOf(sModelName) > -1 ) {
 				mModelConfig.preload = true;
 				Log.warning("FOR TESTING ONLY!!! Activating preload for model \"" + sModelName + "\" (" + mModelConfig.type + ")",
-					oManifest.getComponentName(), "sap.ui.core.Component");
+					sComponentName, "sap.ui.core.Component");
 			}
 
 			// ResourceModels with async=false should be always loaded beforehand to get rid of sync requests under the hood (regardless of the "preload" flag)
 			if (mModelConfig.type === "sap.ui.model.resource.ResourceModel" &&
-				Array.isArray(mModelConfig.settings) &&
-				mModelConfig.settings.length > 0 &&
-				mModelConfig.settings[0].async !== true
+				(!mModelConfig.settings ||
+				mModelConfig.settings.async !== true)
 			) {
 				// Use separate config object for ResourceModels as the resourceBundle might be
 				// part of the Component-preload which isn't available when the regular "preloaded"-models are created
@@ -1958,11 +2022,14 @@ sap.ui.define([
 				// Only create models:
 				//   - which are flagged for preload (mModelConfig.preload) or configured via internal URI param (see above)
 				//   - in case the model class is already loaded (otherwise log a warning)
+				// We check for the moduleState here instead of a simple sap.ui.require probing, because it captures the following cases:
+				//   - modules defined in a preload (via predefine) are "available, but not executed"
+				//   - modules which are already loaded/executed
 				if (sap.ui.loader._.getModuleState(mModelConfig.type.replace(/\./g, "/") + ".js")) {
 					mModelConfigs.afterManifest[sModelName] = mModelConfig;
 				} else {
 					Log.warning("Can not preload model \"" + sModelName + "\" as required class has not been loaded: \"" + mModelConfig.type + "\"",
-						oManifest.getComponentName(), "sap.ui.core.Component");
+						sComponentName, "sap.ui.core.Component");
 				}
 			}
 
@@ -2653,7 +2720,7 @@ sap.ui.define([
 			sManifestUrl,
 			oManifest,
 			mModels,
-			mModelConfigs,
+			mPreloadModelConfigs,
 			fnCallLoadComponentCallback;
 
 		function createSanitizedManifest( oRawManifestJSON, mOptions ) {
@@ -3060,14 +3127,26 @@ sap.ui.define([
 				// create "afterPreload" models in parallel to loading the component preload (below)
 				if (mOptions.createModels) {
 					collect(oManifest.then(function(oManifest) {
+						var sComponentName = oManifest.getComponentName();
 						// Calculate configurations of preloaded models once the manifest is available
-						mModelConfigs = getPreloadModelConfigsFromManifest(oManifest, oConfig.componentData, hints.cacheTokens, aActiveTerminologies);
+						mPreloadModelConfigs = getPreloadModelConfigsFromManifest(oManifest);
 
-						return oManifest;
-					}).then(function(oManifest) {
 						// Create preloaded models directly after the manifest has been loaded
-						if (Object.keys(mModelConfigs.afterManifest).length > 0) {
-							mModels = Component._createManifestModels(mModelConfigs.afterManifest, oManifest.getComponentName());
+						if (Object.keys(mPreloadModelConfigs.afterManifest).length > 0) {
+							Component._loadManifestModelClasses(mPreloadModelConfigs.afterManifest, sComponentName);
+
+							// deep clone is needed as manifest only returns a read-only copy (frozen object)
+							var oManifestDataSources = merge({}, oManifest.getEntry("/sap.app/dataSources"));
+							var mAllModelConfigurations = Component._createManifestModelConfigurations({
+								models: mPreloadModelConfigs.afterManifest,
+								dataSources: oManifestDataSources,
+								manifest: oManifest,
+								componentData: oConfig.componentData,
+								cacheTokens: hints.cacheTokens,
+								activeTerminologies: aActiveTerminologies
+							});
+
+							mModels = Component._createManifestModels(mAllModelConfigurations, sComponentName);
 						}
 
 						return oManifest;
@@ -3096,7 +3175,7 @@ sap.ui.define([
 							return null;
 						}
 
-						var aResourceModelNames = Object.keys(mModelConfigs.afterPreload);
+						var aResourceModelNames = Object.keys(mPreloadModelConfigs.afterPreload);
 
 						if (aResourceModelNames.length === 0) {
 							return null;
@@ -3111,8 +3190,20 @@ sap.ui.define([
 								resolve(ResourceModel);
 							}, reject);
 						}).then(function(ResourceModel) {
+
+							// deep clone is needed as manifest only returns a read-only copy (frozen object)
+							var oManifestDataSources = merge({}, oManifest.getEntry("/sap.app/dataSources"));
+							var mAfterPreloadModelConfigurations = Component._createManifestModelConfigurations({
+								models: mPreloadModelConfigs.afterPreload,
+								dataSources: oManifestDataSources,
+								manifest: oManifest,
+								componentData: oConfig.componentData,
+								cacheTokens: hints.cacheTokens,
+								activeTerminologies: aActiveTerminologies
+							});
+
 							function loadResourceBundle(sModelName) {
-								var mModelConfig = mModelConfigs.afterPreload[sModelName];
+								var mModelConfig = mAfterPreloadModelConfigurations[sModelName];
 								if (Array.isArray(mModelConfig.settings) && mModelConfig.settings.length > 0) {
 									var mModelSettings = mModelConfig.settings[0]; // first argument is the config map
 
@@ -3143,19 +3234,19 @@ sap.ui.define([
 
 										// If the resource bundle can't be loaded, the resource model will be skipped.
 										// But once the component instance gets created, the model will be tried to created again.
-										delete mModelConfigs.afterPreload[sModelName];
+										delete mAfterPreloadModelConfigurations[sModelName];
 									});
 								} else {
 									// Can't load bundle as no settings are defined.
-									// Should not happen as those models won't be part of "mModelConfigs.afterPreload"
+									// Should not happen as those models won't be part of "afterPreload"
 									return Promise.resolve();
 								}
 							}
 
 							// Load all ResourceBundles for all models in parallel
 							return Promise.all(aResourceModelNames.map(loadResourceBundle)).then(function() {
-								if (Object.keys(mModelConfigs.afterPreload).length > 0) {
-									var mResourceModels = Component._createManifestModels(mModelConfigs.afterPreload, oManifest.getComponentName());
+								if (Object.keys(mAfterPreloadModelConfigurations).length > 0) {
+									var mResourceModels = Component._createManifestModels(mAfterPreloadModelConfigurations, oManifest.getComponentName());
 									if (!mModels) {
 										mModels = {};
 									}
@@ -3331,12 +3422,10 @@ sap.ui.define([
 				// lookup model classes
 				var mManifestModels = merge({}, oManifest.getEntry("/sap.ui5/models"));
 				var mManifestDataSources = merge({}, oManifest.getEntry("/sap.app/dataSources"));
-				var mAllModelConfigurations = Component._createManifestModelConfigurations({
+				var mAllModelConfigurations = Component._findManifestModelClasses({
 					models: mManifestModels,
 					dataSources: mManifestDataSources,
-					manifest: oManifest,
-					cacheTokens: hints.cacheTokens,
-					activeTerminologies: aActiveTerminologies
+					componentName: oManifest.getComponentName()
 				});
 				for (var mModelName in mAllModelConfigurations) {
 					if (!mAllModelConfigurations.hasOwnProperty(mModelName)) {

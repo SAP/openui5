@@ -13,7 +13,7 @@ sap.ui.define([
 	// Note: DO NOT reuse the same source file with a different $top if that leads to a short read!
 	var oMockData = {
 			mFixture : {
-				"$metadata" : {
+				"$metadata?sap-language=EN" : {
 					source : "metadata.xml"
 				},
 				"BusinessPartners?$apply=concat(aggregate(SalesAmountLocalCurrency,LocalCurrency),groupby((Country_Code,Country),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(Country%20desc)/concat(aggregate($count%20as%20UI5__count),top(4)))" : {
