@@ -15,8 +15,9 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/ui/commons/TextField",
 	"sap/m/Text",
-	"./helper/_cleanupStyles"
-], function (Log, ObjectPath, VersionInfo, DataType, Element, Control, Item, CommonsTextField, MobileText) {
+	"sap/ui/dom/includeStylesheet",
+	"require"
+], function (Log, ObjectPath, VersionInfo, DataType, Element, Control, Item, CommonsTextField, MobileText, includeStylesheet, require) {
 	"use strict";
 
 	var aKnownLibraries = [
@@ -130,9 +131,6 @@ sap.ui.define([
 	 */
 	var CONTROL_PROPERTIES_TO_BE_IGNORED = {
 		"sap.m.PlanningCalendar": [
-			"viewKey" // control fails when key is set where nothing is registered
-		],
-		"sap.f.PlanningCalendarInCard": [
 			"viewKey" // control fails when key is set where nothing is registered
 		],
 		"sap.m.SinglePlanningCalendarGrid": [
@@ -345,7 +343,6 @@ sap.ui.define([
 
 		// ignore controls with known duplicate ID issues - FIXME: reduce this list after the issues have been fixed
 		if ([
-			"sap.ui.comp.smartform.flexibility.DialogContent",  // Ticket: 1670370548
 			"sap.uiext.inbox.InboxLaunchPad"                    // Ticket: none (old control that is not really used multiple times)
 
 		].indexOf(sControlName) > -1)  { // known to be having an issue with duplicate IDs
@@ -430,7 +427,11 @@ sap.ui.define([
 
 	// Actual Tests
 
-	return loadAllAvailableLibraries().then(function(mAllLibraries) {
+	return includeStylesheet({
+		url: require.toUrl("./helper/_cleanupStyles.css")
+	}).then(function() {
+		return loadAllAvailableLibraries();
+	}).then(function(mAllLibraries) {
 
 		// sanity check to make sure this is actually testing something
 		QUnit.test("Should load at least several expected libraries and lots of controls", function(assert) {

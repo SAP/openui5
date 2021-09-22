@@ -18,8 +18,9 @@ sap.ui.define([
 	"sap/ui/qunit/utils/MemoryLeakCheck",
 	"sap/base/util/UriParameters",
 	"./helper/_LoadingIndicator",
-	"./helper/_cleanupStyles"
-], function(ControlIterator, MemoryLeakCheck, UriParameters, LoadingIndicator) {
+	"sap/ui/dom/includeStylesheet",
+	"require"
+], function(ControlIterator, MemoryLeakCheck, UriParameters, LoadingIndicator, includeStylesheet, require) {
 	"use strict";
 
 	// disable require.js to avoid issues with thirdparty
@@ -102,5 +103,10 @@ sap.ui.define([
 		}, mOptions);
 	}
 
-	collectControls();
+	return includeStylesheet({
+		url: require.toUrl("./helper/_cleanupStyles.css")
+	}).then(function() {
+		collectControls();
+	});
+
 });
