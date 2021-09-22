@@ -55,12 +55,19 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Object with additional information
 	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - application component owning the VariantModel
 	 * @param {object} mPropertyBag.data - Preset data
-	 * @returns {sap.ui.fl.variants.VariantModel}
+	 * @returns {Promise<sap.ui.fl.variants.VariantModel>} Resolving to the initialized variant model
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	FlexTestAPI.createVariantModel = function(mPropertyBag) {
 		var oFlexController = FlexControllerFactory.createForControl(mPropertyBag.appComponent);
-		return new VariantModel(mPropertyBag.data, oFlexController, mPropertyBag.appComponent);
+		var oModel = new VariantModel(mPropertyBag.data, {
+			flexController: oFlexController,
+			appComponent: mPropertyBag.appComponent
+		});
+		return oModel.initialize()
+			.then(function() {
+				return oModel;
+			});
 	};
 
 	return FlexTestAPI;

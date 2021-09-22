@@ -98,14 +98,19 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	function _handleVariantIdChangeInURL(oModel, aServices, sNewHash) {
+	function _handleVariantIdChangeInURL(oModel, sNewHash) {
+		//TODO: Check if this is really necessary, as the method is never called with a new hash and in the test the parameter is not a string
 		try {
-			var oNewParsedHash = aServices[1].parseShellHash(sNewHash);
-			_checkAndUpdateURLParameters(oNewParsedHash, oModel);
+			var oURLParsingService = oModel.getUShellService("URLParsing");
+			if (oURLParsingService) {
+				var oNewParsedHash = oURLParsingService.parseShellHash(sNewHash);
+				_checkAndUpdateURLParameters(oNewParsedHash, oModel);
+			}
 		} catch (oError) {
 			Log.error(oError.message);
 		}
-		return aServices[0].NavigationFilterStatus.Continue;
+		var oShellNavigationService = oModel.getUShellService("ShellNavigation");
+		return oShellNavigationService && oShellNavigationService.NavigationFilterStatus.Continue;
 	}
 
 	/**
@@ -116,12 +121,13 @@ sap.ui.define([
 	 * @private
 	 */
 	function _registerNavigationFilter(oModel) {
-		Utils.ifUShellContainerThen(function(aServices) {
-			if (!_mVariantIdChangeHandlers[oModel.sFlexReference]) {
-				_mVariantIdChangeHandlers[oModel.sFlexReference] = _handleVariantIdChangeInURL.bind(null, oModel, aServices);
-				aServices[0].registerNavigationFilter(_mVariantIdChangeHandlers[oModel.sFlexReference]);
+		var oShellNavigationService = oModel.getUShellService("ShellNavigation");
+		if (!_mVariantIdChangeHandlers[oModel.sFlexReference]) {
+			_mVariantIdChangeHandlers[oModel.sFlexReference] = _handleVariantIdChangeInURL.bind(null, oModel);
+			if (oShellNavigationService) {
+				oShellNavigationService.registerNavigationFilter(_mVariantIdChangeHandlers[oModel.sFlexReference]);
 			}
-		}, ["ShellNavigation", "URLParsing"]);
+		}
 	}
 
 	/**
@@ -132,12 +138,11 @@ sap.ui.define([
 	 * @private
 	 */
 	function _deRegisterNavigationFilter(oModel) {
-		Utils.ifUShellContainerThen(function(aServices) {
-			if (_mVariantIdChangeHandlers[oModel.sFlexReference]) {
-				aServices[0].unregisterNavigationFilter(_mVariantIdChangeHandlers[oModel.sFlexReference]);
-				delete _mVariantIdChangeHandlers[oModel.sFlexReference];
-			}
-		}, ["ShellNavigation"]);
+		var oShellNavigationService = oModel.getUShellService("ShellNavigation");
+		if (oShellNavigationService) {
+			oShellNavigationService.unregisterNavigationFilter(_mVariantIdChangeHandlers[oModel.sFlexReference]);
+			delete _mVariantIdChangeHandlers[oModel.sFlexReference];
+		}
 	}
 
 	/**
@@ -153,10 +158,13 @@ sap.ui.define([
 	 * @private
 	 */
 	function setTechnicalURLParameterValues(mPropertyBag) {
-		var oParsedHash = Utils.getParsedURLHash(VariantUtil.VARIANT_TECHNICAL_PARAMETER);
+		var oModel = mPropertyBag.model;
+		var oURLParsingService = oModel.getUShellService("URLParsing");
+		var oCrossApplicationNavigationService = oModel.getUShellService("CrossApplicationNavigation");
+		var oParsedHash = oURLParsingService && oURLParsingService.parseShellHash(hasher.getHash());
 
-		if (oParsedHash.params) {
-			var mTechnicalParameters = Utils.getTechnicalParametersForComponent(mPropertyBag.model.oAppComponent);
+		if (oParsedHash && oParsedHash.params) {
+			var mTechnicalParameters = Utils.getTechnicalParametersForComponent(oModel.oAppComponent);
 			// if mTechnicalParameters are not available we write a warning and continue updating the hash
 			if (!mTechnicalParameters) {
 				Log.warning("Component instance not provided, so technical parameters in component data and browser history remain unchanged");
@@ -169,14 +177,12 @@ sap.ui.define([
 				mTechnicalParameters && (mTechnicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = mPropertyBag.parameters); // Technical parameters need to be in sync with the URL hash
 			}
 
-			var oUShellContainer = Utils.getUshellContainer();
 			if (mPropertyBag.silent) {
 				hasher.changed.active = false; // disable changed signal
-				hasher.replaceHash(oUShellContainer.getService("URLParsing").constructShellHash(oParsedHash));
+				hasher.replaceHash(oURLParsingService.constructShellHash(oParsedHash));
 				hasher.changed.active = true; // re-enable changed signal
 			} else {
-				var oCrossAppNav = oUShellContainer.getService("CrossApplicationNavigation");
-				oCrossAppNav.toExternal({
+				oCrossApplicationNavigationService.toExternal({
 					target: {
 						semanticObject: oParsedHash.semanticObject,
 						action: oParsedHash.action,
@@ -205,15 +211,17 @@ sap.ui.define([
 	 */
 	function getVariantIndexInURL(mPropertyBag) {
 		var mReturnObject = {index: -1};
+		var oModel = mPropertyBag.model;
 
 		// if ushell container is not present an empty object is returned
-		var mURLParameters = Utils.getParsedURLHash().params;
+		var oURLParsingService = oModel.getUShellService("URLParsing");
+		var mURLParameters = oURLParsingService && oURLParsingService.parseShellHash(hasher.getHash()).params;
 
 		if (mURLParameters) {
 			mReturnObject.parameters = [];
 			// in UI Adaptation the URL parameters are empty
 			// the current URL parameters are retrieved from the stored hash data
-			if (mPropertyBag.model._bDesignTimeMode) {
+			if (oModel._bDesignTimeMode) {
 				mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = URLHandler.getStoredHashParams(mPropertyBag);
 			}
 
@@ -223,7 +231,7 @@ sap.ui.define([
 					var bVariantExistsForParameter = VariantManagementState.getVariant({
 						vmReference: mPropertyBag.vmReference,
 						vReference: sParamDecoded,
-						reference: mPropertyBag.model.oChangePersistence.getComponentName()
+						reference: oModel.oChangePersistence.getComponentName()
 					});
 					if (bVariantExistsForParameter) {
 						mReturnObject.index = iIndex;
@@ -260,21 +268,24 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl.variants.VariantModel
 		 */
 		initialize: function(mPropertyBag) {
-			var oParsedHash = Utils.getParsedURLHash();
-			var aParams = oParsedHash.params && oParsedHash.params[VariantUtil.VARIANT_TECHNICAL_PARAMETER];
+			var oModel = mPropertyBag.model;
+			var oURLParsingService = oModel.getUShellService("URLParsing");
+
+			var oParsedHash = oURLParsingService && oURLParsingService.parseShellHash(hasher.getHash());
+			var aParams = oParsedHash && oParsedHash.params && oParsedHash.params[VariantUtil.VARIANT_TECHNICAL_PARAMETER];
 
 			// register navigation filters and component creation / destroy observers
 			URLHandler.attachHandlers(mPropertyBag);
 
 			// trigger update to initialize
 			URLHandler.update({
-				model: mPropertyBag.model,
+				model: oModel,
 				parameters: aParams,
 				updateHashEntry: Array.isArray(aParams) && aParams.length > 0
 			});
 
 			// to trigger checks on parameters
-			_checkAndUpdateURLParameters(oParsedHash, mPropertyBag.model);
+			_checkAndUpdateURLParameters(oParsedHash, oModel);
 		},
 
 		/**

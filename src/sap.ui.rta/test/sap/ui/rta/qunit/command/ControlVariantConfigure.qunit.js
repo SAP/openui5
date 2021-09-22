@@ -85,11 +85,6 @@ function(
 				}
 			};
 
-			this.oModel = FlexTestAPI.createVariantModel({
-				data: this.oData,
-				appComponent: this.oMockedAppComponent
-			});
-
 			this.oVariant = {
 				content: {
 					fileName: "variant0",
@@ -102,6 +97,13 @@ function(
 				},
 				controlChanges: []
 			};
+
+			return FlexTestAPI.createVariantModel({
+				data: this.oData,
+				appComponent: this.oMockedAppComponent
+			}).then(function(oInitializedModel) {
+				this.oModel = oInitializedModel;
+			}.bind(this));
 		},
 		after: function() {
 			this.oGetAppComponentForControlStub.restore();

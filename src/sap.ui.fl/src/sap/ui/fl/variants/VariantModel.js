@@ -49,6 +49,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var _mUShellServices = {};
+
 	/**
 	 * Handler for "select" event fired from a variant management control.
 	 * Adds to the variant switch promise chain, resolving when new variant (if applicable) has been switched and all source variant dirty changes have been removed.
@@ -190,6 +192,16 @@ sap.ui.define([
 		return oModel._oVariantSwitchPromise;
 	}
 
+	/**
+	 * Saves the specified Unified Shell service on the model
+	 *
+	 * @param {string} sServiceName Name of the ushell service (e.g. "URLParsing")
+	 * @param {sap.ui.core.service.Service} oService The service object
+	 */
+	function setUShellService(sServiceName, oService) {
+		_mUShellServices[sServiceName] = oService;
+	}
+
 	function revertVariantAndClearData(mPropertyBag) {
 		return Switcher.switchVariant(mPropertyBag)
 			.then(function() {
@@ -260,9 +272,9 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @param {object} oData - Either the URL where to load the JSON from or a JS object
-	 * @param {sap.ui.fl.FlexController} oFlexController - <code>FlexController</code> instance for the component which uses the variant model
-	 * @param {sap.ui.core.Component} oAppComponent - Application component instance that is currently loading
-	 * @param {boolean} bObserve -Indicates whether to observe the JSON data for property changes (experimental)
+	 * @param {object} mPropertyBag - Map of properties required for the constructor
+	 * @param {sap.ui.fl.FlexController} mPropertyBag.flexController - <code>FlexController</code> instance for the component which uses the variant model
+	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Application component instance that is currently loading
 	 * @constructor
 	 * @private
 	 * @ui5-restricted
@@ -272,11 +284,10 @@ sap.ui.define([
 	 */
 
 	var VariantModel = JSONModel.extend("sap.ui.fl.variants.VariantModel", /** @lends sap.ui.fl.variants.VariantModel.prototype */ {
-		constructor: function(oData, oFlexController, oAppComponent, bObserve) {
+		constructor: function(oData, mPropertyBag) {
 			// JSON model internal properties
 			this.pSequentialImportCompleted = Promise.resolve();
-			JSONModel.apply(this, arguments);
-			this.bObserve = bObserve;
+			JSONModel.apply(this, [oData]);
 
 			this.sharing = {
 				PRIVATE: "private",
@@ -287,10 +298,10 @@ sap.ui.define([
 			// which creates a ChangePersistence instance.
 			// After retrieving changes for the created ChangePersistence instance,
 			// FlexControllerFactory creates a VariantModel instance for this application component.
-			this.oFlexController = oFlexController;
+			this.oFlexController = mPropertyBag.flexController;
 			this.oChangePersistence = this.oFlexController._oChangePersistence;
 			this.sFlexReference = this.oChangePersistence.getComponentName();
-			this.oAppComponent = oAppComponent;
+			this.oAppComponent = mPropertyBag.appComponent;
 			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 			this._oVariantSwitchPromise = Promise.resolve();
 			this._oVariantAppliedListeners = {};
@@ -327,11 +338,42 @@ sap.ui.define([
 
 				this.setData(oData);
 			}
-
-			//initialize hash data - variants map & model should exist at this point
-			URLHandler.initialize({model: this});
 		}
 	});
+
+	/**
+	 * Gets the necessary UShell Services and initializes the URL Handler
+	 * @returns {Promise} Promise resolving when the VariantModel is initialized
+	 */
+	VariantModel.prototype.initialize = function() {
+		return Promise.resolve()
+			.then(function() {
+				var oUShellContainer = Utils.getUshellContainer();
+				if (oUShellContainer) {
+					var aServicePromises = [
+						oUShellContainer.getServiceAsync("UserInfo"),
+						oUShellContainer.getServiceAsync("URLParsing"),
+						oUShellContainer.getServiceAsync("CrossApplicationNavigation"),
+						oUShellContainer.getServiceAsync("ShellNavigation")
+					];
+					return Promise.all(aServicePromises)
+						.then(function(aServices) {
+							setUShellService("UserInfo", aServices[0]);
+							setUShellService("URLParsing", aServices[1]);
+							setUShellService("CrossApplicationNavigation", aServices[2]);
+							setUShellService("ShellNavigation", aServices[3]);
+						})
+						.catch(function(vError) {
+							throw new Error("Error getting service from Unified Shell: " + vError);
+						});
+				}
+				return undefined;
+			})
+			.then(function() {
+				//initialize hash data - variants map & model should exist at this point (set on constructor)
+				URLHandler.initialize({ model: this });
+			}.bind(this));
+	};
 
 	/**
 	 * Updates the storage of the current variant for a given variant management control.
@@ -1112,8 +1154,7 @@ sap.ui.define([
 						updatePersonalVariantPropertiesWithFlpSettings(oVariant);
 						break;
 					case Layer.PUBLIC:
-						var oUShellContainer = Utils.getUshellContainer();
-						var oUser = oUShellContainer && oUShellContainer.getUser();
+						var oUser = this._oUserInfoService && this._oUserInfoService.getUser();
 						var bUserIsAuthorized = !oUser || oUser.getId().toUpperCase() === oVariant.author.toUpperCase() || Settings.getInstanceOrUndef().isKeyUser();
 						oVariant.remove = bUserIsAuthorized;
 						oVariant.rename = bUserIsAuthorized;
@@ -1452,7 +1493,7 @@ sap.ui.define([
 				VariantManagementState.resetContent(this.sFlexReference);
 				//re-initialize hash data and remove existing parameters
 				if (!bSkipURLHandling) {
-					URLHandler.initialize({model: this});
+					URLHandler.initialize({ model: this });
 					URLHandler.update({
 						parameters: [],
 						updateHashEntry: true,
@@ -1460,6 +1501,16 @@ sap.ui.define([
 					});
 				}
 			}.bind(this));
+	};
+
+	/**
+	 * Returns the Unified Shell service saved on the model, if available
+	 *
+	 * @param {string} sServiceName Name of the ushell service (e.g. "UserInfo")
+	 * @returns {sap.ui.core.service.Service} The service object
+	 */
+	VariantModel.prototype.getUShellService = function(sServiceName) {
+		return _mUShellServices[sServiceName];
 	};
 
 	return VariantModel;

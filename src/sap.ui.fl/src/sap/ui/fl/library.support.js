@@ -58,63 +58,73 @@ sap.ui.define([
 		}],
 		async: true,
 		check: function (issueManager, oCoreFacade, oScope, resolve) {
-			var oAppComponent;
 			var oUshellContainer = ObjectPath.get("sap.ushell.Container");
 
-			if (oUshellContainer) {
-				var mRunningApp = oUshellContainer.getService("AppLifeCycle").getCurrentApplication();
-
-				// Disable this rule for ushell home page (where tiles are located)
-				if (!mRunningApp.homePage) {
-					oAppComponent = mRunningApp.componentInstance;
-				}
-			} else {
-				oAppComponent = findAppComponent(oScope.getElements());
-			}
-
-			if (!oAppComponent) {
-				return;
-			}
-
-			var aPopovers = InstanceManager.getOpenPopovers();
-			var aDialogs = InstanceManager.getOpenDialogs();
-			var aAdaptablePopups = aPopovers.concat(aDialogs).filter(_isPopupAdaptable);
-
-			var oDesignTime = new DesignTime({
-				rootElements: [oAppComponent].concat(aAdaptablePopups)
-			});
-
-			oDesignTime.attachEventOnce("synced", function () {
-				var aUnstableOverlays = validateStableIds(oDesignTime.getElementOverlays(), oAppComponent);
-
-				aUnstableOverlays.forEach(function (oElementOverlay) {
-					var oElement = oElementOverlay.getElement();
-					var sElementId = oElement.getId();
-					var bHasConcatenatedId = sElementId.includes("--");
-
-					if (!bHasConcatenatedId) {
-						issueManager.addIssue({
-							severity: Severity.High,
-							details: "The ID '" + sElementId + "' for the control was generated and flexibility features " +
-							"cannot support controls with generated IDs.",
-							context: {
-								id: sElementId
-							}
-						});
-					} else {
-						issueManager.addIssue({
-							severity: Severity.Low,
-							details: "The ID '" + sElementId + "' for the control was concatenated and has a generated onset.\n" +
-							"To enable the control for flexibility features, you must specify an ID for the control providing the onset, which is marked as high issue.",
-							context: {
-								id: sElementId
-							}
-						});
+			Promise.resolve()
+				.then(function() {
+					if (oUshellContainer) {
+						return oUshellContainer.getServiceAsync("AppLifeCycle")
+							.then(function(oAppLifeCycle) {
+								var mRunningApp = oAppLifeCycle.getCurrentApplication();
+								// Disable this rule for ushell home page (where tiles are located)
+								if (!mRunningApp.homePage) {
+									return mRunningApp.componentInstance;
+								}
+								return undefined;
+							})
+							.catch(function(vError) {
+								throw new Error("Error getting current application from Unified Shell AppLifeCycle service: " + vError);
+							});
 					}
+					return findAppComponent(oScope.getElements());
+				})
+				.then(function(oAppComponent) {
+					if (!oAppComponent) {
+						return;
+					}
+
+					var aPopovers = InstanceManager.getOpenPopovers();
+					var aDialogs = InstanceManager.getOpenDialogs();
+					var aAdaptablePopups = aPopovers.concat(aDialogs).filter(_isPopupAdaptable);
+
+					var oDesignTime = new DesignTime({
+						rootElements: [oAppComponent].concat(aAdaptablePopups)
+					});
+
+					function fnOnSynced() {
+						var aUnstableOverlays = validateStableIds(oDesignTime.getElementOverlays(), oAppComponent);
+
+						aUnstableOverlays.forEach(function (oElementOverlay) {
+							var oElement = oElementOverlay.getElement();
+							var sElementId = oElement.getId();
+							var bHasConcatenatedId = sElementId.includes("--");
+
+							if (!bHasConcatenatedId) {
+								issueManager.addIssue({
+									severity: Severity.High,
+									details: "The ID '" + sElementId + "' for the control was generated and flexibility features " +
+									"cannot support controls with generated IDs.",
+									context: {
+										id: sElementId
+									}
+								});
+							} else {
+								issueManager.addIssue({
+									severity: Severity.Low,
+									details: "The ID '" + sElementId + "' for the control was concatenated and has a generated onset.\n" +
+									"To enable the control for flexibility features, you must specify an ID for the control providing the onset, which is marked as high issue.",
+									context: {
+										id: sElementId
+									}
+								});
+							}
+						});
+						oDesignTime.destroy();
+						resolve();
+					}
+
+					oDesignTime.attachEventOnce("synced", fnOnSynced);
 				});
-				oDesignTime.destroy();
-				resolve();
-			});
 		}
 	};
 

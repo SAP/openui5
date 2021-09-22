@@ -53,11 +53,13 @@ sap.ui.define([
 			this.oMockedAppComponent = this.fnGetMockedAppComponent();
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oMockedAppComponent);
 
-			this.oModel = FlexTestAPI.createVariantModel({
+			return FlexTestAPI.createVariantModel({
 				data: {variantManagementReference: {variants: []}},
 				appComponent: this.oMockedAppComponent
-			});
-			this.fnUpdateCurrentVariantStub = sandbox.stub(this.oModel, "updateCurrentVariant");
+			}).then(function(oInitializedModel) {
+				this.oModel = oInitializedModel;
+				this.fnUpdateCurrentVariantStub = sandbox.stub(this.oModel, "updateCurrentVariant");
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oVariantManagement.destroy();

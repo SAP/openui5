@@ -217,13 +217,19 @@ sap.ui.define([
 
 				oViewPromise.then(function() {
 					this.oFlexController = FlexControllerFactory.createForControl(this.oComp);
-					var oVariantModel = new VariantModel({
+					this.oVariantModel = new VariantModel({
 						variantManagement: {
 							variants: []
 						}
-					}, this.oFlexController, this.oComp);
-					sandbox.stub(oVariantModel, "addChange");
-					this.oComp.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
+					}, {
+						flexController: this.oFlexController,
+						appComponent: this.oComp
+					});
+					sandbox.stub(this.oVariantModel, "addChange");
+					return this.oVariantModel.initialize();
+				}.bind(this))
+				.then(function() {
+					this.oComp.setModel(this.oVariantModel, Utils.VARIANT_MODEL_NAME);
 					this.oCompContainer = new ComponentContainer({
 						component: this.oComp
 					}).placeAt("qunit-fixture");
@@ -516,13 +522,19 @@ sap.ui.define([
 
 				oViewPromise.then(function() {
 					this.oFlexController = FlexControllerFactory.createForControl(this.oComp);
-					var oVariantModel = new VariantModel({
+					this.oVariantModel = new VariantModel({
 						variantManagement: {
 							variants: []
 						}
-					}, this.oFlexController, this.oComp);
-					sandbox.stub(oVariantModel, "addChange");
-					this.oComp.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
+					}, {
+						flexController: this.oFlexController,
+						appComponent: this.oComp
+					});
+					sandbox.stub(this.oVariantModel, "addChange");
+					return this.oVariantModel.initialize();
+				}.bind(this))
+				.then(function() {
+					this.oComp.setModel(this.oVariantModel, Utils.VARIANT_MODEL_NAME);
 					this.oCompContainer = new ComponentContainer({
 						component: this.oComp
 					}).placeAt("qunit-fixture");

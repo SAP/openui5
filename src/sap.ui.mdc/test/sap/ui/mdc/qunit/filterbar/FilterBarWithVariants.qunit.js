@@ -719,8 +719,10 @@ var oVariantMap = {
 		var oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
 		sinon.stub(oFlexController, "applyVariantChanges").returns(Promise.resolve());
 
-		oModel = new VariantModel({}, oFlexController, oComponent);
-
+		oModel = new VariantModel({}, {
+			flexController: oFlexController,
+			appComponent: oComponent
+		});
 
 		var fResolveWaitForSwitch, oWaitForSwitchPromise = new Promise(function(resolve) {
 			fResolveWaitForSwitch = resolve;
@@ -742,8 +744,6 @@ var oVariantMap = {
 		oModel.fnManageClick = function() {};
 
 		var oVM = new VariantManagement("VMId", {});
-		oVM.setModel(oModel, FlUtils.VARIANT_MODEL_NAME);
-
 
 		var done = assert.async();
 
@@ -758,14 +758,18 @@ var oVariantMap = {
 			typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String"),
 			visible: true
 		}];
+		return oModel.initialize()
+		.then(function() {
+			oVM.setModel(oModel, FlUtils.VARIANT_MODEL_NAME);
 
-		oFB = new FilterBar({
-			variantBackreference: oVM.getId(),
-			delegate: { name: "test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate", payload: { modelName: undefined, collectionName: "test" } }
+			oFB = new FilterBar({
+				variantBackreference: oVM.getId(),
+				delegate: { name: "test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate", payload: { modelName: undefined, collectionName: "test" } }
 
-		});
-
-		oFB._oMetadataAppliedPromise.then(function () {
+			});
+			return oFB._oMetadataAppliedPromise;
+		})
+		.then(function () {
 
 			assert.ok(oFB.getControlDelegate());
 			sinon.stub(oFB.getControlDelegate(), "fetchProperties").returns(Promise.resolve([aProperties]));

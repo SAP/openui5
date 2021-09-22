@@ -36,10 +36,12 @@ sap.ui.define([
 			this.oAppComponent = new Component("appComponent");
 			this.oModel = {
 				oAppComponent: this.oAppComponent,
-				resetMap: sandbox.stub().resolves()
+				resetMap: sandbox.stub().resolves(),
+				getUShellService: function() {}
 			};
 			this.fnDestroyObserverSpy = sandbox.spy(ManagedObjectObserver.prototype, "observe");
 			this.fnDestroyUnobserverSpy = sandbox.spy(ManagedObjectObserver.prototype, "unobserve");
+			this.oGetUShellServiceStub = sandbox.stub(this.oModel, "getUShellService");
 		},
 		afterEach: function() {
 			if (this.oAppComponent instanceof Component) {
@@ -50,19 +52,16 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when initialize() is called, followed by a getStoredHashParams() call ", function(assert) {
 			assert.expect(4);
-			sandbox.stub(Utils, "getUshellContainer").returns({
-				getService: function() {
-					return {
-						registerNavigationFilter: function(fnHandler) {
-							assert.strictEqual(typeof fnHandler, "function", "then navigation filer was registered");
-						},
-						unregisterNavigationFilter: function() {
-							assert.ok(false, "then de-registration for navigation filter should not be called");
-						},
-						parseShellHash: function() {}
-					};
-				}
+			this.oGetUShellServiceStub.returns({
+				registerNavigationFilter: function(fnHandler) {
+					assert.strictEqual(typeof fnHandler, "function", "then navigation filter was registered");
+				},
+				unregisterNavigationFilter: function() {
+					assert.ok(false, "then de-registration for navigation filter should not be called");
+				},
+				parseShellHash: function() {}
 			});
+
 			sandbox.spy(URLHandler, "attachHandlers");
 			var mPropertyBag = {model: this.oModel};
 			URLHandler.initialize(mPropertyBag);
@@ -109,18 +108,15 @@ sap.ui.define([
 
 		QUnit.test("when app component is destroyed after attachHandlers() was already called", function(assert) {
 			var sVariantManagementReference = "sLocalControlId";
-			sandbox.stub(Utils, "getUshellContainer").returns({
-				getService: function() {
-					return {
-						registerNavigationFilter: function(fnHandler) {
-							assert.strictEqual(typeof fnHandler, "function", "then navigation filer was registered");
-						},
-						unregisterNavigationFilter: function(fnHandler) {
-							assert.strictEqual(typeof fnHandler, "function", "then navigation filer was de-registered");
-						},
-						parseShellHash: function() {}
-					};
-				}
+
+			this.oGetUShellServiceStub.returns({
+				registerNavigationFilter: function(fnHandler) {
+					assert.strictEqual(typeof fnHandler, "function", "then navigation filter was registered");
+				},
+				unregisterNavigationFilter: function(fnHandler) {
+					assert.strictEqual(typeof fnHandler, "function", "then navigation filer was de-registered");
+				},
+				parseShellHash: function() {}
 			});
 
 			URLHandler.initialize({model: this.oModel});
@@ -157,18 +153,18 @@ sap.ui.define([
 				updateURL: true,
 				model: this.oModel
 			};
-			sandbox.stub(Utils, "getUshellContainer").returns({
-				getService: function(sServiceName) {
-					if (sServiceName === "CrossApplicationNavigation") {
-						return {
-							toExternal: function(mParameters) {
-								assert.strictEqual(mParameters.params[URLHandler.variantTechnicalParameterName], mPropertyBag.parameters, "then correct parameters were passed to be set for the URL hash");
-							}
-						};
-					}
+
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
+				parseShellHash: function() {
+					return {params: {}};
 				}
 			});
-			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
+
+			this.oGetUShellServiceStub.withArgs("CrossApplicationNavigation").returns({
+				toExternal: function(mParameters) {
+					assert.strictEqual(mParameters.params[URLHandler.variantTechnicalParameterName], mPropertyBag.parameters, "then correct parameters were passed to be set for the URL hash");
+				}
+			});
 
 			URLHandler.update(mPropertyBag);
 			assert.deepEqual(this.oModel._oHashData.hashParams, mPropertyBag.parameters, "then hash register was updated");
@@ -183,18 +179,17 @@ sap.ui.define([
 				model: this.oModel
 			};
 
-			sandbox.stub(Utils, "getUshellContainer").returns({
-				getService: function(sServiceName) {
-					if (sServiceName === "CrossApplicationNavigation") {
-						return {
-							toExternal: function(mParameters) {
-								assert.strictEqual(mParameters.params[URLHandler.variantTechnicalParameterName], mPropertyBag.parameters, "then correct parameters were passed to be set for the URL hash");
-							}
-						};
-					}
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
+				parseShellHash: function() {
+					return {params: {}};
 				}
 			});
-			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
+
+			this.oGetUShellServiceStub.withArgs("CrossApplicationNavigation").returns({
+				toExternal: function(mParameters) {
+					assert.strictEqual(mParameters.params[URLHandler.variantTechnicalParameterName], mPropertyBag.parameters, "then correct parameters were passed to be set for the URL hash");
+				}
+			});
 
 			URLHandler.update(mPropertyBag);
 			assert.strictEqual(this.oModel._oHashData.hashParams.length, 0, "then hash register was not updated");
@@ -209,18 +204,19 @@ sap.ui.define([
 				model: this.oModel
 			};
 			this.oModel.oAppComponent = undefined;
-			sandbox.stub(Utils, "getUshellContainer").returns({
-				getService: function(sServiceName) {
-					if (sServiceName === "CrossApplicationNavigation") {
-						return {
-							toExternal: function(mParameters) {
-								assert.strictEqual(mParameters.params[URLHandler.variantTechnicalParameterName], mPropertyBag.parameters, "then correct parameters were passed to be set for the URL hash");
-							}
-						};
-					}
+
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
+				parseShellHash: function() {
+					return {params: {}};
 				}
 			});
-			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
+
+			this.oGetUShellServiceStub.withArgs("CrossApplicationNavigation").returns({
+				toExternal: function(mParameters) {
+					assert.strictEqual(mParameters.params[URLHandler.variantTechnicalParameterName], mPropertyBag.parameters, "then correct parameters were passed to be set for the URL hash");
+				}
+			});
+
 			URLHandler.update(mPropertyBag);
 		});
 
@@ -231,7 +227,7 @@ sap.ui.define([
 				model: this.oModel
 			};
 
-			sandbox.stub(Utils, "getUshellContainer").callsFake(function() {
+			this.oGetUShellServiceStub.callsFake(function() {
 				assert.ok(false, "then hash related functions should not be called");
 			});
 
@@ -245,32 +241,20 @@ sap.ui.define([
 			this.oAppComponent = new Component("appComponent");
 			this.oRegisterNavigationFilterStub = sandbox.stub();
 			this.oDeRegisterNavigationFilterStub = sandbox.stub();
-			// mock ushell services
-			var sDefaultStatus = "Continue";
-			sandbox.stub(Utils, "getUshellContainer").returns({
-				getService: function(sName) {
-					if (sName === "URLParsing") {
-						return {
-							parseShellHash: function(oHashParams) {
-								return {
-									params: oHashParams.params
-								};
-							}
-						};
-					} else if (sName === "ShellNavigation") {
-						return {
-							NavigationFilterStatus: {
-								Continue: sDefaultStatus
-							},
-							registerNavigationFilter: this.oRegisterNavigationFilterStub,
-							unregisterNavigationFilter: this.oDeRegisterNavigationFilterStub
-						};
-					}
-				}.bind(this)
-			});
-			this.sDefaultStatus = sDefaultStatus;
 
 			// variant model
+			var oFlexController = {
+				setVariantSwitchPromise: function() {},
+				_oChangePersistence: {
+					getComponentName: function() {
+						return "mockComponentName";
+					}
+				}
+			};
+
+			// mock ushell services
+			var sDefaultStatus = "Continue";
+
 			this.oModel = new VariantModel(
 				{
 					variantMgmtId1: {
@@ -316,31 +300,50 @@ sap.ui.define([
 						]
 					}
 				}, {
-					setVariantSwitchPromise: function() {},
-					_oChangePersistence: {
-						getComponentName: function() {
-							return "mockComponentName";
-						}
-					}
-				},
-				this.oAppComponent
+					flexController: oFlexController,
+					appComponent: this.oAppComponent
+				}
 			);
-			this.oSwitchToDefaultVariantStub = sandbox.stub(this.oModel, "switchToDefaultForVariantManagement");
 
-			// variant management controls
-			this.oVariantManagement1 = new VariantManagement("variantMgmtId1", {updateVariantInURL: true});
-			this.oVariantManagement1.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
-			this.oVariantManagement2 = new VariantManagement("variantMgmtId2", {updateVariantInURL: true});
-			this.oVariantManagement2.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
-			this.oVariantManagement3 = new VariantManagement("variantMgmtId3", {updateVariantInURL: true});
-			this.oVariantManagement3.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+			this.sDefaultStatus = sDefaultStatus;
 
-			// mock property bag for URLHandler.update
-			this.mPropertyBag = {
-				parameters: ["testParam1", "testParam2"],
-				updateHashEntry: true,
-				updateURL: true
-			};
+			this.oGetUShellServiceStub = sandbox.stub(this.oModel, "getUShellService");
+
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
+				parseShellHash: function(oHashParams) {
+					return {
+						params: oHashParams.params
+					};
+				}
+			});
+
+			this.oGetUShellServiceStub.withArgs("ShellNavigation").returns({
+				NavigationFilterStatus: {
+					Continue: sDefaultStatus
+				},
+				registerNavigationFilter: this.oRegisterNavigationFilterStub,
+				unregisterNavigationFilter: this.oDeRegisterNavigationFilterStub
+			});
+
+			return this.oModel.initialize()
+				.then(function() {
+					this.oSwitchToDefaultVariantStub = sandbox.stub(this.oModel, "switchToDefaultForVariantManagement");
+
+					// variant management controls
+					this.oVariantManagement1 = new VariantManagement("variantMgmtId1", {updateVariantInURL: true});
+					this.oVariantManagement1.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+					this.oVariantManagement2 = new VariantManagement("variantMgmtId2", {updateVariantInURL: true});
+					this.oVariantManagement2.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+					this.oVariantManagement3 = new VariantManagement("variantMgmtId3", {updateVariantInURL: true});
+					this.oVariantManagement3.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+
+					// mock property bag for URLHandler.update
+					this.mPropertyBag = {
+						parameters: ["testParam1", "testParam2"],
+						updateHashEntry: true,
+						updateURL: true
+					};
+				}.bind(this));
 		},
 		afterEach: function(assert) {
 			var done = assert.async();
@@ -372,7 +375,12 @@ sap.ui.define([
 		QUnit.test("when event 'modelContextChange' is fired on a control rendered at position 1 with a URL parameter, out of 3 controls", function(assert) {
 			var oReturnObject = {params: {}};
 			oReturnObject.params[URLHandler.variantTechnicalParameterName] = [this.oVariantManagement1.getId()];
-			sandbox.stub(Utils, "getParsedURLHash").returns(oReturnObject);
+
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
+				parseShellHash: function() {
+					return oReturnObject;
+				}
+			});
 			sandbox.stub(VariantManagementState, "getVariant").callsFake(function(mPropertyBag) {
 				if (mPropertyBag.vmReference === this.oVariantManagement1.getId() && mPropertyBag.vReference === this.oVariantManagement1.getId()) {
 					return true;
@@ -432,7 +440,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the registered navigationFilter function is called and there is an error in hash parsing", function(assert) {
-			sandbox.stub(Utils.getUshellContainer(), "getService").callThrough().withArgs("URLParsing").throws();
+			this.oGetUShellServiceStub.callThrough().withArgs("URLParsing").throws();
 			var oLogErrorSpy = sandbox.spy(Log, "error");
 			var fnVariantIdChangeHandler = this.oRegisterNavigationFilterStub.getCall(0).args[0];
 			assert.strictEqual(fnVariantIdChangeHandler(), this.sDefaultStatus, "then the default navigation filter status was returned");
@@ -472,6 +480,7 @@ sap.ui.define([
 			assert.strictEqual(fnVariantIdChangeHandler(oHash), this.sDefaultStatus, "then the default navigation filter status was returned");
 		});
 
+		//TODO: Check this test - in real code the method "registerNavigationFilter" is never called with a second parameter
 		QUnit.test("when the registered navigationFilter function is called and there are changed variant URL parameters", function(assert) {
 			assert.expect(2);
 			var aParameterValues = [this.oModel.oData["variantMgmtId1"].defaultVariant, this.oModel.oData["variantMgmtId2"].defaultVariant, "otherParamValue"];
@@ -552,7 +561,15 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given URLHandler.updateVariantInURL() to update a new variant parameter in the URL", {
-		before: function() {
+		beforeEach: function() {
+			var oFlexController = {
+				setVariantSwitchPromise: function() {},
+				_oChangePersistence: {
+					getComponentName: function() {
+						return "someComponentName";
+					}
+				}
+			};
 			this.oModel = new VariantModel({
 				variantMgmtId1: {
 					defaultVariant: "variant1",
@@ -583,22 +600,23 @@ sap.ui.define([
 					]
 				}
 			}, {
-				setVariantSwitchPromise: function() {},
-				_oChangePersistence: {
-					getComponentName: function() {
-						return "someComponentName";
-					}
-				}
-			}, {});
-		},
-		beforeEach: function() {
-			sandbox.stub(URLHandler, "update");
+				flexController: oFlexController,
+				appComponent: {}
+			});
+
+			this.oGetUShellServiceStub = sandbox.stub(this.oModel, "getUShellService");
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
+				parseShellHash: function() {}
+			});
+
+			return this.oModel.initialize()
+				.then(function() {
+					sandbox.stub(URLHandler, "update");
+				});
 		},
 		afterEach: function() {
-			sandbox.restore();
-		},
-		after: function() {
 			this.oModel.destroy();
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when called with no variant URL parameter", function(assert) {
@@ -612,7 +630,11 @@ sap.ui.define([
 				vmReference: "variantMgmtId1",
 				reference: "someComponentName"
 			}).returns(true);
-			var fnGetParsedURLHashStub = sandbox.stub(Utils, "getParsedURLHash").returns(oParameters);
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
+				parseShellHash: function() {
+					return oParameters;
+				}
+			});
 			sandbox.spy(URLHandler, "removeURLParameterForVariantManagement");
 
 			URLHandler.updateVariantInURL({
@@ -620,7 +642,7 @@ sap.ui.define([
 				newVReference: "variant0",
 				model: this.oModel
 			});
-			assert.ok(fnGetParsedURLHashStub.calledOnce, "then url parameters requested once");
+			assert.ok(this.oGetUShellServiceStub.called, "then url parameters requested");
 			assert.deepEqual(URLHandler.removeURLParameterForVariantManagement.returnValues[0], {
 				parameters: [],
 				index: -1
@@ -648,7 +670,11 @@ sap.ui.define([
 				vmReference: "variantMgmtId1",
 				reference: "someComponentName"
 			}).returns(true);
-			var fnGetParsedURLHashStub = sandbox.stub(Utils, "getParsedURLHash").returns(oParameters);
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
+				parseShellHash: function() {
+					return oParameters;
+				}
+			});
 			sandbox.spy(URLHandler, "removeURLParameterForVariantManagement");
 
 			URLHandler.updateVariantInURL({
@@ -656,7 +682,7 @@ sap.ui.define([
 				newVReference: sTargetVariantId,
 				model: this.oModel
 			});
-			assert.ok(fnGetParsedURLHashStub.calledOnce, "then url parameters requested once");
+			assert.ok(this.oGetUShellServiceStub.called, "then url parameters requested");
 
 			var oVariantIndexInURLReturn = {parameters: {}, index: 1};
 			oVariantIndexInURLReturn.parameters = [aExistingParameters[0]];
@@ -670,7 +696,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("when called in standalone mode (without a ushell container)", function(assert) {
-			var fnGetParsedURLHashStub = sandbox.stub(Utils, "getParsedURLHash").returns({});
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
+				parseShellHash: function() {
+					return {};
+				}
+			});
 			sandbox.spy(URLHandler, "removeURLParameterForVariantManagement");
 
 			URLHandler.updateVariantInURL({
@@ -679,7 +709,7 @@ sap.ui.define([
 				model: this.oModel
 			});
 
-			assert.ok(fnGetParsedURLHashStub.calledOnce, "then url parameters requested once");
+			assert.ok(this.oGetUShellServiceStub.called, "then url parameters requested");
 			assert.deepEqual(URLHandler.removeURLParameterForVariantManagement.returnValues[0], {
 				index: -1
 			}, "then URLHandler.removeURLParameterForVariantManagement() returns the correct parameters and index");
@@ -687,7 +717,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("when called for the default variant with no variant URL parameters", function(assert) {
-			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
+				parseShellHash: function() {
+					return {};
+				}
+			});
 
 			URLHandler.updateVariantInURL({
 				vmReference: "variantMgmtId1",
@@ -701,7 +735,11 @@ sap.ui.define([
 		QUnit.test("when called for the default variant with a valid variant URL parameter for the same variant management", function(assert) {
 			var oReturnObject = {params: {}};
 			oReturnObject.params[URLHandler.variantTechnicalParameterName] = ["Dummy", "variantMgmtId1", "Dummy1"];
-			sandbox.stub(Utils, "getParsedURLHash").returns(oReturnObject);
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
+				parseShellHash: function() {
+					return oReturnObject;
+				}
+			});
 
 			sandbox.stub(VariantManagementState, "getVariant").withArgs({
 				vReference: "variantMgmtId1",
@@ -725,7 +763,11 @@ sap.ui.define([
 
 		QUnit.test("when called while in adaptation mode with variant parameters present in the hash register", function(assert) {
 			// to verify ushell
-			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
+				parseShellHash: function() {
+					return {params: {}};
+				}
+			});
 			// return parameters saved at the current index of the hash register
 			sandbox.stub(URLHandler, "getStoredHashParams").returns(["Dummy", "variantMgmtId1", "Dummy1"]);
 			sandbox.stub(VariantManagementState, "getVariant").withArgs({
@@ -751,7 +793,11 @@ sap.ui.define([
 
 		QUnit.test("when called while in adaptation mode and there are no variant parameters saved in the hash register", function(assert) {
 			// to verify ushell
-			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
+				parseShellHash: function() {
+					return {params: {}};
+				}
+			});
 			this.oModel._bDesignTimeMode = true;
 
 			URLHandler.updateVariantInURL({
@@ -770,7 +816,11 @@ sap.ui.define([
 
 		QUnit.test("when called and there is no parameter saved in the hash register", function(assert) {
 			// to verify ushell
-			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
+				parseShellHash: function() {
+					return {params: {}};
+				}
+			});
 			this.oModel._bDesignTimeMode = true;
 
 			URLHandler.updateVariantInURL({
@@ -790,10 +840,12 @@ sap.ui.define([
 
 	QUnit.module("Given URLHandler.update to update hash parameters in URL", {
 		beforeEach: function() {
-			sandbox.stub(Utils, "getUshellContainer").returns(true);
 			sandbox.stub(Log, "warning");
 			sandbox.stub(hasher, "replaceHash");
-			this.oModel = {};
+			this.oModel = {
+				getUShellService: function() {}
+			};
+			this.oGetUShellServiceStub = sandbox.stub(this.oModel, "getUShellService");
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -822,13 +874,7 @@ sap.ui.define([
 				}
 			};
 
-			Utils.getUshellContainer.returns({
-				getService: function(sServiceName) {
-					if (sServiceName === "URLParsing") {
-						return oMockedURLParser;
-					}
-				}
-			});
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns(oMockedURLParser);
 
 			URLHandler.update({model: this.oModel, parameters: aNewParamValues, updateURL: true, silent: true});
 
@@ -871,13 +917,7 @@ sap.ui.define([
 				}
 			};
 
-			Utils.getUshellContainer.returns({
-				getService: function(sServiceName) {
-					if (sServiceName === "URLParsing") {
-						return oMockedURLParser;
-					}
-				}
-			});
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns(oMockedURLParser);
 
 			URLHandler.update({model: this.oModel, parameters: aNewParamValues, updateURL: true, silent: true});
 
@@ -922,15 +962,9 @@ sap.ui.define([
 				}
 			};
 
-			Utils.getUshellContainer.returns({
-				getService: function(sServiceName) {
-					if (sServiceName === "CrossApplicationNavigation") {
-						return oCrossAppNav;
-					} else if (sServiceName === "URLParsing") {
-						return oMockedURLParser;
-					}
-				}
-			});
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns(oMockedURLParser);
+			this.oGetUShellServiceStub.withArgs("CrossApplicationNavigation").returns(oCrossAppNav);
+
 			var oExpectedResult = {
 				target: {
 					semanticObject: oMockParsedHash.semanticObject,

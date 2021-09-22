@@ -394,6 +394,19 @@ sap.ui.define([
 			sandbox.stub(Utils, "getUrlParameter").returns(Layer.VENDOR);
 			window.sessionStorage.setItem("sap.ui.rta.restart.VENDOR", "MockCompName");
 			sandbox.stub(Utils, "getUshellContainer").returns({
+				getServiceAsync: function(sServiceName) {
+					if (sServiceName === "ShellNavigation") {
+						return Promise.resolve({
+							toExternal: function() {
+								return true;
+							},
+							registerNavigationFilter: function() {
+								return true;
+							}
+						});
+					}
+				},
+				//TODO: Remove once getService is only async
 				getService: function() {
 					return {
 						toExternal: function() {
@@ -439,6 +452,19 @@ sap.ui.define([
 				fnCallback(fnStartRtaSpy);
 			});
 			sandbox.stub(Utils, "getUshellContainer").returns({
+				getServiceAsync: function(sServiceName) {
+					if (sServiceName === "ShellNavigation") {
+						return Promise.resolve({
+							toExternal: function() {
+								return true;
+							},
+							registerNavigationFilter: function() {
+								return true;
+							}
+						});
+					}
+				},
+				//TODO: Remove once getService is only async
 				getService: function() {
 					return {
 						toExternal: function() {

@@ -77,37 +77,38 @@ sap.ui.define([
 				}
 			};
 
-			this.oModel = FlexTestAPI.createVariantModel({
+			return FlexTestAPI.createVariantModel({
 				data: oData,
 				appComponent: this.oMockedAppComponent
-			});
-
-			var oVariant = {
-				content: {
-					fileName: "variant0",
+			}).then(function(oInitializedModel) {
+				this.oModel = oInitializedModel;
+				var oVariant = {
 					content: {
-						title: "variant A"
+						fileName: "variant0",
+						content: {
+							title: "variant A"
+						},
+						layer: Layer.CUSTOMER,
+						variantReference: "variant00",
+						reference: "Dummy.Component"
 					},
-					layer: Layer.CUSTOMER,
-					variantReference: "variant00",
-					reference: "Dummy.Component"
-				},
-				controlChanges: [
-					{
-						fileName: "change44",
-						layer: Layer.CUSTOMER
-					},
-					{
-						fileName: "change45",
-						layer: Layer.CUSTOMER
-					}
-				]
-			};
+					controlChanges: [
+						{
+							fileName: "change44",
+							layer: Layer.CUSTOMER
+						},
+						{
+							fileName: "change45",
+							layer: Layer.CUSTOMER
+						}
+					]
+				};
 
-			sinon.stub(this.oModel, "getVariant").returns(oVariant);
-			sinon.stub(VariantManagementState, "setVariantData").returns(1);
-			sinon.stub(VariantManagementState, "updateChangesForVariantManagementInMap");
-			sinon.stub(VariantManagementState, "getContent").returns({});
+				sinon.stub(this.oModel, "getVariant").returns(oVariant);
+				sinon.stub(VariantManagementState, "setVariantData").returns(1);
+				sinon.stub(VariantManagementState, "updateChangesForVariantManagementInMap");
+				sinon.stub(VariantManagementState, "getContent").returns({});
+			}.bind(this));
 		},
 		after: function() {
 			this.oManifest.destroy();

@@ -143,6 +143,8 @@ sap.ui.define([
 			if (!oVariantModel) {
 				//technical parameters are not updated, only URL hash is updated
 				Log.warning("Variant model could not be found on the provided control");
+				//TODO: Confirm if there is a reason for this code to continue if no model is available
+				return;
 			}
 
 			//check if variant for the passed variant management control is present

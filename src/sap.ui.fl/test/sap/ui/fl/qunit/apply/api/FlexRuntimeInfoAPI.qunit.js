@@ -334,13 +334,19 @@ sap.ui.define([
 						variantManagement: {
 							variants: []
 						}
-					}, this.oFlexController, this.oComp);
-					this.oComp.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
-					this.oCompContainer = new ComponentContainer("sap-ui-static", {
-						component: this.oComp
-					}).placeAt("qunit-fixture");
+					}, {
+						flexController: this.oFlexController,
+						appComponent: this.oComp
+					});
+					return oVariantModel.initialize()
+						.then(function() {
+							this.oComp.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
+							this.oCompContainer = new ComponentContainer("sap-ui-static", {
+								component: this.oComp
+							}).placeAt("qunit-fixture");
 
-					done();
+							done();
+						}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		},

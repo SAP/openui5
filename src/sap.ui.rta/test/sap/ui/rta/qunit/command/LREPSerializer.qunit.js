@@ -50,6 +50,7 @@ sap.ui.define([
 		}
 	};
 	var oManifest = new Manifest(oRawManifest);
+	var oModel;
 	var oMockedAppComponent = {
 		getLocalId: function() {
 			return undefined;
@@ -79,7 +80,7 @@ sap.ui.define([
 			return oManifest;
 		},
 		getModel: function() {
-			return oModel; // eslint-disable-line no-use-before-define
+			return oModel;
 		}
 	};
 	var oGetAppComponentForControlStub = sinon.stub(flUtils, "getAppComponentForControl").returns(oMockedAppComponent);
@@ -126,12 +127,16 @@ sap.ui.define([
 		variantChanges: {}
 	};
 
-	var oModel = FlexTestAPI.createVariantModel({
-		data: oData,
-		appComponent: this.oMockedAppComponent
-	});
-
 	QUnit.module("Given a command serializer loaded with an RTA command stack", {
+		before: function() {
+			return FlexTestAPI.createVariantModel({
+				data: oData,
+				appComponent: this.oMockedAppComponent
+			}).then(function(oInitializedModel) {
+				oModel = oInitializedModel;
+			});
+		},
+
 		beforeEach: function() {
 			return RtaQunitUtils.clear(oMockedAppComponent)
 			.then(function() {
@@ -171,6 +176,9 @@ sap.ui.define([
 				sandbox.restore();
 				return RtaQunitUtils.clear(oMockedAppComponent);
 			}.bind(this));
+		},
+		after: function() {
+			oModel.destroy();
 		}
 	}, function() {
 		QUnit.test("when two commands get undone, redone and saved while the element of one command is not available", function(assert) {
@@ -834,6 +842,15 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a command serializer loaded with an RTA command stack and ctrl variant commands", {
+		before: function() {
+			return FlexTestAPI.createVariantModel({
+				data: oData,
+				appComponent: this.oMockedAppComponent
+			}).then(function(oInitializedModel) {
+				oModel = oInitializedModel;
+			});
+		},
+
 		beforeEach: function() {
 			this.oCommandStack = new CommandStack();
 
@@ -841,6 +858,10 @@ sap.ui.define([
 			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
 			this.oDesignTimeMetadata = new DesignTimeMetadata({data: {}});
 			oModel._bDesignTimeMode = true;
+
+			oMockedAppComponent.getModel = function() {
+				return oModel;
+			};
 
 			this.oSerializer = new CommandSerializer({
 				commandStack: this.oCommandStack,
@@ -874,6 +895,9 @@ sap.ui.define([
 			this.oDesignTimeMetadata.destroy();
 			sandbox.restore();
 			return RtaQunitUtils.clear(oMockedAppComponent);
+		},
+		after: function() {
+			oModel.destroy();
 		}
 	}, function() {
 		QUnit.test("when the LREPSerializer.clearCommandStack gets called with 4 different ctrl variant commands created containing one or more changes and this is booked for a new app variant with different id", function(assert) {

@@ -157,7 +157,12 @@ sap.ui.define([
 
 			sandbox.spy(URLHandler, "initialize");
 			sandbox.stub(VariantManagementState, "fillVariantModel").returns(this.oData);
-			this.oModel = new VariantModel({}, this.oFlexController, this.oComponent);
+
+			this.oModel = new VariantModel({}, {
+				flexController: this.oFlexController,
+				appComponent: this.oComponent
+			});
+			return this.oModel.initialize();
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -273,7 +278,7 @@ sap.ui.define([
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].remove, true, "a user can removed another users PUBLIC variant in case the ushell user cannot be determined");
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].change, true, "a user can changed another users PUBLIC variant in case the ushell user cannot be determined");
 
-			sandbox.stub(Utils, "getUshellContainer").returns({
+			this.oModel._oUserInfoService = {
 				getUser: function () {
 					return {
 						getId: function () {
@@ -281,7 +286,8 @@ sap.ui.define([
 						}
 					};
 				}
-			});
+			};
+
 			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].rename, false, "a user cannot renamed another users PUBLIC variant");
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].remove, false, "a user cannot removed another users PUBLIC variant");
@@ -292,7 +298,6 @@ sap.ui.define([
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].rename, true, "a key user can renamed another users PUBLIC variant");
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].remove, true, "a key user can removed another users PUBLIC variant");
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variants[3].change, true, "a eky user can changed another users PUBLIC variant");
-			Utils.getUshellContainer.restore();
 			Settings.getInstanceOrUndef.restore();
 		});
 
@@ -2175,7 +2180,12 @@ sap.ui.define([
 			sandbox.stub(VariantManagementState, "fillVariantModel").returns(this.oData);
 			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
 
-			this.oModel = new VariantModel({}, this.oFlexController, oComponent);
+			this.oModel = new VariantModel({}, {
+				flexController: this.oFlexController,
+				appComponent: oComponent
+			});
+
+			return this.oModel.initialize();
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -2467,7 +2477,12 @@ sap.ui.define([
 				this.oComp = new MockComponent({id: "testComponent"});
 				this.oView = oView;
 				this.oFlexController = ChangesController.getFlexControllerInstance(this.oComp);
-				this.oVariantModel = new VariantModel({}, this.oFlexController, this.oComp);
+				this.oVariantModel = new VariantModel({}, {
+					flexController: this.oFlexController,
+					appComponent: this.oComp
+				});
+				return this.oVariantModel.initialize();
+			}.bind(this)).then(function() {
 				this.oComp.setModel(this.oVariantModel, Utils.VARIANT_MODEL_NAME);
 				this.sVMReference = "mockview--VariantManagement1";
 

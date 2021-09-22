@@ -143,48 +143,49 @@ sap.ui.define([
 				subSections: [this.oObjectPageSubSection]
 			});
 			this.sLocalVariantManagementId = "varMgtKey";
-			this.oModel = FlexTestAPI.createVariantModel({
+			return FlexTestAPI.createVariantModel({
 				data: this.oData,
 				appComponent: this.oMockedAppComponent
-			});
-			this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
-			this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
-			this.oObjectPageLayout = new ObjectPageLayout("objPage", {
-				headerContent: [this.oVariantManagementControl],
-				sections: [this.oObjectPageSection]
-			});
-			this.oVariantManagementControl.addAssociation("for", "objPage", true);
-			this.oButton2 = new Button();
-			this.oLayoutOuter = new VerticalLayout("verlayouter", {
-				content: [this.oButton2]
-			});
-			this.oPage = new Page("mainPage", {
-				content: [this.oLayoutOuter, this.oObjectPageLayout]
-			}).placeAt("qunit-fixture");
-			var oVariantManagementDesignTimeMetadata = {
-				"sap.ui.fl.variants.VariantManagement": {}
-			};
-
-			this.oDesignTime = new DesignTime({
-				designTimeMetadata: oVariantManagementDesignTimeMetadata,
-				rootElements: [this.oPage]
-			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oObjectPageLayoutOverlay = OverlayRegistry.getOverlay(this.oObjectPageLayout);
-				this.oObjectPageSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection);
-				this.oObjectPageSubSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSubSection);
-				this.oLayoutOuterOverlay = OverlayRegistry.getOverlay(this.oLayoutOuter);
-				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
-				this.oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
-				this.oControlVariantPlugin = new ControlVariantPlugin({
-					commandFactory: new CommandFactory()
+			}).then(function(oInitializedModel) {
+				this.oModel = oInitializedModel;
+				this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
+				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
+				this.oObjectPageLayout = new ObjectPageLayout("objPage", {
+					headerContent: [this.oVariantManagementControl],
+					sections: [this.oObjectPageSection]
 				});
-				this.oToolHooksPlugin = new ToolHooksPlugin();
-				done();
-			}.bind(this));
+				this.oVariantManagementControl.addAssociation("for", "objPage", true);
+				this.oButton2 = new Button();
+				this.oLayoutOuter = new VerticalLayout("verlayouter", {
+					content: [this.oButton2]
+				});
+				this.oPage = new Page("mainPage", {
+					content: [this.oLayoutOuter, this.oObjectPageLayout]
+				}).placeAt("qunit-fixture");
+				var oVariantManagementDesignTimeMetadata = {
+					"sap.ui.fl.variants.VariantManagement": {}
+				};
 
-			sap.ui.getCore().applyChanges();
+				this.oDesignTime = new DesignTime({
+					designTimeMetadata: oVariantManagementDesignTimeMetadata,
+					rootElements: [this.oPage]
+				});
+
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oObjectPageLayoutOverlay = OverlayRegistry.getOverlay(this.oObjectPageLayout);
+					this.oObjectPageSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection);
+					this.oObjectPageSubSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSubSection);
+					this.oLayoutOuterOverlay = OverlayRegistry.getOverlay(this.oLayoutOuter);
+					this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+					this.oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
+					this.oControlVariantPlugin = new ControlVariantPlugin({
+						commandFactory: new CommandFactory()
+					});
+					this.oToolHooksPlugin = new ToolHooksPlugin();
+					done();
+				}.bind(this));
+				sap.ui.getCore().applyChanges();
+			}.bind(this));
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -587,51 +588,53 @@ sap.ui.define([
 			//				button2
 
 			this.sLocalVariantManagementId = "varMgtKey";
-			this.oModel = FlexTestAPI.createVariantModel({
+			return FlexTestAPI.createVariantModel({
 				data: this.oData,
 				appComponent: this.oMockedAppComponent
-			});
-			this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
-			this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
-			this.oButton1 = new Button("button1");
-			this.oButton2 = new Button("button2");
-			this.oFlexBox1 = new FlexBox("flexbox1", {
-				items: [this.oVariantManagementControl, this.oButton1]
-			});
-			this.oFlexBox2 = new FlexBox("flexbox2", {
-				items: [this.oButton2]
-			});
-			this.oVariantManagementControl.addAssociation("for", "flexbox2", true);
-			this.oLayoutOuter = new VerticalLayout("layoutouter", {
-				content: [this.oFlexBox1, this.oFlexBox2]
-			});
-			this.oPage = new Page("mainPage", {
-				content: [this.oLayoutOuter]
-			}).placeAt("qunit-fixture");
-			var oVariantManagementDesignTimeMetadata = {
-				"sap.ui.fl.variants.VariantManagement": {}
-			};
-
-			this.oDesignTime = new DesignTime({
-				designTimeMetadata: oVariantManagementDesignTimeMetadata,
-				rootElements: [this.oPage]
-			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oLayoutOuterOverlay = OverlayRegistry.getOverlay(this.oLayoutOuter);
-				this.oButton1Overlay = OverlayRegistry.getOverlay(this.oButton1);
-				this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);
-				this.oFlexBox1Overlay = OverlayRegistry.getOverlay(this.oFlexBox1);
-				this.oFlexBox2Overlay = OverlayRegistry.getOverlay(this.oFlexBox2);
-				this.oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
-				this.oControlVariantPlugin = new ControlVariantPlugin({
-					commandFactory: new CommandFactory()
+			}).then(function(oInitializedModel) {
+				this.oModel = oInitializedModel;
+				this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
+				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
+				this.oButton1 = new Button("button1");
+				this.oButton2 = new Button("button2");
+				this.oFlexBox1 = new FlexBox("flexbox1", {
+					items: [this.oVariantManagementControl, this.oButton1]
 				});
-				this.oToolHooksPlugin = new ToolHooksPlugin();
-				done();
-			}.bind(this));
+				this.oFlexBox2 = new FlexBox("flexbox2", {
+					items: [this.oButton2]
+				});
+				this.oVariantManagementControl.addAssociation("for", "flexbox2", true);
+				this.oLayoutOuter = new VerticalLayout("layoutouter", {
+					content: [this.oFlexBox1, this.oFlexBox2]
+				});
+				this.oPage = new Page("mainPage", {
+					content: [this.oLayoutOuter]
+				}).placeAt("qunit-fixture");
+				var oVariantManagementDesignTimeMetadata = {
+					"sap.ui.fl.variants.VariantManagement": {}
+				};
 
-			sap.ui.getCore().applyChanges();
+				this.oDesignTime = new DesignTime({
+					designTimeMetadata: oVariantManagementDesignTimeMetadata,
+					rootElements: [this.oPage]
+				});
+
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oLayoutOuterOverlay = OverlayRegistry.getOverlay(this.oLayoutOuter);
+					this.oButton1Overlay = OverlayRegistry.getOverlay(this.oButton1);
+					this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);
+					this.oFlexBox1Overlay = OverlayRegistry.getOverlay(this.oFlexBox1);
+					this.oFlexBox2Overlay = OverlayRegistry.getOverlay(this.oFlexBox2);
+					this.oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
+					this.oControlVariantPlugin = new ControlVariantPlugin({
+						commandFactory: new CommandFactory()
+					});
+					this.oToolHooksPlugin = new ToolHooksPlugin();
+					done();
+				}.bind(this));
+
+				sap.ui.getCore().applyChanges();
+			}.bind(this));
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -665,34 +668,36 @@ sap.ui.define([
 			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockAppComponent);
 			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 
-			this.oModel = FlexTestAPI.createVariantModel({
+			return FlexTestAPI.createVariantModel({
 				data: {variantManagementReference: {variants: []}},
 				appComponent: this.oMockedAppComponent
-			});
-			this.oVariantManagementControl = new VariantManagement("varMgtKey").placeAt("qunit-fixture");
-			this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
+			}).then(function(oInitializedModel) {
+				this.oModel = oInitializedModel;
+				this.oVariantManagementControl = new VariantManagement("varMgtKey").placeAt("qunit-fixture");
+				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 
-			var oVariantManagementDesignTimeMetadata = {
-				"sap.ui.fl.variants.VariantManagement": {
-					actions: {}
-				}
-			};
-			sap.ui.getCore().applyChanges();
-			this.oDesignTime = new DesignTime({
-				designTimeMetadata: oVariantManagementDesignTimeMetadata,
-				rootElements: [this.oVariantManagementControl]
-			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
-				this.oControlVariantPlugin = new ControlVariantPlugin({
-					commandFactory: new CommandFactory()
+				var oVariantManagementDesignTimeMetadata = {
+					"sap.ui.fl.variants.VariantManagement": {
+						actions: {}
+					}
+				};
+				sap.ui.getCore().applyChanges();
+				this.oDesignTime = new DesignTime({
+					designTimeMetadata: oVariantManagementDesignTimeMetadata,
+					rootElements: [this.oVariantManagementControl]
 				});
-				this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
-				this.oVariantManagementOverlay.setSelectable(true);
-				this.oControlVariantPlugin._oEditedOverlay = this.oVariantManagementOverlay;
-				this.oControlVariantPlugin._$oEditableControlDomRef = jQuery(this.oVariantManagementControl.getTitle().getDomRef("inner"));
-				done();
+
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
+					this.oControlVariantPlugin = new ControlVariantPlugin({
+						commandFactory: new CommandFactory()
+					});
+					this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+					this.oVariantManagementOverlay.setSelectable(true);
+					this.oControlVariantPlugin._oEditedOverlay = this.oVariantManagementOverlay;
+					this.oControlVariantPlugin._$oEditableControlDomRef = jQuery(this.oVariantManagementControl.getTitle().getDomRef("inner"));
+					done();
+				}.bind(this));
 			}.bind(this));
 		},
 		afterEach: function () {
@@ -1141,49 +1146,51 @@ sap.ui.define([
 			});
 			this.sLocalVariantManagementId = "varMgtKey";
 			this.sGlobalVariantManagementId = "Comp1--varMgtKey";
-			this.oModel = FlexTestAPI.createVariantModel({
+			return FlexTestAPI.createVariantModel({
 				data: this.oData,
 				appComponent: this.oMockedAppComponent
-			});
-			this.oVariantManagementControl = new VariantManagement(this.sGlobalVariantManagementId);
-			this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
-			this.oObjectPageLayout = new ObjectPageLayout("objPage", {
-				headerContent: [this.oVariantManagementControl],
-				sections: [this.oObjectPageSection]
-			});
-			this.oVariantManagementControl.addAssociation("for", "objPage", true);
-			this.oButton2 = new Button();
-			this.oLayoutOuter = new VerticalLayout("verlayouter", {
-				content: [this.oButton2]
-			});
-			this.oPage = new Page("mainPage", {
-				content: [this.oLayoutOuter, this.oObjectPageLayout]
-			}).placeAt("qunit-fixture");
-
-			sap.ui.getCore().applyChanges();
-
-			var oVariantManagementDesignTimeMetadata = {
-				"sap.ui.fl.variants.VariantManagement": {}
-			};
-
-			this.oDesignTime = new DesignTime({
-				designTimeMetadata: oVariantManagementDesignTimeMetadata,
-				rootElements: [this.oPage]
-			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oObjectPageLayoutOverlay = OverlayRegistry.getOverlay(this.oObjectPageLayout);
-				this.oObjectPageSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection);
-				this.oObjectPageSubSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSubSection);
-				this.oLayoutOuterOverlay = OverlayRegistry.getOverlay(this.oLayoutOuter);
-				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
-				this.oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
-				this.oControlVariantPlugin = new ControlVariantPlugin({
-					commandFactory: new CommandFactory()
+			}).then(function(oInitializedModel) {
+				this.oModel = oInitializedModel;
+				this.oVariantManagementControl = new VariantManagement(this.sGlobalVariantManagementId);
+				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
+				this.oObjectPageLayout = new ObjectPageLayout("objPage", {
+					headerContent: [this.oVariantManagementControl],
+					sections: [this.oObjectPageSection]
 				});
-				done();
+				this.oVariantManagementControl.addAssociation("for", "objPage", true);
+				this.oButton2 = new Button();
+				this.oLayoutOuter = new VerticalLayout("verlayouter", {
+					content: [this.oButton2]
+				});
+				this.oPage = new Page("mainPage", {
+					content: [this.oLayoutOuter, this.oObjectPageLayout]
+				}).placeAt("qunit-fixture");
+
+				sap.ui.getCore().applyChanges();
+
+				var oVariantManagementDesignTimeMetadata = {
+					"sap.ui.fl.variants.VariantManagement": {}
+				};
+
+				this.oDesignTime = new DesignTime({
+					designTimeMetadata: oVariantManagementDesignTimeMetadata,
+					rootElements: [this.oPage]
+				});
+
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oObjectPageLayoutOverlay = OverlayRegistry.getOverlay(this.oObjectPageLayout);
+					this.oObjectPageSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection);
+					this.oObjectPageSubSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSubSection);
+					this.oLayoutOuterOverlay = OverlayRegistry.getOverlay(this.oLayoutOuter);
+					this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+					this.oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
+					this.oControlVariantPlugin = new ControlVariantPlugin({
+						commandFactory: new CommandFactory()
+					});
+					done();
+				}.bind(this));
+				sap.ui.getCore().applyChanges();
 			}.bind(this));
-			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -1228,35 +1235,37 @@ sap.ui.define([
 			};
 
 			this.sLocalVariantManagementId = "varMgtKey";
-			this.oModel = FlexTestAPI.createVariantModel({
+			return FlexTestAPI.createVariantModel({
 				data: this.oData,
 				appComponent: this.oMockedAppComponent
-			});
-			this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
-			this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
-			this.oVariantManagementControl.addAssociation("for", "objPage", true);
+			}).then(function(oInitializedModel) {
+				this.oModel = oInitializedModel;
+				this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
+				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
+				this.oVariantManagementControl.addAssociation("for", "objPage", true);
 
-			var oVariantManagementDesignTimeMetadata = {
-				"sap.ui.fl.variants.VariantManagement": {}
-			};
+				var oVariantManagementDesignTimeMetadata = {
+					"sap.ui.fl.variants.VariantManagement": {}
+				};
 
-			this.oVariantManagementControl.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+				this.oVariantManagementControl.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
 
-			this.oDesignTime = new DesignTime({
-				designTimeMetadata: oVariantManagementDesignTimeMetadata,
-				rootElements: [this.oVariantManagementControl]
-			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
-				this.oControlVariantPlugin = new ControlVariantPlugin({
-					commandFactory: new CommandFactory()
+				this.oDesignTime = new DesignTime({
+					designTimeMetadata: oVariantManagementDesignTimeMetadata,
+					rootElements: [this.oVariantManagementControl]
 				});
-				done();
-			}.bind(this));
 
-			sap.ui.getCore().applyChanges();
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
+					this.oControlVariantPlugin = new ControlVariantPlugin({
+						commandFactory: new CommandFactory()
+					});
+					done();
+				}.bind(this));
+
+				sap.ui.getCore().applyChanges();
+			}.bind(this));
 		},
 		afterEach: function () {
 			sandbox.restore();
