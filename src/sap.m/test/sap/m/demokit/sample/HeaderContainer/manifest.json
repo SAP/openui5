@@ -8,7 +8,8 @@
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.m.sample.HeaderContainer.Page",
-			"type": "XML"
+			"type": "XML",
+			"async": true
 		},
 		"dependencies": {
 			"libs": {

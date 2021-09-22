@@ -6,7 +6,11 @@
 		}
 	},
 	"sap.ui5": {
-		"rootView": "sap.m.sample.CookieSettingsDialogPattern.view.App",
+		"rootView": {
+			"viewName": "sap.m.sample.CookieSettingsDialogPattern.view.App",
+			"type": "XML",
+			"async": true
+		},
 		"dependencies": {
 			"libs": {
 				"sap.m": {}
