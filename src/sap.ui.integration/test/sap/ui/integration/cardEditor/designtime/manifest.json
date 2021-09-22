@@ -294,6 +294,17 @@
 				"src": "sap-icon://accept",
 				"shape": "Circle",
 				"backgroundColor": ""
+			},
+			"status": {
+				"text": {
+				 	 "format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+					  		"activities",
+					  		"count"
+						]
+					}
+				}
 			}
 		},
 		"data": {
