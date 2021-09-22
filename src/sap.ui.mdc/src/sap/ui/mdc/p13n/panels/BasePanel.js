@@ -328,7 +328,7 @@ sap.ui.define([
 	BasePanel.prototype._getListControlConfig = function() {
 		return {
 			mode:"MultiSelect",
-			rememberSelections: false,
+			rememberSelections: true,
 			itemPress: [this._onItemPressed, this],
 			selectionChange: [this._onSelectionChange, this],
 			sticky: ["HeaderToolbar", "ColumnHeaders", "InfoToolbar"],

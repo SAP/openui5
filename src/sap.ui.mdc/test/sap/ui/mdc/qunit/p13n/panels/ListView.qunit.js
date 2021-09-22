@@ -257,4 +257,28 @@ sap.ui.define([
 
     });
 
+    QUnit.test("Check selection count after filtering the table control", function(assert) {
+        this.oListView.setP13nModel(new JSONModel(this.oP13nData));
+        var aColumns = [
+            "Fields",
+            "Test"
+        ];
+        this.oListView.setEnableCount(true);
+        this.oListView.setPanelColumns(aColumns);//update the columns
+
+        this.oListView._filterList(false, "Field 4"); // --> only show key4
+        assert.equal(this.oListView.getItems().length, 1, "Only one item found");
+
+        var aItems = Object.assign([], this.oListView.getP13nModel().getProperty("/items"));
+        aItems[3].visible = true;
+        this.oListView.getP13nModel().setProperty("/items", aItems);
+
+        this.oListView._selectTableItem(this.oListView.getItems()[0]);
+        var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+        var sTextFirstColumn = this.oListView._oListControl.getColumns()[0].getHeader().getText();
+
+        //Note: this test serves to check that also filtered lists still "remember" the complete selection state
+        assert.equal(sTextFirstColumn, "Fields " + oRB.getText("p13nDialog.HEADER_COUNT", [4, 6]), "The text has been enhanced with a count (4 are selected, 6 are available)");
+    });
+
 });
