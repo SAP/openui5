@@ -109,7 +109,7 @@ sap.ui.define([
 			this.prepareFieldsInKey(oCurrentData);
 		}
 		oCurrentInstance = this;
-		oPopover = createPopover(oCurrentData);
+		oPopover = createPopover(oCurrentData, oParent);
 		this.addDependent(oPopover);
 		this.oHost = oHost;
 		this.fnApply = fnApply;
@@ -164,12 +164,12 @@ sap.ui.define([
 		return Control.prototype.destroy.apply(this, arguments);
 	};
 
-	function createPopover(oData) {
+	function createPopover(oData, oField) {
 		var oHeader = createHeader(),
 		    oResetToDefaultButton = createResetBtn(oData),
 		    oDynamicPanel = createDynamicPanel(),
 			oCurrentValue = createCurrentValuesBox(),
-		    oSettingsPanel = createSettingPanel(oData),
+		    oSettingsPanel = createSettingPanel(oData, oField),
 		    oPopover = new Popover({
 			id: "settings_popover",
 			showArrow: true,
@@ -564,7 +564,7 @@ sap.ui.define([
 		return oCurrentValue;
 	}
 
-	function createSettingPanel(oData) {
+	function createSettingPanel(oData, oField) {
 		oSettingsPanel = new VBox({ visible: false });
 		var oBox = new VBox().addStyleClass("commonSettings");
 		oSettingsPanel.addItem(oBox);
@@ -615,7 +615,30 @@ sap.ui.define([
 		}).addStyleClass("cbrow"));
 
 		//Binding page admin data to table
-		if (oData.values && oData.values.data) {
+		if (oData.values) {
+			var vData;
+			if (oData.values.data) {
+				var sPath = oData.values.data.path,
+					aPath;
+				if (sPath && sPath !== "/") {
+					if (sPath.startsWith("/")) {
+						sPath = sPath.substring(1);
+					}
+					if (sPath.endsWith("/")) {
+						sPath = sPath.substring(0, sPath.length - 1);
+					}
+					aPath = sPath.split("/");
+					vData = ObjectPath.get(["_values", aPath], oData);
+				} else {
+					vData = ObjectPath.get(["_values"], oData);
+				}
+			} else if (oField.getParent().getParent().getAggregation("_extension")) {
+				var ePath = oData.values.path;
+				if (ePath.length > 1) {
+					ePath = ePath.substring(1);
+				}
+				vData = ObjectPath.get([ePath], oField.getModel().getData());
+			}
 			oBox.addItem(new HBox({
 				visible: "{= ${currentSettings>_next/visible} !== false && ${currentSettings>_next/editable} !== false}",
 				items: [
@@ -626,6 +649,7 @@ sap.ui.define([
 					}),
 					new Button({
 						type: "Transparent",
+						enabled: vData !== undefined,
 						icon: {
 							path: "currentSettings>selectedValues",
 							formatter: function(values) {
@@ -662,33 +686,19 @@ sap.ui.define([
 				]
 			}).addStyleClass("tableHdr");
 			var pavItemText = oData.values.item.text,
-				sPath = oData.values.data.path,
-			    aPath,
-				vData;
-			if (sPath && sPath !== "/") {
-				if (sPath.startsWith("/")) {
-					sPath = sPath.substring(1);
-				}
-				if (sPath.endsWith("/")) {
-					sPath = sPath.substring(0, sPath.length - 1);
-				}
-				aPath = sPath.split("/");
-				vData = ObjectPath.get(["_values", aPath], oData);
-			} else {
-				vData = ObjectPath.get(["_values"], oData);
-			}
-			var pavItemText = oData.values.item.text,
 			    vModel = new JSONModel(vData);
 			pavTable.setModel(vModel);
 			var oTemplate = new ColumnListItem().addStyleClass("pavlistItem");
-			for (var i = 0; i < vData.length; i++) {
-				oTemplate.addCell(new HBox({
-					items: [
-						new Text({
-							text: BindingHelper.createBindingInfos(pavItemText)
-						}).addStyleClass("pavTblCellText")
-					]
-				})).addStyleClass("pavlistItem");
+			if (vData) {
+				for (var i = 0; i < vData.length; i++) {
+					oTemplate.addCell(new HBox({
+						items: [
+							new Text({
+								text: BindingHelper.createBindingInfos(pavItemText)
+							}).addStyleClass("pavTblCellText")
+						]
+					})).addStyleClass("pavlistItem");
+				}
 			}
 			pavTable.bindItems("/", oTemplate);
 			var oScrollContainer = new ScrollContainer({
