@@ -16,6 +16,23 @@ sap.ui.define([
 					}
 				};
 			}
+		},
+		aggregations: {
+			content: {
+				propagateMetadata: function(oElement) {
+					return {
+						actions: "not-adaptable"
+					};
+				}
+			}
+		},
+		properties: {
+			showAdaptFiltersButton: {
+				ignore: false
+			},
+			p13nMode: {
+				ignore: false
+			}
 		}
 	};
 });
