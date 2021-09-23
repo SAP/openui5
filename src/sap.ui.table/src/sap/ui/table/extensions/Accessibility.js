@@ -734,7 +734,6 @@ sap.ui.define([
 					break;
 
 				case AccExtension.ELEMENTTYPES.CONTAINER: //The table container
-					mAttributes["role"] = "application";
 					break;
 
 				case AccExtension.ELEMENTTYPES.CONTENT: //The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
