@@ -2049,7 +2049,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act
-		this.multiInput1.setSelectionItem(oItem, true);
+		this.multiInput1.setSelectedKey(oItem.getKey());
 		Core.applyChanges();
 
 		// assert

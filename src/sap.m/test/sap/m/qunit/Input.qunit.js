@@ -3548,31 +3548,6 @@ sap.ui.define([
 		oInput._$input.trigger("focus").val("It").trigger("input");
 		this.clock.tick(300);
 
-		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		this.clock.tick();
-		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ENTER);
-		this.clock.tick();
-
-		// Assert
-		assert.strictEqual(fnOnChangeSpy.calledOnce, true, "change event handler only called once");
-
-		// Clean
-		fnOnChangeSpy.restore();
-		oInput.destroy();
-	});
-
-	QUnit.test("Set selection with 'ENTER' key press", function(assert) {
-		// Arrange
-		var oInput = createInputWithSuggestions();
-		var fnOnChangeSpy = this.spy(InputBase.prototype, 'onChange');
-
-		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// Act
-		oInput._$input.trigger("focus").val("It").trigger("input");
-		this.clock.tick(300);
-
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ENTER);
 		this.clock.tick();
 
@@ -3606,7 +3581,6 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oSetSelectionItemSpy.calledOnce, true, "'setSelectionItem' was called once.");
 		assert.strictEqual(oSetSelectionItemSpy.firstCall.args[1], true, "Second parameter was 'true' indicating the selection was made by interaction.");
 		assert.strictEqual(oInput.getSelectedKey(), "2", "The 'selectedKey' property was set properly");
 
@@ -4946,13 +4920,14 @@ sap.ui.define([
 		assert.notOk(oInput._oClearButton.getVisible(), "clear icon should not be visible when value is empty");
 
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("G").trigger("input");
-		this.clock.tick(300);
+		qutils.triggerKeyup(oInput._$input, "G");
+		sap.ui.getCore().applyChanges();
 
 		assert.ok(oInput._oClearButton.getVisible(), "clear icon should be visible when value is not empty");
 
-		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
 		oInput._$input.val("").trigger("input");
-		this.clock.tick(300);
+		qutils.triggerKeyup(oInput._$input, KeyCodes.BACKSPACE);
+		sap.ui.getCore().applyChanges();
 
 		assert.notOk(oInput._oClearButton.getVisible(), "clear icon should not be visible when value is empty");
 

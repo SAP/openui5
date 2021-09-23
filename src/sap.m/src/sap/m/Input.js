@@ -647,7 +647,7 @@ function(
 
 		this._deregisterEvents();
 
-		if (sSelectedKey) {
+		if (sSelectedKey && !this.getSelectedItem() && this.getSuggestionItemByKey(sSelectedKey)) {
 			this.setSelectedKey(sSelectedKey);
 		}
 
@@ -1742,8 +1742,6 @@ function(
 		// always focus input field when typing in it
 		this.addStyleClass("sapMFocus");
 
-		this.setProperty("effectiveShowClearIcon", !!sValue);
-
 		// No need to fire suggest event when suggestion feature isn't enabled or runs on the phone.
 		// Because suggest event should only be fired by the input in dialog when runs on the phone.
 		if (this.getShowSuggestion() && !this.isMobileDevice()) {
@@ -1767,6 +1765,15 @@ function(
 	Input.prototype.onkeydown = function (oEvent) {
 		// disable the typeahead feature for android devices due to an issue on android soft keyboard, which always returns keyCode 229
 		this._bDoTypeAhead = !Device.os.android && this.getAutocomplete() && (oEvent.which !== KeyCodes.BACKSPACE) && (oEvent.which !== KeyCodes.DELETE);
+	};
+
+	Input.prototype.onkeyup = function (oEvent) {
+		var sValue = this.getValue();
+		if ([KeyCodes.BACKSPACE, KeyCodes.DELETE].indexOf(oEvent.which) !== -1 && !sValue) {
+			this.setSelectedKey(null);
+		}
+
+		this.getShowClearIcon() && this.setProperty("effectiveShowClearIcon", !!sValue);
 	};
 
 	/**
