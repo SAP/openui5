@@ -5613,6 +5613,258 @@ usePreliminaryContext : false}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: Use ODataListBinding#create to create a new entity and discard it afterwards.
+	// JIRA: CPOUI5MODELS-616
+	QUnit.test("ODataListBinding#create: create and discard", function (assert) {
+		var oBinding, oCreatedContext, oTable,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<Table growing="true" growingThreshold="2" id="SalesOrderList" items="{/SalesOrderSet}">\
+	<Text id="SalesOrderNote" text="{Note}" />\
+</Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=2", {
+				results : []
+			})
+			.expectValue("SalesOrderNote", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("SalesOrderList");
+			oBinding = oTable.getBinding("items");
+
+			that.expectValue("SalesOrderNote", ["baz"]);
+
+			// code under test
+			oCreatedContext = oBinding.create({Note : "baz"});
+
+			assert.strictEqual(oBinding.getLength(), 1);
+			assert.strictEqual(oBinding.getCount(), 1);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oTable.getItems().length, 1);
+
+			that.expectValue("SalesOrderNote", [""]);
+
+			return Promise.all([
+				// code under test
+				oModel.resetChanges([oCreatedContext.getPath()], undefined, true),
+				// code under test
+				oCreatedContext.created().then(function () {
+					assert.ok(false, "unexpected success");
+				}, function (oError) {
+					assert.strictEqual(oError.aborted, true);
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(oBinding.getLength(), 0);
+			assert.strictEqual(oBinding.getCount(), 0);
+			assert.strictEqual(oTable.getItems().length, 0);
+
+			that.expectValue("SalesOrderNote", ["foo"]);
+
+			// code under test
+			oCreatedContext = oBinding.create({Note : "foo"});
+
+			assert.strictEqual(oBinding.getLength(), 1);
+			assert.strictEqual(oBinding.getCount(), 1);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {
+							type : "GWSAMPLE_BASIC.SalesOrder"
+						},
+						Note : "foo"
+					},
+					deepPath : "/SalesOrderSet('~key~')",
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, {
+					data : {
+						__metadata : {
+							uri : "SalesOrderSet('42')"
+						},
+						Note : "bar",
+						SalesOrderID : "42"
+					},
+					statusCode : 201
+				})
+				.expectValue("SalesOrderNote", ["bar"]);
+
+			oModel.submitChanges();
+
+			return Promise.all([
+				// code under test
+				oCreatedContext.created(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create the first entry on a relative list binding with a parent context for an
+	// entity that has been read from the server and persist the data. After that change the parent
+	// context to a transient context. Ensure that the table for this list binding gets a change
+	// event and clears its content.
+	// JIRA: CPOUI5MODELS-616
+	QUnit.test("Clear table if parent context is transient", function (assert) {
+		var oBinding, oObjectPage, oTable,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox id="objectPage">\
+	<Text id="salesOrderId" text="{SalesOrderID}" />\
+	<Table id="table" items="{ToLineItems}">\
+		<Text id="salesOrderNote" text="{Note}" />\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function (oView) {
+			oObjectPage = that.oView.byId("objectPage");
+
+			that.expectHeadRequest()
+				.expectRequest("SalesOrderSet('1')", {
+					SalesOrderID : "1"
+				})
+				.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=100", {
+					results : []
+				})
+				.expectValue("salesOrderId", "1")
+				.expectValue("salesOrderNote", []);
+
+			oObjectPage.bindElement({path : "/SalesOrderSet('1')"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oCreatedContext;
+
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("items");
+
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {
+							type : "GWSAMPLE_BASIC.SalesOrderLineItem"
+						},
+						Note : "foo"
+					},
+					deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
+					method : "POST",
+					requestUri : "SalesOrderSet('1')/ToLineItems"
+				}, {
+					data : {
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+						},
+						Note : "foo",
+						SalesOrderID : "1",
+						ItemPosition : "10"
+					},
+					statusCode : 201
+				})
+				.expectValue("salesOrderNote", ["foo"]);
+
+			oCreatedContext = oBinding.create({Note : "foo"});
+			oModel.submitChanges();
+
+			return Promise.all([
+				oCreatedContext.created(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			var oCreatedContext = oModel.createEntry("/SalesOrderSet", {
+					properties : {SalesOrderID : "new"}
+				});
+
+			assert.strictEqual(oTable.getItems().length, 1);
+
+			that.expectValue("salesOrderId", "new");
+
+			// code under test
+			oObjectPage.bindElement({path : oCreatedContext.getPath()});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oTable.getItems().length, 0);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Relative listbinding with transient contexts gets refreshed with bForceUpdate set
+	// to true. Ensure, that the created entites are kept.
+	// JIRA: CPOUI5MODELS-616
+	QUnit.test("ODataListBinding#create: keep created after refresh", function (assert) {
+		var oModel = createSalesOrdersModelMessageScope(),
+			oTable,
+			sView = '\
+<FlexBox id="page" binding="{/SalesOrderSet(\'1\')}">\
+	<Table growing="true" growingThreshold="20" id="table" items="{ToLineItems}">\
+		<Input id="note" value="{Note}" />\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
+				__metadata : {uri : "SalesOrderSet('1')"},
+				SalesOrderID : "1"
+			})
+			.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=20", {
+				results : [{
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+					},
+					Note : "Foo",
+					ItemPosition : "10",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectValue("note", ["Foo"])
+			.expectMessages([]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectValue("note", ["Bar"]);
+
+			oTable.getBinding("items").create({Note : "Bar"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oTable.getItems().length, 2);
+
+			that.expectRequest("SalesOrderSet('1')", {
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1"
+				})
+				.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=19", {
+					results : [{
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+						},
+						Note : "Foo",
+						ItemPosition : "10",
+						SalesOrderID : "1"
+					}]
+				});
+
+			// code under test
+			that.oView.byId("page").getElementBinding().refresh(true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oTable.getItems().length, 2);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Read an entity (SalesOrderLineItem) with an expand on a 0..1 navigation property
 	// (ToProduct) plus an expand of a second 0..1 navigation property from the first one
 	// (ToProduct/ToSupplier). Element bindings on the second navigation property have a valid
