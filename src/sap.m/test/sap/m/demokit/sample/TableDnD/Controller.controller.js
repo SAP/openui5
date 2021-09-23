@@ -18,18 +18,20 @@ sap.ui.define([
 		},
 
 		initSampleProductsModel: function() {
-			var oData = jQuery.sap.sjax({
+			var oModel = new JSONModel();
+
+			jQuery.ajax({
 				url: sap.ui.require.toUrl("sap/ui/demo/mock/products.json"),
 				dataType: "json"
-			}).data;
+			}).then(function(oData) {
+				// prepare and initialize the rank property
+				oData.ProductCollection.forEach(function(oProduct) {
+					oProduct.Rank = Utils.ranking.Initial;
+				}, this);
 
-			// prepare and initialize the rank property
-			oData.ProductCollection.forEach(function(oProduct) {
-				oProduct.Rank = Utils.ranking.Initial;
-			}, this);
+				oModel.setData(oData);
+			});
 
-			var oModel = new JSONModel();
-			oModel.setData(oData);
 			return oModel;
 		},
 
