@@ -166,7 +166,7 @@ sap.ui.define([
 				return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
 					var aChanges = oResult.changes.changes;
 					assert.equal(aChanges.length, 5, "five changes are loaded");
-					assert.equal(aChanges[0].fileName, "1_localIdClone", "the file name of the first change is correct");
+					assert.equal(aChanges[0].fileName, "1", "the file name of the first change is correct - MUST BE THE SAME");
 					assert.deepEqual(aChanges[0].selector, {
 						id: "ProductDetail--GeneralForm--generalForm",
 						idIsLocal: true
@@ -205,7 +205,7 @@ sap.ui.define([
 							idIsLocal: true
 						}]
 					}, "the dependent selector of the third change is correct");
-					assert.equal(aChanges[3].fileName, "3_localIdClone", "the file name of the forth change is correct");
+					assert.equal(aChanges[3].fileName, "3", "the file name of the forth change is correct - MUST BE THE SAME");
 					assert.deepEqual(aChanges[3].selector, {
 						id: "ProductDetail--GeneralForm--generalForm",
 						idIsLocal: true

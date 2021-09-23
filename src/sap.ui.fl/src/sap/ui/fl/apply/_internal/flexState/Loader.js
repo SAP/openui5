@@ -36,9 +36,8 @@ sap.ui.define([
 				for (var i = aFlexItems.length - 1; i >= 0; i--) {
 					var oFlexItem = aFlexItems[i];
 					if (!oFlexItem.selector.idIsLocal) {
+						// ensure the UID stays the same to send the correct ID on a condensing request (delete section)
 						var oFlexItemCopy = deepClone(oFlexItem);
-						// ensure a UID of the change for dependency handling
-						oFlexItemCopy.fileName = oFlexItemCopy.fileName + "_localIdClone";
 						oFlexItemCopy.selector = getIdIsLocalTrueObject(oFlexItemCopy.selector);
 
 						// do the same for dependentSelectors
