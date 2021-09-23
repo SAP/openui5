@@ -36,6 +36,22 @@ sap.ui.define([
 	var ListMode = library.ListMode;
 	var Sticky = library.Sticky;
 
+	/**
+	 * Constructor for a new <code>MTable</code> content.
+	 *
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
+	 * @class Content for the <code>sap.ui.mdc.valuehelp.base.Container</code> element using a sap.m.Table.
+	 * @extends sap.ui.mdc.valuehelp.base.FilterableListContent
+	 * @version ${version}
+	 * @constructor
+	 * @abstract
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * @since 1.95.0
+	 * @alias sap.ui.mdc.valuehelp.content.MTable
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	var MTable = FilterableListContent.extend("sap.ui.mdc.valuehelp.content.MTable", /** @lends sap.ui.mdc.valuehelp.content.MTable.prototype */
 	{
 		metadata: {
@@ -48,12 +64,18 @@ sap.ui.define([
 
 			},
 			aggregations: {
+				/**
+				 * Table to be used in value help
+				 */
 				table: {
 					type: "sap.m.Table",
 					multiple: false
 				}
 			},
 			events: {
+				/**
+				 * This event is fired if the content of the table is updated
+				 */
 				contentUpdated: {} // TODO: Better way to solve missing popover maxheight? Part of ITypeahead? Or is this explicitly for IPopoverContent?
 			},
 			defaultAggregation: "table"
@@ -130,7 +152,7 @@ sap.ui.define([
 		var oDelegatePayload = this._getValueHelpDelegatePayload();
 
 		var oFilterBar = this._getPriorityFilterBar();
-		var oConditions = oFilterBar ? oFilterBar.getInternalConditions() : this.getProperty("_inConditions"); // use InParameter if no FilterBar
+		var oConditions = oFilterBar ? oFilterBar.getInternalConditions() : this.getProperty("inConditions"); // use InParameter if no FilterBar
 		var oConditionTypes = oConditions && this._getTypesForConditions(oConditions);
 		var oFilter = oConditions && FilterConverter.createFilters( oConditions, oConditionTypes, undefined, this.getCaseSensitive());
 		var aFilters = oFilter && [oFilter];

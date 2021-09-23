@@ -709,9 +709,10 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oConfig.bindingContext] <code>BindingContext</code> of the checked field. Inside a table the <code>ValueHelp</code> element might be connected to a different row.
 	 * @param {boolean} [oConfig.checkKeyFirst] If set, the value help checks first if the value fits a key // TODO: not longer needed?
 	 * @param {boolean} oConfig.checkKey If set, the value help checks only if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
-	 * @param {boolean} oConfig.checkDescription If set, the field help checks only if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
+	 * @param {boolean} oConfig.checkDescription If set, the value help checks only if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
 	 * @param {sap.ui.mdc.condition.ConditionModel} [oConfig.conditionModel] <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @param {string} [oConfig.conditionModelName] Name of the <code>ConditionModel</code>, in case of <code>FilterField</code>
+	 * @param {boolean} [oConfig.caseSensitive] If set, the check is done case sensitive
 	 * @returns {Promise<sap.ui.mdc.field.FieldHelpItem>} Promise returning object containing description, key, in and out parameters.
 	 * @throws {sap.ui.model.FormatException|sap.ui.model.ParseException} if entry is not found or not unique
 	 *
@@ -762,12 +763,11 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	ValueHelp.prototype.isValidationSupported = function(oConfig) { // isUsableForValidation also necessary?
+	ValueHelp.prototype.isValidationSupported = function() { // isUsableForValidation also necessary?
 
 		var oTypeahead = this.getTypeahead();
-		if (oTypeahead) {
-			return oTypeahead.isValidationSupported();
-		}
+
+		return oTypeahead && oTypeahead.isValidationSupported();
 
 	};
 
@@ -813,11 +813,11 @@ sap.ui.define([
 				}
 				if (bUpdate) {
 					var vNewValue;
+					var oNewCondition;
 					if (bUseConditions) {
 						if (!Array.isArray(vValue)) {
 							throw new Error("Value on OutParameter must be an array " + oOutParameter);
 						}
-						var oNewCondition;
 						vNewValue = merge([], vValue);
 					} else {
 						vNewValue = vValue;
@@ -1238,9 +1238,10 @@ sap.ui.define([
 
 		var aBindings = [];
 		var bBindingChanged = false;
+		var oMyBindingContext;
 
 		if (oBindingContext) {
-			var oMyBindingContext = this.oBindingContexts[undefined]; // as getBindingContext returns propagated Context if own context don't fit to model
+			oMyBindingContext = this.oBindingContexts[undefined]; // as getBindingContext returns propagated Context if own context don't fit to model
 			if (oBindingContext && Context.hasChanged(oMyBindingContext, oBindingContext)) {
 				bBindingChanged = true;
 			}

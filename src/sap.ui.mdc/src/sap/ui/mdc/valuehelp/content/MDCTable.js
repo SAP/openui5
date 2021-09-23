@@ -252,6 +252,22 @@ sap.ui.define([
 		}
 	}
 
+	// TODO:  @ui5-restricted sap.ui.mdc
+	/**
+	 * Constructor for a new <code>MDCTable</code> content.
+	 *
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
+	 * @class Content for the <code>sap.ui.mdc.valuehelp.base.Container</code> element using a sap.ui.mdc.Table.
+	 * @extends sap.ui.mdc.valuehelp.base.FilterableListContent
+	 * @version ${version}
+	 * @constructor
+	 * @abstract
+	 * @private
+	 * @since 1.95.0
+	 * @alias sap.ui.mdc.valuehelp.content.MDCTable
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	var MDCTable = FilterableListContent.extend("sap.ui.mdc.valuehelp.content.MDCTable", /** @lends sap.ui.mdc.valuehelp.content.MDCTable.prototype */
 	{
 		metadata: {
@@ -262,6 +278,9 @@ sap.ui.define([
 			properties: {
 			},
 			aggregations: {
+				/**
+				 * Table to be used in value help
+				 */
 				table: {
 					type: "sap.ui.mdc.Table",
 					multiple: false

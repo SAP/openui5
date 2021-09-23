@@ -3,33 +3,76 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/Control',
-	'sap/ui/base/ManagedObjectObserver'
+	'sap/ui/core/Control'//,
+	//'sap/ui/base/ManagedObjectObserver'
 ], function(
-	Control,
-	ManagedObjectObserver
+	Control//,
+	//ManagedObjectObserver
 ) {
 	"use strict";
 
+	/**
+	 * Constructor for a new <code>DialogTab</code>.
+	 *
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
+	 * @class Content for the <code>sap.ui.mdc.valuehelp.content.Dialog</code> element.
+	 * @extends sap.ui.core.Control
+	 * @version ${version}
+	 * @constructor
+	 * @abstract
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * @since 1.95.0
+	 * @alias sap.ui.mdc.valuehelp.base.DialogTab
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	var DialogTab = Control.extend("sap.ui.mdc.valuehelp.base.DialogTab", /** @lends sap.ui.mdc.valuehelp.base.DialogTab.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
+				/**
+				 * Content control
+				 */
 				content: {
-					type: "object"
+					type: "object" // as a Control can officially not be a property
 				}
 			},
 			// aggregations: {
 			// },
 			events: {
-				select: {
+				/**
+				 * Fired if the selected condition changed.
+				 */
+				 select: {
 					parameters: {
+						/**
+						 * Type of the selection change (add, remove)
+						 */
 						type: { type: "sap.ui.mdc.enum.SelectType" },
+						/**
+						 * Changed conditions
+						 *
+						 * <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
+						 */
 						conditions: { type: "object[]" }
 					}
 				},
-				confirm: {},
+				/**
+				 * Fired if a change on the content is confirmed
+				 */
+				 confirm: {
+					parameters: {
+						/**
+						 * True if the value help need to be closed
+						 */
+						close: { type: "boolean" }
+					}
+				},
+				/**
+				 * Fired if the change is cancelled.
+				 */
 				cancel: {}
 			}
 		},

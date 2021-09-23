@@ -90,6 +90,7 @@ sap.ui.define([
 		assert.notOk(oContainer.shouldOpenOnClick(), "shouldOpenOnClick");
 		assert.notOk(oContainer.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
 		assert.ok(oContainer.isFocusInHelp(), "isFocusInHelp");
+		assert.notOk(oContainer.isValidationSupported(), "isValidationSupported");
 
 	});
 

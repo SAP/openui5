@@ -27,6 +27,23 @@ sap.ui.define([
 
 	var MDialog, MLibrary, Button, ManagedObjectModel, IconTabBar, IconTabFilter;
 	var Panel, HBox, Tokenizer, Token, formatMessage;
+
+	/**
+	 * Constructor for a new <code>Dialog</code> container.
+	 *
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
+	 * @class Container for the <code>sap.ui.mdc.ValueHelp</code> element showing a dialog.
+	 * @extends sap.ui.mdc.valuehelp.base.Container
+	 * @version ${version}
+	 * @constructor
+	 * @abstract
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * @since 1.95.0
+	 * @alias sap.ui.mdc.valuehelp.Dialog
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	var Dialog = Container.extend("sap.ui.mdc.valuehelp.Dialog", /** @lends sap.ui.mdc.valuehelp.Dialog.prototype */
 	{
 		metadata: {
@@ -35,11 +52,6 @@ sap.ui.define([
 				"sap.ui.mdc.valuehelp.IDialogContainer"
 			],
 			properties: {
-				title: {
-					type: "string",
-					group: "Appearance",
-					defaultValue: ""
-				},
 				_selectedContentKey: {
 					type: "string",
 					visibility: "hidden"

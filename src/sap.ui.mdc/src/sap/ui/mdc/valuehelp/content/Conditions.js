@@ -16,7 +16,23 @@ sap.ui.define([
 	Common
 ) {
 	"use strict";
-	var Conditions = Content.extend(
+	/**
+	 * Constructor for a new <code>Conditions</code> content.
+	 *
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
+	 * @class Content for the <code>sap.ui.mdc.valuehelp.base.Container</code> element showing a condition panel.
+	 * @extends sap.ui.mdc.valuehelp.base.Content
+	 * @version ${version}
+	 * @constructor
+	 * @abstract
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * @since 1.95.0
+	 * @alias sap.ui.mdc.valuehelp.content.Conditions
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	 var Conditions = Content.extend(
 		"sap.ui.mdc.valuehelp.content.Conditions" /** @lends sap.ui.mdc.valuehelp.content.Conditions.prototype */,
 		{
 			metadata: {
@@ -35,6 +51,9 @@ sap.ui.define([
 //						defaultValue: true,
 //						visibility: "hidden"
 //					}
+					/**
+					 * Label shown on condition panel.
+					 */
 					label: {
 						type: "string"
 					}
