@@ -164,7 +164,6 @@ sap.ui.define([
 		this.bIgnoreSuspend = true;
 
 		this._fireChange({reason: ChangeReason.Sort});
-		// TODO remove this if the sorter event gets removed which is deprecated
 		this._fireSort({sorter: aSorters});
 		this.bIgnoreSuspend = false;
 
@@ -236,7 +235,6 @@ sap.ui.define([
 		this.bIgnoreSuspend = true;
 
 		this._fireChange({reason: ChangeReason.Filter});
-		// TODO remove this if the filter event gets removed which is deprecated
 		if (sFilterType == FilterType.Application) {
 			this._fireFilter({filters: this.aApplicationFilters});
 		} else {
