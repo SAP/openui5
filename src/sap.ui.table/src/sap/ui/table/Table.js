@@ -1549,11 +1549,6 @@ sap.ui.define([
 			});
 		}, this);
 
-		var oScrollExtension = this._getScrollExtension();
-		oScrollExtension.updateHorizontalScrollbar(oTableSizes);
-		oScrollExtension.updateVerticalScrollbarPosition();
-		oScrollExtension.updateVerticalScrollbarVisibility();
-
 		var $this = this.$();
 
 		if (TableUtils.hasRowActions(this) || TableUtils.hasRowNavigationIndicators(this)) {

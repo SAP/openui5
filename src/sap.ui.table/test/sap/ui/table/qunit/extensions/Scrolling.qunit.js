@@ -80,18 +80,77 @@ sap.ui.define([
 	});
 
 	QUnit.test("Horizontal scrollbar visibility", function(assert) {
-		var oScrollExtension = this.oTable._getScrollExtension();
+		var oTable = this.oTable;
+		var oScrollExtension = oTable._getScrollExtension();
 		var oHSb = oScrollExtension.getHorizontalScrollbar();
+		var oModel = oTable.getModel();
 
-		assert.ok(oHSb.offsetWidth > 0 && oHSb.offsetHeight > 0, "Table content does not fit width -> Horizontal scrollbar is visible");
+		assert.ok(oHSb.offsetWidth > 0 && oHSb.offsetHeight > 0, "Table content does not fit: Horizontal scrollbar is visible");
 
-		this.oTable.getColumns()[0].setWidth("10px");
-		sap.ui.getCore().applyChanges();
+		oTable.getColumns()[0].setWidth("10px");
+		oTable.rerender();
+		assert.ok(oHSb.offsetWidth === 0 && oHSb.offsetHeight === 0, "Table content does fit: Horizontal scrollbar is not visible");
 
-		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			oHSb = oScrollExtension.getHorizontalScrollbar();
-			assert.ok(oHSb.offsetWidth === 0 && oHSb.offsetHeight === 0, "Table content fits width -> Horizontal scrollbar is not visible");
+		oTable.setSelectionMode(tableLibrary.SelectionMode.None);
+		oTable.setVisibleRowCount(6);
+		oTable.getColumns()[0].setWidth("495px");
+		oTable.rerender();
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oModel.oData.push({});
+			oModel.refresh();
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.ok(oHSb.offsetWidth > 0 && oHSb.offsetHeight > 0,
+				"Increase binding length so that vertical scrollbar appears: Horizontal scrollbar is visible");
+
+			oTable.setVisibleRowCountMode(tableLibrary.VisibleRowCountMode.Auto);
+		}).then(oTable.qunit.whenRenderingFinished).then(oTable.qunit.$resize({height: "400px"})).then(function() {
+			assert.ok(oHSb.offsetWidth > 0 && oHSb.offsetHeight > 0,
+				"Decrease visible rows so that vertical scrollbar appears: Horizontal scrollbar is visible");
 		});
+	});
+
+	// Test fails in Safari, skip until fixed
+	QUnit[Device.browser.safari ? "skip" : "test"]("Horizontal scrollbar position", function(assert) {
+		var oTable = this.oTable;
+		var oScrollExtension = oTable._getScrollExtension();
+		var oHSb = oScrollExtension.getHorizontalScrollbar();
+		var oHSbContent = oTable.getDomRef("hsb-content");
+		var oHSbComputedStyle = window.getComputedStyle(oHSb);
+		var oHSbContentComputedStyle = window.getComputedStyle(oHSbContent);
+
+		oTable.rerender();
+		assert.strictEqual(oHSbComputedStyle.marginLeft, "48px", "Left margin");
+		assert.strictEqual(oHSbComputedStyle.marginRight, "17px", "Right margin");
+		assert.strictEqual(oHSbContentComputedStyle.width, "800px", "Scroll range");
+
+		oTable.getColumns()[0].setWidth("10px");
+		oTable.rerender();
+		assert.strictEqual(oHSb.style.marginLeft, "", "Scrollbar hidden: Left margin");
+		assert.strictEqual(oHSb.style.marginRight, "", "Scrollbar hidden: Right margin");
+		assert.strictEqual(oHSbContent.style.width, "", "Scrollbar hidden: Scroll range");
+
+		oTable.getColumns()[0].setWidth("500px");
+		oTable.insertColumn(TableQUnitUtils.createTextColumn().setWidth("40px"), 0);
+		oTable.setFixedColumnCount(1);
+		oTable.setRowActionCount(2);
+		oTable.setRowActionTemplate(new RowAction({items: [new RowActionItem({type: tableLibrary.RowActionType.Navigation})]}));
+		oTable.rerender();
+		assert.strictEqual(oHSbComputedStyle.marginLeft, "88px", "Fixed columns and row actions: Left margin");
+		assert.strictEqual(oHSbComputedStyle.marginRight, "107px", "Fixed columns and row actions: Right margin");
+		assert.strictEqual(oHSbContentComputedStyle.width, "500px", "Fixed columns and row actions: Scroll range");
+
+		return TableQUnitUtils.changeTextDirection(true).then(function() {
+			oTable.setFixedColumnCount(0);
+			oTable.getColumns()[0].destroy();
+			oTable.rerender();
+		}).then(oTable.qunit.whenRenderingFinished()).then(function() {
+			oHSbComputedStyle = window.getComputedStyle(oScrollExtension.getHorizontalScrollbar());
+			oHSbContentComputedStyle = window.getComputedStyle(oTable.getDomRef("hsb-content"));
+			assert.strictEqual(oHSbComputedStyle.marginLeft, "107px", "RTL: Left margin");
+			assert.strictEqual(oHSbComputedStyle.marginRight, "48px", "RTL: Right margin");
+			assert.strictEqual(oHSbContentComputedStyle.width, "500px", "RTL: Scroll range");
+		}).finally(TableQUnitUtils.$changeTextDirection(false));
 	});
 
 	QUnit.test("Vertical scrollbar visibility", function(assert) {
@@ -129,6 +188,22 @@ sap.ui.define([
 		}).finally(function() {
 			sap.ui.table.TableRenderer.apiVersion = iOriginalApiVersion;
 		});
+	});
+
+	QUnit.test("Vertical scrollbar position", function(assert) {
+		var oScrollExtension = this.oTable._getScrollExtension();
+		var oVSb = oScrollExtension.getVerticalScrollbar();
+		var oVSbComputedStyle = window.getComputedStyle(oVSb);
+
+		this.oTable.setColumnHeaderHeight(78);
+		this.oTable.rerender();
+		assert.strictEqual(oVSbComputedStyle.top, this.oTable.getDomRef("tableCCnt").offsetTop + "px", "Top position");
+
+		this.oTable.setVisibleRowCount(2);
+		this.oTable.setFixedRowCount(1);
+		this.oTable.rerender();
+		assert.strictEqual(oVSbComputedStyle.top, this.oTable.getDomRef("tableCCnt").offsetTop + TableUtils.BaseSize.sapUiSizeCozy + "px",
+			"Fixed rows: Top position");
 	});
 
 	QUnit.test("Vertical scrollbar height if variable row heights enabled", function(assert) {
@@ -358,49 +433,6 @@ sap.ui.define([
 		});
 	});
 
-	// test fails in Safari, skip until fixed
-	QUnit[Device.browser.safari ? "skip" : "test"]("updateHorizontalScrollbar", function(assert) {
-		var oTable = this.oTable;
-		var oScrollExtension = oTable._getScrollExtension();
-		var oHSb = oScrollExtension.getHorizontalScrollbar();
-		var oTableSizes = oTable._collectTableSizes(oTable._collectRowHeights());
-		var oHSbContent = oTable.getDomRef("hsb-content");
-
-		oTableSizes.tableCtrlScrWidth = 392;
-		oTableSizes.tableCtrlScrollWidth = 393;
-		oTableSizes.tableCtrlFixedWidth = 10;
-		oTableSizes.tableRowHdrScrWidth = 20;
-		oScrollExtension.updateHorizontalScrollbar(oTableSizes);
-		assert.ok(oScrollExtension.isHorizontalScrollbarVisible(), "The scrollbar is visible");
-		assert.strictEqual(oHSb.style.marginLeft, "30px", "The left margin is correct");
-		assert.strictEqual(oHSb.style.marginRight, "", "The right margin is correct");
-		assert.strictEqual(oHSbContent.style.width, "393px", "The scroll range is correct");
-
-		oTable._bRtlMode = true;
-		oScrollExtension.updateHorizontalScrollbar(oTableSizes);
-		assert.ok(oScrollExtension.isHorizontalScrollbarVisible(), "RTL: The scrollbar is visible");
-		assert.strictEqual(oHSb.style.marginLeft, "", "RTL: The left margin is correct");
-		assert.strictEqual(oHSb.style.marginRight, "30px", "RTL: The right margin is correct");
-		assert.strictEqual(oHSbContent.style.width, "393px", "RTL: The scroll range is correct");
-
-		oTable._bRtlMode = false;
-		oTableSizes.tableCtrlScrWidth = 393;
-		oTableSizes.tableCtrlFixedWidth = 20;
-		oTableSizes.tableRowHdrScrWidth = 30;
-		oScrollExtension.updateHorizontalScrollbar(oTableSizes);
-		assert.ok(!oScrollExtension.isHorizontalScrollbarVisible(), "The scrollbar is not visible");
-		assert.strictEqual(oHSb.style.marginLeft, "", "RTL: The left margin is correct");
-		assert.strictEqual(oHSb.style.marginRight, "30px", "RTL: The right margin is correct");
-		assert.strictEqual(oHSbContent.style.width, "393px", "The scroll range is correct");
-
-		oTableSizes.tableCtrlScrollWidth = 444;
-		oScrollExtension.updateHorizontalScrollbar(oTableSizes);
-		assert.ok(oScrollExtension.isHorizontalScrollbarVisible(), "The scrollbar is visible");
-		assert.strictEqual(oHSb.style.marginLeft, "50px", "The left margin is correct");
-		assert.strictEqual(oHSb.style.marginRight, "", "The right margin is correct");
-		assert.strictEqual(oHSbContent.style.width, "444px", "The scroll range is correct");
-	});
-
 	QUnit.test("updateVerticalScrollbarHeight", function(assert) {
 		var oScrollExtension = this.oTable._getScrollExtension();
 		var oVSb = oScrollExtension.getVerticalScrollbar();
@@ -422,29 +454,6 @@ sap.ui.define([
 		assert.strictEqual(window.getComputedStyle(oVSb).maxHeight, iInitialVSbHeight + "px", "The maximum height is " + iInitialVSbHeight + "px");
 
 		oGetVerticalScrollbarHeightStub.restore();
-	});
-
-	QUnit.test("updateVerticalScrollbarPosition", function(assert) {
-		var oTable = this.oTable;
-		var oScrollExtension = oTable._getScrollExtension();
-		var iExpectedTopPosition;
-
-		oTable.getDomRef().querySelector(".sapUiTableColHdrCnt").style.height = "78px";
-		oScrollExtension.updateVerticalScrollbarPosition();
-		iExpectedTopPosition = oTable.getDomRef("tableCCnt").offsetTop + TableUtils.BaseSize.sapUiSizeCozy;
-		assert.strictEqual(window.getComputedStyle(oScrollExtension.getVerticalScrollbar()).top, iExpectedTopPosition + "px",
-			"The top position is " + iExpectedTopPosition + "px");
-
-		oTable.setFixedRowCount(0);
-		sap.ui.getCore().applyChanges();
-
-		return oTable.qunit.whenRenderingFinished().then(function() {
-			oTable.getDomRef().querySelector(".sapUiTableColHdrCnt").style.height = "78px";
-			oScrollExtension.updateVerticalScrollbarPosition();
-			iExpectedTopPosition = oTable.getDomRef("tableCCnt").offsetTop;
-			assert.strictEqual(window.getComputedStyle(oScrollExtension.getVerticalScrollbar()).top, iExpectedTopPosition + "px",
-				"The top position is " + iExpectedTopPosition + "px");
-		});
 	});
 
 	QUnit.test("updateVerticalScrollHeight", function(assert) {
@@ -517,28 +526,6 @@ sap.ui.define([
 		oGetTotalRowCountStub.restore();
 		oGetRowCountsStub.restore();
 		oGetBaseRowHeightStub.restore();
-	});
-
-	QUnit.test("updateVerticalScrollbarVisibility", function(assert) {
-		var oScrollExtension = this.oTable._getScrollExtension();
-		var oVSb = oScrollExtension.getVerticalScrollbar();
-		var oIsVerticalScrollbarRequiredStub = sinon.stub(oScrollExtension, "isVerticalScrollbarRequired");
-
-		oIsVerticalScrollbarRequiredStub.returns(true);
-		oScrollExtension.updateVerticalScrollbarVisibility();
-		assert.ok(oScrollExtension.isVerticalScrollbarVisible(), "The scrollbar is visible");
-
-		oIsVerticalScrollbarRequiredStub.returns(false);
-		oVSb.scrollTop = 1;
-		oScrollExtension.updateVerticalScrollbarVisibility();
-		assert.ok(!oScrollExtension.isVerticalScrollbarVisible(), "The scrollbar is visible");
-		assert.strictEqual(oVSb.scrollTop, 0, "The scroll position was reset");
-
-		oIsVerticalScrollbarRequiredStub.returns(true);
-		oScrollExtension.updateVerticalScrollbarVisibility();
-		assert.ok(oScrollExtension.isVerticalScrollbarVisible(), "The scrollbar is visible");
-
-		oIsVerticalScrollbarRequiredStub.restore();
 	});
 
 	QUnit.test("isVerticalScrollbarRequired", function(assert) {
