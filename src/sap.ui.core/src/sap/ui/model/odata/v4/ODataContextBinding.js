@@ -1031,7 +1031,9 @@ sap.ui.define([
 			mQueryOptions = Object.assign({}, mQueryOptions);
 			// keep $select before $expand
 			if ("$select" in mInheritableQueryOptions) {
-				mQueryOptions.$select = mInheritableQueryOptions.$select;
+				// avoid that this.mQueryOptions.$select is modified
+				mQueryOptions.$select = mQueryOptions.$select && mQueryOptions.$select.slice();
+				_Helper.addToSelect(mQueryOptions, mInheritableQueryOptions.$select);
 			}
 			if ("$expand" in mInheritableQueryOptions) {
 				mQueryOptions.$expand = mInheritableQueryOptions.$expand;

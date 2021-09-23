@@ -3350,30 +3350,51 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	{$select : ["prop"], $expand : {Nav : {}}},
-	{$select : ["prop"]},
-	{$expand : {Nav : {}}}
-].forEach(function (mParentQueryOptions, i) {
+	{
+		own : {foo : "bar"}, // some custom query option which have to survive always
+		inherited : {$select : ["prop"], $expand : {Nav : {}}},
+		expected: {foo : "bar", $select : ["prop"], $expand : {Nav : {}}}
+	}, {
+		own : {foo : "bar", $select : []},
+		inherited : {$select : ["prop"]},
+		expected: {foo : "bar", $select : ["prop"]}
+	}, {
+		own : {foo : "bar"},
+		inherited : {$expand : {Nav : {}}},
+		expected: {foo : "bar", $expand : {Nav : {}}}
+	}, {
+		own : {foo : "bar", $select : ['own', 'both']},
+		inherited : {$select : ['inh', 'both']},
+		expected : {foo : "bar", $select : ['own', 'both', 'inh']}
+	}
+].forEach(function (oFixture, i) {
 	QUnit.test("getQueryOptionsFromParameters: $$inheritExpandSelect #" + i, function (assert) {
 		var oParentBinding = {
 				getInheritableQueryOptions : function () {}
 			},
 			oContext = Context.create(this.oModel, oParentBinding, "/SalesOrderList('4711')"),
 			oBinding = this.bindContext("bound.Operation(...)", oContext,
-				{foo : "bar", $$inheritExpandSelect : true}),
-			mQueryOptions = {};
+				Object.assign(oFixture.own, {$$inheritExpandSelect : true})),
+			sInheritedQueryOptionsBefore = JSON.stringify(oFixture.inherited),
+			sOwnQueryOptionsBefore = JSON.stringify(oBinding.mQueryOptions),
+			mQueryOptions;
 
 		this.mock(oParentBinding).expects("getInheritableQueryOptions").withExactArgs()
-			.returns(mParentQueryOptions);
+			.returns(oFixture.inherited);
 		this.mock(Object).expects("assign")
 			.withExactArgs({}, sinon.match.same(oBinding.mQueryOptions))
-			.returns(mQueryOptions);
+			.callThrough();
 
 		// code under test
-		assert.strictEqual(oBinding.getQueryOptionsFromParameters(), mQueryOptions);
+		mQueryOptions = oBinding.getQueryOptionsFromParameters();
 
+		assert.deepEqual(mQueryOptions, oFixture.expected);
 		// ensure that $select is before $expand, too
-		assert.deepEqual(JSON.stringify(mQueryOptions), JSON.stringify(mParentQueryOptions));
+		assert.deepEqual(JSON.stringify(mQueryOptions), JSON.stringify(oFixture.expected));
+		// own query options are still the same
+		assert.deepEqual(JSON.stringify(oBinding.mQueryOptions), sOwnQueryOptionsBefore);
+		// inherited query options are still the same
+		assert.deepEqual(JSON.stringify(oFixture.inherited), sInheritedQueryOptionsBefore);
 	});
 });
 

@@ -2379,23 +2379,20 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[{$expand : {NavProperty : {}}}, {$select : "p0,p1"}].forEach(function (mExpandOrSelect, i) {
-		QUnit.test("checkBindingParameters: $$inheritExpandSelect with $expand or $select, " + i,
-			function (assert) {
-			var aAllowedParams = ["$$inheritExpandSelect"],
-				oBinding = new ODataBinding({
-					oOperation : {}
-				}),
-				mParameters = Object.assign({
-					$$inheritExpandSelect : true
-				}, mExpandOrSelect);
+	QUnit.test("checkBindingParameters: $$inheritExpandSelect with $expand", function (assert) {
+		var aAllowedParams = ["$$inheritExpandSelect"],
+			oBinding = new ODataBinding({
+				oOperation : {}
+			}),
+			mParameters = Object.assign({
+				$$inheritExpandSelect : true
+			}, {$expand : {NavProperty : {}}});
 
-			// code under test
-			assert.throws(function () {
-				oBinding.checkBindingParameters(mParameters, aAllowedParams);
-			}, new Error("Must not set parameter $$inheritExpandSelect on a binding which has "
-					+ "a $expand or $select binding parameter"));
-		});
+		// code under test
+		assert.throws(function () {
+			oBinding.checkBindingParameters(mParameters, aAllowedParams);
+		}, new Error("Must not set parameter $$inheritExpandSelect on a binding which has "
+				+ "a $expand binding parameter"));
 	});
 
 	//*********************************************************************************************
