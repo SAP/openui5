@@ -119,6 +119,10 @@
 					"name": "local",
 					"defaultUrl": "./"
 				},
+				"northwind": {
+					"name": "Northwind_V4",
+					"defaultUrl": "https://services.odata.org/V4/Northwind/Northwind.svc"
+				},
 				"Northwind_V3": {
 					"name": "Northwind_V3",
 					"defaultUrl": "https://services.odata.org/V4/Northwind/Northwind.svc"
