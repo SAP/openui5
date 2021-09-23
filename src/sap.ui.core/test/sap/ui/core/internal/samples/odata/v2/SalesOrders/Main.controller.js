@@ -13,9 +13,10 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/ODataUtils"
 ], function (Log, encodeURL, MessageBox, MessageToast, coreLibrary, Core, Element, Message,
-		Controller, Filter, FilterOperator, ODataUtils) {
+		Controller, Filter, FilterOperator, Sorter, ODataUtils) {
 	"use strict";
 	var sClassname = "sap.ui.core.internal.samples.odata.v2.SalesOrders.Main.controller",
 		MessageType = coreLibrary.MessageType;
@@ -33,38 +34,6 @@ sap.ui.define([
 				return (oMessage.technical || oMessage.persistent)
 					&& (!bUnboundOnly || !oMessage.target);
 			}));
-		},
-
-		formatMessageDescription : function (oMessage) {
-			var sMessageDescription = oMessage.description,
-				sResult = sMessageDescription ? sMessageDescription + "\n\n" : "";
-
-			return sResult + "See technical details for more information.";
-		},
-
-		formatMessageSubtitle : function (oMessage) {
-			var i,
-				sMessageFullTarget = oMessage.fullTarget,
-				sResult = oMessage.additionalText ? oMessage.additionalText + "\n" : "";
-
-			if (sMessageFullTarget) {
-				i = sMessageFullTarget.lastIndexOf("ItemPosition=");
-				if (i >= 0) {
-					return sResult + "Sales Order Item "
-						+ sMessageFullTarget.slice(i + 13, sMessageFullTarget.indexOf(")", i));
-				} else {
-					i = sMessageFullTarget.lastIndexOf("SalesOrderSet(");
-					if (i >= 0) {
-						return sResult + "Sales Order "
-							+ sMessageFullTarget.slice(i + 14, sMessageFullTarget.indexOf(")", i));
-					}
-				}
-			}
-			return sResult;
-		},
-
-		formatMessageTargets : function (aTargets) {
-			return aTargets && aTargets.join("\n");
 		},
 
 		handleMessageChange : function (oEvent) {
@@ -197,6 +166,28 @@ sap.ui.define([
 			MessageBox.confirm(sMessage, onConfirm, "Sales Order Item Deletion");
 		},
 
+		onDeleteSalesOrder : function () {
+			var sMessage, sSalesOrderID,
+				oContext = this.byId("SalesOrderList").getSelectedContexts()[0];
+
+			function onConfirm(sCode) {
+				if (sCode !== 'OK') {
+					return;
+				}
+
+				oContext.getModel().remove("", {
+					context : oContext,
+					success : function () {
+						MessageToast.show("Deleted sales order " + sSalesOrderID);
+					}
+				});
+			}
+
+			sSalesOrderID = oContext.getProperty("SalesOrderID", true);
+			sMessage = "Do you really want to delete: " + sSalesOrderID + "?";
+			MessageBox.confirm(sMessage, onConfirm, "Sales Order Deletion");
+		},
+
 		onDiscardCreatedItem : function () {
 			var oCreatedContext = this.byId("createSalesOrderItemDialog").getBindingContext();
 
@@ -313,6 +304,14 @@ sap.ui.define([
 			}
 		},
 
+		onRefreshItems : function () {
+			this.getView().byId("ToLineItems").getBinding("rows").refresh();
+		},
+
+		onRefreshSalesOrders : function () {
+			this.getView().byId("SalesOrderList").getBinding("items").refresh();
+		},
+
 		onResetChanges : function () {
 			this.getView().getModel().resetChanges();
 		},
@@ -349,13 +348,22 @@ sap.ui.define([
 				!!this.byId("ToLineItems").getSelectedIndices().length);
 		},
 
-		onSelectSalesOrder : function () {
-			var oView = this.getView(),
+		onSelectSalesOrder : function (oEvent) {
+			var sContextPath, sSalesOrderID,
+				oView = this.getView(),
 				oTable = oView.byId("ToLineItems"),
-				oUiModel = oView.getModel("ui"),
-				sSalesOrder = ODataUtils.formatValue(
-					encodeURL(oUiModel.getProperty("/salesOrderID")), "Edm.String"),
-				sContextPath = "/SalesOrderSet(" +  sSalesOrder + ")";
+				oUiModel = oView.getModel("ui");
+
+			if (oEvent && oEvent.sId === "selectionChange") {
+				sSalesOrderID = oEvent.getParameter("listItem").getBindingContext("SalesOrders")
+					.getProperty("SalesOrderID");
+				oUiModel.setProperty("/salesOrderSelected", true);
+				oUiModel.setProperty("/salesOrderID", sSalesOrderID);
+			}
+
+			sSalesOrderID = encodeURL(oUiModel.getProperty("/salesOrderID"));
+			sContextPath =
+				"/SalesOrderSet(" + ODataUtils.formatValue(sSalesOrderID, "Edm.String") + ")";
 
 			// do unbind first to ensure that the sales order is read again even if sales order ID
 			// did not change
@@ -387,6 +395,21 @@ sap.ui.define([
 
 			oDialog.setBindingContext(oEvent.getParameter("row").getBindingContext());
 			oDialog.open();
+		},
+
+		onShowTable : function () {
+			var oUiModel = this.getView().getModel("ui");
+
+			oUiModel.setProperty("/useTable", !oUiModel.getProperty("/useTable"));
+			// set the named model, so the table only requests data once it is shown
+			this.getView().setModel(this.getView().getModel(), "SalesOrders");
+		},
+
+		onSortSalesOrdersTable : function (oEvent) {
+			var sKey = oEvent.getSource().getSelectedKey(),
+				oListBinding = this.getView().byId("SalesOrderList").getBinding("items");
+
+			oListBinding.sort(new Sorter("SalesOrderID", sKey === "desc"));
 		},
 
 		onTransitionMessagesOnly : function (oEvent) {

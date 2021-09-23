@@ -231,6 +231,21 @@ sap.ui.define([
 				"$metadata?sap-language=EN" : {
 					source : "metadata.xml"
 				},
+				"SalesOrderSet?$skip=0&$top=4&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
+					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable.json"
+				},
+				"SalesOrderSet?$skip=4&$top=4&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
+					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable2.json"
+				},
+				"SalesOrderSet?$skip=8&$top=4&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
+					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable3.json"
+				},
+				"SalesOrderSet?$skip=0&$top=8&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
+					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable4.json"
+				},
+				"SalesOrderSet?$skip=0&$top=12&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
+					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTableALL.json"
+				},
 
 				/* Test Case I */
 				"SalesOrderSet('101')" : {
