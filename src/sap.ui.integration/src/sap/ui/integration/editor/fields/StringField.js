@@ -276,6 +276,8 @@ sap.ui.define([
 	StringField.prototype._afterInit = function () {
 		var oControl = this.getAggregation("_field");
 		if (oControl instanceof ComboBox) {
+			//workaround for DIGITALWORKPLACE-5156, set the min-height of the popover
+			oControl.onAfterOpen = this.onAfterOpen;
 			if (this.isFilterBackend()) {
 				this.onInput = _debounce(this.onInput, 500);
 				//if need to filter backend by input value, need to hook the onInput function which only support filter locally.
@@ -548,6 +550,16 @@ sap.ui.define([
 		return new SeparatorItem( {
 			text: oGroup.key
 		});
+	};
+
+	StringField.prototype.onAfterOpen = function () {
+		ComboBox.prototype.onAfterOpen.apply(this, arguments);
+		var oPopover = this.getPicker();
+		if (oPopover._oCalcedPos === "Bottom" && !oPopover.hasStyleClass("sapUiIntegrationEditorPopupBottom")) {
+			oPopover.addStyleClass("sapUiIntegrationEditorPopupBottom");
+		} else if (oPopover._oCalcedPos !== "Bottom" &&  oPopover.hasStyleClass("sapUiIntegrationEditorPopupBottom")) {
+			oPopover.removeStyleClass("sapUiIntegrationEditorPopupBottom");
+		}
 	};
 
 	return StringField;

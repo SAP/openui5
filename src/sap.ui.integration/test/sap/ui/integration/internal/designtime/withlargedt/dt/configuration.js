@@ -737,6 +737,120 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"additionalText": "{= ${CustomerID} !== undefind ? ${Country} + ', ' +  ${City} + ', ' + ${Address}: ''}"
 							}
 						}
+					},
+					"filterBackendInStringArray": {
+						"label": "Filter backend by input in MultiComboBox",
+						"type": "group"
+					},
+					"CustomersWithMultiKeys": {
+						"manifestpath": "/sap.card/configuration/parameters/CustomersWithMultiKeys/value",
+						"type": "string[]",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address",
+										"$filter": "startswith(CompanyName,'{currentSettings>suggestValue}')"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}/{CompanyName}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							},
+							"keySeparator": "/"
+						},
+						"validations": [{
+							"type": "error",
+							"validate": function (value, config, context) {
+								return context["requestData"]({
+									"data": {
+										"request": {
+											"url": "{{destinations.northwind}}/Customers",
+											"parameters": {
+												"$select": "CustomerID, CompanyName, Country, City, Address"
+											}
+										},
+										"path": "/value"
+									}
+								}).then(function (oData){
+									if (value.length === 6) {
+										return false;
+									}
+									return true;
+								});
+							},
+							"message": function (value, config) {
+								return "Please do not select 6 items!";
+							}
+						}, {
+							"type": "error",
+							"minLength": 2,
+							"maxLength": 4
+						}]
+					},
+					"CustomersWithMultiKeysAndSeperator": {
+						"manifestpath": "/sap.card/configuration/parameters/CustomersWithMultiKeysAndSeperator/value",
+						"type": "string[]",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address",
+										"$filter": "startswith(CompanyName,'{currentSettings>suggestValue}')"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}#{CompanyName}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						}
+					},
+					"CustomersWithFilterParameter": {
+						"manifestpath": "/sap.card/configuration/parameters/CustomersWithFilterParameter/value",
+						"type": "string[]",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address",
+										"$filter": "startswith(CompanyName,'{currentSettings>suggestValue}')"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						}
+					},
+					"CustomersWithFilterInURL": {
+						"manifestpath": "/sap.card/configuration/parameters/CustomersWithFilterInURL/value",
+						"type": "string[]",
+						"translatable": true,
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers?$select=CustomerID, CompanyName, Country, City, Address&$filter=contains(CompanyName,'{currentSettings>suggestValue}')"
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						}
 					}
 				}
 			},

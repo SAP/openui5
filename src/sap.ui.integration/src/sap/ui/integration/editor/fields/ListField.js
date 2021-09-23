@@ -118,6 +118,8 @@ sap.ui.define([
 		if (oControl instanceof MultiComboBox) {
 			var oConfig = this.getConfiguration();
 			this.prepareFieldsInKey(oConfig);
+			//workaround for DIGITALWORKPLACE-5156, set the min-height of the popover
+			oControl.onAfterOpen = this.onAfterOpen;
 			if (this.isFilterBackend()) {
 				this.onInput = _debounce(this.onInput, 500);
 				//if need to filter backend by input value, need to hook the onInput function which only support filter locally.
@@ -420,6 +422,16 @@ sap.ui.define([
 		oSettingsModel.setProperty(sSettingspath + "/_loading", true);
 		oEvent.srcControl.open();
 		oEvent.srcControl._getSuggestionsPopover()._sTypedInValue = sTerm;
+	};
+
+	ListField.prototype.onAfterOpen = function () {
+		MultiComboBox.prototype.onAfterOpen.apply(this, arguments);
+		var oPopover = this.getPicker();
+		if (oPopover._oCalcedPos === "Bottom" && !oPopover.hasStyleClass("sapUiIntegrationEditorPopupBottom")) {
+			oPopover.addStyleClass("sapUiIntegrationEditorPopupBottom");
+		} else if (oPopover._oCalcedPos !== "Bottom" &&  oPopover.hasStyleClass("sapUiIntegrationEditorPopupBottom")) {
+			oPopover.removeStyleClass("sapUiIntegrationEditorPopupBottom");
+		}
 	};
 
 	return ListField;

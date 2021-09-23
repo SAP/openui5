@@ -353,6 +353,92 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "{= ${items>booleanDependent/value} === true ? 'booleanDependent True' : 'booleanDependent False' }",
 						"editable": "{items>booleanDependent/value}",
 						"visible": "{items>booleanDependent/value}"
+					},
+					"filterBackendInStringArray": {
+						"label": "Filter backend by input in MultiComboBox",
+						"type": "group"
+					},
+					"CustomersWithMultiKeys": {
+						"manifestpath": "/sap.card/configuration/parameters/CustomersWithMultiKeys/value",
+						"type": "string[]",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address",
+										"$filter": "startswith(CompanyName,'{currentSettings>suggestValue}')"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}/{CompanyName}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							},
+							"keySeparator": "/"
+						}
+					},
+					"CustomersWithMultiKeysAndSeperator": {
+						"manifestpath": "/sap.card/configuration/parameters/CustomersWithMultiKeysAndSeperator/value",
+						"type": "string[]",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address",
+										"$filter": "startswith(CompanyName,'{currentSettings>suggestValue}')"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}#{CompanyName}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						}
+					},
+					"CustomersWithFilterParameter": {
+						"manifestpath": "/sap.card/configuration/parameters/CustomersWithFilterParameter/value",
+						"type": "string[]",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address",
+										"$filter": "startswith(CompanyName,'{currentSettings>suggestValue}')"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						}
+					},
+					"CustomersWithFilterInURL": {
+						"manifestpath": "/sap.card/configuration/parameters/CustomersWithFilterInURL/value",
+						"type": "string[]",
+						"translatable": true,
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers?$select=CustomerID, CompanyName, Country, City, Address&$filter=contains(CompanyName,'{currentSettings>suggestValue}')"
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						}
 					}
 				}
 			},

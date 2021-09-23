@@ -214,6 +214,8 @@ sap.ui.define([
 						language: Core.getConfiguration().getLanguage()
 					}), "config");
 
+					oDialog.setContentWidth("750px");
+
 					oDialog.open();
 				}))
 				.catch(function (oErr) {

@@ -23,9 +23,9 @@
 			<option value="sap_hcb">sap_hcb</option>
 		</select>
 	</div>
-	<div id="editor">
+	<div id="editor" style="width: 800px;">
 		<h2>Admin Mode (only)</h2>
-		<ui-integration-card-editor id="cardEditorAdmin" preview-position="left" mode="admin" allow-dynamic-values="true" allow-settings="true">
+		<ui-integration-card-editor id="cardEditorAdmin" preview-position="right" mode="admin" allow-dynamic-values="true" allow-settings="true">
 		</ui-integration-card-editor>
 		<div class="buttons">
 			<button onclick="showCurrentValues('cardEditorAdmin')">
@@ -39,26 +39,6 @@
 			</button>
 			<button onclick="deleteCurrentValues('cardEditorAdmin')">
 				Delete Values (Admin Mode)
-			</button>
-		</div>
-	</div>
-	<div style="width: 800px;">
-		<h2>Content Mode (only)</h2>
-		<ui-integration-card-editor id="cardEditorContent" preview-position="right" mode="content" allow-dynamic-values="true"
-			allow-settings="true">
-		</ui-integration-card-editor>
-		<div class="buttons">
-			<button onclick="showCurrentValues('cardEditorContent')">
-				Show Current Values (Content Mode)
-			</button>
-			<button onclick="saveCurrentValues('cardEditorContent')">
-				Save Current Values (Content Mode)
-			</button>
-			<button onclick="loadCurrentValues('cardEditorContent')">
-				Load Values (Content Mode)
-			</button>
-			<button onclick="deleteCurrentValues('cardEditorContent')">
-				Delete Values (Content Mode)
 			</button>
 		</div>
 	</div>
