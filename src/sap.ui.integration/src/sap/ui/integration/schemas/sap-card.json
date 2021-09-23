@@ -29,7 +29,8 @@
         "1.17.0",
         "1.18.0",
         "1.19.0",
-        "1.20.0"
+        "1.20.0",
+        "1.21.0"
       ]
     },
     "designtime": {
@@ -126,7 +127,7 @@
       "type": "string"
     },
     "footer": {
-      "descirption": "Represent card footer attributes",
+      "description": "Represent card footer attributes",
       "type": "object",
       "additionalProperties": false,
       "properties": {
