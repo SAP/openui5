@@ -299,7 +299,7 @@ sap.ui.define([
 				appointmentHeight: { type: "sap.ui.unified.CalendarAppointmentHeight", group: "Appearance", defaultValue: CalendarAppointmentHeight.Regular },
 
 				/**
-				 * Defines rounding of the width <code>CalendarAppoinment<code>
+				 * Defines rounding of the width <code>CalendarAppoinment</code>
 				 * <b>Note:</b> This property is applied, when the calendar interval type is day and the view shows more than 20 days
 				 * @experimental Since 1.81.0
 				 * @since 1.81.0
