@@ -2094,12 +2094,12 @@ sap.ui.define([
 				return;
 			}
 
-			if (RESERVED_MODEL_NAMES.indexOf(sModelName) > 0) {
+			if (RESERVED_MODEL_NAMES.indexOf(sModelName) > -1) {
 				Log.error("The model name (data section name) '" + sModelName + "' is reserved for cards. Can not be used for creating a custom model.");
 				return;
 			}
 
-			if (this._aCustomModels.indexOf(sModelName) > 0) {
+			if (this._aCustomModels.indexOf(sModelName) > -1) {
 				Log.error("The model name (data section name) '" + sModelName + "' is already used.");
 				return;
 			}
