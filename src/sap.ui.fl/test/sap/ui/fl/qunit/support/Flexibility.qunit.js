@@ -34,6 +34,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("sets models and starts rendering for the tool part", function (assert) {
+			var done = assert.async();
 			var renderingSpy = sandbox.spy(this.oFlexibility, "_renderToolPlugin");
 			sandbox.stub(Plugin.prototype.init, "apply");
 
@@ -47,6 +48,7 @@ sap.ui.define([
 			assert.ok(oView.getModel("flexToolSettings"));
 			assert.ok(oView.getModel("flexChanges"));
 			assert.ok(oView.getModel("flexChangeDetails"));
+			done();
 		});
 	});
 
