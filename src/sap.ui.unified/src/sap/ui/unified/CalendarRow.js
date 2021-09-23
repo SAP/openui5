@@ -1545,7 +1545,6 @@ sap.ui.define([
 				if (oAppointment.end < 0) {
 					oAppointment.end = 0;
 				}
-				oAppointment.level = -1; // level must be new calculated
 				bChanged = true;
 				$Appointment.addClass("sapUiCalendarAppSmall");
 			} else if ($Appointment.hasClass("sapUiCalendarAppSmall")){
@@ -1553,6 +1552,10 @@ sap.ui.define([
 				oAppointment.end = oAppointment.calculatedEnd;
 				bChanged = true;
 				$Appointment.removeClass("sapUiCalendarAppSmall");
+			}
+
+			if (bChanged) {
+				oAppointment.level = -1; // level must be new calculated
 			}
 
 			if (bChanged && !bHorizontalFit) {
