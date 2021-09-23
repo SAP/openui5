@@ -3,6 +3,11 @@
     "date": "September 2021",
     "notes": [
       {
+        "id": "be872e83320a4f1372207d95960c9c3872bb5b02",
+        "type": "FEATURE",
+        "text": " sap.tnt.InfoLabel: Redesign"
+      },
+      {
         "id": "766113d1ffff1ced4c36cc8f1cf79155c867a3f9",
         "type": "FIX",
         "text": " sap.tnt.ToolHeader: Avatar icon color is now correct",

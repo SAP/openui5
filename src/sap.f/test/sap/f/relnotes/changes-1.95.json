@@ -3,6 +3,17 @@
     "date": "September 2021",
     "notes": [
       {
+        "id": "b2ee5525063bd8df702723fd9e685afcbb45e410",
+        "type": "FIX",
+        "text": " Integration cards: Card type is now announced upon focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170188036"
+          }
+        ]
+      },
+      {
         "id": "736748b0a87a763a44df4ee15cb12441eb36cacf",
         "type": "FEATURE",
         "text": " sap.f.Card: New property \"state\" for the SideIndicators implemented"

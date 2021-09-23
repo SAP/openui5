@@ -3,6 +3,54 @@
     "date": "September 2021",
     "notes": [
       {
+        "id": "2183384845fe72ad24dceaa7d7124a36f13a03fe",
+        "type": "FIX",
+        "text": " Component: class-based model check to support language parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170145239"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180369275"
+          }
+        ]
+      },
+      {
+        "id": "268aa69f3980a23a06b16dd50aa0bb2e6e2cc8d9",
+        "type": "FIX",
+        "text": " Interaction: Scrolling must not be active",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170210449"
+          }
+        ]
+      },
+      {
+        "id": "37dbbe7e8a37f38418ba376abb1ffc10b7e12545",
+        "type": "FIX",
+        "text": " sap.ui.core: fix handling of static expressions that return \"\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170203287"
+          }
+        ]
+      },
+      {
+        "id": "c22ea69090110c65888bb4a028805e2ea49bebd7",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#resetChanges: delete created entity only when requested",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170206361"
+          }
+        ]
+      },
+      {
         "id": "790387342cb3ef3a5dd47ebf3a6926c403db48c1",
         "type": "FIX",
         "text": " core.routing: initialize nested routers when parent router initialized without hash parsing",
@@ -23,6 +71,11 @@
             "reference": "2180199485"
           }
         ]
+      },
+      {
+        "id": "a0f984400f283a673deb57e958490caf76e7b75e",
+        "type": "FEATURE",
+        "text": " i18n: support library bundle in I18NText matcher"
       },
       {
         "id": "3844cdec14d11771c0501413ae8bc82d9f748a4d",

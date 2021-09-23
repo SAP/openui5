@@ -3,6 +3,54 @@
     "date": "September 2021",
     "notes": [
       {
+        "id": "c29ac96e680d28d64fbccde43ed057eb4a6f1fed",
+        "type": "FIX",
+        "text": " sap.m.StepInput: the control now can be focused by JS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170207375"
+          }
+        ]
+      },
+      {
+        "id": "dd3aeaa06b4118d18a77e59d93262b0fdc3c7a35",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: can fast-forward to Today view"
+      },
+      {
+        "id": "36f8ca0ab19341cec32182925f35f8d8ca61ee23",
+        "type": "FEATURE",
+        "text": " sap.m.IconTabBar: Implemented tab selection in UI Adaptation mode"
+      },
+      {
+        "id": "9b980f2a7ed2d16208162f8af6b9625a0e7e2330",
+        "type": "FIX",
+        "text": " demokit.walkthrough: make the config 'IAsyncContentCreation' and 'async' consistent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180355649"
+          }
+        ]
+      },
+      {
+        "id": "fedbb2338dd51c2b742ca3cdf525100ed1b267f4",
+        "type": "FEATURE",
+        "text": " sap.m.Button: screen reader announses text, icon or tooltip changes"
+      },
+      {
+        "id": "e754236243a28e805a040128dc4d296fc046a49c",
+        "type": "FIX",
+        "text": " sap.m.UploadSet : inner controls created by setter not freed up",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006120612021"
+          }
+        ]
+      },
+      {
         "id": "1b8f962a318b86fc52081637e5930b4d146ebfd3",
         "type": "FIX",
         "text": " sap.m.Tokenizer: aria-hidden attribute added when there are no tokens",
@@ -67,6 +115,11 @@
             "reference": "2180349498"
           }
         ]
+      },
+      {
+        "id": "a0f984400f283a673deb57e958490caf76e7b75e",
+        "type": "FEATURE",
+        "text": " i18n: support library bundle in I18NText matcher"
       },
       {
         "id": "0d3c7bbfabe01662e94fff700614126dfffcc295",

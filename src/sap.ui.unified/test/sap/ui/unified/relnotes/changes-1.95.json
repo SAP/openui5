@@ -3,6 +3,22 @@
     "date": "September 2021",
     "notes": [
       {
+        "id": "dd3aeaa06b4118d18a77e59d93262b0fdc3c7a35",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: can fast-forward to Today view"
+      },
+      {
+        "id": "3bbf78c4e5519222f01e0b7f421a9d013e904194",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Alpha slider background is correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170206276"
+          }
+        ]
+      },
+      {
         "id": "08bd96dc884f39083407c95396b94fcbdc5567e6",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: Month view correctly shows non-working days in subintervals",
