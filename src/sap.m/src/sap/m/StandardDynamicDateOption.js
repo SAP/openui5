@@ -495,9 +495,12 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 					oDate = UniversalDateUtils.getMonthStartDate(oDate);
 					return UniversalDateUtils.getRange(0, "MONTH", oDate);
 				case "DATE":
-					return [oValue.values[0], oValue.values[0]];
+					return UniversalDateUtils.getRange(0, "DAY", UniversalDate.getInstance(oValue.values[0]));
 				case "DATERANGE":
-					return oValue.values.slice(0);
+					var oStart = UniversalDate.getInstance(oValue.values[0]);
+					var oEnd = UniversalDate.getInstance(oValue.values[1]);
+
+					return [UniversalDateUtils.resetStartTime(oStart), UniversalDateUtils.resetEndTime(oEnd)];
 				case "TODAY":
 					return UniversalDateUtils.ranges.today();
 				case "YESTERDAY":
