@@ -2871,4 +2871,21 @@ sap.ui.define([
 		oStepInput.destroy();
 	});
 
+	QUnit.test("StepInput can be focused", function (assert) {
+		// arrange
+		var oStepInput = new StepInput();
+
+		oStepInput.placeAt('qunit-fixture');
+		oCore.applyChanges();
+
+		// act
+		oStepInput.focus();
+
+		// assert
+		assert.equal(oStepInput.getFocusDomRef().id, document.activeElement.id, "StepInput's internal NumericInput is focused");
+
+		// cleanup
+		oStepInput.destroy();
+	});
+
 });

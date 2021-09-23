@@ -1685,6 +1685,10 @@ function(
 			}
 		};
 
+		StepInput.prototype.getFocusDomRef = function() {
+			return this.getAggregation("_input").getFocusDomRef();
+		};
+
 		/*
 		 * Resets timeouts and speed to initial values.
 		 */
