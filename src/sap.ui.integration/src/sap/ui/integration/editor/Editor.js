@@ -2013,6 +2013,28 @@ sap.ui.define([
 				});
 			} else if (this.getAggregation("_extension")) {
 				oValueModel = this.getAggregation("_extension").getModel();
+				//filter data for page admin
+				if (oValueModel && this.getMode() === "content" && oConfig.pageAdminValues && oConfig.pageAdminValues.length > 0) {
+					this.prepareFieldsInKey(oConfig);
+					var ePath = oConfig.values.path;
+					if (ePath.length > 1) {
+						ePath = ePath.substring(1);
+					}
+					var oValueData = ObjectPath.get([ePath], oValueModel.getData()),
+					    paValues = oConfig.pageAdminValues,
+						results = [];
+					for (var m = 0; m < paValues.length; m++) {
+						for (var j = 0; j < oValueData.length; j++) {
+							var keyValue = this.getKeyFromItem(oValueData[j]);
+							if (paValues[m] === keyValue) {
+								results.push(oValueData[j]);
+							}
+						}
+					}
+					delete oValueData[ePath];
+					ObjectPath.set(ePath, results, oValueData);
+					oValueModel.setData(oValueData);
+				}
 				//we use the binding context to connect the given path from oConfig.values.path
 				//with that the result of the data request can be have also other structures.
 				oField.bindObject({
