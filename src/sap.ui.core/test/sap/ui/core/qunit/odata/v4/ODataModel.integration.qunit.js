@@ -27772,14 +27772,8 @@ sap.ui.define([
 					.getBoundContext());
 
 			that.expectRequest("MANAGERS('1')?$expand=Manager_to_Team",
-					new Promise(function (resolve, reject) {
-						fnRespond = resolve.bind(null, {
-							ID : "1",
-							Manager_to_Team : {
-								Name : "Team #1",
-								Team_Id : "Team_01"
-							}
-						});
+					new Promise(function (resolve) {
+						fnRespond = resolve;
 					})
 				);
 
@@ -27797,10 +27791,15 @@ sap.ui.define([
 					oContextBinding.setContext(
 						oModel.bindContext("/MANAGERS('2')", null, {$expand : "Manager_to_Team"})
 							.getBoundContext());
-					fnRespond();
+					fnRespond({
+						ID : "1",
+						Manager_to_Team : {
+							Name : "Team #1",
+							Team_Id : "Team_01"
+						}
+					});
 				}, 10),
-				// Increase the timeout for this test to 6 seconds to run also in IE
-				that.waitForChanges(assert, "", undefined, 6000)
+				that.waitForChanges(assert)
 			]);
 		});
 	});
