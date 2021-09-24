@@ -31,6 +31,6 @@
 			sDemokitUrl += "documentation.html";
 		}
 
-		return sDemokitUrl + "#" + sUrl;
+		return sDemokitUrl + sUrl;
 	}
 })();
