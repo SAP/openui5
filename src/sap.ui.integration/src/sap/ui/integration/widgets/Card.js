@@ -2087,6 +2087,9 @@ sap.ui.define([
 			this._aCustomModels = [];
 		}
 
+		// remove any old models before registering the new ones
+		this._deregisterCustomModels();
+
 		aDataSections.forEach(function (oDataSettings) {
 			var sModelName = oDataSettings && oDataSettings.name;
 
