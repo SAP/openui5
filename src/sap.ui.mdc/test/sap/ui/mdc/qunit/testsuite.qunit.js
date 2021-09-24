@@ -229,7 +229,11 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 			// },
 
 			// Design Time & RTA Enabling
-			"Designtime-Library": {
+			"designtime/Designtime": {
+				group: "DesignTime",
+				module: "./designtime/Designtime.qunit"
+			},
+			"Designtime/Library": {
 				group: "Designtime",
 				module: "./designtime/Library.qunit"
 			},

@@ -70,6 +70,7 @@ sap.ui.define([
 	{
 		metadata: {
 			library: "sap.ui.mdc",
+			designtime: "sap/ui/mdc/designtime/filterbar/FilterBarBase.designtime",
 			defaultAggregation: "filterItems",
 			interfaces : [
 				"sap.ui.mdc.IFilter",

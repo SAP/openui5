@@ -43,15 +43,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Determines whether the Go button is visible in the filter bar.<br>
-				 * <b>Note</b>: If the <code>liveMode</code> property is set to <code>true</code>, it is ignored.
-				 */
-				showGoButton: {
-					type: "boolean",
-					defaultValue: true
-				},
-
-				/**
 				 * Specifies the personalization options for the filter bar.
 				 *
 				 * @since 1.74
