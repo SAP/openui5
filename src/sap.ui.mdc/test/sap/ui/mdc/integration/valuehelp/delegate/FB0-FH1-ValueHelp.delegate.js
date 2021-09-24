@@ -84,7 +84,7 @@ sap.ui.define([
 				if (bMultiSelect) {
 					var oAdditionalContent = new Conditions({
 						title:"Define Conditions",
-						subTitle:"Conditions",
+						shortTitle:"Conditions",
 						label:"Label of Field"
 					});
 					oContainer.addContent(oAdditionalContent);

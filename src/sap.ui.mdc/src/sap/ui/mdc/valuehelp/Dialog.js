@@ -101,6 +101,19 @@ sap.ui.define([
 		this.fireConfirm({close: true});
 	};
 
+	Dialog.prototype._handleClosed = function (oEvent) {
+
+		var aContents = this.getContent();
+		var oContent = this._sSelectedKey && aContents && aContents.find(function (oContent) {
+			return oContent.getId() === this._sSelectedKey;
+		}.bind(this));
+
+		if (oContent) {
+			oContent.onHide();
+		}
+
+		Container.prototype._handleClosed.apply(this, arguments);
+	};
 
 	Dialog.prototype._getContainer = function () {
 		if (!this.getModel("$i18n")) {
@@ -116,7 +129,7 @@ sap.ui.define([
 					"sap/m/Dialog",
 					"sap/m/Button",
 					"sap/ui/model/base/ManagedObjectModel",
-					'sap/m/library'
+					"sap/m/library"
 				]).then(function (aModules) {
 
 					MDialog = aModules[0];
@@ -136,7 +149,7 @@ sap.ui.define([
 						type: ButtonType.Emphasized,
 						press: this._handleConfirmed.bind(this),
 						visible: { parts: ['$valueHelp>/_config/maxConditions', '$help>/_quickSelectEnabled'], formatter: function(iMaxConditions, bQuickSelectEnabled) {
-							return iMaxConditions === -1 || !bQuickSelectEnabled;
+							return iMaxConditions !== 1 || !bQuickSelectEnabled;
 						}}
 					});
 
@@ -152,19 +165,13 @@ sap.ui.define([
 						contentWidth: _getContentWidth(),
 						horizontalScrolling: false,
 						verticalScrolling: false,
-						title: {parts: ['$help>/title', '$help>/content', '$help>/_selectedContentKey', '$valueHelp>/conditions'], formatter:
-							function(sTitle, aContent, sSelectedContent, aConditions) {
-								if (this._oIconTabBar && aContent.length == 1) {
-									var iIndex = 0;
-									if (!sSelectedContent || this._oIconTabBar.getItems().some(function(oItem, i) {
-										iIndex = i;
-										return oItem.getKey() === sSelectedContent;
-									})) {
-										var oContent = aContent[iIndex];
-										var sDlgTitle = oContent.getFormattedSubTitle() ? oContent.getFormattedSubTitle() : oContent.getTitle();
-										if (sDlgTitle) {
-											sTitle = this._oResourceBundle.getText("valuehelp.DIALOGSUBTITLECOLONTITLE", [sDlgTitle, sTitle]);
-										}
+						title: {parts: ['$help>/title', '$help>/content'], formatter:
+							function(sTitle, aContent) {
+								if (aContent.length == 1) {
+									var oContent = aContent[0];
+									var sDlgTitle = oContent.getFormattedShortTitle() ? oContent.getFormattedShortTitle() : oContent.getTitle();
+									if (sDlgTitle) {
+										sTitle = this._oResourceBundle.getText("valuehelp.DIALOGSHORTTITLECOLONTITLE", [sDlgTitle, sTitle]);
 									}
 								}
 
@@ -262,12 +269,13 @@ sap.ui.define([
 				"sap/m/IconTabFilter"]).then(function(aModules){
 					IconTabBar = aModules[0];
 					IconTabFilter = aModules[1];
+					var IconTabHeaderMode = MLibrary.IconTabHeaderMode;
 
 					this._oIconTabBar = new IconTabBar(this.getId() + "-ITB", {
 						expandable: false,
 						upperCase: false,
 						stretchContentHeight: true,
-						headerMode: "Inline",
+						headerMode: IconTabHeaderMode.Inline,
 						select: this._onTabBarSelect.bind(this),
 						layoutData: new FlexItemData({growFactor: 1}),
 						selectedKey: "{$help>/_selectedContentKey}",
@@ -284,7 +292,7 @@ sap.ui.define([
 							}
 						}
 					});
-					this._oIconTabBar.setModel(this._oManagedObjectModel, "$help");
+					// this._oIconTabBar.setModel(this._oManagedObjectModel, "$help");
 					this._oIconTabBar.addStyleClass("sapUiNoContentPadding");
 
 					var oITF = new IconTabFilter(this.getId() + "-ITF", {
@@ -325,9 +333,11 @@ sap.ui.define([
 				formatMessage = aModules[5];
 				var Filter = aModules[6];
 				var ConditionType = aModules[7];
+				var BackgroundDesign = MLibrary.BackgroundDesign;
+				var ButtonType = MLibrary.ButtonType;
 
 				this.oTokenizerPanel = new Panel( {
-					backgroundDesign: "Transparent",
+					backgroundDesign: BackgroundDesign.Transparent,
 					expanded: true,
 					visible: { parts: ['$valueHelp>/_config/maxConditions', '$help>/content'], formatter:
 					function(iMaxConditions, aContent) {
@@ -365,7 +375,8 @@ sap.ui.define([
 
 				var oFilter = new Filter({path:'isEmpty', operator:'NE', value1:true});
 
-				var oConfig = this.getModel("$valueHelp").getProperty("/_config");
+				var oValueHelpModel = this.getModel("$valueHelp");
+				var oConfig = oValueHelpModel ? oValueHelpModel.getProperty("/_config") : {};
 				var oFormatOptions = { // TODO: is more needed?
 							maxConditions: -1, // as for tokens there should not be a limit on type side
 							valueType: oConfig.dataType,
@@ -401,7 +412,7 @@ sap.ui.define([
 						this.fireSelect({type: SelectType.Set, conditions: []});
 
 					}.bind(this),
-					type: "Transparent",
+					type: ButtonType.Transparent,
 					icon: "sap-icon://decline",
 					tooltip: "{$i18n>valuehelp.REMOVEALLTOKEN}",
 					layoutData: new FlexItemData({growFactor: 0, baseSize: "2rem"})

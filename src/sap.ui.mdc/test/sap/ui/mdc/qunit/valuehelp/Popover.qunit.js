@@ -464,7 +464,7 @@ sap.ui.define([
 
 		oContent.fireConfirm();
 		assert.equal(iConfirm, 1, "Confirm event fired");
-		assert.ok(bClose, "colse parameter");
+		assert.ok(bClose, "close parameter");
 
 	});
 

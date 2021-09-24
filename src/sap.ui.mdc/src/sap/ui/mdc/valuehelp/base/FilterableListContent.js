@@ -521,12 +521,12 @@ sap.ui.define([
 		return sTitle;
 	};
 
-	FilterableListContent.prototype.getFormattedSubTitle = function() {
-		var sSubTitle = this.getSubTitle();
-		if (!sSubTitle) {
-			sSubTitle = this._oResourceBundle.getText("valuehelp.SELECTFROMLIST.Subtitle");
+	FilterableListContent.prototype.getFormattedShortTitle = function() {
+		var sShortTitle = this.getShortTitle();
+		if (!sShortTitle) {
+			sShortTitle = this._oResourceBundle.getText("valuehelp.SELECTFROMLIST.Shorttitle");
 		}
-		return sSubTitle;
+		return sShortTitle;
 	};
 
 

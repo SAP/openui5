@@ -168,7 +168,10 @@ sap.ui.define([
 	};
 
 	Container.prototype.getDomRef = function() {
-		// need to be implemented by real container
+		var oContainer = this.getAggregation("_container");
+		if (oContainer) {
+			return oContainer.getDomRef();
+		}
 	};
 
 	Container.prototype.getUIArea = function() { // TODO: Ask Frank, if better way available
