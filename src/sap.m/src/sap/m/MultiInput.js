@@ -990,7 +990,7 @@ function(
 			this._validateCurrentText();
 		}
 
-		if (oEvent && oEvent.setMarked && this._bTokenIsValidated) {
+		if (oEvent && oEvent.setMarked && (this._bTokenIsValidated || this.getDOMValue())) {
 			oEvent.setMarked();
 		}
 
