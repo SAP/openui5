@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./MessageStripUtilities"],
-	function (MSUtils) {
+sap.ui.define(["./MessageStripUtilities", "sap/ui/core/IconPool"],
+	function (MSUtils, IconPool) {
 	"use strict";
 
 	/**
