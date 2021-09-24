@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/MaskInput",
 	"sap/m/MaskInputRule",
 	"sap/m/Input",
+	"sap/m/InputBase",
 	"sap/m/Button",
 	"sap/ui/Device",
 	"sap/ui/core/library",
@@ -21,6 +22,7 @@ sap.ui.define([
 	MaskInput,
 	MaskInputRule,
 	Input,
+	InputBase,
 	Button,
 	Device,
 	coreLibrary,
@@ -983,6 +985,42 @@ sap.ui.define([
 		this.sendAndValidate(-1, "c", "ab-c_");
 		qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
 		assert.equal(oControl.getValue(), "ab-__", "The value before focusing-in must be restored");
+	});
+
+	QUnit.test("Esc key - 'onsapescape' event is not prevented if the value is as initial", function (assert) {
+		// Arrange
+		var onsapescapeIBSpy = this.spy(InputBase.prototype, "onsapescape"),
+			onsapescapeMISpy = this.spy(this.oMaskInput, "onsapescape");
+
+		this.oMaskInput.setMask("9");
+
+		// Act
+		this.oMaskInput.focus();
+		this.clock.tick(100);
+		qutils.triggerKeypress(this.oMaskInput.getDomRef(), "1");
+
+		// Assert
+		assert.equal(getMaskInputDomValue(this.oMaskInput), "1", "'1' is set as value of the input");
+
+		// Act
+		qutils.triggerKeydown(this.oMaskInput.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+
+		// Assert
+		assert.equal(getMaskInputDomValue(this.oMaskInput), "_", "The input is cleared after the first ESC press");
+		assert.equal(onsapescapeMISpy.callCount, 1, "onsapescape of the MaskInput is called after the first ESC press");
+		assert.equal(onsapescapeIBSpy.callCount, 1, "onsapescape of the InputBase is called after the first ESC press");
+
+		// Act
+		qutils.triggerKeydown(this.oMaskInput.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+
+		// Assert
+		assert.equal(getMaskInputDomValue(this.oMaskInput), "_", "The input is cleared after the second ESC press");
+		assert.equal(onsapescapeMISpy.callCount, 2, "onsapescape of the MaskInput is called after the second ESC press");
+		assert.equal(onsapescapeIBSpy.callCount, 1, "onsapescape of the InputBase is not called after the second ESC press");
+
+		// Cleanup
+		onsapescapeIBSpy.restore();
+		onsapescapeMISpy.restore();
 	});
 
 	QUnit.test("OnBeforeRendering captures any validation errors.", function (assert){
