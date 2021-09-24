@@ -3,7 +3,7 @@ sap.ui.define([
 ], function (UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.ui.core.tutorial.odatav4.08.Component", {
+	var Component = UIComponent.extend("sap.ui.core.tutorial.odatav4.09.Component", {
 
 		metadata : {
 			config : {
