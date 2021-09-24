@@ -21,6 +21,9 @@ sap.ui.define([
 	'sap/ui/model/type/Time',
 	'sap/ui/model/odata/type/DateTime',
 	'sap/ui/model/type/Float',
+	'sap/ui/layout/Grid',
+	'sap/ui/layout/GridData',
+	'sap/ui/layout/HorizontalLayout',
 	'./Button',
 	'./OverflowToolbar',
 	'./OverflowToolbarLayoutData',
@@ -56,6 +59,9 @@ sap.ui.define([
 	TimeType,
 	DateTimeOdataType,
 	FloatType,
+	Grid,
+	GridData,
+	HorizontalLayout,
 	Button,
 	OverflowToolbar,
 	OverflowToolbarLayoutData,
@@ -94,15 +100,6 @@ sap.ui.define([
 
 	// shortcut for sap.m.P13nConditionOperation
 	var P13nConditionOperation = library.P13nConditionOperation;
-
-	// lazy dependency to sap.ui.layout.Grid
-	var Grid;
-	// lazy dependency to sap.ui.layout.GridData
-	var GridData;
-	// lazy dependency to sap.ui.layout.HorizontalLayout
-	var HorizontalLayout;
-	// lazy dependency to sap.ui.comp.odata.type.StringDate
-	var StringDateType;
 
 	/**
 	 * Constructor for a new P13nConditionPanel.
@@ -570,12 +567,6 @@ sap.ui.define([
 						oType.oFormat.oFormatOptions.UTC = false;
 					}
 					break;
-				case "stringdate":
-					// TODO: Do we really need the COMP library here???
-					sap.ui.getCore().loadLibrary("sap.ui.comp");
-					StringDateType = StringDateType || sap.ui.requireSync("sap/ui/comp/odata/type/StringDate");
-					oKeyField.typeInstance = new StringDateType(Object.assign({}, oKeyField.formatSettings, { strictParsing: true }));
-					break;
 				case "numeric":
 					if (oKeyField.precision || oKeyField.scale) {
 						oConstraints = {};
@@ -717,7 +708,6 @@ sap.ui.define([
 	P13nConditionPanel.prototype.init = function() {
 		// load the required layout lib
 		sap.ui.getCore().loadLibrary("sap.ui.layout");
-		var Grid = P13nConditionPanel._getGridConstructor();
 
 		// init some resources
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -1184,9 +1174,7 @@ sap.ui.define([
 	 */
 	P13nConditionPanel.prototype._createConditionRow = function(oTargetGrid, oConditionGridData, sKey, iPos, bUseRowFromAbove) {
 		var oGrid,
-			that = this,
-			Grid = P13nConditionPanel._getGridConstructor(),
-			GridData = P13nConditionPanel._getGridDataConstructor();
+			that = this;
 
 		if (iPos === undefined) {
 			iPos = oTargetGrid.getContent().length;
@@ -1573,7 +1561,6 @@ sap.ui.define([
 		var oControl;
 		var sCtrlType;
 		var that = this;
-		var GridData = P13nConditionPanel._getGridDataConstructor();
 
 		var params = {
 			value: oFieldInfo["Value"],
@@ -2940,11 +2927,9 @@ sap.ui.define([
 
 	P13nConditionPanel.prototype._addButtons = function(oConditionGrid, oTargetGrid){
 		var that = this;
-		var GridData = P13nConditionPanel._getGridDataConstructor();
 
 		// create a hLayout container for the remove and add buttons
-		var	HorizontalLayout = P13nConditionPanel._getHorizontalLayoutConstructor(),
-			oButtonContainer = new HorizontalLayout({
+		var	oButtonContainer = new HorizontalLayout({
 			layoutData: new GridData({
 				span: this.getLayoutMode() === "Desktop" ? "L2 M2 S2" : this._oButtonGroupSpan["Span" + this._sConditionType]
 			})
@@ -3104,28 +3089,6 @@ sap.ui.define([
 			);
 		}
 		oControl.setVisible(bVisible);
-	};
-
-	P13nConditionPanel._getGridConstructor = function(){
-		if (Grid === undefined) {
-			Grid = sap.ui.requireSync("sap/ui/layout/Grid");
-		}
-
-		return Grid;
-	};
-
-	P13nConditionPanel._getGridDataConstructor = function(){
-		if (GridData === undefined) {
-			GridData = sap.ui.requireSync("sap/ui/layout/GridData");
-		}
-		return GridData;
-	};
-
-	P13nConditionPanel._getHorizontalLayoutConstructor = function(){
-		if (HorizontalLayout === undefined) {
-			HorizontalLayout = sap.ui.requireSync("sap/ui/layout/HorizontalLayout");
-		}
-		return HorizontalLayout;
 	};
 
 	P13nConditionPanel.prototype._mTypes = {
