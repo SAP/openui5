@@ -139,7 +139,15 @@
           }
         }
       }
-    }
+    },
+	"requiredHeight": {
+		"description": "Represents card minimum required height",
+		"type": "string"
+	},
+	"requiredWidth": {
+		"description": "Represents card minimum required width",
+		"type": "string"
+	}
   },
   "allOf": [
     {
