@@ -702,7 +702,7 @@ sap.ui.define([
 		if (deepEqual(vIdOrSettings, this._preIdOrSettings)) {
 			return this;
 		}
-		this._preIdOrSettings = deepClone(vIdOrSettings);
+		this._preIdOrSettings = deepClone(vIdOrSettings, 500);
 		if (typeof vIdOrSettings === "string") {
 			try {
 				vIdOrSettings = JSON.parse(vIdOrSettings);
@@ -1219,7 +1219,7 @@ sap.ui.define([
 								if (!oItem.valueTranslations) {
 									oValueTranslations = {};
 								} else {
-									oValueTranslations = deepClone(oItem.valueTranslations);
+									oValueTranslations = deepClone(oItem.valueTranslations, 500);
 								}
 								oValueTranslations[sLanguage] = oItem.value;
 								oItem.valueTranslations = oValueTranslations;
@@ -2164,7 +2164,7 @@ sap.ui.define([
 			delete oConfig.values;
 
 			//create a configuration clone. map the _settingspath setting to _language, and set it to not editable
-			var origLangField = deepClone(oConfig, 10);
+			var origLangField = deepClone(oConfig, 500);
 			origLangField._settingspath += "/_language";
 			origLangField.editable = false;
 			origLangField.required = false;
