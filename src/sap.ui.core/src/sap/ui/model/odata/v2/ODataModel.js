@@ -29,6 +29,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/util/uid",
 	"sap/base/util/UriParameters",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/core/library",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/message/MessageParser",
@@ -50,8 +51,8 @@ sap.ui.define([
 	"sap/ui/util/isCrossOriginURL"
 ], function(Context, ODataAnnotations, ODataContextBinding, ODataListBinding, ODataTreeBinding,
 		assert, Log, encodeURL, deepEqual, deepExtend, each, extend, isEmptyObject, isPlainObject,
-		merge, uid, UriParameters, coreLibrary, Message, MessageParser, BindingMode, BaseContext,
-		FilterProcessor, Model, CountMode, MessageScope, ODataMetadata, ODataMetaModel,
+		merge, uid, UriParameters, SyncPromise, coreLibrary, Message, MessageParser, BindingMode,
+		BaseContext, FilterProcessor, Model, CountMode, MessageScope, ODataMetadata, ODataMetaModel,
 		ODataMessageParser, ODataPropertyBinding, ODataUtils, OperationMode, UpdateMethod, OData,
 	    URI, isCrossOriginURL
 ) {
@@ -5962,6 +5963,9 @@ sap.ui.define([
 		});
 		if (bDeleteCreatedEntities && oCreated) {
 			this._removeEntity(sKey);
+			if (oCreated.abort) {
+				oCreated.abort(ODataModel._createAbortedError());
+			}
 		} else {
 			delete this.mChangedEntities[sKey];
 		}
@@ -6534,10 +6538,11 @@ sap.ui.define([
 	 *   If the <code>expand</code> parameter is used but the batch mode is disabled
 	 * @public
 	 */
-	ODataModel.prototype.createEntry = function(sPath, mParameters) {
-		var bCanonical, sChangeSetId, oContext, fnCreated, sDeepPath, fnError, sETag, sExpand,
-			sGroupId, mHeaders, sKey, sNormalizedPath, vProperties, bRefreshAfterChange, oRequest,
-			mRequests, fnSuccess, sUrl, aUrlParams, mUrlParams,
+	ODataModel.prototype.createEntry = function (sPath, mParameters) {
+		var bCanonical, sChangeSetId, oContext, fnCreated, pCreate, fnCreatedPromiseResolve,
+			sDeepPath, fnError, sETag, sExpand, sGroupId, mHeaders, sKey, sNormalizedPath,
+			vProperties, bRefreshAfterChange, oRequest, mRequests, fnSuccess, sUrl, aUrlParams,
+			mUrlParams,
 			oEntity = {},
 			sMethod = "POST",
 			that = this;
@@ -6647,6 +6652,7 @@ sap.ui.define([
 						oData = Object.assign({}, oCreateData, oData);
 						fnSuccessFromParameters(oData, oCreateResponse);
 					}
+					fnCreatedPromiseResolve();
 				};
 				fnError = function (oError) {
 					if (oCreateData) {
@@ -6659,6 +6665,8 @@ sap.ui.define([
 						if (fnSuccessFromParameters) {
 							fnSuccessFromParameters(oCreateData, oCreateResponse);
 						}
+						fnCreatedPromiseResolve();
+
 						return;
 					}
 					if (!bCreateFailed) {
@@ -6677,12 +6685,19 @@ sap.ui.define([
 						bCreateFailed = false;
 					}
 				};
+			} else {
+				fnSuccess = function (oData, oCreateResponse) {
+					if (fnSuccessFromParameters) {
+						fnSuccessFromParameters(oData, oCreateResponse);
+					}
+					fnCreatedPromiseResolve();
+				};
 			}
 			oEntity.__metadata = {
 				type: "" + oEntityMetadata.entityType,
 				uri: that.sServiceUrl + '/' + sKey,
-				created: {//store path for later POST
-					key: sNormalizedPath.substring(1),
+				created: {
+					key: sNormalizedPath.substring(1), //store path for later POST
 					success: fnSuccess,
 					error: fnError,
 					headers: mHeaders,
@@ -6693,6 +6708,13 @@ sap.ui.define([
 				},
 				deepPath: sDeepPath
 			};
+			pCreate = new SyncPromise(function (resolve, reject) {
+				fnCreatedPromiseResolve = resolve;
+				oEntity.__metadata.created.abort = reject;
+			});
+			pCreate.catch(function () {
+				// avoid uncaught in promise if the caller of #createEntry does not use the promise
+			});
 
 			sKey = that._addEntity(merge({}, oEntity));
 			that.mChangedEntities[sKey] = oEntity;
@@ -6711,7 +6733,8 @@ sap.ui.define([
 				oEntity.__metadata.created.expandRequest = oExpandRequest;
 				oEntity.__metadata.created.contentID = sUID;
 			}
-			oCreatedContext = that.getContext("/" + sKey, sDeepPath); // context wants a path
+
+			oCreatedContext = that.getContext("/" + sKey, sDeepPath, pCreate);
 			oCreatedContext.bCreated = true;
 
 			oRequest.key = sKey;
@@ -7634,15 +7657,17 @@ sap.ui.define([
 	 *   The absolute path
 	 * @param {string} [sDeepPath]
 	 *   The absolute deep path representing the same data as the given <code>sPath</code>
+	 * @param {sap.ui.base.SyncPromise} [oCreatePromise]
+	 *   A created promise as specified in the constructor of {@link sap.ui.model.odata.v2.Context}
 	 * @returns {sap.ui.model.odata.v2.Context}
 	 *   The ODate V2 context for the given path
 	 * @private
 	 */
-	ODataModel.prototype.getContext = function (sPath, sDeepPath) {
+	ODataModel.prototype.getContext = function (sPath, sDeepPath, oCreatePromise) {
 		var oContext = this.mContexts[sPath];
 
 		if (!oContext) {
-			oContext = this.mContexts[sPath] = new Context(this, sPath, sDeepPath);
+			oContext = this.mContexts[sPath] = new Context(this, sPath, sDeepPath, oCreatePromise);
 		} else {
 			oContext.setDeepPath(sDeepPath || oContext.getDeepPath() || sPath);
 		}
@@ -7907,6 +7932,7 @@ sap.ui.define([
 	 */
 	ODataModel._createAbortedError = function () {
 		return {
+			aborted : true,
 			headers : {},
 			message : "Request aborted",
 			responseText : "",
