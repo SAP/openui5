@@ -29,7 +29,7 @@ sap.ui.define([
 						var aValueTranslations = oModel.getProperty(s);
 						if (aValueTranslations) {
 							//clone the exist value translations list since sometimes it is readonly
-							var aValueTranslationsUpdated = deepClone(aValueTranslations);
+							var aValueTranslationsUpdated = deepClone(aValueTranslations, 500);
 							value = merge(aValueTranslationsUpdated, value);
 						}
 						//update the value property via current language in Core

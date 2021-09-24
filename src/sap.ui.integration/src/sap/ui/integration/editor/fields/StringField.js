@@ -241,7 +241,7 @@ sap.ui.define([
 							var oControl = oEvent.getSource();
 							var sValue = oControl.getValue();
 							var sLanguage =  Core.getConfiguration().getLanguage().replaceAll('-', '_');
-							var oValueTranslations = deepClone(oConfig.valueTranslations);
+							var oValueTranslations = deepClone(oConfig.valueTranslations, 500);
 							oValueTranslations[sLanguage] = sValue;
 							oConfig.valueTranslations = oValueTranslations;
 						}
@@ -372,7 +372,7 @@ sap.ui.define([
 			//init the origin translation value list in card i18n files
 			that._aOriginTranslatedValues = oField.getOriginTranslatedValues(oConfig);
 		}
-		var aTempTranslatedLanguages = deepClone(that._aOriginTranslatedValues);
+		var aTempTranslatedLanguages = deepClone(that._aOriginTranslatedValues, 500);
 		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 		//merge the value in config.valueTranslations into the value list of i18n files
 		aTempTranslatedLanguages.forEach(function (translatedValue) {
@@ -481,7 +481,7 @@ sap.ui.define([
 							enabled: "{languages>/isUpdated}",
 							press: function () {
 								var aLanguages = that._oTranslationPopover.getModel("languages").getData();
-								var oCurrentValueTranslations = deepClone(oConfig.valueTranslations);
+								var oCurrentValueTranslations = deepClone(oConfig.valueTranslations, 500);
 								//get changes in the popup
 								var oValueTranslations = {};
 								var aUpdatedLanguages = [];

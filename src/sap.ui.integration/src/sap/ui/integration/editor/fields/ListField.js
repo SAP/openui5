@@ -297,7 +297,7 @@ sap.ui.define([
 			var oNewItems = [];
 			oItems.forEach(function (oItem) {
 				//clone the current item since sometimes the item is readonly
-				var oNewItem = deepClone(oItem, 10);
+				var oNewItem = deepClone(oItem, 500);
 				var sItemKey = oField.getKeyFromItem(oNewItem);
 				if (sItemKey === sChangedItemKey) {
 					if (bIsSelected) {

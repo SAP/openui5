@@ -93,9 +93,9 @@ sap.ui.define([
 					enabled: true
 				});
 			});
-			aDefaultIcons = deepClone(aIcons);
+			aDefaultIcons = deepClone(aIcons, 500);
 		} else {
-			aIcons = deepClone(aDefaultIcons);
+			aIcons = deepClone(aDefaultIcons, 500);
 		}
 		aIcons = [{
 			icon: "",
