@@ -374,25 +374,6 @@ sap.ui.define([
 				}
 			});
 		},
-		iClickOnRtaSetting: function(sIcon) {
-			return this.waitFor({
-				controlType: "sap.m.Popover",
-				success: function(aPopovers) {
-					var oPopover = aPopovers[0];
-					this.waitFor({
-						controlType: "sap.m.Button",
-						matchers: [
-							new Ancestor(oPopover),
-							new PropertyStrictEquals({
-								name: "icon",
-								value: sIcon
-							})
-						],
-						actions: new Press()
-					});
-				}
-			});
-		},
 		iPressButtonWithText: function (sText) {
 			return this.waitFor({
 				controlType: "sap.m.Button",

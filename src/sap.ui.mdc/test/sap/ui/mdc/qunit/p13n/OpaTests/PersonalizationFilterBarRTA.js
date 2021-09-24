@@ -5,7 +5,8 @@ sap.ui.define([
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Util',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion',
-	'sap/ui/Device'
+	'sap/ui/Device',
+	'test-resources/sap/ui/rta/internal/integration/pages/Adaptation'
 ], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, Device) {
 	'use strict';
 
@@ -42,7 +43,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("When I enable key user adaptation, the App should change into 'RTA' mode", function(Given, When, Then){
 		When.iPressButtonWithText("Start RTA");
-		Then.iShouldSeeRTABar();
+		Then.onPageWithRTA.iShouldSeeTheToolbar();
 	});
 
 	// ----------------------------------------------------------------
@@ -50,14 +51,15 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("When I press on the FilterBar, the settings context menu opens", function (Given, When, Then) {
 		When.iClickOnOverlayForControl("sap.ui.mdc.FilterBar");
-		Then.iShouldSeeRTAPopoverWithActions(2);
+		Then.onPageWithRTA.iShouldSeetheContextMenu();
+		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2, true);
 	});
 
 	// ----------------------------------------------------------------
 	// open Personalization dialog
 	// ----------------------------------------------------------------
 	opaTest("When I press on RTA settings icon the personalization dialog appears", function (Given, When, Then) {
-		When.iClickOnRtaSetting("sap-icon://key-user-settings");
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
 		When.iChangeAdaptFiltersView("sap-icon://group-2");
 		Then.iShouldSeeP13nFilterItem({
 			itemText: "cityOfOrigin_city",

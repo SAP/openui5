@@ -35,29 +35,6 @@ sap.ui.define([
 				}
 			});
 		},
-		iShouldSeeRTABar: function() {
-			return this.waitFor({
-				controlType: "sap.ui.rta.toolbar.Standalone",
-				success: function(aRTAToolBar) {
-					Opa5.assert.equal(aRTAToolBar.length, 1, "RTA has been started");
-				}
-			});
-		},
-		iShouldSeeRTAPopoverWithActions: function(iButtons) {
-			return this.waitFor({
-				controlType: "sap.m.Popover",
-				success: function(aPopover) {
-					Opa5.assert.equal(aPopover.length, 1, "RTA has been started");
-					this.waitFor({
-						controlType: "sap.m.Button",
-						matchers: new Ancestor(aPopover[0]),
-						success: function(aButtons){
-							Opa5.assert.equal(aButtons.length, iButtons, "Correct amount of actions");
-						}
-					});
-				}
-			});
-		},
 		iShouldSeeButtonWithText: function (sText) {
 			return this.waitFor({
 				controlType: "sap.m.Button",
