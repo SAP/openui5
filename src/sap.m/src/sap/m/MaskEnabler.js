@@ -208,6 +208,18 @@ sap.ui.define([
 		};
 
 		/**
+		 * Handle when escape is pressed.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
+		 */
+		this.onsapescape = function(oEvent) {
+			if (this._oTempValue._aContent.join("") !== this._oTempValue._aInitial.join("")) {
+				InputBase.prototype.onsapescape.call(this, oEvent);
+			}
+		};
+
+		/**
 		 * Setter for property <code>value</code>.
 		 *
 		 * @param {string} sValue New value for property <code>value</code>.
@@ -949,7 +961,6 @@ sap.ui.define([
 				this._applyAndUpdate(this._sOldInputValue);
 				this._positionCaret(true);
 				oEvent.preventDefault();
-
 			} else if (oKey.bEnter) {
 				this._inputCompletedHandler(oEvent);
 			} else if ((oKey.bCtrlKey && oKey.bInsert) ||
