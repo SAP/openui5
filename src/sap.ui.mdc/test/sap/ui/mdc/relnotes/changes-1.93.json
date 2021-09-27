@@ -45,5 +45,32 @@
         ]
       }
     ]
+  },
+  "1.93.1": {
+    "date": "September 2021",
+    "notes": [
+      {
+        "id": "c8a8e4383ce23334e11ff32bc5b1f4daf6506ff9",
+        "type": "FIX",
+        "text": " ConditionType: return unit valid for type",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170175592"
+          }
+        ]
+      },
+      {
+        "id": "8edd793a9518d6df9c06b106b86078257cc69eae",
+        "type": "FIX",
+        "text": " Field: if in table changing number changes unit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170173084"
+          }
+        ]
+      }
+    ]
   }
 }

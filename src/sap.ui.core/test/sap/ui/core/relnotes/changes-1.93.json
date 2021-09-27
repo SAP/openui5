@@ -137,5 +137,85 @@
         "text": " Customizing_async.qunit.js"
       }
     ]
+  },
+  "1.93.1": {
+    "date": "September 2021",
+    "notes": [
+      {
+        "id": "9c0fe1bfbee7ecf21c01b5c7a9de5ff4c7ef9124",
+        "type": "FIX",
+        "text": " core.routing: initialize nested routers when parent router initialized without hash parsing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170180471"
+          }
+        ]
+      },
+      {
+        "id": "6015458a26a9c41b441b810301add075e9f3f757",
+        "type": "FIX",
+        "text": " Component: Accept multiple onInstanceCreated listeners",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180375313"
+          }
+        ]
+      },
+      {
+        "id": "3216a1fb0a2efe43ea0df75a2cc80e94986db031",
+        "type": "FIX",
+        "text": " ManagedObject: detach binding handler before destroying child controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180198925"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180190469"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180208149"
+          }
+        ]
+      },
+      {
+        "id": "72c4345015d05a052e13ecf0f2818804205e0ea1",
+        "type": "FIX",
+        "text": " routing.History: use HashChanger to fetch hash and wait it till init",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180169665"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180299462"
+          }
+        ]
+      },
+      {
+        "id": "eac33bee803c7cfc568d790d8030662016f12f2e",
+        "type": "FIX",
+        "text": " crossroads: Match patterns w/ optional parameters and optional slashes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180291823"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500005662652021"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500005654522021"
+          }
+        ]
+      }
+    ]
   }
 }

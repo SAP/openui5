@@ -35,5 +35,21 @@
         "text": " JSDoc: fix pseudo-fields, declare type for real fields"
       }
     ]
+  },
+  "1.93.1": {
+    "date": "September 2021",
+    "notes": [
+      {
+        "id": "4471c917efa9596a80ccc42271f91c55a0f86892",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Correct maxScrollHeight computation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180305489"
+          }
+        ]
+      }
+    ]
   }
 }

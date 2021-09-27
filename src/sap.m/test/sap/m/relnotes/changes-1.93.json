@@ -316,5 +316,80 @@
         ]
       }
     ]
+  },
+  "1.93.1": {
+    "date": "September 2021",
+    "notes": [
+      {
+        "id": "243b00affb3b83b42a05ea12c14a201ea748a7f6",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: aria-hidden attribute added when there are no tokens",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700018628612021"
+          }
+        ]
+      },
+      {
+        "id": "41539a2372e438ba4f5a4e5072a53925fcaacead",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Racing condition with invalidating content fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170174725"
+          }
+        ]
+      },
+      {
+        "id": "374aed244d8b537e7807b07a571d3be9132187cf",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: navigateBack should be called by the application when model is updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180372956"
+          }
+        ]
+      },
+      {
+        "id": "01c8ca9be4927dc90a6f02f16039e99941bfc2c2",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: 'selectionChange' is fired properly on 'selectAll'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180358601"
+          }
+        ]
+      },
+      {
+        "id": "ca0e0a20e8d705e1be017d2a54418866029fe6ba",
+        "type": "FIX",
+        "text": " sap.m.IcontabBar: Color of tabs in Inline mode is now announced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180337117"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180348247"
+          }
+        ]
+      },
+      {
+        "id": "cd8e97aeb10e8b4e7a14e42280965320972b7993",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: vertical alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005622642021"
+          }
+        ]
+      }
+    ]
   }
 }
