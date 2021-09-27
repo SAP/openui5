@@ -339,7 +339,16 @@ sap.ui.define([
 		sut._notifyResize({from: 0});
 		this.clock.tick(1);
 
-		assert.ok(tableResizeSpy.called, "Table resize called, if media is different");
+		assert.equal(tableResizeSpy.callCount, 1, "Table resize called, if media is different");
+
+		sut.setVisible(false);
+		sut._notifyResize({from: 100});
+		this.clock.tick(1);
+		assert.equal(tableResizeSpy.callCount, 1, "Table resize not called, since column is invisible");
+
+		sut.setVisible(true);
+		sut.rerender();
+		assert.ok(sut.getDomRef(), "Visible column is rendered");
 
 		parent.destroy();
 	});
