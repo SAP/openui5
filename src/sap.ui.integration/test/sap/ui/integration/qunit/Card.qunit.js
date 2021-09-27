@@ -774,6 +774,26 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_CustomModels = {
+			"sap.app": {
+				"id": "test.card.card15"
+			},
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"name": "cities"
+				},
+				"content": {
+					"data": {
+						"path": "cities>/items"
+					},
+					"item": {
+						"title": "{cities>name}"
+					}
+				}
+			}
+		};
+
 		function testContentInitialization(oManifest, assert) {
 
 			// Arrange
@@ -2971,5 +2991,82 @@ sap.ui.define([
 			}, 500);
 		});
 
+		QUnit.module("Custom Models", {
+			beforeEach: function () {
+				this.oCard = new Card();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("List items can be set through custom model", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			oCard.attachEvent("_ready", function () {
+				var aItems;
+
+				oCard.getModel("cities").setData({
+					items: [
+						{name: "City 1"},
+						{name: "City 2"}
+					]
+				});
+
+				Core.applyChanges();
+
+				aItems = this.oCard.getCardContent().getInnerList().getItems();
+
+				// Assert
+				assert.strictEqual(aItems.length, 2, "There are two items rendered from the custom model.");
+				done();
+			}.bind(this));
+
+			// Act
+			oCard.setManifest(oManifest_CustomModels);
+			oCard.startManifestProcessing();
+		});
+
+		QUnit.test("Registering custom models on multiple calls to setManifest", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard,
+				fnErrorLogSpy = sinon.spy(Log, "error");
+
+			oCard.attachEventOnce("_ready", function () {
+				var fnModelDestroySpy = sinon.spy(oCard.getModel("cities"), "destroy");
+
+				oCard.attachEventOnce("_ready", function () {
+					// Assert - after second setManifest
+					assert.ok(fnModelDestroySpy.calledOnce, "Destroy was called for the custom model on second setManifest.");
+					assert.strictEqual(this._aCustomModels.length, 1, "Custom model is registered only once.");
+					assert.notOk(fnErrorLogSpy.called, "There is no error logged for duplicate custom model names.");
+
+					oCard.destroy();
+					Core.applyChanges();
+
+					assert.ok(true, "Card can be successfully destroyed after multiple calls to setManifest.");
+
+					done();
+
+					// Clean up
+					fnModelDestroySpy.restore();
+					fnErrorLogSpy.restore();
+				});
+
+				// Act
+				oCard.setManifest(oManifest_CustomModels);
+				oCard.startManifestProcessing();
+				Core.applyChanges();
+
+			});
+
+			// Act
+			oCard.setManifest(oManifest_CustomModels);
+			oCard.startManifestProcessing();
+		});
 	}
 );
