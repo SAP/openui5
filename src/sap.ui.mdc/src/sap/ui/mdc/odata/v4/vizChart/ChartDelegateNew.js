@@ -297,8 +297,10 @@ sap.ui.define([
         }
 
         //Update coloring and semantical patterns on Item change
-        this._prepareColoringForItem(oMDCChartItem);
-        this._updateColoring(oMDCChart, this._getChart(oMDCChart).getVisibleDimensions(), this._getChart(oMDCChart).getVisibleMeasures());
+        this._prepareColoringForItem(oMDCChartItem).then(function(){
+            this._updateColoring(oMDCChart, this._getChart(oMDCChart).getVisibleDimensions(), this._getChart(oMDCChart).getVisibleMeasures());
+        }.bind(this));
+
         this.fetchProperties(oMDCChartItem.getParent()).then(function (aProperties) {
             this._updateSemanticalPattern(oMDCChart, aProperties);
         }.bind(this));
@@ -471,17 +473,25 @@ sap.ui.define([
                         return oCurrentPropertyInfo.name === sKey;
                     });
 
-                    var oMeasure = new Measure({
+                    var aggregationMethod = oPropertyInfo.aggregationMethod;
+                    var propertyPath = oPropertyInfo.propertyPath;
+
+                    var oMeasureSettings = {
                         name: sKey,
                         label: oPropertyInfo.label,
-                        role: "axis1",
-                        analyticalInfo: {
-                            propertyPath: oPropertyInfo.name, //TODO: What to fill here without PropertyInfos? Consider property at MDC Item level
-                            "with": oPropertyInfo.aggregationMethod
-                        }
-                    });
+                        role: "axis1"
+                    };
 
-                    aVisibleMeasures.push();
+                    if (aggregationMethod && propertyPath) {
+                        oMeasureSettings.analyticalInfo = {
+                            propertyPath: propertyPath,
+                            "with": aggregationMethod
+                        };
+                    }
+
+                    var oMeasure = new Measure(oMeasureSettings);
+
+                    aVisibleMeasures.push(oMeasure);
                     this._getChart(oMDCChart).addMeasure(oMeasure);
                 }
 
@@ -589,7 +599,7 @@ sap.ui.define([
 
             }
 
-        });
+        }.bind(this));
 
     };
 
@@ -997,14 +1007,7 @@ sap.ui.define([
         var oMetadataInfo = oMDCChart.getDelegate().payload;
         var sEntitySetPath = "/" + oMetadataInfo.collectionName;
         var oBindingInfo = {
-            path: sEntitySetPath,
-            parameters: {
-                entitySet: oMetadataInfo.collectionName,
-                useBatchRequests: true,
-                provideGrandTotals: true,
-                provideTotalResultSize: true,
-                noPaging: true
-            }
+            path: sEntitySetPath
         };
         return oBindingInfo;
     };
