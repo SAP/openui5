@@ -7,8 +7,23 @@
 // already has been loaded asynchronously (e.g. via a dependency declared in the manifest)
 sap.ui.getCore().loadLibrary("sap.ui.unified");
 
-sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', './PlanningCalendarLegend', 'sap/ui/unified/library'],
-	function(CalendarDate, CalendarUtils, UniversalDate, InvisibleText, PlanningCalendarLegend, unifiedLibrary) {
+sap.ui.define([
+	'sap/ui/unified/calendar/CalendarDate',
+	'sap/ui/unified/calendar/CalendarUtils',
+	'sap/ui/core/date/UniversalDate',
+	'sap/ui/core/IconPool',
+	'sap/ui/core/InvisibleText',
+	'./PlanningCalendarLegend',
+	'sap/ui/unified/library'
+	],
+	function(
+		CalendarDate,
+		CalendarUtils,
+		UniversalDate,
+		IconPool,
+		InvisibleText,
+		PlanningCalendarLegend,
+		unifiedLibrary) {
 		"use strict";
 
 		var iVerticalPaddingBetweenAppointments = 2;

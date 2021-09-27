@@ -2,9 +2,25 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppointment', 'sap/ui/unified/CalendarLegendRenderer',
-		'sap/ui/Device', 'sap/ui/unified/library', 'sap/ui/core/InvisibleText', "sap/base/Log"],
-	function (UniversalDate, CalendarAppointment, CalendarLegendRenderer, Device, library, InvisibleText, Log) {
+sap.ui.define([
+	'sap/ui/core/date/UniversalDate',
+	'sap/ui/unified/CalendarAppointment',
+	'sap/ui/unified/CalendarLegendRenderer',
+	'sap/ui/Device',
+	'sap/ui/unified/library',
+	'sap/ui/core/IconPool',
+	'sap/ui/core/InvisibleText',
+	"sap/base/Log"
+	],
+	function (
+		UniversalDate,
+		CalendarAppointment,
+		CalendarLegendRenderer,
+		Device,
+		library,
+		IconPool,
+		InvisibleText,
+		Log) {
 		"use strict";
 
 
