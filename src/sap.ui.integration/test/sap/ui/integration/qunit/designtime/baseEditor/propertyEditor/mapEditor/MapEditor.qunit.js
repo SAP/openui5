@@ -76,6 +76,11 @@ sap.ui.define([
 			assert.ok(oMapEditorDomRef instanceof HTMLElement, "Then it is rendered correctly (1/3)");
 			assert.ok(oMapEditorDomRef.offsetHeight > 0, "Then it is rendered correctly (2/3)");
 			assert.ok(oMapEditorDomRef.offsetWidth > 0, "Then it is rendered correctly (3/3)");
+			var sDefaultLabel = this.oMapEditor.getEditor().getI18nProperty("BASE_EDITOR.MAP.DEFAULT_TYPE");
+			assert.ok(
+				this.oAddButton.getText().includes(sDefaultLabel),
+				"then the add button has the proper default label"
+			);
 		});
 
 		QUnit.test("When a value is set", function (assert) {
@@ -533,6 +538,33 @@ sap.ui.define([
 					"Then the key is not updated"
 				);
 				assert.strictEqual(aItems[0].key.getContent().getValueState(), "Error", "Then the error is displayed");
+			});
+		});
+
+		QUnit.test("When the add item label is customized", function(assert) {
+			this.oBaseEditor.setConfig({
+				"properties": {
+					"sampleMap": {
+						"path": "/sampleMap",
+						"type": "map",
+						"addItemLabelI18n": "SOME_I18N_KEY"
+					}
+				},
+				"propertyEditors": {
+					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor"
+				}
+			});
+
+			this.oBaseEditor.setJson({
+				sampleMap: {}
+			});
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleMap").then(function (aPropertyEditor) {
+				var oMapEditor = aPropertyEditor[0];
+				assert.ok(
+					getMapEditorContent(oMapEditor).addButton.getText().includes("SOME_I18N_KEY"),
+					"then the custom key is part of the label"
+				);
 			});
 		});
 	});

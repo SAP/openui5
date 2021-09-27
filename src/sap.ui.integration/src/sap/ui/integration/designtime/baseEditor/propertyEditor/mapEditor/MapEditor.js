@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/base/util/restricted/_merge",
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/isPlainObject",
-	"sap/base/util/includes"
+	"sap/base/util/includes",
+	"sap/base/strings/formatMessage"
 ], function (
 	BasePropertyEditor,
 	deepClone,
@@ -18,7 +19,8 @@ sap.ui.define([
 	_merge,
 	_omit,
 	isPlainObject,
-	includes
+	includes,
+	formatMessage
 ) {
 	"use strict";
 
@@ -85,6 +87,12 @@ sap.ui.define([
 	 *  <td><code>boolean</code></td>
 	 * 	<td><code>true</code></td>
 	 * 	<td>Whether to allow changing the order of items.</td>
+	 * </tr>
+	 * <tr>
+	 * 	<td><code>addItemLabelI18n</code></td>
+	 *  <td><code>string</code></td>
+	 * 	<td><code>BASE_EDITOR.MAP.DEFAULT_TYPE</code></td>
+	 * 	<td>I18n key for the item in the "Add: Item" label, e.g. "Add: Parameter" by default</td>
 	 * </tr>
 	 * </table>
 	 *
@@ -587,6 +595,11 @@ sap.ui.define([
 			this.setValue(oEditorValue);
 		},
 
+		formatAddItemText: function(sAddText, sItemLabelI18n) {
+			var sItemLabel = this.getI18nProperty(sItemLabelI18n);
+			return formatMessage(sAddText, [sItemLabel]);
+		},
+
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
@@ -614,6 +627,9 @@ sap.ui.define([
 		includeInvalidEntries: {
 			defaultValue: true,
 			mergeStrategy: "mostRestrictiveWins"
+		},
+		addItemLabelI18n: {
+			defaultValue: "BASE_EDITOR.MAP.DEFAULT_TYPE"
 		}
 	});
 
