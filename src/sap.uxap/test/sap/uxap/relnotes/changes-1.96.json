@@ -1,0 +1,29 @@
+{
+  "1.96.0": {
+    "date": "September 2021",
+    "notes": [
+      {
+        "id": "4c7fffecac0e81485aca9fbb97f6ae7a82521bc8",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed wrong height when used in sap.uxap.ObjectPageHeaderContent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170215532"
+          }
+        ]
+      },
+      {
+        "id": "b007c0e005b7adbc1b1f8198585b7ff985d60588",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected scroll to subSection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180373220"
+          }
+        ]
+      }
+    ]
+  }
+}

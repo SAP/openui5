@@ -1,0 +1,312 @@
+{
+  "1.96.0": {
+    "date": "September 2021",
+    "notes": [
+      {
+        "id": "c29ac96e680d28d64fbccde43ed057eb4a6f1fed",
+        "type": "FIX",
+        "text": " sap.m.StepInput: the control now can be focused by JS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170207375"
+          }
+        ]
+      },
+      {
+        "id": "dd3aeaa06b4118d18a77e59d93262b0fdc3c7a35",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: can fast-forward to Today view"
+      },
+      {
+        "id": "36f8ca0ab19341cec32182925f35f8d8ca61ee23",
+        "type": "FEATURE",
+        "text": " sap.m.IconTabBar: Implemented tab selection in UI Adaptation mode"
+      },
+      {
+        "id": "9b980f2a7ed2d16208162f8af6b9625a0e7e2330",
+        "type": "FIX",
+        "text": " demokit.walkthrough: make the config 'IAsyncContentCreation' and 'async' consistent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180355649"
+          }
+        ]
+      },
+      {
+        "id": "fedbb2338dd51c2b742ca3cdf525100ed1b267f4",
+        "type": "FEATURE",
+        "text": " sap.m.Button: screen reader announses text, icon or tooltip changes"
+      },
+      {
+        "id": "e754236243a28e805a040128dc4d296fc046a49c",
+        "type": "FIX",
+        "text": " sap.m.UploadSet : inner controls created by setter not freed up",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006120612021"
+          }
+        ]
+      },
+      {
+        "id": "1b8f962a318b86fc52081637e5930b4d146ebfd3",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: aria-hidden attribute added when there are no tokens",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700018628612021"
+          }
+        ]
+      },
+      {
+        "id": "5ad7e0f41317b92f41b841523245381a2ad4abd7",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Fixed value color regression",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170198963"
+          }
+        ]
+      },
+      {
+        "id": "cf9d8c392c94da477d37b56a659ca1a15b7fa64a",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Accessibility test page inludes region labels",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180274947"
+          }
+        ]
+      },
+      {
+        "id": "46c2f33769653f995875ad8f7c409fd79b492c30",
+        "type": "FIX",
+        "text": " sap.m.Menu: Splitting into buttons defines correct press handlers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170199101"
+          }
+        ]
+      },
+      {
+        "id": "96f1eef4180c85dfbb8520606e8a76285376a4ca",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: added aria-expanded attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170138972"
+          }
+        ]
+      },
+      {
+        "id": "124ac9e9a1af8b076c75598c1c6fdc8ea32a446f",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Adjust documentation for the 'growing' property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180349498"
+          }
+        ]
+      },
+      {
+        "id": "a0f984400f283a673deb57e958490caf76e7b75e",
+        "type": "FEATURE",
+        "text": " i18n: support library bundle in I18NText matcher"
+      },
+      {
+        "id": "0d3c7bbfabe01662e94fff700614126dfffcc295",
+        "type": "FIX",
+        "text": " sap.m.Bar: Middle content aligned properly when there is left or right content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180337099"
+          }
+        ]
+      },
+      {
+        "id": "db67f4dceb72a55e0cd0a8c53763b5776630e3e2",
+        "type": "FIX",
+        "text": "sap.m.Input: Input with OSP sample update",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005182052021"
+          }
+        ]
+      },
+      {
+        "id": "7916c40abf93185a8777cae8ecadc6ac61299622",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Racing condition with invalidating content fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170174725"
+          }
+        ]
+      },
+      {
+        "id": "2f8a6da701ab3c73a9bd7be93c37d8043151ca54",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Correctly switches row header icon to image",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180379501"
+          }
+        ]
+      },
+      {
+        "id": "8c8e04834055a4add4877f89129479831704ff78",
+        "type": "FIX",
+        "text": " sap.m.Input: Prevent calling SuggestionItemSelected twice on tab",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180367145"
+          }
+        ]
+      },
+      {
+        "id": "0f7fa59c5072e7e708170c4991f3a266026ec4d6",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: navigateBack should be called by the application when model is updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180372956"
+          }
+        ]
+      },
+      {
+        "id": "81dd0e2ec058a29aee7072f8e2da623c8c9a1147",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: vertical alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180228319"
+          }
+        ]
+      },
+      {
+        "id": "806aab06b79b2c23e313dd0f9831788b3e41c4b0",
+        "type": "FIX",
+        "text": " sap.m.StepInput: formats its value correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006083982021"
+          }
+        ]
+      },
+      {
+        "id": "8dd94fd68ff9e5b3badabf5f9c828f90fe76638c",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Display initially bound value when in read-only mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005050852021"
+          }
+        ]
+      },
+      {
+        "id": "115486d998058eb79bb5d5ca0284fb5b62eea4c5",
+        "type": "FIX",
+        "text": " sap.m.Input: Input value is not cleared when focus is over a group header",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170176927"
+          }
+        ]
+      },
+      {
+        "id": "f95ca6889b56d9d4b7d9283055d588e3113b187a",
+        "type": "FEATURE",
+        "text": " sap.m.Select: Add previously selected item in change event"
+      },
+      {
+        "id": "f7393b79e42d780083f7d7d3216cede47a8e19c7",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Unnecessary invalidation is now avoided",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970240933"
+          }
+        ]
+      },
+      {
+        "id": "744adca90ef794dea90db27e3801136d8b0f9115",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: activedescendant is now set when group header is focused",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180360232"
+          }
+        ]
+      },
+      {
+        "id": "ef421329e236f7ef048ed7c19b63e87009be8d2c",
+        "type": "FIX",
+        "text": " sap.m.Input: Hide clear icon when setShowClarIcon is called with false"
+      },
+      {
+        "id": "bbbb51259042eb6bf51100995a48d7781f4038da",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Heading level is now announced only once by screen readers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700018876752021"
+          }
+        ]
+      },
+      {
+        "id": "5027532cd1c2ed26bc60d7e580e38d13773d046e",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: formats value when out of min/max range",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005668632021"
+          }
+        ]
+      },
+      {
+        "id": "2ab3ecd76ebdb75bb429e3f742e280d6fa02b339",
+        "type": "FIX",
+        "text": " sap.m.TextArea: correct mirror font-size when browser font-size is changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180375336"
+          }
+        ]
+      },
+      {
+        "id": "bb5bfc0e12945ea1cb2fca0b867f99a5cff40ea9",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: 'selectionChange' is fired properly on 'selectAll'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180358601"
+          }
+        ]
+      }
+    ]
+  }
+}
