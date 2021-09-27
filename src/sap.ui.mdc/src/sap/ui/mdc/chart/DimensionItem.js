@@ -25,14 +25,14 @@ sap.ui.define([
 	 *        The control is experimental and the API/behaviour is not finalised and hence this should not be used for productive usage.
 	 * @extends sap.ui.mdc.chart.Item
 	 * @author SAP SE
-	 * @constructor The API/behaviour is not finalised and hence this control should not be used for productive usage.
 	 * @private
-	 * @experimental
+	 * @experimental As of version 1.61
+	 * @ui5-restricted sap.ui.mdc
 	 * @since 1.61
 	 * @alias sap.ui.mdc.chart.DimensionItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var DimensionItem = Item.extend("sap.ui.mdc.chart.DimensionItem", /** @lends sap.ui.mdc.chart.Item.prototype */
+	var DimensionItem = Item.extend("sap.ui.mdc.chart.DimensionItem", /** @lends sap.ui.mdc.chart.DimensionItem.prototype */
 	{
 		metadata: {
 			"abstract": true,

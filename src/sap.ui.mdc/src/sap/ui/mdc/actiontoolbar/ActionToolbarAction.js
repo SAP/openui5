@@ -8,6 +8,26 @@ sap.ui.define([
 ], function(Control, ActionToolbarActionRenderer, ActionToolbarActionAlignment) {
     "use strict";
 
+	/**
+	 * Constructor for a new ActionToolbarAction.<br>
+	 * <b>Note:</b><br>
+	 * The control is experimental and the API / behavior is not finalized. It should only be used internally in other mdc controls (e.g.
+	 * chart/table).<br>
+	 *
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
+	 * @class The action for an {@link sap.ui.mdc.ActionToolbar ActionToolbar}) control
+	 * @extends sap.ui.core.Control
+	 * @author SAP SE
+	 * @version ${version}
+	 * @constructor
+	 * @private
+	 * @since 1.58
+	 * @experimental As of version 1.58
+	 * @ui5-restricted sap.ui.mdc
+	 * @alias sap.ui.mdc.actiontoolbar.ActionToolbarAction
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
     var ActionToolbarAction = Control.extend("sap.ui.mdc.actiontoolbar.ActionToolbarAction", {
         metadata: {
             library: "sap.ui.mdc",
@@ -15,6 +35,9 @@ sap.ui.define([
 				"sap.m.IOverflowToolbarContent"
 			],
             properties: {
+                /**
+                 * Layout information
+                 */
                 layoutInformation: {
                     type: "object",
                     defaultValue: {
@@ -26,6 +49,9 @@ sap.ui.define([
             },
             defaultAggregation: "action",
             aggregations: {
+                /**
+                 * Action
+                 */
                 action: {
                     type: "sap.ui.core.Control",
 					multiple: false

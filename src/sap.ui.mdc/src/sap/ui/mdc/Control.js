@@ -35,9 +35,10 @@ sap.ui.define([
  	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.getInbuiltFilter as getInbuiltFilter
 	 *
 	 * @private
-	 * @experimental
 	 * @since 1.61
-	*/
+	 * @experimental As of version 1.61
+	 * @ui5-restricted sap.ui.mdc
+	 */
 	var Control = CoreControl.extend("sap.ui.mdc.Control", /** @lends sap.ui.mdc.Control.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",

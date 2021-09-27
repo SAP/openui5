@@ -17,7 +17,6 @@ sap.ui.define([
 	 *        The control is experimental and the API/behaviour is not finalised and hence this should not be used for productive usage.
 	 * @extends sap.ui.core.Element
 	 * @author SAP SE
-	 * @constructor The API/behaviour is not finalised and hence this control should not be used for productive usage.
 	 * @private
 	 * @experimental
 	 * @since 1.58

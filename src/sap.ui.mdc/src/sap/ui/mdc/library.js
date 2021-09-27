@@ -62,6 +62,7 @@ sap.ui.define([
 			"sap.ui.mdc.table.GridTableType",
 			"sap.ui.mdc.table.ResponsiveTableType",
 			"sap.ui.mdc.table.RowSettings",
+			"sap.ui.mdc.chart.Item",
 			"sap.ui.mdc.chart.DimensionItem",
 			"sap.ui.mdc.chart.MeasureItem",
 			"sap.ui.mdc.chartNew.ItemNew",
@@ -768,6 +769,8 @@ sap.ui.define([
 	 * @enum {string}
 	 * @private
 	 * @since 1.74
+	 * @experimental As of version 1.74
+	 * @ui5-restricted sap.ui.mdc
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.FilterBarP13nMode = {
@@ -908,6 +911,8 @@ sap.ui.define([
 	 * @enum {string}
 	 * @private
 	 * @since 1.64
+	 * @experimental As of version 1.64
+	 * @ui5-restricted sap.ui.mdc
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ChartToolbarActionType = {
@@ -943,6 +948,8 @@ sap.ui.define([
 	 * @enum {string}
 	 * @private
 	 * @since 1.75
+	 * @experimental As of version 1.75
+	 * @ui5-restricted sap.ui.mdc
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ChartP13nMode = {

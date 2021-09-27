@@ -33,10 +33,9 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
-	 * @class
+	 * @class The ListView is a list based view to personalize selection and ordering of a Control aggregation.
 	 * @extends sap.ui.mdc.p13n.panels.BasePanel
 	 * @author SAP SE
-	 * @constructor The ListView is a list based view to personalize selection and ordering of a Control aggregation.
 	 * @private
 	 * @experimental
 	 * @since 1.85

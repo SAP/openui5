@@ -250,15 +250,30 @@ sap.ui.define([
 				 */
 				closed: {},
 
+				/**
+				 * This event is fired after the user navigated in the value help.
+				 */
 				navigated: {
 					parameters: {
+						/**
+						 * True if the focus should be set back to the field.
+						 */
 						bLeaveFocus: { type: "boolean" },
+						/**
+						 * Navigated condition.
+						 *
+						 * <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
+						 */
 						condition: { type: "object" },
-						value: { type: "string" },
-						key: { type: "string" },
+						/**
+						 * ID of the navigated item. (This is needed to set the corresponding aria-attribute)
+						 */
 						itemId: { type: "string" }
 					}
 				},
+				/**
+				 * This event is fired if the user wants to switch from typeahead to value help.
+				 */
 				switchToValueHelp: {}
 			},
 			defaultProperty: "filterValue"
