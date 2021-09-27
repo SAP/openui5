@@ -843,5 +843,87 @@
         ]
       }
     ]
+  },
+  "1.84.18": {
+    "date": "September 2021",
+    "notes": [
+      {
+        "id": "93090d5b98a2c4cc2f7b5a42825edb6438eb83a0",
+        "type": "FIX",
+        "text": " sap.m.UploadSet : inner controls created by setter not freed up",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006120612021"
+          }
+        ]
+      },
+      {
+        "id": "e5e387691c11371991484f47b90ddf77430ef4a3",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: aria-hidden attribute added when there are no tokens",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700018628612021"
+          }
+        ]
+      },
+      {
+        "id": "2095991b3a9cf542d9ac1931f8205fe1661e934f",
+        "type": "FIX",
+        "text": " UploadSet multiple files uplaod enabled for upload button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005981182021"
+          }
+        ]
+      },
+      {
+        "id": "0b45834c36fe13420d9351582342f3e63d8cf4c6",
+        "type": "FIX",
+        "text": "sap.m.Input: Input with OSP sample update",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005182052021"
+          }
+        ]
+      },
+      {
+        "id": "db9b109dca45b809b48ad6198045627a20b403af",
+        "type": "FIX",
+        "text": " sap.m.Input: Suggestion are visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005835762021"
+          }
+        ]
+      },
+      {
+        "id": "251259229ff4360c92b59b4135e48e90e9ce406a",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Display initially bound value when in read-only mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005050852021"
+          }
+        ]
+      },
+      {
+        "id": "c510580a3bb0433478088e0e6e719469a91102f4",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Range selection adoption",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005737542021"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -73,5 +73,21 @@
         ]
       }
     ]
+  },
+  "1.84.18": {
+    "date": "September 2021",
+    "notes": [
+      {
+        "id": "e39fb91f110a04cd6655391ea9f3eda1b52f7d7c",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Colors in list/table context fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080399165"
+          }
+        ]
+      }
+    ]
   }
 }

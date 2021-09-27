@@ -456,5 +456,51 @@
         ]
       }
     ]
+  },
+  "1.84.18": {
+    "date": "September 2021",
+    "notes": [
+      {
+        "id": "3c4fbb4a344a638c00dd5a4cb5432b983569bd89",
+        "type": "FIX",
+        "text": " ManagedObject.findAggregatedObjects: add possibility to include binding templates into the search",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170077221"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070449873"
+          }
+        ]
+      },
+      {
+        "id": "adf69bfea77f4a31e2dcaf63174160ec337b4b7f",
+        "type": "FIX",
+        "text": " core.Popup: avoid setting focus to static UIArea when runs on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004958692021"
+          }
+        ]
+      },
+      {
+        "id": "3472bcaab9b8b7271616ca5df175e11cc2c7e6de",
+        "type": "FIX",
+        "text": " routing.History: use HashChanger to fetch hash and wait it till init",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180169665"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180299462"
+          }
+        ]
+      }
+    ]
   }
 }
