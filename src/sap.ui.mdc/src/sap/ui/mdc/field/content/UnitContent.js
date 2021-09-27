@@ -24,7 +24,7 @@ sap.ui.define([
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	var UnitContent = Object.assign({}, DefaultContent, {
-		getEditMulti: function() {
+		getEditMultiValue: function() {
 			return ["sap/ui/mdc/field/FieldMultiInput", "sap/ui/mdc/field/FieldInput", "sap/m/Token"];
 		},
 		getEditMultiLine: function() {
@@ -68,7 +68,7 @@ sap.ui.define([
 
 			return aControls;
 		},
-		createEditMulti: function(oContentFactory, aControlClasses, sId) {
+		createEditMultiValue: function(oContentFactory, aControlClasses, sId) {
 			oContentFactory.setIsMeasure(true); // FieldHelp only on unit field
 			var MultiInput = aControlClasses[0];
 			var Token = aControlClasses[2]; // is loaded by MultiInput

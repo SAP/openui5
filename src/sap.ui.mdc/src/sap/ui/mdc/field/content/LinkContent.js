@@ -22,6 +22,9 @@ sap.ui.define([
 		getDisplay: function() {
 			return ["sap/m/Link"];
 		},
+		getDisplayMultiValue: function() {
+			return [null];
+		},
 		getDisplayMultiLine: function() {
 			return ["sap/m/Link"]; // render Link too, it wraps in Multiline
 		},
@@ -51,6 +54,9 @@ sap.ui.define([
 			oContentFactory.setBoundProperty("text");
 
 			return [oLink];
+		},
+		createDisplayMultiValue: function() {
+			throw new Error("sap.ui.mdc.field.content.LinkContent - createDisplayMultiValue not defined!");
 		},
 		createDisplayMultiLine: function(oContentFactory, aControlClasses, sId) {
 			return LinkContent.createDisplay(oContentFactory, aControlClasses, sId);

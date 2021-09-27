@@ -19,6 +19,12 @@ sap.ui.define([
 			instances: [Text],
 			createFunction: DefaultContent.createDisplay
 		},
+		"DisplayMultiValue": {
+			getPathsFunction: DefaultContent.getDisplayMultiValue,
+			paths: ["sap/m/ExpandableText"],
+			instances: [ExpandableText],
+			createFunction: DefaultContent.createDisplayMultiValue
+		},
 		"DisplayMultiLine": {
 			getPathsFunction: DefaultContent.getDisplayMultiLine,
 			paths: ["sap/m/ExpandableText"],
@@ -31,11 +37,11 @@ sap.ui.define([
 			instances: [FieldInput],
 			createFunction: DefaultContent.createEdit
 		},
-		"EditMulti": {
-			getPathsFunction: DefaultContent.getEditMulti,
+		"EditMultiValue": {
+			getPathsFunction: DefaultContent.getEditMultiValue,
 			paths: ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"],
 			instances: [FieldMultiInput, Token],
-			createFunction: DefaultContent.createEditMulti
+			createFunction: DefaultContent.createEditMultiValue
 		},
 		"EditMultiLine": {
 			getPathsFunction: DefaultContent.getEditMultiLine,
@@ -79,7 +85,9 @@ sap.ui.define([
 
 		assert.deepEqual(DefaultContent.getControlNames("Edit"), ["sap/ui/mdc/field/FieldInput"], "Correct default controls returned for ContentMode 'Edit'");
 		assert.deepEqual(DefaultContent.getControlNames("Display"), ["sap/m/Text"], "Correct default controls returned for ContentMode 'Display'");
-		assert.deepEqual(DefaultContent.getControlNames("EditMulti"), ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], "Correct default controls returned for ContentMode 'EditMulti'");
+		assert.deepEqual(DefaultContent.getControlNames("DisplayMultiValue"), ["sap/m/ExpandableText"], "Correct default controls returned for ContentMode 'DisplayMultiValue'");
+		assert.deepEqual(DefaultContent.getControlNames("DisplayMultiLine"), ["sap/m/ExpandableText"], "Correct default controls returned for ContentMode 'DisplayMultiLine'");
+		assert.deepEqual(DefaultContent.getControlNames("EditMultiValue"), ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], "Correct default controls returned for ContentMode 'EditMultiValue'");
 		assert.deepEqual(DefaultContent.getControlNames("EditMultiLine"), ["sap/m/TextArea"], "Correct default controls returned for ContentMode 'EditMultiLine'");
 		assert.deepEqual(DefaultContent.getControlNames("EditOperator"), [null], "Correct default controls returned for ContentMode 'EditOperator'");
 	});
@@ -119,30 +127,40 @@ sap.ui.define([
 		var oContentFactory = this.oField._oContentFactory;
 		this.oField.awaitControlDelegate().then(function() {
 			var aDisplayControls = oControlMap["Display"].instances;
+			var aDisplayMultiValueControls = oControlMap["DisplayMultiValue"].instances;
+			var aDisplayMultiLineControls = oControlMap["DisplayMultiLine"].instances;
 			var aEditControls = oControlMap["Edit"].instances;
-			var aEditMultiControls = oControlMap["EditMulti"].instances;
+			var aEditMultiValueControls = oControlMap["EditMultiValue"].instances;
 			var aEditMultiLineControls = oControlMap["EditMultiLine"].instances;
 
 			var fnCreateDisplayFunction = fnSpyOnCreateFunction("Display");
+			var fnCreateDisplayMultiValueFunction = fnSpyOnCreateFunction("DisplayMultiValue");
+			var fnCreateDisplayMultiLineFunction = fnSpyOnCreateFunction("DisplayMultiLine");
 			var fnCreateEditFunction = fnSpyOnCreateFunction("Edit");
-			var fnCreateEditMultiFunction = fnSpyOnCreateFunction("EditMulti");
+			var fnCreateEditMultiValueFunction = fnSpyOnCreateFunction("EditMultiValue");
 			var fnCreateEditMultiLineFunction = fnSpyOnCreateFunction("EditMultiLine");
 
 			var aCreatedDisplayControls = fnCreateControls(oContentFactory, "Display", "-create");
+			fnSpyCalledOnce(fnCreateDisplayFunction, "Display", assert);
+			var aCreatedDisplayMultiLineControls = fnCreateControls(oContentFactory, "DisplayMultiLine", "-create");
+			fnSpyCalledOnce(fnCreateDisplayMultiLineFunction, "DisplayMultiLine", assert); // before DisplayMultiValue as called inside there too
+			var aCreatedDisplayMultiValueControls = fnCreateControls(oContentFactory, "DisplayMultiValue", "-create");
+			fnSpyCalledOnce(fnCreateDisplayMultiValueFunction, "DisplayMultiValue", assert);
 			var aCreatedEditControls = fnCreateControls(oContentFactory, "Edit", "-create");
-			var aCreatedEditMultiControls = fnCreateControls(oContentFactory, "EditMulti", "-create");
+			fnSpyCalledOnce(fnCreateEditFunction, "Edit", assert);
+			var aCreatedEditMultiValueControls = fnCreateControls(oContentFactory, "EditMultiValue", "-create");
+			fnSpyCalledOnce(fnCreateEditMultiValueFunction, "EditMultiValue", assert);
 			var aCreatedEditMultiLineControls = fnCreateControls(oContentFactory, "EditMultiLine", "-create");
+			fnSpyCalledOnce(fnCreateEditMultiLineFunction, "EditMultiLine", assert);
 
 			var aCreatedEditOperatorControls = DefaultContent.create(oContentFactory, "EditOperator", null, [null], "EditOperator" + "-create");
 
-			fnSpyCalledOnce(fnCreateDisplayFunction, "Display", assert);
-			fnSpyCalledOnce(fnCreateEditFunction, "Edit", assert);
-			fnSpyCalledOnce(fnCreateEditMultiFunction, "EditMulti", assert);
-			fnSpyCalledOnce(fnCreateEditMultiLineFunction, "EditMultiLine", assert);
 
 			assert.ok(aCreatedDisplayControls[0] instanceof aDisplayControls[0], aDisplayControls[0].getMetadata().getName() + " control created for ContentMode 'Display'.");
+			assert.ok(aCreatedDisplayMultiValueControls[0] instanceof aDisplayMultiValueControls[0], aDisplayMultiValueControls[0].getMetadata().getName() + " control created for ContentMode 'DisplayMultiValue'.");
+			assert.ok(aCreatedDisplayMultiLineControls[0] instanceof aDisplayMultiLineControls[0], aDisplayMultiLineControls[0].getMetadata().getName() + " control created for ContentMode 'DisplayMultiLine'.");
 			assert.ok(aCreatedEditControls[0] instanceof aEditControls[0], aEditControls[0].getMetadata().getName() + " control created for ContentMode 'Edit'.");
-			assert.ok(aCreatedEditMultiControls[0] instanceof aEditMultiControls[0], aEditMultiControls[0].getMetadata().getName() + " control created for ContentMode 'EditMulti'.");
+			assert.ok(aCreatedEditMultiValueControls[0] instanceof aEditMultiValueControls[0], aEditMultiValueControls[0].getMetadata().getName() + " control created for ContentMode 'EditMultiValue'.");
 			assert.ok(aCreatedEditMultiLineControls[0] instanceof aEditMultiLineControls[0], aEditMultiLineControls[0].getMetadata().getName() + " control created for ContentMode 'EditMultiLine'.");
 			assert.equal(aCreatedEditOperatorControls[0], null, "No control created for ContentMode 'EditOperator'.");
 
