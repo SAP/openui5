@@ -4366,6 +4366,9 @@ sap.ui.define([
 		QUnit.test("it should display the control tooltip when the select has value state", function (assert) {
 			// system under test
 			var sSampleText = "lorem ipsum",
+				oSelect = new Select({
+					tooltip: sSampleText
+				}),
 				oSuccessSelect = new Select({
 					tooltip: sSampleText,
 					valueState: ValueState.Success
@@ -4384,6 +4387,7 @@ sap.ui.define([
 				});
 
 			// arrange
+			oSelect.placeAt("content");
 			oSuccessSelect.placeAt("content");
 			oWarningSelect.placeAt("content");
 			oErrorSelect.placeAt("content");
@@ -4395,6 +4399,8 @@ sap.ui.define([
 			assert.strictEqual(oWarningSelect.getFocusDomRef().getAttribute("title"), sSampleText, "select title attribute is correct");
 			assert.strictEqual(oErrorSelect.getFocusDomRef().getAttribute("title"), sSampleText, "select title attribute is correct");
 			assert.strictEqual(oInformationSelect.getFocusDomRef().getAttribute("title"), sSampleText, "select title attribute is correct");
+			// since focusable element has sapUiPseudoInvisibleText class the tooltip is also set to the label element to be visually displayed
+			assert.strictEqual(oSelect.$("label").attr("title"), sSampleText, "select title attribute is correct");
 
 			// cleanup
 			oSuccessSelect.destroy();
