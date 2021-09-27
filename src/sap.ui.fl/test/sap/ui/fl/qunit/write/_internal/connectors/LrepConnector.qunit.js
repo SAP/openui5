@@ -825,7 +825,7 @@ sap.ui.define([
 			return WriteLrepConnector.appVariant.getManifest(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(mPropertyBag.appVarUrl, "GET", {
 					xsrfToken: InitialLrepConnector.xsrfToken,
-					tokenUrl: undefined,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					contentType: "application/json; charset=utf-8",
 					dataType: "json"
@@ -844,7 +844,7 @@ sap.ui.define([
 			return WriteLrepConnector.appVariant.load(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "GET", {
 					xsrfToken: InitialLrepConnector.xsrfToken,
-					tokenUrl: undefined,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					contentType: "application/json; charset=utf-8",
 					dataType: "json"
