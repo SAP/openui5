@@ -43,7 +43,6 @@ sap.ui.define([
 
 			// Test: update of SalesOrder note -> error, restart after note corrected
 			When.onTheMainPage.changeNoteInSalesOrders(0, "RAISE_ERROR");
-			When.onTheMessagePopover.selectMessage(sRaiseErrorMessage);
 			Then.onTheMessagePopover.checkMessageHasTechnicalDetails({
 				originalMessage : {
 					code : "OO/000",
