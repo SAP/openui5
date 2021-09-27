@@ -54,13 +54,23 @@ function (
 		this.clock.tick(100);
 
 		// assert
-		assert.ok(this._fnChangeStub.notCalled, "Change event is not fired when data is not changed.");
+		assert.ok(this._fnChangeStub.called, "Change event is fired.");
 	});
 
 	QUnit.test("Change is not fired multiple times if changes happen in the same tick", function (assert) {
 		// act
 		this._oModel.setData({"test": "test"});
 		this._oModel.setData({"test": "new test"});
+		this.clock.tick(100);
+
+		// assert
+		assert.strictEqual(this._fnChangeStub.callCount, 1, "Change event is fired once if changes happen in same tick.");
+	});
+
+	QUnit.test("Change is not fired multiple times if changes happen in the same tick via setProperty", function (assert) {
+		// act
+		this._oModel.setProperty("/test", "value1");
+		this._oModel.setProperty("/test", "value2");
 		this.clock.tick(100);
 
 		// assert
