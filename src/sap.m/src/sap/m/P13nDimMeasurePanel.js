@@ -928,7 +928,7 @@ sap.ui.define([
 		if (iIndex < 0) {
 			return null;
 		}
-		return this._oTable.getBinding("items").getContexts()[iIndex].getObject().columnKey;
+		return this._oTable.getBinding("items").getContexts(undefined, undefined, undefined, true)[iIndex].getObject().columnKey;
 	};
 
 	P13nDimMeasurePanel.prototype._getModelItemIndexByColumnKey = function(sColumnKey) {

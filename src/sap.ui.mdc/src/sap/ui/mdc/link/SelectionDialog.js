@@ -197,7 +197,7 @@ sap.ui.define([
 		if (oTable) {
 			oTable.getItems().forEach(function(oTableItem) {
 				var iIndex = oTable.indexOfItem(oTableItem);
-				var bIsBaseline = oTable.getBinding("items").getContexts()[iIndex].getObject().getIsBaseline();
+				var bIsBaseline = oTable.getBinding("items").getContexts(undefined, undefined, undefined, true)[iIndex].getObject().getIsBaseline();
 				if (oTableItem.getSelected() !== bIsBaseline) {
 					oTableItem.setSelected(bIsBaseline);
 					this._selectTableItem(oTableItem);
