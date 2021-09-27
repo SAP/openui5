@@ -24,6 +24,7 @@ sap.ui.define([], function () {
 		oRm.openStart("div", oNumericHeader)
 			.class("sapFCardHeader")
 			.class("sapFCardNumericHeader")
+			.class("sapFCardNumericHeaderSideIndicatorsAlign" + oNumericHeader.getSideIndicatorsAlignment())
 			.attr("tabindex", sTabIndex);
 
 		if (bLoading) {

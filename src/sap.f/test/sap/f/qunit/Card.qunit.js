@@ -234,7 +234,23 @@ function (
 		oHeader.destroy();
 	});
 
+	QUnit.test("Numeric Header's \"sideIndicatorsAlignment\" property ", function (assert) {
+		// Arrange
+		var oHeader = new CardNumericHeader({
+			sideIndicatorsAlignment: "End"
+		});
 
+		// Act
+		oHeader.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(oHeader.getDomRef().classList.contains("sapFCardNumericHeaderSideIndicatorsAlignEnd"), "Numeric header has the right class for alignment applied");
+		assert.notOk(oHeader.getDomRef().classList.contains("sapFCardNumericHeaderSideIndicatorsAlignBegin"), "Numeric header has the right class for alignment applied");
+
+		// Clean up
+		oHeader.destroy();
+	});
 	QUnit.test("Card has correct class when header is not visible", function (assert) {
 		// Arrange
 		var oCard = createCard(CardHeader);

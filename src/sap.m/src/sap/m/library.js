@@ -4286,7 +4286,7 @@ sap.ui.define([
 		Start : "Start",
 
 		/**
-		 * Explicitly sets the alignment to the start (left or right depending on LTR/RTL)
+		 * Explicitly sets the alignment to the center
 		 * @public
 		 */
 		Center : "Center"

@@ -21,6 +21,12 @@
 				class="sapUiMediumMargin"
 				width="600px" />
 			<w:Card
+				id="lineSideIndRight"
+				manifest="{analyticalContentManifests>/lineSideIndRight}"
+				baseUrl="./"
+				class="sapUiMediumMargin"
+				width="600px" />
+			<w:Card
 				id="stackedBar"
 				manifest="{analyticalContentManifests>/stackedColumn}"
 				baseUrl="./"
