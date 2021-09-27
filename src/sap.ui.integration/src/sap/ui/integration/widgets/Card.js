@@ -69,7 +69,6 @@ sap.ui.define([
 	CardObserver
 ) {
 	"use strict";
-	/* global Map */
 
 	var MANIFEST_PATHS = {
 		TYPE: "/sap.card/type",
@@ -385,7 +384,6 @@ sap.ui.define([
 		this.setModel(new JSONModel(), "parameters");
 		this.setModel(new JSONModel(), "filters");
 		this.setModel(new ContextModel(), "context");
-		this._busyStates = new Map();
 		this._oContentFactory = new ContentFactory(this);
 		this._oCardObserver = new CardObserver(this);
 		this._bFirstRendering = true;
@@ -920,7 +918,6 @@ sap.ui.define([
 		this.destroyManifest();
 		this._oCardObserver.destroy();
 		this._oCardObserver = null;
-		this._busyStates = null;
 		this._oContentFactory = null;
 		this._bFirstRendering = null;
 
@@ -970,8 +967,6 @@ sap.ui.define([
 		this.destroyAggregation("_footer");
 
 		this._aReadyPromises = null;
-
-		this._busyStates.clear();
 
 		this.getModel("filters").setData({});
 		this.getModel("parameters").setData({});
