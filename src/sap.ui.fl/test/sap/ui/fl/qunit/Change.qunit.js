@@ -310,24 +310,24 @@ function(
 
 		QUnit.test("Change.setState with an incorrect value", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
-			assert.equal(oInstance.getPendingAction(), "NEW");
+			assert.equal(oInstance.getState(), Change.states.NEW);
 			oInstance.setState("anInvalidState");
-			assert.equal(oInstance.getPendingAction(), "NEW");
+			assert.equal(oInstance.getState(), Change.states.NEW);
 		});
 
 		QUnit.test("Change.setState to DIRTY when current state is NEW", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
-			assert.equal(oInstance.getPendingAction(), "NEW");
+			assert.equal(oInstance.getState(), Change.states.NEW);
 			oInstance.setState(Change.states.DIRTY);
-			assert.equal(oInstance.getPendingAction(), "NEW");
+			assert.equal(oInstance.getState(), Change.states.NEW);
 		});
 
 		QUnit.test("Change.setState to DIRTY when current state is PERSISTED", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
-			assert.equal(oInstance.getPendingAction(), "NEW");
+			assert.equal(oInstance.getState(), Change.states.NEW);
 			oInstance.setState(Change.states.PERSISTED);
 			oInstance.setState(Change.states.DIRTY);
-			assert.equal(oInstance.getPendingAction(), "UPDATE");
+			assert.equal(oInstance.getState(), Change.states.DIRTY);
 		});
 
 		QUnit.test("Change.restorePreviousState after change from DIRTY to PERSISTED", function(assert) {
@@ -368,14 +368,14 @@ function(
 
 		QUnit.test("Change.setContent", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
-			assert.equal(oInstance.getPendingAction(), "NEW");
+			assert.equal(oInstance.getState(), Change.states.NEW);
 			oInstance.setContent({something: "nix"});
 			assert.deepEqual(oInstance.getContent(), {something: "nix"});
-			assert.equal(oInstance.getPendingAction(), "NEW");
+			assert.equal(oInstance.getState(), Change.states.NEW);
 			oInstance.setState(Change.states.PERSISTED);
 			oInstance.setContent({something: "updated"});
 			assert.deepEqual(oInstance.getContent(), {something: "updated"});
-			assert.equal(oInstance.getPendingAction(), "UPDATE");
+			assert.equal(oInstance.getState(), Change.states.DIRTY);
 		});
 
 		QUnit.test("Change.getText", function(assert) {
@@ -387,7 +387,7 @@ function(
 			var oInstance = new Change(this.oChangeDef);
 			oInstance.setText('variantName', 'newText');
 			assert.equal(oInstance.getText('variantName'), 'newText');
-			assert.equal(oInstance.getPendingAction(), "NEW");
+			assert.equal(oInstance.getState(), Change.states.NEW);
 			oInstance.setState(Change.states.PERSISTED);
 			oInstance.setText('variantName', 'myVariantName');
 			assert.equal(oInstance.getState(), Change.states.DIRTY);
@@ -409,7 +409,7 @@ function(
 		QUnit.test("Change.markForDeletion", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
 			oInstance.markForDeletion();
-			assert.equal(oInstance.getPendingAction(), "DELETE");
+			assert.equal(oInstance.getState(), Change.states.DELETED);
 		});
 
 		QUnit.test("Change.set/get-Request", function(assert) {
@@ -437,16 +437,16 @@ function(
 			assert.ok(!oInstance.isUserDependent());
 		});
 
-		QUnit.test("Change.getPendingChanges", function(assert) {
+		QUnit.test("Change.getState", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
-			assert.equal(oInstance.getPendingAction(), Change.states.NEW);
+			assert.equal(oInstance.getState(), Change.states.NEW);
 			oInstance.setState(Change.states.PERSISTED);
 
 			oInstance.setContent({});
-			assert.equal(oInstance.getPendingAction(), Change.states.DIRTY);
+			assert.equal(oInstance.getState(), Change.states.DIRTY);
 
 			oInstance.markForDeletion();
-			assert.equal(oInstance.getPendingAction(), Change.states.DELETED);
+			assert.equal(oInstance.getState(), Change.states.DELETED);
 		});
 
 		QUnit.test("Change.getDefinition", function(assert) {

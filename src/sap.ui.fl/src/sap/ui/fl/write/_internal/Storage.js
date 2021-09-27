@@ -5,10 +5,12 @@
 sap.ui.define([
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/write/_internal/StorageFeaturesMerger",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/base/util/ObjectPath"
 ], function(
 	StorageUtils,
 	StorageFeaturesMerger,
+	States,
 	ObjectPath
 ) {
 	"use strict";
@@ -140,7 +142,7 @@ sap.ui.define([
 				if (oChange.condenserState) {
 					var bDifferentOrder = false;
 					if (oChange.condenserState === "delete") {
-						if (oChange.getState() === "NONE") {
+						if (oChange.getState() === States.PERSISTED) {
 							mCondense.delete.change.push(oChange.getFileName());
 						}
 						iOffset++;
@@ -154,7 +156,7 @@ sap.ui.define([
 						mCondense.reorder.change = aReorderedChanges;
 						bAlreadyReordered = true;
 					}
-					if (oChange.condenserState === "select" && oChange.getProperty("state") === "NEW") {
+					if (oChange.condenserState === "select" && oChange.getState() === States.NEW) {
 						mCondense.create.change[iChangeCreateIndex] = {};
 						mCondense.create.change[iChangeCreateIndex][oChange.getFileName()] = oChange.getDefinition();
 					} else if (oChange.condenserState === "update") {
@@ -166,7 +168,7 @@ sap.ui.define([
 					}
 
 					delete oChange.condenserState;
-				} else if (oChange.getProperty("state") === "NEW") {
+				} else if (oChange.getState() === States.NEW) {
 					mCondense.create[oChange.getFileType()][iChangeCreateIndex] = {};
 					mCondense.create[oChange.getFileType()][iChangeCreateIndex][oChange.getId()] = oChange.getDefinition();
 				}

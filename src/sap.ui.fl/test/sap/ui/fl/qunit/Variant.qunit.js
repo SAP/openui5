@@ -96,33 +96,33 @@ sap.ui.define([
 		});
 
 		QUnit.test("when setState is called with an incorrect value", function(assert) {
-			assert.equal(this.oVariant.getPendingAction(), "NEW");
+			assert.equal(this.oVariant.getState(), Variant.states.NEW);
 			this.oVariant.setState("anInvalidState");
-			assert.equal(this.oVariant.getPendingAction(), "NEW");
+			assert.equal(this.oVariant.getState(), Variant.states.NEW);
 		});
 
 		QUnit.test("when setState is called with state DIRTY, with current state NEW", function(assert) {
-			assert.equal(this.oVariant.getPendingAction(), "NEW");
+			assert.equal(this.oVariant.getState(), Variant.states.NEW);
 			this.oVariant.setState(Variant.states.DIRTY);
-			assert.equal(this.oVariant.getPendingAction(), "NEW");
+			assert.equal(this.oVariant.getState(), Variant.states.NEW);
 		});
 
 		QUnit.test("when setState is called with state DIRTY, with current state PERSISTED", function(assert) {
-			assert.equal(this.oVariant.getPendingAction(), "NEW");
+			assert.equal(this.oVariant.getState(), Variant.states.NEW);
 			this.oVariant.setState(Variant.states.PERSISTED);
 			this.oVariant.setState(Variant.states.DIRTY);
-			assert.equal(this.oVariant.getPendingAction(), "UPDATE");
+			assert.equal(this.oVariant.getState(), Variant.states.DIRTY);
 		});
 
 		QUnit.test("when setContent is called", function(assert) {
-			assert.equal(this.oVariant.getPendingAction(), "NEW");
+			assert.equal(this.oVariant.getState(), Variant.states.NEW);
 			this.oVariant.setContent({something: "dummy"});
 			assert.deepEqual(this.oVariant.getContent(), {something: "dummy"});
-			assert.equal(this.oVariant.getPendingAction(), "NEW");
+			assert.equal(this.oVariant.getState(), Variant.states.NEW);
 			this.oVariant.setState(Variant.states.PERSISTED);
 			this.oVariant.setContent({something: "updated"});
 			assert.deepEqual(this.oVariant.getContent(), {something: "updated"});
-			assert.equal(this.oVariant.getPendingAction(), "UPDATE");
+			assert.equal(this.oVariant.getState(), Variant.states.DIRTY);
 		});
 
 		QUnit.test("when getText is called", function(assert) {
@@ -132,7 +132,7 @@ sap.ui.define([
 		QUnit.test("when setText is called", function(assert) {
 			this.oVariant.setText('TextDemo', 'newText');
 			assert.equal(this.oVariant.getText('TextDemo'), 'newText');
-			assert.equal(this.oVariant.getPendingAction(), "NEW");
+			assert.equal(this.oVariant.getState(), Variant.states.NEW);
 			this.oVariant.setState(Variant.states.PERSISTED);
 			this.oVariant.setText('TextDemo', 'newText2');
 			assert.equal(this.oVariant.getState(), Variant.states.DIRTY);
@@ -151,7 +151,7 @@ sap.ui.define([
 
 		QUnit.test("when markForDeletion is called", function(assert) {
 			this.oVariant.markForDeletion();
-			assert.equal(this.oVariant.getPendingAction(), "DELETE");
+			assert.equal(this.oVariant.getState(), Variant.states.DELETED);
 		});
 
 		QUnit.test("when set/get-Request is called", function(assert) {
@@ -179,15 +179,15 @@ sap.ui.define([
 			assert.ok(!this.oVariant.isUserDependent());
 		});
 
-		QUnit.test("when getPendingChanges is called", function(assert) {
-			assert.equal(this.oVariant.getPendingAction(), Variant.states.NEW);
+		QUnit.test("when getState is called", function(assert) {
+			assert.equal(this.oVariant.getState(), Variant.states.NEW);
 			this.oVariant.setState(Variant.states.PERSISTED);
 
 			this.oVariant.setContent({});
-			assert.equal(this.oVariant.getPendingAction(), Variant.states.DIRTY);
+			assert.equal(this.oVariant.getState(), Variant.states.DIRTY);
 
 			this.oVariant.markForDeletion();
-			assert.equal(this.oVariant.getPendingAction(), Variant.states.DELETED);
+			assert.equal(this.oVariant.getState(), Variant.states.DELETED);
 		});
 
 		QUnit.test("when getContent is called", function(assert) {

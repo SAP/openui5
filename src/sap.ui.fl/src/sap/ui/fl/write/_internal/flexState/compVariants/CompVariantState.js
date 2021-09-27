@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/RevertData",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariantRevertData",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
@@ -29,6 +30,7 @@ sap.ui.define([
 	CompVariant,
 	RevertData,
 	CompVariantRevertData,
+	States,
 	Utils,
 	FlexState,
 	CompVariantMerger,
@@ -83,7 +85,7 @@ sap.ui.define([
 			if (result && result.response) {
 				oFlexObject.setResponse(result.response);
 			} else {
-				oFlexObject.setState(Change.states.PERSISTED);
+				oFlexObject.setState(States.PERSISTED);
 			}
 
 			return oStoredResponse;
@@ -130,7 +132,7 @@ sap.ui.define([
 
 	function needsPersistencyCall(oFlexObject) {
 		return oFlexObject &&
-			[Change.states.NEW, Change.states.DIRTY, Change.states.DELETED].includes(oFlexObject.getPendingAction());
+			[States.NEW, States.DIRTY, States.DELETED].includes(oFlexObject.getState());
 	}
 
 	function getAllCompVariantObjects(mCompVariantsMapByPersistencyKey) {
@@ -728,7 +730,7 @@ sap.ui.define([
 				if (result && result.response && result.response[0]) {
 					oFlexObject.setResponse(result.response[0]);
 				} else {
-					oFlexObject.setState(Change.states.PERSISTED);
+					oFlexObject.setState(States.PERSISTED);
 				}
 
 				return oStoredResponse;
@@ -748,14 +750,14 @@ sap.ui.define([
 		var aPromises = getAllCompVariantObjects(mCompVariantsMapByPersistencyKey)
 			.filter(needsPersistencyCall)
 			.map(function (oFlexObject) {
-				switch (oFlexObject.getPendingAction()) {
-					case Change.states.NEW:
+				switch (oFlexObject.getState()) {
+					case States.NEW:
 						ifVariantClearRevertData(oFlexObject);
 						return writeObjectAndAddToState(oFlexObject, oStoredResponse);
-					case Change.states.DIRTY:
+					case States.DIRTY:
 						ifVariantClearRevertData(oFlexObject);
 						return updateObjectAndStorage(oFlexObject, oStoredResponse);
-					case Change.states.DELETED:
+					case States.DELETED:
 						ifVariantClearRevertData(oFlexObject);
 						return deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse);
 					default:

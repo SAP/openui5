@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/LayerUtils",
@@ -29,6 +30,7 @@ sap.ui.define([
 	Log,
 	JsControlTreeModifier,
 	VariantsApplyUtil,
+	States,
 	FlexState,
 	Change,
 	LayerUtils,
@@ -553,11 +555,11 @@ sap.ui.define([
 		var oFlexObjects = FlexState.getFlexObjectsFromStorageResponse(mPropertyBag.reference);
 
 		if (mPropertyBag.changeToBeAddedOrDeleted) {
-			switch (mPropertyBag.changeToBeAddedOrDeleted.getPendingAction()) {
-				case "NEW":
+			switch (mPropertyBag.changeToBeAddedOrDeleted.getState()) {
+				case States.NEW:
 					addChange(mPropertyBag.changeToBeAddedOrDeleted.getDefinition(), oFlexObjects);
 					break;
-				case "DELETE":
+				case States.DELETE:
 					deleteChange(mPropertyBag.changeToBeAddedOrDeleted.getDefinition(), oFlexObjects);
 					break;
 				default:

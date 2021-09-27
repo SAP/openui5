@@ -435,4 +435,4 @@ sap.ui.define([
 	};
 
 	return FlexState;
-}, true);
+});

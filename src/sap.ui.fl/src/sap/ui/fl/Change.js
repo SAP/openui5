@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/base/Log",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/base/util/includes"
 ], function (
 	jQuery,
@@ -21,6 +22,7 @@ sap.ui.define([
 	Settings,
 	Log,
 	DescriptorChangeTypes,
+	States,
 	includes
 ) {
 	"use strict";
@@ -74,10 +76,10 @@ sap.ui.define([
 	});
 
 	Change.states = {
-		NEW: "NEW",
-		PERSISTED: "NONE",
-		DELETED: "DELETE",
-		DIRTY: "UPDATE"
+		NEW: States.NEW,
+		PERSISTED: States.PERSISTED,
+		DELETED: States.DELETED,
+		DIRTY: States.DIRTY
 	};
 
 	Change.applyState = {
@@ -811,16 +813,6 @@ sap.ui.define([
 	 */
 	Change.prototype.isUserDependent = function () {
 		return (this._bUserDependent);
-	};
-
-	/**
-	 * Returns the pending action on the change item.
-	 * @returns {string} One of the following values: DELETE/NEW/UPDATE/NONE
-	 *
-	 * @public
-	 */
-	Change.prototype.getPendingAction = function () {
-		return this.getState();
 	};
 
 	/**
