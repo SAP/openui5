@@ -42,7 +42,6 @@
 		"rootView": {
 			"viewName": "sap.ui.core.sample.RoutingNestedComponent.view.App",
 			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"componentUsages": {
@@ -103,7 +102,6 @@
 				"bypassed": {
 					"target": "notFound"
 				},
-				"async": true,
 				"propagateTitle": true
 			},
 			"routes": [

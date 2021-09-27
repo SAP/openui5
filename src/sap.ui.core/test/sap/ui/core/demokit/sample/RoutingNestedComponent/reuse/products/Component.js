@@ -1,11 +1,13 @@
 sap.ui.define([
+	"sap/ui/core/library",
 	"sap/ui/core/sample/RoutingNestedComponent/base/BaseComponent",
 	"sap/ui/core/Component"
-], function(BaseComponent, Component) {
+], function(library, BaseComponent, Component) {
 	"use strict";
 	return BaseComponent.extend("sap.ui.core.sample.RoutingNestedComponent.reuse.products.Component", {
 		metadata: {
-			manifest: "json"
+			manifest: "json",
+			interfaces: [library.IAsyncContentCreation]
 		},
 		init: function() {
 			BaseComponent.prototype.init.apply(this, arguments);
