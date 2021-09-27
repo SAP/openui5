@@ -1514,6 +1514,47 @@
 					}]
 				}
 			}
+		},
+		"i6-error": {
+			"sap.app": {
+				"id": "cardsdemo.noHeaderNoContent.i6-error",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"title": "Sales Report",
+					"mainIndicator": {
+						"number": "0",
+						"unit": "Items",
+						"state": "None"
+					},
+					"data": {
+						"request": {
+							"url": "fake-url"
+						}
+					}
+				}
+			}
+		},
+		"i7-error": {
+			"sap.app": {
+				"id": "cardsdemo.noHeaderNoContent.i7-error",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Object",
+				"header": {
+					"title": "Header Title",
+					"subTitle": "Top Products by Lorem Ipsum",
+					"data": {
+						"request": {
+							"url": "fake-url"
+						}
+					}
+				}
+			}
 		}
 	},
 	"minHeight": {

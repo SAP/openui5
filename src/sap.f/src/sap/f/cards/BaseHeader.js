@@ -75,7 +75,12 @@ sap.ui.define([
 				 * @experimental Since 1.86
 				 * @since 1.86
 				 */
-				toolbar: { type: "sap.ui.core.Control", multiple: false }
+				toolbar: { type: "sap.ui.core.Control", multiple: false },
+
+				/**
+				 * Defines an error which will be displayed in the header.
+				 */
+				_error: { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" }
 			}
 		}
 	});
