@@ -1,12 +1,14 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/SuggestionItem",
 	"sap/m/SearchField",
+	"sap/m/SuggestionsList",
 	"sap/ui/Device",
 	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -14,8 +16,10 @@ sap.ui.define([
 	createAndAppendDiv,
 	SuggestionItem,
 	SearchField,
+	SuggestionsList,
 	Device,
 	InvisibleText,
+	Core,
 	KeyCodes,
 	jQuery
 ) {
@@ -23,13 +27,8 @@ sap.ui.define([
 
 	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);
 
-
-	//
 	// Test for the suggestion functionality of the sap.m.SearchField control.
-	// Other functional tests see SearchField.qunit.html.
-	//
-
-
+	// Other functional tests see SearchField.qunit
 
 	function createStaticSuggestionItems(a){
 		var items = [];
@@ -61,7 +60,7 @@ sap.ui.define([
 
 		// arrange
 		oSF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSF.getSuggestionItems().length, aItems.length, "The number of suggestion items is correct");
@@ -75,7 +74,6 @@ sap.ui.define([
 	// test properties
 	QUnit.test("Properties", function(assert) {
 		assert.equal(oSF.getWidth(), '100%', "Default value of the property Width is 100%s");
-
 	});
 
 	QUnit.test("call the suggest() function", function(assert) {
@@ -207,7 +205,6 @@ sap.ui.define([
 
 		// assertion
 		assert.strictEqual($SF.cursorPos(), oFocusInfo.cursorPos, "Cursor position is set to the correct position after apply focus.");
-
 	});
 
 	QUnit.test("Clear method test", function(assert) {
@@ -266,7 +263,8 @@ sap.ui.define([
 		var 	oInput = oSF.getFocusDomRef();
 		var fnFireSearch = this.spy(oSF, 'fireSearch');
 		var toValue = 'abcd';
-		this.stub(Device, "system", {
+
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: false,
 			tablet: true
@@ -283,7 +281,7 @@ sap.ui.define([
 		assert.strictEqual(oSF.getValue(), toValue, "Search event sets the control value");
 
 		fnFireSearch.restore();
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: true,
 			phone: false,
 			tablet: false
@@ -316,6 +314,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Delayed suggestions");
+
 	QUnit.test("Test suggestion to be fired after 400ms onInput", function(assert) {
 
 		var fnFireSuggest = this.spy(oSF, 'fireSuggest');
@@ -336,9 +335,46 @@ sap.ui.define([
 	});
 
 	QUnit.module("Clean up");
+
 	QUnit.test("cleanup", function(assert){
 		oSF.destroy();
 		this.clock.tick(1000);
 		assert.ok(!oSF.getDomRef(), "The search field is removed");
+	});
+
+	QUnit.module("SuggestionItems", {
+		beforeEach: function () {
+			this.oSF = new SearchField({
+				enableSuggestions: true
+			});
+			this.oSF.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oSF.destroy();
+		}
+	});
+
+	QUnit.test("Suggestion list is updated when text of an item is changed", function (assert) {
+		// Arrange
+		this.clock.restore();
+		var done = assert.async();
+		var oSuggItem = new SuggestionItem({
+			text: "initial"
+		});
+		var oSF = this.oSF;
+		this.oSF.addSuggestionItem(oSuggItem);
+		this.oSF.suggest();
+		this.stub(SuggestionsList.prototype, "update").callsFake(function () {
+			SuggestionsList.prototype.update.restore();
+			SuggestionsList.prototype.update.apply(this, arguments);
+
+			// Assert
+			assert.strictEqual(oSF._oSuggest._oPopover.getContent()[0].$().text(), "updated", "Suggestion list should be updated");
+			done();
+		});
+
+		// Act
+		oSuggItem.setText("updated");
 	});
 });
