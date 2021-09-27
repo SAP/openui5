@@ -47,7 +47,8 @@
     "@openui5/sap.uxap": "1.96.0-SNAPSHOT",
     "@openui5/themelib_sap_belize": "1.96.0-SNAPSHOT",
     "@openui5/themelib_sap_bluecrystal": "1.96.0-SNAPSHOT",
-    "@openui5/themelib_sap_fiori_3": "1.96.0-SNAPSHOT"
+    "@openui5/themelib_sap_fiori_3": "1.96.0-SNAPSHOT",
+    "@openui5/themelib_sap_horizon": "1.96.0-SNAPSHOT"
   },
   "devDependencies": {
     "local-web-server": "^3.0.7"
