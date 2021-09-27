@@ -1,12 +1,13 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/MenuButton",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"jquery.sap.global",
+	"sap/ui/unified/Menu",
+	"sap/ui/unified/MenuItemBase",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/library",
 	"sap/ui/core/Popup",
 	"sap/ui/core/Control",
@@ -14,6 +15,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/Popover",
 	"sap/m/Button",
+	"sap/m/Label",
 	"sap/base/Log",
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/events/KeyCodes"
@@ -23,6 +25,8 @@ sap.ui.define([
 	MenuButton,
 	Menu,
 	MenuItem,
+	UnifiedMenu,
+	UnifiedMenuItemBase,
 	jQuery,
 	mobileLibrary,
 	Popup,
@@ -31,10 +35,13 @@ sap.ui.define([
 	coreLibrary,
 	Popover,
 	Button,
+	Label,
 	Log,
 	waitForThemeApplied,
 	KeyCodes
 ) {
+	"use strict";
+
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
@@ -199,7 +206,7 @@ sap.ui.define([
 
 	QUnit.test("MenuButton (Regular) aria-controls placement", function (assert) {
 		var $buttonReference = this.sut._getButtonControl().$(),
-			oGetMenuSub = this.stub(this.sut, "getMenu", function () {
+			oGetMenuSub = this.stub(this.sut, "getMenu").callsFake(function () {
 				return {
 					getDomRefId: function () { return "fake-menu-id"; }
 				};
@@ -220,7 +227,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var $arrowButton = this.sut._getButtonControl()._getArrowButton().$(),
-			oGetMenuSub = this.stub(this.sut, "getMenu", function () {
+			oGetMenuSub = this.stub(this.sut, "getMenu").callsFake(function () {
 				return {
 					getDomRefId: function () { return "fake-menu-id"; }
 				};
@@ -416,7 +423,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Semantic MenuButton disabled in Split mode", function (assert) {
-		var sTooltip = "Some meaningful tooltip";
 		this.sut.setEnabled(false);
 		this.sut.setIcon("sap-icon://slim-arrow-down");
 		this.sut.setText("Hello");
@@ -569,10 +575,10 @@ sap.ui.define([
 
 	QUnit.module("Accessibility (Labelling)", {
 		beforeEach: function () {
-			this.oLabel = new sap.m.Label("initialLabel", {
+			this.oLabel = new Label("initialLabel", {
 				labelFor: "menuButton"
 			});
-			this.oMenuButton = new sap.m.MenuButton("menuButton");
+			this.oMenuButton = new MenuButton("menuButton");
 
 			this.oLabel.placeAt("content");
 			this.oMenuButton.placeAt("content");
@@ -596,7 +602,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Dynamically created label", function (assert) {
-		var oLabel = new sap.m.Label("newLabel", { labelFor: "menuButton" }),
+		var oLabel = new Label("newLabel", { labelFor: "menuButton" }),
 			sInternalButtonAriaLabelledby;
 
 		oLabel.placeAt("content");
@@ -884,7 +890,7 @@ sap.ui.define([
 		//Assert
 		assert.ok(!oSpyControlSetProperty.called, "Control's setProperty not called because values are forbidden");
 
-		oSpyControlSetProperty.reset();
+		oSpyControlSetProperty.resetHistory();
 
 		//Test allowed values of 'type' also
 		//Act
@@ -940,8 +946,8 @@ sap.ui.define([
 		assert.ok(oSpyMenuOpenBy.args[0][3], Dock.BeginBottom, "Menu's openBy default parameter sDockAt is BeginBottom");
 		assert.ok(oSpyMenuOpenBy.args[0][4], "0 -2", "Menu's openBy default parameter sOffset is '0 -2'");
 
-		oSpySetArrowState.reset();
-		oSpyMenuOpenBy.reset();
+		oSpySetArrowState.resetHistory();
+		oSpyMenuOpenBy.resetHistory();
 
 		//Act
 		this.sut.destroyMenu();
@@ -964,8 +970,6 @@ sap.ui.define([
 		assert.equal(oSpyMenuOpenBy.args[0][2], Dock.EndBottom, "Menu's openBy default parameter sDockMy is EndBottom");
 		assert.equal(oSpyMenuOpenBy.args[0][3], Dock.EndTop, "Menu's openBy default parameter sDockAt is EndTop");
 		assert.equal(oSpyMenuOpenBy.args[0][4], "0 +2", "Menu's openBy default parameter sOffset is '0 +2'");
-
-		oSpyMenuOpenBy.reset();
 	});
 
 	QUnit.test("_menuClosed", function(assert) {
@@ -1137,8 +1141,8 @@ sap.ui.define([
 
 	QUnit.test("Focus is returned back the the opener DOM ref, when the menu is closed with F4", function(assert) {
 		//arrange
-		var oMenu = new sap.ui.unified.Menu(),
-			oMenuItem = new sap.ui.unified.MenuItemBase();
+		var oMenu = new UnifiedMenu(),
+			oMenuItem = new UnifiedMenuItemBase();
 
 		oMenuItem.setParent(oMenu);
 		oMenu.bOpen = true;
@@ -1180,8 +1184,8 @@ sap.ui.define([
 		var oMenuButton = new MenuButton({
 			buttonMode: "Split"
 		}),
-		oNeedsWidthStub = this.stub(oMenuButton, "_needsWidth", function () { return true; }),
-		oGetDomRefStub = this.stub(oMenuButton, "getDomRef", function () { return document.createElement("DIV"); });
+		oNeedsWidthStub = this.stub(oMenuButton, "_needsWidth").callsFake(function () { return true; }),
+		oGetDomRefStub = this.stub(oMenuButton, "getDomRef").callsFake(function () { return document.createElement("DIV"); });
 
 		// Act
 		oMenuButton.onThemeChanged();
@@ -1205,9 +1209,9 @@ sap.ui.define([
 						buttonMode: "Split"
 					}),
 					oTextBtnContentDiv = document.createElement("DIV"),
-					oNeedsWidthStub = this.stub(oMenuButton, "_needsWidth", function () { return true; }),
-					oGetDomRefStub = this.stub(oMenuButton, "getDomRef", function () { return document.createElement("DIV"); }),
-					oGetTextBtnContentDomRefStub = this.stub(oMenuButton, "_getTextBtnContentDomRef", function () { return oTextBtnContentDiv; });
+					oNeedsWidthStub = this.stub(oMenuButton, "_needsWidth").callsFake(function () { return true; }),
+					oGetDomRefStub = this.stub(oMenuButton, "getDomRef").callsFake(function () { return document.createElement("DIV"); }),
+					oGetTextBtnContentDomRefStub = this.stub(oMenuButton, "_getTextBtnContentDomRef").callsFake(function () { return oTextBtnContentDiv; });
 			oTextBtnContentDiv.style.display = "none";
 			document.body.appendChild(oTextBtnContentDiv);
 
@@ -1228,7 +1232,7 @@ sap.ui.define([
 
 	QUnit.test("Exception is not thrown when the control is extended", function (assert) {
 		// Arrange
-		var CustomMenuButton = new sap.m.MenuButton.extend("myMB", {
+		var CustomMenuButton = new MenuButton.extend("myMB", {
 				metadata: {
 					properties: {
 						myProp: {type: "string"}

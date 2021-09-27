@@ -1,18 +1,17 @@
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/library",
 	"sap/m/SuggestionsPopover",
 	'sap/m/List',
 	"sap/m/Input",
 	"sap/m/ComboBox",
 	"sap/m/MultiComboBox",
-	"sap/ui/thirdparty/sinon",
+	"sap/m/GroupHeaderListItem",
 	"sap/ui/core/Item"
 ], function (
 	Device,
@@ -26,7 +25,7 @@ sap.ui.define([
 	Input,
 	ComboBox,
 	MultiComboBox,
-	sinon,
+	GroupHeaderListItem,
 	Item
 ) {
 	"use strict";
@@ -88,7 +87,7 @@ sap.ui.define([
 			]
 		}),
 			oSuggPopover = oInput._getSuggestionsPopover(),
-			oSpy = sinon.spy(oSuggPopover, "handleListNavigation");
+			oSpy = this.spy(oSuggPopover, "handleListNavigation");
 
 		// Act
 		oInput._bIsComposingCharacter = true;
@@ -114,7 +113,7 @@ sap.ui.define([
 		var oComboBox, oSuggestionsPopover;
 
 		// Arrange
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -142,7 +141,7 @@ sap.ui.define([
 		var oComboBox;
 
 		// Arrange
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -169,7 +168,7 @@ sap.ui.define([
 		var oMultiComboBox;
 
 		// Arrange
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -196,7 +195,7 @@ sap.ui.define([
 		var oSuggPopover, oInput;
 
 		// Arrange
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -224,7 +223,7 @@ sap.ui.define([
 		var oSuggPopover, oInput, oListItem, oList, oListSpy;
 
 		// Setup
-		oListItem = new sap.m.GroupHeaderListItem();
+		oListItem = new GroupHeaderListItem();
 		oInput = new Input();
 		oSuggPopover = oInput._getSuggestionsPopover();
 		oSuggPopover.initContent();

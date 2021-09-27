@@ -12,14 +12,10 @@ sap.ui.define([
 	"use strict";
 
 
-	createAndAppendDiv("content").style.height = "100%";
+	document.documentElement.style.height =
+	document.body.style.height =
+	createAndAppendDiv("content").style.height =
 	createAndAppendDiv("qunit_results").style.height = "100%";
-	var styleElement = document.createElement("style");
-	styleElement.textContent =
-		"html, body {" +
-		"	height: 100%;" +
-		"}";
-	document.head.appendChild(styleElement);
 
 	QUnit.jUnitReport = function(report) {
 		if (typeof console !== 'undefined') {

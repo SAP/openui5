@@ -12,7 +12,9 @@ sap.ui.define([
 	"./helpers",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/core/mvc/Controller", // provides sap.ui.controller
+	"sap/ui/core/mvc/JSView" // provides sap.ui.jsview
 ], function(
 	Router,
 	TargetHandler,

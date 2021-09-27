@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -61,6 +60,8 @@ sap.ui.define([
 	Sorter,
 	Library
 ) {
+	"use strict";
+
 	createAndAppendDiv("content");
 
 
@@ -70,6 +71,11 @@ sap.ui.define([
 	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 	var nPopoverAnimationTick = 300;
 	var TokenizerRenderMode = Library.TokenizerRenderMode;
+
+	// make jQuery.now work with Sinon fake timers (since jQuery 2.x, jQuery.now caches the native Date.now)
+	jQuery.now = function () {
+		return Date.now();
+	};
 
 	QUnit.module("Basic", {
 		beforeEach : function() {
@@ -799,15 +805,15 @@ sap.ui.define([
 
 	QUnit.test("do not duplicate tokens on sapfocusleave when using custom validator", function(assert) {
 		var aItems = [
-			new sap.ui.core.Item("itemId", {
+			new Item("itemId", {
 				key: "1",
 				text: "Token 1"
 			}),
-			new sap.ui.core.Item({
+			new Item({
 				key: "2",
 				text: "Token 2"
 			}),
-			new sap.ui.core.Item({
+			new Item({
 				key: "3",
 				text: "Token 3"
 			})
@@ -829,7 +835,7 @@ sap.ui.define([
 		);
 
 		this.multiInput1.addValidator(function(args) {
-			return new sap.m.Token({ text: args.text });
+			return new Token({ text: args.text });
 		});
 
 		Core.applyChanges();
@@ -1449,7 +1455,7 @@ sap.ui.define([
 		// Act
 		oPickerTextFieldDomRef = oMI._getSuggestionsPopoverInstance().getInput().getFocusDomRef();
 
-		sap.ui.test.qunit.triggerCharacterInput(oPickerTextFieldDomRef, "test");
+		qutils.triggerCharacterInput(oPickerTextFieldDomRef, "test");
 		qutils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
 
 		sOpenState = oMI._getSuggestionsPopoverPopup().oPopup.getOpenState();
@@ -1476,15 +1482,15 @@ sap.ui.define([
 
 		oMI = new MultiInput({
 			suggestionItems : [
-				new sap.ui.core.Item({
+				new Item({
 					text : 'Damage',
 					key : 'damage'
 				}),
-				new sap.ui.core.Item({
+				new Item({
 					text : 'another Damage',
 					key : 'damage'
 				}),
-				new sap.ui.core.Item({
+				new Item({
 					text : 'demon',
 					key : 'demon'
 				})
@@ -1504,7 +1510,7 @@ sap.ui.define([
 		assert.ok(oSpy.called, "_togglePopup is called when N-more is pressed");
 
 		// Act
-		sap.ui.test.qunit.triggerCharacterInput(oMI._getSuggestionsPopoverInstance().getInput().getFocusDomRef(), "d");
+		qutils.triggerCharacterInput(oMI._getSuggestionsPopoverInstance().getInput().getFocusDomRef(), "d");
 		qutils.triggerEvent("input", oMI._getSuggestionsPopoverInstance().getInput().getFocusDomRef());
 		this.clock.tick(100);
 
@@ -1529,11 +1535,11 @@ sap.ui.define([
 
 		oMI = new MultiInput({
 			suggestionItems : [
-				new sap.ui.core.Item({
+				new Item({
 					text : 'Diamond',
 					key : 'diamond'
 				}),
-				new sap.ui.core.Item({
+				new Item({
 					text : 'Graphite',
 					key : 'graphite'
 				})
@@ -1570,15 +1576,15 @@ sap.ui.define([
 		// Arrange
 		oMI = new MultiInput({
 			suggestionItems : [
-				new sap.ui.core.Item({
+				new Item({
 					text : 'Damage',
 					key : 'damage'
 				}),
-				new sap.ui.core.Item({
+				new Item({
 					text : 'another Damage',
 					key : 'damage'
 				}),
-				new sap.ui.core.Item({
+				new Item({
 					text : 'demon',
 					key : 'demon'
 				})
@@ -1824,8 +1830,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("tokenUpdate event", function(assert) {
-		var oTokenizer = this.multiInput1.getAggregation("tokenizer"),
-			eventType,
+		var eventType,
 			token1 = new Token({key: "test", text: "test", selected: true}),
 			count = 0;
 
@@ -2952,14 +2957,14 @@ sap.ui.define([
 
 	QUnit.test("Read-only popover should not be closed when the scrolbar inside is clicked", function (assert) {
 		// arrange
-		var oMultiInput = new sap.m.MultiInput({
+		var oMultiInput = new MultiInput({
 			editable: false,
 			width: "50px",
 			tokens: [
-				new sap.m.Token({ text: "XXXX" }),
-				new sap.m.Token({ text: "XXXX" }),
-				new sap.m.Token({ text: "XXXX" }),
-				new sap.m.Token({ text: "XXXX" })
+				new Token({ text: "XXXX" }),
+				new Token({ text: "XXXX" }),
+				new Token({ text: "XXXX" }),
+				new Token({ text: "XXXX" })
 			]
 		}),
 		oPopover = oMultiInput.getAggregation("tokenizer").getTokensPopup();
@@ -3410,7 +3415,7 @@ sap.ui.define([
 
 	QUnit.test("Read-only popover is opened after N-more is pressed", function (assert) {
 		//Arrange
-		var oMultiInput = new sap.m.MultiInput({
+		var oMultiInput = new MultiInput({
 				editable: true
 			}),
 			oTokenizer = oMultiInput.getAggregation("tokenizer"),

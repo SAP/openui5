@@ -1,5 +1,4 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
@@ -15,7 +14,9 @@ sap.ui.define([
 	"sap/m/SliderTooltipBase",
 	"sap/m/SliderTooltipBaseRenderer",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/ui/dom/includeStylesheet",
+	"require"
 ], function(
 	Core,
 	qutils,
@@ -31,17 +32,16 @@ sap.ui.define([
 	SliderTooltipBase,
 	SliderTooltipBaseRenderer,
 	KeyCodes,
-	InvisibleText
+	InvisibleText,
+	includeStylesheet,
+	require
 ) {
-	createAndAppendDiv("content");
-	var styleElement = document.createElement("style");
-	styleElement.textContent =
-		"div.sapMSliderWithoutPadding {" +
-		"  padding-left: 0;" +
-		"  padding-right: 0;" +
-		"}";
-	document.head.appendChild(styleElement);
+	"use strict";
 
+	createAndAppendDiv("content");
+	var pStyleLoaded = includeStylesheet({
+		url: require.toUrl("./Slider.qunit.css")
+	});
 
 	var oApp = new App("myApp", {
 		initialPage: "page1"
@@ -352,13 +352,13 @@ sap.ui.define([
 			oSlider = new Slider(),
 			aLabels = oSlider.getAggregation("_handlesLabels"),
 			oSliderWithTickmarks = new Slider({enableTickmarks: true}),
-			oSliderWithLables = new sap.m.Slider({
+			oSliderWithLables = new Slider({
 				min: 0,
 				max: 40,
 				step: 5,
 				enableTickmarks: true,
 				showAdvancedTooltip: true,
-				scale: new sap.m.ResponsiveScale({
+				scale: new ResponsiveScale({
 					tickmarksBetweenLabels: 1
 				})
 			}),
@@ -2040,7 +2040,7 @@ sap.ui.define([
 	QUnit.module('Scale');
 
 	QUnit.test("Slider with scale, should fallback to default one, after the scale is destroyed", function(assert) {
-			var oSlider, oDefaultScale, oHandleLabelsDomRef,
+			var oSlider, oDefaultScale,
 				oScale = new ResponsiveScale({tickmarksBetweenLabels: 1});
 
 			oScale.getLabel = function (fCurValue, oSlider) {
@@ -2141,7 +2141,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Slider with custom Scale", function(assert) {
-		var oSlider, oDefaultScale, oCustonScale, CustomScale,
+		var oSlider, CustomScale,
 		$SliderTickmarksDomRef, $SliderLabelsDomRef, $SliderTicksDomRef;
 
 		CustomScale = Element.extend("sap.test.CustomScale", {
@@ -2569,4 +2569,5 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
+	return pStyleLoaded;
 });

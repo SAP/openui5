@@ -1,15 +1,20 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ObjectNumber",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
+	"sap/ui/Device",
+	"sap/base/util/Version",
+	"sap/m/Label",
 	"sap/m/Panel",
+	"sap/m/Text",
 	"sap/m/library"
-], function(QUnitUtils, createAndAppendDiv, ObjectNumber, jQuery, coreLibrary, Core, Panel, mobileLibrary) {
+], function(QUnitUtils, createAndAppendDiv, ObjectNumber, jQuery, coreLibrary, Core, Device, Version, Label, Panel, Text, mobileLibrary) {
+	"use strict";
+
 	// shortcut for sap.ui.core.TextAlign
 	var TextAlign = coreLibrary.TextAlign;
 
@@ -114,10 +119,10 @@ sap.ui.define([
 
 		//Assert
 		var $ontxt = jQuery("#on2").find(".sapMObjectNumberText");
-		var expected = jQuery.browser.webkit ? "normal" : "400";
+		var expected = Device.browser.webkit ? "normal" : "400";
 		// check if the jQuery version is lower than 1.10 then use "normal" will be set as font-weigt
 		// from jQuery 1.10 jQuery converts the font-weight of "normal" into 400
-		expected = jQuery.sap.Version(jQuery.fn.jquery).compareTo("1.10") > 0 ? "400" : expected;
+		expected = Version(jQuery.fn.jquery).compareTo("1.10") > 0 ? "400" : expected;
 		assert.equal($ontxt.css("font-weight"), expected, "font weight of non-emphasized ObjectNumber should be " + expected);
 
 		//Cleanup
@@ -273,7 +278,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Active ObjectNumber", function (assert) {
-		var oLabel = new sap.m.Label("label", {
+		var oLabel = new Label("label", {
 				text: "Label",
 				labelFor: "ON"
 			}),
@@ -321,7 +326,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ObjectNumber with ariaDescribedBy association", function (assert) {
-		var oDescription = new sap.m.Text({ text: "Description" }),
+		var oDescription = new Text({ text: "Description" }),
 			sAriaDescribedByReferences;
 
 		this.oON.addAriaDescribedBy(oDescription);

@@ -1,5 +1,4 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	'sap/ui/qunit/QUnitUtils',
 	'sap/ui/qunit/utils/createAndAppendDiv',
@@ -10,23 +9,21 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	'sap/ui/core/IconPool',
 	'sap/m/library',
-	'sap/ui/qunit/QUnitUtils',
-	'sap/ui/events/KeyCodes'
-], function(QUnitUtils, createAndAppendDiv, EventExtension, App, Page, RatingIndicator, Core, IconPool, mobileLibrary, qutils, KeyCodes) {
+	'sap/ui/events/KeyCodes',
+	'sap/ui/dom/includeStylesheet',
+	'require'
+], function(qutils, createAndAppendDiv, EventExtension, App, Page, RatingIndicator, Core, IconPool, mobileLibrary,  KeyCodes, includeStylesheet, require) {
+	"use strict";
+
 	createAndAppendDiv("content");
-	var styleElement = document.createElement("style");
-	styleElement.textContent =
-		".sapMRI { /* formatter to display each rating in a single line */" +
-		"	display: block;" +
-		"	margin-bottom: 1rem;" +
-		"}";
-	document.head.appendChild(styleElement);
+	var pStyleLoaded = includeStylesheet({
+		url: require.toUrl("./RatingIndicator.qunit.css")
+	});
 
 	// shortcut
 	var RatingIndicatorVisualMode = mobileLibrary.RatingIndicatorVisualMode;
 
 	var oApp = new App("myApp", {initialPage: "page1"});
-	var idPrefix = "__indicator";
 
 	// default rating with no properties
 	var oRating0 = new RatingIndicator({
@@ -481,22 +478,9 @@ sap.ui.define([
 						touches: touches
 					}
 				}),
-				oEventTouchMove = jQuery.Event("touchmove", {
-					target: oRating4.$(),
-					touches: touches,
-					targetTouches: touches,
-					originalEvent: {
-						touches: touches
-					}
-				}),
 				oEventTouchEnd = jQuery.Event("touchend", {
 					targetTouches: touches
-				}),
-				j,
-				i,
-				fSelectedWidth = parseFloat(oRating4.$().children(".sapMRatingSelected").css("width")),
-				iRemainder,
-				iValue;
+				});
 
 		// check touch start
 		oRating4.ontouchstart(oEventTouchStart);
@@ -532,7 +516,7 @@ sap.ui.define([
 		oRating4._ontouchmove(oEventTouchStart);
 		oRating4._ontouchend(oEventTouchEnd);
 
-		var tempValue = oRating4.getValue();
+		oRating4.getValue();
 
 		// change event with invalid values
 		setEventValue(9999);
@@ -562,21 +546,23 @@ sap.ui.define([
 					oRating.detachLiveChange(check1function);
 					oRating.detachChange(check1function);
 				},
+				/*
 				check2function = function (evt) {
 					assert.strictEqual(evt.getParameter("value"), 2, "The keyboard event has set the rating value to 2");
 					oRating.detachLiveChange(check2function);
 					oRating.detachChange(check2function);
-				},
+				},*/
 				check3function = function (evt) {
 					assert.strictEqual(evt.getParameter("value"), 3, "The keyboard event has set the rating value to 3");
 					oRating.detachLiveChange(check3function);
 					oRating.detachChange(check3function);
 				},
+				/*
 				check4function = function (evt) {
 					assert.strictEqual(evt.getParameter("value"), 4, "The keyboard event has set the rating value to 4");
 					oRating.detachLiveChange(check4function);
 					oRating.detachChange(check4function);
-				},
+				},*/
 				check5function = function (evt) {
 					assert.strictEqual(evt.getParameter("value"), 5, "The keyboard event has set the rating value to 5");
 					oRating.detachLiveChange(check5function);
@@ -735,4 +721,6 @@ sap.ui.define([
 
 		assert.strictEqual(oFnSpy.callCount, 2, "Calculations should be done only 2 times for all elements with the same size");
 	});
+
+	return pStyleLoaded;
 });

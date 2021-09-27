@@ -1,5 +1,4 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/qunit/QUnitUtils",
@@ -27,6 +26,8 @@ sap.ui.define([
 	ActionSheet,
 	Button
 ) {
+	"use strict";
+
 	createAndAppendDiv("qunit-fixture-visible");
 
 	// shortcut for sap.ui.core.aria.HasPopup

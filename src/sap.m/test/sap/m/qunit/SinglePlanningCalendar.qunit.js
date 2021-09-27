@@ -1,7 +1,7 @@
 /*global QUnit, sinon*/
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/library",
 	"sap/m/SinglePlanningCalendar",
 	"sap/m/SinglePlanningCalendarGrid",
@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/m/SinglePlanningCalendarWeekView",
 	"sap/m/SinglePlanningCalendarMonthView",
 	"sap/m/PlanningCalendarLegend",
+	"sap/m/Button",
 	"sap/ui/unified/CalendarAppointment",
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/unified/DateTypeRange",
@@ -28,6 +29,7 @@ sap.ui.define([
 	SinglePlanningCalendarWeekView,
 	SinglePlanningCalendarMonthView,
 	PlanningCalendarLegend,
+	Button,
 	CalendarAppointment,
 	CalendarLegendItem,
 	DateTypeRange,
@@ -1907,7 +1909,7 @@ sap.ui.define([
 
 	QUnit.test("The actions toolbar is visible when actions are set", function (assert) {
 		// Arrange
-		this.oSPC.addAction(new sap.m.Button({
+		this.oSPC.addAction(new Button({
 			text: "SPC button"
 		}));
 		sap.ui.getCore().applyChanges();

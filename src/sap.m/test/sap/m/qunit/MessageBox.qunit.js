@@ -16,14 +16,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/library",
 	"sap/ui/core/library",
-	"sap/ui/Device",
-	"sap/ui/qunit/qunit-css",
-	"sap/ui/thirdparty/qunit",
-	"sap/ui/qunit/qunit-junit",
-	"sap/ui/qunit/qunit-coverage",
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
+	"sap/ui/Device"
 ], function(
 	App,
 	Page,
@@ -88,6 +81,8 @@ sap.ui.define([
 		"QUESTION": "sapMMessageBoxQuestion",
 		"STANDARD": "sapMMessageBoxStandard"
 	};
+
+	QUnit.module("");
 
 	QUnit.test("show", function (assert) {
 		MessageBox.show(sMessageText, {
@@ -747,7 +742,7 @@ sap.ui.define([
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
-		assert.ok(oMessageBox.getContent()[0] instanceof sap.ui.core.Control, "Content is control");
+		assert.ok(oMessageBox.getContent()[0].isA("sap.ui.core.Control"), "Content is control");
 		assert.ok(oMessageBox.$().hasClass(sClassName));
 		$Layout = sap.ui.getCore().byId(sLayoutId).$();
 		assert.equal($Layout.length, 1, "Layout should be created");
@@ -846,7 +841,7 @@ sap.ui.define([
 
 	// When the message box is used on phone device and contains exactly 2 buttons it should use internally beginButton and endButton aggregations instead of buttons.
 	QUnit.test("When the message box is used on phone device and contains exactly 2 buttons:", function (assert) {
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			phone: true,
 			tablet: false,
 			desktop: false

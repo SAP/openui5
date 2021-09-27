@@ -1,6 +1,7 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define(["sap/ui/qunit/QUnitUtils", "sap/m/Bar"], function(QUnitUtils, Bar) {
+	"use strict";
+
 	function renderBarInPageTestCase(sTestName, sContext, sExpectedTag, sExpectedClass) {
 		QUnit.test(sTestName, function (assert) {
 			// System under Test + Act

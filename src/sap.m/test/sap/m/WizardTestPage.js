@@ -1,13 +1,14 @@
-sap.ui.define(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
+sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 		"sap/m/Text", "sap/m/Label", "sap/m/Input", "sap/m/TextArea",
 		"sap/m/CheckBox", "sap/m/Select", "sap/m/StandardListItem",
 		"sap/m/Page", "sap/m/Button", "sap/m/Link", "sap/m/RadioButton",
 		"sap/m/RadioButtonGroup", "sap/m/VBox", "sap/m/Dialog", "sap/m/List",
-		"sap/m/SplitApp", "sap/ui/core/Item", "sap/ui/layout/form/SimpleForm", "sap/ui/Device"],
+		"sap/m/SplitApp", "sap/ui/core/Item", "sap/ui/layout/form/SimpleForm", "sap/ui/Device",
+		"sap/ui/model/json/JSONModel"],
 	function(Wizard, WizardStep, MessageToast, Text, Label, Input,
 	         TextArea, CheckBox, Select, StandardListItem, Page, Button , Link,
 	         RadioButton, RadioButtonGroup, VBox, Dialog, List, SplitApp, Item,
-	         SimpleForm, Device) {
+	         SimpleForm, Device, JSONModel) {
 		"use strict";
 
 		var splitAppContainer = new SplitApp(),
@@ -262,7 +263,7 @@ sap.ui.define(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 				}
 			});
 
-			bindableWizard.setModel(new sap.ui.model.json.JSONModel({
+			bindableWizard.setModel(new JSONModel({
 				steps: [
 					{
 						title: "First",

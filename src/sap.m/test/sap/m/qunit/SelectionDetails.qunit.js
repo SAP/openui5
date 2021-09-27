@@ -1,6 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/NavContainer",
 	"sap/m/ResponsivePopover",
 	"sap/m/Page",
@@ -850,8 +850,8 @@ sap.ui.define([
 
 		// Assert
 		var sId = this.oSelectionDetails.getId() + "-actionGroup-";
-		assert.ok(jQuery.sap.byId(sId + "0").is(".sapMSDFirstActionGroup"), "The first item has the correct style class.");
-		assert.notOk(jQuery.sap.byId(sId + "1").is(".sapMSDFirstActionGroup"), "The second item doesn't have an additional style class.");
+		assert.ok(jQuery("#" + sId + "0").is(".sapMSDFirstActionGroup"), "The first item has the correct style class.");
+		assert.notOk(jQuery("#" + sId + "1").is(".sapMSDFirstActionGroup"), "The second item doesn't have an additional style class.");
 	});
 
 	QUnit.test("StandardListItem is created for actionGroups aggregation", function(assert) {

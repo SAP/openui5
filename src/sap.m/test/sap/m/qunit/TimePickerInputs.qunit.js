@@ -1,12 +1,10 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/m/TimePickerInputs",
 	"sap/m/TimePickerInternals",
-	"sap/ui/events/KeyCodes",
-	"jquery.sap.global"
-], function(QUnitUtils, TimePickerInputs, TimePickerInternals, KeyCodes, jQuery) {
+	"sap/ui/events/KeyCodes"
+], function(TimePickerInputs, TimePickerInternals, KeyCodes) {
+	"use strict";
 
 	QUnit.module("API", {
 		beforeEach: function () {
@@ -35,9 +33,6 @@ sap.ui.define([
 		assert.equal(this.oTPI._sPM, sExpectedPM, "_sPM property should be set to proper locale PM");
 		assert.equal(oSetPropertySpy.calledWithExactly("localeId", sLocale, true), true, "setProperty is called with right arguments");
 		assert.ok(oSetupControlsSpy.called, "_createControls is called to regenerate the controls");
-
-		oSetPropertySpy.restore();
-		oSetupControlsSpy.restore();
 	});
 
 	QUnit.test("Call to setDisplayFormat sets displayFormat and regenerates the controls", function (assert) {
@@ -50,9 +45,6 @@ sap.ui.define([
 
 		assert.equal(oSetPropertySpy.calledWithExactly("displayFormat", sDisplayFormat, true), true, "setProperty is called with right arguments");
 		assert.ok(oSetupControlsSpy.called, "_createControls is called to regenerate the controls");
-
-		oSetPropertySpy.restore();
-		oSetupControlsSpy.restore();
 	});
 
 	QUnit.test("Call to setMinutesStep sets minutesStep and regenerates the controls", function(assert) {
@@ -65,9 +57,6 @@ sap.ui.define([
 
 		assert.ok(oSetPropertySpy.calledWithExactly("minutesStep", iStep, true), "setProperty is called with right arguments");
 		assert.ok(oSetupControlsSpy.called, "_createControls is called to regenerate the controls");
-
-		oSetPropertySpy.restore();
-		oSetupControlsSpy.restore();
 	});
 
 	QUnit.test("Call to setSecondsStep sets secondsStep and regenerates the inputs", function(assert) {
@@ -80,9 +69,6 @@ sap.ui.define([
 
 		assert.ok(oSetPropertySpy.calledWithExactly("secondsStep", iStep, true), "setProperty is called with right arguments");
 		assert.ok(oSetupControlsSpy.called, "_createControls is called to regenerate the controls");
-
-		oSetPropertySpy.restore();
-		oSetupControlsSpy.restore();
 	});
 
 	QUnit.test("Call to setValue sets the value", function (assert) {
@@ -93,25 +79,19 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oSetPropertySpy.calledWithExactly("value", sValue, true), true, "setProperty is called with right arguments");
-
-		oSetPropertySpy.restore();
 	});
 
 	QUnit.test("Call to setValue calls the _setTimeValues", function (assert) {
 		var sValue = "15:16:17",
 			sExpectedDate = new Date(2017, 11, 17, 15, 16, 17), // year, month, day, hours, minutes, seconds
-			oSetTimeValuesSpy = this.spy(this.oTPI, "_setTimeValues"),
-			oParseValueStub = this.stub(this.oTPI, "_parseValue", function () {
-				return sExpectedDate;
-			});
+			oSetTimeValuesSpy = this.spy(this.oTPI, "_setTimeValues");
+
+		this.stub(this.oTPI, "_parseValue").returns(sExpectedDate);
 
 		this.oTPI.setValue(sValue);
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oSetTimeValuesSpy.calledWithExactly(sExpectedDate, false), true, "_setTimeValues is called with parsed date");
-
-		oParseValueStub.restore();
-		oSetTimeValuesSpy.restore();
 	});
 
 	QUnit.test("Call to setValue with '24:00:00' sets the value", function (assert) {
@@ -123,27 +103,22 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oSetPropertySpy.calledWithExactly("value", sValue, true), true, "setProperty is called with right arguments");
-
-		oSetPropertySpy.restore();
 	});
 
 	QUnit.test("Call to setValue with value '24:00:00' calls the _setTimeValues", function (assert) {
 		var sValue = "24:00:00",
 				sExpectedDate = new Date(2017, 11, 17, 0, 0, 0), // year, month, day, hours, minutes, seconds
-				oSetTimeValuesSpy = this.spy(this.oTPI, "_setTimeValues"),
-				oParseValueStub = this.stub(this.oTPI, "_parseValue", function () {
-					return sExpectedDate;
-				});
+				oSetTimeValuesSpy = this.spy(this.oTPI, "_setTimeValues");
+
+		this.stub(this.oTPI, "_parseValue").returns(sExpectedDate);
 
 		this.oTPI.setValueFormat("HH:mm:ss");
 		this.oTPI.setValue(sValue);
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oSetTimeValuesSpy.calledWithExactly(sExpectedDate, true), true, "_setTimeValues is called with parsed date");
-
-		oParseValueStub.restore();
-		oSetTimeValuesSpy.restore();
 	});
+
 /*
 	QUnit.module("Events", {
 		beforeEach: function () {
@@ -257,15 +232,14 @@ sap.ui.define([
 
 	QUnit.test("_getDisplatFormatPattern should return local based pattern if default format names are used (short, medium, long or full)", function (assert) {
 		var sExpectedResult = "HH:mm:ss a",
-			aDisplayFormats = ["short", "medium", "long", "full"],
-			oGetLocaleBasedPatternStub = this.stub(this.oTPI, "_getLocaleBasedPattern", function () { return sExpectedResult;});
+			aDisplayFormats = ["short", "medium", "long", "full"];
+
+		this.stub(this.oTPI, "_getLocaleBasedPattern").returns(sExpectedResult);
 
 		aDisplayFormats.forEach(function (sStyle) {
 			this.oTPI.setDisplayFormat(sStyle);
 			assert.equal(this.oTPI._getDisplayFormatPattern(sStyle), sExpectedResult, "displayFormat is returned directly without modifications");
 		}, this);
-
-		oGetLocaleBasedPatternStub.restore();
 	});
 
 	QUnit.test("_getActiveInput returns the focused input", function (assert) {
@@ -291,7 +265,7 @@ sap.ui.define([
 		this.oTPI.setDisplayFormat("HH:mm:ss");
 
 		// assert
-		assert.ok(this.oTPI._getHoursInput() instanceof sap.m.Input, "should be instance of sap.m.Input");
+		assert.ok(this.oTPI._getHoursInput().isA("sap.m.Input"), "should be instance of sap.m.Input");
 		assert.equal(this.oTPI._getHoursInput().getType().toLowerCase(), "number", "should be of type number");
 		assert.ok(this.oTPI._getHoursInput().getId().indexOf("-inputH") !== -1, "id of the input should contain '-inputH'");
 	});
@@ -309,7 +283,7 @@ sap.ui.define([
 		this.oTPI.setDisplayFormat("HH:mm:ss");
 
 		// assert
-		assert.ok(this.oTPI._getMinutesInput() instanceof sap.m.Input, "should be instance of sap.m.Input");
+		assert.ok(this.oTPI._getMinutesInput().isA("sap.m.Input"), "should be instance of sap.m.Input");
 		assert.equal(this.oTPI._getMinutesInput().getType().toLowerCase(), "number", "should be of type number");
 		assert.ok(this.oTPI._getMinutesInput().getId().indexOf("-inputM") !== -1, "id of the input should contain '-inputM'");
 	});
@@ -327,7 +301,7 @@ sap.ui.define([
 		this.oTPI.setDisplayFormat("HH:mm:ss");
 
 		// assert
-		assert.ok(this.oTPI._getSecondsInput() instanceof sap.m.Input, "should be instance of sap.m.Input");
+		assert.ok(this.oTPI._getSecondsInput().isA("sap.m.Input"), "should be instance of sap.m.Input");
 		assert.equal(this.oTPI._getSecondsInput().getType().toLowerCase(), "number", "should be of type number");
 		assert.ok(this.oTPI._getSecondsInput().getId().indexOf("-inputS") !== -1, "id of the input should contain '-inputS'");
 	});
@@ -345,7 +319,7 @@ sap.ui.define([
 		this.oTPI.setDisplayFormat("h:mm:ss a");
 
 		// assert
-		assert.ok(this.oTPI._getFormatButton() instanceof sap.m.SegmentedButton, "should be instance of sap.m.SegmentedButton");
+		assert.ok(this.oTPI._getFormatButton().isA("sap.m.SegmentedButton"), "should be instance of sap.m.SegmentedButton");
 		assert.ok(this.oTPI._getFormatButton().getId().indexOf("-format") !== -1, "id of the segmented button should contain -format");
 	});
 
@@ -942,14 +916,11 @@ sap.ui.define([
 		var oHoursInput = this.oTPI._getHoursInput(),
 			oMinutesInput = this.oTPI._getMinutesInput(),
 			oSecondsInput = this.oTPI._getSecondsInput(),
-			oHoursInputDom = oHoursInput.getDomRef(),
-			oMinutesInputDom = this.oTPI._getMinutesInput().getDomRef(),
-			oSecondsInputDom = this.oTPI._getSecondsInput().getDomRef(),
 			oRB = this.oTPI._oResourceBundle,
 			oInputsWrapper = this.oTPI.getDomRef(),
-			sHoursLabelled = oHoursInput.getAriaLabelledBy(),
-			sMinutesLabelled = oMinutesInput.getAriaLabelledBy(),
-			sSecondsLabelled = oSecondsInput.getAriaLabelledBy();
+			sHoursLabelled = oHoursInput.getAriaLabelledBy()[0],
+			sMinutesLabelled = oMinutesInput.getAriaLabelledBy()[0],
+			sSecondsLabelled = oSecondsInput.getAriaLabelledBy()[0];
 
 		//assert
 		assert.equal(sap.ui.getCore().byId(sHoursLabelled).getText(), oRB.getText("TIMEPICKER_INPUTS_ENTER_HOURS"), "Hours input is aria-labelledby properly");

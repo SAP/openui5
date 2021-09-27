@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -8,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/ObjectAttribute",
 	"sap/ui/core/IconPool",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/m/ObjectMarker",
 	"sap/m/library"
@@ -25,6 +24,11 @@ sap.ui.define([
 	ObjectMarker,
 	mobileLibrary
 ) {
+	"use strict";
+
+	// shortcut for sap.m.ObjectHeaderPictureShape
+	var ObjectHeaderPictureShape = mobileLibrary.ObjectHeaderPictureShape;
+
 	// shortcut for sap.m.ObjectMarkerType
 	var ObjectMarkerType = mobileLibrary.ObjectMarkerType;
 
@@ -153,7 +157,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// Assert
-		var iconEl = jQuery.sap.domById(sControlId + "-img");
+		var iconEl = document.getElementById(sControlId + "-img");
 		assert.ok(iconEl, "Icon is rendered.");
 		assert.ok(!oObjectHeader.$("img").control(0).getTooltip(), "icon has no tooltip");
 
@@ -188,7 +192,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// Assert
-		var iconEl = jQuery.sap.domById(sControlId + "-img");
+		var iconEl = document.getElementById(sControlId + "-img");
 		assert.ok(!iconEl, "Icon isn't rendered.");
 
 		// Clean up
@@ -210,7 +214,7 @@ sap.ui.define([
 		assert.ok($objectHeader.hasClass("sapMOHRIcon" + oObjectHeader.getImageShape()), "Object has class \"sapMOHRIconSquare\".");
 
 		//Act
-		oObjectHeader.setImageShape(sap.m.ObjectHeaderPictureShape.Circle);
+		oObjectHeader.setImageShape(ObjectHeaderPictureShape.Circle);
 		oCore.applyChanges();
 
 		// Assert
@@ -294,7 +298,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// Assert
-		var titleSelectorEl = jQuery.sap.domById(sControlId + "-titleArrow");
+		var titleSelectorEl = document.getElementById(sControlId + "-titleArrow");
 		assert.ok(titleSelectorEl, "Title arrow is rendered.");
 
 		// Clean up
@@ -310,7 +314,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// Assert
-		var titleSelectorEl = jQuery.sap.domById(sControlId + "-titleArrow");
+		var titleSelectorEl = document.getElementById(sControlId + "-titleArrow");
 		assert.ok(!titleSelectorEl, "Title arrow is not rendered.");
 
 		// Clean up
@@ -330,7 +334,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// Assert
-		var introEl = jQuery.sap.domById(sControlId + "-intro");
+		var introEl = document.getElementById(sControlId + "-intro");
 		assert.ok(introEl, "Intro is rendered");
 		assert.equal(introEl.textContent, sIntro, "Intro exist and it is with the right value.");
 
@@ -348,7 +352,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// Assert
-		var introEl = jQuery.sap.domById(sControlId + "-intro");
+		var introEl = document.getElementById(sControlId + "-intro");
 		assert.ok(!introEl, "Intro isn't rendered");
 
 		// Clean up
@@ -451,7 +455,7 @@ sap.ui.define([
 		oObjectHeader.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
-		sap.ui.test.qunit.triggerEvent("tap", oObjectHeader.$("txt"));
+		qutils.triggerEvent("tap", oObjectHeader.$("txt"));
 		assert.equal(domRef.id, oObjectHeader.$("txt").attr("id"), "Title should be clickable when clicking on \"a\" element");
 		domRef = null;
 
@@ -1359,8 +1363,8 @@ sap.ui.define([
 		oObjectHeader.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.domById("draft"), "marker draft should be rendered.");
-		assert.ok(jQuery.sap.domById("favorite"), "marker favorite should be rendered.");
+		assert.ok(document.getElementById("draft"), "marker draft should be rendered.");
+		assert.ok(document.getElementById("favorite"), "marker favorite should be rendered.");
 
 		oObjectHeader.destroy();
 	});
@@ -1384,7 +1388,7 @@ sap.ui.define([
 		oObjectHeader.insertMarker(marker, 0);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.domById("draft"), "marker draft should be rendered.");
+		assert.ok(document.getElementById("draft"), "marker draft should be rendered.");
 
 		oObjectHeader.destroy();
 	});
@@ -1404,7 +1408,7 @@ sap.ui.define([
 		oObjectHeader.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.domById("flag"), "marker flag should be rendered.");
+		assert.ok(document.getElementById("flag"), "marker flag should be rendered.");
 
 		oObjectHeader.removeAllMarkers();
 		sap.ui.getCore().applyChanges();

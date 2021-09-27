@@ -1,6 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -28,17 +28,7 @@ sap.ui.define([
 	"sap/base/Log"
 ], function(jQuery, Core, EventExtension, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, KeyCodes, Control, ListItemBase, Log) {
 	"use strict";
-	createAndAppendDiv("content");
-	var styleElement = document.createElement("style");
-	styleElement.textContent =
-		"#content {" +
-		"	height: 100%;" +
-		"}" +
-		"#mSAPUI5SupportMessage {" +
-		"	display: none !important;" +
-		"}";
-	document.head.appendChild(styleElement);
-
+	createAndAppendDiv("content").style.height = "100%";
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
 
@@ -65,7 +55,6 @@ sap.ui.define([
 	var detailPage = new Page("detailPage", {
 		title : "Detail Page",
 		showNavButton : true,
-		navButtonText : "Back",
 		navButtonPress : function() {
 			app.back();
 		}
@@ -76,7 +65,6 @@ sap.ui.define([
 	var standardListThumb = new Page("standardListThumb", {
 		title : "Standard List Thumb",
 		showNavButton : true,
-		navButtonText : "Back",
 		navButtonPress : function() {
 			app.back();
 		},
@@ -91,7 +79,6 @@ sap.ui.define([
 	var standardListIcon = new Page("standardListIcon", {
 		title : "Standard List Icon",
 		showNavButton : true,
-		navButtonText : "Back",
 		navButtonPress : function() {
 			app.back();
 		},
@@ -106,7 +93,6 @@ sap.ui.define([
 	var standardListTitle = new Page("standardListTitle", {
 		title : "Standard List Title",
 		showNavButton : true,
-		navButtonText : "Back",
 		navButtonPress : function() {
 			app.back();
 		},
@@ -121,7 +107,6 @@ sap.ui.define([
 	var standardListNoImage = new Page("standardListNoImage", {
 		title : "Standard List no Image",
 		showNavButton : true,
-		navButtonText : "Back",
 		navButtonPress : function() {
 			app.back();
 		}
@@ -130,7 +115,6 @@ sap.ui.define([
 	var displayList = new Page("displayList", {
 		title : "Display list",
 		showNavButton : true,
-		navButtonText : "Back",
 		navButtonPress : function() {
 			app.back();
 		},
@@ -145,7 +129,6 @@ sap.ui.define([
 	var inputList = new Page("inputList", {
 		title : "Input List",
 		showNavButton : true,
-		navButtonText : "Back",
 		navButtonPress : function() {
 			app.back();
 		},
@@ -160,7 +143,6 @@ sap.ui.define([
 	var customList = new Page("customList", {
 		title : "Custom List",
 		showNavButton : true,
-		navButtonText : "Back",
 		navButtonPress : function() {
 			app.back();
 		},
@@ -175,7 +157,6 @@ sap.ui.define([
 	var groupedList = new Page("groupedList", {
 		title : "Grouped List",
 		showNavButton : true,
-		navButtonText : "Back",
 		navButtonPress : function() {
 			app.back();
 		},
@@ -190,7 +171,6 @@ sap.ui.define([
 	var groupedNoHeaderList = new Page("groupedNoHeaderList", {
 		title : "Grouped List without Header/Footer",
 		showNavButton : true,
-		navButtonText : "Back",
 		navButtonPress : function() {
 			app.back();
 		},
@@ -205,7 +185,6 @@ sap.ui.define([
 	var selectionList = new Page("selectionList", {
 		title : "Selection List",
 		showNavButton : true,
-		navButtonText : "Back",
 		navButtonPress : function() {
 			app.back();
 		},
@@ -238,7 +217,6 @@ sap.ui.define([
 	var invisibleList = new Page("invisibleList", {
 		title : "Invisible List",
 		showNavButton : true,
-		navButtonText : "Back",
 		navButtonPress : function() {
 			app.back();
 		}
@@ -247,7 +225,6 @@ sap.ui.define([
 	var noDataList = new Page("noDataList", {
 		title : "No Data List",
 		showNavButton : true,
-		navButtonText : "Back",
 		navButtonPress : function() {
 			app.back();
 		},
@@ -305,7 +282,6 @@ sap.ui.define([
 	var backgroundDesignPage = new Page("backgroundDesignPage", {
 			title : "List Test Page",
 			showNavButton : true,
-			navButtonText : "Back",
 			navButtonPress : function() {
 				app.back();
 			}
@@ -774,7 +750,11 @@ sap.ui.define([
 		itemTemplate.addCustomData(oDataTemplate);
 
 		// bind Aggregation
-		list.bindAggregation("items", "/navigation", itemTemplate);
+		list.bindAggregation("items", {
+			path: "/navigation",
+			template: itemTemplate,
+			templateShareable: true // sample template is used in list w/ and w/o header
+		});
 	}
 
 	function handlePress(e) {
@@ -965,8 +945,8 @@ sap.ui.define([
 	QUnit.module("Initial Check");
 
 	QUnit.test("Overview rendered", function(assert) {
-		assert.ok(jQuery.sap.domById("sapMList001-listUl"), "Overview should be rendered");
-		assert.ok(jQuery.sap.domById("sapMList001-listUl").childNodes[0], "Overview ListItem should be rendered");
+		assert.ok(document.getElementById("sapMList001-listUl"), "Overview should be rendered");
+		assert.ok(document.getElementById("sapMList001-listUl").childNodes[0], "Overview ListItem should be rendered");
 	});
 
 	QUnit.test("StandardListItem wrappedItem more button-onTouchStart", function(assert) {
@@ -1023,8 +1003,8 @@ sap.ui.define([
 		var done = assert.async();
 		app.to("standardListThumb", "show");
 		Core.applyChanges();
-		assert.ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
-		assert.ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
+		assert.ok(document.getElementById("sapMList002-listUl"), "standardListThumb should be rendered");
+		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[0].getId();
 		var oListItem = Core.byId(listItemId);
@@ -1033,7 +1013,7 @@ sap.ui.define([
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
 			Core.applyChanges();
-			assert.ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
+			assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
 			done();
 		},50);
 	});
@@ -1042,8 +1022,8 @@ sap.ui.define([
 		var done = assert.async();
 		app.back();
 		Core.applyChanges();
-		assert.ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
-		assert.ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
+		assert.ok(document.getElementById("sapMList002-listUl"), "standardListThumb should be rendered");
+		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[1].getId();
 		var oListItem = Core.byId(listItemId);
@@ -1052,7 +1032,7 @@ sap.ui.define([
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
 			Core.applyChanges();
-			assert.ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
+			assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
 			done();
 		},50);
 	});
@@ -1061,8 +1041,8 @@ sap.ui.define([
 		var done = assert.async();
 		app.back();
 		Core.applyChanges();
-		assert.ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
-		assert.ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
+		assert.ok(document.getElementById("sapMList002-listUl"), "standardListThumb should be rendered");
+		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[2].getId();
 		var oListItem = Core.byId(listItemId);
@@ -1071,7 +1051,7 @@ sap.ui.define([
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
 			Core.applyChanges();
-			assert.ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
+			assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
 			done();
 		},50);
 	});
@@ -1080,8 +1060,8 @@ sap.ui.define([
 		var done = assert.async();
 		app.back();
 		Core.applyChanges();
-		assert.ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
-		assert.ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
+		assert.ok(document.getElementById("sapMList002-listUl"), "standardListThumb should be rendered");
+		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[3].getId();
 		var oListItem = Core.byId(listItemId);
@@ -1090,7 +1070,7 @@ sap.ui.define([
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
 			Core.applyChanges();
-			assert.ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
+			assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
 			done();
 		},50);
 	});
@@ -1099,8 +1079,8 @@ sap.ui.define([
 		var done = assert.async();
 		app.back();
 		Core.applyChanges();
-		assert.ok(jQuery.sap.domById("sapMList002-listUl"), "standardListThumb should be rendered");
-		assert.ok(jQuery.sap.domById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
+		assert.ok(document.getElementById("sapMList002-listUl"), "standardListThumb should be rendered");
+		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[4].getId();
 		var oListItem = Core.byId(listItemId);
@@ -1109,7 +1089,7 @@ sap.ui.define([
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
 			Core.applyChanges();
-			assert.ok(jQuery.sap.domById("detailPage"), "detailPage should be rendered)");
+			assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
 			done();
 		},50);
 	});
@@ -1122,74 +1102,74 @@ sap.ui.define([
 
 		var _bShowUnreadBubble = (Parameters.get({name: "sapUiLIUnreadAsBubble"}) == "true");
 		if (_bShowUnreadBubble) {
-			assert.ok(jQuery.sap.domById(listItemId + "-unread"), "standardListThumb unread indicator should be rendered");
+			assert.ok(document.getElementById(listItemId + "-unread"), "standardListThumb unread indicator should be rendered");
 		}
-		assert.ok(jQuery.sap.domById(listItemId + "-counter"), "standardListThumb counter should be rendered");
-		assert.ok(jQuery.sap.domById(listItemId + "-info"), "standardListThumb info should be rendered");
-		assert.ok(jQuery.sap.domById("actionListItem"), "actionListItem should be rendered");
+		assert.ok(document.getElementById(listItemId + "-counter"), "standardListThumb counter should be rendered");
+		assert.ok(document.getElementById(listItemId + "-info"), "standardListThumb info should be rendered");
+		assert.ok(document.getElementById("actionListItem"), "actionListItem should be rendered");
 	});
 
 	QUnit.test("standardListIcon rendered", function(assert) {
 		app.to("standardListIcon", "show");
 		Core.applyChanges();
-		assert.ok(jQuery.sap.domById("sapMList003-listUl"), "standardListIcon should be rendered");
-		assert.ok(jQuery.sap.domById("sapMList003-listUl").childNodes[0], "standardListIcon ListItem should be rendered");
+		assert.ok(document.getElementById("sapMList003-listUl"), "standardListIcon should be rendered");
+		assert.ok(document.getElementById("sapMList003-listUl").childNodes[0], "standardListIcon ListItem should be rendered");
 		app.to("standardListTitle", "show");
 		Core.applyChanges();
 	});
 
 	QUnit.test("standardListTitle rendered", function(assert) {
 		app.back();
-		assert.ok(jQuery.sap.domById("sapMList004-listUl"), "standardListTitle should be rendered");
-		assert.ok(jQuery.sap.domById("sapMList004-listUl").childNodes[0], "standardListTitle ListItem should be rendered");
+		assert.ok(document.getElementById("sapMList004-listUl"), "standardListTitle should be rendered");
+		assert.ok(document.getElementById("sapMList004-listUl").childNodes[0], "standardListTitle ListItem should be rendered");
 		app.to("standardListNoImage", "show");
 		Core.applyChanges();
 	});
 
 	QUnit.test("standardListNoImage rendered", function(assert) {
 		app.back();
-		assert.ok(jQuery.sap.domById("sapMList005-listUl"), "standardListNoImage should be rendered");
-		assert.ok(jQuery.sap.domById("sapMList005-listUl").childNodes[0], "standardListNoImage ListItem should be rendered");
+		assert.ok(document.getElementById("sapMList005-listUl"), "standardListNoImage should be rendered");
+		assert.ok(document.getElementById("sapMList005-listUl").childNodes[0], "standardListNoImage ListItem should be rendered");
 		app.to("displayList", "show");
 		Core.applyChanges();
 	});
 
 	QUnit.test("displayList rendered", function(assert) {
 		app.back();
-		assert.ok(jQuery.sap.domById("sapMList006-listUl"), "displayList should be rendered");
-		assert.ok(jQuery.sap.domById("sapMList006-listUl").childNodes[0], "displayList ListItem should be rendered");
+		assert.ok(document.getElementById("sapMList006-listUl"), "displayList should be rendered");
+		assert.ok(document.getElementById("sapMList006-listUl").childNodes[0], "displayList ListItem should be rendered");
 		app.to("inputList", "show");
 		Core.applyChanges();
 	});
 
 	QUnit.test("inputList rendered", function(assert) {
 		app.back();
-		assert.ok(jQuery.sap.domById("sapMList007-listUl"), "inputList should be rendered");
-		assert.ok(jQuery.sap.domById("sapMList007-listUl").childNodes[0], "inputList ListItem should be rendered");
+		assert.ok(document.getElementById("sapMList007-listUl"), "inputList should be rendered");
+		assert.ok(document.getElementById("sapMList007-listUl").childNodes[0], "inputList ListItem should be rendered");
 		app.to("customList", "show");
 		Core.applyChanges();
 	});
 
 	QUnit.test("customList rendered", function(assert) {
 		app.back();
-		assert.ok(jQuery.sap.domById("sapMList008-listUl"), "customList should be rendered");
-		assert.ok(jQuery.sap.domById("sapMList008-listUl").childNodes[0], "customList ListItem should be rendered");
+		assert.ok(document.getElementById("sapMList008-listUl"), "customList should be rendered");
+		assert.ok(document.getElementById("sapMList008-listUl").childNodes[0], "customList ListItem should be rendered");
 		app.to("invisibleList", "show");
 		Core.applyChanges();
 	});
 
 	QUnit.test("invisibleList rendered", function(assert) {
 		app.back();
-		assert.ok(!jQuery.sap.domById("sapMList010-listUl"), "invisibleList should not be rendered");
+		assert.ok(!document.getElementById("sapMList010-listUl"), "invisibleList should not be rendered");
 		app.to("noDataList", "show");
 		Core.applyChanges();
 	});
 
 	QUnit.test("noDataList rendered", function(assert) {
 		app.back();
-		assert.ok(jQuery.sap.domById("sapMList011-listUl"), "noDataList should be rendered");
-		assert.ok(jQuery.sap.domById("sapMList011-nodata-text").textContent == "Forgot something???", "noDataList custom text should be rendered");
-		assert.ok(jQuery.sap.byId("sapMList011-nodata").attr("role") == "option", "ARIA role of No Data Entry");
+		assert.ok(document.getElementById("sapMList011-listUl"), "noDataList should be rendered");
+		assert.ok(document.getElementById("sapMList011-nodata-text").textContent == "Forgot something???", "noDataList custom text should be rendered");
+		assert.ok(jQuery("#sapMList011-nodata").attr("role") == "option", "ARIA role of No Data Entry");
 		app.to("selectionList", "show");
 		Core.applyChanges();
 	});
@@ -1241,8 +1221,8 @@ sap.ui.define([
 	}
 
 	QUnit.test("selectionList rendered", function(assert) {
-		assert.ok(jQuery.sap.domById("sapMList009"), "selectionList should be rendered");
-		assert.ok(jQuery.sap.domById("sapMList009").childNodes[0], "selectionList ListItem should be rendered");
+		assert.ok(document.getElementById("sapMList009"), "selectionList should be rendered");
+		assert.ok(document.getElementById("sapMList009").childNodes[0], "selectionList ListItem should be rendered");
 	});
 
 	QUnit.test("selectionList singleSelection Item 1", function(assert) {
@@ -1613,10 +1593,10 @@ sap.ui.define([
 
 
 	QUnit.module("Properties", {
-		beforeEach: function() {
+		before: function() {
 			sinon.config.useFakeTimers = true;
 		},
-		afterEach: function() {
+		after: function() {
 			sinon.config.useFakeTimers = false;
 		}
 	});
@@ -2007,7 +1987,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("StandardListItem wrapping behavior (Phone)", function(assert) {
-		this.stub(Device.system, "phone", true);
+		this.stub(Device.system, "phone").value(true);
 
 		var oStdLI = new StandardListItem({
 			title: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, seddiamnonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.",
@@ -2032,7 +2012,7 @@ sap.ui.define([
 	QUnit.module("ListItemBase");
 
 	QUnit.test("ListItemBase RenderOutlineClass", function(assert) {
-		this.stub(Device.system, "desktop", true);
+		this.stub(Device.system, "desktop").value(true);
 
 		// SUT
 		var sut1 = new StandardListItem(),

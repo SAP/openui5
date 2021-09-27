@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent', 'sap/m/Page', 'sap/m/Panel', 'sap/m/Button'],
-	function(jQuery, UIComponent, Page, Panel, Button) {
+sap.ui.define(['sap/ui/core/UIComponent', 'sap/m/Page', 'sap/m/Panel', 'sap/m/Button'],
+	function(UIComponent, Page, Panel, Button) {
 	"use strict";
 
 	var Component = UIComponent.extend("samples.scrollcomp.Component", {

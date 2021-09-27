@@ -1,7 +1,5 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/IconPool",
 	"sap/ui/model/json/JSONModel",
@@ -10,7 +8,6 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/library"
 ], function(
-	qutils,
 	createAndAppendDiv,
 	IconPool,
 	JSONModel,
@@ -19,6 +16,8 @@ sap.ui.define([
 	Button,
 	coreLibrary
 ) {
+	"use strict";
+
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
@@ -27,7 +26,6 @@ sap.ui.define([
 
 
 	var messagePageId = "testMessagePage";
-	var IconPool = sap.ui.core.IconPool;
 
 	function createMessagePage() {
 		return new MessagePage(messagePageId,{

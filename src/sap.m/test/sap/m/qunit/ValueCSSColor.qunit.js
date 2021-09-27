@@ -1,5 +1,6 @@
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define(["sap/m/library"], function(mobileLibrary) {
+	"use strict";
+
 	// shortcut for sap.m.ValueCSSColor
 	var ValueCSSColor = mobileLibrary.ValueCSSColor;
 
@@ -7,7 +8,6 @@ sap.ui.define(["sap/m/library"], function(mobileLibrary) {
 	var ValueColor = mobileLibrary.ValueColor;
 
 	/*global QUnit */
-	/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 
 
 	QUnit.module("RegEx check for additional sap.m.ValueColor enum type");

@@ -5,7 +5,7 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'sap/ui/core/Core',
 	'sap/ui/qunit/QUnitUtils',
 	'sap/ui/events/KeyCodes',

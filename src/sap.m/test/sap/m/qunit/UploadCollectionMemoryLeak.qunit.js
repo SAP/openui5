@@ -1,4 +1,4 @@
-/*global QUnit, sinon */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/m/UploadCollectionItem",
@@ -24,11 +24,10 @@ sap.ui.define([
 	var ObjectMarkerVisibility = mlibrary.ObjectMarkerVisibility;
 
 	function createSpySetup(module) {
-		module.oManagedObjectSpy = sinon.spy(ManagedObject.prototype, "applySettings");
+		module.oManagedObjectSpy = this.spy(ManagedObject.prototype, "applySettings");
 	}
 
 	function restoreSpySetup(module) {
-		module.oManagedObjectSpy.restore();
 	}
 
 	function checkDestroy(module, assert) {
@@ -116,7 +115,7 @@ sap.ui.define([
 	QUnit.skip("Helper 'checkDestroy'", function (assert) {
 		//Arrange
 		var oLabel = new Label("labelOne");
-		var oStub = sinon.stub(assert, "ok");
+		var oStub = this.stub(assert, "ok");
 		//Act
 		checkDestroy(this, assert);
 		oStub.restore();
@@ -289,14 +288,13 @@ sap.ui.define([
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		var oStubShow = sinon.stub(MessageBox, "show");
+		this.stub(MessageBox, "show");
 		sap.ui.getCore().byId(this.oItem.getId() + "-deleteButton").firePress();
 		sap.ui.getCore().applyChanges();
 		oCollection._onCloseMessageBoxDeleteItem(MessageBox.Action.OK);
 		sap.ui.getCore().applyChanges();
 		oCollection.destroy();
 		checkDestroy(this, assert);
-		oStubShow.restore();
 	});
 
 	QUnit.module("Uploading", {

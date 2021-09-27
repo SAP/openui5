@@ -1,15 +1,16 @@
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/m/WheelSlider",
 	"sap/ui/events/KeyCodes",
-	"jquery.sap.global"
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Item,
 	WheelSlider,
 	KeyCodes,
 	jQuery) {
+		"use strict";
+
 		QUnit.module("Type to select", {
 			beforeEach: function() {
 				this.oSlider = new WheelSlider({
@@ -21,11 +22,10 @@ sap.ui.define([
 						new Item({ key: "k113", text: "113" })
 					]
 				});
-				this.oSelectedKeySpy = sinon.spy(this.oSlider, "setSelectedKey");
+				this.oSelectedKeySpy = this.spy(this.oSlider, "setSelectedKey");
 				this.iNowTimeStamp = 50501234;
 			},
 			afterEach: function() {
-				this.oSelectedKeySpy.restore();
 				this.oSlider.destroy();
 				this.oSlider = null;
 			}

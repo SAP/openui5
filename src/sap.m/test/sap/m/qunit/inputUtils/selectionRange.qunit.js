@@ -1,7 +1,6 @@
-0;/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+0;/*global QUnit */
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/library",
 	"sap/m/inputUtils/selectionRange",
 	"sap/ui/Device"

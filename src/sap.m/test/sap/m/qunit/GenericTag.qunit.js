@@ -230,7 +230,6 @@ sap.ui.define([
 		afterEach: function() {
 			this.oGenericTag.destroy();
 			this.oGenericTag = null;
-			this.oToggleActiveGenericTagSpy.reset();
 			this.oToggleActiveGenericTagSpy = null;
 		},
 		assertCalledOnceWithExactParam: function(oSpy, bValue, assert) {

@@ -17,11 +17,11 @@ sap.ui.define([
 				"xx-waitForTheme": "init"
 			},
 			qunit: {
-				version: 1,
+				version: 2,
 				reorder: false
 			},
 			sinon: {
-				version: 1,
+				version: 4,
 				qunitBridge: true,
 				useFakeTimers: false
 			},
@@ -35,7 +35,6 @@ sap.ui.define([
 			},
 			ActionSelect: {
 				title: "Test Page for sap.m.ActionSelect",
-				_alternativeTitle: "QUnit tests: sap.m.ActionSelect",
 				sinon: {
 					useFakeTimers: true
 				}
@@ -47,8 +46,7 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.App"
 			},
 			AppWithBackground: {
-				title: "QUnit Page for sap.m.App with Background Images",
-				_alternativeTitle: "QUnit Page for sap.m.App"
+				title: "QUnit Page for sap.m.App with Background Images"
 			},
 			Avatar: {
 				coverage: {
@@ -96,7 +94,6 @@ sap.ui.define([
 			},
 			Button: {
 				title: "Test Page for sap.m.Button",
-				_alternativeTitle: "QUnit page for sap.m.Button",
 				ui5: {
 					language: "en"
 				},
@@ -111,7 +108,6 @@ sap.ui.define([
 				 */
 				page: "test-resources/sap/m/qunit/CSSClassesFromParameters.qunit.html",
 				title: "QUnit Page for Theme-dependent CSS Classes",
-				_alternativeTitle: "QUnit tests: CSS Classes for Theme Parameters",
 				ui5: {
 					theme: "sap_bluecrystal"
 				}
@@ -133,16 +129,18 @@ sap.ui.define([
 			},
 			CheckBox: {
 				title: "Test Page for sap.m.CheckBox",
-				_alternativeTitle: "QUnit Page for sap.m.CheckBox"
+				ui5: {
+					language: "en-US"
+				}
 			},
 			ColorPalette: {
 				title: "ColorPalette - sap.m",
-				_alternativeTitle: "QUnit tests: sap.m.ColorPalette",
-				ui5: {
-					language: "en-US"
+				sinon: {
+					version: 1 // sinon-qunit-bridge does not supported nested modules
 				},
-				qunit: {
-					version: 2
+				ui5: {
+					language: "en-US",
+					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
 				}
 			},
 			Column: {
@@ -153,8 +151,15 @@ sap.ui.define([
 			},
 			ColumnHeaderPopover: {
 				title: "QUnit Page for sap.m.ColumnHeaderPopover",
+				qunit: {
+					version: 1 // TBD: test fails locally, no chance to migrate it
+				},
 				sinon: {
+					version: 1, // TBD: test fails locally, no chance to migrate it
 					useFakeTimers: true
+				},
+				ui5: {
+					language: "en-US"
 				}
 			},
 			ColumnListItem: {
@@ -165,12 +170,12 @@ sap.ui.define([
 			},
 			ComboBox: {
 				title: "Test Page for sap.m.ComboBox",
-				_alternativeTitle: "QUnit tests: sap.m.ComboBox",
 				ui5: {
 					libs: "sap.m, sap.ui.layout",
 					language: "en"
 				},
 				sinon: {
+					version: 1, // test hangs with sinon 4
 					useFakeTimers: true
 				}
 			},
@@ -186,62 +191,62 @@ sap.ui.define([
 			},
 			DateNavigation: {
 				title: "Test page for sap.m.delegate.DateNavigation",
-				_alternativeTitle: "QUnit tests for sap.m.delegate.DateNavigation",
 				sinon: {
 					useFakeTimers: true
+				},
+				ui5: {
+					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
 				}
 			},
 			DatePicker: {
 				title: "DatePicker - sap.m",
-				_alternativeTitle: "QUnit tests: sap.m.DatePicker",
 				qunit: {
 					// one test checks a module for not being loaded, another checks it for being loaded
 					// -> order of tests is significant!
 					reorder: false
 				},
 				ui5: {
-					language: "en-US"
+					language: "en-US",
+					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
 				}
 			},
 			DateRangeSelection: {
 				title: "DateRangeSelection - sap.m",
-				_alternativeTitle: "QUnit tests: sap.m.DateRangeSelection",
 				ui5: {
-					language: "en-US"
+					language: "en-US",
+					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
 				}
 			},
 			DateTimeField: {
 				title: "DateTimeField - sap.m",
-				_alternativeTitle: "QUnit tests: sap.m.DatePicker",
-				ui5: {
-					language: "en-US"
-				},
-				qunit: {
-					version: 2
-				}
-			},
-			DateTimeInput: {
-				title: "Test Page for sap.m.DateTimeInput",
-				_alternativeTitle: "QUnit page for sap.m.DateTimeInput",
 				ui5: {
 					language: "en-US"
 				},
 				sinon: {
-					version: 4,
-					qunitBridge: true,
+					version: 1 // sinon-qunit-bridge does not support nested modules
+				}
+			},
+			DateTimeInput: {
+				title: "Test Page for sap.m.DateTimeInput",
+				ui5: {
+					language: "en-US",
+					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
+				},
+				sinon: {
 					useFakeTimers: true
 				}
 			},
 			DateTimePicker: {
 				title: "DateTimePicker - sap.m",
-				_alternativeTitle: "QUnit tests: sap.m.DateTimePicker",
 				ui5: {
-					language: "en-US"
+					language: "en-US",
+					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
 				}
 			},
 			Dialog: {
 				title: "QUnit Page for sap.m.Dialog",
 				sinon: {
+					version: 1, // test hangs with sinon 4
 					useFakeTimers: true
 				},
 				ui5: {
@@ -253,12 +258,7 @@ sap.ui.define([
 			},
 			DraftIndicator: {
 				title: "Test Page for sap.m.DraftIndicator",
-				_alternativeTitle: "QUnit tests: sap.m.DraftIndicator",
-				qunit: {
-					version: 2
-				},
 				sinon: {
-					version: 1, // as sinon-qunit-bridge doesn't support fake timers yet
 					useFakeTimers: true
 				}
 			},
@@ -267,12 +267,6 @@ sap.ui.define([
 				ui5: {
 					language: "en-US"
 				},
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				coverage: {
 					only: "//sap\/m\/[\\w]*DynamicDate.*/"
 				}
@@ -280,7 +274,6 @@ sap.ui.define([
 			ExpandableText: {
 				title: "QUnit Tests - sap.m.ExpandableText",
 				sinon: {
-					version: 1, // as sinon-qunit-bridge doesn't support fake timers yet
 					useFakeTimers: true
 				},
 				coverage: {
@@ -301,12 +294,6 @@ sap.ui.define([
 					}
 				},
 				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				ui5: {
 					libs: "sap.ui.layout,sap.m,sap.ui.documentation",
 					"xx-componentPreload": "off",
@@ -329,12 +316,6 @@ sap.ui.define([
 					}
 				},
 				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				ui5: {
 					libs: "sap.ui.layout,sap.m,sap.ui.documentation",
 					"xx-componentPreload": "off",
@@ -357,12 +338,6 @@ sap.ui.define([
 					}
 				},
 				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				ui5: {
 					libs: "sap.ui.layout,sap.m,sap.ui.documentation",
 					"xx-componentPreload": "off",
@@ -385,12 +360,6 @@ sap.ui.define([
 					}
 				},
 				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				ui5: {
 					libs: "sap.ui.layout,sap.m,sap.ui.documentation",
 					"xx-componentPreload": "off",
@@ -401,53 +370,36 @@ sap.ui.define([
 			},
 			FacetFilter: {
 				title: "FacetFilter - sap.m",
-				_alternativeTitle: "QUnit Page for sap.m.FacetFilter, part 1",
 				ui5: {
 					language: "en_US"
 				}
 			},
 			FacetFilter2: {
 				title: "FacetFilter 2 - sap.m",
-				_alternativeTitle: "QUnit Page for sap.m.FacetFilter, part 2",
 				ui5: {
 					language: "en_US"
 				}
 			},
 			FeedContent: {
 				title: "Test Page for sap.m.FeedContent",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				coverage: {
 					only: "//sap\/m\/FeedContent.*/"
 				},
 				ui5: {
-					libs: "sap.ui.core,sap.m",
-					language: "en"
+					language: "en-US",
+					libs: "sap.ui.core,sap.m"
 				}
 			},
 			FeedInput: {
 				title: "Test Page for sap.m.FeedInput",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				coverage: {
 					only: "//sap\/m\/FeedInput.*/"
 				}
 			},
 			FeedListItem: {
 				title: "Test Page for sap.m.FeedListItem",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
+				ui5: {
+					language: "en-US"
 				},
 				coverage: {
 					only: "//sap\/m\/FeedListItem.*/"
@@ -455,38 +407,30 @@ sap.ui.define([
 			},
 			FeedListItemAction: {
 				title: "QUnit Test Page for sap.m.FeedListItemAction",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				ui5: {
 					language: "en"
 				}
 			},
 			Fiori20Adapter: {
 				title: "QUnit Page for Fiori20Adapter",
-				_alternativeTitle: "QUnit Page for sap.m.Fiori20Adapter"
+				ui5: {
+					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
+				}
 			},
 			FlexBox: {
 				title: "QUnit Page for FlexBox - sap.m"
 			},
 			FlexBoxFitContainerH: {
-				title: "QUnit Page for sap.m.FlexBox with FitContainer set and outer HBox",
-				_alternativeTitle: "QUnit Page for sap.m.FlexBox with FitContainer set"
+				title: "QUnit Page for sap.m.FlexBox with FitContainer set and outer HBox"
 			},
 			FlexBoxFitContainerV: {
-				title: "QUnit Page for sap.m.FlexBox with FitContainer set and outer VBox",
-				_alternativeTitle: "QUnit Page for sap.m.FlexBox with FitContainer set"
+				title: "QUnit Page for sap.m.FlexBox with FitContainer set and outer VBox"
 			},
 			FlexBoxFitPage: {
-				title: "QUnit Page for sap.m.FlexBox with FitContainer set inside a Page",
-				_alternativeTitle: "QUnit Page for sap.m.FlexBox with FitContainer set"
+				title: "QUnit Page for sap.m.FlexBox with FitContainer set inside a Page"
 			},
 			FormattedText: {
 				title: "QUnit test for the sap.m.FormattedText control",
-				_alternativeTitle: "QUnit tests: sap.m.FormattedText",
 				sinon: {
 					useFakeTimers: true
 				}
@@ -496,12 +440,6 @@ sap.ui.define([
 			},
 			GenericTag: {
 				title: "QUnit Test Page for sap.m.GenericTag",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				coverage: {
 					only: "//sap\/m\/GenericTag.*/"
 				},
@@ -511,12 +449,6 @@ sap.ui.define([
 			},
 			GenericTile: {
 				title: "QUnit Test Page for sap.m.GenericTile",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				coverage: {
 					only: "//sap\/m\/GenericTile.*/"
 				},
@@ -525,25 +457,24 @@ sap.ui.define([
 				}
 			},
 			GrowingEnablement: {
-				title: "QUnit Page for sap.m.GrowingEnablement"
+				title: "QUnit Page for sap.m.GrowingEnablement",
+				loader: {
+					map: {
+						"*": {
+							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+						}
+					}
+				}
 			},
 			GrowingList_databinding: {
 				title: "QUnit Page for sap.m.GrowingList databinding"
 			},
 			HBox: {
-				qunit: {
-					version: 2
-				},
 				title: "QUnit Page for sap.m.HBox"
 			},
 			HeaderContainer: {
 				title: "QUnit: HeaderContainer - sap.m",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				coverage: {
 					only: "//sap\/m\/HeaderContainer.*/"
 				},
@@ -554,8 +485,6 @@ sap.ui.define([
 			IconTabBar: {
 				title: "QUnit Page for sap.m.IconTabBar",
 				sinon: {
-					version: 4,
-					qunitBridge: true,
 					useFakeTimers: true
 				}
 			},
@@ -571,7 +500,6 @@ sap.ui.define([
 			IconTabHeader: {
 				title: "QUnit Page for sap.m.IconTabHeader",
 				sinon: {
-					version: 4,
 					useFakeTimers: true
 				}
 			},
@@ -582,17 +510,10 @@ sap.ui.define([
 				}
 			},
 			Image: {
-				title: "Image - sap.m - QUnit test",
-				_alternativeTitle: "QUnit Page for sap.m.Image"
+				title: "Image - sap.m - QUnit test"
 			},
 			ImageContent: {
 				title: "sap.m.ImageContent",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				coverage: {
 					only: "//sap\/m\/ImageContent.*/"
 				},
@@ -603,6 +524,7 @@ sap.ui.define([
 			Input: {
 				title: "QUnit page for sap.m.Input",
 				sinon: {
+					version: 1, // fails with sinon 4
 					useFakeTimers: true
 				}
 			},
@@ -613,13 +535,7 @@ sap.ui.define([
 				}
 			},
 			InstanceManager: {
-				title: "QUnit Page for sap.m.InstanceManager",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				}
+				title: "QUnit Page for sap.m.InstanceManager"
 			},
 			Label: {
 				title: "QUnit page for sap.m.Label"
@@ -630,12 +546,6 @@ sap.ui.define([
 					paths: {
 						"samples/scrollcomp": "test-resources/sap/m/qunit/scrollcomp"
 					}
-				},
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
 				},
 				ui5: {
 					language: "en"
@@ -651,10 +561,16 @@ sap.ui.define([
 				}
 			},
 			LightBoxMemoryLeak: {
-				title: "QUnit Page for sap.m.LightBox Memory Leaks"
+				title: "QUnit Page for sap.m.LightBox Memory Leaks",
+				qunit: {
+					version: 1 // MemoryLeakCheck loads QUnit 1
+				}
 			},
 			Link: {
-				title: "QUnit page for sap.ui.m.Link"
+				title: "QUnit page for sap.ui.m.Link",
+				ui5: {
+					language: "en-US"
+				}
 			},
 			List: {
 				title: "QUnit Page for sap.m.List and all sap.m List Items",
@@ -666,53 +582,67 @@ sap.ui.define([
 				title: "Test Page for sap.m.ListBase",
 				sinon: {
 					useFakeTimers: true
+				},
+				ui5: {
+					language: "en-US",
+					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
 				}
 			},
 			ListBaseBinding: {
-				title: "QUnit Page for sap.m.ListBase Binding"
+				title: "QUnit Page for sap.m.ListBase Binding",
+				loader: {
+					map: {
+						"*": {
+							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+						}
+					}
+				}
 			},
 			MarginCssClasses: {
 				title: "QUnit Page for sap.m Margin CSS Classes",
 				loader: {
 					paths: {
-						"sap/ui/demo/mock": "test-resources/sap/m/qunit/test-resources/sap/ui/documentation/sdk/"
+						"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
 					}
 				}
 			},
 			MaskInput: {
 				title: "Test Page for sap.m.MaskInput",
-				_alternativeTitle: "QUnit page for sap.m.MaskInput",
+				sinon: {
+					useFakeTimers: true
+				},
 				ui5: {
 					language: "en-US",
 					bindingSyntax: "simple"
-				},
-				sinon: {
-					useFakeTimers: true
 				}
 			},
 			MaskInputRule: {
 				title: "Test Page for sap.m.MaskInputRule",
-				_alternativeTitle: "QUnit page for sap.m.MaskInputRule",
-				ui5: {
-					language: "en-US"
-				},
 				sinon: {
 					useFakeTimers: true
+				},
+				ui5: {
+					language: "en-US"
 				}
 			},
 			Menu: {
 				title: "QUnit page for sap.m.Menu",
-				ui5: {
-					language: "en-US"
-				},
 				sinon: {
 					useFakeTimers: true
+				},
+				ui5: {
+					language: "en-US",
+					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
 				}
 			},
 			MenuButton: {
 				title: "QUnit tests: sap.m.MenuButton",
 				sinon: {
 					useFakeTimers: true
+				},
+				ui5: {
+					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
 				}
 			},
 			MessageBox: {
@@ -721,7 +651,7 @@ sap.ui.define([
 					useFakeTimers: true
 				},
 				ui5: {
-					compatVersion: "edge"
+					language: "en-US"
 				}
 			},
 			MessageItem: {
@@ -759,17 +689,14 @@ sap.ui.define([
 			},
 			MultiEditField: {
 				title: "MultiEditField - sap.m - QUnit test",
-				qunit: {
-					version: 2
-				},
 				sinon: {
-					version: 1, // no fakeTimer support in new sinon-qunit bridge
 					useFakeTimers: true
 				}
 			},
 			MultiInput: {
 				title: "QUnit page for sap.m.MultiInput",
 				sinon: {
+					version: 1, // test has issues with sinon-4 fake timer
 					useFakeTimers: true
 				}
 			},
@@ -778,12 +705,6 @@ sap.ui.define([
 			},
 			NewsContent: {
 				title: "sap.m.NewsContent",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				coverage: {
 					only: "//sap\/m\/NewsContent.*/"
 				},
@@ -805,12 +726,6 @@ sap.ui.define([
 			},
 			NumericContent: {
 				title: "Test Page for sap.m.NumericContent",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				coverage: {
 					only: "//sap\/m\/NumericContent.*/"
 				},
@@ -823,18 +738,13 @@ sap.ui.define([
 				title: "ObjectAttribute - sap.m"
 			},
 			ObjectHeader: {
-				title: "ObjectHeader - sap.m",
-				ui5: {
-					theme: "sap_bluecrystal"
-				}
+				title: "ObjectHeader - sap.m"
 			},
 			ObjectHeaderResponsive: {
-				title: "QUnit Page for sap.m.ObjectHeader in Responsive mode",
-				_alternativeTitle: "QUnit Page for sap.m.ObjectHeader responsive behaviour"
+				title: "QUnit Page for sap.m.ObjectHeader in Responsive mode"
 			},
 			ObjectIdentifier: {
 				title: "ObjectIdentifier - sap.m",
-				_alternativeTitle: "QUnit Page for sap.m.ObjectIdentifier",
 				sinon: {
 					useFakeTimers: true
 				}
@@ -844,57 +754,40 @@ sap.ui.define([
 			},
 			ObjectMarker: {
 				title: "Test Page for sap.m.ObjectMarker",
-				_alternativeTitle: "QUnit page for sap.m.ObjectMarker",
 				ui5: {
 					language: "en-US"
 				}
 			},
 			ObjectNumber: {
-				title: "ObjectNumber - sap.m",
-				_alternativeTitle: "QUnit Page for sap.m.ObjectNumber"
+				title: "ObjectNumber - sap.m"
 			},
 			ObjectStatus: {
 				title: "ObjectStatus - sap.m"
 			},
 			OverflowToolbar: {
 				title: "Test Page for sap.m.OverflowToolbar",
-				_alternativeTitle: "QUnit tests: sap.m.OverflowToolbar",
 				ui5: {
 					libs: "sap.m,sap.ui.unified"
 				},
 				sinon: {
+					version: 1, // one test fails with sinon-4 fakeTimer
 					useFakeTimers: true
 				}
 			},
 			OverflowToolbarButton: {
-				title: "Test Page for sap.m.OverflowToolbarButton",
-				_alternativeTitle: "QUnit tests: sap.m.OverflowToolbarButton",
-				ui5: {
-					libs: "sap.m"
-				}
+				title: "Test Page for sap.m.OverflowToolbarButton"
 			},
 			P13nColumnsPanel: {
 				title: "Test Page for sap.m.P13nColumnsPanel",
-				_alternativeTitle: "QUnit Page for sap.m.P13nColumnsPanel",
-				qunit: {
-					version: 2
-				},
 				sinon: {
-					version: 1,
 					useFakeTimers: true
 				}
 			},
 			P13nConditionPanel: {
 				title: "Test Page for sap.m.P13nConditionPanel",
-				_alternativeTitle: "QUnit Page for sap.m.P13nConditionPanel",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				ui5: {
-					language: "en" // one test depends on locale specific date formatting
+					language: "en", // one test depends on locale specific date formatting
+					libs: ["sap.m", "sap.ui.layout", "sap.ui.unified"] // to compensate 2 sync loadLibrary
 				}
 			},
 			"p13n.AbstractContainer": {
@@ -962,118 +855,71 @@ sap.ui.define([
 			},
 			P13nDialog: {
 				title: "Test Page for sap.m.P13nDialog",
-				_alternativeTitle: "QUnit Page for sap.m.P13nDialog",
 				loader: {
 					paths: {
 						resourceroot: "test-resources/sap/m/qunit/"
 					}
 				},
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
+				ui5: {
+					libs: ["sap.m", "sap.ui.layout", "sap.ui.unified"] // to compensate 2 sync loadLibrary
 				}
 			},
 			P13nDimMeasurePanel: {
 				title: "Test Page for sap.m.P13nDimMeasurePanel",
-				_alternativeTitle: "QUnit Page for sap.m.P13nDimMeasurePanel",
-				qunit: {
-					version: 2
-				},
 				sinon: {
-					version: 1,
 					useFakeTimers: true
 				}
 			},
 			P13nFilterPanel: {
 				title: "Test Page for sap.m.P13nFilterPanel",
-				_alternativeTitle: "QUnit Page for sap.m.P13nFilterPanel",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
+				ui5: {
+					libs: ["sap.m", "sap.ui.layout", "sap.ui.unified"] // to compensate 2 sync loadLibrary
 				}
 			},
 			P13nGroupPanel: {
 				title: "Test Page for sap.m.P13nGroupPanel",
-				_alternativeTitle: "QUnit Page for sap.m.P13nGroupPanel",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
+				ui5: {
+					libs: ["sap.m", "sap.ui.layout", "sap.ui.unified"] // to compensate 2 sync loadLibrary
 				}
 			},
 			P13nSelectionPanel: {
 				title: "Test Page for sap.m.P13nSelectionPanel",
-				_alternativeTitle: "QUnit Page for sap.m.P13nSelectionPanel",
-				qunit: {
-					version: 2
-				},
 				sinon: {
-					version: 1,
 					useFakeTimers: true
 				}
 			},
 			P13nSortPanel: {
 				title: "Test Page for sap.m.P13nSortPanel",
-				_alternativeTitle: "QUnit Page for sap.m.P13nSortPanel",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
+				ui5: {
+					libs: ["sap.m", "sap.ui.layout", "sap.ui.unified"] // to compensate 2 sync loadLibrary
 				}
 			},
 			P13nOperationsHelper: {
-				title: "Test Page for sap.m.P13nOperationsHelper",
-				_alternativeTitle: "QUnit Page for sap.m.P13nOperationsHelper",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				}
+				title: "Test Page for sap.m.P13nOperationsHelper"
 			},
 			PDFViewer: {
 				title: "PdfViewer - sap.m",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				coverage: {
 					only: "//sap\/m\/PDF.*/"
 				}
 			},
 			Page: {
-				title: "QUnit Page for sap.m.Page"
+				title: "QUnit Page for sap.m.Page (part 1)"
 			},
 			Page_part2: {
-				title: "Test page for sap.m.Page",
-				_alternativeTitle: "QUnit tests for sap.m.Page"
+				title: "QUnit Page for sap.m.Page (part 2)"
 			},
 			PageResponsivePaddingsEnablement: {
 				title: "QUnit Page for responsive paddings in sap.m.Page"
 			},
 			PagingButton: {
-				title: "QUnit Page for sap.m.PagingButton",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				}
+				title: "QUnit Page for sap.m.PagingButton"
 			},
 			Panel: {
 				title: "QUnit page for sap.m.Panel"
 			},
 			PlanningCalendar: {
 				title: "PlanningCalendar - sap.m",
-				_alternativeTitle: "QUnit tests: sap.m.PlanningCalendar, part 1",
 				ui5: {
 					libs: "sap.m, sap.ui.unified",
 					language: "en_GB"
@@ -1081,7 +927,6 @@ sap.ui.define([
 			},
 			PlanningCalendar2: {
 				title: "PlanningCalendar 2 - sap.m",
-				_alternativeTitle: "QUnit tests: sap.m.PlanningCalendar, part 2",
 				ui5: {
 					libs: "sap.m, sap.ui.unified",
 					language: "en_GB"
@@ -1089,37 +934,33 @@ sap.ui.define([
 			},
 			PlanningCalendarHeader: {
 				title: "PlanningCalendarHeader - sap.m",
-				_alternativeTitle: "QUnit tests: sap.m.PlanningCalendarHeader",
 				ui5: {
 					libs: "sap.m, sap.ui.unified"
 				}
 			},
 			PlanningCalendarLegend: {
 				title: "PlanningCalendarLegend - sap.m",
-				_alternativeTitle: "QUnit tests: sap.m.PlanningCalendarLegend",
 				ui5: {
 					libs: "sap.m, sap.ui.unified"
 				}
 			},
 			Popover: {
 				title: "QUnit Page for sap.m.Popover",
-				ui5: {
-					theme: "sap_bluecrystal"
-				},
 				sinon: {
 					useFakeTimers: true
+				},
+				ui5: {
+					theme: "sap_bluecrystal"
 				}
 			},
 			ProgressIndicator: {
 				title: "QUnit ProgressIndicator",
 				sinon: {
 					useFakeTimers: true
-				},
-				_alternativeTitle: "QUnit page for sap.m.ProgressIndicator"
+				}
 			},
 			PullToRefresh_desktop: {
-				title: "Test Page for sap.m.PullToRefresh on Desktop",
-				_alternativeTitle: "QUnit tests: sap.m.PullToRefresh on Desktop"
+				title: "Test Page for sap.m.PullToRefresh on Desktop"
 			},
 			QUnitCompositesUsingIFrames: {
 				/*
@@ -1151,17 +992,12 @@ sap.ui.define([
 			},
 			RadioButton: {
 				title: "RadioButton - sap.m - QUnit test",
-				_alternativeTitle: "QUnit Page for sap.m.RadioButton",
 				sinon: {
 					useFakeTimers: true
 				}
 			},
 			RadioButtonGroup: {
 				title: "RadioButton - sap.m - QUnit test",
-				_alternativeTitle: "QUnit Page for sap.m.RadioButton",
-				ui5: {
-					libs: "sap.m, sap.ui.core"
-				},
 				sinon: {
 					useFakeTimers: true
 				},
@@ -1174,8 +1010,11 @@ sap.ui.define([
 			},
 			RangeSlider: {
 				title: "QUnit Page for sap.m.RangeSlider",
-				qunit: {
-					version: 2
+				sinon: {
+					version: 1 // sinon-qunit-bridge does not supported nested modules
+				},
+				ui5: {
+					language: "en-US"
 				}
 			},
 			RatingIndicator: {
@@ -1188,20 +1027,25 @@ sap.ui.define([
 				}
 			},
 			ResponsiveScale: {
-				title: "Test page for sap.m.ResponsiveScale",
-				_alternativeTitle: "QUnit tests: sap.m.ResponsiveScale"
+				title: "Test page for sap.m.ResponsiveScale"
 			},
 			Rule: {
 				title: "QUnit Page for Support Assistant Rules",
 				loader: {
-					shim: {
-						"test-resources/sap/ui/support/TestHelper": {
-							exports: "testRule"
+					map: {
+						"*": {
+							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
 						}
 					}
 				},
+				qunit: {
+					// to be checked: TestHelper does not work with qunit-2 & sinon-4
+					// sinon-4 alone works
+					version: 1
+				},
 				ui5: {
-					libs: "sap.m, sap.ui.support",
+					libs: ["sap.m", "sap.ui.support", "sap.ui.unified"],  // to compensate sync loadLibrary
 					support: "silent",
 					// TO BE FIXED: support lib fails when waiting for Core#init
 					"xx-waitForTheme": true
@@ -1228,7 +1072,10 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.ScrollBar"
 			},
 			ScrollContainer: {
-				title: "QUnit Page for sap.m.ScrollContainer"
+				title: "QUnit Page for sap.m.ScrollContainer",
+				sinon: {
+					version: 1 // custom handling of fakeTimer fails with sinon-4
+				}
 			},
 			ScrollPosition: {
 				title: "QUnit Page for Scroll Positions"
@@ -1239,22 +1086,30 @@ sap.ui.define([
 			SearchField_suggestions: {
 				title: "Test Page for sap.m.SearchField with suggestions",
 				sinon: {
-					useFakeTimers: true,
-					version: 4
+					useFakeTimers: true
 				}
 			},
 			SegmentedButton: {
 				title: "Segmented - sap.m - QUnit test",
-				_alternativeTitle: "QUnit Page for sap.m.SegmentedButton",
 				sinon: {
 					useFakeTimers: true
 				}
 			},
 			Select: {
 				title: "Test Page for sap.m.Select",
-				_alternativeTitle: "QUnit tests: sap.m.Select",
+				loader: {
+					map: {
+						"*": {
+							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+						}
+					}
+				},
 				sinon: {
 					useFakeTimers: true
+				},
+				ui5: {
+					language: "en"
 				}
 			},
 			SelectDialog: {
@@ -1265,19 +1120,12 @@ sap.ui.define([
 			},
 			SelectList: {
 				title: "Test Page for sap.m.SelectList",
-				_alternativeTitle: "QUnit tests: sap.m.SelectList",
 				sinon: {
 					useFakeTimers: true
 				}
 			},
 			SelectionDetails: {
 				title: "Test Page for sap.m.SelectionDetails",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				coverage: {
 					only: "[sap/m/SelectionDetailsItem.js,sap/m/SelectionDetailsListItemRenderer.js]"
 				},
@@ -1287,12 +1135,6 @@ sap.ui.define([
 			},
 			SelectionDetailsItem: {
 				title: "QUnit Test Page for sap.m.SelectionDetailsItem",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				coverage: {
 					only: "[sap/m/SelectionDetailsItem.js,sap/m/SelectionDetailsListItemRenderer.js]"
 				},
@@ -1302,11 +1144,7 @@ sap.ui.define([
 			},
 			SelectionDetailsItemLine: {
 				title: "QUnit Test Page for sap.m.SelectionDetailsItemLine",
-				qunit: {
-					version: 2
-				},
 				sinon: {
-					version: 1, // no support for fake timers in new qunit-sinon-bridge
 					useFakeTimers: true
 				},
 				coverage: {
@@ -1324,7 +1162,6 @@ sap.ui.define([
 			},
 			SimpleFixFlex: {
 				title: "Test Page for sap.m.SimpleFixFlex",
-				_alternativeTitle: "QUnit tests: sap.m.SimpleFixFlex",
 				sinon: {
 					useFakeTimers: true
 				}
@@ -1332,7 +1169,8 @@ sap.ui.define([
 			SinglePlanningCalendar: {
 				title: "QUnit Page for sap.m.SinglePlanningCalendar",
 				ui5: {
-					language: "en"
+					language: "en",
+					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
 				}
 			},
 			SinglePlanningCalendarGrid: {
@@ -1341,7 +1179,8 @@ sap.ui.define([
 					useFakeTimers: true
 				},
 				ui5: {
-					language: "en"
+					language: "en",
+					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
 				}
 			},
 			SinglePlanningCalendarMonthGrid: {
@@ -1350,17 +1189,12 @@ sap.ui.define([
 					useFakeTimers: true
 				},
 				ui5: {
-					language: "en_GB"
+					language: "en_GB",
+					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
 				}
 			},
 			SlideTile: {
 				title: "Test Page for sap.m.SlideTile",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				coverage: {
 					only: "//sap\/m\/SlideTile.*/"
 				},
@@ -1370,42 +1204,42 @@ sap.ui.define([
 			},
 			Slider: {
 				title: "Test page for sap.m.Slider",
-				_alternativeTitle: "QUnit tests: sap.m.Slider",
-				qunit: {
-					version: 2
-				},
 				sinon: {
+					version: 1, // sinon-qunit-bridge does not supported nested modules
 					useFakeTimers: true
+				},
+				ui5: {
+					language: "en-US"
 				}
 			},
 			SplitApp: {
-				title: "QUnit Page for sap.m.SplitApp"
+				title: "QUnit Page for sap.m.SplitApp",
+				ui5: {
+					language: "en-US"
+				}
 			},
 			SplitContainer: {
-				title: "QUnit Page for sap.m.SplitContainer"
+				title: "QUnit Page for sap.m.SplitContainer",
+				ui5: {
+					language: "en-US"
+				}
 			},
 			StandardTile: {
-				title: "StandardTile - sap.m",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				}
+				title: "StandardTile - sap.m"
 			},
 			StepInput: {
 				title: "QUnit Page for sap.m.StepInput",
 				sinon: {
 					useFakeTimers: true
+				},
+				ui5: {
+					language: "en-US"
 				}
 			},
 			SuggestionsPopover: {
 				title: "QUnit Page for sap.m.SuggestionsPopover",
 				ui5: {
 					compatVersion: "1.65"
-				},
-				qunit: {
-					version: 2
 				},
 				coverage: {
 					only: [
@@ -1418,9 +1252,6 @@ sap.ui.define([
 				sinon: {
 					useFakeTimers: true
 				},
-				ui5: {
-					compatVersion: "1.16"
-				},
 				coverage: {
 					only: [
 						"sap/m/Support"
@@ -1429,48 +1260,42 @@ sap.ui.define([
 			},
 			Switch: {
 				title: "Test Page for sap.m.Switch",
-				_alternativeTitle: "QUnit tests: sap.m.Switch",
 				sinon: {
 					useFakeTimers: true
+				},
+				ui5: {
+					language: "en-US"
 				}
 			},
 			TabContainer: {
 				title: "QUnit Page for sap.m.TabContainer",
-				ui5: {
-					language: "en"
-				},
 				sinon: {
 					useFakeTimers: true
+				},
+				ui5: {
+					language: "en"
 				}
 			},
 			TabStrip: {
 				title: "QUnit Page for sap.m.TabStrip",
+				sinon: {
+					useFakeTimers: true
+				},
 				ui5: {
 					language: "en-US"
-				},
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4,
-					useFakeTimers: true,
-					qunitBridge: true
 				}
 			},
 			TabStripItem: {
 				title: "QUnit Page for sap.m.TabStripItem",
 				ui5: {
 					language: "en-US"
-				},
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
 				}
 			},
 			Table: {
 				title: "QUnit Page for sap.m.Table",
+				sinon: {
+					version: 1 // custom handling of fakeTimer fails with sinon-4
+				},
 				coverage: {
 					only: "sap/m/Table"
 				},
@@ -1479,43 +1304,21 @@ sap.ui.define([
 				}
 			},
 			TablePersoController: {
-				title: "QUnit Page for sap.m.TablePersoController",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				}
+				title: "QUnit Page for sap.m.TablePersoController"
 			},
 			TablePersoControllerMigrationInComponent: {
-				title: "QUnit Page for sap.m.TablePersoDialog - Migration in Component",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				}
+				title: "QUnit Page for sap.m.TablePersoDialog - Migration in Component"
 			},
 			TablePersoDialog: {
 				title: "QUnit Page for sap.m.TablePersoController",
-				_alternativeTitle: "QUnit Page for sap.m.TablePersoDialog",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				ui5: {
 					animationMode: "none"
 				}
 			},
 			TableSelectDialog: {
 				title: "QUnit Page for sap.m.TableSelectDialog",
-				qunit: {
-					version: 2
-				},
 				sinon: {
-					version: 1,
+					version: 1, // custom handling of fakeTimer fails with sinon-4
 					useFakeTimers: false // some tests activate it
 				}
 			},
@@ -1524,7 +1327,6 @@ sap.ui.define([
 			},
 			TextArea: {
 				title: "Test Page for sap.m.TextArea",
-				_alternativeTitle: "QUnit page for sap.m.TextArea",
 				sinon: {
 					useFakeTimers: true
 				}
@@ -1540,24 +1342,15 @@ sap.ui.define([
 			},
 			TileContent: {
 				title: "Test Page for sap.m.TileContent",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				coverage: {
 					only: "//sap\/m\/TileContent.*/"
 				}
 			},
 			TimePicker: {
 				title: "Test Page for sap.m.TimePicker",
-				_alternativeTitle: "QUnit page for sap.m.TimePicker",
 				ui5: {
-					language: "en-US"
-				},
-				sinon: {
-					version: 4
+					language: "en-US",
+					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
 				}
 			},
 			TimePickerSliders: {
@@ -1571,7 +1364,6 @@ sap.ui.define([
 			},
 			TimePicker_Locale_bg_BG: {
 				title: "Test Page for sap.m.TimePicker in Locale bg_BG",
-				_alternativeTitle: "QUnit page for sap.m.TimePicker in Locale bg_BG",
 				ui5: {
 					language: "bg_BG"
 				}
@@ -1586,28 +1378,22 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.TitlePropagationSupport"
 			},
 			ToggleButton: {
-				title: "Test Page for sap.m.ToggleButton",
-				_alternativeTitle: "QUnit Page for ToggleButton"
+				title: "Test Page for sap.m.ToggleButton"
 			},
 			Token: {
-				title: "Test Page for sap.m.Token",
-				_alternativeTitle: "QUnit page for sap.m.Token"
+				title: "Test Page for sap.m.Token"
 			},
 			Tokenizer: {
-				title: "Test Page for sap.m.Tokenizer",
-				_alternativeTitle: "QUnit page for sap.m.Tokenizer"
+				title: "Test Page for sap.m.Tokenizer"
 			},
 			Toolbar: {
-				title: "Test Page for sap.m.Toolbar",
-				_alternativeTitle: "QUnit tests: sap.m.Toolbar"
+				title: "Test Page for sap.m.Toolbar"
 			},
 			ToolbarSeparator: {
-				title: "Test Page for sap.m.ToolbarSeparator",
-				_alternativeTitle: "QUnit tests: sap.m.ToolbarSeparator"
+				title: "Test Page for sap.m.ToolbarSeparator"
 			},
 			ToolbarSpacer: {
-				title: "Test Page for sap.m.ToolbarSpacer",
-				_alternativeTitle: "QUnit tests: sap.m.ToolbarSpacer"
+				title: "Test Page for sap.m.ToolbarSpacer"
 			},
 			Tree: {
 				title: "QUnit Page for sap.m.Tree",
@@ -1617,6 +1403,14 @@ sap.ui.define([
 			},
 			Treeodata: {
 				title: "QUnit Page for sap.m.Tree - odata",
+				loader: {
+					map: {
+						"*": {
+							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+						}
+					}
+				},
 				coverage: {
 					branchTracking: true,
 					only: "sap/ui/core/util"
@@ -1624,17 +1418,13 @@ sap.ui.define([
 			},
 			UploadCollection: {
 				title: "Test Page for sap.m.UploadCollection",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 1
-				},
 				coverage: {
 					only: "[sap/m/UploadCollection.js,sap/m/UploadCollectionParameter.js,sap/m/UploadCollectionToolbarPlaceholder.js,sap/m/UploadCollectionRenderer.js,sap/m/UploadCollectionItem.js]"
 				},
 				ui5: {
-					language: "en"
+					language: "en",
+					modules: ["sap.m.Input"], // to compensate sync helper factory (FileUpload)
+					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
 				},
 				module: [
 					"./UploadCollection.qunit",
@@ -1647,17 +1437,12 @@ sap.ui.define([
 			},
 			UploadSet: {
 				title: "Test Page for sap.m.upload.UploadSet",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 1
-				},
 				coverage: {
 					only: "[sap/m/upload/UploadSet.js,sap/m/upload/UploadSetItem.js,sap/m/upload/UploadSetRenderer.js,sap/m/upload/Uploader.js]"
 				},
 				ui5: {
-					language: "en"
+					language: "en",
+					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
 				},
 				module: [
 					"./upload/UploadSet.qunit",
@@ -1666,9 +1451,6 @@ sap.ui.define([
 				]
 			},
 			VBox: {
-				qunit: {
-					version: 2
-				},
 				title: "QUnit Page for sap.m.VBox"
 			},
 			ValueCSSColor: {
@@ -1679,7 +1461,6 @@ sap.ui.define([
 			},
 			ValueStateMessage: {
 				title: "Test page for sap.m.delegate.ValueStateMessage",
-				_alternativeTitle: "QUnit tests for sap.m.delegate.ValueStateMessage",
 				sinon: {
 					useFakeTimers: true
 				}
@@ -1688,7 +1469,7 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.ViewSettingsDialog"
 			},
 			ViewSettingsDialogCustomTabs: {
-				title: "QUnit Page for sap.m.ViewSettingsDialog"
+				title: "QUnit Page for sap.m.ViewSettingsDialog (w/ Custom Tabs)"
 			},
 			WheelSlider: {
 				title: "QUnit Page for sap.m.WheelSlider",
@@ -1735,8 +1516,17 @@ sap.ui.define([
 					language: "en"
 				}
 			},
+
+			// --- refactoring stopped here (FWE) ---
+
 			WizardStep: {
-				title: "QUnit Page for sap.m.WizardStep"
+				title: "QUnit Page for sap.m.WizardStep",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
 			},
 			"changeHandler/MoveTableColumns": {
 				title: "QUnit - sap.m.changeHandler.MoveTableColumns",
@@ -1757,9 +1547,6 @@ sap.ui.define([
 						"cp/opa/test/app": "test-resources/sap/m/qunit/colorpalette/",
 						"cp/opa/test/env": "test-resources/sap/m/qunit/colorpalette/test/"
 					}
-				},
-				qunit: {
-					version: 2
 				}
 			},
 			"colorpalette/test/integration/opaTest2": {
@@ -1775,9 +1562,6 @@ sap.ui.define([
 						"cp/opa/test/app": "test-resources/sap/m/qunit/colorpalette/",
 						"cp/opa/test/env": "test-resources/sap/m/qunit/colorpalette/test/"
 					}
-				},
-				qunit: {
-					version: 2
 				}
 			},
 			"designtime/semantic/DetailPage": {
@@ -1786,7 +1570,6 @@ sap.ui.define([
 					libs: "sap.m,sap.ui.dt"
 				},
 				sinon: false,
-				qunit: 2,
 				skip : true,
 				group: "Designtime"
 			},
@@ -1796,26 +1579,21 @@ sap.ui.define([
 					libs: ["sap.m","sap.ui.rta"]
 				},
 				sinon: false,
-				qunit: 2,
 				group: "Designtime"
 			},
 			"designtime/Avatar": {
 				title: "QUnit Page for sap.m.Avatar design time and rta enabling",
-				_alternativeTitle: "QUnit Page for sap.m.Avatar rta enabling",
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/Bar": {
 				title: "QUnit Page for sap.m.Bar design time and rta enabling",
-				_alternativeTitle: "QUnit Page for sap.m.Bar",
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				loader: {
 					paths: {
@@ -1826,11 +1604,9 @@ sap.ui.define([
 			},
 			"designtime/Button": {
 				title: "QUnit Page for sap.m.Button design time",
-				_alternativeTitle: "QUnit Page for sap.m.Button",
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				loader: {
 					paths: {
@@ -1844,7 +1620,6 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				loader: {
 					paths: {
@@ -1861,7 +1636,6 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.dt"
 				},
-				qunit: 2,
 				sinon: false,
 				loader: {
 					paths: {
@@ -1872,11 +1646,9 @@ sap.ui.define([
 			},
 			"designtime/CustomTile": {
 				title: "QUnit Page for sap.m.CustomTile design time",
-				_alternativeTitle: "QUnit Page for sap.m.CustomTile",
 				ui5: {
 					libs: "sap.m,sap.ui.dt"
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -1885,7 +1657,6 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -1894,7 +1665,6 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -1903,7 +1673,6 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				loader: {
 					paths: {
@@ -1917,7 +1686,6 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				loader: {
 					paths: {
@@ -1931,7 +1699,6 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -1940,7 +1707,6 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -1949,7 +1715,6 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.dt"
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -1958,13 +1723,11 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/Library": {
 				title: "QUnit Page for designtime consistency check of sap.m library",
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -1973,7 +1736,6 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -1982,7 +1744,6 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -1991,7 +1752,6 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -2000,7 +1760,6 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.dt"
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -2009,18 +1768,15 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				skip: true,
 				group: "Designtime"
 			},
 			"designtime/OverflowToolbarButton": {
 				title: "QUnit Page for sap.m.OverflowToolbarButton design time and rta enabling",
-				_alternativeTitle: "QUnit Page for sap.m.OverflowToolbarButton rta enabling",
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -2029,7 +1785,6 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				loader: {
 					paths: {
@@ -2043,7 +1798,6 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -2052,7 +1806,6 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -2061,7 +1814,6 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -2075,7 +1827,6 @@ sap.ui.define([
 						dt: "test-resources/sap/m/qunit/designtime/"
 					}
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -2084,17 +1835,14 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/Select": {
 				title: "QUnit Page for sap.m.Select design time",
-				_alternativeTitle: "QUnit Page for sap.m.Select",
 				ui5: {
 					libs: "sap.m,sap.ui.dt"
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -2103,17 +1851,14 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/SplitContainer": {
 				title: "QUnit Page for sap.m.SplitContainer design time",
-				_alternativeTitle: "QUnit Page for sap.m.SplitContainer",
 				ui5: {
 					libs: "sap.m,sap.ui.dt"
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -2122,7 +1867,6 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -2132,17 +1876,14 @@ sap.ui.define([
 					libs: ["sap.m","sap.ui.rta"],
 					language: "en"
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/Text": {
 				title: "QUnit Page for sap.m.Text design time and rta enabling",
-				_alternativeTitle: "QUnit Page for sap.m.Text rta enabling",
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
@@ -2151,17 +1892,14 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/Toolbar": {
 				title: "QUnit Page for sap.m.Toolbar design time and rta enabling",
-				_alternativeTitle: "QUnit Page for sap.m.Toolbar",
 				ui5: {
 					libs: ["sap.m","sap.ui.rta"]
 				},
-				qunit: 2,
 				sinon: false,
 				loader: {
 					paths: {
@@ -2184,143 +1922,65 @@ sap.ui.define([
 				}
 			},
 			"plugins/PluginBase": {
-				title: "Test Page for sap.m.plugins.PluginBase",
-				qunit: {
-					version: "edge"
-				},
-				sinon: {
-					version: "edge"
-				}
+				title: "Test Page for sap.m.plugins.PluginBase"
 			},
 			"plugins/DataStateIndicator": {
-				title: "Test Page for sap.m.plugins.DataStateIndicator",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				}
+				title: "Test Page for sap.m.plugins.DataStateIndicator"
 			},
 			"plugins/ColumnResizer": {
-				title: "Test Page for sap.m.plugins.ColumnResizer",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				}
+				title: "Test Page for sap.m.plugins.ColumnResizer"
 			},
 			"plugins/PasteProvider": {
-				title: "Test Page for sap.m.plugins.PasteProvider",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				}
+				title: "Test Page for sap.m.plugins.PasteProvider"
 			},
 			"routing/async/RouteMatchedHandler": {
-				title: "QUnit Page for RouteMatchedHandler",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				}
+				title: "QUnit Page for RouteMatchedHandler"
 			},
 			"routing/async/Router": {
-				title: "QUnit Page for sap.m.routing.Router",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				}
+				title: "QUnit Page for sap.m.routing.Router"
 			},
 			"routing/async/Targets": {
-				title: "QUnit Page for sap.m.routing.Targets",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				}
+				title: "QUnit Page for sap.m.routing.Targets"
 			},
 			"routing/common/RouteMatchedHandler": {
-				title: "QUnit Page for RouteMatchedHandler",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				}
+				title: "QUnit Page for RouteMatchedHandler"
 			},
 			"routing/common/TargetHandler": {
-				title: "QUnit Page for sap.m.routing.TargetHandler",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				}
+				title: "QUnit Page for sap.m.routing.TargetHandler"
 			},
 			"routing/sync/RouteMatchedHandler": {
 				title: "QUnit Page for RouteMatchedHandler",
-				qunit: {
-					version: 2
-				},
 				sinon: {
-					version: 1,
+					version: 4,
 					useFakeTimers: true
 				}
 			},
 			"routing/sync/Router": {
-				title: "QUnit Page for sap.m.routing.Router",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				}
+				title: "QUnit Page for sap.m.routing.Router"
 			},
 			"routing/sync/Targets": {
-				title: "QUnit Page for sap.m.routing.Targets",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				}
+				title: "QUnit Page for sap.m.routing.Targets"
 			},
 			"semantic/Segment": {
-				title: "Test Page for sap.m.semantic.Segment",
-				_alternativeTitle: "QUnit tests: sap.m.semantic.SemanticPage"
+				title: "Test Page for sap.m.semantic.Segment"
 			},
 			"semantic/SemanticButton": {
 				title: "Test Page for sap.m.semantic.SemanticButton",
-				_alternativeTitle: "QUnit tests: sap.m.semantic.SemanticButton",
 				sinon: {
 					useFakeTimers: true
 				}
 			},
 			"semantic/SemanticToggleButton": {
-				title: "Test Page for sap.m.semantic.SemanticToggleButton",
-				_alternativeTitle: "QUnit tests: sap.m.semantic.SemanticToggleButton",
-				sinon: {
-					useFakeTimers: true
-				}
+				title: "Test Page for sap.m.semantic.SemanticToggleButton"
 			},
 			"semantic/SemanticPage": {
-				title: "Test Page for sap.m.SemanticPage",
-				_alternativeTitle: "QUnit tests: sap.m.SemanticPage"
+				title: "Test Page for sap.m.SemanticPage"
 			},
 			"semantic/SemanticSelect": {
-				title: "Test Page for sap.m.semantic.SemanticSelect",
-				_alternativeTitle: "QUnit tests: sap.m.semantic.SemanticSelect"
+				title: "Test Page for sap.m.semantic.SemanticSelect"
 			},
 			"semantic/ShareMenu": {
-				title: "Test Page for sap.m.semantic.ShareMenu",
-				_alternativeTitle: "QUnit tests: sap.m.semantic.SemanticPage"
+				title: "Test Page for sap.m.semantic.ShareMenu"
 			}
 		}
 	};
@@ -2351,7 +2011,7 @@ sap.ui.define([
 				"changeHandler/AddTableColumn": {
 					title: "QUnit - legacy addTableColumn changes in sap.m.changeHandler.AddTableColumn",
 					ui5: {
-						libs: ["sap.m","sap.ui.fl", "sap.ui.comp"],
+						libs: ["sap.m","sap.ui.fl", "sap.ui.comp", "sap.ui.unified"], // to compensate sync loadLibrary
 						language: "en"
 					}
 				}

@@ -67,7 +67,7 @@ sap.ui.define([
 
 			// assert
 			assert.ok(oLink, "there is something");
-			assert.ok(oLink instanceof sap.m.Link, "it's a link");
+			assert.ok(oLink.isA("sap.m.Link"), "it's a link");
 			assert.equal(oLink.getText(), "3 More", "it's text is correct");
 		});
 

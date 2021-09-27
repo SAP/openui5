@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 
 sap.ui.define([
 	"sap/m/routing/RouteMatchedHandler",
@@ -13,7 +12,9 @@ sap.ui.define([
 	"./commonIntegrationTests",
 	"sap/m/Page",
 	"./helpers",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/core/mvc/Controller", // provides sap.ui.controller
+	"sap/ui/core/mvc/JSView" // provides sap.ui.jsview
 ], function(
 	RouteMatchedHandler,
 	NavContainer,
@@ -96,8 +97,7 @@ sap.ui.define([
 
 	QUnit.test("Should forward the Direction info to the TargetHandler", function (assert) {
 		//Arrange
-		var view = createViewAndController("dummy"),
-			oRouter = fnCreateRouter({
+		var oRouter = fnCreateRouter({
 				myRoute : {}
 			}),
 			oNavContainer = new NavContainer(),
@@ -112,7 +112,7 @@ sap.ui.define([
 			oNavigateStub = this.stub(TargetHandler.prototype, "navigate");
 
 		//System under Test
-		var oRouteMatchedHandler = new RouteMatchedHandler(oRouter);
+		/* var oRouteMatchedHandler = */ new RouteMatchedHandler(oRouter);
 
 		//Act
 		oRouter.fireRoutePatternMatched(oEvent);
@@ -157,7 +157,7 @@ sap.ui.define([
 			oToSpy = this.spy(NavContainer.prototype, "to");
 
 		//System under Test
-		var oRouteMatchedHandler = new RouteMatchedHandler(this.oRouter);
+		/* var oRouteMatchedHandler = */ new RouteMatchedHandler(this.oRouter);
 
 		//Act
 		this.oRouter.fireRouteMatched(oEvent);
@@ -176,7 +176,6 @@ sap.ui.define([
 	QUnit.test("Should do a backwards navigation", function (assert) {
 		//Arrange
 		var view = createViewAndController("dummy"),
-			oRouter = fnCreateRouter(),
 			oSplitContainer = new SplitContainer({
 				masterPages: [ createViewAndController("initial"), view]
 			}),
@@ -193,11 +192,13 @@ sap.ui.define([
 			oInsertPreviousPageSpy = this.spy(NavContainer.prototype, "insertPreviousPage"),
 			oBackToPageSpy = this.spy(NavContainer.prototype, "backToPage");
 
+		fnCreateRouter();
+
 		//simulate backwards navigation
 		this.stub(History.prototype, "getDirection").returns("Backwards");
 
 		//System under Test
-		var oRouteMatchedHandler = new RouteMatchedHandler(this.oRouter);
+		/* var oRouteMatchedHandler = */ new RouteMatchedHandler(this.oRouter);
 
 		//Act
 		this.oRouter.fireRouteMatched(oEvent);
@@ -237,7 +238,7 @@ sap.ui.define([
 		this.stub(oNavContainer, "getDomRef").returns(true);
 
 		//System under Test
-		var oRouteMatchedHandler = new RouteMatchedHandler(this.oRouter);
+		/* var oRouteMatchedHandler = */ new RouteMatchedHandler(this.oRouter);
 
 		//Act
 		this.oRouter.fireRouteMatched(oEvent);
@@ -274,10 +275,10 @@ sap.ui.define([
 		//Arrange
 		var iExpectedCallCount = bCloseDialogs ? 1 : 0,
 			oCloseAllPopoversSpy = this.spy(InstanceManager, "closeAllPopovers"),
-			oCloseAllDialogsSpy = this.spy(InstanceManager, "closeAllDialogs"),
+			oCloseAllDialogsSpy = this.spy(InstanceManager, "closeAllDialogs");
 
-			//System under Test
-			oRouteMatchedHandler = new RouteMatchedHandler(this.oRouter, bCloseDialogs);
+		//System under Test
+		/* oRouteMatchedHandler = */ new RouteMatchedHandler(this.oRouter, bCloseDialogs);
 
 		this.stub(InstanceManager, "hasOpenPopover").returns(true);
 		this.stub(InstanceManager, "hasOpenDialog").returns(true);
@@ -456,7 +457,7 @@ sap.ui.define([
 		var oRouteMatchedSpy = sinon.spy(oRouter.getRoute("Master"), "_routeMatched");
 
 		// System under test
-		var oRouteMatchedHandler = new RouteMatchedHandler(oRouter);
+		/* var oRouteMatchedHandler = */ new RouteMatchedHandler(oRouter);
 
 
 		// views

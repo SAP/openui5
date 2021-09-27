@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/ColumnHeaderPopover",
 	"sap/m/ColumnPopoverActionItem",
@@ -12,9 +12,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Button",
 	"sap/m/library",
+	"sap/m/Input",
 	"sap/m/Label",
-	"sap/ui/core/Item",
-	"jquery.sap.mobile"
+	"sap/m/MessageToast",
+	"sap/ui/core/Item"
 ], function(
 	Core,
 	createAndAppendDiv,
@@ -27,7 +28,9 @@ sap.ui.define([
 	JSONModel,
 	Button,
 	library,
+	Input,
 	Label,
+	MessageToast,
 	Item) {
 	"use strict";
 	createAndAppendDiv("content");
@@ -46,7 +49,7 @@ sap.ui.define([
 				visible : true,
 				text: "custom",
 				icon: "sap-icon://money-bills",
-				content: new sap.m.Button()
+				content: new Button()
 			},
 			{
 				type: "action",
@@ -59,15 +62,14 @@ sap.ui.define([
 				visible : true,
 				text: "custom",
 				icon: "sap-icon://money-bills",
-				content: new sap.m.Input()
+				content: new Input()
 			}
 
 			];
 
 
 		function handlePressEvnt(oEvent) {
-			jQuery.sap.require("sap.m.MessageToast");
-			sap.m.MessageToast.show("action");
+			MessageToast.show("action");
 		}
 
 		var oPopover = new ColumnHeaderPopover();
@@ -118,8 +120,7 @@ QUnit.test("Overview rendered", function(assert){
 
 	var oRBPopover = oPopover.getAggregation("_popover");
 
-	var sId = oRBPopover.getId();
-	assert.ok(jQuery.sap.byId(sId), "columnHeaderPopover is rendered");
+	assert.ok(oRBPopover.getDomRef(), "columnHeaderPopover is rendered");
 	assert.equal(oPopover.getItems().length, 4, "ColumnHeaderPopover has four items as aggregations");
 
 	oButton.destroy();
@@ -171,7 +172,7 @@ QUnit.module("Aggregation");
 QUnit.test("update item", function(assert){
 	var oPopover = createCHP("test3");
 	var oItem1 = oPopover.getItems()[3];
-	var oItem2 = new sap.m.ColumnPopoverActionItem({text: "Hello"});
+	var oItem2 = new ColumnPopoverActionItem({text: "Hello"});
 
 	var oButton = new Button({
 		text : "open columnHeaderPopover",

@@ -1,5 +1,4 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -21,6 +20,8 @@ sap.ui.define([
 	coreLibrary,
 	jQuery
 ) {
+	"use strict";
+
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
@@ -29,9 +30,11 @@ sap.ui.define([
 	createAndAppendDiv("content");
 
 
+	QUnit.module("");
+
 	QUnit.test("Should render TextArea correctly", function(assert) {
 		var sut = new TextArea(),
-			oCounter, oCounterStyle;
+			oCounter;
 		sut.placeAt("qunit-fixture");
 		core.applyChanges();
 
@@ -116,14 +119,6 @@ sap.ui.define([
 				assert.strictEqual($outer.outerHeight(), parseInt(props.height), "TextArea has correct height : " + props.height);
 				assert.strictEqual($textarea.val(), sut.getValue(), "TextArea has correct value");
 			},
-			applySetters = function(setters) {
-				Object.getOwnPropertyNames(setters).forEach(function(key) {
-					sut["set" + $.sap.charToUpperCase(key)](setters[key]);
-					core.applyChanges();
-				});
-
-				assert.ok(true, "Setters called corretly");
-			},
 			sut = new TextArea(config);
 
 		sut.placeAt("qunit-fixture");
@@ -133,7 +128,8 @@ sap.ui.define([
 		testprops(config);
 
 		// check setter functions
-		applySetters(setters);
+		sut.applySettings(setters);
+		core.applyChanges();
 		testprops(setters);
 
 		//Cleanup
@@ -157,21 +153,13 @@ sap.ui.define([
 				maxLength : 40,
 				value : "Updated text value"
 			},
-
-			applySetters = function(setters) {
-				Object.getOwnPropertyNames(setters).forEach(function(key) {
-					oTextArea["set" + $.sap.charToUpperCase(key)](setters[key]);
-					core.applyChanges();
-				});
-
-				assert.ok(true, "All setters called.");
-			},
 			getAppliedValues = function(oSetters) {
 				var mExpectedValue, mActualValue;
 
 				Object.getOwnPropertyNames(oSetters).forEach(function(sKey) {
+					var oProperty = TextArea.getMetadata().getProperty(sKey);
 					mExpectedValue = oSetters[sKey];
-					mActualValue = oTextArea["get" + $.sap.charToUpperCase(sKey)]();
+					mActualValue = oProperty.get(oTextArea);
 
 					assert.strictEqual(mActualValue, mExpectedValue, "The correct value is applied for property " + sKey);
 					core.applyChanges();
@@ -182,7 +170,8 @@ sap.ui.define([
 		core.applyChanges();
 
 		// check setter functions
-		applySetters(oSetters);
+		oTextArea.applySettings(oSetters);
+		core.applyChanges();
 		getAppliedValues(oSetters);
 
 		//Cleanup
@@ -191,7 +180,7 @@ sap.ui.define([
 
 	QUnit.test("Should react on touchstart/move for INSIDE_SCROLLABLE_WITHOUT_FOCUS behaviour", function(assert) {
 		// turn on touch support during this test
-		this.stub(Device.support, "touch", true);
+		this.stub(Device.support, "touch").value(true);
 
 		// generate events
 		var longText = new Array(1000).join("text "),
@@ -212,7 +201,7 @@ sap.ui.define([
 			});
 
 		// stub the behaviour
-		this.stub(TextArea.prototype, "_behaviour", {
+		this.stub(TextArea.prototype, "_behaviour").value({
 			"INSIDE_SCROLLABLE_WITHOUT_FOCUS" : true
 		});
 
@@ -265,22 +254,22 @@ sap.ui.define([
 
 		// act
 		oTADomRef.focus();
-		sap.ui.test.qunit.triggerKeydown(oTADomRef, "ENTER");
+		qutils.triggerKeydown(oTADomRef, "ENTER");
 
 		// assertion
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "Change event is not fired because initial value and dom value are same.");
 
 		// change dom and cursor pos
-		sap.ui.test.qunit.triggerCharacterInput(oTADomRef, "a");
+		qutils.triggerCharacterInput(oTADomRef, "a");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oTADomRef, "ENTER");
+		qutils.triggerKeydown(oTADomRef, "ENTER");
 
 		// assertion
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "Change event is not fired because enter is not a valid event to fire change event for textarea");
 
 		// reset spy
-		fnFireChangeSpy.reset();
+		fnFireChangeSpy.resetHistory();
 
 		// retest after change event is fired
 		oTADomRef.blur();
@@ -309,10 +298,10 @@ sap.ui.define([
 		// act
 		oTADomRef.focus();
 		oTA.updateDomValue("Something that is not initial value");
-		sap.ui.test.qunit.triggerEvent("input", oTADomRef);
+		qutils.triggerEvent("input", oTADomRef);
 
 		var fnLiveChangeSpy = this.spy(oTA, "fireLiveChange");
-		sap.ui.test.qunit.triggerKeydown(oTADomRef, "ESCAPE");
+		qutils.triggerKeydown(oTADomRef, "ESCAPE");
 
 		assert.strictEqual(fnLiveChangeSpy.callCount, 1, "LiveChange event is fired");
 		assert.strictEqual(fnLiveChangeSpy.args[0][0].value, sInitValue, "Event is fired with correct parameter value");
@@ -338,7 +327,7 @@ sap.ui.define([
 
 		oTA.focus();
 		oTA.updateDomValue("a");
-		sap.ui.test.qunit.triggerEvent("input", oTA.getFocusDomRef());
+		qutils.triggerEvent("input", oTA.getFocusDomRef());
 		assert.equal(oModel.getProperty("/value"), "" , "no model value update");
 		assert.equal(oTA.getValue(), "a", "getter still returns the current dom value");
 
@@ -349,11 +338,11 @@ sap.ui.define([
 		assert.equal(fnChangeSpy.callCount, 1 , "change event is fired on blur");
 
 		oTA.setValueLiveUpdate(true);
-		fnChangeSpy.reset();
+		fnChangeSpy.resetHistory();
 
 		oTA.focus();
 		oTA.updateDomValue("b");
-		sap.ui.test.qunit.triggerEvent("input", oTA.getFocusDomRef());
+		qutils.triggerEvent("input", oTA.getFocusDomRef());
 
 		assert.equal(oModel.getProperty("/value"), "b", "model value is updated with LiveUpdate");
 		assert.equal(oTA.getValue(), "b", "getter returns the current dom value");
@@ -559,7 +548,7 @@ sap.ui.define([
 		// assertions
 		assert.strictEqual(oCounter.text(), oBundle.getText(sMessageBundleKey, 13), "the counter content is correct");
 
-		sap.ui.test.qunit.triggerEvent("paste", oTA.getFocusDomRef(), {
+		qutils.triggerEvent("paste", oTA.getFocusDomRef(), {
 			originalEvent: {
 				clipboardData: {
 					getData: function () {
@@ -571,7 +560,7 @@ sap.ui.define([
 
 		oTA.setValue(oTA.getValue() + sPasteText);
 		this.clock.tick(10);
-		sap.ui.test.qunit.triggerEvent("input", oTA);
+		qutils.triggerEvent("input", oTA);
 		sap.ui.getCore().applyChanges();
 
 		// assertions
@@ -652,7 +641,6 @@ sap.ui.define([
 			iMaxLength = 40,
 			sValueState = "Error",
 			sInitValue = "Lorem ipsum dolor sit amet, consectetur el",
-			oCounter, oTextArea,
 			oTA = new TextArea({
 				value: sInitValue,
 				showExceededText: true,
@@ -676,8 +664,6 @@ sap.ui.define([
 		assert.strictEqual(oTA._maxLengthIsExceeded(), true, "max length is exceeded");
 
 		// arrange
-		oTextArea = $("textarea.sapMTextAreaInner");
-		oCounter = oTA.$("counter");
 		var fnFireLiveChangeSpy = this.spy(oTA, "fireLiveChange");
 		oTA.setValue("This is test text.");
 		//fireLiveChange not "input" event because in inputBase onInput: for IE the event is marked as invalid on event simulation
@@ -698,7 +684,6 @@ sap.ui.define([
 	QUnit.test("valueState with showExceededText = true with binding", function (assert) {
 		// system under test
 		var iMaxLength = 40,
-			oCounter, oTextArea,
 			oTA = new TextArea({
 				value: "{/value}",
 				showExceededText: true,
@@ -722,9 +707,6 @@ sap.ui.define([
 		//fireLiveChange not "input" event because in inputBase onInput: for IE the event is marked as invalid on event simulation
 		oTA.fireLiveChange();
 
-		oTextArea = $("textarea.sapMTextAreaInner");
-		oCounter = oTA.$("counter");
-
 		// assertions
 		assert.strictEqual(oTA.getValue(), oData.value, "The TextArea value is correct");
 		assert.strictEqual(oTA.getMaxLength(), iMaxLength, "The TextArea maxLength property is correctly set to 6");
@@ -747,7 +729,7 @@ sap.ui.define([
 
 	QUnit.test("showExceededText = false on phone", function (assert) {
 		// system under test
-		var oDeviceStub = this.stub(Device, "system",  {
+		var oDeviceStub = this.stub(Device, "system").value({
 				desktop: false,
 				phone: true,
 				tablet: false

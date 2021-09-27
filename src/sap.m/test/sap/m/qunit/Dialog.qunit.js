@@ -81,6 +81,9 @@ sap.ui.define([
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
 
+	// shortcut for sap.m.TitleAlignment
+	var TitleAlignment = mobileLibrary.TitleAlignment;
+
 	var DRAGRESIZE_STEP = Rem.toPx(1);
 
 	createAndAppendDiv("content");
@@ -108,7 +111,7 @@ sap.ui.define([
 		var oDialog = new Dialog("dialog");
 
 		// Assert
-		assert.ok(!jQuery.sap.domById("dialog"), "Dialog is not rendered before it's ever opened.");
+		assert.ok(!document.getElementById("dialog"), "Dialog is not rendered before it's ever opened.");
 		assert.equal(oDialog.oPopup._sF6NavMode, "SCOPE", "Dialog's popup navigation mode is set to SCOPE.");
 
 		// Clean up
@@ -184,6 +187,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Preserve Dialog Content", function(assert) {
+		var done = assert.async();
 		var bRendered = false;
 		var oDialog = new Dialog();
 		var oHtml = new HTML({
@@ -206,6 +210,7 @@ sap.ui.define([
 			assert.equal(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
 
 			oDialog.close();
+			done();
 		};
 
 		var fnClosed1 = function() {
@@ -428,32 +433,32 @@ sap.ui.define([
 	QUnit.test("Open Dialog", function (assert) {
 		// Arrange
 		this.oDialog.attachBeforeOpen(function () {
-			assert.ok(jQuery.sap.byId("dialog").css("visibility") !== "visible", "Dialog should be hidden before it's opened");
+			assert.ok(jQuery("#dialog").css("visibility") !== "visible", "Dialog should be hidden before it's opened");
 		});
 
 		this.oDialog.attachAfterOpen(function () {
-			assert.equal(jQuery.sap.byId("dialog").css("visibility"), "visible", "Dialog should be visible after it's opened");
+			assert.equal(jQuery("#dialog").css("visibility"), "visible", "Dialog should be visible after it's opened");
 		});
 
 		this.oButton.firePress();
 		assert.ok(this.oDialog.isOpen(), "Dialog is already open");
 		this.clock.tick(600);
-		var $Dialog = jQuery.sap.byId("dialog"),
+		var $Dialog = jQuery("#dialog"),
 			$ScrollDiv = this.oDialog.$("scroll"),
 			oTitleDom = this.oDialog.getDomRef("title"),
 			oSubHeaderDom = $Dialog.children(".sapMDialogSubHeader")[0],
 			oIconDom = this.oDialog.getDomRef("icon"),
 			oSearchField = Core.byId("__field0").getFocusDomRef();
-		assert.ok(jQuery.sap.domById("dialog"), "dialog is rendered after it's opened.");
+		assert.ok(document.getElementById("dialog"), "dialog is rendered after it's opened.");
 		assert.ok($Dialog.closest("#sap-ui-static")[0], "dialog should be rendered inside the static uiArea.");
 		assert.ok(oSubHeaderDom, "Sub header should be rendered inside the dialog");
 		assert.equal($ScrollDiv.css("display"), "inline-block", "Scroll div should always have display: inline-block");
 
-		if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
+		if (!Device.support.touch) {
 			assert.equal(oSearchField, document.activeElement, "searchfield should have the focus");
 		}
 
-		if (jQuery.support.touch || jQuery.sap.simulateMobileOnDesktop) {
+		if (Device.support.touch) {
 			assert.expect(9);
 		} else {
 			assert.expect(10);
@@ -467,11 +472,11 @@ sap.ui.define([
 		assert.expect(4);
 		this.oDialog.attachBeforeClose(function () {
 			// Assert 1
-			assert.equal(jQuery.sap.byId("dialog").css("visibility"), "visible", "Dialog should be visible after it's opened");
+			assert.equal(jQuery("#dialog").css("visibility"), "visible", "Dialog should be visible after it's opened");
 		});
 		this.oDialog.attachAfterClose(function (oEvent) {
 			// Assert 2,3,4
-			assert.equal(jQuery.sap.byId("dialog").length, 0, "Dialog content is not rendered anymore");
+			assert.equal(jQuery("#dialog").length, 0, "Dialog content is not rendered anymore");
 			assert.ok(oEvent.getParameter("origin") !== null, "Origin parameter should be set");
 			assert.ok(!this.oDialog.isOpen(), "Dialog is already closed");
 		}.bind(this));
@@ -551,7 +556,7 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
-	QUnit.test("Set vertical/horizontal scrolling to false", function (assert) {
+	QUnit.test("Set vertical/horizontal scrolling to true", function (assert) {
 		var oDialog = new Dialog({
 			content: new HTML({
 				content: "<div style='width: 1000px;height: 1000px'></div>"
@@ -2506,22 +2511,22 @@ sap.ui.define([
 				title: 'Will have vertical scroll',
 				contentHeight: "10rem", // ensure that we have a vertical scroll
 				content: [
-					new sap.m.List({
+					new List({
 						items: [
-							new sap.m.StandardListItem({
+							new StandardListItem({
 								title: "Item 1"
 							}),
-							new sap.m.StandardListItem({
+							new StandardListItem({
 								title: "Item 2"
 							}),
-							new sap.m.StandardListItem({
+							new StandardListItem({
 								title: "Item 3"
 							}),
-							new sap.m.StandardListItem({
+							new StandardListItem({
 								id: "longTextItem", // this item has to be visible without truncation by default
 								title: "Item with some long text. Item with some long text."
 							}),
-							new sap.m.StandardListItem({
+							new StandardListItem({
 								title: "Item 4"
 							})
 						]
@@ -2773,7 +2778,7 @@ sap.ui.define([
 					"The default titleAlignment is '" + sInitialAlignment + "', there is class '" + sAlignmentClass + sInitialAlignment + "' applied to the Header");
 
 		// check if all types of alignment lead to apply the proper CSS class
-		for (sAlignment in sap.m.TitleAlignment) {
+		for (sAlignment in TitleAlignment) {
 			oDialog.setTitleAlignment(sAlignment);
 			oCore.applyChanges();
 			assert.ok(oDialog._header.hasStyleClass(sAlignmentClass + sAlignment),
@@ -2781,7 +2786,7 @@ sap.ui.define([
 		}
 
 		// check how many times setTitleAlignment method is called
-		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(sap.m.TitleAlignment).length,
+		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(TitleAlignment).length,
 			"'setTitleAlignment' method is called total " + setTitleAlignmentSpy.callCount + " times");
 
 		// cleanup
@@ -2811,10 +2816,7 @@ sap.ui.define([
 
 	QUnit.test("Correct Responsive padding is applied", function (assert) {
 		// Arrange
-		var fnRequestAnimationFrameStub = sinon.stub(window, "requestAnimationFrame", function (fnCallback) {
-				fnCallback();
-			}),
-			oDialog = new Dialog({
+		var oDialog = new Dialog({
 				title: "Header",
 				subHeader: new OverflowToolbar({
 					content: new Text({ text: "Subheader text" })
@@ -2836,6 +2838,9 @@ sap.ui.define([
 				assert.ok(fnHasClass(".sapMDialogScrollCont", sClass), "Content section has correct responsive padding class applied on " + sBreakpoint + " breakpoint");
 				assert.ok(fnHasClass(".sapMDialogFooter .sapMIBar", sClass), "Buttons have correct responsive padding class applied on " + sBreakpoint + " breakpoint");
 			};
+		this.stub(window, "requestAnimationFrame", function (fnCallback) {
+			fnCallback();
+		});
 		Core.applyChanges();
 
 		oDialog.addStyleClass("sapUiResponsivePadding--header");
@@ -2872,7 +2877,6 @@ sap.ui.define([
 
 		// Clean up
 		oDialog.destroy();
-		fnRequestAnimationFrameStub.restore();
 	});
 
 	QUnit.module("Close Dialog with ESC", {

@@ -1,26 +1,24 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/model/json/JSONModel",
-	"jquery.sap.global",
-	"sap/ui/core/UIComponent",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/Device"
 ], function(
 	createAndAppendDiv,
-	JSONModel,
 	jQuery,
-	UIComponent,
+	Component,
 	ComponentContainer,
 	Device
 ) {
+	"use strict";
+
 	createAndAppendDiv("content");
 	var sMarginQUnitView =
 		"<mvc:View" +
 		"    id=\"testView\"" +
 		"    height=\"100%\"" +
-		"    controllerName=\"margin.qunit.controller\"" +
 		"    xmlns:f=\"sap.ui.layout.form\"" +
 		"    xmlns:l=\"sap.ui.layout\"" +
 		"    xmlns:core=\"sap.ui.core\"" +
@@ -29,6 +27,7 @@ sap.ui.define([
 		"    xmlns=\"sap.m\">" +
 		"    <Page" +
 		"        id=\"page\"" +
+		"        binding=\"{/ProductCollection/0}\"" +
 		"        title=\" Product XY\" >" +
 		"        <content>" +
 		"            <ObjectHeader" +
@@ -130,163 +129,161 @@ sap.ui.define([
 		"</mvc:View>";
 
 
-	sap.ui.controller("margin.qunit.controller", {
+	sap.ui.define("test/sap/m/margin/Component", [
+		"sap/ui/core/UIComponent",
+		"sap/ui/core/mvc/XMLView",
+		"sap/ui/model/json/JSONModel"
+	], function(UIComponent, XMLView, JSONModel) {
+		return UIComponent.extend("test.sap.m.margin.Component", {
+			metadata: {
+				interfaces: [ "sap.ui.core.IAsyncContentCreation" ]
+			},
+			createContent: function(oEvent) {
+				// set explored app's demo model on this sample
+				var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 
-		onInit: function(oEvent) {
-			// set explored app's demo model on this sample
-			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
-
-			this.getView().setModel(oModel);
-			this.getView().byId("page").bindElement("/ProductCollection/0");
-		}
-
-	});
-
-	UIComponent.extend("margin.qunit.Component", {
-		createContent: function(oEvent) {
-			return sap.ui.xmlview({ viewContent: sMarginQUnitView });
-		}
-	});
-
-
-	QUnit.module("Apply pre-defined css classes");
-	var oPage;
-	var oObjectHeader;
-	var oIconTabBar;
-	var oSimpleForm;
-	var oList;
-	var oTable;
-	var oPanel;
-	var oRestrictedWidthPanel;
-	var oScrollCont;
-	var oCarousel;
-	var oSplitContainer;
-
-	var fnTest = function(sCssProperty, sMarginClass, sExpectedMarginValue, bHorizontal) {
-		assert.ok( true, " " ); //Group tests
-		assert.ok( true, "TESTING MARGIN CLASS '" + sMarginClass + "'" );
-		var oComponentContainer = new ComponentContainer();
-		oComponentContainer.setComponent(new margin.qunit.Component());
-		oComponentContainer.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		var oTestView = sap.ui.getCore().byId("__xmlview" + iCount),
-			aControls = [
-				oPage = oTestView.byId('page'),
-				oObjectHeader = oTestView.byId('objectHeader'),
-				oIconTabBar = oTestView.byId('iconTabBar'),
-				oSimpleForm = oTestView.byId('simpleForm'),
-				oList = oTestView.byId('list'),
-				oTable = oTestView.byId('table'),
-				oPanel = oTestView.byId('panel'),
-				oRestrictedWidthPanel = oTestView.byId('restrictedWidthPanel'),
-				oScrollCont = oTestView.byId('scrollCont'),
-				oCarousel = oTestView.byId('carousel'),
-				oSplitContainer = oTestView.byId('splitContainer')];
-		//add css classes
-		aControls.forEach(function(oControl) {
-			if (bHorizontal) {
-				if (!oControl.setWidth || oControl == oRestrictedWidthPanel) {
-					//if the control has no width property, we need our special width class
-					oControl.addStyleClass('sapUiForceWidthAuto');
-				} else {
-					//if the control has a width property, we'll set it to 'auto'
-					oControl.setWidth('auto');
-				}
+				return XMLView.create({
+					definition: sMarginQUnitView,
+					models: oModel
+				});
 			}
-			oControl.addStyleClass(sMarginClass);
 		});
-		sap.ui.getCore().applyChanges();
+	});
 
-		//check values
-		assert.equal(oPage.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Page " +  sExpectedMarginValue);
-		assert.equal(oObjectHeader.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " ObjectHeader " +  sExpectedMarginValue);
-		assert.equal(oIconTabBar.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " IconTabBar " +  sExpectedMarginValue);
-		assert.equal(oSimpleForm.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Simple Form " +  sExpectedMarginValue);
-		assert.equal(oTable.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Table "  +  sExpectedMarginValue);
-		assert.equal(oPanel.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Panel "  +  sExpectedMarginValue);
-		assert.equal(oRestrictedWidthPanel.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Panel "  +  sExpectedMarginValue);
-		if (bHorizontal) {
-			//Check if 'sapUiForceWidthAuto' changes the width property as expected
-			assert.notEqual(oRestrictedWidthPanel.$().css('width'), '200px', "width Panel 200px");
-			oRestrictedWidthPanel.removeStyleClass('sapUiForceWidthAuto');
-			assert.equal(oRestrictedWidthPanel.$().css('width'), '200px', "width Panel 200px");
-
-		}
-		assert.equal(oList.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " List " +  sExpectedMarginValue );
-		assert.equal(oScrollCont.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Scroll Container " +  sExpectedMarginValue );
-		assert.equal(oCarousel.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Carousel " +  sExpectedMarginValue );
-		assert.equal(oSplitContainer.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Split Containe " +  sExpectedMarginValue );
-		//Can not check 'auto' because there is no way to  ask for it. Even 'oControl.getDomRef().style.width'
-		//does not deliver the correct result: the inline style is returned even though it is not what
-		//is used for determining the width
-
-		//Clean up
-		oComponentContainer.destroy();
-		iCount++;
-	};
-
-	//Needed to identify the views which are created during test
-	var iCount = 0;
-
-	QUnit.test("Test static margin classes", function(assert) {
-		//Currently only works under chrome
-		if (Device.browser.chrome) {
-			//Test Margins all around
-			fnTest.call(this, 'margin', 'sapUiTinyMargin', '8px', true);
-			fnTest.call(this, 'margin', 'sapUiSmallMargin', '16px', true);
-			fnTest.call(this, 'margin', 'sapUiMediumMargin', '32px', true);
-			fnTest.call(this, 'margin', 'sapUiLargeMargin', '48px', true);
-
-			//Test Two-side margins
-			fnTest.call(this, 'margin-left', 'sapUiTinyMarginBeginEnd', '8px', true);
-			fnTest.call(this, 'margin-right', 'sapUiTinyMarginBeginEnd', '8px', true);
-			fnTest.call(this, 'margin-left', 'sapUiSmallMarginBeginEnd', '16px', true);
-			fnTest.call(this, 'margin-right', 'sapUiSmallMarginBeginEnd', '16px', true);
-			fnTest.call(this, 'margin-left', 'sapUiMediumMarginBeginEnd', '32px', true);
-			fnTest.call(this, 'margin-right', 'sapUiMediumMarginBeginEnd', '32px', true);
-			fnTest.call(this, 'margin-left', 'sapUiLargeMarginBeginEnd', '48px', true);
-			fnTest.call(this, 'margin-right', 'sapUiLargeMarginBeginEnd', '48px', true);
-			fnTest.call(this, 'margin-top', 'sapUiTinyMarginTopBottom', '8px');
-			fnTest.call(this, 'margin-bottom', 'sapUiTinyMarginTopBottom', '8px');
-			fnTest.call(this, 'margin-top', 'sapUiSmallMarginTopBottom', '16px');
-			fnTest.call(this, 'margin-bottom', 'sapUiSmallMarginTopBottom', '16px');
-			fnTest.call(this, 'margin-top', 'sapUiMediumMarginTopBottom', '32px');
-			fnTest.call(this, 'margin-bottom', 'sapUiMediumMarginTopBottom', '32px');
-			fnTest.call(this, 'margin-top', 'sapUiLargeMarginTopBottom', '48px');
-			fnTest.call(this, 'margin-bottom', 'sapUiLargeMarginTopBottom', '48px');
-
-			//Test Single-sided margins
-			fnTest.call(this, 'margin-top', 'sapUiTinyMarginTop', '8px');
-			fnTest.call(this, 'margin-bottom', 'sapUiTinyMarginBottom', '8px');
-			fnTest.call(this, 'margin-left', 'sapUiTinyMarginBegin', '8px', true);
-			fnTest.call(this, 'margin-right', 'sapUiTinyMarginEnd', '8px', true);
-
-			fnTest.call(this, 'margin-top', 'sapUiSmallMarginTop', '16px');
-			fnTest.call(this, 'margin-bottom', 'sapUiSmallMarginBottom', '16px');
-			fnTest.call(this, 'margin-left', 'sapUiSmallMarginBegin', '16px', true);
-			fnTest.call(this, 'margin-right', 'sapUiSmallMarginEnd', '16px', true);
-
-			fnTest.call(this, 'margin-top', 'sapUiMediumMarginTop', '32px');
-			fnTest.call(this, 'margin-bottom', 'sapUiMediumMarginBottom', '32px');
-			fnTest.call(this, 'margin-left', 'sapUiMediumMarginBegin', '32px', true);
-			fnTest.call(this, 'margin-right', 'sapUiMediumMarginEnd', '32px', true);
-
-			fnTest.call(this, 'margin-top', 'sapUiLargeMarginTop', '48px');
-			fnTest.call(this, 'margin-bottom', 'sapUiLargeMarginBottom', '48px');
-			fnTest.call(this, 'margin-left', 'sapUiLargeMarginBegin', '48px', true);
-			fnTest.call(this, 'margin-right', 'sapUiLargeMarginEnd', '48px', true);
-
-			//Test No Margins: add margin classes AND use our No Margins at the same time:
-			//the No Margins classes should be stronger
-			fnTest.call(this, 'margin', 'sapUiLargeMargin sapUiNoMargin', '0px');
-			fnTest.call(this, 'margin-right', 'sapUiLargeMargin sapUiNoMarginEnd', '0px');
-			fnTest.call(this, 'margin-top', 'sapUiLargeMargin sapUiNoMarginTop sapUiNoMarginBottom', '0px');
-			fnTest.call(this, 'margin-bottom', 'sapUiNoMarginTop sapUiNoMarginBottom sapUiLargeMargin', '0px');
-		} else {
-			//Write a comment into the test protocol that static
-			//tests can not be executed.
+	// Currently only works under chrome
+	if (!Device.browser.chrome) {
+		QUnit.test("Browser '" + Device.browser.name + "'...", function(assert) {
+			//Write a comment into the test protocol that static tests can not be executed.
 			assert.ok(true, "Static test not available yet for browser '" + Device.browser.name + "'");
+		});
+		return;
+	}
+
+	QUnit.module("Apply pre-defined css classes", {
+		beforeEach: function() {
+			return Component.create({
+				name: "test.sap.m.margin"
+			}).then(function(oComponent) {
+				this.oComponentContainer =
+					new ComponentContainer()
+						.setComponent(oComponent)
+						.placeAt("content");
+
+				var oTestView = oComponent.getRootControl();
+				this.aControls = [
+					this.oPage = oTestView.byId('page'),
+					this.oObjectHeader = oTestView.byId('objectHeader'),
+					this.oIconTabBar = oTestView.byId('iconTabBar'),
+					this.oSimpleForm = oTestView.byId('simpleForm'),
+					this.oList = oTestView.byId('list'),
+					this.oTable = oTestView.byId('table'),
+					this.oPanel = oTestView.byId('panel'),
+					this.oRestrictedWidthPanel = oTestView.byId('restrictedWidthPanel'),
+					this.oScrollCont = oTestView.byId('scrollCont'),
+					this.oCarousel = oTestView.byId('carousel'),
+					this.oSplitContainer = oTestView.byId('splitContainer')
+				];
+			}.bind(this));
+		},
+		afterEach: function() {
+			// clean up
+			this.oComponentContainer.destroy();
 		}
+	});
+
+	[
+		{cssProperty: 'margin', marginClass: 'sapUiTinyMargin', expected: '8px', horizontal: true},
+		{cssProperty: 'margin', marginClass: 'sapUiSmallMargin', expected: '16px', horizontal: true},
+		{cssProperty: 'margin', marginClass: 'sapUiMediumMargin', expected: '32px', horizontal: true},
+		{cssProperty: 'margin', marginClass: 'sapUiLargeMargin', expected: '48px', horizontal: true},
+
+		//Test Two-side margins
+		{cssProperty: 'margin-left', marginClass: 'sapUiTinyMarginBeginEnd', expected: '8px', horizontal: true},
+		{cssProperty: 'margin-right', marginClass: 'sapUiTinyMarginBeginEnd', expected: '8px', horizontal: true},
+		{cssProperty: 'margin-left', marginClass: 'sapUiSmallMarginBeginEnd', expected: '16px', horizontal: true},
+		{cssProperty: 'margin-right', marginClass: 'sapUiSmallMarginBeginEnd', expected: '16px', horizontal: true},
+		{cssProperty: 'margin-left', marginClass: 'sapUiMediumMarginBeginEnd', expected: '32px', horizontal: true},
+		{cssProperty: 'margin-right', marginClass: 'sapUiMediumMarginBeginEnd', expected: '32px', horizontal: true},
+		{cssProperty: 'margin-left', marginClass: 'sapUiLargeMarginBeginEnd', expected: '48px', horizontal: true},
+		{cssProperty: 'margin-right', marginClass: 'sapUiLargeMarginBeginEnd', expected: '48px', horizontal: true},
+		{cssProperty: 'margin-top', marginClass: 'sapUiTinyMarginTopBottom', expected: '8px'},
+		{cssProperty: 'margin-bottom', marginClass: 'sapUiTinyMarginTopBottom', expected: '8px'},
+		{cssProperty: 'margin-top', marginClass: 'sapUiSmallMarginTopBottom', expected: '16px'},
+		{cssProperty: 'margin-bottom', marginClass: 'sapUiSmallMarginTopBottom', expected: '16px'},
+		{cssProperty: 'margin-top', marginClass: 'sapUiMediumMarginTopBottom', expected: '32px'},
+		{cssProperty: 'margin-bottom', marginClass: 'sapUiMediumMarginTopBottom', expected: '32px'},
+		{cssProperty: 'margin-top', marginClass: 'sapUiLargeMarginTopBottom', expected: '48px'},
+		{cssProperty: 'margin-bottom', marginClass: 'sapUiLargeMarginTopBottom', expected: '48px'},
+
+		//Test Single-sided margins
+		{cssProperty: 'margin-top', marginClass: 'sapUiTinyMarginTop', expected: '8px'},
+		{cssProperty: 'margin-bottom', marginClass: 'sapUiTinyMarginBottom', expected: '8px'},
+		{cssProperty: 'margin-left', marginClass: 'sapUiTinyMarginBegin', expected: '8px', horizontal: true},
+		{cssProperty: 'margin-right', marginClass: 'sapUiTinyMarginEnd', expected: '8px', horizontal: true},
+
+		{cssProperty: 'margin-top', marginClass: 'sapUiSmallMarginTop', expected: '16px'},
+		{cssProperty: 'margin-bottom', marginClass: 'sapUiSmallMarginBottom', expected: '16px'},
+		{cssProperty: 'margin-left', marginClass: 'sapUiSmallMarginBegin', expected: '16px', horizontal: true},
+		{cssProperty: 'margin-right', marginClass: 'sapUiSmallMarginEnd', expected: '16px', horizontal: true},
+
+		{cssProperty: 'margin-top', marginClass: 'sapUiMediumMarginTop', expected: '32px'},
+		{cssProperty: 'margin-bottom', marginClass: 'sapUiMediumMarginBottom', expected: '32px'},
+		{cssProperty: 'margin-left', marginClass: 'sapUiMediumMarginBegin', expected: '32px', horizontal: true},
+		{cssProperty: 'margin-right', marginClass: 'sapUiMediumMarginEnd', expected: '32px', horizontal: true},
+
+		{cssProperty: 'margin-top', marginClass: 'sapUiLargeMarginTop', expected: '48px'},
+		{cssProperty: 'margin-bottom', marginClass: 'sapUiLargeMarginBottom', expected: '48px'},
+		{cssProperty: 'margin-left', marginClass: 'sapUiLargeMarginBegin', expected: '48px', horizontal: true},
+		{cssProperty: 'margin-right', marginClass: 'sapUiLargeMarginEnd', expected: '48px', horizontal: true},
+
+		//Test No Margins: add margin classes AND use our No Margins at the same time:
+		//the No Margins classes should be stronger
+		{cssProperty: 'margin', marginClass: 'sapUiLargeMargin sapUiNoMargin', expected: '0px'},
+		{cssProperty: 'margin-right', marginClass: 'sapUiLargeMargin sapUiNoMarginEnd', expected: '0px'},
+		{cssProperty: 'margin-top', marginClass: 'sapUiLargeMargin sapUiNoMarginTop sapUiNoMarginBottom', expected: '0px'},
+		{cssProperty: 'margin-bottom', marginClass: 'sapUiNoMarginTop sapUiNoMarginBottom sapUiLargeMargin', expected: '0px'}
+	].forEach(function(oConfig) {
+
+		QUnit.test("Testing margin class '" + oConfig.marginClass + "'", function(assert) {
+
+			// add css classes to each control
+			this.aControls.forEach(function(oControl) {
+				if (oConfig.horizontal) {
+					if (!oControl.setWidth || oControl == this.oRestrictedWidthPanel) {
+						//if the control has no width property, we need our special width class
+						oControl.addStyleClass('sapUiForceWidthAuto');
+					} else {
+						//if the control has a width property, we'll set it to 'auto'
+						oControl.setWidth('auto');
+					}
+				}
+				oControl.addStyleClass(oConfig.marginClass);
+			}.bind(this));
+
+			// render
+			sap.ui.getCore().applyChanges();
+
+			//check values
+			assert.equal(this.oPage.$().css(oConfig.cssProperty), oConfig.expected, oConfig.cssProperty + " Page " +  oConfig.expected);
+			assert.equal(this.oObjectHeader.$().css(oConfig.cssProperty), oConfig.expected, oConfig.cssProperty + " ObjectHeader " +  oConfig.expected);
+			assert.equal(this.oIconTabBar.$().css(oConfig.cssProperty), oConfig.expected, oConfig.cssProperty + " IconTabBar " +  oConfig.expected);
+			assert.equal(this.oSimpleForm.$().css(oConfig.cssProperty), oConfig.expected, oConfig.cssProperty + " Simple Form " +  oConfig.expected);
+			assert.equal(this.oTable.$().css(oConfig.cssProperty), oConfig.expected, oConfig.cssProperty + " Table "  +  oConfig.expected);
+			assert.equal(this.oPanel.$().css(oConfig.cssProperty), oConfig.expected, oConfig.cssProperty + " Panel "  +  oConfig.expected);
+			assert.equal(this.oRestrictedWidthPanel.$().css(oConfig.cssProperty), oConfig.expected, oConfig.cssProperty + " Panel "  +  oConfig.expected);
+			if (oConfig.horizontal) {
+				//Check if 'sapUiForceWidthAuto' changes the width property as expected
+				assert.notEqual(this.oRestrictedWidthPanel.$().css('width'), '200px', "width Panel 200px");
+				this.oRestrictedWidthPanel.removeStyleClass('sapUiForceWidthAuto');
+				assert.equal(this.oRestrictedWidthPanel.$().css('width'), '200px', "width Panel 200px");
+			}
+			assert.equal(this.oList.$().css(oConfig.cssProperty), oConfig.expected, oConfig.cssProperty + " List " +  oConfig.expected );
+			assert.equal(this.oScrollCont.$().css(oConfig.cssProperty), oConfig.expected, oConfig.cssProperty + " Scroll Container " +  oConfig.expected );
+			assert.equal(this.oCarousel.$().css(oConfig.cssProperty), oConfig.expected, oConfig.cssProperty + " Carousel " +  oConfig.expected );
+			assert.equal(this.oSplitContainer.$().css(oConfig.cssProperty), oConfig.expected, oConfig.cssProperty + " Split Containe " +  oConfig.expected );
+			//Cannot check 'auto' because there is no way to  ask for it. Even 'oControl.getDomRef().style.width'
+			//does not deliver the correct result: the inline style is returned even though it is not what
+			//is used for determining the width
+		});
 	});
 });

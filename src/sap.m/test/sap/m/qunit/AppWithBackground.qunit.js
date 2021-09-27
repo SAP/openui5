@@ -1,22 +1,19 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/App",
 	"sap/m/Page",
-	"sap/ui/thirdparty/jquery"
-], function(QUnitUtils, createAndAppendDiv, App, Page, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/dom/includeStylesheet",
+	"require"
+], function(QUnitUtils, createAndAppendDiv, App, Page, jQuery, includeStylesheet, require) {
+	"use strict";
+
 	createAndAppendDiv("content");
-	var styleElement = document.createElement("style");
-	styleElement.textContent =
-		"#page1-scroll {" +
-		"    padding: 100px;" +
-		"    box-sizing: border-box;" +
-		"}";
-	document.head.appendChild(styleElement);
-
-
+	var pStyleLoaded = includeStylesheet({
+		url: require.toUrl("./AppWithBackground.qunit.css")
+	});
 
 	var app = new App("myFirstApp", {
 		initialPage: "page1",
@@ -25,7 +22,7 @@ sap.ui.define([
 				title: "Page 1"
 			})
 		],
-		backgroundImage: "../images/demo/nature/huntingLeopard.jpg",
+		backgroundImage: require.toUrl("../images/demo/nature/huntingLeopard.jpg"),
 		backgroundColor: "rgb(255, 0, 0)",
 		backgroundOpacity: 0.6,
 		backgroundRepeat: true
@@ -52,4 +49,6 @@ sap.ui.define([
 			assert.ok(true, "older browsers don't matter");
 		}
 	});
+
+	return pStyleLoaded;
 });

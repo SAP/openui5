@@ -1,5 +1,4 @@
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -45,21 +44,11 @@ sap.ui.define([
 	XMLView,
 	Core
 ) {
-	createAndAppendDiv("content");
-	var styleElement = document.createElement("style");
-	styleElement.textContent =
-		"#p2content {" +
-		"    width: 2000px;" +
-		"    height: 2000px;" +
-		"}" +
-		"html," +
-		"#content," +
-		"#p3content," +
-		"#p4content {" +
-		"    width: 100%;" +
-		"    height: 100%;" +
-		"}";
-	document.head.appendChild(styleElement);
+	"use strict";
+
+	document.documentElement.style =
+	createAndAppendDiv("content").style = "width:100%;height:100%;";
+
 	var sObjectPageView =
 		"<mvc:View" +
 		"        xmlns=\"sap.uxap\"" +
@@ -442,7 +431,7 @@ sap.ui.define([
 			fnViewListener = function(oEvent) {
 				oDetectedBackButton = oEvent.getParameter("oBackButton");
 			},
-			oSpy = sinon.spy(fnViewListener);
+			oSpy = this.spy(fnViewListener);
 
 		this.oPage.setCustomHeader(new Bar({
 			contentLeft: [oBackButton]
@@ -457,7 +446,7 @@ sap.ui.define([
 		assert.strictEqual(this.oPage.hasStyleClass("sapF2CollapsedHeader"), true , "header is collapsed");
 		assert.strictEqual(oSpy.called, false, "spy is not called");
 
-		oSpy.reset();
+		oSpy.resetHistory();
 		oModel.setProperty("/showButton", true);
 		Core.applyChanges();
 
@@ -466,7 +455,7 @@ sap.ui.define([
 		assert.strictEqual(oSpy.calledOnce, true, "spy is called");
 		assert.strictEqual(oDetectedBackButton.getId(), oBackButton.getId(), "back button is detected");
 
-		oSpy.reset();
+		oSpy.resetHistory();
 		oDetectedBackButton = null;
 		oModel.setProperty("/showButton", false);
 		Core.applyChanges();
@@ -504,7 +493,7 @@ sap.ui.define([
 			oTitleInfo = oEvent.getParameter("oTitleInfo");
 			sViewId = oEvent.getParameter("sViewId");
 		},
-		oSpy = sinon.spy(fnViewListener);
+		oSpy = this.spy(fnViewListener);
 		Fiori20Adapter.attachViewChange(oSpy);
 		Fiori20Adapter.traverse(this.oApp, oAdaptOptions);
 
@@ -532,7 +521,7 @@ sap.ui.define([
 				fnViewListener = function(oEvent) {
 					oChangedBackButton = oEvent.getParameter("oBackButton");
 				},
-				oSpy = sinon.spy(fnViewListener);
+				oSpy = this.spy(fnViewListener);
 
 		this.oPage.setCustomHeader(new Bar({
 			contentLeft: [oBackButton]
@@ -553,11 +542,7 @@ sap.ui.define([
 	QUnit.test("Unrelated button properties are skipped in post adaptation", function(assert) {
 		var oAdaptOptions = {bHideBackButton: true},
 				oBackButton = new Button("newBackButton", {type: "Back", visible: false}),
-				oChangedBackButton,
-				fnViewListener = function(oEvent) {
-					oChangedBackButton = oEvent.getParameter("oBackButton");
-				},
-				oSpy = sinon.spy(fnViewListener);
+				oSpy = this.spy();
 
 		this.oPage.setCustomHeader(new Bar({
 			contentLeft: [oBackButton]
@@ -585,7 +570,7 @@ sap.ui.define([
 				oTitleInfo = oEvent.getParameter("oTitleInfo");
 				sViewId = oEvent.getParameter("sViewId");
 			},
-			oSpy = sinon.spy(fnViewListener);
+			oSpy = this.spy(fnViewListener);
 		Fiori20Adapter.attachViewChange(oSpy);
 		Fiori20Adapter.traverse(this.oApp, oAdaptOptions);
 
@@ -615,7 +600,7 @@ sap.ui.define([
 				oBackButton = oEvent.getParameter("oBackButton");
 				oTitleInfo = oEvent.getParameter("oTitleInfo");
 			},
-			oSpy = sinon.spy(fnViewListener);
+			oSpy = this.spy(fnViewListener);
 		Fiori20Adapter.attachViewChange(oSpy);
 
 		Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
@@ -634,12 +619,10 @@ sap.ui.define([
 	QUnit.test("Title is not adapted when header content is added at a later time and lateAdaptation=false", function(assert) {
 		var oAdaptOptions = {bMoveTitle: true},
 			oTitleInfo,
-			oBackButton,
 			fnViewListener = function(oEvent) {
-				oBackButton = oEvent.getParameter("oBackButton");
 				oTitleInfo = oEvent.getParameter("oTitleInfo");
 			},
-			oSpy = sinon.spy(fnViewListener);
+			oSpy = this.spy(fnViewListener);
 
 		Fiori20Adapter.attachViewChange(oSpy);
 		this.oPage.setTitle("Test");
@@ -661,12 +644,10 @@ sap.ui.define([
 	QUnit.test("Title is adapted when header content is added at a later time and lateAdaptation=true", function(assert) {
 		var oAdaptOptions = {bMoveTitle: true, bLateAdaptation: true},
 				oTitleInfo,
-				oBackButton,
 				fnViewListener = function(oEvent) {
-					oBackButton = oEvent.getParameter("oBackButton");
 					oTitleInfo = oEvent.getParameter("oTitleInfo");
 				},
-				oSpy = sinon.spy(fnViewListener);
+				oSpy = this.spy(fnViewListener);
 
 		Fiori20Adapter.attachViewChange(oSpy);
 		this.oPage.setTitle("Test");
@@ -688,12 +669,10 @@ sap.ui.define([
 	QUnit.test("Title is adapted when header content is inserted at a later time and lateAdaptation=true", function(assert) {
 		var oAdaptOptions = {bMoveTitle: true, bLateAdaptation: true},
 				oTitleInfo,
-				oBackButton,
 				fnViewListener = function(oEvent) {
-					oBackButton = oEvent.getParameter("oBackButton");
 					oTitleInfo = oEvent.getParameter("oTitleInfo");
 				},
-				oSpy = sinon.spy(fnViewListener);
+				oSpy = this.spy(fnViewListener);
 
 		Fiori20Adapter.attachViewChange(oSpy);
 		this.oPage.setTitle("Test");
@@ -722,7 +701,7 @@ sap.ui.define([
 					oTitleInfo = oEvent.getParameter("oTitleInfo");
 					oBackButton = oEvent.getParameter("oBackButton");
 				},
-				oSpy = sinon.spy(fnViewListener);
+				oSpy = this.spy(fnViewListener);
 
 		// Arrange
 		this.oPage.setTitle("Test");
@@ -751,7 +730,7 @@ sap.ui.define([
 				oTitleInfo = oEvent.getParameter("oTitleInfo");
 				oBackButton = oEvent.getParameter("oBackButton");
 			},
-			oSpy = sinon.spy(fnViewListener);
+			oSpy = this.spy(fnViewListener);
 
 		// Arrange
 		this.oPage.setTitle("Test");
@@ -780,14 +759,10 @@ sap.ui.define([
 
 		var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
 				oTitleInfo,
-				oBackButton,
-				sViewId,
 				fnViewListener = function(oEvent) {
-					oBackButton = oEvent.getParameter("oBackButton");
 					oTitleInfo = oEvent.getParameter("oTitleInfo");
-					sViewId = oEvent.getParameter("sViewId");
 				},
-				oSpy = sinon.spy(fnViewListener);
+				oSpy = this.spy(fnViewListener);
 		Fiori20Adapter.attachViewChange(oSpy);
 		Fiori20Adapter.traverse(oRootPage, oAdaptOptions);
 
@@ -808,22 +783,17 @@ sap.ui.define([
 
 	QUnit.test("Header is adapted if the content of the root view is added at a later time", function(assert) {
 
-		var done = assert.async();
-		XMLView.create(
+		return XMLView.create(
 			{definition: sEmptyView}).then(function(oRootView) {
 				oRootView.placeAt("content");
 				Core.applyChanges();
 
 				var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
 					oTitleInfo,
-					oBackButton,
-					sViewId,
 					fnViewListener = function(oEvent) {
-						oBackButton = oEvent.getParameter("oBackButton");
 						oTitleInfo = oEvent.getParameter("oTitleInfo");
-						sViewId = oEvent.getParameter("sViewId");
 					},
-					oSpy = sinon.spy(fnViewListener);
+					oSpy = this.spy(fnViewListener);
 
 				Fiori20Adapter.attachViewChange(oSpy);
 				Fiori20Adapter.traverse(oRootView, oAdaptOptions);
@@ -841,8 +811,7 @@ sap.ui.define([
 				Fiori20Adapter.detachViewChange(oSpy);
 
 				oRootView.destroy();
-				done();
-		});
+		}.bind(this));
 	});
 
 
@@ -869,7 +838,7 @@ sap.ui.define([
 					sPageTitle = oTitleInfo.text;
 					sViewId = oEvent.getParameter("sViewId");
 				},
-				oSpy = sinon.spy(fnViewListener);
+				oSpy = this.spy(fnViewListener);
 
 		//setup
 		Fiori20Adapter.attachViewChange(oSpy);
@@ -901,7 +870,7 @@ sap.ui.define([
 					sPageTitle = oTitleInfo.text;
 					sViewId = oEvent.getParameter("sViewId");
 				},
-				oSpy = sinon.spy(fnTitleListener);
+				oSpy = this.spy(fnTitleListener);
 
 		//setup
 		this.oNavContainer.addPage(new Page("page2", {title: "Test2", showNavButton: true}));
@@ -937,9 +906,9 @@ sap.ui.define([
 				sTitleId = oTitleInfo ? oTitleInfo.id : null;
 				oBackButton = oEvent.getParameter("oBackButton");
 			},
-			oNestedNavContainer = new sap.m.NavContainer({pages: oInitPage}),
+			oNestedNavContainer = new NavContainer({pages: oInitPage}),
 			oNestedSplitContainer = new SplitContainer(),
-			oSpy = sinon.spy(onViewChange);
+			oSpy = this.spy(onViewChange);
 
 		//setup
 		Fiori20Adapter.attachViewChange(oSpy);
@@ -956,12 +925,12 @@ sap.ui.define([
 		this.oNavContainer.to(oNestedSplitContainer);
 		assert.strictEqual(sTitleId, null, "title is ignored");
 
-		oSpy.reset();
+		oSpy.resetHistory();
 		oInitPage.setTitle("Changed");
 		assert.strictEqual(oSpy.callCount, 0, "title update is ignored");
 
 
-		oSpy.reset();
+		oSpy.resetHistory();
 		oInitPage.setShowNavButton(false);
 		assert.strictEqual(oSpy.callCount, 0, "button update is ignored");
 
@@ -995,7 +964,7 @@ sap.ui.define([
 					sPageTitle = oTitleInfo.text;
 					sViewId = oEvent.getParameter("sViewId");
 				},
-				oSpy = sinon.spy(fnViewListener);
+				oSpy = this.spy(fnViewListener);
 		//setup
 		this.oNavContainer.placeAt("content");
 		Core.applyChanges();
@@ -1033,7 +1002,7 @@ sap.ui.define([
 				sPageTitle = oTitleInfo.text;
 				sViewId = oEvent.getParameter("sViewId");
 			},
-			oSpy = sinon.spy(fnViewListener);
+			oSpy = this.spy(fnViewListener);
 
 		//setup: only attach listener and DO NOT PLACE IN DOM YET
 		Fiori20Adapter.attachViewChange(oSpy);
@@ -1070,7 +1039,7 @@ sap.ui.define([
 				sPageTitle = oTitleInfo.text;
 				sViewId = oEvent.getParameter("sViewId");
 			},
-			oSpy = sinon.spy(fnViewListener);
+			oSpy = this.spy(fnViewListener);
 
 		//setup: only attach listener and DO NOT PLACE IN DOM YET
 		Fiori20Adapter.attachViewChange(oSpy);
@@ -1117,7 +1086,7 @@ sap.ui.define([
 					var oTitleInfo = oEvent.getParameter("oTitleInfo");
 					sPageTitle = oTitleInfo.text;
 				},
-				oSpy = sinon.spy(fnViewListener);
+				oSpy = this.spy(fnViewListener);
 		//setup
 
 		this.oNavContainer.addPage(new Page("myBasePage", {
@@ -1155,7 +1124,7 @@ sap.ui.define([
 					sViewId = oEvent.getParameter("sViewId");
 				},
 				oNestedNavContainer = new NavContainer(),
-				oSpy = sinon.spy(fnViewListener);
+				oSpy = this.spy(fnViewListener);
 		//setup
 
 		this.oNavContainer.addPage(new Page("myBasePage", {
@@ -1172,7 +1141,7 @@ sap.ui.define([
 		assert.ok(oSpy.calledOnce, "view change called once");
 		assert.equal(sViewId, "myBasePage", "view id is identified");
 
-		oSpy.reset();
+		oSpy.resetHistory();
 
 		//act
 		oNestedNavContainer.addPage(new Page("page1", {title: "Test1", showNavButton: true}));
@@ -1202,7 +1171,7 @@ sap.ui.define([
 					sViewId = oEvent.getParameter("sViewId");
 				},
 				oNestedNavContainer = new NavContainer(),
-				oSpy = sinon.spy(fnViewListener),
+				oSpy = this.spy(fnViewListener),
 				done = assert.async();
 		//setup
 		this.oNavContainer.addPage(new Page("myBasePage", {
@@ -1226,7 +1195,7 @@ sap.ui.define([
 			assert.equal(oBackButton.getId(), "page2-navButton", "back button is identified");
 			assert.ok(oBackButton.hasStyleClass("sapF2AdaptedNavigation"), "back button is adapted");
 
-			oSpy.reset();
+			oSpy.resetHistory();
 			oNestedNavContainer.attachEventOnce("afterNavigate", checkOnAfterReturnToPage1);
 			oNestedNavContainer.to("page1");
 		}
@@ -1245,7 +1214,7 @@ sap.ui.define([
 
 			done();
 		}
-		oSpy.reset();
+		oSpy.resetHistory();
 		oNestedNavContainer.attachEventOnce("afterNavigate", checkOnAfterNavigateToPage2);
 		oNestedNavContainer.to("page2");
 	});
@@ -1267,7 +1236,7 @@ sap.ui.define([
 					sPageTitle = oTitleInfo.text;
 					sViewId = oEvent.getParameter("sViewId");
 				},
-				oSpy = sinon.spy(fnViewListener),
+				oSpy = this.spy(fnViewListener),
 				done = assert.async();
 
 		//setup
@@ -1289,7 +1258,7 @@ sap.ui.define([
 		assert.equal(oBackButton.getId(), "myBasePage-navButton", "back button is identified");
 		assert.ok(oBackButton.hasStyleClass("sapF2AdaptedNavigation"), "back button is adapted");
 
-		oSpy.reset();
+		oSpy.resetHistory();
 
 		oNestedNavC.attachAfterNavigate(function() {
 			assert.equal(sViewId, "myBasePage", "view id is identified");
@@ -1325,7 +1294,7 @@ sap.ui.define([
 					sPageTitle = oTitleInfo.text;
 					sViewId = oEvent.getParameter("sViewId");
 				},
-				oSpy = sinon.spy(fnViewListener),
+				oSpy = this.spy(fnViewListener),
 				done = assert.async();
 
 		//setup
@@ -1345,7 +1314,7 @@ sap.ui.define([
 		assert.equal(oBackButton.getId(), "nestedPage1-navButton", "back button is identified");
 		assert.ok(oBackButton.hasStyleClass("sapF2AdaptedNavigation"), "back button is adapted");
 
-		oSpy.reset();
+		oSpy.resetHistory();
 
 		oNestedNavC.attachAfterNavigate(function() {
 			assert.equal(sViewId, "myBasePage", "view id is identified");
@@ -1386,7 +1355,7 @@ sap.ui.define([
 					sPageTitle = oTitleInfo.text;
 					sViewId = oEvent.getParameter("sViewId");
 				},
-				oSpy = sinon.spy(fnViewListener),
+				oSpy = this.spy(fnViewListener),
 				done = assert.async();
 
 		//setup
@@ -1409,7 +1378,7 @@ sap.ui.define([
 		assert.equal(oBackButton.getId(), "nestedPage1-navButton", "back button is identified");
 		assert.ok(oBackButton.hasStyleClass("sapF2AdaptedNavigation"), "back button is adapted");
 
-		oSpy.reset();
+		oSpy.resetHistory();
 
 		function checkAfterNavigateToPage2() {
 			assert.equal(sViewId, "myBasePage1", "view id is identified");
@@ -1470,7 +1439,7 @@ sap.ui.define([
 					oBackButton = oEvent.getParameter("oBackButton");
 					sViewId = oEvent.getParameter("sViewId");
 				},
-				oSpy = sinon.spy(fnTitleListener);
+				oSpy = this.spy(fnTitleListener);
 
 		//setup
 		Fiori20Adapter.attachViewChange(oSpy);
@@ -1502,7 +1471,7 @@ sap.ui.define([
 					oBackButton = oEvent.getParameter("oBackButton");
 					sViewId = oEvent.getParameter("sViewId");
 				},
-				oSpy = sinon.spy(fnTitleListener);
+				oSpy = this.spy(fnTitleListener);
 
 		//setup
 		Core.byId("detailPage1-navButton").setVisible(false); //only master page has back button
@@ -1530,7 +1499,7 @@ sap.ui.define([
 					oBackButton = oEvent.getParameter("oBackButton");
 					sViewId = oEvent.getParameter("sViewId");
 				},
-				oSpy = sinon.spy(fnTitleListener);
+				oSpy = this.spy(fnTitleListener);
 
 		//setup
 		Core.byId("masterPage1-navButton").setVisible(false); //only detail page has back button
@@ -1558,7 +1527,7 @@ sap.ui.define([
 					oBackButton = oEvent.getParameter("oBackButton");
 					sViewId = oEvent.getParameter("sViewId");
 				},
-				oSpy = sinon.spy(fnTitleListener);
+				oSpy = this.spy(fnTitleListener);
 
 		//setup
 		Fiori20Adapter.attachViewChange(oSpy);
@@ -1589,7 +1558,7 @@ sap.ui.define([
 					sViewId = oEvent.getParameter("sViewId");
 					bHideBackButton = oEvent.getParameter("oAdaptOptions").bHideBackButton;
 				},
-				oSpy = sinon.spy(fnTitleListener);
+				oSpy = this.spy(fnTitleListener);
 
 		//setup
 		this.oSplitContainer.addMasterPage(new Page("masterPage2", {title: "Master2", showNavButton: true}));
@@ -1622,7 +1591,7 @@ sap.ui.define([
 					sViewId = oEvent.getParameter("sViewId");
 					bHideBackButton = oEvent.getParameter("oAdaptOptions").bHideBackButton;
 				},
-				oSpy = sinon.spy(fnTitleListener);
+				oSpy = this.spy(fnTitleListener);
 
 		//setup
 		this.oSplitContainer.addDetailPage(new Page("detailPage2", {title: "Detail2", showNavButton: true}));
@@ -1644,8 +1613,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("page of splitContainer is correctly adapted on secondary adaptation", function(assert) {
-		var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bStylePage: true},
-				oTitleInfo;
+		var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bStylePage: true};
 
 		//setup step1: adapt once
 		this.oSplitContainer.addDetailPage(new Page("detailPage2", {title: "Detail2", showNavButton: true}));
@@ -1701,7 +1669,7 @@ sap.ui.define([
 					oBackButton = oEvent.getParameter("oBackButton");
 					sViewId = oEvent.getParameter("sViewId");
 				},
-				oSpy = sinon.spy(fnTitleListener);
+				oSpy = this.spy(fnTitleListener);
 
 		//setup
 		Fiori20Adapter.attachViewChange(oSpy);
@@ -1737,7 +1705,7 @@ sap.ui.define([
 					oBackButton = oEvent.getParameter("oBackButton");
 					bHideBackButton = oEvent.getParameter("oAdaptOptions").bHideBackButton;
 				},
-				oSpy = sinon.spy(fnTitleListener);
+				oSpy = this.spy(fnTitleListener);
 
 		//setup
 		this.oSplitContainer.addMasterPage(new Page("masterPage2", {title: "Master2", showNavButton: true}));
@@ -1765,7 +1733,7 @@ sap.ui.define([
 					oTitleInfo = oEvent.getParameter("oTitleInfo");
 					oBackButton = oEvent.getParameter("oBackButton");
 				},
-				oSpy = sinon.spy(fnTitleListener);
+				oSpy = this.spy(fnTitleListener);
 
 		//setup
 		this.oSplitContainer.addDetailPage(new Page("detailPage2", {title: "Detail2", showNavButton: true}));
@@ -1803,7 +1771,7 @@ sap.ui.define([
 					oTitleInfo = oEvent.getParameter("oTitleInfo");
 					oBackButton = oEvent.getParameter("oBackButton");
 				},
-				oSpy = sinon.spy(fnTitleListener);
+				oSpy = this.spy(fnTitleListener);
 
 		//setup
 		Fiori20Adapter.attachViewChange(oSpy);
@@ -1823,7 +1791,7 @@ sap.ui.define([
 		assert.ok(!jQuery("#masterPage1-title").hasClass("sapF2AdaptedTitle"), "master title is not adapted");
 
 		//act
-		oSpy.reset();
+		oSpy.resetHistory();
 		this.oSplitContainer.addDetailPage(new Page("detailPage1", {title: "Detail1", showNavButton: false}));
 
 		//assert
@@ -1982,7 +1950,7 @@ sap.ui.define([
 				fnTitleListener = function(oEvent) {
 					oTitleInfo = oEvent.getParameter("oTitleInfo");
 				},
-				oSpy = sinon.spy(fnTitleListener);
+				oSpy = this.spy(fnTitleListener);
 
 		Fiori20Adapter.attachViewChange(oSpy);
 		Fiori20Adapter.traverse(this.oApp, oAdaptOptions);
@@ -2016,7 +1984,7 @@ sap.ui.define([
 				fnTitleListener = function (oEvent) {
 					oTitleInfo = oEvent.getParameter("oTitleInfo");
 				},
-				oSpy = sinon.spy(fnTitleListener);
+				oSpy = this.spy(fnTitleListener);
 
 		Fiori20Adapter.attachViewChange(oSpy);
 		Fiori20Adapter.traverse(this.oApp, oAdaptOptions);
@@ -2042,8 +2010,8 @@ sap.ui.define([
 			fnTitleListener = function (oEvent) {
 				oTitleInfo = oEvent.getParameter("oTitleInfo");
 			},
-			oViewChangeSpy = sinon.spy(fnTitleListener),
-			oProcessNodeSpy = sinon.spy(Fiori20Adapter, "_processNode");
+			oViewChangeSpy = this.spy(fnTitleListener),
+			oProcessNodeSpy = this.spy(Fiori20Adapter, "_processNode");
 
 		Fiori20Adapter.attachViewChange(oViewChangeSpy);
 		Fiori20Adapter.traverse(this.oApp, oAdaptOptions);
@@ -2117,7 +2085,7 @@ sap.ui.define([
 	QUnit.module("Listeners cache");
 
 	QUnit.test("_checkHasListener", function(assert) {
-		var oNavContainer = new sap.m.NavContainer();
+		var oNavContainer = new NavContainer();
 		Fiori20Adapter.traverse(oNavContainer, {});
 		Fiori20Adapter._setHasListener(oNavContainer, "_adaptableContentChange", function(){});
 		Fiori20Adapter._setHasListener(oNavContainer, "navigate", function(){});

@@ -1,5 +1,4 @@
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -10,6 +9,7 @@ sap.ui.define([
 	"sap/m/Popover",
 	"sap/m/Button",
 	"sap/m/PageRenderer",
+	"sap/m/ResponsivePopover",
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/m/Text",
@@ -28,6 +28,7 @@ sap.ui.define([
 	Popover,
 	Button,
 	PageRenderer,
+	ResponsivePopover,
 	Label,
 	Input,
 	Text,
@@ -37,16 +38,9 @@ sap.ui.define([
 	Core,
 	Device
 ) {
-	createAndAppendDiv("content");
-	var styleElement = document.createElement("style");
-	styleElement.textContent =
-		"#content {" +
-		"	height: 100%;" +
-		"}" +
-		"#mSAPUI5SupportMessage {" +
-		"	display: none !important;" +
-		"}";
-	document.head.appendChild(styleElement);
+	"use strict";
+
+	createAndAppendDiv("content").style.height = "100%";
 
 
 
@@ -69,14 +63,14 @@ sap.ui.define([
 
 
 	function handleNavEvent(evt) {
-		assert.equal(evt.getParameter("fromId"), window.expectedNav.fromId, "fromId should be correct");
-		assert.equal(evt.getParameter("toId"), window.expectedNav.toId, "toId should be correct");
-		assert.equal(evt.getParameter("firstTime"), window.expectedNav.firstTime, "firstTime should be correct");
-		assert.equal(evt.getParameter("isTo"), window.expectedNav.isTo, "isTo should be correct");
-		assert.equal(evt.getParameter("isBack"), window.expectedNav.isBack, "isBack should be correct");
-		assert.equal(evt.getParameter("isBackToPage"), window.expectedNav.isBackToPage, "isBackToPage should be correct");
-		assert.equal(evt.getParameter("isBackToTop"), window.expectedNav.isBackToTop, "isBackToTop should be correct");
-		assert.equal(evt.getParameter("direction"), window.expectedNav.direction, "direction should be correct");
+		QUnit.assert.equal(evt.getParameter("fromId"), window.expectedNav.fromId, "fromId should be correct");
+		QUnit.assert.equal(evt.getParameter("toId"), window.expectedNav.toId, "toId should be correct");
+		QUnit.assert.equal(evt.getParameter("firstTime"), window.expectedNav.firstTime, "firstTime should be correct");
+		QUnit.assert.equal(evt.getParameter("isTo"), window.expectedNav.isTo, "isTo should be correct");
+		QUnit.assert.equal(evt.getParameter("isBack"), window.expectedNav.isBack, "isBack should be correct");
+		QUnit.assert.equal(evt.getParameter("isBackToPage"), window.expectedNav.isBackToPage, "isBackToPage should be correct");
+		QUnit.assert.equal(evt.getParameter("isBackToTop"), window.expectedNav.isBackToTop, "isBackToTop should be correct");
+		QUnit.assert.equal(evt.getParameter("direction"), window.expectedNav.direction, "direction should be correct");
 	}
 
 	function getDelegate(mLog) {
@@ -187,17 +181,15 @@ sap.ui.define([
 
 	QUnit.module("AutoFocus tests", {
 		beforeEach: function () {
-			this.sinon = sinon.sandbox.create();
-			this.spy = this.sinon.spy(NavContainer, "_applyAutoFocusTo");
+			this.fnApplyAutoFocusToSpy = this.spy(NavContainer, "_applyAutoFocusTo");
 			this.pageId = "someId";
 		},
 		afterEach: function () {
-			this.sinon.restore();
 		}
 	});
 
 	QUnit.test("Auto focus enabled", function (assert) {
-		this.sinon.stub(nc, "getAutoFocus").returns(true);
+		this.stub(nc, "getAutoFocus").returns(true);
 
 		nc._applyAutoFocus({
 			isTo: true,
@@ -205,9 +197,9 @@ sap.ui.define([
 			bFocusInsideFromPage: true
 		});
 
-		assert.ok(this.spy.calledWith(this.pageId));
+		assert.ok(this.fnApplyAutoFocusToSpy.calledWith(this.pageId));
 
-		this.spy.reset();
+		this.fnApplyAutoFocusToSpy.resetHistory();
 
 		nc._applyAutoFocus({
 			isBack: true,
@@ -215,9 +207,9 @@ sap.ui.define([
 			bFocusInsideFromPage: true
 		});
 
-		assert.ok(this.spy.calledWith(this.pageId));
+		assert.ok(this.fnApplyAutoFocusToSpy.calledWith(this.pageId));
 
-		this.spy.reset();
+		this.fnApplyAutoFocusToSpy.resetHistory();
 
 		nc._applyAutoFocus({
 			isBackToPage: true,
@@ -225,9 +217,9 @@ sap.ui.define([
 			bFocusInsideFromPage: true
 		});
 
-		assert.ok(this.spy.calledWith(this.pageId));
+		assert.ok(this.fnApplyAutoFocusToSpy.calledWith(this.pageId));
 
-		this.spy.reset();
+		this.fnApplyAutoFocusToSpy.resetHistory();
 
 		nc._applyAutoFocus({
 			isBackToTop: true,
@@ -235,9 +227,9 @@ sap.ui.define([
 			bFocusInsideFromPage: true
 		});
 
-		assert.ok(this.spy.calledWith(this.pageId));
+		assert.ok(this.fnApplyAutoFocusToSpy.calledWith(this.pageId));
 
-		this.spy.reset();
+		this.fnApplyAutoFocusToSpy.resetHistory();
 
 		nc._applyAutoFocus({
 			isTo: false,
@@ -245,12 +237,12 @@ sap.ui.define([
 			bFocusInsideFromPage: true
 		});
 
-		assert.ok(!this.spy.calledWith(this.pageId));
+		assert.ok(!this.fnApplyAutoFocusToSpy.calledWith(this.pageId));
 	});
 
 	QUnit.test("Auto focus disabled", function (assert) {
 		// Arrange
-		var oApplyAutoFocusSpy = sinon.spy(NavContainer.prototype, "_applyAutoFocus"),
+		var oApplyAutoFocusSpy = this.spy(NavContainer.prototype, "_applyAutoFocus"),
 			fnDone = assert.async(),
 			oNavContainer = new NavContainer({
 				pages : [
@@ -295,7 +287,7 @@ sap.ui.define([
 		});
 
 		// Assert
-		oAssert.strictEqual(this.spy.callCount, 0,
+		oAssert.strictEqual(this.fnApplyAutoFocusToSpy.callCount, 0,
 			"The method should not be called when focus is not inside the current page");
 
 		// Act
@@ -306,7 +298,7 @@ sap.ui.define([
 		});
 
 		// Assert
-		oAssert.strictEqual(this.spy.callCount, 1,
+		oAssert.strictEqual(this.fnApplyAutoFocusToSpy.callCount, 1,
 			"The method should be called when focus is inside the current page");
 	});
 
@@ -352,10 +344,10 @@ sap.ui.define([
 			// Arrange
 			this.nc = new NavContainer({
 				pages: [
-					new sap.m.Page("page1a", {
+					new Page("page1a", {
 						title: "page1a"
 					}),
-					new sap.m.Page("page2a", {
+					new Page("page2a", {
 						title: "page2a"
 					})
 				]
@@ -370,8 +362,7 @@ sap.ui.define([
 
 	QUnit.test("afterNavigate is fired event if no transition", function (assert) {
 		// Arrange
-		var oSinon = sinon.sandbox.create(),
-			oSpy = oSinon.spy(this.nc, "fireAfterNavigate");
+		var oSpy = this.spy(this.nc, "fireAfterNavigate");
 
 		Core.applyChanges();
 
@@ -384,10 +375,6 @@ sap.ui.define([
 		});
 
 		this.nc.backToPage("page1a");
-
-		// Cleanup
-		oSpy.reset();
-		oSinon.restore();
 	});
 
 	QUnit.module("Page change");
@@ -612,17 +599,19 @@ sap.ui.define([
 
 		assert.equal(!!NavContainer.transitions["c_testTrans"], false, "custom animation should not be defined yet");
 
-		var value = nc.addCustomTransition(
+		nc.addCustomTransition(
 				"c_testTrans",
 				/* to */ function(oFromPage, oToPage, fCallback, oCustomData) {
 					oToPage.removeStyleClass("sapMNavItemHidden", true); // remove the "hidden" class which has been added by the NavContainer before the transition was called
-					assert.equal(oCustomData.test, "testParametersTo", "oCustomData should have the correct value");
+					// Note: use QUnit.assert instead of the local assert as transition is reused in later tests
+					QUnit.assert.equal(oCustomData.test, "testParametersTo", "oCustomData should have the correct value");
 					fCallback();
 				},
 				/* back */ function(oFromPage, oToPage, fCallback, oCustomData) {
 					oToPage.removeStyleClass("sapMNavItemHidden", true);
 					oFromPage.addStyleClass("sapMNavItemHidden", true); // instantly hide the previous page
-					assert.equal(oCustomData.test, "testParametersBack", "oCustomData should have the correct value");
+					// Note: use QUnit.assert instead of the local assert as transition is reused in later tests
+					QUnit.assert.equal(oCustomData.test, "testParametersBack", "oCustomData should have the correct value");
 					fCallback();
 				}
 		);
@@ -637,17 +626,19 @@ sap.ui.define([
 
 		assert.equal(!!NavContainer.transitions["c_testTrans2"], false, "custom animation should not be defined yet");
 
-		var value = NavContainer.addCustomTransition(
+		NavContainer.addCustomTransition(
 				"c_testTrans2",
 				/* to */ function(oFromPage, oToPage, fCallback, oCustomData) {
 					oToPage.removeStyleClass("sapMNavItemHidden", true); // remove the "hidden" class which has been added by the NavContainer before the transition was called
-					assert.equal(oCustomData.test, "testParametersTo2", "oCustomData should have the correct value");
+					// Note: use QUnit.assert instead of the local assert as transition is reused in later tests
+					QUnit.assert.equal(oCustomData.test, "testParametersTo2", "oCustomData should have the correct value");
 					fCallback();
 				},
 				/* back */ function(oFromPage, oToPage, fCallback, oCustomData) {
 					oToPage.removeStyleClass("sapMNavItemHidden", true);
 					oFromPage.addStyleClass("sapMNavItemHidden", true); // instantly hide the previous page
-					assert.equal(oCustomData.test, "testParametersBack2", "oCustomData should have the correct value");
+					// Note: use QUnit.assert instead of the local assert as transition is reused in later tests
+					QUnit.assert.equal(oCustomData.test, "testParametersBack2", "oCustomData should have the correct value");
 					fCallback();
 				}
 		);
@@ -658,7 +649,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Custom Transition To", function(assert) {
-		assert.expect(19); // including the "navigate" event
+		assert.expect(20); // including the "navigate" event
 
 		window.expectedNav = {
 				fromId: "page2",
@@ -678,7 +669,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Custom Transition Back", function(assert) {
-		assert.expect(19); // including the "navigate" event
+		assert.expect(20); // including the "navigate" event
 
 		window.expectedNav = {
 				fromId: "page3",
@@ -825,14 +816,13 @@ sap.ui.define([
 			],
 			initialPage: "secondPage"
 		}),
-			mySinon = sinon.sandbox.create(),
 			spy;
 
 		nc.placeAt("qunit-fixture");
 
 		Core.applyChanges();
 
-		spy = mySinon.spy(NavContainer.transitions["slide"], "back");
+		spy = this.spy(NavContainer.transitions["slide"], "back");
 
 		// act
 		nc._safeBackToPage("firstPage");
@@ -842,7 +832,6 @@ sap.ui.define([
 
 		// clean-up
 		nc.destroy();
-		mySinon.restore();
 	});
 
 	var pageRenderCounter = 0;
@@ -2108,7 +2097,7 @@ sap.ui.define([
 					page1
 				]
 			}),
-			oSpy = sinon.spy(localNc, "invalidate");
+			oSpy = this.spy(localNc, "invalidate");
 
 		// Act
 		localNc.removePage(page1);
@@ -2128,7 +2117,7 @@ sap.ui.define([
 					page1
 				]
 			}),
-			oSpy = sinon.spy(localNc, "invalidate");
+			oSpy = this.spy(localNc, "invalidate");
 
 		// Act
 		localNc.removePage(page1.getId());
@@ -2148,7 +2137,7 @@ sap.ui.define([
 					page1
 				]
 			}),
-		oSpy = sinon.spy(localNc, "invalidate");
+		oSpy = this.spy(localNc, "invalidate");
 
 		// Act
 		localNc.removePage(0);
@@ -2168,7 +2157,7 @@ sap.ui.define([
 					page1
 				]
 			}),
-			oSpy = sinon.spy(localNc, "invalidate");
+			oSpy = this.spy(localNc, "invalidate");
 
 		// Act: give invalid index as argument
 		localNc.removePage(1);
@@ -2329,24 +2318,23 @@ sap.ui.define([
 
 	QUnit.module("NavContainer in Popover", {
 		beforeEach: function () {
-			this.sinon = sinon.sandbox.create();
-			this.spy = this.sinon.spy(Popup.prototype, "close");
-			this.oNavC = new sap.m.NavContainer("navC", {
+			this.fnCloseSpy = this.spy(Popup.prototype, "close");
+			this.oNavC = new NavContainer("navC", {
 				pages: [
-					new sap.m.Page("page1a", {
+					new Page("page1a", {
 						title: "page1a"
 					}),
-					new sap.m.Page("page2a", {
+					new Page("page2a", {
 						title: "page2a"
 					})
 				]
 			});
-			this.oPopover = new sap.m.ResponsivePopover({
+			this.oPopover = new ResponsivePopover({
 					contentWidth: "18rem",
 					contentHeight: "24rem",
 					content: [ this.oNavC ]
 				});
-			this.oOpeningBtn = new sap.m.Button();
+			this.oOpeningBtn = new Button();
 
 			this.oOpeningBtn.addEventDelegate({
 				"onAfterRendering": function() {
@@ -2361,8 +2349,6 @@ sap.ui.define([
 			this.oPopover = null;
 			this.oNavC = null;
 			this.oOpeningBtn = null;
-
-			this.sinon.restore();
 		}
 	});
 
@@ -2372,8 +2358,8 @@ sap.ui.define([
 			oPopover = this.oPopover,
 			transitionComplete = false;
 
-		var oFocusable1 = new sap.m.Button({text: "focusable1"}),
-			oFocusable2 = new sap.m.Button({text: "focusable2"});
+		var oFocusable1 = new Button({text: "focusable1"}),
+			oFocusable2 = new Button({text: "focusable2"});
 
 		// Setup: add one focusable item in each page
 		oNavContainer.getPages()[0].addContent(oFocusable1);
@@ -2385,7 +2371,7 @@ sap.ui.define([
 			document.addEventListener("blur", fnOnBlur, true);
 			oNavContainer.attachEventOnce("afterNavigate", function() {
 				// Check
-				assert.strictEqual(this.spy.called, false, "parent popup is not closed");
+				oAssert.strictEqual(this.fnCloseSpy.called, false, "parent popup is not closed");
 				fnDone();
 			}, this);
 		}, this);
@@ -2399,8 +2385,8 @@ sap.ui.define([
 
 		// Check
 		var fnOnBlur = function(oEvent) {
-			assert.strictEqual(oEvent.target, oFocusable1.getDomRef());
-			assert.ok(transitionComplete, "transition already completed");
+			oAssert.strictEqual(oEvent.target, oFocusable1.getDomRef());
+			oAssert.ok(transitionComplete, "transition already completed");
 			document.removeEventListener("blur", fnOnBlur, true);
 		};
 

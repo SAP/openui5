@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/MessageView",
@@ -23,6 +22,8 @@ sap.ui.define([
 	Link,
 	Message
 ) {
+	"use strict";
+
 	// shortcut for sap.ui.core.MessageType
 	var MessageType = coreLibrary.MessageType;
 
@@ -189,7 +190,7 @@ sap.ui.define([
 
 		this.oDialog.attachAfterOpen(function () {
 			var oItem = this.oMessageView._oLists["all"].getItems()[testItemIndex].getDomRef();
-			sap.ui.test.qunit.triggerEvent("tap", oItem);
+			qutils.triggerEvent("tap", oItem);
 		}.bind(this));
 
 
@@ -229,7 +230,7 @@ sap.ui.define([
 
 		this.oDialog.attachAfterOpen(function () {
 			var oItem = that.oMessageView._oLists["all"].getItems()[4].getDomRef();
-			sap.ui.test.qunit.triggerEvent("tap", oItem);
+			qutils.triggerEvent("tap", oItem);
 		});
 
 		this.clock.tick(500);
@@ -265,7 +266,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(this.oMessageView._oLists.all.getItems().length, 7, "Item should be 7");
-		assert.ok(this.oMessageView._oLists.all.getItems()[0] instanceof sap.m.GroupHeaderListItem, "Item should be GroupHeaderItem");
+		assert.ok(this.oMessageView._oLists.all.getItems()[0].isA("sap.m.GroupHeaderListItem"), "Item should be GroupHeaderItem");
 	});
 
 	QUnit.test("_restoreItemsType should not throw an exception when there the groupItems property is set to true", function (assert) {
@@ -339,8 +340,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("hasStyleClass should check if class is added", function (assert) {
-		var $oDomRef = this.oMessageView.$();
-
 		assert.ok(!this.oMessageView.hasStyleClass("test"), "should not have 'test' class");
 
 		this.oMessageView.addStyleClass("test");

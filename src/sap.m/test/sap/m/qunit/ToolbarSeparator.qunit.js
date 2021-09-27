@@ -115,7 +115,7 @@ sap.ui.define([
 				"Third separator isn't displayed since it's the last element of the overflow area.");
 
 		// Clean-up
-		this.clock.reset();
+		this.clock.restore();
 		oOverflowTB.destroy();
 	});
 });

@@ -1,17 +1,16 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/IconPool",
 	"sap/m/ObjectStatus",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
 	"sap/ui/core/ValueStateSupport",
 	"sap/ui/events/jquery/EventExtension",
 	"sap/m/Panel",
 	"sap/m/library",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -22,7 +21,8 @@ sap.ui.define([
 	ValueStateSupport,
 	EventExtension,
 	Panel,
-	mobileLibrary
+	mobileLibrary,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -42,7 +42,7 @@ sap.ui.define([
 
 
 	var eventHandler = function (oEvent) {
-		assert.ok(true, "press event for status was fired");
+		QUnit.assert.ok(true, "press event for status was fired");
 	};
 
 	var os1 = new ObjectStatus("os1",{
@@ -67,9 +67,9 @@ sap.ui.define([
 
 	QUnit.test("StatusRendered", function(assert) {
 
-		assert.notEqual(jQuery.sap.domById("os1"), null, "Object Status #1 should be rendered.");
-		assert.notEqual(jQuery.sap.domById("os2"), null, "Object Status #2 should be rendered.");
-		assert.notEqual(jQuery.sap.domById("os3"), null, "Object Status #3 should be rendered.");
+		assert.notEqual(document.getElementById("os1"), null, "Object Status #1 should be rendered.");
+		assert.notEqual(document.getElementById("os2"), null, "Object Status #2 should be rendered.");
+		assert.notEqual(document.getElementById("os3"), null, "Object Status #3 should be rendered.");
 	});
 
 	QUnit.test("IconOnly Class Rendered", function(assert) {
@@ -139,7 +139,6 @@ sap.ui.define([
 	QUnit.test("ObjectStatus if the text is changed", function(assert) {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
-			oRenderSpy,
 			oResult,
 			oConstructor = { text : "not empty text"};
 
@@ -164,7 +163,6 @@ sap.ui.define([
 		// Arrange
 		var iNumberToSet = 5,
 			sTextToExpect = "5",
-			oRenderSpy,
 			oResult,
 			oConstructor = { text : "not empty text"};
 
@@ -249,7 +247,6 @@ sap.ui.define([
 	QUnit.test("if the new text is empty", function(assert) {
 		// Arrange
 		var sTextToSet = "  ",
-			oResult,
 			oConstructor = { text : "not empty text"};
 
 		// System under Test
@@ -257,7 +254,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Act
-		oResult = oObjectStatus.setText(sTextToSet);
+		oObjectStatus.setText(sTextToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
@@ -271,7 +268,6 @@ sap.ui.define([
 	QUnit.test("if the new title is empty", function(assert) {
 		// Arrange
 		var sTitleToSet = "  ",
-			oResult,
 			oConstructor = { title : "not empty text"};
 
 		// System under Test
@@ -279,7 +275,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Act
-		oResult = oObjectStatus.setTitle(sTitleToSet);
+		oObjectStatus.setTitle(sTitleToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
@@ -293,7 +289,6 @@ sap.ui.define([
 	QUnit.test("if the new text is undefined", function(assert) {
 		// Arrange
 		var sTextToSet,
-			oResult,
 			oConstructor = { text : "not empty text"};
 
 		// System under Test
@@ -301,7 +296,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Act
-		oResult = oObjectStatus.setText(sTextToSet);
+		oObjectStatus.setText(sTextToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
@@ -315,7 +310,6 @@ sap.ui.define([
 	QUnit.test("if the new title is undefined", function(assert) {
 		// Arrange
 		var sTitleToSet,
-			oResult,
 			oConstructor = { title : "not empty text"};
 
 		// System under Test
@@ -323,7 +317,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Act
-		oResult = oObjectStatus.setTitle(sTitleToSet);
+		oObjectStatus.setTitle(sTitleToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
@@ -337,7 +331,6 @@ sap.ui.define([
 	QUnit.test("Should rerender if the text was empty before", function(assert) {
 		// Arrange
 		var sTextToSet = "not empty text",
-			oResult,
 			oConstructor = { text : ""};
 
 		// System under Test
@@ -345,7 +338,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Act
-		oResult = oObjectStatus.setText(sTextToSet);
+		oObjectStatus.setText(sTextToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
@@ -359,7 +352,6 @@ sap.ui.define([
 	QUnit.test("Should rerender if the title was empty before", function(assert) {
 		// Arrange
 		var sTitleToSet = "not empty text",
-			oResult,
 			oConstructor = { title : ""};
 
 		// System under Test
@@ -367,7 +359,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Act
-		oResult = oObjectStatus.setTitle(sTitleToSet);
+		oObjectStatus.setTitle(sTitleToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
@@ -381,7 +373,6 @@ sap.ui.define([
 	QUnit.test("Should display titles with special characters correctly", function(assert) {
 		// Arrange
 		var sTitleToSet = "Account blocked - Blocked for payment",
-			oResult,
 			oConstructor = { title : "not empty text"};
 
 		// System under Test
@@ -389,7 +380,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Act
-		oResult = oObjectStatus.setTitle(sTitleToSet);
+		oObjectStatus.setTitle(sTitleToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
@@ -403,7 +394,6 @@ sap.ui.define([
 	QUnit.test("Should display texts with special characters correctly", function(assert) {
 		// Arrange
 		var sTextToSet = "Account blocked - Blocked for payment",
-			oResult,
 			oConstructor = { text : "not empty text"};
 
 		// System under Test
@@ -411,7 +401,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Act
-		oResult = oObjectStatus.setText(sTextToSet);
+		oObjectStatus.setText(sTextToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
@@ -425,7 +415,6 @@ sap.ui.define([
 	QUnit.test("Should display titles with special characters correctly", function(assert) {
 		// Arrange
 		var sTitleToSet = "Account blocked - Blocked for payment",
-			oResult,
 			oConstructor = { title : "not empty text"};
 
 		// System under Test
@@ -433,7 +422,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Act
-		oResult = oObjectStatus.setTitle(sTitleToSet);
+		oObjectStatus.setTitle(sTitleToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
@@ -874,7 +863,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var oPressSpy = sinon.spy(ObjectStatus.prototype, "firePress");
-		sap.ui.test.qunit.triggerKeydown(oObjectStatus.getFocusDomRef(), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(oObjectStatus.getFocusDomRef(), KeyCodes.ENTER);
 
 		assert.strictEqual(oPressSpy.callCount, 1, "Enter is pressed, press event was fired");
 
@@ -897,7 +886,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var oPressSpy = sinon.spy(ObjectStatus.prototype, "firePress");
-		sap.ui.test.qunit.triggerKeydown(oObjectStatus.getFocusDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oObjectStatus.getFocusDomRef(), KeyCodes.SPACE);
 
 		assert.strictEqual(oPressSpy.callCount, 1, "Space is pressed, press event was fired");
 

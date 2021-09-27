@@ -1,10 +1,9 @@
 /*global QUnit */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/m/FeedContent",
 	"sap/ui/core/TooltipBase",
 	"sap/m/library"
-], function(jQuery, FeedContent, TooltipBase, library) {
+], function(FeedContent, TooltipBase, library) {
 	"use strict";
 
 	// shortcut for sap.m.ValueColor
@@ -32,10 +31,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Feed Content rendered.", function(assert) {
-		assert.ok(jQuery.sap.domById("feed-cnt"),"FeedContent was rendered successfully");
-		assert.ok(jQuery.sap.domById("feed-cnt-content-text"),"Content text was rendered successfully");
-		assert.ok(jQuery.sap.domById("feed-cnt-subheader"),"Subheader was rendered successfully");
-		assert.ok(jQuery.sap.domById("feed-cnt-value"),"Value was rendered successfully");
+		assert.ok(document.getElementById("feed-cnt"),"FeedContent was rendered successfully");
+		assert.ok(document.getElementById("feed-cnt-content-text"),"Content text was rendered successfully");
+		assert.ok(document.getElementById("feed-cnt-subheader"),"Subheader was rendered successfully");
+		assert.ok(document.getElementById("feed-cnt-value"),"Value was rendered successfully");
 	});
 
 	QUnit.module("Functional tests - sap.m.FeedContent", {

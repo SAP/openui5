@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -11,7 +10,7 @@ sap.ui.define([
 	"sap/m/VisibleItem",
 	"sap/m/library",
 	"sap/m/TimePicker",
-	"jquery.sap.keycodes",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/DatePicker",
 	"sap/ui/model/type/Time",
 	"sap/ui/model/json/JSONModel",
@@ -24,7 +23,8 @@ sap.ui.define([
 	"sap/m/MaskEnabler",
 	"sap/ui/model/odata/type/Time",
 	"sap/ui/Device",
-	"jquery.sap.global"
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -48,10 +48,11 @@ sap.ui.define([
 	LocaleData,
 	MaskEnabler,
 	typeTime,
-	Device
+	Device,
+	XMLView,
+	KeyCodes
 ) {
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = coreLibrary.mvc.ViewType;
+	"use strict";
 
 	// shortcut for sap.m.TimePickerMaskMode
 	var TimePickerMaskMode = mobileLibrary.TimePickerMaskMode;
@@ -61,8 +62,8 @@ sap.ui.define([
 	createAndAppendDiv("uiArea2");
 	createAndAppendDiv("uiArea3");
 	var sMyxml =
-		"<mvc:View xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.m\" controllerName=\"my.own.controller\">" +
-		"    <VBox>" +
+		"<mvc:View xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.m\">" +
+		"    <VBox binding=\"{/EdmTypesCollection(ID='1')}\">" +
 		"        <TimePicker id=\"tp1\"" +
 		"            value=\"{" +
 		"                path: 'Time'," +
@@ -452,8 +453,7 @@ sap.ui.define([
 	function generateValuesTest(aSetValues, oExpectedValues) {
 		//system under test
 		var tp = new TimePicker(),
-			i,
-			key;
+			i;
 
 		//arrange
 		tp.placeAt("qunit-fixture");
@@ -467,15 +467,15 @@ sap.ui.define([
 		//assert
 		// trim because the framework formatter has no leading space,
 		// but the tp now has a leading space for for h:mm, H:mm format
-		assert.equal(jQuery("#" + tp.getId() + "-inner").val().trim(), oExpectedValues["expInputVal"], "$input.val() ok");
+		QUnit.assert.equal(jQuery("#" + tp.getId() + "-inner").val().trim(), oExpectedValues["expInputVal"], "$input.val() ok");
 
-		assert.equal(tp.getValue(), oExpectedValues["expValue"], "getValue() ok");
+		QUnit.assert.equal(tp.getValue(), oExpectedValues["expValue"], "getValue() ok");
 
 		var oDateValue = tp.getDateValue();
 		oDateValue.setFullYear(oExpectedValues["expDateValue"].getFullYear());
 		oDateValue.setMonth(oExpectedValues["expDateValue"].getMonth());
 		oDateValue.setDate(oExpectedValues["expDateValue"].getDate());
-		assert.equal(oDateValue.toString(), oExpectedValues["expDateValue"].toString(), "getDateValue ok");
+		QUnit.assert.equal(oDateValue.toString(), oExpectedValues["expDateValue"].toString(), "getDateValue ok");
 
 		//cleanup
 		tp.destroy();
@@ -984,7 +984,7 @@ sap.ui.define([
 		assert.ok(!tp._getPicker(), "picker does not exist");
 
 		//act
-		qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, true, false);
+		qutils.triggerKeydown(tp.getDomRef(), KeyCodes.ARROW_UP, false, true, false);
 
 		//assert
 		assert.ok(tp._getPicker().isOpen(), "picker is open");
@@ -1006,7 +1006,7 @@ sap.ui.define([
 		assert.ok(!tp._getPicker(), "picker does not exist");
 
 		//act
-		qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true, false);
+		qutils.triggerKeydown(tp.getDomRef(), KeyCodes.ARROW_DOWN, false, true, false);
 
 		//assert
 		assert.ok(tp._getPicker().isOpen(), "picker is open");
@@ -1034,8 +1034,8 @@ sap.ui.define([
 		jQuery(tp.getFocusDomRef()).cursorPos(0);
 
 		//act
-		qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
-		qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+		qutils.triggerKeydown(tp.getDomRef(), KeyCodes.ARROW_RIGHT, false, false, false);
+		qutils.triggerKeydown(tp.getDomRef(), KeyCodes.ARROW_RIGHT, false, false, false);
 
 		//assert
 		assert.equal(jQuery(tp.getFocusDomRef()).cursorPos(), 3, "After right + right the cursor is at the first minute digit");
@@ -1064,7 +1064,7 @@ sap.ui.define([
 		jQuery(tp.getFocusDomRef()).cursorPos(3);
 		assert.equal(jQuery(tp.getFocusDomRef()).cursorPos(), 3, "Initially the cursor is at the first minute digit");
 
-		qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT, false, false, false);
+		qutils.triggerKeydown(tp.getDomRef(), KeyCodes.ARROW_LEFT, false, false, false);
 		assert.equal(jQuery(tp.getFocusDomRef()).cursorPos(), 1, "After left the cursor is at the second hour digit");
 
 		//cleanup
@@ -1179,11 +1179,6 @@ sap.ui.define([
 
 	QUnit.test("data binding with OData", function(assert) {
 		var done = assert.async();
-		sap.ui.controller("my.own.controller", {
-			onInit: function() {
-				this.getView().bindObject("/EdmTypesCollection(ID='1')");
-			}
-		});
 
 		TestUtils.useFakeServer(sinon.sandbox.create(),
 			"sap/ui/core/demokit/sample/ViewTemplate/types/data", {
@@ -1200,16 +1195,20 @@ sap.ui.define([
 			useBatch : false
 		});
 
-		var view = sap.ui.view({ viewContent: sMyxml, type: ViewType.XML })
+		return XMLView.create({
+			definition: sMyxml
+		}).then(function(view) {
+			view
 			.setModel(oModelV2)
 			.placeAt("qunit-fixture");
 
-		oModelV2.attachRequestCompleted(function () {
-			assert.equal(view.byId("tp1")._$input.val(), "11:33:55 AM", "TP1 has coorect value!");
-			assert.equal(view.byId("tp2")._$input.val(), "11:33:55 AM", "TP2 has coorect value!");
-			assert.equal(view.byId("tp3")._$input.val(), "11:33 AM", "TP3 has coorect value!");
-			assert.equal(view.byId("tp4")._$input.val(), "11:33", "TP4 has coorect value!");
-			done();
+			oModelV2.attachRequestCompleted(function () {
+				assert.equal(view.byId("tp1")._$input.val(), "11:33:55 AM", "TP1 has coorect value!");
+				assert.equal(view.byId("tp2")._$input.val(), "11:33:55 AM", "TP2 has coorect value!");
+				assert.equal(view.byId("tp3")._$input.val(), "11:33 AM", "TP3 has coorect value!");
+				assert.equal(view.byId("tp4")._$input.val(), "11:33", "TP4 has coorect value!");
+				done();
+			});
 		});
 	});
 
@@ -1280,7 +1279,7 @@ sap.ui.define([
 	});
 
 	/* Temporary disabled until robust solution (across all timezones is implemented) QUnit.test("decrease time when daylight saving begins", function(assert) {
-	 var tp = new sap.m.TimePicker();
+	 var tp = new TimePicker();
 	 tp.placeAt("qunit-fixture");
 	 sap.ui.getCore().applyChanges();
 
@@ -1404,7 +1403,7 @@ sap.ui.define([
 		// prepare
 		var oTimePicker = new TimePicker(),
 			oSandbox = sinon.createSandbox({}),
-			oLabel = new sap.m.Label({text: "TimePicker Label", labelFor: oTimePicker.getId()}),
+			oLabel = new Label({text: "TimePicker Label", labelFor: oTimePicker.getId()}),
 			oDialog;
 
 		oSandbox.stub(Device.system, "phone").value(true);
@@ -1448,8 +1447,8 @@ sap.ui.define([
 					bHasRoleAttribute = oSlider.$().is('[role]'),
 					sRole = oSlider.$().attr('role');
 
-			assert.ok(bHasRoleAttribute, "TimePickerSlider " + iNonZeroIndex + " has role attribute");
-			assert.strictEqual(sRole, "list", "TimePickerSlider " + iNonZeroIndex + " has role='" + sRole + "'");
+			QUnit.assert.ok(bHasRoleAttribute, "TimePickerSlider " + iNonZeroIndex + " has role attribute");
+			QUnit.assert.strictEqual(sRole, "list", "TimePickerSlider " + iNonZeroIndex + " has role='" + sRole + "'");
 		},
 		fnAriaLiveAndHiddenTest: function (oSlider, iIndex) {
 			var iNonZeroIndex = iIndex + 1,
@@ -1457,30 +1456,28 @@ sap.ui.define([
 					bHasAriaHiddenAttr = $Target.is("[aria-hidden]"),
 					sAriaHiddenValue = $Target.attr("aria-hidden"),
 					bHasAriaLiveAttr = $Target.is("[aria-live]"),
-					sAriaLiveValue = $Target.attr("aria-live"),
-					sCurrentSelectionValue = oSlider.getSelectedValue(),
-					sExpectedSelectionValue;
+					sAriaLiveValue = $Target.attr("aria-live");
 
-			assert.ok(bHasAriaHiddenAttr, "TimePickerSlider " + iNonZeroIndex + " live-region child has aria-hidden attribute");
-			assert.strictEqual(sAriaHiddenValue, "false", "TimePickerSlider " + iNonZeroIndex + " live-region child has aria-hidden='" + sAriaHiddenValue + "'");
-			assert.ok(bHasAriaLiveAttr, "TimePickerSlider " + iNonZeroIndex + " live-region child has aria-live attribute");
-			assert.strictEqual(sAriaLiveValue, "assertive", "TimePickerSlider " + iNonZeroIndex + " live-region child has aria-live='" + sAriaLiveValue + "'");
+			QUnit.assert.ok(bHasAriaHiddenAttr, "TimePickerSlider " + iNonZeroIndex + " live-region child has aria-hidden attribute");
+			QUnit.assert.strictEqual(sAriaHiddenValue, "false", "TimePickerSlider " + iNonZeroIndex + " live-region child has aria-hidden='" + sAriaHiddenValue + "'");
+			QUnit.assert.ok(bHasAriaLiveAttr, "TimePickerSlider " + iNonZeroIndex + " live-region child has aria-live attribute");
+			QUnit.assert.strictEqual(sAriaLiveValue, "assertive", "TimePickerSlider " + iNonZeroIndex + " live-region child has aria-live='" + sAriaLiveValue + "'");
 		},
 		fnAriaLabelledByTest: function (oSlider, iIndex) {
 			var iNonZeroIndex = iIndex + 1,
 					sAriaLabelledById = oSlider.$().attr('aria-labelledby'),
 					$AriaLabelledTarget = oSlider.$('label');
 
-			assert.ok($AriaLabelledTarget.length, "TimePickerSlider " + iNonZeroIndex + " has aria-labelledby association");
-			assert.strictEqual(sAriaLabelledById, $AriaLabelledTarget.attr("id"), "TimePickerSlider " + iNonZeroIndex + " aria-labelledby association has a correct value " + sAriaLabelledById);
+			QUnit.assert.ok($AriaLabelledTarget.length, "TimePickerSlider " + iNonZeroIndex + " has aria-labelledby association");
+			QUnit.assert.strictEqual(sAriaLabelledById, $AriaLabelledTarget.attr("id"), "TimePickerSlider " + iNonZeroIndex + " aria-labelledby association has a correct value " + sAriaLabelledById);
 		},
 		fnAriaDescribedByTest: function (oSlider, iIndex) {
 			var iNonZeroIndex = iIndex + 1,
 					sAriaDescribedById = oSlider.$().attr('aria-describedby'),
 					$AriaDescribedTarget = oSlider.$('valDescription');
 
-			assert.ok(sAriaDescribedById.length, "TimePickerSlider " + iNonZeroIndex + " has aria-describedby association");
-			assert.strictEqual(sAriaDescribedById, $AriaDescribedTarget.attr("id"), "TimePickerSlider " + iNonZeroIndex + " aria-describedby association has a correct value " + sAriaDescribedById);
+			QUnit.assert.ok(sAriaDescribedById.length, "TimePickerSlider " + iNonZeroIndex + " has aria-describedby association");
+			QUnit.assert.strictEqual(sAriaDescribedById, $AriaDescribedTarget.attr("id"), "TimePickerSlider " + iNonZeroIndex + " aria-describedby association has a correct value " + sAriaDescribedById);
 		},
 		fnTestReferencing: function (oSut, fnAssert, oResourceManager, aScenarios) {
 			//prepare
@@ -1658,7 +1655,7 @@ sap.ui.define([
 			triggerMultipleKeypress(tp, sInput);
 
 			//assert
-			assert.equal(jQuery("#" + tp.getId() + "-inner").val(), sExpectedValue, "$input.val() ok");
+			QUnit.assert.equal(jQuery("#" + tp.getId() + "-inner").val(), sExpectedValue, "$input.val() ok");
 
 			//cleanup
 			this.clock.restore();
@@ -1804,7 +1801,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// act
-		qutils.triggerKeydown(jQuery(oTimePicker.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(jQuery(oTimePicker.getFocusDomRef()), KeyCodes.ARROW_RIGHT);
 		triggerMultipleKeypress(oTimePicker, "830");
 
 		// assert
@@ -1876,7 +1873,7 @@ sap.ui.define([
 
 		//act
 		triggerMultipleKeypress(oTp, "15");
-		qutils.triggerKeydown(jQuery(oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(jQuery(oTp.getFocusDomRef()), KeyCodes.ENTER);
 
 		//assert
 		assert.equal(jQuery("#" + oTp.getId() + "-inner").val(), "15:00:00", "$input.val() ok");
@@ -1897,7 +1894,7 @@ sap.ui.define([
 
 		//act
 		triggerMultipleKeypress(oTp, "151");
-		qutils.triggerKeydown(jQuery(oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(jQuery(oTp.getFocusDomRef()), KeyCodes.ENTER);
 		//assert
 		assert.equal(jQuery("#" + oTp.getId() + "-inner").val(), "15:01:00", "$input.val() ok");
 
@@ -1922,7 +1919,7 @@ sap.ui.define([
 
 		//act
 		triggerMultipleKeypress(oTp, "7");
-		qutils.triggerKeydown(jQuery(oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(jQuery(oTp.getFocusDomRef()), KeyCodes.ENTER);
 		//assert
 		assert.equal(jQuery("#" + oTp.getId() + "-inner").val(), "07:00 AM", "$input.val() ok");
 
@@ -1943,11 +1940,11 @@ sap.ui.define([
 		tp.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
-		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
-		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
-		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
-		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.BACKSPACE);
+		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), KeyCodes.BACKSPACE);
 
 		assert.equal(jQuery("#" + tp.getId() + "-inner").val(), "12 A-", "$input.val() correctly preset");
 
@@ -1972,7 +1969,7 @@ sap.ui.define([
 
 		//act
 		triggerMultipleKeypress(oTp, "15");
-		qutils.triggerKeydown(jQuery(oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(jQuery(oTp.getFocusDomRef()), KeyCodes.ENTER);
 
 		//assert
 		assert.equal(jQuery("#" + oTp.getId() + "-inner").val(), "15", "$input.val() ok");
@@ -1993,11 +1990,11 @@ sap.ui.define([
 		tp.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
-		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
-		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
-		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
-		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.BACKSPACE);
+		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), KeyCodes.BACKSPACE);
 
 		assert.equal(jQuery("#" + tp.getId() + "-inner").val(), "12 P-", "$input.val() correctly preset");
 
@@ -2315,7 +2312,7 @@ sap.ui.define([
 		// helper function
 		function simulateDelPress(oThis) {
 			oTP.selectText(0, 0);
-			qutils.triggerKeydown(oTP._$input, jQuery.sap.KeyCodes.DELETE);
+			qutils.triggerKeydown(oTP._$input, KeyCodes.DELETE);
 			iDelPressed++;
 			oThis.clock.tick(100);
 			if (oTP._oTempValue._aInitial[iDelPressed] != "-") {
@@ -2767,7 +2764,7 @@ sap.ui.define([
 
 		// act
 		jQuery(this.oTp.getFocusDomRef()).val("11");
-		qutils.triggerKeydown(jQuery(this.oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(jQuery(this.oTp.getFocusDomRef()), KeyCodes.ENTER);
 
 		// assert
 		assert.equal(oChangeSpy.callCount, 1, "change event should be called once");
@@ -3082,14 +3079,14 @@ sap.ui.define([
 
 		//system under test
 		triggerMultipleKeypress(this.oTp, "09");
-		qutils.triggerKeydown(oTpFocusDomRef, jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(oTpFocusDomRef, KeyCodes.ENTER);
 
 		assert.equal(this.oSpy.callCount, 1, "changed event fired when the value is set");
 
 		while (oTpFocusDomRef.val() !== "-- --") {
-			qutils.triggerKeydown(oTpFocusDomRef, jQuery.sap.KeyCodes.BACKSPACE);
+			qutils.triggerKeydown(oTpFocusDomRef, KeyCodes.BACKSPACE);
 		}
-		qutils.triggerKeydown(oTpFocusDomRef, jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(oTpFocusDomRef, KeyCodes.ENTER);
 
 		assert.equal(this.oSpy.callCount, 2, "changed event fired when the value is reset");
 	});
@@ -3097,7 +3094,7 @@ sap.ui.define([
 	QUnit.test("upon enter, change event fires only once", function(assert) {
 		//act
 		triggerMultipleKeypress(this.oTp, "09");
-		qutils.triggerKeydown(jQuery(this.oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(jQuery(this.oTp.getFocusDomRef()), KeyCodes.ENTER);
 		assert.equal(this.oSpy.callCount, 1, "changed event must be fired only once");
 	});
 

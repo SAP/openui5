@@ -1,29 +1,33 @@
 /*global QUnit */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/m/Page",
+	"sap/m/Title",
+	"sap/ui/core/library",
 	"test-resources/sap/ui/support/TestHelper"
-], function (jQuery, testRule) {
+], function (Page, Title, coreLibrary, testRule) {
 	"use strict";
+
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	QUnit.module("Title rule tests", {
 		setup: function () {
-			this.page = new sap.m.Page("myPage", {
+			this.page = new Page("myPage", {
 				content: [
-					new sap.m.Title({
+					new Title({
 						text: "Default title"
 					}),
-					new sap.m.Title({
+					new Title({
 						text: "Title with level auto",
-						level: sap.ui.core.TitleLevel.Auto
+						level: TitleLevel.Auto
 					}),
-					new sap.m.Title({
+					new Title({
 						text: "Title with level H1",
-						level: sap.ui.core.TitleLevel.H1
+						level: TitleLevel.H1
 					}),
-					new sap.m.Title({
+					new Title({
 						text: "Title with level H5",
-						level: sap.ui.core.TitleLevel.H5
+						level: TitleLevel.H5
 					})
 				]
 			});

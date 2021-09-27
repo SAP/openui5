@@ -1,13 +1,13 @@
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ProgressIndicator",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
 	"sap/ui/core/Core"
-], function(QUnitUtils, createAndAppendDiv, ProgressIndicator, jQuery, coreLibrary, Core) {
+], function(createAndAppendDiv, ProgressIndicator, jQuery, coreLibrary, Core) {
+	"use strict";
+
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
@@ -50,11 +50,7 @@ sap.ui.define([
 	oProgInd4.placeAt("content");
 	Core.applyChanges();
 
-	//deferment
-
-	jQuery(document).ready(function() {
-
-	});
+	QUnit.module("");
 
 	//basic rendering
 	QUnit.test("basic rendering", function(assert) {
@@ -408,7 +404,6 @@ sap.ui.define([
 			" milliseconds (default animation) as expected");
 
 		// Clean up
-		oSpy.reset();
 		oProgressIndicator.destroy();
 	});
 
@@ -432,7 +427,6 @@ sap.ui.define([
 			" milliseconds (no animation) as expected");
 
 		// Clean up
-		oSpy.reset();
 		oProgressIndicator.destroy();
 	});
 

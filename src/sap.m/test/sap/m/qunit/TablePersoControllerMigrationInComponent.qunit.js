@@ -3,10 +3,9 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/TablePersoController",
-	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/UIComponent",
-	"sap/ui/model/json/JSONModel"
-], function(createAndAppendDiv, jQuery, TablePersoController, ComponentContainer, UIComponent, JSONModel) {
+	"sap/ui/core/Component",
+	"sap/ui/core/ComponentContainer"
+], function(createAndAppendDiv, jQuery, TablePersoController, Component, ComponentContainer) {
 	"use strict";
 
 	// prepare DOM
@@ -88,45 +87,66 @@ sap.ui.define([
 		}
 	};
 
-	sap.ui.controller("perso.qunit.controller", {
+	sap.ui.define("perso/qunit/controller.controller", [
+		"sap/ui/core/mvc/Controller",
+		"sap/m/TablePersoController"
+	], function(Controller, TablePersoController) {
+		return Controller.extend("perso.qunit.controller", {
 
-		onInit: function(oEvent) {
+			onInit: function(oEvent) {
 
-			var oView = this.getView();
+				var oView = this.getView();
 
-			var oTPC = new TablePersoController({
-				table: oView.byId("myTable"),
-				persoService: oPersoService
-			}).activate();
+				var oTPC = new TablePersoController({
+					table: oView.byId("myTable"),
+					persoService: oPersoService
+				}).activate();
 
-			oView.byId("idPersonalizationButton").attachPress(function(oEvent) {
-				oTPC.openDialog();
+				oView.byId("idPersonalizationButton").attachPress(function(oEvent) {
+					oTPC.openDialog();
+				});
+			}
+
+		});
+	});
+
+	sap.ui.define("perso/qunit/Component", [
+		"sap/ui/core/UIComponent",
+		"sap/ui/core/mvc/XMLView",
+		"sap/ui/model/json/JSONModel"
+	], function(UIComponent, XMLView, JSONModel) {
+		return UIComponent.extend("perso.qunit.Component", {
+			metadata: {
+				interfaces: [ "sap.ui.core.IAsyncContentCreation" ]
+			},
+			createContent: function(oEvent) {
+				return XMLView.create({
+					definition: viewContent
+				}).then(function(oView) {
+					oView.setModel(new JSONModel({
+						items: [
+								{ name: "Michelle", color: "orange", number: 3.14 },
+								{ name: "Joseph", color: "blue", number: 1.618 },
+								{ name: "David", color: "green", number: 0 }
+						]
+					}));
+					return oView;
+				});
+			}
+		});
+	});
+
+	QUnit.module("Migration", {
+		before: function() {
+			return Component.create({
+				name: "perso.qunit"
+			}).then(function(oComponent) {
+				var oComponentContainer = new ComponentContainer();
+				oComponentContainer.setComponent(oComponent);
+				oComponentContainer.placeAt("content");
 			});
 		}
-
 	});
-
-	var TestComp = UIComponent.extend("perso.qunit.Component", {
-		createContent: function(oEvent) {
-
-			var oView = sap.ui.xmlview({ viewContent: viewContent });
-			oView.setModel(new JSONModel({
-				items: [
-						{ name: "Michelle", color: "orange", number: 3.14 },
-						{ name: "Joseph", color: "blue", number: 1.618 },
-						{ name: "David", color: "green", number: 0 }
-				]
-			}));
-			return oView;
-
-		}
-	});
-
-	var oComponentContainer = new ComponentContainer();
-	oComponentContainer.setComponent(new TestComp());
-	oComponentContainer.placeAt("content");
-
-	QUnit.module("Migration");
 
 	QUnit.test("Column order as in historic settings", function(assert) {
 

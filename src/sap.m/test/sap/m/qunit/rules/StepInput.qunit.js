@@ -1,40 +1,42 @@
 /*global QUnit */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/m/Page",
+	"sap/m/Panel",
+	"sap/m/StepInput",
 	"test-resources/sap/ui/support/TestHelper"
-], function(jQuery, testRule) {
+], function(Page, Panel, StepInput, testRule) {
 	"use strict";
 
 	QUnit.module("StepInput rules", {
 		setup: function() {
-			this.page = new sap.m.Page({
+			this.page = new Page({
 				content: [
-					new sap.m.Panel({
+					new Panel({
 						id: "StepInputTestsContext1",
 						content: [
-							new sap.m.StepInput({
+							new StepInput({
 								step: 0.255,
 								displayValuePrecision: 2
 							}),
-							new sap.m.StepInput({
+							new StepInput({
 								step: 0.2,
 								displayValuePrecision: 2
 							}),
-							new sap.m.StepInput({
+							new StepInput({
 								step: 0.255,
 								displayValuePrecision: 3
 							})
 						]
 					}),
-					new sap.m.Panel({
+					new Panel({
 						id: "StepInputTestsContext2",
 						content: [
-							new sap.m.StepInput({
+							new StepInput({
 								fieldWidth: '20px'
 							}),
-							new sap.m.StepInput(),
-							new sap.m.StepInput({
+							new StepInput(),
+							new StepInput({
 								fieldWidth: '20px',
 								description: 'descr.'
 							})

@@ -1,6 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/HeaderContainer",
 	"sap/m/FlexBox",
 	"sap/m/Label",
@@ -9,11 +9,12 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Icon",
 	"sap/ui/core/library",
+	"sap/ui/events/PseudoEvents",
+	"sap/ui/util/Mobile",
 	"sap/m/library",
 	"sap/base/Log",
-	"sap/m/Text",
-	"jquery.sap.events"
-], function(jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, coreLibrary, mobileLibrary,
+	"sap/m/Text"
+], function(jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, coreLibrary, PseudoEvents, Mobile, mobileLibrary,
 			Log, Text) {
 	"use strict";
 
@@ -23,7 +24,7 @@ sap.ui.define([
 	// shortcut for sap.ui.core.Orientation
 	var Orientation = coreLibrary.Orientation;
 
-	jQuery.sap.initMobile();
+	Mobile.init();
 
 	QUnit.module("Default Property Values", {
 		beforeEach: function () {
@@ -107,20 +108,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("DOM Structure should exist for horizontal header container", function (assert) {
-		assert.ok(jQuery.sap.domById("headerContainer"), "HeaderContainer was rendered successfully");
-		assert.ok(jQuery.sap.domById("headerContainer-scroll-area"), "HeaderContainer scroll area was rendered successfully");
+		assert.ok(document.getElementById("headerContainer"), "HeaderContainer was rendered successfully");
+		assert.ok(document.getElementById("headerContainer-scroll-area"), "HeaderContainer scroll area was rendered successfully");
 	});
 
 	QUnit.test("DOM Structure should exist for vertical header container", function (assert) {
 		this.oHeaderContainer.setOrientation("Vertical");
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.domById("headerContainer"), "HeaderContainer was rendered successfully");
-		assert.ok(jQuery.sap.domById("headerContainer-scroll-area"), "HeaderContainer scroll area was rendered successfully");
+		assert.ok(document.getElementById("headerContainer"), "HeaderContainer was rendered successfully");
+		assert.ok(document.getElementById("headerContainer-scroll-area"), "HeaderContainer scroll area was rendered successfully");
 	});
 
 	QUnit.test("Default inline style for width and height in DOM structure", function (assert) {
-		assert.equal(jQuery.sap.domById("headerContainer").style.width, "100%");
-		assert.equal(jQuery.sap.domById("headerContainer").style.height, "auto");
+		assert.equal(document.getElementById("headerContainer").style.width, "100%");
+		assert.equal(document.getElementById("headerContainer").style.height, "auto");
 	});
 
 	QUnit.test("Default inline style for width and height in DOM structure (vertical mode)", function (assert) {
@@ -129,8 +130,8 @@ sap.ui.define([
 		//Act
 		sap.ui.getCore().applyChanges();
 		//Assert
-		assert.equal(jQuery.sap.domById("headerContainer").style.width, "auto");
-		assert.equal(jQuery.sap.domById("headerContainer").style.height, "100%");
+		assert.equal(document.getElementById("headerContainer").style.width, "auto");
+		assert.equal(document.getElementById("headerContainer").style.height, "100%");
 	});
 
 	QUnit.test("Inline style for width and height in DOM structure", function (assert) {
@@ -140,8 +141,8 @@ sap.ui.define([
 		//Act
 		sap.ui.getCore().applyChanges();
 		//Assert
-		assert.equal(jQuery.sap.domById("headerContainer").style.width, "31%");
-		assert.equal(jQuery.sap.domById("headerContainer").style.height, "32%");
+		assert.equal(document.getElementById("headerContainer").style.width, "31%");
+		assert.equal(document.getElementById("headerContainer").style.height, "32%");
 	});
 
 	QUnit.skip("Acc - role assigned is of type list", function (assert) {
@@ -194,7 +195,7 @@ sap.ui.define([
 		this.oHeaderContainer.setBackgroundDesign(BackgroundDesign.Solid);
 		this.oHeaderContainer.rerender();
 		var oBackgroundDesignNew = this.oHeaderContainer.getBackgroundDesign();
-		var sCssClassNew = jQuery.sap.domById("headerContainer-scroll-area").className;
+		var sCssClassNew = document.getElementById("headerContainer-scroll-area").className;
 		//assert
 		assert.equal(oBackgroundDesignDefault, BackgroundDesign.Transparent, "The default value is 'sapMHdrCntrBGTransparent'");
 		assert.equal(oBackgroundDesignNew, BackgroundDesign.Solid, "The new value is 'sapMHdrCntrBGSolid'");
@@ -317,10 +318,10 @@ sap.ui.define([
 	QUnit.test("Shifting content to the left", function (assert) {
 		var done = assert.async();
 		setTimeout(function () {
-			assert.notOk(jQuery.sap.byId("headerContainer-prev-button-container").is(":visible"), "Previous Button is not visible before scrolling.");
+			assert.notOk(jQuery("#headerContainer-prev-button-container").is(":visible"), "Previous Button is not visible before scrolling.");
 			this.oHeaderContainer._scroll(100, 0);
 			setTimeout(function () {
-				assert.ok(jQuery.sap.byId("headerContainer-prev-button-container").is(":visible"), "Previous Button is visible after scrolling.");
+				assert.ok(jQuery("#headerContainer-prev-button-container").is(":visible"), "Previous Button is visible after scrolling.");
 				done();
 			}, 1000);
 		}.bind(this), 200);
@@ -330,7 +331,7 @@ sap.ui.define([
 		var done = assert.async();
 		this.oHeaderContainer._scroll(-200, 500);
 		setTimeout(function () {
-			assert.ok(jQuery.sap.byId("headerContainer-scrl-next-button").css("visibility") !== "hidden", "Next Button is visible after scrolling.");
+			assert.ok(jQuery("#headerContainer-scrl-next-button").css("visibility") !== "hidden", "Next Button is visible after scrolling.");
 			done();
 		}, 1000);
 	});
@@ -595,7 +596,7 @@ sap.ui.define([
 					return {target: ""};
 				}
 			};
-			var oStub = sinon.stub(jQuery.sap.PseudoEvents.sapnext, "fnCheck").returns(true);
+			var oStub = sinon.stub(PseudoEvents.events.sapnext, "fnCheck").returns(true);
 			//Act
 			this.oHeaderContainer._handleBeforeFocus(oEvt);
 			//Assert
@@ -613,7 +614,7 @@ sap.ui.define([
 					return {target: ""};
 				}
 			};
-			var oStub = sinon.stub(jQuery.sap.PseudoEvents.sapprevious, "fnCheck").returns(true);
+			var oStub = sinon.stub(PseudoEvents.events.sapprevious, "fnCheck").returns(true);
 			//Act
 			this.oHeaderContainer._handleBeforeFocus(oEvt);
 			//Assert

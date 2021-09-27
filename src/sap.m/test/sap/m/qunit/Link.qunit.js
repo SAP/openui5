@@ -1,17 +1,17 @@
 /*global QUnit*/
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Link",
 	"sap/m/Text",
-	"jquery.sap.keycodes",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
+	"sap/ui/core/dnd/DragInfo",
 	"sap/m/Panel",
 	"sap/m/library",
-	"jquery.sap.global"
-], function(QUnitUtils, createAndAppendDiv, Link, Text, jQuery, coreLibrary, Core, Panel, mobileLibrary) {
+	"sap/ui/thirdparty/jquery"
+], function(qutils, createAndAppendDiv, Link, Text, KeyCodes, coreLibrary, Core, DragInfo, Panel, mobileLibrary, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -39,9 +39,9 @@ sap.ui.define([
 		width : "200px",
 		press:function(oEvent) {
 			oEvent.preventDefault();
-			assert.ok(true, "This should be executed when the link is triggered");
-			assert.strictEqual(oEvent.getParameter("ctrlKey"), bLinkPressExpectCtrlKey, "CtrlKey-Parameter correct for press event");
-			assert.strictEqual(oEvent.getParameter("metaKey"), bLinkPressExpectMetaKey, "MetaKey-Parameter correct for press event");
+			QUnit.config.current.assert.ok(true, "This should be executed when the link is triggered");
+			QUnit.config.current.assert.strictEqual(oEvent.getParameter("ctrlKey"), bLinkPressExpectCtrlKey, "CtrlKey-Parameter correct for press event");
+			QUnit.config.current.assert.strictEqual(oEvent.getParameter("metaKey"), bLinkPressExpectMetaKey, "MetaKey-Parameter correct for press event");
 		}
 	}).placeAt("uiArea1");
 
@@ -52,6 +52,8 @@ sap.ui.define([
 	}).placeAt("uiArea1");
 
 	// test property accessor methods
+
+	QUnit.module("");
 
 	QUnit.test("Text in HTML", function(assert) {
 		assert.equal(oLink1.$().text(), sText, "oLink1 text should be correct");
@@ -86,22 +88,22 @@ sap.ui.define([
 
 	QUnit.test("Enter event should fire press event on keydown", function (assert) {
 		assert.expect(3); // verifies the event handler was executed
-		qutils.triggerKeydown(oLink1.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(oLink1.getDomRef(), KeyCodes.ENTER);
 	});
 
 	QUnit.test("Enter event should not fire press on keyup", function (assert) {
 		assert.expect(0); // verifies the event handler was NOT executed
-		qutils.triggerKeyup(oLink1.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeyup(oLink1.getDomRef(), KeyCodes.ENTER);
 	});
 
 	QUnit.test("Space event should fire press event on keyup", function (assert) {
 		assert.expect(3); // verifies the event handler was executed
-		qutils.triggerKeyup(oLink1.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeyup(oLink1.getDomRef(), KeyCodes.SPACE);
 	});
 
 	QUnit.test("Space event should not fire press on keydown", function (assert) {
 		assert.expect(0); // verifies the event handler was NOT executed
-		qutils.triggerKeydown(oLink1.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oLink1.getDomRef(), KeyCodes.SPACE);
 	});
 
 	QUnit.test("Space event should not fire press if escape is pressed and released after the Space is released", function(assert) {
@@ -115,10 +117,10 @@ sap.ui.define([
 		// Action
 		// first keydown on SPACE, keydown on ESCAPE, release SPACE then release ESCAPE
 		var oLinkDomRef = oLink.getDomRef();
-		qutils.triggerKeydown(oLinkDomRef, jQuery.sap.KeyCodes.SPACE);
-		qutils.triggerKeydown(oLinkDomRef, jQuery.sap.KeyCodes.ESCAPE);
-		qutils.triggerKeyup(oLinkDomRef, jQuery.sap.KeyCodes.SPACE);
-		qutils.triggerKeyup(oLinkDomRef, jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oLinkDomRef, KeyCodes.SPACE);
+		qutils.triggerKeydown(oLinkDomRef, KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oLinkDomRef, KeyCodes.SPACE);
+		qutils.triggerKeyup(oLinkDomRef, KeyCodes.ESCAPE);
 
 		// Assert
 		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
@@ -139,10 +141,10 @@ sap.ui.define([
 		// Action
 		// first keydown on SPACE, keydown on ESCAPE, release ESCAPE then release SPACE
 		var oLinkDomRef = oLink.getDomRef();
-		qutils.triggerKeydown(oLinkDomRef, jQuery.sap.KeyCodes.SPACE);
-		qutils.triggerKeydown(oLinkDomRef, jQuery.sap.KeyCodes.ESCAPE);
-		qutils.triggerKeyup(oLinkDomRef, jQuery.sap.KeyCodes.ESCAPE);
-		qutils.triggerKeyup(oLinkDomRef, jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oLinkDomRef, KeyCodes.SPACE);
+		qutils.triggerKeydown(oLinkDomRef, KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oLinkDomRef, KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oLinkDomRef, KeyCodes.SPACE);
 
 		// Assert
 		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
@@ -552,7 +554,7 @@ sap.ui.define([
 
 	QUnit.test("drag and drop", function(assert) {
 		var oLink = new Link({
-			dragDropConfig: new sap.ui.core.dnd.DragInfo({
+			dragDropConfig: new DragInfo({
 				enabled: false
 			})
 		}).placeAt("qunit-fixture");

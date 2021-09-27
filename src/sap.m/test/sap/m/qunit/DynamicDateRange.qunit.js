@@ -1,5 +1,4 @@
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 sap.ui.define([
 	"sap/m/DynamicDateRange",
 	"sap/m/CustomDynamicDateOption",
@@ -17,6 +16,8 @@ sap.ui.define([
 	DateRange,
 	DateFormat
 ) {
+	"use strict";
+
 	var oCore = sap.ui.getCore();
 
 	// shortcut for library resource bundle

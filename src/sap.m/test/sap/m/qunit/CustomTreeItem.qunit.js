@@ -9,13 +9,7 @@ sap.ui.define([
 ], function(createAndAppendDiv, CustomTreeItem, Tree, Image, Text, JSONModel) {
 	"use strict";
 
-	createAndAppendDiv("content");
-	var styleElement = document.createElement("style");
-	styleElement.textContent =
-		"#content {" +
-		"	height: 100%;" +
-		"}";
-	document.head.appendChild(styleElement);
+	createAndAppendDiv("content").style.height = "100%";
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
 

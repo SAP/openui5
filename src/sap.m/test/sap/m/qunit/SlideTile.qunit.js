@@ -1,6 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/SlideTile",
 	"sap/m/GenericTile",
 	"sap/ui/model/json/JSONModel",
@@ -9,9 +9,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/NumericContent",
 	"sap/m/library",
-	"sap/ui/events/jquery/EventExtension", // only used indirectly?
-	"jquery.sap.keycodes"
-], function(jQuery, SlideTile, GenericTile, JSONModel, TileContent, NewsContent, Device, NumericContent, library) {
+	"sap/ui/events/KeyCodes",
+	"sap/ui/events/jquery/EventExtension" // only used indirectly?
+], function(jQuery, SlideTile, GenericTile, JSONModel, TileContent, NewsContent, Device, NumericContent, library, KeyCodes) {
 	"use strict";
 
 
@@ -135,10 +135,10 @@ sap.ui.define([
 
 	QUnit.test("Test tiles displaying", function(assert) {
 		var done = assert.async();
-		assert.equal(jQuery.sap.byId("st-wrapper-0").css("left"), "0px", "The first tile is shown");
+		assert.equal(jQuery("#st-wrapper-0").css("left"), "0px", "The first tile is shown");
 
 		setTimeout(function() {
-			assert.equal(jQuery.sap.byId("st-wrapper-1").css("left"), "0px", "The second tile is shown");
+			assert.equal(jQuery("#st-wrapper-1").css("left"), "0px", "The second tile is shown");
 			done();
 		}, 500);
 	});
@@ -215,7 +215,7 @@ sap.ui.define([
 		//Arrange
 		var spy = sinon.spy(this.oSlideTile, "_toggleAnimation"),
 			oEvent = jQuery.Event("keyup");
-		oEvent.keyCode = jQuery.sap.KeyCodes.SPACE;
+		oEvent.keyCode = KeyCodes.SPACE;
 		//Act
 		this.oSlideTile.onkeyup(oEvent);
 		//Assert
@@ -228,7 +228,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		var spy = sinon.spy(this.oSlideTile, "_toggleAnimation"),
 			oEvent = jQuery.Event("keyup");
-		oEvent.keyCode = jQuery.sap.KeyCodes.SPACE;
+		oEvent.keyCode = KeyCodes.SPACE;
 		oEvent.target = {
 			id : "-otto"
 		};
@@ -257,8 +257,8 @@ sap.ui.define([
 		assert.ok(spyScrollToTile.calledOnce, "Function _scrollToTile is called");
 		assert.ok(spyStartAnimation.notCalled, "Function _startAnimation is not called");
 		assert.ok(spyInvalidate.calledOnce, "Invalidate function is called");
-		assert.notOk(jQuery.sap.domById("st-pause-play-icon"), "The pause/play button is hidden");
-		assert.notOk(jQuery.sap.domById("st-tilesIndicator"), "The indicator is hidden");
+		assert.notOk(document.getElementById("st-pause-play-icon"), "The pause/play button is hidden");
+		assert.notOk(document.getElementById("st-tilesIndicator"), "The indicator is hidden");
 	});
 
 	QUnit.test("GenericTile view in SlideTile Actions scope", function(assert) {
@@ -328,7 +328,7 @@ sap.ui.define([
 			//Arrange
 			var spy = sinon.spy(this.oSlideTile.getTiles()[0], "onkeydown"),
 				oEvent = jQuery.Event("keydown");
-			oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
+			oEvent.keyCode = KeyCodes.ENTER;
 			//Act
 			this.oSlideTile.$().trigger(oEvent);
 			//Assert
@@ -340,7 +340,7 @@ sap.ui.define([
 			var oEvent = jQuery.Event("keyup");
 			this.oSlideTile.getTiles()[0].attachEvent("press", this.fnPressHandler);
 			this.oSlideTile.getTiles()[1].attachEvent("press", this.fnSecondPressHandler);
-			oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
+			oEvent.keyCode = KeyCodes.ENTER;
 			//Act
 			this.oSlideTile.$().trigger(oEvent);
 			//Assert
@@ -352,7 +352,7 @@ sap.ui.define([
 			//Arrange
 			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
 				oEvent = jQuery.Event("keyup");
-			oEvent.which = jQuery.sap.KeyCodes.B;
+			oEvent.which = KeyCodes.B;
 			this.oSlideTile._bAnimationPause = true;
 			//Act
 			this.oSlideTile.$().trigger(oEvent);
@@ -364,7 +364,7 @@ sap.ui.define([
 			//Arrange
 			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
 				oEvent = jQuery.Event("keyup");
-			oEvent.which = jQuery.sap.KeyCodes.B;
+			oEvent.which = KeyCodes.B;
 			this.oSlideTile._bAnimationPause = false;
 			//Act
 			this.oSlideTile.$().trigger(oEvent);
@@ -378,7 +378,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
 				oEvent = jQuery.Event("keyup");
-			oEvent.which = jQuery.sap.KeyCodes.B;
+			oEvent.which = KeyCodes.B;
 			this.oSlideTile._bAnimationPause = true;
 			//Act
 			this.oSlideTile.$().trigger(oEvent);
@@ -390,7 +390,7 @@ sap.ui.define([
 			//Arrange
 			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
 				oEvent = jQuery.Event("keyup");
-			oEvent.which = jQuery.sap.KeyCodes.F;
+			oEvent.which = KeyCodes.F;
 			this.oSlideTile._bAnimationPause = true;
 			//Act
 			this.oSlideTile.$().trigger(oEvent);
@@ -402,7 +402,7 @@ sap.ui.define([
 			//Arrange
 			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
 				oEvent = jQuery.Event("keyup");
-			oEvent.which = jQuery.sap.KeyCodes.F;
+			oEvent.which = KeyCodes.F;
 			this.oSlideTile._bAnimationPause = false;
 			//Act
 			this.oSlideTile.$().trigger(oEvent);
@@ -416,7 +416,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
 				oEvent = jQuery.Event("keyup");
-			oEvent.which = jQuery.sap.KeyCodes.F;
+			oEvent.which = KeyCodes.F;
 			this.oSlideTile._bAnimationPause = true;
 			//Act
 			this.oSlideTile.$().trigger(oEvent);
@@ -698,7 +698,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Empty tile displaying", function(assert) {
-		assert.ok(jQuery.sap.byId("st-empty").length !== 0, "Empty tile is shown");
+		assert.ok(jQuery("#st-empty").length !== 0, "Empty tile is shown");
 	});
 
 	QUnit.module("Play/pause button", {
@@ -814,7 +814,7 @@ sap.ui.define([
 		this.oSlideTile.attachEvent("press", handlePress);
 		sap.ui.getCore().applyChanges();
 		var oEvent = jQuery.Event("keyup");
-		oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
+		oEvent.keyCode = KeyCodes.ENTER;
 		oEvent.target = {
 			id : "-dummy"
 		};
@@ -836,7 +836,7 @@ sap.ui.define([
 		this.oSlideTile.attachEvent("press", handlePress);
 		sap.ui.getCore().applyChanges();
 		var oEvent = jQuery.Event("keyup");
-		oEvent.keyCode = jQuery.sap.KeyCodes.SPACE;
+		oEvent.keyCode = KeyCodes.SPACE;
 		oEvent.target = {
 			id : "-dummy"
 		};
@@ -858,7 +858,7 @@ sap.ui.define([
 		this.oSlideTile.attachEvent("press", handlePress);
 		sap.ui.getCore().applyChanges();
 		var oEvent = jQuery.Event("keyup");
-		oEvent.keyCode = jQuery.sap.KeyCodes.DELETE;
+		oEvent.keyCode = KeyCodes.DELETE;
 		oEvent.target = {
 			id : "-dummy"
 		};
@@ -880,7 +880,7 @@ sap.ui.define([
 		this.oSlideTile.attachEvent("press", handlePress);
 		sap.ui.getCore().applyChanges();
 		var oEvent = jQuery.Event("keyup");
-		oEvent.keyCode = jQuery.sap.KeyCodes.BACKSPACE;
+		oEvent.keyCode = KeyCodes.BACKSPACE;
 		oEvent.target = {
 			id : "-dummy"
 		};

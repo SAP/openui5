@@ -1,5 +1,4 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -18,6 +17,7 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/PagingButton",
+	"sap/m/OverflowToolbarButton",
 	"sap/m/semantic/MultiSelectAction",
 	"sap/m/library",
 	"sap/m/Label",
@@ -40,11 +40,14 @@ sap.ui.define([
 	Title,
 	JSONModel,
 	PagingButton,
+	OverflowToolbarButton,
 	MultiSelectAction,
 	mobileLibrary,
 	Label,
 	InvisibleText
 ) {
+	"use strict";
+
 	// shortcut for sap.m.OverflowToolbarPriority
 	var OverflowToolbarPriority = mobileLibrary.OverflowToolbarPriority;
 
@@ -148,9 +151,9 @@ sap.ui.define([
 				},
 				oSemanticPage = createSemanticPageFactory(null, oConfig);
 
-		assert.ok(oSemanticPage.getAggregation("_page").getFooter() instanceof sap.m.Toolbar, "The footer is Toolbar");
+		assert.ok(oSemanticPage.getAggregation("_page").getFooter().isA("sap.m.Toolbar"), "The footer is Toolbar");
 
-		assert.strictEqual(oSemanticPage._getPage().getFooter().getContent()[0] instanceof sap.m.ToolbarSpacer, true, "inner footer first item is spacer");
+		assert.strictEqual(oSemanticPage._getPage().getFooter().getContent()[0].isA("sap.m.ToolbarSpacer"), true, "inner footer first item is spacer");
 
 		oSemanticPage.destroy();
 	});
@@ -163,7 +166,7 @@ sap.ui.define([
 				},
 				oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.detail, oConfig);
 
-		assert.ok(oSemanticPage.getAggregation("_page").getFooter() instanceof sap.m.Toolbar, "The footer is Toolbar");
+		assert.ok(oSemanticPage.getAggregation("_page").getFooter().isA("sap.m.Toolbar"), "The footer is Toolbar");
 
 		assert.strictEqual(oSemanticPage._getPage().getFooter().getContent()[1] instanceof Button, true, "inner footer last item is button (for shareMenu)");
 
@@ -178,7 +181,7 @@ sap.ui.define([
 				},
 				oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.fullscreen, oConfig);
 
-		assert.ok(oSemanticPage.getAggregation("_page").getFooter() instanceof sap.m.Toolbar, "The footer is Toolbar");
+		assert.ok(oSemanticPage.getAggregation("_page").getFooter().isA("sap.m.Toolbar"), "The footer is Toolbar");
 
 		assert.strictEqual(oSemanticPage._getPage().getFooter().getContent()[1] instanceof Button, true, "inner footer last item is button (for shareMenu)");
 
@@ -289,15 +292,15 @@ sap.ui.define([
 
 	QUnit.test("Subheader", function (assert) {
 		var oSemanticPage = createSemanticPageFactory(),
-				oBar = new Bar(),
-				oTitle = new Title();
+				oBar = new Bar();
+				// oTitle = new Title();
 
 		oSemanticPage.setSubHeader(oBar);
 		assert.strictEqual(oSemanticPage.getAggregation("_page").getSubHeader(), oBar, "Subheader is set to Bar");
 
 		//TODO: check how restrictions of type are imposed
 		//oSemanticPage.setSubHeader(oTitle);
-		//assert.ok(!(oSemanticPage.getAggregation("_page").getSubHeader() instanceof sap.m.Title), "Subheader content should not allow adding components that does not implement IBar interface");
+		//assert.ok(!(oSemanticPage.getAggregation("_page").getSubHeader() instanceof Title), "Subheader content should not allow adding components that does not implement IBar interface");
 
 		oSemanticPage.getAggregation("_page").setSubHeader(oBar);
 		assert.strictEqual(oSemanticPage.getSubHeader(), oBar, "Retrieved content is Bar");
@@ -1175,10 +1178,10 @@ sap.ui.define([
 			]
 		});
 
-		var oPage = new sap.m.semantic.DetailPage({
+		var oPage = new DetailPage({
 			positiveAction: {
 				path: "/data",
-				template: new sap.m.semantic.PositiveAction({
+				template: new PositiveAction({
 							tooltip: "{tooltip}",
 							text: "{text}"
 						}
@@ -1235,7 +1238,6 @@ sap.ui.define([
 		assert.strictEqual(_getActualButton(), oExpectedButton, "Semantic share button is correctly positioned last even if new content is added");
 
 		// Act
-		var content = oDetailPage._getPage().getFooter().getContent();
 		oDetailPage.setFavoriteAction(oFavorite);
 
 		// Assert
@@ -1259,7 +1261,6 @@ sap.ui.define([
 
 
 		var layout = oShareButton.getLayoutData(),
-				sPriority = layout.getPriority(),
 				sExpectedPriority = OverflowToolbarPriority.NeverOverflow;
 
 		assert.strictEqual(layout.getPriority(), sExpectedPriority, "The share button has correct priority: NeverOverflow");
@@ -1279,7 +1280,6 @@ sap.ui.define([
 
 	QUnit.test('Footer custom right section should hold correct content', function (assert) {
 		var oLabel = new Label({text: "CustomLblRight"}),
-				oSecondLabel = new Label({text: "CustomLbl2"}),
 				oButton = new Button({text: "CustomBtnRight"}),
 				oSemanticButton = new EditAction(),
 				oDetailPage = createSemanticPageFactory(_SemanticPageTypes.detail, {
@@ -1312,41 +1312,48 @@ sap.ui.define([
 
 	QUnit.module("SemanticControls positioning");
 
-	/*test("SemanticControls are positioned in the correct inner aggregation", function () {
+	/*
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
+	// shortcut for SemanticType
+	var SemanticType = mobileLibrary.semantic.SemanticType;
+
+	QUnit.test("SemanticControls are positioned in the correct inner aggregation", function () {
 		// Arrange
 		var oModel = new sap.ui.model.json.JSONModel({
-			data: [{ type: sap.m.semantic.SemanticType.Edit },
-				{ type: sap.m.semantic.SemanticType.Save },
-				{ type: sap.m.semantic.SemanticType.Cancel },
-				{ type: sap.m.semantic.SemanticType.Approve },
-				{ type: sap.m.semantic.SemanticType.Reject },
-				{ type: sap.m.semantic.SemanticType.Forward },
-				{ type: sap.m.semantic.SemanticType.Flag },
-				{ type: sap.m.semantic.SemanticType.Favorite },
-				{ type: sap.m.semantic.SemanticType.Add },
-				{ type: sap.m.semantic.SemanticType.SendEmail },
-				{ type: sap.m.semantic.SemanticType.DiscussInJam },
-				{ type: sap.m.semantic.SemanticType.ShareInJam },
-				{ type: sap.m.semantic.SemanticType.SendMessage },
-				{ type: sap.m.semantic.SemanticType.Print },
-				{ type: sap.m.semantic.SemanticType.MessagesIndicator }
+			data: [{ type: SemanticType.Edit },
+				{ type: SemanticType.Save },
+				{ type: SemanticType.Cancel },
+				{ type: SemanticType.Approve },
+				{ type: SemanticType.Reject },
+				{ type: SemanticType.Forward },
+				{ type: SemanticType.Flag },
+				{ type: SemanticType.Favorite },
+				{ type: SemanticType.Add },
+				{ type: SemanticType.SendEmail },
+				{ type: SemanticType.DiscussInJam },
+				{ type: SemanticType.ShareInJam },
+				{ type: SemanticType.SendMessage },
+				{ type: SemanticType.Print },
+				{ type: SemanticType.MessagesIndicator }
 			]
 		});
 
-		var oPage = new sap.m.semantic.DetailPage({
+		var oPage = new DetailPage({
 			semanticControls: {
 				path: "/data",
-				template: new sap.m.semantic.SemanticButton({
+				template: new SemanticButton({
 							type:  "{type}"
 						}
 				)
 			},
 			customFooterContent: [
-				new sap.m.OverflowToolbarButton({
+				new OverflowToolbarButton({
 					icon: "sap-icon://task",
 					text: "Custom1"
 				}),
-				new sap.m.Button({
+				new Button({
 					text: "Custom2"
 				})
 			]
@@ -1368,41 +1375,41 @@ sap.ui.define([
 	QUnit.test("SemanticControls are positioned in correct sequence order", function (assert) {
 		// Arrange
 		var oModel = new sap.ui.model.json.JSONModel({
-			data: [{ type: sap.m.semantic.SemanticType.Group },
-				{ type: sap.m.semantic.SemanticType.Save },
-				{ type: sap.m.semantic.SemanticType.Edit },
-				{ type: sap.m.semantic.SemanticType.SendMessage },
-				{ type: sap.m.semantic.SemanticType.Cancel },
-				{ type: sap.m.semantic.SemanticType.Reject },
-				{ type: sap.m.semantic.SemanticType.Forward },
-				{ type: sap.m.semantic.SemanticType.DiscussInJam },
-				{ type: sap.m.semantic.SemanticType.Approve },
-				{ type: sap.m.semantic.SemanticType.Filter },
-				{ type: sap.m.semantic.SemanticType.Sort },
-				{ type: sap.m.semantic.SemanticType.Flag },
-				{ type: sap.m.semantic.SemanticType.Favorite },
-				{ type: sap.m.semantic.SemanticType.Add },
-				{ type: sap.m.semantic.SemanticType.SendEmail },
-				{ type: sap.m.semantic.SemanticType.ShareInJam },
-				{ type: sap.m.semantic.SemanticType.Print },
-				{ type: sap.m.semantic.SemanticType.MessagesIndicator }
+			data: [{ type: SemanticType.Group },
+				{ type: SemanticType.Save },
+				{ type: SemanticType.Edit },
+				{ type: SemanticType.SendMessage },
+				{ type: SemanticType.Cancel },
+				{ type: SemanticType.Reject },
+				{ type: SemanticType.Forward },
+				{ type: SemanticType.DiscussInJam },
+				{ type: SemanticType.Approve },
+				{ type: SemanticType.Filter },
+				{ type: SemanticType.Sort },
+				{ type: SemanticType.Flag },
+				{ type: SemanticType.Favorite },
+				{ type: SemanticType.Add },
+				{ type: SemanticType.SendEmail },
+				{ type: SemanticType.ShareInJam },
+				{ type: SemanticType.Print },
+				{ type: SemanticType.MessagesIndicator }
 			]
 		});
 
-		var oPage = new sap.m.semantic.DetailPage({
+		var oPage = new DetailPage({
 			semanticControls: {
 				path: "/data",
-				template: new sap.m.semantic.SemanticButton({
+				template: new SemanticButton({
 							type:  "{type}"
 						}
 				)
 			},
 			customFooterContent: [
-				new sap.m.OverflowToolbarButton({
+				new OverflowToolbarButton({
 					icon: "sap-icon://task",
 					text: "Custom1"
 				}),
-				new sap.m.Button({
+				new Button({
 					text: "Custom2"
 				})
 			]
@@ -1415,35 +1422,35 @@ sap.ui.define([
 		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		//messages indicator
-		assert.strictEqual(oPage._getPage().getFooter().getContent()[0].getType(), sap.m.ButtonType.Emphasized, "MessagesIndicator button type is Accept");
+		assert.strictEqual(oPage._getPage().getFooter().getContent()[0].getType(), ButtonType.Emphasized, "MessagesIndicator button type is Accept");
 		assert.strictEqual(oPage._getPage().getFooter().getContent()[0].getIcon(), "sap-icon://alert", "MessagesIndicator button icon");
 
 		//spacer
-		assert.strictEqual(oPage._getPage().getFooter().getContent()[1] instanceof sap.m.ToolbarSpacer, true, "contains spacer");
+		assert.strictEqual(oPage._getPage().getFooter().getContent()[1].isA("sap.m.ToolbarSpacer"), true, "contains spacer");
 
 		//edit
 		assert.strictEqual(oPage._getPage().getFooter().getContent()[2].getText(), oBundle.getText("SEMANTIC_CONTROL_EDIT"), "Edit button type has correct text");
-		assert.strictEqual(oPage._getPage().getFooter().getContent()[2].getType(), sap.m.ButtonType.Emphasized, "Edit button type is Emphasized");
+		assert.strictEqual(oPage._getPage().getFooter().getContent()[2].getType(), ButtonType.Emphasized, "Edit button type is Emphasized");
 
 		//save
 		assert.strictEqual(oPage._getPage().getFooter().getContent()[3].getText(), oBundle.getText("SEMANTIC_CONTROL_SAVE"), "Save button type has correct text");
-		assert.strictEqual(oPage._getPage().getFooter().getContent()[3].getType(), sap.m.ButtonType.Emphasized, "Save button type is Emphasized");
+		assert.strictEqual(oPage._getPage().getFooter().getContent()[3].getType(), ButtonType.Emphasized, "Save button type is Emphasized");
 
 		//cancel
 		assert.strictEqual(oPage._getPage().getFooter().getContent()[4].getText(), oBundle.getText("SEMANTIC_CONTROL_CANCEL"), "Cancel button type has correct text");
-		assert.strictEqual(oPage._getPage().getFooter().getContent()[4].getType(), sap.m.ButtonType.Default, "Cancel button type is of Default type");
+		assert.strictEqual(oPage._getPage().getFooter().getContent()[4].getType(), ButtonType.Default, "Cancel button type is of Default type");
 
 		//approve
 		assert.strictEqual(oPage._getPage().getFooter().getContent()[5].getText(), oBundle.getText("SEMANTIC_CONTROL_APPROVE"), "Approve button type has correct text");
-		assert.strictEqual(oPage._getPage().getFooter().getContent()[5].getType(), sap.m.ButtonType.Accept, "Approve button type is of Accept type");
+		assert.strictEqual(oPage._getPage().getFooter().getContent()[5].getType(), ButtonType.Accept, "Approve button type is of Accept type");
 
 		//reject
 		assert.strictEqual(oPage._getPage().getFooter().getContent()[6].getText(), oBundle.getText("SEMANTIC_CONTROL_REJECT"), "Reject button type has correct text");
-		assert.strictEqual(oPage._getPage().getFooter().getContent()[6].getType(), sap.m.ButtonType.Reject, "Reject button type is of Reject type");
+		assert.strictEqual(oPage._getPage().getFooter().getContent()[6].getType(), ButtonType.Reject, "Reject button type is of Reject type");
 
 		//forward
 		assert.strictEqual(oPage._getPage().getFooter().getContent()[7].getText(), oBundle.getText("SEMANTIC_CONTROL_FORWARD"), "Forward button type has correct text");
-		assert.strictEqual(oPage._getPage().getFooter().getContent()[7].getType(), sap.m.ButtonType.Default, "Forward button type is of Default type");
+		assert.strictEqual(oPage._getPage().getFooter().getContent()[7].getType(), ButtonType.Default, "Forward button type is of Default type");
 
 		// Clean up
 		oPage.destroy();

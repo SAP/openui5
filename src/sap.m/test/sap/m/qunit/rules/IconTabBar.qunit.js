@@ -1,174 +1,185 @@
 /*global QUnit */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/m/IconTabBar",
+	"sap/m/IconTabFilter",
+	"sap/m/IconTabSeparator",
+	"sap/m/Label",
+	"sap/m/Page",
+	"sap/m/Text",
+	"sap/m/library",
+	"sap/ui/core/library",
 	"test-resources/sap/ui/support/TestHelper"
-], function (jQuery, testRule) {
+], function (IconTabBar, IconTabFilter, IconTabSeparator, Label, Page, Text, mobileLibrary, coreLibrary,testRule) {
 	"use strict";
+
+	var IconColor = coreLibrary.IconColor;
+	var IconTabFilterDesign = mobileLibrary.IconTabFilterDesign;
+	var IconTabHeaderMode = mobileLibrary.IconTabHeaderMode;
 
 	QUnit.module("IconTabBar rule tests", {
 		setup: function () {
-			this.page = new sap.m.Page("myPage", {
+			this.page = new Page("myPage", {
 				title : "IconTabBar Support Rules Test",
 				content: [
-					new sap.m.IconTabBar("itb-filter", {
+					new IconTabBar("itb-filter", {
 						expanded: true,
 						expandable: true,
 						selectedKey: "key3",
 						items: [
-							new sap.m.IconTabFilter({
+							new IconTabFilter({
 								showAll: true,
-								design: sap.m.IconTabFilterDesign.Horizontal,
+								design: IconTabFilterDesign.Horizontal,
 								count: "30",
 								text: "products"
 							}),
-							new sap.m.IconTabSeparator(),
-							new sap.m.IconTabFilter({
+							new IconTabSeparator(),
+							new IconTabFilter({
 								//icon: "sap-icon://hint",
-								iconColor: sap.ui.core.IconColor.Neutral,
+								iconColor: IconColor.Neutral,
 								count: "10",
-								design: sap.m.IconTabFilterDesign.Horizontal,
+								design: IconTabFilterDesign.Horizontal,
 								key: "key1",
 								text: "Neutral with long long long text"
 
 							}),
-							new sap.m.IconTabFilter({
+							new IconTabFilter({
 								icon: "sap-icon://activity-items",
-								iconColor: sap.ui.core.IconColor.Critical,
+								iconColor: IconColor.Critical,
 								count: "10",
-								design: sap.m.IconTabFilterDesign.Horizontal,
+								design: IconTabFilterDesign.Horizontal,
 								key: "key2",
 								text: "Critical lorem long text"
 							}),
-							new sap.m.IconTabFilter({
+							new IconTabFilter({
 								//icon: "sap-icon://attachment",
 								count: "5",
-								design: sap.m.IconTabFilterDesign.Horizontal,
-								iconColor: sap.ui.core.IconColor.Negative,
+								design: IconTabFilterDesign.Horizontal,
+								iconColor: IconColor.Negative,
 								text: "Short text",
 								key: "key3"
 							})
 						],
 						content: [
-							new sap.m.Label({
+							new Label({
 								text: "info info info"
 							})
 						]
 					}),
-					new sap.m.IconTabBar("itb-mixed", {
+					new IconTabBar("itb-mixed", {
 						applyContentPadding: false,
-						headerMode: sap.m.IconTabHeaderMode.Inline,
+						headerMode: IconTabHeaderMode.Inline,
 						items: [
-							new sap.m.IconTabFilter({
+							new IconTabFilter({
 								icon: "sap-icon://attachment", //not correct
-								iconColor: sap.ui.core.IconColor.Default,
+								iconColor: IconColor.Default,
 								text: "Lorem",
 								count: "3",
 								content: [
-									new sap.m.Text({
+									new Text({
 										text: "info info info"
 									})
 								]
 							}),
-							new sap.m.IconTabFilter({
-								iconColor: sap.ui.core.IconColor.Default,
+							new IconTabFilter({
+								iconColor: IconColor.Default,
 								text: "Ipsum",
 								count: "3",
 								content: [
-									new sap.m.Text({
+									new Text({
 										text: "info info info"
 									})
 								]
 							}),
-							new sap.m.IconTabFilter({
-								iconColor: sap.ui.core.IconColor.Default,
+							new IconTabFilter({
+								iconColor: IconColor.Default,
 								text: "Lorem Ipsum",
 								count: "233",
 								content: [
-									new sap.m.Text({
+									new Text({
 										text: "info info info"
 									})
 								]
 							}),
-							new sap.m.IconTabFilter({
-								iconColor: sap.ui.core.IconColor.Default,
+							new IconTabFilter({
+								iconColor: IconColor.Default,
 								text: "Lorem Ipsum",
 								count: "233",
 								content: [
-									new sap.m.Text({
+									new Text({
 										text: "info info info"
 									})
 								]
 							})
 						]
 					}),
-					new sap.m.IconTabBar("itb-icons", {
+					new IconTabBar("itb-icons", {
 						items: [
-							new sap.m.IconTabFilter({
+							new IconTabFilter({
 								icon: "sap-icon://attachment",
-								iconColor: sap.ui.core.IconColor.Neutral,
+								iconColor: IconColor.Neutral,
 								text: "Lorem",
 								count: "33333",
 								content: [
-									new sap.m.Text({
+									new Text({
 										text: "info info info"
 									})
 								]
 							}),
-							new sap.m.IconTabFilter({
+							new IconTabFilter({
 								icon: "sap-icon://attachment",
-								iconColor: sap.ui.core.IconColor.Contrast,
+								iconColor: IconColor.Contrast,
 								text: "Lorem",
 								count: "3333",
 								content: [
-									new sap.m.Text({
+									new Text({
 										text: "info info info"
 									})
 								]
 							}),
-							new sap.m.IconTabFilter({
+							new IconTabFilter({
 								icon: "sap-icon://attachment",
-								iconColor: sap.ui.core.IconColor.Positive,
+								iconColor: IconColor.Positive,
 								text: "Lorem",
 								count: "33333333333",
 								content: [
-									new sap.m.Text({
+									new Text({
 										text: "info info info"
 									})
 								]
 							})
 						]
 					}),
-					new sap.m.IconTabBar("itb-text", {
+					new IconTabBar("itb-text", {
 						applyContentPadding: false,
-						headerMode: sap.m.IconTabHeaderMode.Inline,
+						headerMode: IconTabHeaderMode.Inline,
 						items: [
-							new sap.m.IconTabFilter({
-								iconColor: sap.ui.core.IconColor.Default,
+							new IconTabFilter({
+								iconColor: IconColor.Default,
 								text: "Ipsum",
 								count: "3",
 								content: [
-									new sap.m.Text({
+									new Text({
 										text: "info info info"
 									})
 								]
 							}),
-							new sap.m.IconTabFilter({
-								iconColor: sap.ui.core.IconColor.Default,
+							new IconTabFilter({
+								iconColor: IconColor.Default,
 								text: "Lorem Ipsum",
 								count: "233",
 								content: [
-									new sap.m.Text({
+									new Text({
 										text: "info info info"
 									})
 								]
 							}),
-							new sap.m.IconTabFilter({
-								iconColor: sap.ui.core.IconColor.Default,
+							new IconTabFilter({
+								iconColor: IconColor.Default,
 								text: "Lorem Ipsum",
 								count: "233",
 								content: [
-									new sap.m.Text({
+									new Text({
 										text: "info info info"
 									})
 								]

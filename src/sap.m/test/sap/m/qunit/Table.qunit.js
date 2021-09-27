@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/m/Table",
 	"sap/m/Column",
 	"sap/m/Label",
+	"sap/m/Link",
 	"sap/m/Toolbar",
 	"sap/m/ToolbarSpacer",
 	"sap/m/Button",
@@ -24,7 +25,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/layout/VerticalLayout"
 ], function(Core, qutils, TablePersoDialog, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, ListBase, Table, Column,
-	 Label, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout) {
+	 Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout) {
 	"use strict";
 
 	var oTable;
@@ -89,40 +90,40 @@ sap.ui.define([
 		};
 		var aColumns = [
 			new Column({
-				header : new sap.m.Label({
+				header : new Label({
 					text : "LastName"
 				})
 			}),
 			new Column({
-				header : new sap.m.Label({
+				header : new Label({
 					text : "FirstName"
 				})
 			}),
 			new Column({
 				hAlign: "Center",
-				header : new sap.m.Label({
+				header : new Label({
 					text : "Available"
 				})
 			}),
 			new Column({
-				header : new sap.m.Link({
+				header : new Link({
 					text : "Website"
 				})
 			}),
 			new Column({
-				header : new sap.m.Label({
+				header : new Label({
 					text : "Rating"
 				})
 			}),
 			new Column({
-				header : new sap.m.Label({
+				header : new Label({
 					text : "Birthday"
 				}),
 				minScreenWidth: "800px"
 			}),
 			new Column({
 				hAlign: "End",
-				header : new sap.m.Label({
+				header : new Label({
 					text : "Salary"
 				})
 			})
@@ -1365,8 +1366,6 @@ sap.ui.define([
 		sut.getDomRef = fnGetDomRef;
 
 		oScrollContainer.destroy();
-		// reset stub
-		this.stub().reset();
 		this.clock.restore();
 	});
 
@@ -1432,8 +1431,6 @@ sap.ui.define([
 		assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -32]), "scrollToElement function called");
 
 		oScrollContainer.destroy();
-		// reset stub
-		this.stub().reset();
 		this.clock.restore();
 	});
 
@@ -1514,8 +1511,6 @@ sap.ui.define([
 		sut.getDomRef = fnGetDomRef;
 
 		oScrollContainer.destroy();
-		// reset stub
-		this.stub().reset();
 		this.clock.restore();
 	});
 
@@ -1635,8 +1630,6 @@ sap.ui.define([
 		sut.getDomRef = fnGetDomRef;
 
 		oScrollContainer.destroy();
-		// reset stub
-		this.stub().reset();
 		this.clock.restore();
 	});
 

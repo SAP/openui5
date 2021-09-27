@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/m/routing/Router",
 	"sap/m/routing/TargetHandler",
@@ -10,7 +9,9 @@ sap.ui.define([
 	"./commonIntegrationTests",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/core/mvc/Controller", // provides sap.ui.controller
+	"sap/ui/core/mvc/JSView" // provides sap.ui.jsview
 ], function(
 	Router,
 	TargetHandler,

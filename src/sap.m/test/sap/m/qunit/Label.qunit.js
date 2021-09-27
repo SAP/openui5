@@ -1,12 +1,10 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/m/Label",
 	"sap/m/Input",
-	"jquery.sap.global",
 	"sap/m/Link",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormRenderer",
@@ -26,7 +24,6 @@ sap.ui.define([
 	mobileLibrary,
 	Label,
 	Input,
-	jQuery,
 	Link,
 	Form,
 	FormRenderer,
@@ -41,6 +38,8 @@ sap.ui.define([
 	Select,
 	Item
 ) {
+	"use strict";
+
 	// shortcut for sap.ui.core.VerticalAlign
 	var VerticalAlign = coreLibrary.VerticalAlign;
 
@@ -62,7 +61,6 @@ sap.ui.define([
 
 	var sText = "Hello",
 		sWidth = "111px",
-		bVisible = true,
 		oTextAlignEnd = TextAlign.End,
 		oTextAlignCenter = TextAlign.Center,
 		oTextDirectionDefault = TextDirection.LTR,
@@ -108,7 +106,7 @@ sap.ui.define([
 	var l1, l2;
 
 	QUnit.module("Basic", {
-		beforeEach : function() {
+		beforeEach : function(assert) {
 			l1 = sap.ui.getCore().getControl("l1");
 			l2 = sap.ui.getCore().getControl("l2");
 
@@ -121,7 +119,7 @@ sap.ui.define([
 
 			assert.ok(l1, "l1 should not be null");
 			assert.ok(l2, "l2 should not be null");
-			assert.ok(!jQuery.sap.domById("l3"), "l3 should not be rendered");
+			assert.ok(!document.getElementById("l3"), "l3 should not be rendered");
 		},
 		afterEach : function() {
 			l1 = null;
@@ -163,8 +161,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should set vertical alignment", function(assert) {
-		var sVerticalAlign = l1.getVAlign();
-
 		assert.strictEqual(l1.getVAlign(), "Inherit", "should have vertical-align: inherit set as default");
 
 		l1.setVAlign(VerticalAlign.Top);

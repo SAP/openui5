@@ -1,6 +1,4 @@
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 
 
 sap.ui.define([
@@ -8,24 +6,32 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Label",
 	"sap/m/Image",
-	"jquery.sap.global",
+	"sap/m/Title",
 	"sap/m/BarRenderer",
+	"sap/m/library",
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/theming/Parameters",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Bar,
 	Button,
 	Label,
 	Image,
-	jQuery,
+	Title,
 	BarRenderer,
+	mobileLibrary,
 	Device,
 	ResizeHandler,
 	Parameters,
-	InvisibleText
+	InvisibleText,
+	jQuery
 ) {
+	"use strict";
+
+	var TitleAlignment = mobileLibrary.TitleAlignment;
+
 	QUnit.module("rendering");
 
 	function renderingTest (fnAssertions) {
@@ -66,8 +72,8 @@ sap.ui.define([
 
 		renderingTest.call(this, function() {
 
-			assert.ok(jQuery.sap.domById("myBar"), "Bar should be rendered");
-			assert.ok(jQuery.sap.domById("myBar1"), "Bar1 should be rendered");
+			assert.ok(document.getElementById("myBar"), "Bar should be rendered");
+			assert.ok(document.getElementById("myBar1"), "Bar1 should be rendered");
 
 		});
 
@@ -78,7 +84,7 @@ sap.ui.define([
 
 		renderingTest.call(this, function() {
 
-			assert.equal(jQuery.sap.byId("myBar1").position().top, (jQuery.sap.byId("myBar").position().top + jQuery.sap.byId("myBar").outerHeight()),
+			assert.equal(jQuery("#myBar1").position().top, (jQuery("#myBar").position().top + jQuery("#myBar").outerHeight()),
 					"Bar1 should be located below Bar");
 
 		});
@@ -89,12 +95,12 @@ sap.ui.define([
 
 		renderingTest.call(this, function() {
 
-			assert.ok(jQuery.sap.byId("CancelBtn").parent().hasClass("sapMBarLeft"), "header button should have class sapMBarLeft");
-			assert.ok(jQuery.sap.byId("myIcon").parent().hasClass("sapMBarLeft"), "header icon should have class sapMBarLeft");
-			assert.ok(jQuery.sap.byId("myLabel").parent().hasClass("sapMBarPH"), "label should have class sapMBarPH");
-			assert.ok(jQuery.sap.byId("myLabel1").parent().hasClass("sapMBarPH"), "label should have class sapMBarPH");
-			assert.ok(jQuery.sap.byId("EditBtn").parent().hasClass("sapMBarRight"), "header button should have class sapMBarRight");
-			assert.ok(jQuery.sap.byId("EditBtn1").parent().hasClass("sapMBarRight"), "header button should have class sapMBarRight");
+			assert.ok(jQuery("#CancelBtn").parent().hasClass("sapMBarLeft"), "header button should have class sapMBarLeft");
+			assert.ok(jQuery("#myIcon").parent().hasClass("sapMBarLeft"), "header icon should have class sapMBarLeft");
+			assert.ok(jQuery("#myLabel").parent().hasClass("sapMBarPH"), "label should have class sapMBarPH");
+			assert.ok(jQuery("#myLabel1").parent().hasClass("sapMBarPH"), "label should have class sapMBarPH");
+			assert.ok(jQuery("#EditBtn").parent().hasClass("sapMBarRight"), "header button should have class sapMBarRight");
+			assert.ok(jQuery("#EditBtn1").parent().hasClass("sapMBarRight"), "header button should have class sapMBarRight");
 
 		});
 
@@ -144,23 +150,23 @@ sap.ui.define([
 
 		renderingTest.call(this, function() {
 
-			assert.ok(jQuery.sap.byId("myBar").is("div"), "bar should be rendered as div");
-			assert.ok(jQuery.sap.byId("myBar1").is("div"), "bar1 should be rendered as div");
+			assert.ok(jQuery("#myBar").is("div"), "bar should be rendered as div");
+			assert.ok(jQuery("#myBar1").is("div"), "bar1 should be rendered as div");
 
 			var bar = sap.ui.getCore().byId("myBar");
 			bar.setHTMLTag('Header');
 			bar.rerender();
-			assert.ok(jQuery.sap.byId("myBar").is("header"), "bar should be rendered as header");
+			assert.ok(jQuery("#myBar").is("header"), "bar should be rendered as header");
 
 			var bar1 = sap.ui.getCore().byId("myBar1");
 			bar1.setHTMLTag('Footer');
 			bar1.rerender();
-			assert.ok(jQuery.sap.byId("myBar1").is("footer"), "bar1 should be rendered as footer");
+			assert.ok(jQuery("#myBar1").is("footer"), "bar1 should be rendered as footer");
 
 			var bar2 = sap.ui.getCore().byId("myBar2");
 			bar2.setHTMLTag('H1');
 			bar2.rerender();
-			assert.ok(jQuery.sap.byId("myBar2").is("H1"), "bar2 should be rendered as H1");
+			assert.ok(jQuery("#myBar2").is("H1"), "bar2 should be rendered as H1");
 			assert.equal(bar2.getHTMLTag(), "H1", "Even when sap.m.Bar has HTML tag set with value different than header and footer, " +
 				"the getHTMLTag should behave in one and the same way- should return the tag value itself");
 		});
@@ -172,14 +178,14 @@ sap.ui.define([
 		renderingTest.call(this, function() {
 
 			var bar2 = sap.ui.getCore().byId("myBar2");
-			assert.ok(jQuery.sap.byId("myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should be a FlexBox with class sapMFlexBox");
-			assert.ok(jQuery.sap.byId("myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should be a HBox with class sapMHBox");
+			assert.ok(jQuery("#myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should be a FlexBox with class sapMFlexBox");
+			assert.ok(jQuery("#myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should be a HBox with class sapMHBox");
 			bar2.setEnableFlexBox(false);
 
 			sap.ui.getCore().applyChanges();
 
-			assert.ok(!jQuery.sap.byId("myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should not be a FlexBox with class sapMFlexBox");
-			assert.ok(!jQuery.sap.byId("myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should not be a HBox with class sapMHBox");
+			assert.ok(!jQuery("#myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should not be a FlexBox with class sapMFlexBox");
+			assert.ok(!jQuery("#myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should not be a HBox with class sapMHBox");
 
 		});
 	});
@@ -191,7 +197,7 @@ sap.ui.define([
 			});
 
 		//Arrange
-		this.stub(Device.support, "touch", true);
+		this.stub(Device.support, "touch").value(true);
 
 		//Act
 		sut.placeAt("qunit-fixture");
@@ -324,7 +330,7 @@ sap.ui.define([
 		}
 
 		//Arrange
-		var oStub = sinon.stub(sut, "onAfterRendering", function() {
+		this.stub(sut, "onAfterRendering").callsFake(function() {
 		   //Assert
 		   check("just before onAfterRendering:");
 		   Bar.prototype.onAfterRendering.apply(sut, arguments);
@@ -336,7 +342,6 @@ sap.ui.define([
 		check("after onAfterRendering");
 
 		//Cleanup
-		oStub.restore();
 		sut.destroy();
 	});
 
@@ -354,7 +359,7 @@ sap.ui.define([
 		}
 
 		//Arrange
-		var oStub = sinon.stub(sut, "onAfterRendering", function() {
+		this.stub(sut, "onAfterRendering").callsFake(function() {
 			//Assert
 			check("just before onAfterRendering:");
 			Bar.prototype.onAfterRendering.apply(sut, arguments);
@@ -366,7 +371,6 @@ sap.ui.define([
 		check("after onAfterRendering");
 
 		//Cleanup
-		oStub.restore();
 		sut.destroy();
 	});
 
@@ -384,7 +388,7 @@ sap.ui.define([
 		}
 
 		//Arrange
-		var oStub = sinon.stub(sut, "onAfterRendering", function() {
+		this.stub(sut, "onAfterRendering").callsFake(function() {
 			//Assert
 			check("just before onAfterRendering:");
 			Bar.prototype.onAfterRendering.apply(sut, arguments);
@@ -396,7 +400,6 @@ sap.ui.define([
 		check("after onAfterRendering");
 
 		//Cleanup
-		oStub.restore();
 		sut.destroy();
 	});
 
@@ -502,7 +505,7 @@ sap.ui.define([
 			var config = sap.ui.getCore().getConfiguration();
 
 			//turn on rtl for this test
-			this.stub(config, "getRTL", function() {
+			this.stub(config, "getRTL").callsFake(function() {
 				return false;
 			});
 
@@ -513,7 +516,7 @@ sap.ui.define([
 			var config = sap.ui.getCore().getConfiguration();
 
 			//turn on rtl for this test
-			this.stub(config, "getRTL", function() {
+			this.stub(config, "getRTL").callsFake(function() {
 				return true;
 			});
 
@@ -968,7 +971,7 @@ sap.ui.define([
 	QUnit.test("setTitleAlignment test", function (assert) {
 
 		var oBar = new Bar({
-				contentMiddle: new sap.m.Title({
+				contentMiddle: new Title({
 					text: "Header"
 				})
 			}),
@@ -986,7 +989,7 @@ sap.ui.define([
 					"The default titleAlignment is '" + sInitialAlignment + "', so there is class '" + sAlignmentClass + sInitialAlignment + "' applied to the Bar");
 
 		// check if all types of alignment lead to apply the proper CSS class
-		for (sAlignment in sap.m.TitleAlignment) {
+		for (sAlignment in TitleAlignment) {
 			oBar.setTitleAlignment(sAlignment);
 			oCore.applyChanges();
 			assert.ok(oBar.hasStyleClass(sAlignmentClass + sAlignment),

@@ -1,28 +1,37 @@
 /*global QUnit */
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/qunit/utils/createAndAppendDiv',
 	'sap/m/library',
+	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/m/Page'
-], function(jQuery, createAndAppendDiv, mLib, ComponentContainer, Page) {
+], function(createAndAppendDiv, mLib, Component, ComponentContainer, Page) {
 	"use strict";
 
 	// prepare DOM
 	createAndAppendDiv("area").style.height = "500px";
 
 
-	var oCompCont = new ComponentContainer("CompCont", {
-		name: "samples.scrollcomp"
+	var oCompCont, oPage;
+
+	QUnit.module("", {
+		before: function() {
+			return Component.create({
+				name: "samples.scrollcomp"
+			}).then(function(oComponent) {
+				oCompCont = new ComponentContainer("CompCont", {
+					component: oComponent
+				});
+
+				oPage = new Page({
+					content: oCompCont
+				});
+				oPage.placeAt("area");
+
+				sap.ui.getCore().applyChanges();
+			});
+		}
 	});
-
-	var oPage = new Page({
-		content: oCompCont
-	});
-
-	oPage.placeAt("area");
-
-	sap.ui.getCore().applyChanges();
 
 	QUnit.test("Component Available", function(assert){
 		var oComponent = oCompCont.getComponentInstance();

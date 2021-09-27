@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -16,12 +15,12 @@ sap.ui.define([
 	"sap/m/ViewSettingsFilterItem",
 	"sap/m/ViewSettingsCustomItem",
 	"sap/m/ViewSettingsDialog",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/Input",
 	"sap/ui/base/ManagedObject",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/waitForThemeApplied",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -42,8 +41,11 @@ sap.ui.define([
 	Input,
 	ManagedObject,
 	Log,
+	KeyCodes,
 	waitForThemeApplied
 ) {
+	"use strict";
+
 	// shortcut for sap.m.ListMode
 	var ListMode = mobileLibrary.ListMode;
 
@@ -53,11 +55,11 @@ sap.ui.define([
 	// shortcut for sap.m.LabelDesign
 	var LabelDesign = mobileLibrary.LabelDesign;
 
+	// shortcut for sap.m.TitleAlignment
+	var TitleAlignment = mobileLibrary.TitleAlignment;
+
 	createAndAppendDiv("content");
 
-
-
-	var Log = sap.ui.require("sap/base/Log");
 
 
 	/* definition of a custom control */
@@ -482,7 +484,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initialization", function (assert) {
-		assert.ok(!jQuery.sap.domById(this.oVSD.getId()), "Dialog is not rendered before it's ever opened.");
+		assert.ok(!document.getElementById(this.oVSD.getId()), "Dialog is not rendered before it's ever opened.");
 		assert.strictEqual(this.oVSD.getTitle(), "", 'The default title is empty and will be filled by "' + this.oResourceBundle.getText("VIEWSETTINGS_TITLE") + '" later');
 		assert.strictEqual(this.oVSD.getSortDescending(), false, 'The default value for sortDescending should be "false"');
 		assert.strictEqual(this.oVSD.getGroupDescending(), false, 'The default value for groupDescending should be "false"');
@@ -590,8 +592,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("setSelectedSortItem via string key throws error if the key is wrong, but does not prevent dialog open", function (assert) {
-		assert.ok(Log, "Log module should be available");
-		var oErrorLogSpy = sinon.spy(Log, "error"),
+		var oErrorLogSpy = this.spy(Log, "error"),
 			sErrorMessage,
 			sNonExistentItemKey = "non_existent_key";
 
@@ -606,22 +607,15 @@ sap.ui.define([
 		this.oVSD.open();
 		//assert
 		assert.ok(this.oVSD._getDialog().isOpen(), "Dialog is still functional");
-
-		//clean
-		Log.error.restore();
 	});
 
 	QUnit.test("setSelectedSortItem does not throw error if the item is null or undefined", function (assert) {
-		assert.ok(Log, "Log module should be available");
-		var oErrorLogSpy = sinon.spy(Log, "error");
+		var oErrorLogSpy = this.spy(Log, "error");
 
 		//act
 		this.oVSD.setSelectedSortItem(undefined);
 		//assert
 		assert.strictEqual(oErrorLogSpy.callCount, 0, "setSelectedSortItem does not throw an error.");
-
-		//clean
-		Log.error.restore();
 	});
 
 	QUnit.test("setFilter count doe not throw an error when filter item type is sap.m.ViewSettingsCustomItem", function (assert) {
@@ -692,7 +686,7 @@ sap.ui.define([
 
 	QUnit.test("The control is not invalidated on setting sort, group or filter Items", function (assert) {
 
-		sinon.spy(this.oVSD, "invalidate");
+		this.spy(this.oVSD, "invalidate");
 
 		this.oVSD.setSelectedSortItem(this.oSelectedSortItem);
 
@@ -706,8 +700,6 @@ sap.ui.define([
 
 		this.oVSD.setSelectedFilterKeys(this.oFilterState);
 		assert.ok(!this.oVSD.invalidate.called, "The control is not invalidated on setting Filter keys");
-
-		this.oVSD.invalidate.restore();
 	});
 
 	QUnit.module("Open and Close", {
@@ -731,17 +723,17 @@ sap.ui.define([
 		var sId = this.oVSD.getId();
 		this.oVSD.open();
 
-		assert.ok(jQuery.sap.domById(sId + "-dialog"), "Dialog should be rendered");
-		assert.ok(jQuery.sap.domById(sId + "-navcontainer"), "Nav container should be rendered");
-		assert.ok(jQuery.sap.domById(sId + "-page1-cont"), "Page 1 (sort/group/filter content) should be rendered");
-		assert.ok(!jQuery.sap.domById(sId + "-page2-cont"), "Page 2 (filter detail content) should not be rendered");
-		assert.ok(jQuery.sap.byId(sId + "-sortbutton").hasClass("sapMSegBBtnSel"), "Segmented 'sort' button should be selected");
+		assert.ok(document.getElementById(sId + "-dialog"), "Dialog should be rendered");
+		assert.ok(document.getElementById(sId + "-navcontainer"), "Nav container should be rendered");
+		assert.ok(document.getElementById(sId + "-page1-cont"), "Page 1 (sort/group/filter content) should be rendered");
+		assert.ok(!document.getElementById(sId + "-page2-cont"), "Page 2 (filter detail content) should not be rendered");
+		assert.ok(jQuery("#" + sId + "-sortbutton").hasClass("sapMSegBBtnSel"), "Segmented 'sort' button should be selected");
 	});
 
 	QUnit.test("Open predefined tab", function(assert){
 		this.oVSD.open("filter");
 
-		assert.ok(jQuery.sap.byId(this.oVSD.getId() + "-filterbutton").hasClass("sapMSegBBtnSel"), "Segmented 'filter' button should be selected");
+		assert.ok(jQuery("#" + this.oVSD.getId() + "-filterbutton").hasClass("sapMSegBBtnSel"), "Segmented 'filter' button should be selected");
 	});
 
 	QUnit.test("Close ViewSettingsDialog", function (assert) {
@@ -881,16 +873,13 @@ sap.ui.define([
 					oViewSettingsItem
 				]
 			}),
-			oAddAssociationSpy = sinon.spy(oViewSettingsDialog, "setAssociation");
+			oAddAssociationSpy = this.spy(oViewSettingsDialog, "setAssociation");
 
 		// act
 		oViewSettingsItem.setSelected(true);
 
 		// assert
 		assert.ok(oAddAssociationSpy.calledWith("selectedGroupItem", oViewSettingsItem, true), "Selected item is referenced");
-
-		// clean
-		oAddAssociationSpy.restore();
 	});
 
 
@@ -967,7 +956,7 @@ sap.ui.define([
 		this.oVSD.setSelectedGroupItem();
 		this.oVSD.setGroupDescending(false);
 		this.oVSD.setSelectedFilterKeys([]);
-		sap.ui.test.qunit.triggerKeydown(this.oVSD._getDialog().getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(this.oVSD._getDialog().getDomRef(), KeyCodes.ESCAPE);
 	});
 
 
@@ -977,10 +966,9 @@ sap.ui.define([
 		this.oVSD._switchToPage(0);
 		this.oVSD._switchToPage(1);
 		this.oVSD._switchToPage(2);
-		jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
 		this.oVSD._switchToPage(3,this.oVSD.getFilterItems()[0]); // name details page
 
-		sap.ui.test.qunit.triggerKeyboardEvent(this.oVSD._getDialog().getDomRef(), jQuery.sap.KeyCodes.ENTER, true, false, false);
+		qutils.triggerKeyboardEvent(this.oVSD._getDialog().getDomRef(), KeyCodes.ENTER, true, false, false);
 		assert.equal(this.oVSD._vContentPage, 2, "Internal page state should be on the second page");
 		assert.equal(this.oVSD._navContainer.getCurrentPage(), this.oVSD._getPage1(), "NavContainer should be on the first page");
 	});
@@ -1039,11 +1027,13 @@ sap.ui.define([
 
 		assert.strictEqual(typeof this.oVSD.fireFilterDetailPageOpened, 'function', 'fireFilterDetailPageOpened exists');
 
-		var fnFireItemPressSpy = sinon.spy(this.oVSD, "fireFilterDetailPageOpened");
+		var fnFireItemPressSpy = this.spy(this.oVSD, "fireFilterDetailPageOpened");
 
 		this.oVSD.open();
 
-		jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+		setTimeout(function() {
+			this.oVSD._navContainer.to(this.oVSD.getId() + '-page2', "show");
+		}.bind(this), 0);
 		this.oVSD._switchToPage(3, oFilterItem); // name details page
 
 
@@ -1056,10 +1046,10 @@ sap.ui.define([
 	QUnit.test("Grouping items selection", function (assert) {
 		var sSelectedGroupItem,
 			clock = sinon.useFakeTimers(),
-			fnOnConfirmObject = sinon.spy(function (oEvent) {
+			fnOnConfirmObject = this.spy(function (oEvent) {
 				assert.ok(typeof oEvent.getParameter("groupItem") == "object", "Group Item is an object");
 			}),
-			fnOnConfirmUndefined = sinon.spy(function (oEvent) {
+			fnOnConfirmUndefined = this.spy(function (oEvent) {
 				assert.ok(typeof oEvent.getParameter("groupItem") == "undefined", "'None' Item is undefined");
 			});
 
@@ -1152,11 +1142,13 @@ sap.ui.define([
 		this.oVSD._switchToPage(0);
 		this.oVSD._switchToPage(1);
 		this.oVSD._switchToPage(2);
-		jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+		setTimeout(function() {
+			that.oVSD._navContainer.to(that.oVSD.getId() + '-page2', "show");
+		}, 0);
 		this.oVSD._switchToPage(3,this.oVSD.getFilterItems()[0]); // name details page
 
 		setTimeout(function () {
-			// store poiners to internal controls
+			// store pointers to internal controls
 			var sortList = that.oVSD._sortList,
 				ariaSortListInvisibleText = that.oVSD._ariaSortListInvisibleText,
 				sortOrderList = that.oVSD._sortOrderList,
@@ -1360,12 +1352,12 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
 
 		// Aria sort list and sort order list labels and ariaLabelledBy
-		assert.ok(jQuery.sap.domById(this.oVSD.getId() + "-sortOrderLabel"), "Sort order list aria label should be rendered");
-		assert.ok(jQuery.sap.domById(this.oVSD.getId() + "-sortListLabel"), "Sort list aria label should be rendered");
+		assert.ok(document.getElementById(this.oVSD.getId() + "-sortOrderLabel"), "Sort order list aria label should be rendered");
+		assert.ok(document.getElementById(this.oVSD.getId() + "-sortListLabel"), "Sort list aria label should be rendered");
 		assert.strictEqual(this.oVSD._sortOrderList.getAriaLabelledBy().length, 1, "Sort order list should have aria ariaLabelledBy set");
 		assert.strictEqual(this.oVSD._sortList.getAriaLabelledBy().length, 1, "Sort list should have aria ariaLabelledBy set");
 
-		assert.ok(jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should be rendered");
+		assert.ok(document.getElementById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should be rendered");
 });
 
 	QUnit.module("Group tab only checks", {
@@ -1414,12 +1406,12 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
 
 		// Aria sort list and sort order list labels and ariaLabelledBy
-		assert.ok(jQuery.sap.domById(this.oVSD.getId() + "-groupOrderLabel"), "Group order list aria label should be rendered");
-		assert.ok(jQuery.sap.domById(this.oVSD.getId() + "-groupListLabel"), "Group list aria label should be rendered");
+		assert.ok(document.getElementById(this.oVSD.getId() + "-groupOrderLabel"), "Group order list aria label should be rendered");
+		assert.ok(document.getElementById(this.oVSD.getId() + "-groupListLabel"), "Group list aria label should be rendered");
 		assert.strictEqual(this.oVSD._groupOrderList.getAriaLabelledBy().length, 1, "Group order list should have aria ariaLabelledBy set");
 		assert.strictEqual(this.oVSD._groupList.getAriaLabelledBy().length, 1, "Group list should have aria ariaLabelledBy set");
 
-		assert.ok(jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should be rendered");
+		assert.ok(document.getElementById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should be rendered");
 	});
 
 	QUnit.module("Preset Filter only checks", {
@@ -1462,7 +1454,7 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD._filterContent.length, 2, "Filter content is initalized and has two items");
 		assert.strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
 		assert.strictEqual(this.oVSD.getSelectedFilterItems().length, 0, "There are no selected filter items");
-		assert.ok(jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should be rendered");
+		assert.ok(document.getElementById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should be rendered");
 	});
 
 	QUnit.module("Filter details rendering", {
@@ -1499,13 +1491,15 @@ sap.ui.define([
 
 		this.oVSD.open();
 
-		jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+		setTimeout(function() {
+			that.oVSD._navContainer.to(that.oVSD.getId() + '-page2', "show");
+		}, 0);
 		this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
 
 		setTimeout(function() {
-			assert.ok(jQuery.sap.domById(that.oVSD.getId() + "-page2"), "Page 2 is rendered");
-			assert.ok(jQuery.sap.domById(that.oVSD.getId() + "-detailresetbutton"), "Filter detail reset button should be rendered");
-			assert.ok(jQuery.sap.domById(that.oVSD.getId() + "-backbutton"), "Back button should be rendered");
+			assert.ok(document.getElementById(that.oVSD.getId() + "-page2"), "Page 2 is rendered");
+			assert.ok(document.getElementById(that.oVSD.getId() + "-detailresetbutton"), "Filter detail reset button should be rendered");
+			assert.ok(document.getElementById(that.oVSD.getId() + "-backbutton"), "Back button should be rendered");
 			done();
 		}, 10);
 
@@ -1562,7 +1556,9 @@ sap.ui.define([
 
 		this.oVSD.open();
 
-		jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+		setTimeout(function() {
+			that.oVSD._navContainer.to(that.oVSD.getId() + '-page2', "show");
+		}, 0);
 		this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[1]); // name details page
 
 		setTimeout(function() {
@@ -1590,7 +1586,6 @@ sap.ui.define([
 		this.oVSD.setSelectedFilterKeys(this.oFilterState);
 
 		this.oVSD.open();
-		jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
 		this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
 
 		oShowOnlySelected = this.oVSD._showOnlySelectedButton;
@@ -1678,7 +1673,9 @@ sap.ui.define([
 
 		this.oVSD.open();
 
-		jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+		setTimeout(function() {
+			this.oVSD._navContainer.to(this.oVSD.getId() + '-page2', "show");
+		}.bind(this), 0);
 		this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
 
 		setTimeout(function() {
@@ -1732,7 +1729,9 @@ sap.ui.define([
 
 		this.oVSD.open();
 
-		jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+		setTimeout(function() {
+			that.oVSD._navContainer.to(that.oVSD.getId() + '-page2', "show");
+		}, 0);
 		this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
 
 		setTimeout(function() {
@@ -1823,12 +1822,13 @@ sap.ui.define([
 
 		this.oVSD.open();
 
-		jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+		setTimeout(function() {
+			that.oVSD._navContainer.to(that.oVSD.getId() + '-page2', "show");
+		}, 0);
 		this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[5]); // name2 details page
 
 		setTimeout(function() {
-			var oSearchField = that.oVSD._filterSearchField,
-				aFilteredItems;
+			var oSearchField = that.oVSD._filterSearchField;
 
 			//Assert
 			assert.ok(oSearchField, "There is a search field when multiSelect is set to false");
@@ -1874,7 +1874,9 @@ sap.ui.define([
 
 		this.oVSD.open();
 
-		jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+		setTimeout(function() {
+			this.oVSD._navContainer.to(this.oVSD.getId() + '-page2', "show");
+		}.bind(this), 0);
 		this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
 
 		setTimeout(function() {
@@ -1902,7 +1904,9 @@ sap.ui.define([
 
 		this.oVSD.open();
 
-		jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+		setTimeout(function() {
+			that.oVSD._navContainer.to(that.oVSD.getId() + '-page2', "show");
+		}, 0);
 		this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
 
 		setTimeout(function() {
@@ -1929,7 +1933,9 @@ sap.ui.define([
 
 		this.oVSD.open();
 
-		jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+		setTimeout(function() {
+			that.oVSD._navContainer.to(that.oVSD.getId() + '-page2', "show");
+		}, 0);
 		this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
 
 		setTimeout(function() {
@@ -1969,7 +1975,9 @@ sap.ui.define([
 
 		this.oVSD.open();
 
-		jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+		setTimeout(function() {
+			that.oVSD._navContainer.to(that.oVSD.getId() + '-page2', "show");
+		}, 0);
 		this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
 
 		setTimeout(function() {
@@ -2018,7 +2026,7 @@ sap.ui.define([
 
 	QUnit.test("Select All checkbox is disabled when there are no detail items", function (assert) {
 		// prepare
-		var oFilterItem = new  sap.m.ViewSettingsFilterItem({
+		var oFilterItem = new  ViewSettingsFilterItem({
 				text: "oFixedFilter",
 				key: "oFixedFilter",
 				multiSelect: true
@@ -2114,7 +2122,7 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD._filterContent.length, 2, "Filter content is initialized and has two items");
 		assert.strictEqual(this.oVSD._page1.getSubHeader(), null, "Sub-header with segmented button is not set on first page");
 		assert.ok(compareFilterKeys(this.oFilterState, this.oVSD.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
-		assert.ok(jQuery.sap.domById(sId + "-resetbutton"), "Filter reset button should be rendered");
+		assert.ok(document.getElementById(sId + "-resetbutton"), "Filter reset button should be rendered");
 		assert.strictEqual(this.oVSD._filterList.getItems()[1].getCounter(), 4, "Filter counter for name is 4"); //since the header is the 0 element, get the actual first item
 
 		this.oVSD._switchToPage(3,this.oVSD.getFilterItems()[2]); // value details page
@@ -2283,8 +2291,8 @@ sap.ui.define([
 			var listOfOtherItems = that.oVSD._getPage1().getContent()[3];
 			var oListItemOther = listOfOtherItems.getItems()[1];
 			var vsdSortItem = that.oVSD.getSortItems()[1];
-			var spySortItem = sinon.spy(vsdSortItem, "setProperty");
-			var spyVsd = sinon.spy(that.oVSD, "setProperty");
+			var spySortItem = that.spy(vsdSortItem, "setProperty");
+			var spyVsd = that.spy(that.oVSD, "setProperty");
 
 			oListItemDescending._oSingleSelectControl.fireSelect({selected : true});
 			oListItemOther._oSingleSelectControl.fireSelect({selected : true});
@@ -2302,7 +2310,7 @@ sap.ui.define([
 				var listOfGroupDirectionItems	= that.oVSD._getPage1().getContent()[3];
 				var vsdGroupDirectionDesc 		= listOfGroupDirectionItems.getItems()[2];
 				var vsdGroupItem 				= that.oVSD.getGroupItems()[1];
-				var spyGroupItem 				= sinon.spy(vsdGroupItem, "setProperty");
+				var spyGroupItem 				= that.spy(vsdGroupItem, "setProperty");
 
 				listOfGroupItems._oSingleSelectControl.fireSelect({selected : true});
 				vsdGroupDirectionDesc._oSingleSelectControl.fireSelect({selected : true});
@@ -2437,7 +2445,9 @@ sap.ui.define([
 		setTimeout(function () {
 			var vsdFilterItem = that.oVSD.getFilterItems()[0];
 			that.oVSD._switchToPage(3, vsdFilterItem);
-			jQuery.sap.delayedCall(0, that.oVSD._getNavContainer(), "to", [ that.oVSD.getId() + '-page2', "slide" ]);
+			setTimeout(function() {
+				that.oVSD._getNavContainer().to(that.oVSD.getId() + '-page2', "slide");
+			}, 0);
 			setTimeout(function () {
 				that.oVSD._dialog.getBeginButton().firePress();
 				that.oVSD.removeFilterItem(vsdFilterItem);
@@ -2477,7 +2487,9 @@ sap.ui.define([
 		setTimeout(function () {
 			var vsdFilterItem = that.oVSD.getFilterItems()[0];
 			that.oVSD._switchToPage(3, vsdFilterItem);
-			jQuery.sap.delayedCall(0, that.oVSD._getNavContainer(), "to", [ that.oVSD.getId() + '-page2', "slide" ]);
+			setTimeout(function() {
+				that.oVSD._getNavContainer().to(that.oVSD.getId() + '-page2', "slide");
+			}, 0);
 			setTimeout(function () {
 				that.oVSD._dialog.getBeginButton().firePress();
 				that.oVSD.removeAllFilterItems();
@@ -2512,7 +2524,9 @@ sap.ui.define([
 		setTimeout(function () {
 			var vsdFilterItem = that.oVSD.getFilterItems()[0];
 			that.oVSD._switchToPage(3, vsdFilterItem);
-			jQuery.sap.delayedCall(0, that.oVSD._getNavContainer(), "to", [ that.oVSD.getId() + '-page2', "slide" ]);
+			setTimeout(function() {
+				that.oVSD._getNavContainer().to(that.oVSD.getId() + '-page2', "slide");
+			}, 0);
 			setTimeout(function () {
 				that.oVSD._dialog.getBeginButton().firePress();
 				that.oVSD.setModel(model2);
@@ -2548,7 +2562,9 @@ sap.ui.define([
 		setTimeout(function () {
 			var vsdFilterItem = that.oVSD.getFilterItems()[0];
 			that.oVSD._switchToPage(3, vsdFilterItem);
-			jQuery.sap.delayedCall(0, that.oVSD._getNavContainer(), "to", [ that.oVSD.getId() + '-page2', "slide" ]);
+			setTimeout(function() {
+				that.oVSD._getNavContainer().to(that.oVSD.getId() + '-page2', "slide");
+			}, 0);
 			setTimeout(function () {
 				that.oVSD._dialog.getBeginButton().firePress();
 				that.oVSD.setModel(model2);
@@ -2821,7 +2837,6 @@ sap.ui.define([
 
 		this.oVSD.open();
 		this.oVSD._switchToPage(2);
-		jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
 		this.oVSD._switchToPage(3,this.oVSD.getFilterItems()[0]);
 
 		assert.strictEqual(this.oVSD._getSubHeader().getContentRight().length, 0, "Reset Button should be removed from page1 on going to filter details view");
@@ -2995,7 +3010,6 @@ sap.ui.define([
 
 		var aItems = this.oVSD._sortList.getItems();
 		var oItem = aItems[1]; //since the header is the 0 element, get the actual first item
-		var sFirstItemId = oItem.getId();
 		var sTitleSelector = "#" + this.oVSD._getDialog().getId() + " .sapMSLITitleOnly";
 
 		setTimeout(function () {
@@ -3045,7 +3059,6 @@ sap.ui.define([
 
 		var aItems = this.oVSD._filterList.getItems();
 		var oItem = aItems[1]; //since the header is the 0 element, get the actual first item
-		var sFirstItemId = oItem.getId();
 		var sTitleSelector = "#" + this.oVSD._getDialog().getId() + " .sapMSLITitleOnly";
 
 		setTimeout(function () {
@@ -3097,12 +3110,13 @@ sap.ui.define([
 
 		this.oVSD._getPage2().getCustomHeader().getContentMiddle();
 
-		jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+		setTimeout(function() {
+			this.oVSD._navContainer.to(this.oVSD.getId() + '-page2', "show");
+		}.bind(this), 0);
 		this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]);
 
 		var aItems = this.oVSD._filterDetailList.getItems();
 		var oItem = aItems[0];
-		var sFirstItemId = oItem.getId();
 		var sTitleSelector = "#" + this.oVSD._getDialog().getId() + " .sapMSLITitleOnly";
 
 
@@ -3185,7 +3199,6 @@ sap.ui.define([
 
 		var aItems = this.oVSD._groupList.getItems();
 		var oItem = aItems[1]; //since the header is the 0 element, get the actual first item
-		var sFirstItemId = oItem.getId();
 		var sTitleSelector = "#" + this.oVSD._getDialog().getId() + " .sapMSLITitleOnly";
 
 		setTimeout(function () {
@@ -3335,14 +3348,14 @@ sap.ui.define([
 
 	QUnit.test("Item selection does not trigger re-rendering", function (assert) {
 		//arrange
-		var oSetPropertySpy = sinon.spy(ManagedObject.prototype, "setProperty"),
+		var oSetPropertySpy = this.spy(ManagedObject.prototype, "setProperty"),
 			oItem = new ViewSettingsItem({
 				key: "test",
 				text: "2",
 				selected: false
 			});
 
-		oSetPropertySpy.reset();
+		oSetPropertySpy.resetHistory();
 
 		//act
 		oItem.setSelected(true);
@@ -3735,12 +3748,12 @@ sap.ui.define([
 			jQuery("#" + sItemId).trigger("focus");
 		},
 		checkItemFocus: function (sItemId) {
-			assert.strictEqual(document.activeElement.id, sItemId, "The proper item is focused");
+			QUnit.assert.strictEqual(document.activeElement.id, sItemId, "The proper item is focused");
 		}
 	});
 
 	QUnit.test("Focus on sortItems is being preserved on re-rendering", function (assert) {
-		var aSortItems, sItemToSelect, oListItem,
+		var aSortItems, oListItem,
 				done = assert.async();
 
 		this.oVSD.open();
@@ -3900,7 +3913,7 @@ sap.ui.define([
 			jQuery("#" + sItemId).trigger("focus");
 		},
 		checkItemFocus: function (sItemId) {
-			assert.strictEqual(document.activeElement.id, sItemId, "The proper item is focused");
+			QUnit.assert.strictEqual(document.activeElement.id, sItemId, "The proper item is focused");
 		}
 	});
 
@@ -4040,7 +4053,7 @@ sap.ui.define([
 					"The default titleAlignment is '" + sInitialAlignment + "', there is class '" + sAlignmentClass + sInitialAlignment + "' applied to the Header");
 
 		// check if all types of alignment lead to apply the proper CSS class
-		for (sAlignment in sap.m.TitleAlignment) {
+		for (sAlignment in TitleAlignment) {
 			oVSD.setTitleAlignment(sAlignment);
 			oCore.applyChanges();
 			assert.ok(oVSD._getHeader().hasStyleClass(sAlignmentClass + sAlignment),
@@ -4048,7 +4061,7 @@ sap.ui.define([
 		}
 
 		// check how many times setTitleAlignment method is called
-		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(sap.m.TitleAlignment).length,
+		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(TitleAlignment).length,
 			"'setTitleAlignment' method is called total " + setTitleAlignmentSpy.callCount + " times");
 
 		oVSD.destroy();

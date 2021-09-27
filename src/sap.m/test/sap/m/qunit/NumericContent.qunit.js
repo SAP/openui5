@@ -1,13 +1,14 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/GenericTile",
 	"sap/m/NumericContent",
 	"sap/m/TileContent",
 	"sap/ui/core/TooltipBase",
 	"sap/ui/core/ResizeHandler",
-	"sap/m/library"
-], function (jQuery, GenericTile, NumericContent, TileContent, TooltipBase, ResizeHandler, library) {
+	"sap/m/library",
+	"sap/ui/util/Mobile"
+], function (jQuery, GenericTile, NumericContent, TileContent, TooltipBase, ResizeHandler, library, Mobile) {
 	"use strict";
 
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -24,7 +25,7 @@ sap.ui.define([
 	// shortcut for sap.m.Size
 	var Size = library.Size;
 
-	jQuery.sap.initMobile();
+	Mobile.init();
 
 	QUnit.module("Rendering test - sap.m.NumericContent", {
 		beforeEach: function () {

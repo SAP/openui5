@@ -1,11 +1,10 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/m/NewsContent",
 	"sap/m/MessageToast",
 	"sap/ui/core/TooltipBase",
 	"sap/m/library"
-], function(jQuery, NewsContent, MessageToast, TooltipBase, library) {
+], function(NewsContent, MessageToast, TooltipBase, library) {
 	"use strict";
 
 
@@ -38,9 +37,9 @@ sap.ui.define([
 		// Act
 		this.oNewsContent.rerender();
 		// Assert
-		assert.ok(jQuery.sap.domById("news-cnt"), "NewsContent was rendered successfully");
-		assert.ok(jQuery.sap.domById("news-cnt-content-text"), "Content text was rendered successfully");
-		assert.ok(jQuery.sap.domById("news-cnt-subheader"), "Subheader was rendered successfully");
+		assert.ok(document.getElementById("news-cnt"), "NewsContent was rendered successfully");
+		assert.ok(document.getElementById("news-cnt-content-text"), "Content text was rendered successfully");
+		assert.ok(document.getElementById("news-cnt-subheader"), "Subheader was rendered successfully");
 		assert.equal(oSpy.callCount, 1, "During rendering _setPointerOnContentText has been called");
 	});
 

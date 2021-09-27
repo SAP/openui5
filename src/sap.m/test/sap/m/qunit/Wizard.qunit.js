@@ -1,14 +1,14 @@
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
+	"sap/base/Log",
 	"sap/ui/core/Core",
 	"sap/m/Wizard",
 	"sap/m/WizardStep",
 	"sap/ui/base/ObjectPool",
-	"sap/m/library"
-], function(QUnitUtils, Core, Wizard, WizardStep, ObjectPool, library) {
-	var Log = sap.ui.require("sap/base/Log");
+	"sap/m/library",
+	"sap/ui/thirdparty/jquery"
+], function(Log, Core, Wizard, WizardStep, ObjectPool, library, jQuery) {
+	"use strict";
 
 	// shortcut for sap.m.PageBackgroundDesign
 	var PageBackgroundDesign = library.PageBackgroundDesign;
@@ -17,27 +17,26 @@ sap.ui.define([
 		sWizardId: "wizard-id",
 		oSpies: {},
 		beforeEach: function (assert) {
-			assert.ok(Log, "Log module should be available");
 			var that = this;
 			this.oParams = {};
-			this.oSpies.onStepActivated = sinon.spy(function (oEvent) {
+			this.oSpies.onStepActivated = this.spy(function (oEvent) {
 				that.oParams.index = oEvent.getParameter("index");
 			});
-			this.oSpies.onStepChanged = sinon.spy(function (oEvent) {
+			this.oSpies.onStepChanged = this.spy(function (oEvent) {
 				that.oParams.previous = oEvent.getParameter("previous");
 				that.oParams.current = oEvent.getParameter("current");
 			});
-			this.oSpies.onComplete = sinon.spy();
-			this.oSpies.error = sinon.spy(Log, "error");
+			this.oSpies.onComplete = this.spy();
+			this.oSpies.error = this.spy(Log, "error");
 
 			this.oSpies.firstStep = {
-				onActivate: sinon.spy(),
-				onComplete: sinon.spy()
+				onActivate: this.spy(),
+				onComplete: this.spy()
 			};
 
 			this.oSpies.secondStep = {
-				onActivate: sinon.spy(),
-				onComplete: sinon.spy()
+				onActivate: this.spy(),
+				onComplete: this.spy()
 			};
 
 			this.oWizard = new Wizard(this.sWizardId, {
@@ -66,7 +65,7 @@ sap.ui.define([
 			this.oWizard.placeAt("qunit-fixture");
 			Core.applyChanges();
 
-			sinon.stub(ObjectPool.prototype, "returnObject", function () {
+			this.stub(ObjectPool.prototype, "returnObject").callsFake(function () {
 			});
 
 			this.oResourceBundle = Core.getLibraryResourceBundle("sap.m");
@@ -74,8 +73,6 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oWizard.destroy();
-			this.oSpies.error.restore();
-			ObjectPool.prototype.returnObject.restore();
 			this.oWizardSecondStep = null;
 			this.oWizard = null;
 		}
@@ -138,8 +135,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ScrollHandler methods check", function (assert) {
-		var oStub,
-			oSpyPreviousStep,
+		var oSpyPreviousStep,
 			oSpyNextStep,
 			aWizardSteps,
 			oWizard = new Wizard({
@@ -147,8 +143,8 @@ sap.ui.define([
 			});
 
 		// Arrange
-		oSpyPreviousStep = sinon.spy(oWizard._getProgressNavigator(), "previousStep");
-		oSpyNextStep = sinon.spy(oWizard._getProgressNavigator(), "nextStep");
+		oSpyPreviousStep = this.spy(oWizard._getProgressNavigator(), "previousStep");
+		oSpyNextStep = this.spy(oWizard._getProgressNavigator(), "nextStep");
 		aWizardSteps = oWizard.getSteps();
 		oWizard.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -163,7 +159,7 @@ sap.ui.define([
 
 		// Arrange
 		this.clock.tick(300);
-		oStub = sinon.stub(oWizard._getProgressNavigator(), '_isActiveStep', function(){ return true;});
+		this.stub(oWizard._getProgressNavigator(), '_isActiveStep').returns(true);
 		oWizard._bScrollLocked = false;
 
 		// Act
@@ -173,9 +169,6 @@ sap.ui.define([
 		assert.ok(oSpyNextStep.calledOnce, "Next step should be called once");
 
 		// cleanup
-		oStub.restore();
-		oSpyPreviousStep.restore();
-		oSpyNextStep.restore();
 		oWizard.destroy();
 	});
 
@@ -184,7 +177,7 @@ sap.ui.define([
 			id: "wizard::complex::id",
 			steps: [ new WizardStep(), new WizardStep(), new WizardStep() ]
 		});
-		var oSpy = sinon.spy(oWizard, "goToStep");
+		var oSpy = this.spy(oWizard, "goToStep");
 
 		oWizard._getNextStep();
 		oWizard._getNextStep();
@@ -224,7 +217,7 @@ sap.ui.define([
 
 	QUnit.test("DestroySteps() empties the steps aggregation", function (assert) {
 		//Arrange
-		var oSpy = sinon.spy(Wizard.prototype, "_activateAllPreceedingSteps");
+		var oSpy = this.spy(Wizard.prototype, "_activateAllPreceedingSteps");
 
 		//Act
 		this.oWizard.destroySteps();
@@ -233,9 +226,6 @@ sap.ui.define([
 		//Assert
 		assert.ok(this.oWizard.getSteps().length === 0, "Aggregation should be empty");
 		assert.notOk(oSpy.called, "_activateAllPreceedingSteps should not be called after deleting the steps");
-
-		//Clean up
-		oSpy.restore();
 	});
 
 	QUnit.test("validateStep(step) should validate the given step", function (assert) {
@@ -285,8 +275,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Click on next button should fire _handleNextButtonPress before (not as) the attachEvent handler of the 'complete' event is executed", function (assert) {
-		var oNextButtenPressHandlerSpy = sinon.spy(this.oWizard, "_handleNextButtonPress");
-		var oAttachCompleteSpy = sinon.spy(this.oWizard, "attachComplete");
+		var oNextButtenPressHandlerSpy = this.spy(this.oWizard, "_handleNextButtonPress");
+		var oAttachCompleteSpy = this.spy(this.oWizard, "attachComplete");
 
 		this.oWizard._getNextButton().firePress();
 		assert.strictEqual(oNextButtenPressHandlerSpy.calledBefore(oAttachCompleteSpy), true, "_handleNextButtonPress is fired not as attachEvent handler for the 'complete' event");
@@ -587,8 +577,6 @@ sap.ui.define([
 	QUnit.module("Wizard Branching", {
 		sWizardId: "wizard-branching-id",
 		beforeEach: function () {
-			var that = this;
-
 			this.externalStep = new WizardStep();
 			this.step6 = new WizardStep({
 				content : []
@@ -628,12 +616,11 @@ sap.ui.define([
 			this.oWizard.placeAt("qunit-fixture");
 			Core.applyChanges();
 
-			sinon.stub(ObjectPool.prototype, "returnObject", function () {
+			this.stub(ObjectPool.prototype, "returnObject").callsFake(function () {
 			});
 		},
 		afterEach: function () {
 			this.oWizard.destroy();
-			ObjectPool.prototype.returnObject.restore();
 			this.oWizard = null;
 		}
 	});
@@ -680,8 +667,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("First step's initial nextStep shouldn't be overwritten during onafterrendering", function (assert) {
-		var that = this;
-
 		var step3 = new WizardStep({
 			content: []
 		}), step2 = new WizardStep({
@@ -851,7 +836,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("WizardStep labelled-by reference number step and title", function (assert) {
-		var oSpy = sinon.spy(WizardStep.prototype, "_setNumberInvisibleText"),
+		var oSpy = this.spy(WizardStep.prototype, "_setNumberInvisibleText"),
 			oWizard = new Wizard({
 			steps: [
 				new WizardStep({
@@ -878,7 +863,6 @@ sap.ui.define([
 		// assert
 		assert.ok(oSpy.calledWith(2), "The correct step position is forwarded to the wizard step.");
 
-		oSpy.restore();
 		oWizard.destroy();
 	});
 
@@ -932,7 +916,7 @@ sap.ui.define([
 	QUnit.test("Step rerendering on navigation", function (assert) {
 		var oNextButton = this.oWizard._getNextButton();
 
-		var oRenderingSpy =  sinon.spy(WizardStep.prototype, "onBeforeRendering");
+		var oRenderingSpy =  this.spy(WizardStep.prototype, "onBeforeRendering");
 		// act
 		oNextButton.$().tap();
 		Core.applyChanges();
@@ -976,7 +960,7 @@ sap.ui.define([
 
 	QUnit.test("showNextButton set to false initially", function (assert) {
 		var oWizard = new Wizard({
-			steps: [new sap.m.WizardStep({validated: true})],
+			steps: [new WizardStep({validated: true})],
 			showNextButton: false
 		});
 
@@ -1049,7 +1033,7 @@ sap.ui.define([
 				title: "Step 1"
 			}),
 			oWizard = new Wizard({steps: [oStep]}).placeAt("qunit-fixture"),
-			oWizardCompleteSpy = sinon.spy(oWizard, "fireComplete");
+			oWizardCompleteSpy = this.spy(oWizard, "fireComplete");
 
 		// Act
 		oStep._complete();
@@ -1059,7 +1043,7 @@ sap.ui.define([
 		// Act
 		oWizard.removeAllSteps();
 		oNewWizard = new Wizard({steps: [oStep]}).placeAt("qunit-fixture");
-		oNewWizardCompleteSpy = sinon.spy(oNewWizard, "fireComplete");
+		oNewWizardCompleteSpy = this.spy(oNewWizard, "fireComplete");
 		oStep._complete();
 
 
@@ -1071,20 +1055,17 @@ sap.ui.define([
 		oStep = null;
 		oWizard.destroy();
 		oNewWizard.destroy();
-		oWizardCompleteSpy.restore();
-		oNewWizardCompleteSpy.restore();
 	});
 
 	QUnit.test("_initResponsivePaddingsEnablement is called on init", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(Wizard.prototype, "_initResponsivePaddingsEnablement"),
+		var oSpy = this.spy(Wizard.prototype, "_initResponsivePaddingsEnablement"),
 			oTestPage = new Wizard({}).placeAt("qunit-fixture");
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "Method _initResponsivePaddingsEnablement called on init of control");
 		assert.ok(oSpy.calledOn(oTestPage), "The spy is called on the tested control instance");
 
-		oSpy.restore();
 		oTestPage.destroy();
 	});
 
@@ -1106,7 +1087,6 @@ sap.ui.define([
 		oWizard.addStyleClass("sapUiResponsivePadding--header");
 		oWizard.addStyleClass("sapUiResponsivePadding--content");
 
-		this.stub(window, "requestAnimationFrame", window.setTimeout);
 		Core.applyChanges();
 
 		oWizard.setWidth("300px");
@@ -1171,7 +1151,6 @@ sap.ui.define([
 		assert.ok(bIsProgressNavigatorResponsive, "The sapUi-Std-PaddingXL class is applied to the progress navigator");
 		assert.ok(bIsContentResponsive, "The sapUi-Std-PaddingXL class is applied to the content");
 
-		this.stub().reset();
 		oWizard.destroy();
 	});
 
@@ -1225,7 +1204,7 @@ sap.ui.define([
 
 	QUnit.test("_returnStickyContent inserts the progress navigator back into the wizard's DOM", function (assert) {
 		var $WizardElement = this.oWizard.$()[0],
-			oPrependSpy = new sinon.spy(),
+			oPrependSpy = new this.spy(),
 			oStub = {
 				$: {
 					prependTo: oPrependSpy
@@ -1241,8 +1220,5 @@ sap.ui.define([
 		assert.ok(oProgressDomStub.calledOnce, "The progress navigator's $ was  called once.");
 		assert.ok(oPrependSpy.calledOnce, "prependTo was called once.");
 		assert.strictEqual(oPrependSpy.firstCall.args[0][0], $WizardElement, "The sticky content was returned to the correct DOM element.");
-
-		// Clean
-		oProgressDomStub.restore();
 	});
 });

@@ -1,11 +1,12 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/semantic/SortSelect",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Item"
 ], function(createAndAppendDiv, SortSelect, JSONModel, Item) {
+	"use strict";
+
 	createAndAppendDiv("qunit-fixture-visible");
 
 
@@ -39,13 +40,10 @@ sap.ui.define([
 				], oItemTemplate = new Item({
 					key: "{key}"
 				}),
-				bChangeEventHasFired = false,
 				oSemanticSelect = new SortSelect({
 					items: {
 						path: "/",
 						template: oItemTemplate
-					}, change: function () {
-						bChangeEventHasFired = true;
 					}
 				});
 
@@ -123,13 +121,10 @@ sap.ui.define([
 				}, oItemTemplate = new Item({
 					key: "{key}"
 				}),
-				bChangeEventHasFired = false,
 				oSemanticSelect = new SortSelect({
 					items: {
 						path: "/items",
 						template: oItemTemplate
-					}, change: function () {
-						bChangeEventHasFired = true;
 					},
 					selectedKey: "{/selected}"
 				});

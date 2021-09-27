@@ -1,9 +1,8 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/library",
 	"sap/m/Shell",
@@ -11,7 +10,9 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/util/Mobile",
 	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(QUnitUtils, createAndAppendDiv, jQuery, Parameters, coreLibrary, Shell, SplitApp, Page, Mobile, waitForThemeApplied) {
+], function(qutils, createAndAppendDiv, jQuery, Parameters, coreLibrary, Shell, SplitApp, Page, Mobile, waitForThemeApplied) {
+	"use strict";
+
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
 
@@ -24,13 +25,9 @@ sap.ui.define([
 		logo: "../images/SAPLogo.jpg",
 		logout: function(){
 			window.loggedOut = true;
-			assert.ok(true, "Logging out");
+			QUnit.assert.ok(true, "Logging out");
 		}
 	});
-
-	function byIdSuffix(suffix) {
-		return jQuery.sap.byId(oShell.getId() + suffix);
-	}
 
 	var oApp = new SplitApp("myApp", {
 		masterPages: new Page("page1", {
@@ -46,9 +43,9 @@ sap.ui.define([
 
 
 	QUnit.test("Shell rendered", function(assert) {
-		assert.ok(jQuery.sap.domById("myShell"), "Shell should be rendered");
-		assert.ok(jQuery.sap.domById("myApp"), "App should be rendered");
-		assert.ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
+		assert.ok(document.getElementById("myShell"), "Shell should be rendered");
+		assert.ok(document.getElementById("myApp"), "App should be rendered");
+		assert.ok(document.getElementById("page1"), "Initially the first page should be rendered");
 	});
 
 
@@ -67,10 +64,10 @@ sap.ui.define([
 	// Shell features
 	QUnit.test("Shell features", function(assert) {
 		var sExpectedAltForLogoImage = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SHELL_ARIA_LOGO");
-		assert.equal(byIdSuffix("-hdrTxt").text(), "Test Shell", "Title should be rendered");
+		assert.equal(oShell.$("hdrTxt").text(), "Test Shell", "Title should be rendered");
 		assert.equal(jQuery(".sapMShellHeaderRightText").text(), "Mr. Right", "Header right text should be rendered");
-		assert.equal(byIdSuffix("-logo").attr("src"), "../images/SAPLogo.jpg", "Logo URL should be rendered");
-		assert.equal(byIdSuffix("-logo").attr("alt"), sExpectedAltForLogoImage, "Logo ALT should be 'Logo''");
+		assert.equal(oShell.$("logo").attr("src"), "../images/SAPLogo.jpg", "Logo URL should be rendered");
+		assert.equal(oShell.$("logo").attr("alt"), sExpectedAltForLogoImage, "Logo ALT should be 'Logo''");
 	});
 
 	QUnit.test("Shell without title", function(assert) {
@@ -101,7 +98,7 @@ sap.ui.define([
 
 		// bg image std
 		QUnit.test("Shell background standard (tests the sap.m.BackgroundHelper as well)", function(assert) {
-			var bgDiv = byIdSuffix("-BG"),
+			var bgDiv = oShell.$("BG"),
 				style = window.getComputedStyle(bgDiv[0]);
 
 			assert.equal(bgDiv.length, 1, "Background image div should be rendered");
@@ -123,7 +120,7 @@ sap.ui.define([
 
 			sap.ui.getCore().applyChanges();
 
-			var bgDiv = byIdSuffix("-BG"),
+			var bgDiv = oShell.$("BG"),
 				style = window.getComputedStyle(bgDiv[0]);
 
 			assert.equal(bgDiv.length, 1, "Background image div should be rendered");
@@ -142,7 +139,7 @@ sap.ui.define([
 
 			sap.ui.getCore().applyChanges();
 
-			var bgDiv = byIdSuffix("-BG"),
+			var bgDiv = oShell.$("BG"),
 				style = window.getComputedStyle(bgDiv[0]);
 
 			assert.equal(bgDiv.length, 1, "Background image div should be rendered");
@@ -177,8 +174,6 @@ sap.ui.define([
 			assert.equal(oSetPropertySpy.callCount, 1, "setProperty called once");
 			assert.equal(oSetPropertySpy.args[0][0], "title", "setProperty called for 'title' property");
 			assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
-
-			oShell.setProperty.restore();
 		});
 
 		QUnit.test("setHeaderRightText modifies the dom, sets the property and doesn't re-render", function(assert) {
@@ -201,8 +196,6 @@ sap.ui.define([
 			assert.equal(oSetPropertySpy.callCount, 1, "setProperty called once");
 			assert.equal(oSetPropertySpy.args[0][0], "headerRightText", "setProperty called for 'headerRightText' property");
 			assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
-
-			oShell.setProperty.restore();
 		});
 
 		QUnit.test("setAppWidthLimited modifies the dom, sets the property and doesn't re-render", function(assert) {
@@ -231,8 +224,6 @@ sap.ui.define([
 
 			assert.equal(oSetPropertySpy.callCount, 2, "setProperty called second time");
 			assert.equal(oSetPropertySpy.args[1][2], true, "setProperty 2nd time called with suppressRendering === true");
-
-			oShell.setProperty.restore();
 		});
 
 		QUnit.test("setBackgroundOpacity modifies the dom only when value is valid, sets the property and doesn't re-render", function(assert) {
@@ -266,13 +257,11 @@ sap.ui.define([
 			assert.equal(oSetPropertySpy.callCount, 1, "setProperty called once");
 			assert.equal(oSetPropertySpy.args[0][0], "backgroundOpacity", "setProperty called for 'backgroundOpacity' property");
 			assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
-
-			oShell.setProperty.restore();
 		});
 
 		QUnit.test("setHomeIcon calls setIcons, sets the property and doesn't re-render", function(assert) {
 			var oSetPropertySpy,
-				oJQuerySapSetIconSpy,
+				oMobileSetIconSpy,
 				oExampleIcons = {
 					'phone': 'phone-icon_57x57.png',
 					'phone@2': 'phone-retina_114x114.png',
@@ -285,7 +274,7 @@ sap.ui.define([
 			//arrange
 			sap.ui.getCore().applyChanges();
 			oSetPropertySpy = this.spy(oShell, "setProperty");
-			oJQuerySapSetIconSpy = this.spy(Mobile, "setIcons");
+			oMobileSetIconSpy = this.spy(Mobile, "setIcons");
 
 			//act
 			oShell.setHomeIcon(oExampleIcons);
@@ -293,15 +282,12 @@ sap.ui.define([
 			//assert
 			assert.equal(oShell.getHomeIcon(), oExampleIcons, "property is changed");
 
-			assert.equal(oJQuerySapSetIconSpy.callCount, 1, "Mobile.setIcons called once");
-			assert.equal(oJQuerySapSetIconSpy.args[0][0], oExampleIcons, "Mobile.setIcons called with the icons object");
+			assert.equal(oMobileSetIconSpy.callCount, 1, "Mobile.setIcons called once");
+			assert.equal(oMobileSetIconSpy.args[0][0], oExampleIcons, "Mobile.setIcons called with the icons object");
 
 			assert.equal(oSetPropertySpy.callCount, 1, "setProperty called once");
 			assert.equal(oSetPropertySpy.args[0][0], "homeIcon", "setProperty called for 'homeIcon' property");
 			assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
-
-			oShell.setProperty.restore();
-			Mobile.setIcons.restore();
 		});
 	}
 

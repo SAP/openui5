@@ -1,6 +1,5 @@
 /*global sinon */
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 
 sap.ui.define([
 	"sap/ui/dom/units/Rem",
@@ -26,7 +25,9 @@ sap.ui.define([
 	"sap/m/Menu",
 	"sap/m/MenuButton",
 	"sap/m/FlexItemData",
-	"sap/m/Title"
+	"sap/m/Title",
+	"sap/m/SegmentedButton",
+	"sap/m/SegmentedButtonItem"
 ], function(
 	DomUnitsRem,
 	createAndAppendDiv,
@@ -51,7 +52,9 @@ sap.ui.define([
 	Menu,
 	MenuButton,
 	FlexItemData,
-	Title
+	Title,
+	SegmentedButton,
+	SegmentedButtonItem
 ) {
 	"use strict";
 
@@ -1735,17 +1738,16 @@ sap.ui.define([
 
 	QUnit.test("Changing width of sap.m.SegmentedButton fires _containerWidthChanged event, which triggers _resetAndInvalidateToolbar when in Toolbar",
 	function (assert) {
-		var oSegmentedButton = new sap.m.SegmentedButton({
+		var oSegmentedButton = new SegmentedButton({
 				selectedKey: "Item1",
 				items: [
-					new sap.m.SegmentedButtonItem({id: "idSBItem1", key: "Item1", text: "Item 1", icon: "sap-icon://home"}),
-					new sap.m.SegmentedButtonItem({id: "idSBItem2", key: "Item2", text: "Item 2", icon: "sap-icon://home"})
+					new SegmentedButtonItem({id: "idSBItem1", key: "Item1", text: "Item 1", icon: "sap-icon://home"}),
+					new SegmentedButtonItem({id: "idSBItem2", key: "Item2", text: "Item 2", icon: "sap-icon://home"})
 				]
 			}),
 			aContent = [oSegmentedButton],
 			oOverflowTB,
-			oSpyInvalidationEvent,
-			oStubWidth;
+			oSpyInvalidationEvent;
 
 
 		// arrange
@@ -1757,24 +1759,23 @@ sap.ui.define([
 		assert.notOk(oSpyInvalidationEvent.calledWith("_containerWidthChanged"), "_containerWidthChanged event is not fired on first rendering");
 
 		// act - simulate image load, which changes width and calls _updateWidth
-		oStubWidth = this.stub(oSegmentedButton, "_previousWidth", 100);
+		this.stub(oSegmentedButton, "_previousWidth", 100);
 		oSegmentedButton._updateWidth();
 
 		// assert
 		assert.ok(oSpyInvalidationEvent.calledWith("_containerWidthChanged"),
 			"Layout recalculation triggered (when SegmentedButton's width is changed, _resetAndInvalidateToolbar is called)");
 
-		oStubWidth.restore();
 		oOverflowTB.destroy();
 	});
 
 	QUnit.test("Changing width of sap.m.SegmentedButton does not fire _containerWidthChanged event, when in Associative Popover",
 	function (assert) {
-		var oSegmentedButton = new sap.m.SegmentedButton({
+		var oSegmentedButton = new SegmentedButton({
 			selectedKey: "Item1",
 			items: [
-				new sap.m.SegmentedButtonItem({id: "idSBItem1", key: "Item1", text: "Item 1", icon: "sap-icon://home"}),
-				new sap.m.SegmentedButtonItem({id: "idSBItem2", key: "Item2", text: "Item 2", icon: "sap-icon://home"})
+				new SegmentedButtonItem({id: "idSBItem1", key: "Item1", text: "Item 1", icon: "sap-icon://home"}),
+				new SegmentedButtonItem({id: "idSBItem2", key: "Item2", text: "Item 2", icon: "sap-icon://home"})
 			]
 		}),
 		aContent = [oSegmentedButton],
@@ -1803,7 +1804,7 @@ sap.ui.define([
 
 	QUnit.test("Changing type of sap.m.Button triggers invalidation of sap.m.OverflowToolbar",
 		function (assert) {
-			var oButton = new sap.m.Button({
+			var oButton = new Button({
 					type: "Default",
 					text: "Button1"
 				}),
@@ -2011,7 +2012,7 @@ sap.ui.define([
 		oOverflowTBbar.destroyContent();
 
 		for (var i = 0; i < 20; i++) {
-			oOverflowTBbar.addContent(new sap.m.Button({text: "Very long text for test"}));
+			oOverflowTBbar.addContent(new Button({text: "Very long text for test"}));
 		}
 
 		this.clock.tick(500);
@@ -2244,16 +2245,16 @@ sap.ui.define([
 	// Arrange
 		var oLabel = new Label({text: "Text", visible: false, id: "label_0"}),
 			aContent = [oLabel, new Button()],
-			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent),
-			spyOTInvalidate = this.spy(OverflowToolbar.prototype, "invalidate");
+			spyOTInvalidate;
+
+		createOverflowToolbar({width: 'auto'}, aContent);
+		spyOTInvalidate = this.spy(OverflowToolbar.prototype, "invalidate");
+
 	// Act
 		oLabel.setText("Text123");
 		sap.ui.getCore().applyChanges();
 	// Assert
 		assert.strictEqual(spyOTInvalidate.callCount, 0);
-
-	// Clean
-		spyOTInvalidate.restore();
 	});
 
 	QUnit.test("OverflowToolbarLayoutData is always invalidated when 'priority' is changed", function (assert) {
@@ -2264,10 +2265,11 @@ sap.ui.define([
 			}),
 			aContent = [oButton],
 			oSpyInvalidate = this.spy(oLayoutData, "invalidate"),
-			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent),
-			oStubInvalidateSuppressed = this.stub(oLayoutData , "isInvalidateSuppressed", function () {
-				return true;
-			});
+			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
+
+		this.stub(oLayoutData , "isInvalidateSuppressed", function () {
+			return true;
+		});
 
 		// Act
 		oLayoutData.setPriority("AlwaysOverflow");
@@ -2276,8 +2278,6 @@ sap.ui.define([
 		assert.strictEqual(oSpyInvalidate.callCount, 1, "Invalidate is called");
 
 		// Clean up
-		oSpyInvalidate.restore();
-		oStubInvalidateSuppressed.restore();
 		oOverflowTB.destroy();
 	});
 
@@ -2701,9 +2701,6 @@ sap.ui.define([
 		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 200);
 		assert.ok(oSpy.called, "_getControlWidth is called for more precise measuring of control width");
 		assert.ok(oMathSpy.called, "Width value is rounded");
-
-		// Clean up
-		oSpy.restore();
 	});
 
 	QUnit.test("Size of an invisible control reported correctly", function (assert) {
@@ -2887,13 +2884,13 @@ sap.ui.define([
 			"Size of Overflow Button should be calculated as 0");
 
 		// Clean
-		oStubWidth.restore();
+		oStubWidth.restore(); // restore explicitly before destroy of oOverflowTB as stub is not complete
 		oOverflowTB.destroy();
 	});
 
 	QUnit.test("Recalculation is not triggered after caching overflow button size", function (assert) {
 		// Arrange
-		var oOverflowTB = new OverflowToolbar({content: [new sap.m.Button({ text: "test button"})]}),
+		var oOverflowTB = new OverflowToolbar({content: [new Button({ text: "test button"})]}),
 			oOverflowBtnClonedSpy = this.spy(oOverflowTB._getOverflowButtonClone(), "$");
 
 		oOverflowTB.placeAt("qunit-fixture");
@@ -3149,7 +3146,6 @@ sap.ui.define([
 
 		// arrange
 		var done = assert.async(),
-			oOverflowButton = this.oOTBOverflowed._getOverflowButton(),
 			oDelegate = {
 				onAfterRendering: function() {
 					// act (2) - remove delegate and simulate that overflow button is focused
@@ -3289,9 +3285,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("_markControlsWithShrinkableLayoutData with items with fixed widths", function (assert) {
-		var fnIsRelativeWidth = this.stub(Toolbar, "isRelativeWidth", function () { return false; }),
-			aContent = this.oOTB.getContent(),
+		var aContent = this.oOTB.getContent(),
 			sShrinkClass = "sapMTBShrinkItem";
+		this.stub(Toolbar, "isRelativeWidth").returns(false);
 
 		// act
 		this.oOTB._markControlsWithShrinkableLayoutData();
@@ -3300,19 +3296,16 @@ sap.ui.define([
 		aContent.forEach(function (oControl) {
 			assert.notOk(oControl.hasStyleClass(sShrinkClass), "shrinkClass is not added");
 		});
-
-		// cleanup
-		fnIsRelativeWidth.restore();
 	});
 
 	QUnit.test("_markControlsWithShrinkableLayoutData with items with not fixed width", function (assert) {
-		var fnIsRelativeWidth = this.stub(Toolbar, "isRelativeWidth", function () { return true; }),
-			aContent = this.oOTB.getContent(),
+		var aContent = this.oOTB.getContent(),
 			oButton0 = aContent[0],
 			oButton1 = aContent[1],
 			oButton2 = aContent[2],
 			oButton3 = aContent[3],
 			sShrinkClass = "sapMTBShrinkItem";
+		this.stub(Toolbar, "isRelativeWidth").returns(true);
 
 		// act
 		this.oOTB._markControlsWithShrinkableLayoutData();
@@ -3322,9 +3315,6 @@ sap.ui.define([
 		assert.notOk(oButton1.hasStyleClass(sShrinkClass), "shrinkClass is not added when LayoutData is not shrinkable");
 		assert.ok(oButton2.hasStyleClass(sShrinkClass), "shrinkClass is added when LayoutData is shrinkable");
 		assert.notOk(oButton3.hasStyleClass(sShrinkClass), "shrinkClass is not added when LayoutData is from a different type. Error is not thrown.");
-
-		// cleanup
-		fnIsRelativeWidth.restore();
 	});
 
 	QUnit.module("Accessibility");

@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -9,6 +8,7 @@ sap.ui.define([
 	"sap/m/Table",
 	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/core/Item",
+	"sap/ui/core/SeparatorItem",
 	"sap/ui/core/TextDirection",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Sorter",
@@ -24,6 +24,7 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Button",
 	"sap/m/SuggestionItem",
+	"sap/m/SuggestionsPopover",
 	"sap/ui/core/IconPool",
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/events/KeyCodes",
@@ -34,9 +35,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/FormattedText",
-	"jquery.sap.global",
-	"jquery.sap.strings", // provides jQuery.sap.startsWithIgnoreCase
-	"jquery.sap.mobile", // fills jQuery.device
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/jquery/zIndex" // provides jQuery.fn.zIndex
 ], function(
 	qutils,
@@ -47,6 +46,7 @@ sap.ui.define([
 	Table,
 	EventExtension,
 	Item,
+	SeparatorItem,
 	TextDirection,
 	JSONModel,
 	Sorter,
@@ -62,6 +62,7 @@ sap.ui.define([
 	Dialog,
 	Button,
 	SuggestionItem,
+	SuggestionsPopover,
 	IconPool,
 	waitForThemeApplied,
 	KeyCodes,
@@ -1170,10 +1171,10 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		oPopup = oInput6._getSuggestionsPopover().getPopover();
-		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
+		assert.ok(oPopup.isA("sap.m.Popover"), "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 		assert.equal(getPopupItemsContent(oPopup).getItems().length, aNames.length, "Suggestions are inserted");
-		assert.ok(getPopupItemsContent(oPopup) instanceof sap.m.List, "Suggestions are list-based)");
+		assert.ok(getPopupItemsContent(oPopup).isA("sap.m.List"), "Suggestions are list-based)");
 
 		oInput6._$input.trigger("focus").val("abcT").trigger("input");
 		this.clock.tick(400);
@@ -1246,7 +1247,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		oPopup = oInput._getSuggestionsPopover().getPopover();
-		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
+		assert.ok(oPopup.isA("sap.m.Popover"), "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
 		qutils.triggerKeyboardEvent(oInput.getDomRef(), KeyCodes.ENTER);
@@ -1288,7 +1289,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		var oPopup = oInput._getSuggestionsPopover().getPopover();
-		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
+		assert.ok(oPopup.isA("sap.m.Popover"), "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
 		var oItem = oInput._getSuggestionsPopover().getPopover().getContent()[0].getItems()[0];
@@ -1340,7 +1341,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		var oPopup = oInput._getSuggestionsPopover().getPopover();
-		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
+		assert.ok(oPopup.isA("sap.m.Popover"), "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
 		oNextInput.focus();
@@ -1391,7 +1392,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		oPopup = oInput._getSuggestionsPopover().getPopover();
-		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
+		assert.ok(oPopup.isA("sap.m.Popover"), "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
 		// set focus into the suggestion popup
@@ -1439,10 +1440,10 @@ sap.ui.define([
 		oPopup1 = oInput._getSuggestionsPopover().getPopover();
 		aItems = oPopup1.getContent()[0].getItems();
 
-		assert.ok(oPopup1 instanceof sap.m.Popover, "Two Value Suggestion Popup is created and is a Popover instance");
+		assert.ok(oPopup1.isA("sap.m.Popover"), "Two Value Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup1.isOpen(), "Two Value Suggestion Popup is open now");
 		assert.equal(aItems.length, aNames.length, "Suggestions are inserted");
-		assert.ok(aItems[0] instanceof sap.m.StandardListItem, "Suggestion item is a StandardListItem");
+		assert.ok(aItems[0].isA("sap.m.StandardListItem"), "Suggestion item is a StandardListItem");
 		assert.ok(aItems[0].getTitle(), aNames[0], "Suggestion item has a title set equal to the ListItem's text");
 		assert.ok(aItems[0].getInfo(), aDescription[0], "Suggestion item has an info set equal to the ListItem's additionalText");
 
@@ -1501,10 +1502,10 @@ sap.ui.define([
 		this.clock.tick(300);
 		oPopup = oInput._getSuggestionsPopover().getPopover();
 
-		assert.ok(oPopup instanceof sap.m.Popover, "Two Value Suggestion Popup is created and is a Popover instance");
+		assert.ok(oPopup.isA("sap.m.Popover"), "Two Value Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Two Value Suggestion Popup is open now");
 		assert.equal(getPopupItemsContent(oPopup).getItems().length, 2, "Only enabled suggestions are inserted");
-		assert.ok(getPopupItemsContent(oPopup).getItems()[0] instanceof sap.m.StandardListItem, "Suggestion item is a StandardListItem");
+		assert.ok(getPopupItemsContent(oPopup).getItems()[0].isA("sap.m.StandardListItem"), "Suggestion item is a StandardListItem");
 		assert.ok(getPopupItemsContent(oPopup).getItems()[0].getTitle(), aNames[0], "Suggestion item has a title set equal to the ListItem's text");
 		assert.ok(getPopupItemsContent(oPopup).getItems()[0].getInfo(), aDescription[0], "Suggestion item has an info set equal to the ListItem's additionalText");
 
@@ -1632,7 +1633,7 @@ sap.ui.define([
 		this.clock.tick(300);
 		oPopup = oInput._getSuggestionsPopover().getPopover();
 
-		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
+		assert.ok(oPopup.isA("sap.m.Popover"), "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
 		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ARROW_DOWN);
@@ -1697,7 +1698,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		oPopup = oInput._getSuggestionsPopover().getPopover();
-		assert.ok(oPopup instanceof Dialog, "Suggestion Popup is created and is a Dialog instance");
+		assert.ok(oPopup.isA("sap.m.Dialog"), "Suggestion Popup is created and is a Dialog instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
 		assert.equal(oInput._getSuggestionsPopover().getInput().getType(), mobileLibrary.InputType.Tel, "The type of the Input inside the Suggestion Popup is the same as the type of the original Input"); // BCP 1970125027
@@ -1821,7 +1822,7 @@ sap.ui.define([
 
 		assert.equal(oInput._getSuggestionsPopover().getInput().getType(), mobileLibrary.InputType.Text, "The type of the Input inside the Suggestion Popup is the same as the type of the original Input - the default one ('Text')"); // BCP 1970125027
 
-		assert.ok(oPopup instanceof Dialog, "Two value Suggestion Popup is created and is a Dialog instance");
+		assert.ok(oPopup.isA("sap.m.Dialog"), "Two value Suggestion Popup is created and is a Dialog instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
 		oInput._getSuggestionsPopover().getInput()._$input.trigger("focus").val("abc").trigger("input");
@@ -1999,14 +2000,14 @@ sap.ui.define([
 		this.clock.tick(300);
 		oPopup = oInput._getSuggestionsPopover().getPopover();
 
-		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
+		assert.ok(oPopup.isA("sap.m.Popover"), "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
 		assert.ok(!oInput._getSuggestionsPopover().getItemsContainer().hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table initially has not the hidden style class");
 
 		assert.equal(getPopupItemsContent(oPopup).getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
 		assert.strictEqual(getPopupItemsContent(oPopup).$().length, 1, "Suggestion table is rendered");
-		assert.ok(getPopupItemsContent(oPopup) instanceof sap.m.Table, "Suggestions are tabular)");
+		assert.ok(getPopupItemsContent(oPopup).isA("sap.m.Table"), "Suggestions are tabular)");
 		assert.strictEqual(oPopup.getContentWidth(), "100px", "Suggestion popup has 100px width");
 
 		oInput._$input.trigger("focus").val("Product1").trigger("input");
@@ -2019,7 +2020,7 @@ sap.ui.define([
 
 		// checks for the show more button (tabular suggestions only)
 		assert.strictEqual(oPopup.getFooter().getContent().length, 2, "The footer has two items (spacer and button)");
-		assert.strictEqual(oPopup.getFooter().getContent()[1] instanceof Button, true, "The show more button is added to the popup");
+		assert.strictEqual(oPopup.getFooter().getContent()[1].isA("sap.m.Button"), true, "The show more button is added to the popup");
 		assert.strictEqual(oPopup.getFooter().getContent()[1].getText(), oMessageBundle.getText("INPUT_SUGGESTIONS_SHOW_ALL"), "The show more button shows the correct text from the message bundle");
 
 		//close the popoup when nothing is typed in input
@@ -2146,11 +2147,11 @@ sap.ui.define([
 		// set up a spy on the dialog's renderer (the dialog should not be rerendered)
 		oInputRendererSpy = sinon.spy(InputRenderer, "render");
 
-		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
+		assert.ok(oPopup.isA("sap.m.Popover"), "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 		assert.equal(getPopupItemsContent(oPopup).getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
 		assert.strictEqual(getPopupItemsContent(oPopup).$().length, 1, "Suggestion table is rendered");
-		assert.ok(getPopupItemsContent(oPopup) instanceof sap.m.Table, "Suggestions are tabular)");
+		assert.ok(getPopupItemsContent(oPopup).isA("sap.m.Table"), "Suggestions are tabular)");
 
 		oInput._$input.trigger("focus").val("Product1").trigger("input");
 		this.clock.tick(400);
@@ -2513,7 +2514,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		oPopup = oInput._getSuggestionsPopover().getPopover();
-		assert.ok(oPopup instanceof Dialog, "Suggestion Popup is created and is a Dialog instance");
+		assert.ok(oPopup.isA("sap.m.Dialog"), "Suggestion Popup is created and is a Dialog instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
 		// set up a spy on the dialog's renderer
@@ -2559,7 +2560,7 @@ sap.ui.define([
 		assert.ok(!oInput._getSuggestionsPopover().getItemsContainer().hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
 
 		// checks for the show more button (tabular suggestions only)
-		assert.strictEqual(oPopup.getEndButton() instanceof Button, true, "The show more button is added to the popup");
+		assert.strictEqual(oPopup.getEndButton().isA("sap.m.Button"), true, "The show more button is added to the popup");
 		assert.strictEqual(oPopup.getEndButton().getText(), oMessageBundle.getText("INPUT_SUGGESTIONS_SHOW_ALL"), "The show more button shows the correct text from the message bundle");
 
 		getPopupItemsContent(oPopup).getItems()[1].$().trigger("tap");
@@ -2660,7 +2661,7 @@ sap.ui.define([
 		oInput.setFilterFunction(function(sValue, oColumnListItem) {
 			var aCells = oColumnListItem.getCells();
 
-			return jQuery.sap.startsWithIgnoreCase(aCells[2].getText(), sValue);
+			return !!sValue && aCells[2].getText().toLowerCase().startsWith(sValue.toLowerCase());
 		});
 
 		// custom result function using a string and price
@@ -3169,8 +3170,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(oInput._getSuggestionsPopover().getPopover(), "Suggestion Popup instance is created");
-		assert.ok(oInput._getSuggestionsPopover().getPopover().getFooter() instanceof sap.m.Toolbar, "Suggestion Popup has Toolbar footer");
-		assert.ok(oInput._getSuggestionsPopover().getPopover().getFooter().getContent()[1] instanceof Button, "Suggestion Popup has showMoreButton");
+		assert.ok(oInput._getSuggestionsPopover().getPopover().getFooter().isA("sap.m.Toolbar"), "Suggestion Popup has Toolbar footer");
+		assert.ok(oInput._getSuggestionsPopover().getPopover().getFooter().getContent()[1].isA("sap.m.Button"), "Suggestion Popup has showMoreButton");
 
 		oInput.destroy();
 	});
@@ -3272,8 +3273,8 @@ sap.ui.define([
 		oInput.setShowSuggestion(true);
 
 		assert.ok(oInput._getSuggestionsPopover().getPopover(), "Suggestion Popup instance is created");
-		assert.ok(oInput._getSuggestionsPopover().getPopover().getFooter() instanceof sap.m.Toolbar, "Suggestion Popup has Toolbar footer");
-		assert.ok(oInput._getSuggestionsPopover().getPopover().getFooter().getContent()[1] instanceof Button, "Suggestion Popup has showMoreButton");
+		assert.ok(oInput._getSuggestionsPopover().getPopover().getFooter().isA("sap.m.Toolbar"), "Suggestion Popup has Toolbar footer");
+		assert.ok(oInput._getSuggestionsPopover().getPopover().getFooter().getContent()[1].isA("sap.m.Button"), "Suggestion Popup has showMoreButton");
 
 		oInput.destroy();
 	});
@@ -4323,11 +4324,11 @@ sap.ui.define([
 			oInput = new Input({
 				showSuggestion: true,
 				suggestionItems: [
-					new sap.ui.core.Item({
+					new Item({
 						text: "Item 1",
 						key: "001"
 					}),
-					new sap.ui.core.Item({
+					new Item({
 						text: "Item 2",
 						key: "002"
 					})
@@ -5282,7 +5283,6 @@ sap.ui.define([
 		};
 
 		this.stub(Device, "system", oSystem);
-		this.stub(jQuery.device, "is", oSystem);
 
 		var oInput = new Input({
 			showSuggestion: true,
@@ -5475,18 +5475,18 @@ sap.ui.define([
 			showSuggestion: true,
 			showTableSuggestionValueHelp: false,
 			suggestionColumns: [
-				new sap.m.Column({
+				new Column({
 					popinDisplay: "Inline",
 					demandPopin: true,
 					content: [
-						new sap.m.Label({text: "My text label"})
+						new Label({text: "My text label"})
 					]
 				})
 			],
 			suggestionRows: [
-				new sap.m.ColumnListItem({
+				new ColumnListItem({
 					content: [
-						new sap.m.Label({text: "My text label"})
+						new Label({text: "My text label"})
 					]
 				})
 			]
@@ -5916,7 +5916,7 @@ sap.ui.define([
 				text: "multiple",
 				href: "#"
 			}),
-			new sap.m.Link({
+			new Link({
 				text: "links",
 				href: "#"
 			})]
@@ -6151,7 +6151,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		// Select the value state header
-		sap.ui.test.qunit.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick();
 
 		this.oInput._$input.trigger("focus").val("one").trigger("input");
@@ -6452,7 +6452,7 @@ sap.ui.define([
 		this.oInput.focus();
 
 		// Act
-		oSuggestionsPopover.fireEvent(sap.m.SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
+		oSuggestionsPopover.fireEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
 			previousItem: null,
 			newItem: oItem
 		});
@@ -6464,7 +6464,7 @@ sap.ui.define([
 
 		// Act
 		// Go back to the input. The "focus" is moved to the input
-		oSuggestionsPopover.fireEvent(sap.m.SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
+		oSuggestionsPopover.fireEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
 			previousItem: null,
 			newItem: null
 		});
@@ -6487,7 +6487,7 @@ sap.ui.define([
 		this.oInput.focus();
 
 		// Act
-		oSuggestionsPopover.fireEvent(sap.m.SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
+		oSuggestionsPopover.fireEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
 			previousItem: null,
 			newItem: oItem
 		});
@@ -6500,7 +6500,7 @@ sap.ui.define([
 
 		// Act
 		// Go back to the input. The "focus" is moved to the input
-		oSuggestionsPopover.fireEvent(sap.m.SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
+		oSuggestionsPopover.fireEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
 			previousItem: null,
 			newItem: null
 		});
@@ -6524,7 +6524,7 @@ sap.ui.define([
 		this.oInput.focus();
 
 		// Act
-		oSuggestionsPopover.fireEvent(sap.m.SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
+		oSuggestionsPopover.fireEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
 			previousItem: null,
 			newItem: oGroupItem
 		});
@@ -6535,7 +6535,7 @@ sap.ui.define([
 
 		// Act
 		// Go back to the input. The "focus" is moved to the input
-		oSuggestionsPopover.fireEvent(sap.m.SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
+		oSuggestionsPopover.fireEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
 			previousItem: null,
 			newItem: null
 		});
@@ -7109,7 +7109,7 @@ sap.ui.define([
 		var oInput = new Input({
 			showSuggestion: true,
 			suggestionItems: [
-				new sap.ui.core.SeparatorItem({
+				new SeparatorItem({
 					text: "Countries",
 					textDirection: TextDirection.RTL
 				}),
@@ -7150,7 +7150,7 @@ sap.ui.define([
 				showSuggestion: true,
 				suggestionItems: {
 					path: "/items",
-					template: new sap.ui.core.Item({key: "{key}", text: "{value}"}),
+					template: new Item({key: "{key}", text: "{value}"}),
 					sorter: [new Sorter('group', false, true)]
 				}
 			});
@@ -7193,20 +7193,20 @@ sap.ui.define([
 				showSuggestion: true,
 				suggestionRows: {
 					path: "/items",
-					template: new sap.m.ColumnListItem({
+					template: new ColumnListItem({
 						cells: [
-							new sap.m.Text({text:"{value}"}),
-							new sap.m.Text({text:"{key}"})
+							new Text({text:"{value}"}),
+							new Text({text:"{key}"})
 						]
 					}),
 					sorter: [new Sorter('group', false, true)]
 				},
 				suggestionColumns: [
-					new sap.m.Column({
-						header: new sap.m.Label({text: "Text"})
+					new Column({
+						header: new Label({text: "Text"})
 					}),
-					new sap.m.Column({
-						header: new sap.m.Label({text: "Key"})
+					new Column({
+						header: new Label({text: "Key"})
 					})
 				]
 			});
@@ -7384,7 +7384,7 @@ sap.ui.define([
 					new Column({
 						header: new Label({text: "Text"})
 					}),
-					new sap.m.Column({
+					new Column({
 						header: new Label({text: "Key"})
 					})
 				],

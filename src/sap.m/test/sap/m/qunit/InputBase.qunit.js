@@ -1,12 +1,11 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/InputBase",
 	"sap/ui/core/library",
 	"sap/m/Label",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/Input",
 	"sap/m/Button",
 	"sap/m/Panel",
@@ -41,6 +40,8 @@ sap.ui.define([
 	Icon,
 	KeyCodes
 ) {
+	"use strict";
+
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
@@ -731,7 +732,6 @@ sap.ui.define([
 			// arrange
 			oInput.placeAt("content");
 			sap.ui.getCore().applyChanges();
-			var fnRerenderSpy = this.spy(oInput.getRenderer(), "render");
 
 			// act
 			oInput.setValueState(mSettings.input);
@@ -1116,29 +1116,29 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assert
-		assert.ok(jQuery.sap.domById("errorinput-message"), "error message popup is open on focusin");
+		assert.ok(document.getElementById("errorinput-message"), "error message popup is open on focusin");
 		assert.equal(oErrorInput.getValueStateText(), "Error Message", "error message is correct");
 
 		oErrorInput.getFocusDomRef().blur();
 		this.clock.tick();
 
-		assert.ok(!jQuery.sap.domById("errorinput-message"), "error message popup is closed when focus is out");
+		assert.ok(!document.getElementById("errorinput-message"), "error message popup is closed when focus is out");
 
 		oWarningInput.focus();
 		this.clock.tick(500);
-		assert.ok(jQuery.sap.domById("warninginput-message"), "warning message popup is open when focusin");
+		assert.ok(document.getElementById("warninginput-message"), "warning message popup is open when focusin");
 		assert.equal(oWarningInput.getValueStateText(), "Warning Message", "warning message is correct");
 
 		oWarningInput.getFocusDomRef().blur();
 		this.clock.tick();
 
-		assert.ok(!jQuery.sap.domById("warninginput-message"), "warning message popup is closed when focus is out");
+		assert.ok(!document.getElementById("warninginput-message"), "warning message popup is closed when focus is out");
 
 		oErrorInput.setShowValueStateMessage(false);
 		sap.ui.getCore().applyChanges();
 		oErrorInput.focus();
 		this.clock.tick(500);
-		assert.ok(!jQuery.sap.domById("errorinput-message"), "no error message popup if showValueStateMessage is set to false");
+		assert.ok(!document.getElementById("errorinput-message"), "no error message popup if showValueStateMessage is set to false");
 
 		// cleanup
 		oErrorInput.destroy();
@@ -1147,7 +1147,6 @@ sap.ui.define([
 
 	QUnit.test("it should update the value state message accordingly", function(assert) {
 		var oCoreRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core"),
-				oMobileRB = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 				oValueStateInput = new Input("vsinput", {
 					placeholder: "value state changes while you are typing",
 					liveChange: function() {
@@ -1187,49 +1186,49 @@ sap.ui.define([
 
 		// warning state
 		oValueStateInput.updateDomValue("1").focus();
-		sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
+		qutils.triggerEvent("input", oValueStateInput.getFocusDomRef());
 		this.clock.tick(1000);
 		assert.strictEqual(oValueStateInput.getValueState(), "Warning");
-		assert.ok(jQuery.sap.domById("vsinput-message"), "warning message popup is open");
-		assert.strictEqual(jQuery.sap.byId("vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_WARNING"));
-		assert.strictEqual(jQuery.sap.byId("vsinput-message").text(), oCoreRB.getText("VALUE_STATE_WARNING"));
+		assert.ok(document.getElementById("vsinput-message"), "warning message popup is open");
+		assert.strictEqual(jQuery("#vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_WARNING"));
+		assert.strictEqual(jQuery("#vsinput-message").text(), oCoreRB.getText("VALUE_STATE_WARNING"));
 
 		// success state
 		oValueStateInput.updateDomValue("12");
-		sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
+		qutils.triggerEvent("input", oValueStateInput.getFocusDomRef());
 		this.clock.tick(1000);
 		oValueStateInput.getValueState();
 		assert.strictEqual(oValueStateInput.getValueState(), "Success");
-		assert.ok(jQuery.sap.domById("vsinput-message"), "Success message popup is open");
-		assert.ok(jQuery.sap.byId("vsinput-message").hasClass("sapUiInvisibleText"), "Success message popup is not visible");
+		assert.ok(document.getElementById("vsinput-message"), "Success message popup is open");
+		assert.ok(jQuery("#vsinput-message").hasClass("sapUiInvisibleText"), "Success message popup is not visible");
 
 		// error state
 		oValueStateInput.updateDomValue("123");
-		sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
+		qutils.triggerEvent("input", oValueStateInput.getFocusDomRef());
 		this.clock.tick(1000);
 		oValueStateInput.getValueState();
 		assert.strictEqual(oValueStateInput.getValueState(), "Error");
-		assert.ok(jQuery.sap.domById("vsinput-message"), "error message popup is open");
-		assert.strictEqual(jQuery.sap.byId("vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_ERROR"));
-		assert.strictEqual(jQuery.sap.byId("vsinput-message").text(), oCoreRB.getText("VALUE_STATE_ERROR"));
+		assert.ok(document.getElementById("vsinput-message"), "error message popup is open");
+		assert.strictEqual(jQuery("#vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_ERROR"));
+		assert.strictEqual(jQuery("#vsinput-message").text(), oCoreRB.getText("VALUE_STATE_ERROR"));
 
 		// information state
 		oValueStateInput.updateDomValue("1234");
-		sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
+		qutils.triggerEvent("input", oValueStateInput.getFocusDomRef());
 		this.clock.tick(1000);
 		oValueStateInput.getValueState();
 		assert.strictEqual(oValueStateInput.getValueState(), "Information");
-		assert.ok(jQuery.sap.domById("vsinput-message"), "Information message popup is open");
-		assert.strictEqual(jQuery.sap.byId("vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_INFORMATION"));
-		assert.strictEqual(jQuery.sap.byId("vsinput-message").text(), oCoreRB.getText("VALUE_STATE_INFORMATION"));
+		assert.ok(document.getElementById("vsinput-message"), "Information message popup is open");
+		assert.strictEqual(jQuery("#vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_INFORMATION"));
+		assert.strictEqual(jQuery("#vsinput-message").text(), oCoreRB.getText("VALUE_STATE_INFORMATION"));
 
 		// none state
 		oValueStateInput.updateDomValue("12345");
-		sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
+		qutils.triggerEvent("input", oValueStateInput.getFocusDomRef());
 		this.clock.tick();
 
 		assert.strictEqual(oValueStateInput.getValueState(), "None");
-		assert.ok(!jQuery.sap.domById("vsinput-message"), "no message popup");
+		assert.ok(!document.getElementById("vsinput-message"), "no message popup");
 
 		// cleanup
 		oValueStateInput.destroy();
@@ -1330,7 +1329,7 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerCharacterInput(oInput.getFocusDomRef(), "a");
+		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "a");
 		oInput.onChange();
 
 		// assertions
@@ -1343,7 +1342,7 @@ sap.ui.define([
 	QUnit.test("it should prevent the change event from being fired", function(assert) {
 
 		// system under test
-		InputBase.extend("InputSubclass", {
+		var InputSubclass = InputBase.extend("InputSubclass", {
 			renderer: {},
 			preventChangeOnFocusLeave: function() {
 				return true;
@@ -1357,7 +1356,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		oInput.focus();
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
-		sap.ui.test.qunit.triggerCharacterInput(oInput.getFocusDomRef(), "a");
+		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "a");
 
 		// act
 		oInput.getFocusDomRef().blur();
@@ -1381,7 +1380,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		oInput.focus();
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
-		sap.ui.test.qunit.triggerCharacterInput(oInput.getFocusDomRef(), "bar");
+		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "bar");
 
 		// act
 		oInput.onChange(null, {
@@ -1400,7 +1399,7 @@ sap.ui.define([
 	QUnit.test("onChange should pass in additional parameters to the change event handle", function(assert) {
 
 		// system under test
-		InputBase.extend("InputSubclass", {
+		var InputSubclass = InputBase.extend("InputSubclass", {
 			renderer: {}
 		});
 
@@ -1418,7 +1417,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		oInput.focus();
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
-		sap.ui.test.qunit.triggerCharacterInput(oInput.getFocusDomRef(), "a");
+		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "a");
 
 		// act
 		oInput.getFocusDomRef().blur();
@@ -1447,22 +1446,22 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oInputDomRef, "ENTER");
+		qutils.triggerKeydown(oInputDomRef, "ENTER");
 
 		// assertion
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "Change event is not fired because initial value and dom value are same.");
 
 		// change dom and cursor pos
-		sap.ui.test.qunit.triggerCharacterInput(oInputDomRef, "a");
+		qutils.triggerCharacterInput(oInputDomRef, "a");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oInputDomRef, "ENTER");
+		qutils.triggerKeydown(oInputDomRef, "ENTER");
 
 		// assertion
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, "Change event is fired because last known value and dom value are not same.");
 
 		// reset spy
-		fnFireChangeSpy.reset();
+		fnFireChangeSpy.resetHistory();
 
 		// retest after change event is fired
 		oInputDomRef.blur();
@@ -1527,7 +1526,7 @@ sap.ui.define([
 		assert.notEqual(oInput.getFocusDomRef().value, oInput.getValue(), "Before escape call dom value and value property are not same.");
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent(oInput.getFocusDomRef(), "ESCAPE");
+		qutils.triggerKeyboardEvent(oInput.getFocusDomRef(), "ESCAPE");
 
 		// assertion - after escape
 		assert.strictEqual(oInput.getValue(), sInitValue, "Input value is returned to the inital value after escape.");
@@ -1543,10 +1542,10 @@ sap.ui.define([
 		assert.ok(fnOnEscapeSpy.args[0][0].isMarked(), "Escape is marked as handled");
 
 		// reset spy
-		fnFireEventSpy.reset();
+		fnFireEventSpy.resetHistory();
 
 		// retest while dom and value property are same
-		sap.ui.test.qunit.triggerKeyboardEvent(oInput.getFocusDomRef(), "ESCAPE");
+		qutils.triggerKeyboardEvent(oInput.getFocusDomRef(), "ESCAPE");
 
 		// assertion - after 2nd escape
 		assert.strictEqual(fnFireEventSpy.callCount, 0, "LiveChange event is not fired again because dom and value property are same.");
@@ -1576,12 +1575,12 @@ sap.ui.define([
 
 		// act
 		oInputDomRef.focus();
-		sap.ui.test.qunit.triggerCharacterInput(oInputDomRef, "a");
-		sap.ui.test.qunit.triggerEvent("input", oInputDomRef);
+		qutils.triggerCharacterInput(oInputDomRef, "a");
+		qutils.triggerEvent("input", oInputDomRef);
 
 		// assertion
 		assert.strictEqual(fnInputDelegateSpy.callCount, 1, "input event delegate is called with character input");
-		fnInputDelegateSpy.reset();
+		fnInputDelegateSpy.resetHistory();
 
 		// cleanup
 		oInput.destroy();
@@ -1959,7 +1958,7 @@ sap.ui.define([
 	QUnit.test("it should not render the tooltip (test case 3)", function(assert) {
 
 		// arrange
-		InputBase.extend("CustomInput", {
+		var CustomInput = InputBase.extend("CustomInput", {
 			renderer: {
 				getDescribedByAnnouncement: function() {
 					return "lorem ipsum";
@@ -1989,7 +1988,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("it should keep other describedby associations when the tooltip is set to empty string", function(assert) {
-		InputBase.extend("CustomInput", {
+		var CustomInput = InputBase.extend("CustomInput", {
 			metadata: {
 				associations: {
 					ariaDescribedBy: {
@@ -2027,7 +2026,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Renderer Hooks", function(assert) {
-		InputBase.extend("my.TextField", {
+		var MyTextField = InputBase.extend("MyTextField", {
 			metadata: {
 				associations: {
 					ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"}
@@ -2058,7 +2057,7 @@ sap.ui.define([
 			}
 		});
 
-		var oInput = new my.TextField({
+		var oInput = new MyTextField({
 			valueState: ValueState.Error
 		}).placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -2135,10 +2134,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("invalid input event when rendered with non-ASCII symbols", {
-		beforeEach: function () {
+		before: function () {
 			sinon.config.useFakeTimers = false;
 		},
-		afterEach: function () {
+		after: function () {
 			sinon.config.useFakeTimers = true;
 		}
 	});
@@ -2285,11 +2284,11 @@ sap.ui.define([
 			value : "Initial value"
 		});
 
-		this.stub(InputBase.prototype, "isComposingCharacter", function() {
+		this.stub(InputBase.prototype, "isComposingCharacter").callsFake(function() {
 			return true;
 		});
 
-		this.stub(Device, "browser", {
+		this.stub(Device, "browser").value({
 			safari: true
 		});
 
@@ -2301,10 +2300,10 @@ sap.ui.define([
 			fnOnEnterSpy = this.spy(oInput, "onsapenter");
 
 		// change dom and cursor pos
-		sap.ui.test.qunit.triggerCharacterInput(oInputDomRef, "a");
+		qutils.triggerCharacterInput(oInputDomRef, "a");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oInputDomRef, "ENTER");
+		qutils.triggerKeydown(oInputDomRef, "ENTER");
 
 		// assertion
 		assert.notOk(fnFireChangeSpy.callCount, "Change event is not fired when the IME Popover is opened.");
@@ -2402,7 +2401,7 @@ sap.ui.define([
 		this.oInput.focus();
 		this.oInputFocusDomRef.value = "User Value";
 		this.oModel.setProperty('/value', "Model Value");
-		sap.ui.test.qunit.triggerKeydown(this.oInputFocusDomRef, "ENTER");
+		qutils.triggerKeydown(this.oInputFocusDomRef, "ENTER");
 
 		// assert
 		assert.strictEqual(this.oInput.getValue(), "User Value",
@@ -2415,7 +2414,7 @@ sap.ui.define([
 		this.oInput.focus();
 		this.oInputFocusDomRef.value = "User Value 2";
 		this.oModel.setProperty('/value', "Model Value");
-		sap.ui.test.qunit.triggerKeydown(this.oInputFocusDomRef, "ENTER");
+		qutils.triggerKeydown(this.oInputFocusDomRef, "ENTER");
 
 		// assert
 		assert.strictEqual(this.oInput.getValue(), "Model Value",

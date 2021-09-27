@@ -1,7 +1,6 @@
-/*global QUnit, sinon */
+/*global QUnit */
 
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	'sap/ui/Device',
 	"sap/m/InputBase",
@@ -10,7 +9,6 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/library"
 ], function(
-	qutils,
 	createAndAppendDiv,
 	Device,
 	InputBase,
@@ -184,8 +182,8 @@ sap.ui.define([
 			}
 		};
 
-		var oStubGetPopup = sinon.stub(oValueStateMessage, "getPopup" , function() {return true;});
-		var oStubCreateDom = sinon.stub(oValueStateMessage, "createDom" , function() {return true;});
+		this.stub(oValueStateMessage, "getPopup").returns(true);
+		this.stub(oValueStateMessage, "createDom").returns(true);
 
 		// act
 		oValueStateMessage.open();
@@ -194,8 +192,6 @@ sap.ui.define([
 		assert.ok(true, "No exception should be thrown");
 
 		// cleanup
-		oStubGetPopup.restore();
-		oStubCreateDom.restore();
 		oInput.destroy();
 	});
 

@@ -11,8 +11,8 @@ sap.ui.define([
 	"sap/m/QuickViewGroup",
 	"sap/m/QuickViewGroupElement",
 	"sap/m/Button",
-	"jquery.sap.keycodes",
-	"jquery.sap.global"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
 ], function (
 	qutils,
 	JSONModel,
@@ -25,6 +25,7 @@ sap.ui.define([
 	QuickViewGroup,
 	QuickViewGroupElement,
 	Button,
+	KeyCodes,
 	jQuery
 ) {
 	"use strict";
@@ -610,7 +611,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		var $popover = this.oQuickView._oPopover.$();
-		sap.ui.test.qunit.triggerKeydown($popover, jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown($popover, KeyCodes.ESCAPE);
 
 		assert.strictEqual(fnEventSpy.callCount, 1, "Should call the event handler.");
 		assert.notEqual(this.oQuickView._oPopover.getId(), document.activeElement.id, "Should lose the focus from the QuickView");
@@ -631,7 +632,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		var $popover = this.oQuickView._oPopover.$();
-		sap.ui.test.qunit.triggerKeydown($popover, "ENTER", true, false, false);
+		qutils.triggerKeydown($popover, "ENTER", true, false, false);
 
 		var newCurrentPage = this.oQuickView._oNavContainer.getCurrentPage().getId();
 

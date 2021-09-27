@@ -1,19 +1,21 @@
 /*global QUnit */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/m/MaskInput",
+	"sap/m/Page",
+	"sap/m/Panel",
 	"test-resources/sap/ui/support/TestHelper"
-], function(jQuery, testRule) {
+], function(MaskInput, Page, Panel, testRule) {
 	"use strict";
 
 	QUnit.module("MaskInput rules", {
 		setup: function() {
-			this.page = new sap.m.Page({
+			this.page = new Page({
 				content: [
-					new sap.m.Panel({
+					new Panel({
 						id: "MaskInputTestsContext1",
 						content: [
-							new sap.m.MaskInput({
+							new MaskInput({
 								mask: ""
 							})
 						]

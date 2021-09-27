@@ -1,0 +1,5 @@
+/* all tiles will be shown/fit into the parent container uiArea1 */
+.small_60x100 { 
+	width: 60px !important;
+	height: 100px !important;
+}

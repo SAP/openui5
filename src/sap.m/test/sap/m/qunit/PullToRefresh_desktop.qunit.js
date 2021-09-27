@@ -1,5 +1,4 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -8,7 +7,8 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/List",
 	"sap/m/PullToRefresh",
-	"sap/m/Page"
+	"sap/m/Page",
+	"sap/ui/Device"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -17,8 +17,11 @@ sap.ui.define([
 	App,
 	List,
 	PullToRefresh,
-	Page
+	Page,
+	Device
 ) {
+	"use strict";
+
 	// shortcut for sap.m.ListType
 	var ListType = mobileLibrary.ListType;
 
@@ -26,9 +29,9 @@ sap.ui.define([
 
 
 
-	if (jQuery.support.touch || !window.getComputedStyle) {
-		QUnit.test("Not relevant on touch devices and below IE9", function(assert) {
-			assert.ok(true, "Not relevant on touch devices and below IE9");
+	if (Device.support.touch) {
+		QUnit.test("Not relevant on touch devices", function(assert) {
+			assert.ok(true, "Not relevant on touch devices");
 		});
 
 	} else {
@@ -49,7 +52,6 @@ sap.ui.define([
 		var oApp = new App("p2RApp", {initialPage:"page1"});
 
 		var sPullDwn = oRb.getText("PULL2REFRESH_REFRESH"),
-			sRelease = oRb.getText("PULL2REFRESH_RELEASE"),
 			sRefresh = "refreshing",
 			sLoading = oRb.getText("PULL2REFRESH_LOADING");
 		var sDescription = "pull to refresh";

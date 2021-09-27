@@ -1,6 +1,7 @@
-sap.ui.define(
-	[],
-	function () {
+sap.ui.define([
+	"sap/ui/core/mvc/Controller", // provides sap.ui.controller
+	"sap/ui/core/mvc/JSView" // provides sap.ui.jsview
+], function () {
 		"use strict";
 
 		return {

@@ -1,47 +1,51 @@
 /*global QUnit */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/m/Page",
+	"sap/m/Panel",
+	"sap/m/ViewSettingsDialog",
+	"sap/m/ViewSettingsItem",
+	"sap/m/ViewSettingsFilterItem",
 	"test-resources/sap/ui/support/TestHelper"
-], function(jQuery, testRule) {
+], function(Page, Panel, ViewSettingsDialog, ViewSettingsItem, ViewSettingsFilterItem, testRule) {
 	"use strict";
 
 	QUnit.module("ViewSettingsDialog rules", {
 		setup: function() {
-			this.page = new sap.m.Page({
+			this.page = new Page({
 				content: [
-					new sap.m.Panel({
+					new Panel({
 						id: "ViewSettingsDialogTestsContext1",
 						content: [
-							new sap.m.ViewSettingsDialog({
+							new ViewSettingsDialog({
 								sortItems: [
-									new sap.m.ViewSettingsItem({
+									new ViewSettingsItem({
 										text: 'a'
 									})
 								]
 							}),
-							new sap.m.ViewSettingsDialog({
+							new ViewSettingsDialog({
 								filterItems: [
-									new sap.m.ViewSettingsFilterItem({
+									new ViewSettingsFilterItem({
 										text: 'a'
 									})
 								]
 							}),
-							new sap.m.ViewSettingsDialog({
+							new ViewSettingsDialog({
 								filterItems: [
-									new sap.m.ViewSettingsFilterItem({
+									new ViewSettingsFilterItem({
 										key: 'a',
 										text: 'a'
 									})
 								],
 								groupItems: [
-									new sap.m.ViewSettingsItem({
+									new ViewSettingsItem({
 										key: 'b',
 										text: 'b'
 									})
 								],
 								sortItems: [
-									new sap.m.ViewSettingsItem({
+									new ViewSettingsItem({
 										key: 'c',
 										text: 'c'
 									})

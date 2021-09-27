@@ -7,15 +7,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/Device",
-	"sap/ui/qunit/qunit-css",
-	"sap/ui/thirdparty/qunit",
-	"sap/ui/qunit/qunit-junit",
-	"sap/ui/qunit/qunit-coverage",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/Device"
 ], function(
 	library,
 	App,
@@ -24,6 +18,7 @@ sap.ui.define([
 	Button,
 	KeyCodes,
 	Log,
+	qutils,
 	createAndAppendDiv,
 	Device
 ) {
@@ -61,21 +56,6 @@ sap.ui.define([
 		placement: PlacementType.Bottom,
 		cancelButtonPress: function () {
 			Log.info("sap.m.ActionSheet: cancelButton is pressed");
-		},
-		beforeOpen: function () {
-			QUnit.ok(sap.ui.getCore().byId("actionsheet").$().css("visibility") !== "visible", "ActionSheet should be hidden before it's opened");
-		},
-		afterOpen: function () {
-			QUnit.equal(sap.ui.getCore().byId("actionsheet").$().css("visibility"), "visible", "ActionSheet should be visible after it's opened");
-			QUnit.start();
-		},
-		beforeClose: function () {
-			QUnit.equal(sap.ui.getCore().byId("actionsheet").$().css("visibility"), "visible", "ActionSheet should be visible before it's closed");
-		},
-		afterClose: function () {
-			QUnit.ok(sap.ui.getCore().byId("actionsheet").$().css("visibility") !== "visible", "ActionSheet should be hidden after it's closed");
-			QUnit.ok(!oActionSheet.isOpen(), "ActionSheet is already closed");
-			QUnit.start();
 		}
 	});
 
@@ -99,6 +79,33 @@ sap.ui.define([
 
 	app.addPage(page).placeAt("content");
 
+	function observeOpenEvents(assert) {
+		var done = assert.async();
+		oActionSheet.attachBeforeOpen(function onBeforeOpen() {
+			oActionSheet.detachBeforeOpen(onBeforeOpen);
+			assert.ok(sap.ui.getCore().byId("actionsheet").$().css("visibility") !== "visible", "ActionSheet should be hidden before it's opened");
+		});
+		oActionSheet.attachAfterOpen(function onAfterOpen() {
+			oActionSheet.detachAfterOpen(onAfterOpen);
+			assert.equal(sap.ui.getCore().byId("actionsheet").$().css("visibility"), "visible", "ActionSheet should be visible after it's opened");
+			done();
+		});
+	}
+
+	function observeCloseEvents(assert) {
+		var done = assert.async();
+		oActionSheet.attachBeforeClose(function onBeforeClose() {
+			oActionSheet.detachBeforeClose(onBeforeClose);
+			assert.equal(sap.ui.getCore().byId("actionsheet").$().css("visibility"), "visible", "ActionSheet should be visible before it's closed");
+		});
+		oActionSheet.attachAfterClose(function onAfterClose() {
+			oActionSheet.detachAfterClose(onAfterClose);
+			assert.ok(sap.ui.getCore().byId("actionsheet").$().css("visibility") !== "visible", "ActionSheet should be hidden after it's closed");
+			assert.ok(!oActionSheet.isOpen(), "ActionSheet is already closed");
+			done();
+		});
+	}
+
 	QUnit.module("Initial Check");
 
 	QUnit.test("Initialization", function (assert) {
@@ -108,9 +115,10 @@ sap.ui.define([
 	QUnit.module("Open and Close - with Title and Cancel Button");
 
 	QUnit.test("Open ActionSheet - - with Title and Cancel Button", function (assert) {
-		assert.async();
+		observeOpenEvents(assert);
 		oButton.firePress();
 		assert.ok(oActionSheet.isOpen(), "ActionSheet is already open");
+
 		setTimeout(function () {
 			var $actionSheet = sap.ui.getCore().byId("actionsheet").$(),
 				$parentControl = !Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
@@ -136,7 +144,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Close ActionSheet", function (assert) {
-		assert.async();
+		observeCloseEvents(assert);
 		assert.expect(3);
 		oActionSheet.close();
 	});
@@ -144,7 +152,7 @@ sap.ui.define([
 	QUnit.module("Open and Close - with Title but no Cancel Button");
 
 	QUnit.test("Open ActionSheet - - with Title  but no Cancel Button", function (assert) {
-		assert.async();
+		observeOpenEvents(assert);
 		oActionSheet.setShowCancelButton(false);
 		oButton.firePress();
 		assert.ok(oActionSheet.isOpen(), "ActionSheet is already open");
@@ -168,7 +176,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Close ActionSheet", function (assert) {
-		assert.async();
+		observeCloseEvents(assert);
 		assert.expect(3);
 
 		oActionSheet.close();
@@ -177,7 +185,7 @@ sap.ui.define([
 	QUnit.module("Open and Close - no Title but with Cancel Button");
 
 	QUnit.test("Open ActionSheet - - no Title but with Cancel Button", function (assert) {
-		assert.async();
+		observeOpenEvents(assert);
 		oActionSheet.setShowCancelButton(true);
 		oActionSheet.setTitle(null);
 		oButton.firePress();
@@ -203,7 +211,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Close ActionSheet", function (assert) {
-		assert.async();
+		observeCloseEvents(assert);
 		assert.expect(3);
 		oActionSheet.close();
 	});
@@ -211,7 +219,7 @@ sap.ui.define([
 	QUnit.module("Open and Close - no Title and no Cancel Button");
 
 	QUnit.test("Open ActionSheet - - no Title and no Cancel Button", function (assert) {
-		assert.async();
+		observeOpenEvents(assert);
 		oActionSheet.setShowCancelButton(false);
 		oActionSheet.setTitle(null);
 		oButton.firePress();
@@ -232,7 +240,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Close ActionSheet", function (assert) {
-		assert.async();
+		observeCloseEvents(assert);
 		assert.expect(3);
 		oActionSheet.close();
 	});
@@ -256,7 +264,7 @@ sap.ui.define([
 
 		page.addDependent(oAC);
 
-		var oSpyOfViewInvalidate = sinon.spy(page, "invalidate");
+		var oSpyOfViewInvalidate = this.spy(page, "invalidate");
 
 		oAC.attachAfterOpen(function () {
 			assert.equal(oSpyOfViewInvalidate.callCount, 0, "Former parent shouldn't be invalidated");
@@ -314,7 +322,7 @@ sap.ui.define([
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oActionSheet = new ActionSheet({
 			buttons: [
@@ -333,7 +341,7 @@ sap.ui.define([
 		oButton.firePress();
 		oClock.tick(300);
 
-		oSpy = sinon.spy(oActionSheet._parent, "setTitle");
+		oSpy = this.spy(oActionSheet._parent, "setTitle");
 
 		// Act
 		oActionSheet.addButton(new Button({text: "Test1"}));
@@ -423,13 +431,13 @@ sap.ui.define([
 		setTimeout(function () {
 			sap.ui.getCore().byId('oButton7').$().trigger("focus");
 
-			sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId('oButton7').$()[0], KeyCodes.PAGE_UP);
-			sap.ui.test.qunit.triggerKeyup(sap.ui.getCore().byId('oButton7').$()[0], KeyCodes.PAGE_UP);
+			qutils.triggerKeydown(sap.ui.getCore().byId('oButton7').$()[0], KeyCodes.PAGE_UP);
+			qutils.triggerKeyup(sap.ui.getCore().byId('oButton7').$()[0], KeyCodes.PAGE_UP);
 
 			assert.ok(sap.ui.getCore().byId('oButton2').$().is(":focus"), 'The 2nd button should be focused');
 
-			sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId('oButton2').$()[0], KeyCodes.PAGE_UP);
-			sap.ui.test.qunit.triggerKeyup(sap.ui.getCore().byId('oButton2').$()[0], KeyCodes.PAGE_UP);
+			qutils.triggerKeydown(sap.ui.getCore().byId('oButton2').$()[0], KeyCodes.PAGE_UP);
+			qutils.triggerKeyup(sap.ui.getCore().byId('oButton2').$()[0], KeyCodes.PAGE_UP);
 
 			assert.ok(sap.ui.getCore().byId('oButton1').$().is(":focus"), 'The first button should be focused');
 			done();
@@ -450,7 +458,7 @@ sap.ui.define([
 			tablet: false
 		};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 		assert.expect(2);
 		var oButton = new Button({
 			text: "Open ActionSheet",
@@ -501,13 +509,13 @@ sap.ui.define([
 		oButton.firePress();
 
 		setTimeout(function () {
-			sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
-			sap.ui.test.qunit.triggerKeyup(sap.ui.getCore().byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeydown(sap.ui.getCore().byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeyup(sap.ui.getCore().byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
 
 			assert.ok(sap.ui.getCore().byId('oButton6').$().is(":focus"), 'The 6th button should be focused');
 
-			sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
-			sap.ui.test.qunit.triggerKeyup(sap.ui.getCore().byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeydown(sap.ui.getCore().byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeyup(sap.ui.getCore().byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
 			assert.ok(oActionSheet.$('cancelBtn').is(":focus"), 'The cancel button should be focused');
 			done();
 			oActionSheet.close();
@@ -524,7 +532,7 @@ sap.ui.define([
 			phone: false
 		};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 		assert.expect(2);
 		var oButton = new Button({
 			text: "Open ActionSheet",
@@ -575,13 +583,13 @@ sap.ui.define([
 		oButton.firePress();
 
 		setTimeout(function () {
-			sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
-			sap.ui.test.qunit.triggerKeyup(sap.ui.getCore().byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeydown(sap.ui.getCore().byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeyup(sap.ui.getCore().byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
 
 			assert.ok(sap.ui.getCore().byId('oButton6').$().is(":focus"), 'The 6th button should be focused');
 
-			sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
-			sap.ui.test.qunit.triggerKeyup(sap.ui.getCore().byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeydown(sap.ui.getCore().byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeyup(sap.ui.getCore().byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
 
 			assert.ok(sap.ui.getCore().byId('oButton7').$().is(":focus"), 'The 7th button should be focused');
 
@@ -600,7 +608,7 @@ sap.ui.define([
 			phone: false
 		};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 		var oButton = new Button({
 			text: "Open ActionSheet",
 			press: function () {
@@ -746,7 +754,7 @@ sap.ui.define([
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oButton = new Button({
 			text: "Open ActionSheet",
@@ -811,7 +819,7 @@ sap.ui.define([
 		setTimeout(function () {
 			var aInvisibleTexts = oActionSheet.getAggregation("_invisibleAriaTexts");
 
-			assert.strictEqual(aInvisibleTexts[0] instanceof sap.ui.core.InvisibleText, true, "Second label should be invisibleText");
+			assert.strictEqual(aInvisibleTexts[0].isA("sap.ui.core.InvisibleText"), true, "Second label should be invisibleText");
 			assert.strictEqual(aInvisibleTexts[0].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 2]), "Text should be the index of the button");
 			assert.strictEqual(aInvisibleTexts[1].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [2, 2]), "Text should be the index of the button");
 
@@ -986,7 +994,7 @@ sap.ui.define([
 		function mockButtonPressHandler() {
 			Log.info('mock button press event handler was triggered');
 		}
-		var spyMockButtonPressHandler = sinon.spy(mockButtonPressHandler);
+		var spyMockButtonPressHandler = this.spy(mockButtonPressHandler);
 
 		var button1 = new Button({ text: "Button1", id: "asButton1", press: spyMockButtonPressHandler });
 		var button2 = new Button({ text: "Button2", id: "asButton2", visible: false, press: spyMockButtonPressHandler });
@@ -1078,6 +1086,7 @@ sap.ui.define([
 		oButton.firePress();
 		oActionSheet.close();
 		oClock.tick(300);
+		oClock.tick(1); // also process nested setTimeout(0) calls
 	});
 
 	QUnit.test('Origin should provide the type of the selected action', function (assert) {
@@ -1117,6 +1126,7 @@ sap.ui.define([
 		oActionSheet.onmousedown({ srcControl: oButton1 });
 		oButton1.firePress();
 		oClock.tick(300);
+		oClock.tick(1); // also process nested setTimeout(0) calls
 	});
 
 	QUnit.test('Origin should provide the type of the cancel button', function (assert) {
@@ -1129,7 +1139,7 @@ sap.ui.define([
 			tablet: false
 		};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oButton = new Button({
 			text: "Open ActionSheet",
@@ -1167,6 +1177,7 @@ sap.ui.define([
 		oActionSheet.onmousedown({ srcControl: oCancelButton });
 		oCancelButton.firePress();
 		oClock.tick(300);
+		oClock.tick(1); // also process nested setTimeout(0) calls
 	});
 
 	QUnit.done(function () {

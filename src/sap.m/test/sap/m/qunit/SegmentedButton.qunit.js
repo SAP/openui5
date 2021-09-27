@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/SegmentedButton",
@@ -14,11 +13,14 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/ChangeReason",
-	"jquery.sap.keycodes",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/CustomData",
 	"sap/ui/core/LayoutData",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/events/KeyCodes",
+	"sap/base/Log"
 ], function(
 	qutils,
 	SegmentedButton,
@@ -37,10 +39,12 @@ sap.ui.define([
 	CustomData,
 	LayoutData,
 	InvisibleText,
-	waitForThemeApplied
+	XMLView,
+	waitForThemeApplied,
+	KeyCodes,
+	Log
 ) {
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = coreLibrary.mvc.ViewType;
+	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
@@ -51,15 +55,6 @@ sap.ui.define([
 	var IMAGE_PATH = "test-resources/sap/m/images/";
 
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
-	// Create test for given property
-	var fnTestControlProperty = function(mOptions) {
-		var sProperty = mOptions.property.charAt(0).toUpperCase() + mOptions.property.slice(1);
-
-		QUnit.test("get" + sProperty + "()", function(assert) {
-			assert.strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
-		});
-	};
 
 	/* =========================================================== */
 	/* Initialize module                                           */
@@ -744,9 +739,9 @@ sap.ui.define([
 	QUnit.test("Initialize with XML view", function(assert) {
 
 		// Arrange
-		var xmlData = '<core:FragmentDefinition\
+		var xmlData = '<mvc:View\
 		xmlns="sap.m"\
-		xmlns:core="sap.ui.core">\
+		xmlns:mvc="sap.ui.core.mvc">\
 		<SegmentedButton\
 		id="XMLSegmentedButton"\
 		selectedKey="b2">\
@@ -756,25 +751,27 @@ sap.ui.define([
 		<SegmentedButtonItem key="b3" text="Btn 3" />\
 		</items>\
 		</SegmentedButton>\
-		</core:FragmentDefinition>';
+		</mvc:View>';
 
-		var oView = sap.ui.view({ viewContent: xmlData, type:ViewType.XML });
-		var oSegmentedButton = oView.byId("XMLSegmentedButton");
+		return XMLView.create({
+			definition: xmlData
+		}).then(function(oView) {
+			var oSegmentedButton = oView.byId("XMLSegmentedButton");
 
-		// System under Test
-		oView.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+			// System under Test
+			oView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
-		// Assert
-		assert.strictEqual(oSegmentedButton.getItems().length, 3, "Control should have 3 items");
-		assert.strictEqual(oSegmentedButton.getButtons().length, 3, "Control should have 3 buttons from the button aggregation");
-		assert.strictEqual(oSegmentedButton.$().find("li").length, 3, "Control should have 3 buttons rendered");
-		assert.strictEqual(oSegmentedButton.getButtons()[0].getText(), "Btn 1", "Button text should be equal to xml view ListItem text");
-		assert.strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be 'b2'");
+			// Assert
+			assert.strictEqual(oSegmentedButton.getItems().length, 3, "Control should have 3 items");
+			assert.strictEqual(oSegmentedButton.getButtons().length, 3, "Control should have 3 buttons from the button aggregation");
+			assert.strictEqual(oSegmentedButton.$().find("li").length, 3, "Control should have 3 buttons rendered");
+			assert.strictEqual(oSegmentedButton.getButtons()[0].getText(), "Btn 1", "Button text should be equal to xml view ListItem text");
+			assert.strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be 'b2'");
 
-		// Cleanup
-		oView.destroy();
-
+			// Cleanup
+			oView.destroy();
+		});
 	});
 
 	QUnit.test("ID's of internal elements properly set/rendered", function(assert) {
@@ -1066,8 +1063,8 @@ sap.ui.define([
 	/* =========================================================== */
 
 	QUnit.module("SegmentedButton in Dialog", {
-		beforeEach : function () { sinon.config.useFakeTimers = false; },
-		afterEach : function () { sinon.config.useFakeTimers = true; }
+		before : function () { sinon.config.useFakeTimers = false; },
+		after : function () { sinon.config.useFakeTimers = true; }
 	});
 
 	QUnit.test("SegmentedButton in Dialog's header", function(assert) {
@@ -1306,8 +1303,6 @@ sap.ui.define([
 		// Act
 		oSegmentedButton.addButton(new Button());
 		oSegmentedButton.addButton(new Button());
-
-		var oButton = new Button();
 
 		sap.ui.getCore().applyChanges();
 
@@ -2199,11 +2194,11 @@ sap.ui.define([
 
 	QUnit.test("_handleContainerResize fires _containerWidthChanged event when width is changed", function (assert) {
 		// Arrange
-		var oSB = new sap.m.SegmentedButton({
+		var oSB = new SegmentedButton({
 			items: [
-				new sap.m.SegmentedButtonItem({text: "Btn 1"}),
-				new sap.m.SegmentedButtonItem({text: "Btn 2"}),
-				new sap.m.SegmentedButtonItem({text: "Btn 3"})
+				new SegmentedButtonItem({text: "Btn 1"}),
+				new SegmentedButtonItem({text: "Btn 2"}),
+				new SegmentedButtonItem({text: "Btn 3"})
 			]
 		}).placeAt("qunit-fixture");
 
@@ -2415,9 +2410,7 @@ sap.ui.define([
 		var mDataInitial,
 			mDataSecond,
 			oSegmentedButton,
-			aButtons,
-			oModel,
-			i;
+			oModel;
 
 		// Arrange
 		mDataInitial = {
@@ -2473,9 +2466,6 @@ sap.ui.define([
 		assert.strictEqual(oSegmentedButton.getItems()[0].getText(),
 				"Initial btn 1", "Button text should be equal to initial Model text");
 
-		// Get the buttons prior to changing the model of the control.
-		aButtons = oSegmentedButton.getButtons();
-
 		// Act
 		oModel.setData(mDataSecond);
 		sap.ui.getCore().applyChanges();
@@ -2497,7 +2487,6 @@ sap.ui.define([
 				"Button icon should be equal to second Model icon");
 
 		// Cleanup
-		aButtons = null;
 		oSegmentedButton.destroy();
 	});
 
@@ -2539,22 +2528,22 @@ sap.ui.define([
 
 			// Act
 			var fnFireSelectSpy = this.spy(oSegmentedButton, "fireSelect");
-			sap.ui.test.qunit.triggerKeydown(oButton1.getDomRef(), oOptions.keyCode);
-			sap.ui.test.qunit.triggerKeyup(oButton1.getDomRef(), oOptions.keyCode);
+			qutils.triggerKeydown(oButton1.getDomRef(), oOptions.keyCode);
+			qutils.triggerKeyup(oButton1.getDomRef(), oOptions.keyCode);
 
 			// Assert
 			assert.strictEqual(fnFireSelectSpy.callCount, 0, "Event should not be fired, because the button is selected");
 
 			// Act
-			sap.ui.test.qunit.triggerKeydown(oButton2.getDomRef(), oOptions.keyCode);
-			sap.ui.test.qunit.triggerKeyup(oButton2.getDomRef(), oOptions.keyCode);
+			qutils.triggerKeydown(oButton2.getDomRef(), oOptions.keyCode);
+			qutils.triggerKeyup(oButton2.getDomRef(), oOptions.keyCode);
 
 			// Assert
 			assert.strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired once");
 
 			// Act
-			sap.ui.test.qunit.triggerKeydown(oButton2.getDomRef(), oOptions.keyCode);
-			sap.ui.test.qunit.triggerKeyup(oButton2.getDomRef(), oOptions.keyCode);
+			qutils.triggerKeydown(oButton2.getDomRef(), oOptions.keyCode);
+			qutils.triggerKeyup(oButton2.getDomRef(), oOptions.keyCode);
 
 			// Assert
 			assert.strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired once");
@@ -2565,11 +2554,11 @@ sap.ui.define([
 	}
 
 	checkKeyboardEventhandling("Firing ENTER event", {
-		keyCode : jQuery.sap.KeyCodes.ENTER
+		keyCode : KeyCodes.ENTER
 	});
 
 	checkKeyboardEventhandling("Firing SPACE event", {
-		keyCode : jQuery.sap.KeyCodes.SPACE
+		keyCode : KeyCodes.SPACE
 	});
 
 	function testNavigationSegmentedButton4Items(options) {
@@ -2600,8 +2589,8 @@ sap.ui.define([
 		var SegmentedIcons = new SegmentedButton('SegmentedIcons', {
 			buttons: [oButton1, oButton2, oButton3, oButton4],
 			select: function(oEvent) {
-				jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
-				}
+				Log.info('press event segmented: ' + oEvent.getParameter('id'));
+			}
 		});
 		SegmentedIcons.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -2612,12 +2601,12 @@ sap.ui.define([
 		btn.focus();
 
 		//Act
-		sap.ui.test.qunit.triggerKeydown(btn.getDomRef(), options.keycode);
-		sap.ui.test.qunit.triggerKeyup(btn.getDomRef(), options.keycode);
+		qutils.triggerKeydown(btn.getDomRef(), options.keycode);
+		qutils.triggerKeyup(btn.getDomRef(), options.keycode);
 
 		//Assert
 		var focussedButtonId = document.activeElement.id;
-		assert.strictEqual(focussedButtonId,
+		QUnit.assert.strictEqual(focussedButtonId,
 				'buttonIcon' + options.expectedFocusedIndex,
 				"Button with index " + options.expectedFocusedIndex + " should be focussed.");
 
@@ -2627,71 +2616,71 @@ sap.ui.define([
 
 	QUnit.test('Left Arrow after setSelectedButton call on image buttons - fix 619572', function(assert) {
 		// Flip the arrow keys in RTL mode
-		var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_RIGHT : jQuery.sap.KeyCodes.ARROW_LEFT;
+		var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? KeyCodes.ARROW_RIGHT : KeyCodes.ARROW_LEFT;
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 2, keycode: keyCode});
 	});
 
 	QUnit.test('Left Arrow when the first button has the focus', function(assert) {
-		var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_RIGHT : jQuery.sap.KeyCodes.ARROW_LEFT;
+		var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? KeyCodes.ARROW_RIGHT : KeyCodes.ARROW_LEFT;
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: keyCode});
 	});
 
 	QUnit.test('Right Arrow', function(assert) {
-		var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT;
+		var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? KeyCodes.ARROW_LEFT : KeyCodes.ARROW_RIGHT;
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 2, keycode: keyCode});
 	});
 
 	QUnit.test('Right Arrow when the last button has the focus', function(assert) {
-		var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT;
+		var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? KeyCodes.ARROW_LEFT : KeyCodes.ARROW_RIGHT;
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: keyCode});
 	});
 
 	QUnit.test('Up Arrow', function(assert) {
-		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 2, keycode: jQuery.sap.KeyCodes.ARROW_UP});
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 2, keycode: KeyCodes.ARROW_UP});
 	});
 
 	QUnit.test('Up Arrow when the first button has the focus', function(assert) {
-		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.ARROW_UP});
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: KeyCodes.ARROW_UP});
 	});
 
 	QUnit.test('Down Arrow', function(assert) {
-		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 2, keycode: jQuery.sap.KeyCodes.ARROW_DOWN});
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 2, keycode: KeyCodes.ARROW_DOWN});
 	});
 
 	QUnit.test('Down Arrow when the last button has the focus', function(assert) {
-		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.ARROW_DOWN});
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: KeyCodes.ARROW_DOWN});
 	});
 
 	QUnit.test('Home', function(assert) {
-		testNavigationSegmentedButton4Items({initialSelectedIndex: 2, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.HOME});
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 2, expectedFocusedIndex: 0, keycode: KeyCodes.HOME});
 	});
 
 	QUnit.test('Home when the first button has the focus', function(assert) {
-		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.HOME});
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: KeyCodes.HOME});
 	});
 
 	QUnit.test('Page up', function(assert) {
-		testNavigationSegmentedButton4Items({initialSelectedIndex: 2, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.PAGE_UP});
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 2, expectedFocusedIndex: 0, keycode: KeyCodes.PAGE_UP});
 	});
 
 	QUnit.test('Page up when the first button has the focus', function(assert) {
-		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.PAGE_UP});
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: KeyCodes.PAGE_UP});
 	});
 
 	QUnit.test('End', function(assert) {
-		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.END});
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 3, keycode: KeyCodes.END});
 	});
 
 	QUnit.test('End when the last button has the focus', function(assert) {
-		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.END});
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: KeyCodes.END});
 	});
 
 	QUnit.test('Page up', function(assert) {
-		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.PAGE_DOWN});
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 3, keycode: KeyCodes.PAGE_DOWN});
 	});
 
 	QUnit.test('Page up when the last button has the focus', function(assert) {
-		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.PAGE_DOWN});
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: KeyCodes.PAGE_DOWN});
 	});
 
 	QUnit.test("Press 'SPACE' should not scroll the page", function (assert) {
@@ -3045,7 +3034,6 @@ sap.ui.define([
 		oSegmentedButton._toSelectMode();
 		sap.ui.getCore().applyChanges();
 
-		var fnSyncSelectSpy = this.spy(oSegmentedButton, "_syncSelect");
 		oSegmentedButton.getButtons()[0].setText(newText);
 		this.clock.tick(1000);
 
@@ -3224,64 +3212,66 @@ sap.ui.define([
 
 	QUnit.test("Adding items (XML view with binding)", function(assert) {
 		// Arrange
-		var fnChangHandler = this.spy(),
-			oView = sap.ui.view({
-				viewContent:  '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">'
-							+ '  <SegmentedButton id="SB" items="{/}">'
-							+ '    <items>'
-							+ '      <SegmentedButtonItem text="{text}"/>'
-							+ '    </items>'
-							+ '  </SegmentedButton>'
-							+ '</core:FragmentDefinition>',
-				type:ViewType.XML
-			});
+		var fnChangHandler = this.spy();
 
-		oView.setModel(new JSONModel());
+		return XMLView.create({
+			definition:  '<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">'
+						+ '  <SegmentedButton id="SB" items="{/}">'
+						+ '    <items>'
+						+ '      <SegmentedButtonItem text="{text}"/>'
+						+ '    </items>'
+						+ '  </SegmentedButton>'
+						+ '</mvc:View>'
+		}).then(function(oView) {
 
-		oView.byId("SB").attachEvent("_change", fnChangHandler);
+			oView.setModel(new JSONModel());
 
-		// Assert
-		assert.equal(fnChangHandler.callCount, 0, "Initially the change event hasn't been fired");
+			oView.byId("SB").attachEvent("_change", fnChangHandler);
 
-		// Act
-		oView.getModel().setData([{text: "Test"}]);
+			// Assert
+			assert.equal(fnChangHandler.callCount, 0, "Initially the change event hasn't been fired");
 
-		// Assert
-		assert.equal(fnChangHandler.callCount, 1, "The change event has been fired after new item is added");
+			// Act
+			oView.getModel().setData([{text: "Test"}]);
 
-		// Cleanup
-		oView.destroy();
+			// Assert
+			assert.equal(fnChangHandler.callCount, 1, "The change event has been fired after new item is added");
+
+			// Cleanup
+			oView.destroy();
+		});
 	});
 
 	QUnit.test("Removing items (XML view with binding)", function(assert) {
 		// Arrange
-		var fnChangHandler = this.spy(),
-			oView = sap.ui.view({
-				viewContent:  '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">'
+		var fnChangHandler = this.spy();
+
+		return XMLView.create({
+			definition:  '<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">'
 				+ '  <SegmentedButton id="SB" items="{/}">'
 				+ '    <items>'
 				+ '      <SegmentedButtonItem text="{text}"/>'
 				+ '    </items>'
 				+ '  </SegmentedButton>'
-				+ '</core:FragmentDefinition>',
-				type:ViewType.XML
-			});
+				+ '</mvc:View>'
+		}).then(function(oView) {
 
-		oView.setModel(new JSONModel([{text: "Test"}]));
+			oView.setModel(new JSONModel([{text: "Test"}]));
 
-		oView.byId("SB").attachEvent("_change", fnChangHandler);
+			oView.byId("SB").attachEvent("_change", fnChangHandler);
 
-		// Assert
-		assert.equal(fnChangHandler.callCount, 0, "Initially the change event hasn't been fired");
+			// Assert
+			assert.equal(fnChangHandler.callCount, 0, "Initially the change event hasn't been fired");
 
-		// Act
-		oView.getModel().setData([]);
+			// Act
+			oView.getModel().setData([]);
 
-		// Assert
-		assert.equal(fnChangHandler.callCount, 1, "The change event has been fired after new item is added");
+			// Assert
+			assert.equal(fnChangHandler.callCount, 1, "The change event has been fired after new item is added");
 
-		// Cleanup
-		oView.destroy();
+			// Cleanup
+			oView.destroy();
+		});
 	});
 
 	QUnit.module("SegmentedButtonItem", {

@@ -6,11 +6,11 @@ sap.ui.define([
 	"sap/m/TabStripItem",
 	"sap/m/library",
 	"sap/m/Button",
-	"jquery.sap.keycodes",
+	"sap/m/Select",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/core/Element",
-	"jquery.sap.global",
-	"jquery.sap.mobile"
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -18,9 +18,11 @@ sap.ui.define([
 	TabStripItem,
 	mobileLibrary,
 	Button,
+	Select,
 	jQuery,
 	Device,
-	Element
+	Element,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -93,8 +95,7 @@ sap.ui.define([
 
 	QUnit.test("setSelectedItem on mobile", function (assert) {
 		// prepare
-		var oSandbox = sinon.sandbox.create(),
-			oItem2 = new TabStripItem({
+		var oItem2 = new TabStripItem({
 				text: "Tab 2"
 			}),
 			oTS = new TabStrip({
@@ -105,12 +106,12 @@ sap.ui.define([
 				oItem2
 			]
 		}),
-		oInvalidateSpy = sinon.spy(oTS, "invalidate"),
-		oUpdateAriaSelectedAttributesSpy = sinon.spy(oTS, "_updateAriaSelectedAttributes"),
-		oUpdateSelectedItemClassesSpy = sinon.spy(oTS, "_updateSelectedItemClasses"),
-		oScrollIntoViewSpy = sinon.spy(oTS, "_scrollIntoView");
+		oInvalidateSpy = this.spy(oTS, "invalidate"),
+		oUpdateAriaSelectedAttributesSpy = this.spy(oTS, "_updateAriaSelectedAttributes"),
+		oUpdateSelectedItemClassesSpy = this.spy(oTS, "_updateSelectedItemClasses"),
+		oScrollIntoViewSpy = this.spy(oTS, "_scrollIntoView");
 
-		preparePhonePlatform(oSandbox);
+		preparePhonePlatform(this);
 		oTS.placeAt('qunit-fixture');
 		sap.ui.getCore().applyChanges();
 
@@ -125,11 +126,6 @@ sap.ui.define([
 
 		// clean
 		oTS.destroy();
-		oInvalidateSpy.restore();
-		oUpdateAriaSelectedAttributesSpy.restore();
-		oUpdateSelectedItemClassesSpy.restore();
-		oScrollIntoViewSpy.restore();
-		oSandbox.restore();
 		jQuery('body').removeClass('sap-phone');
 	});
 
@@ -167,9 +163,9 @@ sap.ui.define([
 				this.sut.getSelectedItem() + TabStrip.SELECT_ITEMS_ID_SUFFIX,
 				"The selected item in the select aggregation is the same as the one in the TabStrip area");
 
-		var fnActivateItemSpy = sinon.spy(this.sut, "_activateItem");
-		var fnFireItemPressSpy = sinon.spy(this.sut, "fireItemPress");
-		var fnSetSelectedItemSpy = sinon.spy(this.sut, "setSelectedItem");
+		var fnActivateItemSpy = this.spy(this.sut, "_activateItem");
+		var fnFireItemPressSpy = this.spy(this.sut, "fireItemPress");
+		var fnSetSelectedItemSpy = this.spy(this.sut, "setSelectedItem");
 
 		var srcControl = this.sut.getItems()[1];
 		qutils.triggerTouchEvent('touchstart', this.sut.getDomRef(), {changedTouches: [{pageX: srcControl.$().offset().left + 2}], target: srcControl.getDomRef()});
@@ -297,7 +293,7 @@ sap.ui.define([
 		this.sut.setHasSelect(true);
 		assert.strictEqual(this.sut.getHasSelect(), true, "Correct hasSelect property value");
 		this.sut.setHasSelect(true);
-		assert.strictEqual(this.sut.getAggregation('_select') instanceof sap.m.Select, true, "The select aggregation should not be destroyed when hasSelect is set to 'true'");
+		assert.strictEqual(this.sut.getAggregation('_select') instanceof Select, true, "The select aggregation should not be destroyed when hasSelect is set to 'true'");
 	});
 
 
@@ -380,7 +376,6 @@ sap.ui.define([
 		assert.equal(fnFireItemSelectSpy.callCount, 0, 'fireItemSelect was not fiered if not on item');
 
 		//cleanup
-		fnFireItemSelectSpy.reset();
 		oTabStrip.destroy();
 	});
 
@@ -408,7 +403,7 @@ sap.ui.define([
 
 	QUnit.test("TabStripSelectList _getValueIcon returns null", function (assert) {
 		var oCustomSelect = new mobileLibrary.internal.TabStripSelect({}),
-			oSpy = sinon.spy(oCustomSelect, "_getValueIcon");
+			oSpy = this.spy(oCustomSelect, "_getValueIcon");
 
 		// act
 		oCustomSelect.setValue("tab1");
@@ -417,7 +412,6 @@ sap.ui.define([
 		assert.strictEqual(oSpy.callCount, 1, "overwritten function is called on set Value");
 
 		// clean up
-		oSpy.restore();
 		oCustomSelect.destroy();
 	});
 
@@ -464,22 +458,22 @@ sap.ui.define([
 		//assert
 		assert.strictEqual(oTabs[0].getId(), document.activeElement.id, "First tab is focused");
 		//arrange
-		qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(this.sut.$("tabs"), KeyCodes.ARROW_RIGHT);
 		this.clock.tick(1000);
 		//assert
 		assert.strictEqual(oTabs[1].getId(), document.activeElement.id, "Second tab is focused on ARROW_RIGHT");
 		//arrange
-		qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.sut.$("tabs"), KeyCodes.ARROW_DOWN);
 		this.clock.tick(1000);
 		//assert
 		assert.strictEqual(oTabs[2].getId(), document.activeElement.id, "Third tab is focused on ARROW_DOWN");
 		//arrange
-		qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_LEFT);
+		qutils.triggerKeydown(this.sut.$("tabs"), KeyCodes.ARROW_LEFT);
 		this.clock.tick(1000);
 		//assert
 		assert.strictEqual(oTabs[1].getId(), document.activeElement.id, "Second tab is focused on forth ARROW_LEFT");
 		//arrange
-		qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.sut.$("tabs"), KeyCodes.ARROW_UP);
 		this.clock.tick(1000);
 		//assert
 		assert.strictEqual(oTabs[0].getId(), document.activeElement.id, "First is focused on fifth ARROW_UP");
@@ -730,15 +724,13 @@ sap.ui.define([
 
 	QUnit.module("TabSelect PHONE", {
 		beforeEach: function() {
-			this.sandbox = sinon.sandbox.create();
-			preparePhonePlatform(this.sandbox);
+			preparePhonePlatform(this);
 		},
 		afterEach: function () {
 			this.oTS.destroy();
 			this.oTS = null;
 
 			jQuery('body').removeClass('sap-phone');
-			this.sandbox.restore();
 		}
 	});
 
@@ -811,7 +803,6 @@ sap.ui.define([
 			tablet : false
 		};
 		oSandbox.stub(Device, "system").value(oSystem);
-		oSandbox.stub(jQuery.device, "is").value(oSystem);
 		jQuery('body').addClass('sap-phone');
 	}
 
@@ -866,7 +857,7 @@ sap.ui.define([
 			selectedItem: this.selectedItem,
 			items: this.items
 		});
-		var fnScrollingSpy = sinon.spy(this.sut, "_handleInititalScrollToItem");
+		var fnScrollingSpy = this.spy(this.sut, "_handleInititalScrollToItem");
 
 		this.sut.placeAt('qunit-fixture');
 		oCore.applyChanges();
@@ -892,8 +883,7 @@ sap.ui.define([
 
 	QUnit.test("No Overflow Buttons on phone", function (assert) {
 		//arrange
-		var oSandbox = sinon.sandbox.create();
-		preparePhonePlatform(oSandbox);
+		preparePhonePlatform(this);
 
 		this.sut = new TabStrip({
 			hasSelect: true,
@@ -902,7 +892,7 @@ sap.ui.define([
 			]
 		});
 
-		var fnScrollingSpy = sinon.spy(this.sut, "_adjustScrolling");
+		var fnScrollingSpy = this.spy(this.sut, "_adjustScrolling");
 
 		this.sut.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -916,7 +906,6 @@ sap.ui.define([
 		assert.ok(!this.sut.$().hasClass(this.sut.getRenderer().RIGHT_OVERRFLOW_BTN_CLASS_NAME), "No right button placeholder");
 
 		//clean
-		oSandbox.restore();
 		jQuery('body').removeClass('sap-phone');
 	});
 

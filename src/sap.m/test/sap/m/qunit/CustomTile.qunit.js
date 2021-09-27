@@ -1,17 +1,17 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define(
-	["sap/ui/qunit/QUnitUtils", "sap/m/library"],
-	function(QUnitUtils, mobileLibrary) {
+	["sap/ui/qunit/QUnitUtils", "sap/m/CustomTile", "sap/m/TileContainer", "sap/m/library"],
+	function(QUnitUtils, CustomTile, TileContainer, mobileLibrary) {
+		"use strict";
+
 		var core = sap.ui.getCore();
 		QUnit.module("Dimensions");
 
 		QUnit.test('ShouldHaveAccessibilityAttributes', function (assert) {
 			// SUT
-			var m = sap.m,
-				sut = new m.CustomTile(),
-				tiles = [sut, new m.CustomTile()],
-				cnt = new m.TileContainer({tiles: tiles});
+			var sut = new CustomTile(),
+				tiles = [sut, new CustomTile()],
+				cnt = new TileContainer({tiles: tiles});
 
 			cnt.placeAt("qunit-fixture");
 			// Act

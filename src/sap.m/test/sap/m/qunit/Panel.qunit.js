@@ -1,7 +1,5 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Panel",
 	"sap/m/Text",
 	"sap/m/Button",
@@ -12,7 +10,6 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/OverflowToolbar"
 ], function(
-	qutils,
 	Panel,
 	Text,
 	Button,
@@ -23,6 +20,8 @@ sap.ui.define([
 	Title,
 	OverflowToolbar
 ) {
+	"use strict";
+
 	// shortcut for sap.m.PanelAccessibleRole
 	var PanelAccessibleRole = mobileLibrary.PanelAccessibleRole;
 
@@ -681,7 +680,6 @@ sap.ui.define([
 			sContentSelector = ".sapMPanelContent",
 			sResponsiveSize = (Device.resize.width <= 599 ? "0px" : (Device.resize.width <= 1023 ? "16px" : "16px 32px")), // eslint-disable-line no-nested-ternary
 			aResponsiveSize = sResponsiveSize.split(" "),
-			$container,
 			$containerContent;
 
 		// Act
@@ -782,7 +780,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Expandable panel with headerText and header toolbar", function(assert) {
-		this.stub(sap.ui.Device, "browser", { msie: false });
+		this.stub(sap.ui.Device, "browser").value({ msie: false });
 		this.oPanel.setExpandable(true);
 		this.oPanel.setAccessibleRole(PanelAccessibleRole.Region);
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar());
@@ -795,7 +793,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Expandable panel with headerText and reinitialized header toolbar", function(assert) {
-		this.stub(sap.ui.Device, "browser", { msie: false });
+		this.stub(sap.ui.Device, "browser").value({ msie: false });
 		var sHeaderToolbarTitleId, sNewHeaderToolbarTitleId;
 
 		this.oPanel.setExpandable(true);

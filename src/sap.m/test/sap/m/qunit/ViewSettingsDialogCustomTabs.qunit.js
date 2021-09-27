@@ -1,5 +1,4 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -16,8 +15,8 @@ sap.ui.define([
 	"sap/m/ViewSettingsFilterItem",
 	"sap/m/ViewSettingsCustomItem",
 	"sap/m/ViewSettingsDialog",
-	"jquery.sap.global",
-	"sap/m/Input"
+	"sap/m/Input",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -34,9 +33,11 @@ sap.ui.define([
 	ViewSettingsFilterItem,
 	ViewSettingsCustomItem,
 	ViewSettingsDialog,
-	jQuery,
-	Input
+	Input,
+	jQuery
 ) {
+	"use strict";
+
 	// shortcut for sap.m.LabelDesign
 	var LabelDesign = mobileLibrary.LabelDesign;
 
@@ -78,29 +79,6 @@ sap.ui.define([
 			})
 		]
 	}).addStyleClass("customPriceFilter");
-
-	/* helper function to compare the filter state */
-
-	var compareFilterKeys = function(o1, o2) {
-		var sKey = "",
-			result = true;
-
-		for (sKey in o1) {
-			if (o1.hasOwnProperty(sKey)) {
-				if (!o2[sKey] || o2[sKey] !== o1[sKey]) {
-					result = false;
-				}
-			}
-		}
-		for (sKey in o2) {
-			if (o2.hasOwnProperty(sKey)) {
-				if (!o1[sKey] || o1[sKey] !== o2[sKey]) {
-					result = false;
-				}
-			}
-		}
-		return result;
-	};
 
 	var model = new JSONModel();
 	model.setData({
@@ -295,8 +273,8 @@ sap.ui.define([
 		this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory('taxi-settings'));
 		this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory('other-tab'));
 		this.oVSD.open();
-		assert.ok(jQuery.sap.domById(sId + "-custom-button-taxi-settings"), "Button is rendered custom tab.");
-		assert.ok(jQuery.sap.domById(sId + "-custom-button-other-tab"), "Button is rendered custom tab.");
+		assert.ok(document.getElementById(sId + "-custom-button-taxi-settings"), "Button is rendered custom tab.");
+		assert.ok(document.getElementById(sId + "-custom-button-other-tab"), "Button is rendered custom tab.");
 	});
 
 	QUnit.test("Check if all tabs contents are rendered when tab is focused.", function (assert) {
@@ -316,7 +294,7 @@ sap.ui.define([
 		}));
 
 		this.oVSD.open();
-		assert.ok(jQuery.sap.domById('taxi-settings-button-content2'), "Custom page contents are rendered.");
+		assert.ok(document.getElementById('taxi-settings-button-content2'), "Custom page contents are rendered.");
 	});
 
 	QUnit.test("Make sure 'reset' button is rendered when on custom page.", function (assert) {
@@ -324,7 +302,7 @@ sap.ui.define([
 		this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory('taxi-settings'));
 
 		this.oVSD.open();
-		assert.ok(jQuery.sap.domById(sId + "-resetbutton"), "Reset button should be rendered");
+		assert.ok(document.getElementById(sId + "-resetbutton"), "Reset button should be rendered");
 	});
 
 	/* [start]  Actual unit tests of custom tabs */
@@ -621,19 +599,21 @@ sap.ui.define([
 		setTimeout(function () {
 			that.oVSD.open();
 			that.oVSD._switchToPage(3, that.oVSD.getFilterItems()[0]); // name details page
-			jQuery.sap.delayedCall(0, that.oVSD._navContainer, "to", [sId + '-page2', "show"]);
+			setTimeout(function() {
+				that.oVSD._navContainer.to(sId + '-page2', "show");
+			},0);
 			that.oVSD._onConfirm();
 		}, 0);
 
 		setTimeout(function () {
 			that.oVSD.open();
-			assert.ok(jQuery.sap.domById(sId + "-page2-cont"), "Page 2 (filter detail content) should be rendered");
+			assert.ok(document.getElementById(sId + "-page2-cont"), "Page 2 (filter detail content) should be rendered");
 
 			setTimeout(function () {
 				that.oVSD._pressBackButton();
 
 				setTimeout(function () {
-					assert.ok(jQuery.sap.byId(sId + "-filterbutton").hasClass("sapMSegBBtnSel"), "Segmented 'filter' button should be selected after 'back' is pressed.");
+					assert.ok(jQuery("#" + sId + "-filterbutton").hasClass("sapMSegBBtnSel"), "Segmented 'filter' button should be selected after 'back' is pressed.");
 					done();
 				}, delay);
 			}, delay);

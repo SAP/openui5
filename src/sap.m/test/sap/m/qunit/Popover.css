@@ -32,3 +32,13 @@
 	bottom: 10px;
 	left: 100px;
 }
+
+.width400height400 {
+	width: 400px;
+	height: 400px;
+}
+
+.width500height600 {
+	width: 500px;
+	height: 600px;
+}

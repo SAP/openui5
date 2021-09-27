@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -15,7 +14,7 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/unified/library",
 	"sap/ui/core/format/DateFormat",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/SearchField",
 	"sap/m/Button",
 	"sap/m/Label",
@@ -38,7 +37,8 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	'sap/base/Log',
-	"jquery.sap.keycodes"
+	"sap/base/util/deepEqual",
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -76,7 +76,9 @@ sap.ui.define([
 	Element,
 	InvisibleText,
 	waitForThemeApplied,
-	BaseLog
+	BaseLog,
+	deepEqual,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -107,26 +109,13 @@ sap.ui.define([
 	// shortcut for sap.ui.unified.CalendarIntervalType
 	var CalendarIntervalType = unifiedLibrary.CalendarIntervalType;
 
-	var styleElement = document.createElement("style");
-	styleElement.textContent =
-		".width300 {" +
-		"	width: 300px;" +
-		"}" +
-		".width600 {" +
-		"	width: 600px;" +
-		"}" +
-		".width1024{" +
-		"	width: 1024px;" +
-		"}";
-	document.head.appendChild(styleElement);
-	createAndAppendDiv("verySmallUiArea").className = "width300";
-	createAndAppendDiv("smallUiArea").className = "width600";
-	createAndAppendDiv("bigUiArea").className = "width1024";
+	createAndAppendDiv("verySmallUiArea").style.width = "300px";
+	createAndAppendDiv("smallUiArea").style.width = "600px";
+	createAndAppendDiv("bigUiArea").style.width = "1024px";
 
 	var oFormatYyyyMMddHHmm = DateFormat.getInstance({pattern: "yyyyMMddHHmm"}),
-		oFormatYyyyMMdd = DateFormat.getInstance({pattern: "yyyyMMdd"}),
 		/*the SUT won't be destroyed when single test is run*/
-		bSkipDestroy = !!jQuery.sap.getUriParameters().get("testId");
+		bSkipDestroy = new URLSearchParams(window.location.search).has("testId");
 
 	var oSelectedAppointment,
 		sDomRefId;
@@ -356,7 +345,7 @@ sap.ui.define([
 		mIntervalStringsMap[CalendarIntervalType.Week] = "PLANNINGCALENDAR_WEEK";
 		mIntervalStringsMap[CalendarIntervalType.OneMonth] = "PLANNINGCALENDAR_ONE_MONTH";
 		sViewI18Name = oRb.getText(mIntervalStringsMap[sViewName]);
-		assert.ok(sViewI18Name, "There must be internationalized string corresponding to the viewName " + sViewName);
+		QUnit.assert.ok(sViewI18Name, "There must be internationalized string corresponding to the viewName " + sViewName);
 		sIntervalTypeDropdownId = oPC.getId() + "-Header-ViewSwitch-select";
 		oViewSwitch = sap.ui.getCore().byId(sIntervalTypeDropdownId);
 		aItemsToSelect = oViewSwitch.getItems().filter(function(item) {
@@ -364,7 +353,7 @@ sap.ui.define([
 		});
 		if (aItemsToSelect.length !== 1) {
 			sErrMsg = "Cannot switch to view " + sViewName;
-				assert.ok(false, sErrMsg);
+				QUnit.assert.ok(false, sErrMsg);
 				throw sErrMsg;
 			}
 		oViewSwitch.setSelectedItem(aItemsToSelect[0]);
@@ -393,17 +382,14 @@ sap.ui.define([
 			oFirstDate = aDates[0],
 			oLastDate = aDates[aDates.length - 1],
 			sExpectedDateRange = _formatDate.call(this, oFirstDate) + "-" + _formatDate.call(this, oLastDate),
-			oDateDateFormat = DateFormat.getDateInstance({pattern: "d"}),
-			oMonthDateFormat = DateFormat.getDateInstance({pattern: "MMMM"}),
-			oYearDateFormat = DateFormat.getDateInstance({pattern: "YYYY"}),
 			sResult;
 
 		sMessagePrefix += ": expected dates: " + sExpectedDateRange;
 
-		assert.equal(iAvailableDays, aDates.length, sMessagePrefix + ": Planning Calendar should show certain amount of days: ");
+		QUnit.assert.equal(iAvailableDays, aDates.length, sMessagePrefix + ": Planning Calendar should show certain amount of days: ");
 		sResult = DateFormat.getDateInstance({format: "yMMMMd"}).format(oFirstDate) + " - " + DateFormat.getDateInstance({format: "yMMMMd"}).format(oLastDate);
 
-		assert.equal(_getChangeMonthButtonText.call(this, oPC), sResult, sMessagePrefix + ": Change month button should have certain text of " +
+		QUnit.assert.equal(_getChangeMonthButtonText.call(this, oPC), sResult, sMessagePrefix + ": Change month button should have certain text of " +
 			sResult + ", current text: " + _getChangeMonthButtonText.call(this, oPC));
 
 		aDates.forEach(function (oDate) {
@@ -420,7 +406,7 @@ sap.ui.define([
 		}
 
 		var sDayId = convertDate2DomId(oDate, oPC.getId() + "-" + _getIntervalId.call(this, oPC));
-		assert.equal(jQuery("#" + sDayId).length, 1, sMessagePrefix + ": Date " + _formatDate.call(this, oDate) + " should be visible (" + sDayId + ")");
+		QUnit.assert.equal(jQuery("#" + sDayId).length, 1, sMessagePrefix + ": Date " + _formatDate.call(this, oDate) + " should be visible (" + sDayId + ")");
 	};
 
 	//Verifies that given hour for given date is "displayed" in the Planning Calendar
@@ -432,7 +418,7 @@ sap.ui.define([
 		}
 
 		var sHourInDayId = convertHourInDate2DomId(oDate, oPC.getId() + "-" + _getIntervalId.call(this, oPC));
-		assert.equal(jQuery("#" + sHourInDayId).length, 1, sMessagePrefix + ": Hour " + _formatDateHour.call(this, oDate) + " should be visible (" + sHourInDayId + ")");
+		QUnit.assert.equal(jQuery("#" + sHourInDayId).length, 1, sMessagePrefix + ": Hour " + _formatDateHour.call(this, oDate) + " should be visible (" + sHourInDayId + ")");
 	};
 
 	var _assertHoursAreVisible = function(aDates, oPC, sMessagePrefix) {
@@ -440,7 +426,7 @@ sap.ui.define([
 			sExpectedDateRange = _formatDateHour.call(this, aDates[0]) + "-" + _formatDateHour.call(this, aDates[aDates.length - 1]);
 
 		sMessagePrefix += ": expected hours: " + sExpectedDateRange;
-		assert.equal(iAvailableDays, aDates.length, sMessagePrefix + ": Planning Calendar should show certain amount of hours: ");
+		QUnit.assert.equal(iAvailableDays, aDates.length, sMessagePrefix + ": Planning Calendar should show certain amount of hours: ");
 
 		aDates.forEach(function (oDate) {
 			_assertHourIsVisible.call(this, oDate, oPC, sMessagePrefix);
@@ -448,7 +434,7 @@ sap.ui.define([
 	};
 
 	var _assertFocus = function(oTarget) {
-		assert.strictEqual(document.activeElement.id, oTarget && oTarget.id, "Element with id: " + oTarget.id + " should be focused");
+		QUnit.assert.strictEqual(document.activeElement.id, oTarget && oTarget.id, "Element with id: " + oTarget.id + " should be focused");
 	};
 
 	var _formatDate = function(oDate) {
@@ -653,7 +639,7 @@ sap.ui.define([
 		assert.strictEqual($oRowHeader.attr("title"), "Header tooltip", "row header has it's tooltip set in the DOM");
 
 		assert.ok(_getRowTimeline(oRow), "CalendarRow exist");
-		assert.ok(_getRowTimeline(oRow) instanceof sap.ui.unified.CalendarRow, "CalendarRow control");
+		assert.ok(_getRowTimeline(oRow).isA("sap.ui.unified.CalendarRow"), "CalendarRow control");
 
 		var oTimeline = _getRowTimeline(oRow);
 		assert.ok(!oTimeline.getNonWorkingDays(), "Row1: CalendarRow - nonWorkingDays");
@@ -661,8 +647,8 @@ sap.ui.define([
 
 		oRow = sap.ui.getCore().byId("PC1-Row2");
 		oTimeline = _getRowTimeline(oRow);
-		assert.ok(jQuery.sap.equal(oTimeline.getNonWorkingDays(), [2, 3]), "Row2: CalendarRow - nonWorkingDays");
-		assert.ok(jQuery.sap.equal(oTimeline.getNonWorkingHours(), [11, 12]), "Row2: CalendarRow - nonWorkingHours");
+		assert.deepEqual(oTimeline.getNonWorkingDays(), [2, 3], "Row2: CalendarRow - nonWorkingDays");
+		assert.deepEqual(oTimeline.getNonWorkingHours(), [11, 12], "Row2: CalendarRow - nonWorkingHours");
 	});
 
 	QUnit.test("PlanningCalendarRow's customData is used", function (assert) {
@@ -756,7 +742,7 @@ sap.ui.define([
 		oPlanningCalendar.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		var oUpdatePickerStateSpy = sinon.spy(oPlanningCalendar, "_updatePickerSelection");
+		var oUpdatePickerStateSpy = this.spy(oPlanningCalendar, "_updatePickerSelection");
 
 		// act
 		oPlanningCalendar.setWidth("400px");
@@ -766,7 +752,6 @@ sap.ui.define([
 		assert.ok(oUpdatePickerStateSpy.calledTwice, "Calendar picker is properly updated.");
 
 		// clean
-		oUpdatePickerStateSpy.restore();
 		oPlanningCalendar.destroy();
 	});
 
@@ -809,9 +794,9 @@ sap.ui.define([
 	}
 
 	function _checkColor (oExtractedRGB, oExpectedRGB, sLabel) {
-		assert.equal(oExtractedRGB[1], oExpectedRGB.R, sLabel + " (RED)");
-		assert.equal(oExtractedRGB[2], oExpectedRGB.G, sLabel + " (GREEN)");
-		assert.equal(oExtractedRGB[3], oExpectedRGB.B, sLabel + " (BLUE)");
+		QUnit.assert.equal(oExtractedRGB[1], oExpectedRGB.R, sLabel + " (RED)");
+		QUnit.assert.equal(oExtractedRGB[2], oExpectedRGB.G, sLabel + " (GREEN)");
+		QUnit.assert.equal(oExtractedRGB[3], oExpectedRGB.B, sLabel + " (BLUE)");
 	}
 
 	QUnit.test("Check custom colors in Appointments", function (assert) {
@@ -1194,35 +1179,35 @@ sap.ui.define([
 		checkInitItemPlacement: function  () {
 			var oInfoToolbarContent = this.oPC._oInfoToolbar.getContent();
 
-			assert.strictEqual(oInfoToolbarContent.length, 2, "Internal _oInfoToolbar has correct amount of controls in it's content.");
-			assert.ok(oInfoToolbarContent[0].isA("sap.m._PlanningCalendarInternalHeader"), "First child of _oInfoToolbar is a CalendarHeader");
-			assert.ok(oInfoToolbarContent[1].isA(this.aIntervalRepresentatives), "Second child of _oInfoToolbar is an interval");
-			assert.notOk(jQuery("#SelectionMode-All").get(0), "Select All CheckBox not rendered");
+			QUnit.assert.strictEqual(oInfoToolbarContent.length, 2, "Internal _oInfoToolbar has correct amount of controls in it's content.");
+			QUnit.assert.ok(oInfoToolbarContent[0].isA("sap.m._PlanningCalendarInternalHeader"), "First child of _oInfoToolbar is a CalendarHeader");
+			QUnit.assert.ok(oInfoToolbarContent[1].isA(this.aIntervalRepresentatives), "Second child of _oInfoToolbar is an interval");
+			QUnit.assert.notOk(jQuery("#SelectionMode-All").get(0), "Select All CheckBox not rendered");
 		},
 		checkItemPlacementInMultiSel: function (iInfoToolbarContentLength) {
 			var oInfoToolbarContent = this.oPC._oInfoToolbar.getContent();
 
-			assert.strictEqual(oInfoToolbarContent.length, iInfoToolbarContentLength, "Internal _oInfoToolbar has correct amount of controls in it's content.");
-			assert.ok(oInfoToolbarContent[0].isA("sap.m._PlanningCalendarInternalHeader"), "First child of _oInfoToolbar is a CalendarHeader");
-			assert.ok(oInfoToolbarContent[1].isA(this.aIntervalRepresentatives), "Second child of _oInfoToolbar is an interval");
+			QUnit.assert.strictEqual(oInfoToolbarContent.length, iInfoToolbarContentLength, "Internal _oInfoToolbar has correct amount of controls in it's content.");
+			QUnit.assert.ok(oInfoToolbarContent[0].isA("sap.m._PlanningCalendarInternalHeader"), "First child of _oInfoToolbar is a CalendarHeader");
+			QUnit.assert.ok(oInfoToolbarContent[1].isA(this.aIntervalRepresentatives), "Second child of _oInfoToolbar is an interval");
 			if (iInfoToolbarContentLength > 2) {
-				assert.notOk(this.oPC._oCalendarHeader.getAllCheckBox(), "Select All CheckBox does not exist in the _oCalendarHeader");
+				QUnit.assert.notOk(this.oPC._oCalendarHeader.getAllCheckBox(), "Select All CheckBox does not exist in the _oCalendarHeader");
 			} else {
-				assert.ok(this.oPC._oCalendarHeader.getAllCheckBox(), "Internal _oCalendarHeader holds the select all checkbox");
+				QUnit.assert.ok(this.oPC._oCalendarHeader.getAllCheckBox(), "Internal _oCalendarHeader holds the select all checkbox");
 			}
-			assert.ok(jQuery("#SelectionMode-All").get(0), "Select All CheckBox rendered");
+			QUnit.assert.ok(jQuery("#SelectionMode-All").get(0), "Select All CheckBox rendered");
 		},
 		checkItemPlacementAfterHidingRowHeaders: function (bDesktop) {
 			var oInfoToolbarContent = this.oPC._oInfoToolbar.getContent();
 
-			assert.strictEqual(oInfoToolbarContent.length, 3, "Internal _oInfoToolbar has correct amount of controls in it's content.");
-			assert.ok(oInfoToolbarContent[0].isA("sap.m._PlanningCalendarInternalHeader"), "First child of _oInfoToolbar is a CalendarHeader");
+			QUnit.assert.strictEqual(oInfoToolbarContent.length, 3, "Internal _oInfoToolbar has correct amount of controls in it's content.");
+			QUnit.assert.ok(oInfoToolbarContent[0].isA("sap.m._PlanningCalendarInternalHeader"), "First child of _oInfoToolbar is a CalendarHeader");
 			if (bDesktop) {
-				assert.ok(oInfoToolbarContent[1].isA("sap.m.CheckBox"), "Second child of _oInfoToolbar is a checkBox");
-				assert.ok(oInfoToolbarContent[2].isA(this.aIntervalRepresentatives), "Third child of _oInfoToolbar is an interval");
+				QUnit.assert.ok(oInfoToolbarContent[1].isA("sap.m.CheckBox"), "Second child of _oInfoToolbar is a checkBox");
+				QUnit.assert.ok(oInfoToolbarContent[2].isA(this.aIntervalRepresentatives), "Third child of _oInfoToolbar is an interval");
 			} else {
-				assert.ok(oInfoToolbarContent[1].isA(this.aIntervalRepresentatives), "Second child of _oInfoToolbar is an interval");
-				assert.ok(oInfoToolbarContent[2].isA("sap.m.CheckBox"), "Third child of _oInfoToolbar is a checkBox");
+				QUnit.assert.ok(oInfoToolbarContent[1].isA(this.aIntervalRepresentatives), "Second child of _oInfoToolbar is an interval");
+				QUnit.assert.ok(oInfoToolbarContent[2].isA("sap.m.CheckBox"), "Third child of _oInfoToolbar is a checkBox");
 			}
 		}
 	});
@@ -1478,13 +1463,13 @@ sap.ui.define([
 
 		var oMinDate = new Date(2000, 0 , 1, 0, 0, 0);
 		oPC1.setMinDate(oMinDate);
-		assert.ok(jQuery.sap.equal(oMinDate, oPC1.getMinDate()), "no minDate set");
-		assert.ok(jQuery.sap.equal(oMinDate, sap.ui.getCore().byId("PC1-Header-Cal").getMinDate()), "Calendar minDate set");
+		assert.ok(deepEqual(oMinDate, oPC1.getMinDate()), "no minDate set");
+		assert.ok(deepEqual(oMinDate, sap.ui.getCore().byId("PC1-Header-Cal").getMinDate()), "Calendar minDate set");
 
 		var oMaxDate = new Date(2050, 11 , 31, 23, 59, 59);
 		oPC1.setMaxDate(oMaxDate);
-		assert.ok(jQuery.sap.equal(oMaxDate, oPC1.getMaxDate()), "no minDate set");
-		assert.ok(jQuery.sap.equal(oMaxDate, sap.ui.getCore().byId("PC1-Header-Cal").getMaxDate()), "Calendar maxDate set");
+		assert.ok(deepEqual(oMaxDate, oPC1.getMaxDate()), "no minDate set");
+		assert.ok(deepEqual(oMaxDate, sap.ui.getCore().byId("PC1-Header-Cal").getMaxDate()), "Calendar maxDate set");
 
 		oPC1.setMinDate();
 		assert.ok(!oPC1.getMinDate(), "no minDate set");
@@ -1594,13 +1579,12 @@ sap.ui.define([
 		oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
 		oTable = sap.ui.getCore().byId("PC1-Table");
 
-		oSpyRerender = sinon.spy(oPC1, "invalidate");
+		oSpyRerender = this.spy(oPC1, "invalidate");
 		oPC1.destroyRows();
 		sap.ui.getCore().applyChanges();
 		assert.equal(oTable.getItems().length, 0, "Table rows destroyed");
 		assert.ok(!sap.ui.getCore().byId("PC1-Row1"), "Row1 destroyed");
 		assert.ok(oSpyRerender.callCount > 0, "Calendar was rerendered");
-		oSpyRerender.restore();
 
 		oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
 	});
@@ -1787,8 +1771,8 @@ sap.ui.define([
 		oRow.setNonWorkingDays([2, 3]);
 		oRow.setNonWorkingHours([11, 12]);
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.equal(oTimeline.getNonWorkingDays(), [2, 3]), "CalendarRow - nonWorkingDays");
-		assert.ok(jQuery.sap.equal(oTimeline.getNonWorkingHours(), [11, 12]), "CalendarRow - nonWorkingHours");
+		assert.ok(deepEqual(oTimeline.getNonWorkingDays(), [2, 3]), "CalendarRow - nonWorkingDays");
+		assert.ok(deepEqual(oTimeline.getNonWorkingHours(), [11, 12]), "CalendarRow - nonWorkingHours");
 	});
 
 	QUnit.test("Row selected", function(assert) {
@@ -1806,7 +1790,7 @@ sap.ui.define([
 	QUnit.test("Row appointments", function(assert) {
 		var oRow = sap.ui.getCore().byId("PC1-Row1");
 		var oTimeline = _getRowTimeline(oRow);
-		assert.ok(jQuery.sap.equal(oRow.getAppointments(), oTimeline.getAppointments()), "CalendarRow appointments");
+		assert.ok(deepEqual(oRow.getAppointments(), oTimeline.getAppointments()), "CalendarRow appointments");
 		assert.equal(oRow.getAppointments().length, 4, "number of appointments");
 
 		var oAppointment = new CalendarAppointment("NewAppointment", {
@@ -1859,7 +1843,7 @@ sap.ui.define([
 	QUnit.test("Row intervalHeaders", function(assert) {
 		var oRow = sap.ui.getCore().byId("PC1-Row1");
 		var oTimeline = _getRowTimeline(oRow);
-		assert.ok(jQuery.sap.equal(oRow.getIntervalHeaders(), oTimeline.getIntervalHeaders()), "CalendarRow IntervalHeaders");
+		assert.ok(deepEqual(oRow.getIntervalHeaders(), oTimeline.getIntervalHeaders()), "CalendarRow IntervalHeaders");
 		assert.equal(oRow.getIntervalHeaders().length, 1, "number of IntervalHeaders");
 
 		var oIntervalHeader = new CalendarAppointment("NewIntervalHeader", {
@@ -2161,9 +2145,7 @@ sap.ui.define([
 
 	QUnit.test("Sticky header", function (assert) {
 		// arrange
-		var oInfoToolbar,
-			oToolbar,
-			oPC = createPlanningCalendar(
+		var oPC = createPlanningCalendar(
 				"invalidationExample",
 				new SearchField(),
 				new Button(),
@@ -2205,7 +2187,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//act
-		var oResizingSpy = sinon.spy(oPCWithSticky, "_adjustColumnHeadersTopOffset");
+		var oResizingSpy = this.spy(oPCWithSticky, "_adjustColumnHeadersTopOffset");
 		oPCWithSticky.setWidth("800px");
 		sap.ui.getCore().applyChanges();
 
@@ -2216,7 +2198,7 @@ sap.ui.define([
 		oPCWithSticky.destroy();
 	});
 
-	QUnit.test("singleSelection setter", function() {
+	QUnit.test("singleSelection setter", function(assert) {
 		var oTable = sap.ui.getCore().byId("SelectionMode-Table");
 
 		// Assert
@@ -2283,11 +2265,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("SelectAllCheckBox placement after changing the view - desktop", function() {
-		var oCalType = sap.ui.unified.CalendarIntervalType,
-			// Check only for Day, Month and Hour view, because TimesRow, DatesRow and
-			// MonthsRow represent all 5 existing intervals. That is because the two left intervals
-			// (OneMonthsRow and WeeksRow) inherit DatesRow one.
-			aCalTypes = [oCalType.Day, oCalType.Month, oCalType.Hour];
+		// Check only for Day, Month and Hour view, because TimesRow, DatesRow and
+		// MonthsRow represent all 5 existing intervals. That is because the two left intervals
+		// (OneMonthsRow and WeeksRow) inherit DatesRow one.
+		var aCalTypes = [CalendarIntervalType.Day, CalendarIntervalType.Month, CalendarIntervalType.Hour];
 
 		// Prepare
 		this.oPC.placeAt("bigUiArea");
@@ -2305,11 +2286,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("SelectAllCheckBox placement after changing the view - tablet/phone", function() {
-		var oCalType = sap.ui.unified.CalendarIntervalType,
-			// Check only for Day, Month and Hour view, because TimesRow, DatesRow and
-			// MonthsRow represent all 5 existing intervals. That is because the two left intervals
-			// (OneMonthsRow and WeeksRow) inherit DatesRow one.
-			aCalTypes = [oCalType.Day, oCalType.Month, oCalType.Hour];
+		// Check only for Day, Month and Hour view, because TimesRow, DatesRow and
+		// MonthsRow represent all 5 existing intervals. That is because the two left intervals
+		// (OneMonthsRow and WeeksRow) inherit DatesRow one.
+		var aCalTypes = [CalendarIntervalType.Day, CalendarIntervalType.Month, CalendarIntervalType.Hour];
 
 		// Prepare
 		this.oPC.placeAt("smallUiArea");
@@ -2354,7 +2334,7 @@ sap.ui.define([
 		this.checkItemPlacementAfterHidingRowHeaders(false);
 	});
 
-	QUnit.test("firstDayOfWeek", function() {
+	QUnit.test("firstDayOfWeek", function(assert) {
 		var oStartDate = new Date(2015, 0, 1, 8),
 			sCurrentPickerId, oPicker, oRow, aDays, $Date, oErrorSpy;
 
@@ -2564,7 +2544,7 @@ sap.ui.define([
 		_assertSpecialDatesEmpty: function() {
 			// Checks that aggregation "specialDates" is empty for each PlanningCalendarRow
 			this.oPC.getAggregation("rows").forEach(function (oRow) {
-				assert.ok(!oRow.getAggregation("specialDates") ||
+				QUnit.assert.ok(!oRow.getAggregation("specialDates") ||
 					oRow.getAggregation("specialDates").length === 0,
 					"PlanningCalendarRow should have no items in its aggregation specialDates");
 			});
@@ -2576,45 +2556,45 @@ sap.ui.define([
 			// and one with startDate and endDate of type 04.
 			var oRowNoWork = this.oPC.getAggregation("rows")[1].getAggregation("specialDates");
 
-			assert.equal(this.oPC.getAggregation("rows")[0].getAggregation("specialDates").length, 0, "first PlanningCalendarRow should have no items in its aggregation specialDates");
-			assert.equal(oRowNoWork.length, 3, " second PlanningCalendarRow should have 3 items in its aggregation specialDates");
-			assert.equal(oRowNoWork[0].getStartDate().toString(), oDate.getStartDate().toString(), "the right start of the special date is set");
-			assert.equal(oRowNoWork[0].getEndDate(), null, "the special date should have no endDate");
-			assert.equal(oRowNoWork[0].getType(), CalendarDayType.NonWorking, "the special date should be of type NonWorking");
-			assert.equal(oRowNoWork[1].getStartDate().toString(), oSecondDate.getStartDate().toString(), "the right start of the special date range is set");
-			assert.equal(oRowNoWork[1].getEndDate().toString(), oSecondDate.getEndDate().toString(), "the right end of the special date range is set");
-			assert.equal(oRowNoWork[1].getType(), CalendarDayType.NonWorking, "the special date should be of type NonWorking");
-			assert.equal(oRowNoWork[2].getStartDate().toString(), oThirdDate.getStartDate().toString(), "the right start of the special date range is set");
-			assert.equal(oRowNoWork[2].getEndDate().toString(), oThirdDate.getEndDate().toString(), "the right end of the special date range is set");
-			assert.equal(oRowNoWork[2].getType(), CalendarDayType.Type04, "the special date should be of type Type04");
+			QUnit.assert.equal(this.oPC.getAggregation("rows")[0].getAggregation("specialDates").length, 0, "first PlanningCalendarRow should have no items in its aggregation specialDates");
+			QUnit.assert.equal(oRowNoWork.length, 3, " second PlanningCalendarRow should have 3 items in its aggregation specialDates");
+			QUnit.assert.equal(oRowNoWork[0].getStartDate().toString(), oDate.getStartDate().toString(), "the right start of the special date is set");
+			QUnit.assert.equal(oRowNoWork[0].getEndDate(), null, "the special date should have no endDate");
+			QUnit.assert.equal(oRowNoWork[0].getType(), CalendarDayType.NonWorking, "the special date should be of type NonWorking");
+			QUnit.assert.equal(oRowNoWork[1].getStartDate().toString(), oSecondDate.getStartDate().toString(), "the right start of the special date range is set");
+			QUnit.assert.equal(oRowNoWork[1].getEndDate().toString(), oSecondDate.getEndDate().toString(), "the right end of the special date range is set");
+			QUnit.assert.equal(oRowNoWork[1].getType(), CalendarDayType.NonWorking, "the special date should be of type NonWorking");
+			QUnit.assert.equal(oRowNoWork[2].getStartDate().toString(), oThirdDate.getStartDate().toString(), "the right start of the special date range is set");
+			QUnit.assert.equal(oRowNoWork[2].getEndDate().toString(), oThirdDate.getEndDate().toString(), "the right end of the special date range is set");
+			QUnit.assert.equal(oRowNoWork[2].getType(), CalendarDayType.Type04, "the special date should be of type Type04");
 		},
 
 		_assertIsClassNoWorkAvailable: function () {
 			var aIntervals = jQuery("#PCSpecialDatesInRows-Row2-CalRow-Apps").children(".sapUiCalendarRowAppsInt");
 
-			assert.ok(jQuery(aIntervals[0]).hasClass("sapUiCalendarRowAppsNoWork"), "interval0 has class sapUiCalendarRowAppsNoWork because it is a special date");
-			assert.ok(!jQuery(aIntervals[1]).hasClass("sapUiCalendarRowAppsNoWork"), "interval0 has no class sapUiCalendarRowAppsNoWork");
-			assert.ok(!jQuery(aIntervals[2]).hasClass("sapUiCalendarRowAppsNoWork"), "interval02 has no class sapUiCalendarRowAppsNoWork");
-			assert.ok(!jQuery(aIntervals[3]).hasClass("sapUiCalendarRowAppsNoWork"), "interval03 has no class sapUiCalendarRowAppsNoWork");
-			assert.ok(!jQuery(aIntervals[4]).hasClass("sapUiCalendarRowAppsNoWork"), "interval04 has no class sapUiCalendarRowAppsNoWork");
-			assert.ok(jQuery(aIntervals[5]).hasClass("sapUiCalendarRowAppsNoWork"), "interval05 has class sapUiCalendarRowAppsNoWork because it is a non-working day");
-			assert.ok(jQuery(aIntervals[6]).hasClass("sapUiCalendarRowAppsNoWork"), "interval06 has class sapUiCalendarRowAppsNoWork because it is a non-working day");
-			assert.ok(!jQuery(aIntervals[7]).hasClass("sapUiCalendarRowAppsNoWork"), "interval07 has no class sapUiCalendarRowAppsNoWork");
-			assert.ok(!jQuery(aIntervals[8]).hasClass("sapUiCalendarRowAppsNoWork"), "interval08 has no class sapUiCalendarRowAppsNoWork, because it is a special date of other type than non-working");
-			assert.ok(!jQuery(aIntervals[9]).hasClass("sapUiCalendarRowAppsNoWork"), "interval09 has no class sapUiCalendarRowAppsNoWork, because it is a special date of other type than non-working");
-			assert.ok(!jQuery(aIntervals[10]).hasClass("sapUiCalendarRowAppsNoWork"), "interval10 has no class sapUiCalendarRowAppsNoWork");
-			assert.ok(!jQuery(aIntervals[11]).hasClass("sapUiCalendarRowAppsNoWork"), "interval11 has no class sapUiCalendarRowAppsNoWork");
-			assert.ok(jQuery(aIntervals[12]).hasClass("sapUiCalendarRowAppsNoWork"), "interval12 has class sapUiCalendarRowAppsNoWork because it is a non-working day");
-			assert.ok(jQuery(aIntervals[13]).hasClass("sapUiCalendarRowAppsNoWork"), "interval13 has class sapUiCalendarRowAppsNoWork because it is a non-working day and a special date");
+			QUnit.assert.ok(jQuery(aIntervals[0]).hasClass("sapUiCalendarRowAppsNoWork"), "interval0 has class sapUiCalendarRowAppsNoWork because it is a special date");
+			QUnit.assert.ok(!jQuery(aIntervals[1]).hasClass("sapUiCalendarRowAppsNoWork"), "interval0 has no class sapUiCalendarRowAppsNoWork");
+			QUnit.assert.ok(!jQuery(aIntervals[2]).hasClass("sapUiCalendarRowAppsNoWork"), "interval02 has no class sapUiCalendarRowAppsNoWork");
+			QUnit.assert.ok(!jQuery(aIntervals[3]).hasClass("sapUiCalendarRowAppsNoWork"), "interval03 has no class sapUiCalendarRowAppsNoWork");
+			QUnit.assert.ok(!jQuery(aIntervals[4]).hasClass("sapUiCalendarRowAppsNoWork"), "interval04 has no class sapUiCalendarRowAppsNoWork");
+			QUnit.assert.ok(jQuery(aIntervals[5]).hasClass("sapUiCalendarRowAppsNoWork"), "interval05 has class sapUiCalendarRowAppsNoWork because it is a non-working day");
+			QUnit.assert.ok(jQuery(aIntervals[6]).hasClass("sapUiCalendarRowAppsNoWork"), "interval06 has class sapUiCalendarRowAppsNoWork because it is a non-working day");
+			QUnit.assert.ok(!jQuery(aIntervals[7]).hasClass("sapUiCalendarRowAppsNoWork"), "interval07 has no class sapUiCalendarRowAppsNoWork");
+			QUnit.assert.ok(!jQuery(aIntervals[8]).hasClass("sapUiCalendarRowAppsNoWork"), "interval08 has no class sapUiCalendarRowAppsNoWork, because it is a special date of other type than non-working");
+			QUnit.assert.ok(!jQuery(aIntervals[9]).hasClass("sapUiCalendarRowAppsNoWork"), "interval09 has no class sapUiCalendarRowAppsNoWork, because it is a special date of other type than non-working");
+			QUnit.assert.ok(!jQuery(aIntervals[10]).hasClass("sapUiCalendarRowAppsNoWork"), "interval10 has no class sapUiCalendarRowAppsNoWork");
+			QUnit.assert.ok(!jQuery(aIntervals[11]).hasClass("sapUiCalendarRowAppsNoWork"), "interval11 has no class sapUiCalendarRowAppsNoWork");
+			QUnit.assert.ok(jQuery(aIntervals[12]).hasClass("sapUiCalendarRowAppsNoWork"), "interval12 has class sapUiCalendarRowAppsNoWork because it is a non-working day");
+			QUnit.assert.ok(jQuery(aIntervals[13]).hasClass("sapUiCalendarRowAppsNoWork"), "interval13 has class sapUiCalendarRowAppsNoWork because it is a non-working day and a special date");
 		},
 
 		_assertIsClassNoWorkNotAvailable: function () {
 			var aIntervals = jQuery("#PCSpecialDatesInRows-Row2-CalRow-Apps").children(".sapUiCalendarRowAppsInt");
 			for (var i = 0; i < aIntervals.length; i++) {
 				if (i === 5 || i === 6 || i === 12 || i === 13) {
-					assert.ok(jQuery(aIntervals[i]).hasClass("sapUiCalendarRowAppsNoWork"), "interval" + i + " has class sapUiCalendarRowAppsNoWork because it is a non-working day");
+					QUnit.assert.ok(jQuery(aIntervals[i]).hasClass("sapUiCalendarRowAppsNoWork"), "interval" + i + " has class sapUiCalendarRowAppsNoWork because it is a non-working day");
 				} else {
-					assert.ok(!jQuery(aIntervals[i]).hasClass("sapUiCalendarRowAppsNoWork"), "interval" + i + " has no class sapUiCalendarRowAppsNoWork");
+					QUnit.assert.ok(!jQuery(aIntervals[i]).hasClass("sapUiCalendarRowAppsNoWork"), "interval" + i + " has no class sapUiCalendarRowAppsNoWork");
 				}
 			}
 		}
@@ -2953,7 +2933,7 @@ sap.ui.define([
 				assert.strictEqual(sRowHeaderId, oSecondRow.sId + "-Head", "Returned id must be equal to the second row header id");
 			};
 
-		oSpy = sinon.spy(handleRowHeaderClick);
+		oSpy = this.spy(handleRowHeaderClick);
 		oPC1.attachEvent("rowHeaderClick", oSpy);
 
 		// Act - click on the second row header
@@ -3107,9 +3087,6 @@ sap.ui.define([
 		assert.strictEqual(oSetPropertySpy.callCount, 1, "If an appointment with the specified id does not exist in the DOM," +
 			"setProperty is not called for it. setProperty(\"selected\") is called only if an appointment is present and selected.");
 
-		//cleanup
-		oSetPropertySpy.restore();
-
 	});
 
 	QUnit.test("_getHeader returns the planning calendar header", function(assert) {
@@ -3135,7 +3112,7 @@ sap.ui.define([
 				new Date(Date.UTC(2015, 0, 7)),
 				CalendarIntervalType.Hours
 			),
-			fnAdjustColumnHeader = sinon.spy(oPC, "_adjustColumnHeadersTopOffset");
+			fnAdjustColumnHeader = this.spy(oPC, "_adjustColumnHeadersTopOffset");
 
 		// assert
 		assert.strictEqual(fnAdjustColumnHeader.callCount, 0, "_adjustColumnHeadersTopOffset() is not called if the control is not rendered");
@@ -3182,9 +3159,6 @@ sap.ui.define([
 		});
 		//assert
 		assert.strictEqual(_rowSetDateSpy.callCount, 1, "'_handleDateSelect()' was called once when the date is different");
-
-		//clean
-		_rowSetDateSpy.restore();
 	});
 
 	QUnit.module("Interaction", {
@@ -3739,7 +3713,7 @@ sap.ui.define([
 
 		setTimeout(function(){
 			$Day = jQuery("#startDateAtTheMiddleOfTheWeek-Header-Cal--Month0-20160902");
-			qutils.triggerKeyboardEvent($Day.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent($Day.get(0), KeyCodes.ENTER, false, false, false);
 			sap.ui.getCore().applyChanges();
 			assert.ok($Day.hasClass("sapUiCalItemSel"), "Day marked as selected");
 
@@ -3782,7 +3756,7 @@ sap.ui.define([
 
 		setTimeout(function(){
 			$Day = jQuery("#startDateAtTheMiddleOfTheWeek-Header-Cal--Month0-20160830");
-			qutils.triggerKeyboardEvent($Day.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent($Day.get(0), KeyCodes.ENTER, false, false, false);
 			sap.ui.getCore().applyChanges();
 
 			this.oPC2Interval = oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
@@ -3824,7 +3798,7 @@ sap.ui.define([
 
 		setTimeout(function(){
 			$Day = jQuery("#startDateAtTheMiddleOfTheWeek-WeeksRow--Cal--Month0-20160830");
-			qutils.triggerKeyboardEvent($Day.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent($Day.get(0), KeyCodes.ENTER, false, false, false);
 
 			this.oPC2Interval = oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
 			aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem");
@@ -4135,7 +4109,7 @@ sap.ui.define([
 	QUnit.test("Date Picker close button works on mobile", function(assert) {
 		var oHeader = this.oPC2._getHeader(),
 			oCalendarPicker = Element.registry.get(oHeader.getAssociation("currentPicker")),
-			oSpyCancel = sinon.spy(oHeader, "_closeCalendarPickerPopup");
+			oSpyCancel = this.spy(oHeader, "_closeCalendarPickerPopup");
 
 		oHeader._openCalendarPickerPopup(oCalendarPicker);
 

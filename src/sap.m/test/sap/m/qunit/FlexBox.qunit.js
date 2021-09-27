@@ -7,7 +7,9 @@ sap.ui.define([
 	"sap/m/Image",
 	"sap/m/FlexItemData",
 	"sap/m/Button",
-	"sap/m/VBox"
+	"sap/m/VBox",
+	"sap/ui/dom/includeStylesheet",
+	"require"
 ], function (
 	FlexBox,
 	Core,
@@ -15,19 +17,15 @@ sap.ui.define([
 	Image,
 	FlexItemData,
 	Button,
-	VBox
+	VBox,
+	includeStylesheet,
+	require
 ) {
 	"use strict";
 
-	var styleElem = document.createElement("style");
-	styleElem.textContent =
-		".sapMFlexItem {" +
-		"	padding: 1rem;" +
-		"	border: 1px solid black;" +
-		"	box-sizing: border-box;" +
-		"}";
-	document.head.appendChild(styleElem);
-
+	var pStyleLoaded = includeStylesheet({
+		url: require.toUrl("./FlexBox.qunit.css")
+	});
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
@@ -989,4 +987,7 @@ sap.ui.define([
 
 		assert.ok(oItemVisibilityChangeSpy.calledOnce, "_onItemVisibilityChange method is called once");
 	});
+
+	// let test starter wait for style sheet
+	return pStyleLoaded;
 });

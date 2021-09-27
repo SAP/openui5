@@ -1,7 +1,7 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Sorter",
 	"sap/m/List",
@@ -111,7 +111,7 @@ sap.ui.define([
 		assert.expect(10); // incl. rendering
 		app.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.domById("gl"), "GrowingList should be rendered");
+		assert.ok(document.getElementById("gl"), "GrowingList should be rendered");
 		assert.equal($ul().length, 1, "GrowingList should have its list rendered");
 		assert.equal($ul().children().length, 4, "GrowingList should have one header and three items rendered");
 

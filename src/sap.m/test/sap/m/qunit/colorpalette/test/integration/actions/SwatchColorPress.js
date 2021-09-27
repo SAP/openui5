@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/test/actions/Press"], function ($, Press) {
+sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/test/actions/Press"], function ($, Press) {
 	"use strict";
 
 	return Press.extend("cp.opa.test.app.actions.SwatchColorPress", {

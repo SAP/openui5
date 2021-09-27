@@ -1,5 +1,5 @@
+
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
@@ -12,8 +12,11 @@ sap.ui.define([
 	"sap/ui/base/Event",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
-	"sap/m/library"
-], function(Core, QUnitUtils, createAndAppendDiv, Tokenizer, Token, Dialog, Label, MultiInput, Event, Device, KeyCodes, Library) {
+	"sap/m/library",
+	"sap/ui/model/json/JSONModel"
+], function(Core, qutils, createAndAppendDiv, Tokenizer, Token, Dialog, Label, MultiInput, Event, Device, KeyCodes, Library, JSONModel) {
+	"use strict";
+
 	createAndAppendDiv("content");
 
 
@@ -44,9 +47,6 @@ sap.ui.define([
 		// assert
 		assert.ok(fnScrollToEndSpy.callCount, "scrollToEnd was called");
 		assert.ok(this.tokenizer._sResizeHandlerId, "Tokenizer has resize handler.");
-
-		//clean
-		fnScrollToEndSpy.restore();
 	});
 
 	QUnit.module("Basic", {
@@ -99,7 +99,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("removeAllTokens should call setFirstTokenTruncated with 'false'.", function(assert) {
-		var oSpy = sinon.spy(this.tokenizer, "setFirstTokenTruncated");
+		var oSpy = this.spy(this.tokenizer, "setFirstTokenTruncated");
 
 		// Act
 		this.tokenizer.removeAllTokens();
@@ -111,8 +111,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("_handleResize should call _useCollapsedMode and scrollToEnd so as to show properly the tokens", function(assert) {
-		var oUseCollapsedModeSpy = sinon.spy(this.tokenizer, "_useCollapsedMode"),
-			oScrollToEndSpy = sinon.spy(this.tokenizer, "scrollToEnd");
+		var oUseCollapsedModeSpy = this.spy(this.tokenizer, "_useCollapsedMode"),
+			oScrollToEndSpy = this.spy(this.tokenizer, "scrollToEnd");
 
 		// Act
 		this.tokenizer._handleResize();
@@ -126,7 +126,7 @@ sap.ui.define([
 		// arrange
 		this.tokenizer.addToken(new Token());
 		sap.ui.getCore().applyChanges();
-		var oSpy = sinon.spy(this.tokenizer, "setFirstTokenTruncated");
+		var oSpy = this.spy(this.tokenizer, "setFirstTokenTruncated");
 
 		// Act
 		this.tokenizer.destroyTokens();
@@ -135,17 +135,14 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(oSpy.callCount, 1, "setFirstTokenTruncated was called.");
 		assert.ok(oSpy.calledWith(false), "The setFirstTokenTruncated is called with false value");
-
-		// Cleanup
-		oSpy.restore();
 	});
 
 
 	QUnit.test("updateTokens should call setFirstTokenTruncated with 'false'.", function(assert) {
-		var oSpy = sinon.spy(this.tokenizer, "setFirstTokenTruncated");
+		var oSpy = this.spy(this.tokenizer, "setFirstTokenTruncated");
 
 		// Arrange
-		this.tokenizer.updateAggregation = sinon.stub().returns(true);
+		this.tokenizer.updateAggregation = this.stub().returns(true);
 
 		// Act
 		this.tokenizer.updateAggregation("tokens");
@@ -249,14 +246,14 @@ sap.ui.define([
 		var oTokenizerDomRef = oMultiInput.$().find('.sapMTokenizer')[0];
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oTokenizerDomRef, KeyCodes.ARROW_LEFT);
+		qutils.triggerKeydown(oTokenizerDomRef, KeyCodes.ARROW_LEFT);
 
 		// assert
 		assert.strictEqual(sap.ui.getCore().byId("t6").getDomRef().id, document.activeElement.id,
 			"Token6 is selected.");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oTokenizerDomRef, KeyCodes.ARROW_LEFT);
+		qutils.triggerKeydown(oTokenizerDomRef, KeyCodes.ARROW_LEFT);
 
 		// assert
 		assert.strictEqual(oSpecialToken.getDomRef().id, document.activeElement.id,
@@ -343,8 +340,8 @@ sap.ui.define([
 
 	QUnit.test("Handle mapping between List items and Tokens on Token deletion", function (assert) {
 		// Setup
-		var aItems, aTokens, oItem, oToken,
-			oModel = new sap.ui.model.json.JSONModel({
+		var aItems, oItem, oToken,
+			oModel = new JSONModel({
 				items: [{text: "Token 0"},
 					{text: "Token 1"},
 					{text: "Token 2"}
@@ -384,7 +381,7 @@ sap.ui.define([
 
 		// Assert
 		aItems = oTokenizer._getTokensList().getItems();
-		aTokens = oTokenizer.getTokens();
+		oTokenizer.getTokens();
 		assert.ok(oTokenUpdateSpy.called, "Token Update event should be called");
 		assert.ok(oTokenDeleteSpy.called, "Token Delete event should be called");
 
@@ -409,7 +406,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("setEditable", function () {
+	QUnit.test("setEditable", function (assert) {
 		var oToken;
 		this.tokenizer.addToken(new Token({text: "Token 1", key: "0001"}));
 
@@ -474,8 +471,6 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(spy.callCount, 1, "tokenizer's _adjustTokensVisibility was called once");
-
-		spy.restore();
 	});
 
 	QUnit.test("setEnabled", function(assert) {
@@ -497,7 +492,7 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(this.tokenizer.getHiddenTokensCount(), 5, "The Token's count was correctly set to 5");
 
-		oSpy = sinon.spy(this.tokenizer, "_setHiddenTokensCount");
+		oSpy = this.spy(this.tokenizer, "_setHiddenTokensCount");
 		// act
 		try {
 			this.tokenizer._setHiddenTokensCount("x");
@@ -536,8 +531,6 @@ sap.ui.define([
 		assert.equal(oUpdateTokensSpy.callCount, 0, "TokenUpdate was NOT fired");
 		assert.equal(oFireDeleteSpy.callCount, 0, "delete event was NOT BE fired");
 		assert.ok(!oToken.bIsDestroyed, "Token1 is NOT destroyed");
-
-		oFireDeleteSpy.restore();
 	});
 
 	QUnit.module("Keyboard handling", {
@@ -564,7 +557,7 @@ sap.ui.define([
 		this.tokenizer.setEditable(false);
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.DELETE);
+		qutils.triggerKeyboardEvent("t", KeyCodes.DELETE);
 
 		// assert
 		assert.equal(this.tokenizer.getTokens().length, 3, "No tokens were removed");
@@ -592,7 +585,7 @@ sap.ui.define([
 		var oSpy = this.spy(this.tokenizer, "fireTokenDelete");
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.DELETE);
+		qutils.triggerKeyboardEvent("t", KeyCodes.DELETE);
 
 		var oCall = oSpy.getCalls()[0];
 
@@ -602,7 +595,7 @@ sap.ui.define([
 
 	QUnit.test("tab", function(assert) {
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.TAB);
+		qutils.triggerKeyboardEvent("t", KeyCodes.TAB);
 
 		// assert
 		assert.equal(this.tokenizer.getSelectedTokens().length, 0, "There are no selected tokens");
@@ -613,13 +606,13 @@ sap.ui.define([
 		var fnCopySpy = this.spy(this.tokenizer, "_copy");
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.C, false, false, true);
+		qutils.triggerKeyboardEvent("t", KeyCodes.C, false, false, true);
 
 		// assert
 		assert.equal(fnCopySpy.callCount, 1, "Copy was triggered");
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.INSERT, false, false, true);
+		qutils.triggerKeyboardEvent("t", KeyCodes.INSERT, false, false, true);
 
 		// assert
 		assert.equal(fnCopySpy.callCount, 2, "Copy was triggered");
@@ -629,7 +622,7 @@ sap.ui.define([
 		var fnCutSpy = this.spy(this.tokenizer, "_cut");
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.X, false, false, true);
+		qutils.triggerKeyboardEvent("t", KeyCodes.X, false, false, true);
 
 		// assert
 		assert.equal(fnCutSpy.callCount, 1, "Cut was triggered");
@@ -653,9 +646,6 @@ sap.ui.define([
 
 		// assert
 		assert.equal(fnCutSpy.callCount, 0, "Cut was NOT triggered");
-
-		// clean
-		fnCutSpy.restore();
 	});
 
 	QUnit.test("Ctrl + X (copy)", function(assert) {
@@ -665,7 +655,7 @@ sap.ui.define([
 		this.tokenizer.setEditable(false);
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.X, false, false, true);
+		qutils.triggerKeyboardEvent("t", KeyCodes.X, false, false, true);
 
 		// assert
 		assert.equal(fnCopySpy.callCount, 1, "Copy was triggered");
@@ -675,7 +665,7 @@ sap.ui.define([
 		var fnCutSpy = this.spy(this.tokenizer, "_cut");
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.DELETE, true);
+		qutils.triggerKeyboardEvent("t", KeyCodes.DELETE, true);
 
 		// assert
 		assert.equal(fnCutSpy.callCount, 1, "Cut was triggered");
@@ -707,7 +697,7 @@ sap.ui.define([
 		this.tokenizer.setEditable(false);
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.DELETE, true);
+		qutils.triggerKeyboardEvent("t", KeyCodes.DELETE, true);
 
 		// assert
 		assert.equal(fnCopySpy.callCount, 1, "Copy was triggered");
@@ -718,7 +708,7 @@ sap.ui.define([
 		sap.ui.getCore().byId("t1").focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t1", KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeyboardEvent("t1", KeyCodes.ARROW_RIGHT);
 
 		// assert
 		assert.equal(this.tokenizer.getSelectedTokens().length, 2, "The initial selection is preserved");
@@ -730,7 +720,7 @@ sap.ui.define([
 		this.tokenizer.focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(this.tokenizer.getId(), KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(this.tokenizer.getId(), KeyCodes.ARROW_RIGHT);
 
 		// assert
 		assert.equal(this.tokenizer.getSelectedTokens().length, 0, "There aren't any selected token");
@@ -741,13 +731,13 @@ sap.ui.define([
 	QUnit.test("Arrow_right when last token in tokenizer is focused", function(assert) {
 		// arrange
 		var oTokenizer = this.tokenizer,
-			oSpy = sinon.spy(oTokenizer, "onsapnext"),
+			oSpy = this.spy(oTokenizer, "onsapnext"),
 			oEventArg;
 
 		sap.ui.getCore().byId("t3").focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown("t", KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown("t", KeyCodes.ARROW_RIGHT);
 		oEventArg = oSpy.getCall(0).args[0];
 
 		// assert
@@ -757,8 +747,6 @@ sap.ui.define([
 		// to bubble up.
 		assert.equal(oSpy.callCount, 1, "Only one event is triggered");
 		assert.equal(oEventArg.isMarked(), false, "The event was not processed by the Tokenizer");
-
-		oSpy.restore();
 	});
 
 	QUnit.test("Arrow_up", function(assert) {
@@ -766,13 +754,13 @@ sap.ui.define([
 		sap.ui.getCore().byId("t1").focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t1", KeyCodes.ARROW_UP);
+		qutils.triggerKeyboardEvent("t1", KeyCodes.ARROW_UP);
 
 		// assert
 		assert.equal(this.tokenizer.getSelectedTokens().length, 2, "Token selection is not changed");
 	});
 
-	QUnit.test("_selectRange(true)", function() {
+	QUnit.test("_selectRange(true)", function(assert) {
 		var oTokenizer = new Tokenizer().placeAt("content"),
 			aSelectedTokens,
 			oSecondToken = new Token("tok1");
@@ -814,7 +802,7 @@ sap.ui.define([
 
 		// act
 		oTokenizer.getTokens()[0].focus();
-		sap.ui.test.qunit.triggerKeydown(oTokenizer.getTokens()[0].getDomRef(), KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(oTokenizer.getTokens()[0].getDomRef(), KeyCodes.ARROW_RIGHT);
 		sap.ui.getCore().applyChanges();
 
 		// assert
@@ -834,14 +822,14 @@ sap.ui.define([
 
 		// act
 		oTokenizer.getTokens()[2].focus();
-		sap.ui.test.qunit.triggerKeydown(oTokenizer.getTokens()[2].getDomRef(), KeyCodes.ARROW_LEFT);
+		qutils.triggerKeydown(oTokenizer.getTokens()[2].getDomRef(), KeyCodes.ARROW_LEFT);
 		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(oTokenizer.getTokens()[0].getDomRef(), document.activeElement, "The navigation was successful.");
 	});
 
-	QUnit.test("_selectRange(false)", function() {
+	QUnit.test("_selectRange(false)", function(assert) {
 		var oTokenizer = new Tokenizer().placeAt("content"),
 			aSelectedTokens,
 			oSecondToken = new Token("tok1");
@@ -870,7 +858,7 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("onsapend", function() {
+	QUnit.test("onsapend", function(assert) {
 		var oEvent = new jQuery.Event(),
 			aTokens,
 			oTokenizer = new Tokenizer({
@@ -891,7 +879,7 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("onsaphome", function() {
+	QUnit.test("onsaphome", function(assert) {
 		var oEvent = new jQuery.Event(),
 			oTokenizer = new Tokenizer({
 				tokens: [new Token(), new Token(), new Token()]
@@ -909,7 +897,7 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("onsaphome + hidden tokens", function() {
+	QUnit.test("onsaphome + hidden tokens", function(assert) {
 		var oEvent = new jQuery.Event(),
 			oTokenizer = new Tokenizer({
 				tokens: [new Token(), new Token(), new Token()]
@@ -929,58 +917,46 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("HOME + SHIFT", function() {
+	QUnit.test("HOME + SHIFT", function(assert) {
 		var oSpySelection = this.spy(this.tokenizer, "_selectRange");
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.HOME, true);
+		qutils.triggerKeyboardEvent("t", KeyCodes.HOME, true);
 
 		// assert
 		assert.ok(oSpySelection.called, "Range selection is triggered");
 		assert.ok(oSpySelection.calledWith(false), "Range selection should select all tokens until the beginning");
-
-		// clean up
-		oSpySelection.restore();
 	});
 
-	QUnit.test("END + SHIFT", function() {
+	QUnit.test("END + SHIFT", function(assert) {
 		var oSpySelection = this.spy(this.tokenizer, "_selectRange");
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.END, true);
+		qutils.triggerKeyboardEvent("t", KeyCodes.END, true);
 
 		// assert
 		assert.ok(oSpySelection.called, "Range selection is triggered");
 		assert.ok(oSpySelection.calledWith(true), "Range selection should select all tokens until the end");
-
-		// clean up
-		oSpySelection.restore();
 	});
 
-	QUnit.test("ARROW_LEFT + CTR", function() {
+	QUnit.test("ARROW_LEFT + CTR", function(assert) {
 		var oSpyPrevious = this.spy(this.tokenizer, "onsapprevious");
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.ARROW_LEFT, false, false, true);
+		qutils.triggerKeyboardEvent("t", KeyCodes.ARROW_LEFT, false, false, true);
 
 		// assert
 		assert.ok(oSpyPrevious.called, "Backward navigation is triggered");
-
-		// clean up
-		oSpyPrevious.restore();
 	});
 
-	QUnit.test("ARROW_RIGHT + CTR", function() {
+	QUnit.test("ARROW_RIGHT + CTR", function(assert) {
 		var oSpyNext = this.spy(this.tokenizer, "onsapnext");
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.ARROW_RIGHT, false, false, true);
+		qutils.triggerKeyboardEvent("t", KeyCodes.ARROW_RIGHT, false, false, true);
 
 		// assert
 		assert.ok(oSpyNext.called, "Forward navigation is triggered");
-
-		// clean up
-		oSpyNext.restore();
 	});
 
 
@@ -1011,16 +987,16 @@ sap.ui.define([
 
 	QUnit.test("Test token selection with Shift and Ctrl", function(assert){
 		// arrange
-		sap.ui.test.qunit.triggerEvent("tap", this.t3.getDomRef(), {target : this.t3.getDomRef()});
+		qutils.triggerEvent("tap", this.t3.getDomRef(), {target : this.t3.getDomRef()});
 
 		// act
-		sap.ui.test.qunit.triggerEvent("tap", this.t1.getDomRef(), {target : this.t1.getDomRef(), shiftKey: true});
+		qutils.triggerEvent("tap", this.t1.getDomRef(), {target : this.t1.getDomRef(), shiftKey: true});
 
 		// assert
 		assert.equal(this.tokenizer.getSelectedTokens().length, 3, "Tokens 1 to 3 are selected");
 
 		// act
-		sap.ui.test.qunit.triggerEvent("tap", this.t5.getDomRef(), {target : this.t5.getDomRef(), shiftKey: true, ctrlKey: true});
+		qutils.triggerEvent("tap", this.t5.getDomRef(), {target : this.t5.getDomRef(), shiftKey: true, ctrlKey: true});
 
 		// assert
 		assert.equal(this.tokenizer.getSelectedTokens().length, 5, "All 5 tokens are selected");
@@ -1057,8 +1033,8 @@ sap.ui.define([
 
 	QUnit.test("Copy to clipboard", function(assert) {
 		assert.expect(6);
-		var oAddListenerSpy = new sinon.spy(document, "addEventListener"),
-			oExecCommandSpy = new sinon.spy(document, "execCommand"),
+		var oAddListenerSpy = this.spy(document, "addEventListener"),
+			oExecCommandSpy = this.spy(document, "execCommand"),
 			fnCopyToClipboard = null,
 			oDummyEvent1 = {
 				clipboardData: {
@@ -1125,8 +1101,6 @@ sap.ui.define([
 
 		// cleanup
 		document.removeEventListener("copy", oExecCommandSpy);
-		oAddListenerSpy.restore();
-		oExecCommandSpy.restore();
 	});
 
 	QUnit.module("useCollapsedMode", {
@@ -1156,7 +1130,7 @@ sap.ui.define([
 			assert.strictEqual(oToken.$().hasClass("sapMHiddenToken"), false, "Token on position " +  iIndex +  " is visible");
 		});
 
-		this.tokenizer.setRenderMode(sap.m.TokenizerRenderMode.Narrow);
+		this.tokenizer.setRenderMode(TokenizerRenderMode.Narrow);
 		sap.ui.getCore().applyChanges();
 
 		aTokens = this.tokenizer.getTokens();
@@ -1214,7 +1188,7 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("N-More label + Invalidation", function() {
+	QUnit.test("N-More label + Invalidation", function(assert) {
 		var oTokenizer = new Tokenizer({
 			maxWidth: "100px",
 			tokens: [
@@ -1352,7 +1326,7 @@ sap.ui.define([
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
-			this.clock.reset();
+			this.clock.restore();
 		}
 	});
 
@@ -1381,16 +1355,11 @@ sap.ui.define([
 		assert.strictEqual(oSetTruncatedSpy.calledWith(false), true, "Method called with correct parameter");
 		assert.strictEqual(oRemoveStyleClassSpy.callCount, 1, "The tokenizer's removeStyleClass method was called once.");
 		assert.strictEqual(oAddStyleClassSpy.calledWith("sapMTokenizerOneLongToken"), true, "Method called with correct parameter");
-
-		// Clean
-		oSetTruncatedSpy.restore();
-		oAddStyleClassSpy.restore();
-		oRemoveStyleClassSpy.restore();
 	});
 
 	QUnit.test("One token with later rebinding", function(assert) {
 		// Act
-		var oModel = new sap.ui.model.json.JSONModel({items: [{text: "token1"}]});
+		var oModel = new JSONModel({items: [{text: "token1"}]});
 		var oTokenizer = new Tokenizer({
 			width: "18rem",
 			tokens: {
@@ -1445,8 +1414,6 @@ sap.ui.define([
 		assert.ok(oSpy.calledOnce, "Truncation function should be called once.");
 		assert.ok(this.tokenizer.$().hasClass("sapMTokenizerOneLongToken"), "Should have class for one long token.");
 		assert.ok(oSpy.calledWith(true), "Truncation function should be called with True value");
-		// cleanup
-		oSpy.restore();
 	});
 
 	QUnit.test("Small container + One long truncated token should call setFirstTokenTruncated with false", function(assert) {
@@ -1463,8 +1430,6 @@ sap.ui.define([
 		assert.ok(oSpy.calledOnce, "Truncation function should be called once.");
 		assert.notOk(this.tokenizer.$().hasClass("sapMTokenizerOneLongToken"), "Should not have class for one long token.");
 		assert.ok(oSpy.calledWith(false), "Truncation function should be called with false");
-		// cleanup
-		oSpy.restore();
 	});
 
 	QUnit.test("Small containers usage (1 Item):", function(assert) {
@@ -1514,7 +1479,7 @@ sap.ui.define([
 
 	QUnit.module("Mobile Dialog", {
 		stubPlatform: function () {
-			this.stub(Device, "system", {
+			this.stub(Device, "system").value({
 				desktop: false,
 				phone: true,
 				tablet: false
@@ -1590,7 +1555,7 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("Checks if title is shown ot desktop", function (assert) {
+	QUnit.test("Checks if title is shown on desktop", function (assert) {
 		var oTokenizer = this.createTokenizer();
 
 		oTokenizer.placeAt("content");

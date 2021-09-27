@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/dom/units/Rem",
 	"sap/ui/core/theming/Parameters",
 	"sap/m/Breadcrumbs",
@@ -7,7 +8,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/library"
 ],
-function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
+function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 	"use strict";
 	var core, oFactory, helpers, $ = jQuery;
 
@@ -50,7 +51,7 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 	helpers = {
 		verifyFocusOnKeyDown: function (assert, iKeyCode, oItemToStartWith, oExpectedItemToBeFocused, sMessage) {
 			oItemToStartWith.$().trigger("focus");
-			sap.ui.test.qunit.triggerKeydown(oItemToStartWith.getId(), iKeyCode);
+			qutils.triggerKeydown(oItemToStartWith.getId(), iKeyCode);
 			assert.ok(oExpectedItemToBeFocused.jQuery().is(':focus'), sMessage);
 		},
 		waitForUIUpdates: function (){
@@ -389,7 +390,7 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 
 		this.oStandardBreadCrumbsControl.addEventDelegate({
 			onBeforeRendering: function() {
-				invalidateSpy.reset();
+				invalidateSpy.resetHistory();
 			}
 		});
 
@@ -413,12 +414,12 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 
 		helpers.renderObject(this.oStandardBreadCrumbsControl);
 
-		this.stub(this.oStandardBreadCrumbsControl, "$", function() {
+		this.stub(this.oStandardBreadCrumbsControl, "$").callsFake(function() {
 			return {
 				"outerWidth": function(){ return 208;}
 			};
 		});
-		this.stub(oLink1, "$", function() {
+		this.stub(oLink1, "$").callsFake(function() {
 			return {
 				"parent": function() {
 					return {
@@ -427,7 +428,7 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 				}
 			};
 		});
-		this.stub(oLink2, "$", function() {
+		this.stub(oLink2, "$").callsFake(function() {
 			return {
 				"parent": function() {
 					return {
@@ -495,7 +496,6 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 
 		// Clean up
 		this.oStandardBreadCrumbsControl.destroy();
-		oSpy.restore();
 	});
 
 	QUnit.module("Breadcrumbs - private functions", {
@@ -653,7 +653,7 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 		// Assert
 		assert.equal(document.activeElement, oCurrentLocation.getDomRef(), "Focus on the current location element");
 		// Act
-		oStandardBreadCrumbsControl.addLink(new sap.m.Link({text: "New Test Link"}));
+		oStandardBreadCrumbsControl.addLink(new Link({text: "New Test Link"}));
 		sap.ui.getCore().applyChanges();
 		// Assert
 		assert.equal(document.activeElement, oCurrentLocation.getDomRef(), "Focus is correctly restored");

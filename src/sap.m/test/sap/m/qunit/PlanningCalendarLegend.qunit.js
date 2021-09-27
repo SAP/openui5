@@ -1,10 +1,11 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/PlanningCalendarLegend"
-], function(QUnitUtils, JSONModel, PlanningCalendarLegend) {
+], function(XMLView, JSONModel, PlanningCalendarLegend) {
+	"use strict";
+
 	var sPclNoDB =
 		"<mvc:View" +
 		"    xmlns:core=\"sap.ui.core\"" +
@@ -28,7 +29,6 @@ sap.ui.define([
 
 	var sPclDB =
 		"<mvc:View" +
-		"    controllerName=\"PCLDBController\"" +
 		"    xmlns:core=\"sap.ui.core\"" +
 		"    xmlns:mvc=\"sap.ui.core.mvc\"" +
 		"    xmlns:unified=\"sap.ui.unified\"" +
@@ -48,46 +48,37 @@ sap.ui.define([
 		"    </PlanningCalendarLegend>" +
 		"</mvc:View>";
 
-
-	sap.ui.controller("PCLDBController", {
-
-		// implement an event handler in the Controller
-		onInit: function () {
-			var oModel = new JSONModel();
-			oModel.setData({
-				itemsHeader: "MyItemsHeader",
-				legendItems: [
-					{
-						text: "Public holiday",
-						type: "Type07"
-					},
-					{
-						text: "Team building",
-						type: "Type08"
-					},
-					{
-						text: "Customer event",
-						type: "Type20"
-					}
-				],
-				legendAppointmentItems: [
-					{
-						text: "Reminder",
-						type: "Type06"
-					},
-					{
-						text: "Client meeting",
-						type: "Type02"
-					},
-					{
-						text: "Team meeting",
-						type: "Type01"
-					}
-				],
-				legendStandardItems: ['WorkingDay', 'NonWorkingDay']
-			});
-			this.getView().setModel(oModel);
-		}
+	var oModel = new JSONModel({
+		itemsHeader: "MyItemsHeader",
+		legendItems: [
+			{
+				text: "Public holiday",
+				type: "Type07"
+			},
+			{
+				text: "Team building",
+				type: "Type08"
+			},
+			{
+				text: "Customer event",
+				type: "Type20"
+			}
+		],
+		legendAppointmentItems: [
+			{
+				text: "Reminder",
+				type: "Type06"
+			},
+			{
+				text: "Client meeting",
+				type: "Type02"
+			},
+			{
+				text: "Team meeting",
+				type: "Type01"
+			}
+		],
+		legendStandardItems: ['WorkingDay', 'NonWorkingDay']
 	});
 
 
@@ -130,56 +121,71 @@ sap.ui.define([
 	QUnit.test("PlanningCalendarLegend as XML view without data binding", function (assert) {
 
 		//Act
-		var myView = sap.ui.xmlview({viewContent: sPclNoDB}),
-				oPCLegend = myView.byId("PlanningCalendarLegend");
+		return XMLView.create({
+			definition: sPclNoDB
+		}).then(function(myView) {
 
-		//Assert
-		assert.deepEqual(oPCLegend.getStandardItems(), ["Today", "Selected", "NonWorkingDay"], "Should return the same items");
-		assert.equal(oPCLegend.getItems().length, 2, "Should has 2 Calendar items");
-		assert.equal(oPCLegend.getAppointmentItems().length, 1, "Should has 1 Appointment items");
+			var oPCLegend = myView.byId("PlanningCalendarLegend");
 
-		//Cleanup
-		myView.destroy();
+			//Assert
+			assert.deepEqual(oPCLegend.getStandardItems(), ["Today", "Selected", "NonWorkingDay"], "Should return the same items");
+			assert.equal(oPCLegend.getItems().length, 2, "Should has 2 Calendar items");
+			assert.equal(oPCLegend.getAppointmentItems().length, 1, "Should has 1 Appointment items");
+
+			//Cleanup
+			myView.destroy();
+		});
+
 	});
 
 	QUnit.test("PlanningCalendarLegend as XML view with data binding", function (assert) {
 
 		//Act
-		var myView = sap.ui.xmlview({viewContent: sPclDB}),
-				oPCLegend = myView.byId("PlanningCalendarLegend");
+		return XMLView.create({
+			definition: sPclDB
+		}).then(function(myView) {
+			myView.setModel(oModel);
 
-		myView.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+			var oPCLegend = myView.byId("PlanningCalendarLegend");
 
-		//Assert
-		assert.deepEqual(oPCLegend.getStandardItems(), ["WorkingDay", "NonWorkingDay"], "Should return the same items");
-		assert.equal(oPCLegend.getItems().length, 3, "Should has 3 Calendar items");
-		assert.equal(oPCLegend.getAppointmentItems().length, 3, "Should has 3 Appointment items");
+			myView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
-		//Cleanup
-		myView.destroy();
+			//Assert
+			assert.deepEqual(oPCLegend.getStandardItems(), ["WorkingDay", "NonWorkingDay"], "Should return the same items");
+			assert.equal(oPCLegend.getItems().length, 3, "Should has 3 Calendar items");
+			assert.equal(oPCLegend.getAppointmentItems().length, 3, "Should has 3 Appointment items");
+
+			//Cleanup
+			myView.destroy();
+		});
 	});
 
 	QUnit.module("Rendering");
 	QUnit.test("Basic", function (assert) {
 		//Act
-		var myView = sap.ui.xmlview({viewContent: sPclNoDB}),
-				oPCLegend = myView.byId("PlanningCalendarLegend");
-		//Act
-		oPCLegend.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		return XMLView.create({
+			definition: sPclNoDB
+		}).then(function(myView) {
 
-		//Assert --section header
-		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").length, 2, "Two header sections should be rendered");
-		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(0).innerText, "MyItemsHeader", "The calendar section should be available");
-		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(1).innerText, "MyAppointmentItemsHeader", "The Appointments section should be available");
+			var oPCLegend = myView.byId("PlanningCalendarLegend");
 
-		//Assert -- Types
-		assert.equal(oPCLegend.$().find(".sapUiUnifiedLegendItems")[0].childElementCount, 5, 'Calendar section should contain exact amount of elements');
-		assert.equal(oPCLegend.$().find(".sapUiUnifiedLegendItems")[1].childElementCount, 1, 'Appointments section should contain exact amount of elements');
+			//Act
+			oPCLegend.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
-		//Cleanup
-		oPCLegend.destroy();
+			//Assert --section header
+			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").length, 2, "Two header sections should be rendered");
+			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(0).innerText, "MyItemsHeader", "The calendar section should be available");
+			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(1).innerText, "MyAppointmentItemsHeader", "The Appointments section should be available");
+
+			//Assert -- Types
+			assert.equal(oPCLegend.$().find(".sapUiUnifiedLegendItems")[0].childElementCount, 5, 'Calendar section should contain exact amount of elements');
+			assert.equal(oPCLegend.$().find(".sapUiUnifiedLegendItems")[1].childElementCount, 1, 'Appointments section should contain exact amount of elements');
+
+			//Cleanup
+			oPCLegend.destroy();
+		});
 	});
 
 	QUnit.test("when no appointmenetItems is set, the Appointments section should not appear", function (assert) {
@@ -200,20 +206,25 @@ sap.ui.define([
 
 	QUnit.test("Legend header elements roles", function (assert) {
 		//Act
-		var myView = sap.ui.xmlview({viewContent: sPclNoDB}),
-				oPCLegend = myView.byId("PlanningCalendarLegend");
-		//Act
-		oPCLegend.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		return XMLView.create({
+			definition: sPclNoDB
+		}).then(function(myView) {
 
-		//Assert --section header
-		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").length, 2, "Two header sections should be rendered");
-		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(0).getAttribute("role"), "heading", "The headers have a heading role");
-		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(0).getAttribute("aria-level"), "3", "The headers have aria-level - 3");
-		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(1).getAttribute("role"), "heading", "The headers have a heading role");
-		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(1).getAttribute("aria-level"), "3", "The headers have aria-level - 3");
+			var oPCLegend = myView.byId("PlanningCalendarLegend");
 
-		//Cleanup
-		oPCLegend.destroy();
+			//Act
+			oPCLegend.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//Assert --section header
+			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").length, 2, "Two header sections should be rendered");
+			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(0).getAttribute("role"), "heading", "The headers have a heading role");
+			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(0).getAttribute("aria-level"), "3", "The headers have aria-level - 3");
+			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(1).getAttribute("role"), "heading", "The headers have a heading role");
+			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(1).getAttribute("aria-level"), "3", "The headers have aria-level - 3");
+
+			//Cleanup
+			oPCLegend.destroy();
+		});
 	});
 });

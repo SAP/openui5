@@ -1,16 +1,16 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/StandardTile",
 	"sap/ui/core/IconPool",
-	"sap/m/TileContainer",
-	"jquery.sap.global"
+	"sap/m/TileContainer"
 ], function(
+	Log,
 	createAndAppendDiv,
 	StandardTile,
 	IconPool,
-	TileContainer,
-	jQuery
+	TileContainer
 ) {
 	"use strict";
 
@@ -77,31 +77,31 @@ sap.ui.define([
 	QUnit.module("Rendering All Fields");
 
 	QUnit.test("ControlRendered", function(assert) {
-		assert.notEqual(jQuery.sap.domById(tileBasicId), null, "tileBasic should be rendered.");
+		assert.notEqual(document.getElementById(tileBasicId), null, "tileBasic should be rendered.");
 	});
 
 	QUnit.test("IconRendered", function(assert) {
-		assert.notEqual(jQuery.sap.domById(tileBasicId + "-img"), null, "tileBasic icon should be rendered.");
+		assert.notEqual(document.getElementById(tileBasicId + "-img"), null, "tileBasic icon should be rendered.");
 	});
 
 	QUnit.test("IconFontRendered", function(assert) {
-		assert.equal(jQuery.sap.domById(tileIconFont + "-img"), null, "tileIconFont icon should be rendered.");
+		assert.equal(document.getElementById(tileIconFont + "-img"), null, "tileIconFont icon should be rendered.");
 	});
 
 	QUnit.test("NumberRendered", function(assert) {
-		assert.notEqual(jQuery.sap.domById(tileBasicId + "-number"), null, "tileBasic number should be rendered.");
+		assert.notEqual(document.getElementById(tileBasicId + "-number"), null, "tileBasic number should be rendered.");
 	});
 
 	QUnit.test("NumberUnitRendered", function(assert) {
-		assert.notEqual(jQuery.sap.domById(tileBasicId + "-numberUnit"), null, "tileBasic number unit should be rendered.");
+		assert.notEqual(document.getElementById(tileBasicId + "-numberUnit"), null, "tileBasic number unit should be rendered.");
 	});
 
 	QUnit.test("TitleRendered", function(assert) {
-		assert.notEqual(jQuery.sap.domById(tileBasicId + "-title"), null, "tileBasic title should be rendered.");
+		assert.notEqual(document.getElementById(tileBasicId + "-title"), null, "tileBasic title should be rendered.");
 	});
 
 	QUnit.test("DescriptionRendered", function(assert) {
-		assert.notEqual(jQuery.sap.domById(tileBasicId + "-info"), null, "tileBasic info should be rendered.");
+		assert.notEqual(document.getElementById(tileBasicId + "-info"), null, "tileBasic info should be rendered.");
 	});
 
 	QUnit.test("ShouldRenderAddIconIfTypeIsCreate", function(assert) {
@@ -128,21 +128,21 @@ sap.ui.define([
 		core.applyChanges();
 
 		//Act
-		result = jQuery(sut.getDomRef()).find(".sapMStdTileNumS .sapMStdTileNumM");
+		result = sut.$().find(".sapMStdTileNumS .sapMStdTileNumM");
 		//Assert
 		assert.equal(result.length, 0);
 
 		//Act
 		sut.setNumber("7000000");
 		core.applyChanges();
-		result = jQuery(sut.getDomRef()).find(".sapMStdTileNumM");
+		result = sut.$().find(".sapMStdTileNumM");
 		//Assert
 		assert.equal(result.length, 1);
 
 		//Act
 		sut.setNumber("80000000");
 		core.applyChanges();
-		result = jQuery(sut.getDomRef()).find(".sapMStdTileNumS");
+		result = sut.$().find(".sapMStdTileNumS");
 		//Assert
 		assert.equal(result.length, 1);
 
@@ -154,11 +154,11 @@ sap.ui.define([
 	QUnit.module("Not Rendering Optional Fields");
 
 	QUnit.test("IconNotRendered", function(assert) {
-		assert.equal(jQuery.sap.domById(tileNoIconId + "-img"), null, "tileNoIcon icon should not be rendered.");
+		assert.equal(document.getElementById(tileNoIconId + "-img"), null, "tileNoIcon icon should not be rendered.");
 	});
 
 	QUnit.test("NumberNotRendered", function(assert) {
-		assert.equal(jQuery.sap.domById(tileNoNumberId + "-number"), null, "tileNoNumber number and number units should not be rendered.");
+		assert.equal(document.getElementById(tileNoNumberId + "-number"), null, "tileNoNumber number and number units should not be rendered.");
 	});
 
 
@@ -173,7 +173,7 @@ sap.ui.define([
 
 	QUnit.test("PressOk", function(assert) {
 		tileBasic.firePress();
-		jQuery.sap.log.info("Pressed tile id=" + pressedTileId);
+		Log.info("Pressed tile id=" + pressedTileId);
 		assert.equal(pressedTileId, tileBasicId, "tileBasic was pressed");
 	});
 

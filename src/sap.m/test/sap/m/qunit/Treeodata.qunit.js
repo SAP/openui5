@@ -9,16 +9,7 @@ sap.ui.define([
 	"sap/m/Tree"
 ], function(createAndAppendDiv, qutils, MockServer, ODataModelV2, StandardTreeItem, Tree) {
 	"use strict";
-	createAndAppendDiv("content");
-	var styleElement = document.createElement("style");
-	styleElement.textContent =
-		"#content {" +
-		"	height: 100%;" +
-		"}" +
-		"#mSAPUI5SupportMessage {" +
-		"	display: none !important;" +
-		"}";
-	document.head.appendChild(styleElement);
+	createAndAppendDiv("content").style.height = "100%";
 
 
 

@@ -7,14 +7,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/qunit-css",
-	"sap/ui/thirdparty/qunit",
-	"sap/ui/qunit/qunit-junit",
-	"sap/ui/qunit/qunit-coverage",
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
-], function(KeyCodes, MessageStrip, Link, FormattedText, Core, Device, JSONModel) {
+	"sap/ui/qunit/QUnitUtils"
+], function(KeyCodes, MessageStrip, Link, FormattedText, Core, Device, JSONModel, qutils) {
 	"use strict";
 
 
@@ -134,7 +128,9 @@ sap.ui.define([
 		assert.strictEqual(oText.getText(), this.oMessageStrip.getText(), "should set the same text on the MS and it's internal aggregation text");
 	});
 
-	QUnit.test("setText", 2, function (oAssert) {
+	QUnit.test("setText", function (oAssert) {
+		oAssert.expect(2);
+
 		// Arrange
 		var sTestString = "test string",
 			oFormattedText = new FormattedText(),
@@ -325,7 +321,7 @@ sap.ui.define([
 		});
 
 		setTimeout(function() {
-			sap.ui.test.qunit.triggerEvent("tap", this.oButton);
+			qutils.triggerEvent("tap", this.oButton);
 		}.bind(this), nAnimationLengthTimeout);
 
 	});
@@ -341,7 +337,7 @@ sap.ui.define([
 
 		setTimeout(function() {
 			this.oButton.focus();
-			sap.ui.test.qunit.triggerKeydown(this.oButton, KeyCodes.ENTER);
+			qutils.triggerKeydown(this.oButton, KeyCodes.ENTER);
 		}.bind(this), nAnimationLengthTimeout);
 	});
 
@@ -356,7 +352,7 @@ sap.ui.define([
 
 		setTimeout(function() {
 			this.oButton.focus();
-			sap.ui.test.qunit.triggerKeyup(this.oButton, KeyCodes.SPACE);
+			qutils.triggerKeyup(this.oButton, KeyCodes.SPACE);
 		}.bind(this), nAnimationLengthTimeout);
 	});
 
@@ -463,7 +459,7 @@ sap.ui.define([
 
 		var $oCloseButton = this.oMessageStrip.$().find(".sapMMsgStripCloseButton"),
 			$sCloseButtonLabelId = $oCloseButton.attr("aria-labelledby"),
-			$sCloseButtonLabelText = jQuery.sap.byId($sCloseButtonLabelId)[0].innerText,
+			$sCloseButtonLabelText = document.getElementById($sCloseButtonLabelId).innerText,
 			sInvisibleTextInformation = oRb.getText("MESSAGE_STRIP_INFORMATION_CLOSE_BUTTON"),
 			sInvisibleTextWarning = oRb.getText("MESSAGE_STRIP_WARNING_CLOSE_BUTTON"),
 			sInvisibleTextError = oRb.getText("MESSAGE_STRIP_ERROR_CLOSE_BUTTON"),
@@ -478,7 +474,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.strictEqual(jQuery.sap.byId($oCloseButton.attr("aria-labelledby"))[0].innerText, sInvisibleTextError,
+		assert.strictEqual(document.getElementById($oCloseButton.attr("aria-labelledby")).innerText, sInvisibleTextError,
 			"the aria-labelledby of the close button should indicate that the type of the message strip is Error");
 
 		//Act
@@ -486,7 +482,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.strictEqual(jQuery.sap.byId($oCloseButton.attr("aria-labelledby"))[0].innerText, sInvisibleTextWarning,
+		assert.strictEqual(document.getElementById($oCloseButton.attr("aria-labelledby")).innerText, sInvisibleTextWarning,
 			"the aria-labelledby of the close button should indicate that the type of the message strip is Warning");
 
 		//Act
@@ -494,7 +490,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.strictEqual(jQuery.sap.byId($oCloseButton.attr("aria-labelledby"))[0].innerText, sInvisibleTextSuccess,
+		assert.strictEqual(document.getElementById($oCloseButton.attr("aria-labelledby")).innerText, sInvisibleTextSuccess,
 			"the aria-labelledby of the close button should indicate that the type of the message strip is Success");
 	});
 

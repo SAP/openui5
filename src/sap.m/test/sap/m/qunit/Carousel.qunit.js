@@ -43,13 +43,6 @@ sap.ui.define([
 	// shortcut for sap.m.PlacementType
 	var PlacementType = mobileLibrary.PlacementType;
 
-	var styleElement = document.createElement("style");
-	styleElement.textContent =
-		"#mSAPUI5SupportMessage {" +
-		"	display: none !important;" +
-		"}";
-	document.head.appendChild(styleElement);
-
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 	var sinonClockTickValue = 1000;
 
@@ -366,9 +359,10 @@ sap.ui.define([
 	QUnit.test("#setCustomLayout() with no DomRef available", function (assert) {
 		// Set up
 		var iPagesToShow = 4,
-			oDomRefStub = this.stub(this.oCarousel, "getDomRef", null),
 			oMoveToPageSpy = this.spy(this.oCarousel, "_moveToPage"),
 			oRerenderSpy = this.spy(this.oCarousel, "rerender");
+
+		this.stub(this.oCarousel, "getDomRef").returns(null);
 
 		// Act
 		this.oCarousel.setCustomLayout(new CarouselLayout({
@@ -378,11 +372,6 @@ sap.ui.define([
 		// Assert
 		assert.ok(oMoveToPageSpy.notCalled, "moveToPage is not called");
 		assert.ok(oRerenderSpy.notCalled, "Rerender is not called");
-
-		// Cleanup
-		oDomRefStub.restore();
-		oMoveToPageSpy.restore();
-		oRerenderSpy.restore();
 	});
 
 	QUnit.test("#onAfterRendering() _setWidthOfPages is not called when no customLayout aggregation is set", function (assert) {
@@ -394,9 +383,6 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(oSetWidthOfPagesSpy.notCalled, "_setWidthOfPages is not called");
-
-		// Cleanup
-		oSetWidthOfPagesSpy.restore();
 	});
 
 	QUnit.test("#onAfterRendering() _setWidthOfPages is called with corect number of items to be shown", function (assert) {
@@ -413,9 +399,6 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(oSetWidthOfPagesSpy.calledWith, iPagesToShow, "_setWidthOfPages is called with 4");
-
-		// Cleanup
-		oSetWidthOfPagesSpy.restore();
 	});
 
 	QUnit.test("#_getPageIndicatorText(2) correct number of pages is shown when customLayout aggregation is set", function (assert) {
@@ -565,20 +548,17 @@ sap.ui.define([
 		// Set up
 		var sResult,
 			sFocusedPage = "keyTestPage_3",
-			oGetLastFocusedActivePageStub = this.stub(this.oCarousel, "_getLastFocusedActivePage", function() { return sFocusedPage; }),
 			oFocusedElement = {};
 
-			this.oCarousel._lastFocusablePageElement = {};
-			this.oCarousel._lastFocusablePageElement[sFocusedPage] = oFocusedElement;
+		this.stub(this.oCarousel, "_getLastFocusedActivePage").callsFake(function() { return sFocusedPage; });
+		this.oCarousel._lastFocusablePageElement = {};
+		this.oCarousel._lastFocusablePageElement[sFocusedPage] = oFocusedElement;
 
 		// Act
 		sResult = this.oCarousel._getActivePageLastFocusedElement();
 
 		// Assert
 		assert.strictEqual(sResult, oFocusedElement, "The correct last focused HTML element is returned for the last focused still active page");
-
-		// Clean up
-		oGetLastFocusedActivePageStub.restore();
 	});
 
 	QUnit.test("#setVisible(false) should delete Carousel from DOM", function (assert) {
@@ -615,10 +595,11 @@ sap.ui.define([
 
 	QUnit.test("Destroying the Carousel will set the _needsUpdate property of the Mobify Carousel to 'false'", function (assert) {
 		// Arrange
+		var oCarousel = createCarouselWithContent("");
+
 		// on the next animation frame _needsUpdate will automatically become false,
 		// so make sure that it doesn't happen during our test
-		var oReqAnimationFrameStub = sinon.stub(Mobify.UI.Utils, "requestAnimationFrame", jQuery.noop),
-			oCarousel = createCarouselWithContent("");
+		this.stub(Mobify.UI.Utils, "requestAnimationFrame").callsFake(jQuery.noop);
 
 		oCarousel.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
@@ -632,9 +613,6 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oMobifyCarousel._needsUpdate, false, "'_needsUpdate' property is false after destroy");
-
-		// Clean up
-		oReqAnimationFrameStub.restore();
 	});
 
 	//================================================================================
@@ -722,8 +700,6 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		assert.ok(oPageChangedSpy.notCalled, "pageChanged event is not fired");
-
-		oPageChangedSpy.restore();
 	});
 
 	QUnit.test("Listen to 'beforePageChanged' event", function (assert) {
@@ -763,10 +739,6 @@ sap.ui.define([
 
 		assert.ok(oChangePageSpy.calledOnce, "PageChanged fired once");
 		assert.ok(oUpdateActivePagesSpy.calledWith("keyTestPage_3"), "_updateActivePages is called with the correct new active page Id");
-
-		// Reset sinon spy
-		oChangePageSpy.restore();
-		oUpdateActivePagesSpy.restore();
 	});
 
 	QUnit.test("Active page should be set when specified in constructor'", function (assert) {
@@ -1190,15 +1162,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("F6", function (assert) {
-		var oSpy = sinon.spy(F6Navigation, "handleF6GroupNavigation");
+		var oSpy = this.spy(F6Navigation, "handleF6GroupNavigation");
 		// Act
 		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.F6);
 
 		// Assert
 		assert.ok(oSpy.callCount >= 1, "Last active page index should be preserved.");
-
-		// Clean up
-		oSpy.restore();
 	});
 
 	QUnit.test("F6 focusing on next focusable group", function (assert) {
@@ -1293,7 +1262,7 @@ sap.ui.define([
 			touch: false
 		};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 		oCarousel.setActivePage("image2");
 		forceTransitionComplete(this.oCarousel);
 
@@ -1312,6 +1281,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Error page", {
+		before: function() {
+			sinon.config.useFakeTimers = false;
+		},
 		beforeEach: function () {
 			this.data = {
 				texts : [ {
@@ -1323,14 +1295,14 @@ sap.ui.define([
 				}]
 			};
 
-			this.oCarousel = new sap.m.Carousel();
+			this.oCarousel = new Carousel();
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
-
-			sinon.config.useFakeTimers = false;
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
+		},
+		after: function() {
 			sinon.config.useFakeTimers = true;
 		}
 	});
@@ -1340,7 +1312,7 @@ sap.ui.define([
 		this.oCarousel.setModel(oModel);
 		oModel.setData(this.data);
 
-		this.oCarousel.bindAggregation("pages",{path:"/wrongPath", template:new sap.m.Text({text: "{text}"})});
+		this.oCarousel.bindAggregation("pages",{path:"/wrongPath", template:new Text({text: "{text}"})});
 
 		assert.strictEqual(this.oCarousel.getPages().length, 0, "There are no pages in the carousel when the binding is wrong (or other similar issue)");
 		assert.strictEqual(this.oCarousel.getDomRef().getElementsByClassName("sapMMessagePage").length, 1, "When there is wrong binding path there is sap.m.MessagePage with error message");
@@ -1361,7 +1333,7 @@ sap.ui.define([
 
 			assert.strictEqual(this.oCarousel.getPages().length, 3, "There are 3 pages in the carousel");
 			assert.strictEqual(this.oCarousel.getDomRef().getElementsByClassName("sapMMessagePage").length, 0, "When there is late binding there is no sap.m.MessagePage with error message");
-				done();
+			done();
 		}.bind(this), 1000);
 	});
 

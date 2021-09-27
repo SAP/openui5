@@ -223,7 +223,7 @@ function(
 					 * Determines whether the Dialog will be displayed on full screen on a phone.
 					 * @since 1.11.2
 					 * @deprecated Since version 1.13.1.
-					 * Please use the new stretch property instead. This enables a stretched Dialog even on tablet and desktop. If you want to achieve the same effect as <code>stretchOnPhone</code>, please set the stretch with jQuery.device.is.phone, then the Dialog is only stretched when it runs on a phone.
+					 * Please use the new stretch property instead. This enables a stretched Dialog even on tablet and desktop. If you want to achieve the same effect as <code>stretchOnPhone</code>, please set the stretch with <code>Device.system.phone</code>, then the Dialog is only stretched when it runs on a phone.
 					 */
 					stretchOnPhone: {type: "boolean", group: "Appearance", defaultValue: false, deprecated: true},
 

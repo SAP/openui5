@@ -1,6 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/GenericTile",
 	"sap/m/TileContent",
 	"sap/m/NumericContent",
@@ -8,17 +8,18 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
 	"sap/m/GenericTileLineModeRenderer",
+	"sap/m/Button",
 	"sap/m/Text",
 	"sap/m/ScrollContainer",
 	"sap/m/FlexBox",
 	"sap/m/GenericTileRenderer",
 	"sap/m/library",
 	"sap/base/util/isEmptyObject",
+	"sap/ui/events/KeyCodes",
 	// used only indirectly
-	"sap/ui/events/jquery/EventExtension",
-	"jquery.sap.keycodes"
+	"sap/ui/events/jquery/EventExtension"
 ], function(jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, ResizeHandler, GenericTileLineModeRenderer,
-            Text, ScrollContainer, FlexBox, GenericTileRenderer, library, isEmptyObject) {
+            Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, isEmptyObject, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.m.Size
@@ -46,22 +47,16 @@ sap.ui.define([
 
 	QUnit.module("Control initialization core and theme checks", {
 		beforeEach: function() {
-			this.fnStubIsInitialized = sinon.stub(sap.ui.getCore(), "isInitialized");
-			this.fnSpyAttachInit = sinon.spy(sap.ui.getCore(), "attachInit");
-			this.fnSpyHandleCoreInitialized = sinon.spy(GenericTile.prototype, "_handleCoreInitialized");
-			this.fnStubThemeApplied = sinon.stub(sap.ui.getCore(), "isThemeApplied");
-			this.fnStubAttachThemeApplied = sinon.stub(sap.ui.getCore(), "attachThemeChanged").callsFake(function(fn, context) {
+			this.fnStubIsInitialized = this.stub(sap.ui.getCore(), "isInitialized");
+			this.fnSpyAttachInit = this.spy(sap.ui.getCore(), "attachInit");
+			this.fnSpyHandleCoreInitialized = this.spy(GenericTile.prototype, "_handleCoreInitialized");
+			this.fnStubThemeApplied = this.stub(sap.ui.getCore(), "isThemeApplied");
+			this.fnStubAttachThemeApplied = this.stub(sap.ui.getCore(), "attachThemeChanged").callsFake(function(fn, context) {
 				fn.call(context); //simulate immediate theme change
 			});
-			this.fnSpyHandleThemeApplied = sinon.spy(GenericTile.prototype, "_handleThemeApplied");
+			this.fnSpyHandleThemeApplied = this.spy(GenericTile.prototype, "_handleThemeApplied");
 		},
 		afterEach: function() {
-			this.fnStubIsInitialized.restore();
-			this.fnSpyAttachInit.restore();
-			this.fnSpyHandleCoreInitialized.restore();
-			this.fnStubThemeApplied.restore();
-			this.fnStubAttachThemeApplied.restore();
-			this.fnSpyHandleThemeApplied.restore();
 		}
 	});
 
@@ -133,16 +128,13 @@ sap.ui.define([
 		//Arrange
 		this.fnStubIsInitialized.returns(true);
 		this.fnStubThemeApplied.returns(false);
-		sinon.spy(Text.prototype, "clampHeight");
+		this.spy(Text.prototype, "clampHeight");
 
 		//Act
 		new GenericTile();
 
 		//Assert
 		assert.ok(Text.prototype.clampHeight.calledOnce, "The tile's title height has been recalculated.");
-
-		//Cleanup
-		Text.prototype.clampHeight.restore();
 	});
 
 	QUnit.module("Default values", {
@@ -191,7 +183,7 @@ sap.ui.define([
 
 	QUnit.module("Rendering tests", {
 		beforeEach: function() {
-			this.fnSpyBeforeRendering = sinon.spy(GenericTile.prototype, "onBeforeRendering");
+			this.fnSpyBeforeRendering = this.spy(GenericTile.prototype, "onBeforeRendering");
 
 			this.oGenericTile = new GenericTile("generic-tile", {
 				subheader: "Expenses By Region",
@@ -240,7 +232,7 @@ sap.ui.define([
 							fnCallback = undefined;
 						}
 					} else {
-						jQuery.sap.delayedCall(1500, this, fnThemeApplied, oEvent);
+						setTimeout(fnThemeApplied.bind(this, oEvent), 1500);
 					}
 				}
 			};
@@ -256,8 +248,6 @@ sap.ui.define([
 
 			var done = assert.async();
 			this.applyTheme(this.sStartTheme, done);
-
-			this.fnSpyBeforeRendering.restore();
 		},
 		fnWithRenderAsserts: function(assert) {
 			assert.ok(document.getElementById("generic-tile"), "Generic tile was rendered successfully");
@@ -364,8 +354,8 @@ sap.ui.define([
 	QUnit.test("GenericTile focus rendered - blue crystal", function(assert) {
 		var done = assert.async();
 		this.applyTheme("sap_bluecrystal", function() {
-			assert.ok(jQuery.sap.byId("generic-tile-hover-overlay"), "Hover overlay div was rendered successfully");
-			assert.ok(jQuery.sap.byId("generic-tile-focus"), "Focus div was rendered successfully");
+			assert.ok(document.getElementById("generic-tile-hover-overlay"), "Hover overlay div was rendered successfully");
+			assert.ok(document.getElementById("generic-tile-focus"), "Focus div was rendered successfully");
 			done();
 		});
 	});
@@ -388,8 +378,8 @@ sap.ui.define([
 		var done = assert.async();
 		this.applyTheme("sap_hcb", function() {
 			this.oGenericTile.rerender();
-			assert.ok(jQuery.sap.byId("generic-tile-hover-overlay"), "Hover overlay div was rendered successfully");
-			assert.ok(jQuery.sap.byId("generic-tile-focus"), "Focus div was rendered successfully");
+			assert.ok(document.getElementById("generic-tile-hover-overlay"), "Hover overlay div was rendered successfully");
+			assert.ok(document.getElementById("generic-tile-focus"), "Focus div was rendered successfully");
 			done();
 		});
 	});
@@ -412,13 +402,13 @@ sap.ui.define([
 		var done = assert.async();
 		this.applyTheme("sap_belize", function() {
 			this.oGenericTile.rerender();
-			assert.ok(jQuery.sap.byId("generic-tile-focus"), "Focus div was rendered successfully");
-			assert.ok(jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTWithoutImageHoverOverlay"), "Hover overlay was rendered successfully");
-			assert.ok(!jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is not triggered");
+			assert.ok(document.getElementById("generic-tile-focus"), "Focus div was rendered successfully");
+			assert.ok(jQuery("#generic-tile-hover-overlay").hasClass("sapMGTWithoutImageHoverOverlay"), "Hover overlay was rendered successfully");
+			assert.ok(!jQuery("#generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is not triggered");
 			this.oGenericTile.ontouchstart();
-			assert.ok(jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added");
+			assert.ok(jQuery("#generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added");
 			this.oGenericTile.ontouchend();
-			assert.ok(!jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed");
+			assert.ok(!jQuery("#generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed");
 			done();
 		});
 	});
@@ -428,16 +418,16 @@ sap.ui.define([
 		this.applyTheme("sap_fiori_3", function() {
 			this.oGenericTile.rerender();
 			// hover overlay is used only in case of tiles with background image
-			assert.ok(jQuery.sap.byId("generic-tile-focus"), "Focus div was rendered successfully");
-			assert.ok(jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTWithoutImageHoverOverlay"), "Hover overlay was rendered successfully");
-			assert.ok(!jQuery.sap.byId("generic-tile").hasClass("sapMGTPressActive"), "Press action is not triggered on GenericTile");
-			assert.ok(!jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is not triggered on GenericTile hover overlay");
+			assert.ok(document.getElementById("generic-tile-focus"), "Focus div was rendered successfully");
+			assert.ok(jQuery("#generic-tile-hover-overlay").hasClass("sapMGTWithoutImageHoverOverlay"), "Hover overlay was rendered successfully");
+			assert.ok(!jQuery("#generic-tile").hasClass("sapMGTPressActive"), "Press action is not triggered on GenericTile");
+			assert.ok(!jQuery("#generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is not triggered on GenericTile hover overlay");
 			this.oGenericTile.ontouchstart();
-			assert.ok(jQuery.sap.byId("generic-tile").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added to GenericTile");
-			assert.ok(jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added to GenericTile hover overlay");
+			assert.ok(jQuery("#generic-tile").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added to GenericTile");
+			assert.ok(jQuery("#generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added to GenericTile hover overlay");
 			this.oGenericTile.ontouchend();
-			assert.ok(!jQuery.sap.byId("generic-tile").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed from GenericTile");
-			assert.ok(!jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed from GenericTile hover overlay");
+			assert.ok(!jQuery("#generic-tile").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed from GenericTile");
+			assert.ok(!jQuery("#generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed from GenericTile hover overlay");
 			done();
 		});
 	});
@@ -614,7 +604,7 @@ sap.ui.define([
 		//Assert
 		assert.equal(this.oGenericTile.getScope(), GenericTileScope.Display, "The GenericTile was in Display scope");
 		assert.ok(this.oGenericTile.$().hasClass("sapMGTScopeActions"), "The actions scope class was added");
-		assert.notOk(jQuery.sap.domById("tile-cont-footer-text"), "The footer text has not been rendered in actions view");
+		assert.notOk(document.getElementById("tile-cont-footer-text"), "The footer text has not been rendered in actions view");
 	});
 
 	QUnit.test("Display scope with actions view in failed state", function(assert) {
@@ -745,7 +735,7 @@ sap.ui.define([
 	QUnit.test("Scope content is created on beforeRendering", function(assert) {
 		//Arrange
 		this.oGenericTile.setScope(GenericTileScope.Actions);
-		sinon.spy(this.oGenericTile, "_initScopeContent");
+		this.spy(this.oGenericTile, "_initScopeContent");
 
 		//Act
 		sap.ui.getCore().applyChanges();
@@ -756,7 +746,7 @@ sap.ui.define([
 
 	QUnit.module("sap.m.GenericTileMode.LineMode ListView cozy (small screen only)", {
 		beforeEach: function() {
-			sinon.stub(Device.media, "attachHandler");
+			this.stub(Device.media, "attachHandler");
 			this.oGenericTile = new GenericTile({
 				state: LoadState.Loaded,
 				header: "headerText",
@@ -764,11 +754,10 @@ sap.ui.define([
 				mode: GenericTileMode.LineMode
 			}).placeAt("qunit-fixture");
 			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").addClass("sapUiMedia-GenericTileDeviceSet-small");
-			sinon.stub(this.oGenericTile, "_isScreenLarge").returns(false);
+			this.stub(this.oGenericTile, "_isScreenLarge").returns(false);
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
-			Device.media.attachHandler.restore();
 			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
@@ -790,17 +779,16 @@ sap.ui.define([
 
 	QUnit.module("LineMode FloatingView (large screen only) w/o parent", {
 		beforeEach: function() {
-			sinon.stub(Device.media, "attachHandler");
+			this.stub(Device.media, "attachHandler");
 			this.oGenericTile = new GenericTile({
 				state: LoadState.Loaded,
 				mode: GenericTileMode.LineMode
 			}).placeAt("qunit-fixture");
 			jQuery("html").addClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
-			sinon.stub(this.oGenericTile, "_isScreenLarge").returns(true);
+			this.stub(this.oGenericTile, "_isScreenLarge").returns(true);
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
-			Device.media.attachHandler.restore();
 			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
@@ -809,7 +797,7 @@ sap.ui.define([
 
 	QUnit.test("Correct parameters provided to Resize Handler", function(assert) {
 		//Arrange
-		var oSpy = sinon.spy(ResizeHandler, "register");
+		var oSpy = this.spy(ResizeHandler, "register");
 		this.oGenericTile._bCompact = true;
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile._sParentResizeListenerId = null;
@@ -820,14 +808,11 @@ sap.ui.define([
 
 		//Assert
 		assert.ok(oSpy.calledWith(this.oGenericTile.$().parent()), "Correct parameter provided if parent is UIArea");
-
-		//Cleanup
-		oSpy.restore();
 	});
 
 	QUnit.module("sap.m.GenericTileMode.LineMode FloatingView cozy (large screen only)", {
 		beforeEach: function() {
-			sinon.stub(Device.media, "attachHandler");
+			this.stub(Device.media, "attachHandler");
 			this.oGenericTile = new GenericTile({
 				state: LoadState.Loaded,
 				header: "headerText",
@@ -835,11 +820,10 @@ sap.ui.define([
 				mode: GenericTileMode.LineMode
 			}).placeAt("qunit-fixture");
 			jQuery("html").addClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
-			sinon.stub(this.oGenericTile, "_isScreenLarge").returns(true);
+			this.stub(this.oGenericTile, "_isScreenLarge").returns(true);
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
-			Device.media.attachHandler.restore();
 			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
@@ -861,7 +845,7 @@ sap.ui.define([
 
 	QUnit.module("sap.m.GenericTileMode.LineMode ListView compact (small screen only)", {
 		beforeEach: function() {
-			sinon.stub(Device.media, "attachHandler");
+			this.stub(Device.media, "attachHandler");
 			this.oGenericTile = new GenericTile({
 				state: LoadState.Loaded,
 				subheader: "Expenses By Region",
@@ -869,9 +853,9 @@ sap.ui.define([
 				mode: GenericTileMode.LineMode
 			});
 			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").addClass("sapUiMedia-GenericTileDeviceSet-small");
-			sinon.stub(this.oGenericTile, "_isScreenLarge").returns(false);
+			this.stub(this.oGenericTile, "_isScreenLarge").returns(false);
 			//stub this function in order to not queue any updates which might influence the other tests
-			sinon.stub(this.oGenericTile, "_updateHoverStyle");
+			this.stub(this.oGenericTile, "_updateHoverStyle");
 
 			this.oParent = new FlexBox({
 				width: "100px",
@@ -879,10 +863,9 @@ sap.ui.define([
 			}).placeAt("qunit-fixture");
 			this.oParent.addStyleClass("sapUiSizeCompact");
 			sap.ui.getCore().applyChanges();
-			this.oGenericTile._updateHoverStyle.reset();
+			this.oGenericTile._updateHoverStyle.resetHistory();
 		},
 		afterEach: function() {
-			Device.media.attachHandler.restore();
 			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
@@ -906,7 +889,7 @@ sap.ui.define([
 
 	QUnit.module("sap.m.GenericTileMode.LineMode FloatingView compact (large screen only)", {
 		beforeEach: function() {
-			sinon.stub(Device.media, "attachHandler");
+			this.stub(Device.media, "attachHandler");
 			this.oGenericTile = new GenericTile({
 				state: LoadState.Loaded,
 				subheader: "Expenses By Region",
@@ -914,9 +897,9 @@ sap.ui.define([
 				mode: GenericTileMode.LineMode
 			});
 			jQuery("html").addClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
-			sinon.stub(this.oGenericTile, "_isScreenLarge").returns(true);
+			this.stub(this.oGenericTile, "_isScreenLarge").returns(true);
 			//stub this function in order to not queue any updates which might influence the other tests
-			sinon.stub(this.oGenericTile, "_updateHoverStyle");
+			this.stub(this.oGenericTile, "_updateHoverStyle");
 
 			this.oParent = new FlexBox({
 				width: "100px",
@@ -924,10 +907,9 @@ sap.ui.define([
 			}).placeAt("qunit-fixture");
 			this.oParent.addStyleClass("sapUiSizeCompact");
 			sap.ui.getCore().applyChanges();
-			this.oGenericTile._updateHoverStyle.reset();
+			this.oGenericTile._updateHoverStyle.resetHistory();
 		},
 		afterEach: function() {
-			Device.media.attachHandler.restore();
 			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
@@ -938,7 +920,7 @@ sap.ui.define([
 
 	QUnit.test("Correct parameter provided to Resize Handler", function(assert) {
 		//Arrange
-		var oSpy = sinon.spy(ResizeHandler, "register");
+		var oSpy = this.spy(ResizeHandler, "register");
 		this.oGenericTile._sParentResizeListenerId = null;
 
 		//Act
@@ -947,9 +929,6 @@ sap.ui.define([
 
 		//Assert
 		assert.ok(oSpy.calledWith(this.oGenericTile.getParent()), "Correct parameter provided if parent is a control");
-
-		//Cleanup
-		oSpy.restore();
 	});
 
 	QUnit.test("All elements found", function(assert) {
@@ -967,7 +946,7 @@ sap.ui.define([
 
 	QUnit.module("sap.m.GenericTileMode.LineMode FloatingView Functions tests (large screen only)", {
 		beforeEach: function() {
-			sinon.stub(Device.media, "attachHandler");
+			this.stub(Device.media, "attachHandler");
 			this.oGenericTile = new GenericTile({
 				state: LoadState.Loaded,
 				subheader: "Expenses By Region",
@@ -975,19 +954,18 @@ sap.ui.define([
 				mode: GenericTileMode.LineMode
 			});
 			jQuery("html").addClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
-			sinon.stub(this.oGenericTile, "_isScreenLarge").returns(true);
+			this.stub(this.oGenericTile, "_isScreenLarge").returns(true);
 			//stub this function in order to not queue any updates which might influence the other tests
-			sinon.stub(this.oGenericTile, "_updateHoverStyle");
+			this.stub(this.oGenericTile, "_updateHoverStyle");
 
 			this.oParent = new FlexBox({
 				width: "100px",
 				items: [this.oGenericTile]
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			this.oGenericTile._updateHoverStyle.reset();
+			this.oGenericTile._updateHoverStyle.resetHistory();
 		},
 		afterEach: function() {
-			Device.media.attachHandler.restore();
 			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
@@ -1000,7 +978,7 @@ sap.ui.define([
 		//Arrange
 		// remove stub to attach spy
 		Device.media.attachHandler.restore();
-		var deviceAttachHandlerSpy = sinon.spy(Device.media, "attachHandler");
+		var deviceAttachHandlerSpy = this.spy(Device.media, "attachHandler");
 
 		//Act
 		this.oGenericTile.invalidate();
@@ -1013,7 +991,7 @@ sap.ui.define([
 	QUnit.test("Tile is invalidated on device size change", function(assert) {
 		//Arrange
 		// restore previous stub and replace it with different stub.
-		var oMediaChangeSpy = sinon.spy(this.oGenericTile, "onAfterRendering");
+		var oMediaChangeSpy = this.spy(this.oGenericTile, "onAfterRendering");
 
 		//Act
 		this.oGenericTile._handleMediaChange();
@@ -1054,10 +1032,10 @@ sap.ui.define([
 		//Arrange
 		this.oGenericTile._updateHoverStyle.restore();
 
-		sinon.spy(this.oGenericTile, "_updateHoverStyle");
-		sinon.spy(GenericTileLineModeRenderer, "_updateHoverStyle");
-		sinon.stub(this.oGenericTile, "_getStyleData").returns(true);
-		sinon.spy(this.oGenericTile, "_queueAnimationEnd");
+		this.spy(this.oGenericTile, "_updateHoverStyle");
+		this.spy(GenericTileLineModeRenderer, "_updateHoverStyle");
+		this.stub(this.oGenericTile, "_getStyleData").returns(true);
+		this.spy(this.oGenericTile, "_queueAnimationEnd");
 		var oClock = sinon.useFakeTimers();
 
 		//Act
@@ -1072,16 +1050,15 @@ sap.ui.define([
 		assert.ok(GenericTileLineModeRenderer._updateHoverStyle.called, "The renderer's update function is called if the style data changed.");
 
 		//Cleanup
-		GenericTileLineModeRenderer._updateHoverStyle.restore();
 		oClock.restore();
 	});
 
 	QUnit.test("Hover style is not updated on rendering", function(assert) {
 		//Arrange
 		this.oGenericTile._updateHoverStyle.restore();
-		sinon.spy(this.oGenericTile, "_updateHoverStyle");
-		sinon.spy(GenericTileLineModeRenderer, "_updateHoverStyle");
-		sinon.stub(this.oGenericTile, "_getStyleData").returns(false);
+		this.spy(this.oGenericTile, "_updateHoverStyle");
+		this.spy(GenericTileLineModeRenderer, "_updateHoverStyle");
+		this.stub(this.oGenericTile, "_getStyleData").returns(false);
 
 		//Act
 		this.oGenericTile.invalidate();
@@ -1090,12 +1067,11 @@ sap.ui.define([
 		//Assert
 		assert.ok(this.oGenericTile._updateHoverStyle.calledOnce, "The hover style is updated when the control is rendered.");
 		assert.ok(GenericTileLineModeRenderer._updateHoverStyle.notCalled, "The renderer's update function is not called if the style data has not changed.");
-		GenericTileLineModeRenderer._updateHoverStyle.restore();
 	});
 
 	QUnit.test("Function _calculateStyleData returns object with necessary fields", function(assert) {
 		//Arrange
-		var oStubGetPixelValue = sinon.stub(GenericTileLineModeRenderer, "_getCSSPixelValue");
+		var oStubGetPixelValue = this.stub(GenericTileLineModeRenderer, "_getCSSPixelValue");
 		oStubGetPixelValue.withArgs(this.oGenericTile, "line-height").returns(30);
 		oStubGetPixelValue.withArgs(this.oGenericTile, "min-height").returns(26);
 		oStubGetPixelValue.withArgs(this.oGenericTile, "margin-top").returns(4);
@@ -1116,9 +1092,6 @@ sap.ui.define([
 		assert.notEqual(oData.lines[0].height, undefined, "The field lines[0].height is available.");
 		assert.notEqual(oData.lines[0].offset.x, undefined, "The field lines[0].offset.x is available.");
 		assert.notEqual(oData.lines[0].offset.y, undefined, "The field lines[0].offset.y is available.");
-
-		//Cleanup
-		oStubGetPixelValue.restore();
 	});
 
 	QUnit.test("_calculateStyleData returns null if no rendering was done", function(assert) {
@@ -1136,7 +1109,7 @@ sap.ui.define([
 
 	QUnit.test("Function _getStyleData updates internal object on change", function(assert) {
 		//Arrange
-		sinon.stub(this.oGenericTile, "_calculateStyleData").returns({ field: "value" });
+		this.stub(this.oGenericTile, "_calculateStyleData").returns({ field: "value" });
 		this.oGenericTile._oStyleData = null;
 
 		//Act
@@ -1150,7 +1123,7 @@ sap.ui.define([
 
 	QUnit.test("Function _getStyleData does not update internal object", function(assert) {
 		//Arrange
-		sinon.stub(this.oGenericTile, "_calculateStyleData").returns(null);
+		this.stub(this.oGenericTile, "_calculateStyleData").returns(null);
 		this.oGenericTile._oStyleData = null;
 
 		//Act
@@ -1163,7 +1136,7 @@ sap.ui.define([
 
 	QUnit.test("Hover style update on resize", function(assert) {
 		//Arrange
-		sinon.stub(GenericTileLineModeRenderer, "_updateHoverStyle");
+		this.stub(GenericTileLineModeRenderer, "_updateHoverStyle");
 		var done = assert.async();
 		var oClock = sinon.useFakeTimers();
 
@@ -1180,7 +1153,6 @@ sap.ui.define([
 
 			//Cleanup
 			sap.ui.getCore().detachIntervalTimer(checkAssertions);
-			GenericTileLineModeRenderer._updateHoverStyle.restore();
 			oClock.restore();
 
 			done();
@@ -1189,20 +1161,20 @@ sap.ui.define([
 
 	QUnit.test("Hover style update of siblings on state change", function(assert) {
 		//Arrange
-		sinon.spy(this.oGenericTile, "_updateLineTileSiblings");
+		this.spy(this.oGenericTile, "_updateLineTileSiblings");
 		var oSiblingTile = new GenericTile("sibling-tile", {
 			state: LoadState.Loaded,
 			subheader: "Expenses By Region",
 			header: "Comparative Annual Totals",
 			mode: GenericTileMode.LineMode
 		});
-		sinon.stub(oSiblingTile, "_isScreenLarge").returns(true);
+		this.stub(oSiblingTile, "_isScreenLarge").returns(true);
 		this.oParent.addItem(oSiblingTile);
 		sap.ui.getCore().applyChanges();
 
 		this.oGenericTile._updateHoverStyle.restore(); //restore stub in order to use spy
-		sinon.spy(this.oGenericTile, "_updateHoverStyle");
-		sinon.spy(oSiblingTile, "_updateHoverStyle");
+		this.spy(this.oGenericTile, "_updateHoverStyle");
+		this.spy(oSiblingTile, "_updateHoverStyle");
 
 		//Act
 		this.oGenericTile.setState("Failed");
@@ -1221,10 +1193,10 @@ sap.ui.define([
 		//Arrange
 		var oSibling = new Text();
 		this.oParent.addItem(oSibling);
-		sinon.spy(this.oGenericTile, "_updateLineTileSiblings");
+		this.spy(this.oGenericTile, "_updateLineTileSiblings");
 
 		this.oGenericTile._updateHoverStyle.restore(); //restore stub in order to use spy
-		sinon.spy(this.oGenericTile, "_updateHoverStyle");
+		this.spy(this.oGenericTile, "_updateHoverStyle");
 
 		//Act
 		this.oGenericTile.setState("Failed");
@@ -1240,8 +1212,8 @@ sap.ui.define([
 
 	QUnit.test("Resize Handler attached to parent, no deregister", function(assert) {
 		//Arrange
-		sinon.spy(ResizeHandler, "deregister");
-		sinon.spy(ResizeHandler, "register");
+		this.spy(ResizeHandler, "deregister");
+		this.spy(ResizeHandler, "register");
 		this.oGenericTile._sParentResizeListenerId = null;
 
 		//Act
@@ -1251,16 +1223,12 @@ sap.ui.define([
 		//Assert
 		assert.ok(ResizeHandler.deregister.notCalled);
 		assert.ok(ResizeHandler.register.calledOnce);
-
-		//Cleanup
-		ResizeHandler.deregister.restore();
-		ResizeHandler.register.restore();
 	});
 
 	QUnit.test("Resize Handler attached to parent, with deregister", function(assert) {
 		//Arrange
-		sinon.spy(ResizeHandler, "deregister");
-		sinon.spy(ResizeHandler, "register");
+		this.spy(ResizeHandler, "deregister");
+		this.spy(ResizeHandler, "register");
 		this.oGenericTile._sParentResizeListenerId = "SomeListener";
 
 		//Act
@@ -1270,10 +1238,6 @@ sap.ui.define([
 		//Assert
 		assert.ok(ResizeHandler.deregister.calledOnce);
 		assert.ok(ResizeHandler.register.calledOnce);
-
-		//Cleanup
-		ResizeHandler.deregister.restore();
-		ResizeHandler.register.restore();
 	});
 
 	QUnit.test("Hover style update on transitionend", function(assert) {
@@ -1281,23 +1245,20 @@ sap.ui.define([
 		this.oGenericTile._updateHoverStyle.restore();
 
 		//stub renderer method in order to not render/manipulate anything
-		sinon.stub(GenericTileLineModeRenderer, "_updateHoverStyle");
-		sinon.stub(this.oGenericTile, "_queueAnimationEnd");
-		sinon.stub(this.oGenericTile, "_getStyleData").returns(true);
+		this.stub(GenericTileLineModeRenderer, "_updateHoverStyle");
+		this.stub(this.oGenericTile, "_queueAnimationEnd");
+		this.stub(this.oGenericTile, "_getStyleData").returns(true);
 		this.oGenericTile._oStyleData = {
 			lineBreak: true
 		};
 
 		//Act
 		this.oGenericTile._updateHoverStyle();
-		this.oGenericTile._queueAnimationEnd.reset();
+		this.oGenericTile._queueAnimationEnd.resetHistory();
 		this.oGenericTile._$RootNode.trigger("transitionend");
 
 		//Assert
 		assert.equal(this.oGenericTile._queueAnimationEnd.callCount, 1, "Previously attached event handler _queueAnimationEnd has been called once.");
-
-		//Cleanup
-		GenericTileLineModeRenderer._updateHoverStyle.restore();
 	});
 
 	QUnit.test("Hover style update on animationend", function(assert) {
@@ -1305,23 +1266,20 @@ sap.ui.define([
 		this.oGenericTile._updateHoverStyle.restore();
 
 		//stub renderer method in order to not render/manipulate anything
-		sinon.stub(GenericTileLineModeRenderer, "_updateHoverStyle");
-		sinon.stub(this.oGenericTile, "_queueAnimationEnd");
-		sinon.stub(this.oGenericTile, "_getStyleData").returns(true);
+		this.stub(GenericTileLineModeRenderer, "_updateHoverStyle");
+		this.stub(this.oGenericTile, "_queueAnimationEnd");
+		this.stub(this.oGenericTile, "_getStyleData").returns(true);
 		this.oGenericTile._oStyleData = {
 			lineBreak: true
 		};
 
 		//Act
 		this.oGenericTile._updateHoverStyle();
-		this.oGenericTile._queueAnimationEnd.reset();
+		this.oGenericTile._queueAnimationEnd.resetHistory();
 		this.oGenericTile._$RootNode.trigger("animationend");
 
 		//Assert
 		assert.equal(this.oGenericTile._queueAnimationEnd.callCount, 1, "Previously attached event handler _queueAnimationEnd has been called once.");
-
-		//Cleanup
-		GenericTileLineModeRenderer._updateHoverStyle.restore();
 	});
 
 	QUnit.test("Function _queueAnimationEnd called with GenericTile as event target", function(assert) {
@@ -1358,7 +1316,7 @@ sap.ui.define([
 		var oEvent = {
 			target: jQuery("<div class='sapMPage' />")
 		};
-		sinon.stub(this.oGenericTile, "_handleAnimationEnd");
+		this.stub(this.oGenericTile, "_handleAnimationEnd");
 		this.oGenericTile._oAnimationEndCallIds = {};
 
 		//Act
@@ -1370,12 +1328,12 @@ sap.ui.define([
 
 	QUnit.test("Mutex mechanism for animation/transition handling", function(assert) {
 		//Arrange
-		sinon.spy(this.oGenericTile, "_queueAnimationEnd");
-		sinon.spy(this.oGenericTile, "_handleAnimationEnd");
-		sinon.spy(this.oGenericTile, "_getStyleData");
-		sinon.stub(GenericTileLineModeRenderer, "_updateHoverStyle");
-		sinon.stub(this.oGenericTile, "_updateLineTileSiblings");
-		sinon.stub(this.oGenericTile, "_calculateStyleData").returns({
+		this.spy(this.oGenericTile, "_queueAnimationEnd");
+		this.spy(this.oGenericTile, "_handleAnimationEnd");
+		this.spy(this.oGenericTile, "_getStyleData");
+		this.stub(GenericTileLineModeRenderer, "_updateHoverStyle");
+		this.stub(this.oGenericTile, "_updateLineTileSiblings");
+		this.stub(this.oGenericTile, "_calculateStyleData").returns({
 			lineBreak: true
 		});
 		this.oGenericTile._updateHoverStyle.restore();
@@ -1385,7 +1343,7 @@ sap.ui.define([
 		this.oGenericTile._updateHoverStyle();
 		this.oGenericTile._$RootNode.trigger("transitionend");
 
-		jQuery.sap.delayedCall(1000, null, function() { //1000ms, to make sure to wait for the 10ms delay
+		setTimeout(function() {
 			//Assert
 			assert.ok(GenericTileLineModeRenderer._updateHoverStyle.called, "Rendering update has been executed.");
 			assert.ok(GenericTileLineModeRenderer._updateHoverStyle.calledOn(this.oGenericTile), "Rendering update has been executed.");
@@ -1395,14 +1353,13 @@ sap.ui.define([
 			assert.ok(this.oGenericTile._handleAnimationEnd.calledWith(0), "Function _handleAnimationEnd has been called with correct index.");
 			assert.ok(this.oGenericTile._handleAnimationEnd.calledWith(1), "Function _handleAnimationEnd has been called with correct index.");
 
-			GenericTileLineModeRenderer._updateHoverStyle.restore();
 			done();
-		}.bind(this));
+		}.bind(this), 1000); // 1000ms, to make sure to wait for the 10ms delay
 	});
 
 	QUnit.test("Function _clearAnimationUpdateQueue", function(assert) {
 		//Arrange
-		var oClearTimeoutSpy = sinon.spy(window, "clearTimeout");
+		var oClearTimeoutSpy = this.spy(window, "clearTimeout");
 		this.oGenericTile._oAnimationEndCallIds = {
 			0: 100,
 			1: 200
@@ -1412,18 +1369,15 @@ sap.ui.define([
 		this.oGenericTile._clearAnimationUpdateQueue();
 
 		//Assert
-		assert.equal(oClearTimeoutSpy.callCount, 2, "Cleared delayedCall count is correct.");
+		assert.equal(oClearTimeoutSpy.callCount, 2, "Cleared setTimeout count is correct.");
 		assert.equal(oClearTimeoutSpy.firstCall.args[0], 100, "Correct first ID has been cleared.");
 		assert.equal(oClearTimeoutSpy.secondCall.args[0], 200, "Correct second ID has been cleared.");
 		assert.deepEqual(this.oGenericTile._oAnimationEndCallIds, {}, "All IDs have been removed from the object.");
-
-		//Cleanup
-		oClearTimeoutSpy.restore();
 	});
 
 	QUnit.module("Protected method getBoundingRects", {
 		beforeEach: function() {
-			sinon.stub(Device.media, "attachHandler");
+			this.stub(Device.media, "attachHandler");
 			this.oGenericTile = new GenericTile({
 				state: LoadState.Loaded,
 				subheader: "Expenses By Region",
@@ -1432,15 +1386,14 @@ sap.ui.define([
 			});
 
 			jQuery("html").addClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
-			sinon.stub(this.oGenericTile, "_isScreenLarge").returns(true);
+			this.stub(this.oGenericTile, "_isScreenLarge").returns(true);
 			//stub this function on order to not queue any updates which might influence the other tests
-			sinon.stub(this.oGenericTile, "_updateHoverStyle");
+			this.stub(this.oGenericTile, "_updateHoverStyle");
 
 			this.oGenericTile.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
-			Device.media.attachHandler.restore();
 			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
@@ -1452,7 +1405,7 @@ sap.ui.define([
 		//Arrange
 		jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").addClass("sapUiMedia-GenericTileDeviceSet-small");
 		this.oGenericTile._isScreenLarge.restore();
-		sinon.stub(this.oGenericTile, "_isScreenLarge").returns(false);
+		this.stub(this.oGenericTile, "_isScreenLarge").returns(false);
 		sap.ui.getCore().applyChanges();
 
 		//Act
@@ -1468,7 +1421,7 @@ sap.ui.define([
 
 	QUnit.test("getBoundingRects returns object with necessary fields in floating view (large screen)", function(assert) {
 		//Arrange
-		var oStubGetPixelValue = sinon.stub(GenericTileLineModeRenderer, "_getCSSPixelValue");
+		var oStubGetPixelValue = this.stub(GenericTileLineModeRenderer, "_getCSSPixelValue");
 		oStubGetPixelValue.withArgs(this.oGenericTile, "line-height").returns(50);
 		oStubGetPixelValue.withArgs(this.oGenericTile, "min-height").returns(26);
 		oStubGetPixelValue.withArgs(this.oGenericTile, "margin-top").returns(4);
@@ -1487,9 +1440,6 @@ sap.ui.define([
 		assert.equal(typeof aBoundingRects[0].offset.y, "number", "The field 'offset.y' is available.");
 		assert.ok(aBoundingRects[0].width >= 0, "The field 'width' is available.");
 		assert.ok(aBoundingRects[0].height >= 0, "The field 'height' is available.");
-
-		//Cleanup
-		oStubGetPixelValue.restore();
 	});
 
 	QUnit.module("Rendering tests for failing state", {
@@ -1613,7 +1563,7 @@ sap.ui.define([
 		//Arrange
 		this.oGenericTile.setMode(GenericTileMode.HeaderMode);
 		sap.ui.getCore().applyChanges();
-		var oVisibilitySpy = sinon.spy(this.oGenericTile, "_changeTileContentContentVisibility");
+		var oVisibilitySpy = this.spy(this.oGenericTile, "_changeTileContentContentVisibility");
 		this.oGenericTile.setMode(GenericTileMode.ContentMode);
 		//Act
 		sap.ui.getCore().applyChanges();
@@ -1636,7 +1586,7 @@ sap.ui.define([
 
 	QUnit.test("HeaderMode - Check if the TileContent's content visibility is changed", function(assert) {
 		//Arrange
-		var oVisibilitySpy = sinon.spy(this.oGenericTile, "_changeTileContentContentVisibility");
+		var oVisibilitySpy = this.spy(this.oGenericTile, "_changeTileContentContentVisibility");
 		this.oGenericTile.setMode(GenericTileMode.HeaderMode);
 		//Act
 		sap.ui.getCore().applyChanges();
@@ -1653,7 +1603,7 @@ sap.ui.define([
 
 	QUnit.test("GenericTileLineModeRenderer called for LineMode", function(assert) {
 		// Arrange
-		var oSpy = sinon.spy(GenericTileLineModeRenderer, "render");
+		var oSpy = this.spy(GenericTileLineModeRenderer, "render");
 		this.oGenericTile.getParent().addStyleClass = function() {
 		};
 		// Act
@@ -1661,20 +1611,16 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		// Assert
 		assert.ok(oSpy.calledOnce, "GenericTileLineModeRenderer called");
-		//Restore
-		oSpy.restore();
 	});
 
 	QUnit.test("GenericTileRenderer called for HeaderMode", function(assert) {
 		// Arrange
-		var oSpy = sinon.spy(GenericTileRenderer, "render");
+		var oSpy = this.spy(GenericTileRenderer, "render");
 		// Act
 		this.oGenericTile.setMode(GenericTileMode.HeaderMode);
 		sap.ui.getCore().applyChanges();
 		// Assert
 		assert.ok(oSpy.calledOnce, "GenericTileRenderer called");
-		//Restore
-		oSpy.restore();
 	});
 
 	QUnit.test("Test content density class - cozy as default", function(assert) {
@@ -2089,7 +2035,7 @@ sap.ui.define([
 			this.oGenericTile = null;
 
 			var done = assert.async();
-			jQuery.sap.delayedCall(0, this, done); // needed to slow down until the tile is rendered
+			setTimeout(done, 0); // needed to slow down until the tile is rendered
 		}
 	});
 
@@ -2226,7 +2172,7 @@ sap.ui.define([
 
 	QUnit.module("Tooltip handling in LineMode (large screens)", {
 		beforeEach: function() {
-			sinon.stub(Device.media, "attachHandler");
+			this.stub(Device.media, "attachHandler");
 			this.oGenericTile = new GenericTile("generic-tile", {
 				header: "header",
 				subheader: "subheader",
@@ -2235,7 +2181,7 @@ sap.ui.define([
 			});
 
 			jQuery("html").addClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
-			sinon.stub(this.oGenericTile, "_isScreenLarge").returns(true);
+			this.stub(this.oGenericTile, "_isScreenLarge").returns(true);
 
 			// stub function _getAriaAndTooltipText of the content
 			this.oGenericTile.getTileContent()[0]._getAriaAndTooltipText = function() {
@@ -2253,7 +2199,6 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
-			Device.media.attachHandler.restore();
 			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
@@ -2360,7 +2305,7 @@ sap.ui.define([
 
 	QUnit.module("Tooltip handling in LineMode (small screens)", {
 		beforeEach: function() {
-			sinon.stub(Device.media, "attachHandler");
+			this.stub(Device.media, "attachHandler");
 			this.oGenericTile = new GenericTile("generic-tile", {
 				header: "header",
 				subheader: "subheader",
@@ -2369,7 +2314,7 @@ sap.ui.define([
 			});
 
 			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").addClass("sapUiMedia-GenericTileDeviceSet-small");
-			sinon.stub(this.oGenericTile, "_isScreenLarge").returns(false);
+			this.stub(this.oGenericTile, "_isScreenLarge").returns(false);
 
 			// stub function _getAriaAndTooltipText of the content
 			this.oGenericTile.getTileContent()[0]._getAriaAndTooltipText = function() {
@@ -2387,7 +2332,6 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
-			Device.media.attachHandler.restore();
 			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
@@ -2492,7 +2436,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Act
-		jQuery.sap.byId("remove").trigger("mouseenter");
+		jQuery("#remove").trigger("mouseenter");
 		var sTitleOfRemove = this.oGenericTile.$("action-remove").attr("title");
 
 		//Assert
@@ -2501,13 +2445,13 @@ sap.ui.define([
 
 	QUnit.test("TileContent content doesn't contain attributes ARIA-label and title", function(assert) {
 		//Arrange
-		jQuery.sap.byId("tile-cont-1").trigger("mouseenter");
-		jQuery.sap.byId("tile-cont-2").trigger("mouseenter");
+		jQuery("#tile-cont-1").trigger("mouseenter");
+		jQuery("#tile-cont-2").trigger("mouseenter");
 		//Act
-		var sAriaLabelOfContent1 = jQuery.sap.byId("tile-cont-1").attr("aria-label");
-		var sTitleOfTileContent1 = jQuery.sap.byId("tile-cont-1").attr("title");
-		var sAriaLabelOfContent2 = jQuery.sap.byId("tile-cont-2").attr("aria-label");
-		var sTitleOfTileContent2 = jQuery.sap.byId("tile-cont-2").attr("title");
+		var sAriaLabelOfContent1 = jQuery("#tile-cont-1").attr("aria-label");
+		var sTitleOfTileContent1 = jQuery("#tile-cont-1").attr("title");
+		var sAriaLabelOfContent2 = jQuery("#tile-cont-2").attr("aria-label");
+		var sTitleOfTileContent2 = jQuery("#tile-cont-2").attr("title");
 		//Assert
 		assert.ok(!sAriaLabelOfContent1, "GenericTile 1 doesn't contain attribute aria-label");
 		assert.ok(!sTitleOfTileContent1, "GenericTile 1 doesn't contain attribute title");
@@ -2517,10 +2461,10 @@ sap.ui.define([
 
 	QUnit.test("NumericContent doesn't contain attributes ARIA-label and title", function(assert) {
 		//Arrange
-		jQuery.sap.byId("numeric-content").trigger("mouseover");
+		jQuery("#numeric-content").trigger("mouseover");
 		//Act
-		var sAriaLabelOfNumericContent = jQuery.sap.byId("numeric-content").attr("aria-label");
-		var sTitleOfNumericContent = jQuery.sap.byId("numeric-content").attr("title");
+		var sAriaLabelOfNumericContent = jQuery("#numeric-content").attr("aria-label");
+		var sTitleOfNumericContent = jQuery("#numeric-content").attr("title");
 		//Assert
 		assert.ok(!sAriaLabelOfNumericContent, "NumericContent doesn't contain attribute ARIA-label");
 		assert.ok(!sTitleOfNumericContent, "NumericContent doesn't contain attribute title");
@@ -2559,8 +2503,8 @@ sap.ui.define([
 		this.oGenericTile.getTileContent()[0].getContent().setValue("999");
 		$Tile.trigger("mouseenter");
 		//Act
-		var sAriaLabelOfNumericContent = jQuery.sap.byId("numeric-content").attr("aria-label");
-		var sTitleOfNumericContent = jQuery.sap.byId("numeric-content").attr("title");
+		var sAriaLabelOfNumericContent = jQuery("#numeric-content").attr("aria-label");
+		var sTitleOfNumericContent = jQuery("#numeric-content").attr("title");
 		//Assert
 		assert.ok(!sAriaLabelOfNumericContent, "NumericContent doesn't contain ARIA-label attribute after content changed");
 		assert.ok(!sTitleOfNumericContent, "NumericContent doesn't contain title attribute after content changed");
@@ -2600,10 +2544,9 @@ sap.ui.define([
 				})
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			sinon.spy(this, "ftnPressHandler");
+			this.spy(this, "ftnPressHandler");
 		},
 		afterEach: function() {
-			this.ftnPressHandler.restore();
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
 		}
@@ -2672,7 +2615,7 @@ sap.ui.define([
 		//Arrange
 		this.oGenericTile.setScope(GenericTileScope.ActionRemove);
 		sap.ui.getCore().applyChanges();
-		var oHandlePressSpy = sinon.spy();
+		var oHandlePressSpy = this.spy();
 		this.oGenericTile.attachEvent("press", oHandlePressSpy);
 
 		//Act
@@ -2686,7 +2629,7 @@ sap.ui.define([
 		//Arrange
 		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
 		var e = jQuery.Event("keydown");
-		e.keyCode = jQuery.sap.KeyCodes.ENTER;
+		e.keyCode = KeyCodes.ENTER;
 
 		//Act
 		this.oGenericTile.$().trigger(e);
@@ -2699,7 +2642,7 @@ sap.ui.define([
 		//Arrange
 		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
 		var e = jQuery.Event("keyup");
-		e.keyCode = jQuery.sap.KeyCodes.ENTER;
+		e.keyCode = KeyCodes.ENTER;
 
 		//Act
 		this.oGenericTile.$().trigger(e);
@@ -2714,7 +2657,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
 		var e = jQuery.Event("keyup");
-		e.keyCode = jQuery.sap.KeyCodes.ENTER;
+		e.keyCode = KeyCodes.ENTER;
 
 		//Act
 		this.oGenericTile.$().trigger(e);
@@ -2727,7 +2670,7 @@ sap.ui.define([
 		//Arrange
 		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
 		var e = jQuery.Event("keyup");
-		e.keyCode = jQuery.sap.KeyCodes.SPACE;
+		e.keyCode = KeyCodes.SPACE;
 
 		//Act
 		this.oGenericTile.$().trigger(e);
@@ -2743,7 +2686,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", handlePress);
 		var e = jQuery.Event("keyup");
-		e.keyCode = jQuery.sap.KeyCodes.SPACE;
+		e.keyCode = KeyCodes.SPACE;
 
 		//Act
 		this.oGenericTile.$().trigger(e);
@@ -2762,7 +2705,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
 		var e = jQuery.Event("keyup");
-		e.keyCode = jQuery.sap.KeyCodes.SPACE;
+		e.keyCode = KeyCodes.SPACE;
 
 		//Act
 		this.oGenericTile.$().trigger(e);
@@ -2778,7 +2721,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", handlePress);
 		var e = jQuery.Event("keyup");
-		e.keyCode = jQuery.sap.KeyCodes.SPACE;
+		e.keyCode = KeyCodes.SPACE;
 
 		//Act
 		this.oGenericTile.$().trigger(e);
@@ -2795,7 +2738,7 @@ sap.ui.define([
 		//Arrange
 		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
 		var e = jQuery.Event("keyup");
-		e.keyCode = jQuery.sap.KeyCodes.DELETE;
+		e.keyCode = KeyCodes.DELETE;
 
 		//Act
 		this.oGenericTile.$().trigger(e);
@@ -2808,7 +2751,7 @@ sap.ui.define([
 		//Arrange
 		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
 		var e = jQuery.Event("keyup");
-		e.keyCode = jQuery.sap.KeyCodes.BACKSPACE;
+		e.keyCode = KeyCodes.BACKSPACE;
 
 		//Act
 		this.oGenericTile.$().trigger(e);
@@ -2824,7 +2767,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", handlePress);
 		var e = jQuery.Event("keyup");
-		e.keyCode = jQuery.sap.KeyCodes.DELETE;
+		e.keyCode = KeyCodes.DELETE;
 
 		//Act
 		this.oGenericTile.$().trigger(e);
@@ -2844,7 +2787,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", handlePress);
 		var e = jQuery.Event("keyup");
-		e.keyCode = jQuery.sap.KeyCodes.BACKSPACE;
+		e.keyCode = KeyCodes.BACKSPACE;
 
 		//Act
 		this.oGenericTile.$().trigger(e);
@@ -2859,27 +2802,27 @@ sap.ui.define([
 
 	QUnit.test("GenericTile press state is removed after Kep Up", function(assert) {
 		this.oGenericTile.rerender();
-		assert.ok(jQuery.sap.byId("generic-tile-focus"), "Focus div was rendered successfully");
-		assert.ok(jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTWithoutImageHoverOverlay"), "Hover overlay was rendered successfully");
-		assert.ok(!jQuery.sap.byId("generic-tile").hasClass("sapMGTPressActive"), "Press action is not triggered on GenericTile");
-		assert.ok(!jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is not triggered on GenericTile hover overlay");
+		assert.ok(document.getElementById("generic-tile-focus"), "Focus div was rendered successfully");
+		assert.ok(jQuery("#generic-tile-hover-overlay").hasClass("sapMGTWithoutImageHoverOverlay"), "Hover overlay was rendered successfully");
+		assert.ok(!jQuery("#generic-tile").hasClass("sapMGTPressActive"), "Press action is not triggered on GenericTile");
+		assert.ok(!jQuery("#generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is not triggered on GenericTile hover overlay");
 		//Arrange
 		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
 		var down = jQuery.Event("keydown");
-		down.keyCode = jQuery.sap.KeyCodes.ENTER;
+		down.keyCode = KeyCodes.ENTER;
 
 		//Act
 		this.oGenericTile.$().trigger(down);
-		assert.ok(jQuery.sap.byId("generic-tile").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added to GenericTile");
-		assert.ok(jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added to GenericTile hover overlay");
+		assert.ok(jQuery("#generic-tile").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added to GenericTile");
+		assert.ok(jQuery("#generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added to GenericTile hover overlay");
 		//Arrange
 		var up = jQuery.Event("keyup");
-		up.keyCode = jQuery.sap.KeyCodes.ENTER;
+		up.keyCode = KeyCodes.ENTER;
 
 		//Act
 		this.oGenericTile.$().trigger(up);
-		assert.ok(!jQuery.sap.byId("generic-tile").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed from GenericTile");
-		assert.ok(!jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed from GenericTile hover overlay");
+		assert.ok(!jQuery("#generic-tile").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed from GenericTile");
+		assert.ok(!jQuery("#generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed from GenericTile hover overlay");
 
 	});
 
@@ -2889,65 +2832,65 @@ sap.ui.define([
 
 		//simulate space key press
 		var spaceDown = jQuery.Event("keydown");
-		spaceDown.keyCode = jQuery.sap.KeyCodes.SPACE;
+		spaceDown.keyCode = KeyCodes.SPACE;
 		this.oGenericTile.$().trigger(spaceDown);
 
 		//simulate tab key navigation
 		var tabDown = jQuery.Event("keydown");
-		tabDown.keyCode = jQuery.sap.KeyCodes.TAB;
+		tabDown.keyCode = KeyCodes.TAB;
 		this.oGenericTile.$().trigger(tabDown);
 		var tabUp = jQuery.Event("keyup");
-		tabUp.keyCode = jQuery.sap.KeyCodes.TAB;
+		tabUp.keyCode = KeyCodes.TAB;
 		this.oGenericTile.$().trigger(tabUp);
 
 		//Default event cancelled when space key is down
 		assert.ok(tabDown.isDefaultPrevented(), "Navigation using TAB disabled when a tile is in selected state with SPACE key");
 		var spaceUp = jQuery.Event("keyup");
-		spaceUp.keyCode = jQuery.sap.KeyCodes.SPACE;
+		spaceUp.keyCode = KeyCodes.SPACE;
 		this.oGenericTile.$().trigger(spaceUp);
 
 		//simulate enter key press
 		var enterDown = jQuery.Event("keydown");
-		enterDown.keyCode = jQuery.sap.KeyCodes.ENTER;
+		enterDown.keyCode = KeyCodes.ENTER;
 		this.oGenericTile.$().trigger(enterDown);
 
 		//simulate tab key navigation
 		tabDown = jQuery.Event("keydown");
-		tabDown.keyCode = jQuery.sap.KeyCodes.TAB;
+		tabDown.keyCode = KeyCodes.TAB;
 		this.oGenericTile.$().trigger(tabDown);
 		tabUp = jQuery.Event("keyup");
-		tabUp.keyCode = jQuery.sap.KeyCodes.TAB;
+		tabUp.keyCode = KeyCodes.TAB;
 		this.oGenericTile.$().trigger(tabUp);
 
 		//Default event cancelled when enter key is down
 		assert.ok(tabDown.isDefaultPrevented(), "Navigation using TAB disabled when a tile is in selected state with ENTER key");
 		var enterUp = jQuery.Event("keyup");
-		enterUp.keyCode = jQuery.sap.KeyCodes.ENTER;
+		enterUp.keyCode = KeyCodes.ENTER;
 		this.oGenericTile.$().trigger(enterUp);
 
 		//simulate space key press
 		spaceDown = jQuery.Event("keydown");
-		spaceDown.keyCode = jQuery.sap.KeyCodes.SPACE;
+		spaceDown.keyCode = KeyCodes.SPACE;
 		this.oGenericTile.$().trigger(spaceDown);
 
 		//simulating shift+tab key press
 		var shiftDown = jQuery.Event("keydown");
-		shiftDown.keyCode = jQuery.sap.KeyCodes.SHIFT;
+		shiftDown.keyCode = KeyCodes.SHIFT;
 		this.oGenericTile.$().trigger(shiftDown);
 		tabDown = jQuery.Event("keydown");
-		tabDown.keyCode = jQuery.sap.KeyCodes.TAB;
+		tabDown.keyCode = KeyCodes.TAB;
 		this.oGenericTile.$().trigger(tabDown);
 		var shiftUp = jQuery.Event("keyup");
-		shiftUp.keyCode = jQuery.sap.KeyCodes.SHIFT;
+		shiftUp.keyCode = KeyCodes.SHIFT;
 		this.oGenericTile.$().trigger(shiftUp);
 		tabUp = jQuery.Event("keyup");
-		tabUp.keyCode = jQuery.sap.KeyCodes.TAB;
+		tabUp.keyCode = KeyCodes.TAB;
 		this.oGenericTile.$().trigger(tabUp);
 
 		//navigation disabled using shift+tab when a tile is selected
 		assert.ok(tabDown.isDefaultPrevented(), "Navigation using SHIFT+TAB disabled when a tile is in selected state with SPACE key");
 		spaceUp = jQuery.Event("keyup");
-		spaceUp.keyCode = jQuery.sap.KeyCodes.SPACE;
+		spaceUp.keyCode = KeyCodes.SPACE;
 		this.oGenericTile.$().trigger(spaceUp);
 
 		//tile released and action not invoked, on shift or escape press
@@ -2958,9 +2901,9 @@ sap.ui.define([
 		this.oGenericTile.$().trigger(spaceUp);
 
 		var escapeDown = jQuery.Event("keydown");
-		escapeDown.keyCode = jQuery.sap.KeyCodes.ESCAPE;
+		escapeDown.keyCode = KeyCodes.ESCAPE;
 		var escapeUp = jQuery.Event("keyup");
-		escapeUp.keyCode = jQuery.sap.KeyCodes.ESCAPE;
+		escapeUp.keyCode = KeyCodes.ESCAPE;
 		this.oGenericTile.$().trigger(spaceDown);
 		this.oGenericTile.$().trigger(escapeDown);
 		this.oGenericTile.$().trigger(escapeUp);
@@ -2969,10 +2912,10 @@ sap.ui.define([
 
 		//simulating navigation using tab key when no tile is in selected state
 		tabDown = jQuery.Event("keydown");
-		tabDown.keyCode = jQuery.sap.KeyCodes.TAB;
+		tabDown.keyCode = KeyCodes.TAB;
 		this.oGenericTile.$().trigger(tabDown);
 		tabUp = jQuery.Event("keyup");
-		tabUp.keyCode = jQuery.sap.KeyCodes.TAB;
+		tabUp.keyCode = KeyCodes.TAB;
 		this.oGenericTile.$().trigger(tabUp);
 
 		//Default event is not cancelled when no tile is selected
@@ -2990,7 +2933,7 @@ QUnit.test("Check the max line of header if footer exists", function(assert) {
 	this.oGenericTile.destroyTileContent();
 	this.oGenericTile.addTileContent(tileContent);
 	sap.ui.getCore().applyChanges();
-	var check = jQuery.sap.domById("tile-cont-two-by-half-footer-text");
+	var check = document.getElementById("tile-cont-two-by-half-footer-text");
 	if (check != null) {
 		assert.equal(sap.ui.getCore().byId("generic-tile-title").getMaxLines(), 2, "The header has 2 lines when footer is available");
 	}
@@ -3000,7 +2943,7 @@ QUnit.test("Check for the visibilty of content in header mode in 4*1 tile", func
 	this.oGenericTile.setFrameType("TwoByHalf");
 	sap.ui.getCore().applyChanges();
 	//to check if the content area is visible.
-	var oVisibilityCheck = sinon.spy(this.oGenericTile, "_changeTileContentContentVisibility");
+	var oVisibilityCheck = this.spy(this.oGenericTile, "_changeTileContentContentVisibility");
 	this.oGenericTile.setMode(GenericTileMode.HeaderMode);
 	sap.ui.getCore().applyChanges();
 	assert.ok(oVisibilityCheck.calledWith(false), "The visibility is changed to not visible");
@@ -3219,7 +3162,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 	this.oGenericTile.setFrameType("OneByHalf");
 	sap.ui.getCore().applyChanges();
 	//to check if the content area is visible.
-	var oVisibilitySpy = sinon.spy(this.oGenericTile, "_changeTileContentContentVisibility");
+	var oVisibilitySpy = this.spy(this.oGenericTile, "_changeTileContentContentVisibility");
 	this.oGenericTile.setMode(GenericTileMode.HeaderMode);
 	sap.ui.getCore().applyChanges();
 	assert.ok(oVisibilitySpy.calledWith(false), "The visibility is changed to not visible");
@@ -3358,8 +3301,8 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 					})
 				}),
 				actionButtons: [
-					this.oActionButton1 = new sap.m.Button(),
-					this.oActionButton2 = new sap.m.Button()
+					this.oActionButton1 = new Button(),
+					this.oActionButton2 = new Button()
 				]
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -3394,8 +3337,8 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 	});
 
 	QUnit.test("Press Event Tests for Action Buttons", function(assert) {
-		var oButtonPressHandler = sinon.spy(),
-			oTilePressHandler = sinon.spy();
+		var oButtonPressHandler = this.spy(),
+			oTilePressHandler = this.spy();
 		this.oActionButton1.attachPress(oButtonPressHandler);
 		this.oGenericTile.attachPress(oTilePressHandler);
 
@@ -3404,7 +3347,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		assert.ok(oButtonPressHandler.calledOnce, "Button press handler called on Button Press");
 		assert.notOk(oTilePressHandler.calledOnce, "Generic Tile press handler is not called on Button Press");
 
-		oButtonPressHandler = sinon.spy();
+		oButtonPressHandler = this.spy();
 
 		//Trigger press for Generic Tile
 		this.oGenericTile.firePress();
@@ -3413,7 +3356,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 	});
 
 	QUnit.test("Addtion or Deletion of Action Buttons", function(assert) {
-		var oButton = new sap.m.Button("test_button");
+		var oButton = new Button("test_button");
 
 		//add test button
 		this.oGenericTile.addActionButton(oButton);

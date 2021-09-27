@@ -1,10 +1,10 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/m/Image",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/library",
 	"sap/m/LightBox",
+	"sap/m/Page",
 	"sap/m/Text",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
@@ -13,7 +13,9 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/library"
-], function(Image, jQuery, mobileLibrary, LightBox, Text, KeyCodes, QUtils, Core, Device, VBox, createAndAppendDiv, coreLibrary) {
+], function(Image, jQuery, mobileLibrary, LightBox, Page, Text, KeyCodes, QUtils, Core, Device, VBox, createAndAppendDiv, coreLibrary) {
+	"use strict";
+
 	// shortcut for sap.m.ImageMode
 	var ImageMode = mobileLibrary.ImageMode;
 
@@ -390,7 +392,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("detailBox", 7, function (oAssert) {
+	QUnit.test("detailBox", function (oAssert) {
+		oAssert.expect(7);
+
 		// Arrange
 		var oLightBox = new LightBox(),
 			fnDone = oAssert.async();
@@ -441,7 +445,7 @@ sap.ui.define([
 		oAssert.strictEqual(oDetachPressSpy.callCount, 0, "detachPress method should not be called");
 
 		// Act - replace with new LightBox
-		oAttachPressSpy.reset();
+		oAttachPressSpy.resetHistory();
 		this.oImage.setDetailBox(oLightBoxB);
 
 		// Assert
@@ -450,8 +454,8 @@ sap.ui.define([
 		oAssert.strictEqual(oDetachPressSpy.callCount, 1, "detachPress method should be called once");
 
 		// Act - replace with the same LightBox
-		oAttachPressSpy.reset();
-		oDetachPressSpy.reset();
+		oAttachPressSpy.resetHistory();
+		oDetachPressSpy.resetHistory();
 		this.oImage.setDetailBox(oLightBoxB);
 
 		// Assert
@@ -460,7 +464,7 @@ sap.ui.define([
 		oAssert.strictEqual(oDetachPressSpy.callCount, 0, "detachPress method should not be called");
 
 		// Act - replace with the same LightBox
-		oDetachPressSpy.reset();
+		oDetachPressSpy.resetHistory();
 		this.oImage.setDetailBox(undefined);
 
 		// Assert
@@ -726,8 +730,7 @@ sap.ui.define([
 
 	QUnit.test("Image with density 1.5, source handling after rerendering", function(assert) {
 		var done = assert.async();
-		var oSandbox = sinon.sandbox.create();
-		oSandbox.stub(Image, "_currentDevicePixelRatio", 1.5);
+		this.stub(Image, "_currentDevicePixelRatio").value(1.5);
 
 		var oImage = createImage({ densityAware: true });
 
@@ -741,8 +744,6 @@ sap.ui.define([
 			oImage.$().on("load", function() {
 				assert.ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is still taken");
 				oImage.destroy();
-				// Restore the stubbed property in the callback
-				oSandbox.restore();
 				done();
 			});
 		});
@@ -847,7 +848,9 @@ sap.ui.define([
 		Core.applyChanges();
 	});
 
-	QUnit.test("Image with invalid src, no alt text and decorative mode - true", 2, function(assert) {
+	QUnit.test("Image with invalid src, no alt text and decorative mode - true", function(assert) {
+		assert.expect(2);
+
 		// Arrange
 		var fnDone = assert.async(),
 				oErrorSpy = sinon.spy(function() {
@@ -1039,13 +1042,12 @@ sap.ui.define([
 
 	QUnit.test("Image with density 1.5, source handling after rerendering", function(assert) {
 		var done = assert.async();
-		var oSandbox = sinon.sandbox.create(),
-			oLoadSpy = sinon.spy(function() {
+		var oLoadSpy = this.spy(function() {
 				assert.equal(oErrorSpy.callCount, 0, "error event handler shouldn't be called");
 			}),
 			oErrorSpy = sinon.spy();
 
-		oSandbox.stub(Image, "_currentDevicePixelRatio", 1.5);
+		this.stub(Image, "_currentDevicePixelRatio").value(1.5);
 
 		var oImage = new Image({
 			src: sSrc,
@@ -1063,8 +1065,6 @@ sap.ui.define([
 				assert.ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is still taken");
 				assert.equal(oLoadSpy.callCount, 2, "load event handler is called again");
 				oImage.destroy();
-				// Restore the stubbed property in the callback
-				oSandbox.restore();
 				done();
 			});
 		});
@@ -1170,7 +1170,7 @@ sap.ui.define([
 			oImage = createImage({
 				lazyLoading: true
 		}),
-			oPage = new sap.m.Page({
+			oPage = new Page({
 				content: [oBox, oImage]
 		}),
 			done = assert.async(),

@@ -1,22 +1,26 @@
 /*global QUnit*/
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
+	"sap/m/ResponsivePopover",
 	"sap/m/SinglePlanningCalendarGrid",
 	"sap/m/SinglePlanningCalendarGridRenderer",
+	"sap/m/library",
 	"sap/ui/unified/CalendarAppointment",
 	"sap/ui/events/KeyCodes",
 	'sap/ui/unified/calendar/CalendarDate'
 ], function(
-	qutils,
 	jQuery,
+	ResponsivePopover,
 	SinglePlanningCalendarGrid,
 	SinglePlanningCalendarGridRenderer,
+	mobileLibrary,
 	CalendarAppointment,
 	KeyCodes,
 	CalendarDate
 ) {
 	"use strict";
+
+	var PlacementType = mobileLibrary.PlacementType;
 
 	QUnit.module("Other");
 
@@ -226,8 +230,8 @@ sap.ui.define([
 				startDate: new Date(2018, 6, 8),
 				appointments: [oAppointment]
 			}),
-			oPopover = new sap.m.ResponsivePopover({
-				placement: sap.m.PlacementType.Auto
+			oPopover = new ResponsivePopover({
+				placement: PlacementType.Auto
 			}),
 			fnApplyFocusInfoSpy = this.spy(oGrid, "applyFocusInfo");
 

@@ -1,4 +1,4 @@
-/*global QUnit, jQuery */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/TablePersoController",
@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Page",
-	"sap/m/App"
-], function(createAndAppendDiv, TablePersoController, JSONModel, Table, Label, Toolbar, ToolbarSpacer, Button, Column, ColumnListItem, Page, App) {
+	"sap/m/App",
+	"sap/ui/thirdparty/jquery"
+], function(createAndAppendDiv, TablePersoController, JSONModel, Table, Label, Toolbar, ToolbarSpacer, Button, Column, ColumnListItem, Page, App, jQuery) {
 	"use strict";
 
 
@@ -136,7 +137,7 @@ sap.ui.define([
 	});
 
 	sap.ui.getCore().byId("idPersonalizationResetButton").attachPress(function() {
-		//		jQuery.sap.log.debug("TablePersoController resetRadioButton");
+		//		Log.debug("TablePersoController resetRadioButton");
 		oPersoService.resetPersData();
 		oTPC.refresh();
 	});

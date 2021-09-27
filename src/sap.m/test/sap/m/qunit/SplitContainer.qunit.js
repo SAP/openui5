@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	'sap/ui/core/Core',
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/SplitContainer",
 	"sap/m/ScrollContainer",
 	"sap/m/Page",
@@ -16,8 +16,10 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/List",
 	"sap/m/Input",
+	"sap/m/Text",
 	"sap/m/Toolbar",
 	"sap/m/NavContainer",
+	"sap/ui/util/Mobile",
 	"sap/ui/model/json/JSONModel"
 ], function(
 	qutils,
@@ -35,8 +37,10 @@ sap.ui.define([
 	App,
 	List,
 	Input,
+	Text,
 	Toolbar,
 	NavContainer,
+	Mobile,
 	JSONModel
 ) {
 	"use strict";
@@ -52,7 +56,7 @@ sap.ui.define([
 
 
 	// Setup viewport for mobile device because SplitContainer doesn't call this by default.
-	jQuery.sap.initMobile();
+	Mobile.init();
 
 	function splitContainerSetup(bNoPages) {
 		//System under Test
@@ -191,7 +195,7 @@ sap.ui.define([
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oApp = new App();
 
@@ -341,8 +345,8 @@ sap.ui.define([
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
-		this.stub(Device, "orientation", oPortrait);
+		this.stub(Device, "system").value(oSystem);
+		this.stub(Device, "orientation").value(oPortrait);
 
 		var oInput = new Input();
 
@@ -383,15 +387,15 @@ sap.ui.define([
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
-		this.stub(Device, "orientation", oLandscape);
+		this.stub(Device, "system").value(oSystem);
+		this.stub(Device, "orientation").value(oLandscape);
 
 		var oSplitContainer = new SplitContainer();
 		oSplitContainer._onOrientationChange = this.spy();
 		oSplitContainer.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		this.stub(Device, "orientation", oPortrait);
+		this.stub(Device, "orientation").value(oPortrait);
 		oSplitContainer._fnResize();
 		assert.equal(oSplitContainer._onOrientationChange.callCount, 1, "OrientationChange event should be reacted by the SplitContainer when runs on phone.");
 		oSplitContainer.destroy();
@@ -450,8 +454,8 @@ sap.ui.define([
 			},
 			oToolbar = new Toolbar();
 
-		this.stub(Device, "system", oSystem);
-		this.stub(Device, "orientation", oPortrait);
+		this.stub(Device, "system").value(oSystem);
+		this.stub(Device, "orientation").value(oPortrait);
 
 		// System under test
 		var oSplitContainer = new SplitContainer({
@@ -469,7 +473,7 @@ sap.ui.define([
 
 
 		// Act 2 - change orientation
-		this.stub(Device, "orientation", oLandscape);
+		this.stub(Device, "orientation").value(oLandscape);
 		oSplitContainer._fnResize();
 
 		// Asset Button is removed
@@ -488,8 +492,8 @@ sap.ui.define([
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
-		this.stub(Device, "orientation", oPortrait);
+		this.stub(Device, "system").value(oSystem);
+		this.stub(Device, "orientation").value(oPortrait);
 
 		var oPage = new Page({
 			title: "Detail Page"
@@ -541,8 +545,8 @@ sap.ui.define([
 			iCalled++;
 		};
 
-		this.stub(Device, "system", oSystem);
-		this.stub(Device, "orientation", oLandscape);
+		this.stub(Device, "system").value(oSystem);
+		this.stub(Device, "orientation").value(oLandscape);
 
 		// System under test
 		var oPage = new Page("page1"),
@@ -559,7 +563,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Act - Change Orientation to portrait
-		this.stub(Device, "orientation", oPortrait);
+		this.stub(Device, "orientation").value(oPortrait);
 		oSC._fnResize();
 		sap.ui.getCore().applyChanges();
 
@@ -574,7 +578,7 @@ sap.ui.define([
 		bMasterButtonVisible = null;
 
 		// Act - Change Orientation to landscape
-		this.stub(sap.ui.Device, "orientation", oLandscape);
+		this.stub(sap.ui.Device, "orientation").value(oLandscape);
 		oSC._fnResize();
 		sap.ui.getCore().applyChanges();
 
@@ -592,7 +596,7 @@ sap.ui.define([
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oPage = new Page(),
 			oSC = new SplitContainer({
@@ -615,7 +619,7 @@ sap.ui.define([
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oPage = new Page(),
 			oSC = new SplitContainer({
@@ -639,8 +643,8 @@ sap.ui.define([
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
-		this.stub(Device, "orientation", oPortrait);
+		this.stub(Device, "system").value(oSystem);
+		this.stub(Device, "orientation").value(oPortrait);
 
 		var oPage = new Page(),
 			oSC = new SplitContainer({
@@ -671,8 +675,8 @@ sap.ui.define([
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
-		this.stub(Device, "orientation", oLandscape);
+		this.stub(Device, "system").value(oSystem);
+		this.stub(Device, "orientation").value(oLandscape);
 
 		var oMasterPage1 = new Page("mp1"),
 			oMasterPage2 = new Page("mp2"),
@@ -717,8 +721,8 @@ sap.ui.define([
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
-		this.stub(Device, "orientation", oPortrait);
+		this.stub(Device, "system").value(oSystem);
+		this.stub(Device, "orientation").value(oPortrait);
 
 		var oMasterPage1 = new Page("mp1"),
 			oDetailPage1 = new Page("dp1", {
@@ -792,8 +796,8 @@ sap.ui.define([
 				portrait: true
 			};
 
-		this.stub(Device, "system", oSystem);
-		this.stub(Device, "orientation", oLandscape);
+		this.stub(Device, "system").value(oSystem);
+		this.stub(Device, "orientation").value(oLandscape);
 
 		assert.equal(oSplitContainer.getMode(), SplitAppMode.ShowHideMode, "The default mode is showhide mode");
 		oSplitContainer.placeAt("content");
@@ -845,8 +849,8 @@ sap.ui.define([
 				portrait: true
 			};
 
-		this.stub(Device, "system", oSystem);
-		this.stub(Device, "orientation", oPortrait);
+		this.stub(Device, "system").value(oSystem);
+		this.stub(Device, "orientation").value(oPortrait);
 
 		var oSplitContainer = new SplitContainer({
 			masterPages: new Page(),
@@ -858,7 +862,7 @@ sap.ui.define([
 
 		assert.ok(oSplitContainer.$().hasClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be output to the DOM node");
 
-		this.stub(Device, "orientation", oLandscape);
+		this.stub(Device, "orientation").value(oLandscape);
 		oSplitContainer._handleResize();
 
 		assert.ok(!oSplitContainer.$().hasClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be removed from the DOM node");
@@ -1205,7 +1209,7 @@ sap.ui.define([
 			tablet: false
 		};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		this.sut = new SplitContainer({
 			initialMaster : "master2",
@@ -1231,7 +1235,7 @@ sap.ui.define([
 			tablet: false
 		};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		this.sut = new SplitContainer({
 			mode:"HideMode",
@@ -1275,7 +1279,7 @@ sap.ui.define([
 		var oSplitContainer = new SplitContainer();
 		oSplitContainer.bindAggregation("detailPages", {
 			path: "/Pages",
-			template: new sap.m.Page({ title: "{title}" })
+			template: new Page({ title: "{title}" })
 		});
 
 		// Act
@@ -1293,13 +1297,13 @@ sap.ui.define([
 
 	QUnit.test("Show/Hide master", function(assert) {
 
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: false,
 			tablet: true
 		});
 
-		this.stub(Device, "support", {
+		this.stub(Device, "support").value({
 			touch: true
 		});
 
@@ -1346,13 +1350,13 @@ sap.ui.define([
 
 	QUnit.test("showMaster() method called from a Button with an icon", function(assert) {
 
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: false,
 			tablet: true
 		});
 
-		this.stub(Device, "support", {
+		this.stub(Device, "support").value({
 			touch: true
 		});
 
@@ -1434,25 +1438,25 @@ sap.ui.define([
 	QUnit.module("Initial master page rendering", {
 
 		beforeEach : function () {
-			this.page = new sap.m.Page("page", {
+			this.page = new Page("page", {
 				title: "Page",
 				showNavButton: true,
 				enableScrolling: false,
 				content : [
-					new sap.m.SplitContainer("splitContainer", {
+					new SplitContainer("splitContainer", {
 						initialDetail: "detail1",
 						initialMaster: "initialMaster",
 						masterPages: [
-							new sap.m.Page("secondaryMaster", {
+							new Page("secondaryMaster", {
 								title: "Master 2",
 								content: [
-									new sap.m.Text("secondaryMaster_text", {text: "Master page 2"})
+									new Text("secondaryMaster_text", {text: "Master page 2"})
 								]
 							}),
-							new sap.m.Page("initialMaster", {
+							new Page("initialMaster", {
 								title: "Master 1",
 								content: [
-									new sap.m.Text("initialMaster_text", {text: "Master page 1"})
+									new Text("initialMaster_text", {text: "Master page 1"})
 								]
 							})
 						]

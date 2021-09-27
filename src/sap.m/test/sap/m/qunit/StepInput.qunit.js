@@ -1,11 +1,11 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/library",
 	"sap/m/StepInput",
+	"sap/m/Label",
 	"sap/ui/core/library",
 	"sap/ui/Device",
 	"sap/ui/events/jquery/EventExtension",
@@ -15,13 +15,15 @@ sap.ui.define([
 	"sap/ui/layout/form/FormElement",
 	"sap/ui/layout/form/ResponsiveGridLayout",
 	"sap/ui/layout/GridData",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/model/type/Float"
 ], function(
 	qutils,
 	createAndAppendDiv,
 	jQuery,
 	mobileLibrary,
 	StepInput,
+	Label,
 	coreLibrary,
 	Device,
 	EventExtension,
@@ -30,8 +32,12 @@ sap.ui.define([
 	FormContainer,
 	FormElement,
 	ResponsiveGridLayout,
-	GridData
+	GridData,
+	KeyCodes,
+	TypeFloat
 ) {
+	"use strict";
+
 	// shortcut for sap.m.StepInputValidationMode
 	var StepInputValidationMode = mobileLibrary.StepInputValidationMode;
 
@@ -39,15 +45,14 @@ sap.ui.define([
 	var ValueState = coreLibrary.ValueState;
 
 	// shortcut for sap.m.StepInputStepModeType
-	var StepInputStepModeType = mobileLibrary.StepInputStepModeType;
+	var StepMode = mobileLibrary.StepInputStepModeType;
 
 	createAndAppendDiv("content");
 
 
 
 	var oCore = sap.ui.getCore();
-	var bSkipDestroy = !!jQuery.sap.getUriParameters().get("testId");
-	var StepMode = StepInputStepModeType;
+	var bSkipDestroy = new URLSearchParams(window.location.search).has("testId");
 
 	QUnit.module("API", {
 		beforeEach: function () {
@@ -657,7 +662,7 @@ sap.ui.define([
 			"The value is successfuly decremented");
 
 		//act
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick(1000);
 
 		//assert
@@ -665,7 +670,7 @@ sap.ui.define([
 			"The input's value is successfully incremented");
 
 		//act
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(1000);
 
 		//assert
@@ -702,11 +707,11 @@ sap.ui.define([
 		assert.strictEqual(this.stepInput.getValue(), 431.15,
 			"The value is successfuly decremented");
 
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick(1000);
 		assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "431.20",
 			"The input's value is successfully incremented");
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(1000);
 		assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "431.15",
 			"The input's value is successfully decremented");
@@ -980,7 +985,7 @@ sap.ui.define([
 
 	QUnit.module("Keyboard Handling", {
 		beforeEach: function () {
-			this.oChangeSpy = sinon.spy();
+			this.oChangeSpy = this.spy();
 			this.stepInput = new StepInput({
 				value: 4,
 				max: 10,
@@ -995,7 +1000,6 @@ sap.ui.define([
 			if (!bSkipDestroy) {
 				this.stepInput.destroy();
 			}
-			this.oChangeSpy.reset();
 		}
 	});
 
@@ -1012,7 +1016,7 @@ sap.ui.define([
 		assert.equal(this.oChangeSpy.callCount, 0, "Change Event should not be called");
 
 		//act
-		qutils.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ENTER);
 
 		//assert
 		assert.equal(this.stepInput.getValue(), 7, "Value should be changed due to ENTER pressed");
@@ -1084,7 +1088,7 @@ sap.ui.define([
 		//assert
 		assert.equal(this.stepInput.getValue(), 5, "Value should be changed 5 due to increment button pressed");
 		assert.equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
-		this.oChangeSpy.reset();
+		this.oChangeSpy.resetHistory();
 
 		//act
 		oDecrementBtn.firePress();
@@ -1105,7 +1109,7 @@ sap.ui.define([
 		//act
 		oInput.focus();
 		oInput.$("inner").val(7);
-		qutils.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ENTER);
 
 		this.clock.tick(1000);
 
@@ -1135,7 +1139,7 @@ sap.ui.define([
 
 	QUnit.test("up/down increases/decreases the value", function (assert) {
 		//act
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick(1000);
 
 		//assert
@@ -1143,7 +1147,7 @@ sap.ui.define([
 			"The input's value is increasing with 1 after arrow up");
 
 		//act
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(1000);
 
 		//assert
@@ -1153,7 +1157,7 @@ sap.ui.define([
 		//act
 		this.stepInput.setStep(5);
 		this.clock.tick(1000);
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick(1000);
 
 		//assert
@@ -1167,7 +1171,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		//act
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick(1000);
 
 		//assert
@@ -1178,7 +1182,7 @@ sap.ui.define([
 		this.stepInput.setValueState("Warning");
 
 		//act
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(1000);
 
 		//assert
@@ -1191,7 +1195,7 @@ sap.ui.define([
 		//act
 		this.stepInput.setStep(5);
 		this.clock.tick(1000);
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick(1000);
 
 		//assert
@@ -1250,7 +1254,7 @@ sap.ui.define([
 		//act
 		this.stepInput.setValue(-7);
 		oCore.applyChanges();
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick(1000);
 
 		//assert
@@ -1260,7 +1264,7 @@ sap.ui.define([
 		//act
 		this.stepInput.setValue(13);
 		oCore.applyChanges();
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(1000);
 
 		//assert
@@ -1272,7 +1276,7 @@ sap.ui.define([
 		//act
 		this.stepInput.setValue(-7);
 		oCore.applyChanges();
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, true);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_UP, false, true);
 		this.clock.tick(1000);
 
 		//assert
@@ -1282,7 +1286,7 @@ sap.ui.define([
 		//act
 		this.stepInput.setValue(13);
 		oCore.applyChanges();
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(1000);
 
 		//assert
@@ -1294,7 +1298,7 @@ sap.ui.define([
 		//act
 		this.stepInput.setValue(-7);
 		oCore.applyChanges();
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, false, true);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_UP, false, false, true);
 		this.clock.tick(1000);
 
 		//assert
@@ -1304,7 +1308,7 @@ sap.ui.define([
 		//act
 		this.stepInput.setValue(13);
 		oCore.applyChanges();
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, false, true);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_DOWN, false, false, true);
 		this.clock.tick(1000);
 
 		//assert
@@ -1316,7 +1320,7 @@ sap.ui.define([
 		var oSpyPageUp = this.spy(this.stepInput, "onsappageup"),
 			oSpyPageDown = this.spy(this.stepInput, "onsappagedown");
 		//act
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.PAGE_UP);
 		this.clock.tick(1000);
 
 		//assert
@@ -1324,7 +1328,7 @@ sap.ui.define([
 		assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 6, "The input's value is increasing with step=step*2 after pageup");
 
 		//act
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.PAGE_DOWN);
 		this.clock.tick(1000);
 
 		//assert
@@ -1335,7 +1339,7 @@ sap.ui.define([
 		//act
 		this.stepInput.setStep(5);
 		this.clock.tick(1000);
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.PAGE_UP);
 		this.clock.tick(1000);
 
 		//assert
@@ -1346,7 +1350,7 @@ sap.ui.define([
 
 	QUnit.test("shift+up/down increases/decreases the value with a larger step if specified", function (assert) {
 		//act
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, true, false, false);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_UP, true, false, false);
 		this.clock.tick(1000);
 
 		//assert
@@ -1354,7 +1358,7 @@ sap.ui.define([
 			"The input's value is increasing with step=2*step after arrow up");
 
 		//act
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, true, false, false);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_DOWN, true, false, false);
 		this.clock.tick(1000);
 
 		//assert
@@ -1364,7 +1368,7 @@ sap.ui.define([
 		//act
 		this.stepInput.setStep(5);
 		this.clock.tick(1000);
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, true, false, false);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_UP, true, false, false);
 		this.clock.tick(1000);
 
 		//assert
@@ -1374,7 +1378,7 @@ sap.ui.define([
 
 	QUnit.test("shift+pageup/pagedown sets value to max/min", function (assert) {
 		//act
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, true, false, false);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.PAGE_UP, true, false, false);
 		this.clock.tick(1000);
 
 		//assert
@@ -1382,7 +1386,7 @@ sap.ui.define([
 			"The input's value is set to max after page up");
 
 		//act
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN, true, false, false);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.PAGE_DOWN, true, false, false);
 		this.clock.tick(1000);
 
 		//asser
@@ -1392,7 +1396,7 @@ sap.ui.define([
 
 	QUnit.test("ctrl+shift+up/down sets value to max/min", function (assert) {
 		//act
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, true, false, true);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_UP, true, false, true);
 		this.clock.tick(1000);
 
 		//assert
@@ -1400,7 +1404,7 @@ sap.ui.define([
 			"The input's value is set to max after page up");
 
 		//act
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, true, false, true);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_DOWN, true, false, true);
 		this.clock.tick(1000);
 
 		//assert
@@ -1507,21 +1511,19 @@ sap.ui.define([
 
 	QUnit.module("Mouse events on increment/decrement button", {
 		beforeEach: function () {
-			this.oChangeSpy = sinon.spy();
+			this.oChangeSpy = this.spy();
 			this.stepInput = new StepInput({
 				value: 4,
 				max: 10,
 				min: -4,
 				change: this.oChangeSpy
 			});
-			this.oResetSpinSpy = sinon.spy(this.stepInput, "_resetSpinValues");
+			this.oResetSpinSpy = this.spy(this.stepInput, "_resetSpinValues");
 
 			this.stepInput.placeAt('qunit-fixture');
 			oCore.applyChanges();
 		},
 		afterEach: function () {
-			this.oChangeSpy.reset();
-			this.oResetSpinSpy.reset();
 		}
 	});
 
@@ -1661,13 +1663,12 @@ sap.ui.define([
 
 	QUnit.module("Touch events on increment/decrement button", {
 		beforeEach: function () {
-			this.oDeviceStub = sinon.sandbox;
-			this.oDeviceStub.stub(Device, "system", {
+			this.stub(Device, "system").value({
 				desktop : false,
 				phone : false,
 				tablet : true
 			});
-			this.oChangeSpy = sinon.spy();
+			this.oChangeSpy = this.spy();
 			this.stepInput = new StepInput({
 				value: 4,
 				max: 10,
@@ -1679,9 +1680,6 @@ sap.ui.define([
 			oCore.applyChanges();
 		},
 		afterEach: function () {
-			this.oDeviceStub.restore();
-			this.oDeviceStub = null;
-			this.oChangeSpy.reset();
 		}
 	});
 
@@ -1897,11 +1895,11 @@ sap.ui.define([
 		assert.strictEqual(oInput.$(sInputSuffix).attr('aria-invalid'), "true", "'aria-invalid' attribute was updated when the invalid value is typed and confirmed");
 	});
 
-	QUnit.test("labels are redirected to the inner input", function () {
+	QUnit.test("labels are redirected to the inner input", function (assert) {
 		// Prepare
 		var $label,
 			$innerInput,
-			oLabel = new sap.m.Label({
+			oLabel = new Label({
 				labelFor: this.stepInput,
 				text: "Doesn't matter"
 			});
@@ -1936,7 +1934,7 @@ sap.ui.define([
 						title: "test",
 						formElements: [
 							new FormElement({
-								label: new sap.m.Label("medium", {text: "Medium"}),
+								label: new Label("medium", {text: "Medium"}),
 								fields: [
 									oStepInputOne,
 									oStepInputTwo
@@ -1960,11 +1958,11 @@ sap.ui.define([
 		oForm.destroy();
 	});
 
-	QUnit.test("Backwards reference to a label is added in aria-labelledby only on the inner input", function () {
+	QUnit.test("Backwards reference to a label is added in aria-labelledby only on the inner input", function (assert) {
 		// Prepare
 		var $label,
 			$innerInput,
-			oLabel = new sap.m.Label({
+			oLabel = new Label({
 				labelFor: this.stepInput,
 				text: "Doesn't matter"
 			});
@@ -1984,11 +1982,11 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
-	QUnit.test("Labels, default ariaLabelledBy and description are all added in aria-labelledby", function () {
+	QUnit.test("Labels, default ariaLabelledBy and description are all added in aria-labelledby", function (assert) {
 		// Prepare
 		var $innerInput,
 			sExpectedReferences,
-			oLabel = new sap.m.Label("the-label", {
+			oLabel = new Label("the-label", {
 				labelFor: this.stepInput,
 				text: "Doesn't matter"
 			});
@@ -2333,7 +2331,7 @@ sap.ui.define([
 
 
 	QUnit.test("_calculateNewValue: next value when current value does not fold into a mandatory step(StepMode.MultiplicationAndDivision)" +
-		" and larger step is defined", function () {
+		" and larger step is defined", function (assert) {
 		//Prepare
 		var fResult;
 		this.stepInput.setStepMode(StepMode.Multiple);
@@ -2350,7 +2348,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_calculateNewValue: previous value when current value does not fold into a mandatory step(StepMode.MultiplicationAndDivision)" +
-		" and larger step is defined", function () {
+		" and larger step is defined", function (assert) {
 		//Prepare
 		var fResult;
 		this.stepInput.setStepMode(StepMode.Multiple);
@@ -2368,7 +2366,7 @@ sap.ui.define([
 
 
 	QUnit.test("_calculateNewValue: next value when current value does not fold into a mandatory step(StepMode.MultiplicationAndDivision) " +
-		"and next value is greater than max", function () {
+		"and next value is greater than max", function (assert) {
 		//Prepare
 		var fResult;
 		this.stepInput.setStepMode(StepMode.Multiple);
@@ -2385,7 +2383,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_calculateNewValue: previous value when current value does not fold into a mandatory step(StepMode.Multiple" +
-		") and previous value is less than min", function () {
+		") and previous value is less than min", function (assert) {
 		//Prepare
 		var fResult;
 		this.stepInput.setStepMode(StepMode.Multiple);
@@ -2467,11 +2465,11 @@ sap.ui.define([
 		//Act
 		this.stepInput.focus();
 		this.stepInput._getIncrementButton().firePress();
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick(1000);
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.PAGE_UP);
 		this.clock.tick(1000);
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, true, false, false);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_UP, true, false, false);
 		this.clock.tick(1000);
 
 		//Assert
@@ -2499,11 +2497,11 @@ sap.ui.define([
 		//Act
 		this.stepInput.focus();
 		this.stepInput._getDecrementButton().firePress();
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(1000);
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.PAGE_DOWN);
 		this.clock.tick(1000);
-		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, true, false, false);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_DOWN, true, false, false);
 		this.clock.tick(1000);
 
 		//Assert
@@ -2694,7 +2692,7 @@ sap.ui.define([
 		this.stepInput.setModel(new JSONModel({ value: 11 }));
 		this.stepInput.bindProperty("value", {
 			path: "/value",
-			type: new sap.ui.model.type.Float(null, {
+			type: new TypeFloat(null, {
 				maximum: 10
 			})
 		});
@@ -2713,7 +2711,7 @@ sap.ui.define([
 		this.stepInput.setModel(new JSONModel({ value: 11 }));
 		this.stepInput.bindProperty("value", {
 			path: "/value",
-			type: new sap.ui.model.type.Float(null, {
+			type: new TypeFloat(null, {
 				maximum: 10
 			})
 		});
@@ -2732,7 +2730,7 @@ sap.ui.define([
 		this.stepInput.setModel(new JSONModel({ value: 9 }));
 		this.stepInput.bindProperty("value", {
 			path: "/value",
-			type: new sap.ui.model.type.Float(null, {
+			type: new TypeFloat(null, {
 				maximum: 10
 			})
 		});

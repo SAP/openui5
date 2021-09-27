@@ -1,11 +1,13 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
+	"sap/m/TimePickerSlider",
 	"sap/m/TimePickerSliders",
-	"jquery.sap.keycodes",
-	"jquery.sap.global"
-], function(QUnitUtils, TimePickerSliders, jQuery) {
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
+], function(QUnitUtils, TimePickerSlider, TimePickerSliders, KeyCodes, jQuery) {
+	"use strict";
+
 	QUnit.module("API", {
 		beforeEach: function () {
 			this.oTPS = new TimePickerSliders();
@@ -159,9 +161,7 @@ sap.ui.define([
 		var sValue = "15:16:17",
 			sExpectedDate = new Date(2017, 11, 17, 15, 16, 17), // year, month, day, hours, minutes, seconds
 			oSetTimeValuesSpy = this.spy(this.oTPS, "_setTimeValues"),
-			oParseValueStub = this.stub(this.oTPS, "_parseValue", function () {
-				return sExpectedDate;
-			});
+			oParseValueStub = this.stub(this.oTPS, "_parseValue").returns(sExpectedDate);
 
 		this.oTPS.setValue(sValue);
 		sap.ui.getCore().applyChanges();
@@ -189,9 +189,7 @@ sap.ui.define([
 		var sValue = "24:00:00",
 				sExpectedDate = new Date(2017, 11, 17, 0, 0, 0), // year, month, day, hours, minutes, seconds
 				oSetTimeValuesSpy = this.spy(this.oTPS, "_setTimeValues"),
-				oParseValueStub = this.stub(this.oTPS, "_parseValue", function () {
-					return sExpectedDate;
-				});
+				oParseValueStub = this.stub(this.oTPS, "_parseValue").returns(sExpectedDate);
 
 		this.oTPS.setValueFormat("HH:mm:ss");
 		this.oTPS.setValue(sValue);
@@ -234,7 +232,7 @@ sap.ui.define([
 			fnChangeEventSpy = sinon.spy(function (oEvent) {
 				sEventParam = oEvent.getParameter('value');
 			}),
-			oGetValueStub = this.stub(this.oTPS, "getValue", function () { return sExpectedValue; });
+			oGetValueStub = this.stub(this.oTPS, "getValue").returns(sExpectedValue);
 
 		this.oTPS.attachChange(fnChangeEventSpy);
 
@@ -265,9 +263,9 @@ sap.ui.define([
 		var oHoursSlider = { setSelectedValue: this.spy() },
 			oMinutesSlider = { setSelectedValue: this.spy(), _setEnabled: this.spy(), _updateStepAndValue: this.spy() },
 			oSecondsSlider = { setSelectedValue: this.spy(), _setEnabled: this.spy(), _updateStepAndValue: this.spy() },
-			oHoursSliderStub = this.stub(this.oTPS, "_getHoursSlider", function () { return oHoursSlider; }),
-			oMinutesSliderStub = this.stub(this.oTPS, "_getMinutesSlider", function () { return oMinutesSlider; }),
-			oSecondsSliderStub = this.stub(this.oTPS, "_getSecondsSlider", function () { return oSecondsSlider; });
+			oHoursSliderStub = this.stub(this.oTPS, "_getHoursSlider").returns(oHoursSlider),
+			oMinutesSliderStub = this.stub(this.oTPS, "_getMinutesSlider").returns(oMinutesSlider),
+			oSecondsSliderStub = this.stub(this.oTPS, "_getSecondsSlider").returns(oSecondsSlider);
 
 		this.oTPS.setValueFormat("HH:mm:ss");
 		this.oTPS._setTimeValues(new Date(2017, 7, 8, 11, 12, 13), false);
@@ -299,8 +297,8 @@ sap.ui.define([
 	QUnit.test("_setTimeValues properly enables Minutes and Seconds Slider when Date(2017, 7, 8, 11, 12, 13) date is used", function (assert) {
 		var oMinutesSlider = { setSelectedValue: this.spy(), _setEnabled: this.spy(), _updateStepAndValue: this.spy() },
 				oSecondsSlider = { setSelectedValue: this.spy(), _setEnabled: this.spy(), _updateStepAndValue: this.spy() },
-				oMinutesSliderStub = this.stub(this.oTPS, "_getMinutesSlider", function () { return oMinutesSlider; }),
-				oSecondsSliderStub = this.stub(this.oTPS, "_getSecondsSlider", function () { return oSecondsSlider; });
+				oMinutesSliderStub = this.stub(this.oTPS, "_getMinutesSlider").returns(oMinutesSlider),
+				oSecondsSliderStub = this.stub(this.oTPS, "_getSecondsSlider").returns(oSecondsSlider);
 
 		this.oTPS.setValueFormat("HH:mm:ss");
 		this.oTPS._setTimeValues(new Date(2017, 7, 8, 11, 12, 13), false);
@@ -316,10 +314,10 @@ sap.ui.define([
 		var oHoursSlider = { setSelectedValue: this.spy() },
 			oMinutesSlider = { setSelectedValue: this.spy(), _setEnabled: this.spy(), _updateStepAndValue: this.spy() },
 			oSecondsSlider = { setSelectedValue: this.spy(), _setEnabled: this.spy(), _updateStepAndValue: this.spy() },
-			oHoursSliderStub = this.stub(this.oTPS, "_getHoursSlider", function () { return oHoursSlider; }),
-			oMinutesSliderStub = this.stub(this.oTPS, "_getMinutesSlider", function () { return oMinutesSlider; }),
-			oSecondsSliderStub = this.stub(this.oTPS, "_getSecondsSlider", function () { return oSecondsSlider; }),
-			oFormatSliderStub = this.stub(this.oTPS, "_getFormatSlider", function () { return null; });
+			oHoursSliderStub = this.stub(this.oTPS, "_getHoursSlider").returns(oHoursSlider),
+			oMinutesSliderStub = this.stub(this.oTPS, "_getMinutesSlider").returns(oMinutesSlider),
+			oSecondsSliderStub = this.stub(this.oTPS, "_getSecondsSlider").returns(oSecondsSlider),
+			oFormatSliderStub = this.stub(this.oTPS, "_getFormatSlider").returns(null);
 
 		this.oTPS.setValueFormat("HH:mm:ss");
 		this.oTPS._setTimeValues(new Date(2017, 7, 8, 0, 0, 0), true);
@@ -337,8 +335,8 @@ sap.ui.define([
 	QUnit.test("_setTimeValues properly disables Minutes and Seconds Slider when value is marking the end of the day new Date(2017, 7, 8, 0, 0, 0)", function (assert) {
 		var oMinutesSlider = { setSelectedValue: this.spy(), _setEnabled: this.spy(), _updateStepAndValue: this.spy() },
 			oSecondsSlider = { setSelectedValue: this.spy(), _setEnabled: this.spy(), _updateStepAndValue: this.spy() },
-			oMinutesSliderStub = this.stub(this.oTPS, "_getMinutesSlider", function () { return oMinutesSlider; }),
-			oSecondsSliderStub = this.stub(this.oTPS, "_getSecondsSlider", function () { return oSecondsSlider; });
+			oMinutesSliderStub = this.stub(this.oTPS, "_getMinutesSlider").returns(oMinutesSlider),
+			oSecondsSliderStub = this.stub(this.oTPS, "_getSecondsSlider").returns(oSecondsSlider);
 
 		this.oTPS.setValueFormat("HH:mm:ss");
 		this.oTPS._setTimeValues(new Date(2017, 7, 8, 0, 0, 0), true);
@@ -404,7 +402,7 @@ sap.ui.define([
 	QUnit.test("_getDisplatFormatPattern should return local based pattern if default format names are used (short, medium, long or full)", function (assert) {
 		var sExpectedResult = "HH:mm:ss a",
 			aDisplayFormats = ["short", "medium", "long", "full"],
-			oGetLocaleBasedPatternStub = this.stub(this.oTPS, "_getLocaleBasedPattern", function () { return sExpectedResult;});
+			oGetLocaleBasedPatternStub = this.stub(this.oTPS, "_getLocaleBasedPattern").returns(sExpectedResult);
 
 		aDisplayFormats.forEach(function (sStyle) {
 			this.oTPS.setDisplayFormat(sStyle);
@@ -441,7 +439,7 @@ sap.ui.define([
 		this.oTPS.setDisplayFormat("HH:mm:ss");
 
 		// assert
-		assert.ok(this.oTPS._getHoursSlider() instanceof sap.m.TimePickerSlider, "should be instance of sap.m.TimePickerSlider");
+		assert.ok(this.oTPS._getHoursSlider().isA("sap.m.TimePickerSlider"), "should be instance of sap.m.TimePickerSlider");
 		assert.ok(this.oTPS._getHoursSlider().getId().indexOf("-listHours") !== -1, "id of the slider should contain listHours");
 	});
 
@@ -458,7 +456,7 @@ sap.ui.define([
 		this.oTPS.setDisplayFormat("HH:mm:ss");
 
 		// assert
-		assert.ok(this.oTPS._getMinutesSlider() instanceof sap.m.TimePickerSlider, "should be instance of sap.m.TimePickerSlider");
+		assert.ok(this.oTPS._getMinutesSlider().isA("sap.m.TimePickerSlider"), "should be instance of sap.m.TimePickerSlider");
 		assert.ok(this.oTPS._getMinutesSlider().getId().indexOf("-listMins") !== -1, "id of the slider should contain listMins");
 	});
 
@@ -475,7 +473,7 @@ sap.ui.define([
 		this.oTPS.setDisplayFormat("HH:mm:ss");
 
 		// assert
-		assert.ok(this.oTPS._getSecondsSlider() instanceof sap.m.TimePickerSlider, "should be instance of sap.m.TimePickerSlider");
+		assert.ok(this.oTPS._getSecondsSlider().isA("sap.m.TimePickerSlider"), "should be instance of sap.m.TimePickerSlider");
 		assert.ok(this.oTPS._getSecondsSlider().getId().indexOf("-listSecs") !== -1, "id of the slider should contain listSecs");
 	});
 
@@ -492,7 +490,7 @@ sap.ui.define([
 		this.oTPS.setDisplayFormat("h:mm:ss a");
 
 		// assert
-		assert.ok(this.oTPS._getFormatSlider() instanceof sap.m.TimePickerSlider, "should be instance of sap.m.TimePickerSlider");
+		assert.ok(this.oTPS._getFormatSlider().isA("sap.m.TimePickerSlider"), "should be instance of sap.m.TimePickerSlider");
 		assert.ok(this.oTPS._getFormatSlider().getId().indexOf("-listFormat") !== -1, "id of the slider should contain listFormat");
 	});
 
@@ -501,7 +499,7 @@ sap.ui.define([
 		this.oTPS.setDisplayFormat("h:m:s");
 
 		// assert
-		assert.ok(this.oTPS._getFirstSlider() instanceof sap.m.TimePickerSlider, "should be instance of sap.m.TimePickerSlider");
+		assert.ok(this.oTPS._getFirstSlider().isA("sap.m.TimePickerSlider"), "should be instance of sap.m.TimePickerSlider");
 		assert.ok(this.oTPS._getFirstSlider().getId().indexOf("-listHours") !== -1, "id of the slider should contain listHours");
 	});
 
@@ -510,7 +508,7 @@ sap.ui.define([
 		this.oTPS.setDisplayFormat("h:m:s");
 
 		// assert
-		assert.ok(this.oTPS._getLastSlider() instanceof sap.m.TimePickerSlider, "should be instance of sap.m.TimePickerSlider");
+		assert.ok(this.oTPS._getLastSlider().isA("sap.m.TimePickerSlider"), "should be instance of sap.m.TimePickerSlider");
 		assert.ok(this.oTPS._getLastSlider().getId().indexOf("-listSecs") !== -1, "id of the slider should contain listSecs");
 	});
 
@@ -570,8 +568,8 @@ sap.ui.define([
 			iExpectedSeconds = 12,
 			oMinutesSlider = { _getEnabled: function () { return false; }, _setEnabled: this.spy(), setSelectedValue: this.spy(), _updateStepAndValue: this.spy() },
 			oSecondsSlider = { _getEnabled: function () { return false; }, _setEnabled: this.spy(), setSelectedValue: this.spy(), _updateStepAndValue: this.spy() },
-			oMinutesSliderStub = this.stub(this.oTPS, "_getMinutesSlider", function () { return oMinutesSlider; }),
-			oSecondsSliderStub = this.stub(this.oTPS, "_getSecondsSlider", function () { return oSecondsSlider; });
+			oMinutesSliderStub = this.stub(this.oTPS, "_getMinutesSlider").returns(oMinutesSlider),
+			oSecondsSliderStub = this.stub(this.oTPS, "_getSecondsSlider").returns(oSecondsSlider);
 		this.oTPS.setSupport2400(true);
 		this.oTPS._iMinutes = iExpectedMinutes;
 		this.oTPS._iSeconds = iExpectedSeconds;
@@ -596,8 +594,8 @@ sap.ui.define([
 			iExpectedSeconds = "0",
 			oMinutesSlider = { _getEnabled: function () { return true; }, _setEnabled: this.spy(), setSelectedValue: this.spy(), _updateStepAndValue: this.spy(), getSelectedValue: this.spy() },
 			oSecondsSlider = { _getEnabled: function () { return true; }, _setEnabled: this.spy(), setSelectedValue: this.spy(), _updateStepAndValue: this.spy(), getSelectedValue: this.spy() },
-			oMinutesSliderStub = this.stub(this.oTPS, "_getMinutesSlider", function () { return oMinutesSlider; }),
-			oSecondsSliderStub = this.stub(this.oTPS, "_getSecondsSlider", function () { return oSecondsSlider; });
+			oMinutesSliderStub = this.stub(this.oTPS, "_getMinutesSlider").returns(oMinutesSlider),
+			oSecondsSliderStub = this.stub(this.oTPS, "_getSecondsSlider").returns(oSecondsSlider);
 		this.oTPS.setSupport2400(true);
 
 		// act
@@ -761,7 +759,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("When drag and drop a slider, mouse wheel events are not handled", function () {
+	QUnit.test("When drag and drop a slider, mouse wheel events are not handled", function (assert) {
 		var oFirstSlider = this.oTPS._getFirstSlider(),
 			oSpyWheeling = this.spy(oFirstSlider, "_handleWheelScroll");
 
@@ -774,7 +772,7 @@ sap.ui.define([
 		});
 
 		// assert
-		sinon.assert.notCalled(oSpyWheeling, "_onmousewheel didn't simulate the wheeling");
+		assert.ok(oSpyWheeling.notCalled, "_onmousewheel didn't simulate the wheeling");
 	});
 
 	// BCP: 1880065660
@@ -798,26 +796,24 @@ sap.ui.define([
 
 	QUnit.test("_convertNumPadToNumKeyCode on TimePickerSlider should convert numpad to nums", function (assert) {
 		// arrange
-		var oKCs = jQuery.sap.KeyCodes,
-			oSlider = this.oTPS._getFirstSlider();
+		var oSlider = this.oTPS._getFirstSlider();
 
 		// assert
-		assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_0), "0".charCodeAt(0), "numpad 0 char code should be converted to 0's char code");
-		assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_1), "1".charCodeAt(0), "numpad 1 char code should be converted to 1's char code");
-		assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_2), "2".charCodeAt(0), "numpad 2 char code should be converted to 2's char code");
-		assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_3), "3".charCodeAt(0), "numpad 3 char code should be converted to 3's char code");
-		assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_4), "4".charCodeAt(0), "numpad 4 char code should be converted to 4's char code");
-		assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_5), "5".charCodeAt(0), "numpad 5 char code should be converted to 5's char code");
-		assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_6), "6".charCodeAt(0), "numpad 6 char code should be converted to 6's char code");
-		assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_7), "7".charCodeAt(0), "numpad 7 char code should be converted to 7's char code");
-		assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_8), "8".charCodeAt(0), "numpad 8 char code should be converted to 8's char code");
-		assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_9), "9".charCodeAt(0), "numpad 9 char code should be converted to 9's char code");
+		assert.equal(oSlider._convertNumPadToNumKeyCode(KeyCodes.NUMPAD_0), "0".charCodeAt(0), "numpad 0 char code should be converted to 0's char code");
+		assert.equal(oSlider._convertNumPadToNumKeyCode(KeyCodes.NUMPAD_1), "1".charCodeAt(0), "numpad 1 char code should be converted to 1's char code");
+		assert.equal(oSlider._convertNumPadToNumKeyCode(KeyCodes.NUMPAD_2), "2".charCodeAt(0), "numpad 2 char code should be converted to 2's char code");
+		assert.equal(oSlider._convertNumPadToNumKeyCode(KeyCodes.NUMPAD_3), "3".charCodeAt(0), "numpad 3 char code should be converted to 3's char code");
+		assert.equal(oSlider._convertNumPadToNumKeyCode(KeyCodes.NUMPAD_4), "4".charCodeAt(0), "numpad 4 char code should be converted to 4's char code");
+		assert.equal(oSlider._convertNumPadToNumKeyCode(KeyCodes.NUMPAD_5), "5".charCodeAt(0), "numpad 5 char code should be converted to 5's char code");
+		assert.equal(oSlider._convertNumPadToNumKeyCode(KeyCodes.NUMPAD_6), "6".charCodeAt(0), "numpad 6 char code should be converted to 6's char code");
+		assert.equal(oSlider._convertNumPadToNumKeyCode(KeyCodes.NUMPAD_7), "7".charCodeAt(0), "numpad 7 char code should be converted to 7's char code");
+		assert.equal(oSlider._convertNumPadToNumKeyCode(KeyCodes.NUMPAD_8), "8".charCodeAt(0), "numpad 8 char code should be converted to 8's char code");
+		assert.equal(oSlider._convertNumPadToNumKeyCode(KeyCodes.NUMPAD_9), "9".charCodeAt(0), "numpad 9 char code should be converted to 9's char code");
 	});
 
 	QUnit.test("_convertNumPadToNumKeyCode on TimePickerSlider should return the keycode of the provided key if it is not numpad", function (assert) {
 		// arrange
-		var oKCs = jQuery.sap.KeyCodes,
-			oSlider = this.oTPS._getFirstSlider();
+		var oSlider = this.oTPS._getFirstSlider();
 
 		// assert
 		for (var i = 0; i < 10; i++) {

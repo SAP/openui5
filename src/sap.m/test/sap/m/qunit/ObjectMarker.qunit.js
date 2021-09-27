@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/ObjectMarker",
@@ -9,8 +8,8 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/Label",
 	"sap/m/ColumnListItem",
-	"jquery.sap.keycodes",
-	"jquery.sap.global"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
 	ObjectMarker,
@@ -20,8 +19,11 @@ sap.ui.define([
 	Column,
 	Label,
 	ColumnListItem,
+	KeyCodes,
 	jQuery
 ) {
+	"use strict";
+
 	// shortcut for sap.m.ObjectMarkerVisibility
 	var ObjectMarkerVisibility = mobileLibrary.ObjectMarkerVisibility;
 
@@ -458,7 +460,7 @@ sap.ui.define([
 		// Act
 		var oRenderSpy = this.spy(oTable, "invalidate");
 		var $trigger = oTable.$("trigger").trigger("focus");
-		qutils.triggerKeydown($trigger, jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown($trigger, KeyCodes.SPACE);
 
 		// Assert
 		assert.strictEqual(oTable.getItems().length, 4, "2 more ObjectMarkers were rendered");
@@ -727,7 +729,7 @@ sap.ui.define([
 
 	QUnit.test("tabindex=0 for ObjectMarker of 'Favorite' type", function (assert) {
 		// Act
-		this.marker.setType(sap.m.ObjectMarkerType.Favorite);
+		this.marker.setType(ObjectMarkerType.Favorite);
 		this.marker.attachPress(function () {}); // Make ObjectMarker interactive
 		sap.ui.getCore().applyChanges();
 
@@ -737,7 +739,7 @@ sap.ui.define([
 
 	QUnit.test("tabindex=0 for ObjectMarker of 'Flagged' type", function (assert) {
 		// Act
-		this.marker.setType(sap.m.ObjectMarkerType.Flagged);
+		this.marker.setType(ObjectMarkerType.Flagged);
 		this.marker.attachPress(function () {}); // Make ObjectMarker interactive
 		sap.ui.getCore().applyChanges();
 

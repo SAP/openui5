@@ -1,4 +1,4 @@
-/*global QUnit, sinon */
+/*global QUnit */
 sap.ui.define([
 	"sap/m/TitlePropagationSupport",
 	"sap/ui/base/ManagedObject",
@@ -98,7 +98,7 @@ sap.ui.define([
 		assertWithMockControlOfType: function (assert, sType, bNegative) {
 			// Arrange
 			var oMockedControl = this.getMockedControl(sType),
-				oSuggestSpy = sinon.spy(oMockedControl, "_suggestTitleId"),
+				oSuggestSpy = this.spy(oMockedControl, "_suggestTitleId"),
 				sTitleID = this.getTitleID();
 
 			this.oTC.removeAllContent(); // Make sure we don't have any leftover content from the last test
@@ -136,7 +136,7 @@ sap.ui.define([
 
 	QUnit.test("_propagateTitleIdToChildControl private method", function (assert) {
 		var oMockedControl = this.getMockedControl("sap.ui.layout.form.SimpleForm"),
-			oSuggestSpy = sinon.spy(oMockedControl, "_suggestTitleId"),
+			oSuggestSpy = this.spy(oMockedControl, "_suggestTitleId"),
 			bResult;
 
 		// Assert
@@ -155,7 +155,7 @@ sap.ui.define([
 				"Suggest method should not be called when propagate method is called without ID");
 
 		// Act - reset the spy and call suggest method with ID when there is a content in the control
-		oSuggestSpy.reset();
+		oSuggestSpy.resetHistory();
 		this.oTC.setReturnTitleId(true); // In this case this.oTC.getTitleId() should return ID
 		bResult = this.oTC._propagateTitleIdToChildControl();
 
@@ -171,9 +171,7 @@ sap.ui.define([
 
 	QUnit.test("_propagateTitleIdToChildControl private method - ACC mode", function (assert) {
 		// Arrange
-		var oStub = sinon.stub(sap.ui.getCore().getConfiguration(), "getAccessibility", function () {
-				return true;
-			}),
+		var oStub = this.stub(sap.ui.getCore().getConfiguration(), "getAccessibility").returns(true),
 			oMockedControl = this.getMockedControl("sap.ui.layout.form.SimpleForm"),
 			bResult;
 
@@ -186,9 +184,7 @@ sap.ui.define([
 
 		// Arrange
 		oStub.restore();
-		oStub = sinon.stub(sap.ui.getCore().getConfiguration(), "getAccessibility", function () {
-			return false;
-		});
+		oStub = this.stub(sap.ui.getCore().getConfiguration(), "getAccessibility").returns(false);
 
 		// Act - call method again
 		bResult = this.oTC._propagateTitleIdToChildControl();
@@ -197,7 +193,6 @@ sap.ui.define([
 		assert.notOk(bResult, "Method called with ACC off should return 'false'");
 
 		// Cleanup
-		oStub.restore();
 		oMockedControl.destroy();
 	});
 

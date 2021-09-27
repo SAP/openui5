@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -8,7 +7,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/m/Popover",
 	"sap/m/FacetFilterItem",
@@ -22,7 +21,7 @@ sap.ui.define([
 	"sap/ui/base/EventProvider",
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/qunit/utils/waitForThemeApplied",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -44,7 +43,8 @@ sap.ui.define([
 	InvisibleText,
 	EventProvider,
 	GroupHeaderListItem,
-	waitForThemeApplied
+	waitForThemeApplied,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -127,11 +127,11 @@ sap.ui.define([
 
 			// Facet list page
 			var oSearchField = getDialogFacetSearch(oFF);
-			assert.ok(oSearchField instanceof sap.m.SearchField, "Control should be an instance of SearchField");
+			assert.ok(oSearchField.isA("sap.m.SearchField"), "Control should be an instance of SearchField");
 			assert.ok(oSearchField.getTooltip(), "Dialog search field has tooltip");
 			assert.ok(oSearchField.getDomRef(), "Facet search field should be rendered");
 			var oFacetList = getDialogFacetList(oFF);
-			assert.ok(oFacetList instanceof sap.m.List, "Control should be an instance of List");
+			assert.ok(oFacetList.isA("sap.m.List"), "Control should be an instance of List");
 			assert.ok(oFacetList.getDomRef(), "Dialog facet list should be rendered");
 			var oFacetListItem = oFacetList.getItems()[0];
 			assert.ok(oFacetListItem.getDomRef(), "Facet list item should be rendered");
@@ -367,8 +367,8 @@ sap.ui.define([
 		// If running on the phone then test behavior if type is explicitly set to Simple
 		/*  if (sap.ui.Device.system.phone) {
 
-			var oFFPhone = new sap.m.FacetFilter({
-				type : sap.m.FacetFilterType.Simple
+			var oFFPhone = new FacetFilter({
+				type : FacetFilterType.Simple
 			});
 			oFFPhone.setShowPersonalization(true);
 
@@ -382,7 +382,8 @@ sap.ui.define([
 			var oFFPhone = new FacetFilter();
 
 			oFFPhone.setType(FacetFilterType.Light);
-				oSummaryBar.setActive(true);
+			var oSummaryBar = oFFPhone.getAggregation("summaryBar");
+			oSummaryBar.setActive(true);
 			//oFFPhone.setShowPersonalization(true);
 
 			oFFPhone.placeAt("content");
@@ -712,8 +713,7 @@ sap.ui.define([
 			oFF = new FacetFilter(),
 			oFFL = new FacetFilterList(),
 			oPopover = oFF._getPopover(),
-			oButton = oFF._getButtonForList(oFFL),
-			oList = getPopoverFilterItemsList(oPopover);
+			oButton = oFF._getButtonForList(oFFL);
 
 		oFFL.bindAggregation("items", {
 			path : "/values",
@@ -824,38 +824,38 @@ sap.ui.define([
 //onsapincreasemodifiers - page down
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
-		oEvent.which = jQuery.sap.KeyCodes.ARROW_RIGHT;
+		oEvent.which = KeyCodes.ARROW_RIGHT;
 		oFF.onsapincreasemodifiers(oEvent);
 		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapincreasemodifiers tested - focus on add button");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[1];
-		oEvent.which = jQuery.sap.KeyCodes.ARROW_RIGHT;
+		oEvent.which = KeyCodes.ARROW_RIGHT;
 		oFF.onsapincreasemodifiers(oEvent);
 		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapincreasemodifiers tested - focus on add button");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[2];
-		oEvent.which = jQuery.sap.KeyCodes.ARROW_RIGHT;
+		oEvent.which = KeyCodes.ARROW_RIGHT;
 		oFF.onsapincreasemodifiers(oEvent);
 		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapincreasemodifiers tested - focus on add button");
 
 //onsapdecreasemodifiers - page up
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[1];
-		oEvent.which = jQuery.sap.KeyCodes.ARROW_LEFT;
+		oEvent.which = KeyCodes.ARROW_LEFT;
 		oFF.onsapdecreasemodifiers(oEvent);
 		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapdecreasemodifiers tested - focus on List1");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[2];
-		oEvent.which = jQuery.sap.KeyCodes.ARROW_LEFT;
+		oEvent.which = KeyCodes.ARROW_LEFT;
 		oFF.onsapdecreasemodifiers(oEvent);
 		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapdecreasemodifiers tested - focus on List1");
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
-		oEvent.which = jQuery.sap.KeyCodes.ARROW_LEFT;
+		oEvent.which = KeyCodes.ARROW_LEFT;
 		oFF.onsapdecreasemodifiers(oEvent);
 		assert.ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapdecreasemodifiers tested - focus on List1");
 
@@ -1960,7 +1960,7 @@ sap.ui.define([
 		 *
 		 * @param {int} iListCount the number of expected ff lists
 		 */
-		testFacetFilterList: function (iListCount) {
+		testFacetFilterList: function (assert, iListCount) {
 			var iTotalSize = iListCount + 1, // Make sure to include the Add Filter button
 				$currentlyTestedButton,
 				aAriaDescribedByIds,
@@ -1992,7 +1992,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Facet filter list positioning - initial", function (assert) {
-		this.testFacetFilterList(5);
+		this.testFacetFilterList(assert, 5);
 	});
 
 	QUnit.test("Facet filter list positioning - after removal of list(s)", function (assert) {
@@ -2001,7 +2001,7 @@ sap.ui.define([
 		this.oFF.removeList(oListToRemove);
 		sap.ui.getCore().applyChanges();
 
-		this.testFacetFilterList(4);
+		this.testFacetFilterList(assert, 4);
 	});
 
 	QUnit.test("FacetFilter: type=Light", function(assert) {
@@ -2649,7 +2649,7 @@ sap.ui.define([
 
 		var oPage = getDialogFilterItemsPage(oFF);
 		var oList = oPage.getContent()[0];
-		if (!(oList instanceof sap.m.List)) { //May need to skip the select all checkbox bar if the list is multi select
+		if (!(oList.isA("sap.m.List"))) { //May need to skip the select all checkbox bar if the list is multi select
 			oList = oPage.getContent()[1];
 		}
 		return oList;
@@ -2676,10 +2676,10 @@ sap.ui.define([
 					"The summary bar should have 3 controls in its content when the reset button is displayed");
 			var oToolbarSpacer = oSummaryBar.getContent()[1];
 			assert.ok(
-					oToolbarSpacer instanceof sap.m.ToolbarSpacer,
+					oToolbarSpacer.isA("sap.m.ToolbarSpacer"),
 					"The second control in the summary bar content should be a spacer so that the reset button is displayed on the right side of the toolbar");
 			var oResetButton = oSummaryBar.getContent()[2];
-			assert.ok(oResetButton instanceof sap.m.Button, "The third control in the summary bar content should be a button");
+			assert.ok(oResetButton.isA("sap.m.Button"), "The third control in the summary bar content should be a button");
 			assert.ok(oResetButton.$().hasClass("sapUiSizeCompact"), "The button should be in compact size");
 		} else {
 

@@ -1,8 +1,8 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define(
 	["sap/ui/qunit/QUnitUtils", "sap/m/DateTimeField"],
 	function(QUnitUtils, DateTimeField) {
+		"use strict";
 
 		QUnit.module("Public API", function () {
 

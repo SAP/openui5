@@ -240,7 +240,7 @@ sap.ui.define([
 
 	QUnit.test("Test set and get selected", function(assert) {
 		//Arrange
-		var oStub = sinon.stub(this.oUploadCollectionItem, "fireEvent");
+		var oStub = this.stub(this.oUploadCollectionItem, "fireEvent");
 
 		//Act
 		this.oUploadCollectionItem.setSelected(true);
@@ -249,9 +249,6 @@ sap.ui.define([
 		assert.equal(oStub.callCount, 1, "Function 'fireEvent' was called once");
 		assert.ok(oStub.calledWithExactly("selected"), "Function 'fireEvent' was called with parameter 'selected'");
 		assert.ok(this.oUploadCollectionItem.getSelected(), "Item has been selected");
-
-		//Cleanup
-		oStub.restore();
 	});
 
 	QUnit.module("UploadCollectionItem with markers", {
@@ -297,7 +294,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 		},
 		initFakeServer: function(sResponseCode) {
-			this.aFakeRequest = this.sandbox.useFakeXMLHttpRequest();
+			this.aFakeRequest = this._oSandbox.useFakeServer();
 		},
 		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
@@ -329,19 +326,19 @@ sap.ui.define([
 			return;
 		}
 		//Arrange
-		var stub = this.sandbox.stub(File, "save");
+		var stub = this.stub(File, "save");
 		var sFileName = this.oUploadCollectionItem.getFileName();
 		var oFileNameAndExtension = this.oUploadCollectionItem._splitFileName(sFileName, false);
 		var sFileExtension = oFileNameAndExtension.extension;
 		sFileName = oFileNameAndExtension.name;
 
 		//Act
-		this.initFakeServer.bind(this)();
+		this.initFakeServer();
 		this.oUploadCollectionItem.download(true);
 		this.aFakeRequest.requests[0].respond(200, {}, "Empty String");
 
 		//Assert
-		assert.ok(stub.calledWith(undefined, sFileName, sFileExtension, "image/jpg", 'utf-8'), "sap.ui.core.util.File.save was called with the right arguments");
+		assert.ok(stub.calledWith(sinon.match.any, sFileName, sFileExtension, "image/jpg", 'utf-8'), "sap.ui.core.util.File.save was called with the right arguments");
 	});
 
 
@@ -351,7 +348,7 @@ sap.ui.define([
 			return;
 		}
 		//Arrange
-		var stub = this.sandbox.stub(URLHelper, "redirect");
+		var stub = this.stub(URLHelper, "redirect");
 
 		//Act
 		var bDownloadResult = this.oUploadCollectionItem.download(false);

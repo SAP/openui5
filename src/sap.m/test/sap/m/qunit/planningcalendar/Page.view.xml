@@ -19,8 +19,8 @@
 						icon="{pic}"
 						title="{name}"
 						text="{role}"
-						appointments="{appointments}"
-						intervalHeaders="{headers}">
+						appointments="{path:'appointments', templateShareable:false}"
+						intervalHeaders="{path:'headers', templateShareable:false}">
 					<appointments>
 						<unified:CalendarAppointment
 								startDate="{start}"

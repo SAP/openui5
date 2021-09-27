@@ -736,7 +736,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oRadioButton1.getDomRef());
+		qutils.triggerTouchEvent("touchstart", oRadioButton1.getDomRef());
 
 		// assertions
 		assert.ok(oRadioButton1.$().hasClass("sapMRbBTouched"), "RadioButton should have class sapMRbBTouched");
@@ -754,13 +754,13 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oRadioButton1.getDomRef());
+		qutils.triggerTouchEvent("touchstart", oRadioButton1.getDomRef());
 
 		// assertions
 		assert.ok(oRadioButton1.$().hasClass("sapMRbBTouched"), "RadioButton should have class sapMRbBTouched");
 
 		// act
-		sap.ui.test.qunit.triggerTouchEvent("touchend", oRadioButton1.getDomRef());
+		qutils.triggerTouchEvent("touchend", oRadioButton1.getDomRef());
 
 		// assertions
 		assert.ok(!oRadioButton1.$().hasClass("sapMRbBTouched"), "RadioButton should not have class sapMRbBTouched");
@@ -781,14 +781,14 @@ sap.ui.define([
 
 			// act
 			var fnFireSelectSpy = this.spy(oRadioButton1, "fireSelect");
-			sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), oOptions.keyCode);
+			qutils.triggerKeydown(oRadioButton1.getDomRef(), oOptions.keyCode);
 			this.clock.tick(1);
 
 			// assertions
 			assert.strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired once");
 
 			// act
-			sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), oOptions.keyCode);
+			qutils.triggerKeydown(oRadioButton1.getDomRef(), oOptions.keyCode);
 			this.clock.tick(1);
 
 			// assertions
@@ -820,7 +820,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			oRadioButton1.applyFocusInfo();
-			sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), iKeyCode);
+			qutils.triggerKeydown(oRadioButton1.getDomRef(), iKeyCode);
 			this.clock.tick(100);
 
 			oAssert.strictEqual(oFireSelectSpy.callCount, 0, "Button 2 should not be selected");
@@ -851,8 +851,8 @@ sap.ui.define([
 		// act
 		var fnFireSelectSpy1 = this.spy(oRadioButton1, "fireSelect");
 		var fnFireSelectSpy2 = this.spy(oRadioButton2, "fireSelect");
-		sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), KeyCodes.ENTER);
-		sap.ui.test.qunit.triggerKeydown(oRadioButton2.getDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oRadioButton1.getDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oRadioButton2.getDomRef(), KeyCodes.ENTER);
 		this.clock.tick(1);
 
 		// assertions
@@ -877,7 +877,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		oRadioButton1.applyFocusInfo();
-		sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(oRadioButton1.getDomRef(), KeyCodes.ARROW_RIGHT);
 		this.clock.tick(100);
 
 		assert.strictEqual(oRadioButton3.$().is(":focus"), true, "3rd RadioButton should be focussed");
@@ -904,7 +904,7 @@ sap.ui.define([
 
 
 		oRadioButton3.applyFocusInfo();
-		sap.ui.test.qunit.triggerKeydown(oRadioButton3.getDomRef(), KeyCodes.ARROW_LEFT);
+		qutils.triggerKeydown(oRadioButton3.getDomRef(), KeyCodes.ARROW_LEFT);
 
 		assert.strictEqual(oRadioButton1.$().is(":focus"), true, "3rd RadioButton should be focussed");
 
@@ -1025,16 +1025,20 @@ sap.ui.define([
 	});
 
 	QUnit.module("Message support", {
+		before: function() {
+			sinon.config.useFakeTimers = false;
+		},
 		beforeEach: function () {
 			this.oRadioButton = new RadioButton({
 				selected:"{/selected}"
 			});
 			this.oRadioButton.placeAt('qunit-fixture');
 			Core.applyChanges();
-			sinon.config.useFakeTimers = false;
 		},
 		afterEach: function () {
 			this.oRadioButton.destroy();
+		},
+		after: function() {
 			sinon.config.useFakeTimers = true;
 		}
 	});

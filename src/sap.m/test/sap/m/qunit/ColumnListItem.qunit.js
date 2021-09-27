@@ -16,6 +16,8 @@ sap.ui.define([
 
 	Mobile.init();
 
+	QUnit.module("");
+
 	QUnit.test("ShouldRemoveAPopin", function(assert) {
 		// SUT
 		var hasPopin,
@@ -188,7 +190,7 @@ sap.ui.define([
 		var fnPress = this.spy(oCLI, "firePress");
 		oCLI.focus();
 		var bHasSelection;
-		this.stub(window, "getSelection", function() {
+		this.stub(window, "getSelection").callsFake(function() {
 			return {
 				toString: function() {
 					return bHasSelection ? "Hello World" : "";

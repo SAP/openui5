@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
-	"sap/ui/core/UIComponent",
+	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/createAndAppendDiv"
@@ -13,7 +13,7 @@ sap.ui.define([
 	Change,
 	JsControlTreeModifier,
 	XmlTreeModifier,
-	UIComponent,
+	Component,
 	ComponentContainer,
 	JSONModel,
 	createAndAppendDiv
@@ -119,73 +119,84 @@ sap.ui.define([
 	});
 
 	QUnit.module("bindingAggregation functionality with JsControlTreeModifier", {
+		before: function() {
+			sap.ui.define("test/Component", [
+				"sap/ui/core/UIComponent",
+				"sap/ui/core/mvc/XMLView"
+			], function(UIComponent, XMLView) {
+				return UIComponent.extend("test.Component", {
+					metadata: {
+						manifest : {
+							"sap.app": {
+								"id": "test",
+								"type": "application"
+							}
+						},
+						interfaces: [ "sap.ui.core.IAsyncContentCreation" ]
+					},
+					createContent : function() {
+						// Adds binding to XML
+						var sAfterSubstring = 'id="myTable"';
+						var iInsertPosition = oXmlString.indexOf(sAfterSubstring) + sAfterSubstring.length;
+						var oXmlStringWithBinding = [
+							oXmlString.slice(0, iInsertPosition),
+							' items="{path: \'/records\'}"',
+							oXmlString.slice(iInsertPosition)
+						].join('');
+
+						var oView = XMLView.create({
+							 id : this.createId("view"),
+							 definition : oXmlStringWithBinding
+						});
+						return oView;
+					}
+
+				});
+			});
+		},
 		beforeEach: function() {
 			this.oChangeHandler = AddTableColumnChangeHandler;
 
-			// Adds binding to XML
-			var sAfterSubstring = 'id="myTable"';
-			var iInsertPosition = oXmlString.indexOf(sAfterSubstring) + sAfterSubstring.length;
-			var oXmlStringWithBinding = [
-				oXmlString.slice(0, iInsertPosition),
-				' items="{path: \'/records\'}"',
-				oXmlString.slice(iInsertPosition)
-			].join('');
+			return Component.create({
+				id: "comp",
+				name: "test"
+			}).then(function(oComponent) {
+				this.oUiComponent = oComponent;
+
+				// Place component in container and display
+				this.oUiComponentContainer = new ComponentContainer({
+					component : this.oUiComponent
+				});
 
 
-			var Comp = UIComponent.extend("test", {
-				metadata: {
-					manifest : {
-						"sap.app": {
-							"id": "test",
-							"type": "application"
-						}
-					}
-				},
-				createContent : function() {
-					// store it in outer scope
-					var oView = sap.ui.xmlview({
-						 id : this.createId("view"),
-						 viewContent : oXmlStringWithBinding
-					 });
-					 return oView;
-				}
+				this.oUiComponentContainer.placeAt("content");
 
-			});
-			this.oUiComponent = new Comp("comp");
+				this.oView = this.oUiComponent.getRootControl();
 
-			// Place component in container and display
-			this.oUiComponentContainer = new ComponentContainer({
-				component : this.oUiComponent
-			});
+				this.oView.setModel(new JSONModel({
+					"records": [{
+						"column0": "test0_1",
+						"column1": "test1_1",
+						"column2": "test2_1",
+						"column3": "test3_1"
+					},{
+						"column0": "test0_2",
+						"column1": "test1_2",
+						"column2": "test2_2",
+						"column3": "test3_2"
+					},{
+						"column0": "test0_3",
+						"column1": "test1_3",
+						"column2": "test2_3",
+						"column3": "test3_3"
+					}]
+				}));
 
+				sap.ui.getCore().applyChanges();
 
-			this.oUiComponentContainer.placeAt("content");
-
-			this.oView = this.oUiComponent.getRootControl();
-
-			this.oView.setModel(new JSONModel({
-				"records": [{
-					"column0": "test0_1",
-					"column1": "test1_1",
-					"column2": "test2_1",
-					"column3": "test3_1"
-				},{
-					"column0": "test0_2",
-					"column1": "test1_2",
-					"column2": "test2_2",
-					"column3": "test3_2"
-				},{
-					"column0": "test0_3",
-					"column1": "test1_3",
-					"column2": "test2_3",
-					"column3": "test3_3"
-				}]
-			}));
-
-			sap.ui.getCore().applyChanges();
-
-			this.oTable = this.oView.byId('myTable');
-			this.oChange = new Change(createChangeDefinition());
+				this.oTable = this.oView.byId('myTable');
+				this.oChange = new Change(createChangeDefinition());
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oChange = null;

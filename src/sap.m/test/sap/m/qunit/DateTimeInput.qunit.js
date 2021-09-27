@@ -1,29 +1,32 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/model/type/Date",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/mvc/XMLView",
 	"sap/m/DateTimeInput",
 	"sap/ui/model/type/DateTime",
-	"jquery.sap.global",
+	"sap/base/util/deepEqual",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
 	TypeDate,
 	JSONModel,
 	DateFormat,
+	XMLView,
 	DateTimeInput,
 	DateTime,
+	deepEqual,
 	jQuery,
-	coreLibrary
+	coreLibrary,
+	KeyCodes
 ) {
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = coreLibrary.mvc.ViewType;
+	"use strict";
 
 	createAndAppendDiv("content");
 	var sDtiView =
@@ -105,7 +108,6 @@ sap.ui.define([
 	});
 	sap.ui.getCore().setModel(oModel);
 
-	var bChange = false;
 	var sValue = "";
 	var bValid = false;
 	var sId = "";
@@ -114,7 +116,6 @@ sap.ui.define([
 			var oDTI = oEvent.oSource;
 			sValue = oEvent.getParameter("newValue");
 			bValid = oEvent.getParameter("valid");
-			bChange = true;
 			sId = oDTI.getId();
 		}
 
@@ -191,7 +192,7 @@ sap.ui.define([
 		assert.equal(dti0.getPlaceholder(), oDatePicker.getPlaceholder(), "DatePicker value");
 		assert.equal(dti0.getWidth(), "100px", "DateTimeInput width");
 		assert.equal(oDatePicker.getWidth(), "100%", "DatePicker width");
-		assert.ok(jQuery.sap.equal(dti0.getAriaLabelledBy(), oDatePicker.getAriaLabelledBy()), "DatePicker getAriaLabelledBy");
+		assert.ok(deepEqual(dti0.getAriaLabelledBy(), oDatePicker.getAriaLabelledBy()), "DatePicker getAriaLabelledBy");
 
 		oDatePicker = dti4.getAggregation("_picker");
 		assert.equal(dti4.getValueState(), oDatePicker.getValueState(), "DatePicker valueState");
@@ -236,13 +237,12 @@ sap.ui.define([
 	QUnit.test("Change event", function(assert) {
 		var oDateValue2 = oFormatter.parse(sDateValue2);
 		var oDatePicker = dti0.getAggregation("_picker");
-		bChange = false;
 		sValue = "";
 		bValid = true;
 		sId = "";
 		dti0.focus();
 		oDatePicker.$().find("input").val("33 May, 2012");
-		qutils.triggerKeyboardEvent("__input0-Picker-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("__input0-Picker-inner", KeyCodes.ENTER, false, false, false);
 		oDatePicker.$().find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, dti0.getId(), "Change event fired");
 		assert.equal(sValue, "33 May, 2012", "Value of event has entered value if invalid");
@@ -250,13 +250,12 @@ sap.ui.define([
 		assert.equal(dti0.getValue(), "33 May, 2012", "Value has entered value if invalid");
 		assert.equal(dti0.getDateValue().getTime(), oDateValue2.getTime(), "DateValue not changed set");
 
-		bChange = false;
 		sValue = "";
 		bValid = false;
 		sId = "";
 		dti0.focus();
 		oDatePicker.$().find("input").val("30 May, 2012");
-		qutils.triggerKeyboardEvent("__input0-Picker-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("__input0-Picker-inner", KeyCodes.ENTER, false, false, false);
 		oDatePicker.$().find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, dti0.getId(), "Change event fired");
 		assert.equal(sValue, "2012-05-30", "Value in internal format priovided");
@@ -268,34 +267,35 @@ sap.ui.define([
 
 	QUnit.test("Databinding type of 'value' property vs DateTimeInput type", function (assert) {
 		//Prepare
-		var oMyLocalModel = new JSONModel({dateVal: new Date()}),
-				oView = sap.ui.view({
-					viewContent: sDtiView,
-					type: ViewType.XML
-				}),
-				oDateVSdate = oView.byId("dateVSdate"),
+		var oMyLocalModel = new JSONModel({dateVal: new Date()});
+
+		return XMLView.create({
+			definition: sDtiView
+		}).then(function(oView) {
+			var oDateVSdate = oView.byId("dateVSdate"),
 				oDateVSdatetime = oView.byId("dateVSdatetime"),
 				oDatetimeVSdate = oView.byId("datetimeVSdate"),
 				oDatetimeVSdatetime = oView.byId("datetimeVSdatetime"),
 				aAllDateTimeInputs = [oDateVSdate, oDateVSdatetime, oDatetimeVSdate, oDatetimeVSdatetime];
 
-		oView.setModel(oMyLocalModel);
-		oView.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+			oView.setModel(oMyLocalModel);
+			oView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
-		aAllDateTimeInputs.forEach(function (oDTI) {
-			//Act
-			oDTI.focus();
-			this.clock.tick(500);
-			jQuery("#" + oDTI.getId() + "-Picker-icon").trigger("click");
+			aAllDateTimeInputs.forEach(function (oDTI) {
+				//Act
+				oDTI.focus();
+				this.clock.tick(500);
+				jQuery("#" + oDTI.getId() + "-Picker-icon").trigger("click");
 
-			//Assert
-			var oPicker = jQuery("#" + oDTI.getId() + "-Picker-cal");
-			assert.ok(oPicker, "There should be a calendar in the DOM");
+				//Assert
+				var oPicker = jQuery("#" + oDTI.getId() + "-Picker-cal");
+				assert.ok(oPicker, "There should be a calendar in the DOM");
+			}.bind(this));
+
+			//Cleanup
+			oView.destroy();
 		}.bind(this));
-
-		//Cleanup
-		oView.destroy();
 	});
 
 	QUnit.test("Destroy", function(assert) {
@@ -336,64 +336,67 @@ sap.ui.define([
 				oPicker,
 				oNewPicker;
 
-		//1.1 sap.m.DateTimeInput.Date vs date pattern
-		test("typeDate", sDatePattern, "sap.m.DatePicker");
+		return Promise.all([
+			//1.1 sap.m.DateTimeInput.Date vs date pattern
+			test("typeDate", sDatePattern, "sap.m.DatePicker"),
 
-		//1.2. sap.m.DateTimeInput.Date vs datetime pattern
-		test("typeDate", sDateTimePattern, "sap.m.DateTimePicker");
+			//1.2. sap.m.DateTimeInput.Date vs datetime pattern
+			test("typeDate", sDateTimePattern, "sap.m.DateTimePicker"),
 
-		//1.3. sap.m.DateTimeInput.Date vs time pattern
-		test("typeDate", sTimePattern, "sap.m.TimePicker");
+			//1.3. sap.m.DateTimeInput.Date vs time pattern
+			test("typeDate", sTimePattern, "sap.m.TimePicker"),
 
-		//2.1. sap.m.DateTimeInput.Time vs date pattern
-		test("typeTime", sDatePattern, "sap.m.DatePicker");
+			//2.1. sap.m.DateTimeInput.Time vs date pattern
+			test("typeTime", sDatePattern, "sap.m.DatePicker"),
 
-		//2.2. sap.m.DateTimeInput.Time vs datetime pattern
-		test("typeTime", sDateTimePattern, "sap.m.DateTimePicker");
+			//2.2. sap.m.DateTimeInput.Time vs datetime pattern
+			test("typeTime", sDateTimePattern, "sap.m.DateTimePicker"),
 
-		//2.3. sap.m.DateTimeInput.Time vs time pattern
-		test("typeTime", sTimePattern, "sap.m.TimePicker");
+			//2.3. sap.m.DateTimeInput.Time vs time pattern
+			test("typeTime", sTimePattern, "sap.m.TimePicker"),
 
-		//3.1. sap.m.DateTimeInput.DateTime vs date pattern
-		test("typeDateTime", sDatePattern, "sap.m.DatePicker");
+			//3.1. sap.m.DateTimeInput.DateTime vs date pattern
+			test("typeDateTime", sDatePattern, "sap.m.DatePicker"),
 
-		//3.2. sap.m.DateTimeInput.DateTime vs datetime pattern
-		test("typeDateTime", sDateTimePattern, "sap.m.DateTimePicker");
+			//3.2. sap.m.DateTimeInput.DateTime vs datetime pattern
+			test("typeDateTime", sDateTimePattern, "sap.m.DateTimePicker"),
 
-		//3.3. sap.m.DateTimeInput.DateTime vs time pattern
-		test("typeDateTime", sTimePattern, "sap.m.TimePicker");
+			//3.3. sap.m.DateTimeInput.DateTime vs time pattern
+			test("typeDateTime", sTimePattern, "sap.m.TimePicker")
+		]);
 
 		//helpers
 
 		function prepare() { //creates view with 3 DateTimeInputs where the type and its binding type are equal
-			var oMyLocalModel = new JSONModel({dateVal: new Date()}),
-					oView = sap.ui.view({
-						viewContent: sDtiView,
-						type: ViewType.XML
-					});
-			oView.setModel(oMyLocalModel);
-			oView.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			var oMyLocalModel = new JSONModel({dateVal: new Date()});
 
-			return oView;
+			return XMLView.create({
+				definition: sDtiView
+			}).then(function(oView) {
+				oView.setModel(oMyLocalModel);
+				oView.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				return oView;
+			});
 		}
 
 		//calls DateTimeInput.prototype._getPickerByTypeAndPattern with pattern that does not corresponds to the
 		//DateTimeInput.prototype.type property and verifies that the picker is of correct type
 		function test(sDateTimeInputId, sPattern, sExpectedCtrType) {
 			//Prepare
-			var oDateTimeInput,
-			oView = prepare();
-			oDateTimeInput = oView.byId(sDateTimeInputId);
+			return prepare().then(function(oView) {
+				var oDateTimeInput = oView.byId(sDateTimeInputId);
 
-			oPicker = oDateTimeInput.getAggregation("_picker");
-			//Act
-			oNewPicker = oDateTimeInput._getPickerByTypeAndPattern(oDateTimeInput.getType(), oPicker, sPattern);
-			//Assert
-			assert.equal(oNewPicker.getMetadata().getName(), sExpectedCtrType, "DateTimeInput.type='" + oDateTimeInput.getType() +
+				oPicker = oDateTimeInput.getAggregation("_picker");
+				//Act
+				oNewPicker = oDateTimeInput._getPickerByTypeAndPattern(oDateTimeInput.getType(), oPicker, sPattern);
+				//Assert
+				assert.equal(oNewPicker.getMetadata().getName(), sExpectedCtrType, "DateTimeInput.type='" + oDateTimeInput.getType() +
 					"', pattern='" + sPattern + "' should render a '" + sExpectedCtrType + "'");
-			//Cleanup
-			oView.destroy();
+				//Cleanup
+				oView.destroy();
+			});
 		}
 	});
 });

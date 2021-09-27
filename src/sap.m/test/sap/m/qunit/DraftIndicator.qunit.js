@@ -97,6 +97,7 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oDraftIndi.$("label").text(), oBundle.getText("DRAFT_INDICATOR_SAVING_DRAFT"), "Draft saved is shown");
 		this.clock.tick(1500);
+		this.clock.tick(1); // also process nested timeouts
 
 		// Assert
 		assert.strictEqual(oDraftIndi.$("label").text(), "", "Draft saving state is cleared after default timeout");

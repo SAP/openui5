@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -7,14 +6,15 @@ sap.ui.define([
 	"sap/m/Table",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
-	"jquery.sap.global",
 	"sap/m/ObjectHeader",
 	"sap/m/ObjectListItem",
+	"sap/m/library",
 	"sap/ui/events/KeyCodes",
 	"sap/m/Link",
+	"sap/m/Text",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -22,16 +22,20 @@ sap.ui.define([
 	Table,
 	Column,
 	ColumnListItem,
-	jQuery,
 	ObjectHeader,
 	ObjectListItem,
+	mobileLibrary,
 	KeyCodes,
 	Link,
+	Text,
 	Core,
 	coreLibrary
 ) {
-	// shortcut for sap.ui.core.TextDirection
-	var TextDirection = coreLibrary.TextDirection,
+	"use strict";
+
+	// shortcut for sap.m.EmptyIndicatorMode and sap.ui.core.TextDirection
+	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode,
+		TextDirection = coreLibrary.TextDirection,
 		oCore = sap.ui.getCore();
 
 	// shortcut for library resource bundle
@@ -43,11 +47,11 @@ sap.ui.define([
 
 
 	var eventHandler = function (oEvent) {
-		assert.ok(true, "press event for attribute was fired");
+		QUnit.assert.ok(true, "press event for attribute was fired");
 	};
 
 	var eventHandlerForTableRow = function (oEvent) {
-		assert.ok(true, "press event for table was fired");
+		QUnit.assert.ok(true, "press event for table was fired");
 	};
 
 	var oa1 = new ObjectAttribute("oa1", {
@@ -120,9 +124,9 @@ sap.ui.define([
 
 	QUnit.test("AttributesRendered", function(assert) {
 
-		assert.notEqual(jQuery.sap.domById("oa1"), null, "Object attribute #1 should be rendered.");
-		assert.notEqual(jQuery.sap.domById("oa2"), null, "Object attribute #2 should be rendered.");
-		assert.notEqual(jQuery.sap.domById("oa3"), null, "Object attribute #3 should be rendered.");
+		assert.notEqual(document.getElementById("oa1"), null, "Object attribute #1 should be rendered.");
+		assert.notEqual(document.getElementById("oa2"), null, "Object attribute #2 should be rendered.");
+		assert.notEqual(document.getElementById("oa3"), null, "Object attribute #3 should be rendered.");
 	});
 
 	QUnit.test("Screen reader", function(assert) {
@@ -339,10 +343,10 @@ sap.ui.define([
 
 	QUnit.test("customContent with sap.m.Text and EmptyIndicatorMode is on", function(assert) {
 		// arrange
-		var oAttr = new sap.m.ObjectAttribute({
+		var oAttr = new ObjectAttribute({
 			title:'Object Attribute without text',
-			customContent : new sap.m.Text({
-				emptyIndicatorMode : sap.m.EmptyIndicatorMode.On
+			customContent : new Text({
+				emptyIndicatorMode : EmptyIndicatorMode.On
 			})
 		}),
 		sExpected = oRb.getText("EMPTY_INDICATOR") + oRb.getText("EMPTY_INDICATOR_TEXT");
@@ -534,7 +538,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		var oPressSpy = sinon.spy(ObjectAttribute.prototype, "firePress");
-		sap.ui.test.qunit.triggerKeydown(oObjectAttribute.getFocusDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oObjectAttribute.getFocusDomRef(), KeyCodes.ENTER);
 
 		assert.strictEqual(oPressSpy.callCount, 1, "Enter is pressed, press event was fired");
 
@@ -557,7 +561,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		var oPressSpy = sinon.spy(ObjectAttribute.prototype, "firePress");
-		sap.ui.test.qunit.triggerKeyup(oObjectAttribute.getFocusDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeyup(oObjectAttribute.getFocusDomRef(), KeyCodes.SPACE);
 
 		assert.strictEqual(oPressSpy.callCount, 1, "Space is pressed, press event was fired");
 
@@ -684,12 +688,10 @@ sap.ui.define([
 		assert.ok(oAttr.getDomRef(), "Object attribute should have its container element rendered");
 	});
 
-	QUnit.test("Object attribute do not throw expection when a special regex symbol for regex is used in the title", function (assert) {
+	QUnit.test("Object attribute do not throw exception when a special regex symbol for regex is used in the title", function (assert) {
 		// Arrange
 		var oAttr = new ObjectAttribute();
-		var oGetTitleStub = this.stub(oAttr, "getTitle", function () {
-			return "\".*+?^${}()|[]\\";
-		});
+		this.stub(oAttr, "getTitle").returns("\".*+?^${}()|[]\\");
 
 		// Act
 		oAttr._getUpdatedTextControl();
@@ -718,7 +720,7 @@ sap.ui.define([
 
 	QUnit.test("rendered title is correct after custom content change", function (assert) {
 		// Arrange
-		var oText = new sap.m.Text({
+		var oText = new Text({
 			text: "2"
 		}), oAttr = new ObjectAttribute({
 			title: "1",

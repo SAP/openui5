@@ -1,0 +1,42 @@
+#sc2, #oSC-2 {
+	white-space: nowrap;
+	border: 1px solid red;
+}
+#sc2-scroll{
+	width: 1000px;
+}
+
+.bigContent {
+	overflow: scroll;
+	-webkit-overflow-scrolling: touch;
+	width: 200px;
+	height: 200px;
+	border: 1px solid red;
+}
+
+.height100 {
+	height: 100px;
+}
+.height200 {
+	height: 200px;
+}
+.height300 {
+	height: 300px;
+}
+.height800 {
+	height: 800px;
+}
+.height2000 {
+	height: 2000px;
+}
+
+.absoluteLeft0Top200 {
+	position: absolute;
+	left: 0;
+	top: 200px;
+}
+
+.width800inline {
+	width: 800px;
+	display: inline-block;
+}

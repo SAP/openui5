@@ -1,34 +1,37 @@
 /*global QUnit */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/m/Button",
+	"sap/m/Page",
+	"sap/m/Panel",
+	"sap/ui/core/IconPool",
 	"test-resources/sap/ui/support/TestHelper"
-], function (jQuery, testRule) {
+], function (Button, Page, Panel, IconPool, testRule) {
 	"use strict";
 
 	QUnit.module("Button rule tests", {
 		setup: function () {
-			this.page = new sap.m.Page({
+			this.page = new Page({
 				content: [
-					new sap.m.Panel({
+					new Panel({
 						id: "buttonTestsContext",
 						content: [
-							new sap.m.Button(),
-							new sap.m.Button({
-								icon: sap.ui.core.IconPool.getIconURI("add"),
+							new Button(),
+							new Button({
+								icon: IconPool.getIconURI("add"),
 								text: "Add",
 								tooltip: "Add"
 							}),
-							new sap.m.Button({
-								icon: sap.ui.core.IconPool.getIconURI("add"),
+							new Button({
+								icon: IconPool.getIconURI("add"),
 								tooltip: "Add"
 							}),
-							new sap.m.Button({
-								icon: sap.ui.core.IconPool.getIconURI("add"),
+							new Button({
+								icon: IconPool.getIconURI("add"),
 								text: "Add"
 							}),
-							new sap.m.Button({
-								icon: sap.ui.core.IconPool.getIconURI("add")
+							new Button({
+								icon: IconPool.getIconURI("add")
 							})
 						]
 					})

@@ -1,5 +1,4 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -11,11 +10,11 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/m/ObjectHeader",
 	"sap/m/library",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/ObjectNumber",
 	"sap/m/ObjectMarker",
 	"sap/m/Label",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -30,8 +29,11 @@ sap.ui.define([
 	jQuery,
 	ObjectNumber,
 	ObjectMarker,
-	Label
+	Label,
+	KeyCodes
 ) {
+	"use strict";
+
 	// shortcut for sap.m.ObjectMarkerType
 	var ObjectMarkerType = mobileLibrary.ObjectMarkerType;
 
@@ -85,35 +87,6 @@ sap.ui.define([
 		height : '1.375rem'
 	}) ];
 
-	var oItem0 = new Item({
-		key : "0",
-		text : "item 0",
-		enabled : true
-	});
-
-	var oItem1 = new Item({
-		key : "1",
-		text : "item 1",
-		enabled : true
-	});
-
-	var oItem2 = new Item({
-		key : "2",
-		text : "item 2",
-		enabled : true
-	});
-
-	var oItem3 = new Item({
-		key : "3",
-		text : "item 3",
-		enabled : true
-	});
-
-	var oItem4 = new Item({
-		key : "4",
-		text : "item 4",
-		enabled : true
-	});
 
 	//test popover title
 	var oTitleArrowDomRef = null;
@@ -258,8 +231,8 @@ sap.ui.define([
 
 	QUnit.test("AttributesRendered", function(assert) {
 
-		assert.notEqual(jQuery.sap.domById("oa1"), null, "Object attribute #1 should be rendered.");
-		assert.notEqual(jQuery.sap.domById("oa2"), null, "Object attribute #2 should be rendered.");
+		assert.notEqual(document.getElementById("oa1"), null, "Object attribute #1 should be rendered.");
+		assert.notEqual(document.getElementById("oa2"), null, "Object attribute #2 should be rendered.");
 	});
 
 	QUnit.test("Attribute rerendered after being empty", function(assert) {
@@ -285,47 +258,47 @@ sap.ui.define([
 
 	QUnit.test("StatusesRendered", function(assert) {
 
-		assert.notEqual(jQuery.sap.domById("oses1"), null, "Object statuses #1 should be rendered.");
-		assert.notEqual(jQuery.sap.domById("oses2"), null, "Object statuses #2 should be rendered.");
-		assert.equal(jQuery.sap.domById("oattr1"), null, "Object attribute should not be rendered.");
+		assert.notEqual(document.getElementById("oses1"), null, "Object statuses #1 should be rendered.");
+		assert.notEqual(document.getElementById("oses2"), null, "Object statuses #2 should be rendered.");
+		assert.equal(document.getElementById("oattr1"), null, "Object attribute should not be rendered.");
 	});
 
 	QUnit.test("InfoRendered", function(assert) {
 
-		assert.notEqual(jQuery.sap.domById("os1"), null, "First status should be rendered.");
-		assert.notEqual(jQuery.sap.domById("os2"), null, "Second status info should be rendered.");
+		assert.notEqual(document.getElementById("os1"), null, "First status should be rendered.");
+		assert.notEqual(document.getElementById("os2"), null, "Second status info should be rendered.");
 	});
 
 	QUnit.test("FavoriteRendered", function(assert) {
 
-		assert.notEqual(jQuery.sap.domById(ohFlagFavId + "-favorite"), null, "Favorite marker should be rendered.");
-		assert.ok(jQuery.sap.byId(ohFlagFavId + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
+		assert.notEqual(document.getElementById(ohFlagFavId + "-favorite"), null, "Favorite marker should be rendered.");
+		assert.ok(jQuery("#" + ohFlagFavId + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
 
-		assert.equal(jQuery.sap.domById(ohFlagFavId2 + "-favorite"), null, "Favorite marker should not be rendered.");
+		assert.equal(document.getElementById(ohFlagFavId2 + "-favorite"), null, "Favorite marker should not be rendered.");
 	});
 
 	QUnit.test("FlagRendered", function(assert) {
 
-		assert.notEqual(jQuery.sap.domById(ohFlagFavId + "-flag"), null, "Flag marker should be rendered.");
-		assert.ok(jQuery.sap.byId(ohFlagFavId + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
+		assert.notEqual(document.getElementById(ohFlagFavId + "-flag"), null, "Flag marker should be rendered.");
+		assert.ok(jQuery("#" + ohFlagFavId + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
 
-		assert.equal(jQuery.sap.domById(ohFlagFavId2 + "-flag"), null, "Flag marker should not be rendered.");
+		assert.equal(document.getElementById(ohFlagFavId2 + "-flag"), null, "Flag marker should not be rendered.");
 
 		// test flag rendering with one attribute
-		assert.notEqual(jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag"), null, "Flag marker should be rendered.");
-		assert.ok(jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
+		assert.notEqual(jQuery("#" + ohAttributeAndFlagId2 + "-flag"), null, "Flag marker should be rendered.");
+		assert.ok(jQuery("#" + ohAttributeAndFlagId2 + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
 
 	});
 
 	QUnit.test("Flag Rendering Position", function(assert) {
 
-		assert.ok(Math.abs(jQuery.sap.byId(ohAttributeAndFlagId2 + "-attr1")[0].offsetTop - jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag")[0].offsetTop) <= 2,
+		assert.ok(Math.abs(jQuery("#" + ohAttributeAndFlagId2 + "-attr1")[0].offsetTop - jQuery("#" + ohAttributeAndFlagId2 + "-flag")[0].offsetTop) <= 2,
 		"Attribute and flag should be rendered on the same row");
 	});
 
 	QUnit.test("ProgressIndicatorRendered", function(assert) {
 
-		assert.notEqual(jQuery.sap.domById(ohBasicId + "-pi"), null, "Progress Indicator should be rendered.");
+		assert.notEqual(document.getElementById(ohBasicId + "-pi"), null, "Progress Indicator should be rendered.");
 		assert.ok(!jQuery(jQuery("#ohBasic .sapMOHStatusFixedWidth")[4]).attr("style"), "Progress Indicator only use 35% width.");
 		assert.equal(jQuery("#ohBasic .sapMOHStatusFixedWidth .sapMPI").css("float"), "right", "Progress Indicator is floating right");
 	});
@@ -480,7 +453,7 @@ sap.ui.define([
 
 	QUnit.test("NumberRendered", function(assert) {
 
-		assert.notEqual(jQuery.sap.domById(ohCondensedId + "-number"), null, "Number should be rendered.");
+		assert.notEqual(document.getElementById(ohCondensedId + "-number"), null, "Number should be rendered.");
 		assert.ok(jQuery("#" + ohCondensedId + "-number").hasClass("sapMObjectNumber"), "Number is sap.m.ObjectNumber");
 	});
 
@@ -489,7 +462,7 @@ sap.ui.define([
 		assert.equal(jQuery("#ohc1 > .sapMOHBgTransparent").length, 1, "Transparent background style should be set.");
 
 		// in some browsers css("background-color") instead of "transparent" returns "rgba(0, 0, 0, 0)"
-		var bBackgroundTransparent = (jQuery.sap.byId("ohc1").css("background-color") == "transparent") || (jQuery.sap.byId("ohc1").css("background-color") == "rgba(0, 0, 0, 0)");
+		var bBackgroundTransparent = (jQuery("#ohc1").css("background-color") == "transparent") || (jQuery("#ohc1").css("background-color") == "rgba(0, 0, 0, 0)");
 		assert.ok(bBackgroundTransparent, "Background color is transparent");
 	});
 
@@ -688,7 +661,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
-		assert.ok(jQuery.sap.byId(ohFlagAndFavoriteMarkerId + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker");
+		assert.ok(jQuery("#" + ohFlagAndFavoriteMarkerId + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker");
 
 		// cleanup
 		ohFlagAndFavoriteMarker.destroy();
@@ -729,7 +702,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
-		assert.ok(jQuery.sap.byId(ohFlagAndFavoriteMarkerId + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
+		assert.ok(jQuery("#" + ohFlagAndFavoriteMarkerId + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
 
 		// cleanup
 		ohFlagAndFavoriteMarker.destroy();
@@ -772,7 +745,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
-		assert.notEqual(jQuery.sap.domById("ohefafm1"), null, "Attribute should be rendered.");
+		assert.notEqual(document.getElementById("ohefafm1"), null, "Attribute should be rendered.");
 
 		// cleanup
 		ohFlagAndFavoriteMarker.destroy();
@@ -860,7 +833,7 @@ sap.ui.define([
 		//Act
 		var $oImageControlRef = ohResponsiveIcon._oImageControl.$();
 		$oImageControlRef.trigger("focus");
-		sap.ui.test.qunit.triggerKeyup($oImageControlRef, jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeyup($oImageControlRef, KeyCodes.SPACE);
 
 		//Assert
 		assert.ok(domRef, "Icon should fire 'iconPress' event when object header is responsive");
@@ -897,7 +870,7 @@ sap.ui.define([
 		oArrow.focus(); // set focus on the arrow
 
 		// Assert
-		sap.ui.test.qunit.triggerKeyup(oArrow, jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeyup(oArrow, KeyCodes.SPACE);
 		assert.strictEqual(oSpy.callCount, 1, "SPACE is pressed, titleSelectorPress event was fired");
 
 		// clean up
@@ -921,7 +894,7 @@ sap.ui.define([
 		oArrow.focus(); // set focus on the arrow
 
 		// Assert
-		sap.ui.test.qunit.triggerKeydown(oArrow, jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(oArrow, KeyCodes.ENTER);
 		assert.strictEqual(oSpy.callCount, 1, "ENTER is pressed, titleSelectorPress event was fired");
 
 		// clean up
@@ -948,7 +921,7 @@ sap.ui.define([
 		oTitleArrowOH.setShowTitleSelector(false);
 
 		setTimeout(function() {
-			assert.equal(jQuery.sap.byId("titleArrowOH-titleArrow").length, 0, " The titleArrowOH showTitleSelector is set to false and is not rendered.");
+			assert.equal(jQuery("#titleArrowOH-titleArrow").length, 0, " The titleArrowOH showTitleSelector is set to false and is not rendered.");
 			done();
 		}, 100);
 
@@ -1543,8 +1516,8 @@ sap.ui.define([
 		oObjectHeader.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.domById("draft"), "marker draft should be rendered.");
-		assert.ok(jQuery.sap.domById("unsaved"), "marker unsaved should be rendered.");
+		assert.ok(document.getElementById("draft"), "marker draft should be rendered.");
+		assert.ok(document.getElementById("unsaved"), "marker unsaved should be rendered.");
 
 		oObjectHeader.destroy();
 	});
@@ -1583,7 +1556,7 @@ sap.ui.define([
 
 	QUnit.test("_initResponsivePaddingsEnablement is called on init", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(ObjectHeader.prototype, "_initResponsivePaddingsEnablement"),
+		var oSpy = this.spy(ObjectHeader.prototype, "_initResponsivePaddingsEnablement"),
 			oTestPage = new ObjectHeader({}).placeAt("qunit-fixture");
 
 		// Assert
@@ -1591,7 +1564,6 @@ sap.ui.define([
 		assert.ok(oSpy.calledOn(oTestPage), "The spy is called on the tested control instance");
 
 		//clean
-		oSpy.restore();
 		oTestPage.destroy();
 	});
 });

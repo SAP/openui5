@@ -1,5 +1,4 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/model/json/JSONModel",
@@ -29,12 +28,16 @@ sap.ui.define([
 	Page,
 	InvisibleText
 ) {
+	"use strict";
+
 	// shortcut for sap.m.PlacementType
 	var PlacementType = mobileLibrary.PlacementType;
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
 
+	// shortcut for sap.m.TitleAlignment
+	var TitleAlignment = mobileLibrary.TitleAlignment;
 
 
 	// mockup data
@@ -97,7 +100,11 @@ sap.ui.define([
 		list.setModel(oModel);
 
 		// bind Aggregation
-		list.bindAggregation("items", "/navigation", itemTemplate);
+		list.bindAggregation("items", {
+			path: "/navigation",
+			template: itemTemplate,
+			templateShareable: false
+		});
 	}
 
 	QUnit.module("API", {
@@ -159,13 +166,13 @@ sap.ui.define([
 
 		// Act and Arrange
 
-		this.stub(Device, "system", {desktop: true});
+		this.stub(Device, "system").value({desktop: true});
 		this.oResponsivePopover = new ResponsivePopover(this.oControlProps);
 		this.oResponsivePopover.addContent(this.oList);
 		this.oResponsivePopover.setInitialFocus(this.oList);
 
 		// Assert
-		assert.ok(this.oResponsivePopover._oControl instanceof sap.m.Popover, "ResponsivePopover should contain a popover inside");
+		assert.ok(this.oResponsivePopover._oControl.isA("sap.m.Popover"), "ResponsivePopover should contain a popover inside");
 		assert.equal(this.oResponsivePopover._oControl.getPlacement(), PlacementType.Bottom, "Placement should be passed to inner popover");
 		assert.equal(this.oResponsivePopover._oControl.getTitle(), "Adaptive now", "Title should be passed to inner popover");
 		assert.equal(this.oResponsivePopover._oControl.getShowHeader(), false, "ShowHeader should be passed to inner popover");
@@ -185,7 +192,7 @@ sap.ui.define([
 	QUnit.test('Phone mode', function(assert) {
 
 		// Act and Arrange
-		this.stub(Device, "system", {phone: true});
+		this.stub(Device, "system").value({phone: true});
 		this.oResponsivePopover = new ResponsivePopover(this.oControlProps);
 		this.oResponsivePopover.setShowHeader(true);
 		this.oResponsivePopover.setShowCloseButton(false);
@@ -193,7 +200,7 @@ sap.ui.define([
 		this.oResponsivePopover.setInitialFocus(this.oInput);
 
 		// Assert
-		assert.ok(this.oResponsivePopover._oControl instanceof sap.m.Dialog, "ResponsivePopover should be a dialog now");
+		assert.ok(this.oResponsivePopover._oControl.isA("sap.m.Dialog"), "ResponsivePopover should be a dialog now");
 		assert.equal(this.oResponsivePopover._oControl.getStretch(), true, "Dialog should have stretch enabled");
 		assert.equal(this.oResponsivePopover._oControl.getTitle(), "Adaptive now", "Title should be passed to inner dialog");
 		assert.equal(this.oResponsivePopover._oControl.getIcon(), "sap-icon://manager", "Icon should be passed to inner dialog");
@@ -220,7 +227,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Close button should not be forwarded to an internal aggregation Toolbar", function (assert) {
-		this.stub(Device, "system", { phone: true, desktop: false });
+		this.stub(Device, "system").value({ phone: true, desktop: false });
 
 		var oToolbar = new Toolbar(),
 			oResponsivePopover = new ResponsivePopover({
@@ -249,7 +256,7 @@ sap.ui.define([
 
 	QUnit.test("Getter for begin/end button", function(assert) {
 		// Act and Arrange
-		this.stub(Device, "system", { phone: true });
+		this.stub(Device, "system").value({ phone: true });
 		this.oResponsivePopover = new ResponsivePopover(this.oControlProps);
 
 		assert.ok(this.oResponsivePopover.getBeginButton(), "Should be executed without any errors");
@@ -273,7 +280,7 @@ sap.ui.define([
 	QUnit.test("Phone mode with NavContainer content", function(assert) {
 
 		// Arrange and Act
-		this.stub(Device, "system", {phone: true});
+		this.stub(Device, "system").value({phone: true});
 		this.oResponsivePopover = new ResponsivePopover(this.oControlProps);
 		var oNavContainer = new NavContainer({
 			pages: [
@@ -376,8 +383,9 @@ sap.ui.define([
 
 	QUnit.test("ResponsivePopover with ariaLabelledBy", function (assert) {
 		// Arrange
-		var sInvTextId = "invisibleText",
-			oInvText = new InvisibleText(sInvTextId, {text: "Additional Label"});
+		var sInvTextId = "invisibleText";
+
+		/* var oInvText = */ new InvisibleText(sInvTextId, {text: "Additional Label"});
 		this.oResponsivePopover = new ResponsivePopover();
 		this.oResponsivePopover.addAriaLabelledBy(sInvTextId);
 
@@ -465,7 +473,7 @@ sap.ui.define([
 					"The default titleAlignment is '" + sInitialAlignment + "', there is class '" + sAlignmentClass + sInitialAlignment + "' applied to the Header");
 
 		// check if all types of alignment lead to apply the proper CSS class
-		for (sAlignment in sap.m.TitleAlignment) {
+		for (sAlignment in TitleAlignment) {
 			oPopover.setTitleAlignment(sAlignment);
 			oCore.applyChanges();
 			assert.ok(oPopover._oControl._getAnyHeader().hasStyleClass(sAlignmentClass + sAlignment),
@@ -473,7 +481,7 @@ sap.ui.define([
 		}
 
 		// check how many times setTitleAlignment method is called
-		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(sap.m.TitleAlignment).length,
+		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(TitleAlignment).length,
 			"'setTitleAlignment' method is called total " + setTitleAlignmentSpy.callCount + " times");
 
 		// cleanup

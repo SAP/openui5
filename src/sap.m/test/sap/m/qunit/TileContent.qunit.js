@@ -1,12 +1,12 @@
-/*global QUnit, sinon */
+/*global QUnit */
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/TileContent",
-	"sap/ui/core/Control",
 	"sap/m/NewsContent",
 	"sap/m/FeedContent",
+	"sap/m/Text",
 	"sap/m/library"
-], function(jQuery, TileContent, Control, NewsContent, FeedContent, library) {
+], function(jQuery, TileContent, NewsContent, FeedContent, Text, library) {
 	"use strict";
 
 
@@ -70,9 +70,9 @@ sap.ui.define([
 
 	QUnit.test("DOM structure created", function(assert) {
 		assert.equal(this.oNewsTileContent._getContentType(), "News", "Type was get successfully");
-		assert.ok(jQuery.sap.domById("tc1"), "TileContent1 was rendered successfully");
-		assert.ok(jQuery.sap.domById("news"), "News content was rendered successfully");
-		assert.ok(jQuery.sap.domById("tc1-footer-text"), "TileContent1 footer was rendered successfully");
+		assert.ok(document.getElementById("tc1"), "TileContent1 was rendered successfully");
+		assert.ok(document.getElementById("news"), "News content was rendered successfully");
+		assert.ok(document.getElementById("tc1-footer-text"), "TileContent1 footer was rendered successfully");
 	});
 
 	QUnit.module("Rendering of colored footer", {
@@ -136,9 +136,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Getting content type.", function(assert) {
-		assert.ok(jQuery.sap.domById("tc2"), "TileContent2 was rendered successfully");
-		assert.ok(jQuery.sap.domById("feed"), "Feed content was rendered successfully");
-		assert.ok(jQuery.sap.domById("tc2-footer-text"), "TileContent2 footer was rendered successfully");
+		assert.ok(document.getElementById("tc2"), "TileContent2 was rendered successfully");
+		assert.ok(document.getElementById("feed"), "Feed content was rendered successfully");
+		assert.ok(document.getElementById("tc2-footer-text"), "TileContent2 footer was rendered successfully");
 		assert.equal(this.oFeedTileContent._getContentType(), undefined, "Type was get successfully");
 	});
 
@@ -173,7 +173,7 @@ sap.ui.define([
 
 	QUnit.test("Function setRenderFooter does not mark the control as invalidated", function(assert) {
 		//Arrange
-		sinon.spy(this.oTileContent, "invalidate");
+		this.spy(this.oTileContent, "invalidate");
 
 		//Act
 		this.oTileContent.setRenderFooter(false);
@@ -191,13 +191,13 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.ok(!jQuery.sap.domById("tileContent-footer-text"), "No footer has been rendered.");
+		assert.ok(!document.getElementById("tileContent-footer-text"), "No footer has been rendered.");
 	});
 
 	QUnit.module("Protected property _bRenderContent", {
 		beforeEach : function() {
 			this.oTileContent = new TileContent("tileContent", {
-				content: new Control()
+				content: new Text()
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -224,7 +224,7 @@ sap.ui.define([
 
 	QUnit.test("Function setRenderContent does not mark the control as invalidated", function(assert) {
 		//Arrange
-		sinon.spy(this.oTileContent, "invalidate");
+		this.spy(this.oTileContent, "invalidate");
 
 		//Act
 		this.oTileContent.setRenderContent(false);
@@ -242,7 +242,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.ok(!jQuery.sap.domById("tileContent-content"), "No content has been rendered.");
+		assert.ok(!document.getElementById("tileContent-content"), "No content has been rendered.");
 	});
 
 	QUnit.module("testing tooltip", {
@@ -264,7 +264,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		var tooltip = "fulltile" + "\n" + "content " + "\n";
 		//Assert
-		assert.equal(jQuery.sap.domById("tileContent").title,tooltip);
+		assert.equal(document.getElementById("tileContent").title,tooltip);
 	});
 
 	QUnit.test("when only content has tooltip", function(assert) {
@@ -278,7 +278,7 @@ sap.ui.define([
 		this.oTileContent.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		//Assert
-		assert.equal(jQuery.sap.domById("tileContent1").title,"content " + "\n");
+		assert.equal(document.getElementById("tileContent1").title,"content " + "\n");
 	});
 
 	QUnit.test("when only tile has tooltip", function(assert) {
@@ -291,7 +291,7 @@ sap.ui.define([
 		this.oTileContent.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		//Assert
-		assert.equal(jQuery.sap.domById("tileContent2").title,"fulltile");
+		assert.equal(document.getElementById("tileContent2").title,"fulltile");
 	});
 
 });

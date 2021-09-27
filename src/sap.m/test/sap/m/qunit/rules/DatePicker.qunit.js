@@ -1,60 +1,66 @@
 /*global QUnit */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/m/DatePicker",
+	"sap/m/Page",
+	"sap/m/Panel",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/type/Date",
+	"sap/ui/model/odata/type/Date",
+	"sap/ui/model/odata/type/DateTime",
 	"test-resources/sap/ui/support/TestHelper"
-], function(jQuery, testRule) {
+], function(DatePicker, Page, Panel, JSONModel, TypeDate, ODataTypeDate, ODataTypeDateTime, testRule) {
 	"use strict";
 
 	QUnit.module("DatePicker rules", {
 		setup: function() {
-			this.model = new sap.ui.model.json.JSONModel({
+			this.model = new JSONModel({
 				date1: new Date(),
 				date2: new Date()
 			});
-			this.page = new sap.m.Page({
+			this.page = new Page({
 				content: [
-					new sap.m.Panel({
+					new Panel({
 						id: "DatePickerTestsContext1",
 						content: [
-							new sap.m.DatePicker({
+							new DatePicker({
 								value: {
 									path: "/date1",
-									type: new sap.ui.model.type.Date({ style: "medium", strictParsing: true })
+									type: new TypeDate({ style: "medium", strictParsing: true })
 								},
 								dateValue: {
 									path: "/date2",
-									type: new sap.ui.model.type.Date()
+									type: new TypeDate()
 								}
 							})
 						]
 					}),
-					new sap.m.Panel({
+					new Panel({
 						id: "DatePickerTestsContext2",
 						content: [
-							new sap.m.DatePicker({
+							new DatePicker({
 								value: {
 									path: "/date1",
-									type: new sap.ui.model.odata.type.DateTime()
+									type: new ODataTypeDateTime()
 								}
 							})
 						]
 					}),
-					new sap.m.Panel({
+					new Panel({
 						id: "DatePickerTestsContext3",
 						content: [
-							new sap.m.DatePicker({
+							new DatePicker({
 								value: {
 									path: "/date1",
-									type: new sap.ui.model.odata.type.Date()
+									type: new ODataTypeDate()
 								}
 							})
 						]
 					}),
-					new sap.m.Panel({
+					new Panel({
 						id: "DatePickerTestsContext4",
 						content: [
-							new sap.m.DatePicker({
+							new DatePicker({
 								dateValue: new Date(2018, 9, 23, 14, 24)
 							})
 						]

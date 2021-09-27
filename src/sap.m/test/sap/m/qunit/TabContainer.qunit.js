@@ -1,5 +1,4 @@
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -11,9 +10,11 @@ sap.ui.define([
 	"sap/m/TabContainer",
 	"sap/m/TabStripItem",
 	"sap/ui/core/Element",
+	"sap/ui/core/CustomData",
 	"sap/ui/Device",
 	"sap/m/Button",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -25,10 +26,14 @@ sap.ui.define([
 	TabContainer,
 	TabStripItem,
 	Element,
+	CustomData,
 	Device,
 	Button,
-	mobileLibrary
+	mobileLibrary,
+	jQuery
 ) {
+	"use strict";
+
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
 
@@ -96,13 +101,6 @@ sap.ui.define([
 		]
 	});
 
-	var fnCloseItem = function(oEvent) {
-		var oItemToClose = oEvent.getParameter('item');
-		if (oItemToClose && this.oTabContainer && this.oTabContainer.removeItem) {
-			this.oTabContainer.removeItem(oItemToClose);
-		}
-	};
-
 	QUnit.module("Deletion", {
 		beforeEach: function () {
 			this.oTabContainer = new TabContainer({
@@ -163,7 +161,7 @@ sap.ui.define([
 		var sName = oItem.getText();
 
 		this.oTabContainer.attachItemClose(function (oEvent) {oEvent.preventDefault();});
-		sap.ui.test.qunit.triggerEvent("tap", oItem.getAggregation('_closeButton').$());
+		qutils.triggerEvent("tap", oItem.getAggregation('_closeButton').$());
 
 		assert.equal(jQuery( "div." + TabStripItem.CSS_CLASS_LABEL + ":contains(" + sName + ")").length, 1, 'Element with name "' + sName + '" is in the DOM.');
 	});
@@ -263,7 +261,7 @@ sap.ui.define([
 
 		QUnit.test("_initResponsivePaddingsEnablement is called on init", function (assert) {
 			// Arrange
-			var oSpy = sinon.spy(TabContainer.prototype, "_initResponsivePaddingsEnablement"),
+			var oSpy = this.spy(TabContainer.prototype, "_initResponsivePaddingsEnablement"),
 				oTestPage = new TabContainer({}).placeAt("qunit-fixture");
 
 			// Assert
@@ -271,7 +269,6 @@ sap.ui.define([
 			assert.ok(oSpy.calledOn(oTestPage), "The spy is called on the tested control instance");
 
 			//clean
-			oSpy.restore();
 			oTestPage.destroy();
 		});
 
@@ -279,8 +276,7 @@ sap.ui.define([
 		//arrange
 		var oTemplate2,
 			oTabContainer2,
-			oItems,
-			oFirstItemContent;
+			oItems;
 
 		oTemplate2 = new TabContainerItem({
 			name: "{Name}",
@@ -311,7 +307,6 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oItems = oTabContainer2.getItems();
-		oFirstItemContent = oItems[0].getContent();
 
 		//assert
 		assert.ok(oItems[0].getContent()[0].getShowAddNewButton(), "showAddNewButton is set to true");
@@ -331,9 +326,6 @@ sap.ui.define([
 
 		// Assert
 		assert.equal(oSpy.calledOnce, true, 'Invalidate method called when the modified property is changed.');
-
-		// Cleanup
-		oSpy.restore();
 	});
 
 	QUnit.module("Focus", {
@@ -480,7 +472,7 @@ sap.ui.define([
 			additionalText: "test",
 			icon: "sap-icon://syringe",
 			tooltip: "added item",
-			customData: new sap.ui.core.CustomData({
+			customData: new CustomData({
 				key:"customData",
 				value:"customValue",
 				writeToDom:true
@@ -491,7 +483,7 @@ sap.ui.define([
 			additionalText: "test",
 			icon: "sap-icon://syringe",
 			tooltip: "inserted item",
-			customData: new sap.ui.core.CustomData({
+			customData: new CustomData({
 				key:"customData",
 				value:"customValue",
 				writeToDom:true
@@ -584,9 +576,6 @@ sap.ui.define([
 		//assert
 		assert.equal(this.oTabContainer.getSelectedItem(), undefined, 'Selected item should not be set when items are destroyed.');
 		assert.equal(oTabStripDestroySpy.callCount, 1, "destroyItems() in TabContainer should call the destryItems() in TabStrip");
-
-		//cleanup
-		oTabStripDestroySpy.restore();
 	});
 
 	QUnit.module("Others");
@@ -611,8 +600,8 @@ sap.ui.define([
 
 	QUnit.test("showAddNewButton on mobile", function(assert) {
 		// preapre
-		this.stub(Device.system, "phone", true);
-		this.stub(Device.system, "desktop", false);
+		this.stub(Device.system, "phone").value(true);
+		this.stub(Device.system, "desktop").value(false);
 
 		var oTabContainer = new TabContainer({
 			showAddNewButton: true

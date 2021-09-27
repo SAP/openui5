@@ -4,14 +4,7 @@ sap.ui.define([
 	"sap/m/BusyIndicator",
 	"sap/ui/core/Core",
 	"sap/ui/core/Configuration",
-	"sap/ui/Device",
-	"sap/ui/qunit/qunit-css",
-	"sap/ui/thirdparty/qunit",
-	"sap/ui/qunit/qunit-junit",
-	"sap/ui/qunit/qunit-coverage",
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
+	"sap/ui/Device"
 ], function (BusyIndicator, Core, Configuration, Device) {
 	"use strict";
 

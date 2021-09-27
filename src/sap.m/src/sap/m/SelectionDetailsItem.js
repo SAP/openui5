@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/OverflowToolbar",
 	"sap/m/ToolbarSpacer",
-	"sap/ui/base/Interface"
+	"sap/ui/base/Interface",
+	"./SelectionDetailsListItemRenderer"
 ],
 	function(
 		Element,
@@ -19,14 +20,17 @@ sap.ui.define([
 		Button,
 		OverflowToolbar,
 		ToolbarSpacer,
-		Interface
+		Interface,
+		SelectionDetailsListItemRenderer
 	) {
 	"use strict";
 
 	/**
 	 * @private
 	 */
-	var SelectionDetailsListItem = ListItemBase.extend("sap.m.SelectionDetailsListItem");
+	var SelectionDetailsListItem = ListItemBase.extend("sap.m.SelectionDetailsListItem", {
+		renderer: SelectionDetailsListItemRenderer
+	});
 
 	SelectionDetailsListItem.prototype.onBeforeRendering = function() {
 		var sType;

@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Page",
 	"sap/m/App",
-	"jquery.sap.global",
+	"sap/m/library",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/events/KeyCodes"
@@ -33,6 +34,7 @@ sap.ui.define([
 	Button,
 	Page,
 	App,
+	mobileLibrary,
 	jQuery,
 	Device,
 	waitForThemeApplied,
@@ -42,6 +44,9 @@ sap.ui.define([
 
 	// prepare DOM
 	createAndAppendDiv("content");
+
+	// shortcut for sap.m.TitleAlignment
+	var TitleAlignment = mobileLibrary.TitleAlignment;
 
 	var aSearchEvents = [];
 	var aLiveChangeEvents = [];
@@ -331,12 +336,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initialization", function(assert) {
-		assert.ok(!jQuery.sap.domById("oTableSelectDialog"), "TableSelectDialog is not rendered before it's ever opened.");
+		assert.ok(!document.getElementById("oTableSelectDialog"), "TableSelectDialog is not rendered before it's ever opened.");
 		assert.strictEqual(oTableSelectDialog.getTitle(), "Choose your tech..", 'The title should be "Choose your tech.."');
 		assert.strictEqual(oTableSelectDialog.getNoDataText(), "We do not have any tech to show here and we are very sorry for that!", '"We do not have any tech to show here and we are very sorry for that!" should be displayed when no data is there');
 		assert.strictEqual(oTableSelectDialog.getMultiSelect(), false, 'Multi Select should by default be set to "false"');
 		assert.strictEqual(oTableSelectDialog.getGrowingThreshold(), 50, 'The growing threshold should be "50"');
-		assert.ok(!jQuery.sap.domById("oTableSelectDialog1"), "TableSelectDialog is not rendered before it's ever opened.");
+		assert.ok(!document.getElementById("oTableSelectDialog1"), "TableSelectDialog is not rendered before it's ever opened.");
 		assert.strictEqual(oTableSelectDialog1.getTitle(), "Title", 'The title should be "Title"');
 		assert.strictEqual(oTableSelectDialog1.getNoDataText(), "No Data", '"No Data" should be displayed when no data is there');
 		assert.strictEqual(oTableSelectDialog1.getMultiSelect(), false, 'Multi Select should by default be set to "false"');
@@ -626,11 +631,11 @@ sap.ui.define([
 
 	QUnit.test("Open TableSelectDialog", function(assert) {
 		oButton.firePress();
-		assert.ok(jQuery.sap.domById("oTableSelectDialog-dialog"), "TableSelectDialog is opened");
-		assert.ok(jQuery.sap.domById("oTableSelectDialog-dialog-title"), "TableSelectDialog title should be rendered");
-		assert.ok(jQuery.sap.domById("oTableSelectDialog-searchField"), "TableSelectDialog should have a searchfield");
-		assert.ok(jQuery.sap.domById("oTableSelectDialog-cancel"), "TableSelectDialog should have a cancel button");
-		assert.ok(!jQuery.sap.domById("oTableSelectDialog-ok"), "TableSelectDialog should not have an ok button");
+		assert.ok(document.getElementById("oTableSelectDialog-dialog"), "TableSelectDialog is opened");
+		assert.ok(document.getElementById("oTableSelectDialog-dialog-title"), "TableSelectDialog title should be rendered");
+		assert.ok(document.getElementById("oTableSelectDialog-searchField"), "TableSelectDialog should have a searchfield");
+		assert.ok(document.getElementById("oTableSelectDialog-cancel"), "TableSelectDialog should have a cancel button");
+		assert.ok(!document.getElementById("oTableSelectDialog-ok"), "TableSelectDialog should not have an ok button");
 	});
 
 	QUnit.test("Destroy TableSelectDialog", function(assert){
@@ -651,11 +656,11 @@ sap.ui.define([
 		assert.expect(6);
 		setTimeout(function() {
 			oButton1.firePress();
-			assert.ok(jQuery.sap.domById("oTableSelectDialog1-dialog"), "TableSelectDialog1 is opened");
-			assert.ok(jQuery.sap.domById("oTableSelectDialog1-dialog-title"), "TableSelectDialog1 title should be rendered");
-			assert.ok(jQuery.sap.domById("oTableSelectDialog1-searchField"), "TableSelectDialog1 should have a searchfield");
-			assert.ok(jQuery.sap.domById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
-			assert.ok(jQuery.sap.domById("oTableSelectDialog1-ok"), "TableSelectDialog1 should have an ok button");
+			assert.ok(document.getElementById("oTableSelectDialog1-dialog"), "TableSelectDialog1 is opened");
+			assert.ok(document.getElementById("oTableSelectDialog1-dialog-title"), "TableSelectDialog1 title should be rendered");
+			assert.ok(document.getElementById("oTableSelectDialog1-searchField"), "TableSelectDialog1 should have a searchfield");
+			assert.ok(document.getElementById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
+			assert.ok(document.getElementById("oTableSelectDialog1-ok"), "TableSelectDialog1 should have an ok button");
 		done();
 		}, 10);
 	});
@@ -697,7 +702,7 @@ sap.ui.define([
 	QUnit.test("TableSelectDialog1 SearchField Equals 'Mo'", function(assert){
 		var done = assert.async();
 		assert.expect(1);
-		assert.strictEqual(jQuery.sap.domById("oTableSelectDialog1-searchField-I").value, "Mo", "Search Field should Contain 'Mo'");
+		assert.strictEqual(document.getElementById("oTableSelectDialog1-searchField-I").value, "Mo", "Search Field should Contain 'Mo'");
 		done();
 	});
 
@@ -796,8 +801,8 @@ sap.ui.define([
 		var done = assert.async();
 		assert.expect(2);
 		setTimeout(function() {
-			assert.ok(jQuery.sap.domById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
-			assert.ok(!jQuery.sap.domById("oTableSelectDialog1-ok"), "TableSelectDialog1 should not have an ok button");
+			assert.ok(document.getElementById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
+			assert.ok(!document.getElementById("oTableSelectDialog1-ok"), "TableSelectDialog1 should not have an ok button");
 		done();
 		}, 50);
 	});
@@ -821,8 +826,8 @@ sap.ui.define([
 		assert.expect(3);
 		oInput1.setValue("");
 		oButton1.firePress();
-		assert.ok(jQuery.sap.domById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
-		assert.ok(!jQuery.sap.domById("oTableSelectDialog1-ok"), "TableSelectDialog1 should not have an ok button");
+		assert.ok(document.getElementById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
+		assert.ok(!document.getElementById("oTableSelectDialog1-ok"), "TableSelectDialog1 should not have an ok button");
 		var oCancel = sap.ui.getCore().byId("oTableSelectDialog1-cancel");
 		oCancel.firePress();
 		done();
@@ -1370,7 +1375,7 @@ sap.ui.define([
 					"The default titleAlignment is '" + sInitialAlignment + "', there is class '" + sAlignmentClass + sInitialAlignment + "' applied to the Header");
 
 		// check if all types of alignment lead to apply the proper CSS class
-		for (sAlignment in sap.m.TitleAlignment) {
+		for (sAlignment in TitleAlignment) {
 			oDialog.setTitleAlignment(sAlignment);
 			oCore.applyChanges();
 			assert.ok(oDialog._oDialog.getCustomHeader().hasStyleClass(sAlignmentClass + sAlignment),
@@ -1378,7 +1383,7 @@ sap.ui.define([
 		}
 
 		// check how many times setTitleAlignment method is called
-		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(sap.m.TitleAlignment).length,
+		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(TitleAlignment).length,
 			"'setTitleAlignment' method is called total " + setTitleAlignmentSpy.callCount + " times");
 
 		// cleanup

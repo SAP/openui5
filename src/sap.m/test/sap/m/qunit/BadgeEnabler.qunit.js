@@ -1,4 +1,4 @@
-/* global QUnit, sinon */
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/core/Control",
@@ -124,7 +124,7 @@ sap.ui.define([
 	QUnit.test("API", function (assert) {
 
 		//Arrange
-		var oUpdateFuncStub = sinon.spy(this.oCustomControl, "onBadgeUpdate");
+		var oUpdateFuncStub = this.spy(this.oCustomControl, "onBadgeUpdate");
 
 		//Act
 		this.oCustomControl.addCustomData(new BadgeCustomData({value: "100"}));

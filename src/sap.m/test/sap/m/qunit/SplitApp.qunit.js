@@ -1,5 +1,4 @@
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -9,11 +8,10 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Bar",
 	"sap/m/Button",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/NavContainer",
 	"sap/m/library",
-	"jquery.sap.keycodes",
-	"jquery.sap.mobile"
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -25,13 +23,13 @@ sap.ui.define([
 	Button,
 	jQuery,
 	NavContainer,
-	mobileLibrary
+	mobileLibrary,
+	KeyCodes
 ) {
+	"use strict";
+
 	// shortcut for sap.m.SplitAppMode
 	var SplitAppMode = mobileLibrary.SplitAppMode;
-
-	// shortcut for jQuery.device
-	var device = jQuery.device;
 
 	createAndAppendDiv("content");
 
@@ -54,7 +52,7 @@ sap.ui.define([
 			phone: false
 		};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
@@ -78,9 +76,9 @@ sap.ui.define([
 		oSplitApp.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
-		assert.ok(jQuery.sap.byId("master").length, "Master page should be rendered initially.");
-		assert.ok(jQuery.sap.byId("detail").length, "Detail page should be rendered initially.");
+		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
+		assert.ok(jQuery("#master").length, "Master page should be rendered initially.");
+		assert.ok(jQuery("#detail").length, "Detail page should be rendered initially.");
 
 		oSplitApp.destroy();
 	});
@@ -97,8 +95,8 @@ sap.ui.define([
 				portrait: true
 			};
 
-		this.stub(Device, "system", oSystem);
-		this.stub(Device, "orientation", oPortrait);
+		this.stub(Device, "system").value(oSystem);
+		this.stub(Device, "orientation").value(oPortrait);
 
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
@@ -125,13 +123,13 @@ sap.ui.define([
 		assert.equal(oSplitApp.isMasterShown(), false, "Master area is NOT shown");
 
 		oSplitApp._oPopOver.attachAfterOpen(function(){
-			assert.ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
-			assert.ok(jQuery.sap.byId("splitapp-Popover").length, "Popover should be rendered.");
+			assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
+			assert.ok(jQuery("#splitapp-Popover").length, "Popover should be rendered.");
 			assert.ok(oSplitApp.isMasterShown(), "Master area is shown");
 			assert.equal(oSplitApp._oPopOver.getContent().length,1, "Popover content should not be empty.");
-			assert.ok(jQuery.sap.byId("splitapp-MasterBtn").length, "Master Button should be rendered");
-			assert.ok(jQuery.sap.byId("splitapp-MasterBtn").is(":visible"), "Master Button is shown");
-			assert.ok(jQuery.sap.byId("detail").length, "Detail page should be rendered  initially.");
+			assert.ok(jQuery("#splitapp-MasterBtn").length, "Master Button should be rendered");
+			assert.ok(jQuery("#splitapp-MasterBtn").is(":visible"), "Master Button is shown");
+			assert.ok(jQuery("#detail").length, "Detail page should be rendered  initially.");
 			assert.equal(oSplitApp.$().children().length,2, "SplitApp should only contain the detail nav container.");
 			assert.equal(oSplitApp._oMasterNav.getParent().getId(), "splitapp-Popover", "Parent of Master Nav container page should be Popover.");
 			oSplitApp.destroy();
@@ -151,8 +149,8 @@ sap.ui.define([
 				portrait: true
 			};
 
-		this.stub(Device, "system", oSystem);
-		this.stub(Device, "orientation", oPortrait);
+		this.stub(Device, "system").value(oSystem);
+		this.stub(Device, "orientation").value(oPortrait);
 
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
@@ -177,14 +175,14 @@ sap.ui.define([
 		oSplitApp.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
 		assert.equal(oSplitApp._oMasterNav.getParent().getId(), "splitapp", "Parent of Master page should be SpltApp.");
-		assert.ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered initially.");
-		assert.ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered initially.");
+		assert.ok(jQuery("#detail").length, "Detail Nav Container should be rendered initially.");
+		assert.ok(jQuery("#master").length, "Master Nav Container should be rendered initially.");
 		assert.equal(oSplitApp.isMasterShown(), false, "Master area is NOT shown");
-		assert.ok(jQuery.sap.byId("splitapp-MasterBtn").length, "Master Button should be rendered");
-		assert.ok(!jQuery.sap.byId("splitapp-MasterBtn").is(":hidden"), "Master Button is shown");
+		assert.ok(jQuery("#splitapp-MasterBtn").length, "Master Button should be rendered");
+		assert.ok(!jQuery("#splitapp-MasterBtn").is(":hidden"), "Master Button is shown");
 		assert.equal(oSplitApp.$().children().length, 3, "Splitapp should render both master and detail.");
 
 		oSplitApp.showMaster();
@@ -205,8 +203,8 @@ sap.ui.define([
 				portrait: true
 			};
 
-		this.stub(Device, "system", oSystem);
-		this.stub(Device, "orientation", oPortrait);
+		this.stub(Device, "system").value(oSystem);
+		this.stub(Device, "orientation").value(oPortrait);
 
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
@@ -231,13 +229,13 @@ sap.ui.define([
 		oSplitApp.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
-		assert.ok(jQuery.sap.byId("detail").length, "Master Nav Container should be rendered initially.");
+		assert.ok(jQuery("#detail").length, "Master Nav Container should be rendered initially.");
 		//assert.equal(jQuery("#splitapp-MasterBtn").css("display"), "none", "Master Button is not shown");	           TODO
 		assert.equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
 		assert.equal(oSplitApp.isMasterShown(), true, "Master area is shown");
-		assert.equal(jQuery.sap.byId("splitapp-Master").outerWidth(), 320, "Master width should be 320px.");
+		assert.equal(jQuery("#splitapp-Master").outerWidth(), 320, "Master width should be 320px.");
 		oSplitApp.destroy();
 	});
 
@@ -251,8 +249,8 @@ sap.ui.define([
 				portrait: false
 			};
 
-		this.stub(Device, "system", oSystem);
-		this.stub(Device, "orientation", oLandscape);
+		this.stub(Device, "system").value(oSystem);
+		this.stub(Device, "orientation").value(oLandscape);
 
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
@@ -277,10 +275,10 @@ sap.ui.define([
 		oSplitApp.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
-		assert.ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
-		assert.ok(jQuery.sap.byId("master").length, "Master Nav Container page should be rendered");
+		assert.ok(jQuery("#detail").length, "Detail Nav Container should be rendered");
+		assert.ok(jQuery("#master").length, "Master Nav Container page should be rendered");
 		assert.equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
 		assert.equal(oSplitApp.isMasterShown(), true, "Master area is shown");
 		assert.equal(oSplitApp.$("Master").outerWidth(),320, "Master width should be 320px.");
@@ -298,8 +296,8 @@ sap.ui.define([
 				portrait: false
 			};
 
-		this.stub(Device, "system", oSystem);
-		this.stub(Device, "orientation", oLandscape);
+		this.stub(Device, "system").value(oSystem);
+		this.stub(Device, "orientation").value(oLandscape);
 
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
@@ -324,10 +322,10 @@ sap.ui.define([
 		oSplitApp.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
-		assert.ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
-		assert.ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered");
+		assert.ok(jQuery("#detail").length, "Detail Nav Container should be rendered");
+		assert.ok(jQuery("#master").length, "Master Nav Container should be rendered");
 		assert.equal(oSplitApp.$().children().length, 3 ,"Master page should be rendered initially.");
 		assert.equal(oSplitApp.isMasterShown(), true, "Master area is shown");
 		assert.equal(oSplitApp.$("Master").outerWidth(), 320, "Master width should be 320px.");
@@ -345,8 +343,8 @@ sap.ui.define([
 				portrait: false
 			};
 
-		this.stub(Device, "system", oSystem);
-		this.stub(Device, "orientation", oLandscape);
+		this.stub(Device, "system").value(oSystem);
+		this.stub(Device, "orientation").value(oLandscape);
 
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
@@ -371,15 +369,15 @@ sap.ui.define([
 		oSplitApp.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
-		assert.ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
-		assert.ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered");
+		assert.ok(jQuery("#detail").length, "Detail Nav Container should be rendered");
+		assert.ok(jQuery("#master").length, "Master Nav Container should be rendered");
 		assert.equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
 		assert.equal(oSplitApp.isMasterShown(), true, "Master area is shown");
 
-		assert.ok(!jQuery.sap.byId("splitapp-Master").is(":hidden"),"Master should be visible.");
-		assert.equal(jQuery.sap.byId("splitapp-Master").outerWidth(),320, "Master width should be 320px.");
+		assert.ok(!jQuery("#splitapp-Master").is(":hidden"),"Master should be visible.");
+		assert.equal(jQuery("#splitapp-Master").outerWidth(),320, "Master width should be 320px.");
 		oSplitApp.destroy();
 	});
 
@@ -390,7 +388,7 @@ sap.ui.define([
 			phone: false
 		};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
@@ -415,13 +413,13 @@ sap.ui.define([
 		oSplitApp.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
-		assert.ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered initially.");
-		assert.ok(jQuery.sap.byId("splitapp-MasterBtn").length, "Master Button should be rendered");
+		assert.ok(jQuery("#detail").length, "Detail Nav Container should be rendered initially.");
+		assert.ok(jQuery("#splitapp-MasterBtn").length, "Master Button should be rendered");
 		assert.equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
 		assert.equal(oSplitApp.isMasterShown(), false, "Master area is NOT shown");
-		assert.ok(jQuery.sap.byId("splitapp-Master").position().left <= -320, "Master should be hidden.");
+		assert.ok(jQuery("#splitapp-Master").position().left <= -320, "Master should be hidden.");
 		oSplitApp.destroy();
 	});
 
@@ -437,8 +435,8 @@ sap.ui.define([
 				portrait: true
 			};
 
-		this.stub(Device, "system", oSystem);
-		this.stub(Device, "orientation", oPortrait);
+		this.stub(Device, "system").value(oSystem);
+		this.stub(Device, "orientation").value(oPortrait);
 
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
@@ -466,10 +464,10 @@ sap.ui.define([
 		oSplitApp.showMaster();
 
 		setTimeout(function(){
-			assert.ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+			assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 			assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
-			assert.ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
-			assert.ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered");
+			assert.ok(jQuery("#detail").length, "Detail Nav Container should be rendered");
+			assert.ok(jQuery("#master").length, "Master Nav Container should be rendered");
 			assert.equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
 
 			assert.ok(!jQuery("#splitapp-Master").is(":hidden"),"Master should not be hidden.");
@@ -485,7 +483,7 @@ sap.ui.define([
 			tablet: false,
 			phone: true
 		};
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
 				new Page("master",{
@@ -509,10 +507,10 @@ sap.ui.define([
 		oSplitApp.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
-		assert.ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered initially.");
-		assert.equal(jQuery.sap.byId("detail").length , 0, "Detail Nav Container should not be rendered.");
-		assert.equal(jQuery.sap.byId("splitapp-MasterBtn").length, 0, "Master Button should not be rendered");
+		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
+		assert.ok(jQuery("#master").length, "Master Nav Container should be rendered initially.");
+		assert.equal(jQuery("#detail").length , 0, "Detail Nav Container should not be rendered.");
+		assert.equal(jQuery("#splitapp-MasterBtn").length, 0, "Master Button should not be rendered");
 		oSplitApp.destroy();
 	});
 
@@ -791,9 +789,7 @@ sap.ui.define([
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
-
-		this.stub(device, "is", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var	oSplitApp1 = new SplitApp({
 			mode: SplitAppMode.HideMode
@@ -810,8 +806,8 @@ sap.ui.define([
 		assert.ok(oMasterButton.getDomRef(), "Master Button is rendered");
 		assert.ok(oMasterButton.$().css("display") !== "none", "Master Button should be shown");
 		oMasterButton.$().trigger("focus");
-		sap.ui.test.qunit.triggerKeydown(oMasterButton.getDomRef(), jQuery.sap.KeyCodes.ENTER);
-		sap.ui.test.qunit.triggerKeyup(oMasterButton.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(oMasterButton.getDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeyup(oMasterButton.getDomRef(), KeyCodes.ENTER);
 		setTimeout(function(){
 			assert.ok(oSplitApp1.isMasterShown(), "Master should be opened");
 			oSplitApp1.destroy();
@@ -937,7 +933,7 @@ sap.ui.define([
 			var oDetailPage = new Page("detail11", {
 				title: "Detail 1",
 				content: [],
-				showNavButton: jQuery.device.is.phone,
+				showNavButton: Device.system.phone,
 				navButtonText: "Back",
 				navButtonPress: function() {
 					this.oSplitApp.backDetail();
@@ -947,13 +943,13 @@ sap.ui.define([
 						this.oStrechButton = new Button({
 							text: "stretch/compress",
 							press: function() {
-								this.oSplitApp.setMode(sap.m.SplitAppMode.StretchCompressMode);
+								this.oSplitApp.setMode(SplitAppMode.StretchCompressMode);
 							}.bind(this)
 						}),
 						this.oHideButton =  new Button("saHideMasterMode", {
 							text: "hide",
 							press: function() {
-								this.oSplitApp.setMode(sap.m.SplitAppMode.HideMode);
+								this.oSplitApp.setMode(SplitAppMode.HideMode);
 							}.bind(this)
 						})
 					]

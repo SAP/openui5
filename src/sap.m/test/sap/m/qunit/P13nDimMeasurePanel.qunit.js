@@ -669,13 +669,13 @@ sap.ui.define([
 		assert.strictEqual(oDimMeasurePanel.getDimMeasureItems()[1].getIndex(), 0);
 
 		//            // test
-		//            var oDimMeasurePanelT = new sap.m.P13nDimMeasurePanel({
+		//            var oDimMeasurePanelT = new P13nDimMeasurePanel({
 		//                items: [
-		//                    new sap.m.P13nItem({
+		//                    new P13nItem({
 		//                        columnKey: "keyA",
 		//                        text: "A"
 		//                    }),
-		//                    new sap.m.P13nItem({
+		//                    new P13nItem({
 		//                        columnKey: "keyB",
 		//                        text: "B"
 		//                    })
@@ -971,10 +971,10 @@ sap.ui.define([
 
 	QUnit.module("sap.m.P13nDimMeasurePanel: FIX 0020751294 0000593415 2018", {
 		beforeEach: function() {
-			this.oPanel = new sap.m.P13nDimMeasurePanel({
+			this.oPanel = new P13nDimMeasurePanel({
 				items: {
 					path: "/items",
-					template: new sap.m.P13nItem({
+					template: new P13nItem({
 						columnKey: "{columnKey}",
 						text: "{text}",
 						aggregationRole: "{aggregationRole}"
@@ -982,7 +982,7 @@ sap.ui.define([
 				},
 				dimMeasureItems: {
 					path: "/dimMeasureItems",
-					template: new sap.m.P13nDimMeasureItem({
+					template: new P13nDimMeasureItem({
 						columnKey: "{columnKey}",
 						index: "{index}",
 						visible: "{visible}"

@@ -7,11 +7,11 @@ sap.ui.define([
 	"sap/m/SliderTooltipBase",
 	"sap/m/SliderTooltipBaseRenderer",
 	"sap/m/Text",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
-	"jquery.sap.keycodes",
-	"sap/ui/model/json/JSONModel",
-	"jquery.sap.global"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/model/json/JSONModel"
 ], function(
 	Log,
 	RangeSlider,
@@ -19,6 +19,7 @@ sap.ui.define([
 	SliderTooltipBase,
 	SliderTooltipBaseRenderer,
 	Text,
+	XMLView,
 	KeyCodes,
 	qutils,
 	jQuery,
@@ -777,7 +778,7 @@ sap.ui.define([
 
 		//Check end handle home event
 		//Act
-		qutils.triggerKeydown(this.oRangeSlider._mHandleTooltip.end.handle, jQuery.sap.KeyCodes.HOME);
+		qutils.triggerKeydown(this.oRangeSlider._mHandleTooltip.end.handle, KeyCodes.HOME);
 
 		// Assert
 		assert.deepEqual(this.oRangeSlider.getRange(), [0, 0], "End handle home event is correctly triggered");
@@ -951,20 +952,23 @@ sap.ui.define([
 
 	QUnit.test("XML value", function (assert) {
 		var oRangeSlider,
-			sXMLText = '<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc"><RangeSlider id="range" range="5,20" /></mvc:View>',
-			oView = sap.ui.xmlview({viewContent: sXMLText});
+			sXMLText = '<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc"><RangeSlider id="range" range="5,20" /></mvc:View>';
 
-		oView.placeAt(DOM_RENDER_LOCATION);
-		sap.ui.getCore().applyChanges();
+		return XMLView.create({
+			definition: sXMLText
+		}).then(function(oView) {
+			oView.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
 
-		oRangeSlider = oView.byId("range");
+			oRangeSlider = oView.byId("range");
 
-		assert.ok(oRangeSlider, "Slider should have been initialized");
-		assert.deepEqual(oRangeSlider.getRange(), [5, 20], "Range's string array should have been parsed properly");
+			assert.ok(oRangeSlider, "Slider should have been initialized");
+			assert.deepEqual(oRangeSlider.getRange(), [5, 20], "Range's string array should have been parsed properly");
 
-		oRangeSlider.destroy();
-		oRangeSlider = null;
-		oView.destroy();
+			oRangeSlider.destroy();
+			oRangeSlider = null;
+			oView.destroy();
+		});
 	});
 
 	QUnit.test("value, value2 and range bindings through setters", function (assert) {

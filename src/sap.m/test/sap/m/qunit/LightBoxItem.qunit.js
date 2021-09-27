@@ -74,7 +74,7 @@ sap.ui.define(
 
 		QUnit.test('Setting image when state is loading', function (assert) {
 			// arrange
-			sinon.stub(this.LightBoxItem, 'getParent', function() {
+			sinon.stub(this.LightBoxItem, 'getParent').callsFake(function() {
 				return {
 					_oPopup: {
 						getOpenState: function () {

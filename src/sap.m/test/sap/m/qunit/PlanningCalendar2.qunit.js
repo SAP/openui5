@@ -1,11 +1,11 @@
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/model/type/Date",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/calendar/CalendarDate",
+	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/CalendarLegend",
 	"sap/ui/unified/CalendarLegendRenderer",
@@ -14,11 +14,12 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/unified/library",
 	"sap/ui/core/format/DateFormat",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/SearchField",
 	"sap/m/Button",
 	"sap/m/Label",
 	"sap/m/library",
+	"sap/m/ObjectListItem",
 	"sap/m/PlanningCalendarRow",
 	"sap/m/PlanningCalendar",
 	"sap/m/Title",
@@ -33,15 +34,17 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/utils/waitForThemeApplied",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
 	TypeDate,
 	JSONModel,
 	CalendarDate,
+	DateRange,
 	DateTypeRange,
 	CalendarLegend,
 	CalendarLegendRenderer,
@@ -55,6 +58,7 @@ sap.ui.define([
 	Button,
 	Label,
 	mobileLibrary,
+	ObjectListItem,
 	PlanningCalendarRow,
 	PlanningCalendar,
 	Title,
@@ -69,8 +73,10 @@ sap.ui.define([
 	coreLibrary,
 	Control,
 	Element,
+	XMLView,
 	InvisibleText,
-	waitForThemeApplied
+	waitForThemeApplied,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -95,64 +101,15 @@ sap.ui.define([
 	// shortcut for sap.ui.unified.CalendarIntervalType
 	var CalendarIntervalType = unifiedLibrary.CalendarIntervalType;
 
-	var styleElement = document.createElement("style");
-	styleElement.textContent =
-		".width300 {" +
-		"	width: 300px;" +
-		"}" +
-		".width600 {" +
-		"	width: 600px;" +
-		"}" +
-		".width1024{" +
-		"	width: 1024px;" +
-		"}";
-	document.head.appendChild(styleElement);
-	createAndAppendDiv("verySmallUiArea").className = "width300";
-	createAndAppendDiv("smallUiArea").className = "width600";
-	createAndAppendDiv("bigUiArea").className = "width1024";
+	createAndAppendDiv("verySmallUiArea").style.width = "300px";
+	createAndAppendDiv("smallUiArea").style.width = "600px";
+	createAndAppendDiv("bigUiArea").style.width = "1024px";
 
 	var oFormatYyyyMMddHHmm = DateFormat.getInstance({pattern: "yyyyMMddHHmm"}),
 		oFormatYyyyMMdd = DateFormat.getInstance({pattern: "yyyyMMdd"}),
 		/*the SUT won't be destroyed when single test is run*/
-		bSkipDestroy = !!jQuery.sap.getUriParameters().get("testId");
+		bSkipDestroy = new URLSearchParams(window.location.search).has("testId");
 
-	var oSelectedAppointment,
-		sDomRefId;
-	var handleAppointmentSelect = function(oEvent){
-		oSelectedAppointment = oEvent.getParameter("appointment");
-		sDomRefId = oEvent.getParameter("domRefId");
-	};
-
-	var bRowSelectionChange = false;
-	var aChangedRows;
-	var handleRowSelectionChange = function(oEvent){
-		bRowSelectionChange = true;
-		aChangedRows = oEvent.getParameter("rows");
-	};
-
-	var bStartDateChange = false;
-	var handleStartDateChange = function(oEvent){
-		bStartDateChange = true;
-	};
-
-	var bViewChange = false;
-	var handleViewChange = function(oEvent){
-		bViewChange = true;
-
-	};
-
-	var bIntervalSelect = false;
-	var oIntervalStartDate;
-	var oIntervalEndDate;
-	var bSubInterval;
-	var oIntervalRow;
-	var handleIntervalSelect = function(oEvent){
-		bIntervalSelect = true;
-		oIntervalStartDate = oEvent.getParameter("startDate");
-		oIntervalEndDate = oEvent.getParameter("endDate");
-		bSubInterval = oEvent.getParameter("bubInterval");
-		oIntervalRow = oEvent.getParameter("row");
-	};
 	var oPCStartDate = new Date("2015", "0", "1", "08", "00");
 
 	var createPlanningCalendar = function(sID, oSearchField, oButton, oParamStartDate, sViewKey, oLegend, aSpecialDates, aRows) {
@@ -261,12 +218,7 @@ sap.ui.define([
 			legend: oLegend,
 			rows: aRows,
 			specialDates: aSpecialDates,
-			toolbarContent: [oSearchField, oButton],
-			appointmentSelect: handleAppointmentSelect,
-			startDateChange: handleStartDateChange,
-			rowSelectionChange: handleRowSelectionChange,
-			viewChange: handleViewChange,
-			intervalSelect: handleIntervalSelect
+			toolbarContent: [oSearchField, oButton]
 		});
 		if (sViewKey) {
 			oTC.setViewKey(sViewKey);
@@ -300,7 +252,7 @@ sap.ui.define([
 		mIntervalStringsMap[CalendarIntervalType.Week] = "PLANNINGCALENDAR_WEEK";
 		mIntervalStringsMap[CalendarIntervalType.OneMonth] = "PLANNINGCALENDAR_ONE_MONTH";
 		sViewI18Name = oRb.getText(mIntervalStringsMap[sViewName]);
-		assert.ok(sViewI18Name, "There must be internationalized string corresponding to the viewName " + sViewName);
+		QUnit.assert.ok(sViewI18Name, "There must be internationalized string corresponding to the viewName " + sViewName);
 		sIntervalTypeDropdownId = oPC.getId() + "-Header-ViewSwitch-select";
 		oViewSwitch = sap.ui.getCore().byId(sIntervalTypeDropdownId);
 		aItemsToSelect = oViewSwitch.getItems().filter(function(item) {
@@ -308,7 +260,7 @@ sap.ui.define([
 		});
 		if (aItemsToSelect.length !== 1) {
 			sErrMsg = "Cannot switch to view " + sViewName;
-				assert.ok(false, sErrMsg);
+				QUnit.assert.ok(false, sErrMsg);
 				throw sErrMsg;
 			}
 		oViewSwitch.setSelectedItem(aItemsToSelect[0]);
@@ -319,9 +271,6 @@ sap.ui.define([
 		var bWizardUsesDaysPicker = (oPC.getViewKey() === "Days" || oPC.getViewKey() === "1 Week" || oPC.getViewKey() === "Hours"),
 			sCalendarPickerId =  oPC._getHeader()._oCalendar.getId(),
 			sMonthPickerId =  oPC._getHeader()._oMonthPicker.getId(),
-			sYearPickerId =  oPC._getHeader()._oYearPicker.getId(),
-			sCalendarPickerYearId = sCalendarPickerId + "--YP",
-			sCalendarPickerMonthId = sCalendarPickerId + "--MP",
 			sDate,
 			$Date;
 
@@ -338,7 +287,7 @@ sap.ui.define([
 			$Date.trigger("focus");
 			oPC._getHeader()._oMonthPicker.getAggregation("monthPicker")._oItemNavigation.setFocusedIndex(iYear);
 			sap.ui.getCore().applyChanges();
-			qutils.triggerKeydown($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
 			sap.ui.getCore().applyChanges();
 		}
 
@@ -355,7 +304,7 @@ sap.ui.define([
 			// sets February
 			oPC._getHeader()._oMonthPicker.getAggregation("monthPicker")._oItemNavigation.setFocusedIndex(iMonth);
 			sap.ui.getCore().applyChanges();
-			qutils.triggerKeydown($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
 			sap.ui.getCore().applyChanges();
 		}
 
@@ -364,7 +313,7 @@ sap.ui.define([
 			sDate = DateFormat().getInstance({pattern: "yyyymmdd"}).format(new Date(iYear, iMonth, iDay));
 			$Date = jQuery("#" + sCalendarPickerId + "--Month0-" + sDate);
 			$Date.trigger("focus");
-			qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
 			sap.ui.getCore().applyChanges();
 		}
 	};
@@ -388,7 +337,7 @@ sap.ui.define([
 		}
 
 		var sDayId = convertDate2DomId(oDate, oPC.getId() + "-" + _getIntervalId.call(this, oPC));
-		assert.equal(jQuery("#" + sDayId).length, 1, sMessagePrefix + ": Date " + _formatDate.call(this, oDate) + " should be visible (" + sDayId + ")");
+		QUnit.assert.equal(jQuery("#" + sDayId).length, 1, sMessagePrefix + ": Date " + _formatDate.call(this, oDate) + " should be visible (" + sDayId + ")");
 	};
 
 	var _formatDate = function(oDate) {
@@ -600,7 +549,7 @@ sap.ui.define([
 			var oFirstCalendarRow = this._getFirstRow(oPC);
 			var sIntervalId = oFirstCalendarRow.getId() + "-AppsInt" + iIntervalIndex.toString();
 
-			assert.ok(jQuery("#" + sIntervalId).hasClass(sCSSClass), "Interval " + iInterval + " should have class " + sCSSClass + " applied");
+			QUnit.assert.ok(jQuery("#" + sIntervalId).hasClass(sCSSClass), "Interval " + iInterval + " should have class " + sCSSClass + " applied");
 		},
 
 		_getFirstRow: function(oPC) {
@@ -708,7 +657,9 @@ sap.ui.define([
 	QUnit.test('intervalSelect fires correctly', function(assert) {
 		var oRow = this._getFirstRow(this.oPC);
 		var eventParams = {};
-		bIntervalSelect = false;
+
+		var fnCalendarIntervalSelect = this.spy();
+		this.oPC.attachIntervalSelect(fnCalendarIntervalSelect);
 
 		oRow.attachIntervalSelect(function(oEvent) {
 			eventParams = oEvent.getParameters();
@@ -725,8 +676,8 @@ sap.ui.define([
 		assert.equal(eventParams.endDate.getDate(), 1, 'end date is 1st day of the month');
 
 		assert.equal(eventParams.subInterval, false, 'selected interval is not a sub-interval');
-		assert.ok(!bIntervalSelect,
-			"intervalSelect was not fired because the click was on the next month's first days and this serves as navigation, not selection");
+		assert.ok(fnCalendarIntervalSelect.notCalled,
+			"intervalSelect was not fired on the calendar because the click was on the next month's first days and this serves as navigation, not selection");
 	});
 
 	QUnit.test('select fires correctly', function(assert) {
@@ -848,8 +799,8 @@ sap.ui.define([
 		this.oPC.setStickyHeader(true);
 		_switchToView.call(this, CalendarIntervalType.Month, this.oPC);
 
-		this.stub(Device, "system", {desktop: false, phone: true, tablet: false});
-		this.stub(Device, "orientation", {portrait: true, landscape: false});
+		this.stub(Device, "system").value({desktop: false, phone: true, tablet: false});
+		var orientationStub = this.stub(Device, "orientation").value({portrait: true, landscape: false});
 
 		//act
 		this.oPC._updateStickyHeader();
@@ -857,6 +808,9 @@ sap.ui.define([
 		// assert
 		assert.ok(this.oPC.getAggregation("table").getSticky().indexOf("InfoToolbar") > -1, "sticky property should be set on the info bar only");
 		assert.ok(this.oPC.getAggregation("table").getSticky().indexOf("HeaderToolbar") === -1, "sticky property shouldn't be set on the toolbar");
+
+		// explicitly restore Device.orientation to avoid error during oPC.destroy
+		orientationStub.restore();
 	});
 
 	QUnit.module("OneMonth view (size S)", {
@@ -870,7 +824,7 @@ sap.ui.define([
 			this.o14Sep2016MidOfMonth = undefined;
 		},
 		_simulateMobileEnvironment: function () {
-			this.oDeviceJsStub = sinon.sandbox.stub(Device, "system", {phone: true});
+			this.oDeviceJsStub = this.stub(Device, "system").value({phone: true});
 			jQuery("html").addClass("sapUiMedia-Std-Phone sapUiMedia-StdExt-Phone");
 			jQuery("html").removeClass("sapUiMedia-Std-Desktop sapUiMedia-StdExt-Desktop");
 		},
@@ -946,9 +900,6 @@ sap.ui.define([
 		//assert
 		assert.strictEqual(oHandleTodayPressSpy.callCount, 1, "'_handleTodayPress()' handler is called once");
 		assert.strictEqual(oSetStartDateSpy.callCount, 1, "'setStartDate()' setter is called once");
-		//clear
-		oHandleTodayPressSpy.restore();
-		oSetStartDateSpy.restore();
 	});
 
 	QUnit.test("'_handleCalendarSelect()' event handler adjust the startDate to the 1st day of month", function (assert) {
@@ -962,13 +913,11 @@ sap.ui.define([
 		oEventTarget = oPCInterval.getDomRef().querySelectorAll(".sapUiCalItem")[0];
 
 		//force Calendar selection by triggering ENTER keypress on a first calendar cell
-		qutils.triggerKeydown(jQuery(oEventTarget).attr("id"), jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown(jQuery(oEventTarget).attr("id"), KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 
 		//assert
 		assert.strictEqual(oHandleCalendarSelectSpy.callCount, 1, "'_handleStartDateChange()' event handler is called once");
-		//clean
-		oHandleCalendarSelectSpy.restore();
 	});
 
 	QUnit.test("'OneMonthDatesRow.init()' calls its super class 'init()' and then 'OneMonthDatesRow()' gets called and sets the internal private property 'iMode' to the value '1'", function (assert) {
@@ -984,10 +933,6 @@ sap.ui.define([
 		assert.ok(oOneMonthDatesRowInitSpy.calledBefore(oDatesRowSpy), "The call sequence is as expected");
 		assert.ok(oOneMonthDatesRowSetModeSpy.calledWithExactly(1), "'OneMonthDatesRow.setMode(1)' method was called");
 		assert.strictEqual(this._oPCOneMonthsRow.iMode, 1, "'OneMonthDatesRow.setMode()' correctly set the internal 'iMode' property value");
-		//clean
-		oOneMonthDatesRowInitSpy.restore();
-		oDatesRowSpy.restore();
-		oOneMonthDatesRowSetModeSpy.restore();
 	});
 
 	QUnit.test("'OneMonthDatesRow.setMode()' updates the iMode property", function (assert) {
@@ -1008,10 +953,6 @@ sap.ui.define([
 		this._oPCOneMonthsRow.setMode(2);
 		//assert
 		assert.strictEqual(this._oPCOneMonthsRow.iMode, 2, "'OneMonthDatesRow.setMode()' sets the internal 'iMode' property as expected");
-
-		//clean
-		oOneMonthDatesRowInitSpy.restore();
-		oOneMonthDatesRowSetModeSpy.restore();
 	});
 
 	QUnit.test("'CalendarRow.Renderer' calls its 'renderSingleDayInterval()'", function (assert) {
@@ -1025,8 +966,9 @@ sap.ui.define([
 		this._createCalendar();
 		//assert
 		assert.strictEqual(oTimelineRendererSpy.callCount, 4, "'renderSingleDayInterval()' is called as expected"); //Two rows
+
 		//clean
-		oTimelineRendererSpy.restore();
+		oPC.destroy();
 	});
 
 	QUnit.test("Adding a row adds a row timeline with the correct startDate", function(assert) {
@@ -1037,7 +979,7 @@ sap.ui.define([
 		this._createCalendar();
 
 		this._oPC._oOneMonthsRow.removeAllSelectedDates();
-		this._oPC._oOneMonthsRow.addSelectedDate(new sap.ui.unified.DateRange({ startDate: new Date(2019, 1, 18) }));
+		this._oPC._oOneMonthsRow.addSelectedDate(new DateRange({ startDate: new Date(2019, 1, 18) }));
 
 		//act
 		this._oPC.addRow(oRow);
@@ -1056,10 +998,15 @@ sap.ui.define([
 		this._oPC.placeAt("smallUiArea");
 		sap.ui.getCore().applyChanges();
 
-		oSelectedAppointment = undefined;
+		var oSelectedAppointment;
+		this._oPC.attachAppointmentSelect(function(oEvent) {
+			oSelectedAppointment = oEvent.getParameter("appointment");
+		});
+
+		//act
 		qutils.triggerEvent("tap", "_oPC-R1A1");
 
-		//act & assert
+		// assert
 		assert.equal(oSelectedAppointment.getId(), "_oPC-R1A1", "appointmentSelect event fired and appointment returned");
 		assert.ok(sap.ui.getCore().byId("_oPC-R1A1").getSelected(), "Appointment is selected");
 		qutils.triggerEvent("tap", "_oPC-R1A2");
@@ -1074,14 +1021,14 @@ sap.ui.define([
 
 		//CTRL key included
 		qutils.triggerEvent("tap", "_oPC-R1A2");
-		sap.ui.test.qunit.triggerEvent("tap", sap.ui.getCore().byId("_oPC-R1A1").getDomRef(), {target :
+		qutils.triggerEvent("tap", sap.ui.getCore().byId("_oPC-R1A1").getDomRef(), {target :
 				sap.ui.getCore().byId("_oPC-R1A1").getDomRef(), ctrlKey: true});
 		assert.equal(this._oPC.getSelectedAppointments().length, 2, "Two appointments are selected");
-		sap.ui.test.qunit.triggerEvent("tap", sap.ui.getCore().byId("_oPC-R1A1").getDomRef(), {target :
+		qutils.triggerEvent("tap", sap.ui.getCore().byId("_oPC-R1A1").getDomRef(), {target :
 				sap.ui.getCore().byId("_oPC-R1A1").getDomRef(), ctrlKey: true});
 		assert.equal(this._oPC.getSelectedAppointments().length, 1,
 			"When deselecting an appointment while pressing CTRL key, only this particular appointment is deselected");
-		sap.ui.test.qunit.triggerEvent("tap", sap.ui.getCore().byId("_oPC-R1A1").getDomRef(), {target :
+		qutils.triggerEvent("tap", sap.ui.getCore().byId("_oPC-R1A1").getDomRef(), {target :
 				sap.ui.getCore().byId("_oPC-R1A1").getDomRef(), ctrlKey: true});
 		qutils.triggerEvent("tap", "_oPC-R1A2");
 		assert.equal(this._oPC.getSelectedAppointments().length, 0,
@@ -1116,9 +1063,7 @@ sap.ui.define([
 		// arrange
 		this._createCalendar(new Date(2015, 0, 1));
 
-		var oGetSelectedDatesStub = this.stub(this._oPC._oOneMonthsRow, "getSelectedDates", function () {
-			return [];
-		});
+		this.stub(this._oPC._oOneMonthsRow, "getSelectedDates").returns([]);
 
 		// act
 		this._oPC.rerender();
@@ -1126,9 +1071,6 @@ sap.ui.define([
 		// assert
 		assert.ok(this._oPC.$().find(".sapUiCalendarNoApps").get(0), "'No Entries' div should be rendered");
 		assert.equal(this._oPC.$().find(".sapUiCalendarApp:not(.sapUiCalendarAppDummy)").length, 0, "Appointments should not be rendered");
-
-		// cleanup
-		oGetSelectedDatesStub.restore();
 	});
 
 	// BCP: 1930624418
@@ -1255,7 +1197,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ARIA", {
-		beforeEach: function() {
+		beforeEach: function(assert) {
 
 			this.sOldLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");//due to text strings for built-in CalendarDayType texts
@@ -1493,6 +1435,7 @@ sap.ui.define([
 		//Prepare
 		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), new Date(2015, 0, 1)),
 			sExpectedRole = "button";
+		oSut.attachIntervalSelect(this.stub());
 
 		//Act
 		oSut.setViewKey(CalendarIntervalType.Hour);
@@ -1538,7 +1481,6 @@ sap.ui.define([
 		//Prepare
 		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), new Date(2015, 0, 1)),
 			sExpectedRole = "gridcell";
-		oSut.detachEvent("intervalSelect", handleIntervalSelect);
 
 		//Act
 		oSut.setViewKey(CalendarIntervalType.Hour);
@@ -1928,7 +1870,7 @@ sap.ui.define([
 		// act
 		$Date = jQuery("#" + oPC.getId() + "-OneMonthsRow-20180701");
 		$Date.trigger("focus");
-		qutils.triggerKeydown($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 	 });
 
@@ -2030,9 +1972,6 @@ sap.ui.define([
 				})
 			],
 			oCurrentlyDisplayedDate = new Date(2015, 0, 2),
-			oTimeFormat = DateFormat.getTimeInstance({pattern: 'HH:mm'}),
-			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
-			oLocaleData = LocaleData.getInstance(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()),
 			oOriginalFormatLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
 			sOriginalFormatLocale = oOriginalFormatLocale.getLanguage() + "_" +  oOriginalFormatLocale.getRegion();
 
@@ -2201,7 +2140,6 @@ sap.ui.define([
 			"When _bIsBeingDestroyed is true only the Control's 'invalidate' is executed and not our extra logic");
 
 		//cleanup
-		oControlInvalidateSpy.restore();
 		this.oPC._bIsBeingDestroyed = false;
 
 		this.oPC.destroy();
@@ -3036,7 +2974,7 @@ sap.ui.define([
 				tooltip: "Header tooltip",
 				headerContent: {
 					path: '/',
-					template: new sap.m.ObjectListItem({
+					template: new ObjectListItem({
 						title: "{title}",
 						intro: "{intro}"
 					})
@@ -3064,7 +3002,7 @@ sap.ui.define([
 		oPC.destroy();
 	});
 
-	QUnit.test("headerContent is rendered properly in a xml view", function (assert) {
+	QUnit.test("headerContent is rendered properly in an XML view", function (assert) {
 		// Prepare
 		var oPC,
 			oModel = new JSONModel(),
@@ -3079,30 +3017,34 @@ sap.ui.define([
 				'			</PlanningCalendarRow>' +
 				'		</rows>' +
 				'	</PlanningCalendar>' +
-				'</mvc:View>',
-			oView = sap.ui.xmlview({viewContent: sXMLText});
+				'</mvc:View>';
 
-		oModel.setData({
-			people: [{
-				pic: "test-resources/sap/ui/documentation/sdk/images/John_Miller.png",
-				name: "John Miller",
-				role: "team member",
-				headerContent: [{
-					title: "Alfonso",
-					intro: "headerContent aggregation"
+		return XMLView.create({
+			definition: sXMLText
+		}).then(function(oView) {
+
+			oModel.setData({
+				people: [{
+					pic: "test-resources/sap/ui/documentation/sdk/images/John_Miller.png",
+					name: "John Miller",
+					role: "team member",
+					headerContent: [{
+						title: "Alfonso",
+						intro: "headerContent aggregation"
+					}]
 				}]
-			}]
+			});
+			oView.setModel(oModel);
+			oView.placeAt("bigUiArea");
+			sap.ui.getCore().applyChanges();
+			oPC = oView.byId("pc");
+
+			// Assert
+			assert.deepEqual(oPC.getRows()[0].getHeaderContent()[0].getTitle(), "Alfonso", "headerContent is successfully binded");
+
+			//Destroy
+			oView.destroy();
 		});
-		oView.setModel(oModel);
-		oView.placeAt("bigUiArea");
-		sap.ui.getCore().applyChanges();
-		oPC = oView.byId("pc");
-
-		// Assert
-		assert.deepEqual(oPC.getRows()[0].getHeaderContent()[0].getTitle(), "Alfonso", "headerContent is successfully binded");
-
-		//Destroy
-		oView.destroy();
 	});
 
 	QUnit.test("PlanningCalendarRowHeader overides getIconDensityAware to return always false", function(assert) {

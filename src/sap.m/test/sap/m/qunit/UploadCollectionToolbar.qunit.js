@@ -1,4 +1,4 @@
-/*global QUnit,sinon*/
+/*global QUnit */
 
 sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 	"sap/m/UploadCollection",
@@ -40,13 +40,12 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 		afterEach: function () {
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
-			Log.info.restore();
 		}
 	});
 
 	QUnit.test("A Toolbar without place holder is provided. Test that an info log has been written", function (assert) {
 		//Arrange
-		var oInfoLogStub = sinon.stub(Log, "info");
+		var oInfoLogStub = this.stub(Log, "info");
 
 		//Act
 		this.oUploadCollection = new UploadCollection("noPHToolbarTest", {

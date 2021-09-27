@@ -1,64 +1,67 @@
 /*global QUnit */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/m/Button",
+	"sap/m/Column",
+	"sap/m/Dialog",
+	"sap/m/Table",
 	"test-resources/sap/ui/support/TestHelper"
-], function (jQuery, testRule) {
+], function (Button, Column, Dialog, Table, testRule) {
 	"use strict";
 
 	QUnit.module("Dialog rule tests", {
 		setup: function () {
 
-			var dialog1 = new sap.m.Dialog({
+			var dialog1 = new Dialog({
 				title: "Dialog 1",
 				ariaLabelledBy: "t1",
-				buttons: [new sap.m.Button({
+				buttons: [new Button({
 					press: function () {
 						dialog1.close();
 					},
 					text: "Close"
 				})],
-				content: new sap.m.Table("t1", {
+				content: new Table("t1", {
 					columns: [
-						new sap.m.Column(),
-						new sap.m.Column()
+						new Column(),
+						new Column()
 					]
 				})
 			});
 
-			var dialog2 = new sap.m.Dialog("d2", {
+			var dialog2 = new Dialog("d2", {
 				title: "Dialog 2",
-				buttons: [new sap.m.Button({
+				buttons: [new Button({
 					press: function () {
 						dialog2.close();
 					},
 					text: "Close"
 				})],
-				content: new sap.m.Table({
+				content: new Table({
 					columns: [
-						new sap.m.Column(),
-						new sap.m.Column()
+						new Column(),
+						new Column()
 					]
 				})
 			});
 
-			var dialog3 = new sap.m.Dialog({
+			var dialog3 = new Dialog({
 				title: "Dialog 3",
-				buttons: [new sap.m.Button({
+				buttons: [new Button({
 					press: function () {
 						dialog1.close();
 					},
 					text: "Close"
 				})],
-				content: new sap.m.Table("t3", {
+				content: new Table("t3", {
 					columns: [
-						new sap.m.Column(),
-						new sap.m.Column()
+						new Column(),
+						new Column()
 					]
 				})
 			});
 
-			this.b1 = new sap.m.Button({
+			this.b1 = new Button({
 				text:'Dialog 1',
 				press: function(){
 					dialog1.open();
@@ -66,7 +69,7 @@ sap.ui.define([
 			});
 			this.b1.placeAt("qunit-fixture");
 
-			this.b2 = new sap.m.Button({
+			this.b2 = new Button({
 				text:'Dialog 2',
 				press: function(){
 					dialog2.open();
@@ -74,7 +77,7 @@ sap.ui.define([
 			});
 			this.b2.placeAt("qunit-fixture");
 
-			this.b3 = new sap.m.Button({
+			this.b3 = new Button({
 				text:'Dialog 3',
 				press: function(){
 					dialog3.open();

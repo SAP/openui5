@@ -1,6 +1,6 @@
-/*global QUnit, sinon */
+/*global QUnit */
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/UploadCollection",
 	"sap/m/UploadCollectionItem",
 	"sap/m/Toolbar",
@@ -21,11 +21,11 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/core/Element",
 	"sap/m/library",
-	"sap/ui/events/jquery/EventExtension",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/events/jquery/EventExtension"
 ], function(jQuery, UploadCollection, UploadCollectionItem, Toolbar, Label, UploadCollectionRenderer,
             ListItemBaseRenderer, Dialog, Device, JSONModel, ManagedObject, OverflowToolbar,
-            MessageBox, FileUploader, ObjectMarker, ObjectStatus, Event, UploadCollectionParameter, Sorter, Element, library) {
+            MessageBox, FileUploader, ObjectMarker, ObjectStatus, Event, UploadCollectionParameter, Sorter, Element, library, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.m.ListMode
@@ -187,10 +187,10 @@ sap.ui.define([
 
 	QUnit.test("Composite Controls are rendered", function(assert) {
 		//Assert
-		assert.ok(jQuery.sap.domById("uploadCollection-list"), "Item list is rendered");
-		assert.ok(jQuery.sap.domById("uploadCollection-toolbar"), "Toolbar of the item list is rendered");
-		assert.ok(jQuery.sap.domById("uploadCollection-numberOfAttachmentsTitle"), "Title attachments is rendered");
-		assert.ok(jQuery.sap.domById(this.oUploadCollection.getId() + "-" + this.oUploadCollection._iFUCounter + "-uploader"), "FileUploader is rendered");
+		assert.ok(document.getElementById("uploadCollection-list"), "Item list is rendered");
+		assert.ok(document.getElementById("uploadCollection-toolbar"), "Toolbar of the item list is rendered");
+		assert.ok(document.getElementById("uploadCollection-numberOfAttachmentsTitle"), "Title attachments is rendered");
+		assert.ok(document.getElementById(this.oUploadCollection.getId() + "-" + this.oUploadCollection._iFUCounter + "-uploader"), "FileUploader is rendered");
 	});
 
 	QUnit.test("Marker is rendered with text and icon", function(assert) {
@@ -330,10 +330,10 @@ sap.ui.define([
 	QUnit.test("setUploadButtonInvisible returns when the existing value is passed", function(assert) {
 		//Arrange
 		var bUploadButtonInvisible = true,
-			stubGetUploadButtonInvisible = sinon.stub(this.oUploadCollection, "getUploadButtonInvisible").returns(bUploadButtonInvisible),
-			stubSetProperty = sinon.stub(this.oUploadCollection, "setProperty"),
-			stubGetInstantUpload = sinon.stub(this.oUploadCollection, "getInstantUpload"),
-			stubSetFileUploaderVisibility = sinon.stub(this.oUploadCollection, "_setFileUploaderVisibility");
+			stubGetUploadButtonInvisible = this.stub(this.oUploadCollection, "getUploadButtonInvisible").returns(bUploadButtonInvisible),
+			stubSetProperty = this.stub(this.oUploadCollection, "setProperty"),
+			stubGetInstantUpload = this.stub(this.oUploadCollection, "getInstantUpload"),
+			stubSetFileUploaderVisibility = this.stub(this.oUploadCollection, "_setFileUploaderVisibility");
 		//Act
 		var oInstance = this.oUploadCollection.setUploadButtonInvisible(bUploadButtonInvisible);
 		//Assert
@@ -348,10 +348,10 @@ sap.ui.define([
 		//Arrange
 		var bUploadButtonInvisible = true,
 			bIsInstantUpload = true,
-			stubGetUploadButtonInvisible = sinon.stub(this.oUploadCollection, "getUploadButtonInvisible").returns(!bUploadButtonInvisible),
-			stubSetProperty = sinon.stub(this.oUploadCollection, "setProperty"),
-			stubGetInstantUpload = sinon.stub(this.oUploadCollection, "getInstantUpload").returns(bIsInstantUpload),
-			stubSetFileUploaderVisibility = sinon.stub(this.oUploadCollection, "_setFileUploaderVisibility");
+			stubGetUploadButtonInvisible = this.stub(this.oUploadCollection, "getUploadButtonInvisible").returns(!bUploadButtonInvisible),
+			stubSetProperty = this.stub(this.oUploadCollection, "setProperty"),
+			stubGetInstantUpload = this.stub(this.oUploadCollection, "getInstantUpload").returns(bIsInstantUpload),
+			stubSetFileUploaderVisibility = this.stub(this.oUploadCollection, "_setFileUploaderVisibility");
 		//Act
 		var oInstance = this.oUploadCollection.setUploadButtonInvisible(bUploadButtonInvisible);
 		//Assert
@@ -367,10 +367,10 @@ sap.ui.define([
 		//Arrange
 		var bUploadButtonInvisible = true,
 			bIsInstantUpload = false,
-			stubGetUploadButtonInvisible = sinon.stub(this.oUploadCollection, "getUploadButtonInvisible").returns(!bUploadButtonInvisible),
-			stubSetProperty = sinon.stub(this.oUploadCollection, "setProperty"),
-			stubGetInstantUpload = sinon.stub(this.oUploadCollection, "getInstantUpload").returns(bIsInstantUpload),
-			stubSetFileUploaderVisibility = sinon.stub(this.oUploadCollection, "_setFileUploaderVisibility");
+			stubGetUploadButtonInvisible = this.stub(this.oUploadCollection, "getUploadButtonInvisible").returns(!bUploadButtonInvisible),
+			stubSetProperty = this.stub(this.oUploadCollection, "setProperty"),
+			stubGetInstantUpload = this.stub(this.oUploadCollection, "getInstantUpload").returns(bIsInstantUpload),
+			stubSetFileUploaderVisibility = this.stub(this.oUploadCollection, "_setFileUploaderVisibility");
 		//Act
 		var oInstance = this.oUploadCollection.setUploadButtonInvisible(bUploadButtonInvisible);
 		//Assert
@@ -413,15 +413,15 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.equal(oInfoToolbar, oInfoToolbarList, "Info toolbar belongs to the item list");
-		assert.ok(jQuery.sap.domById("uploadCollection-infoToolbar"), "Info toolbar is rendered");
-		assert.ok(jQuery.sap.domById("uploadCollection-infoToolbar-Label"), "Info toolbar label is rendered");
+		assert.ok(document.getElementById("uploadCollection-infoToolbar"), "Info toolbar is rendered");
+		assert.ok(document.getElementById("uploadCollection-infoToolbar-Label"), "Info toolbar label is rendered");
 	});
 
 	QUnit.test("No data rendering", function(assert) {
 		//Arrange
 		this.oUploadCollection.unbindAggregation("items");
-		var oSpy = sinon.spy(UploadCollectionRenderer, "renderNoData"),
-			oSpyLIBRenderer = sinon.spy(ListItemBaseRenderer, "addFocusableClasses");
+		var oSpy = this.spy(UploadCollectionRenderer, "renderNoData"),
+			oSpyLIBRenderer = this.spy(ListItemBaseRenderer, "addFocusableClasses");
 		//Act
 		sap.ui.getCore().applyChanges();
 		//Assert
@@ -429,7 +429,6 @@ sap.ui.define([
 		assert.ok(oSpyLIBRenderer.calledOnce, "Method addFocusableClasses of ListItemBaseRenderer is called");
 		assert.ok(this.oUploadCollection._oList.$("nodata").hasClass("sapMLIB"), "The nodata area contains class sapMLIB");
 		assert.ok(this.oUploadCollection._oList.$("nodata").hasClass("sapMUCNoDataPage"), "The nodata area contains class sapMUCNoDataPage");
-		oSpy.restore();
 	});
 
 	QUnit.test("No data rendering in upload disabled state", function(assert) {
@@ -553,7 +552,7 @@ sap.ui.define([
 
 	QUnit.test("Setter delegation to FileUploader for property 'fileType'", function(assert) {
 		//Arrange
-		var oSpy = sinon.spy(this.oUploadCollection._getFileUploader(), "setFileType");
+		var oSpy = this.spy(this.oUploadCollection._getFileUploader(), "setFileType");
 
 		//Act
 		this.oUploadCollection.setFileType([]);
@@ -569,7 +568,7 @@ sap.ui.define([
 
 	QUnit.test("Setter delegation to FileUploader for property 'maximumFilenameLength'", function(assert) {
 		//Arrange
-		var oSpy = sinon.spy(this.oUploadCollection._getFileUploader(), "setMaximumFilenameLength");
+		var oSpy = this.spy(this.oUploadCollection._getFileUploader(), "setMaximumFilenameLength");
 
 		//Act
 		this.oUploadCollection.setMaximumFilenameLength(10);
@@ -585,7 +584,7 @@ sap.ui.define([
 
 	QUnit.test("Setter delegation to FileUploader for property 'maximumFileSize'", function(assert) {
 		//Arrange
-		var oSpy = sinon.spy(this.oUploadCollection._getFileUploader(), "setMaximumFileSize");
+		var oSpy = this.spy(this.oUploadCollection._getFileUploader(), "setMaximumFileSize");
 
 		//Act
 		this.oUploadCollection.setMaximumFileSize(100);
@@ -600,7 +599,7 @@ sap.ui.define([
 
 	QUnit.test("Setter delegation to FileUploader for property 'mimeType'", function(assert) {
 		//Arrange
-		var oSpy = sinon.spy(this.oUploadCollection._getFileUploader(), "setMimeType");
+		var oSpy = this.spy(this.oUploadCollection._getFileUploader(), "setMimeType");
 
 		//Act
 		this.oUploadCollection.setMimeType("application/json");
@@ -615,7 +614,7 @@ sap.ui.define([
 
 	QUnit.test("Setter delegation to FileUploader for property 'multiple'", function(assert) {
 		//Arrange
-		var oSpy = sinon.spy(this.oUploadCollection._getFileUploader(), "setMultiple");
+		var oSpy = this.spy(this.oUploadCollection._getFileUploader(), "setMultiple");
 
 		//Act
 		this.oUploadCollection.setMultiple(true);
@@ -626,7 +625,7 @@ sap.ui.define([
 
 	QUnit.test("Return type of overridden setter for property 'showSeparators'", function(assert) {
 		//Arrange
-		var oSpy = sinon.spy(this.oUploadCollection._oList, "setShowSeparators");
+		var oSpy = this.spy(this.oUploadCollection._oList, "setShowSeparators");
 
 		//Act
 		//Assert
@@ -640,7 +639,7 @@ sap.ui.define([
 
 	QUnit.test("Setter delegation to FileUploader for property 'uploadEnabled'", function(assert) {
 		//Arrange
-		var oSpy = sinon.spy(this.oUploadCollection._getFileUploader(), "setEnabled");
+		var oSpy = this.spy(this.oUploadCollection._getFileUploader(), "setEnabled");
 
 		//Act
 		this.oUploadCollection.setUploadEnabled(false);
@@ -655,7 +654,7 @@ sap.ui.define([
 
 	QUnit.test("Setter delegation to FileUploader for property 'uploadUrl'", function(assert) {
 		//Arrange
-		var oSpy = sinon.spy(this.oUploadCollection._getFileUploader(), "setUploadUrl");
+		var oSpy = this.spy(this.oUploadCollection._getFileUploader(), "setUploadUrl");
 
 		//Act
 		this.oUploadCollection.setUploadUrl("http://bla.de");
@@ -672,7 +671,7 @@ sap.ui.define([
 
 	QUnit.test("Setter delegation to FileUploader for property 'mode'", function(assert) {
 		//Arrange
-		var oSpy = sinon.spy(this.oUploadCollection._oList, "setMode");
+		var oSpy = this.spy(this.oUploadCollection._oList, "setMode");
 
 		//Act
 		this.oUploadCollection.setMode(ListMode.Delete);
@@ -700,8 +699,8 @@ sap.ui.define([
 
 	QUnit.module("Internal Methods", {
 		beforeEach: function() {
-			this.oSpySetProperty = sinon.spy(ManagedObject.prototype, "setProperty");
-			this.oSpyApplySettings = sinon.spy(ManagedObject.prototype, "applySettings");
+			this.oSpySetProperty = this.spy(ManagedObject.prototype, "setProperty");
+			this.oSpyApplySettings = this.spy(ManagedObject.prototype, "applySettings");
 			this.oItem = new UploadCollectionItem({
 				fileName: "anyFileName"
 			});
@@ -719,8 +718,6 @@ sap.ui.define([
 			};
 		},
 		afterEach: function() {
-			this.oSpySetProperty.restore();
-			this.oSpyApplySettings.restore();
 			if (this.oIcon) {
 				this.oIcon.destroy();
 				this.oIcon = null;
@@ -755,7 +752,7 @@ sap.ui.define([
 		//Arrange
 		this.oItem._requestIdName = 0;
 		var oFileName = this.oUploadCollection._getFileNameControl(this.oItem, this),
-			oSpyGetter = sinon.spy(this.oItem, "_getFileNameLink");
+			oSpyGetter = this.spy(this.oItem, "_getFileNameLink");
 		//Act
 		oFileName = this.oUploadCollection._getFileNameControl(this.oItem, this);
 		//Assert
@@ -797,16 +794,14 @@ sap.ui.define([
 
 	QUnit.test("Default event on FileNameLink press", function(assert) {
 		//Arrange
-		var oFileName,
-			oStub = sinon.stub(this.oUploadCollection, "_triggerLink");
+		var oFileName;
+		this.stub(this.oUploadCollection, "_triggerLink");
 		this.oItem.setUrl("test.url");
 		//Act
 		oFileName = this.oUploadCollection._getFileNameControl(this.oItem, this);
 		oFileName.firePress();
 		//Assert
 		assert.equal(this.oUploadCollection._triggerLink.callCount, 1, "Default event triggered on FileNameLink press");
-		//Cleanup
-		oStub.restore();
 	});
 
 	QUnit.test("Check if _createIcon returns an Icon", function(assert) {
@@ -877,7 +872,7 @@ sap.ui.define([
 		this.oUploadCollection.insertItem(oItem);
 		sap.ui.getCore().applyChanges();
 		var oDeleteButton = this.oUploadCollection._createDeleteButton(oItem.getId(), "deleteButton", oItem, this);
-		var oSpyGetter = sinon.spy(oItem, "_getDeleteButton");
+		var oSpyGetter = this.spy(oItem, "_getDeleteButton");
 		//Act
 		oDeleteButton = this.oUploadCollection._createDeleteButton(oItem.getId(), "deleteButton", oItem, this);
 		//Assert
@@ -897,7 +892,7 @@ sap.ui.define([
 		this.oUploadCollection._setNumberOfAttachmentsTitle();
 		sap.ui.getCore().applyChanges();
 		assert.strictEqual(this.oUploadCollection._oNumberOfAttachmentsTitle.getText(), sText, "Correct Title text for number of attachments.");
-		assert.strictEqual(jQuery(jQuery.sap.domById("uploadCollection-numberOfAttachmentsTitle")).text(), sText);
+		assert.strictEqual(this.oUploadCollection._oNumberOfAttachmentsTitle.$().text(), sText);
 	});
 
 	QUnit.test("Set tooltip of FileUploader", function(assert) {
@@ -974,8 +969,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("handleTerminate - Function _handleTerminate called on terminate button press", function(assert) {
-		var oDialogOpenStub = sinon.stub(Dialog.prototype, "open");
-		var oHandleTerminateSpy = sinon.spy(this.oUploadCollection, "_handleTerminate");
+		this.stub(Dialog.prototype, "open");
+		var oHandleTerminateSpy = this.spy(this.oUploadCollection, "_handleTerminate");
 		var oFileUploader = this.oUploadCollection._getFileUploader();
 		oFileUploader._aXhr = [];
 		var oFile2 = {
@@ -996,7 +991,6 @@ sap.ui.define([
 		// Clean up
 		var oDialog = sap.ui.getCore().byId(this.oUploadCollection.getId() + "deleteDialog");
 		oDialog.destroy();
-		oDialogOpenStub.restore();
 	});
 
 	QUnit.test("handleTerminate opens a dialog which could be cancelled.", function(assert) {
@@ -1019,8 +1013,8 @@ sap.ui.define([
 	QUnit.test("Function _handleDelete creates the popup and changes the internal state of UploadCollection correctly", function(assert) {
 		//Arrange
 		var sItemId = this.oUploadCollection.aItems[0].sId,
-			oMessageBoxStub = sinon.stub(MessageBox, "show"),
-			oCloseMessageBoxStub = sinon.stub(this.oUploadCollection, "_onCloseMessageBoxDeleteItem"),
+			oMessageBoxStub = this.stub(MessageBox, "show"),
+			oCloseMessageBoxStub = this.stub(this.oUploadCollection, "_onCloseMessageBoxDeleteItem"),
 			sCompactClass = "sapUiSizeCompact",
 			oEvent = {
 				getParameters: function() {
@@ -1040,15 +1034,13 @@ sap.ui.define([
 		assert.equal(oMessageBoxStub.getCall(0).args[1].actions[0], MessageBox.Action.OK, "OK action is included in the MessageBox call");
 		assert.equal(oMessageBoxStub.getCall(0).args[1].actions[1], MessageBox.Action.CANCEL, "Cancel action is included in the MessageBox call");
 		assert.equal(oMessageBoxStub.getCall(0).args[1].styleClass, sCompactClass, "Compact class has been handed from UploadCollection to the MessageBox successfully");
-		//Restore
-		oMessageBoxStub.restore();
 	});
 
 	QUnit.test("handleTerminate - abort on FileUploader is called.", function(assert) {
 		var done = assert.async();
 		// Prepare FileUploader Spy
 		this.oUploadCollection._getFileUploader()._aXhr = [];
-		sinon.spy(this.oUploadCollection._getFileUploader(), "abort");
+		this.spy(this.oUploadCollection._getFileUploader(), "abort");
 		// Prepare UploadCollectionItem
 		var oItem = new UploadCollectionItem({
 			fileName: "otto4711.txt"
@@ -1374,12 +1366,12 @@ sap.ui.define([
 					}
 				}
 			},
-			oGetUploadCollectionItemsByListItems = sinon.stub(this.oUploadCollection, "_getUploadCollectionItemsByListItems")
+			oGetUploadCollectionItemsByListItems = this.stub(this.oUploadCollection, "_getUploadCollectionItemsByListItems")
 				.returns(aUploadCollectionListItems),
-			oGetUploadCollectionItemByListItem = sinon.stub(this.oUploadCollection, "_getUploadCollectionItemByListItem")
+			oGetUploadCollectionItemByListItem = this.stub(this.oUploadCollection, "_getUploadCollectionItemByListItem")
 				.returns(oUploadCollectionItem),
-			oFireSelectionChangeStub = sinon.stub(this.oUploadCollection, "fireSelectionChange"),
-			oSetSelectedStub = sinon.stub(oUploadCollectionItem, "setSelected");
+			oFireSelectionChangeStub = this.stub(this.oUploadCollection, "fireSelectionChange"),
+			oSetSelectedStub = this.stub(oUploadCollectionItem, "setSelected");
 		//Act
 		this.oUploadCollection._handleSelectionChange(oEvent);
 		//Assert
@@ -1421,7 +1413,7 @@ sap.ui.define([
 
 	QUnit.test("Download an item returns true.", function(assert) {
 		//Arrange
-		var stub = sinon.stub(this.oUploadCollection, "downloadItem");
+		var stub = this.stub(this.oUploadCollection, "downloadItem");
 		var oItem = this.oUploadCollection.getItems()[3];
 		//Act
 		this.oUploadCollection.downloadItem(oItem, false);
@@ -1451,7 +1443,7 @@ sap.ui.define([
 	QUnit.test("Terminate upload button is visible by default.", function(assert) {
 		//Arrange
 		var oItem = this.oUploadCollection.getItems()[0];
-		var spyGetTerminationEnabled = sinon.spy(this.oUploadCollection, "getTerminationEnabled");
+		var spyGetTerminationEnabled = this.spy(this.oUploadCollection, "getTerminationEnabled");
 		//Act
 		var oDeleteButton = this.oUploadCollection._createDeleteButton("visibleButtonTestId", "terminateButton", oItem, "", {});
 		//Assert
@@ -1463,7 +1455,7 @@ sap.ui.define([
 		//Arrange
 		this.oUploadCollection.setTerminationEnabled(false);
 		var oItem = this.oUploadCollection.getItems()[0];
-		var spyGetTerminationEnabled = sinon.spy(this.oUploadCollection, "getTerminationEnabled");
+		var spyGetTerminationEnabled = this.spy(this.oUploadCollection, "getTerminationEnabled");
 		//Act
 		var oDeleteButton = this.oUploadCollection._createDeleteButton("invisibleButtonTestId", "terminateButton", oItem, null, {});
 		//Assert
@@ -1475,7 +1467,7 @@ sap.ui.define([
 		//Arrange
 		this.oUploadCollection.setTerminationEnabled(false);
 		var oItem = this.oUploadCollection.getItems()[0];
-		var spyGetTerminationEnabled = sinon.spy(this.oUploadCollection, "getTerminationEnabled");
+		var spyGetTerminationEnabled = this.spy(this.oUploadCollection, "getTerminationEnabled");
 		//Act
 		var oDeleteButton = this.oUploadCollection._createDeleteButton("invisibleButtonTestId", "terminateButton", oItem, null, {});
 		// re-create the existing button
@@ -1489,7 +1481,7 @@ sap.ui.define([
 		//Arrange
 		this.oUploadCollection.setTerminationEnabled(true);
 		var oItem = this.oUploadCollection.getItems()[0];
-		var spyGetTerminationEnabled = sinon.spy(this.oUploadCollection, "getTerminationEnabled");
+		var spyGetTerminationEnabled = this.spy(this.oUploadCollection, "getTerminationEnabled");
 		//Act
 		var oDeleteButton = this.oUploadCollection._createDeleteButton("invisibleButtonTestId", "terminateButton", oItem, null, {});
 		// re-create the existing button
@@ -1505,8 +1497,8 @@ sap.ui.define([
 		var oFileUploader = new FileUploader();
 		var oContent = [{}, {}, oFileUploader];
 		this.oUploadCollection._iFileUploaderPH = 2;
-		var stubGetContent = sinon.stub(this.oUploadCollection._oHeaderToolbar, "getContent").returns(oContent);
-		var stubSetVisible = sinon.stub(oFileUploader, "setVisible");
+		var stubGetContent = this.stub(this.oUploadCollection._oHeaderToolbar, "getContent").returns(oContent);
+		var stubSetVisible = this.stub(oFileUploader, "setVisible");
 		this.oUploadCollection._aFileUploadersForPendingUpload = [{}];
 		//Act
 		this.oUploadCollection._setFileUploaderVisibility(bUploadButtonInvisible);
@@ -1517,6 +1509,8 @@ sap.ui.define([
 		assert.ok(stubSetVisible.calledOnce, "setVisible method on the file uploder was called only once.");
 		assert.ok(stubSetVisible.calledWith(!bUploadButtonInvisible), "setVisible was called with the opposite of bUploadButtonInvisible flag.");
 		this.oUploadCollection._aFileUploadersForPendingUpload = [];
+
+		// restore getContent explicitly as control cleanup otherwise fails
 		stubGetContent.restore();
 	});
 
@@ -1540,7 +1534,7 @@ sap.ui.define([
 
 	QUnit.test("Focus is only set once after delete", function(assert) {
 		//Arrange
-		var oSpy = sinon.spy(this.oUploadCollection, "_setFocusAfterDeletion");
+		var oSpy = this.spy(this.oUploadCollection, "_setFocusAfterDeletion");
 		this.oUploadCollection.sDeletedItemId = "someId";
 
 		//Act
@@ -1608,7 +1602,7 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-ta_progress").getText(), sUploadProgress, "Correct uploadProgress text");
-		assert.equal(jQuery.sap.domById(this.oUploadCollection.aItems[0].sId + "-ia_indicator").getAttribute("aria-valuenow"), "50", "Correct ARIA-valuenow attribute");
+		assert.equal(document.getElementById(this.oUploadCollection.aItems[0].sId + "-ia_indicator").getAttribute("aria-valuenow"), "50", "Correct ARIA-valuenow attribute");
 	});
 
 	QUnit.test("Rendering of uploadProgress 100% uploaded", function(assert) {
@@ -1641,7 +1635,7 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-ta_progress").getText(), sUploadCompleted, "Correct uploadCompleted text");
-		assert.equal(jQuery.sap.domById(this.oUploadCollection.aItems[0].sId + "-ia_indicator").getAttribute("aria-label"), sUploadCompleted, "Correct ARIA-label attribute");
+		assert.equal(document.getElementById(this.oUploadCollection.aItems[0].sId + "-ia_indicator").getAttribute("aria-label"), sUploadCompleted, "Correct ARIA-label attribute");
 	});
 
 	/* --------------------------------------- */
@@ -1650,7 +1644,7 @@ sap.ui.define([
 	QUnit.module("Drag and drop", {
 		beforeEach: function() {
 			this.$RootNode = jQuery(document.body);
-			this.oSpyOnChange = sinon.spy(UploadCollection.prototype, "_onChange");
+			this.oSpyOnChange = this.spy(UploadCollection.prototype, "_onChange");
 			this.oUploadCollection = new UploadCollection("uploadCollection", {
 				items: {
 					path: "/items",
@@ -1663,7 +1657,6 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
-			this.oSpyOnChange.restore();
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
 		}
@@ -1671,7 +1664,7 @@ sap.ui.define([
 
 	QUnit.test("Drag file enter UIArea", function(assert) {
 		//Arrange
-		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
+		var oStubCheckForFiles = this.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		//Act
 		this.$RootNode.trigger("dragenter");
 		//Assert
@@ -1681,7 +1674,7 @@ sap.ui.define([
 
 	QUnit.test("Drag file over UIArea", function(assert) {
 		//Arrange
-		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
+		var oStubCheckForFiles = this.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		//Act
 		this.$RootNode.trigger("dragover");
 		//Assert
@@ -1702,7 +1695,7 @@ sap.ui.define([
 	QUnit.test("Drag file enter UploadCollection", function(assert) {
 		//Arrange
 		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
-		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
+		var oStubCheckForFiles = this.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		//Act
 		$DragDropArea.trigger("dragenter");
 		//Assert
@@ -1732,9 +1725,9 @@ sap.ui.define([
 	QUnit.test("Drop file in UploadCollection", function(assert) {
 		//Arrange
 		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
-		var oSpySendFiles = sinon.spy(this.oUploadCollection._getFileUploader(), "_sendFilesFromDragAndDrop");
-		var oStubFilesAllowed = sinon.stub(this.oUploadCollection._getFileUploader(), "_areFilesAllowed").returns(true);
-		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
+		var oSpySendFiles = this.spy(this.oUploadCollection._getFileUploader(), "_sendFilesFromDragAndDrop");
+		var oStubFilesAllowed = this.stub(this.oUploadCollection._getFileUploader(), "_areFilesAllowed").returns(true);
+		var oStubCheckForFiles = this.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		var oEvent = jQuery.Event("drop", {
 			originalEvent: {
 				dataTransfer: {
@@ -1761,8 +1754,8 @@ sap.ui.define([
 		//Arrange
 		this.oUploadCollection.setMultiple(false);
 		sap.ui.getCore().applyChanges();
-		var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
-		var oStubMessageBox = sinon.stub(MessageBox, "error");
+		this.stub(this.oUploadCollection, "_checkForFiles").returns(true);
+		var oStubMessageBox = this.stub(MessageBox, "error");
 		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
 		var oFileList = [
 			{
@@ -1783,14 +1776,11 @@ sap.ui.define([
 		//Assert
 		assert.ok(this.oSpyOnChange.notCalled, "Files are not dropped in UploadCollection");
 		assert.ok(oStubMessageBox.called, "Error Messagebox is displayed");
-		//Restore
-		oStubMessageBox.restore();
-		oStubCheckForFiles.restore();
 	});
 
 	QUnit.test("Drag drop icon is hidden when height of drag drop area smaller than 10rem", function(assert) {
 		//Arrange
-		sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
+		this.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		this.oUploadCollection.$("drag-drop-area").height(150);
 		//Act
 		this.$RootNode.trigger("dragenter");
@@ -1800,7 +1790,7 @@ sap.ui.define([
 
 	QUnit.test("Drag drop icon is hidden when height of drag drop area smaller than 10rem", function(assert) {
 		//Arrange
-		sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
+		this.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		this.oUploadCollection.$("drag-drop-area").height(150);
 		//Act
 		this.$RootNode.trigger("dragenter");
@@ -1843,8 +1833,8 @@ sap.ui.define([
 		var oBindSpy,
 			oUnBindSpy;
 		//Arrange
-		oBindSpy = sinon.spy(this.oUploadCollection, "_bindDragEnterLeave");
-		oUnBindSpy = sinon.spy(this.oUploadCollection, "_unbindDragEnterLeave");
+		oBindSpy = this.spy(this.oUploadCollection, "_bindDragEnterLeave");
+		oUnBindSpy = this.spy(this.oUploadCollection, "_unbindDragEnterLeave");
 		//Act
 		this.oUploadCollection.setUploadButtonInvisible(true);
 		this.oUploadCollection.setUploadButtonInvisible(false);
@@ -1900,7 +1890,7 @@ sap.ui.define([
 	QUnit.module("Drag and drop in instantUpload false", {
 		beforeEach: function() {
 			this.$RootNode = jQuery(document.body);
-			this.oSpyOnChange = sinon.spy(UploadCollection.prototype, "_onChange");
+			this.oSpyOnChange = this.spy(UploadCollection.prototype, "_onChange");
 			this.oUploadCollection = new UploadCollection("uploadCollection", {
 				items: {
 					path: "/items",
@@ -1918,7 +1908,6 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
-			this.oSpyOnChange.restore();
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
 		}
@@ -2313,9 +2302,9 @@ sap.ui.define([
 		assert.equal(this.oUploadCollection.aItems[1]._status, "Edit", "Item 2 has status 'Edit'");
 		assert.equal(this.oUploadCollection.aItems[1].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
 		assert.equal(sap.ui.getCore().byId(this.oUploadCollection.editModeItem + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
-		assert.ok(!this.oUploadCollection.oInvisibleText.getText(), "Invisible Text for Editetd element is empty.");
+		assert.ok(!this.oUploadCollection.oInvisibleText.getText(), "Invisible Text for Edited element is empty.");
 
-		var oInputField1 = jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner");
+		var oInputField1 = this.oUploadCollection.aItems[1].$("ta_editFileName-inner");
 		oInputField1[0].value = "NewDocument_toCancel";
 		sap.ui.getCore().applyChanges();
 
@@ -2342,7 +2331,7 @@ sap.ui.define([
 		//check save
 		sap.ui.getCore().byId(sEditButtonId).firePress();
 		sap.ui.getCore().applyChanges();
-		var oInputField2 = jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner");
+		var oInputField2 = this.oUploadCollection.aItems[1].$("ta_editFileName-inner");
 		oInputField2[0].value = "NewDocument";
 		sap.ui.getCore().applyChanges();
 		oData.items[1].fileName = "NewDocument.txt";
@@ -2365,7 +2354,7 @@ sap.ui.define([
 		assert.equal(sap.ui.getCore().byId(this.oUploadCollection.editModeItem + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
 		assert.ok(!this.oUploadCollection.oInvisibleText.getText() , "Invisible Text for Editetd element is empty.");
 
-		var oInputField3 = jQuery.sap.byId(this.oUploadCollection.aItems[2].sId + "-ta_editFileName-inner");
+		var oInputField3 = this.oUploadCollection.aItems[2].$("ta_editFileName-inner");
 		oInputField3[0].value = "NewDocument";
 		oData.items[2].fileName = "NewDocument.txt";
 		oEvent.target.id = this.oUploadCollection.aItems[2].sId;
@@ -2420,7 +2409,7 @@ sap.ui.define([
 		sap.ui.getCore().byId(sEditButtonId).firePress();
 		sap.ui.getCore().applyChanges();
 
-		var oSpy = sinon.spy(UploadCollection.prototype, "_handleCancel");
+		var oSpy = this.spy(UploadCollection.prototype, "_handleCancel");
 		var oEvent = {
 			target: this.oUploadCollection.$().find(".sapMUCItem").eq(1).find(".sapMUCCancelBtn .sapMBtnContent")[0]
 		};
@@ -2431,9 +2420,6 @@ sap.ui.define([
 
 		// Assert
 		assert.equal(oSpy.callCount, 1, "Cancel handling is done even for targets that are not the button itself.");
-
-		// Cleanup
-		oSpy.restore();
 	});
 
 	QUnit.test("Cancelling the edit mode of an item while another item is being uploaded", function(assert) {
@@ -2510,7 +2496,7 @@ sap.ui.define([
 	QUnit.test("Exiting edit mode after an attemt to save an empty file in case same file names are allowed", function(assert) {
 		//Arrange
 		this.oUploadCollection.setSameFilenameAllowed(true);
-		jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner")[0].value = "Nonempty name";
+		this.oUploadCollection.aItems[1].$("ta_editFileName-inner")[0].value = "Nonempty name";
 		//Act
 		this.oUploadCollection._handleClick(this.oObj, this.oUploadCollection.aItems[1].sId);
 		//Assert
@@ -2555,7 +2541,7 @@ sap.ui.define([
 
 	QUnit.test("Link is triggered by icon press", function(assert) {
 		//Arrange
-		var oStub = sinon.stub(UploadCollection.prototype, "_triggerLink");
+		this.stub(UploadCollection.prototype, "_triggerLink");
 
 		//Act
 		// An event is triggered, because there is a url provided at item[1]
@@ -2564,14 +2550,11 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(UploadCollection.prototype._triggerLink.callCount, 1, "Function _triggerLink has been called once");
-
-		//Cleanup
-		oStub.restore();
 	});
 
 	QUnit.test("Link is not triggered by icon press", function(assert) {
 		//Arrange
-		var oStub = sinon.stub(UploadCollection.prototype, "_triggerLink");
+		this.stub(UploadCollection.prototype, "_triggerLink");
 
 		//Act
 		// No event is triggered, because there is no url provided at item[0]
@@ -2580,9 +2563,6 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(UploadCollection.prototype._triggerLink.callCount, 0, "Function _triggerLink has not been called");
-
-		//Cleanup
-		oStub.restore();
 	});
 
 	QUnit.module("Grouping tests", {
@@ -2611,7 +2591,7 @@ sap.ui.define([
 
 	QUnit.test("Rendering", function(assert) {
 		//Arrange
-		sinon.spy(this.oUploadCollection._oList, "addItemGroup");
+		this.spy(this.oUploadCollection._oList, "addItemGroup");
 		var aList = this.oUploadCollection._oList,
 			aItems = aList.getItems();
 
@@ -2848,7 +2828,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Model refresh like ODataModel - check number of list preparation", function(assert) {
-		sinon.spy(this.oUploadCollection, "_fillList");
+		this.spy(this.oUploadCollection, "_fillList");
 		this.oModel.setProperty("/items", null);
 		this.oModel.setProperty("/items", [
 			{
@@ -2863,12 +2843,11 @@ sap.ui.define([
 		]);
 		sap.ui.getCore().applyChanges();
 		assert.ok(this.oUploadCollection._fillList.calledOnce);
-		this.oUploadCollection._fillList.restore();
 	});
 
 	QUnit.module("Accessibility features", {
 		beforeEach: function() {
-			this.fnSpy = sinon.spy(Element.prototype, "setTooltip");
+			this.fnSpy = this.spy(Element.prototype, "setTooltip");
 			this.oUploadCollection = new UploadCollection("uploadCollection", {
 				items: {
 					path: "/items",
@@ -2880,7 +2859,6 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
-			this.fnSpy.restore();
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
 		}
@@ -2894,14 +2872,14 @@ sap.ui.define([
 
 	QUnit.test("Icon", function(assert) {
 		var oIcon = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
-		var $Icon = jQuery.sap.domById(this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
+		var $Icon = document.getElementById(this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
 		assert.strictEqual(oIcon.getAlt(), "textForIconOfItemSusanBaker", "The icon has correct alt text");
 		assert.strictEqual($Icon.getAttribute("aria-label"), "textForIconOfItemSusanBaker", "The DOM object icon has correct tooltip");
 	});
 
 	QUnit.test("Image", function(assert) {
 		var oImage = sap.ui.getCore().byId(this.oUploadCollection.aItems[3].sId + "-ia_imageHL");
-		var $Image = jQuery.sap.domById(this.oUploadCollection.aItems[3].sId + "-ia_imageHL");
+		var $Image = document.getElementById(this.oUploadCollection.aItems[3].sId + "-ia_imageHL");
 		assert.strictEqual(oImage.getAlt(), "textForImageOfItemKateBrown", "The image has correct alt text");
 		assert.strictEqual($Image.getAttribute("aria-label"), "textForImageOfItemKateBrown", "The DOM object image has correct tooltip");
 	});
@@ -2926,8 +2904,8 @@ sap.ui.define([
 				}
 			},
 			oEditButton = sap.ui.getCore().byId(sUCItemId + "-editButton"),
-			oFirePressStub = sinon.stub(oEditButton, "firePress"),
-			oHandleClickStub = sinon.stub(this.oUploadCollection, "_handleClick");
+			oFirePressStub = this.stub(oEditButton, "firePress"),
+			oHandleClickStub = this.stub(this.oUploadCollection, "_handleClick");
 		this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[1].getId();
 		//Act
 		this.oUploadCollection._handleF2(oPressEvent);
@@ -2945,7 +2923,7 @@ sap.ui.define([
 					id: oListItem.getId()
 				}
 			},
-			oHandleClickStub = sinon.stub(this.oUploadCollection, "_handleClick");
+			oHandleClickStub = this.stub(this.oUploadCollection, "_handleClick");
 		this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[0].getId();
 		oListItem._status = undefined;
 		//Act
@@ -2963,7 +2941,7 @@ sap.ui.define([
 					id: sUCItemId + "-ta_editFileName-inner"
 				}
 			},
-			oHandleOkStub = sinon.stub(this.oUploadCollection, "_handleOk");
+			oHandleOkStub = this.stub(this.oUploadCollection, "_handleOk");
 		this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[0].getId();
 		//Act
 		this.oUploadCollection._handleF2(oPressEvent);
@@ -2982,7 +2960,7 @@ sap.ui.define([
 				}
 			},
 			oDeleteButton = sap.ui.getCore().byId(sUCItemId + "-deleteButton"),
-			oFirePressStub = sinon.stub(oDeleteButton, "firePress");
+			oFirePressStub = this.stub(oDeleteButton, "firePress");
 		//Act
 		this.oUploadCollection._handleDEL(oPressEvent);
 		//Assert
@@ -2992,10 +2970,10 @@ sap.ui.define([
 	QUnit.test("Pressing keyboard F2 button results in correct handler call", function(assert) {
 		//Arrange
 		var oEvent = {
-				keyCode: jQuery.sap.KeyCodes.F2,
-				setMarked: sinon.stub()
+				keyCode: KeyCodes.F2,
+				setMarked: this.stub()
 			},
-			oHandleF2Stub = sinon.stub(this.oUploadCollection, "_handleF2");
+			oHandleF2Stub = this.stub(this.oUploadCollection, "_handleF2");
 		//Act
 		this.oUploadCollection.onkeydown(oEvent);
 		//Assert
@@ -3006,10 +2984,10 @@ sap.ui.define([
 	QUnit.test("Pressing keyboard ESCAPE button results in correct handler call", function(assert) {
 		//Arrange
 		var oEvent = {
-				keyCode: jQuery.sap.KeyCodes.ESCAPE,
-				setMarked: sinon.stub()
+				keyCode: KeyCodes.ESCAPE,
+				setMarked: this.stub()
 			},
-			oHandleESCAPEStub = sinon.stub(this.oUploadCollection, "_handleESC");
+			oHandleESCAPEStub = this.stub(this.oUploadCollection, "_handleESC");
 		//Act
 		this.oUploadCollection.onkeydown(oEvent);
 		//Assert
@@ -3020,10 +2998,10 @@ sap.ui.define([
 	QUnit.test("Pressing keyboard DELETE button results in correct handler call", function(assert) {
 		//Arrange
 		var oEvent = {
-				keyCode: jQuery.sap.KeyCodes.DELETE,
-				setMarked: sinon.stub()
+				keyCode: KeyCodes.DELETE,
+				setMarked: this.stub()
 			},
-			oHandleDELETEStub = sinon.stub(this.oUploadCollection, "_handleDEL");
+			oHandleDELETEStub = this.stub(this.oUploadCollection, "_handleDEL");
 		//Act
 		this.oUploadCollection.onkeydown(oEvent);
 		//Assert
@@ -3034,10 +3012,10 @@ sap.ui.define([
 	QUnit.test("Pressing keyboard ENTER button results in correct handler call", function(assert) {
 		//Arrange
 		var oEvent = {
-				keyCode: jQuery.sap.KeyCodes.ENTER,
-				setMarked: sinon.stub()
+				keyCode: KeyCodes.ENTER,
+				setMarked: this.stub()
 			},
-			oHandleENTERStub = sinon.stub(this.oUploadCollection, "_handleENTER");
+			oHandleENTERStub = this.stub(this.oUploadCollection, "_handleENTER");
 		//Act
 		this.oUploadCollection.onkeydown(oEvent);
 		//Assert
@@ -3049,12 +3027,12 @@ sap.ui.define([
 		//Arrange
 		var oEvent = {
 				keyCode: "Dummy",
-				setMarked: sinon.stub()
+				setMarked: this.stub()
 			},
-			oHandleF2Stub = sinon.stub(this.oUploadCollection, "_handleF2"),
-			oHandleENTERStub = sinon.stub(this.oUploadCollection, "_handleENTER"),
-			oHandleDELETEStub = sinon.stub(this.oUploadCollection, "_handleDEL"),
-			oHandleESCAPEStub = sinon.stub(this.oUploadCollection, "_handleESC"),
+			oHandleF2Stub = this.stub(this.oUploadCollection, "_handleF2"),
+			oHandleENTERStub = this.stub(this.oUploadCollection, "_handleENTER"),
+			oHandleDELETEStub = this.stub(this.oUploadCollection, "_handleDEL"),
+			oHandleESCAPEStub = this.stub(this.oUploadCollection, "_handleESC"),
 			oSetMarkedStub = oEvent.setMarked;
 		//Act
 		this.oUploadCollection.onkeydown(oEvent);
@@ -3144,7 +3122,7 @@ sap.ui.define([
 
 	QUnit.test("Test for triggerLink method when factory binding is used.", function(assert) {
 		//Arrange
-		var oStub = sinon.stub(this.oUploadCollection, "_triggerLink");
+		this.stub(this.oUploadCollection, "_triggerLink");
 		var oItem = this.oUploadCollection.getItems()[0];
 		oItem.setUrl("test.jpg");
 		//Act
@@ -3152,7 +3130,5 @@ sap.ui.define([
 		oFileName.firePress();
 		//Assert
 		assert.equal(this.oUploadCollection._triggerLink.callCount, 1, "Download Success");
-		//Cleanup
-		oStub.restore();
 	});
 });

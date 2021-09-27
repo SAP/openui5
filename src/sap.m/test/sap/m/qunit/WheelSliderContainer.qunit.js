@@ -1,16 +1,19 @@
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Item",
 	"sap/m/WheelSlider",
-	"sap/m/WheelSliderContainer"
+	"sap/m/WheelSliderContainer",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Device,
 	Item,
 	WheelSlider,
-	WheelSliderContainer
+	WheelSliderContainer,
+	jQuery
 ) {
+		"use strict";
+
 		QUnit.module("Misc");
 
 		QUnit.test("init", function(assert) {

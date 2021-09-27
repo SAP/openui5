@@ -1,14 +1,14 @@
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Tile",
 	"sap/m/TileContainer",
-	"jquery.sap.keycodes",
 	"sap/m/library",
 	"sap/ui/core/InvisibleText",
-	"jquery.sap.global"
-], function(QUnitUtils, Tile, TileContainer, jQuery, mobileLibrary, InvisibleText) {
+	"sap/ui/events/KeyCodes"
+], function(qutils, Tile, TileContainer, mobileLibrary, InvisibleText, KeyCodes) {
+	"use strict";
+
 	var core = sap.ui.getCore();
 
 	QUnit.module("Dimensions");
@@ -123,13 +123,12 @@ sap.ui.define([
 
 	QUnit.test("Should Set Visibility and trigger rerender of the TileContainer", function(assert) {
 		//Arrange
-		var result ,
 		//SUT
-		sut = new Tile(),
+		var sut = new Tile(),
 		sut2 = new Tile(),
 		container = new TileContainer({tiles: [sut, sut2]});
 
-		sinon.spy(container, "rerender");
+		this.spy(container, "rerender");
 
 		container.placeAt("qunit-fixture");
 		core.applyChanges();
@@ -155,7 +154,7 @@ sap.ui.define([
 		core.applyChanges();
 
 		// Act
-		sap.ui.test.qunit.triggerTouchEvent("touchstart",sut.getDomRef(),{clientX: 0, clientY: 0});
+		qutils.triggerTouchEvent("touchstart",sut.getDomRef(),{clientX: 0, clientY: 0});
 
 		// Assert
 		assert.ok(sut.$().hasClass("sapMTileActive"));
@@ -172,7 +171,7 @@ sap.ui.define([
 		sut.$().toggleClass("sapMTileActive-CTX",true);
 
 		//Act
-		sap.ui.test.qunit.triggerTouchEvent("touchend",sut.getDomRef());
+		qutils.triggerTouchEvent("touchend",sut.getDomRef());
 
 		//Assert
 		assert.ok(!sut.$().hasClass("sapMTileActive"));
@@ -186,10 +185,10 @@ sap.ui.define([
 		sut.placeAt("qunit-fixture");
 		core.applyChanges();
 
-		sap.ui.test.qunit.triggerTouchEvent("touchstart",sut.getDomRef(), {clientX: 0, clientY: 0});
+		qutils.triggerTouchEvent("touchstart",sut.getDomRef(), {clientX: 0, clientY: 0});
 
 		//Act
-		sap.ui.test.qunit.triggerTouchEvent("touchmove",sut.getDomRef(), {clientX: 100, clientY: 100});
+		qutils.triggerTouchEvent("touchmove",sut.getDomRef(), {clientX: 100, clientY: 100});
 
 		//Assert
 		assert.ok(!sut.$().hasClass("sapMTileActive"));
@@ -212,7 +211,11 @@ sap.ui.define([
 
 		//Act
 		result = sut._parentPreventsTapEvent;
-		sut._parentPreventsTapEvent = 5;
+		try {
+			sut._parentPreventsTapEvent = 5;
+		} catch (err) {
+			assert.ok(true, "strict mode code is not allowed to write a read-only property");
+		}
 
 		//Assert
 		assert.equal(result,true);
@@ -236,22 +239,21 @@ sap.ui.define([
 		core.applyChanges();
 
 		//Act
-		sap.ui.test.qunit.triggerKeyboardEvent(sut.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeyboardEvent(sut.getDomRef(), KeyCodes.ENTER);
 		//Assert
 		assert.equal(result, 1);
 
 		//Act
-		sap.ui.test.qunit.triggerKeyboardEvent(sut.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeyboardEvent(sut.getDomRef(), KeyCodes.SPACE);
 		//Assert
 		assert.equal(result, 2);
 	});
 
 	QUnit.test('ShouldHaveAccessibilityAttributes', function (assert) {
 		// SUT
-		var m 	  	= sap.m,
-			sut 	= new m.Tile(),
-			tiles 	= [sut, new m.Tile()],
-			cnt 	= new m.TileContainer({tiles: tiles});
+		var sut 	= new Tile(),
+			tiles 	= [sut, new Tile()],
+			cnt 	= new TileContainer({tiles: tiles});
 
 		cnt.placeAt("qunit-fixture");
 
@@ -267,10 +269,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("ShouldHaveAriaDescribedByAttribute", function (assert) {
-		var m = sap.m,
-				sut = new m.Tile(),
-				tiles = [sut, new m.Tile()],
-				cnt = new m.TileContainer({tiles: tiles});
+		var sut 	= new Tile(),
+			tiles	= [sut, new Tile()],
+			cnt		= new TileContainer({tiles: tiles});
 
 		cnt.placeAt("qunit-fixture");
 

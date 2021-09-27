@@ -1,5 +1,4 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -7,7 +6,7 @@ sap.ui.define([
 	"sap/m/ObjectAttribute",
 	"sap/m/ObjectListItem",
 	"sap/m/ObjectStatus",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
 	"sap/m/ObjectMarker",
 	"sap/m/library",
@@ -25,6 +24,8 @@ sap.ui.define([
 	mobileLibrary,
 	ManagedObjectObserver
 ) {
+	"use strict";
+
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
@@ -86,22 +87,22 @@ sap.ui.define([
 	QUnit.module("Rendering");
 
 	QUnit.test("ControlRendered", function(assert) {
-		assert.ok(jQuery.sap.domById("test_list"), "List should be rendered.");
-		assert.ok(jQuery.sap.domById(listItemId), "Worst case list item should be rendered.");
+		assert.ok(document.getElementById("test_list"), "List should be rendered.");
+		assert.ok(document.getElementById(listItemId), "Worst case list item should be rendered.");
 	});
 
 	QUnit.test("IntroRendered", function(assert) {
-		assert.notEqual(jQuery.sap.domById(listItemId + "-intro"), null, "Worst case list item intro should be rendered.");
+		assert.notEqual(document.getElementById(listItemId + "-intro"), null, "Worst case list item intro should be rendered.");
 	});
 
 	QUnit.test("FlagRendered", function(assert) {
-		assert.ok(jQuery.sap.domById(listItemId + "-flag"), "Flag marker should be rendered.");
-		assert.ok(jQuery.sap.byId(listItemId + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
+		assert.ok(document.getElementById(listItemId + "-flag"), "Flag marker should be rendered.");
+		assert.ok(jQuery("#" + listItemId + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
 	});
 
 	QUnit.test("FavoriteRendered", function(assert) {
-		assert.ok(jQuery.sap.domById(listItemId + "-favorite"), "Favorite marker should be rendered.");
-		assert.ok(jQuery.sap.byId(listItemId + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
+		assert.ok(document.getElementById(listItemId + "-favorite"), "Favorite marker should be rendered.");
+		assert.ok(jQuery("#" + listItemId + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
 	});
 
 	QUnit.test("MarkersOrder", function(assert) {
@@ -112,22 +113,22 @@ sap.ui.define([
 	});
 
 	QUnit.test("FirstStatusRendered", function(assert) {
-		assert.ok(jQuery.sap.domById(listItemId + "-status1"), "Worst case first status should be rendered.");
+		assert.ok(document.getElementById(listItemId + "-status1"), "Worst case first status should be rendered.");
 	});
 
 	QUnit.test("SecondStatusRendered", function(assert) {
-		assert.ok(jQuery.sap.domById(listItemId + "-status2"), "Worst case second status should be rendered.");
+		assert.ok(document.getElementById(listItemId + "-status2"), "Worst case second status should be rendered.");
 	});
 
 	QUnit.test("AttributesRendered", function(assert) {
 
-		assert.ok(jQuery.sap.domById(listItemId + "-firstAttr"), "Worst case first attribute should be rendered.");
-		assert.ok(jQuery.sap.domById(listItemId + "-secondAttr"), "Worst case second attribute should be rendered.");
-		assert.ok(!jQuery.sap.domById(listItemId + "-firstInvisibleAttr"), "Worst case first invisible attribute should not be rendered.");
-		assert.ok(jQuery.sap.domById(listItemId + "-thirdAttr"), "Worst case third attribute should be rendered.");
-		assert.ok(jQuery.sap.domById(listItemId + "-fourthAttr"), "Worst case fourth attribute should be rendered.");
-		assert.ok(!jQuery.sap.domById(listItemId + "-secondInvisibleAttr"), "Worst case second invisible attribute should not be rendered.");
-		assert.ok(jQuery.sap.domById(listItemId + "-fifthAttr"), "Worst case fifth attribute should be rendered.");
+		assert.ok(document.getElementById(listItemId + "-firstAttr"), "Worst case first attribute should be rendered.");
+		assert.ok(document.getElementById(listItemId + "-secondAttr"), "Worst case second attribute should be rendered.");
+		assert.ok(!document.getElementById(listItemId + "-firstInvisibleAttr"), "Worst case first invisible attribute should not be rendered.");
+		assert.ok(document.getElementById(listItemId + "-thirdAttr"), "Worst case third attribute should be rendered.");
+		assert.ok(document.getElementById(listItemId + "-fourthAttr"), "Worst case fourth attribute should be rendered.");
+		assert.ok(!document.getElementById(listItemId + "-secondInvisibleAttr"), "Worst case second invisible attribute should not be rendered.");
+		assert.ok(document.getElementById(listItemId + "-fifthAttr"), "Worst case fifth attribute should be rendered.");
 	});
 
 	QUnit.test("ObjectAttributeRowsRendered", function(assert) {
@@ -274,7 +275,7 @@ sap.ui.define([
 
 	QUnit.test("Number properties create a private sap.m.ObjectNumber control", function (assert) {
 		var oObjectNumberAggregation = showTextDir.getAggregation("_objectNumber");
-		assert.ok(oObjectNumberAggregation && oObjectNumberAggregation instanceof sap.m.ObjectNumber, "An instance of sap.m.ObjectNumber is created out of number, unit, numberState, numberTextDirection properties");
+		assert.ok(oObjectNumberAggregation && oObjectNumberAggregation.isA("sap.m.ObjectNumber"), "An instance of sap.m.ObjectNumber is created out of number, unit, numberState, numberTextDirection properties");
 		assert.strictEqual(oObjectNumberAggregation.getNumber(), showTextDir.getNumber(), "Both 'number' properties are in sync");
 		assert.strictEqual(oObjectNumberAggregation.getUnit(), showTextDir.getNumberUnit(), "Both 'unit' properties are in sync");
 		assert.strictEqual(oObjectNumberAggregation.getState(), showTextDir.getNumberState(), "Both 'ValueStates' properties are in sync");
@@ -299,8 +300,8 @@ sap.ui.define([
 		list.addItem(markersOlI);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.domById("draft"), "marker draft should be rendered.");
-		assert.ok(jQuery.sap.domById("favorite"), "marker favorite should be rendered.");
+		assert.ok(document.getElementById("draft"), "marker draft should be rendered.");
+		assert.ok(document.getElementById("favorite"), "marker favorite should be rendered.");
 
 		markersOlI.destroy();
 	});
@@ -323,7 +324,7 @@ sap.ui.define([
 		markersOlI.insertMarker(marker, 0);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.domById("draft"), "marker draft should be rendered.");
+		assert.ok(document.getElementById("draft"), "marker draft should be rendered.");
 
 		markersOlI.destroy();
 	});
@@ -342,7 +343,7 @@ sap.ui.define([
 		list.addItem(markersOlI);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery.sap.domById("flag"), "marker flag should be rendered.");
+		assert.ok(document.getElementById("flag"), "marker flag should be rendered.");
 
 		markersOlI.removeAllMarkers();
 		sap.ui.getCore().applyChanges();
@@ -759,7 +760,7 @@ sap.ui.define([
 		markerOli.setMarkFlagged(true);
 		setTimeout(function() {
 			assert.equal($("#" + markerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
-			assert.ok(jQuery.sap.byId(markerId + "-flag"), "Flag marker should be rendered.");
+			assert.ok(document.getElementById(markerId + "-flag"), "Flag marker should be rendered.");
 			done();
 		}, 100);
 	});
@@ -782,7 +783,7 @@ sap.ui.define([
 		markerOli.setMarkFlagged(false);
 		setTimeout(function() {
 			assert.equal($("#" + markerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
-			assert.ok(jQuery.sap.byId(markerId + "-favorite"), "Favorite marker should be rendered.");
+			assert.ok(document.getElementById(markerId + "-favorite"), "Favorite marker should be rendered.");
 			done();
 		}, 100);
 	});

@@ -746,7 +746,7 @@ sap.ui.define([
 		// act
 		var oCheckbox = this.oSelectionPanel._oTable.getItems()[0].$().find("input[type=checkbox]")[0];
 		assert.ok(oCheckbox, "Columns A shall contain a CheckBox");
-		sap.ui.test.qunit.triggerTouchEvent("tap", oCheckbox, {
+		qutils.triggerTouchEvent("tap", oCheckbox, {
 			srcControl: this.oSelectionPanel
 		});
 
@@ -771,7 +771,7 @@ sap.ui.define([
 		// act
 		var oCheckbox = this.oSelectionPanel._oTable.getItems()[0].$().find("input[type=checkbox]")[0];
 		assert.ok(oCheckbox, "Columns A shall contain a CheckBox");
-		sap.ui.test.qunit.triggerTouchEvent("tap", oCheckbox, {
+		qutils.triggerTouchEvent("tap", oCheckbox, {
 			srcControl: this.oSelectionPanel
 		});
 
@@ -842,7 +842,7 @@ sap.ui.define([
 
 		// act
 		this.oSelectionPanel._getSearchField().setValue("foo");
-		sap.ui.test.qunit.triggerTouchEvent("touchend", this.oSelectionPanel._getSearchField().$().find(".sapMSFS")[0], {
+		qutils.triggerTouchEvent("touchend", this.oSelectionPanel._getSearchField().$().find(".sapMSFS")[0], {
 			srcControl: this.oSelectionPanel._getSearchField()
 		});
 		this.clock.tick(500);
@@ -918,7 +918,7 @@ sap.ui.define([
 		// act
 		var oCheckbox = this.oSelectionPanel._oTable.getItems()[0].$().find("input[type=checkbox]")[0];
 		assert.ok(oCheckbox, "Columns A shall contain a CheckBox");
-		sap.ui.test.qunit.triggerTouchEvent("tap", oCheckbox, {
+		qutils.triggerTouchEvent("tap", oCheckbox, {
 			srcControl: this.oSelectionPanel
 		});
 
@@ -953,7 +953,7 @@ sap.ui.define([
 		// act
 		var oCheckbox = this.oSelectionPanel._oTable.getItems()[0].$().find("input[type=checkbox]")[0];
 		assert.ok(oCheckbox, "Columns A shall contain a CheckBox");
-		sap.ui.test.qunit.triggerTouchEvent("tap", oCheckbox, {
+		qutils.triggerTouchEvent("tap", oCheckbox, {
 			srcControl: this.oSelectionPanel
 		});
 	});

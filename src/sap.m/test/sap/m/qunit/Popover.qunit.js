@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -18,7 +17,7 @@ sap.ui.define([
 	"sap/m/Image",
 	"sap/m/Label",
 	"sap/m/SearchField",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/core/Popup",
 	"sap/m/NavContainer",
@@ -27,8 +26,8 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/m/Title",
 	"sap/m/Input",
-	"jquery.sap.keycodes",
-	"jquery.sap.mobile"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/dom/containsOrEquals"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -55,10 +54,11 @@ sap.ui.define([
 	Parameters,
 	InvisibleText,
 	Title,
-	Input
+	Input,
+	KeyCodes,
+	containsOrEquals
 ) {
-	// shortcut for jQuery.device
-	var device = jQuery.device;
+	"use strict";
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
@@ -66,11 +66,15 @@ sap.ui.define([
 	// shortcut for sap.m.PlacementType
 	var PlacementType = mobileLibrary.PlacementType;
 
+	// shortcut for sap.m.TitleAlignment
+	var TitleAlignment = mobileLibrary.TitleAlignment;
+
 	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
 
-	var iBarHeight = 48, iArrowOffset = 9;
+	// var iBarHeight = 48;
+	var iArrowOffset = 9;
 
 	var oButton = new Button({
 		text: "Popover",
@@ -225,7 +229,7 @@ sap.ui.define([
 	QUnit.module("Initial Check");
 
 	QUnit.test("Initialization", function (assert){
-		assert.ok(!jQuery.sap.domById("popover"), "Popover is not rendered in the beginning.");
+		assert.ok(!document.getElementById("popover"), "Popover is not rendered in the beginning.");
 	});
 
 	QUnit.module("Open and Close", {
@@ -264,8 +268,8 @@ sap.ui.define([
 		assert.ok($popover.length, "Popover is rendered after it's opened.");
 		assert.ok($popover.closest("#sap-ui-static")[0], "Popover should be rendered inside the static uiArea.");
 		assert.ok(Math.ceil($popover.offset().top - iArrowOffset) >= Math.floor($Button.offset().top + $Button.outerHeight()), "Popover should be opened at the bottom of the button");
-		if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
-			assert.ok(jQuery.sap.containsOrEquals($popover[0], document.activeElement), "Popover should have the focus");
+		if (!Device.support.touch) {
+			assert.ok(containsOrEquals($popover[0], document.activeElement), "Popover should have the focus");
 		}
 		assert.equal(fnBeforeOpen.callCount, 1, "beforeOpen event is fired");
 		assert.equal(fnAfterOpen.callCount, 1, "afterOpen event is fired");
@@ -291,8 +295,8 @@ sap.ui.define([
 		oButton.firePress();
 		assert.ok(oPopover.isOpen(), "Popover is already open");
 		this.clock.tick(500);
-		var $popover = jQuery.sap.byId("popover");
-		assert.ok(jQuery.sap.domById("popover"), "Popover is rendered after it's opened.");
+		var $popover = jQuery("#popover");
+		assert.ok(document.getElementById("popover"), "Popover is rendered after it's opened.");
 		assert.ok($popover.closest("#sap-ui-static")[0], "Popover should be rendered inside the static uiArea.");
 		assert.ok(Math.ceil($popover.offset().left - iArrowOffset) >= Math.floor(oButton.$().offset().left + oButton.$().outerWidth()), "Popover should be opened at the right side of the button");
 		//the window size of the test machine is too small, this test can't be executed successfully
@@ -304,7 +308,7 @@ sap.ui.define([
 	QUnit.test("Close", function (assert){
 		oPopover.close();
 		this.clock.tick(500);
-		assert.equal(jQuery.sap.byId("popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
+		assert.equal(jQuery("#popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
 		assert.ok(!oPopover.isOpen(), "Popover is already closed");
 	});
 
@@ -314,9 +318,9 @@ sap.ui.define([
 		oButton.firePress();
 		assert.ok(oPopover.isOpen(), "Popover is already open");
 		this.clock.tick(500);
-		var $popover = jQuery.sap.byId("popover"),
+		var $popover = jQuery("#popover"),
 				$Button = jQuery(oButton.getFocusDomRef());
-		assert.ok(jQuery.sap.domById("popover"), "Popover is rendered after it's opened.");
+		assert.ok(document.getElementById("popover"), "Popover is rendered after it's opened.");
 		assert.ok($popover.closest("#sap-ui-static")[0], "Popover should be rendered inside the static uiArea.");
 		assert.ok(Math.floor($popover.offset().left + $popover.outerWidth() + iArrowOffset) <= Math.ceil($Button.offset().left), "Popover should be opened at the left side of the button");
 		//the window size of the test machine is too small, this test can't be executed successfully
@@ -327,7 +331,7 @@ sap.ui.define([
 	QUnit.test("Close", function (assert){
 		oPopover.close();
 		this.clock.tick(500);
-		assert.equal(jQuery.sap.byId("popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
+		assert.equal(jQuery("#popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
 		assert.ok(!oPopover.isOpen(), "Popover is already closed");
 	});
 
@@ -337,9 +341,9 @@ sap.ui.define([
 		oButton.firePress();
 		assert.ok(oPopover.isOpen(), "Popover is already open");
 		this.clock.tick(500);
-		var $popover = jQuery.sap.byId("popover"),
+		var $popover = jQuery("#popover"),
 				$Button = jQuery(oButton.getDomRef("inner"));
-		assert.ok(jQuery.sap.domById("popover"), "Popover is rendered after it's opened.");
+		assert.ok(document.getElementById("popover"), "Popover is rendered after it's opened.");
 		assert.ok($popover.closest("#sap-ui-static")[0], "Popover should be rendered inside the static uiArea.");
 		if (jQuery(window).height() > 150) {
 			// when the browser window is really short, this has to be disabled.
@@ -355,7 +359,7 @@ sap.ui.define([
 	QUnit.test("Close", function (assert){
 		oPopover.close();
 		this.clock.tick(500);
-		assert.equal(jQuery.sap.byId("popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
+		assert.equal(jQuery("#popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
 		assert.ok(!oPopover.isOpen(), "Popover is already closed");
 	});
 
@@ -400,13 +404,13 @@ sap.ui.define([
 
 	QUnit.test('ESCAPE should not dismiss the Popover in certain situations', function (assert) {
 		var fnKeyDownModifiers = function (iCode) {
-				sap.ui.test.qunit.triggerKeydown(this.oPopover.getDomRef(), iCode);
-				sap.ui.test.qunit.triggerKeydown(this.oPopover.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+				qutils.triggerKeydown(this.oPopover.getDomRef(), iCode);
+				qutils.triggerKeydown(this.oPopover.getDomRef(), KeyCodes.ESCAPE);
 				this.clock.tick(1000);  // wait eventual animation
 			}.bind(this),
 			fnKeyUpModifiers = function (iCode) {
-				sap.ui.test.qunit.triggerKeyup(this.oPopover.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
-				sap.ui.test.qunit.triggerKeyup(this.oPopover.getDomRef(), iCode);
+				qutils.triggerKeyup(this.oPopover.getDomRef(), KeyCodes.ESCAPE);
+				qutils.triggerKeyup(this.oPopover.getDomRef(), iCode);
 				this.clock.tick(1000);  // wait eventual animation
 			}.bind(this);
 		// arrange
@@ -414,17 +418,17 @@ sap.ui.define([
 		this.clock.tick(1000);  // wait 1s after the open animation is completed
 
 		// Act
-		fnKeyDownModifiers(jQuery.sap.KeyCodes.SPACE);
+		fnKeyDownModifiers(KeyCodes.SPACE);
 		// Assert
 		assert.strictEqual(this.oPopover.isOpen(), true, "ESCAPE when Space is hold, should not close the Popover");
 		// Cleanup
-		fnKeyUpModifiers(jQuery.sap.KeyCodes.SPACE);
+		fnKeyUpModifiers(KeyCodes.SPACE);
 		// Assert
 		assert.strictEqual(this.oPopover.isOpen(), true, "The Popover should still be in Open state");
 
 		// Act
-		sap.ui.test.qunit.triggerKeydown(this.oPopover.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
-		sap.ui.test.qunit.triggerKeyup(this.oPopover.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(this.oPopover.getDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeyup(this.oPopover.getDomRef(), KeyCodes.ESCAPE);
 		this.clock.tick(500);
 
 		// Assert
@@ -467,7 +471,7 @@ sap.ui.define([
 		oButton2.firePress();
 		this.clock.tick(500);
 
-		sap.ui.test.qunit.triggerKeydown(oPopover.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oPopover.getDomRef(), KeyCodes.ESCAPE);
 		this.clock.tick(500);
 
 		// Assert
@@ -711,11 +715,11 @@ sap.ui.define([
 		this.clock.tick(500);
 		oPopover.setModal(true);
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.domById("sap-ui-blocklayer-popup"), "Block layer is rendered");
-		assert.equal(jQuery.sap.byId("sap-ui-blocklayer-popup").css("visibility"), "visible", "block layer is visible");
+		assert.ok(document.getElementById("sap-ui-blocklayer-popup"), "Block layer is rendered");
+		assert.equal(jQuery("#sap-ui-blocklayer-popup").css("visibility"), "visible", "block layer is visible");
 		oPopover.setModal(false);
 		sap.ui.getCore().applyChanges();
-		assert.equal(jQuery.sap.byId("sap-ui-blocklayer-popup").css("visibility"), "hidden", "block layer is invisible");
+		assert.equal(jQuery("#sap-ui-blocklayer-popup").css("visibility"), "hidden", "block layer is invisible");
 	});
 
 	QUnit.test("Set title", function (assert){
@@ -738,7 +742,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		var oBeginButtonFocusDom = oBeginButton.getFocusDomRef();
 		assert.ok(oBeginButtonFocusDom, "BeginButton should be rendered");
-		if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
+		if (!Device.support.touch) {
 			assert.equal(oBeginButtonFocusDom, document.activeElement, "beginButton should have the focus");
 		}
 		assert.ok(oBeginButton.$().closest("#" + oPopover.getId() + "-intHeader-BarLeft")[0], "Left button is set in the left side of the bar in iOS");
@@ -746,7 +750,7 @@ sap.ui.define([
 		oBeginButton.setEnabled(false);
 		sap.ui.getCore().applyChanges();
 
-		if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
+		if (!Device.support.touch) {
 			assert.equal(oPopover.getDomRef(), document.activeElement, "beginButton should not trap the focus");
 		}
 	});
@@ -754,17 +758,17 @@ sap.ui.define([
 	QUnit.test("Add right button", function (assert){
 		oPopover.setEndButton(oEndButton);
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.domById("endButton"), "EndButton should be rendered");
+		assert.ok(document.getElementById("endButton"), "EndButton should be rendered");
 		assert.ok(oEndButton.$().closest("#" + oPopover.getId() + "-intHeader-BarRight")[0], "EndButton is set in the right side of the bar");
 
-		if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
+		if (!Device.support.touch) {
 			assert.equal(oEndButton.getFocusDomRef(), document.activeElement, "endButton should be focused, when beginButton is disabled");
 		}
 
 		oEndButton.setEnabled(false);
 		sap.ui.getCore().applyChanges();
 
-		if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
+		if (!Device.support.touch) {
 			assert.equal(oPopover.getDomRef(), document.activeElement, "endButton should not trap the focus");
 		}
 
@@ -775,7 +779,7 @@ sap.ui.define([
 		oPopover.setBeginButton(null);
 		sap.ui.getCore().applyChanges();
 		var oEndButtonFocusDom = oEndButton.getFocusDomRef();
-		if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
+		if (!Device.support.touch) {
 			assert.equal(oEndButtonFocusDom, document.activeElement, "EndButton should have the focus");
 		}
 		if (Device.os.ios) {
@@ -861,7 +865,7 @@ sap.ui.define([
 	QUnit.test("Set custom header", function (assert){
 		oPopover.setCustomHeader(oCustomHeader);
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.domById("customHeader"), "Custom Header is rendered");
+		assert.ok(document.getElementById("customHeader"), "Custom Header is rendered");
 		assert.ok(!oPopover.getDomRef("intHeader"), "Internal header is destroyed");
 		oPopover.destroy();
 	});
@@ -880,7 +884,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		assert.ok(oPopover.isOpen(), "Popover is open");
-		assert.ok(jQuery.sap.containsOrEquals(oButtonInPopover.getDomRef(), document.activeElement), "focus is set to the button in popover");
+		assert.ok(containsOrEquals(oButtonInPopover.getDomRef(), document.activeElement), "focus is set to the button in popover");
 
 		oButton.focus();
 		this.clock.tick(500);
@@ -898,11 +902,9 @@ sap.ui.define([
 			tablet: false
 		};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
-		this.stub(device, "is", oSystem);
-
-		this.stub(Popup.prototype, "touchEnabled", false);
+		this.stub(Popup.prototype, "touchEnabled").value(false);
 
 		var oPopover = new Popover({
 			contentWidth: "300px",
@@ -954,7 +956,7 @@ sap.ui.define([
 			tablet: false
 		};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 
 		var sId = "scrollPosPopover",
@@ -964,7 +966,7 @@ sap.ui.define([
 					contentWidth: "300px",
 					contentHeight: "300px",
 					content: new HTML({
-						content: "<div style='width: 500px; height: 600px'></div>"
+						content: "<div class='width500height600'></div>"
 					}),
 					placement: PlacementType.Top
 				});
@@ -975,7 +977,6 @@ sap.ui.define([
 		oPopover.openBy(oButton);
 		this.clock.tick(500);
 
-		var $Content = jQuery.sap.byId(sId + "-cont");
 		oPopover._oScroller.scrollTo(iScrollLeft, iScrollTop, 1);
 
 		//trigger content resize listener
@@ -993,7 +994,7 @@ sap.ui.define([
 			tablet: false
 		};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oButton = new Button();
 		oButton.placeAt("content");
@@ -1004,7 +1005,7 @@ sap.ui.define([
 			contentWidth: "300px",
 			contentHeight: "300px",
 			content: new HTML({
-				content: "<div style='width: 500px; height: 600px'></div>"
+				content: "<div class='width500height600'></div>"
 			}),
 			placement: PlacementType.Top
 		});
@@ -1015,7 +1016,7 @@ sap.ui.define([
 		oPopover.openBy(oButton);
 		this.clock.tick(500);
 		assert.ok(oPopover.isOpen(), "Popover should be opened");
-		sap.ui.test.qunit.triggerKeydown(oPopover.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oPopover.getDomRef(), KeyCodes.ESCAPE);
 		this.clock.tick(500);
 		assert.ok(!oPopover.isOpen(), "Popover should be closed by ESCAPE key");
 		assert.equal(document.activeElement, oButton.getFocusDomRef(), "Focus should be set back to the button");
@@ -1023,7 +1024,7 @@ sap.ui.define([
 		oPopover.openBy(oButton);
 		this.clock.tick(500);
 		assert.ok(oPopover.isOpen(), "Popover should be opened");
-		sap.ui.test.qunit.triggerKeydown(oPopover.getDomRef(), jQuery.sap.KeyCodes.F4, false, true);
+		qutils.triggerKeydown(oPopover.getDomRef(), KeyCodes.F4, false, true);
 		this.clock.tick(500);
 		assert.ok(!oPopover.isOpen(), "Popover should be closed by Alt+F4 key");
 		assert.equal(document.activeElement, oButton.getFocusDomRef(), "Focus should be set back to the button");
@@ -1037,7 +1038,7 @@ sap.ui.define([
 			contentWidth: "300px",
 			contentHeight: "300px",
 			content: new HTML({
-				content: "<div style='width: 500px; height: 600px'></div>"
+				content: "<div class='width500height600'></div>"
 			}),
 			placement: PlacementType.Auto
 		});
@@ -1060,15 +1061,13 @@ sap.ui.define([
 			tablet: false
 		};
 
-		this.stub(Device, "system", oSystem);
-
-		this.stub(device, "is", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oPopover = new Popover({
 			contentWidth: "300px",
 			contentHeight: "300px",
 			content: new HTML({
-				content: "<div style='width: 500px; height: 600px'></div>"
+				content: "<div class='width500height600'></div>"
 			}),
 			placement: PlacementType.Auto
 		});
@@ -1243,7 +1242,7 @@ sap.ui.define([
 			tablet: false
 		};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oButton = new Button({
 			text: "Follow Me"
@@ -1366,7 +1365,7 @@ sap.ui.define([
 			phone: false
 		};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oButton = new Button({
 			text: "Open"
@@ -1376,7 +1375,7 @@ sap.ui.define([
 			contentWidth: "200px",
 			contentHeight: "200px",
 			content: new HTML({
-				content: "<div style='width: 400px;height: 400px'></div>"
+				content: "<div class='width400height400'></div>"
 			})
 		});
 
@@ -1430,7 +1429,6 @@ sap.ui.define([
 				sContentSelector = ".sapMPopoverCont > .sapMPopoverScroll",
 				sResponsiveSize = (Device.resize.width <= 599 ? "0px" : (Device.resize.width <= 1023 ? "16px" : "16px 32px")), // eslint-disable-line no-nested-ternary
 				aResponsiveSize = sResponsiveSize.split(" "),
-				$container,
 				$containerContent;
 
 		// Act
@@ -1993,7 +1991,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Popover should use normal arrow offset if a theme sets less variable _sap_m_Popover_ForceCompactArrowOffset to be false", function (assert){
-		var stubGetParameters = sinon.stub(Parameters, "get", function () { return "false";}),
+		var stubGetParameters = sinon.stub(Parameters, "get").callsFake(function () { return "false";}),
 			oPopover = new Popover();
 
 		oPopover.openBy(oButton2);
@@ -2268,7 +2266,7 @@ sap.ui.define([
 	QUnit.module("Integration");
 
 	QUnit.test("Focus should be taken out of Popover after closed on tablet", function (assert) {
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: false,
 			tablet: true,
@@ -2289,19 +2287,19 @@ sap.ui.define([
 
 		oPopover.openBy(oButton);
 		this.clock.tick(500);
-		assert.ok(jQuery.sap.containsOrEquals(oInput.getDomRef(), document.activeElement), "focus is set to input");
+		assert.ok(containsOrEquals(oInput.getDomRef(), document.activeElement), "focus is set to input");
 
 		oPopover.close();
 		this.clock.tick(500);
 
-		assert.ok(!jQuery.sap.containsOrEquals(oInput.getDomRef(), document.activeElement), "focus is not in input anymore");
+		assert.ok(!containsOrEquals(oInput.getDomRef(), document.activeElement), "focus is not in input anymore");
 
 		oPopover.destroy();
 		oButton.destroy();
 	});
 
 	QUnit.test("Focus should be taken out of Popover after closed on mobile", function (assert) {
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false,
@@ -2322,12 +2320,12 @@ sap.ui.define([
 
 		oPopover.openBy(oButton);
 		this.clock.tick(500);
-		assert.ok(jQuery.sap.containsOrEquals(oInput.getDomRef(), document.activeElement), "focus is set to input");
+		assert.ok(containsOrEquals(oInput.getDomRef(), document.activeElement), "focus is set to input");
 
 		oPopover.close();
 		this.clock.tick(500);
 
-		assert.ok(!jQuery.sap.containsOrEquals(oInput.getDomRef(), document.activeElement), "focus is not in input anymore");
+		assert.ok(!containsOrEquals(oInput.getDomRef(), document.activeElement), "focus is not in input anymore");
 
 		oPopover.destroy();
 		oButton.destroy();
@@ -2343,7 +2341,9 @@ sap.ui.define([
 		oPopover.attachAfterClose(afterCloseSpy);
 
 		//Act
-		jQuery.sap.delayedCall(1000, oPopover, "destroy");
+		setTimeout(function() {
+			oPopover.destroy();
+		}, 1000);
 		this.clock.tick(1001);
 
 		assert.strictEqual(beforeCloseSpy.called, false, "On destruction do not call beforeClose event");
@@ -2361,7 +2361,7 @@ sap.ui.define([
 		}).placeAt("content");
 		var oPopover = new Popover({
 			endButton: [
-				oCloseButton = new sap.m.Button({
+				oCloseButton = new Button({
 					text: "Close Popover",
 					press: function () {
 						oOpenButton.setVisible(false);
@@ -2438,8 +2438,8 @@ sap.ui.define([
 			}
 		};
 
-		this.stub(Device, "system", oDeviceParams.system);
-		this.stub(Device, "support", oDeviceParams.support);
+		this.stub(Device, "system").value(oDeviceParams.system);
+		this.stub(Device, "support").value(oDeviceParams.support);
 
 		var oResizeHandlerSpy = this.spy(Device.resize, "attachHandler");
 		var oButton = new Button().placeAt("content");
@@ -2447,7 +2447,7 @@ sap.ui.define([
 			contentWidth: "300px",
 			contentHeight: "300px",
 			content: new HTML({
-				content: "<div style='width: 500px; height: 600px'></div>"
+				content: "<div class='width500height600'></div>"
 			}),
 			afterOpen: function(oEvent) {
 				oPopover.destroy();
@@ -2480,8 +2480,8 @@ sap.ui.define([
 			}
 		};
 
-		this.stub(Device, "system", oDeviceParams.system);
-		this.stub(Device, "support", oDeviceParams.support);
+		this.stub(Device, "system").value(oDeviceParams.system);
+		this.stub(Device, "support").value(oDeviceParams.support);
 
 		var oPopover = new Popover({
 			content: [new Label({text: "Hello World!"})]
@@ -2560,6 +2560,7 @@ sap.ui.define([
 	QUnit.test("Item texts are not truncated when width is auto", function(assert) {
 		this.oPopover.openBy(this.oButton);
 		this.clock.tick(500);
+		this.clock.tick(1); // also process nested setTimeout calls
 
 		sap.ui.getCore().applyChanges();
 
@@ -2615,9 +2616,9 @@ sap.ui.define([
 		var oButton = new Button({text: "Test"});
 		var oPopover = new Popover("responsivePaddingsPopover", {
 			title: "Test title",
-			subHeader: new sap.m.Bar({
+			subHeader: new Bar({
 				contentMiddle: [
-					new sap.m.SearchField({
+					new SearchField({
 						placeholder: "Search ...",
 						width: "100%"
 					})
@@ -2636,14 +2637,13 @@ sap.ui.define([
 				})
 			],
 			footer: new Bar({
-				contentLeft: [new sap.m.Button({icon: "sap-icon://inspection", text: "short"})],
-				contentRight: [new sap.m.Button({icon: "sap-icon://home", text: "loooooong text"})]
+				contentLeft: [new Button({icon: "sap-icon://inspection", text: "short"})],
+				contentRight: [new Button({icon: "sap-icon://home", text: "loooooong text"})]
 			})
 		});
 
 		page.addContent(oButton);
 
-		var oStub = sinon.stub(window, "requestAnimationFrame", window.setTimeout);
 		sap.ui.getCore().applyChanges();
 
 		oPopover.addStyleClass("sapUiResponsivePadding--header");
@@ -2691,12 +2691,11 @@ sap.ui.define([
 		//cleanup
 		oPopover.destroy();
 		oButton.destroy();
-		oStub.restore();
 	});
 
 	QUnit.test("Should not throw exception if no DOM reference is found in _clearCSSStyles()", function (assert) {
 		var oPopover = new Popover({}),
-			oStub = sinon.stub(oPopover, "getDomRef", function() { return null; });
+			oStub = sinon.stub(oPopover, "getDomRef").callsFake(function() { return null; });
 
 		sap.ui.getCore().applyChanges();
 		oPopover._clearCSSStyles();
@@ -2732,7 +2731,7 @@ sap.ui.define([
 					"The default titleAlignment is '" + sInitialAlignment + "', there is class '" + sAlignmentClass + sInitialAlignment + "' applied to the Header");
 
 		// check if all types of alignment lead to apply the proper CSS class
-		for (sAlignment in sap.m.TitleAlignment) {
+		for (sAlignment in TitleAlignment) {
 			oPopover.setTitleAlignment(sAlignment);
 			oCore.applyChanges();
 			assert.ok(oPopover._getAnyHeader().hasStyleClass(sAlignmentClass + sAlignment),
@@ -2740,7 +2739,7 @@ sap.ui.define([
 		}
 
 		// check how many times setTitleAlignment method is called
-		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(sap.m.TitleAlignment).length,
+		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(TitleAlignment).length,
 			"'setTitleAlignment' method is called total " + setTitleAlignmentSpy.callCount + " times");
 
 		// cleanup

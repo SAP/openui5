@@ -1,13 +1,13 @@
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Text",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
+	"sap/ui/core/mvc/XMLView",
 	"sap/m/Panel",
 	"sap/m/TextRenderer"
 ], function(
@@ -18,6 +18,7 @@ sap.ui.define([
 	Text,
 	jQuery,
 	Core,
+	XMLView,
 	Panel,
 	TextRenderer
 ) {
@@ -28,9 +29,6 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.TextAlign
 	var TextAlign = coreLibrary.TextAlign;
-
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = coreLibrary.mvc.ViewType;
 
 	// shortcut for sap.m.WrappingType
 	var WrappingType = mobileLibrary.WrappingType;
@@ -57,28 +55,6 @@ sap.ui.define([
 	createAndAppendDiv("content91");
 	createAndAppendDiv("content92");
 	createAndAppendDiv("content93");
-	var sView1 =
-		"<mvc:View xmlns=\"sap.m\" xmlns:mvc=\"sap.ui.core.mvc\" controllerName=\"myController\">" +
-		"    <Text id=\"xmltext1\" text=\"Should visualize tab&#009;and new line&#xA;and escaped \n and \t\" renderWhitespace=\"true\" width=\"100%\"></Text>" +
-		"    <Text id=\"xmltext2\" text=\"{/text}\" renderWhitespace=\"true\" width=\"100%\"></Text>" +
-		"</mvc:View>";
-
-
-	sap.ui.controller("myController", {
-		doSomething: function() {
-			//something
-		}
-	});
-
-	var oData2 = {text: "Should visualize tab\tand new line\nand escaped \\n and \\t from binding"};
-	var myView = sap.ui.xmlview({viewContent:sView1, type:ViewType.XML});
-	var oModel2 = new JSONModel();
-
-	oModel2.setData(oData2);
-	myView.setModel(oModel2);
-
-	myView.placeAt('content64');
-
 
 	function countLines(oControl) {
 		return Math.round(oControl.$().height() / oControl.getLineHeight());
@@ -147,61 +123,61 @@ sap.ui.define([
 
 	QUnit.test("Text Output", function(assert) {
 		// test if result is in HTML
-		oDom = jQuery.sap.domById('Text1');
+		oDom = document.getElementById('Text1');
 		assert.equal(oDom.textContent,"This is a simple Text.", "Displayed Text");
 		// test if text is escaped
 		t1.setText("~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>");
 		oCore.applyChanges();
-		oDom = jQuery.sap.domById('Text1');
+		oDom = document.getElementById('Text1');
 		assert.equal(jQuery(oDom).text(),"~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>", "Escaping HTML-Text");
 	});
 
 	/*test("Wrapping", function() {
 		// test line height with wrapping on
-		oDom = jQuery.sap.domById('Text1');
+		oDom = document.getElementById('Text1');
 		var iLineHeight1 = oDom.clientHeight;
-		oDom = jQuery.sap.domById('Text2');
+		oDom = document.getElementById('Text2');
 		var iLineHeight2 = oDom.clientHeight;
 		assert.equal(iLineHeight2, iLineHeight1 * 5, "Wrapping on => 5 Lines (lineheight: " + iLineHeight1 +")");
 		// test line height with wrapping off
 		t2.setWrapping(false);
 		oCore.applyChanges();
-		oDom = jQuery.sap.domById('Text2');
+		oDom = document.getElementById('Text2');
 		iLineHeight2 = oDom.clientHeight;
 		assert.equal(iLineHeight2, iLineHeight1 * 3, "Wrapping off => 3 Lines (lineheight: " + iLineHeight1 +")");
 	});*/
 
 	QUnit.test("Width", function(assert) {
-		oDom = jQuery.sap.domById('Text2');
+		oDom = document.getElementById('Text2');
 		assert.equal(oDom.style.width, "155px", "Defined width");
 	});
 
 	QUnit.test("Text Align & RTL", function(assert) {
 		// default
 		oCore.applyChanges();
-		oDom = jQuery.sap.domById('Text1');
+		oDom = document.getElementById('Text1');
 		assert.equal(jQuery(oDom).css("text-align"),"left","Default (Begin) Text Align");
 		// right
 		t1.setTextAlign(TextAlign.Right);
 		oCore.applyChanges();
-		oDom = jQuery.sap.domById('Text1');
+		oDom = document.getElementById('Text1');
 		assert.equal(jQuery(oDom).css("text-align"),"right","Text Align Right");
 		// end
 		t1.setTextAlign(TextAlign.End);
 		oCore.applyChanges();
-		oDom = jQuery.sap.domById('Text1');
+		oDom = document.getElementById('Text1');
 		assert.equal(jQuery(oDom).css("text-align"),"right","Text Align End");
 		// RTL end
 		t1.setTextDirection(TextDirection.RTL);
 		oCore.applyChanges();
-		oDom = jQuery.sap.domById('Text1');
+		oDom = document.getElementById('Text1');
 		assert.equal(jQuery(oDom).css("text-align"),"left","Text Align End in RTL");
 		assert.equal(jQuery(oDom).attr("dir"),"rtl","Attribute 'dir' for Text Direction is set to RTL");
 
 		// RTL left
 		t1.setTextAlign(TextAlign.Left);
 		oCore.applyChanges();
-		oDom = jQuery.sap.domById('Text1');
+		oDom = document.getElementById('Text1');
 		assert.equal(jQuery(oDom).css("text-align"),"left","Text Align Left in RTL");
 		// reset
 		t1.setTextDirection(TextDirection.Inherit);
@@ -213,23 +189,45 @@ sap.ui.define([
 		t1.setText(null);
 		try {
 			oCore.applyChanges();
-			oDom = jQuery.sap.domById('Text1');
+			oDom = document.getElementById('Text1');
 			assert.equal(oDom.textContent,"", "Null Text");
 		} catch (e) {
 			// do nothing but let "expect" raise an error
 		}
 		t1.setText("Hello World!");
 		oCore.applyChanges();
-		oDom = jQuery.sap.domById('Text1');
+		oDom = document.getElementById('Text1');
 		assert.equal(oDom.textContent,"Hello World!", "Text entered again");
 	});
 
 	QUnit.test("New line characters in XML view", function(assert) {
-		var myText64a = sap.ui.getCore().byId("__xmlview0--xmltext1");
-		assert.equal(countLines(myText64a), 2, "Text from XML view should be in 2 lines");
+		var sViewXML =
+			"<mvc:View xmlns=\"sap.m\" xmlns:mvc=\"sap.ui.core.mvc\">" +
+			"    <Text id=\"xmltext1\" text=\"Should visualize tab&#009;and new line&#xA;and escaped \n and \t\" renderWhitespace=\"true\" width=\"100%\"></Text>" +
+			"    <Text id=\"xmltext2\" text=\"{/text}\" renderWhitespace=\"true\" width=\"100%\"></Text>" +
+			"</mvc:View>";
 
-		var myText64b = sap.ui.getCore().byId("__xmlview0--xmltext2");
-		assert.equal(countLines(myText64b), 2, "Text from XML view with binding should be in 2 lines");
+		return XMLView.create({
+			definition: sViewXML
+		}).then(function(oView) {
+			oView.setModel(
+				new JSONModel({
+					text: "Should visualize tab\tand new line\nand escaped \\n and \\t from binding"
+				})
+			);
+			oView.placeAt('content64');
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			var myText64a = oView.byId("xmltext1");
+			assert.equal(countLines(myText64a), 2, "Text from XML view should be in 2 lines");
+
+			var myText64b = oView.byId("xmltext2");
+			assert.equal(countLines(myText64b), 2, "Text from XML view with binding should be in 2 lines");
+
+			// cleanup
+			oView.destroy();
+		});
 	});
 
 	QUnit.test("New line characters with binding", function(assert) {
@@ -281,14 +279,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("hyphenation", function(assert) {
-		oDom = jQuery.sap.domById("Text8");
+		oDom = document.getElementById("Text8");
 		assert.notEqual(oDom.innerHTML, "", "When property wrappingType is 'Hyphenated' some text is rendered"); // this is the only possible check. Provided hypens (dashes) will be additionally checked by Visual test
 	});
 
 	if (t5.canUseNativeLineClamp()) {
 		QUnit.test("native max lines", function(assert) {
 			assert.strictEqual(t5.$("inner").hasClass("sapMTextLineClamp"), true, "Text has correct class for native MaxLine");
-			equals(t5.$("inner").css("-webkit-line-clamp"), t5.getMaxLines(), "Text has correct line clamp value in CSS");
+			assert.equal(t5.$("inner").css("-webkit-line-clamp"), t5.getMaxLines(), "Text has correct line clamp value in CSS");
 			assert.strictEqual(t5.hasOwnProperty("_sResizeListenerId"), false, "Text does not have resize handler");
 		});
 	}
@@ -428,28 +426,21 @@ sap.ui.define([
 
 	QUnit.test("max lines with isThemeApplied true in RTL", function (assert){
 
-		var stubIsThemeApplied = sinon.stub(sap.ui.getCore(), "isThemeApplied", function () {
-			return true;
-		});
+		this.stub(sap.ui.getCore(), "isThemeApplied").returns(true);
 
 		var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
-		var textWithMaxLines = new sap.m.Text("textML-RTL", {
+		var textWithMaxLines = new Text("textML-RTL", {
 			width: "300px",
 			text: lorem,
 			textDirection: "RTL",
 			maxLines: 2
 		});
-		var stubCanUseNativeLineClamp = sinon.stub(textWithMaxLines,"canUseNativeLineClamp",function () {
-			return false;
-		});
-		sinon.spy(textWithMaxLines, "clampHeight");
+		this.stub(textWithMaxLines,"canUseNativeLineClamp").returns(false);
+		this.spy(textWithMaxLines, "clampHeight");
 		textWithMaxLines.placeAt("content91");
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(textWithMaxLines.clampHeight.calledOnce, "clampHeight was called ones");
-		textWithMaxLines.clampHeight.restore();
-		stubIsThemeApplied.restore();
-		stubCanUseNativeLineClamp.restore();
 
 	});
 
@@ -467,27 +458,20 @@ sap.ui.define([
 		var done = assert.async();
 		var sCurrentTheme = sap.ui.getCore().getConfiguration().getTheme();
 		var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
-		var stubIsThemeApplied = sinon.stub(sap.ui.getCore(), "isThemeApplied", function () {
-			return false;
-		});
+		this.stub(sap.ui.getCore(), "isThemeApplied").returns(false);
 
-		var textWithMaxLines = new sap.m.Text("textML", {
+		var textWithMaxLines = new Text("textML", {
 			width: "300px",
 			text: lorem,
 			maxLines: 2
 		});
-		var stubCanUseNativeLineClamp = sinon.stub(textWithMaxLines,"canUseNativeLineClamp",function () {
-			return false;
-		});
+		this.stub(textWithMaxLines,"canUseNativeLineClamp").returns(false);
 
-		sinon.spy(textWithMaxLines, "_handleThemeLoad");
+		this.spy(textWithMaxLines, "_handleThemeLoad");
 		textWithMaxLines.placeAt("content92");
 
 		themeChanged().then(function () {
 			assert.ok(textWithMaxLines._handleThemeLoad.calledOnce, "_handleThemeLoad was called ones");
-			textWithMaxLines._handleThemeLoad.restore();
-			stubIsThemeApplied.restore();
-			stubCanUseNativeLineClamp.restore();
 			sap.ui.getCore().applyTheme(sCurrentTheme);
 			done();
 		});

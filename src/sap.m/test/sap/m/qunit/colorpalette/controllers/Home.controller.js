@@ -1,10 +1,9 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/mvc/Controller',
 		'sap/m/ColorPalettePopover',
 		'sap/m/MessageToast'
 	],
-	function (jQuery, Controller, ColorPalettePopover, MessageToast) {
+	function (Controller, ColorPalettePopover, MessageToast) {
 	"use strict";
 
 	return Controller.extend("cp.opa.test.app.controllers.Home", {

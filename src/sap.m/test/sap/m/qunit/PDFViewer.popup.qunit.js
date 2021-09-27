@@ -3,7 +3,7 @@
 sap.ui.define([
 	"./PDFViewerTestUtils",
 	"sap/m/library",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/PDFViewerRenderer",
 	"sap/ui/Device"
 ], function (TestUtils, library, $, PDFViewerRenderer, Device) {

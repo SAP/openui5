@@ -1,12 +1,12 @@
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/m/TimePickerClocks",
 	"sap/m/TimePickerInternals",
 	"sap/ui/events/KeyCodes",
-	"jquery.sap.global"
-], function(QUnitUtils, TimePickerClocks, TimePickerInternals, KeyCodes, jQuery) {
+	"sap/ui/thirdparty/jquery"
+], function(TimePickerClocks, TimePickerInternals, KeyCodes, jQuery) {
+	"use strict";
+
 	QUnit.module("API", {
 		beforeEach: function () {
 			this.oTPC = new TimePickerClocks();
@@ -85,17 +85,14 @@ sap.ui.define([
 	QUnit.test("Call to setValue calls the _setTimeValues", function (assert) {
 		var sValue = "15:16:17",
 			sExpectedDate = new Date(2017, 11, 17, 15, 16, 17), // year, month, day, hours, minutes, seconds
-			oSetTimeValuesSpy = this.spy(this.oTPC, "_setTimeValues"),
-			oParseValueStub = this.stub(this.oTPC, "_parseValue", function () {
-				return sExpectedDate;
-			});
+			oSetTimeValuesSpy = this.spy(this.oTPC, "_setTimeValues");
+
+		this.stub(this.oTPC, "_parseValue").returns(sExpectedDate);
 
 		this.oTPC.setValue(sValue);
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oSetTimeValuesSpy.calledWithExactly(sExpectedDate, false), true, "_setTimeValues is called with parsed date");
-
-		oParseValueStub.restore();
 	});
 
 	QUnit.test("Call to setValue with '24:00:00' sets the value", function (assert) {
@@ -112,18 +109,15 @@ sap.ui.define([
 	QUnit.test("Call to setValue with value '24:00:00' calls the _setTimeValues", function (assert) {
 		var sValue = "24:00:00",
 			sExpectedDate = new Date(2017, 11, 17, 0, 0, 0), // year, month, day, hours, minutes, seconds
-			oSetTimeValuesSpy = this.spy(this.oTPC, "_setTimeValues"),
-			oParseValueStub = this.stub(this.oTPC, "_parseValue", function () {
-				return sExpectedDate;
-			});
+			oSetTimeValuesSpy = this.spy(this.oTPC, "_setTimeValues");
+
+		this.stub(this.oTPC, "_parseValue").returns(sExpectedDate);
 
 		this.oTPC.setValueFormat("HH:mm:ss");
 		this.oTPC.setValue(sValue);
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oSetTimeValuesSpy.calledWithExactly(sExpectedDate, true), true, "_setTimeValues is called with parsed date");
-
-		oParseValueStub.restore();
 	});
 
 	QUnit.module("Internals", {
@@ -142,10 +136,11 @@ sap.ui.define([
 	QUnit.test("_setTimevalues properly set value to clocks when Date(2017, 7, 8, 11, 12, 13) date is used", function (assert) {
 		var oHoursClock = { setSelectedValue: this.spy() },
 			oMinutesClock = { setSelectedValue: this.spy(), setEnabled: this.spy() },
-			oSecondsClock = { setSelectedValue: this.spy(), setEnabled: this.spy() },
-			oHoursClockStub = this.stub(this.oTPC, "_getHoursClock", function () { return oHoursClock; }),
-			oMinutesClockStub = this.stub(this.oTPC, "_getMinutesClock", function () { return oMinutesClock; }),
-			oSecondsClockStub = this.stub(this.oTPC, "_getSecondsClock", function () { return oSecondsClock; });
+			oSecondsClock = { setSelectedValue: this.spy(), setEnabled: this.spy() };
+
+		this.stub(this.oTPC, "_getHoursClock").returns(oHoursClock);
+		this.stub(this.oTPC, "_getMinutesClock").returns(oMinutesClock);
+		this.stub(this.oTPC, "_getSecondsClock").returns(oSecondsClock);
 
 		this.oTPC.setValueFormat("HH:mm:ss");
 		this.oTPC._setTimeValues(new Date(2017, 7, 8, 11, 12, 13), false);
@@ -153,26 +148,20 @@ sap.ui.define([
 		assert.ok(oHoursClock.setSelectedValue.calledWithExactly(11), "Hours are properly set to 11");
 		assert.ok(oMinutesClock.setSelectedValue.calledWithExactly(12), "Minutes are properly set to 12");
 		assert.ok(oSecondsClock.setSelectedValue.calledWithExactly(13), "Seconds are properly set to 13");
-
-		oHoursClockStub.restore();
-		oMinutesClockStub.restore();
-		oSecondsClockStub.restore();
 	});
 
 	QUnit.test("_setTimeValues properly enables Minutes and Seconds Clock when Date(2017, 7, 8, 11, 12, 13) date is used", function (assert) {
 		var oMinutesClock = { setSelectedValue: this.spy(), setEnabled: this.spy() },
-			oSecondsClock = { setSelectedValue: this.spy(), setEnabled: this.spy() },
-			oMinutesClockStub = this.stub(this.oTPC, "_getMinutesClock", function () { return oMinutesClock; }),
-			oSecondsClockStub = this.stub(this.oTPC, "_getSecondsClock", function () { return oSecondsClock; });
+			oSecondsClock = { setSelectedValue: this.spy(), setEnabled: this.spy() };
+
+		this.stub(this.oTPC, "_getMinutesClock").returns(oMinutesClock);
+		this.stub(this.oTPC, "_getSecondsClock").returns(oSecondsClock);
 
 		this.oTPC.setValueFormat("HH:mm:ss");
 		this.oTPC._setTimeValues(new Date(2017, 7, 8, 11, 12, 13), false);
 
 		assert.ok(oMinutesClock.setEnabled.calledWithExactly(true), "Minutes Clock is enabled");
 		assert.ok(oSecondsClock.setEnabled.calledWithExactly(true), "Seconds Clock is enabled");
-
-		oMinutesClockStub.restore();
-		oSecondsClockStub.restore();
 	});
 
 	QUnit.test("_setTimeValues properly set value to Clocks when date value is marking the end of the day new Date(2017, 7, 8, 0, 0, 0)", function (assert) {
@@ -232,15 +221,14 @@ sap.ui.define([
 
 	QUnit.test("_getDisplatFormatPattern should return local based pattern if default format names are used (short, medium, long or full)", function (assert) {
 		var sExpectedResult = "HH:mm:ss a",
-			aDisplayFormats = ["short", "medium", "long", "full"],
-			oGetLocaleBasedPatternStub = this.stub(this.oTPC, "_getLocaleBasedPattern", function () { return sExpectedResult;});
+			aDisplayFormats = ["short", "medium", "long", "full"];
+
+		this.stub(this.oTPC, "_getLocaleBasedPattern").returns(sExpectedResult);
 
 		aDisplayFormats.forEach(function (sStyle) {
 			this.oTPC.setDisplayFormat(sStyle);
 			assert.equal(this.oTPC._getDisplayFormatPattern(sStyle), sExpectedResult, "displayFormat is returned directly without modifications");
 		}, this);
-
-		oGetLocaleBasedPatternStub.restore();
 	});
 
 	QUnit.test("_getActiveClock returns the displayed clock", function (assert) {
@@ -283,7 +271,7 @@ sap.ui.define([
 		this.oTPC.setDisplayFormat("HH:mm:ss");
 
 		// assert
-		assert.ok(this.oTPC._getMinutesClock() instanceof sap.m.TimePickerClock, "should be instance of sap.m.TimePickerClock");
+		assert.ok(this.oTPC._getMinutesClock().isA("sap.m.TimePickerClock"), "should be instance of sap.m.TimePickerClock");
 		assert.ok(this.oTPC._getMinutesClock().getId().indexOf("-clockM") !== -1, "id of the clock should contain '-clockM'");
 	});
 
@@ -300,7 +288,7 @@ sap.ui.define([
 		this.oTPC.setDisplayFormat("HH:mm:ss");
 
 		// assert
-		assert.ok(this.oTPC._getSecondsClock() instanceof sap.m.TimePickerClock, "should be instance of sap.m.TimePickerClock");
+		assert.ok(this.oTPC._getSecondsClock().isA("sap.m.TimePickerClock"), "should be instance of sap.m.TimePickerClock");
 		assert.ok(this.oTPC._getSecondsClock().getId().indexOf("-clockS") !== -1, "id of the clock should contain '-clockS'");
 	});
 
@@ -317,7 +305,7 @@ sap.ui.define([
 		this.oTPC.setDisplayFormat("h:mm:ss a");
 
 		// assert
-		assert.ok(this.oTPC._getFormatButton() instanceof sap.m.SegmentedButton, "should be instance of sap.m.SegmentedButton");
+		assert.ok(this.oTPC._getFormatButton().isA("sap.m.SegmentedButton"), "should be instance of sap.m.SegmentedButton");
 		assert.ok(this.oTPC._getFormatButton().getId().indexOf("-format") !== -1, "id of the segmented button should contain -format");
 	});
 
@@ -360,9 +348,10 @@ sap.ui.define([
 		var iExpectedMinutes = 11,
 			iExpectedSeconds = 12,
 			oMinutesClock = { setEnabled: this.spy(), getEnabled: this.spy(), setSelectedValue: this.spy() },
-			oSecondsClock = { setEnabled: this.spy(), getEnabled: this.spy(), setSelectedValue: this.spy() },
-			oMinutesClockStub = this.stub(this.oTPC, "_getMinutesClock", function () { return oMinutesClock; }),
-			oSecondsClockStub = this.stub(this.oTPC, "_getSecondsClock", function () { return oSecondsClock; });
+			oSecondsClock = { setEnabled: this.spy(), getEnabled: this.spy(), setSelectedValue: this.spy() };
+
+		this.stub(this.oTPC, "_getMinutesClock").returns(oMinutesClock);
+		this.stub(this.oTPC, "_getSecondsClock").returns(oSecondsClock);
 		this.oTPC.setSupport2400(true);
 		this.oTPC._sMinutes = iExpectedMinutes;
 		this.oTPC._sSeconds = iExpectedSeconds;
@@ -375,10 +364,6 @@ sap.ui.define([
 		assert.ok(oMinutesClock.setSelectedValue.calledWithExactly(iExpectedMinutes), "Minutes clock value should be set to " + iExpectedMinutes);
 		assert.ok(oSecondsClock.setEnabled.calledWithExactly(true), "Seconds clock should be enabled");
 		assert.ok(oSecondsClock.setSelectedValue.calledWithExactly(iExpectedSeconds), "Seconds clock value should be set to " + iExpectedSeconds);
-
-		// cleanup
-		oMinutesClockStub.restore();
-		oSecondsClockStub.restore();
 	});
 
 	QUnit.test("_handleHoursChange disables minutes and seconds Clock and sets 0 values them", function (assert) {
@@ -386,9 +371,10 @@ sap.ui.define([
 		var iExpectedMinutes = 0,
 			iExpectedSeconds = 0,
 			oMinutesClock = { setEnabled: this.spy(), getEnabled: function() { return true; }, setSelectedValue: this.spy(), getSelectedValue: this.spy() },
-			oSecondsClock = { setEnabled: this.spy(), getEnabled: function() { return true; }, setSelectedValue: this.spy(), getSelectedValue: this.spy() },
-			oMinutesClockStub = this.stub(this.oTPC, "_getMinutesClock", function () { return oMinutesClock; }),
-			oSecondsClockStub = this.stub(this.oTPC, "_getSecondsClock", function () { return oSecondsClock; });
+			oSecondsClock = { setEnabled: this.spy(), getEnabled: function() { return true; }, setSelectedValue: this.spy(), getSelectedValue: this.spy() };
+
+		this.stub(this.oTPC, "_getMinutesClock").returns(oMinutesClock);
+		this.stub(this.oTPC, "_getSecondsClock").returns(oSecondsClock);
 		this.oTPC.setSupport2400(true);
 
 		// act
@@ -399,10 +385,6 @@ sap.ui.define([
 		assert.ok(oMinutesClock.setSelectedValue.calledWithExactly(iExpectedMinutes), "Minutes clock value should be set to " + iExpectedMinutes);
 		assert.ok(oSecondsClock.setEnabled.calledWithExactly(false), "Seconds clock should be disabled");
 		assert.ok(oSecondsClock.setSelectedValue.calledWithExactly(iExpectedSeconds), "Seconds clock value should be set to " + iExpectedSeconds);
-
-		// cleanup
-		oMinutesClockStub.restore();
-		oSecondsClockStub.restore();
 	});
 
 	QUnit.test("_replaceZeroHoursWith24 should properly replace the hours part from the string", function (assert) {

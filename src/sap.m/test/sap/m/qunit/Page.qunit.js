@@ -1,57 +1,47 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/HTML",
 	"sap/m/Button",
 	"sap/m/Page",
 	"sap/m/Bar",
 	"sap/m/SearchField",
+	"sap/m/library",
 	"sap/ui/core/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/OverflowToolbar",
 	"sap/ui/Device",
 	"sap/ui/qunit/utils/waitForThemeApplied",
-	"jquery.sap.global"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/dom/includeStylesheet",
+	"require"
 ], function(
-	qutils,
 	createAndAppendDiv,
 	HTML,
 	Button,
 	Page,
 	Bar,
 	SearchField,
+	mobileLibrary,
 	coreLibrary,
 	JSONModel,
 	OverflowToolbar,
 	Device,
 	waitForThemeApplied,
-	jQuery
+	jQuery,
+	includeStylesheet,
+	require
 ) {
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = coreLibrary.mvc.ViewType;
+	"use strict";
 
 	createAndAppendDiv("content");
-	var styleElement = document.createElement("style");
-	styleElement.textContent =
-		"#bigButton {" +
-		"	height: 2000px;" +
-		"}" +
-		"#p2content {" +
-		"	width: 2000px;" +
-		"	height: 2000px;" +
-		"}" +
-		"html," +
-		"#content," +
-		"#p3content," +
-		"#p4content {" +
-		"	width: 100%;" +
-		"	height: 100%;" +
-		"}";
-	document.head.appendChild(styleElement);
+
+	var pStyleLoaded = includeStylesheet({
+		url: require.toUrl("./Page.qunit.css")
+	});
 
 
+	var TitleAlignment = mobileLibrary.TitleAlignment;
 
 	var oHtml = new HTML({
 		content : '<h1 id="qunit-header">Header</h1><h2 id="qunit-banner"></h2><h2 id="qunit-userAgent"></h2><ol id="qunit-tests"></ol>'
@@ -81,7 +71,7 @@ sap.ui.define([
 		}), oButton]
 	}).placeAt("content");
 
-	var oPage3 = new Page("myThirdPage", {
+	/* var oPage3 = */ new Page("myThirdPage", {
 		showHeader : false,
 		enableScrolling : false,
 		content : new HTML({
@@ -89,27 +79,6 @@ sap.ui.define([
 		})
 	}).placeAt("content");
 
-
-	sap.ui.jsview("busyTestView", {
-		createContent: function() {
-			return new Page("busyTestPage1", {
-				title : "TestView",
-				showNavButton : true,
-				headerContent: [new Button({text:"HDRBTN"})],
-				content : new HTML({
-					content : "<div id='p4content'>yet another test content</div>"
-				})
-			});
-		}
-	});
-
-	var oView = sap.ui.view({id:"testView1", viewName:"busyTestView", type:ViewType.JS});
-	oView.placeAt("content");
-
-
-	jQuery(document).ready(function() {
-
-	});
 
 	QUnit.module("Initial Check");
 
@@ -300,7 +269,7 @@ sap.ui.define([
 			showFooter: true,
 			footer: [new OverflowToolbar({id: "idFooter", content: [new Button()]})]
 		}),
-		done = assert.async(2);
+		done = assert.async();
 
 		oPage.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -466,7 +435,7 @@ sap.ui.define([
 				} else if (Device.browser.safari || Device.browser.chrome) {
 					fScrollLeft = $Scroll.css("-webkit-transform").split(" ")[5];
 				}
-				return Math.round(parseFloat(s));
+				return Math.round(parseFloat(fScrollLeft));
 
 			} else { // NativeMouseScroller
 				fScrollLeft = document.getElementById(sPageId + "-cont").scrollTop;
@@ -492,11 +461,11 @@ sap.ui.define([
 			var oPage4 = new Page("myFourthPage",{
 				content:[
 					new HTML({
-						content : "<div style='height: 1200px'>1200px height div</div>"
+						content : "<div class='height1200'>1200px height div</div>"
 					}),
 					this.oTestButton = new Button(),
 					new HTML({
-						content : "<div style='height: 2000px'>2000px height div</div>"
+						content : "<div class='height2000'>2000px height div</div>"
 					})
 				]
 			});
@@ -544,7 +513,7 @@ sap.ui.define([
 			// System under Test + Act
 			/* eslint-disable no-nested-ternary */
 			var oContainer = new Page(), sContentSelector = "section", sResponsiveSize = (Device.resize.width <= 599 ? "0px"
-					: (Device.resize.width <= 1023 ? "16px" : "16px 32px")), aResponsiveSize = sResponsiveSize.split(" "), $container, $containerContent;
+					: (Device.resize.width <= 1023 ? "16px" : "16px 32px")), aResponsiveSize = sResponsiveSize.split(" "), $containerContent;
 			/* eslint-enable no-nested-ternary */
 
 			// Act
@@ -613,13 +582,12 @@ sap.ui.define([
 
 		oPage.setBusy(true);
 
-		jQuery.sap.delayedCall(1200, this, function() {
-			var $busyIndicator = jQuery('.sapUiLocalBusyIndicator')[0];
+		setTimeout(function() {
 			var sZIndex = jQuery('.sapUiLocalBusyIndicator').css('z-index');
 			assert.strictEqual(sZIndex, sDesiredZIndex, "z-index of the BusyIndicator is set correctly for Page with header/footer also covered");
 
 			done();
-		});
+		}, 1200);
 	});
 
 	QUnit.test("Busy Indication within Page (also covering header/footer)", function(assert){
@@ -629,14 +597,13 @@ sap.ui.define([
 		oPage.setContentOnlyBusy(true);
 		oPage.setBusy(true);
 
-		jQuery.sap.delayedCall(2300, this, function() {
-			var $busyIndicator = jQuery('.sapUiLocalBusyIndicator').get(0);
+		setTimeout(function() {
 			var sZIndex = jQuery('.sapUiLocalBusyIndicator').css('z-index');
 
 			assert.strictEqual(sZIndex, sDesiredZIndex, "z-index of the BusyIndicator is set correctly for Page with only content covered");
 
 			done();
-		});
+		}, 2300);
 	});
 
 	QUnit.module("Title ID propagation");
@@ -680,7 +647,7 @@ sap.ui.define([
 					"The default titleAlignment is '" + sInitialAlignment + "', there is class '" + sAlignmentClass + sInitialAlignment + "' applied to the Header");
 
 		// check if all types of alignment lead to apply the proper CSS class
-		for (sAlignment in sap.m.TitleAlignment) {
+		for (sAlignment in TitleAlignment) {
 			oPage.setTitleAlignment(sAlignment);
 			oCore.applyChanges();
 			assert.ok(oPage._getAnyHeader().hasStyleClass(sAlignmentClass + sAlignment),
@@ -688,12 +655,12 @@ sap.ui.define([
 		}
 
 		// check how many times setTitleAlignment method is called
-		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(sap.m.TitleAlignment).length,
+		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(TitleAlignment).length,
 			"'setTitleAlignment' method is called total " + setTitleAlignmentSpy.callCount + " times");
 
 		// cleanup
 		oPage.destroy();
 	});
 
-	return waitForThemeApplied();
+	return Promise.all([pStyleLoaded, waitForThemeApplied()]);
 });

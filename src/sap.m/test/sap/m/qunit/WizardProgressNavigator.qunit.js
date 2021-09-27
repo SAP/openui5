@@ -1,18 +1,17 @@
-/*global QUnit,sinon*/
+/*global QUnit */
 
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/m/WizardProgressNavigator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
 	"sap/ui/core/InvisibleText"
-], function(QUnitUtils, WizardProgressNavigator, JSONModel, Device, InvisibleText) {
+], function(WizardProgressNavigator, JSONModel, Device, InvisibleText) {
 	"use strict";
 
 	QUnit.module("sap.m.WizardProgressNavigator API", {
 		oSpies: {},
 		beforeEach: function () {
-			this.oSpies.stepChanged = sinon.spy();
+			this.oSpies.stepChanged = this.spy();
 			this.oProgressNavigator = new WizardProgressNavigator({
 				stepChanged: this.oSpies.stepChanged,
 				stepCount: 5
@@ -284,7 +283,7 @@ sap.ui.define([
 			this.oSpies = {};
 			this.oParams = {};
 
-			this.oSpies.stepChanged = sinon.spy(function(event) {
+			this.oSpies.stepChanged = this.spy(function(event) {
 				that.oParams.prevIndex = event.getParameter("previous");
 				that.oParams.currentIndex = event.getParameter("current");
 			});
@@ -320,13 +319,13 @@ sap.ui.define([
 
 	QUnit.test("Tapping on action sheet on mobile should fire stepChanged", function(assert) {
 
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
 		});
 
-		var oStepChangedSpy = sinon.spy(),
+		var oStepChangedSpy = this.spy(),
 			$steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
 		this.oProgressNavigator.attachStepChanged(oStepChangedSpy);
 
@@ -344,7 +343,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Tapping on NON ACTIVE step", function(assert) {
-		var oStepChangedSpy = sinon.spy(),
+		var oStepChangedSpy = this.spy(),
 			$steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
 
 		this.oProgressNavigator.attachStepChanged(oStepChangedSpy);
@@ -355,7 +354,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Tapping on ACTIVE step", function(assert) {
-		var oStepChangedSpy = sinon.spy(),
+		var oStepChangedSpy = this.spy(),
 			$steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
 
 		this.oProgressNavigator.nextStep().previousStep();
@@ -568,7 +567,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_updateOpenSteps should not throw when this._aCachedSteps is undefined.", function (assert) {
-		var oThrowSpy = new sinon.spy(this.oProgressNavigator, "_updateOpenSteps");
+		var oThrowSpy = this.spy(this.oProgressNavigator, "_updateOpenSteps");
 
 		// arrange
 		this.oProgressNavigator._aCachedSteps = undefined;
@@ -582,8 +581,5 @@ sap.ui.define([
 
 		// assert
 		assert.ok(!oThrowSpy.threw(), "The method didn't threw.");
-
-		// clean
-		oThrowSpy.restore();
 	});
 });

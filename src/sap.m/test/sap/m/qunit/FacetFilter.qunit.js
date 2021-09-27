@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -8,7 +7,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/m/Popover",
 	"sap/m/FacetFilterItem",
@@ -16,13 +15,13 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/ListItemBase",
 	"sap/ui/events/jquery/EventExtension",
+	"sap/ui/events/jquery/EventSimulation",
 	"sap/ui/model/Sorter",
 	"sap/m/HBox",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/base/EventProvider",
 	"sap/m/GroupHeaderListItem",
-	"sap/ui/qunit/utils/waitForThemeApplied",
-	"jquery.sap.keycodes"
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -39,6 +38,7 @@ sap.ui.define([
 	Page,
 	ListItemBase,
 	EventExtension,
+	EventSimulation,
 	Sorter,
 	HBox,
 	InvisibleText,
@@ -71,6 +71,7 @@ sap.ui.define([
 
 	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);
 
+	QUnit.module("");
 
 	QUnit.test("All lists are available to the FacetFilter control when 'reset' event handler is called", function(assert) {
 		// prepare
@@ -84,7 +85,7 @@ sap.ui.define([
 			oButton,
 			oPopover;
 
-		this.stub(sap.ui.Device.support, "touch", true);
+		this.stub(Device.support, "touch").value(true);
 		oFF.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
@@ -219,13 +220,13 @@ sap.ui.define([
 
 	QUnit.test("FacetFilter.init", function(assert) {
 
-		var oFF = new FacetFilter(),
-		oFFS = oFF._enableTouchSupport();
+		var oFF = new FacetFilter();
+		oFF._enableTouchSupport();
 		// Verify the add facet button is created
 		var oAddFacetButton = oFF.getAggregation("addFacetButton");
 		assert.ok(oAddFacetButton, "The add facet button is created");
 
-		jQuery.sap.touchEventMode === "ON";
+		EventSimulation.touchEventMode === "ON";
 		oFF._enableTouchSupport();
 
 		Device.system.phone;
@@ -366,7 +367,7 @@ sap.ui.define([
 		assert.ok(!oDialog, "Dialog should be created lazily");
 
 		oDialog = oFF._getFacetDialog();
-		assert.ok(oDialog instanceof sap.m.Dialog, "Should be an instance of sap.m.Dialog");
+		assert.ok(oDialog.isA("sap.m.Dialog"), "Should be an instance of sap.m.Dialog");
 		assert.ok(oDialog, "Dialog should not be null");
 		assert.ok(oFF.getAggregation("dialog"), "Dialog aggregation should be created");
 
@@ -467,16 +468,16 @@ sap.ui.define([
 
 		var oPageSubHeader = oPage.getSubHeader();
 		assert.ok(oPageSubHeader, "Page should have a sub header");
-		assert.ok(oPageSubHeader instanceof sap.m.Bar, "Page sub header should be a Bar");
+		assert.ok(oPageSubHeader.isA("sap.m.Bar"), "Page sub header should be a Bar");
 
 		var oPageSubHeaderSearchField = oPageSubHeader.getContentMiddle()[0];
 		assert.ok(oPageSubHeaderSearchField, "Page sub header should have content");
-		assert.ok(oPageSubHeaderSearchField instanceof sap.m.SearchField, "Page sub header should be a SearchField");
+		assert.ok(oPageSubHeaderSearchField.isA("sap.m.SearchField"), "Page sub header should be a SearchField");
 		assert.equal(oPageSubHeaderSearchField.getWidth(), "100%", "Page search field width should be 100%");
 
 		var oFacetList = oPage.getContent()[0];
 		assert.ok(oFacetList, "Page should have content");
-		assert.ok(oFacetList instanceof sap.m.List, "Page content should be a List");
+		assert.ok(oFacetList.isA("sap.m.List"), "Page content should be a List");
 		oFF.destroy();
 	});
 
@@ -522,10 +523,10 @@ sap.ui.define([
 		oFFL1.addItem(new FacetFilterItem());
 		var oCheckboxBar1 = oFF._createSelectAllCheckboxBar(oFFL1);
 		assert.ok(oCheckboxBar1, "The checkbox bar is created");
-		assert.ok(oCheckboxBar1 instanceof sap.m.Bar, "The checkbox bar should be a Bar");
+		assert.ok(oCheckboxBar1.isA("sap.m.Bar"), "The checkbox bar should be a Bar");
 		var oCheckBox1 = oCheckboxBar1.getContentLeft()[0];
 		assert.ok(oCheckBox1, "A control is contained in the left content of the bar");
-		assert.ok(oCheckBox1 instanceof sap.m.CheckBox, "The bar contains a CheckBox");
+		assert.ok(oCheckBox1.isA("sap.m.CheckBox"), "The bar contains a CheckBox");
 		assert.ok(oCheckBox1.getTooltip(),"CheckBox contain tooltip");
 		assert.ok(!oCheckBox1.getSelected(), "Checkbox should be initially unchecked when the list is active and contains no selections");
 		oFFL1.destroy();
@@ -556,7 +557,7 @@ sap.ui.define([
 
 		var oFF = new FacetFilter();
 		var oNavContainer = oFF._getFacetDialogNavContainer();
-		assert.ok(oNavContainer instanceof sap.m.NavContainer, "Should be an instance of sap.m.NavContainer");
+		assert.ok(oNavContainer.isA("sap.m.NavContainer"), "Should be an instance of sap.m.NavContainer");
 		assert.ok(oNavContainer, "NavContainer should not be null");
 
 		assert.equal(oNavContainer.getPages().length, 1, "Nav container should contain one pages");
@@ -592,20 +593,20 @@ sap.ui.define([
 			var oFacetFilterList = oFacetFilterListPage.getContent()[1];
 			var oCurrentPage = oNavContainer.getCurrentPage();
 			assert.strictEqual(oFacetFilterListPage, oCurrentPage, "The current page should be the facet filter item page");
-			assert.ok(oFacetFilterListBar instanceof sap.m.Bar, 'The first content item is the Bar that contains selectAll checkbox');
+			assert.ok(oFacetFilterListBar.isA("sap.m.Bar"), 'The first content item is the Bar that contains selectAll checkbox');
 			assert.strictEqual(oFFL1, oFacetFilterList, 'The second content item is the Facet filter list page');
 
 			var oPageSubHeader = oCurrentPage.getSubHeader();
 			assert.ok(oPageSubHeader, "Page should have a sub header");
-			assert.ok(oPageSubHeader instanceof sap.m.Bar, "Page sub header should be a Bar");
+			assert.ok(oPageSubHeader.isA("sap.m.Bar"), "Page sub header should be a Bar");
 
 			var oPageSubHeaderSearchField = oPageSubHeader.getContentMiddle()[0];
 			assert.ok(oPageSubHeaderSearchField, "Page sub header should have content");
-			assert.ok(oPageSubHeaderSearchField instanceof sap.m.SearchField, "Page sub header should be a SearchField");
+			assert.ok(oPageSubHeaderSearchField.isA("sap.m.SearchField"), "Page sub header should be a SearchField");
 			assert.equal(sList1Title, oCurrentPage.getTitle(), "Current page should display the first facet filter list");
 			assert.ok(oFFL1.getItems()[0].getDomRef(), "Facet filter item should be rendered");
 			// in MultiSelect mode focus is on 1st item of 2nd content item, since the first content item is the Bar with "Select All" checkbox
-			assert.ok(jQuery.sap.byId(oFFL1.getItems()[0].getId()).is(":focus"), 'The first Facet filter item should be focused');
+			assert.ok(oFFL1.getItems()[0].$().is(":focus"), 'The first Facet filter item should be focused');
 
 			destroyFF(oFF);
 			done();
@@ -643,7 +644,7 @@ sap.ui.define([
 			assert.strictEqual(oFFL1, oFacetFilterList, 'The first content item is the Facet filter list page');
 			assert.ok(oFFL1.getItems()[0].getDomRef(), "Facet filter item should be rendered");
 			// in SingleSelectMaster focus is on the 1st content item 1st item
-			assert.ok(jQuery.sap.byId(oFFL1.getItems()[0].getId()).is(":focus"), 'The first Facet filter item should be focused');
+			assert.ok(oFFL1.getItems()[0].$().is(":focus"), 'The first Facet filter item should be focused');
 
 			destroyFF(oFF);
 			done();
@@ -1024,7 +1025,7 @@ sap.ui.define([
 
 		assert.equal(oSummaryBar.getContent().length, 1, "Summary bar should have one control in its content");
 		var oText = oSummaryBar.getContent()[0];
-		assert.ok(oText instanceof sap.m.Text, "Summary bar should have a Text control as its contents");
+		assert.ok(oText.isA("sap.m.Text"), "Summary bar should have a Text control as its contents");
 		assert.ok(!oSummaryBar.getActive(), "Summary bar should be inactive");
 		assert.equal(oSummaryBar.getDesign(), ToolbarDesign.Info, "Summary bar design should be Info");
 		assert.equal(oSummaryBar.getHeight(), "", "Toolbar height shouldn't be specified");
@@ -1450,7 +1451,7 @@ sap.ui.define([
 		var oFF = new FacetFilter(),
 			oFFL = new FacetFilterList(),
 			oSearchSpy = this.spy(oFFL, "_search"),
-				restoreListFromDisplayContainerStub = this.stub(oFF, "_restoreListFromDisplayContainer", function () {
+				restoreListFromDisplayContainerStub = this.stub(oFF, "_restoreListFromDisplayContainer").callsFake(function () {
 					return oFFL;
 				}),
 			oNavContainer = {
@@ -1871,7 +1872,7 @@ sap.ui.define([
 		assert.ok(!oArrow, "Arrow control is null if an invalid name is given");
 		oArrow = oFF._getScrollingArrow("left");
 		assert.ok(oArrow, "Arrow control is created");
-		assert.ok(oArrow instanceof sap.ui.core.Icon, "Arrow is an Icon");
+		assert.ok(oArrow.isA("sap.ui.core.Icon"), "Arrow is an Icon");
 		assert.equal(oArrow.getId(), oFF.getId() + "-arrowScrollLeft", "Icon id is correct");
 		assert.ok(oArrow.hasStyleClass("sapMPointer"), "Style class is set");
 		assert.ok(oArrow.hasStyleClass("sapMFFArrowScroll"), "Style class is set");
@@ -1883,7 +1884,7 @@ sap.ui.define([
 
 		oArrow = oFF._getScrollingArrow("right");
 		assert.ok(oArrow, "Arrow control is created");
-		assert.ok(oArrow instanceof sap.ui.core.Icon, "Arrow is an Icon");
+		assert.ok(oArrow.isA("sap.ui.core.Icon"), "Arrow is an Icon");
 		assert.equal(oArrow.getId(), oFF.getId() + "-arrowScrollRight", "Icon id is correct");
 		assert.ok(oArrow.hasStyleClass("sapMPointer"), "Style class is set");
 		assert.ok(oArrow.hasStyleClass("sapMFFArrowScroll"), "Style class is set");
@@ -1921,7 +1922,7 @@ sap.ui.define([
 			index: 1
 		}];
 		var oFacetFilter = new FacetFilter();
-		var oGetListsStub = this.stub(oFacetFilter, "getLists", function () { return aLists; });
+		var oGetListsStub = this.stub(oFacetFilter, "getLists").callsFake(function () { return aLists; });
 		var aResult = [];
 
 		// Act
@@ -1979,7 +1980,7 @@ sap.ui.define([
 		assert.ok(oDialog.isOpen(), "Dialog should be opened");
 		var aContent = oDialog.getContent();
 		assert.equal(aContent.length, 1, "Dialog contains one control in its content");
-		assert.ok(aContent[0] instanceof sap.m.NavContainer, "The dialog content is a NavContainer");
+		assert.ok(aContent[0].isA("sap.m.NavContainer"), "The dialog content is a NavContainer");
 
 		destroyFF(oFF);
 	});
@@ -2469,7 +2470,6 @@ sap.ui.define([
 
 	QUnit.test("FacetFilterList.listOpen", function(assert) {
 		var done = assert.async();
-		var oListOpenEvent = null;
 		var oFF = new FacetFilter();
 		var oFFL = new FacetFilterList({
 			title : "List"
@@ -2669,17 +2669,17 @@ sap.ui.define([
 	 **/
 
 	QUnit.test("FacetFilterList.listClose - called only once(scenario a)", function (assert) {
-		testListCloseCalledOnce.call(this, "Icon.touchstart->Icon.touchend->Icon.press->Popover.afterClose", "a");
+		testListCloseCalledOnce.call(this, assert, "Icon.touchstart->Icon.touchend->Icon.press->Popover.afterClose", "a");
 	});
 	QUnit.test("FacetFilterList.listClose - called only once(scenario b)", function (assert) {
-		testListCloseCalledOnce.call(this, "Icon.touchstart->Popover.afterClose->Icon.touchend->Icon.press", "b");
+		testListCloseCalledOnce.call(this, assert, "Icon.touchstart->Popover.afterClose->Icon.touchend->Icon.press", "b");
 	});
 
 	QUnit.test("FacetFilterList.listClose - called only once(scenario c)", function (assert) {
-		testListCloseCalledOnce.call(this, "Icon.touchstart->Popover.afterClose->Icon.touchend(outside the icon)-> no icon.press", "c");
+		testListCloseCalledOnce.call(this, assert, "Icon.touchstart->Popover.afterClose->Icon.touchend(outside the icon)-> no icon.press", "c");
 	});
 
-	function testListCloseCalledOnce(sSubtestName, sScenario) {
+	function testListCloseCalledOnce(assert, sSubtestName, sScenario) {
 		var done = assert.async();
 		var oFF = this.oFacetFilter;
 		var oFFL = oFF.getLists()[0];
@@ -3035,7 +3035,7 @@ sap.ui.define([
 
 		var oPage = getDialogFilterItemsPage(oFF);
 		var oList = oPage.getContent()[0];
-		if (!(oList instanceof sap.m.List)) { //May need to skip the select all checkbox bar if the list is multi select
+		if (!(oList.isA("sap.m.List"))) { //May need to skip the select all checkbox bar if the list is multi select
 			oList = oPage.getContent()[1];
 		}
 		return oList;

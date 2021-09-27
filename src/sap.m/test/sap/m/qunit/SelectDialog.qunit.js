@@ -14,7 +14,10 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/StandardListItemRenderer",
 	"sap/ui/core/Core",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/Fragment",
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/mvc/XMLView",
+	"sap/m/library"
 ],
 	function(
 		SelectDialog,
@@ -30,9 +33,14 @@ sap.ui.define([
 		Device,
 		StandardListItemRenderer,
 		Core,
-		InvisibleText
+		Fragment,
+		InvisibleText,
+		XMLView,
+		mobileLibrary
 	) {
 		"use strict";
+
+		var TitleAlignment = mobileLibrary.TitleAlignment;
 
 		function generateData() {
 			return {
@@ -223,7 +231,7 @@ sap.ui.define([
 				phone: false,
 				tablet: false
 			};
-			this.stub(Device, "system", oSystem);
+			this.stub(Device, "system").value(oSystem);
 
 			// Act
 			this.oSelectDialog.setDraggable(true);
@@ -240,7 +248,7 @@ sap.ui.define([
 				phone: true,
 				tablet: false
 			};
-			this.stub(Device, "system", oSystem);
+			this.stub(Device, "system").value(oSystem);
 
 			// Act
 			this.oSelectDialog.setDraggable(true);
@@ -257,7 +265,7 @@ sap.ui.define([
 				phone: false,
 				tablet: false
 			};
-			this.stub(Device, "system", oSystem);
+			this.stub(Device, "system").value(oSystem);
 
 			// Act
 			this.oSelectDialog.setResizable(true);
@@ -274,7 +282,7 @@ sap.ui.define([
 				phone: true,
 				tablet: false
 			};
-			this.stub(Device, "system", oSystem);
+			this.stub(Device, "system").value(oSystem);
 
 			// Act
 			this.oSelectDialog.setResizable(true);
@@ -332,7 +340,7 @@ sap.ui.define([
 
 			jQuery.when(this.oSelectDialog.open()).then(function (oEvent) {
 				assert.ok(document.getElementById("selectDialog-dialog"), "Dialog is opened");
-				assert.ok(that.oSelectDialog.getParent() instanceof sap.ui.core.UIArea, "Dialog is now a direct child of the UI Area");
+				assert.ok(that.oSelectDialog.getParent().isA("sap.ui.core.UIArea"), "Dialog is now a direct child of the UI Area");
 				assert.strictEqual(that.oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
 				assert.strictEqual(that.oSelectDialog._oSearchField.$("I").attr("aria-labelledby"), InvisibleText.getStaticId("sap.m", "SELECTDIALOG_SEARCH"), "aria-labelledby is correctly set");
 			});
@@ -388,7 +396,7 @@ sap.ui.define([
 
 			this.oSelectDialog._oDialog.attachAfterOpen(function () {
 				// Reset call count of spy
-				oUpdateSelectionIndicatorSpy.reset();
+				oUpdateSelectionIndicatorSpy.resetHistory();
 
 				// Assert
 				assert.strictEqual(that.oSelectDialog._aInitiallySelectedContextPaths.length, 1, "There is one selected item");
@@ -430,19 +438,23 @@ sap.ui.define([
 			'    </mvc:View>',
 				that = this;
 
-			this.oXmlViewOrFragment = sap.ui.xmlview({viewContent:xml});
-			this.oSelectDialog = this.oXmlViewOrFragment.byId("xmlSelectDialog");
+			return XMLView.create({
+				definition: xml
+			}).then(function(oView) {
+				this.oXmlViewOrFragment = oView;
+				this.oSelectDialog = this.oXmlViewOrFragment.byId("xmlSelectDialog");
 
-			assert.ok(this.oSelectDialog.getParent() instanceof sap.ui.core.mvc.XMLView, "Dialog's parent is instance of XML view");
-			assert.strictEqual(this.oSelectDialog.getParent(), this.oXmlViewOrFragment, "Dialog's parent is an XML view");
-			assert.strictEqual(this.oSelectDialog.getParent().getParent(), null, "The XML view has no parent");
-			assert.strictEqual(this.oSelectDialog.getUIArea(), null, "Dialog has no ui area before opening");
+				assert.ok(this.oSelectDialog.getParent() instanceof XMLView, "Dialog's parent is instance of XML view");
+				assert.strictEqual(this.oSelectDialog.getParent(), this.oXmlViewOrFragment, "Dialog's parent is an XML view");
+				assert.strictEqual(this.oSelectDialog.getParent().getParent(), null, "The XML view has no parent");
+				assert.strictEqual(this.oSelectDialog.getUIArea(), null, "Dialog has no ui area before opening");
 
-			jQuery.when(this.oSelectDialog.open()).then(function (oEvent) {
-				assert.ok(document.getElementById(that.oXmlViewOrFragment.createId("xmlSelectDialog-dialog")), "Dialog is opened");
-				assert.ok(that.oSelectDialog.getParent() instanceof sap.ui.core.UIArea, "Dialog is now a direct child of the UI Area");
-				assert.strictEqual(that.oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
-			});
+				return jQuery.when(this.oSelectDialog.open()).then(function (oEvent) {
+					assert.ok(document.getElementById(that.oXmlViewOrFragment.createId("xmlSelectDialog-dialog")), "Dialog is opened");
+					assert.ok(that.oSelectDialog.getParent().isA("sap.ui.core.UIArea"), "Dialog is now a direct child of the UI Area");
+					assert.strictEqual(that.oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
+				});
+			}.bind(this));
 		});
 
 		QUnit.test("Open SelectDialog that is defined within a fragment", function (assert) {
@@ -451,17 +463,21 @@ sap.ui.define([
 			 '    </core:FragmentDefinition>',
 				that = this;
 
-			this.oXmlViewOrFragment = sap.ui.xmlfragment({fragmentContent: sFragmentText});
-			this.oSelectDialog = sap.ui.getCore().byId("fragmentSelectDialog");
+			return Fragment.load({
+				definition: sFragmentText
+			}).then(function(oFragment) {
+				this.oXmlViewOrFragment = oFragment;
+				this.oSelectDialog = sap.ui.getCore().byId("fragmentSelectDialog");
 
-			assert.strictEqual(this.oSelectDialog.getParent(), null, "Dialog's parent is null");
-			assert.strictEqual(this.oSelectDialog.getUIArea(), null, "Dialog has no ui area before opening");
+				assert.strictEqual(this.oSelectDialog.getParent(), null, "Dialog's parent is null");
+				assert.strictEqual(this.oSelectDialog.getUIArea(), null, "Dialog has no ui area before opening");
 
-			jQuery.when(this.oSelectDialog.open()).then(function (oEvent) {
-				assert.ok(document.getElementById("fragmentSelectDialog-dialog"), "Dialog is opened");
-				assert.ok(that.oSelectDialog.getParent() instanceof sap.ui.core.UIArea, "Dialog is now a direct child of the UI Area");
-				assert.strictEqual(that.oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
-			});
+				return jQuery.when(this.oSelectDialog.open()).then(function (oEvent) {
+					assert.ok(document.getElementById("fragmentSelectDialog-dialog"), "Dialog is opened");
+					assert.ok(that.oSelectDialog.getParent().isA("sap.ui.core.UIArea"), "Dialog is now a direct child of the UI Area");
+					assert.strictEqual(that.oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
+				});
+			}.bind(this));
 		});
 
 		QUnit.module("Multiselection", {
@@ -1150,10 +1166,6 @@ sap.ui.define([
 
 			this.oSelectDialog._oDialog.close();
 			this.clock.tick(350);
-
-			oUpdateStartedSpy.reset();
-			oUpdateFinishedSpy.reset();
-			oSelectionChangeSpy.reset();
 		});
 
 		QUnit.module("Destroy", {
@@ -1313,7 +1325,7 @@ sap.ui.define([
 				tablet: false
 			};
 
-			this.stub(Device, "system", oSystem);
+			this.stub(Device, "system").value(oSystem);
 
 			// Act
 			this.oSelectDialog.open();
@@ -1335,7 +1347,7 @@ sap.ui.define([
 				tablet: false
 			};
 
-			this.stub(Device, "system", oSystem);
+			this.stub(Device, "system").value(oSystem);
 			bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
 
 			// Act
@@ -1358,7 +1370,7 @@ sap.ui.define([
 				tablet: false
 			};
 
-			this.stub(Device, "system", oSystem);
+			this.stub(Device, "system").value(oSystem);
 
 			// Act
 			this.oSelectDialog.open();
@@ -1769,7 +1781,7 @@ sap.ui.define([
 					"The default titleAlignment is '" + sInitialAlignment + "', there is class '" + sAlignmentClass + sInitialAlignment + "' applied to the Header");
 
 		// check if all types of alignment lead to apply the proper CSS class
-		for (sAlignment in sap.m.TitleAlignment) {
+		for (sAlignment in TitleAlignment) {
 			oDialog.setTitleAlignment(sAlignment);
 			oCore.applyChanges();
 			assert.ok(oDialog._oDialog.getCustomHeader().hasStyleClass(sAlignmentClass + sAlignment),
@@ -1777,7 +1789,7 @@ sap.ui.define([
 		}
 
 		// check how many times setTitleAlignment method is called
-		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(sap.m.TitleAlignment).length,
+		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(TitleAlignment).length,
 			"'setTitleAlignment' method is called total " + setTitleAlignmentSpy.callCount + " times");
 
 		// cleanup

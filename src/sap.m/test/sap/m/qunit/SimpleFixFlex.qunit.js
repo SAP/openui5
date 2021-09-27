@@ -2,11 +2,10 @@
 sap.ui.define([
 	"sap/m/SimpleFixFlex",
 	"sap/m/SimpleFixFlexRenderer",
+	"sap/m/Button",
 	"sap/m/Text",
-	"sap/base/Log",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
-], function(SimpleFixFlex, SimpleFixFlexRenderer, Text, Log, Sinon) {
+	"sap/base/Log"
+], function(SimpleFixFlex, SimpleFixFlexRenderer, Button, Text, Log) {
 	"use strict";
 
 	var oCore = sap.ui.getCore();
@@ -121,7 +120,7 @@ sap.ui.define([
 						"FixContent should be rendered.");
 
 		// Act
-		this.oSimpleFixFlex.addFlexContent(new sap.m.Button({ text: "test"}));
+		this.oSimpleFixFlex.addFlexContent(new Button({ text: "test"}));
 		oCore.applyChanges();
 
 		this.oSimpleFixFlex.getFlexContent().forEach(function (oControl) {
@@ -159,7 +158,7 @@ sap.ui.define([
 	QUnit.test("SimpleFixFlex control should not throw error when there is no FixedContent and _onFixContentResize is called", function(assert) {
 
 		// Arrange
-		var oSpy = new Sinon.spy(this.oSimpleFixFlex, "_onFixContentResize");
+		var oSpy = new this.spy(this.oSimpleFixFlex, "_onFixContentResize");
 
 		// Act
 		this.oSimpleFixFlex.getFixContent().setVisible(false);
@@ -178,7 +177,7 @@ sap.ui.define([
 	QUnit.test("SimpleFixFlex control should not throw error when the DOM element doesn't have clientHeight and _onFixContentResize is called", function (assert) {
 		// Arrange
 		var vResult;
-		this.stub(this.oSimpleFixFlex, "getFixContent", function () {
+		this.stub(this.oSimpleFixFlex, "getFixContent").callsFake(function () {
 			return {
 				$: function () {
 					return {

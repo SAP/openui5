@@ -1,22 +1,22 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ObjectIdentifier",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/IconPool",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Table",
+	"sap/m/Text",
 	"sap/m/Column",
 	"sap/m/Label",
 	"sap/m/ColumnListItem",
 	"sap/m/ObjectIdentifierRenderer",
 	"sap/m/Panel",
 	"sap/m/library",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -27,12 +27,14 @@ sap.ui.define([
 	coreLibrary,
 	JSONModel,
 	Table,
+	Text,
 	Column,
 	Label,
 	ColumnListItem,
 	ObjectIdentifierRenderer,
 	Panel,
-	mobileLibrary
+	mobileLibrary,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -90,8 +92,6 @@ sap.ui.define([
 
 	QUnit.test("NotVisible", function(assert) {
 		//SUT
-		var sTitle = "My Title";
-		var sText = "My Text";
 		var sut = new ObjectIdentifier("NotVisible");
 		sut.setVisible(false);
 
@@ -342,7 +342,7 @@ sap.ui.define([
 		// assertions for title
 		assert.strictEqual(oObjectIdentifier.getTitleActive(), false, 'Default value for titleActive is false');
 		assert.ok(oObjectIdentifierTitleControl === oObjectIdentifier.getAggregation("_titleControl"), 'The title control is present and properly assigned to its private aggregation');
-		assert.ok(oObjectIdentifierTitleControl instanceof sap.m.Text, 'The default type of title control is correct');
+		assert.ok(oObjectIdentifierTitleControl instanceof Text, 'The default type of title control is correct');
 		assert.strictEqual(oObjectIdentifierTitleText.length === 0, true, 'The title text is empty');
 		// assertions for text
 		assert.ok(oObjectIdentifierTextControl === oObjectIdentifier.getAggregation("_textControl"), 'The text control is present and properly assigned to its private aggregation');
@@ -430,9 +430,9 @@ sap.ui.define([
 				// act
 			var fnFireSelectSpy = this.spy(oObjectIdentifier, "fireTitlePress");
 			if (bKeyDown) {
-				sap.ui.test.qunit.triggerKeydown(oObjectIdentifier.$('title').children()[0], oOptions.keyCode);
+				qutils.triggerKeydown(oObjectIdentifier.$('title').children()[0], oOptions.keyCode);
 			} else {
-				sap.ui.test.qunit.triggerKeyup(oObjectIdentifier.$('title').children()[0], oOptions.keyCode);
+				qutils.triggerKeyup(oObjectIdentifier.$('title').children()[0], oOptions.keyCode);
 			}
 
 			this.clock.tick(1);
@@ -447,11 +447,11 @@ sap.ui.define([
 	}
 
 	checkKeyboardEventhandling("Firing ENTER event", {
-		keyCode : jQuery.sap.KeyCodes.ENTER
+		keyCode : KeyCodes.ENTER
 	}, true);
 
 	checkKeyboardEventhandling("Firing SPACE event", {
-		keyCode : jQuery.sap.KeyCodes.SPACE
+		keyCode : KeyCodes.SPACE
 	});
 
 	QUnit.module("Event testing");
@@ -472,8 +472,8 @@ sap.ui.define([
 		// act
 		var fnFireSelectSpy1 = this.spy(oObjectIdentifier1, "fireTitlePress");
 		var fnFireSelectSpy2 = this.spy(oObjectIdentifier2, "fireTitlePress");
-		sap.ui.test.qunit.triggerKeydown(oObjectIdentifier1.$('title').children()[0], jQuery.sap.KeyCodes.ENTER);
-		sap.ui.test.qunit.triggerKeydown(oObjectIdentifier2.$('title').children()[0], jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(oObjectIdentifier1.$('title').children()[0], KeyCodes.ENTER);
+		qutils.triggerKeydown(oObjectIdentifier2.$('title').children()[0], KeyCodes.ENTER);
 		this.clock.tick(1);
 
 		// assertions

@@ -1,5 +1,4 @@
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -9,6 +8,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Core"
 ], function(QUnitUtils, createAndAppendDiv, App, Page, jQuery, Device, Core) {
+	"use strict";
+
 	createAndAppendDiv("content");
 
 
@@ -97,7 +98,7 @@ sap.ui.define([
 
 	QUnit.module("backgroundColor", {
 		beforeEach: function () {
-			this.oApp = new sap.m.App();
+			this.oApp = new App();
 			this.oApp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -122,7 +123,7 @@ sap.ui.define([
 
 	QUnit.module("backgroundImage", {
 		beforeEach: function () {
-			this.oApp = new sap.m.App();
+			this.oApp = new App();
 			this.oApp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -233,8 +234,8 @@ sap.ui.define([
 
 	QUnit.module("Parent traversing", {
 		beforeEach: function () {
-			this.oApp = new sap.m.App();
-			this.oSpy = sinon.spy(this.oApp, "_adjustParentsHeight");
+			this.oApp = new App();
+			this.oSpy = this.spy(this.oApp, "_adjustParentsHeight");
 			this.oApp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -247,7 +248,7 @@ sap.ui.define([
 	QUnit.test("isTopLevel property", function(assert) {
 		assert.strictEqual(this.oSpy.called, true, "Parents are traversed when isTopLevel value is true");
 
-		this.oSpy.reset();
+		this.oSpy.resetHistory();
 
 		this.oApp.setIsTopLevel(false);
 		Core.applyChanges();
@@ -257,7 +258,7 @@ sap.ui.define([
 
 	QUnit.module("Invisible App", {
 		beforeEach: function () {
-			this.oApp = new sap.m.App({ visible: false });
+			this.oApp = new App({ visible: false });
 			this.oApp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},

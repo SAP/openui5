@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/m/ComboBoxTextField",
 	"sap/m/SelectList",
 	"sap/m/Dialog",
+	"sap/m/OverflowToolbar",
 	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleText",
 	"sap/m/library",
@@ -52,6 +53,7 @@ sap.ui.define([
 		ComboBoxTextField,
 		SelectList,
 		Dialog,
+		OverflowToolbar,
 		Element,
 		InvisibleText,
 		mobileLibrary,
@@ -4774,7 +4776,7 @@ sap.ui.define([
 
 		QUnit.test("open() on desktop", function (assert) {
 
-			this.stub(Device, "system", {
+			this.stub(Device, "system").value({
 				desktop: true,
 				phone: false,
 				tablet: false
@@ -4819,7 +4821,7 @@ sap.ui.define([
 
 		QUnit.test("open() on phone", function (assert) {
 
-			this.stub(Device, "system", {
+			this.stub(Device, "system").value({
 				desktop: false,
 				phone: true,
 				tablet: false
@@ -4865,7 +4867,7 @@ sap.ui.define([
 
 		QUnit.test("open() on tablet", function (assert) {
 
-			this.stub(Device, "system", {
+			this.stub(Device, "system").value({
 				desktop: false,
 				phone: false,
 				tablet: true
@@ -4950,7 +4952,7 @@ sap.ui.define([
 
 		QUnit.test("open() the picker popup (dropdown list) should automatically size itself to fit its content", function (assert) {
 
-			this.stub(Device, "system", {
+			this.stub(Device, "system").value({
 				desktop: true,
 				phone: false,
 				tablet: false
@@ -5006,7 +5008,7 @@ sap.ui.define([
 
 		QUnit.test("close() on phone restores focus to the select", function (assert) {
 
-			this.stub(Device, "system", {
+			this.stub(Device, "system").value({
 				desktop: false,
 				phone: true,
 				tablet: false
@@ -5909,7 +5911,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("update valueState during destroy", function (assert) {
-			var oSelect = new sap.m.Select({
+			var oSelect = new Select({
 				valueState: "Error"
 			});
 			// Setup: trigger destroy
@@ -8378,7 +8380,7 @@ sap.ui.define([
 			assert.notOk(fnEnterSpy.args[0][0].isMarked(), "The event should not be marked, since the picker is not opened.");
 
 			// Act
-			fnEnterSpy.reset();
+			fnEnterSpy.resetHistory();
 			oSelect.open();
 			this.clock.tick(1000);
 
@@ -8389,7 +8391,6 @@ sap.ui.define([
 			assert.ok(fnEnterSpy.args[0][0].isMarked(), "The event should be marked, since the picker is opened.");
 
 			// Cleanup
-			fnEnterSpy.restore();
 			oSelect.destroy();
 		});
 
@@ -8880,8 +8881,8 @@ sap.ui.define([
 
 			// act - call the function with random target
 			oSelect._bProcessChange = true; // Force processing of focus out
-			oCheckSelectionChangeSpy.reset();
-			oRevertSelectionSpy.reset();
+			oCheckSelectionChangeSpy.resetHistory();
+			oRevertSelectionSpy.resetHistory();
 			oSelect._handleFocusout(oMockEventRandomTarget);
 
 			// assert
@@ -8951,7 +8952,7 @@ sap.ui.define([
 		// BCP 0020079747 0000194079 2016
 		QUnit.test("it should not fire the change event twice", function (assert) {
 
-			this.stub(Device, "system", {
+			this.stub(Device, "system").value({
 				desktop: true,
 				phone: false,
 				tablet: false
@@ -10132,7 +10133,7 @@ sap.ui.define([
 
 		QUnit.test("it should open the value state message popup on focusin", function (assert) {
 
-			this.stub(Device, "system", {
+			this.stub(Device, "system").value({
 				desktop: true,
 				phone: false,
 				tablet: false
@@ -10162,7 +10163,7 @@ sap.ui.define([
 
 		QUnit.test("it should open the value state message popup when the dropdown list is closed", function (assert) {
 
-			this.stub(Device, "system", {
+			this.stub(Device, "system").value({
 				desktop: true,
 				phone: false,
 				tablet: false
@@ -10229,7 +10230,7 @@ sap.ui.define([
 
 		QUnit.test("it should close the value state message popup on focusout", function (assert) {
 
-			this.stub(Device, "system", {
+			this.stub(Device, "system").value({
 				desktop: true,
 				phone: false,
 				tablet: false
@@ -10259,7 +10260,7 @@ sap.ui.define([
 
 		QUnit.test("it should close the value state message popup when the dropdown list is opened", function (assert) {
 
-			this.stub(Device, "system", {
+			this.stub(Device, "system").value({
 				desktop: true,
 				phone: false,
 				tablet: false
@@ -10326,7 +10327,7 @@ sap.ui.define([
 
 		QUnit.test("it should open the value state message popup on setValueState to Error", function (assert) {
 
-			this.stub(Device, "system", {
+			this.stub(Device, "system").value({
 				desktop: true,
 				phone: false,
 				tablet: false
@@ -10357,7 +10358,7 @@ sap.ui.define([
 
 		QUnit.test("it should close the value state message popup on setValueState to None", function (assert) {
 
-			this.stub(Device, "system", {
+			this.stub(Device, "system").value({
 				desktop: true,
 				phone: false,
 				tablet: false
@@ -10492,7 +10493,8 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Text of the picker's title", 2, function(assert) {
+		QUnit.test("Text of the picker's title", function(assert) {
+			assert.expect(2);
 
 			var fnDone = assert.async(),
 				oDialog = this.oSelect.getAggregation("picker");
@@ -10719,7 +10721,7 @@ sap.ui.define([
 			function (assert) {
 
 			// arrange
-			this.stub(Device, "system", {
+			this.stub(Device, "system").value({
 				desktop: true,
 				phone: false,
 				tablet: false
@@ -10742,7 +10744,7 @@ sap.ui.define([
 			"it should change the CSS class of the value state text in the value state content when the value state is changed",
 			function (assert) {
 			// arrange
-			this.stub(Device, "system", {
+			this.stub(Device, "system").value({
 				desktop: true,
 				phone: false,
 				tablet: false
@@ -10782,7 +10784,7 @@ sap.ui.define([
 		QUnit.test(
 			"it should change the value state text in the value state content when the value state text is changed", function (assert) {
 			// arrange
-			this.stub(Device, "system", {
+			this.stub(Device, "system").value({
 				desktop: true,
 				phone: false,
 				tablet: false
@@ -10911,17 +10913,17 @@ sap.ui.define([
 			beforeEach: function () {
 				this.oSelect = new Select({
 					items : [
-						new sap.ui.core.Item({
+						new Item({
 							key: "0",
 							text: "Footer Select 1"
 						}),
-						new sap.ui.core.Item({
+						new Item({
 							key: "1",
 							text: "Footer Select 2"
 						})
 					]
 				});
-				this.OTB = new sap.m.OverflowToolbar();
+				this.OTB = new OverflowToolbar();
 				this.OTB.addContent(this.oSelect);
 				this.OTB.placeAt("content");
 				Core.applyChanges();

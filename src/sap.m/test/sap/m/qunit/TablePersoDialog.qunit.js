@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/m/TablePersoController",
 	"sap/m/Page",
 	"sap/m/App",
-	"jquery.sap.global"
+	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -198,7 +198,7 @@ sap.ui.define([
 
 	QUnit.test("Initialization", function(assert) {
 		oTablePersoDialog = oTPC.getAggregation("_tablePersoDialog");
-		assert.ok(!jQuery.sap.domById(oTablePersoDialog.getId()), "TablePersoDialog is not rendered before it's ever opened.");
+		assert.ok(!document.getElementById(oTablePersoDialog.getId()), "TablePersoDialog is not rendered before it's ever opened.");
 		assert.strictEqual(oTablePersoDialog.getPersoDialogFor(), "idRandomDataTable", "TablePersoDialog is linked to the correct table");
 		var oPersData = oTablePersoDialog.retrievePersonalizations();
 		assert.strictEqual(oPersData.aColumns, undefined, "No personalization data until dialog opened");
@@ -236,7 +236,7 @@ sap.ui.define([
 		//oTPC.setHasGrouping(true);
 		oTPC.openDialog();
 		assert.ok(sap.ui.getCore().byId(oTablePersoDialog.getId() + "-Dialog"), "Columns dialog exists after open() called");
-		assert.ok(jQuery.sap.domById(oTablePersoDialog.getId() + "-Dialog-title"), "Columns dialog has a title rendered");
+		assert.ok(document.getElementById(oTablePersoDialog.getId() + "-Dialog-title"), "Columns dialog has a title rendered");
 		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		var sTitle = sap.ui.getCore().byId(oTablePersoDialog.getId() + "-Dialog").getTitle();
 		assert.strictEqual(sTitle, oRb.getText("PERSODIALOG_COLUMNS_TITLE"), "Columns dialog title is 'Columns'");

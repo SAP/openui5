@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/CustomData",
@@ -19,7 +19,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/util/MockServer",
-	"sap/ui/thirdparty/sinon",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/inputUtils/inputsDefaultFilter",
@@ -29,13 +28,7 @@ sap.ui.define([
 	"sap/m/InputBase",
 	'sap/ui/core/ValueStateSupport',
 	"sap/ui/core/library",
-	"sap/ui/base/ManagedObject",
-	"sap/ui/qunit/qunit-css",
-	"sap/ui/thirdparty/qunit",
-	"sap/ui/qunit/qunit-junit",
-	"sap/ui/qunit/qunit-coverage",
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/thirdparty/sinon-qunit"
+	"sap/ui/base/ManagedObject"
 ], function (
 	qutils,
 	CustomData,
@@ -56,7 +49,6 @@ sap.ui.define([
 	Log,
 	KeyCodes,
 	MockServer,
-	sinon,
 	containsOrEquals,
 	createAndAppendDiv,
 	inputsDefaultFilter,
@@ -1508,7 +1500,7 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		// act
-		sap.ui.test.qunit.triggerEvent("tap", oComboBox._getList().getItems()[0].getDomRef());
+		qutils.triggerEvent("tap", oComboBox._getList().getItems()[0].getDomRef());
 		this.clock.tick(1000);
 
 		// assert
@@ -2230,7 +2222,7 @@ sap.ui.define([
 		// Act
 		oComboBox.focus();
 		this.clock.tick();
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		sap.ui.getCore().applyChanges();
 
 		this.clock.tick(300);
@@ -2267,9 +2259,9 @@ sap.ui.define([
 
 		// Act
 		oComboBox.focus();
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
 		sap.ui.getCore().applyChanges();
 
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
@@ -3009,7 +3001,7 @@ sap.ui.define([
 		sap.ui.qunit.QUnitUtils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.I);
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef);
 		this.clock.tick(300);
-		sap.ui.test.qunit.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
+		qutils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
 		this.clock.tick(300);
 
 		// assert
@@ -3495,7 +3487,7 @@ sap.ui.define([
 		this.clock.tick(500);
 		assert.ok(document.getElementById("errorcombobox-message"), "error message popup is open when focusin");
 
-		sap.ui.test.qunit.triggerKeydown(oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
+		qutils.triggerKeydown(oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick(500);
 		assert.ok(!document.getElementById("errorcombobox-message"), "error message popup is not open when list is open");
 
@@ -4819,7 +4811,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oComboBox.getOpenArea(), {
+		qutils.triggerTouchEvent("touchstart", oComboBox.getOpenArea(), {
 			touches: {
 				0: {
 					pageX: 10,
@@ -4839,7 +4831,7 @@ sap.ui.define([
 			}
 		});
 
-		sap.ui.test.qunit.triggerTouchEvent("touchend", oComboBox.getOpenArea(), {
+		qutils.triggerTouchEvent("touchend", oComboBox.getOpenArea(), {
 			targetTouches: {
 				0: {
 					pageX: 10,
@@ -4850,7 +4842,7 @@ sap.ui.define([
 			}
 		});
 
-		sap.ui.test.qunit.triggerTouchEvent("tap", oComboBox.getOpenArea(), {
+		qutils.triggerTouchEvent("tap", oComboBox.getOpenArea(), {
 			targetTouches: {
 				0: {
 					pageX: 10,
@@ -4893,7 +4885,7 @@ sap.ui.define([
 		oComboBox.getFocusDomRef().value = "foo";
 
 		// act
-		sap.ui.test.qunit.triggerTouchEvent("tap", oComboBox._getList().getSelectedItem().getDomRef(), {
+		qutils.triggerTouchEvent("tap", oComboBox._getList().getSelectedItem().getDomRef(), {
 			changedTouches: {
 				0: {
 					pageX: 1,
@@ -4982,7 +4974,7 @@ sap.ui.define([
 		var fnShowSpy = this.spy(oComboBox, "onsapshow");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
 
 		// assert
 		assert.strictEqual(fnShowSpy.callCount, 1, "onsapshow() method was called exactly once");
@@ -5033,11 +5025,11 @@ sap.ui.define([
 		oComboBox.focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick(300);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(300);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
 		this.clock.tick(300);
 
 		oComboBox2.focus();
@@ -5075,7 +5067,7 @@ sap.ui.define([
 		oComboBox.focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
 
 		// assert
 		this.clock.tick(1000);
@@ -5112,7 +5104,7 @@ sap.ui.define([
 		var fnShowSpy = this.spy(oComboBox, "onsapshow");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		sap.ui.getCore().applyChanges();
 
 		// arrange
@@ -5154,7 +5146,7 @@ sap.ui.define([
 		oComboBox.focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 
 		// assert
 		this.clock.tick(1000);
@@ -5191,10 +5183,10 @@ sap.ui.define([
 		// act
 
 		// open the dropdown list picker
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
 
 		// close the dropdown list picker
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick(1000);
 
 		// assert
@@ -5238,7 +5230,7 @@ sap.ui.define([
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);	// close the picker pop-up
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);	// close the picker pop-up
 		this.clock.tick(1000); // wait 1s after the close animation is completed
 
 		// assert
@@ -5274,10 +5266,10 @@ sap.ui.define([
 		// act
 
 		// open the dropdown list picker
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 
 		// close the dropdown list picker
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(1000);
 
 		// assert
@@ -5312,10 +5304,10 @@ sap.ui.define([
 		this.clock.tick(0);
 
 		// open the dropdown list picker
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_RIGHT);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true /* ctrl key is down */);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true /* ctrl key is down */);
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().selectionStart, 0, "The text should be selected");
@@ -5351,7 +5343,7 @@ sap.ui.define([
 		oComboBox.focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 
 		// assert
 		assert.ok(oComboBox.isOpen(), "the dropdown list is open");
@@ -5437,7 +5429,7 @@ sap.ui.define([
 		var fnHideSpy = this.spy(oComboBox, "onsaphide");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP, false, true, false);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP, false, true, false);
 
 		// assert
 		assert.strictEqual(fnHideSpy.callCount, 1, "onsaphide() method was called exactly once");
@@ -5475,7 +5467,7 @@ sap.ui.define([
 		oComboBox.focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP, false, true, false);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP, false, true, false);
 
 		// assert
 		this.clock.tick(1000);
@@ -5510,8 +5502,8 @@ sap.ui.define([
 		var fnHideSpy = this.spy(oComboBox, "onsaphide");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP, false, true, false);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP, false, true, false);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP, false, true, false);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP, false, true, false);
 		this.clock.tick(1000);
 
 		// assert
@@ -5549,7 +5541,7 @@ sap.ui.define([
 		var fnCloseSpy = this.spy(oComboBox, "close");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ESCAPE);
 
 		// assert
 		assert.strictEqual(fnEscapeSpy.callCount, 1, "onsapescape() method was called exactly once");
@@ -5594,7 +5586,7 @@ sap.ui.define([
 		var fnCloseSpy = this.spy(oComboBox, "close");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ESCAPE);
 		this.clock.tick(1000);	// wait 1s after the close animation is completed
 
 		// assert
@@ -5632,7 +5624,7 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ESCAPE);
 
 		// assert
 		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "Control's picker pop-up is open");
@@ -5667,7 +5659,7 @@ sap.ui.define([
 		var fnCloseSpy = this.spy(oComboBox, "close");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
 
 		// assert
 		assert.strictEqual(fnEnterSpy.callCount, 1, "onsapenter() method was called exactly once");
@@ -5712,7 +5704,7 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
 		this.clock.tick(1000);	// wait 1s after the close animation is completed
 
 		// assert
@@ -5743,7 +5735,7 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
 
 		// assert
 		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "Control's picker pop-up is open");
@@ -5777,7 +5769,7 @@ sap.ui.define([
 		oComboBox.selectText(0, 6);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
 		// note: after the onsapenter() method is called, the cursor position change
 
 		// assert
@@ -5809,8 +5801,8 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
 
 		// assert
 		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).cursorPos(), 6, "The cursor position is at the end of the text");
@@ -5842,8 +5834,8 @@ sap.ui.define([
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().selectionStart, 7, "The text should not be selected");
@@ -5889,7 +5881,7 @@ sap.ui.define([
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 
 		// assert
 		assert.strictEqual(fnKeyDownSpy.callCount, 1, "onsapdown() method was called exactly once");
@@ -5923,7 +5915,7 @@ sap.ui.define([
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 
 		// assert
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, 'The "selectionChange" event was not fired');
@@ -5968,7 +5960,7 @@ sap.ui.define([
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 
 		// assert
 		assert.strictEqual(fnKeyDownSpy.callCount, 1, "onsapdown() method was called exactly once");
@@ -6016,7 +6008,7 @@ sap.ui.define([
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 
 		// assert
 		assert.strictEqual(fnKeyDownSpy.callCount, 1, "onsapdown() method was called exactly once");
@@ -6053,8 +6045,8 @@ sap.ui.define([
 		}, oComboBox);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 
 		// assert
 		assert.strictEqual(oComboBox.getValue(), sExpectedValue);
@@ -6102,7 +6094,7 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		sap.ui.getCore().applyChanges();
 
 		// assert
@@ -6150,7 +6142,7 @@ sap.ui.define([
 		jQuery(oComboBox.getFocusDomRef()).cursorPos(0);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().value, "Algeria");
@@ -6181,7 +6173,7 @@ sap.ui.define([
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		sap.ui.getCore().applyChanges();
 
 		// assert
@@ -6218,8 +6210,8 @@ sap.ui.define([
 		oComboBox.focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 
 		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
 		// to make sure that the data from the OData model is available)
@@ -6269,7 +6261,7 @@ sap.ui.define([
 		oComboBox.focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 
 		// tick the clock ahead some ms millisecond
 		this.clock.tick(300);
@@ -6323,7 +6315,7 @@ sap.ui.define([
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 
 		// assert
 		assert.strictEqual(fnKeyUpSpy.callCount, 1, "onsapup() method was called exactly once");
@@ -6365,7 +6357,7 @@ sap.ui.define([
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 
 		// assert
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, 'The "selectionChange" event was not fired');
@@ -6409,7 +6401,7 @@ sap.ui.define([
 		var fnKeyUpSpy = this.spy(oComboBox, "onsapup");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 
 		// assert
 		assert.strictEqual(fnKeyUpSpy.callCount, 1, "onsapup() method was called exactly once");
@@ -6457,7 +6449,7 @@ sap.ui.define([
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 
 		// assert
 		assert.strictEqual(fnKeyUpSpy.callCount, 1, "onsapup() method was called exactly once");
@@ -6501,8 +6493,8 @@ sap.ui.define([
 		}, oComboBox);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 
 		// assert
 		assert.strictEqual(oComboBox.getValue(), sExpectedValue);
@@ -6550,8 +6542,8 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().value, "Algeria");
@@ -6600,8 +6592,8 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().value, "Algeria");
@@ -6639,7 +6631,7 @@ sap.ui.define([
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 		sap.ui.getCore().applyChanges();
 
 		// assert
@@ -6698,7 +6690,7 @@ sap.ui.define([
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
 
 		// assert
 		assert.strictEqual(fnKeyHomeSpy.callCount, 1, "onsaphome() method was called exactly once");
@@ -6732,7 +6724,7 @@ sap.ui.define([
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
 
 		// assert
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, 'The "selectionChange" event was not fired');
@@ -6790,7 +6782,7 @@ sap.ui.define([
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
 
 		// assert
 		assert.strictEqual(fnKeyHomeSpy.callCount, 1, "onsaphome() method was called exactly once");
@@ -6851,8 +6843,8 @@ sap.ui.define([
 		}, oComboBox);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
 
 		// assert
 		assert.strictEqual(oComboBox.getValue(), sExpectedValue);
@@ -6905,9 +6897,9 @@ sap.ui.define([
 
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick(0);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
 		sap.ui.getCore().applyChanges();
 
 		// assert
@@ -6943,7 +6935,7 @@ sap.ui.define([
 		oComboBox.focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
 
 		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
 		// to make sure that the data from the OData model is available)
@@ -7011,7 +7003,7 @@ sap.ui.define([
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
 
 		// assert
 		assert.strictEqual(fnKeyEndSpy.callCount, 1, "onsapend() method was called exactly once");
@@ -7069,8 +7061,8 @@ sap.ui.define([
 		}, oComboBox);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
 
 		// assert
 		assert.strictEqual(oComboBox.getValue(), sExpectedValue);
@@ -7112,7 +7104,7 @@ sap.ui.define([
 		oComboBox.focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
 
 		// assert
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, 'The "selectionChange" event was not fired');
@@ -7156,7 +7148,7 @@ sap.ui.define([
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
 		sap.ui.getCore().applyChanges();
 
 		// assert
@@ -7192,7 +7184,7 @@ sap.ui.define([
 		oComboBox.focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
 
 		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
 		// to make sure that the data from the OData model is available)
@@ -7232,7 +7224,7 @@ sap.ui.define([
 			var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
 			// act
-			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
+			qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
 
 			// assert
 			assert.strictEqual(fnPageDownSpy.callCount, 1, "onsappagedown() method was called exactly once");
@@ -7417,8 +7409,8 @@ sap.ui.define([
 		}, oComboBox);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
 
 		// assert
 		assert.strictEqual(oComboBox.getValue(), sExpectedValue);
@@ -7470,7 +7462,7 @@ sap.ui.define([
 		oComboBox.focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
 
 		// assert
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, 'The "selectionChange" event was not fired');
@@ -7524,7 +7516,7 @@ sap.ui.define([
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
 		sap.ui.getCore().applyChanges();
 
 		// assert
@@ -7560,7 +7552,7 @@ sap.ui.define([
 		oComboBox.focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
 
 		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
 		// to make sure that the data from the OData model is available)
@@ -7600,7 +7592,7 @@ sap.ui.define([
 			var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
 			// act
-			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
+			qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
 
 			// assert
 			assert.strictEqual(fnPageUpSpy.callCount, 1, "onsappageup() method was called exactly once");
@@ -7789,8 +7781,8 @@ sap.ui.define([
 		}, oComboBox);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().value, sExpectedValue);
@@ -7841,7 +7833,7 @@ sap.ui.define([
 		oComboBox.focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
 
 		// assert
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, 'The "selectionChange" event was not fired');
@@ -7897,7 +7889,7 @@ sap.ui.define([
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
 		sap.ui.getCore().applyChanges();
 
 		// assert
@@ -7933,7 +7925,7 @@ sap.ui.define([
 		oComboBox.focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
 
 		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
 		// to make sure that the data from the OData model is available)
@@ -8542,7 +8534,7 @@ sap.ui.define([
 		oComboBox.focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
 
 		// act
@@ -8574,7 +8566,7 @@ sap.ui.define([
 		oComboBox.focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);	// open the dropdown list
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);	// open the dropdown list
 		this.clock.tick(1000);	// wait 1s after the open animation is completed
 
 		// act
@@ -9114,7 +9106,7 @@ sap.ui.define([
 		oComboBox.focus();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick(500);
 
 		// assert
@@ -9276,7 +9268,7 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		oComboBox.getFocusDomRef().blur();
 		this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
@@ -9309,8 +9301,8 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
 
 		// assert
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
@@ -9346,7 +9338,7 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 		oComboBox.getFocusDomRef().blur();
 		this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
@@ -9384,8 +9376,8 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
 
 		// assert
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
@@ -9421,7 +9413,7 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
 		oComboBox.getFocusDomRef().blur();
 		this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
@@ -9459,8 +9451,8 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
 
 		// assert
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
@@ -9496,7 +9488,7 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
 		oComboBox.getFocusDomRef().blur();
 		this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
@@ -9534,8 +9526,8 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
 
 		// assert
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
@@ -9575,7 +9567,7 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
 		oComboBox.getFocusDomRef().blur();
 		this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
@@ -9617,8 +9609,8 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
 
 		// assert
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
@@ -9658,7 +9650,7 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
 		oComboBox.getFocusDomRef().blur();
 		this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
@@ -9700,8 +9692,8 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
 
 		// assert
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
@@ -9785,7 +9777,7 @@ sap.ui.define([
 		// act
 		oPickerTextField.getFocusDomRef().value = "lorem ipsum";
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef);
-		sap.ui.test.qunit.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
+		qutils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
 		oComboBox.close();
 		this.clock.tick(1000);
 
@@ -9862,7 +9854,7 @@ sap.ui.define([
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef, {
 			srcControl: oPickerTextField
 		});
-		sap.ui.test.qunit.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
+		qutils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
 		this.clock.tick(1000);
 
 		// assert
@@ -9923,19 +9915,19 @@ sap.ui.define([
 			length: 1
 		};
 
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oListItem, {
+		qutils.triggerTouchEvent("touchstart", oListItem, {
 			touches: oTouches,
 			targetTouches: oTouches
 		});
 
-		sap.ui.test.qunit.triggerTouchEvent("touchend", oListItem, {
+		qutils.triggerTouchEvent("touchend", oListItem, {
 			changedTouches: oTouches,
 			touches: {
 				length: 0
 			}
 		});
 
-		sap.ui.test.qunit.triggerTouchEvent("tap", oListItem, {
+		qutils.triggerTouchEvent("tap", oListItem, {
 			changedTouches: oTouches,
 			touches: {
 				length: 0
@@ -9984,10 +9976,10 @@ sap.ui.define([
 		var oButton = oComboBox.getPicker().getButtons()[0];
 
 		// act
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oButton.getDomRef(), oParams);
+		qutils.triggerTouchEvent("touchstart", oButton.getDomRef(), oParams);
 		oButton.focus();
-		sap.ui.test.qunit.triggerTouchEvent("touchend", oButton.getDomRef(), oParams);
-		sap.ui.test.qunit.triggerTouchEvent("tap", oButton.getDomRef(), oParams);
+		qutils.triggerTouchEvent("touchend", oButton.getDomRef(), oParams);
+		qutils.triggerTouchEvent("tap", oButton.getDomRef(), oParams);
 		this.clock.tick(1000);
 
 		// assert
@@ -10084,7 +10076,7 @@ sap.ui.define([
 		// act
 		oComboBox.getFocusDomRef().value = "D";
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		oComboBox.getFocusDomRef().blur();
 		this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
@@ -10594,12 +10586,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Clone combobox with preselected item", function (assert) {
-		var oItem = new sap.ui.core.Item({
+		var oItem = new Item({
 			text: "Dryanovo",
 			key: "1"
 		});
 
-		var oCB = new sap.m.ComboBox({
+		var oCB = new ComboBox({
 			items: [oItem],
 			selectedItem: oItem
 		}).placeAt("content");
@@ -11031,7 +11023,7 @@ sap.ui.define([
 		oComboBox.open();
 		this.clock.tick(2000);
 
-		sap.ui.test.qunit.triggerEvent("tap", ListHelpers.getListItem(oComboBox.getFirstItem()).getDomRef());
+		qutils.triggerEvent("tap", ListHelpers.getListItem(oComboBox.getFirstItem()).getDomRef());
 		this.clock.tick(2000);
 
 		// assert
@@ -11838,11 +11830,11 @@ sap.ui.define([
 		this.clock.tick();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.F4);
+		qutils.triggerKeydown(oFocusDomRef, KeyCodes.F4);
 		this.clock.tick(500);
 
 		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
-		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(oFocusDomRef, KeyCodes.ARROW_UP);
 
 		oGroupHeaderListItem = this.oComboBox._getList().getItems()[0];
 		oInvisibleText = sap.ui.getCore().byId(oGroupHeaderListItem.getAriaLabelledBy()[0]);
@@ -11876,7 +11868,7 @@ sap.ui.define([
 		this.clock.tick(0);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 
 		// assert
 		this.fnCheckSelectedItemAndValue(assert, oExpectedItem, sExpectedValue);
@@ -11891,7 +11883,7 @@ sap.ui.define([
 		this.clock.tick(0);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.F4);
+		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick(500);
 
 		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
@@ -11906,7 +11898,7 @@ sap.ui.define([
 
 		// assert
 		// no selection was made, the value is empty and the group header has the visual focus
-		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 		this.fnCheckSelectedItemAndValue(assert, null, "");
 	});
 
@@ -11921,9 +11913,9 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(500);
-		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(500);
 
 		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
@@ -11950,7 +11942,7 @@ sap.ui.define([
 		this.clock.tick(0);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.F4);
+		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick(500);
 
 		// assert
@@ -11959,7 +11951,7 @@ sap.ui.define([
 		assert.ok(this.oComboBox._getList().hasStyleClass("sapMListFocus"), "The visual focus was correctly on the combo box's list initially.");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		oInitiallySelectedListItem = ListHelpers.getListItem(oInitiallySelectedItem);
 		oExpectedListItem = ListHelpers.getListItem(oExpectedItem);
 
@@ -11982,7 +11974,7 @@ sap.ui.define([
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.F4);
+		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick(500);
 
 		// assert
@@ -11991,7 +11983,7 @@ sap.ui.define([
 		assert.ok(this.oComboBox._getList().hasStyleClass("sapMListFocus"), "The visual focus was correctly on the combo box's list initially.");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 		oExpectedListItem = ListHelpers.getListItem(oExpectedItem);
 		oInitiallySelectedListItem = ListHelpers.getListItem(oInitiallySelectedItem);
 
@@ -12015,7 +12007,7 @@ sap.ui.define([
 		assert.ok(this.oComboBox.getSelectedItem() === oInitiallySelectedItem, "The expected item was initially selected.");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 
 		// assert
 		this.fnCheckSelectedItemAndValue(assert, oExpectedItem, sExpectedValue);
@@ -12041,7 +12033,7 @@ sap.ui.define([
 		this.clock.tick(0);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 
 		// assert
 		assert.strictEqual(this.oComboBox.getFocusDomRef().value, "it", "The expected text was filled in the combo box.");
@@ -12075,8 +12067,8 @@ sap.ui.define([
 		this.clock.tick(0);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 
 		// assert
 		assert.strictEqual(this.oComboBox.getFocusDomRef().value, "item11", "The expected text was filled in the combo box.");
@@ -12096,12 +12088,12 @@ sap.ui.define([
 
 		// act
 		// Open it
-		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.F4);
+		qutils.triggerKeydown(oFocusDomRef, KeyCodes.F4);
 		this.clock.tick(500);
 		// Select group header
-		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(oFocusDomRef, KeyCodes.ARROW_UP);
 		// Close it again
-		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.F4);
+		qutils.triggerKeydown(oFocusDomRef, KeyCodes.F4);
 		this.clock.tick(500);
 
 		oExpectedListItem = ListHelpers.getListItem(oExpectedItem);
@@ -12113,7 +12105,7 @@ sap.ui.define([
 
 		// act
 		// When the last item was header and we reopen it, there should not be double focus
-		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.F4);
+		qutils.triggerKeydown(oFocusDomRef, KeyCodes.F4);
 		this.clock.tick(500);
 
 		// assert
@@ -12175,7 +12167,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// act
-		sap.ui.test.qunit.triggerEvent("tap", oComboBox._getList().getItems()[0].getDomRef());
+		qutils.triggerEvent("tap", oComboBox._getList().getItems()[0].getDomRef());
 		this.clock.tick(500);
 
 		// assert
@@ -12212,7 +12204,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// act
-		sap.ui.test.qunit.triggerEvent("tap", oComboBox._getList().getItems()[0].getDomRef());
+		qutils.triggerEvent("tap", oComboBox._getList().getItems()[0].getDomRef());
 		this.clock.tick(500);
 
 		// assert
@@ -12584,10 +12576,10 @@ sap.ui.define([
 		this.oErrorComboBox.focus();
 		this.clock.tick();
 
-		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick();
 
-		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick();
 
 		// Assert
@@ -12600,13 +12592,13 @@ sap.ui.define([
 		this.oErrorComboBox.focus();
 		this.clock.tick();
 
-		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick();
 
-		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick();
 
-		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick();
 
 		// Assert
@@ -12620,7 +12612,7 @@ sap.ui.define([
 		this.clock.tick(500);
 		sap.ui.getCore().applyChanges();
 
-		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(500);
 
 		sap.ui.getCore().applyChanges();
@@ -12664,7 +12656,7 @@ sap.ui.define([
 		oComboBox.focus();
 		sap.ui.getCore().applyChanges();
 
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick();
 
 		// Arrange
@@ -12817,7 +12809,7 @@ sap.ui.define([
 		this.clock.tick();
 
 		// Select the value state header
-		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick();
 
 		this.oErrorComboBox._$input.trigger("focus").val("Ger").trigger("input");
@@ -12836,11 +12828,11 @@ sap.ui.define([
 		var	oValueStateHeader;
 
 		// Act
-		sap.ui.test.qunit.triggerKeyboardEvent(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		qutils.triggerKeyboardEvent(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick();
-		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick();
-		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.HOME);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.HOME);
 		this.clock.tick();
 
 		oValueStateHeader = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader();
@@ -12856,11 +12848,11 @@ sap.ui.define([
 		var	oValueStateHeader;
 
 		// Act
-		sap.ui.test.qunit.triggerKeyboardEvent(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		qutils.triggerKeyboardEvent(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick();
-		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick();
-		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.TAB);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.TAB);
 		this.clock.tick();
 
 		oValueStateHeader = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader();
@@ -12868,7 +12860,7 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oValueStateHeader.getFormattedText().getControls()[0].getDomRef(), document.activeElement, "The link in the value state header has the real focus");
 
-		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick();
 
 		// Assert
@@ -12883,14 +12875,14 @@ sap.ui.define([
 			iLastItemIndex;
 
 			// Act
-		sap.ui.test.qunit.triggerKeyboardEvent(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		qutils.triggerKeyboardEvent(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick();
 
 		iLastItemIndex = this.oErrorComboBox._getSuggestionsPopover().getItemsContainer().getItems().length - 1;
 
-		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick();
-		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.END);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.END);
 		this.clock.tick();
 
 		oValueStateHeader = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader();
@@ -12962,7 +12954,7 @@ sap.ui.define([
 		this.oErrorComboBox.focus();
 		sap.ui.getCore().applyChanges();
 
-		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick();
 
 		oValueStateHeader = this.oErrorComboBox._oSuggestionPopover._getValueStateHeader();

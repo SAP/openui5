@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/MessagePopover",
@@ -15,7 +14,9 @@ sap.ui.define([
 	"sap/m/MessageItem",
 	"sap/ui/Device",
 	"sap/ui/core/CustomData",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/mvc/Controller", // provides sap.ui.controller
+	"sap/ui/core/mvc/JSView" // provides sap.ui.jsview
 ], function(
 	qutils,
 	MessagePopover,
@@ -33,6 +34,8 @@ sap.ui.define([
 	CustomData,
 	Core
 ) {
+	"use strict";
+
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
@@ -122,7 +125,7 @@ sap.ui.define([
 			this.oButton.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			sinon.stub(ObjectPool.prototype, "returnObject", function(){});
+			sinon.stub(ObjectPool.prototype, "returnObject").callsFake(function(){});
 		},
 		bindMessagePopover: function (oMessagePopover, oData) {
 			var oModel = new JSONModel();
@@ -137,7 +140,7 @@ sap.ui.define([
 		openDetailPageAfterOpen: function (oMessagePopover, iItem) {
 			oMessagePopover.attachAfterOpen(function () {
 				var oItem = oMessagePopover._oMessageView._oLists['all'].getItems()[iItem].getDomRef();
-				sap.ui.test.qunit.triggerEvent("tap", oItem);
+				qutils.triggerEvent("tap", oItem);
 			});
 		},
 		afterEach: function () {
@@ -186,6 +189,9 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(sap.ui.getCore().byId("idHeaderButton").getIcon(), "sap-icon://delete", "The header button is bound correctly");
+
+		// clean up
+		JSView.destroy();
 	});
 
 	QUnit.test("setDescription() property", function (assert) {
@@ -541,7 +547,6 @@ sap.ui.define([
 
 	QUnit.test("hasStyleClass should check if class is added", function (assert) {
 		this.oMessagePopover.openBy(this.oButton);
-		var $oDomRef = this.oMessagePopover.$();
 
 		assert.ok(!this.oMessagePopover.hasStyleClass("test"), "should not have 'test' class");
 
@@ -817,7 +822,7 @@ sap.ui.define([
 
 	QUnit.test("MessagePopover's behavior in different screens on Desktop", function (assert) {
 		//System under test
-		this.stub(Device, "system", {desktop: true});
+		this.stub(Device, "system").value({desktop: true});
 
 		var oMessagePopover = new MessagePopover({
 			items: [
@@ -946,7 +951,7 @@ sap.ui.define([
 			this.oButton.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			sinon.stub(ObjectPool.prototype, "returnObject", function(){});
+			sinon.stub(ObjectPool.prototype, "returnObject").callsFake(function(){});
 		},
 		bindMessagePopover: function(oMessagePopover, oData) {
 			var oModel = new JSONModel();
@@ -961,7 +966,7 @@ sap.ui.define([
 		openDetailPageAfterOpen: function(oMessagePopover, iItem) {
 			oMessagePopover.attachAfterOpen(function() {
 				var oItem = oMessagePopover._oMessageView._oLists['all'].getItems()[iItem].getDomRef();
-				sap.ui.test.qunit.triggerEvent("tap", oItem);
+				qutils.triggerEvent("tap", oItem);
 			});
 		},
 		afterEach: function() {
@@ -977,8 +982,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Async description handler", function (assert) {
-		var done = assert.async(),
-				that = this;
+		var done = assert.async();
 
 		this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
 
@@ -994,8 +998,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Async URL handler", function (assert) {
-		var done = assert.async(),
-				that = this;
+		var done = assert.async();
 
 		this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
 
@@ -1079,7 +1082,7 @@ sap.ui.define([
 	QUnit.module("Internal ResponsivePopover");
 
 	QUnit.test("openBy method should not call setShowArrow on phone", function (assert) {
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			tablet: false,
 			phone: true
@@ -1106,7 +1109,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("openBy method should call setShowArrow on desktop", function (assert) {
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: true,
 			tablet: false,
 			phone: false
@@ -1134,7 +1137,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("openBy method should call setShowArrow on desktop", function (assert) {
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: true,
 			tablet: false,
 			phone: false
@@ -1558,7 +1561,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("On mobile the dialog should be closed after clicking on the active title", function (assert) {
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			tablet: false,
 			phone: true

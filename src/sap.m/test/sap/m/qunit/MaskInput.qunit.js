@@ -1,9 +1,9 @@
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/Log",
 	"sap/m/MaskInput",
 	"sap/m/MaskInputRule",
 	"sap/m/Input",
@@ -13,12 +13,13 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/qunit/utils/waitForThemeApplied",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes"
 
 ], function(
 	qutils,
 	createAndAppendDiv,
 	jQuery,
+	Log,
 	MaskInput,
 	MaskInputRule,
 	Input,
@@ -27,9 +28,11 @@ sap.ui.define([
 	Device,
 	coreLibrary,
 	EventExtension,
-	waitForThemeApplied
-
+	waitForThemeApplied,
+	KeyCodes
 ) {
+	"use strict";
+
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
@@ -37,21 +40,18 @@ sap.ui.define([
 
 
 
-	var Log = sap.ui.require("sap/base/Log");
 	//the SUT won't be destroyed when single test is run
-	var bSkipDestroy = !!jQuery.sap.getUriParameters().get("testId");
+	var bSkipDestroy = new URLSearchParams(window.location.search).has("testId");
 	QUnit.module("API", {
 		beforeEach: function () {
 			this.oMaskInput = new MaskInput();
 			this.oMaskInput.placeAt("content");
 			sap.ui.getCore().applyChanges();
-			this.sandbox = sinon.sandbox;
 		},
 		afterEach: function () {
 			if (!bSkipDestroy) {
 				this.oMaskInput.destroy();
 			}
-			this.sandbox.restore();
 		}
 	});
 
@@ -67,10 +67,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Setting empty mask should give a warning", function (assert){
-		assert.ok(Log, "Log module should be available");
 		var oControl = this.oMaskInput;
-		var oWarningSpy = this.sandbox.spy(Log, 'warning'),
-			oSetterSpy = this.sandbox.spy(oControl, "setProperty");
+		var oWarningSpy = this.spy(Log, 'warning'),
+			oSetterSpy = this.spy(oControl, "setProperty");
 
 		this.oMaskInput.setMask('');
 		assert.ok(oSetterSpy.notCalled, "Invalid placeholder symbol is not accepted");
@@ -82,7 +81,6 @@ sap.ui.define([
 
 
 	QUnit.test("Setting (invalid) placeholder symbol that is part of mask's regex", function (assert){
-		assert.ok(Log, "Log module should be available");
 		var oControl = this.oMaskInput,
 			sPlaceholderSymbol = '+',
 			oDefinition = new MaskInputRule({
@@ -90,7 +88,7 @@ sap.ui.define([
 				regex: '[a-z+]'
 			});
 
-		var oErrorSpy = this.sandbox.spy(Log, 'error');
+		var oErrorSpy = this.spy(Log, 'error');
 		oControl.addRule(oDefinition);
 		var sOriginalPlaceholderSymbol = oControl.getPlaceholderSymbol();
 		oControl.setPlaceholderSymbol(sPlaceholderSymbol);
@@ -103,7 +101,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Setting (invalid) regex that contains the placeholder symbol", function (assert){
-		assert.ok(Log, "Log module should be available");
 		var oControl = this.oMaskInput,
 			sPlaceholderSymbol = '+',
 			oDefinition = new MaskInputRule({
@@ -111,7 +108,7 @@ sap.ui.define([
 				regex: '[a-z+]'
 			});
 
-		var oErrorSpy = this.sandbox.spy(Log, 'error');
+		var oErrorSpy = this.spy(Log, 'error');
 		oControl.setPlaceholderSymbol(sPlaceholderSymbol);
 		oControl.addRule(oDefinition);
 
@@ -207,13 +204,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Setting an invalid placeholder symbol is not accepted", function (assert){
-		assert.ok(Log, "Log module should be available");
 		var oControl = this.oMaskInput,
-			oErrorSpy = this.sandbox.spy(Log, 'error'),
-			oSetterSpy = this.sandbox.spy(oControl, 'setProperty');
+			oErrorSpy = this.spy(Log, 'error'),
+			oSetterSpy = this.spy(oControl, 'setProperty');
 
-		setAndValidate("more_than_one_character", this.sandbox);
-		setAndValidate("", this.sandbox);
+		setAndValidate("more_than_one_character", this);
+		setAndValidate("", this);
 
 		function setAndValidate(sSymbol, oSandbox) {
 			oErrorSpy.restore();
@@ -365,13 +361,13 @@ sap.ui.define([
 				setCursorPosition(iCarretPosition, oControl);
 			}
 
-			qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes[sKey.toUpperCase()]);
+			qutils.triggerKeydown(oControl.getDomRef(), KeyCodes[sKey.toUpperCase()]);
 			return getMaskInputDomValue(oControl);
 		}
 	});
 
 	QUnit.test("Del button", function (assert){
-		var oControl = this.oMaskInput.setPlaceholderSymbol('_');
+		this.oMaskInput.setPlaceholderSymbol('_');
 		assert.strictEqual(this.setAndDel('delete', 'aaaaa', 'abcde', 0), "_bcde", "Delete single character");
 		assert.strictEqual(this.setAndDel('delete', 'aaaaa', 'abcd', 4), "abcd_", "Try deleting non existing character");
 		assert.strictEqual(this.setAndDel('delete', '9a-9-aa', '2b-2-de', 1), '2_-2-de', "Delete parameter before immutable character");
@@ -379,7 +375,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Backspace button", function (assert){
-		var oControl = this.oMaskInput.setPlaceholderSymbol('_');
+		this.oMaskInput.setPlaceholderSymbol('_');
 		assert.strictEqual(this.setAndDel('backspace', '99/9', '12/3', 2), "1_/3", "Delete single character");
 		assert.strictEqual(this.setAndDel('backspace', '99/9', '12/3', 3), "1_/3", "Delete single character behind immutable character");
 		assert.strictEqual(this.setAndDel('backspace', '99/9', '12/3', 2, 4), "12/_", "Delete selection with immutable characters");
@@ -437,13 +433,11 @@ sap.ui.define([
 			this.oMaskInput = new MaskInput();
 			this.oMaskInput.placeAt("content");
 			sap.ui.getCore().applyChanges();
-			this.sandbox = sinon.sandbox;
 		},
 		afterEach: function () {
 			if (!bSkipDestroy) {
 				this.oMaskInput.destroy();
 			}
-			this.sandbox.restore();
 		}
 	});
 	QUnit.test("Initial focusing on mask input", function (assert){
@@ -523,7 +517,7 @@ sap.ui.define([
 
 		oControl.focus();
 		this.clock.tick(1000);
-		qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.DELETE);
+		qutils.triggerKeydown(oControl.getDomRef(), KeyCodes.DELETE);
 		this.clock.tick(1000);
 
 		oOtherControl.focus();
@@ -594,8 +588,7 @@ sap.ui.define([
 
 			sap.ui.getCore().applyChanges();
 			this.oChangeListenerPassedEvent = null;
-			this.sandbox = sinon.sandbox;
-			this.spyChangeEvent = sinon.spy(this.changeListener.bind(this));
+			this.spyChangeEvent = this.spy(this.changeListener.bind(this));
 			this.oMaskInput.attachEvent("change", this.spyChangeEvent);
 
 		},
@@ -604,7 +597,6 @@ sap.ui.define([
 				this.oMaskInput.destroy();
 				this.oOtherControl.destroy();
 			}
-			this.sandbox.restore();
 		},
 		changeListener: function () {
 			this.oChangeListenerPassedEvent = jQuery.extend({}, arguments[0]);
@@ -636,7 +628,7 @@ sap.ui.define([
 		assert.ok(getMaskInputDomValue(oControl), "The '18' should go into the input");
 		assert.ok(!this.spyChangeEvent.called, "Change event must not be called");
 
-		qutils.triggerKeydown(jQuery(oControl.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(jQuery(oControl.getFocusDomRef()), KeyCodes.ENTER);
 
 		assert.equal(this.spyChangeEvent.callCount, 1, "Change event must be called exactly once");
 	});
@@ -648,7 +640,7 @@ sap.ui.define([
 
 		qutils.triggerKeypress(oControl.getDomRef(), "1");
 		assert.ok(getMaskInputDomValue(oControl), "The '1' should go into the input");
-		qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oControl.getDomRef(), KeyCodes.ESCAPE);
 		assert.ok(!this.spyChangeEvent.called, "Change event must not be called");
 	});
 
@@ -657,7 +649,7 @@ sap.ui.define([
 
 		oControl.focus();
 		this.clock.tick(1000);
-		qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.DELETE);
+		qutils.triggerKeydown(oControl.getDomRef(), KeyCodes.DELETE);
 
 		this.oOtherControl.focus();
 		this.clock.tick(1000);
@@ -705,7 +697,6 @@ sap.ui.define([
 			this.oMaskInputHebrew.placeAt("content");
 
 			sap.ui.getCore().applyChanges();
-			this.sandbox = sinon.sandbox;
 		},
 
 		afterEach: function () {
@@ -713,19 +704,17 @@ sap.ui.define([
 				this.oMaskInputLatin.destroy();
 				this.oMaskInputHebrew.destroy();
 			}
-
-			this.sandbox.restore();
 		},
 		testSelectedInputWithArrow: function(oControl, oClock, sArrowName, iExpectedPosition, sMessagePrefix) {
 			oControl.focus();
 			oClock.tick(1000);
 			oControl.selectText(0, oControl.getValue().length);
-			qutils.triggerKeydown(oControl.getDomRef(), sArrowName.toLowerCase() === "left" ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(oControl.getDomRef(), sArrowName.toLowerCase() === "left" ? KeyCodes.ARROW_LEFT : KeyCodes.ARROW_RIGHT);
 			oClock.tick(1000);
 			checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
 
 			//consecutive presses should not move the carret
-			qutils.triggerKeydown(oControl.getDomRef(), sArrowName.toLowerCase() === "left" ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(oControl.getDomRef(), sArrowName.toLowerCase() === "left" ? KeyCodes.ARROW_LEFT : KeyCodes.ARROW_RIGHT);
 
 			checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix + " Consecutive presses do nothing");
 		},
@@ -733,7 +722,7 @@ sap.ui.define([
 			oControl.focus();
 			oClock.tick(1000);
 			setCursorPosition(iStartPosition, oControl);
-			qutils.triggerKeydown(oControl.getDomRef(),  sArrowName.toLowerCase() === "left"  ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(oControl.getDomRef(),  sArrowName.toLowerCase() === "left"  ? KeyCodes.ARROW_LEFT : KeyCodes.ARROW_RIGHT);
 
 			checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
 		},
@@ -863,13 +852,11 @@ sap.ui.define([
 			this.oMaskInput = new MaskInput();
 			this.oMaskInput.placeAt("content");
 			sap.ui.getCore().applyChanges();
-			this.sandbox = sinon.sandbox;
 		},
 		afterEach: function () {
 			if (!bSkipDestroy) {
 				this.oMaskInput.destroy();
 			}
-			this.sandbox.restore();
 		},
 		sendAndValidate: function (iPos, sChar, sExpectedValue, oControl) {
 			if (!oControl) {
@@ -879,7 +866,7 @@ sap.ui.define([
 				setCursorPosition(iPos, oControl);
 			}
 			qutils.triggerKeypress(oControl.getDomRef(), sChar);
-			assert.equal(oControl._getInputValue(), sExpectedValue, "Typing '" + sChar + "' at position [" +
+			QUnit.assert.equal(oControl._getInputValue(), sExpectedValue, "Typing '" + sChar + "' at position [" +
 			(iPos === -1 ? "current" : iPos) + "] should resolve to a certain value");
 		}
 	});
@@ -942,7 +929,7 @@ sap.ui.define([
 		oControl.focus();
 		this.clock.tick(1000);
 		this.sendAndValidate(-1, "2", "2-#");
-		qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oControl.getDomRef(), KeyCodes.ESCAPE);
 		this.clock.tick(1000);
 
 		var oSelection = getCurrentSelection(oControl);
@@ -983,7 +970,7 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		this.sendAndValidate(-1, "c", "ab-c_");
-		qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oControl.getDomRef(), KeyCodes.ESCAPE);
 		assert.equal(oControl.getValue(), "ab-__", "The value before focusing-in must be restored");
 	});
 
@@ -1003,7 +990,7 @@ sap.ui.define([
 		assert.equal(getMaskInputDomValue(this.oMaskInput), "1", "'1' is set as value of the input");
 
 		// Act
-		qutils.triggerKeydown(this.oMaskInput.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(this.oMaskInput.getDomRef(), KeyCodes.ESCAPE);
 
 		// Assert
 		assert.equal(getMaskInputDomValue(this.oMaskInput), "_", "The input is cleared after the first ESC press");
@@ -1011,7 +998,7 @@ sap.ui.define([
 		assert.equal(onsapescapeIBSpy.callCount, 1, "onsapescape of the InputBase is called after the first ESC press");
 
 		// Act
-		qutils.triggerKeydown(this.oMaskInput.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(this.oMaskInput.getDomRef(), KeyCodes.ESCAPE);
 
 		// Assert
 		assert.equal(getMaskInputDomValue(this.oMaskInput), "_", "The input is cleared after the second ESC press");
@@ -1024,11 +1011,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("OnBeforeRendering captures any validation errors.", function (assert){
-		assert.ok(Log, "Log module should be available");
 		var oControl = this.oMaskInput,
 			oDefinition1 = new MaskInputRule({maskFormatSymbol: "-", regex: "[']"}),
 			oDefinition2 = new MaskInputRule({maskFormatSymbol: "+", regex: "[()]"}),
-			oWarningSpy = this.sandbox.spy(Log, "warning");
+			oWarningSpy = this.spy(Log, "warning");
 		oControl.addRule(oDefinition1);
 		oControl.addRule(oDefinition2);
 		oDefinition1.setMaskFormatSymbol("+");
@@ -1105,13 +1091,12 @@ sap.ui.define([
 			this.oMaskInput.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			this.fnIsChromeOnAndroidStub = sinon.stub(this.oMaskInput, "_isChromeOnAndroid", function () {
+			this.fnIsChromeOnAndroidStub = this.stub(this.oMaskInput, "_isChromeOnAndroid").callsFake(function () {
 				return true;
 			});
 		},
 		afterEach: function() {
 			if (!bSkipDestroy) {
-				this.fnIsChromeOnAndroidStub.restore();
 				this.oMaskInput.destroy();
 			}
 		}
@@ -1207,9 +1192,9 @@ sap.ui.define([
 			var done = assert.async(),
 				oOnInputEvent = new jQuery.Event(),
 				fnSpyPreventDefaultSpy = this.spy(oOnInputEvent, "preventDefault"),
-				fnKeyPressHandlerStub = this.stub(this.oMaskInput, "_keyPressHandler", function() {}),
+				fnKeyPressHandlerStub = this.stub(this.oMaskInput, "_keyPressHandler").callsFake(function() {}),
 				oBuildKeyboardEventInfoResponse = {"sChar": "9"},
-				fnBuildKeyboardEventInfoStub = this.stub(this.oMaskInput, "_buildKeyboardEventInfo", function() { return oBuildKeyboardEventInfoResponse;});
+				fnBuildKeyboardEventInfoStub = this.stub(this.oMaskInput, "_buildKeyboardEventInfo").callsFake(function() { return oBuildKeyboardEventInfoResponse;});
 
 			this.oMaskInput.setMask("99999");
 			sap.ui.getCore().applyChanges();
@@ -1242,9 +1227,9 @@ sap.ui.define([
 			var done = assert.async(),
 				oOnInputEvent = new jQuery.Event(),
 				fnSpyPreventDefaultSpy = this.spy(oOnInputEvent, "preventDefault"),
-				fnRevertKeyStub = this.stub(this.oMaskInput, "_revertKey", function() {}),
+				fnRevertKeyStub = this.stub(this.oMaskInput, "_revertKey").callsFake(function() {}),
 				oBuildKeyboardEventInfoResponse = {"bBackspace": true},
-				fnBuildKeyboardEventInfoStub = this.stub(this.oMaskInput, "_buildKeyboardEventInfo", function() { return oBuildKeyboardEventInfoResponse;});
+				fnBuildKeyboardEventInfoStub = this.stub(this.oMaskInput, "_buildKeyboardEventInfo").callsFake(function() { return oBuildKeyboardEventInfoResponse;});
 
 			this.oMaskInput.setMask("99999");
 			sap.ui.getCore().applyChanges();
@@ -1338,7 +1323,7 @@ sap.ui.define([
 		assert.ok(oClearIcon.getVisible(), "Clear Icon is visible when the value of the input is not empty");
 
 		// Act
-		qutils.triggerKeydown(this.oMaskInput.getDomRef(), jQuery.sap.KeyCodes.BACKSPACE);
+		qutils.triggerKeydown(this.oMaskInput.getDomRef(), KeyCodes.BACKSPACE);
 
 		// Assert
 		assert.equal(getMaskInputDomValue(this.oMaskInput), "_", "The input is cleared after the BACKSPACE press");
@@ -1357,7 +1342,7 @@ sap.ui.define([
 		assert.notOk(oClearIcon.getVisible(), "Clear Icon is not visible when the value of the input is empty");
 
 		// Act
-		qutils.triggerKeydown(this.oMaskInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(this.oMaskInput.getDomRef(), KeyCodes.ENTER);
 
 		// Assert
 		assert.notOk(oClearIcon.getVisible(), "Clear Icon is still not visible after ENTER press");
@@ -1370,7 +1355,7 @@ sap.ui.define([
 		assert.ok(oClearIcon.getVisible(), "Clear Icon is visible when the value of the input is not empty");
 
 		// Act
-		qutils.triggerKeydown(this.oMaskInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(this.oMaskInput.getDomRef(), KeyCodes.ENTER);
 
 		// Assert
 		assert.ok(oClearIcon.getVisible(), "Clear Icon is still visible after ENTER press");
@@ -1419,31 +1404,31 @@ sap.ui.define([
 		oControl.focus();
 		this.clock.tick(1000);
 		this.sendAndValidate(0, "1", "1_:__:__ ", oControl);
-		qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.BACKSPACE);
+		qutils.triggerKeydown(oControl.getDomRef(), KeyCodes.BACKSPACE);
 		this.clock.tick(1000);
-		assert.equal(oControl._getInputValue(), "__:__:__ ", "the value after backspace should be empty");
+		QUnit.assert.equal(oControl._getInputValue(), "__:__:__ ", "the value after backspace should be empty");
 
 		this.sendAndValidate(0, "1", "1_:__:__ ", oControl);
 		setCursorPosition(0, oControl);
-		qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.DELETE);
+		qutils.triggerKeydown(oControl.getDomRef(), KeyCodes.DELETE);
 		this.clock.tick(1000);
-		assert.equal(oControl._getInputValue(), "__:__:__ ", "the value after delete should be empty");
+		QUnit.assert.equal(oControl._getInputValue(), "__:__:__ ", "the value after delete should be empty");
 
 		this.sendAndValidate(0, "1", "1_:__:__ ", oControl);
 		this.sendAndValidate(1, "2", "12:__:__ ", oControl);
 		oControl.selectText(0, 2);
 		this.clock.tick(1000);
-		qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.BACKSPACE);
+		qutils.triggerKeydown(oControl.getDomRef(), KeyCodes.BACKSPACE);
 		this.clock.tick(1000);
-		assert.equal(oControl._getInputValue(), "__:__:__ ", "the value after backspace should be empty");
+		QUnit.assert.equal(oControl._getInputValue(), "__:__:__ ", "the value after backspace should be empty");
 
 		this.sendAndValidate(0, "1", "1_:__:__ ", oControl);
 		this.sendAndValidate(1, "2", "12:__:__ ", oControl);
 		oControl.selectText(0, 2);
 		this.clock.tick(1000);
-		qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.DELETE);
+		qutils.triggerKeydown(oControl.getDomRef(), KeyCodes.DELETE);
 		this.clock.tick(1000);
-		assert.equal(oControl._getInputValue(), "__:__:__ ", "the value after delete should be empty");
+		QUnit.assert.equal(oControl._getInputValue(), "__:__:__ ", "the value after delete should be empty");
 	}
 
 	function setCursorPosition(iPosition, oControl) {
@@ -1458,12 +1443,8 @@ sap.ui.define([
 		return jQuery(oControl.getDomRef("inner")).val();
 	}
 
-	function getCursorPosition(oControl) {
-		return jQuery(oControl.getFocusDomRef()).cursorPos();
-	}
-
 	function checkForEmptyValue(oControl) {
-		assert.ok(typeof oControl.getValue() === "undefined" || oControl.getValue() == null || oControl.getValue().length === 0,
+		QUnit.assert.ok(typeof oControl.getValue() === "undefined" || oControl.getValue() == null || oControl.getValue().length === 0,
 				"The value [" + oControl.getValue() + "] should be empty ");
 	}
 
@@ -1510,13 +1491,13 @@ sap.ui.define([
 
 	function checkCursorIsAtPosition (oControl, iExpectedPosition, sMessagePrefix) {
 		var oSelection = getCurrentSelection(oControl);
-		assert.equal(oSelection.iFrom, oSelection.iTo, "Prerequisites: there must not be any selection(selectionStart & selectionEnd must be equal)");
-		assert.equal(oSelection.iFrom, iExpectedPosition, sMessagePrefix + ": Cursor position check");
+		QUnit.assert.equal(oSelection.iFrom, oSelection.iTo, "Prerequisites: there must not be any selection(selectionStart & selectionEnd must be equal)");
+		QUnit.assert.equal(oSelection.iFrom, iExpectedPosition, sMessagePrefix + ": Cursor position check");
 	}
 
 	function checkSelection(oControl, iExpectedStartPosition, iExpectedEndPosition, sMessagePrefix) {
 		var oSelection = getCurrentSelection(oControl);
-		assert.deepEqual(oSelection, {iFrom: iExpectedStartPosition, iTo: iExpectedEndPosition}, sMessagePrefix + ": selection start check");
+		QUnit.assert.deepEqual(oSelection, {iFrom: iExpectedStartPosition, iTo: iExpectedEndPosition}, sMessagePrefix + ": selection start check");
 	}
 
 	function getCursorSelectionWebkit(oControl) {

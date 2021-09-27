@@ -1,28 +1,34 @@
 /*global QUnit */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/m/FacetFilter",
+	"sap/m/FacetFilterItem",
+	"sap/m/FacetFilterList",
+	"sap/m/Page",
+	"sap/m/Panel",
+	"sap/ui/model/BindingMode",
+	"sap/ui/model/json/JSONModel",
 	"test-resources/sap/ui/support/TestHelper"
-], function(jQuery, testRule) {
+], function(FacetFilter, FacetFilterItem, FacetFilterList, Page, Panel, BindingMode, JSONModel, testRule) {
 	"use strict";
 
 	QUnit.module("FacetFilter rules", {
 		setup: function() {
-			this.model1 = new sap.ui.model.json.JSONModel({
+			this.model1 = new JSONModel({
 				items: [{ text: 'a' }]
 			});
 
-			this.model2 = new sap.ui.model.json.JSONModel({
+			this.model2 = new JSONModel({
 				items: [{ text: 'a' }]
 			});
-			this.model2.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay);
+			this.model2.setDefaultBindingMode(BindingMode.OneWay);
 
-			var ff1 = new sap.m.FacetFilter({
+			var ff1 = new FacetFilter({
 				lists: [
-					new sap.m.FacetFilterList({
+					new FacetFilterList({
 						items: {
 							path: '/items',
-							template: new sap.m.FacetFilterItem({
+							template: new FacetFilterItem({
 								text: 'hardcoded'
 							})
 						},
@@ -32,12 +38,12 @@ sap.ui.define([
 			});
 			ff1.setModel(this.model1);
 
-			var ff2 = new sap.m.FacetFilter({
+			var ff2 = new FacetFilter({
 				lists: [
-					new sap.m.FacetFilterList({
+					new FacetFilterList({
 						items: {
 							path: '/items',
-							template: new sap.m.FacetFilterItem({
+							template: new FacetFilterItem({
 								text: 'hardcoded'
 							})
 						},
@@ -47,9 +53,9 @@ sap.ui.define([
 			});
 			ff2.setModel(this.model2);
 
-			this.page = new sap.m.Page({
+			this.page = new Page({
 				content: [
-					new sap.m.Panel({
+					new Panel({
 						id: "FacetFilterTestsContext1",
 						content: [
 							ff1,

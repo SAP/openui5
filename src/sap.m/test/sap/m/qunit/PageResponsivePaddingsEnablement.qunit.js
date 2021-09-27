@@ -1,13 +1,11 @@
 /*global sinon, QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Button",
 	"sap/m/Page",
 	"sap/m/Bar",
-	"jquery.sap.global"
+	"sap/ui/thirdparty/jquery"
 ], function(
-	qutils,
 	createAndAppendDiv,
 	Button,
 	Page,
@@ -17,16 +15,17 @@ sap.ui.define([
 	"use strict";
 	createAndAppendDiv("content");
 
+	QUnit.module("");
+
 	QUnit.test("_initResponsivePaddingsEnablement is called on init", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(Page.prototype, "_initResponsivePaddingsEnablement"),
+		var oSpy = this.spy(Page.prototype, "_initResponsivePaddingsEnablement"),
 			oTestPage = new Page({}).placeAt("content");
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "Method _initResponsivePaddingsEnablement called on init of control");
 		assert.ok(oSpy.calledOn(oTestPage), "The spy is called on the tested control instance");
 
-		oSpy.restore();
 		oTestPage.destroy();
     });
 
@@ -52,7 +51,6 @@ sap.ui.define([
 		oTestPage.addStyleClass("sapUiResponsivePadding--content");
 		oTestPage.addStyleClass("sapUiResponsivePadding--footer");
 
-		this.stub(window, "requestAnimationFrame", window.setTimeout);
 		sap.ui.getCore().applyChanges();
 
 		var $page = jQuery("#testPage");
@@ -125,7 +123,6 @@ sap.ui.define([
 		assert.ok(bIsContentResponsive, "The sapUi-Std-PaddingXL class is applied to the content");
 		assert.ok(bIsFooterResponsive, "The sapUi-Std-PaddingXL class is applied to the footer");
 
-		this.stub().reset();
 		oTestPage.destroy();
 	});
 });

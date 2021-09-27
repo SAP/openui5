@@ -1549,14 +1549,14 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// Assert
-		assert.strictEqual(jQuery.sap.byId("PreserveContent1").length, 1, "The span node \"PreserveContent\" is in the DOM");
+		assert.strictEqual(jQuery("#PreserveContent1").length, 1, "The span node \"PreserveContent\" is in the DOM");
 		oIconTabBar.setSelectedItem(oIconTabBar.getItems()[1]);
 		Core.applyChanges();
-		assert.strictEqual(jQuery.sap.byId("PreserveContent2").length, 1, "The span node \"PreserveContent2\" is in the DOM");
+		assert.strictEqual(jQuery("#PreserveContent2").length, 1, "The span node \"PreserveContent2\" is in the DOM");
 		oIconTabBar.setSelectedItem(oIconTabBar.getItems()[0]);
 		Core.applyChanges();
-		assert.strictEqual(jQuery.sap.byId("PreserveContent1").length, 1, "The span node \"PreserveContent1\" is in the DOM");
-		assert.strictEqual(jQuery.sap.byId("PreserveContent2").length, 1, "The span node \"PreserveContent2\" is in the DOM");
+		assert.strictEqual(jQuery("#PreserveContent1").length, 1, "The span node \"PreserveContent1\" is in the DOM");
+		assert.strictEqual(jQuery("#PreserveContent2").length, 1, "The span node \"PreserveContent2\" is in the DOM");
 
 		// Clean up
 		oIconTabBar.destroy();

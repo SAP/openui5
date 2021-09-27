@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -8,13 +7,15 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/m/DatePicker",
 	"sap/m/InstanceManager",
+	"sap/m/Label",
 	"sap/ui/model/type/Date",
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/core/library",
 	"sap/ui/core/CalendarType",
-	"jquery.sap.keycodes",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/unified/library",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/calendar/CalendarDate",
@@ -23,7 +24,9 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/unified/calendar/CustomYearPicker",
 	"sap/ui/unified/calendar/CustomMonthPicker",
-	"jquery.sap.global"
+	"sap/base/Log",
+	"sap/base/util/deepEqual",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -32,13 +35,15 @@ sap.ui.define([
 	DateFormat,
 	DatePicker,
 	InstanceManager,
+	Label,
 	TypeDate,
 	DateTime,
 	ODataModel,
-	coreLibrary,
 	CalendarType,
-	jQuery,
+	KeyCodes,
 	Device,
+	InvisibleText,
+	XMLView,
 	unifiedLibrary,
 	DateRange,
 	CalendarDate,
@@ -46,13 +51,15 @@ sap.ui.define([
 	CalendarLegend,
 	CalendarLegendItem,
 	CustomYearPicker,
-	CustomMonthPicker
+	CustomMonthPicker,
+	Log,
+	deepEqual,
+	jQuery
 ) {
+	"use strict";
+
 	// shortcut for sap.ui.unified.CalendarDayType
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
-
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = coreLibrary.mvc.ViewType;
 
 	createAndAppendDiv("uiArea1");
 	createAndAppendDiv("uiArea2");
@@ -61,8 +68,8 @@ sap.ui.define([
 	createAndAppendDiv("uiArea5");
 	createAndAppendDiv("uiArea6");
 	var sMyxml =
-		"<mvc:View xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.m\" controllerName=\"my.own.controller\">" +
-		"	<VBox>" +
+		"<mvc:View xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.m\">" +
+		"	<VBox binding=\"{/EdmTypesCollection(ID='1')}\">" +
 		"		<DatePicker id=\"picker1\"" +
 		"			value=\"{" +
 		"				path: 'DateTimeOffset'," +
@@ -101,8 +108,6 @@ sap.ui.define([
 		"	</VBox>" +
 		"</mvc:View>";
 
-
-	var Log = sap.ui.require("sap/base/Log");
 
 	var bChange = false;
 	var sValue = "";
@@ -276,7 +281,7 @@ sap.ui.define([
 		// arrange
 		var oDatePicker = new DatePicker({ editable: false }),
 			oValueHelpIconSetPropertySpy = this.spy(),
-			oValueHelpIconStub = this.stub(oDatePicker, "_getValueHelpIcon", function () {
+			oValueHelpIconStub = this.stub(oDatePicker, "_getValueHelpIcon").callsFake(function () {
 				return { setProperty: oValueHelpIconSetPropertySpy };
 			});
 
@@ -335,10 +340,10 @@ sap.ui.define([
 
 	QUnit.test("Footer is correctly displayed on mobile", function(assert) {
 		// Prepare
-		var oTouchStub = this.stub(Device, "support", {touch: true}),
-			oSystemStub = this.stub(Device, "system", {phone: true}),
+		var oTouchStub = this.stub(Device, "support").value({touch: true}),
+			oSystemStub = this.stub(Device, "system").value({phone: true}),
 			sLabelText = "DatePicker with showFooter property set to 'true'",
-			oLabel = new sap.m.Label({text: sLabelText, labelFor: "uniqueId"}),
+			oLabel = new Label({text: sLabelText, labelFor: "uniqueId"}),
 			oDP = new DatePicker("uniqueId", {
 				valueFormat: "yyyyMMdd",
 				showFooter: true
@@ -424,11 +429,6 @@ sap.ui.define([
 
 	QUnit.test("data binding with OData", function(assert) {
 		var done = assert.async();
-		sap.ui.controller("my.own.controller", {
-			onInit: function() {
-				this.getView().bindObject("/EdmTypesCollection(ID='1')");
-			}
-		});
 
 		TestUtils.useFakeServer(sinon.sandbox.create(),
 			"sap/ui/core/demokit/sample/ViewTemplate/types/data", {
@@ -445,22 +445,26 @@ sap.ui.define([
 			useBatch : false
 		});
 
-		var view = sap.ui.view({ viewContent: sMyxml, type: ViewType.XML })
-			.setModel(oModelV2)
-			.placeAt("qunit-fixture");
+		XMLView.create({
+			definition: sMyxml
+		}).then(function(view) {
 
-		oModelV2.attachRequestCompleted(function () {
-			var oDate = new Date(1420529121547); // Tue Jan 06 2015 09:25:21 GMT+0200 (FLE Standard Time)
+			view.setModel(oModelV2)
+				.placeAt("qunit-fixture");
 
-			assert.equal(view.byId("picker1")._$input.val(), DateFormat.getDateTimeInstance().format(oDate), "picker1 has correct value!");
-			assert.equal(view.byId("picker1").isValidValue(), true, "picker1 has valid value!");
-			assert.equal(view.byId("picker2")._$input.val(), DateFormat.getDateTimeInstance().format(oDate), "picker2 has correct value!");
-			assert.equal(view.byId("picker2").isValidValue(), true, "picker2 has valid value!");
-			assert.equal(view.byId("picker3")._$input.val(), DateFormat.getDateTimeInstance({style: "short"}).format(oDate), "picker3 has correct value!");
-			assert.equal(view.byId("picker3").isValidValue(), true, "picker3 has valid value!");
-			assert.equal(view.byId("picker4")._$input.val(), DateFormat.getDateTimeInstance({pattern: "dd+MM+yyyy"}).format(oDate), "picker4 has correct value!");
-			assert.equal(view.byId("picker4").isValidValue(), true, "picker4 has valid value!");
-			done();
+			oModelV2.attachRequestCompleted(function () {
+				var oDate = new Date(1420529121547); // Tue Jan 06 2015 09:25:21 GMT+0200 (FLE Standard Time)
+
+				assert.equal(view.byId("picker1")._$input.val(), DateFormat.getDateTimeInstance().format(oDate), "picker1 has correct value!");
+				assert.equal(view.byId("picker1").isValidValue(), true, "picker1 has valid value!");
+				assert.equal(view.byId("picker2")._$input.val(), DateFormat.getDateTimeInstance().format(oDate), "picker2 has correct value!");
+				assert.equal(view.byId("picker2").isValidValue(), true, "picker2 has valid value!");
+				assert.equal(view.byId("picker3")._$input.val(), DateFormat.getDateTimeInstance({style: "short"}).format(oDate), "picker3 has correct value!");
+				assert.equal(view.byId("picker3").isValidValue(), true, "picker3 has valid value!");
+				assert.equal(view.byId("picker4")._$input.val(), DateFormat.getDateTimeInstance({pattern: "dd+MM+yyyy"}).format(oDate), "picker4 has correct value!");
+				assert.equal(view.byId("picker4").isValidValue(), true, "picker4 has valid value!");
+				done();
+			});
 		});
 	});
 
@@ -588,7 +592,7 @@ sap.ui.define([
 		var oModel = new sap.ui.model.json.JSONModel({
 				date: "20190618000000"
 			}),
-			oDatePicker = new sap.m.DatePicker("datePicker", {
+			oDatePicker = new DatePicker("datePicker", {
 				value: {path:'model>/date',
 					type:'sap.ui.model.type.Date',
 					formatOptions: {source: {pattern: 'yyyyMMddHHmmss'}, style:'medium'}}
@@ -661,7 +665,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("setMinDate when dateValue does not match the new min date", function(assert) {
-		assert.ok(Log, "Log module should be available");
 		var oDateValue = new Date(2017, 0, 1),
 			oNewMinDate = new Date(2018, 0, 1),
 			oSut = new DatePicker({
@@ -694,7 +697,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("setMaxDate when dateValue does not match the new max date", function(assert) {
-		assert.ok(Log, "Log module should be available");
 		var oDateValue = new Date(2017, 0, 1),
 			oNewMaxDate = new Date(2016, 0, 1),
 			oSut = new DatePicker({
@@ -729,7 +731,6 @@ sap.ui.define([
 
 	QUnit.test("minDate and value in databinding scenario where the order of setters is not known",
 		function (assert) {
-			assert.ok(Log, "Log module should be available");
 			/**
 			 * value in second model is intentionally Jan 20, 2017, in order to examine the scenario, where value
 			 * setter is called before the minDate setter and a potentially valid value is not yet considered such,
@@ -782,7 +783,7 @@ sap.ui.define([
 				assert.equal(oSpyLogError.getCall(1).args[0], sErrorMsgDP2, "And the second message is with expected text");
 			}
 
-			oSpyLogError.reset();
+			oSpyLogError.resetHistory();
 
 			//Act - set a valid model
 			oDP1.setModel(oModelValid);
@@ -1034,7 +1035,7 @@ sap.ui.define([
 	QUnit.test("_fillDateRange should call Calendar's focusDate method with dateValue", function (assert) {
 		// prepare
 		var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8),
-			oGetDateValue = this.stub(this.oDp, "getDateValue", function () { return oExpectedDateValue; });
+			oGetDateValue = this.stub(this.oDp, "getDateValue").callsFake(function () { return oExpectedDateValue; });
 		this.oDp._oCalendar = { focusDate: this.spy(), destroy: function () {} };
 		this.oDp._oDateRange = { setStartDate: function () {}, getStartDate: function () {} };
 
@@ -1059,7 +1060,7 @@ sap.ui.define([
 		sId = "";
 		oDP2.focus();
 		jQuery("#DP2").find("input").val("32+04+2014");
-		qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DP2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DP2", "Change event fired");
 		assert.equal(sValue, "32+04+2014", "Value of event has entered value if invalid");
@@ -1073,7 +1074,7 @@ sap.ui.define([
 		sId = "";
 		oDP2.focus();
 		jQuery("#DP2").find("input").val("02+04+2014");
-		qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DP2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DP2", "Change event fired");
 		assert.equal(sValue, "2014-04-02", "Value in internal format priovided");
@@ -1089,7 +1090,7 @@ sap.ui.define([
 		sId = "";
 		oDP6.focus();
 		jQuery("#DP6").find("input").val("13/23/2015");
-		qutils.triggerKeyboardEvent("DP6-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DP6-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DP6").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.ok(bParseError, "parse error fired");
 		assert.ok(!bValidationSuccess, "no validation success fired");
@@ -1106,7 +1107,7 @@ sap.ui.define([
 		sId = "";
 		oDP6.focus();
 		jQuery("#DP6").find("input").val("01/01/15");
-		qutils.triggerKeyboardEvent("DP6-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DP6-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DP6").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.ok(!bParseError, "no parse error fired");
 		assert.ok(bValidationSuccess, "validation success fired");
@@ -1122,7 +1123,7 @@ sap.ui.define([
 		sValue = "";
 		sId = "";
 		oDP2.focus();
-		qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.PAGE_UP, false, false, false);
+		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.PAGE_UP, false, false, false);
 		assert.equal(sId, "DP2", "PageUp: Change event fired");
 		assert.equal(sValue, "2014-04-03", "PageUp: Value in internal format priovided");
 		assert.equal(oDP2.getValue(), "2014-04-03", "PageUp: Value in internal format set");
@@ -1131,7 +1132,7 @@ sap.ui.define([
 		bChange = false;
 		sValue = "";
 		sId = "";
-		qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.PAGE_UP, true, false, false);
+		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.PAGE_UP, true, false, false);
 		assert.equal(sId, "DP2", "PageUp+shift: Change event fired");
 		assert.equal(sValue, "2014-05-03", "PageUp+shift: Value in internal format priovided");
 		assert.equal(oDP2.getValue(), "2014-05-03", "PageUp+shift: Value in internal format set");
@@ -1140,7 +1141,7 @@ sap.ui.define([
 		bChange = false;
 		sValue = "";
 		sId = "";
-		qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.PAGE_UP, true, false, true);
+		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.PAGE_UP, true, false, true);
 		assert.equal(sId, "DP2", "PageUp+shift+ctrl: Change event fired");
 		assert.equal(sValue, "2015-05-03", "PageUp+shift+ctrl: Value in internal format priovided");
 		assert.equal(oDP2.getValue(), "2015-05-03", "PageUp+shift+ctrl: Value in internal format set");
@@ -1149,7 +1150,7 @@ sap.ui.define([
 		bChange = false;
 		sValue = "";
 		sId = "";
-		qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
+		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.PAGE_DOWN, false, false, false);
 		assert.equal(sId, "DP2", "PageDown: Change event fired");
 		assert.equal(sValue, "2015-05-02", "PageDown: Value in internal format priovided");
 		assert.equal(oDP2.getValue(), "2015-05-02", "PageDown: Value in internal format set");
@@ -1158,7 +1159,7 @@ sap.ui.define([
 		bChange = false;
 		sValue = "";
 		sId = "";
-		qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.PAGE_DOWN, true, false, false);
+		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.PAGE_DOWN, true, false, false);
 		assert.equal(sId, "DP2", "PageDown+shift: Change event fired");
 		assert.equal(sValue, "2015-04-02", "PageDown+shift: Value in internal format priovided");
 		assert.equal(oDP2.getValue(), "2015-04-02", "PageUp+shift: Value in internal format set");
@@ -1167,7 +1168,7 @@ sap.ui.define([
 		bChange = false;
 		sValue = "";
 		sId = "";
-		qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.PAGE_DOWN, true, false, true);
+		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.PAGE_DOWN, true, false, true);
 		assert.equal(sId, "DP2", "PageDown+shift+ctrl: Change event fired");
 		assert.equal(sValue, "2014-04-02", "PageDown+shift+ctrl: Value in internal format priovided");
 		assert.equal(oDP2.getValue(), "2014-04-02", "PageDown+shift+ctrl: Value in internal format set");
@@ -1181,27 +1182,27 @@ sap.ui.define([
 			bOrigDesktop = Device.system.desktop;
 
 		// On a desktop (non-touch) device
-		sap.ui.Device.support.touch = false;
-		sap.ui.Device.system.desktop = true;
+		Device.support.touch = false;
+		Device.system.desktop = true;
 		sap.ui.getCore().byId("DP5").focus();
 		qutils.triggerEvent("click", "DP5-icon");
 		sap.ui.getCore().applyChanges();
 		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
-		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
 		assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after date selection");
 
 		qutils.triggerEvent("click", "DP5-icon");
 		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
-		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
 		assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after selecting the same date");
 
 		oDP5.focus();
 		jQuery("#DP5").find("input").val("4"); // enter invalid date
-		qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DP5").find("input").trigger("change");
 		qutils.triggerEvent("click", "DP5-icon");
 		jQuery("#DP5-cal--Month0-20151124").trigger("focus"); // choose previous valid date
-		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
 		assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after first entering invalid date and then selecting the previous valid date");
 
 		qutils.triggerEvent("click", "DP5-icon");
@@ -1209,24 +1210,24 @@ sap.ui.define([
 		assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after cancel");
 
 		// On a touch device
-		sap.ui.Device.support.touch = true;
-		sap.ui.Device.system.desktop = false;
+		Device.support.touch = true;
+		Device.system.desktop = false;
 		qutils.triggerEvent("click", "DP5-icon");
 		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
-		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
 		assert.notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after date selection");
 
 		qutils.triggerEvent("click", "DP5-icon");
 		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
-		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
 		assert.notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after selecting the same date");
 
 		qutils.triggerEvent("click", "DP5-icon");
 		jQuery("#DP5-cal").control(0).fireCancel();
 		assert.notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after cancel");
 
-		sap.ui.Device.system.desktop = bOrigDesktop;
-		sap.ui.Device.support.touch = bOrigTouch;
+		Device.system.desktop = bOrigDesktop;
+		Device.support.touch = bOrigTouch;
 	});
 
 	QUnit.test("change date using calendar", function(assert) {
@@ -1256,7 +1257,7 @@ sap.ui.define([
 		}
 
 		// use ENTER to not run into itemNavigation
-		qutils.triggerKeyboardEvent(oDay, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oDay, KeyCodes.ENTER, false, false, false);
 		assert.ok(!jQuery("#DP3-cal").is(":visible"), "calendar is not invisible");
 		assert.equal(sId, "DP3", "Change event fired");
 		assert.equal(sValue, "4/10/14", "Value in internal format priovided");
@@ -1280,7 +1281,7 @@ sap.ui.define([
 		assert.equal(oDP5._getCalendar().getPrimaryCalendarType(), "Islamic", "DP5: Primary calendar type set");
 		assert.equal(oDP5._getCalendar().getSecondaryCalendarType(), "Gregorian", "DP5: Secondary calendar type set");
 		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
-		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
 		assert.equal(oDP5.getValue(), "11/24/15", "Value in internal format set");
 
 		oDP7.focus();
@@ -1288,7 +1289,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.equal(oDP7._getCalendar().getPrimaryCalendarType(), "Islamic", "DP7: Primary calendar type set");
 		jQuery("#DP7-cal--Month0-20151124").trigger("focus");
-		qutils.triggerKeyboardEvent("DP7-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DP7-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
 		assert.equal(oDP7.getValue(), "2/11/1437 AH", "Value in binding format set");
 
 		// invalid enterd value must be set to valid by picking in calendar
@@ -1298,7 +1299,7 @@ sap.ui.define([
 		sId = "";
 		oDP3.focus();
 		jQuery("#DP3").find("input").val("invalid");
-		qutils.triggerKeyboardEvent("DP3-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DP3-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DP3").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DP3", "Change event fired");
 		assert.equal(sValue, "invalid", "Value of event has entered value if invalid");
@@ -1315,7 +1316,7 @@ sap.ui.define([
 		assert.ok(jQuery("#DP3-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
 		jQuery("#DP3-cal--Month0-20140410").trigger("focus");
-		qutils.triggerKeyboardEvent("DP3-cal--Month0-20140410", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DP3-cal--Month0-20140410", KeyCodes.ENTER, false, false, false);
 		assert.ok(!jQuery("#DP3-cal").is(":visible"), "calendar is not invisible");
 		assert.equal(sId, "DP3", "Change event fired");
 		// Ssince no format is set, the date picker uses the default short format which for setted local "en-US" is "M/d/yy"
@@ -1327,11 +1328,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("min/max", function(assert) {
-		assert.ok(Log, "Log module should be available");
 		var oMinDate = new Date(1,0,1);
 		oMinDate.setFullYear("0001");
 		var oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 999);
-		var oSpyLogError = sinon.spy(Log, "error");
+		var oSpyLogError = this.spy(Log, "error");
 
 		//Assert
 		assert.ok(!oDP3.getMinDate(), "DP3: no min date set");
@@ -1352,7 +1352,7 @@ sap.ui.define([
 		assert.equal(oDP3._oMaxDate.toString(), oNewMaxDate.toString(), "DP3: new max date");
 
 		//Prepare
-		oSpyLogError.reset();
+		oSpyLogError.resetHistory();
 		var oNewDate = new Date(2016, 1, 15);
 		var sErrorMsg = "dateValue " + oNewDate.toString() + "(value=" + oDP3._getFormatter(false).format(oNewDate) +
 			") does not match min/max date range(" + oNewMinDate.toString() + " - " + oNewMaxDate.toString() + ")." +
@@ -1392,7 +1392,7 @@ sap.ui.define([
 			" current <dateValue> is null");
 
 		//Prepare
-		oSpyLogError.reset();
+		oSpyLogError.resetHistory();
 		//Act - switch from empty dateValue to a valid dateValue
 		oNewDate = new Date(2014, 0, 1);
 		oDP3.setDateValue(oNewDate);
@@ -1404,16 +1404,16 @@ sap.ui.define([
 		//Act - page down
 		bChange = false;
 		oDP3.focus();
-		qutils.triggerKeydown("DP3-inner", jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
+		qutils.triggerKeydown("DP3-inner", KeyCodes.PAGE_DOWN, false, false, false);
 		//Assert
 		assert.ok(!bChange, "DP3: No change event fired by PAGE_DOWN");
-		assert.ok(jQuery.sap.equal(oDP3.getDateValue(), oNewDate), "DP3: date not changed by PAGE_DOWN");
+		assert.ok(deepEqual(oDP3.getDateValue(), oNewDate), "DP3: date not changed by PAGE_DOWN");
 		assert.equal(oDP3.getValue(), "1/1/14", "DP3: value not changed by PAGE_DOWN");
 
 		//Act - pagedown+shift+ctrl
 		bChange = false;
 		oDP3.focus();
-		qutils.triggerKeydown("DP3-inner", jQuery.sap.KeyCodes.PAGE_UP, true, false, true);
+		qutils.triggerKeydown("DP3-inner", KeyCodes.PAGE_UP, true, false, true);
 		assert.ok(bChange, "DP3: change event fired by PAGE_UP+shift+ctrl");
 		assert.equal(oDP3.getDateValue().toString(), oNewMaxDate.toString(), "DP3: date changed by PAGE_DOWN+shift+ctrl");
 		assert.equal(oDP3.getValue(), "12/31/14", "DP3: value changed by PAGE_DOWN+shift+ctrl");
@@ -1423,7 +1423,7 @@ sap.ui.define([
 		bValid = true;
 		oDP3.focus();
 		jQuery("#DP3").find("input").val("December 31, 2015");
-		qutils.triggerKeydown("DP3-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DP3-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DP3").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		//Assert
 		assert.ok(bChange, "DP3: change event fired by typing invalid date");
@@ -1461,11 +1461,9 @@ sap.ui.define([
 		//Cleanup
 		qutils.triggerEvent("mousedown", "DP3-icon");
 		qutils.triggerEvent("click", "DP3-icon");
-		oSpyLogError.restore();
 	});
 
 	QUnit.test("setValue with value outside min/max range", function (assert) {
-		assert.ok(Log, "Log module should be available");
 		//Prepare
 		var oMinDate = new Date(2017, 0, 1),
 			oMaxDate = new Date(2017, 11, 31),
@@ -1477,7 +1475,7 @@ sap.ui.define([
 				maxDate: oMaxDate,
 				dateValue: oDateValue
 			}),
-			oSpyLogError = sinon.spy(Log, "error"),
+			oSpyLogError = this.spy(Log, "error"),
 			sErrorMsg = "dateValue " + new Date(2020, 5, 30).toString() + "(value=20200630) does not match " +
 				"min/max date range(" + oMinDate.toString() + " - " + new Date(oMaxDate.setHours(23, 59, 59)).toString() +
 				"). App. developers should take care to maintain dateValue/value accordingly.";
@@ -1497,7 +1495,6 @@ sap.ui.define([
 		oSpyLogError.callCount && assert.equal(oSpyLogError.getCall(0).args[0], sErrorMsg, "And the message is as expected");
 
 		//Cleanup
-		oSpyLogError.restore();
 		oDP.destroy();
 	});
 
@@ -1538,7 +1535,7 @@ sap.ui.define([
 				dateValue: new Date(2010, 0, 1)
 			}),
 			iFocusedIndex = 9,
-			oDeviceStub = this.stub(sap.ui.Device.support, "touch", true),
+			oDeviceStub = this.stub(Device.support, "touch").value(true),
 			oYP,
 			oFakeEvent,
 			oItemNavigationStub,
@@ -1551,8 +1548,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oYP = oDP._getCalendar()._getYearPicker();
-		oItemNavigationStub = this.stub(oYP._oItemNavigation, "getFocusedIndex", function () { return iFocusedIndex; });
-		oIsValueInThresholdStub = this.stub(oYP, "_isValueInThreshold", function () { return true; });
+		oItemNavigationStub = this.stub(oYP._oItemNavigation, "getFocusedIndex").callsFake(function () { return iFocusedIndex; });
+		oIsValueInThresholdStub = this.stub(oYP, "_isValueInThreshold").callsFake(function () { return true; });
 		fnFireSelectSpy = this.spy(oYP, "fireSelect");
 
 		oFakeEvent = {
@@ -1588,7 +1585,7 @@ sap.ui.define([
 		var oDate = new Date(1, 0, 1);
 		oDate.setFullYear(1);
 		oDP3.setDateValue(oDate);
-		assert.ok(jQuery.sap.equal(oDP3.getDateValue(), oDate), "DP3: 00010101 as valid date set");
+		assert.ok(deepEqual(oDP3.getDateValue(), oDate), "DP3: 00010101 as valid date set");
 		assert.equal(oDP3.getValue(), "1/1/01", "DP3: 00010101 displayed");
 		oDP3.focus();
 		qutils.triggerEvent("mousedown", "DP3-icon");
@@ -1602,7 +1599,7 @@ sap.ui.define([
 
 		oDate = new Date(1970, 0, 1);
 		oDP3.setDateValue(oDate);
-		assert.ok(jQuery.sap.equal(oDP3.getDateValue(), oDate), "DP3: 19700101 as valid date set");
+		assert.ok(deepEqual(oDP3.getDateValue(), oDate), "DP3: 19700101 as valid date set");
 		assert.equal(oDP3.getValue(), "1/1/70", "DP3: 19700101 displayed");
 		oDP3.focus();
 		qutils.triggerEvent("mousedown", "DP3-icon");
@@ -1616,7 +1613,7 @@ sap.ui.define([
 
 		oDate = new Date(9999, 11, 31);
 		oDP3.setDateValue(oDate);
-		assert.ok(jQuery.sap.equal(oDP3.getDateValue(), oDate), "DP3: 99991231 as valid date set");
+		assert.ok(deepEqual(oDP3.getDateValue(), oDate), "DP3: 99991231 as valid date set");
 		assert.equal(oDP3.getValue(), "12/31/99", "DP3: 99991231 displayed");
 		oDP3.focus();
 		qutils.triggerEvent("mousedown", "DP3-icon");
@@ -1632,11 +1629,11 @@ sap.ui.define([
 
 	QUnit.test("validation check", function(assert) {
 
-		simulateUserInputViaTheInputField();
-		simulateSelectionOnTheCalendar();
-		simulateUserInputViaTheInputField();
-		simulateSelectionOnTheCalendar();
-		simulateUserInputViaTheInputField();
+		simulateUserInputViaTheInputField(assert);
+		simulateSelectionOnTheCalendar(assert);
+		simulateUserInputViaTheInputField(assert);
+		simulateSelectionOnTheCalendar(assert);
+		simulateUserInputViaTheInputField(assert);
 
 		assert.equal(bChange, true,
 				"fireChange is fired everytime when needed and _lastValue is in sync with the selected date");
@@ -1865,7 +1862,7 @@ sap.ui.define([
 		assert.equal(oDP._getCalendar().getAggregation("header").getVisibleButton1(), false, "month button in the CustomMonthPicker is hidden");
 
 		oDP.toggleOpen(oDP.isOpen());
-		var oSpy = sinon.spy(oDP._getCalendar(), "_setDisabledMonths");
+		var oSpy = this.spy(oDP._getCalendar(), "_setDisabledMonths");
 		oDP.toggleOpen(oDP.isOpen());
 		assert.strictEqual(oSpy.callCount, 1, "The _setDisabledMonths method is called on on rendering");
 
@@ -2036,18 +2033,15 @@ sap.ui.define([
 	QUnit.module("Events", {
 		beforeEach: function () {
 			this.oDP = new DatePicker("EDP").placeAt("uiArea6");
-			this.oSpy = sinon.spy();
-			this.fnHandleCalendarSelect = sinon.spy(this.oDP, "_handleCalendarSelect");
-			this.fnHandleOKButton = sinon.spy(this.oDP, "_handleOKButton");
-			this.fnFireNavigate = sinon.spy(this.oDP, "fireNavigate");
+			this.oSpy = this.spy();
+			this.fnHandleCalendarSelect = this.spy(this.oDP, "_handleCalendarSelect");
+			this.fnHandleOKButton = this.spy(this.oDP, "_handleOKButton");
+			this.fnFireNavigate = this.spy(this.oDP, "fireNavigate");
 
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
 			this.oSpy = null;
-			this.fnHandleCalendarSelect.restore();
-			this.fnHandleOKButton.restore();
-			this.fnFireNavigate.restore();
 
 			this.oDP.destroy();
 			this.oDP = null;
@@ -2138,7 +2132,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("SpecialDates - lazy loading", {
-		beforeEach: function () {
+		beforeEach: function (assert) {
 			this.oDP = new DatePicker("SDP", {
 				dateValue: new Date(2016, 0, 1),
 				navigate: this.fHandleNavigate.bind(this)
@@ -2147,6 +2141,25 @@ sap.ui.define([
 
 			// Open date picker
 			qutils.triggerEvent("click", "SDP-icon");
+			this.assertSpecialDatesMarked = function () {
+				var fnDone = assert.async();
+				var oDateFormat = DateFormat.getInstance({pattern: "YYYYMMdd"});
+
+				// We use 200 ms timeout here to place the test on a safe place on the event loop queue
+				// to catch all the ui updates happening with multiple delayed calls.
+				setTimeout(function () {
+					var $Days = this.oDP._getCalendar().$().find(".sapUiCalItemType03");
+					assert.strictEqual($Days.length, 2, "There should be only two special days visible");
+					assert.strictEqual(jQuery($Days[0]).data("sap-day").toString(),
+						oDateFormat.format(this.oStartDate, false),
+						"The first special date '" + this.oStartDate + "' should be marked in the newly displayed month");
+					assert.strictEqual(jQuery($Days[1]).data("sap-day").toString(),
+						oDateFormat.format(this.oEndDate, false),
+						"The second special date '" + this.oEndDate + "' should be marked in the newly displayed month");
+
+					fnDone();
+				}.bind(this), 200);
+			};
 		},
 		afterEach: function () {
 			this.oDP.destroy();
@@ -2185,24 +2198,6 @@ sap.ui.define([
 				})
 			);
 		},
-		assertSpecialDatesMarked: function (fnDone) {
-			var oDateFormat = DateFormat.getInstance({pattern: "YYYYMMdd"});
-
-			// We use 200 ms timeout here to place the test on a safe place on the event loop queue
-			// to catch all the ui updates happening with multiple delayed calls.
-			setTimeout(function () {
-				var $Days = this.oDP._getCalendar().$().find(".sapUiCalItemType03");
-				assert.strictEqual($Days.length, 2, "There should be only two special days visible");
-				assert.strictEqual(jQuery($Days[0]).data("sap-day").toString(),
-					oDateFormat.format(this.oStartDate, false),
-					"The first special date '" + this.oStartDate + "' should be marked in the newly displayed month");
-				assert.strictEqual(jQuery($Days[1]).data("sap-day").toString(),
-					oDateFormat.format(this.oEndDate, false),
-					"The second special date '" + this.oEndDate + "' should be marked in the newly displayed month");
-
-				fnDone();
-			}.bind(this), 200);
-		},
 		/**
 		 * Click on a calendar month from the monthPicker
 		 * @param {int} iIndex 0..11 zero based index of the month
@@ -2227,23 +2222,19 @@ sap.ui.define([
 	});
 
 	QUnit.test("Changing month using the next arrow", function (assert) {
-		var fnDone = assert.async();
-
 		// Act - click on next button
 		qutils.triggerEvent("click", "SDP-cal--Head-next");
 
 		// Assert
-		this.assertSpecialDatesMarked(fnDone);
+		this.assertSpecialDatesMarked();
 	});
 
 	QUnit.test("Changing month using the back arrow", function (assert) {
-		var fnDone = assert.async();
-
 		// Act - click on previous button
 		qutils.triggerEvent("click", "SDP-cal--Head-prev");
 
 		// Assert
-		this.assertSpecialDatesMarked(fnDone);
+		this.assertSpecialDatesMarked();
 	});
 
 	QUnit.test("Changing month using the month picker", function (assert) {
@@ -2260,7 +2251,9 @@ sap.ui.define([
 			that.clickOnMonth(2);
 
 			// Assert
-			that.assertSpecialDatesMarked(fnDone);
+			that.assertSpecialDatesMarked();
+
+			fnDone();
 		}, 0);
 	});
 
@@ -2278,7 +2271,9 @@ sap.ui.define([
 			that.clickOnYear(2015);
 
 			// Assert
-			that.assertSpecialDatesMarked(fnDone);
+			that.assertSpecialDatesMarked();
+
+			fnDone();
 		}, 0);
 	});
 
@@ -2301,12 +2296,12 @@ sap.ui.define([
 
 	QUnit.test("dialog on mobile device", function(assert) {
 		// prepare
-		var oDeviceStub = this.stub(Device, "system", {
+		var oDeviceStub = this.stub(Device, "system").value({
 				desktop: false,
 				tablet: false,
 				phone: true
 			}),
-			oLabel = new sap.m.Label({text: "DatePicker Label", labelFor: this.oDP.getId()}),
+			oLabel = new Label({text: "DatePicker Label", labelFor: this.oDP.getId()}),
 			oDialog;
 
 		this.oDP.placeAt("qunit-fixture");
@@ -2331,13 +2326,13 @@ sap.ui.define([
 
 	QUnit.test("dialog on mobile device with invisible label", function(assert) {
 		// prepare
-		var oDeviceStub = this.stub(Device, "system", {
+		var oDeviceStub = this.stub(Device, "system").value({
 				desktop: false,
 				tablet: false,
 				phone: true
 			}),
-			oLabel = new sap.m.Label({text: "DatePicker Label", labelFor: this.oDP.getId()}),
-			oInvisibleText = new sap.ui.core.InvisibleText("invisibleTextId", {
+			oLabel = new Label({text: "DatePicker Label", labelFor: this.oDP.getId()}),
+			oInvisibleText = new InvisibleText("invisibleTextId", {
 				text: "invisible text"
 			}),
 			oDialog;
@@ -2380,13 +2375,13 @@ sap.ui.define([
 	});
 
 	//set the input value to an invalid one
-	function simulateUserInputViaTheInputField(){
+	function simulateUserInputViaTheInputField(assert) {
 		bChange = false;
 		sValue = "";
 		bValid = true;
 		sId = "";
 		jQuery("#DP2").find("input").val("11/190/2016");
-		qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DP2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DP2", "Change event fired");
 		assert.equal(sValue, "11/190/2016", "The new value is set to an invalid one");
@@ -2395,13 +2390,13 @@ sap.ui.define([
 	}
 
 	//press the icon and select a valid value
-	function simulateSelectionOnTheCalendar(){
+	function simulateSelectionOnTheCalendar(assert) {
 		oDP2.focus();
 		qutils.triggerEvent("click", "DP2-icon");
 		sap.ui.getCore().applyChanges();
 		var $Date = jQuery("#DP2-cal--Month0-20140401");
 		$Date.trigger("focus");
-		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
 		assert.ok(oDP2.getValue() !== "11/190/2016",
 			"The value has successfully changed after a selection from the calendar");
 	}
@@ -2675,7 +2670,7 @@ sap.ui.define([
 			this.oFakeEvent = {
 				target: {
 					id: this.oDRS.getId() + "-inner",
-					which: jQuery.sap.KeyCodes.PAGE_UP
+					which: KeyCodes.PAGE_UP
 				},
 				defaultPrevented: false,
 				preventDefault: function() {
@@ -2683,7 +2678,7 @@ sap.ui.define([
 				}
 			};
 
-			this.fnIncreaseDateSpy = sinon.spy(this.oDRS, "_increaseDate");
+			this.fnIncreaseDateSpy = this.spy(this.oDRS, "_increaseDate");
 
 			this.oDRS.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -2691,7 +2686,6 @@ sap.ui.define([
 		afterEach: function() {
 			this.oDRS.destroy();
 			this.oDRS = null;
-			this.fnIncreaseDateSpy.restore();
 		}
 	});
 
@@ -2747,15 +2741,12 @@ sap.ui.define([
 
 		// act
 		this.oDRS.toggleOpen();
-		oSpy = sinon.spy(this.oDRS._getCalendar(), "_closePickers");
+		oSpy = this.spy(this.oDRS._getCalendar(), "_closePickers");
 		this.oDRS._getCalendar().onsapshow(this.oFakeEvent);
 		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.ok(oSpy.notCalled, "the month picker is opened");
-
-		// clean
-		oSpy.restore();
 	});
 
 	QUnit.module("displayFormat");

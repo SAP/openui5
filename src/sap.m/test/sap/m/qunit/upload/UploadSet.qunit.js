@@ -303,7 +303,6 @@ sap.ui.define([
 
 		//Clean
 		oUploader.destroy();
-		oXMLHttpRequestSendSpy.restore();
 	});
 
 	QUnit.test("No data rendering - with default text and description", function(assert) {
@@ -316,8 +315,8 @@ sap.ui.define([
 		//Assert
 		assert.equal(this.oUploadSet.getNoDataText(), sNoDataText, "default text is returned for getNoDataText");
 		assert.equal(this.oUploadSet.getNoDataDescription(), sNoDataDescription, "default description is returned for getNoDataDescription");
-		assert.equal(jQuery.sap.byId(this.oUploadSet.getId() + "-no-data-text").text(), sNoDataText, "default no data text is rendered in upload set");
-		assert.equal(jQuery.sap.byId(this.oUploadSet.getId() + "-no-data-description").text(), sNoDataDescription, "default no data description is rendered in upload set");
+		assert.equal(this.oUploadSet.$("no-data-text").text(), sNoDataText, "default no data text is rendered in upload set");
+		assert.equal(this.oUploadSet.$("no-data-description").text(), sNoDataDescription, "default no data description is rendered in upload set");
 	});
 
 	QUnit.test("No data rendering - with user specified no data text", function(assert) {
@@ -327,7 +326,7 @@ sap.ui.define([
 
 		sap.ui.getCore().applyChanges();
 		//Assert
-		assert.equal(jQuery.sap.byId(this.oUploadSet.getId() + "-no-data-text").text(), "myNoDataText", "The no data text set by user is rendered");
+		assert.equal(this.oUploadSet.$("no-data-text").text(), "myNoDataText", "The no data text set by user is rendered");
 	});
 
 	QUnit.test("No data rendering - with user specified no data description", function(assert) {
@@ -337,7 +336,7 @@ sap.ui.define([
 
 		sap.ui.getCore().applyChanges();
 		//Assert
-		assert.equal(jQuery.sap.byId(this.oUploadSet.getId() + "-no-data-description").text(), "myNoDataDescription", "The no data description set by user is rendered");
+		assert.equal(this.oUploadSet.$("no-data-description").text(), "myNoDataDescription", "The no data description set by user is rendered");
 	});
 
 	QUnit.test("Test httpRequestMethod property with XMLHttpRequest", function (assert) {
@@ -360,7 +359,6 @@ sap.ui.define([
 
 		//Clean
 		oUploader.destroy();
-		oXMLHttpRequestOpenSpy.restore();
 	});
 
 	QUnit.test("Test incomplete items are empty after upload completed", function (assert) {

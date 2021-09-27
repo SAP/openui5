@@ -1,6 +1,4 @@
-/*global sinon */
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 
 sap.ui.define([
 	"sap/m/library",
@@ -18,6 +16,7 @@ sap.ui.define([
 	IconPool
 ) {
 	"use strict";
+
 	var oOTBPriority = mLibrary.OverflowToolbarPriority;
 
 	QUnit.module("Private methods", {

@@ -1,12 +1,11 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"jquery.sap.global",
 	"sap/m/FeedInput",
 	"sap/ui/core/TooltipBase",
 	"sap/m/FeedListItem",
-	"jquery.sap.keycodes"
-], function(qutils, jQuery, FeedInput, TooltipBase, FeedListItem) {
+	"sap/ui/events/KeyCodes"
+], function(qutils, FeedInput, TooltipBase, FeedListItem, KeyCodes) {
 	"use strict";
 
 	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -346,9 +345,9 @@ sap.ui.define([
 		this.oFeedInput.attachPost(onPost);
 		this.oFeedInput.setValue("firedValue");
 		this.oFeedInput.setEnabled(true);
-		qutils.triggerKeydown("input-button", jQuery.sap.KeyCodes.ENTER);
-		qutils.triggerKeyEvent("keypress", "input-button", jQuery.sap.KeyCodes.ENTER);
-		qutils.triggerKeyup("input-button", jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown("input-button", KeyCodes.ENTER);
+		qutils.triggerKeyEvent("keypress", "input-button", KeyCodes.ENTER);
+		qutils.triggerKeyup("input-button", KeyCodes.ENTER);
 	});
 
 	QUnit.test("Post - fired when pressing the Space key", function (assert) {
@@ -360,9 +359,9 @@ sap.ui.define([
 		this.oFeedInput.attachPost(onPost);
 		this.oFeedInput.setValue("firedValue");
 		this.oFeedInput.setEnabled(true);
-		qutils.triggerKeydown("input-button", jQuery.sap.KeyCodes.SPACE);
-		qutils.triggerKeyEvent("keypress", "input-button", jQuery.sap.KeyCodes.SPACE);
-		qutils.triggerKeyup("input-button", jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown("input-button", KeyCodes.SPACE);
+		qutils.triggerKeyEvent("keypress", "input-button", KeyCodes.SPACE);
+		qutils.triggerKeyup("input-button", KeyCodes.SPACE);
 	});
 
 	QUnit.test("Post - not fired when pressing 'A' Key", function (assert) {
@@ -374,9 +373,9 @@ sap.ui.define([
 		this.oFeedInput.attachPost(onPost);
 		this.oFeedInput.setValue("firedValue");
 		this.oFeedInput.setEnabled(true);
-		qutils.triggerKeydown("input-button", jQuery.sap.KeyCodes.A);
-		qutils.triggerKeyEvent("keypress", "input-button", jQuery.sap.KeyCodes.A);
-		qutils.triggerKeyup("input-button", jQuery.sap.KeyCodes.A);
+		qutils.triggerKeydown("input-button", KeyCodes.A);
+		qutils.triggerKeyEvent("keypress", "input-button", KeyCodes.A);
+		qutils.triggerKeyup("input-button", KeyCodes.A);
 	});
 
 });

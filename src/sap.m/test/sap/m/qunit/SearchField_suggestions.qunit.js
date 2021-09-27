@@ -225,10 +225,6 @@ sap.ui.define([
 		oSF.clear({value: toValue});
 
 		assert.strictEqual(fnFireSearch.callCount, 1, "Clear method is not fired again as the value is the same");
-
-
-		fnSpyFireLiveChange.restore();
-		fnFireSearch.restore();
 	});
 
 	QUnit.test("Background color on blur is restored", function(assert) {
@@ -254,9 +250,6 @@ sap.ui.define([
 		// assertion
 		assert.strictEqual(fnSpyFireLiveChange.callCount, 1, "LiveChange event is fired");
 		assert.strictEqual(fnFireSuggest.callCount, 1, "FireSuggest event is fired");
-
-		fnSpyFireLiveChange.restore();
-		fnFireSuggest.restore();
 	});
 
 	QUnit.test("onSearch test - event ", function(assert) {
@@ -279,13 +272,6 @@ sap.ui.define([
 		// assertion
 		assert.strictEqual(fnFireSearch.callCount, 1, "FireSearch event is fired");
 		assert.strictEqual(oSF.getValue(), toValue, "Search event sets the control value");
-
-		fnFireSearch.restore();
-		this.stub(Device, "system").value({
-			desktop: true,
-			phone: false,
-			tablet: false
-		});
 	});
 
 	QUnit.module("Formatting");
@@ -330,8 +316,6 @@ sap.ui.define([
 
 		this.clock.tick(400);
 		assert.strictEqual(fnFireSuggest.callCount, 1,  "Suggest should be fired ones");
-
-		fnFireSuggest.restore();
 	});
 
 	QUnit.module("Clean up");

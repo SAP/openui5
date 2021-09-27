@@ -1,6 +1,6 @@
 /*global sinon*/
 
-sap.ui.define(["jquery.sap.global"], function(jQuery) {
+sap.ui.define(["sap/base/Log"], function(Log) {
 	"use strict";
 
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -112,10 +112,10 @@ sap.ui.define(["jquery.sap.global"], function(jQuery) {
 					request.respond(200, oCountHeaders, "1");
 				}, responseDelay);
 			} else {
-				jQuery.sap.log.debug("FacetFilterODataFakeService: No match found for request.url=" + request.url);
+				Log.debug("FacetFilterODataFakeService: No match found for request.url=" + request.url);
 			}
 
-			jQuery.sap.log.info("Fake AJAX request started for URL: " + request.url);
+			Log.info("Fake AJAX request started for URL: " + request.url);
 		};
 	};
 

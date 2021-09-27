@@ -1,8 +1,6 @@
 sap.ui.define([
 	"sap/m/upload/UploadSetItem",
-	"sap/m/ObjectMarker",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
+	"sap/m/ObjectMarker"
 ], function (UploadSetItem, ObjectMarker) {
 	"use strict";
 

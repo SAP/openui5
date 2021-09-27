@@ -1,31 +1,37 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/DateTimePicker",
+	"sap/m/Label",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/DateTime",
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/Device",
 	"sap/m/TimePickerSliders",
-	"jquery.sap.keycodes",
+	"sap/ui/core/Popup",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/unified/DateRange",
-	"jquery.sap.global"
+	"sap/ui/unified/DateRange"
 ], function(
 	qutils,
 	createAndAppendDiv,
 	DateTimePicker,
+	Label,
 	JSONModel,
 	DateTime,
 	ODataDateTime,
 	Device,
 	TimePickerSliders,
+	Popup,
+	DateFormat,
 	jQuery,
 	KeyCodes,
 	DateRange
 ) {
+	"use strict";
+
 	createAndAppendDiv("uiArea1");
 	createAndAppendDiv("uiArea2");
 	createAndAppendDiv("uiArea3");
@@ -36,7 +42,6 @@ sap.ui.define([
 	createAndAppendDiv("uiArea8");
 
 
-	var bChange = false;
 	var sValue = "";
 	var bValid = false;
 	var sId = "";
@@ -45,7 +50,6 @@ sap.ui.define([
 			var oDTP = oEvent.oSource;
 			sValue = oEvent.getParameter("newValue");
 			bValid = oEvent.getParameter("valid");
-			bChange = true;
 			sId = oDTP.getId();
 		}
 
@@ -73,22 +77,18 @@ sap.ui.define([
 	});
 	sap.ui.getCore().setModel(oModel);
 
-	var bParseError = false;
 	sap.ui.getCore().attachParseError(
 			function(oEvent) {
 				sId = oEvent.getParameter("element").getId();
 				sValue = oEvent.getParameter('newValue');
 				bValid = false;
-				bParseError = true;
 			});
 
-	var bValidationSuccess = false;
 	sap.ui.getCore().attachValidationSuccess(
 			function(oEvent) {
 				sId = oEvent.getParameter("element").getId();
 				sValue = oEvent.getParameter('newValue');
 				bValid = true;
-				bValidationSuccess = true;
 			});
 
 	var oDTP4 = new DateTimePicker("DTP4", {
@@ -140,7 +140,7 @@ sap.ui.define([
 	QUnit.test("Popover instance is properly configured on desktop", function(assert) {
 		// Prepare
 		var oDTP = new DateTimePicker().placeAt("qunit-fixture"),
-			oSetDurationsSpy = sinon.spy(sap.ui.core.Popup.prototype, "setDurations");
+			oSetDurationsSpy = this.spy(Popup.prototype, "setDurations");
 
 		// Act
 		oDTP._createPopup();
@@ -389,7 +389,7 @@ sap.ui.define([
 	QUnit.test("_fillDateRange should call Calendar's focusDate method and sliders _setTimeValues with valueDate", function (assert) {
 		// prepare
 		var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8),
-			oGetDateValue = this.stub(this.oDTp, "getDateValue", function () { return oExpectedDateValue; });
+			oGetDateValue = this.stub(this.oDTp, "getDateValue").callsFake(function () { return oExpectedDateValue; });
 		this.oDTp._oCalendar = { focusDate: this.spy(), destroy: function () {} };
 		this.oDTp._oOKButton = { setEnabled: function() {} };
 		this.oDTp._oDateRange = { getStartDate: function () {}, setStartDate: function () {} };
@@ -414,13 +414,12 @@ sap.ui.define([
 	QUnit.module("interaction");
 
 	QUnit.test("change date by typing", function(assert) {
-		bChange = false;
 		sValue = "";
 		bValid = true;
 		sId = "";
 		oDTP2.focus();
 		jQuery("#DTP2").find("input").val("37+02+2016:10+11");
-		qutils.triggerKeyboardEvent("DTP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DTP2-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DTP2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DTP2", "Change event fired");
 		assert.equal(sValue, "37+02+2016:10+11", "Value of event has entered value if invalid");
@@ -428,13 +427,12 @@ sap.ui.define([
 		assert.equal(oDTP2.getValue(), "37+02+2016:10+11", "Value has entered value if invalid");
 		assert.equal(oDTP2.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DateValue not changed set");
 
-		bChange = false;
 		sValue = "";
 		bValid = true;
 		sId = "";
 		oDTP2.focus();
 		jQuery("#DTP2").find("input").val("18+02+2016:10+30");
-		qutils.triggerKeyboardEvent("DTP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DTP2-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DTP2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DTP2", "Change event fired");
 		assert.equal(sValue, "2016-02-18,10-30-00", "Value of event has entered value if valid");
@@ -454,7 +452,6 @@ sap.ui.define([
 			iIndex,
 			i;
 
-		bChange = false;
 		sValue = "";
 		sId = "";
 
@@ -479,7 +476,7 @@ sap.ui.define([
 			}
 
 			// use ENTER to not run into itemNavigation
-			qutils.triggerKeyboardEvent(oDay, jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent(oDay, KeyCodes.ENTER, false, false, false);
 
 			aHours = jQuery("#DTP3-Sliders-listHours-content").find(".sapMTimePickerItem");
 			for ( iIndex = 0; iIndex < aHours.length; iIndex++) {
@@ -489,7 +486,7 @@ sap.ui.define([
 			}
 
 			oDTP3._oSliders.getAggregation("_columns")[0].focus();
-			qutils.triggerKeyboardEvent(oDTP3._oSliders.getAggregation("_columns")[0].getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+			qutils.triggerKeyboardEvent(oDTP3._oSliders.getAggregation("_columns")[0].getDomRef(), KeyCodes.ARROW_DOWN, false, false, false);
 
 			done();
 		});
@@ -513,8 +510,8 @@ sap.ui.define([
 		});
 
 		jQuery("#DTP3-OK").trigger("focus");
-		qutils.triggerKeydown("DTP3-OK", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		qutils.triggerKeyup("DTP3-OK", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DTP3-OK", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyup("DTP3-OK", KeyCodes.ENTER, false, false, false);
 	});
 
 	QUnit.module("Accessibility");
@@ -688,7 +685,7 @@ sap.ui.define([
 		var dateValue,
 			actualValue,
 			oDate = "2018-08-15T13:07:47.000Z",
-			oFormatter = sap.ui.core.format.DateFormat.getDateTimeInstance({
+			oFormatter = DateFormat.getDateTimeInstance({
 				pattern: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
 				UTC: true //setting it to true should give me the original date ("2018-08-15T13:07:47.000Z") in UTC again
 			}),
@@ -715,12 +712,12 @@ sap.ui.define([
 	QUnit.test("_createPopup: mobile device", function(assert) {
 		// prepare
 		var oDateTimePicker = new DateTimePicker(),
-			oDeviceStub = this.stub(Device, "system", {
+			oDeviceStub = this.stub(Device, "system").value({
 				desktop: false,
 				tablet: false,
 				phone: true
 			}),
-			oLabel = new sap.m.Label({text: "DatePicker Label", labelFor: oDateTimePicker.getId()}),
+			oLabel = new Label({text: "DatePicker Label", labelFor: oDateTimePicker.getId()}),
 			oDialog;
 
 		oDateTimePicker.placeAt("qunit-fixture");

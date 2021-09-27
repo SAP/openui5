@@ -1,6 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/ImageContent",
 	"sap/ui/events/jquery/EventExtension"
 ], function(jQuery, ImageContent, EventExtension) {
@@ -26,8 +26,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("ImageContent and image rendered", function(assert) {
-		assert.ok(jQuery.sap.domById("img-cnt"), "ImageContent was rendered successfully");
-		assert.ok(jQuery.sap.domById("img-cnt-icon-image"), "Image was rendered successfully");
+		assert.ok(document.getElementById("img-cnt"), "ImageContent was rendered successfully");
+		assert.ok(document.getElementById("img-cnt-icon-image"), "Image was rendered successfully");
 	});
 
 	QUnit.test("Icon rendered", function(assert) {
@@ -37,7 +37,7 @@ sap.ui.define([
 		this.oImageContent.setSrc("sap-icon://travel-expense");
 		sap.ui.getCore().applyChanges();
 		//Assert
-		assert.ok(jQuery.sap.domById("img-cnt-icon-image"), "Icon was rendered successfully");
+		assert.ok(document.getElementById("img-cnt-icon-image"), "Icon was rendered successfully");
 		assert.equal(oSpy.callCount, 1, "During rendering _setPointerOnImage has been called");
 	});
 

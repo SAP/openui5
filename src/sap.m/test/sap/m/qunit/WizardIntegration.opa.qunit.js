@@ -1,8 +1,11 @@
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 sap.ui.define([
-	'sap/ui/test/Opa5', 'sap/ui/test/opaQunit', 'sap/ui/test/actions/Press'
-], function(Opa5, OpaTest, Press) {
+	'sap/ui/test/Opa5',
+	'sap/ui/test/opaQunit',
+	'sap/ui/test/actions/Press',
+	'sap/ui/test/matchers/PropertyStrictEquals'
+], function(Opa5, OpaTest, Press, PropertyStrictEquals) {
+	"use strict";
 
 	var oActions = new Opa5({
 		iPressOnTheButton : function (sButtonId) {
@@ -37,7 +40,7 @@ sap.ui.define([
 		theNextButtonShouldBeVisible: function (sId) {
 			return this.waitFor({
 				id : sId,
-				matchers : new sap.ui.test.matchers.PropertyStrictEquals({
+				matchers : new PropertyStrictEquals({
 					name : "visible",
 					value : true
 				}),
@@ -59,7 +62,7 @@ sap.ui.define([
 		theStepShouldBeValidated: function (sId) {
 			return this.waitFor({
 				id : sId,
-				matchers : new sap.ui.test.matchers.PropertyStrictEquals({
+				matchers : new PropertyStrictEquals({
 					name : "validated",
 					value : true
 				}),

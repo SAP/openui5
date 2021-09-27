@@ -1,5 +1,4 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -31,6 +30,8 @@ sap.ui.define([
 	Filter,
 	EventExtension
 ) {
+	"use strict";
+
 	// shortcut for sap.m.SelectListKeyboardNavigationMode
 	var SelectListKeyboardNavigationMode = mobileLibrary.SelectListKeyboardNavigationMode;
 
@@ -612,10 +613,9 @@ sap.ui.define([
 	QUnit.test("getSelectedItem()", function(assert) {
 
 		// system under test
-		var oExpectedItem;
 		var oSelectList = new SelectList({
 			items: [
-				oExpectedItem = new Item({
+				new Item({
 					id: "item-id",
 					key: "0",
 					text: "item 0"
@@ -729,10 +729,9 @@ sap.ui.define([
 	QUnit.test("getSelectedKey()", function(assert) {
 
 		// system under test
-		var oExpectedItem;
 		var oSelectList = new SelectList({
 			items: [
-				oExpectedItem = new Item({
+				new Item({
 					id: "item-id",
 					key: "0",
 					text: "item 0"
@@ -903,10 +902,9 @@ sap.ui.define([
 	QUnit.test("getSelectedKey()", function(assert) {
 
 		// system under test
-		var oExpectedItem;
 		var oSelectList = new SelectList({
 			items: [
-				oExpectedItem = new Item({
+				new Item({
 					id: "item-id",
 					key: "0",
 					text: "item 0"
@@ -3247,7 +3245,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// Act - Fake the add virtual context process.
-		oSpy.reset();
+		oSpy.resetHistory();
 		oBinding.fireEvent("change", {
 			detailedReason: "AddVirtualContext",
 			reason: "change"
@@ -3259,7 +3257,7 @@ sap.ui.define([
 		assert.strictEqual(oSpy.callCount, 1, "synchronizeSelection is not called from updateItems with add virtual context (only called from beforeRendering");
 
 		// Act - Fake the remove virtual context process.
-		oSpy.reset();
+		oSpy.resetHistory();
 		oBinding.fireEvent("change", {
 			detailedReason: "RemoveVirtualContext",
 			reason: "change"
@@ -3269,7 +3267,7 @@ sap.ui.define([
 		assert.strictEqual(oSpy.callCount, 0, "synchronizeSelection is not called from updateItems with remove virtual context");
 
 		// Act - Fake the remove virtual context process.
-		oSpy.reset();
+		oSpy.resetHistory();
 		oBinding.fireEvent("change", {});
 
 		// Assert
@@ -3571,7 +3569,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oSelectList.getDomRef(), {
+		qutils.triggerTouchEvent("touchstart", oSelectList.getDomRef(), {
 			srcControl: oItem,
 			touches: {
 				0: {
@@ -3623,7 +3621,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oSelectList.getDomRef(), {
+		qutils.triggerTouchEvent("touchstart", oSelectList.getDomRef(), {
 			srcControl: oItem,
 			touches: {
 				0: {
@@ -3673,7 +3671,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oSelectList.getDomRef(), {
+		qutils.triggerTouchEvent("touchstart", oSelectList.getDomRef(), {
 			srcControl: oItem,
 			touches: {
 				0: {
@@ -3700,7 +3698,7 @@ sap.ui.define([
 
 		this.clock.tick(101);
 
-		sap.ui.test.qunit.triggerTouchEvent("touchmove", oSelectList.getDomRef(), {
+		qutils.triggerTouchEvent("touchmove", oSelectList.getDomRef(), {
 			srcControl: oItem,
 			touches: {
 				0: {
@@ -3754,7 +3752,7 @@ sap.ui.define([
 		oSelectList.focus();
 
 		// act
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oSelectList.getDomRef(), {
+		qutils.triggerTouchEvent("touchstart", oSelectList.getDomRef(), {
 			srcControl: oItem,
 			touches: {
 				0: {
@@ -3779,7 +3777,7 @@ sap.ui.define([
 			}
 		});
 
-		sap.ui.test.qunit.triggerTouchEvent("touchend", oSelectList.getDomRef(), {
+		qutils.triggerTouchEvent("touchend", oSelectList.getDomRef(), {
 			srcControl: oItem,
 			changedTouches: {
 				0: {
@@ -3827,7 +3825,7 @@ sap.ui.define([
 		var fnFireItemPressSpy = this.spy(oSelectList, "fireItemPress");
 
 		// act
-		sap.ui.test.qunit.triggerTouchEvent("tap", oSelectList.getDomRef(), {
+		qutils.triggerTouchEvent("tap", oSelectList.getDomRef(), {
 			srcControl: oItem,
 			changedTouches: {
 				0: {
@@ -3874,7 +3872,7 @@ sap.ui.define([
 		var fnFireItemPressSpy = this.spy(oSelectList, "fireItemPress");
 
 		// act
-		sap.ui.test.qunit.triggerTouchEvent("tap", oSelectList.getDomRef(), {
+		qutils.triggerTouchEvent("tap", oSelectList.getDomRef(), {
 			srcControl: oItem,
 			changedTouches: {
 				0: {

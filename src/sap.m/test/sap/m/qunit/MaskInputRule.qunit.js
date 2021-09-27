@@ -1,16 +1,16 @@
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/MaskInputRule",
-	"sap/m/MaskInput"
-], function(QUnitUtils, createAndAppendDiv, MaskInputRule, MaskInput) {
+	"sap/m/MaskInput",
+	"sap/base/Log"
+], function(QUnitUtils, createAndAppendDiv, MaskInputRule, MaskInput, Log) {
+	"use strict";
+
 	createAndAppendDiv("content");
 
 
-
-	var Log = sap.ui.require("sap/base/Log");
 
 	QUnit.module("API", {
 		beforeEach: function () {
@@ -18,11 +18,9 @@ sap.ui.define([
 			this.oMaskInput = new MaskInput({rules: [this.oMaskInputRule]});
 			this.oMaskInput.placeAt("content");
 			sap.ui.getCore().applyChanges();
-			this.sandbox = sinon.sandbox;
 		},
 		afterEach: function () {
 			this.oMaskInput.destroy();
-			this.sandbox.restore();
 		}
 	});
 
@@ -38,10 +36,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Setting an invalid Mask Format Symbol is not accepted", function (assert) {
-		assert.ok(Log, "Log module should be available");
 		var oRule = this.oMaskInputRule,
-				oErrorSpy = this.sandbox.spy(Log, 'error'),
-				oSetterSpy = this.sandbox.spy(oRule, 'setProperty');
+				oErrorSpy = this.spy(Log, 'error'),
+				oSetterSpy = this.spy(oRule, 'setProperty');
 
 		setAndValidate.call(this, "more_than_one_character");
 		setAndValidate.call(this, "");
@@ -50,9 +47,9 @@ sap.ui.define([
 			var sExpectedError = "The mask format symbol '" + sSymbol + "' is not valid";
 
 			oErrorSpy.restore();
-			oErrorSpy = this.sandbox.spy(Log, 'error');
+			oErrorSpy = this.spy(Log, 'error');
 			oSetterSpy.restore();
-			oSetterSpy = this.sandbox.spy(oRule, 'setProperty');
+			oSetterSpy = this.spy(oRule, 'setProperty');
 			oRule.setMaskFormatSymbol(sSymbol);
 			assert.ok(oSetterSpy.notCalled, "Invalid maskFormatSymbol [" + sSymbol + "] is not accepted");
 			assert.ok(oErrorSpy.calledOnce, "When called with invalid parameter [" + sSymbol + "] setMaskFormatSymbol logs error.");
@@ -81,10 +78,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Setting an invalid regex is not accepted", function (assert) {
-		assert.ok(Log, "Log module should be available");
 		var oRule = this.oMaskInputRule,
-				oErrorSpy = this.sandbox.spy(Log, 'error'),
-				oSetterSpy = this.sandbox.spy(oRule, 'setProperty');
+				oErrorSpy = this.spy(Log, 'error'),
+				oSetterSpy = this.spy(oRule, 'setProperty');
 
 		setAndValidate.call(this, "");
 
@@ -92,9 +88,9 @@ sap.ui.define([
 			var sExpectedError = "The regex value '" + sRegex + "' is not valid";
 
 			oErrorSpy.restore();
-			oErrorSpy = this.sandbox.spy(Log, 'error');
+			oErrorSpy = this.spy(Log, 'error');
 			oSetterSpy.restore();
-			oSetterSpy = this.sandbox.spy(oRule, 'setProperty');
+			oSetterSpy = this.spy(oRule, 'setProperty');
 			oRule.setRegex(sRegex);
 			assert.ok(oSetterSpy.notCalled, "Invalid regex [" + sRegex + "] is not accepted");
 			assert.ok(oErrorSpy.calledOnce, "When called with invalid parameter [" + sRegex + "] setRegex logs error.");

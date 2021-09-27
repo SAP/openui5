@@ -860,7 +860,7 @@ sap.ui.define([
 
 	QUnit.module("sap.m.P13nColumnsPanel: _sortModelItemsByPersistentIndex", {
 		beforeEach: function() {
-			this.oPanel = new sap.m.P13nColumnsPanel();
+			this.oPanel = new P13nColumnsPanel();
 		},
 		afterEach: function() {
 			this.oPanel.destroy();
@@ -876,17 +876,17 @@ sap.ui.define([
 	});
 	QUnit.module("sap.m.P13nColumnsPanel: _sortModelItemsByPersistentIndex", {
 		beforeEach: function() {
-			this.oPanel = new sap.m.P13nColumnsPanel({
+			this.oPanel = new P13nColumnsPanel({
 				items: {
 					path: "/items",
-					template: new sap.m.P13nItem({
+					template: new P13nItem({
 						columnKey: "{columnKey}",
 						text: "{text}"
 					})
 				},
 				columnsItems: {
 					path: "/columnsItems",
-					template: new sap.m.P13nColumnsItem({
+					template: new P13nColumnsItem({
 						columnKey: "{columnKey}",
 						index: "{index}",
 						visible: "{visible}"

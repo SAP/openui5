@@ -14,11 +14,11 @@ sap.ui.define([
 	createAndAppendDiv("content");
 
 	QUnit.module("Open API", {
-		beforeEach: function() {
+		before: function() {
 			// due to async loading, using sinon.clock.tick() no longer works for waiting on module loading
 			sinon.config.useFakeTimers = false;
 		},
-		afterEach: function() {
+		after: function() {
 			sinon.config.useFakeTimers = true;
 		}
 	});
@@ -26,9 +26,19 @@ sap.ui.define([
 	QUnit.test("Test main control functionality", function(assert) {
 		mobileLibrary.Support.open();
 		var done = assert.async();
+		var maxTries = 8; // ~ 2s
 
-		setTimeout(function() {
+		function check() {
 			var oSupport = sap.ui.getCore().byId("__dialog0");
+			if ( !oSupport ) {
+				if ( --maxTries > 0 ) {
+					setTimeout(check, 250);
+				} else {
+					assert.notOk(true, "Support Dialog did not open");
+					done();
+				}
+				return;
+			}
 			assert.ok(oSupport, "Support dialog should be created");
 			assert.equal(oSupport.isOpen(), true, "Support dialog should be open now");
 			assert.equal(oSupport.getType(), DialogType.Standard , "Support dialog should have type Standard");
@@ -37,7 +47,9 @@ sap.ui.define([
 
 			oSupport.destroy();
 			done();
-		}, 1000);
+		}
+
+		check();
 	});
 
 	QUnit.module("On and Off API");

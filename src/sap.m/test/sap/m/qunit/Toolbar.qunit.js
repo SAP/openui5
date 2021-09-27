@@ -1,5 +1,4 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Toolbar",
@@ -9,7 +8,10 @@ sap.ui.define([
 	"sap/m/ToolbarSeparator",
 	"sap/m/Button",
 	"sap/m/Title",
+	"sap/m/Input",
 	"sap/m/Label",
+	"sap/m/Link",
+	"sap/m/Text",
 	"sap/ui/core/Control",
 	"sap/ui/events/KeyCodes",
 	"sap/m/SearchField",
@@ -27,7 +29,10 @@ sap.ui.define([
 	ToolbarSeparator,
 	Button,
 	Title,
+	Input,
 	Label,
+	Link,
+	Text,
 	Control,
 	KeyCodes,
 	SearchField,
@@ -37,6 +42,8 @@ sap.ui.define([
 	Core,
 	coreLibrary
 ) {
+	"use strict";
+
 	// shortcut for sap.m.ToolbarStyle
 	var ToolbarStyle = mobileLibrary.ToolbarStyle;
 
@@ -58,10 +65,6 @@ sap.ui.define([
 		var oTB = new Toolbar(oTBConfig);
 
 		// add contents
-		Object.keys(oConfig).forEach(function(sControl) {
-			var oControl = new mobileLibrary[sControl](oConfig[sControl] || {});
-			oTB.addContent(oControl);
-		});
 
 		// render
 		if (bShouldRender) {
@@ -75,8 +78,11 @@ sap.ui.define([
 	QUnit.module("Rendering");
 	QUnit.test("test rendering and visible property", function(assert) {
 		var oTB = createToolbar({
-			Toolbar : {},
-			Label : {text: "text"}
+			Toolbar : {
+				content: [
+					new Label({text: "text"})
+				]
+			}
 		});
 
 
@@ -111,8 +117,11 @@ sap.ui.define([
 
 	QUnit.test("test design property", function(assert) {
 		var oTB = createToolbar({
-			Toolbar : {},
-			Label : {text: "text"}
+			Toolbar : {
+				content: [
+					new Label({text: "text"})
+				]
+			}
 		});
 
 		assert.strictEqual(ToolbarDesign.Auto, oTB.getDesign(), "Toolbar initially has design property 'Auto'");
@@ -166,8 +175,11 @@ sap.ui.define([
 
 	QUnit.test("test style property", function (assert) {
 		var oTB = createToolbar({
-			Toolbar: {},
-			Label: {text: "text"}
+			Toolbar: {
+				content: [
+					new Label({text: "text"})
+				]
+			}
 		});
 
 		assert.equal(oTB.getStyle(), ToolbarStyle.Standard, "The initial ToolbarStyle property value is correct");
@@ -406,9 +418,9 @@ sap.ui.define([
 
 	QUnit.test("should detect whether toolbar content is shrinkable or not", function(assert) {
 		// test wrapper
-		var testShrinkable = function(bExpected, sMessage, sControlName, oConfig) {
+		var testShrinkable = function(bExpected, sMessage, fnControlClass, oConfig) {
 			var sShrinkClass = "shrink";
-			var oControl = new mobileLibrary[sControlName](oConfig || {});
+			var oControl = new fnControlClass(oConfig || {});
 			oControl.placeAt("qunit-fixture");
 			Core.applyChanges();
 
@@ -423,28 +435,28 @@ sap.ui.define([
 		var shouldNotShrink = testShrinkable.bind(0, false);
 
 		// when should shrink
-		shouldShrink("ToolbarSpacer with default properties", "ToolbarSpacer", {});
-		shouldShrink("The Button width percent value", "Button", {width : "100%"});
-		shouldShrink("SearchField with default properties", "SearchField");
-		shouldShrink("Input with default properties", "Input");
-		shouldShrink("Label control with default properties", "Label");
-		shouldShrink("Link control with default properties", "Link");
-		shouldShrink("Text control with default properties", "Text");
-		shouldShrink("Text control with maxLines 2", "Text", {
+		shouldShrink("ToolbarSpacer with default properties", ToolbarSpacer, {});
+		shouldShrink("The Button width percent value", Button, {width : "100%"});
+		shouldShrink("SearchField with default properties", SearchField);
+		shouldShrink("Input with default properties", Input);
+		shouldShrink("Label control with default properties", Label);
+		shouldShrink("Link control with default properties", Link);
+		shouldShrink("Text control with default properties", Text);
+		shouldShrink("Text control with maxLines 2", Text, {
 			maxLines : 2
 		});
 
-		shouldShrink("Button with shrinkable layoutData", "Button", {
+		shouldShrink("Button with shrinkable layoutData", Button, {
 			layoutData: new ToolbarLayoutData({
 				shrinkable : true
 			})
 		});
 
 		// when should not shrink
-		shouldNotShrink("Button control width default properties", "Button", {});
-		shouldNotShrink("Fixed width ToolbarSpacer", "ToolbarSpacer", {width : "200px"});
-		shouldNotShrink("Fixed width Shrinkable text", "Text", {width : "5rem"});
-		shouldNotShrink("SearchField with unshrinkable layoutData", "SearchField", {
+		shouldNotShrink("Button control width default properties", Button, {});
+		shouldNotShrink("Fixed width ToolbarSpacer", ToolbarSpacer, {width : "200px"});
+		shouldNotShrink("Fixed width Shrinkable text", Text, {width : "5rem"});
+		shouldNotShrink("SearchField with unshrinkable layoutData", SearchField, {
 			layoutData: new ToolbarLayoutData({
 				shrinkable : false
 			})
@@ -633,10 +645,13 @@ sap.ui.define([
 
 		// run test
 		shouldNotOverflow("By default, text controls are shrinkable", {
-			Toolbar : {},
-			Label : {text : sLongText},
-			Text : {text : sLongText},
-			Link : {text : sLongText}
+			Toolbar : {
+				content: [
+					new Label({text : sLongText}),
+					new Text({text : sLongText}),
+					new Link({text : sLongText})
+				]
+			}
 		});
 
 		shouldNotOverflow("By default, the controls have percent width are shrinkable", {

@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/P13nConditionPanel",
+	"sap/m/library",
 	"sap/ui/core/library",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/odata/type/String",
@@ -19,6 +20,7 @@ sap.ui.define([
 ], function(
 	createAndAppendDiv,
 	P13nConditionPanel,
+	mobileLibrary,
 	coreLibrary,
 	NumberFormat,
 	StringType,
@@ -40,7 +42,7 @@ sap.ui.define([
 	var ValueState = coreLibrary.ValueState;
 
 	// shortcut for sap.m.P13nConditionOperation (which is not exported by any other module)
-	var P13nConditionOperation = sap.m.P13nConditionOperation;
+	var P13nConditionOperation = mobileLibrary.P13nConditionOperation;
 
 
 	// prepare DOM
@@ -464,7 +466,7 @@ sap.ui.define([
 
 		/* QUnit.test("testing Paste in value fields", function(assert) {
 			// system under test
-			var oP13nConditionPanel = new sap.m.P13nConditionPanel({
+			var oP13nConditionPanel = new P13nConditionPanel({
 				maxConditions: -1
 			});
 

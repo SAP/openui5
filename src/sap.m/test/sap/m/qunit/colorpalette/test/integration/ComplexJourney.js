@@ -4,8 +4,8 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"cp/opa/test/env/integration/actions/Setup",
-	"jquery.sap.keycodes"
-], function (Opa5, opaTest, Setup /*, jquerySapKeyCodes */) {
+	"sap/ui/events/KeyCodes"
+], function (Opa5, opaTest, Setup, KeyCodes) {
 	"use strict";
 
 	QUnit.module("Setup");
@@ -42,7 +42,7 @@ sap.ui.define([
 				opaTest("Cancel new color selection using [ESCAPE] key", function (Given, When, Then) {
 					When.iOpenComplexControlDefaultsColorPalettePopover();
 					Then.complexControlDefaultsColorPalettePopoverShouldBeOpen();
-					When.iPressKeyOnATargetId(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_ID, jQuery.sap.KeyCodes.ESCAPE);
+					When.iPressKeyOnATargetId(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_ID, KeyCodes.ESCAPE);
 					//Adding COMPONENT_VIEW_SUFFIX is required here because of the nature of UI5 component to add ids
 					Then.complexControlDefaultsColorPalettePopoverShouldBeClosedAndFocusShouldBeOn(COMPONENT_VIEW_PREFFIX + COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_OPENER_ID);
 					//Destroy component
@@ -70,7 +70,7 @@ sap.ui.define([
 				opaTest("Select the default color using the [SPACE] key", function (Given, When, Then) {
 					When.iOpenComplexControlDefaultsColorPalettePopover();
 					Then.complexControlDefaultsColorPalettePopoverShouldBeOpen();
-					When.iPressKeyOnATargetId(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_DEFAULTCOLOR_ID, jQuery.sap.KeyCodes.SPACE);
+					When.iPressKeyOnATargetId(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_DEFAULTCOLOR_ID, KeyCodes.SPACE);
 					Then.colorSelectEventParamsShouldMatch({
 						defaultAction: true,
 						value: "green"
@@ -82,7 +82,7 @@ sap.ui.define([
 				opaTest("Select the default color using the [ENTER] key", function (Given, When, Then) {
 					When.iOpenComplexControlDefaultsColorPalettePopover();
 					Then.complexControlDefaultsColorPalettePopoverShouldBeOpen();
-					When.iPressKeyOnATargetId(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_DEFAULTCOLOR_ID, jQuery.sap.KeyCodes.ENTER);
+					When.iPressKeyOnATargetId(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_DEFAULTCOLOR_ID, KeyCodes.ENTER);
 					Then.colorSelectEventParamsShouldMatch({
 						defaultAction: true,
 						value: "green"
@@ -94,7 +94,7 @@ sap.ui.define([
 				opaTest("Select the default color using the [TAB] key", function (Given, When, Then) {
 					When.iOpenComplexControlDefaultsColorPalettePopover();
 					Then.complexControlDefaultsColorPalettePopoverShouldBeOpen();
-					When.iPressKeyOnATargetId(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_DEFAULTCOLOR_ID, jQuery.sap.KeyCodes.TAB);
+					When.iPressKeyOnATargetId(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_DEFAULTCOLOR_ID, KeyCodes.TAB);
 					Then.colorSelectEventParamsShouldMatch({
 						defaultAction: true,
 						value: "green"
@@ -120,7 +120,7 @@ sap.ui.define([
 				opaTest("Select a predefined color using the [SPACE] key", function (Given, When, Then) {
 					When.iOpenComplexControlDefaultsColorPalettePopover();
 					Then.complexControlDefaultsColorPalettePopoverShouldBeOpen();
-					When.iPressKeyOnAColorSwatch("darkorange", jQuery.sap.KeyCodes.SPACE);
+					When.iPressKeyOnAColorSwatch("darkorange", KeyCodes.SPACE);
 					Then.colorSelectEventParamsShouldMatch({
 						defaultAction: false,
 						value: "darkorange"
@@ -132,7 +132,7 @@ sap.ui.define([
 				opaTest("Select a predefined color using the [ENTER] key", function (Given, When, Then) {
 					When.iOpenComplexControlDefaultsColorPalettePopover();
 					Then.complexControlDefaultsColorPalettePopoverShouldBeOpen();
-					When.iPressKeyOnAColorSwatch("indianred", jQuery.sap.KeyCodes.ENTER);
+					When.iPressKeyOnAColorSwatch("indianred", KeyCodes.ENTER);
 					Then.colorSelectEventParamsShouldMatch({
 						defaultAction: false,
 						value: "indianred"
@@ -144,7 +144,7 @@ sap.ui.define([
 				opaTest("Select a predefined color using the [TAB] key", function (Given, When, Then) {
 					When.iOpenComplexControlDefaultsColorPalettePopover();
 					Then.complexControlDefaultsColorPalettePopoverShouldBeOpen();
-					When.iPressKeyOnAColorSwatch("darkmagenta", jQuery.sap.KeyCodes.TAB);
+					When.iPressKeyOnAColorSwatch("darkmagenta", KeyCodes.TAB);
 					Then.colorSelectEventParamsShouldMatch({
 						defaultAction: false,
 						value: "darkmagenta"

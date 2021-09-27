@@ -1,24 +1,27 @@
 /*global QUnit */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/m/Input",
+	"sap/m/Label",
+	"sap/m/Page",
+	"sap/m/Panel",
 	"test-resources/sap/ui/support/TestHelper"
-], function (jQuery, testRule) {
+], function (Input, Label, Page, Panel, testRule) {
 	"use strict";
 
 	QUnit.module("Input rule tests", {
 		setup: function () {
-			this.page = new sap.m.Page({
+			this.page = new Page({
 				content: [
-					new sap.m.Panel({
+					new Panel({
 						id: "inputTestsContext",
 						content: [
-							new sap.m.Input(),
-							new sap.m.Label({
+							new Input(),
+							new Label({
 								text: "Label",
 								labelFor: "inputWithLabelFor"
 							}),
-							new sap.m.Input("inputWithLabelFor")
+							new Input("inputWithLabelFor")
 						]
 					})
 				]

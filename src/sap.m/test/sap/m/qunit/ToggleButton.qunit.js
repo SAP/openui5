@@ -1,19 +1,12 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ToggleButton",
 	"sap/m/Toolbar",
 	"sap/ui/events/KeyCodes"
-], function(QUnitUtils, createAndAppendDiv, ToggleButton, Toolbar, KeyCodes) {
-
-	var styleElement = document.createElement("style");
-	styleElement.textContent =
-		".ButtonSpace {" +
-		"	margin-top: 10px;" +
-		"}";
-	document.head.appendChild(styleElement);
+], function(qutils, createAndAppendDiv, ToggleButton, Toolbar, KeyCodes) {
+	"use strict";
 
 	createAndAppendDiv("uiArea1");
 	createAndAppendDiv("uiArea2");

@@ -1,10 +1,9 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/base/util/merge",
 	"sap/ui/Device",
-	"jquery.sap.mobile",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
 	"sap/ui/model/json/JSONModel",
@@ -15,7 +14,8 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/ui/events/jquery/EventExtension",
 	"sap/m/MenuListItem",
-	"sap/ui/core/CustomData"
+	"sap/ui/core/CustomData",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	merge,
@@ -31,9 +31,10 @@ sap.ui.define([
 	Item,
 	EventExtension,
 	MenuListItem,
-	CustomData
+	CustomData,
+	oCore
 ) {
-	var oCore = sap.ui.getCore();
+	"use strict";
 
 	function prepareMobilePlatform() {
 		var oSystem = {
@@ -42,9 +43,7 @@ sap.ui.define([
 			tablet : false
 		};
 
-		this.sandbox = sinon.sandbox;
-		this.sandbox.stub(Device, "system", oSystem);
-		this.sandbox.stub(jQuery.device, "is", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		jQuery('#qunit-fixture').addClass('sap-phone');
 		jQuery('body').addClass('sap-phone');
@@ -203,9 +202,6 @@ sap.ui.define([
 
 			jQuery('#qunit-fixture').removeClass('sap-phone');
 			jQuery('body').removeClass('sap-phone');
-
-			this.sandbox.restore();
-			this.sandbox = null;
 		}
 	});
 
@@ -386,9 +382,6 @@ sap.ui.define([
 
 			jQuery('#qunit-fixture').removeClass('sap-phone');
 			jQuery('body').removeClass('sap-phone');
-
-			this.sandbox.restore();
-			this.sandbox = null;
 		},
 		openMenu: function() {
 			this.sut.openBy();
@@ -704,9 +697,6 @@ sap.ui.define([
 
 			jQuery('#qunit-fixture').removeClass('sap-phone');
 			jQuery('body').removeClass('sap-phone');
-
-			this.sandbox.restore();
-			this.sandbox = null;
 		},
 		getFirstModelData: getFirstModelData,
 		getSecondModelData: getSecondModelData,
@@ -1194,7 +1184,7 @@ sap.ui.define([
 		// Default
 		oAriaProps = merge({}, oOrigProps); // clone
 		oUfdMenu.enhanceAccessibilityState(oButton, oAriaProps);
-		assert.deepEqual(oAriaProps, oOrigProps, "Should not modify passed mAriaProps if no custom function is set");
+		oAssert.deepEqual(oAriaProps, oOrigProps, "Should not modify passed mAriaProps if no custom function is set");
 
 		// Act
 		this.oMenu._setCustomEnhanceAccStateFunction(fnCustomAccFunction);
@@ -1204,22 +1194,22 @@ sap.ui.define([
 		// Assert
 		oAriaProps = merge({}, oOrigProps); // clone
 		oUfdMenu.enhanceAccessibilityState(oButton, oAriaProps);
-		assert.strictEqual(oAriaProps.controls, "sControlId", "Should also add additional mAriaProps if a custom function is set");
+		oAssert.strictEqual(oAriaProps.controls, "sControlId", "Should also add additional mAriaProps if a custom function is set");
 	});
 
 	QUnit.test("Custom data is propagated properly", function (oAssert) {
-		var oItem = new sap.m.MenuItem(),
+		var oItem = new MenuItem(),
 			oUfdItem;
 
 		// Arrange
-		oItem.addCustomData(new sap.ui.core.CustomData({
+		oItem.addCustomData(new CustomData({
 			key: "customKey",
 			value: "customValue"
 		}));
 		oUfdItem = this.oMenu._createVisualMenuItemFromItem(oItem);
 
 		// Assert
-		assert.strictEqual(oUfdItem.data("customKey"), "customValue", "Custom data is propagated properly to the Unified menu item");
+		oAssert.strictEqual(oUfdItem.data("customKey"), "customValue", "Custom data is propagated properly to the Unified menu item");
 	});
 
 	QUnit.test("Custom data is propagated properly when binding with binding string", function (oAssert) {
@@ -1233,7 +1223,7 @@ sap.ui.define([
 				id: "menu",
 				items: {
 					path:"myModel>/",
-					template:new sap.m.MenuItem({
+					template:new MenuItem({
 						text:"test",
 						customData : [
 							new CustomData({
@@ -1261,15 +1251,15 @@ sap.ui.define([
 		oUnfdItemCustomData = oMenu._getMenu().getItems()[0].getCustomData()[0];
 
 		// Assert
-		assert.strictEqual(oUnfdItemCustomData.getValue(), oItemCustomData.getValue(), "Source data is propagated property to the target data");
-		assert.strictEqual(oItemCustomData.getValue(), oModel.getData()[0].bar, "Source data is propagated property to the target data");
+		oAssert.strictEqual(oUnfdItemCustomData.getValue(), oItemCustomData.getValue(), "Source data is propagated property to the target data");
+		oAssert.strictEqual(oItemCustomData.getValue(), oModel.getData()[0].bar, "Source data is propagated property to the target data");
 
 		// Act
 		oMenu.getItems()[0].getCustomData()[0].setValue("newValue");
 
 		// Assert
-		assert.strictEqual(oUnfdItemCustomData.getValue(), oItemCustomData.getValue(), "Source data is propagated property to the target data");
-		assert.strictEqual(oItemCustomData.getValue(), "newValue", "Source data is propagated property to the target data");
+		oAssert.strictEqual(oUnfdItemCustomData.getValue(), oItemCustomData.getValue(), "Source data is propagated property to the target data");
+		oAssert.strictEqual(oItemCustomData.getValue(), "newValue", "Source data is propagated property to the target data");
 
 		// Destroy
 		oButton.destroy();

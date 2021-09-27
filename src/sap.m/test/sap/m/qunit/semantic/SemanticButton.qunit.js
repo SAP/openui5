@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -20,7 +19,8 @@ sap.ui.define([
 	"sap/m/semantic/MasterPage",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/base/strings/capitalize"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -41,19 +41,16 @@ sap.ui.define([
 	MasterPage,
 	KeyCodes,
 	jQuery,
-	Core
+	Core,
+	capitalize
 ) {
+	"use strict";
+
 	createAndAppendDiv("qunit-fixture-visible");
 
 
 
 	//
-
-	var oBundle = Core.getLibraryResourceBundle("sap.m");
-
-	function capitalize(sName) {
-		return sName.substring(0, 1).toUpperCase() + sName.substring(1);
-	}
 
 	function testPropertyInitValue(fnClass, sPropertyName, oExpectedInitValue, oMetadata) {
 
@@ -167,7 +164,6 @@ sap.ui.define([
 
 	function testDataBindingAfterUnbind(fnClass, sField, oInitValue, oModifiedValue, oMetadata) {
 
-		var oModel = new JSONModel({modifiedValue: oModifiedValue});
 		var oBindingInfo = {};
 		oBindingInfo[sField] = "{/modifiedValue}";
 		oMetadata || (oMetadata = {});
@@ -618,7 +614,7 @@ sap.ui.define([
 		var oMultiSelectAction = new MultiSelectAction("multiAction"),
 			callback = sinon.spy();
 
-		var oResult = oMultiSelectAction.addEventDelegate({onAfterRendering: callback});
+		oMultiSelectAction.addEventDelegate({onAfterRendering: callback});
 		var oSemanticPage = new MasterPage({
 			multiSelectAction: oMultiSelectAction
 		});
@@ -684,7 +680,7 @@ sap.ui.define([
 
 		assert.strictEqual(callback.calledOnce, true, "delegate is called");
 
-		var oResult = oMultiSelectAction.removeEventDelegate(oDelegate);
+		oMultiSelectAction.removeEventDelegate(oDelegate);
 
 		oSemanticPage.rerender();
 		Core.applyChanges();

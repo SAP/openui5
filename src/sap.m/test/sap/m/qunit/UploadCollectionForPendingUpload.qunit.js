@@ -1,7 +1,7 @@
-/*global QUnit,sinon*/
+/*global QUnit */
 
 sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/UploadCollection",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/UploadCollectionItem",
@@ -98,7 +98,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 
 	QUnit.test("API method 'upload' exists and reacts depending on usages.", function(assert) {
 		var oUploadCollection = this.oUploadCollection;
-		sinon.spy(Log, "error");
+		this.spy(Log, "error");
 		oUploadCollection.upload();
 		assert.equal(Log.error.callCount, 1, "Error logging shall be happend.");
 		oUploadCollection.destroy();
@@ -112,7 +112,6 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		assert.ok(Log.error.calledOnce, "No error should be logged, because of valid API call.");
 		oUploadCollection.destroy();
 		oUploadCollection = null;
-		Log.error.restore();
 	});
 
 	QUnit.test("Container for FileUploader instances is created and destroyed when exiting the control.", function(assert) {
@@ -200,15 +199,12 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		this.createUploadCollection({
 			instantUpload: false
 		});
-		var oSpy = sinon.spy(Log, "info");
+		var oSpy = this.spy(Log, "info");
 
 		//Act
 		//Assert
 		assert.equal(this.oUploadCollection.setFileType([]), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
 		assert.equal(oSpy.callCount, 1, "An error log has been written.");
-
-		//Cleanup
-		oSpy.restore();
 	});
 
 	QUnit.test("Test for method setMaximumFilenameLength", function(assert) {
@@ -226,15 +222,12 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		this.createUploadCollection({
 			instantUpload: false
 		});
-		var oSpy = sinon.spy(Log, "info");
+		var oSpy = this.spy(Log, "info");
 
 		//Act
 		//Assert
 		assert.equal(this.oUploadCollection.setMaximumFilenameLength(), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
 		assert.equal(oSpy.callCount, 1, "An error log has been written.");
-
-		//Cleanup
-		oSpy.restore();
 	});
 
 	QUnit.test("Test for method setMaximumFileSize", function(assert) {
@@ -252,15 +245,12 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		this.createUploadCollection({
 			instantUpload: false
 		});
-		var oSpy = sinon.spy(Log, "info");
+		var oSpy = this.spy(Log, "info");
 
 		//Act
 		//Assert
 		assert.equal(this.oUploadCollection.setMaximumFileSize(20), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
 		assert.equal(oSpy.callCount, 1, "An error log has been written.");
-
-		//Cleanup
-		oSpy.restore();
 	});
 
 	QUnit.test("Test for method setMimeType", function(assert) {
@@ -280,15 +270,12 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		this.createUploadCollection({
 			instantUpload: false
 		});
-		var oSpy = sinon.spy(Log, "info");
+		var oSpy = this.spy(Log, "info");
 
 		//Act
 		//Assert
 		assert.equal(this.oUploadCollection.setMimeType(20), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
 		assert.equal(oSpy.callCount, 1, "An error log has been written.");
-
-		//Cleanup
-		oSpy.restore();
 	});
 
 	QUnit.test("Test for method setMultiple", function(assert) {
@@ -306,15 +293,12 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		this.createUploadCollection({
 			instantUpload: false
 		});
-		var oSpy = sinon.spy(Log, "info");
+		var oSpy = this.spy(Log, "info");
 
 		//Act
 		//Assert
 		assert.equal(this.oUploadCollection.setMultiple(), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
 		assert.equal(oSpy.callCount, 1, "An error log has been written.");
-
-		//Cleanup
-		oSpy.restore();
 	});
 
 	QUnit.test("Test for method setUploadEnabled", function(assert) {
@@ -333,15 +317,12 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		this.createUploadCollection({
 			instantUpload: false
 		});
-		var oSpy = sinon.spy(Log, "info");
+		var oSpy = this.spy(Log, "info");
 
 		//Act
 		//Assert
 		assert.equal(this.oUploadCollection.setUploadEnabled(), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
 		assert.equal(oSpy.callCount, 1, "An error log has been written.");
-
-		//Cleanup
-		oSpy.restore();
 	});
 
 	QUnit.test("Test for method setUploadUrl", function(assert) {
@@ -360,15 +341,12 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		this.createUploadCollection({
 			instantUpload: false
 		});
-		var oSpy = sinon.spy(Log, "info");
+		var oSpy = this.spy(Log, "info");
 
 		//Act
 		//Assert
 		assert.equal(this.oUploadCollection.setUploadUrl(), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
 		assert.equal(oSpy.callCount, 1, "An error log has been written.");
-
-		//Cleanup
-		oSpy.restore();
 	});
 
 	QUnit.test("Test for MultiSelect in pending upload (not supported)", function(assert) {
@@ -386,15 +364,12 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		this.createUploadCollection({
 			instantUpload: false
 		});
-		var oSpy = sinon.spy(Log, "info");
+		var oSpy = this.spy(Log, "info");
 
 		//Act
 		//Assert
 		assert.equal(this.oUploadCollection.setUploadUrl(ListMode.MultiSelect), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
 		assert.equal(oSpy.callCount, 1, "An error log has been written.");
-
-		//Cleanup
-		oSpy.restore();
 	});
 
 	QUnit.module("Rendering of UploadCollection with instantUpload = false ", {
@@ -416,9 +391,9 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 
 	QUnit.test("Rendering after initial load", function(assert) {
 		assert.ok(this.oUploadCollection, "UploadCollection instantiated");
-		assert.ok(jQuery.sap.domById("uploadCollection1-list"), "Item list is rendered");
-		assert.ok(jQuery.sap.domById("uploadCollection1-toolbar"), "Toolbar of the item list is rendered");
-		assert.ok(jQuery.sap.domById("uploadCollection1-numberOfAttachmentsTitle"), "Title Number of attachments is rendered");
+		assert.ok(document.getElementById("uploadCollection1-list"), "Item list is rendered");
+		assert.ok(document.getElementById("uploadCollection1-toolbar"), "Toolbar of the item list is rendered");
+		assert.ok(document.getElementById("uploadCollection1-numberOfAttachmentsTitle"), "Title Number of attachments is rendered");
 	});
 
 	QUnit.test("Rendering of an item after change event", function(assert) {
@@ -502,15 +477,12 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 			newValue: "file1"// needed to enable IE9 support and non failing tests
 		});
 		var oButtonFU = this.oUploadCollection._oHeaderToolbar.getContent()[2].$().find("button");
-		var oStubFUFocus = sinon.stub(jQuery.sap, "focus");
+		var oStubFUFocus = this.stub(jQuery.sap, "focus");
 		sap.ui.getCore().applyChanges();
 
 		//Act
 		//Assert
 		assert.ok(oStubFUFocus.withArgs(oButtonFU), "Set focus on FileUploader called");
-
-		//Restore
-		oStubFUFocus.restore();
 	});
 
 	QUnit.module("Rendering of UploadCollection with instantUpload = false and uploadButtonInvisible = true", {
@@ -541,7 +513,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 	QUnit.test("Focus is not set if file uploader is invisible", function(assert) {
 		//Arrange
 		var oItem = new UploadCollectionItem();
-		var oJQuerySpy = sinon.spy(this.oUploadCollection._oFileUploader, "$");
+		var oJQuerySpy = this.spy(this.oUploadCollection._oFileUploader, "$");
 		this.oUploadCollection._oItemForDelete = {
 			_iLineNumber: 0
 		};
@@ -619,7 +591,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 			}
 		});
 		assert.ok(fnFUUpload1.calledOnce, true, "'Upload' method of FileUploader should be called for each FU instance just once");
-		fnFUUpload1.reset();
+		fnFUUpload1.resetHistory();
 		this.oUploadCollection.upload();
 		assert.equal(fnFUUpload1.calledOnce, false, "'Upload' method shouldn't retrigger upload on uploaded files.");
 	});
@@ -811,7 +783,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 
 	QUnit.test("Drop file in UploadCollection", function(assert) {
 		//Arrange
-		sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
+		this.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
 		var oFileList = {
 			0: {
@@ -842,9 +814,9 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		//Arrange
 		this.oUploadCollection.setMultiple(false);
 		sap.ui.getCore().applyChanges();
-		sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
-		var oSpyOnChange = sinon.spy(this.oUploadCollection, "_onChange");
-		var oStubMessageBox = sinon.stub(MessageBox, "error");
+		this.stub(this.oUploadCollection, "_checkForFiles").returns(true);
+		var oSpyOnChange = this.spy(this.oUploadCollection, "_onChange");
+		var oStubMessageBox = this.stub(MessageBox, "error");
 		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
 		var oFileList = [
 			{
@@ -867,8 +839,6 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		//Assert
 		assert.ok(oSpyOnChange.notCalled, "Files are not dropped in UploadCollection");
 		assert.ok(oStubMessageBox.called, "Error messagebox is displayed");
-		//Restore
-		oStubMessageBox.restore();
 	});
 
 	QUnit.module("Delete PendingUpload Item", {
@@ -888,7 +858,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 
 	QUnit.test("Check file list", function(assert) {
 		assert.expect(4);
-		var oHandleDeleteStub = sinon.stub(this.oUploadCollection, "_handleDelete");
+		var oHandleDeleteStub = this.stub(this.oUploadCollection, "_handleDelete");
 		var oFile0 = {
 			name: "Screenshot.ico"
 		};
@@ -953,12 +923,12 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		//check the deleted item by comparison of the number of list items before and after the deletion
 		var iLengthAfterDeletion = this.oUploadCollection.getItems().length;
 		assert.notEqual(iLengthBeforeDeletion, iLengthAfterDeletion, "Item was deleted, checked by different number of items!");
-		oHandleDeleteStub.restore();
+
 	});
 
 	QUnit.test("Delete PendingUpload item which comes from drag and drop", function(assert) {
 		//Arrange
-		sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
+		this.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		/*eslint-disable new-cap*/
 		var oEvent = jQuery.Event("drop", {
 			originalEvent: {
@@ -1018,7 +988,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 					"requestHeaders": fileUploader.getHeaderParameters()
 				});
 			};
-			this.abortStub = sinon.stub(FileUploader.prototype, "abort");
+			this.abortStub = this.stub(FileUploader.prototype, "abort");
 			this.encodeToAscii = function(value) {
 				var sEncodedValue = "";
 				for (var i = 0; i < value.length; i++) {
@@ -1030,7 +1000,6 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		afterEach: function() {
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
-			this.abortStub.restore();
 		}
 	});
 
@@ -1138,7 +1107,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 	QUnit.module("PendingUpload uploadProgress Event", {
 		beforeEach: function() {
 			this.oUploadCollection = new UploadCollection("pendingUploads");
-			sinon.spy(this.oUploadCollection, "_onUploadProgress");
+			this.spy(this.oUploadCollection, "_onUploadProgress");
 
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -1151,7 +1120,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 
 	QUnit.test("onUploadProgress with instantUpload=false", function(assert) {
 		//Arrange
-		sinon.stub(this.oUploadCollection, "getInstantUpload").returns(false);
+		this.stub(this.oUploadCollection, "getInstantUpload").returns(false);
 
 		//Act
 		this.oUploadCollection._oFileUploader.fireUploadProgress();

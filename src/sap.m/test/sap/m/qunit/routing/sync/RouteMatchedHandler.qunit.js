@@ -10,7 +10,9 @@ sap.ui.define([
 	"sap/m/InstanceManager",
 	"./commonIntegrationTests",
 	"sap/m/Page",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/core/mvc/Controller", // provides sap.ui.controller
+	"sap/ui/core/mvc/JSView" // provides sap.ui.jsview
 ], function(
 	RouteMatchedHandler,
 	NavContainer,
@@ -175,9 +177,7 @@ sap.ui.define([
 			oBackToPageSpy = this.spy(NavContainer.prototype, "backToPage");
 
 		//simulate backwards navigation
-		this.stub(History.prototype, "getDirection", function () {
-			return "Backwards";
-		});
+		this.stub(History.prototype, "getDirection").returns("Backwards");
 
 		//System under Test
 		/*var oRouteMatchedHandler = */ new RouteMatchedHandler(this.oRouter);
@@ -217,9 +217,7 @@ sap.ui.define([
 			oToSpy = this.spy(NavContainer.prototype, "to"),
 			oNavigateSpy = this.spy(TargetHandler.prototype, "navigate");
 
-		this.stub(oNavContainer, "getDomRef", function() {
-			return true;
-		});
+		this.stub(oNavContainer, "getDomRef").returns(true);
 
 		//System under Test
 		/*var oRouteMatchedHandler = */ new RouteMatchedHandler(this.oRouter);
@@ -342,7 +340,7 @@ sap.ui.define([
 				}
 			});
 
-		this.stub(Device.system, "phone", false);
+		this.stub(Device.system, "phone").value(false);
 
 		// System under test
 		var oRouteMatchedHandler = new RouteMatchedHandler(oRouter);
@@ -391,7 +389,7 @@ sap.ui.define([
 				}
 			});
 
-		this.stub(Device.system, "phone", false);
+		this.stub(Device.system, "phone").value(false);
 
 		// System under test
 		var oRouteMatchedHandler = new RouteMatchedHandler(oRouter);
@@ -433,7 +431,7 @@ sap.ui.define([
 			}),
 			data = null;
 
-		this.stub(Device.system, "phone", false);
+		this.stub(Device.system, "phone").value(false);
 
 		// System under test
 		/*var oRouteMatchedHandler = */ new RouteMatchedHandler(oRouter);

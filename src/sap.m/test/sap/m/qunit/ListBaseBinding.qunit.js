@@ -1,12 +1,9 @@
-/*global QUnit, jQuery, sinon*/
+/*global QUnit, sinon*/
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
-	"sap/ui/thirdparty/sinon-qunit",
-	/*Sinon itself already part of MockServer*/
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/m/ListBase",
-	"jquery.sap.strings",
-	"jquery.sap.sjax",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
@@ -15,15 +12,13 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/m/InputListItem",
 	"sap/m/Input",
-	"sap/ui/model/odata/ODataUtils",
-	"jquery.sap.global"
+	"sap/base/strings/capitalize",
+	"jquery.sap.sjax"
 ], function(
 	MockServer,
-	SinonQUnit,
 	ODataModel,
 	ListBase,
-	StringUtil,
-	Sjax,
+	jQuery,
 	FilterOperator,
 	JSONModel,
 	Filter,
@@ -32,7 +27,7 @@ sap.ui.define([
 	StandardListItem,
 	InputListItem,
 	Input,
-	ODataUtils
+	capitalize
 ) {
 	"use strict";
 
@@ -45,8 +40,7 @@ sap.ui.define([
 
 		mSettings = mSettings || {};
 		jQuery.each(mSettings, function(sProperty, vValue) {
-			sProperty = jQuery.sap.charToUpperCase(sProperty);
-			oModel["set" + sProperty](vValue);
+			oModel["set" + capitalize(sProperty)](vValue);
 		});
 
 		return oModel;
@@ -779,8 +773,8 @@ sap.ui.define([
 			assert.strictEqual(oVirtualItem.getBindingContext(), oBinding.getContexts(0, 1)[0],
 				"AddVirtualContext: Virtual item has the correct context");
 			assert.notOk(oVirtualItem.bIsDestroyed, "AddVirtualContext: Virtual item is not destroyed");
-			oInvalidateSpy.reset();
-			oUpdateItemsSpy.reset();
+			oInvalidateSpy.resetHistory();
+			oUpdateItemsSpy.resetHistory();
 
 			oBinding.fireEvent("change", {
 				detailedReason: "RemoveVirtualContext",
@@ -824,7 +818,7 @@ sap.ui.define([
 		return new Promise(function(resolve) {
 			oList.attachEventOnce("updateFinished", resolve);
 		}).then(function() {
-			oInvalidateSpy.reset();
+			oInvalidateSpy.resetHistory();
 			oList.bindItems(oList.getBindingInfo("items"));
 			return new Promise(function(resolve) {
 				oList.updateItems = resolve;
@@ -844,7 +838,7 @@ sap.ui.define([
 		return new Promise(function(resolve) {
 			oList.attachEventOnce("updateFinished", resolve);
 		}).then(function() {
-			oInvalidateSpy.reset();
+			oInvalidateSpy.resetHistory();
 			oList.getBindingInfo("items").filters = [new Filter("Name", FilterOperator.EQ, "ThisTextShouldNotBeFound")];
 			oList.bindItems(oList.getBindingInfo("items"));
 			return new Promise(function(resolve) {
@@ -869,7 +863,7 @@ sap.ui.define([
 		return new Promise(function(resolve) {
 			oList.attachEventOnce("updateFinished", resolve);
 		}).then(function() {
-			oInvalidateSpy.reset();
+			oInvalidateSpy.resetHistory();
 			oList.getBindingInfo("items").filters = [new Filter("Name", FilterOperator.EQ, "Gladiator MX")];
 			oList.bindItems(oList.getBindingInfo("items"));
 			return new Promise(function(resolve) {
@@ -896,7 +890,7 @@ sap.ui.define([
 		return new Promise(function(resolve) {
 			oList.attachEventOnce("updateFinished", resolve);
 		}).then(function() {
-			oInvalidateSpy.reset();
+			oInvalidateSpy.resetHistory();
 			oList.getBindingInfo("items").filters = [new Filter("Name", FilterOperator.EQ, "ThisTextShouldNotBeFound")];
 			oList.bindItems(oList.getBindingInfo("items"));
 			return new Promise(function(resolve) {
@@ -923,7 +917,7 @@ sap.ui.define([
 		return new Promise(function(resolve) {
 			oList.attachEventOnce("updateFinished", resolve);
 		}).then(function() {
-			oInvalidateSpy.reset();
+			oInvalidateSpy.resetHistory();
 			oList.getBindingInfo("items").filters = [new Filter("Name", FilterOperator.EQ, "Gladiator MX")];
 			oList.bindItems(oList.getBindingInfo("items"));
 			return new Promise(function(resolve) {

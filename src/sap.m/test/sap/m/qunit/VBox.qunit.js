@@ -141,6 +141,5 @@ sap.ui.define([
 		assert.strictEqual(flexBoxInitSpy.calledOnce, true, "When VBox is initialized, the init method of FlexBox should also be called.");
 
 		oVBox.destroy();
-		flexBoxInitSpy.restore();
 	});
 });

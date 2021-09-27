@@ -1,4 +1,4 @@
-/*global QUnit, sinon*/
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/Device",
@@ -32,8 +32,7 @@ sap.ui.define([
 		sDefaultIconRendered = "Avatar is a default icon",
 		sPreAvatarFitType = "Avatar's image fit type is ",
 		// shortcut for sap.m.AvatarColor
-		AvatarColor = library.AvatarColor,
-		sandbox = sinon.sandbox.create();
+		AvatarColor = library.AvatarColor;
 
 	function createAvatar(oProps, sId) {
 		var oAvatarProps = {};
@@ -187,7 +186,7 @@ sap.ui.define([
 
 	QUnit.test("Fallback type should be always restored according to current property values", function (assert) {
 		//Arrange
-		this.oAvatar.setSrc("http://www.some-image-src.jpg");
+		this.oAvatar.setSrc("https://example.org/some-image-src.jpg");
 		oCore.applyChanges();
 
 		// Assert
@@ -300,12 +299,14 @@ sap.ui.define([
 	QUnit.test("Show fallback initials when image source is invalid and initials are set and valid", function (assert) {
 		//Arrange
 		var done = assert.async(),
-		oStub = sinon.stub(this.oAvatar, "_onImageError", function() {
+			$oAvatar;
+
+		this.stub(this.oAvatar, "_onImageError").callsFake(function() {
 			//Assert
 			assert.ok(true, "When image inside sap.m.Avatar is not loaded, error callback launches");
 			done();
-		}),
-		$oAvatar;
+		});
+
 		this.oAvatar.setInitials("PB");
 		assert.expect(2);
 
@@ -317,8 +318,6 @@ sap.ui.define([
 		$oAvatar = this.oAvatar.$();
 		assert.equal($oAvatar.find(".sapFAvatarInitialsHolder").text(),"PB", "When type of sap.m.Avatar is 'Image'" +
 		 " and initials are set we load fallback initials container");
-		//Cleanup
-		oStub.restore();
 	});
 
 	QUnit.test("Add initials class when source is invalid and initials are set", function (assert) {
@@ -326,8 +325,8 @@ sap.ui.define([
 		var $oAvatar,
 			done = assert.async(),
 			that = this,
-			oStub = sinon.stub(this.oAvatar, "_onImageError", function() {
-				oStub.restore();
+			oStub = this.stub(this.oAvatar, "_onImageError").callsFake(function() {
+				oStub.restore(); // avoid endless recursion
 				that.oAvatar._onImageError();
 				$oAvatar = that.oAvatar.$();
 
@@ -384,8 +383,8 @@ sap.ui.define([
 		var $oAvatar,
 			done = assert.async(),
 			that = this,
-			oStub = sinon.stub(this.oAvatar, "_onImageError", function() {
-				oStub.restore();
+			oStub = this.stub(this.oAvatar, "_onImageError").callsFake(function() {
+				oStub.restore(); // avoid endless recursion
 				that.oAvatar._onImageError();
 				$oAvatar = that.oAvatar.$();
 
@@ -411,8 +410,8 @@ sap.ui.define([
 		var done = assert.async(),
 			that = this,
 
-			oStub = sinon.stub(this.oAvatar, "_onImageLoad", function() {
-				oStub.restore();
+			oStub = this.stub(this.oAvatar, "_onImageLoad").callsFake(function() {
+				oStub.restore(); // avoid endless recursion
 				that.oAvatar._onImageLoad();
 				//Assert
 				assert.ok(true, "When image inside sap.m.Avatar is loaded, success callback launches");
@@ -476,8 +475,8 @@ sap.ui.define([
 		// Arrange
 		var oLightBoxA = new LightBox(),
 			oLightBoxB = new LightBox(),
-			oAttachPressSpy = sinon.spy(this.oAvatar, "attachPress"),
-			oDetachPressSpy = sinon.spy(this.oAvatar, "detachPress");
+			oAttachPressSpy = this.spy(this.oAvatar, "attachPress"),
+			oDetachPressSpy = this.spy(this.oAvatar, "detachPress");
 
 		// Act - set LightBox
 		this.oAvatar.setDetailBox(oLightBoxA);
@@ -487,7 +486,7 @@ sap.ui.define([
 		oAssert.strictEqual(oDetachPressSpy.callCount, 0, "detachPress method should not be called");
 
 		// Act - replace with new LightBox
-		oAttachPressSpy.reset();
+		oAttachPressSpy.resetHistory();
 		this.oAvatar.setDetailBox(oLightBoxB);
 
 		// Assert
@@ -496,8 +495,8 @@ sap.ui.define([
 		oAssert.strictEqual(oDetachPressSpy.callCount, 1, "detachPress method should be called once");
 
 		// Act - replace with the same LightBox
-		oAttachPressSpy.reset();
-		oDetachPressSpy.reset();
+		oAttachPressSpy.resetHistory();
+		oDetachPressSpy.resetHistory();
 		this.oAvatar.setDetailBox(oLightBoxB);
 
 		// Assert
@@ -506,7 +505,7 @@ sap.ui.define([
 		oAssert.strictEqual(oDetachPressSpy.callCount, 0, "detachPress method should not be called");
 
 		// Act - replace with the same LightBox
-		oDetachPressSpy.reset();
+		oDetachPressSpy.resetHistory();
 		this.oAvatar.setDetailBox(undefined);
 
 		// Assert
@@ -515,8 +514,6 @@ sap.ui.define([
 		// Cleanup
 		oLightBoxA.destroy();
 		oLightBoxB.destroy();
-		oAttachPressSpy.restore();
-		oDetachPressSpy.restore();
 	});
 
 	QUnit.test("cloning of press event handler", function (assert) {
@@ -619,13 +616,14 @@ sap.ui.define([
 		assert.strictEqual($oAvatar.attr("aria-label"), sDefaultTooltip, "Aria-label should be the default 'Avatar' text");
 
 		//act
-		this.oAvatar.attachPress();
+		var fnHandler = this.stub();
+		this.oAvatar.attachPress(fnHandler);
 
 		//assert
 		assert.strictEqual($oAvatar.attr("role"), "button", "Aria role should be 'button'");
 
 		//act
-		this.oAvatar.detachPress();
+		this.oAvatar.detachPress(fnHandler);
 
 		//assert
 		assert.strictEqual($oAvatar.attr("role"), "img", "Aria role should be 'img'");
@@ -767,7 +765,7 @@ sap.ui.define([
 		// Arrange
 		var sWarnArgs = "No valid Icon URI source for badge affordance was provided";
 		this.oAvatar.attachPress(function () {});
-		sandbox.stub(Log, "warning");
+		this.stub(Log, "warning");
 
 		//Act
 		this.oAvatar.setBadgeIcon("12345");

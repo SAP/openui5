@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -7,11 +6,12 @@ sap.ui.define([
 	"sap/m/StandardTile",
 	"sap/m/CustomTile",
 	"sap/m/library",
-	"jquery.sap.mobile",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Tile",
-	"jquery.sap.global"
+	"sap/ui/dom/includeStylesheet",
+	"require"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -22,30 +22,24 @@ sap.ui.define([
 	jQuery,
 	Device,
 	JSONModel,
-	Tile
+	Tile,
+	includeStylesheet,
+	require
 ) {
-	// shortcut for jQuery.device.is
-	var is = jQuery.device.is;
-	var $ = jQuery;
+	"use strict";
 
 	createAndAppendDiv("uiArea1").style = "width: 600px; height: 480px";
 	createAndAppendDiv("uiArea2");
-	var styleElement = document.createElement("style");
-	styleElement.textContent =
-		".small_60x100 { /* in order to guarantee that the tiles will all be shown/fit into the parent container uiArea1 */" +
-		"	width: 60px !important;" +
-		"	height: 100px; !important;" +
-		"}";
-	document.head.appendChild(styleElement);
-
+	var pStyleLoaded = includeStylesheet({
+		url: require.toUrl("./TileContainer.qunit.css")
+	});
 
 	var core = sap.ui.getCore();
 	var delay = 500;
 
 	QUnit.test("ShouldRenderNiceHtml", function(assert) {
 		// SUT
-		var id,
-			expectedWidth = "100px",
+		var expectedWidth = "100px",
 			expectedHeight = "200px",
 			sut = new TileContainer({
 					width : expectedWidth,
@@ -53,7 +47,6 @@ sap.ui.define([
 				});
 
 		sut.placeAt("qunit-fixture");
-		id = sut.getId();
 
 		// Act
 		core.applyChanges();
@@ -62,10 +55,10 @@ sap.ui.define([
 		assert.strictEqual(sut.$().css("width"),expectedWidth);
 		assert.strictEqual(sut.$().css("height"),expectedHeight);
 
-		assert.ok($("#" + id + "-scrl").length > 0);
-		assert.ok($("#" + id + "-blind").length > 0);
-		assert.ok($("#" + id + "-cnt").length > 0);
-		assert.ok($("#" + id + "-pager").length > 0);
+		assert.ok(sut.$("scrl").length > 0);
+		assert.ok(sut.$("blind").length > 0);
+		assert.ok(sut.$("cnt").length > 0);
+		assert.ok(sut.$("pager").length > 0);
 
 
 		sut.destroy();
@@ -84,9 +77,9 @@ sap.ui.define([
 		core.applyChanges();
 
 		// Assert
-		//The only that contains a tile id is id+ "-remove" that's why it's retrived like this
-		assert.equal($("#" + tile1.getId() + "-remove").length,1, "tile is rendered");
-		assert.equal($("#" + tile1.getId() + "-remove").css("visibility"), "visible", "tile is visible");
+		//The only that contains a tile id is id+ "-remove" that's why it's retrieved like this
+		assert.equal(tile1.$("remove").length,1, "tile is rendered");
+		assert.equal(tile1.$("remove").css("visibility"), "visible", "tile is visible");
 
 		// Cleanup
 		sut.destroy();
@@ -108,9 +101,9 @@ sap.ui.define([
 		core.applyChanges();
 
 		// Assert
-		//The only that contains a tile id is id+ "-remove" that's why it's retrived like this
-		assert.equal($("#" + tile1.getId() + "-remove").length,1);
-		assert.equal($("#" + tile2.getId() + "-remove").length,1);
+		//The only that contains a tile id is id+ "-remove" that's why it's retrieved like this
+		assert.equal(tile1.$("remove").length,1);
+		assert.equal(tile2.$("remove").length,1);
 
 		// Cleanup
 		sut.destroy();
@@ -218,13 +211,12 @@ sap.ui.define([
 		var done = assert.async();
 		// Arrange
 		var sut,
-			id,
 			oDim,
 			$rightEdge,
 			$leftEdge,
 			$scroll,
 			pagerHeight,
-			expectedOffset = is.phone ? 2 : 0,
+			expectedOffset = Device.system.phone ? 2 : 0,
 			tile = new StandardTile();
 
 		// SUT
@@ -240,22 +232,21 @@ sap.ui.define([
 		//timeout needed to have the content at its actual size
 		setTimeout(function(){
 			sut._applyDimension();
-			id = sut.getId();
 			oDim = sut._getDimension();
-			pagerHeight = jQuery.sap.byId( id + "-pager").outerHeight();
+			pagerHeight = sut.$("pager").outerHeight();
 
 			assert.equal(sut.$().css("visibility"),"visible","TileContainer was visible");
 
-			$scroll = jQuery.sap.byId(id + "-scrl");
+			$scroll = sut.$("scrl");
 			assert.equal($scroll.css("width"), oDim.outerwidth + "px","scroll width");
 			assert.equal($scroll.css("height"), (oDim.outerheight - pagerHeight) + "px","scroll height");
 
 
-			$rightEdge = jQuery.sap.byId(id + "-rightedge");
+			$rightEdge = sut.$("rightedge");
 			assert.equal($rightEdge.css("top"), (sut.getDomRef().offsetTop + expectedOffset) + "px","right edge top");
 			assert.equal($rightEdge.css("right"),expectedOffset + "px");
 
-			$leftEdge = jQuery.sap.byId(id + "-leftedge");
+			$leftEdge = sut.$("leftedge");
 			assert.equal($leftEdge.css("top"), (sut.getDomRef().offsetTop + expectedOffset) + "px","left edge top");
 			assert.equal($leftEdge.css("left"),expectedOffset + "px");
 
@@ -476,17 +467,14 @@ sap.ui.define([
 
 	QUnit.module("Tile common dimension calculation", {
 		beforeEach: function () {
-			this.sandbox = sinon.sandbox.create();
-
-			this.sandbox.stub(Device.system, "tablet", false);
-			this.sandbox.stub(Device.system, "phone", false);
-			this.sandbox.stub(Device.system, "desktop", true);
-			this.sandbox.stub(Device.system, "combi", false);
+			this.stub(Device.system, "tablet").value(false);
+			this.stub(Device.system, "phone").value(false);
+			this.stub(Device.system, "desktop").value(true);
+			this.stub(Device.system, "combi").value(false);
 			this.prepare();
 		},
 		afterEach: function () {
 			this.clean();
-			this.sandbox.restore();
 		},
 		prepare : function() {
 			this.sOriginalTheme = sap.ui.getCore().getConfiguration().getTheme();
@@ -518,16 +506,12 @@ sap.ui.define([
 			if (this.oStubWidth) {
 				this.oStubWidth.restore();
 			}
-			this.oStubWidth = this.sandbox.stub(jQuery.fn, "outerWidth", function () {
-				return iWidth;
-			});
+			this.oStubWidth = this.stub(jQuery.fn, "outerWidth").returns(iWidth);
 
 			if (this.oStubHeight) {
 				this.oStubHeight.restore();
 			}
-			this.oStubHeight = this.sandbox.stub(jQuery.fn, "outerHeight", function () {
-				return iHeight;
-			});
+			this.oStubHeight = this.stub(jQuery.fn, "outerHeight").returns(iHeight);
 		},
 
 		callAndTest: function(oFnThatProvokesTileDimensionChanges, args, assert) {
@@ -589,8 +573,8 @@ sap.ui.define([
 		var done = assert.async();
 
 		//emulate device that supports orientation change
-		this.sandbox.stub(Device.system, "tablet", true);
-		this.sandbox.stub(Device.system, "desktop", false);
+		this.stub(Device.system, "tablet").value(true);
+		this.stub(Device.system, "desktop").value(false);
 
 		this.clean().then(function() {
 			this.prepare();
@@ -709,7 +693,7 @@ sap.ui.define([
 		var done = assert.async(),
 			oTile2 = this.sut.getTiles()[2],
 			oTile3 = this.sut.getTiles()[3],
-			oJQueryTriggerSpy = sinon.spy(jQuery.fn, "trigger");
+			oJQueryTriggerSpy = this.spy(jQuery.fn, "trigger");
 
 		this.sut.setEditable(true);
 		this.sut._iCurrentFocusIndex = 2;
@@ -718,7 +702,6 @@ sap.ui.define([
 			this.sut.onsapdelete({ stopPropagation: function() { } });
 			assert.ok(oJQueryTriggerSpy.getCall(0).calledWith("focus"), "trigger is called with type 'focus' on the next item");
 			assert.equal(oJQueryTriggerSpy.getCall(0).thisValue.attr("id"), oTile3.getId(), "trigger is called on the next item");
-			oJQueryTriggerSpy.restore();
 			oTile2.destroy();
 			done();
 		}.bind(this), delay);
@@ -742,7 +725,6 @@ sap.ui.define([
 
 	QUnit.module("Data Binding", {
 		beforeEach: function () {
-			this.sandbox = sinon.sandbox;
 			sap.ui.getCore().setModel(new JSONModel({
 				"TileCollection" : [
 					{
@@ -791,13 +773,12 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oTileContainer.destroy();
-			this.sandbox.restore();
 		}
 	});
 
 	QUnit.test("Tiles are destroyed when model is changed", function (assert) {
 		//Arrange
-		var fnDestroyTilesSpy = this.sandbox.spy(this.oTileContainer, 'destroyTiles'),
+		var fnDestroyTilesSpy = this.spy(this.oTileContainer, 'destroyTiles'),
 			newDataModel = new JSONModel({
 				"TileCollection" : [
 					{
@@ -981,7 +962,7 @@ sap.ui.define([
 		//SUT
 		var aSut = [new StandardTile(), new StandardTile()],
 			oTC = new TileContainer({tiles: aSut}),
-			oSpyPagesInfoReset = sinon.spy(oTC._oPagesInfo, "reset");
+			oSpyPagesInfoReset = this.spy(oTC._oPagesInfo, "reset");
 
 		oTC.placeAt('qunit-fixture');
 
@@ -995,14 +976,21 @@ sap.ui.define([
 		assert.equal(oSpyPagesInfoReset.callCount, 1, "Before rendering the oPagesInfo object should be reset");
 
 		//Cleanup
-		oSpyPagesInfoReset.restore();
 		oTC.destroy();
+	});
+
+	QUnit.module("", {
+		before: function() {
+			sinon.config.useFakeTimers = true;
+		},
+		after: function() {
+			sinon.config.useFakeTimers = false;
+		}
 	});
 
 	QUnit.test("Parent container does not define width/height", function(assert) {
 		//Prepare
-		var oClock = this.sandbox.useFakeTimers(),
-			done = assert.async(),
+		var done = assert.async(),
 			aTiles = [
 				new StandardTile({title: "first"}), new StandardTile({title: "second"}),
 				new StandardTile({title: "thirth"}), new StandardTile({title: "forth"}),
@@ -1032,14 +1020,13 @@ sap.ui.define([
 				assert.equal(oSut._iMaxTiles, 2, "Max Tile should be recalculated once there is a height defined");
 
 				//Cleanup
-				oClock.restore();
 				oSut.destroy();
 				done();
 			}, 150);
-			oClock.tick(200);//make sure rerendering and resize callbacks were passed
-		}, 150);
+			this.clock.tick(200);//make sure rerendering and resize callbacks were passed
+		}.bind(this), 150);
 
-		oClock.tick(200);//make sure rendering and resize callbacks were passed
+		this.clock.tick(200);//make sure rendering and resize callbacks were passed
 	});
 
 	QUnit.module("Performance optimizations", {
@@ -1226,4 +1213,6 @@ sap.ui.define([
 			done();
 		}.bind(this), 200); //the default interval trigger of the resize handler
 	});
+
+	return pStyleLoaded;
 });

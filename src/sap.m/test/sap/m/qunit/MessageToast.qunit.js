@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -8,7 +7,8 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/InstanceManager",
 	"sap/ui/core/HTML",
-	"sap/ui/events/jquery/EventExtension"
+	"sap/ui/events/jquery/EventExtension",
+	"sap/base/Log"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -17,8 +17,11 @@ sap.ui.define([
 	MessageToast,
 	InstanceManager,
 	HTML,
-	EventExtension
+	EventExtension,
+	Log
 ) {
+	"use strict";
+
 	createAndAppendDiv("content");
 
 
@@ -34,8 +37,6 @@ sap.ui.define([
 	oApp.placeAt("content");
 
 
-
-	var Log = sap.ui.require("sap/base/Log");
 
 	var getBoxSizing = function($DomRef) {
 		return $DomRef.css("box-sizing") || $DomRef.css("-webkit-box-sizing") || $DomRef.css("-moz-box-sizing");
@@ -81,8 +82,6 @@ sap.ui.define([
 
 	var isFiniteInteger = function(sTestName, vValue) {
 		QUnit.test(sTestName, function(assert) {
-			assert.ok(Log, "Log module should be available");
-
 			// arrange
 			var fnErrorSpy = sinon.spy(Log, "error");
 
@@ -111,8 +110,6 @@ sap.ui.define([
 	/* ------------------------------ */
 
 	QUnit.test("width", function(assert) {
-		assert.ok(Log, "Log module should be available");
-
 		// arrange
 		var fnErrorSpy = sinon.spy(Log, "error");
 
@@ -132,8 +129,6 @@ sap.ui.define([
 
 	var isDockPosition = function(sTestName, vValue, iNumberOfErrors) {
 		QUnit.test(sTestName, function(assert) {
-			assert.ok(Log, "Log module should be available");
-
 			// arrange
 			var fnErrorSpy = sinon.spy(Log, "error");
 
@@ -171,8 +166,6 @@ sap.ui.define([
 
 	var isValidOf = function(sTestName, vValue, iNumberOfErrors) {
 		QUnit.test(sTestName, function(assert) {
-			assert.ok(Log, "Log module should be available");
-
 			// arrange
 			var fnErrorSpy = sinon.spy(Log, "error");
 
@@ -201,8 +194,6 @@ sap.ui.define([
 	/* ------------------------------ */
 
 	QUnit.test("offset", function(assert) {
-		assert.ok(Log, "Log module should be available");
-
 		// arrange
 		var fnErrorSpy = sinon.spy(Log, "error");
 
@@ -222,8 +213,6 @@ sap.ui.define([
 
 	var isValidCollision = function(sTestName, vValue, iNumberOfErrors) {
 		QUnit.test(sTestName, function(assert) {
-			assert.ok(Log, "Log module should be available");
-
 			// arrange
 			var fnErrorSpy = sinon.spy(Log, "error");
 
@@ -259,8 +248,6 @@ sap.ui.define([
 
 	var isValidOnCloseFn = function (sTestName, vValue, iNumberOfErrors) {
 		QUnit.test(sTestName, function(assert) {
-			assert.ok(Log, "Log module should be available");
-
 			// arrange
 			var fnErrorSpy = sinon.spy(Log, "error");
 
@@ -285,8 +272,6 @@ sap.ui.define([
 
 	var isValidAutoCloseValue = function(sTestName, vValue, iNumberOfErrors) {
 		QUnit.test(sTestName, function(assert) {
-			assert.ok(Log, "Log module should be available");
-
 			// arrange
 			var fnErrorSpy = sinon.spy(Log, "error");
 
@@ -311,8 +296,6 @@ sap.ui.define([
 
 	var isValidAnimationTimingFunction = function(sTestName, vValue, iNumberOfErrors) {
 		QUnit.test(sTestName, function(assert) {
-			assert.ok(Log, "Log module should be available");
-
 			// arrange
 			var fnErrorSpy = sinon.spy(Log, "error");
 

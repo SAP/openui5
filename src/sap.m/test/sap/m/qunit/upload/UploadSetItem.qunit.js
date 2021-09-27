@@ -1,4 +1,4 @@
-/*global QUnit,sinon*/
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
@@ -132,8 +132,8 @@ sap.ui.define([
 		assert.expect(7);
 		var oItem = this.oUploadSet.getItems()[0],
 			oTarget = {id: oItem.getListItem().getId()},
-			oPressedSpy = sinon.spy(UploadSetItem.prototype, "_handleFileNamePressed"),
-			oDeleteSpy = sinon.spy(UploadSet.prototype, "_handleItemDelete");
+			oPressedSpy = this.spy(UploadSetItem.prototype, "_handleFileNamePressed"),
+			oDeleteSpy = this.spy(UploadSet.prototype, "_handleItemDelete");
 
 		oItem.getListItem().focus();
 		oItem.attachOpenPressed(function (oEvent) {
@@ -144,7 +144,6 @@ sap.ui.define([
 			keyCode: KeyCodes.ENTER
 		});
 		assert.equal(oPressedSpy.callCount, 1, "Upload set item handler for hitting a file name should be called.");
-		oPressedSpy.restore();
 
 		this.oUploadSet.onkeydown({
 			target: oTarget,
@@ -178,7 +177,6 @@ sap.ui.define([
 			keyCode: KeyCodes.DELETE
 		});
 		assert.equal(oDeleteSpy.calledTwice, false, "When focus is on input element delete handler should not be called");
-		oDeleteSpy.restore();
 	});
 
 	/* ============== */
@@ -322,9 +320,6 @@ sap.ui.define([
 		//Assert
 		assert.equal(oUploaderSpy.args[0].length, 2, "Header is present");
 		assert.equal(oUploaderSpy.args[0][1][0].getText(), "value1", "Header is selected from UploadSet");
-
-		//Clean
-		oUploaderSpy.restore();
 	});
 
 	QUnit.test("Check header fields in UploadSetItem", function (assert) {
@@ -358,9 +353,6 @@ sap.ui.define([
 		//Assert
 		assert.equal(oUploaderSpy.args[0].length, 2, "Header is present");
 		assert.equal(oUploaderSpy.args[0][1][0].getText(), "value2", "Header is selected from UploadSetItem");
-
-		//Clean
-		oUploaderSpy.restore();
 	});
 
 	QUnit.test("Test for uploadUrl property", function (assert) {
@@ -383,7 +375,6 @@ sap.ui.define([
 
 		//Clean
 		oUploader.destroy();
-		oXMLHttpRequestOpenSpy.restore();
 	});
 
 });

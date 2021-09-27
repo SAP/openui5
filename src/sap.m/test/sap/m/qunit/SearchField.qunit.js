@@ -47,7 +47,7 @@ sap.ui.define([
 
 	function doTouchEnd(sTarget, oParams){
 		var sEventName = "touchend";
-		var oTarget = jQuery.sap.domById(sTarget);
+		var oTarget = document.getElementById(sTarget);
 		var $Target = jQuery(oTarget);
 		var oEvent = jQuery.Event(sEventName);
 		oEvent.originalEvent = {};
@@ -274,7 +274,7 @@ sap.ui.define([
 	QUnit.test("ARIA attributes for Chrome specific", function(assert) {
 		// arrange
 		var bHasAutocorrect;
-		this.stub(Device, "browser", {name: "cr", chrome: true});
+		this.stub(Device, "browser").value({name: "cr", chrome: true});
 
 		// act
 		this.oSearchField.invalidate();
@@ -289,7 +289,7 @@ sap.ui.define([
 	QUnit.test("ARIA attributes for Safari specific", function(assert) {
 		// arrange
 		var bHasAutocorrect;
-		this.stub(Device, "browser", {name: "sf", safari: true});
+		this.stub(Device, "browser").value({name: "sf", safari: true});
 
 		// act
 		this.oSearchField.invalidate();

@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"jquery.sap.global",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel",
@@ -11,18 +10,9 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/m/Tree",
 	"sap/m/library"
-], function(createAndAppendDiv, jQuery, qutils, KeyCodes, JSONModel, Sorter, StandardTreeItem, StandardListItem, Tree, library) {
+], function(createAndAppendDiv, qutils, KeyCodes, JSONModel, Sorter, StandardTreeItem, StandardListItem, Tree, library) {
 	"use strict";
-	createAndAppendDiv("content");
-	var styleElement = document.createElement("style");
-	styleElement.textContent =
-		"#content {" +
-		"	height: 100%;" +
-		"}" +
-		"#mSAPUI5SupportMessage {" +
-		"	display: none !important;" +
-		"}";
-	document.head.appendChild(styleElement);
+	createAndAppendDiv("content").style.height = "100%";
 
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
@@ -175,8 +165,8 @@ sap.ui.define([
 	QUnit.module("Initial Check");
 
 	QUnit.test("Overview rendered", function(assert){
-		assert.ok(jQuery.sap.domById("__item0-__tree0-0"), "initial render of first node");
-		assert.ok(jQuery.sap.domById("__item0-__tree0-1"), "initial render of second node");
+		assert.ok(document.getElementById("__item0-__tree0-0"), "initial render of first node");
+		assert.ok(document.getElementById("__item0-__tree0-1"), "initial render of second node");
 	});
 
 	QUnit.module("Indentation");
@@ -418,7 +408,7 @@ sap.ui.define([
 		QUnit.module("Icon");
 
 		QUnit.test("tree item with icon", function(assert){
-		assert.ok(jQuery.sap.domById("__item0-__tree0-0-icon"), "icon is rendered");
+		assert.ok(document.getElementById("__item0-__tree0-0-icon"), "icon is rendered");
 
 		var oImage = sap.ui.getCore().byId("__item0-__tree0-0-icon");
 		assert.strictEqual(oImage.getSrc(), IMAGE_PATH + "action.png", "icon source is correct");

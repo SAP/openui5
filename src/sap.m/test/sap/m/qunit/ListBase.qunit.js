@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/ListBaseRenderer",
 	"sap/ui/events/KeyCodes",
@@ -1165,7 +1165,7 @@ sap.ui.define([
 				bIncludeItemInSelection;
 
 			// let the item navigation run for testing
-			this.stub(Device.system, "desktop", true);
+			this.stub(Device.system, "desktop").value(true);
 
 			bindListData(oList, data3, "/items", createTemplateListItem());
 
@@ -1415,7 +1415,7 @@ sap.ui.define([
 						assert.ok(oSpy.calledOnce, "The scroll delegate was called exactly once");
 						assert.ok(oSpy.calledWithExactly(oList.getVisibleItems()[iIndex].getDomRef(), null, [0, oList._getStickyAreaHeight() * -1]),
 							"Scroll delegate was called with correct parameters");
-						oSpy.reset();
+						oSpy.resetHistory();
 						resolve();
 					});
 				});
@@ -1561,7 +1561,7 @@ sap.ui.define([
 				}).addItem(oListItem1).addItem(oListItem2);
 
 			// let the item navigation run for testing
-			this.stub(Device.system, "desktop", true);
+			this.stub(Device.system, "desktop").value(true);
 
 			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
@@ -1609,14 +1609,14 @@ sap.ui.define([
 
 			qutils.triggerKeydown(document.activeElement, "SPACE");
 			assert.strictEqual(fnSelectionChangeSpy.callCount, 1, "SelectionChange event is fired when space is pressed while focus is at the item");
-			fnSelectionChangeSpy.reset();
+			fnSelectionChangeSpy.resetHistory();
 
 			qutils.triggerKeydown(document.activeElement, "ENTER");
 			this.clock.tick(0);
 			assert.strictEqual(fnItemPressSpy.callCount, 1, "ItemPress event is fired async when enter is pressed while focus is at the item");
 			assert.strictEqual(fnPressSpy.callCount, 1, "Press event is fired async when enter is pressed while focus is at the item");
-			fnItemPressSpy.reset();
-			fnPressSpy.reset();
+			fnItemPressSpy.resetHistory();
+			fnPressSpy.resetHistory();
 
 			qutils.triggerKeydown(document.activeElement, "F2");
 			assert.strictEqual(fnDetailPressSpy.callCount, 0, "DetailPress event is not called since first item has not Edit type");
@@ -1674,13 +1674,13 @@ sap.ui.define([
 			qutils.triggerKeyboardEvent(oInput.getFocusDomRef(), "TAB", false, false, false);
 			assert.strictEqual(fnSpy.callCount, 1, "List is informed to forward tab when tab is pressed while focus is on last tabbable item");
 			assert.strictEqual(fnSpy.args[0][0], true, "Tab Forward is informed");
-			fnSpy.reset();
+			fnSpy.resetHistory();
 
 			// shift-tab key
 			qutils.triggerKeyboardEvent(oListItem.getFocusDomRef(), "TAB", true, false, false);
 			assert.strictEqual(fnSpy.callCount, 1, "List is informed to forward tab backwards when tab is pressed while focus is on the row");
 			assert.strictEqual(fnSpy.args[0][0], false, "Backwards tab is informed");
-			fnSpy.reset();
+			fnSpy.resetHistory();
 
 			// shift-F6 key
 			oInput.getFocusDomRef().focus();
@@ -1710,7 +1710,7 @@ sap.ui.define([
 			oList.addItem(oListItem0).addItem(oListItem1).addItem(oListItem2);
 
 			// let the item navigation run for testing
-			this.stub(Device.system, "desktop", true);
+			this.stub(Device.system, "desktop").value(true);
 
 			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
@@ -1744,13 +1744,13 @@ sap.ui.define([
 
 			assert.strictEqual(fnSpy.callCount, 1, "List is informed when item visibility is changed from visible to invisible");
 			assert.strictEqual(fnSpy.args[0][0], oListItem, "Correct list item is informed");
-			fnSpy.reset();
+			fnSpy.resetHistory();
 
 			oListItem.setVisible(false);
 			Core.applyChanges();
 
 			assert.strictEqual(fnSpy.callCount, 0, "Visibility did not changed and list is not informed");
-			fnSpy.reset();
+			fnSpy.resetHistory();
 
 			oListItem.setVisible(true);
 			Core.applyChanges();
@@ -1758,7 +1758,7 @@ sap.ui.define([
 			assert.strictEqual(fnSpy.callCount, 1, "List is informed when item visibility is changed from invisible to visible");
 			assert.strictEqual(fnSpy.args[0][0], oListItem, "Correct list item is informed");
 			assert.strictEqual(fnSpy.args[0][1], true, "Correct visible parameter item is informed");
-			fnSpy.reset();
+			fnSpy.resetHistory();
 
 			// cleanup
 			oPage.removeAllContent();
@@ -1780,7 +1780,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// let the item navigation run for testing
-			this.stub(Device.system, "desktop", true);
+			this.stub(Device.system, "desktop").value(true);
 
 			var fnRenderSpy = this.spy(oList.getRenderer(), "render");
 
@@ -1924,7 +1924,7 @@ sap.ui.define([
 			qutils.triggerKeydown(document.activeElement, "F2");
 			assert.strictEqual(fnDetailPressSpy.callCount, 1, "Keyboard mode did not change Detail press event is fired while focus is on the row");
 			assert.strictEqual(oList.getKeyboardMode(), "Edit", "Keyboard mode is still in Edit");
-			fnDetailPressSpy.reset();
+			fnDetailPressSpy.resetHistory();
 
 			oInput1.focus();
 			qutils.triggerKeydown(document.activeElement, "TAB");
@@ -2015,7 +2015,7 @@ sap.ui.define([
 			qutils.triggerKeyup(document.activeElement, "SHIFT", false, false, false);
 			assert.ok(!oList._mRangeSelection, "Range selection mode cleared");
 			// reset the spy
-			fnFireSelectionChangeEvent.reset();
+			fnFireSelectionChangeEvent.resetHistory();
 
 			oList.getVisibleItems()[5].focus();
 			// select the item
@@ -2043,7 +2043,7 @@ sap.ui.define([
 			qutils.triggerKeyup(document.activeElement, "SHIFT", false, false, false);
 			assert.ok(!oList._mRangeSelection, "Range selection mode cleared");
 			// reset the spy
-			fnFireSelectionChangeEvent.reset();
+			fnFireSelectionChangeEvent.resetHistory();
 
 			// selectionChange event should not be fired when the item is already selected and range selection occurs on this item
 			assert.ok(oList.getVisibleItems()[4].getSelected(), "item is already selected");
@@ -2163,7 +2163,7 @@ sap.ui.define([
 			Core.applyChanges();
 			assert.equal(oList.getSelectedItems().length, 4, "4 items are selected");
 
-			fnFireSelectionChangeEvent.reset();
+			fnFireSelectionChangeEvent.resetHistory();
 
 			// focus an already selected item
 			oList.getVisibleItems()[2].focus();
@@ -2240,7 +2240,7 @@ sap.ui.define([
 			assert.equal(oList.getSelectedItems().length, 10, "10 items are selected using mouse range selection");
 
 			// range deselection should be prevented and selection change should not be fired if the item is already selected
-			fnFireSelectionChangeEvent.reset();
+			fnFireSelectionChangeEvent.resetHistory();
 			assert.ok(oList.getVisibleItems()[5].getSelected(), "item is already selected");
 			oCheckboxDomRef = oList.getVisibleItems()[5].getDomRef("selectMulti");
 			qutils.triggerMouseEvent(oCheckboxDomRef, "tap");
@@ -2846,7 +2846,7 @@ sap.ui.define([
 			var fnInvalidate = this.spy(oList, "invalidate");
 
 			// list should not be invalidated for setContextMenu
-			fnInvalidate.reset();
+			fnInvalidate.resetHistory();
 			oList.setContextMenu(new Menu({
 			items: [
 				new MenuItem({text: "{Title}"})
@@ -2869,7 +2869,7 @@ sap.ui.define([
 			oMenu.close();
 
 			// list should not be invalidated for destroyContextmenu
-			fnInvalidate.reset();
+			fnInvalidate.resetHistory();
 			oList.destroyContextMenu();
 			assert.ok(!fnInvalidate.called, "List is not invalidated when the contextMenu aggregation is destroyed");
 
@@ -2947,7 +2947,7 @@ sap.ui.define([
 			var fnPress = this.spy(oListItem, "firePress");
 			oListItem.focus();
 			var bHasSelection;
-			this.stub(window, "getSelection", function() {
+			this.stub(window, "getSelection").callsFake(function() {
 				return {
 					toString: function() {
 						return bHasSelection ? "Hello World" : "";
@@ -3019,7 +3019,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Focus and scroll handling with sticky infoToolbar", function(assert) {
-			this.stub(Device.system, "desktop", false);
+			this.stub(Device.system, "desktop").value(false);
 			this.clock = sinon.useFakeTimers();
 
 			var oStdLI = new StandardListItem({
@@ -3075,7 +3075,7 @@ sap.ui.define([
 
 			assert.ok(oInfoToolbarContainer.classList.contains("sapMListInfoTBarContainer"), "infoToolbar container div rendered");
 
-			this.stub(oInfoToolbarContainer, "getBoundingClientRect", function() {
+			this.stub(oInfoToolbarContainer, "getBoundingClientRect").callsFake(function() {
 				return {
 					bottom: 72,
 					height: 32
@@ -3086,8 +3086,8 @@ sap.ui.define([
 			var oFocusedItemDomRef = oFocusedItem.getDomRef();
 			var fnScrollToElementSpy = sinon.spy(oScrollContainer.getScrollDelegate(), "scrollToElement");
 
-			this.stub(window, "requestAnimationFrame", window.setTimeout);
-			this.stub(oFocusedItemDomRef, "getBoundingClientRect", function() {
+			this.stub(window, "requestAnimationFrame").callsFake(window.setTimeout);
+			this.stub(oFocusedItemDomRef, "getBoundingClientRect").callsFake(function() {
 				return {
 					top: 70
 				};
@@ -3098,13 +3098,11 @@ sap.ui.define([
 			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -32]), "scrollToElement function called");
 
 			oScrollContainer.destroy();
-			// reset stub
-			this.stub().reset();
 			this.clock.restore();
 		});
 
 		QUnit.test("Focus and scroll handling with sticky headerToolbar", function(assert) {
-			this.stub(Device.system, "desktop", false);
+			this.stub(Device.system, "desktop").value(false);
 			this.clock = sinon.useFakeTimers();
 
 			var oStdLI = new StandardListItem({
@@ -3160,14 +3158,14 @@ sap.ui.define([
 
 			var oHeaderDomRef = sut.getDomRef().querySelector(".sapMListHdr");
 			var fnGetDomRef = sut.getDomRef;
-			this.stub(oHeaderDomRef, "getBoundingClientRect", function() {
+			this.stub(oHeaderDomRef, "getBoundingClientRect").callsFake(function() {
 				return {
 					bottom: 88,
 					height: 48
 				};
 			});
 
-			this.stub(sut, "getDomRef", function() {
+			this.stub(sut, "getDomRef").callsFake(function() {
 				return {
 					querySelector: function() {
 						return oHeaderDomRef;
@@ -3179,8 +3177,8 @@ sap.ui.define([
 			var oFocusedItemDomRef = oFocusedItem.getDomRef();
 			var fnScrollToElementSpy = sinon.spy(oScrollContainer.getScrollDelegate(), "scrollToElement");
 
-			this.stub(window, "requestAnimationFrame", window.setTimeout);
-			this.stub(oFocusedItemDomRef, "getBoundingClientRect", function() {
+			this.stub(window, "requestAnimationFrame").callsFake(window.setTimeout);
+			this.stub(oFocusedItemDomRef, "getBoundingClientRect").callsFake(function() {
 				return {
 					top: 80
 				};
@@ -3194,13 +3192,11 @@ sap.ui.define([
 			sut.getDomRef = fnGetDomRef;
 
 			oScrollContainer.destroy();
-			// reset stub
-			this.stub().reset();
 			this.clock.restore();
 		});
 
 		QUnit.test("Focus and scroll handling with sticky headerToolbar and infoToolbar", function(assert) {
-			this.stub(Device.system, "desktop", false);
+			this.stub(Device.system, "desktop").value(false);
 			this.clock = sinon.useFakeTimers();
 
 			var oStdLI = new StandardListItem({
@@ -3275,7 +3271,7 @@ sap.ui.define([
 
 			var oHeaderDomRef = sut.getDomRef().querySelector(".sapMListHdr");
 			var fnGetDomRef = sut.getDomRef;
-			this.stub(oHeaderDomRef, "getBoundingClientRect", function() {
+			this.stub(oHeaderDomRef, "getBoundingClientRect").callsFake(function() {
 				return {
 					bottom: 48,
 					height: 48
@@ -3283,7 +3279,7 @@ sap.ui.define([
 			});
 
 			var oInfoToolbarContainer = oInfoToolbar.$().parent()[0];
-			this.stub(oInfoToolbarContainer, "getBoundingClientRect", function() {
+			this.stub(oInfoToolbarContainer, "getBoundingClientRect").callsFake(function() {
 				return {
 					bottom: 80,
 					height: 32
@@ -3294,8 +3290,8 @@ sap.ui.define([
 			var oFocusedItemDomRef = oFocusedItem.getDomRef();
 			var fnScrollToElementSpy = sinon.spy(oScrollContainer.getScrollDelegate(), "scrollToElement");
 
-			this.stub(window, "requestAnimationFrame", window.setTimeout);
-			this.stub(oFocusedItemDomRef, "getBoundingClientRect", function() {
+			this.stub(window, "requestAnimationFrame").callsFake(window.setTimeout);
+			this.stub(oFocusedItemDomRef, "getBoundingClientRect").callsFake(function() {
 				return {
 					top: 40
 				};
@@ -3309,8 +3305,6 @@ sap.ui.define([
 			sut.getDomRef = fnGetDomRef;
 
 			oScrollContainer.destroy();
-			// reset stub
-			this.stub().reset();
 			this.clock.restore();
 		});
 

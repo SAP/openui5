@@ -1,11 +1,11 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/base/Log",
 	"sap/ui/Device",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/m/Bar",
@@ -18,6 +18,7 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	waitForThemeApplied,
+	Log,
 	Device,
 	jQuery,
 	App,
@@ -29,6 +30,8 @@ sap.ui.define([
 	JSONModel,
 	Button
 ) {
+	"use strict";
+
 	// shortcut for sap.m.ListType
 	var ListType = mobileLibrary.ListType;
 
@@ -49,16 +52,16 @@ sap.ui.define([
 
 		if (scrollEnablement._scroller) { // iScroll
 			if (Device.browser.mozilla) {
-				s = jQuery.sap.byId("page1-scroll").css("-moz-transform").split(" ")[5]; // "matrix(1, 0, 0, -99.9999, 0px, 0px)" => "99.9999,"
+				s = jQuery("#page1-scroll").css("-moz-transform").split(" ")[5]; // "matrix(1, 0, 0, -99.9999, 0px, 0px)" => "99.9999,"
 			} else if (Device.browser.safari || Device.browser.chrome) {
-				s = jQuery.sap.byId("page1-scroll").css("-webkit-transform").split(" ")[5];
+				s = jQuery("#page1-scroll").css("-webkit-transform").split(" ")[5];
 			} else if (Device.browser.msie && Device.browser.version >= 9) {
-				s = jQuery.sap.byId("page1-scroll").css("top");
+				s = jQuery("#page1-scroll").css("top");
 			}
 			return Math.round(parseFloat(s));
 
 		} else { // NativeMouseScroller
-			s = jQuery.sap.domById("page1-cont").scrollTop;
+			s = document.getElementById("page1-cont").scrollTop;
 			return Math.round(-s);
 		}
 	}
@@ -85,15 +88,6 @@ sap.ui.define([
 			app.back();
 		}
 	});
-
-	var page3 = new Page("page3", {
-		title : "Test Page 3",
-		showNavButton: true,
-		navButtonPress: function(){
-			app.back();
-		}
-	});
-
 
 	var nav = [];
 	for ( var i = 0; i < 100; i++) {
@@ -170,8 +164,8 @@ sap.ui.define([
 	/***************** TESTS ******************/
 
 	QUnit.test("Page and List rendered", function(assert) {
-		assert.ok(jQuery.sap.domById("page1"), "page1 should be rendered");
-		assert.ok(jQuery.sap.domById("growingList"), "growingList should be rendered");
+		assert.ok(document.getElementById("page1"), "page1 should be rendered");
+		assert.ok(document.getElementById("growingList"), "growingList should be rendered");
 	});
 
 
@@ -215,8 +209,8 @@ sap.ui.define([
 			assert.expect(5);
 
 			var interval = window.setInterval(function(){ // burst of logs to analyze future problems because this is the most tricky situation in IE
-				jQuery.sap.log.info("page1 height: " + jQuery.sap.byId("page1-cont").height()
-						+ ", scrollTop: " + jQuery.sap.domById("page1-cont").scrollTop
+				Log.info("page1 height: " + jQuery("#page1-cont").height()
+						+ ", scrollTop: " + document.getElementById("page1-cont").scrollTop
 						+ "; page1 scroller thinks: " + page1.getScrollDelegate()._scrollY
 						+ ", resizeListener: " + page1.getScrollDelegate()._sResizeListenerId);
 			}, 200);

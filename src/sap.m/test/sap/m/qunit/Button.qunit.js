@@ -1,5 +1,4 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -31,6 +30,8 @@ sap.ui.define([
 	KeyCodes,
 	BadgeCustomData
 ) {
+	"use strict";
+
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
@@ -40,27 +41,26 @@ sap.ui.define([
 	// shortcut for sap.m.ButtonAccessibilityType
 	var ButtonAccessibilityType = mobileLibrary.ButtonAccessibilityType;
 
-	var styleElement = document.createElement("style");
-	styleElement.textContent =
-		".ButtonSpace {" +
-		"	margin-top: 10px;" +
-		"}";
-	document.head.appendChild(styleElement);
+	function createDivWithTopMargin(sName) {
+		var div = createAndAppendDiv(sName);
+		div.style.marginTop = "10px";
+		return div;
+	}
 
-	createAndAppendDiv("contentBtnDefault").className = "ButtonSpace";
-	createAndAppendDiv("contentBtnBack").className = "ButtonSpace";
-	createAndAppendDiv("contentBtnAccept").className = "ButtonSpace";
-	createAndAppendDiv("contentBtnReject").className = "ButtonSpace";
-	createAndAppendDiv("contentBtnTransparent").className = "ButtonSpace";
-	createAndAppendDiv("contentBtnWidth").className = "ButtonSpace";
-	createAndAppendDiv("contentBtnDisabled").className = "ButtonSpace";
-	createAndAppendDiv("contentBtnIcon").className = "ButtonSpace";
-	createAndAppendDiv("contentBtnUp").className = "ButtonSpace";
-	createAndAppendDiv("contentBtnUnstyled").className = "ButtonSpace";
-	createAndAppendDiv("contentBtnInvisible").className = "ButtonSpace";
-	createAndAppendDiv("contentBtnTextDirectionRTL").className = "ButtonSpace";
-	createAndAppendDiv("contentBtnTextDirectionLTR").className = "ButtonSpace";
-	createAndAppendDiv("contentBtnIconTap").className = "ButtonSpace";
+	createDivWithTopMargin("contentBtnDefault");
+	createDivWithTopMargin("contentBtnBack");
+	createDivWithTopMargin("contentBtnAccept");
+	createDivWithTopMargin("contentBtnReject");
+	createDivWithTopMargin("contentBtnTransparent");
+	createDivWithTopMargin("contentBtnWidth");
+	createDivWithTopMargin("contentBtnDisabled");
+	createDivWithTopMargin("contentBtnIcon");
+	createDivWithTopMargin("contentBtnUp");
+	createDivWithTopMargin("contentBtnUnstyled");
+	createDivWithTopMargin("contentBtnInvisible");
+	createDivWithTopMargin("contentBtnTextDirectionRTL");
+	createDivWithTopMargin("contentBtnTextDirectionLTR");
+	createDivWithTopMargin("contentBtnIconTap");
 
 
 
@@ -74,15 +74,11 @@ sap.ui.define([
 		sButtonTypeTransparent = ButtonType.Transparent,
 		sButtonTypeUp = ButtonType.Up,
 		sButtonTypeUnstyled = ButtonType.Unstyled,
-		sButtonTypeCritical = ButtonType.Critical,
-		sButtonTypeNegative = ButtonType.Negative,
-		sButtonTypeSuccess = ButtonType.Success,
 		sWidth = "200px",
 		bEnabled = true,
 		bDisabled = false,
 		sIcon = "../images/analytics_64.png",
-		sPressMessage = "Button Tapped Event!",
-		sTapMessage = "There is Tap Event on a Button!";
+		sPressMessage = "Button Tapped Event!";
 
 	function tabEventHandler1() {
 		throw sPressMessage + " - Exception";
@@ -330,8 +326,8 @@ sap.ui.define([
 		assert.ok(!b12.getDomRef(), "Button12 should not be rendered");
 	});
 
-	function hoverableTestCase (oTestDescription) {
-		this.stub(Device, "system", { desktop : oTestDescription.desktop });
+	function hoverableTestCase (oTestDescription, assert) {
+		this.stub(Device, "system").value({ desktop : oTestDescription.desktop });
 
 		// System under Test
 		var oButton = new Button({
@@ -354,7 +350,7 @@ sap.ui.define([
 			desktop : true,
 			shouldBeHoverable : true,
 			shouldHaveCssClass : true
-		});
+		}, assert);
 	});
 
 	QUnit.test("Should not be hoverable if the button is disabled and in desktop", function(assert) {
@@ -363,7 +359,7 @@ sap.ui.define([
 			desktop : true,
 			shouldBeHoverable : false,
 			shouldHaveCssClass : false
-		});
+		}, assert);
 	});
 
 	QUnit.test("Should not be hoverable if the button is enabled and not desktop", function(assert) {
@@ -372,7 +368,7 @@ sap.ui.define([
 			desktop : false,
 			shouldBeHoverable : false,
 			shouldHaveCssClass : false
-		});
+		}, assert);
 	});
 
 	QUnit.test("Should not be hoverable if the button is disabled and not desktop", function(assert) {
@@ -381,21 +377,18 @@ sap.ui.define([
 			desktop : false,
 			shouldBeHoverable : false,
 			shouldHaveCssClass : false
-		});
+		}, assert);
 	});
 
 	QUnit.test("Should not re-render the button if the text is changed", function(assert) {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
-			oRenderSpy,
 			oResult,
 			oConstructor = { text : "No empty text"};
 
 		// System under Test
 		var oButton = new Button(oConstructor).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-
-		oRenderSpy = this.spy(oButton, "invalidate");
 
 		// Act
 		oResult = oButton.setText(sTextToSet);
@@ -434,7 +427,7 @@ sap.ui.define([
 	QUnit.test("For safari the button should gain explicitly focus on touch start", function(assert) {
 		// Arrange
 		// stub the browser to be only safari
-		this.stub(Device, "browser", {
+		this.stub(Device, "browser").value({
 			safari: true
 		});
 
@@ -454,7 +447,7 @@ sap.ui.define([
 	QUnit.test("For firefox the button should gain explicitly focus on touch start", function(assert) {
 		// Arrange
 		// stub the browser to be only firefox
-		this.stub(Device, "browser", {
+		this.stub(Device, "browser").value({
 			firefox: true
 		});
 
@@ -819,7 +812,7 @@ sap.ui.define([
 
 	//BCP: 1880541323
 	QUnit.test("no exception is thrown when domRef is null", function(assert) {
-		this.stub(Device, "browser", {"firefox": true});
+		this.stub(Device, "browser").value({"firefox": true});
 
 		// System under Test
 		var oButton = new Button({
@@ -828,7 +821,7 @@ sap.ui.define([
 		});
 
 		// stub the getDomRef function to return null
-		var stubGetDomRef = this.stub(oButton, "getDomRef", function () { return null; });
+		this.stub(oButton, "getDomRef").returns(null);
 
 		// Action
 		oButton.onAfterRendering();
@@ -837,7 +830,6 @@ sap.ui.define([
 		assert.ok(true, "No exception is thrown");
 
 		// Cleanup
-		stubGetDomRef.restore();
 		oButton.destroy();
 	});
 
@@ -879,7 +871,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Types Negative, Critical, Success, Neutral implied icon is applied", function() {
+	QUnit.test("Types Negative, Critical, Success, Neutral implied icon is applied", function(assert) {
 		// arrange
 		var oButton = new Button({
 			text: "button"
@@ -938,7 +930,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Icon is preferred over the type's implied icon", function() {
+	QUnit.test("Icon is preferred over the type's implied icon", function(assert) {
 		// arrange
 		var oButton = new Button({
 			text: "button",
@@ -974,7 +966,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Rendering of icons for Back/Up type", function (assert) {
-		var oButton = new sap.m.Button({
+		var oButton = new Button({
 			type: ButtonType.Back
 		});
 
@@ -1023,38 +1015,38 @@ sap.ui.define([
 			oBdiContent.dispatchEvent(oEventDown);
 			oContent.dispatchEvent(oEventUp);
 			assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-content");
-			spy.reset();
+			spy.resetHistory();
 
 			oBdiContent.dispatchEvent(oEventDown);
 			oInner.dispatchEvent(oEventUp);
 			assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-inner");
-			spy.reset();
+			spy.resetHistory();
 
 			oBdiContent.dispatchEvent(oEventDown);
 			oImg.dispatchEvent(oEventUp);
 			assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-img");
-			spy.reset();
+			spy.resetHistory();
 
 			oImg.dispatchEvent(oEventDown);
 			oBdiContent.dispatchEvent(oEventUp);
 			assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-BDI-content");
-			spy.reset();
+			spy.resetHistory();
 		}
 
 		oContent.dispatchEvent(oEventDown);
 		oInner.dispatchEvent(oEventUp);
 		assert.equal(spy.callCount, 1, "TAP on a button works from b15-content to b15-inner");
-		spy.reset();
+		spy.resetHistory();
 
 		oContent.dispatchEvent(oEventDown);
 		oImg.dispatchEvent(oEventUp);
 		assert.equal(spy.callCount, 1, "TAP on a button works from b15-content to b15-img");
-		spy.reset();
+		spy.resetHistory();
 
 		oImg.dispatchEvent(oEventDown);
 		oContent.dispatchEvent(oEventUp);
 		assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-content");
-		spy.reset();
+		spy.resetHistory();
 
 		oImg.dispatchEvent(oEventDown);
 		oInner.dispatchEvent(oEventUp);
@@ -1562,7 +1554,7 @@ sap.ui.define([
 				icon: "sap-icon://home",
 				text: "I have a badge!",
 				customData: [
-					new sap.m.BadgeCustomData({
+					new BadgeCustomData({
 						key: "badge",
 						value: "3",
 						visible: true

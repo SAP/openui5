@@ -5,11 +5,11 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Label",
 	"sap/m/library",
-	"jquery.sap.keycodes",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"jquery.sap.global"
-], function(Switch, Page, Label, mobileLibrary, jQuery, qutils, createAndAppendDiv) {
+	"sap/ui/events/KeyCodes"
+], function(Switch, Page, Label, mobileLibrary, jQuery, qutils, createAndAppendDiv, KeyCodes) {
 	"use strict";
 	createAndAppendDiv("content");
 
@@ -563,7 +563,7 @@ sap.ui.define([
 			oSwitch0 = sap.ui.getCore().byId("__switch0"),
 			oSwitch8 = sap.ui.getCore().byId("__switch8");
 
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oSwitch0.getDomRef(), {
+		qutils.triggerTouchEvent("touchstart", oSwitch0.getDomRef(), {
 			touches: {
 				0: {
 					pageX: 60,
@@ -587,7 +587,7 @@ sap.ui.define([
 
 		assert.ok(oSwitch0.$().children(".sapMSwt").hasClass("sapMSwtPressed"), 'On touchstart event the switch first-child html element muss have the css class “sapMSwtPressed”');
 
-		sap.ui.test.qunit.triggerTouchEvent("touchend", oSwitch0.getDomRef(), {
+		qutils.triggerTouchEvent("touchend", oSwitch0.getDomRef(), {
 			changedTouches: {
 				0: {
 					pageX: 60,
@@ -610,7 +610,7 @@ sap.ui.define([
 		/*	Only process single touches. If there is already a touch
 		 happening or two simultaneous touches, then just ignore them. */
 
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oSwitch0.getDomRef(), {
+		qutils.triggerTouchEvent("touchstart", oSwitch0.getDomRef(), {
 			touches: {
 				0: {
 					pageX: 60,
@@ -648,7 +648,7 @@ sap.ui.define([
 
 		/*	testing touch move	*/
 
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oSwitch8.getDomRef(), {
+		qutils.triggerTouchEvent("touchstart", oSwitch8.getDomRef(), {
 			touches: {
 				0: {
 					pageX: 636,
@@ -697,10 +697,10 @@ sap.ui.define([
 		j = 636;
 		for (i = j + 1; i < j + 41; i++) {
 			oTouchMove.changedTouches[0].pageX = i;
-			sap.ui.test.qunit.triggerTouchEvent("touchmove", oSwitch8.$("handle")[0], oTouchMove);
+			qutils.triggerTouchEvent("touchmove", oSwitch8.$("handle")[0], oTouchMove);
 		}
 
-		sap.ui.test.qunit.triggerTouchEvent("touchend", oSwitch8.getDomRef(), {
+		qutils.triggerTouchEvent("touchend", oSwitch8.getDomRef(), {
 			changedTouches: {
 				0: {
 					pageX: 60,
@@ -770,11 +770,11 @@ sap.ui.define([
 		var iClickThreshold = 100;	// threshold between clicks
 
 		// act
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oSwitch.getDomRef(), oTouchstart);
-		sap.ui.test.qunit.triggerTouchEvent("touchend", oSwitch.getDomRef(), oTouchend);
+		qutils.triggerTouchEvent("touchstart", oSwitch.getDomRef(), oTouchstart);
+		qutils.triggerTouchEvent("touchend", oSwitch.getDomRef(), oTouchend);
 		this.clock.tick(iClickThreshold);
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oSwitch.getDomRef(), oTouchstart);
-		sap.ui.test.qunit.triggerTouchEvent("touchend", oSwitch.getDomRef(), oTouchend);
+		qutils.triggerTouchEvent("touchstart", oSwitch.getDomRef(), oTouchstart);
+		qutils.triggerTouchEvent("touchend", oSwitch.getDomRef(), oTouchend);
 		this.clock.tick(Switch._TRANSITIONTIME - iClickThreshold);
 
 		// assert
@@ -860,10 +860,10 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(oSwitch, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oSwitch.getDomRef(), oTouchstart);
+		qutils.triggerTouchEvent("touchstart", oSwitch.getDomRef(), oTouchstart);
 		// drag the switch handle 7px to the right - we compensate for touch/slide threshold which is 6px
-		sap.ui.test.qunit.triggerTouchEvent("touchmove", oSwitch.getDomRef(), oTouchmove);
-		sap.ui.test.qunit.triggerTouchEvent("touchend", oSwitch.getDomRef(), oTouchend);
+		qutils.triggerTouchEvent("touchmove", oSwitch.getDomRef(), oTouchmove);
+		qutils.triggerTouchEvent("touchend", oSwitch.getDomRef(), oTouchend);
 		this.clock.tick(Switch._TRANSITIONTIME + 1);	// wait some ms after the CSS transition is completed
 
 		// assert
@@ -890,7 +890,7 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(oSwitch, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeyup(oSwitch.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeyup(oSwitch.getDomRef(), KeyCodes.SPACE);
 		this.clock.tick(1000);
 
 		// assert
@@ -914,7 +914,7 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(oSwitch, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSwitch.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(oSwitch.getDomRef(), KeyCodes.ENTER);
 		this.clock.tick(1000);
 
 		// assert

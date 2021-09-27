@@ -1,7 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/PDFViewer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device"

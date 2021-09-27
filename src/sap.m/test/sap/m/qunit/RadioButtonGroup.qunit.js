@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/util/Mobile",
 	"sap/ui/core/library",
 	"sap/m/RadioButtonGroup",
 	"sap/m/RadioButton",
@@ -10,6 +11,7 @@ sap.ui.define([
 ], function(
 	qutils,
 	jQuery,
+	Mobile,
 	coreLibrary,
 	RadioButtonGroup,
 	RadioButton,
@@ -23,7 +25,7 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
-	jQuery.sap.initMobile();
+	Mobile.init();
 
 	QUnit.module("Rendering");
 

@@ -1,5 +1,5 @@
-/*global QUnit, sinon */
-sap.ui.define(["sap/m/WizardStep", "sap/ui/qunit/QUnitUtils"], function(WizardStep, QUnitUtils) {
+/*global QUnit */
+sap.ui.define(["sap/m/WizardStep"], function(WizardStep) {
 	"use strict";
 
 	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -73,7 +73,7 @@ sap.ui.define(["sap/m/WizardStep", "sap/ui/qunit/QUnitUtils"], function(WizardSt
 	});
 
 	QUnit.test("_activate() is firing the activate event", function (assert) {
-		var spy = sinon.spy();
+		var spy = this.spy();
 
 		this.wizardStep.attachActivate(spy);
 		this.wizardStep._activate();
@@ -82,7 +82,7 @@ sap.ui.define(["sap/m/WizardStep", "sap/ui/qunit/QUnitUtils"], function(WizardSt
 	});
 
 	QUnit.test("_complete() is firing the complete event", function (assert) {
-		var spy = sinon.spy();
+		var spy = this.spy();
 
 		this.wizardStep.attachComplete(spy);
 		this.wizardStep._complete();
@@ -113,7 +113,7 @@ sap.ui.define(["sap/m/WizardStep", "sap/ui/qunit/QUnitUtils"], function(WizardSt
 
 	QUnit.test("_initTitlePropagationSupport is called on init", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(WizardStep.prototype, "_initTitlePropagationSupport"),
+		var oSpy = this.spy(WizardStep.prototype, "_initTitlePropagationSupport"),
 			oControl;
 
 		// Act
@@ -124,7 +124,6 @@ sap.ui.define(["sap/m/WizardStep", "sap/ui/qunit/QUnitUtils"], function(WizardSt
 		assert.ok(oSpy.calledOn(oControl), "The spy is called on the tested control instance");
 
 		// Cleanup
-		oSpy.restore();
 		oControl.destroy();
 	});
 });

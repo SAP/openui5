@@ -1,5 +1,4 @@
-/*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -10,7 +9,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/message/Message"
+	"sap/ui/core/message/Message",
+	"sap/base/Log"
 ], function (
 	QUtils,
 	createAndAppendDiv,
@@ -21,8 +21,11 @@ sap.ui.define([
 	KeyCodes,
 	Core,
 	JSONModel,
-	Message
+	Message,
+	Log
 ) {
+	"use strict";
+
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
@@ -582,42 +585,46 @@ sap.ui.define([
 	/* Test: testSetLabelProperty  					   */
 	/* ----------------------------------------------- */
 
-	function testSetLabelProperty(property, value, mode) {
+	QUnit.module("Label Properties", {
+		beforeEach: function (assert) {
+			this.testSetLabelProperty = function(property, value, mode) {
 
-		var sPropertyCamelCase = property[0].toUpperCase() + property.slice(1);
-		var sSetterMethod = "set" + sPropertyCamelCase;
+				var sPropertyCamelCase = property[0].toUpperCase() + property.slice(1);
+				var sSetterMethod = "set" + sPropertyCamelCase;
 
-		var oSpy = sinon.spy(Label.prototype, sSetterMethod);
+				var oSpy = this.spy(Label.prototype, sSetterMethod);
 
 
-		// system under test
-		switch (mode) {
-			case "Constructor":
-				// set property via contructor
-				var args = {};
-				args[property] = value;
-				var oCheckBox = new CheckBox(args);
-				break;
-			case "Setter":
-				// set property via setter method
-				var oCheckBox = new CheckBox();
-				oCheckBox[sSetterMethod](value);
-				break;
-			default:
-				console.error(": wrong argument for parameter 'mode'"); // eslint-disable-line no-console
+				// system under test
+				switch (mode) {
+					case "Constructor":
+						// set property via constructor
+						var args = {};
+						args[property] = value;
+						var oCheckBox = new CheckBox(args);
+						break;
+					case "Setter":
+						// set property via setter method
+						var oCheckBox = new CheckBox();
+						oCheckBox[sSetterMethod](value);
+						break;
+					default:
+						Log.error(": wrong argument for parameter 'mode'");
+				}
+
+				// arrange
+				oCheckBox.placeAt("content");
+				Core.applyChanges();
+
+				// assertions
+				assert.strictEqual(oSpy.lastCall.args[0], value, "Property '" + property + "=" + value + "'testSetLabelProperty: Corresponding setter method of label control should have been called accordingly");
+
+				// cleanup
+				oCheckBox.destroy();
+				Label.prototype[sSetterMethod].restore(); // restore as method might be called multiple times
+			};
 		}
-
-		// arrange
-		oCheckBox.placeAt("content");
-		Core.applyChanges();
-
-		// assertions
-		assert.strictEqual(oSpy.lastCall.args[0], value, "Property '" + property + "=" + value + "'testSetLabelProperty: Corresponding setter method of label control should have been called accordingly");
-
-		// cleanup
-		oCheckBox.destroy();
-		Label.prototype[sSetterMethod].restore();
-	}
+	});
 
 	QUnit.test("Should render the text of a Checkbox after rendering the checkbox without setting label properties", function (assert) {
 		// Arrange
@@ -644,7 +651,7 @@ sap.ui.define([
 
 	QUnit.test("'text' - via Constructor", function (assert) {
 
-		testSetLabelProperty("text", "my Text", "Constructor");
+		this.testSetLabelProperty("text", "my Text", "Constructor");
 	});
 
 
@@ -654,7 +661,7 @@ sap.ui.define([
 
 	QUnit.test("'text' - via Setter Method", function (assert) {
 
-		testSetLabelProperty("text", "my Text", "Setter");
+		this.testSetLabelProperty("text", "my Text", "Setter");
 	});
 
 
@@ -665,9 +672,9 @@ sap.ui.define([
 
 	QUnit.test("'textDirection' - via Constructor", function (assert) {
 
-		testSetLabelProperty("textDirection", "RTL", "Constructor");
-		testSetLabelProperty("textDirection", "LTR", "Constructor");
-		testSetLabelProperty("textDirection", "Inherit", "Constructor");
+		this.testSetLabelProperty("textDirection", "RTL", "Constructor");
+		this.testSetLabelProperty("textDirection", "LTR", "Constructor");
+		this.testSetLabelProperty("textDirection", "Inherit", "Constructor");
 	});
 
 
@@ -677,9 +684,9 @@ sap.ui.define([
 
 	QUnit.test("'textDirection' - via Setter Method", function (assert) {
 
-		testSetLabelProperty("textDirection", "RTL", "Setter");
-		testSetLabelProperty("textDirection", "LTR", "Setter");
-		testSetLabelProperty("textDirection", "Inherit", "Setter");
+		this.testSetLabelProperty("textDirection", "RTL", "Setter");
+		this.testSetLabelProperty("textDirection", "LTR", "Setter");
+		this.testSetLabelProperty("textDirection", "Inherit", "Setter");
 	});
 
 	/* ----------------------------------------------- */
@@ -687,12 +694,12 @@ sap.ui.define([
 	/* ----------------------------------------------- */
 
 	QUnit.test("'textAlign' - via Constructor", function (assert) {
-		testSetLabelProperty("textAlign", "Begin", "Constructor");
-		testSetLabelProperty("textAlign", "End", "Constructor");
-		testSetLabelProperty("textAlign", "Left", "Constructor");
-		testSetLabelProperty("textAlign", "Right", "Constructor");
-		testSetLabelProperty("textAlign", "Center", "Constructor");
-		testSetLabelProperty("textAlign", "Initial", "Constructor");
+		this.testSetLabelProperty("textAlign", "Begin", "Constructor");
+		this.testSetLabelProperty("textAlign", "End", "Constructor");
+		this.testSetLabelProperty("textAlign", "Left", "Constructor");
+		this.testSetLabelProperty("textAlign", "Right", "Constructor");
+		this.testSetLabelProperty("textAlign", "Center", "Constructor");
+		this.testSetLabelProperty("textAlign", "Initial", "Constructor");
 	});
 
 
@@ -701,12 +708,12 @@ sap.ui.define([
 	/* ----------------------------------------------- */
 
 	QUnit.test("'textAlign' - via Setter Method", function (assert) {
-		testSetLabelProperty("textAlign", "Begin", "Setter");
-		testSetLabelProperty("textAlign", "End", "Setter");
-		testSetLabelProperty("textAlign", "Left", "Setter");
-		testSetLabelProperty("textAlign", "Right", "Setter");
-		testSetLabelProperty("textAlign", "Center", "Setter");
-		testSetLabelProperty("textAlign", "Initial", "Setter");
+		this.testSetLabelProperty("textAlign", "Begin", "Setter");
+		this.testSetLabelProperty("textAlign", "End", "Setter");
+		this.testSetLabelProperty("textAlign", "Left", "Setter");
+		this.testSetLabelProperty("textAlign", "Right", "Setter");
+		this.testSetLabelProperty("textAlign", "Center", "Setter");
+		this.testSetLabelProperty("textAlign", "Initial", "Setter");
 	});
 
 
@@ -716,7 +723,7 @@ sap.ui.define([
 
 	QUnit.test("'width' - via Constructor", function (assert) {
 
-		testSetLabelProperty("width", "100px", "Constructor");
+		this.testSetLabelProperty("width", "100px", "Constructor");
 	});
 
 
@@ -726,8 +733,12 @@ sap.ui.define([
 
 	QUnit.test("'width' - via Setter Method", function (assert) {
 
-		testSetLabelProperty("width", "100px", "Setter");
+		this.testSetLabelProperty("width", "100px", "Setter");
 	});
+
+
+
+	QUnit.module("Properties");
 
 	QUnit.test("valueState with enabled and editable set to false", function (assert) {
 		// system under test
@@ -797,9 +808,9 @@ sap.ui.define([
 	/* ----------------------------------------------- */
 	/* function: sapMCbHoverable                       */
 	/* ----------------------------------------------- */
-	function testSapMCbHoverable(oThat, bDesktop, sMessage) {
+	function testSapMCbHoverable(assert, oThat, bDesktop, sMessage) {
 
-		var stub = oThat.stub(Device, "system", { desktop: bDesktop });
+		oThat.stub(Device, "system").value({ desktop: bDesktop });
 
 		// system under test
 		var oCheckBox = new CheckBox();
@@ -826,7 +837,7 @@ sap.ui.define([
 
 	QUnit.test("sapMCbHoverable (non-desktop environment)", function (assert) {
 
-		testSapMCbHoverable(this, false, "CheckBox should not have class sapMCbHoverable");
+		testSapMCbHoverable(assert, this, false, "CheckBox should not have class sapMCbHoverable");
 	});
 
 
@@ -835,7 +846,7 @@ sap.ui.define([
 	/* ----------------------------------------------- */
 
 	QUnit.test("sapMCbHoverable (desktop environment)", function (assert) {
-		testSapMCbHoverable(this, true, "CheckBox should have class sapMCbHoverable");
+		testSapMCbHoverable(assert, this, true, "CheckBox should have class sapMCbHoverable");
 	});
 
 
@@ -961,7 +972,7 @@ sap.ui.define([
 			assert.equal(oCheckBox.getSelected(), oOptions.expectedSelection, oOptions.expectedMessage);
 			assert.strictEqual(oCheckBox.$().attr("aria-checked"), "" + oOptions.expectedSelection, oOptions.expectedMessageAria);
 
-			oSpy.reset();
+			oSpy.resetHistory();
 			QUtils.triggerKeyup(oCheckBox.$(), KeyCodes.SPACE, true); // trigger Space up on checkbox with SHIFT key pressed
 			assert.strictEqual(oSpy.callCount, 0, "SPACE is released when holding SHIFT key, select event was not fired");
 
@@ -1033,36 +1044,31 @@ sap.ui.define([
 
 		// system under test
 		var oCheckBox = new CheckBox(),
-			bSelected = this.stub(oCheckBox, "getSelected", function () { return true; }),
-			bPartiallySelected = this.stub(oCheckBox, "getPartiallySelected", function () { return true; });
+			bSelected = this.stub(oCheckBox, "getSelected").returns(true),
+			bPartiallySelected = this.stub(oCheckBox, "getPartiallySelected").returns(true);
 
 		// assertions
 		assert.equal(oCheckBox._getSelectedState(), true, "Should return true when selected = true and partiallySelected = true");
 
 		// act
-		bPartiallySelected.restore();
-		var getPartiallySelected = this.stub(oCheckBox, "getPartiallySelected", function () { return false; });
+		bPartiallySelected.returns(false);
 
 		// assertions
 		assert.equal(oCheckBox._getSelectedState(), false, "Should return false when selected = true and partiallySelected = false");
 
 		// act
-		bSelected.restore();
-		bSelected = this.stub(oCheckBox, "getSelected", function () { return false; });
+		bSelected.returns(false);
 
 		// assertions
 		assert.equal(oCheckBox._getSelectedState(), true, "Should return true when selected = false and partiallySelected = false");
 
 		// act
-		bPartiallySelected.restore();
-		getPartiallySelected = this.stub(oCheckBox, "getPartiallySelected", function () { return true; });
+		bPartiallySelected.returns(true);
 
 		// assertions
 		assert.equal(oCheckBox._getSelectedState(), true, "Should return true when selected = false and partiallySelected = true");
 
 		// cleanup
-		bSelected.restore();
-		bPartiallySelected.restore();
 		oCheckBox.destroy();
 	});
 
@@ -1070,36 +1076,31 @@ sap.ui.define([
 
 		// system under test
 		var oCheckBox = new CheckBox(),
-			bSelected = this.stub(oCheckBox, "getSelected", function () { return true; }),
-			bPartiallySelected = this.stub(oCheckBox, "getPartiallySelected", function () { return true; });
+			bSelected = this.stub(oCheckBox, "getSelected").callsFake(function () { return true; }),
+			bPartiallySelected = this.stub(oCheckBox, "getPartiallySelected").callsFake(function () { return true; });
 
 		// assertions
 		assert.strictEqual(oCheckBox._getAriaChecked(), "mixed", "Should return 'mixed' when selected = true and partiallySelected = true");
 
 		// act
-		bPartiallySelected.restore();
-		var getPartiallySelected = this.stub(oCheckBox, "getPartiallySelected", function () { return false; });
+		bPartiallySelected.returns(false);
 
 		// assertions
 		assert.equal(oCheckBox._getAriaChecked(), true, "Should return true when selected = true and partiallySelected = false");
 
 		// act
-		bSelected.restore();
-		bSelected = this.stub(oCheckBox, "getSelected", function () { return false; });
+		bSelected.returns(false);
 
 		// assertions
 		assert.equal(oCheckBox._getAriaChecked(), false, "Should return false when selected = false and partiallySelected = false");
 
 		// act
-		bPartiallySelected.restore();
-		getPartiallySelected = this.stub(oCheckBox, "getPartiallySelected", function () { return true; });
+		bPartiallySelected.returns(true);
 
 		// assertions
 		assert.equal(oCheckBox._getAriaChecked(), false, "Should return false when selected = false and partiallySelected = true");
 
 		// cleanup
-		bSelected.restore();
-		bPartiallySelected.restore();
 		oCheckBox.destroy();
 	});
 
@@ -1154,8 +1155,8 @@ sap.ui.define([
 
 	QUnit.test("Referencing labels enhancing", function (assert) {
 		// system under test
-		var oSpy = sinon.spy(CheckBox.prototype, "_handleReferencingLabels"),
-			oSpyHandler = sinon.spy(CheckBox.prototype, "_fnLabelTapHandler"),
+		var oSpy = this.spy(CheckBox.prototype, "_handleReferencingLabels"),
+			oSpyHandler = this.spy(CheckBox.prototype, "_fnLabelTapHandler"),
 			oLabel = new Label({
 				text: "referencing label",
 				labelFor: 'cbTest1'

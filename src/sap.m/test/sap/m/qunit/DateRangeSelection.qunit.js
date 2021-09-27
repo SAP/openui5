@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -10,14 +9,17 @@ sap.ui.define([
 	"sap/ui/unified/DateTypeRange",
 	"sap/m/DateRangeSelection",
 	"sap/m/DatePicker",
-	"jquery.sap.keycodes",
 	"sap/ui/Device",
 	"sap/ui/core/library",
 	"sap/ui/core/LocaleData",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/events/jquery/EventExtension",
-	"sap/ui/dom/jquery/cursorPos",
-	"jquery.sap.global"
+	"sap/ui/events/KeyCodes",
+	"sap/base/util/deepEqual",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/dom/jquery/cursorPos"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -28,15 +30,18 @@ sap.ui.define([
 	DateTypeRange,
 	DateRangeSelection,
 	DatePicker,
-	jQuery,
 	Device,
 	coreLibrary,
 	LocaleData,
+	XMLView,
 	ODataModel,
-	EventExtension
+	EventExtension,
+	KeyCodes,
+	deepEqual,
+	Log,
+	jQuery
 ) {
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = coreLibrary.mvc.ViewType;
+	"use strict";
 
 	// shortcut for sap.ui.core.CalendarType
 	var CalendarType = coreLibrary.CalendarType;
@@ -45,8 +50,8 @@ sap.ui.define([
 	createAndAppendDiv("uiArea2");
 	createAndAppendDiv("uiArea3");
 	var sMyxml =
-		"<mvc:View xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.m\" controllerName=\"my.own.controller\">" +
-		"	<VBox>" +
+		"<mvc:View xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.m\">" +
+		"	<VBox binding=\"{/EdmTypesCollection(ID='1')}\">" +
 		"		<DateRangeSelection id=\"drs_odata\"" +
 		"			value=\"{" +
 		"				parts: [{ path: 'TravelStartDate'},{ path:'TravelEndDate'}]," +
@@ -62,8 +67,6 @@ sap.ui.define([
 		"</mvc:View>";
 
 
-	var Log = sap.ui.require("sap/base/Log");
-
 	var oDefaultMinDate = new DatePicker()._oMinDate;
 	var oDefaultMaxDate = new DatePicker()._oMaxDate;
 
@@ -78,16 +81,11 @@ sap.ui.define([
 	var dateTo2 = new Date(2014, 3, 3, 0, 0, 0);
 
 	var bChange = false;
-	var sValue = "";
 	var bValid = false;
-	var sId = "";
 
 	function handleChange(oEvent){
-			var oDRS = oEvent.oSource;
-			sValue = oEvent.getParameter("newValue");
 			bValid = oEvent.getParameter("valid");
 			bChange = true;
-			sId = oDRS.getId();
 		}
 
 	var oDRS1 = new DateRangeSelection("DRS1", {
@@ -251,33 +249,33 @@ sap.ui.define([
 		bValid = true;
 		oDRS2.focus();
 		jQuery("#DRS2").find("input").val("01+04+2013 - 10+04+2014");
-		qutils.triggerKeyboardEvent("DRS2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DRS2-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DRS2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.ok(bChange, "DRS2: change event fired by typing invalid date");
 		assert.ok(!bValid, "DRS2: invalid typed date is not valid");
-		assert.ok(jQuery.sap.equal(oDRS2.getDateValue(), dateFrom), "DRS2: dateValue not changed by invalid typing");
+		assert.ok(deepEqual(oDRS2.getDateValue(), dateFrom), "DRS2: dateValue not changed by invalid typing");
 
 		bChange = false;
 		bValid = true;
 		oDRS2.focus();
 		jQuery("#DRS2").find("input").val("02+04+2014 - 11+04+2014");
-		qutils.triggerKeyboardEvent("DRS2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DRS2-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DRS2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.ok(bChange, "DRS2: change event fired by typing valid date");
 		assert.ok(bValid, "DRS2: valid typed date is valid");
-		assert.ok(jQuery.sap.equal(oDRS2.getDateValue(), new Date(2014,3,2)), "DRS2: dateValue changed by valid typing");
-		assert.ok(jQuery.sap.equal(oDRS2.getSecondDateValue(), new Date(2014,3,11,23,59,59,999)), "DRS2: secondDateValue changed by valid typing");
+		assert.ok(deepEqual(oDRS2.getDateValue(), new Date(2014,3,2)), "DRS2: dateValue changed by valid typing");
+		assert.ok(deepEqual(oDRS2.getSecondDateValue(), new Date(2014,3,11,23,59,59,999)), "DRS2: secondDateValue changed by valid typing");
 
 		bChange = false;
 		bValid = true;
 		oDRS2.focus();
 		jQuery("#DRS2").find("input").val("01+04+2014 - 10+04+2015");
-		qutils.triggerKeyboardEvent("DRS2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DRS2-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DRS2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.ok(bChange, "DRS2: change event fired by typing invalid date");
 		assert.ok(!bValid, "DRS2: invalid typed date is not valid");
-		assert.ok(jQuery.sap.equal(oDRS2.getDateValue(), new Date(2014,3,2)), "DRS2: dateValue not changed by invalid typing");
-		assert.ok(jQuery.sap.equal(oDRS2.getSecondDateValue(), new Date(2014,3,11,23,59,59,999)), "DRS2: secondDateValue not changed by invalid typing");
+		assert.ok(deepEqual(oDRS2.getDateValue(), new Date(2014,3,2)), "DRS2: dateValue not changed by invalid typing");
+		assert.ok(deepEqual(oDRS2.getSecondDateValue(), new Date(2014,3,11,23,59,59,999)), "DRS2: secondDateValue not changed by invalid typing");
 
 		oDRS2.setMinDate();
 		oDRS2.setMaxDate();
@@ -287,7 +285,7 @@ sap.ui.define([
 
 	QUnit.test("When invalid date is set as value the control detects it and doesn't throw error", function(assert) {
 		//Prepare
-		var oDRS = new sap.m.DateRangeSelection("DRS", {
+		var oDRS = new DateRangeSelection("DRS", {
 			value: "Invalid Date"
 		});
 
@@ -390,9 +388,9 @@ sap.ui.define([
 		qutils.triggerEvent("click", "DRS2-icon");
 		sap.ui.getCore().applyChanges();
 		jQuery("#DRS2-cal--Month0-20140406").trigger("focus");
-		qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140406", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140406", KeyCodes.ENTER, false, false, false);
 		jQuery("#DRS2-cal--Month0-20140409").trigger("focus");
-		qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140409", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140409", KeyCodes.ENTER, false, false, false);
 		assert.equal(document.activeElement.id, "DRS2-inner", "Focus is on the input field after date selection");
 
 		qutils.triggerEvent("click", "DRS2-icon");
@@ -404,9 +402,9 @@ sap.ui.define([
 		sap.ui.Device.system.desktop = false;
 		qutils.triggerEvent("click", "DRS2-icon");
 		jQuery("#DRS2-cal--Month0-20140406").trigger("focus");
-		qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140406", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140406", KeyCodes.ENTER, false, false, false);
 		jQuery("#DRS2-cal--Month0-20140409").trigger("focus");
-		qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140409", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140409", KeyCodes.ENTER, false, false, false);
 		assert.notEqual(document.activeElement.id, "DRS2-inner", "Focus is NOT on the input field after date selection");
 
 		qutils.triggerEvent("click", "DRS2-icon");
@@ -571,7 +569,7 @@ sap.ui.define([
 			this.oFakeEvent = {
 				target: {
 					id: this.oDRS.getId() + "-inner",
-					which: jQuery.sap.KeyCodes.PAGE_UP
+					which: KeyCodes.PAGE_UP
 				},
 				preventDefault: function() {}
 			};
@@ -598,9 +596,6 @@ sap.ui.define([
 
 		// assert
 		assert.ok(oSpyLogError.notCalled, "Error is not logged");
-
-		// clean
-		oSpyLogError.restore();
 	});
 
 	QUnit.test("Change date with page up key when 'date' value isn't set", function(assert) {
@@ -1101,11 +1096,6 @@ sap.ui.define([
 	QUnit.test("Binding with OData initial loading(oFormatOptions.format: yMEd, UTC:true)", function(assert) {
 		//Arrange
 		var done = assert.async();
-		sap.ui.controller("my.own.controller", {
-			onInit: function() {
-				this.getView().bindObject("/EdmTypesCollection(ID='1')");
-			}
-		});
 
 		TestUtils.useFakeServer(sinon.sandbox.create(),
 			"sap/m/qunit/data/datetime", {
@@ -1123,40 +1113,38 @@ sap.ui.define([
 		});
 
 		//Act
-		var view = sap.ui.view({ viewContent: sMyxml, type: ViewType.XML })
-			.setModel(oModelV2)
-			.placeAt("qunit-fixture");
+		XMLView.create({
+			definition: sMyxml
+		}).then(function(view) {
+			view.setModel(oModelV2)
+				.placeAt("qunit-fixture");
 
-		oModelV2.attachRequestCompleted(function () {
-			var oDateModelUTC, oDate2UTCModel,
-				oDateLocalDate, oDate2Localdate;
+			oModelV2.attachRequestCompleted(function () {
+				var oDateModelUTC, oDate2UTCModel,
+					oDateLocalDate, oDate2Localdate;
 
-			oDateModelUTC = oModelV2.getProperty("/EdmTypesCollection('1')/TravelStartDate");
-			/*Time part is cut off by the sap.ui.model.type.DateInterval when DateRangeSelection.setValue is called*/
-			oDateLocalDate = new Date(oDateModelUTC.getUTCFullYear(), oDateModelUTC.getUTCMonth(), oDateModelUTC.getUTCDate());
+				oDateModelUTC = oModelV2.getProperty("/EdmTypesCollection('1')/TravelStartDate");
+				/*Time part is cut off by the sap.ui.model.type.DateInterval when DateRangeSelection.setValue is called*/
+				oDateLocalDate = new Date(oDateModelUTC.getUTCFullYear(), oDateModelUTC.getUTCMonth(), oDateModelUTC.getUTCDate());
 
-			oDate2UTCModel = oModelV2.getProperty("/EdmTypesCollection('1')/TravelEndDate");
-			oDate2Localdate = new Date(oDate2UTCModel.getUTCFullYear(), oDate2UTCModel.getUTCMonth(), oDate2UTCModel.getUTCDate());
+				oDate2UTCModel = oModelV2.getProperty("/EdmTypesCollection('1')/TravelEndDate");
+				oDate2Localdate = new Date(oDate2UTCModel.getUTCFullYear(), oDate2UTCModel.getUTCMonth(), oDate2UTCModel.getUTCDate());
 
-			var oSut = view.byId("drs_odata");
+				var oSut = view.byId("drs_odata");
 
-			//Assert
-			//char code 8211 is a dash
-			assert.equal(oSut._$input.val(), "Sat, 12/23/2017 " + String.fromCharCode(8211) + " Mon, 1/1/2018", oSut._$input.val() + " is correct");
-			assert.equal(oSut.getDateValue().toString(), oDateLocalDate.toString(), "dateValue should be always a local date");
-			assert.equal(oSut.getSecondDateValue().toString(), oDate2Localdate.toString(), "secondDateValue should be always a local date");
-			done();
+				//Assert
+				//char code 8211 is a dash
+				assert.equal(oSut._$input.val(), "Sat, 12/23/2017 " + String.fromCharCode(8211) + " Mon, 1/1/2018", oSut._$input.val() + " is correct");
+				assert.equal(oSut.getDateValue().toString(), oDateLocalDate.toString(), "dateValue should be always a local date");
+				assert.equal(oSut.getSecondDateValue().toString(), oDate2Localdate.toString(), "secondDateValue should be always a local date");
+				done();
+			});
 		});
 	});
 
 	QUnit.test("Binding with OData when user picks a new date rangeoFormatOptions.format: yMEd, UTC:true", function(assert) {
 		//Arrange
 		var done = assert.async();
-		sap.ui.controller("my.own.controller", {
-			onInit: function () {
-				this.getView().bindObject("/EdmTypesCollection(ID='1')");
-			}
-		});
 
 		TestUtils.useFakeServer(sinon.sandbox.create(),
 			"sap/m/qunit/data/datetime", {
@@ -1173,49 +1161,50 @@ sap.ui.define([
 			useBatch: false
 		});
 
-		var view = sap.ui.view({
-			viewContent: sMyxml,
-			type: ViewType.XML
-		}).setModel(oModelV2).placeAt("qunit-fixture");
+		XMLView.create({
+			definition: sMyxml
+		}).then(function(view) {
+			view.setModel(oModelV2).placeAt("qunit-fixture");
 
-		oModelV2.attachRequestCompleted(function () {
-			var oDRS = view.byId('drs_odata'),
-				oCalendar,
-				oDateInterval;
+			oModelV2.attachRequestCompleted(function () {
+				var oDRS = view.byId('drs_odata'),
+					oCalendar,
+					oDateInterval;
 
-			//Act
-			oDRS.$().find(".sapUiIcon").trigger("click"); //to open the calendar popoup
-			sap.ui.getCore().applyChanges();
-			//Simulate the user has selected 10 - 20 Dec 2017.
-			oCalendar = oDRS._oPopup.getContent()[1];
-			var $EventTarget1 = oCalendar.$().find("[data-sap-day='20171210']"),
-				$EventTarget2 = oCalendar.$().find("[data-sap-day='20171220']"),
-				oEvent1 = { clientX: 100, clientY: 100, target: $EventTarget1.children().get(0) },
-				oEvent2 = { clientX: 100, clientY: 100, target: $EventTarget2.children().get(0) },
-				oMouseDownEvent1 = jQuery.Event("mousedown", oEvent1),
-				oMouseUpEvent1 = jQuery.Event("mouseup", oEvent1),
-				oMouseDownEvent2 = jQuery.Event("mousedown", oEvent2),
-				oMouseUpEvent2 = jQuery.Event("mouseup", oEvent2);
+				//Act
+				oDRS.$().find(".sapUiIcon").trigger("click"); //to open the calendar popoup
+				sap.ui.getCore().applyChanges();
+				//Simulate the user has selected 10 - 20 Dec 2017.
+				oCalendar = oDRS._oPopup.getContent()[1];
+				var $EventTarget1 = oCalendar.$().find("[data-sap-day='20171210']"),
+					$EventTarget2 = oCalendar.$().find("[data-sap-day='20171220']"),
+					oEvent1 = { clientX: 100, clientY: 100, target: $EventTarget1.children().get(0) },
+					oEvent2 = { clientX: 100, clientY: 100, target: $EventTarget2.children().get(0) },
+					oMouseDownEvent1 = jQuery.Event("mousedown", oEvent1),
+					oMouseUpEvent1 = jQuery.Event("mouseup", oEvent1),
+					oMouseDownEvent2 = jQuery.Event("mousedown", oEvent2),
+					oMouseUpEvent2 = jQuery.Event("mouseup", oEvent2);
 
-			$EventTarget1.trigger(oMouseDownEvent1).trigger(oMouseUpEvent1);
-			$EventTarget2.trigger(oMouseDownEvent2).trigger(oMouseUpEvent2);
+				$EventTarget1.trigger(oMouseDownEvent1).trigger(oMouseUpEvent1);
+				$EventTarget2.trigger(oMouseDownEvent2).trigger(oMouseUpEvent2);
 
-			oDateInterval = oDRS.getBinding("value").getType();
+				oDateInterval = oDRS.getBinding("value").getType();
 
-			//Assert
-			assert.equal(oDRS.getDateValue().toString(), new Date(2017, 11, 10).toString(),
-				"dateValue corresponds to the chosen by the end user date range in local time");
-			assert.equal(oDRS.getSecondDateValue().toString(), new Date(2017, 11, 20, 23, 59, 59, 999).toString(),
-				"secondDateValue corresponds to the chosen by the end user date range in local time");
+				//Assert
+				assert.equal(oDRS.getDateValue().toString(), new Date(2017, 11, 10).toString(),
+					"dateValue corresponds to the chosen by the end user date range in local time");
+				assert.equal(oDRS.getSecondDateValue().toString(), new Date(2017, 11, 20, 23, 59, 59, 999).toString(),
+					"secondDateValue corresponds to the chosen by the end user date range in local time");
 
-			assert.equal(oDRS.getValue(), oDateInterval.formatValue([
-					new Date(Date.UTC(2017, 11, 10)),
-					new Date(Date.UTC(2017, 11, 20))], "string"),
-				"Value corresponds to the chosen by the end user range");
+				assert.equal(oDRS.getValue(), oDateInterval.formatValue([
+						new Date(Date.UTC(2017, 11, 10)),
+						new Date(Date.UTC(2017, 11, 20))], "string"),
+					"Value corresponds to the chosen by the end user range");
 
-			//Clean up
-			oDRS._oPopup.close();
-			done();
+				//Clean up
+				oDRS._oPopup.close();
+				done();
+			});
 		});
 	});
 
@@ -1224,7 +1213,7 @@ sap.ui.define([
 		var oModel = new sap.ui.model.json.JSONModel([
 			{ value: "02.02.2019-03.03.2019" }
 		]),
-			oDSR4 = new sap.m.DateRangeSelection({
+			oDSR4 = new DateRangeSelection({
 				value: {
 					path: "value",
 					type: "sap.ui.model.type.DateInterval"
@@ -1249,7 +1238,7 @@ sap.ui.define([
 		var oModel = new sap.ui.model.json.JSONModel([
 				{ value: "02.02.2019-03.03.2019" }
 			]),
-			oDSR4 = new sap.m.DateRangeSelection({
+			oDSR4 = new DateRangeSelection({
 				value: {
 					path: "value",
 					type: "sap.ui.model.type.DateInterval",
@@ -1275,7 +1264,6 @@ sap.ui.define([
 	QUnit.module("API");
 
 	QUnit.test("setMinDate when dateValue & secondDateValue do not match the new min date", function (assert) {
-		assert.ok(Log, "Log module should be available");
 		var oDateValue = new Date(2017, 0, 1),
 			oNewMinDate = new Date(2018, 0, 1),
 			oSut = new DateRangeSelection({
@@ -1311,13 +1299,10 @@ sap.ui.define([
 			sExpectedErrorMsg2, ".. with concrete 2nd message text");
 
 		//Cleanup
-		oSpySetProperty.restore();
-		oSpyLogError.restore();
 		oSut.destroy();
 	});
 
 	QUnit.test("setMaxDate when dateValue & secondDateValue do not match the new max date", function (assert) {
-		assert.ok(Log, "Log module should be available");
 		var oDateValue = new Date(2017, 0, 1),
 			oNewMaxDate = new Date(2016, 0, 1),
 			oSut = new DateRangeSelection({
@@ -1362,7 +1347,6 @@ sap.ui.define([
 
 	QUnit.test("minDate and value in databinding scenario where the order of setters is not known",
 			function (assert) {
-				assert.ok(Log, "Log module should be available");
 				/**
 				 * value in second model is intentionally 20170120-20170130, in order to examine the scenario, where value
 				 * setter is called before the minDate setter and a potentially valid value is not yet considered such,
@@ -1433,7 +1417,7 @@ sap.ui.define([
 				oSpyLogError.callCount > 3 && assert.equal(oSpyLogError.getCall(3).args[0], sErrorMsgDP22,
 					"And the DP2 second message is with expected text");
 
-				oSpyLogError.reset();
+				oSpyLogError.resetHistory();
 
 				//Act - set a valid model
 				oDP1.setModel(oModelValid);

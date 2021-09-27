@@ -1,5 +1,4 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/m/Button",
 	"sap/m/ColorPalette",
@@ -29,6 +28,8 @@ sap.ui.define([
 	EventExtension,
 	KeyCodes
 ) {
+	"use strict";
+
 	// shortcut for sap.ui.core.CSSColor
 	var CSSColor = coreLibrary.CSSColor;
 
@@ -424,10 +425,9 @@ sap.ui.define([
 		QUnit.test("_createMoreColorsDialog for Desktop", function (assert) {
 			// Prepare
 			var oDialog,
-				sTitleMoreColors = "More Colors...",
-				oDeviceDesktopStub = this.stub(Device.system, "phone", false),
 				oCP = new ColorPalette();
 
+			this.stub(Device.system, "phone", false);
 
 			// Act
 			oDialog = oCP._createMoreColorsDialog();
@@ -442,16 +442,14 @@ sap.ui.define([
 
 			// Cleanup
 			oCP.destroy();
-			oDeviceDesktopStub.restore();
 		});
 
 		QUnit.test("_createMoreColorsDialog for phone", function (assert) {
 			// Prepare
 			var oDialog,
-				sTitleMoreColors = "More Colors...",
-				oDevicePhoneStub = this.stub(Device.system, "phone", true),
 				oCP = new ColorPalette();
 
+			this.stub(Device.system, "phone", true);
 
 			// Act
 			oDialog = oCP._createMoreColorsDialog();
@@ -467,7 +465,6 @@ sap.ui.define([
 
 			// Cleanup
 			oCP.destroy();
-			oDevicePhoneStub.restore();
 		});
 
 		QUnit.test("_focusFirstElement when 'Default Color' button is available", function (assert) {
@@ -556,12 +553,13 @@ sap.ui.define([
 			// Prepare
 			var oCP = new ColorPalette(),
 				oEvent = new jQuery.Event(),
-				oStubGetElementInfo = this.stub(ColorPalette.prototype, "_getElementInfo").returns({
-					bIsDefaultColorButton: false,
-					bIsMoreColorsButton: true
-				}),
 				oSpyEvtPreventDefault = this.spy(oEvent, "preventDefault"),
 				oSpyEvtStopImmediatePropagation = this.spy(oEvent, "stopImmediatePropagation");
+
+			this.stub(ColorPalette.prototype, "_getElementInfo").returns({
+				bIsDefaultColorButton: false,
+				bIsMoreColorsButton: true
+			});
 
 			// Act
 			oCP.onsaphome(oEvent);
@@ -579,12 +577,13 @@ sap.ui.define([
 				// Prepare
 				var oCP = new ColorPalette(),
 					oEvent = new jQuery.Event(),
-					oStubGetElementInfo = this.stub(ColorPalette.prototype, "_getElementInfo").returns({
-						bIsDefaultColorButton: false,
-						bIsMoreColorsButton: false
-					}),
 					oSpyEvtPreventDefault = this.spy(oEvent, "preventDefault"),
 					oSpyEvtStopImmediatePropagation = this.spy(oEvent, "stopImmediatePropagation");
+
+				this.stub(ColorPalette.prototype, "_getElementInfo").returns({
+					bIsDefaultColorButton: false,
+					bIsMoreColorsButton: false
+				});
 
 				// Act
 				oCP.onsaphome(oEvent);
@@ -1041,16 +1040,17 @@ sap.ui.define([
 				QUnit.test("Enriches the event parameters in case of the Border Reached Event with first item index",
 					function (assert) {
 						// Prepare
-						var oStubGetItemInfo = this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
-								bIsFirstItem: true,
-								bIsLastItem: false,
-								bIsInTheLastColumn: false,
-								bIsInTheFirstColumn: true,
-								bNextRowExists: true,
-								bItemSameColumnNextRowExists: true
-							}),
-							oEvent = {type: "sapprevious"},
+						var oEvent = {type: "sapprevious"},
 							oSpyFireEventsHandler = this.stub(ItemNavigation.prototype, "fireEvent");
+
+						this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
+							bIsFirstItem: true,
+							bIsLastItem: false,
+							bIsInTheLastColumn: false,
+							bIsInTheFirstColumn: true,
+							bNextRowExists: true,
+							bItemSameColumnNextRowExists: true
+						});
 
 						// Act
 						this.oCP._oPaletteColorItemNavigation.fireEvent(ItemNavigation.Events.BorderReached, {
@@ -1075,16 +1075,17 @@ sap.ui.define([
 				QUnit.test("Enriches the event parameters in case of the Border Reached Event with last item index",
 					function (assert) {
 						// Prepare
-						var oStubGetItemInfo = this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
-								bIsFirstItem: false,
-								bIsLastItem: true,
-								bIsInTheLastColumn: true,
-								bIsInTheFirstColumn: false,
-								bNextRowExists: false,
-								bItemSameColumnNextRowExists: false
-							}),
-							oEvent = {type: "sapnext"},
+						var oEvent = {type: "sapnext"},
 							oSpyFireEventsHandler = this.stub(ItemNavigation.prototype, "fireEvent");
+
+						this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
+							bIsFirstItem: false,
+							bIsLastItem: true,
+							bIsInTheLastColumn: true,
+							bIsInTheFirstColumn: false,
+							bNextRowExists: false,
+							bItemSameColumnNextRowExists: false
+						});
 
 						// Act
 						this.oCP._oPaletteColorItemNavigation.fireEvent(ItemNavigation.Events.BorderReached, {
@@ -1152,12 +1153,13 @@ sap.ui.define([
 				QUnit.test("ItemNavigationHomeEnd.onsaphome when HOME is pressed on a item that is not first nor last" +
 					" in the row", function (assert) {
 					// Prepare
-					var oStubOnSaphomeParent = this.stub(ItemNavigation.prototype, "onsaphome", function() {}),
-						oStubGetFocusedIndex = this.stub(this.oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(1),
-						oStubGetItemInfo = this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
-							bNextRowExists: true,
-							bItemSameColumnNextRowExists: true
-						});
+					var oStubOnSaphomeParent = this.stub(ItemNavigation.prototype, "onsaphome", function() {});
+
+					this.stub(this.oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(1);
+					this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
+						bNextRowExists: true,
+						bItemSameColumnNextRowExists: true
+					});
 
 					// Act
 					this.oCP._oPaletteColorItemNavigation.onsaphome(this.oEvent);
@@ -1173,12 +1175,13 @@ sap.ui.define([
 					function (assert) {
 						// Prepare
 						var oStubOnSaphomeParent = this.stub(ItemNavigation.prototype, "onsaphome", function() {}),
-							oStubGetFocusedIndex = this.stub(this.oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(5),
-							oStubFirstItemFocusFunction = this.stub(),
-							oStubGetItemDomRefs = this.oCP._oPaletteColorItemNavigation.getItemDomRefs()[0] = {
+							oStubFirstItemFocusFunction = this.stub();
+
+							this.stub(this.oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(5);
+							this.oCP._oPaletteColorItemNavigation.getItemDomRefs()[0] = {
 								focus: oStubFirstItemFocusFunction
-							},
-							oStubGetItemInfo = this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
+							};
+							this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
 								bIsInTheFirstColumn: true,
 								bNextRowExists: true,
 								bItemSameColumnNextRowExists: true
@@ -1198,14 +1201,15 @@ sap.ui.define([
 					function (assert) {
 						// Prepare
 						var oStubOnSaphomeParent = this.stub(ItemNavigation.prototype, "onsaphome", function() {}),
-							oStubFireEventOnInstance = this.stub(this.oCP._oPaletteColorItemNavigation, "fireEvent", function() {}),
-							oStubGetFocusedIndex = this.stub(this.oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(0), //on first item
-							oStubGetItemInfo = this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
-								bIsFirstItem: true,
-								bIsInTheFirstColumn: true,
-								bNextRowExists: true,
-								bItemSameColumnNextRowExists: true
-							});
+							oStubFireEventOnInstance = this.stub(this.oCP._oPaletteColorItemNavigation, "fireEvent", function() {});
+
+						this.stub(this.oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(0); //on first item
+						this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
+							bIsFirstItem: true,
+							bIsInTheFirstColumn: true,
+							bNextRowExists: true,
+							bItemSameColumnNextRowExists: true
+						});
 
 						// Act
 						this.oCP._oPaletteColorItemNavigation.onsaphome(this.oEvent);
@@ -1253,12 +1257,13 @@ sap.ui.define([
 				QUnit.test("ItemNavigationHomeEnd.onsapend when END is pressed on a item that is not first nor last" +
 					" in the row", function (assert) {
 					// Prepare
-					var oStubOnSapendParent = this.stub(ItemNavigation.prototype, "onsapend", function() {}),
-						oStubGetFocusedIndex = this.stub(this.oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(1),
-						oStubGetItemInfo = this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
-							bNextRowExists: true,
-							bItemSameColumnNextRowExists: true
-						});
+					var oStubOnSapendParent = this.stub(ItemNavigation.prototype, "onsapend", function() {});
+
+					this.stub(this.oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(1);
+					this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
+						bNextRowExists: true,
+						bItemSameColumnNextRowExists: true
+					});
 
 					// Act
 					this.oCP._oPaletteColorItemNavigation.onsapend(this.oEvent);
@@ -1274,16 +1279,17 @@ sap.ui.define([
 					function (assert) {
 						// Prepare
 						var oStubOnSapendParent = this.stub(ItemNavigation.prototype, "onsapend", function() {}),
-							oStubGetFocusedIndex = this.stub(this.oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(9),
-							oStubLastItemFocusFunction = this.stub(),
-							oStubGetItemDomRefs = this.oCP._oPaletteColorItemNavigation.getItemDomRefs()[this.oCP.getColors().length - 1] = {
-								focus: oStubLastItemFocusFunction
-							},
-							oStubGetItemInfo = this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
-								bIsInTheLastColumn: true,
-								bNextRowExists: true,
-								bItemSameColumnNextRowExists: true
-							});
+							oStubLastItemFocusFunction = this.stub();
+
+						this.stub(this.oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(9);
+						this.oCP._oPaletteColorItemNavigation.getItemDomRefs()[this.oCP.getColors().length - 1] = {
+							focus: oStubLastItemFocusFunction
+						};
+						this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
+							bIsInTheLastColumn: true,
+							bNextRowExists: true,
+							bItemSameColumnNextRowExists: true
+						});
 
 
 						// Act
@@ -1300,12 +1306,13 @@ sap.ui.define([
 					function (assert) {
 						// Prepare
 						var oStubOnSapendParent = this.stub(ItemNavigation.prototype, "onsapend", function() {}),
-							oStubFireEventOnInstance = this.stub(this.oCP._oPaletteColorItemNavigation, "fireEvent", function() {}),
-							oStubGetFocusedIndex = this.stub(this.oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(this.oCP.getColors().length - 1), //on last item
-							oStubGetItemInfo = this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
-								bIsLastItem: true,
-								bIsInTheLastColumn: true
-							});
+							oStubFireEventOnInstance = this.stub(this.oCP._oPaletteColorItemNavigation, "fireEvent", function() {});
+
+						this.stub(this.oCP._oPaletteColorItemNavigation, "getFocusedIndex").returns(this.oCP.getColors().length - 1); //on last item
+						this.stub(this.oCP._oPaletteColorItemNavigation, "_getItemInfo").returns({
+							bIsLastItem: true,
+							bIsInTheLastColumn: true
+						});
 
 						// Act
 						this.oCP._oPaletteColorItemNavigation.onsapend(this.oEvent);
@@ -1339,8 +1346,9 @@ sap.ui.define([
 				callGetItemInfo: function(iIndex, itemsCount, oExpected, sMsg, assert) {
 					// Prepare
 					var aItemDomRefs = new Array(itemsCount),
-						oStubGetItemDomRefs = this.stub(this.oCP._oPaletteColorItemNavigation, "getItemDomRefs").returns(aItemDomRefs),
 						oResult;
+
+					this.stub(this.oCP._oPaletteColorItemNavigation, "getItemDomRefs").returns(aItemDomRefs);
 
 					// Act
 					oResult = this.oCP._oPaletteColorItemNavigation._getItemInfo(iIndex);
@@ -1827,7 +1835,7 @@ sap.ui.define([
 			QUnit.test("liveChange event", function (assert) {
 				// Prepare
 				var oColorPalettePopover = new ColorPalettePopover({
-						displayMode: sap.ui.unified.ColorPickerDisplayMode.Large
+						displayMode: ColorPickerDisplayMode.Large
 					}),
 					aTestCasesRed = [128, 192, 255, 0],
 					iTestCasesLength = aTestCasesRed.length,

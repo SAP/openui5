@@ -1,7 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/FeedListItem",
 	"sap/m/FeedListItemAction",
 	"sap/m/List",
@@ -17,9 +17,10 @@ sap.ui.define([
 	"sap/m/FormattedText",
 	"sap/ui/core/IconPool",
 	"sap/m/library",
-	"jquery.sap.keycodes"
+	"sap/base/Log",
+	"sap/ui/events/KeyCodes"
 ], function(qutils, jQuery, FeedListItem, FeedListItemAction, List, StandardListItem, JSONModel, Button, Popover, Bar,
-			ActionSheet, App, Page, Device, FormattedText, IconPool, library) {
+			ActionSheet, App, Page, Device, FormattedText, IconPool, library, Log, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -130,16 +131,16 @@ sap.ui.define([
 		leftButton: oLeftButton,
 		rightButton: oRightButton,
 		beforeOpen: function (oEvent) {
-			jQuery.sap.log.info("before popover opens!!!");
+			Log.info("before popover opens!!!");
 		},
 		afterOpen: function (oEvent) {
-			jQuery.sap.log.info("popover is opened finally!!!");
+			Log.info("popover is opened finally!!!");
 		},
 		beforeClose: function (oEvent) {
-			jQuery.sap.log.info("before popover closes!!!");
+			Log.info("before popover closes!!!");
 		},
 		afterClose: function (oEvent) {
-			jQuery.sap.log.info("popover is closed properly!!!");
+			Log.info("popover is closed properly!!!");
 		},
 		footer: footer,
 		content: [
@@ -153,7 +154,7 @@ sap.ui.define([
 
 	var fnOpenPopup = function (oControlEvent) {
 		if (oControlEvent.getSource().getSender() === "Jack Jones") {
-			jQuery.sap.log.info("senderPress called");
+			Log.info("senderPress called");
 			oControlEvent.getSource().setSender("Event was fired");
 		} else {
 			oPopover.openBy(oControlEvent.getParameters().getDomRef());
@@ -358,7 +359,9 @@ sap.ui.define([
 						fnCallback = undefined;
 					}
 				} else {
-					jQuery.sap.delayedCall(1500, this, fnThemeApplied, oEvent);
+					setTimeout(function() {
+						fnThemeApplied(oEvent);
+					}, 1500);
 				}
 			}
 		};
@@ -574,25 +577,25 @@ sap.ui.define([
 	});
 
 	QUnit.test("Press SPACE Key on Sender", function (assert) {
-		qutils.triggerKeyup(oFeedList.getItems()[9]._oLinkControl.getId(), jQuery.sap.KeyCodes.SPACE, false, false, false);
+		qutils.triggerKeyup(oFeedList.getItems()[9]._oLinkControl.getId(), KeyCodes.SPACE, false, false, false);
 		assert.equal(oFeedList.getItems()[9].getSender(), "Event was fired", "Sender Press event was fired");
 		oFeedList.getItems()[9].setSender("Jack Jones");
 	});
 
 	QUnit.test("Press X Key on Sender", function (assert) {
-		qutils.triggerKeyboardEvent(oFeedList.getItems()[9]._oLinkControl.getId(), jQuery.sap.KeyCodes.X, false, false, false);
+		qutils.triggerKeyboardEvent(oFeedList.getItems()[9]._oLinkControl.getId(), KeyCodes.X, false, false, false);
 		assert.notEqual(oFeedList.getItems()[9].getSender(), "Hello", "Sender Press event was not fired");
 	});
 
 	QUnit.test("Press SPACE Key on MORE", function (assert) {
-		qutils.triggerKeyup(oFeedList.getItems()[9]._oLinkExpandCollapse.getId(), jQuery.sap.KeyCodes.SPACE, false, false, false);
+		qutils.triggerKeyup(oFeedList.getItems()[9]._oLinkExpandCollapse.getId(), KeyCodes.SPACE, false, false, false);
 		assert.ok(oFeedList.getItems()[9].$("realtext").text() === oFeedList.getItems()[9]._sFullText, "the expanded text displayed ");
-		qutils.triggerKeyup(oFeedList.getItems()[9]._oLinkExpandCollapse.getId(), jQuery.sap.KeyCodes.SPACE, false, false, false);
+		qutils.triggerKeyup(oFeedList.getItems()[9]._oLinkExpandCollapse.getId(), KeyCodes.SPACE, false, false, false);
 		assert.ok(oFeedList.getItems()[9].$("realtext").text() === oFeedList.getItems()[9]._sShortText, "the collapsed text displayed ");
 	});
 
 	QUnit.test("Press X Key on MORE", function (assert) {
-		qutils.triggerKeyboardEvent(oFeedList.getItems()[9]._oLinkExpandCollapse.getId(), jQuery.sap.KeyCodes.X, false, false, false);
+		qutils.triggerKeyboardEvent(oFeedList.getItems()[9]._oLinkExpandCollapse.getId(), KeyCodes.X, false, false, false);
 		assert.notEqual(oFeedList.getItems()[9].getSender(), "Hello", "Sender Press event was not fired");
 	});
 

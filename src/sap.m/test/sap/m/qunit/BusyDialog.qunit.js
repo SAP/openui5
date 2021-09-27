@@ -1,29 +1,36 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/BusyDialog",
+	"sap/m/library",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/events/KeyCodes",
-	'sap/ui/core/Core'
+	'sap/ui/core/Core',
+	"sap/ui/core/mvc/XMLView",
+	"sap/base/Log"
 ], function(
 	qutils,
 	createAndAppendDiv,
 	BusyDialog,
+	mobileLibrary,
 	jQuery,
 	JSONModel,
 	RenderManager,
 	InvisibleText,
 	KeyCodes,
-	Core
+	Core,
+	XMLView,
+	Log
 ) {
 	"use strict";
 	createAndAppendDiv("content");
 
+	// shortcut for sap.m.TitleAlignment
+	var TitleAlignment = mobileLibrary.TitleAlignment;
 
 	// =========================================================================================================
 	// Testing a Default Busy Dialog - initialised with no properties/options
@@ -88,7 +95,7 @@ sap.ui.define([
 				showCancelButton: true,
 				cancelButtonText: 'Abort',
 				close: function (oEvent) {
-					jQuery.sap.log.info(oEvent, 'closed');
+					Log.info(oEvent, 'closed');
 				}
 			});
 
@@ -453,23 +460,23 @@ sap.ui.define([
 			'</mvc:View>';
 
 		// create the view instance
-		var myView = sap.ui.xmlview({
-			viewContent: sXMLView
+		return XMLView.create({
+			definition: sXMLView
+		}).then(function(myView) {
+
+			// check the availability of a renderer and a render function
+			// which is required for usage as content in the XMLView
+			var oBusyDialog = myView.byId("busyDialog");
+			var oRenderer = RenderManager.getRenderer(oBusyDialog);
+			assert.ok(oRenderer && typeof oRenderer.render === "function", 'The BusyDialog should have a render function!');
+
+			// test the rendering with the XMLView will fail if there is no renderer
+			myView.placeAt("content");
+			Core.applyChanges();
+
+			// destroy the XMLView
+			myView.destroy();
 		});
-
-		// check the availability of a renderer and a render function
-		// which is required for usage as content in the XMLView
-		var oBusyDialog = myView.byId("busyDialog");
-		var oRenderer = RenderManager.getRenderer(oBusyDialog);
-		assert.ok(oRenderer && typeof oRenderer.render === "function", 'The BusyDialog should have a render function!');
-
-		// test the rendering with the XMLView will fail if there is no renderer
-		myView.placeAt("content");
-		Core.applyChanges();
-
-		// destroy the XMLView
-		myView.destroy();
-
 	});
 
 	// =========================================================================================================
@@ -599,7 +606,7 @@ sap.ui.define([
 					"The default titleAlignment is '" + sInitialAlignment + "', there is class '" + sAlignmentClass + sInitialAlignment + "' applied to the Header");
 
 		// check if all types of alignment lead to apply the proper CSS class
-		for (sAlignment in sap.m.TitleAlignment) {
+		for (sAlignment in TitleAlignment) {
 			oDialog.setTitleAlignment(sAlignment);
 			oCore.applyChanges();
 			assert.ok(oDialog._oDialog._header.hasStyleClass(sAlignmentClass + sAlignment),
@@ -607,7 +614,7 @@ sap.ui.define([
 		}
 
 		// check how many times setTitleAlignment method is called
-		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(sap.m.TitleAlignment).length,
+		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(TitleAlignment).length,
 			"'setTitleAlignment' method is called total " + setTitleAlignmentSpy.callCount + " times");
 
 		// cleanup

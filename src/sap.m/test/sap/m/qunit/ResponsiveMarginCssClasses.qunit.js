@@ -2,36 +2,44 @@
 QUnit.config.autostart = false;
 
 sap.ui.require([
+	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/UIComponent",
-	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/mvc/XMLView",
-	"sap/ui/model/json/JSONModel",
 	"sap/base/util/UriParameters",
 	"sap/ui/layout/form/ResponsiveGridLayout" // form layout used by SimpleForm
-], function(ComponentContainer, UIComponent, Controller, XMLView, JSONModel, UriParameters) {
+], function(Component, ComponentContainer, UriParameters) {
 	"use strict";
 
-	Controller.extend("margin.qunit.controller", {
+	sap.ui.define("margin/qunit/controller.controller", [
+		"sap/ui/core/mvc/Controller",
+		"sap/ui/model/json/JSONModel"
+	], function(Controller, JSONModel) {
+		return Controller.extend("margin.qunit.controller", {
 
-		onInit: function(oEvent) {
-			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
-			this.getView().setModel(oModel);
-			this.getView().byId("page").bindElement("/ProductCollection/0");
-		}
+			onInit: function(oEvent) {
+				// set explored app's demo model on this sample
+				var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
+				this.getView().setModel(oModel);
+				this.getView().byId("page").bindElement("/ProductCollection/0");
+			}
 
+		});
 	});
 
-	var MarginComponent = UIComponent.extend("margin.qunit.Component", {
-		createContent: function(oEvent) {
-			return sap.ui.xmlview({
-				viewContent: jQuery('#marginQUnitView').html(),
-				async: true
-			});
-		}
+	sap.ui.define("margin/qunit/Component", [
+		"sap/ui/core/UIComponent",
+		"sap/ui/core/mvc/XMLView"
+	], function(UIComponent, XMLView) {
+		return UIComponent.extend("margin.qunit.Component", {
+			metadata: {
+				interfaces: [ "sap.ui.core.IAsyncContentCreation" ]
+			},
+			createContent: function(oEvent) {
+				return XMLView.create({
+					definition: jQuery('#marginQUnitView').html()
+				});
+			}
+		});
 	});
-
 
 	QUnit.module("Apply pre-defined css classes");
 
@@ -52,9 +60,9 @@ sap.ui.require([
 		assert.ok( true, " " ); //Group tests
 		assert.ok( true, "TESTING MARGIN CLASS '" + sMarginClass + "'" );
 
-		var oComponent = new MarginComponent();
-
-		return oComponent.getRootControl().loaded().then(function() {
+		return Component.create({
+			name: "margin.qunit"
+		}).then(function(oComponent) {
 
 			var oComponentContainer = new ComponentContainer();
 			oComponentContainer.setComponent(oComponent);
@@ -111,7 +119,7 @@ sap.ui.require([
 			assert.equal(oList.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " List " +  sExpectedMarginValue );
 			assert.equal(oScrollCont.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Scroll Container " +  sExpectedMarginValue );
 			assert.equal(oCarousel.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Carousel " +  sExpectedMarginValue );
-			assert.equal(oSplitContainer.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Split Containe " +  sExpectedMarginValue );
+			assert.equal(oSplitContainer.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Split Container " +  sExpectedMarginValue );
 			// Cannot check 'auto' because there is no way to ask for it. Even 'oControl.getDomRef().style.width'
 			// does not deliver the correct result: the inline style is returned even though it is not what
 			// is used for determining the width

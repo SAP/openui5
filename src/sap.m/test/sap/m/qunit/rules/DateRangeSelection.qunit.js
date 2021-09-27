@@ -1,64 +1,68 @@
 /*global QUnit */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/m/DateRangeSelection",
+	"sap/m/Page",
+	"sap/m/Panel",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/type/Date",
 	"test-resources/sap/ui/support/TestHelper"
-], function(jQuery, testRule) {
+], function(DateRangeSelection, Page, Panel, JSONModel, TypeDate, testRule) {
 	"use strict";
 
 	QUnit.module("DateRangeSelection rules", {
 		setup: function() {
-			this.model = new sap.ui.model.json.JSONModel({
+			this.model = new JSONModel({
 				date1: new Date(),
 				date2: new Date()
 			});
-			this.page = new sap.m.Page({
+			this.page = new Page({
 				content: [
-					new sap.m.Panel({
+					new Panel({
 						id: "DateRangeSelectionTestsContext1",
 						content: [
-							new sap.m.DateRangeSelection({
+							new DateRangeSelection({
 								value: {
 									path: "/date1",
-									type: new sap.ui.model.type.Date({ style: "medium", strictParsing: true })
+									type: new TypeDate({ style: "medium", strictParsing: true })
 								},
 								dateValue: {
 									path: "/date2",
-									type: new sap.ui.model.type.Date()
+									type: new TypeDate()
 								}
 							}),
-							new sap.m.DateRangeSelection({
+							new DateRangeSelection({
 								value: {
 									path: "/date1",
-									type: new sap.ui.model.type.Date({ style: "medium", strictParsing: true })
+									type: new TypeDate({ style: "medium", strictParsing: true })
 								},
 								secondDateValue: {
 									path: "/date2",
-									type: new sap.ui.model.type.Date()
+									type: new TypeDate()
 								}
 							}),
-							new sap.m.DateRangeSelection({
+							new DateRangeSelection({
 								dateValue: {
 									path: "/date1",
-									type: new sap.ui.model.type.Date()
+									type: new TypeDate()
 								},
 								secondDateValue: {
 									path: "/date2",
-									type: new sap.ui.model.type.Date()
+									type: new TypeDate()
 								}
 							}),
-							new sap.m.DateRangeSelection({
+							new DateRangeSelection({
 								value: {
 									path: "/date1",
-									type: new sap.ui.model.type.Date({ style: "medium", strictParsing: true })
+									type: new TypeDate({ style: "medium", strictParsing: true })
 								}
 							})
 						]
 					}),
-					new sap.m.Panel({
+					new Panel({
 						id: "DateRangeSelectionTestsContext2",
 						content: [
-							new sap.m.DateRangeSelection({
+							new DateRangeSelection({
 								valueFormat: "yyyy/MM"
 							})
 						]

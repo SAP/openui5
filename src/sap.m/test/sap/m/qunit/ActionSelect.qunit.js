@@ -1,4 +1,4 @@
-/*global QUnit, sinon */
+/*global QUnit */
 sap.ui.define([
 	"sap/m/App",
 	"sap/m/Page",
@@ -9,14 +9,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/Device",
-	"sap/ui/qunit/qunit-css",
-	"sap/ui/thirdparty/qunit",
-	"sap/ui/qunit/qunit-junit",
-	"sap/ui/qunit/qunit-coverage",
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
+	"sap/ui/Device"
 ], function(
 	App,
 	Page,
@@ -398,21 +391,18 @@ sap.ui.define([
 
 	QUnit.test("onfocusinList shouldn't set the focus only phone devices", function (assert) {
 		// arrange
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
 		});
-		var oFocusSpy = sinon.spy(this.oActionSelect, "focus");
+		var oFocusSpy = this.spy(this.oActionSelect, "focus");
 
 		// act
 		this.oActionSelect.onfocusinList();
 
 		// assert
 		assert.notOk(oFocusSpy.called, "The focus shouldn't be called");
-
-		//clear
-		oFocusSpy.restore();
 	});
 
 	QUnit.module("Accessibility", {
