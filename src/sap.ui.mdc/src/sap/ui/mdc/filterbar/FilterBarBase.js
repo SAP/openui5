@@ -782,9 +782,7 @@ sap.ui.define([
 			this._bSearchTriggered = true;
 			return Promise.resolve();
 		}
-		return this.validate().then(function(){
-			this.fireSearch();
-		}.bind(this));
+		return this.validate();
 	};
 
 	/**
@@ -797,7 +795,9 @@ sap.ui.define([
 	 * @returns {Promise} Returns a Promise which resolves after the validation of erroneous fields has been propagated.
 	 *
 	 */
-	FilterBarBase.prototype.validate = function() {
+	FilterBarBase.prototype.validate = function(bSuppressSearch) {
+
+		var bFireSearch = !bSuppressSearch;
 
 		return this.initialized().then(function() {
 			if (!this._oValidationPromise) {
@@ -808,7 +808,7 @@ sap.ui.define([
 				}.bind(this));
 
 				var fDelayedFunction = function() {
-					this._validate();
+					this._validate(bFireSearch);
 					this._oValidationPromise = null;
 				};
 				setTimeout(fDelayedFunction.bind(this), 0);
@@ -956,7 +956,7 @@ sap.ui.define([
 		return oFilterField;
 	};
 
-	FilterBarBase.prototype._handleAsyncValidation = function() {
+	FilterBarBase.prototype._handleAsyncValidation = function(bFireSearch) {
 		if (this._aFIChanges && (this._aFIChanges.length > 0)) {
 
 			var aNamePromisesArray = this._aFIChanges.slice();
@@ -975,22 +975,22 @@ sap.ui.define([
 						oFF.setValueState(ValueState.None); //valid existing value -> clear missing required error
 					}
 				}, this);
-				this._validate();
+				this._validate(bFireSearch);
 			}.bind(this), function(aConditionsArray) {
-				this._validate();
+				this._validate(bFireSearch);
 			}.bind(this));
 		}
 	};
 
-	FilterBarBase.prototype._waitForChangeAppliance = function() {
+	FilterBarBase.prototype._waitForChangeAppliance = function(bFireSearch) {
 
 		var aChangePromises = this._aCollectedChangePromises.slice();
 		this._aCollectedChangePromises = null;
 
 		Promise.all(aChangePromises).then(function(aConditionsArray) {
-			this._validate();
+			this._validate(bFireSearch);
 		}.bind(this), function(aConditionsArray) {
-			this._validate();
+			this._validate(bFireSearch);
 		}.bind(this));
 	};
 
@@ -998,8 +998,14 @@ sap.ui.define([
 	 * Executes the search.
 	 * @private
 	 */
-	 FilterBarBase.prototype._validate = function() {
+	 FilterBarBase.prototype._validate = function(bFireSearch) {
 		var sErrorMessage, vRetErrorState;
+
+		var fnCheckAndFireSearch = function() {
+			if (bFireSearch) {
+				this.fireSearch();
+			}
+		}.bind(this);
 
 		var fnCleanup = function() {
 			this._fRejectedSearchPromise = null;
@@ -1015,22 +1021,24 @@ sap.ui.define([
 		vRetErrorState = this._checkFilters();
 
 		if (vRetErrorState === ErrorState.AsyncValidation) {
-			this._handleAsyncValidation();
+			this._handleAsyncValidation(bFireSearch);
 			return;
 		}
 
 		if (this._aCollectedChangePromises && (this._aCollectedChangePromises.length > 0)) {
-			this._waitForChangeAppliance();
+			this._waitForChangeAppliance(bFireSearch);
 			return;
 		}
 
 		if (vRetErrorState === ErrorState.NoError) {
 			if (this._isChangeApplying()) {
 				this._oFlexPromise.then(function() {
-				 this._fResolvedSearchPromise();
-				 fnCleanup();
+					fnCheckAndFireSearch();
+					this._fResolvedSearchPromise();
+					fnCleanup();
 				}.bind(this));
 			} else {
+				fnCheckAndFireSearch();
 				this._fResolvedSearchPromise();
 				fnCleanup();
 			}

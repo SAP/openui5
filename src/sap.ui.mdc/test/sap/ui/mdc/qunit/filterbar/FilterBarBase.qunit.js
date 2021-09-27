@@ -149,7 +149,7 @@ sap.ui.define([
 
         oValid.then(function(){
             assert.ok(true, "Valid Promise resolved");
-            assert.equal(oSearchSpy.callCount, 0, "Search not executed by default");
+            assert.equal(oSearchSpy.callCount, 1, "Search executed by default");
             done();
         });
     });
@@ -171,7 +171,7 @@ sap.ui.define([
     QUnit.test("Check 'valid' promise - do not fire search", function(assert){
         var done = assert.async();
 
-        var oValid = this.oFilterBarBase.validate();
+        var oValid = this.oFilterBarBase.validate(true);
 
         var oSearchSpy = sinon.spy(this.oFilterBarBase, "fireSearch");
 
