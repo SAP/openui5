@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/mdc/TableDelegate",
+	"sap/ui/mdc/odata/v4/TableDelegate",
 	"sap/ui/core/Core",
 	"sap/ui/mdc/util/FilterUtil",
 	"sap/ui/mdc/odata/v4/util/DelegateUtil",
@@ -121,66 +121,50 @@ sap.ui.define([
 	 * @param {Object} oMetadataInfo The metadataInfo set on the table
 	 * @param {Object} oBindingInfo The bindingInfo of the table
 	 */
-	ODataTableDelegate.updateBindingInfo = function(oMDCTable, oMetadataInfo, oBindingInfo) {
-		if (!oMDCTable) {
-			return;
+	 ODataTableDelegate.updateBindingInfo = function(oTable, oDelegatePayload, oBindingInfo) {
+		TableDelegate.updateBindingInfo.apply(this, arguments);
+
+		if (oDelegatePayload ) {
+			oBindingInfo.path = oBindingInfo.path || oDelegatePayload.collectionPath || "/" + oDelegatePayload.collectionName;
+			oBindingInfo.model = oBindingInfo.model || oDelegatePayload.model;
 		}
 
-		if (oMetadataInfo && oBindingInfo) {
-			oBindingInfo.path = oBindingInfo.path || oMetadataInfo.collectionPath || "/" + oMetadataInfo.collectionName;
-			oBindingInfo.model = oBindingInfo.model || oMetadataInfo.model;
-		}
-
-		if (!oBindingInfo) {
-			oBindingInfo = {};
-		}
-
-		var oFilter = Core.byId(oMDCTable.getFilter()), bFilterEnabled = oMDCTable.isFilteringEnabled(), mConditions;
-		var oInnerFilterInfo, oOuterFilterInfo;
+		var oFilterBar = Core.byId(oTable.getFilter());
+		// var bTableFilterEnabled = oTable.isFilteringEnabled();
+		var mConditions;
+		var oOuterFilterInfo;
 		var aFilters = [];
 
-		//TODO: consider a mechanism ('FilterMergeUtil' or enhance 'FilterUtil') to allow the connection between different filters)
-		if (bFilterEnabled) {
-			mConditions = oMDCTable.getConditions();
-			var aTableProperties = oMDCTable.data("$tablePropertyInfo");
-			oInnerFilterInfo = FilterUtil.getFilterInfo(oMDCTable, mConditions, aTableProperties);
-			if (oInnerFilterInfo.filters) {
-				aFilters.push(oInnerFilterInfo.filters);
-			}
-		}
+		// if (bTableFilterEnabled) {
+		// 	mConditions = oTable.getConditions();
+		// 	var aPropertiesMetadata = oTable.getPropertyHelper().getProperties();
+		// 	oInnerFilterInfo = FilterUtil.getFilterInfo(ODataTableDelegate.getTypeUtil(), mConditions, aPropertiesMetadata);
 
-		if (oFilter) {
-			mConditions = oFilter.getConditions();
+		// 	if (oInnerFilterInfo.filters) {
+		// 		aFilters.push(oInnerFilterInfo.filters);
+		// 	}
+		// }
+
+		if (oFilterBar) {
+			mConditions = oFilterBar.getConditions();
 			if (mConditions) {
 
-				var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
-				var aParameterNames = DelegateUtil.getParameterNames(oFilter);
-				oOuterFilterInfo = FilterUtil.getFilterInfo(oFilter, mConditions, aPropertiesMetadata, aParameterNames);
+				var aPropertiesMetadata = oFilterBar.getPropertyHelper().getProperties();
+				oOuterFilterInfo = FilterUtil.getFilterInfo(ODataTableDelegate.getTypeUtil(), mConditions, aPropertiesMetadata);
 
 				if (oOuterFilterInfo.filters) {
 					aFilters.push(oOuterFilterInfo.filters);
 				}
-
-				var sParameterPath = DelegateUtil.getParametersInfo(oFilter, mConditions);
-				if (sParameterPath) {
-					oBindingInfo.path = sParameterPath;
-				}
 			}
 
 			// get the basic search
-			var sSearchText = oFilter.getSearch();
-			if (sSearchText) {
-
-				if (!oBindingInfo.parameters) {
-					oBindingInfo.parameters = {};
-				}
-
-				// add basic search parameter as expected by v4.ODataListBinding
-				oBindingInfo.parameters.$search = sSearchText;
-			}
+			var sSearchText = oFilterBar.getSearch instanceof Function ? oFilterBar.getSearch() :  "";
+			oBindingInfo.parameters.$search = sSearchText || undefined;
 		}
 
-		oBindingInfo.filters = new Filter(aFilters, true);
+		if (aFilters && aFilters.length > 0) {
+			oBindingInfo.filters = new Filter(aFilters, true);
+		}
 	};
 
 	ODataTableDelegate.getFilterDelegate = function() {
