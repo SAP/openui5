@@ -76,19 +76,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ObservableModel.prototype._fireChange = function () {
-		var bDataChanged;
-
-		if (!this._oOldData) {
-			bDataChanged = true;
-		} else {
-			bDataChanged = !deepEqual(this.oData, this._oOldData, 100);
-		}
-
-		this._oOldData = deepClone(this.oData);
-
-		if (bDataChanged) {
-			this.fireEvent("change");
-		}
+		this.fireEvent("change");
 	};
 
 	return ObservableModel;
