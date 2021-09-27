@@ -118,7 +118,7 @@ sap.ui.define([
 		if (oControl instanceof MultiComboBox) {
 			var oConfig = this.getConfiguration();
 			this.prepareFieldsInKey(oConfig);
-			//fix DIGITALWORKPLACE-5156, set the min-height of the popover
+			//workaround for DIGITALWORKPLACE-5156, set the min-height of the popover
 			oControl.onAfterOpen = this.onAfterOpen;
 			if (this.isFilterBackend()) {
 				this.onInput = _debounce(this.onInput, 500);
