@@ -235,7 +235,7 @@ sap.ui.define([
 			oFormatOptions.maxConditions = oConfig.maxConditions;
 			oFormatOptions.delegate = oConfig.delegate;
 			oFormatOptions.delegateName = oConfig.delegateName;
-			oFormatOptions.payload = oConfig.paylod;
+			oFormatOptions.payload = oConfig.payload;
 			oFormatOptions.operators = oConfig.operators;
 			oFormatOptions.display = oConfig.display;
 		}
