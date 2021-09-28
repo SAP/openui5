@@ -1182,14 +1182,13 @@ sap.ui.define([
 				title: "QUnit Page for Scroll Positions"
 			},
 			SearchField: {
-				title: "Test Page for sap.m.SearchField",
-				_alternativeTitle: "QUnit page for sap.ui.m.SearchField"
+				title: "Test Page for sap.m.SearchField"
 			},
 			SearchField_suggestions: {
 				title: "Test Page for sap.m.SearchField with suggestions",
-				_alternativeTitle: "QUnit tests: sap.m.SearchField",
 				sinon: {
-					useFakeTimers: true
+					useFakeTimers: true,
+					version: 4
 				}
 			},
 			SegmentedButton: {

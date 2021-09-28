@@ -145,11 +145,5 @@ sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/ui/core/IconPool'],
 		return this.getText();
 	};
 
-	// Suppress invalidate of the parent input field by property changes.
-	SuggestionItem.prototype.invalidate = function() {
-		return undefined;
-	};
-
 	return SuggestionItem;
-
 });

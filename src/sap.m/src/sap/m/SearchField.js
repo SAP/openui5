@@ -308,6 +308,7 @@ sap.ui.define([
 	SearchField.prototype.onBeforeRendering = function() {
 		this._unregisterEventListeners();
 		this._updateTranslations();
+		updateSuggestions(this);
 	};
 
 	SearchField.prototype.onAfterRendering = function() {
@@ -1004,37 +1005,5 @@ sap.ui.define([
 		oSF._oSuggest && oSF._oSuggest.update();
 	}
 
-	/* =========================================================== */
-	/*           begin: aggregation methods overrides		       */
-	/* =========================================================== */
-
-	// Suppress invalidate by changes in the suggestionItems aggregation.
-	var SUGGESTION_ITEMS = "suggestionItems";
-
-	SearchField.prototype.insertSuggestionItem = function(oObject, iIndex, bSuppressInvalidate) {
-		updateSuggestions(this);
-		return Control.prototype.insertAggregation.call(this, SUGGESTION_ITEMS, oObject, iIndex, true);
-	};
-
-	SearchField.prototype.addSuggestionItem = function(oObject, bSuppressInvalidate) {
-		updateSuggestions(this);
-		return Control.prototype.addAggregation.call(this, SUGGESTION_ITEMS, oObject, true);
-	};
-
-	SearchField.prototype.removeSuggestionItem = function(oObject, bSuppressInvalidate) {
-		updateSuggestions(this);
-		return Control.prototype.removeAggregation.call(this, SUGGESTION_ITEMS, oObject, true);
-	};
-
-	SearchField.prototype.removeAllSuggestionItems = function(bSuppressInvalidate) {
-		updateSuggestions(this);
-		return Control.prototype.removeAllAggregation.call(this, SUGGESTION_ITEMS, true);
-	};
-
-	/* =========================================================== */
-	/*           end: aggregation methods overrides		           */
-	/* =========================================================== */
-
 	return SearchField;
-
 });
