@@ -6513,5 +6513,14 @@
 			"scan",
 			"code"
 		]
+	},
+	"space-navigation": {
+		"tags": [
+			"space",
+			"navigation",
+			"circle",
+			"shape",
+			"line"
+		]
 	}
 }

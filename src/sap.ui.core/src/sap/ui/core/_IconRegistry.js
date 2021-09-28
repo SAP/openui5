@@ -706,7 +706,8 @@ sap.ui.define([
 				'clear-all': 0xe28c,
 				'command-line-interfaces': 0xe28d,
 				'sum': 0x1e28e,
-				'qr-code': 0x1e28f
+				'qr-code': 0x1e28f,
+				'space-navigation': 0xe290
 			}
 		};
 
