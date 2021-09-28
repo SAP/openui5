@@ -2,11 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define(["./BaseContentRenderer",
+sap.ui.define([
+	"./BaseContentRenderer",
+	"sap/ui/core/IconPool",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/unified/library",
-	"sap/ui/unified/CalendarLegendRenderer"],
-	function(BaseContentRenderer,
+	"sap/ui/unified/CalendarLegendRenderer"
+	],
+	function(
+		BaseContentRenderer,
+		IconPool,
 		InvisibleText,
 		unifiedLibrary,
 		CalendarLegendRenderer) {
