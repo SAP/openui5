@@ -180,7 +180,7 @@ sap.ui.define([
 			}
 			fnGetService = function (sServiceName) {
 				if (sServiceName === "UserInfo") {
-					return {
+					return Promise.resolve({
 						getUser: function () {
 							return {
 								getEmail: function () { return vUserEmail; },
@@ -189,17 +189,18 @@ sap.ui.define([
 								getLastName: function () { return sUserLastName; }
 							};
 						}
-					};
+					});
 				}
+				return Promise.resolve();
 			};
 		} else {
 			fnGetService = function () {
-				return null;
+				return Promise.resolve();
 			};
 		}
 		sap.ushell = {
 			Container: {
-				getService: fnGetService
+				getServiceAsync: fnGetService
 			}
 		};
 		return {
@@ -223,6 +224,7 @@ sap.ui.define([
 			});
 			this.oIFrame.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+			return this.oIFrame.waitForInit();
 		},
 		afterEach: function() {
 			this.oIFrame.destroy();
@@ -244,6 +246,7 @@ sap.ui.define([
 			});
 			this.oIFrame.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+			return this.oIFrame.waitForInit();
 		},
 		afterEach: function() {
 			this.oIFrame.destroy();
@@ -265,6 +268,7 @@ sap.ui.define([
 			});
 			this.oIFrame.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+			return this.oIFrame.waitForInit();
 		},
 		afterEach: function() {
 			this.oIFrame.destroy();
@@ -278,9 +282,8 @@ sap.ui.define([
 
 	QUnit.module("URL binding in XML view", {
 		beforeEach: function (assert) {
-			var done = assert.async();
 			this.oUShellMock = mockUserInfoService(true);
-			XMLView.create({
+			return XMLView.create({
 				definition: '<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.fl.util">' +
 					'<IFrame id="iframe1" url="' + sOpenUI5Url + '" />' +
 					'<IFrame id="iframe2" url="' + sOpenUI5Url + '?fullName={$user>/fullName}" />' +
@@ -290,9 +293,10 @@ sap.ui.define([
 				'</mvc:View>'
 			}).then(function (oView) {
 				this.myView = oView;
+				var iFrame = this.myView.byId("iframe1");
 				this.myView.placeAt("qunit-fixture");
 				Core.applyChanges();
-				done();
+				return iFrame.waitForInit();
 			}.bind(this));
 		},
 		afterEach: function () {

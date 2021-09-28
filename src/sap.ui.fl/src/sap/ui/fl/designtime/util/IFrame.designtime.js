@@ -13,14 +13,18 @@ sap.ui.define([
 	function editIFrame (oIFrame/*, mPropertyBag*/) {
 		var oAddIFrameDialog = new AddIFrameDialog();
 		var oSettings = oIFrame.get_settings();
-		var mDialogSettings = {
-			parameters: AddIFrameDialog.buildUrlBuilderParametersFor(oIFrame),
-			frameUrl: oSettings.url,
-			frameWidth: oSettings.width,
-			frameHeight: oSettings.height,
-			updateMode: true
-		};
-		return oAddIFrameDialog.open(mDialogSettings)
+		var mDialogSettings;
+		return AddIFrameDialog.buildUrlBuilderParametersFor(oIFrame)
+			.then(function(mURLParameters) {
+				mDialogSettings = {
+					parameters: mURLParameters,
+					frameUrl: oSettings.url,
+					frameWidth: oSettings.width,
+					frameHeight: oSettings.height,
+					updateMode: true
+				};
+				return oAddIFrameDialog.open(mDialogSettings);
+			})
 			.then(function (mSettings) {
 				if (!mSettings) {
 					return []; // No change
