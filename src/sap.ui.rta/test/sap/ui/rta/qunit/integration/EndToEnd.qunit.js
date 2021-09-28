@@ -175,7 +175,8 @@ sap.ui.define([
 
 							// select the field in the list and close the dialog with OK
 							oFieldToAdd.selected = true;
-							sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
+							var oOkButton = sap.ui.getCore().byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
+							sap.ui.qunit.QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
 							sap.ui.getCore().applyChanges();
 						}.bind(this));
 					}.bind(this));
@@ -236,7 +237,8 @@ sap.ui.define([
 					// select the field in the list and close the dialog with OK
 					oFieldToAdd.focus();
 					QUnitUtils.triggerKeydown(oFieldToAdd.getDomRef(), KeyCodes.ENTER, false, false, false);
-					sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
+					var oOkButton = sap.ui.getCore().byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
+					sap.ui.qunit.QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
 					sap.ui.getCore().applyChanges();
 				}.bind(this));
 
@@ -414,7 +416,8 @@ sap.ui.define([
 
 					// select the field in the list and close the dialog with OK
 					oFieldToAdd.selected = true;
-					sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
+					var oOkButton = sap.ui.getCore().byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
+					sap.ui.qunit.QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
 					sap.ui.getCore().applyChanges();
 				}.bind(this));
 

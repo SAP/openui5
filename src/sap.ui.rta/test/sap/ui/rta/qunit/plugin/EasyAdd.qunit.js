@@ -73,9 +73,7 @@ function(
 			var done = assert.async();
 
 			this.oEasyAddPlugin = new EasyAdd({
-				commandFactory: new CommandFactory(),
-				dialog: new AddElementsDialog({title: "hugo"}),
-				analyzer: AdditionalElementsAnalyzer
+				commandFactory: new CommandFactory()
 			});
 
 			//	VBox
@@ -213,9 +211,7 @@ function(
 			var done = assert.async();
 
 			this.oEasyAddPlugin = new EasyAdd({
-				commandFactory: new CommandFactory(),
-				dialog: new AddElementsDialog(),
-				analyzer: AdditionalElementsAnalyzer
+				commandFactory: new CommandFactory()
 			});
 
 			this.oLayout = new ObjectPageLayout("layout", {});

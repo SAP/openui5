@@ -151,9 +151,7 @@ sap.ui.define([
 			});
 
 			this._mDefaultPlugins["additionalElements"] = new AdditionalElementsPlugin({
-				commandFactory: this._oCommandFactory,
-				analyzer: AdditionalElementsAnalyzer,
-				dialog: new AdditionalElementsDialog()
+				commandFactory: this._oCommandFactory
 			});
 
 			this._mDefaultPlugins["createContainer"] = new CreateContainerPlugin({
