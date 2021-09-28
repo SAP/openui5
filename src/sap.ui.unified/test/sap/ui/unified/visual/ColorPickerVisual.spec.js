@@ -11,7 +11,7 @@ describe("sap.ui.unified.ColorPickerVisual", function() {
 	});
 
 	it("alpha slider background should be adjusted on RGB changes", function() {
-		element(by.id("cp-gF-inner")).click();
+		element(by.id("cp-bF-inner")).click();
 
 		//clear the green field
 		browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
@@ -25,7 +25,7 @@ describe("sap.ui.unified.ColorPickerVisual", function() {
 		browser.actions().sendKeys("0").perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
 
-		expect(takeScreenshot(element(by.id("cp-aSLD-inner")))).toLookAs("AlphaSlider_Background_Is_Pink");
+		expect(takeScreenshot(element(by.id("cp-aSLD-inner")))).toLookAs("AlphaSlider_Background_Is_Yellow");
 	});
 
 	it("should render default mode HSV color picker with RGB output", function() {
