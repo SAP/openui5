@@ -1,0 +1,33 @@
+{
+	"sap.app": {
+		"id": "sap.ui.mdc.sample.TableODataV4PDFExport",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.mdc.sample.TableODataV4PDFExport.View",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.table": {},
+				"sap.ui.mdc": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"View.view.xml",
+					"View.controller.js",
+					"Component.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

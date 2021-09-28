@@ -24,7 +24,8 @@
 					"sap.ui.mdc.sample.GridTable",
 					"sap.ui.mdc.sample.TableStateHandling",
 					"sap.ui.mdc.sample.TableFilter",
-					"sap.ui.mdc.sample.TableODataV4Analytics"
+					"sap.ui.mdc.sample.TableODataV4Analytics",
+					"sap.ui.mdc.sample.TableODataV4PDFExport"
 				]
 			},
 			{
@@ -64,6 +65,11 @@
 				"id": "sap.ui.mdc.sample.TableODataV4Analytics",
 				"name": "0.5 Table with OData V4",
 				"description": "OData V4 with analytical capabilities, e.g. grouping and totals."
+			}, {
+				
+				"id": "sap.ui.mdc.sample.TableODataV4PDFExport",
+				"name": "0.6 Table with OData V4 for PDF export",
+				"description": "OData V4 with PDF export capabilities."
 			}, {
 				"id": "sap.ui.mdc.sample.FieldEditMode",
 				"name": "1.1 Fields with different EditModes",
