@@ -215,7 +215,6 @@
 								id="mdcTable1"
 								width="100%"
 								height="100%"
-								header="Table Header"
 								headerVisible="true"
 								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
 								p13nMode="Column,Sort"
@@ -302,11 +301,10 @@
 								type="ResponsiveTable"
 								width="100%"
 								height="100%"
-								header="Table Header"
 								headerVisible="true"
 								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
 								p13nMode="Column,Sort"
-								delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Authors'}}"
+								delegate="{name: 'sap/ui/v4demo/delegate/ResponsiveTable.delegate', payload: {collectionName: 'Authors'}}"
 								threshold="50">
 								<mdc:type>
 									<mdc:table.ResponsiveTableType growingMode="Scroll" />
@@ -568,7 +566,6 @@
 								id="mdcTable-city"
 								width="100%"
 								height="100%"
-								header="Table Header"
 								headerVisible="true"
 								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
 								p13nMode="Column,Sort"
