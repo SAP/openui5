@@ -25,14 +25,11 @@ sap.ui.define([
 	return {
 		annotations: {},
 		properties: {
-			showExecuteOnSelection: {
-				ignore: false
-			},
 			showSetAsDefault: {
 				ignore: false
 			},
 			manualVariantKey: {
-				ignore: false
+				ignore: true
 			},
 			inErrorState: {
 				ignore: false
@@ -44,6 +41,15 @@ sap.ui.define([
 				ignore: false
 			},
 			updateVariantInURL: {
+				ignore: true
+			},
+			resetOnContextChange: {
+				ignore: true
+			},
+			executeOnSelectionForStandardDefault: {
+				ignore: false
+			},
+			displayTextForExecuteOnSelectionForStandardVariant: {
 				ignore: false
 			}
 		},
