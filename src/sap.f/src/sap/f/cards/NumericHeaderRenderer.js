@@ -23,7 +23,8 @@ sap.ui.define([], function () {
 
 		oRm.openStart("div", oNumericHeader)
 			.class("sapFCardHeader")
-			.class("sapFCardNumericHeader");
+			.class("sapFCardNumericHeader")
+			.attr("tabindex", sTabIndex);
 
 		if (bLoading) {
 			oRm.class("sapFCardHeaderLoading");
@@ -33,7 +34,6 @@ sap.ui.define([], function () {
 			oRm.class("sapFCardClickable");
 		}
 
-		oRm.attr("tabindex", sTabIndex);
 		//Accessibility state
 		oRm.accessibilityState(oNumericHeader, {
 			role: oNumericHeader.getAriaRole(),

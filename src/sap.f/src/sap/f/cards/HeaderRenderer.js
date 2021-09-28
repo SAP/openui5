@@ -49,6 +49,10 @@ sap.ui.define([], function () {
 		});
 		oRm.openEnd();
 
+		oRm.openStart("div")
+			.class("sapFCardHeaderWrapper")
+			.openEnd();
+
 		if (oHeader.getIconSrc() || oHeader.getIconInitials() || oBindingInfos.iconSrc) {
 			oRm.openStart("div")
 				.class("sapFCardHeaderImage")
@@ -118,6 +122,8 @@ sap.ui.define([], function () {
 				oRm.close("div"); //closes sapFCardHeaderTextSecondLine
 			}
 		}
+
+		oRm.close("div");
 
 		oRm.close("div");
 
