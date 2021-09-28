@@ -57,7 +57,7 @@ sap.ui.define([
 				 * @experimental since 1.95
 				 * Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 				 */
-				state: { "type": "sap.m.ValueColor", group: "Appearance", defaultValue : "Neutral" }
+				state: { "type": "sap.m.ValueColor", group: "Appearance", defaultValue : "None" }
 			},
 			aggregations: {
 
