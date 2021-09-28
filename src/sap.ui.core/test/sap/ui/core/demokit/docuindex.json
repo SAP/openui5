@@ -418,7 +418,9 @@
 					"Create and Edit",
 					"Delete",
 					"OData Operations",
-					"Add list-detail scenario"
+					"Add list-detail scenario",
+					"Context#setKeepAlive",
+					"Add table with :n navigation to detail area"
 				]
 			}
 		],
