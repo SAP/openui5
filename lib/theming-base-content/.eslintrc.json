@@ -1,0 +1,13 @@
+{
+	"env": {
+		"node": true,
+		"browser": false
+	},
+	"parserOptions": {
+		"ecmaVersion": 8
+	},
+	"rules": {
+		"strict": ["error", "never"],
+		"no-console": "off"
+	}
+}
