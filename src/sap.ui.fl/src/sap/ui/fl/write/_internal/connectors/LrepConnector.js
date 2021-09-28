@@ -467,7 +467,7 @@ sap.ui.define([
 				var sAppVariantManifestUrl = mPropertyBag.appVarUrl;
 				var oRequestOption = WriteUtils.getRequestOptions(
 					InitialConnector,
-					undefined,
+					Utils.getLrepUrl() + ROUTES.TOKEN,
 					undefined,
 					"application/json; charset=utf-8", "json"
 				);
@@ -477,7 +477,7 @@ sap.ui.define([
 				var sAppVariantUrl = InitialUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag);
 				var oRequestOption = WriteUtils.getRequestOptions(
 					InitialConnector,
-					undefined,
+					Utils.getLrepUrl() + ROUTES.TOKEN,
 					undefined,
 					"application/json; charset=utf-8", "json"
 				);
