@@ -247,7 +247,10 @@ sap.ui.define([
 
 	Filter.prototype._updateSelected = function (oSelectedItem) {
 		var oFiltersModel = this.getModel("filters"),
-			sFilterKey = this.getKey();
+			sFilterKey = this.getKey(),
+			oCard = this.getCardInstance(),
+			sManifestKey = "/sap.card/configuration/filters/" + sFilterKey + "/value",
+			sParams = {};
 
 		oFiltersModel.setProperty("/" + sFilterKey, {
 			"value": oSelectedItem.getKey(),
@@ -256,6 +259,9 @@ sap.ui.define([
 				"key": oSelectedItem.getKey()
 			}
 		});
+
+		sParams[sManifestKey] = oSelectedItem.getKey();
+		oCard._fireConfigurationChange(sParams);
 	};
 
 	/**

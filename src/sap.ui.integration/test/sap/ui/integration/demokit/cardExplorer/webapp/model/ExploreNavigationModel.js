@@ -1772,6 +1772,47 @@ sap.ui.define([
 						]
 					},
 					{
+						key: 'configurationChanges',
+						target: 'exploreSamples',
+						title: 'Configuration Changes',
+						useIFrame: true,
+						isApplication: true,
+						experimental: true,
+						files: [
+							{
+								url: '/samples/configurationChanges/indexTemplate.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/configurationChanges/cardManifest.json',
+								name: 'cardManifest.json',
+								key: 'cardManifest.json'
+							},
+							{
+								url: '/samples/configurationChanges/ConfigurationChanges.view.xml',
+								name: 'HostActions.view.xml',
+								key: 'HostActions.view.xml'
+							},
+							{
+								url: '/samples/configurationChanges/ConfigurationChanges.controller.js',
+								name: 'HostActions.controller.js',
+								key: 'HostActions.controller.js'
+							},
+							{
+								url: '/samples/configurationChanges/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								isApplicationManifest: true
+							},
+							{
+								url: '/samples/configurationChanges/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							}
+						]
+					},
+					{
 						key: 'hostContext',
 						target: 'exploreSamples',
 						title: 'Host Context',
