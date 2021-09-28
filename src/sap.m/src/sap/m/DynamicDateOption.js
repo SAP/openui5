@@ -229,7 +229,8 @@ sap.ui.define([
 		 * @public
 		 */
 		DynamicDateOption.prototype.getGroupHeader = function() {
-			return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DDR_OPTIONS_GROUP_0");
+			var iGroup = (this.getGroup() > -1 && this.getGroup() < 7) ? this.getGroup() : 0;
+			return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DDR_OPTIONS_GROUP_" + iGroup);
 		};
 
 		/**

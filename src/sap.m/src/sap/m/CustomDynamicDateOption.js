@@ -97,5 +97,13 @@ sap.ui.define(['sap/m/DynamicDateOption'],
 				};
 			});
 
+		CustomDynamicDateOption.prototype.getGroupHeader = function() {
+			if ((this.getGroup() < 7 && this.getGroup() > -1) || !this.getGetGroupHeader()) {
+				return DynamicDateOption.prototype.getGroupHeader.apply(this, arguments);
+			} else {
+				return this.getGetGroupHeader().apply(this, arguments);
+			}
+		};
+
 		return CustomDynamicDateOption;
 	});
