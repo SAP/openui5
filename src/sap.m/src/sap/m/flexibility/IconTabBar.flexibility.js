@@ -10,7 +10,10 @@ sap.ui.define([
 	return {
 		"moveControls": "default",
 		"selectIconTabBarFilter": {
-			"changeHandler": SelectIconTabBarFilter
+			"changeHandler": SelectIconTabBarFilter,
+			"layers": {
+				"USER": true
+			}
 		}
 	};
 });
