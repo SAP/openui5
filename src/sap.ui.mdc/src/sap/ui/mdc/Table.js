@@ -351,6 +351,16 @@ sap.ui.define([
 					defaultValue: false
 				},
 				/**
+				 * Determines whether the Paste button is enabled.
+				 *
+				 * @since 1.96
+				 */
+				enablePaste: {
+					type: "boolean",
+					group: "Behavior",
+					defaultValue: true
+				},
+				/**
 				 * Defines the multi-selection mode for the control.
 				 * If this property is set to the <code>Default</code> value, the <code>ResponsiveTable</code> type control renders
 				 * the Select All checkbox in the column header, otherwise the Deselect All icon is rendered.
@@ -1405,14 +1415,23 @@ sap.ui.define([
 		if ((bShowPasteButton = !!bShowPasteButton) == this.getShowPasteButton()) {
 			return this;
 		}
-
 		this.setProperty("showPasteButton", bShowPasteButton, true);
 		if (bShowPasteButton && !this._oPasteButton && this._oToolbar) {
 			this._oToolbar.insertEnd(this._getPasteButton(), 0);
+			this._oPasteButton.setEnabled(this.getEnablePaste());
 		} else if (this._oPasteButton) {
 			this._oPasteButton.setVisible(bShowPasteButton);
+			this._oPasteButton.setEnabled(this.getEnablePaste());
 		}
 
+		return this;
+	};
+
+	Table.prototype.setEnablePaste = function(bEnablePaste) {
+		this.setProperty("enablePaste", bEnablePaste, true);
+		if (this._oPasteButton) {
+			this._oPasteButton.setEnabled(this.getEnablePaste());
+		}
 		return this;
 	};
 
@@ -2665,6 +2684,9 @@ sap.ui.define([
 	// Called when a paste event is fired from the inner table
 	// Fires the MDCTable paste event
 	Table.prototype._onInnerTablePaste = function(oEvent) {
+		if (!this.getEnablePaste()) {
+			return;
+		}
 		this.firePaste({
 			data: oEvent.getParameter("data")
 		});

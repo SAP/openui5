@@ -2415,6 +2415,49 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("enablePaste with ShowPasteButton set to true", function(assert) {
+		this.oTable.setShowPasteButton(true);
+		var fPasteHandler = function(oEvent) {
+			assert.ok(this.getEnablePaste(), "Paste event fired");
+		};
+
+		this.oTable.attachPaste(fPasteHandler);
+
+		assert.ok(this.oTable.getEnablePaste(), "default value of enablePaste=true");
+		return this.oTable.initialized().then(function() {
+			assert.ok(this.oTable._oPasteButton.getVisible(), "pasteButton is visible");
+			this.oTable._oTable.firePaste({data: [["111", "222", "333"], ["aaa", "bbb", "ccc"]]});
+			this.oTable.setEnablePaste(false);
+			assert.notOk(this.oTable.getEnablePaste(), "enablePaste=false");
+			assert.notOk(this.oTable._oPasteButton.getEnabled(), "Paste button disabled");
+			this.oTable._oTable.firePaste({data: [["111", "222", "333"], ["aaa", "bbb", "ccc"]]});
+
+			this.oTable.setEnablePaste(true);
+			assert.ok(this.oTable.getEnablePaste(), "enablePaste=true");
+			assert.ok(this.oTable._oPasteButton.getEnabled(), "pasteButton enabled");
+		}.bind(this));
+	});
+
+
+	QUnit.test("enablePaste with ShowPasteButton set to false", function(assert) {
+		this.oTable.setShowPasteButton(false);
+		assert.ok(this.oTable.getEnablePaste(), "default value of enablePaste=true");
+		return this.oTable.initialized().then(function() {
+
+			this.oTable.setEnablePaste(false);
+			assert.notOk(this.oTable.getEnablePaste(), "enablePaste=false");
+			assert.notOk(this.oTable._oPasteButton, "Paste button not created");
+
+			this.oTable.setShowPasteButton(true);
+			assert.notOk(this.oTable.getEnablePaste(), "enablePaste=false");
+			assert.notOk(this.oTable._oPasteButton.getEnabled(), "Paste button disabled");
+
+			this.oTable.setEnablePaste(true);
+			assert.ok(this.oTable.getEnablePaste(), "enablePaste=true");
+			assert.ok(this.oTable._oPasteButton.getEnabled(), "Paste button enabled");
+		}.bind(this));
+	});
+
 	QUnit.test("enableExport property & export button test", function(assert) {
 		assert.notOk(this.oTable.getEnableExport(), "default property value enableExport=false");
 
