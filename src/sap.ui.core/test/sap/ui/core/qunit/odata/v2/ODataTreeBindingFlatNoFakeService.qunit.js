@@ -167,4 +167,33 @@ sap.ui.define([
 		// code under test
 		ODataTreeBindingFlat.prototype.submitChanges.call(oBinding);
 	});
+
+	//*********************************************************************************************
+["~sNewlyGeneratedId", undefined].forEach(function (sNewlyGeneratedId) {
+	[true, false, undefined].forEach(function (bIsTransient) {
+	var sTitle = "_ensureHierarchyNodeIDForContext: use isTransient, bIsTransient=" + bIsTransient
+			+ ", sNewlyGeneratedId=" + sNewlyGeneratedId;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = {
+				oModel : {setProperty : function () {}},
+				oTreeProperties : {"hierarchy-node-for" : "foo"}
+			},
+			oContext = {// a sap.ui.model.odata.v2.Context instance
+				getProperty : function () {},
+				isTransient : function () {}
+			};
+
+		this.mock(oContext).expects("getProperty").withExactArgs("foo").returns(sNewlyGeneratedId);
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(bIsTransient);
+		this.mock(oBinding.oModel).expects("setProperty")
+			//TODO: replace with uid mock
+			.withExactArgs("foo", /* uid */sinon.match.string, sinon.match.same(oContext))
+			.exactly(bIsTransient !== true || sNewlyGeneratedId ? 0 : 1);
+
+		// code under test
+		ODataTreeBindingFlat.prototype._ensureHierarchyNodeIDForContext.call(oBinding, oContext);
+	});
+	});
+});
 });

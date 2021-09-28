@@ -4220,7 +4220,6 @@ sap.ui.define([
 								+ sKey.slice(sKey.indexOf("("));
 						}
 						this._updateContext(oContext, '/' + sKey, oRequest.deepPath);
-						oContext.bCreated = false;
 						oContext.setUpdated(true);
 						// register function to reset updated flag call as callAfterUpdate
 						this.callAfterUpdate(function() {
@@ -6735,7 +6734,6 @@ sap.ui.define([
 			}
 
 			oCreatedContext = that.getContext("/" + sKey, sDeepPath, pCreate);
-			oCreatedContext.bCreated = true;
 
 			oRequest.key = sKey;
 			oRequest.created = true;

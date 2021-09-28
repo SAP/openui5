@@ -55,12 +55,6 @@ sap.ui.define([
 	var Context = BaseContext.extend("sap.ui.model.odata.v2.Context", {
 			constructor : function (oModel, sPath, sDeepPath, oCreatePromise) {
 				BaseContext.call(this, oModel, sPath);
-				// whether this context references a newly created transient entity; supported
-				// values are:
-				// - undefined: entity has not been created on client side,
-				// - true: created on the client but not yet persisted in the back end,
-				// - false: created on the client and persisted in the back end
-				this.bCreated = undefined;
 				// Promise returned by #created for a context of a newly created entity which
 				// resolves when the entity is persisted or rejects if the creation is aborted; set
 				// it lazily to avoid "Uncaught (in promise)" errors
@@ -182,7 +176,7 @@ sap.ui.define([
 	 * @since 1.94.0
 	 */
 	Context.prototype.isTransient = function () {
-		return this.bCreated;
+		return this.oSyncCreatePromise && this.oSyncCreatePromise.isPending();
 	};
 
 	/**
