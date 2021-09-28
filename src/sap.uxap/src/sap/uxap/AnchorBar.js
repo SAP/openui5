@@ -99,6 +99,28 @@ sap.ui.define([
 		}
 	});
 
+	AnchorBar.ButtonDelegate = {
+		onAfterRendering: function () {
+			var oButton = this.isA("sap.m.MenuButton") ? this._getButtonControl() : this,
+				bSelected = this.hasStyleClass("sapUxAPAnchorBarButtonSelected");
+
+			// set ARIA has-popup if button opens submenu
+			if (this.data("bHasSubMenu")) {
+				oButton.$().attr("aria-haspopup", "menu");
+
+				// although the inner (arrow like) buttons are not focusable
+				// set role 'none' since it is not allowed nesting
+				// them in elements with role 'option'
+				oButton.$().find(".sapMBtn")
+					.attr("role", "none")
+					// remove ARIA has-popup from inner elements
+					// since they are not receiving any focus
+					.removeAttr('aria-haspopup');
+			}
+			// set ARIA attributes of main buttons
+			oButton.$().attr("aria-controls", this.data("sectionId")).attr("aria-selected", bSelected);
+		}
+	};
 
 	AnchorBar.prototype.init = function () {
 		if (Toolbar.prototype.init) {
@@ -260,10 +282,19 @@ sap.ui.define([
 		if (bIsSecondLevel) {
 			oButton.destroy();
 		} else {
+			oButton.addEventDelegate(AnchorBar.ButtonDelegate, oButton);
 			this.addAggregation("content", oButton, bInvalidate);
 		}
 
 		return this;
+	};
+
+	AnchorBar.prototype._removeButtonsDelegate = function () {
+		var aContent = this.getContent();
+
+		aContent.forEach(function (oButton) {
+			oButton.removeEventDelegate(AnchorBar.ButtonDelegate);
+		});
 	};
 
 	AnchorBar.prototype._createSelectItem = function (oButton, bIsSecondLevel) {
@@ -919,24 +950,6 @@ sap.ui.define([
 	};
 
 	AnchorBar.prototype._computeNextSectionInfo = function (oContent) {
-		var oButton = oContent.isA("sap.m.MenuButton") ? oContent._getButtonControl() : oContent,
-			bSelected = oContent.hasStyleClass("sapUxAPAnchorBarButtonSelected");
-
-		// set ARIA has-popup if button opens submenu
-		if (oContent.data("bHasSubMenu")) {
-			oButton.$().attr("aria-haspopup", "menu");
-
-			// set role 'group' to inner button element since
-			// its not allow nesting them in elements with role 'option'
-			oButton.$().find(".sapMBtn")
-				.attr("role", "group")
-				// remove ARIA has-popup from inner elements
-				// since they are not receiving any focus
-				.removeAttr('aria-haspopup');
-		}
-		// set ARIA attributes of main buttons
-		oButton.$().attr("aria-controls", oContent.data("sectionId")).attr("aria-selected", bSelected);
-
 		var iWidth = oContent.$().outerWidth(true);
 
 		//store info on the various sections for horizontalScrolling
@@ -969,6 +982,7 @@ sap.ui.define([
 	};
 
 	AnchorBar.prototype._resetControl = function () {
+		this._removeButtonsDelegate();
 		this.destroyAggregation('content');
 		this._oSelect.destroyAggregation("items", true);
 
@@ -1023,6 +1037,8 @@ sap.ui.define([
 			clearTimeout(this._iComputeContentSizeTimeout);
 			this._iComputeContentSizeTimeout = null;
 		}
+
+		this._removeButtonsDelegate();
 	};
 
 	/**

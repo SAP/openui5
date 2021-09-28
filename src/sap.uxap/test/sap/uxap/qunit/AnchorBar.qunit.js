@@ -607,6 +607,12 @@ sap.ui.define([
 
 		for (iIndex = 0; iIndex < iAnchorBarContentLength; iIndex++) {
 			oCurrentButton = aAnchorBarContent[iIndex];
+
+			if (oCurrentButton.isA("sap.m.MenuButton")) {
+				assert.strictEqual(oCurrentButton.$().find(".sapMBtn").attr("role"), "none",
+				"inner buttons are hidden from accessibility API");
+			}
+
 			checkButtonAriaAttribute(assert, oCurrentButton, "role", "option",
 				"aria role of the button is set correctly");
 		}
