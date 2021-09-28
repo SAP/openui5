@@ -18,12 +18,14 @@ sap.ui.define([
 			}
 		},
 		aggregations: {
-			content: {
-				propagateMetadata: function(oElement) {
-					return {
-						actions: "not-adaptable"
-					};
-				}
+			layout: {
+				ignore: true
+			},
+			basicSearchField: {
+				ignore: true
+			},
+			filterItems: {
+				ignore: true
 			}
 		},
 		properties: {
