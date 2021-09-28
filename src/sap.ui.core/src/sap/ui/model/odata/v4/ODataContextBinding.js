@@ -401,7 +401,9 @@ sap.ui.define([
 		this.mParameters = mParameters; // store mParameters at binding after validation
 
 		if (this.isRootBindingSuspended()) {
-			this.sResumeChangeReason = ChangeReason.Change;
+			if (!this.oOperation) {
+				this.sResumeChangeReason = ChangeReason.Change;
+			}
 		} else if (!this.oOperation) {
 			this.fetchCache(this.oContext);
 			if (sChangeReason) {
@@ -776,7 +778,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#doSuspend
 	 */
 	ODataContextBinding.prototype.doSuspend = function () {
-		if (this.bInitial) {
+		if (this.bInitial && !this.oOperation) {
 			// if the binding is still initial, it must fire an event in resume
 			this.sResumeChangeReason = ChangeReason.Change;
 		}
@@ -1392,23 +1394,31 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#resumeInternal
 	 */
 	ODataContextBinding.prototype.resumeInternal = function (bCheckUpdate, bParentHasChanges) {
-		var sResumeChangeReason = this.sResumeChangeReason;
+		var sResumeChangeReason = this.sResumeChangeReason,
+			that = this;
+
+		function resumeDependents() {
+			that.getDependentBindings().forEach(function (oDependentBinding) {
+				oDependentBinding.resumeInternal(bCheckUpdate, !!sResumeChangeReason);
+			});
+		}
 
 		this.sResumeChangeReason = undefined;
 
-		if (!this.oOperation) {
-			if (bParentHasChanges || sResumeChangeReason) {
-				this.mAggregatedQueryOptions = {};
-				this.bAggregatedQueryOptionsInitial = true;
-				this.removeCachesAndMessages("");
-				this.fetchCache(this.oContext);
-			}
-			this.getDependentBindings().forEach(function (oDependentBinding) {
-				oDependentBinding.resumeInternal(bCheckUpdate, !!sResumeChangeReason);
-			});
-			if (sResumeChangeReason) {
-				this._fireChange({reason : sResumeChangeReason});
-			}
+		if (this.oOperation) {
+			resumeDependents();
+			return;
+		}
+
+		if (bParentHasChanges || sResumeChangeReason) {
+			this.mAggregatedQueryOptions = {};
+			this.bAggregatedQueryOptionsInitial = true;
+			this.removeCachesAndMessages("");
+			this.fetchCache(this.oContext);
+		}
+		resumeDependents();
+		if (sResumeChangeReason) {
+			this._fireChange({reason : sResumeChangeReason});
 		}
 	};
 

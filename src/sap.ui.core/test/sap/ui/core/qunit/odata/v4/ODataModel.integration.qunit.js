@@ -21055,6 +21055,7 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oHiddenBinding, // to be kept in the controller
+			oPublications,
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			mNames = {
 				23 : "The Rolling Stones",
@@ -21076,7 +21077,7 @@ sap.ui.define([
 	<Text id="id" text="{ArtistID}"/>\
 	<Text id="isActive" text="{IsActiveEntity}"/>\
 	<Input id="name" value="{Name}"/>\
-	<Table items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
+	<Table id="publication" items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
 		<Input id="price" value="{Price}"/>\
 	</Table>\
 </FlexBox>',
@@ -21209,6 +21210,7 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oObjectPage = that.oView.byId("objectPage"); // just to keep the test shorter
+			oPublications = that.oView.byId("publication").getBinding("items");
 			if (oFixture.hiddenBinding) {
 				// create the hidden binding when creating the controller
 				oHiddenBinding = that.oModel.bindContext("", undefined,
@@ -21230,6 +21232,35 @@ sap.ui.define([
 			return bindObjectPage(oRowContext, oFixture.hiddenBinding);
 		}).then(function () {
 			return action("EditAction", "42");
+		}).then(function () {
+			// BCP 2170181227: Check that dependent bindings of an operation are also resumed if the
+			// root binding is resumed.
+			var oRootBinding = oHiddenBinding
+					? oHiddenBinding.getRootBinding()
+					: that.oView.byId("table").getBinding("items");
+
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)/_Publication"
+				+ "?$select=Price,PublicationID&$filter=Price gt 8&$skip=0&$top=100", {
+					value : [{
+						Price : "8.88",
+						PublicationID : "42-0"
+					}]
+				})
+				.expectChange("price", ["8.88"]);
+
+			// code under test
+			oRootBinding.suspend();
+			oPublications.filter(new Filter("Price", FilterOperator.GT, "8"));
+			oRootBinding.resume();
+
+			return that.waitForChanges(assert, "BCP: 2170181227");
+		}).then(function () {
+			expectPublicationRequest("42", false);
+
+			// reset filter in order to continue with the next .then(...)
+			oPublications.filter();
+
+			return that.waitForChanges(assert, "BCP: 2170181227, reset filter");
 		}).then(function () {
 			that.expectRequest({
 					headers : {Prefer : "return=minimal"},
