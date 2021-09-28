@@ -5,7 +5,7 @@ sap.ui.define([
 	], function(MessageToast, Controller, JSONModel) {
 	"use strict";
 
-	return Controller.extend("sap.m.sample.MultiComboBox.controller.MultiComboBox", {
+	return Controller.extend("sap.m.sample.MultiComboBoxSelectAll.controller.MultiComboBoxSelectAll", {
 
 		onInit: function () {
 			// set explored app's demo model on this sample

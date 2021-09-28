@@ -12,6 +12,8 @@ sap.ui.define([
 	'./StandardListItem',
 	'./Popover',
 	'./GroupHeaderListItem',
+	'./CheckBox',
+	'./Toolbar',
 	'./library',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/IconPool',
@@ -54,6 +56,8 @@ function(
 	StandardListItem,
 	Popover,
 	GroupHeaderListItem,
+	CheckBox,
+	Toolbar,
 	library,
 	EnabledPropagator,
 	IconPool,
@@ -177,7 +181,12 @@ function(
 			/**
 			 * Defines if there are selected items or not.
 			 */
-			hasSelection: { type: "boolean", visibility: "hidden", defaultValue: false }
+			hasSelection: { type: "boolean", visibility: "hidden", defaultValue: false },
+
+			/**
+			 * Determines if the select all checkbox is visible on top of suggestions.
+			 */
+			showSelectAll: { type: "boolean", defaultValue: false }
 		},
 		associations: {
 
@@ -341,21 +350,9 @@ function(
 			return;
 		}
 
-		if (this.getValueState() != ValueState.None) {
-			this._handleFormattedTextNav();
-			return;
-		}
-
 		// wait for the composition and input events to fire properly since the focus of the list item
 		// triggers unwanted extra events when called in while composing
-		setTimeout(function() {
-			// If list is open then go to the first visible list item. Set this item into the visual viewport.
-			var aItems = ListHelpers.getVisibleItems(this.getItems()),
-				oItem = aItems[0];
-
-			oItem && ListHelpers.getListItem(oItem).focus();
-		}.bind(this), 0);
-
+		setTimeout(this.handleDownEvent.bind(this, oEvent), 0);
 	};
 
 	/**
@@ -394,6 +391,94 @@ function(
 	};
 
 	/**
+	 * Handles the Down Arrow press event.
+	 *
+	 * @param {jquery.Event} oEvent The event object
+	 * @private
+	 */
+	MultiComboBox.prototype.handleDownEvent = function (oEvent) {
+		if (!this.isOpen()) {
+			return;
+		}
+
+		var oSrcControl = oEvent.srcControl,
+			oSrcDomRef = oSrcControl && oSrcControl.getDomRef(),
+			bFocusInInput = containsOrEquals(this.getDomRef(), oSrcDomRef),
+			oValueStateHeader = this.getPicker().getCustomHeader(),
+			oValueStateHeaderDom = oValueStateHeader && oValueStateHeader.getDomRef();
+
+		oEvent.setMarked();
+		// note: Prevent document scrolling when Down key is pressed
+		oEvent.preventDefault();
+
+		if (bFocusInInput && this.getValueState() != ValueState.None) {
+			this._handleFormattedTextNav();
+			return;
+		}
+
+		if ((bFocusInInput || containsOrEquals(oValueStateHeaderDom, oSrcDomRef)) && this.getShowSelectAll()) {
+			this.focusSelectAll();
+			return;
+		}
+
+		this.focusFirstItemInList();
+	};
+
+	/**
+	 * Handles the End press event.
+	 *
+	 * @param {jquery.Event} oEvent The event object
+	 * @private
+	 */
+	MultiComboBox.prototype.handleEndEvent = function (oEvent) {
+		oEvent.setMarked();
+		// Note: Prevent document scrolling when End key is pressed
+		oEvent.preventDefault();
+
+		var aVisibleItems = ListHelpers.getVisibleItems(this.getItems()),
+			oListItem = aVisibleItems.length && ListHelpers.getListItem(aVisibleItems[aVisibleItems.length - 1]);
+
+		oListItem && oListItem.focus();
+	};
+
+	/**
+	 * Handles the Home press event.
+	 *
+	 * @param {jquery.Event} oEvent The event object
+	 * @private
+	 */
+	MultiComboBox.prototype.handleHomeEvent = function (oEvent) {
+		oEvent.setMarked();
+		// note: Prevent document scrolling when Home key is pressed
+		oEvent.preventDefault();
+
+		if (this.getValueState() !== ValueState.None) {
+			this._handleFormattedTextNav();
+			oEvent.stopPropagation(true);
+			return;
+		}
+
+		if (this.getShowSelectAll()) {
+			this.focusSelectAll();
+			oEvent.stopPropagation(true);
+			return;
+		}
+
+		this.focusFirstItemInList();
+	};
+
+	/**
+	 * Focuses on the first item in the list of options.
+	 * @private
+	 */
+	MultiComboBox.prototype.focusFirstItemInList = function () {
+		var aVisibleItems = ListHelpers.getVisibleItems(this.getItems()),
+			oListItem = aVisibleItems.length && ListHelpers.getListItem(aVisibleItems[0]);
+
+		oListItem && oListItem.focus();
+	};
+
+	/**
 	 * Checks if the focused element is part of the Tokenizer.
 	 * @returns {boolean} True if the focus is inside the Tokenizer
 	 * @private
@@ -409,6 +494,8 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onsapshow = function(oEvent) {
+		oEvent.preventDefault();
+
 		this._handleItemToFocus();
 		ComboBoxBase.prototype.onsapshow.apply(this, arguments);
 	};
@@ -426,33 +513,17 @@ function(
 	 *  - pressing the Up arrow key will move the focus to the input,
 	 *  - pressing the Down arrow key - will select the first selectable item.
 	 *
-	 * @param {object} oFormattedText <code>sap.m.FormattedText</code> value state message.
+	 * @param {object} oValueStateHeader The value state header.
 	 * @param {array} aValueStateLinks The links in <code>sap.m.FormattedText</code> value state message.
 	 * @returns {object} Delegate for navigation and focus handling for <code>sap.m.ValueStateHeader</code> containing <code>sap.m.FormattedText</code> message with links.
 	 *
 	 * @private
 	 */
-	MultiComboBox.prototype._valueStateNavDelegate = function(oValueStateHeader, oFormattedText, aValueStateLinks) {
-		var oFocusDomRef = this.getFocusDomRef();
-
-		this.oValueStateNavDelegate = {
-			onsapdown: function(oEvent) {
-				var aVisibleItems = ListHelpers.getVisibleItems(this.getItems()),
-					oListItem = aVisibleItems.length && ListHelpers.getListItem(aVisibleItems[0]);
-
-				oEvent.preventDefault();
-				oListItem && oListItem.focus();
-			}.bind(this),
-			onsapup: function() {
-				oFocusDomRef.focus();
-			},
-			onsapend: function(oEvent) {
-				var aVisibleItems = ListHelpers.getVisibleItems(this.getItems()),
-					oListItem = aVisibleItems.length && ListHelpers.getListItem(aVisibleItems[aVisibleItems.length - 1]);
-
-				oEvent.preventDefault();
-				oListItem && oListItem.focus();
-			}.bind(this),
+	MultiComboBox.prototype._valueStateNavDelegate = function(oValueStateHeader, aValueStateLinks) {
+		return {
+			onsapdown: this.handleDownEvent,
+			onsapup: this.focus,
+			onsapend: this.handleEndEvent,
 			onfocusout: function(oEvent) {
 				// Links should not be tabbable after the focus is moved outside of the value state header
 				oValueStateHeader.removeStyleClass("sapMFocusable");
@@ -463,10 +534,10 @@ function(
 						oLink.getDomRef().setAttribute("tabindex", "-1");
 					});
 				}
-			}
+			},
+			onsapshow: this.close,
+			onsaphide: this.close
 		};
-
-		return this.oValueStateNavDelegate;
 	};
 
 	/**
@@ -492,16 +563,8 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._formattedTextLinksNav = {
-		onsapup: function() {
-			this.focus();
-		},
-		onsapdown: function() {
-			var aSelectableItems = ListHelpers.getSelectableItems(this.getItems());
-
-			if (aSelectableItems.length) {
-				aSelectableItems[0].focus();
-			}
-		}
+		onsapup: this.focus,
+		onsapdown: this.handleDownEvent
 	};
 
 	/**
@@ -513,8 +576,6 @@ function(
 	MultiComboBox.prototype._handleFormattedTextNav = function() {
 		var	oCustomHeader = this.getPicker().getCustomHeader(),
 			aValueStateLinks = this.getValueStateLinks(),
-			oFormattedText = oCustomHeader.getFormattedText(),
-			oValueStateNavDelegate = this.oValueStateNavDelegate || this._valueStateNavDelegate(oCustomHeader, oFormattedText, aValueStateLinks),
 			oLastValueStateLink = aValueStateLinks ? aValueStateLinks[aValueStateLinks.length - 1] : null,
 			oFirstValueStateLink = aValueStateLinks ? aValueStateLinks[0] : null;
 
@@ -522,9 +583,13 @@ function(
 			return;
 		}
 
+		if (!this.oValueStateNavDelegate) {
+			this.oValueStateNavDelegate = this._valueStateNavDelegate(oCustomHeader, aValueStateLinks);
+			oCustomHeader.addEventDelegate(this.oValueStateNavDelegate, this);
+		}
+
 		// Make the value state header focusable and focus it
 		oCustomHeader.getDomRef().setAttribute("tabindex", "-1");
-		oCustomHeader.addDelegate(oValueStateNavDelegate);
 		oCustomHeader.addStyleClass("sapMFocusable");
 		oCustomHeader.focus();
 
@@ -532,7 +597,7 @@ function(
 		// (on the items list or on the input) and the opposite when the header is focused.
 		aValueStateLinks.forEach(function(oLink) {
 			oLink.getDomRef().setAttribute("tabindex", "0");
-			oLink.addDelegate(this._formattedTextLinksNav, this);
+			oLink.addEventDelegate(this._formattedTextLinksNav, this);
 		}, this);
 
 		this.oMoveFocusBackToVSHeader = !this.oMoveFocusBackToVSHeader ? {
@@ -543,8 +608,8 @@ function(
 			}
 		} : this.oMoveFocusBackToVSHeader;
 
-		oLastValueStateLink && oLastValueStateLink.addDelegate(this._closePickerDelegate, this);
-		oFirstValueStateLink && oFirstValueStateLink.addDelegate(this.oMoveFocusBackToVSHeader, this);
+		oLastValueStateLink && oLastValueStateLink.addEventDelegate(this._closePickerDelegate, this);
+		oFirstValueStateLink && oFirstValueStateLink.addEventDelegate(this.oMoveFocusBackToVSHeader, this);
 	};
 
 	/**
@@ -553,7 +618,9 @@ function(
 	 * @param {jQuery.Event} oEvent The event object.
 	 * @private
 	 */
-	MultiComboBox.prototype.onsaphide = MultiComboBox.prototype.onsapshow;
+	MultiComboBox.prototype.onsaphide = function (oEvent) {
+		this.onsapshow(oEvent);
+	};
 
 	/**
 	 * Handles the item selection when user triggers an item selection via key press (TAB, ENTER etc.).
@@ -1122,6 +1189,8 @@ function(
 			onAfterRendering: this.onAfterRenderingList,
 			onfocusin: this.onFocusinList
 		}, this);
+
+		this.getShowSelectAll() && this.createSelectAllHeaderToolbar(oList);
 	};
 
 	/**
@@ -1181,6 +1250,8 @@ function(
 		if (this._getList()) {
 			this.syncPickerContent(true);
 		}
+
+		this.toggleSelectAllVisibility(this.getShowSelectAll());
 
 		this._deregisterResizeHandler();
 		this._synchronizeSelectedItemAndKey();
@@ -1470,6 +1541,8 @@ function(
 		} else {
 			itemsVisibilityHandler(this.getItems(), this.filterItems({value: sValue, items: aItems}));
 		}
+
+		this.manageSelectAllCheckBoxState();
 	};
 
 	/**
@@ -1794,9 +1867,7 @@ function(
 					oEvent.setMarked();
 					oEvent.preventDefault();
 
-					var aVisibleItems = ListHelpers.getSelectableItems(this.getItems()).filter(function(oItem) {
-						return !oItem.isA("sap.ui.core.SeparatorItem") && !oItem.isA("sap.m.GroupHeaderListItem");
-					});
+					var aVisibleItems = ListHelpers.getSelectableItems(this.getItems());
 					var aSelectedItems = this._getSelectedItemsOf(aVisibleItems);
 
 					if (aSelectedItems.length !== aVisibleItems.length) {
@@ -1867,14 +1938,7 @@ function(
 				// Handle when F4 or Alt + DOWN arrow are pressed.
 				oEvent.setMarked();
 
-				if (this.isOpen()) {
-					this.close();
-					return;
-				}
-
-				if (this.hasContent()) {
-					this.open();
-				}
+				this.close();
 			},
 
 			onsaphide: function(oEvent) {
@@ -1889,40 +1953,9 @@ function(
 				this.close();
 			},
 
-			onsaphome: function(oEvent) {
+			onsaphome: this.handleHomeEvent.bind(this),
 
-				// Handle when Pos1 is pressed.
-				oEvent.setMarked();
-
-				// note: prevent document scrolling when Home key is pressed
-				oEvent.preventDefault();
-
-				if (this.getValueState() !== ValueState.None) {
-					this._handleFormattedTextNav();
-					oEvent.stopPropagation(true);
-					return;
-				}
-
-				var aVisibleItems = ListHelpers.getSelectableItems(this.getItems());
-				var oItem = aVisibleItems[0];
-
-				// Scrolls an item into the visual viewport
-				ListHelpers.getListItem(oItem).focus();
-			},
-
-			onsapend: function(oEvent) {
-
-				// Handle when End is pressed.
-				oEvent.setMarked();
-
-				// note: prevent document scrolling when End key is pressed
-				oEvent.preventDefault();
-				var aVisibleItems = ListHelpers.getSelectableItems(this.getItems());
-				var oItem = aVisibleItems[aVisibleItems.length - 1];
-
-				// Scrolls an item into the visual viewport
-				ListHelpers.getListItem(oItem).focus();
-			},
+			onsapend: this.handleEndEvent.bind(this),
 
 			onsapup: function(oEvent) {
 
@@ -1936,18 +1969,20 @@ function(
 				var oItemFirst = aVisibleItems[0];
 				var oItemCurrent = jQuery(document.activeElement).control()[0];
 
-				if (oItemCurrent === ListHelpers.getListItem(oItemFirst) && this.getValueState() !== ValueState.None) {
-					this._handleFormattedTextNav();
-					oEvent.stopPropagation(true);
+				if (oItemCurrent !== ListHelpers.getListItem(oItemFirst)) {
 					return;
-				} else if (oItemCurrent === ListHelpers.getListItem(oItemFirst)) {
-					this.focus();
-
-					// Stop the propagation of event. Otherwise the list item sets
-					// the focus and
-					// it is not possible to come up from list box to input field.
-					oEvent.stopPropagation(true);
 				}
+
+				if (this.getShowSelectAll()) {
+					this.focusSelectAll();
+				} else if (this.getValueState() !== ValueState.None) {
+					this._handleFormattedTextNav();
+				} else {
+					this.focus();
+				}
+
+				// prevent list from focusing list item
+				oEvent.stopPropagation(true);
 			},
 
 			onfocusin: function(oEvent) {
@@ -2182,6 +2217,8 @@ function(
 			oList.getItems()[this._iFocusedIndex].focus();
 			this._iFocusedIndex = null;
 		}
+
+		this.manageSelectAllCheckBoxState();
 	};
 
 	/**
@@ -3124,6 +3161,7 @@ function(
 			}
 		}
 		itemsVisibilityHandler(this.getItems(), this.filterItems({ value: sValue, items: aItemsToCheck }));
+		this.manageSelectAllCheckBoxState();
 
 		this._sOldInput = sValue;
 
@@ -3198,8 +3236,6 @@ function(
 	};
 
 	MultiComboBox.prototype.init = function() {
-		this._oRb = core.getLibraryResourceBundle("sap.m");
-
 		ComboBoxBase.prototype.init.apply(this, arguments);
 
 		// Flag to mark that all the initial setters have completed.
@@ -3290,6 +3326,7 @@ function(
 		this._oRbC = null;
 		this._oRbM = null;
 		this._oListItemEnterEventDelegate = null;
+		this.oValueStateNavDelegate = null;
 
 		this._sInitialValueState = null;
 	};
@@ -3364,7 +3401,7 @@ function(
 			oItemToFocus = this._getItemByValue(sValue);
 		}
 
-		// If no items are selected focuse the first visible one
+		// If no items are selected focus the first visible one
 		if (!oItemToFocus) {
 			oItemToFocus = aSelectedItems.length ? ListHelpers.getItemByListItem(this.getItems(), this._getList().getSelectedItems()[0]) : aSelectableItems[0];
 		}
@@ -3523,6 +3560,7 @@ function(
 	MultiComboBox.prototype.applyShowItemsFilters = function () {
 		this.syncPickerContent();
 		itemsVisibilityHandler(this.getItems(), this.filterItems({value: this.getValue() || "_", items: this.getItems()}));
+		this.manageSelectAllCheckBoxState();
 	};
 
 	/**
@@ -3548,6 +3586,183 @@ function(
 		if (bHasItemsAfterFiltering) {
 			ComboBoxBase.prototype.showItems.apply(this, arguments);
 		}
+	};
+
+	/**
+	 * Creates a list header toolbar containing the select all checkbox.
+	 *
+	 * @param {sap.m.List} oList The list instance to be configured
+	 * @private
+	 */
+	MultiComboBox.prototype.createSelectAllHeaderToolbar = function (oList) {
+		oList = oList || this._getList();
+
+		if (!oList || oList.getHeaderToolbar()) {
+			return;
+		}
+
+		var oSelectAllCheckbox = new CheckBox({
+			select: function (oEvent) {
+				var oCheckBox = oEvent.getSource(),
+					aVisibleSelectableItems = ListHelpers.getSelectableItems(this.getItems()),
+					aSelectedVisibleItems = this._getSelectedItemsOf(aVisibleSelectableItems);
+
+				if (oEvent.getParameter("selected")) {
+					var aNotSelectedVisibleItems = aVisibleSelectableItems.filter(function (aCurSelectedItem) {
+						return aSelectedVisibleItems.indexOf(aCurSelectedItem) === -1;
+					});
+
+					aNotSelectedVisibleItems.forEach(function(oItem) {
+						this.setSelection({
+							item: oItem,
+							items: aNotSelectedVisibleItems,
+							selectAll: true,
+							id: oItem.getId(),
+							key: oItem.getKey(),
+							fireChangeEvent: true,
+							suppressInvalidate: true,
+							listItemUpdated: false
+						});
+					}, this);
+
+				} else {
+					aSelectedVisibleItems.forEach(function(oItem) {
+						this.removeSelection({
+							item: oItem,
+							items: aSelectedVisibleItems,
+							selectAll: true,
+							id: oItem.getId(),
+							key: oItem.getKey(),
+							fireChangeEvent: true,
+							suppressInvalidate: true,
+							listItemUpdated: false
+						});
+					}, this);
+				}
+
+				oCheckBox.focus();
+			}.bind(this)
+		});
+
+		oSelectAllCheckbox.addEventDelegate(this._selectAllDelegate(), this);
+
+		oList.setHeaderToolbar(new Toolbar({
+				content: oSelectAllCheckbox
+			}).addStyleClass("sapMMultiComboBoxSelectAll"))
+			.setSticky(["HeaderToolbar"]);
+
+		this.attachSelectionChange(this.manageSelectAllCheckBoxState.bind(this));
+	};
+
+	/**
+	 * Updates the state and text of the select all checkbox.
+	 *
+	 * @private
+	 */
+	MultiComboBox.prototype.manageSelectAllCheckBoxState = function () {
+		var oSelectAllCheckbox = this.getSelectAllCheckbox();
+
+		if (!oSelectAllCheckbox) {
+			return;
+		}
+
+		var aItems = this.getItems(),
+			aSelectedItems = this.getSelectedItems(),
+			bSelectAll = ListHelpers.getSelectableItems(aItems).filter(function (oSelectableItem) {
+				return aSelectedItems.indexOf(oSelectableItem) > -1;
+			}).length === ListHelpers.getSelectableItems(aItems).length;
+
+		oSelectAllCheckbox
+			.setText(this._oRbM.getText("MULTICOMBOBOX_SELECT_ALL_CHECKBOX", [aSelectedItems.length, ListHelpers.getAllSelectableItems(aItems).length]))
+			.setSelected(bSelectAll);
+	};
+
+	/**
+	 * Gets the list header toolbar containing the select all checkbox.
+	 *
+	 * @returns {sap.m.Toolbar|undefined} The header toolbar, if defined
+	 * @private
+	 */
+	MultiComboBox.prototype.getSelectAllToolbar = function () {
+		var oList = this._getList();
+
+		return oList && oList.getHeaderToolbar();
+	};
+
+	/**
+	 * Gets the select all checkbox.
+	 *
+	 * @returns {sap.m.Checkbox|undefined} The select all checkbox, if defined
+	 * @private
+	 */
+	MultiComboBox.prototype.getSelectAllCheckbox = function () {
+		var oSelectAllToolbar = this.getSelectAllToolbar();
+
+		return oSelectAllToolbar && oSelectAllToolbar.getContent()[0];
+	};
+
+	/**
+	 * Event Delegate for the select all checkbox.
+	 *
+	 * @returns {object} The delegate object, containing all event delegates
+	 * @private
+	 */
+	MultiComboBox.prototype._selectAllDelegate = function () {
+		return {
+			onsapdown: this.handleDownEvent,
+			onsapup: function (oEvent) {
+				oEvent.preventDefault();
+				if (this.getValueState() !== ValueState.None) {
+					this._handleFormattedTextNav();
+					return;
+				}
+
+				this.getFocusDomRef().focus();
+			},
+			onsaphome: this.handleHomeEvent,
+			onsapend: this.handleEndEvent,
+			onfocusin: function () {
+				var oRenderer = this.getRenderer(),
+					oSelectAllToolbar = this.getSelectAllToolbar();
+
+				oSelectAllToolbar && oSelectAllToolbar.addStyleClass(oRenderer.CSS_CLASS_MULTICOMBOBOX + "SelectAllFocused");
+			},
+			onfocusout: function () {
+				var oRenderer = this.getRenderer(),
+					oSelectAllToolbar = this.getSelectAllToolbar();
+
+				oSelectAllToolbar && oSelectAllToolbar.removeStyleClass(oRenderer.CSS_CLASS_MULTICOMBOBOX + "SelectAllFocused");
+			},
+			onsapshow: this.close,
+			onsaphide: this.close
+		};
+	};
+
+	/**
+	 * Focuses the select all checkbox.
+	 * @private
+	 */
+	MultiComboBox.prototype.focusSelectAll = function () {
+		var oSelectAllCheckbox = this.getSelectAllCheckbox();
+
+		oSelectAllCheckbox && oSelectAllCheckbox.focus();
+	};
+
+	/**
+	 * Toggles the visibility of the list header toolbar, containing the select all checkbox.
+	 *
+	 * @param {boolean} bShow If true, the select all should be visible
+	 * @private
+	 */
+	MultiComboBox.prototype.toggleSelectAllVisibility = function (bShow) {
+		var oSelectAllToolbar = this.getSelectAllToolbar();
+
+		if (oSelectAllToolbar) {
+			oSelectAllToolbar.setVisible(bShow);
+			return;
+		}
+
+		bShow && this.createSelectAllHeaderToolbar();
 	};
 
 	return MultiComboBox;

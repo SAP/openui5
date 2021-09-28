@@ -184,6 +184,19 @@ describe('sap.m.MultiComboBox', function() {
 		});
 	});
 
+	//MultiComboBox - SelectAll
+	it("should visualize a MultiComboBox with select all functionality", function(){
+		browser.executeScript('document.getElementById("MultiComboBoxSelectAll").scrollIntoView()').then(function() {
+			element(by.id("MultiComboBoxSelectAll-arrow")).click();
+			expect(takeScreenshot()).toLookAs("multiComboBox_with_selectAll_initial");
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.SPACE).perform();
+			expect(takeScreenshot()).toLookAs("multiComboBox_with_selectAll_selected");
+			browser.actions().sendKeys(protractor.Key.SPACE).perform();
+			expect(takeScreenshot()).toLookAs("multiComboBox_with_selectAll_deselected");
+		});
+	});
+
 	// MultiComboBox - dropwdown selection
 	it("should visualize a MultiComboBox dropdown with correct selection", function() {
 		browser.executeScript('document.getElementById("MultiComboBoxBinding").scrollIntoView()').then(function() {

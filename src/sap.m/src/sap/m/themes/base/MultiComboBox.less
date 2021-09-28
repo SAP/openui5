@@ -120,4 +120,21 @@ li.sapMMultiComboBoxItem .sapMCbBg {
 			min-width: @_InputBase_Control_Tokens_ReadOnly_MinWidth_Compact;
 		}
 	}
+
+	.sapMMultiComboBoxSelectAll.sapMTB .sapMCb {
+		margin-left: 0.5rem;
+		padding-left: 2.25rem;
+	}
+}
+
+.sapMMultiComboBoxSelectAll.sapMTB.sapMIBar {
+	padding: 0;
+	&.sapMMultiComboBoxSelectAllFocused {
+		outline: 1px dotted @sapUiContentFocusColor;
+		outline-offset: -0.125rem;
+	}
+
+	& .sapMBarChild.sapMCb.sapMCbHasLabel:focus:before {
+		border: none;
+	}
 }

@@ -5223,6 +5223,7 @@ sap.ui.define([
 				items: [ oItem ]
 			}),
 			oFakeEvent = {
+				preventDefault: function () {},
 				setMarked: function () {},
 				keyCode: 111 // dommy code
 			};
@@ -5248,6 +5249,7 @@ sap.ui.define([
 				selectedItems: [ oItem ]
 			}),
 			oFakeEvent = {
+				preventDefault: function () {},
 				setMarked: function () {},
 				keyCode: 111 // dommy code
 			};
@@ -5274,6 +5276,7 @@ sap.ui.define([
 				selectedItems: [ oItem1, oItem2 ]
 			}),
 			oFakeEvent = {
+				preventDefault: function () {},
 				setMarked: function () {},
 				keyCode: 111 // dommy code
 			};
@@ -5398,6 +5401,7 @@ sap.ui.define([
 		}),
 			aItems = [new Item({key: "Item1", text: "Item1"})],
 			oEventMock = {
+				preventDefault: function () {},
 				setMarked: function() {
 					return false;
 				}
@@ -5873,6 +5877,7 @@ sap.ui.define([
 	QUnit.test("Focus handling - ARROW keys", function (assert) {
 		// Arrange
 		var oGroupHeaderItem = new SeparatorItem({text: "Group Header"});
+		this.oMultiComboBox.setShowSelectAll(true);
 		this.oMultiComboBox.setValueState("Warning");
 		this.oMultiComboBox.insertItem(oGroupHeaderItem, 0);
 		this.oMultiComboBox.syncPickerContent();
@@ -5891,7 +5896,19 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
 		this.clock.tick(500);
 		// Assert
+		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused");
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+		// Assert
 		assert.strictEqual(this.oMultiComboBox._getList().getItems()[0].getDomRef(), document.activeElement, "The first item in the list should be focused");
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP);
+		this.clock.tick(500);
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused");
 
 		// Act
 		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP);
@@ -5904,11 +5921,42 @@ sap.ui.define([
 		this.clock.tick(500);
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getFocusDomRef(), document.activeElement, "The input field should be focused");
+
+		this.oMultiComboBox.setValueState("None");
+		sap.ui.getCore().applyChanges();
+
+		this.oMultiComboBox.open();
+		this.clock.tick();
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused");
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+		// Assert
+		assert.strictEqual(this.oMultiComboBox._getList().getItems()[0].getDomRef(), document.activeElement, "The first item in the list should be focused");
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP);
+		this.clock.tick(500);
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused");
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP);
+		this.clock.tick(500);
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.getFocusDomRef(), document.activeElement, "The input field should be focused");
 	});
 
 	QUnit.test("Focus handling - HOME and END keys", function (assert) {
 		// Arrange
 		this.oMultiComboBox.setValueState("Warning");
+		this.oMultiComboBox.setShowSelectAll(true);
 		sap.ui.getCore().applyChanges();
 
 		this.oMultiComboBox.open();
@@ -5931,6 +5979,36 @@ sap.ui.define([
 		this.clock.tick(500);
 		// Assert
 		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getDomRef(), document.activeElement, "The value state message should be focused");
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused");
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.HOME);
+		this.clock.tick(500);
+		// Assert
+		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getDomRef(), document.activeElement, "The value state message should be focused");
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.END);
+		this.clock.tick(500);
+		// Assert
+		assert.strictEqual(this.oMultiComboBox._getList().getItems()[this.oMultiComboBox._getList().getItems().length - 1].getDomRef(), document.activeElement, "The last item in the list should be focused");
+
+		// Arrange
+		this.oMultiComboBox.setValueState("None");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.HOME);
+		this.clock.tick(500);
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused");
 	});
 
 	QUnit.module("Mobile mode (dialog)");
@@ -7959,6 +8037,8 @@ sap.ui.define([
 
 		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
 
+		this.clock.tick();
+
 		// Assert
 		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getDomRef(), document.activeElement, "The formatted value state message is focused");
 	});
@@ -7987,16 +8067,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Value state header containing links should be focusable but not part of the tab chain", function(assert) {
-		// Arrange
-		var oFakeEvent = {
-			isMarked: function () { },
-			setMarked: function () { },
-			preventDefault: function() {return false; }
-		};
-
 		// Act
 		this.oMultiComboBox.open();
-		this.oMultiComboBox.onsapdown(oFakeEvent);
+		this.clock.tick();
+
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick();
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().$().attr("tabindex"), "-1", "Value state message is focusable but not part of the tab chain");
@@ -9052,5 +9128,117 @@ sap.ui.define([
 
 		// Clean
 		fnFireSelectionChangeSpy.restore();
+	});
+
+	QUnit.module("selectAll", {
+		beforeEach : function() {
+			this.oMultiComboBox = new MultiComboBox({
+				items: [
+					new ListItem({
+						text: "Hong Kong",
+						additionalText: "China"
+					}),
+					new ListItem({
+						text: "Haskovo",
+						additionalText: "Bulgaria"
+					}),
+					new ListItem({
+						text: "Baragoi",
+						additionalText: "Kenya"
+					}),
+					new ListItem({
+						text: "Brussel",
+						additionalText: "Belgium"
+					})
+				]
+			});
+			this.oMultiComboBox.placeAt("MultiComboBoxContent");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oMultiComboBox.destroy();
+		}
+	});
+
+	QUnit.test("getSelectAllToolbar & getSelectAllCheckbox", function (assert) {
+		// Assert
+		assert.notOk(this.oMultiComboBox.getSelectAllToolbar(), "The select all toolbar should not be rendered by default");
+		assert.notOk(this.oMultiComboBox.getSelectAllCheckbox(), "The select all checkbox should not be rendered by default");
+
+		this.oMultiComboBox.setShowSelectAll(true);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(this.oMultiComboBox.getSelectAllToolbar(), "The select all toolbar should not be rendered, since the list is not rendered");
+		assert.notOk(this.oMultiComboBox.getSelectAllCheckbox(), "The select all checkbox should not be rendered, since the list is not rendered");
+
+		// Act
+		this.oMultiComboBox.open();
+		this.clock.tick(500);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(this.oMultiComboBox.getSelectAllToolbar().hasStyleClass("sapMMultiComboBoxSelectAll"), "The select all checkbox should be rendered");
+		assert.ok(this.oMultiComboBox.getSelectAllToolbar(), "The select all toolbar should be rendered");
+		assert.ok(this.oMultiComboBox.getSelectAllCheckbox(), "The select all checkbox should be rendered");
+
+		this.oMultiComboBox.setShowSelectAll(false);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(this.oMultiComboBox.getSelectAllToolbar().getVisible(), "The select all toolbar should not be visible, when showSelectAll is false");
+
+		this.oMultiComboBox.setShowSelectAll(true);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(this.oMultiComboBox.getSelectAllToolbar().getVisible(), "The select all toolbar should be visible, when showSelectAll is true");
+	});
+
+	QUnit.test("Focus handling", function (assert) {
+		// Act
+		this.oMultiComboBox.setShowSelectAll(true);
+		this.oMultiComboBox.open();
+		this.clock.tick(500);
+
+		this.oMultiComboBox.focusSelectAll();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused.");
+		assert.ok(this.oMultiComboBox.getSelectAllToolbar().hasStyleClass("sapMMultiComboBoxSelectAllFocused"), "The select all toolbar should have a focus class.");
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox._getList().getItems()[0].getDomRef(), document.activeElement, "The first item in the list should be focused.");
+		assert.notOk(this.oMultiComboBox.getSelectAllToolbar().hasStyleClass("sapMMultiComboBoxSelectAllFocused"), "The select all toolbar should not have a focus class.");
+	});
+
+	QUnit.test("Toggle selection", function (assert) {
+		// Act
+		this.oMultiComboBox.setShowSelectAll(true);
+		this.oMultiComboBox.open();
+		this.clock.tick(500);
+
+		this.oMultiComboBox.focusSelectAll();
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		sap.ui.test.qunit.triggerKeyup(document.activeElement, KeyCodes.SPACE);
+		this.clock.tick(500);
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.getSelectedItems().length, 4, "All list items should be selected");
+
+		// Act
+		sap.ui.test.qunit.triggerKeyup(document.activeElement, KeyCodes.SPACE);
+		this.clock.tick(500);
+
+		// Assert
+		assert.notOk(this.oMultiComboBox.getSelectedItems().length, "No list items should be selected");
 	});
 });
