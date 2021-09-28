@@ -24,8 +24,29 @@
 	background: @sapUiFieldBackground;
 	border-radius: @sapUiFieldBorderCornerRadius;
 
+	&.sapMInputBaseContentWrapperState {
+		&.sapMInputBaseContentWrapperSuccess {
+			border-width: @sapField_SuccessBorderWidth;
+			border-style: @sapField_SuccessBorderStyle;
+		}
+
+		&.sapMInputBaseContentWrapperError {
+			border-width: @sapField_InvalidBorderWidth;
+			border-style: @sapField_InvalidBorderStyle;
+		}
+
+		&.sapMInputBaseContentWrapperWarning {
+			border-width: @sapField_WarningBorderWidth;
+			border-style: @sapField_WarningBorderStyle;
+		}
+
+		&.sapMInputBaseContentWrapperInformation {
+			border-width: @sapField_InformationBorderWidth;
+			border-style: @sapField_InformationBorderStyle;
+		}
+	}
+
 	&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess){
-		border-width: 2px;
 		/* calculated line-height excluding the top and bottom borders */
 		.sapMInputBaseIcon {
 			line-height: 2rem;
