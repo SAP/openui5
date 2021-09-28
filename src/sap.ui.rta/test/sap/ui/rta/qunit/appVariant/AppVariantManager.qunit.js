@@ -159,16 +159,16 @@ function (
 
 			oServer = sinon.fakeServer.create();
 
-			sandbox.stub(AppVariantUtils, "getInboundInfo").returns({
+			sandbox.stub(AppVariantUtils, "getInboundInfo").returns(Promise.resolve({
 				currentRunningInbound: "customer.savedAsAppVariant",
 				addNewInboundRequired: true
-			});
+			}));
 
 			var oParsedHashStub = {
 				semanticObject: "testSemanticObject",
 				action: "testAction"
 			};
-			sandbox.stub(FlUtils, "getParsedURLHash").returns(oParsedHashStub);
+			sandbox.stub(FlUtils, "getParsedURLHashAsync").returns(Promise.resolve(oParsedHashStub));
 
 			this.oAppVariantData = {
 				description: "App Variant Description",

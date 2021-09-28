@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
 	"sap/ui/rta/appVariant/manageApps/webapp/model/models",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/appVariant/Utils",
@@ -17,6 +18,7 @@ sap.ui.define([
 ], function(
 	Controller,
 	Layer,
+	FlUtils,
 	Model,
 	AppVariantUtils,
 	AppVariantOverviewUtils,
@@ -33,6 +35,7 @@ sap.ui.define([
 	var _sIdRunningApp;
 	var _bKeyUser;
 	var _sLayer;
+	var _oCrossAppNavService;
 	var sModulePath;
 	var oI18n;
 
@@ -41,29 +44,41 @@ sap.ui.define([
 			_sIdRunningApp = this.getOwnerComponent().getIdRunningApp();
 			_bKeyUser = this.getOwnerComponent().getIsOverviewForKeyUser();
 			_sLayer = this.getOwnerComponent().getLayer();
+			var oUShellContainer = FlUtils.getUshellContainer();
 
 			if (!oI18n) {
 				this._createResourceBundle();
 			}
 
 			BusyIndicator.show();
-			return AppVariantOverviewUtils.getAppVariantOverview(_sIdRunningApp, _bKeyUser).then(function(aAppVariantOverviewAttributes) {
-				BusyIndicator.hide();
-				if (aAppVariantOverviewAttributes.length) {
-					return this._arrangeOverviewDataAndBindToModel(aAppVariantOverviewAttributes).then(function(aAppVariantOverviewAttributes) {
-						return this._highlightNewCreatedAppVariant(aAppVariantOverviewAttributes);
-					}.bind(this));
-				}
-
-				AppVariantUtils.closeOverviewDialog();
-				return this._showMessageWhenNoAppVariantsExist();
-			}.bind(this))["catch"](function(oError) {
-				AppVariantUtils.closeOverviewDialog();
-				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_MANAGE_APPS_FAILED", oError);
-				oErrorInfo.overviewDialog = true;
-				BusyIndicator.hide();
-				return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
-			});
+			return Promise.resolve()
+				.then(function() {
+					if (oUShellContainer) {
+						return oUShellContainer.getServiceAsync("CrossApplicationNavigation")
+							.then(function(oCrossAppNavService) {
+								_oCrossAppNavService = oCrossAppNavService;
+							});
+					}
+					return undefined;
+				})
+				.then(AppVariantOverviewUtils.getAppVariantOverview.bind(AppVariantOverviewUtils, _sIdRunningApp, _bKeyUser))
+				.then(function(aAppVariantOverviewAttributes) {
+					BusyIndicator.hide();
+					if (aAppVariantOverviewAttributes.length) {
+						return this._arrangeOverviewDataAndBindToModel(aAppVariantOverviewAttributes).then(function(aAppVariantOverviewAttributes) {
+							return this._highlightNewCreatedAppVariant(aAppVariantOverviewAttributes);
+						}.bind(this));
+					}
+					AppVariantUtils.closeOverviewDialog();
+					return this._showMessageWhenNoAppVariantsExist();
+				}.bind(this))
+				.catch(function(oError) {
+					AppVariantUtils.closeOverviewDialog();
+					var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_MANAGE_APPS_FAILED", oError);
+					oErrorInfo.overviewDialog = true;
+					BusyIndicator.hide();
+					return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
+				});
 		},
 
 		_createResourceBundle: function() {
@@ -220,8 +235,6 @@ sap.ui.define([
 		},
 
 		handleUiAdaptation: function(oEvent) {
-			var oNavigationService = sap.ushell.Container.getService("CrossApplicationNavigation");
-
 			var sSemanticObject = this.getModelProperty("semanticObject", oEvent.getSource().getBindingContext());
 			var sAction = this.getModelProperty("action", oEvent.getSource().getBindingContext());
 			var oParams = this.getModelProperty("params", oEvent.getSource().getBindingContext());
@@ -239,7 +252,9 @@ sap.ui.define([
 
 				RuntimeAuthoring.enableRestart(Layer.CUSTOMER);
 
-				oNavigationService.toExternal(oNavigationParams);
+				if (_oCrossAppNavService) {
+					_oCrossAppNavService.toExternal(oNavigationParams);
+				}
 
 				AppVariantUtils.closeOverviewDialog();
 				return true;

@@ -27,14 +27,14 @@ sap.ui.define([
 
 			sap.ushell = Object.assign({}, sap.ushell, {
 				Container: {
-					getService: function() {
-						return {
+					getServiceAsync: function() {
+						return Promise.resolve({
 							getLinks: function() {
 								return Promise.resolve([{
 									result: "success"
 								}]);
 							}
-						};
+						});
 					},
 					setDirtyFlag: function() {
 						return "";
@@ -361,6 +361,37 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("When getAppVariantOverviewAttributes() method is called but the ushell container fails to retrieve the CrossApplicationNavigation service", function (assert) {
+			var oAppVariantInfo = {
+				appId: "id1",
+				title: "title1",
+				subTitle: "subTitle1",
+				description: "description1",
+				iconUrl: "sap-icon://history",
+				isOriginal: true,
+				originLayer: Layer.VENDOR,
+				isAppVariant: false,
+				descriptorUrl: "url1",
+				hasStartableIntent: true,
+				startWith: {
+					semanticObject: "SemObj",
+					action: "Action",
+					parameters: {
+						"sap-appvar-id": "id1"
+					}
+				}
+			};
+
+			sap.ushell.Container.getServiceAsync = function() {
+				return Promise.reject("Failed to get service");
+			};
+
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true)
+				.catch(function(oError) {
+					assert.equal(oError.message, "Error retrieving ushell service CrossApplicationNavigation: Failed to get service", "then an error is raised");
+				});
+		});
+
 		QUnit.test("When getAppVariantOverview() method is called on a reference app (currently adapting) which also has intent information present (Key user view) on S4 cloud system", function (assert) {
 			var oResult = {
 				response: {
@@ -628,12 +659,12 @@ sap.ui.define([
 
 			sap.ushell = Object.assign({}, sap.ushell, {
 				Container: {
-					getService: function() {
-						return {
+					getServiceAsync: function() {
+						return Promise.resolve({
 							getLinks: function() {
 								return Promise.resolve([]);
 							}
-						};
+						});
 					}
 				}
 			});

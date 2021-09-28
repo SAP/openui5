@@ -36,8 +36,8 @@ sap.ui.define([
 	QUnit.module("Given an AppVariantUtils is instantiated", {
 		beforeEach: function () {
 			var oUshellContainerStub = {
-				getService: function () {
-					return {
+				getServiceAsync: function () {
+					return Promise.resolve({
 						getHash: function() {
 							return "testSemanticObject-testAction";
 						},
@@ -47,7 +47,7 @@ sap.ui.define([
 								action: "testAction"
 							};
 						}
-					};
+					});
 				},
 				getLogonSystem: function() {
 					return {
@@ -115,7 +115,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("When getInboundInfo() is called, the running app has no inbounds present in the descriptor of an application", function (assert) {
-			assert.deepEqual(AppVariantUtils.getInboundInfo(), {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the current inbound info is correct");
+			return AppVariantUtils.getInboundInfo()
+				.then(function(mInboundInfo) {
+					assert.deepEqual(mInboundInfo, {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the current inbound info is correct");
+				});
 		});
 
 		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound does not match with inbounds present in the descriptor of an application", function (assert) {
@@ -134,7 +137,10 @@ sap.ui.define([
 				}
 			};
 
-			assert.deepEqual(AppVariantUtils.getInboundInfo(oInbounds), {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the current inbound info is correct");
+			return AppVariantUtils.getInboundInfo(oInbounds)
+				.then(function(mInboundInfo) {
+					assert.deepEqual(mInboundInfo, {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the current inbound info is correct");
+				});
 		});
 
 		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound does match with an inbound present in the descriptor of an application", function (assert) {
@@ -145,7 +151,10 @@ sap.ui.define([
 				}
 			};
 
-			assert.deepEqual(AppVariantUtils.getInboundInfo(oInbounds), {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: false}, "then the existing inbound will be reused");
+			return AppVariantUtils.getInboundInfo(oInbounds)
+				.then(function(mInboundInfo) {
+					assert.deepEqual(mInboundInfo, {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: false}, "then the existing inbound will be reused");
+				});
 		});
 
 		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound match with 1 inbounds' SO and action", function (assert) {
@@ -164,7 +173,10 @@ sap.ui.define([
 				}
 			};
 
-			assert.deepEqual(AppVariantUtils.getInboundInfo(oInbounds), {currentRunningInbound: "inbound2", addNewInboundRequired: false}, "then the current inbound info is correct");
+			return AppVariantUtils.getInboundInfo(oInbounds)
+				.then(function(mInboundInfo) {
+					assert.deepEqual(mInboundInfo, {currentRunningInbound: "inbound2", addNewInboundRequired: false}, "then the current inbound info is correct");
+				});
 		});
 
 		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound match with 2 inbounds' SO and action", function (assert) {
@@ -183,7 +195,10 @@ sap.ui.define([
 				}
 			};
 
-			assert.deepEqual(AppVariantUtils.getInboundInfo(oInbounds), {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the current inbound info is correct");
+			return AppVariantUtils.getInboundInfo(oInbounds)
+				.then(function(mInboundInfo) {
+					assert.deepEqual(mInboundInfo, {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the current inbound info is correct");
+				});
 		});
 
 		QUnit.test("When prepareAddNewInboundChange() method is called", function (assert) {
@@ -234,7 +249,10 @@ sap.ui.define([
 				}
 			};
 
-			assert.deepEqual(AppVariantUtils.prepareAddNewInboundChange("customer.savedAsAppVariant", "appVariantId", {title: "Test Title", subTitle: "Test Subtitle", icon: "Test icon", referenceAppId: "referenceId"}), oInboundPropertyChange, "then the addNewInbound change structure is correct");
+			return AppVariantUtils.prepareAddNewInboundChange("customer.savedAsAppVariant", "appVariantId", {title: "Test Title", subTitle: "Test Subtitle", icon: "Test icon", referenceAppId: "referenceId"})
+				.then(function(oPreparedInboundChange) {
+					assert.deepEqual(oPreparedInboundChange, oInboundPropertyChange, "then the addNewInbound change structure is correct");
+				});
 		});
 
 		QUnit.test("When prepareChangeInboundChange() method is called", function (assert) {
@@ -798,35 +816,28 @@ sap.ui.define([
 			if (!sap.ushell) {
 				sap.ushell = {};
 			}
-			var originalUShell = sap.ushell.services;
-
-			sap.ushell.services = Object.assign({}, sap.ushell.services, {
-				AppConfiguration: {
-					getCurrentApplication: function() {
-						return {
-							componentHandle: {
-								getInstance: function() {
-									return "testInstance";
-								}
-							}
-						};
-					}
-				}
-			});
 
 			sandbox.stub(FlUtils, "getUshellContainer").returns({
-				getService: function() {
-					return {
+				getServiceAsync: function() {
+					return Promise.resolve({
 						toExternal: function() {
 							window.bUShellNavigationTriggered = true;
+						},
+						getCurrentApplication: function() {
+							return {
+								componentHandle: {
+									getInstance: function() {
+										return "testInstance";
+									}
+								}
+							};
 						}
-					};
+					});
 				}
 			});
 
 			return AppVariantUtils.navigateToFLPHomepage().then(function() {
 				assert.equal(window.bUShellNavigationTriggered, true, "then the navigation to fiorilaunchpad gets triggered");
-				sap.ushell.services = originalUShell;
 				delete window.bUShellNavigationTriggered;
 			});
 		});
@@ -837,35 +848,28 @@ sap.ui.define([
 			if (!sap.ushell) {
 				sap.ushell = {};
 			}
-			var originalUShell = sap.ushell.services;
-
-			sap.ushell.services = Object.assign({}, sap.ushell.services, {
-				AppConfiguration: {
-					getCurrentApplication: function() {
-						return {
-							componentHandle: {
-								getInstance: function() {
-									return undefined;
-								}
-							}
-						};
-					}
-				}
-			});
 
 			sandbox.stub(FlUtils, "getUshellContainer").returns({
-				getService: function() {
-					return {
+				getServiceAsync: function() {
+					return Promise.resolve({
 						toExternal: function() {
 							window.bUShellNavigationTriggered = true;
+						},
+						getCurrentApplication: function() {
+							return {
+								componentHandle: {
+									getInstance: function() {
+										return undefined;
+									}
+								}
+							};
 						}
-					};
+					});
 				}
 			});
 
 			return AppVariantUtils.navigateToFLPHomepage().then(function() {
 				assert.equal(window.bUShellNavigationTriggered, false, "then the navigation to fiorilaunchpad does not get triggered");
-				sap.ushell.services = originalUShell;
 				delete window.bUShellNavigationTriggered;
 			});
 		});

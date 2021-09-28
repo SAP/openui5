@@ -166,23 +166,16 @@ sap.ui.define([
 			if (oDescriptor["sap.app"] && oDescriptor["sap.app"].id) {
 				return FeaturesAPI.isSaveAsAvailable(sCurrentLayer).then(function(bIsSaveAsAvailable) {
 					if (bIsSaveAsAvailable) {
-						var oInboundInfo;
-
 						if (oDescriptor["sap.app"].crossNavigation && oDescriptor["sap.app"].crossNavigation.inbounds) {
-							oInboundInfo = AppVariantUtils.getInboundInfo(oDescriptor["sap.app"].crossNavigation.inbounds);
-						} else {
-							oInboundInfo = AppVariantUtils.getInboundInfo();
+							return AppVariantUtils.getInboundInfo(oDescriptor["sap.app"].crossNavigation.inbounds);
 						}
-
-						if (oInboundInfo) {
-							return true;
-						}
+						return AppVariantUtils.getInboundInfo();
 					}
-
-					return false;
+					return undefined;
+				}).then(function(oInboundInfo) {
+					return !!oInboundInfo;
 				});
 			}
-
 			return Promise.resolve(false);
 		},
 		/**

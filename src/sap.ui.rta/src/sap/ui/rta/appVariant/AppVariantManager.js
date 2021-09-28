@@ -81,6 +81,7 @@ sap.ui.define([
 	/**
 	 *
 	 * @param {Object} oAppVariantSpecificData - Contains the specific info needed to create the inline changes for the app variant
+	 * @param {sap.ui.fl.Selector} vSelector - Managed object or selector object
 	 * @returns {Promise[]} returns all the descriptor inline changes
 	 * @description Creates all the descriptor inline changes for different change types.
 	 */
@@ -106,25 +107,31 @@ sap.ui.define([
 		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_ui_setIcon", vSelector));
 
 		/***********************************************************Inbounds handling******************************************************************/
-		var oInboundInfo = AppVariantUtils.getInboundInfo(oAppVariantSpecificData.inbounds);
-		var sCurrentRunningInboundId = oInboundInfo.currentRunningInbound;
+		return AppVariantUtils.getInboundInfo(oAppVariantSpecificData.inbounds)
+			.then(function(oInboundInfo) {
+				var sCurrentRunningInboundId = oInboundInfo.currentRunningInbound;
 
-		// If there is no inbound, create a new inbound
-		if (oInboundInfo.addNewInboundRequired) {
-			// create a inline change using a change type 'appdescr_app_addNewInbound'
-			oPropertyChange = AppVariantUtils.prepareAddNewInboundChange(sCurrentRunningInboundId, sAppVariantId, oAppVariantSpecificData);
-			aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_addNewInbound", vSelector));
+				// If there is no inbound, create a new inbound
+				if (oInboundInfo.addNewInboundRequired) {
+					// create a inline change using a change type 'appdescr_app_addNewInbound'
+					var oInlineChangePromise = AppVariantUtils.prepareAddNewInboundChange(sCurrentRunningInboundId, sAppVariantId, oAppVariantSpecificData)
+						.then(function(oPropertyChange) {
+							return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_addNewInbound", vSelector);
+						});
 
-			// create a inline change using a change type 'appdescr_app_removeAllInboundsExceptOne'
-			oPropertyChange = AppVariantUtils.prepareRemoveAllInboundsExceptOneChange(sCurrentRunningInboundId);
-			aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_removeAllInboundsExceptOne", vSelector));
-		} else {
-			// create a inline change using a change type 'appdescr_app_changeInbound'
-			oPropertyChange = AppVariantUtils.prepareChangeInboundChange(sCurrentRunningInboundId, sAppVariantId, oAppVariantSpecificData);
-			aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", vSelector));
-		}
+					aAllInlineChangeOperations.push(oInlineChangePromise);
 
-		return Promise.all(aAllInlineChangeOperations);
+					// create a inline change using a change type 'appdescr_app_removeAllInboundsExceptOne'
+					oPropertyChange = AppVariantUtils.prepareRemoveAllInboundsExceptOneChange(sCurrentRunningInboundId);
+					aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_removeAllInboundsExceptOne", vSelector));
+				} else {
+					// create a inline change using a change type 'appdescr_app_changeInbound'
+					oPropertyChange = AppVariantUtils.prepareChangeInboundChange(sCurrentRunningInboundId, sAppVariantId, oAppVariantSpecificData);
+					aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", vSelector));
+				}
+
+				return Promise.all(aAllInlineChangeOperations);
+			});
 	};
 
 	/**
