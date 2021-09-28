@@ -132,7 +132,7 @@ sap.ui.define([
 				assert.ok(oContent.getHorizontal(), "ScrollContainer horizontal");
 				assert.equal(oContent.getContent().length, 1, "ScrollContainer content length");
 				var oDefineConditionPanel = oContent.getContent()[0];
-				assert.ok(oDefineConditionPanel.isA("sap.ui.mdc.field.DefineConditionPanel"), "oDefineConditionPanel in ScrollContainer");
+				assert.ok(oDefineConditionPanel.isA("sap.ui.mdc.field.DefineConditionPanel"), "DefineConditionPanel in ScrollContainer");
 				assert.equal(oDefineConditionPanel.getLabel(), "Test", "title");
 				assert.deepEqual(oDefineConditionPanel.getConditions(), oConditions.getProperty("_conditions"), "Conditions on DefineConditionPanel");
 				assert.ok(oDefineConditionPanel.getInputOK(), "inputOK on DefineConditionPanel");
