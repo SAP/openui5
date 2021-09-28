@@ -694,6 +694,33 @@ sap.ui.define([
 				},
 				actions: new Press()
 			});
+		},
+		// NOTE: this is only a temporary action as we are planning to create a page object for the mdc.Link in the near future anyways - ingore the hardcoded texts :)
+		iPressOkButtonOnTheWarningDialog: function() {
+			return this.waitFor({
+				controlType: "sap.m.Dialog",
+				matchers: new PropertyStrictEquals({
+					name: "title",
+					value: "Warning"
+				}),
+				success: function(aDialogs) {
+					Opa5.assert.equal(aDialogs.length, 1, "warning dialog found");
+					var oDialog = aDialogs[1];
+					this.waitFor({
+						searchOpenDialogs: true,
+						controlType: "sap.m.Button",
+						matchers: [
+							new PropertyStrictEquals({
+								name: "text",
+								value: "OK"
+							}),
+							new Ancestor(oDialog, false)
+						],
+						actions: new Press(),
+						errorMessage: "Could not find the 'OK' button"
+					});
+				}
+			});
 		}
 	});
 

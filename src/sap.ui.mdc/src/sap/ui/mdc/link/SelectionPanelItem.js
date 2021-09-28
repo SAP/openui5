@@ -8,7 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new SelectionDialogItem.
+	 * Constructor for a new SelectionPanelItem.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
@@ -19,10 +19,10 @@ sap.ui.define([
 	 * @abstract
 	 * @private
 	 * @since 1.60.0
-	 * @alias sap.ui.mdc.link.SelectionDialogItem
+	 * @alias sap.ui.mdc.link.SelectionPanelItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var SelectionDialogItem = Element.extend("sap.ui.mdc.link.SelectionDialogItem", /** @lends sap.ui.mdc.link.SelectionDialogItem.prototype */
+	var SelectionPanelItem = Element.extend("sap.ui.mdc.link.SelectionPanelItem", /** @lends sap.ui.mdc.link.SelectionPanelItem.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
@@ -79,6 +79,6 @@ sap.ui.define([
 		}
 	});
 
-	return SelectionDialogItem;
+	return SelectionPanelItem;
 
 });

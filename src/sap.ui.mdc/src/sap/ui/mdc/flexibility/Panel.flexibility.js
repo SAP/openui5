@@ -3,9 +3,15 @@
  */
 
 sap.ui.define([
-	'sap/ui/fl/changeHandler/Base'
-], function(Base) {
+	'sap/ui/fl/changeHandler/Base',
+	'./ItemBaseFlex'
+], function(Base, ItemBaseFlex) {
 	"use strict";
+
+	var oLinkHandler = Object.assign({}, ItemBaseFlex);
+    oLinkHandler.findItem = function(oModifier, aActions, sName) {
+		return Promise.resolve(sap.ui.getCore().byId(sName));
+	};
 
 	/**
 	 * Change handlers for adding and remove of a link in sap.ui.mdc.link.Panel.
@@ -116,7 +122,7 @@ sap.ui.define([
 										href: oMetadataOfNewItem.href,
 										target: oMetadataOfNewItem.target,
 										icon: oMetadataOfNewItem.icon,
-										visible: oMetadataOfNewItem.visible
+										visible: true
 									});
 								})
 								.then(function(oItem){

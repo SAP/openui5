@@ -8,17 +8,18 @@ sap.ui.define([
     "use strict";
 
     var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-    var ColumnController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.ColumnController");
+    var ColumnController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.ColumnController", {
+        constructor: function() {
+			BaseController.apply(this, arguments);
+			this._bResetEnabled = true;
+		}
+    });
 
     ColumnController.prototype.getUISettings = function() {
         return {
             title: oResourceBundle.getText("table.SETTINGS_COLUMN"),
             tabText: oResourceBundle.getText("p13nDialog.TAB_Column")
         };
-    };
-
-    ColumnController.prototype.getResetEnabled = function() {
-        return true;
     };
 
     ColumnController.prototype.model2State = function() {

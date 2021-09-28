@@ -7,14 +7,15 @@ sap.ui.define([
 ], function (BaseController, P13nBuilder, SortPanelOld, SortPanel) {
 	"use strict";
 
-    var SortController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.SortController");
+    var SortController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.SortController", {
+        constructor: function() {
+			BaseController.apply(this, arguments);
+			this._bResetEnabled = true;
+		}
+    });
 
     SortController.prototype.getCurrentState = function() {
         return this.getAdaptationControl().getCurrentState().sorters;
-    };
-
-    SortController.prototype.getResetEnabled = function() {
-        return true;
     };
 
     SortController.prototype.getUISettings = function() {

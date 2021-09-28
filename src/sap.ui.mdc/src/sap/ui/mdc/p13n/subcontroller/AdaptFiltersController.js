@@ -7,7 +7,12 @@ sap.ui.define([
 ], function (BaseController, P13nBuilder, merge) {
     "use strict";
 
-    var AdaptFiltersController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.AdaptFiltersController");
+    var AdaptFiltersController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.AdaptFiltersController", {
+        constructor: function() {
+			BaseController.apply(this, arguments);
+			this._bResetEnabled = true;
+		}
+    });
 
     AdaptFiltersController.prototype.getUISettings = function() {
         return {
@@ -52,10 +57,6 @@ sap.ui.define([
                 return oAdaptationFilterBar;
             });
         }.bind(this));
-    };
-
-    AdaptFiltersController.prototype.getResetEnabled = function () {
-        return true;
     };
 
     AdaptFiltersController.prototype.update = function(){

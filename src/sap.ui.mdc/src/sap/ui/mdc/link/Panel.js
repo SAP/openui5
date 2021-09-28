@@ -14,15 +14,16 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/m/SelectDialog',
 	'sap/m/StandardListItem',
-	'sap/ui/mdc/link/SelectionDialog',
-	'sap/ui/mdc/link/SelectionDialogItem',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/model/BindingMode',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/mdc/flexibility/PanelItem.flexibility',
 	'sap/ui/mdc/flexibility/Panel.flexibility',
-	"sap/ui/core/syncStyleClass"
-], function(XMLComposite, mdcLibrary, HBox, VBox, Text, Image, Link, CustomData, Log, SelectDialog, StandardListItem, SelectionDialog, SelectionDialogItem, JSONModel, BindingMode, ManagedObjectObserver, PanelItemFlexibility, PanelFlexibility, syncStyleClass) {
+	"sap/ui/core/syncStyleClass",
+	"sap/ui/mdc/p13n/subcontroller/LinkPanelController",
+	"sap/ui/mdc/p13n/Engine",
+	"sap/ui/mdc/mixin/AdaptationMixin"
+], function(XMLComposite, mdcLibrary, HBox, VBox, Text, Image, Link, CustomData, Log, SelectDialog, StandardListItem, JSONModel, BindingMode, ManagedObjectObserver, PanelItemFlexibility, PanelFlexibility, syncStyleClass, LinkPanelController, Engine, AdaptationMixin) {
 	"use strict";
 
 	/**
@@ -107,6 +108,23 @@ sap.ui.define([
 	});
 	Panel.prototype.init = function() {
 		XMLComposite.prototype.init.call(this);
+
+		Engine.getInstance().registerAdaptation(this, {
+			controller: {
+				LinkItems: LinkPanelController
+			}
+		});
+
+		AdaptationMixin.call(Panel.prototype);
+
+		Engine.getInstance().defaultProviderRegistry.attach(this, "Global");
+
+		sap.ui.require([
+			this.getMetadataHelperPath() || "sap/ui/mdc/Link"
+		], function(MetadataHelper) {
+			this._oMetadataHelper = MetadataHelper;
+		}.bind(this));
+
 		var oModel = new JSONModel({
 			// disjunct sets
 			countAdditionalContent: 0,
@@ -146,6 +164,9 @@ sap.ui.define([
 			this._oObserver.disconnect();
 			this._oObserver = null;
 		}
+		if (this._oMetadataHelper) {
+			this._oMetadataHelper = null;
+		}
 	};
 
 	Panel.prototype.onPressLink = function(oEvent) {
@@ -161,211 +182,13 @@ sap.ui.define([
 	};
 
 	Panel.prototype.onPressLinkPersonalization = function() {
-		this.openSelectionDialog(false, true, undefined);
-	};
-
-	Panel.prototype.openSelectionDialog = function(bForbidNavigation, bShowReset, sStyleClass) {
-		return sap.ui.getCore().loadLibrary('sap.ui.fl', {
-			async: true
-		}).then(function() {
-			sap.ui.require([
-				'sap/ui/fl/write/api/ControlPersonalizationWriteAPI', 'sap/ui/fl/apply/api/FlexRuntimeInfoAPI', this.getMetadataHelperPath() || "sap/ui/mdc/Link"
-			], function(ControlPersonalizationWriteAPI, FlexRuntimeInfoAPI, MetadataHelper) {
-
-				// If the condition, that a control is assigned to a AppComponent is not fulfilled, we can go ahead
-				if (!FlexRuntimeInfoAPI.isFlexSupported({element: this})) {
-					Log.error("No AppComponent fount for control " + this + ". Without AppComponent the personalization is not available.");
-					return Promise.resolve();
-				}
-				// Otherwise we wait until the changes are applied
-				return FlexRuntimeInfoAPI.waitForChanges({element: this}).then(function() {
-
-					return new Promise(function(resolve) {
-						var aAllLinkItems = MetadataHelper.retrieveAllMetadata(this);
-
-						var bShowDefaultIcon = aAllLinkItems.some(function(oMItem) {
-							return !!oMItem.icon;
-						});
-						var aMRuntimeItems = jQuery.extend(true, [], this._getInternalModel().getProperty("/runtimeItems"));
-
-						var aMBaselineItems = MetadataHelper.retrieveBaseline(this);
-						// TODO: add KEYUSER changed items
-						var aMBaselineItemsTotal = aMBaselineItems;
-						this._getInternalModel().setProperty("/baselineItems", aMBaselineItemsTotal);
-
-						var fnCleanUp = function(oSelectionDialog) {
-							oSelectionDialog.close();
-							oSelectionDialog.destroy();
-							this.fireAfterSelectionDialogClose();
-						}.bind(this);
-						var aRuntimeChanges = [];
-						var fnAddRuntimeChange = function(sId, bVisible) {
-							aRuntimeChanges.push({
-								id: sId,
-								visible: bVisible
-							});
-						};
-
-						var fnUpdateResetButton = function(oSelectionDialog) {
-							var bShowResetEnabled = Panel._showResetButtonEnabled(aMBaselineItemsTotal, oSelectionDialog.getItems());
-							this._getInternalModel().setProperty("/showResetEnabled", bShowResetEnabled);
-						};
-
-						this.fireBeforeSelectionDialogOpen();
-
-						var bUnconfirmedResetPressed = false;
-
-						var oSelectionDialog = new SelectionDialog({
-							showItemAsLink: !bForbidNavigation,
-							showReset: bShowReset,
-							showResetEnabled: {
-								path: '$selectionDialog>/showResetEnabled'
-							},
-							items: aAllLinkItems.map(function(oMItem) {
-								// Overwrite metadata with the current values
-								var oMItemRuntime = Panel._getItemById(oMItem.id, aMRuntimeItems);
-								var bIsBaseline = this._isItemBaseline(oMItem);
-								var sIcon = oMItem.icon;
-								if (bShowDefaultIcon && !sIcon) {
-									sIcon = "sap-icon://chain-link";
-								}
-								return new SelectionDialogItem({
-									key: oMItem.id, // convert id to key
-									text: oMItem.text,
-									description: oMItem.description,
-									href: oMItem.href,
-									target: oMItem.target,
-									icon: sIcon,
-									visible: oMItemRuntime ? oMItemRuntime.visible : false,
-									isBaseline: bIsBaseline
-								});
-							}.bind(this)),
-							visibilityChanged: function(oEvent) {
-								// convert key to id
-								var sId = oEvent.getParameter("key");
-								fnAddRuntimeChange(sId, oEvent.getParameter("visible"));
-								fnUpdateResetButton.call(this, oEvent.getSource());
-							}.bind(this),
-							ok: function() {
-								var that = this;
-								var fnCreateChanges = function() {
-									var aPanelChanges = PanelFlexibility.createChanges(that, aRuntimeChanges);
-									var aFlexChangesTotal = [];
-									ControlPersonalizationWriteAPI.add({
-										changes: aPanelChanges,
-										ignoreVariantManagement: true
-									}).then(function(aFlexChanges) {
-										aFlexChangesTotal = aFlexChangesTotal.concat(aFlexChanges);
-										// Then use the new item instance as selector control
-										var aPanelItemChanges = PanelItemFlexibility.createChanges(aRuntimeChanges);
-										return ControlPersonalizationWriteAPI.add({
-											changes: aPanelItemChanges,
-											ignoreVariantManagement: true
-										});
-									}).then(function(aFlexChanges) {
-										aFlexChangesTotal = aFlexChangesTotal.concat(aFlexChanges);
-										return ControlPersonalizationWriteAPI.save({
-											selector: that,
-											changes: aFlexChangesTotal
-										});
-									}).then(function() {
-										fnCleanUp(oSelectionDialog);
-										return resolve(true);
-									});
-								};
-
-								if (bUnconfirmedResetPressed) {
-									ControlPersonalizationWriteAPI.reset({selectors: this.getItems()}).then(function() {
-										fnCreateChanges();
-									});
-								} else {
-									fnCreateChanges();
-								}
-							}.bind(this),
-							cancel: function() {
-								fnCleanUp(oSelectionDialog);
-								return resolve(true);
-							},
-							reset: function() {
-								aRuntimeChanges = [];
-								bUnconfirmedResetPressed = true;
-							}
-						});
-						if (sStyleClass) {
-							oSelectionDialog.addStyleClass(sStyleClass);
-						}
-						fnUpdateResetButton.call(this, oSelectionDialog);
-
-						// toggle compact style
-						syncStyleClass("sapUiSizeCompact", this, oSelectionDialog);
-						oSelectionDialog.setModel(this._getInternalModel(), "$selectionDialog");
-						this.addDependent(oSelectionDialog);
-
-						oSelectionDialog.open();
-					}.bind(this));
-				}.bind(this));
-
-			}.bind(this));
-		}.bind(this));
-	};
-
-	Panel._showResetButtonEnabled = function(aMBaseLineItems, aSelectionDialogItems) {
-		var bShowResetButtonEnabled = false;
-		var aMRuntimeItems = Panel._mapSelectionDialogItems(aSelectionDialogItems);
-
-		var aMVisibleRuntimeItems = Panel._getVisibleItems(aMRuntimeItems);
-		var aMVisibleBaseLineItems = Panel._getVisibleItems(aMBaseLineItems);
-
-		if (aMVisibleRuntimeItems.length !== aMBaseLineItems.length) {
-			bShowResetButtonEnabled = true;
-		} else if (aMVisibleBaseLineItems.length && aMVisibleRuntimeItems.length) {
-			var bAllVisibleBaselineItemsIncludedInVisibleRuntimeItems = Panel._allItemsIncludedInArray(aMVisibleBaseLineItems, aMVisibleRuntimeItems);
-			var bAllVisibleRuntimeItemsIncludedInVisibleBaselineItems = Panel._allItemsIncludedInArray(aMVisibleRuntimeItems, aMVisibleBaseLineItems);
-
-			bShowResetButtonEnabled = !bAllVisibleBaselineItemsIncludedInVisibleRuntimeItems || !bAllVisibleRuntimeItemsIncludedInVisibleBaselineItems;
-		}
-		return bShowResetButtonEnabled;
-	};
-
-	Panel._allItemsIncludedInArray = function(aMItemsToBeIncluded, aMArrayToCheck) {
-		var bAllItemsIncluded = true;
-		aMItemsToBeIncluded.forEach(function(oItemToBeIncluded) {
-			var aMItemsIncluded = Panel._getItemsById(oItemToBeIncluded.id, aMArrayToCheck);
-			if (aMItemsIncluded.length === 0) {
-				bAllItemsIncluded = false;
-			}
+		var oPopover = this.getParent();
+		oPopover.setModal(true);
+		Engine.getInstance().uimanager.show(this, "LinkItems").then(function(oDialog) {
+			oDialog.attachAfterClose(function(){
+				oPopover.setModal(false);
+			});
 		});
-		return bAllItemsIncluded;
-	};
-
-	Panel._getItemsById = function(sId, aMItems) {
-		return aMItems.filter(function(oItem) {
-			return oItem.id === sId;
-		});
-	};
-
-	Panel._getItemById = function(sId, aArray) {
-		return Panel._getItemsById(sId, aArray)[0];
-	};
-
-	Panel._getVisibleItems = function(aMItems) {
-		return aMItems.filter(function(oItem) {
-			return oItem.id !== undefined && oItem.visible;
-		});
-	};
-
-	Panel._mapSelectionDialogItems = function(aSelectionDialogItems) {
-		return aSelectionDialogItems.map(function(oSelectionDialogItem) {
-			return {
-				id: oSelectionDialogItem.getKey(),
-				visible: oSelectionDialogItem.getVisible()
-			};
-		});
-	};
-
-	Panel.prototype._isItemBaseline = function(oItem) {
-		var aBaselineItems = this._getInternalModel().getProperty("/baselineItems");
-		return !!Panel._getItemsById(oItem.id, aBaselineItems).length;
 	};
 
 	Panel.prototype._getInternalModel = function() {
@@ -425,13 +248,17 @@ sap.ui.define([
 								oModel.setProperty("/countItemsWithIcon", oPanelItem.getIcon() ? oModel.getProperty("/countItemsWithIcon") - 1 : oModel.getProperty("/countItemsWithIcon"));
 								oModel.setProperty("/countItemsWithoutIcon", oPanelItem.getIcon() ? oModel.getProperty("/countItemsWithoutIcon") : oModel.getProperty("/countItemsWithoutIcon") - 1);
 
-								aRuntimeItems.splice(this.indexOfItem(oPanelItem), 1);
+								var oRuntimeItem = aRuntimeItems.find(function(oItem) {
+									return oItem.id === oPanelItem.getId();
+								});
+								aRuntimeItems.splice(aRuntimeItems.indexOf(oRuntimeItem), 1);
 								oModel.setProperty("/runtimeItems", aRuntimeItems);
 
 								this._propagateDefaultIcon(oModel.getProperty("/countItemsWithIcon") > 0 && oModel.getProperty("/countItemsWithoutIcon") > 0);
 
 								this._oObserver.unobserve(oPanelItem);
 								oPanelItem.destroy();
+								this.invalidate(); // TODO: Check why this is needed to update the items on the panel
 								break;
 							default:
 								Log.error("Mutation '" + oChanges.mutation + "' is not supported yet.");
@@ -467,6 +294,53 @@ sap.ui.define([
 	Panel.prototype.getContentTitle = function() {
 		var oModel = this._getInternalModel();
 		return oModel.getProperty("/contentTitle");
+	};
+
+	Panel.prototype.getCurrentState = function() {
+		var aItems = [], sId;
+
+		this.getItems().forEach(function(oItem, iIndex) {
+			sId = oItem && oItem.getId();
+			if (oItem.getVisible()) {
+				aItems.push({
+					name: sId
+				});
+			}
+		});
+
+		return {
+			items: aItems
+		};
+	};
+
+	Panel.prototype.initPropertyHelper = function() {
+
+			var aAllLinkItems = this._oMetadataHelper.retrieveAllMetadata(this);
+
+			return Promise.resolve({
+				getProperties: function() {
+
+					var aItems = [];
+					aAllLinkItems.forEach(function(oItem){
+						aItems.push({
+							name: oItem.id,
+							getName: function() {
+								return oItem.id;
+							},
+							getLabel: function() {
+								return oItem.text;
+							},
+							text: oItem.text,
+							href: oItem.href,
+							description: oItem.description,
+							target: oItem.target,
+							visible: oItem.visible
+						});
+					});
+
+					return aItems;
+				}
+			});
 	};
 
 	Panel.prototype._updateContentTitle = function() {

@@ -3,8 +3,10 @@ sap.ui.define([
 	"sap/ui/mdc/Control",
 	"sap/ui/mdc/p13n/subcontroller/BaseController",
 	"sap/ui/mdc/util/PropertyHelper",
-	"sap/base/util/UriParameters"
-], function (Control, Controller, PropertyHelper, SAPUriParameters) {
+	"sap/base/util/UriParameters",
+	"sap/ui/mdc/Table",
+	"sap/ui/mdc/Chart"
+], function (Control, Controller, PropertyHelper, SAPUriParameters, Table, Chart) {
 	"use strict";
 
 	QUnit.module("Generic API tests", {
@@ -193,5 +195,4 @@ sap.ui.define([
 		}
 
 	});
-
 });

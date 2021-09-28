@@ -1,0 +1,28 @@
+<core:FragmentDefinition xmlns:m="sap.m" xmlns:mdcLink="sap.ui.mdc.link" xmlns:core="sap.ui.core">
+
+
+    <m:Table id="idList" mode="MultiSelect" includeItemInSelection="false" selectionChange="onSelectionChange" items="{path:'$this>/items',
+            templateShareable:false}">
+        <m:headerToolbar>
+            <m:OverflowToolbar>
+                <m:SearchField id="idSearchField" liveChange="onSearchFieldLiveChange" width="100%">
+                    <m:layoutData>
+                        <m:OverflowToolbarLayoutData shrinkable="true" moveToOverflow="true" priority="High" />
+                    </m:layoutData>
+                </m:SearchField>
+            </m:OverflowToolbar>
+        </m:headerToolbar>
+        <m:columns>
+            <m:Column>
+                <m:Text text="{$this.i18n>info.SELECTION_DIALOG_INFO_TOOLBAR} ({path:'$this>/@custom/countOfSelectedItems'}/{path:'$this>/@custom/countOfItems'}) " />
+            </m:Column>
+        </m:columns>
+        <m:items>
+            <m:ColumnListItem id="idListItem" selected="{path:'$this>visible'}">
+                <mdcLink:PanelListItem visible="true" text="{$this>text}" description="{$this>description}" href="{= ${$this>/showItemAsLink} ? ${$this>href}:null}" target="{$this>target}" icon="{$this>icon}" pressLink="onPressLink" />
+            </m:ColumnListItem>
+        </m:items>
+    </m:Table>
+
+
+</core:FragmentDefinition>

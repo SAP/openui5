@@ -1,28 +1,26 @@
 /*
  * ! ${copyright}
  */
-
 sap.ui.define([
 	'sap/ui/core/XMLComposite', 'sap/ui/model/Filter', 'sap/ui/model/FilterOperator', 'sap/ui/base/ManagedObjectObserver', 'sap/base/Log', 'sap/ui/Device', 'sap/ui/model/json/JSONModel', 'sap/m/MessageBox'
 ], function(XMLComposite, Filter, FilterOperator, ManagedObjectObserver, Log, Device, JSONModel, MessageBox) {
 	"use strict";
-
 	/**
-	 * Constructor for a new SelectionDialog.
+	 * Constructor for a new SelectionPanel.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
-	 * @class The SelectionDialog control is used to show <code>items</code>.
+	 * @class The SelectionPanel control is used to show <code>items</code>.
 	 * @extends sap.ui.core.XMLComposite
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
 	 * @private
 	 * @since 1.60.0
-	 * @alias sap.ui.mdc.link.SelectionDialog
+	 * @alias sap.ui.mdc.link.SelectionPanel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var SelectionDialog = XMLComposite.extend("sap.ui.mdc.link.SelectionDialog", /** @lends sap.ui.mdc.link.SelectionDialog.prototype */
+	var SelectionPanel = XMLComposite.extend("sap.ui.mdc.link.SelectionPanel", /** @lends sap.ui.mdc.link.SelectionPanel.prototype */
 		{
 			metadata: {
 				library: "sap.ui.mdc",
@@ -41,7 +39,6 @@ sap.ui.define([
 						defaultValue: false,
 						invalidate: true
 					},
-
 					/**
 					 * This property determines whether the 'Restore' button is enabled and is taken into account only if <code>showReset</code> is set
 					 * to <code>true</code>.
@@ -58,14 +55,14 @@ sap.ui.define([
 					 * Defines personalization items.
 					 */
 					items: {
-						type: "sap.ui.mdc.link.SelectionDialogItem",
+						type: "sap.ui.mdc.link.SelectionPanelItem",
 						multiple: true,
 						singularName: "item"
 					}
 				},
 				events: {
 					/**
-					 * Event fired if an item in <code>SelectionDialog</code> is set as visible or invisible.
+					 * Event fired if an item in <code>SelectionPanel</code> is set as visible or invisible.
 					 */
 					visibilityChanged: {
 						key: {
@@ -76,22 +73,21 @@ sap.ui.define([
 						}
 					},
 					/**
-					 * Event fired if the 'ok' button in <code>SelectionDialog</code> is clicked.
+					 * Event fired if the 'ok' button in <code>SelectionPanel</code> is clicked.
 					 */
 					ok: {},
 					/**
-					 * Event fired if the 'cancel' button in <code>SelectionDialog</code> is clicked.
+					 * Event fired if the 'cancel' button in <code>SelectionPanel</code> is clicked.
 					 */
 					cancel: {},
 					/**
-					 * Event fired if the 'reset' button in <code>SelectionDialog</code> is clicked.
+					 * Event fired if the 'reset' button in <code>SelectionPanel</code> is clicked.
 					 */
 					reset: {}
 				}
 			}
 		});
-
-	SelectionDialog.prototype.init = function() {
+	SelectionPanel.prototype.init = function() {
 		// Set device model
 		var oDeviceModel = new JSONModel(Device);
 		oDeviceModel.setDefaultBindingMode("OneWay");
@@ -100,22 +96,17 @@ sap.ui.define([
 		this._getManagedObjectModel().setSizeLimit(1000);
 		this._bUnconfirmedResetPressed = false;
 	};
-	SelectionDialog.prototype.open = function() {
+	SelectionPanel.prototype.open = function() {
 		this._getManagedObjectModel().setProperty("/@custom/countOfItems", this._getTable().getItems().length);
 		this._updateCountOfSelectedItems();
-		this._getCompositeAggregation().open();
 	};
-	SelectionDialog.prototype.close = function() {
-		this._getCompositeAggregation().close();
-	};
-	SelectionDialog.prototype.onSelectionChange = function(oEvent) {
+	SelectionPanel.prototype.onSelectionChange = function(oEvent) {
 		oEvent.getParameter("listItems").forEach(function(oTableItem) {
 			this._selectTableItem(oTableItem);
 		}, this);
 	};
-	SelectionDialog.prototype.onSearchFieldLiveChange = function(oEvent) {
+	SelectionPanel.prototype.onSearchFieldLiveChange = function(oEvent) {
 		var aFilters = [];
-
 		var oSearchField = oEvent.getSource();
 		var sSearchText = oSearchField ? oSearchField.getValue() : "";
 		if (sSearchText) {
@@ -125,20 +116,20 @@ sap.ui.define([
 		}
 		this._getTable().getBinding("items").filter(aFilters);
 	};
-	SelectionDialog.prototype.onPressOk = function() {
+	SelectionPanel.prototype.onPressOk = function() {
 		this.fireOk();
 	};
-	SelectionDialog.prototype.onPressCancel = function() {
+	SelectionPanel.prototype.onPressCancel = function() {
 		this.fireCancel();
 	};
-	SelectionDialog.prototype.onPressReset = function() {
+	SelectionPanel.prototype.onPressReset = function() {
 		this._resetSelection();
 		this.fireReset();
 	};
-	SelectionDialog.prototype.onAfterClose = function() {
+	SelectionPanel.prototype.onAfterClose = function() {
 		this.fireCancel();
 	};
-	SelectionDialog.prototype.onPressLink = function(oEvent) {
+	SelectionPanel.prototype.onPressLink = function(oEvent) {
 		var sHref = oEvent.getParameter("href");
 		if (this.getParent().getBeforeNavigationCallback() && oEvent.getParameter("target") !== "_blank") {
 			oEvent.preventDefault();
@@ -164,18 +155,17 @@ sap.ui.define([
 			});
 		}
 	};
-	SelectionDialog.prototype._selectTableItem = function(oTableItem) {
+	SelectionPanel.prototype._selectTableItem = function(oTableItem) {
 		this._updateCountOfSelectedItems();
-
 		this.fireVisibilityChanged({
 			key: this._getKeyByTableItem(oTableItem),
 			visible: oTableItem.getSelected()
 		});
 	};
-	SelectionDialog.prototype._getTable = function() {
+	SelectionPanel.prototype._getTable = function() {
 		return sap.ui.getCore().byId(this.getId() + "--idList") || null;
 	};
-	SelectionDialog.prototype._getSelectedTableContextPaths = function() {
+	SelectionPanel.prototype._getSelectedTableContextPaths = function() {
 		return this._getTable().getSelectedContextPaths();
 	};
 	/**
@@ -184,15 +174,14 @@ sap.ui.define([
 	 * @returns {string | null} key of the oTableItem
 	 * @private
 	 */
-	SelectionDialog.prototype._getKeyByTableItem = function(oTableItem) {
+	SelectionPanel.prototype._getKeyByTableItem = function(oTableItem) {
 		var iIndex = this._getTable().indexOfItem(oTableItem);
 		return iIndex < 0 ? null : this._getTable().getBinding("items").getContexts()[iIndex].getObject().getKey();
 	};
-	SelectionDialog.prototype._updateCountOfSelectedItems = function() {
+	SelectionPanel.prototype._updateCountOfSelectedItems = function() {
 		this._getManagedObjectModel().setProperty("/@custom/countOfSelectedItems", this._getSelectedTableContextPaths().length);
 	};
-
-	SelectionDialog.prototype._resetSelection = function() {
+	SelectionPanel.prototype._resetSelection = function() {
 		var oTable = this._getTable();
 		if (oTable) {
 			oTable.getItems().forEach(function(oTableItem) {
@@ -205,7 +194,5 @@ sap.ui.define([
 			}.bind(this));
 		}
 	};
-
-	return SelectionDialog;
-
+	return SelectionPanel;
 });
