@@ -114,27 +114,6 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	Conditions.prototype.getFooterContent = function () {
-		return this._retrievePromise("footerContent", function () {
-			return loadModules(["sap/m/library", "sap/m/Button"]).then(function (aModules) {
-				var oMLibrary = aModules[0];
-				var ButtonType = oMLibrary.ButtonType;
-				var Button = aModules[1];
-				var oButtonOK = new Button(this.getId() + "-ok", {
-					text: this._oResourceBundle.getText("valuehelp.OK"),
-					enabled: "{$valueHelp>/_valid}",
-					type: ButtonType.Emphasized,
-					press: _handleOK.bind(this)
-				});
-				var oButtonCancel = new Button(this.getId() + "-cancel", {
-					text: this._oResourceBundle.getText("valuehelp.CANCEL"),
-					press: this.fireCancel.bind(this)
-				});
-				return [oButtonOK, oButtonCancel];
-			}.bind(this));
-		}.bind(this));
-	};
-
 	Conditions.prototype.getCount = function (aConditions) {
 		var iCount = 0;
 
@@ -188,11 +167,33 @@ sap.ui.define([
 
 	};
 
-	//Part of IPopover?
-	Conditions.prototype.getPopoverConfiguration = function () {
+	Conditions.prototype.getContainerConfig = function () {
 		return {
-			showArrow: true,
-			showHeader: true
+			'sap.ui.mdc.valuehelp.Popover': {
+				showArrow: true,
+				showHeader: true,
+				getContentWidth: function () { return "500px"; },
+				getFooter: function () {
+					return this._retrievePromise("footer", function () {
+						return loadModules(["sap/m/library", "sap/m/Button"]).then(function (aModules) {
+							var oMLibrary = aModules[0];
+							var ButtonType = oMLibrary.ButtonType;
+							var Button = aModules[1];
+							var oButtonOK = new Button(this.getId() + "-ok", {
+								text: this._oResourceBundle.getText("valuehelp.OK"),
+								enabled: "{$valueHelp>/_valid}",
+								type: ButtonType.Emphasized,
+								press: _handleOK.bind(this)
+							});
+							var oButtonCancel = new Button(this.getId() + "-cancel", {
+								text: this._oResourceBundle.getText("valuehelp.CANCEL"),
+								press: this.fireCancel.bind(this)
+							});
+							return [oButtonOK, oButtonCancel];
+						}.bind(this));
+					}.bind(this));
+				}.bind(this)
+			}
 		};
 	};
 

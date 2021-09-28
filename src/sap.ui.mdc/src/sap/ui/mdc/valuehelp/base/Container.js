@@ -429,6 +429,23 @@ sap.ui.define([
 
 	};
 
+	Container.prototype._getContainerConfig = function (oContent) {
+		var oConfig = oContent && oContent.getContainerConfig();
+		var oResult = oConfig && oConfig[this.getMetadata().getName()];	// find configuration for this exact type
+
+		if (!oResult && oConfig) {	// search for configurations of other implemented types
+			var aTypes = Object.keys(oConfig);
+			var sNonSpecificType = aTypes.find(function (sType) {
+				return this.isA(sType);
+			}.bind(this));
+			if (sNonSpecificType) {
+				oResult = oConfig[sNonSpecificType];
+			}
+		}
+
+		return oResult;
+	};
+
 	Container.prototype.exit = function() {
 		this._oObserver.disconnect();
 		this._oObserver = undefined;
