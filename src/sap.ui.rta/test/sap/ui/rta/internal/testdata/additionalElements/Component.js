@@ -76,6 +76,17 @@ sap.ui.define([
 
 			sap.ushell = Object.assign({}, sap.ushell, {
 				Container: {
+					getServiceAsync: function() {
+						return Promise.resolve({
+							hrefForExternal: function() {},
+							parseShellHash: function() {},
+							registerNavigationFilter: function() {},
+							unregisterNavigationFilter: function() {},
+							getUser: function() {},
+							toExternal: function() {}
+						});
+					},
+					//TODO: Remove when all calls are using Async
 					getService: function() {
 						return {
 							hrefForExternal: function() {},
