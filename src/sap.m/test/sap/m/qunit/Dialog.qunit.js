@@ -1662,8 +1662,8 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		var oMockEvent = {
-			pageX: 608,
-			pageY: 646,
+			clientX: 608,
+			clientY: 646,
 			offsetX: 177,
 			offsetY: 35,
 			preventDefault: function () {},
@@ -1716,8 +1716,8 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		var oMockEvent = {
-			pageX: 608,
-			pageY: 646,
+			clientX: 608,
+			clientY: 646,
 			offsetX: 177,
 			offsetY: 35,
 			preventDefault: function () {},
@@ -1768,8 +1768,8 @@ sap.ui.define([
 		jQuery(document).off("mouseup mousemove");
 
 		var oMockEvent = {
-			pageX: 608,
-			pageY: 646,
+			clientX: 608,
+			clientY: 646,
 			offsetX: 177,
 			offsetY: 35,
 			preventDefault: function () {},
@@ -1808,8 +1808,8 @@ sap.ui.define([
 
 
 		var oMockEvent = {
-			pageX: 608,
-			pageY: 646,
+			clientX: 608,
+			clientY: 646,
 			offsetX: 177,
 			offsetY: 35,
 			preventDefault: function () {},
@@ -1849,8 +1849,8 @@ sap.ui.define([
 
 		var $document = jQuery(document),
 			oMouseDownMockEvent = {
-				pageX: 608,
-				pageY: 646,
+				clientX: 608,
+				clientY: 646,
 				offsetX: 177,
 				offsetY: 35,
 				preventDefault: function () {
@@ -1860,8 +1860,8 @@ sap.ui.define([
 				target: oDialog.getAggregation("_header").$().find(".sapMBarPH")[0]
 			},
 			oMouseMoveMockEvent = {
-				pageX: -2000,
-				pageY: -2000
+				clientX: -2000,
+				clientY: -2000
 			};
 
 		// Act
@@ -1870,7 +1870,7 @@ sap.ui.define([
 		$document.trigger(new jQuery.Event("mousemove", oMouseMoveMockEvent));
 		this.clock.tick(500);
 
-		assert.ok(oDialog._oManuallySetPosition.x >= 0, "_oManuallySetPosition.x is correct");
+		assert.ok(oDialog._oManuallySetPosition.x >= 0, "_oManuallySetPosition.x is correct" + oDialog._oManuallySetPosition.x);
 		assert.ok(oDialog._oManuallySetPosition.y >= 0, "_oManuallySetPosition.y is correct");
 
 		$document.trigger(new jQuery.Event("mouseup", oMouseMoveMockEvent));
@@ -1904,8 +1904,8 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		var oMockEvent = {
-			pageX: 608,
-			pageY: 646,
+			clientX: 608,
+			clientY: 646,
 			offsetX: 177,
 			offsetY: 35,
 			preventDefault: function () {},
@@ -1930,6 +1930,64 @@ sap.ui.define([
 		assert.strictEqual(iInitialLeft, iLeftAfterDrag, "The left position of the dialog should not change after dragging it.");
 
 		// cleanup
+		window.scrollTo(0, 0);
+		oGrowingPageElement.remove();
+		jQuery(document).off("mouseup mousemove");
+		oDialog.destroy();
+	});
+
+	QUnit.test("Resizing works if the page is scrolled", function (assert) {
+		// Arrange
+		var oGrowingPageElement = createAndAppendDiv("growingPageElement");
+
+		// make the element scrollable, and scroll it down
+		oGrowingPageElement.style.height = "10000px";
+		window.scrollTo(0, 10000);
+
+		var oDialog = new Dialog({
+			resizable: true,
+			title: "Some title",
+			content: [
+				new Text({
+					text: "Some text"
+				})
+			],
+			contentHeight: "400px"
+		});
+
+		oDialog.open();
+		this.clock.tick(500);
+
+		var oMockEvent = {
+			clientX: 435,
+			clientY: 500,
+			offsetX: 177,
+			offsetY: 35,
+			preventDefault: function () {},
+			stopPropagation: function () {},
+			target: oDialog.$().find(".sapMDialogResizeHandler")[0]
+		};
+
+		var oClientRect = oDialog.getDomRef().getBoundingClientRect();
+		var fInitialHeight = oClientRect.height;
+
+		// Act
+		oDialog.onmousedown(oMockEvent);
+		this.clock.tick(500);
+		// resize width - move mouse right
+		oMockEvent.clientX += 20;
+
+		jQuery(document).trigger(new jQuery.Event("mousemove", oMockEvent));
+		this.clock.tick(500);
+		jQuery(document).trigger(new jQuery.Event("mouseup", oMockEvent));
+
+		oClientRect = oDialog.getDomRef().getBoundingClientRect();
+		var fHeightAfterResize = oClientRect.height;
+
+		// assert
+		assert.strictEqual(fHeightAfterResize, fInitialHeight, "The height of the dialog should not change after resized to the right.");
+
+		// Clean up
 		window.scrollTo(0, 0);
 		oGrowingPageElement.remove();
 		jQuery(document).off("mouseup mousemove");
@@ -1976,8 +2034,8 @@ sap.ui.define([
 
 		var $withinArea = jQuery(this.oWithinArea),
 			oMouseDownMockEvent = {
-				pageX: 608,
-				pageY: 646,
+				clientX: 608,
+				clientY: 646,
 				offsetX: 177,
 				offsetY: 35,
 				preventDefault: function () {
@@ -1987,8 +2045,8 @@ sap.ui.define([
 				target: this.oDialog.getAggregation("_header").$().find(".sapMBarPH")[0]
 			},
 			oMouseMoveMockEvent = {
-				pageX: -2000,
-				pageY: -2000
+				clientX: -2000,
+				clientY: -2000
 			};
 
 		// Act
@@ -2095,8 +2153,8 @@ sap.ui.define([
 
 				// event in which the mouse is on the resize handler
 				return {
-					pageX: oResizeHandlerRect.left,
-					pageY: oResizeHandlerRect.top,
+					clientX: oResizeHandlerRect.left,
+					clientY: oResizeHandlerRect.top,
 					offsetX: 5,
 					offsetY: 5,
 					preventDefault: function () {},
@@ -2126,8 +2184,8 @@ sap.ui.define([
 		oDialog.onmousedown(oMockEvent);
 
 		// move mouse right and down
-		oMockEvent.pageX += 20;
-		oMockEvent.pageY += 20;
+		oMockEvent.clientX += 20;
+		oMockEvent.clientY += 20;
 
 		$document.trigger(new jQuery.Event("mousemove", oMockEvent));
 		this.clock.tick(500);
@@ -2154,7 +2212,7 @@ sap.ui.define([
 		oDialog.onmousedown(oMockEvent);
 
 		// move mouse down
-		oMockEvent.pageY += 1000;
+		oMockEvent.clientY += 1000;
 
 		$document.trigger(new jQuery.Event("mousemove", oMockEvent));
 		this.clock.tick(500);
