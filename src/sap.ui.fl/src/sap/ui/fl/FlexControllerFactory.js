@@ -182,12 +182,19 @@ sap.ui.define([
 		// only manifest with type = "application" will fetch changes
 		var oManifest = oAppComponent.getManifestObject();
 		var oFlexController = FlexControllerFactory.createForControl(oAppComponent, oManifest);
+		var oVariantModel;
 		return oFlexController._oChangePersistence.loadChangesMapForComponent(oAppComponent)
 		.then(function (fnGetChangesMap) {
 			var fnPropagationListener = Applier.applyAllChangesForControl.bind(Applier, fnGetChangesMap, oAppComponent, oFlexController);
 			fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
 			oAppComponent.addPropagationListener(fnPropagationListener);
-			var oVariantModel = new VariantModel({}, oFlexController, oAppComponent);
+			oVariantModel = new VariantModel({}, {
+				flexController: oFlexController,
+				appComponent: oAppComponent
+			});
+			return oVariantModel.initialize();
+		})
+		.then(function() {
 			oAppComponent.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
 			Measurement.end("flexProcessing");
 			return oVariantModel;

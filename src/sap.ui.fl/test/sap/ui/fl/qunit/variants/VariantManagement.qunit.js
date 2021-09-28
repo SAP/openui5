@@ -63,6 +63,14 @@ sap.ui.define([
 		beforeEach: function() {
 			this.fnSettingsGetInstanceSpy = sinon.spy(flSettings, "getInstance");
 			this.oVariantManagement = new VariantManagement("One", {});
+			var oFlexController = {
+				setVariantSwitchPromise: function() {},
+				_oChangePersistence: {
+					getComponentName: function() {
+						return "mockComponentName";
+					}
+				}
+			};
 
 			oModel = new VariantModel({
 				One: {
@@ -119,12 +127,7 @@ sap.ui.define([
 					]
 				}
 			}, {
-				setVariantSwitchPromise: function() {},
-				_oChangePersistence: {
-					getComponentName: function() {
-						return "mockComponentName";
-					}
-				}
+				flexController: oFlexController
 			});
 
 			sinon.stub(oModel, "updateCurrentVariant").returns(Promise.resolve());
@@ -132,6 +135,7 @@ sap.ui.define([
 			sinon.stub(oModel, "_initializeManageVariantsEvents");
 			oModel.fnManageClick = function() {
 			};
+			return oModel.initialize();
 		},
 		afterEach: function() {
 			this.oVariantManagement.destroy();

@@ -79,58 +79,60 @@ sap.ui.define([
 			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
 			this.oGetComponentClassNameStub = sinon.stub(FlUtils, "getComponentClassName").returns("Dummy.Component");
 
-			this.oModel = FlexTestAPI.createVariantModel({
+			return FlexTestAPI.createVariantModel({
 				data: oData,
 				appComponent: this.oMockedAppComponent
-			});
-			// non-personalization mode
-			this.oModel._bDesignTimeMode = true;
+			}).then(function(oInitializedModel) {
+				this.oModel = oInitializedModel;
+				// non-personalization mode
+				this.oModel._bDesignTimeMode = true;
 
-			var oChange1 = new Change({
-				fileName: "change44",
-				layer: Layer.CUSTOMER,
-				selector: {
-					id: "abc123"
-				},
-				reference: "Dummy.Component",
-				variantReference: "variantMgmtId1"
-			});
-			var oChange2 = new Change({
-				fileName: "change45",
-				layer: Layer.CUSTOMER,
-				selector: {
-					id: "abc123"
-				},
-				reference: "Dummy.Component",
-				variantReference: "variantMgmtId1"
-			});
-
-			this.oVariant = {
-				content: {
-					fileName: "variant0",
-					content: {
-						title: "myNewVariant"
-					},
+				var oChange1 = new Change({
+					fileName: "change44",
 					layer: Layer.CUSTOMER,
-					variantReference: "variant00",
-					support: {
-						user: "Me"
+					selector: {
+						id: "abc123"
 					},
-					reference: "Dummy.Component"
-				},
-				controlChanges: [oChange1, oChange2]
-			};
+					reference: "Dummy.Component",
+					variantReference: "variantMgmtId1"
+				});
+				var oChange2 = new Change({
+					fileName: "change45",
+					layer: Layer.CUSTOMER,
+					selector: {
+						id: "abc123"
+					},
+					reference: "Dummy.Component",
+					variantReference: "variantMgmtId1"
+				});
 
-			this.oModel.oData["variantMgmtId1"].variantsEditable = true;
-			this.oModel.oData["variantMgmtId1"].modified = true;
+				this.oVariant = {
+					content: {
+						fileName: "variant0",
+						content: {
+							title: "myNewVariant"
+						},
+						layer: Layer.CUSTOMER,
+						variantReference: "variant00",
+						support: {
+							user: "Me"
+						},
+						reference: "Dummy.Component"
+					},
+					controlChanges: [oChange1, oChange2]
+				};
 
-			this.oGetCurrentLayerStub = sinon.stub(FlLayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
-			sinon.stub(VariantManagementState, "getControlChangesForVariant").returns([oChange1, oChange2]);
-			sinon.stub(this.oModel, "getVariant").returns(this.oVariant);
-			sinon.stub(VariantManagementState, "addVariantToVariantManagement").returns(1);
-			sinon.stub(VariantManagementState, "removeVariantFromVariantManagement").returns(1);
-			sinon.stub(VariantManagementState, "addChangeToVariant").returns(true);
-			sinon.stub(VariantManagementState, "getContent").returns({});
+				this.oModel.oData["variantMgmtId1"].variantsEditable = true;
+				this.oModel.oData["variantMgmtId1"].modified = true;
+
+				this.oGetCurrentLayerStub = sinon.stub(FlLayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
+				sinon.stub(VariantManagementState, "getControlChangesForVariant").returns([oChange1, oChange2]);
+				sinon.stub(this.oModel, "getVariant").returns(this.oVariant);
+				sinon.stub(VariantManagementState, "addVariantToVariantManagement").returns(1);
+				sinon.stub(VariantManagementState, "removeVariantFromVariantManagement").returns(1);
+				sinon.stub(VariantManagementState, "addChangeToVariant").returns(true);
+				sinon.stub(VariantManagementState, "getContent").returns({});
+			}.bind(this));
 		},
 		after: function() {
 			this.oManifest.destroy();
