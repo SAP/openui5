@@ -124,27 +124,20 @@ sap.ui.define([
 	};
 
 	CardPreview.prototype.onAfterRendering = function () {
-		var oCard = this.getCard(),
-		    sModes = this._getModes(),
-			chartType = null;
-		if (oCard.getManifestEntry("/sap.card/content")) {
-			chartType = oCard.getManifestEntry("/sap.card/content/chartType");
-		}
-
-		if (sModes.indexOf("Live") > -1 && chartType && chartType.toUpperCase() === "DONUT") {
-			var oPreview = this._getCardPreview();
+		var oPreview = this._getCardPreview(),
+		    sModes = this._getModes();
+		if (sModes.indexOf("Live") > -1 && oPreview.getDomRef().getElementsByClassName("sapVizFrame")) {
 			window.setTimeout(function() {
-				if (oPreview.getCardContent()) {
-					var oFrame = oPreview.getCardContent().getAggregation("_content");
-					try {
-						if (oFrame.getVizProperties() && oFrame.getVizProperties().legendGroup.layout.position === "bottom" && oFrame.getVizProperties().legendGroup.layout.alignment === "center") {
-							oFrame.getDomRef().getElementsByClassName("v-m-legend")[0].transform.baseVal[0].matrix.e = 110;
-						}
-					} catch (error) {
-						//do nothing
+				try {
+					var vizFrameId = oPreview.getDomRef().getElementsByClassName("sapVizFrame")[0].id;
+					var oVizFrame = Core.byId(vizFrameId);
+					if (oVizFrame.getVizProperties() && oVizFrame.getVizProperties().legendGroup.layout.position === "bottom" && oVizFrame.getVizProperties().legendGroup.layout.alignment === "center") {
+						oPreview.getDomRef().getElementsByClassName("v-m-legend")[0].transform.baseVal[0].matrix.e = 110;
 					}
+				} catch (error) {
+					//do nothing
 				}
-			}, 2000);
+			}, 1000);
 		}
 	};
 
