@@ -9,11 +9,6 @@
 				<copyright>2009-2014, Alexis Sellier &lt;self@cloudhead.net&gt;</copyright>
 				<pattern>src/testsuite-utils/src/main/resources/META-INF/less/less.js</pattern>
 			</lib>
-			<lib name="ajv" displayName="ajv" version="6.12.3" homepage="https://ajv.js.org/">
-				<license url="https://ajv.js.org/license.html" type="MIT"></license>
-				<copyright>2015-2017 Evgeny Poberezkin</copyright>
-				<pattern>../test/sap/ui/integration/demokit/cardExplorer/webapp/thirdparty/ajv/ajv.min.js</pattern>
-			</lib>
 			<lib name="jsdoc-3.6.7" displayName="JSDoc 3" version="3.6.7" homepage="https://github.com/jsdoc/jsdoc">
 				<license url="https://github.com/jsdoc/jsdoc/blob/master/LICENSE" type="Apache-2.0" />
 				<copyright>2011-present Michael Mathews micmath@gmail.com and the contributors to JSDoc</copyright>
