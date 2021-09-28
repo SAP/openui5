@@ -63,12 +63,32 @@
 				<li><a href="../../../index.html#/explore/table" target="_parent">Table Card</a></li>
 				<li><a href="../../../index.html#/explore/timeline" target="_parent">Timeline Card</a></li>
 			</ul>
+
+			<h2 id="requiredSpace">
+				requiredHeight and requiredWidth Properties
+			</h2>
+			<p>
+				The requiredHeight and requiredWidth properties can be used by the host environment to
+				indicate the minimum space required by the card
+				if the end user tries to put the card on too narrow or too short space.
+			</p>
+
+			<pre class="lang-json">
+{
+	"sap.card": {
+		"requiredHeight": "40rem",
+		"requiredWidth": "20rem",
+	}
+}
+</pre>
+				<br />
 		</div>
 		<div class="navigation">
 			<h4>Table of Contents</h4>
 			<div><a href="#sizing">Sizing</a></div>
 			<div><a href="#responsive">Responsive Behavior</a></div>
 			<div><a href="#maxItems">Max Items</a></div>
+			<div><a href="#requiredSpace">Min Required Height/Width</a></div>
 		</div>
 	</div>
 </body>
