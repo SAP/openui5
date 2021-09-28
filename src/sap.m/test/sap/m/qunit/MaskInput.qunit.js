@@ -1303,6 +1303,81 @@ sap.ui.define([
 		assert.strictEqual(this.oRenderer.getDescribedByAnnouncement(this.oMaskInput), $AriaDescripttion.text(), "The message is rendered correctly");
 	});
 
+	QUnit.module("Clear Icon", {
+		beforeEach: function () {
+			this.oMaskInput = new MaskInput({
+				mask: "9",
+				placeholderSymbol: "_",
+				showClearIcon: true
+			});
+			this.oMaskInput.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			if (!bSkipDestroy) {
+				this.oMaskInput.destroy();
+			}
+		}
+	});
+
+	QUnit.test("The icon appears/disappears correctly on direct typing", function (assert){
+		var oClearIcon = this.oMaskInput._getClearIcon();
+
+		// Act
+		this.oMaskInput.focus();
+		this.clock.tick(100);
+
+		// Assert
+		assert.notOk(oClearIcon.getVisible(), "Clear Icon is not visible when the value of the input is empty");
+
+		// Act
+		qutils.triggerKeypress(this.oMaskInput.getDomRef(), "1");
+
+		// Assert
+		assert.equal(getMaskInputDomValue(this.oMaskInput), "1", "'1' is set as value of the input");
+		assert.ok(oClearIcon.getVisible(), "Clear Icon is visible when the value of the input is not empty");
+
+		// Act
+		qutils.triggerKeydown(this.oMaskInput.getDomRef(), jQuery.sap.KeyCodes.BACKSPACE);
+
+		// Assert
+		assert.equal(getMaskInputDomValue(this.oMaskInput), "_", "The input is cleared after the BACKSPACE press");
+		assert.notOk(oClearIcon.getVisible(), "Clear Icon is not visible when the value of the input is empty");
+
+	});
+
+	QUnit.test("Appearance is not changed when ENTER is pressed", function (assert){
+		var oClearIcon = this.oMaskInput._getClearIcon();
+
+		// Act
+		this.oMaskInput.focus();
+		this.clock.tick(100);
+
+		// Assert
+		assert.notOk(oClearIcon.getVisible(), "Clear Icon is not visible when the value of the input is empty");
+
+		// Act
+		qutils.triggerKeydown(this.oMaskInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+
+		// Assert
+		assert.notOk(oClearIcon.getVisible(), "Clear Icon is still not visible after ENTER press");
+
+		// Act
+		qutils.triggerKeypress(this.oMaskInput.getDomRef(), "1");
+
+		// Assert
+		assert.equal(getMaskInputDomValue(this.oMaskInput), "1", "'1' is set as value of the input");
+		assert.ok(oClearIcon.getVisible(), "Clear Icon is visible when the value of the input is not empty");
+
+		// Act
+		qutils.triggerKeydown(this.oMaskInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+
+		// Assert
+		assert.ok(oClearIcon.getVisible(), "Clear Icon is still visible after ENTER press");
+	});
+
+	// Helper functions
+
 	function checkForDeleteAndBackspace() {
 		var oRule = new MaskInputRule();
 		oRule.setMaskFormatSymbol("h");

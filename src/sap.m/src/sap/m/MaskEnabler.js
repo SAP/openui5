@@ -7,13 +7,14 @@ sap.ui.define([
 	'./InputBase',
 	'sap/ui/Device',
 	'sap/ui/core/library',
+	'sap/ui/core/IconPool',
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/MaskInputRule",
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos"
-], function(Control, InputBase, Device, coreLibrary, KeyCodes, Log, jQuery, MaskInputRule) {
+], function(Control, InputBase, Device, coreLibrary, IconPool, KeyCodes, Log, jQuery, MaskInputRule) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -53,6 +54,8 @@ sap.ui.define([
 			// Skips setup of mask variables on every iteration when initializing default rules
 			this._bSkipSetupMaskVariables = null;
 
+			this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 			this._setDefaultRules();
 			this._setupMaskVariables();
 		};
@@ -85,6 +88,8 @@ sap.ui.define([
 			}
 
 			InputBase.prototype.onBeforeRendering.apply(this, arguments);
+
+			this.getShowClearIcon && this.getShowClearIcon() && this._getClearIcon().setVisible(this.getProperty("effectiveShowClearIcon"));
 		};
 
 		/**
@@ -110,6 +115,8 @@ sap.ui.define([
 
 				this._positionCaret(true);
 			}
+
+			this.getShowClearIcon && this.getShowClearIcon() && this._getClearIcon().setVisible(this.getProperty("effectiveShowClearIcon"));
 		};
 
 		/**
@@ -139,6 +146,8 @@ sap.ui.define([
 				this._inputCompletedHandlerNoMask();
 				InputBase.prototype.onfocusout.apply(this, arguments);
 			}
+
+			this.getShowClearIcon && this.getShowClearIcon() && this._getClearIcon().setVisible(false);
 		};
 
 		/**
@@ -167,6 +176,10 @@ sap.ui.define([
 			if (this._isMaskEnabled()) {
 				this._keyPressHandler(oEvent);
 			}
+
+			if (this.getDOMValue() !== "") {
+				this._setClearIconVisibility();
+			}
 		};
 
 		/**
@@ -178,8 +191,11 @@ sap.ui.define([
 				var oKey = this._parseKeyBoardEvent(oEvent);
 
 				InputBase.prototype.onkeydown.apply(this, arguments);
-
 				this._keyDownHandler(oEvent, oKey);
+
+				if (this.getDOMValue() !== "") {
+					this._setClearIconVisibility();
+				}
 			} else {
 				var oKey = this._parseKeyBoardEvent(oEvent);
 				if (oKey.bEnter) {
@@ -217,6 +233,79 @@ sap.ui.define([
 			if (this._oTempValue._aContent.join("") !== this._oTempValue._aInitial.join("")) {
 				InputBase.prototype.onsapescape.call(this, oEvent);
 			}
+		};
+
+		/**
+		 * Sets the clear icon visibility depending on whether the input value is empty or not
+		 *
+		 * @private
+		 */
+		this._setClearIconVisibility = function() {
+			if (this.getShowClearIcon && this.getShowClearIcon()) {
+				this.setProperty("effectiveShowClearIcon", !this._isValueEmpty());
+				this._getClearIcon().setVisible(this.getProperty("effectiveShowClearIcon"));
+			}
+		};
+
+		/**
+		 * Lazy initialization of the clear icon.
+		 * @returns {sap.ui.core.Icon} The created icon.
+		 * @private
+		 */
+		this._getClearIcon = function () {
+			if (this._oClearButton) {
+				return this._oClearButton;
+			}
+
+			this._oClearButton = this.addEndIcon({
+				src: IconPool.getIconURI("decline"),
+				noTabStop: true,
+				visible: false,
+				alt: this._oRb.getText("INPUT_CLEAR_ICON_ALT"),
+				useIconTooltip: false,
+				press: function () {
+					if (!this._isValueEmpty()) {
+						this.fireChange({
+							value: ""
+						});
+
+						this.setValue("");
+						this.setProperty("effectiveShowClearIcon", false);
+						this._getClearIcon().setVisible(false);
+
+						setTimeout(function() {
+							if (Device.system.desktop) {
+								this.focus();
+							}
+						}, 0);
+					}
+				}.bind(this)
+			});
+
+			return this._oClearButton;
+		};
+
+		/**
+		 * Returns whether there is something entered in the field or not.
+		 *
+		 * @protected
+		 * @returns {boolean} True if there are placeholder characters displayed, but nothing is entered.
+		 */
+		this._isValueEmpty = function() {
+			var sValue = this.getDOMValue(),
+				sPlaceholder = this._oTempValue._aInitial.join('');
+
+			return sValue == sPlaceholder;
+		};
+
+		/**
+		 * Gets the inner input DOM value.
+		 *
+		 * @protected
+		 * @returns {string} The value of the input.
+		 */
+		this.getDOMValue = function() {
+			return this._$input.val();
 		};
 
 		/**
@@ -1175,6 +1264,8 @@ sap.ui.define([
 					this._setCursorPosition(iEndSelectionIndex);
 				}
 			}.bind(this), iMinBrowserDelay);
+
+			this._setClearIconVisibility();
 		};
 
 		/**

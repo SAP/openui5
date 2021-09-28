@@ -22,6 +22,7 @@
 				"stretch": true,
 				"files": [
 					"Page.view.xml",
+					"Page.controller.js",
 					"manifest.json"
 				]
 			}
