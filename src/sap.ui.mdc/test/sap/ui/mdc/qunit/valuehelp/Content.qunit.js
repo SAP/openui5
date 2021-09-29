@@ -76,7 +76,7 @@ sap.ui.define([
 		sinon.spy(oContent, "invalidate");
 		sinon.spy(oContent, "_handleConditionsUpdate");
 		var aConditions = [Condition.createItemCondition("X", "Text")];
-		oContent.setProperty("_conditions", aConditions);
+		oContent.setConditions(aConditions);
 		assert.ok(oContent.invalidate.notCalled, "Content not invalidated");
 		assert.ok(oContent._handleConditionsUpdate.calledOnce, "_handleConditionsUpdate called");
 
@@ -86,7 +86,7 @@ sap.ui.define([
 
 		sinon.spy(oContent, "invalidate");
 		sinon.spy(oContent, "_handleFilterValueUpdate");
-		oContent.setProperty("_filterValue", "X");
+		oContent.setFilterValue("X");
 		assert.ok(oContent.invalidate.notCalled, "Content not invalidated");
 		assert.ok(oContent._handleFilterValueUpdate.calledOnce, "_handleFilterValueUpdate called");
 
@@ -127,7 +127,7 @@ sap.ui.define([
 		FilterOperatorUtil.addOperator(oOperator);
 
 		sinon.spy(oContent, "invalidate");
-		oContent.set_config({operators: ["GT", "LT", oOperator.name]});
+		oContent.setConfig({operators: ["GT", "LT", oOperator.name]});
 		assert.ok(oContent._oOperator.isA("sap.ui.mdc.condition.Operator"), "Operator was created.");
 		assert.ok(oContent._oOperator.name === "MyTest", "Operator was set via configuration");
 		assert.ok(oContent.invalidate.notCalled, "Content not invalidated");
@@ -145,7 +145,7 @@ sap.ui.define([
 		});
 		FilterOperatorUtil.addOperator(oOperator);
 
-		oContent.set_config({operators: ["GT", "LT", oOperator.name]});
+		oContent.setConfig({operators: ["GT", "LT", oOperator.name]});
 
 		var oCondition = oContent._createCondition("1", "Text1", {inParameter: "2"}, undefined);
 		assert.ok(oCondition, "Condition created");
@@ -158,7 +158,7 @@ sap.ui.define([
 			assert.equal(oCondition.validated, ConditionValidated.Validated, "Condition is validated");
 		}
 
-		oContent.set_config({operators: []}); // use all
+		oContent.setConfig({operators: []}); // use all
 
 		oCondition = oContent._createCondition("1", "Text1", undefined, {outParameter: "x"});
 		assert.ok(oCondition, "Condition created");
@@ -254,9 +254,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("_isSingleSelect", function(assert) {
-		oContent.set_config({maxConditions: -1});
+		oContent.setConfig({maxConditions: -1});
 		assert.equal(oContent._isSingleSelect(), false, "multi-select correctly determined from maxConditions");
-		oContent.set_config({maxConditions: 1});
+		oContent.setConfig({maxConditions: 1});
 		assert.equal(oContent._isSingleSelect(), true, "single-select correctly determined from maxConditions");
 	});
 
@@ -268,9 +268,9 @@ sap.ui.define([
 
 	QUnit.test("shouldOpenOnNavigate", function(assert) {
 
-		oContent.set_config({maxConditions: -1});
+		oContent.setConfig({maxConditions: -1});
 		assert.ok(oContent.shouldOpenOnNavigate(), "correctly determined from maxConditions");
-		oContent.set_config({maxConditions: 1});
+		oContent.setConfig({maxConditions: 1});
 		assert.notOk(oContent.shouldOpenOnNavigate(), "correctly determined from maxConditions");
 	});
 
@@ -284,16 +284,16 @@ sap.ui.define([
 
 	QUnit.test("isMultiSelect", function(assert) {
 
-		oContent.set_config({maxConditions: -1});
+		oContent.setConfig({maxConditions: -1});
 		assert.ok(oContent.isMultiSelect(), "correctly determined from maxConditions");
-		oContent.set_config({maxConditions: 1});
+		oContent.setConfig({maxConditions: 1});
 		assert.notOk(oContent.isMultiSelect(), "correctly determined from maxConditions");
 	});
 
 	QUnit.test("_getMaxConditions", function(assert) {
-		oContent.set_config({maxConditions: -1});
+		oContent.setConfig({maxConditions: -1});
 		assert.equal(oContent._getMaxConditions(), -1, "maxConditions taken from config");
-		oContent.set_config({maxConditions: 1});
+		oContent.setConfig({maxConditions: 1});
 		assert.equal(oContent._getMaxConditions(), 1, "maxConditions updated from config");
 	});
 

@@ -48,21 +48,21 @@ sap.ui.define([
 
 	QUnit.module("basic features", {
 		beforeEach: function() {
+			var aConditions = [Condition.createItemCondition("I2", "My Item 2")];
 			oFixedList = new FixedList("FL1", {
 				items: [
 					new ListFieldHelpItem("I1", {key: "I1", text: "Item 1", additionalText: "My Item 1", groupKey: "G1", groupText: "Group 1"}),
 					new ListFieldHelpItem("I2", {key: "I2", text: "My Item 2", additionalText: "Item 2", groupKey: "G2", groupText: "Group 2", textDirection: coreLibrary.TextDirection.RTL}),
 					new ListFieldHelpItem("I3", {key: "I3", text: "item 3", additionalText: "My Item 3", groupKey: "G1", groupText: "Group 1"})
-				]
+				],
+				conditions: aConditions, // don't need to test the binding of Container here
+				config: { // don't need to test the binding of Container here
+					maxConditions: -1,
+					operators: ["EQ"]
+				}
 			});
 			sinon.stub(oFixedList, "getParent").returns(oContainer);
 			oFixedList.oParent = oContainer; // fake
-			var aConditions = [Condition.createItemCondition("I2", "My Item 2")];
-			oFixedList.setProperty("_conditions", aConditions); // don't need to test the binding of Container here
-			oFixedList.setProperty("_config", { // don't need to test the binding of Container here
-				maxConditions: -1,
-				operators: ["EQ"]
-			});
 		},
 		afterEach: _teardown
 	});
@@ -90,6 +90,7 @@ sap.ui.define([
 				oFixedList.onShow(); // to update selection and scroll
 				assert.ok(oContent, "Content returned");
 				assert.ok(oContent.isA("sap.m.List"), "Content is sap.m.List");
+				assert.equal(oFixedList.getDisplayContent(), oContent, "sap.m.List stored in displayContent");
 				assert.equal(oContent.getWidth(), "100%", "List width");
 				assert.notOk(oContent.getShowNoData(), "List showNoData");
 				assert.notOk(oContent.getRememberSelections(), "List rememberSelections");
@@ -131,7 +132,7 @@ sap.ui.define([
 				assert.deepEqual(aConditions, aNewConditions, "select event conditions");
 				assert.equal(sType, SelectType.Set, "select event type");
 				assert.equal(iConfirm, 1, "confirm event fired");
-				assert.deepEqual(oFixedList.getProperty("_conditions"), aNewConditions, "FixedList conditions");
+				assert.deepEqual(oFixedList.getConditions(), aNewConditions, "FixedList conditions");
 
 				fnDone();
 			}).catch(function(oError) {
@@ -199,7 +200,7 @@ sap.ui.define([
 
 	QUnit.test("Filtering", function(assert) {
 
-		oFixedList.setProperty("_filterValue", "i");
+		oFixedList.setFilterValue("i");
 		var oContent = oFixedList.getContent();
 
 		if (oContent) {
@@ -231,8 +232,8 @@ sap.ui.define([
 
 	QUnit.test("Filtering without hiding", function(assert) {
 
-		oFixedList.setProperty("_filterValue", "i");
-		oFixedList.setProperty("_conditions", []);
+		oFixedList.setFilterValue("i");
+		oFixedList.setConditions([]);
 		oFixedList.setUseFirstMatch(true);
 		oFixedList.setFilterList(false);
 		var oContent = oFixedList.getContent();
@@ -478,7 +479,7 @@ sap.ui.define([
 			bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
 		});
 
-		oFixedList.setProperty("_conditions", []);
+		oFixedList.setConditions([]);
 		var oContent = oFixedList.getContent(); // as content needs to be crated before navigation is possible
 
 		if (oContent) {
@@ -499,7 +500,7 @@ sap.ui.define([
 				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
 				assert.equal(sNavigateItemId, "FL1-item-FL1-List-0", "Navigated itemId");
 				assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
-				assert.deepEqual(oFixedList.getProperty("_conditions"), [oCondition], "FixedList conditions");
+				assert.deepEqual(oFixedList.getConditions(), [oCondition], "FixedList conditions");
 				iNavigate = 0;
 				oNavigateCondition = undefined;
 				sNavigateItemId = undefined;
@@ -517,7 +518,7 @@ sap.ui.define([
 				assert.deepEqual(oNavigateCondition, undefined, "no Navigated condition");
 				assert.equal(sNavigateItemId, undefined, " no Navigated itemId");
 				assert.ok(bNavigateLeaveFocus, "Navigated leaveFocus");
-				assert.deepEqual(oFixedList.getProperty("_conditions"), [oCondition], "FixedList conditions");
+				assert.deepEqual(oFixedList.getConditions(), [oCondition], "FixedList conditions");
 				iNavigate = 0;
 				oNavigateCondition = undefined;
 				sNavigateItemId = undefined;
@@ -536,7 +537,7 @@ sap.ui.define([
 				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
 				assert.equal(sNavigateItemId, "FL1-item-FL1-List-1", "Navigated itemId");
 				assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
-				assert.deepEqual(oFixedList.getProperty("_conditions"), [oCondition], "FixedList conditions");
+				assert.deepEqual(oFixedList.getConditions(), [oCondition], "FixedList conditions");
 				iNavigate = 0;
 				oNavigateCondition = undefined;
 				sNavigateItemId = undefined;
@@ -556,7 +557,7 @@ sap.ui.define([
 				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
 				assert.equal(sNavigateItemId, "FL1-item-FL1-List-2", "Navigated itemId");
 				assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
-				assert.deepEqual(oFixedList.getProperty("_conditions"), [oCondition], "FixedList conditions");
+				assert.deepEqual(oFixedList.getConditions(), [oCondition], "FixedList conditions");
 
 				oFixedList.onHide();
 				assert.notOk(oContent.hasStyleClass("sapMListFocus"), "List removed style class sapMListFocus");
@@ -584,9 +585,9 @@ sap.ui.define([
 		});
 
 		oFixedList.setGroupable(true);
-		oFixedList.setProperty("_conditions", []);
+		oFixedList.setConditions([]);
 		oFixedList.setFilterList(false);
-		oFixedList.setProperty("_filterValue", "M");
+		oFixedList.setFilterValue("M");
 		bIsOpen = false;
 		var oContent = oFixedList.getContent(); // as content needs to be crated before navigation is possible
 
@@ -606,7 +607,7 @@ sap.ui.define([
 				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
 				assert.equal(sNavigateItemId, "FL1-item-FL1-List-2", "Navigated itemId");
 				assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
-				assert.deepEqual(oFixedList.getProperty("_conditions"), [oCondition], "FixedList conditions");
+				assert.deepEqual(oFixedList.getConditions(), [oCondition], "FixedList conditions");
 				assert.equal(oFixedList._iNavigateIndex, 4, "navigated index stored as closed");
 				iNavigate = 0;
 				oNavigateCondition = undefined;
@@ -626,7 +627,7 @@ sap.ui.define([
 				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
 				assert.equal(sNavigateItemId, "FL1-item-FL1-List-1", "Navigated itemId");
 				assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
-				assert.deepEqual(oFixedList.getProperty("_conditions"), [oCondition], "FixedList conditions");
+				assert.deepEqual(oFixedList.getConditions(), [oCondition], "FixedList conditions");
 				assert.equal(oFixedList._iNavigateIndex, 2, "navigated index stored as closed");
 				iNavigate = 0;
 				oNavigateCondition = undefined;
@@ -646,7 +647,7 @@ sap.ui.define([
 				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
 				assert.equal(sNavigateItemId, "FL1-item-FL1-List-2", "Navigated itemId");
 				assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
-				assert.deepEqual(oFixedList.getProperty("_conditions"), [oCondition], "FixedList conditions");
+				assert.deepEqual(oFixedList.getConditions(), [oCondition], "FixedList conditions");
 				assert.equal(oFixedList._iNavigateIndex, 4, "navigated index stored as closed");
 				iNavigate = 0;
 				oNavigateCondition = undefined;
@@ -667,7 +668,7 @@ sap.ui.define([
 				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
 				assert.equal(sNavigateItemId, "FL1-item-FL1-List-2", "Navigated itemId");
 				assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
-				assert.deepEqual(oFixedList.getProperty("_conditions"), [oCondition], "FixedList conditions");
+				assert.deepEqual(oFixedList.getConditions(), [oCondition], "FixedList conditions");
 				assert.equal(oFixedList._iNavigateIndex, 4, "navigated index stored as closed");
 
 				fnDone();
@@ -724,9 +725,9 @@ sap.ui.define([
 
 		assert.ok(oFixedList.shouldOpenOnNavigate(), "should open if maxConditions != 1");
 
-		var oConfig = oFixedList.getProperty("_config");
+		var oConfig = oFixedList.getConfig();
 		oConfig.maxConditions = 1;
-		oFixedList.setProperty("_config", oConfig);
+		oFixedList.setConfig(oConfig);
 		assert.notOk(oFixedList.shouldOpenOnNavigate(), "should not open if maxConditions == 1");
 
 	});

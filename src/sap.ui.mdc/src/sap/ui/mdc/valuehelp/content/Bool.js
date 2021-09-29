@@ -28,7 +28,7 @@ sap.ui.define([
 		FixedList.prototype.init.apply(this, arguments);
 
 		this._oObserver.observe(this, {
-			properties: ["_config"]
+			properties: ["config"]
 		});
 
 	};
@@ -118,7 +118,7 @@ sap.ui.define([
 
 	Bool.prototype._observeChanges = function(oChanges) {
 
-		if (oChanges.type === "property" && oChanges.name === "_config") {
+		if (oChanges.type === "property" && oChanges.name === "config") {
 			_updateModel.call(this);
 		}
 

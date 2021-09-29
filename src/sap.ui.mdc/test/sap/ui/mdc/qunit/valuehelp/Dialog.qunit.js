@@ -207,7 +207,7 @@ sap.ui.define([
 			oContentField = new Icon("I1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 			oContent = new Content("Content1", {title: "Content title", shortTitle: "ShortTitle"});
 			sinon.stub(oContent, "getContent").returns(oContentField);
-			oContent.setAggregation("_displayContent", oContentField);
+			oContent.setAggregation("displayContent", oContentField);
 			sinon.stub(oContent, "getCount").callsFake(function (aConditions) { return aConditions.length;});
 
 			oDialog = new Dialog("D1", {
@@ -349,7 +349,7 @@ sap.ui.define([
 		var oContentField2 = new Icon("I3", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 		var oContent2 = new Content("Content2", {title: "Content2 title"});
 		sinon.stub(oContent2, "getContent").returns(oContentField2);
-		oContent2.setAggregation("_displayContent", oContentField2);
+		oContent2.setAggregation("displayContent", oContentField2);
 		sinon.stub(oContent2, "getCount").callsFake(function (aConditions) { return aConditions.length;});
 		oDialog.addContent(oContent2);
 
