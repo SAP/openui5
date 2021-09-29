@@ -911,19 +911,15 @@ sap.ui.define([
          *
          * @private
          */
-        //TODO: Pass this as an callback function to the delegate instead of calling it form the delegate directly
         Chart.prototype._innerChartDataLoadComplete = function (mArguments) {
-            if (this.getControlDelegate().checkEventForDataLoaded(mArguments)){
-                this.setBusy(false);
-                this._renderOverlay(false);
+            this.setBusy(false);
+            this._renderOverlay(false);
 
-                this._updateToolbar();
+            this._updateToolbar();
 
-                this.fireEvent("innerChartLoadedData ", {
-                    innerChart: this.getControlDelegate().getInnerChart(this)
-                });
-            }
-
+            this.fireEvent("innerChartLoadedData ", {
+                innerChart: this.getControlDelegate().getInnerChart(this)
+            });
         };
 
         /**
