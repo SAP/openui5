@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/base/security/encodeURL",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
@@ -13,10 +14,11 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/ODataUtils"
-], function (encodeURL, MessageBox, MessageToast, coreLibrary, Core, Element, Message, Controller,
-		Filter, FilterOperator, ODataUtils) {
+], function (Log, encodeURL, MessageBox, MessageToast, coreLibrary, Core, Element, Message,
+		Controller, Filter, FilterOperator, ODataUtils) {
 	"use strict";
-	var MessageType = coreLibrary.MessageType;
+	var sClassname = "sap.ui.core.internal.samples.odata.v2.SalesOrders.Main.controller",
+		MessageType = coreLibrary.MessageType;
 
 	return Controller.extend("sap.ui.core.internal.samples.odata.v2.SalesOrders.Main", {
 		/**
@@ -129,6 +131,10 @@ sap.ui.define([
 
 			oCreatedContext = this.getView().getModel().createEntry("ToLineItems", {
 				context : oBindingContext,
+				error : function (oError) {
+					Log.info("Error Handler: Failed to created sales order item",
+						JSON.stringify(oError), sClassname);
+				},
 				expand : "ToProduct,ToHeader",
 				groupId : "create",
 				properties : {
@@ -139,13 +145,26 @@ sap.ui.define([
 					QuantityUnit : "EA",
 					SalesOrderID : oBindingContext.getProperty("SalesOrderID")
 				},
-				success : function (oData, oResponse) {
-					oCreateDialog.close();
-					MessageBox.success("Created sales order item '"
-						+ oCreatedContext.getProperty("ItemPosition") + "'");
+				success : function (/*oData, oResponse*/) {
+					Log.info("Success Handler: Sales order item creation was successful",
+						oCreatedContext.getPath(), sClassname);
 				}
 			});
 
+			oCreatedContext.created().then(function () {
+				var sMessage = "Created sales order item '"
+						+ oCreatedContext.getProperty("ItemPosition") + "'";
+
+				Log.info(sMessage, oCreatedContext.getPath(), sClassname);
+				MessageBox.success(sMessage);
+			}, function () {
+				var sMessage = "Discarded sales order item creation";
+
+				Log.info(sMessage, oCreatedContext.getPath(), sClassname);
+				MessageToast.show(sMessage);
+			}).finally(function () {
+				oCreateDialog.close();
+			});
 			oCreateDialog.setBindingContext(oCreatedContext);
 			oCreateDialog.open();
 		},
@@ -179,9 +198,9 @@ sap.ui.define([
 		},
 
 		onDiscardCreatedItem : function () {
-			this.byId("createSalesOrderItemDialog").close();
-			this.getView().getModel()
-				.deleteCreatedEntry(this.byId("createSalesOrderItemDialog").getBindingContext());
+			var oCreatedContext = this.byId("createSalesOrderItemDialog").getBindingContext();
+
+			this.getView().getModel().resetChanges([oCreatedContext.getPath()], undefined, true);
 		},
 
 		onFilterMessages : function (oEvent) {
