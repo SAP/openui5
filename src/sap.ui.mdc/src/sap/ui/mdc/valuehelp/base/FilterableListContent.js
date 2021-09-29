@@ -102,7 +102,8 @@ sap.ui.define([
 				},
 				_defaultFilterBar: {
 					type: "sap.ui.mdc.filterbar.FilterBarBase",
-					multiple: false
+					multiple: false,
+					visibility: "hidden"
 				}
 			},
 			events: {
@@ -245,7 +246,7 @@ sap.ui.define([
 				liveMode: false, // !oWrapper.isSuspended(), // if suspended, no live search
 				showGoButton: false
 			});
-			this.set_defaultFilterBar(oFilterBar);
+			this.setAggregation("_defaultFilterBar", oFilterBar, true);
 			return oFilterBar;
 		}.bind(this));
 	};
@@ -383,7 +384,7 @@ sap.ui.define([
 	}
 
 	FilterableListContent.prototype._getPriorityFilterBar = function () {
-		return this.getFilterBar() || this.get_defaultFilterBar();
+		return this.getFilterBar() || this.getAggregation("_defaultFilterBar");
 	};
 
 	FilterableListContent.prototype._observeChanges = function (oChanges) {

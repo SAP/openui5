@@ -51,7 +51,7 @@ sap.ui.define([
 		var fnDone = assert.async();
 		oContent._createDefaultFilterBar().then(function (oFilterBar) {
 			assert.ok(oFilterBar, "FilterBar is created");
-			assert.equal(oFilterBar, oContent.mAggregations._defaultFilterBar, "FilerBar is set as defaultFilterBar");
+			assert.equal(oFilterBar, oContent.getAggregation("_defaultFilterBar"), "FilerBar is set as defaultFilterBar");
 			fnDone();
 		});
 	});
@@ -60,7 +60,7 @@ sap.ui.define([
 		var fnDone = assert.async();
 		oContent._createDefaultFilterBar().then(function () {
 			var oFilterBar = oContent._getPriorityFilterBar();
-			assert.equal(oFilterBar, oContent.mAggregations._defaultFilterBar, "returns defaultFilterBar if none is set");
+			assert.equal(oFilterBar, oContent.getAggregation("_defaultFilterBar"), "returns defaultFilterBar if none is set");
 			var oMyFilterBar = new FilterBar();
 			oContent.setFilterBar(oMyFilterBar);
 			oFilterBar = oContent._getPriorityFilterBar();

@@ -774,7 +774,7 @@ sap.ui.define([
 
 		if (oChanges.name === "filterBar") {
 			oFilterBar = oChanges.child;
-			oDefaultFilterBar = this.get_defaultFilterBar();
+			oDefaultFilterBar = this.getAggregation("_defaultFilterBar");
 			if (oChanges.mutation === "insert") {
 				if (oDefaultFilterBar) {
 					oDefaultFilterBar.detachSearch(_handleSearch, this);
