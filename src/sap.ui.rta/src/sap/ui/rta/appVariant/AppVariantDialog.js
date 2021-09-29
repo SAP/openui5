@@ -141,9 +141,10 @@ function(
 		var aIcons = [];
 
 		aUI5Icons.forEach(function(sName) {
+			var iconInfo = IconPool.getIconInfo(sName);
 			aIcons.push({
-				icon: IconPool.getIconInfo(sName).uri,
-				name: sName.toLowerCase()
+				icon: iconInfo.uri,
+				name: (iconInfo.text === "") ? sName.toLowerCase() : iconInfo.text
 			});
 		});
 
