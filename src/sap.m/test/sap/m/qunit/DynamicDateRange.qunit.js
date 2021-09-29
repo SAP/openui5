@@ -5,13 +5,17 @@ sap.ui.define([
 	"sap/m/CustomDynamicDateOption",
 	"sap/m/StandardDynamicDateOption",
 	"sap/m/DynamicDateValueHelpUIType",
-	"sap/ui/unified/DateRange"
+	"sap/m/DynamicDateUtil",
+	"sap/ui/unified/DateRange",
+	"sap/ui/core/format/DateFormat"
 ], function(
 	DynamicDateRange,
 	CustomDynamicDateOption,
 	StandardDynamicDateOption,
 	DynamicDateValueHelpUIType,
-	DateRange
+	DynamicDateUtil,
+	DateRange,
+	DateFormat
 ) {
 	var oCore = sap.ui.getCore();
 
@@ -513,5 +517,31 @@ sap.ui.define([
 		// assert
 		assert.deepEqual(this.ddr.getValue(), { operator: "TODAY", values: [] }, "the value is correctly substituted");
 		assert.equal(this.ddr._oInput.getValue().indexOf("Today"), 0, "the formatted value is correct");
+	});
+
+	QUnit.test("toDates - DATE", function(assert) {
+		// arrange
+		var oDateFormatter = DateFormat.getDateTimeInstance(),
+			aResultRange;
+
+		//act
+		aResultRange = DynamicDateUtil.toDates({ operator: "DATE", values: [new Date(2021, 8, 23)] });
+
+		// assert
+		assert.equal(oDateFormatter.format(aResultRange[0]), "Sep 23, 2021, 12:00:00 AM", "correct start date");
+		assert.equal(oDateFormatter.format(aResultRange[1]), "Sep 23, 2021, 11:59:59 PM", "correct end date");
+	});
+
+	QUnit.test("toDates - DATERANGE", function(assert) {
+		// arrange
+		var oDateFormatter = DateFormat.getDateTimeInstance(),
+			aResultRange;
+
+		//act
+		aResultRange = DynamicDateUtil.toDates({ operator: "DATERANGE", values: [new Date(2021, 8, 23), new Date(2021, 8, 24)] });
+
+		// assert
+		assert.equal(oDateFormatter.format(aResultRange[0]), "Sep 23, 2021, 12:00:00 AM", "correct start date");
+		assert.equal(oDateFormatter.format(aResultRange[1]), "Sep 24, 2021, 11:59:59 PM", "correct end date");
 	});
 });
