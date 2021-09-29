@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Popup",
 	"sap/base/i18n/ResourceBundle",
+	"sap/ui/integration/editor/EditorResourceBundles",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/dom/includeStylesheet",
 	"sap/base/util/LoaderExtensions",
@@ -70,6 +71,7 @@ sap.ui.define([
 	Log,
 	Popup,
 	ResourceBundle,
+	EditorResourceBundles,
 	URI,
 	includeStylesheet,
 	LoaderExtensions,
@@ -603,6 +605,7 @@ sap.ui.define([
 		this.setAggregation("_messageStrip", new MessageStrip({
 			showIcon: false
 		}));
+		this.setLanguage(Core.getConfiguration().getLanguage());
 		/**
 		 * Facade of the {@link sap.ui.integration.editor.Editor} control.
 		 * @interface
@@ -751,17 +754,22 @@ sap.ui.define([
 				this._registerManifestModulePath();
 				this._oInitialManifestModel = new JSONModel(this._oEditorManifest._oInitialJson);
 				this.setProperty("json", this._oEditorManifest._oInitialJson, bSuppress);
-				var oManifestJson = this._oEditorManifest._oManifest.getRawJson();
+				var oManifestJson = this._oEditorManifest.oJson;
 				var _beforeCurrentLayer = merge({}, oManifestJson);
 				this._beforeManifestModel = new JSONModel(_beforeCurrentLayer);
 				if (iCurrentModeIndex < Merger.layers["translation"] && this._currentLayerManifestChanges) {
 					//merge if not translation
-					oManifestJson = Merger.mergeDelta(oManifestJson, [this._currentLayerManifestChanges]);
+					oManifestJson = Merger.mergeDelta(oManifestJson, [this._currentLayerManifestChanges], this.getSection());
 				}
 				//create a manifest model after the changes are merged
 				this._manifestModel = new JSONModel(oManifestJson);
 				this._isManifestReady = true;
 				this.fireManifestReady();
+				var vI18n = this._oEditorManifest.get("/sap.app/i18n");
+				var sResourceBundleURL = this.getBaseUrl() + vI18n;
+				if (vI18n && EditorResourceBundles.getResourceBundleURL() !== sResourceBundleURL) {
+					EditorResourceBundles.setResourceBundleURL(sResourceBundleURL);
+				}
 				//use the translations
 				this._loadDefaultTranslations();
 				//add a context model
@@ -769,7 +777,6 @@ sap.ui.define([
 				if (this._oEditorManifest.getResourceBundle()) {
 					this._enhanceI18nModel(this._oEditorManifest.getResourceBundle());
 				}
-
 				return this._loadExtension().then(function() {
 					this._initInternal();
 				}.bind(this));
@@ -1005,44 +1012,36 @@ sap.ui.define([
 		 */
 	 Editor.prototype._filterManifestChangesByLayer = function (oManifestSettings) {
 		var aChanges = [],
+			that = this,
+			oBeforeLayerChanges = {},
 			oCurrentLayerChanges = { ":layer": Merger.layers[this.getMode()] },
-			iCurrentModeIndex = Merger.layers[this.getMode()];
-		/* hide multi language function since there has a translation issue in Portal
-		var sEditorLanguage = this._language || this.getLanguage() || Core.getConfiguration().getLanguage().replaceAll('_', '-');
-		*/
+			iCurrentModeIndex = Merger.layers[that.getMode()];
 		oManifestSettings.manifestChanges.forEach(function (oChange) {
 			//filter manifest changes. only the changes before the current layer are needed
 			//editor will merge the last layer locally to allow "reset" or properties
 			//also for translation layer, the "original" value is needed
 			var iLayer = oChange.hasOwnProperty(":layer") ? oChange[":layer"] : 1000;
-			/* hide multi language function since there has a translation issue in Portal
-			//backward compatibility for old changes which not have property "multipleLanguage"
-			//replace the value property by valueTranslation property
-			if (!oChange.hasOwnProperty(":multipleLanguage")) {
-				var oChangeTransfered = {};
-				var aKeys = Object.keys(oChange);
-				for (var j = 0; j < aKeys.length; j++) {
-					if (aKeys[j].endsWith("/value") && typeof oChange[aKeys[j]] === "string") {
-						var sValueTranslationsPath = aKeys[j].substring(0, aKeys[j].lastIndexOf("/")) + "/valueTranslations";
-						if (!includes(aKeys, sValueTranslationsPath)) {
-							var oValueTranslation = {};
-							if (iLayer === Merger.layers["translation"]) {
-								oValueTranslation[sEditorLanguage] = oChange[aKeys[j]];
-							} else {
-								for (var p in Editor._languages) {
-									oValueTranslation[p] = oChange[aKeys[j]];
-								}
-							}
-							oChangeTransfered[sValueTranslationsPath] = oValueTranslation;
-							continue;
-						}
-					}
-					oChangeTransfered[aKeys[j]] = oChange[aKeys[j]];
+			if (iLayer === Merger.layers["translation"]) {
+				var sLanguage = that._language;
+				if (sLanguage === "") {
+					sLanguage = Core.getConfiguration().getLanguage().replaceAll('_', '-');
 				}
-				oChange = oChangeTransfered;
-			}*/
+				var oTranslationChange = {
+					"texts": {}
+				};
+				oTranslationChange.texts[sLanguage] = {};
+				Object.keys(oChange).forEach(function (s) {
+					if (s.charAt(0) === "/") {
+						oTranslationChange.texts[sLanguage][s] = oChange[s];
+					} else {
+						oTranslationChange[s] = oChange[s];
+					}
+				});
+				oChange = oTranslationChange;
+			}
 			if (iLayer < iCurrentModeIndex) {
 				aChanges.push(oChange);
+				oBeforeLayerChanges = merge(oBeforeLayerChanges, oChange);
 			} else if (iLayer === iCurrentModeIndex) {
 				//store the current layer changes locally for later processing
 				oCurrentLayerChanges = oChange;
@@ -1050,6 +1049,7 @@ sap.ui.define([
 		});
 		oManifestSettings.manifestChanges = aChanges;
 		this._currentLayerManifestChanges = oCurrentLayerChanges;
+		this._beforeLayerManifestChanges = oBeforeLayerChanges;
 	};
 	/**
 	 * Initializes the editor after the json is set
@@ -1180,47 +1180,19 @@ sap.ui.define([
 			for (var n in oSettings.form.items) {
 				var oItem = oSettings.form.items[n];
 				if (oItem.editable && oItem.visible) {
-					/* hide multi language function since there has a translation issue in Portal
-					var oValueTranslations;
-					var sLanguage = this.getMode() !== "translation" ? Core.getConfiguration().getLanguage().replaceAll('_', '-') : this._language || this.getLanguage();
-					*/
-					var sValueTranslationsPath = "";
-					if (oItem.manifestpath) {
-						sValueTranslationsPath = oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueTranslations";
-					}
 					if (this.getMode() !== "translation") {
-						if (oItem.translatable && !oItem._changed && oItem._translatedPlaceholder && !this._currentLayerManifestChanges[oItem.manifestpath] && !this._currentLayerManifestChanges[sValueTranslationsPath]) {
+						if (oItem.translatable && !oItem._changed && oItem._translatedPlaceholder && !this._currentLayerManifestChanges[oItem.manifestpath]) {
 							//do not save a value that was not changed and comes from a translated default value
 							//mResult[oItem.manifestpath] = oItem._translatedPlaceholder;
 							//if we would save it
 							continue;
 						} else {
-							/* hide multi language function since there has a translation issue in Portal
-							* need to remove below line later if we want release multi language function again
-							*/
-							mResult[oItem.manifestpath] = oItem.value;
 							if (oItem.valueItems) {
 								mResult[oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueItems"] = oItem.valueItems;
 							}
-							// save the value tokens for backend filter with MultiInput
-							if (oItem.valueTokens) {
-								mResult[oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueTokens"] = oItem.valueTokens;
-							}
-							/* hide multi language function since there has a translation issue in Portal
-							//if current parameter is string and translatable, create or merge valueTranslations property of it.
-							//set the current change to current language in valueTranslations.
-							if (oItem.type === "string" && oItem.translatable) {
-								if (!oItem.valueTranslations) {
-									oValueTranslations = {};
-								} else {
-									oValueTranslations = deepClone(oItem.valueTranslations, 500);
-								}
-								oValueTranslations[sLanguage] = oItem.value;
-								oItem.valueTranslations = oValueTranslations;
-								mResult[sValueTranslationsPath] = oItem.valueTranslations;
-							} else {
+							if (oItem.type !== "string" || !oItem.translatable) {
 								mResult[oItem.manifestpath] = oItem.value;
-							}*/
+							}
 						}
 					} else if (oItem.translatable && oItem.value) {
 						//in translation mode create an entry if there is a value
@@ -1246,6 +1218,15 @@ sap.ui.define([
 							mNext[oItem._settingspath + "/allowDynamicValues"] = oItem._next.allowDynamicValues;
 						}
 					}
+				}
+			}
+		}
+		if (oSettings.texts) {
+			mResult.texts = {};
+			for (var language in oSettings.texts) {
+				mResult.texts[language] = {};
+				for (var translation in oSettings.texts[language]) {
+					mResult.texts[language][translation] = oSettings.texts[language][translation];
 				}
 			}
 		}
@@ -1711,6 +1692,7 @@ sap.ui.define([
 		}
 		oField._oDataProviderFactory = this._oDataProviderFactory;
 		oField.setAssociation("_messageStrip", this.getAggregation("_messageStrip"));
+		oField._previewPostion = this.getPreviewPosition();
 		return oField;
 	};
 
@@ -2086,6 +2068,20 @@ sap.ui.define([
 			}
 		}
 	};
+
+	Editor.prototype.getBeforeLayerChange = function (sKey) {
+		if (!this._beforeLayerManifestChanges) {
+			this._beforeLayerManifestChanges = {};
+		}
+		return this._beforeLayerManifestChanges[sKey];
+	};
+
+	Editor.prototype.getTranslationValueInTexts = function (sLanguage, sKey) {
+		var sTranslationPath = "/texts/" + sLanguage;
+		var oProperty = this._settingsModel.getProperty(sTranslationPath) || {};
+		return oProperty[sKey];
+	};
+
 	/**
 	 * Adds an item to the _formContent aggregation based on the config settings
 	 * @param {} oConfig
@@ -2159,6 +2155,7 @@ sap.ui.define([
 			return;
 		}
 		var oNewLabel = null;
+		var sLanguage = Core.getConfiguration().getLanguage().replaceAll('_', '-');
 		if (sMode === "translation") {
 			if ((typeof oConfig.value === "string" && oConfig.value.indexOf("{") === 0) || typeof oConfig.values !== "undefined") {
 				//do not show dynamic values for translation
@@ -2176,63 +2173,68 @@ sap.ui.define([
 			delete oConfig.values;
 
 			//create a configuration clone. map the _settingspath setting to _language, and set it to not editable
-			var origLangField = deepClone(oConfig, 500);
-			origLangField._settingspath += "/_language";
-			origLangField.editable = false;
-			origLangField.required = false;
-			/* hide multi language function since there has a translation issue in Portal
-			//if has valueTransaltions, get value via language setting in core
-			if (origLangField.valueTranslations) {
-				var sLanguage = Core.getConfiguration().getLanguage().replaceAll('_', '-');
-				if (Editor._languages[sLanguage]) {
-					if (origLangField.valueTranslations[sLanguage]) {
-						origLangField.value = origLangField.valueTranslations[sLanguage];
-					}
-				} else if (sLanguage.indexOf"-") > -1) {
-					sLanguage = sLanguage.substring(0, sLanguage.indexOf("-"));
-					if (Editor._languages[sLanguage]) {
-						if (origLangField.valueTranslations[sLanguage]) {
-							origLangField.value = origLangField.valueTranslations[sLanguage];
-						}
-					}
-				}
-			}*/
-			if (!origLangField.value) {
-				//the original language field shows only a text control. If empty we show a dash to avoid empty text.
-				origLangField.value = "-";
+			var origLangFieldConfig = deepClone(oConfig, 500);
+			origLangFieldConfig._settingspath += "/_language";
+			origLangFieldConfig.editable = false;
+			origLangFieldConfig.required = false;
+			//if has value transaltions, get value via language setting in core
+			if (!Editor._languages[sLanguage] && sLanguage.indexOf("-") > -1) {
+				sLanguage = sLanguage.substring(0, sLanguage.indexOf("-"));
 			}
-			var oLabel = this._createLabel(origLangField);
+			if (Editor._languages[sLanguage]) {
+				var sTranslateText = this.getTranslationValueInTexts(sLanguage, oConfig.manifestpath);
+				if (sTranslateText) {
+					origLangFieldConfig.value = sTranslateText;
+				}
+			}
+			if (!origLangFieldConfig.value) {
+				//the original language field shows only a text control. If empty we show a dash to avoid empty text.
+				origLangFieldConfig.value = "-";
+			}
+			var oLabel = this._createLabel(origLangFieldConfig);
 			this.addAggregation("_formContent",
 				oLabel
 			);
-			var oField = this._createField(origLangField);
-			oField.isOrigLangField = true;
-			this.addAggregation("_formContent", oField);
+			var oOrigLanguageField = this._createField(origLangFieldConfig);
+			oOrigLanguageField.isOrigLangField = true;
+			this.addAggregation("_formContent", oOrigLanguageField);
 
-			oConfig.value = oConfig._translatedValue || "";
 			//even if a item is not visible or not editable by another layer for translations it should always be editable and visible
 			oConfig.editable = oConfig.visible = oConfig.translatable;
-			//if there are changes for the current layer, read the already translated value from there
-			//now merge these changes for translation into the item configs
-			if (this._currentLayerManifestChanges) {
-				oConfig.value = this._currentLayerManifestChanges[oConfig.manifestpath] || oConfig.value;
+			sLanguage = this._language;
+			if (!this.getBeforeLayerChange(oConfig.manifestpath)) {
+				oConfig.value = oConfig._translatedValue || "";
+			}
+			var sTranslateText = this.getTranslationValueInTexts(sLanguage, oConfig.manifestpath);
+			if (sTranslateText) {
+				oConfig.value = sTranslateText;
 			}
 			//change the label for the translation field
 			oConfig.label = oConfig._translatedLabel || "";
 			oConfig.required = false; //translation is never required
-			var oField = this._createField(oConfig);
+			var oTranslateLanguageField = this._createField(oConfig);
 			this.addAggregation("_formContent",
-				oField
+				oTranslateLanguageField
 			);
 		} else {
 			oNewLabel = this._createLabel(oConfig);
 			this.addAggregation("_formContent",
 				oNewLabel
 			);
+			var sBeforeLayerChange = this.getBeforeLayerChange(oConfig.manifestpath);
+			if (sBeforeLayerChange) {
+				oConfig._beforeLayerChange = sBeforeLayerChange;
+			}
 			//if there are changes for the current layer, read the already translated value from there
 			//now merge these changes for translation into the item configs
-			if (this._currentLayerManifestChanges) {
-				oConfig.value = this._currentLayerManifestChanges[oConfig.manifestpath] || oConfig.value;
+			if (this._currentLayerManifestChanges && this._currentLayerManifestChanges[oConfig.manifestpath]) {
+				oConfig.value = this._currentLayerManifestChanges[oConfig.manifestpath];
+				oConfig._beforeLayerChange = oConfig.value;
+			}
+			sLanguage = this._language;
+			var sTranslateText = this.getTranslationValueInTexts(sLanguage, oConfig.manifestpath);
+			if (sTranslateText) {
+				oConfig.value = sTranslateText;
 			}
 			var oField = this._createField(oConfig);
 			this.addAggregation("_formContent",
@@ -2350,28 +2352,12 @@ sap.ui.define([
 					//force a label setting, set it to the name of the item
 					oItem.label = oItem.label || n;
 					//what is the current value from the change?
-					/* hide multi language function since there has a translation issue in Portal
-					var sCurrentLayerValue, sValueTranslationsPath, aTranslationLayerValueChanges;
-					* remove below line if release this feature again
-					*/
 					var sCurrentLayerValue;
 					if (oItem.manifestpath) {
 						this._mItemsByPaths[oItem.manifestpath] = oItem;
-						/* hide multi language function since there has a translation issue in Portal
-						sValueTranslationsPath = oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueTranslations";
-						if (this.getMode() === "translation") {
-							if (this._currentLayerManifestChanges
-								&& this._currentLayerManifestChanges[sValueTranslationsPath]) {
-								//get valueTranslations from current layer changes if current mode is translation
-								aTranslationLayerValueChanges = this._currentLayerManifestChanges[sValueTranslationsPath];
-							}
-						} else {
+						if (this.getMode() !== "translation") {
 							sCurrentLayerValue = this._currentLayerManifestChanges[oItem.manifestpath];
-						}*/
-						/* hide multi language function since there has a translation issue in Portal
-						* need to remove below line later if release multi language function again
-						*/
-						sCurrentLayerValue = this._currentLayerManifestChanges[oItem.manifestpath];
+						}
 					}
 					//if not changed it should be undefined, and ignore changes in tranlation layer
 					oItem._changed = sCurrentLayerValue !== undefined && this.getMode() !== "translation";
@@ -2385,19 +2371,6 @@ sap.ui.define([
 					//check if the provided value from the parameter or designtime default value is a translated value
 					//restrict this to string types for now
 					if (oItem.type === "string") {
-						/* hide multi language function since there has a translation issue in Portal
-						//get i18n path of the editor, and set it to item for initializing EditorResourceBundles
-						var vI18n = this._oEditorManifest.get("/sap.app/i18n");
-						if (!vI18n) {
-							vI18n = "";
-						}
-						oItem._resourceBundleURL = this.getBaseUrl() + vI18n;
-						if (oItem.manifestpath) {
-							//merge valueTranslations in current mainfest mode and current layer changes
-							var oValueTranslationsInManifest = this._manifestModel.getProperty(sValueTranslationsPath);
-							oItem.valueTranslations = merge(oValueTranslationsInManifest, aTranslationLayerValueChanges);
-							aTranslationLayerValueChanges = undefined;
-						}*/
 						//check if is translatable via default value, if default value match "{{sTranslationTextKey}}" or "{i18n>sTranslationTextKey}", it is translatable
 						oItem._translatedDefaultPlaceholder = this._getManifestDefaultValue(oItem.manifestpath);
 						var sTranslationTextKey = null,
@@ -2407,7 +2380,7 @@ sap.ui.define([
 							if (this._isValueWithParameterSyntax(sPlaceholder)) {
 								oItem.translatable = false;
 							}
-							//parameter translated value wins over designtime defaultValue
+							//parameter translated value
 							if (this._isValueWithHandlebarsTranslation(sPlaceholder)) {
 								sTranslationTextKey = sPlaceholder.substring(2, sPlaceholder.length - 2);
 							} else if (sPlaceholder.startsWith("{i18n>")) {
@@ -2417,11 +2390,15 @@ sap.ui.define([
 							if (sTranslationTextKey) {
 								//force translatable, even if it was not explicitly set already
 								oItem.translatable = true;
+							} else if (oItem.translatable  && this.getMode() === "translation" && !this.getBeforeLayerChange(oItem.manifestpath)) {
+								//if no translation key which means item defined as string value directly.
+								//set the _translatedValue with item manifest value.
+								oItem._translatedValue  = oItem._translatedDefaultPlaceholder;
+								oItem.value = oItem._translatedValue;
 							}
 						}
 						//check if before value still has tranlation key
 						oItem._translatedPlaceholder = oItem._beforeValue;
-						sTranslationTextKey = null;
 						sPlaceholder = oItem._translatedPlaceholder;
 						if (sPlaceholder) {
 							//value with parameter syntax will not be translated
@@ -2434,35 +2411,33 @@ sap.ui.define([
 							} else if (sPlaceholder.startsWith("{i18n>")) {
 								sTranslationTextKey = sPlaceholder.substring(6, sPlaceholder.length - 1);
 							}
-							//only if there is a translation key
-							if (sTranslationTextKey) {
-								oItem._translatedValue = this.getModel("i18n").getResourceBundle().getText(sTranslationTextKey);
-								if (oItem._changed) {
-									//item was changed, take the current value
-									oItem.value = sCurrentLayerValue;
-								} else {
-									oItem.value = oItem._translatedValue;
-								}
-								if (oItem.valueTranslations && oItem.valueTranslations[sLanguage]) {
-									oItem.value = oItem.valueTranslations[sLanguage];
-								}
-								if (this.getMode() === "translation") {
-									//if we are in translation mode the default value differs and depends on the language
-									//TODO this does not work in SWZ, the base path is not taken into account...
-									//get the translated default value for the language we want to translate this.getLanguage()
-									oItem._translatedValue = this._getCurrentLanguageSpecificText(sTranslationTextKey);
-								}
-							} else if (oItem.translatable  && this.getMode() === "translation") {
-								//if no translation key which means item defined as string value directly.
-								//set the _translatedValue with item manifest value or default value.
-								oItem._translatedValue  = oItem._translatedPlaceholder;
-								oItem.value = oItem._beforeValue;
+						}
+						var sTranslationValueinTexts = this.getTranslationValueInTexts(sLanguage, oItem.manifestpath);
+						//only if there is a translation key
+						if (sTranslationTextKey) {
+							oItem._translatedValue = this.getModel("i18n").getResourceBundle().getText(sTranslationTextKey);
+							if (oItem._changed) {
+								//item was changed, take the current value
+								oItem.value = sCurrentLayerValue;
+							} else if (oItem.value === oItem._translatedDefaultPlaceholder) {
+								oItem.value = oItem._translatedValue;
 							}
+							if (this.getMode() === "translation") {
+								//if we are in translation mode the default value differs and depends on the language
+								//TODO this does not work in SWZ, the base path is not taken into account...
+								//get the translated default value for the language we want to translate this.getLanguage()
+								//if the value is "", which means the i18n setting is not correct, do not use it as translated value
+								var sCurrentLanguageSpecificText = this._getCurrentLanguageSpecificText(sTranslationTextKey);
+								if (sCurrentLanguageSpecificText !== "") {
+									oItem._translatedValue = sCurrentLanguageSpecificText;
+								}
+							} else if (sTranslationValueinTexts) {
+								oItem.value = sTranslationValueinTexts;
+							}
+						} else if (this.getMode() !== "translation" && oItem.translatable && sTranslationValueinTexts) {
+							oItem.value = sTranslationValueinTexts;
 						}
 						if (this.getMode() === "translation") {
-							if (oItem.valueTranslations && oItem.valueTranslations[sLanguage]) {
-								oItem._translatedValue = oItem.valueTranslations[sLanguage];
-							}
 							if (this._isValueWithHandlebarsTranslation(oItem.label)) {
 								oItem._translatedLabel = this._getCurrentLanguageSpecificText(oItem.label.substring(2, oItem.label.length - 2), true);
 							} else if (oItem.label && oItem.label.startsWith("{i18n>")) {
@@ -2610,6 +2585,7 @@ sap.ui.define([
 	 * Applies previous layer designtime settings that were changed
 	 */
 	Editor.prototype._applyDesigntimeLayers = function (oSettings) {
+		var oTexts = {};
 		//pull current values
 		if (this._appliedLayerManifestChanges && Array.isArray(this._appliedLayerManifestChanges)) {
 			for (var i = 0; i < this._appliedLayerManifestChanges.length; i++) {
@@ -2619,6 +2595,10 @@ sap.ui.define([
 					for (var j = 0; j < aKeys.length; j++) {
 						this._settingsModel.setProperty(aKeys[j], oChanges[aKeys[j]]);
 					}
+				}
+				var oAppliedLayerManifestChangeTexts = this._appliedLayerManifestChanges[i]["texts"];
+				if (oAppliedLayerManifestChangeTexts) {
+					oTexts = merge(oTexts, oAppliedLayerManifestChangeTexts);
 				}
 			}
 		}
@@ -2640,6 +2620,13 @@ sap.ui.define([
 					this._settingsModel.setProperty(sNext + "/" + sProp, oChanges[aKeys[j]]);
 				}
 			}
+			var ocurrentLayerManifestChangeTexts = this._currentLayerManifestChanges["texts"];
+			if (ocurrentLayerManifestChangeTexts) {
+				oTexts = merge(oTexts, ocurrentLayerManifestChangeTexts);
+			}
+		}
+		if (!deepEqual(oTexts, {})) {
+			this._settingsModel.setProperty("/texts", oTexts);
 		}
 	};
 	/**

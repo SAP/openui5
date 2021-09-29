@@ -145,6 +145,7 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: oManifest
 			});
+			var oDate = new Date();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -161,13 +162,13 @@ sap.ui.define([
 					var oTranslateInI18nSyntaxField = this.oEditor.getAggregation("_formContent")[12];
 					assert.ok(oTranslateInI18nSyntaxField.getAggregation("_field").getValue() === "Value: StringParameter Value Trans in i18n", "Field: parameter syntax to translate in i18n format Value");
 					var oTodaySyntaxField = this.oEditor.getAggregation("_formContent")[14];
-					assert.ok(oTodaySyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.TODAY_ISO}}", "Field: parameter syntax to TODAY_ISO Value");
+					assert.ok(oTodaySyntaxField.getAggregation("_field").getValue().substring(7) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO Value");
 					var oNowSyntaxField = this.oEditor.getAggregation("_formContent")[16];
-					assert.ok(oNowSyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.NOW_ISO}}", "Field: parameter syntax to NOW_ISO Value");
+					assert.ok(oNowSyntaxField.getAggregation("_field").getValue().substring(7, 17) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO Value");
 					var oLocaleSyntaxField = this.oEditor.getAggregation("_formContent")[18];
-					assert.ok(oLocaleSyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.LOCALE}}", "Field: parameter syntax to LOCALE Value");
+					assert.ok(oLocaleSyntaxField.getAggregation("_field").getValue() === "Value: " + Core.getConfiguration().getLanguage(), "Field: parameter syntax to LOCALE Value");
 					var oMixedSyntaxField = this.oEditor.getAggregation("_formContent")[20];
-					assert.ok(oMixedSyntaxField.getAggregation("_field").getValue() === "Mixed value: stringParameter Value, StringParameter Value Trans in i18n, StringParameter Value Trans in i18n, {{parameters.TODAY_ISO}}, {{parameters.NOW_ISO}}, {{parameters.LOCALE}} End", "Field: mixed parameter syntaxs Value");
+					assert.ok(oMixedSyntaxField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter Value, StringParameter Value Trans in i18n, StringParameter Value Trans in i18n, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs Value");
 					var oToday1SyntaxField = this.oEditor.getAggregation("_formContent")[22];
 					assert.ok(oToday1SyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.TODAY_ISO1}}", "Field: parameter syntax to TODAY_ISO1 Value");
 					var oNow1SyntaxField = this.oEditor.getAggregation("_formContent")[24];
@@ -188,10 +189,10 @@ sap.ui.define([
 						assert.ok(oNormalSyntaxField.getAggregation("_field").getValue() === "Value: stringParameter New Value", "Field: Normol parameter syntax New Value");
 						assert.ok(oTranslateSyntaxField.getAggregation("_field").getValue() === "Value: StringParameter Value Trans New Value", "Field: parameter syntax to translate New Value");
 						assert.ok(oTranslateInI18nSyntaxField.getAggregation("_field").getValue() === "Value: StringParameter Value Trans in i18n New Value", "Field: parameter syntax to translate New Value");
-						assert.ok(oTodaySyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.TODAY_ISO}}", "Field: parameter syntax to TODAY_ISO Value");
-						assert.ok(oNowSyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.NOW_ISO}}", "Field: parameter syntax to NOW_ISO Value");
-						assert.ok(oLocaleSyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.LOCALE}}", "Field: parameter syntax to LOCALE Value");
-						assert.ok(oMixedSyntaxField.getAggregation("_field").getValue() === "Mixed value: stringParameter New Value, StringParameter Value Trans New Value, StringParameter Value Trans in i18n New Value, {{parameters.TODAY_ISO}}, {{parameters.NOW_ISO}}, {{parameters.LOCALE}} End", "Field: mixed parameter syntaxs New Value");
+						assert.ok(oTodaySyntaxField.getAggregation("_field").getValue().substring(7) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO Value");
+						assert.ok(oNowSyntaxField.getAggregation("_field").getValue().substring(7, 17) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO Value");
+						assert.ok(oLocaleSyntaxField.getAggregation("_field").getValue() === "Value: " + Core.getConfiguration().getLanguage(), "Field: parameter syntax to LOCALE Value");
+						assert.ok(oMixedSyntaxField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter New Value, StringParameter Value Trans New Value, StringParameter Value Trans in i18n New Value, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs New Value");
 						resolve();
 					});
 				}.bind(this));
@@ -214,6 +215,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
+			var oDate = new Date();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -230,13 +232,13 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[12];
 					assert.ok(oField.getAggregation("_field").getValue() === "Value: StringParameter Value Trans Admin2", "Field: parameter syntax to translate in i18n format Value");
 					oField = this.oEditor.getAggregation("_formContent")[14];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.TODAY_ISO}}", "Field: parameter syntax to TODAY_ISO Value");
+					assert.ok(oField.getAggregation("_field").getValue().substring(7) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO Value");
 					oField = this.oEditor.getAggregation("_formContent")[16];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.NOW_ISO}}", "Field: parameter syntax to NOW_ISO Value");
+					assert.ok(oField.getAggregation("_field").getValue().substring(7, 17) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO Value");
 					oField = this.oEditor.getAggregation("_formContent")[18];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.LOCALE}}", "Field: parameter syntax to LOCALE Value");
+					assert.ok(oField.getAggregation("_field").getValue() === "Value: " + Core.getConfiguration().getLanguage(), "Field: parameter syntax to LOCALE Value");
 					oField = this.oEditor.getAggregation("_formContent")[20];
-					assert.ok(oField.getAggregation("_field").getValue() === "Mixed value: stringParameter Value Admin, StringParameter Value Trans Admin1, StringParameter Value Trans Admin2, {{parameters.TODAY_ISO}}, {{parameters.NOW_ISO}}, {{parameters.LOCALE}} End", "Field: mixed parameter syntaxs Value");
+					assert.ok(oField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter Value Admin, StringParameter Value Trans Admin1, StringParameter Value Trans Admin2, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -327,6 +329,7 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: oManifest
 			});
+			var oDate = new Date();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -343,13 +346,13 @@ sap.ui.define([
 					var oTranslateInI18nSyntaxField = this.oEditor.getAggregation("_formContent")[12];
 					assert.ok(oTranslateInI18nSyntaxField.getAggregation("_field").getValue() === "Value: StringParameter Value Trans in i18n", "Field: parameter syntax to translate in i18n format Value");
 					var oTodaySyntaxField = this.oEditor.getAggregation("_formContent")[14];
-					assert.ok(oTodaySyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.TODAY_ISO}}", "Field: parameter syntax to TODAY_ISO Value");
+					assert.ok(oTodaySyntaxField.getAggregation("_field").getValue().substring(7) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO Value");
 					var oNowSyntaxField = this.oEditor.getAggregation("_formContent")[16];
-					assert.ok(oNowSyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.NOW_ISO}}", "Field: parameter syntax to NOW_ISO Value");
+					assert.ok(oNowSyntaxField.getAggregation("_field").getValue().substring(7, 17) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO Value");
 					var oLocaleSyntaxField = this.oEditor.getAggregation("_formContent")[18];
-					assert.ok(oLocaleSyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.LOCALE}}", "Field: parameter syntax to LOCALE Value");
+					assert.ok(oLocaleSyntaxField.getAggregation("_field").getValue() === "Value: " + Core.getConfiguration().getLanguage(), "Field: parameter syntax to LOCALE Value");
 					var oMixedSyntaxField = this.oEditor.getAggregation("_formContent")[20];
-					assert.ok(oMixedSyntaxField.getAggregation("_field").getValue() === "Mixed value: stringParameter Value, StringParameter Value Trans in i18n, StringParameter Value Trans in i18n, {{parameters.TODAY_ISO}}, {{parameters.NOW_ISO}}, {{parameters.LOCALE}} End", "Field: mixed parameter syntaxs Value");
+					assert.ok(oMixedSyntaxField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter Value, StringParameter Value Trans in i18n, StringParameter Value Trans in i18n, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs Value");
 					var oToday1SyntaxField = this.oEditor.getAggregation("_formContent")[22];
 					assert.ok(oToday1SyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.TODAY_ISO1}}", "Field: parameter syntax to TODAY_ISO1 Value");
 					var oNow1SyntaxField = this.oEditor.getAggregation("_formContent")[24];
@@ -370,10 +373,10 @@ sap.ui.define([
 						assert.ok(oNormalSyntaxField.getAggregation("_field").getValue() === "Value: stringParameter New Value", "Field: Normol parameter syntax New Value");
 						assert.ok(oTranslateSyntaxField.getAggregation("_field").getValue() === "Value: StringParameter Value Trans New Value", "Field: parameter syntax to translate New Value");
 						assert.ok(oTranslateInI18nSyntaxField.getAggregation("_field").getValue() === "Value: StringParameter Value Trans in i18n New Value", "Field: parameter syntax to translate New Value");
-						assert.ok(oTodaySyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.TODAY_ISO}}", "Field: parameter syntax to TODAY_ISO");
-						assert.ok(oNowSyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.NOW_ISO}}", "Field: parameter syntax to NOW_ISO");
-						assert.ok(oLocaleSyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.LOCALE}}", "Field: parameter syntax to LOCALE");
-						assert.ok(oMixedSyntaxField.getAggregation("_field").getValue() === "Mixed value: stringParameter New Value, StringParameter Value Trans New Value, StringParameter Value Trans in i18n New Value, {{parameters.TODAY_ISO}}, {{parameters.NOW_ISO}}, {{parameters.LOCALE}} End", "Field: mixed parameter syntaxs New Value");
+						assert.ok(oTodaySyntaxField.getAggregation("_field").getValue().substring(7) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO");
+						assert.ok(oNowSyntaxField.getAggregation("_field").getValue().substring(7, 17) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO");
+						assert.ok(oLocaleSyntaxField.getAggregation("_field").getValue() === "Value: " + Core.getConfiguration().getLanguage(), "Field: parameter syntax to LOCALE");
+						assert.ok(oMixedSyntaxField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter New Value, StringParameter Value Trans New Value, StringParameter Value Trans in i18n New Value, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs New Value");
 						resolve();
 					});
 				}.bind(this));
@@ -396,6 +399,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
+			var oDate = new Date();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -412,13 +416,13 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[12];
 					assert.ok(oField.getAggregation("_field").getValue() === "Value: StringParameter Value Trans Admin2", "Field: parameter syntax to translate in i18n format Value");
 					oField = this.oEditor.getAggregation("_formContent")[14];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.TODAY_ISO}}", "Field: parameter syntax to TODAY_ISO Value");
+					assert.ok(oField.getAggregation("_field").getValue().substring(7) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO Value");
 					oField = this.oEditor.getAggregation("_formContent")[16];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.NOW_ISO}}", "Field: parameter syntax to NOW_ISO Value");
+					assert.ok(oField.getAggregation("_field").getValue().substring(7, 17) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO Value");
 					oField = this.oEditor.getAggregation("_formContent")[18];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.LOCALE}}", "Field: parameter syntax to LOCALE Value");
+					assert.ok(oField.getAggregation("_field").getValue() === "Value: " + Core.getConfiguration().getLanguage(), "Field: parameter syntax to LOCALE Value");
 					oField = this.oEditor.getAggregation("_formContent")[20];
-					assert.ok(oField.getAggregation("_field").getValue() === "Mixed value: stringParameter Value Admin, StringParameter Value Trans Admin1, StringParameter Value Trans Admin2, {{parameters.TODAY_ISO}}, {{parameters.NOW_ISO}}, {{parameters.LOCALE}} End", "Field: mixed parameter syntaxs Value");
+					assert.ok(oField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter Value Admin, StringParameter Value Trans Admin1, StringParameter Value Trans Admin2, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -491,6 +495,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
+			var oDate = new Date();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -507,13 +512,13 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[12];
 					assert.ok(oField.getAggregation("_field").getValue() === "Value: StringParameter Value Trans Content2", "Field: parameter syntax to translate in i18n format Value");
 					oField = this.oEditor.getAggregation("_formContent")[14];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.TODAY_ISO}}", "Field: parameter syntax to TODAY_ISO Value");
+					assert.ok(oField.getAggregation("_field").getValue().substring(7) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO Value");
 					oField = this.oEditor.getAggregation("_formContent")[16];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.NOW_ISO}}", "Field: parameter syntax to NOW_ISO Value");
+					assert.ok(oField.getAggregation("_field").getValue().substring(7, 17) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO Value");
 					oField = this.oEditor.getAggregation("_formContent")[18];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.LOCALE}}", "Field: parameter syntax to LOCALE Value");
+					assert.ok(oField.getAggregation("_field").getValue() === "Value: " + Core.getConfiguration().getLanguage(), "Field: parameter syntax to LOCALE Value");
 					oField = this.oEditor.getAggregation("_formContent")[20];
-					assert.ok(oField.getAggregation("_field").getValue() === "Mixed value: stringParameter Value Content, StringParameter Value Trans Content1, StringParameter Value Trans Content2, {{parameters.TODAY_ISO}}, {{parameters.NOW_ISO}}, {{parameters.LOCALE}} End", "Field: mixed parameter syntaxs Value");
+					assert.ok(oField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter Value Content, StringParameter Value Trans Content1, StringParameter Value Trans Content2, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -591,6 +596,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
+			var oDate = new Date();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -607,13 +613,13 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[12];
 					assert.ok(oField.getAggregation("_field").getValue() === "Value: StringParameter Value Trans Content2", "Field: parameter syntax to translate in i18n format Value");
 					oField = this.oEditor.getAggregation("_formContent")[14];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.TODAY_ISO}}", "Field: parameter syntax to TODAY_ISO Value");
+					assert.ok(oField.getAggregation("_field").getValue().substring(7) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO Value");
 					oField = this.oEditor.getAggregation("_formContent")[16];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.NOW_ISO}}", "Field: parameter syntax to NOW_ISO Value");
+					assert.ok(oField.getAggregation("_field").getValue().substring(7, 17) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO Value");
 					oField = this.oEditor.getAggregation("_formContent")[18];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.LOCALE}}", "Field: parameter syntax to LOCALE Value");
+					assert.ok(oField.getAggregation("_field").getValue() === "Value: " + Core.getConfiguration().getLanguage(), "Field: parameter syntax to LOCALE Value");
 					oField = this.oEditor.getAggregation("_formContent")[20];
-					assert.ok(oField.getAggregation("_field").getValue() === "Mixed value: stringParameter Value Content, StringParameter Value Trans Admin1, StringParameter Value Trans Content2, {{parameters.TODAY_ISO}}, {{parameters.NOW_ISO}}, {{parameters.LOCALE}} End", "Field: mixed parameter syntaxs Value");
+					assert.ok(oField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter Value Content, StringParameter Value Trans Admin1, StringParameter Value Trans Content2, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -714,6 +720,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
+			var oDate = new Date();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -736,7 +743,7 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[18];
 					assert.ok(oField.getAggregation("_field").getValue() === "Value: parameterSyntaxToLOCALE Value Content", "Field: parameter syntax to LOCALE Value");
 					oField = this.oEditor.getAggregation("_formContent")[20];
-					assert.ok(oField.getAggregation("_field").getValue() === "Mixed value: stringParameter Value Content, StringParameter Value Trans Admin1, StringParameter Value Trans Content2, {{parameters.TODAY_ISO}}, {{parameters.NOW_ISO}}, {{parameters.LOCALE}} End", "Field: mixed parameter syntaxs Value");
+					assert.ok(oField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter Value Content, StringParameter Value Trans Admin1, StringParameter Value Trans Content2, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -772,6 +779,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
+			var oDate = new Date();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -794,7 +802,7 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[18];
 					assert.ok(oField.getAggregation("_field").getValue() === "Value: parameterSyntaxToLOCALE Value Content", "Field: parameter syntax to LOCALE Value");
 					oField = this.oEditor.getAggregation("_formContent")[20];
-					assert.ok(oField.getAggregation("_field").getValue() === "Mixed value: stringParameter Value Content, StringParameter Value Trans in i18n, StringParameter Value Trans Content2, {{parameters.TODAY_ISO}}, {{parameters.NOW_ISO}}, {{parameters.LOCALE}} End", "Field: mixed parameter syntaxs Value");
+					assert.ok(oField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter Value Content, StringParameter Value Trans in i18n, StringParameter Value Trans Content2, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1050,6 +1058,7 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				manifest: oManifest
 			});
+			var oDate = new Date();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -1066,13 +1075,13 @@ sap.ui.define([
 					var oTranslateInI18nSyntaxField = this.oEditor.getAggregation("_formContent")[12];
 					assert.ok(oTranslateInI18nSyntaxField.getAggregation("_field").getValue() === "Value: StringParameter Value Trans in i18n", "Field: parameter syntax to translate in i18n format Value");
 					var oTodaySyntaxField = this.oEditor.getAggregation("_formContent")[14];
-					assert.ok(oTodaySyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.TODAY_ISO}}", "Field: parameter syntax to TODAY_ISO Value");
+					assert.ok(oTodaySyntaxField.getAggregation("_field").getValue().substring(7) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO Value");
 					var oNowSyntaxField = this.oEditor.getAggregation("_formContent")[16];
-					assert.ok(oNowSyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.NOW_ISO}}", "Field: parameter syntax to NOW_ISO Value");
+					assert.ok(oNowSyntaxField.getAggregation("_field").getValue().substring(7, 17) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO Value");
 					var oLocaleSyntaxField = this.oEditor.getAggregation("_formContent")[18];
-					assert.ok(oLocaleSyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.LOCALE}}", "Field: parameter syntax to LOCALE Value");
+					assert.ok(oLocaleSyntaxField.getAggregation("_field").getValue() === "Value: " + Core.getConfiguration().getLanguage(), "Field: parameter syntax to LOCALE Value");
 					var oMixedSyntaxField = this.oEditor.getAggregation("_formContent")[20];
-					assert.ok(oMixedSyntaxField.getAggregation("_field").getValue() === "Mixed value: stringParameter Value, StringParameter Value Trans in i18n, StringParameter Value Trans in i18n, {{parameters.TODAY_ISO}}, {{parameters.NOW_ISO}}, {{parameters.LOCALE}} End", "Field: mixed parameter syntaxs Value");
+					assert.ok(oMixedSyntaxField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter Value, StringParameter Value Trans in i18n, StringParameter Value Trans in i18n, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs Value");
 					var oToday1SyntaxField = this.oEditor.getAggregation("_formContent")[22];
 					assert.ok(oToday1SyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.TODAY_ISO1}}", "Field: parameter syntax to TODAY_ISO1 Value");
 					var oNow1SyntaxField = this.oEditor.getAggregation("_formContent")[24];
@@ -1093,10 +1102,10 @@ sap.ui.define([
 						assert.ok(oNormalSyntaxField.getAggregation("_field").getValue() === "Value: stringParameter New Value", "Field: Normol parameter syntax New Value");
 						assert.ok(oTranslateSyntaxField.getAggregation("_field").getValue() === "Value: StringParameter Value Trans New Value", "Field: parameter syntax to translate New Value");
 						assert.ok(oTranslateInI18nSyntaxField.getAggregation("_field").getValue() === "Value: StringParameter Value Trans in i18n New Value", "Field: parameter syntax to translate New Value");
-						assert.ok(oTodaySyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.TODAY_ISO}}", "Field: parameter syntax to TODAY_ISO");
-						assert.ok(oNowSyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.NOW_ISO}}", "Field: parameter syntax to NOW_ISO");
-						assert.ok(oLocaleSyntaxField.getAggregation("_field").getValue() === "Value: {{parameters.LOCALE}}", "Field: parameter syntax to LOCALE");
-						assert.ok(oMixedSyntaxField.getAggregation("_field").getValue() === "Mixed value: stringParameter New Value, StringParameter Value Trans New Value, StringParameter Value Trans in i18n New Value, {{parameters.TODAY_ISO}}, {{parameters.NOW_ISO}}, {{parameters.LOCALE}} End", "Field: mixed parameter syntaxs New Value");
+						assert.ok(oTodaySyntaxField.getAggregation("_field").getValue().substring(7) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO");
+						assert.ok(oNowSyntaxField.getAggregation("_field").getValue().substring(7, 17) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO");
+						assert.ok(oLocaleSyntaxField.getAggregation("_field").getValue() === "Value: " + Core.getConfiguration().getLanguage(), "Field: parameter syntax to LOCALE");
+						assert.ok(oMixedSyntaxField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter New Value, StringParameter Value Trans New Value, StringParameter Value Trans in i18n New Value, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs New Value");
 						resolve();
 					});
 				}.bind(this));
@@ -1119,6 +1128,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
+			var oDate = new Date();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -1135,13 +1145,13 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[12];
 					assert.ok(oField.getAggregation("_field").getValue() === "Value: StringParameter Value Trans Admin2", "Field: parameter syntax to translate in i18n format Value");
 					oField = this.oEditor.getAggregation("_formContent")[14];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.TODAY_ISO}}", "Field: parameter syntax to TODAY_ISO Value");
+					assert.ok(oField.getAggregation("_field").getValue().substring(7) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO Value");
 					oField = this.oEditor.getAggregation("_formContent")[16];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.NOW_ISO}}", "Field: parameter syntax to NOW_ISO Value");
+					assert.ok(oField.getAggregation("_field").getValue().substring(7, 17) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO Value");
 					oField = this.oEditor.getAggregation("_formContent")[18];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.LOCALE}}", "Field: parameter syntax to LOCALE Value");
+					assert.ok(oField.getAggregation("_field").getValue() === "Value: " + Core.getConfiguration().getLanguage(), "Field: parameter syntax to LOCALE Value");
 					oField = this.oEditor.getAggregation("_formContent")[20];
-					assert.ok(oField.getAggregation("_field").getValue() === "Mixed value: stringParameter Value Admin, StringParameter Value Trans Admin1, StringParameter Value Trans Admin2, {{parameters.TODAY_ISO}}, {{parameters.NOW_ISO}}, {{parameters.LOCALE}} End", "Field: mixed parameter syntaxs Value");
+					assert.ok(oField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter Value Admin, StringParameter Value Trans Admin1, StringParameter Value Trans Admin2, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1214,6 +1224,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
+			var oDate = new Date();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -1230,13 +1241,13 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[12];
 					assert.ok(oField.getAggregation("_field").getValue() === "Value: StringParameter Value Trans Content2", "Field: parameter syntax to translate in i18n format Value");
 					oField = this.oEditor.getAggregation("_formContent")[14];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.TODAY_ISO}}", "Field: parameter syntax to TODAY_ISO Value");
+					assert.ok(oField.getAggregation("_field").getValue().substring(7) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO Value");
 					oField = this.oEditor.getAggregation("_formContent")[16];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.NOW_ISO}}", "Field: parameter syntax to NOW_ISO Value");
+					assert.ok(oField.getAggregation("_field").getValue().substring(7, 17) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO Value");
 					oField = this.oEditor.getAggregation("_formContent")[18];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.LOCALE}}", "Field: parameter syntax to LOCALE Value");
+					assert.ok(oField.getAggregation("_field").getValue() === "Value: " + Core.getConfiguration().getLanguage(), "Field: parameter syntax to LOCALE Value");
 					oField = this.oEditor.getAggregation("_formContent")[20];
-					assert.ok(oField.getAggregation("_field").getValue() === "Mixed value: stringParameter Value Content, StringParameter Value Trans Content1, StringParameter Value Trans Content2, {{parameters.TODAY_ISO}}, {{parameters.NOW_ISO}}, {{parameters.LOCALE}} End", "Field: mixed parameter syntaxs Value");
+					assert.ok(oField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter Value Content, StringParameter Value Trans Content1, StringParameter Value Trans Content2, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1309,6 +1320,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
+			var oDate = new Date();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -1325,13 +1337,13 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[12];
 					assert.ok(oField.getAggregation("_field").getValue() === "Value: StringParameter Value Trans Translation2", "Field: parameter syntax to translate in i18n format Value");
 					oField = this.oEditor.getAggregation("_formContent")[14];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.TODAY_ISO}}", "Field: parameter syntax to TODAY_ISO Value");
+					assert.ok(oField.getAggregation("_field").getValue().substring(7) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO Value");
 					oField = this.oEditor.getAggregation("_formContent")[16];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.NOW_ISO}}", "Field: parameter syntax to NOW_ISO Value");
+					assert.ok(oField.getAggregation("_field").getValue().substring(7, 17) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO Value");
 					oField = this.oEditor.getAggregation("_formContent")[18];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.LOCALE}}", "Field: parameter syntax to LOCALE Value");
+					assert.ok(oField.getAggregation("_field").getValue() === "Value: " + Core.getConfiguration().getLanguage(), "Field: parameter syntax to LOCALE Value");
 					oField = this.oEditor.getAggregation("_formContent")[20];
-					assert.ok(oField.getAggregation("_field").getValue() === "Mixed value: stringParameter Value Translation, StringParameter Value Trans Translation1, StringParameter Value Trans Translation2, {{parameters.TODAY_ISO}}, {{parameters.NOW_ISO}}, {{parameters.LOCALE}} End", "Field: mixed parameter syntaxs Value");
+					assert.ok(oField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter Value Translation, StringParameter Value Trans Translation1, StringParameter Value Trans Translation2, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1409,6 +1421,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
+			var oDate = new Date();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -1425,13 +1438,13 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[12];
 					assert.ok(oField.getAggregation("_field").getValue() === "Value: StringParameter Value Trans Content2", "Field: parameter syntax to translate in i18n format Value");
 					oField = this.oEditor.getAggregation("_formContent")[14];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.TODAY_ISO}}", "Field: parameter syntax to TODAY_ISO Value");
+					assert.ok(oField.getAggregation("_field").getValue().substring(7) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO Value");
 					oField = this.oEditor.getAggregation("_formContent")[16];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.NOW_ISO}}", "Field: parameter syntax to NOW_ISO Value");
+					assert.ok(oField.getAggregation("_field").getValue().substring(7, 17) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO Value");
 					oField = this.oEditor.getAggregation("_formContent")[18];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.LOCALE}}", "Field: parameter syntax to LOCALE Value");
+					assert.ok(oField.getAggregation("_field").getValue() === "Value: " + Core.getConfiguration().getLanguage(), "Field: parameter syntax to LOCALE Value");
 					oField = this.oEditor.getAggregation("_formContent")[20];
-					assert.ok(oField.getAggregation("_field").getValue() === "Mixed value: stringParameter Value Content, StringParameter Value Trans Admin1, StringParameter Value Trans Content2, {{parameters.TODAY_ISO}}, {{parameters.NOW_ISO}}, {{parameters.LOCALE}} End", "Field: mixed parameter syntaxs Value");
+					assert.ok(oField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter Value Content, StringParameter Value Trans Admin1, StringParameter Value Trans Content2, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1532,6 +1545,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
+			var oDate = new Date();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -1554,7 +1568,7 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[18];
 					assert.ok(oField.getAggregation("_field").getValue() === "Value: parameterSyntaxToLOCALE Value Content", "Field: parameter syntax to LOCALE Value");
 					oField = this.oEditor.getAggregation("_formContent")[20];
-					assert.ok(oField.getAggregation("_field").getValue() === "Mixed value: stringParameter Value Content, StringParameter Value Trans Admin1, StringParameter Value Trans Content2, {{parameters.TODAY_ISO}}, {{parameters.NOW_ISO}}, {{parameters.LOCALE}} End", "Field: mixed parameter syntaxs Value");
+					assert.ok(oField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter Value Content, StringParameter Value Trans Admin1, StringParameter Value Trans Content2, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1590,6 +1604,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
+			var oDate = new Date();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -1612,7 +1627,7 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[18];
 					assert.ok(oField.getAggregation("_field").getValue() === "Value: parameterSyntaxToLOCALE Value Content", "Field: parameter syntax to LOCALE Value");
 					oField = this.oEditor.getAggregation("_formContent")[20];
-					assert.ok(oField.getAggregation("_field").getValue() === "Mixed value: stringParameter Value Content, StringParameter Value Trans in i18n, StringParameter Value Trans Content2, {{parameters.TODAY_ISO}}, {{parameters.NOW_ISO}}, {{parameters.LOCALE}} End", "Field: mixed parameter syntaxs Value");
+					assert.ok(oField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter Value Content, StringParameter Value Trans in i18n, StringParameter Value Trans Content2, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1986,6 +2001,7 @@ sap.ui.define([
 				manifest: oManifest,
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
+			var oDate = new Date();
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
@@ -2004,7 +2020,7 @@ sap.ui.define([
 					oField = this.oEditor.getAggregation("_formContent")[14];
 					assert.ok(oField.getAggregation("_field").getValue() === "Value: parameterSyntaxToTODAY_ISO Value Translation", "Field: parameter syntax to TODAY_ISO Value");
 					oField = this.oEditor.getAggregation("_formContent")[16];
-					assert.ok(oField.getAggregation("_field").getValue() === "Value: {{parameters.NOW_ISO}}", "Field: parameter syntax to NOW_ISO Value");
+					assert.ok(oField.getAggregation("_field").getValue().substring(7, 17) === oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO Value");
 					oField = this.oEditor.getAggregation("_formContent")[18];
 					assert.ok(oField.getAggregation("_field").getValue() === "Value: parameterSyntaxToLOCALE Value Translation", "Field: parameter syntax to LOCALE Value");
 					oField = this.oEditor.getAggregation("_formContent")[20];

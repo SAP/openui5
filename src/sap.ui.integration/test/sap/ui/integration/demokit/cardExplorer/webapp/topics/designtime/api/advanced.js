@@ -7,7 +7,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 			"form": {
 				"items": {
 					"integer": {
-						"manifestpath": "/sap.card/.../integer/value",
+						"manifestpath": "/sap.card/configuration/parameters/integer/value",
 						"type": "integer",
 						"visualization": {
 							"type": "Slider",
@@ -23,7 +23,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						}
 					},
 					"boolean": {
-						"manifestpath": "/sap.card/.../boolean/value",
+						"manifestpath": "/sap.card/configuration/parameters/boolean/value",
 						"type": "boolean",
 						"visualization": {
 							"type": "Switch",
@@ -33,6 +33,11 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"customTextOff": "No"
 							}
 						}
+					},
+					"string": {
+						"manifestpath": "/sap.card/configuration/parameters/string/value",
+						"label": "String",
+						"type": "string"
 					}
 				}
 			},

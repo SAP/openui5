@@ -1988,7 +1988,9 @@ sap.ui.define([
                         "type": "List",
                         "configuration": {
                             "parameters": {
-                                "stringParameter": {}
+                                "stringParameter": {
+									"value": ""
+								}
                             }
                         }
                     }
@@ -2050,7 +2052,9 @@ sap.ui.define([
                         "type": "List",
                         "configuration": {
                             "parameters": {
-                                "stringParameter": {}
+                                "stringParameter": {
+									"value": ""
+								}
                             }
                         }
                     }
@@ -2115,7 +2119,9 @@ sap.ui.define([
                         "type": "List",
                         "configuration": {
                             "parameters": {
-                                "stringParameter": {}
+                                "stringParameter": {
+									"value": ""
+								}
                             }
                         }
                     }
@@ -2264,7 +2270,7 @@ sap.ui.define([
 						"i18n": "../i18n/i18n.properties"
 					},
 					"sap.card": {
-						"designtime": "designtime/1string",
+						"designtime": "designtime/1stringtrans",
 						"type": "List",
 						"configuration": {
 							"parameters": {
@@ -2283,53 +2289,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value from Translate change");
-					resolve();
-				}.bind(this));
-			}.bind(this));
-		});
-
-		QUnit.test("Check translate: translate the nomal value", function (assert) {
-			this.oEditor.setMode("all");
-			var adminchanges = {
-			};
-			var pagechanges = {
-			};
-			var translationchanges = {
-				"/sap.card/configuration/parameters/stringParameter/value": "stringParameter Value Translate",
-				":layer": 10,
-				":errors": false
-			};
-			this.oEditor.setJson({
-				baseUrl: sBaseUrl,
-				manifest: {
-					"sap.app": {
-						"id": "test.sample",
-						"i18n": "../i18n/i18n.properties"
-					},
-					"sap.card": {
-						"designtime": "designtime/1string",
-						"type": "List",
-						"configuration": {
-							"parameters": {
-								"stringParameter": {
-									"value": "stringParameter Value"
-								}
-							}
-						}
-					}
-				},
-				manifestChanges: [adminchanges, pagechanges, translationchanges]
-			});
-			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oLabel = this.oEditor.getAggregation("_formContent")[1];
-					var oField = this.oEditor.getAggregation("_formContent")[2];
-					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value from Translate change");
 					resolve();
@@ -2496,7 +2456,9 @@ sap.ui.define([
 						"type": "List",
 						"configuration": {
 							"parameters": {
-								"stringParameter": {}
+								"stringParameter": {
+									"value": ""
+								}
 							}
 						}
 					}
