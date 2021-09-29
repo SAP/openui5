@@ -1439,11 +1439,6 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
-
-	setTimeout(function () {
-		jQuery('html').css('overflow', 'auto');
-	}, 1000);
-
 	QUnit.module("Accessibility");
 
 	QUnit.test("Check if ValueState is present", function (assert) {
