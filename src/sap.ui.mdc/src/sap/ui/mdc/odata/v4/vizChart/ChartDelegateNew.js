@@ -981,7 +981,7 @@ sap.ui.define([
     ChartDelegate.rebindChart = function (oMDCChart, oBindingInfo) {
         if (oMDCChart && oBindingInfo && this._getChart(oMDCChart)) {
             //TODO: bindData sap.chart.Chart specific and therefore needs to be changed to a general API.
-            this._addBindingListener(oBindingInfo, "change", this._getState(oMDCChart).dataLoadedCallback.bind(oMDCChart));
+            this._addBindingListener(oBindingInfo, "dataReceived", this._getState(oMDCChart).dataLoadedCallback.bind(oMDCChart));
 
             //TODO: Clarify why sap.ui.model.odata.v4.ODataListBinding.destroy this.bHasAnalyticalInfo is false
             //TODO: on second call, as it leads to issues when changing layout options within the settings dialog.
@@ -1393,10 +1393,6 @@ sap.ui.define([
                 fOriginalHandler.apply(this, arguments);
             };
         }
-    };
-
-    ChartDelegate.checkEventForDataLoaded = function(mEventParams) {
-        return (mEventParams.mParameters.reason === "change" && !mEventParams.mParameters.detailedReason);
     };
 
     /*
