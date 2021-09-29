@@ -305,7 +305,7 @@ sap.ui.define([
 		}
 
 		// Do not change href if it's already changed or if it's a stand-alone HTML page
-		if (!sTargetHref || /^https?:\/\//.test(sTargetHref) || sTargetHref.endsWith(".html")) {
+		if (!sTargetHref || /^https?:\/\//.test(sTargetHref) || /[.]html(#[\w\d]*)?(\?[\w\d-_=&]+)?$/.test(sTargetHref)) {
 			return;
 		}
 
