@@ -85,6 +85,10 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 
 			oRm.style("max-width", oSelect.getMaxWidth());
 
+			if (bEnabled) {
+				oRm.attr("tabindex", "-1");
+			}
+
 			if (sTooltip) {
 				oRm.attr("title", sTooltip);
 			} else if (sType === SelectType.IconOnly) {
