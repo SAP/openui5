@@ -45,8 +45,7 @@
 					"pattern": ":layout:",
 					"name": "master",
 					"target": [
-						"master",
-						"detail"
+						"master"
 					]
 				},
 				{
