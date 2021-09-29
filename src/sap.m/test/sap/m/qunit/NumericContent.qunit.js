@@ -43,6 +43,18 @@ sap.ui.define([
 		fnAssertNumericContentHasRendered(assert);
 	});
 
+	QUnit.test("Numeric Content - Render Placeholder loading animation", function (assert) {
+		//Switch to Loading State
+		this.oNumericContent.setState(LoadState.Loading);
+		sap.ui.getCore().applyChanges();
+		assert.ok(document.querySelector(".sapMNCLoadingShimmer"), "Loading Shimmer present on 'Loading' state");
+
+		//Switch to Loaded State
+		this.oNumericContent.setState(LoadState.Loaded);
+		sap.ui.getCore().applyChanges();
+		assert.equal(document.querySelector(".sapMNCLoadingShimmer"), null, "Loading Shimmer absent on 'Loaded' state");
+	});
+
 	QUnit.test("Numeric Content has ARIA properties", function (assert) {
 		assert.strictEqual(this.oNumericContent.$().attr("role"), "img", "The role is set to 'img'");
 		assert.strictEqual(this.oNumericContent.$().attr("aria-label"), this.oNumericContent.getTooltip_AsString(), "The aria-label is set to numeric content's tooltip");

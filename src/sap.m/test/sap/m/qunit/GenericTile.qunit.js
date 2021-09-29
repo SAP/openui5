@@ -1529,13 +1529,8 @@ sap.ui.define([
 		assert.ok(document.getElementById("tile-cont-failed-content"), "TileContent content was rendered successfully");
 		assert.ok(!document.getElementById("tile-cont-failed-footer-text"), "TileContent footer text was not rendered");
 		assert.ok(document.getElementById("numeric-cnt-failed"), "NumericContent was rendered successfully");
-		assert.ok(document.getElementById("numeric-cnt-failed-indicator"), "Indicator was rendered successfully");
 		assert.ok(document.getElementById("numeric-cnt-failed-value"), "Value was rendered successfully");
-		assert.ok(document.getElementById("numeric-cnt-failed-value-inner"), "Value-inner was rendered successfully");
-		assert.ok(document.getElementById("numeric-cnt-failed-indicator"), "Indicator was rendered successfully");
-		assert.ok(document.getElementById("numeric-cnt-failed-scale"), "Scale was rendered successfully");
-		assert.ok(document.getElementById("numeric-cnt-failed-icon-indicator"), "Indicator icon was rendered successfully");
-		assert.ok(document.getElementById("numeric-cnt-failed-icon-image"), "Icon was rendered successfully");
+		assert.ok(document.querySelector(".sapMNCLoadingShimmer"), "Loading Shimmer present on 'Loading' state for NumericContent");
 
 		this.oGenericTile.setState("Loaded");
 		sap.ui.getCore().applyChanges();
