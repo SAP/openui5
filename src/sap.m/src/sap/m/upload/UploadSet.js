@@ -778,7 +778,7 @@ sap.ui.define([
 		}
 
 		if (oFile.name !== sNewFileName) {
-			sNewFullName = sNewFileName + "." + oFile.extension;
+			sNewFullName = oFile.extension ? sNewFileName + "." + oFile.extension : sNewFileName;
 			oItem.setFileName(sNewFullName);
 		}
 		oItem._setContainsError(false);
