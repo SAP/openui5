@@ -3019,6 +3019,12 @@ sap.ui.define([
 				id: "btnUnderTest",
 				width: "150px"
 			});
+			this.oSelectUnderTest = new Select({
+				id: "sltUnderTest",
+				items: [
+					new Item({id: "idItem1", text: "Item 1"})
+				]
+			});
 			this.oButtonUnderTest2 = new Button({
 				id: "btnUnderTest2",
 				width: "150px"
@@ -3027,6 +3033,11 @@ sap.ui.define([
 				width: "300px",
 				content: [
 					this.oButtonUnderTest
+				]
+			});
+			this.oOTB2 = new OverflowToolbar({
+				content: [
+					this.oSelectUnderTest
 				]
 			});
 			this.oOTBOverflowed = new OverflowToolbar({
@@ -3042,6 +3053,7 @@ sap.ui.define([
 			});
 
 			this.oOTB.placeAt("qunit-fixture");
+			this.oOTB2.placeAt("qunit-fixture");
 			this.oOTBOverflowed.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
@@ -3049,11 +3061,13 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oOTB.destroy();
+			this.oOTB2.destroy();
 			this.oOTBOverflowed.destroy();
 			this.oOTB = null;
 			this.oOTBOverflowed = null;
 			this.oButtonUnderTest = null;
 			this.oButtonUnderTest2 = null;
+			this.oSelectUnderTest = null;
 			sinon.config.useFakeTimers = true;
 		}
 	});
@@ -3080,6 +3094,29 @@ sap.ui.define([
 		// act - child control is on focus, invalidate the toolbar.
 		this.oOTB.sFocusedChildControlId = this.oButtonUnderTest.getId();
 		this.oOTB.setWidth("1000px");
+		sap.ui.getCore().applyChanges();
+	});
+
+	QUnit.test("Focus on toolbar child's focusDomRef is retained after toolbar invalidation", function (assert) {
+		assert.expect(1);
+
+		// arrange
+		var done = assert.async(),
+			oDelegate = {
+				onAfterRendering: function() {
+					this.oOTB.removeEventDelegate(oDelegate);
+
+					// assert
+					assert.strictEqual(document.activeElement, this.oSelectUnderTest.getFocusDomRef(), "Child is focused correctly :: " + this.oButtonUnderTest.getId());
+					done();
+				}.bind(this)
+			};
+
+		this.oOTB2.addEventDelegate(oDelegate);
+
+		// act - child control is on focus, invalidate the toolbar.
+		this.oOTB2.sFocusedChildControlId = this.oSelectUnderTest.getId();
+		this.oOTB2.setWidth("1000px");
 		sap.ui.getCore().applyChanges();
 	});
 
