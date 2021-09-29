@@ -271,19 +271,23 @@ sap.ui.define([
 					},
 					_chart: {
 						type: "sap.chart.Chart",
-						multiple: false
+						multiple: false,
+						visibility: "hidden"
 					},
 					_toolbar: {
 						type: "sap.ui.mdc.ActionToolbar",
-						multiple: false
+						multiple: false,
+						visibility: "hidden"
 					},
 					_breadcrumbs: {
 						type: "sap.m.Breadcrumbs",
-						multiple: false
+						multiple: false,
+						visibility: "hidden"
 					},
 					_noDataStruct: {
 						type: "sap.m.VBox",
-						multiple: false
+						multiple: false,
+						visibility: "hidden"
 					},
 					selectionDetailsActions: {
 						type: "sap.ui.mdc.chart.SelectionDetailsActions",
@@ -303,6 +307,9 @@ sap.ui.define([
 					}
 				},
 				events: {
+					/**
+					 * This event is fired when a SelectionDetailsAction is pressed.
+					 */
 					selectionDetailsActionPressed: {
 						parameters: {
 
@@ -331,6 +338,9 @@ sap.ui.define([
 							}
 						}
 					},
+					/**
+					 * This event is fired when the selection in the inner chart changes.
+					 */
                     dataPointsSelected:{
 					    parameters: {
                             /**
