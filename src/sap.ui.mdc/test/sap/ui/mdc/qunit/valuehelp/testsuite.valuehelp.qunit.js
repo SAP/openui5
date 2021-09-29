@@ -81,6 +81,15 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 					qunitBridge: true
 				}
 			},
+			"FixedList": {
+				module: "./FixedList.qunit",
+				ui5: {
+					animationMode: "none"
+				},
+				sinon: {
+					qunitBridge: true
+				}
+			},
 			"Popover": {
 				module: "./Popover.qunit",
 				ui5: {

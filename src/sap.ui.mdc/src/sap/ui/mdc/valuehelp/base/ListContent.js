@@ -83,6 +83,26 @@ sap.ui.define([
 		}
 	});
 
+	ListContent.prototype.init = function() {
+
+		Content.prototype.init.apply(this, arguments);
+
+		this._oObserver.observe(this, {
+			properties: ["caseSensitive"]
+		});
+
+	};
+
+	ListContent.prototype._observeChanges = function(oChanges) {
+
+		if (oChanges.name === "caseSensitive") {
+			this._handleFilterValueUpdate(oChanges);
+		}
+
+		Content.prototype._observeChanges.apply(this, arguments);
+
+	};
+
 	ListContent.prototype.getCount = function (aConditions) {
 		var iCount = 0;
 		// var aConditions = arguments[0] || this.get_conditions();

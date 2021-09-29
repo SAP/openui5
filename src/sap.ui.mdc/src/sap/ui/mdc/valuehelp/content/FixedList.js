@@ -6,14 +6,12 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/base/ListContent",
 	"sap/ui/mdc/util/loadModules",
 	"sap/ui/mdc/enum/ConditionValidated",
-	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
-	'sap/ui/mdc/enum/SelectType'
+	"sap/ui/mdc/enum/SelectType"
 ], function(
 	ListContent,
 	loadModules,
 	ConditionValidated,
-	FormatException,
 	ParseException,
 	SelectType
 ) {
@@ -116,7 +114,7 @@ sap.ui.define([
 						valueTextDirection: "{$help>textDirection}"
 					}).addStyleClass("sapMComboBoxNonInteractiveItem"); // to add focus outline to selected items
 
-					var oFilter = new Filter("text", _suggestFilter.bind(this));
+					var oFilter = new Filter({path: "text", test: _suggestFilter.bind(this), caseSensitive: true}); // caseSensitive at it is checked in filter-function
 
 					// add sorter only if supported
 					var oSorter;
@@ -309,11 +307,9 @@ sap.ui.define([
 			}
 
 			var sError = this._oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", [oConfig.value]);
-			if (oConfig.checkKey && !oConfig.checkDescription) {
-				throw new FormatException(sError);
-			} else {
-				throw new ParseException(sError);
-			}
+			var Exception = oConfig.exception || ParseException;
+			throw new Exception(sError);
+
 		}.bind(this));
 
 	};
@@ -362,14 +358,14 @@ sap.ui.define([
 			var i = 0;
 			if (iStep >= 0) {
 				for (i = 0; i < aItems.length; i++) {
-					if (_filterText.call(this, aItems[i].getLabel(), sFilterValue)) {
+					if (!aItems[i].isA("sap.m.GroupHeaderListItem") && _filterText.call(this, aItems[i].getLabel(), sFilterValue)) {
 						iSelectedIndex = i;
 						break;
 					}
 				}
 			} else {
 				for (i = aItems.length - 1; i >= 0; i--) {
-					if (_filterText.call(this, aItems[i].getLabel(), sFilterValue)) {
+					if (!aItems[i].isA("sap.m.GroupHeaderListItem") && _filterText.call(this, aItems[i].getLabel(), sFilterValue)) {
 						iSelectedIndex = i;
 						break;
 					}
