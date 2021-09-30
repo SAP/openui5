@@ -1042,12 +1042,6 @@ sap.ui.define([
 	 */
 	FieldBase.prototype._observeChanges = function(oChanges) {
 
-		var fnUpdateInternalContent = function() {
-			if (this.getAggregation("_content", []).length > 0) {
-					_createInternalContentWrapper.call(this);
-			}
-		};
-
 		if (oChanges.name === "dataType") {
 			// check only if different type (in Field type might be already taken from binding)
 			if (this._oContentFactory.getDataType()) {
@@ -1079,8 +1073,7 @@ sap.ui.define([
 		}
 
 		if (oChanges.name === "maxConditions") {
-			fnUpdateInternalContent.call(this);
-			this._oContentFactory.updateConditionType();
+			this._updateInternalContent();
 		}
 
 		if (oChanges.name === "conditions") {
@@ -1109,7 +1102,7 @@ sap.ui.define([
 		}
 
 		if (oChanges.name === "display") {
-			_destroyInternalContent.call(this); // as bound property can change
+			this._destroyInternalContent(); // as bound property can change
 			this._oContentFactory.updateConditionType();
 		}
 
@@ -1144,6 +1137,14 @@ sap.ui.define([
 
 		if (oChanges.name === "editMode") {
 			_refreshLabel.call(this); // as required-idicator might set or removed on Label
+		}
+	};
+
+	// to allow Field or FilterField trigger and update if content control
+	FieldBase.prototype._updateInternalContent = function() {
+		if (this.getAggregation("_content", []).length > 0) {
+			_createInternalContentWrapper.call(this);
+			this._oContentFactory.updateConditionType(); // if control is not excanged at least ConditionType needs to be updated
 		}
 	};
 
@@ -1430,7 +1431,7 @@ sap.ui.define([
 			// bind to ManagedObjectModel at rendering to prevent unneded updates
 
 			if (this.getAggregation("_content", []).length > 0) {
-				_destroyInternalContent.call(this);
+				this._destroyInternalContent();
 			}
 
 			// as for edit and display different Types are possible switch them with edit mode
@@ -1584,7 +1585,7 @@ sap.ui.define([
 		if (oContent || this._bIsBeingDestroyed ||
 			(sEditMode === EditMode.Display && this.getContentDisplay()) ||
 			(sEditMode !== EditMode.Display && this.getContentEdit())) {
-			_destroyInternalContent.call(this);
+			this._destroyInternalContent();
 			var aContent = this._getContent(); // external set content
 			if (aContent.length === 1) {
 				_setModelOnContent.call(this, aContent[0]); // bind to ManagedObjectModel
@@ -1616,7 +1617,7 @@ sap.ui.define([
 			this._oContentFactory.setHideOperator(_isOnlyOneSingleValue.call(this, aOperators)); // in single value eq Field hide operator
 
 			if (oContentOld) {
-				_destroyInternalContent.call(this);
+				this._destroyInternalContent();
 
 				if (oContentOld.isA("sap.m.DateTimeField")) {
 					// in case of DatePicker remove type with special format options
@@ -1660,7 +1661,7 @@ sap.ui.define([
 
 	}
 
-	function _destroyInternalContent() {
+	FieldBase.prototype._destroyInternalContent = function () {
 
 		// if the internalContent must be new created the data type must be switched back to original one
 		// so new creation of control is using original data
@@ -1684,7 +1685,7 @@ sap.ui.define([
 			this._oContentFactory.setIsMeasure(false);
 		}
 
-	}
+	};
 
 	function _setModelOnContent(oContent) {
 		oContent.setModel(this._oManagedObjectModel, "$field");
@@ -1868,23 +1869,26 @@ sap.ui.define([
 
 	function _useDefaultFieldHelp(oContentType, aOperators, sEditMode, iMaxConditions) {
 
-		if (oContentType.getUseDefaultFieldHelp() && !this.getFieldHelp() && sEditMode !== EditMode.Display) {
-			if (aOperators.length === 1) {
-				var bIsSingleValue = _isOnlyOneSingleValue.call(this, aOperators); // if operator not exists unse no field help
-				// not if operator is handled by special control (like DatePicker)
-				if (iMaxConditions === 1) {
-					if (!(oContentType.getEditOperator() && oContentType.getEditOperator()[aOperators[0]]) &&
-						(oContentType.getUseDefaultFieldHelp().oneOperatorSingle || !bIsSingleValue)) {
-						// "bool" case (always default field help) or operator needs more than one value (e.g. between)
+		var oUseDefaultFieldHelp = oContentType.getUseDefaultFieldHelp();
+		if (oUseDefaultFieldHelp && !this.getFieldHelp() && sEditMode !== EditMode.Display) {
+			if ((iMaxConditions === 1 && oUseDefaultFieldHelp.single) || (iMaxConditions !== 1 && oUseDefaultFieldHelp.multi)) {
+				if (aOperators.length === 1) {
+					var bIsSingleValue = _isOnlyOneSingleValue.call(this, aOperators); // if operator not exists unse no field help
+					// not if operator is handled by special control (like DatePicker)
+					if (iMaxConditions === 1) {
+						if (!(oContentType.getEditOperator() && oContentType.getEditOperator()[aOperators[0]]) &&
+								(oUseDefaultFieldHelp.oneOperatorSingle || !bIsSingleValue)) {
+							// "bool" case (always default field help) or operator needs more than one value (e.g. between)
+							return true;
+						}
+					} else if (oUseDefaultFieldHelp.oneOperatorMulti || !bIsSingleValue) {
+						// DatePicker case - in multi-value use default help to get DatePicker controls
 						return true;
 					}
-				} else if (oContentType.getUseDefaultFieldHelp().oneOperatorMulti || !bIsSingleValue) {
-					// DatePicker case - in multi-value use default help to get DatePicker controls
+				} else {
+					// multiple operators -> default help needed
 					return true;
 				}
-			} else {
-				// multiple operators -> default help needed
-				return true;
 			}
 		}
 

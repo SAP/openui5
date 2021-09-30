@@ -64,6 +64,7 @@ function(
 				_mOperators: {
 					equal: new Operator({
 						name: "EQ",
+						alias: "DATE",
 						filterOperator: ModelOperator.EQ,
 						tokenParse: "^=([^=].*)$",
 						tokenFormat: "{1} ({0})", // all placeholder should use the {x} format - the text could be store in the resourcebundel file.
@@ -200,6 +201,7 @@ function(
 					}),
 					between: new Operator({
 						name: "BT",
+						alias: "DATERANGE",
 						filterOperator: ModelOperator.BT,
 						tokenParse: "^([^!].*)\\.\\.\\.(.+)$", // TODO: does this work?? At least also matches crap like ".....". I guess validation of value types needs to get rid of those.
 						tokenFormat: "{0}...{1}",
@@ -268,6 +270,7 @@ function(
 					}),
 					lessEqual: new Operator({
 						name: "LE",
+						alias: "TO",
 						filterOperator: ModelOperator.LE,
 						tokenParse: "^<=(.+)$",
 						tokenFormat: "<={0}",
@@ -283,6 +286,7 @@ function(
 					}),
 					greaterEqual: new Operator({
 						name: "GE",
+						alias: "FROM",
 						filterOperator: ModelOperator.GE,
 						tokenParse: "^>=(.+)$",
 						tokenFormat: ">={0}",
@@ -677,7 +681,7 @@ function(
 					}),
 					specificMonth: new RangeOperator({
 						name: "SPECIFICMONTH",
-						valueTypes: [{ name: "sap.ui.model.type.Integer", constraints: { minimum: 0, maximun: 11 }}],
+						valueTypes: [{ name: "sap.ui.model.type.Integer", constraints: { minimum: 0, maximum: 11 }}],
 						paramTypes: ["(.+)"],
 						additionalInfo: "",
 						// defaultValues: [0],

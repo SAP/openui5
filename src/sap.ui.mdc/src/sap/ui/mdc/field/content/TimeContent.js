@@ -2,8 +2,9 @@
  * ! ${copyright}
  */
 sap.ui.define([
+	"sap/ui/mdc/field/content/DefaultContent",
 	"sap/ui/mdc/field/content/DateContent"
-], function(DateContent) {
+], function(DefaultContent, DateContent) {
 	"use strict";
 
 	/**
@@ -24,8 +25,14 @@ sap.ui.define([
 				"EQ": { name: "sap/m/TimePicker", create: this._createDatePickerControl }  // as same API as DatePicker
 			};
 		},
+		getEdit: function() {
+			return DefaultContent.getEdit.apply(this, arguments);
+		},
 		createEditMultiLine: function() {
 			throw new Error("sap.ui.mdc.field.content.TimeContent - createEditMultiLine not defined!");
+		},
+		createEdit: function(oContentFactory, aControlClasses, sId) {
+			return DefaultContent.createEdit.apply(this, arguments);
 		}
 	});
 

@@ -5,11 +5,22 @@ sap.ui.define([
 	"sap/ui/mdc/field/content/DefaultContent",
 	"sap/ui/mdc/enum/BaseType",
 	"sap/ui/mdc/util/DateUtil",
+	"sap/ui/mdc/condition/FilterOperatorUtil",
+	"sap/ui/mdc/condition/Operator",
 	"sap/ui/core/library"
-], function(DefaultContent, BaseType, DateUtil, coreLibrary) {
+], function(
+	DefaultContent,
+	BaseType,
+	DateUtil,
+	FilterOperatorUtil,
+	Operator,
+	coreLibrary) {
 	"use strict";
 
 	var CalendarType = coreLibrary.CalendarType;
+	var StandardDynamicDateRangeKeys;
+	var DynamicDateUtil;
+	var DynamicDateFormat;
 
 	/**
 	 * Object-based definition of the date content type that is used in the {@link sap.ui.mdc.field.content.ContentFactory}.
@@ -27,14 +38,20 @@ sap.ui.define([
 		getEditMultiLine: function() {
 			return [null];
 		},
+		getEdit: function() {
+			return ["sap/m/DynamicDateRange", "sap/ui/mdc/condition/OperatorDynamicDateOption", "sap/ui/mdc/field/DynamicDateRangeConditionsType", "sap/m/StandardDynamicDateRangeKeys", "sap/m/DynamicDateUtil", "sap/m/DynamicDateFormat"];
+		},
 		getEditOperator: function() {
 			return {
 				"EQ": { name: "sap/m/DatePicker", create: this._createDatePickerControl }, // TODO: how to check custom operators
 				"BT": { name: "sap/m/DateRangeSelection", create: this._createDateRangePickerControl }
 			};
 		},
+		getEditForHelp: function() {
+			return DefaultContent.getEdit.apply(this, arguments);
+		},
 		getUseDefaultFieldHelp: function() {
-			return { name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: true };
+			return { name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: true, single: false, multi: true };
 		},
 		createEditMultiLine: function() {
 			throw new Error("sap.ui.mdc.field.content.DateContent - createEditMultiLine not defined!");
@@ -153,6 +170,115 @@ sap.ui.define([
 					oContentFactory.setCalendarType(oFormatOptions.calendarType);
 				}
 			}
+		},
+		createEdit: function(oContentFactory, aControlClasses, sId) {
+
+			var DynamicDateRange = aControlClasses[0];
+			var OperatorDynamicDateOption = aControlClasses[1];
+			var DynamicDateRangeConditionsType = aControlClasses[2];
+
+			if (!StandardDynamicDateRangeKeys || !DynamicDateUtil || !DynamicDateFormat) {
+				StandardDynamicDateRangeKeys = aControlClasses[3];
+				DynamicDateUtil = aControlClasses[4];
+				DynamicDateFormat = aControlClasses[5];
+			}
+
+			var oConditionsType = oContentFactory.getConditionsType(false, DynamicDateRangeConditionsType);
+			var vOptions;
+			if (oContentFactory.getField().getMetadata().hasProperty("operators")) { // TODO: Field case needed?
+				var fnGetDateRangeOptions = function (aOperators) {
+					return this._getDateRangeOptions(aOperators, oContentFactory, OperatorDynamicDateOption);
+				}.bind(this);
+				vOptions = {path: "$field>/operators", formatter: fnGetDateRangeOptions};
+			} else {
+				vOptions = this._getDateRangeOptions(undefined, oContentFactory, OperatorDynamicDateOption);
+			}
+
+			var oDynamicDateRange = new DynamicDateRange(sId, {
+				value: { path: "$field>/conditions", type: oConditionsType },
+				formatter: this._getDateRangeFormatter(oContentFactory),
+				placeholder: "{$field>/placeholder}",
+//				textAlign: "{$field>/textAlign}",	// this is currently not supported by the DynamicDateRange
+//				textDirection: "{$field>/textDirection}", // this is currently not supported by the DynamicDateRange
+				required: "{$field>/required}",
+				editable: { path: "$field>/editMode", formatter: oContentFactory.getMetadata()._oClass._getEditable },
+				enabled: { path: "$field>/editMode", formatter: oContentFactory.getMetadata()._oClass._getEnabled },
+				valueState: "{$field>/valueState}",
+				valueStateText: "{$field>/valueStateText}",
+				width: "100%",
+				tooltip: "{$field>/tooltip}",
+				// enableGroupHeaders: false,	// disable the grouping of the options
+				options: vOptions,
+				change: oContentFactory.getHandleContentChange()
+			});
+
+			oContentFactory.setBoundProperty("value");
+			oContentFactory.setAriaLabelledBy(DynamicDateRange);
+
+			return [oDynamicDateRange];
+
+		},
+		createEditForHelp: function(oContentFactory, aControlClasses, sId) {
+			return DefaultContent.createEdit.apply(this, arguments);
+		},
+
+		_getDateRangeOptions: function(aOperators, oContentFactory, OperatorDynamicDateOption) {
+			if (!aOperators || aOperators.length === 0) {
+				aOperators = oContentFactory.getField()._getOperators(); // to use default operators if none given
+			}
+			var aOptions = [];
+
+			for (var i = 0; i < aOperators.length; i++) {
+				var sOperator = aOperators[i];
+				var sOption = this._getDateRangeOption(sOperator, oContentFactory, OperatorDynamicDateOption);
+				if (sOption) {
+					aOptions.push(sOption);
+				}
+			}
+
+			return aOptions;
+		},
+
+		_getDateRangeOption: function(sOperator, oContentFactory, OperatorDynamicDateOption) {
+			var oOperator = FilterOperatorUtil.getOperator(sOperator);
+			var sOption = oOperator.name;
+			if (StandardDynamicDateRangeKeys.indexOf(sOption) === -1 ) {
+				sOption = oOperator.alias || sOption;
+			}
+
+			if (StandardDynamicDateRangeKeys.indexOf(sOption) >= 0 ) {
+				return sOption; // use standard option
+			} else
+				// use OperatorDynamicDateOption
+				if (oOperator) {
+					if (!DynamicDateUtil.getOption(sOption)) {
+						var oType = oContentFactory.retrieveDataType(); // TODO: do we need to create data type right now?
+						var aValueTypes = [];
+
+						for (var j = 0; j < oOperator.valueTypes.length; j++) {
+							if (oOperator.valueTypes[j] && oOperator.valueTypes[j] !== Operator.ValueType.Static) {
+								aValueTypes.push("custom"); // provide value as it is to use type to format and parse // TODO: only if custom control?
+							}
+						}
+
+						DynamicDateUtil.addOption(new OperatorDynamicDateOption({key: sOption, operator: oOperator, type: oType, valueTypes: aValueTypes})); // TODO: use name as key?
+					}
+					return sOption;
+				}
+		},
+
+		_getDateRangeFormatter: function(oContentFactory) {
+			var oType = oContentFactory.retrieveDataType(); // TODO: do we need to create data type right now?
+			var oFormatOptions = oType.getFormatOptions();
+			var oDateRangeFormatOptions = {};
+
+			if (oFormatOptions.style) {
+				oDateRangeFormatOptions.date = {style: oFormatOptions.style};
+			} else if (oFormatOptions.pattern) {
+				oDateRangeFormatOptions.date = {pattern: oFormatOptions.pattern};
+			}
+
+			return DynamicDateFormat.getInstance(oDateRangeFormatOptions);
 		}
 	});
 

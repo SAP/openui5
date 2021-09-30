@@ -53,7 +53,7 @@ sap.ui.define([
 			return true;
 		},
 		getUseDefaultFieldHelp: function() {
-			return { name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: false };
+			return { name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: false, single: true, multi: true };
 		},
 		/**
 		 * Determines which controls to return for a given {@link sap.ui.mdc.enum.ContentMode}.

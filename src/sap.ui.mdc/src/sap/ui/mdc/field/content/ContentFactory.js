@@ -269,28 +269,36 @@ sap.ui.define([
 		return this._bHideOperator;
 	};
 
-	ContentFactory.prototype.getConditionType = function(bSkipConditionTypeGeneration) {
-		if (!bSkipConditionTypeGeneration && !this._oConditionType) {
-			var oFormatOptions = this.getField()._getFormatOptions();
-			this._oConditionType = new ConditionType(oFormatOptions);
-			this._oConditionType._bCreatedByField = true;
-		}
+	function _getCondType(sCondType, CondType, fnGetFormatOptions, bSkipTypeGeneration) {
 
-		return this._oConditionType;
+		if (!bSkipTypeGeneration) {
+			if (this[sCondType] && this[sCondType].getMetadata().getName() !== CondType.getMetadata().getName()) {
+				// ConditionsType changed
+				this[sCondType].destroy();
+				this[sCondType] = undefined;
+			}
+
+			if (!this[sCondType]) {
+				var oFormatOptions = fnGetFormatOptions();
+				this[sCondType] = new CondType(oFormatOptions);
+				this[sCondType]._bCreatedByField = true;
+			}
+		}
+		return this[sCondType];
+
+	}
+
+	ContentFactory.prototype.getConditionType = function(bSkipConditionTypeGeneration) {
+		return _getCondType.call(this, "_oConditionType", ConditionType, this.getField()._getFormatOptions.bind(this.getField()), bSkipConditionTypeGeneration);
 	};
 
 	ContentFactory.prototype.setConditionType = function(oConditionType) {
 		this._oConditionType = oConditionType;
 	};
 
-	ContentFactory.prototype.getConditionsType = function(bSkipConditionsTypeGeneration) {
-		if (!bSkipConditionsTypeGeneration && !this._oConditionsType) {
-			var oFormatOptions = this.getField()._getFormatOptions();
-			this._oConditionsType = new ConditionsType(oFormatOptions);
-			this._oConditionsType._bCreatedByField = true;
-		}
-
-		return this._oConditionsType;
+	ContentFactory.prototype.getConditionsType = function (bSkipConditionsTypeGeneration, CustomConditionsType) {
+		var UsedConditionType = CustomConditionsType || ConditionsType; // CustomConditionsType used for DynamicDateRange
+		return _getCondType.call(this, "_oConditionsType", UsedConditionType, this.getField()._getFormatOptions.bind(this.getField()), bSkipConditionsTypeGeneration);
 	};
 
 	ContentFactory.prototype.setConditionsType = function(oConditionsType) {
@@ -298,13 +306,7 @@ sap.ui.define([
 	};
 
 	ContentFactory.prototype.getUnitConditionsType = function(bSkipConditionsTypeGeneration) {
-		if (!bSkipConditionsTypeGeneration && !this._oUnitConditionsType) {
-			var oFormatOptions = this.getField()._getUnitFormatOptions();
-			this._oUnitConditionsType = new ConditionsType(oFormatOptions);
-			this._oUnitConditionsType._bCreatedByField = true;
-		}
-
-		return this._oUnitConditionsType;
+		return _getCondType.call(this, "_oUnitConditionsType", ConditionsType, this.getField()._getUnitFormatOptions.bind(this.getField()), bSkipConditionsTypeGeneration);
 	};
 
 	ContentFactory.prototype.getContentConditionTypes = function() {

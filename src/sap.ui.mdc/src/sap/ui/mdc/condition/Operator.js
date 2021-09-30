@@ -196,15 +196,15 @@ sap.ui.define([
 				this.exclude = !!oConfiguration.exclude; // to have always a boolean value
 				this.validateInput = !!oConfiguration.validateInput; // to have always a boolean value
 
-				// if (oConfiguration.group) {
-				// 	this.group = oConfiguration.group;
-				// } else {
-				this.group = {id: !this.exclude ? "1" : "2"};
-				// }
-				if (!this.group.text) {
-					this.group.text = oMessageBundle.getText("VALUEHELP.OPERATOR.GROUP" + this.group.id);
+				if (oConfiguration.group) {
+					this.group = oConfiguration.group;
+				} else {
+					this.group = {id: !this.exclude ? "1" : "2"};
+					if (!this.group.text) {
+						this.group.text = oMessageBundle.getText("VALUEHELP.OPERATOR.GROUP" + this.group.id);
+					}
 				}
-		}
+			}
 		});
 
 		/**

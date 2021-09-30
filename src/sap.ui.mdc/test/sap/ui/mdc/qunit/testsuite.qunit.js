@@ -69,6 +69,14 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				},
 				sinon: false
 			},
+			"OperatorDynamicDateOption": {
+				group: "Condition",
+				module: "./condition/OperatorDynamicDateOption.qunit",
+				coverage: {
+					only: "[sap/ui/mdc/condition]"
+				},
+				sinon: false
+			},
 			"ActionToolbar": {
 				group: "ActionToolbar",
 				coverage: {

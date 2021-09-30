@@ -29,12 +29,14 @@
 		<f2:header>
 			<f2:DynamicPageHeader>
 				<f2:content>
+					<DynamicDateRange id="ddr"  width="12rem" change="handleDDRChange" options="DATE,DATERANGE,TODAY,YESTERDAY,TOMORROW,THISWEEK,THISMONTH,THISQUARTER,THISYEAR,LASTWEEK,LASTMONTH,LASTQUARTER,LASTYEAR,NEXTWEEK,NEXTMONTH,NEXTQUARTER,NEXTYEAR,LASTDAYS,LASTWEEKS,LASTMONTHS,LASTQUARTERS,LASTYEARS,NEXTDAYS,NEXTWEEKS,NEXTMONTHS,NEXTQUARTERS,NEXTYEARS,FROM,TO,YEARTODATE,TODAYFROMTO,QUARTER1,QUARTER2,QUARTER3,QUARTER4,SPECIFICMONTH">
+					</DynamicDateRange>
 
 					<mdc:FilterBar id="authorsFilterBar" filtersChanged="onFiltersChanged" liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/Authors.FB.delegate', payload: {collectionName: 'Authors'}}" p13nMode="Item,Value">
 						<mdc:dependents>
 							<mdcf:FieldValueHelp filterFields="$search" id="FVH_Generic_Multi" title="Conditions" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />
 							<mdcf:FieldValueHelp id="fhName" title="Name" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />
-							<mdcf:FieldValueHelp id="fhAdob" title="Birth Epoch" showConditionPanel="true" filterFields="*dateOfBirth*" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />
+							<mdcf:FieldValueHelp id="fhAdob" title="Birth Epoch" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />
 							<mdcf:ConditionFieldHelp id="fhAdod" title="Define Filter Conditions" label="Date of death" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}"/>
 							<mdcf:FieldValueHelp id="IOFFVHCountry" title="Countries" showConditionPanel="true" filterFields="*code,descr*" keyPath="code" descriptionPath="descr" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
 								<mdcf:FieldValueHelpMTableWrapper>
@@ -148,8 +150,8 @@
 
 						<mdc:filterItems>
 							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff2" label="Name" conditions="{$filters>/conditions/name}" fieldHelp="fhName" dataType="sap.ui.model.odata.type.String" defaultOperator="StartsWith" />
-							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff3" label="Date of birth" operators="RENAISSANCE,MEDIEVAL,MODERN,CUSTOMRANGE,NOTINRANGE" defaultOperator="MODERN" conditions="{$filters>/conditions/dateOfBirth}" fieldHelp="fhAdob" dataType="sap.ui.model.odata.type.Date" />
-							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff1" label="Date of death" conditions="{$filters>/conditions/dateOfDeath}" maxConditions="1" fieldHelp="fhAdod" dataType="sap.ui.model.odata.type.Date" />
+							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff3" label="Date of birth" conditions="{$filters>/conditions/dateOfBirth}" maxConditions="1" dataType="sap.ui.model.odata.type.Date" />
+							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff1" label="Date of death" conditions="{$filters>/conditions/dateOfDeath}" maxConditions="1" dataType="sap.ui.model.odata.type.Date" />
 							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff4" label="Country of origin" conditions="{$filters>/conditions/countryOfOrigin_code}" fieldHelp="IOFFVHCountry" dataType="sap.ui.model.odata.type.String" />
 							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff5" label="Region of origin" conditions="{$filters>/conditions/regionOfOrigin_code}" fieldHelp="IOFFVHRegion" dataType="sap.ui.model.odata.type.String" />
 							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff6" label="City of origin" conditions="{$filters>/conditions/cityOfOrigin_city}" fieldHelp="IOFFVHCity" dataType="sap.ui.model.odata.type.String" />
