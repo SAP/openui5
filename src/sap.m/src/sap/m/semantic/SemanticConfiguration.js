@@ -383,7 +383,8 @@ sap.ui.define([
 				return {
 					icon: IconPool.getIconURI("group-2"),
 					type: "IconOnly",
-					autoAdjustWidth: true
+					autoAdjustWidth: true,
+					tooltip: oBundle.getText("SEMANTIC_CONTROL_GROUP")
 				};
 			},
 			getEventDelegates: function(oContext) {
