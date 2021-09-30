@@ -3,93 +3,48 @@
 /* Horizon theme                 */
 /* ============================= */
 
-/* slider */
-.sapMSliderInner {
-	background: @sapUiFieldBorderColor;
-	height: 0.25rem;
-	min-width: 4rem;
-	border-radius: 0.25rem;
+.sapMSliderInner::before {
+	content: "";
+	position: absolute;
+	background-color: @sapUiActive;
+	border-radius: 50%;
+	width: 8px;
+	height: 8px;
+	left: -14px;
+	top: -2px;
 }
 
-.sapMSliderProgress {
-	background: @sapUiActive;
-	height: 0.25rem;
-	border-radius: 0.25rem;
+.sapMSlider::after {
+	content: "";
+	position: absolute;
+	background-color: @sapUiFieldBorderColor;
+	border-radius: 50%;
+	width: 8px;
+	height: 8px;
+	right: 2px;
+	top: 20px;
 }
 
-.sapMSliderInner:not(.sapMSliderInnerDisabled):hover > .sapMSliderHandle {
-	background: @sapUiButtonHoverBackground;
-	border-color: @sapUiButtonHoverBorderColor;
-}
-
-/* slider handle */
 .sapMSliderInner .sapMSliderHandle {
-	background: @sapUiButtonBackground;
-	border: solid 0.125rem @sapUiFieldBorderColor;
-	width: 1.625rem;
-	height: 1.625rem;
-	top: -0.825rem;
+	background-color: @sapUiButtonHoverBackground;
+	border-radius: 8px;
+	border: none;
+	width: 32px;
+	height: 22px;
+	box-shadow: 0 8px 16px 0 rgba(27,144,255,0.16), 0 0 2px 0 rgba(27,144,255,0.16);
+	top: -12px;
 }
-
-.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle {
-	&:hover {
-		background: @sapUiButtonHoverBackground;
-		border-color: @sapUiButtonHoverBorderColor;
-	}
-
-	&:active {
-		background: @sapUiButtonActiveBackground;
-		border-color: @sapUiButtonActiveBorderColor;
-	}
+.sapMSliderInner .sapMSliderHandle:focus {
+	outline: none !important;
 }
-
-.sapMSliderTickLabel .sapMSliderLabel {
-	padding-top: 0.4375rem;
-	height: 1rem;
-	width: 2rem;
-	left: -1rem;
-	font-size: @sapMFontSmallSize;
-	color: @sapUiContentLabelColor;
+.sapMSliderInner:not(.sapMSliderInnerDisabled).sapMSliderPressed .sapMSliderHandle,
+.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:hover {
+	background-color: @sapUiButtonHoverBackground;
+	border: none;
 }
-
-.sapMSliderTickmarks {
-	top: 0.675rem;
+.sapMSliderInner {
+	background-color: @sapUiFieldBorderColor;
 }
-
-.sapMSliderTick {
-	margin: 0.375rem 0 0 -0.0625rem;
-}
-
-.sapMSliderLabels {
-	height: 1rem;
-
-	.sapMSliderRangeLabel {
-		width: 2rem;
-		font-size: @sapMFontSmallSize;
-		color: @sapUiContentLabelColor;
-	}
-}
-
-/* disabled */
-.sapMSliderDisabled {
-	opacity: 0.5;
-}
-
-/* pressed */
-.sapMSliderPressed:not(.sapMSliderInnerDisabled) > .sapMSliderHandle,
-.sapMSlider .sapMSliderInner > .sapMSliderHandle.sapMSliderHandlePressed {
-	background-color: @sapUiButtonActiveBackground;
-	border: 0.125rem solid @sapUiButtonActiveBorderColor;
-}
-
-.sapUiSizeCompact {
-	.sapMSliderHandle {
-		width: 1.25rem;
-		height: 1.25rem;
-		top: -0.625rem;
-	}
-
-	.sapMSliderTickLabel .sapMSliderLabel {
-		padding-top: 0.375rem;
-	}
+.sapMSliderProgress {
+	background-color: @sapUiActive;
 }
