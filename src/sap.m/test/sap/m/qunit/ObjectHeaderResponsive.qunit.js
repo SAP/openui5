@@ -155,7 +155,7 @@ sap.ui.define([
 		// Assert
 		var iconEl = jQuery.sap.domById(sControlId + "-img");
 		assert.ok(iconEl, "Icon is rendered.");
-		assert.ok(!oObjectHeader.$("img").attr("title"), "icon has no tooltip");
+		assert.ok(!oObjectHeader.$("img").control(0).getTooltip(), "icon has no tooltip");
 
 		// Clean up
 		oObjectHeader.destroy();
@@ -173,7 +173,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		var $sImg = oObjectHeader.$("img");
-		assert.equal($sImg.attr("title"), "test tooltip", "icon has tooltip");
+		assert.equal($sImg.control(0).getTooltip(), "test tooltip", "icon has tooltip");
 
 		// Clean up
 		oObjectHeader.destroy();
