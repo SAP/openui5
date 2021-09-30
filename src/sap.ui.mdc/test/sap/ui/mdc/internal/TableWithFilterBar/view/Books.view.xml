@@ -96,20 +96,20 @@
 												p13nMode="Column,Sort"
 												delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Books'}}" threshold="50">
 												<mdc:columns>
-													<mdc:table.Column id="FH4--mdc--gridtable--id" header="ID" dataProperty="ID">
-														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
+													<mdc:table.Column id="FH4--mdc--gridtable--id" header="ID" dataProperty="ID" width="5rem">
+														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display" width="100%"/>
 													</mdc:table.Column>
 													<mdc:table.Column id="FH4--mdc--gridtable--title" header="Title" dataProperty="title">
-														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{title}" editMode="Display"/>
+														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{title}" editMode="Display" width="100%"/>
 													</mdc:table.Column>
 													<mdc:table.Column id="FH4--mdc--gridtable--descr" header="Description" dataProperty="descr">
-														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{descr}" editMode="Display"/>
+														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{descr}" editMode="Display" width="100%"/>
 													</mdc:table.Column>
 													<mdc:table.Column id="FH4--mdc--gridtable--pub" header="Published" dataProperty="published">
-														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{published}" editMode="Display"/>
+														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{published}" editMode="Display" width="100%"/>
 													</mdc:table.Column>
 													<mdc:table.Column id="FH4--mdc--gridtable--genre" header="Genre" dataProperty="genre_code">
-														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{genre_code}" additionalValue="{genre/label}" editMode="Display"/>
+														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{genre_code}" additionalValue="{genre/label}" editMode="Display" width="100%"/>
 													</mdc:table.Column>
 												</mdc:columns>
 												<mdc:type>
@@ -381,7 +381,7 @@
 										<mdcvc:MTable keyPath="code" descriptionPath="title">
 											<Table id="mTable1_subgenre" items='{path : "/SubGenres", length: 10}' width="30rem">
 												<columns>
-													<Column width="5rem">
+													<Column width="10rem">
 														<header>
 															<Text text="Code" />
 														</header>
@@ -440,7 +440,7 @@
 											</mdcvc:filterBar>
 											<Table id="mTable2_subgenre" items='{path : "/SubGenres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
 												<columns>
-													<Column width="5rem">
+													<Column width="10rem">
 														<header>
 															<Text text="Code" />
 														</header>
@@ -495,7 +495,7 @@
 										<mdcvc:MTable keyPath="code" descriptionPath="title">
 											<Table id="mTable1_detailgenre" items='{path : "/DetailGenres", length: 10}' width="30rem">
 												<columns>
-													<Column width="5rem">
+													<Column width="10rem">
 														<header>
 															<Text text="Code" />
 														</header>
@@ -561,7 +561,7 @@
 											</mdcvc:filterBar>
 											<Table id="mTable2_detailgenre" items='{path : "/DetailGenres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
 												<columns>
-													<Column width="5rem">
+													<Column width="10rem">
 														<header>
 															<Text text="Code" />
 														</header>
@@ -860,7 +860,7 @@
 							<mdcvc:MTable keyPath="code" descriptionPath="title">
 								<Table id="mTable1_genre" items='{path : "/Genres", length: 10}' width="30rem">
 									<columns>
-										<Column width="5rem">
+										<Column width="10rem">
 											<header>
 												<Text text="Code" />
 											</header>
@@ -912,7 +912,7 @@
 								</mdcvc:filterBar>
 								<Table id="mTable2_genre" items='{path : "/Genres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
 									<columns>
-										<Column width="5rem">
+										<Column width="10rem">
 											<header>
 												<Text text="Code" />
 											</header>
