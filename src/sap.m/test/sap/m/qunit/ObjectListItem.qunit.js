@@ -544,7 +544,6 @@ sap.ui.define([
 			};
 		}).then(function(img) {
 			assert.ok(img.width > img.height, "The image still has different width and height");
-		}).finally(function(){
 			imageOLIImg.destroy();
 			done();
 		});
