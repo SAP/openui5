@@ -41,7 +41,9 @@
 			font-size: @sapMFontMediumSize;
 			color: @sapUiBaseText;
 			text-align: right;
-		}
+		}.sapFCardCalendarContent .sapFCalCard .sapUiCalendarAppContainer > .sapUiCalendarAppContainerRight > .sapUiCalendarApp:not(.sapUiCalendarAppDisabled):active .sapUiCalendarAppCont .sapUiCalendarAppIcon:before,
+                 .sapFCardCalendarContent .sapFCalCard .sapUiCalendarAppContainer > .sapUiCalendarAppContainerRight > .sapUiCalendarApp:not(.sapUiCalendarAppDisabled):active .sapUiCalendarAppCont .sapUiCalendarAppTitleWrapper .sapUiCalendarAppTitle,
+                 .sapFCardCalendarContent .sapFCalCard .sapUiCalendarAppContainer > .sapUiCalendarAppContainerRight > .sapUiCalendarApp:not(.sapUiCalendarAppDisabled):active .sapUiCalendarAppCont .sapUiCalendarAppTitleWrapper .sapUiCalendarAppText
 		.sapUiCalendarAppEnd {
 			font-size: @sapMFontSmallSize;
 			color: @sapUiContentLabelColor;
@@ -110,7 +112,7 @@
 			.sapUiCalendarAppIcon:before,
 			.sapUiCalendarAppTitleWrapper .sapUiCalendarAppTitle,
 			.sapUiCalendarAppTitleWrapper .sapUiCalendarAppText{
-				color: @sapUiListBackground;
+				color: @sapUiContentSelectedTextColor;
 			}
 		}
 	}
