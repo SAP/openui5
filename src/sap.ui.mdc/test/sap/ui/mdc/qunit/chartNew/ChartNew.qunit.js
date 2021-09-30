@@ -357,6 +357,33 @@ function(
 		}.bind(this));
 	});
 
+
+	QUnit.test("MDC Chart _propagateItemChangeToInnerChart", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+			//Arrange
+			var oMockItem = new Item({name: "testName", label:"testLabel", type:"groupable", role:"category"});
+			var oMockChange = {mutation : "insert", child: oMockItem};
+			var oMockBreadcrumbs = {updateDrillBreadcrumbs : function(){}};
+			this.oMDCChart._oBreadcrumbs = oMockBreadcrumbs;
+
+			this.oMDCChart.addItem(new Item({name: "testName1", label:"testLabel1", type:"groupable", role:"category"}));
+			this.oMDCChart.addItem(new Item({name: "testName2", label:"testLabel2", type:"aggregatable", role:"category"}));
+			this.oMDCChart.addItem(oMockItem);
+
+			var oInsertItemSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "insertItemToInnerChart");
+
+			//Act
+			this.oMDCChart._propagateItemChangeToInnerChart(oMockChange);
+
+			//Assert
+			assert.ok(oInsertItemSpy.calledWithExactly(this.oMDCChart, oMockItem, 1), "Item was inserted with correct index");
+			done();
+		}.bind(this));
+
+	});
+
 	QUnit.module("sap.ui.mdc.Chart: Toolbar Actions", {
 
 		beforeEach: function() {
