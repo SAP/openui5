@@ -100,8 +100,11 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 				if (sTextDir) {
 					oRm.attr("dir", sTextDir.toLowerCase());
 				}
+
+				oRm.attr("data-colon", Core.getLibraryResourceBundle("sap.m").getText("LABEL_COLON"));
+
 				oRm.openEnd();
-				oRm.text(oObjStatus.getTitle() + ":");
+				oRm.text(oObjStatus.getTitle());
 				oRm.close("span");
 			}
 

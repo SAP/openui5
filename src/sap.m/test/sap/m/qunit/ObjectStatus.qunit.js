@@ -216,20 +216,24 @@ sap.ui.define([
 		var iNumberToSet = 5,
 			sTitleToExpect = "5",
 			oResult,
-			oConstructor = { title : "not empty text"};
+			oConstructor = { title : "not empty text"},
+			oObjectStatus,
+			$Title;
 
 		// System under Test
-		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
+		oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		// Act
 		oResult = oObjectStatus.setTitle(iNumberToSet);
 		sap.ui.getCore().applyChanges();
+		$Title = oObjectStatus.$().children(".sapMObjStatusTitle");
 
 		// Assert
 		assert.strictEqual(oResult, oObjectStatus, "Should be able to chain");
-		assert.ok(!/.*<script>.*/.test(oObjectStatus.$().children(".sapMObjStatusTitle").html()), "Did not contain a unescaped script tag");
-		assert.strictEqual(oObjectStatus.$().children(".sapMObjStatusTitle").text(), oObjectStatus.getTitle() + ":", "Did contain a :");
+		assert.notOk(/.*<script>.*/.test($Title.html()), "Did not contain a unescaped script tag");
+		assert.strictEqual($Title.attr("data-colon"), ":", "Did have an attribute containing a :");
+		assert.strictEqual(window.getComputedStyle($Title[0], ':after').getPropertyValue('content'), '":"', "Did contain a :");
 		assert.strictEqual(oObjectStatus.getTitle(), sTitleToExpect, "Did set the number as a string as a value");
 
 		//Cleanup
@@ -384,7 +388,7 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oObjectStatus.getTitle(), sTitleToSet, "Did set the value");
-		assert.ok(/.*Account blocked - Blocked for payment:.*/.test(oObjectStatus.$().children(".sapMObjStatusTitle").html()), "Did display dashed string correctly");
+		assert.ok(/.*Account blocked - Blocked for payment.*/.test(oObjectStatus.$().children(".sapMObjStatusTitle").html()), "Did display dashed string correctly");
 
 		//Cleanup
 		oObjectStatus.destroy();
@@ -428,7 +432,7 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oObjectStatus.getTitle(), sTitleToSet, "Did set the value");
-		assert.ok(/.*Account blocked - Blocked for payment:.*/.test(oObjectStatus.$().children(".sapMObjStatusTitle").html()), "Did display dashed string correctly");
+		assert.ok(/.*Account blocked - Blocked for payment.*/.test(oObjectStatus.$().children(".sapMObjStatusTitle").html()), "Did display dashed string correctly");
 
 		//Cleanup
 		oObjectStatus.destroy();
