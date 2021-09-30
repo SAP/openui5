@@ -53,9 +53,12 @@
 		.sapMTimePickerSlider {
 			.sapMTimePickerItem {
 				background: @sapUiContentSelectedBackground;
-				border: 1px solid @sapUiListBackground;;
+				border: 0.0625rem solid @sapUiListBackground;
+				color: @sapUiContentFocusColor;
+				border-color: @sapUiContentFocusColor;
 				&:hover {
-					background: @sapUiContentSelectedHoverBackground;
+					background: @sapUiListHoverBackground;
+					color: @sapUiContentFocusColor;
 				}
 			}
 		}
@@ -76,7 +79,7 @@
 					}
 				}
 				.sapMTPPickerSelectionFrame {
-					border: 0.0625rem solid @sapUiListSelectionBorderColor;
+					border: 0.125rem solid @sapUiListSelectionBorderColor;
 					border-radius: @sapUiButtonBorderCornerRadius;
 					outline:none;
 					&:hover {

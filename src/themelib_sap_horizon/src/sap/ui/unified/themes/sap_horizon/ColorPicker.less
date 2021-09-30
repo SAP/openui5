@@ -110,3 +110,22 @@
 .sapUiColorPicker-ColorPickerMatrix.sapUnifiedColorPicker .sapUiColorPicker-ColorPickerCircle:after {
 	border-color: @sapUiFieldBorderColor;
 }
+
+.sapMSliderInner:not(.sapMSliderInnerDisabled):hover .sapMSliderHandle {
+	background: @sapUiButtonBackground;
+	border-color: darken(@sapUiFieldBorderColor, 15);
+}
+
+.sapMSliderInner:not(.sapMSliderInnerDisabled).sapMSliderPressed .sapMSliderHandle,
+.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:hover {
+	border: 0.125rem solid darken(@sapUiFieldBorderColor, 15);
+}
+
+.sapMSliderInner::before,
+.sapMSlider::after {
+	display: none;
+}
+
+.sapUnifiedColorPicker .sapMSliderInner .sapMSliderHandle:focus {
+	outline: 0.125rem solid @sapUiContentFocusColor !important; // TODO: !important is needed in order to override the same style in Slider. When it is removed, the !important here should be removed too.
+}

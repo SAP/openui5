@@ -30,3 +30,13 @@
 .calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType18, @sapLegendColor18);
 .calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType19, @sapLegendColor19);
 .calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType20, @sapLegendColor20);
+
+html.sap-desktop .sapMSPCMonthDay:not(.sapMSPCMonthDayToday):focus::after {
+	border: 0.125rem solid @sapUiContentFocusColor;
+}
+
+html.sap-desktop .sapMSPCMonthDay.sapMSPCMonthDayToday:focus .sapMSPCMonthNowMarker::after {
+	border: none;
+	outline: 0.125rem solid @sapUiContentFocusColor;
+	outline-offset: -0.25rem;
+}
