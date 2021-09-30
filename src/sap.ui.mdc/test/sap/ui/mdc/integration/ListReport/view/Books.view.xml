@@ -17,7 +17,7 @@
 	<Page showHeader="false" enableScrolling="false" class="sapUiContentPadding" showNavButton="false">
 		<VBox height="95%">
 			<variants:VariantManagement id="IDVariantManagementOfTable" for="booksTable,booksFilterBar,bookChart" class="sapUiTinyMarginBottom" />
-			<mdc:FilterBar search="onSearch" id="booksFilterBar" filterConditions = '\{"stock" : [\{"operator":"BT","values":[0,99999]}]\}' liveMode="true" delegate="{name: 'sap/ui/v4demo/delegate/Books.FB.delegate', payload: {collectionName: 'Books'}}" p13nMode="Item,Value">
+			<mdc:FilterBar variantBackreference="IDVariantManagementOfTable" search="onSearch" id="booksFilterBar" filterConditions = '\{"stock" : [\{"operator":"BT","values":[0,99999]}]\}' liveMode="true" delegate="{name: 'sap/ui/v4demo/delegate/Books.FB.delegate', payload: {collectionName: 'Books'}}" p13nMode="Item,Value">
 				<mdc:dependents>
 					<mdcf:FieldValueHelp title="Title Value Help" id="FH4" noDialog="false" keyPath="title" descriptionPath="title" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
 						<mdcf:content>

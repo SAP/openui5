@@ -10,6 +10,8 @@
 				<IconTabFilter key="authors" text="Manage Authors"/>
 			</items>
 		</IconTabHeader>
+		<ToolbarSpacer />
+		<ToggleButton id="btnStartRTA" text="RTA" icon="sap-icon://user-edit" type="Emphasized" press="onStartRTA" />		
 	</tnt:ToolHeader>
        <App id="app">
 	</App>
