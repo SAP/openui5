@@ -48,7 +48,11 @@ sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText", "sap/ui/core/Shortc
 				|| sType === ButtonType.Reject
 				|| sType === ButtonType.Emphasized
 				|| sType === ButtonType.Transparent
-				|| sType === ButtonType.Attention) {
+				|| sType === ButtonType.Attention
+				|| sType === ButtonType.Neutral
+				|| sType === ButtonType.Critical
+				|| sType === ButtonType.Success
+				|| sType === ButtonType.Negative) {
 				oRm.class(SplitButtonRenderer.CSS_CLASS + sType);
 			}
 
