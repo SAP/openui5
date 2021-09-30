@@ -237,6 +237,7 @@ sap.ui.define([
 			oDetailArea.setBindingContext(oUserContext);
 			// set keepAlive for new context
 			oUserContext.setKeepAlive(true, function () {
+				// hides detail area when context is destroyed
 				oLayout.setSize("100%");
 				oLayout.setResizable(false);
 				oDetailArea.setVisible(false);
