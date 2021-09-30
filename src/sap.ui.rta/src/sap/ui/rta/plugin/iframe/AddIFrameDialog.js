@@ -204,37 +204,39 @@ sap.ui.define([
 	 * Helper to extract current context URL parameters for the URL builder
 	 *
 	 * @param {sap.ui.base.ManagedObject} oObject - Managed object to extract the context from
-	 * @return {object[]}  - Parameters array for URL builder exposed by the Add IFrame dialog
+	 * @return {Promise<object[]>} Resolving to parameters array for URL builder exposed by the Add IFrame dialog
 	 */
 	AddIFrameDialog.buildUrlBuilderParametersFor = function(oObject) {
-		var oUserInfo = getContainerUserInfo();
-		var oUserParameters = Object.keys(oUserInfo)
-			.map(function(sUserSetting) {
-				return {
-					label: sUserSetting,
-					key: "{$user>/" + sUserSetting + "}",
-					value: oUserInfo[sUserSetting]
-				};
+		return getContainerUserInfo()
+			.then(function(oUserInfo) {
+				var oUserParameters = Object.keys(oUserInfo)
+					.map(function(sUserSetting) {
+						return {
+							label: sUserSetting,
+							key: "{$user>/" + sUserSetting + "}",
+							value: oUserInfo[sUserSetting]
+						};
+					});
+				var oBindingContext = oObject.getBindingContext();
+				var oDefaultBoundObjectParameters;
+				if (oBindingContext) {
+					var oDefaultBoundObject = oBindingContext.getObject();
+					oDefaultBoundObjectParameters = Object.keys(oDefaultBoundObject)
+						.filter(function(sProperty) {
+							return typeof oDefaultBoundObject[sProperty] !== "object";
+						})
+						.map(function(sProperty) {
+							return {
+								label: sProperty,
+								key: "{" + sProperty + "}",
+								value: oDefaultBoundObject[sProperty]
+							};
+						});
+				} else {
+					oDefaultBoundObjectParameters = [];
+				}
+				return oUserParameters.concat(oDefaultBoundObjectParameters);
 			});
-		var oBindingContext = oObject.getBindingContext();
-		var oDefaultBoundObjectParameters;
-		if (oBindingContext) {
-			var oDefaultBoundObject = oBindingContext.getObject();
-			oDefaultBoundObjectParameters = Object.keys(oDefaultBoundObject)
-				.filter(function(sProperty) {
-					return typeof oDefaultBoundObject[sProperty] !== "object";
-				})
-				.map(function(sProperty) {
-					return {
-						label: sProperty,
-						key: "{" + sProperty + "}",
-						value: oDefaultBoundObject[sProperty]
-					};
-				});
-		} else {
-			oDefaultBoundObjectParameters = [];
-		}
-		return oUserParameters.concat(oDefaultBoundObjectParameters);
 	};
 
 	return AddIFrameDialog;

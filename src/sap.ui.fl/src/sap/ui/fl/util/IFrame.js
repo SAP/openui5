@@ -36,6 +36,8 @@ sap.ui.define([
 		return vValue;
 	}
 
+	this._oInitializePromise = Promise.reject();
+
 	/**
 	 * Constructor for a new <code>IFrame</code>.
 	 *
@@ -95,8 +97,15 @@ sap.ui.define([
 			if (Control.prototype.init) {
 				Control.prototype.init.apply(this, arguments);
 			}
-			this._oUserModel = new JSONModel(getContainerUserInfo());
-			this.setModel(this._oUserModel, "$user");
+			this._oInitializePromise = getContainerUserInfo()
+				.then(function(oUserInfo) {
+					this._oUserModel = new JSONModel(oUserInfo);
+					this.setModel(this._oUserModel, "$user");
+				}.bind(this));
+		},
+
+		waitForInit: function () {
+			return this._oInitializePromise;
 		},
 
 		setUrl: function(sUrl) {

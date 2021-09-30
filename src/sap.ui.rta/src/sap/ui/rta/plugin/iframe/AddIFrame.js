@@ -68,10 +68,13 @@ sap.ui.define([
 		var sVariantManagementReference = this.getVariantManagementReference(oParentOverlay);
 
 		var oAddIFrameDialog = new AddIFrameDialog();
-		var mAddIFrameDialogSettings = {
-			parameters: AddIFrameDialog.buildUrlBuilderParametersFor(oParent)
-		};
-		oAddIFrameDialog.open(mAddIFrameDialogSettings)
+		AddIFrameDialog.buildUrlBuilderParametersFor(oParent)
+			.then(function(mURLParameters) {
+				var mAddIFrameDialogSettings = {
+					parameters: mURLParameters
+				};
+				return oAddIFrameDialog.open(mAddIFrameDialogSettings);
+			})
 			.then(function(mSettings) {
 				if (!mSettings) {
 					return Promise.reject(); // Cancel
