@@ -285,10 +285,21 @@ sap.ui.define([
     ChartDelegate.insertItemToInnerChart = function (oMDCChart, oMDCChartItem, iIndex) {
         //TODO: Create Measures/Dimension only when required?
         if (oMDCChartItem.getType() === "groupable") {
-            this.createInnerDimension(oMDCChart, oMDCChartItem);
+
+            var oDim = this._getChart(oMDCChart).getDimensionByName(oMDCChartItem.getName());
+
+            if (!oDim) {
+                this.createInnerDimension(oMDCChart, oMDCChartItem);
+            } else {
+                //Update Dimension
+                oDim.setLabel(oMDCChartItem.getLabel());
+                oDim.setRole(oMDCChartItem.getRole() ? oMDCChartItem.getRole() : "category");
+            }
+
             var aVisibleDimension = this._getChart(oMDCChart).getVisibleDimensions();
             aVisibleDimension.splice(iIndex, 0, oMDCChartItem.getName()); //Insert Item without deleting existing dimension
             this._getChart(oMDCChart).setVisibleDimensions(aVisibleDimension);
+
         } else if (oMDCChartItem.getType() === "aggregatable") {
             this.createInnerMeasure(oMDCChart, oMDCChartItem);
             var aVisibleMeasures = this._getChart(oMDCChart).getVisibleMeasures();
@@ -316,9 +327,15 @@ sap.ui.define([
             var aNewVisibleDimensions = this._getChart(oMDCChart).getVisibleDimensions().filter(function (e) {
                 return e !== oMDCChartItem.getName();
             });
+
+            if (oMDCChart.getDelegate().inResultDimensions && oMDCChart.getDelegate().inResultDimensions instanceof Array) {
+                this._getChart(oMDCChart).setInResultDimensions(oMDCChart.getDelegate().inResultDimensions);
+            }
+
             this._getChart(oMDCChart).setVisibleDimensions(aNewVisibleDimensions);
 
-            this._getChart(oMDCChart).removeDimension(this._getChart(oMDCChart).getDimensionByName(oMDCChartItem.getName()));
+            //this._getChart(oMDCChart).removeDimension(this._getChart(oMDCChart).getDimensionByName(oMDCChartItem.getName()));
+
         } else if (oMDCChartItem.getType() === "aggregatable" && this._getChart(oMDCChart).getVisibleMeasures().includes(this._getAggregatedMeasureNameForMDCItem(oMDCChartItem))) {
             var aNewVisibleMeasures = this._getChart(oMDCChart).getVisibleMeasures().filter(function (e) {
                 return e !== this._getAggregatedMeasureNameForMDCItem(oMDCChartItem);
@@ -500,6 +517,30 @@ sap.ui.define([
             Promise.all(aColorPromises).then(function(){
                 this._getChart(oMDCChart).setVisibleDimensions(aVisibleDimensions);
                 this._getChart(oMDCChart).setVisibleMeasures(aVisibleMeasures);
+
+                var aInResultDimensions = oMDCChart.getDelegate().inResultDimensions;
+                if (aInResultDimensions && aInResultDimensions instanceof Array && aInResultDimensions.length != 0) {
+
+                    var aInResultPromises = [];
+
+                    aInResultDimensions.forEach(function(sInResultDim){
+
+                        aInResultPromises.push(this._getPropertyInfosByName(sInResultDim, oMDCChart).then(function(oPropertyInfos){
+                            var oDim = new Dimension({
+                                name: oPropertyInfos.name,
+                                label: oPropertyInfos.label
+                            });
+
+                            this._getChart(oMDCChart).addDimension(oDim);
+                        }.bind(this)));
+
+                    }.bind(this));
+
+                    Promise.all(aInResultPromises).then(function(){
+                        this._getChart(oMDCChart).setInResultDimensions(oMDCChart.getDelegate().inResultDimensions);
+                    }.bind(this));
+
+                }
 
                 this._updateColoring(oMDCChart, aVisibleDimensions, aVisibleMeasures);
                 this._updateSemanticalPattern(oMDCChart, aProperties);
@@ -1072,6 +1113,7 @@ sap.ui.define([
             } else if (oBindingInfo.parameters && oBindingInfo.parameters.$search) {
                 delete oBindingInfo.parameters.$search;
             }
+
         }
     };
 
