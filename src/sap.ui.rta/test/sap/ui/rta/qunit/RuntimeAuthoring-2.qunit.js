@@ -61,6 +61,7 @@ sap.ui.define([
 
 	function givenAnFLP(fnFLPToExternalStub, fnFLPReloadStub, mShellParams) {
 		sandbox.stub(FlexUtils, "getUshellContainer").returns({
+			//TODO: Remove when all calls are adjusted
 			getService: function() {
 				return {
 					toExternal: fnFLPToExternalStub,
@@ -82,6 +83,28 @@ sap.ui.define([
 					registerNavigationFilter: function () {},
 					reloadCurrentApp: fnFLPReloadStub
 				};
+			},
+			getServiceAsync: function() {
+				return Promise.resolve({
+					toExternal: fnFLPToExternalStub,
+					getHash: function () {
+						return "Action-somestring";
+					},
+					parseShellHash: function () {
+						var mHash = {
+							semanticObject: "Action",
+							action: "somestring"
+						};
+
+						if (mShellParams) {
+							mHash.params = mShellParams;
+						}
+						return mHash;
+					},
+					unregisterNavigationFilter: function () {},
+					registerNavigationFilter: function () {},
+					reloadCurrentApp: fnFLPReloadStub
+				});
 			},
 			getLogonSystem: function() {
 				return {

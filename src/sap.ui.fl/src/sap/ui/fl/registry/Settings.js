@@ -5,12 +5,29 @@
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/Utils",
 	"sap/base/Log"
 ], function(
 	Storage,
+	Utils,
 	Log
 ) {
 	"use strict";
+
+	function retrieveUserId() {
+		var oUShellContainer = Utils.getUshellContainer();
+		if (oUShellContainer) {
+			return oUShellContainer.getServiceAsync("UserInfo")
+			.then(function(oUserInfoService) {
+				var oUser = oUserInfoService.getUser();
+				return oUser && oUser.getId();
+			})
+			.catch(function(oError) {
+				Log.error("Error getting service from Unified Shell: " + oError.message);
+			});
+		}
+		return Promise.resolve();
+	}
 
 	/**
 	 * FlexSettings access
@@ -70,29 +87,36 @@ sap.ui.define([
 	 * @returns {Promise} With parameter <code>oInstance</code> of type {sap.ui.fl.registry.Settings}
 	 */
 	Settings._loadSettings = function() {
-		var oLoadingPromise = Storage.loadFeatures().then(function (oSettings) {
-			if (!oSettings) {
-				Log.error("The request for flexibility settings failed; A default response is generated and returned to consuming APIs");
-				// in case the back end cannot respond resolve with a default response
-				oSettings = {
-					isKeyUser: false,
-					isKeyUserTranslationEnabled: false,
-					isVariantSharingEnabled: false,
-					isVariantPersonalizationEnabled: true,
-					isAtoAvailable: false,
-					isAtoEnabled: false,
-					isAppVariantSaveAsEnabled: false,
-					isCondensingEnabled: false,
-					isProductiveSystem: true,
-					isPublicLayerAvailable: false,
-					isVariantAdaptationEnabled: false,
-					versioning: {},
-					_bFlexChangeMode: false,
-					_bFlexibilityAdaptationButtonAllowed: false
-				};
-			}
-			return Settings._storeInstance(oSettings);
-		});
+		var oSettings;
+		var oLoadingPromise = Storage.loadFeatures()
+			.then(function(oLoadedSettings) {
+				oSettings = oLoadedSettings;
+				return retrieveUserId();
+			})
+			.then(function (sUserId) {
+				if (!oSettings) {
+					Log.error("The request for flexibility settings failed; A default response is generated and returned to consuming APIs");
+					// in case the back end cannot respond resolve with a default response
+					oSettings = {
+						isKeyUser: false,
+						isKeyUserTranslationEnabled: false,
+						isVariantSharingEnabled: false,
+						isVariantPersonalizationEnabled: true,
+						isAtoAvailable: false,
+						isAtoEnabled: false,
+						isAppVariantSaveAsEnabled: false,
+						isCondensingEnabled: false,
+						isProductiveSystem: true,
+						isPublicLayerAvailable: false,
+						isVariantAdaptationEnabled: false,
+						versioning: {},
+						_bFlexChangeMode: false,
+						_bFlexibilityAdaptationButtonAllowed: false
+					};
+				}
+				oSettings.userId = sUserId;
+				return Settings._storeInstance(oSettings);
+			});
 		Settings._oLoadSettingsPromise = oLoadingPromise;
 		return oLoadingPromise;
 	};
@@ -305,6 +329,16 @@ sap.ui.define([
 	 */
 	Settings.prototype.getClient = function() {
 		return this._oSettings.client;
+	};
+
+	/**
+	 * Getter for the id of the current user.
+	 * Taken from the property 'userId' of the flex settings. Only filled when UShell is available.
+	 *
+	 * @returns {String} user ID of the current user. Undefined if UShell is not available.
+	 */
+	 Settings.prototype.getUserId = function() {
+		return this._oSettings.userId;
 	};
 
 	return Settings;

@@ -1009,6 +1009,7 @@ sap.ui.define([
 			this.oHandleParametersOnExitSpy = sandbox.spy(this.oRta, "_handleUrlParameterOnExit");
 			this.oReloadPageStub = sandbox.stub(this.oRta, "_reloadPage");
 			sandbox.stub(Utils, "getUshellContainer").returns({
+				//TODO: Remove after all calls are ajusted
 				getService: function () {
 					return {
 						toExternal: function() {
@@ -1022,6 +1023,20 @@ sap.ui.define([
 							};
 						}
 					};
+				},
+				getServiceAsync: function () {
+					return Promise.resolve({
+						toExternal: function() {
+							return true;
+						},
+						parseShellHash: function () {
+							return {
+								params: {
+									"sap-ui-fl-version": [Layer.CUSTOMER]
+								}
+							};
+						}
+					});
 				}
 			});
 			return this.oRta._initVersioning();

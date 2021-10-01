@@ -390,6 +390,7 @@ sap.ui.define([
 			this.oDeRegistrationHandlerStub = sandbox.stub();
 
 			var oUShellService = {
+				//TODO: Remove when all calls are adjusted
 				getService: function(sService) {
 					if (sService === "ShellNavigation") {
 						return {
@@ -400,6 +401,18 @@ sap.ui.define([
 							}
 						};
 					}
+				}.bind(this),
+				getServiceAsync: function(sService) {
+					if (sService === "ShellNavigation") {
+						return Promise.resolve({
+							registerNavigationFilter: this.oRegistrationHandlerStub,
+							unregisterNavigationFilter: this.oDeRegistrationHandlerStub,
+							NavigationFilterStatus: {
+								Continue: "continue"
+							}
+						});
+					}
+					return Promise.resolve();
 				}.bind(this)
 			};
 			sandbox.stub(Utils, "getUshellContainer").returns(oUShellService);
