@@ -2754,7 +2754,13 @@ sap.ui.define([
 	PlanningCalendar.prototype._handleTodayPress = function (oEvent) {
 		var oDate = new Date(),
 			oStartDate,
-			sViewKey = this.getViewKey();
+			sViewKey = this.getViewKey(),
+			oFocusMonthDelegate = {
+				onAfterRendering: function() {
+					this._focusDate(CalendarDate.fromLocalJSDate(new Date()));
+					this.removeDelegate(oFocusMonthDelegate);
+				}
+			};
 
 		// if the OneMonth view is selected and Today btn is pressed,
 		// the calendar should start from the 1st date of the current month
@@ -2775,6 +2781,11 @@ sap.ui.define([
 
 		this.setStartDate(oDate);
 		this._dateNav.setCurrent(oDate);
+		if (sViewKey === PlanningCalendarBuiltInView.Week) {
+			this._oWeeksRow.addDelegate(oFocusMonthDelegate, this._oWeeksRow);
+		} else if (sViewKey === PlanningCalendarBuiltInView.OneMonth) {
+			this._oOneMonthsRow.addDelegate(oFocusMonthDelegate, this._oOneMonthsRow);
+		}
 		this._updatePickerSelection();
 		this.fireStartDateChange();
 
