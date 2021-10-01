@@ -282,7 +282,7 @@ function(
 
 			// initialize dialog and create member variables.
 			this.setTitle(oResources.getText("CREATE_APP_VARIANT_DIALOG_TITLE"));
-			this.setContentWidth("620px");
+			this.setContentWidth("700px");
 			this.setContentHeight("250px");
 
 			oCustomTileModel = new JSONModel({
