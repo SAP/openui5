@@ -15,6 +15,10 @@ sap.ui.define(function () {
 				group: "ODataV4 Tutorial",
 				page: "test-resources/sap/ui/core/demokit/tutorial/odatav4/08/webapp/test/integration/opaTests.qunit.html"
 			},
+			"sap/ui/core/demokit/tutorial/odatav4/11/webapp/test/integration/opaTests": {
+				group: "ODataV4 Tutorial",
+				page: "test-resources/sap/ui/core/demokit/tutorial/odatav4/11/webapp/test/integration/opaTests.qunit.html"
+			},
 			"sap/ui/core/demokit/tutorial/troubleshooting/01/webapp/test/integration/opaTests": {
 				group: "Troubleshooting Tutorial",
 				page: "test-resources/sap/ui/core/demokit/tutorial/troubleshooting/01/webapp/test/integration/opaTests.qunit.html"
