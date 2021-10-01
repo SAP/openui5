@@ -1932,16 +1932,11 @@ function(
 				var oBoundingClientRect = this.getDomRef().getBoundingClientRect();
 
 				var initial = {
-					x: e.pageX,
-					y: e.pageY,
+					x: e.clientX,
+					y: e.clientY,
 					width: that._$dialog.width(),
 					height: that._$dialog.height(),
 					outerHeight : that._$dialog.outerHeight(),
-					offset: {
-						//use e.originalEvent.layerX/Y for Firefox
-						x: e.offsetX ? e.offsetX : e.originalEvent.layerX,
-						y: e.offsetY ? e.offsetY : e.originalEvent.layerY
-					},
 					position: {
 						x: oBoundingClientRect.x,
 						y: oBoundingClientRect.y
@@ -1970,7 +1965,7 @@ function(
 					}
 				}
 
-				if ((isHeaderClicked(e.target) && this.getDraggable()) || bResize) {
+				if (isHeaderClicked(e.target) && this.getDraggable() || bResize) {
 					that._bDisableRepositioning = true;
 
 					that._$dialog.addClass('sapDialogDisableTransition');
@@ -2002,8 +1997,8 @@ function(
 							that._bDisableRepositioning = true;
 
 							that._oManuallySetPosition = {
-								x: Math.max(oAreaDimensions.left, Math.min(event.pageX - e.pageX + initial.position.x, oAreaDimensions.right - initial.width)), // deltaX + initial dialog position
-								y: Math.max(oAreaDimensions.top, Math.min(event.pageY - e.pageY + initial.position.y, oAreaDimensions.bottom - initial.outerHeight)) // deltaY + initial dialog position
+								x: Math.max(oAreaDimensions.left, Math.min(event.clientX - e.clientX + initial.position.x, oAreaDimensions.right - initial.width)), // deltaX + initial dialog position
+								y: Math.max(oAreaDimensions.top, Math.min(event.clientY - e.clientY + initial.position.y, oAreaDimensions.bottom - initial.outerHeight)) // deltaY + initial dialog position
 							};
 
 							//move the dialog
@@ -2032,22 +2027,22 @@ function(
 							// BCP: 1680048166 remove inline set height and width so that the content resizes together with the mouse pointer
 							that.$('cont').height('').width('');
 
-							if (event.pageY + handleOffsetY > oAreaDimensions.bottom) {
-								event.pageY = oAreaDimensions.bottom - handleOffsetY;
+							if (event.clientY + handleOffsetY > oAreaDimensions.bottom) {
+								event.clientY = oAreaDimensions.bottom - handleOffsetY;
 							}
 
-							if (event.pageX + handleOffsetX > oAreaDimensions.right) {
-								event.pageX = oAreaDimensions.right - handleOffsetX;
+							if (event.clientX + handleOffsetX > oAreaDimensions.right) {
+								event.clientX = oAreaDimensions.right - handleOffsetX;
 							}
 
 							that._oManuallySetSize = {
-								width: initial.width + event.pageX - initial.x,
-								height: initial.height + event.pageY - initial.y
+								width: initial.width + event.clientX - initial.x,
+								height: initial.height + event.clientY - initial.y
 							};
 
 							if (that._bRTL) {
-								styles.left = Math.min(Math.max(event.pageX, 0), maxLeftOffset);
-								that._oManuallySetSize.width = initial.width + initial.x - Math.max(event.pageX, 0);
+								styles.left = Math.min(Math.max(event.clientX, 0), maxLeftOffset);
+								that._oManuallySetSize.width = initial.width + initial.x - Math.max(event.clientX, 0);
 							}
 
 							styles.width = that._oManuallySetSize.width;
