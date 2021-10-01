@@ -19,6 +19,7 @@ sap.ui.define([
 		) {
 	"use strict";
 
+	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 	var oConditionsType;
 	var oValueType;
 	var bAsyncCalled;
@@ -99,7 +100,7 @@ sap.ui.define([
 		var oCondition1 = Condition.createCondition("EQ", ["Test1"]);
 		var oCondition2 = Condition.createCondition("EQ", ["Test2"]);
 		var sResult = oConditionsType.formatValue([oCondition1, oCondition2]);
-		assert.equal(sResult, "=Test1; =Test2", "Result of formatting");
+		assert.equal(sResult, "=Test1" + oResourceBundle.getText("field.SEPARATOR") + "=Test2", "Result of formatting");
 
 	});
 
@@ -357,7 +358,7 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		sResult.then(function(sDescription) {
-			assert.equal(sDescription, "Item1; Item2; Item3", "Result of formatting");
+			assert.equal(sDescription, "Item1" + oResourceBundle.getText("field.SEPARATOR") + "Item2" + oResourceBundle.getText("field.SEPARATOR") + "Item3", "Result of formatting");
 			fnDone();
 		});
 
@@ -534,7 +535,7 @@ sap.ui.define([
 		var oCondition1 = Condition.createCondition("EQ", [[1.23, "EUR"]], undefined, undefined, ConditionValidated.Validated);
 		var oCondition2 = Condition.createCondition("BT", [[1, "EUR"], [2, "EUR"]]);
 		var sResult = oConditionsType.formatValue([oCondition1, oCondition2]);
-		assert.equal(sResult, sValue1 + "; " + sValue2 + "..." + sValue3, "Result of number formatting");
+		assert.equal(sResult, sValue1 + oResourceBundle.getText("field.SEPARATOR") + sValue2 + "..." + sValue3, "Result of number formatting");
 		sResult = oUnitConditionsType.formatValue([oCondition1, oCondition2]);
 		assert.equal(sResult, "EUR", "Result of unit formatting");
 

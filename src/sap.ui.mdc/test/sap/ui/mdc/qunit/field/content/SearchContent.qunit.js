@@ -24,11 +24,11 @@ sap.ui.define([
 			instances: [SearchField],
 			createFunction: SearchContent.createEdit
 		},
-		"EditMulti": {
-			getPathsFunction: SearchContent.getEditMulti,
+		"EditMultiValue": {
+			getPathsFunction: SearchContent.getEditMultiValue,
 			paths: [null],
 			instances: [null],
-			createFunction: SearchContent.createEditMulti,
+			createFunction: SearchContent.createEditMultiValue,
 			throwsError: true
 		},
 		"EditMultiLine": {
@@ -71,7 +71,7 @@ sap.ui.define([
 
 		assert.deepEqual(SearchContent.getControlNames("Edit"), ["sap/m/SearchField"], "Correct default controls returned for ContentMode 'Edit'");
 		assert.deepEqual(SearchContent.getControlNames("Display"), ["sap/m/Text"], "Correct default controls returned for ContentMode 'Display'");
-		assert.deepEqual(SearchContent.getControlNames("EditMulti"), [null], "Correct default controls returned for ContentMode 'EditMulti'");
+		assert.deepEqual(SearchContent.getControlNames("EditMultiValue"), [null], "Correct default controls returned for ContentMode 'EditMultiValue'");
 		assert.deepEqual(SearchContent.getControlNames("EditMultiLine"), [null], "Correct default controls returned for ContentMode 'EditMultiLine'");
 		assert.deepEqual(SearchContent.getControlNames("EditOperator"), [null], "Correct default controls returned for ContentMode 'EditOperator'");
 	});
@@ -115,7 +115,7 @@ sap.ui.define([
 
 			var fnCreateDisplayFunction = fnSpyOnCreateFunction("Display");
 			var fnCreateEditFunction = fnSpyOnCreateFunction("Edit");
-			var fnCreateEditMultiFunction = fnSpyOnCreateFunction("EditMulti");
+			var fnCreateEditMultiValueFunction = fnSpyOnCreateFunction("EditMultiValue");
 			var fnCreateEditMultiLineFunction = fnSpyOnCreateFunction("EditMultiLine");
 
 			var aCreatedDisplayControls = fnCreateControls(oContentFactory, "Display", "-create");
@@ -123,15 +123,15 @@ sap.ui.define([
 
 			assert.throws(
 				function() {
-					SearchContent.create(oContentFactory, "EditMulti", null, oControlMap["EditMulti"].instances, "EditMulti-create");
+					SearchContent.create(oContentFactory, "EditMultiValue", null, oControlMap["EditMultiValue"].instances, "EditMultiValue-create");
 				},
 				function(oError) {
 					return (
 						oError instanceof Error &&
-						oError.message === "sap.ui.mdc.field.content.SearchContent - createEditMulti not defined!"
+						oError.message === "sap.ui.mdc.field.content.SearchContent - createEditMultiValue not defined!"
 					);
 				},
-				"createEditMulti throws an error.");
+				"createEditMultiValue throws an error.");
 
 			assert.throws(
 				function() {
@@ -149,7 +149,7 @@ sap.ui.define([
 
 			fnSpyCalledOnce(fnCreateDisplayFunction, "Display", assert);
 			fnSpyCalledOnce(fnCreateEditFunction, "Edit", assert);
-			fnSpyCalledOnce(fnCreateEditMultiFunction, "EditMulti", assert);
+			fnSpyCalledOnce(fnCreateEditMultiValueFunction, "EditMultiValue", assert);
 			fnSpyCalledOnce(fnCreateEditMultiLineFunction, "EditMultiLine", assert);
 
 			assert.ok(aCreatedDisplayControls[0] instanceof aDisplayControls[0], aDisplayControls[0].getMetadata().getName() + " control created for ContentMode 'Display'.");
@@ -177,20 +177,20 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("createEditMulti", function(assert) {
+	QUnit.test("createEditMultiValue", function(assert) {
 		var done = assert.async();
 		this.oField.awaitControlDelegate().then(function() {
 			assert.throws(
 				function() {
-					SearchContent.createEditMulti();
+					SearchContent.createEditMultiValue();
 				},
 				function(oError) {
 					return (
 						oError instanceof Error &&
-						oError.message === "sap.ui.mdc.field.content.SearchContent - createEditMulti not defined!"
+						oError.message === "sap.ui.mdc.field.content.SearchContent - createEditMultiValue not defined!"
 					);
 				},
-				"createEditMulti throws an error.");
+				"createEditMultiValue throws an error.");
 			done();
 		});
 	});

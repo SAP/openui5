@@ -19,7 +19,13 @@ sap.ui.define([
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	var BooleanContent = Object.assign({}, DefaultContent, {
-		getEditMulti: function() {
+		getDisplayMultiValue: function() {
+			return [null];
+		},
+		getDisplayMultiLine: function() {
+			return [null];
+		},
+		getEditMultiValue: function() {
 			return [null];
 		},
 		getEditMultiLine: function() {
@@ -28,11 +34,17 @@ sap.ui.define([
 		getUseDefaultFieldHelp: function() {
 			return { name: "bool", oneOperatorSingle: true, oneOperatorMulti: true };
 		},
-		createEditMulti: function() {
-			throw new Error("sap.ui.mdc.field.content.BooleanContent - createEditMulti not defined!");
+		createEditMultiValue: function() {
+			throw new Error("sap.ui.mdc.field.content.BooleanContent - createEditMultiValue not defined!");
 		},
 		createEditMultiLine: function() {
 			throw new Error("sap.ui.mdc.field.content.BooleanContent - createEditMultiLine not defined!");
+		},
+		createDisplayMultiValue: function() {
+			throw new Error("sap.ui.mdc.field.content.BooleanContent - createDisplayMultiValue not defined!");
+		},
+		createDisplayMultiLine: function() {
+			throw new Error("sap.ui.mdc.field.content.BooleanContent - createDisplayMultiLine not defined!");
 		}
 	});
 

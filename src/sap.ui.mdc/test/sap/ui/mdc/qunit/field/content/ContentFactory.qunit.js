@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/mdc/enum/ContentMode",
 	"sap/ui/mdc/Link",
 	"sap/m/Text",
+	"sap/m/ExpandableText",
 	"sap/m/Link",
 	"sap/ui/mdc/field/FieldInput",
 	"sap/ui/mdc/field/FieldMultiInput",
@@ -23,7 +24,7 @@ sap.ui.define([
 	"sap/m/DateTimePicker",
 	"sap/m/SearchField",
 	"sap/m/TimePicker"
-], function(QUnit, FieldBase, ContentFactory, DefaultContent, LinkContent, DateContent, DateTimeContent, TimeContent, BooleanContent, UnitContent, SearchContent, EditMode, ContentMode, MdcLink, Text, Link, FieldInput, FieldMultiInput, TextArea, DatePicker, DateRangeSelection, DateTimePicker, SearchField, TimePicker) {
+], function(QUnit, FieldBase, ContentFactory, DefaultContent, LinkContent, DateContent, DateTimeContent, TimeContent, BooleanContent, UnitContent, SearchContent, EditMode, ContentMode, MdcLink, Text, ExpandableText, Link, FieldInput, FieldMultiInput, TextArea, DatePicker, DateRangeSelection, DateTimePicker, SearchField, TimePicker) {
 	"use strict";
 
 	QUnit.test("Constructor", function(assert) {
@@ -114,14 +115,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("getContentMode", function(assert) {
+		/* ContentMode DisplayMultiValue */
+		assert.equal(this.oContentFactory.getContentMode(null, EditMode.Display, -1, false, []), ContentMode.DisplayMultiValue, "ContentMode 'DisplayMultiValue' returned.");
+
+		/* ContentMode DisplayMultiLine */
+		assert.equal(this.oContentFactory.getContentMode(null, EditMode.Display, 1, true, []), ContentMode.DisplayMultiLine, "ContentMode 'DisplayMultiLine' returned.");
+
 		/* ContentMode Display */
-		assert.equal(this.oContentFactory.getContentMode(null, EditMode.Display, null, null, []), ContentMode.Display, "ContentMode 'Display' returned.");
+		assert.equal(this.oContentFactory.getContentMode(null, EditMode.Display, 1, false, []), ContentMode.Display, "ContentMode 'Display' returned.");
 
 		/* ContentMode Edit */
 		assert.equal(this.oContentFactory.getContentMode(null, null, 1, null, []), ContentMode.Edit, "ContentMode 'Edit' returned.");
 
-		/* ContentMode EditMulti */
-		assert.equal(this.oContentFactory.getContentMode(null, null, null, null, []), ContentMode.EditMulti, "ContentMode 'EditMulti' returned.");
+		/* ContentMode EditMultiValue */
+		assert.equal(this.oContentFactory.getContentMode(null, null, null, null, []), ContentMode.EditMultiValue, "ContentMode 'EditMultiValue' returned.");
 
 		/* ContentMode EditMultiLine */
 		assert.equal(this.oContentFactory.getContentMode(null, null, 1, true, []), ContentMode.EditMultiLine, "ContentMode 'EditMultiLine' returned.");
@@ -221,8 +228,10 @@ sap.ui.define([
 
 	var fnCreateAllContents = function(oContentType, sContentTypeName) {
 		var oCreateDisplayPromise = this.oContentFactory.createContent(oContentType, ContentMode.Display, sContentTypeName + "-" + ContentMode.Display);
+		var oCreateDisplayMultiValuePromise = this.oContentFactory.createContent(oContentType, ContentMode.DisplayMultiValue, sContentTypeName + "-" + ContentMode.DisplayMultiValue);
+		var oCreateDisplayMultiLinePromise = this.oContentFactory.createContent(oContentType, ContentMode.DisplayMultiLine, sContentTypeName + "-" + ContentMode.DisplayMultiLine);
 		var oCreateEditPromise = this.oContentFactory.createContent(oContentType, ContentMode.Edit, sContentTypeName + "-" + ContentMode.Edit);
-		var oCreateEditMultiPromise = this.oContentFactory.createContent(oContentType, ContentMode.EditMulti, sContentTypeName + "-" + ContentMode.EditMulti);
+		var oCreateEditMultiValuePromise = this.oContentFactory.createContent(oContentType, ContentMode.EditMultiValue, sContentTypeName + "-" + ContentMode.EditMultiValue);
 		var oCreateEditMutliLinePromise = this.oContentFactory.createContent(oContentType, ContentMode.EditMultiLine, sContentTypeName + "-" + ContentMode.EditMultiLine);
 		this.oContentFactory._sOperator = "EQ";
 		var oCreateEditOperatorEQPromise = this.oContentFactory.createContent(oContentType, ContentMode.EditOperator, sContentTypeName + "-" + ContentMode.EditOperator + "EQ");
@@ -231,8 +240,10 @@ sap.ui.define([
 
 		return [
 			oCreateDisplayPromise,
+			oCreateDisplayMultiValuePromise,
+			oCreateDisplayMultiLinePromise,
 			oCreateEditPromise,
-			oCreateEditMultiPromise,
+			oCreateEditMultiValuePromise,
 			oCreateEditMutliLinePromise,
 			oCreateEditOperatorEQPromise,
 			oCreateEditOperatorBTPromise
@@ -242,8 +253,10 @@ sap.ui.define([
 	var fnCheckCreatedContent = function(oExpectedContentControl, assert, done) {
 		var aContentModes = [
 			ContentMode.Display,
+			ContentMode.DisplayMultiValue,
+			ContentMode.DisplayMultiLine,
 			ContentMode.Edit,
-			ContentMode.EditMulti,
+			ContentMode.EditMultiValue,
 			ContentMode.EditMultiLine,
 			ContentMode.EditOperator + " (EQ)",
 			ContentMode.EditOperator + " (BT)"
@@ -276,8 +289,10 @@ sap.ui.define([
 				contentTypeName: "BooleanContent",
 				expectedControls: [
 					[Text], // Display
+					[null], // DisplayMultiValue
+					[null], // DisplayMultiLine
 					[FieldInput], // Edit
-					[null], // EditMulti
+					[null], // EditMultiValue
 					[null], // EditMultiLine
 					[null], // EditOperator EQ
 					[null] // EditOperator BT
@@ -288,6 +303,8 @@ sap.ui.define([
 				contentTypeName: "DateContent",
 				expectedControls: [
 					[Text],
+					[ExpandableText],
+					[ExpandableText],
 					[FieldInput],
 					[FieldMultiInput],
 					[null],
@@ -300,6 +317,8 @@ sap.ui.define([
 				contentTypeName: "DateTimeContent",
 				expectedControls: [
 					[Text],
+					[ExpandableText],
+					[ExpandableText],
 					[FieldInput],
 					[FieldMultiInput],
 					[null],
@@ -312,6 +331,8 @@ sap.ui.define([
 				contentTypeName: "DefaultContent",
 				expectedControls: [
 					[Text],
+					[ExpandableText],
+					[ExpandableText],
 					[FieldInput],
 					[FieldMultiInput],
 					[TextArea],
@@ -323,6 +344,8 @@ sap.ui.define([
 				contentType: LinkContent,
 				contentTypeName: "LinkContent",
 				expectedControls: [
+					[Link],
+					[null],
 					[Link],
 					[FieldInput],
 					[FieldMultiInput],
@@ -336,6 +359,8 @@ sap.ui.define([
 				contentTypeName: "SearchContent",
 				expectedControls: [
 					[Text],
+					[ExpandableText],
+					[ExpandableText],
 					[SearchField],
 					[null],
 					[null],
@@ -348,6 +373,8 @@ sap.ui.define([
 				contentTypeName: "TimeContent",
 				expectedControls: [
 					[Text],
+					[ExpandableText],
+					[ExpandableText],
 					[FieldInput],
 					[FieldMultiInput],
 					[null],
@@ -360,6 +387,8 @@ sap.ui.define([
 				contentTypeName: "UnitContent",
 				expectedControls: [
 					[Text],
+					[ExpandableText],
+					[ExpandableText],
 					[FieldInput, FieldInput],
 					[FieldMultiInput, FieldInput],
 					[null],

@@ -383,7 +383,7 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "content exist");
-		assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
+		assert.equal(oContent.getMetadata().getName(), "sap.m.ExpandableText", "sap.m.ExpandableText is used");
 		assert.equal(oContent.getModel("$field"), oField._oManagedObjectModel, "Text has ManagedObjectModel of Field");
 		assert.equal(oContent.getBindingPath("text"), "/conditions", "Text value bound to Fields Conditions");
 		// TODO: test for formatter
@@ -413,7 +413,7 @@ sap.ui.define([
 	QUnit.test("display mode rendering, async loading of control", function(assert) {
 
 		var oStub = sinon.stub(sap.ui, "require");
-		oStub.withArgs("sap/m/Text").onFirstCall().returns(undefined);
+		oStub.withArgs("sap/m/ExpandableText").onFirstCall().returns(undefined);
 		oStub.callThrough();
 
 		oField.setEditMode(EditMode.Display);
@@ -428,7 +428,7 @@ sap.ui.define([
 			aContent = oField.getAggregation("_content");
 			var oContent = aContent && aContent.length > 0 && aContent[0];
 			assert.ok(oContent, "default content exist");
-			assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
+			assert.equal(oContent.getMetadata().getName(), "sap.m.ExpandableText", "sap.m.ExpandableText is used");
 			fnDone();
 		}, 0);
 
@@ -558,7 +558,7 @@ sap.ui.define([
 		aContent = oField.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "Field has internal content");
-		assert.equal(oContent && oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
+		assert.equal(oContent && oContent.getMetadata().getName(), "sap.m.ExpandableText", "sap.m.ExpandableText is used");
 		assert.notOk(oSegmentedButton.getDomRef(), "SegmentedButton is not rendered");
 		assert.notEqual(oField._oContentFactory._oConditionType, oConditionType, "ConditionType of SegmentedButton not used in Field");
 		assert.notOk(oField._oContentFactory._oConditionType, "no ConditionType used");
@@ -694,7 +694,7 @@ sap.ui.define([
 		assert.ok(aContent.length > 0, "default content exist");
 		assert.equal(aContent.length, 1, "1 content control");
 		oContent1 = aContent && aContent.length > 0 && aContent[0];
-		assert.ok(oContent1 instanceof Text, "Text rendered");
+		assert.ok(oContent1 instanceof ExpandableText, "Text rendered");
 
 		// editable: again 2 Fields but currency readOnly
 		oContent1 = undefined; oContent2 = undefined;
@@ -742,12 +742,25 @@ sap.ui.define([
 		oField.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
+		// multi value
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		var oContentDomRef = oContent && oContent.getDomRef();
+		assert.equal(oContent.getMetadata().getName(), "sap.m.ExpandableText", "sap.m.ExpandableText is used");
+		assert.ok(oContentDomRef, "content control is rendered");
+		assert.ok(jQuery(oContentDomRef.children[0].children[0]).hasClass("sapMEmptyIndicator"), "Empty indicator rendered in ExpandableText control");
+		assert.notEqual(jQuery(oContentDomRef.children[0].children[0]).css("display"), "none", "Empty indicator not hidden");
+
+		// single value
+		oField.setMaxConditions(1);
+		sap.ui.getCore().applyChanges();
+		aContent = oField.getAggregation("_content");
+		oContent = aContent && aContent.length > 0 && aContent[0];
+		oContentDomRef = oContent && oContent.getDomRef();
 		assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
 		assert.ok(oContentDomRef, "content control is rendered");
 		assert.ok(jQuery(oContentDomRef.children[0]).hasClass("sapMEmptyIndicator"), "Empty indicator rendered in Text control");
+		assert.notEqual(jQuery(oContentDomRef.children[0]).css("display"), "none", "Empty indicator not hidden");
 
 		// condition with empty key
 		var oCondition = Condition.createItemCondition("", "");
@@ -1004,7 +1017,7 @@ sap.ui.define([
 
 			aContent = oFieldDisplay.getAggregation("_content");
 			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
+			assert.equal(oContent.getMetadata().getName(), "sap.m.ExpandableText", "sap.m.ExpandableText is used");
 			assert.equal(oContent.getText && oContent.getText(), "Test", "Text set on Text control");
 
 			aContent = oFieldSearch.getAggregation("_content");
@@ -1462,9 +1475,9 @@ sap.ui.define([
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getWidth(), "100%", "width of 100% set on Input control");
 
-		aContent = oFieldDisplay.getAggregation("_content");
-		oContent = aContent && aContent.length > 0 && aContent[0];
-		assert.equal(oContent.getWidth(), "100%", "width of 100% set on Text control");
+		// aContent = oFieldDisplay.getAggregation("_content");
+		// oContent = aContent && aContent.length > 0 && aContent[0];
+		// assert.equal(oContent.getWidth(), "100%", "width of 100% set on Text control");
 
 	});
 

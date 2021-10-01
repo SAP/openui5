@@ -24,11 +24,11 @@ sap.ui.define([
 			instances: [FieldInput],
 			createFunction: TimeContent.createEdit
 		},
-		"EditMulti": {
-			getPathsFunction: TimeContent.getEditMulti,
+		"EditMultiValue": {
+			getPathsFunction: TimeContent.getEditMultiValue,
 			paths: ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"],
 			instances: [FieldMultiInput, Token],
-			createFunction: TimeContent.createEditMulti
+			createFunction: TimeContent.createEditMultiValue
 		},
 		"EditMultiLine": {
 			getPathsFunction: TimeContent.getEditMultiLine,
@@ -75,7 +75,7 @@ sap.ui.define([
 
 		assert.deepEqual(TimeContent.getControlNames("Edit"), ["sap/ui/mdc/field/FieldInput"], "Correct controls returned for ContentMode 'Edit'");
 		assert.deepEqual(TimeContent.getControlNames("Display"), ["sap/m/Text"], "Correct controls returned for ContentMode 'Display'");
-		assert.deepEqual(TimeContent.getControlNames("EditMulti"), ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], "Correct controls returned for ContentMode 'EditMulti'");
+		assert.deepEqual(TimeContent.getControlNames("EditMultiValue"), ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], "Correct controls returned for ContentMode 'EditMultiValue'");
 		assert.deepEqual(TimeContent.getControlNames("EditMultiLine"), [null], "Correct controls returned for ContentMode 'EditMultiLine'");
 		assert.deepEqual(TimeContent.getControlNames("EditOperator"), [null], "Correct controls returned for ContentMode 'EditOperator'");
 	});
@@ -116,16 +116,16 @@ sap.ui.define([
 		this.oField.awaitControlDelegate().then(function() {
 			var aDisplayControls = oControlMap["Display"].instances;
 			var aEditControls = oControlMap["Edit"].instances;
-			var aEditMultiControls = oControlMap["EditMulti"].instances;
+			var aEditMultiValueControls = oControlMap["EditMultiValue"].instances;
 
 			var fnCreateDisplayFunction = fnSpyOnCreateFunction("Display");
 			var fnCreateEditFunction = fnSpyOnCreateFunction("Edit");
-			var fnCreateEditMultiFunction = fnSpyOnCreateFunction("EditMulti");
+			var fnCreateEditMultiValueFunction = fnSpyOnCreateFunction("EditMultiValue");
 			var fnCreateEditMultiLineFunction = fnSpyOnCreateFunction("EditMultiLine");
 
 			var aCreatedDisplayControls = fnCreateControls(oContentFactory, "Display", "-create");
 			var aCreatedEditControls = fnCreateControls(oContentFactory, "Edit", "-create");
-			var aCreatedEditMultiControls = fnCreateControls(oContentFactory, "EditMulti", "-create");
+			var aCreatedEditMultiValueControls = fnCreateControls(oContentFactory, "EditMultiValue", "-create");
 
 			assert.throws(
 				function() {
@@ -143,12 +143,12 @@ sap.ui.define([
 
 			fnSpyCalledOnce(fnCreateDisplayFunction, "Display", assert);
 			fnSpyCalledOnce(fnCreateEditFunction, "Edit", assert);
-			fnSpyCalledOnce(fnCreateEditMultiFunction, "EditMulti", assert);
+			fnSpyCalledOnce(fnCreateEditMultiValueFunction, "EditMultiValue", assert);
 			fnSpyCalledOnce(fnCreateEditMultiLineFunction, "EditMultiLine", assert);
 
 			assert.ok(aCreatedDisplayControls[0] instanceof aDisplayControls[0], aDisplayControls[0].getMetadata().getName() + " control created for ContentMode 'Display'.");
 			assert.ok(aCreatedEditControls[0] instanceof aEditControls[0], aEditControls[0].getMetadata().getName() + " control created for ContentMode 'Edit'.");
-			assert.ok(aCreatedEditMultiControls[0] instanceof aEditMultiControls[0], aEditMultiControls[0].getMetadata().getName() + " control created for ContentMode 'EditMulti'.");
+			assert.ok(aCreatedEditMultiValueControls[0] instanceof aEditMultiValueControls[0], aEditMultiValueControls[0].getMetadata().getName() + " control created for ContentMode 'EditMultiValue'.");
 
 			assert.ok(aCreatedEditOperatorEQControls[0] instanceof TimePicker, aCreatedEditOperatorEQControls[0].getMetadata().getName() + " control created for ContentMode 'EditOperator EQ'.");
 

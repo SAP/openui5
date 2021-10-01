@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldHelpBase",
 	"sap/m/Label",
 	"sap/m/Text",
+	"sap/m/ExpandableText",
 	"sap/m/TextArea",
 	"sap/m/DatePicker",
 	"sap/m/TimePicker",
@@ -48,6 +49,7 @@ sap.ui.define([
 	FieldHelpBase,
 	Label,
 	Text,
+	ExpandableText,
 	TextArea,
 	DatePicker,
 	TimePicker,
@@ -154,7 +156,7 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "content exist");
-		assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
+		assert.equal(oContent.getMetadata().getName(), "sap.m.ExpandableText", "sap.m.ExpandableText is used");
 
 		oField.setEditMode(EditMode.ReadOnly);
 		sap.ui.getCore().applyChanges();
@@ -234,6 +236,7 @@ sap.ui.define([
 
 	QUnit.test("conditions & Tokens", function(assert) {
 
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		var fnDone = assert.async();
 		setTimeout(function() { // async set of condition
 			var aConditions = oFieldEdit.getConditions();
@@ -251,7 +254,7 @@ sap.ui.define([
 
 			aContent = oFieldDisplay.getAggregation("_content");
 			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.equal(oContent.getText(), "Text 1; Text 2; Text 3", "Text set on Text control");
+			assert.equal(oContent.getText(), "Text 1" + oResourceBundle.getText("field.SEPARATOR") + "Text 2" + oResourceBundle.getText("field.SEPARATOR") + "Text 3", "Text set on Text control");
 			fnDone();
 		}, 0);
 

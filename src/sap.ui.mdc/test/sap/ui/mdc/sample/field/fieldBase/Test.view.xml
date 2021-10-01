@@ -184,6 +184,7 @@
 								maxConditions="5"
 								editMode="Display"
 								placeholder="Placeholder"
+								showEmptyIndicator="true"
 								liveChange="handleLiveChange"
 								submit="handleSubmit">
 							</mdcField:FieldBase>
