@@ -1710,7 +1710,7 @@ sap.ui.define([
 			press: fSelectFav
 		});
 
-		if (this.getDefaultVariantKey() === oItem.key) {
+		if (this.getStandardVariantKey() === oItem.key) {
 			oFavoriteIcon.addStyleClass("sapUiFlVarMngmtFavNonInteractiveColor");
 		} else {
 			oFavoriteIcon.addStyleClass("sapUiFlVarMngmtFavColor");
@@ -1812,8 +1812,12 @@ sap.ui.define([
 		}
 	};
 
-	VariantManagement.prototype._toggleIconActivityState = function(oIcon, bToInActive) {
+	VariantManagement.prototype._toggleIconActivityState = function(oIcon, oItem, bToInActive) {
 		if (!oIcon) {
+			return;
+		}
+
+		if (oItem.key === this.getStandardVariantKey()) {
 			return;
 		}
 
@@ -1841,7 +1845,7 @@ sap.ui.define([
 				this.setDefaultVariantKey(sKey);
 			}
 
-			this._toggleIconActivityState(oIcon, bSelected);
+			this._toggleIconActivityState(oIcon, oItem, bSelected);
 		}
 	};
 
@@ -1873,6 +1877,9 @@ sap.ui.define([
 		//		if (!this._anyInErrorState(this.oManagementTable)) {
 		//			this.oManagementSave.setEnabled(true);
 		//		}
+		if (this.getStandardVariantKey() === oItem.key) {
+			return;
+		}
 
 		if ((this.getDefaultVariantKey() === oItem.key) && oItem.favorite) {
 			return;
