@@ -6,14 +6,16 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/base/util/UriParameters"
+	"sap/base/util/UriParameters",
+	"sap/ui/base/ManagedObject"
 ], function(
 	ABAPAccess,
 	CAPAccess,
 	FieldExtensibility,
 	jQuery,
 	sinon,
-	UriParameters
+	UriParameters,
+	ManagedObject
 ) {
 	"use strict";
 
@@ -36,13 +38,19 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given FieldExtensibility with an ABAPAccess.js", {
+		before: function() {
+			// Determine scenario
+			FieldExtensibility.onControlSelected(new ManagedObject());
+		},
 		beforeEach: function() {
-			FieldExtensibility._resetCurrentScenario();
 			stubAccessFunctions(ABAPAccess);
 			stubAccessFunctions(CAPAccess);
 		},
 		afterEach: function() {
 			sandbox.restore();
+		},
+		after: function() {
+			FieldExtensibility._resetCurrentScenario();
 		}
 	}, function() {
 		aFunctionNames.forEach(function(sFunctionName) {
@@ -58,16 +66,22 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a CAP system is identified", {
-		beforeEach: function() {
-			FieldExtensibility._resetCurrentScenario();
-			stubAccessFunctions(CAPAccess);
+		before: function() {
 			sandbox.stub(UriParameters.prototype, "get")
 				.callThrough()
 				.withArgs("sap-ui-fl-xx-capScenario")
 				.returns("true");
+			// Determine scenario
+			FieldExtensibility.onControlSelected(new ManagedObject());
+		},
+		beforeEach: function() {
+			stubAccessFunctions(CAPAccess);
 		},
 		afterEach: function() {
 			sandbox.restore();
+		},
+		after: function() {
+			FieldExtensibility._resetCurrentScenario();
 		}
 	}, function() {
 		aFunctionNames.forEach(function(sFunctionName) {
