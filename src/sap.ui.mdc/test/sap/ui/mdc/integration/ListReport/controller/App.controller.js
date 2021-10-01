@@ -18,6 +18,17 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.v4demo.controller.App", {
 
+		onStartRTA: function () {
+			var oOwnerComponent = this.getOwnerComponent();
+			sap.ui.getCore().loadLibrary("sap/ui/rta", { async: true }).then(function () {
+				sap.ui.require(["sap/ui/rta/api/startKeyUserAdaptation"], function (startKeyUserAdaptation) {
+					startKeyUserAdaptation({
+						rootControl: oOwnerComponent.getAggregation("rootControl")
+					});
+				});
+			});
+		},
+
 		onInit: function() {
 			var oCM = new ConditionModel();
 
