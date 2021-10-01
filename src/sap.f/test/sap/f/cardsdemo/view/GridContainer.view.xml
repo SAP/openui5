@@ -90,6 +90,11 @@
 									<ImageContent src="sap-icon://account" />
 								</TileContent>
 							</GenericTile>
+							<w:Card manifest="./cardsdemo/bundles/analytical/smallDonut.json" baseUrl="./">
+								<w:layoutData>
+									<f:GridContainerItemLayoutData columns="2" />
+								</w:layoutData>
+							</w:Card>
 							<w:Card manifest="{manifests>/listContent/card13}" baseUrl="./">
 								<w:layoutData>
 									<f:GridContainerItemLayoutData columns="4" />
