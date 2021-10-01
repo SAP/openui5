@@ -45,7 +45,10 @@ function (
 			this.oIFrame = new IFrame(oComponent.createId("iframe"), {
 				width: sDefaultSize,
 				height: sDefaultSize,
-				url: sOpenUI5Url
+				url: sOpenUI5Url,
+				_settings: {
+					url: sOpenUI5Url
+				}
 			});
 
 			this.oModel = new JSONModel({
@@ -114,7 +117,10 @@ function (
 
 		QUnit.test("when a value is bound, completeChangeContent & applyChange with JsControlTreeModifier are called and then reverted", function (assert) {
 			this.oIFrame.applySettings({
-				url: sBoundUrl
+				url: sBoundUrl,
+				_settings: {
+					url: sBoundUrl
+				}
 			});
 			assert.equal(this.oIFrame.getUrl(), sSapUI5Url, "the initial bound value is correct");
 
