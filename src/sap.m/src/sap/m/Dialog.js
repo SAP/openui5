@@ -1967,20 +1967,7 @@ function(
 
 				if (isHeaderClicked(e.target) && this.getDraggable() || bResize) {
 					that._bDisableRepositioning = true;
-
 					that._$dialog.addClass('sapDialogDisableTransition');
-
-					that._oManuallySetPosition = {
-						x: initial.position.x,
-						y: initial.position.y
-					};
-
-					//set the new position of the dialog on mouse down when the transform is disabled by the class
-					that._$dialog.css({
-						left: Math.min(Math.max(oAreaDimensions.left, that._oManuallySetPosition.x), oAreaDimensions.right - initial.width),
-						top: Math.min(Math.max(oAreaDimensions.top, that._oManuallySetPosition.y), oAreaDimensions.bottom - initial.height),
-						width: initial.width
-					});
 				}
 
 				if (isHeaderClicked(e.target) && this.getDraggable()) {
@@ -2009,8 +1996,6 @@ function(
 							});
 						});
 					};
-
-					$w.on("mousemove", mouseMoveHandler);
 				} else if (bResize) {
 					that._$dialog.addClass('sapMDialogResizing');
 
@@ -2051,12 +2036,11 @@ function(
 							that._$dialog.css(styles);
 						});
 					};
-
-					$w.on("mousemove", mouseMoveHandler);
 				} else {
 					return;
 				}
 
+				$w.on("mousemove", mouseMoveHandler);
 				$w.on("mouseup", mouseUpHandler);
 
 				e.stopPropagation();
