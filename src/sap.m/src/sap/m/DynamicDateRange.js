@@ -1042,7 +1042,7 @@ sap.ui.define([
 		};
 
 		DynamicDateRange.prototype._parseValue = function(sInputValue) {
-			var aResults = DynamicDateUtil.parse(sInputValue, this._getFormatter()).filter(function(oResult) {
+			var aResults = DynamicDateUtil.parse(sInputValue, this._getFormatter(), this.getOptions()).filter(function(oResult) {
 				return this.getOptions().indexOf(oResult.operator) !== -1;
 			}, this);
 
