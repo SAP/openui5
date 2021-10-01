@@ -10,29 +10,29 @@ sap.ui.define([
 
 	var oControlMap = {
 		"Display": {
-			getPathsFunction: BooleanContent.getDisplay,
+			getPathsFunction: "getDisplay",
 			paths: ["sap/m/Text"],
 			instances: [Text],
-			createFunction: BooleanContent.createDisplay
+			createFunction: "createDisplay"
 		},
 		"Edit": {
-			getPathsFunction: BooleanContent.getEdit,
+			getPathsFunction: "getEdit",
 			paths: ["sap/ui/mdc/field/FieldInput"],
 			instances: [FieldInput],
-			createFunction: BooleanContent.createEdit
+			createFunction: "createEdit"
 		},
 		"EditMultiValue": {
-			getPathsFunction: BooleanContent.getEditMultiValue,
+			getPathsFunction: "getEditMultiValue",
 			paths: [null],
 			instances: [null],
-			createFunction: BooleanContent.createEditMultiValue,
+			createFunction: "createEditMultiValue",
 			throwsError: true
 		},
 		"EditMultiLine": {
-			getPathsFunction: BooleanContent.getEditMultiLine,
+			getPathsFunction: "getEditMultiLine",
 			paths: [null],
 			instances: [null],
-			createFunction: BooleanContent.createEditMultiLine,
+			createFunction: "createEditMultiLine",
 			throwsError: true
 		}
 	};
@@ -43,8 +43,8 @@ sap.ui.define([
 
 	aControlMapKeys.forEach(function(sControlMapKey) {
 		var oValue = oControlMap[sControlMapKey];
-		QUnit.test(oValue.getPathsFunction.name, function(assert) {
-			assert.deepEqual(oValue.getPathsFunction(), oValue.paths, "Correct control path returned for ContentMode '" + sControlMapKey + "'.");
+		QUnit.test(oValue.getPathsFunction, function(assert) {
+			assert.deepEqual(BooleanContent[oValue.getPathsFunction](), oValue.paths, "Correct control path returned for ContentMode '" + sControlMapKey + "'.");
 		});
 	});
 
@@ -97,12 +97,12 @@ sap.ui.define([
 	};
 
 	var fnSpyOnCreateFunction = function(sContentMode) {
-		return oControlMap[sContentMode].createFunction ? sinon.spy(BooleanContent, oControlMap[sContentMode].createFunction.name) : null;
+		return oControlMap[sContentMode].createFunction ? sinon.spy(BooleanContent, oControlMap[sContentMode].createFunction) : null;
 	};
 
 	var fnSpyCalledOnce = function(fnSpyFunction, sContentMode, assert) {
 		if (fnSpyFunction) {
-			assert.ok(fnSpyFunction.calledOnce, oControlMap[sContentMode].createFunction.name + " called once.");
+			assert.ok(fnSpyFunction.calledOnce, oControlMap[sContentMode].createFunction + " called once.");
 		}
 	};
 
@@ -154,14 +154,14 @@ sap.ui.define([
 	aControlMapKeys.forEach(function(sControlMapKey) {
 		var oValue = oControlMap[sControlMapKey];
 		if (oValue.createFunction && !oValue.throwsError) {
-			QUnit.test(oValue.createFunction.name, function(assert) {
+			QUnit.test(oValue.createFunction, function(assert) {
 				var done = assert.async();
 				var oContentFactory = this.oField._oContentFactory;
 				this.oField.awaitControlDelegate().then(function() {
 					var oInstance = oValue.instances[0];
 					var aControls = BooleanContent.create(oContentFactory, sControlMapKey, null, oValue.instances, sControlMapKey);
 
-					assert.ok(aControls[0] instanceof oInstance, "Correct control created in " + oValue.createFunction.name);
+					assert.ok(aControls[0] instanceof oInstance, "Correct control created in " + oValue.createFunction);
 					done();
 				});
 			});

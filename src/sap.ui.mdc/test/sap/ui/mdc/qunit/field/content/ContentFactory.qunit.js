@@ -125,17 +125,21 @@ sap.ui.define([
 		assert.equal(this.oContentFactory.getContentMode(null, EditMode.Display, 1, false, []), ContentMode.Display, "ContentMode 'Display' returned.");
 
 		/* ContentMode Edit */
-		assert.equal(this.oContentFactory.getContentMode(null, null, 1, null, []), ContentMode.Edit, "ContentMode 'Edit' returned.");
+		assert.equal(this.oContentFactory.getContentMode(null, null, 1, false, []), ContentMode.Edit, "ContentMode 'Edit' returned.");
 
 		/* ContentMode EditMultiValue */
-		assert.equal(this.oContentFactory.getContentMode(null, null, null, null, []), ContentMode.EditMultiValue, "ContentMode 'EditMultiValue' returned.");
+		assert.equal(this.oContentFactory.getContentMode(null, null, -1, false, []), ContentMode.EditMultiValue, "ContentMode 'EditMultiValue' returned.");
 
 		/* ContentMode EditMultiLine */
 		assert.equal(this.oContentFactory.getContentMode(null, null, 1, true, []), ContentMode.EditMultiLine, "ContentMode 'EditMultiLine' returned.");
 
 		/* ContentMode EditOperator */
-		assert.equal(this.oContentFactory.getContentMode(DateContent, null, 1, null, ["BT"]), ContentMode.EditOperator, "ContentMode 'EditOperator' returned.");
-		assert.equal(this.oContentFactory.getContentMode(DateContent, null, 1, null, ["EQ"]), ContentMode.EditOperator, "ContentMode 'EditOperator' returned.");
+		assert.equal(this.oContentFactory.getContentMode(DateContent, null, 1, false, ["BT"]), ContentMode.EditOperator, "ContentMode 'EditOperator' returned.");
+		assert.equal(this.oContentFactory.getContentMode(DateContent, null, 1, false, ["EQ"]), ContentMode.EditOperator, "ContentMode 'EditOperator' returned.");
+
+		/* ContentMode EditForHelp */
+		this.oField.setFieldHelp("X"); // just ID needed
+		assert.equal(this.oContentFactory.getContentMode(null, EditMode.Editable, 1, false, []), ContentMode.EditForHelp, "ContentMode 'EditForHelp' returned.");
 	});
 
 	QUnit.test("getContentType", function(assert) {
@@ -237,6 +241,7 @@ sap.ui.define([
 		var oCreateEditOperatorEQPromise = this.oContentFactory.createContent(oContentType, ContentMode.EditOperator, sContentTypeName + "-" + ContentMode.EditOperator + "EQ");
 		this.oContentFactory._sOperator = "BT";
 		var oCreateEditOperatorBTPromise = this.oContentFactory.createContent(oContentType, ContentMode.EditOperator, sContentTypeName + "-" + ContentMode.EditOperator + "BT");
+		var oCreateEditForHelpPromise = this.oContentFactory.createContent(oContentType, ContentMode.EditForHelp, sContentTypeName + "-" + ContentMode.EditForHelp);
 
 		return [
 			oCreateDisplayPromise,
@@ -246,7 +251,8 @@ sap.ui.define([
 			oCreateEditMultiValuePromise,
 			oCreateEditMutliLinePromise,
 			oCreateEditOperatorEQPromise,
-			oCreateEditOperatorBTPromise
+			oCreateEditOperatorBTPromise,
+			oCreateEditForHelpPromise
 		];
 	};
 
@@ -259,7 +265,8 @@ sap.ui.define([
 			ContentMode.EditMultiValue,
 			ContentMode.EditMultiLine,
 			ContentMode.EditOperator + " (EQ)",
-			ContentMode.EditOperator + " (BT)"
+			ContentMode.EditOperator + " (BT)",
+			ContentMode.EditForHelp
 		];
 		var oContentType = oExpectedContentControl.contentType;
 		var sContentTypeName = oExpectedContentControl.contentTypeName;
@@ -268,14 +275,13 @@ sap.ui.define([
 		var aCreateContentPromises = fnCreateAllContents.call(this, oContentType, sContentTypeName);
 
 		Promise.all(aCreateContentPromises).then(function(aCreatedControlsArrays) {
-			aCreatedControlsArrays.forEach(function(aCreatedControls) {
-				var iIndex = aCreatedControlsArrays.indexOf(aCreatedControls);
+			aCreatedControlsArrays.forEach(function(aCreatedControls, iIndex) {
 				var aExpectedControls = aExpectedControlArrays[iIndex];
 				var sContentMode = aContentModes[iIndex];
 
 				aCreatedControls.forEach(function(oCreatedControl) {
 					var oExpectedControl = aExpectedControls[aCreatedControls.indexOf(oCreatedControl)];
-					assert.ok(oCreatedControl instanceof oExpectedControl, "Correct controls returned for ContentType '" + sContentTypeName + "' in ContentMode '" + sContentMode + "'");
+					assert.ok(oExpectedControl && oCreatedControl instanceof oExpectedControl, "Correct controls returned for ContentType '" + sContentTypeName + "' in ContentMode '" + sContentMode + "'");
 				});
 			});
 			done();
@@ -295,7 +301,8 @@ sap.ui.define([
 					[null], // EditMultiValue
 					[null], // EditMultiLine
 					[null], // EditOperator EQ
-					[null] // EditOperator BT
+					[null], // EditOperator BT
+					[FieldInput] // EditForHelp
 				]
 			},
 			{
@@ -309,7 +316,8 @@ sap.ui.define([
 					[FieldMultiInput],
 					[null],
 					[DatePicker],
-					[DateRangeSelection]
+					[DateRangeSelection],
+					[FieldInput]
 				]
 			},
 			{
@@ -323,7 +331,8 @@ sap.ui.define([
 					[FieldMultiInput],
 					[null],
 					[DateTimePicker],
-					[null]
+					[null],
+					[FieldInput]
 				]
 			},
 			{
@@ -337,7 +346,8 @@ sap.ui.define([
 					[FieldMultiInput],
 					[TextArea],
 					[null],
-					[null]
+					[null],
+					[FieldInput]
 				]
 			},
 			{
@@ -351,7 +361,8 @@ sap.ui.define([
 					[FieldMultiInput],
 					[TextArea],
 					[null],
-					[null]
+					[null],
+					[FieldInput]
 				]
 			},
 			{
@@ -362,6 +373,7 @@ sap.ui.define([
 					[ExpandableText],
 					[ExpandableText],
 					[SearchField],
+					[null],
 					[null],
 					[null],
 					[null],
@@ -379,7 +391,8 @@ sap.ui.define([
 					[FieldMultiInput],
 					[null],
 					[TimePicker],
-					[DateRangeSelection]
+					[DateRangeSelection],
+					[FieldInput]
 				]
 			},
 			{
@@ -393,7 +406,8 @@ sap.ui.define([
 					[FieldMultiInput, FieldInput],
 					[null],
 					[null],
-					[null]
+					[null],
+					[FieldInput, FieldInput]
 				]
 			}
 		];
@@ -424,12 +438,15 @@ sap.ui.define([
 			contentTypeName: "DefaultContent",
 			expectedControls: [
 				[Text],
+				[ExpandableText],
+				[ExpandableText],
 				[FieldInput],
 				[FieldMultiInput],
 				[TextArea],
 				[null],
-				[null]
-			]
+				[null],
+				[FieldInput]
+		]
 		};
 		var done = assert.async(2);
 

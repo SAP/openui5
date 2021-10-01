@@ -59,8 +59,15 @@ sap.ui.define(function() {
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		EditOperator: "EditOperator"
-	};
+		EditOperator: "EditOperator",
+		/**
+		 * Edit mode for single value field if a field help is assigned
+		 * To support field help, in some cases a different control needs to be rendered.
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
+		 */
+		 EditForHelp: "EditForHelp"
+		};
 
 	return ContentMode;
 
