@@ -1833,9 +1833,12 @@ sap.ui.define([
 				oPatchPromise2 = bCanceled
 					? Promise.reject(oError2)
 					: Promise.resolve(oPatchResult),
+				fnPatchSent = function () {},
+				bPatchWithoutSideEffects,
 				oRequestCall,
 				oRequestLock = {unlock : function () {}},
 				oStaticCacheMock = this.mock(_Cache),
+				sUnitOrCurrencyPath,
 				oUnlockCall,
 				oUpdateData = {},
 				that = this;
@@ -1944,7 +1947,8 @@ sap.ui.define([
 
 			// code under test
 			oCacheUpdatePromise = oCache.update(oGroupLock, "Address/City", "Walldorf", fnError,
-					"/~/BusinessPartnerList('0')", "path/to/entity")
+					"/~/BusinessPartnerList('0')", "path/to/entity", sUnitOrCurrencyPath,
+					bPatchWithoutSideEffects, fnPatchSent)
 				.then(function (oResult) {
 					assert.notOk(bCanceled);
 					sinon.assert.calledOnce(fnError);
@@ -2020,7 +2024,9 @@ sap.ui.define([
 
 		// code under test
 		oCacheUpdatePromise = oCache.update(oGroupLock, "Address/City", "Walldorf", fnError,
-				"/~/BusinessPartnerList('0')", "('0')/path/to/entity")
+				"/~/BusinessPartnerList('0')", "('0')/path/to/entity",
+				/*sUnitOrCurrencyPath*/undefined, /*bPatchWithoutSideEffects*/undefined,
+				function fnPatchSent() {})
 			.then(function () {
 				assert.ok(false);
 			}, function (oResult) {
@@ -2081,7 +2087,8 @@ sap.ui.define([
 
 		// code under test
 		return oCache.update(oGroupLock, "Address/City", "Walldorf",
-				/*fnErrorCallback*/undefined, "/~/BusinessPartnerList('0')", "('0')/path/to/entity")
+				/*fnErrorCallback*/undefined, "/~/BusinessPartnerList('0')", "('0')/path/to/entity",
+				undefined, undefined, function () {})
 			.then(function () {
 				assert.ok(false);
 			}, function (oResult) {
