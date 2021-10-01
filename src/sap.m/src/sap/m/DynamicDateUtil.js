@@ -111,11 +111,12 @@ sap.ui.define([
 	 *
 	 * @param {string} sValue The string to be parsed
 	 * @param {sap.m.DynamicDateFormat} oFormatter A dynamic date formatter
+	 * @param {array} aOptionKeys array of option names
 	 * @returns {object[]} An array of value objects in the DynamicDateRange's value format
 	 * @static
 	 * @public
 	 */
-	DynamicDateUtil.parse = function(sValue, oFormatter) {
+	DynamicDateUtil.parse = function(sValue, oFormatter, aOptionKeys) {
 		if (typeof sValue !== 'string') {
 			Log.error("DynamicDateFormat can only parse a String.");
 			return [];
@@ -124,7 +125,9 @@ sap.ui.define([
 		var aResults = [],
 			oResult;
 
-		var aOptions = Object.keys(DynamicDateUtil._options).sort(function(sKey1, sKey2) {
+		aOptionKeys = aOptionKeys || Object.keys(DynamicDateUtil._options);
+
+		var aOptions = aOptionKeys.sort(function(sKey1, sKey2) {
 			return StandardDynamicDateRangeKeys.indexOf(sKey1) - StandardDynamicDateRangeKeys.indexOf(sKey2);
 		}).map(function(sKey) {
 			return DynamicDateUtil._options[sKey];
