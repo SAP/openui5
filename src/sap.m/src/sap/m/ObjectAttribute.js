@@ -11,9 +11,10 @@ sap.ui.define([
 	'sap/ui/events/KeyCodes',
 	'./ObjectAttributeRenderer',
 	'sap/base/Log',
+	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/core/Core'
 ],
-function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer, Log, Core) {
+function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer, Log, ManagedObjectObserver, Core) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -114,13 +115,24 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 		this.setAggregation('_textControl', new Text());
 	};
 
+	ObjectAttribute.prototype.exit = function() {
+		if (this._oCustomContentObserver) {
+			this._oCustomContentObserver.disconnect();
+			this._oCustomContentObserver = null;
+		}
+
+		if (this._oCustomContentCloning) {
+			this._oCustomContentCloning.destroy();
+		}
+	};
+
 	/**
 	 * Delivers text control with updated title, text and maxLines properties.
 	 *
 	 * @private
 	 */
 	ObjectAttribute.prototype._getUpdatedTextControl = function() {
-		var oAttrAggregation = this.getAggregation('customContent') || this.getAggregation('_textControl'),
+		var oAttrAggregation = this._oCustomContentCloning || this.getAggregation('_textControl'),
 			sTitle = this.getTitle(),
 			sText = this.getAggregation('customContent') ? this.getAggregation('customContent').getText() : this.getText(),
 			sTextDir = this.getTextDirection(),
@@ -278,11 +290,40 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 	};
 
 	ObjectAttribute.prototype.setCustomContent = function(oCustomContent) {
-		if (oCustomContent && oCustomContent.isA('sap.m.Link')) {
-			oCustomContent._getTabindex = function() {
+		var oCurrentCustomContent = this.getCustomContent(),
+			fnGetTabIndex = function() {
 				return "-1";
 			};
+
+		//for the cases where the original custom content is rendered
+		if (oCustomContent && oCustomContent.isA('sap.m.Link')) {
+			oCustomContent._getTabindex = fnGetTabIndex;
 		}
+
+		// clone the new aggregation, but first destroy the previous cloning
+		if (this._oCustomContentCloning) {
+			this._oCustomContentCloning.destroy();
+		}
+		this._oCustomContentCloning = oCustomContent && oCustomContent.clone();
+
+		if (this._oCustomContentCloning && this._oCustomContentCloning.isA('sap.m.Link')) {
+			this._oCustomContentCloning._getTabindex = fnGetTabIndex;
+		}
+
+		if (!this._oCustomContentObserver) {
+			this._oCustomContentObserver = new ManagedObjectObserver(function() {
+				this.invalidate();
+			}.bind(this));
+		}
+
+		// do not listen for property changes on the old control
+		if (oCurrentCustomContent) {
+			this._oCustomContentObserver.unobserve(oCurrentCustomContent);
+		}
+
+		// listen on the new one
+		oCustomContent && this._oCustomContentObserver.observe(oCustomContent, { properties: true });
+
 		return this.setAggregation('customContent', oCustomContent);
 	};
 

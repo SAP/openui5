@@ -436,10 +436,11 @@ sap.ui.define([
 		var oAttr = new ObjectAttribute({
 			title: "AttributeTitle",
 			customContent: new Link({ text: "LinkText" })
-		});
+		}).placeAt("qunit-fixture");
+		oCore.applyChanges();
 
 		// assertions
-		assert.equal(oAttr.getAggregation('customContent')._getTabindex(), "-1", "Tabindex of the Link should be -1");
+		assert.equal(oAttr.$().find(".sapMLnk").attr("tabindex"), "-1", "Tabindex of the Link should be -1");
 
 		// cleanup
 		oAttr.destroy();
@@ -710,6 +711,29 @@ sap.ui.define([
 
 		// Assert
 		assert.equal(oAttr.$().find(".sapMText").text(), ".*+: text", "Title is correct");
+
+		// Clean up
+		oAttr.destroy();
+	});
+
+	QUnit.test("rendered title is correct after custom content change", function (assert) {
+		// Arrange
+		var oText = new sap.m.Text({
+			text: "2"
+		}), oAttr = new ObjectAttribute({
+			title: "1",
+			customContent: oText
+		});
+
+		oAttr.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Act
+		oText.setText("3");
+		oCore.applyChanges();
+
+		// Assert
+		assert.equal(oAttr.$().find(".sapMText").text(), "1: 3", "Title is correct");
 
 		// Clean up
 		oAttr.destroy();
