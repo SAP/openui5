@@ -916,17 +916,13 @@ function (
 			// (1) call the scroll listener synchronously to speed-up the test
 			oObjectPage._onScroll({target: { scrollTop:  iScrollTopAfter }});
 			// (2) call the resize listener synchronously to speed up the test
-			oObjectPage._onUpdateContentSize({ size: {}});
-
+			oObjectPage._onUpdateContentSize({ size: {}, oldSize: { height: 600, width: 400} });
 
 			// Check
 			assert.equal(oAdjustLayoutSpy.callCount, 1, "layout adjustment is called");
-			oObjectPage._requestAdjustLayout().then(function() {
-				assert.ok(oUpdateSelectionSpy.called, "update selection is called");
-				assert.equal(oObjectPage.getSelectedSection(), oSecondSection.getId(), "selected section is correct");
-				done();
-			});
-
+			assert.ok(oUpdateSelectionSpy.called, "update selection is called");
+			assert.equal(oObjectPage.getSelectedSection(), oSecondSection.getId(), "selected section is correct");
+			done();
 		});
 
 		helpers.renderObject(oObjectPage);
@@ -971,7 +967,7 @@ function (
 			// Act: change height without invalidating any control
 			Core.byId("b1").getDomRef().style.height = "250px";
 			oSpy.reset();
-			oObjectPage._onUpdateContentSize({ size: {}});
+			oObjectPage._onUpdateContentSize({ size: {}, oldSize: {} });
 
 			assert.equal(oSpy.callCount, 1, "recalculation of heights is called");
 			done();
@@ -2738,7 +2734,6 @@ function (
 		// arrange
 		var oObjectPage = this.oObjectPage,
 			// this delay is already introduced in the ObjectPage resize listener
-			iDelay = ObjectPageLayout.HEADER_CALC_DELAY + 100,
 			done = assert.async();
 
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
@@ -2749,12 +2744,10 @@ function (
 			assert.ok(oObjectPage._bHeaderInTitleArea);
 
 			// act: resize and check if the page invalidates in the resize listener
-			oObjectPage._onUpdateContentSize({ size: {}});
+			oObjectPage._onUpdateContentSize({ size: {}, oldSize: {} });
 
-			setTimeout(function() {
-				assert.strictEqual(oObjectPage._bHeaderInTitleArea, true, "page is not snapped on resize");
-				done();
-			}, iDelay);
+			assert.strictEqual(oObjectPage._bHeaderInTitleArea, true, "page is not snapped on resize");
+			done();
 		});
 	});
 
