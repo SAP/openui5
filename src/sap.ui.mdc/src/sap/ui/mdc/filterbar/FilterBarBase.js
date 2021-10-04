@@ -899,7 +899,9 @@ sap.ui.define([
 				} else {
 					this.triggerSearch();
 				}
-			}.bind(this)).catch(function(oEx) {	Log.error(oEx.message); });
+			}.bind(this)).catch(function(oEx) {
+				Log.error(oEx);
+			});
 		}
 	};
 
