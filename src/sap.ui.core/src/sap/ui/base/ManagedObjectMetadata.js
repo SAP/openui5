@@ -600,7 +600,7 @@ function(
 	 * @protected
 	 */
 	ManagedObjectMetadata.addAPIParentInfoEnd = function(oAggregatedObject) {
-		oAggregatedObject && oAggregatedObject.aAPIParentInfos.forwardingCounter--;
+		oAggregatedObject && oAggregatedObject.aAPIParentInfos && oAggregatedObject.aAPIParentInfos.forwardingCounter--;
 	};
 
 	AggregationForwarder.prototype.remove = function(oInstance, vAggregatedObject) {
