@@ -35526,4 +35526,95 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Allow $$inheritExpandSelect in combination with $select
+	// A bound operation inherits the $select query options from a parent list binding, but has its
+	// own $select binding parameter.
+	// (1) check that the inherited and own $select parameters are requested with the operation
+	// (2) consume the return value context (this is a precondition for (3))
+	// (3) check that refreshing the RVC requests the inherited and own $select parameters
+	// but
+	// (4) refreshing the parent list binding or
+	// (5) refreshing the row context
+	// does not request the $select parameters of the operation binding.
+	//
+	// JIRA: CPOUI5UISERVICESV3-1206
+	QUnit.test("CPOUI5ODATAV4-1206: $$inheritExpandSelect with $select", function (assert) {
+		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<Text id="salesOrderID" text="{SalesOrderID}"/>\
+	<Text id="lifecycleStatus" text="{LifecycleStatus}"/>\
+</Table>\
+<FlexBox id="objectPage">\
+	<Text id="note" text="{Note}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=LifecycleStatus,SalesOrderID&$skip=0&$top=100", {
+				value : [{SalesOrderID : "42", LifecycleStatus : "A"}]
+			})
+			.expectChange("salesOrderID", ["42"])
+			.expectChange("lifecycleStatus", ["A"])
+			.expectChange("note");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oAction = oModel.bindContext(sAction + "(...)",
+					that.oView.byId("table").getItems()[0].getBindingContext(),
+					{$$inheritExpandSelect : true, $select : "Note,Messages,LifecycleStatus"});
+
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList('42')/" + sAction + "?$select=LifecycleStatus,Messages,"
+						+ "Note,SalesOrderID",
+					payload : {}
+				}, {SalesOrderID : "42", LifecycleStatus : "B", Messages : [], Note : "some note"})
+				.expectChange("lifecycleStatus", ["B"]);
+
+			return Promise.all([
+				// code under test
+				oAction.execute(),
+				that.waitForChanges(assert, "(1) execute")
+			]);
+		}).then(function (aResults) {
+			that.expectChange("note", "some note");
+
+			that.oView.byId("objectPage").setBindingContext(aResults[0]);
+
+			return that.waitForChanges(assert, "(2) consume return value context");
+		}).then(function () {
+			that.expectRequest("SalesOrderList('42')?$select=LifecycleStatus,Messages,Note"
+					+ ",SalesOrderID", {
+					SalesOrderID : "42", LifecycleStatus : "B", Messages : [], Note : "changed note"
+				}).expectChange("note", "changed note");
+
+			// code under test
+			that.oView.byId("objectPage").getBindingContext().refresh();
+
+			return that.waitForChanges(assert, "(3) refresh return value context");
+		}).then(function () {
+			that.expectRequest("SalesOrderList('42')?$select=LifecycleStatus,SalesOrderID", {
+					SalesOrderID : "42", LifecycleStatus : "C"
+				})
+				.expectChange("lifecycleStatus", ["C"]);
+
+			// code under test
+			that.oView.byId("table").getItems()[0].getBindingContext().refresh();
+
+			return that.waitForChanges(assert, "(4) refresh row context");
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$select=LifecycleStatus,SalesOrderID"
+				+ "&$skip=0&$top=100", {
+					value : [{SalesOrderID : "42", LifecycleStatus : "D"}]
+				})
+				.expectChange("lifecycleStatus", ["D"]);
+
+			// code under test
+			that.oView.byId("table").getBinding("items").refresh();
+
+			return that.waitForChanges(assert, "(5) refresh table");
+		});
+	});
 });
