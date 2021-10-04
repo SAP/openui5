@@ -657,11 +657,18 @@ sap.ui.define([
 			},
 
 			/**
+			 * @typedef {Object} sap.ui.core.routing.RouteInfo
+			 * @property {string} name The route name
+			 * @property {Object.<string, string>} arguments The route data
+			 * @public
+			 */
+
+			/**
 			 * Returns a route info object containing the name and arguments of the route
 			 * which matches the given hash or <code>undefined</code>.
 			 *
 			 * @param {string} sHash The hash to be matched
-			 * @returns {object|undefined} An object containing the route <code>name</code> and the <code>arguments</code> or <code>undefined</code>
+			 * @returns {sap.ui.core.routing.RouteInfo|undefined} An object containing the route <code>name</code> and the <code>arguments</code> or <code>undefined</code>
 			 * @public
 			 * @since 1.75
 			 */
