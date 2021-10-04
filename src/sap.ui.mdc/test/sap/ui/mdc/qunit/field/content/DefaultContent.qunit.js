@@ -14,40 +14,46 @@ sap.ui.define([
 
 	var oControlMap = {
 		"Display": {
-			getPathsFunction: DefaultContent.getDisplay,
+			getPathsFunction: "getDisplay",
 			paths: ["sap/m/Text"],
 			instances: [Text],
-			createFunction: DefaultContent.createDisplay
+			createFunction: "createDisplay"
 		},
 		"DisplayMultiValue": {
-			getPathsFunction: DefaultContent.getDisplayMultiValue,
+			getPathsFunction: "getDisplayMultiValue",
 			paths: ["sap/m/ExpandableText"],
 			instances: [ExpandableText],
-			createFunction: DefaultContent.createDisplayMultiValue
+			createFunction: "createDisplayMultiValue"
 		},
 		"DisplayMultiLine": {
-			getPathsFunction: DefaultContent.getDisplayMultiLine,
+			getPathsFunction: "getDisplayMultiLine",
 			paths: ["sap/m/ExpandableText"],
 			instances: [ExpandableText],
-			createFunction: DefaultContent.createDisplayMultiLine
+			createFunction: "createDisplayMultiLine"
 		},
 		"Edit": {
-			getPathsFunction: DefaultContent.getEdit,
+			getPathsFunction: "getEdit",
 			paths: ["sap/ui/mdc/field/FieldInput"],
 			instances: [FieldInput],
-			createFunction: DefaultContent.createEdit
+			createFunction: "createEdit"
 		},
 		"EditMultiValue": {
-			getPathsFunction: DefaultContent.getEditMultiValue,
+			getPathsFunction: "getEditMultiValue",
 			paths: ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"],
 			instances: [FieldMultiInput, Token],
-			createFunction: DefaultContent.createEditMultiValue
+			createFunction: "createEditMultiValue"
 		},
 		"EditMultiLine": {
-			getPathsFunction: DefaultContent.getEditMultiLine,
+			getPathsFunction: "getEditMultiLine",
 			paths: ["sap/m/TextArea"],
 			instances: [TextArea],
-			createFunction: DefaultContent.createEditMultiLine
+			createFunction: "createEditMultiLine"
+		},
+		"EditForHelp": {
+			getPathsFunction: "getEditForHelp",
+			paths: ["sap/ui/mdc/field/FieldInput"],
+			instances: [FieldInput],
+			createFunction: "createEditForHelp"
 		}
 	};
 
@@ -57,8 +63,8 @@ sap.ui.define([
 
 	aControlMapKeys.forEach(function(sControlMapKey) {
 		var oValue = oControlMap[sControlMapKey];
-		QUnit.test(oValue.getPathsFunction.name, function(assert) {
-			assert.deepEqual(oValue.getPathsFunction(), oValue.paths, "Correct control path returned for ContentMode '" + sControlMapKey + "'.");
+		QUnit.test(oValue.getPathsFunction, function(assert) {
+			assert.deepEqual(DefaultContent[oValue.getPathsFunction](), oValue.paths, "Correct control path returned for ContentMode '" + sControlMapKey + "'.");
 		});
 	});
 
@@ -90,6 +96,7 @@ sap.ui.define([
 		assert.deepEqual(DefaultContent.getControlNames("EditMultiValue"), ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], "Correct default controls returned for ContentMode 'EditMultiValue'");
 		assert.deepEqual(DefaultContent.getControlNames("EditMultiLine"), ["sap/m/TextArea"], "Correct default controls returned for ContentMode 'EditMultiLine'");
 		assert.deepEqual(DefaultContent.getControlNames("EditOperator"), [null], "Correct default controls returned for ContentMode 'EditOperator'");
+		assert.deepEqual(DefaultContent.getControlNames("EditForHelp"), ["sap/ui/mdc/field/FieldInput"], "Correct default controls returned for ContentMode 'EditForHelp'");
 	});
 
 	QUnit.module("Content creation", {
@@ -113,12 +120,12 @@ sap.ui.define([
 	};
 
 	var fnSpyOnCreateFunction = function(sContentMode) {
-		return oControlMap[sContentMode].createFunction ? sinon.spy(DefaultContent, oControlMap[sContentMode].createFunction.name) : null;
+		return oControlMap[sContentMode].createFunction ? sinon.spy(DefaultContent, oControlMap[sContentMode].createFunction) : null;
 	};
 
 	var fnSpyCalledOnce = function(fnSpyFunction, sContentMode, assert) {
 		if (fnSpyFunction) {
-			assert.ok(fnSpyFunction.calledOnce, oControlMap[sContentMode].createFunction.name + " called once.");
+			assert.ok(fnSpyFunction.calledOnce, oControlMap[sContentMode].createFunction + " called once.");
 		}
 	};
 
@@ -132,6 +139,7 @@ sap.ui.define([
 			var aEditControls = oControlMap["Edit"].instances;
 			var aEditMultiValueControls = oControlMap["EditMultiValue"].instances;
 			var aEditMultiLineControls = oControlMap["EditMultiLine"].instances;
+			var aEditForHelpControls = oControlMap["EditForHelp"].instances;
 
 			var fnCreateDisplayFunction = fnSpyOnCreateFunction("Display");
 			var fnCreateDisplayMultiValueFunction = fnSpyOnCreateFunction("DisplayMultiValue");
@@ -139,6 +147,7 @@ sap.ui.define([
 			var fnCreateEditFunction = fnSpyOnCreateFunction("Edit");
 			var fnCreateEditMultiValueFunction = fnSpyOnCreateFunction("EditMultiValue");
 			var fnCreateEditMultiLineFunction = fnSpyOnCreateFunction("EditMultiLine");
+			var fnCreateEditForHelpFunction = fnSpyOnCreateFunction("EditForHelp");
 
 			var aCreatedDisplayControls = fnCreateControls(oContentFactory, "Display", "-create");
 			fnSpyCalledOnce(fnCreateDisplayFunction, "Display", assert);
@@ -152,6 +161,8 @@ sap.ui.define([
 			fnSpyCalledOnce(fnCreateEditMultiValueFunction, "EditMultiValue", assert);
 			var aCreatedEditMultiLineControls = fnCreateControls(oContentFactory, "EditMultiLine", "-create");
 			fnSpyCalledOnce(fnCreateEditMultiLineFunction, "EditMultiLine", assert);
+			var aCreatedEditForHelpControls = fnCreateControls(oContentFactory, "EditForHelp", "-create");
+			fnSpyCalledOnce(fnCreateEditForHelpFunction, "EditForHelp", assert);
 
 			var aCreatedEditOperatorControls = DefaultContent.create(oContentFactory, "EditOperator", null, [null], "EditOperator" + "-create");
 
@@ -163,6 +174,7 @@ sap.ui.define([
 			assert.ok(aCreatedEditMultiValueControls[0] instanceof aEditMultiValueControls[0], aEditMultiValueControls[0].getMetadata().getName() + " control created for ContentMode 'EditMultiValue'.");
 			assert.ok(aCreatedEditMultiLineControls[0] instanceof aEditMultiLineControls[0], aEditMultiLineControls[0].getMetadata().getName() + " control created for ContentMode 'EditMultiLine'.");
 			assert.equal(aCreatedEditOperatorControls[0], null, "No control created for ContentMode 'EditOperator'.");
+			assert.ok(aCreatedEditForHelpControls[0] instanceof aEditForHelpControls[0], aEditForHelpControls[0].getMetadata().getName() + " control created for ContentMode 'EditForHelp'.");
 
 			done();
 		});
@@ -171,14 +183,14 @@ sap.ui.define([
 	aControlMapKeys.forEach(function(sControlMapKey) {
 		var oValue = oControlMap[sControlMapKey];
 		if (oValue.createFunction) {
-			QUnit.test(oValue.createFunction.name, function(assert) {
+			QUnit.test(oValue.createFunction, function(assert) {
 				var done = assert.async();
 				var oContentFactory = this.oField._oContentFactory;
 				this.oField.awaitControlDelegate().then(function() {
 					var oInstance = oValue.instances[0];
 					var aControls = DefaultContent.create(oContentFactory, sControlMapKey, null, oValue.instances, sControlMapKey);
 
-					assert.ok(aControls[0] instanceof oInstance, "Correct control created in " + oValue.createFunction.name);
+					assert.ok(aControls[0] instanceof oInstance, "Correct control created in " + oValue.createFunction);
 					done();
 				});
 			});

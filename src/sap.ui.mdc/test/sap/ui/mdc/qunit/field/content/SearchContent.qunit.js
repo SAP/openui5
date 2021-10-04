@@ -13,29 +13,36 @@ sap.ui.define([
 
 	var oControlMap = {
 		"Display": {
-			getPathsFunction: SearchContent.getDisplay,
+			getPathsFunction: "getDisplay",
 			paths: ["sap/m/Text"],
 			instances: [Text],
-			createFunction: SearchContent.createDisplay
+			createFunction: "createDisplay"
 		},
 		"Edit": {
-			getPathsFunction: SearchContent.getEdit,
+			getPathsFunction: "getEdit",
 			paths: ["sap/m/SearchField"],
 			instances: [SearchField],
-			createFunction: SearchContent.createEdit
+			createFunction: "createEdit"
 		},
 		"EditMultiValue": {
-			getPathsFunction: SearchContent.getEditMultiValue,
+			getPathsFunction: "getEditMultiValue",
 			paths: [null],
 			instances: [null],
-			createFunction: SearchContent.createEditMultiValue,
+			createFunction: "createEditMultiValue",
 			throwsError: true
 		},
 		"EditMultiLine": {
-			getPathsFunction: SearchContent.getEditMultiLine,
+			getPathsFunction: "getEditMultiLine",
 			paths: [null],
 			instances: [null],
-			createFunction: SearchContent.createEditMultiLine,
+			createFunction: "createEditMultiLine",
+			throwsError: true
+		},
+		"EditForHelp": {
+			getPathsFunction: "getEditForHelp",
+			paths: [null],
+			instances: [null],
+			createFunction: "createEditForHelp",
 			throwsError: true
 		}
 	};
@@ -46,8 +53,8 @@ sap.ui.define([
 
 	aControlMapKeys.forEach(function(sControlMapKey) {
 		var oValue = oControlMap[sControlMapKey];
-		QUnit.test(oValue.getPathsFunction.name, function(assert) {
-			assert.deepEqual(oValue.getPathsFunction(), oValue.paths, "Correct control path returned for ContentMode '" + sControlMapKey + "'.");
+		QUnit.test(oValue.getPathsFunction, function(assert) {
+			assert.deepEqual(SearchContent[oValue.getPathsFunction](), oValue.paths, "Correct control path returned for ContentMode '" + sControlMapKey + "'.");
 		});
 	});
 
@@ -74,6 +81,7 @@ sap.ui.define([
 		assert.deepEqual(SearchContent.getControlNames("EditMultiValue"), [null], "Correct default controls returned for ContentMode 'EditMultiValue'");
 		assert.deepEqual(SearchContent.getControlNames("EditMultiLine"), [null], "Correct default controls returned for ContentMode 'EditMultiLine'");
 		assert.deepEqual(SearchContent.getControlNames("EditOperator"), [null], "Correct default controls returned for ContentMode 'EditOperator'");
+		assert.deepEqual(SearchContent.getControlNames("EditForHelp"), [null], "Correct default controls returned for ContentMode 'EditForHelp'");
 	});
 
 	QUnit.module("Content creation", {
@@ -97,12 +105,12 @@ sap.ui.define([
 	};
 
 	var fnSpyOnCreateFunction = function(sContentMode) {
-		return oControlMap[sContentMode].createFunction ? sinon.spy(SearchContent, oControlMap[sContentMode].createFunction.name) : null;
+		return oControlMap[sContentMode].createFunction ? sinon.spy(SearchContent, oControlMap[sContentMode].createFunction) : null;
 	};
 
 	var fnSpyCalledOnce = function(fnSpyFunction, sContentMode, assert) {
 		if (fnSpyFunction) {
-			assert.ok(fnSpyFunction.calledOnce, oControlMap[sContentMode].createFunction.name + " called once.");
+			assert.ok(fnSpyFunction.calledOnce, oControlMap[sContentMode].createFunction + " called once.");
 		}
 	};
 
@@ -117,6 +125,7 @@ sap.ui.define([
 			var fnCreateEditFunction = fnSpyOnCreateFunction("Edit");
 			var fnCreateEditMultiValueFunction = fnSpyOnCreateFunction("EditMultiValue");
 			var fnCreateEditMultiLineFunction = fnSpyOnCreateFunction("EditMultiLine");
+			var fnCreateEditForHelpFunction = fnSpyOnCreateFunction("EditForHelp");
 
 			var aCreatedDisplayControls = fnCreateControls(oContentFactory, "Display", "-create");
 			var aCreatedEditControls = fnCreateControls(oContentFactory, "Edit", "-create");
@@ -145,12 +154,25 @@ sap.ui.define([
 				},
 				"createEditMultiLine throws an error.");
 
+			assert.throws(
+				function() {
+					SearchContent.create(oContentFactory, "EditForHelp", null, oControlMap["EditForHelp"].instances, "EditForHelp-create");
+				},
+				function(oError) {
+					return (
+						oError instanceof Error &&
+						oError.message === "sap.ui.mdc.field.content.SearchContent - createEditForHelp not defined!"
+					);
+				},
+				"createEditForHelp throws an error.");
+
 			var aCreatedEditOperatorControls = SearchContent.create(oContentFactory, "EditOperator", null, [null], "EditOperator" + "-create");
 
 			fnSpyCalledOnce(fnCreateDisplayFunction, "Display", assert);
 			fnSpyCalledOnce(fnCreateEditFunction, "Edit", assert);
 			fnSpyCalledOnce(fnCreateEditMultiValueFunction, "EditMultiValue", assert);
 			fnSpyCalledOnce(fnCreateEditMultiLineFunction, "EditMultiLine", assert);
+			fnSpyCalledOnce(fnCreateEditForHelpFunction, "EditForHelp", assert);
 
 			assert.ok(aCreatedDisplayControls[0] instanceof aDisplayControls[0], aDisplayControls[0].getMetadata().getName() + " control created for ContentMode 'Display'.");
 			assert.ok(aCreatedEditControls[0] instanceof aEditControls[0], aEditControls[0].getMetadata().getName() + " control created for ContentMode 'Edit'.");
@@ -163,14 +185,14 @@ sap.ui.define([
 	aControlMapKeys.forEach(function(sControlMapKey) {
 		var oValue = oControlMap[sControlMapKey];
 		if (oValue.createFunction && !oValue.throwsError) {
-			QUnit.test(oValue.createFunction.name, function(assert) {
+			QUnit.test(oValue.createFunction, function(assert) {
 				var done = assert.async();
 				var oContentFactory = this.oField._oContentFactory;
 				this.oField.awaitControlDelegate().then(function() {
 					var oInstance = oValue.instances[0];
 					var aControls = SearchContent.create(oContentFactory, sControlMapKey, null, oValue.instances, sControlMapKey);
 
-					assert.ok(aControls[0] instanceof oInstance, "Correct control created in " + oValue.createFunction.name);
+					assert.ok(aControls[0] instanceof oInstance, "Correct control created in " + oValue.createFunction);
 					done();
 				});
 			});

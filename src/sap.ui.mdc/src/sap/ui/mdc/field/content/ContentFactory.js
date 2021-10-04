@@ -152,6 +152,8 @@ sap.ui.define([
 		} else if (aOperators.length === 1 && oContentType.getEditOperator() && oContentType.getEditOperator()[aOperators[0]]) {
 			this._sOperator = aOperators[0];
 			sContentMode = ContentMode.EditOperator;
+		} else if (this.getField().getFieldHelp()) { // if FieldHelp assigned use control supporting help
+			sContentMode = ContentMode.EditForHelp;
 		}
 		return sContentMode;
 	};

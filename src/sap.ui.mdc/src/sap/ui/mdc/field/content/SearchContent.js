@@ -35,6 +35,9 @@ sap.ui.define([
 		getEditMultiLine: function() {
 			return [null];
 		},
+		getEditForHelp: function() {
+			return [null];
+		},
 		getUseDefaultEnterHandler: function() {
 			return false;
 		},
@@ -73,6 +76,9 @@ sap.ui.define([
 		},
 		createDisplayMultiLine: function() {
 			throw new Error("sap.ui.mdc.field.content.SearchContent - createDisplayMultiLine not defined!");
+		},
+		createEditForHelp: function() {
+			throw new Error("sap.ui.mdc.field.content.SearchContent - createEditForHelp not defined!");
 		}
 	});
 

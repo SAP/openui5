@@ -29,7 +29,7 @@ sap.ui.define([
 			return ["sap/m/Text"];
 		},
 		getDisplayMultiValue: function() {
-			return ["sap/m/ExpandableText"];
+			return this.getDisplayMultiLine();
 		},
 		getDisplayMultiLine: function() {
 			return ["sap/m/ExpandableText"];
@@ -45,6 +45,9 @@ sap.ui.define([
 		},
 		getEditOperator: function() {
 			return [null];
+		},
+		getEditForHelp: function() {
+			return this.getEdit();
 		},
 		getUseDefaultEnterHandler: function() {
 			return true;
@@ -83,6 +86,9 @@ sap.ui.define([
 						aControlNames = [null];
 					}
 					break;
+				case ContentMode.EditForHelp:
+					aControlNames = this.getEditForHelp();
+					break;
 				default:
 					aControlNames = this.getEdit();
 			}
@@ -117,6 +123,8 @@ sap.ui.define([
 						return this.getEditOperator()[sOperator] ? this.getEditOperator()[sOperator].create.call(this, oContentFactory, aControls, sId) : [null];
 					}
 					return [null];
+				case ContentMode.EditForHelp:
+					return this.createEditForHelp(oContentFactory, aControls, sId);
 				default:
 					return this.createEdit(oContentFactory, aControls, sId);
 			}
@@ -292,6 +300,17 @@ sap.ui.define([
 		 */
 		createDisplayMultiValue: function(oContentFactory, aControlClasses, sId) {
 			return this.createDisplayMultiLine(oContentFactory, aControlClasses, sId); // for now just return the same asl in MultiLine mode
+		},
+		/**
+		 * Creates the suitable controls for content mode <code>EditForHelp</code>.
+		 * @param {sap.ui.mdc.field.content.ContentFactory} oContentFactory The content factory that calls the create function
+		 * @param {Object[]} aControlClasses Array containing the control classes which are to be created
+		 * @param {String} sId ID of the field control
+		 * @returns {sap.ui.core.Control[]} Array containing the created controls
+		 * @since 1.96
+		 */
+		createEditForHelp: function(oContentFactory, aControlClasses, sId) {
+			return this.createEdit(oContentFactory, aControlClasses, sId); // In normal cases there is no difference between EditForHelp and Edit.
 		}
 	};
 

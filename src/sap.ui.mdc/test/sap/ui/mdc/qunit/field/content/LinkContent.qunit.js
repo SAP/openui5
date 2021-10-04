@@ -13,34 +13,34 @@ sap.ui.define([
 
 	var oControlMap = {
 		"Display": {
-			getPathsFunction: LinkContent.getDisplay,
+			getPathsFunction: "getDisplay",
 			paths: ["sap/m/Link"],
 			instances: [Link],
-			createFunction: LinkContent.createDisplay
+			createFunction: "createDisplay"
 		},
 		"DisplayMultiLine": {
-			getPathsFunction: LinkContent.getDisplayMultiLine,
+			getPathsFunction: "getDisplayMultiLine",
 			paths: ["sap/m/Link"],
 			instances: [Link],
-			createFunction: LinkContent.createDisplayMultiLine
+			createFunction: "createDisplayMultiLine"
 		},
 		"Edit": {
-			getPathsFunction: LinkContent.getEdit,
+			getPathsFunction: "getEdit",
 			paths: ["sap/ui/mdc/field/FieldInput"],
 			instances: [FieldInput],
-			createFunction: LinkContent.createEdit
+			createFunction: "createEdit"
 		},
 		"EditMultiValue": {
-			getPathsFunction: LinkContent.getEditMultiValue,
+			getPathsFunction: "getEditMultiValue",
 			paths: ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"],
 			instances: [FieldMultiInput, Token],
-			createFunction: LinkContent.createEditMultiValue
+			createFunction: "createEditMultiValue"
 		},
 		"EditMultiLine": {
-			getPathsFunction: LinkContent.getEditMultiLine,
+			getPathsFunction: "getEditMultiLine",
 			paths: ["sap/m/TextArea"],
 			instances: [TextArea],
-			createFunction: LinkContent.createEditMultiLine
+			createFunction: "createEditMultiLine"
 		}
 	};
 
@@ -50,8 +50,8 @@ sap.ui.define([
 
 	aControlMapKeys.forEach(function(sControlMapKey) {
 		var oValue = oControlMap[sControlMapKey];
-		QUnit.test(oValue.getPathsFunction.name, function(assert) {
-			assert.deepEqual(oValue.getPathsFunction(), oValue.paths, "Correct control path returned for ContentMode '" + sControlMapKey + "'.");
+		QUnit.test(oValue.getPathsFunction, function(assert) {
+			assert.deepEqual(LinkContent[oValue.getPathsFunction](), oValue.paths, "Correct control path returned for ContentMode '" + sControlMapKey + "'.");
 		});
 	});
 
@@ -101,12 +101,12 @@ sap.ui.define([
 	};
 
 	var fnSpyOnCreateFunction = function(sContentMode) {
-		return oControlMap[sContentMode].createFunction ? sinon.spy(LinkContent, oControlMap[sContentMode].createFunction.name) : null;
+		return oControlMap[sContentMode].createFunction ? sinon.spy(LinkContent, oControlMap[sContentMode].createFunction) : null;
 	};
 
 	var fnSpyCalledOnce = function(fnSpyFunction, sContentMode, assert) {
 		if (fnSpyFunction) {
-			assert.ok(fnSpyFunction.calledOnce, oControlMap[sContentMode].createFunction.name + " called once.");
+			assert.ok(fnSpyFunction.calledOnce, oControlMap[sContentMode].createFunction + " called once.");
 		}
 	};
 
@@ -149,14 +149,14 @@ sap.ui.define([
 	aControlMapKeys.forEach(function(sControlMapKey) {
 		var oValue = oControlMap[sControlMapKey];
 		if (oValue.createFunction) {
-			QUnit.test(oValue.createFunction.name, function(assert) {
+			QUnit.test(oValue.createFunction, function(assert) {
 				var done = assert.async();
 				var oContentFactory = this.oField._oContentFactory;
 				this.oField.awaitControlDelegate().then(function() {
 					var oInstance = oValue.instances[0];
 					var aControls = LinkContent.create(oContentFactory, sControlMapKey, null, oValue.instances, sControlMapKey);
 
-					assert.ok(aControls[0] instanceof oInstance, "Correct control created in " + oValue.createFunction.name);
+					assert.ok(aControls[0] instanceof oInstance, "Correct control created in " + oValue.createFunction);
 					done();
 				});
 			});
