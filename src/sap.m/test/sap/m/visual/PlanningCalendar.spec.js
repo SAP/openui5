@@ -388,8 +388,10 @@ describe("sap.m.PlanningCalendar", function() {
 		element(by.id("PC1-IntType")).click();
 		element(by.id("PC1-3")).click();
 		element(by.id("page1-cont")).click();
+		element(by.id("PC1-Header-NavToolbar-NextBtn-inner")).click();
 		element(by.id("PC1-Today")).click();
 		expect(takeScreenshot(element(by.id("PC1-Today")))).toLookAs("1week_today_button");
+		expect(takeScreenshot(element(by.id("PC1-WeeksRow")))).toLookAs("1week_today_focused");
 	});
 	/*
 	 32. 2708
@@ -400,5 +402,6 @@ describe("sap.m.PlanningCalendar", function() {
 		element(by.id("page1-cont")).click();
 		element(by.id("PC1-Today")).click();
 		expect(takeScreenshot(element(by.id("PC1-Today")))).toLookAs("1month_today_button");
+		expect(takeScreenshot(element(by.id("PC1-OneMonthsRow")))).toLookAs("1month_today_focused");
 	});
 });
