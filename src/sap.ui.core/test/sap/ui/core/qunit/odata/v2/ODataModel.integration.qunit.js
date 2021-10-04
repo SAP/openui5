@@ -79,22 +79,30 @@ sap.ui.define([
 	 *   The message text
 	 * @param {string} [oErrorResponseInfo.messageCode="UF0"]
 	 *   The message code
-	 * @param {int} [oErrorResponseInfo.statusCode=500]
+	 * @param {number} [oErrorResponseInfo.statusCode=500]
 	 *   The HTTP status code
+	 * @param {string} [oErrorResponseInfo.target]
+	 *   The message target
 	 * @returns {object}
 	 *   The error response
 	 */
 	function createErrorResponse(oErrorResponseInfo) {
+		var oError;
+
 		oErrorResponseInfo = oErrorResponseInfo || {};
+		oError = {
+			code : oErrorResponseInfo.messageCode || "UF0",
+			message : {
+				value : oErrorResponseInfo.message || "Internal Server Error"
+			}
+		};
+		if (oErrorResponseInfo.hasOwnProperty("target")) {
+			oError.target = oErrorResponseInfo.target;
+		}
 
 		return {
 			body : JSON.stringify({
-				error : {
-					code : oErrorResponseInfo.messageCode || "UF0",
-					message : {
-						value : oErrorResponseInfo.message || "Internal Server Error"
-					}
-				}
+				error : oError
 			}),
 			crashBatch : oErrorResponseInfo.crashBatch,
 			headers : {"Content-Type" : "application/json;charset=utf-8"},
@@ -5012,14 +5020,18 @@ usePreliminaryContext : false}}">\
 [false, true].forEach(function (bWithFailedPOST) {
 	[false, true].forEach(function (bWithPath) {
 		[false, true].forEach(function (bDeleteCreatedEntities) {
+			[false, true].forEach(function (bPersistTechnicalMessages) {
 	var sTitle = "ODataModel#createEntry: discard created entity by using ODataModel#resetChanges "
 			+ (bWithPath ? "called with the context path " : "")
 			+ (bWithFailedPOST ? "after failed submit " : " immediately ")
-			+ (bDeleteCreatedEntities ? "; delete" : "; keep") + " cache data";
+			+ (bDeleteCreatedEntities ? "; delete" : "; keep") + " cache data"
+			+ "; bPersistTechnicalMessages: " + bPersistTechnicalMessages;
 
 	QUnit.test(sTitle, function (assert) {
 		var oCreatedContext,
-			oModel = createSalesOrdersModelMessageScope(),
+			oModel = createSalesOrdersModelMessageScope({
+				persistTechnicalMessages : bPersistTechnicalMessages
+			}),
 			that = this;
 
 		return this.createView(assert, /*sView*/"", oModel).then(function () {
@@ -5042,12 +5054,16 @@ usePreliminaryContext : false}}">\
 						headers : {"Content-ID" : "~key~"},
 						method : "POST",
 						requestUri : "SalesOrderSet('1')/ToLineItems"
-					}, createErrorResponse({message : "POST failed", statusCode : 400}))
+					}, createErrorResponse({
+						message : "POST failed",
+						statusCode : 400,
+						target : ""
+					}))
 					.expectMessages([{
 						code : "UF0",
 						fullTarget : "/SalesOrderSet('1')/ToLineItems('~key~')",
 						message : "POST failed",
-						persistent : false,
+						persistent : bPersistTechnicalMessages,
 						target : "/SalesOrderLineItemSet('~key~')",
 						technical : true,
 						type : "Error"
@@ -5065,7 +5081,19 @@ usePreliminaryContext : false}}">\
 		}).then(function () {
 			var oResetPromise;
 
-			that.expectMessages([]);
+			if (bWithFailedPOST && bPersistTechnicalMessages && !bDeleteCreatedEntities) {
+				that.expectMessages([{
+						code : "UF0",
+						fullTarget : "/SalesOrderSet('1')/ToLineItems('~key~')",
+						message : "POST failed",
+						persistent : bPersistTechnicalMessages,
+						target : "/SalesOrderLineItemSet('~key~')",
+						technical : true,
+						type : "Error"
+					}]);
+			} else {
+				that.expectMessages([]);
+			}
 
 			// code under test
 			oResetPromise = oModel.resetChanges(bWithPath
@@ -5090,6 +5118,7 @@ usePreliminaryContext : false}}">\
 			]);
 		});
 	});
+			});
 		});
 	});
 });

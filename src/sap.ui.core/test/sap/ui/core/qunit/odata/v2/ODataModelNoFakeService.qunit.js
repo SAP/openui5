@@ -5051,7 +5051,7 @@ sap.ui.define([
 				.exactly(oFixture.bCallAbort ? 1 : 0);
 		}
 		oModelMock.expects("getMessagesByEntity")
-			.withExactArgs("~sKey", true)
+			.withExactArgs("~sKey", !oFixture.bCallRemove)
 			.returns("~aMessages");
 		oMessageManagerMock.expects("removeMessages").withExactArgs("~aMessages");
 
