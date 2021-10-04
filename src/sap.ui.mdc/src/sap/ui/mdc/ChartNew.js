@@ -534,7 +534,13 @@ sap.ui.define([
             switch (oChange.mutation) {
 
                 case "insert":
-                    var iIndex = this.getItems().indexOf(oChange.child);
+                    var iIndex;
+
+                    if (oChange.child && oChange.child.getType()) {
+                        iIndex = this.getItems().filter(function(oItem){return oItem.getType() === oChange.child.getType();}).indexOf(oChange.child);
+                    } else {
+                        iIndex = this.getItems().indexOf(oChange.child);
+                    }
 
                     this.getControlDelegate().insertItemToInnerChart(this, oChange.child, iIndex);
                     break;
@@ -578,15 +584,14 @@ sap.ui.define([
                 return;
             }
 
-            var oBindingInfo = this.oBindData ? this.oBindData : this.getControlDelegate()._getBindingInfo(this);
+            var oBindingInfo = this.getControlDelegate()._getBindingInfo(this);
 
             if (oBindingInfo) {
                 oBindingInfo.sorter = this._getSorters();
             }
 
             this.getControlDelegate().updateBindingInfo(this, oBindingInfo); //Applies filters
-            //TODO: Temporary workaround, find a solution to handle binding info for inner chart
-            this.getControlDelegate().rebindChart(this, oBindingInfo, this._innerChartDataLoadComplete.bind(this));
+            this.getControlDelegate().rebindChart(this, oBindingInfo);
 
             this._updateToolbar();
         };

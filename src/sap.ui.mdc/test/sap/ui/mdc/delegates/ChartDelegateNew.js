@@ -324,5 +324,13 @@ sap.ui.define([
         //Nothing to do here
     };
 
+    ChartDelegate.insertItemToInnerChart = function() {
+        //Nothing to mock here
+    };
+
+    ChartDelegate.getDrillableItems = function() {
+        return [];
+    };
+
     return ChartDelegate;
 });
