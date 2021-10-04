@@ -1,7 +1,29 @@
 {
   "1.96.0": {
-    "date": "September 2021",
+    "date": "October 2021",
     "notes": [
+      {
+        "id": "6cff48f635fcbd6259c687de1ef792f3edec0a17",
+        "type": "FIX",
+        "text": " sap.f.Card: The color of the Side Indicator number is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170226646"
+          }
+        ]
+      },
+      {
+        "id": "7aace0cd389b31f2bf9de64f79bbcb28287a793e",
+        "type": "FIX",
+        "text": " Demo Kit: Fix autoFocus logic in FCL sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170162405"
+          }
+        ]
+      },
       {
         "id": "b2ee5525063bd8df702723fd9e685afcbb45e410",
         "type": "FIX",

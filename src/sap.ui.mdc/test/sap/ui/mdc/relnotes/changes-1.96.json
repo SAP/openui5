@@ -1,7 +1,12 @@
 {
   "1.96.0": {
-    "date": "September 2021",
+    "date": "October 2021",
     "notes": [
+      {
+        "id": "fad3f24c8786063508c2a23e7a38c4184a22e767",
+        "type": "FEATURE",
+        "text": " MultiValueField: use ExpandableText in display mode"
+      },
       {
         "id": "d73502b90a58a667024191ed89259b3ab19e3471",
         "type": "FEATURE",
