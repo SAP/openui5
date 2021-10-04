@@ -36,7 +36,7 @@ sap.ui.define(['./InputBase', './MaskEnabler', './MaskInputRenderer'], function(
 				/**
 				 * Defines a placeholder symbol. Shown at the position where there is no user input yet.
 				 */
-				placeholderSymbol: {type: "string", group: "Misc", defaultValue: "_"},
+				placeholderSymbol: { type: "string", group: "Misc", defaultValue: "_" },
 
 				/**
 				 * Mask defined by its characters type (respectively, by its length).
@@ -48,14 +48,29 @@ sap.ui.define(['./InputBase', './MaskEnabler', './MaskInputRenderer'], function(
 				 * 3. You can use the special escape character '^' called "Caret" prepending a rule character to make it immutable.
 				 * Use the double escape '^^' if you want to make use of the escape character as an immutable one.
 				 */
-				mask: {type: "string", group: "Misc", defaultValue: null}
+				mask: { type: "string", group: "Misc", defaultValue: null },
+
+				/**
+				 * Specifies whether a clear icon is shown.
+				 * Pressing the icon will clear input's value and fire the change event.
+				 * @since 1.96
+				 */
+				 showClearIcon: { type: "boolean", defaultValue: false },
+
+				 /**
+				  * Specifies whether the clear icon should be shown/hidden on user interaction.
+				  * @private
+				  */
+				 effectiveShowClearIcon: { type: "boolean", defaultValue: false, visibility: "hidden" }
+
 			},
 			aggregations: {
 
 				/**
 				 A list of validation rules (one rule per mask character).
 				 */
-				rules: {type: "sap.m.MaskInputRule", multiple: true, singularName: "rule"}
+				rules: { type: "sap.m.MaskInputRule", multiple: true, singularName: "rule" }
+
 			},
 			dnd: { draggable: false, droppable: true }
 		}
