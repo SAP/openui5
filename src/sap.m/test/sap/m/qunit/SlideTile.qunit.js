@@ -606,19 +606,6 @@ sap.ui.define([
 		assert.ok(jQuery($indicator[0].children[2]).hasClass("sapMSTActive"),"The third dot displayed as active");
 	});
 
-	QUnit.test("Slide Navigation through bullet click", function(assert) {
-		var oFirstBullet = document.querySelector('span[id$="tileIndicator-0"]'),
-			oSecondBullet = document.querySelector('span[id$="tileIndicator-1"]');
-		//Click Second Bullet
-		oSecondBullet.click();
-		assert.ok(oSecondBullet.classList.contains("sapMSTActive"), "The second bullet is active");
-		assert.notOk(oFirstBullet.classList.contains("sapMSTActive"), "The first bullet is inactive");
-		//Click First Bullet
-		oFirstBullet.click();
-		assert.notOk(oSecondBullet.classList.contains("sapMSTActive"), "The second bullet is inactive");
-		assert.ok(oFirstBullet.classList.contains("sapMSTActive"), "The first bullet is active");
-	});
-
 	QUnit.module("SlideTile has GenericTile with NewsContent", {
 		beforeEach: function() {
 			var oNewsTileContent = new TileContent({
