@@ -108,7 +108,11 @@
 					},
 					"title": "Card Title 2x2",
 					"subTitle": "Card subtitle",
-					"status": "Count"
+					"status": "Count",
+					"actions": [{
+						"type": "Navigation",
+						"parameters": {}
+					}]
 				},
 				"type": "List"
 			}
@@ -120,12 +124,17 @@
 			},
 			"sap.card": {
 				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
+					"type": "Numeric",
 					"title": "Card Title 1x1",
-					"subTitle": "Card subtitle",
-					"status": "Count"
+					"subTitle": "Card Subtitle",
+					"mainIndicator": {
+						"number": "99",
+						"unit": "Problems"
+					},
+					"actions": [{
+						"type": "Navigation",
+						"parameters": {}
+					}]
 				},
 				"type": "List"
 			}
