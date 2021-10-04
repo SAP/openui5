@@ -1,7 +1,78 @@
 {
   "1.96.0": {
-    "date": "September 2021",
+    "date": "October 2021",
     "notes": [
+      {
+        "id": "b0321bfddc4897db2184bbc229d11c536c200442",
+        "type": "FIX",
+        "text": " ScrollPosition qunit tests fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180342621"
+          }
+        ]
+      },
+      {
+        "id": "0a0b290ec8f68b7dd03e74f6fbe557280e9ff91b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: dates strip is focused after today button is pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070448079"
+          }
+        ]
+      },
+      {
+        "id": "c54033826f52e4618d27180a966dda18dd5a996c",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: includes space before colon in french",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180215798"
+          }
+        ]
+      },
+      {
+        "id": "f8a0ffe878c64f640dc9e950fc9e26dc426e71c6",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbarButton: Updated OTB configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170208591"
+          }
+        ]
+      },
+      {
+        "id": "1891a80f952a5c84b293f0a11bc7f463105df1fb",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v4.11"
+      },
+      {
+        "id": "b0fae21069206913c036b061f708bdcbac9d4bc0",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Updates on suggestion items are now shown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170217899"
+          }
+        ]
+      },
+      {
+        "id": "2002dfc3817a0db848f92476b632bd13560d74da",
+        "type": "FIX",
+        "text": " sap.m.TimePicker, sap.m.MaskInput: proper handling of ESC key",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170219716"
+          }
+        ]
+      },
       {
         "id": "c29ac96e680d28d64fbccde43ed057eb4a6f1fed",
         "type": "FIX",
