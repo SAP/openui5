@@ -42,7 +42,6 @@
 		"rootView": {
 			"viewName": "sap.ui.core.sample.RoutingNestedComponent.reuse.suppliers.view.App",
 			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"componentUsages": {
@@ -97,8 +96,7 @@
 				"transition": "slide",
 				"bypassed": {
 					"target": "notFound"
-				},
-				"async": true
+				}
 			},
 			"routes": [
 				{
