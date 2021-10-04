@@ -1,7 +1,29 @@
 {
   "1.95.0": {
-    "date": "September 2021",
+    "date": "October 2021",
     "notes": [
+      {
+        "id": "615fc6ae5b55f6ebb7366c3695f7dcef30c6759f",
+        "type": "FIX",
+        "text": " sap.f.Card: The color of the Side Indicator number is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170226646"
+          }
+        ]
+      },
+      {
+        "id": "500181580d94c2bc7bf97042958b0d2e8311f426",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: refreshData method now hides loading placeholders",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170210778"
+          }
+        ]
+      },
       {
         "id": "3fa4ba00d10908f63426f3fc064b7f835a1d5b27",
         "type": "FEATURE",

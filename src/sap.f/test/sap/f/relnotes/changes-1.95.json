@@ -1,7 +1,18 @@
 {
   "1.95.0": {
-    "date": "September 2021",
+    "date": "October 2021",
     "notes": [
+      {
+        "id": "615fc6ae5b55f6ebb7366c3695f7dcef30c6759f",
+        "type": "FIX",
+        "text": " sap.f.Card: The color of the Side Indicator number is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170226646"
+          }
+        ]
+      },
       {
         "id": "b2ee5525063bd8df702723fd9e685afcbb45e410",
         "type": "FIX",
