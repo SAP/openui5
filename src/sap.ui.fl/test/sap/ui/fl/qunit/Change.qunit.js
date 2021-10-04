@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	Change,
 	Layer,
 	Utils,
@@ -910,6 +909,8 @@ function(
 			oInstance.addDependentControl(aControls, "anotherTarget", {modifier: JsControlTreeModifier});
 			oInstance.addDependentControl(aControlIds, "anotherTargetWithId", {modifier: JsControlTreeModifier});
 
+			assert.notOk(oInstance.getOriginalSelector(), "the getter returns nothing as there is no originalSelector");
+
 			var oDependentControl = oInstance.getDependentControl("source", {modifier: JsControlTreeModifier}, {});
 			assert.equal(oDependentControl.getId(), "control1Id");
 
@@ -937,6 +938,7 @@ function(
 			assert.equal(oChange.getDependentSelectorList()[0].id, "control1");
 			assert.equal(Object.keys(oChange.getDefinition().dependentSelector).length, 3, "there are 3 dependent selectors defined in the change");
 			assert.deepEqual(oChange.getDependentControl("originalSelector", {modifier: JsControlTreeModifier}), oControl, "the 'getDependentControl' function still returns the original selector");
+			assert.deepEqual(oChange.getOriginalSelector(), {id: "original", idIsLocal: false}, "the getter returns the selector");
 		});
 
 		QUnit.test("revertData", function(assert) {

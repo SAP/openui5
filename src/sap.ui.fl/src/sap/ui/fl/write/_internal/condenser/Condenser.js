@@ -55,6 +55,8 @@ sap.ui.define([
 		reverse: Reverse
 	};
 
+	var PROPERTIES_WITH_SELECTORS = ["affectedControl", "sourceContainer", "targetContainer"];
+
 	/**
 	 * Verify 'move' subtype has already been added to the data structure before 'create' subtype and they both belong to the same targetContainer
 	 *
@@ -203,12 +205,31 @@ sap.ui.define([
 				}
 				return undefined;
 			})
+			.then(function(oCondenserInfo) {
+				// changes in templates get the binding holder as selector but have the original selector
+				// inside the template as dependent selector. As there might be multiple different controls in the template
+				// the selectors have to be changed back before the maps gets created
+				if (oCondenserInfo && mControl.bTemplateAffected) {
+					replaceTemplateSelector(oCondenserInfo, oChange);
+				}
+				return oCondenserInfo;
+			})
 			.catch(function() {
 				return undefined;
 			});
 		}
 
 		return Promise.resolve();
+	}
+
+	function replaceTemplateSelector(oCondenserInfo, oChange) {
+		var oOriginalSelector = oChange.getOriginalSelector();
+		var oTemplateSelector = oChange.getSelector();
+		PROPERTIES_WITH_SELECTORS.forEach(function(sPropertyName) {
+			if (oCondenserInfo[sPropertyName] && oCondenserInfo[sPropertyName] === oTemplateSelector) {
+				oCondenserInfo[sPropertyName] = oOriginalSelector;
+			}
+		});
 	}
 
 	/**
@@ -302,7 +323,7 @@ sap.ui.define([
 	}
 
 	function changeSelectorsToIdsInCondenserInfo(oCondenserInfo, oAppComponent) {
-		["affectedControl", "sourceContainer", "targetContainer"].forEach(function(sPropertyName) {
+		PROPERTIES_WITH_SELECTORS.forEach(function(sPropertyName) {
 			if (oCondenserInfo && oCondenserInfo[sPropertyName]) {
 				oCondenserInfo[sPropertyName] = JsControlTreeModifier.getControlIdBySelector(oCondenserInfo[sPropertyName], oAppComponent);
 			}

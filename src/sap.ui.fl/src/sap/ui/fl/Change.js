@@ -939,6 +939,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the 'originalSelector' from the dependent selectors. This is only set in case of changes on a template.
+	 *
+	 * @returns {sap.ui.fl.selector} the original selector if available
+	 */
+	Change.prototype.getOriginalSelector = function() {
+		return this.getDefinition().dependentSelector && this.getDefinition().dependentSelector.originalSelector;
+	};
+
+	/**
 	 * Returns all dependent selectors, including the selector from the selector of the change.
 	 *
 	 * @returns {array} Dependent selector list
