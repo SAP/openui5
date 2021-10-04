@@ -799,10 +799,7 @@ sap.ui.define([
         Chart.prototype._showDrillDown = function (oDrillBtn) {
             if (DrillStackHandler) {
 
-                if (!this._oDrillDownPopover) {
-                    DrillStackHandler.createDrillDownPopover(this);
-                }
-
+                DrillStackHandler.createDrillDownPopover(this);
                 return DrillStackHandler.showDrillDownPopover(this, oDrillBtn);
             }
 
