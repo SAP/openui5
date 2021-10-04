@@ -1,15 +1,18 @@
 sap.ui.define([
+	"sap/ui/core/library",
 	"sap/ui/core/UIComponent",
 	"./model/models",
 	"sap/ui/core/routing/History",
 	"sap/ui/model/resource/ResourceModel"
-], function(UIComponent, models, History) {
+], function(library, UIComponent, models, History) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.toolpageapp.Component", {
 		metadata: {
-			manifest: "json"
+			manifest: "json",
+			interfaces: [library.IAsyncContentCreation]
 		},
+
 		init: function () {
 			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
