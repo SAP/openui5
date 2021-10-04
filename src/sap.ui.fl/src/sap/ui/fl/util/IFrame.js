@@ -36,8 +36,6 @@ sap.ui.define([
 		return vValue;
 	}
 
-	this._oInitializePromise = Promise.reject();
-
 	/**
 	 * Constructor for a new <code>IFrame</code>.
 	 *
@@ -105,7 +103,7 @@ sap.ui.define([
 		},
 
 		waitForInit: function () {
-			return this._oInitializePromise;
+			return this._oInitializePromise ? this._oInitializePromise : Promise.reject();
 		},
 
 		setUrl: function(sUrl) {
