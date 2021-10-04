@@ -67,7 +67,10 @@ sap.ui.define([
 						selectorControl: oControl,
 						changeSpecificData: {
 							changeType: "selectIconTabBarFilter",
-							content: sNewSelectedKey
+							content: {
+								selectedKey: sNewSelectedKey,
+								previousSelectedKey: oControl.getSelectedKey()
+							}
 						}
 					}];
 				}

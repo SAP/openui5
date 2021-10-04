@@ -288,6 +288,12 @@ sap.ui.define([
 					key : {type : "string"},
 
 					/**
+					 * The key of the previous selected item
+					 * @since 1.96
+					 */
+					previousKey : {type : "string"},
+
+					/**
 					 * The selected item
 					 * @deprecated As of 1.15.0, replaced by parameter <code>item</code> instead.
 					 */

@@ -1597,6 +1597,7 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oSelectSpy.callCount, 1, "select is fired");
 		assert.strictEqual(oSelectSpy.lastCall.args[0].key, "key2", "second filter key is passed as select event arg");
+		assert.strictEqual(oSelectSpy.lastCall.args[0].previousKey, "key1", "first filter key is passed as previousKey select event arg");
 
 		// Clean up
 		IconTabBar.prototype.fireSelect.restore();

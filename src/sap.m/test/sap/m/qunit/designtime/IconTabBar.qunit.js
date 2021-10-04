@@ -36,9 +36,9 @@ sap.ui.define([
 			return 	'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 				'<IconTabBar id="' + sId + '">' +
 					'<items>' +
-						'<IconTabFilter id="first" />' +
-						'<IconTabFilter id="second" />' +
-						'<IconTabFilter id="third" />' +
+						'<IconTabFilter id="first" key="firstTab"/>' +
+						'<IconTabFilter id="second" key="secondTab"/>' +
+						'<IconTabFilter id="third" key="thirdTab"/>' +
 					'</items>' +
 					'<content>' +
 						'<Button id="first-content" />' +
@@ -119,12 +119,15 @@ sap.ui.define([
 				controlId: "tabbar",
 				parameter: {
 					changeType: "selectIconTabBarFilter",
-					content: "comp---view--second"
+					content: {
+						selectedKey: "secondTab",
+						previousSelectedKey: "firstTab"
+					}
 				}
 			},
-			afterAction: fnGetConfirmSelectedElementAssert("tabbar", "comp---view--second"),
-			afterUndo: fnGetConfirmSelectedElementAssert("tabbar", "comp---view--first"),
-			afterRedo: fnGetConfirmSelectedElementAssert("tabbar", "comp---view--second")
+			afterAction: fnGetConfirmSelectedElementAssert("tabbar", "secondTab"),
+			afterUndo: fnGetConfirmSelectedElementAssert("tabbar", "firstTab"),
+			afterRedo: fnGetConfirmSelectedElementAssert("tabbar", "secondTab")
 		});
 	});
 });
