@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Utils",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
 	"sap/ui/core/IconPool"
@@ -11,6 +12,7 @@ sap.ui.define([
 function(
 	AppVariantUtils,
 	Settings,
+	FlUtils,
 	ResourceBundle,
 	AppVariantWriteAPI,
 	IconPool
@@ -25,8 +27,14 @@ function(
 	});
 
 	Utils._checkNavigationSupported = function(oNavigationParams) {
-		var oNavigationService = sap.ushell.Container.getService("CrossApplicationNavigation");
-		return oNavigationService.getLinks(oNavigationParams);
+		var oUShellContainer = FlUtils.getUshellContainer();
+		return oUShellContainer.getServiceAsync("CrossApplicationNavigation")
+			.then(function(oNavigationService) {
+				return oNavigationService.getLinks(oNavigationParams);
+			})
+			.catch(function(vError) {
+				throw new Error("Error retrieving ushell service CrossApplicationNavigation: " + vError);
+			});
 	};
 
 	Utils._checkAppType = function(bOriginalApp, bAppVariant) {

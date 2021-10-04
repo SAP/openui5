@@ -390,8 +390,8 @@ sap.ui.define([
 
 			sap.ushell = Object.assign({}, sap.ushell, {
 				Container: {
-					getService: function() {
-						return {
+					getServiceAsync: function() {
+						return Promise.resolve({
 							toExternal: function() {
 								window.bUShellNavigationTriggered = true;
 							},
@@ -404,7 +404,7 @@ sap.ui.define([
 									action: "somestring"
 								};
 							}
-						};
+						});
 					},
 					setDirtyFlag: function() {
 						return false;

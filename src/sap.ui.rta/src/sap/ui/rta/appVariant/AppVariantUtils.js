@@ -165,43 +165,45 @@ function(
 		if (!oInbounds) {
 			oInboundInfo.currentRunningInbound = "customer.savedAsAppVariant";
 			oInboundInfo.addNewInboundRequired = true;
-			return oInboundInfo;
+			return Promise.resolve(oInboundInfo);
 		}
 
-		var oParsedHash = FlexUtils.getParsedURLHash();
-		var aInbounds = Object.keys(oInbounds);
-		var aInboundsFound = [];
+		return FlexUtils.getParsedURLHashAsync()
+			.then(function(oParsedHash) {
+				var aInbounds = Object.keys(oInbounds);
+				var aInboundsFound = [];
 
-		// This will only happen if app variants are created on top of app variants
-		if (aInbounds.length === 1 && aInbounds[0] === "customer.savedAsAppVariant") {
-			return {
-				currentRunningInbound: "customer.savedAsAppVariant",
-				addNewInboundRequired: false
-			};
-		}
+				// This will only happen if app variants are created on top of app variants
+				if (aInbounds.length === 1 && aInbounds[0] === "customer.savedAsAppVariant") {
+					return {
+						currentRunningInbound: "customer.savedAsAppVariant",
+						addNewInboundRequired: false
+					};
+				}
 
-		aInbounds.forEach(function(sInboundId) {
-			if ((oInbounds[sInboundId].action === oParsedHash.action) && (oInbounds[sInboundId].semanticObject === oParsedHash.semanticObject)) {
-				aInboundsFound.push(sInboundId);
-			}
-		});
+				aInbounds.forEach(function(sInboundId) {
+					if ((oInbounds[sInboundId].action === oParsedHash.action) && (oInbounds[sInboundId].semanticObject === oParsedHash.semanticObject)) {
+						aInboundsFound.push(sInboundId);
+					}
+				});
 
-		switch (aInboundsFound.length) {
-			case 0:
-				oInboundInfo.currentRunningInbound = "customer.savedAsAppVariant";
-				oInboundInfo.addNewInboundRequired = true;
-				break;
-			case 1:
-				oInboundInfo.currentRunningInbound = aInboundsFound[0];
-				oInboundInfo.addNewInboundRequired = false;
-				break;
-			default:
-				oInboundInfo.currentRunningInbound = "customer.savedAsAppVariant";
-				oInboundInfo.addNewInboundRequired = true;
-				break;
-		}
+				switch (aInboundsFound.length) {
+					case 0:
+						oInboundInfo.currentRunningInbound = "customer.savedAsAppVariant";
+						oInboundInfo.addNewInboundRequired = true;
+						break;
+					case 1:
+						oInboundInfo.currentRunningInbound = aInboundsFound[0];
+						oInboundInfo.addNewInboundRequired = false;
+						break;
+					default:
+						oInboundInfo.currentRunningInbound = "customer.savedAsAppVariant";
+						oInboundInfo.addNewInboundRequired = true;
+						break;
+				}
 
-		return oInboundInfo;
+				return oInboundInfo;
+			});
 	};
 
 	AppVariantUtils.getInboundPropertiesKey = function(sAppVariantId, sCurrentRunningInboundId, sPropertyName) {
@@ -228,47 +230,57 @@ function(
 		};
 	};
 
+	/**
+	 * Collects the inbound properties and adds to the change content
+	 *
+	 * @param {string} sCurrentRunningInboundId - Identifier of current running inbound
+	 * @param {string} sAppVariantId - App Variant Identifier
+	 * @param {object} oAppVariantSpecificData - App Variant specific data (e.g. reference App Id)
+	 * @returns {Promise<object>} resolving to property object containing inbound properties
+	 */
 	AppVariantUtils.prepareAddNewInboundChange = function(sCurrentRunningInboundId, sAppVariantId, oAppVariantSpecificData) {
-		var oParsedHash = FlexUtils.getParsedURLHash();
-		var oProperty = {
-			content: {
-				inbound: {}
-			},
-			texts: {}
-		};
+		return FlexUtils.getParsedURLHashAsync()
+			.then(function(oParsedHash) {
+				var oProperty = {
+					content: {
+						inbound: {}
+					},
+					texts: {}
+				};
 
-		var sInboundTitleKey = this.getInboundPropertiesKey(oAppVariantSpecificData.referenceAppId, sCurrentRunningInboundId, "title");
-		var sInboundSubTitleKey = this.getInboundPropertiesKey(oAppVariantSpecificData.referenceAppId, sCurrentRunningInboundId, "subTitle");
+				var sInboundTitleKey = this.getInboundPropertiesKey(oAppVariantSpecificData.referenceAppId, sCurrentRunningInboundId, "title");
+				var sInboundSubTitleKey = this.getInboundPropertiesKey(oAppVariantSpecificData.referenceAppId, sCurrentRunningInboundId, "subTitle");
 
-		// Filling change content
-		oProperty.content.inbound[sCurrentRunningInboundId] = {
-			semanticObject: oParsedHash.semanticObject,
-			action: oParsedHash.action,
-			title: "{{" + sInboundTitleKey + "}}",
-			subTitle: "{{" + sInboundSubTitleKey + "}}",
-			icon: oAppVariantSpecificData.icon,
-			signature: {
-				parameters: {
-					"sap-appvar-id": {
-						required: true,
-						filter: {
-							value: sAppVariantId,
-							format: "plain"
+				// Filling change content
+				oProperty.content.inbound[sCurrentRunningInboundId] = {
+					semanticObject: oParsedHash.semanticObject,
+					action: oParsedHash.action,
+					title: "{{" + sInboundTitleKey + "}}",
+					subTitle: "{{" + sInboundSubTitleKey + "}}",
+					icon: oAppVariantSpecificData.icon,
+					signature: {
+						parameters: {
+							"sap-appvar-id": {
+								required: true,
+								filter: {
+									value: sAppVariantId,
+									format: "plain"
+								},
+								launcherValue: {
+									value: sAppVariantId
+								}
+							}
 						},
-						launcherValue: {
-							value: sAppVariantId
-						}
+						additionalParameters: "ignored"
 					}
-				},
-				additionalParameters: "ignored"
-			}
-		};
+				};
 
-		// Filling change texts
-		oProperty.texts[sInboundTitleKey] = this.prepareTextsChange("title", oAppVariantSpecificData.title);
-		oProperty.texts[sInboundSubTitleKey] = this.prepareTextsChange("subTitle", oAppVariantSpecificData.subTitle);
+				// Filling change texts
+				oProperty.texts[sInboundTitleKey] = this.prepareTextsChange("title", oAppVariantSpecificData.title);
+				oProperty.texts[sInboundSubTitleKey] = this.prepareTextsChange("subTitle", oAppVariantSpecificData.subTitle);
 
-		return oProperty;
+				return oProperty;
+			}.bind(this));
 	};
 
 	AppVariantUtils.prepareChangeInboundChange = function(sCurrentRunningInboundId, sAppVariantId, oAppVariantSpecificData) {
@@ -544,18 +556,29 @@ function(
 
 	/**
 	 * Navigates to the Fiorilaunchpad
+	 * @returns {Promise} resolving when the navigation is triggered if ushell is available
 	 */
 	AppVariantUtils.navigateToFLPHomepage = function() {
-		var oApplication = sap.ushell.services.AppConfiguration.getCurrentApplication();
-		var oComponentInstance = oApplication.componentHandle.getInstance();
-
-		if (oComponentInstance) {
-			FlexUtils.ifUShellContainerThen(function(aServices) {
-				var oCrossAppNav = aServices[0];
-				if (oCrossAppNav && oCrossAppNav.toExternal) {
-					oCrossAppNav.toExternal({target: {shellHash: "#"}}, oComponentInstance);
-				}
-			}, ["CrossApplicationNavigation"]);
+		var oUshellContainer = FlexUtils.getUshellContainer();
+		var oComponentInstance;
+		if (oUshellContainer) {
+			return oUshellContainer.getServiceAsync("AppConfiguration")
+				.then(function(oAppConfiguration) {
+					var oApplication = oAppConfiguration.getCurrentApplication();
+					oComponentInstance = oApplication.componentHandle.getInstance();
+					if (oComponentInstance) {
+						return oUshellContainer.getServiceAsync("CrossApplicationNavigation");
+					}
+					return undefined;
+				})
+				.then(function(oCrossAppNav) {
+					if (oCrossAppNav && oCrossAppNav.toExternal) {
+						oCrossAppNav.toExternal({target: {shellHash: "#"}}, oComponentInstance);
+					}
+				})
+				.catch(function(vError) {
+					throw new Error("Error navigating to FLP Homepage: " + vError);
+				});
 		}
 		return Promise.resolve();
 	};
