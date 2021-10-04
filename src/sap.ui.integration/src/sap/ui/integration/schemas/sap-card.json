@@ -402,6 +402,22 @@
         "mainIndicator": {
           "$ref": "#/definitions/HeaderType.Numeric.MainIndicator"
         },
+        "sideIndicatorsAlignment": {
+          "description": "The alignment of the side indicators",
+          "type": "string",
+          "oneOf": [
+            {
+              "enum": [
+                "Begin",
+                "End"
+              ],
+              "default": "Begin"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
         "details": {
           "description": "Represents additional information about the numeric header",
           "type": "string"

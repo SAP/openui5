@@ -101,7 +101,12 @@ sap.ui.define([
 				/**
 				 * Additional text which adds more details to what is shown in the numeric header.
 				 */
-				details: { "type": "string", group: "Appearance" }
+				details: { "type": "string", group: "Appearance" },
+
+				/**
+				 * The alignment of the side indicators.
+				 */
+				 sideIndicatorsAlignment: { "type": "sap.f.cards.NumericHeaderSideIndicatorsAlignment", group: "Appearance", defaultValue : "Begin" }
 			},
 			aggregations: {
 

@@ -35,6 +35,7 @@
 					<tr>
 						<th>Property</th>
 						<th>Type</th>
+						<th>Default Value</th>
 						<th>Required</th>
 						<th>Description</th>
 						<th>Schema Version</th>
@@ -43,6 +44,7 @@
 					<tr>
 						<td>type</td>
 						<td>string</td>
+						<td></td>
 						<td>Yes</td>
 						<td>The type of the header. Should be set to "Numeric".</td>
 						<td>1.14.0</td>
@@ -51,6 +53,7 @@
 					<tr>
 						<td>title</td>
 						<td>string</td>
+						<td></td>
 						<td>Yes</td>
 						<td>The title.</td>
 						<td>1.14.0</td>
@@ -59,6 +62,7 @@
 					<tr>
 						<td>subTitle</td>
 						<td>string</td>
+						<td></td>
 						<td>No</td>
 						<td>The subtitle.</td>
 						<td>1.14.0</td>
@@ -67,6 +71,7 @@
 					<tr>
 						<td>unitOfMeasurement</td>
 						<td>string</td>
+						<td></td>
 						<td>No</td>
 						<td>Represents unit of measurement for the whole numeric header.</td>
 						<td>1.14.0</td>
@@ -75,6 +80,7 @@
 					<tr>
 						<td>mainIndicator</td>
 						<td><a href="#mainIndicatorProperties">MainIndicator</a></td>
+						<td></td>
 						<td>No</td>
 						<td>Numeric indicator.</td>
 						<td>1.14.0</td>
@@ -83,6 +89,7 @@
 					<tr>
 						<td>details</td>
 						<td>string</td>
+						<td></td>
 						<td>No</td>
 						<td>Represents additional information about the numeric header.</td>
 						<td>1.14.0</td>
@@ -91,6 +98,7 @@
 					<tr>
 						<td>sideIndicators</td>
 						<td><a href="#sideIndicatorProperties">SideIndicator[]</a></td>
+						<td></td>
 						<td>No</td>
 						<td>Side indicators that relate to the main numeric indicator. You can have a maximum of two
 							side indicators.</td>
@@ -100,6 +108,7 @@
 					<tr>
 						<td>status</td>
 						<td></td>
+						<td></td>
 						<td>No</td>
 						<td>Represents the status of the card.</td>
 						<td>1.14.0</td>
@@ -108,6 +117,7 @@
 					<tr>
 						<td>actions</td>
 						<td><a href="../../../index.html#/learn/features/cardActions" target="_parent">Actions[]</a></td>
+						<td></td>
 						<td>No</td>
 						<td>Actions that are triggered when the header is pressed.</td>
 						<td>1.15.0</td>
@@ -116,6 +126,7 @@
 					<tr>
 						<td>dataTimestamp</td>
 						<td>string</td>
+						<td></td>
 						<td>No</td>
 						<td>
 							Defines the timestamp of the oldest data in the card. Use this to show to the end user how fresh the information in the card is.<br>
@@ -125,6 +136,15 @@
 						</td>
 						<td>1.33.0</td>
 						<td>1.89</td>
+					</tr>
+					<tr>
+						<td>sideIndicatorsAlignment</td>
+						<td><a data-demokit-href="#/api/sap.f.cards.NumericHeaderSideIndicatorsAlignment" target="_blank">sap.f.cards.NumericHeaderSideIndicatorsAlignment</a></td>
+						<td>"Begin"</td>
+						<td>No</td>
+						<td>The alignment of the side indicators in the numeric header.</td>
+						<td>1.37.0</td>
+						<td>1.96</td>
 					</tr>
 				</table>
 

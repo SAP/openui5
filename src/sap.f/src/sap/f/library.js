@@ -45,6 +45,7 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.AvatarColor",
 			"sap.f.AvatarGroupType",
 			"sap.f.cards.HeaderPosition",
+			"sap.f.cards.NumericHeaderSideIndicatorsAlignment",
 			"sap.f.DynamicPageTitleArea",
 			"sap.f.DynamicPageTitleShrinkRatio",
 			"sap.f.IllustratedMessageSize",
@@ -540,6 +541,29 @@ sap.ui.define(["sap/ui/base/DataType",
 		 * @public
 		 */
 		Bottom: "Bottom"
+	};
+
+	/**
+	 * Different options for the alignment of the side indicators in the numeric header.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.96
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.cards.NumericHeaderSideIndicatorsAlignment = {
+		/**
+		 * Sets the alignment to the beginning (left or right depending on LTR/RTL).
+		 *
+		 * @public
+		 */
+		Begin: "Begin",
+		/**
+		 * Explicitly sets the alignment to the end (left or right depending on LTR/RTL).
+		 *
+		 * @public
+		 */
+		End: "End"
 	};
 
 	/**

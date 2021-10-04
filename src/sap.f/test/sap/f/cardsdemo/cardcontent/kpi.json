@@ -4,6 +4,7 @@
 			"number": "65.34",
 			"unit": "K",
 			"trend": "Down",
+			"sideIndicatorsAlignment": "End",
 			"state": "Error",
 			"target": {
 				"number": 100,

@@ -61,7 +61,8 @@ sap.ui.define([
 
 			extend(mSettings, {
 				unitOfMeasurement: mConfiguration.unitOfMeasurement,
-				details: mConfiguration.details
+				details: mConfiguration.details,
+				sideIndicatorsAlignment: mConfiguration.sideIndicatorsAlignment
 			});
 
 			if (mConfiguration.mainIndicator) {

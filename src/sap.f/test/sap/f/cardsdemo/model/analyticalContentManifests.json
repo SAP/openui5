@@ -80,6 +80,88 @@
 			}
 		}
 	},
+	"lineSideIndRight": {
+		"sap.app": {
+			"id": "cardsdemo.analyticalContent.lineSideIndRight",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Analytical",
+			"header": {
+				"type": "Numeric",
+				"data": {
+					"request": {
+						"url": "./cardsdemo/cardcontent/kpi.json"
+					},
+					"path": "/kpiInfos/kpi"
+				},
+				"title": "Project Cloud Transformation",
+				"subTitle": "Revenue",
+				"unitOfMeasurement": "EUR",
+				"mainIndicator": {
+					"number": "{number}",
+					"unit": "{unit}",
+					"trend": "{trend}",
+					"state": "{state}"
+				},
+				"details": "{details}",
+				"sideIndicatorsAlignment": "{sideIndicatorsAlignment}",
+				"sideIndicators": [
+					{
+						"title": "Target",
+						"number": "{target/number}",
+						"unit": "{target/unit}"
+					},
+					{
+						"title": "Deviation",
+						"number": "{deviation/number}",
+						"unit": "%"
+					}
+				]
+			},
+			"content": {
+				"chartType": "Line",
+				"minHeight": "20rem",
+				"legend": {
+					"position": "Right",
+					"alignment": "Center"
+				},
+				"plotArea": {
+					"dataLabel": {
+						"visible": true
+					}
+				},
+				"title": {
+					"text": "Line chart",
+					"alignment": "Bottom"
+				},
+				"measureAxis": "valueAxis",
+				"dimensionAxis": "categoryAxis",
+				"data": {
+					"request": {
+						"url": "./cardsdemo/cardcontent/revenue.json"
+					},
+					"path": "/list"
+				},
+				"dimensions": [
+					{
+						"label": "Weeks",
+						"value": "{Week}"
+					}
+				],
+				"measures": [
+					{
+						"label": "Revenue",
+						"value": "{Revenue}"
+					},
+					{
+						"label": "Cost",
+						"value": "{Cost}"
+					}
+				]
+			}
+		}
+	},
 	"stackedColumn": {
 		"sap.app": {
 			"id": "cardsdemo.analyticalContent.stackedColumn",
