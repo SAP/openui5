@@ -5951,6 +5951,7 @@ sap.ui.define([
 			oEntityMetadata) {
 		var // created either via #createEntry or via #callFunction
 			oCreated = oEntityMetadata && oEntityMetadata.created,
+			bExcludePersistent = true,
 			// determine group synchronously otherwise #_resolveGroup might return a different group
 			// if for example the entity has been deleted already
 			sGroupId = this._resolveGroup(sKey).groupId,
@@ -5965,10 +5966,12 @@ sap.ui.define([
 			if (oCreated.abort) {
 				oCreated.abort(ODataModel._createAbortedError());
 			}
+			bExcludePersistent = false;
 		} else {
 			delete this.mChangedEntities[sKey];
 		}
-		sap.ui.getCore().getMessageManager().removeMessages(this.getMessagesByEntity(sKey, true));
+		sap.ui.getCore().getMessageManager().removeMessages(this.getMessagesByEntity(sKey,
+			bExcludePersistent));
 
 		return pMetaDataLoaded;
 	};
