@@ -3,7 +3,6 @@
 sap.ui.define([
 	"rta/qunit/RtaQunitUtils",
 	// "sap/ui/core/ComponentContainer",
-	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	// "sap/ui/core/UIComponent",
 	// "sap/ui/mdc/TableDelegate",
@@ -11,14 +10,12 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
-	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/Change",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
 	// ComponentContainer,
-	Log,
 	JsControlTreeModifier,
 	// UIComponent,
 	// TableDelegate,
@@ -26,7 +23,6 @@ sap.ui.define([
 	ChangeHandlerStorage,
 	Applier,
 	Reverter,
-	ChangesUtils,
 	Condenser,
 	Change,
 	sinon
@@ -641,6 +637,37 @@ sap.ui.define([
 		QUnit.test("calling Condenser twice in one session", function(assert) {
 			return loadApplyCondenseChanges.call(this, "moveToInitialUiReconstruction.json", 7, 0, assert)
 			.then(loadApplyCondenseChanges.bind(this, "moveWithinTwoGroupsWithoutUnknowns.json", 30, 5, assert));
+		});
+	});
+
+	QUnit.module("Condenser with template changes", {
+		before: function() {
+			return RtaQunitUtils.renderRuntimeAuthoringAppAt("qunit-fixture").then(function(oComp) {
+				oAppComponent = oComp.getComponentInstance();
+			});
+		},
+		beforeEach: function() {
+			this.aChanges = [];
+		},
+		afterEach: function() {
+			return revertMultipleChanges(this.aChanges).then(function() {
+				sandbox.restore();
+			});
+		},
+		after: function() {
+			oAppComponent.destroy();
+		}
+	}, function() {
+		QUnit.test("rename, hide/unhide and move in a template", function(assert) {
+			return loadApplyCondenseChanges.call(this, "templateChanges.json", 12, 5, assert).then(function(aRemainingChanges) {
+				var sRenameChangeType = "rename";
+				var sMoveChangeType = "moveControls";
+				assert.equal(aRemainingChanges[0].getChangeType(), sRenameChangeType, sChangeTypeMsg + sRenameChangeType);
+				assert.equal(aRemainingChanges[1].getChangeType(), sRenameChangeType, sChangeTypeMsg + sRenameChangeType);
+				assert.equal(aRemainingChanges[2].getChangeType(), HIDE_CHANGE_TYPE, sChangeTypeMsg + HIDE_CHANGE_TYPE);
+				assert.equal(aRemainingChanges[3].getChangeType(), sMoveChangeType, sChangeTypeMsg + sMoveChangeType);
+				assert.equal(aRemainingChanges[4].getChangeType(), sMoveChangeType, sChangeTypeMsg + sMoveChangeType);
+			});
 		});
 	});
 
