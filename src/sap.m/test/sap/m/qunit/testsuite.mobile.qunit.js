@@ -621,17 +621,6 @@ sap.ui.define([
 					version: 4
 				}
 			},
-			Ios7: {
-				skip: Device.browser.msie || Device.browser.firefox,
-				title: "QUnit Page for sap.m.Ios7",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 1,
-					useFakeTimers: true
-				}
-			},
 			Label: {
 				title: "QUnit page for sap.m.Label"
 			},

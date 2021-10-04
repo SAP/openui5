@@ -26,6 +26,8 @@ sap.ui.define([
 	"./AvatarColor",
 	"./AvatarImageFitType",
 	"./upload/UploaderHttpRequestMethod",
+	"sap/ui/core/theming/Parameters",
+	"sap/ui/core/LocaleData",
 	// referenced here to enable the Support feature
 	"./Support"
 ],
@@ -48,7 +50,9 @@ sap.ui.define([
 	AvatarType,
 	AvatarColor,
 	AvatarImageFitType,
-	UploaderHttpRequestMethod
+	UploaderHttpRequestMethod,
+	Parameters,
+	LocaleData
 ) {
 
 	"use strict";
@@ -2408,7 +2412,6 @@ sap.ui.define([
 				if (bResult) {
 					return bResult;
 				} else {
-					var Parameters = sap.ui.requireSync("sap/ui/core/theming/Parameters");
 					return CoreLibrary.CSSColor.isValid(Parameters.get(vValue));
 				}
 			}
@@ -4390,7 +4393,7 @@ sap.ui.define([
 
 	sap.ui.lazyRequire("sap.m.DynamicDate");
 
-		//lazy imports for MessageToast
+	//lazy imports for MessageToast
 	sap.ui.lazyRequire("sap.m.MessageToast", "show");
 
 	// requires for routing
@@ -4399,11 +4402,6 @@ sap.ui.define([
 	sap.ui.lazyRequire("sap.m.routing.Target");
 	sap.ui.lazyRequire("sap.m.routing.TargetHandler");
 	sap.ui.lazyRequire("sap.m.routing.Targets");
-
-	//enable ios7 support
-	if (Device.os.ios && Device.os.version >= 7 && Device.os.version < 8 && Device.browser.name === "sf") {
-		sap.ui.requireSync("sap/m/ios7");
-	}
 
 	//Internal: test the whole page with compact design
 	if (/sap-ui-xx-formfactor=compact/.test(location.search)) {
@@ -4461,7 +4459,7 @@ sap.ui.define([
 	 * @since 1.10
 	 */
 	thisLib.getLocaleData = function() {
-		var oLocaleData = sap.ui.requireSync("sap/ui/core/LocaleData").getInstance(thisLib.getLocale());
+		var oLocaleData = LocaleData.getInstance(thisLib.getLocale());
 
 		thisLib.getLocaleData = function() {
 			return oLocaleData;
@@ -4926,7 +4924,6 @@ sap.ui.define([
 		 */
 		/* currently not needed
 		isThemeBackgroundImageModified: function() {
-			var Parameters = sap.ui.requireSync("sap/ui/core/theming/Parameters");
 			var sBgImgUrl = Parameters.get('sapUiGlobalBackgroundImage'); // the global background image from the theme
 			if (sBgImgUrl && sBgImgUrl !== "''") {
 				var sBgImgUrlDefault = Parameters.get('sapUiGlobalBackgroundImageDefault');
@@ -5052,10 +5049,9 @@ sap.ui.define([
 						checkAndSetProperty(oImage, key,  mProperties[key]);
 					}
 				} else {
-					var Image = sap.ui.require("sap/m/Image") || sap.ui.requireSync("sap/m/Image");
 					//add 'id' to properties. This is required by utility method 'createControlByURI'
 					var mSettings = Object.assign({}, mProperties, {id: sImgId});
-					oImage = sap.ui.core.IconPool.createControlByURI(mSettings, Image);
+					oImage = sap.ui.core.IconPool.createControlByURI(mSettings, sap.m.Image);
 					//Set the parent so the image gets re-rendered, when the parent is
 					oImage.setParent(oParent, null, true);
 				}
@@ -5358,19 +5354,9 @@ sap.ui.define([
 			return new sap.m.Label(sId, {text: sText});
 		},
 		createButton: function(sId, fnPressFunction, fnCallback){
-			var that = this;
-			var _createButton = function(Button){
-				var oButton = new Button(sId, {type: thisLib.ButtonType.Transparent});
-				oButton.attachEvent("press", fnPressFunction, that); // attach event this way to have the right this-reference in handler
-				fnCallback.call(that, oButton);
-			};
-			var fnButtonClass = sap.ui.require("sap/m/Button");
-			if (fnButtonClass) {
-				// already loaded -> execute synchronously
-				_createButton(fnButtonClass);
-			} else {
-				sap.ui.require(["sap/m/Button"], _createButton);
-			}
+			var oButton = new sap.m.Button(sId, {type: thisLib.ButtonType.Transparent});
+			oButton.attachEvent("press", fnPressFunction, this); // attach event this way to have the right this-reference in handler
+			fnCallback.call(this, oButton);
 		},
 		setButtonContent: function(oButton, sText, sTooltip, sIcon, sIconHovered){
 			oButton.setText(sText);
