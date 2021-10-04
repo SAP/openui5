@@ -404,7 +404,7 @@ sap.ui.define([
 				bIsComponentTarget = oOptions.type === "Component",
 				bHasPlaceholderConfig = false,
 				oPlaceholderConfig = oTargetCreateInfo.placeholder || oOptions.placeholder || {},
-				pPlaceholder;
+				pPlaceholder = Promise.resolve();
 
 			if (Placeholder.hasProviders()) {
 				Object.assign(oPlaceholderConfig, Placeholder.getPlaceholderFromProviders({
@@ -476,12 +476,10 @@ sap.ui.define([
 					});
 				}
 
-				if (oPlaceholderConfig.placeholder) {
+				if (oPlaceholderConfig.placeholder && sap.ui.getCore().getConfiguration().getPlaceholder()) {
 					pPlaceholder = this.showPlaceholder(oPlaceholderConfig);
 				}
 			}
-
-			pPlaceholder = pPlaceholder || Promise.resolve();
 
 			// wait for placeholder to load
 			return pPlaceholder.then(function(sPlaceholderContent) {
