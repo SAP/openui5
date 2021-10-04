@@ -1,0 +1,40 @@
+/* ==================================== */
+/* CSS for control sap.ui.commons/Link  */
+/* Horizon theme                        */
+/* ==================================== */
+
+.sapUiLnk {
+	font-family: @sapUiDesktopFontFamily;
+	font-size: @sapUiDesktopFontSize;
+	text-decoration: none;
+}
+
+.sapUiLnk:hover {
+	text-decoration: underline;
+}
+
+.sapUiLnk:focus {
+	outline: 1px dashed @sapUiHighlight;
+}
+
+.sapUiLnkDsbl {
+	font-family: @sapUiDesktopFontFamily;
+	font-size: @sapUiDesktopFontSize;
+}
+
+/* ================= */
+/* Alignment in Form */
+/* ================= */
+
+/* GridLayout */
+.sapUiGrid td > .sapUiLnk{
+	margin-top: 2px;
+}
+
+/* ResponsiveGridLayout */
+.sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > div > .sapUiLnk,
+.sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > div > .sapUiLnk,
+.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > div > .sapUiLnk,
+.sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > div > .sapUiLnk {
+	margin-top: 2px;
+}

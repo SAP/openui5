@@ -1,0 +1,116 @@
+/* ======================================= */
+/* CSS for control sap.ui.commons/Toolbar  */
+/* Horizon theme                           */
+/* ======================================= */
+
+.sapUiTb {
+	font-family: @sapUiDesktopFontFamily;
+	font-size: @sapUiDesktopFontSize;
+	height: 28px;
+}
+
+.sapUiTbDesignStandard {
+	background-color: @sapUiToolbarBackground;
+}
+
+.sapUiTbCont {
+	padding: 3px 0 3px 6px;
+	line-height: 18px;
+}
+
+.sapUiTbInner > label,
+.sapUiTbInnerRight > label {
+	line-height: 22px;
+}
+
+.sapUiTbStandalone .sapUiTbCont {
+	border-color: transparent;
+	border-width: 0px;
+}
+
+.sapUiTbOB:hover {
+	background-color: darken(@sapUiContentForegroundColor, 43); // @sapUiDarkBG = #777777
+}
+.sapUiTbOB:focus {
+	outline: 1px dashed @sapUiHighlight;
+}
+
+/* opened state of the overflow button */
+.sapUiTbOBAct,
+.sapUiTbOBAct:hover {
+	background-color: @sapUiHighlight;
+}
+
+.sapUiTbOBAct:hover  {
+	background-color: @sapUiHighlight;
+}
+
+.sapUiTbDD {
+	background-color: @sapUiGroupContentBackground;
+	border: 3px solid @sapUiHighlight;
+}
+
+.sapUiTbSeparator {
+	height: 18px;
+	margin-bottom: 8px;
+	width: 2px;
+	background-color: @sapUiToolbarSeparatorColor;
+}
+
+.sapUiTbSeparator.sapUiTbSepFullHeight {
+	height: 28px;
+	margin-top: -3px;
+	margin-bottom: 3px;
+	width: 2px;
+	background-color: lighten(@sapUiContentForegroundColor, 5); // @sapUiExtraLightBG = #f2f2f2
+}
+
+.sapUiTbDD .sapUiTbSepFullHeight {
+	display: none;
+}
+
+.sapUiTbDD .sapUiTbSeparator {
+	margin: 4px 6px 2px 6px;
+}
+
+.sapUiTbContLeft.sapUiTbCont {
+	padding: 3px;
+	height: 28px;
+}
+
+.sapUiTbInnerRight {
+	padding: 3px 0px 3px 6px;
+}
+
+.sapUiTbInner > * , .sapUiTbInnerRight > * {
+	margin-right: 6px;
+}
+
+/* Toolbar inside of Form as Form- and Container- header */
+.sapUiGrid.sapUiFormToolbar .sapUiGridTitle > th > .sapUiTb,
+.sapUiFormToolbar > div:first-child.sapUiTb{
+	border-bottom-width: 0.0625rem;
+	padding-top: 10px;
+}
+
+.sapUiGridTitle > th > .sapUiTb > .sapUiTbInnerRight > *:last-child,
+.sapUiFormToolbar > .sapUiTb > .sapUiTbInnerRight > *:last-child,
+.sapUiFormContainerToolbar > .sapUiTb > .sapUiTbInnerRight > *:last-child{
+	margin-right: 0;
+}
+
+.sapUiRGLContainer.sapUiFormContainerToolbar > .sapUiTb > .sapUiTbInnerRight > *:last-child{
+	margin-right: 0.25rem;
+}
+
+.sapUiGridTitle > th > .sapUiTb > .sapUiTbCont,
+.sapUiRLContainer.sapUiFormContainerToolbar > .sapUiTb > .sapUiTbCont{
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.sapUiGridTitle > th > .sapUiTb > .sapUiTbInnerRight,
+.sapUiFormResLayout.sapUiFormToolbar > .sapUiTb > .sapUiTbInnerRight,
+.sapUiFormResGrid.sapUiFormToolbar > .sapUiTb > .sapUiTbInnerRight{
+	right: 1rem;
+}
