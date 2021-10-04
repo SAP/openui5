@@ -1,6 +1,6 @@
 /* global QUnit, sinon */
-sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/core/Element', 'sap/ui/core/Item', 'sap/ui/core/Control', 'sap/ui/model/json/JSONModel'],
-	function(ManagedObject, Element, Item, Control, JSONModel) {
+sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/base/ManagedObjectObserver', 'sap/ui/core/Element', 'sap/ui/core/Item', 'sap/ui/core/Control', 'sap/ui/model/json/JSONModel'],
+	function(ManagedObject, ManagedObjectObserver, Element, Item, Control, JSONModel) {
 		"use strict";
 
 		var SimpleElement = Element.extend("SimpleElement", {
@@ -2178,4 +2178,48 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/core/Element', 'sap/ui/core/
 		});
 
 
+		QUnit.test("Synchronous destroy during aggregation forwarding", function(assert) {
+			// BCP: 0020751294 0000616200 2021
+			var oElement = new Element();
+			var CustomControl = Element.extend("CustomControl", {
+				metadata: {
+					properties: {
+						text: "string"
+					},
+					aggregations: {
+						forwardingAggregation: {
+							type: "sap.ui.core.Element",
+							multiple: false,
+							forwarding: {
+								idSuffix: "-innerElement",
+								aggregation: "innerAggregation"
+							}
+						}
+					}
+				},
+				init: function() {
+					var oSimpleElement = new SimpleElement(this.getId() + "-innerElement");
+					var oSimpleElementObserver = new ManagedObjectObserver(function(oEvent) {
+						if (oEvent.mutation === "insert") {
+							oSimpleElement.destroy();
+							assert.ok(oSimpleElement.isDestroyed(), "SimpleElement destroyed during aggregation forwarding");
+							assert.ok(oElement.isDestroyed(), "Aggregated Element destroyed during aggregation forwarding");
+						}
+					});
+
+					oSimpleElementObserver.observe(oSimpleElement, {
+						aggregations: ["innerAggregation"]
+					});
+				}
+			});
+
+			var oCustomControl = new CustomControl();
+			assert.ok(oCustomControl, "CustomControl should be created");
+
+			oCustomControl.setAggregation("forwardingAggregation", oElement);
+
+			assert.equal(oCustomControl.getAggregation("forwardingAggregation"), null, "Should not break");
+
+			oCustomControl.destroy();
+		});
 	});
