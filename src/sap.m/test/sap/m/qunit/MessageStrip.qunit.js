@@ -447,7 +447,14 @@ sap.ui.define([
 			describedBy = linkDom.getAttribute("aria-describedby"),
 			sId = this.oMessageStrip.getId() + "-info" + " " + this.oMessageStrip.getId() + "-content";
 
-			assert.strictEqual(describedBy, sId, "link aria-labelledby should point to the MessageStrip and Link id");
+			//assert
+			assert.strictEqual(describedBy, sId, "link aria-describedby should point to the MessageStrip and Link id");
+
+			//act
+			this.oMessageStrip.setLink(new Link({text: "test"}));
+
+			//assert
+			assert.strictEqual(describedBy, sId, "aria-describedby is not changed");
 	});
 
 	QUnit.test("When we have a close button it should have an aria-labelledby attribute", function (assert) {
