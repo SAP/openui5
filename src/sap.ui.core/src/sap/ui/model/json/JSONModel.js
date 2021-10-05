@@ -116,12 +116,14 @@ sap.ui.define([
 			}
 		}
 		function observeRecursive(oObject, oParentObject, sName) {
+			var i;
+
 			if (Array.isArray(oObject)) {
-				for (var i = 0; i < oObject.length; i++) {
+				for (i = 0; i < oObject.length; i++) {
 					observeRecursive(oObject[i], oObject, i);
 				}
 			} else if (isPlainObject(oObject)) {
-				for (var i in oObject) {
+				for (i in oObject) {
 					observeRecursive(oObject[i], oObject, i);
 				}
 			}
@@ -209,10 +211,10 @@ sap.ui.define([
 			// the textStatus is either passed by jQuery via arguments,
 			// or by us from a promise reject() in the async case
 			var sMessage = sTextStatus || oParams.textStatus;
-			var oParams = bAsync ? oParams.request : oParams;
-			var iStatusCode = oParams.status;
-			var sStatusText = oParams.statusText;
-			var sResponseText = oParams.responseText;
+			var oParameters = bAsync ? oParams.request : oParams;
+			var iStatusCode = oParameters.status;
+			var sStatusText = oParameters.statusText;
+			var sResponseText = oParameters.responseText;
 
 			var oError = {
 				message : sMessage,
@@ -229,6 +231,8 @@ sap.ui.define([
 			if (bAsync) {
 				return Promise.reject(oError);
 			}
+
+			return undefined;
 		}.bind(this);
 
 		var _loadData = function(fnSuccess, fnError) {
@@ -268,6 +272,8 @@ sap.ui.define([
 			return pReturn;
 		} else {
 			_loadData(fnSuccess, fnError);
+
+			return undefined;
 		}
 	};
 
@@ -307,12 +313,13 @@ sap.ui.define([
 	/**
 	 * @see sap.ui.model.Model.prototype.bindTree
 	 *
-	 * @param {object}
-	 *         [mParameters=null] additional model specific parameters (optional)
-	 *         If the mParameter <code>arrayNames</code> is specified with an array of string names this names will be checked against the tree data structure
-	 *         and the found data in this array is included in the tree but only if also the parent array is included.
-	 *         If this parameter is not specified then all found arrays in the data structure are bound.
-	 *         If the tree data structure doesn't contain an array you don't have to specify this parameter.
+	 * @param {object} [mParameters=null]
+	 *   Additional model specific parameters; if the mParameter <code>arrayNames</code> is
+	 *   specified with an array of string names these names will be checked against the tree data
+	 *   structure and the found data in this array is included in the tree, but only if the parent
+	 *   array is also included; if this parameter is not specified then all found arrays in the
+	 *   data structure are bound; if the tree data structure doesn't contain an array, this
+	 *   parameter doesn't need to be specified
 	 *
 	 */
 	JSONModel.prototype.bindTree = function(sPath, oContext, aFilters, mParameters, aSorters) {
