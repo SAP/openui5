@@ -44,6 +44,26 @@ sap.ui.define([
 		assert.equal(oSpy.callCount, 1, "During rendering _setPointerOnContentText has been called");
 	});
 
+	QUnit.test("HTML ContentText", function(assert) {
+		//Act
+		this.oNewsContent.setContentText("My <u>new</u> Text");
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(this.oNewsContent.getProperty("contentText"), "My <u>new</u> Text", "ContentText text has HTML");
+		assert.equal(this.oNewsContent._oContentText.getHtmlText(), "My <u>new</u> Text", "Inner text has HTML");
+		assert.equal(document.getElementById("news-cnt-content-text").innerHTML, "My <u>new</u> Text", "Inner text is parsed in DOM");
+	});
+
+	QUnit.test("HTML Subheader", function(assert) {
+		//Act
+		this.oNewsContent.setSubheader("My <u>new</u> Text");
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.equal(this.oNewsContent.getProperty("subheader"), "My <u>new</u> Text", "Subheader text has HTML");
+		assert.equal(this.oNewsContent._oSubHeaderText.getHtmlText(), "My <u>new</u> Text", "Inner text has HTML");
+		assert.equal(document.getElementById("news-cnt-subheader-text").innerHTML, "My <u>new</u> Text", "Inner text is parsed in DOM");
+	});
+
 	QUnit.module("Functional tests", {
 		beforeEach : function() {
 			this.oNewsContent = new NewsContent({
@@ -57,13 +77,22 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Setter method 'setSubheader'", function(assert) {
+		//Act
+		var oResult = this.oNewsContent.setSubheader("My new Text");
+		//Assert
+		assert.deepEqual(oResult, this.oNewsContent, "Instance is returned");
+		assert.equal(this.oNewsContent.getProperty("subheader"), "My new Text", "Control property updated");
+		assert.equal(this.oNewsContent._oSubHeaderText.getHtmlText(), "My new Text", "Inner control property updated");
+	});
+
 	QUnit.test("Setter method 'setContentText'", function(assert) {
 		//Act
 		var oResult = this.oNewsContent.setContentText("My new Text");
 		//Assert
 		assert.deepEqual(oResult, this.oNewsContent, "Instance is returned");
 		assert.equal(this.oNewsContent.getProperty("contentText"), "My new Text", "Control property updated");
-		assert.equal(this.oNewsContent._oContentText.getText(), "My new Text", "Inner control property updated");
+		assert.equal(this.oNewsContent._oContentText.getHtmlText(), "My new Text", "Inner control property updated");
 	});
 
 	QUnit.test("Alternative text tests", function(assert) {
