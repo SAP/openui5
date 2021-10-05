@@ -1615,7 +1615,7 @@ sap.ui.define([
 	 *   Path of the unit or currency for the property, relative to the entity
 	 * @param {boolean} [bPatchWithoutSideEffects]
 	 *   Whether the PATCH response is ignored, except for a new ETag
-	 * @param {function} [fnPatchSent]
+	 * @param {function} fnPatchSent
 	 *   The function is called just before a back-end request is sent for the first time.
 	 *   If no back-end request is needed, the function is not called.
 	 * @returns {Promise}
@@ -1679,9 +1679,7 @@ sap.ui.define([
 				 */
 				function onSubmit() {
 					oRequestLock = that.oRequestor.lockGroup(sGroupId, that, true);
-					if (fnPatchSent) {
-						fnPatchSent();
-					}
+					fnPatchSent();
 				}
 
 				if (bPatchWithoutSideEffects) {
