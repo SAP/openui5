@@ -6330,10 +6330,9 @@ sap.ui.define([
 			oError = new Error(),
 			sGroupId = "group";
 
-		oBinding.aContexts.push({isTransient : function () {}});
+		oBinding.iCurrentEnd = 42;
 		this.mock(oBinding).expects("lockGroup").never();
 		oCacheMock.expects("requestSideEffects").never();
-		this.mock(oBinding.aContexts[0]).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("", sGroupId, false, true)
 			.rejects(oError);
 
@@ -6375,11 +6374,8 @@ sap.ui.define([
 			oContext = oBinding.getHeaderContext(),
 			oResult = {};
 
-		oBinding.aContexts.push({isTransient : function () {}});
-		oBinding.aContexts.push({isTransient : function () {}});
+		oBinding.iCurrentEnd = 42;
 		this.mock(oBinding).expects("refreshSingle").never();
-		this.mock(oBinding.aContexts[0]).expects("isTransient").withExactArgs().returns(true);
-		this.mock(oBinding.aContexts[1]).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("", "group", false, true)
 			.resolves(oResult);
 
@@ -6554,13 +6550,11 @@ sap.ui.define([
 			sGroupId = "group",
 			aPaths = ["A"];
 
-		oBinding.aContexts.push({isTransient : function () {}});
 		oBinding.createContexts(3, createData(8, 3, true)); // no key predicates
 		oBinding.iCurrentBegin = 3;
 		oBinding.iCurrentEnd = 8;
 		this.mock(oBinding).expects("lockGroup").never();
 		oCacheMock.expects("requestSideEffects").never();
-		this.mock(oBinding.aContexts[0]).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("", sGroupId, false, true)
 			.rejects(oError);
 
@@ -6576,34 +6570,19 @@ sap.ui.define([
 	// side effects now and the late property will fetch its own value later on.
 
 	//*********************************************************************************************
-	QUnit.test("requestSideEffects: all contexts transient => no refresh", function () {
-		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
-			oBinding = this.bindList("/Set"),
-			j;
-
-		for (j = 0; j < 2; j += 1) {
-			oBinding.aContexts.push({isTransient : function () {} });
-			this.mock(oBinding.aContexts[j]).expects("isTransient").withExactArgs().returns(true);
-		}
-		this.mock(oBinding).expects("lockGroup").never();
-		oCacheMock.expects("requestSideEffects").never();
-		this.mock(oBinding).expects("refreshInternal").never();
-
-		// code under test
-		return oBinding.requestSideEffects("group", ["n/a", ""]);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("requestSideEffects: no contexts => do refresh", function () {
+	QUnit.test("requestSideEffects: no data read => no refresh", function (assert) {
 		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
 			oBinding = this.bindList("/Set");
 
 		this.mock(oBinding).expects("lockGroup").never();
 		oCacheMock.expects("requestSideEffects").never();
-		this.mock(oBinding).expects("refreshInternal").withExactArgs("", "group", false, true);
+		this.mock(oBinding).expects("refreshInternal").never();
 
-		// code under test
-		return oBinding.requestSideEffects("group", ["n/a", ""]);
+		assert.strictEqual(
+			// code under test
+			oBinding.requestSideEffects("group", ["n/a", ""]),
+			SyncPromise.resolve()
+		);
 	});
 
 	//*********************************************************************************************

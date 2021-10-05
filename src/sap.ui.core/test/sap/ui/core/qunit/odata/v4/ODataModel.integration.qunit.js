@@ -1784,6 +1784,7 @@ sap.ui.define([
 			}
 			// ensure that these properties are defined (required for deepEqual)
 			vRequest.headers = vRequest.headers || {};
+			vRequest.method = vRequest.method || "GET";
 			vRequest.payload = vRequest.payload || undefined;
 			vRequest.responseHeaders = mResponseHeaders || {};
 			vRequest.response = vResponse
@@ -12424,10 +12425,8 @@ sap.ui.define([
 			this.expectChange("text", []);
 
 			return this.createView(assert, sView, oModel).then(function () {
-				that.expectRequest({
-						method : "GET",
-						url : sUrlPrefix + "$skip=0&$top=100"
-					}, {value : [mFrederic, mJonathan]})
+				that.expectRequest(sUrlPrefix + "$skip=0&$top=100",
+						{value : [mFrederic, mJonathan]})
 					.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
 
 				return Promise.all([
@@ -12437,10 +12436,8 @@ sap.ui.define([
 			}).then(function () {
 				var oListBinding = that.oView.byId("table").getBinding("items");
 
-				that.expectRequest({
-						method : "GET",
-						url : sUrlPrefix + "$orderby=Name desc&$skip=0&$top=100"
-					}, {value : [mJonathan, mFrederic]})
+				that.expectRequest(sUrlPrefix + "$orderby=Name desc&$skip=0&$top=100",
+						{value : [mJonathan, mFrederic]})
 					.expectChange("text", ["Jonathan Smith", "Frederic Fall"]);
 
 				oListBinding.changeParameters({$orderby : "Name desc"});
@@ -12478,10 +12475,7 @@ sap.ui.define([
 					[, "change", {reason : "change"}],
 					[, "dataReceived", {data : {}}]
 				])
-				.expectRequest({
-					method : "GET",
-					url : "EMPLOYEES?$select=ID,Name&$skip=0&$top=100"
-				}, {
+				.expectRequest("EMPLOYEES?$select=ID,Name&$skip=0&$top=100", {
 					value : [
 						{ID : "2", Name : "Frederic Fall"},
 						{ID : "3", Name : "Jonathan Smith"}
@@ -13131,14 +13125,8 @@ sap.ui.define([
 	parameters : {$$groupId : \'group2\'}}"\
 />';
 
-		this.expectRequest({
-				url : "EMPLOYEES('2')/Name",
-				method : "GET"
-			}, {value : "Frederic Fall"})
-			.expectRequest({
-				url : "EMPLOYEES('3')/Name",
-				method : "GET"
-			}, {value : "Jonathan Smith"})
+		this.expectRequest("EMPLOYEES('2')/Name", {value : "Frederic Fall"})
+			.expectRequest("EMPLOYEES('3')/Name", {value : "Jonathan Smith"})
 			.expectChange("text1", "Frederic Fall")
 			.expectChange("text2", "Jonathan Smith");
 
@@ -13167,12 +13155,10 @@ sap.ui.define([
 
 		this.expectRequest({
 				url : "EMPLOYEES('2')/Name",
-				method : "GET",
 				batchNo : 1
 			}, {value : "Frederic Fall"})
 			.expectRequest({
 				url : "EMPLOYEES('3')/Name",
-				method : "GET",
 				batchNo : 2
 			}, {value : "Jonathan Smith"})
 			.expectChange("text1", "Frederic Fall")
@@ -22809,12 +22795,9 @@ sap.ui.define([
 					+ "sample.v0002.SalesOrderLineItem_CheckAvailability(...)",
 					oCreatedItemContext);
 
-			that.expectRequest({
-					method : "GET",
-					url : "SalesOrderList('43')/SO_2_SOITEM(SalesOrderID='43'"
-						+ ",ItemPosition='10')/com.sap.gateway.default.zui5_epm_"
-						+ "sample.v0002.SalesOrderLineItem_CheckAvailability()"
-				}, {value : "5.0"});
+			that.expectRequest("SalesOrderList('43')/SO_2_SOITEM(SalesOrderID='43'"
+					+ ",ItemPosition='10')/com.sap.gateway.default.zui5_epm_"
+					+ "sample.v0002.SalesOrderLineItem_CheckAvailability()", {value : "5.0"});
 
 			return Promise.all([
 				// code under test
@@ -24193,7 +24176,6 @@ sap.ui.define([
 				}, createErrorInsideBatch({message : "Value -1 not allowed"}))
 				.expectRequest({
 					batchNo : 1,
-					method : "GET",
 					url : "SalesOrderList('42')?sap-client=123&$select=GrossAmount"
 				}) // no response required since the PATCH fails
 				.expectMessages([{
@@ -24285,7 +24267,6 @@ sap.ui.define([
 				})
 				.expectRequest({
 					batchNo : 3,
-					method : "GET",
 					url : "SalesOrderList('42')?sap-client=123&$select=GrossAmount,NetAmount"
 				}, {
 //					"@odata.etag" : "ETag2",
@@ -24446,7 +24427,6 @@ sap.ui.define([
 				}, {/* response does not matter here */})
 				.expectRequest({
 					batchNo : 1,
-					method : "GET",
 					url : "Artists(ArtistID='42',IsActiveEntity=true)"
 						+ "?$select=DraftAdministrativeData"
 						+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)"
@@ -26046,9 +26026,8 @@ sap.ui.define([
 				})
 				.expectRequest({
 					batchNo : 2,
-					method : "GET",
 					url : "SalesOrderList('1')?$select=SO_2_SOITEM"
-							+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)"
+						+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)"
 				}, {
 					"@odata.etag" : "ETag",
 					SO_2_SOITEM : [{ItemPosition : "0010*", SalesOrderID : "1"}]
@@ -26187,7 +26166,6 @@ sap.ui.define([
 			}, {/* don't care */})
 			.expectRequest({
 				batchNo : 2,
-				method : "GET",
 				url : "EMPLOYEES('3')?$select=STATUS"
 			}, {
 				STATUS : "Busy"
@@ -27817,7 +27795,6 @@ sap.ui.define([
 			that.expectRequest({
 					batchNo : 2,
 					changeSetNo : 2,
-					method : "GET",
 					url : "BusinessPartnerList?$count=true&$select=BusinessPartnerID"
 						+ "&$filter=not (BusinessPartnerID eq '4710')" //TODO this is missing!
 						+ "&$skip=2&$top=1"
@@ -27894,7 +27871,6 @@ sap.ui.define([
 
 		this.expectRequest({
 				batchNo : 1,
-				method : "GET",
 				url : "SalesOrderList('1')?$select=SalesOrderID"
 					+ "&$expand=SO_2_SOITEM($select=ItemPosition,Messages,Quantity,SalesOrderID;"
 						+ "$expand=SOITEM_2_PRODUCT($select=ProductID))"
@@ -27936,7 +27912,6 @@ sap.ui.define([
 				})
 				.expectRequest({
 					batchNo : 3,
-					method : "GET",
 					url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')"
 						+ "?$select=ItemPosition,Messages,Quantity,SalesOrderID"
 						+ "&$expand=SOITEM_2_PRODUCT($select=ProductID)"
@@ -28832,11 +28807,21 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: requestSideEffects must not refresh a dependent list binding in case it is a
-	// "creation row" which means it only contains transient contexts.
+	// "creation row" which means it only contains transient contexts and never read data.
 	// JIRA: CPOUI5UISERVICESV3-1943
-	QUnit.test("requestSideEffects does not refresh creation row", function (assert) {
+	//
+	// Allow side effect to refresh a dependent list binding even if it only contains transient
+	// contexts.
+	// JIRA: CPOUI5ODATAV4-37
+[false, true].forEach(function (bEmpty) {
+	[false, true].forEach(function (bSuccess) {
+		var sTitle = "CPOUI5ODATAV4-37: items table is empty = " + bEmpty
+				+ "; creation succeeds = " + bSuccess;
+
+	QUnit.test(sTitle, function (assert) {
 		var oCreationRowContext,
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oNewContext,
 			oTableBinding,
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
@@ -28856,13 +28841,13 @@ sap.ui.define([
 			})
 			.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$select=ItemPosition,Note,SalesOrderID"
 				+ "&$skip=0&$top=100", {
-				value : [{
+				value : bEmpty ? [] : [{
 					ItemPosition : "10",
 					Note : "Foo",
 					SalesOrderID : "1"
 				}]
 			})
-			.expectChange("note", ["Foo"])
+			.expectChange("note", bEmpty ? [] : ["Foo"])
 			.expectChange("soCurrencyCode", "EUR")
 			.expectChange("creationRow::note");
 
@@ -28882,22 +28867,93 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
-					+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
-					value : [{
-						ItemPosition : "10*", // key property has changed
+			// Note: Context#requestSideEffects sync. calls ODLB#reset, but
+			// ODPrB#checkUpdateInternal is intentionally async => oTableBinding.iCreatedContexts
+			// is already reset here
+			that.expectChange("note", "First new row", -1);
+			if (!bEmpty) {
+				that.expectChange("note", ["Foo"]);
+			}
+			that.expectRequest({
+					batchNo : 2,
+					method : "POST",
+					payload : {Note : "First new row"},
+					url : "SalesOrderList('1')/SO_2_SOITEM"
+				}, bSuccess ? {
+					ItemPosition : "0",
+					Note : "First new row",
+					SalesOrderID : "1"
+				} : createErrorInsideBatch())
+				.expectMessages(bSuccess ? [] : [{
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+			if (!bSuccess) {
+				that.oLogMock.expects("error")
+					.withArgs("POST on 'SalesOrderList('1')/SO_2_SOITEM' failed"
+						+ "; will be repeated automatically");
+				that.oLogMock.expects("error")
+					.withArgs("Failed to request side effects");
+				that.oLogMock.expects("error")
+					.withArgs("Failed to get contexts for " + sSalesOrderService
+						+ "SalesOrderList('1')/SO_2_SOITEM with start index 0 and length 100");
+			}
+
+			// add transient row to items table
+			oNewContext = oTableBinding.create({Note : "First new row"}, /*bSkipRefresh*/true);
+
+			that.expectRequest({
+					batchNo : 2,
+					url : "SalesOrderList('1')/SO_2_SOITEM"
+						+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100"
+				}, {
+					value : [{ //TODO failed to drill-down if this is missing (BCP: 2170230216)
+						ItemPosition : "0",
+						Note : "First new row",
+						SalesOrderID : "1"
+					}, {
+						ItemPosition : "10",
 						Note : "Foo - side effect",
 						SalesOrderID : "1"
 					}]
-				})
-				.expectChange("note", ["Foo - side effect"]);
+				});
+			if (bSuccess) {
+				that.expectChange("note", [, "Foo - side effect"]);
+			}
 
 			// code under test: requestSideEffects promise resolves, "creationRow::note" unchanged
 			return Promise.all([
-				oTableBinding.getContext().requestSideEffects(["SO_2_SOITEM"]),
+				oTableBinding.getContext().requestSideEffects(["SO_2_SOITEM"])
+					.then(bSuccess ? null : mustFail(assert), function (oError0) {
+						assert.notOk(bSuccess);
+						assert.strictEqual(oError0.message,
+							"HTTP request was not processed because the previous request failed");
+						assert.strictEqual(oError0.cause.message, "Request intentionally failed");
+					}),
+				bSuccess && oNewContext.created(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
+			if (bSuccess) {
+				return; // must not use oNewContext anymore after side effects refresh!
+			}
+
+			assert.strictEqual(oNewContext.getBinding(), oTableBinding);
+			assert.strictEqual(oNewContext.getIndex(), 0);
+			assert.strictEqual(oNewContext.getProperty("Note"), "First new row");
+
+			that.expectChange("note", ["*First new row*"]);
+
+			return Promise.all([
+				// code under test
+				oNewContext.setProperty("Note", "*First new row*", null),
+				that.waitForChanges(assert, "check that new context still works fine")
+			]);
+		}).then(function () {
+
 			that.expectChange("creationRow::note", "Changed item note");
 
 			// code under test: no error on edit in transient context after requestSideEffects
@@ -28906,15 +28962,23 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("creationRow::note", null);
+			if (!bSuccess && !bEmpty) {
+				that.expectChange("note", ["Foo"]);
+			}
 
 			return Promise.all([
 				// cleanup: delete creation row to avoid error on view destruction
 				oCreationRowContext.delete(),
 				checkCanceled(assert, oCreationRowContext.created()),
+				bSuccess || oNewContext.delete(),
+				bSuccess || checkCanceled(assert, oNewContext.created()),
 				that.waitForChanges(assert)
 			]);
 		});
 	});
+
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario: ODataModel#hasPendingChanges works synchronously as expected:
@@ -29159,7 +29223,6 @@ sap.ui.define([
 			})
 			.expectRequest({
 				batchNo : 3,
-				method : "GET",
 				url : "BusinessPartnerList('4711')?$select=BP_2_SO"
 					+ "&$expand=BP_2_SO($select=Note,SalesOrderID)"
 			}, {
@@ -29211,7 +29274,6 @@ sap.ui.define([
 			}) // no response required
 			.expectRequest({
 				batchNo : 3,
-				method : "GET",
 				url : "BusinessPartnerList('4711')?$select=BP_2_SO"
 					+ "&$expand=BP_2_SO($select=Note,SalesOrderID)"
 			}) // no response required
@@ -29429,7 +29491,6 @@ sap.ui.define([
 				}, oCausingError)
 				.expectRequest({
 					batchNo : 3,
-					method : "GET",
 					// Because of the transient row in the first context the skip has to be adapted
 					// to 0 => CPOUI5UISERVICESV3-1764
 					url : "SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=2"
@@ -29545,7 +29606,6 @@ sap.ui.define([
 				})
 				.expectRequest({
 					batchNo : 3,
-					method : "GET",
 					url : "BusinessPartnerList('4711')?$select=BP_2_SO"
 						+ "&$expand=BP_2_SO($select=Note,SalesOrderID)"
 				}, {
@@ -29640,7 +29700,6 @@ sap.ui.define([
 				}, {/* response does not matter here */})
 				.expectRequest({
 					batchNo : 3,
-					method : "GET",
 					url : "BusinessPartnerList('4711')?$select=BusinessPartnerID,CompanyName"
 				}, {
 					BusinessPartnerID : "4711",
@@ -30294,7 +30353,6 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
 					headers : mHeaders,
-					method : "GET",
 					url : "EMPLOYEES(0)/Name"
 				}, {value : "Frederic Fall"});
 
@@ -30354,7 +30412,6 @@ sap.ui.define([
 
 		this.expectRequest({
 					headers : mExpectedHeaders,
-					method : "GET",
 					url : "EMPLOYEES(0)/Name"
 				}, {value : "Frederic Fall"})
 			.expectChange("name", "Frederic Fall");
@@ -30362,7 +30419,6 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
 					headers : mExpectedHeaders,
-					method : "GET",
 					url : "EMPLOYEES(0)/Name"
 				} , {value : "Frederic Fall"});
 
@@ -33176,7 +33232,6 @@ sap.ui.define([
 			if (oFixture.bFilter) {
 				that.expectRequest({
 						batchNo : iBatch,
-						method : "GET",
 						url : "SalesOrderList?$count=true"
 							+ "&$filter=(GrossAmount gt 1000) and not (SalesOrderID eq 'new')"
 							+ "&$top=0"
@@ -33239,14 +33294,12 @@ sap.ui.define([
 				}, createErrorInsideBatch(null, 404))
 				.expectRequest({
 					batchNo : 4,
-					method : "GET",
 					url : "SalesOrderList?$count=true&$filter=GrossAmount gt 123&$top=0"
 				}) // response does not matter, fails with DELETE in same $batch
 				.expectChange("objectPageGrossAmount", null)
 				.expectChange("objectPageNote", null)
 				.expectRequest({
 					batchNo : 5,
-					method : "GET",
 					url : "SalesOrderList?$count=true&$filter=GrossAmount gt 123&$top=0"
 				}, {
 					"@odata.count" : "38",
@@ -33512,7 +33565,6 @@ sap.ui.define([
 		return this.createKeepAliveScenario(assert, false).then(function (oKeptContext) {
 			that.expectRequest({
 					batchNo : 3,
-					method : "GET",
 					url : "SalesOrderList?$filter=SalesOrderID eq '1'"
 						+ "&$select=GrossAmount,Note,SalesOrderID"
 				}, {
@@ -33520,7 +33572,6 @@ sap.ui.define([
 				})
 				.expectRequest({
 					batchNo : 3,
-					method : "GET",
 					url : "SalesOrderList?$filter=(GrossAmount le 150) and SalesOrderID eq '1'"
 						+ "&$count=true&$top=0"
 				}, {
@@ -33533,7 +33584,6 @@ sap.ui.define([
 				// as context is no longer part of the collection the list requests a new context
 				.expectRequest({
 					batchNo : 4,
-					method : "GET",
 					url : "SalesOrderList?$count=true&$filter=GrossAmount le 150"
 						+ "&$select=GrossAmount,SalesOrderID&$skip=1&$top=1"
 				}, {
@@ -33544,7 +33594,6 @@ sap.ui.define([
 				.expectChange("grossAmount", [, "120.00"])
 				.expectRequest({
 					batchNo : 4,
-					method : "GET",
 					url : "SalesOrderList('1')/SO_2_SOITEM"
 						+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100"
 				}, {
@@ -33574,7 +33623,6 @@ sap.ui.define([
 		return this.createKeepAliveScenario(assert, false).then(function (oKeptContext) {
 			that.expectRequest({
 					batchNo : 3,
-					method : "GET",
 					url : "SalesOrderList?$filter=SalesOrderID eq '1'"
 						+ "&$select=GrossAmount,Note,SalesOrderID"
 				}, {
@@ -33582,7 +33630,6 @@ sap.ui.define([
 				})
 				.expectRequest({
 					batchNo : 3,
-					method : "GET",
 					url : "SalesOrderList?$filter=(GrossAmount le 150) and SalesOrderID eq '1'"
 						+ "&$count=true&$top=0"
 				}, {
@@ -33594,7 +33641,6 @@ sap.ui.define([
 				.expectChange("grossAmount", ["140.00"])
 				.expectRequest({
 					batchNo : 4,
-					method : "GET",
 					url : "SalesOrderList('1')/SO_2_SOITEM"
 						+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100"
 				}, {
@@ -33622,7 +33668,6 @@ sap.ui.define([
 			.then(function (oKeptContext) {
 				that.expectRequest({
 						batchNo : 3,
-						method : "GET",
 						url : "SalesOrderList?$filter=SalesOrderID eq '1'"
 							+ "&$select=GrossAmount,Note,SalesOrderID"
 					}, {
@@ -33630,7 +33675,6 @@ sap.ui.define([
 					})
 					.expectRequest({
 						batchNo : 3,
-						method : "GET",
 						url : "SalesOrderList?$filter=(GrossAmount le 150) and SalesOrderID eq '1'"
 							+ "&$count=true&$top=0"
 					}, {
@@ -33645,7 +33689,6 @@ sap.ui.define([
 					// as context is no longer part of aContexts the list requests a new context
 					.expectRequest({
 						batchNo : 4,
-						method : "GET",
 						url : "SalesOrderList?$count=true&$filter=GrossAmount le 150"
 							+ "&$select=GrossAmount,SalesOrderID&$skip=1&$top=1"
 					}, {
@@ -33990,7 +34033,6 @@ sap.ui.define([
 			oTable.getItems()[0].getBindingContext().setKeepAlive(true);
 			that.expectRequest({
 					batchNo : 4,
-					method : "GET",
 					url : "SalesOrderList"
 						+ "?$filter=SalesOrderID eq '1' or SalesOrderID eq '2'"
 						+ "&$select=GrossAmount,Note,SalesOrderID&$top=2"
@@ -34009,7 +34051,6 @@ sap.ui.define([
 				.expectChange("objectPageNote", "After refresh")
 				.expectRequest({
 					batchNo : 4,
-					method : "GET",
 					url : "SalesOrderList?$count=true&$filter=GrossAmount gt 123"
 						+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=2"
 				}, {
@@ -34025,7 +34066,6 @@ sap.ui.define([
 				.expectChange("grossAmount", ["149.10", "789.10"])
 				.expectRequest({
 					batchNo : 4,
-					method : "GET",
 					url : "SalesOrderList('1')/SO_2_SOITEM"
 						+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100"
 				}, {
@@ -34045,7 +34085,6 @@ sap.ui.define([
 
 			that.expectRequest({
 					batchNo : 5,
-					method : "GET",
 					url : "SalesOrderList?$filter=SalesOrderID eq '1' or SalesOrderID eq '2'"
 						+ " or SalesOrderID eq '3'&$select=GrossAmount,Note,SalesOrderID&$top=3"
 				}, {
@@ -34063,7 +34102,6 @@ sap.ui.define([
 				.expectChange("objectPageNote", "After refresh 2")
 				.expectRequest({
 					batchNo : 5,
-					method : "GET",
 					url : "SalesOrderList?$count=true&$filter=GrossAmount gt 123"
 						+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=2"
 				}, {
@@ -34080,7 +34118,6 @@ sap.ui.define([
 				.expectChange("grossAmount", ["149.20", "789.20"])
 				.expectRequest({
 					batchNo : 5,
-					method : "GET",
 					url : "SalesOrderList('1')/SO_2_SOITEM"
 						+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100"
 				}, {
@@ -34414,7 +34451,6 @@ sap.ui.define([
 
 				that.expectRequest({
 						batchNo : 3,
-						method : "GET",
 						url : "SalesOrderList?$filter=SalesOrderID eq '1'"
 							+ "&$select=GrossAmount,Note,SalesOrderID"
 					}, {
@@ -34424,7 +34460,6 @@ sap.ui.define([
 					.expectChange("objectPageNote", null)
 					.expectRequest({
 						batchNo : 3,
-						method : "GET",
 						url : "SalesOrderList?$count=true&$filter=GrossAmount le 150"
 							+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=2"
 					}, {
@@ -34441,7 +34476,6 @@ sap.ui.define([
 					.expectChange("grossAmount", ["149.10", "99.00"])
 					.expectRequest({
 						batchNo : 3,
-						method : "GET",
 						url : "SalesOrderList('1')/SO_2_SOITEM"
 							+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100"
 					}, oError)
@@ -34705,7 +34739,6 @@ sap.ui.define([
 				}) // no need to update the ETag when requesting side effects
 				.expectRequest({
 					batchNo : 5,
-					method : "GET",
 					url : "Artists(ArtistID='A1',IsActiveEntity=false)"
 						+ "?$select=Messages,defaultChannel"
 				}, {

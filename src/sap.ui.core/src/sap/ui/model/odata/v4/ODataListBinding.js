@@ -2659,8 +2659,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects
 	 */
 	ODataListBinding.prototype.requestSideEffects = function (sGroupId, aPaths, oContext) {
-		var bAllContextsTransient,
-			aContexts,
+		var aContexts,
 			bMissingPredicate,
 			oModel = this.oModel,
 			// Hash set of collection-valued navigation property meta paths (relative to the cache's
@@ -2741,13 +2740,8 @@ sap.ui.define([
 		if (bSingle) {
 			return this.refreshSingle(oContext, this.lockGroup(sGroupId), false);
 		}
-		if (this.aContexts.length) {
-			bAllContextsTransient = this.aContexts.every(function (oContext) {
-				return oContext.isTransient();
-			});
-			if (bAllContextsTransient) {
-				return SyncPromise.resolve();
-			}
+		if (this.iCurrentEnd === 0) {
+			return SyncPromise.resolve();
 		}
 		return this.refreshInternal("", sGroupId, false, true);
 	};
