@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides an abstraction for list bindings
 sap.ui.define(['./Binding', './Filter', './Sorter'],
 	function(Binding, Filter, Sorter) {

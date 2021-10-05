@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 //Provides an abstraction for list bindings
 sap.ui.define(['sap/ui/model/ContextBinding', 'sap/ui/model/ChangeReason'],
 		function(ContextBinding, ChangeReason) {

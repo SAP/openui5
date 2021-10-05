@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides class sap.ui.model.SelectionModel
 sap.ui.define(['sap/ui/base/EventProvider', "sap/base/assert"],
 	function(EventProvider, assert) {

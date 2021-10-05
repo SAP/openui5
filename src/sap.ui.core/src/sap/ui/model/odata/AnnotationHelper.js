@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides object sap.ui.model.odata.AnnotationHelper
 sap.ui.define([
 	"./_AnnotationHelperBasics",

@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 sap.ui.define(['./Filter', 'sap/base/Log'],
 	function(Filter, Log) {
 	"use strict";

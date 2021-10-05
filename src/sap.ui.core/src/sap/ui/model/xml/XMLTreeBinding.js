@@ -66,7 +66,8 @@ sap.ui.define(['sap/ui/model/ClientTreeBinding', "sap/base/util/each"],
 				oChildContext = that.oModel.getContext(sChildPath);
 				// check if there is a filter on this level applied
 				if (that.oCombinedFilter && !that.bIsFiltering) {
-					if (that.filterInfo.aFilteredContexts && that.filterInfo.aFilteredContexts.indexOf(oChildContext) != -1) {
+					if (that.filterInfo.aFilteredContexts
+							&& that.filterInfo.aFilteredContexts.indexOf(oChildContext) != -1) {
 						aContexts.push(oChildContext);
 					}
 				} else {

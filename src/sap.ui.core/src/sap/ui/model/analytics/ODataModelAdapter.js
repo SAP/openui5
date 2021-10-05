@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 /**
  * Analytical Adapter for ODataModels
  *

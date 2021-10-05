@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides class sap.ui.model.odata.ODataTreeBindingAdapter
 sap.ui.define(['sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/model/TreeBindingAdapter', 'sap/ui/model/TreeAutoExpandMode', 'sap/ui/model/ChangeReason', './OperationMode', 'sap/base/assert', 'sap/ui/model/Filter', 'sap/ui/model/odata/ODataUtils'],
 	function(TreeBinding, ODataTreeBinding, TreeBindingAdapter, TreeAutoExpandMode, ChangeReason, OperationMode, assert, Filter, ODataUtils) {

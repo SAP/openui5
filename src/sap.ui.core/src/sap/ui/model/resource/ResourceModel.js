@@ -1,6 +1,7 @@
 /*!
  * ${copyright}
  */
+/*eslint-disable max-len */
 /**
  * ResourceBundle-based DataBinding
  *

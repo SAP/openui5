@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // This module provides internal functions for dynamic expressions in OData V4 annotations. It is a
 // helper module for sap.ui.model.odata.AnnotationHelper.
 sap.ui.define([

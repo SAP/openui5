@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides the base implementation for all model implementations
 sap.ui.define([
 	"sap/base/Log",

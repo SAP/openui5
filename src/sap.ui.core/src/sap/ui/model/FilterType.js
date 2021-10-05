@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides enumeration sap.ui.model.FilterType
 sap.ui.define(function() {
 	"use strict";

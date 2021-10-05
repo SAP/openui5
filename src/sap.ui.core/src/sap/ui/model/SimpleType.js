@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides the base implementation for all simple type implementations that are able to format,
 // parse and validate values
 sap.ui.define([

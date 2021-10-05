@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 /**
  * Analytical Version Information, used to figure out the version of the ODataModel
  *

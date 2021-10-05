@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides enumeration sap.ui.model.TreeAutoExpandMode
 sap.ui.define([],
 	function() {

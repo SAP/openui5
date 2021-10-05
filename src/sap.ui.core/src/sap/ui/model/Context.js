@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 // Provides an abstraction for model bindings
 sap.ui.define(['sap/ui/base/Object', "sap/base/util/isPlainObject"],
 	function(BaseObject, isPlainObject) {

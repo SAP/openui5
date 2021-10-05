@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/*eslint-disable max-len */
 sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/util/each",
