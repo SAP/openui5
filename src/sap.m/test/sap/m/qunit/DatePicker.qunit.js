@@ -302,7 +302,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.equal(oDatePicker.$("icon").attr("title"), sExpected, "icon has its title property set");
+		assert.equal(oDatePicker.$("icon").control(0).getTooltip(), sExpected, "icon has its tooltip property set");
 
 		// cleanup
 		oDatePicker.destroy();

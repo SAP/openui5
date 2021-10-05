@@ -36,7 +36,9 @@ sap.ui.define([
 	}), $icon, $dummy;
 	oIcon.placeAt("uiAreaA");
 
-
+	function getIconTitle(oIcon) {
+		return oIcon.$().children(".sapUiIconTitle").attr("title");
+	}
 
 	QUnit.module("Icon Control");
 
@@ -272,25 +274,26 @@ sap.ui.define([
 
 	QUnit.test("set src should also change the tooltip", function(assert) {
 		var oIcon = new Icon({
-			src: _IconRegistry.getIconURI("delete")
+			src: _IconRegistry.getIconURI("delete"),
+			decorative: false
 		});
 
 		oIcon.placeAt("uiAreaA");
 		sap.ui.getCore().applyChanges();
 
-		var sTitle = oIcon.$().attr("title");
+		var sTitle = getIconTitle(oIcon);
 		var sLabel = oIcon.$().attr("aria-label");
 		var sLabelledBy = oIcon.$().attr("aria-labelledby");
 
 		assert.ok(!!sTitle, "tooltip has been set");
-		assert.ok(!sLabel, "aria-label hasn't been set");
+		assert.ok(sLabel, "aria-label has been set");
 		assert.ok(!sLabelledBy, "No aria-labelledby has been set");
 
 		oIcon.setSrc(_IconRegistry.getIconURI("add"));
 		sap.ui.getCore().applyChanges();
 
-		assert.notEqual(oIcon.$().attr("title"), sTitle, "Tooltip should have changed when changing the icon src.");
-		assert.ok(!oIcon.$().attr("aria-label"), "ARIA label is still not set");
+		assert.notEqual(getIconTitle(oIcon), sTitle, "Tooltip should have changed when changing the icon src.");
+		assert.notEqual(oIcon.$().attr("aria-label"), sLabel, "ARIA label is changed when changing the icon src");
 		assert.equal(oIcon.$().attr("aria-labelledby"), undefined, "ARIA labelledby should still not be set when changing the icon src.");
 
 		oIcon.destroy();
@@ -300,34 +303,37 @@ sap.ui.define([
 		var sLabelledById = "foo",
 			oIcon = new Icon({
 				src: _IconRegistry.getIconURI("delete"),
-				ariaLabelledBy: sLabelledById
+				ariaLabelledBy: sLabelledById,
+				decorative: false
 			});
 
 		oIcon.placeAt("uiAreaA");
 		sap.ui.getCore().applyChanges();
 
-		var sTitle = oIcon.$().attr("title");
+		var sTitle = getIconTitle(oIcon);
 		var sLabel = oIcon.$().attr("aria-label");
 		var sLabelledBy = oIcon.$().attr("aria-labelledby");
 		var $InvisibleText = oIcon.$("label");
+		var sInvisibleTextValue = $InvisibleText.text();
 
 		assert.ok(!!sTitle, "A tooltip has been set");
 		assert.ok(!sLabel, "No aria-label has been set");
 		assert.ok(!!sLabelledBy, "aria-labelledby has been set");
-		assert.equal($InvisibleText.length, 0, "No InvisibleText control is created");
+		assert.equal($InvisibleText.length, 1, "InvisibleText control is created");
 
 		var aLabels = sLabelledBy.split(" ");
 
-		assert.equal(aLabels.length, 1, "ARIA labelledby should only have the set ariaLabelledBy");
+		assert.equal(aLabels.length, 2, "ARIA labelledby should have the set ariaLabelledBy and the default translation text");
 		assert.equal(aLabels[0], sLabelledById, "The first label id in aLabelledBy should be the one set to ariaLabelledBy");
 
 		oIcon.setSrc(_IconRegistry.getIconURI("add"));
 		sap.ui.getCore().applyChanges();
 
-		assert.notEqual(oIcon.$().attr("title"), sTitle, "Tooltip should have changed when changing the icon src.");
+		assert.notEqual(getIconTitle(oIcon), sTitle, "Tooltip should have changed when changing the icon src.");
 		assert.equal(oIcon.$().attr("aria-label"), undefined, "ARIA label should still not be set when changing the icon src.");
 		assert.equal(oIcon.$().attr("aria-labelledby"), sLabelledBy, "ARIA labelledby should still be the same when changing the icon src.");
-		assert.equal(oIcon.$("label").length, 0, "No InvisibleText control is created when changing the icon src");
+		assert.equal(oIcon.$("label").length, 1, "InvisibleText control is kept when changing the icon src");
+		assert.notEqual(oIcon.$("label").text(), sInvisibleTextValue, "Invisible text value is changed");
 
 		oIcon.destroy();
 	});
@@ -373,15 +379,15 @@ sap.ui.define([
 		assert.strictEqual($icon.attr("role"), "presentation", "role should be set to presentation");
 		assert.strictEqual($icon.attr("tabindex"), undefined, "no tabindex is set");
 		assert.strictEqual($icon.attr("aria-hidden"), 'true', "aria-hidden is enabled");
-		assert.notEqual($icon.attr("title"), undefined, "title is output using icon text");
-		assert.strictEqual($icon.attr("aria-label"), undefined, "aria-label doesn't exist in the DOM");
+		assert.notEqual(getIconTitle(this.oAriaIcon), undefined, "title is output using icon text");
+		assert.notEqual($icon.attr("aria-label"), undefined, "aria-label is output");
 
 		this.oAriaIcon.setTooltip(this.sTooltip);
 		sap.ui.getCore().applyChanges();
 
 		$icon = this.oAriaIcon.$();
-		assert.strictEqual($icon.attr("title"), this.sTooltip, "title is rendered with property 'tooltip'");
-		assert.strictEqual($icon.attr("aria-label"), undefined, "aria-label still doesn't exist in the DOM");
+		assert.strictEqual(getIconTitle(this.oAriaIcon), this.sTooltip, "title is rendered with property 'tooltip'");
+		assert.strictEqual($icon.attr("aria-label"), this.sTooltip, "aria-label is output with property 'tooltip'");
 	});
 
 	QUnit.test("When decorative is set to false", function (assert) {
@@ -393,17 +399,16 @@ sap.ui.define([
 
 		assert.strictEqual($icon.attr("role"), "img", "role should be set to img");
 		assert.strictEqual($icon.attr("aria-hidden"), undefined, "aria-hidden isn't output in DOM");
-		assert.strictEqual($icon.attr("title"), this.sTooltip, "title is rendered with property 'tooltip'");
-		assert.strictEqual($icon.attr("aria-label"), undefined, "aria-label still doesn't exist in the DOM");
+		assert.strictEqual(getIconTitle(this.oAriaIcon), this.sTooltip, "title is rendered with property 'tooltip'");
+		assert.strictEqual($icon.attr("aria-label"), this.sTooltip, "aria-label is output using the 'tooltip'");
 		assert.strictEqual($icon.attr("tabindex"), undefined, "no tabindex is set");
 
 		// setting alt makes the aria-label differ from the title.
-		// outputting the aria-label is needed
 		this.oAriaIcon.setAlt(this.sAlt);
 		sap.ui.getCore().applyChanges();
 
 		$icon = this.oAriaIcon.$();
-		assert.strictEqual($icon.attr("title"), this.sTooltip, "title is rendered with property 'tooltip'");
+		assert.strictEqual(getIconTitle(this.oAriaIcon), this.sTooltip, "title is rendered with property 'tooltip'");
 		assert.strictEqual($icon.attr("aria-label"), this.sAlt, "aria-label still doesn't exist in the DOM");
 	});
 
@@ -416,7 +421,7 @@ sap.ui.define([
 		var $icon = this.oAriaIcon.$();
 		assert.strictEqual($icon.attr("role"), "presentation", "role is set to presentation");
 		assert.strictEqual($icon.attr("tabindex"), "0", "tabindex is set to 0");
-		assert.notEqual($icon.attr("title"), undefined, "title is set");
+		assert.notEqual(getIconTitle(this.oAriaIcon), undefined, "title is set");
 
 		this.oAriaIcon.setNoTabStop(true);
 		sap.ui.getCore().applyChanges();
@@ -454,7 +459,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var $icon = this.oAriaIcon.$();
-		assert.strictEqual($icon.attr("title"), this.sTooltip, "title is output using tooltip");
+		assert.strictEqual(getIconTitle(this.oAriaIcon), this.sTooltip, "title is output using tooltip");
 		assert.strictEqual($icon.attr("aria-label"), this.sAlt, "aria-label is output using alt property");
 	});
 
@@ -468,13 +473,12 @@ sap.ui.define([
 		$Icon = this.oAriaIcon.$();
 		$InvisibleText = this.oAriaIcon.$("label");
 
-		assert.notEqual($Icon.attr("title"), undefined, "title attribute is set");
+		assert.notEqual(getIconTitle(this.oAriaIcon), undefined, "title attribute is set");
 		assert.strictEqual($Icon.attr("aria-label"), undefined, "aria-label should be undefined");
-		assert.strictEqual($Icon.attr("aria-labelledby"), sId, "aria-labelledby should be " + sId);
-		assert.strictEqual($InvisibleText.length, 0, "No invisible text is created");
+		assert.strictEqual($Icon.attr("aria-labelledby"), sId + " " + $InvisibleText.attr("id"), "aria-labelledby is output correctly");
+		assert.strictEqual($InvisibleText.length, 1, "Invisible text is created");
 
 		// setting alt makes the refered aria-labelledby text differ from the title.
-		// outputting the aria-labelledby is needed
 		this.oAriaIcon.setAlt(this.sAlt);
 		sap.ui.getCore().applyChanges();
 
@@ -482,7 +486,7 @@ sap.ui.define([
 		$InvisibleText = this.oAriaIcon.$("label");
 		sText = $InvisibleText.text();
 
-		assert.notEqual($Icon.attr("title"), undefined, "title attribute is set");
+		assert.notEqual(getIconTitle(this.oAriaIcon), undefined, "title attribute is set");
 		assert.strictEqual($Icon.attr("aria-label"), undefined, "aria-label should be undefined");
 		assert.strictEqual($Icon.attr("aria-labelledby"), sId + " " + $InvisibleText.attr("id"), "aria-labelledby should be " + sId + " " + $InvisibleText.attr("id"));
 		assert.strictEqual(sText, this.sAlt, "The content of InvisibleText is set with the given alt");
@@ -552,8 +556,8 @@ sap.ui.define([
 		});
 
 		assert.equal(this.oIcon.getUseIconTooltip(), true, "Default value of property 'useIconTooltip' should be 'true'");
-		assert.notEqual(this.oIcon.$().attr("title"), undefined, "title should not be empty");
-		assert.equal(this.oIcon.$().attr("aria-label"), undefined, "aria-label should be undefined");
+		assert.notEqual(getIconTitle(this.oIcon), undefined, "title should not be empty");
+		assert.notEqual(this.oIcon.$().attr("aria-label"), undefined, "aria-label should not be empty");
 		assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
 	});
 
@@ -563,8 +567,8 @@ sap.ui.define([
 			src: _IconRegistry.getIconURI("add"),
 			tooltip: sTooltip
 		});
-		assert.equal(this.oIcon.$().attr("title"), sTooltip, "title should be set");
-		assert.equal(this.oIcon.$().attr("aria-label"), undefined, "aria-label should be undefined");
+		assert.equal(getIconTitle(this.oIcon), sTooltip, "title should be set");
+		assert.equal(this.oIcon.$().attr("aria-label"), sTooltip, "aria-label should be undefined");
 		assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
 	});
 
@@ -573,7 +577,7 @@ sap.ui.define([
 			src: _IconRegistry.getIconURI("add"),
 			useIconTooltip: false
 		});
-		assert.equal(this.oIcon.$().attr("title"), undefined, "title should be undefined");
+		assert.equal(getIconTitle(this.oIcon), undefined, "title should be undefined");
 		assert.equal(this.oIcon.$().attr("aria-label"), undefined, "aria-label should be undefined");
 		assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
 	});
@@ -585,8 +589,8 @@ sap.ui.define([
 			useIconTooltip: false,
 			tooltip: sTooltip
 		});
-		assert.equal(this.oIcon.$().attr("title"), sTooltip, "title should be set");
-		assert.equal(this.oIcon.$().attr("aria-label"), undefined, "aria-label should be undefined");
+		assert.equal(getIconTitle(this.oIcon), sTooltip, "title should be set");
+		assert.equal(this.oIcon.$().attr("aria-label"), sTooltip, "aria-label should be undefined");
 		assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
 	});
 

@@ -63,10 +63,6 @@ sap.ui.define(['./_IconRegistry', './library', "sap/base/security/encodeCSS"], f
 			}
 		}
 
-		if (sTitle) {
-			oRm.attr("title", sTitle);
-		}
-
 		if (oControl.hasListeners("press")) {
 			oRm.class("sapUiIconPointer");
 			if (!oControl.getNoTabStop()) {
@@ -88,6 +84,10 @@ sap.ui.define(['./_IconRegistry', './library', "sap/base/security/encodeCSS"], f
 		}
 
 		oRm.openEnd();
+
+		if (sTitle) {
+			oRm.openStart("span").class("sapUiIconTitle").attr("title", sTitle).attr("aria-hidden", true).openEnd().close("span");
+		}
 
 		if (aLabelledBy && aLabelledBy.length && oInvisibleText) {
 			oRm.renderControl(oInvisibleText);

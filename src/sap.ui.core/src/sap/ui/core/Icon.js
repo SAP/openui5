@@ -501,10 +501,9 @@ sap.ui.define([
 		var sAlt = this.getAlt(),
 			sTooltip = this.getTooltip_AsString(),
 			bUseIconTooltip = this.getUseIconTooltip(),
-			sLabel = sAlt || sTooltip || (bUseIconTooltip && oIconInfo && (oIconInfo.text || oIconInfo.name)),
-			sOutputTitle = this._getOutputTitle(oIconInfo);
+			sLabel = sAlt || sTooltip || (bUseIconTooltip && oIconInfo && (oIconInfo.text || oIconInfo.name));
 
-		if (sLabel && sLabel !== sOutputTitle) {
+		if (sLabel) {
 			return sLabel;
 		}
 	};
