@@ -55,25 +55,40 @@ sap.ui.define([
                 /**
 				 * Title text that appears in the dialog header.
 				 */
-				 shortTitle: {
+				shortTitle: {
 					type: "string",
 					group: "Appearance",
 					defaultValue: ""
 				},
-				_conditions: { // TODO: only internal? make restricted?
+				/**
+				 * Conditions of the value help
+				 *
+				 * <b>Note:</b> This property must not be set from outside, it is only to be used by the corresponding container
+				 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
+				 */
+				conditions: { // TODO: only internal? make restricted?
 					type: "object[]",
 					defaultValue: [],
 					byValue: true
 				},
-				_filterValue: { // TODO: how to hide? Or how to access from ValueHelp?
+				/**
+				 * Value for filtering ($search)
+				 *
+				 * <b>Note:</b> This property must not be set from outside, it is only to be used by the corresponding container
+				 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
+				 */
+				filterValue: { // TODO: how to hide? Or how to access from ValueHelp?
 					type: "string",
 					defaultValue: ""//,
 					//visibility: "hidden"
 				},
 				/**
 				 * internal configuration
+				 *
+				 * <b>Note:</b> This property must not be set from outside, it is only to be used by the corresponding container
+				 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 				 */
-				_config: {
+				config: {
 					type: "object",
 					defaultValue: {}//,
 //					visibility: "hidden"
@@ -81,7 +96,13 @@ sap.ui.define([
 
 			},
 			aggregations: {
-				_displayContent: {
+				/**
+				 * Content control that is put inside the parent container
+				 *
+				 * <b>Note:</b> This aggregation must not be set from outside, it is only to be used by the corresponding container
+				 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
+				 */
+				displayContent: {
 					type: "sap.ui.core.Control",
 					multiple: false//,
 					//visibility: "hidden" // as ManagedObjectModel can only observe hidden aggregations on root-control
@@ -120,7 +141,7 @@ sap.ui.define([
 		this._oObserver = new ManagedObjectObserver(this._observeChanges.bind(this));
 
 		this._oObserver.observe(this, {
-			properties: ["_filterValue", "_conditions", "_config"]
+			properties: ["filterValue", "conditions", "config"]
 		});
 
 	};
@@ -136,7 +157,7 @@ sap.ui.define([
 
 		// don't rerender content or parent-container on conditions change. This needs only be updated on
 		// content control inside (Table, List, DefineConditionPanel...).
-		if (sPropertyName === "_conditions" || sPropertyName === "_filterValue" || sPropertyName === "_config") {
+		if (sPropertyName === "conditions" || sPropertyName === "filterValue" || sPropertyName === "config") {
 			bSuppressInvalidate = true;
 		}
 
@@ -176,15 +197,15 @@ sap.ui.define([
 	};
 
 	Content.prototype._observeChanges = function(oChanges) {
-		if (oChanges.name === "_conditions") {
+		if (oChanges.name === "conditions") {
 			this._handleConditionsUpdate(oChanges);
 		}
 
-		if (oChanges.name === "_filterValue") {
+		if (oChanges.name === "filterValue") {
 			this._handleFilterValueUpdate(oChanges);
 		}
 
-		if (oChanges.name === "_config") {
+		if (oChanges.name === "config") {
 			_configChanged.call(this, oChanges.current);
 		}
 	};
@@ -427,7 +448,7 @@ sap.ui.define([
 
 	Content.prototype._getMaxConditions = function() {
 
-		var oConfig = this.getProperty("_config");
+		var oConfig = this.getConfig();
 		return oConfig && oConfig.maxConditions;
 
 	};

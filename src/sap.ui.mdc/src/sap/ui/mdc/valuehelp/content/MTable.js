@@ -83,13 +83,13 @@ sap.ui.define([
 
 	function _updateSelection () {
 		if (this._oTable) {
-//			var aSelectedIds = this.get_conditions().filter(function (oCondition) {
+//			var aSelectedIds = this.getConditions().filter(function (oCondition) {
 //				return oCondition.operator === "EQ";
 //			}).map(function (oCondition) {
 //				return oCondition.values[0];
 //			});
 			var aItems = this._oTable.getItems();
-			var aConditions = this.get_conditions();
+			var aConditions = this.getConditions();
 
 			for (var iId in aItems) {
 				var oItem = aItems[iId];
@@ -308,7 +308,7 @@ sap.ui.define([
 						this._oTablePanel.addContent(this._oScrollContainer);
 					}
 
-					this.setAggregation("_displayContent", this._oContentLayout);
+					this.setAggregation("displayContent", this._oContentLayout);
 
 					var oFilterBar = this._getPriorityFilterBar();
 					if (!oFilterBar) {
@@ -672,7 +672,7 @@ sap.ui.define([
 
 				var oValues = this._getItemFromContext(oItem.getBindingContext());
 				oCondition = oValues && this._createCondition(oValues.key, oValues.description, oValues.inParameters, oValues.outParameters);
-				this.setProperty("_conditions", [oCondition], true);
+				this.setProperty("conditions", [oCondition], true);
 
 				if (this._bVisible) {
 					this._handleScrolling(oItem);
@@ -754,7 +754,7 @@ sap.ui.define([
 	};
 
 	var _handleSearch = function () {
-		return this.applyFilters(this.get_filterValue());
+		return this.applyFilters(this.getFilterValue());
 	};
 
 	MTable.prototype._observeChanges = function (oChanges) {
@@ -788,7 +788,7 @@ sap.ui.define([
 			}
 		}
 
-		if (oChanges.name === "_config") {
+		if (oChanges.name === "config") {
 			_adjustTable.call(this);
 		}
 

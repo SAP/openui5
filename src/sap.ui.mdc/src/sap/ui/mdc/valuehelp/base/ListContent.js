@@ -30,10 +30,6 @@ sap.ui.define([
 					defaultValue: false
 				},
 
-//				_filterValue: {	// Bind to ManagedObjectModel of ValueHelp
-//					type: "string",
-//					visibility: "hidden"
-//				},
 				/**
 				 * If set, <code>getKeyForText</code> returns the first item that matches the text.
 				 *
@@ -105,7 +101,7 @@ sap.ui.define([
 
 	ListContent.prototype.getCount = function (aConditions) {
 		var iCount = 0;
-		// var aConditions = arguments[0] || this.get_conditions();
+
 		for (var i = 0; i < aConditions.length; i++) {
 			var oCondition = aConditions[i];
 			if (oCondition.isEmpty !== true && oCondition.validated === ConditionValidated.Validated) {

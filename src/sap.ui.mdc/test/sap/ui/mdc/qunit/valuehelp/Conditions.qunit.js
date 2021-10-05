@@ -85,20 +85,22 @@ sap.ui.define([
 		beforeEach: function() {
 			oType = new StringType();
 
-			oConditions = new Conditions("C1", {label: "Test"});
+			var aConditions = [Condition.createCondition("EQ", ["X"], undefined, undefined, ConditionValidated.NotValidated)];
+			oConditions = new Conditions("C1", {
+				label: "Test",
+				conditions: aConditions, // don't need to test the binding of Container here
+				config: { // don't need to test the binding of Container here
+					dataType: oType,
+					maxConditions: -1,
+					delegate: FieldBaseDelegate,
+					delegateName: "sap/ui/mdc/field/FieldBaseDelegate",
+					payload: { text: "X" },
+					operators: ["EQ", "BT", "Contains"],
+					display: FieldDisplay.Description
+				}
+			});
 			sinon.stub(oConditions, "getParent").returns(oContainer);
 			oConditions.oParent = oContainer; // fake
-			var aConditions = [Condition.createCondition("EQ", ["X"], undefined, undefined, ConditionValidated.NotValidated)];
-			oConditions.setProperty("_conditions", aConditions); // don't need to test the binding of Container here
-			oConditions.setProperty("_config", { // don't need to test the binding of Container here
-				dataType: oType,
-				maxConditions: -1,
-				delegate: FieldBaseDelegate,
-				delegateName: "sap/ui/mdc/field/FieldBaseDelegate",
-				payload: {text: "X"},
-				operators: ["EQ", "BT", "Contains"],
-				display: FieldDisplay.Description
-			});
 
 			oModel = new JSONModel({
 				_valid: true
@@ -134,7 +136,7 @@ sap.ui.define([
 				var oDefineConditionPanel = oContent.getContent()[0];
 				assert.ok(oDefineConditionPanel.isA("sap.ui.mdc.field.DefineConditionPanel"), "DefineConditionPanel in ScrollContainer");
 				assert.equal(oDefineConditionPanel.getLabel(), "Test", "title");
-				assert.deepEqual(oDefineConditionPanel.getConditions(), oConditions.getProperty("_conditions"), "Conditions on DefineConditionPanel");
+				assert.deepEqual(oDefineConditionPanel.getConditions(), oConditions.getConditions(), "Conditions on DefineConditionPanel");
 				assert.ok(oDefineConditionPanel.getInputOK(), "inputOK on DefineConditionPanel");
 				var oFormatOptions = oDefineConditionPanel.getFormatOptions();
 				var oTestFormatOptions = {
@@ -161,7 +163,7 @@ sap.ui.define([
 				aConditions = undefined;
 				sType = undefined;
 
-				oConditions.setProperty("_config", { // don't need to test the binding of Container here
+				oConditions.setConfig({ // don't need to test the binding of Container here
 					dataType: oType,
 					maxConditions: 1,
 					delegate: FieldBaseDelegate,

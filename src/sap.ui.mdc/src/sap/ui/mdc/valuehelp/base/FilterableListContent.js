@@ -336,7 +336,7 @@ sap.ui.define([
 			return;
 		}
 
-		this.applyFilters(this.get_filterValue());
+		this.applyFilters(this.getFilterValue());
 	};
 
 	FilterableListContent.prototype._formatConditions = function(aConditions) {
@@ -420,7 +420,7 @@ sap.ui.define([
 					}
 					this._assignCollectiveSearch();
 					_addInParameterToFilterBar.call(this, oFilterBar, this.getProperty("_inConditions"));
-					_addFilterValueToFilterBar.call(this, oFilterBar, this.getProperty("_filterValue"));
+					_addFilterValueToFilterBar.call(this, oFilterBar, this.getFilterValue());
 				}
 			}
 		}

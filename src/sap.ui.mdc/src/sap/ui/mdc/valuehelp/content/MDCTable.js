@@ -172,7 +172,7 @@ sap.ui.define([
 					});
 					var aAddConditions = [], aRemoveConditions = [];
 					var aSelectedRows = MDCTableHelperConfig["Table"].getSelectedItems();
-					var aCurrentConditions = this.get_conditions();
+					var aCurrentConditions = this.getConditions();
 					aRows.forEach(function (oRow, i) {
 						var bIsInSelectedConditions = this._isItemSelected(oRow, aCurrentConditions);
 						var bIsRowSelected = aSelectedRows.indexOf(oRow) !== -1;
@@ -239,7 +239,7 @@ sap.ui.define([
 		if (this._oTableHelper) {
 			this._bSelectionIsUpdating = true;
 			var aItems = this._oTableHelper.getItems();
-			var aConditions = this.get_conditions();
+			var aConditions = this.getConditions();
 			var aModifications = [];
 			for (var iId in aItems) {
 				var oItem = aItems[iId];
@@ -366,7 +366,7 @@ sap.ui.define([
 	};
 
 	var _handleSearch = function () {
-		return this.applyFilters(this.get_filterValue());
+		return this.applyFilters(this.getFilterValue());
 	};
 
 	MDCTable.prototype._observeChanges = function (oChanges) {
@@ -439,7 +439,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (oChanges.name === "_config") {
+		if (oChanges.name === "config") {
 			_adjustTable.call(this);
 		}
 
@@ -522,7 +522,7 @@ sap.ui.define([
 					};
 				}
 
-				this.setAggregation("_displayContent", this._oContentLayout);
+				this.setAggregation("displayContent", this._oContentLayout);
 
 				if (!this._getPriorityFilterBar()) {
 					return this._createDefaultFilterBar().then(function () {

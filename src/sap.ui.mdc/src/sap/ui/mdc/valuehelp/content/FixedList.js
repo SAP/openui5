@@ -133,7 +133,7 @@ sap.ui.define([
 
 					oList.setModel(this._oManagedObjectModel, "$help");
 //					oList.bindElement({ path: "/", model: "$help" });
-					this.setAggregation("_displayContent", oList, true); // to have in control tree
+					this.setAggregation("displayContent", oList, true); // to have in control tree
 
 					return oList;
 				}.bind(this));
@@ -142,7 +142,7 @@ sap.ui.define([
 
 	function _getList() {
 
-		return this.getAggregation("_displayContent");
+		return this.getAggregation("displayContent");
 
 	}
 
@@ -154,10 +154,10 @@ sap.ui.define([
 		if (bSelected) {
 			var oOriginalItem = _getOriginalItem.call(this, oItem);
 			var vKey = _getKey.call(this, oOriginalItem);
-//			this.fireRemoveConditions({conditions: this.get_conditions()});
+//			this.fireRemoveConditions({conditions: this.getConditions()});
 			_setConditions.call(this, vKey, oItem.getLabel());
-//			this.fireAddConditions({conditions: this.get_conditions()});
-			this.fireSelect({type: SelectType.Set, conditions: this.get_conditions()});
+//			this.fireAddConditions({conditions: this.getConditions()});
+			this.fireSelect({type: SelectType.Set, conditions: this.getConditions()});
 			this.fireConfirm();
 		}
 
@@ -166,7 +166,7 @@ sap.ui.define([
 	function _setConditions(vKey, sValue) {
 
 		var oCondition = this._createCondition(vKey, sValue);
-		this.setProperty("_conditions", [oCondition], true);
+		this.setProperty("conditions", [oCondition], true);
 
 		return oCondition;
 
@@ -176,7 +176,7 @@ sap.ui.define([
 
 		var bFilterList = this.getFilterList();
 
-		return !bFilterList || _filterText.call(this, sText, this.get_filterValue());
+		return !bFilterList || _filterText.call(this, sText, this.getFilterValue());
 
 	}
 
@@ -211,9 +211,9 @@ sap.ui.define([
 
 		var oList = _getList.call(this);
 		if (oList) {
-			var aConditions = this.get_conditions();
+			var aConditions = this.getConditions();
 			var vSelectedKey;
-			var sFilterValue = this.get_filterValue();
+			var sFilterValue = this.getFilterValue();
 			var bUseFirstMatch = this.getUseFirstMatch();
 			var bFistFilterItemSelected = false;
 //			var oOperator = this._getOperator();
@@ -350,7 +350,7 @@ sap.ui.define([
 		var iItems = aItems.length;
 		var iSelectedIndex = 0;
 		var bFilterList = this.getFilterList();
-		var sFilterValue = this.get_filterValue();
+		var sFilterValue = this.getFilterValue();
 		var bLeaveFocus = false;
 
 		if (!bFilterList && !oSelectedItem) {

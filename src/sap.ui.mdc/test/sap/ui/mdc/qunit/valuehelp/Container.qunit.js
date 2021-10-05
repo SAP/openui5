@@ -282,15 +282,15 @@ sap.ui.define([
 		var oContent = new Content("Content1");
 		oContainer.addContent(oContent);
 
-		assert.equal(oContent.getProperty("_filterValue"), "X", "_filterValue from ValueHelp");
-		assert.deepEqual(oContent.getProperty("_config"), oValueHelpConfig, "_config from ValueHelp");
-		assert.deepEqual(oContent.getProperty("_conditions"), [Condition.createItemCondition("X", "Text")], "_conditions from ValueHelp");
+		assert.equal(oContent.getFilterValue(), "X", "filterValue from ValueHelp");
+		assert.deepEqual(oContent.getConfig(), oValueHelpConfig, "_config from ValueHelp");
+		assert.deepEqual(oContent.getConditions(), [Condition.createItemCondition("X", "Text")], "conditions from ValueHelp");
 
 		// remove
 		oContent.destroy();
-		assert.equal(oContent.getProperty("_filterValue"), "", "_filterValue initialized");
-		assert.deepEqual(oContent.getProperty("_config"), {}, "_config initialized");
-		assert.deepEqual(oContent.getProperty("_conditions"), [], "_conditions initialized");
+		assert.equal(oContent.getFilterValue(), "", "filterValue initialized");
+		assert.deepEqual(oContent.getConfig(), {}, "_config initialized");
+		assert.deepEqual(oContent.getConditions(), [], "conditions initialized");
 
 	});
 

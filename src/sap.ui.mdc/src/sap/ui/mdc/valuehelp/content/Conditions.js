@@ -85,9 +85,9 @@ sap.ui.define([
 						this.getId() + "-DCP",
 						{
 							label: "{$help>/label}",
-							conditions: "{$help>/_conditions}",
+							conditions: "{$help>/conditions}",
 							inputOK: "{$valueHelp>/_valid}",
-							formatOptions: {path: "$help>/_config", formatter: _convertConfig}, // TODO: change DefineConditionPanel to use Config
+							formatOptions: {path: "$help>/config", formatter: _convertConfig}, // TODO: change DefineConditionPanel to use Config
 							conditionProcessed: _handleConditionProcessed.bind(this)
 						}
 					).setModel(this._oManagedObjectModel, "$help");
@@ -108,7 +108,7 @@ sap.ui.define([
 						}
 						return aContent;
 					};
-					this.setAggregation("_displayContent", this._oScrollContainer);
+					this.setAggregation("displayContent", this._oScrollContainer);
 					return this._oScrollContainer;
 				}.bind(this));
 		}.bind(this));
@@ -137,7 +137,7 @@ sap.ui.define([
 
 	Conditions.prototype.getCount = function (aConditions) {
 		var iCount = 0;
-		// var aConditions = arguments[0] || this.get_conditions();
+
 		for (var i = 0; i < aConditions.length; i++) {
 			var oCondition = aConditions[i];
 			if (oCondition.isEmpty !== true && oCondition.validated === ConditionValidated.NotValidated) {
@@ -197,7 +197,7 @@ sap.ui.define([
 	};
 
 	function _handleOK(oEvent) {
-//		var aConditions = this.get_conditions();
+//		var aConditions = this.getConditions();
 //
 //		// remove empty conditions
 //		aConditions = Condition._removeEmptyConditions(aConditions);
@@ -209,7 +209,7 @@ sap.ui.define([
 	}
 
 	function _handleConditionProcessed(oEvent) {
-		var aNextConditions = this.get_conditions();
+		var aNextConditions = this.getConditions();
 
 		if (this._getMaxConditions() === 1) {	// TODO: Better treatment of conditions? DefineConditionPanel currently hijacks conditions
 			aNextConditions = aNextConditions.filter(function(oCondition){

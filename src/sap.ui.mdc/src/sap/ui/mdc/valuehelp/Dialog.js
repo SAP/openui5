@@ -297,7 +297,7 @@ sap.ui.define([
 
 					var oITF = new IconTabFilter(this.getId() + "-ITF", {
 						key: {path: "$help>id"},
-						content: new DialogTab(this.getId() + "-DT", {content: {path: "$help>_displayContent"}}),
+						content: new DialogTab(this.getId() + "-DT", {content: {path: "$help>displayContent"}}),
 						text: {parts: ['$help>', '$valueHelp>/conditions'], formatter:
 							function(oContent, aConditions) {
 								return oContent ? oContent.getFormattedTitle(oContent.getCount(aConditions)) : "none";

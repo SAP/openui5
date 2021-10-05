@@ -101,9 +101,9 @@ sap.ui.define([
 		if (oChanges.name === "content") {
 			var oContent = oChanges.child;
 			if (oChanges.mutation === "remove") {
-				oContent.unbindProperty("_filterValue");
-				oContent.unbindProperty("_conditions");
-				oContent.unbindProperty("_config");
+				oContent.unbindProperty("filterValue");
+				oContent.unbindProperty("conditions");
+				oContent.unbindProperty("config");
 				oContent.detachConfirm(this._handleConfirmed, this);
 				oContent.detachCancel(this._handleCanceled, this);
 				oContent.detachSelect(this._handleSelect, this);
@@ -118,13 +118,13 @@ sap.ui.define([
 				}
 
 			} else {
-				oContent.bindProperty("_filterValue", { path: "/filterValue", model: "$valueHelp", mode: BindingMode.OneWay}); // inherit from ValueHelp
+				oContent.bindProperty("filterValue", { path: "/filterValue", model: "$valueHelp", mode: BindingMode.OneWay}); // inherit from ValueHelp
 				var oBindingOptions = { path: "/conditions", model: "$valueHelp", mode: BindingMode.OneWay};
 				if (oContent._formatConditions) {
 					oBindingOptions.formatter = oContent._formatConditions.bind(oContent);
 				}
-				oContent.bindProperty("_conditions", oBindingOptions); // inherit from ValueHelp
-				oContent.bindProperty("_config", { path: "/_config", model: "$valueHelp", mode: BindingMode.OneWay}); // inherit from ValueHelp
+				oContent.bindProperty("conditions", oBindingOptions); // inherit from ValueHelp
+				oContent.bindProperty("config", { path: "/_config", model: "$valueHelp", mode: BindingMode.OneWay}); // inherit from ValueHelp
 
 				oContent.attachConfirm(this._handleConfirmed, this);
 				oContent.attachCancel(this._handleCanceled, this);
