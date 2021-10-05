@@ -13,13 +13,20 @@ sap.ui.define(["sap/base/util/each"],
 		 *
 		 * This module is only for experimental and internal use!
 		 *
+		 * @param {sap.ui.model.TreeBinding} oBinding
+		 *   The binding to add ListBinding functionality to
+		 * @param {object} oControl
+		 *   The tree or tree table control using the given binding; the control is used for
+		 *   selection handling
+		 *
 		 * @alias sap.ui.model.TreeBindingCompatibilityAdapter
 		 * @class
 		 * @protected
+		 *
+		 * @deprecated use {@link sap.ui.model.TreeBindingAdapter} instead
 		 */
-		var TreeBindingCompatibilityAdapter = function (oBinding, oTable) {
+		var TreeBindingCompatibilityAdapter = function (oBinding, oControl) {
 			// Code necessary for ClientTreeBinding
-			var that = oTable;
 			Object.assign(oBinding, {
 				_init: function(bExpandFirstLevel) {
 					this._bExpandFirstLevel = bExpandFirstLevel;
@@ -217,19 +224,19 @@ sap.ui.define(["sap/base/util/each"],
 					this.toggleContext(this.getContextByIndex(iRowIndex));
 				},
 				storeSelection: function() {
-					var aSelectedIndices = that.getSelectedIndices();
+					var aSelectedIndices = oControl.getSelectedIndices();
 					var aSelectedContexts = [];
 					each(aSelectedIndices, function(iIndex, iValue) {
-						aSelectedContexts.push(that.getContextByIndex(iValue));
+						aSelectedContexts.push(oControl.getContextByIndex(iValue));
 					});
 					this._aSelectedContexts = aSelectedContexts;
 				},
 				restoreSelection: function() {
-					that.clearSelection();
+					oControl.clearSelection();
 					var _aSelectedContexts = this._aSelectedContexts;
 					each(this.aContexts, function(iIndex, oContext) {
 						if (((_aSelectedContexts ? _aSelectedContexts.indexOf(oContext) : -1)) >= 0) {
-							that.addSelectionInterval(iIndex, iIndex);
+							oControl.addSelectionInterval(iIndex, iIndex);
 						}
 					});
 					this._aSelectedContexts = undefined;
@@ -240,13 +247,13 @@ sap.ui.define(["sap/base/util/each"],
 				},
 				detachSelectionChanged: function() {}, // for compatibility
 				clearSelection: function () {
-					that._oSelection.clearSelection();
+					oControl._oSelection.clearSelection();
 				},
 				attachSort: function() {},
 				detachSort: function() {}
 			});
 			// initialize the binding
-			oBinding._init(oTable.getExpandFirstLevel());
+			oBinding._init(oControl.getExpandFirstLevel());
 
 		};
 
