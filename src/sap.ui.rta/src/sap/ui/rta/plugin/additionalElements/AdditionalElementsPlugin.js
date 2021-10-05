@@ -9,6 +9,8 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/fl/write/api/FieldExtensibility",
+	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
+	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsUtils",
@@ -21,6 +23,8 @@ sap.ui.define([
 	OverlayRegistry,
 	OverlayUtil,
 	FieldExtensibility,
+	AddElementsDialog,
+	AdditionalElementsAnalyzer,
 	Plugin,
 	Utils,
 	AdditionalElementsUtils,
@@ -77,15 +81,21 @@ sap.ui.define([
 	 * @experimental Since 1.44. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var AdditionalElementsPlugin = Plugin.extend("sap.ui.rta.plugin.additionalElements.AdditionalElementsPlugin", {
+		constructor: function(oPropertyBag) {
+			oPropertyBag.dialog = new AddElementsDialog();
+			Plugin.apply(this, arguments);
+		},
 		metadata: {
 			// ---- object ----
 
 			// ---- control specific ----
 			library: "sap.ui.rta",
 			properties: {
-				analyzer: "object", //sap.ui.rta.plugin.additionalElements.AdditionalElementsAnalyzer
-				dialog: "object", //sap.ui.rta.plugin.additionalElements.AddElementsDialog
-				commandFactory: "object"
+				commandFactory: "object",
+				analyzer: "object" //sap.ui.rta.plugin.additionalElements.AdditionalElementsAnalyzer - will be removed in a later commit; kept to not break unified.shell
+			},
+			aggregations: {
+				dialog: { type: "sap.ui.rta.plugin.additionalElements.AddElementsDialog", multiple: false }
 			},
 			associations: {},
 			events: {}
@@ -241,10 +251,10 @@ sap.ui.define([
 					if (oExtensibilityInfo) {
 						this.getDialog().detachEvent("openCustomField", this._onOpenCustomField, this);
 						this.getDialog().attachEvent("openCustomField", bOverlayIsSibling, this._onOpenCustomField, this);
-						this.getDialog()._oCustomFieldButton.setVisible(true);
+						this.getDialog().setCustomFieldButtonVisible(true);
 						return this.getDialog().addExtensionData(oExtensibilityInfo.extensionData);
 					}
-					return this.getDialog()._oCustomFieldButton.setVisible(false);
+					return this.getDialog().setCustomFieldButtonVisible(false);
 				}.bind(this))
 
 				.then(function() {
@@ -296,9 +306,6 @@ sap.ui.define([
 		_setDialogTitle: function(mActions, oParentElement, sControlName) {
 			var sDialogTitle = AdditionalElementsUtils.getText("HEADER_ADDITIONAL_ELEMENTS", mActions, oParentElement, PLURAL, sControlName);
 			this.getDialog().setTitle(sDialogTitle);
-			if (sControlName) {
-				this.getDialog()._oList.setNoDataText(this.getDialog()._oTextResources.getText("MSG_NO_FIELDS", sControlName.toLowerCase()));
-			}
 		},
 
 		//Function called when custom field button was pressed
@@ -401,17 +408,17 @@ sap.ui.define([
 						aPromises.push({
 							aggregation: sAggregationName,
 							elementPromises: [
-								mActions.reveal ? this.getAnalyzer().enhanceInvisibleElements(mParents.parent, mActions) : Promise.resolve([]),
-								mActions.addViaDelegate ? this.getAnalyzer().getUnrepresentedDelegateProperties(mParents.parent, mActions.addViaDelegate) : Promise.resolve([]),
-								mActions.addViaCustom ? this.getAnalyzer().getCustomAddItems(mParents.parent, mActions.addViaCustom, mActions.aggregation) : Promise.resolve([])
+								mActions.reveal ? AdditionalElementsAnalyzer.enhanceInvisibleElements(mParents.parent, mActions) : Promise.resolve([]),
+								mActions.addViaDelegate ? AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(mParents.parent, mActions.addViaDelegate) : Promise.resolve([]),
+								mActions.addViaCustom ? AdditionalElementsAnalyzer.getCustomAddItems(mParents.parent, mActions.addViaCustom, mActions.aggregation) : Promise.resolve([])
 							]
 						});
-					}.bind(this));
+					});
 					if (bCheckExtensibility) {
 						return handleExtensibility(mParents.parent);
 					}
 					return undefined;
-				}.bind(this))
+				})
 
 				.then(function(oExtensibilityInfo) {
 					this.setExtensibilityInfo(bOverlayIsSibling, oExtensibilityInfo);
@@ -593,11 +600,11 @@ sap.ui.define([
 					Promise.all(aPromisesByAggregation.elementPromises).then(function(aAnalyzerValues) {
 						return {
 							aggregation: aPromisesByAggregation.aggregation,
-							elements: this.getAnalyzer().getFilteredItemsList(aAnalyzerValues)
+							elements: AdditionalElementsAnalyzer.getFilteredItemsList(aAnalyzerValues)
 						};
-					}.bind(this))
+					})
 				);
-			}.bind(this));
+			});
 
 			return Promise.all(aCollectedPromises)
 				.then(function(aElementsPerAggregation) {
@@ -641,6 +648,13 @@ sap.ui.define([
 				return this._oExtensibilityInfo[bOverlayIsSibling ? "asSibling" : "asChild"];
 			}
 			return undefined;
+		},
+
+		exit: function() {
+			this.getDialog().destroy();
+			if (Plugin.prototype.exit) {
+				Plugin.prototype.exit.apply(this, arguments);
+			}
 		}
 
 	});

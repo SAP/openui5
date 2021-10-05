@@ -96,23 +96,25 @@ sap.ui.define([
 				})[0];
 			}
 
-			var oList = this.oAddElementsDialog.getList();
-			var sBindingPath = oList.getItems()[0].getBindingContext().getPath();
+			this.oAddElementsDialog._oDialogPromise.then(function() {
+				var oList = sap.ui.getCore().byId(this.oAddElementsDialog.getId() + "--" + "rta_addElementsDialogList");
+				var sBindingPath = oList.getItems()[0].getBindingContext().getPath();
 
-			this.oAddElementsDialog.attachOpened(function() {
-				var oTargetItem = getItemByPath(oList.getItems(), sBindingPath);
-				oTargetItem.$().trigger("focus");
-				assert.strictEqual(document.activeElement, oTargetItem.getDomRef());
-				oTargetItem.$().trigger("tap");
-
-				// Wait until list is re-rendered
-				setTimeout(function () {
+				this.oAddElementsDialog.attachOpened(function() {
 					var oTargetItem = getItemByPath(oList.getItems(), sBindingPath);
+					oTargetItem.$().trigger("focus");
 					assert.strictEqual(document.activeElement, oTargetItem.getDomRef());
-					done();
+					oTargetItem.$().trigger("tap");
+
+					// Wait until list is re-rendered
+					setTimeout(function () {
+						var oTargetItem = getItemByPath(oList.getItems(), sBindingPath);
+						assert.strictEqual(document.activeElement, oTargetItem.getDomRef());
+						done();
+					});
 				});
-			});
-			this.oAddElementsDialog.open();
+				this.oAddElementsDialog.open();
+			}.bind(this));
 		});
 
 		QUnit.test("when AddElementsDialog gets initialized and open is called,", function(assert) {
@@ -124,7 +126,7 @@ sap.ui.define([
 				assert.equal(this._oList.getItems().length, 6, "then 6 elements internally known");
 				assert.equal(this.getElements().length, 6, "then 6 elements externally known");
 				assert.equal(this.getSelectedElements().length, 2, "then 2 selected elements");
-				assert.equal(this._oCustomFieldButton.getEnabled(), false, "then the customField-button is disabled");
+				assert.equal(this.getCustomFieldEnabled(), false, "then the customField-button is disabled");
 				assert.equal(this._oList.getItems()[0].getContent()[0].getItems()[1].getText(), "was original", "then the originalLabel is set");
 				done();
 			});
@@ -140,25 +142,28 @@ sap.ui.define([
 				done();
 			});
 			this.oAddElementsDialog.attachOpened(function() {
-				assert.equal(this._oCustomFieldButton.getEnabled(), true, "then the button is enabled");
-				this._oCustomFieldButton.firePress();
+				assert.equal(this.getCustomFieldEnabled(), true, "then the button is enabled");
+				var oCustomFieldButton = sap.ui.getCore().byId(this.getId() + "--" + "rta_customFieldButton");
+				oCustomFieldButton.firePress();
 			});
 			this.oAddElementsDialog.open();
 		});
 
-		QUnit.test("when AddElementsDialog gets initialized with customFieldsEnabled set and no Bussiness Contexts are available", function(assert) {
+		QUnit.test("when AddElementsDialog gets initialized with customFieldsEnabled set and no Business Contexts are available", function(assert) {
 			var done = assert.async();
 
 			this.oAddElementsDialog.setCustomFieldEnabled(true);
 			this.oAddElementsDialog.attachOpened(function() {
-				assert.ok(this._oBCContainer.getVisible(), "then the Business Context Container is visible");
-				assert.equal(this._oBCContainer.getContent().length, 2, "and the Business Context Container has two entries");
-				assert.equal(this._oBCContainer.getContent()[0].getText(), "extensibilityHeaderText", "and the first entry is the Title");
-				assert.equal(this._oBCContainer.getContent()[1].getText(), oTextResources.getText("MSG_NO_BUSINESS_CONTEXTS"), "and the second entry is the No-Context Message");
+				var oBCContainer = sap.ui.getCore().byId(this.getId() + "--" + "rta_businessContextContainer");
+				assert.ok(oBCContainer.getVisible(), "then the Business Context Container is visible");
+				assert.equal(oBCContainer.getContent().length, 2, "and the Business Context Container has two entries");
+				assert.equal(oBCContainer.getContent()[0].getText(), "extensibilityHeaderText", "and the first entry is the Title");
+				assert.equal(oBCContainer.getContent()[1].getText(), oTextResources.getText("MSG_NO_BUSINESS_CONTEXTS"), "and the second entry is the No-Context Message");
 				done();
 			});
-			this.oAddElementsDialog.addExtensionData();
-			this.oAddElementsDialog.open();
+			this.oAddElementsDialog.addExtensionData().then(function() {
+				this.oAddElementsDialog.open();
+			}.bind(this));
 		});
 
 		QUnit.test("when AddElementsDialog gets initialized with customFieldsEnabled set and three Business Contexts are available", function(assert) {
@@ -166,12 +171,13 @@ sap.ui.define([
 
 			this.oAddElementsDialog.setCustomFieldEnabled(true);
 			this.oAddElementsDialog.attachOpened(function() {
-				assert.ok(this._oBCContainer.getVisible(), "then the Business Context Container is visible");
-				assert.equal(this._oBCContainer.getContent().length, 4, "and the Business Context Container has four entries");
-				assert.equal(this._oBCContainer.getContent()[0].getText(), "extensibilityHeaderText", "and the first entry is the Title");
-				assert.equal(this._oBCContainer.getContent()[1].getText(), "Business Context 1", "and the second entry is the First Business Context");
-				assert.equal(this._oBCContainer.getContent()[2].getText(), "Business Context 2", "and the third entry is the Second Business Context");
-				assert.equal(this._oBCContainer.getContent()[3].getText(), "Business Context 3", "and the fourth entry is the Third Business Context");
+				var oBCContainer = sap.ui.getCore().byId(this.getId() + "--" + "rta_businessContextContainer");
+				assert.ok(oBCContainer.getVisible(), "then the Business Context Container is visible");
+				assert.equal(oBCContainer.getContent().length, 4, "and the Business Context Container has four entries");
+				assert.equal(oBCContainer.getContent()[0].getText(), "extensibilityHeaderText", "and the first entry is the Title");
+				assert.equal(oBCContainer.getContent()[1].getText(), "Business Context 1", "and the second entry is the First Business Context");
+				assert.equal(oBCContainer.getContent()[2].getText(), "Business Context 2", "and the third entry is the Second Business Context");
+				assert.equal(oBCContainer.getContent()[3].getText(), "Business Context 3", "and the fourth entry is the Third Business Context");
 				done();
 			});
 			var aBusinessContexts = [
@@ -179,8 +185,9 @@ sap.ui.define([
 				{description: "Business Context 2"},
 				{description: "Business Context 3"}
 			];
-			this.oAddElementsDialog.addExtensionData(aBusinessContexts);
-			this.oAddElementsDialog.open();
+			this.oAddElementsDialog.addExtensionData(aBusinessContexts).then(function() {
+				this.oAddElementsDialog.open();
+			}.bind(this));
 		});
 
 		QUnit.test("when AddElementsDialog gets closed and opened again with customFieldsEnabled set and available Business Contexts", function(assert) {
@@ -190,12 +197,13 @@ sap.ui.define([
 				this.oAddElementsDialog.attachEventOnce("opened", fnOnOpen);
 			}
 			function fnOnOpen() {
-				assert.ok(this._oBCContainer.getVisible(), "then the Business Context Container is visible");
-				assert.equal(this._oBCContainer.getContent().length, 4, "and the Business Context Container has four entries");
-				assert.equal(this._oBCContainer.getContent()[0].getText(), "extensibilityHeaderText", "and the first entry is the Title");
-				assert.equal(this._oBCContainer.getContent()[1].getText(), "Business Context 1", "and the second entry is the First Business Context");
-				assert.equal(this._oBCContainer.getContent()[2].getText(), "Business Context 2", "and the third entry is the Second Business Context");
-				assert.equal(this._oBCContainer.getContent()[3].getText(), "Business Context 3", "and the fourth entry is the Third Business Context");
+				var oBCContainer = sap.ui.getCore().byId(this.getId() + "--" + "rta_businessContextContainer");
+				assert.ok(oBCContainer.getVisible(), "then the Business Context Container is visible");
+				assert.equal(oBCContainer.getContent().length, 4, "and the Business Context Container has four entries");
+				assert.equal(oBCContainer.getContent()[0].getText(), "extensibilityHeaderText", "and the first entry is the Title");
+				assert.equal(oBCContainer.getContent()[1].getText(), "Business Context 1", "and the second entry is the First Business Context");
+				assert.equal(oBCContainer.getContent()[2].getText(), "Business Context 2", "and the third entry is the Second Business Context");
+				assert.equal(oBCContainer.getContent()[3].getText(), "Business Context 3", "and the fourth entry is the Third Business Context");
 				done();
 			}
 
@@ -206,7 +214,9 @@ sap.ui.define([
 				{description: "Business Context 3"}
 			];
 			this.oAddElementsDialog.addExtensionData(aBusinessContexts);
-			this.oAddElementsDialog._oDialog.attachEventOnce("afterClose", fnOnClose, this);
+			this.oAddElementsDialog._oDialogPromise.then(function(oDialog) {
+				oDialog.attachEventOnce("afterClose", fnOnClose, this);
+			}.bind(this));
 
 			// Open the first time and close it
 			this.oAddElementsDialog.open();
@@ -271,22 +281,6 @@ sap.ui.define([
 				done();
 			});
 			this.oAddElementsDialog.open();
-		});
-
-		QUnit.test("when unsupported element type is specified", function (assert) {
-			var fnDone = assert.async();
-			sandbox.stub(Log, "error")
-				.callThrough()
-				.withArgs(sinon.match("unsupported data type"))
-				.callsFake(function () {
-					assert.ok(true);
-					fnDone();
-				});
-
-			this.oAddElementsDialog.setElements([{
-				label: "label1",
-				type: "unknown"
-			}]);
 		});
 	});
 

@@ -98,13 +98,11 @@ sap.ui.define([
 		beforeEach: function (assert) {
 			givenBarWithButtons.call(this);
 			var done = assert.async();
-			this.oDialog = new AddElementsDialog();
 
 			this.oPlugin = new AdditionalElementsPlugin({
-				analyzer: AdditionalElementsAnalyzer,
-				dialog: this.oDialog,
 				commandFactory: new CommandFactory()
 			});
+			this.oDialog = this.oPlugin.getDialog();
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oPseudoPublicParent],
 				plugins: [this.oPlugin]
@@ -124,7 +122,7 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("when getting the available elements for the contentLeft aggregation of the Bar clicking on the Bar", function (assert) {
-			this.oDialogOpenStub = sandbox.stub(this.oDialog, "open").returns(Promise.reject());
+			sandbox.stub(this.oDialog, "open").returns(Promise.reject());
 			this.oDialogSetElementsSpy = sandbox.spy(this.oDialog, "setElements");
 
 			return this.oPlugin.showAvailableElements(false, "contentLeft", [this.oBarOverlay])
@@ -136,7 +134,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when getting the available elements for the contentLeft aggregation of the Bar clicking on one element from the same aggregation", function (assert) {
-			this.oDialogOpenStub = sandbox.stub(this.oDialog, "open").returns(Promise.reject());
+			sandbox.stub(this.oDialog, "open").returns(Promise.reject());
 			this.oDialogSetElementsSpy = sandbox.spy(this.oDialog, "setElements");
 
 			return this.oPlugin.showAvailableElements(true, "contentLeft", [this.oVisibleLeftButtonOverlay])
@@ -148,7 +146,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when getting the available elements for the contentMiddle aggregation (all elements visible) of the Bar clicking on one element from the same aggregation", function (assert) {
-			this.oDialogOpenStub = sandbox.stub(this.oDialog, "open").returns(Promise.reject());
+			sandbox.stub(this.oDialog, "open").returns(Promise.reject());
 			this.oDialogSetElementsSpy = sandbox.spy(this.oDialog, "setElements");
 			this.oVisibleMiddleButton1Overlay = OverlayRegistry.getOverlay(this.oVisibleMiddleButton1);
 
@@ -162,7 +160,7 @@ sap.ui.define([
 
 		QUnit.test("when getting the available elements after all available elements were displayed and then one is hidden again", function (assert) {
 			var done = assert.async();
-			this.oDialogOpenStub = sandbox.stub(this.oDialog, "open").returns(Promise.reject());
+			sandbox.stub(this.oDialog, "open").returns(Promise.reject());
 			this.oDialogSetElementsSpy = sandbox.spy(this.oDialog, "setElements");
 
 			//This is to ensure that the isEditableCheck happens even if the button visibility is not completely finished
@@ -190,7 +188,7 @@ sap.ui.define([
 
 		QUnit.test("when adding the InvisibleRightButton to the contentLeft aggregation clicking on the Bar", function (assert) {
 			var done = assert.async();
-			this.oDialogOpenStub = sandbox.stub(this.oDialog, "open").returns(Promise.resolve());
+			sandbox.stub(this.oDialog, "open").returns(Promise.resolve());
 			this.oDialogGetSelectedElementsStub = sandbox.stub(this.oDialog, "getSelectedElements")
 				.callsFake(function() {
 					return [this.oDialog.getElements()[1]];
@@ -221,7 +219,7 @@ sap.ui.define([
 
 		QUnit.test("when adding the InvisibleRightButton to the contentLeft aggregation clicking on an element of the aggregation", function (assert) {
 			var done = assert.async();
-			this.oDialogOpenStub = sandbox.stub(this.oDialog, "open").returns(Promise.resolve());
+			sandbox.stub(this.oDialog, "open").returns(Promise.resolve());
 			this.oDialogGetSelectedElementsStub = sandbox.stub(this.oDialog, "getSelectedElements")
 				.callsFake(function() {
 					return [this.oDialog.getElements()[1]];
@@ -252,7 +250,7 @@ sap.ui.define([
 
 		QUnit.test("when getting the available elements for the contentRight aggregation and this aggregation is not valid for the middle button which was made invisible", function (assert) {
 			var done = assert.async();
-			this.oDialogOpenStub = sandbox.stub(this.oDialog, "open").returns(Promise.reject());
+			sandbox.stub(this.oDialog, "open").returns(Promise.reject());
 			this.oDialogSetElementsSpy = sandbox.spy(this.oDialog, "setElements");
 			this.oVisibleRightButtonOverlay = OverlayRegistry.getOverlay(this.oVisibleRightButton);
 			var bWasCalled = false;

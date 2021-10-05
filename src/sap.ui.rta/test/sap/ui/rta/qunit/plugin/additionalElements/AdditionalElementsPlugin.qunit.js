@@ -1709,7 +1709,8 @@ sap.ui.define([
 				.then(function () {
 					assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
 					assert.ok(fnServiceUpToDateStub.notCalled, "up to date service is not called");
-					assert.equal(this.oPlugin.getDialog()._oCustomFieldButton.getVisible(), false, "then the Button to create custom Fields is not shown");
+					var oCustomFieldButton = sap.ui.getCore().byId(this.oDialog.getId() + "--" + "rta_customFieldButton");
+					assert.equal(oCustomFieldButton.getVisible(), false, "then the button to create custom fields is not shown");
 				}.bind(this));
 		});
 
@@ -1731,7 +1732,8 @@ sap.ui.define([
 				.then(function () {
 					assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
 					assert.ok(fnServiceUpToDateStub.getCall(0).args[0], "addViaDelegate is dependent on up to date service, it should be called with a control");
-					assert.equal(this.oPlugin.getDialog()._oCustomFieldButton.getVisible(), false, "the Button to create custom Fields is not shown");
+					var oCustomFieldButton = sap.ui.getCore().byId(this.oDialog.getId() + "--" + "rta_customFieldButton");
+					assert.equal(oCustomFieldButton.getVisible(), false, "the Button to create custom Fields is not shown");
 				}.bind(this));
 		});
 
@@ -1754,7 +1756,8 @@ sap.ui.define([
 
 				.then(function () {
 					assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
-					assert.equal(this.oPlugin.getDialog()._oCustomFieldButton.getVisible(), true, "the Button to create custom Fields is shown");
+					var oCustomFieldButton = sap.ui.getCore().byId(this.oDialog.getId() + "--" + "rta_customFieldButton");
+					assert.equal(oCustomFieldButton.getVisible(), true, "the Button to create custom Fields is shown");
 				}.bind(this));
 		});
 
@@ -1825,10 +1828,10 @@ sap.ui.define([
 
 				.then(function () {
 					assert.ok(fnServiceUpToDateStub.getCall(0).args[0], "addViaDelegate is dependent on up to date service, it should be called with a control");
-
+					var oBCContainer = sap.ui.getCore().byId(this.oDialog.getId() + "--" + "rta_businessContextContainer");
 					assert.equal(this.oDialog.getCustomFieldEnabled(), true, "then in the dialog custom field is enabled");
-					assert.equal(this.oDialog._oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
-					assert.equal(this.oDialog._oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
+					assert.equal(oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
+					assert.equal(oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
 
 					//Simulate custom field button pressed, should trigger openNewWindow
 					this.oDialog.fireOpenCustomField();
@@ -1863,8 +1866,9 @@ sap.ui.define([
 
 						.then(function () {
 							assert.equal(this.oDialog.getCustomFieldEnabled(), true, "then in the dialog custom field is enabled");
-							assert.equal(this.oDialog._oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
-							assert.equal(this.oDialog._oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
+							var oBCContainer = sap.ui.getCore().byId(this.oDialog.getId() + "--" + "rta_businessContextContainer");
+							assert.equal(oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
+							assert.equal(oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
 							return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 						}.bind(this))
 						.then(function () {
@@ -2128,18 +2132,16 @@ sap.ui.define([
 	}
 
 	function givenThePluginWithDialogClosing(oDialogReturnValue) {
-		this.oDialog = new AddElementsDialog();
-		//simulate dialog closed with OK/CANCEL
-		this.fnDialogOpen = sandbox.stub(this.oDialog, "open").returns(oDialogReturnValue);
-
 		//intercept command creation
 		this.fnGetCommandSpy = sandbox.spy(CommandFactory.prototype, "getCommandFor");
 
 		this.oPlugin = new AdditionalElementsPlugin({
-			analyzer: AdditionalElementsAnalyzer,
-			dialog: this.oDialog,
 			commandFactory: new CommandFactory()
 		});
+		this.oDialog = this.oPlugin.getDialog();
+
+		//simulate dialog closed with OK/CANCEL
+		this.fnDialogOpen = sandbox.stub(this.oDialog, "open").returns(oDialogReturnValue);
 	}
 
 	function enhanceForResponsibleElement(mActions) {

@@ -1,0 +1,74 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:layout="sap.ui.layout">
+
+	<Dialog
+		class="sapUIRtaFieldRepositoryDialog sapUiNoContentPadding"
+		horizontalScrolling="false">
+		<buttons>
+			<Button
+				id="rta_addDialogOkButton"
+				text="{i18n>BTN_FREP_OK}"
+				press="._submitDialog"
+				type="Emphasized"/>
+			<Button
+				text="{i18n>BTN_FREP_CANCEL}"
+				press="._cancelDialog"/>
+		</buttons>
+		<content>
+			<Toolbar>
+				<SearchField
+					width="100%"
+					liveChange="._updateModelFilter"/>
+				<Button
+					text=""
+					icon="sap-icon://sort"
+					press="._resortList"/>
+				<Button
+					id="rta_customFieldButton"
+					text=""
+					icon="sap-icon://add"
+					tooltip="{/customFieldButtonTooltip}"
+					enabled="{/customFieldEnabled}"
+					visible="{/customFieldVisible}"
+					press="._redirectToCustomFieldCreation"/>
+			</Toolbar>
+			<layout:VerticalLayout
+				id="rta_businessContextContainer"
+				class="sapUIRtaBusinessContextContainer"
+				visible="{/businessContextVisible}"
+				content="{/businessContextTexts}">
+					<Text text="{text}"/>
+			</layout:VerticalLayout>
+			<ScrollContainer
+				class="sapUIRtaCCDialogScrollContainer"
+				vertical="true"
+				horizontal="false">
+				<List
+					id="rta_addElementsDialogList"
+					mode="MultiSelect"
+					includeItemInSelection="true"
+					growing="true"
+					growingScrollToLoad="true"
+					items="{ path: '/elements', sorter: { path: 'label', descending: false}, templateShareable: false }"
+					noDataText="{i18n>MSG_NO_FIELDS}">
+					<CustomListItem
+						class="sapUIRtaListItem"
+						type="Active"
+						selected="{selected}"
+						tooltip="{tooltip}">
+						<VBox>
+							<Label
+								design="Standard"
+								text="{= ${parentPropertyName} &amp;&amp; ${duplicateName} ? ${label} + ' (' + ${parentPropertyName} + ')' : ${label} }"/>
+							<Label
+								text="{= ${originalLabel} ? ${i18n>LBL_FREP}.replace('{0}', ${originalLabel}) : ''}"
+								visible="{= !!${originalLabel} }"/>
+						</VBox>
+					</CustomListItem>
+				</List>
+			</ScrollContainer>
+		</content>
+	</Dialog>
+</core:FragmentDefinition>
