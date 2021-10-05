@@ -20,7 +20,7 @@ sap.ui.define([
 	 */
 	var UpdateIFrame = {};
 
-	var aUpdatableProperties = ["width", "height", "url"];
+	var aUpdatableProperties = ["width", "height", "url", "_settings"];
 
 	/**
 	 * Extract an IFrame control settings.
@@ -109,6 +109,10 @@ sap.ui.define([
 		return Promise.resolve()
 			.then(function() {
 				if (mRevertData) {
+					// If available, the URL is reverted to before parsing the parameters (saved in "_settings")
+					if (mRevertData.originalSettings._settings && mRevertData.originalSettings._settings.url) {
+						mRevertData.originalSettings.url = mRevertData.originalSettings._settings.url;
+					}
 					return applySettings(mPropertyBag.modifier, oControl, mRevertData.originalSettings);
 				}
 				return Promise.reject(new Error("Attempt to revert an unapplied change."));
