@@ -277,14 +277,6 @@ sap.ui.define([
 		oSemanticPage.destroy();
 	});
 
-	QUnit.test("MessagesIndicator aria-labelledby is correct", function (assert) {
-		var oMessagesIndicator = new MessagesIndicator(),
-			sAriaLabelledBy = oMessagesIndicator._getControl().getAriaLabelledBy()[0],
-			sTextId = InvisibleText.getStaticId("sap.m", "SEMANTIC_CONTROL_MESSAGES_INDICATOR");
-
-		assert.strictEqual(sAriaLabelledBy, sTextId, "MessagesIndicator button aria-labelledby is set correctly.");
-	});
-
 	QUnit.module("Aggregations", {
 		beforeEach: function () {
 
