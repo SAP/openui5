@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
 	"sap/base/util/UriParameters",
@@ -13,7 +12,6 @@ sap.ui.define([
 	merge,
 	CompVariant,
 	Change,
-	Utils,
 	Settings,
 	Layer,
 	UriParameters,
@@ -228,15 +226,7 @@ sap.ui.define([
 	}];
 
 	function stubCurrentUser(sUserId) {
-		sandbox.stub(Utils, "getUshellContainer").returns({
-			getUser: function () {
-				return sUserId ? {
-					getId: function () {
-						return sUserId;
-					}
-				} : undefined;
-			}
-		});
+		sandbox.stub(Settings.prototype, "getUserId").returns(sUserId);
 	}
 
 	function createVariant(oVariantData) {

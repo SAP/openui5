@@ -3,13 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Change",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexObjects/UpdatableChange",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger"
 ], function(
-	Change,
 	CompVariant,
 	States,
 	UpdatableChange,

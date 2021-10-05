@@ -22,9 +22,9 @@ sap.ui.define([
 	"use strict";
 
 	function isUserAuthor(oAuthor) {
-		var oUShellContainer = Utils.getUshellContainer();
-		var oUser = oUShellContainer && oUShellContainer.getUser();
-		return !oUser || oUser.getId().toUpperCase() === oAuthor.toUpperCase();
+		var oSettings = Settings.getInstanceOrUndef();
+		var vUserId = oSettings && oSettings.getUserId();
+		return !vUserId || vUserId.toUpperCase() === oAuthor.toUpperCase();
 	}
 
 	/**

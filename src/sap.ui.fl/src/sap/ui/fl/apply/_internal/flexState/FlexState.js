@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/each",
-	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath",
 	"sap/base/Log",
@@ -22,7 +21,6 @@ sap.ui.define([
 ], function(
 	_omit,
 	each,
-	isEmptyObject,
 	merge,
 	ObjectPath,
 	Log,
@@ -81,6 +79,7 @@ sap.ui.define([
 	var _mInstances = {};
 	var _mNavigationHandlers = {};
 	var _mInitPromises = {};
+	var _oShellNavigationService;
 	var _mFlexObjectInfo = {
 		appDescriptorChanges: {
 			prepareFunction: prepareAppDescriptorMap,
@@ -208,23 +207,23 @@ sap.ui.define([
 	}
 
 	function registerMaxLayerHandler(sReference) {
-		Utils.ifUShellContainerThen(function(aServices) {
+		if (_oShellNavigationService) {
 			_mNavigationHandlers[sReference] = handleMaxLayerChange.bind(null, sReference);
-			aServices[0].registerNavigationFilter(_mNavigationHandlers[sReference]);
-		}, ["ShellNavigation"]);
+			_oShellNavigationService.registerNavigationFilter(_mNavigationHandlers[sReference]);
+		}
 	}
 
 	function deRegisterMaxLayerHandler(sReference) {
-		Utils.ifUShellContainerThen(function(aServices) {
+		if (_oShellNavigationService) {
 			if (_mNavigationHandlers[sReference]) {
-				aServices[0].unregisterNavigationFilter(_mNavigationHandlers[sReference]);
+				_oShellNavigationService.unregisterNavigationFilter(_mNavigationHandlers[sReference]);
 				delete _mNavigationHandlers[sReference];
 			}
-		}, ["ShellNavigation"]);
+		}
 	}
 
 	function handleMaxLayerChange(sReference, sNewHash, sOldHash) {
-		return Utils.ifUShellContainerThen(function(aServices) {
+		if (_oShellNavigationService) {
 			try {
 				var sCurrentMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sNewHash);
 				var sPreviousMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sOldHash);
@@ -235,8 +234,9 @@ sap.ui.define([
 				// required to hinder any errors - can break FLP navigation
 				Log.error(oError.message);
 			}
-			return aServices[0].NavigationFilterStatus.Continue;
-		}, ["ShellNavigation"]);
+			return _oShellNavigationService.NavigationFilterStatus.Continue;
+		}
+		return undefined;
 	}
 
 	function clearPreparedMaps(sReference) {
@@ -262,6 +262,20 @@ sap.ui.define([
 		return mInitProperties;
 	}
 
+	function loadShellNavigationService() {
+		var oUShellContainer = Utils.getUshellContainer();
+		if (oUShellContainer) {
+			return oUShellContainer.getServiceAsync("ShellNavigation")
+			.then(function(oShellNavigationService) {
+				_oShellNavigationService = oShellNavigationService;
+			})
+			.catch(function(oError) {
+				Log.error("Error getting service from Unified Shell: " + oError.message);
+			});
+		}
+		return Promise.resolve();
+	}
+
 	/**
 	 * Initializes the FlexState for a given reference. A request for the flex data is sent to the Loader and the response is saved.
 	 * The FlexState can only be initialized once, every subsequent init call will just resolve as soon as it is initialized.
@@ -278,14 +292,14 @@ sap.ui.define([
 	 * @returns {promise<undefined>} Resolves a promise as soon as FlexState is initialized
 	 */
 	FlexState.initialize = function(mPropertyBag) {
-		return Promise.resolve(mPropertyBag)
-			.then(function(mInitProperties) {
-				enhancePropertyBag(mInitProperties);
-				var sFlexReference = mInitProperties.reference;
+		return loadShellNavigationService()
+			.then(function() {
+				enhancePropertyBag(mPropertyBag);
+				var sFlexReference = mPropertyBag.reference;
 
 				if (_mInitPromises[sFlexReference]) {
 					return _mInitPromises[sFlexReference]
-						.then(checkPartialFlexState.bind(null, mInitProperties))
+						.then(checkPartialFlexState.bind(null, mPropertyBag))
 						.then(checkComponentId)
 						.then(function(mEvaluatedProperties) {
 							return mEvaluatedProperties.reInitialize
@@ -294,7 +308,7 @@ sap.ui.define([
 						});
 				}
 
-				return loadFlexData(mInitProperties);
+				return loadFlexData(mPropertyBag);
 			})
 			.then(function(mPropertyBag, mResponse) {
 				// filtering should only be done once; can be reset via function
