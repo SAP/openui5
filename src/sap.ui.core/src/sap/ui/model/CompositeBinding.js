@@ -26,28 +26,31 @@ sap.ui.define([
 	 * @class
 	 * Combines multiple property bindings (called 'parts') into a single one.
 	 *
-	 * A <code>CompositeBinding</code> combines the values from all its binding parts (each an instance of
-	 * <code>PropertyBinding</code>), either by calling a formatter function or by involving a
-	 * {@link sap.ui.model.CompositeType composite type}. When a formatter function is used, then the
-	 * composite binding is automatically limited to <code>OneWay</code> mode. When a type is used, the binding
-	 * can also operate in <code>TwoWay</code> mode.
+	 * A <code>CompositeBinding</code> combines the values from all its binding parts (each an
+	 * instance of <code>PropertyBinding</code>), either by calling a formatter function or by
+	 * involving a {@link sap.ui.model.CompositeType composite type}. When a formatter function is
+	 * used, the composite binding is automatically limited to <code>OneWay</code> mode. When a
+	 * type is used, the binding can also operate in <code>TwoWay</code> mode.
 	 *
-	 * Higher layers of the framework derive composite bindings from easy-to-write string representations
-	 * (the following features require complex binding syntax, e.g. <code>data-sap-ui-bindingSyntax="complex"</code>):
+	 * Higher layers of the framework derive composite bindings from easy-to-write string
+	 * representations (the following features require complex binding syntax, e.g.
+	 * <code>data-sap-ui-bindingSyntax="complex"</code>):
 	 *
 	 * XML views, for example, convert attribute values with nested curly braces like
 	 * <pre>
 	 *   text="{fullname} &amp;lt;{email}&amp;gt;"
 	 * </pre>
-	 * into a composite binding with two parts (one property binding for property "fullname" and one for
-	 * property "email") and with a generic formatter function that injects the values of the parts into
-	 * the string literal "{0} &lt;{1}&gt;" accordingly.
+	 * into a composite binding with two parts (one property binding for property "fullname" and one
+	 * for property "email") and with a generic formatter function that injects the values of the
+	 * parts into the string literal "{0} &lt;{1}&gt;" accordingly.
 	 *
-	 * Similarly, {@link topic:daf6852a04b44d118963968a1239d2c0 expression bindings} are parsed and converted
-	 * into composite bindings, too. The formatter function is created by the framework and executes the
-	 * calculations as defined by the expression string, taking the values from the binding parts as input.
+	 * Similarly, {@link topic:daf6852a04b44d118963968a1239d2c0 expression bindings} are parsed and
+	 * converted into composite bindings, too. The formatter function is created by the framework
+	 * and executes the calculations as defined by the expression string, taking the values from the
+	 * binding parts as input.
 	 *
-	 * <b>Note:</b> A nesting of composite bindings is currently not supported (albeit being helpful).
+	 * <b>Note:</b> A nesting of composite bindings is currently not supported (albeit being
+	 * helpful).
 	 *
 	 * @see {@link topic:a2fe8e763014477e87990ff50657a0d0}
 	 * @public
@@ -111,11 +114,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the optional type and internal type for the binding. The type and internal type are used to do the parsing/formatting correctly.
-	 * The internal type is the property type of the element which the value is formatted to.
+	 * Sets the optional type and internal type for the binding. The type and internal type are used
+	 * to do the parsing/formatting correctly. The internal type is the property type of the element
+	 * which the value is formatted to.
 	 *
-	 * @param {sap.ui.model.CompositeType} oType the type for the binding
-	 * @param {string} sInternalType the internal type of the element property which this binding is bound against.
+	 * @param {sap.ui.model.CompositeType} oType
+	 *   The type for the binding
+	 * @param {string} sInternalType
+	 *   The internal type of the element property which this binding is bound against.
 	 *
 	 * @public
 	 */
@@ -195,7 +201,7 @@ sap.ui.define([
 	 * Sets the values. This will cause the setValue to be called for each nested binding, except
 	 * for undefined values in the array.
 	 *
-	 * @param {array} aValues the values to set for this binding
+	 * @param {array} aValues The values to set for this binding
 	 *
 	 * @public
 	 */
@@ -216,7 +222,7 @@ sap.ui.define([
 	/**
 	 * Returns the raw values of the property bindings in an array.
 	 *
-	 * @return {object} the values of the internal property bindings in an array
+	 * @return {object} The values of the internal property bindings in an array
 	 *
 	 * @public
 	 */
@@ -233,9 +239,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the current external value of the bound target which is formatted via a type or formatter function.
+	 * Returns the current external value of the bound target which is formatted via a type or
+	 * formatter function.
 	 *
-	 * @return {object} the current value of the bound target
+	 * @return {object} The current value of the bound target
 	 *
 	 * @throws {sap.ui.model.FormatException}
 	 *
@@ -273,12 +280,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the external value of a composite binding. If no CompositeType is assigned to the binding, the default
-	 * implementation assumes a space separated list of values. This will cause the setValue to be called for each
-	 * nested binding, except for undefined values in the array.
+	 * Sets the external value of a composite binding. If no CompositeType is assigned to the
+	 * binding, the default implementation assumes a space-separated list of values. This will cause
+	 * the setValue to be called for each nested binding, except for undefined values in the array.
 	 *
-	 * @param {object} oValue the value to set for this binding
-	 * @return {undefined|Promise} a promise in case of asynchronous type parsing or validation
+	 * @param {object} oValue The value to set for this binding
+	 * @return {undefined|Promise} A promise in case of asynchronous type parsing or validation
+	 *
 	 * @throws sap.ui.model.ParseException
 	 * @throws sap.ui.model.ValidateException
 	 *
@@ -290,10 +298,10 @@ sap.ui.define([
 
 		if (this.sInternalType === "raw") {
 			this.setRawValue(oValue);
-			return;
+			return undefined;
 		} else if (this.sInternalType === "internal") {
 			this.setInternalValue(oValue);
-			return;
+			return undefined;
 		}
 
 		oInternalType = this.sInternalType && DataType.getType(this.sInternalType);
@@ -301,7 +309,7 @@ sap.ui.define([
 		// No twoway binding when using formatters
 		if (this.fnFormatter) {
 			Log.warning("Tried to use twoway binding, but a formatter function is used");
-			return;
+			return undefined;
 		}
 
 		oDataState = this.getDataState();
@@ -356,10 +364,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the current internal value of the bound target which is an array of the
-	 * internal (JS native) values of nested bindings
+	 * Returns the current internal value of the bound target which is an array of the internal (JS
+	 * native) values of nested bindings.
 	 *
-	 * @return {array} the current values of the nested bindings
+	 * @return {array} The current values of the nested bindings
 	 *
 	 * @public
 	 */
@@ -370,10 +378,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the internal value of the bound target. Parameter must be an array of
-	 * values matching the internal (JS native) types of nested bindings.
+	 * Sets the internal value of the bound target. Parameter must be an array of values matching
+	 * the internal (JS native) types of nested bindings.
 	 *
 	 * @param {array} aValues the new values of the nested bindings
+	 * @return {undefined|Promise} A promise in case of asynchronous type parsing or validation
 	 *
 	 * @public
 	 */
@@ -419,10 +428,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the current raw value of the bound target which is an array of the
-	 * raw (model) values of nested bindings
+	 * Returns the current raw value of the bound target which is an array of the raw (model)
+	 * values of nested bindings.
 	 *
-	 * @return {array} the current values of the nested bindings
+	 * @return {array} The current values of the nested bindings
 	 *
 	 * @public
 	 */
@@ -433,10 +442,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the raw value of the bound target. Parameter must be an array of
-	 * values matching the raw (model) types of nested bindings.
+	 * Sets the raw value of the bound target. Parameter must be an array of values matching the raw
+	 * (model) types of nested bindings.
 	 *
 	 * @param {array} aValues the new values of the nested bindings
+	 * @return {undefined|Promise} A promise in case of asynchronous type parsing or validation
 	 *
 	 * @public
 	 */
@@ -508,6 +518,7 @@ sap.ui.define([
 	 * method always gets the full set of values to validate, even if partial updates are
 	 * used.
 	 *
+	 * @param {any[]} aValues Values to fill empty current values with
 	 * @return {array} Array of values used for validation
 	 *
 	 * @private
@@ -530,7 +541,7 @@ sap.ui.define([
 	/**
 	 * Returns the property bindings contained in this composite binding.
 	 *
-	 * @return {array} the property bindings in this composite binding
+	 * @return {array} The property bindings in this composite binding
 	 *
 	 * @public
 	 */
@@ -538,11 +549,11 @@ sap.ui.define([
 		return this.aBindings;
 	};
 
-
 	/**
 	 * {@see sap.ui.model.Binding#hasValidation}
 	 *
-	 * @returns {boolean} Returns true if the binding throws a validation exception when an invalid value is set on it.
+	 * @returns {boolean}
+	 *   Whether the binding throws a validation exception when an invalid value is set on it
 	 * @private
 	 */
 	CompositeBinding.prototype.hasValidation = function() {
@@ -568,11 +579,12 @@ sap.ui.define([
 	 * Attaches event handler <code>fnFunction</code> to the <code>change</code> event of this
 	 * <code>sap.ui.model.CompositeBinding</code>.
 	 *
-	 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
-	 * if specified, otherwise it will be bound to this <code>sap.ui.model.CompositeBinding</code> itself.
+	 * When called, the context of the event handler (its <code>this</code>) will be bound to
+	 * <code>oListener</code> if specified, otherwise it will be bound to this
+	 * <code>sap.ui.model.CompositeBinding</code> itself.
 	 *
 	 * @param {function} fnFunction The function to be called, when the event occurs
-	 * @param {object} [oListener] object on which to call the given function
+	 * @param {object} [oListener] Object on which to call the given function
 	 * @protected
 	 */
 	CompositeBinding.prototype.attachChange = function(fnFunction, oListener) {
@@ -603,7 +615,7 @@ sap.ui.define([
 	 * <code>sap.ui.model.CompositeBinding</code>.
 	 *
 	 * @param {function} fnFunction The function to be called, when the event occurs
-	 * @param {object} [oListener] object on which to call the given function
+	 * @param {object} [oListener] Object on which to call the given function
 	 * @protected
 	 */
 	CompositeBinding.prototype.detachChange = function(fnFunction, oListener) {
@@ -617,14 +629,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Attaches event handler <code>fnFunction</code> to the <code>DataStateChange</code> event of this
-	 * <code>sap.ui.model.CompositeBinding</code>.
+	 * Attaches event handler <code>fnFunction</code> to the <code>DataStateChange</code> event of
+	 * this <code>sap.ui.model.CompositeBinding</code>.
 	 *
-	 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
-	 * if specified, otherwise it will be bound to this <code>sap.ui.model.CompositeBinding</code> itself.
+	 * When called, the context of the event handler (its <code>this</code>) will be bound to
+	 * <code>oListener</code> if specified, otherwise it will be bound to this
+	 * <code>sap.ui.model.CompositeBinding</code> itself.
 	 *
 	 * @param {function} fnFunction The function to be called, when the event occurs
-	 * @param {object} [oListener] object on which to call the given function
+	 * @param {object} [oListener] Object on which to call the given function
 	 * @protected
 	 */
 	CompositeBinding.prototype.attachDataStateChange = function(fnFunction, oListener) {
@@ -650,7 +663,7 @@ sap.ui.define([
 	 * this <code>sap.ui.model.CompositeBinding</code>.
 	 *
 	 * @param {function} fnFunction The function to be called, when the event occurs
-	 * @param {object} [oListener] object on which to call the given function
+	 * @param {object} [oListener] Object on which to call the given function
 	 * @protected
 	 */
 	CompositeBinding.prototype.detachDataStateChange = function(fnFunction, oListener) {
@@ -664,15 +677,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Attaches event handler <code>fnFunction</code> to the <code>AggregatedDataStateChange</code> event of this
-	 * <code>sap.ui.model.CompositeBinding</code>.
+	 * Attaches event handler <code>fnFunction</code> to the <code>AggregatedDataStateChange</code>
+	 * event of this <code>sap.ui.model.CompositeBinding</code>.
 	 *
-	 * The <code>AggregatedDataStateChange</code> event is fired asynchronously, meaning that the <code>DataState</code>
-	 * object given as parameter of the event contains all changes that were applied to the <code>DataState</code>
-	 * in the running thread.
+	 * The <code>AggregatedDataStateChange</code> event is fired asynchronously, meaning that the
+	 * <code>DataState</code> object given as parameter of the event contains all changes that were
+	 * applied to the <code>DataState</code> in the running thread.
 	 *
 	 * @param {function} fnFunction The function to be called, when the event occurs
-	 * @param {object} [oListener] object on which to call the given function.
+	 * @param {object} [oListener] Object on which to call the given function
 	 * @protected
 	 */
 	CompositeBinding.prototype.attachAggregatedDataStateChange = function(fnFunction, oListener) {
@@ -698,11 +711,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Detaches event handler <code>fnFunction</code> from the <code>AggregatedDataStateChange</code>
-	 * event of this <code>sap.ui.model.CompositeBinding</code>.
+	 * Detaches event handler <code>fnFunction</code> from the
+	 * <code>AggregatedDataStateChange</code> event of this
+	 * <code>sap.ui.model.CompositeBinding</code>.
 	 *
 	 * @param {function} fnFunction The function to be called, when the event occurs
-	 * @param {object} [oListener] object on which to call the given function
+	 * @param {object} [oListener] Object on which to call the given function
 	 * @protected
 	 */
 	CompositeBinding.prototype.detachAggregatedDataStateChange = function(fnFunction, oListener) {
@@ -715,11 +729,12 @@ sap.ui.define([
 		}
 	};
 
-
 	/**
-	 * Determines if the property bindings in the composite binding should be updated by calling updateRequired on all property bindings with the specified model.
+	 * Determines if the property bindings in the composite binding should be updated by calling
+	 * updateRequired on all property bindings with the specified model.
+	 *
 	 * @param {object} oModel The model instance to compare against
-	 * @returns {boolean} true if this binding should be updated
+	 * @returns {boolean} Whether this binding should be updated
 	 * @protected
 	 */
 	CompositeBinding.prototype.updateRequired = function(oModel) {
@@ -733,8 +748,10 @@ sap.ui.define([
 	/**
 	 * Initialize the binding. The method should be called when creating a binding.
 	 * The default implementation calls checkUpdate(true).
-	 * Prevent checkUpdate to be triggered while initializing nestend bindings, it is
+	 * Prevent checkUpdate to be triggered while initializing nested bindings, it is
 	 * sufficient to call checkUpdate when all nested bindings are initialized.
+	 *
+	 * @returns {this} A reference to itself
 	 *
 	 * @protected
 	 */
@@ -754,8 +771,9 @@ sap.ui.define([
 
 
 	/**
-	 * Returns the data state for this binding
-	 * @return {sap.ui.model.CompositeDataState} the data state
+	 * Returns the data state for this binding.
+	 *
+	 * @return {sap.ui.model.CompositeDataState} The data state
 	 */
 	CompositeBinding.prototype.getDataState = function() {
 		if (!this.oDataState) {
@@ -769,9 +787,11 @@ sap.ui.define([
 	/**
 	 * Suspends the binding update. No change events will be fired.
 	 *
-	 * A refresh call with bForceUpdate set to true will also update the binding and fire a change in suspended mode.
-	 * Special operations on bindings, which require updates to work properly (as paging or filtering in list bindings)
-	 * will also update and cause a change event although the binding is suspended.
+	 * A refresh call with bForceUpdate set to true will also update the binding and fire a change
+	 * in suspended mode. Special operations on bindings, which require updates to work properly
+	 * (as paging or filtering in list bindings) will also update and cause a change event although
+	 * the binding is suspended.
+	 *
 	 * @public
 	 */
 	CompositeBinding.prototype.suspend = function() {
@@ -784,9 +804,11 @@ sap.ui.define([
 	/**
 	 * Suspends the binding update. No change events will be fired.
 	 *
-	 * A refresh call with bForceUpdate set to true will also update the binding and fire a change in suspended mode.
-	 * Special operations on bindings, which require updates to work properly (as paging or filtering in list bindings)
-	 * will also update and cause a change event although the binding is suspended.
+	 * A refresh call with bForceUpdate set to true will also update the binding and fire a change
+	 * in suspended mode. Special operations on bindings, which require updates to work properly
+	 * (as paging or filtering in list bindings) will also update and cause a change event although
+	 * the binding is suspended.
+	 *
 	 * @public
 	 */
 	CompositeBinding.prototype.resume = function() {
@@ -801,7 +823,7 @@ sap.ui.define([
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
 	 *
-	 * @param {boolean} bForceupdate
+	 * @param {boolean} bForceUpdate Whether an update should be forced
 	 *
 	 */
 	CompositeBinding.prototype.checkUpdate = function(bForceUpdate){
@@ -840,5 +862,4 @@ sap.ui.define([
 	};
 
 	return CompositeBinding;
-
 });
