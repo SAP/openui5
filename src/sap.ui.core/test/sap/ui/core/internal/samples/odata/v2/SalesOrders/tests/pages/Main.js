@@ -8,15 +8,16 @@ sap.ui.define([
 
 	var iCurrentItemCount, iCurrentMessageCount, oSalesOrderDetails,
 		mColumn = {
-			SalesOrderID : 0,
-			ItemPosition : 1,
-			ProductID : 2,
-			Quantity : 3,
-			Unit : 4,
-			GrossAmount : 5,
-			Currency : 6,
-			Note : 7,
-			Fix : 8
+			Status : 0,
+			SalesOrderID : 1,
+			ItemPosition : 2,
+			ProductID : 3,
+			Quantity : 4,
+			Unit : 5,
+			GrossAmount : 6,
+			Currency : 7,
+			Note : 8,
+			Fix : 9
 		},
 		mMessageShort2Message = {
 			approval : "For a quantity greater than 1 you need an approval reason",
