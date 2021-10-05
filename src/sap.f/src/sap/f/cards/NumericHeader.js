@@ -26,7 +26,7 @@ sap.ui.define([
 	 * Displays general information in the header of the {@link sap.f.Card} and allows the
 	 * configuration of a numeric value visualization.
 	 *
-	 * You can configure the title, subtitle, status text and icon, using the provided properties.
+	 * You can configure the title, subtitle, and status text, using the provided properties.
 	 * To add more side number indicators, use the <code>sideIndicators</code> aggregation.
 	 *
 	 * <b>Notes:</b>
