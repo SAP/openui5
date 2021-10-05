@@ -6441,9 +6441,13 @@ sap.ui.define([
 	 * against the newly created object.
 	 *
 	 * For each created entry a request is created and stored in a request queue.
-	 * The request queue can be submitted by calling {@link #submitChanges}. To delete a created
-	 * entry from the request queue call {@link #resetChanges} with the context path and the
-	 * <code>bDeleteCreatedEntities</code> parameter set to <code>true</code>.
+	 * The request queue can be submitted by calling {@link #submitChanges}. As long as the context
+	 * is transient (see {@link sap.ui.model.odata.v2.Context#isTransient}),
+	 * {@link sap.ui.model.odata.v2.ODataModel#resetChanges} with the
+	 * <code>bDeleteCreatedEntities</code> parameter set to <code>true</code> can be used to delete
+	 * the created entity again.
+	 *
+	 * If the creation of the entity on the server failed, it is repeated automatically.
 	 *
 	 * The optional parameter <code>mParameters.properties</code> can be used as follows:
 	 * <ul>
@@ -6458,8 +6462,8 @@ sap.ui.define([
 	 *
 	 * If there are no values specified, the properties will have <code>undefined</code> values.
 	 *
-	 * Please note that deep creates (including data defined by navigation properties) are not
-	 * supported.
+	 * The <code>properties</code> can be modified via property bindings relative to the returned
+	 * context instance.
 	 *
 	 * The parameter <code>expand</code> is supported since 1.78.0. If this parameter is set, the
 	 * given navigation properties are expanded automatically with the same $batch request in which
@@ -6485,6 +6489,14 @@ sap.ui.define([
 	 *     additional property <code>expandAfterCreateFailed</code> set to <code>true</code>.
 	 *   </li>
 	 * </ul>
+	 *
+	 * Note: If a server requires a property in the request, you must supply this property in the
+	 * initial data, for example if the server requires a unit for an amount. This also applies if
+	 * this property has a default value.
+	 *
+	 * Note: A deep create (including data defined by navigation properties) is not supported. The
+	 * dependent entity has to be created using a second list binding, after this entity has been
+	 * saved successfully in the back-end system.
 	 *
 	 * @param {string} sPath
 	 *   The path to the EntitySet
