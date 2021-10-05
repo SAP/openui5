@@ -45,6 +45,15 @@
 						<td>1.15.0</td>
 						<td>1.65</td>
 					</tr>
+					<tr>
+						<td>group</td>
+						<td><a href="#groupApi">Group</a>
+						</td>
+						<td>No</td>
+						<td>Defines whether and how items are grouped.</td>
+						<td>1.35.0</td>
+						<td>1.96</td>
+					</tr>
 				</table>
 			</div>
 
@@ -192,6 +201,66 @@
 				</table>
 			</div>
 
+			<h4 id="groupApi">Group properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>title</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>Title of the group</td>
+						<td>1.37.0</td>
+						<td>1.96</td>
+					</tr>
+					<tr>
+						<td>order</td>
+						<td><a href="#orderApi">Order</a></td>
+						<td>Yes</td>
+						<td>The sorting order of the group.</td>
+						<td>1.37.0</td>
+						<td>1.96</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4 id="groupOrderApi">Group order properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>path</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>The binding path used for sorting</td>
+						<td>1.37.0</td>
+						<td>1.96</td>
+					</tr>
+					<tr>
+						<td>dir</td>
+						<td>string</td>
+						<td>No</td>
+						<td>The direction of the sorting order - "ASC" (default) or "DESC".</td>
+						<td>1.37.0</td>
+						<td>1.96</td>
+					</tr>
+				</table>
+			</div>
+
 			<h2 id="example">Example</h2>
 			<p>Define the type and data for the card:
 			</p>
@@ -230,6 +299,13 @@
 				"info": {
 					"value": "{info}",
 					"state": "{infoState}"
+				},
+				"group": {
+					"title": "{= ${infoState} === 'Success' ? 'Successful' : 'Unsuccessful'}",
+					"order": {
+						"path": "infoState",
+						"dir": "ASC"
+					}
 				}
 			}
 		}

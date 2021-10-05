@@ -544,7 +544,10 @@
               "$ref": "#/definitions/simpleBinding"
             }
           ]
-        }
+        },
+		"group": {
+			"$ref": "#/definitions/group"
+		}
       }
     },
     "ContentType.List.Item": {
@@ -1156,7 +1159,10 @@
               "$ref": "#/definitions/simpleBinding"
             }
           ]
-        }
+        },
+		"group": {
+			"$ref": "#/definitions/group"
+		}
       }
     },
     "ContentType.Table.Column": {
@@ -2600,7 +2606,38 @@
               "$ref": "#/definitions/simpleBinding"
             }
           ]
-        }
+        },
+		"group": {
+			"description": "Represents group of items",
+			"type": "object",
+			"properties": {
+				"title": {
+					"description": "The title of the group",
+					"type": "string"
+				},
+				"order": {
+					"description": "The order by which the group will be sorted",
+					"properties": {
+						"path": {
+							"description": "Defines the path to the structure holding the data about the group order",
+							"type": "string"
+						},
+						"dir": {
+							"description": "The direction in which the group items will be ordered",
+							"oneOf": [
+								{
+									"enum": [
+										"ASC",
+										"DESC"
+									],
+									"default": "ASC"
+								}
+							]
+						}
+					}
+				}
+			}
+		}
       }
     }
   }

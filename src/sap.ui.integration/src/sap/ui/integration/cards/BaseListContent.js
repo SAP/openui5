@@ -8,14 +8,16 @@ sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/model/Sorter"
 ], function (
 	BaseContent,
 	BindingResolver,
 	library,
 	Filter,
 	FilterOperator,
-	Log
+	Log,
+	Sorter
 ) {
 	"use strict";
 
@@ -201,6 +203,24 @@ sap.ui.define([
 				this.fireEvent("_filterNavItemsReady");
 			}
 		}.bind(this));
+	};
+
+	/**
+	 * Define the sorting of a group.
+	 * @param {object} oGroup The group which will be sorted
+	 * @returns {sap.ui.model.Sorter}  Sorter for a list bindings.
+	 */
+	BaseListContent.prototype._getGroupSorter = function(oGroup) {
+
+		var bDescendingOrder = false;
+		if (oGroup.order.dir && oGroup.order.dir === "DESC") {
+			bDescendingOrder = true;
+		}
+		var oSorter = new Sorter(oGroup.order.path, bDescendingOrder, function (oContext) {
+			return BindingResolver.resolveValue(oGroup.title, oContext.getModel(), oContext.getPath());
+		});
+
+		return oSorter;
 	};
 
 	return BaseListContent;
