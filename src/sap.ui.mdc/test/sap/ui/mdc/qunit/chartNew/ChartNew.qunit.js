@@ -109,7 +109,6 @@ function(
 			var getBindingInfoSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "_getBindingInfo");
 			var updateBindingInfoSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "updateBindingInfo");
 			var rebindChartSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "rebindChart");
-			var updateToolbarSpy = sinon.spy(this.oMDCChart, "_updateToolbar");
 
 			this.oMDCChart.rebind();
 
@@ -117,7 +116,6 @@ function(
 			assert.ok(getBindingInfoSpy.calledOnce, "getBindingInfo called on delegate");
 			assert.ok(updateBindingInfoSpy.calledOnce, "updateBindingInfo called on delegate");
 			assert.ok(rebindChartSpy.calledOnce, "rebindChart called on delegate");
-			assert.ok(updateToolbarSpy.calledOnce, "_updateToolbar called");
 
 			done();
 		}.bind(this));
