@@ -78,7 +78,7 @@ sap.ui.define([
 				if (oValue === "") {
 					return null;
 				}
-				var oResult = this.oOutputFormat.parse(oValue);
+				oResult = this.oOutputFormat.parse(oValue);
 				if (!oResult) {
 					oBundle = sap.ui.getCore().getLibraryResourceBundle();
 					throw new ParseException(oBundle.getText(this.sName + ".Invalid"));
@@ -129,6 +129,7 @@ sap.ui.define([
 							aMessages.push(oBundle.getText(that.sName + ".Maximum", [sContent]));
 						}
 						break;
+					default: break;
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
@@ -174,6 +175,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the output pattern.
+	 *
+	 * @returns {string} The output pattern
+	 *
+	 * @see sap.ui.core.format.DateFormat.getDateInstance
 	 * @protected
 	 */
 	Date1.prototype.getOutputPattern = function() {

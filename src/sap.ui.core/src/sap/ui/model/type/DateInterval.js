@@ -214,6 +214,8 @@ sap.ui.define([
 							aViolatedConstraints.push("maximum");
 							aMessages.push(oBundle.getText("Date.Maximum", [oCompareValue]));
 						}
+						break;
+					default: break;
 				}
 			}.bind(this));
 
