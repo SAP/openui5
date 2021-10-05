@@ -82,6 +82,10 @@ sap.ui.define([
 			});
 		},
 
+		onCloseCreatedItemDialog : function () {
+			this.byId("createSalesOrderItemDialog").close();
+		},
+
 		onCloseMessageDetails : function (oEvent) {
 			var oMessageDetails = this.byId("messageDetails");
 
@@ -98,22 +102,19 @@ sap.ui.define([
 				oCreatedContext,
 				oCreateDialog = this.byId("createSalesOrderItemDialog");
 
-			oCreatedContext = this.getView().getModel().createEntry("ToLineItems", {
-				context : oBindingContext,
+			oCreatedContext = this.byId("ToLineItems").getBinding("rows").create({
+				DeliveryDate : new Date(Date.now() + 14 * 24 * 3600000),
+				Note : "Created by OData V2 Sales Orders App",
+				ProductID : "HT-1000",
+				Quantity : "1",
+				QuantityUnit : "EA",
+				SalesOrderID : oBindingContext.getProperty("SalesOrderID")
+			}, /*bAtEnd*/false, {
 				error : function (oError) {
 					Log.info("Error Handler: Failed to created sales order item",
 						JSON.stringify(oError), sClassname);
 				},
 				expand : "ToProduct,ToHeader",
-				groupId : "create",
-				properties : {
-					DeliveryDate : new Date(Date.now() + 14 * 24 * 3600000),
-					Note : "Created by OData V2 Sales Orders App",
-					ProductID : "HT-1000",
-					Quantity : "1",
-					QuantityUnit : "EA",
-					SalesOrderID : oBindingContext.getProperty("SalesOrderID")
-				},
 				success : function (/*oData, oResponse*/) {
 					Log.info("Success Handler: Sales order item creation was successful",
 						oCreatedContext.getPath(), sClassname);
@@ -138,11 +139,24 @@ sap.ui.define([
 			oCreateDialog.open();
 		},
 
+		onCreateSalesOrder : function () {
+			var oCreatedContext = this.byId("SalesOrderSet").getBinding("items").create({
+					CustomerID : "0100000000",
+					LifecycleStatus : "N"
+				}, /*bAtEnd*/false);
+
+			oCreatedContext.created().then(function () {
+				MessageToast.show("Created sales order "
+					+ oCreatedContext.getProperty("SalesOrderID"));
+			}, function (oError) {
+				MessageToast.show("Deleted transient sales order");
+			});
+		},
+
 		onDeleteItem : function () {
-			var oTable = this.byId("ToLineItems"),
+			var sSalesOrderLineItem,
+				oTable = this.byId("ToLineItems"),
 				oItemContext = oTable.getContextByIndex(oTable.getSelectedIndex()),
-				sMessage,
-				sSalesOrderLineItem,
 				that = this;
 
 			function onConfirm(sCode) {
@@ -150,40 +164,83 @@ sap.ui.define([
 					return;
 				}
 
-				oItemContext.getModel().remove("", {
-					context : oItemContext,
-					success : function () {
-						MessageToast.show("Deleted sales order item " + sSalesOrderLineItem);
-						oTable.clearSelection();
-					}
-				});
-				that.readSalesOrder();
+				if (oItemContext.isTransient()) {
+					oItemContext.getModel().resetChanges([oItemContext.getPath()], undefined, true);
+				} else {
+					oItemContext.getModel().remove("", {
+						context : oItemContext,
+						refreshAfterChange : false, // manually done later
+						success : function () {
+							var oBinding, iContextIndex;
+
+							MessageToast.show("Deleted sales order item " + sSalesOrderLineItem);
+							oTable.clearSelection();
+							// HACK
+							// a context contained in the list of created items is currently removed
+							// only if the transient entity is discarded or the binding is
+							// recreated; manually remove the persisted entity from the list of
+							// created context and refresh the binding
+							oBinding = oTable.getBinding("rows");
+							iContextIndex = oBinding.aCreatedContexts.indexOf(oItemContext);
+							if (iContextIndex >= 0) {
+								oBinding.aCreatedContexts.splice(iContextIndex, 1);
+							}
+							oTable.getBinding("rows").refresh();
+							// /HACK
+						}
+					});
+					that.readSalesOrder();
+				}
 			}
 
-			sSalesOrderLineItem = oItemContext.getProperty("SalesOrderID", true)
-				+ " / " + oItemContext.getProperty("ItemPosition", true);
-			sMessage = "Do you really want to delete: " + sSalesOrderLineItem + "?";
-			MessageBox.confirm(sMessage, onConfirm, "Sales Order Item Deletion");
+			sSalesOrderLineItem = oItemContext.getProperty("SalesOrderID", true) + " / "
+				+ (oItemContext.getProperty("ItemPosition", true)
+					|| oItemContext.getProperty("Note", true)
+					|| "newly created item");
+			MessageBox.confirm("Do you really want to delete: " + sSalesOrderLineItem + "?",
+				onConfirm, "Sales Order Item Deletion");
 		},
 
 		onDeleteSalesOrder : function () {
 			var sMessage, sSalesOrderID,
-				oContext = this.byId("SalesOrderList").getSelectedContexts()[0];
+				oTable = this.byId("SalesOrderSet"),
+				oContext = oTable.getSelectedContexts()[0];
 
 			function onConfirm(sCode) {
 				if (sCode !== 'OK') {
 					return;
 				}
 
-				oContext.getModel().remove("", {
-					context : oContext,
-					success : function () {
-						MessageToast.show("Deleted sales order " + sSalesOrderID);
-					}
-				});
+				if (oContext.isTransient()) {
+					oContext.getModel().resetChanges([oContext.getPath()], undefined, true);
+				} else {
+					oContext.getModel().remove("", {
+						context : oContext,
+						refreshAfterChange : false, // manually done later
+						success : function () {
+							var oBinding, iContextIndex;
+
+							MessageToast.show("Deleted sales order " + sSalesOrderID);
+							// HACK
+							// a context contained in the list of created items is currently removed
+							// only if the transient entity is discarded or the binding is
+							// recreated; manually remove the persisted entity from the list of
+							// created context and refresh the binding
+							oBinding = oTable.getBinding("items");
+							iContextIndex = oBinding.aCreatedContexts.indexOf(oContext);
+							if (iContextIndex >= 0) {
+								oBinding.aCreatedContexts.splice(iContextIndex, 1);
+							}
+							oTable.getBinding("items").refresh();
+							// /HACK
+						}
+					});
+				}
 			}
 
-			sSalesOrderID = oContext.getProperty("SalesOrderID", true);
+			sSalesOrderID = oContext.getProperty("SalesOrderID", true)
+				|| oContext.getProperty("Note", true)
+				|| "the newly created sales order";
 			sMessage = "Do you really want to delete: " + sSalesOrderID + "?";
 			MessageBox.confirm(sMessage, onConfirm, "Sales Order Deletion");
 		},
@@ -234,7 +291,7 @@ sap.ui.define([
 					MessageToast.show("Successfully fixed all quantities for sales order "
 						+ sSalesOrderID);
 					// Server may process GET requests in different order, so we have to ensure that
-					// the function import is proccesed first
+					// the function import is processed first
 					that.readSalesOrder();
 				},
 				urlParameters : {
@@ -309,15 +366,16 @@ sap.ui.define([
 		},
 
 		onRefreshSalesOrders : function () {
-			this.getView().byId("SalesOrderList").getBinding("items").refresh();
+			this.getView().byId("SalesOrderSet").getBinding("items").refresh();
 		},
 
 		onResetChanges : function () {
-			this.getView().getModel().resetChanges();
+			this.getView().getModel().resetChanges(/*aPath*/undefined, /*bAll*/true,
+				/*bDeleteCreatedEntities*/true);
 		},
 
 		onSaveCreatedItem : function () {
-			this.getView().getModel().submitChanges({groupId : "create"});
+			this.getView().getModel().submitChanges();
 		},
 
 		onSaveSalesOrder : function () {
@@ -349,29 +407,33 @@ sap.ui.define([
 		},
 
 		onSelectSalesOrder : function (oEvent) {
-			var sContextPath, sSalesOrderID,
+			var oBindingContext, sContextPath, bIsTransient, sSalesOrderID,
 				oView = this.getView(),
 				oTable = oView.byId("ToLineItems"),
 				oUiModel = oView.getModel("ui");
 
 			if (oEvent && oEvent.sId === "selectionChange") {
-				sSalesOrderID = oEvent.getParameter("listItem").getBindingContext("SalesOrders")
-					.getProperty("SalesOrderID");
+				oBindingContext = oEvent.getParameter("listItem").getBindingContext("SalesOrders");
+				bIsTransient = oBindingContext.isTransient();
+				sSalesOrderID = oBindingContext.getProperty("SalesOrderID") || "";
 				oUiModel.setProperty("/salesOrderSelected", true);
 				oUiModel.setProperty("/salesOrderID", sSalesOrderID);
+				sContextPath = oBindingContext.getPath();
+			} else {
+				sSalesOrderID = encodeURL(oUiModel.getProperty("/salesOrderID"));
+				sContextPath =
+					"/SalesOrderSet(" + ODataUtils.formatValue(sSalesOrderID, "Edm.String") + ")";
 			}
-
-			sSalesOrderID = encodeURL(oUiModel.getProperty("/salesOrderID"));
-			sContextPath =
-				"/SalesOrderSet(" + ODataUtils.formatValue(sSalesOrderID, "Edm.String") + ")";
 
 			// do unbind first to ensure that the sales order is read again even if sales order ID
 			// did not change
 			oView.byId("objectPage").unbindElement();
 
 			// reset filter for items with messages
-			oTable.getBinding("rows").filter();
-			oView.byId("itemFilter").setSelectedKey("Show all");
+			if (!bIsTransient) {
+				oTable.getBinding("rows").filter();
+				oView.byId("itemFilter").setSelectedKey("Show all");
+			}
 
 			oView.byId("objectPage").bindElement(sContextPath, {createPreliminaryContext : true});
 			oTable.clearSelection();
@@ -407,7 +469,7 @@ sap.ui.define([
 
 		onSortSalesOrdersTable : function (oEvent) {
 			var sKey = oEvent.getSource().getSelectedKey(),
-				oListBinding = this.getView().byId("SalesOrderList").getBinding("items");
+				oListBinding = this.getView().byId("SalesOrderSet").getBinding("items");
 
 			oListBinding.sort(new Sorter("SalesOrderID", sKey === "desc"));
 		},
@@ -428,10 +490,16 @@ sap.ui.define([
 		},
 
 		readSalesOrder : function (sGroupId) {
-			var oView = this.getView();
+			var oView = this.getView(),
+				oBindingContext = oView.byId("objectPage").getBindingContext();
+
+			if (!oBindingContext || oBindingContext.isTransient()) {
+				// for a transient context the resources of the read request cannot be determined
+				return;
+			}
 
 			oView.getModel().read("", {
-				context : oView.byId("objectPage").getBindingContext(),
+				context : oBindingContext,
 				groupId : sGroupId,
 				updateAggregatedMessages : true,
 				urlParameters : {

@@ -231,19 +231,19 @@ sap.ui.define([
 				"$metadata?sap-language=EN" : {
 					source : "metadata.xml"
 				},
-				"SalesOrderSet?$skip=0&$top=4&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
+				"SalesOrderSet?$skip=0&$top=4&$orderby=SalesOrderID%20desc&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
 					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable.json"
 				},
-				"SalesOrderSet?$skip=4&$top=4&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
+				"SalesOrderSet?$skip=4&$top=4&$orderby=SalesOrderID%20desc&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
 					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable2.json"
 				},
-				"SalesOrderSet?$skip=8&$top=4&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
+				"SalesOrderSet?$skip=8&$top=4&$orderby=SalesOrderID%20desc&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
 					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable3.json"
 				},
-				"SalesOrderSet?$skip=0&$top=8&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
+				"SalesOrderSet?$skip=0&$top=8&$orderby=SalesOrderID%20desc&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
 					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable4.json"
 				},
-				"SalesOrderSet?$skip=0&$top=12&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
+				"SalesOrderSet?$skip=0&$top=12&$orderby=SalesOrderID%20desc&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
 					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTableALL.json"
 				},
 
@@ -534,6 +534,10 @@ sap.ui.define([
 					source : "Messages/TC6/SalesOrderSet.json"
 				},
 				"SalesOrderSet('106')/ToLineItems?$skip=0&$top=4" : [{
+					message : getLineItems("Messages/TC6/SalesOrderSet-ToLineItems.json",
+						undefined, 0, 2)
+				}],
+				"SalesOrderSet('106')/ToLineItems?$skip=0&$top=3" : [{
 					ifMatch : ithCall.bind(null, 3),
 					source : "Messages/TC6/SalesOrderSet-ToLineItems.json"
 				}, {
