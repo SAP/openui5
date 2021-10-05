@@ -73,6 +73,9 @@ sap.ui.define([
 		allowBindings: {
 			defaultValue: true,
 			mergeStrategy: "mostRestrictiveWins"
+		},
+		typeLabel: {
+			defaultValue: "BASE_EDITOR.TYPES.BOOLEAN"
 		}
 	});
 

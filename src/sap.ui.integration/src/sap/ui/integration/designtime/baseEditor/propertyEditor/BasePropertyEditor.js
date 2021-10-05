@@ -827,6 +827,9 @@ sap.ui.define([
 		visible: {
 			defaultValue: true,
 			mergeStrategy: "mostRestrictiveWins"
+		},
+		typeLabel: {
+			defaultValue: "BASE_EDITOR.FALLBACK_TYPE"
 		}
 	};
 
@@ -834,7 +837,7 @@ sap.ui.define([
 		var oPreviousConfig = this.getConfig();
 
 		var oDefaultConfig = {};
-		var oConfigMetadata = PropertyEditorFactory.getType(this.getMetadata().getName()).configMetadata;
+		var oConfigMetadata = PropertyEditorFactory.getByClassName(this.getMetadata().getName()).configMetadata;
 		each(oConfigMetadata, function (sConfigKey, mConfigValue) {
 			oDefaultConfig[sConfigKey] = mConfigValue.defaultValue;
 		});

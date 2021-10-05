@@ -66,6 +66,9 @@ sap.ui.define([
 	DateEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata, {
 		allowBindings: {
 			defaultValue: true
+		},
+		typeLabel: {
+			defaultValue: "BASE_EDITOR.TYPES.DATE"
 		}
 	});
 

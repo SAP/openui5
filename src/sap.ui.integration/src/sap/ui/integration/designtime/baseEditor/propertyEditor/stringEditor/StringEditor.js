@@ -74,6 +74,9 @@ sap.ui.define([
 	});
 
 	StringEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata, {
+		typeLabel: {
+			defaultValue: "BASE_EDITOR.TYPES.STRING"
+		},
 		enabled: {
 			defaultValue: true,
 			mergeStrategy: "mostRestrictiveWins"

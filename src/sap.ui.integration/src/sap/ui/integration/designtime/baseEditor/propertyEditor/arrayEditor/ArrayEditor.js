@@ -118,6 +118,9 @@ sap.ui.define([
 		},
 		template: {
 			defaultValue: {}
+		},
+		typeLabel: {
+			defaultValue: "BASE_EDITOR.TYPES.ARRAY"
 		}
 	});
 

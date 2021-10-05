@@ -52,6 +52,16 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
+	IconEditor.configMetadata = Object.assign(
+		{},
+		BasePropertyEditor.configMetadata,
+		{
+			typeLabel: {
+				defaultValue: "BASE_EDITOR.TYPES.ICON"
+			}
+		}
+	);
+
 	// Editor Configuration for Editor for type "icon"
 	var oIconConfig = {
 		config: {
