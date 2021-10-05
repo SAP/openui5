@@ -413,6 +413,44 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("setAggregation: kept-alive context", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oContext0 = {isKeepAlive : function () {}},
+			oContext1 = {isKeepAlive : function () {}};
+
+		oBinding.aContexts = [oContext0, undefined, oContext1];
+
+		this.mock(oContext0).expects("isKeepAlive").withExactArgs().returns(false);
+		this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oBinding.setAggregation({});
+		}, new Error("Cannot set $$aggregation due to a kept-alive context"));
+
+		assert.notOk("$$aggregation" in oBinding.mQueryOptions);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setAggregation: hidden kept-alive context", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oContext0 = {isKeepAlive : function () {}},
+			oContext1 = {isKeepAlive : function () {}};
+
+		oBinding.mPreviousContextsByPath  = {foo : oContext0, bar : oContext1};
+
+		this.mock(oContext0).expects("isKeepAlive").withExactArgs().returns(false);
+		this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oBinding.setAggregation({});
+		}, new Error("Cannot set $$aggregation due to a kept-alive context"));
+
+		assert.notOk("$$aggregation" in oBinding.mQueryOptions);
+	});
+
+	//*********************************************************************************************
 [null, {group : {dimension : {}}}].forEach(function (oAggregation, i) {
 	QUnit.test("setAggregation, " + i, function () {
 		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
