@@ -111,20 +111,16 @@ sap.ui.define([
 		},
 
 		switchToAdaptionMode: function() {
-			sap.ui.require(["sap/ui/rta/RuntimeAuthoring"], function(RuntimeAuthoring) {
+			sap.ui.require(["sap/ui/rta/api/startAdaptation"], function(startAdaptation) {
 				var sUriParam = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-ccf");
-				var oRta = new RuntimeAuthoring({
+				startAdaptation({
 					rootControl: sap.ui.getCore().byId("Comp1---idMain1"),
 					customFieldUrl: this._sResourcePath + "/testdata/rta/CustomField.html",
 					showCreateCustomField: sUriParam === "true",
-					flexSettings: {
-						developerMode: false
+					stop: function() {
+						this.destroy();
 					}
 				});
-				oRta.attachEvent("stop", function() {
-					oRta.destroy();
-				});
-				oRta.start();
 			}.bind(this));
 		},
 

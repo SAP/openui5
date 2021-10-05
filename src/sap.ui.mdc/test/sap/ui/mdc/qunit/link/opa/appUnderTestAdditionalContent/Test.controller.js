@@ -1,17 +1,16 @@
 sap.ui.define([
-	'sap/ui/core/mvc/Controller', 'sap/ui/rta/RuntimeAuthoring'
-], function(Controller, RuntimeAuthoring) {
+	'sap/ui/core/mvc/Controller', 'sap/ui/rta/api/startAdaptation'
+], function(Controller, startAdaptation) {
 	"use strict";
 
 	return Controller.extend("appUnderTestAdditionalContent.Test", {
 		onPressRTA: function() {
-			var oRuntimeAuthoring = new RuntimeAuthoring({
-				rootControl: this.getOwnerComponent().getAggregation("rootControl"),
+			startAdaptation({
+				rootControl: this.getOwnerComponent(),
 				stop: function() {
-					oRuntimeAuthoring.destroy();
+					this.destroy();
 				}
 			});
-			oRuntimeAuthoring.start();
 		}
 	});
 }, true);

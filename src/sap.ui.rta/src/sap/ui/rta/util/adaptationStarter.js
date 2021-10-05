@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/core/Element",
+	"sap/ui/core/Control",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/api/FeaturesAPI",
@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/base/Log"
 ], function(
 	RuntimeAuthoring,
-	Element,
+	Control,
 	FlexUtils,
 	Layer,
 	FeaturesAPI,
@@ -45,7 +45,7 @@ sap.ui.define([
 	 * @private
 	 */
 	function adaptationStarter(mOptions, loadPlugins, onStart, onFailed, onStop) {
-		if (!(mOptions.rootControl instanceof Element) && !(mOptions.rootControl instanceof UIComponent)) {
+		if (!(mOptions.rootControl instanceof Control) && !(mOptions.rootControl instanceof UIComponent)) {
 			return Promise.reject(new Error("An invalid root control was passed"));
 		}
 

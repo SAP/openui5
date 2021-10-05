@@ -51,11 +51,11 @@
 							if (bRTA) {
 								oView.addStyleClass("sapUiTop");
 								sap.ui.require([
-									"sap/ui/rta/RuntimeAuthoring"
-								], function(RuntimeAuthoring) {
-									new RuntimeAuthoring({
-										rootControl: oView
-									}).start();
+									"sap/ui/rta/api/startKeyUserAdaptation"
+								], function(startKeyUserAdaptation) {
+									startKeyUserAdaptation({
+										rootControl: oComp
+									});
 								});
 							}
 						});

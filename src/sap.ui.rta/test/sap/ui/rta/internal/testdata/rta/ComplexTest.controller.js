@@ -193,10 +193,10 @@ sap.ui.define([
 
 		switchToAdaptionMode: function() {
 			sap.ui.require([
-				"sap/ui/rta/RuntimeAuthoring",
+				"sap/ui/rta/api/startAdaptation",
 				"sap/ui/rta/command/Stack"
 			], function(
-				RuntimeAuthoring,
+				startAdaptation,
 				Stack
 			) {
 				var aFileNames = [];
@@ -205,21 +205,15 @@ sap.ui.define([
 					//expose undo/redo test function to console
 					window.undoRedoStack = this._undoRedoStack.bind(this, oStack);
 
-					var oRta = new RuntimeAuthoring({
+					startAdaptation({
 						rootControl: this.getOwnerComponent(),
 						commandStack: oStack,
-						flexSettings: {
-							developerMode: false
+						stop: function() {
+							this.destroy();
 						}
-					});
-					oRta.attachEvent("stop", function() {
-						oRta.destroy();
-					});
-					oRta.attachEvent("start", function() {
+					}).then(function() {
 						MessageToast.show("Rta is started with all changes from local storage added to the command stack. Undo might already by enabled.\n To test the visual editor usage of our stack, there is a undoRedoStack() function in console available", {duration: 10000});
 					});
-
-					oRta.start();
 				}.bind(this));
 			}.bind(this));
 		},
