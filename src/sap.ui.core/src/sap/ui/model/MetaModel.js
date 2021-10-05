@@ -43,8 +43,6 @@ sap.ui.define(['./Model'],
 	 *
 	 */
 	MetaModel.prototype.createBindingContext = function(sPath, oContext, mParameters, fnCallBack) {
-		//TODO should come from a to be implemented read-only base class for ClientModels
-		// optional parameter handling
 		if (typeof oContext == "function") {
 			fnCallBack = oContext;
 			oContext = null;
@@ -66,12 +64,9 @@ sap.ui.define(['./Model'],
 	};
 
 	/**
-	 * @see sap.ui.model.Model.prototype.destroyBindingContext
-	 * @param {object}
-	 *         oContext to destroy
+	 * Does nothing.
 	 */
-	MetaModel.prototype.destroyBindingContext = function(oContext) {
-		// TODO: what todo here?
+	MetaModel.prototype.destroyBindingContext = function() {
 	};
 
 	return MetaModel;
