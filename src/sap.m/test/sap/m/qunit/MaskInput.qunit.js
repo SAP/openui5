@@ -1376,6 +1376,37 @@ sap.ui.define([
 		assert.ok(oClearIcon.getVisible(), "Clear Icon is still visible after ENTER press");
 	});
 
+	QUnit.test("Appearance is not changed when focus in/focus out", function (assert){
+		var oClearIcon = this.oMaskInput._getClearIcon(),
+			oButton = new Button();
+
+		oButton.placeAt("content");
+
+		// Act
+		this.oMaskInput.focus();
+		this.clock.tick(100);
+
+		// Assert
+		assert.notOk(oClearIcon.getVisible(), "Clear Icon is not visible when the value of the input is empty");
+
+		// Act
+		qutils.triggerKeypress(this.oMaskInput.getDomRef(), "1");
+
+		// Assert
+		assert.equal(getMaskInputDomValue(this.oMaskInput), "1", "'1' is set as value of the input");
+		assert.ok(oClearIcon.getVisible(), "Clear Icon is visible when the value of the input is not empty");
+
+		// Act
+		oButton.focus();
+
+		// Assert
+		assert.ok(oClearIcon.getVisible(), "Clear Icon is visible when focus is lost");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
+
 	// Helper functions
 
 	function checkForDeleteAndBackspace() {

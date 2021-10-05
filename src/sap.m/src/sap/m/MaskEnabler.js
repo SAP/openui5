@@ -115,8 +115,6 @@ sap.ui.define([
 
 				this._positionCaret(true);
 			}
-
-			this.getShowClearIcon && this.getShowClearIcon() && this._getClearIcon().setVisible(this.getProperty("effectiveShowClearIcon"));
 		};
 
 		/**
@@ -146,8 +144,6 @@ sap.ui.define([
 				this._inputCompletedHandlerNoMask();
 				InputBase.prototype.onfocusout.apply(this, arguments);
 			}
-
-			this.getShowClearIcon && this.getShowClearIcon() && this._getClearIcon().setVisible(false);
 		};
 
 		/**
@@ -236,13 +232,14 @@ sap.ui.define([
 		};
 
 		/**
-		 * Sets the clear icon visibility depending on whether the input value is empty or not
-		 *
+		 * Sets the clear icon visibility depending on whether the input value is empty or not.
+		 * @param {boolean} bShowClearIcon whether to force show/hide of the clear icon or not.
 		 * @private
 		 */
-		this._setClearIconVisibility = function() {
+		this._setClearIconVisibility = function(bShowClearIcon) {
+			var bEffectiveShowClearIcon = bShowClearIcon !== undefined ? bShowClearIcon : !this._isValueEmpty();
 			if (this.getShowClearIcon && this.getShowClearIcon()) {
-				this.setProperty("effectiveShowClearIcon", !this._isValueEmpty());
+				this.setProperty("effectiveShowClearIcon", bEffectiveShowClearIcon);
 				this._getClearIcon().setVisible(this.getProperty("effectiveShowClearIcon"));
 			}
 		};
@@ -330,6 +327,9 @@ sap.ui.define([
 					this._applyRules(sValue);
 				}
 			}
+
+			// show/hide the clear icon based on the new value (it is not yet set in the DOM, so the default check will not work)
+			this._setClearIconVisibility(sValue !== "");
 
 			return this;
 		};
