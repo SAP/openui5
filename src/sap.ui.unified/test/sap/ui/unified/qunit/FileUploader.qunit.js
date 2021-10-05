@@ -120,12 +120,16 @@ sap.ui.define([
 
 		// assert
 		assert.ok(oStaticArea.querySelector("[type='file']"), "File uploader input field exits in the static area");
+		assert.ok(oFileUploader.FUEl, "File type input element is cached");
+		assert.ok(oFileUploader.FUDataEl, "File input data element is cached");
 
 		// act
 		oFileUploader.destroy();
 
 		// assert
 		assert.notOk(oStaticArea.querySelector("[type='file']"), "File uploader input field is removed from static area");
+		assert.notOk(oFileUploader.FUEl, "File type input element reference is null");
+		assert.notOk(oFileUploader.FUDataEl, "File input data element reference is null");
 	});
 
 	QUnit.test("Test buttonOnly property - setter/getter", function (assert) {
