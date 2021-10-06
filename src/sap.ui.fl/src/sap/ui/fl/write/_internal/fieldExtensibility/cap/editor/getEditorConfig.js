@@ -143,11 +143,12 @@ sap.ui.define([
 				annotations: {
 					tags: ["advanced"],
 					label: "Additional Annotations",
-					allowedTypes: ["string", "json"],
+					allowedTypes: ["json"],
 					path: "annotations",
-					type: "annotations",
+					type: "map",
 					allowTypeChange: false,
-					addItemLabelI18n: "CAP_ADD_FIELD_EDITOR.ANNOTATION"
+					addItemLabelI18n: "CAP_ADD_FIELD_EDITOR.ANNOTATION",
+					defaultType: "json"
 				}
 			},
 			layout: {
@@ -189,7 +190,6 @@ sap.ui.define([
 				integer: "sap/ui/integration/designtime/baseEditor/propertyEditor/integerEditor/IntegerEditor",
 				number: "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
 				map: "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
-				annotations: "sap/ui/fl/write/_internal/fieldExtensibility/cap/editor/propertyEditor/annotationsEditor/AnnotationsEditor",
 				list: "sap/ui/integration/designtime/baseEditor/propertyEditor/listEditor/ListEditor",
 				bool: "sap/ui/fl/write/_internal/fieldExtensibility/cap/editor/propertyEditor/booleanEditor/BooleanEditor",
 				range: "sap/ui/fl/write/_internal/fieldExtensibility/cap/editor/propertyEditor/rangeEditor/RangeEditor",
