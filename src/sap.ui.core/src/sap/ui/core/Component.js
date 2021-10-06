@@ -1369,8 +1369,7 @@ sap.ui.define([
 			if (mConfig.async === true) {
 				return Component.create(mConfig);
 			} else {
-				// use deprecated factory for sync use case only
-				return sap.ui.component(mConfig);
+				return sap.ui.component(mConfig); // legacy-relevant: use deprecated factory for sync use case only
 			}
 		}
 
