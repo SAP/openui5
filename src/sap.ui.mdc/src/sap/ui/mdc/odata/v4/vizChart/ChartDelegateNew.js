@@ -916,21 +916,27 @@ sap.ui.define([
         //Since zoom information is not yet available for sap.chart.Chart after data load is complete, do it on renderComplete instead
         //This is a workaround which is hopefully not needed in other chart libraries
         this._getChart(oMDCChart).attachRenderComplete(function () {
-            oMDCChart._updateToolbar();
-        });
+            if (this._getState(oMDCChart).toolbarUpdateRequested){
+                oMDCChart._updateToolbar();
+                this._getState(oMDCChart).toolbarUpdateRequested = false;
+            }
+        }.bind(this));
 
         this._getInnerStructure(oMDCChart).removeAllItems();
         this._getInnerStructure(oMDCChart).setJustifyContent(sap.m.FlexJustifyContent.Start);
         this._getInnerStructure(oMDCChart).setAlignItems(sap.m.FlexAlignItems.Stretch);
         this._getInnerStructure(oMDCChart).addItem(this._getChart(oMDCChart));
 
-        var oState = this._getState(oMDCChart);
         oState.dataLoadedCallback = fnCallbackDataLoaded;
 
         this._setState(oMDCChart, oState);
         var oBindingInfo = this._getBindingInfo(oMDCChart);
         this.updateBindingInfo(oMDCChart, oBindingInfo); //Applies filters
         this.rebindChart(oMDCChart, oBindingInfo);
+    };
+
+    ChartDelegate.requestToolbarUpdate = function(oMDCChart) {
+        this._getState(oMDCChart).toolbarUpdateRequested = true;
     };
 
     ChartDelegate.createInnerDimension = function (oMDCChart, oMDCChartItem) {

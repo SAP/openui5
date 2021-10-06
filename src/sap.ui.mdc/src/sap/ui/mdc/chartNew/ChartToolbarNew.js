@@ -192,7 +192,15 @@ sap.ui.define([
         };
 
         ChartToolbar.prototype._getZoomEnablement = function (oMDCChart) {
-            var zoomInfo = oMDCChart.getZoomState();
+            var zoomInfo;
+
+            try {
+                zoomInfo = oMDCChart.getZoomState();
+            } catch (error) {
+                //Catch the case when an inner chart is not yet rendered
+                zoomInfo = {enabled: false};
+            }
+
 
             if (zoomInfo && zoomInfo.hasOwnProperty("currentZoomLevel") && zoomInfo.currentZoomLevel != null && zoomInfo.enabled) {
                 var toolbarZoomInfo = {enabled: true};

@@ -592,8 +592,6 @@ sap.ui.define([
 
             this.getControlDelegate().updateBindingInfo(this, oBindingInfo); //Applies filters
             this.getControlDelegate().rebindChart(this, oBindingInfo);
-
-            this._updateToolbar();
         };
 
         /**
@@ -917,7 +915,7 @@ sap.ui.define([
             this.setBusy(false);
             this._renderOverlay(false);
 
-            this._updateToolbar();
+            this.getControlDelegate().requestToolbarUpdate(this);
 
             this.fireEvent("innerChartLoadedData ", {
                 innerChart: this.getControlDelegate().getInnerChart(this)
