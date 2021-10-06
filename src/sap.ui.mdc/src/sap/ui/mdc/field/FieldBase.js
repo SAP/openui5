@@ -1208,7 +1208,14 @@ sap.ui.define([
 
 	FieldBase.prototype.getFocusElementForValueHelp = function(bTypahead) {
 		var oSuggestControl = this.getControlForSuggestion();
-		var oIcon = oSuggestControl && oSuggestControl.mAggregations && oSuggestControl.mAggregations._endIcon && oSuggestControl.mAggregations._endIcon[0];
+		var aIcons = oSuggestControl && oSuggestControl.getMetadata().getAllPrivateAggregations()._endIcon && oSuggestControl.getAggregation("_endIcon");
+		var oIcon;
+		for (var i = 0; i < aIcons.length; i++) { // as MultiInput can have a invisible icon before visible icon
+			if (aIcons[i].getVisible()) {
+				oIcon = aIcons[i];
+				break;
+			}
+		}
 		return bTypahead || !oIcon ? oSuggestControl : oIcon;
 	};
 
