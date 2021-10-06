@@ -5,11 +5,11 @@
 sap.ui.define([
 	"sap/ui/mdc/valuehelp/content/FixedList",
 	"sap/ui/mdc/util/loadModules",
-	"sap/ui/model/BindingMode"
+	"sap/ui/model/ParseException"
 ], function(
 	FixedList,
 	loadModules,
-	BindingMode
+	ParseException
 ) {
 	"use strict";
 
@@ -26,6 +26,11 @@ sap.ui.define([
 	Bool.prototype.init = function() {
 
 		FixedList.prototype.init.apply(this, arguments);
+
+		this.setUseFirstMatch(true); // as only 2 items
+		this.setUseAsValueHelp(true); // should be used as value help
+		this.setFilterList(false); // as only 2 items
+		this.setCaseSensitive(false); // as only 2 items
 
 		this._oObserver.observe(this, {
 			properties: ["config"]
@@ -64,16 +69,13 @@ sap.ui.define([
 						}
 					]
 				});
-				_updateModel.call(this);
+				_updateModel.call(this, this.getConfig());
 
 				var oItem = new ListFieldHelpItem(this.getId() + "-Item", {
 					key: {path: "$Bool>key"},
 					text: {path: "$Bool>text"}
 				});
 
-				this.setUseFirstMatch(true);
-				this.setUseAsValueHelp(true);
-				this.setFilterList(false);
 				this.bindAggregation("items", {path: "$Bool>/items", template: oItem});
 				this.setModel(this._oModel, "$Bool");
 
@@ -85,28 +87,37 @@ sap.ui.define([
 
 	Bool.prototype.getItemForValue = function (oConfig) {
 
-		// as in bool case the description is comming from the type, search for description (first match) if parsing fails
-		if (!oConfig.checkKey && oConfig.parsedValue === undefined && oConfig.value) {
-			oConfig.checkDescription = true;
-		}
+		return Promise.resolve().then(function () {
+			// don't need to create items for this, just use the type to check
+			var oGlobalConfig = this.getConfig();
+			var oType = oGlobalConfig && oGlobalConfig.dataType;
 
-		return FixedList.prototype.getItemForValue.call(this, oConfig);
-
-	};
-
-	Bool.prototype.getValueHelpIcon = function() {
-
-		return "sap-icon://slim-arrow-down"; // need to be known before Content is created
-
-	};
-
-	Bool.prototype.getAriaAttributes = function(iMaxConditions) {
-
-		return { // return default values, but needs to be implemented by specific content
-			contentId: this.getId() + "-FL-List", // as list might be created async, use fix ID
-			ariaHasPopup: "listbox",
-			roleDescription: null // no multi-selection
-		};
+			if (oType) {
+				if (oConfig.checkKey) {
+					if (oConfig.parsedValue === true || oConfig.parsedValue === false) {
+						return { key: oConfig.parsedValue, description: oType.formatValue(oConfig.parsedValue, "string") };
+					} else {
+						// as in bool case the description is comming from the type, search for description (first match) if parsing fails
+						oConfig.checkDescription = true;
+					}
+				}
+				if (oConfig.checkDescription && oConfig.value) {
+					var sTrue = oType.formatValue(true, "string");
+					if (sTrue.toLowerCase().startsWith(oConfig.value.toLowerCase())) {
+						return { key: true, description: sTrue };
+					}
+					var sFalse = oType.formatValue(false, "string");
+					if (sFalse.toLowerCase().startsWith(oConfig.value.toLowerCase())) {
+						return { key: false, description: sFalse };
+					}
+				}
+				var sError = this._oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", [oConfig.value]);
+				var Exception = oConfig.exception || ParseException;
+				throw new Exception(sError);
+			} else {
+				throw new Error("Type missing");
+			}
+		}.bind(this));
 
 	};
 
@@ -119,30 +130,25 @@ sap.ui.define([
 	Bool.prototype._observeChanges = function(oChanges) {
 
 		if (oChanges.type === "property" && oChanges.name === "config") {
-			_updateModel.call(this);
+			_updateModel.call(this, oChanges.current);
 		}
 
 		FixedList.prototype._observeChanges.apply(this, arguments);
 	};
 
-	function _updateModel() {
-		if (this._oModel) {
-			var oValueHelpModel = this.getModel("$valueHelp");
-			var oConfig = oValueHelpModel && oValueHelpModel.getProperty("/_config");
-
-			if (oConfig) {
-				// use texts of used type
-				var oType = oConfig.dataType;
-				var oData = this._oModel.getData();
-				if (oType && oData["type"] !== oType.getMetadata().getName()) {
-					oData["type"] = oType.getMetadata().getName();
-					var aItems = oData["items"];
-					for (var i = 0; i < aItems.length; i++) {
-						var oItem = aItems[i];
-						oItem["text"] = oType.formatValue(oItem["key"], "string");
-					}
-					this._oModel.checkUpdate(true);
+	function _updateModel(oConfig) {
+		if (this._oModel && oConfig) {
+			// use texts of used type
+			var oType = oConfig.dataType;
+			var oData = this._oModel.getData();
+			if (oType && oData["type"] !== oType.getMetadata().getName()) {
+				oData["type"] = oType.getMetadata().getName();
+				var aItems = oData["items"];
+				for (var i = 0; i < aItems.length; i++) {
+					var oItem = aItems[i];
+					oItem["text"] = oType.formatValue(oItem["key"], "string");
 				}
+				this._oModel.checkUpdate(true);
 			}
 		}
 	}
@@ -226,5 +232,69 @@ sap.ui.define([
 	 * @function
 	 */
 
-	return Bool;
+	/**
+	 * Sets a new value for property <code>useFirstMatch</code>.
+	 *
+	 * <b>Note:</b> Do not set this property for the <code>Bool</code> content. It will be set by itself
+	 *
+	 * @param {boolean} [bUseFirstMatch=true] New value for property <code>useFirstMatch</code>
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @deprecated Not supported, the property is automatically set.
+	 * @ui5-not-supported
+	 * @name sap.ui.mdc.valuehelp.content.Bool#setUseFirstMatch
+	 * @function
+	 */
+
+	/**
+	 * Sets a new value for property <code>useAsValueHelp</code>.
+	 *
+	 * <b>Note:</b> Do not set this property for the <code>Bool</code> content. It will be set by itself
+	 *
+	 * @param {boolean} [bUseAsValueHelp=true] New value for property <code>useAsValueHelp</code>
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @deprecated Not supported, the property is automatically set.
+	 * @ui5-not-supported
+	 * @name sap.ui.mdc.valuehelp.content.Bool#setUseAsValueHelp
+	 * @function
+	 */
+
+	/**
+	 * Sets a new value for property <code>filterList</code>.
+	 *
+	 * <b>Note:</b> Do not set this property for the <code>Bool</code> content. It will be set by itself
+	 *
+	 * @param {boolean} [bFilterList=false] New value for property <code>filterList</code>
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @deprecated Not supported, the property is automatically set.
+	 * @ui5-not-supported
+	 * @name sap.ui.mdc.valuehelp.content.Bool#setFilterList
+	 * @function
+	 */
+
+	/**
+	 * Sets a new value for property <code>caseSensitive</code>.
+	 *
+	 * <b>Note:</b> Do not set this property for the <code>Bool</code> content. It will be set by itself
+	 *
+	 * @param {boolean} [bCaseSensitive=false] New value for property <code>caseSensitive</code>
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @deprecated Not supported, the property is automatically set.
+	 * @ui5-not-supported
+	 * @name sap.ui.mdc.valuehelp.content.Bool#setCaseSensitive
+	 * @function
+	 */
+
+	 return Bool;
 });
