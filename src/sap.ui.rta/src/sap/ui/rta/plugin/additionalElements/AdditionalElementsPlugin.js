@@ -91,8 +91,7 @@ sap.ui.define([
 			// ---- control specific ----
 			library: "sap.ui.rta",
 			properties: {
-				commandFactory: "object",
-				analyzer: "object" //sap.ui.rta.plugin.additionalElements.AdditionalElementsAnalyzer - will be removed in a later commit; kept to not break unified.shell
+				commandFactory: "object"
 			},
 			aggregations: {
 				dialog: { type: "sap.ui.rta.plugin.additionalElements.AddElementsDialog", multiple: false }
