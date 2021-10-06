@@ -261,6 +261,21 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
+	AutoRowMode.prototype.updateTableRows = function() {
+		if (this.getHideEmptyRows() && this.getComputedRowCounts().count === 0) {
+			var iConfiguredRowCount = this.getConfiguredRowCount();
+
+			if (iConfiguredRowCount > 0) {
+				return this.getRowContexts(iConfiguredRowCount, true).length > 0;
+			}
+		} else {
+			return RowMode.prototype.updateTableRows.call(this);
+		}
+	};
+
+	/**
+	 * @inheritDoc
+	 */
 	AutoRowMode.prototype.getComputedRowCounts = function() {
 		if (isRowCountInitial(this)) {
 			// The actual row count is only known after rendering, when the row count was first determined and set.
