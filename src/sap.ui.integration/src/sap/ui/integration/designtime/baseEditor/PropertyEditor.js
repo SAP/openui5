@@ -314,6 +314,14 @@ sap.ui.define([
 		return sap.ui.getCore().byId(this.getAssociation("editor"));
 	};
 
+	PropertyEditor.prototype._prepareConfig = function(oConfig) {
+		var oBaseEditor = this.getEditor();
+		var oEditorConfig = (oConfig.type && oBaseEditor)
+			? (oBaseEditor.getConfig().propertyEditorConfigs || {})[oConfig.type]
+			: {};
+		return _merge({}, oEditorConfig, oConfig);
+	};
+
 	PropertyEditor.prototype.setConfig = function (mConfig) {
 		var mPreviousConfig = this.getConfig();
 		var mNextConfig = mConfig && _merge(
@@ -323,7 +331,7 @@ sap.ui.define([
 			{
 				designtime: undefined
 			},
-			mConfig
+			this._prepareConfig(mConfig)
 		);
 
 		if (!deepEqual(mPreviousConfig, mNextConfig)) {
@@ -356,6 +364,8 @@ sap.ui.define([
 				previousEditor: oPreviousEditor,
 				editor: oEditor
 			});
+			// Make sure to refresh config as the editor defaults might have changed
+			this.setConfig(this.getConfig());
 		}
 	};
 
