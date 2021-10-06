@@ -25,10 +25,10 @@
 						</layoutData>
 					</Input>
 					<Button id="selectSalesOrder" press="onSelectSalesOrder"
-						text="Show Sales Order" type="Accept" />
+						text="Show Sales Order" tooltip="Show the sales order" type="Accept" />
 					<ToolbarSpacer/>
 					<Button id="showSalesOrderTable" press="onShowTable" text="Use Table"
-						tooltip="Show sales order table" type="Emphasized" />
+						tooltip="Show the sales order table" type="Emphasized" />
 					<Link href="test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/MIT.SalesOrders(V2).Messages.html"
 						target="_blank" text="Test Cases" />
 				</Toolbar>
@@ -49,7 +49,8 @@
 								id="refresh::SalesOrderList" press="onRefreshSalesOrders"
 								tooltip="Refresh the sales order list" />
 							<Button enabled="{ui>/salesOrderSelected}" icon="sap-icon://delete"
-								id="delete::SalesOrderList" press="onDeleteSalesOrder" />
+								id="delete::SalesOrderList" press="onDeleteSalesOrder"
+								tooltip="Delete the selected sales order"/>
 							<Label text="Sort: "/>
 							<Select change="onSortSalesOrdersTable">
 								<core:Item key="asc" text="Ascending" />
@@ -189,9 +190,10 @@
 							</Select>
 							<ToolbarSpacer/>
 							<Button id="fixAllQuantities::ToLineItems" press="onFixAllQuantities"
-								text="Fix Quantities" />
+								text="Fix Quantities" tooltip="Fix all faulty quantities" />
 							<Button enabled="{ui>/itemSelected}" id="cloneItem::ToLineItems"
-								press="onCloneItem" text="Clone Item" />
+								press="onCloneItem" text="Clone Item"
+								tooltip="Clone the selected line item" />
 							<ToggleButton id="transitionMessagesOnly"
 								press="onTransitionMessagesOnly" pressed="true"
 								text="Transition Messages Only"
@@ -354,9 +356,11 @@
 					<Dialog id="createSalesOrderItemDialog" title="Create a New Sales Order Item">
 						<buttons>
 							<Button id="saveCreatedItem::createSalesOrderItemDialog"
-								press="onSaveCreatedItem" text="Save" type="Accept" />
+								press="onSaveCreatedItem" text="Save"
+								tooltip="Save the new sales order item" type="Accept" />
 							<Button id="discardCreatedItem::createSalesOrderItemDialog"
-								press="onDiscardCreatedItem" text="Discard" type="Reject" />
+								press="onDiscardCreatedItem" text="Discard"
+								tooltip="Discard the new sales order item" type="Reject" />
 						</buttons>
 						<form:SimpleForm ariaLabelledBy="createSalesOrderItemDialog" editable="true"
 							layout="ResponsiveGridLayout">
@@ -384,7 +388,8 @@
 					</Dialog>
 					<Dialog binding="{ToProduct}" id="productDetailsDialog" title="Product Details">
 						<buttons>
-							<Button press="onCloseProductDetails" text="Close" type="Accept" />
+							<Button press="onCloseProductDetails" text="Close"
+								tooltip="Close the product details dialog" type="Accept" />
 						</buttons>
 						<form:SimpleForm editable="true" layout="ResponsiveGridLayout">
 							<Label text="Product ID" />
@@ -395,7 +400,8 @@
 					</Dialog>
 					<Dialog contentWidth="50%" id="messageDetails" title="Message Details">
 						<buttons>
-							<Button press="onCloseMessageDetails" text="Close" type="Emphasized" />
+							<Button press="onCloseMessageDetails" text="Close"
+								tooltip="Close the message details dialog" type="Emphasized" />
 						</buttons>
 						<form:SimpleForm editable="false" layout="ResponsiveGridLayout">
 							<Label text="Message ID" />
@@ -461,7 +467,7 @@
 				</Button>
 				<ToolbarSpacer />
 				<Button id="saveSalesOrder" press="onSaveSalesOrder" text="Save"
-					type="Emphasized" />
+					tooltip="Save the sales order" type="Emphasized" />
 				<Button press="onResetChanges" text="Reset Changes" />
 			</OverflowToolbar>
 		</footer>
