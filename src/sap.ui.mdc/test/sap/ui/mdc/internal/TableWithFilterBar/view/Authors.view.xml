@@ -41,11 +41,16 @@
 
 			<mdc:FilterBar id="authorsFilterBar" variantBackreference="IDVariantManagementOfTable" filtersChanged="onFiltersChanged" liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/Authors.FB.delegate', payload: {collectionName: 'Authors'}}" p13nMode="Item,Value">
 				<mdc:dependents>
-					<mdcf:FieldValueHelp
+					<mdc:ValueHelp
 						id="FVH_Generic_Multi"
 						title="Conditions"
-						showConditionPanel="true"
-						delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />
+						delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+						<mdc:dialog>
+							<mdcv:Popover>
+								<mdcvc:Conditions label="Conditions"/>
+							</mdcv:Popover>
+						</mdc:dialog>
+					</mdc:ValueHelp>
 
 					<mdc:ValueHelp
 						id="fhName"

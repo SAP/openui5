@@ -38,6 +38,10 @@ sap.ui.define([
 						bSearchExists = true;
 					}
 
+					if (oProperty.name === "ID") {
+						oProperty.formatOptions = {groupingEnabled: false};
+					}
+
 					if (oProperty.maxConditions === -1) {
 						oProperty.fieldHelp = "FVH_Generic_Multi";
 					}
@@ -87,6 +91,7 @@ sap.ui.define([
 				oFilterField.setOperators(["RENAISSANCE","MEDIEVAL","MODERN","CUSTOMRANGE","NOTINRANGE"]);
 				return oFilterField;
 			}
+
 		});
 
 		return oFilterFieldPromise;

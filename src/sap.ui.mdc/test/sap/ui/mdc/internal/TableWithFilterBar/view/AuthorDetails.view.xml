@@ -8,6 +8,8 @@
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdcf="sap.ui.mdc.field"
 	xmlns:mdcl="sap.ui.mdc.link"
+	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 	xmlns:ui="sap.ui"
 	xmlns:variants="sap.ui.fl.variants"
 	xmlns="sap.m" controllerName="sap.ui.v4demo.controller.AuthorDetails">
@@ -49,227 +51,265 @@
 									<Label text="Date of death"></Label>
 									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path:'dateOfDeath', type:'sap.ui.model.odata.type.Date'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
 									<Label text="Country"></Label>
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{countryOfOrigin_code}" additionalValue="{countryOfOrigin/descr}" display="ValueDescription" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHCountry">
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{countryOfOrigin_code}" display="ValueDescription" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHCountry">
 										<mdc:dependents>
-											<mdcf:FieldValueHelp id="IOFFVHCountry" title="Countries" showConditionPanel="false" filterFields="*code,descr*" keyPath="code" descriptionPath="descr" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
-												<mdcf:suggestContent>
-													<mdcf:FieldValueHelpMTableWrapper>
-														<Table items="{path: '/Countries', length: 10}" width="30rem">
-															<columns>
-																<Column>
-																	<Label text="Country"></Label>
-																</Column>
-																<Column>
-																	<Label text="Name"></Label>
-																</Column>
-															</columns>
-															<items>
-																<ColumnListItem type="Active">
-																	<Text text="{code}"></Text>
-																	<Text text="{descr}"></Text>
-																</ColumnListItem>
-															</items>
-														</Table>
-													</mdcf:FieldValueHelpMTableWrapper>
-												</mdcf:suggestContent>
-												<mdcf:content>
-													<mdcf:FieldValueHelpMTableWrapper>
-														<Table items="{path: '/Countries'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
-															<columns>
-																<Column>
-																	<Label text="Country"></Label>
-																</Column>
-																<Column>
-																	<Label text="Name"></Label>
-																</Column>
-															</columns>
-															<items>
-																<ColumnListItem type="Active">
-																	<Text text="{code}"></Text>
-																	<Text text="{descr}"></Text>
-																</ColumnListItem>
-															</items>
-														</Table>
-													</mdcf:FieldValueHelpMTableWrapper>
-												</mdcf:content>
-											</mdcf:FieldValueHelp>
+											<mdc:ValueHelp id="IOFFVHCountry" title="Countries" delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+												<mdc:typeahead>
+													<mdcv:Popover >
+														<mdcvc:MTable filterFields="$search" keyPath="code"	descriptionPath="descr">
+															<Table items="{path: '/Countries'}" width="30rem">
+																<columns>
+																	<Column>
+																		<Label text="Country"/>
+																	</Column>
+																	<Column>
+																		<Label text="Name"/>
+																	</Column>
+																</columns>
+																<items>
+																	<ColumnListItem type="Active">
+																		<Text text="{code}"/>
+																		<Text text="{descr}"/>
+																	</ColumnListItem>
+																</items>
+															</Table>
+														</mdcvc:MTable>
+													</mdcv:Popover >
+												</mdc:typeahead>
+												<mdc:dialog>
+													<mdcv:Dialog >
+														<mdcvc:MTable filterFields="$search" keyPath="code"	descriptionPath="descr">
+															<Table items="{path: '/Countries'}" width="30rem">
+																<columns>
+																	<Column>
+																		<Label text="Country"/>
+																	</Column>
+																	<Column>
+																		<Label text="Name"/>
+																	</Column>
+																</columns>
+																<items>
+																	<ColumnListItem type="Active">
+																		<Text text="{code}"/>
+																		<Text text="{descr}"/>
+																	</ColumnListItem>
+																</items>
+															</Table>
+														</mdcvc:MTable>
+													</mdcv:Dialog >
+												</mdc:dialog>
+											</mdc:ValueHelp>
 										</mdc:dependents>
 									</mdc:Field>
 									<Label text="Region"></Label>
 									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{regionOfOrigin_code}" additionalValue="{regionOfOrigin/text}" display="ValueDescription" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHRegion">
 										<mdc:dependents>
-											<mdcf:FieldValueHelp id="IOFFVHRegion" title="Regions" showConditionPanel="false" filterFields="*code,country_code,text*" keyPath="code" descriptionPath="text" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
-												<mdcf:inParameters>
+											<mdc:ValueHelp id="IOFFVHRegion" title="Regions" delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+												<mdc:inParameters>
 													<mdcf:InParameter id="IOFFVHRegion-In-Country" value="{countryOfOrigin_code}" helpPath="country_code" />
-												</mdcf:inParameters>
-												<mdcf:outParameters>
+												</mdc:inParameters>
+												<mdc:outParameters>
 													<mdcf:OutParameter id="IOFFVHRegion-Out-Country" value="{countryOfOrigin_code}" helpPath="country_code" />
-													<mdcf:OutParameter id="IOFFVHRegion-Out-CountryDesc" value="{countryOfOrigin/descr}" fixedValue=""/>
-												</mdcf:outParameters>
-												<mdcf:filterBar>
-													<vhfb:FilterBar liveMode= "false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
-														<mdc:FilterField id="VHFFBTextFFCountry"
-															label= "Country"
-															editMode= "Editable"
-															display= "ValueDescription"
-															dataType="sap.ui.model.type.String"
-															width="100%"
-															conditions="{$filters>/conditions/country_code}"
-															operators="EQ,NE"
-															valueState="{ path: '$filters>/fieldPath/country_code/valueState'}"
-															valueStateText="{ path:'$filters>/fieldPath/country_code/valueStateText'}"
-															fieldHelp="IOFFVHCountry">
-														</mdc:FilterField>
-													</vhfb:FilterBar>
-												</mdcf:filterBar>
-												<mdcf:suggestContent>
-													<mdcf:FieldValueHelpMTableWrapper>
-													<Table items="{path: '/Regions', length: 10}" width="30rem">
-														<columns>
-															<Column>
-																<Label text="Region"></Label>
-															</Column>
-															<Column>
-																<Label text="Name"></Label>
-															</Column>
-															<Column>
-																<Label text="Country"></Label>
-															</Column>
-														</columns>
-														<items>
-															<ColumnListItem type="Active">
-																<Text text="{code}"></Text>
-																<Text text="{text}"></Text>
-																<Text text="{country_code}"></Text>
-															</ColumnListItem>
-														</items>
-													</Table>
-												</mdcf:FieldValueHelpMTableWrapper>
-												</mdcf:suggestContent>
-												<mdcf:content>
-													<mdcf:FieldValueHelpMTableWrapper>
-													<Table items="{path: '/Regions'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
-														<columns>
-															<Column>
-																<Label text="Region"></Label>
-															</Column>
-															<Column>
-																<Label text="Name"></Label>
-															</Column>
-															<Column>
-																<Label text="Country"></Label>
-															</Column>
-														</columns>
-														<items>
-															<ColumnListItem type="Active">
-																<Text text="{code}"></Text>
-																<Text text="{text}"></Text>
-																<Text text="{country_code}"></Text>
-															</ColumnListItem>
-														</items>
-													</Table>
-												</mdcf:FieldValueHelpMTableWrapper>
-												</mdcf:content>
-											</mdcf:FieldValueHelp>
-										</mdc:dependents>
+												</mdc:outParameters>
+												<mdc:typeahead>
+													<mdcv:Popover>
+														<mdcvc:MTable keyPath="code" descriptionPath="text">
+															<Table items="{path: '/Regions', length: 10}" width="30rem">
+																<columns>
+																	<Column>
+																		<Label text="Region"/>
+																	</Column>
+																	<Column>
+																		<Label text="Name"/>
+																	</Column>
+																	<Column>
+																		<Label text="Country"/>
+																	</Column>
+																</columns>
+																<items>
+																	<ColumnListItem type="Active">
+																		<Text text="{code}"/>
+																		<Text text="{text}"/>
+																		<Text text="{country_code}"/>
+																	</ColumnListItem>
+																</items>
+															</Table>
+														</mdcvc:MTable>
+													</mdcv:Popover>
+												</mdc:typeahead>
+												<mdc:dialog>
+													<mdcv:Dialog title="Regions">
+														<mdcvc:MTable  keyPath="code" descriptionPath="text" filterFields="$search">
+															<mdcvc:filterBar>
+																<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+																	<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="VHFFBTextFFCountry" 
+																		label="Country"
+																		editMode="Editable"
+																		display="ValueDescription"
+																		dataType="sap.ui.model.type.String"
+																		width="100%"
+																		conditions="{$filters>/conditions/country_code}"
+																		operators="EQ,NE"
+																		valueState="{ path: '$filters>/fieldPath/country_code/valueState'}"
+																		valueStateText="{ path:'$filters>/fieldPath/country_code/valueStateText'}"
+																		fieldHelp="IOFFVHCountry">
+																	</mdc:FilterField>
+																</vhfb:FilterBar>
+															</mdcvc:filterBar>
 
+															<Table items="{path: '/Regions'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+																<columns>
+																	<Column>
+																		<Label text="Region"/>
+																	</Column>
+																	<Column>
+																		<Label text="Name"/>
+																	</Column>
+																	<Column>
+																		<Label text="Country"/>
+																	</Column>
+																</columns>
+																<items>
+																	<ColumnListItem type="Active">
+																		<Text text="{code}"/>
+																		<Text text="{text}"/>
+																		<Text text="{country_code}"/>
+																	</ColumnListItem>
+																</items>
+															</Table>
+														</mdcvc:MTable>
+													</mdcv:Dialog>
+												</mdc:dialog>
+											</mdc:ValueHelp>
+										</mdc:dependents>
 									</mdc:Field>
 									<Label text="City"></Label>
 									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{cityOfOrigin_city}" additionalValue="{cityOfOrigin/text}" display="ValueDescription"  editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHCity">
 										<mdc:dependents>
-											<mdcf:FieldValueHelp id="IOFFVHCity" title="Cities" showConditionPanel="false" filterFields="*country_code,region_code,city,text*" keyPath="city" descriptionPath="text" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
-												<mdcf:inParameters>
+											<mdc:ValueHelp id="IOFFVHCity" delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+												<mdc:inParameters>
 													<mdcf:InParameter id="IOFFVHCity_In-Country" value="{countryOfOrigin_code}" helpPath="country_code" />
 													<mdcf:InParameter id="IOFFVHCity_In-Region" value="{regionOfOrigin_code}" helpPath="region_code" />
-												</mdcf:inParameters>
-												<mdcf:outParameters>
+												</mdc:inParameters>
+												<mdc:outParameters>
 													<mdcf:OutParameter id="IOFFVHCity_Out-Country" value="{countryOfOrigin_code}" helpPath="country_code" mode="Always" />
-													<mdcf:OutParameter id="IOFFVHCity-Out-CountryDesc" value="{countryOfOrigin/descr}" fixedValue=""/>
 													<mdcf:OutParameter id="IOFFVHCity_Out-Region" value="{regionOfOrigin_code}" helpPath="region_code" mode="Always" />
-													<mdcf:OutParameter id="IOFFVHCity-Out-RegionDesc" value="{regionOfOrigin/text}" fixedValue=""/>
-												</mdcf:outParameters>
-												<mdcf:filterBar>
-													<vhfb:FilterBar liveMode= "false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
-														<mdc:FilterField id="VHFFBTextFFCountry2" label= "Country" editMode= "Editable" display= "ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/country_code}" operators="EQ,NE" valueState="{ path: '$filters>/fieldPath/country_code/valueState'}" valueStateText="{ path: '$filters>/fieldPath/country_code/valueStateText'}">
-														</mdc:FilterField>
-														<mdc:FilterField id="VHFFBTextFFRegion2" label= "Region" editMode= "Editable" display= "ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/region_code}" valueState="{ path: '$filters>/fieldPath/region_code/valueState'}" valueStateText="{ path: '$filters>/fieldPath/region_code/valueStateText'}">
-														</mdc:FilterField>
-													</vhfb:FilterBar>
-												</mdcf:filterBar>
-												<mdcf:suggestContent>
-													<mdcf:FieldValueHelpMTableWrapper>
-													<Table items="{path: '/Cities', length: 10}" width="30rem">
-														<columns>
-															<Column>
-																<Label text="City"></Label>
-															</Column>
-															<Column>
-																<Label text="Name"></Label>
-															</Column>
-															<Column>
-																<Label text="Country"></Label>
-															</Column>
-															<Column>
-																<Label text="Region"></Label>
-															</Column>
-														</columns>
-														<items>
-															<ColumnListItem type="Active">
-																<Text text="{city}"></Text>
-																<Text text="{text}"></Text>
-																<Text text="{country_code}"></Text>
-																<Text text="{region_code}"></Text>
-															</ColumnListItem>
-														</items>
-													</Table>
-												</mdcf:FieldValueHelpMTableWrapper>
-												</mdcf:suggestContent>
-												<mdcf:content>
-													<mdcf:FieldValueHelpMTableWrapper>
-													<Table items="{path: '/Cities'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
-														<columns>
-															<Column>
-																<Label text="City"></Label>
-															</Column>
-															<Column>
-																<Label text="Name"></Label>
-															</Column>
-															<Column>
-																<Label text="Country"></Label>
-															</Column>
-															<Column>
-																<Label text="Region"></Label>
-															</Column>
-														</columns>
-														<items>
-															<ColumnListItem type="Active">
-																<Text text="{city}"></Text>
-																<Text text="{text}"></Text>
-																<Text text="{country_code}"></Text>
-																<Text text="{region_code}"></Text>
-															</ColumnListItem>
-														</items>
-													</Table>
-												</mdcf:FieldValueHelpMTableWrapper>
-												</mdcf:content>
-											</mdcf:FieldValueHelp>
+												</mdc:outParameters>
+												<mdc:typeahead>
+													<mdcv:Popover>
+													<mdcvc:MTable keyPath="city" descriptionPath="text">
+														<Table items="{path: '/Cities', length: 10}" width="30rem">
+															<columns>
+																<Column>
+																	<Label text="City"/>
+																</Column>
+																<Column>
+																	<Label text="Name"/>
+																</Column>
+																<Column>
+																	<Label text="Country"/>
+																</Column>
+																<Column>
+																	<Label text="Region"/>
+																</Column>
+															</columns>
+															<items>
+																<ColumnListItem type="Active">
+																	<Text text="{city}"/>
+																	<Text text="{text}"/>
+																	<Text text="{country_code}"/>
+																	<Text text="{region_code}"/>
+																</ColumnListItem>
+															</items>
+														</Table>
+													</mdcvc:MTable>
+													</mdcv:Popover>
+												</mdc:typeahead>
+												<mdc:dialog>
+													<mdcv:Dialog title= "Cities">
+													<mdcvc:MTable keyPath="city" descriptionPath="text" filterFields="$search">
+														<mdcvc:filterBar>
+															<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+																<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="VHFFBTextFFCountry2" label="Country" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/country_code}" operators="EQ,NE" />
+																<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="VHFFBTextFFRegion2" label="Region" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/region_code}" />
+															</vhfb:FilterBar>
+														</mdcvc:filterBar>
+														<Table items="{path: '/Cities'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+															<columns>
+																<Column>
+																	<Label text="City"/>
+																</Column>
+																<Column>
+																	<Label text="Name"/>
+																</Column>
+																<Column>
+																	<Label text="Country"/>
+																</Column>
+																<Column>
+																	<Label text="Region"/>
+																</Column>
+															</columns>
+															<items>
+																<ColumnListItem type="Active">
+																	<Text text="{city}"/>
+																	<Text text="{text}"/>
+																	<Text text="{country_code}"/>
+																	<Text text="{region_code}"/>
+																</ColumnListItem>
+															</items>
+														</Table>
+													</mdcvc:MTable>
+													</mdcv:Dialog>
+												</mdc:dialog>
+											</mdc:ValueHelp>
 										</mdc:dependents>
-
 									</mdc:Field>
 
 									<Label text="Genres"></Label>
 									<mdc:MultiValueField items="{genres}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" change="onMultiChange" display= "Description" fieldHelp="FHAuthorGenre">
 										<mdcf:MultiValueFieldItem key="{path: 'genre/code', type: 'sap.ui.model.odata.type.String'}" description="{genre_label}" />
 										<mdc:dependents>
-											<mdcf:FieldValueHelp filterFields="$search" title="Genre" id="FHAuthorGenre"
-												noDialog="false" keyPath="code" descriptionPath="title"
-												delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
-												<mdcf:content>
-													<mdcf:FieldValueHelpMTableWrapper>
-														<mdcf:table>
-															<Table items='{path : "/Genres"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+											<mdc:ValueHelp id="FHAuthorGenre" delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+												<mdc:typeahead>
+													<mdcv:Popover title="Genre">
+														<mdcvc:MTable keyPath="code" descriptionPath="title">
+															<Table id="mTable1_genre" items='{path : "/Genres", length: 10}' width="30rem">
 																<columns>
+																	<Column width="10rem">
+																		<header>
+																			<Text text="Code"/>
+																		</header>
+																	</Column>
 																	<Column>
+																		<header>
+																			<Text text="Title"/>
+																		</header>
+																	</Column>
+																	<Column>
+																		<header>
+																			<Text text="Classification"/>
+																		</header>
+																	</Column>
+																</columns>
+																<items>
+																	<ColumnListItem type="Active">
+																		<cells>
+																			<Text text="{code}"/>
+																			<Text text="{title}"/>
+																			<Text text="{classification_code}"/>
+																		</cells>
+																	</ColumnListItem>
+																</items>
+															</Table>
+														</mdcvc:MTable>
+													</mdcv:Popover>
+												</mdc:typeahead>
+												<mdc:dialog>
+													<mdcv:Dialog title="Genre">
+														<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
+															<Table id="mTable2_genre" items='{path : "/Genres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+																<columns>
+																	<Column width="10rem">
 																		<header>
 																			<Text text="Code" />
 																		</header>
@@ -295,10 +335,10 @@
 																	</ColumnListItem>
 																</items>
 															</Table>
-														</mdcf:table>
-													</mdcf:FieldValueHelpMTableWrapper>
-												</mdcf:content>
-											</mdcf:FieldValueHelp>
+														</mdcvc:MTable>
+													</mdcv:Dialog>
+												</mdc:dialog>
+											</mdc:ValueHelp>
 										</mdc:dependents>
 									</mdc:MultiValueField>
 

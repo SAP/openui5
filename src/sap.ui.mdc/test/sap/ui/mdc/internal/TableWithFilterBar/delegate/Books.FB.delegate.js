@@ -25,9 +25,15 @@ sap.ui.define([
 					bSearchExists = true;
 				}
 
+				if (oPropertyInfo.name === "ID") {
+					oPropertyInfo.formatOptions = {groupingEnabled: false};
+				}
+
 				if (oPropertyInfo.name === "author_ID") {
 					oPropertyInfo.fieldHelp = "FH1";
 					oPropertyInfo.label = "Author ID";
+					oPropertyInfo.display = "Description";
+					oPropertyInfo.formatOptions = {groupingEnabled: false};
 				}
 
 				if (oPropertyInfo.name === "title") {
@@ -72,6 +78,7 @@ sap.ui.define([
 					oPropertyInfo.fieldHelp = "FHDetailGenre";
 					oPropertyInfo.label = "Detail Genre";
 				}
+
 			});
 
 			if (!bSearchExists) {
@@ -98,7 +105,7 @@ sap.ui.define([
 
 	FilterBarBooksSampleDelegate._createFilterField = function (oProperty, oFilterBar, mPropertyBag) {
 
-		mPropertyBag = 	{
+		mPropertyBag = mPropertyBag || {
 			modifier: JsControlTreeModifier,
 			view: FlUtils.getViewForControl(oFilterBar),
 			appComponent: FlUtils.getAppComponentForControl(oFilterBar)
@@ -127,12 +134,6 @@ sap.ui.define([
 					return oFilterField;
 				});
 			}
-
-			if (sName === "author_ID") {
-				oModifier.setProperty(oFilterField, "display","Description");
-				return oFilterField;
-			}
-
 		});
 
 		return oFilterFieldPromise;
