@@ -996,6 +996,26 @@ sap.ui.define([
 		},
 		beforeEach: function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+			var oService = {
+				toExternal: function() {
+					return true;
+				},
+				parseShellHash: function () {
+					return {
+						params: {
+							"sap-ui-fl-version": [Layer.CUSTOMER]
+						}
+					};
+				}
+			};
+			sandbox.stub(Utils, "getUshellContainer").returns({
+				getServiceAsync: function () {
+					return Promise.resolve(oService);
+				},
+				getService: function () {
+					return oService;
+				}
+			});
 			this.oRta = new RuntimeAuthoring({
 				rootControl: this.oRootControl,
 				showToolbars: false,
@@ -1004,41 +1024,23 @@ sap.ui.define([
 				}
 			});
 			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.resolve());
-			this.oDeleteChangesStub = sandbox.stub(this.oRta, "_deleteChanges");
+			this.oDeleteChangesStub = sandbox.stub(this.oRta, "_deleteChanges").resolves();
 			this.oEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
 			this.oHandleParametersOnExitSpy = sandbox.spy(this.oRta, "_handleUrlParameterOnExit");
 			this.oReloadPageStub = sandbox.stub(this.oRta, "_reloadPage");
-			sandbox.stub(Utils, "getUshellContainer").returns({
-				//TODO: Remove after all calls are ajusted
-				getService: function () {
+			sandbox.stub(Utils, "getUShellService").returns(Promise.resolve({
+				toExternal: function() {
+					return true;
+				},
+				parseShellHash: function () {
 					return {
-						toExternal: function() {
-							return true;
-						},
-						parseShellHash: function () {
-							return {
-								params: {
-									"sap-ui-fl-version": [Layer.CUSTOMER]
-								}
-							};
+						params: {
+							"sap-ui-fl-version": [Layer.CUSTOMER]
 						}
 					};
-				},
-				getServiceAsync: function () {
-					return Promise.resolve({
-						toExternal: function() {
-							return true;
-						},
-						parseShellHash: function () {
-							return {
-								params: {
-									"sap-ui-fl-version": [Layer.CUSTOMER]
-								}
-							};
-						}
-					});
 				}
-			});
+			}));
+
 			return this.oRta._initVersioning();
 		},
 		afterEach: function() {

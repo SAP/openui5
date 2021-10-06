@@ -754,33 +754,26 @@ function(
 					"sap-ui-fl-max-layer": [Layer.CUSTOMER]
 				}
 			};
-			sandbox.stub(Utils, "getUshellContainer").returns({
-				getService: function() {
-					return {
-						getHash: function() {
-							return "";
-						},
-						parseShellHash: function() {
-							return oParameters;
-						}
-					};
-				}
-			});
 
-			assert.deepEqual(Utils.getParsedURLHash(), oParameters, "then the url parameters calculated from the url are received");
+			var oURLParsingService = {
+				getHash: function() {
+					return "";
+				},
+				parseShellHash: function() {
+					return oParameters;
+				}
+			};
+
+			assert.deepEqual(Utils.getParsedURLHash(oURLParsingService), oParameters, "then the url parameters calculated from the url are received");
 		});
 
 		QUnit.test("when calling 'getParsedURLHash' with a ushell container and a URL which cannot be parsed properly", function(assert) {
-			sandbox.stub(Utils, "getUshellContainer").returns({
-				getService: function() {
-					return {
-						getHash: function() {},
-						parseShellHash: function() {}
-					};
-				}
-			});
+			var oURLParsingService = {
+				getHash: function() {},
+				parseShellHash: function() {}
+			};
 
-			assert.ok(isEmptyObject(Utils.getParsedURLHash()), "then an empty object is received");
+			assert.ok(isEmptyObject(Utils.getParsedURLHash(oURLParsingService)), "then an empty object is received");
 		});
 
 		QUnit.test("when calling 'getParsedURLHash' without a ushell container", function(assert) {
@@ -1930,6 +1923,63 @@ function(
 		});
 	});
 
+	QUnit.module("Utils.getUShellServices", {
+		beforeEach: function() {
+			sandbox.stub(Utils, "getUshellContainer").returns({
+				getServiceAsync: function(sServiceName) {
+					switch (sServiceName) {
+						case "validService1":
+							return Promise.resolve("validService1Result");
+						case "validService2":
+							return Promise.resolve("validService2Result");
+						case "validService3":
+							return Promise.resolve("validService3Result");
+						default:
+							return Promise.reject(new Error("Invalid service: " + sServiceName));
+					}
+				}
+			});
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("with empty services list", function(assert) {
+			return Utils.getUShellServices([])
+				.then(function (mUshellServices) {
+					assert.ok(isEmptyObject(mUshellServices), "then the returned services map is empty");
+				});
+		});
+
+		QUnit.test("with ushell container is not available", function(assert) {
+			Utils.getUshellContainer.restore();
+			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
+			return Utils.getUShellServices([])
+				.then(function (mUshellServices) {
+					assert.ok(isEmptyObject(mUshellServices), "then the returned services map is empty");
+					return Utils.getUShellServices(["validService1"]);
+				})
+				.then(function (mUshellServices) {
+					assert.strictEqual(mUshellServices["validService1"], undefined, "then the expected service is available with key only in the returned map");
+				});
+		});
+
+		QUnit.test("with invalid service", function(assert) {
+			return Utils.getUShellServices(["invalid-service"])
+				.catch(function (oError) {
+					assert.ok(oError.message.indexOf("Invalid service: ") > -1, "then the promise is rejected");
+				});
+		});
+
+		QUnit.test("with valid services list", function(assert) {
+			return Utils.getUShellServices(["validService1", "validService2", "validService3"])
+				.then(function (mUshellServices) {
+					assert.strictEqual(mUshellServices["validService1"], "validService1Result", "then the expected service is available in the returned map");
+					assert.strictEqual(mUshellServices["validService2"], "validService2Result", "then the expected service is available in the returned map");
+					assert.strictEqual(mUshellServices["validService3"], "validService3Result", "then the expected service is available in the returned map");
+				});
+		});
+	});
 
 	QUnit.done(function() {
 		jQuery('#qunit-fixture').hide();

@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/base/util/UriParameters",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/BindingMode"
@@ -14,7 +13,6 @@ sap.ui.define([
 	Settings,
 	ChangePersistenceFactory,
 	Storage,
-	UriParameters,
 	JSONModel,
 	Utils,
 	BindingMode
@@ -43,65 +41,71 @@ sap.ui.define([
 			}
 		});
 
-		var sPersistedBasisForDisplayedVersion = Utils.getParameter(sap.ui.fl.Versions.UrlParameter);
-		var nPersistedBasisForDisplayedVersion;
-		if (sPersistedBasisForDisplayedVersion) {
-			nPersistedBasisForDisplayedVersion = parseInt(sPersistedBasisForDisplayedVersion);
-		} else if (aVersions.length > 0) {
-			nPersistedBasisForDisplayedVersion = aVersions[0].version;
-		} else {
-			nPersistedBasisForDisplayedVersion = sap.ui.fl.Versions.Original;
-		}
+		return Utils.getUShellService("URLParsing")
+			.then(function (oURLParsingService) {
+				var sPersistedBasisForDisplayedVersion = Utils.getParameter(
+					sap.ui.fl.Versions.UrlParameter,
+					oURLParsingService
+				);
+				var nPersistedBasisForDisplayedVersion;
+				if (sPersistedBasisForDisplayedVersion) {
+					nPersistedBasisForDisplayedVersion = parseInt(sPersistedBasisForDisplayedVersion);
+				} else if (aVersions.length > 0) {
+					nPersistedBasisForDisplayedVersion = aVersions[0].version;
+				} else {
+					nPersistedBasisForDisplayedVersion = sap.ui.fl.Versions.Original;
+				}
 
-		var oModel = new JSONModel({
-			versioningEnabled: bVersioningEnabled,
-			versions: aVersions,
-			activeVersion: nActiveVersion,
-			backendDraft: bBackendDraft,
-			dirtyChanges: false,
-			draftAvailable: bBackendDraft,
-			activateEnabled: bBackendDraft,
-			persistedVersion: nPersistedBasisForDisplayedVersion,
-			displayedVersion: nPersistedBasisForDisplayedVersion
-		});
+				var oModel = new JSONModel({
+					versioningEnabled: bVersioningEnabled,
+					versions: aVersions,
+					activeVersion: nActiveVersion,
+					backendDraft: bBackendDraft,
+					dirtyChanges: false,
+					draftAvailable: bBackendDraft,
+					activateEnabled: bBackendDraft,
+					persistedVersion: nPersistedBasisForDisplayedVersion,
+					displayedVersion: nPersistedBasisForDisplayedVersion
+				});
 
-		oModel.setDefaultBindingMode(BindingMode.OneWay);
-		oModel.setSizeLimit(MODEL_SIZE_LIMIT);
+				oModel.setDefaultBindingMode(BindingMode.OneWay);
+				oModel.setSizeLimit(MODEL_SIZE_LIMIT);
 
-		// TODO: currently called by sap.ui.rta.RuntimeAuthoring but should be by a ChangesState
-		oModel.setDirtyChanges = function (bDirtyChanges) {
-			oModel.setProperty("/dirtyChanges", bDirtyChanges);
-			oModel.updateDraftVersion();
-			oModel.updateBindings(true);
-		};
+				// TODO: currently called by sap.ui.rta.RuntimeAuthoring but should be by a ChangesState
+				oModel.setDirtyChanges = function (bDirtyChanges) {
+					oModel.setProperty("/dirtyChanges", bDirtyChanges);
+					oModel.updateDraftVersion();
+					oModel.updateBindings(true);
+				};
 
-		oModel.updateDraftVersion = function () {
-			var aVersions = oModel.getProperty("/versions");
-			var bVersioningEnabled = oModel.getProperty("/versioningEnabled");
-			var bDirtyChanges = oModel.getProperty("/dirtyChanges");
-			var bBackendDraft = oModel.getProperty("/backendDraft");
-			var bDraftAvailable = bVersioningEnabled && (bDirtyChanges || bBackendDraft);
-			oModel.setProperty("/draftAvailable", bDraftAvailable);
+				oModel.updateDraftVersion = function () {
+					var aVersions = oModel.getProperty("/versions");
+					var bVersioningEnabled = oModel.getProperty("/versioningEnabled");
+					var bDirtyChanges = oModel.getProperty("/dirtyChanges");
+					var bBackendDraft = oModel.getProperty("/backendDraft");
+					var bDraftAvailable = bVersioningEnabled && (bDirtyChanges || bBackendDraft);
+					oModel.setProperty("/draftAvailable", bDraftAvailable);
 
-			var nDisplayedVersion = bDirtyChanges ? sap.ui.fl.Versions.Draft : oModel.getProperty("/persistedVersion");
-			oModel.setProperty("/displayedVersion", nDisplayedVersion);
+					var nDisplayedVersion = bDirtyChanges ? sap.ui.fl.Versions.Draft : oModel.getProperty("/persistedVersion");
+					oModel.setProperty("/displayedVersion", nDisplayedVersion);
 
-			// add draft
-			if (!_doesDraftExistInVersions(aVersions) && bDraftAvailable) {
-				aVersions.splice(0, 0, {version: sap.ui.fl.Versions.Draft, type: "draft"});
-			}
+					// add draft
+					if (!_doesDraftExistInVersions(aVersions) && bDraftAvailable) {
+						aVersions.splice(0, 0, {version: sap.ui.fl.Versions.Draft, type: "draft"});
+					}
 
-			// remove draft
-			if (_doesDraftExistInVersions(aVersions) && !bDraftAvailable) {
-				aVersions.shift();
-				oModel.setProperty("/displayedVersion", oModel.getProperty("/persistedVersion"));
-			}
+					// remove draft
+					if (_doesDraftExistInVersions(aVersions) && !bDraftAvailable) {
+						aVersions.shift();
+						oModel.setProperty("/displayedVersion", oModel.getProperty("/persistedVersion"));
+					}
 
-			var bActivateEnabled = oModel.getProperty("/displayedVersion") !== oModel.getProperty("/activeVersion");
-			oModel.setProperty("/activateEnabled", bActivateEnabled);
-		};
+					var bActivateEnabled = oModel.getProperty("/displayedVersion") !== oModel.getProperty("/activeVersion");
+					oModel.setProperty("/activateEnabled", bActivateEnabled);
+				};
 
-		return oModel;
+				return oModel;
+			});
 	}
 
 	// TODO: the handling should move to the FlexState as soon as it is ready
@@ -177,9 +181,12 @@ sap.ui.define([
 				var aVersionsPromise = bVersionsEnabled ? Storage.versions.load(mPropertyBag) : Promise.resolve([]);
 				return aVersionsPromise
 					.then(function (aVersions) {
+						return createModel(mPropertyBag, bVersionsEnabled, aVersions);
+					})
+					.then(function (oModel) {
 						_mInstances[sReference] = _mInstances[sReference] || {};
 						_mInstances[sReference][sLayer] = _mInstances[sReference][sLayer] || {};
-						_mInstances[sReference][sLayer] = createModel(mPropertyBag, bVersionsEnabled, aVersions);
+						_mInstances[sReference][sLayer] = oModel;
 						return _mInstances[sReference][sLayer];
 					});
 			});

@@ -223,6 +223,7 @@ function(
 			this._dependents = {};
 			this._mServices = {};
 			this._mCustomServicesDictinary = {};
+			this._mUShellServices = {};
 
 			this.addDependent(new PluginManager(), "pluginManager");
 			this.addDependent(new PopupManager(), "popupManager");
@@ -242,6 +243,11 @@ function(
 			if (this._shouldValidateFlexEnabled()) {
 				this.attachEvent("start", validateFlexEnabled.bind(null, this));
 			}
+
+			this._loadUShellServicesPromise = FlexUtils.getUShellServices(["URLParsing", "AppLifeCycle", "CrossApplicationNavigation"])
+				.then(function (mUShellServices) {
+					this._mUShellServices = mUShellServices;
+				}.bind(this));
 		},
 		_RELOAD: {
 			NOT_NEEDED: "NO_RELOAD",
@@ -427,7 +433,8 @@ function(
 				return Promise.reject(vError);
 			}
 
-			return this._initVersioning()
+			return this._loadUShellServicesPromise
+			.then(this._initVersioning.bind(this))
 			/*
 			Check if the application has personalized changes and reload without them;
 			Also Check if the application has an available draft and if yes, reload with those changes.
@@ -905,7 +912,7 @@ function(
 		}
 		var bTriggerReload = true;
 		this.getCommandStack().removeAllCommands();
-		var mParsedHash = this._removeVersionParameterForFLP(oReloadInfo, FlexUtils.getParsedURLHash(), bTriggerReload);
+		var mParsedHash = this._removeVersionParameterForFLP(oReloadInfo, FlexUtils.getParsedURLHash(this._getUShellService("URLParsing")), bTriggerReload);
 		this._triggerCrossAppNavigation(mParsedHash);
 		return this.stop(true, true);
 	};
@@ -924,6 +931,7 @@ function(
 				})
 				.then(this._handleDiscard.bind(this));
 			}
+			return undefined;
 		}.bind(this));
 	};
 
@@ -938,23 +946,23 @@ function(
 
 		if (this.canUndo()) {
 			this._nSwitchToVersion = nVersion;
-			return Utils.showMessageBox("warning", "MSG_SWITCH_VERSION_DIALOG", {
+			Utils.showMessageBox("warning", "MSG_SWITCH_VERSION_DIALOG", {
 				titleKey: "TIT_SWITCH_VERSION_DIALOG",
 				actions: [MessageBox.Action.YES, MessageBox.Action.NO, MessageBox.Action.CANCEL],
 				emphasizedAction: MessageBox.Action.YES
 			}).then(function (sAction) {
-				switch (sAction) {
-					case MessageBox.Action.YES:
-						return this._serializeToLrep(this)
-							.then(this._switchVersion.bind(this, this._nSwitchToVersion));
-					case MessageBox.Action.NO:
-						// avoids the data loss popup; a reload is triggered later and will destroy RTA & the command stack
-						this.getCommandStack().removeAllCommands(true);
-						this._switchVersion(this._nSwitchToVersion);
+				if (sAction === MessageBox.Action.YES) {
+					this._serializeToLrep(this)
+						.then(this._switchVersion.bind(this, this._nSwitchToVersion));
+				} else if (sAction === MessageBox.Action.NO) {
+					// avoids the data loss popup; a reload is triggered later and will destroy RTA & the command stack
+					this.getCommandStack().removeAllCommands(true);
+					this._switchVersion(this._nSwitchToVersion);
 				}
+				return undefined;
 			}.bind(this));
+			return;
 		}
-
 		this._switchVersion(nVersion);
 	};
 
@@ -964,7 +972,7 @@ function(
 		RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
 
 		if (!FlexUtils.getUshellContainer()) {
-			if (!ReloadInfoAPI.hasVersionParameterWithValue({value: sVersion})) {
+			if (!ReloadInfoAPI.hasVersionParameterWithValue({value: sVersion}, this._getUShellService("URLParsing"))) {
 				var oReloadInfo = {
 					versionSwitch: true,
 					version: sVersion
@@ -973,20 +981,25 @@ function(
 			}
 			return this._reloadPage();
 		}
-		var mParsedHash = FlexUtils.getParsedURLHash();
+		var mParsedHash = FlexUtils.getParsedURLHash(this._getUShellService("URLParsing"));
 		VersionsAPI.loadVersionForApplication({
 			selector: this.getRootControlInstance(),
 			layer: this.getLayer(),
 			version: nVersion
 		});
 		var aVersionsParameter = mParsedHash.params[sap.ui.fl.Versions.UrlParameter];
-		if (aVersionsParameter && aVersionsParameter[0] === sVersion) {
+		if (
+			aVersionsParameter &&
+			aVersionsParameter[0] === sVersion &&
+			this._getUShellService("AppLifeCycle")
+		) {
 			// RTA was started with a version parameter, the displayed version has changed and the key user switches back
-			FlexUtils.getUshellContainer().getService("AppLifeCycle").reloadCurrentApp();
+			this._getUShellService("AppLifeCycle").reloadCurrentApp();
 		} else {
 			mParsedHash.params[sap.ui.fl.Versions.UrlParameter] = sVersion;
 			this._triggerCrossAppNavigation(mParsedHash);
 		}
+		return undefined;
 	};
 
 	RuntimeAuthoring.prototype._setUriParameter = function (sParameters) {
@@ -1167,7 +1180,7 @@ function(
 	 * the changes for both places will be deleted. For App Variants all the changes are saved in one place.
 	 *
 	 * @private
-	 * @returns {Promise}
+	 * @returns {Promise} Resolves when change persistence is resetted
 	 */
 	RuntimeAuthoring.prototype._deleteChanges = function() {
 		var sLayer = this.getLayer();
@@ -1178,7 +1191,7 @@ function(
 		}).then(function () {
 			ReloadInfoAPI.removeInfoSessionStorage(oSelector);
 			var oReloadInfo = {
-				isDraftAvailable: ReloadInfoAPI.hasVersionParameterWithValue({value: sLayer}),
+				isDraftAvailable: ReloadInfoAPI.hasVersionParameterWithValue({value: sLayer}, this._getUShellService("URLParsing")),
 				layer: sLayer,
 				deleteMaxLayer: false,
 				triggerHardReload: true
@@ -1275,9 +1288,12 @@ function(
 		}).then(function(sAction) {
 			if (sAction === MessageBox.Action.OK) {
 				RuntimeAuthoring.enableRestart(sLayer, this.getRootControlInstance());
-				this._deleteChanges();
-				this.getCommandStack().removeAllCommands();
+				return this._deleteChanges()
+					.then(function () {
+						this.getCommandStack().removeAllCommands();
+					}.bind(this));
 			}
+			return undefined;
 		}.bind(this));
 	};
 
@@ -1418,11 +1434,12 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._triggerCrossAppNavigation = function(mParsedHash) {
-		if (this.getLayer() !== Layer.USER) {
-			return FlexUtils.ifUShellContainerThen(function(aServices) {
-				aServices[0].toExternal(this._buildNavigationArguments(mParsedHash));
-				return Promise.resolve(true);
-			}.bind(this), ["CrossApplicationNavigation"]);
+		if (
+			(this.getLayer() !== Layer.USER) &&
+			this._getUShellService("CrossApplicationNavigation")
+		) {
+			this._getUShellService("CrossApplicationNavigation")
+				.toExternal(this._buildNavigationArguments(mParsedHash));
 		}
 	};
 
@@ -1432,13 +1449,16 @@ function(
 			return mParsedHash;
 		}
 
-		var sVersionParameter = FlexUtils.getParameter(flexLibrary.Versions.UrlParameter);
+		var sVersionParameter = FlexUtils.getParameter(flexLibrary.Versions.UrlParameter, this._getUShellService("URLParsing"));
 		if (sVersionParameter) {
 			delete mParsedHash.params[flexLibrary.Versions.UrlParameter];
-		} else if ((this._isDraftAvailable() || bTriggerReload /* for discarding of dirty changes */)
-			&& !oReloadInfo.hasHigherLayerChanges) {
+		} else if (
+			(this._isDraftAvailable() || bTriggerReload /* for discarding of dirty changes */) &&
+			!oReloadInfo.hasHigherLayerChanges &&
+			this._getUShellService("AppLifeCycle")
+		) {
 			// reloading this way only works when we dont have to remove max-layer parameter, see _removeMaxLayerParameterForFLP
-			FlexUtils.getUshellContainer().getService("AppLifeCycle").reloadCurrentApp();
+			this._getUShellService("AppLifeCycle").reloadCurrentApp();
 		}
 		return mParsedHash;
 	};
@@ -1466,14 +1486,18 @@ function(
 			return this._triggerHardReload(oReloadInfo);
 		}
 
-		var mParsedHash = FlexUtils.getParsedURLHash();
+		var mParsedHash = FlexUtils.getParsedURLHash(this._getUShellService("URLParsing"));
 		if (!mParsedHash) {
-			return;
+			return undefined;
 		}
 
 		// allContexts do not change the url parameter to trigger a reload
-		if (oReloadInfo.allContexts && !oReloadInfo.hasHigherLayerChanges) {
-			FlexUtils.getUshellContainer().getService("AppLifeCycle").reloadCurrentApp();
+		if (
+			oReloadInfo.allContexts &&
+			!oReloadInfo.hasHigherLayerChanges &&
+			this._getUShellService("AppLifeCycle")
+		) {
+			this._getUShellService("AppLifeCycle").reloadCurrentApp();
 		}
 
 		mParsedHash = this._removeMaxLayerParameterForFLP(oReloadInfo, mParsedHash);
@@ -1580,7 +1604,7 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._triggerReloadOnStart = function(oReloadInfo) {
-		FlexUtils.ifUShellContainerThen(function() {
+		if (this._getUShellService("CrossApplicationNavigation")) {
 			if (oReloadInfo.isDraftAvailable) {
 				// clears FlexState and triggers reloading of the flex data without blocking
 				VersionsAPI.loadDraftForApplication({
@@ -1594,7 +1618,7 @@ function(
 					allContexts: oReloadInfo.allContexts
 				});
 			}
-		}, ["CrossApplicationNavigation"]);
+		}
 		var sReason = this._getReloadMessageOnStart(oReloadInfo);
 		if (!sReason) {
 			return Promise.resolve();
@@ -1603,8 +1627,12 @@ function(
 		.then(function() {
 			RuntimeAuthoring.enableRestart(oReloadInfo.layer, this.getRootControlInstance());
 			// allContexts do not change the url parameter to trigger a reload
-			if (oReloadInfo.allContexts && !oReloadInfo.hasHigherLayerChanges) {
-				FlexUtils.getUshellContainer().getService("AppLifeCycle").reloadCurrentApp();
+			if (
+				oReloadInfo.allContexts &&
+				!oReloadInfo.hasHigherLayerChanges &&
+				this._getUShellService("AppLifeCycle")
+			) {
+				this._getUShellService("AppLifeCycle").reloadCurrentApp();
 			}
 			if (FlexUtils.getUshellContainer()) {
 				// clears FlexState and triggers reloading of the flex data without blocking
@@ -1630,7 +1658,8 @@ function(
 			layer: this.getLayer(),
 			selector: this.getRootControlInstance(),
 			ignoreMaxLayerParameter: false,
-			includeCtrlVariants: true
+			includeCtrlVariants: true,
+			URLParsingService: this._getUShellService("URLParsing")
 		};
 		return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo)
 		.then(function (oReloadInfo) {
@@ -1640,6 +1669,7 @@ function(
 			if (oReloadInfo.hasHigherLayerChanges || oReloadInfo.isDraftAvailable || oReloadInfo.allContexts) {
 				return this._triggerReloadOnStart(oReloadInfo);
 			}
+			return undefined;
 		}.bind(this));
 	};
 
@@ -1648,10 +1678,11 @@ function(
 	 * This function must only be called outside of the ushell.
 	 *
 	 * @param {Object} oReloadInfo - Information to determine reload is needed
-	 * @returns {Promise}
+	 * @returns {Promise} Resolves when page reload is triggered
 	 */
 	RuntimeAuthoring.prototype._triggerHardReload = function(oReloadInfo) {
 		oReloadInfo.parameters = document.location.search;
+		oReloadInfo.URLParsingService = this._getUShellService("URLParsing");
 		var sParameters = ReloadInfoAPI.handleUrlParametersForStandalone(oReloadInfo);
 		if (document.location.search !== sParameters) {
 			this._setUriParameter(sParameters);
@@ -1680,7 +1711,8 @@ function(
 				changesNeedReload: bChangesNeedReload,
 				isDraftAvailable: this._oVersionsModel.getProperty("/draftAvailable"),
 				versioningEnabled: this._oVersionsModel.getProperty("/versioningEnabled"),
-				activeVersion: this._oVersionsModel.getProperty("/activeVersion")
+				activeVersion: this._oVersionsModel.getProperty("/activeVersion"),
+				URLParsingService: this._getUShellService("URLParsing")
 			};
 			oReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
 			return this._handleReloadMessageBoxOnExit(oReloadInfo).then(function () {
@@ -1936,6 +1968,10 @@ function(
 	 */
 	RuntimeAuthoring.prototype.getService = function (sName) {
 		return this.startService(sName);
+	};
+
+	RuntimeAuthoring.prototype._getUShellService = function(sServiceName) {
+		return this._mUShellServices[sServiceName];
 	};
 
 	return RuntimeAuthoring;

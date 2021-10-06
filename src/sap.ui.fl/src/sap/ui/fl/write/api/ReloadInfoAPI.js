@@ -23,7 +23,7 @@ sap.ui.define([
 	"use strict";
 
 	function isDraftAvailable(oReloadInfo) {
-		var bUrlHasVersionParameter = !!Utils.getParameter(sap.ui.fl.Versions.UrlParameter);
+		var bUrlHasVersionParameter = !!Utils.getParameter(sap.ui.fl.Versions.UrlParameter, oReloadInfo.URLParsingService);
 		if (bUrlHasVersionParameter) {
 			return Promise.resolve(false);
 		}
@@ -37,7 +37,7 @@ sap.ui.define([
 	}
 
 	function areHigherLayerChangesAvailable(oReloadInfo) {
-		var bUrlHasMaxLayerParameter = this.hasMaxLayerParameterWithValue({value: oReloadInfo.layer});
+		var bUrlHasMaxLayerParameter = this.hasMaxLayerParameterWithValue({value: oReloadInfo.layer}, oReloadInfo.URLParsingService);
 		var bUserLayer = oReloadInfo.layer === Layer.USER;
 		if (bUserLayer || bUrlHasMaxLayerParameter) {
 			return Promise.resolve(false);
@@ -131,11 +131,11 @@ sap.ui.define([
 		 *
 		 * @param  {object} oParameter - Object containing the parameter value to be checked
 		 * @param  {string} oParameter.value - The parameter value to be checked
-		 *
+		 * @param  {sap.ushell.services.URLParsing} oURLParsingService - The Unified Shell's internal URL parsing service
 		 * @returns {boolean} True if the parameter with the given value is in the URL
 		 */
-		hasVersionParameterWithValue: function(oParameter) {
-			return Utils.hasParameterAndValue(sap.ui.fl.Versions.UrlParameter, oParameter.value);
+		hasVersionParameterWithValue: function(oParameter, oURLParsingService) {
+			return Utils.hasParameterAndValue(sap.ui.fl.Versions.UrlParameter, oParameter.value, oURLParsingService);
 		},
 
 		/**
@@ -143,12 +143,13 @@ sap.ui.define([
 		 *
 		 * @param  {object} oParameter - Object containing the parameter value to be checked
 		 * @param  {string} oParameter.value - The parameter value to be checked
+		 * @param  {sap.ushell.services.URLParsing} oURLParsingService - The Unified Shell's internal URL parsing service
 		 *
 		 * @returns {boolean} <code>true</code> if the parameter with the given value is in the URL
 		 */
-		hasMaxLayerParameterWithValue: function(oParameter) {
+		hasMaxLayerParameterWithValue: function(oParameter, oURLParsingService) {
 			var sParameterName = LayerUtils.FL_MAX_LAYER_PARAM;
-			return Utils.hasParameterAndValue(sParameterName, oParameter.value);
+			return Utils.hasParameterAndValue(sParameterName, oParameter.value, oURLParsingService);
 		},
 
 		/**
@@ -161,13 +162,14 @@ sap.ui.define([
 		 * @param  {string} oReloadInfo.parameters - The URL parameters to be modified
 		 * @param  {string} oReloadInfo.versionSwitch - Indicates if we are in a version switch scenario
 		 * @param  {string} oReloadInfo.version - Version we want to switch to
+		 * @param  {sap.ushell.services.URLParsing} oReloadInfo.URLParsingService - The Unified Shell's internal URL parsing service
 		 * @param  {boolean} [oReloadInfo.onExit=false] - Indicates if we are in a save+exit case/flow to not add the version=0 parameter
 		 *
 		 * @returns {string} The modified URL
 		 */
 		handleUrlParametersForStandalone: function(oReloadInfo) {
 			if (oReloadInfo.hasHigherLayerChanges) {
-				oReloadInfo.parameters = Utils.handleUrlParameters(oReloadInfo.parameters, LayerUtils.FL_MAX_LAYER_PARAM, oReloadInfo.layer);
+				oReloadInfo.parameters = Utils.handleUrlParameters(oReloadInfo.parameters, LayerUtils.FL_MAX_LAYER_PARAM, oReloadInfo.layer, oReloadInfo.URLParsingService);
 			}
 
 			// removes any version number set (original, draft, inactive and active versions)
@@ -176,11 +178,11 @@ sap.ui.define([
 
 			// startup reload due to draft
 			if (oReloadInfo.isDraftAvailable && !oReloadInfo.onExit) {
-				oReloadInfo.parameters = Utils.handleUrlParameters(oReloadInfo.parameters, sap.ui.fl.Versions.UrlParameter, sap.ui.fl.Versions.Draft);
+				oReloadInfo.parameters = Utils.handleUrlParameters(oReloadInfo.parameters, sap.ui.fl.Versions.UrlParameter, sap.ui.fl.Versions.Draft, oReloadInfo.URLParsingService);
 			}
 
 			if (oReloadInfo.versionSwitch) {
-				oReloadInfo.parameters = Utils.handleUrlParameters(oReloadInfo.parameters, sap.ui.fl.Versions.UrlParameter, oReloadInfo.version);
+				oReloadInfo.parameters = Utils.handleUrlParameters(oReloadInfo.parameters, sap.ui.fl.Versions.UrlParameter, oReloadInfo.version, oReloadInfo.URLParsingService);
 			}
 
 			// clean up if the last parameter was removed
@@ -199,11 +201,12 @@ sap.ui.define([
 		 * @param  {boolean} oReloadInfo.isDraftAvailable - Indicates if a draft is available
 		 * @param  {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
 		 * @param  {sap.ui.fl.Selector} oReloadInfo.selector - Root control instance
+		 * @param  {sap.ushell.services.URLParsing} oReloadInfo.URLParsingService - The Unified Shell's internal URL parsing service
 		 *
 		 * @returns {object} oParsedHash Adjusted parsed hash
 		 */
 		handleParametersOnStart: function(oReloadInfo) {
-			var mParsedHash = Utils.getParsedURLHash();
+			var mParsedHash = Utils.getParsedURLHash(oReloadInfo.URLParsingService);
 			mParsedHash.params = mParsedHash.params || {};
 
 			if (oReloadInfo.hasHigherLayerChanges) {
@@ -222,12 +225,12 @@ sap.ui.define([
 		 * @param  {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
 		 * @param  {sap.ui.fl.Selector} oReloadInfo.selector - Root control instance
 		 * @param  {boolean} oReloadInfo.versioningEnabled - Indicates if versioning is enabled by the backend
-		 *
+		 * @param  {sap.ushell.services.URLParsing} oReloadInfo.URLParsingService - The Unified Shell's internal URL parsing service
 		 * @returns {boolean} <code>true</code> if a draft got activated and had a draft initially when entering UI adaptation
 		 */
 		initialDraftGotActivated: function(oReloadInfo) {
 			if (oReloadInfo.versioningEnabled) {
-				var bUrlHasVersionParameter = this.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()});
+				var bUrlHasVersionParameter = this.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()}, oReloadInfo.URLParsingService);
 				return !VersionsAPI.isDraftAvailable(oReloadInfo) && bUrlHasVersionParameter;
 			}
 			return false;
@@ -243,6 +246,7 @@ sap.ui.define([
 		 * @param  {boolean} oReloadInfo.changesNeedReload - Indicates if changes (e.g. app descriptor changes) need hard reload
 		 * @param  {boolean} oReloadInfo.initialDraftGotActivated - Indicates if a draft got activated and had a draft initially when entering UI adaptation
 		 * @param  {boolean} oReloadInfo.activeVersion - Indicates the current active version
+		 * @param  {sap.ushell.services.URLParsing} oReloadInfo.URLParsingService - The Unified Shell's internal URL parsing service
 		 *
 		 * @returns {boolean} <code>true</code> if a draft got activated and had a draft initially when entering UI adaptation
 		 */
@@ -256,12 +260,12 @@ sap.ui.define([
 
 			// TODO fix app descriptor handling and reload behavior
 			// TODO move changesNeedReload near flexState; set flag when saving change that needs a reload
-			oReloadInfo.isDraftAvailable = oReloadInfo.isDraftAvailable || ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()});
+			oReloadInfo.isDraftAvailable = oReloadInfo.isDraftAvailable || ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()}, oReloadInfo.URLParsingService);
 
 			if (oReloadInfo.activeVersion > sap.ui.fl.Versions.Original) {
-				oReloadInfo.activeVersionNotSelected = oReloadInfo.activeVersion && !ReloadInfoAPI.hasVersionParameterWithValue({value: oReloadInfo.activeVersion.toString()});
+				oReloadInfo.activeVersionNotSelected = oReloadInfo.activeVersion && !ReloadInfoAPI.hasVersionParameterWithValue({value: oReloadInfo.activeVersion.toString()}, oReloadInfo.URLParsingService);
 			}
-			oReloadInfo.hasHigherLayerChanges = ReloadInfoAPI.hasMaxLayerParameterWithValue({value: oReloadInfo.layer});
+			oReloadInfo.hasHigherLayerChanges = ReloadInfoAPI.hasMaxLayerParameterWithValue({value: oReloadInfo.layer}, oReloadInfo.URLParsingService);
 			oReloadInfo.initialDraftGotActivated = ReloadInfoAPI.initialDraftGotActivated(oReloadInfo);
 			if (oReloadInfo.initialDraftGotActivated) {
 				oReloadInfo.isDraftAvailable = false;
