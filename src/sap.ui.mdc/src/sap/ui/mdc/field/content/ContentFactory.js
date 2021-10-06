@@ -269,8 +269,8 @@ sap.ui.define([
 		return this._bHideOperator;
 	};
 
-	ContentFactory.prototype.getConditionType = function() {
-		if (!this._oConditionType) {
+	ContentFactory.prototype.getConditionType = function(bSkipConditionTypeGeneration) {
+		if (!bSkipConditionTypeGeneration && !this._oConditionType) {
 			var oFormatOptions = this.getField()._getFormatOptions();
 			this._oConditionType = new ConditionType(oFormatOptions);
 			this._oConditionType._bCreatedByField = true;
@@ -283,8 +283,8 @@ sap.ui.define([
 		this._oConditionType = oConditionType;
 	};
 
-	ContentFactory.prototype.getConditionsType = function() {
-		if (!this._oConditionsType) {
+	ContentFactory.prototype.getConditionsType = function(bSkipConditionsTypeGeneration) {
+		if (!bSkipConditionsTypeGeneration && !this._oConditionsType) {
 			var oFormatOptions = this.getField()._getFormatOptions();
 			this._oConditionsType = new ConditionsType(oFormatOptions);
 			this._oConditionsType._bCreatedByField = true;
@@ -297,8 +297,8 @@ sap.ui.define([
 		this._oConditionsType = oConditionsType;
 	};
 
-	ContentFactory.prototype.getUnitConditionsType = function() {
-		if (!this._oUnitConditionsType) {
+	ContentFactory.prototype.getUnitConditionsType = function(bSkipConditionsTypeGeneration) {
+		if (!bSkipConditionsTypeGeneration && !this._oUnitConditionsType) {
 			var oFormatOptions = this.getField()._getUnitFormatOptions();
 			this._oUnitConditionsType = new ConditionsType(oFormatOptions);
 			this._oUnitConditionsType._bCreatedByField = true;
