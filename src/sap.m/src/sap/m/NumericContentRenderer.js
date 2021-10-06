@@ -182,28 +182,45 @@ sap.ui.define([
 		oRm.class(oControl.getState());
 		oRm.openEnd();
 
-		var oMaxDigitsData = oControl._getMaxDigitsData();
-		this._prepareAndRenderIcon(oRm, oControl, oControl._oIcon, oMaxDigitsData.fontClass);
+		if (oControl.getState() === LoadState.Loading) {
+			oRm.openStart("div").class("sapMNCContentShimmerPlaceholderItem");
+			oRm.openEnd();
+			oRm.openStart("div")
+				.class("sapMNCContentShimmerPlaceholderRows")
+				.openEnd();
+			oRm.openStart("div")
+				.class("sapMNCContentShimmerPlaceholderItemHeader")
+				.class("sapMNCLoadingShimmer")
+				.openEnd()
+				.close("div");
 
-		var iChar = oControl.getTruncateValueTo() || oMaxDigitsData.maxLength;
-	    oRm.openStart("span" , oControl.getId() + "-value-inner");
-		if (oMaxDigitsData.fontClass) {
-			oRm.class(oMaxDigitsData.fontClass);
-		}
-		oRm.openEnd();
-
-		//Control shows only iChar characters. If the last shown character is decimal separator - show only first N-1 characters. So "144.5" is shown like "144" and not like "144.".
-		if (sValue.length >= iChar && (sValue[iChar - 1] === "." || sValue[iChar - 1] === ",")) {
-			oRm.text(sValue.substring(0, iChar - 1));
+			oRm.close("div");
+			oRm.close("div");
+			oRm.close("div");
 		} else {
-			oRm.text(sValue ? sValue.substring(0, iChar) : sEmptyValue);
+			var oMaxDigitsData = oControl._getMaxDigitsData();
+			this._prepareAndRenderIcon(oRm, oControl, oControl._oIcon, oMaxDigitsData.fontClass);
+
+			var iChar = oControl.getTruncateValueTo() || oMaxDigitsData.maxLength;
+			oRm.openStart("span" , oControl.getId() + "-value-inner");
+			if (oMaxDigitsData.fontClass) {
+				oRm.class(oMaxDigitsData.fontClass);
+			}
+			oRm.openEnd();
+
+			//Control shows only iChar characters. If the last shown character is decimal separator - show only first N-1 characters. So "144.5" is shown like "144" and not like "144.".
+			if (sValue.length >= iChar && (sValue[iChar - 1] === "." || sValue[iChar - 1] === ",")) {
+				oRm.text(sValue.substring(0, iChar - 1));
+			} else {
+				oRm.text(sValue ? sValue.substring(0, iChar) : sEmptyValue);
+			}
+
+			oRm.close("span");
+
+			this._renderScaleAndIndicator(oRm, oControl, sWithoutMargin, sValue, sScale, oMaxDigitsData.fontClass);
+
+			oRm.close("div");
 		}
-
-		oRm.close("span");
-
-		this._renderScaleAndIndicator(oRm, oControl, sWithoutMargin, sValue, sScale, oMaxDigitsData.fontClass);
-
-		oRm.close("div");
 	};
 
 	return NumericContentRenderer;

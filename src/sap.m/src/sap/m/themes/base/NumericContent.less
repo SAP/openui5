@@ -266,3 +266,90 @@ html[dir=rtl] .sapMNCValue {
 		font-size: @sapMFontHeader6Size;
 	}
 }
+
+.sapMNCContentPlaceholder {
+	outline: none;
+	width: 300px;
+    height: 100px;
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.10);
+    border-radius: 4px;
+}
+
+.sapMNCContentPlaceholder:focus::before {
+	content: '';
+	display: block;
+	position: absolute;
+	left: 1px;
+	bottom: 1px;
+	right: 1px;
+	top: 1px;
+	border: 1px dotted @sapUiContentFocusColor;
+	pointer-events: none;
+}
+
+.sapMNCContentShimmerPlaceholderItem {
+	padding: 1rem 1rem 0 1rem;
+	box-sizing: border-box;
+	display: flex;
+	position: relative;
+	align-items: center;
+	flex: 1 1 auto;
+
+	.sapMNCContentShimmerPlaceholderRows {
+		flex-grow: 1;
+		.sapMNCContentShimmerPlaceholderItemHeader {
+			height: 1rem;
+			margin-bottom: 0.5rem;
+			margin-top: 0.5rem;
+		}
+	}
+}
+
+.sapMNCLoadingShimmer {
+	.sapMNCLoadingShimmerMixin();
+}
+
+.sapMNCLoadingShimmerMixin() {
+	background-color: @sapUiContentPlaceholderloadingBackground;
+	background-image: @sapUiContentPlaceholderloadingGradient;
+	background-repeat: no-repeat;
+	background-size: 800px 144px;
+	position: relative;
+	border-radius: 0.25rem;
+
+	[data-sap-ui-animation-mode="full"] & {
+		animation-duration: 2.5s;
+		animation-fill-mode: forwards;
+		animation-iteration-count: infinite;
+		animation-name: placeHolderShimmer;
+		animation-timing-function: linear;
+	}
+
+	[data-sap-ui-animation-mode="basic"] &,
+	[data-sap-ui-animation-mode="minimal"] & {
+		animation-duration: 8s;
+		animation-fill-mode: forwards;
+		animation-iteration-count: infinite;
+		animation-name: placeHolderShimmer;
+		animation-timing-function: linear;
+	}
+}
+
+@keyframes placeHolderShimmer {
+	0% {
+		background-position: -468px 0;
+	}
+
+	100% {
+		background-position: 468px 0;
+	}
+}
+
+@keyframes placeHolderShimmer{
+    0% {
+      background-position: -468px 0;
+    }
+    100% {
+      background-position: 468px 0;
+    }
+}
