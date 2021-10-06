@@ -1284,15 +1284,18 @@ sap.ui.define([
 			}]
 		};
 
+		var oButton = this.oSelectionDetails.getAggregation("_button");
+
+		sinon.stub(oButton, "rerender");
 		//Act
 		this.oSelectionDetails._handleSelectionChange({
 			getParameter: function () {
 				return oEventParam.data;
 			}
 		});
-		sap.ui.getCore().applyChanges();
 
 		//Assert
+		assert.ok(oButton.rerender.notCalled, "Button rerender not explicitly called");
 		assert.equal(this.oSelectionDetails.getAggregation("_button").getText(), "Details (2)", "The button text is up to date");
 		assert.equal(this.oSelectionDetails.getAggregation("_button").getEnabled(), true, "The button is enabled");
 	});
