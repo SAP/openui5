@@ -579,6 +579,31 @@ sap.ui.define([
 			oList.destroy();
 		});
 
+		QUnit.test("Show noDataText when no item is visible", function(assert) {
+			var oList = new List();
+			bindListData(oList, data2, "/items", createTemplateListItem());
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			var aVisibleItems = oList.getVisibleItems();
+			assert.ok(aVisibleItems.length > 0, "List has visible items.");
+			assert.strictEqual(oList.$("nodata-text")[0], undefined, "NoDataText is not visible");
+
+			aVisibleItems.forEach(function(oItem) {
+				oItem.setVisible(false);
+			});
+
+			sap.ui.getCore().applyChanges();
+			aVisibleItems = oList.getVisibleItems();
+			assert.strictEqual(aVisibleItems.length, 0, "List has no visible items.");
+			assert.ok(oList.$("nodata-text")[0], "NoDataText is visible");
+
+			// cleanup
+			oPage.removeAllContent();
+		});
+
 		/********************************************************************************/
 		QUnit.module("Getter/Setter methods");
 		/********************************************************************************/
