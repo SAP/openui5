@@ -581,6 +581,17 @@ sap.ui.define([
 								]
 							},
 							{
+								title: 'Attributes',
+								key: 'attributes',
+								files: [
+									{
+										url: '/samples/list/attributes.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
 								title: 'Bullet Chart',
 								key: 'bulletChart',
 								experimental: true,

@@ -245,6 +245,11 @@
 					"pattern": "listContentActions",
 					"name": "listContentActions",
 					"target": "listContentActions"
+				},
+				{
+					"pattern": "listAttributes",
+					"name": "listAttributes",
+					"target": "listAttributes"
 				}
 			],
 			"targets": {
@@ -426,6 +431,11 @@
 				"listContentActions": {
 					"viewId": "listContentActions",
 					"viewName": "ListContentActions",
+					"viewLevel": 1
+				},
+				"listAttributes": {
+					"viewId": "listAttributes",
+					"viewName": "ListAttributes",
 					"viewLevel": 1
 				}
 			}

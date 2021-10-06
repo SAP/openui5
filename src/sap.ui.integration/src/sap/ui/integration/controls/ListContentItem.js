@@ -3,12 +3,14 @@
 */
 
 sap.ui.define([
+	"sap/ui/integration/library",
 	"./ListContentItemRenderer",
 	"sap/m/Avatar",
 	"sap/m/AvatarShape",
 	"sap/m/AvatarSize",
 	"sap/m/StandardListItem"
 ], function (
+	library,
 	ListContentItemRenderer,
 	Avatar,
 	AvatarShape,
@@ -16,6 +18,8 @@ sap.ui.define([
 	StandardListItem
 ) {
 	"use strict";
+
+	var AttributesLayoutType = library.AttributesLayoutType;
 
 	/**
 	 * Constructor for a new ListContentItem.
@@ -66,12 +70,19 @@ sap.ui.define([
 				 * Defines the background color of the icon.
 				 * @since 1.83
 				 */
-				iconBackgroundColor: { type: "sap.m.AvatarColor" }
+				iconBackgroundColor: { type: "sap.m.AvatarColor" },
+
+				/**
+				 * Defines the layout type of the attributes.
+				 */
+				attributesLayoutType: { type: "sap.ui.integration.AttributesLayoutType", defaultValue: AttributesLayoutType.TwoColumns }
 			},
 			aggregations: {
 				microchart: { type: "sap.ui.integration.controls.Microchart", multiple: false },
 
 				actionsStrip: { type: "sap.ui.integration.controls.ActionsStrip", multiple: false },
+
+				attributes: { type: "sap.m.ObjectStatus", multiple: true },
 
 				/**
 				 * Defines the inner avatar control.

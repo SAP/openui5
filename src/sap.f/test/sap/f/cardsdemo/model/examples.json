@@ -198,5 +198,11 @@
 		"description": "List Content Quick Actions",
 		"route": "listContentActions",
 		"group": "Other Card Examples"
+	},
+	{
+		"title": "List with Attributes",
+		"description": "List with Attributes",
+		"route": "listAttributes",
+		"group": "Other Card Examples"
 	}
 ]

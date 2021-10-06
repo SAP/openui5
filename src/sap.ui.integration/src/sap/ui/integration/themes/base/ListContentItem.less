@@ -8,14 +8,47 @@
 .sapUiIntCard {
 	.sapMLIB.sapMSLI.sapUiIntLCI {
 		height: auto;
+		padding: 1rem 1rem ~"calc(1rem - 1px)" 1rem;
+
+		.sapMSLIDiv {
+			padding: 0;
+		}
 	}
 
 	.sapMLIB.sapUiIntLCI {
 		flex-direction: column;
 		align-items: stretch;
 
+		&.sapUiIntLCIWithActionsStrip {
+			padding-bottom: ~"calc(0.5rem - 1px)";
+		}
+
+		&:not(.sapMSLIThumbnail):not(.sapUiIntLCIWithAttributes):not(.sapMSLIWithDescription) {
+			&.sapUiIntLCIIconSize {
+				&XS,
+				&S,
+				&M {
+					padding: 0.25rem 1rem ~"calc(0.25rem - 1px)" 1rem;
+				}
+			}
+		}
+
+		&.sapMSLIWithDescription:not(.sapMSLIThumbnail):not(.sapUiIntLCIIconSizeXS):not(.sapUiIntLCIIconSizeS):not(.sapUiIntLCIIconSizeM) {
+			.sapMLIBContent {
+				padding: 0.3125rem 0;
+			}
+		}
+
 		.sapMLIBContent {
-			height: ~"calc(3rem - 1px)";
+			.sapMSLIDescription {
+				padding-top: 0.5rem;
+				white-space: normal;
+			}
+
+			.sapMSLIDescriptionText {
+				padding-bottom: 0;
+			}
+
 			display: flex;
 			flex-direction: row;
 			align-items: center;
@@ -25,8 +58,12 @@
 			}
 		}
 
+		.sapUiIntLCIAttrs {
+			padding-top: 0.25rem;
+		}
+
 		.sapUiIntActionsStrip {
-			margin-bottom: 0.5rem;
+			padding-top: 1rem;
 		}
 
 		&.sapMLIBActive {
@@ -39,93 +76,52 @@
 				color: @sapUiContentContrastTextColor;
 			}
 		}
+
+		&.sapUiIntLCIIconSizeXS {
+			.sapUiIntLCIAttrs,
+			.sapUiIntMicrochartChart {
+				margin-left: 2.75rem;
+			}
+		}
+
+		&.sapUiIntLCIIconSizeS {
+			.sapUiIntLCIAttrs,
+			.sapUiIntMicrochartChart {
+				margin-left: 3.75rem;
+			}
+		}
+
+		&.sapUiIntLCIIconSizeM {
+			.sapUiIntLCIAttrs,
+			.sapUiIntMicrochartChart {
+				margin-left: 4.75rem;
+			}
+		}
+
+		.sapUiIntLCIAttrRow {
+			display: flex;
+			align-items: center;
+			padding: 0.25rem 0;
+		}
+
+		.sapUiIntLCIAttrSecondCell {
+			justify-content: flex-end;
+
+			.sapMObjStatus {
+				text-align: end;
+			}
+		}
+
+		.sapUiIntLCIAttrCell {
+			flex: 1;
+			display: flex;
+			align-items: center;
+		}
 	}
 
 	&:not(.sapUiIntCardWithFooter) {
 		.sapMListItems li:last-child {
 			border-bottom: 1px solid transparent;
-		}
-	}
-
-	.sapMSLI.sapUiIntLCI {
-		&.sapMSLIThumbnail,
-		&.sapMSLINoIconInset,
-		&.sapMSLIWithDescription,
-		&.sapMSLINoTitleAdapt {
-			.sapMLIBContent {
-				height: ~"calc(5rem - 1px)";
-			}
-
-			&.sapUiIntLCIWithChart .sapMLIBContent {
-				height: ~"calc(4rem - 1px)";
-			}
-		}
-	}
-
-	/* Wrapping */
-	.sapMSLI.sapUiIntLCI.sapMSLIWrapping .sapMLIBContent {
-		height: auto;
-		min-height: ~"calc(3rem - 1px)";
-	}
-
-	.sapMSLIWithDescription,
-	.sapMSLINoIconInset,
-	.sapMSLINoTitleAdapt {
-		&.sapUiIntLCI.sapMSLIWrapping {
-			.sapMLIBContent {
-				min-height: ~"calc(5rem - 1px)";
-			}
-		}
-	}
-
-	.sapUiIntLCI:not(.sapMSLIThumbnail):not(.sapMSLIWithDescription).sapUiIntLCIIconSize {
-		&XS .sapMLIBContent {
-			height: ~"calc(2.5625rem - 1px)";
-		}
-
-		&S .sapMLIBContent {
-			height: ~"calc(3.5625rem - 1px)";
-		}
-
-		&M .sapMLIBContent {
-			height: ~"calc(4.5625rem - 1px)";
-		}
-	}
-}
-
-.sapUiSizeCompact.sapUiIntCard,
-.sapUiSizeCompact .sapUiIntCard {
-	.sapMSLI.sapUiIntLCI {
-		.sapMLIBContent {
-			height: ~"calc(2rem - 1px)";
-		}
-
-		&.sapMSLIThumbnail,
-		&.sapMSLINoIconInset,
-		&.sapMSLIWithDescription,
-		&.sapMSLINoTitleAdapt {
-			.sapMLIBContent {
-				height: ~"calc(5rem - 1px)";
-			}
-
-			&.sapUiIntLCIWithChart .sapMLIBContent {
-				height: ~"calc(4rem - 1px)";
-			}
-		}
-
-		&.sapMSLIWrapping {
-			&.sapMSLIWithDescription,
-			&.sapMSLINoIconInset,
-			&.sapMSLINoTitleAdapt {
-				.sapMLIBContent {
-					min-height: ~"calc(5rem - 1px)";
-				}
-			}
-
-			.sapMLIBContent {
-				height: auto;
-				min-height: ~"calc(2rem - 1px)";
-			}
 		}
 	}
 }
