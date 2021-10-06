@@ -68,23 +68,23 @@
 
 .sapMInputBaseContentWrapperWarning {
 	background: @sapUiFieldWarningBackground;
-	border: 2 * @sapUiFieldBorderWidth dashed @sapUiFieldWarningColor;
+	border: @sapField_WarningBorderWidth @sapField_WarningBorderStyle @sapUiFieldWarningColor;
 }
 
 .sapMInputBaseContentWrapperSuccess {
 	background: @sapUiFieldSuccessBackground;
-	border-color: @sapUiFieldSuccessColor;
+	border: @sapField_SuccessBorderWidth @sapField_SuccessBorderStyle @sapUiFieldSuccessColor;
 }
 
 .sapMILI-CTX .sapMInputBaseContentWrapperError,
 .sapMInputBaseContentWrapperError {
 	background: @sapUiFieldInvalidBackground;
-	border: 2 * @sapUiFieldBorderWidth dashed @sapUiFieldInvalidColor;
+	border: @sapField_InvalidBorderWidth @sapField_InvalidBorderStyle @sapUiFieldInvalidColor;
 }
 
 .sapMInputBaseContentWrapperInformation {
 	background: @sapUiFieldInformationBackground;
-	border: @sapUiFieldBorderWidth dashed @sapUiFieldInformationColor;
+	border: @sapField_InformationBorderWidth @sapField_InformationBorderStyle @sapUiFieldInformationColor;
 }
 
 .sapMInputBaseContentWrapperWarning, .sapMInputBaseContentWrapperError {
