@@ -11,7 +11,7 @@ sap.ui.define([
          * @param {array} aDataPoints Datapoint objects to select (see sap.chart.Chart#setSelectedDataPoints)
          * @param {string} sId Id of the mdc chart
          */
-        iSelectTheDatapointOnTheChart: function (aDataPoints, sId){
+        iSelectTheDatapoint: function (aDataPoints, sId){
             return this.waitFor({
                 id: sId,
                 success: function(oMDCChart){
@@ -25,7 +25,7 @@ sap.ui.define([
          * @param {object} oCategories Categories to select (see sap.chart.Chart#setSelectedCategories for more information)
          * @param {string} sId Id of the mdc chart
          */
-         iSelectTheCategoriesOnTheChart: function (oCategories, sId){
+         iSelectTheCategories: function (oCategories, sId){
             return this.waitFor({
                 id: sId,
                 success: function(oMDCChart){
