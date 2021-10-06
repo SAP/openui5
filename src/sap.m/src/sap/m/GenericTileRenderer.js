@@ -74,13 +74,30 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		if (!oControl._isInActionScope() && oControl._bShowActionsView) {
 			oRm.class("sapMGTScopeActions");
 		}
-		oRm.class(frameType);
+		//Set respective Class for IconMode
+		if (oControl._isIconMode()){
+			if (frameType === frameTypes.OneByOne) {
+				var sClass = "sapMGTOneByOne";
+			} else if (frameType === frameTypes.TwoByHalf) {
+				var sClass = "TwoByHalf";
+			}
+		}
+		oRm.class(oControl._isIconMode() ? sClass : frameType);
 		if (frameType === frameTypes.TwoByOne && oControl.getMode() === GenericTileMode.ActionMode) {
 			oRm.class("sapMGTActionMode");
 		}
 		if (frameType === frameTypes.OneByOne && oControl.getSystemInfo() || oControl.getAppShortcut()){
 			oRm.class("tileWithAppInfo");
 		}
+		//Set respective Class/ BackgroundColor for IconMode
+		if (oControl._isIconMode()) {
+			if (frameType === frameTypes.TwoByHalf) {
+				oRm.class("sapMGTTwoByHalf");
+			} else {
+				oRm.style("background-color", oControl.getBackgroundColor());
+			}
+		}
+
 		if (sAriaRole) {
 			oRm.attr("role", sAriaRole);
 		} else if (!bRenderLink) { // buttons only; <a> elements always have the default role
@@ -118,123 +135,182 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		var isFooterPresent = false;
 		var isContentPresent = false;
 		if (sState === LoadState.Loading) {
-
-			oRm.openStart("div").class("sapMGTContentShimmerPlaceholderItem");
-			oRm.class("sapMGTContentShimmerPlaceholderWithDescription");
-			oRm.openEnd();
-			oRm.openStart("div")
-				.class("sapMGTContentShimmerPlaceholderRows")
-				.openEnd();
-			oRm.openStart("div")
-				.class("sapMGTContentShimmerPlaceholderItemHeader")
-				.class("sapMGTLoadingShimmer")
-				.openEnd()
-				.close("div");
-			oRm.openStart("div")
-				.class("sapMGTContentShimmerPlaceholderItemText")
-				.class("sapMGTLoadingShimmer")
-				.openEnd()
-				.close("div");
-			if (!isHalfFrame) {
+			//Setplaceholders for IconMode.
+			if ( oControl._isIconMode() ) {
+				if (frameType === frameTypes.OneByOne) {
+					oRm.openStart("div").class("sapMGTContentShimmerPlaceholderItemOneByOne");
+					oRm.class("sapMGTContentShimmerPlaceholderWithDescriptionOneByOne");
+					oRm.openEnd();
+					oRm.openStart("div")
+						.class("sapMGTContentShimmerPlaceholderRowsOneByOne")
+						.openEnd();
+					oRm.openStart("div")
+						.class("sapMGTContentShimmerPlaceholderIconOneByOne")
+						.class("sapMGTLoadingShimmer")
+						.openEnd()
+						.close("div");
+					oRm.openStart("div")
+						.class("sapMGTContentShimmerPlaceholderItemTextOneByOne")
+						.class("sapMGTLoadingShimmer")
+						.openEnd()
+						.close("div");
+				} else {
+					oRm.openStart("div").class("sapMGTContentShimmerPlaceholderItemTwoByHalf");
+					oRm.class("sapMGTContentShimmerPlaceholderWithDescriptionTwoByHalf");
+					oRm.openEnd();
+					oRm.openStart("div")
+						.class("sapMGTContentShimmerPlaceholderRowsTwoByHalf")
+						.openEnd();
+					oRm.openStart("div")
+						.class("sapMGTContentShimmerPlaceholderIconTwoByHalf")
+						.class("sapMGTLoadingShimmer")
+						.openEnd()
+						.close("div");
+					oRm.openStart("div")
+						.class("sapMGTContentShimmerPlaceholderItemTextTwoByHalf")
+						.class("sapMGTLoadingShimmer")
+						.openEnd()
+						.close("div");
+				}
+				oRm.close("div");
+				oRm.close("div");
+			} else {
+				oRm.openStart("div").class("sapMGTContentShimmerPlaceholderItem");
+				oRm.class("sapMGTContentShimmerPlaceholderWithDescription");
+				oRm.openEnd();
 				oRm.openStart("div")
-					.class("sapMGTContentShimmerPlaceholderItemBox")
+					.class("sapMGTContentShimmerPlaceholderRows")
+					.openEnd();
+				oRm.openStart("div")
+					.class("sapMGTContentShimmerPlaceholderItemHeader")
 					.class("sapMGTLoadingShimmer")
 					.openEnd()
 					.close("div");
 				oRm.openStart("div")
-					.class("sapMGTContentShimmerPlaceholderItemTextFooter")
+					.class("sapMGTContentShimmerPlaceholderItemText")
 					.class("sapMGTLoadingShimmer")
 					.openEnd()
 					.close("div");
+				if (!isHalfFrame) {
+					oRm.openStart("div")
+						.class("sapMGTContentShimmerPlaceholderItemBox")
+						.class("sapMGTLoadingShimmer")
+						.openEnd()
+						.close("div");
+					oRm.openStart("div")
+						.class("sapMGTContentShimmerPlaceholderItemTextFooter")
+						.class("sapMGTLoadingShimmer")
+						.openEnd()
+						.close("div");
+				}
+				oRm.close("div");
+				oRm.close("div");
+			}
+		} else {
+			//Set respective Class/ BackgroundColor for IconMode
+			if (oControl._isIconMode()) {
+				oRm.openStart("div");
+				if (frameType === frameTypes.OneByOne) {
+					oRm.class("sapMGTOneByOneIcon");
+				} else {
+					oRm.class("sapMGTTwoByHalfIcon");
+					oRm.style("background-color", oControl.getBackgroundColor());
+				}
+				oRm.openEnd();
+				if (oControl.getTileIcon()) {
+					oRm.renderControl(oControl._renderTileIcon(oControl.getTileIcon()));
+				}
+				oRm.close("div");
 			}
 
-
-
-			oRm.close("div");
-			oRm.close("div");
-		} else {
-		oRm.openStart("div");
-		oRm.class("sapMGTHdrContent");
-		oRm.class(frameType);
-		if (sTooltipText) {
-			oRm.attr("title", sTooltipText);
-		}
-		oRm.openEnd();
-		if (sHeaderImage) {
-			oRm.renderControl(oControl._oImage);
-		}
-
-		this._renderHeader(oRm, oControl);
-		for (var i = 0; i < iLength; i++) {
-			isFooterPresent = oControl._checkFooter(aTileContent[i], oControl) && aTileContent[i].getFooter();
-			if (aTileContent[i].getAggregation("content") !== null){
-				if (frameType === frameTypes.OneByHalf && aTileContent[i].getAggregation("content").getMetadata()._sClassName === "sap.m.ImageContent") {
-					isContentPresent = false;
-				} else {
-					isContentPresent = true;
-					break;
+			oRm.openStart("div");
+			oRm.class("sapMGTHdrContent");
+			if (oControl._isIconMode() ){
+				if (frameType === frameTypes.OneByOne) {
+					var sClass = "sapMGTOneByOne";
+				} else if (frameType === frameTypes.TwoByHalf) {
+					var sClass = "TwoByHalf";
 				}
 			}
-		}
-		var bIsActionMode = frameType === frameTypes.TwoByOne && oControl.getMode() === GenericTileMode.ActionMode;
-		if (!(isHalfFrame && isContentPresent) && !bIsActionMode) {
-			if (oControl.getSubheader()) {
-				this._renderSubheader(oRm, oControl);
+			oRm.class(oControl._isIconMode()	? sClass : frameType);
+			if (sTooltipText) {
+				oRm.attr("title", sTooltipText);
 			}
-		}
-
-		oRm.close("div");
-
-		oRm.openStart("div", oControl.getId() + "-content");
-		oRm.class("sapMGTContent");
-		if (isFooterPresent && frameType === frameTypes.OneByOne && (oControl.getSystemInfo() || oControl.getAppShortcut())) {
-			oRm.class("appInfoWithFooter");
-		} else {
-			oRm.class("appInfoWithoutFooter");
-		}
-
-		oRm.openEnd();
-		for (var i = 0; i < iLength; i++) {
-			oRm.renderControl(aTileContent[i]);
-		}
-		oRm.close("div");
-
-		//Render Action Buttons, only in ActionMode and in TwoByOne frame type
-		if (bIsActionMode && oControl.getActionButtons().length) {
-			oRm.openStart("div", oControl.getId() + "-actionButtons");
-			oRm.class("sapMGTActionsContainer");
 			oRm.openEnd();
-			oControl.getActionButtons().forEach(function(oActionButton) {
-				oRm.renderControl(oActionButton);
-			});
+			if (sHeaderImage) {
+				oRm.renderControl(oControl._oImage);
+			}
+
+			this._renderHeader(oRm, oControl);
+			for (var i = 0; i < iLength; i++) {
+				isFooterPresent = oControl._checkFooter(aTileContent[i], oControl) && aTileContent[i].getFooter();
+				if (aTileContent[i].getAggregation("content") !== null){
+					if (frameType === frameTypes.OneByHalf && aTileContent[i].getAggregation("content").getMetadata()._sClassName === "sap.m.ImageContent") {
+						isContentPresent = false;
+					} else {
+						isContentPresent = true;
+						break;
+					}
+				}
+			}
+			var bIsActionMode = frameType === frameTypes.TwoByOne && oControl.getMode() === GenericTileMode.ActionMode;
+			if (!(isHalfFrame && isContentPresent) && !bIsActionMode) {
+				if (oControl.getSubheader() && (!oControl._isIconMode())) {//Restrict creation of SubHeader for IconMode
+					this._renderSubheader(oRm, oControl);
+				}
+			}
+
 			oRm.close("div");
-		}
 
-		if (frameType === frameTypes.OneByOne && (oControl.getSystemInfo() || oControl.getAppShortcut())){
-
-			oRm.openStart("div", oControl.getId() + "-tInfo");
-			oRm.class("sapMGTTInfoContainer");
-			oRm.openEnd();
-			oRm.openStart("div");
-			oRm.class("sapMGTTInfo");
-			oRm.openEnd();
-			if (oControl.getAppShortcut()) {
-				oRm.openStart("div", oControl.getId() + "-appShortcut");
-				oRm.class("sapMGTAppShortcutText").openEnd();
-				oRm.renderControl(oControl._oAppShortcut);
+			if ( !oControl._isIconMode() ) { //Restrict creation of Footer for IconMode
+				oRm.openStart("div", oControl.getId() + "-content");
+				oRm.class("sapMGTContent");
+				if (isFooterPresent && frameType === frameTypes.OneByOne && (oControl.getSystemInfo() || oControl.getAppShortcut())) {
+					oRm.class("appInfoWithFooter");
+				} else {
+					oRm.class("appInfoWithoutFooter");
+				}
+				oRm.openEnd();
+				for (var i = 0; i < iLength; i++) {
+					oRm.renderControl(aTileContent[i]);
+				}
 				oRm.close("div");
 			}
-			if (oControl.getSystemInfo()) {
-				oRm.openStart("div", oControl.getId() + "-sytemInfo");
-				oRm.class("sapMGTSystemInfoText").openEnd();
-				oRm.renderControl(oControl._oSystemInfo);
+			//Render Action Buttons, only in ActionMode and in TwoByOne frame type
+			if (bIsActionMode && oControl.getActionButtons().length) {
+				oRm.openStart("div", oControl.getId() + "-actionButtons");
+				oRm.class("sapMGTActionsContainer");
+				oRm.openEnd();
+				oControl.getActionButtons().forEach(function(oActionButton) {
+					oRm.renderControl(oActionButton);
+				});
 				oRm.close("div");
 			}
-			oRm.close("div");
-			oRm.close("div");
+			//Restrict creation of InfoContainer for IconMode
+			if (!oControl._isIconMode() && (frameType === frameTypes.OneByOne && (oControl.getSystemInfo() || oControl.getAppShortcut()))){
+				oRm.openStart("div", oControl.getId() + "-tInfo");
+				oRm.class("sapMGTTInfoContainer");
+				oRm.openEnd();
+				oRm.openStart("div");
+				oRm.class("sapMGTTInfo");
+				oRm.openEnd();
+				if (oControl.getAppShortcut()) {
+					oRm.openStart("div", oControl.getId() + "-appShortcut");
+					oRm.class("sapMGTAppShortcutText").openEnd();
+					oRm.renderControl(oControl._oAppShortcut);
+					oRm.close("div");
+				}
+				if (oControl.getSystemInfo()) {
+					oRm.openStart("div", oControl.getId() + "-sytemInfo");
+					oRm.class("sapMGTSystemInfoText").openEnd();
+					oRm.renderControl(oControl._oSystemInfo);
+					oRm.close("div");
+				}
+				oRm.close("div");
+				oRm.close("div");
+			}
 		}
-	}
-	if (sState !== LoadState.Loaded && sState !== LoadState.Loading) {
+		if (sState !== LoadState.Loaded && sState !== LoadState.Loading) {
 			this._renderStateOverlay(oRm, oControl, sTooltipText);
 		}
 
@@ -256,6 +332,13 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 	GenericTileRenderer._renderFocusDiv = function(oRm, oControl) {
 		oRm.openStart("div", oControl.getId() + "-focus");
 		oRm.class("sapMGTFocusDiv");
+		if (oControl._isIconMode()) { //Set respective BorderRadius for IconMode
+			if (oControl.getFrameType() === frameTypes.OneByOne) {
+				oRm.style("border-radius", "1rem");
+			} else {
+				oRm.style("border-radius", "0.75rem");
+			}
+		}
 		oRm.openEnd();
 		oRm.close("div");
 	};
@@ -311,6 +394,13 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			oRm.class("sapMGTWithImageHoverOverlay");
 		} else {
 			oRm.class("sapMGTWithoutImageHoverOverlay");
+			if (oControl._isIconMode()) { //Set respective BorderRadius for IconMode
+				if (oControl.getFrameType() === frameTypes.OneByOne) {
+					oRm.style("border-radius", "1rem");
+				} else {
+					oRm.style("border-radius", "0.75rem");
+				}
+			}
 		}
 		oRm.openEnd();
 		oRm.close("div");

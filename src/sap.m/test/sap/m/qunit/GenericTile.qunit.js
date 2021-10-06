@@ -3478,4 +3478,160 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		assert.notOk(document.getElementById("generic-tile-subHdr-text"), "Generic tile subheader is not rendered in Action Mode");
 		assert.ok(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is rendered in Action Mode");
 	});
+	QUnit.module("GenericTile IconMode", {
+		beforeEach: function() {
+			this.oGenericTile = new GenericTile({
+				header: "GenericTile",
+				subheader: "GenericTile subHeader",
+				mode: "IconMode",
+				appShortcut: "GenericTile Shortcutt",
+				tileContent: [
+					new TileContent({
+						unit: "EUR",
+						footer: "Current Quarter",
+						content: new ImageContent({
+									src: IMAGE_PATH + "headerImg1.png",
+									description: "image descriptions ..."
+								})
+				})]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("OneByOne", function(assert){
+		var fnDone = assert.async();
+		this.oGenericTile.setFrameType(FrameType.OneByOne);
+		sap.ui.getCore().applyChanges();
+		setTimeout(function(){
+			assert.equal(this.oGenericTile.getMode(), GenericTileMode.IconMode, "CurrentMode is " + GenericTileMode.IconMode);
+			assert.equal(this.oGenericTile.getFrameType(), FrameType.OneByOne, "Current FrameType is " + FrameType.OneByOne);
+			assert.equal(this.oGenericTile.getTileIcon(), undefined, "No Tile Icon.");
+			assert.equal(this.oGenericTile.getBackgroundColor(), undefined, "No Tile Background Color");
+			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
+			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
+			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 1, "SubHeader Text Created.");
+			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTContent").length, 1, "Content Created.");
+			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMTileCntFtrTxt").length, 1, "Footer Text Created.");
+			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 1, "InfoContainer Created.");
+			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTOneByOneIcon").length, 0, "No Icon Container Created.");
+			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTOneByOne").length, 0, "No Text Container Created.");
+			this.oGenericTile.setTileIcon("sap-icon://key");
+			this.oGenericTile.setBackgroundColor("teal");
+			sap.ui.getCore().applyChanges();
+			setTimeout(function(){
+				assert.equal(this.oGenericTile.getMode(), GenericTileMode.IconMode, "CurrentMode is " + GenericTileMode.IconMode);
+				assert.equal(this.oGenericTile.getFrameType(), FrameType.OneByOne, "Current FrameType is " + FrameType.OneByOne);
+				assert.equal(this.oGenericTile.getTileIcon(), "sap-icon://key", "Tile Icon is present.");
+				assert.equal(this.oGenericTile.getBackgroundColor(), "teal", "Tile Background Coloris present");
+				assert.ok(this.oGenericTile._oIcon.isA("sap.ui.core.Icon"), "Icon Created");
+				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
+				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
+				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 0, "No SubHeader Text Created.");
+				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTContent").length, 0, "No Content Created.");
+				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMTileCntFtrTxt").length, 0, "No Footer Text Created.");
+				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 0, "No InfoContainer Created.");
+				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTOneByOneIcon").length, 1, "Icon Container Created.");
+				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTOneByOne").length, 1, "Text Container Created.");
+				this.oGenericTile.setTileIcon(IMAGE_PATH + "female_BaySu.jpg");
+				sap.ui.getCore().applyChanges();
+				setTimeout(function(){
+					assert.equal(this.oGenericTile.getMode(), GenericTileMode.IconMode, "CurrentMode is " + GenericTileMode.IconMode);
+					assert.equal(this.oGenericTile.getFrameType(), FrameType.OneByOne, "Current FrameType is " + FrameType.OneByOne);
+					assert.equal(this.oGenericTile.getTileIcon(), IMAGE_PATH + "female_BaySu.jpg", "Tile Icon is present.");
+					assert.equal(this.oGenericTile.getBackgroundColor(), "teal", "Tile Background Coloris present");
+					assert.ok(this.oGenericTile._oIcon.isA("sap.m.Image"), "Image Created.");
+					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
+					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
+					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 0, "No SubHeader Text Created.");
+					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTContent").length, 0, "No Content Created.");
+					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMTileCntFtrTxt").length, 0, "No Footer Text Created.");
+					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 0, "No InfoContainer Created.");
+					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTOneByOneIcon").length, 1, "Icon Container Created.");
+					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTOneByOne").length, 1, "Text Container Created.");
+					this.oGenericTile.setState("Loading");
+					sap.ui.getCore().applyChanges();
+					setTimeout(function(){
+						var oDomRef = this.oGenericTile.getDomRef().children[0];
+						assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is present when state is loading");
+						this.oGenericTile.setState("Loaded");
+						sap.ui.getCore().applyChanges();
+						setTimeout(function(){
+							assert.notOk(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is not present when state is loaded");
+							fnDone();
+						}, 100);
+					}.bind(this), 100);
+				}.bind(this), 100);
+			}.bind(this), 100);
+		}.bind(this), 100);
+	});
+
+	QUnit.test("TwoByHalf", function(assert){
+		var fnDone = assert.async();
+		this.oGenericTile.setFrameType(FrameType.TwoByHalf);
+		sap.ui.getCore().applyChanges();
+		setTimeout(function(){
+			assert.equal(this.oGenericTile.getMode(), GenericTileMode.IconMode, "CurrentMode is " + GenericTileMode.IconMode);
+			assert.equal(this.oGenericTile.getFrameType(), FrameType.TwoByHalf, "Current FrameType is " + FrameType.TwoByHalf);
+			assert.equal(this.oGenericTile.getTileIcon(), undefined, "No Tile Icon.");
+			assert.equal(this.oGenericTile.getBackgroundColor(), undefined, "No Tile Background Color");
+			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
+			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
+			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 0, "No SubHeader Text Created.");
+			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTContent").length, 1, "Content Created.");
+			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMTileCntFtrTxt").length, 0, "No Footer Text Created.");
+			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 0, "No InfoContainer Created.");
+			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTwoByHalfIcon").length, 0, "No Icon Container Created.");
+			this.oGenericTile.setTileIcon("sap-icon://key");
+			this.oGenericTile.setBackgroundColor("teal");
+			sap.ui.getCore().applyChanges();
+			setTimeout(function() {
+				assert.equal(this.oGenericTile.getMode(), GenericTileMode.IconMode, "CurrentMode is " + GenericTileMode.IconMode);
+				assert.equal(this.oGenericTile.getFrameType(), FrameType.TwoByHalf, "Current FrameType is " + FrameType.TwoByHalf);
+				assert.equal(this.oGenericTile.getTileIcon(), "sap-icon://key", "Tile Icon is present.");
+				assert.equal(this.oGenericTile.getBackgroundColor(), "teal", "Tile Background Coloris present");
+				assert.ok(this.oGenericTile._oIcon.isA("sap.ui.core.Icon"), "Icon Created");
+				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
+				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
+				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 0, "No SubHeader Text Created.");
+				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTContent").length, 0, "No Content Created.");
+				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMTileCntFtrTxt").length, 0, "No SubHeader Text Created.");
+				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 0, "No InfoContainer Created.");
+				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTwoByHalfIcon").length, 1, "Icon Container Created.");
+				this.oGenericTile.setTileIcon(IMAGE_PATH + "female_BaySu.jpg");
+				sap.ui.getCore().applyChanges();
+				setTimeout(function(){
+					assert.equal(this.oGenericTile.getMode(), GenericTileMode.IconMode, "CurrentMode is " + GenericTileMode.IconMode);
+					assert.equal(this.oGenericTile.getFrameType(), FrameType.TwoByHalf, "Current FrameType is " + FrameType.TwoByHalf);
+					assert.equal(this.oGenericTile.getTileIcon(), IMAGE_PATH + "female_BaySu.jpg", "Tile Icon is present.");
+					assert.equal(this.oGenericTile.getBackgroundColor(), "teal", "Tile Background Coloris present");
+					assert.ok(this.oGenericTile._oIcon.isA("sap.m.Image"), "Image Created");
+					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
+					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
+					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 0, "No SubHeader Text Created.");
+					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTContent").length, 0, "No Content Created.");
+					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMTileCntFtrTxt").length, 0, "No SubHeader Text Created.");
+					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 0, "No InfoContainer Created.");
+					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTwoByHalfIcon").length, 1, "Icon Container Created.");
+					this.oGenericTile.setState("Loading");
+					sap.ui.getCore().applyChanges();
+					setTimeout(function(){
+						var oDomRef = this.oGenericTile.getDomRef().children[0];
+						assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is present when state is loading");
+						this.oGenericTile.setState("Loaded");
+						sap.ui.getCore().applyChanges();
+						setTimeout(function(){
+							assert.notOk(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is not present when state is loaded");
+							fnDone();
+						}, 100);
+					}.bind(this), 100);
+				}.bind(this), 100);
+			}.bind(this), 100);
+		}.bind(this), 100);
+	});
+
 });
