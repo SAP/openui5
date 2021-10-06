@@ -581,7 +581,7 @@ function(
 
 		if (typeof (sId) === "string") { // basic call
 			if (typeof (vFragment) === "string") { // with ID
-				return sap.ui.fragment({fragmentName: vFragment, sId: sId, type: "XML"}, oController);
+				return sap.ui.fragment({fragmentName: vFragment, sId: sId, type: "XML"}, oController); // legacy-relevant
 
 			} else { // no ID, sId is actually the name and vFragment the optional Controller
 				return sap.ui.fragment(sId, "XML", vFragment); // legacy-relevant
