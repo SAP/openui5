@@ -1,11 +1,15 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/actions/Press",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/events/KeyCodes"
 ], function(
 	Opa5,
+	PropertyStrictEquals,
+	Properties,
 	Press,
 	QUnitUtils,
 	FakeLrepConnectorSessionStorage,
@@ -113,6 +117,33 @@ sap.ui.define([
 						errorMessage: "Did not find the Context Menu"
 					});
 				},
+				iClickOnAContextMenuEntryWithText: function(sText) {
+					var oResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: new PropertyStrictEquals({
+							name: "text",
+							value: oResources.getText(sText)
+						}),
+						actions: new Press(),
+						errorMessage: "The Menu Item was not pressable"
+					});
+				},
+				iClickOnAContextMenuEntryWithIcon: function(sIcon) {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: [
+							function(oButton) {
+								return (oButton.getParent().getId().indexOf("popoverContentBox") >= 0 || oButton.getParent().getId().indexOf("popoverExpContentBox") >= 0);
+							},
+							new PropertyStrictEquals({
+								name: "icon",
+								value: sIcon
+							})],
+						actions: new Press(),
+						errorMessage: "The Menu Item was not pressable"
+					});
+				},
 				iEnterANewName: function(sNewLabel) {
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
@@ -175,7 +206,10 @@ sap.ui.define([
 						matchers: function(oButton) {
 							return oButton.$().closest(".sapUiRtaToolbar").length > 0 && oButton.getProperty("text") === oResources.getText("BTN_EXIT");
 						},
-						actions: new Press()
+						actions: new Press(),
+						success: function(aButtons) {
+							Opa5.assert.equal(aButtons.length, 1, "'Save & Exit' button found");
+						}
 					});
 				},
 				// Only for UI Personalization. Plese do not use in UI Adaptation tests
@@ -282,7 +316,6 @@ sap.ui.define([
 							oApp = oAppControl;
 						}
 					});
-
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
 						matchers: function(oOverlay) {
@@ -369,6 +402,54 @@ sap.ui.define([
 							Opa5.assert.ok(true, "The URL parameter for variant id is present");
 						},
 						errorMessage: "The URL parameter for variant id is not being added"
+					});
+				},
+				iShouldSeetheContextMenu: function() {
+					return this.waitFor({
+						controlType: "sap.m.Popover",
+						matchers: function(oPopover) {
+							return oPopover.hasStyleClass("sapUiDtContextMenu");
+						},
+						success: function(oPopover) {
+							Opa5.assert.ok(oPopover[0].getVisible(), "The context menu is shown.");
+						},
+						errorMessage: "Did not find the Context Menu"
+					});
+				},
+				iShouldSeetheContextMenuEntries: function(aContextEntries) {
+					return this.waitFor({
+						controlType: "sap.m.VBox",
+						matchers: function(oVBox) {
+							return oVBox.getId().indexOf("popoverExpContentBox") >= 0;
+						},
+						success: function(oVBox) {
+							var aIsContextEntries = [];
+							oVBox[0].getItems().forEach(function(oItem) {
+								aIsContextEntries.push(oItem.getText());
+							});
+							Opa5.assert.deepEqual(aIsContextEntries, aContextEntries, "expected [" + aContextEntries + "] context entries found");
+						},
+						errorMessage: "Did not find the Context Menu entries"
+					});
+				},
+				iShouldSeetheNumberOfContextMenuActions: function(iActions, bIsMiniMenu) {
+					var sControlType = bIsMiniMenu ? "sap.m.HBox" : "sap.m.VBox";
+					var sIdPart = bIsMiniMenu ? "popoverContentBox" : "popoverExpContentBox";
+					return this.waitFor({
+						controlType: sControlType,
+						matchers: function(oControl) {
+							return oControl.getId().indexOf(sIdPart) >= 0;
+						},
+						success: function(oControl) {
+							var iItems = 0;
+							oControl[0].getItems().forEach(function(oItem) {
+								if (oItem.getVisible()) {
+									iItems++;
+								}
+							});
+							Opa5.assert.deepEqual(iActions, iItems, "expected " + iItems + " context entries found");
+						},
+						errorMessage: "Did not find the Context Menu entries"
 					});
 				}
 			}

@@ -5,7 +5,8 @@ sap.ui.define([
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Util',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion',
-	'sap/ui/Device'
+	'sap/ui/Device',
+	'test-resources/sap/ui/rta/internal/integration/pages/Adaptation'
 ], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, Device) {
 	'use strict';
 
@@ -65,7 +66,7 @@ sap.ui.define([
 	opaTest("When I enable key user adaptation, the App should change into 'RTA' mode", function(Given, When, Then){
 		When.iPressButtonWithText("Start RTA");
 
-		Then.iShouldSeeRTABar();
+		Then.onPageWithRTA.iShouldSeeTheToolbar();
 	});
 
 	// ----------------------------------------------------------------
@@ -73,8 +74,9 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("When I press on the Table, the settings context menu opens", function (Given, When, Then) {
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
-		Then.iShouldSeeRTAPopoverWithActions(2);
-		When.iClickOnRtaSetting("sap-icon://key-user-settings");
+		Then.onPageWithRTA.iShouldSeetheContextMenu();
+		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2, true);
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
 
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
@@ -107,8 +109,9 @@ sap.ui.define([
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 
-		Then.iShouldSeeRTAPopoverWithActions(2);
-		When.iClickOnRtaSetting("sap-icon://key-user-settings");
+		Then.onPageWithRTA.iShouldSeetheContextMenu();
+		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2, true);
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
 
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
@@ -145,8 +148,9 @@ sap.ui.define([
 		//as the Table overlay is still marked as selected, we need to click it twice..
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
-		Then.iShouldSeeRTAPopoverWithActions(2);
-		When.iClickOnRtaSetting("sap-icon://key-user-settings");
+		Then.onPageWithRTA.iShouldSeetheContextMenu();
+		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2, true);
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
 
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
@@ -182,8 +186,9 @@ sap.ui.define([
 		//as the Table overlay is still marked as selected, we need to click it twice..
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
-		Then.iShouldSeeRTAPopoverWithActions(2);
-		When.iClickOnRtaSetting("sap-icon://key-user-settings");
+		Then.onPageWithRTA.iShouldSeetheContextMenu();
+		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2, true);
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
 
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
@@ -241,8 +246,9 @@ sap.ui.define([
 		//as the Table overlay is still marked as selected, we need to click it twice..
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
-		Then.iShouldSeeRTAPopoverWithActions(2);
-		When.iClickOnRtaSetting("sap-icon://key-user-settings");
+		Then.onPageWithRTA.iShouldSeetheContextMenu();
+		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2, true);
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
 		Then.iShouldSeeP13nItems(aTableItems);
