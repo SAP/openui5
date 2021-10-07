@@ -12,6 +12,7 @@
 
 //Provides class sap.ui.model.odata.v2.ODataModel
 sap.ui.define([
+	"./_CreatedContextsCache",
 	"./Context",
 	"./ODataAnnotations",
 	"./ODataContextBinding",
@@ -49,12 +50,12 @@ sap.ui.define([
 	"sap/ui/thirdparty/datajs",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/util/isCrossOriginURL"
-], function(Context, ODataAnnotations, ODataContextBinding, ODataListBinding, ODataTreeBinding,
-		assert, Log, encodeURL, deepEqual, deepExtend, each, extend, isEmptyObject, isPlainObject,
-		merge, uid, UriParameters, SyncPromise, coreLibrary, Message, MessageParser, BindingMode,
-		BaseContext, FilterProcessor, Model, CountMode, MessageScope, ODataMetadata, ODataMetaModel,
-		ODataMessageParser, ODataPropertyBinding, ODataUtils, OperationMode, UpdateMethod, OData,
-	    URI, isCrossOriginURL
+], function(_CreatedContextsCache, Context, ODataAnnotations, ODataContextBinding, ODataListBinding,
+		ODataTreeBinding, assert, Log, encodeURL, deepEqual, deepExtend, each, extend,
+		isEmptyObject, isPlainObject, merge, uid, UriParameters, SyncPromise, coreLibrary, Message,
+		MessageParser, BindingMode, BaseContext, FilterProcessor, Model, CountMode, MessageScope,
+		ODataMetadata, ODataMetaModel, ODataMessageParser, ODataPropertyBinding, ODataUtils,
+		OperationMode, UpdateMethod, OData, URI, isCrossOriginURL
 ) {
 
 	"use strict";
@@ -341,6 +342,7 @@ sap.ui.define([
 			this.mChangedEntities4checkUpdate = {};
 			this.bPersistTechnicalMessages = bPersistTechnicalMessages === undefined
 				? undefined : !!bPersistTechnicalMessages;
+			this.oCreatedContextsCache = new _CreatedContextsCache();
 
 			if (oMessageParser) {
 				oMessageParser.setProcessor(this);
@@ -1962,6 +1964,12 @@ sap.ui.define([
 	 * @param {Object<string,string>} [mParameters.custom] Optional map of custom query parameters (name/value pairs); names of custom parameters must not start with <code>$</code>
 	 * @param {sap.ui.model.odata.CountMode} [mParameters.countMode] Count mode for this binding;
 	 *           if not specified, the default count mode for this model is used
+	 * @param {string} [mParameters.createdEntitiesKey=""]
+	 *   A key used in combination with the resolved path of the binding to identify the entities
+	 *   created via the binding's {@link #create} method.
+	 *
+	 *   <b>Note:</b> Different controls or control aggregation bindings to the same collection must
+	 *   have different <code>createdEntitiesKey</code> values.
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode] Operation mode for this binding;
 	 *           if not specified, the default operation mode of this model is used
 	 * @param {boolean} [mParameters.faultTolerant] Turns on the fault tolerance mode, data is not reset if a backend request returns an error
@@ -7952,6 +7960,18 @@ sap.ui.define([
 			statusCode : 0,
 			statusText : "abort"
 		};
+	};
+
+	/**
+	 * Gets the cache for contexts of entities created via
+	 * {@link sap.ui.model.odata.v2.ODataListBinding#create}.
+	 *
+	 * @returns {sap.ui.model.odata.v2._CreatedContextsCache} The created entities cache
+	 *
+	 * @private
+	 */
+	ODataModel.prototype._getCreatedContextsCache = function () {
+		return this.oCreatedContextsCache;
 	};
 
 	return ODataModel;

@@ -45,6 +45,12 @@ sap.ui.define([
 	 * @param {string} [mParameters.batchGroupId] Sets the batch group ID to be used for requests originating from this binding
 	 * @param {sap.ui.model.odata.CountMode} [mParameters.countMode] Defines the count mode of this binding;
 	 *           if not specified, the default count mode of the <code>oModel</code> is applied
+	 * @param {string} [mParameters.createdEntitiesKey=""]
+	 *   A key used in combination with the resolved path of this binding to identify the entities
+	 *   created this binding's {@link #create} method.
+	 *
+	 *   <b>Note:</b> Different controls or control aggregation bindings to the same collection must
+	 *   have different <code>createdEntitiesKey</code> values.
 	 * @param {Object<string,string>} [mParameters.custom] An optional map of custom query parameters. Custom parameters must not start with <code>$</code>
 	 * @param {string} [mParameters.expand] Value for the OData <code>$expand</code> query parameter which is included in the request
 	 * @param {boolean} [mParameters.faultTolerant] Turns on the fault tolerance mode, data is not reset if a back-end request returns an error
@@ -112,9 +118,7 @@ sap.ui.define([
 			this.mNormalizeCache = {};
 			this.bTransitionMessagesOnly = !!(mParameters
 				&& mParameters.transitionMessagesOnly);
-			// an array of sap.ui.model.odata.v2.Context instances that have been created via
-			// #create
-			this.aCreatedContexts = [];
+			this.sCreatedEntitiesKey = mParameters && mParameters.createdEntitiesKey || "";
 
 			// check filter integrity
 			this.oModel.checkFilterOperation(this.aApplicationFilters);
@@ -274,18 +278,22 @@ sap.ui.define([
 	};
 
 	/**
-	 * Return contexts for the list.
+	 * Returns contexts for the list.
 	 *
-	 * @param {int} [iStartIndex=0] The start index of the requested contexts
-	 * @param {int} [iLength] The requested amount of contexts
+	 * @param {number} [iStartIndex=0]
+	 *   The start index of the requested contexts
+	 * @param {number} [iLength]
+	 *   The requested amount of contexts
+	 * @return {sap.ui.model.odata.v2.Context[]}
+	 *   The available contexts for the given range
 	 *
-	 * @return {sap.ui.model.odata.v2.Context[]} The contexts
 	 * @private
 	 */
-	ODataListBinding.prototype._getContexts = function(iStartIndex, iLength) {
+	ODataListBinding.prototype._getContexts = function (iStartIndex, iLength) {
 		var oContext, i, sKey,
 			aContexts = [],
-			iCreated = this.aCreatedContexts.length,
+			aCreatedContexts = this._getCreatedContexts(),
+			iCreated = aCreatedContexts.length,
 			sDeepPath = this.oModel.resolveDeep(this.sPath, this.oContext);
 
 		if (!iStartIndex) {
@@ -295,7 +303,7 @@ sap.ui.define([
 			iLength = this._getMaximumLength();
 		}
 		for (i = iStartIndex; i < iCreated && iLength > 0; i += 1) {
-			aContexts.push(this.aCreatedContexts[i]);
+			aContexts.push(aCreatedContexts[i]);
 			iLength -= 1;
 		}
 		iStartIndex = Math.max(0, iStartIndex - iCreated);
@@ -345,16 +353,10 @@ sap.ui.define([
 		}
 		if (Context.hasChanged(this.oContext, oContext)) {
 			if (this.oContext !== oContext) {
-				if (this.aCreatedContexts.some(function (oCreatedContext) {
-					return oCreatedContext.isTransient();
-				})) {
-					throw new Error("There are transient contexts, context change not possible");
-				}
-				bHasCreatedContexts = this.aCreatedContexts.length > 0;
-				this.aCreatedContexts = [];
+				bHasCreatedContexts = this._getCreatedContexts().length > 0;
 			}
 			this.oContext = oContext;
-			sResolvedPath = this.getResolvedPath();
+			sResolvedPath = this.getResolvedPath(); // resolved path with the new context
 			this.sDeepPath = this.oModel.resolveDeep(this.sPath, this.oContext);
 			if (!this._checkPathType()) {
 				Log.error("List Binding is not bound against a list for " + sResolvedPath);
@@ -692,7 +694,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataListBinding.prototype.getLength = function() {
-		var iResult = this.iLength + this.aCreatedContexts.length;
+		var iResult = this.iLength + this._getCreatedContexts().length;
 
 		if (this.bLengthFinal || this.iLength === 0) {
 			return iResult;
@@ -784,42 +786,19 @@ sap.ui.define([
 	 * Gets the maximum length based on the final length, the number of created entities and the
 	 * model's size limit.
 	 *
-	 * @returns {number} The maximum length
+	 * @returns {number}
+	 *   The maximum length
+	 *
 	 * @private
 	 */
 	ODataListBinding.prototype._getMaximumLength = function () {
-		var iCreated = this.aCreatedContexts.length,
-			iLength = this.oModel.iSizeLimit;
+		var iLength = this.oModel.iSizeLimit;
 
 		if (this.bLengthFinal) {
-			iLength = Math.min(iLength, this.iLength + iCreated);
+			iLength = Math.min(iLength, this.iLength + this._getCreatedContexts().length);
 		}
 
 		return iLength;
-	};
-
-	/**
-	 * Gets an object with the values for system query options $skip and $top based on the given
-	 * start index and length, both from control point of view. It considers the number of entities
-	 * created via {@link #create}.
-	 *
-	 * @param {number} iStartIndex The start index from control point of view
-	 * @param {number} iLength The length from control point of view
-	 * @returns {object}
-	 *   An object containing the properties <code>skip</code> and <code>top</code>; the values
-	 *   correspond to the system query options <code>$skip</code> and <code>$top</code>
-	 *
-	 * @private
-	 */
-	ODataListBinding.prototype._getSkipAndTop = function (iStartIndex, iLength) {
-		var iCreated = this.aCreatedContexts.length,
-			iServerStartIndex = iStartIndex - iCreated,
-			iServerLength = iServerStartIndex > 0 ? iLength : iLength + iServerStartIndex;
-
-		return {
-			skip : Math.max(0, iServerStartIndex),
-			top : Math.max(0, iServerLength)
-		};
 	};
 
 	/**
@@ -1000,12 +979,11 @@ sap.ui.define([
 	 * @param {object} mChangedEntities Map of changed entities
 	 * @private
 	 */
-	ODataListBinding.prototype.checkUpdate = function(bForceUpdate, mChangedEntities) {
-		var bChangeReason = this.sChangeReason ? this.sChangeReason : ChangeReason.Change,
-				bChangeDetected = false,
-				oCurrentData,
-				that = this,
-				aOldRefs;
+	ODataListBinding.prototype.checkUpdate = function (bForceUpdate, mChangedEntities) {
+		var aContexts, oCurrentData, bExpandedList, aLastKeys, aOldRefs,
+			bChangeDetected = false,
+			bChangeReason = this.sChangeReason ? this.sChangeReason : ChangeReason.Change,
+			that = this;
 
 		if ((this.bSuspended && !this.bIgnoreSuspend && !bForceUpdate) || this.bPendingRequest) {
 			return;
@@ -1026,8 +1004,8 @@ sap.ui.define([
 			aOldRefs = this.aExpandRefs;
 
 
-			var aLastKeys = this.aKeys.slice();
-			var bExpandedList = this.checkExpandedList(true);
+			aLastKeys = this.aKeys.slice();
+			bExpandedList = this.checkExpandedList(true);
 
 			// apply sorting and filtering again, as the newly set entities may have changed in clientmode
 			if (!bExpandedList && this.useClientMode()) {
@@ -1055,9 +1033,8 @@ sap.ui.define([
 			if (bChangeDetected && this.aLastContexts) {
 				// Reset bChangeDetected and compare actual data of entries
 				bChangeDetected = false;
-
 				//Get contexts for visible area and compare with stored contexts
-				var aContexts = this._getContexts(this.iLastStartIndex, this.iLastLength, this.iLastThreshold);
+				aContexts = this._getContexts(this.iLastStartIndex, this.iLastLength);
 				if (this.aLastContexts.length !== aContexts.length) {
 					bChangeDetected = true;
 				} else {
@@ -1598,7 +1575,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.suite.ui.generic.template
 	 */
 	ODataListBinding.prototype.create = function (oInitialData, bAtEnd, mParameters) {
-		var oCreatedContext,
+		var oCreatedContext, oCreatedContextsCache, sResolvedPath,
 			mCreateParameters = {properties : oInitialData, refreshAfterChange : false},
 			that = this;
 
@@ -1621,16 +1598,18 @@ sap.ui.define([
 			throw new Error("Metadata is not loaded");
 		}
 
+		sResolvedPath = this.getResolvedPath();
+		oCreatedContextsCache = this.oModel._getCreatedContextsCache();
 		Object.assign(mCreateParameters, mParameters);
-
-		oCreatedContext = this.oModel.createEntry(this.getResolvedPath(), mCreateParameters);
-
+		oCreatedContext = this.oModel.createEntry(sResolvedPath, mCreateParameters);
 		oCreatedContext.created().catch(function () {
-			that.aCreatedContexts.splice(that.aCreatedContexts.indexOf(oCreatedContext), 1);
+			oCreatedContextsCache.removeContext(oCreatedContext, sResolvedPath,
+				that.sCreatedEntitiesKey);
 			that._fireChange({reason : ChangeReason.Remove});
 		});
 
-		this.aCreatedContexts.unshift(oCreatedContext);
+		oCreatedContextsCache.addContext(oCreatedContext, sResolvedPath,
+			this.sCreatedEntitiesKey);
 		this._fireChange({reason : ChangeReason.Add});
 
 		return oCreatedContext;
@@ -1696,6 +1675,41 @@ sap.ui.define([
 		} // else oFilter = null
 
 		return Promise.resolve(oFilter);
+	};
+
+	/**
+	 * Gets the array of contexts for created entities, created via {@link #create}.
+	 *
+	 * @returns {sap.ui.model.odata.v2.Context[]} The array of contexts for created entities
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype._getCreatedContexts = function () {
+		return this.oModel._getCreatedContextsCache()
+			.getContexts(this.getResolvedPath(), this.sCreatedEntitiesKey);
+	};
+
+	/**
+	 * Gets an object with the values for system query options $skip and $top based on the given
+	 * start index and length, both from control point of view. It considers the number of entities
+	 * created via {@link #create}.
+	 *
+	 * @param {number} iStartIndex The start index from control point of view
+	 * @param {number} iLength The length from control point of view
+	 * @returns {object}
+	 *   An object containing the properties <code>skip</code> and <code>top</code>; the values
+	 *   correspond to the system query options <code>$skip</code> and <code>$top</code>
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype._getSkipAndTop = function (iStartIndex, iLength) {
+		var iServerStartIndex = iStartIndex - this._getCreatedContexts().length,
+			iServerLength = iServerStartIndex > 0 ? iLength : iLength + iServerStartIndex;
+
+		return {
+			skip : Math.max(0, iServerStartIndex),
+			top : Math.max(0, iServerLength)
+		};
 	};
 
 	return ODataListBinding;
