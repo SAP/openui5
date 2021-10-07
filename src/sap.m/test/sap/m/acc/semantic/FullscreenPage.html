@@ -28,6 +28,18 @@
 			var app = new sap.m.App("myApp");
 
 			var oPage = new sap.m.semantic.FullscreenPage("testPage", {
+					landmarkInfo: new sap.m.PageAccessibleLandmarkInfo({
+					headerRole: sap.ui.core.AccessibleLandmarkRole.Banner,
+					headerLabel: "Header label from LandmarkInfo",
+					subHeaderRole: sap.ui.core.AccessibleLandmarkRole.Banner,
+					subHeaderLabel: "SubHeader label from LandmarkInfo",
+					rootRole: sap.ui.core.AccessibleLandmarkRole.Region,
+					rootLabel: "Root label from LandmarkInfo",
+					contentRole: sap.ui.core.AccessibleLandmarkRole.Main,
+					contentLabel: "Content label from LandmarkInfo",
+					footerRole: sap.ui.core.AccessibleLandmarkRole.Banner,
+					footerLabel: "Footer label from LandmarkInfo"
+				}),
 				title:"Fullscreen Test page",
 				titleLevel: "H1",
 				showNavButton: true,
