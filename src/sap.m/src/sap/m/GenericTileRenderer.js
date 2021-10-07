@@ -75,6 +75,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			oRm.class("sapMGTScopeActions");
 		}
 		oRm.class(frameType);
+		if (frameType === frameTypes.TwoByOne && oControl.getMode() === GenericTileMode.ActionMode) {
+			oRm.class("sapMGTActionMode");
+		}
 		if (frameType === frameTypes.OneByOne && oControl.getSystemInfo() || oControl.getAppShortcut()){
 			oRm.class("tileWithAppInfo");
 		}
@@ -173,7 +176,8 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				}
 			}
 		}
-		if (!(isHalfFrame && isContentPresent)) {
+		var bIsActionMode = frameType === frameTypes.TwoByOne && oControl.getMode() === GenericTileMode.ActionMode;
+		if (!(isHalfFrame && isContentPresent) && !bIsActionMode) {
 			if (oControl.getSubheader()) {
 				this._renderSubheader(oRm, oControl);
 			}
@@ -188,11 +192,24 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		} else {
 			oRm.class("appInfoWithoutFooter");
 		}
+
 		oRm.openEnd();
 		for (var i = 0; i < iLength; i++) {
 			oRm.renderControl(aTileContent[i]);
 		}
 		oRm.close("div");
+
+		//Render Action Buttons, only in ActionMode and in TwoByOne frame type
+		if (bIsActionMode && oControl.getActionButtons().length) {
+			oRm.openStart("div", oControl.getId() + "-actionButtons");
+			oRm.class("sapMGTActionsContainer");
+			oRm.openEnd();
+			oControl.getActionButtons().forEach(function(oActionButton) {
+				oRm.renderControl(oActionButton);
+			});
+			oRm.close("div");
+		}
+
 		if (frameType === frameTypes.OneByOne && (oControl.getSystemInfo() || oControl.getAppShortcut())){
 
 			oRm.openStart("div", oControl.getId() + "-tInfo");

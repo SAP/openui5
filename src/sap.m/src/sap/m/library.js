@@ -1758,6 +1758,13 @@ sap.ui.define([
 		HeaderMode : "HeaderMode",
 
 		/**
+		 * Action Mode (Two lines for the header and one line for the subtitle).
+		 * @public
+		 * @experimental since 1.96
+		 */
+		ActionMode: "ActionMode",
+
+		/**
 		 * Line mode (Implemented for both, cozy and compact densities).
 		 *
 		 * Generic Tile is displayed as in-line element, header and subheader are displayed in one line.

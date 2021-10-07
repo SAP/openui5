@@ -1139,3 +1139,87 @@ html[data-sap-ui-browser*='ff'] {
 	margin-right: 1rem;
 	bottom: 1.0625rem;
 }
+
+.TwoByOne.sapMGTActionMode {
+	.sapMGTTitle {
+		font-weight: bold;
+	}
+	.sapMGTHdrContent {
+		height: 2.25rem;
+		.sapMGTHdrTxt {
+			.sapMGTTitle{
+				font-size: 0.875rem;
+			}
+		}
+	}
+	.sapMGTContent {
+		height: 4.875rem;
+		.sapMTileCnt {
+			height: 4.875rem;
+			.sapMTileCntContent {
+				height: 3.5rem;
+				margin-top: 0.125rem;
+				margin-bottom: 0.125rem;
+				.sapMNC {
+					height: 3.5rem;
+				}
+				.sapMImageContent {
+					height: 3.5rem;
+				}
+			}
+			.sapMTileCntFtrTxt{
+				font-size: 0.75rem;
+				height: 1.063rem;
+				bottom: 0;
+			}
+		}
+	}
+	.sapMGTActionsContainer {
+		position: absolute;
+		overflow: hidden;
+		right: 0;
+		left: 0;
+		bottom: 0.5rem;
+		margin-left: 1rem;
+		margin-right: 1rem;
+		height: 2rem;
+		display: inline-flex;
+		column-gap: 0.5rem;
+	}
+}
+
+.TwoByOne.sapMGTActionMode.sapMTileSmallPhone {
+	.sapMGTContent {
+		.sapMTileCnt {
+			height: 4rem;
+			.sapMTileCntContent {
+				height: 2.625rem;
+				.sapMNC {
+					height: 2.625rem;
+				}
+				.sapMImageContent {
+					height: 2.625rem;
+					.sapMImageContentImageIcon {
+						max-height: 2.625rem;
+					}
+				}
+				.sapMText {
+					font-size: 0.75rem;
+				}
+				.sapMFC {
+					height: 2.625rem;
+					.sapMFCCTxt {
+						height: 1.75rem;
+					}
+				}
+				.sapMFT {
+					font-size: 0.75rem;
+				}
+			}
+		}
+	}
+	.sapMGTActionsContainer {
+		margin-left: 0.5rem;
+		margin-right: 0.5rem;
+	}
+}
