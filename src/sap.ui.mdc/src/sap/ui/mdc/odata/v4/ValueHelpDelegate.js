@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"../../ValueHelpDelegate",
-	'sap/ui/model/FilterType'
+	"sap/ui/model/FilterType"
 ], function(
 	ValueHelpDelegate,
 	FilterType
@@ -83,7 +83,7 @@ sap.ui.define([
 		}
 
 		return oListBinding.requestContexts(0, oListBindingInfo && oListBindingInfo.length).then(function(aContexts){	// TODO: never resolves for mdc.table and prevents loading??
-			return aContexts.length > 0;
+			return aContexts.length === 0;
 		});
 
 	};

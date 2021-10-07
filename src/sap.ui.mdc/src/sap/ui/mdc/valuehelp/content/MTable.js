@@ -13,6 +13,7 @@ sap.ui.define([
 	'sap/ui/model/FilterProcessor',
 	'sap/ui/mdc/util/Common',
 	'sap/base/strings/formatMessage',
+	'sap/base/util/merge',
 	'sap/ui/mdc/enum/SelectType',
 	'sap/base/Log'
 ], function(
@@ -26,6 +27,7 @@ sap.ui.define([
 	FilterProcessor,
 	Common,
 	formatMessage,
+	merge,
 	SelectType,
 	Log
 ) {
@@ -113,7 +115,9 @@ sap.ui.define([
 
 		if ((!oListBinding || !bValueHelpDelegateInitialized) && (this.isContainerOpening() || this.isTypeahead())) {
 				Promise.all([this._retrievePromise("listBinding"), this._awaitValueHelpDelegate()]).then(function () {
-					this.applyFilters(sFieldSearch);
+					if (!this.bIsDestroyed) {
+						this.applyFilters(sFieldSearch);
+					}
 				}.bind(this));
 			return;
 		}
@@ -178,8 +182,6 @@ sap.ui.define([
 			var oParams = oEvent.getParameters();
 			var aListItems = oParams.listItems || oParams.listItem && [oParams.listItem];
 			var aConditions = aListItems.map(function (oItem) {
-//				var sKey = _getListItemKey.call(this, oItem);
-//				return sKey && this._createCondition(sKey);
 				var oValues = this._getItemFromContext(oItem.getBindingContext());
 				return oValues && this._createCondition(oValues.key, oValues.description, oValues.inParameters, oValues.outParameters);
 			}.bind(this));
@@ -192,7 +194,6 @@ sap.ui.define([
 
 	MTable.prototype._handleItemPress = function (oEvent) {
 		var oItem = oEvent.getParameter("listItem");
-//		var oKey = _getListItemKey.call(this, oItem);
 		var oValues = this._getItemFromContext(oItem.getBindingContext());
 		var bIsSingleSelect = this._isSingleSelect();
 		var bSelected = bIsSingleSelect ? true : !oItem.getSelected();
@@ -202,7 +203,6 @@ sap.ui.define([
 			oItem.setSelected(bSelected);
 			sSelectType = bSelected ? SelectType.Add : SelectType.Remove;
 		}
-//		var oCondition = this._createCondition(oKey);
 		var oCondition = this._createCondition(oValues.key, oValues.description, oValues.inParameters, oValues.outParameters);
 		this.fireSelect({type: sSelectType, conditions: [oCondition]});
 		if (this.isTypeahead()) {
@@ -258,23 +258,26 @@ sap.ui.define([
 					"sap/ui/layout/FixFlex",
 					"sap/m/VBox",
 					"sap/m/Panel",
-					"sap/m/ScrollContainer"
+					"sap/m/ScrollContainer",
+					"sap/ui/model/resource/ResourceModel"
 				]).then(function(aModules) {
 
 					var FixFlex = aModules[0];
 					var VBox = aModules[1];
 					var Panel = aModules[2];
 					var ScrollContainer = aModules[3];
+					var ResourceModel = aModules[4];
 
 					if (!this._oContentLayout) {
 
-						this._oFilterBarVBox = new VBox(this.getId() + "-FilterBarBox", {visible: "{$this>/_filterBarVisible}"});
+						this._oFilterBarVBox = new VBox(this.getId() + "-FilterBarBox");
 						this._oFilterBarVBox.addStyleClass("sapMdcValueHelpPanelFilterbar");
 						this._oFilterBarVBox._oWrapper = this;
 						this._oFilterBarVBox.getItems = function () {
 							return [this._oWrapper._getPriorityFilterBar.call(this._oWrapper)];
 						};
 
+						this.setModel(new ResourceModel({ bundleName: "sap/ui/mdc/messagebundle", async: false }), "$i18n");
 						var _formatTableTitle = function (sText) {
 							var iItems = 0; //TODO from where do we get the count
 							if (iItems === 0) {
@@ -362,10 +365,10 @@ sap.ui.define([
 		*/
 		oConfig.caseSensitive = oConfig.caseSensitive || this.getCaseSensitive();
 
-		return _checkListBindingPending.call(this).then(function(bReady) {
+		return _checkListBindingPending.call(this).then(function(bPending) {
 			var oResult;
 
-			if (bReady) {
+			if (!bPending) {
 				var oTable = this.getTable();
 				oResult = _filterItems.call(this, oConfig, oTable.getItems());
 			}
@@ -382,18 +385,21 @@ sap.ui.define([
 	function _checkListBindingPending() {
 		return this._retrievePromise("listBinding").then(function (oListBinding) {
 			var oDelegate = this._getValueHelpDelegate();
-			var oValueHelpModel = this.getModel("$valueHelp");
-			var oDelegatePayload = oValueHelpModel && oValueHelpModel.getObject("/delegate").payload;
+			var oDelegatePayload = this._getValueHelpDelegatePayload();
 			var oListBindingInfo = this._getListBindingInfo();
 			if (oListBinding && oDelegate){
 				return oDelegate.checkListBindingPending(oDelegatePayload, oListBinding, oListBindingInfo);
 			} else {
-				return false;
+				return true;
 			}
 		}.bind(this));
 	}
 
 	function _filterItems(oConfig, aItems) {
+
+		if (aItems.length === 0) {
+			return;
+		}
 
 		var aFields = [];
 
@@ -435,7 +441,7 @@ sap.ui.define([
 				if (!oConfig.inParameters.aFilters) {
 					aInParameters.push(oConfig.inParameters.sPath);
 				} else {
-					for (var i = 0; i < oConfig.inParameters.aFilters.length; i++) {
+					for (i = 0; i < oConfig.inParameters.aFilters.length; i++) {
 						if (aInParameters.indexOf(oConfig.inParameters.aFilters[i].sPath) < 0) {
 							aInParameters.push(oConfig.inParameters.aFilters[i].sPath);
 						}
@@ -455,7 +461,9 @@ sap.ui.define([
 		} else if (aFilteredItems.length > 1) {
 			if (!oConfig.caseSensitive) {
 				// try with case sensitive search
-				return _filterItems.call(this, oConfig, aItems);
+				var oNewConfig = merge({}, oConfig);
+				oNewConfig.caseSensitive = true;
+				return _filterItems.call(this, oNewConfig, aItems);
 			}
 			throw _createException.call(this, oConfig.exception, true, aFields[0].value);
 		}
@@ -494,8 +502,7 @@ sap.ui.define([
 		var sPath = oListBinding && oListBinding.getPath();
 
 		var oDelegate = this._getValueHelpDelegate();
-		var oValueHelpModel = this.getModel("$valueHelp");
-		var oDelegatePayload = oValueHelpModel && oValueHelpModel.getObject("/delegate").payload;
+		var oDelegatePayload = this._getValueHelpDelegatePayload();
 
 		var sPromiseKey = ["loadItemForValue", sPath, sKeyPath, oConfig.parsedValue || oConfig.value].join("_");
 
@@ -513,11 +520,21 @@ sap.ui.define([
 			var oFilter = aFilters.length > 1 ? new Filter({filters: aFilters, and: false}) : aFilters[0];
 			aFilters = [oFilter];
 
+			var aInParameters;
 			if (oConfig.inParameters) {
 				// use in-parameters as additional filters
 				aFilters.push(oConfig.inParameters);
+				aInParameters = []; // TODO: maybe provide paths from outside? No need to analyze Filters backwards
+				if (!oConfig.inParameters.aFilters) {
+					aInParameters.push(oConfig.inParameters.sPath);
+				} else {
+					for (var i = 0; i < oConfig.inParameters.aFilters.length; i++) {
+						if (aInParameters.indexOf(oConfig.inParameters.aFilters[i].sPath) < 0) {
+							aInParameters.push(oConfig.inParameters.aFilters[i].sPath);
+						}
+					}
+				}
 			}
-
 //			if (oConfig.oOutParameters) {
 //				// use out-parameters as additional filters (only if not already set by InParameter
 //				if (oConfig.oInParameters) {
@@ -553,7 +570,7 @@ sap.ui.define([
 				}, 0);
 
 				if (aContexts.length && (aContexts.length < 2 || bUseFirstMatch)) {
-					return this._getItemFromContext(aContexts[0], {keyPath: sKeyPath, descriptionPath: sDescriptionPath});
+					return this._getItemFromContext(aContexts[0], {keyPath: sKeyPath, descriptionPath: sDescriptionPath, inParameters: aInParameters});
 				} else if (oConfig.checkKey && oConfig.parsedValue === "" && aContexts.length === 0) {
 					// nothing found for empty key -> this is not an error
 					return null;
@@ -583,35 +600,13 @@ sap.ui.define([
 		return true;
 	};
 
-	MTable.prototype._isTableReady = function () {
-		var oTable = this._getTable();
-		var oListBinding = oTable && oTable.getBinding("items");
-
-		if (!oTable || !oListBinding) {
-			return false;
-		}
-
-		if (oListBinding && (oListBinding.isSuspended() || oListBinding.getLength() === 0)) {
-			return false; // if no context exist, Table is not ready
-		}
-
-		return true;
-	};
-
-
 	MTable.prototype.navigate = function (iStep) {
 
 		var oListBinding = this._getListBinding();
 
-		if (!oListBinding) { // collect navigates until listbinding is available
-			return this._retrievePromise("listBinding").then(function (oAsyncListBinding) {
-				return this.navigate(iStep);
-			}.bind(this));
-		}
-
-		if (!oListBinding.getLength()) {
-			return _checkListBindingPending.call(this).then(function (bReady) {
-				if (bReady) {
+		if (!oListBinding || !oListBinding.getLength()) {
+			return _checkListBindingPending.call(this).then(function (bPending) {
+				if (!bPending && oListBinding.getLength() !== 0) { // if no items - no navigation is possible
 					return this.navigate(iStep);
 				}
 				return false;
@@ -660,6 +655,19 @@ sap.ui.define([
 				iSelectedIndex++;
 			} else {
 				iSelectedIndex--;
+			}
+		}
+		if (iSelectedIndex < 0 || iSelectedIndex > iItems - 1) {
+			// find last not groupable item
+			bSearchForNext = !bSearchForNext;
+			bLeaveFocus = iSelectedIndex < 0;
+			iSelectedIndex = iSelectedIndex < 0 ? 0 : iItems - 1;
+			while (aItems[iSelectedIndex] && aItems[iSelectedIndex].isA("sap.m.GroupHeaderListItem")) { // ignore group headers
+				if (bSearchForNext) {
+					iSelectedIndex++;
+				} else {
+					iSelectedIndex--;
+				}
 			}
 		}
 
@@ -784,6 +792,7 @@ sap.ui.define([
 					oDefaultFilterBar.attachSearch(_handleSearch, this);
 				}
 				oFilterBar.detachSearch(_handleSearch, this);
+				this._createDefaultFilterBar(); // TODO: should this be part of FilterableListContent?
 			}
 		}
 
