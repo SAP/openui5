@@ -41,7 +41,7 @@
 			"id": "appView"
 		},
 		"dependencies": {
-			"minUI5Version": "1.48.0",
+			"minUI5Version": "1.96.0",
 			"libs": {
 				"sap.m": {},
 				"sap.ui.core": {},
