@@ -535,6 +535,8 @@ sap.ui.define([
 			aSubmenuItems = oSubmenu.getItems();
 			aSubmenuItems[i].setProperty("icon", sIcon);
 			aSubmenuItems[i].setEnabled(!bVisible || aVisibleColumns.length > 1);
+			aSubmenuItems[i].removeAllAriaLabelledBy();
+			aSubmenuItems[i].addAriaLabelledBy(oTable.getId() + (bVisible ? "-ariahidecolmenu" : "-ariashowcolmenu"));
 		}
 
 		for (var i = aSubmenuItems.length; i > aColumns.length; i--) {
