@@ -8725,7 +8725,9 @@ sap.ui.define([
 
 		// Act
 		this.oMultiComboBox.onfocusin(oMockEvent);
-		this.clock.tick(600);
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(nPopoverAnimationTick);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.ok(oSpy.calledWith(TokenizerRenderMode.Loose), "_useCollapsedMode should be called with 'Narrow'.");
@@ -8733,7 +8735,9 @@ sap.ui.define([
 
 		// Act
 		this.oMultiComboBox.onsapfocusleave(oMockEvent);
-		this.clock.tick(600);
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(nPopoverAnimationTick);
+		sap.ui.getCore().applyChanges();
 
 		assert.ok(oSpy.calledWith(TokenizerRenderMode.Narrow), "_useCollapsedMode should be called with 'Loose'.");
 		assert.ok(oTokenizer.hasOneTruncatedToken(), "Truncation was set on the token");
