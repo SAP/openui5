@@ -1280,18 +1280,21 @@ sap.ui.define([
 		assert.equal(oColumn1.getVisible(), false, "firstName column is invisible (no preventDefault)");
 	});
 
-	QUnit.test("Column Visibility Submenu: Icons and Enabled State", function(assert) {
+	QUnit.test("Column Visibility Submenu: Icons, Enabled State and Accessibility", function(assert) {
 		function checkSubmenuIcons(oTable, assert) {
 			var aColumns = oTable.getColumns();
 			var aVisibleColumns = oTable._getVisibleColumns();
 			var oSubmenu = oTable._oColumnVisibilityMenuItem.getSubmenu();
 			var aSubmenuItems = oSubmenu.getItems();
+			var sTableId = oTable.getId();
 
 			for (var i = 0; i < aColumns.length; i++) {
 				var oColumn = aColumns[i];
 				var bVisible = aVisibleColumns.indexOf(oColumn) > -1;
 				assert.equal(aSubmenuItems[i].getIcon(), bVisible ? "sap-icon://accept" : "",
 					"The column visibility is correctly displayed in the submenu");
+				assert.deepEqual(aSubmenuItems[i].getAriaLabelledBy(), bVisible ? [sTableId + '-ariahidecolmenu'] : [sTableId + "-ariashowcolmenu"],
+					"ariaLabelledBy is set correctly");
 			}
 		}
 
