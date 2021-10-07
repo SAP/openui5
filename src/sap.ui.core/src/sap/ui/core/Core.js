@@ -1318,7 +1318,7 @@ sap.ui.define([
 		if (sRootComponent) {
 
 			Log.info("Loading Root Component: " + sRootComponent,null,METHOD);
-			var oComponent = sap.ui.component({
+			var oComponent = sap.ui.component({ //legacy-relevant: Deprecated rootComponent API
 				name: sRootComponent
 			});
 			this.oRootComponent = oComponent;
