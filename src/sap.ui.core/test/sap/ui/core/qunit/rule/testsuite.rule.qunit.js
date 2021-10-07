@@ -51,12 +51,12 @@ sap.ui.define(function () {
 			"app/syncXHRBootstrap": {
 				title: "QUnit Tests for 'sync XHR bootstrap' rules",
 				bootCore: false,
-				page: "test-resources/sap/ui/core/qunit/rule/app/syncXHRBootstrap.qunit.html"
+				page: "test-resources/sap/ui/core/qunit/rule/app/syncXHRBootstrap.qunit.html?sap-language=en"
 			},
 			"app/syncXHRBootstrapDebug": {
 				title: "QUnit Tests for 'sync XHR bootstrap debug' rules",
 				bootCore: false,
-				page: "test-resources/sap/ui/core/qunit/rule/app/syncXHRBootstrapDebug.qunit.html"
+				page: "test-resources/sap/ui/core/qunit/rule/app/syncXHRBootstrapDebug.qunit.html?sap-language=en"
 			},
 			"app/controllerExtension": {
 				title: "QUnit Tests for controller extensions",

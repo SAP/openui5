@@ -19,7 +19,7 @@
 		},
 		after: function(assert) {
 			var iLoadedModuleIndex = 0;
-			var iExpectedMaxSyncCalls = 2;
+			var iExpectedMaxSyncCalls = 3;
 
 			var fnAssertRequireSync = function(sModuleName) {
 				assert.strictEqual(this.requireSyncStub.getCall(iLoadedModuleIndex).args[0], sModuleName, "At position " + iLoadedModuleIndex + " the module '" + sModuleName + "' should be loaded");
@@ -39,6 +39,9 @@
 
 			fnAssertRequireSync("sap/ui/core/support/Support");
 			fnAssertRequireSync("sap/ui/support/Bootstrap");
+
+			// Gregorian, since testsuite is configured with language "en"
+			fnAssertRequireSync("sap/ui/core/date/Gregorian");
 
 			assert.equal(this.requireSyncStub.callCount, iExpectedMaxSyncCalls,
 				"The number of sync requests should be exactly " + iExpectedMaxSyncCalls);

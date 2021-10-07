@@ -215,6 +215,33 @@ sap.ui.define(function() {
 					libs: "sap.m"
 				}
 			},
+			"CalendarClassLoading": {
+				group: "Calendar Class",
+				ui5: {
+					language: "en",
+					calendarType: "islamic",
+					logLevel: "WARNING",
+					noConflict: "true",
+					libs: "sap.ui.core"
+				}
+			},
+			"CalendarClassLoadingWithCustomBootTask": {
+				group: "Calendar Class",
+				title: "Test Page for Bootstrap with a Custom Boot Task",
+				ui5: {
+					libs: "sap.ui.core"
+				},
+				beforeBootstrap: "./CalendarClassLoadingWithCustomBootTask.beforeBootstrap.qunit"
+			},
+			"CalendarClassLoadingWithCustomBootTaskAndPreload": {
+				group: "Calendar Class",
+				title: "Test Page for Bootstrap with a Custom Boot Task",
+				ui5: {
+					libs: "sap.ui.core",
+					preload: "async"
+				},
+				beforeBootstrap: "./CalendarClassLoadingWithCustomBootTask.beforeBootstrap.qunit"
+			},
 			"CfgDefaults": {
 				group: "Configuration",
 				page: "test-resources/sap/ui/core/qunit/bootstrap/CfgDefaults.qunit.html"

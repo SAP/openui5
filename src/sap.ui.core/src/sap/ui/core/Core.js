@@ -891,6 +891,9 @@ sap.ui.define([
 			this.includeLibraryTheme("sap-ui-merged", undefined, "?l=" + aCSSLibs.join(","));
 		}
 
+		// add CalendarClass to list of modules
+		this.oConfiguration.modules.push("sap/ui/core/date/" + this.oConfiguration.getCalendarType());
+
 		// load all modules now
 		if ( bAsync ) {
 			return this._requireModulesAsync().then(function() {
