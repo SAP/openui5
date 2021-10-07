@@ -17,6 +17,7 @@
 				"stretch": true,
 				"files": [
 					"routingApp/Component.js",
+					"routingApp/manifest.json",
 					"routingApp/view/View1.view.xml",
 					"routingApp/controller/View1.controller.js",
 					"routingApp/view/View2.view.xml",
