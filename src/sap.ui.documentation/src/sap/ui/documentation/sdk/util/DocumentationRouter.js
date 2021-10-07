@@ -7,8 +7,9 @@ sap.ui.define([
 	'sap/m/routing/Router',
 	'sap/ui/core/routing/History',
 	'sap/ui/thirdparty/hasher',
-	"sap/ui/documentation/sdk/controller/util/ControlsInfo"
-], function(Router, History, Hasher, ControlsInfo) {
+	"sap/ui/documentation/sdk/controller/util/ControlsInfo",
+	"sap/ui/thirdparty/URI"
+], function(Router, History, Hasher, ControlsInfo, URI) {
 	"use strict";
 
 	// We need to set the global hasher instance to not encode URL's. This is specific for the SDK
@@ -292,7 +293,8 @@ sap.ui.define([
 			oAnchorElement = getClosestParentLink(oTarget),
 			bCtrlHold = oEvent.ctrlKey || oEvent.metaKey,
 			sTargetHref,
-			bNewWindow;
+			bNewWindow,
+			oUri;
 
 		if (oAnchorElement) {
 			// The links from the static documentation are already preprocessed at build-time
@@ -305,7 +307,7 @@ sap.ui.define([
 		}
 
 		// Do not change href if it's already changed or if it's a stand-alone HTML page
-		if (!sTargetHref || /^https?:\/\//.test(sTargetHref) || /[.]html(#[\w\d]*)?(\?[\w\d-_=&]+)?$/.test(sTargetHref)) {
+		if (!sTargetHref || (oUri = URI(sTargetHref)).is("absolute") || oUri.suffix() === "html") {
 			return;
 		}
 
