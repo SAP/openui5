@@ -2,7 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(function () {
+sap.ui.define([
+	"sap/ui/fl/library"
+], function (flLibrary) {
 	"use strict";
 
 	/**
@@ -22,23 +24,15 @@ sap.ui.define(function () {
 	 * @param {sap.m.IconTabBar} oControl - Icon Tab Bar in which the selected tab should be changed
 	 * @param {object} mPropertyBag - Map of properties
 	 * @param {object} mPropertyBag.modifier - Modifier for the controls
-	 * @return {Promise} Promise resolving when change was successfully applied
 	 *
 	 * @public
 	 */
 	SelectIconTabBarFilter.applyChange = function (oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var oChangeDefinition = oChange.getDefinition();
-		var sSelectedTab = oChangeDefinition.content;
 
-		return oModifier.getProperty(oControl, "selectedKey").then(function(oProperty){
-			var oRevertData = {
-				selectedKey: oProperty
-			};
-			oModifier.setProperty(oControl, "selectedKey", sSelectedTab);
-			oChange.setRevertData(oRevertData);
-		});
-
+		oModifier.setProperty(oControl, "selectedKey", oChangeDefinition.content.selectedKey);
+		oChange.setRevertData(oChangeDefinition.content.previousSelectedKey);
 	};
 
 	/**
@@ -52,10 +46,10 @@ sap.ui.define(function () {
 	 */
 	SelectIconTabBarFilter.revertChange = function (oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
-		var oRevertData = oChange.getRevertData();
-		var sSelectedTab = oRevertData.selectedKey;
+		var sPreviousSelectedKey = oChange.getRevertData();
 
-		oModifier.setProperty(oControl, "selectedKey", sSelectedTab);
+		oModifier.setProperty(oControl, "selectedKey", sPreviousSelectedKey);
+		oChange.resetRevertData();
 	};
 
 	/**
@@ -70,6 +64,21 @@ sap.ui.define(function () {
 	 */
 	SelectIconTabBarFilter.completeChangeContent = function (oChange, oSpecificChangeInfo, mPropertyBag) {};
 
+
+	/**
+	 * Retrieves the condenser-specific information.
+	 *
+	 * @param {sap.ui.fl.Change} oChange - Change object with instructions to be applied on the control map
+	 * @returns {object} - Condenser-specific information
+	 * @public
+	 */
+	SelectIconTabBarFilter.getCondenserInfo = function (oChange) {
+		return {
+			affectedControl: oChange.getSelector(),
+			classification: flLibrary.condenser.Classification.LastOneWins,
+			uniqueKey: oChange.getContent().selectedKey
+		};
+	};
 
 	return SelectIconTabBarFilter;
 });

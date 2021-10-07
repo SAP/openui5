@@ -218,7 +218,13 @@ sap.ui.define([
 					 * The key of the selected item
 					 * @since 1.15.0
 					 */
-					key : {type : "string"}
+					key : {type : "string"},
+
+					/**
+					 * The key of the previous selected item
+					 * @since 1.96
+					 */
+					previousKey : {type : "string"}
 				}
 			}
 		}
@@ -521,6 +527,7 @@ sap.ui.define([
 
 		var oParent = this.getParent();
 		var bIsParentIconTabBar = this._isInsideIconTabBar();
+		var sPrevKey = this.getSelectedKey();
 
 		//if the old selected tab and the new selected tab both have no own content, which means they both use the same content from the icontabbar
 		//there is no need to rerender the content
@@ -593,7 +600,8 @@ sap.ui.define([
 					selectedItem: this.oSelectedItem,
 					selectedKey: sSelectedKey,
 					item: this.oSelectedItem,
-					key: sSelectedKey
+					key: sSelectedKey,
+					previousKey: sPrevKey
 				});
 			} else {
 				// fire event on header
@@ -601,7 +609,8 @@ sap.ui.define([
 					selectedItem: this.oSelectedItem,
 					selectedKey: sSelectedKey,
 					item: this.oSelectedItem,
-					key: sSelectedKey
+					key: sSelectedKey,
+					previousKey: sPrevKey
 				});
 			}
 		}
