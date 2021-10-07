@@ -1,0 +1,14 @@
+<SideNavigation xmlns="sap.tnt" xmlns:core="sap.ui.core" expanded="true" selectedKey="{/selectedKey}" itemSelect="onItemSelect">
+	<NavigationList items="{path: '/navigation'}">
+		<core:Fragment
+				fragmentName="sap.f.sample.ShellBarWithSplitApp.view.NavigationList"
+				type="XML" />
+	</NavigationList>
+	<fixedItem>
+		<NavigationList items="{path: '/fixedNavigation'}">
+			<core:Fragment
+					fragmentName="sap.f.sample.ShellBarWithSplitApp.view.NavigationList"
+					type="XML" />
+		</NavigationList>
+	</fixedItem>
+</SideNavigation>

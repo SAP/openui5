@@ -25,6 +25,8 @@
 					"controller/ShellBarWithSplitApp.controller.js",
 					"model/model.json",
 					"view/ShellBarWithSplitApp.view.xml",
+					"view/NavigationList.fragment.xml",
+					"view/SideNavigation.fragment.xml",
 					"manifest.json"
 				]
 			}
