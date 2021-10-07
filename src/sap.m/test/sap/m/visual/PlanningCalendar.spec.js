@@ -394,7 +394,7 @@ describe("sap.m.PlanningCalendar", function() {
 		element(by.id("PC1-Header-NavToolbar-NextBtn-inner")).click();
 		element(by.id("PC1-Header-NavToolbar-TodayBtn")).click();
 		expect(takeScreenshot(element(by.id("PC1-Header-NavToolbar-TodayBtn")))).toLookAs("1week_today_button");
-		expect(takeScreenshot(element(by.id("PC1-WeeksRow")))).toLookAs("1week_today_focused");
+		expect(takeScreenshot(element(by.id("PC1-InfoToolbar")))).toLookAs("1week_today_focused");
 	});
 	/*
 	 32. 2708
@@ -402,9 +402,10 @@ describe("sap.m.PlanningCalendar", function() {
 	it("should render 1month today button under 600px width", function() {
 		element(by.id("PC1-Header-ViewSwitch")).click();
 		element(by.cssContainingText(".sapMSelectListItem", "1 Month")).click();
-		element(by.id("page1-cont")).click();
+		element(by.id("PC1-Header-NavToolbar-PrevBtn")).click();
+		element(by.id("PC1-Header-NavToolbar-PrevBtn")).click();
 		element(by.id("PC1-Header-NavToolbar-TodayBtn")).click();
 		expect(takeScreenshot(element(by.id("PC1-Header-NavToolbar-TodayBtn")))).toLookAs("1month_today_button");
-		expect(takeScreenshot(element(by.id("PC1-OneMonthsRow")))).toLookAs("1month_today_focused");
+		expect(takeScreenshot(element(by.id("PC1-InfoToolbar")))).toLookAs("1month_today_focused");
 	});
 });
