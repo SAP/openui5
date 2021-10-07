@@ -52,7 +52,7 @@ sap.ui.define([
 			UIComponent.prototype.init.apply(this, arguments);
 
 			oModel = this.getModel();
-			oModel.setDeferredGroups(["changes", "FixQuantity", "create"]);
+			oModel.setDeferredGroups(["changes", "FixQuantity"]);
 			oModel.setMessageScope(MessageScope.BusinessObject);
 
 			this.setModel(new JSONModel({

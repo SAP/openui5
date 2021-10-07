@@ -3,36 +3,36 @@
 		"results": [
 			{
 				"__metadata" : {
-					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('109')",
-					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('109')",
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('103')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('103')",
 					"type" : "GWSAMPLE_BASIC.SalesOrder"
 				},
-				"SalesOrderID" : "109",
-				"Note" : "Test Case IX",
+				"SalesOrderID" : "103",
+				"Note" : "Test Case III",
+				"CurrencyCode" : "EUR",
+				"GrossAmount" : "17664.36"
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('102')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('102')",
+					"type" : "GWSAMPLE_BASIC.SalesOrder"
+				},
+				"SalesOrderID" : "102",
+				"Note" : "Test Case II",
+				"CurrencyCode" : "EUR",
+				"GrossAmount" : "14789.32"
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('101')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('101')",
+					"type" : "GWSAMPLE_BASIC.SalesOrder"
+				},
+				"SalesOrderID" : "101",
+				"Note" : "Test Case I",
 				"CurrencyCode" : "EUR",
 				"GrossAmount" : "98710.62"
-			},
-			{
-				"__metadata" : {
-					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('110')",
-					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('110')",
-					"type" : "GWSAMPLE_BASIC.SalesOrder"
-				},
-				"SalesOrderID" : "110",
-				"Note" : "Test Case X",
-				"CurrencyCode" : "EUR",
-				"GrossAmount" : "89250.00"
-			},
-			{
-				"__metadata" : {
-					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('111')",
-					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('111')",
-					"type" : "GWSAMPLE_BASIC.SalesOrder"
-				},
-				"SalesOrderID" : "111",
-				"Note" : "Test Case XI",
-				"CurrencyCode" : "EUR",
-				"GrossAmount" : "1137.64"
 			}
 		]
 	}
