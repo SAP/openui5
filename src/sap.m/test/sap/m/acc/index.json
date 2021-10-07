@@ -67,7 +67,7 @@
 		},
 		{
 			"control": "sap.m.CheckBox",
-			"url": "../CheckBox.html",
+			"url": "CheckBox.html",
 			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
