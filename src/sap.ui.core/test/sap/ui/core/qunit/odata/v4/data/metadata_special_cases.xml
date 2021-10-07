@@ -269,6 +269,31 @@
 					</Collection>
 				</Annotation>
 			</Annotations>
+			<Annotations Target="special.cases.B/BID">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListWithFixedValues"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList" Qualifier="zero">
+					<Record>
+						<PropertyValue Property="Label" String="First label" />
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList" Qualifier="one">
+					<Record>
+						<PropertyValue Property="Label" String="Second label" />
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers">
+					<Collection>
+						<If>
+							<Eq>
+								<Path>BValue</Path>
+								<Int>0</Int>
+							</Eq>
+							<String>zero</String>
+							<String>one</String>
+						</If>
+					</Collection>
+				</Annotation>
+			</Annotations>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>

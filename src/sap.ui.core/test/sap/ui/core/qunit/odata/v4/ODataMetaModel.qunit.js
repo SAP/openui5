@@ -5805,8 +5805,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bDuplicate) {
-		QUnit.test("requestValueListInfo: duplicate=" + bDuplicate, function (assert) {
+[false, true].forEach(function (bFixed) {
+	[false, true].forEach(function (bError) {
+		// with bFixed, the error case is an empty result after filtering by relevant qualifiers,
+		// else it's a duplicate qualifier
+		var bDuplicate = !bFixed && bError,
+			sTitle = "requestValueListInfo: error=" + bError
+				+ "; ValueListWithFixedValues=" + bFixed;
+
+		QUnit.test(sTitle, function (assert) {
 			var oContext = {
 					getBinding : function () {}
 				},
@@ -5849,7 +5856,9 @@ sap.ui.define([
 						}
 					}
 				},
-				mValueListByRelevantQualifiers = {},
+				mValueListByRelevantQualifiers = {
+					"qualifier" : "~valueList~"
+				},
 				oValueListMappings1 = {
 					"" : {CollectionPath : ""}
 				},
@@ -5861,6 +5870,13 @@ sap.ui.define([
 				oValueListModel2 = {sServiceUrl : sMappingUrl2},
 				oValueListModelBar = {sServiceUrl : sMappingUrlBar};
 
+			if (bFixed) {
+				oMetadata.$Annotations["zui5_epm_sample.Product/Category"]
+					["@com.sap.vocabularies.Common.v1.ValueListWithFixedValues"] = true;
+				if (bError) { // simulate empty result after filtering by relevant qualifiers
+					delete mValueListByRelevantQualifiers.qualifier;
+				}
+			}
 			oValueListMappingsBar[bDuplicate ? "" : "bar"] = {CollectionPath : "bar"};
 			oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 				.returns(SyncPromise.resolve(oMetadata));
@@ -5909,17 +5925,25 @@ sap.ui.define([
 			return oModel.getMetaModel()
 				.requestValueListInfo(sPropertyPath, undefined, oContext)
 				.then(function (oResult) {
-					assert.ok(!bDuplicate);
-					assert.strictEqual(oResult, mValueListByRelevantQualifiers);
+					assert.ok(!bError);
+					if (bFixed) {
+						assert.deepEqual(oResult, {"" : "~valueList~"});
+					} else {
+						assert.strictEqual(oResult, mValueListByRelevantQualifiers);
+					}
 				}, function (oError) {
-					assert.ok(bDuplicate);
-					assert.strictEqual(oError.message,
-						"Annotations 'com.sap.vocabularies.Common.v1.ValueList' with "
-						+ "identical qualifier '' for property " + sPropertyPath
-						+ " in " + sMappingUrl1 + " and " + sMappingUrlBar);
+					assert.ok(bError);
+					assert.strictEqual(oError.message, bFixed
+						? "Annotation 'com.sap.vocabularies.Common.v1.ValueListWithFixedValues'"
+							+ " but not exactly one 'com.sap.vocabularies.Common.v1.ValueList'"
+							+ " for property " + sPropertyPath
+						: "Annotations 'com.sap.vocabularies.Common.v1.ValueList' with "
+							+ "identical qualifier '' for property " + sPropertyPath
+							+ " in " + sMappingUrl1 + " and " + sMappingUrlBar);
 				});
 		});
 	});
+});
 
 	//*********************************************************************************************
 [
@@ -6165,8 +6189,8 @@ sap.ui.define([
 					}, function (oError) {
 						assert.ok(bDuplicate);
 						assert.strictEqual(oError.message, "Annotation "
-							+ "'com.sap.vocabularies.Common.v1.ValueListWithFixedValues' but "
-							+ "multiple 'com.sap.vocabularies.Common.v1.ValueList' for property "
+							+ "'com.sap.vocabularies.Common.v1.ValueListWithFixedValues' but not "
+							+ "exactly one 'com.sap.vocabularies.Common.v1.ValueList' for property "
 							+ sPropertyPath);
 					});
 			});
