@@ -134,7 +134,7 @@ sap.ui.define([
 		});
 
 		for (var i = 0; i < aOptions.length; i++) {
-			oResult = aOptions[i].parse(sValue.trim(), oFormatter);
+			oResult = aOptions[i] && aOptions[i].parse(sValue.trim(), oFormatter);
 
 			if (oResult) {
 				oResult.operator = aOptions[i].getKey();
