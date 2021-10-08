@@ -102,6 +102,15 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				qunit: {
 					reorder: false
 				}
+			},
+			PlaceholderOptOut: {
+				title: "QUnit Page for sap.ui.core.Placeholder - Opt-out via xx-Placeholder set to false",
+				qunit: {
+					reorder: false
+				},
+				ui5: {
+					"xx-placeholder": false
+				}
 			}
 		}
 	};
