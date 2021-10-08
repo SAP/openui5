@@ -1310,6 +1310,42 @@ sap.ui.define([
 		assert.equal(oColumn1.getVisible(), false, "firstName column is invisible (no preventDefault)");
 	});
 
+	QUnit.test("Column Visibility Submenu: Icons and Accessibility", function(assert) {
+		function checkSubmenuIcons(oTable, assert) {
+			var aColumns = oTable.getColumns();
+			var aVisibleColumns = oTable._getVisibleColumns();
+			var oSubmenu = oTable._oColumnVisibilityMenuItem.getSubmenu();
+			var aSubmenuItems = oSubmenu.getItems();
+			var sTableId = oTable.getId();
+
+			for (var i = 0; i < aColumns.length; i++) {
+				var oColumn = aColumns[i];
+				var bVisible = aVisibleColumns.indexOf(oColumn) > -1;
+				assert.equal(aSubmenuItems[i].getIcon(), bVisible ? "sap-icon://accept" : "",
+					"The column visibility is correctly displayed in the submenu");
+				assert.deepEqual(aSubmenuItems[i].getAriaLabelledBy(), bVisible ? [sTableId + '-ariahidecolmenu'] : [sTableId + "-ariashowcolmenu"],
+					"ariaLabelledBy is set correctly");
+			}
+		}
+
+		oTable.setShowColumnVisibilityMenu(true);
+		var aColumns = oTable.getColumns();
+		var oMenu = aColumns[0].getMenu();
+		oMenu.open();
+		var oSubmenu = oTable._oColumnVisibilityMenuItem.getSubmenu();
+		var aSubmenuItems = oSubmenu.getItems();
+		assert.ok(oSubmenu, "The Column Visibility Submenu exists");
+		assert.equal(aSubmenuItems.length, 8, "The Column Visibility Submenu has one item for each column");
+		checkSubmenuIcons(oTable, assert);
+
+		for (var i = 2; i < 8; i++) {
+			aColumns[i].setVisible(false);
+		}
+		oMenu.open();
+		checkSubmenuIcons(oTable, assert);
+		oMenu.close();
+	});
+
 	QUnit.test("CustomColumnMenu", function(assert) {
 		var oCustomMenu = new Menu("custom-menu");
 		var oColumn = oTable.getColumns()[1];

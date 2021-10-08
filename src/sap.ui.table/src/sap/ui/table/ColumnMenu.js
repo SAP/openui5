@@ -511,6 +511,8 @@ sap.ui.define([
 			return;
 		}
 		oItem.setProperty("icon", sIcon);
+		oItem.removeAllAriaLabelledBy();
+		oItem.addAriaLabelledBy(oTable.getId() + (bVisible ? "-ariahidecolmenu" : "-ariashowcolmenu"));
 	};
 
 	return ColumnMenu;
