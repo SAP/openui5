@@ -3,7 +3,9 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/sample/common/Helper",
+	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/support/RuleAnalyzer",
 	"sap/ui/test/actions/Press",
@@ -11,8 +13,10 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/TestUtils",
 	"sap/ui/test/matchers/Properties"
-], function (Log, Helper, QUnitUtils, RuleAnalyzer, Press, Opa, Opa5, TestUtils, Properties) {
+], function (Log, CacheManager, Helper, _Requestor, QUnitUtils, RuleAnalyzer, Press, Opa, Opa5,
+		TestUtils, Properties) {
 	"use strict";
+	/*global sinon*/
 
 	/*
 	 * checks that console log is clean, or only has <code>aExpected</code> log entries
@@ -107,6 +111,50 @@ sap.ui.define([
 		 */
 		onAnyPage : {
 			actions : {
+				applyOptimisticBatchObserver : function (mParameter) {
+					this.waitFor({
+						success : function () {
+							var oOpaContext = Opa.getContext();
+
+							oOpaContext.optimisticBatchParameter = mParameter;
+							Opa5.assert.ok(true, "Test: " + mParameter.title);
+							if (mParameter.deleteCache) {
+								sap.ui.getCore().getConfiguration()
+									.setSecurityTokenHandlers([function () {
+										// During runtime of a OPA test the window.location.href
+										// changes so we use the securityTokenHandler to have a
+										// point in time when the ODataModel is created in order to
+										// match the right CacheManager key
+										CacheManager.del("sap.ui.model.odata.v4.optimisticBatch:"
+											+ window.location.href);
+										sap.ui.getCore().getConfiguration()
+											.setSecurityTokenHandlers([]); //do it only once
+										return undefined;
+									}
+								]);
+							}
+							if (mParameter.enablerResult !== undefined) {
+								TestUtils.setData("optimisticBatch", mParameter.enablerResult);
+							}
+							if (mParameter.enablerResult === true) { // enabled
+								oOpaContext.fnFirst = sinon.spy(_Requestor.prototype,
+									mParameter.isFirstAppStart ? "request" : "sendRequest");
+								oOpaContext.fnSecond = sinon.spy(_Requestor.prototype,
+									mParameter.isFirstAppStart ? "sendRequest" : "request");
+								oOpaContext.fnSendBatch = mParameter.isFirstAppStart
+									? oOpaContext.fnSecond
+									: oOpaContext.fnFirst;
+								if (mParameter.appChanged) {
+									TestUtils.setData("addSorter", true);
+								}
+							} else { // disabled or undefined (standard behavior)
+								oOpaContext.fnFirst = sinon.spy(_Requestor.prototype, "request");
+								oOpaContext.fnSecond = oOpaContext.fnSendBatch =
+									sinon.spy(_Requestor.prototype, "sendRequest");
+							}
+						}
+					});
+				},
 				applySupportAssistant : function () {
 					// we use support assistant only on-demand and only with mock data
 					Opa.getContext().bSupportAssistant =
@@ -155,6 +203,27 @@ sap.ui.define([
 					this.waitFor({
 						success : function () {
 							checkLog(aExpected);
+						}
+					});
+				},
+				checkOptimisticBatch : function (aExpected) {
+					this.waitFor({
+						success : function () {
+							var oOpaContext = Opa.getContext(),
+								mParameter = oOpaContext.optimisticBatchParameter,
+								sText = "expected sequence: " +
+									(mParameter.enablerResult
+									&& !mParameter.isFirstAppStart
+										? "sendRequest before request"
+										: "request before sendRequest");
+
+							Opa5.assert.ok(oOpaContext.fnFirst.firstCall.calledBefore(
+								oOpaContext.fnSecond.firstCall), sText);
+							Opa5.assert.strictEqual(oOpaContext.fnSendBatch.callCount,
+								mParameter.sendRequestCallCount || 1,
+								"sendRequest called: " + oOpaContext.fnSendBatch.callCount);
+							oOpaContext.fnFirst.restore();
+							oOpaContext.fnSecond.restore();
 						}
 					});
 				},

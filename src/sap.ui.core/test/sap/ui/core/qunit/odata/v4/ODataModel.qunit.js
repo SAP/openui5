@@ -84,6 +84,7 @@ sap.ui.define([
 		}, new Error("Unsupported operation mode: Auto"), "Unsupported OperationMode");
 
 		this.mock(ODataModel.prototype).expects("initializeSecurityToken").never();
+		this.mock(_Requestor.prototype).expects("sendOptimisticBatch").never();
 
 		// code under test: operation mode Server must not throw an error
 		oModel = this.createModel("", {operationMode : OperationMode.Server, serviceUrl : "/foo/",
@@ -110,6 +111,7 @@ sap.ui.define([
 			.returns(oMetadataRequestor);
 		this.mock(ODataMetaModel.prototype).expects("fetchEntityContainer").withExactArgs(true);
 		this.mock(ODataModel.prototype).expects("initializeSecurityToken").withExactArgs();
+		this.mock(_Requestor.prototype).expects("sendOptimisticBatch").withExactArgs();
 
 		// code under test
 		oModel = this.createModel("",
@@ -123,8 +125,10 @@ sap.ui.define([
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneWay), true);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.TwoWay), true);
 		assert.strictEqual(oModel.bSharedRequests, false);
+		assert.strictEqual(oModel.bEarlyRequests, true);
 		assert.deepEqual(oModel.aAllBindings, []);
 		assert.strictEqual(oModel.aPrerenderingTasks, null);
+		assert.strictEqual(oModel.getOptimisticBatchEnabler(), null);
 		oMetaModel = oModel.getMetaModel();
 		assert.ok(oMetaModel instanceof ODataMetaModel);
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
@@ -174,6 +178,7 @@ sap.ui.define([
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneWay), true);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.TwoWay), false);
 		assert.strictEqual(oModel.bSharedRequests, true);
+		assert.strictEqual(oModel.bEarlyRequests, undefined);
 
 		[false, 0, "", undefined, 1, "X"].forEach(function (vSharedRequests) {
 			assert.throws(function () {
@@ -402,10 +407,14 @@ sap.ui.define([
 			oExpectedBind2,
 			oExpectedBind3,
 			oExpectedBind4,
+			oExpectedBind5,
+			oExpectedBind6,
 			oExpectedCreate = this.mock(_Requestor).expects("create"),
 			fnFetchEntityContainer = {},
 			fnFetchMetadata = {},
 			fnGetGroupProperty = {},
+			fnGetOptimisticBatchEnabler = function () { return "~OptimisticBatchEnabler~"; },
+			fnGetReporter = {},
 			oModel,
 			oModelInterface,
 			fnreportStateMessages = {},
@@ -424,6 +433,8 @@ sap.ui.define([
 					fetchMetadata : sinon.match.same(fnFetchMetadata),
 					fireSessionTimeout : sinon.match.func,
 					getGroupProperty : sinon.match.same(fnGetGroupProperty),
+					getOptimisticBatchEnabler : sinon.match.same(fnGetOptimisticBatchEnabler),
+					getReporter : sinon.match.same(fnGetReporter),
 					onCreateGroup : sinon.match.func,
 					reportStateMessages : sinon.match.same(fnreportStateMessages),
 					reportTransitionMessages : sinon.match.same(fnreportTransitionMessages)
@@ -440,9 +451,13 @@ sap.ui.define([
 			.returns(fnFetchMetadata);
 		oExpectedBind2 = this.mock(ODataModel.prototype.getGroupProperty).expects("bind")
 			.returns(fnGetGroupProperty);
-		oExpectedBind3 = this.mock(ODataModel.prototype.reportTransitionMessages).expects("bind")
+		oExpectedBind3 = this.mock(ODataModel.prototype.getOptimisticBatchEnabler).expects("bind")
+			.returns(fnGetOptimisticBatchEnabler);
+		oExpectedBind4 = this.mock(ODataModel.prototype.getReporter).expects("bind")
+			.returns(fnGetReporter);
+		oExpectedBind5 = this.mock(ODataModel.prototype.reportTransitionMessages).expects("bind")
 			.returns(fnreportTransitionMessages);
-		oExpectedBind4 = this.mock(ODataModel.prototype.reportStateMessages).expects("bind")
+		oExpectedBind6 = this.mock(ODataModel.prototype.reportStateMessages).expects("bind")
 			.returns(fnreportStateMessages);
 
 		// code under test
@@ -455,6 +470,8 @@ sap.ui.define([
 		assert.strictEqual(oExpectedBind2.firstCall.args[0], oModel);
 		assert.strictEqual(oExpectedBind3.firstCall.args[0], oModel);
 		assert.strictEqual(oExpectedBind4.firstCall.args[0], oModel);
+		assert.strictEqual(oExpectedBind5.firstCall.args[0], oModel);
+		assert.strictEqual(oExpectedBind6.firstCall.args[0], oModel);
 		assert.strictEqual(oExpectedCreate.firstCall.args[1], oModel.oInterface);
 
 		this.mock(oModel._submitBatch).expects("bind")
@@ -2653,6 +2670,56 @@ sap.ui.define([
 		assert.strictEqual(oModel.releaseKeepAliveBinding("/EMPLOYEES"), "~oBinding~");
 
 		assert.notOk("/EMPLOYEES" in oModel.mKeepAliveBindingsByPath);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("set+getOptimisticBatchEnabler, success", function (assert) {
+		var oModel = this.createModel("", {earlyRequests : true}),
+			fnEnabler = function () {};
+
+		assert.strictEqual(oModel.getOptimisticBatchEnabler(), null);
+
+		// code under test
+		oModel.setOptimisticBatchEnabler(fnEnabler);
+
+		assert.strictEqual(oModel.getOptimisticBatchEnabler(), fnEnabler);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setOptimisticBatchEnabler, no earlyRequests set", function (assert) {
+		var oModel = this.createModel("");
+
+		assert.throws(function () {
+			// code under test
+			oModel.setOptimisticBatchEnabler("n/a");
+		}, new Error("The earlyRequests model parameter is not set"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setOptimisticBatchEnabler, other errors", function (assert) {
+		var oModel = this.createModel("", {earlyRequests : true}),
+			oRequestorMock = this.mock(oModel.oRequestor);
+
+		oRequestorMock.expects("isFirstBatchSent").thrice().withExactArgs().returns(false);
+
+		assert.throws(function () {
+			// code under test - not a function
+			oModel.setOptimisticBatchEnabler("~not~a~function~");
+		}, new Error("The given fnOptimisticBatchEnabler parameter is not a function"));
+
+		oModel.setOptimisticBatchEnabler(function () {});
+
+		assert.throws(function () {
+			// code under test - already set
+			oModel.setOptimisticBatchEnabler(function () {});
+		}, new Error("The setter is called more than once"));
+
+		oRequestorMock.expects("isFirstBatchSent").withExactArgs().returns(true);
+
+		assert.throws(function () {
+			// code under test - to late
+			oModel.setOptimisticBatchEnabler("n/a");
+		}, new Error("The setter is called after the first $batch request is sent"));
 	});
 });
 //TODO constructor: test that the service root URL is absolute?

@@ -331,6 +331,8 @@ sap.ui.define([
 				that.fireEvent("sessionTimeout");
 			},
 			getGroupProperty : this.getGroupProperty.bind(this),
+			getOptimisticBatchEnabler : this.getOptimisticBatchEnabler.bind(this),
+			getReporter : this.getReporter.bind(this),
 			onCreateGroup : function (sGroupId) {
 				if (that.isAutoGroup(sGroupId)) {
 					that.addPrerenderingTask(that._submitBatch.bind(that, sGroupId, true));
@@ -342,9 +344,11 @@ sap.ui.define([
 		this.oRequestor = _Requestor.create(this.sServiceUrl, this.oInterface, this.mHeaders,
 			mUriParameters, sODataVersion);
 		this.changeHttpHeaders(mParameters.httpHeaders);
-		if (mParameters.earlyRequests) {
+		this.bEarlyRequests = mParameters.earlyRequests;
+		if (this.bEarlyRequests) {
 			this.oMetaModel.fetchEntityContainer(true);
 			this.initializeSecurityToken();
+			this.oRequestor.sendOptimisticBatch();
 		}
 
 		this.aAllBindings = [];
@@ -361,6 +365,7 @@ sap.ui.define([
 			this.mSupportedBindingModes.TwoWay = true;
 		}
 		this.aPrerenderingTasks = null; // @see #addPrerenderingTask
+		this.fnOptimisticBatchEnabler = null;
 	}
 
 	/**
@@ -2111,6 +2116,79 @@ sap.ui.define([
 	// @override sap.ui.model.Model#setLegacySyntax
 	ODataModel.prototype.setLegacySyntax = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#setLegacySyntax");
+	};
+
+	/**
+	 * Getter for the optimistic batch enabler callback function; see
+	 * {@link sap.ui.model.odata.v4.ODataModel#setOptimisticBatchEnabler}.
+	 *
+	 *
+	 * @returns {function(string)}
+	 *   The optimistic batch enabler callback function
+	 *
+	 * @experimental As of version 1.100.0
+	 * @private
+	 * @ui5-restricted sap.fe
+	 */
+	ODataModel.prototype.getOptimisticBatchEnabler = function () {
+		return this.fnOptimisticBatchEnabler;
+	};
+
+	/**
+	 * Setter for the optimistic batch enabler callback function. Setting this callback activates
+	 * the optimistic batch feature. Via the callback the optimistic batch behavior can be enabled
+	 * or disabled by returning either a boolean or a promise resolving with a boolean.
+	 * As its first argument the callback gets the <code>window.location.href</code> at the point in
+	 * time when the OData model is instantiated.
+	 *
+	 * If the callback returns or resolves with <code>true</code>, the OData model remembers the
+	 * first sent $batch request. With the next model instantiation for the same key, this
+	 * remembered $batch request will be sent at the earliest point in time in order to have the
+	 * response already available when the first $batch request is triggered from the UI or the
+	 * binding. If the returned promise is rejected, this error will be reported and the optimistic
+	 * batch will be disabled.
+	 *
+	 * There are several preconditions on the usage of this API:
+	 * <ul>
+	 *   <li> Optimistic batch handling requires the "earlyRequests" model parameter; see
+	 *     {@link sap.ui.model.odata.v4.ODataModel#constructor},
+	 *   <li> the setter has to be called before the first $batch request is sent,
+	 *   <li> the setter may only be called once for an OData model,
+	 *   <li> the callback has to return a boolean, or a <code>Promise</code> resolving with a
+	 *     boolean
+	 *   <li> the callback is not called if the first $batch request is modifying, means that it
+	 *     contains not only GET requests.
+	 * </ul>
+	 *
+	 * @param {function(string):Promise<boolean>|boolean} fnOptimisticBatchEnabler
+	 *   The optimistic batch enabler callback controlling whether optimistic batch should be used
+	 * @throws {Error} If
+	 * <ul>
+	 *   <li> the earlyRequests model parameter is not set,
+	 *   <li> the setter is called after the first $batch request is sent,
+	 *   <li> the given <code>fnOptimisticBatchEnabler</code> parameter is not a function
+	 *   <li> the setter is called more than once
+	 * </ul>
+	 *
+	 * @experimental As of version 1.100.0
+	 * @private
+	 * @ui5-restricted sap.fe
+	 */
+	ODataModel.prototype.setOptimisticBatchEnabler = function (fnOptimisticBatchEnabler) {
+		if (!this.bEarlyRequests) {
+			throw new Error("The earlyRequests model parameter is not set");
+		}
+		if (this.oRequestor.isFirstBatchSent()) {
+			throw new Error("The setter is called after the first $batch request is sent");
+		}
+		if (typeof fnOptimisticBatchEnabler !== "function") {
+			throw new Error("The given fnOptimisticBatchEnabler parameter is not a function");
+		}
+		if (this.fnOptimisticBatchEnabler) {
+			throw new Error("The setter is called more than once");
+		}
+
+		this.fnOptimisticBatchEnabler = fnOptimisticBatchEnabler;
 	};
 
 	/**

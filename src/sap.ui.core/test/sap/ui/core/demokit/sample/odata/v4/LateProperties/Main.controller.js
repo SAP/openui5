@@ -12,15 +12,37 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/core/Title",
-	"sap/ui/layout/form/SimpleForm"
+	"sap/ui/layout/form/SimpleForm",
+	"sap/ui/model/Sorter",
+	"sap/ui/test/TestUtils"
 ], function (Button, mobileLibrary, Dialog, Input, Label, MessageToast, Text, Controller, Title,
-		SimpleForm) {
+		SimpleForm, Sorter, TestUtils) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.LateProperties.Main", {
+		onInit : function () {
+			var bOptimisticBatch = TestUtils.isOptimisticBatch();
+
+			if (bOptimisticBatch === undefined) {
+				// optimisticBatch enabled via OPA
+				bOptimisticBatch = TestUtils.retrieveData("optimisticBatch");
+				if (TestUtils.retrieveData("addSorter")) {
+					// this changes the payload for the current 1st batch
+					this.byId("SalesOrderList").getBinding("items").sort(
+						new Sorter("SalesOrderID", true));
+				}
+			}
+
+			if (bOptimisticBatch !== undefined) {
+				this.oView.getModel().setOptimisticBatchEnabler(function () {
+					return Promise.resolve(bOptimisticBatch);
+				});
+			}
+		},
+
 		onOpenEditDeliveryDate : function (oEvent) {
 			var oDialog = new Dialog({
 					title : "Edit Delivery Date",
