@@ -1881,6 +1881,56 @@ function(
 			assert.equal(bResult, "?" + this.sAnotherParameter + "&" + this.sSearchParameter, "no change in the url");
 		});
 	});
+
+	QUnit.module("Utils.getUShellService", {
+		beforeEach: function() {
+			sandbox.stub(Utils, "getUshellContainer").returns({
+				getServiceAsync: function(sServiceName) {
+					switch (sServiceName) {
+						case "validService":
+							return Promise.resolve("validServiceResult");
+						default:
+							return Promise.reject(new Error("Not available service: " + sServiceName));
+					}
+				}
+			});
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("with empty parameter", function(assert) {
+			return Utils.getUShellService()
+				.then(function (oUShellService) {
+					assert.notOk(oUShellService, "then the method resolves to undefined");
+				});
+		});
+
+		QUnit.test("with ushell container is not available", function(assert) {
+			Utils.getUshellContainer.restore();
+			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
+			return Utils.getUShellService("validService")
+				.then(function (oUShellService) {
+					assert.strictEqual(oUShellService, undefined, "then the method resolves undefined");
+				});
+		});
+
+		QUnit.test("with invalid service", function(assert) {
+			return Utils.getUShellService("invalid-service")
+				.catch(function (vError) {
+					assert.ok(vError.message.indexOf("Not available service: ") > -1, "then the promise rejects");
+				});
+		});
+
+		QUnit.test("with valid service", function(assert) {
+			return Utils.getUShellService("validService")
+				.then(function (oUShellService) {
+					assert.strictEqual(oUShellService, "validServiceResult", "then the expected service is returned");
+				});
+		});
+	});
+
+
 	QUnit.done(function() {
 		jQuery('#qunit-fixture').hide();
 	});

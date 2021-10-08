@@ -5,13 +5,11 @@
 sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/hasher",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Layer"
 ], function(
 	UriParameters,
 	hasher,
-	Layer,
-	Utils
+	Layer
 ) {
 	"use strict";
 
@@ -51,6 +49,7 @@ sap.ui.define([
 		/**
 		 * Indicates if the passed layer is valid.
 		 *
+		 * @param {string} sLayer layer name
 		 * @returns {boolean} <code>true</code> if the layer is valid
 		 * @public
 		 */
@@ -81,6 +80,13 @@ sap.ui.define([
 			return ([Layer.PUBLIC, Layer.CUSTOMER, Layer.CUSTOMER_BASE].indexOf(sLayerName) > -1);
 		},
 
+		/**
+		 * Returns whether provided layer is a developer layer.
+		 *
+		 * @param {string} sLayer layer name
+		 * @returns {boolean} true if provided layer is customer dependent layer else false
+		 * @public
+		 */
 		isDeveloperLayer: function(sLayer) {
 			return LayerUtils.compareAgainstCurrentLayer(sLayer, Layer.CUSTOMER) === -1;
 		},
@@ -102,10 +108,11 @@ sap.ui.define([
 		 * Determine the <code>maxLayer</code> based on the url parameter <code>sap-ui-fl-max-layer</code> or if is not set by <code>topLayer</code>.
 		 *
 		 * @ui5-restricted sap.ui.fl.apply._internal.Connector
-		 * @return {String} maxLayer
+		 * @param {sap.ui.core.service.Service} oURLParsingService Unified Shell URL Parsing Service
+		 * @return {string} maxLayer
 		 */
-		getMaxLayer: function () {
-			var sParseMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(hasher.getHash());
+		getMaxLayer: function (oURLParsingService) {
+			var sParseMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(hasher.getHash(), oURLParsingService);
 			return sParseMaxLayer || getUrlParameter(this.FL_MAX_LAYER_PARAM) || LayerUtils._sTopLayer;
 		},
 
@@ -123,11 +130,12 @@ sap.ui.define([
 		 * Determines whether a layer is higher than the max layer.
 		 *
 		 * @param {string} sLayer Layer name to be evaluated
+		 * @param {sap.ui.core.service.Service} oURLParsingService Unified Shell URL Parsing Service
 		 * @returns {boolean} <code>true</code> if input layer is higher than max layer, otherwise <code>false</code>
 		 * @public
 		 */
-		isOverMaxLayer: function(sLayer) {
-			return this.isOverLayer(sLayer, this.getMaxLayer());
+		isOverMaxLayer: function(sLayer, oURLParsingService) {
+			return this.isOverLayer(sLayer, this.getMaxLayer(oURLParsingService));
 		},
 
 		/**
@@ -146,8 +154,8 @@ sap.ui.define([
 		 * Compares current layer with a provided layer
 		 * -1: Lower layer, 0: Same layer, 1: Layer above.
 		 *
-		 * @param {String} sLayer Layer name to be evaluated
-		 * @param {String} [sCurrentLayer] Current layer name to be evaluated, if not provided the layer is taken from URL parameter
+		 * @param {string} sLayer Layer name to be evaluated
+		 * @param {string} [sCurrentLayer] Current layer name to be evaluated, if not provided the layer is taken from URL parameter
 		 * @returns {int} -1: Lower layer, 0: Same layer, 1: Layer above
 		 * @public
 		 */
@@ -166,10 +174,11 @@ sap.ui.define([
 		 * Determines if filtering of changes based on layer is required.
 		 *
 		 * @returns {boolean} <code>true</code> if the top layer is also the max layer, otherwise <code>false</code>
+		 * @param {sap.ui.core.service.Service} oURLParsingService Unified Shell URL Parsing Service
 		 * @public
 		 */
-		isLayerFilteringRequired: function() {
-			return this._sTopLayer !== this.getMaxLayer();
+		isLayerFilteringRequired: function(oURLParsingService) {
+			return this._sTopLayer !== this.getMaxLayer(oURLParsingService);
 		},
 
 		/**
@@ -208,8 +217,8 @@ sap.ui.define([
 		/**
 		 * Filters the passed Changes or change definitions and returns only the ones in the current layer
 		 *
-		 * @param {sap.ui.fl.Change|object[]} - aChanges Array of Changes or ChangeDefinitions
-		 * @param {string} - sCurrentLayer Current Layer
+		 * @param {sap.ui.fl.Change|object[]} aChanges Array of Changes or ChangeDefinitions
+		 * @param {string} sCurrentLayer Current Layer
 		 * @returns {sap.ui.fl.Change|object[]} Array of filtered Changes
 		 */
 		filterChangeOrChangeDefinitionsByCurrentLayer: function(aChanges, sCurrentLayer) {
@@ -227,15 +236,17 @@ sap.ui.define([
 		 * Returns max layer technical parameter from the passed hash if ushell is available
 		 *
 		 * @param {string} sHash Hash value
+		 * @param {sap.ui.core.service.Service} oURLParsingService Unified Shell URL Parsing Service
 		 * @returns {string|undefined} Max layer parameter value, if available
 		 */
-		getMaxLayerTechnicalParameter: function(sHash) {
-			return Utils.ifUShellContainerThen(function(aServices) {
-				var oParsedHash = aServices[0].parseShellHash(sHash) || {};
+		getMaxLayerTechnicalParameter: function(sHash, oURLParsingService) {
+			if (oURLParsingService) {
+				var oParsedHash = oURLParsingService.parseShellHash(sHash) || {};
 				if (oParsedHash.params && oParsedHash.params.hasOwnProperty(this.FL_MAX_LAYER_PARAM)) {
 					return oParsedHash.params[this.FL_MAX_LAYER_PARAM][0];
 				}
-			}.bind(this), ["URLParsing"]);
+			}
+			return undefined;
 		}
 	};
 	return LayerUtils;

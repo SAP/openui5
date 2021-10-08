@@ -802,7 +802,7 @@ function(
 		/**
 		 * Returns the value of the specified url parameter of the current url
 		 *
-		 * @param {String} sParameterName - Name of the url parameter
+		 * @param {string} sParameterName - Name of the url parameter
 		 * @returns {string} url parameter
 		 * @private
 		 */
@@ -811,12 +811,28 @@ function(
 		},
 
 		/**
-		 * Returns ushell container if available
+		 * Returns UShell container if available
 		 *
-		 * @returns {object|undefined} Returns ushell container object if available or undefined
+		 * @returns {object|undefined} Returns UShell container object if available or undefined
 		 */
 		getUshellContainer: function() {
 			return sap.ushell && sap.ushell.Container;
+		},
+
+		/**
+		 * Returns a Promise resolving with the requested Unified Shell service if available
+		 *
+		 * @param {string} sServiceName UShell service name (e.g. "URLParsing")
+		 * @returns {Promise<object|undefined>} Returns UShell service if available or undefined
+		 */
+		getUShellService: function(sServiceName) {
+			if (sServiceName) {
+				var oUShellContainer = this.getUshellContainer();
+				if (oUShellContainer) {
+					return oUShellContainer.getServiceAsync(sServiceName);
+				}
+			}
+			return Promise.resolve();
 		},
 
 		createDefaultFileName: function(sNameAddition) {

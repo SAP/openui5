@@ -20,19 +20,16 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	function stubUShellContainer(mParsedShellHash) {
-		sandbox.stub(Utils, "getUshellContainer").returns({
-			getService: function() {
-				return {
-					getHash: function() {
-						return "";
-					},
-					parseShellHash: function() {
-						return mParsedShellHash;
-					}
-				};
+
+	function getURLParsingService(mParsedShellHash) {
+		return {
+			getHash: function() {
+				return "";
+			},
+			parseShellHash: function() {
+				return mParsedShellHash;
 			}
-		});
+		};
 	}
 
 	QUnit.module("sap.ui.fl.LayerUtils", {
@@ -122,7 +119,7 @@ sap.ui.define([
 
 	QUnit.module("LayerUtils.isLayerFilteringRequired", {
 		beforeEach: function () {
-			stubUShellContainer();
+			this.oURLParsingService = getURLParsingService();
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -131,19 +128,19 @@ sap.ui.define([
 		QUnit.test("when maxLayer is CUSTOMER", function (assert) {
 			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
 
-			assert.equal(LayerUtils.isLayerFilteringRequired(), true, "maxLayer is not equal topLayer");
+			assert.equal(LayerUtils.isLayerFilteringRequired(this.oURLParsingService), true, "maxLayer is not equal topLayer");
 		});
 
 		QUnit.test("when maxLayer is USER", function (assert) {
 			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.USER);
 
-			assert.equal(LayerUtils.isLayerFilteringRequired(), false, "maxLayer is equal topLayer");
+			assert.equal(LayerUtils.isLayerFilteringRequired(this.oURLParsingService), false, "maxLayer is equal topLayer");
 		});
 	});
 
 	QUnit.module("LayerUtils.isOverMaxLayer", {
 		beforeEach: function () {
-			stubUShellContainer();
+			this.oURLParsingService = getURLParsingService();
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -152,19 +149,19 @@ sap.ui.define([
 		QUnit.test("compare maxLayer: CUSTOMER with layer BASE", function (assert) {
 			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
 
-			assert.equal(LayerUtils.isOverMaxLayer(Layer.BASE), false, "false");
+			assert.equal(LayerUtils.isOverMaxLayer(Layer.BASE, this.oURLParsingService), false, "false");
 		});
 
 		QUnit.test("compare maxLayer: CUSTOMER with layer CUSTOMER", function (assert) {
 			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
 
-			assert.equal(LayerUtils.isOverMaxLayer(Layer.CUSTOMER), false, "false");
+			assert.equal(LayerUtils.isOverMaxLayer(Layer.CUSTOMER, this.oURLParsingService), false, "false");
 		});
 
 		QUnit.test("compare maxLayer: CUSTOMER with layer USER", function (assert) {
 			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
 
-			assert.equal(LayerUtils.isOverMaxLayer(Layer.USER), true, "true");
+			assert.equal(LayerUtils.isOverMaxLayer(Layer.USER, this.oURLParsingService), true, "true");
 		});
 	});
 
@@ -184,37 +181,33 @@ sap.ui.define([
 
 	QUnit.module("LayerUtils.getMaxLayer", {
 		beforeEach: function () {
-			stubUShellContainer();
+			this.oURLParsingService = getURLParsingService();
 		},
 		afterEach: function () {
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("sap-ui-fl-max-layer is not available", function (assert) {
-			assert.equal(LayerUtils.getMaxLayer(), Layer.USER, "return topLayer");
+			assert.equal(LayerUtils.getMaxLayer(this.oURLParsingService), Layer.USER, "return topLayer");
 		});
 
 		QUnit.test("sap-ui-fl-max-layer is set as url parameter", function (assert) {
 			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.VENDOR);
-			assert.equal(LayerUtils.getMaxLayer(), Layer.VENDOR, "get UriParamter");
+			assert.equal(LayerUtils.getMaxLayer(this.oURLParsingService), Layer.VENDOR, "get UriParamter");
 		});
 
 		QUnit.test("sap-ui-fl-max-layer is set as hash parameter", function (assert) {
-			Utils.getUshellContainer.restore();
-			stubUShellContainer({
+			this.oURLParsingService = getURLParsingService({
 				params: {
 					"sap-ui-fl-max-layer": [Layer.CUSTOMER]
 				}
 			});
 			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.VENDOR);
-			assert.equal(LayerUtils.getMaxLayer(), Layer.CUSTOMER, "get UriParamter");
+			assert.equal(LayerUtils.getMaxLayer(this.oURLParsingService), Layer.CUSTOMER, "get UriParamter");
 		});
 	});
 
 	QUnit.module("LayerUtils.doesCurrentLayerRequirePackage", {
-		beforeEach: function () {
-			stubUShellContainer();
-		},
 		afterEach: function () {
 			sandbox.restore();
 		}

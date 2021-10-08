@@ -80,6 +80,7 @@ sap.ui.define([
 	var _mNavigationHandlers = {};
 	var _mInitPromises = {};
 	var _oShellNavigationService;
+	var _oURLParsingService;
 	var _mFlexObjectInfo = {
 		appDescriptorChanges: {
 			prepareFunction: prepareAppDescriptorMap,
@@ -170,7 +171,7 @@ sap.ui.define([
 	function filterByMaxLayer(mResponse) {
 		var mFilteredReturn = merge({}, mResponse);
 		var mFlexObjects = mFilteredReturn.changes;
-		if (LayerUtils.isLayerFilteringRequired()) {
+		if (LayerUtils.isLayerFilteringRequired(_oURLParsingService)) {
 			each(_mFlexObjectInfo, function(iIndex, mFlexObjectInfo) {
 				mFlexObjectInfo.pathInResponse.forEach(function(sPath) {
 					ObjectPath.set(sPath, LayerUtils.filterChangeDefinitionsByMaxLayer(ObjectPath.get(sPath, mFlexObjects)), mFlexObjects);
@@ -225,8 +226,8 @@ sap.ui.define([
 	function handleMaxLayerChange(sReference, sNewHash, sOldHash) {
 		if (_oShellNavigationService) {
 			try {
-				var sCurrentMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sNewHash);
-				var sPreviousMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sOldHash);
+				var sCurrentMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sNewHash, _oURLParsingService);
+				var sPreviousMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sOldHash, _oURLParsingService);
 				if (sCurrentMaxLayer !== sPreviousMaxLayer) {
 					FlexState.clearFilteredResponse(sReference);
 				}
@@ -262,18 +263,18 @@ sap.ui.define([
 		return mInitProperties;
 	}
 
-	function loadShellNavigationService() {
-		var oUShellContainer = Utils.getUshellContainer();
-		if (oUShellContainer) {
-			return oUShellContainer.getServiceAsync("ShellNavigation")
-			.then(function(oShellNavigationService) {
-				_oShellNavigationService = oShellNavigationService;
+	function loadUShellServices() {
+		return Promise.all([
+			Utils.getUShellService("ShellNavigation"),
+			Utils.getUShellService("URLParsing")
+		])
+			.then(function(aServices) {
+				_oShellNavigationService = aServices[0];
+				_oURLParsingService = aServices[1];
 			})
 			.catch(function(oError) {
 				Log.error("Error getting service from Unified Shell: " + oError.message);
 			});
-		}
-		return Promise.resolve();
 	}
 
 	/**
@@ -292,7 +293,7 @@ sap.ui.define([
 	 * @returns {promise<undefined>} Resolves a promise as soon as FlexState is initialized
 	 */
 	FlexState.initialize = function(mPropertyBag) {
-		return loadShellNavigationService()
+		return loadUShellServices()
 			.then(function() {
 				enhancePropertyBag(mPropertyBag);
 				var sFlexReference = mPropertyBag.reference;
