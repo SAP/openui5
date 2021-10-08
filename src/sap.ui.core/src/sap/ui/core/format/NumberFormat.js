@@ -1080,6 +1080,20 @@ sap.ui.define([
 		}
 
 		if (oOptions.type == mNumberType.CURRENCY) {
+			// Make sure the "trailingCurrencyCode" mode is only used on currency codes:
+			// The "customCurrencies" format option takes precedence over CLDR and global configuration. If the given measure isn't found
+			// there, we already return an empty string in the check above (look for error log 'Currency "xy" is unknown').
+			// "mKnownCurrencyCodes" either contains the keys of the "customCurrencies" format option or the accumulated currency codes
+			// from CLDR and global configuration. If the given measure isn't found there and does not have the three letter ISO code format,
+			// it shouldn't be formatted with the "trailingCurrencyCode" pattern.
+			if (sMeasure && oOptions.trailingCurrencyCode) {
+				if (!this.mKnownCurrencyCodes[sMeasure] && !/(^[A-Z]{3}$)/.test(sMeasure)) {
+					oOptions.trailingCurrencyCode = false;
+					// Revert to non-"sap-" prefixed (trailing-currency-code) pattern. Also see code in getCurrencyInstance()
+					oOptions.pattern = this.oLocaleData.getCurrencyPattern(oOptions.currencyContext);
+				}
+			}
+
 			if (!oOptions.showNumber) {
 				// if the number should not be shown, return the sMeasure part standalone, without anything number specific
 				if (!oOptions.currencyCode) {
@@ -1334,7 +1348,8 @@ sap.ui.define([
 
 			if (oShortFormat && oShortFormat.formatString && oOptions.showScale) {
 				var sStyle;
-				// Currency formatting only supports short style (no long)
+
+				// Currency formatting has only short style (no long)
 				if (oOptions.trailingCurrencyCode) {
 					sStyle = "sap-short";
 				} else {
