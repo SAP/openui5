@@ -595,8 +595,7 @@ html.sap-desktop {
 	.sapMSinglePCBlockers, .sapMSinglePCAppointments {
 
 		&.sapUiCalendarRowVisFilled > .@{class}.sapUiCalendarRowApps > .sapUiCalendarApp:not(.sapUiCalendarAppSel) > .sapUiCalendarAppCont{
-			background-color: @bcolor;
-			opacity: 90%;
+			background-color: fade(@bcolor, 90%);
 		}
 	}
 	//Special Dates
