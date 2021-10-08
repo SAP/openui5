@@ -972,6 +972,10 @@ sap.ui.define([
 			oCache.drillDown({/*no annotation found*/}, "@$ui5.context.isTransient").getResult(),
 			undefined, "no error if annotation is not found");
 
+		assert.strictEqual(
+			oCache.drillDown({/*no annotation found*/}, "property@foo.bar").getResult(),
+			undefined, "no error if annotation is not found");
+
 		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into 0/foo/list/bar, invalid segment: bar",
 			oCache.toString(), sClassName);

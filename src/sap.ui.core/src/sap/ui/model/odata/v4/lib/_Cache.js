@@ -597,7 +597,7 @@ sap.ui.define([
 					vValue = vValue[vIndex];
 				}
 				// missing advertisement or annotation is not an error
-				return vValue === undefined && sSegment[0] !== "#" &&  sSegment[0] !== "@"
+				return vValue === undefined && sSegment[0] !== "#" && !sSegment.includes("@")
 					? missingValue(oParentValue, sSegment, i + 1)
 					: vValue;
 			});

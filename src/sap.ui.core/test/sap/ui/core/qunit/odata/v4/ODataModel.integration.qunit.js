@@ -11883,7 +11883,10 @@ sap.ui.define([
 		type : \'sap.ui.model.odata.type.String\'}"/>\
 </FlexBox>';
 
-		this.expectRequest("EMPLOYEES('2')", {"@odata.etag" : "ETagValue"})
+		this.expectRequest("EMPLOYEES('2')?$select=ID", {
+				"@odata.etag" : "ETagValue",
+				ID : "2"
+			})
 			.expectChange("ETag", "ETagValue");
 
 		return this.createView(assert, sView, oModel);
@@ -12796,25 +12799,45 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: stream property with @mediaReadLink or @odata.mediaReadLink
+	// JIRA: CPOUI5UISERVICESV3-821
+	//
+	// Property annotations contribute to $select and do not cause a "Failed to drill-down".
+	// BCP: 2170245436
 ["@mediaReadLink", "@odata.mediaReadLink"].forEach(function (sAnnotation) {
-	QUnit.test("stream property with " + sAnnotation, function (assert) {
+	[undefined, null, "image/jpeg"].forEach(function (vMediaContentType) {
+		var sTitle = "stream property with " + sAnnotation + "=" + vMediaContentType;
+
+	QUnit.test(sTitle, function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			oResponse = {},
 			sView = '\
 <FlexBox binding="{/Equipments(\'1\')/EQUIPMENT_2_PRODUCT}">\
 	<Text id="url" text="{ProductPicture/Picture}"/>\
+	<Text id="contentType"\
+		text="{= JSON.stringify(%{ProductPicture/Picture@odata.mediaContentType}) }"/>\
+	<Text id="fooBar" text="{= %{SupplierIdentifier@foo.bar} }"/>\
 </FlexBox>';
 
 		oResponse["Picture" + sAnnotation] = "ProductPicture('42')";
-		this.expectRequest(
-			"Equipments('1')/EQUIPMENT_2_PRODUCT?$select=ID,ProductPicture/Picture", {
+		if (vMediaContentType !== undefined) {
+			oResponse["Picture@odata.mediaContentType"] = vMediaContentType;
+		}
+		this.expectRequest("Equipments('1')/EQUIPMENT_2_PRODUCT"
+				+ "?$select=ID,ProductPicture/Picture,SupplierIdentifier", {
 				"@odata.context" : "../$metadata#Equipments('1')/EQUIPMENT_2_PRODUCT",
 				ID : "42",
-				ProductPicture : oResponse
+				ProductPicture : oResponse,
+				"SupplierIdentifier@foo.bar" : "The answer",
+				SupplierIdentifier : 42 // Edm.Int32
 			})
-			.expectChange("url", sTeaBusi + "ProductPicture('42')");
+			.expectChange("url", sTeaBusi + "ProductPicture('42')")
+			// Note: JSON.stringify is used in expression binding to "simulate" a function call
+			.expectChange("contentType", JSON.stringify(vMediaContentType))
+			.expectChange("fooBar", "The answer");
 
 		return this.createView(assert, sView, oModel);
+	});
+
 	});
 });
 
@@ -20414,9 +20437,9 @@ sap.ui.define([
 		function expectFailedToDrillDown(sPrefix) {
 			if (sPrefix !== "") {
 				that.oLogMock.expects("error").withExactArgs("Failed to enhance query options for "
-					+ "auto-$expand/$select as the path '/MANAGERS/" + sPrefix
+					+ "auto-$expand/$select as the path '/MANAGERS('1')/" + sPrefix
 					+ "@$ui5._/predicate' does not point to a property",
-					undefined, "sap.ui.model.odata.v4.ODataParentBinding"
+					sinon.match.string, "sap.ui.model.odata.v4.ODataParentBinding"
 				); // fetchIfChildCanUseCache
 				that.oLogMock.expects("error").withExactArgs("Not a valid property path: " +
 					sPrefix + "@$ui5._/predicate", undefined, "sap.ui.model.odata.v4.Context");
