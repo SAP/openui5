@@ -392,8 +392,8 @@ sap.ui.define([
 						});
 					});
 				} else {
-					var Ext1 = sap.ui.requireSync("example/ProviderExt1");
-					var Ext2 = sap.ui.requireSync("example/ProviderExt2");
+					var Ext1 = sap.ui.requireSync("example/ProviderExt1"); // legacy-relevant: sync path tests
+					var Ext2 = sap.ui.requireSync("example/ProviderExt2"); // legacy-relevant: sync path tests
 					return [Ext1, Ext2];
 				}
 			}
