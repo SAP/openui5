@@ -16,6 +16,37 @@
 	box-shadow: @sapUiShadowLevel0;
 	vertical-align: top;
 }
+
+.sapMGTCriticalBorder {
+    height: 100%;
+    width: 0.25rem;
+    position: absolute;
+    left: -1px;
+    top: -1px;
+    border-radius: 0.25rem 0 0 0.25rem;
+    border: 1px solid;
+}
+
+.sapMGTCriticalBorder.Neutral {
+	background-color: @sapUiNeutralText;
+	border-color:  @sapUiNeutralText;
+}
+
+.sapMGTCriticalBorder.Good {
+	background-color: @sapUiPositiveText;
+	border-color:  @sapUiPositiveText;
+}
+
+.sapMGTCriticalBorder.Critical {
+	background-color: @sapUiCriticalText;
+	border-color:  @sapUiCriticalText;
+}
+
+.sapMGTCriticalBorder.Error {
+	background-color: @sapUiNegativeText;
+	border-color:  @sapUiNegativeText;
+}
+
 .sapMGTContentPlaceholder {
 	outline: none;
 	width: 300px;

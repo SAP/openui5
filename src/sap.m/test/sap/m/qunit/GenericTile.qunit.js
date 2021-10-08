@@ -524,6 +524,20 @@ sap.ui.define([
 		assert.strictEqual(library.WrappingType.Hyphenated, this.oGenericTile._oSystemInfo.getWrappingType(), "SystemInfo wrapping type should be Hyphenated");
 	});
 
+	QUnit.test("GenericTile border rendered for valueColor", function(assert) {
+		assert.notOk(document.querySelector("#generic-tile .sapMGTCriticalBorder"), "Generic tile has no criticality border");
+		this.oGenericTile.setValueColor("Error");
+		this.oGenericTile.rerender();
+		assert.ok(document.querySelector("#generic-tile .sapMGTCriticalBorder"), "Generic tile border was rendered sucessfully");
+		assert.equal(document.querySelector("#generic-tile .sapMGTCriticalBorder").classList[1], "Error", "Generic tile border has error state");
+	});
+
+	QUnit.test("GenericTile border not rendered when no valueColor", function(assert) {
+		this.oGenericTile.setValueColor("None");
+		this.oGenericTile.rerender();
+		assert.notOk(document.querySelector("#generic-tile .sapMGTCriticalBorder"), "Generic tile border was not rendered");
+	});
+
 	QUnit.test("GenericTile is dragged", function(assert) {
 		this.oGenericTile.rerender();
 		//Style class which gets added when Generic Tile when it is Dragged.

@@ -15,6 +15,8 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 	// shortcut for sap.m.FrameType
 	var frameTypes = library.FrameType;
 
+	var ValueColor = library.ValueColor;
+
 	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	/**
@@ -207,6 +209,13 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				oRm.close("div");
 			}
 		} else {
+			if (this._isValueColorValid(oControl.getValueColor())) {
+				oRm.openStart("div");
+				oRm.class("sapMGTCriticalBorder");
+					oRm.class(oControl.getValueColor());
+				oRm.openEnd();
+				oRm.close("div");
+			}
 			//Set respective Class/ BackgroundColor for IconMode
 			if (oControl._isIconMode()) {
 				oRm.openStart("div");
@@ -434,6 +443,18 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		oRm.openEnd();
 		oRm.renderControl(oControl._oSubTitle);
 		oRm.close("div");
+	};
+
+	/**
+	 * Checks for valid value color
+	 *
+	 * @private
+	 */
+	 GenericTileRenderer._isValueColorValid = function(sValueColor) {
+		if (sValueColor == ValueColor.Good || sValueColor == ValueColor.Error || sValueColor == ValueColor.Neutral || sValueColor == ValueColor.Critical) {
+			return true;
+		}
+		return false;
 	};
 
 	return GenericTileRenderer;

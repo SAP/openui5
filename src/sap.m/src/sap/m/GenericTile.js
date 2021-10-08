@@ -185,7 +185,13 @@ sap.ui.define([
 				 * @since 1.96
 				 * @experimental Since 1.96
 				*/
-				backgroundColor: {type: "sap.ui.core.CSSColor", group: "Appearance"}
+				backgroundColor: {type: "sap.ui.core.CSSColor", group: "Appearance"},
+				/**
+				 * The semantic color of the value.
+				 * @experimental
+				 * @since 1.95
+				 */
+				valueColor: {type: "sap.m.ValueColor", group: "Appearance", defaultValue: "None"}
 			},
 			defaultAggregation: "tileContent",
 			aggregations: {
