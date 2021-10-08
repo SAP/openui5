@@ -6,11 +6,13 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/security/encodeURL",
 	"sap/ui/core/Core",
+	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Log,
 	encodeURL,
 	Core,
+	FlexUtils,
 	jQuery
 ) {
 	"use strict";
@@ -294,20 +296,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the cross app navigation service.
-	 *
-	 * @public
-	 * @returns {sap.ushell.services.ContainerInterface|null} cross app navigation service or null
-	 */
-	Utils.getCrossAppNavigationService = function() {
-		if (sap.ushell && sap.ushell.Container) {
-			return sap.ushell.Container.getServiceAsync("CrossApplicationNavigation");
-		}
-
-		return Promise.resolve(null);
-	};
-
-	/**
 	 * Gets the navigation URI for a given Intent
 	 *
 	 * @public
@@ -315,7 +303,7 @@ sap.ui.define([
 	 * @returns {Promise<string|null>} Resolves with navigation URI or null
 	 */
 	Utils.getNavigationUriForIntent = function(mIntent) {
-		return Utils.getCrossAppNavigationService().then(function(oCrossAppNavigationService) {
+		return FlexUtils.getUShellService("CrossApplicationNavigation").then(function(oCrossAppNavigationService) {
 			if (oCrossAppNavigationService && oCrossAppNavigationService.hrefForExternal) {
 				return oCrossAppNavigationService.hrefForExternal(mIntent);
 			}
@@ -379,7 +367,7 @@ sap.ui.define([
 	 * @returns {Promise<Array<Boolean>>} Resolves with an array of booleans
 	 */
 	Utils.isNavigationSupportedForIntents = function(aIntents) {
-		return Utils.getCrossAppNavigationService().then(function(oCrossAppNavigationService) {
+		return FlexUtils.getUShellService("CrossApplicationNavigation").then(function(oCrossAppNavigationService) {
 			if (oCrossAppNavigationService && oCrossAppNavigationService.isNavigationSupported) {
 				return oCrossAppNavigationService.isNavigationSupported(aIntents).then(function(aResults) {
 					return aResults.map(function(oResult) {

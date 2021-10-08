@@ -405,17 +405,6 @@ sap.ui.define([
 							}
 						});
 					}
-				},
-				//TODO: Remove once getService is only async
-				getService: function() {
-					return {
-						toExternal: function() {
-							return true;
-						},
-						registerNavigationFilter: function() {
-							return true;
-						}
-					};
 				}
 			});
 			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
@@ -463,17 +452,6 @@ sap.ui.define([
 							}
 						});
 					}
-				},
-				//TODO: Remove once getService is only async
-				getService: function() {
-					return {
-						toExternal: function() {
-							return true;
-						},
-						registerNavigationFilter: function() {
-							return true;
-						}
-					};
 				}
 			});
 			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});

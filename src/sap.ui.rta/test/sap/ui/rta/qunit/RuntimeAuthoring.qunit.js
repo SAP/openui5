@@ -1011,9 +1011,6 @@ sap.ui.define([
 			sandbox.stub(Utils, "getUshellContainer").returns({
 				getServiceAsync: function () {
 					return Promise.resolve(oService);
-				},
-				getService: function () {
-					return oService;
 				}
 			});
 			this.oRta = new RuntimeAuthoring({

@@ -358,24 +358,9 @@ sap.ui.define([
 	QUnit.module("Given that a ManageApps controller is instantiated", {
 		beforeEach: function () {
 			window.bUShellNavigationTriggered = false;
-			this.originalUShell = sap.ushell;
-			// this overrides the ushell globally => we need to restore it!
-
-			sap.ushell = Object.assign({}, sap.ushell, {
-				Container: {
-					getService: function () {
-						return {
-							toExternal: function() {
-								window.bUShellNavigationTriggered = true;
-							}
-						};
-					}
-				}
-			});
 		},
 		afterEach: function () {
 			sandbox.restore();
-			sap.ushell = this.originalUShell;
 			delete window.bUShellNavigationTriggered;
 		}
 	}, function() {

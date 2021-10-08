@@ -27,7 +27,7 @@ sap.ui.define([
 	return function () {
 		var oUShellContainer = Utils.getUshellContainer();
 		if (oUShellContainer) {
-			return oUShellContainer.getServiceAsync("UserInfo")
+			return Utils.getUShellService("UserInfo")
 				.then(function(oUserInfoService) {
 					if (!oUserInfoService) {
 						return {};

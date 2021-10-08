@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/fl/write/_internal/fieldExtensibility/Utils",
+	"sap/ui/fl/Utils",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/thirdparty/jquery",
@@ -10,6 +11,7 @@ sap.ui.define([
 ], function(
 	Log,
 	Utils,
+	FlexUtils,
 	ODataModelV2,
 	ODataModelV4,
 	jQuery,
@@ -389,7 +391,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("No Cross App Navigation Service", function(assert) {
 			var done = assert.async();
-			oSandbox.stub(Utils, "getCrossAppNavigationService").returns(Promise.resolve(null));
+			oSandbox.stub(FlexUtils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(null));
 
 			var aNavigationIntents = [{
 				semanticObject: "CustomField",
@@ -421,7 +423,7 @@ sap.ui.define([
 					return Promise.resolve(aResults);
 				}
 			};
-			oSandbox.stub(Utils, "getCrossAppNavigationService").returns(Promise.resolve(oCrossApp));
+			oSandbox.stub(FlexUtils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(oCrossApp));
 
 			var aNavigationIntents = [{
 				semanticObject: "CustomField",

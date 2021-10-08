@@ -729,28 +729,6 @@ function(
 		},
 
 		/**
-		 * Returns promise resolving to URL hash when ushell container is available
-		 *
-		 * @returns {Promise<object>} Resolving to a parsed URL hash object or an empty object if ushell container is not available
-		 */
-		getParsedURLHashAsync: function() {
-			var oUShellContainer = Utils.getUshellContainer();
-			if (oUShellContainer) {
-				return oUShellContainer.getServiceAsync("URLParsing")
-					.then(function(oURLParsingService) {
-						if (oURLParsingService) {
-							return oURLParsingService.parseShellHash(hasher.getHash());
-						}
-						return {};
-					})
-					.catch(function (vError) {
-						throw new Error("Error during retrieval of URLParsing ushell service: " + vError);
-					});
-			}
-			return Promise.resolve({});
-		},
-
-		/**
 		 * Returns URL hash when ushell container is available synchronously.
 		 *
 		 * @param  {sap.ushell.services.URLParsing} oURLParsingService - The Unified Shell's internal URL parsing service
@@ -761,23 +739,6 @@ function(
 				return oURLParsingService.parseShellHash(hasher.getHash()) || {};
 			}
 			return {};
-		},
-
-		/**
-		 * Calls the passed function with the desired ushell services, if ushell container is available
-		 *
-		 * @param {function} fnCallBack - Callback function
-		 * @param {string[]} aServiceNames - Array of ushell service names
-		 * @returns {any|undefined} Returns the Value from the callback
-		 */
-		ifUShellContainerThen: function(fnCallBack, aServiceNames) {
-			var oUShellContainer = Utils.getUshellContainer();
-			if (oUShellContainer) {
-				var aServices = aServiceNames.map(function(sServiceName) {
-					return oUShellContainer.getService(sServiceName);
-				});
-				return fnCallBack(aServices);
-			}
 		},
 
 		/**

@@ -780,30 +780,6 @@ function(
 			assert.ok(isEmptyObject(Utils.getParsedURLHash()), "then no url parameters are received");
 		});
 
-		QUnit.test("when calling 'ifUShellContainerThen' without a ushell container", function(assert) {
-			var vReturnValue = Utils.ifUShellContainerThen(function() {
-				assert.ok(false, "callback function should not be called");
-			}, ["service1"]);
-			assert.strictEqual(vReturnValue, undefined, "then undefined was returned");
-		});
-
-		QUnit.test("when calling 'ifUShellContainerThen' with a ushell container", function(assert) {
-			assert.expect(2);
-			sandbox.stub(Utils, "getUshellContainer").returns({
-				getService: function(sServiceName) {
-					if (sServiceName === "service1") {
-						return "evaluatedService1";
-					} else if (sServiceName === "service2") {
-						return "evaluatedService2";
-					}
-				}
-			});
-			Utils.ifUShellContainerThen(function(aServices) {
-				assert.equal(aServices[0], "evaluatedService1", "then callback function was called with the ushell service");
-				assert.equal(aServices[1], "evaluatedService2", "then callback function was called with the ushell service");
-			}, ["service1", "service2"]);
-		});
-
 		QUnit.test("createNamespace returns correct namespace for changes of app descriptor", function(assert) {
 			var oPropertyBag = {
 				reference: "sap.account.appname.Component"

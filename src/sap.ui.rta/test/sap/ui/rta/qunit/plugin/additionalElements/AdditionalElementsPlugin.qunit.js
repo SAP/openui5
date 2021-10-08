@@ -1674,15 +1674,6 @@ sap.ui.define([
 			this.STUB_EXTENSIBILITY_USHELL_URL = "someURLToCheckOurParameterPassing:"
 				+ JSON.stringify(this.STUB_EXTENSIBILITY_USHELL_PARAMS);
 
-			sandbox.stub(FlexUtils, "getUshellContainer").returns({
-				getService: function () {
-					return {
-						hrefForExternal: function (mData) {
-							return "someURLToCheckOurParameterPassing:" + JSON.stringify(mData);
-						}
-					};
-				}
-			});
 			givenSomeBoundControls.call(this, assert);
 
 			givenThePluginWithOKClosingDialog.call(this);
