@@ -1009,6 +1009,30 @@ sap.ui.define([
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
+		QUnit.test("setManifest - to undefined and then set again", function (assert) {
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			oCard.attachEventOnce("_ready", function () {
+				// Act - set manifest to undefined
+				oCard.setManifest(undefined);
+				Core.applyChanges();
+
+				oCard.attachEventOnce("_ready", function () {
+					assert.ok(true, "Manifest can be set correctly second time after it was set to undefined.");
+					done();
+				});
+
+				// Act - set correct manifest
+				oCard.setManifest(oManifest_ListCard);
+				Core.applyChanges();
+			});
+
+			oCard.setManifest(oManifest_ListCard);
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		});
+
 		QUnit.test("createManifest called twice", function (assert) {
 			var done = assert.async(),
 				oStub = sinon.stub(this.oCard, "_setCardContent").callsFake(function () {
