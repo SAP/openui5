@@ -961,6 +961,11 @@ sap.ui.define([
 			this._oIconFormatter = null;
 		}
 
+		if (this._oActionsToolbar) {
+			this._oActionsToolbar.destroy();
+			this._oActionsToolbar = null;
+		}
+
 		this.destroyAggregation("_header");
 		this.destroyAggregation("_filterBar");
 		this.destroyAggregation("_content");
