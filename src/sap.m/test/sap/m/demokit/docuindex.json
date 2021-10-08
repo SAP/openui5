@@ -290,7 +290,8 @@
 			"sap.m.sample.ComboBoxFilteringContains",
 			"sap.m.sample.ComboBoxFilteringStartsWith",
 			"sap.m.sample.ComboBoxGrouping",
-			"sap.m.sample.ComboBoxValidation"
+			"sap.m.sample.ComboBoxValidation",
+			"sap.m.sample.ComboBoxClearIcon"
 		  ]
 		},
 		{
@@ -1199,7 +1200,8 @@
 			"sap.m.sample.MultiComboBoxSuggestionsAndValueState",
 			"sap.m.sample.MultiComboBoxTwoColumnsLayout",
 			"sap.m.sample.MultiComboBoxGrouping",
-			"sap.m.sample.MultiComboBoxSelectAll"
+			"sap.m.sample.MultiComboBoxSelectAll",
+			"sap.m.sample.MultiComboBoxClearIcon"
 		  ]
 		},
 		{
@@ -1729,6 +1731,11 @@
 			"id": "sap.m.sample.ComboBoxValidation",
 			"name": "ComboBox - Validation",
 			"description": "The combo box control could be restricted to allow selection only from the items in the list."
+		},
+		{
+			"id": "sap.m.sample.ComboBoxClearIcon",
+			"name": "ComboBox - Clear Icon",
+			"description": "The combo box control can show 'clear' icon, which when pressed will remove the user's input and selected key."
 		},
 		{
 		  "id": "sap.m.sample.DateRangeSelection",
@@ -2462,6 +2469,11 @@
 		  "id": "sap.m.sample.MultiComboBoxTwoColumnsLayout",
 		  "name": "MultiComboBox - Two columns layout",
 		  "description": "Use the dropdown list with two columns layout if you need to display additional information to your options, like e.g. currencies to countries or abbreviations to systems."
+		},
+		{
+			"id": "sap.m.sample.MultiComboBoxClearIcon",
+			"name": "MultiComboBox - Clear Icon",
+			"description": "The multi combo box control can show 'clear' icon, which when pressed will remove the user's input."
 		},
 		{
 			"id": "sap.m.sample.p13n.Container",

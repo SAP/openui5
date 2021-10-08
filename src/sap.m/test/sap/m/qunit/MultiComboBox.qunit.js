@@ -3629,8 +3629,8 @@ sap.ui.define([
 		assert.strictEqual(fnOpenSpy.callCount, 0, "open was not called");
 		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), OpenState.CLOSED, "Popup is closed");
 		assert.ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
-		assert.ok(!oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
-				'The MultiComboBox must not have the css class “' + InputBase.ICON_PRESSED_CSS_CLASS);
+		assert.ok(!oMultiComboBox.$().hasClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS),
+			'The MultiComboBox must not have the css class “' + ComboBoxBase.ARROW_PRESSED_CSS_CLASS);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3741,8 +3741,8 @@ sap.ui.define([
 		assert.strictEqual(fnOpenSpy.callCount, 1, "openwas called exactly once");
 		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "Popup is open");
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
-				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
+		assert.ok(oMultiComboBox.$().hasClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS),
+				'The MultiComboBox must have the css class “' + ComboBoxBase.ARROW_PRESSED_CSS_CLASS);
 		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
@@ -3784,8 +3784,8 @@ sap.ui.define([
 		assert.strictEqual(fnOpenSpy.callCount, 1, "openwas called exactly once");
 		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "Popup is open");
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
-				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
+		assert.ok(oMultiComboBox.$().hasClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS),
+				'The MultiComboBox must have the css class “' + ComboBoxBase.ARROW_PRESSED_CSS_CLASS);
 		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
@@ -3827,8 +3827,8 @@ sap.ui.define([
 		assert.strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
 		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "Popup is open");
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
-				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLA);
+		assert.ok(oMultiComboBox.$().hasClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS),
+			'The MultiComboBox must have the css class “' + ComboBoxBase.ARROW_PRESSED_CSS_CLASS);
 		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
@@ -3899,8 +3899,8 @@ sap.ui.define([
 		assert.strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
 		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "Popup is open");
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
-				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
+		assert.ok(oMultiComboBox.$().hasClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS),
+			'The MultiComboBox must have the css class “' + ComboBoxBase.ARROW_PRESSED_CSS_CLASS);
 		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
@@ -3943,8 +3943,8 @@ sap.ui.define([
 		assert.strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
 		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "Popup is open");
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
-				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
+		assert.ok(oMultiComboBox.$().hasClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS),
+			'The MultiComboBox must have the css class “' + ComboBoxBase.ARROW_PRESSED_CSS_CLASS);
 		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
 
@@ -4077,8 +4077,8 @@ sap.ui.define([
 				assert.strictEqual(fnOpenSpy.callCount, 2, "open was called exactly once");
 				assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "Popup is open");
 				assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-				assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
-						'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
+				assert.ok(oMultiComboBox.$().hasClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS),
+					'The MultiComboBox must have the css class “' + ComboBoxBase.ARROW_PRESSED_CSS_CLASS);
 
 				// cleanup
 				oMultiComboBox.destroy();
@@ -4132,8 +4132,8 @@ sap.ui.define([
 				assert.strictEqual(fnOpenSpy.callCount, 2, "open was called exactly twice");
 				assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "Popup is open");
 				assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-				assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
-						'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
+				assert.ok(oMultiComboBox.$().hasClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS),
+					'The MultiComboBox must have the css class “' + ComboBoxBase.ARROW_PRESSED_CSS_CLASS);
 				assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 				// cleanup
@@ -4247,8 +4247,8 @@ sap.ui.define([
 
 		// assertions
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
-				'The MultiComboBox must have the css class "' + InputBase.ICON_PRESSED_CSS_CLASS + '"');
+		assert.ok(oMultiComboBox.$().hasClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS),
+				'The MultiComboBox must have the css class "' + ComboBoxBase.ARROW_PRESSED_CSS_CLASS + '"');
 		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 
 		// cleanup
@@ -4278,8 +4278,8 @@ sap.ui.define([
 
 		// assertions
 		assert.ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
-		assert.ok(!oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
-				'The MultiComboBox must not have the css class "' + InputBase.ICON_PRESSED_CSS_CLASS + '"');
+		assert.ok(!oMultiComboBox.$().hasClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS),
+				'The MultiComboBox must not have the css class "' + ComboBoxBase.ARROW_PRESSED_CSS_CLASS + '"');
 		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false", "aria-expanded should be false");
 
 		// cleanup
@@ -4325,8 +4325,8 @@ sap.ui.define([
 		// assertions
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
-		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
-				'The MultiComboBox must have the css class "' + InputBase.ICON_PRESSED_CSS_CLASS + '"');
+		assert.ok(oMultiComboBox.$().hasClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS),
+				'The MultiComboBox must have the css class "' + ComboBoxBase.ARROW_PRESSED_CSS_CLASS + '"');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4915,7 +4915,9 @@ sap.ui.define([
 
 		// act
 		oMultiComboBox._iFocusedIndex = iTestFocusIndex;
+
 		document.body.focus();
+
 		oMultiComboBox.onAfterRenderingList();
 		sap.ui.getCore().applyChanges();
 
@@ -7243,7 +7245,7 @@ sap.ui.define([
 				key : "AU",
 				text : "Australia"
 			})]
-		}), oInputDomRef, aListItems, oList,
+		}), oInputDomRef, oList,
 			oInputEvent = {
 				target: {
 					value: "A"
@@ -7261,7 +7263,6 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// act
-		aListItems = oList.getItems();
 		oInputDomRef = oMultiComboBox.getDomRef("inner");
 
 		oMultiComboBox.oninput(oInputEvent);
@@ -7271,7 +7272,7 @@ sap.ui.define([
 				"Correct value autocompleted on input.");
 
 		// act - select item from list
-		oList.setSelectedItem(aListItems[0], true, true);
+		oList.setSelectedItem(oList.getItems()[0], true, true);
 		this.clock.tick(500);
 		// assert
 		assert.strictEqual(oInputDomRef.value, "A",
@@ -7286,7 +7287,7 @@ sap.ui.define([
 
 		// act - tap in item from list
 		oMultiComboBox._bCheckBoxClicked = false;
-		oList.setSelectedItem(aListItems[1], true, true);
+		oList.setSelectedItem(oList.getItems()[1], true, true);
 		this.clock.tick(500);
 		// assert
 		assert.strictEqual(oInputDomRef.value, "",
@@ -8133,9 +8134,10 @@ sap.ui.define([
 		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._getList().getItems()).length, 1, "Only the matching items are visible");
 	});
 
-	QUnit.test("Should call toggleIconPressedState correctly in the process of showing items", function (assert) {
+	QUnit.test("Should call toggleStyleClass correctly in the process of showing items", function (assert) {
 		// Setup
-		var oSpy = new this.spy(this.oMultiComboBox, "toggleIconPressedStyle");
+		var oSpy = this.spy(this.oMultiComboBox, "toggleStyleClass"),
+			sClassName = ComboBoxBase.ARROW_PRESSED_CSS_CLASS;
 
 		// Act
 		this.oMultiComboBox.showItems(function () {
@@ -8143,14 +8145,14 @@ sap.ui.define([
 		});
 
 		// Assert
-		assert.strictEqual(oSpy.callCount, 0, "The toggleIconPressedStyle method was not called.");
+		assert.strictEqual(oSpy.callCount, 0, "The toggleStyleClass method was not called.");
 
 		// Act
 		this.oMultiComboBox._handlePopupOpenAndItemsLoad(true); // Icon press
 
 		// Assert
-		assert.strictEqual(oSpy.callCount, 1, "The toggleIconPressedStyle method was called once:");
-		assert.strictEqual(oSpy.getCall(0).args[0], true, "...first time with 'true'.");
+		assert.strictEqual(oSpy.callCount, 1, "The toggleStyleClass method was called once:");
+		assert.strictEqual(oSpy.getCall(0).args[0], sClassName, "...first time with '" + sClassName + "'.");
 
 		// Arrange
 		this.oMultiComboBox._bShouldClosePicker = true;
@@ -8160,13 +8162,13 @@ sap.ui.define([
 		this.oMultiComboBox._handlePopupOpenAndItemsLoad(); // Icon press
 
 		// Assert
-		assert.strictEqual(oSpy.callCount, 2, "The toggleIconPressedStyle method was called twice:");
-		assert.strictEqual(oSpy.getCall(1).args[0], false, "...second time with 'false'.");
+		assert.strictEqual(oSpy.callCount, 2, "The toggleStyleClass method was called twice:");
+		assert.strictEqual(oSpy.getCall(1).args[0], sClassName, "...second time with '" + sClassName + "'.");
 	});
 
-	QUnit.test("Should call toggleIconPressedState after showItems is called and oninput is triggered.", function (assert) {
+	QUnit.test("Should call toggleStyleClass after showItems is called and oninput is triggered.", function (assert) {
 		// Setup
-		var oSpy = new this.spy(this.oMultiComboBox, "toggleIconPressedStyle"),
+		var oSpy = this.spy(this.oMultiComboBox, "toggleStyleClass"),
 			oFakeEvent = {
 				isMarked: function () {return false;},
 				setMarked: function () {},
@@ -8174,7 +8176,8 @@ sap.ui.define([
 					value: "A Item"
 				},
 				srcControl: this.oMultiComboBox
-			};
+			},
+			sClassName = ComboBoxBase.ARROW_PRESSED_CSS_CLASS;
 
 		// Act
 		this.oMultiComboBox.showItems(function () {
@@ -8182,14 +8185,14 @@ sap.ui.define([
 		});
 
 		// Assert
-		assert.strictEqual(oSpy.callCount, 0, "The toggleIconPressedStyle method was not called.");
+		assert.strictEqual(oSpy.callCount, 0, "The toggleStyleClass method was not called.");
 
 		// Act
 		this.oMultiComboBox.oninput(oFakeEvent); // Fake input
 
 		// Assert
-		assert.strictEqual(oSpy.callCount, 1, "The toggleIconPressedStyle method was called once:");
-		assert.strictEqual(oSpy.getCall(0).args[0], true, "...first time with 'true'.");
+		assert.strictEqual(oSpy.callCount, 1, "The toggleStyleClass method was called once:");
+		assert.strictEqual(oSpy.getCall(0).args[0], sClassName, "...first time with '" + sClassName + "'.");
 	});
 
 	QUnit.test("Should show all items when drop down arrow is pressed after showing filtered list.", function (assert) {
@@ -8430,7 +8433,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oOnBeforeRenderingSpy.callCount, 1, "onBeforeRendering has been called and items should be in sync");
+		assert.strictEqual(oOnBeforeRenderingSpy.called, true, "onBeforeRendering has been called and items should be in sync");
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["A"], "Only the last setter should be applied");
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "Selected Items association should be in sync");
 		assert.strictEqual(oTokenizer.getTokens().length, 1, "Tokens should correspond to the actual selection");
@@ -8467,7 +8470,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oOnBeforeRenderingSpy.callCount, 1, "onBeforeRendering has been called and items should be in sync");
+		assert.strictEqual(oOnBeforeRenderingSpy.called, true, "onBeforeRendering has been called and items should be in sync");
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["A"], "Only the last setter should be applied");
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "Selected Items association should be in sync");
 		assert.strictEqual(oTokenizer.getTokens().length, 1, "Tokens should correspond to the actual selection");
@@ -8507,7 +8510,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// Assert
-		assert.strictEqual(oOnBeforeRenderingSpy.callCount, 1, "onBeforeRendering has been called and items should be in sync");
+		assert.strictEqual(oOnBeforeRenderingSpy.callCount, 1, "onBeforeRendering has been called once and items should be in sync");
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["B", "C", "A"], "Only the last setter should be applied");
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 3, "Selected Items association should be in sync");
 		assert.strictEqual(oTokenizer.getTokens().length, 3, "Tokens should correspond to the actual selection");
@@ -9100,5 +9103,129 @@ sap.ui.define([
 
 		// Assert
 		assert.notOk(this.oMultiComboBox.getSelectedItems().length, "No list items should be selected");
+	});
+
+	QUnit.module("Clear icon");
+
+	QUnit.test("Invalidating the MultiComboBox due to clear icon should not change its state", function (assert) {
+		var aItems = [
+			new ListItem({
+				key: "GER",
+				text: "Germany"
+			}),
+			new ListItem({
+				key: "AR",
+				text: "Argentina"
+			}),
+			new ListItem({
+				key: "BG",
+				text: "Bulgaria"
+			}),
+			new ListItem({
+				key: "BL",
+				text: "Belgium"
+			}),
+			new ListItem({
+				key: "MAD",
+				text: "Madagascar"
+			})
+		];
+		var oMultiComboBox = new MultiComboBox({
+			items: aItems,
+			showClearIcon: true
+		}).placeAt("MultiComboBoxContent");
+		sap.ui.getCore().applyChanges();
+
+		// Arrange
+		var fnFilterItemsSpy = this.spy(oMultiComboBox, "filterItems");
+		var fnHighlighSpy = this.spy(oMultiComboBox, "highlightList");
+		var fnBeforeRenderingSpy = this.spy(oMultiComboBox, "onBeforeRendering");
+
+		// Act
+		oMultiComboBox._$input.focus().val("b").trigger("input");
+		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.b);
+		oMultiComboBox.onkeyup();
+		sap.ui.getCore().applyChanges();
+		this.clock.tick();
+
+		// Assert
+		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 2, "Only the filtered items are shown");
+		assert.strictEqual(fnBeforeRenderingSpy.called, true, "onBeforeRendering was called");
+		assert.strictEqual(fnFilterItemsSpy.called, true, "filterItems must be called");
+		assert.strictEqual(fnHighlighSpy.called, true, "highlightList must be called");
+
+		// Clean
+		fnFilterItemsSpy.restore();
+		fnHighlighSpy.restore();
+		fnFilterItemsSpy.restore();
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("'handleClearIconPress' should call clear the value and call setProperty", function(assert) {
+		// Arrange
+		var oMultiComboBox = new MultiComboBox({
+			showClearIcon: true,
+			value: "test"
+		});
+		var oSetValueSpy, oSetPropertySpy;
+
+		oMultiComboBox.placeAt("MultiComboBoxContent");
+		sap.ui.getCore().applyChanges();
+
+		oSetValueSpy = this.spy(oMultiComboBox, "setValue");
+		oSetPropertySpy = this.spy(oMultiComboBox, "setProperty");
+
+		// Act
+		oMultiComboBox.handleClearIconPress();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oSetValueSpy.calledWith(""), true, "setValue was called with the correct parameters");
+		assert.strictEqual(oSetPropertySpy.calledWith('effectiveShowClearIcon', false), true, "setProperty was called with the correct parameters");
+		assert.strictEqual(oMultiComboBox._sOldInput, "", "_sOldInput was reset to empty string");
+
+		// Clean
+		oSetValueSpy.restore();
+		oSetPropertySpy.restore();
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("'handleClearIconPress' should not do anything when control is disabled", function(assert) {
+		// Arrange
+		var oMultiComboBox = new MultiComboBox({
+			showClearIcon: true,
+			value: "test",
+			enabled: false
+		});
+		var oSetPropertySpy;
+
+		oMultiComboBox.placeAt("MultiComboBoxContent");
+		sap.ui.getCore().applyChanges();
+
+		oSetPropertySpy = this.spy(oMultiComboBox, "setProperty");
+
+		// Act
+		oMultiComboBox.handleClearIconPress();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oSetPropertySpy.calledWith('effectiveShowClearIcon', false), false, "setProperty was called with the correct parameters");
+
+		// Arrange
+		oMultiComboBox.setEnabled(true);
+		oMultiComboBox.setEditable(false);
+		sap.ui.getCore().applyChanges();
+		oSetPropertySpy.reset();
+
+		// Act
+		oMultiComboBox.handleClearIconPress();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oSetPropertySpy.calledWith('effectiveShowClearIcon', false), false, "setProperty was called with the correct parameters");
+
+		// Clean
+		oSetPropertySpy.restore();
+		oMultiComboBox.destroy();
 	});
 });

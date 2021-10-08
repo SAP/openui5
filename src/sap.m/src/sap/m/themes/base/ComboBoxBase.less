@@ -3,12 +3,32 @@
 /* Base theme                          */
 /* =================================== */
 
+.sapMComboBoxBase.sapMInputBaseHasEndIcons .sapMInputBaseInner {
+	width: auto;
+	flex: 1
+}
+
+.sapMComboBoxBase .sapMInputBaseContentWrapper {
+	display: inline-flex;
+}
+
 /* ------------------------------ */
 /* arrow                          */
 /* ------------------------------ */
 
 .sapMComboBoxBase.sapMInputBaseReadonly .sapMInputBaseIcon {
 	opacity: 0;
+	cursor: default;
+}
+
+.sapMInputBase:not(.sapMInputBaseDisabled):not(.sapMInputBaseIconPressed).sapMComboBoxBase.sapMComboBoxBaseArrowPressed .sapMInputBaseIconContainer .sapMInputBaseIcon:last-child {
+	background: @sapUiToggleButtonPressedBackground;
+	&:hover {
+		background: @sapUiToggleButtonPressedBackground;
+	}
+	&::before {
+		color: @sapUiToggleButtonPressedTextColor;
+	}
 }
 
 /* ------------------------------ */
