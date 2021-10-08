@@ -45,6 +45,9 @@ sap.ui.define([
 		getControlDelegate: function () {
 			return ValueHelpDelegate;
 		},
+		getPayload: function () {
+			return {x: "X"};
+		},
 		awaitControlDelegate: function () {
 			return Promise.resolve();
 		},
@@ -446,6 +449,13 @@ sap.ui.define([
 
 		var oDelegate = oContainer.getValueHelpDelegate();
 		assert.equal(oDelegate, ValueHelpDelegate, "Delegate returned");
+
+	});
+
+	QUnit.test("getValueHelpDelegatePayload", function(assert) {
+
+		var oPayload = oContainer.getValueHelpDelegatePayload();
+		assert.deepEqual(oPayload, {x: "X"}, "Payload returned");
 
 	});
 

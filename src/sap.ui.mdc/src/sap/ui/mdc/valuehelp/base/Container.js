@@ -310,6 +310,11 @@ sap.ui.define([
 		return oValueHelp && oValueHelp.getControlDelegate();
 	};
 
+	Container.prototype.getValueHelpDelegatePayload = function () {
+		var oValueHelp = this.getParent();
+		return oValueHelp && oValueHelp.getPayload();
+	};
+
 	Container.prototype.awaitValueHelpDelegate = function () {
 		var oValueHelp = this.getParent();
 		return oValueHelp && oValueHelp.awaitControlDelegate();

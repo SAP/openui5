@@ -123,8 +123,7 @@ sap.ui.define([
 		}
 
 		var oDelegate = this._getValueHelpDelegate();
-		var oValueHelpModel = this.getModel("$valueHelp");
-		var oDelegatePayload = oValueHelpModel && oValueHelpModel.getObject("/delegate").payload;
+		var oDelegatePayload = this._getValueHelpDelegatePayload();
 
 		var oFilterBar = this._getPriorityFilterBar();
 		var oConditions = oFilterBar ? oFilterBar.getInternalConditions() : this.getProperty("_inConditions"); // use InParameter if no FilterBar
