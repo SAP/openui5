@@ -291,6 +291,11 @@ sap.ui.define([
 		return oContainer && oContainer.getValueHelpDelegate();
 	};
 
+	Content.prototype._getValueHelpDelegatePayload = function () {
+		var oContainer = this.getParent();
+		return oContainer && oContainer.getValueHelpDelegatePayload();
+	};
+
 	Content.prototype._awaitValueHelpDelegate = function () {
 		var oContainer = this.getParent();
 		return oContainer && oContainer.awaitValueHelpDelegate();
