@@ -3320,4 +3320,162 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		assert.ok(tileContentChildren, "Tile Content with ImageContent does not add overlay on the GenericTile.");
 	});
 
+	QUnit.module("Action Mode Tests", {
+		beforeEach: function() {
+			this.oGenericTile = new GenericTile("generic-tile", {
+				mode: GenericTileMode.ActionMode,
+				subheader: "Expenses By Region",
+				frameType: FrameType.TwoByOne,
+				header: "Comparative Annual Totals",
+				headerImage: IMAGE_PATH + "female_BaySu.jpg",
+				tileContent: new TileContent("tile-cont", {
+					unit: "EUR",
+					footer: "Current Quarter",
+					content: new NumericContent("numeric-cnt", {
+						state: LoadState.Loaded,
+						scale: "M",
+						indicator: DeviationIndicator.Up,
+						truncateValueTo: 4,
+						value: 20,
+						nullifyValue: true,
+						formatterValue: false,
+						valueColor: ValueColor.Good,
+						icon: "sap-icon://customer-financial-fact-sheet"
+					})
+				}),
+				actionButtons: [
+					this.oActionButton1 = new sap.m.Button(),
+					this.oActionButton2 = new sap.m.Button()
+				]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		},
+
+		fnWithRenderAsserts: function(assert) {
+			assert.ok(document.getElementById("generic-tile"), "Generic tile was rendered successfully");
+			assert.ok(document.getElementById("generic-tile-hdr-text"), "Generic tile header was rendered successfully");
+			assert.notOk(document.getElementById("generic-tile-subHdr-text"), "Generic tile subheader is not rendered");
+			assert.ok(document.getElementById("generic-tile-icon-image"), "Generic tile icon was rendered successfully");
+			assert.ok(document.getElementById("tile-cont"), "TileContent was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt"), "NumericContent was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt-indicator"), "Indicator was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt-value"), "Value was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt-scale"), "Scale was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt-icon-image"), "Icon was rendered successfully");
+			assert.ok(this.oGenericTile.getDomRef().classList.contains("TwoByOne"), "TwoByOne FrameType class has been added");
+		}
+	});
+
+	QUnit.test("GenericTile rendered with Action Buttons", function(assert) {
+		this.fnWithRenderAsserts(assert);
+
+		assert.ok(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is rendered");
+		assert.ok(document.getElementById(this.oActionButton1.getId()), "Action Button 1 is rendered");
+		assert.ok(document.getElementById(this.oActionButton1.getId()), "Action Button 2 is rendered");
+	});
+
+	QUnit.test("Press Event Tests for Action Buttons", function(assert) {
+		var oButtonPressHandler = sinon.spy(),
+			oTilePressHandler = sinon.spy();
+		this.oActionButton1.attachPress(oButtonPressHandler);
+		this.oGenericTile.attachPress(oTilePressHandler);
+
+		//Trigger press for Action Button
+		this.oActionButton1.firePress();
+		assert.ok(oButtonPressHandler.calledOnce, "Button press handler called on Button Press");
+		assert.notOk(oTilePressHandler.calledOnce, "Generic Tile press handler is not called on Button Press");
+
+		oButtonPressHandler = sinon.spy();
+
+		//Trigger press for Generic Tile
+		this.oGenericTile.firePress();
+		assert.ok(oTilePressHandler.calledOnce, "Generic Tile press handler is called on Tile Press");
+		assert.notOk(oButtonPressHandler.calledOnce, "Button press handler is not called on Tile Press");
+	});
+
+	QUnit.test("Addtion or Deletion of Action Buttons", function(assert) {
+		var oButton = new sap.m.Button("test_button");
+
+		//add test button
+		this.oGenericTile.addActionButton(oButton);
+		sap.ui.getCore().applyChanges();
+		assert.ok(document.getElementById(oButton.getId()), "New Button is rendered successfully");
+
+		//remove test button
+		this.oGenericTile.removeActionButton(oButton);
+		sap.ui.getCore().applyChanges();
+		assert.equal(document.getElementById(oButton.getId()), null, "New Button is removed successfully");
+
+		//remove all buttons
+		this.oGenericTile.removeAllActionButtons();
+		sap.ui.getCore().applyChanges();
+		assert.notOk(document.getElementById(this.oActionButton1.getId()), "Action Button 1 is not rendered");
+		assert.notOk(document.getElementById(this.oActionButton1.getId()), "Action Button 2 is rendered");
+		assert.notOk(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is not rendered");
+	});
+
+	QUnit.test("Action Mode for Different Frame Types", function(assert) {
+		//Switch to OneByOne
+		this.oGenericTile.setFrameType(FrameType.OneByOne);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(this.oGenericTile.getDomRef().classList.contains("OneByOne"), "OneByOne FrameType class has been added");
+		assert.notOk(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is not rendered");
+
+		//Switch to OneByHalf
+		this.oGenericTile.setFrameType(FrameType.OneByHalf);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(this.oGenericTile.getDomRef().classList.contains("OneByHalf"), "OneByHalf FrameType class has been added");
+		assert.notOk(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is not rendered");
+
+		//Switch to TwoByHalf
+		this.oGenericTile.setFrameType(FrameType.TwoByHalf);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(this.oGenericTile.getDomRef().classList.contains("TwoByHalf"), "TwoByHalf FrameType class has been added");
+		assert.notOk(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is not rendered");
+
+		//Switch to TwoByOne
+		this.oGenericTile.setFrameType(FrameType.TwoByOne);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(this.oGenericTile.getDomRef().classList.contains("TwoByOne"), "TwoByOne FrameType class has been added");
+		assert.ok(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is rendered");
+	});
+
+	QUnit.test("TwoByOne Tile: Switch between modes", function(assert) {
+		//Switch to HeaderMode
+		this.oGenericTile.setMode(GenericTileMode.HeaderMode);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(document.getElementById("generic-tile-subHdr-text"), "Generic tile subheader is rendered in Header Mode");
+		assert.notOk(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is not rendered in Header Mode");
+
+		//Switch to ContentMode
+		this.oGenericTile.setMode(GenericTileMode.ContentMode);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(document.getElementById("generic-tile-subHdr-text"), "Generic tile subheader is rendered in Content Mode");
+		assert.notOk(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is not rendered in Content Mode");
+
+		//Switch to LineMode
+		this.oGenericTile.setMode(GenericTileMode.LineMode);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(document.getElementById("generic-tile-subHdr-text"), "Generic tile subheader is rendered in Line Mode");
+		assert.notOk(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is not rendered in Line Mode");
+
+		//Switch to ActionMode
+		this.oGenericTile.setMode(GenericTileMode.ActionMode);
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(document.getElementById("generic-tile-subHdr-text"), "Generic tile subheader is not rendered in Action Mode");
+		assert.ok(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is rendered in Action Mode");
+	});
 });

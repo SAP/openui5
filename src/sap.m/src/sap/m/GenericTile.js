@@ -188,6 +188,11 @@ sap.ui.define([
 				 */
 				icon: {type: "sap.ui.core.Control", multiple: false, deprecated: true},
 				/**
+				 * Action Buttons in ActionMode
+				 * @experimental since 1.96
+				 */
+				actionButtons: {type: "sap.m.Button", multiple: true, bindable: "bindable"},
+				/**
 				 * The hidden aggregation for the title.
 				 */
 				_titleText: {type: "sap.m.Text", multiple: false, visibility: "hidden"},
@@ -861,8 +866,15 @@ sap.ui.define([
 	};
 
 	GenericTile.prototype.ontap = function (event) {
-		var oParams;
-		if (this._bTilePress && this.getState() !== LoadState.Disabled) {
+		var oParams,
+			bIsActionButtonPressed = false;
+
+		if (this.getMode() === GenericTileMode.ActionMode) {
+			var oActionsContainerNode = document.querySelector("#" + this.getId() + "-actionButtons");
+			bIsActionButtonPressed = oActionsContainerNode && oActionsContainerNode !== event.target &&  oActionsContainerNode.contains(event.target);
+		}
+
+		if (this._bTilePress && this.getState() !== LoadState.Disabled && !bIsActionButtonPressed) {
 			this.$().trigger("focus");
 			oParams = this._getEventParams(event);
 			if (!(this.isInActionRemoveScope() && oParams.action === GenericTile._Action.Press)) {
@@ -906,7 +918,8 @@ sap.ui.define([
 	};
 
 	GenericTile.prototype.onkeyup = function (event) {
-		var currentKey = keyPressed[event.keyCode];    //disable navigation to other tiles when one tile is selected
+		var currentKey = keyPressed[event.keyCode],    //disable navigation to other tiles when one tile is selected
+			bIsActionButtonPressed = false;
 		if (currentKey) {
 			delete keyPressed[event.keyCode];
 		}
@@ -935,7 +948,13 @@ sap.ui.define([
 			bFirePress = true;
 
 		}
-		if (!preventPress && bFirePress) {
+
+		if (this.getMode() === GenericTileMode.ActionMode) {
+			var oActionsContainerNode = document.querySelector("#" + this.getId() + "-actionButtons");
+			bIsActionButtonPressed = oActionsContainerNode && oActionsContainerNode !== event.target &&  oActionsContainerNode.contains(event.target);
+		}
+
+		if (!preventPress && bFirePress && !bIsActionButtonPressed) {
 			this.firePress(oParams);
 			event.preventDefault();
 		}
