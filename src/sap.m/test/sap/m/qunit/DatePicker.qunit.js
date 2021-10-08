@@ -1644,9 +1644,6 @@ sap.ui.define([
 		var oDate = new Date(2016, 5, 29);
 		oDP3.setDateValue(oDate);
 		oDate = new Date(2016, 5, 1);
-		if (!DateTypeRange) {
-			sap.ui.getCore().loadLibrary("sap.ui.unified");
-		}
 		var oLegend = new CalendarLegend("Legend1", {
 			items: [
 				new CalendarLegendItem("T1", {type: CalendarDayType.Type01, text: "Typ 1"}),
