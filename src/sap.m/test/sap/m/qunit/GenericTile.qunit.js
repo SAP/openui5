@@ -3648,4 +3648,131 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		}.bind(this), 100);
 	});
 
+	QUnit.module("Article Mode Tests", {
+		beforeEach: function() {
+			this.oGenericTile = new GenericTile("generic-tile", {
+				mode: GenericTileMode.ArticleMode,
+				subheader: "Expenses By Region",
+				frameType: FrameType.TwoByOne,
+				header: "Comparative Annual Totals",
+				url: "#",
+				enableNavigationButton: true,
+				headerImage: IMAGE_PATH + "female_BaySu.jpg",
+				tileContent: new TileContent("tile-cont", {
+					unit: "EUR",
+					footer: "Current Quarter",
+					content: new NumericContent("numeric-cnt", {
+						state: LoadState.Loaded,
+						scale: "M",
+						indicator: DeviationIndicator.Up,
+						truncateValueTo: 4,
+						value: 20,
+						nullifyValue: true,
+						formatterValue: false,
+						valueColor: ValueColor.Good,
+						icon: "sap-icon://customer-financial-fact-sheet"
+					})
+				})
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		},
+
+		fnWithRenderAsserts: function(assert) {
+			assert.ok(document.getElementById("generic-tile"), "Generic tile was rendered successfully");
+			assert.ok(document.getElementById("generic-tile-hdr-text"), "Generic tile header was rendered successfully");
+			assert.ok(document.getElementById("generic-tile-subHdr-text"), "Generic tile subheader was rendered successfully");
+			assert.ok(document.getElementById("generic-tile-icon-image"), "Generic tile icon was rendered successfully");
+			assert.ok(document.getElementById("tile-cont"), "TileContent was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt"), "NumericContent was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt-indicator"), "Indicator was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt-value"), "Value was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt-scale"), "Scale was rendered successfully");
+			assert.ok(document.getElementById("numeric-cnt-icon-image"), "Icon was rendered successfully");
+			assert.ok(this.oGenericTile.getDomRef().classList.contains("TwoByOne"), "TwoByOne FrameType class has been added");
+		}
+	});
+
+	QUnit.test("GenericTile rendered with Read More Button in Article Mode", function(assert) {
+		this.fnWithRenderAsserts(assert);
+
+		assert.ok(document.getElementById("generic-tile-navigateActionContainer"), "navigateAction Container is rendered");
+		assert.ok(this.oGenericTile._getNavigateAction().getDomRef(), "Navigate Action Button is rendered");
+	});
+
+	QUnit.test("Press Event Tests for Navigate Action Button", function(assert) {
+		var oButtonPressHandler = sinon.spy(),
+			oTilePressHandler = sinon.spy();
+		this.oGenericTile._getNavigateAction().attachPress(oButtonPressHandler);
+		this.oGenericTile.attachPress(oTilePressHandler);
+
+		//Trigger press for Navigate Action Button
+		this.oGenericTile._getNavigateAction().firePress();
+		assert.ok(oButtonPressHandler.calledOnce, "Button press handler called on Button Press");
+		assert.notOk(oTilePressHandler.calledOnce, "Generic Tile press handler is not called on Button Press");
+
+		oButtonPressHandler = sinon.spy();
+
+		//Trigger press for Generic Tile
+		this.oGenericTile.firePress();
+		assert.ok(oTilePressHandler.calledOnce, "Generic Tile press handler is called on Tile Press");
+		assert.notOk(oButtonPressHandler.calledOnce, "Button press handler is not called on Tile Press");
+	});
+
+	QUnit.test("Update Action Button Text", function(assert) {
+		var sDefaultText = "Read More",
+			sUpdatedText = "Read Article";
+
+		assert.equal(this.oGenericTile._getNavigateAction().getText(), sDefaultText, "Default button text is shown");
+
+		//update button text
+		this.oGenericTile.setNavigationButtonText(sUpdatedText);
+		sap.ui.getCore().applyChanges();
+		assert.equal(this.oGenericTile._getNavigateAction().getText(), sUpdatedText, "Button text is updated");
+	});
+
+	QUnit.test("enableNavigationButton property changes", function(assert) {
+		assert.ok(document.getElementById("generic-tile-navigateActionContainer"), "navigateAction Container is rendered");
+		assert.ok(this.oGenericTile._getNavigateAction().getDomRef(), "Navigate Action Button is rendered");
+
+		// updated enableNavigationButton property
+		this.oGenericTile.setEnableNavigationButton(false);
+		sap.ui.getCore().applyChanges();
+		assert.notOk(document.getElementById("generic-tile-navigateActionContainer"), "navigateAction Container is not rendered");
+		assert.notOk(this.oGenericTile._getNavigateAction().getDomRef(), "Navigate Action Button is not rendered");
+	});
+
+	QUnit.test("Article Mode for Different Frame Types", function(assert) {
+		//Switch to OneByOne
+		this.oGenericTile.setFrameType(FrameType.OneByOne);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(this.oGenericTile.getDomRef().classList.contains("OneByOne"), "OneByOne FrameType class has been added");
+		assert.ok(document.getElementById("generic-tile-navigateActionContainer"), "navigateAction Container is rendered");
+
+		//Switch to OneByHalf
+		this.oGenericTile.setFrameType(FrameType.OneByHalf);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(this.oGenericTile.getDomRef().classList.contains("OneByHalf"), "OneByHalf FrameType class has been added");
+		assert.notOk(document.getElementById("generic-tile-navigateActionContainer"), "navigateAction Container is not rendered");
+
+		//Switch to TwoByHalf
+		this.oGenericTile.setFrameType(FrameType.TwoByHalf);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(this.oGenericTile.getDomRef().classList.contains("TwoByHalf"), "TwoByHalf FrameType class has been added");
+		assert.notOk(document.getElementById("generic-tile-navigateActionContainer"), "navigateAction Container is not rendered");
+
+		//Switch to TwoByOne
+		this.oGenericTile.setFrameType(FrameType.TwoByOne);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(this.oGenericTile.getDomRef().classList.contains("TwoByOne"), "TwoByOne FrameType class has been added");
+		assert.ok(document.getElementById("generic-tile-navigateActionContainer"), "navigateAction Container is rendered");
+	});
 });

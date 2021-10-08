@@ -48,7 +48,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		var isHalfFrame = frameType === frameTypes.OneByHalf || frameType === frameTypes.TwoByHalf;
 
 		// Render a link when URL is provided, not in action scope and the state is enabled
-		var bRenderLink = oControl.getUrl() && !oControl._isInActionScope() && sState !== LoadState.Disabled;
+		var bRenderLink = oControl.getUrl() && !oControl._isInActionScope() && sState !== LoadState.Disabled && !oControl._isNavigateActionEnabled();
 
 		if (oControl._isInActionScope()) {
 			sScopeClass = encodeCSS("sapMGTScopeActions");
@@ -85,10 +85,16 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			}
 		}
 		oRm.class(oControl._isIconMode() ? sClass : frameType);
+
+		var bIsArticleMode = oControl.getMode() === GenericTileMode.ArticleMode;
+
 		if (frameType === frameTypes.TwoByOne && oControl.getMode() === GenericTileMode.ActionMode) {
 			oRm.class("sapMGTActionMode");
 		}
-		if (frameType === frameTypes.OneByOne && oControl.getSystemInfo() || oControl.getAppShortcut()){
+		if (bIsArticleMode) {
+			oRm.class("sapMGTArticleMode");
+		}
+		if (!bIsArticleMode && frameType === frameTypes.OneByOne && oControl.getSystemInfo() || oControl.getAppShortcut()){
 			oRm.class("tileWithAppInfo");
 		}
 		//Set respective Class/ BackgroundColor for IconMode

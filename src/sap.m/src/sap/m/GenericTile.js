@@ -45,7 +45,8 @@ sap.ui.define([
 		Size = library.Size,
 		GenericTileMode = library.GenericTileMode,
 		TileSizeBehavior = library.TileSizeBehavior,
-		WrappingType = library.WrappingType;
+		WrappingType = library.WrappingType,
+		URLHelper = library.URLHelper;
 
 	var DEVICE_SET = "GenericTileDeviceSet";
 	var keyPressed = {};
@@ -159,6 +160,18 @@ sap.ui.define([
 				 * @since 1.76
 				 */
 				url: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
+				/**
+				 * Renders the given link as a button, enabling the option of opening the link in new tab/window functionality.
+				 * Works only in ArticleMode.
+				 * @experimental since 1.96
+				 */
+				enableNavigationButton: {type: "boolean", group: "Misc", defaultValue: false},
+				 /**
+				 * Text for navigate action button. Default Value is "Read More".
+				 * Works only in ArticleMode.
+				 * @experimental since 1.96
+				 */
+				navigationButtonText: {type: "string", group: "Misc", defaultValue: null},
 				/**
 				 * Defines the type of text wrapping to be used (hyphenated or normal).
 				 * @since 1.60
@@ -324,6 +337,10 @@ sap.ui.define([
 		} else {
 			this._handleCoreInitialized();
 		}
+
+		//Navigate Action Button in Article Mode
+		this._oNavigateAction = new Button(this.getId() + "-navigateAction");
+		this.addDependent(this._oNavigateAction);
 	};
 
 	GenericTile.prototype.setWrappingType = function (sWrappingType) {
@@ -452,6 +469,9 @@ sap.ui.define([
 		if (this._oRemoveButton) {
 			this._oRemoveButton.destroy();
 		}
+		if (this._oNavigateAction) {
+			this._oNavigateAction.destroy();
+		}
 	};
 
 	GenericTile.prototype.onBeforeRendering = function () {
@@ -485,6 +505,12 @@ sap.ui.define([
 
 		if (this.getFrameType() === FrameType.Auto) {
 			this.setProperty("frameType", FrameType.OneByOne, true);
+		}
+
+		//Set Navigate Action Button Text - Only in Article Mode
+		if (this._isNavigateActionEnabled()) {
+			var sButtonText = this.getNavigationButtonText() ? this.getNavigationButtonText() : this._oRb.getText("ACTION_READ_MORE");
+			this._oNavigateAction.setText(sButtonText);
 		}
 	};
 
@@ -522,6 +548,15 @@ sap.ui.define([
 		if (sMode === GenericTileMode.LineMode) {
 			// attach handler in order to check the device type based on width and invalidate on change
 			Device.media.attachHandler(this._handleMediaChange, this, DEVICE_SET);
+		}
+
+		//Attach press event handler to Navigate Action Button
+		if (this._isNavigateActionEnabled()) {
+			this._oNavigateAction.attachPress(function (oEvent) {
+				oEvent.preventDefault();
+				var sURL = oEvent.getSource().getParent().getUrl();
+				URLHelper.redirect(sURL, true);
+			});
 		}
 
 		this.onDragComplete();
@@ -884,40 +919,38 @@ sap.ui.define([
 	};
 
 	GenericTile.prototype.ontap = function (event) {
-		var oParams,
-			bIsActionButtonPressed = false;
+		if (!_isInnerTileButtonPressed(event, this)) {
+			var oParams;
 
-		if (this.getMode() === GenericTileMode.ActionMode) {
-			var oActionsContainerNode = document.querySelector("#" + this.getId() + "-actionButtons");
-			bIsActionButtonPressed = oActionsContainerNode && oActionsContainerNode !== event.target &&  oActionsContainerNode.contains(event.target);
-		}
-
-		if (this._bTilePress && this.getState() !== LoadState.Disabled && !bIsActionButtonPressed) {
-			this.$().trigger("focus");
-			oParams = this._getEventParams(event);
-			if (!(this.isInActionRemoveScope() && oParams.action === GenericTile._Action.Press)) {
-				this.firePress(oParams);
+			if (this._bTilePress && this.getState() !== LoadState.Disabled) {
+				this.$().trigger("focus");
+				oParams = this._getEventParams(event);
+				if (!(this.isInActionRemoveScope() && oParams.action === GenericTile._Action.Press)) {
+					this.firePress(oParams);
+				}
+				event.preventDefault();
 			}
-			event.preventDefault();
 		}
 	};
 
 	var preventPress = false;
 	GenericTile.prototype.onkeydown = function (event) {
-		preventPress = (event.keyCode === 16 || event.keyCode === 27) ? true : false;
-		var currentKey = keyPressed[event.keyCode];
-		if (!currentKey) {
-			keyPressed[event.keyCode] = true;
-			if (keyPressed[32] || keyPressed[13]) {
+		if (!_isInnerTileButtonPressed(event, this)) {
+			preventPress = (event.keyCode === 16 || event.keyCode === 27) ? true : false;
+			var currentKey = keyPressed[event.keyCode];
+			if (!currentKey) {
+				keyPressed[event.keyCode] = true;
+				if (keyPressed[32] || keyPressed[13]) {
+					event.preventDefault();
+				}
+			}
+			if (PseudoEvents.events.sapselect.fnCheck(event) && this.getState() !== LoadState.Disabled) {
+				this.addStyleClass("sapMGTPressActive");
+				if (this.$("hover-overlay").length > 0) {
+					this.$("hover-overlay").addClass("sapMGTPressActive");
+				}
 				event.preventDefault();
 			}
-		}
-		if (PseudoEvents.events.sapselect.fnCheck(event) && this.getState() !== LoadState.Disabled) {
-			this.addStyleClass("sapMGTPressActive");
-			if (this.$("hover-overlay").length > 0) {
-				this.$("hover-overlay").addClass("sapMGTPressActive");
-			}
-			event.preventDefault();
 		}
 	};
 
@@ -936,48 +969,44 @@ sap.ui.define([
 	};
 
 	GenericTile.prototype.onkeyup = function (event) {
-		var currentKey = keyPressed[event.keyCode],    //disable navigation to other tiles when one tile is selected
-			bIsActionButtonPressed = false;
-		if (currentKey) {
-			delete keyPressed[event.keyCode];
-		}
-		var oParams,
-			bFirePress = false,
-			sScope = this.getScope(),
-			bActionsScope = sScope === GenericTileScope.Actions || sScope === GenericTileScope.ActionRemove;
-
-		if (bActionsScope && (PseudoEvents.events.sapdelete.fnCheck(event) || PseudoEvents.events.sapbackspace.fnCheck(event))) {
-			oParams = {
-				scope: sScope,
-				action: GenericTile._Action.Remove,
-				domRef: this._oRemoveButton.getPopupAnchorDomRef()
-			};
-			bFirePress = true;
-		}
-		if (keyPressed[16] && event.keyCode !== 16 && this.getState() !== LoadState.Disabled) {
-			preventPress === false;
-		}
-		if ((PseudoEvents.events.sapselect.fnCheck(event) || preventPress) && this.getState() !== LoadState.Disabled) {
-			this.removeStyleClass("sapMGTPressActive");
-			if (this.$("hover-overlay").length > 0) {
-				this.$("hover-overlay").removeClass("sapMGTPressActive");
+		if (!_isInnerTileButtonPressed(event, this)) {
+			var currentKey = keyPressed[event.keyCode];    //disable navigation to other tiles when one tile is selected
+			if (currentKey) {
+				delete keyPressed[event.keyCode];
 			}
-			oParams = this._getEventParams(event);
-			bFirePress = true;
+			var oParams,
+				bFirePress = false,
+				sScope = this.getScope(),
+				bActionsScope = sScope === GenericTileScope.Actions || sScope === GenericTileScope.ActionRemove;
 
+			if (bActionsScope && (PseudoEvents.events.sapdelete.fnCheck(event) || PseudoEvents.events.sapbackspace.fnCheck(event))) {
+				oParams = {
+					scope: sScope,
+					action: GenericTile._Action.Remove,
+					domRef: this._oRemoveButton.getPopupAnchorDomRef()
+				};
+				bFirePress = true;
+			}
+			if (keyPressed[16] && event.keyCode !== 16 && this.getState() !== LoadState.Disabled) {
+				preventPress === false;
+			}
+			if ((PseudoEvents.events.sapselect.fnCheck(event) || preventPress) && this.getState() !== LoadState.Disabled) {
+				this.removeStyleClass("sapMGTPressActive");
+				if (this.$("hover-overlay").length > 0) {
+					this.$("hover-overlay").removeClass("sapMGTPressActive");
+				}
+				oParams = this._getEventParams(event);
+				bFirePress = true;
+
+			}
+
+			if (!preventPress && bFirePress) {
+				this.firePress(oParams);
+				event.preventDefault();
+			}
+
+			this._updateAriaLabel();  // To update the Aria Label for Generic Tile on change.
 		}
-
-		if (this.getMode() === GenericTileMode.ActionMode) {
-			var oActionsContainerNode = document.querySelector("#" + this.getId() + "-actionButtons");
-			bIsActionButtonPressed = oActionsContainerNode && oActionsContainerNode !== event.target &&  oActionsContainerNode.contains(event.target);
-		}
-
-		if (!preventPress && bFirePress && !bIsActionButtonPressed) {
-			this.firePress(oParams);
-			event.preventDefault();
-		}
-
-		this._updateAriaLabel();  // To update the Aria Label for Generic Tile on change.
 	};
 
 	/* --- Getters and Setters --- */
@@ -1515,6 +1544,47 @@ sap.ui.define([
 			return false;
 		}
 	};
+
+	/**
+	 * Checks if Navigate Action Button should be used in Article Mode
+	 * @returns {boolean} - true if Navigarte Action Button is enabled
+	 * @private
+	 */
+	GenericTile.prototype._isNavigateActionEnabled = function() {
+		return this.getMode() === GenericTileMode.ArticleMode && this.getUrl() && this.getEnableNavigationButton();
+	};
+
+	/**
+	 * Returns Navigate Action Button
+	 * @returns {object} Button Object
+	 * @private
+	*/
+	GenericTile.prototype._getNavigateAction = function() {
+		return this._oNavigateAction;
+	};
+
+	/**
+	 * Checks if any of the inner buttons in the Tile are focused or clicked
+	 * @param {object} event - jQuery event object
+	 * @param {object} oTile - tile object
+	 * @returns {boolean} - returns true if any of the inner buttons are focused or clicked
+	 * @private
+	 */
+	function _isInnerTileButtonPressed(event, oTile) {
+		var bIsActionButtonPressed = false,
+		bIsNavigateActionPressed = false;
+
+		if (oTile.getMode() === GenericTileMode.ActionMode) {
+			var oActionsContainerNode = document.querySelector("#" + oTile.getId() + "-actionButtons");
+			bIsActionButtonPressed = oActionsContainerNode && oActionsContainerNode !== event.target &&  oActionsContainerNode.contains(event.target);
+		}
+
+		if (oTile._isNavigateActionEnabled()) {
+			var oNavigateActionContainerNode = document.querySelector("#" + oTile.getId() + "-navigateActionContainer");
+			bIsNavigateActionPressed = oNavigateActionContainerNode && oNavigateActionContainerNode !== event.target &&  oNavigateActionContainerNode.contains(event.target);
+		}
+		return bIsActionButtonPressed || bIsNavigateActionPressed;
+	}
 
 	return GenericTile;
 });

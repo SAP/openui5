@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/security/encodeCSS"],
-	function(encodeCSS) {
+sap.ui.define(["sap/base/security/encodeCSS", "sap/m/GenericTile"],
+	function(encodeCSS, GenericTile) {
 	"use strict";
 
 	/**
@@ -81,8 +81,16 @@ sap.ui.define(["sap/base/security/encodeCSS"],
 			return;
 		}
 
-		var sColorClass = "sapMTileCntFooterTextColor" + oControl.getFooterColor();
-		var sFooterTxt = oControl._getFooterText(oRm, oControl);
+		var sColorClass = "sapMTileCntFooterTextColor" + oControl.getFooterColor(),
+			sFooterTxt = oControl._getFooterText(oRm, oControl),
+			oTile = oControl.getParent();
+
+		if (oTile instanceof GenericTile && oTile._isNavigateActionEnabled()) {
+			oRm.openStart("div", oTile.getId() + "-footer-container");
+			oRm.class("sapMTileFtrCnt");
+			oRm.openEnd();
+		}
+
 		// footer text div
 		oRm.openStart("div", oControl.getId() + "-footer-text");
 		oRm.class("sapMTileCntFtrTxt");
@@ -90,6 +98,15 @@ sap.ui.define(["sap/base/security/encodeCSS"],
 		oRm.openEnd();
 		oRm.text(sFooterTxt);
 		oRm.close("div");
+
+		if (oTile instanceof GenericTile && oTile._isNavigateActionEnabled()) {
+			oRm.openStart("div", oTile.getId() + "-navigateActionContainer");
+			oRm.class("sapMTileNavContainer");
+			oRm.openEnd();
+			oRm.renderControl(oTile._getNavigateAction());
+			oRm.close("div");
+			oRm.close("div");
+		}
 	};
 
 	return TileContentRenderer;
