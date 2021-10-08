@@ -1071,7 +1071,7 @@ function(
 
 		var fnHandleHeadersSelect = function(oEvent) {
 			this.fireHeaderDateSelect({
-				date: oEvent.getSource().getDate()
+				date: oEvent.getSource()._oDate.toLocalJSDate()
 			});
 		};
 		var fnHandleAppointmentSelect = function(oEvent) {

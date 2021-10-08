@@ -524,15 +524,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("headerDateSelect", function (assert) {
-		var oSPC = new SinglePlanningCalendar(),
+		var oSPC = new SinglePlanningCalendar({
+				startDate: new Date(2021, 1, 1)
+			}).placeAt("qunit-fixture"),
 			oSPCHeaders = oSPC.getAggregation("_grid")._getColumnHeaders(),
-			oStartDate = oSPC.getStartDate(),
-			oHeaderDateToSelect = new Date(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate()),
+			oHeaderDateToSelect = new Date(2021, 1, 4),
 			fnFireHeaderDateSelect = this.spy(oSPC, "fireHeaderDateSelect");
 
 		//act
-		oSPCHeaders.setDate(oHeaderDateToSelect);
-		oSPCHeaders.fireSelect();
+		sap.ui.getCore().applyChanges();
+		qutils.triggerEvent("mousedown", oSPCHeaders.getId() + "-20210204");
+		qutils.triggerEvent("mouseup", oSPCHeaders.getId() + "-20210204");
 
 		//assert
 		assert.ok(fnFireHeaderDateSelect.calledOnce, "Event was fired");
