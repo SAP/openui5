@@ -11,7 +11,8 @@
  * @name sap.ui.test
  * @public
  */
-
+// The module ID argument is given because QUnitUtils.js often was included as a script Element in the past.
+// It is now recommended to use it via a module dependency (sap.ui.define).
 sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	'jquery.sap.global',
 	'sap/base/util/ObjectPath',
@@ -76,7 +77,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 					var QUnit = window.QUnit;
 					window.QUnit = undefined;
 					// load the blanket instance
-					sap.ui.requireSync("sap/ui/thirdparty/blanket");
+					sap.ui.requireSync("sap/ui/thirdparty/blanket"); // legacy-relevant
 					// restore the QUnit object
 					window.QUnit = QUnit;
 					// trigger blanket to display the coverage report
