@@ -242,21 +242,23 @@ sap.ui.define([
 		// we poll for the panels aggregation content until all ExtensionPoints have been resolved
 		var iPoll = setInterval(function() {
 			var aPanelContent1 = oView.byId("sync").byId("Panel").getContent();
-			var aPanelContent2 = oView.byId("async").byId("Panel").getContent();
-			var aCellItems1 = oView.byId("sync").byId("fragmentWithExtensionPoint3--customTable").getItems()[0]
-				? oView.byId("sync").byId("fragmentWithExtensionPoint3--customTable").getItems()[0].getCells()
-				: [];
-			var aCellItems2 = oView.byId("async").byId("fragmentWithExtensionPoint3--customTable").getItems()[0]
-				? oView.byId("async").byId("fragmentWithExtensionPoint3--customTable").getItems()[0].getCells()
-				: [];
-			if (
-				aPanelContent1.length === 27
-				&& aPanelContent2.length === 27
-				&& aCellItems1.length === 2
-				&& aCellItems2.length === 2
-			) {
-				fnAssert();
-				clearInterval(iPoll);
+			if (oView.byId("async").byId("Panel")) {
+				var aPanelContent2 = oView.byId("async").byId("Panel").getContent();
+				var aCellItems1 = oView.byId("sync").byId("fragmentWithExtensionPoint3--customTable").getItems()[0]
+					? oView.byId("sync").byId("fragmentWithExtensionPoint3--customTable").getItems()[0].getCells()
+					: [];
+				var aCellItems2 = oView.byId("async").byId("fragmentWithExtensionPoint3--customTable").getItems()[0]
+					? oView.byId("async").byId("fragmentWithExtensionPoint3--customTable").getItems()[0].getCells()
+					: [];
+				if (
+					aPanelContent1.length === 27
+					&& aPanelContent2.length === 27
+					&& aCellItems1.length === 2
+					&& aCellItems2.length === 2
+				) {
+					fnAssert();
+					clearInterval(iPoll);
+				}
 			}
 		}, 500);
 	}
