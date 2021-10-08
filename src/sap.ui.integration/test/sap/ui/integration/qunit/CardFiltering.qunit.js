@@ -1,10 +1,12 @@
-/* global QUnit */
+/* global QUnit sinon */
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
+	"sap/ui/integration/Host",
 	"sap/ui/core/Core"
 ], function (
 	Card,
+	Host,
 	Core
 ) {
 	"use strict";
@@ -116,6 +118,51 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardFilteringNoDataForFilter/manifest.json");
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.test("configurationChange event is fired", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oHost = new Host(),
+			oFireConfigurationChangeSpy = sinon.spy(this.oCard, "fireConfigurationChange"),
+			oFireCardConfigurationChangeHostSpy = sinon.spy(oHost, "fireCardConfigurationChange");
+
+		this.oCard.setHost(oHost);
+
+		this.oCard.attachEvent("_ready", function () {
+			// Act
+			var oFilterBar = this.oCard.getAggregation("_filterBar"),
+				oSelect = oFilterBar.getItems()[0]._getSelect(),
+				mArguments;
+
+			oSelect.onSelectionChange({
+				getParameter: function () {
+					return oSelect.getItems()[0];
+				}
+			});
+			Core.applyChanges();
+
+			assert.ok(oFireConfigurationChangeSpy.called, "configurationChange event is fired");
+			assert.ok(oFireCardConfigurationChangeHostSpy.called, "cardConfigurationChange event of the Host is fired");
+
+			mArguments = oFireConfigurationChangeSpy.args[0][0];
+			assert.strictEqual(mArguments.changes["/sap.card/configuration/filters/category/value"], "flat_screens", "arguments are correct");
+
+			mArguments = oFireCardConfigurationChangeHostSpy.args[0][0];
+			assert.strictEqual(mArguments.changes["/sap.card/configuration/filters/category/value"], "flat_screens", "arguments are correct");
+			assert.strictEqual(mArguments.card, this.oCard, "card parameter is correct");
+
+			oFireConfigurationChangeSpy.reset();
+			oFireCardConfigurationChangeHostSpy.reset();
+			oHost.destroy();
+
+			done();
+
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_static_filter.json");
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 

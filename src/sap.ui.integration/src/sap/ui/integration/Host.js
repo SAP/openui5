@@ -112,6 +112,34 @@ sap.ui.define([
 					},
 
 					/**
+					 * Fired when some card configuration settings are changed as a result of user interaction.
+					 * For example - filter value is changed.
+					 * @experimental since 1.96
+					 */
+					cardConfigurationChange: {
+						parameters: {
+							/**
+							 * The card the changes are fired from.
+							 */
+							card: { type: "sap.ui.core.Control" },
+							/**
+							 * Changed configuration settings.
+							 *
+							 * Example:
+							 * <pre>
+							 *  {
+							 *  	"/sap.card/configuration/filters/shipper/value": "key3",
+							 *  	"/sap.card/configuration/filters/item/value": "key2"
+							 *  }
+							 * </pre>
+							 */
+							changes: {
+								type: "object"
+							}
+						}
+					},
+
+					/**
 					 * Fired when a message from channels like navigator.serviceWorker is received.
 					 * @experimental since 1.91
 					 */

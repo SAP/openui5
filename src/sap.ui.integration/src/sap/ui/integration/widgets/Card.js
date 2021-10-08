@@ -346,6 +346,30 @@ sap.ui.define([
 				},
 
 				/**
+				 * Fired when some configuration settings are changed as a result of user interaction.
+				 * For example - filter value is changed.
+				 * @experimental since 1.96
+				 */
+				configurationChange: {
+					parameters: {
+						/**
+						 * Changed configuration settings.
+						 *
+						 * Example:
+						 * <pre>
+						 *  {
+						 *  	"/sap.card/configuration/filters/shipper/value": "key3",
+						 *  	"/sap.card/configuration/filters/item/value": "key2",
+						 *  }
+						 * </pre>
+						 */
+						changes: {
+							type: "object"
+						}
+					}
+				},
+
+				/**
 				 * Fired when the manifest is loaded.
 				 * @experimental since 1.72
 				 */
@@ -2127,6 +2151,25 @@ sap.ui.define([
 		}.bind(this));
 
 		this._aCustomModels = [];
+	};
+
+	Card.prototype._fireConfigurationChange = function (mChanges) {
+		var oHostInstance = this.getHostInstance();
+
+		if (!this._bReady) {
+			return;
+		}
+
+		this.fireConfigurationChange({
+			changes: mChanges
+		});
+
+		if (oHostInstance) {
+			oHostInstance.fireCardConfigurationChange({
+				card: this,
+				changes: mChanges
+			});
+		}
 	};
 
 	return Card;

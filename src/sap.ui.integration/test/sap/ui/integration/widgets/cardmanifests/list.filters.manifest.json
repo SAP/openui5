@@ -1,0 +1,124 @@
+{
+	"sap.app": {
+		"type": "card",
+		"id": "listCard1"
+	},
+	"sap.card": {
+		"type": "List",
+		"configuration": {
+			"filters": {
+				"shipper": {
+					"value": "Shipper2",
+					"type": "string",
+					"label": "Shipper",
+					"description": "Filter the orders by shipper.",
+					"item": {
+						"path": "/",
+						"template": {
+							"key": "{ShipperID}",
+							"title": "{CompanyName}"
+						}
+					},
+					"data": {
+						"json": [
+							{
+								"ShipperID": "Shipper1",
+								"CompanyName": "Company Name 1"
+							},
+							{
+								"ShipperID": "Shipper2",
+								"CompanyName": "Company Name 2"
+							},
+							{
+								"ShipperID": "Shipper3",
+								"CompanyName": "Company Name 3"
+							},
+							{
+								"ShipperID": "Shipper4",
+								"CompanyName": "Company Name 4"
+							}
+						]
+					}
+				},
+				"item": {
+					"value": "Item3",
+					"type": "string",
+					"label": "Order",
+					"description": "Filter the orders by item.",
+					"item": {
+						"path": "/",
+						"template": {
+							"key": "{ItemID}",
+							"title": "{ItemName}"
+						}
+					},
+					"data": {
+						"json": [
+							{
+								"ItemID": "Item1",
+								"ItemName": "Item 1"
+							},
+							{
+								"ItemID": "Item2",
+								"ItemName": "Item 2"
+							},
+							{
+								"ItemID": "Item3",
+								"ItemName": "Item 3"
+							},
+							{
+								"ItemID": "Item4",
+								"ItemName": "Item 4"
+							},
+							{
+								"ItemID": "Item5",
+								"ItemName": "Item 5"
+							}
+						]
+					}
+				}
+			}
+		},
+		"header": {
+			"title": "List Card",
+			"subTitle": "Card subtitle",
+			"icon": {
+				"src": "sap-icon://accept"
+			},
+			"status": "100 of 200"
+		},
+		"content": {
+			"data": {
+				"json": [{
+						"Name": "Notebook Basic 15",
+						"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+						"Id": "HT-1000",
+						"SubCategoryId": "Notebooks",
+						"icon": "../images/Woman_avatar_01.png",
+						"highlight": "Error"
+					},
+					{
+						"Name": "Notebook Basic 17",
+						"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+						"Id": "HT-1001",
+						"SubCategoryId": "Notebooks",
+						"icon": "../images/Woman_avatar_01.png",
+						"highlight": "Success"
+					}
+				]
+			},
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": {
+					"value": "{Name}"
+				},
+				"description": {
+					"value": "{Description}"
+				},
+				"highlight": "{highlight}"
+			}
+		}
+	}
+}
