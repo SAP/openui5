@@ -332,5 +332,9 @@ sap.ui.define([
         return [];
     };
 
+    ChartDelegate.adjustChartHeight = function() {
+        //Nothing to do here in the test delegate
+    };
+
     return ChartDelegate;
 });

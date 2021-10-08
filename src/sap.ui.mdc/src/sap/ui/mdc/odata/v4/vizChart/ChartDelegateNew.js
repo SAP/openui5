@@ -16,7 +16,8 @@ sap.ui.define([
     "sap/ui/mdc/chartNew/ItemNew",
     "sap/ui/model/Sorter",
     "sap/m/VBox",
-    "sap/ui/base/ManagedObjectObserver"
+    "sap/ui/base/ManagedObjectObserver",
+    "sap/ui/core/ResizeHandler"
 ], function (
     V4ChartDelegate,
     loadModules,
@@ -31,7 +32,8 @@ sap.ui.define([
     MDCChartItem,
     Sorter,
     VBox,
-    ManagedObjectObserver
+    ManagedObjectObserver,
+    ResizeHandler
 ) {
     "use strict";
     /**
@@ -900,10 +902,18 @@ sap.ui.define([
         this._setChart(oMDCChart, new Chart({
             id: oMDCChart.getId() + "--innerChart",
             chartType: "column",
-            height: "330px",
             width: "100%",
             isAnalytical: true//,
         }));
+
+        if (oMDCChart.getHeight()){
+            this._getChart(oMDCChart).setHeight(this._calculateInnerChartHeight(oMDCChart));
+        }
+
+        //Set height correctly again if chart changes
+        ResizeHandler.register(oMDCChart, function(){
+            this.adjustChartHeight(oMDCChart);
+        }.bind(this));
 
         var oState = this._getState(oMDCChart);
         oState.aColMeasures = [];
@@ -933,6 +943,39 @@ sap.ui.define([
         var oBindingInfo = this._getBindingInfo(oMDCChart);
         this.updateBindingInfo(oMDCChart, oBindingInfo); //Applies filters
         this.rebindChart(oMDCChart, oBindingInfo);
+    };
+
+    ChartDelegate._calculateInnerChartHeight = function(oMDCChart) {
+        var iTotalHeight = jQuery(oMDCChart.getDomRef()).height();
+        var iToolbarHeight = 0;
+        var oToolbar = oMDCChart.getAggregation("_toolbar");
+        var iBreadcrumbsHeight = 0;
+        var oBreadcrumbs = oMDCChart.getAggregation("_breadcrumbs");
+
+        if (oToolbar){
+            iToolbarHeight = jQuery(oToolbar.getDomRef()).outerHeight(true);
+        }
+
+        if (oBreadcrumbs){
+            iBreadcrumbsHeight = jQuery(oBreadcrumbs.getDomRef()).outerHeight(true);
+        }
+
+        var iSubHeight = iBreadcrumbsHeight + iToolbarHeight;
+
+        if (!iTotalHeight){
+            return "480px";
+        }
+
+        return iTotalHeight - iSubHeight +  "px";
+    };
+
+    /**
+     * Adjust chart height to changed content strucutre, if needed
+     */
+    ChartDelegate.adjustChartHeight = function(oMDCChart){
+        if (oMDCChart.getHeight() && this._getChart(oMDCChart)){
+            this._getChart(oMDCChart).setHeight(this._calculateInnerChartHeight(oMDCChart));
+        }
     };
 
     ChartDelegate.requestToolbarUpdate = function(oMDCChart) {
