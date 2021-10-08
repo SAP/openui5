@@ -233,7 +233,13 @@ sap.ui.define([
 		assert.strictEqual(oResult, oObjectStatus, "Should be able to chain");
 		assert.notOk(/.*<script>.*/.test($Title.html()), "Did not contain a unescaped script tag");
 		assert.strictEqual($Title.attr("data-colon"), ":", "Did have an attribute containing a :");
-		assert.strictEqual(window.getComputedStyle($Title[0], ':after').getPropertyValue('content'), '":"', "Did contain a :");
+
+		// OR is used here because of buggy behaviour of the Firefox browser, where it seems
+		// getComputedStyle() cannot resolve properly the value of the 'content' property
+		// and retuns the declaration instead of the value
+		assert.ok((window.getComputedStyle($Title[0], ':after').getPropertyValue('content') === '":"'
+			|| window.getComputedStyle($Title[0], ':after').getPropertyValue('content') === "attr(data-colon)"), "Did contain a :");
+
 		assert.strictEqual(oObjectStatus.getTitle(), sTitleToExpect, "Did set the number as a string as a value");
 
 		//Cleanup
