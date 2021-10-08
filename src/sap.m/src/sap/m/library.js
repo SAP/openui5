@@ -1774,7 +1774,15 @@ sap.ui.define([
 		 * @since 1.44.0
 		 * @public
 		 */
-		LineMode : "LineMode"
+		LineMode : "LineMode",
+		/**
+		 * Icon mode.
+		 *
+		 * GenericTile displays a combination of icon and header title. It is applicable only for the OneByOne FrameType and TwoByHalf FrameType.
+		 * @public 1.96
+		 * @experimental Since 1.96
+		*/
+		IconMode : "IconMode"
 	};
 
 	/**
