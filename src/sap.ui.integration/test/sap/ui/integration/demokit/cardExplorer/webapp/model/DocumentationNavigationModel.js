@@ -93,6 +93,26 @@ sap.ui.define([
 				experimental: true
 			},
 			{
+				title: 'Card Filters',
+				key: "filters",
+				target: 'learnDetail',
+				icon: 'sap-icon://filter',
+				items: [
+					{
+						title: 'DateRange',
+						target: 'learnDetail',
+						key: 'dateRange',
+						experimental: true
+					},
+					{
+						title: 'Select',
+						target: 'learnDetail',
+						key: 'select',
+						experimental: true
+					}
+				]
+			},
+			{
 				title: 'Card Features',
 				icon: 'sap-icon://activities',
 				target: 'learnDetail',
@@ -133,12 +153,6 @@ sap.ui.define([
 						title: 'Extension',
 						target: 'learnDetail',
 						key: 'extension'
-					},
-					{
-						title: 'Filters',
-						target: 'learnDetail',
-						key: 'filters',
-						experimental: true
 					},
 					{
 						title: 'Manifest Parameters',

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Cards Filters</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Integration Card Filters</h1>
+			<div class="messageStripWarning">
+				Experimental feature since version 1.80. The API may change.
+			</div>
+			<p>
+				Filters allow end users to refine displayed data based on selected criteria.
+			</p>
+			<p>
+				Filters are defined in the "configuration" section of the manifest. They are displayed under the card header.
+				The value of each filter can be read from the <code>filters</code> model.
+				When the end user selects different value the model is updated, refreshing all fields that are bound to it.
+				The most common use case is to bind filter value to data request.
+			</p>
+
+			<h2 id="filterProperties">Filter Properties</h2>
+			<p>All filter types have the following properties:</p>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>type</td>
+						<td>string</td>
+						<td>"Select"</td>
+						<td>No</td>
+						<td>
+							The type of the filter. Possible values: "Select" and "DateRange".
+							Based on this value additional properties of the filter are available.
+							See <a href="../../index.html#/learn/filters/select" target="_parent">Select Filter</a> and <a href="../../index.html#/learn/filters/dateRange" target="_parent">DateRange Filter</a>.
+						</td>
+						<td>1.24.0</td>
+						<td>1.80</td>
+					</tr>
+					<tr>
+						<td>label</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>A label for the filter. This property is used only in UI adaptation during designtime.</td>
+						<td>1.24.0</td>
+						<td>1.80</td>
+					</tr>
+					<tr>
+						<td>description</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>More detailed description for this filter. This property is used only in UI adaptation
+							during designtime.</td>
+						<td>1.24.0</td>
+						<td>1.80</td>
+					</tr>
+					<tr>
+						<td>data</td>
+						<td><a href="../../index.html#/learn/features/data" target="_parent">Data</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Data to populate the filter.</td>
+						<td>1.27.0</td>
+						<td>1.83</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="filtersModel">Filters Model</h2>
+			<p>
+				The value of each filter is stored in the <code>filters</code> model.
+				It can be referenced throughout the manifest with the following syntax: <code>{filters>/keyOfTheFilter/value}</code>.
+				Depending on the filter type different values are available.
+			</p>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Card Filters</a></div>
+			<div><a href="#filterProperties">Properties</a></div>
+			<div><a href="#filtersModel">Filters Model</a></div>
+		</div>
+	</div>
+</body>
+
+</html>

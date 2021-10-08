@@ -2299,8 +2299,8 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "operator": {
-              "description": "The date range operator",
+            "option": {
+              "description": "The date range option",
               "type": "string"
             },
             "values": {
@@ -2757,7 +2757,7 @@
               "type": "string"
             },
             "dir": {
-              "description": "The direction in which the group items will be ordered",
+              "description": "The sorting direction in which the group items will be ordered",
               "oneOf": [
                 {
                   "enum": [

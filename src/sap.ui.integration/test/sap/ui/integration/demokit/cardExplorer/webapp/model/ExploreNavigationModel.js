@@ -933,6 +933,60 @@ sap.ui.define([
 				]
 			},
 			{
+				title: 'Card Filters',
+				key: 'filters',
+				target: 'exploreOverview',
+				icon: 'sap-icon://filter',
+				hasExpander: false,
+				items: [
+					{
+						title: 'DateRange',
+						target: 'exploreSamples',
+						key: 'dateRangeFilter',
+						experimental: true,
+						files: [
+							{
+
+								url: '/samples/filters/dateRange/dateRangeFilter.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							}
+						]
+					},
+					{
+						title: 'Select',
+						target: 'exploreSamples',
+						key: 'selectFilter',
+						experimental: true,
+						subSamples: [
+							{
+								title: 'Dynamically Defined Filter',
+								key: 'dynamicFilter',
+								files: [
+									{
+										url: '/samples/filters/select/dynamicFilter.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Using Static Items',
+								key: 'usingStaticItems',
+								mockServer: true,
+								files: [
+									{
+										url: '/samples/filters/select/usingStaticItems.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							}
+						]
+					}
+				]
+			},
+			{
 				title: 'Card Features',
 				key: 'features',
 				target: 'exploreOverview',
@@ -1187,46 +1241,6 @@ sap.ui.define([
 										key: 'DataExtension.js'
 									}
 								]
-							}
-						]
-					},
-					{
-						key: 'filters',
-						target: 'exploreSamples',
-						title: 'Filters',
-						experimental: true,
-						subSamples: [
-							{
-								title: 'Dynamically Defined Filter',
-								key: 'dynamicFilter',
-								files: [
-									{
-										url: '/samples/filters/dynamicFilter.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									}
-								]
-							},
-							{
-								title: 'Using Static Items',
-								key: 'usingStaticItems',
-								mockServer: true,
-								files: [
-									{
-										url: '/samples/filters/usingStaticItems.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									}
-								]
-							},
-							{
-								title: 'Date Range Filter',
-								key: 'dateRangeFilter',
-								files: [{
-									url: '/samples/filters/dateRangeFilter.json',
-									name: 'manifest.json',
-									key: 'manifest.json'
-								}]
 							}
 						]
 					},

@@ -21,11 +21,11 @@ sap.ui.define([
 	var MAX_ODATA_DATE = new Date("9999-12-31");
 
 	/**
-	 * @param {string} sOperator sap.m.StandardDynamicDateRangeKeys operator in upper case
-	 * @returns {string} Operator in camel case
+	 * @param {string} sOption sap.m.StandardDynamicDateRangeKeys option in upper case
+	 * @returns {string} Option in camel case
 	 */
-	function operatorToCamelCase(sOperator) {
-		var mOperators = {
+	function optionToCamelCase(sOption) {
+		var mOptions = {
 			"DATE": "date",
 			"TODAY": "today",
 			"YESTERDAY": "yesterday",
@@ -69,7 +69,7 @@ sap.ui.define([
 			"NEXTYEAR": "nextYear"
 		};
 
-		return mOperators[sOperator];
+		return mOptions[sOption];
 	}
 
 	/**
@@ -122,8 +122,12 @@ sap.ui.define([
 		var oRangeOData;
 
 		if (oDateRangeValue) {
-			oValue = Object.assign({}, oDateRangeValue);
-			var aDates = DynamicDateUtil.toDates(oValue),
+			oValue = {
+				option: optionToCamelCase(oDateRangeValue.operator),
+				values: oDateRangeValue.values.slice()
+			};
+
+			var aDates = DynamicDateUtil.toDates(oDateRangeValue),
 				dStart = aDates[0].getJSDate ? aDates[0].getJSDate() : aDates[0],
 				dEnd = aDates[1].getJSDate ? aDates[1].getJSDate() : aDates[1];
 
@@ -136,17 +140,15 @@ sap.ui.define([
 				end: dEnd.toISOString()
 			};
 
-			if (oValue.operator === "TO") {
+			if (oDateRangeValue.operator === "TO") {
 				oRange.start = MIN_DATE.toISOString();
 				oRangeOData.start = MIN_ODATA_DATE.toISOString();
 			}
 
-			if (oValue.operator === "FROM") {
+			if (oDateRangeValue.operator === "FROM") {
 				oRange.end = MAX_DATE.toISOString();
 				oRangeOData.end = MAX_ODATA_DATE.toISOString();
 			}
-
-			oValue.operator = operatorToCamelCase(oValue.operator);
 		}
 
 		return {
@@ -177,7 +179,7 @@ sap.ui.define([
 		var oValue;
 
 		if (oConfig.value) {
-			var sOption = oConfig.value.operator.toUpperCase();
+			var sOption = oConfig.value.option.toUpperCase();
 			var aTypes = DynamicDateUtil.getOption(sOption).getValueTypes();
 			oValue = {
 				operator: sOption,
