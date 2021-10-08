@@ -63,7 +63,8 @@ sap.ui.define([
 					},
 					registerNavigationFilter: function () {
 					},
-					reloadCurrentApp: fnFLPReloadStub
+					reloadCurrentApp: fnFLPReloadStub,
+					getUser: function () {}
 				};
 			},
 			getServiceAsync: function () {
@@ -87,7 +88,8 @@ sap.ui.define([
 					},
 					registerNavigationFilter: function () {
 					},
-					reloadCurrentApp: fnFLPReloadStub
+					reloadCurrentApp: fnFLPReloadStub,
+					getUser: function () {}
 				});
 			},
 			getLogonSystem: function () {
@@ -238,7 +240,8 @@ sap.ui.define([
 		},
 		beforeEach: function () {
 			sandbox.stub(FlexUtils, "getUshellContainer").returns({
-				getService: function () {
+				//TODO: Remove when all calls are adjusted
+				getService: function() {
 					return {
 						toExternal: function () {
 							return true;
@@ -247,6 +250,16 @@ sap.ui.define([
 							return {params: {}};
 						}
 					};
+				},
+				getServiceAsync: function () {
+					return Promise.resolve({
+						toExternal: function () {
+							return true;
+						},
+						parseShellHash: function () {
+							return {params: {}};
+						}
+					});
 				}
 			});
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
@@ -266,7 +279,8 @@ sap.ui.define([
 				selector: this.oRta.getRootControlInstance(),
 				ignoreMaxLayerParameter: false,
 				includeCtrlVariants: true,
-				parsedHash: this.mParsedHash
+				parsedHash: this.mParsedHash,
+				URLParsingService: this.oURLParsingService
 			};
 		},
 		afterEach: function () {
@@ -303,6 +317,18 @@ sap.ui.define([
 			});
 			this.mParsedHash = {params: {}};
 
+			this.oURLParsingService = {
+				parseShellHash: function () {
+					var mHash = {
+						semanticObject: "Action",
+						action: "somestring"
+					};
+
+					mHash.params = {};
+					return mHash;
+				}
+			};
+
 			this.oReloadInfo = {
 				hasHigherLayerChanges: false,
 				isDraftAvailable: true,
@@ -310,8 +336,15 @@ sap.ui.define([
 				selector: this.oRta.getRootControlInstance(),
 				ignoreMaxLayerParameter: false,
 				includeCtrlVariants: true,
-				parsedHash: this.mParsedHash
+				parsedHash: this.mParsedHash,
+				URLParsingService: this.oURLParsingService
 			};
+
+			sandbox.stub(this.oRta, "_getUShellService").withArgs("CrossApplicationNavigation").returns({
+				toExternal: function () {
+					return true;
+				}
+			});
 		},
 		afterEach: function () {
 			this.oRta.destroy();
@@ -359,7 +392,8 @@ sap.ui.define([
 
 			var oReloadInfo = {
 				isDraftAvailable: true,
-				hasHigherLayerChanges: false
+				hasHigherLayerChanges: false,
+				URLParsingService: this.oURLParsingService
 			};
 			return this.oRta._triggerReloadOnStart(oReloadInfo).then(function () {
 				assert.equal(oLoadDraftForApplication.callCount, 1, "then loadDraftForApplication is called once");
@@ -375,7 +409,8 @@ sap.ui.define([
 
 			var oReloadInfo = {
 				isDraftAvailable: false,
-				hasHigherLayerChanges: true
+				hasHigherLayerChanges: true,
+				URLParsingService: this.oURLParsingService
 			};
 			return this.oRta._triggerReloadOnStart(oReloadInfo).then(function () {
 				assert.equal(oLoadDraftForApplication.callCount, 0, "then loadDraftForApplication is called once");
@@ -440,7 +475,7 @@ sap.ui.define([
 					"sap-ui-fl-version": [sap.ui.fl.Versions.Draft]
 				}
 			};
-			var oReloadCurrentAppStub = sandbox.stub(FlexUtils.getUshellContainer().getService("AppLifeCycle"), "reloadCurrentApp").returns(true);
+			var oReloadCurrentAppStub = sandbox.stub(this.oRta._getUShellService("AppLifeCycle"), "reloadCurrentApp").returns(true);
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_VIEWS_PERSONALIZATION_AND_WITHOUT_DRAFT", assert);
 			var mParsedHash = this.oRta._removeVersionParameterForFLP({deleteMaxLayer: true, hasHigherLayerChanges: true}, mParsedHash);
 			assert.equal(mParsedHash, mParsedHash, "hash didnt change");
@@ -493,6 +528,7 @@ sap.ui.define([
 				rootControl: this.oRootControl
 			});
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
+			this.oSwitchVersionStub = sandbox.stub(this.oRta, "_switchVersion");
 			return this.oRta.start();
 		},
 		afterEach: function () {
@@ -508,11 +544,10 @@ sap.ui.define([
 			sandbox.stub(this.oRta, "canUndo").returns(true);
 			var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
 
-			return this.oRta._onSwitchVersion(oEvent)
-			.then(function () {
-				assert.equal(oShowMessageBoxStub.callCount, 1, "a MessageBox was opened");
-				assert.equal(this.oEnableRestartStub.callCount, 0, "then no restart is mentioned");
-			}.bind(this));
+			this.oRta._onSwitchVersion(oEvent);
+
+			assert.equal(oShowMessageBoxStub.callCount, 1, "a MessageBox was opened");
+			assert.equal(this.oEnableRestartStub.callCount, 0, "then no restart is enabled");
 		});
 
 		QUnit.test("when the displayed version and the in the event are the same", function (assert) {
@@ -524,10 +559,11 @@ sap.ui.define([
 
 			this.oRta._onSwitchVersion(oEvent);
 
-			assert.equal(this.oEnableRestartStub.callCount, 0, "then no restart is mentioned");
+			assert.equal(this.oEnableRestartStub.callCount, 0, "then no restart is enabled");
 		});
 
 		QUnit.test("when no version is in the url and the app", function (assert) {
+			var fnDone = assert.async();
 			var oEvent = new Event("someEventId", undefined, {
 				version: 1
 			});
@@ -535,19 +571,24 @@ sap.ui.define([
 			var oCrossAppNavigationStub = sandbox.stub(this.oRta, "_triggerCrossAppNavigation").resolves();
 			var oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication");
 
-			this.oRta._onSwitchVersion(oEvent);
+			this.oSwitchVersionStub.callsFake(function() {
+				this.oRta._switchVersion.wrappedMethod.apply(this.oRta, arguments);
+				assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
+				assert.equal(oLoadVersionStub.callCount, 1, "a reload for versions as triggered");
+				var oLoadVersionArguments = oLoadVersionStub.getCall(0).args[0];
+				assert.equal(oLoadVersionArguments.selector, this.oRootControl, "with the selector");
+				assert.equal(oLoadVersionArguments.version, 1, ", the version number");
+				assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
+				assert.equal(oCrossAppNavigationStub.callCount, 1, "a cross app navigation was triggered");
+				fnDone();
+			}.bind(this));
 
-			assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is mentioned");
-			assert.equal(oLoadVersionStub.callCount, 1, "a reload for versions as triggered");
-			var oLoadVersionArguments = oLoadVersionStub.getCall(0).args[0];
-			assert.equal(oLoadVersionArguments.selector, this.oRootControl, "with the selector");
-			assert.equal(oLoadVersionArguments.version, 1, ", the version number");
-			assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
-			assert.equal(oCrossAppNavigationStub.callCount, 1, "a cross app navigation was triggered");
+			this.oRta._onSwitchVersion(oEvent);
 		});
 
 		QUnit.test("when a version is in the url and the same version should be loaded again (i.e. loaded the app with " +
 			"the 'Original App' version, create a draft and switch to 'Original Version' again)", function (assert) {
+			var fnDone = assert.async();
 			var oEvent = new Event("someEventId", undefined, {
 				version: sap.ui.fl.Versions.Original
 			});
@@ -560,15 +601,19 @@ sap.ui.define([
 			mParsedUrlHash.params[sap.ui.fl.Versions.UrlParameter] = [sap.ui.fl.Versions.Original.toString()];
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedUrlHash);
 
-			this.oRta._onSwitchVersion(oEvent);
+			this.oSwitchVersionStub.callsFake(function() {
+				this.oRta._switchVersion.wrappedMethod.apply(this.oRta, arguments);
+				assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is mentioned");
+				assert.equal(oLoadVersionStub.callCount, 1, "a reload for versions as triggered");
+				var oLoadVersionArguments = oLoadVersionStub.getCall(0).args[0];
+				assert.equal(oLoadVersionArguments.selector, this.oRootControl, "with the selector");
+				assert.equal(oLoadVersionArguments.version, sap.ui.fl.Versions.Original, ", the version number");
+				assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
+				assert.equal(this.oRestartFlpStub.callCount, 1, "a app restart was triggered");
+				fnDone();
+			}.bind(this));
 
-			assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is mentioned");
-			assert.equal(oLoadVersionStub.callCount, 1, "a reload for versions as triggered");
-			var oLoadVersionArguments = oLoadVersionStub.getCall(0).args[0];
-			assert.equal(oLoadVersionArguments.selector, this.oRootControl, "with the selector");
-			assert.equal(oLoadVersionArguments.version, sap.ui.fl.Versions.Original, ", the version number");
-			assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
-			assert.equal(this.oRestartFlpStub.callCount, 1, "a app restart was triggered");
+			this.oRta._onSwitchVersion(oEvent);
 		});
 	});
 
@@ -597,33 +642,43 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("when save was called", function (assert) {
+			var fnDone = assert.async();
 			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.YES);
 
 			var oEvent = new Event("someEventId", undefined, {
 				version: this.nVersionParameter
 			});
-			return this.oRta._onSwitchVersion(oEvent)
-			.then(function () {
+
+			this.oSwitchVersionStub.callsFake(function() {
+				this.oRta._switchVersion.wrappedMethod.apply(this.oRta, arguments);
 				assert.equal(this.oSerializeStub.callCount, 1, "the changes were saved");
 				assert.equal(this.oSwitchVersionStub.callCount, 1, "the version switch was triggered");
 				var aSwitchVersionArguments = this.oSwitchVersionStub.getCall(0).args;
 				assert.equal(aSwitchVersionArguments[0], this.nVersionParameter, "the version parameter was passed correct");
+				fnDone();
 			}.bind(this));
+
+			this.oRta._onSwitchVersion(oEvent);
 		});
 
 		QUnit.test("when changes should not be saved", function (assert) {
+			var fnDone = assert.async();
 			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.NO);
 
 			var oEvent = new Event("someEventId", undefined, {
 				version: this.nVersionParameter
 			});
-			return this.oRta._onSwitchVersion(oEvent)
-			.then(function () {
+
+			this.oSwitchVersionStub.callsFake(function() {
+				this.oRta._switchVersion.wrappedMethod.apply(this.oRta, arguments);
 				assert.equal(this.oSerializeStub.callCount, 0, "the changes were not saved");
 				assert.equal(this.oSwitchVersionStub.callCount, 1, "the version switch was triggered");
 				var aSwitchVersionArguments = this.oSwitchVersionStub.getCall(0).args;
 				assert.equal(aSwitchVersionArguments[0], this.nVersionParameter, "the version parameter was passed correct");
+				fnDone();
 			}.bind(this));
+
+			this.oRta._onSwitchVersion(oEvent);
 		});
 
 		QUnit.test("when cancel was called", function (assert) {
@@ -632,11 +687,10 @@ sap.ui.define([
 			var oEvent = new Event("someEventId", undefined, {
 				version: this.nVersionParameter
 			});
-			return this.oRta._onSwitchVersion(oEvent)
-			.then(function () {
-				assert.equal(this.oSerializeStub.callCount, 0, "the changes were not saved");
-				assert.equal(this.oSwitchVersionStub.callCount, 0, "the version switch was not triggered");
-			}.bind(this));
+
+			this.oRta._onSwitchVersion(oEvent);
+			assert.equal(this.oSerializeStub.callCount, 0, "the changes were not saved");
+			assert.equal(this.oSwitchVersionStub.callCount, 0, "the version switch was not triggered");
 		});
 	});
 
@@ -645,6 +699,8 @@ sap.ui.define([
 			return oComponentPromise;
 		},
 		beforeEach: function() {
+			this.oRestartFlpStub = sandbox.stub();
+			givenAnFLP(function() {return true;}, this.oRestartFlpStub);
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
 				rootControl: this.oRootControl
@@ -660,9 +716,6 @@ sap.ui.define([
 				this.oRta._oVersionsModel = oModel;
 				return Promise.resolve();
 			}.bind(this));
-
-			this.oRestartFlpStub = sandbox.stub();
-			givenAnFLP(function() {return true;}, this.oRestartFlpStub);
 		},
 		afterEach: function() {
 			this.oRta.destroy();
@@ -795,6 +848,7 @@ sap.ui.define([
 				showToolbars: false
 			});
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
+			this.oSwitchVersionStub = sandbox.stub(this.oRta, "_switchVersion");
 			return this.oRta.start();
 		},
 		afterEach: function() {
@@ -803,6 +857,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when no version is in the url and the app", function (assert) {
+			var fnDone = assert.async();
 			var oEvent = new Event("someEventId", undefined, {
 				version: 1
 			});
@@ -811,15 +866,20 @@ sap.ui.define([
 			var oHandleUrlParametersSpy = sandbox.spy(FlexUtils, "handleUrlParameters");
 			var oTriggerHardReloadSpy = sandbox.spy(this.oRta, "_triggerHardReload");
 
-			this.oRta._onSwitchVersion(oEvent);
+			this.oSwitchVersionStub.callsFake(function() {
+				this.oRta._switchVersion.wrappedMethod.apply(this.oRta, arguments);
+				assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
+				assert.equal(oTriggerHardReloadSpy.callCount, 1, "_triggerHardReload was called");
+				assert.equal(oHandleUrlParametersSpy.callCount, 1, "handleUrlParameters was called");
+				assert.equal(oSetUriParameterStub.callCount, 1, "the uri was changed and will lead to a reload");
+				fnDone();
+			}.bind(this));
 
-			assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is mentioned");
-			assert.equal(oTriggerHardReloadSpy.callCount, 1, "_triggerHardReload was called");
-			assert.equal(oHandleUrlParametersSpy.callCount, 1, "handleUrlParameters was called");
-			assert.equal(oSetUriParameterStub.callCount, 1, "the uri was changed and will lead to a reload");
+			this.oRta._onSwitchVersion(oEvent);
 		});
 
 		QUnit.test("when version parameter is in the url no hard reload is triggered", function (assert) {
+			var fnDone = assert.async();
 			var oEvent = new Event("someEventId", undefined, {
 				version: 1
 			});
@@ -828,11 +888,15 @@ sap.ui.define([
 			var oTriggerHardReloadSpy = sandbox.spy(this.oRta, "_triggerHardReload");
 			var oReloadPageSpy = sandbox.stub(this.oRta, "_reloadPage").resolves();
 
-			this.oRta._onSwitchVersion(oEvent);
+			this.oSwitchVersionStub.callsFake(function() {
+				this.oRta._switchVersion.wrappedMethod.apply(this.oRta, arguments);
+				assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
+				assert.equal(oReloadPageSpy.callCount, 1, "_reloadPage was called");
+				assert.equal(oTriggerHardReloadSpy.callCount, 0, "and _triggerHardReload was not called");
+				fnDone();
+			}.bind(this));
 
-			assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is mentioned");
-			assert.equal(oReloadPageSpy.callCount, 1, "_reloadPage was called");
-			assert.equal(oTriggerHardReloadSpy.callCount, 0, "and _triggerHardReload was not called");
+			this.oRta._onSwitchVersion(oEvent);
 		});
 	});
 

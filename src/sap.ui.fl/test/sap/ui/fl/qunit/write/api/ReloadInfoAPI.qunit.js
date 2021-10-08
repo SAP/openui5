@@ -383,16 +383,17 @@ sap.ui.define([
 				changesNeedReload: false,
 				isDraftAvailable: false,
 				versioningEnabled: true,
-				activeVersion: 2
-			};
-
-			var mParsedHash = {
-				params: {
-					"sap-ui-fl-version": ["2"]
+				activeVersion: 2,
+				URLParsingService: {
+					parseShellHash: function() {
+						return {
+							params: {
+								"sap-ui-fl-version": ["2"]
+							}
+						};
+					}
 				}
 			};
-
-			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
 
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
@@ -606,18 +607,20 @@ sap.ui.define([
 
 	QUnit.module("Given that a hasVersionParameterWithValue is called in FLP and the version parameter is in the hash", {
 		beforeEach: function() {
+			this.oURLParsingService = {
+				parseShellHash: function () {
+					return {
+						params: {
+							"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]
+						}
+					};
+				}
+			};
 			sandbox.stub(FlexUtils, "getUshellContainer").returns({
 				getService: function () {
 					return {
 						toExternal: function() {
 							return true;
-						},
-						parseShellHash: function () {
-							return {
-								params: {
-									"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]
-								}
-							};
 						}
 					};
 				}
@@ -628,30 +631,32 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("with value '0'", function(assert) {
-			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()});
+			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()}, this.oURLParsingService);
 			assert.deepEqual(bHasVersionParameter, true, "hasVersionParameterWithValue returns true");
 		});
 
 		QUnit.test("with value '1'", function(assert) {
-			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: "1"});
+			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: "1"}, this.oURLParsingService);
 			assert.deepEqual(bHasVersionParameter, false, "hasVersionParameterWithValue returns false");
 		});
 	});
 
 	QUnit.module("Given that a hasMaxLayerParameterWithValue is called in FLP and the version parameter is in the hash", {
 		beforeEach: function() {
+			this.oURLParsingService = {
+				parseShellHash: function () {
+					return {
+						params: {
+							"sap-ui-fl-max-layer": [Layer.CUSTOMER]
+						}
+					};
+				}
+			};
 			sandbox.stub(FlexUtils, "getUshellContainer").returns({
 				getService: function () {
 					return {
 						toExternal: function() {
 							return true;
-						},
-						parseShellHash: function () {
-							return {
-								params: {
-									"sap-ui-fl-max-layer": [Layer.CUSTOMER]
-								}
-							};
 						}
 					};
 				}
@@ -662,29 +667,31 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("with value CUSTOMER", function(assert) {
-			var bHasVersionParameter = ReloadInfoAPI.hasMaxLayerParameterWithValue({value: Layer.CUSTOMER});
+			var bHasVersionParameter = ReloadInfoAPI.hasMaxLayerParameterWithValue({value: Layer.CUSTOMER}, this.oURLParsingService);
 			assert.deepEqual(bHasVersionParameter, true, "hasMaxLayerParameterWithValue returns true");
 		});
 
 		QUnit.test("with value USER", function(assert) {
-			var bHasVersionParameter = ReloadInfoAPI.hasMaxLayerParameterWithValue({value: Layer.USER});
+			var bHasVersionParameter = ReloadInfoAPI.hasMaxLayerParameterWithValue({value: Layer.USER}, this.oURLParsingService);
 			assert.deepEqual(bHasVersionParameter, false, "hasMaxLayerParameterWithValue returns false");
 		});
 	});
 
 	QUnit.module("Given that a hasVersionParameterWithValue is called in FLP and the version parameter is not in the hash", {
 		beforeEach: function() {
+			this.oURLParsingService = {
+				parseShellHash: function () {
+					return {
+						params: {
+						}
+					};
+				}
+			};
 			sandbox.stub(FlexUtils, "getUshellContainer").returns({
 				getService: function () {
 					return {
 						toExternal: function() {
 							return true;
-						},
-						parseShellHash: function () {
-							return {
-								params: {
-								}
-							};
 						}
 					};
 				}
@@ -695,12 +702,12 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("with value '0'", function(assert) {
-			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()});
+			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()}, this.oURLParsingService);
 			assert.deepEqual(bHasVersionParameter, false, "hasVersionParameterWithValue returns undefined");
 		});
 
 		QUnit.test("with value '1'", function(assert) {
-			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: "1"});
+			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: "1"}, this.oURLParsingService);
 			assert.deepEqual(bHasVersionParameter, false, "hasVersionParameterWithValue returns undefined");
 		});
 	});

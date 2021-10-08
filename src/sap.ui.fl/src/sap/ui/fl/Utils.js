@@ -729,19 +729,6 @@ function(
 		},
 
 		/**
-		 * Returns URL hash when ushell container is available
-		 *
-		 * @returns {object} Returns the parsed URL hash object or an empty object if ushell container is not available
-		 */
-		//TODO: Replace with async implementation when all objects are adjusted + adjust all callers
-		getParsedURLHash: function() {
-			return Utils.ifUShellContainerThen(function(aServices) {
-				var oParsedHash = aServices[0].parseShellHash(hasher.getHash());
-				return oParsedHash || {};
-			}, ["URLParsing"]) || {};
-		},
-
-		/**
 		 * Returns promise resolving to URL hash when ushell container is available
 		 *
 		 * @returns {Promise<object>} Resolving to a parsed URL hash object or an empty object if ushell container is not available
@@ -761,6 +748,19 @@ function(
 					});
 			}
 			return Promise.resolve({});
+		},
+
+		/**
+		 * Returns URL hash when ushell container is available synchronously.
+		 *
+		 * @param  {sap.ushell.services.URLParsing} oURLParsingService - The Unified Shell's internal URL parsing service
+		 * @returns {object} Returns the parsed URL hash object or an empty object if ushell container is not available
+		 */
+		getParsedURLHash: function(oURLParsingService) {
+			if (oURLParsingService) {
+				return oURLParsingService.parseShellHash(hasher.getHash()) || {};
+			}
+			return {};
 		},
 
 		/**
@@ -817,22 +817,6 @@ function(
 		 */
 		getUshellContainer: function() {
 			return sap.ushell && sap.ushell.Container;
-		},
-
-		/**
-		 * Returns a Promise resolving with the requested Unified Shell service if available
-		 *
-		 * @param {string} sServiceName UShell service name (e.g. "URLParsing")
-		 * @returns {Promise<object|undefined>} Returns UShell service if available or undefined
-		 */
-		getUShellService: function(sServiceName) {
-			if (sServiceName) {
-				var oUShellContainer = this.getUshellContainer();
-				if (oUShellContainer) {
-					return oUShellContainer.getServiceAsync(sServiceName);
-				}
-			}
-			return Promise.resolve();
 		},
 
 		createDefaultFileName: function(sNameAddition) {
@@ -1231,10 +1215,11 @@ function(
 		 * @param  {string} sParameters - The URL parameters to be modified
 		 * @param  {string} sParameterName - The parameter name that can be removed or added
 		 * @param  {string} sParameterValue - The parameter value of the parameter name that can be removed or added
+		 * @param  {sap.ushell.services.URLParsing} oURLParsingService - The Unified Shell's internal URL parsing service
 		 * @returns {string} The modified URL
 		 */
-		handleUrlParameters: function(sParameters, sParameterName, sParameterValue) {
-			if (this.hasParameterAndValue(sParameterName, sParameterValue)) {
+		handleUrlParameters: function(sParameters, sParameterName, sParameterValue, oURLParsingService) {
+			if (this.hasParameterAndValue(sParameterName, sParameterValue, oURLParsingService)) {
 				if (sParameters.startsWith("?")) {
 					sParameters = sParameters.substr(1, sParameters.length);
 				}
@@ -1256,22 +1241,23 @@ function(
 		 *
 		 * @param  {string} sParameterName - The parameter name to be checked
 		 * @param  {string} sParameterValue - The parameter value to be checked
+		 * @param  {sap.ushell.services.URLParsing} oURLParsingService - The Unified Shell's internal URL parsing service
 		 * @returns {boolean} <code>true</code> if the parameter and the given value are in the URL
 		 */
-		hasParameterAndValue: function(sParameterName, sParameterValue) {
-			return this.getParameter(sParameterName) === sParameterValue;
+		hasParameterAndValue: function(sParameterName, sParameterValue, oURLParsingService) {
+			return this.getParameter(sParameterName, oURLParsingService) === sParameterValue;
 		},
 
 		/**
 		 * Checks if the passed parameter name is contained in the URL and returns its value.
 		 *
 		 * @param  {string} sParameterName - The parameter name to be checked
+		 * @param  {sap.ushell.services.URLParsing} oURLParsingService - The Unified Shell's internal URL parsing service
 		 * @returns {string} The value of the given parameter or undefined
 		 */
-		getParameter: function (sParameterName) {
-			var oUshellContainer = this.getUshellContainer();
-			if (oUshellContainer) {
-				var mParsedHash = this.getParsedURLHash();
+		getParameter: function (sParameterName, oURLParsingService) {
+			if (oURLParsingService) {
+				var mParsedHash = Utils.getParsedURLHash(oURLParsingService);
 				return mParsedHash.params &&
 					mParsedHash.params[sParameterName] &&
 					mParsedHash.params[sParameterName][0];
@@ -1329,7 +1315,41 @@ function(
 				return oControl[sPropertyGetter]();
 			}
 			return undefined;
+		},
+
+		/**
+		 * Returns a Promise resolving with the requested Unified Shell service if available
+		 *
+		 * @param {string} sServiceName UShell service name (e.g. "URLParsing")
+		 * @returns {Promise<object|undefined>} Returns UShell service if available or undefined
+		 */
+		 getUShellService: function(sServiceName) {
+			if (sServiceName) {
+				var oUShellContainer = this.getUshellContainer();
+				if (oUShellContainer) {
+					return oUShellContainer.getServiceAsync(sServiceName);
+				}
+			}
+			return Promise.resolve();
+		},
+
+		/**
+		 * Gets the requested UShell Services from Ushell container, if container is available.
+		 * @param {array} aServiceNames - List of service names
+		 * @returns {Promise<object>} Resolves to an object with the requested ushell services
+		 */
+		getUShellServices: function (aServiceNames) {
+			var aServicePromises = aServiceNames.map(function (sServiceName) {
+				return this.getUShellService(sServiceName);
+			}.bind(this));
+			return Promise.all(aServicePromises).then(function (aServices) {
+				return aServiceNames.reduce(function (mServices, sService, iIndex) {
+					mServices[sService] = aServices && aServices[iIndex];
+					return mServices;
+				}, {});
+			});
 		}
+
 	};
 	return Utils;
 }, true);

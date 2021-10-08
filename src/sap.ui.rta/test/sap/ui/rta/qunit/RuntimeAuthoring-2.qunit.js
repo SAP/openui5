@@ -1,7 +1,6 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/ui/dt/plugin/ContextMenu",
 	"sap/ui/dt/DesignTime",
@@ -20,10 +19,8 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/fl/write/_internal/Versions",
-	"sap/ui/fl/LayerUtils",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
-	MessageBox,
 	MessageToast,
 	ContextMenuPlugin,
 	DesignTime,
@@ -42,7 +39,6 @@ sap.ui.define([
 	FeaturesAPI,
 	ReloadInfoAPI,
 	Versions,
-	LayerUtils,
 	sinon
 ) {
 	"use strict";
@@ -103,7 +99,8 @@ sap.ui.define([
 					},
 					unregisterNavigationFilter: function () {},
 					registerNavigationFilter: function () {},
-					reloadCurrentApp: fnFLPReloadStub
+					reloadCurrentApp: fnFLPReloadStub,
+					getUser: function () {}
 				});
 			},
 			getLogonSystem: function() {
@@ -116,20 +113,22 @@ sap.ui.define([
 		});
 	}
 
-	function givenMaxLayerParameterIsSetTo(sMaxLayer, fnFLPToExternalStub, fnFLPReloadStub) {
-		givenAnFLP.call(this, fnFLPToExternalStub, fnFLPReloadStub, {
-			"sap-ui-fl-max-layer": [sMaxLayer]
-		});
-	}
+	function stubUShellService(oRta, mSettings) {
+		return sandbox.stub(oRta, "_getUShellService").returns({
+			getHash: function () {
+				return "Action-somestring";
+			},
+			parseShellHash: function () {
+				var mHash = {
+					semanticObject: "Action",
+					action: "somestring"
+				};
 
-	function givenDraftParameterIsSet(fnFLPToExternalStub, fnFLPReloadStub) {
-		givenAnFLP.call(this, fnFLPToExternalStub, fnFLPReloadStub, {
-			"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]
-		});
-	}
-
-	function givenNoParameterIsSet(fnFLPToExternalStub, fnFLPReloadStub) {
-		givenAnFLP.call(this, fnFLPToExternalStub, fnFLPReloadStub, {
+				mHash.params = mSettings.mHashParameters;
+				return mHash;
+			},
+			toExternal: mSettings.fnToExternal,
+			reloadCurrentApp: mSettings.fnReload
 		});
 	}
 
@@ -268,6 +267,10 @@ sap.ui.define([
 			return oComponentPromise;
 		},
 		beforeEach: function() {
+			this.fnFLPToExternalStub = sandbox.spy();
+			this.fnTriggerRealoadStub = sandbox.stub();
+
+			givenAnFLP.call(this, this.fnFLPToExternalStub, this.fnTriggerRealoadStub);
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl"),
 				showToolbars: false
@@ -278,10 +281,6 @@ sap.ui.define([
 				}
 			});
 			this.fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
-			this.fnFLPToExternalStub = sandbox.spy();
-			this.fnTriggerRealoadStub = sandbox.stub();
-
-			givenAnFLP.call(this, this.fnFLPToExternalStub, this.fnTriggerRealoadStub);
 		},
 		afterEach: function() {
 			this.oRta.destroy();
@@ -451,6 +450,7 @@ sap.ui.define([
 			return oComponentPromise;
 		},
 		beforeEach: function() {
+			givenAnFLP();
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl"),
 				showToolbars: false
@@ -473,7 +473,12 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
-			givenAnFLP(function() {return true;}, undefined, {"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]});
+			stubUShellService(this.oRta, {
+				fnReload: sandbox.stub(),
+				fnToExternal: function() {return true;},
+				mHashParameters: {"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]}
+			});
+
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITHOUT_DRAFT", assert);
 
 			return this.oRta._handleReloadOnExit()
@@ -486,10 +491,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("when draft changes already existed when entering and user exits RTA...", function(assert) {
-			givenDraftParameterIsSet.call(this, this.fnFLPToExternalStub);
 			var oReloadInfo = {
 				reloadMethod: this.oRta._RELOAD.VIA_HASH
 			};
+			stubUShellService(this.oRta, {
+				fnReload: sandbox.stub(),
+				fnToExternal: this.fnFLPToExternalStub,
+				mHashParameters: {"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]}
+			});
 			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(oReloadInfo);
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 
@@ -507,7 +516,11 @@ sap.ui.define([
 
 		QUnit.test("when draft changes already existed and the draft was activated and user exits RTA...", function(assert) {
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(true);
-			givenDraftParameterIsSet.call(this, this.fnFLPToExternalStub);
+			stubUShellService(this.oRta, {
+				fnReload: sandbox.stub(),
+				fnToExternal: this.fnFLPToExternalStub,
+				mHashParameters: {"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]}
+			});
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 			sandbox.stub(this.oRta, "_handleReloadMessageBoxOnExit").resolves();
 
@@ -525,8 +538,12 @@ sap.ui.define([
 
 		QUnit.test("when no draft was present and dirty changes were made after entering RTA and user exits RTA...", function(assert) {
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
-			var fnTriggerRealoadStub = sandbox.stub();
-			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub, fnTriggerRealoadStub);
+			var fnTriggerReloadStub = sandbox.stub();
+			stubUShellService(this.oRta, {
+				fnReload: fnTriggerReloadStub,
+				fnToExternal: this.fnFLPToExternalStub,
+				mHashParameters: {}
+			});
 			var oReloadInfo = {
 				reloadMethod: this.oRta._RELOAD.VIA_HASH,
 				hasHigherLayerChanges: false
@@ -539,15 +556,19 @@ sap.ui.define([
 				assert.equal(this.fnHandleParametersOnExitStub.callCount,
 					1,
 					"then handleParametersOnExit was called");
-				assert.equal(fnTriggerRealoadStub.callCount,
+				assert.equal(fnTriggerReloadStub.callCount,
 					1, "then crossAppNavigation was triggered without changing the url");
 			}.bind(this));
 		});
 
 		QUnit.test("when no draft was present and dirty changes were made after entering RTA and user exits RTA...", function(assert) {
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
-			var fnTriggerRealoadStub = sandbox.stub();
-			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub, fnTriggerRealoadStub);
+			var fnTriggerReloadStub = sandbox.stub();
+			stubUShellService(this.oRta, {
+				fnReload: fnTriggerReloadStub,
+				fnToExternal: this.fnFLPToExternalStub,
+				mHashParameters: {}
+			});
 			var oReloadInfo = {
 				reloadMethod: this.oRta._RELOAD.VIA_HASH,
 				hasHigherLayerChanges: true
@@ -560,13 +581,17 @@ sap.ui.define([
 				assert.equal(this.fnHandleParametersOnExitStub.callCount,
 					1,
 					"then handleParametersOnExit was called");
-				assert.equal(fnTriggerRealoadStub.callCount,
+				assert.equal(fnTriggerReloadStub.callCount,
 					0, "then reloadCurrentApp was not triggered because the max layer parameter gets removed");
 			}.bind(this));
 		});
 
 		QUnit.test("when no versioning is available and dirty changes were made after entering RTA and user exits RTA...", function(assert) {
-			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub);
+			stubUShellService(this.oRta, {
+				fnReload: sandbox.stub(),
+				fnToExternal: this.fnFLPToExternalStub,
+				mHashParameters: {"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]}
+			});
 			var oReloadInfo = {
 				reloadMethod: this.oRta._RELOAD.VIA_HASH
 			};
@@ -584,8 +609,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("when all context is loaded without higher layer changes after entering RTA and user exits RTA...", function(assert) {
-			var fnTriggerRealoadStub = sandbox.stub();
-			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub, fnTriggerRealoadStub);
+			var fnTriggerReloadStub = sandbox.stub();
+			stubUShellService(this.oRta, {
+				fnReload: fnTriggerReloadStub,
+				fnToExternal: this.fnFLPToExternalStub,
+				mHashParameters: {"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]}
+			});
 			var oReloadInfo = {
 				reloadMethod: this.oRta._RELOAD.VIA_HASH,
 				hasHigherLayerChanges: false,
@@ -598,7 +627,7 @@ sap.ui.define([
 				assert.equal(this.fnHandleParametersOnExitStub.callCount,
 					1,
 					"then handleParametersOnExit was called");
-				assert.equal(fnTriggerRealoadStub.callCount,
+				assert.equal(fnTriggerReloadStub.callCount,
 					1,
 					"then reloadCurrentApp was trigger");
 				assert.equal(this.fnTriggerCrossAppNavigationSpy.callCount,
@@ -607,8 +636,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("when all context is loaded without higher layer changes after entering RTA and user exits RTA...", function(assert) {
-			var fnTriggerRealoadStub = sandbox.stub();
-			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub, fnTriggerRealoadStub);
+			var fnTriggerReloadStub = sandbox.stub();
+			stubUShellService(this.oRta, {
+				fnReload: fnTriggerReloadStub,
+				fnToExternal: this.fnFLPToExternalStub,
+				mHashParameters: {"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]}
+			});
 			var oReloadInfo = {
 				reloadMethod: this.oRta._RELOAD.VIA_HASH,
 				hasHigherLayerChanges: true,
@@ -621,7 +654,7 @@ sap.ui.define([
 				assert.equal(this.fnHandleParametersOnExitStub.callCount,
 					1,
 					"then handleParametersOnExit was called");
-				assert.equal(fnTriggerRealoadStub.callCount,
+				assert.equal(fnTriggerReloadStub.callCount,
 					0,
 					"then reloadCurrentApp was not trigger");
 				assert.equal(this.fnTriggerCrossAppNavigationSpy.callCount,
@@ -635,6 +668,7 @@ sap.ui.define([
 			return oComponentPromise;
 		},
 		beforeEach: function() {
+			givenAnFLP();
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl"),
 				showToolbars: false
@@ -646,7 +680,14 @@ sap.ui.define([
 			sandbox.spy(this.oRta, "_handleUrlParameterOnExit");
 			this.fnFLPToExternalStub = sandbox.spy();
 
-			return this.oRta._initVersioning();
+			return this.oRta._initVersioning()
+				.then(function() {
+					this.oGetUShellServiceStub = stubUShellService(this.oRta, {
+						fnReload: sandbox.stub(),
+						fnToExternal: this.fnFLPToExternalStub,
+						mHashParameters: {"sap-ui-fl-max-layer": [Layer.CUSTOMER]}
+					});
+				}.bind(this));
 		},
 		afterEach: function() {
 			this.oRta.destroy();
@@ -655,7 +696,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when personalized changes exist and started in FLP reloading the personalization...", function(assert) {
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
-			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
+
 			whenHigherLayerChangesExist();
 
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS", assert);
@@ -671,7 +712,22 @@ sap.ui.define([
 
 		QUnit.test("when higher layer changes exist, RTA is started above CUSTOMER layer and user exits and started in FLP reloading the personalization...", function(assert) {
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
-			givenMaxLayerParameterIsSetTo.call(this, Layer.VENDOR, this.fnFLPToExternalStub);
+			this.oGetUShellServiceStub.returns({
+				getHash: function () {
+					return "Action-somestring";
+				},
+				parseShellHash: function () {
+					var mHash = {
+						semanticObject: "Action",
+						action: "somestring"
+					};
+
+					mHash.params = {"sap-ui-fl-max-layer": [Layer.VENDOR]};
+					return mHash;
+				},
+				toExternal: this.fnFLPToExternalStub,
+				reloadCurrentApp: sandbox.stub()
+			});
 			whenStartedWithLayer(this.oRta, Layer.VENDOR);
 			whenHigherLayerChangesExist(Layer.VENDOR);
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_ALL_CHANGES", assert);
@@ -687,7 +743,6 @@ sap.ui.define([
 
 		QUnit.test("when app descriptor and personalized changes exist and user exits reloading the personalization...", function(assert) {
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
-			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			whenAppDescriptorChangesExist(this.oRta);
 			whenHigherLayerChangesExist();
 
@@ -710,7 +765,6 @@ sap.ui.define([
 				saveCommands: function() {}
 			};
 			var fnNeedsReloadStub = sandbox.stub(this.oRta._oSerializer, "needsReload");
-			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			fnNeedsReloadStub.onFirstCall().resolves(false);
 			fnNeedsReloadStub.onSecondCall().resolves(true);
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS", assert);
@@ -729,7 +783,6 @@ sap.ui.define([
 
 		QUnit.test("when app descriptor changes exist and user publishes and afterwards exits ...", function(assert) {
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
-			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			whenAppDescriptorChangesExist(this.oRta);
 			var fnNeedsReloadSpy = sandbox.spy(this.oRta._oSerializer, "needsReload");
 
@@ -749,7 +802,6 @@ sap.ui.define([
 
 		QUnit.test("when app descriptor changes exist and user exits ...", function(assert) {
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
-			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			whenAppDescriptorChangesExist(this.oRta);
 			var fnNeedsReloadSpy = sandbox.spy(this.oRta._oSerializer, "needsReload");
 
@@ -768,7 +820,6 @@ sap.ui.define([
 
 		QUnit.test("when there are no personalized and appDescriptor changes and _handleReloadOnExit() is called", function(assert) {
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
-			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
@@ -782,7 +833,6 @@ sap.ui.define([
 
 		QUnit.test("when app descriptor and no personalized changes exist and user exits reloading the personalization...", function(assert) {
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
-			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			whenAppDescriptorChangesExist(this.oRta);
 
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS", assert);
@@ -797,8 +847,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when reloadable changes exist and user exits RTA...", function(assert) {
-			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
-
 			sandbox.spy(this.oRta, "_handleReloadOnExit");
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS", assert);
