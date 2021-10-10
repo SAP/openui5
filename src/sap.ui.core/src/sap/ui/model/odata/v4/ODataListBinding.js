@@ -1509,6 +1509,22 @@ sap.ui.define([
 	 * <code>false</code>. This property has to be set on each filter, it is not inherited from a
 	 * multi-filter.
 	 *
+	 * <h4>Application and Control Filters</h4>
+	 * Each list binding maintains two separate lists of filters, one for filters defined by the
+	 * control that owns the binding, and another list for filters that an application can define in
+	 * addition. When executing the filter operation, both sets of filters are combined.
+	 *
+	 * By using the <code>sFilterType</code> parameter of the <code>filter</code> method, the
+	 * caller can control which set of filters is modified.
+	 *
+	 * <h4>Auto-Grouping of Filters</h4>
+	 * Filters are first grouped according to their binding path. All filters belonging to the same
+	 * path are ORed, and after that the results of all paths are ANDed. Usually this means that all
+	 * filters applied to the same property are ORed, while filters on different properties are
+	 * ANDed.
+	 * Please use either the automatic grouping of filters (where applicable) or explicit
+	 * AND/OR filters, as a mixture of both is not supported.
+	 *
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [vFilters]
 	 *   The dynamic filters to be used; replaces the dynamic filters given in
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}.

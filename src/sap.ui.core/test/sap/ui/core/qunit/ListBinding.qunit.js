@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Control",
 	"sap/ui/model/ChangeReason",
+	"sap/ui/model/FilterType",
 	"sap/ui/model/ListBinding",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/json/JSONListBinding",
@@ -11,6 +12,7 @@ sap.ui.define([
 	Element,
 	Control,
 	ChangeReason,
+	FilterType,
 	ListBinding,
 	JSONModel,
 	JSONListBinding,
@@ -261,6 +263,44 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(ListBinding.prototype.getCount.call(oBinding), undefined);
+	});
+
+	//**********************************************************************************************
+	QUnit.test("getFilters", function(assert) {
+		var oBinding = {},
+			aReturnedFilters;
+
+		assert.throws(function() {
+			// code under test
+			ListBinding.prototype.getFilters.call(oBinding);
+		}, new Error("Invalid FilterType: undefined"));
+
+		oBinding.aApplicationFilters = ["~appfilter~"];
+
+		// code under test
+		aReturnedFilters = ListBinding.prototype.getFilters.call(oBinding, FilterType.Application);
+
+		assert.deepEqual(aReturnedFilters, ["~appfilter~"]);
+		assert.notStrictEqual(oBinding.aApplicationFilters, aReturnedFilters);
+
+		oBinding.aFilters = ["~filter~"];
+
+		// code under test
+		aReturnedFilters = ListBinding.prototype.getFilters.call(oBinding, FilterType.Control);
+
+		assert.deepEqual(aReturnedFilters, ["~filter~"]);
+		assert.notStrictEqual(oBinding.aFilters, aReturnedFilters);
+
+		// all models in sap.ui.models have an empty array. but it is not a requirement for other
+		// models
+		oBinding.aFilters = undefined;
+		oBinding.aApplicationFilters = undefined;
+
+		// code under test
+		assert.deepEqual(ListBinding.prototype.getFilters.call(oBinding, FilterType.Application),
+			[]);
+		assert.deepEqual(ListBinding.prototype.getFilters.call(oBinding, FilterType.Control),
+			[]);
 	});
 
 	//**********************************************************************************************

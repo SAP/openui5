@@ -1034,7 +1034,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("toArray", function (assert) {
-		var oObject = {},
+		var aArray = [0],
+			oObject = {},
 			aObjects = [oObject];
 
 		assert.deepEqual(_Helper.toArray(), []);
@@ -1042,7 +1043,10 @@ sap.ui.define([
 		assert.deepEqual(_Helper.toArray(""), [""]);
 		assert.deepEqual(_Helper.toArray("foo"), ["foo"]);
 		assert.deepEqual(_Helper.toArray(oObject), aObjects);
-		assert.strictEqual(_Helper.toArray(aObjects), aObjects);
+
+		assert.deepEqual(_Helper.toArray(aArray), [0]);
+		assert.notStrictEqual(_Helper.toArray(aArray), aArray);
+
 	});
 
 	//*********************************************************************************************

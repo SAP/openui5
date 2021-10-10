@@ -357,6 +357,7 @@ sap.ui.define([
 
 		onFilterItems : function (oEvent) {
 			var oBinding = this.byId("SO_2_SOITEM").getBinding("items"),
+				aFilters = oBinding.getFilters(FilterType.Application),
 				sQuery = this.getView().getModel("ui").getProperty("/filterProductID");
 
 			if (oBinding.hasPendingChanges()) {
@@ -364,9 +365,21 @@ sap.ui.define([
 					+ "; save or reset changes before filtering");
 				return;
 			}
-			oBinding.filter(sQuery
-				? new Filter("SOITEM_2_PRODUCT/ProductID", FilterOperator.EQ, sQuery)
-				: null);
+
+			aFilters = aFilters.filter(function (oFilter) {
+				if (oFilter.getPath() !== "SOITEM_2_PRODUCT/ProductID") {
+					return oFilter;
+				}
+			});
+
+			if (sQuery) {
+				aFilters.push(new Filter({
+					path: "SOITEM_2_PRODUCT/ProductID",
+					operator: FilterOperator.EQ,
+					value1: sQuery
+				}));
+			}
+			oBinding.filter(aFilters);
 		},
 
 		onFilterMessages : function (oEvent) {

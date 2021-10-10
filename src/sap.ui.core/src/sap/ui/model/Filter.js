@@ -19,22 +19,25 @@ sap.ui.define([
 	 * parameters are supported (the following list uses the names from the object literal):
 	 * <ul>
 	 * <li>A <code>path</code>, <code>operator</code> and one or two values (<code>value1</code>,
-	 *   <code>value2</code>), depending on the operator</li>
-	 * <li>A <code>path</code> and a custom filter function <code>test</code></li>
+	 *   <code>value2</code>), depending on the operator
+	 * <li>A <code>path</code> and a custom filter function <code>test</code>
 	 * <li>An array of other filters named <code>filters</code> and a Boolean flag <code>and</code>
 	 *   that specifies whether to combine the filters with an AND (<code>true</code>) or an OR
-	 *   (<code>false</code>) operator.</li>
+	 *   (<code>false</code>) operator.
 	 * </ul>
 	 * An error will be logged to the console if an invalid combination of parameters is provided.
+	 *
 	 * Please note that a model implementation may not support a custom filter function, e.g. if the
-	 * model does not perform client side filtering. It also depends on the model implementation if
+	 * model does not perform client-side filtering. It also depends on the model implementation if
 	 * the filtering is case sensitive or not. Client models filter case insensitive compared to the
-	 * OData models which filter case sensitive by default.
-	 * See particular model documentation for details
-	 * The filter operators <code>Any</code> and <code>All</code> are only supported in V4 OData
-	 * models. When creating a filter instance with these filter operators, the argument
-	 * <code>variable</code> only accepts a string identifier and <code>condition</code> needs to be
-	 * another filter instance.
+	 * OData models which filter case sensitive by default. See particular model documentation for
+	 * details.
+	 *
+	 * The filter operators {@link sap.ui.model.FilterOperator.Any "Any"} and
+	 * {@link sap.ui.model.FilterOperator.All "All"} are only supported in V4 OData models. When
+	 * creating a filter instance with these filter operators, the argument <code>variable</code>
+	 * only accepts a string identifier and <code>condition</code> needs to be another filter
+	 * instance.
 	 *
 	 * @example <caption>Using an object with a path, an operator and one or two values</caption>
 	 *
@@ -118,36 +121,64 @@ sap.ui.define([
 	 *   Filter info object or a path or an array of filters
 	 * @param {string} [vFilterInfo.path]
 	 *   Binding path for this filter
-	 * @param {function} [vFilterInfo.test]
-	 *   Function which is used to filter the items and which should return a Boolean value to
-	 *   indicate whether the current item passes the filter
-	 * @param {function} [vFilterInfo.comparator]
-	 *   Function which is used to compare two values, this is used for processing of equal, less
-	 *   than and greater than operators
+	 * @param {function(any):boolean} [vFilterInfo.test]
+	 *   Function used for the client-side filtering of items. It should return a Boolean indicating
+	 *   whether the current item passes the filter. If no test function is given, a default test
+	 *   function is used, based on the given filter operator and the comparator function.
+	 * @param {function(any,any):number} [vFilterInfo.comparator]
+	 *   Function used to compare two values for equality and order during client-side filtering.
+	 *   Two values are given as parameters. The function is expected to return:
+	 *   <ul>
+	 *     <li>a negative number if the first value is smaller than the second value,
+	 *     <li><code>0</code> if the two values are equal,
+	 *     <li>a positive number if the first value is larger than the second value,
+	 *     <li><code>NaN</code> for non-comparable values.
+	 *   </ul>
+	 *   If no function is given, {@link sap.ui.model.Filter.defaultComparator} is used.
 	 * @param {sap.ui.model.FilterOperator} [vFilterInfo.operator]
 	 *   Operator used for the filter
 	 * @param {any} [vFilterInfo.value1]
 	 *   First value to use with the given filter operator
-	 * @param {any} [vFilterInfo.value2=null]
-	 *   Second value to use with the filter operator (only for some operators)
+	 * @param {any} [vFilterInfo.value2]
+	 *   Second value to use with the given filter operator, used only for the
+	 *   {@link sap.ui.model.FilterOperator.BT "BT" between} and
+	 *   {@link sap.ui.model.FilterOperator.NB "NB" not between} filter operators
 	 * @param {string} [vFilterInfo.variable]
-	 *   The variable used in lambda operators (<code>Any</code> and <code>All</code>)
+	 *   The variable name used in lambda operators ({@link sap.ui.model.FilterOperator.Any "Any"}
+	 *   and {@link sap.ui.model.FilterOperator.All "All"})
 	 * @param {sap.ui.model.Filter} [vFilterInfo.condition]
-	 *   A <code>Filter</code> instance which will be used as the condition for the lambda operator
+	 *   A filter instance which will be used as the condition for lambda
+	 *   operators ({@link sap.ui.model.FilterOperator.Any "Any"} and
+	 *   {@link sap.ui.model.FilterOperator.All "All"})
 	 * @param {sap.ui.model.Filter[]} [vFilterInfo.filters]
-	 *   Array of filters on which logical conjunction is applied
+	 *   An array of filters on which the logical conjunction is applied
 	 * @param {boolean} [vFilterInfo.and=false]
 	 *   Indicates whether an "AND" logical conjunction is applied on the filters. If it's not set
-	 *   or set to <code>false</code>, an "OR" conjunction is applied
+	 *   or set to <code>false</code>, an "OR" conjunction is applied.
 	 * @param {boolean} [vFilterInfo.caseSensitive]
-	 *   Indicates whether a string value should be compared case sensitive or not.
-	 * @param {sap.ui.model.FilterOperator|function|boolean} [vOperator]
-	 *   Either a filter operator or a custom filter function or a Boolean flag that defines how to
-	 *   combine multiple filters
+	 *   Indicates whether a string value should be compared case sensitive or not. The handling of
+	 *   <code>undefined</code> depends on the model implementation.
+	 * @param {sap.ui.model.FilterOperator|function(any):boolean|boolean} [vOperator]
+	 *   Either a filter operator or a custom filter function or
+	 *   a <code>boolean</code> flag that defines how to combine multiple filters
 	 * @param {any} [vValue1]
 	 *   First value to use with the given filter operator
 	 * @param {any} [vValue2]
-	 *   Second value to use with the given filter operator (only for some operators)
+	 *   Second value to use with the given filter operator, used only for the
+	 *   {@link sap.ui.model.FilterOperator.BT "BT" between} and
+	 *   {@link sap.ui.model.FilterOperator.NB "NB" not between} filter operators
+	 * @throws {Error}
+	 *   for the following incorrect combinations of filter operators and conditions:
+	 *   <ul>
+	 *     <li>"Any", if only a lambda variable or only a condition is given
+	 *     <li>"Any" or "All": If
+	 *       <ul>
+	 *         <li>the <code>vFilterInfo</code> parameter is not in object notation,
+	 *         <li><code>vFilterInfo.variable</code> is not a string,
+	 *         <li><code>vFilterInfo.condition</code> is not an instance of
+	 *               {@link sap.ui.model.Filter}.
+	 *     </ul>
+	 *   </ul>
 	 *
 	 * @public
 	 * @alias sap.ui.model.Filter
@@ -207,7 +238,7 @@ sap.ui.define([
 					&& !this.oValue1 && !this.oValue2) {
 				this._bMultiFilter = true;
 				if ( !this.aFilters.every(isFilter) ) {
-					Log.error("Filter in Aggregation of Multi filter has to be instance of"
+					Log.error("Filter in aggregation of multi filter has to be instance of"
 						+ " sap.ui.model.Filter");
 				}
 			} else if (!this.aFilters && this.sPath !== undefined
@@ -415,17 +446,156 @@ sap.ui.define([
 };
 
 	/**
+	 * Returns the comparator function as provided on construction of this filter, see
+	 * {@link sap.ui.model.Filter#constructor}, parameter <code>vFilterInfo.comparator</code>.
+	 *
+	 * @returns {function(any):boolean|undefined} The comparator function
+	 * @public
+	 * @since 1.96.0
+	 */
+	Filter.prototype.getComparator = function () {
+		return this.fnCompare;
+	};
+
+	/**
+	 * Returns the filter instance which is used as the condition for lambda operators, see
+	 * {@link sap.ui.model.Filter#constructor}, parameter <code>vFilterInfo.condition</code>.
+	 *
+	 * @returns {sap.ui.model.Filter|undefined} The filter instance
+	 * @public
+	 * @since 1.96.0
+	 */
+	Filter.prototype.getCondition = function () {
+		return this.oCondition;
+	};
+
+	/**
+	 * Returns the filter operator used for this filter, see
+	 * {@link sap.ui.model.Filter#constructor}, parameter <code>vFilterInfo.operator</code> or
+	 * <code>vOperator</code>.
+	 *
+	 *
+	 * @returns {sap.ui.model.FilterOperator|undefined} The operator
+	 * @public
+	 * @since 1.96.0
+	 */
+	Filter.prototype.getOperator = function () {
+		return this.sOperator;
+	};
+
+	/**
+	 * Returns the binding path for this filter, see
+	 * {@link sap.ui.model.Filter#constructor}, parameter <code>vFilterInfo</code> or
+	 * <code>vFilterInfo.path</code>.
+	 *
+	 * @returns {string|undefined} The binding path
+	 * @public
+	 * @since 1.96.0
+	 */
+	Filter.prototype.getPath = function () {
+		return this.sPath;
+	};
+
+	/**
+	 * Returns the array of filters as specified on construction of this filter, see
+	 * {@link sap.ui.model.Filter#constructor}, parameter <code>vFilterInfo.filters</code>
+	 *
+	 * @returns {sap.ui.model.Filter[]|undefined} The array of filters
+	 * @public
+	 * @since 1.96.0
+	 */
+	Filter.prototype.getFilters = function () {
+		return this.aFilters && this.aFilters.slice();
+	};
+
+	/**
+	 * Returns the test function which is used to filter the items, see
+	 * {@link sap.ui.model.Filter#constructor}, parameter <code>vFilterInfo.test</code>.
+	 *
+	 * @returns {function(any,any):boolean|undefined} The test function
+	 * @public
+	 * @since 1.96.0
+	 */
+	Filter.prototype.getTest = function () {
+		return this.fnTest;
+	};
+
+	/**
+	 * Returns the first value that is used with the given filter operator, see
+	 * {@link sap.ui.model.Filter#constructor}, parameter <code>vFilterInfo.value1</code> or
+	 * <code>vValue1</code>.
+	 *
+	 * @returns {any} The first value
+	 * @public
+	 * @since 1.96.0
+	 */
+	Filter.prototype.getValue1 = function () {
+		return this.oValue1;
+	};
+
+	/**
+	 * Returns the second value that is used with the given filter operator, see
+	 * {@link sap.ui.model.Filter#constructor}, parameter <code>vFilterInfo.value2</code> or
+	 * <code>vValue2</code>.
+	 *
+	 * @returns {any} The second value
+	 * @public
+	 * @since 1.96.0
+	 */
+	Filter.prototype.getValue2 = function () {
+		return this.oValue2;
+	};
+
+	/**
+	 * Returns the variable name used in lambda operators, see
+	 * {@link sap.ui.model.Filter#constructor}, parameter <code>vFilterInfo.variable</code>.
+	 *
+	 * @returns {string|undefined} The variable name
+	 * @public
+	 * @since 1.96.0
+	 */
+	Filter.prototype.getVariable = function () {
+		return this.sVariable;
+	};
+
+	/**
+	 * Indicates whether an "AND" logical conjunction is applied on the filters, see
+	 * {@link sap.ui.model.Filter#constructor}, parameter <code>vFilterInfo.and</code>.
+	 *
+	 * @returns {boolean} Whether "AND" is being applied
+	 * @public
+	 * @since 1.96.0
+	 */
+	Filter.prototype.isAnd = function () {
+		return !!this.bAnd;
+	};
+
+	/**
+	 * Indicates whether a string value should be compared case sensitive, see
+	 * {@link sap.ui.model.Filter#constructor}, parameter <code>vFilterInfo.caseSensitive</code>.
+	 *
+	 * @returns {boolean} Whether the string values should be compared case sensitive
+	 * @public
+	 * @since 1.96.0
+	 */
+	Filter.prototype.isCaseSensitive = function () {
+		return this.bCaseSensitive;
+	};
+
+	/**
 	 * Compares two values
 	 *
-	 * This is the default comparator function used for clientside filtering, if no custom comparator is given in the
-	 * constructor. It does compare just by using equal/less than/greater than with automatic type casting, except
-	 * for null values, which are neither less or greater, and string values where localeCompare is used.
+	 * This is the default comparator function used for client-side filtering, if no custom
+	 * comparator is given in the constructor. It does compare just by using equal/less than/greater
+	 * than with automatic type casting, except for null values, which are neither less or greater,
+	 * and string values where localeCompare is used.
 	 *
-	 * The comparator method returns -1, 0, 1 for comparable values and NaN for non-comparable values.
+	 * The comparator method returns -1, 0, 1 for comparable values and NaN for non-comparable
+	 * values.
 	 *
 	 * @param {any} a the first value to compare
 	 * @param {any} b the second value to compare
-	 * @returns {int} -1, 0, 1 or NaN depending on the compare result
+	 * @returns {number} -1, 0, 1 or NaN depending on the compare result
 	 * @public
 	 */
 	Filter.defaultComparator = function(a, b) {
@@ -447,7 +617,5 @@ sap.ui.define([
 		return NaN;
 	};
 
-
 	return Filter;
-
 });

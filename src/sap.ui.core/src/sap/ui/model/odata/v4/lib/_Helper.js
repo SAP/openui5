@@ -1843,7 +1843,7 @@ sap.ui.define([
 		/**
 		 * Converts given value to an array.
 		 * <code>null</code> and <code>undefined</code> are converted to the empty array, a
-		 * non-array value is wrapped with an array and an array is returned as it is.
+		 * non-array value is wrapped with an array and an array is returned as a shallow copy.
 		 *
 		 * @param {any} [vElement]
 		 *   The element to be converted into an array.
@@ -1855,7 +1855,7 @@ sap.ui.define([
 				return [];
 			}
 			if (Array.isArray(vElement)) {
-				return vElement;
+				return vElement.slice();
 			}
 			return [vElement];
 		},
