@@ -1,5 +1,6 @@
 # see http://editorconfig.org
 
+# Top-most EditorConfig file
 root = true
 
 [*]
