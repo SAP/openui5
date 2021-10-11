@@ -504,7 +504,7 @@ function(
 		};
 
 		Select.prototype.focus = function() {
-			this._getHiddenSelect().focus();
+			this._getHiddenSelect().trigger("focus");
 			Control.prototype.focus.call(this, arguments);
 		};
 
@@ -1194,7 +1194,6 @@ function(
 				offsetX: 0,
 				offsetY: 0,
 				initialFocus: this,
-				bounce: false,
 				ariaLabelledBy: this._getPickerHiddenLabelId()
 			});
 
@@ -1619,7 +1618,7 @@ function(
 		 */
 		Select.prototype.onmousedown = function (oEvent) {
 			oEvent.preventDefault();
-			this._getHiddenSelect().focus();
+			this._getHiddenSelect().trigger("focus");
 		};
 
 		/**
