@@ -206,11 +206,12 @@ sap.ui.define([
 		 * The function loops over the array and filters the object if the layer property is higher than the current max layer.
 		 *
 		 * @param {object[]} aChangeDefinitions - Array of change definitions
+		 * @param {sap.ui.core.service.Service} oURLParsingService Unified Shell URL Parsing Service
 		 * @returns {object[]} Array of filtered change definitions
 		 */
-		filterChangeDefinitionsByMaxLayer: function(aChangeDefinitions) {
+		filterChangeDefinitionsByMaxLayer: function(aChangeDefinitions, oURLParsingService) {
 			return aChangeDefinitions.filter(function(oChangeDefinition) {
-				return !oChangeDefinition.layer || !LayerUtils.isOverMaxLayer(oChangeDefinition.layer);
+				return !oChangeDefinition.layer || !LayerUtils.isOverMaxLayer(oChangeDefinition.layer, oURLParsingService);
 			});
 		},
 
