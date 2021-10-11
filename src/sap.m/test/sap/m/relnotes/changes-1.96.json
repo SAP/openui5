@@ -3,6 +3,141 @@
     "date": "October 2021",
     "notes": [
       {
+        "id": "c7c2c97d5423f2d8742ee5b8a4e90f7b0edfc349",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: fixed failing test in Firefox browser",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170248338"
+          }
+        ]
+      },
+      {
+        "id": "167cc63f635c862e1215b639d92c49b33a8d3d2d",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: fixed styles for ObjectNumber in editable SimpleForm",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170237776"
+          }
+        ]
+      },
+      {
+        "id": "26f980cb96219ae0b3452b22e11c7187c3b6af85",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: has enough contrast ratio between text and background of appointment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180165915"
+          }
+        ]
+      },
+      {
+        "id": "d8fba2f5a51ebdfad53397426a0fa4c9d18a814d",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: fixed styles for large ObjectNumber in editable SimpleForm",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180311186"
+          }
+        ]
+      },
+      {
+        "id": "beb598b19451c350fbfe545de53000605e79eea1",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: correct date parameter passed to headerDateSelect event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006821942021"
+          }
+        ]
+      },
+      {
+        "id": "244551c7e34324c1b5c21886961555a9c316a227",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Fix unstable QUnit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180358895"
+          }
+        ]
+      },
+      {
+        "id": "74273e392e470d0badebd739326faffb37bdb9bb",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Tab selection with VariantManagement now works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170234174"
+          }
+        ]
+      },
+      {
+        "id": "7418c90276ffb0ba05de01896735772625b729f5",
+        "type": "FIX",
+        "text": " sap.m.MaskInput: clear icon stays on focus out when there is value entered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "61645af3223ea8bba83f3a05857de704040a45d3",
+        "type": "FIX",
+        "text": " m/f.TargetHandler: improve API doc for setCloseDialogs with navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170181925"
+          }
+        ]
+      },
+      {
+        "id": "43814d948ad158a08d8af67e7f5c85025f0c34d1",
+        "type": "FIX",
+        "text": " core.Icon: support screen reader in VPC mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180128712"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670565585"
+          }
+        ]
+      },
+      {
+        "id": "65b009f828a670a9331107eb1195af27a36b6507",
+        "type": "FEATURE",
+        "text": " sap.f.cards.NumericHeader: New property \"sideIndicatorsAlignment\" implemented"
+      },
+      {
+        "id": "8f246fc77bc31056f9e7b3243cae2e146d35f433",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: ariaDescribedBy association is correctly updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180374676"
+          }
+        ]
+      },
+      {
+        "id": "515d878f70ee01074aa450cf03ebb6c67c277944",
+        "type": "FEATURE",
+        "text": " sap.m.MaskInput: added clearIcon functionality"
+      },
+      {
         "id": "b0321bfddc4897db2184bbc229d11c536c200442",
         "type": "FIX",
         "text": " ScrollPosition qunit tests fixed",
@@ -32,6 +167,21 @@
           {
             "type": "BCP",
             "reference": "2180215798"
+          }
+        ]
+      },
+      {
+        "id": "d7c26e855c50a21b5ecc3ec1d75235b5f4da8b7a",
+        "type": "FIX",
+        "text": " sap.m.Select: Correct focus on combi devices",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006164082021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180201197"
           }
         ]
       },

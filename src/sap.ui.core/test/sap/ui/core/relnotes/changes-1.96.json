@@ -3,6 +3,37 @@
     "date": "October 2021",
     "notes": [
       {
+        "id": "9da943b5ac9752bdb3e7e989e7e36c7541b33e4d",
+        "type": "FIX",
+        "text": " core/Router: Add typedef for RouteInfo",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170235589"
+          }
+        ]
+      },
+      {
+        "id": "43814d948ad158a08d8af67e7f5c85025f0c34d1",
+        "type": "FIX",
+        "text": " core.Icon: support screen reader in VPC mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180128712"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670565585"
+          }
+        ]
+      },
+      {
+        "id": "0d7754afca99e0b274840d68ebd776301fc95a81",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v4.ODataContextBinding: allow $$inheritExpandSelect with $select for operations"
+      },
+      {
         "id": "f9ab357aa3582c730fb545b0dcda4fe5c9f5e289",
         "type": "FEATURE",
         "text": " sap_horizon: initial commit of Horizon theme"

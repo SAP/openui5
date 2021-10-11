@@ -3,6 +3,33 @@
     "date": "October 2021",
     "notes": [
       {
+        "id": "61645af3223ea8bba83f3a05857de704040a45d3",
+        "type": "FIX",
+        "text": " m/f.TargetHandler: improve API doc for setCloseDialogs with navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170181925"
+          }
+        ]
+      },
+      {
+        "id": "65b009f828a670a9331107eb1195af27a36b6507",
+        "type": "FEATURE",
+        "text": " sap.f.cards.NumericHeader: New property \"sideIndicatorsAlignment\" implemented"
+      },
+      {
+        "id": "61b4a9a63a8bce7a5c9dc164da9cd7fc6383428b",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: minHeight of Analytical content now works in GridContainer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170234802"
+          }
+        ]
+      },
+      {
         "id": "6cff48f635fcbd6259c687de1ef792f3edec0a17",
         "type": "FIX",
         "text": " sap.f.Card: The color of the Side Indicator number is fixed",
@@ -10,6 +37,17 @@
           {
             "type": "BCP",
             "reference": "2170226646"
+          }
+        ]
+      },
+      {
+        "id": "4dde31733995464c5984f0be7980c87d154fb3ca",
+        "type": "FIX",
+        "text": " Integration cards: Fixed header alignment in a card with no content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170226671"
           }
         ]
       },
