@@ -6522,5 +6522,26 @@
 			"shape",
 			"line"
 		]
+	},
+	"in-progress": {
+		"tags": [
+			"in process",
+			"status",
+			"working",
+			"current",
+			"on-going",
+			"clock",
+			"Time",
+			"Square"
+		]
+	},
+	"not-editable": {
+		"tags": [
+			"not editable",
+			"pencil",
+			"status",
+			"editable false",
+			"crossed-out"
+		]
 	}
 }

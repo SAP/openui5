@@ -861,7 +861,8 @@
 				{ "name" : "busy" },
 				{ "name" : "appear-offline" },
 				{ "name" : "validate" },
-				{ "name" : "information" }
+				{ "name" : "information" },
+				{ "name" : "in-progress" }
 			]
 		},
 		{
