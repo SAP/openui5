@@ -55,6 +55,7 @@ sap.ui.define([
 		 * <li>Steps can be branching depending on choices the user made in their input - this is set by the <code>enableBranching</code> property. </li>
 		 * <li>Steps can have different visual representations - numbers or icons. You can add labels for better readability </li>
 		 * </ul>
+		 * <strong>Note:</strong> Dynamic step insertion is not supported. Even if branching steps are used, the steps should be known in advance.
 		 * <h4>Content</h4>
 		 * The content occupies the main part of the page. It can hold any type of input controls. The content is kept in {@link sap.m.WizardStep wizard steps}.
 		 * <h4>Next Step Button</h4>
