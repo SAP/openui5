@@ -10,7 +10,6 @@ sap.ui.define([
 	var InnerTable, InnerColumn, InnerRow;
 	var GrowingMode = library.GrowingMode;
 	var RowAction = library.RowAction;
-
 	/**
 	 * Constructor for a new ResponsiveTableType.
 	 *
@@ -72,6 +71,16 @@ sap.ui.define([
 				detailsButtonSetting: {
 					type: "sap.ui.core.Priority[]",
 					group: "Behavior"
+				},
+				/**
+				 * Defines the layout in which the table pop-in rows are rendered.
+				 *
+				 * @since 1.96
+				 */
+				popinLayout: {
+					type : "sap.m.PopinLayout",
+					group : "Appearance",
+					defaultValue : "Block"
 				}
 			}
 		}
@@ -89,6 +98,8 @@ sap.ui.define([
 				oTable.setGrowing(vValue !== GrowingMode.None);
 			} else if (sProperty === "showDetailsButton") {
 				this.updateShowDetailsButton(oTable, vValue);
+			} else if (sProperty === "popinLayout") {
+				oTable.setPopinLayout(vValue);
 			}
 		}
 	};
