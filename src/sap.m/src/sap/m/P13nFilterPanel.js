@@ -398,8 +398,6 @@ sap.ui.define([
 		this.setType(P13nPanelType.filter);
 		this.setTitle(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FILTERPANEL_TITLE"));
 
-		sap.ui.getCore().loadLibrary("sap.ui.layout");
-
 		this._aKeyFields = [];
 
 		// init some resources
