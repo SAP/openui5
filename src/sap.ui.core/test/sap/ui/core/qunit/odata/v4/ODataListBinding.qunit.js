@@ -7382,8 +7382,7 @@ sap.ui.define([
 
 		this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs()
 			.returns("/TEAMS");
-		this.mock(this.oModel.oMetaModel).expects("getMetaPath").withExactArgs("/TEAMS")
-			.returns("~meta~path~");
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("/TEAMS").returns("~meta~path~");
 		this.mock(this.oModel.oMetaModel).expects("requestObject").withExactArgs("~meta~path~/")
 			.callsFake(function () {
 				that.mock(that.oModel).expects("getMessagesByPath")
