@@ -1,4 +1,4 @@
-ace.define("ace/mode/doc_comment_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/doc_comment_highlight_rules",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
@@ -48,7 +48,7 @@ exports.DocCommentHighlightRules = DocCommentHighlightRules;
 
 });
 
-ace.define("ace/mode/edifact_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/doc_comment_highlight_rules","ace/mode/text_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/edifact_highlight_rules",[], function(require, exports, module) {
     "use strict";
     
     var oop = require("../lib/oop");
@@ -137,7 +137,7 @@ ace.define("ace/mode/edifact_highlight_rules",["require","exports","module","ace
     exports.EdifactHighlightRules = EdifactHighlightRules;
     });
 
-ace.define("ace/mode/edifact",["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/edifact_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/edifact",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");

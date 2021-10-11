@@ -1,4 +1,4 @@
-ace.define("ace/mode/abc_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function (require, exports, module) {
+ace.define("ace/mode/abc_highlight_rules",[], function (require, exports, module) {
     "use strict";
 
     var oop = require("../lib/oop");
@@ -98,7 +98,7 @@ ace.define("ace/mode/abc_highlight_rules",["require","exports","module","ace/lib
     exports.ABCHighlightRules = ABCHighlightRules;
 });
 
-ace.define("ace/mode/folding/cstyle",["require","exports","module","ace/lib/oop","ace/range","ace/mode/folding/fold_mode"], function(require, exports, module) {
+ace.define("ace/mode/folding/cstyle",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../../lib/oop");
@@ -238,7 +238,7 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 });
 
-ace.define("ace/mode/abc",["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/abc_highlight_rules","ace/mode/folding/cstyle"], function (require, exports, module) {
+ace.define("ace/mode/abc",[], function (require, exports, module) {
     "use strict";
 
     var oop = require("../lib/oop");

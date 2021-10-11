@@ -1,4 +1,4 @@
-ace.define("ace/snippets/lua",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/snippets/lua",[], function(require, exports, module) {
 "use strict";
 
 exports.snippetText = "snippet #!\n\

@@ -1,8 +1,7 @@
-ace.define("ace/theme/eclipse",["require","exports","module","ace/lib/dom"], function(require, exports, module) {
+ace.define("ace/theme/eclipse",[], function(require, exports, module) {
 "use strict";
 
 exports.isDark = false;
-// #### BEGIN MODIFIED BY SAP
 exports.cssText = ".ace-eclipse .ace_gutter {\
 background: #ebebeb;\
 border-right: 1px solid rgb(159, 159, 159);\
@@ -89,14 +88,13 @@ background-color : #DADADA;\
 border: 1px solid rgb(181, 213, 255);\
 }\
 .ace-eclipse .ace_indent-guide {\
-background: url(" + sap.ui.require.toUrl("sap/ui/codeeditor/js/ace/assets/theme_eclipse_indent_guide.png") + ") right repeat-y;\
+background: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==\") right repeat-y;\
 }";
-// #### END MODIFIED BY SAP
 
 exports.cssClass = "ace-eclipse";
 
 var dom = require("../lib/dom");
-dom.importCssString(exports.cssText, exports.cssClass);
+dom.importCssString(exports.cssText, exports.cssClass, false);
 });                (function() {
                     ace.require(["ace/theme/eclipse"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {

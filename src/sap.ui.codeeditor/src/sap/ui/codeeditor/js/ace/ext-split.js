@@ -1,4 +1,4 @@
-ace.define("ace/split",["require","exports","module","ace/lib/oop","ace/lib/lang","ace/lib/event_emitter","ace/editor","ace/virtual_renderer","ace/edit_session"], function(require, exports, module) {
+ace.define("ace/split",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("./lib/oop");
@@ -193,7 +193,7 @@ var Split = function(container, theme, splits) {
 exports.Split = Split;
 });
 
-ace.define("ace/ext/split",["require","exports","module","ace/split"], function(require, exports, module) {
+ace.define("ace/ext/split",[], function(require, exports, module) {
 "use strict";
 module.exports = require("../split");
 

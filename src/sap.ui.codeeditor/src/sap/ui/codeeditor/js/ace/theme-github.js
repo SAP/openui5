@@ -1,8 +1,7 @@
-ace.define("ace/theme/github",["require","exports","module","ace/lib/dom"], function(require, exports, module) {
+ace.define("ace/theme/github",[], function(require, exports, module) {
 
 exports.isDark = false;
 exports.cssClass = "ace-github";
-// #### BEGIN MODIFIED BY SAP
 exports.cssText = "\
 .ace-github .ace_gutter {\
 background: #e8e8e8;\
@@ -96,12 +95,11 @@ width: 1px;\
 background: #e8e8e8;\
 }\
 .ace-github .ace_indent-guide {\
-background: url(" + sap.ui.require.toUrl("sap/ui/codeeditor/js/ace/assets/theme_github_indent_guide.png") + ") right repeat-y;\
+background: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==\") right repeat-y;\
 }";
-// #### END MODIFIED BY SAP
 
     var dom = require("../lib/dom");
-    dom.importCssString(exports.cssText, exports.cssClass);
+    dom.importCssString(exports.cssText, exports.cssClass, false);
 });                (function() {
                     ace.require(["ace/theme/github"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {

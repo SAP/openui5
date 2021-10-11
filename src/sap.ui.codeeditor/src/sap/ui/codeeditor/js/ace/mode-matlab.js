@@ -1,4 +1,4 @@
-ace.define("ace/mode/matlab_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/matlab_highlight_rules",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
@@ -230,7 +230,7 @@ oop.inherits(MatlabHighlightRules, TextHighlightRules);
 exports.MatlabHighlightRules = MatlabHighlightRules;
 });
 
-ace.define("ace/mode/matlab",["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/matlab_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/matlab",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");

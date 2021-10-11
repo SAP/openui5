@@ -1,4 +1,4 @@
-ace.define("ace/mode/gitignore_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/gitignore_highlight_rules",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
@@ -30,7 +30,7 @@ oop.inherits(GitignoreHighlightRules, TextHighlightRules);
 exports.GitignoreHighlightRules = GitignoreHighlightRules;
 });
 
-ace.define("ace/mode/gitignore",["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/gitignore_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/gitignore",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");

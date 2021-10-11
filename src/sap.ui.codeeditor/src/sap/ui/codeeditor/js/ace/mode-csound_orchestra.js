@@ -1,4 +1,4 @@
-ace.define("ace/mode/csound_preprocessor_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/csound_preprocessor_highlight_rules",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
@@ -280,7 +280,7 @@ oop.inherits(CsoundPreprocessorHighlightRules, TextHighlightRules);
 exports.CsoundPreprocessorHighlightRules = CsoundPreprocessorHighlightRules;
 });
 
-ace.define("ace/mode/csound_score_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/csound_preprocessor_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/csound_score_highlight_rules",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
@@ -300,7 +300,7 @@ var CsoundScoreHighlightRules = function(embeddedRulePrefix) {
     start.push(
         {
             token : "keyword.control.csound-score",
-            regex : /[abCdefiqstvxy]/
+            regex : /[aBbCdefiqstvxy]/
         }, {
             token : "invalid.illegal.csound-score",
             regex : /w/
@@ -431,7 +431,7 @@ oop.inherits(CsoundScoreHighlightRules, CsoundPreprocessorHighlightRules);
 exports.CsoundScoreHighlightRules = CsoundScoreHighlightRules;
 });
 
-ace.define("ace/mode/lua_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/lua_highlight_rules",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
@@ -590,7 +590,7 @@ oop.inherits(LuaHighlightRules, TextHighlightRules);
 exports.LuaHighlightRules = LuaHighlightRules;
 });
 
-ace.define("ace/mode/python_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/python_highlight_rules",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
@@ -981,7 +981,7 @@ oop.inherits(PythonHighlightRules, TextHighlightRules);
 exports.PythonHighlightRules = PythonHighlightRules;
 });
 
-ace.define("ace/mode/csound_orchestra_highlight_rules",["require","exports","module","ace/lib/lang","ace/lib/oop","ace/mode/csound_preprocessor_highlight_rules","ace/mode/csound_score_highlight_rules","ace/mode/lua_highlight_rules","ace/mode/python_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/csound_orchestra_highlight_rules",[], function(require, exports, module) {
 "use strict";
 
 var lang = require("../lib/lang");
@@ -1141,6 +1141,7 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "adsynt",
         "adsynt2",
         "aftouch",
+        "allpole",
         "alpass",
         "alwayson",
         "ampdb",
@@ -1148,11 +1149,17 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "ampmidi",
         "ampmidicurve",
         "ampmidid",
+        "apoleparams",
+        "arduinoRead",
+        "arduinoReadF",
+        "arduinoStart",
+        "arduinoStop",
         "areson",
         "aresonk",
         "atone",
         "atonek",
         "atonex",
+        "autocorr",
         "babo",
         "balance",
         "balance2",
@@ -1160,8 +1167,6 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "barmodel",
         "bbcutm",
         "bbcuts",
-        "beadsynt",
-        "beosc",
         "betarand",
         "bexprnd",
         "bformdec1",
@@ -1170,6 +1175,7 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "biquad",
         "biquada",
         "birnd",
+        "bob",
         "bpf",
         "bpfcos",
         "bqrez",
@@ -1195,6 +1201,7 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "ceps",
         "cepsinv",
         "chanctrl",
+        "changed",
         "changed2",
         "chani",
         "chano",
@@ -1227,6 +1234,13 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "clockon",
         "cmp",
         "cmplxprod",
+        "cntCreate",
+        "cntCycles",
+        "cntDelete",
+        "cntDelete_i",
+        "cntRead",
+        "cntReset",
+        "cntState",
         "comb",
         "combinv",
         "compilecsd",
@@ -1246,6 +1260,8 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "cosseg",
         "cossegb",
         "cossegr",
+        "count",
+        "count_i",
         "cps2pch",
         "cpsmidi",
         "cpsmidib",
@@ -1271,6 +1287,11 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "ctrl21",
         "ctrl7",
         "ctrlinit",
+        "ctrlpreset",
+        "ctrlprint",
+        "ctrlprintpresets",
+        "ctrlsave",
+        "ctrlselect",
         "cuserrnd",
         "dam",
         "date",
@@ -1433,7 +1454,9 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "ftsamplebank",
         "ftsave",
         "ftsavek",
+        "ftset",
         "ftslice",
+        "ftslicei",
         "ftsr",
         "gain",
         "gainslider",
@@ -1450,7 +1473,6 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "getcol",
         "getftargs",
         "getrow",
-        "getrowlin",
         "getseed",
         "gogobel",
         "grain",
@@ -1698,9 +1720,12 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "la_k_upper_solve_mr",
         "la_k_vc_set",
         "la_k_vr_set",
+        "lag",
+        "lagud",
         "lastcycle",
         "lenarray",
         "lfo",
+        "lfsr",
         "limit",
         "limit1",
         "lincos",
@@ -1744,6 +1769,8 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "lowpass2",
         "lowres",
         "lowresx",
+        "lpcanal",
+        "lpcfilter",
         "lpf18",
         "lpform",
         "lpfreson",
@@ -1759,14 +1786,7 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "lpshold",
         "lpsholdp",
         "lpslot",
-        "lua_exec",
-        "lua_iaopcall",
-        "lua_iaopcall_off",
-        "lua_ikopcall",
-        "lua_ikopcall_off",
-        "lua_iopcall",
-        "lua_iopcall_off",
-        "lua_opdef",
+        "lufs",
         "mac",
         "maca",
         "madsr",
@@ -1842,6 +1862,7 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "mp3sr",
         "mpulse",
         "mrtmsg",
+        "ms2st",
         "mtof",
         "mton",
         "multitap",
@@ -1851,6 +1872,7 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "mvclpf2",
         "mvclpf3",
         "mvclpf4",
+        "mvmfilter",
         "mxadsr",
         "nchnls_hw",
         "nestedap",
@@ -1894,6 +1916,7 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "oscilx",
         "out",
         "out32",
+        "outall",
         "outc",
         "outch",
         "outh",
@@ -1994,12 +2017,11 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "printk2",
         "printks",
         "printks2",
+        "println",
         "prints",
+        "printsk",
         "product",
         "pset",
-        "ptable",
-        "ptable3",
-        "ptablei",
         "ptablew",
         "ptrack",
         "puts",
@@ -2016,6 +2038,7 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "pvsarp",
         "pvsbandp",
         "pvsbandr",
+        "pvsbandwidth",
         "pvsbin",
         "pvsblur",
         "pvsbuffer",
@@ -2024,6 +2047,7 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "pvscale",
         "pvscent",
         "pvsceps",
+        "pvscfs",
         "pvscross",
         "pvsdemix",
         "pvsdiskin",
@@ -2043,6 +2067,7 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "pvsinfo",
         "pvsinit",
         "pvslock",
+        "pvslpc",
         "pvsmaska",
         "pvsmix",
         "pvsmooth",
@@ -2168,6 +2193,7 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "repluck",
         "reshapearray",
         "reson",
+        "resonbnk",
         "resonk",
         "resonr",
         "resonx",
@@ -2185,6 +2211,7 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "rms",
         "rnd",
         "rnd31",
+        "rndseed",
         "round",
         "rspline",
         "rtclock",
@@ -2197,11 +2224,13 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "sc_phasor",
         "sc_trig",
         "scale",
+        "scale2",
         "scalearray",
         "scanhammer",
         "scans",
         "scantable",
         "scanu",
+        "scanu2",
         "schedkwhen",
         "schedkwhennamed",
         "schedule",
@@ -2251,6 +2280,7 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "sinh",
         "sininv",
         "sinsyn",
+        "skf",
         "sleighbells",
         "slicearray",
         "slicearray_i",
@@ -2286,13 +2316,16 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "spat3di",
         "spat3dt",
         "spdist",
+        "spf",
         "splitrig",
         "sprintf",
         "sprintfk",
         "spsend",
         "sqrt",
         "squinewave",
+        "st2ms",
         "statevar",
+        "sterrain",
         "stix",
         "strcat",
         "strcatk",
@@ -2331,6 +2364,7 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "sum",
         "sumarray",
         "svfilter",
+        "svn",
         "syncgrain",
         "syncloop",
         "syncphasor",
@@ -2371,7 +2405,6 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "tabmorphi",
         "tabplay",
         "tabrec",
-        "tabrowlin",
         "tabsum",
         "tabw",
         "tabw_i",
@@ -2403,7 +2436,11 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "trcross",
         "trfilter",
         "trhighest",
+        "trigExpseg",
+        "trigLinseg",
         "trigger",
+        "trighold",
+        "trigphasor",
         "trigseq",
         "trim",
         "trim_i",
@@ -2415,6 +2452,8 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "trsplit",
         "turnoff",
         "turnoff2",
+        "turnoff2_i",
+        "turnoff3",
         "turnon",
         "tvconv",
         "unirand",
@@ -2438,6 +2477,7 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "vbapz",
         "vbapzmove",
         "vcella",
+        "vclpf",
         "vco",
         "vco2",
         "vco2ft",
@@ -2486,6 +2526,7 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "vpow_i",
         "vpowv",
         "vpowv_i",
+        "vps",
         "vpvoc",
         "vrandh",
         "vrandi",
@@ -2525,6 +2566,7 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "wrap",
         "writescratch",
         "wterrain",
+        "wterrain2",
         "xadsr",
         "xin",
         "xout",
@@ -2557,24 +2599,47 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "zkwm"
     ];
     var deprecatedOpcodes = [
+        "OSCsendA",
         "array",
+        "beadsynt",
+        "beosc",
         "bformdec",
         "bformenc",
-        "changed",
+        "buchla",
         "copy2ftab",
         "copy2ttab",
+        "getrowlin",
         "hrtfer",
         "ktableseg",
         "lentab",
+        "lua_exec",
+        "lua_iaopcall",
+        "lua_iaopcall_off",
+        "lua_ikopcall",
+        "lua_ikopcall_off",
+        "lua_iopcall",
+        "lua_iopcall_off",
+        "lua_opdef",
         "maxtab",
         "mintab",
+        "mp3scal_check",
+        "mp3scal_load",
+        "mp3scal_load2",
+        "mp3scal_play",
+        "mp3scal_play2",
         "pop",
         "pop_f",
+        "ptable",
+        "ptable3",
+        "ptablei",
         "ptableiw",
         "push",
         "push_f",
+        "pvsgendy",
         "scalet",
+        "signalflowgraph",
         "sndload",
+        "socksend_k",
         "soundout",
         "soundouts",
         "specaddm",
@@ -2587,11 +2652,14 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "specsum",
         "spectrum",
         "stack",
+        "sumTableFilter",
         "sumtab",
+        "systime",
         "tabgen",
         "tableiw",
         "tabmap",
         "tabmap_i",
+        "tabrowlin",
         "tabslice",
         "tb0",
         "tb0_init",
@@ -2626,6 +2694,7 @@ var CsoundOrchestraHighlightRules = function(embeddedRulePrefix) {
         "tb9",
         "tb9_init",
         "vbap16",
+        "vbap1move",
         "vbap4",
         "vbap4move",
         "vbap8",
@@ -2934,7 +3003,7 @@ oop.inherits(CsoundOrchestraHighlightRules, CsoundPreprocessorHighlightRules);
 exports.CsoundOrchestraHighlightRules = CsoundOrchestraHighlightRules;
 });
 
-ace.define("ace/mode/csound_orchestra",["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/csound_orchestra_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/csound_orchestra",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
