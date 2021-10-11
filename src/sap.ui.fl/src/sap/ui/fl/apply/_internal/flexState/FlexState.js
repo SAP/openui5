@@ -174,7 +174,7 @@ sap.ui.define([
 		if (LayerUtils.isLayerFilteringRequired(_oURLParsingService)) {
 			each(_mFlexObjectInfo, function(iIndex, mFlexObjectInfo) {
 				mFlexObjectInfo.pathInResponse.forEach(function(sPath) {
-					ObjectPath.set(sPath, LayerUtils.filterChangeDefinitionsByMaxLayer(ObjectPath.get(sPath, mFlexObjects)), mFlexObjects);
+					ObjectPath.set(sPath, LayerUtils.filterChangeDefinitionsByMaxLayer(ObjectPath.get(sPath, mFlexObjects), _oURLParsingService), mFlexObjects);
 				});
 			});
 		}

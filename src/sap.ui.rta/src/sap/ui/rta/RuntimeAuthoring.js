@@ -1440,7 +1440,9 @@ function(
 		) {
 			this._getUShellService("CrossApplicationNavigation")
 				.toExternal(this._buildNavigationArguments(mParsedHash));
+			return true;
 		}
+		return false;
 	};
 
 	RuntimeAuthoring.prototype._removeVersionParameterForFLP = function(oReloadInfo, mParsedHash, bTriggerReload) {
