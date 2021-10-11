@@ -182,5 +182,47 @@
         ]
       }
     ]
+  },
+  "1.90.7": {
+    "date": "October 2021",
+    "notes": [
+      {
+        "id": "811ffa47dc77add52b21119efebf144d6b10794c",
+        "type": "FIX",
+        "text": " sap.m.UploadSet : inner controls created by setter not freed up",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006120612021"
+          }
+        ]
+      },
+      {
+        "id": "c10aa0e63a753dba00a729afc63cf6ebdab1a3a6",
+        "type": "FIX",
+        "text": " sap.m.Select: Announce the new value with InvisibleMessage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002851422021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180337057"
+          }
+        ]
+      },
+      {
+        "id": "067e4ff2e64645c2e461a0d139ac6d9b9059c4ce",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: aria-hidden attribute added when there are no tokens",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700018628612021"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -28,5 +28,21 @@
         ]
       }
     ]
+  },
+  "1.90.7": {
+    "date": "October 2021",
+    "notes": [
+      {
+        "id": "b024f3893fb2df18560c08c84713a9883ff5dcbc",
+        "type": "FIX",
+        "text": "sap.ui.fl: Condenser changes reorder fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170211539"
+          }
+        ]
+      }
+    ]
   }
 }
