@@ -27758,7 +27758,8 @@ sap.ui.define([
 	// change the binding's parent context in the meantime. Check that setting the property value
 	// fails instead of changing the wrong data or so.
 	// JIRA: CPOUI5ODATAV4-14
-	QUnit.test("CPOUI5ODATAV4-108 what if context has changed in the meantime", function (assert) {
+	QUnit[Device.browser.msie ? "skip" : "test"]("CPOUI5ODATAV4-108 what if context has changed in"
+		+ " the meantime", function (assert) {
 		var oModel = createTeaBusiModel({groupId : "$direct"}),
 			that = this;
 
