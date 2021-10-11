@@ -621,6 +621,8 @@ sap.ui.define([
 
 		if (oHostInstance && oHostInstance.bUseExperimentalCaching) {
 			this.addStyleClass("sapFCardExperimentalCaching");
+		} else {
+			this.removeStyleClass("sapFCardExperimentalCaching");
 		}
 
 		return this;
