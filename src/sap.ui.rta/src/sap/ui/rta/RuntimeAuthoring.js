@@ -1028,8 +1028,8 @@ function(
 				oProperties.activate = this._onActivate.bind(this);
 				oProperties.discardDraft = this._onDiscardDraft.bind(this);
 				oProperties.switchVersion = this._onSwitchVersion.bind(this);
-				oProperties.toggleChangeVisualizationPopover = this.getChangeVisualization
-					? this.getChangeVisualization().togglePopover.bind(this.getChangeVisualization())
+				oProperties.onCommandCategorySelection = this.getChangeVisualization
+					? this.getChangeVisualization().onCommandCategorySelection.bind(this.getChangeVisualization())
 					: function () {};
 			}
 
@@ -1734,7 +1734,7 @@ function(
 		if (sCurrentMode !== sNewMode) {
 			var oChangeVisualization = this.getChangeVisualization && this.getChangeVisualization();
 			if (sNewMode === "visualization" || sCurrentMode === "visualization") {
-				oChangeVisualization.triggerModeChange(this.getRootControl());
+				oChangeVisualization.triggerModeChange(this.getRootControl(), this.getToolbar());
 			}
 			var oTabHandlingPlugin = this.getPluginManager().getPlugin("tabHandling");
 			var oSelectionPlugin = this.getPluginManager().getPlugin("selection");
