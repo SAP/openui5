@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/util/XMLHelper",
 	"sap/base/util/merge",
-	"sap/ui/core/Fragment" // also needed to have sap.ui.xmlfragment
+	"sap/ui/core/Fragment"
 ], function (
 	BindingParser,
 	BaseTreeModifier,
@@ -450,14 +450,12 @@ sap.ui.define([
 
 			return this._checkAndPrefixIdsInFragment(oFragment, sNamespace)
 				.then(function (oFragment) {
-					var aNewControls;
-					var sId = oView && oView.getId();
-					var oController = oView.getController();
-					aNewControls = sap.ui.xmlfragment({
-						fragmentContent: oFragment,
-						sId:sId
-					}, oController);
-
+					return Fragment.load({
+						definition: oFragment,
+						sId: oView && oView.getId(),
+						controller: oView.getController()
+					});
+				}).then(function(aNewControls) {
 					if (!Array.isArray(aNewControls)) {
 						aNewControls = [aNewControls];
 					}
