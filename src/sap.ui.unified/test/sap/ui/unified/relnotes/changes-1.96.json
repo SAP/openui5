@@ -3,6 +3,17 @@
     "date": "October 2021",
     "notes": [
       {
+        "id": "47bc26ce765066d74e86e6f4a3efdf82a6cfb86b",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: cached input field element is now cleared on destroy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170197001"
+          }
+        ]
+      },
+      {
         "id": "7f0b176e37795729656b5b99b30e0baf3a57b39d",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: Appointments levels are re-calculated on grow",
