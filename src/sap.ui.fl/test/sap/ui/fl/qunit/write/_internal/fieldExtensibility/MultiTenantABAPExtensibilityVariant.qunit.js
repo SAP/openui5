@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/fl/write/_internal/fieldExtensibility/Utils",
 	"sap/ui/fl/write/_internal/fieldExtensibility/MultiTenantABAPExtensibilityVariant",
+	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Utils,
 	MultiTenantABAPExtensibilityVariant,
+	FlexUtils,
 	jQuery,
 	sinon
 ) {
@@ -51,7 +53,7 @@ sap.ui.define([
 			this.oGetTextStub = this.oSandbox.stub(Utils, "getText").callsFake(function(sTextKey) {
 				return sTextKey;
 			});
-			this.oSandbox.stub(Utils, "getCrossAppNavigationService").returns(Promise.resolve(this.oCrossApp));
+			this.oSandbox.stub(FlexUtils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(this.oCrossApp));
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
 		},

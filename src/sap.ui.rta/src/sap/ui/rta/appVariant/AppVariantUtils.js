@@ -168,7 +168,10 @@ function(
 			return Promise.resolve(oInboundInfo);
 		}
 
-		return FlexUtils.getParsedURLHashAsync()
+		return FlexUtils.getUShellService("URLParsing")
+			.then(function(oURLParsingService) {
+				return FlexUtils.getParsedURLHash(oURLParsingService);
+			})
 			.then(function(oParsedHash) {
 				var aInbounds = Object.keys(oInbounds);
 				var aInboundsFound = [];
@@ -239,7 +242,10 @@ function(
 	 * @returns {Promise<object>} resolving to property object containing inbound properties
 	 */
 	AppVariantUtils.prepareAddNewInboundChange = function(sCurrentRunningInboundId, sAppVariantId, oAppVariantSpecificData) {
-		return FlexUtils.getParsedURLHashAsync()
+		return FlexUtils.getUShellService("URLParsing")
+			.then(function(oURLParsingService) {
+				return FlexUtils.getParsedURLHash(oURLParsingService);
+			})
 			.then(function(oParsedHash) {
 				var oProperty = {
 					content: {

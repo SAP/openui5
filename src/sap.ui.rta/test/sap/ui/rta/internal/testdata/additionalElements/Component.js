@@ -86,17 +86,6 @@ sap.ui.define([
 							toExternal: function() {}
 						});
 					},
-					//TODO: Remove when all calls are using Async
-					getService: function() {
-						return {
-							hrefForExternal: function() {},
-							parseShellHash: function() {},
-							registerNavigationFilter: function() {},
-							unregisterNavigationFilter: function() {},
-							getUser: function() {},
-							toExternal: function() {}
-						};
-					},
 					getLogonSystem: function() {
 						return {
 							getName: function() {

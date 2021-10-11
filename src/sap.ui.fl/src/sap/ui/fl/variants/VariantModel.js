@@ -351,10 +351,10 @@ sap.ui.define([
 				var oUShellContainer = Utils.getUshellContainer();
 				if (oUShellContainer) {
 					var aServicePromises = [
-						oUShellContainer.getServiceAsync("UserInfo"),
-						oUShellContainer.getServiceAsync("URLParsing"),
-						oUShellContainer.getServiceAsync("CrossApplicationNavigation"),
-						oUShellContainer.getServiceAsync("ShellNavigation")
+						Utils.getUShellService("UserInfo"),
+						Utils.getUShellService("URLParsing"),
+						Utils.getUShellService("CrossApplicationNavigation"),
+						Utils.getUShellService("ShellNavigation")
 					];
 					return Promise.all(aServicePromises)
 						.then(function(aServices) {

@@ -1,7 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/fl/write/_internal/fieldExtensibility/Utils",
+	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPExtensibilityVariantFactory",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
@@ -60,7 +60,7 @@ sap.ui.define([
 			}
 		},
 		beforeEach: function () {
-			this.oSandbox.stub(Utils, "getCrossAppNavigationService").returns(Promise.resolve(this.oCrossApp));
+			this.oSandbox.stub(Utils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(this.oCrossApp));
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
 		},

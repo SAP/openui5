@@ -77,7 +77,7 @@ sap.ui.define([
 			oSandbox.stub(ExtUtils, "getText").callsFake(function(sTextKey) {
 				return sTextKey;
 			});
-			oSandbox.stub(ExtUtils, "getCrossAppNavigationService").returns(Promise.resolve(this.oCrossApp));
+			oSandbox.stub(FlexUtils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(this.oCrossApp));
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
 			this.oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
@@ -272,7 +272,7 @@ sap.ui.define([
 		},
 		beforeEach: function() {
 			ABAPExtensibilityVariantFactory.reset();
-			oSandbox.stub(ExtUtils, "getCrossAppNavigationService").returns(Promise.resolve(this.oCrossApp));
+			oSandbox.stub(FlexUtils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(this.oCrossApp));
 		},
 		afterEach: function() {
 			this.oServer.restore();

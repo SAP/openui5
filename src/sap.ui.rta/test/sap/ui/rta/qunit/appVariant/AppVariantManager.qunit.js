@@ -168,7 +168,7 @@ function (
 				semanticObject: "testSemanticObject",
 				action: "testAction"
 			};
-			sandbox.stub(FlUtils, "getParsedURLHashAsync").returns(Promise.resolve(oParsedHashStub));
+			sandbox.stub(FlUtils, "getParsedURLHash").returns(oParsedHashStub);
 
 			this.oAppVariantData = {
 				description: "App Variant Description",
@@ -434,15 +434,6 @@ function (
 			var originalUShell = sap.ushell;
 
 			sap.ushell = Object.assign({}, sap.ushell, {
-				Container: {
-					getService: function() {
-						return {
-							toExternal: function() {
-								window.bUShellNavigationTriggered = true;
-							}
-						};
-					}
-				},
 				services: {
 					AppConfiguration: {
 						getCurrentApplication: function() {
@@ -486,15 +477,6 @@ function (
 			var originalUShell = sap.ushell;
 
 			sap.ushell = Object.assign({}, sap.ushell, {
-				Container: {
-					getService: function() {
-						return {
-							toExternal: function() {
-								window.bUShellNavigationTriggered = true;
-							}
-						};
-					}
-				},
 				services: {
 					AppConfiguration: {
 						getCurrentApplication: function() {

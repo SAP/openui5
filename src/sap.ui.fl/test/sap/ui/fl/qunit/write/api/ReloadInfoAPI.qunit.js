@@ -616,15 +616,6 @@ sap.ui.define([
 					};
 				}
 			};
-			sandbox.stub(FlexUtils, "getUshellContainer").returns({
-				getService: function () {
-					return {
-						toExternal: function() {
-							return true;
-						}
-					};
-				}
-			});
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -652,15 +643,6 @@ sap.ui.define([
 					};
 				}
 			};
-			sandbox.stub(FlexUtils, "getUshellContainer").returns({
-				getService: function () {
-					return {
-						toExternal: function() {
-							return true;
-						}
-					};
-				}
-			});
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -687,15 +669,6 @@ sap.ui.define([
 					};
 				}
 			};
-			sandbox.stub(FlexUtils, "getUshellContainer").returns({
-				getService: function () {
-					return {
-						toExternal: function() {
-							return true;
-						}
-					};
-				}
-			});
 		},
 		afterEach: function() {
 			sandbox.restore();

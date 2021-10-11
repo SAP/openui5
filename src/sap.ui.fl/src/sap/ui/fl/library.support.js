@@ -63,7 +63,7 @@ sap.ui.define([
 			Promise.resolve()
 				.then(function() {
 					if (oUshellContainer) {
-						return oUshellContainer.getServiceAsync("AppLifeCycle")
+						return Utils.getUShellService("AppLifeCycle")
 							.then(function(oAppLifeCycle) {
 								var mRunningApp = oAppLifeCycle.getCurrentApplication();
 								// Disable this rule for ushell home page (where tiles are located)

@@ -17,14 +17,14 @@ sap.ui.define([
 	function retrieveUserId() {
 		var oUShellContainer = Utils.getUshellContainer();
 		if (oUShellContainer) {
-			return oUShellContainer.getServiceAsync("UserInfo")
-			.then(function(oUserInfoService) {
-				var oUser = oUserInfoService.getUser();
-				return oUser && oUser.getId();
-			})
-			.catch(function(oError) {
-				Log.error("Error getting service from Unified Shell: " + oError.message);
-			});
+			return Utils.getUShellService("UserInfo")
+				.then(function(oUserInfoService) {
+					var oUser = oUserInfoService.getUser();
+					return oUser && oUser.getId();
+				})
+				.catch(function(oError) {
+					Log.error("Error getting service from Unified Shell: " + oError.message);
+				});
 		}
 		return Promise.resolve();
 	}

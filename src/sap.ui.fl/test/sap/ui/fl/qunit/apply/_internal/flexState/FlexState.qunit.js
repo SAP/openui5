@@ -390,18 +390,6 @@ sap.ui.define([
 			this.oDeRegistrationHandlerStub = sandbox.stub();
 
 			var oUShellService = {
-				//TODO: Remove when all calls are adjusted
-				getService: function(sService) {
-					if (sService === "ShellNavigation") {
-						return {
-							registerNavigationFilter: this.oRegistrationHandlerStub,
-							unregisterNavigationFilter: this.oDeRegistrationHandlerStub,
-							NavigationFilterStatus: {
-								Continue: "continue"
-							}
-						};
-					}
-				}.bind(this),
 				getServiceAsync: function(sService) {
 					if (sService === "ShellNavigation") {
 						return Promise.resolve({
