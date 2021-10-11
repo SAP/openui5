@@ -2252,11 +2252,16 @@ sap.ui.define([
 	 *
 	 * @param {object} mSettings Object containing the aggregation name
 	 * @param {string} mSettings.aggregation The aggregation name to decide on which column/container the placeholder should be shown
-	 * @public
+	 * @private
+	 * @ui5-restricted SAPUI5 Distribution libraries only
 	 * @since 1.91
 	 */
 	FlexibleColumnLayout.prototype.showPlaceholder = function(mSettings) {
-		switch (mSettings.aggregation) {
+		if (!sap.ui.getCore().getConfiguration().getPlaceholder()) {
+			return;
+		}
+
+		switch (mSettings && mSettings.aggregation) {
 			case "beginColumnPages":
 				return this.getAggregation("_beginColumnNav").showPlaceholder(mSettings);
 			case "midColumnPages":
@@ -2271,7 +2276,8 @@ sap.ui.define([
 	 *
 	 * @param {object} mSettings Object containing the aggregation name
 	 * @param {string} mSettings.aggregation The aggregation name to decide on which column/container the placeholder should be hidden
-	 * @public
+	 * @private
+	 * @ui5-restricted SAP internal apps
 	 * @since 1.91
 	 */
 	FlexibleColumnLayout.prototype.hidePlaceholder = function(mSettings) {

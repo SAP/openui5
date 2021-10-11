@@ -2136,11 +2136,16 @@ function(
 	 * @param {object} mSettings Object containing the aggregation name
 	 * @param {string} mSettings.aggregation The aggregation name to decide on which column/container the placeholder should be shown
 	 *
-	 * @public
+	 * @private
+	 * @ui5-restricted SAPUI5 Distribution libraries only
 	 * @since 1.91
 	 */
 	SplitContainer.prototype.showPlaceholder = function(mSettings) {
-		switch (mSettings.aggregation) {
+		if (!sap.ui.getCore().getConfiguration().getPlaceholder()) {
+			return;
+		}
+
+		switch (mSettings && mSettings.aggregation) {
 			case "masterPages":
 				return this.getAggregation("_navMaster").showPlaceholder(mSettings);
 			default:
@@ -2154,7 +2159,8 @@ function(
 	 * @param {object} mSettings Object containing the aggregation name
 	 * @param {string} mSettings.aggregation The aggregation name to decide on which column/container the placeholder should be hidden
 	 *
-	 * @public
+	 * @private
+	 * @ui5-restricted SAP internal apps
 	 * @since 1.91
 	 */
 	SplitContainer.prototype.hidePlaceholder = function(mSettings) {
