@@ -33408,12 +33408,47 @@ sap.ui.define([
 					AValue : iValue // Edm.Int16
 				});
 
-			return that.oView.byId("aid").getBinding("text").requestValueListInfo()
-				.then(function (mQualifier2ValueListType) {
-					assert.deepEqual(
-						Object.keys(mQualifier2ValueListType),
-						iValue > 10 ? ["in", "maybe"] : ["in"]);
-				});
+			// code under test
+			return that.oView.byId("aid").getBinding("text").requestValueListInfo();
+		}).then(function (mQualifier2ValueListType) {
+			assert.deepEqual(
+				Object.keys(mQualifier2ValueListType),
+				iValue > 10 ? ["in", "maybe"] : ["in"]);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Evaluate "ValueListRelevantQualifiers" annotation even when
+	// "ValueListWithFixedValues" is present.
+	// JIRA: CPOUI5ODATAV4-1251
+[0, 1].forEach(function (iValue) {
+	var sTitle = "CPOUI5ODATAV4-1251: ValueListRelevantQualifiers and ValueListWithFixedValues"
+			+ ", value=" + iValue;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/Bs(1)}">\
+	<Text id="bid" text="{BID}"/>\
+	<Text id="bvalue" text="{BValue}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Bs(1)?$select=BID,BValue", {BID : 1, BValue : iValue})
+			.expectChange("bid", "1")
+			.expectChange("bvalue", "" + iValue);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			// code under test
+			return that.oView.byId("bid").getBinding("text").requestValueListInfo();
+		}).then(function (mQualifier2ValueListType) {
+			delete mQualifier2ValueListType[""].$model;
+			assert.deepEqual(mQualifier2ValueListType, {
+				"" : {
+					Label : iValue ? "Second label" : "First label"
+				}
+			});
 		});
 	});
 });

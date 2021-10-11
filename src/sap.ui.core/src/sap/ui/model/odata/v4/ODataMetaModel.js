@@ -3211,7 +3211,7 @@ sap.ui.define([
 					});
 				});
 			})).then(function () {
-				var aQualifiers;
+				var aRelevantQualifiers = mAnnotationByTerm[sValueListRelevantQualifiers];
 
 				// add all mappings in the data service (or local annotation files)
 				Object.keys(mAnnotationByTerm).filter(function (sTerm) {
@@ -3220,28 +3220,33 @@ sap.ui.define([
 					addMapping(mAnnotationByTerm[sTerm], getValueListQualifier(sTerm), that.sUrl,
 						that.oModel);
 				});
-				aQualifiers = Object.keys(oValueListInfo);
 
 				// Each reference must have contributed at least one qualifier. So if oValueListInfo
 				// is empty, there cannot have been a reference.
-				if (!aQualifiers.length) {
+				if (isEmptyObject(oValueListInfo)) {
 					throw new Error("No annotation '" + sValueListReferences.slice(1) + "' for " +
 						sPropertyPath);
 				}
-				if (bFixedValues) {
-					// With fixed values, only one mapping may exist. Return it for qualifier "".
-					if (aQualifiers.length > 1) {
-						throw new Error("Annotation '" + sValueListWithFixedValues.slice(1)
-							+ "' but multiple '" + sValueList.slice(1)
-							+ "' for property " + sPropertyPath);
-					}
-					return {"" : oValueListInfo[aQualifiers[0]]};
-				}
-				aQualifiers = mAnnotationByTerm[sValueListRelevantQualifiers];
-				return aQualifiers && oContext && oContext.getBinding
-					? that.filterValueListRelevantQualifiers(oValueListInfo, aQualifiers,
+
+				return aRelevantQualifiers && oContext && oContext.getBinding
+					? that.filterValueListRelevantQualifiers(oValueListInfo, aRelevantQualifiers,
 						sPropertyMetaPath + sValueListRelevantQualifiers, oContext)
 					: oValueListInfo;
+			}).then(function (mValueListByRelevantQualifier) {
+				var aQualifiers;
+
+				if (bFixedValues) {
+					aQualifiers = Object.keys(mValueListByRelevantQualifier);
+					// With fixed values, only one mapping should exist. Return it for qualifier "".
+					if (aQualifiers.length !== 1) {
+						throw new Error("Annotation '" + sValueListWithFixedValues.slice(1)
+							+ "' but not exactly one '" + sValueList.slice(1)
+							+ "' for property " + sPropertyPath);
+					}
+					return {"" : mValueListByRelevantQualifier[aQualifiers[0]]};
+				}
+
+				return mValueListByRelevantQualifier;
 			});
 		});
 	};
