@@ -111,8 +111,7 @@ sap.ui.define([], function () {
 			.attr("tabindex", "-1")
 			.accessibilityState({
 				role: "listitem",
-				roledescription: this.writeStepRoleDescription(oRm, sStepTitle, sOptionalLabel, iStepNumber),
-				label: null
+				label: this.writeStepLabel(oRm, sStepTitle, sOptionalLabel, iStepNumber)
 			});
 
 		if (!oCurrentStep || !!parseInt(oCurrentStep.style.zIndex)) {
@@ -157,7 +156,7 @@ sap.ui.define([], function () {
 		oRm.close("span");
 	};
 
-	WizardProgressNavigatorRenderer.writeStepRoleDescription = function (oRm, sStepTitle, sOptionalLabel, iStepNumber) {
+	WizardProgressNavigatorRenderer.writeStepLabel = function (oRm, sStepTitle, sOptionalLabel, iStepNumber) {
 		var sStepText = oResourceBundle.getText("WIZARD_PROG_NAV_STEP_TITLE"),
 			sTitleAttribute;
 
