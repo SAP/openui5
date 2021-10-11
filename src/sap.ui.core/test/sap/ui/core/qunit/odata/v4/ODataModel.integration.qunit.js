@@ -13019,8 +13019,8 @@ sap.ui.define([
 				template : new CustomListItem({content : [oText]})
 			});
 
-			// Increase the timeout for this test to 12 seconds to run also in IE
-			return that.waitForChanges(assert, "", undefined, 12000);
+			// Increase the timeout for this test to 24 seconds to run also in IE
+			return that.waitForChanges(assert, "", undefined, 24000);
 		});
 	});
 
@@ -13063,8 +13063,8 @@ sap.ui.define([
 				new Promise(function (resolve) {
 					fnDone = resolve;
 				}),
-				// Increase the timeout for this test to 12 seconds to run also in IE
-				that.waitForChanges(assert, "", undefined, 12000)
+				// Increase the timeout for this test to 24 seconds to run also in IE
+				that.waitForChanges(assert, "", undefined, 24000)
 			]);
 		});
 	});
@@ -28683,7 +28683,8 @@ sap.ui.define([
 	// change the binding's parent context in the meantime. Check that setting the property value
 	// fails instead of changing the wrong data or so.
 	// JIRA: CPOUI5ODATAV4-14
-	QUnit.test("CPOUI5ODATAV4-108 what if context has changed in the meantime", function (assert) {
+	QUnit[Device.browser.msie ? "skip" : "test"]("CPOUI5ODATAV4-108 what if context has changed in"
+		+ " the meantime", function (assert) {
 		var oModel = createTeaBusiModel({groupId : "$direct"}),
 			that = this;
 
