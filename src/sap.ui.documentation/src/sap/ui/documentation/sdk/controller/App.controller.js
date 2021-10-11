@@ -2,8 +2,6 @@
  * ${copyright}
  */
 
-/* global URLSearchParams */
-
 sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
@@ -78,14 +76,13 @@ sap.ui.define([
 
 		function getResourcePath(sResource) {
 
-			return bUseUnifiedResourceOrigin && !self['sap-ui-documentation-config'] ?
+			return ResourcesUtil.getResourcesVersion() && !self['sap-ui-documentation-config'] ?
 				window.origin + sResource :
 				ResourcesUtil.getResourceOriginPath(sResource);
 
 		}
 		// shortcut for sap.m.URLHelper
-		var bUseUnifiedResourceOrigin =  new URLSearchParams(window.location.search).get('sap-ui-xx-unifiedResources') != null,
-			URLHelper = mobileLibrary.URLHelper,
+		var URLHelper = mobileLibrary.URLHelper,
 			sNeoAppJsonPath = getResourcePath("/neo-app.json"), /* Load neo-app.json always from root URL */
 			sVersionOverviewJsonPath = getResourcePath("/versionoverview.json"), /* Load versionoverview.json always from root URL */
 			ABOUT_TEXT = "about",
@@ -1037,8 +1034,7 @@ sap.ui.define([
 			},
 
 			onLatestVersionItemPress: function() {
-				var bUseUnifiedResourceOrigin =  new URLSearchParams(window.location.search).get('sap-ui-xx-unifiedResources') != null;
-				if (bUseUnifiedResourceOrigin) {
+				if (ResourcesUtil.getResourcesVersion()) {
 					window.sessionStorage.removeItem("versionPrefixPath");
 					window.location.reload();
 				} else {
@@ -1048,12 +1044,11 @@ sap.ui.define([
 
 			onVersionItemPress: function (oEvent) {
 				var oSelectedItem = sap.ui.getCore().byId("versionList").getSelectedItem(),
-					oCustomData = oSelectedItem.getCustomData()[0],
-					bUseUnifiedResourceOrigin =  new URLSearchParams(window.location.search).get('sap-ui-xx-unifiedResources') != null;
+					oCustomData = oSelectedItem.getCustomData()[0];
 
 				if (oCustomData && oCustomData.getKey() === "path") {
 
-					if (bUseUnifiedResourceOrigin) {
+					if (ResourcesUtil.getHasProxy()) {
 						window.sessionStorage.setItem("versionPrefixPath", oCustomData.getValue());
 						window.location.reload();
 					} else {
@@ -1538,7 +1533,7 @@ sap.ui.define([
 			},
 
 			_getUI5Version: function () {
-				return bUseUnifiedResourceOrigin && window.sessionStorage.getItem("versionPrefixPath") ?
+				return ResourcesUtil.getResourcesVersion() ?
 					window.sessionStorage.getItem("versionPrefixPath") : this.getModel("versionData").getProperty("/version");
 			},
 
