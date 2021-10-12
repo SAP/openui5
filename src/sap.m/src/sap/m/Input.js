@@ -629,7 +629,7 @@ function(
 	Input.prototype.onBeforeRendering = function() {
 		var sSelectedKey = this.getSelectedKey(),
 			bShowValueHelpIcon = this.getShowValueHelp() && this.getEnabled() && this.getEditable(),
-			bShowClearIcon = this.getShowClearIcon(),
+			bShowClearIcon = this.getProperty("effectiveShowClearIcon") && this.getEnabled() && this.getEditable(),
 			oIcon = this._oValueHelpIcon,
 			oSuggestionsPopover = this._getSuggestionsPopover(),
 			bSuggestionsPopoverIsOpen = oSuggestionsPopover && this._isSuggestionsPopoverOpen(),
@@ -639,8 +639,8 @@ function(
 
 		InputBase.prototype.onBeforeRendering.call(this);
 
-		if (bShowClearIcon) {
-			this._getClearIcon().setProperty("visible", this.getProperty("effectiveShowClearIcon"));
+		if (this.getShowClearIcon()) {
+			this._getClearIcon().setProperty("visible", bShowClearIcon);
 		} else if (this._oClearButton) {
 			this._getClearIcon().setProperty("visible", false);
 		}
