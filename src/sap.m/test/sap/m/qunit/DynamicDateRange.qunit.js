@@ -45,6 +45,14 @@ sap.ui.define([
 		assert.strictEqual(oResultOptions[0], "LASTDAYS", "correct option");
 	});
 
+	QUnit.test("getFocusDomRef", function(assert) {
+		assert.strictEqual(
+			this.ddr.getFocusDomRef().id,
+			this.ddr.getAggregation("_input").getFocusDomRef().id,
+			"getFocusDomRef returns the DOM of the inner input control"
+		);
+	});
+
 	QUnit.module("CustomDynamicDateOption", {
 		beforeEach: function() {
 			this.ddr = new DynamicDateRange();

@@ -401,6 +401,10 @@ sap.ui.define([
 			this.setOptions(aOptions);
 		};
 
+		DynamicDateRange.prototype.getFocusDomRef = function(){
+			return this.getAggregation("_input") && this.getAggregation("_input").getFocusDomRef();
+		};
+
 		DynamicDateRange.prototype._updateInputValue = function(oValue) {
 			var sInputValue;
 
@@ -611,7 +615,6 @@ sap.ui.define([
 				this._oPopup.attachAfterClose(function() {
 					this._setFooterVisibility(false);
 					this.invalidate();
-					this.getAggregation("_input").focus();
 				}, this);
 
 				this._oPopup.setBeginButton(new Button({
@@ -962,7 +965,7 @@ sap.ui.define([
 				// There is a custom initial focus handling logic for both options list page and option details page
 				this._applyNavContainerPageFocus(oToPage);
 			} else {
-				this.getAggregation("_input").focus();
+				this.focus();
 			}
 		};
 
