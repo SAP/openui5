@@ -614,7 +614,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.equal(sut.$().find(".sapMObjectIdentifierTopRow").attr("style"), undefined, "top row is visible");
+		assert.ok(sut.$().find(".sapMObjectIdentifierTopRow").is(":visible"), "top row is visible");
 
 		//Act
 		sut.setTitle('');
@@ -628,7 +628,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.equal(sut.$().find(".sapMObjectIdentifierTopRow").attr("style"), undefined, "top row is visible");
+		assert.ok(sut.$().find(".sapMObjectIdentifierTopRow").is(":visible"), "top row is visible");
 
 		//Cleanup
 		sut.destroy();
