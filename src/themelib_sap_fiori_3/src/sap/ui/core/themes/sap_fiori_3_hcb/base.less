@@ -1,11 +1,11 @@
 // /**
-// * Copyright (c) 2012-2020 SAP SE or an SAP affiliate company. All rights reserved.
+// * Copyright (c) 2012-2020 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
 // * Theming Engine 1.51.0
-// * data:{"sModified":"2021-09-28T11:55:01Z"}
+// * data:{"sModified":"2021-10-12T13:35:51Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/sap_fiori_3_hcb/base.less (Version 11.1.33-SNAPSHOT) *******************/
+/******************* FILE /Base/baseLib/sap_fiori_3_hcb/base.less (Version 11.1.34) *******************/
 
 
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
@@ -327,6 +327,27 @@
 @sapContent_HeaderShadow: inset 0 -0.125rem @sapObjectHeader_BorderColor;
 
 // [Tags "!Protected"]
+@sapContent_Interaction_Shadow: none;
+
+// [Tags "!Protected"]
+@sapContent_Selected_Shadow: none;
+
+// [Tags "!Protected"]
+@sapContent_Negative_Shadow: none;
+
+// [Tags "!Protected"]
+@sapContent_Critical_Shadow: none;
+
+// [Tags "!Protected"]
+@sapContent_Positive_Shadow: none;
+
+// [Tags "!Protected"]
+@sapContent_Informative_Shadow: none;
+
+// [Tags "!Protected"]
+@sapContent_Neutral_Shadow: none;
+
+// [Tags "!Protected"]
 @sapContent_SearchHighlightColor: @sapHighlightColor;
 
 // [Tags "!Protected"]
@@ -393,6 +414,18 @@
 @sapContent_Illustrative_Color6: #88979e;
 @sapContent_Illustrative_Color7: #212628;
 @sapContent_Illustrative_Color8: #dbdbdb;
+@sapContent_Illustrative_Color9: #64edd2;
+@sapContent_Illustrative_Color10: #ebf8ff;
+@sapContent_Illustrative_Color11: #f31ded;
+@sapContent_Illustrative_Color12: #5dc122;
+@sapContent_Illustrative_Color13: #005dc9;
+@sapContent_Illustrative_Color14: #004da5;
+@sapContent_Illustrative_Color15: #cc7400;
+@sapContent_Illustrative_Color16: #3b0ac6;
+@sapContent_Illustrative_Color17: #00a58a;
+@sapContent_Illustrative_Color18: #d1efff;
+@sapContent_Illustrative_Color19: #b8e6ff;
+@sapContent_Illustrative_Color20: #9eddff;
 
 // [Tags "!Protected"]
 @sapFontLightFamily: "72-Light", "72-Lightfull", "72", "72full", Arial, Helvetica, sans-serif;
@@ -449,7 +482,7 @@
 @sapShell_Background: @sapBackgroundColor;
 
 // [Tags "!Protected"]
-@sapShell_BackgroundImage: @sapBackgroundColor;
+@sapShell_BackgroundImage: linear-gradient(to bottom, @sapShell_Background, @sapShell_Background);
 
 // [Tags "!Protected"]
 @sapShell_BackgroundImageOpacity: 1.0;
@@ -462,6 +495,9 @@
 
 // [Tags "!Protected"]
 @sapShell_TextColor: @sapTextColor;
+
+// [Tags "!Protected"]
+@sapShell_InteractiveBackground: @sapField_Background;
 
 // [Tags "!Protected"]
 @sapShell_InteractiveTextColor: @sapShell_TextColor;
@@ -1228,6 +1264,16 @@
 @sapAccentColor8: #b2e484;
 @sapAccentColor9: #b995e0;
 @sapAccentColor10: #b0bcc5;
+@sapAccentBackgroundColor1: #fff3b8;
+@sapAccentBackgroundColor2: #ffd0e7;
+@sapAccentBackgroundColor3: #fff0fa;
+@sapAccentBackgroundColor4: #ffdcf3;
+@sapAccentBackgroundColor5: #ded3ff;
+@sapAccentBackgroundColor6: #d1efff;
+@sapAccentBackgroundColor7: #c2fcee;
+@sapAccentBackgroundColor8: #ebf5cb;
+@sapAccentBackgroundColor9: #dafdf5;
+@sapAccentBackgroundColor10: #eaecee;
 
 // [Tags "!Protected"]
 @sapIndicationColor_1: #ff5e5e;
