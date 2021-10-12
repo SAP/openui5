@@ -206,7 +206,7 @@ sap.ui.define([
 				 */
 				icon: {type: "sap.ui.core.Control", multiple: false, deprecated: true},
 				/**
-				 * Action Buttons in ActionMode
+				 * Action buttons added in ActionMode.
 				 * @experimental since 1.96
 				 */
 				actionButtons: {type: "sap.m.Button", multiple: true, bindable: "bindable"},

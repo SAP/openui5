@@ -1758,7 +1758,9 @@ sap.ui.define([
 		HeaderMode : "HeaderMode",
 
 		/**
-		 * Action Mode (Two lines for the header and one line for the subtitle).
+		 * Action Mode (Two lines for the header).
+		 *
+		 * Generic Tile renders buttons that are specified under 'actionButtons' aggregation
 		 * @public
 		 * @experimental since 1.96
 		 */
