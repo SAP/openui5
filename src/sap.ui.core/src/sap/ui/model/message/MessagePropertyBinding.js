@@ -41,7 +41,7 @@ sap.ui.define([
 	 * inform interested parties about this.
 	 *
 	 * @param {boolean} bForceupdate
-	 *
+	 *   Whether interested parties should be informed regardless of the bindings state
 	 */
 	MessagePropertyBinding.prototype.checkUpdate = function(bForceupdate){
 		var oValue = this._getValue();

@@ -88,7 +88,12 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientModel', 'sap/ui/m
 	 * Unsupported operation.
 	 *
 	 * Other models provide this method to set a new value for a specific property.
-	 * <code>MessageModel</code> does not support it as it supports the <code>OneWay</code> mode only.
+	 * <code>MessageModel</code> does not support it as it supports the <code>OneWay</code> mode
+	 * only.
+	 *
+	 * @param {string} sPath Unused in this implementation
+	 * @param {object} oValue Unused in this implementation
+	 * @param {sap.ui.model.Context} oContext Unused in this implementation
 	 *
 	 * @public
 	 */
@@ -98,23 +103,24 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientModel', 'sap/ui/m
 	};
 
 	/**
-	* Returns the value for the property with the given <code>sPropertyName</code>
-	*
-	* @param {string} sPath the path to the property
-	* @param {object} [oContext=null] the context which will be used to retrieve the property
-	* @type any
-	* @return the value of the property
-	* @public
-	*/
+	 * Returns the value for the property with the given <code>sPropertyName</code>.
+	 *
+	 * @param {string} sPath The path to the property
+	 * @param {sap.ui.model.Context} [oContext] The context to resolve a relative path with
+	 *
+	 * @return {any} The value of the property
+	 * @public
+	 */
 	MessageModel.prototype.getProperty = function(sPath, oContext) {
 		return this._getObject(sPath, oContext);
 
 	};
 
 	/**
-	 * @param {string} sPath
-	 * @param {object} [oContext]
-	 * @returns {any} the node of the specified path/context
+	 * @param {string} sPath The path to the property
+	 * @param {sap.ui.model.Context} [oContext] The context to resolve a relative path with
+	 *
+	 * @returns {any} The node of the specified path/context
 	 */
 	MessageModel.prototype._getObject = function (sPath, oContext) {
 		var oNode;
