@@ -97,7 +97,8 @@ sap.ui.define([
 	opaTest("2. check the context menue for Standard variant", function(Given, When, Then) {
 
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sFLVM_ID);
-		Then.onFlVariantManagement.theKUCheckContextEntries(["Rename", "Save View", "Save View As", "Manage Views", "Switch Views"]);
+		Then.onPageWithRTA.iShouldSeetheContextMenu();
+		Then.onPageWithRTA.iShouldSeetheContextMenuEntries(["Rename", "Save View", "Save View As", "Manage Views", "Switch Views"]);
 	});
 
 	opaTest("3. create new variant and check context menu", function(Given, When, Then) {
@@ -110,7 +111,8 @@ sap.ui.define([
 		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sFLVM_ID, "KUVariant1");
 
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sFLVM_ID);
-		Then.onFlVariantManagement.theKUCheckContextEntries(["Rename", "Save View", "Save View As", "Manage Views", "Switch Views"]);
+		Then.onPageWithRTA.iShouldSeetheContextMenu();
+		Then.onPageWithRTA.iShouldSeetheContextMenuEntries(["Rename", "Save View", "Save View As", "Manage Views", "Switch Views"]);
 	});
 
 	opaTest("4. open Manage views and check content", function(Given, When, Then) {
