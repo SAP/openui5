@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/api/startKeyUserAdaptation",
-	"sap/ui/core/Element",
+	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/FeaturesAPI",
@@ -13,7 +13,7 @@ sap.ui.define([
 ], function(
 	RuntimeAuthoring,
 	startKeyUserAdaptation,
-	Element,
+	Control,
 	UIComponent,
 	Settings,
 	FeaturesAPI,
@@ -46,7 +46,7 @@ sap.ui.define([
 	QUnit.test("when called and restart is not needed", function(assert) {
 		var done = assert.async();
 		setIsKeyUser(true);
-		var oRootControl = new Element("rootControl");
+		var oRootControl = new Control("rootControl");
 		var oAppComponent = new UIComponent("appComponent");
 		sandbox.stub(FlexUtils, "getAppComponentForControl")
 			.callThrough()
@@ -79,7 +79,7 @@ sap.ui.define([
 
 	QUnit.test("when called and the user is not a key user", function(assert) {
 		setIsKeyUser(false);
-		var oRootControl = new Element("rootControl");
+		var oRootControl = new Control("rootControl");
 		this.aObjectsToBeDestroyed.push(oRootControl);
 		return startKeyUserAdaptation({rootControl: oRootControl})
 			.catch(function(oError) {
@@ -90,7 +90,7 @@ sap.ui.define([
 
 	QUnit.test("when called and flex settings could not be loaded", function(assert) {
 		sandbox.stub(Settings, "getInstance").rejects();
-		var oRootControl = new Element("rootControl");
+		var oRootControl = new Control("rootControl");
 		this.aObjectsToBeDestroyed.push(oRootControl);
 		return startKeyUserAdaptation({rootControl: oRootControl})
 			.catch(function(oError) {

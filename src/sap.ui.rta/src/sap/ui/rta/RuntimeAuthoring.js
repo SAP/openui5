@@ -117,7 +117,7 @@ function(
 			// ---- control specific ----
 			library: "sap.ui.rta",
 			associations: {
-				/** The root control which the runtime authoring should handle. Can only be sap.ui.core.Element or sap.ui.core.UIComponent */
+				/** The root control which the runtime authoring should handle. Can only be sap.ui.core.Control or sap.ui.core.UIComponent */
 				rootControl: {
 					type: "sap.ui.base.ManagedObject"
 				}
@@ -415,6 +415,13 @@ function(
 		}).then(this._setVersionsModel.bind(this));
 	};
 
+	function addOrRemoveStyleClass(oRootControl, bAdd) {
+		if (oRootControl.isA("sap.ui.core.UIComponent")) {
+			oRootControl = oRootControl.getRootControl();
+		}
+		oRootControl[bAdd ? "addStyleClass" : "removeStyleClass"]("sapUiRtaRoot");
+	}
+
 	/**
 	 * Start UI adaptation at runtime (RTA).
 	 * @return {Promise} Returns a Promise with the initialization of RTA
@@ -532,11 +539,7 @@ function(
 				this.fnKeyDown = this._onKeyDown.bind(this);
 				jQuery(document).on("keydown", this.fnKeyDown);
 
-				var oRootOverlay = OverlayRegistry.getOverlay(this.getRootControl());
-				this._$RootControl = oRootOverlay.getAssociatedDomRef();
-				if (this._$RootControl) {
-					this._$RootControl.addClass("sapUiRtaRoot");
-				}
+				addOrRemoveStyleClass(this.getRootControlInstance(), true);
 			}.bind(this))
 			.then(function () {
 				this._sStatus = STARTED;
@@ -1111,8 +1114,8 @@ function(
 			jQuery(document).off("keydown", this.fnKeyDown);
 		}
 
-		if (this._$RootControl) {
-			this._$RootControl.removeClass("sapUiRtaRoot");
+		if (this.getRootControlInstance()) {
+			addOrRemoveStyleClass(this.getRootControlInstance(), false);
 		}
 
 		this.setCommandStack(null);

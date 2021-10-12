@@ -472,23 +472,20 @@ sap.ui.define([
 
 			onToggleAdaptationMode : function (oEvt) {
 				sap.ui.require([
-					"sap/ui/rta/RuntimeAuthoring"
+					"sap/ui/rta/api/startKeyUserAdaptation"
 				], function (
-					RuntimeAuthoring
+					startKeyUserAdaptation
 				) {
 					if (!this._oRTA) {
-						// default developerMode for CUSTOMER-layer is 'true'
-						this._oRTA = new RuntimeAuthoring({
-							rootControl : this.byId("page").getContent()[0],
-							flexSettings: {
-								developerMode: false
-							}
-						});
-						this._oRTA.attachStop(function () {
-							this._oRTA.destroy();
-							delete this._oRTA;
+						startKeyUserAdaptation({
+							rootControl : this.byId("page").getContent()[0].getComponentInstance()
+						}).then(function(oRta) {
+							this._oRTA = oRta;
+							this._oRTA.attachStop(function () {
+								this._oRTA.destroy();
+								delete this._oRTA;
+							}.bind(this));
 						}.bind(this));
-						this._oRTA.start();
 					}
 				}.bind(this));
 			},
