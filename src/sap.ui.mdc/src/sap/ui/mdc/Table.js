@@ -35,7 +35,9 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/subcontroller/GroupController",
 	"sap/ui/mdc/p13n/subcontroller/AggregateController",
 	"sap/m/ColumnPopoverSelectListItem",
-	"sap/ui/mdc/p13n/subcontroller/ColumnWidthController"
+	"sap/m/ColumnPopoverActionItem",
+	"sap/ui/mdc/p13n/subcontroller/ColumnWidthController",
+	"sap/ui/mdc/actiontoolbar/ActionToolbarAction"
 ], function(
 	Control,
 	ActionToolbar,
@@ -69,7 +71,9 @@ sap.ui.define([
 	GroupController,
 	AggregateController,
 	ColumnPopoverSelectListItem,
-	ColumnWidthController
+	ColumnPopoverActionItem,
+	ColumnWidthController,
+	ActionToolbarAction
 ) {
 	"use strict";
 
@@ -2719,6 +2723,16 @@ sap.ui.define([
 		this._oPasteButton = null;
 
 		Control.prototype.exit.apply(this, arguments);
+	};
+
+	Table.prototype.addAction = function(oControl) {
+		if (oControl.getMetadata().getName() !== "sap.ui.mdc.actiontoolbar.ActionToolbarAction") {
+			oControl = new ActionToolbarAction(oControl.getId() + "-action", {
+				action: oControl
+			});
+		}
+
+		return Control.prototype.addAggregation.apply(this, ["actions", oControl]);
 	};
 
 	return Table;

@@ -307,7 +307,7 @@ function(
 				]
 			});
 		} catch (oException) {
-			assert.notOk(true);
+			assert.notOk(true, "Error '" + oException.message + "' thrown");
 		}
 
 		// assert
@@ -335,8 +335,8 @@ function(
 
 		// assert
 		oChart.initialized().finally(function() {
-			assert.ok(oChart.getActions()[0] === oButtonAction);
-			assert.ok(oChart.getAggregation("_toolbar").getActions()[0] === oButtonAction);
+			assert.ok(oChart.getActions()[0] === oButtonAction, "Chart has correct action");
+			assert.ok(oChart.getAggregation("_toolbar").getActions()[0] === oButtonAction, "ActionToolbar has correct action");
 			done();
 		});
 	});

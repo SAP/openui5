@@ -4658,7 +4658,7 @@ sap.ui.define([
 			var oColumn = oTable._oTable.getColumns()[0];
 			var oColumnResizer = oTable._oTable.getDependents()[0];
 			assert.ok(oTable.getEngine().getController(oTable, "ColumnWidth"), "Column Width controller defined");
-			assert.notOk(oTable.getCurrentState().xConfig.aggregations, "Custom Data is empty");
+			assert.notOk(oTable.getCurrentState().xConfig.aggregations && oTable.getCurrentState().xConfig.aggregations.length, "Custom Data is empty");
 			oColumnResizer.fireColumnResize({
 				column: oColumn,
 				width: "200px"
@@ -4687,7 +4687,7 @@ sap.ui.define([
 			var fOnModificationSpy = sinon.spy(oTable, "_onModifications");
 			var oColumn = oTable._oTable.getColumns()[0];
 
-			assert.notOk(oTable.getCurrentState().xConfig.aggregations.length, "Custom Data is empty");
+			assert.notOk(oTable.getCurrentState().xConfig.aggregations && oTable.getCurrentState().xConfig.aggregations.length, "Custom Data is empty");
 			oTable._oTable.fireColumnResize({
 				column: oColumn,
 				width: "200px"
