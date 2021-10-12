@@ -271,6 +271,12 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("isFocusInHelp", function(assert) {
+
+		assert.ok(oConditions.isFocusInHelp(), "isFocusInHelp");
+
+	});
+
 	QUnit.test("getRequiresTokenizer", function(assert) {
 
 		assert.notOk(oConditions.getRequiresTokenizer(), "getRequiresTokenizer");

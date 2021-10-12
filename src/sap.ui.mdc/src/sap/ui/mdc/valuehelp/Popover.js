@@ -184,7 +184,9 @@ sap.ui.define([
 
 		if (oTarget && oTarget.getDomRef()) {
 			oPopover.setContentMinWidth(jQuery(oTarget.getDomRef()).outerWidth() + "px");
-			oPopover.setInitialFocus(oTarget);
+			if (!this.isFocusInHelp()) {
+				oPopover.setInitialFocus(oTarget);
+			}
 			oPopover.openBy(oTarget);
 		}
 	};
