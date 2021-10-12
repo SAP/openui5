@@ -30,6 +30,12 @@ sap.ui.define(['./library', "sap/base/security/encodeCSS"],
 			iLength;
 
 		oRm.openStart("div", oControl);
+		if (oControl.getHeight()) {
+			oRm.style("height",oControl.getHeight());
+		}
+		if (oControl.getWidth()) {
+			oRm.style("width",oControl.getWidth());
+		}
 		oRm.class("sapMST");
 		oRm.class(sScopeClass);
 		if (!this._bAnimationPause) {
@@ -64,6 +70,9 @@ sap.ui.define(['./library', "sap/base/security/encodeCSS"],
 		for (var i = 0; i < iLength; i++) {
 			oRm.openStart("div", oControl.getId() + "-wrapper-" + i );
 			oRm.class("sapMSTWrapper");
+			if (oControl.getTiles()[i].getFrameType() == sap.m.FrameType.Stretch && oControl.getTiles()[i].getMode() == sap.m.GenericTileMode.ArticleMode) {
+				oRm.class("sapMGTTileStretch");
+			}
 			oRm.openEnd();
 			oRm.renderControl(oControl.getTiles()[i]);
 			oRm.close("div");

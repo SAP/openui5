@@ -1624,7 +1624,14 @@ sap.ui.define([
 		 * @public
 		 * @since 1.83
 		 */
-		OneByHalf: "OneByHalf"
+		OneByHalf: "OneByHalf",
+
+		/**
+		 * The Stretch frame type adjusts the size of the control to the parent.
+		 * @since 1.96
+		 * @experimental
+		 */
+		 Stretch: "Stretch"
 
 	};
 

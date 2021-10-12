@@ -277,6 +277,31 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Correct Height and Width are rendered", function(assert) {
+		this.oSlideTile.setWidth("100%");
+		this.oSlideTile.getTiles()[0].setFrameType("Stretch");
+		this.oSlideTile.getTiles()[0].setMode("ArticleMode");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(this.oSlideTile.getDomRef().style.width, "100%", "Slide tile has rendered in 100% width");
+		assert.ok(this.oSlideTile.getDomRef().querySelector(".sapMSTWrapper.sapMGTTileStretch"), "Slide tile wrapper with stretch class exist");
+
+		assert.equal(this.oSlideTile.getTiles()[0].getDomRef().offsetWidth, this.oSlideTile.getDomRef().offsetWidth, "Slide tile and Generic Tile inside it has the same width");
+		assert.equal(this.oSlideTile.getTiles()[0].getDomRef().offsetHeight, this.oSlideTile.getDomRef().offsetHeight, "Slide tile and Generic Tile inside it has the same height");
+	});
+
+	QUnit.test("When GenericTile frametype is not Stretch", function(assert) {
+		this.oSlideTile.setWidth("100%");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(this.oSlideTile.getDomRef().style.width, "100%", "Slide tile has rendered in 100% width");
+		assert.notOk(this.oSlideTile.getDomRef().querySelector(".sapMSTWrapper.sapMGTTileStretch"), "Slide tile wrapper with stretch class doesn't exist");
+
+		assert.equal(this.oSlideTile.getTiles()[0].getDomRef().offsetWidth, 360, "Generic Tile inside Slide tile has the default width");
+	});
+
 	QUnit.module("Events - sap.m.SlideTile", {
 		beforeEach : function() {
 			this.fnPressHandler = function() {
