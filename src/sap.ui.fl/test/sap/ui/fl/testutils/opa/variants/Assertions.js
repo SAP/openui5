@@ -198,39 +198,6 @@ sap.ui.define([
 				},
 				errorMessage: "No variant list items found"
 			});
-		},
-
-		/**
-		 * Checks for the expected context menu entries.
-		 * Prerequisite is the UI Adaptation mode.
-		 * @param {array} aContextEntries List of the expected menu entries
-		 * @returns {object} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
-		 * @public
-		 */
-		theKUCheckContextEntries: function(aContextEntries) {
-			return this.waitFor({
-				controlType: "sap.m.Popover",
-				matchers: function(oMenu) {
-					return oMenu.$().hasClass("sapUiDtContextMenu");
-				},
-				success: function() {
-					return this.waitFor({
-						controlType: "sap.m.VBox",
-						matchers: function(oVBox) {
-							return oVBox.getId().indexOf("popoverExpContentBox") >= 0;
-						},
-						success: function(oVBox) {
-							var aIsContextEntries = [];
-							oVBox[0].getItems().forEach(function(oItem) {
-								aIsContextEntries.push(oItem.getText());
-							});
-
-							Opa5.assert.deepEqual(aIsContextEntries, aContextEntries, "expected [" + aContextEntries + "] context entries found");
-						}
-					});
-				},
-				errorMessage: "Did not find the correct Context Menu"
-			});
 		}
 	};
 });
