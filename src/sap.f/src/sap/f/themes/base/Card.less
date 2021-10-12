@@ -306,12 +306,25 @@
 	display: flex;
 
 	.sapFCardContentListPlaceholder,
-	.sapFCardErrorContent,
 	.sapFCardBaseContent {
 		max-width: 100%;
 		flex: 1;
 		box-sizing: border-box;
 	}
+}
+
+.sapFCardHeader.sapFCardHeaderError {
+	align-items: center;
+
+	.sapFCardHeaderContent {
+		display: flex;
+	}
+}
+
+.sapFCard .sapFCardErrorContent {
+	max-width: 100%;
+	flex: 1;
+	box-sizing: border-box;
 }
 
 .sapFCard .sapFCardContent {
@@ -408,9 +421,9 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 	}
 }
 
-.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCardHeader::before, // focus inside GridContainer
-.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCard.sapFCardNoHeader::before, // focus inside GridContainer on a card without header
-.sapFCardHeader:focus::before {
+.sapFCardHeader:focus::before,
+.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCardHeader::before, // focus inside Grid Container
+.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCard.sapFCardNoHeader::before { // ... on a card without header
 	content: '';
 	display: block;
 	position: absolute;
@@ -422,11 +435,10 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 	pointer-events: none;
 }
 
-.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCard.sapFCardNoHeader::before { //focus inside GridContainer on a card without header
+.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCard.sapFCardNoHeader::before { // focus inside GridContainer on a card without header
 	bottom: 1px;
 	z-index: 1;
 }
-
 
 html[data-sap-ui-browser^="ie"] .sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCardHeader::before, // focus inside GridContainer
 html[data-sap-ui-browser^="ie"] .sapFCardHeader:focus::before {

@@ -794,6 +794,24 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_DefaultHeader_NoContent = {
+			"sap.app": {
+				"id": "test.card.card16",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Object",
+				"header": {
+					"title": "Header Title",
+					"data": {
+						"request": {
+							"url": "fake-url"
+						}
+					}
+				}
+			}
+		};
+
 		function testContentInitialization(oManifest, assert) {
 
 			// Arrange
@@ -1687,10 +1705,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("Handler call", function (assert) {
-
 			// Arrange
 			var oLogSpy = sinon.spy(Log, "error"),
 				sLogMessage = "Log this error in the console.";
+
+			this.oCard.setManifest(oManifest_ListCard);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 
 			// Act
 			this.oCard._handleError(sLogMessage);
@@ -1731,6 +1752,25 @@ sap.ui.define([
 					}
 				}
 			});
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		});
+
+		QUnit.test("In a card with no content, the error is rendered in the header", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oHeaderDomRef = this.oCard.getCardHeader().getDomRef();
+
+				// Assert
+				assert.ok(oHeaderDomRef.querySelector(".sapFCardErrorContent"), "error element is rendered in the header");
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_DefaultHeader_NoContent);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		});

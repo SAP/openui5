@@ -50,6 +50,18 @@
 						<f:GridContainerItemLayoutData columns="3" />
 					</w:layoutData>
 				</w:Card>
+
+				<w:Card id="i6-error" manifest="{manifests>/noHeaderNoContent/i6-error}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="3" />
+					</w:layoutData>
+				</w:Card>
+
+				<w:Card id="i7-error" manifest="{manifests>/noHeaderNoContent/i7-error}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="3" />
+					</w:layoutData>
+				</w:Card>
 			</f:GridContainer>
 		</Panel>
 	</Page>

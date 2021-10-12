@@ -1475,6 +1475,10 @@ sap.ui.define([
 			return;
 		}
 
+		oHeader.attachEvent("_error", function (oEvent) {
+			this._handleError(oEvent.getParameter("message"));
+		}.bind(this));
+
 		this.setAggregation("_header", oHeader);
 
 		if (oHeader.isReady()) {
@@ -1681,44 +1685,7 @@ sap.ui.define([
 		this.setAggregation("_content", oTemporaryContent);
 	};
 
-	/**
-	 * Handler for error states
-	 *
-	 * @param {string} sLogMessage Message that will be logged.
-	 * @param {string} [sDisplayMessage] Message that will be displayed in the card's content. If not provided, a default message is displayed.
-	 * @private
-	 */
-	Card.prototype._handleError = function (sLogMessage, sDisplayMessage) {
-		this._loadDefaultTranslations();
-		Log.error(sLogMessage, null, "sap.ui.integration.widgets.Card");
-
-		this.fireEvent("_error", { message: sLogMessage });
-
-		var sDefaultDisplayMessage = this._oIntegrationRb.getText("CARD_DATA_LOAD_ERROR"),
-			sErrorMessage = sDisplayMessage || sDefaultDisplayMessage,
-			oPreviousContent = this.getAggregation("_content");
-
-		var oError = new HBox({
-			justifyContent: "Center",
-			alignItems: "Center",
-			items: [
-				new Icon({ src: "sap-icon://message-error", size: "1rem" }).addStyleClass("sapUiTinyMargin"),
-				new Text({ text: sErrorMessage })
-			]
-		}).addStyleClass("sapFCardErrorContent");
-
-		// only destroy previous content of type BaseContent
-		if (oPreviousContent && !oPreviousContent.hasStyleClass("sapFCardErrorContent")) {
-			oPreviousContent.destroy();
-
-			if (oPreviousContent === this._oTemporaryContent) {
-				this._oTemporaryContent = null;
-			}
-
-			this.fireEvent("_contentReady"); // content won't show up so mark it as ready
-		}
-
-		//keep the min height
+	Card.prototype._preserveMinHeightInContent = function (oError) {
 		oError.addEventDelegate({
 			onAfterRendering: function () {
 				if (!this._oCardManifest) {
@@ -1741,8 +1708,71 @@ sap.ui.define([
 				}
 			}
 		}, this);
+	};
 
-		this.setAggregation("_content", oError);
+	/**
+	 * Destroys the previous content, unless the content is the error message.
+	 *
+	 * @param {sap.ui.core.Control} oContent content aggregation
+	 * @private
+	 */
+	Card.prototype._destroyPreviousContent = function (oContent) {
+		// only destroy previous content and avoid setting an error message again
+		if (oContent && !oContent.hasStyleClass("sapFCardErrorContent")) {
+			oContent.destroy();
+
+			if (oContent === this._oTemporaryContent) {
+				this._oTemporaryContent = null;
+			}
+		}
+	};
+
+	/**
+	 * Creates a control representation of an error.
+	 *
+	 * @param {string} sErrorMessage Error message
+	 * @private
+	 * @returns {sap.ui.core.Control} control instance
+	 */
+	Card.prototype._createError = function (sErrorMessage) {
+		return new HBox({
+			justifyContent: "Center",
+			alignItems: "Center",
+			items: [
+				new Icon({ src: "sap-icon://message-error", size: "1rem" }).addStyleClass("sapUiTinyMargin"),
+				new Text({ text: sErrorMessage })
+			]
+		}).addStyleClass("sapFCardErrorContent");
+	};
+
+	/**
+	 * Handler for error states.
+	 * If the content is not provided in the manifest, the error message will be displayed in the header.
+	 * If a message is not provided, a default message will be displayed.
+	 *
+	 * @param {string} sLogMessage Message that will be logged.
+	 * @param {string} [sDisplayMessage] Message that will be displayed as an error in the card.
+	 * @private
+	 */
+	Card.prototype._handleError = function (sLogMessage, sDisplayMessage) {
+		this._loadDefaultTranslations();
+		Log.error(sLogMessage, null, "sap.ui.integration.widgets.Card");
+
+		this.fireEvent("_error", { message: sLogMessage });
+
+		var sErrorMessage = sDisplayMessage || this._oIntegrationRb.getText("CARD_DATA_LOAD_ERROR"),
+			oError = this._createError(sErrorMessage),
+			oContentSection = this._oCardManifest.get(MANIFEST_PATHS.CONTENT);
+
+		if (oContentSection) {
+			this._destroyPreviousContent(this.getCardContent());
+			this._preserveMinHeightInContent(oError);
+			this.setAggregation("_content", oError);
+			this.fireEvent("_contentReady"); // content won't show up so mark it as ready
+		} else {
+			this.getCardHeader().setAggregation("_error", oError);
+		}
+
 	};
 
 	Card.prototype._getTemporaryContent = function (sCardType, oContentManifest) {

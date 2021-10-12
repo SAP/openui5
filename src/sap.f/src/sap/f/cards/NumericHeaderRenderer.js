@@ -18,7 +18,7 @@ sap.ui.define([], function () {
 	 */
 	NumericHeaderRenderer.render = function (oRm, oNumericHeader) {
 		var bLoading = oNumericHeader.isLoading(),
-			oToolbar = oNumericHeader.getToolbar(),
+			oError = oNumericHeader.getAggregation("_error"),
 			sTabIndex = oNumericHeader._isInsideGridContainer() ? "-1" : "0";
 
 		oRm.openStart("div", oNumericHeader)
@@ -35,6 +35,10 @@ sap.ui.define([], function () {
 			oRm.class("sapFCardClickable");
 		}
 
+		if (oError) {
+			oRm.class("sapFCardHeaderError");
+		}
+
 		//Accessibility state
 		oRm.accessibilityState(oNumericHeader, {
 			role: oNumericHeader.getAriaRole(),
@@ -48,11 +52,31 @@ sap.ui.define([], function () {
 			.class("sapFCardHeaderContent")
 			.openEnd();
 
-		NumericHeaderRenderer.renderHeaderText(oRm, oNumericHeader);
-		NumericHeaderRenderer.renderIndicators(oRm, oNumericHeader);
-		NumericHeaderRenderer.renderDetails(oRm, oNumericHeader);
+		if (oError) {
+			oRm.renderControl(oError);
+		} else {
+			NumericHeaderRenderer.renderHeaderText(oRm, oNumericHeader);
+			NumericHeaderRenderer.renderIndicators(oRm, oNumericHeader);
+			NumericHeaderRenderer.renderDetails(oRm, oNumericHeader);
+		}
 
 		oRm.close("div");
+
+		if (!oError) {
+			NumericHeaderRenderer.renderToolbar(oRm, oNumericHeader);
+		}
+
+		oRm.close("div");
+	};
+
+	/**
+	 * Render toolbar.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.f.cards.NumericHeader} oNumericHeader An object representation of the control that should be rendered
+	 */
+	NumericHeaderRenderer.renderToolbar = function (oRm, oNumericHeader) {
+		var oToolbar = oNumericHeader.getToolbar();
 
 		if (oToolbar) {
 			oRm.openStart("div")
@@ -63,8 +87,6 @@ sap.ui.define([], function () {
 
 			oRm.close("div");
 		}
-
-		oRm.close("div");
 	};
 
 	/**

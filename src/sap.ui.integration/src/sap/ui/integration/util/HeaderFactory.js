@@ -75,11 +75,8 @@ sap.ui.define([
 	var HeaderFactory = BaseFactory.extend("sap.ui.integration.util.HeaderFactory");
 
 	HeaderFactory.prototype.create = function (mConfiguration, oToolbar) {
-		var oHeader,
-			oCard = this._oCard,
-			oActions = new CardActions({
-				card: oCard
-			});
+		var oCard = this._oCard,
+			oHeader;
 
 		mConfiguration = this.createBindingInfos(mConfiguration, oCard.getBindingNamespaces());
 
@@ -107,6 +104,10 @@ sap.ui.define([
 		oHeader.setServiceManager(oCard._oServiceManager);
 		oHeader.setDataProviderFactory(oCard._oDataProviderFactory);
 		oHeader._setDataConfiguration(mConfiguration.data);
+
+		var oActions = new CardActions({
+			card: oCard
+		});
 
 		oActions.attach({
 			area: ActionArea.Header,

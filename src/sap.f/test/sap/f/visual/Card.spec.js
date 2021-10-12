@@ -374,7 +374,9 @@ describe("sap.f.Card", function () {
 			{ id: "i2", focus: true },
 			{ id: "f3" },
 			{ id: "i4", focus: true },
-			{ id: "i5", focus: true }
+			{ id: "i5", focus: true },
+			{ id: "i6-error", focus: true },
+			{ id: "i7-error", focus: true }
 		];
 
 		aCards.forEach(function (oCard) {

@@ -25,6 +25,7 @@ sap.ui.define([], function () {
 			oDataTimestamp = oHeader.getAggregation("_dataTimestamp"),
 			bHasDataTimestamp = oHeader.getDataTimestamp() || oBindingInfos.dataTimestamp,
 			bLoading = oHeader.isLoading(),
+			oError = oHeader.getAggregation("_error"),
 			oToolbar = oHeader.getToolbar(),
 			sTabIndex = oHeader._isInsideGridContainer() ? "-1" : "0";
 
@@ -40,6 +41,10 @@ sap.ui.define([], function () {
 			oRm.class("sapFCardClickable");
 		}
 
+		if (oError) {
+			oRm.class("sapFCardHeaderError");
+		}
+
 		//Accessibility state
 		oRm.accessibilityState(oHeader, {
 			role: oHeader.getAriaRole(),
@@ -52,6 +57,14 @@ sap.ui.define([], function () {
 		oRm.openStart("div")
 			.class("sapFCardHeaderWrapper")
 			.openEnd();
+
+		if (oError) {
+			oRm.renderControl(oError);
+
+			oRm.close("div");
+			oRm.close("div");
+			return;
+		}
 
 		if (oHeader.getIconSrc() || oHeader.getIconInitials() || oBindingInfos.iconSrc) {
 			oRm.openStart("div")
