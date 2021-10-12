@@ -119,6 +119,8 @@ sap.ui.define([
 							aMessages.push(oBundle.getText("Float.Maximum",
 								[that.oOutputFormat.format(oContent)]));
 						}
+						break;
+					default: break;
 				}
 			});
 			if (aViolatedConstraints.length > 0) {

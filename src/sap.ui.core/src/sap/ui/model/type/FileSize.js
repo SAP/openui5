@@ -143,6 +143,8 @@ sap.ui.define([
 							aViolatedConstraints.push("maximum");
 							aMessages.push(oBundle.getText("FileSize.Maximum", [oContent]));
 						}
+						break;
+					default: break;
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
