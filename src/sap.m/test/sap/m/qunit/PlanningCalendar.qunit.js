@@ -478,6 +478,7 @@ sap.ui.define([
 			case CalendarIntervalType.Month:
 				return "MonthsRow";
 			case CalendarIntervalType.OneMonth:
+			case "OneMonth":
 				return "OneMonthsRow";
 			default:
 				throw "Unknown viewKey:" + oPC.getViewKey();
