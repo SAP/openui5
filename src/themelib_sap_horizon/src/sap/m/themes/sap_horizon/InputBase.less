@@ -20,9 +20,9 @@
 }
 
 .sapMInputBaseContentWrapper {
-	border: @sapUiFieldBorderWidth solid @sapUiFieldBorderColor;
 	background: @sapUiFieldBackground;
-	border-radius: @sapUiFieldBorderCornerRadius;
+	border-radius: 0.5rem; // @sapUiFieldBorderCornerRadius;
+	border-bottom: 2px /* @sapUiFieldBorderWidth */ solid @sapUiFieldBorderColor;
 
 	&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess){
 		border-width: 2px;
@@ -34,6 +34,10 @@
 		.sapMTokenizer .sapMToken {
 			margin-top: 0.1875rem;
 		}
+	}
+
+	&.sapMInputBaseDisabledWrapper, &.sapMInputBaseReadonlyWrapper {
+		border: none;
 	}
 }
 
@@ -83,7 +87,72 @@
 }
 
 .sapMFocus .sapMInputBaseContentWrapper {
-	&::before {
-		border: 1px dotted @sapUiContentFocusColor;
+	border: none;
+	background-color: @sapUiButtonLiteActiveBackground;
+	box-shadow: 0 8px 16px 0 rgba(27,144,255,0.16), 0 0 2px 0 rgba(27,144,255,0.16);
+
+	&.sapMInputBaseReadonlyWrapper {
+		background: @sapUiFieldReadOnlyBackground;
+		box-shadow: none;
+		outline: none;
 	}
+}
+
+.sapMInputBase:not(.sapMInputFocused) {
+	.sapMInputBaseContentWrapperWarning {
+		&:hover {
+			background-color: @sapUiButtonLiteActiveBackground;
+		}
+
+		.sapMInputBaseInner {
+			color: @sapUiFieldWarningColor;
+		}
+	}
+
+	.sapMInputBaseContentWrapperSuccess {
+		&:hover {
+			background-color: @sapUiButtonLiteActiveBackground;
+		}
+
+		.sapMInputBaseInner {
+			color: @sapUiFieldSuccessColor;
+		}
+	}
+
+	.sapMInputBaseContentWrapperError {
+		&:hover {
+			background-color: @sapUiButtonLiteActiveBackground;
+		}
+
+		.sapMInputBaseInner,
+		.sapMInputBaseInner::placeholder {
+			color: @sapUiFieldInvalidColor;
+		}
+	}
+
+	.sapMInputBaseContentWrapper:not(.sapMInputBaseDisabledWrapper):not(.sapMInputBaseReadonlyWrapper) {
+		&:hover {
+			box-shadow: 0 8px 16px 0 rgba(131, 150, 168, 0.16), 0 0 2px 0 rgba(131, 150, 168, 0.16);
+		}
+
+		&.sapMInputBaseContentWrapperError:hover {
+			box-shadow: 0 8px 16px 0 rgba(245, 40, 40, 0.16), 0 0 2px 0 rgba(245, 40, 40, 0.16);
+		}
+
+		&.sapMInputBaseContentWrapperWarning:hover {
+			box-shadow: 0 8px 16px 0 rgba(255, 179, 0, 0.16), 0 0 2px 0 rgba(255, 179, 0, 0.16);
+		}
+	}
+}
+
+.sapMInputBaseContentWrapperWarning .sapMInputBaseInner::placeholder {
+	color: @sapUiFieldWarningColor;
+}
+
+.sapMInputBaseContentWrapperSuccess .sapMInputBaseInner::placeholder {
+	color: @sapUiFieldSuccessColor;
+}
+
+.sapMInputBaseContentWrapperError .sapMInputBaseInner::placeholder {
+	color: @sapUiFieldInvalidColor;
 }
