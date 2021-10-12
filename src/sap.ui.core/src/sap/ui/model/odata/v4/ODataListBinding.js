@@ -2349,7 +2349,7 @@ sap.ui.define([
 							throw oError;
 						}
 						return that.fetchResourcePath(that.oContext).then(function (sResourcePath) {
-							if (!that.bRelative || oCache.$resourcePath === sResourcePath) {
+							if (!that.bRelative || oCache.getResourcePath() === sResourcePath) {
 								that.oCache = oCache;
 								that.oCachePromise = SyncPromise.resolve(oCache);
 								that.iCreatedContexts = iCreatedContexts;

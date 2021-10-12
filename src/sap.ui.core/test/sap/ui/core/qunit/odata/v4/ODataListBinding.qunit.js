@@ -2338,13 +2338,9 @@ sap.ui.define([
 		this.mock(oBinding).expects("refreshSuspended").never();
 		oReadPromise.catch(function () {
 			var iCallCount = bKeepCacheOnError ? 1 : 0,
-				oResourcePathPromise = Promise.resolve(bRelative ? oCache.$resourcePath : "n/a");
+				oResourcePathPromise
+					= Promise.resolve(bRelative ? oCache.getResourcePath() : "n/a");
 
-			if (bRelative) {
-				assert.ok(oCache.$resourcePath);
-			} else {
-				assert.notOk("$resourcePath" in oCache);
-			}
 			that.mock(oBinding).expects("fetchResourcePath").exactly(iCallCount)
 				.withExactArgs(sinon.match.same(oContext))
 				.returns(SyncPromise.resolve(oResourcePathPromise));

@@ -144,7 +144,6 @@ sap.ui.define([
 		// code under test
 		oBinding = this.bindContext("/Operation(...)", null, mParameters);
 
-		assert.ok(oBinding.hasOwnProperty("mCacheByResourcePath"));
 		assert.strictEqual(oBinding.sGroupId, "group");
 		assert.strictEqual(oBinding.bInheritExpandSelect, bInheritExpandSelect);
 		assert.deepEqual(oBinding.oOperation, {
@@ -192,7 +191,6 @@ sap.ui.define([
 		var oParentBindingSpy = this.spy(asODataParentBinding, "call"),
 			oBinding = this.bindContext("/EMPLOYEES('42')");
 
-		assert.ok(oBinding.hasOwnProperty("mCacheByResourcePath"));
 		assert.ok(oBinding.hasOwnProperty("sGroupId"));
 		assert.ok(oBinding.hasOwnProperty("bInheritExpandSelect"));
 		assert.ok(oBinding.hasOwnProperty("oOperation"));
@@ -655,8 +653,6 @@ sap.ui.define([
 		assert.strictEqual(oBinding.sGroupId, undefined);
 		assert.strictEqual(oBinding.hasOwnProperty("sUpdateGroupId"), true);
 		assert.strictEqual(oBinding.sUpdateGroupId, undefined);
-		assert.strictEqual(oBinding.hasOwnProperty("mCacheByResourcePath"), true);
-		assert.strictEqual(oBinding.mCacheByResourcePath, undefined);
 	});
 
 	//*********************************************************************************************
@@ -2663,7 +2659,6 @@ sap.ui.define([
 		oBinding.destroy();
 
 		oBinding = this.bindContext("relative", Context.create(this.oModel, {}, "/foo"));
-		oBinding.mCacheByResourcePath = {/*mCacheByResourcePath*/};
 		oBinding.oOperation = {bAction : undefined};
 		oBinding.oParameterContext = oParameterContext;
 		oBinding.oReturnValueContext = oReturnValueContext;
@@ -2677,7 +2672,6 @@ sap.ui.define([
 		// code under test
 		oBinding.destroy();
 
-		assert.strictEqual(oBinding.mCacheByResourcePath, undefined);
 		assert.strictEqual(oBinding.oElementContext, undefined);
 		assert.strictEqual(oBinding.oOperation, undefined);
 		assert.strictEqual(oBinding.oParameterContext, undefined);
@@ -3002,13 +2996,9 @@ sap.ui.define([
 		this.mock(this.oModel).expects("getReporter").withExactArgs().returns(fnReporter);
 		oReadPromise.catch(function () {
 			var iCallCount = bKeepCacheOnError ? 1 : 0,
-				oResourcePathPromise = Promise.resolve(bRelative ? oCache.$resourcePath : "n/a");
+				oResourcePathPromise
+					= Promise.resolve(bRelative ? oCache.getResourcePath() : "n/a");
 
-			if (bRelative) {
-				assert.ok(oCache.$resourcePath);
-			} else {
-				assert.notOk("$resourcePath" in oCache);
-			}
 			oBindingMock.expects("fetchResourcePath").exactly(iCallCount)
 				.withExactArgs(sinon.match.same(oContext))
 				.returns(SyncPromise.resolve(oResourcePathPromise));
@@ -3077,7 +3067,7 @@ sap.ui.define([
 		oBindingMock.expects("fetchValue").never();
 		oReadPromise.catch(function () {
 			var iCallCount = bKeepCacheOnError ? 1 : 0,
-				oResourcePathPromise = Promise.resolve(oCache.$resourcePath);
+				oResourcePathPromise = Promise.resolve(oCache.getResourcePath());
 
 			oBindingMock.expects("fetchResourcePath").exactly(iCallCount)
 				.withExactArgs(sinon.match.same(oContext))

@@ -289,7 +289,6 @@ sap.ui.define([
 				}
 				oCache.$deepResourcePath = sDeepResourcePath;
 				oCache.$generation = iGeneration;
-				oCache.$resourcePath = sResourcePath;
 			}
 		} else { // absolute binding
 			oCache = this.doCreateCache(sResourcePath, this.mCacheQueryOptions);

@@ -714,7 +714,6 @@ sap.ui.define([
 			this.oReturnValueContext = undefined;
 		}
 		this.oModel.bindingDestroyed(this);
-		this.mCacheByResourcePath = undefined;
 		this.oOperation = undefined;
 		this.mParameters = undefined;
 		this.mQueryOptions = undefined;
@@ -1251,7 +1250,7 @@ sap.ui.define([
 				if (bKeepCacheOnError && oPromise) {
 					oPromise = oPromise.catch(function (oError) {
 						return that.fetchResourcePath(that.oContext).then(function (sResourcePath) {
-							if (!that.bRelative || oCache.$resourcePath === sResourcePath) {
+							if (!that.bRelative || oCache.getResourcePath() === sResourcePath) {
 								that.oCache = oCache;
 								that.oCachePromise = SyncPromise.resolve(oCache);
 								oCache.setActive(true);
