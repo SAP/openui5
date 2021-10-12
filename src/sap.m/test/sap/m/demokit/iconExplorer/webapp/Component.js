@@ -57,13 +57,14 @@ sap.ui.define([
 				this.setModel(models.createDeviceModel(), "device");
 
 				var aFontsLoaded = [];
-				var sLocalFontFolder = sap.ui.require.toUrl("sap/ui/demo/iconexplorer/fonts/");
+				var sLocalFontFolder = sap.ui.require.toUrl("sap/ui/demo/iconexplorer/fonts/base/");
 
 				var oFontConfigs = {};
 				oFontConfigs["SAP-icons"] = {
 					fontFamily: "SAP-icons",
 					fontURI: sap.ui.require.toUrl("sap/ui/core/themes/base/fonts/"),
-					downloadURI: sLocalFontFolder
+					downloadURI: sLocalFontFolder,
+					downloadURIV5: sap.ui.require.toUrl("sap/ui/demo/iconexplorer/fonts/sap_horizon/")
 				};
 
 				var oTNTConfig = {

@@ -707,7 +707,9 @@ sap.ui.define([
 				'command-line-interfaces': 0xe28d,
 				'sum': 0x1e28e,
 				'qr-code': 0x1e28f,
-				'space-navigation': 0xe290
+				'space-navigation': 0xe290,
+				'in-progress': 0x1e291,
+				'not-editable': 0xe292
 			}
 		};
 
