@@ -1395,3 +1395,47 @@ html[data-sap-ui-browser*='ff'] {
 .sapMGTTileIcon {
 	color: @sapUiContentContrastTextColor;
 }
+
+.sapMGTArticleMode {
+	.sapMGTContent {
+		.sapMTileCnt {
+			.sapMTileCntContent {
+				height: 3.25rem;
+				.sapMImageContent {
+					height: 3rem;
+					.sapMImageContentImageIcon {
+						max-height: 3.25rem;
+					}
+				}
+			}
+			.sapMTileFtrCnt {
+				height: 2.5rem;
+				display: flex;
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0.25rem;
+				justify-content: space-between;
+				align-items: center;
+				.sapMTileCntFtrTxt {
+					position: initial;
+					margin-right: 0;
+				}
+				.sapMTileNavContainer {
+					margin: 0 1rem 0 0.5rem;
+				}
+			}
+		}
+	}
+}
+.sapMGTArticleMode.sapMTileSmallPhone {
+	.sapMGTContent {
+		.sapMTileCnt {
+			.sapMTileFtrCnt {
+				.sapMTileNavContainer {
+					margin-right: 0.5rem;
+				}
+			}
+		}
+	}
+}
