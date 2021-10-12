@@ -719,9 +719,11 @@ sap.ui.define([
 			return this._pInitCardSample.then(function () {
 				if (oSample.cache) {
 					this._oHost.useExperimentalCaching();
+					this._oCardSample.setHost(this._oHost);
 					return this._registerCachingServiceWorker();
 				} else {
 					this._oHost.stopUsingExperimentalCaching();
+					this._oCardSample.setHost(this._oHost);
 					this._unregisterCachingServiceWorker();
 					return Promise.resolve();
 				}
