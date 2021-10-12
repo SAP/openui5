@@ -221,8 +221,6 @@ sap.ui.define([
 		this.setType(P13nPanelType.group);
 		this.setTitle(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("GROUPPANEL_TITLE"));
 
-		sap.ui.getCore().loadLibrary("sap.ui.layout");
-
 		this._aKeyFields = [];
 
 		if (!this._aOperations) {

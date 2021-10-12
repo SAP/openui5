@@ -21,6 +21,7 @@ sap.ui.define([
 	'sap/ui/model/type/Time',
 	'sap/ui/model/odata/type/DateTime',
 	'sap/ui/model/type/Float',
+	'sap/ui/layout/library',
 	'sap/ui/layout/Grid',
 	'sap/ui/layout/GridData',
 	'sap/ui/layout/HorizontalLayout',
@@ -59,6 +60,7 @@ sap.ui.define([
 	TimeType,
 	DateTimeOdataType,
 	FloatType,
+	layoutLibrary,
 	Grid,
 	GridData,
 	HorizontalLayout,
@@ -706,9 +708,6 @@ sap.ui.define([
 	 * Initialize the control @private
 	 */
 	P13nConditionPanel.prototype.init = function() {
-		// load the required layout lib
-		sap.ui.getCore().loadLibrary("sap.ui.layout");
-
 		// init some resources
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._sFromLabelText = this._oRb.getText("CONDITIONPANEL_LABELFROM");
