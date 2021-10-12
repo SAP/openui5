@@ -137,7 +137,7 @@ sap.ui.define([
 				} catch (error) {
 					//do nothing
 				}
-			}, 1000);
+			}, 500);
 		}
 	};
 
