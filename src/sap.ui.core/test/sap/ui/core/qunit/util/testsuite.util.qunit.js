@@ -61,6 +61,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				group: "jQuery plugins"
 			},
 			"postmessage/Bus": {
+				sinon: {
+					qunitBridge: false // because the bridge doesn't support nested modules yet
+				},
 				coverage: {
 					only: "[sap/ui/core/postmessage/Bus]"
 				}
