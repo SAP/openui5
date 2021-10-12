@@ -9,7 +9,7 @@ sap.ui.define([
 	"use strict";
 	var Delegate = Object.assign({}, ODataFieldValueHelpDelegate);
 
-	Delegate.retrieveContent = function (oContainer) {
+	Delegate.retrieveContent = function (oPayload, oContainer) {
 		var oValueHelp = oContainer && oContainer.getParent();
 
 		// var oParams = UriParameters.fromQuery(location.search);

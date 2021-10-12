@@ -298,6 +298,7 @@ sap.ui.define([
 			});
 			oValueHelp = new ValueHelp("F1-H", {
 				typeahead: oContainer,
+				delegate: {name: "sap/ui/mdc/ValueHelpDelegate", payload: {x: "X"}},
 				disconnect: _myDisconnectHandler,
 				navigated: _myNavigateHandler,
 				select: _mySelectHandler,
@@ -774,7 +775,7 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function() { // Delegate is called async
-			assert.ok(ValueHelpDelegate.retrieveContent.calledWith(oContainer), "ValueHelpDelegate.retrieveContent called for typeahead");
+			assert.ok(ValueHelpDelegate.retrieveContent.calledWith({x: "X"}, oContainer), "ValueHelpDelegate.retrieveContent called for typeahead");
 
 			ValueHelpDelegate.retrieveContent.restore();
 			fnDone();
