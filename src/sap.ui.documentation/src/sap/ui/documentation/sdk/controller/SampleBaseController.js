@@ -6,8 +6,10 @@ sap.ui.define([
 	"sap/ui/documentation/sdk/controller/BaseController",
 	"sap/ui/thirdparty/URI",
 	"sap/base/Log",
-	"sap/ui/documentation/sdk/controller/util/ResourceDownloadUtil"
-], function (BaseController, URI, Log, ResourceDownloadUtil) {
+	"sap/ui/documentation/sdk/controller/util/ResourceDownloadUtil",
+	"sap/ui/documentation/sdk/util/Resources"
+
+], function (BaseController, URI, Log, ResourceDownloadUtil, ResourcesUtil) {
 	"use strict";
 
 		var TMPL_REF = sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl"),
@@ -38,7 +40,7 @@ sap.ui.define([
 				"sap/ui/core/util/File"
 			], function (JSZip, File) {
 				var oZipFile = new JSZip(),
-					sRef = sap.ui.require.toUrl((this._sId).replace(/\./g, "/")),
+					sRef = ResourcesUtil.getResourceOriginPath(sap.ui.require.toUrl((this._sId).replace(/\./g, "/"))),
 					oData = this.oModel.getData(),
 					aExtraFiles = oData.includeInDownload || [],
 					oManifestFile,
@@ -86,7 +88,7 @@ sap.ui.define([
 				}
 
 				// iframe examples have a separate index file and a component file to describe it
-				if (!oData.iframe) {
+				if (!oData.iframe || ResourcesUtil.getHasProxy()) {
 					bHasManifest = oData.files.some(function (oFile) {
 						return oFile.name === "manifest.json";
 					});
