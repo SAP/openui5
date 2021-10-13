@@ -4938,6 +4938,80 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("hasSelection - MultiComboBox with no pre-selected items", function(assert) {
+		// arrange
+		var oMultiComboBox = new MultiComboBox({
+				items: [
+					new Item({key: "Item1", text: "Item1"}),
+					new Item({key: "Item2", text: "Item2"})
+				]
+			}).placeAt("MultiComboBoxContent");
+
+		sap.ui.getCore().applyChanges();
+		oMultiComboBox.open();
+		this.clock.tick(nPopoverAnimationTick);
+
+		// assert
+		assert.notOk(oMultiComboBox.getProperty("hasSelection"), "The property should be correctly set on initial loading.");
+		assert.notOk(oMultiComboBox.$().hasClass("sapMMultiComboBoxHasToken"), "The property should be correctly set to true.");
+
+		var oListItem = oMultiComboBox._getList().getItems()[0];
+		var oDomListItem = oListItem.getDomRef();
+
+		sap.ui.test.qunit.triggerTouchEvent("tap", oDomListItem, {
+			srcControl : oListItem
+		});
+
+		this.clock.tick(200);
+
+		// assert
+		assert.ok(oMultiComboBox.getProperty("hasSelection"), "The property should be correctly set to true.");
+		assert.ok(oMultiComboBox.$().hasClass("sapMMultiComboBoxHasToken"), "The control should have a class set.");
+
+		oMultiComboBox.focus();
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE);
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE);
+
+		this.clock.tick(500);
+
+		// assert
+		assert.notOk(oMultiComboBox.getProperty("hasSelection"), "The property should be correctly set on item delete.");
+		assert.notOk(oMultiComboBox.$().hasClass("sapMMultiComboBoxHasToken"), "The control should not have the class set.");
+
+		// clean up
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("hasSelection - MultiComboBox with pre-selected items", function(assert) {
+		// arrange
+		var oMultiComboBox = new MultiComboBox({
+				items: [
+					new Item({key: "Item1", text: "Item1"}),
+					new Item({key: "Item2", text: "Item2"})
+				],
+				selectedKeys: ["Item1"]
+			}).placeAt("MultiComboBoxContent");
+
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oMultiComboBox.getProperty("hasSelection"), "The property should be correctly set to true.");
+		assert.ok(oMultiComboBox.$().hasClass("sapMMultiComboBoxHasToken"), "The control should have a class set.");
+
+		oMultiComboBox.focus();
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE);
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE);
+
+		this.clock.tick(500);
+
+		// assert
+		assert.notOk(oMultiComboBox.getProperty("hasSelection"), "The property should be correctly set on item delete.");
+		assert.notOk(oMultiComboBox.$().hasClass("sapMMultiComboBoxHasToken"), "The control should not have the class set.");
+
+		// clean up
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.module("Focus handling");
 
 	QUnit.test("Focusing a token inside the MCB should not add css focus indication to the MCB itself", function(assert) {
@@ -7243,7 +7317,7 @@ sap.ui.define([
 				key : "AU",
 				text : "Australia"
 			})]
-		}), oInputDomRef, aListItems, oList,
+		}), oInputDomRef,
 			oInputEvent = {
 				target: {
 					value: "A"
@@ -7256,12 +7330,10 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.syncPickerContent();
-		oList = oMultiComboBox._getList();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
 		sap.ui.getCore().applyChanges();
 
 		// act
-		aListItems = oList.getItems();
 		oInputDomRef = oMultiComboBox.getDomRef("inner");
 
 		oMultiComboBox.oninput(oInputEvent);
@@ -7271,7 +7343,7 @@ sap.ui.define([
 				"Correct value autocompleted on input.");
 
 		// act - select item from list
-		oList.setSelectedItem(aListItems[0], true, true);
+		oMultiComboBox._getList().setSelectedItem(oMultiComboBox._getList().getItems()[0], true, true);
 		this.clock.tick(500);
 		// assert
 		assert.strictEqual(oInputDomRef.value, "A",
@@ -7286,7 +7358,7 @@ sap.ui.define([
 
 		// act - tap in item from list
 		oMultiComboBox._bCheckBoxClicked = false;
-		oList.setSelectedItem(aListItems[1], true, true);
+		oMultiComboBox._getList().setSelectedItem(oMultiComboBox._getList().getItems()[1], true, true);
 		this.clock.tick(500);
 		// assert
 		assert.strictEqual(oInputDomRef.value, "",
@@ -7492,72 +7564,6 @@ sap.ui.define([
 			assert.strictEqual(aListItems[i].getTitle(), aSuggestions[i].getText(), "Item " + i + " text is correctly mapped.");
 			assert.strictEqual(aListItems[i].getInfo(), aSuggestions[i].getAdditionalText(), "Item " + i + " info is correctly mapped.");
 		}
-	});
-
-	QUnit.module("Width calculations");
-
-	QUnit.test("_syncInputWidth", function(assert) {
-		// Arrange
-		var oMultiComboBox = new MultiComboBox({
-			items: [
-				new Item({
-					key : "0",
-					text : "item 0"
-				}),
-				new Item({
-					key : "1",
-					text : "item 1"
-				})
-			]
-		}),
-		iInputWidthDecimalPlaces, oTokenizerDOM,
-		oSyncInput = this.spy(oMultiComboBox, "_syncInputWidth");
-
-
-
-		// Act
-		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
-
-		// Arrange
-		oTokenizerDOM = oMultiComboBox.getAggregation("tokenizer").getDomRef();
-		this.stub(oTokenizerDOM, "getBoundingClientRect").callsFake(function() {
-			return { width:
-				 86.13
-			};
-		});
-
-		// Act
-		this.clock.tick();
-		this.clock.tick(1); // also process nested timeouts
-		this.clock.tick(1); // also process nested timeouts
-
-		// Assert
-		assert.strictEqual(oSyncInput.callCount, 2);
-
-		// Act
-		oMultiComboBox.setSelectedKeys(["0"]);
-		this.clock.tick();
-		this.clock.tick(1); // also process nested timeouts
-
-		// Make sure the input's width is rounded to 2 decimal places
-		// Extract only the numbers after the decimal separator from a width string with the following format: "calc(100% - 124.13px)""
-		iInputWidthDecimalPlaces = oMultiComboBox.getFocusDomRef().getAttribute("style").split('width: calc(100% - ')[1].replace("px);", "").split('.')[1].length;
-
-		// Assert
-		assert.strictEqual(iInputWidthDecimalPlaces, 2, "The width of the input is rounded to 2 decimal places");
-		assert.strictEqual(oSyncInput.callCount, 3);
-
-		// Act
-		oMultiComboBox.setSelectedKeys([]);
-		this.clock.tick();
-		this.clock.tick(1); // also process nested timeouts
-
-		// Assert
-		assert.strictEqual(oSyncInput.callCount, 4);
-
-		// Clean
-		oMultiComboBox.destroy();
 	});
 
 	QUnit.module("Grouping", {
@@ -8518,7 +8524,6 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(500);
 
-		assert.strictEqual(oOnBeforeRenderingSpy.callCount, 1, "The MultiComboBox was not invalidated");
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "Selected Items should be adjusted");
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["B"], "SelectedKeys should be in sync");
 		assert.strictEqual(oTokenizer.getTokens().length, 1, "Tokens should correspond to the actual selection");
@@ -8529,7 +8534,6 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(500);
 
-		assert.strictEqual(oOnBeforeRenderingSpy.callCount, 1, "The MultiComboBox was not invalidated");
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["C", "A"], "SelectedKeys should be adjusted");
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 2, "Selected Items should be in sync");
 		assert.strictEqual(oTokenizer.getTokens().length, 2, "Tokens should correspond to the actual selection");

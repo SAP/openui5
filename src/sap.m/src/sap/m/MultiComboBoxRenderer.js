@@ -27,6 +27,10 @@ sap.ui.define(['./ComboBoxBaseRenderer','./ComboBoxTextFieldRenderer', 'sap/ui/c
 	MultiComboBoxRenderer.addOuterClasses = function(oRm, oControl) {
 		ComboBoxBaseRenderer.addOuterClasses.apply(this, arguments);
 		oRm.class(MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX);
+
+		if (oControl.getProperty("hasSelection")) {
+			oRm.class("sapMMultiComboBoxHasToken");
+		}
 	};
 	/**
 	 * Returns the inner aria describedby ids for the accessibility.
