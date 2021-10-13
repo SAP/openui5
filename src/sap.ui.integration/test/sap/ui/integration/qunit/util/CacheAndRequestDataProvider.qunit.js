@@ -354,4 +354,48 @@ sap.ui.define([
 		oCard.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 	});
+
+	QUnit.module("Usage without a card or editor", {
+		beforeEach: function () {
+			this.oHost = new Host();
+			this.oHost.useExperimentalCaching();
+
+			this.oDataProviderFactory = new DataProviderFactory(null, null, null, null, this.oHost);
+
+			this.oServer = sinon.createFakeServer({
+				autoRespond: true
+			});
+
+			this.oServer.respondImmediately = true;
+		},
+		afterEach: function () {
+			this.oDataProviderFactory.destroy();
+			this.oHost.destroy();
+			this.oServer.restore();
+		}
+	});
+
+	QUnit.test("Sends a request with default caching headers", function (assert) {
+		var done = assert.async(),
+			oCacheDataProvider = this.oDataProviderFactory.create({
+				request: {
+					url: "/test/url"
+				}
+			});
+
+		this.oServer.respondWith("GET", "/test/url", function (oXhr) {
+			var mHeaders = oXhr.requestHeaders,
+				mCacheHeader = parseHeaderList(mHeaders["Cache-Control"]);
+
+			assert.strictEqual(mHeaders["x-sap-card"], "true", "Header x-sap-card=true is sent");
+			assert.ok(mCacheHeader, "Cache-Control header is there");
+			assert.strictEqual(mCacheHeader["max-age"], "0", "Cache-Control: max-age is set to 0.");
+			assert.ok(mCacheHeader["x-stale-while-revalidate"], "Cache-Control: x-stale-while-revalidate is present.");
+
+			fakeRespond(oXhr);
+			done();
+		});
+
+		oCacheDataProvider.triggerDataUpdate();
+	});
 });

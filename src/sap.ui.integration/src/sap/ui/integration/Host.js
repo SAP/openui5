@@ -297,7 +297,7 @@ sap.ui.define([
 		 * Override if you need to change the default cache headers behavior.
 		 * @param {map} mHeaders The current map of headers.
 		 * @param {map} mSettings The map of request settings defined in the card manifest.
-		 * @param {sap.ui.integration.widgets.Card} oCard The card for which the request is made.
+		 * @param {sap.ui.integration.widgets.Card} [oCard] The card for which the request is made.
 		 * @returns {map} Map of http headers.
 		 * @private
 		 * @ui5-restricted

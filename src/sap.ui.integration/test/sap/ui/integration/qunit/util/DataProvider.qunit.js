@@ -853,4 +853,37 @@ sap.ui.define([
 			done();
 		});
 	});
+
+	QUnit.module("Usage without a card or editor", {
+		beforeEach: function () {
+			this.oDataProviderFactory = new DataProviderFactory();
+
+			this.oServer = sinon.createFakeServer({
+				autoRespond: true
+			});
+
+			this.oServer.respondImmediately = true;
+		},
+		afterEach: function () {
+			this.oDataProviderFactory.destroy();
+			this.oServer.restore();
+		}
+	});
+
+	QUnit.test("Sends a request", function (assert) {
+		var done = assert.async(),
+			oDataProvider = this.oDataProviderFactory.create({
+				request: {
+					url: "/test/url"
+				}
+			});
+
+		this.oServer.respondWith("GET", "/test/url", function (oXhr) {
+			assert.ok(true, "Request is sent");
+			oXhr.respond(200, {}, "");
+			done();
+		});
+
+		oDataProvider.triggerDataUpdate();
+	});
 });

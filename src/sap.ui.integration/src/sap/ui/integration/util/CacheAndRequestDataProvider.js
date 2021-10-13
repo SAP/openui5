@@ -34,13 +34,24 @@ sap.ui.define([
 	}
 
 	/**
+	 * Executes data requests with enabled caching based on the given settings.
 	 * @private
+	 * @ui5-restricted sap.ui.integration, shell-toolkit
+	 * @alias sap.ui.integration.util.CacheAndRequestDataProvider
 	 */
 	var CacheAndRequestDataProvider = RequestDataProvider.extend("sap.ui.integration.util.CacheAndRequestDataProvider", {
 		metadata: {
 			associations : {
 				/**
-				 * The card.
+				 * The host which is used for communication with the caching service worker.
+				 */
+				host: {
+					type : "sap.ui.integration.Host",
+					multiple: false
+				},
+
+				/**
+				 * Optionally the card which will be used as reference for the requests and for visual representation of cache timestamp and refresh.
 				 */
 				card: {
 					type : "sap.ui.integration.widgets.Card",
@@ -68,8 +79,22 @@ sap.ui.define([
 		RequestDataProvider.prototype.destroy.apply(this, arguments);
 	};
 
+	CacheAndRequestDataProvider.prototype.getHostInstance = function () {
+		return Core.byId(this.getHost());
+	};
+
 	CacheAndRequestDataProvider.prototype.getCardInstance = function () {
 		return Core.byId(this.getCard());
+	};
+
+	CacheAndRequestDataProvider.prototype.getCardInstanceHeader = function () {
+		var oCard = this.getCardInstance();
+
+		if (!oCard) {
+			return null;
+		}
+
+		return oCard.getCardHeader();
 	};
 
 	CacheAndRequestDataProvider.prototype.onDataRequestComplete = function () {
@@ -100,8 +125,7 @@ sap.ui.define([
 	 */
 	CacheAndRequestDataProvider.prototype._request = function (oRequest) {
 		var pRequestPromise,
-			oCard = this.getCardInstance(),
-			oCardHeader = oCard.getCardHeader();
+			oCardHeader = this.getCardInstanceHeader();
 
 		this._sCurrentRequestFullUrl = getFullUrl(oRequest);
 
@@ -126,7 +150,7 @@ sap.ui.define([
 	 * Refresh the data without using cache.
 	 */
 	CacheAndRequestDataProvider.prototype.refreshWithoutCache = function () {
-		var oCardHeader = this.getCardInstance().getCardHeader();
+		var oCardHeader = this.getCardInstanceHeader();
 
 		if (oCardHeader) {
 			oCardHeader.setDataTimestampUpdating(true);
@@ -143,7 +167,7 @@ sap.ui.define([
 	 * Refresh the data preferring any cache if available.
 	 */
 	CacheAndRequestDataProvider.prototype.refreshFromCache = function () {
-		var oCardHeader = this.getCardInstance().getCardHeader();
+		var oCardHeader = this.getCardInstanceHeader();
 
 		if (oCardHeader) {
 			oCardHeader.setDataTimestampUpdating(true);
@@ -164,7 +188,7 @@ sap.ui.define([
 	 */
 	CacheAndRequestDataProvider.prototype._prepareHeaders = function (mHeaders, oSettings) {
 		var oCard = this.getCardInstance(),
-			oHost = oCard.getHostInstance(),
+			oHost = this.getHostInstance(),
 			oDefault = {
 				enabled: true,
 				maxAge: 0,
@@ -201,8 +225,7 @@ sap.ui.define([
 	 * Starts to listen for messages from the host.
 	 */
 	CacheAndRequestDataProvider.prototype._subscribeToHostMessages = function () {
-		var oCard = this.getCardInstance(),
-			oHost = oCard.getHostInstance();
+		var oHost = this.getHostInstance();
 
 		if (this._bIsSubscribed) {
 			return;
@@ -221,8 +244,7 @@ sap.ui.define([
 	 * Stops to listen for messages from the host.
 	 */
 	CacheAndRequestDataProvider.prototype._unsubscribeFromHostMessages = function () {
-		var oCard = this.getCardInstance(),
-			oHost = oCard.getHostInstance();
+		var oHost = this.getHostInstance();
 
 		if (!oHost) {
 			return;
@@ -255,7 +277,7 @@ sap.ui.define([
 
 	CacheAndRequestDataProvider.prototype._attachTimestampPress = function (oEvent) {
 		var oCard = this.getCardInstance(),
-			oHeader = oCard.getCardHeader();
+			oHeader = this.getCardInstanceHeader();
 
 		if (this._oHeaderDelegate) {
 			return;
@@ -281,8 +303,8 @@ sap.ui.define([
 
 	CacheAndRequestDataProvider.prototype._detachTimestampPress = function (oEvent) {
 		var oCard = this.getCardInstance(),
-			oHeader = oCard.getCardHeader(),
-			$timestamp = this.getCardInstance().$().find(".sapFCardDataTimestamp");
+			oHeader = this.getCardInstanceHeader(),
+			$timestamp = oCard && oCard.$().find(".sapFCardDataTimestamp");
 
 		if (!oHeader) {
 			return;
