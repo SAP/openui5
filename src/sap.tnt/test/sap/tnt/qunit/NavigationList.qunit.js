@@ -736,6 +736,44 @@ sap.ui.define([
 		assert.ok($focusableElement.is(":focus"), "The item is still focused");
 	});
 
+	QUnit.test("Expand/collapse with mouse", function (assert) {
+		// Arrange
+		var oItem = Core.byId("groupItem3"),
+			$item = oItem.$(),
+			$icon = $item.find(".sapTntNavLIGroup .sapTntNavLIExpandIcon"),
+			$iconTitle = $item.find(".sapTntNavLIGroup .sapTntNavLIExpandIcon .sapUiIconTitle");
+
+		// Act collapse
+		QUnitUtils.triggerEvent("tap", $icon);
+		this.clock.tick(500);
+
+		// Assert collapsed
+		assert.notOk(oItem.getExpanded(), "The item collapses");
+
+
+		// Act expand
+		QUnitUtils.triggerEvent("tap", $icon);
+		this.clock.tick(500);
+
+		// Assert expanded
+		assert.ok(oItem.getExpanded(), "The item expands");
+
+		// Act collapse
+		QUnitUtils.triggerEvent("tap", $iconTitle);
+		this.clock.tick(500);
+
+		// Assert collapsed
+		assert.notOk(oItem.getExpanded(), "The item collapses");
+
+
+		// Act expand
+		QUnitUtils.triggerEvent("tap", $iconTitle);
+		this.clock.tick(500);
+
+		// Assert expanded
+		assert.ok(oItem.getExpanded(), "The item expands");
+	});
+
 	QUnit.test("select group", function (assert) {
 
 		var bPassedArg,
