@@ -75,7 +75,9 @@ sap.ui.define([
 							var oImage = aControls[0];
 
 							Opa5.assert.strictEqual(oImage.getSrc(),
-								oImage.getBinding("src").getModel().sServiceUrl + sUrl,
+								sUrl[0] === "/"
+								? sUrl
+								: oImage.getBinding("src").getModel().sServiceUrl + sUrl,
 								"URL of equipment image in row " + iRow + " as expected \"" + sUrl
 								+ "\"");
 						},

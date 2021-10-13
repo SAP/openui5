@@ -165,7 +165,7 @@
 			<Column>
 				<Text text="Equipment ID"/>
 			</Column>
-			<Column visible="{ui>/bRealOData}">
+			<Column>
 				<Text text="Product Image"/>
 			</Column>
 			<Column>
