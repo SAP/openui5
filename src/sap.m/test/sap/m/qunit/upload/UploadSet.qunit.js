@@ -376,6 +376,20 @@ sap.ui.define([
 		assert.equal(this.oUploadSet.getIncompleteItems(), 0, "incomplete items are empty");
 	});
 
+	QUnit.test("No Data is rendered after item is removed", function (assert) {
+		assert.notOk(document.querySelector(".sapMUCNoDataPage"), "No Data template is not visible");
+
+		var oItem1 = this.oUploadSet.getItems()[0];
+		var oItem2 = this.oUploadSet.getItems()[1];
+		this.oUploadSet.removeItem(oItem1);
+		this.oUploadSet.removeItem(oItem2);
+
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(document.querySelector(".sapMUCNoDataPage"), "No Data template is visible");
+	});
+
 	QUnit.module("Drag and drop", {
 		beforeEach: function () {
 			this.$RootNode = jQuery(document.body);
