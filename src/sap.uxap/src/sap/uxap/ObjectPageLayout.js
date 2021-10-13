@@ -908,6 +908,10 @@ sap.ui.define([
 		this._scrollTo(0, 0, 0);
 		this._bHeaderExpanded = true;
 		this._updateToggleHeaderVisualIndicators();
+
+		if (this._isHeaderPinnable()) {
+			this._getHeaderContent()._getPinButton().setVisible(!this._headerBiggerThanAllowedToBeExpandedInTitleArea());
+		}
 	};
 
 	ObjectPageLayout.prototype._handleDynamicTitlePress = function () {
@@ -1171,7 +1175,6 @@ sap.ui.define([
 		}
 
 		if (oHeaderContent && oHeaderContent.supportsPinUnpin()) {
-			this.$().toggleClass("sapUxAPObjectPageLayoutHeaderPinnable", oHeaderContent.getPinnable());
 			this._updatePinButtonState();
 		}
 
@@ -3062,8 +3065,14 @@ sap.ui.define([
 			}
 
 			if (this._bHeaderInTitleArea && this._headerBiggerThanAllowedToBeExpandedInTitleArea()) {
+				if (this._isHeaderPinnable()) {
+					this._updatePinButtonState();
+				}
+
 				this._expandHeader(false);
 				this._scrollTo(0, 0);
+			} else if (this._isHeaderPinnable() && !this._headerBiggerThanAllowedToBeExpandedInTitleArea()) {
+				this._updatePinButtonState();
 			}
 
 			// Let the dynamic header know size changed first, because this might lead to header dimensions changes
@@ -3504,6 +3513,10 @@ sap.ui.define([
 			this._bHeaderExpanded = true;
 			this._adjustHeaderHeights();
 			this._updateToggleHeaderVisualIndicators();
+
+			if (this._isHeaderPinnable()) {
+				this._getHeaderContent()._getPinButton().setVisible(!this._headerBiggerThanAllowedToBeExpandedInTitleArea());
+			}
 		}
 	};
 
@@ -4451,14 +4464,25 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._isHeaderPinnable = function () {
 		var oHeader = this._getHeaderContent();
-		return oHeader && oHeader.getPinnable()
-			&& this._bHeaderExpanded
-			&& !this.getPreserveHeaderStateOnScroll();
+
+		return oHeader && oHeader.supportsPinUnpin() && oHeader.getPinnable();
+	};
+
+	ObjectPageLayout.prototype._shouldPinUnpinHeader = function () {
+		return this._bHeaderExpanded
+			&& !this.getPreserveHeaderStateOnScroll()
+			&& !this._headerBiggerThanAllowedToBeExpandedInTitleArea();
 	};
 
 	ObjectPageLayout.prototype._updatePinButtonState = function() {
-		var bShouldPin = this.getHeaderContentPinned() && this._isHeaderPinnable();
-		this._getHeaderContent()._togglePinButton(bShouldPin);
+		var bIsHeaderPinnable = this._isHeaderPinnable(),
+			bShouldPin = bIsHeaderPinnable && this.getHeaderContentPinned() && this._shouldPinUnpinHeader(),
+			oHeaderContent = this._getHeaderContent();
+
+		oHeaderContent._togglePinButton(bShouldPin);
+		this.$().toggleClass("sapUxAPObjectPageLayoutHeaderPinnable", bIsHeaderPinnable);
+		oHeaderContent._getPinButton().setVisible(!this._headerBiggerThanAllowedToBeExpandedInTitleArea());
+
 		if (bShouldPin) {
 			this._pin();
 		} else {
