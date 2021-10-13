@@ -365,7 +365,10 @@ sap.ui.define([
             if (aMode && aMode.length > 0) {
                 aMode.forEach(function(sMode){
                     var sKey = sMode;
-                    oRegisterConfig.controller[sKey] = mRegistryOptions[sMode];
+                    var oController = mRegistryOptions[sMode];
+                    if (oController) {
+                        oRegisterConfig.controller[sKey] = oController;
+                    }
                 });
 
                 this.getEngine().registerAdaptation(this, oRegisterConfig);

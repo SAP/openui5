@@ -47,8 +47,8 @@ function(
                         name: sDelegatePath,
 					    payload: {
 						collectionPath: "/testPath"
-					}
-                    }});
+						}}
+					});
 				}
 			});
 			this.oUiComponent = new TestComponent("IDComponent");

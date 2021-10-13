@@ -90,7 +90,10 @@ sap.ui.define([
 
             this.addEnd(this._oChartSelectionDetails);
 
-            if (!oMDCChart.getIgnoreToolbarActions().length || oMDCChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.DrillDownUp) < 0) {
+            //Check p13n mode property on the chart and enable only desired buttons
+			var aP13nMode = oMDCChart.getP13nMode() || [];
+
+            if (  aP13nMode.indexOf("Item") > -1 && (!oMDCChart.getIgnoreToolbarActions().length || oMDCChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.DrillDownUp) < 0)) {
                 this._oDrillDownBtn = new OverflowButton(oMDCChart.getId() + "-drillDown", {
                     icon: "sap-icon://drill-down",
                     tooltip: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
@@ -137,9 +140,6 @@ sap.ui.define([
                 this.addEnd(this.oZoomInButton);
                 this.addEnd(this.oZoomOutButton);
             }
-
-			//Check p13n mode property on the chart and enable only desired buttons
-			var aP13nMode = oMDCChart.getP13nMode() || [];
 
             if (aP13nMode.indexOf("Sort") > -1 || aP13nMode.indexOf("Item") > -1) {
                 this._oSettingsBtn = new OverflowButton(oMDCChart.getId() + "-chart_settings", {
