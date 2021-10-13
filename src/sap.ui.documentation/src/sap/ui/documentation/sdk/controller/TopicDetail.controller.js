@@ -281,7 +281,7 @@ sap.ui.define([
 					sTopicId = aUrlParts[0],
 					sSubTopicId = aUrlParts[1];
 
-				this.sTopicId = sTopicId;
+				this.sTopicId = sTopicId.replace(".html", "");
 				this.sSubTopicId = sSubTopicId;
 				this.sTopicURL = ResourcesUtil.getResourceOriginPath(this._oConfig.docuPath + sTopicId + (sTopicId.match(/\.html/) ? "" : ".html"));
 				this.sSubTopicId = event.getParameter("arguments").subId || sSubTopicId;
