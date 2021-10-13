@@ -50,7 +50,7 @@ sap.ui.define([
 				 * @property {object} [inParameters] In parameters of the condition. For each field path, a value is stored
 				 * @property {object} [outParameters] Out parameters of the condition. For each field path, a value is stored
 				 * @property {boolean} [isEmpty] If set, the condition is empty (used as dummy condition in {@link sap.ui.mdc.field.DefineConditionPanel DefineConditionPanel})
-				 * @property {sap.ui.mdc.util.ConditionValidated} validated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the field help) and not shown in the {@link sap.ui.mdc.field.DefineConditionPanel DefineConditionPanel} control
+				 * @property {sap.ui.mdc.enum.ConditionValidated} validated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the field help) and not shown in the {@link sap.ui.mdc.field.DefineConditionPanel DefineConditionPanel} control
 				 * @private
 				 * @ui5-restricted sap.fe
 				 * @MDC_PUBLIC_CANDIDATE
