@@ -1257,82 +1257,72 @@ html[data-sap-ui-browser*='ff'] {
 		font-weight: bold;
 	}
 	.sapMGTHdrContent {
-		height: 2.25rem;
-		.sapMGTHdrTxt {
-			.sapMGTTitle{
-				font-size: 0.875rem;
-			}
+		.sapMGTHdrIconImage {
+			float: left;
+			padding-right: 1rem;
+		}
+		.sapMGTHdrIconImage.sapUiIcon::before {
+			font-size: 2rem;
+		}
+		.sapMGTHdrIconImage.Neutral {
+			color:  @sapUiNeutralText;
+		}
+		.sapMGTHdrIconImage.Good {
+			color: @sapUiPositiveText;
+		}
+		.sapMGTHdrIconImage.Critical {
+			color: @sapUiCriticalText;
+		}
+		.sapMGTHdrIconImage.Error {
+			color: @sapUiNegativeText;
+		}
+		.sapMGTHdrIconImage.None {
+			color: @sapUiTileIconColor
 		}
 	}
 	.sapMGTContent {
-		height: 4.875rem;
 		.sapMTileCnt {
-			height: 4.875rem;
 			.sapMTileCntContent {
-				height: 3.5rem;
-				margin-top: 0.125rem;
-				margin-bottom: 0.125rem;
-				.sapMNC {
-					height: 3.5rem;
-				}
+				height: 3.25rem;
 				.sapMImageContent {
-					height: 3.5rem;
+					height: 3rem;
+					.sapMImageContentImageIcon {
+						max-height: 3.25rem;
+					}
 				}
 			}
-			.sapMTileCntFtrTxt{
-				font-size: 0.75rem;
-				height: 1.063rem;
-				bottom: 0;
+			.sapMTileFtrCnt {
+				height: 2.5rem;
+				display: flex;
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0.25rem;
+				justify-content: space-between;
+				align-items: center;
+				.sapMTileCntFtrTxt {
+					position: initial;
+					margin-right: 0;
+				}
+				.sapMGTActionModeContainer {
+					margin: 0 1rem 0 0.5rem;
+					display: inline-flex;
+					column-gap: 0.5rem;
+				}
 			}
 		}
-	}
-	.sapMGTActionsContainer {
-		position: absolute;
-		overflow: hidden;
-		right: 0;
-		left: 0;
-		bottom: 0.5rem;
-		margin-left: 1rem;
-		margin-right: 1rem;
-		height: 2rem;
-		display: inline-flex;
-		column-gap: 0.5rem;
 	}
 }
 
 .TwoByOne.sapMGTActionMode.sapMTileSmallPhone {
 	.sapMGTContent {
 		.sapMTileCnt {
-			height: 4rem;
-			.sapMTileCntContent {
-				height: 2.625rem;
-				.sapMNC {
-					height: 2.625rem;
-				}
-				.sapMImageContent {
-					height: 2.625rem;
-					.sapMImageContentImageIcon {
-						max-height: 2.625rem;
-					}
-				}
-				.sapMText {
-					font-size: 0.75rem;
-				}
-				.sapMFC {
-					height: 2.625rem;
-					.sapMFCCTxt {
-						height: 1.75rem;
-					}
-				}
-				.sapMFT {
-					font-size: 0.75rem;
+			.sapMTileFtrCnt {
+				.sapMGTActionModeContainer {
+					margin-right: 0.5rem;
 				}
 			}
 		}
-	}
-	.sapMGTActionsContainer {
-		margin-left: 0.5rem;
-		margin-right: 0.5rem;
 	}
 }
 .sapMGT.sapMGTOneByOne {
