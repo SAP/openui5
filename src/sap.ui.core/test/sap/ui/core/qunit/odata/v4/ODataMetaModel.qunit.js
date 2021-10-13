@@ -5857,7 +5857,10 @@ sap.ui.define([
 					}
 				},
 				mValueListByRelevantQualifiers = {
-					"qualifier" : "~valueList~"
+					qualifier : {
+						$model : "~model~",
+						CollectionPath : "/Collection"
+					}
 				},
 				oValueListMappings1 = {
 					"" : {CollectionPath : ""}
@@ -5927,7 +5930,13 @@ sap.ui.define([
 				.then(function (oResult) {
 					assert.ok(!bError);
 					if (bFixed) {
-						assert.deepEqual(oResult, {"" : "~valueList~"});
+						assert.deepEqual(oResult, {
+							"" : {
+								$model : "~model~",
+								$qualifier : "qualifier",
+								CollectionPath : "/Collection"
+							}
+						});
 					} else {
 						assert.strictEqual(oResult, mValueListByRelevantQualifiers);
 					}
@@ -6184,7 +6193,10 @@ sap.ui.define([
 						assert.strictEqual(oResult[""].$model, oModel);
 						delete oResult[""].$model;
 						assert.deepEqual(oResult, {
-							"" : {CollectionPath : "foo"}
+							"" : {
+								$qualifier : "foo",
+								CollectionPath : "foo"
+							}
 						});
 					}, function (oError) {
 						assert.ok(bDuplicate);
@@ -6460,6 +6472,7 @@ sap.ui.define([
 					assert.deepEqual(oResult, {
 						"" : {
 							$model : oValueListModel,
+							$qualifier : "bar",
 							CollectionPath : "foo",
 							Label : "from data service"
 						}

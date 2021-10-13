@@ -27430,6 +27430,7 @@ sap.ui.define([
 				delete mQualifier2ValueList[""].$model;
 				assert.deepEqual(mQualifier2ValueList, {
 					"" : {
+						$qualifier : "",
 						CollectionPath : "I_AIVS_CountryCode",
 						Label : "Country Code Value Help",
 						Parameters : [{
@@ -27465,6 +27466,7 @@ sap.ui.define([
 			delete mQualifier2ValueList[""].$model;
 			assert.deepEqual(mQualifier2ValueList, {
 				"" : {
+					$qualifier : "",
 					Label : "Publication's Currency"
 				}
 			});
@@ -33469,7 +33471,8 @@ sap.ui.define([
 			delete mQualifier2ValueListType[""].$model;
 			assert.deepEqual(mQualifier2ValueListType, {
 				"" : {
-					Label : iValue ? "Second label" : "First label"
+					Label : iValue ? "Second label" : "First label",
+					$qualifier : iValue ? "one" : "zero"
 				}
 			});
 		});
