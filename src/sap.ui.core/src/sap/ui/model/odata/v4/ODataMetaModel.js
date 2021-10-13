@@ -3084,7 +3084,8 @@ sap.ui.define([
 	 *   instead, see {@link sap.ui.model.odata.v4.ODataModel#bindList}.
 	 *
 	 *   For fixed values, only one mapping is expected and the qualifier is ignored. The mapping
-	 *   is available with key "".
+	 *   is available with key "" and has an additional property "$qualifier" which is the original
+	 *   qualifier (useful in case of "ValueListRelevantQualifiers" annotation).
 	 *
 	 *   The promise is rejected with an error if there is no value list information available
 	 *   for the given property path. Use {@link #getValueListType} to determine if value list
@@ -3234,7 +3235,7 @@ sap.ui.define([
 						sPropertyMetaPath + sValueListRelevantQualifiers, oContext)
 					: oValueListInfo;
 			}).then(function (mValueListByRelevantQualifier) {
-				var aQualifiers;
+				var aQualifiers, mValueListMapping;
 
 				if (bFixedValues) {
 					aQualifiers = Object.keys(mValueListByRelevantQualifier);
@@ -3244,7 +3245,10 @@ sap.ui.define([
 							+ "' but not exactly one '" + sValueList.slice(1)
 							+ "' for property " + sPropertyPath);
 					}
-					return {"" : mValueListByRelevantQualifier[aQualifiers[0]]};
+					mValueListMapping = mValueListByRelevantQualifier[aQualifiers[0]];
+					mValueListMapping.$qualifier = aQualifiers[0];
+
+					return {"" : mValueListMapping};
 				}
 
 				return mValueListByRelevantQualifier;
