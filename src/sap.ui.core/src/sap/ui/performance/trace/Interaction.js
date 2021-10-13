@@ -589,7 +589,7 @@ sap.ui.define([
 		 */
 		notifyStepStart : function(sEventId, oElement, bForce) {
 			if (bInteractionActive) {
-				if ((!oPendingInteraction && oCurrentBrowserEvent && oCurrentBrowserEvent.srcControl.getId() === oElement.getId() && !bInteractionProcessed) || bForce) {
+				if ((!oPendingInteraction && oCurrentBrowserEvent && !bInteractionProcessed) || bForce) {
 					var sType;
 					if (bForce) {
 						sType = "startup";
