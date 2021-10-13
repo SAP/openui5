@@ -74,6 +74,8 @@ sap.ui.define([
 	FormattedText,
 	jQuery
 ) {
+	"use strict";
+
 	// shortcut for sap.m.InputTextFormatMode
 	var InputTextFormatMode = mobileLibrary.InputTextFormatMode;
 
@@ -4985,6 +4987,32 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(oInput._oClearButton.getVisible(), "clear icon should be visible after presetting API");
+
+		oInput.destroy();
+	});
+
+	QUnit.test("Clear icon should not be visible when input is disabled", function (assert) {
+		var oInput = new Input({ value: "test", enabled: false }).placeAt("content");
+
+		assert.notOk(oInput._oClearButton, "clear icon should not be created by default");
+
+		oInput.setShowClearIcon(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(oInput._oClearButton.getVisible(), "clear icon is not visible");
+
+		oInput.destroy();
+	});
+
+	QUnit.test("Clear icon should not be visible when input is non editable", function (assert) {
+		var oInput = new Input({ value: "test", editable: false }).placeAt("content");
+
+		assert.notOk(oInput._oClearButton, "clear icon should not be created by default");
+
+		oInput.setShowClearIcon(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(oInput._oClearButton.getVisible(), "clear icon is not visible");
 
 		oInput.destroy();
 	});
