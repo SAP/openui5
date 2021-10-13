@@ -168,7 +168,7 @@ sap.ui.define([
 	XMLCompositeMetadata.prototype._loadFragment = function (sFragmentName, sExtension) {
 		var sFragmentKey = sExtension + "$" + sFragmentName;
 		if (!mFragmentCache[sFragmentKey]) {
-			mFragmentCache[sFragmentKey] = XMLTemplateProcessor.loadTemplate(sFragmentName, sExtension);
+			mFragmentCache[sFragmentKey] = XMLTemplateProcessor.loadTemplate(sFragmentName, sExtension); // legacy-relevant: sync loading of XML resource
 		}
 
 		return mFragmentCache[sFragmentKey];

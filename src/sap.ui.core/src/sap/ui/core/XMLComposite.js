@@ -517,7 +517,7 @@ sap.ui.define([
 			var sFragment = oFragmentContent ? (new XMLSerializer()).serializeToString(oFragmentContent) : undefined;
 			this.bUsesI18n = sFragment ? (sFragment.indexOf("$" + this.alias + ".i18n") != -1) : true;
 
-			this._setCompositeAggregation(sap.ui.xmlfragment({
+			this._setCompositeAggregation(sap.ui.xmlfragment({ // legacy-relevant: can lead to follow-up sync XHRs for controls
 				sId: this.getId(),
 				fragmentContent: oFragmentContent,
 				oController: this
