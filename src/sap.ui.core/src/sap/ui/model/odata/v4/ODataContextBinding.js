@@ -294,7 +294,7 @@ sap.ui.define([
 			return that.refreshDependentBindings("", oGroupLock.getGroupId(), true);
 		}
 
-		oPromise = oMetaModel.fetchObject(oMetaModel.getMetaPath(sResolvedPath) + "/@$ui5.overload")
+		oPromise = oMetaModel.fetchObject(_Helper.getMetaPath(sResolvedPath) + "/@$ui5.overload")
 			.then(function (aOperationMetadata) {
 				var fnGetEntity, iIndex, sPath;
 
@@ -601,7 +601,7 @@ sap.ui.define([
 			oCache,
 			vEntity = fnGetEntity,
 			oModel = this.oModel,
-			sMetaPath = oModel.getMetaModel().getMetaPath(sPath) + "/@$ui5.overload/0/$ReturnType",
+			sMetaPath = _Helper.getMetaPath(sPath) + "/@$ui5.overload/0/$ReturnType",
 			sOriginalResourcePath = sPath.slice(1),
 			oRequestor = oModel.oRequestor,
 			that = this;
@@ -1101,17 +1101,17 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.hasReturnValueContext = function (oMetadata) {
-		var oMetaModel = this.oModel.getMetaModel(),
-			aMetaSegments;
+		var aMetaSegments;
 
 		if (!this.isReturnValueLikeBindingParameter(oMetadata)) {
 			return false;
 		}
 
-		aMetaSegments = oMetaModel.getMetaPath(this.getResolvedPath()).split("/");
+		aMetaSegments = _Helper.getMetaPath(this.getResolvedPath()).split("/");
 
+		// case 4b
 		return aMetaSegments.length === 3
-			&& oMetaModel.getObject("/" + aMetaSegments[1]).$kind === "EntitySet"; // case 4b
+			&& this.oModel.getMetaModel().getObject("/" + aMetaSegments[1]).$kind === "EntitySet";
 	};
 
 	/**

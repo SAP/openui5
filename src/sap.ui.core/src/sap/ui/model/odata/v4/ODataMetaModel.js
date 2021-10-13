@@ -1661,7 +1661,7 @@ sap.ui.define([
 
 		// First fetch the complete metapath to ensure that everything is in mScope
 		// This also ensures that the metadata is valid
-		return this.fetchObject(this.getMetaPath(sResolvedPath)).then(function () {
+		return this.fetchObject(_Helper.getMetaPath(sResolvedPath)).then(function () {
 			// Then fetch mScope
 			return that.fetchEntityContainer();
 		}).then(function (mScope) {
@@ -2079,7 +2079,8 @@ sap.ui.define([
 						&& aSegments0[i + 1] === "$Parameter") {
 					// Filter via the binding parameter
 					aOverloadMetadata = that.getObject(
-						that.getMetaPath(aSegments0.slice(0, i + 1).join("/") + "/@$ui5.overload")
+						_Helper.getMetaPath(aSegments0.slice(0, i + 1).join("/")
+							+ "/@$ui5.overload")
 					);
 					// Note: This must be a bound operation with a binding parameter; otherwise it
 					// would be in the first segment and the loop would not touch it due to
@@ -2098,7 +2099,7 @@ sap.ui.define([
 			return j < iBasePathLength || sSegment[0] === "#" || sSegment[0] === "@"
 					|| rNumber.test(sSegment) || sSegment === "$Parameter"
 				? {} // simply an object w/o $Partner and $isCollection
-				: that.getObject(that.getMetaPath(aSegments.slice(0, j + 1).join("/"))) || {};
+				: that.getObject(_Helper.getMetaPath(aSegments.slice(0, j + 1).join("/"))) || {};
 		});
 		mPaths[sPath] = true;
 		if (!(bNoReduceBeforeCollection
@@ -2227,7 +2228,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataMetaModel.prototype.getMetaContext = function (sPath) {
-		return new BaseContext(this, this.getMetaPath(sPath));
+		return new BaseContext(this, _Helper.getMetaPath(sPath));
 	};
 
 	/**
@@ -3111,7 +3112,7 @@ sap.ui.define([
 	 */
 	ODataMetaModel.prototype.requestValueListInfo = function (sPropertyPath, bAutoExpandSelect,
 			oContext) {
-		var sPropertyMetaPath = this.getMetaPath(sPropertyPath),
+		var sPropertyMetaPath = _Helper.getMetaPath(sPropertyPath),
 			sParentMetaPath = sPropertyMetaPath.slice(0, sPropertyMetaPath.lastIndexOf("/"))
 				.replace("/$Parameter", ""),
 			sQualifiedName = sParentMetaPath.slice(sParentMetaPath.lastIndexOf("/") + 1),

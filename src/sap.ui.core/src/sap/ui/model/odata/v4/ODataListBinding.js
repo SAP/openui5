@@ -2624,7 +2624,7 @@ sap.ui.define([
 			return Promise.resolve(null);
 		}
 
-		sMetaPath = oMetaModel.getMetaPath(sResolvedPath);
+		sMetaPath = _Helper.getMetaPath(sResolvedPath);
 		return oMetaModel.requestObject(sMetaPath + "/").then(function (oEntityType) {
 			var aFilters,
 				mPredicates = {};
