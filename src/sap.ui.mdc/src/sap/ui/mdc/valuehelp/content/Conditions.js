@@ -157,6 +157,12 @@ sap.ui.define([
 
 	};
 
+	Conditions.prototype.isFocusInHelp = function() {
+
+		return true;
+
+	};
+
 	Conditions.prototype.getRequiresTokenizer = function() {
 		// when only the conditions content is on the dialog the tokenizer should be hidden.
 		return false;

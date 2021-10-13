@@ -230,6 +230,7 @@ sap.ui.define([
 					assert.equal(oContainer._getAllContent()[0], oContentField, "Content of sap.m.Popover");
 					assert.ok(oContent.onShow.calledOnce, "Content onShow called");
 					assert.equal(oContainer.getContentHeight(), "auto", "contentHeight"); // TODO: Is this is right???
+					assert.equal(oContainer.getInitialFocus(), oField.getId(), "initialFocus");
 					assert.notOk(oContainer.getFooter(), "no footer");
 					assert.equal(oPopover.getDomRef(), oContainer.getDomRef(), "DomRef of sap.m.Popover returned");
 					assert.equal(oPopover._getUIAreaForContent(), oContainer.getUIArea(), "_getUIAreaForContent returns UiArea of sap.m.Popover");
@@ -253,6 +254,7 @@ sap.ui.define([
 
 	QUnit.test("open with footer toolbar", function(assert) {
 
+		sinon.stub(oContent, "isFocusInHelp").returns(true); // test if initial focus is not set to field
 		var oToolbar = new Toolbar("TB1");
 		sinon.stub(oContent, "getFooterContent").returns(oToolbar);
 		var iOpened = 0;
@@ -270,6 +272,7 @@ sap.ui.define([
 					var oContainer = oPopover.getAggregation("_container");
 					assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
 					assert.ok(oContainer.isOpen(), "sap.m.Popover is open");
+					assert.notOk(oContainer.getInitialFocus(), "initialFocus not set");
 					assert.equal(oContainer._getAllContent()[0], oContentField, "Content of sap.m.Popover");
 					assert.equal(oContainer.getFooter(), oToolbar, "footer");
 
