@@ -335,26 +335,26 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/librar
 			 * @returns {string} String containing the formatted name.
 			 */
 			_getFormattedName: function(oValues) {
-				var sHighColor = "",
-					sMediumColor = "",
-					sLowColor = "";
+				var sHighClass = "",
+					sMediumClass = "",
+					sLowClass = "";
 
 				if (oValues.highCount > 0) {
-					sHighColor = "color: " + constants.SUPPORT_ASSISTANT_SEVERITY_HIGH_COLOR + ";";
+					sHighClass = "issueSeverityHigh";
 				}
 
 				if (oValues.mediumCount > 0) {
-					sMediumColor = "color: " + constants.SUPPORT_ASSISTANT_SEVERITY_MEDIUM_COLOR + ";";
+					sMediumClass = "issueSeverityMedium";
 				}
 
 				if (oValues.lowCount > 0) {
-					sLowColor = "color: " + constants.SUPPORT_ASSISTANT_SEVERITY_LOW_COLOR + ";";
+					sLowClass = "issueSeverityLow";
 				}
 
 				return oValues.name +
-					" (<span style=\"" + sHighColor + "\"> " + oValues.highCount + " " + oValues.highName + ", </span> " +
-					"<span style=\"" + sMediumColor + "\"> " + oValues.mediumCount + " " + oValues.mediumName + ", </span> " +
-					"<span style=\"" + sLowColor + "\"> " + oValues.lowCount + " " + oValues.lowName + "</span> )";
+					" (<span class=\"" + sHighClass + "\"> " + oValues.highCount + " " + oValues.highName + ", </span> " +
+					"<span class=\"" + sMediumClass + "\"> " + oValues.mediumCount + " " + oValues.mediumName + ", </span> " +
+					"<span class=\"" + sLowClass + "\"> " + oValues.lowCount + " " + oValues.lowName + "</span> )";
 			},
 
 			/**

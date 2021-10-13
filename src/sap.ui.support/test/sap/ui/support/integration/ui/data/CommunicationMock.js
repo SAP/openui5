@@ -140,7 +140,7 @@ sap.ui.define([
 								categories: "Other",
 								description: "Description",
 								details: "High test issue details",
-								formattedName: 'temporary (<span style="color: #bb0000;"> 1 High, </span> <span style=""> 0 Medium, </span> <span style=""> 0 Low</span> )',
+								formattedName: 'temporary (<span class="issueSeverityHigh"> 1 High, </span> <span class=""> 0 Medium, </span> <span class=""> 0 Low</span> )',
 								issueCount: 1,
 								name: "Title of temp rule",
 								resolution: "Resolution",
@@ -152,7 +152,7 @@ sap.ui.define([
 								showCategories: true,
 								type: "rule"
 							},
-							formattedName: 'temporary (<span style="color: #bb0000;"> 1 High, </span> <span style=""> 0 Medium, </span> <span style=""> 0 Low</span> )',
+							formattedName: 'temporary (<span class="issueSeverityHigh"> 1 High, </span> <span class=""> 0 Medium, </span> <span class=""> 0 Low</span> )',
 							issueCount: 1,
 							name: "temporary (1 issues)",
 							showAudiences: false,

@@ -223,3 +223,12 @@ body {
 	padding-right: 0.2rem;
 }
 
+.issueSeverityHigh {
+	color: #bb0000;
+}
+.issueSeverityMedium {
+	color: #e78c07;
+}
+.issueSeverityLow {
+	color:#5e696e;
+}
