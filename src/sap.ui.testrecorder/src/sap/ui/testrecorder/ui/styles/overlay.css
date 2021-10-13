@@ -1,9 +1,5 @@
 @import url("ControlTree.css");
 
-body {
-	background: #fff;
-}
-
 .ttPageBar {
 	height: 2rem !important;
 	background-color: #354a5f !important;
