@@ -463,6 +463,7 @@ License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: src/sap.ui.core/src/sap/ui/core/themes/base/base.less
 	src/themelib_sap_belize/src/sap/ui/core/themes/*/base.less
 	src/themelib_sap_fiori_3/src/sap/ui/core/themes/*/base.less
+	src/themelib_sap_horizon/src/sap/ui/core/themes/*/base.less
 
 
 ALL LICENSE TEXTS:
