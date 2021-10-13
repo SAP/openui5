@@ -3317,9 +3317,21 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("remove: create request with bUpdateAggregatedMessages=true", function (assert) {
-		var fnHandleProcessSuccess,
+[
+	null,
+	{isTransient : function () { return true; }},
+	{isTransient : function () { return false; }}
+].forEach(function (oContext, i) {
+	["/path/~entityKey?query&string", "/path/~entityKey"].forEach(function (sUrl) {
+	var sTitle = "remove: create request with bUpdateAggregatedMessages=true;"
+			+ (oContext ? " context created=" + oContext.isTransient() : " no context")
+			+ "; sUrl=" + sUrl;
+
+	QUnit.test(sTitle, function (assert) {
+		var fnHandleSuccess, fnProcessRequest,
 			oModel = {
+				mContexts : oContext ? {"/~entityKey" : oContext} : {},
+				oCreatedContextsCache : {findAndRemoveContext : function () {}},
 				mDeferredGroups : {},
 				mRequests : "~mRequests",
 				bUseBatch : "~bUseBatch",
@@ -3331,6 +3343,7 @@ sap.ui.define([
 				_normalizePath : function () {},
 				_processRequest : function () {},
 				_pushToRequestQueue : function () {},
+				_removeEntity : function () {},
 				resolveDeep : function () {}
 			};
 
@@ -3354,8 +3367,8 @@ sap.ui.define([
 			.returns("~sDeepPath");
 		this.mock(oModel).expects("_processRequest")
 			.withExactArgs(sinon.match.func, "~fnError", false)
-			.callsFake(function (fnHandleProcessSuccess0, fnError, bDeferred) {
-				fnHandleProcessSuccess = fnHandleProcessSuccess0;
+			.callsFake(function (fnProcessRequest0) {
+				fnProcessRequest = fnProcessRequest0;
 			});
 
 		// code under test
@@ -3373,18 +3386,31 @@ sap.ui.define([
 
 		this.mock(oModel).expects("_createRequestUrlWithNormalizedPath")
 			.withExactArgs("~sNormalizedPath", "~aUrlParams", "~bUseBatch")
-			.returns("~sUrl");
+			.returns(sUrl);
 		this.mock(oModel).expects("_createRequest")
-			.withExactArgs("~sUrl", "~sDeepPath", "DELETE", "~mHeaders1", undefined, "~sETag",
+			.withExactArgs(sUrl, "~sDeepPath", "DELETE", "~mHeaders1", undefined, "~sETag",
 				undefined, true)
 			.returns("~oRequest");
 		this.mock(oModel).expects("_pushToRequestQueue")
 			.withExactArgs("~mRequests", "~sGroupId", "~sChangeSetId", "~oRequest",
-				sinon.match.func, "~fnError", "~requestHandle", "~bRefreshAfterChange1");
+				sinon.match.func, "~fnError", "~requestHandle", "~bRefreshAfterChange1")
+			.callsFake(function () {
+				fnHandleSuccess = arguments[4];
+			});
 
 		// code under test
-		fnHandleProcessSuccess("~requestHandle");
+		fnProcessRequest("~requestHandle");
+
+		this.mock(oModel).expects("_removeEntity").withExactArgs("~entityKey");
+		this.mock(oModel.oCreatedContextsCache).expects("findAndRemoveContext")
+			.withExactArgs(sinon.match.same(oContext))
+			.exactly(i === 2 ? 1 : 0);
+
+		// code under test
+		fnHandleSuccess();
 	});
+	});
+});
 
 	//*********************************************************************************************
 [{groupId : "~groupId"}, {batchGroupId : "~groupId"}].forEach(function (oGroupFixture, i) {
