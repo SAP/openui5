@@ -559,7 +559,7 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 			.sapMGTOverlayMixin();
 			display: block;
 			content: "";
-			background-color: fade(@sapUiTileBackground, 70);
+			background-color: fade(@sapUiTileBackground, 60);
 		}
 	}
 
@@ -647,7 +647,7 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 			.sapMGTOverlayMixin();
 			display: block;
 			content: "";
-			background-color: fade(@sapUiTileBackground, 70);
+			background-color: fade(@sapUiTileBackground, 60);
 			border-radius: 0.125rem;
 		}
 	}
@@ -971,12 +971,6 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 		width: 100%;
 	}
 
-	.sapMGTScopeActions, .sapMGTScopeSingleAction {
-		.sapMGTHdrTxt, .sapMGTSubHdrTxt {
-			opacity: 0.4;
-		}
-	}
-
 	.sapMGTLineStyleHelper {
 		position: absolute;
 		pointer-events: auto;
@@ -1027,9 +1021,17 @@ html[dir=rtl] .sapMGTLineMode {
 }
 
 /******************* OVERLAYS AND HELPERS *******************/
-.sapMGTOverlay {
-	.sapMGTOverlayMixin();
-	opacity: 0.8;
+.sapMGT.sapMGTStateFailed, .sapMGT.sapMGTStateDisabled {
+	.sapMTileCnt {
+		position: relative;
+
+		&:after {
+			.sapMGTOverlayMixin();
+			display: block;
+			content: "";
+			background-color: fade(@sapUiTileBackground, 80);
+		}
+	}
 }
 
 .sapMGT .sapMGTFocusDiv {
