@@ -29,7 +29,7 @@ sap.ui.define([
 
 	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
 
-	ValueHelpDelegate.retrieveContent = function (oContainer) {
+	ValueHelpDelegate.retrieveContent = function (oPayload, oContainer) {
 		var oValueHelp = oContainer && oContainer.getParent();
 
 		var oParams = UriParameters.fromQuery(location.search);

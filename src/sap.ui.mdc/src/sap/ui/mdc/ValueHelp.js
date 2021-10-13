@@ -402,8 +402,8 @@ sap.ui.define([
 		return this._retrievePromise("delegateContent--" + oContainer.getId(), function() {
 			var oDelegatePromise = this._getControlDelegatePromise();
 			return oDelegatePromise.then(function (oDelegateModule) {
-				return oDelegateModule.retrieveContent(oContainer); // TODO: wait until In/OutParameter bindings finished?
-			});
+				return oDelegateModule.retrieveContent(this.getPayload(), oContainer); // TODO: wait until In/OutParameter bindings finished?
+			}.bind(this));
 		}.bind(this));
 	};
 

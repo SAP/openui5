@@ -13,7 +13,7 @@ sap.ui.define([
 
 	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
 
-	ValueHelpDelegate.retrieveContent = function (oContainer) {
+	ValueHelpDelegate.retrieveContent = function (oPayload, oContainer) {
 
 		var aCurrentContent = oContainer && oContainer.getContent();
 		var oCurrentContent = aCurrentContent && aCurrentContent[0];

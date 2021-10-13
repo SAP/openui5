@@ -11,7 +11,7 @@ sap.ui.define([
 
 	var ValueHelpDelegate = Object.assign({}, BaseDelegate);
 
-	ValueHelpDelegate.retrieveContent = function (oContainer) {
+	ValueHelpDelegate.retrieveContent = function (oPayload, oContainer) {
 		return Promise.resolve();
 	};
 

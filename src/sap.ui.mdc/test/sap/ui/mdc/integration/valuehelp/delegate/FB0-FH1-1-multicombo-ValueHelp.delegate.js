@@ -27,7 +27,7 @@ sap.ui.define([
 
 //	var counter = 0;
 
-	ValueHelpDelegate.retrieveContent = function (oContainer) {
+	ValueHelpDelegate.retrieveContent = function (oPayload, oContainer) {
 		var oValueHelp = oContainer && oContainer.getParent();
 
 		var oParams = UriParameters.fromQuery(location.search);
