@@ -8,11 +8,10 @@ sap.ui.define([
 	'./JSViewRenderer',
 	'./ViewType',
 	'sap/base/util/extend',
-	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
 	'sap/base/Log'
 ],
-	function(View, JSViewRenderer, ViewType, merge, extend, ManagedObject, Log) {
+	function(View, JSViewRenderer, ViewType, extend, ManagedObject, Log) {
 	"use strict";
 
 
@@ -92,7 +91,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.core.mvc.JSView>} A promise that resolves with the view instance
 	 */
 	JSView.create = function(oOptions) {
-		var mParameters = merge({}, oOptions);
+		var mParameters = View._cloneViewSettings(oOptions);
 		// remove unsupported options:
 		for (var sOption in mParameters) {
 			if (sOption === 'definition' || sOption === 'preprocessors') {
