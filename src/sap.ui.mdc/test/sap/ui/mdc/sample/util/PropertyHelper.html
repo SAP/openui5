@@ -256,7 +256,6 @@
 				}) : undefined;
 				var mExtensionAttributeMetadata = sExtensionMetadata ? JSON.parse(sExtensionMetadata) : undefined;
 				var mExtensions = sExtensions ? JSON.parse(sExtensions) : undefined;
-				var oError;
 				var aLogEntries = [];
 				var oLogListener = {
 					onLogEntry: function(oLogEntry) {
@@ -266,43 +265,40 @@
 					}
 				};
 
-				try {
-						sap.ui.require([
-							oPropertyHelperClassInput.getValue().trim().replace(/\./g, "/")
-						], function(PropertyHelper) {
-							Log.addLogListener(oLogListener);
-							if (oSettings.getProperty("/helperSettingsEnabled")) {
-								oPropertyHelper = new PropertyHelper(aPropertyInfos, mExtensions, null, aAllowedAttributes, mExtensionAttributeMetadata);
-							} else {
-								oPropertyHelper = new PropertyHelper(aPropertyInfos);
-							}
-							Log.removeLogListener(oLogListener);
-		
-							if (bFullOutput) {
-								oPropertyOutput.setValue(stringify(oPropertyHelper.getProperties().map(getFullPropertyJSON)));
-							} else {
-								oPropertyOutput.setValue(stringify(oPropertyHelper.getProperties()));
-							}
-		
-							oPropertyHelper.destroy();
-						});
-
-				} catch (e) {
-					oPropertyOutput.setValue();
-					oError = e;
-				}
-
 				clearLog();
 
-				if (oError) {
-					writeLogEntry(oError.message, Log.Level.ERROR);
-				}
+				sap.ui.require([
+					oPropertyHelperClassInput.getValue().trim().replace(/\./g, "/")
+				], function(PropertyHelper) {
+					try {
+						Log.addLogListener(oLogListener);
+						if (oSettings.getProperty("/helperSettingsEnabled")) {
+							oPropertyHelper = new PropertyHelper(aPropertyInfos, mExtensions, null, aAllowedAttributes, mExtensionAttributeMetadata);
+						} else {
+							oPropertyHelper = new PropertyHelper(aPropertyInfos);
+						}
+						Log.removeLogListener(oLogListener);
 
-				aLogEntries.forEach(function(oEntry) {
-					if (oEntry.message.indexOf("Invalid property definition") === 0) {
-						writeLogEntry(oEntry.message, oEntry.level);
+						if (bFullOutput) {
+							oPropertyOutput.setValue(stringify(oPropertyHelper.getProperties().map(getFullPropertyJSON)));
+						} else {
+							oPropertyOutput.setValue(stringify(oPropertyHelper.getProperties()));
+						}
+
+						oPropertyHelper.destroy();
+					} catch (e) {
+						oPropertyOutput.setValue();
+						writeLogEntry(e.message, Log.Level.ERROR);
 					}
-				})
+
+					aLogEntries.forEach(function(oEntry) {
+						if (oEntry.message.indexOf("Invalid property definition") === 0) {
+							writeLogEntry(oEntry.message, oEntry.level);
+						}
+					})
+				}, function(e) {
+					writeLogEntry(e.message, Log.Level.ERROR);
+				});
 			}
 
 			function getFullPropertyJSON(oProperty) {

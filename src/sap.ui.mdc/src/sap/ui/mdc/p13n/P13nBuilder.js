@@ -214,7 +214,7 @@ sap.ui.define([
                 }
 
                 mItem.name = oProperty.name;
-                mItem.label = oProperty.getLabel() || oProperty.name;
+                mItem.label = oProperty.label || oProperty.name;
                 mItem.tooltip = oProperty.tooltip;
 
                 if (mItemsGrouped) {

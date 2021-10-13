@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/* global QUnit, sinon */
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/mdc/table/V4AnalyticsPropertyHelper"
@@ -53,121 +53,90 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("isAggregatable", function(assert) {
-		assert.strictEqual(this.oPropertyHelper.isAggregatable(), null, "No arguments");
-		assert.strictEqual(this.oPropertyHelper.isAggregatable({}), null, "Empty object");
-		assert.strictEqual(this.oPropertyHelper.isAggregatable("propA"), true, "Name of an aggregatable simple property");
-		assert.strictEqual(this.oPropertyHelper.isAggregatable("complexPropA"), false,
-			"Name of a complex property referencing aggregatable properties");
-		assert.strictEqual(this.oPropertyHelper.isAggregatable("propB"), false, "Name of a non-aggregatable simple property");
-		assert.strictEqual(this.oPropertyHelper.isAggregatable("complexPropB"), false,
-			"Name of a complex property referencing non-aggregatable properties");
-		assert.strictEqual(this.oPropertyHelper.isAggregatable("unknownProp"), null, "Unknown property key");
-
-		this.oPropertyHelper.destroy();
-		assert.strictEqual(this.oPropertyHelper.isAggregatable("propA"), null, "After destruction");
-	});
-
 	QUnit.test("getAggregatableProperties", function(assert) {
-		assert.deepEqual(this.oPropertyHelper.getAggregatableProperties(), [], "No arguments");
-		assert.deepEqual(this.oPropertyHelper.getAggregatableProperties({}), [], "Empty object");
-		assert.deepEqual(this.oPropertyHelper.getAggregatableProperties("propA"), [this.aProperties[0]],
-			"Name of an aggregatable simple property");
-		assert.deepEqual(this.oPropertyHelper.getAggregatableProperties("complexPropA"), [
-			this.aProperties[0]
-		], "Name of a complex property referencing one aggregatable property");
-		assert.deepEqual(this.oPropertyHelper.getAggregatableProperties("complexPropC"), [
-			this.aProperties[0], this.aProperties[2]
-		], "Name of a complex property referencing multiple aggregatable properties");
-		assert.deepEqual(this.oPropertyHelper.getAggregatableProperties("propB"), [], "Name of a non-aggregatable simple property");
-		assert.deepEqual(this.oPropertyHelper.getAggregatableProperties("complexPropB"), [],
-			"Name of a complex property referencing non-aggregatable properties");
-		assert.deepEqual(this.oPropertyHelper.getAggregatableProperties("unknownProp"), [], "Unknown property key");
-
-		this.oPropertyHelper.destroy();
-		assert.deepEqual(this.oPropertyHelper.getAggregatableProperties("propA"), [], "After destruction");
-	});
-
-	QUnit.test("getAllAggregatableProperties", function(assert) {
-		assert.deepEqual(this.oPropertyHelper.getAllAggregatableProperties(), [
+		assert.deepEqual(this.oPropertyHelper.getAggregatableProperties(), [
 			this.aProperties[0], this.aProperties[2]
 		]);
 
 		this.oPropertyHelper.destroy();
-		assert.deepEqual(this.oPropertyHelper.getAllAggregatableProperties(), [], "After destruction");
-	});
-
-	QUnit.test("getDefaultAggregate", function(assert) {
-		assert.deepEqual(this.oPropertyHelper.getDefaultAggregate(), null, "No arguments");
-		assert.deepEqual(this.oPropertyHelper.getDefaultAggregate({}), null, "Empty object");
-		assert.deepEqual(this.oPropertyHelper.getDefaultAggregate("propA"), {
-			contextDefiningProperties: [this.aProperties[1]],
-			unit: this.aProperties[6]
-		}, "Name of a simple property with a default aggregate with unit and context defining properties");
-		assert.deepEqual(this.oPropertyHelper.getDefaultAggregate("propC"), {
-			contextDefiningProperties: [],
-			unit: null
-		}, "Name of a simple property with a default aggregate without unit and context defining properties");
-		assert.deepEqual(this.oPropertyHelper.getDefaultAggregate("propB"), null, "Name of a simple property without a default aggregate");
-		assert.deepEqual(this.oPropertyHelper.getDefaultAggregate("complexProp"), null,
-			"Name of a complex property referencing a property with a default aggregate");
-		assert.deepEqual(this.oPropertyHelper.getDefaultAggregate("unknownProp"), null, "Unknown property key");
-
-		this.oPropertyHelper.destroy();
-		assert.deepEqual(this.oPropertyHelper.getDefaultAggregate("propA"), null, "After destruction");
+		assert.deepEqual(this.oPropertyHelper.getAggregatableProperties(), [], "After destruction");
 	});
 
 	QUnit.module("Property", {
-		before: function() {
-			this.aExpectedMethods = [
-				"isAggregatable", "getAggregatableProperties", "getDefaultAggregate"
-			];
+		beforeEach: function() {
 			this.oPropertyHelper = new PropertyHelper([{
 				name: "prop",
 				label: "Property"
 			}, {
+				name: "prop2",
+				label: "Property 2"
+			}, {
 				name: "complexProp",
 				label: "Complex property",
 				propertyInfos: ["prop"]
-			}]);
+			}, {
+				name: "complexProp2",
+				label: "Complex property 2",
+				propertyInfos: ["prop2"]
+			}], {
+				prop: {
+					defaultAggregate: {
+						contextDefiningProperties: ["prop2"]
+					}
+				}
+			});
 		},
-		after: function() {
+		afterEach: function() {
 			this.oPropertyHelper.destroy();
 		},
 		assertProperty: function(assert, oProperty) {
-			for (var i = 0; i < this.aExpectedMethods.length; i++) {
-				var sMethod = this.aExpectedMethods[i];
+			var aExpectedMethods = ["getAggregatableProperties"];
+
+			for (var i = 0; i < aExpectedMethods.length; i++) {
+				var sMethod = aExpectedMethods[i];
 				assert.equal(typeof oProperty[sMethod], "function", "Has function '" + sMethod + "'");
-			}
-		},
-		assertCalls: function(assert, oProperty, sPropertyName) {
-			for (var i = 0; i < this.aExpectedMethods.length; i++) {
-				var sMethod = this.aExpectedMethods[i];
-				var oSpy = sinon.spy(this.oPropertyHelper, sMethod);
-
-				oProperty[sMethod]();
-				assert.ok(oSpy.calledOnceWithExactly(sPropertyName), "'" + sMethod + "' called once with the correct arguments");
-
-				oSpy.restore();
 			}
 		}
 	});
 
 	QUnit.test("Simple property", function(assert) {
-		var oProperty = this.oPropertyHelper.getProperties()[0];
-		this.assertProperty(assert, oProperty);
-		this.assertCalls(assert, oProperty, "prop");
+		this.assertProperty(assert, this.oPropertyHelper.getProperty("prop"));
 	});
 
 	QUnit.test("Complex property", function(assert) {
-		var oProperty = this.oPropertyHelper.getProperties()[1];
-		this.assertProperty(assert, oProperty);
-		this.assertCalls(assert, oProperty, "complexProp");
+		this.assertProperty(assert, this.oPropertyHelper.getProperty("complexProp"));
 	});
 
 	QUnit.test("Property referenced by complex property", function(assert) {
-		var oProperty = this.oPropertyHelper.getProperties()[1].getReferencedProperties()[0];
-		this.assertProperty(assert, oProperty);
-		this.assertCalls(assert, oProperty, "prop");
+		this.assertProperty(assert, this.oPropertyHelper.getProperty("complexProp").getReferencedProperties()[0]);
+	});
+
+	QUnit.test("getAggregatableProperties", function(assert) {
+		assert.deepEqual(this.oPropertyHelper.getProperty("prop").getAggregatableProperties(), [
+			this.oPropertyHelper.getProperty("prop")
+		], "Aggregatable simple property");
+		assert.deepEqual(this.oPropertyHelper.getProperty("complexProp").getAggregatableProperties(), [
+			this.oPropertyHelper.getProperty("prop")
+		], "Complex property referencing aggregatable properties");
+		assert.deepEqual(this.oPropertyHelper.getProperty("prop2").getAggregatableProperties(), [],
+			"Non-aggregatable simple property");
+		assert.deepEqual(this.oPropertyHelper.getProperty("complexProp2").getAggregatableProperties(), [],
+			"Complex property referencing non-aggregatable properties");
+
+		var oSimpleProperty = this.oPropertyHelper.getProperty("prop");
+		var oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
+		this.oPropertyHelper.destroy();
+		assert.deepEqual(oComplexProperty.getAggregatableProperties(), [oSimpleProperty], "After destruction");
+	});
+
+	QUnit.test("attribute: aggregatable", function(assert) {
+		assert.strictEqual(this.oPropertyHelper.getProperty("prop").aggregatable, true,
+			"Aggregatable simple property");
+		assert.strictEqual(this.oPropertyHelper.getProperty("complexProp").aggregatable, false,
+			"Complex property referencing aggregatable properties");
+		assert.strictEqual(this.oPropertyHelper.getProperty("prop2").aggregatable, false,
+			"Non-aggregatable simple property");
+		assert.strictEqual(this.oPropertyHelper.getProperty("complexProp2").aggregatable, false,
+			"Complex property referencing non-aggregatable properties");
 	});
 });

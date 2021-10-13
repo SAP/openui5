@@ -198,7 +198,7 @@ sap.ui.define([
 				control: oController.getAdaptationControl(),
 				changeOperations: mchangeOperations,
 				deltaAttributes: ["name"],
-				propertyInfo: oRegistryEntry.helper.getProperties().map(function(a){return {name: a.getName()};})
+				propertyInfo: oRegistryEntry.helper.getProperties().map(function(a){return {name: a.name};})
 			};
 
 			//Only execute change calculation in case there is a difference (--> example: press 'Ok' without a difference)

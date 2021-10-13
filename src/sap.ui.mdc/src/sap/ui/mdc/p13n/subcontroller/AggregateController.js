@@ -53,7 +53,7 @@ sap.ui.define([
         var oP13nData = P13nBuilder.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
             var oExisting = mExistingAggregations[oProperty.name];
             mItem.aggregated = !!oExisting;
-            return oProperty.isAggregatable();
+            return oProperty.aggregatable;
         });
 
         return oP13nData;

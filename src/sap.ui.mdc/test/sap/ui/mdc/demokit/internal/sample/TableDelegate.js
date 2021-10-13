@@ -43,7 +43,7 @@ sap.ui.define([
 
 	CustomTableDelegate.addItem = function(sPropertyName, oTable, mPropertyBag) {
 		var oPropertyHelper = oTable.getPropertyHelper();
-		if (oPropertyHelper.isComplex(sPropertyName)) {
+		if (oPropertyHelper.getProperty(sPropertyName).isComplex()) {
 			return this._createComplexColumn(sPropertyName, oTable);
 		}
 
@@ -59,9 +59,9 @@ sap.ui.define([
 			}
 
 			return this._createComplexColumnTemplate(oPropertyInfo).then(function(oTemplate) {
-				var sPropertyName = oPropertyInfo.getName();
+				var sPropertyName = oPropertyInfo.name;
 				var oColumnInfo = {
-					header: oPropertyInfo.getLabel(),
+					header: oPropertyInfo.label,
 					dataProperty: sPropertyName,
 					template: oTemplate
 				};
@@ -78,7 +78,7 @@ sap.ui.define([
 		oPropertyInfo.getReferencedProperties().forEach(function(oSimplePropertyInfo) {
 			var oText = new Text({
 				text: {
-					path: oSimplePropertyInfo.getPath()
+					path: oSimplePropertyInfo.path
 				}
 			});
 			oVBox.addItem(oText);

@@ -208,7 +208,7 @@ sap.ui.define([
 				assert.ok(oChangeContent.name);
 				assert.ok(!oChangeContent.hasOwnProperty("descending"));
 				var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
-				assert.equal(oChangeContent.name, oPropertyHelper.getProperties()[1].getName(),
+				assert.equal(oChangeContent.name, oPropertyHelper.getProperties()[1].name,
 					"The stored key should be equal to the 'name' in property info (NOT PATH!)");
 				Engine.getInstance()._setModificationHandler(this.oTable, FlexModificationHandler.getInstance());
 				done();
