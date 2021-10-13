@@ -34,7 +34,8 @@ sap.ui.require([
 		"javascript": document.getElementById("javascriptSample").textContent,
 		"css": document.getElementById("cssSample").textContent,
 		"xquery": document.getElementById("xquerySample").textContent,
-		"coffee": document.getElementById("coffeeSample").textContent
+		"coffee": document.getElementById("coffeeSample").textContent,
+		"plain_text": document.getElementById("plainText").textContent
 	};
 
 	var oCodeEditor = new CodeEditor({
@@ -59,7 +60,8 @@ sap.ui.require([
 							new Item({ key: "javascript", text: "javascript"}),
 							new Item({ key: "css", text: "css"}),
 							new Item({ key: "xquery", text: "xquery"}),
-							new Item({ key: "coffee", text: "coffee"})
+							new Item({ key: "coffee", text: "coffee"}),
+							new Item({ key: "plain_text", text: "plain text"})
 						],
 						change: function (e) {
 							var sKey = e.getSource().getSelectedKey();
