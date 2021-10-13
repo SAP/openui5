@@ -1635,6 +1635,10 @@ function(
 			}
 		}, this);
 
+		if (!this.getProperty("hasSelection") && this.getSelectedItems().length) {
+			this.setProperty("hasSelection", true);
+		}
+
 		this.setValue('');
 
 		if (mOptions.fireFinishEvent) {
@@ -1709,6 +1713,10 @@ function(
 				});
 			}
 		}, this);
+
+		if (this.getProperty("hasSelection") && !this.getSelectedItems().length) {
+			this.setProperty("hasSelection", false);
+		}
 
 		if (mOptions.fireFinishEvent) {
 			// Fire selectionFinish also if tokens are deleted directly in input field
@@ -2156,8 +2164,6 @@ function(
 		setTimeout(this._syncInputWidth.bind(this, oTokenizer), 0);
 		setTimeout(this._handleNMoreAccessibility.bind(this), 0);
 		setTimeout(oTokenizer["scrollToEnd"].bind(oTokenizer), 0);
-
-		this._toggleTokenClass();
 	};
 
 	/**
@@ -2175,7 +2181,6 @@ function(
 		if (aItemsBeforeRemoval.length !== ListHelpers.getSelectableItems(this.getItems())) {
 			!this.isPickerDialog() && !this.isFocusInTokenizer() && this.focus();
 			this.fireChangeEvent("");
-			this.setProperty("hasSelection", !!this.getSelectedItems().length);
 		}
 	};
 
@@ -3320,17 +3325,6 @@ function(
 	 */
 	MultiComboBox.prototype._clearTokenizer = function() {
 		this.getAggregation("tokenizer").destroyTokens();
-	};
-
-	/**
-	 * OnAfterRendering event delegate for the tokenizer to toggle
-	 * sapMMultiComboBoxHasToken class depending on whether or not there are
-	 * any tokens.
-	 *
-	 * @private
-	 */
-	MultiComboBox.prototype._toggleTokenClass = function() {
-		this.toggleStyleClass("sapMMultiComboBoxHasToken", this._hasTokens());
 	};
 
 	MultiComboBox.prototype.exit = function() {
