@@ -3595,4 +3595,18 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.iTotalSize, 5);
 	});
+
+	//*********************************************************************************************
+	// Binding triggers change event also if there are no group members so that the AnalyticalTable
+	// displays its "No Data" text.
+	// BCP: 2170218821
+	QUnit.test("_processLevelMembersQueryResponse: update on empty data", function (assert) {
+		var oBinding = {bNeedsUpdate : false};
+
+		// code under test
+		AnalyticalBinding.prototype._processLevelMembersQueryResponse
+			.call(oBinding, /*oRequestDetails, not needed*/ undefined, /*oData*/{results : []});
+
+		assert.strictEqual(oBinding.bNeedsUpdate, true);
+	});
 });

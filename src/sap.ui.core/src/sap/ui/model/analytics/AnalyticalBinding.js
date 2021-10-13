@@ -3381,6 +3381,7 @@ sap.ui.define([
 		// function implementation starts here
 
 		if (oData.results.length == 0) {
+			this.bNeedsUpdate = true;
 			return;
 		}
 		// Collecting contexts
