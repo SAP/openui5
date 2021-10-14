@@ -507,15 +507,8 @@ function(
 			// this is needed to initially check if undo is available, e.g. when the stack gets initialized with changes
 			.then(this._onStackModified.bind(this))
 			.then(function () {
-				// non-blocking style loading
-				StylesLoader
-				.loadStyles("InPageStyles")
-				.then(function (sData) {
-					var sStyles = sData.replace(/%scrollWidth%/g, DOMUtil.getScrollbarWidth() + "px");
-					DOMUtil.insertStyles(sStyles, Overlay.getOverlayContainer().get(0));
-				});
-			})
-			.then(function () {
+				//Resolve the CSS variable set in themes/base/OverlayWithScrollbar.css
+				Overlay.getOverlayContainer().get(0).style.setProperty("--sap-ui-rta-scrollbar-scrollWidth", DOMUtil.getScrollbarWidth() + "px");
 				return oDesignTimePromise;
 			})
 			.then(function () {

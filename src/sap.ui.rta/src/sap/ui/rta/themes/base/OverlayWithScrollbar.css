@@ -2,33 +2,40 @@
 	Content of this file inserts automatically into the page when RTA starts
  */
 
+#overlay-container {
+	--sap-ui-rta-scrollbar-scrollWidth: 0px;
+}
+
 .sapUiRta .sapUiDtOverlaySelected.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarVertical:after {
-	right: %scrollWidth%;
+	inset-inline-end: var(--sap-ui-rta-scrollbar-scrollWidth) !important;
 }
 
 .sapUiRta .sapUiDtOverlaySelected.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarHorizontal:after {
-	bottom: %scrollWidth%;
+	inset-block-end: var(--sap-ui-rta-scrollbar-scrollWidth) !important;
 }
 
 .sapUiRta .sapUiDtOverlaySelected.sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarVertical:focus:before {
-	right: calc(%scrollWidth% + 2px);
+	inset-inline-end: calc(var(--sap-ui-rta-scrollbar-scrollWidth) + 2px) !important;
 }
+
 .sapUiRta .sapUiDtOverlaySelected.sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarHorizontal:focus:before {
-	bottom: calc(%scrollWidth% + 2px);
+	inset-block-end: calc(var(--sap-ui-rta-scrollbar-scrollWidth) + 2px) !important;
 }
 
 .sapUiRta .sapUiDtOverlaySelected.sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarVertical:focus:before {
-	right: calc(%scrollWidth% + 2px);
+	inset-inline-end: calc(var(--sap-ui-rta-scrollbar-scrollWidth) + 2px) !important;
 }
+
 .sapUiRta .sapUiDtOverlaySelected.sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarHorizontal:focus:before {
-	bottom: calc(%scrollWidth% + 2px);
+	inset-block-end: calc(var(--sap-ui-rta-scrollbar-scrollWidth) + 2px) !important;
 }
 
 .sapUiRta .sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarHorizontal:focus:before,
 .sapUiRta .sapUiRtaOverlayHover.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarHorizontal:after {
-	bottom: %scrollWidth%;
+	inset-block-end: var(--sap-ui-rta-scrollbar-scrollWidth) !important;
 }
+
 .sapUiRta .sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarVertical:focus:before,
 .sapUiRta .sapUiRtaOverlayHover.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarVertical:after {
-	right: %scrollWidth%;
+	inset-inline-end: var(--sap-ui-rta-scrollbar-scrollWidth) !important;
 }
