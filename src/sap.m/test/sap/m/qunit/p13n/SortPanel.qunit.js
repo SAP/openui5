@@ -102,8 +102,8 @@ sap.ui.define([
         });
 
         var aNewSortState = [
-            {name: "key2", sorted: true, descending: false},
-            {name: "key3", sorted: true, descending: true}// --> descending has been kept (!)
+            {name: "key3", sorted: true, descending: true},// --> descending has been kept (!)
+            {name: "key2", sorted: true, descending: false}
         ];
 
         assert.deepEqual(this.oSortPanel.getP13nData(true), aNewSortState, "Correct sort state");

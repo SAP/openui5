@@ -183,13 +183,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("check 'model2State'", function(assert){
-		this.oController._getP13nModel(new PropertyHelper(this.aPropertyInfo));
 
 		var fnValidateP13n = this.oController.model2State;
 
-		if (fnValidateP13n instanceof Function) {
-			var oTheoreticalState = this.oController.model2State();
-			assert.ok(oTheoreticalState, "State returned");
+		if (fnValidateP13n) {
+			assert.ok(fnValidateP13n instanceof Function, "Model2State implemented");
 		} else {
 			assert.strictEqual(fnValidateP13n, false, "The Subcontroller does not implement a validation.");
 		}

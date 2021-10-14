@@ -1,7 +1,7 @@
 /* global QUnit */
 sap.ui.define([
 	"sap/ui/mdc/p13n/panels/Wrapper",
-    "sap/ui/mdc/p13n/panels/BasePanel"
+    "sap/m/p13n/BasePanel"
 ], function (Wrapper, BasePanel) {
 	"use strict";
 

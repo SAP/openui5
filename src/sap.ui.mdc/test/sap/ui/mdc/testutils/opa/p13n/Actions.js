@@ -452,7 +452,7 @@ sap.ui.define([
 
 	var iPersonalizeListViewItems = function(oP13nDialog, aItems) {
 		this.waitFor({
-			controlType: "sap.ui.mdc.p13n.panels.ListView",
+			controlType: oP13nDialog.getContent()[0].getView("columns") ? "sap.ui.mdc.p13n.panels.ListView" : "sap.m.p13n.SelectionPanel",
 			matchers: new Ancestor(oP13nDialog, false),
 			success: function(aListViews) {
 				var oListView = aListViews[0];
@@ -826,14 +826,14 @@ sap.ui.define([
 			return iPersonalize.call(this, oControl, Util.texts.group, {
 				success: function(oP13nDialog) {
 					this.waitFor({
-						controlType: "sap.ui.mdc.p13n.panels.GroupPanel",
+						controlType: (oP13nDialog.getContent()[0].getView("group") ? "sap.ui.mdc.p13n.panels.GroupPanel" : "sap.m.p13n.GroupPanel"),
 						matchers: new Ancestor(oP13nDialog, false),
 						success: function(aGroupPanels) {
 							var oGroupPanel = aGroupPanels[0];
 							// Remove all group entries
 							iPressAllDeclineButtonsOnPanel.call(this, oGroupPanel, {
 								// Add new group entries
-								itemAmount: oGroupPanel.getItems().length,
+								itemAmount: oGroupPanel._oListControl.getItems().length, //TODO: cleanup
 								success: function() {
 									this.waitFor({
 										controlType: "sap.m.CustomListItem",
@@ -868,14 +868,14 @@ sap.ui.define([
 			return iPersonalize.call(this, oControl, Util.texts.sort, {
 				success: function(oP13nDialog) {
 					this.waitFor({
-						controlType: "sap.ui.mdc.p13n.panels.SortQueryPanel",
+						controlType: oP13nDialog.getContent()[0].getView("sort") ? "sap.ui.mdc.p13n.panels.SortQueryPanel" : "sap.m.p13n.SortPanel",
 						matchers: new Ancestor(oP13nDialog, false),
 						success: function(aSortPanels) {
 							var oSortPanel = aSortPanels[0];
 							// Remove all Sort entries
 							iPressAllDeclineButtonsOnPanel.call(this, oSortPanel, {
 								// Add new Sort entries
-								itemAmount: oSortPanel.getItems().length,
+								itemAmount: oSortPanel._oListControl.getItems().length, //TODO: cleanup,
 								success: function() {
 									this.waitFor({
 										controlType: "sap.m.CustomListItem",

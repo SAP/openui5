@@ -83,8 +83,8 @@ sap.ui.define([
         });
 
         var aNewState = [
-            {name: "key2", visible: true},
-            {name: "key3", visible: true}
+            {name: "key3", visible: true},
+            {name: "key2", visible: true}
         ];
 
         assert.equal(this.oQueryPanel._oListControl.getItems().length, 3, "two initial rows + 1 empty row remain");

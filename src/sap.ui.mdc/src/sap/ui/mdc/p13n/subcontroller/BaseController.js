@@ -9,7 +9,7 @@ sap.ui.define([
     'sap/base/util/merge',
     'sap/base/util/deepEqual',
     'sap/ui/model/json/JSONModel',
-    'sap/ui/mdc/p13n/panels/SelectionPanel'
+    'sap/m/p13n/SelectionPanel'
 ], function (BaseObject, FlexUtil, P13nBuilder, merge, deepEqual, JSONModel, SelectionPanel) {
 	"use strict";
 
@@ -104,8 +104,8 @@ sap.ui.define([
     BaseController.prototype.getAdaptationUI = function(oPropertyHelper){
 
         var oSelectionPanel = new SelectionPanel();
-        var oAdaptationModel = this._getP13nModel(oPropertyHelper);
-        oSelectionPanel.setP13nModel(oAdaptationModel);
+        var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+        oSelectionPanel.setP13nData(oAdaptationData.items);
         this._oPanel = oSelectionPanel;
         return Promise.resolve(oSelectionPanel);
     };
@@ -182,7 +182,7 @@ sap.ui.define([
      *
      */
     BaseController.prototype.getP13nData = function() {
-        return this._oPanel ? this._oPanel.getP13nState() : this._oAdaptationModel.getProperty("/items");
+        return this._oPanel ? this._oPanel.getP13nData() : this._oAdaptationModel.getProperty("/items");
     };
 
     BaseController.prototype.model2State = false;
@@ -191,7 +191,10 @@ sap.ui.define([
      * Can be used to trigger update after UI interactions such as "Ok" and "Reset"
      */
     BaseController.prototype.update = function(oPropertyHelper) {
-        if (this._oAdaptationModel) {
+        if (this._oPanel) {
+            var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+            this._oPanel.setP13nData(oAdaptationData.items);
+        } else if (this._oAdaptationModel){
             //'setData' causes unnecessary rerendering in some cases
             var oP13nData = this.mixInfoAndState(oPropertyHelper);
             this._oAdaptationModel.setProperty("/items", oP13nData.items);
