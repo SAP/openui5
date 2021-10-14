@@ -70,6 +70,7 @@ sap.ui.define([
 			BaseObject.call(this);
 
 			this._aChanges = aChanges;
+			this._sSection = sSection;
 
 			this.PARAMETERS = MANIFEST_PARAMETERS.replace("{SECTION}", sSection);
 			this.FILTERS = MANIFEST_FILTERS.replace("{SECTION}", sSection);
@@ -108,7 +109,7 @@ sap.ui.define([
 	 * @returns {Object} The merged manifest json
 	 */
 	Manifest.prototype.mergeDeltaChanges = function (oManifestJson) {
-		return CardMerger.mergeCardDelta(oManifestJson, this._aChanges);
+		return CardMerger.mergeCardDelta(oManifestJson, this._aChanges, this._sSection);
 	};
 
 	/**

@@ -26,7 +26,7 @@ sap.ui.define([
 	var Manifest = BaseManifest.extend("sap.ui.integration.editor.Manifest");
 
 	Manifest.prototype.mergeDeltaChanges = function (oManifestJson) {
-		return Merger.mergeDelta(oManifestJson, this._aChanges);
+		return Merger.mergeDelta(oManifestJson, this._aChanges, this._sSection);
 	};
 
 	return Manifest;

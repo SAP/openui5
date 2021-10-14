@@ -42,9 +42,11 @@ sap.ui.define([
 				}
 			});
 		},
-		mergeCardDelta: function (oManifest, aChanges) {
-			var oInitialManifest = merge({}, oManifest),
+		mergeCardDelta: function (oManifest, aChanges, sSection) {
+			var oInitialManifest = merge({}, oManifest);
+			if (typeof sSection === "undefined") {
 				sSection = "sap.card";
+			}
 			if (Array.isArray(aChanges) && aChanges.length > 0) {
 				var oModel;
 				aChanges.forEach(function (oChange) {
