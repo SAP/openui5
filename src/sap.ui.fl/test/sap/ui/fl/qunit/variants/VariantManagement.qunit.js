@@ -265,10 +265,10 @@ sap.ui.define([
 
 			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
 
-			assert.equal(this.oVariantManagement.oVariantInvisibleText.getText(), "View Standard. To open, press spacebar.");
+			assert.equal(this.oVariantManagement.oVariantInvisibleText.getText(), "View Standard. To select view, press spacebar.");
 
 			this.oVariantManagement.setCurrentVariantKey("2");
-			assert.equal(this.oVariantManagement.oVariantInvisibleText.getText(), "View Two. To open, press spacebar.");
+			assert.equal(this.oVariantManagement.oVariantInvisibleText.getText(), "View Two. To select view, press spacebar.");
 
 			oConfiguration.setLanguage(sLanguage);
 		});
