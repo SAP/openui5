@@ -108,6 +108,7 @@ sap.ui.define([
 	QUnit.test("_getContainer", function(assert) {
 
 		oPopover.setTitle("Test");
+
 		var oContainer = oPopover._getContainer();
 //		assert.ok(oContainer instanceof Promise, "Promise returned");
 
@@ -165,11 +166,13 @@ sap.ui.define([
 
 	QUnit.test("_getContainer with content configuration", function(assert) {
 
-		oContent.getPopoverConfiguration = function () {
+		oContent.getContainerConfig = function () {
 			return {
-				showArrow: true,
-				showHeader: true,
-				resizable: true
+				'sap.ui.mdc.valuehelp.Popover': {
+					showArrow: true,
+					showHeader: true,
+					resizable: true
+				}
 			};
 		};
 		oPopover.setTitle("Test");
@@ -256,7 +259,12 @@ sap.ui.define([
 
 		sinon.stub(oContent, "isFocusInHelp").returns(true); // test if initial focus is not set to field
 		var oToolbar = new Toolbar("TB1");
-		sinon.stub(oContent, "getFooterContent").returns(oToolbar);
+		sinon.stub(oContent, "getContainerConfig").returns({
+			'sap.ui.mdc.valuehelp.Popover': {
+				getFooter : function () { return oToolbar; }
+			}
+		});
+
 		var iOpened = 0;
 		oPopover.attachEvent("opened", function(oEvent) {
 			iOpened++;
@@ -293,7 +301,12 @@ sap.ui.define([
 	QUnit.test("open with footer content", function(assert) {
 
 		var oIcon = new Icon("Icon1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
-		sinon.stub(oContent, "getFooterContent").returns(oIcon);
+		sinon.stub(oContent, "getContainerConfig").returns({
+			'sap.ui.mdc.valuehelp.Popover': {
+				getFooter : function () { return oIcon; }
+			}
+		});
+
 		var iOpened = 0;
 		oPopover.attachEvent("opened", function(oEvent) {
 			iOpened++;

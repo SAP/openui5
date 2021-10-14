@@ -215,12 +215,6 @@ sap.ui.define([
 		this.fireContentUpdated();
 	};
 
-	MTable.prototype.getContentHeight = function () {	// Part of iTypeAhead? iPopover? Better solution for popover height?
-		var oTable = this._getTable();
-		var oDomRef = oTable && oTable.getDomRef();
-		return oDomRef && Math.round(oDomRef.getBoundingClientRect().height);
-	};
-
 	MTable.prototype._getTable = function () {
 		return this._oTable;
 	};
@@ -323,32 +317,6 @@ sap.ui.define([
 			}.bind(this));
 		}
 		return this._oTable;
-	};
-
-	MTable.prototype.getFooterContent = function () {
-		return this._retrievePromise("footer", function () {
-			return this._retrievePromise("listBinding").then(function (oListBinding) {
-				var oBindingInfo = this._getListBindingInfo();
-				if (oBindingInfo && oBindingInfo.length) {
-					return loadModules(["sap/m/Button", "sap/m/Toolbar", "sap/m/ToolbarSpacer"]).then(function (aModules) {
-						var Button = aModules[0];
-						var Toolbar = aModules[1];
-						var ToolbarSpacer = aModules[2];
-						var oShowAllItemsButton = new Button(this.getId() + "-showAllItems", {
-							text: this._oMResourceBundle.getText("INPUT_SUGGESTIONS_SHOW_ALL"),
-							press: function () {
-								this.fireRequestSwitchToDialog();
-							}.bind(this)
-						});
-						var aToolbarContent = [new ToolbarSpacer(this.getId() + "-Spacer")].concat(oShowAllItemsButton);
-						var oFooter = new Toolbar(this.getId() + "-TB", {
-							content: aToolbarContent
-						});
-						return oFooter;
-					}.bind(this));
-				}
-			}.bind(this));
-		}.bind(this));
 	};
 
 	MTable.prototype.getItemForValue = function (oConfig) {
@@ -730,6 +698,43 @@ sap.ui.define([
 			contentId: oTable && oTable.getId(), // if open, table should be there; if closed, not needed
 			ariaHasPopup: "listbox",
 			roleDescription: null // TODO: no multi-selection
+		};
+	};
+
+	MTable.prototype.getContainerConfig = function () {
+		return {
+			'sap.ui.mdc.valuehelp.Popover': {
+				getContentHeight: function () {
+					var oTable = this._getTable();
+					var oDomRef = oTable && oTable.getDomRef();
+					return oDomRef && Math.round(oDomRef.getBoundingClientRect().height);
+				}.bind(this),
+				getFooter: function () {
+					return this._retrievePromise("footer", function () {
+						return this._retrievePromise("listBinding").then(function (oListBinding) {
+							var oBindingInfo = this._getListBindingInfo();
+							if (oBindingInfo && oBindingInfo.length) {
+								return loadModules(["sap/m/Button", "sap/m/Toolbar", "sap/m/ToolbarSpacer"]).then(function (aModules) {
+									var Button = aModules[0];
+									var Toolbar = aModules[1];
+									var ToolbarSpacer = aModules[2];
+									var oShowAllItemsButton = new Button(this.getId() + "-showAllItems", {
+										text: this._oMResourceBundle.getText("INPUT_SUGGESTIONS_SHOW_ALL"),
+										press: function () {
+											this.fireRequestSwitchToDialog();
+										}.bind(this)
+									});
+									var aToolbarContent = [new ToolbarSpacer(this.getId() + "-Spacer")].concat(oShowAllItemsButton);
+									var oFooter = new Toolbar(this.getId() + "-TB", {
+										content: aToolbarContent
+									});
+									return oFooter;
+								}.bind(this));
+							}
+						}.bind(this));
+					}.bind(this));
+				}.bind(this)
+			}
 		};
 	};
 

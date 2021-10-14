@@ -197,7 +197,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getFooterContent", function(assert) {
+	QUnit.test("getContainerConfig", function(assert) {
 
 		var iConfirm = 0;
 		oConditions.attachEvent("confirm", function(oEvent) {
@@ -208,7 +208,15 @@ sap.ui.define([
 			iCancel++;
 		});
 
-		var oFooterContent = oConditions.getFooterContent();
+		var oContainerConfig = oConditions.getContainerConfig();
+		var oPopupConfig = oContainerConfig && oContainerConfig['sap.ui.mdc.valuehelp.Popover'];
+
+		assert.ok(oContainerConfig, "Config returned");
+		assert.ok(oPopupConfig, "Config contains a section for 'sap.ui.mdc.valuehelp.Popover'");
+		assert.ok(oPopupConfig.showArrow, "Popup config contains truthy 'showArrow'");
+		assert.ok(oPopupConfig.showHeader, "Popup config contains truthy 'showHeader'");
+
+		var oFooterContent = oContainerConfig.getFooter && oContainerConfig.getFooter();
 
 		if (oFooterContent) {
 			var fnDone = assert.async();
@@ -312,17 +320,4 @@ sap.ui.define([
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
 
 	});
-
-	QUnit.test("getPopoverConfiguration", function(assert) {
-
-		var oCheckConfig = {
-			showArrow: true,
-			showHeader: true
-		};
-		var oConfig = oConditions.getPopoverConfiguration();
-		assert.ok(oConfig, "Config returned");
-		assert.deepEqual(oConfig, oCheckConfig, "returned attributes");
-
-	});
-
 });

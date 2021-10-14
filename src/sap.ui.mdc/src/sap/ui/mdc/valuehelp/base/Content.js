@@ -170,7 +170,26 @@ sap.ui.define([
 
 	};
 
-	Content.prototype.getFooterContent = function () {
+	/**
+	 * Provides a configuration map for supported containers
+	 *
+	 * @example
+	 * 	// Example configuration:
+	 * 	{
+	 *		'sap.ui.mdc.valuehelp.MyCustomContainer': {
+	 *			showArrow: true,
+	 *			showHeader: true,
+ 				getFooter: function () { Promise.resolve(oFooter); },
+	 *			getContentWidth: function () { return "500px"; },
+	 			getContentHeight: function () { ... },
+	 *		}
+	 *	}
+	 * @returns {object|undefined} if available, a container configuration object is returned.
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	Content.prototype.getContainerConfig = function () {
 
 	};
 

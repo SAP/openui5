@@ -473,6 +473,42 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("_getContainerConfig", function(assert) {
+
+		var oParentConfig = {
+			showHeader: true
+		};
+
+		var oChildConfig = {
+			showHeader: false
+		};
+
+		var oContainerConfig = {
+			"sap.ui.mdc.qunit.valuehelp.ParentContainer": oParentConfig
+		};
+
+		var oContent = new Content("Content2");
+		sinon.stub(oContent, "getContainerConfig").returns(oContainerConfig);
+
+		var ParentContainer = Container.extend("sap.ui.mdc.qunit.valuehelp.ParentContainer");
+		var ChildContainer = ParentContainer.extend("sap.ui.mdc.qunit.valuehelp.ChildContainer");
+
+		var oParentContainer = new ParentContainer();
+		var oChildContainer = new ChildContainer();
+
+		assert.equal(oParentContainer._getContainerConfig(oContent), oParentConfig, "Configuration found");
+		assert.equal(oChildContainer._getContainerConfig(oContent), oParentConfig, "Configuration for inherited type found");
+
+		oContainerConfig["sap.ui.mdc.qunit.valuehelp.ChildContainer"] = oChildConfig;
+
+		assert.equal(oChildContainer._getContainerConfig(oContent), oChildConfig, "Specific configuration found and prefered");
+
+		oContent.getContainerConfig.restore();
+		oContent.destroy();
+		oParentContainer.destroy();
+		oChildContainer.destroy();
+	});
+
 	// TODO: Test Operator determination on Content
 	// TODO: Test condition creation on Content
 

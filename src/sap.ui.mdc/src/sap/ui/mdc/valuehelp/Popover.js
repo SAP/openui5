@@ -101,12 +101,16 @@ sap.ui.define([
 				}.bind(this);
 
 				var oContent = this._getContent();
-				var oPopoverConfiguration = oContent && oContent.getPopoverConfiguration && oContent.getPopoverConfiguration();
+				var oContainerConfig = this._getContainerConfig(oContent);
 
-				if (oPopoverConfiguration) {
-					oPopover.setShowArrow(!!oPopoverConfiguration.showArrow);
-					oPopover.setShowHeader(!!oPopoverConfiguration.showHeader);
-					oPopover.setResizable(!!oPopoverConfiguration.resizable);
+				if (oContainerConfig) {
+					oPopover.setShowArrow(!!oContainerConfig.showArrow);
+					oPopover.setShowHeader(!!oContainerConfig.showHeader);
+					oPopover.setResizable(!!oContainerConfig.resizable);
+
+					if (oContainerConfig.getContentWidth) {
+						oPopover.setContentWidth(oContainerConfig.getContentWidth());
+					}
 				}
 
 				this.setAggregation("_container", oPopover, true);
@@ -120,8 +124,9 @@ sap.ui.define([
 	var _setContainerHeight = function () {
 		var oContainer = this.getAggregation("_container");
 		var oContent = this._getContent();
-		if (oContainer && oContent && oContent.getContentHeight) {
-			var iHeight = oContent && oContent.getContentHeight();
+		var oContainerConfig = oContent && this._getContainerConfig(oContent);
+		if (oContainer && oContainerConfig && oContainerConfig.getContentHeight) {
+			var iHeight = oContainerConfig.getContentHeight();
 			var iContainerHeight = oContainer.$().find(".sapMPopoverCont").height();
 			var bContainerHeightBelowLimit = iContainerHeight < Rem.toPx("30rem");
 			oContainer.setContentHeight(!iHeight || bContainerHeightBelowLimit || iContainerHeight >= iHeight ? "auto" : "30rem");
@@ -146,7 +151,8 @@ sap.ui.define([
 
 		var oContent = this._getContent();
 		var oContentPromise = oContent && oContent.getContent();
-		var oFooterContentPromise = oContent && oContent.getFooterContent();
+		var oContainerConfig = this._getContainerConfig(oContent);
+		var oFooterContentPromise = oContainerConfig && oContainerConfig.getFooter && oContainerConfig.getFooter();
 
 		return Promise.all([oContentPromise, oFooterContentPromise]).then(function (aContents) {
 			this._oCurrentContent = aContents[0];
