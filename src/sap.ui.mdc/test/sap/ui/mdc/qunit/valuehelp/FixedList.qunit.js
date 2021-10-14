@@ -671,6 +671,28 @@ sap.ui.define([
 				assert.deepEqual(oFixedList.getConditions(), [oCondition], "FixedList conditions");
 				assert.equal(oFixedList._iNavigateIndex, 4, "navigated index stored as closed");
 
+				// ignore group header backwards
+				iNavigate = 0;
+				oNavigateCondition = undefined;
+				sNavigateItemId = undefined;
+				oContent.getItems()[4].setSelected(false); // initialize
+				oContent.getItems()[2].setSelected(true); // set as selected
+				oFixedList.navigate(-2);
+				oItem = oContent.getItems()[1];
+				assert.ok(oItem.getSelected(), "Item1 selected");
+				oItem = oContent.getItems()[2];
+				assert.notOk(oItem.getSelected(), "Item2 not selected");
+				oItem = oContent.getItems()[4];
+				assert.notOk(oItem.getSelected(), "Item4 not selected");
+
+				oCondition = Condition.createItemCondition("I1", "Item 1");
+				assert.equal(iNavigate, 1, "Navigated Event fired");
+				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
+				assert.equal(sNavigateItemId, "FL1-item-FL1-List-0", "Navigated itemId");
+				assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
+				assert.deepEqual(oFixedList.getConditions(), [oCondition], "FixedList conditions");
+				assert.equal(oFixedList._iNavigateIndex, 1, "navigated index stored as closed");
+
 				fnDone();
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called: " + oError);

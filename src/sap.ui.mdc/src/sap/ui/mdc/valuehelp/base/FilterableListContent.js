@@ -332,8 +332,8 @@ sap.ui.define([
 		var bBindingSuspended = oListBinding && oListBinding.isSuspended();
 		var bBindingWillBeSuspended = !oListBinding && oListBindingInfo && oListBindingInfo.suspended;
 
-		if (bBindingSuspended || bBindingWillBeSuspended) {
-			return;
+		if ((bBindingSuspended || bBindingWillBeSuspended) && !this.isTypeahead()) {
+			return; // in dialog case do not resume suspended table on opening
 		}
 
 		this.applyFilters(this.getFilterValue());

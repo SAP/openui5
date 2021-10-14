@@ -88,6 +88,9 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 				},
 				sinon: {
 					qunitBridge: true
+				},
+				coverage: {
+					only: "[sap/ui/mdc/valuehelp]"
 				}
 			},
 			"Bool": {
@@ -97,6 +100,21 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 				},
 				sinon: {
 					qunitBridge: true
+				},
+				coverage: {
+					only: "[sap/ui/mdc/valuehelp]"
+				}
+			},
+			"MTable": {
+				module: "./MTable.qunit",
+				ui5: {
+					animationMode: "none"
+				},
+				sinon: {
+					qunitBridge: true
+				},
+				coverage: {
+					only: "[sap/ui/mdc/valuehelp]"
 				}
 			},
 			"Popover": {

@@ -380,23 +380,36 @@ sap.ui.define([
 			iSelectedIndex = iItems + iStep;
 		}
 
-		var bSeachForNext;
+		var bSearchForNext;
 		if (iSelectedIndex < 0) {
 			iSelectedIndex = 0;
-			bSeachForNext = true;
+			bSearchForNext = true;
 			bLeaveFocus = true;
 		} else if (iSelectedIndex >= iItems - 1) {
 			iSelectedIndex = iItems - 1;
-			bSeachForNext = false;
+			bSearchForNext = false;
 		} else {
-			bSeachForNext = iStep >= 0;
+			bSearchForNext = iStep >= 0;
 		}
 
 		while (aItems[iSelectedIndex] && aItems[iSelectedIndex].isA("sap.m.GroupHeaderListItem")) { // ignore group headers
-			if (bSeachForNext) {
+			if (bSearchForNext) {
 				iSelectedIndex++;
 			} else {
 				iSelectedIndex--;
+			}
+		}
+		if (iSelectedIndex < 0 || iSelectedIndex > iItems - 1) {
+			// find last not groupable item
+			bSearchForNext = !bSearchForNext;
+			bLeaveFocus = iSelectedIndex < 0;
+			iSelectedIndex = iSelectedIndex < 0 ? 0 : iItems - 1;
+			while (aItems[iSelectedIndex] && aItems[iSelectedIndex].isA("sap.m.GroupHeaderListItem")) { // ignore group headers
+				if (bSearchForNext) {
+					iSelectedIndex++;
+				} else {
+					iSelectedIndex--;
+				}
 			}
 		}
 
