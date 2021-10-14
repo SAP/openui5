@@ -512,10 +512,11 @@ sap.ui.define([
 
 		this._$spacer = oObjectPageLayout.$("spacer");
 
-		if (this._bShouldFocusSeeMoreLessButton) {
-			this._bShouldFocusSeeMoreLessButton = false;
+		if (this._bShouldFocusSeeMoreLessButton && document.activeElement === document.body) {
 			this._oCurrentlyVisibleSeeMoreLessButton.focus();
 		}
+
+		this._bShouldFocusSeeMoreLessButton = false;
 	};
 
 	ObjectPageSubSection.prototype.onBeforeRendering = function () {
