@@ -493,17 +493,18 @@ sap.ui.define([
 	};
 
 	UploadSet.prototype.removeAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
-		var oListItem;
-		Control.prototype.removeAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
-		if (oObject && (sAggregationName === "items" || sAggregationName === "incompleteItems")) {
-			oListItem = oObject._getListItem();
-			var oItem = this.getList().removeAggregation("items", oListItem, bSuppressInvalidate);
-			if (oItem) {
-				oItem.destroy();
-			}
-			this._refreshInnerListStyle();
-		}
-	};
+        var oListItem;
+        Control.prototype.removeAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
+        if (oObject && (sAggregationName === "items" || sAggregationName === "incompleteItems")) {
+            oListItem = oObject._getListItem();
+            var oItem = this.getList().removeAggregation("items", oListItem, bSuppressInvalidate);
+            if (oItem && oObject) {
+                oObject.destroy();
+                oItem.destroy();
+            }
+            this._refreshInnerListStyle();
+        }
+    };
 
 	UploadSet.prototype.removeAllAggregation = function (sAggregationName, bSuppressInvalidate) {
 		if (sAggregationName === "items") {
