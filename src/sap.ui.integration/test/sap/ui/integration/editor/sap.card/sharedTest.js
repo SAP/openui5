@@ -126,7 +126,7 @@ function loadLanguages() {
 			failOnError: false,
 			async: false
 		});
-		var sCurrentLanguage =  Core.getConfiguration().getLanguage().replaceAll('-', '_');
+		var sCurrentLanguage =  Core.getConfiguration().getLanguage().replaceAll('_', '-');
 		var oLanguageSelect = document.getElementById("languageSelect");
 		if (!oLanguageSelect) return;
 		for (var sLanguage in aLanguageList) {

@@ -1016,7 +1016,7 @@ sap.ui.define([
 				Core.getConfiguration().setLanguage("de-DE");
 				assert.ok(true, "Set language to de-DE, which does not exists, 'en' will be used");
 				this.oEditor.setMode("translation");
-				this.oEditor.setLanguage("fr_CA");
+				this.oEditor.setLanguage("fr-CA");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
 				this.oEditor.setJson({
@@ -1105,7 +1105,7 @@ sap.ui.define([
 				Core.getConfiguration().setLanguage("de-DE");
 				assert.ok(true, "Set language to de-DE, which does not exists, 'en' will be used");
 				this.oEditor.setMode("translation");
-				this.oEditor.setLanguage("es_MX");
+				this.oEditor.setLanguage("es-MX");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
 				this.oEditor.setJson({
@@ -1225,7 +1225,7 @@ sap.ui.define([
 				Core.getConfiguration().setLanguage("de-DE");
 				assert.ok(true, "Set language to de-DE, which does not exists, 'en' will be used");
 				this.oEditor.setMode("translation");
-				this.oEditor.setLanguage("es_MX");
+				this.oEditor.setLanguage("es-MX");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
 				this.oEditor.setJson({

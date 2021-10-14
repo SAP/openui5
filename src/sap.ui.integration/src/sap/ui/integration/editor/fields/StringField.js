@@ -240,7 +240,7 @@ sap.ui.define([
 							}
 							var oControl = oEvent.getSource();
 							var sValue = oControl.getValue();
-							var sLanguage =  Core.getConfiguration().getLanguage().replaceAll('-', '_');
+							var sLanguage =  Core.getConfiguration().getLanguage().replaceAll('_', '-');
 							var oValueTranslations = deepClone(oConfig.valueTranslations, 500);
 							oValueTranslations[sLanguage] = sValue;
 							oConfig.valueTranslations = oValueTranslations;

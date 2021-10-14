@@ -18,7 +18,7 @@ sap.ui.define([
 		layers: { "admin": 0, "content": 5, "translation": 10, "all": 20 },
 		mergeManifestPathChanges: function (oModel, oChange) {
 			/* hide multi language function since there has a translation issue in Portal
-			var sLanguage =  Core.getConfiguration().getLanguage().replaceAll('-', '_');
+			var sLanguage =  Core.getConfiguration().getLanguage().replaceAll('_', '-');
 			*/
 			Object.keys(oChange).forEach(function (s) {
 				if (s.charAt(0) === "/") {

@@ -118,12 +118,6 @@ sap.ui.define([
 		CONTEXT_TIMEOUT = 5000,
 		oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
 		MessageStripId = "__strip0";
-		/* hide multi language function since there has a translation issue in Portal
-		aLanguageList = LoaderExtensions.loadResource("sap/ui/integration/editor/languages.json", {
-			dataType: "json",
-			failOnError: false,
-			async: false
-		});*/
 
 	/**
 	 * Constructor for a new <code>Editor</code>.
@@ -981,7 +975,7 @@ sap.ui.define([
 		if (!sValue || typeof sValue !== "string") {
 			return this;
 		}
-		this._language = sValue.replace("-", "_");
+		this._language = sValue.replaceAll('_', '-');
 		if (this.getLanguage() != sValue) {
 			//reload resource bundler if language changed
 			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
@@ -989,7 +983,7 @@ sap.ui.define([
 		}
 		this.setProperty("language", sValue, bSuppress);
 		if (!Editor._languages[this._language]) {
-			this._language = this._language.split("_")[0];
+			this._language = this._language.split("-")[0];
 		}
 		if (!Editor._languages[this._language]) {
 			Log.warning("The language: " + sValue + " is currently unknown, some UI controls might show " + sValue + " instead of the language name.");
@@ -1018,7 +1012,7 @@ sap.ui.define([
 			oCurrentLayerChanges = { ":layer": Merger.layers[this.getMode()] },
 			iCurrentModeIndex = Merger.layers[this.getMode()];
 		/* hide multi language function since there has a translation issue in Portal
-		var sEditorLanguage = this._language || this.getLanguage() || Core.getConfiguration().getLanguage().replaceAll('-', '_');
+		var sEditorLanguage = this._language || this.getLanguage() || Core.getConfiguration().getLanguage().replaceAll('_', '-');
 		*/
 		oManifestSettings.manifestChanges.forEach(function (oChange) {
 			//filter manifest changes. only the changes before the current layer are needed
@@ -1039,7 +1033,7 @@ sap.ui.define([
 							if (iLayer === Merger.layers["translation"]) {
 								oValueTranslation[sEditorLanguage] = oChange[aKeys[j]];
 							} else {
-								for (var p in aLanguageList) {
+								for (var p in Editor._languages) {
 									oValueTranslation[p] = oChange[aKeys[j]];
 								}
 							}
@@ -1192,7 +1186,7 @@ sap.ui.define([
 				if (oItem.editable && oItem.visible) {
 					/* hide multi language function since there has a translation issue in Portal
 					var oValueTranslations;
-					var sLanguage = this.getMode() !== "translation" ? Core.getConfiguration().getLanguage().replaceAll('-', '_') : this._language || this.getLanguage();
+					var sLanguage = this.getMode() !== "translation" ? Core.getConfiguration().getLanguage().replaceAll('_', '-') : this._language || this.getLanguage();
 					*/
 					var sValueTranslationsPath = "";
 					if (oItem.manifestpath) {
@@ -2171,14 +2165,14 @@ sap.ui.define([
 			/* hide multi language function since there has a translation issue in Portal
 			//if has valueTransaltions, get value via language setting in core
 			if (origLangField.valueTranslations) {
-				var sLanguage = Core.getConfiguration().getLanguage().replaceAll('-', '_');
-				if (aLanguageList[sLanguage]) {
+				var sLanguage = Core.getConfiguration().getLanguage().replaceAll('_', '-');
+				if (Editor._languages[sLanguage]) {
 					if (origLangField.valueTranslations[sLanguage]) {
 						origLangField.value = origLangField.valueTranslations[sLanguage];
 					}
-				} else if (sLanguage.indexOf("_") > -1) {
-					sLanguage = sLanguage.substring(0, sLanguage.indexOf("_"));
-					if (aLanguageList[sLanguage]) {
+				} else if (sLanguage.indexOf"-") > -1) {
+					sLanguage = sLanguage.substring(0, sLanguage.indexOf("-"));
+					if (Editor._languages[sLanguage]) {
 						if (origLangField.valueTranslations[sLanguage]) {
 							origLangField.value = origLangField.valueTranslations[sLanguage];
 						}
@@ -2269,8 +2263,8 @@ sap.ui.define([
 		}
 		if (typeof vI18n === "string") {
 			var aFallbacks = [sLanguage];
-			if (sLanguage.indexOf("_") > -1) {
-				aFallbacks.push(sLanguage.substring(0, sLanguage.indexOf("_")));
+			if (sLanguage.indexOf("-") > -1) {
+				aFallbacks.push(sLanguage.substring(0, sLanguage.indexOf("-")));
 			}
 			//add en into fallbacks
 			if (!includes(aFallbacks, "en")) {
@@ -2302,7 +2296,7 @@ sap.ui.define([
 		if (oSettings.form && oSettings.form.items) {
 			aItems = oSettings.form.items;
 			//get current language
-			var sLanguage = this._language || this.getLanguage() || Core.getConfiguration().getLanguage().replaceAll('-', '_');
+			var sLanguage = this._language || this.getLanguage() || Core.getConfiguration().getLanguage().replaceAll('_', '-');
 			if (this.getMode() === "translation") {
 				//add top panel of translation editor
 				this._addItem({

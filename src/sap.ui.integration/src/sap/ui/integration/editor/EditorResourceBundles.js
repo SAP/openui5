@@ -34,8 +34,8 @@ sap.ui.define([
 			//according to the language list, load each resource bundle
 			for (var p in aLanguageList) {
 				var aFallbacks = [p];
-				if (p.indexOf("_") > -1) {
-					aFallbacks.push(p.substring(0, p.indexOf("_")));
+				if (p.indexOf("-") > -1) {
+					aFallbacks.push(p.substring(0, p.indexOf("-")));
 				}
 				//add en into fallbacks
 				if (!includes(aFallbacks, "en")) {

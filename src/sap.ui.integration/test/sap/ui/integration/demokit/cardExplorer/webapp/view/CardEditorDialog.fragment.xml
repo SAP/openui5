@@ -22,7 +22,7 @@
 					<core:Item key="en" text="English" />
 					<core:Item key="fr" text="Français" />
 					<core:Item key="de" text="Deutsch" />
-					<core:Item key="zh_CN" text="简体中文" />
+					<core:Item key="zh-CN" text="简体中文" />
                 </items>
 			</Select>
 			<editor:CardEditor
