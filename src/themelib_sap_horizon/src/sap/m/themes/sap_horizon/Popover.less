@@ -6,6 +6,7 @@
 
 .sapMPopoverArr:after {
 	background: @sapUiGroupContentBackground;
+	box-shadow: @sapUiShadowLevel2;
 }
 
 .sapMPopoverWithBar > .sapMPopoverArr.sapMPopoverArrUp:after {
@@ -109,6 +110,17 @@
 }
 
 .sapMPopover {
-	box-shadow: 0 8px 16px 0 rgba(131, 150, 168, 0.16), 0 0 2px 0 rgba(131, 150, 168, 0.16);
-	border-radius: 0.5rem; // @sapUiFieldBorderCornerRadius;
+	border-radius: @sapUiElementBorderCornerRadius;
+
+	&.sapMPopoverWithoutBar .sapMPopoverCont,
+	.sapMIBar.sapMHeader-CTX {
+		border-top-right-radius: 0.75rem;
+		border-top-left-radius: 0.75rem;
+	}
+
+	&.sapMPopoverWithoutFooter .sapMPopoverCont,
+	.sapMIBar.sapMFooter-CTX {
+		border-bottom-right-radius: 0.75rem;
+		border-bottom-left-radius: 0.75rem;
+	}
 }
