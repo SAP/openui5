@@ -564,7 +564,7 @@ sap.ui.define([
 				var sViewKey = this.byId('PC1').getViewKey(),
 					oLegend = this.byId("PlanningCalendarLegend");
 
-				if (sViewKey !== PlanningCalendarBuiltInView.OneMonth) {
+				if (sViewKey !== PlanningCalendarBuiltInView.OneMonth && sViewKey !== "OneMonth") {
 					oLegend.setStandardItems([
 						StandardCalendarLegendItem.Today,
 						StandardCalendarLegendItem.WorkingDay,

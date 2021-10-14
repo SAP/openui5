@@ -989,6 +989,7 @@ sap.ui.define([
 				break;
 
 			case CalendarIntervalType.OneMonth:
+			case "OneMonth":
 				oDateFormat = DateFormat.getDateInstance({format: "yMMMM"});
 				sBeginningResult = oDateFormat.format(oStartDate);
 				break;
@@ -1103,7 +1104,7 @@ sap.ui.define([
 	 */
 	PlanningCalendar.prototype.getVisibleIntervalsCount = function () {
 		var sViewKey = this.getViewKey();
-		if (sViewKey === CalendarIntervalType.OneMonth && this._iSize < 2) {
+		if ((sViewKey === CalendarIntervalType.OneMonth || sViewKey === "OneMonth") && this._iSize < 2) {
 			var oFirstVisibleDate = CalendarUtils.getFirstDateOfWeek(this.getStartDate()),
 				oFirstDateInLastWeek = CalendarUtils.getFirstDateOfWeek(this._dateNav.getEnd()),
 				oLastVisibleDate = new Date(oFirstDateInLastWeek.getTime());
@@ -1373,13 +1374,13 @@ sap.ui.define([
 
 		// in OneMonth view there is selection,
 		// start date of the rows should match the selected date
-		if (this.getViewKey() === PlanningCalendarBuiltInView.OneMonth && this._oOneMonthsRow.getMode() < 2 && this._oOneMonthsRow.getSelectedDates().length) {
+		if ((this.getViewKey() === PlanningCalendarBuiltInView.OneMonth || this.getViewKey() === "OneMonth") && this._oOneMonthsRow.getMode() < 2 && this._oOneMonthsRow.getSelectedDates().length) {
 			this._setRowsStartDate(this._oOneMonthsRow.getSelectedDates()[0].getStartDate());
 		} else {
 			this._setRowsStartDate(new Date(oStartDate.getTime()));
 		}
 
-		if (this.getViewKey() === PlanningCalendarBuiltInView.Week || this.getViewKey() === PlanningCalendarBuiltInView.OneMonth) {
+		if (this.getViewKey() === PlanningCalendarBuiltInView.Week || this.getViewKey() === PlanningCalendarBuiltInView.OneMonth || this.getViewKey() === "OneMonth") {
 			this._updateTodayButtonState();
 		}
 
@@ -1601,6 +1602,7 @@ sap.ui.define([
 				case CalendarIntervalType.Day:
 				case CalendarIntervalType.Week:
 				case CalendarIntervalType.OneMonth:
+				case "OneMonth":
 					//Date, Week and OneMonth intervals share the same object artifacts
 					oIntervalMetadata = INTERVAL_METADATA[sIntervalType];
 					oInterval = this[oIntervalMetadata.sInstanceName];
@@ -1619,7 +1621,7 @@ sap.ui.define([
 						oInterval.attachEvent("select", this._handleCalendarSelect, this);
 						oInterval.attachEvent("focus", this._handleFocus, this);
 
-						if (sKey === PlanningCalendarBuiltInView.OneMonth) {
+						if (sKey === PlanningCalendarBuiltInView.OneMonth || sKey === "OneMonth") {
 							oInterval._setRowsStartDate = this._setRowsStartDate.bind(this);
 						}
 
@@ -1636,7 +1638,7 @@ sap.ui.define([
 					}
 					this._insertInterval(oInterval);
 					this[oIntervalMetadata.sInstanceName] = oInterval;
-					if (sIntervalType === CalendarIntervalType.OneMonth) {
+					if ((sIntervalType === CalendarIntervalType.OneMonth || sIntervalType === "OneMonth")) {
 						oAssociation = oHeader.getAggregation("_monthPicker") ? oHeader.getAggregation("_monthPicker") : oHeader._oPopup.getContent()[0];
 						oHeader.setAssociation("currentPicker", oAssociation);
 						oAssociation.addDelegate(MONTH_PICKER_DELEGATE, oAssociation);
@@ -1721,7 +1723,7 @@ sap.ui.define([
 			this._updatePickerSelection();
 		}
 
-		if (sKey === PlanningCalendarBuiltInView.Week || sKey === PlanningCalendarBuiltInView.OneMonth || sKey === PlanningCalendarBuiltInView.Month) {
+		if (sKey === PlanningCalendarBuiltInView.Week || sKey === PlanningCalendarBuiltInView.OneMonth || sKey === PlanningCalendarBuiltInView.Month || sKey === "OneMonth") {
 			oOldStartDate = this.getStartDate();
 			this.setStartDate(new Date(oOldStartDate.getTime())); //make sure the start date is aligned according to the week/month rules
 			if (oOldStartDate.getTime() !== this.getStartDate().getTime()) {
@@ -1729,7 +1731,7 @@ sap.ui.define([
 			}
 		}
 
-		if (this._oOneMonthsRow && sKey === PlanningCalendarBuiltInView.OneMonth) {
+		if (this._oOneMonthsRow && (sKey === PlanningCalendarBuiltInView.OneMonth || sKey === "OneMonth")) {
 			this._oOneMonthsRow.setMode(this._iSize);
 			this._oOldStartDate = new Date(this.getStartDate().getTime());
 			this._adjustSelectedDate(CalendarDate.fromLocalJSDate(oOldStartDate));
@@ -1737,7 +1739,7 @@ sap.ui.define([
 				this._setRowsStartDate(oOldStartDate);
 			}
 		} else if (this._oOneMonthsRow
-			&& sOldViewKey === PlanningCalendarBuiltInView.OneMonth
+			&& (sOldViewKey === PlanningCalendarBuiltInView.OneMonth || sOldViewKey === "OneMonth")
 			&& this._oOneMonthsRow.getSelectedDates().length) {
 			oSelectedDate = this._oOneMonthsRow.getSelectedDates()[0].getStartDate();
 			if (oSelectedDate) {
@@ -1890,7 +1892,7 @@ sap.ui.define([
 			oStartDate.setTime(oLocalDate.getTime());
 		}
 
-		if ((this.getViewKey() === PlanningCalendarBuiltInView.OneMonth || this.getViewKey() === PlanningCalendarBuiltInView.Month)) {
+		if ((this.getViewKey() === PlanningCalendarBuiltInView.OneMonth || this.getViewKey() === PlanningCalendarBuiltInView.Month || this.getViewKey() === "OneMonth")) {
 			/*
 			 * Have in mind that the oStartDate is the date that the user sees in the UI, thus - local one. As
 			 * CalendarUtils.getFirstDateOfMonth works with UTC dates (this is because the dates are timezone irrelevant),
@@ -2198,7 +2200,7 @@ sap.ui.define([
 	PlanningCalendar.prototype._updateStickyHeader = function() {
 		var aStickyParts = [],
 			bStick = this.getStickyHeader(),
-			bMobile1MonthView = this.getViewKey() === PlanningCalendarBuiltInView.OneMonth && this._iSize < 2,
+			bMobile1MonthView = (this.getViewKey() === PlanningCalendarBuiltInView.OneMonth || this.getViewKey() === "OneMonth") && this._iSize < 2,
 			bStickyToolbar = bStick && !Device.system.phone && !bMobile1MonthView,
 			bStickyInfoToolbar = bStick && !(Device.system.phone && Device.orientation.landscape) && !bMobile1MonthView;
 
@@ -2437,6 +2439,7 @@ sap.ui.define([
 						}
 						break;
 					case CalendarIntervalType.OneMonth:
+					case "OneMonth":
 						if (this._oOneMonthsRow) {
 							this._oOneMonthsRow.invalidate(arguments);
 						}
@@ -2722,6 +2725,7 @@ sap.ui.define([
 			case CalendarIntervalType.Day:
 			case CalendarIntervalType.Week:
 			case CalendarIntervalType.OneMonth:
+			case "OneMonth":
 				iTime = 1800000;
 				iStartTime = oStartDate.getTime() - 3600000;
 				iEndTime = oStartDate.getTime() + iIntervals * 86400000;
@@ -2764,7 +2768,7 @@ sap.ui.define([
 
 		// if the OneMonth view is selected and Today btn is pressed,
 		// the calendar should start from the 1st date of the current month
-		if (sViewKey === PlanningCalendarBuiltInView.OneMonth) {
+		if (sViewKey === PlanningCalendarBuiltInView.OneMonth || sViewKey === "OneMonth") {
 			oStartDate = CalendarUtils.getFirstDateOfMonth(CalendarUtils._createUniversalUTCDate(oDate, undefined, true));
 			this._adjustSelectedDate(CalendarDate.fromLocalJSDate(oDate));
 
@@ -2783,7 +2787,7 @@ sap.ui.define([
 		this._dateNav.setCurrent(oDate);
 		if (sViewKey === PlanningCalendarBuiltInView.Week) {
 			this._oWeeksRow.addDelegate(oFocusMonthDelegate, this._oWeeksRow);
-		} else if (sViewKey === PlanningCalendarBuiltInView.OneMonth) {
+		} else if (sViewKey === PlanningCalendarBuiltInView.OneMonth || sViewKey === "OneMonth") {
 			this._oOneMonthsRow.addDelegate(oFocusMonthDelegate, this._oOneMonthsRow);
 		}
 		this._updatePickerSelection();
@@ -2878,7 +2882,7 @@ sap.ui.define([
 		// remove old selection
 		// unless the select acts as a picker, then the selection stays
 		// in OneMonth view smaller sizes
-		if (sIntervalType !== CalendarIntervalType.OneMonth
+		if ((sIntervalType !== CalendarIntervalType.OneMonth && sIntervalType !== "OneMonth")
 			|| this._iSize > 1) {
 			aSelectedDates[0].setStartDate();
 		}
@@ -2893,6 +2897,7 @@ sap.ui.define([
 				oEndDate.setUTCDate(oEndDate.getUTCDate() + 1);
 				break;
 			case CalendarIntervalType.OneMonth:
+			case "OneMonth":
 				if (this._iSize < 2) { // change rows' startDate on S and M sizes
 					var oFocusedDate = new Date(oEvtSelectedStartDate.getTime());
 					if (CalendarUtils.monthsDiffer(this.getStartDate(), oEvtSelectedStartDate)) {
@@ -2932,7 +2937,7 @@ sap.ui.define([
 		var oView = this._getView(sKey);
 		var sIntervalType = oView.getIntervalType();
 
-		if (sIntervalType === CalendarIntervalType.OneMonth
+		if ((sIntervalType === CalendarIntervalType.OneMonth || sIntervalType === "OneMonth")
 			&& CalendarUtils._isNextMonth(oStartDate, this.getStartDate())) {
 			this.shiftToDate(oStartDate);
 			this._addMonthFocusDelegate(this._getRowInstanceByViewKey(this.getViewKey()));
@@ -3032,6 +3037,7 @@ sap.ui.define([
 					break;
 
 				case CalendarIntervalType.OneMonth:
+				case "OneMonth":
 					if (this._oOneMonthsRow && this._oOneMonthsRow.getDays() != iIntervals) {
 						this._oOneMonthsRow.setDays(iIntervals);
 						this._dateNav.setStep(iIntervals * iIntervalSize);
@@ -3055,7 +3061,7 @@ sap.ui.define([
 			}
 		}
 
-		if (this._oOneMonthsRow && this.getViewKey() === CalendarIntervalType.OneMonth) {
+		if (this._oOneMonthsRow && (this.getViewKey() === CalendarIntervalType.OneMonth || this.getViewKey() === "OneMonth")) {
 			oSelectedDate = (this._getSelectedDates().length && this._getSelectedDates()[0].getStartDate()) ?
 				this._getSelectedDates()[0].getStartDate() : this.getStartDate();
 			this._oOneMonthsRow.setMode(this._iSize);
@@ -3203,6 +3209,7 @@ sap.ui.define([
 					}
 					return this._oViews[oViewType.Week];
 				case oViewType.OneMonth:
+				case "OneMonth":
 					if (!this._oViews[oViewType.OneMonth]) {
 						this._oViews[oViewType.OneMonth] = new PlanningCalendarView(this.getId() + "-OneMonthView", {
 							key: oViewType.OneMonth,
@@ -3348,7 +3355,7 @@ sap.ui.define([
 	PlanningCalendar.prototype._updateRowTimeline = function (oRow) {
 		var oRowTimeline = getRowTimeline(oRow),
 			sKey, oView, sIntervalType, iIntervals, iIntervalSize,
-			bMobile1MonthView = this.getViewKey() === PlanningCalendarBuiltInView.OneMonth && this._iSize < 2,
+			bMobile1MonthView = (this.getViewKey() === PlanningCalendarBuiltInView.OneMonth || this.getViewKey() === "OneMonth") && this._iSize < 2,
 			oStartDate = this.getStartDate();
 
 		oRowTimeline.setNonWorkingDays(oRow.getNonWorkingDays());
@@ -3674,7 +3681,7 @@ sap.ui.define([
 			var aEmptyNonWorkDay = [];
 		return CalendarRowRenderer.renderInterval(oRm, oTimeline, iInterval, iWidth,  aIntervalHeaders, aEmptyNonWorkDay, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax, bFirstOfType, bLastOfType, sAdditionalNonWorkingClass);
 		}
-		if (sIntervalType === CalendarIntervalType.Day || sIntervalType === CalendarIntervalType.Week || sIntervalType === CalendarIntervalType.OneMonth) {
+		if (sIntervalType === CalendarIntervalType.Day || sIntervalType === CalendarIntervalType.Week || sIntervalType === CalendarIntervalType.OneMonth || sIntervalType === "OneMonth") {
 			var oRow = getRow(oTimeline.getParent()),
 				oPC = oRow.getParent(),
 				fnNonWorkingFilter = function (oSpecialDate) {
@@ -3958,7 +3965,7 @@ sap.ui.define([
 						newPos = this._calcNewHoursAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
 					} else if (sIntervalType === CalendarIntervalType.Day
 						|| sIntervalType === CalendarIntervalType.Week
-						|| (sIntervalType === CalendarIntervalType.OneMonth && !oTargetTimeline._isOneMonthsRowOnSmallSizes())) {
+						|| ((sIntervalType === CalendarIntervalType.OneMonth || sIntervalType === "OneMonth") && !oTargetTimeline._isOneMonthsRowOnSmallSizes())) {
 
 						newPos = this._calcNewDaysAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
 					} else if (sIntervalType === CalendarIntervalType.Month) {
@@ -4011,7 +4018,7 @@ sap.ui.define([
 					newPos = this._calcNewHoursAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
 				} else if (sIntervalType === CalendarIntervalType.Day
 					|| sIntervalType === CalendarIntervalType.Week
-					|| (sIntervalType === CalendarIntervalType.OneMonth && !oTargetTimeline._isOneMonthsRowOnSmallSizes())) {
+					|| ((sIntervalType === CalendarIntervalType.OneMonth || sIntervalType === "OneMonth") && !oTargetTimeline._isOneMonthsRowOnSmallSizes())) {
 
 					newPos = this._calcNewDaysAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
 				} else if (sIntervalType === CalendarIntervalType.Month) {
@@ -4174,7 +4181,7 @@ sap.ui.define([
 						newPos = this._calcResizeNewHoursAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
 					} else if (sIntervalType === CalendarIntervalType.Day
 						|| sIntervalType === CalendarIntervalType.Week
-						|| (sIntervalType === CalendarIntervalType.OneMonth && !oTimeline._isOneMonthsRowOnSmallSizes())) {
+						|| ((sIntervalType === CalendarIntervalType.OneMonth || sIntervalType === "OneMonth") && !oTimeline._isOneMonthsRowOnSmallSizes())) {
 
 						newPos = this._calcResizeNewDaysAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
 					} else if (sIntervalType === CalendarIntervalType.Month) {
@@ -4385,7 +4392,7 @@ sap.ui.define([
 						oNewPos = this._calcCreateNewAppHours(oRowStartDate, iStartIndex, iEndIndex);
 					} else if (sIntervalType === CalendarIntervalType.Day
 						|| sIntervalType === CalendarIntervalType.Week
-						|| (sIntervalType === CalendarIntervalType.OneMonth && !oTimeline._isOneMonthsRowOnSmallSizes())) {
+						|| ((sIntervalType === CalendarIntervalType.OneMonth || sIntervalType === "OneMonth") && !oTimeline._isOneMonthsRowOnSmallSizes())) {
 						oNewPos = this._calcCreateNewAppDays(oRowStartDate, iStartIndex, iEndIndex);
 					} else if (sIntervalType === CalendarIntervalType.Month) {
 						oNewPos = this._calcCreateNewAppMonths(oRowStartDate, iStartIndex, iEndIndex);
