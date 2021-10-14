@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/model/odata/ODataMetaModel",
 	"sap/ui/model/odata/ODataPropertyBinding",
 	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/odata/v2/_CreatedContextsCache",
 	"sap/ui/model/odata/v2/Context",
 	"sap/ui/model/odata/v2/ODataAnnotations",
 	"sap/ui/model/odata/v2/ODataContextBinding",
@@ -25,8 +26,8 @@ sap.ui.define([
 	"sap/ui/test/TestUtils"
 ], function (Log, SyncPromise, coreLibrary, Message, BaseContext, FilterProcessor, Model,
 		_ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser, ODataMetaModel,
-		ODataPropertyBinding, ODataUtils, Context, ODataAnnotations, ODataContextBinding,
-		ODataListBinding, ODataModel, ODataTreeBinding, TestUtils
+		ODataPropertyBinding, ODataUtils, _CreatedContextsCache, Context, ODataAnnotations,
+		ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding, TestUtils
 ) {
 	/*global QUnit,sinon*/
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
@@ -78,8 +79,8 @@ sap.ui.define([
 	},
 	sServiceUrl : "https://example.com/foo/bar"
 }].forEach(function (oFixture, i) {
-	var sTitle = "constructor: codeListModelParameters and sMetadataUrl stored #" + i
-		+ ", sServiceUrl: " + oFixture.sServiceUrl;
+	var sTitle = "constructor: oCreatedContextsCache, codeListModelParameters and sMetadataUrl"
+		+ " stored #" + i + ", sServiceUrl: " + oFixture.sServiceUrl;
 	QUnit.test(sTitle, function (assert) {
 		var oDataModelMock = this.mock(ODataModel),
 			oExpectedHeaders = {
@@ -141,6 +142,7 @@ sap.ui.define([
 		assert.strictEqual(oModel.sMetadataUrl, "~metadataUrl");
 		assert.deepEqual(oModel.oHeaders, oExpectedHeaders);
 		assert.deepEqual(oModel.mCustomHeaders, oFixture.oHeaderParameter || {});
+		assert.ok(oModel.oCreatedContextsCache instanceof _CreatedContextsCache);
 	});
 });
 
@@ -5071,7 +5073,7 @@ sap.ui.define([
 
 		return oPromise;
 	});
-});
+	});
 });
 
 	//*********************************************************************************************
@@ -5115,5 +5117,14 @@ sap.ui.define([
 		return oContext.created().then(function (oSyncPromise) {
 			assert.strictEqual(oSyncPromise, undefined);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getCreatedContextsCache", function (assert) {
+		var oModel = {oCreatedContextsCache : "~oCreatedContextsCache"};
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype._getCreatedContextsCache.call(oModel),
+			"~oCreatedContextsCache");
 	});
 });

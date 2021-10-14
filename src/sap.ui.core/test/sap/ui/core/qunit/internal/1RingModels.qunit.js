@@ -144,6 +144,7 @@ sap.ui.require([
 		// ***************************************************************************************
 		// sap.ui.model.odata.v2.* - tests are contained in testsuite.odatav2.qunit.js
 		// ***************************************************************************************
+		"sap/ui/core/qunit/odata/v2/_CreatedContextsCache.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses MockServer
 		// "sap/ui/core/qunit/odata/v2/CanonicalRequests.qunit",
 		"sap/ui/core/qunit/odata/v2/Context.qunit",

@@ -20,6 +20,9 @@ sap.ui.define(function() {
 			}
 		},
 		tests: {
+			_CreatedContextsCache : {
+				title : "sap.ui.model.odata.v2._CreatedContextsCache"
+			},
 			CanonicalRequests: {
 				title: "sap.ui.model.odata.v2.ODataModel - Canonical Requests",
 				sinon: 1 /* MockServer usage */

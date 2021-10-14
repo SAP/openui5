@@ -171,7 +171,7 @@ sap.ui.define([
 						context : oItemContext,
 						refreshAfterChange : false, // manually done later
 						success : function () {
-							var oBinding, iContextIndex;
+							var oBinding;
 
 							MessageToast.show("Deleted sales order item " + sSalesOrderLineItem);
 							oTable.clearSelection();
@@ -181,11 +181,10 @@ sap.ui.define([
 							// recreated; manually remove the persisted entity from the list of
 							// created context and refresh the binding
 							oBinding = oTable.getBinding("rows");
-							iContextIndex = oBinding.aCreatedContexts.indexOf(oItemContext);
-							if (iContextIndex >= 0) {
-								oBinding.aCreatedContexts.splice(iContextIndex, 1);
-							}
-							oTable.getBinding("rows").refresh();
+
+							oBinding.getModel()._getCreatedContextsCache()
+								.removeContext(oItemContext, oBinding.getResolvedPath(), "");
+							oBinding.refresh();
 							// /HACK
 						}
 					});
@@ -218,7 +217,7 @@ sap.ui.define([
 						context : oContext,
 						refreshAfterChange : false, // manually done later
 						success : function () {
-							var oBinding, iContextIndex;
+							var oBinding;
 
 							MessageToast.show("Deleted sales order " + sSalesOrderID);
 							// HACK
@@ -227,11 +226,10 @@ sap.ui.define([
 							// recreated; manually remove the persisted entity from the list of
 							// created context and refresh the binding
 							oBinding = oTable.getBinding("items");
-							iContextIndex = oBinding.aCreatedContexts.indexOf(oContext);
-							if (iContextIndex >= 0) {
-								oBinding.aCreatedContexts.splice(iContextIndex, 1);
-							}
-							oTable.getBinding("items").refresh();
+
+							oBinding.getModel()._getCreatedContextsCache()
+								.removeContext(oContext, oBinding.getResolvedPath(), "");
+							oBinding.refresh();
 							// /HACK
 						}
 					});
