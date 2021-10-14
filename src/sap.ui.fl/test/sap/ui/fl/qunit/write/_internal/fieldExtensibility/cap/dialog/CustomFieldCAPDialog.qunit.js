@@ -132,31 +132,55 @@ sap.ui.define([
 				assert.ok(true, "then a success message is displayed");
 				fnDone();
 			});
+			this.oCAPDialog.onSave();
+
+			var oAddFieldRequest = findAddFieldRequest(this.aRequests);
+			assert.ok(
+				oAddFieldRequest.url.endsWith("/-/cds/extensibility/addExtension"),
+				"then the addField endpoint is called"
+			);
+			var oResponse = JSON.parse(oAddFieldRequest.requestBody);
+			assert.deepEqual(
+				JSON.parse(oResponse.extensions[0]),
+				{
+					elements: {
+						NewField: {
+							"@Common.Label": "NewField",
+							name: "NewField",
+							type: "cds.String"
+						}
+					},
+					extend: "SampleType"
+				},
+				"then the proper csn payload is passed"
+			);
+			assert.strictEqual(
+				oResponse.extensions.length,
+				1,
+				"then the csn for one extension is created"
+			);
+			oAddFieldRequest.respond(200);
+		});
+
+		QUnit.test("when a field is created with a custom editor payload", function(assert) {
 			this.oCAPDialog._oEditor.setJson({
 				element: {
 					name: "TestField",
-					type: "cds.String"
+					type: "cds.String",
+					"@Common.Label": "Hello World"
 				},
 				extend: "SampleType"
 			});
 			this.oCAPDialog.onSave();
 
 			var oAddFieldRequest = findAddFieldRequest(this.aRequests);
-			assert.ok(
-				oAddFieldRequest.url.endsWith("/extensibility/addExtension"),
-				"then the addField endpoint is called"
-			);
 			var oResponse = JSON.parse(oAddFieldRequest.requestBody);
-			assert.strictEqual(
-				oResponse.extensions.length,
-				1,
-				"then the csn for one extension is created"
-			);
 			assert.deepEqual(
 				JSON.parse(oResponse.extensions[0]),
 				{
 					elements: {
 						TestField: {
+							"@Common.Label": "Hello World",
 							name: "TestField",
 							type: "cds.String"
 						}
@@ -205,6 +229,7 @@ sap.ui.define([
 				{
 					elements: {
 						TestField: {
+							"@Common.Label": "TestField",
 							name: "TestField",
 							type: "cds.Integer",
 							"@assert.range": [0, 1],
@@ -234,6 +259,7 @@ sap.ui.define([
 				{
 					elements: {
 						TestField: {
+							"@Common.Label": "TestField",
 							name: "TestField",
 							type: "cds.String",
 							"@assert.range": true,

@@ -21,19 +21,31 @@ sap.ui.define([
 						return {
 							key: sEntityType
 						};
-					})
+					}),
+					allowCustomValues: false,
+					validators: {
+						isRequired: {
+							type: "isRequired"
+						}
+					}
 				},
 				name: {
 					tags: ["general"],
 					label: "Name",
 					path: "name",
-					type: "string"
+					type: "string",
+					validators: {
+						isRequired: {
+							type: "isRequired"
+						}
+					}
 				},
 				label: {
 					tags: ["general"],
 					label: "Label",
 					path: "@Common.Label",
-					type: "string"
+					type: "string",
+					placeholder: "{/element/name}"
 				},
 				type: {
 					tags: ["general"],
@@ -69,7 +81,13 @@ sap.ui.define([
 							key: "cds.Boolean",
 							title: "Boolean"
 						}
-					]
+					],
+					allowCustomValues: false,
+					validators: {
+						isRequired: {
+							type: "isRequired"
+						}
+					}
 				},
 				numberPrecision: {
 					tags: ["general"],
@@ -203,7 +221,10 @@ sap.ui.define([
 				"cds.DateTime": "sap/ui/fl/write/_internal/fieldExtensibility/cap/editor/propertyEditor/dateTimeEditor/DateTimeEditor",
 				"cds.Boolean": "sap/ui/fl/write/_internal/fieldExtensibility/cap/editor/propertyEditor/booleanEditor/BooleanEditor"
 			},
-			i18n: "sap/ui/fl/messagebundle.properties"
+			i18n: "sap/ui/fl/messagebundle.properties",
+			validators: {
+				isRequired: "sap/ui/fl/write/_internal/fieldExtensibility/cap/editor/validators/IsRequired"
+			}
 		};
 	};
 });
