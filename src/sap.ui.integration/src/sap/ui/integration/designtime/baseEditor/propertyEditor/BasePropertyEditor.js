@@ -314,6 +314,9 @@ sap.ui.define([
 		var vCurrentValue = this.getValue();
 		var oConfig = this.getConfig() || {};
 		var vNextValue = vValue;
+		if (oConfig.type === "integer" && Number.isInteger(Number(vValue))) {
+			vNextValue = parseInt(vValue);
+		}
 
 		// If the editor is not visible, don't allow setting new values
 		// to avoid unwanted updates and side effects like validation failures
