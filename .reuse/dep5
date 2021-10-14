@@ -459,7 +459,7 @@ Copyright:
 License: Apache-2.0
 Comment: these files contain content from SAP and JSDoc 3: plugin.js is overall written by SAP, but contains code taken from JSDoc 3.6.7 (see the respective comments)
 
-Files: src/sap.ui.core/src/sap/ui/core/themes/base/base.less src/themelib_sap_belize/src/sap/ui/core/themes/*/base.less src/themelib_sap_fiori_3/src/sap/ui/core/themes/*/base.less
+Files: src/sap.ui.core/src/sap/ui/core/themes/base/base.less src/themelib_sap_belize/src/sap/ui/core/themes/*/base.less src/themelib_sap_fiori_3/src/sap/ui/core/themes/*/base.less src/themelib_sap_horizon/src/sap/ui/core/themes/*/base.less
 Copyright: SAP SE or an SAP affiliate company and Theming Base Content contributors
 License: Apache-2.0
 Comment: these files belong to: SAP Theming Base Content
