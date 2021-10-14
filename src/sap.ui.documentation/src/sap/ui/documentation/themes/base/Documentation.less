@@ -104,7 +104,7 @@ html.sap-tablet:not(.sap-desktop) {
     }
 
     .collapsible.expanded {
-        > .collapsible-icon::before {
+        > .collapsible-icon:before {
             content: '\E1EF';
         }
     }
@@ -114,7 +114,7 @@ html.sap-tablet:not(.sap-desktop) {
             display: none;
         }
 
-        > .collapsible-icon::before {
+        > .collapsible-icon:before {
            content: '\e0e3';
         }
     }
@@ -127,6 +127,7 @@ html.sap-tablet:not(.sap-desktop) {
                 margin-right: 1rem;
                 font-family: sap-icons;
                 font-size: 1rem;
+				float: left;
             }
 
             &:hover {
@@ -135,7 +136,8 @@ html.sap-tablet:not(.sap-desktop) {
 
             h2, h3, .title, strong {
               cursor: pointer;
-              display: inline-block;
+              display: block;
+			  float: none;
               margin: 0.25rem 0.25rem 0.25rem;
               pointer-events: none;
             }
@@ -378,6 +380,7 @@ html.sap-tablet:not(.sap-desktop) {
     .restriction .title:before,
     .caution .title:before {
         margin-right: .5em;
+		float: left;
     }
 
     .note .title:before {
