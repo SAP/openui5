@@ -322,6 +322,7 @@ sap.ui.define([
 	QUnit.module("FlexState with loadFlexData and callPrepareFunction stubbed, filtering active", {
 		beforeEach: function() {
 			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(mResponse);
+			this.ogetUShellServiceStub = sandbox.stub(Utils, "getUShellService").withArgs("URLParsing").returns(Promise.resolve("DummyURLParsingService"));
 			this.oCallPrepareFunctionStub = sandbox.stub(FlexState, "callPrepareFunction").callsFake(mockPrepareFunctions);
 			this.oAppComponent = new UIComponent(sComponentId);
 			this.oIsLayerFilteringRequiredStub = sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(true);
@@ -340,6 +341,7 @@ sap.ui.define([
 			})
 			.then(function() {
 				assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 1, "the check was made once");
+				assert.ok(this.oFilterStub.calledWith([], "DummyURLParsingService"), "then filtering was called with the right parameters");
 				assert.equal(this.oFilterStub.callCount, 9, "all filterable types got filtered");
 			}.bind(this))
 			.then(FlexState.initialize.bind(null, {

@@ -249,6 +249,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("with max layer = ", function(assert) {
+			var oDummyURLParsingService = "DummyURLParsingService";
 			var aChangeDefinitions = [
 				{fileName: "user1", layer: Layer.USER},
 				{fileName: "customer1", layer: Layer.CUSTOMER},
@@ -257,8 +258,9 @@ sap.ui.define([
 				{fileName: "user2", layer: Layer.USER}
 			];
 			var oMaxLayerStub = sandbox.stub(LayerUtils, "getMaxLayer").returns(Layer.USER);
-			var aFilteredChanges = LayerUtils.filterChangeDefinitionsByMaxLayer(aChangeDefinitions);
+			var aFilteredChanges = LayerUtils.filterChangeDefinitionsByMaxLayer(aChangeDefinitions, oDummyURLParsingService);
 			assert.equal(aFilteredChanges.length, 5, "USER: all 5 changes are returned");
+			assert.ok(oMaxLayerStub.withArgs(oDummyURLParsingService), "then getMaxLayer was called with the URLParsingService");
 
 			oMaxLayerStub.returns(Layer.CUSTOMER);
 			aFilteredChanges = LayerUtils.filterChangeDefinitionsByMaxLayer(aChangeDefinitions);
