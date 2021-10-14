@@ -142,6 +142,11 @@
 @_sap_m_IconTabBar_ShellOverflowBorderColor: transparent;
 @_sap_m_IconTabBar_ShellOverflowHoverBorderColor: transparent;
 @_sap_m_IconTabBar_ShellOverflowPressedBorderColor: @sapUiShellNavigationActiveBackground;
+@_sap_m_IconTabBar_HeaderFocusBorderTopOffset: -1px;
+@_sap_m_IconTabBar_HeaderFocusBorderBottomOffset: -1px;
+@_sap_m_IconTabBar_HeaderFocusBorderRightOffset: -1px;
+@_sap_m_IconTabBar_HeaderFocusBorderLeftOffset: -1px;
+@_sap_m_IconTabBar_HeaderBorderRadius: 0px;
 
 // ========== Badge ============
 @_sap_m_IconTabBar_FilterExpandButtonBadgeTop: 1.125rem;
@@ -859,11 +864,12 @@ html.sap-desktop {
 		&::after {
 			content: "";
 			position: absolute;
-			top: -1px;
-			bottom: -1px;
-			right: -1px;
-			left: -1px;
-			border: @sapUiContentFocusWidth dotted @sapUiContentFocusColor;
+			top: @_sap_m_IconTabBar_HeaderFocusBorderTopOffset;
+			bottom: @_sap_m_IconTabBar_HeaderFocusBorderBottomOffset;
+			right: @_sap_m_IconTabBar_HeaderFocusBorderRightOffset;
+			left: @_sap_m_IconTabBar_HeaderFocusBorderLeftOffset;
+			border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+			border-radius: @_sap_m_IconTabBar_HeaderBorderRadius;
 			pointer-events: none;
 		}
 	}
@@ -879,7 +885,7 @@ html.sap-desktop {
 				right: 0.125rem;
 				left: 0.125rem;
 				border-radius: inherit;
-				border: @sapUiContentFocusWidth dotted @sapUiContentFocusColor;
+				border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 				pointer-events: none;
 			}
 		}
@@ -1472,7 +1478,7 @@ html[dir=rtl] {
 				border-color: @_sap_m_IconTabBar_ShellTextColor;
 			}
 		}
- 	}
+	}
 }
 
 /* ------------------------------------------------ */

@@ -15,9 +15,23 @@
 @_sap_m_SearchField_NoSearchButtonPadding: 2.25rem;
 @_sap_m_SearchField_Compact_FormPaddingLeft: 0.5rem;
 @_sap_m_SearchField_ResetIcon: "\e03e";
+@_sap_m_SearchField_Border: none;
+@_sap_m_SearchField_FocusOffset: 0;
+@_sap_m_SearchField_FocusBorderRadius: inherit;
+@_sap_m_SearchField_PlaceholderFontStyle: normal;
 
 .sapMSFF {
 	border-radius: @sapUiFieldBorderCornerRadius;
+
+	//placeholder to be center aligned
+	display:flex;
+	align-items:center;
+
+	// bottom line
+	background-image: linear-gradient(0deg, @sapField_BorderColor 0, @sapField_BorderColor 100%);
+	background-size: 100% @sapField_BorderWidth;
+	background-repeat: repeat-x;
+	background-position: bottom;
 }
 
 .sapMSFDisabled {
@@ -25,6 +39,19 @@
 }
 
 /* custom buttons */
+
+.sapMSFB {
+	height: 2.1875rem;
+	//center buttons
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.sapMSFB:last-of-type {
+	border-radius: 0 @sapUiFieldBorderCornerRadius @sapUiFieldBorderCornerRadius 0;
+}
+
 .sapMSFB:focus {
 	outline: none;
 }
@@ -33,16 +60,48 @@
 	text-shadow: none;
 }
 
-.sapMFocus>.sapMSFF>.sapMSFB {
+.sapMFocus > .sapMSFF > .sapMSFB {
 	color: @sapUiHighlight;
 }
 
-.sapMSFB:hover{
-	background-color: @sapUiButtonLiteHoverBackground;
+.sapMSFB:hover {
+	box-shadow: @sapContent_Interaction_Shadow;
 }
 
-.sapMSFF>.sapMSFB:not(.sapMSFBF):active,
-.sapMSFF>.sapMSFB.sapMSFBA {
+.sapMSFB:active {
+	box-shadow: @sapContent_Interaction_Shadow;
+
+	&::after {
+		color: @sapField_Focus_BorderColor;
+	}
+}
+
+.sapMSFF > .sapMSFB:not(.sapMSFBF):active,
+.sapMSFF > .sapMSFB.sapMSFBA {
 	background-color: @sapUiButtonLiteActiveBackground;
 	color: @sapUiContentContrastIconColor;
+}
+
+.sapMSF.sapMFocus .sapMSFF {
+	background: @sapField_Hover_Background;
+	box-shadow: @sapContent_Interaction_Shadow;
+}
+
+.sapMSF.sapMFocus:hover .sapMSFF {
+	box-shadow: @sapContent_Interaction_Shadow;
+}
+
+.sapMSF:not(.sapMSFDisabled):hover .sapMSFF {
+	background: @sapField_Hover_Background;
+	box-shadow: @sapContent_Interaction_Shadow;
+
+	// bottom line
+	background-image: linear-gradient(0deg, @sapField_BorderColor 0, @sapField_BorderColor 100%);
+	background-size: 100% @sapField_BorderWidth;
+	background-repeat: repeat-x;
+	background-position: bottom;
+}
+
+.sapUiSizeCompact .sapMSFB {
+	height: 1.625rem;
 }

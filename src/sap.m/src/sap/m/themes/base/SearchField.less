@@ -12,6 +12,12 @@
 @_sap_m_SearchField_Compact_FormPaddingLeft: 0.375rem;
 @_sap_m_SearchField_Compact_NoSearchButtonPadding: 2rem;
 @_sap_m_SearchField_ResetIcon: "\e1c7";
+@_sap_m_SearchField_SearchIcon: "\e00d";
+@_sap_m_SearchField_PlaceholderColor: @sapUiFieldPlaceholderTextColor;
+@_sap_m_SearchField_Border: 1px solid @sapUiFieldBorderColor;
+@_sap_m_SearchField_FocusOffset: 1px;
+@_sap_m_SearchField_FocusBorderRadius: unset;
+@_sap_m_SearchField_PlaceholderFontStyle: italic;
 
 .sapMSF {
 	position: relative;
@@ -36,13 +42,14 @@
 }
 
 html.sap-desktop .sapMFocus > .sapMSFF::before {
-	border: 1px dotted @sapUiContentFocusColor;
+	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 	position: absolute;
 	content: " ";
-	top: 1px;
-	right: 1px;
-	bottom: 1px;
-	left: 1px;
+	top: @_sap_m_SearchField_FocusOffset;
+	right: @_sap_m_SearchField_FocusOffset;
+	left: @_sap_m_SearchField_FocusOffset;
+	bottom: @_sap_m_SearchField_FocusOffset;
+	border-radius: @_sap_m_SearchField_FocusBorderRadius;
 	z-index: 2;
 	pointer-events: none;
 }
@@ -86,7 +93,7 @@ input.sapMSFI[type="search"]:focus {
 	box-sizing: border-box;
 	height: @_sap_m_SearchField_FormHeight;
 	line-height: @_sap_m_SearchField_InputHeight;
-	border: 1px solid @sapUiFieldBorderColor;
+	border: @_sap_m_SearchField_Border;
 	background: @sapUiFieldBackground;
 	vertical-align: top;
 	width: 100%;
@@ -187,12 +194,12 @@ input.sapMSFI[type="search"]:focus {
 
 /* search icon in place of the reset button */
 :not(.sapMSFVal)>.sapMSFReload>.sapMSFR::after {
-	content: "\e00d";
+	content: @_sap_m_SearchField_SearchIcon;
 }
 
 /* search button */
 .sapMSFS::after {
-	content: "\e00d";
+	content: @_sap_m_SearchField_SearchIcon;
 }
 
 /* refresh icon in some cases */
@@ -202,15 +209,15 @@ input.sapMSFI[type="search"]:focus {
 
 /*grouping is not allowed here*/
 .sapMSFI::-webkit-input-placeholder {
-	color:		   @sapUiFieldPlaceholderTextColor;
-	font-size:	   @sapMFontMediumSize;
-	font-style:	   italic;
+	color: @_sap_m_SearchField_PlaceholderColor;
+	font-size: @sapMFontMediumSize;
+	font-style: @_sap_m_SearchField_PlaceholderFontStyle;
 }
 
 .sapMSFI::-moz-placeholder {
-	color:		   @sapUiFieldPlaceholderTextColor;
-	font-size:	   @sapMFontMediumSize;
-	font-style:	   italic;
+	color: @_sap_m_SearchField_PlaceholderColor;
+	font-size: @sapMFontMediumSize;
+	font-style: @_sap_m_SearchField_PlaceholderFontStyle;
 	opacity: 1; // in FF by default the opacity is 60%
 }
 

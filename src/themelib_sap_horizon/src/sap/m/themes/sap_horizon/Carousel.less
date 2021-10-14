@@ -12,6 +12,7 @@
 @_sap_m_Carousel_NumericIndicatorTextColor: @sapUiPageFooterTextColor;
 @_sap_m_Carousel_PrevAndNextSize: 2.125rem;
 @_sap_m_Carousel_PrevAndNextPosition: 0.5rem;
+@_sap_m_Carousel_PrevAndNextFocusBorderRadius: inherit;
 @_sap_m_Carousel_PageIndicatorWidthSizeS: 9rem;
 @_sap_m_Carousel_PageIndicatorWidthSizeM: @_sap_m_Carousel_PageIndicatorWidthSizeS;
 @_sap_m_Carousel_PageIndicatorWidthSizeL: @_sap_m_Carousel_PageIndicatorWidthSizeS;
@@ -40,59 +41,7 @@
 	background-color: @sapUiButtonActiveBackground;
 }
 
-.sapMCrsl:focus {
-	&:before {
-		border: 1px solid @sapUiContentFocusColor;
-		position: absolute;
-		content: " ";
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		z-index: 2;
-		pointer-events: none;
-	}
-
-	&:after {
-		border: 1px dotted @sapUiContentContrastFocusColor;
-		position: absolute;
-		content: " ";
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		z-index: 2;
-		pointer-events: none;
-	}
-}
-
 .sapMCrslPrev:focus,
-.sapMCrslNext:focus,
-.sapMCrslPrev .sapUiIcon:focus,
-.sapMCrslNext .sapUiIcon:focus {
-  outline: none;
-}
-
-html.sap-desktop .sapMCrslHud .sapMCrslPrev:focus,
-html.sap-desktop .sapMCrslHud .sapMCrslNext:focus {
-  	&::before {
-		content: "";
-		position: absolute;
-		top: -0.125rem;
-		right: -0.125rem;
-		bottom: -0.125rem;
-		left: -0.125rem;
-		pointer-events: none;
-	}
-
-  	&::after {
-		content: "";
-		position: absolute;
-		top: -0.125rem;
-		right: -0.125rem;
-		bottom: -0.125rem;
-		left: -0.125rem;
-		pointer-events: none;
-		border: 1px dotted @sapUiContentFocusColor;
-	}
+.sapMCrslNext:focus {
+	outline: none;
 }

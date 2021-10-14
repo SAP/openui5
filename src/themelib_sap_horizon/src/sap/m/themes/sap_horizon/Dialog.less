@@ -11,11 +11,17 @@
 @_sap_m_Dialog_BarHeight: 2.75rem;
 @_sap_m_Dialog_SubHeaderCompactHeight: 2.25rem;
 
-@_sap_m_Dialog_NoStateHeaderShadow: @sapUiShadowHeader;
-@_sap_m_Dialog_SuccessHeaderShadow: inset 0 -0.0625rem @sapUiSuccessBorder, @sapUiShadowHeader;
-@_sap_m_Dialog_ErrorHeaderShadow: inset 0 -0.0625rem @sapUiErrorBorder, @sapUiShadowHeader;
-@_sap_m_Dialog_WarningHeaderShadow: inset 0 -0.0625rem @sapUiWarningBorder, @sapUiShadowHeader;
-@_sap_m_Dialog_InformationHeaderShadow: inset 0 -0.0625rem @sapUiInformationBorder, @sapUiShadowHeader;
+@_sap_m_Dialog_NoStateHeaderShadow: none;
+@_sap_m_Dialog_SuccessHeaderShadow: inset 0 -0.0625rem @sapUiSuccessBorder;
+@_sap_m_Dialog_ErrorHeaderShadow: inset 0 -0.0625rem @sapUiErrorBorder;
+@_sap_m_Dialog_WarningHeaderShadow: inset 0 -0.0625rem @sapUiWarningBorder;
+@_sap_m_Dialog_InformationHeaderShadow: inset 0 -0.0625rem @sapUiInformationBorder;
+
+@_sap_m_Dialog_HeaderFocusBorderBottomOffset: 0px;
+@_sap_m_Dialog_HeaderFocusBorderTopOffset: 0px;
+@_sap_m_Dialog_HeaderFocusBorderLeftOffset: 0px;
+@_sap_m_Dialog_HeaderFocusBorderRightOffset: 0px;
+@_sap_m_Dialog_BorderRadius: @sapUiElementBorderCornerRadius;
 
 // This parameter is used in sap.m.Select. TODO: remove it when it is removed from there.
 @_sap_m_Dialog_HeaderShadowColor: darken(@sapUiGroupContentBackground, 8);
@@ -97,4 +103,14 @@ html.sap-phone .sapMDialog {
 			}
 		}
 	}
+}
+
+
+html.sap-desktop .sapMIBar.sapMFooter-CTX { // this should come from the BarBase. Test and delete later
+	border-top: none;
+}
+
+.sapMDialogResizeHandler {
+	right: 6px;
+	bottom: 3px;
 }

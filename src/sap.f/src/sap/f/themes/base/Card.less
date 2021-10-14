@@ -5,11 +5,17 @@
 
 @_sap_f_Card_BoxShadow: @sapUiShadowLevel0;
 @_sap_f_Card_HeaderBorder: 0.0625rem solid @sapUiTileSeparatorColor; // used as top or bottom border
+@_sap_f_Card_HeaderFocusBorderRadius: none;
+@_sap_f_Card_BorderRadius: @sapUiElementBorderCornerRadius;
 @_sap_f_Card_ContentPadding: 1rem;
 @_sap_f_Card_HeaderFocusBorderBottomOffset: 1px;
+@_sap_f_Card_HeaderFocusBorderTopOffset: 1px;
+@_sap_f_Card_HeaderFocusBorderLeftOffset: 1px;
+@_sap_f_Card_HeaderFocusBorderRightOffset: 1px;
 @_sap_f_Card_Badge_Background: @sapInformativeColor;
 @_sap_f_Card_Badge_Color: @sapContent_ContrastTextColor;
 @_sap_f_Card_Badge_Border: 0.0625rem solid @sapButton_Lite_BorderColor;
+@_sap_f_Card_TitleFontSize: @sapMFontHeader5Size;
 
 .sapFCard {
 	position: relative;
@@ -19,7 +25,7 @@
 	box-sizing: border-box;
 	background: @sapUiTileBackground;
 	box-shadow: @_sap_f_Card_BoxShadow;
-	border-radius: @sapUiElementBorderCornerRadius;
+	border-radius: @_sap_f_Card_BorderRadius;
 	border: 0.0625rem solid @sapUiTileBorderColor;
 	width: 100%;
 	height: auto;
@@ -47,9 +53,12 @@
 	background: @sapUiTileBackground;
 	border-bottom: @_sap_f_Card_HeaderBorder;
 	z-index: 2;
+	border-radius: @_sap_f_Card_BorderRadius @_sap_f_Card_BorderRadius 0 0;
 	padding: @_sap_f_Card_ContentPadding;
 	display: flex;
 	outline: none;
+
+
 
 	.sapFCardHeaderImage {
 		position: relative;
@@ -87,7 +96,7 @@
 			min-width: 0;
 			display: block;
 			font-family: @sapUiFontHeaderFamily;
-			font-size: @sapMFontHeader5Size;
+			font-size: @_sap_f_Card_TitleFontSize;
 			font-weight: @sapUiFontHeaderWeight;
 			color: @sapUiTileTitleTextColor;
 			min-height: 1rem;
@@ -128,7 +137,7 @@
 		width: 100%;
 	}
 
-  	.sapFCardHeaderTextSecondLine {
+	.sapFCardHeaderTextSecondLine {
 		margin-top: 0.25rem;
 		display: flex;
 		justify-content: space-between;
@@ -163,9 +172,16 @@
 	z-index: 10; // busy layer should be over the header and sub-headers BCP 2080150813
 }
 
-.sapFCard.sapFCardBottomHeader .sapFCardHeader {
-	border-top: @_sap_f_Card_HeaderBorder;
-	border-bottom: none;
+.sapFCard.sapFCardBottomHeader {
+	.sapFCardHeader {
+		border-top: @_sap_f_Card_HeaderBorder;
+		border-bottom: none;
+		border-radius: 0 0 @_sap_f_Card_BorderRadius @_sap_f_Card_BorderRadius;
+	}
+
+	.sapFCardContent {
+		border-radius: @_sap_f_Card_BorderRadius @_sap_f_Card_BorderRadius 0 0;
+	}
 }
 
 .sapFCard .sapFCardHeader.sapFCardNumericHeader {
@@ -275,6 +291,7 @@
 	overflow: hidden;
 	position: relative;
 	display: flex;
+	border-radius: 0 0 @_sap_f_Card_BorderRadius @_sap_f_Card_BorderRadius;
 
 	.sapFCardContentListPlaceholder,
 	.sapFCardErrorContent,
@@ -284,7 +301,13 @@
 		box-sizing: border-box;
 	}
 }
+.sapFCard.sapFCardNoHeader .sapFCardContent {
+	border-radius: @_sap_f_Card_BorderRadius;
 
+	&:focus {
+		border-radius: inherit;
+	}
+}
 .sapFCard .sapFCardContent {
 	.sapVizFrame {
 		min-height: inherit;
@@ -351,6 +374,7 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 
 .sapFCard.sapFCardNoContent .sapFCardHeader {
 	border-bottom: none;
+	border-radius: @_sap_f_Card_BorderRadius;
 }
 
 .sapFCard {
@@ -378,29 +402,24 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 	}
 }
 
-.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCardHeader::before, // focus inside GridContainer
-.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCard.sapFCardNoHeader::before, // focus inside GridContainer on a card without header
-.sapFCardHeader:focus::before {
+.sapFCardHeader:focus::before,
+.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCardHeader::before, // focus inside Grid Container
+.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCard.sapFCardNoHeader::before { // ... on a card without header
 	content: '';
 	display: block;
 	position: absolute;
-	left: 1px;
+	left: @_sap_f_Card_HeaderFocusBorderLeftOffset;
 	bottom: @_sap_f_Card_HeaderFocusBorderBottomOffset;
-	right: 1px;
-	top: 1px;
-	border: @sapUiContentFocusWidth dotted @sapUiContentFocusColor;
+	right: @_sap_f_Card_HeaderFocusBorderRightOffset;
+	top: @_sap_f_Card_HeaderFocusBorderTopOffset;
+	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	border-radius: @_sap_f_Card_HeaderFocusBorderRadius;
 	pointer-events: none;
 }
 
-.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCard.sapFCardNoHeader::before { //focus inside GridContainer on a card without header
+.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCard.sapFCardNoHeader::before { // focus inside GridContainer on a card without header
 	bottom: 1px;
 	z-index: 1;
-}
-
-
-html[data-sap-ui-browser^="ie"] .sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCardHeader::before, // focus inside GridContainer
-html[data-sap-ui-browser^="ie"] .sapFCardHeader:focus::before {
-	border: @sapUiContentFocusWidth dashed @sapUiContentFocusColor;
 }
 
 .sapUiSizeCompact {
