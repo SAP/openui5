@@ -13,6 +13,7 @@ sap.ui.define([
 	'sap/ui/core/ElementMetadata',
 	'sap/ui/core/UIArea',
 	'sap/ui/core/mvc/View',
+	'sap/ui/core/mvc/XMLView',
 	'sap/ui/model/Binding',
 	'sap/ui/model/CompositeBinding',
 	'sap/base/util/ObjectPath',
@@ -30,6 +31,7 @@ sap.ui.define([
 	ElementMetadata,
 	UIArea,
 	View,
+	XMLView,
 	Binding,
 	CompositeBinding,
 	ObjectPath,
@@ -1128,54 +1130,46 @@ sap.ui.define([
 
 			var oViewSerializer;
 			var mViews;
-			sap.ui.controller(sType + "ViewController", {});
-			sap.ui.jsview(sType + "ViewExported", {
-				getControllerName : function() {
-					return sType + "ViewController";
-				},
-				createContent : function(oController) { }
-			});
+			var sViewName = sType + "ViewExported";
 
-			sap.ui.controller(sType + "ViewController", {});
-			sap.ui.jsview(sType + "ViewExported", {
-				getControllerName : function() {
-					return sType + "ViewController";
-				},
-				createContent : function(oController) { }
-			});
+			XMLView.create({
+				definition: document
+			}).then(function (oView) {
+				oView.setViewName(sViewName);
+				oView._controllerName = sType + "ViewController";
 
-			try {
-				if (oControl) {
-					if (oControl instanceof View) {
-						oViewSerializer = new ViewSerializer(oControl, window, "sap.m");
+				try {
+					if (oControl) {
+						if (oControl instanceof View) {
+							oViewSerializer = new ViewSerializer(oControl, window, "sap.m");
+						} else {
+							oView.addContent(oControl.clone());
+							oViewSerializer = new ViewSerializer(oView, window, "sap.m");
+						}
+						// By now just XML and HTML can be serialized
+						mViews = (sType && sType !== "XML") ? oViewSerializer.serializeToHTML() : oViewSerializer.serializeToXML();
 					} else {
-						var oView = sap.ui.jsview(sType + "ViewExported");
-						oView.addContent(oControl.clone());
+						var oUIArea = this.oCore.getUIArea(oEvent.getParameter("controlID"));
+						var aContent = oUIArea.getContent();
+						for ( var i = 0; i < aContent.length; i++) {
+							oView.addContent(aContent[i]);
+						}
 						oViewSerializer = new ViewSerializer(oView, window, "sap.m");
+						// By now just XML and HTML can be serialized
+						mViews = (sType && sType !== "XML") ? oViewSerializer.serializeToHTML() : oViewSerializer.serializeToXML();
+						for ( var i = 0; i < aContent.length; i++) {
+							oUIArea.addContent(aContent[i]);
+						}
 					}
-					// By now just XML and HTML can be serialized
-					mViews = (sType && sType !== "XML") ? oViewSerializer.serializeToHTML() : oViewSerializer.serializeToXML();
-				} else {
-					var oUIArea = this.oCore.getUIArea(oEvent.getParameter("controlID"));
-					var oView = sap.ui.jsview(sType + "ViewExported");
-					var aContent = oUIArea.getContent();
-					for ( var i = 0; i < aContent.length; i++) {
-						oView.addContent(aContent[i]);
+
+					if (oViewSerializer) {
+						this._oStub.sendEvent(this.getId() + "ReceiveControlTreeExport", { serializedViews: JSON.stringify(mViews), sType: sType });
 					}
-					oViewSerializer = new ViewSerializer(oView, window, "sap.m");
-					// By now just XML and HTML can be serialized
-					mViews = (sType && sType !== "XML") ? oViewSerializer.serializeToHTML() : oViewSerializer.serializeToXML();
-					for ( var i = 0; i < aContent.length; i++) {
-						oUIArea.addContent(aContent[i]);
-					}
+				} catch (err) {
+					this._oStub.sendEvent(this.getId() + "ReceiveControlTreeExportError", { errorMessage: err.message });
 				}
 
-				if (oViewSerializer) {
-					this._oStub.sendEvent(this.getId() + "ReceiveControlTreeExport", { serializedViews: JSON.stringify(mViews), sType: sType });
-				}
-			} catch (err) {
-				this._oStub.sendEvent(this.getId() + "ReceiveControlTreeExportError", { errorMessage: err.message });
-			}
+			}.bind(this));
 		};
 
 		ControlTree.prototype.onsapUiSupportControlTreeRequestProperties = function(oEvent) {
