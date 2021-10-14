@@ -1,0 +1,34 @@
+/* ============================== */
+/* CSS for sap.ui.table/Grouping  */
+/* Horizon theme                  */
+/* ============================== */
+
+/*TBD: Adjustments for sapUiTableTreeIcon might be obsolete when Icon is adjusted*/
+
+.sapUiTableTreeIcon {
+    border-radius: @sapUiButtonBorderCornerRadius;
+    box-sizing: border-box;
+    margin-right: 2px;
+}
+
+.sapUiSizeCompact .sapUiTableTreeIcon {
+    height: @_sap_ui_table_BaseSizeCondensed;
+}
+
+.sapUiTableTreeIcon:active::before {
+    color: @sapUiButtonActiveTextColor;
+}
+
+.sapUiTableTreeIcon:hover {
+    color: @sapUiButtonHoverTextColor;
+    border: 1px solid @sapUiButtonHoverBorderColor;
+    background: @sapUiButtonHoverBackground;
+}
+
+.sapUiTableTreeIcon:active {
+    border: 1px solid @sapUiButtonActiveBorderColor;
+}
+
+.sapUiTableTreeIcon:active:focus {
+    outline: none;
+}

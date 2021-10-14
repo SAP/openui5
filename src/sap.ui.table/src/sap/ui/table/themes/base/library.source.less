@@ -43,7 +43,8 @@
 @_sap_ui_table_DeleteIcon: sys-cancel;
 @_sap_ui_table_ClearSelectionIcon: clear-all;
 
-@_sap_ui_table_FocusOutlineWidth: 1px;
+/*TBD: Table specific parameter should be removed and replaced with sapUiContentFocusWidth*/
+@_sap_ui_table_FocusOutlineWidth: @sapUiContentFocusWidth;
 
 @import "Table.less";
 @import "Row.less";
