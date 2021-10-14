@@ -1,5 +1,7 @@
 /**
  * Do NOT use any LESS syntax in this file because it may be used externally without UI5
+ *
+ * NOTE: This file must be kept in sync with SAP-icons.less
  */
 @font-face {
 	font-family: "SAP-icons";
