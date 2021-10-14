@@ -271,12 +271,14 @@ sap.ui.define([
 				$RowHdr.css(bRTL ? "right" : "left", "");
 				$Shield.css("width", "").css(bRTL ? "margin-right" : "margin-left", "");
 				$FirstCellContentInRow.css(bRTL ? "padding-right" : "padding-left", "");
+				$Row.css("--CalculatedGroupIndent", "0");
 			} else {
 				// Apply indent on table row
 				$RowHdr.css(bRTL ? "right" : "left", iIndent + "px");
 				$Shield.css("width", iIndent + "px").css(bRTL ? "margin-right" : "margin-left", ((-1) * iIndent) + "px");
 				$FirstCellContentInRow.css(bRTL ? "padding-right" : "padding-left",
 					(iIndent + 8/* +8px standard padding .sapUiTableCellInner */) + "px");
+				$Row.css("--CalculatedGroupIndent", iIndent + "px");
 			}
 		},
 

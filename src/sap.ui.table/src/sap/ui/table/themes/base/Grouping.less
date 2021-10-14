@@ -29,7 +29,7 @@
 	}
 
 	&:focus {
-		outline: @_sap_ui_table_Grouping_GroupOutlineWidth dotted @sapUiContentFocusColor;
+		outline: @_sap_ui_table_Grouping_GroupOutlineWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 		outline-offset: -2px;
 	}
 }
@@ -42,7 +42,7 @@
 	position: absolute;
 	left: 1px;
 	top: @_sap_ui_table_Grouping_GroupOutlineWidth;
-	bottom: 0;
+	bottom: @_sap_ui_table_Grouping_GroupOutlineWidth;
 	white-space: nowrap;
 	font-weight: normal;
 	color: @sapUiListTextColor;
@@ -80,6 +80,7 @@
 	text-align: center;
 	vertical-align: middle;
 	margin-left: -2px;
+	margin-right: 2px;
 }
 
 .sapUiSizeCozy .sapUiTableGroupIcon::before {
@@ -121,9 +122,19 @@ html[dir=rtl] {
 
 .sapUiTableGroupHeaderRow > .sapUiTableRowSelectionCell:focus .sapUiTableGroupIcon {
 	outline-width: @_sap_ui_table_Grouping_GroupOutlineWidth;
-	outline-style: dotted;
+	outline-style: @sapUiContentFocusStyle;
 	outline-offset: 0;
 	outline-color: @sapUiContentFocusColor;
+}
+
+.sapUiTableGroupHeaderRow > .sapUiTableRowSelectionCell:focus::before {
+	outline: none;
+}
+
+.sapUiTableGroupHeaderRow > .sapUiTableCell.sapUiTableCellFirst:focus::before,
+.sapUiTableGroupMode .sapUiTableRowIndented > .sapUiTableCell.sapUiTableCellFirst:focus::before {
+	z-index: 2;
+	left: var(--CalculatedGroupIndent, 0);
 }
 
 // Override row background and cell borders in group header rows.
@@ -179,6 +190,10 @@ html[dir=rtl] {
 	margin-left: -0px;
 	background-color: @sapUiListBackground;
 	pointer-events: none;
+}
+
+.sapUiTableRowHidden > .sapUiTableCell > .sapUiTableGroupShield {
+	display: block;
 }
 
 .sapUiTableGroupHeaderRow > .sapUiTableRowSelectionCell:focus {
