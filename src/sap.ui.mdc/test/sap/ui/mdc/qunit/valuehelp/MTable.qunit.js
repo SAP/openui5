@@ -226,9 +226,13 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getFooterContent without length limitation", function(assert) {
+	QUnit.test("getContainerConfig - footer without length limitation", function(assert) {
 
-		var oFooterContent = oMTable.getFooterContent();
+		var oContainerConfig = oMTable.getContainerConfig();
+		var oPopupConfig = oContainerConfig && oContainerConfig['sap.ui.mdc.valuehelp.Popover'];
+
+		assert.ok(oContainerConfig, "Config returned");
+		var oFooterContent = oPopupConfig.getFooter && oPopupConfig.getFooter();
 
 		if (oFooterContent) {
 			var fnDone = assert.async();
@@ -243,7 +247,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getFooterContent with length limitation", function(assert) {
+	QUnit.test("getContainerConfig - footer with length limitation", function(assert) {
 
 		oTable.bindItems({path: "/items", template: oItemTemplate, length: 10});
 
@@ -252,7 +256,11 @@ sap.ui.define([
 			iSwitchToDialog++;
 		});
 
-		var oFooterContent = oMTable.getFooterContent();
+		var oContainerConfig = oMTable.getContainerConfig();
+		var oPopupConfig = oContainerConfig && oContainerConfig['sap.ui.mdc.valuehelp.Popover'];
+
+		assert.ok(oContainerConfig, "Config returned");
+		var oFooterContent = oPopupConfig.getFooter && oPopupConfig.getFooter();
 
 		if (oFooterContent) {
 			var fnDone = assert.async();
@@ -1024,7 +1032,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getContentHeight", function(assert) {
+	QUnit.test("getContainerConfig - getContentHeight", function(assert) {
 
 		var oFakeDom = {
 			getBoundingClientRect: function() {
@@ -1033,7 +1041,11 @@ sap.ui.define([
 		};
 		sinon.stub(oTable, "getDomRef"). returns(oFakeDom);
 
-		var iHeight = oMTable.getContentHeight();
+		var oContainerConfig = oMTable.getContainerConfig();
+		var oPopupConfig = oContainerConfig && oContainerConfig['sap.ui.mdc.valuehelp.Popover'];
+
+		assert.ok(oContainerConfig, "Config returned");
+		var iHeight = oPopupConfig.getContentHeight();
 		assert.equal(iHeight, 10, "height");
 		oTable.getDomRef.restore();
 
