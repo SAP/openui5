@@ -40,32 +40,6 @@
 	background-color: @sapUiButtonActiveBackground;
 }
 
-.sapMCrsl:focus {
-	&:before {
-		border: 1px solid @sapUiContentFocusColor;
-		position: absolute;
-		content: " ";
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		z-index: 2;
-		pointer-events: none;
-	}
-
-	&:after {
-		border: 1px dotted @sapUiContentContrastFocusColor;
-		position: absolute;
-		content: " ";
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		z-index: 2;
-		pointer-events: none;
-	}
-}
-
 .sapMCrslPrev:focus,
 .sapMCrslNext:focus,
 .sapMCrslPrev .sapUiIcon:focus,
@@ -93,6 +67,6 @@ html.sap-desktop .sapMCrslHud .sapMCrslNext:focus {
 		bottom: -0.125rem;
 		left: -0.125rem;
 		pointer-events: none;
-		border: 1px dotted @sapUiContentFocusColor;
+		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 	}
 }

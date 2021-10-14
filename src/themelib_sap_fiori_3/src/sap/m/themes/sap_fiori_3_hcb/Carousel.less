@@ -24,6 +24,7 @@
 
 @_sap_m_Carousel_BulletInactiveWidth: 0.5rem;
 @_sap_m_Carousel_BulletInactiveMargin: 0 0.25rem;
+@_sap_m_Carousel_FocusBorderOffsetArrow: -0.25rem;
 .sapMCrsl {
 	background-color: @sapUiBaseBG;
 	border: 0.125rem solid transparent;
@@ -56,32 +57,6 @@
 	background-color: @sapUiButtonActiveBackground;
 }
 
-.sapMCrsl:focus {
-	&:before {
-		border: 1px solid @sapUiContentFocusColor;
-		position: absolute;
-		content: " ";
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		z-index: 2;
-		pointer-events: none;
-	}
-
-	&:after {
-		border: 1px dotted @sapUiContentContrastFocusColor;
-		position: absolute;
-		content: " ";
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		z-index: 2;
-		pointer-events: none;
-	}
-}
-
 /* HCB Additional Styles */
 .sapMCrslHud .sapMCrslPrev,
 .sapMCrslHud .sapMCrslNext {
@@ -98,29 +73,4 @@
 .sapMCrslPrev .sapUiIcon:focus,
 .sapMCrslNext .sapUiIcon:focus {
 	outline: none;
-}
-
-html.sap-desktop .sapMCrslHud .sapMCrslPrev:focus,
-html.sap-desktop .sapMCrslHud .sapMCrslNext:focus {
-	&::before {
-		content: "";
-		position: absolute;
-		top: -0.25rem;
-		right: -0.25rem;
-		bottom: -0.25rem;
-		left: -0.25rem;
-		pointer-events: none;
-		border: 2px solid @sapUiContentContrastFocusColor;
-	}
-
-	&::after {
-		content: "";
-		position: absolute;
-		top: -0.25rem;
-		right: -0.25rem;
-		bottom: -0.25rem;
-		left: -0.25rem;
-		pointer-events: none;
-		border: 2px dotted @sapUiBaseBG;
-	}
 }
