@@ -78,6 +78,11 @@ sap.ui.define([
             this._getState(oMDCChart).vizTooltip.destroy();
         }
 
+        if (this._getState(oMDCChart).observer) {
+            this._getState(oMDCChart).observer.disconnect();
+            this._getState(oMDCChart).observer = null;
+        }
+
         return mStateMap.delete(oMDCChart);
     };
 
