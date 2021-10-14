@@ -98,6 +98,9 @@ sap.ui.define([
 							oChange.setRevertData(oParsedRevertDataFromCustomData);
 							oChange.markFinished();
 						});
+				} else if (bChangeStatusAppliedFinished && bIsCurrentlyAppliedOnControl) {
+					// both the change instance and the UI Control are already applied, so the change can be directly marked as finished
+					oChange.markFinished();
 				}
 				return undefined;
 			});
