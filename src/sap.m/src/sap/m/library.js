@@ -355,7 +355,14 @@ sap.ui.define([
 			"sap.m.semantic.SemanticPage",
 			"sap.m.semantic.ShareMenuPage",
 			"sap.m.semantic.FullscreenPage",
-			"sap.m.semantic.MasterPage"
+			"sap.m.semantic.MasterPage",
+			"sap.m.p13n.AbstractContainer",
+			"sap.m.p13n.BasePanel",
+			"sap.m.p13n.Container",
+			"sap.m.p13n.GroupPanel",
+			"sap.m.p13n.QueryPanel",
+			"sap.m.p13n.SelectionPanel",
+			"sap.m.p13n.SortPanel"
 		],
 		elements: [
 			"sap.m.BadgeCustomData",
@@ -414,6 +421,7 @@ sap.ui.define([
 			"sap.m.plugins.DataStateIndicator",
 			"sap.m.plugins.PasteProvider",
 			"sap.m.plugins.PluginBase",
+			"sap.m.p13n.AbstractContainerItem",
 			"sap.m.semantic.AddAction",
 			"sap.m.semantic.CancelAction",
 			"sap.m.semantic.DeleteAction",

@@ -1,0 +1,74 @@
+<mvc:View 
+    height="100%"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:p13n="sap.m.p13n"
+    class="sapUiContentPadding"
+    controllerName="sap.m.sample.p13n.Container.P13nContainer">
+
+    <VBox class="sapUiSmallMargin">
+
+        <Label labelFor="dialogChose" text="Chose Popup type"/>
+		<RadioButtonGroup select="selectPopup" id="dialogChose" columns="2" class="sapUiMediumMarginBottom">
+			<RadioButton id="dlg" text="Dialog" />
+			<RadioButton id="ppr" text="Popover" />
+		</RadioButtonGroup>
+
+        <Label labelFor="layoutType" text="Chose P13nContainer layout type"/>
+		<RadioButtonGroup select="selectLayout" id="layoutType" columns="2" class="sapUiMediumMarginBottom">
+			<RadioButton id="list" text="List" />
+			<RadioButton id="tabs" text="IconTabBar" />
+		</RadioButtonGroup>
+
+        <Button id="openBtn" text="Show P13nContainer used in Popup" press="onContainerOpen"/>
+
+        <Dialog id="d1" title="My custom p13n Dialog" verticalScrolling="false" contentWidth="25rem" contentHeight="35rem">
+            <p13n:Container id="P13nContainer" listLayout="{/listLayout}" defaultView="view2">
+                <p13n:AbstractContainerItem key="view1" text="View 1">
+                    <VBox class="sapUiSmallMargin">
+                        <Text text="My Test View 1"/>
+                    </VBox>
+                </p13n:AbstractContainerItem>
+                <p13n:AbstractContainerItem key="view2" text="View 2">
+                    <VBox class="sapUiSmallMargin">
+                        <Text text="My Test View 2"/>
+                    </VBox>
+                </p13n:AbstractContainerItem>
+                <p13n:AbstractContainerItem key="view3" text="View 3">
+                    <VBox class="sapUiSmallMargin">
+                        <Text text="My Test View 3"/>
+                    </VBox>
+                </p13n:AbstractContainerItem>
+            </p13n:Container>
+            <buttons>
+                <Button text="Add custom view" press="addCustomView"/>
+                <Button text="Close Dialog" press="closeDialog"/>
+            </buttons>
+        </Dialog>
+
+        <ResponsivePopover id="p1" title="My custom p13n Popover" verticalScrolling="false" contentWidth="25rem" contentHeight="15rem">
+            <p13n:Container id="P13nContainerPopover" listLayout="{/listLayout}" defaultView="view2">
+                <p13n:AbstractContainerItem key="view1" text="View 1">
+                    <VBox class="sapUiSmallMargin">
+                        <Text text="My Test View 1"/>
+                    </VBox>
+                </p13n:AbstractContainerItem>
+                <p13n:AbstractContainerItem key="view2" text="View 2">
+                    <VBox class="sapUiSmallMargin">
+                        <Text text="My Test View 2"/>
+                    </VBox>
+                </p13n:AbstractContainerItem>
+                <p13n:AbstractContainerItem key="view3" text="View 3">
+                    <VBox class="sapUiSmallMargin">
+                        <Text text="My Test View 3"/>
+                    </VBox>
+                </p13n:AbstractContainerItem>
+            </p13n:Container>
+            <beginButton>
+                <Button text="Add custom view" press="addCustomView"/>
+            </beginButton>
+        </ResponsivePopover>
+
+    </VBox>
+
+</mvc:View>
