@@ -1757,7 +1757,7 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 							title: "Title",
 							showTitle: false,
 							blocks: [new Text({text: "Test"})],
-							moreBlocks: [new Text({text: "Test"})]
+							moreBlocks: [new Button()]
 						})
 					]
 				})
@@ -1782,6 +1782,29 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 			assert.equal(document.activeElement, oSubSection._oSeeLessButton.getDomRef(), "See less button is focused correctly");
 			done();
 		}});
+		// act
+		oSubSection._oSeeMoreButton.firePress();
+	});
+
+	QUnit.test("Focus handling when see more / see less button is selected and focus was moved", function (assert) {
+		assert.expect(1);
+
+		// setup
+		var oSubSection = this.oObjectPage.getSections()[0].getSubSections()[0],
+			oMoreBlock = oSubSection.getMoreBlocks()[0],
+			done = assert.async();
+
+		oMoreBlock.addEventDelegate({ onAfterRendering: function() {
+			// act - moving the focus the Button
+			oMoreBlock.getDomRef().focus();
+		}});
+
+		oSubSection.addEventDelegate({ onAfterRendering: function() {
+			// assert
+			assert.equal(document.activeElement, oMoreBlock.getDomRef(), "Button in moreBlocks is focused");
+			done();
+		}});
+
 		// act
 		oSubSection._oSeeMoreButton.firePress();
 	});
