@@ -27,7 +27,7 @@ sap.ui.define([
 		MANIFEST_FILTERS = "/{SECTION}/configuration/filters",
 		MANIFEST_CONFIGURATION = "/{SECTION}",
 		APP_DATA_SOURCES = "/sap.app/dataSources",
-		REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}|\{i18n>([^\}]+)\}/g;
+		REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)(?!csrfTokens.)([^\}\}]+)\}\}|\{i18n>([^\}]+)\}/g;
 
 	/**
 	 * Creates a new Manifest object.

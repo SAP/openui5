@@ -99,6 +99,15 @@ sap.ui.define(["sap/ui/base/ManagedObject"],
 	};
 
 	/**
+	 * Sets the CSRF token handler
+	 *
+	 * @param {sap.ui.integration.util.CsrfTokenHandler} oCsrfTokenHandler The CSRF token handler.
+	 */
+	DataProvider.prototype.setCsrfTokenHandler = function (oCsrfTokenHandler) {
+		this._oCsrfTokenHandler = oCsrfTokenHandler;
+	};
+
+	/**
 	 * Sets a list of <code>sap.ui.integration.util.DataProvider</code> which will be considered dependencies of the current one.
 	 * @param {sap.ui.integration.util.DataProvider[]} aDependencies The list of dependencies.
 	 */

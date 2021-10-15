@@ -892,7 +892,11 @@ sap.ui.define([
 			this._oDataProviderFactory.destroy();
 		}
 		var oExtension = this.getAggregation("_extension");
-		this._oDataProviderFactory = new DataProviderFactory(this._oDestinations, oExtension, undefined, this);
+		this._oDataProviderFactory = new DataProviderFactory({
+			destinations: this._oDestinations,
+			extension: oExtension,
+			editor: this
+		});
 	};
 
 	/**

@@ -9,10 +9,18 @@ sap.ui.define([
 	"sap/ui/integration/util/DataProvider",
 	"sap/ui/integration/util/ExtensionDataProvider",
 	"sap/ui/integration/util/JSONBindingHelper",
-	"sap/ui/integration/util/BindingHelper"
-],
-function (BaseObject, ServiceDataProvider, RequestDataProvider, CacheAndRequestDataProvider, DataProvider, ExtensionDataProvider, JSONBindingHelper, BindingHelper) {
-"use strict";
+	"sap/ui/integration/util/BindingHelper",
+	"sap/ui/integration/util/CsrfTokenHandler"
+], function (BaseObject,
+			 ServiceDataProvider,
+			 RequestDataProvider,
+			 CacheAndRequestDataProvider,
+			 DataProvider,
+			 ExtensionDataProvider,
+			 JSONBindingHelper,
+			 BindingHelper,
+			 CsrfTokenHandler) {
+	"use strict";
 
 	/**
 	 * @class
@@ -28,13 +36,24 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, CacheAndRequestD
 	 * @alias sap.ui.integration.util.DataProviderFactory
 	 */
 	var DataProviderFactory = BaseObject.extend("sap.ui.integration.util.DataProviderFactory", {
-		constructor: function (oDestinations, oExtension, oCard, oEditor, oHost) {
+		constructor: function (mSettings) {
 			BaseObject.call(this);
-			this._oDestinations = oDestinations;
-			this._oExtension = oExtension;
-			this._oCard = oCard;
-			this._oEditor = oEditor;
-			this._oHost = oHost;
+
+			mSettings = mSettings || {};
+
+			this._oDestinations = mSettings.destinations;
+			this._oExtension = mSettings.extension;
+			this._oCsrfTokenHandler = mSettings.csrfTokenHandler;
+			this._oCard = mSettings.card;
+			this._oEditor = mSettings.editor;
+			this._oHost = mSettings.host;
+
+			if (mSettings.csrfTokensConfig) {
+				this._oCsrfTokenHandler = new CsrfTokenHandler({
+					host: mSettings.host,
+					configuration: mSettings.csrfTokensConfig
+				});
+			}
 
 			this._aDataProviders = [];
 			this._aFiltersProviders = [];
@@ -57,6 +76,11 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, CacheAndRequestD
 
 			this._aDataProviders = null;
 			this._aFiltersProviders = null;
+		}
+
+		if (this._oCsrfTokenHandler) {
+			this._oCsrfTokenHandler.destroy();
+			this._oCsrfTokenHandler = null;
 		}
 
 		this._oCard = null;
@@ -137,6 +161,11 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, CacheAndRequestD
 
 		oDataProvider.setDestinations(this._oDestinations);
 
+		if (this._oCsrfTokenHandler) {
+			oDataProvider.setCsrfTokenHandler(this._oCsrfTokenHandler);
+			this._oCsrfTokenHandler.setDataProviderFactory(this);
+		}
+
 		if (oDataProvider.isA("sap.ui.integration.util.IServiceDataProvider")) {
 			oDataProvider.createServiceInstances(oServiceManager);
 		}
@@ -169,6 +198,14 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, CacheAndRequestD
 
 		if (oDataProvider && !oDataProvider.bDestroyed && oDataProvider._bIsDestroyed) {
 			oDataProvider.destroy();
+		}
+	};
+
+	DataProviderFactory.prototype.setHost = function (oHost) {
+		this._oHost = oHost;
+
+		if (this._oCsrfTokenHandler) {
+			this._oCsrfTokenHandler.setHost(oHost);
 		}
 	};
 

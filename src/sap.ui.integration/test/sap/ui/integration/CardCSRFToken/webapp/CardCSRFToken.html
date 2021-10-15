@@ -3,16 +3,17 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Cards Caching</title>
+	<title>Cards CSRF Token</title>
 	<link rel="icon" href="../images/favicon.ico" type="image/x-icon" />
 	<script id="sap-ui-bootstrap"
 			src="../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_fiori_3"
 			data-sap-ui-resourceroots='{
-				"sap.ui.CardsCaching": "./"
+				"sap.ui.CardCSRFToken": "./"
 			}'
-			data-sap-ui-oninit="module:sap/ui/CardsCaching/initMockServer"
+			data-sap-ui-oninit="module:sap/ui/CardCSRFToken/initMockServer"
 			data-sap-ui-compatVersion="edge"
+			data-sap-ui-xx-bindingSyntax="complex"
 			data-sap-ui-async="true"
 			data-sap-ui-xx-supportedLanguages="">
 	</script>
@@ -25,8 +26,8 @@
 
 <body class="sapUiBody">
 <div data-sap-ui-component
-	 data-name="sap.ui.CardsCaching"
+	 data-name="sap.ui.CardCSRFToken"
 	 data-id="container"
-	 data-settings='{"id" : "CardsCaching"}'></div>
+	 data-settings='{"id" : "CardCSRFToken"}'></div>
 </body>
 </html>

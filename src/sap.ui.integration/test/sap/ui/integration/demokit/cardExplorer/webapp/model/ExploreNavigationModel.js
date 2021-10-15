@@ -1124,6 +1124,19 @@ sap.ui.define([
 										key: 'manifest.json'
 									}
 								]
+							},
+							{
+								title: 'Using a CSRF token',
+								key: 'csrf',
+								experimental: true,
+								mockServer: true,
+								files: [
+									{
+										url: '/samples/data/csrf/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
 							}
 						]
 					},

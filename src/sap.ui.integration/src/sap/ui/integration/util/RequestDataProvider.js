@@ -16,7 +16,7 @@ sap.ui.define([
 	var RETRY_STATUS_CODES = [429, 503];
 
 	var aModes = ["no-cors", "same-origin", "cors"];
-	var aMethods = ["GET", "POST"];
+	var aMethods = ["GET", "POST", "HEAD"];
 
 	/**
 	 * Constructor for a new <code>RequestDataProvider</code>.
@@ -61,6 +61,10 @@ sap.ui.define([
 		DataProvider.prototype.destroy.apply(this, arguments);
 	};
 
+	RequestDataProvider.prototype.getLastJQXHR = function () {
+		return this._lastJQXHR;
+	};
+
 	/**
 	 * @override
 	 * @private
@@ -68,35 +72,39 @@ sap.ui.define([
 	 * @returns {Promise} A promise resolved when the data is available and rejected in case of an error.
 	 */
 	RequestDataProvider.prototype.getData = function () {
-		var oRequestConfig = this.getSettings().request;
+		var oRequestConfig = this.getSettings().request,
+			pRequestChain = Promise.resolve(oRequestConfig);
 
 		if (this._oDestinations) {
-			return this._oDestinations.process(oRequestConfig)
-				.then(this._fetch.bind(this));
+			pRequestChain = this._oDestinations.process(oRequestConfig);
 		}
 
-		return this._fetch(oRequestConfig);
+		if (this._oCsrfTokenHandler) {
+			pRequestChain = pRequestChain.then(function (oRequest) {
+				return this._oCsrfTokenHandler.resolveToken(oRequest);
+			}.bind(this));
+		}
+
+		pRequestChain = pRequestChain.then(this._fetch.bind(this));
+
+		if (this._oCsrfTokenHandler) {
+			pRequestChain = pRequestChain.catch(this._handleExpiredToken.bind(this));
+		}
+
+		return pRequestChain;
 	};
 
-	RequestDataProvider.prototype._isValidRequest = function (oRequest) {
+	RequestDataProvider.prototype._handleExpiredToken = function (oError) {
+		if (this._oCsrfTokenHandler.isExpiredToken(this.getLastJQXHR())) {
+			// csrf token has expired, reset the token and retry this whole request
+			this._oCsrfTokenHandler.resetTokenByRequest(this.getSettings().request);
 
-		if (!oRequest) {
-			return false;
+			return this.getData().catch(function (oError) {
+				throw oError;
+			});
 		}
 
-		if (aModes.indexOf(oRequest.mode) === -1) {
-			return false;
-		}
-
-		if (aMethods.indexOf(oRequest.method) === -1) {
-			return false;
-		}
-
-		if (typeof oRequest.url !== "string") {
-			return false;
-		}
-
-		return true;
+		throw oError;
 	};
 
 	RequestDataProvider.prototype._fetch = function (oRequestConfig) {
@@ -151,6 +159,10 @@ sap.ui.define([
 			}
 		};
 
+		if (!vData) {
+			delete oRequest.data;
+		}
+
 		if (!this._isValidRequest(oRequest)) {
 			Log.error(sMessage);
 			return Promise.reject(sMessage);
@@ -158,11 +170,10 @@ sap.ui.define([
 
 		return this._request(oRequest)
 			.then(function (vResult) {
-				var vData = vResult[0],
-					jqXHR = vResult[1];
+				var vData = vResult[0];
 
 				if (mBatchRequests) {
-					return this._deserializeBatchResponse(mBatchRequests, vData, jqXHR);
+					return this._deserializeBatchResponse(mBatchRequests, vData);
 				}
 
 				return vData;
@@ -177,28 +188,35 @@ sap.ui.define([
 	 */
 	RequestDataProvider.prototype._request = function (oRequest, bNoRetry) {
 		return new Promise(function (resolve, reject) {
-			jQuery.ajax(oRequest).done(function (vData, sTextStatus, jqXHR) {
-				if (this.bIsDestroyed) {
-					reject("RequestDataProvider is already destroyed before the response is received.");
-					return;
-				}
+			jQuery.ajax(oRequest).done(
+				function (vData, sTextStatus, jqXHR) {
+					if (this.bIsDestroyed) {
+						reject("RequestDataProvider is already destroyed before the response is received.");
+						return;
+					}
 
-				resolve([vData, jqXHR]);
-			}).fail(function (jqXHR, sTextStatus, sError) {
-				var aError = [sError, jqXHR];
+					this._lastJQXHR = jqXHR;
 
-				if (this.bIsDestroyed) {
-					reject("RequestDataProvider is already destroyed while error in the response occurred.");
-					return;
-				}
+					resolve([vData, jqXHR]);
+				}.bind(this)
+			).fail(
+				function (jqXHR, sTextStatus, sError) {
+					var aError = [sError, jqXHR];
 
-				if (bNoRetry) {
-					reject(aError);
-					return;
-				}
+					if (this.bIsDestroyed) {
+						reject("RequestDataProvider is already destroyed while error in the response occurred.");
+						return;
+					}
 
-				this._retryRequest(aError, oRequest).then(resolve, reject);
-			}.bind(this));
+					this._lastJQXHR = jqXHR;
+
+					if (bNoRetry) {
+						reject(aError);
+						return;
+					}
+
+					this._retryRequest(aError, oRequest).then(resolve, reject);
+				}.bind(this));
 		}.bind(this));
 	};
 
@@ -284,17 +302,37 @@ sap.ui.define([
 		return false;
 	};
 
+	RequestDataProvider.prototype._isValidRequest = function (oRequest) {
+
+		if (!oRequest) {
+			return false;
+		}
+
+		if (aModes.indexOf(oRequest.mode) === -1) {
+			return false;
+		}
+
+		if (aMethods.indexOf(oRequest.method) === -1) {
+			return false;
+		}
+
+		if (typeof oRequest.url !== "string") {
+			return false;
+		}
+
+		return true;
+	};
+
 	/**
 	 * Deserializes the result of a batch (multipart/mixed) request.
 	 * @private
 	 * @param {map} mBatchRequests The requests which were send in batch. Order in the response must match.
 	 * @param {Object} sResponseBody The response to be deserialized.
-	 * @param {jqXHR} jqXHR The jQuery XHR which goes with the response.
 	 * @returns {Object} The deserialized response. Each object in the result will have a key matching the one in the request.
 	 */
-	RequestDataProvider.prototype._deserializeBatchResponse = function (mBatchRequests, sResponseBody, jqXHR) {
+	RequestDataProvider.prototype._deserializeBatchResponse = function (mBatchRequests, sResponseBody) {
 		return new Promise(function(resolve, reject) {
-			var sContentType = jqXHR.getResponseHeader("Content-Type"),
+			var sContentType = this.getLastJQXHR().getResponseHeader("Content-Type"),
 				aBatchResponses = ODataUtils.deserializeBatchResponse(sContentType, sResponseBody, false),
 				aKeys = Object.keys(mBatchRequests),
 				mResult = {};
@@ -319,7 +357,7 @@ sap.ui.define([
 			});
 
 			resolve(mResult);
-		});
+		}.bind(this));
 	};
 
 	/**
