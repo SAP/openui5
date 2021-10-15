@@ -73,14 +73,14 @@ sap.ui.define([
 		};
 	}
 
-	function getLabelChangeContent(sFileName, sSelectorId) {
+	function getLabelChangeContent(sFileName, sSelectorId, sChangeType) {
 		return {
 			fileType: "change",
 			layer: Layer.USER,
 			fileName: sFileName || "a",
 			namespace: "b",
 			packageName: "c",
-			changeType: "labelChange",
+			changeType: sChangeType || "labelChange",
 			creation: "",
 			reference: "",
 			selector: {
@@ -94,7 +94,7 @@ sap.ui.define([
 
 	var labelChangeContent = getLabelChangeContent("a");
 	var labelChangeContent2 = getLabelChangeContent("a2");
-	var labelChangeContent3 = getLabelChangeContent("a3");
+	var labelChangeContent3 = getLabelChangeContent("a3", null, "myFancyChangeType");
 	var labelChangeContent4 = getLabelChangeContent("a4", "foo");
 	var labelChangeContent5 = getLabelChangeContent("a5", "bar");
 
@@ -908,7 +908,7 @@ sap.ui.define([
 		[true, false].forEach(function(bAsInstance) {
 			var sPrefix = bAsInstance ? "as instance" : "as selector";
 			QUnit.test(sPrefix + " with no changes", function(assert) {
-				return this.oFlexController.waitForChangesToBeApplied(getControl(this.oComponent, this.oControl, bAsInstance))
+				return this.oFlexController.waitForChangesToBeApplied([{selector: getControl(this.oComponent, this.oControl, bAsInstance)}])
 					.then(function(oReturn) {
 						assert.ok(true, "then the function resolves");
 						assert.equal(oReturn, undefined, "the return value is undefined");
@@ -919,7 +919,7 @@ sap.ui.define([
 				assert.expect(2);
 				this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
 				Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
-				return this.oFlexController.waitForChangesToBeApplied(getControl(this.oComponent, this.oControl, bAsInstance))
+				return this.oFlexController.waitForChangesToBeApplied([{selector: getControl(this.oComponent, this.oControl, bAsInstance)}])
 					.then(function(oReturn) {
 						assert.equal(this.oAddAppliedCustomDataSpy.callCount, 3, "addCustomData was called 3 times");
 						assert.equal(oReturn, undefined, "the return value is undefined");
@@ -933,8 +933,8 @@ sap.ui.define([
 				Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
 				Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oOtherControl);
 				var pWaiting = this.oFlexController.waitForChangesToBeApplied([
-					getControl(this.oComponent, this.oControl, bAsInstance),
-					getControl(this.oComponent, this.oOtherControl, bAsInstance)
+					{selector: getControl(this.oComponent, this.oControl, bAsInstance)},
+					{selector: getControl(this.oComponent, this.oOtherControl, bAsInstance)}
 				]);
 				return pWaiting.then(function(oReturn) {
 					assert.equal(this.oAddAppliedCustomDataSpy.callCount, 4, "addCustomData was called 4 times");
@@ -961,7 +961,7 @@ sap.ui.define([
 
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
 
-			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
+			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
 				.then(function() {
 					assert.equal(this.oErrorLogStub.callCount, 1, "then the changeHandler threw an error");
 					assert.equal(this.oAddAppliedCustomDataSpy.callCount, 2, "addCustomData was called 2 times");
@@ -973,8 +973,8 @@ sap.ui.define([
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
 
-			this.oFlexController.waitForChangesToBeApplied(this.oControl);
-			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
+			this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}]);
+			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
 				.then(function() {
 					assert.equal(this.oAddAppliedCustomDataSpy.callCount, 3, "addCustomData was called 3 times");
 				}.bind(this));
@@ -992,7 +992,7 @@ sap.ui.define([
 			});
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange];
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
-			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
+			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
 				.then(function() {
 					assert.equal(this.oErrorLogStub.callCount, 1, "then the changeHandler threw an error");
 					assert.ok(true, "then the function resolves");
@@ -1011,8 +1011,8 @@ sap.ui.define([
 			});
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange];
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
-			this.oFlexController.waitForChangesToBeApplied(this.oControl);
-			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
+			this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}]);
+			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
 				.then(function(oReturn) {
 					assert.equal(oReturn, undefined, "the return value is undefined");
 					assert.equal(this.oErrorLogStub.callCount, 1, "then the changeHandler threw an error");
@@ -1026,7 +1026,7 @@ sap.ui.define([
 			var oChangePromiseSpy4 = sandbox.spy(this.oChange4, "addChangeProcessingPromises");
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange4];
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
-			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
+			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
 				.then(function() {
 					assert.ok(oChangePromiseSpy.called, "addChangeProcessingPromise was called");
 					assert.ok(oChangePromiseSpy2.called, "addChangeProcessingPromise was called");
@@ -1077,7 +1077,7 @@ sap.ui.define([
 			this.mChanges.mDependentChangesOnMe = mDependentChangesOnMe;
 
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
-			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
+			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
 				.then(function() {
 					assert.equal(this.oAddAppliedCustomDataSpy.callCount, 1, "addCustomData was called once");
 					assert.ok(oChangePromiseSpy.called, "change was in applying state when waitForChangesToBeApplied was called");
@@ -1117,7 +1117,7 @@ sap.ui.define([
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl3);
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
 
-			this.oFlexController.waitForChangesToBeApplied(this.oControl)
+			this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
 				.then(function() {
 					assert.ok(oChangePromiseSpy.called, "addChangeProcessingPromise was called");
 					assert.ok(oChangePromiseSpy2.called, "addChangeProcessingPromise was called");
@@ -1152,7 +1152,7 @@ sap.ui.define([
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl3);
 
-			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
+			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
 				.then(function() {
 					assert.equal(this.oAddAppliedCustomDataSpy.callCount, 4, "addCustomData was called 4 times");
 				}.bind(this));
@@ -1198,7 +1198,7 @@ sap.ui.define([
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl3);
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
 
-			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
+			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
 				.then(function() {
 					assert.equal(this.oErrorLogStub.callCount, 1, "then the changeHandler threw an error");
 					assert.equal(this.oAddAppliedCustomDataSpy.callCount, 2, "two changes were applied");
@@ -1216,7 +1216,7 @@ sap.ui.define([
 				modifier: JsControlTreeModifier,
 				flexController: this.oFlexController
 			});
-			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
+			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
 				.then(function(oReturn) {
 					assert.equal(oReturn, undefined, "the return value is undefined");
 					assert.equal(this.oDestroyAppliedCustomDataSpy.callCount, 3, "all three changes got reverted");
@@ -1234,7 +1234,7 @@ sap.ui.define([
 				flexController: this.oFlexController
 			});
 
-			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
+			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
 				.then(function() {
 					assert.equal(this.oAddAppliedCustomDataSpy.callCount, 2, "two changes were applied");
 					assert.equal(this.oDestroyAppliedCustomDataSpy.callCount, 2, "all two changes got reverted");
@@ -1250,10 +1250,38 @@ sap.ui.define([
 				});
 			}));
 
-			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
+			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl}])
 				.then(function(oReturn) {
 					assert.equal(oReturn, undefined, "the return value is undefined");
 					assert.ok(bCalled, "the function waited for the variant switch");
+				});
+		});
+
+		QUnit.test("with a change type filter and 3 queued changes - 1", function(assert) {
+			var oChangePromiseSpy = sandbox.spy(this.oChange, "addChangeProcessingPromises");
+			var oChangePromiseSpy2 = sandbox.spy(this.oChange2, "addChangeProcessingPromises");
+			var oChangePromiseSpy3 = sandbox.spy(this.oChange3, "addChangeProcessingPromises");
+			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
+			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
+			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl, changeTypes: ["labelChange"]}])
+				.then(function() {
+					assert.ok(oChangePromiseSpy.called, "addChangeProcessingPromise was called");
+					assert.ok(oChangePromiseSpy2.called, "addChangeProcessingPromise was called");
+					assert.notOk(oChangePromiseSpy3.called, "addChangeProcessingPromise was not called");
+				});
+		});
+
+		QUnit.test("with a change type filter and 3 queued changes - 2", function(assert) {
+			var oChangePromiseSpy = sandbox.spy(this.oChange, "addChangeProcessingPromises");
+			var oChangePromiseSpy2 = sandbox.spy(this.oChange2, "addChangeProcessingPromises");
+			var oChangePromiseSpy3 = sandbox.spy(this.oChange3, "addChangeProcessingPromises");
+			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
+			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
+			return this.oFlexController.waitForChangesToBeApplied([{selector: this.oControl, changeTypes: ["myFancyChangeType"]}])
+				.then(function() {
+					assert.notOk(oChangePromiseSpy.called, "addChangeProcessingPromise was not called");
+					assert.notOk(oChangePromiseSpy2.called, "addChangeProcessingPromise was not called");
+					assert.ok(oChangePromiseSpy3.called, "addChangeProcessingPromise was called");
 				});
 		});
 	});

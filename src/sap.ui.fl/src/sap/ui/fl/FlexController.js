@@ -375,18 +375,14 @@ sap.ui.define([
 	/**
 	 * Resolves with a promise after all the changes for all controls that are passed have been processed.
 	 *
-	 * @param {sap.ui.fl.Selector[]} vSelectors The control or an array of controls whose changes are being waited for
-	 * @returns {Promise} Returns a promise when all changes on the controls have been processed
+	 * @param {object[]} aSelectors - An array containing an object with {@link sap.ui.fl.Selector} and further configuration
+	 * @param {sap.ui.fl.Selector} aSelectors.selector - A {@link sap.ui.fl.Selector}
+	 * @param {string[]} [aSelectors.changeTypes] - An array containing the change types that will be considered. If empty no filtering will be done
+	 * @returns {Promise} Resolves when all changes on the controls have been processed
 	 */
-	FlexController.prototype.waitForChangesToBeApplied = function(vSelectors) {
-		var aSelectors;
-		if (Array.isArray(vSelectors)) {
-			aSelectors = vSelectors;
-		} else {
-			aSelectors = [vSelectors];
-		}
-		var aPromises = aSelectors.map(function(vSelector) {
-			return this._waitForChangesToBeApplied(vSelector);
+	FlexController.prototype.waitForChangesToBeApplied = function(aSelectors) {
+		var aPromises = aSelectors.map(function(mSelector) {
+			return this._waitForChangesToBeApplied(mSelector);
 		}.bind(this));
 		return Promise.all(aPromises)
 			.then(function() {
@@ -394,23 +390,33 @@ sap.ui.define([
 				return undefined;
 			});
 	};
+
 	/**
-	 * Resolves with a Promise after all the changes for this control have been processed.
+	 * Resolves with a Promise after all relevant changes for this control have been processed.
 	 *
-	 * @param {sap.ui.fl.Selector} vSelector The control whose changes are being waited for
-	 * @returns {Promise} Returns a promise when all changes on the control have been processed
+	 * @param {object} mPropertyBag - Object with control and list of change types
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - A {@link sap.ui.fl.Selector}
+	 * @param {string[]} mPropertyBag.changeTypes - An array containing the change types that should be considered
+	 * @returns {Promise} Resolves when all changes on the control have been processed
 	 */
-	FlexController.prototype._waitForChangesToBeApplied = function(vSelector) {
-		var oControl = vSelector.id && sap.ui.getCore().byId(vSelector.id) || vSelector;
+	FlexController.prototype._waitForChangesToBeApplied = function(mPropertyBag) {
+		function filterChanges(oChange) {
+			return !oChange.isCurrentProcessFinished()
+			&& (mPropertyBag.changeTypes.length === 0 || mPropertyBag.changeTypes.includes(oChange.getChangeType()));
+		}
+
+		mPropertyBag.changeTypes = mPropertyBag.changeTypes || [];
+		var oControl = mPropertyBag.selector.id && sap.ui.getCore().byId(mPropertyBag.selector.id) || mPropertyBag.selector;
 		var mChangesMap = this._oChangePersistence.getChangesMapForComponent();
 		var aPromises = [];
 		var mDependencies = Object.assign({}, mChangesMap.mDependencies);
 		var mChanges = mChangesMap.mChanges;
 		var aChangesForControl = mChanges[oControl.getId()] || [];
-		var aNotYetProcessedChanges = aChangesForControl.filter(function(oChange) {
-			return !oChange.isCurrentProcessFinished();
-		}, this);
-		var oAppComponent = vSelector.appComponent || Utils.getAppComponentForControl(oControl);
+
+		// filter out already applied changes and, if given, filter by change type
+		var aNotYetProcessedChanges = aChangesForControl.filter(filterChanges);
+
+		var oAppComponent = mPropertyBag.selector.appComponent || Utils.getAppComponentForControl(oControl);
 		var aRelevantChanges = [];
 		aNotYetProcessedChanges.forEach(function(oChange) {
 			var aChanges = checkDependencies(oChange, mDependencies, mChangesMap.mChanges, oAppComponent, []);
