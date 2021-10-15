@@ -2199,7 +2199,7 @@ sap.ui.define([
 	QUnit.test("checkUpdateInternal: relative binding with cache, parent binding data has changed",
 			function (assert) {
 		var oCache = {
-				$resourcePath : "TEAMS('4711')/TEAM_2_MANAGER"
+				getResourcePath : function () {}
 			},
 			oBinding = new ODataParentBinding({
 				oCache : oCache,
@@ -2212,6 +2212,8 @@ sap.ui.define([
 			oPathPromise = Promise.resolve("TEAMS('8192')/TEAM_2_MANAGER"),
 			bRefreshed = false;
 
+		this.mock(oCache).expects("getResourcePath").withExactArgs()
+			.returns("TEAMS('4711')/TEAM_2_MANAGER");
 		this.mock(oBinding).expects("fetchResourcePath")
 			.withExactArgs(sinon.match.same(oBinding.oContext))
 			.returns(SyncPromise.resolve(oPathPromise)); // data for path "/TEAMS/1" has changed
@@ -2235,7 +2237,7 @@ sap.ui.define([
 			function (assert) {
 		var sPath = "/TEAMS('4711')/TEAM_2_MANAGER",
 			oCache = {
-				$resourcePath : sPath
+				getResourcePath : function () {}
 			},
 			oBinding = new ODataParentBinding({
 				oCache : oCache,
@@ -2275,6 +2277,7 @@ sap.ui.define([
 			}),
 			oPathPromise = Promise.resolve(sPath);
 
+		this.mock(oCache).expects("getResourcePath").withExactArgs().returns(sPath);
 		this.mock(oBinding).expects("fetchResourcePath")
 			.withExactArgs(sinon.match.same(oBinding.oContext))
 			.returns(SyncPromise.resolve(oPathPromise));
@@ -2298,7 +2301,7 @@ sap.ui.define([
 		QUnit.test("createInCache: with cache, canceled: " + bCancel, function (assert) {
 			var sCanonicalPath = "/TEAMS('1')/EMPLOYEES",
 				oCache = {
-					$resourcePath : sCanonicalPath,
+					getResourcePath : function () {},
 					create : function () {}
 				},
 				oCreateError = new Error("canceled"),
@@ -2317,6 +2320,8 @@ sap.ui.define([
 
 			oBinding.mCacheByResourcePath[sCanonicalPath] = oCache;
 
+			this.mock(oCache).expects("getResourcePath").exactly(bCancel ? 0 : 1).withExactArgs()
+				.returns(sCanonicalPath);
 			this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/TEAMS('1')");
 			this.mock(_Helper).expects("getRelativePath")
 				.withExactArgs("/TEAMS('1')/TEAM_2_EMPLOYEES", "/TEAMS('1')")
@@ -2343,7 +2348,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createInCache: cache without $resourcePath", function (assert) {
+	QUnit.test("createInCache: binding without mCacheByResourcePath", function (assert) {
 		var oCache = {
 				create : function () {}
 			},

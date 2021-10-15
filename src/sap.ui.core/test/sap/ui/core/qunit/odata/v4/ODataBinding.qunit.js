@@ -1644,7 +1644,6 @@ sap.ui.define([
 			assert.strictEqual(oBinding.mCacheByResourcePath, undefined);
 		}
 		assert.strictEqual(oCache.$deepResourcePath, "deep/resource/path");
-		assert.strictEqual(oCache.$resourcePath, "/resource/path");
 		assert.strictEqual(oCache.$generation, bV4Context ? iGeneration : 0);
 	});
 
@@ -1782,7 +1781,6 @@ sap.ui.define([
 		assert.strictEqual(oBinding.mCacheQueryOptions, mMergedQueryOptions);
 		assert.strictEqual(oBinding.mCacheByResourcePath["/resource/path"], oCache1);
 		assert.strictEqual(oCache1.$deepResourcePath, "deep/resource/path");
-		assert.strictEqual(oCache1.$resourcePath, "/resource/path");
 		assert.strictEqual(oCache1.$generation, 42);
 	});
 

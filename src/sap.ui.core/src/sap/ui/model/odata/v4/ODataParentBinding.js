@@ -432,7 +432,7 @@ sap.ui.define([
 		return this.oCachePromise.then(function (oCache) {
 			if (oCache && that.bRelative) {
 				return that.fetchResourcePath(that.oContext).then(function (sResourcePath) {
-					if (oCache.$resourcePath === sResourcePath) {
+					if (oCache.getResourcePath() === sResourcePath) {
 						return updateDependents();
 					}
 					return that.refreshInternal(""); // entity of context changed
@@ -479,10 +479,10 @@ sap.ui.define([
 				return oCache.create(oUpdateGroupLock, vCreatePath, sPathInCache,
 					sTransientPredicate, oInitialData, fnErrorCallback, fnSubmitCallback
 				).then(function (oCreatedEntity) {
-					if (oCache.$resourcePath) {
+					if (that.mCacheByResourcePath) {
 						// Ensure that cache containing non-transient created entity is recreated
 						// when the parent binding changes to another row and back again.
-						delete that.mCacheByResourcePath[oCache.$resourcePath];
+						delete that.mCacheByResourcePath[oCache.getResourcePath()];
 					}
 					return oCreatedEntity;
 				});
