@@ -1126,6 +1126,22 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("the same view gets created twice", function(assert) {
+			this.oApplyChangeOnControlStub.resolves({success: true});
+			var oSetQueueSpy = sandbox.spy(this.oChange, "setQueuedForApply");
+			var oMarkFinishedSpy = sandbox.spy(this.oChange, "markFinished");
+			return Applier.applyAllChangesForXMLView(this.mPropertyBag, [this.oChange]).then(function() {
+				assert.strictEqual(oSetQueueSpy.callCount, 1, "the change was queued");
+
+				this.oChange.markFinished();
+				sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").resolves(true);
+
+				return Applier.applyAllChangesForXMLView(this.mPropertyBag, [this.oChange]);
+			}.bind(this)).then(function() {
+				assert.strictEqual(oMarkFinishedSpy.callCount, 2, "the change was marked as finished again");
+			});
+		});
+
 		QUnit.test("when change for an extension point can be applied", function(assert) {
 			this.oApplyChangeOnControlStub.resolves({success: true});
 
