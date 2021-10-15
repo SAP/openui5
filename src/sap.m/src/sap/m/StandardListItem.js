@@ -280,6 +280,8 @@ sap.ui.define([
 			StandardListItem._themeInfo = {};
 		}
 
+		var fBaseFontSize = parseFloat(library.BaseFontSize) || 16;
+
 		if (!StandardListItem._themeInfo.sFontFamily || bThemeChanged) {
 			StandardListItem._themeInfo.sFontFamily = ThemeParameters.get({
 				name: "sapUiFontFamily"
@@ -287,33 +289,24 @@ sap.ui.define([
 		}
 
 		if (!StandardListItem._themeInfo.sFontStyleInfoStateInverted || bThemeChanged) {
-			StandardListItem._themeInfo.sFontStyleInfoStateInverted = "bold " + (ThemeParameters.get({
+			StandardListItem._themeInfo.sFontStyleInfoStateInverted = "bold " + parseFloat(ThemeParameters.get({
 				name: "sapMFontSmallSize"
-			}) || "0.75rem") + " " + StandardListItem._themeInfo.sFontFamily;
+			}) || "0.75rem") * fBaseFontSize + "px " + StandardListItem._themeInfo.sFontFamily;
 		}
 
 		if (!StandardListItem._themeInfo.sFontStyle || bThemeChanged) {
-			StandardListItem._themeInfo.sFontStyle = (ThemeParameters.get({
+			StandardListItem._themeInfo.sFontStyle = parseFloat(ThemeParameters.get({
 				name: "sapMFontMediumSize"
-			}) || "0.875rem") + " " + StandardListItem._themeInfo.sFontFamily;
+			}) || "0.875rem") * fBaseFontSize + "px " + StandardListItem._themeInfo.sFontFamily;
 		}
 
-		if (!StandardListItem._themeInfo.iBaseFontSize || bThemeChanged) {
-			StandardListItem._themeInfo.iBaseFontSize = parseInt(library.BaseFontSize) || 16;
+		if (!StandardListItem._oCtx) {
+			StandardListItem._oCtx = document.createElement("canvas").getContext("2d");
 		}
 
-		if (!StandardListItem._oCanvas) {
-			StandardListItem._oCanvas = document.createElement("canvas");
-			StandardListItem._oCtx = StandardListItem._oCanvas.getContext("2d");
-		}
+		StandardListItem._oCtx.font = StandardListItem._themeInfo[this.getInfoStateInverted() ? "sFontStyleInfoStateInverted" : "sFontStyle"];
 
-		if (this.getInfoStateInverted()) {
-			StandardListItem._oCtx.font = StandardListItem._themeInfo.sFontStyleInfoStateInverted || "";
-		} else {
-			StandardListItem._oCtx.font = StandardListItem._themeInfo.sFontStyle || "";
-		}
-
-		return Math.ceil(StandardListItem._oCtx.measureText(this.getInfo()).width) / StandardListItem._themeInfo.iBaseFontSize;
+		return Math.ceil(StandardListItem._oCtx.measureText(this.getInfo()).width) / fBaseFontSize;
 	};
 
 	/**
