@@ -29,12 +29,6 @@ sap.ui.define([
 		},
 		beforeEach: function() {
 			this.oGetContextsSpy.reset();
-
-			// Under some conditions, e.g. the tab is in the background, painting can be delayed. As a result, the asynchronous rendering of the
-			// Auto row mode is executed last, which is unexpected for these tests. To avoid any timing issues, we wait for the browser to be ready.
-			return new Promise(function(resolve) {
-				window.requestAnimationFrame(resolve);
-			});
 		},
 		after: function() {
 			this.oMockServer.destroy();
