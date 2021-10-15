@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/comp/smartform/Group",
 	"sap/ui/comp/smartform/GroupElement",
 	"sap/ui/comp/smartform/SmartForm",
+	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/dt/DesignTime",
@@ -44,6 +45,7 @@ sap.ui.define([
 	Group,
 	GroupElement,
 	SmartForm,
+	UIComponent,
 	Device,
 	DesignTimeMetadata,
 	DesignTime,
@@ -95,7 +97,7 @@ sap.ui.define([
 		window.sessionStorage.removeItem("sap.ui.fl.info." + sFlexReference);
 	}
 
-	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
+	QUnit.module("Given that RuntimeAuthoring is available with a component as rootControl...", {
 		before: function () {
 			return oComponentPromise;
 		},
@@ -575,7 +577,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("enableRestart", {
+	QUnit.module("Given a test app..", {
 		before: function () {
 			return oComponentPromise;
 		},
@@ -613,6 +615,17 @@ sap.ui.define([
 			RuntimeAuthoring.disableRestart(sLayer);
 
 			assert.notOk(RuntimeAuthoring.needsRestart(sLayer), "then restart is not needed");
+		});
+
+		QUnit.test("when destroying RuntimeAuthoring after the rootControl of the UI Component was already destroyed", function(assert) {
+			var oUiComponent = new UIComponent();
+			var oRuntimeAuthoring = new RuntimeAuthoring({
+				rootControl: oUiComponent
+			});
+			oRuntimeAuthoring.destroy();
+			assert.ok(true, "the function does not throw an error");
+
+			oUiComponent.destroy();
 		});
 	});
 
@@ -995,7 +1008,7 @@ sap.ui.define([
 			return oComponentPromise;
 		},
 		beforeEach: function() {
-			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+			this.oRootControl = oComp;
 			var oService = {
 				toExternal: function() {
 					return true;
