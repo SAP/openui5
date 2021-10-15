@@ -82,9 +82,17 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			oRm.class("sapFDynamicPageContentWrapper" + oDynamicPage.getBackgroundDesign());
 		}
 		oRm.openEnd();
+
+
+		oRm.openStart("div", oDynamicPage.getId() + "-headerWrapper");
+		oRm.class("sapFDynamicPageHeaderWrapper");
+		oRm.openEnd();
 		if (!bHeaderInTitleArea) {
 			oRm.renderControl(oDynamicPageHeader);
 		}
+		oRm.close("div");
+
+
 		oRm.openStart("div", oDynamicPage.getId() + "-content");
 		oRm.class("sapFDynamicPageContent");
 		oRm.accessibilityState(oDynamicPage, oDynamicPage._formatLandmarkInfo(oLandmarkInfo, "Content"));

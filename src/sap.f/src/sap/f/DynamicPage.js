@@ -810,6 +810,7 @@ sap.ui.define([
 
 		this._toggleHeaderInTabChain(false);
 		this._updateARIAStates(false);
+		this._toggleHeaderBackground(true);
 	};
 
 	/**
@@ -849,6 +850,7 @@ sap.ui.define([
 
 		this._toggleHeaderInTabChain(true);
 		this._updateARIAStates(true);
+		this._toggleHeaderBackground(false);
 	};
 
 	/**
@@ -878,6 +880,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Ensures that when the header is hidden with <code>visibility: hidden</code>
+	 * the area that it occupies still has the required background (as that area may be
+	 * visible to the user by being outside the scroll overflow).
+	 *
+	 * This is needed in FLP environment where the FLP background contrasts with
+	 * the background of the page eleemnts => we need to ensure that all non-transparent
+	 * page elements have the expected background.
+	 * @param {boolean} bShow
+	 * @private
+	 */
+	DynamicPage.prototype._toggleHeaderBackground = function (bShow) {
+		this.$headerInContentWrapper.toggleClass("sapFDynamicPageHeaderSolid", bShow);
+	};
+
+	/**
 	 * Appends header to content area.
 	 * @param {boolean} bOffsetContent - whether to offset the content bellow the newly-added header in order to visually preserve its scroll position
 	 * @private
@@ -886,7 +903,7 @@ sap.ui.define([
 		var oDynamicPageHeader = this.getHeader();
 
 		if (exists(oDynamicPageHeader)) {
-			oDynamicPageHeader.$().prependTo(this.$wrapper);
+			oDynamicPageHeader.$().prependTo(this.$headerInContentWrapper);
 			this._bHeaderInTitleArea = false;
 			if (bOffsetContent) {
 				this._offsetContentOnMoveHeader();
@@ -1751,6 +1768,7 @@ sap.ui.define([
 		}
 
 		this.$wrapper = this.$("contentWrapper");
+		this.$headerInContentWrapper = this.$("headerWrapper");
 		this.$contentFitContainer = this.$("contentFitContainer");
 		this.$titleArea = this.$("header");
 		this.$stickyPlaceholder = this.$("stickyPlaceholder");

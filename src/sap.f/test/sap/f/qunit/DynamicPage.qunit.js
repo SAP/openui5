@@ -463,6 +463,18 @@ function (
 		assertCSSReset(assert, $MainActions[0]);
 	});
 
+	QUnit.test("Snapped header in content has solid background", function (assert) {
+		var oDynamicPage = this.oDynamicPage;
+
+		oDynamicPage._snapHeader();
+		assert.ok(oDynamicPage.$headerInContentWrapper.hasClass("sapFDynamicPageHeaderSolid"),
+			"The snapped header in content has solid background");
+
+		oDynamicPage._expandHeader();
+		assert.notOk(oDynamicPage.$headerInContentWrapper.hasClass("sapFDynamicPageHeaderSolid"),
+			"The expanded header in content does not have solid background");
+	});
+
 	QUnit.module("DynamicPage - Rendering - No Title", {
 		beforeEach: function () {
 			this.oDynamicPageNoTitle = oFactory.getDynamicPageNoTitle();
