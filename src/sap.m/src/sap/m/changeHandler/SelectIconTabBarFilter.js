@@ -31,7 +31,13 @@ sap.ui.define([
 		var oModifier = mPropertyBag.modifier;
 		var oChangeDefinition = oChange.getDefinition();
 
+		// Make sure the "select" event of the control is fired.
+		// By default it is not fired when the "selectedKey" property is changed,
+		// but only via user interaction
+		oControl._bFireSelectEvent = true;
 		oModifier.setProperty(oControl, "selectedKey", oChangeDefinition.content.selectedKey);
+		oControl._bFireSelectEvent = false;
+
 		oChange.setRevertData(oChangeDefinition.content.previousSelectedKey);
 	};
 
@@ -48,7 +54,13 @@ sap.ui.define([
 		var oModifier = mPropertyBag.modifier;
 		var sPreviousSelectedKey = oChange.getRevertData();
 
+		// Make sure the "select" event of the control is fired.
+		// By default it is not fired when the "selectedKey" property is changed,
+		// but only via user interaction
+		oControl._bFireSelectEvent = true;
 		oModifier.setProperty(oControl, "selectedKey", sPreviousSelectedKey);
+		oControl._bFireSelectEvent = false;
+
 		oChange.resetRevertData();
 	};
 
