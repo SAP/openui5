@@ -322,7 +322,7 @@ sap.ui.define([
 
         Chart.prototype.setP13nMode = function(aMode) {
             var aSortedKeys = null;
-            if (aMode && aMode.length > 1){
+            if (aMode && aMode.length >= 1){
                 aSortedKeys = [];
                 var mKeys = aMode.reduce(function(mMap, sKey, iIndex){
                     mMap[sKey] = true;
