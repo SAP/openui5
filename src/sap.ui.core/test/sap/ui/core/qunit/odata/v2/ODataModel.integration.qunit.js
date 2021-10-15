@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/MessageScope",
+	"sap/ui/model/odata/v2/Context",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/datajs",
@@ -26,7 +27,7 @@ sap.ui.define([
 	// "sap/ui/table/Table"
 ], function (Log, uid, Device, ManagedObjectObserver, SyncPromise, coreLibrary, Message, Controller,
 		View, BindingMode, Filter, FilterOperator, Sorter, JSONModel, CountMode, MessageScope,
-		ODataModel, TestUtils, datajs, XMLHelper) {
+		Context, ODataModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
 	"use strict";
@@ -10669,6 +10670,131 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		}).then(function () {
 			assert.strictEqual(oBinding.getCount(), 3, "number of contexts");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Multi create with relative binding and messages
+	// CPOUI5MODELS-635
+	QUnit.test("Multi create with relative binding and messages", function (assert) {
+		var oBinding, oCreatedContext, oObjectPage, oTable,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox id="flexbox">\
+	<Table id="table" growing="true" items="{ToLineItems}">\
+		<Text id="itemPosition" text="{ItemPosition}"/>\
+		<Text id="note" text="{Note}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oObjectPage = that.oView.byId("flexbox");
+
+			that.expectHeadRequest()
+				.expectRequest({
+					deepPath : "/BusinessPartnerSet('4711')/ToSalesOrders('42')/ToLineItems",
+					headers : {},
+					method : "GET",
+					requestUri : "SalesOrderSet('42')/ToLineItems?$skip=0&$top=20"
+				}, {
+					results : [{
+						__metadata : {
+							uri : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')"
+						},
+						ItemPosition : "10",
+						Note : "Position 10",
+						SalesOrderID : "42"
+					}]
+				}, {"sap-message" : getMessageHeader(that.createResponseMessage(
+					"(SalesOrderID='42',ItemPosition='10')/Note", "message-0"))})
+				.expectMessages([{
+					code : "code-0",
+					fullTarget : "/BusinessPartnerSet('4711')/ToSalesOrders('42')"
+						+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/Note",
+					message : "message-0",
+					persistent : false,
+					target : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/Note",
+					technical : false,
+					type : "Error"
+				}])
+				.expectValue("itemPosition", ["10"])
+				.expectValue("note", ["Position 10"]);
+
+			// code under test - relative binding context
+			oObjectPage.setBindingContext(new Context(oModel, "/SalesOrderSet('42')",
+				"/BusinessPartnerSet('4711')/ToSalesOrders('42')"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oBinding = oTable.getBinding("items");
+			that.expectValue("itemPosition", ["", "10"])
+				.expectValue("note", ["Position New", "Position 10"]);
+
+			oCreatedContext = oBinding.create({Note : "Position New"}, false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrderLineItem"},
+						Note : "Position New"
+					},
+					deepPath : "/BusinessPartnerSet('4711')/ToSalesOrders('42')"
+						+ "/ToLineItems('~key~')",
+					method : "POST",
+					requestUri : "SalesOrderSet('42')/ToLineItems"
+				}, createErrorResponse({message : "POST failed", statusCode : 400}))
+				.expectMessages([{
+					code : "code-0",
+					fullTarget : "/BusinessPartnerSet('4711')/ToSalesOrders('42')"
+						+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/Note",
+					message : "message-0",
+					persistent : false,
+					target : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/Note",
+					technical : false,
+					type : "Error"
+				}, {
+					code : "UF0",
+					fullTarget : "/BusinessPartnerSet('4711')/ToSalesOrders('42')"
+						+ "/ToLineItems('~key~')",
+					message : "POST failed",
+					persistent : false,
+					target : "/SalesOrderLineItemSet('~key~')",
+					technical : true,
+					type : "Error"
+				}]);
+
+			that.oLogMock.expects("error")
+				.withExactArgs("Request failed with status code 400: "
+					+ "POST SalesOrderSet('42')/ToLineItems",
+					/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
+
+			// code under test
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("note", [""])
+				.expectValue("itemPosition", ["10"])
+				.expectValue("note", ["Position 10"])
+				.expectMessages([{
+					code : "code-0",
+					fullTarget : "/BusinessPartnerSet('4711')/ToSalesOrders('42')"
+						+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/Note",
+					message : "message-0",
+					persistent : false,
+					target : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/Note",
+					technical : false,
+					type : "Error"
+				}]);
+
+			return Promise.all([
+				oModel.resetChanges([oCreatedContext.getPath()], undefined, true),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 });
