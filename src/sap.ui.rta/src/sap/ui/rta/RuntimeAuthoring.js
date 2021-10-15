@@ -1976,7 +1976,7 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._getUShellService = function(sServiceName) {
-		return this._mUShellServices[sServiceName];
+		return FlexUtils.getUshellContainer() && this._mUShellServices[sServiceName];
 	};
 
 	return RuntimeAuthoring;

@@ -1510,7 +1510,7 @@ sap.ui.define([
 	 * @returns {sap.ui.core.service.Service} The service object
 	 */
 	VariantModel.prototype.getUShellService = function(sServiceName) {
-		return _mUShellServices[sServiceName];
+		return Utils.getUshellContainer() && _mUShellServices[sServiceName];
 	};
 
 	return VariantModel;
