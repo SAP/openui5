@@ -1,7 +1,8 @@
 sap.ui.define([
+	"sap/ui/Device",
 	"sap/ui/core/Patcher",
 	"sap/base/security/encodeXML"
-], function(Patcher, encodeXML) {
+], function(Device, Patcher, encodeXML) {
 
 	"use strict";
 	/*global QUnit, CSS*/
@@ -320,7 +321,11 @@ sap.ui.define([
 			oPatcher.openStart("div").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
-			assert.equal(oElement.getAttribute("style"), null, "style attribute is removed");
+			if ( Device.browser.safari ) {
+				assert.equal(oElement.getAttribute("style"), "", "style attribute is cleared, but not removed (due to Webkit bug #227349)");
+			} else {
+				assert.equal(oElement.getAttribute("style"), null, "style attribute is removed");
+			}
 		});
 
 		this.html("<div></div>", function(oElement) {
@@ -329,7 +334,11 @@ sap.ui.define([
 			oPatcher.openStart("div").style("width", "").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
-			assert.equal(oElement.getAttribute("style"), null, "style attribute is removed since it had no value");
+			if ( Device.browser.safari ) {
+				assert.equal(oElement.getAttribute("style"), "", "style attribute is cleared since it had no value, but not removed (due to Webkit bug #227349)");
+			} else {
+				assert.equal(oElement.getAttribute("style"), null, "style attribute is removed since it had no value");
+			}
 		});
 
 		this.html("<div></div>", function(oElement) {
