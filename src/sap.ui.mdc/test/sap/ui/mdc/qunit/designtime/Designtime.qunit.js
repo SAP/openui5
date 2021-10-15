@@ -1,7 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/mdc/Chart",
+	"sap/ui/mdc/ChartNew",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/FilterBar",
 	"sap/ui/mdc/filterbar/FilterBarBase",
@@ -23,7 +23,7 @@ sap.ui.define([
 
 		beforeEach: function() {
 		   this.aControls = [
-//				new Chart(),
+				new Chart(),
 //				new Table(),
 //				new Field(),
 //				new FilterField(),

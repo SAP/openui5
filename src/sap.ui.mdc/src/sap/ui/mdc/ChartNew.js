@@ -68,6 +68,7 @@ sap.ui.define([
         var Chart = Control.extend("sap.ui.mdc.ChartNew", /** @lends sap.ui.mdc.ChartNew.prototype */ {
             metadata: {
                 library: "sap.ui.mdc",
+                designtime: "sap/ui/mdc/designtime/chart/ChartNew.designtime",
                 interfaces: [
                     "sap.ui.mdc.IxState"
                 ],
