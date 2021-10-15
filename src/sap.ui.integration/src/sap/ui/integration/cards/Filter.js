@@ -261,7 +261,9 @@ sap.ui.define([
 		});
 
 		sParams[sManifestKey] = oSelectedItem.getKey();
-		oCard._fireConfigurationChange(sParams);
+		if (oCard) {
+			oCard._fireConfigurationChange(sParams);
+		}
 	};
 
 	/**
