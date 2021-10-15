@@ -383,8 +383,7 @@ sap.ui.define([
 				// this promise is not returned since the component is getting destroyed,
 				// which will also destroy the variant model anyway,
 				// but this is just to ensure the model is in sync with the variants state (which is persisted)
-				mPropertyBag.model.resetMap(true)
-					.then(mPropertyBag.model.destroy.bind(mPropertyBag.model));
+				mPropertyBag.model.destroy();
 				mPropertyBag.model.oComponentDestroyObserver.unobserve(mPropertyBag.model.oAppComponent, {destroy: true});
 				mPropertyBag.model.oComponentDestroyObserver.destroy();
 			});

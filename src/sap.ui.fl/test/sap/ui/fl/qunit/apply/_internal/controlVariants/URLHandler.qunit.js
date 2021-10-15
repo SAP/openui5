@@ -36,7 +36,7 @@ sap.ui.define([
 			this.oAppComponent = new Component("appComponent");
 			this.oModel = {
 				oAppComponent: this.oAppComponent,
-				resetMap: sandbox.stub().resolves(),
+				destroy: sandbox.stub().resolves(),
 				getUShellService: function() {}
 			};
 			this.fnDestroyObserverSpy = sandbox.spy(ManagedObjectObserver.prototype, "observe");
@@ -121,9 +121,9 @@ sap.ui.define([
 
 			URLHandler.initialize({model: this.oModel});
 
-			this.oModel.destroy = function() {
+			this.oModel.destroy = sandbox.stub().callsFake(function() {
 				assert.ok(true, "then the passed VariantModel is destroyed");
-			};
+			});
 			URLHandler.attachHandlers({vmReference: sVariantManagementReference, updateURL: true, model: this.oModel}); // app component's destroy handlers are attached here
 
 			var fnVariantSwitchPromiseStub = sandbox.stub();
@@ -137,8 +137,7 @@ sap.ui.define([
 
 			return this.oModel._oVariantSwitchPromise.then(function() {
 				var aCallArgs = this.fnDestroyUnobserverSpy.getCall(0).args;
-				assert.equal(this.oModel.resetMap.callCount, 1, "then variant model resetMap() was called");
-				assert.strictEqual(this.oModel.resetMap.getCall(0).args[0], true, "the correct boolean was passed");
+				assert.equal(this.oModel.destroy.callCount, 1, "then variant model resetMap() was called");
 				assert.deepEqual(aCallArgs[0], this.oAppComponent, "then ManagedObjectObserver unobserve() was called for the AppComponent");
 				assert.strictEqual(aCallArgs[1].destroy, true, "then ManagedObjectObserver unobserve() was called for the destroy() method");
 				assert.ok(fnVariantSwitchPromiseStub.calledBefore(this.fnDestroyUnobserverSpy), "then first variant switch was resolved and then component's destroy callback was called");
@@ -601,7 +600,7 @@ sap.ui.define([
 				}
 			}, {
 				flexController: oFlexController,
-				appComponent: {}
+				appComponent: { getId: function() { return "testid"; } }
 			});
 
 			this.oGetUShellServiceStub = sandbox.stub(this.oModel, "getUShellService");
