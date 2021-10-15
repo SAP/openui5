@@ -1,5 +1,5 @@
 ---
-specVersion: "2.0"
+specVersion: "2.4"
 type: library
 metadata:
   name: sap.ui.core
@@ -11,6 +11,233 @@ resources:
   configuration:
     propertiesFileSourceEncoding: ISO-8859-1
 builder:
+  bundles:
+    - bundleDefinition:
+        name: jquery-sap.js
+        sections:
+          - mode: provided
+            filters:
+              - jquery-ui-core.js
+              - jquery-ui-datepicker.js
+              - jquery-ui-position.js
+              - sap/ui/thirdparty/jquery.js
+              - sap/ui/thirdparty/jquery/
+              - sap/ui/thirdparty/jqueryui/
+          - mode: raw
+            filters:
+              - ui5loader-autoconfig.js
+            declareRawModules: false
+            resolve: true
+          - mode: preload
+            name: jquery-sap-preload
+            filters:
+              - jquery.sap.dom.js
+              - jquery.sap.events.js
+              - jquery.sap.global.js
+              - jquery.sap.keycodes.js
+              - jquery.sap.mobile.js
+              - jquery.sap.properties.js
+              - jquery.sap.resources.js
+              - jquery.sap.script.js
+              - jquery.sap.sjax.js
+              - jquery.sap.encoder.js
+              - jquery.sap.strings.js
+              - jquery.sap.xml.js
+            resolve: false
+          - mode: require
+            filters:
+              - jquery.sap.dom.js
+              - jquery.sap.events.js
+              - jquery.sap.global.js
+              - jquery.sap.keycodes.js
+              - jquery.sap.mobile.js
+              - jquery.sap.properties.js
+              - jquery.sap.resources.js
+              - jquery.sap.script.js
+              - jquery.sap.sjax.js
+              - jquery.sap.encoder.js
+              - jquery.sap.strings.js
+              - jquery.sap.xml.js
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
+    - bundleDefinition:
+        name: sap-ui-core.js
+        sections:
+          - mode: raw
+            filters:
+              - ui5loader-autoconfig.js
+            declareRawModules: false
+            resolve: true
+          - mode: preload
+            name: sap-ui-core-preload
+            filters:
+              - sap/ui/core/Core.js
+            resolve: true
+          - mode: require
+            filters:
+              - sap/ui/core/Core.js
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
+    - bundleDefinition:
+        name: sap-ui-core-dbg.js
+        sections:
+          - mode: raw
+            filters:
+              - ui5loader-autoconfig.js
+            declareRawModules: false
+            resolve: true
+          - mode: require
+            filters:
+              - sap/ui/core/Core.js
+      bundleOptions:
+        optimize: false
+        usePredefineCalls: true
+    - bundleDefinition:
+        name: sap-ui-core-nojQuery.js
+        sections:
+          - mode: provided
+            filters:
+              - jquery-ui-core.js
+              - jquery-ui-datepicker.js
+              - jquery-ui-position.js
+              - sap/ui/thirdparty/jquery.js
+              - sap/ui/thirdparty/jquery/
+              - sap/ui/thirdparty/jqueryui/
+          - mode: raw
+            filters:
+              - ui5loader-autoconfig.js
+            declareRawModules: false
+            resolve: true
+          - mode: preload
+            name: sap-ui-core-preload
+            filters:
+              - sap/ui/core/Core.js
+            resolve: true
+          - mode: require
+            filters:
+              - sap/ui/core/Core.js
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
+    - bundleDefinition:
+        name: sap-ui-core-nojQuery-dbg.js
+        sections:
+          - mode: provided
+            filters:
+              - jquery-ui-core.js
+              - jquery-ui-datepicker.js
+              - jquery-ui-position.js
+              - sap/ui/thirdparty/jquery.js
+              - sap/ui/thirdparty/jquery/
+              - sap/ui/thirdparty/jqueryui/
+          - mode: raw
+            filters:
+              - ui5loader-autoconfig.js
+            declareRawModules: false
+            resolve: true
+          - mode: require
+            filters:
+              - sap/ui/core/Core.js
+      bundleOptions:
+        optimize: false
+        usePredefineCalls: true
+    - bundleDefinition:
+        name: sap-ui-core-lean.js
+        sections:
+          - mode: raw
+            filters:
+              - ui5loader-autoconfig.js
+            declareRawModules: false
+            resolve: true
+          - mode: require
+            filters:
+              - sap/ui/core/Core.js
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
+    - bundleDefinition:
+        name: sap-ui-debug.js
+        sections:
+          - mode: preload
+            name: sap-ui-debug-preload
+            filters:
+              - sap/ui/debug/DebugEnv.js
+              - sap/ui/debug/ControlTree.js
+              - sap/ui/debug/LogViewer.js
+              - sap/ui/debug/PropertyList.js
+              - sap/ui/debug/Highlighter.js
+            resolve: false
+          - mode: require
+            filters:
+              - sap/ui/debug/DebugEnv.js
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
+    - bundleDefinition:
+        name: sap-ui-testenv.js
+        sections:
+          - mode: preload
+            name: sap-ui-debug-preload
+            filters:
+              - sap/ui/test/TestEnv.js
+              - sap/ui/test/ControlTree.js
+              - sap/ui/debug/Highlighter.js
+              - jquery.sap.strings
+            resolve: false
+          - mode: require
+            filters:
+              - sap/ui/test/TestEnv.js
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
+    - bundleDefinition:
+        name: sap/ui/test/starter/runTest.js
+        sections:
+          - mode: raw
+            filters:
+              - sap/ui/test/starter/_configureLoader.js
+            declareRawModules: false
+            resolve: true
+          - mode: raw
+            filters:
+              - ui5loader-autoconfig.js
+            declareRawModules: false
+            resolve: true
+          - mode: preload
+            name: runTest-preload
+            filters:
+              - sap/ui/test/starter/_setupAndStart.js
+              - sap/ui/thirdparty/qunit*
+              - sap/ui/thirdparty/sinon*
+              - sap/ui/core/Core.js
+            resolve: true
+          - mode: require
+            filters:
+              - sap/ui/test/starter/_setupAndStart.js
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
+    - bundleDefinition:
+        name: sap/ui/test/starter/runTest-dbg.js
+        sections:
+          - mode: raw
+            filters:
+              - sap/ui/test/starter/_configureLoader.js
+            declareRawModules: false
+            resolve: true
+          - mode: raw
+            filters:
+              - ui5loader-autoconfig.js
+            declareRawModules: false
+            resolve: true
+          - mode: require
+            filters:
+              - sap/ui/test/starter/_setupAndStart.js
+      bundleOptions:
+        optimize: false
+        usePredefineCalls: true
   jsdoc:
     excludes:
       - "jquery-*"
