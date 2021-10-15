@@ -586,27 +586,17 @@ sap.ui.define([
 		sinon.spy(oContainer, "navigate");
 		sinon.spy(oContainer, "open");
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
-		var oPromise = oValueHelp.navigate(1);
-		assert.ok(oPromise instanceof Promise, "navigate returns promise");
+		oValueHelp.navigate(1);
 
-		if (oPromise) {
-			var fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then called");
-				assert.ok(oContainer.navigate.calledWith(1), "Container.navigate called");
-				assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called for navigation");
-				assert.notOk(oContainer.open.called, "Container not opened");
+		var fnDone = assert.async();
+		setTimeout(function() { // as Promise used inside
+			assert.ok(oContainer.navigate.calledWith(1), "Container.navigate called");
+			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called for navigation");
+			assert.notOk(oContainer.open.called, "Container not opened");
 
-				ValueHelpDelegate.retrieveContent.restore();
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called");
-				ValueHelpDelegate.retrieveContent.restore();
-				fnDone();
-			});
-		} else {
 			ValueHelpDelegate.retrieveContent.restore();
-		}
+			fnDone();
+		}, 0);
 
 	});
 
@@ -616,27 +606,18 @@ sap.ui.define([
 		sinon.stub(oContainer, "open").returns(Promise.resolve());
 		sinon.stub(oContainer, "shouldOpenOnNavigate").returns(true);
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
-		var oPromise = oValueHelp.navigate(1);
-		assert.ok(oPromise instanceof Promise, "navigate returns promise");
 
-		if (oPromise) {
-			var fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then called");
-				assert.ok(oContainer.navigate.calledWith(1), "Container.navigate called");
-				assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called for navigation");
-				assert.ok(oContainer.open.called, "Container opened");
+		oValueHelp.navigate(1);
 
-				ValueHelpDelegate.retrieveContent.restore();
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called");
-				ValueHelpDelegate.retrieveContent.restore();
-				fnDone();
-			});
-		} else {
+		var fnDone = assert.async();
+		setTimeout(function() { // as Promise used inside
+			assert.ok(oContainer.navigate.calledWith(1), "Container.navigate called");
+			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called for navigation");
+			assert.ok(oContainer.open.called, "Container opened");
+
 			ValueHelpDelegate.retrieveContent.restore();
-		}
+			fnDone();
+		}, 0);
 
 	});
 
