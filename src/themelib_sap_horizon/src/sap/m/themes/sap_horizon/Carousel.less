@@ -44,5 +44,16 @@
 .sapMCrslNext:focus,
 .sapMCrslPrev .sapUiIcon:focus,
 .sapMCrslNext .sapUiIcon:focus {
-  outline: none;
+  outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+}
+
+html.sap-desktop .sapMCrslHud .sapMCrslPrev:focus,
+html.sap-desktop .sapMCrslHud .sapMCrslNext:focus {
+  &::before {
+	content: none;
+  }
+
+  &::after {
+	content: none;
+  }
 }

@@ -9,6 +9,9 @@
 @_sap_f_Card_BorderRadius: @sapUiElementBorderCornerRadius;
 @_sap_f_Card_ContentPadding: 1rem;
 @_sap_f_Card_HeaderFocusBorderBottomOffset: 1px;
+@_sap_f_Card_HeaderFocusBorderTopOffset: 1px;
+@_sap_f_Card_HeaderFocusBorderLeftOffset: 1px;
+@_sap_f_Card_HeaderFocusBorderRightOffset: 1px;
 @_sap_f_Card_Badge_Background: @sapInformativeColor;
 @_sap_f_Card_Badge_Color: @sapContent_ContrastTextColor;
 @_sap_f_Card_Badge_Border: 0.0625rem solid @sapButton_Lite_BorderColor;
@@ -138,7 +141,7 @@
 		width: 100%;
 	}
 
-  	.sapFCardHeaderTextSecondLine {
+	.sapFCardHeaderTextSecondLine {
 		margin-top: 0.25rem;
 		display: flex;
 		justify-content: space-between;
@@ -448,10 +451,10 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 	content: '';
 	display: block;
 	position: absolute;
-	left: 1px;
+	left: @_sap_f_Card_HeaderFocusBorderLeftOffset;
 	bottom: @_sap_f_Card_HeaderFocusBorderBottomOffset;
-	right: 1px;
-	top: 1px;
+	right: @_sap_f_Card_HeaderFocusBorderRightOffset;
+	top: @_sap_f_Card_HeaderFocusBorderTopOffset;
 	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 	border-radius: @_sap_f_Card_HeaderFocusBorderRadius;
 	pointer-events: none;
