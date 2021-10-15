@@ -1198,7 +1198,8 @@
 			"sap.m.sample.MultiComboBoxCustomFiltering",
 			"sap.m.sample.MultiComboBoxSuggestionsAndValueState",
 			"sap.m.sample.MultiComboBoxTwoColumnsLayout",
-			"sap.m.sample.MultiComboBoxGrouping"
+			"sap.m.sample.MultiComboBoxGrouping",
+			"sap.m.sample.MultiComboBoxSelectAll"
 		  ]
 		},
 		{
@@ -2451,6 +2452,11 @@
 			"id": "sap.m.sample.MultiComboBoxGrouping",
 			"name": "MultiComboBox - Grouping of items",
 			"description": "Items in the MultiComboBox could be grouped by a property"
+		},
+		{
+			"id": "sap.m.sample.MultiComboBoxSelectAll",
+			"name": "MultiComboBox - showSelectAll functionality",
+			"description": "MultiComboBox with enabled Select All feature inside suggestions."
 		},
 		{
 		  "id": "sap.m.sample.MultiComboBoxTwoColumnsLayout",

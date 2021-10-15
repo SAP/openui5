@@ -895,7 +895,7 @@
 		}
 	});
 
-	var MultiComboBoxFourItems = new sap.m.MultiComboBox({
+	var oMultiComboBoxFourItems = new sap.m.MultiComboBox({
 		id : "MultiComboBoxFourItems",
 		width : "300px",
 		items : [
@@ -983,6 +983,31 @@
 	});
 	oMultiComboBoxWithGrouping.setModel(oGroupedModel, "groupedModel");
 
+	var oMultiComboBoxSelectAll = new sap.m.MultiComboBox({
+		id : "MultiComboBoxSelectAll",
+		width : "300px",
+		items : [
+			new sap.ui.core.Item({
+				key: "0",
+				text : "Item 0"
+			}),
+			new sap.ui.core.Item({
+				key: "1",
+				text : "Item 1"
+			}),
+			new sap.ui.core.Item({
+				key: "2",
+				text : "Item 2"
+			}),
+			new sap.ui.core.Item({
+				key: "3",
+				text : "Item 3"
+			})
+		],
+		selectedKeys: [0, 2],
+		showSelectAll: true
+	});
+
 	var oEmptyMultiComboBox = new sap.m.MultiComboBox({
 		placeholder: "MultiComboBox with no items"
 	});
@@ -1014,8 +1039,8 @@
 			theCompactMode,oMultiComboBox2, oMultiComboBox, oMultiComboBox1,
 			oMultiComboBoxDisabledListItemSelectable, oMultiComboBoxDisabledListItemDisabled, oMultiComboBoxReadOnly,
 			oMultiComboBoxErrorWithLink, oMultiComboBoxWarningWithLinks, oMultiComboBoxDisabled, oMultiComboBoxWithoutKey, oMultiComboBoxError, oMultiComboBoxWarning,
-			oMultiComboBoxSuccess, oMultiComboBoxOneToken, readOnlyButtonOneToken, MultiComboBoxFourItems,
-			oMultiComboBoxBinding, oMultiComboBoxWithGrouping, oToolbar, oEmptyMultiComboBox
+			oMultiComboBoxSuccess, oMultiComboBoxOneToken, readOnlyButtonOneToken, oMultiComboBoxFourItems,
+			oMultiComboBoxBinding, oMultiComboBoxWithGrouping, oMultiComboBoxSelectAll, oToolbar, oEmptyMultiComboBox
 		],
 		showNavButton : true,
 		navButtonPress : function() {
