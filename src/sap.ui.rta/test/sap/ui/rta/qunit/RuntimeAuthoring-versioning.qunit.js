@@ -358,7 +358,8 @@ sap.ui.define([
 				hasHigherLayerChanges: false,
 				URLParsingService: this.oURLParsingService
 			};
-			return this.oRta._triggerReloadOnStart(oReloadInfo).then(function () {
+			return this.oRta._triggerReloadOnStart(oReloadInfo).then(function (bReloadResult) {
+				assert.ok(bReloadResult, "then the reload is successful");
 				assert.equal(oLoadDraftForApplication.callCount, 1, "then loadDraftForApplication is called once");
 				assert.equal(oLoadVersionForApplication.callCount, 0, "then loadVersionForApplication is not called");
 			});
@@ -375,7 +376,8 @@ sap.ui.define([
 				hasHigherLayerChanges: true,
 				URLParsingService: this.oURLParsingService
 			};
-			return this.oRta._triggerReloadOnStart(oReloadInfo).then(function () {
+			return this.oRta._triggerReloadOnStart(oReloadInfo).then(function (bReloadResult) {
+				assert.ok(bReloadResult, "then the reload is successful");
 				assert.equal(oLoadDraftForApplication.callCount, 0, "then loadDraftForApplication is called once");
 				assert.equal(oLoadVersionForApplication.callCount, 1, "then loadVersionForApplication is not called");
 			});
