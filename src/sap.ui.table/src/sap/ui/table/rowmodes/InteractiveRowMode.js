@@ -166,7 +166,11 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	InteractiveRowMode.prototype.getComputedRowCounts = function() {
-		return this.computeStandardizedRowCounts(this.getConfiguredRowCount(), this.getFixedTopRowCount(), this.getFixedBottomRowCount());
+		var iRowCount = this.getConfiguredRowCount();
+		var iFixedTopRowCount = this.getFixedTopRowCount();
+		var iFixedBottomRowCount = this.getFixedBottomRowCount();
+
+		return this.computeStandardizedRowCounts(iRowCount, iFixedTopRowCount, iFixedBottomRowCount);
 	};
 
 	/**
