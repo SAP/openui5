@@ -13,7 +13,7 @@ sap.ui.define([
 
 	QUnit.module("Get contexts", {
 		before: function() {
-			this.oMockServer = TableQUnitUtils.startMockServer();
+			this.oMockServer = TableQUnitUtils.startMockServer(200);
 			this.oDataModel = TableQUnitUtils.createODataModel();
 			this.oGetContextsSpy = sinon.spy(Table.prototype, "_getContexts");
 			this.iOriginalDeviceHeight = Device.resize.height;
