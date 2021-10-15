@@ -419,7 +419,9 @@ function(
 		if (oRootControl.isA("sap.ui.core.UIComponent")) {
 			oRootControl = oRootControl.getRootControl();
 		}
-		oRootControl[bAdd ? "addStyleClass" : "removeStyleClass"]("sapUiRtaRoot");
+		if (oRootControl) {
+			oRootControl[bAdd ? "addStyleClass" : "removeStyleClass"]("sapUiRtaRoot");
+		}
 	}
 
 	/**
