@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/util/openWindow",
 	"sap/m/library",
 	"sap/m/List",
+	"sap/m/ObjectStatus",
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/controls/Microchart",
@@ -19,6 +20,7 @@ sap.ui.define([
 	openWindow,
 	mLibrary,
 	List,
+	ObjectStatus,
 	library,
 	BindingHelper,
 	Microchart,
@@ -42,6 +44,9 @@ sap.ui.define([
 
 	// shortcut for sap.ui.integration.CardActionArea
 	var ActionArea = library.CardActionArea;
+
+	// shortcut for sap.m.EmptyIndicator
+	var EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
 
 	var LEGEND_COLORS_LOAD = "_legendColorsLoad";
 
@@ -194,13 +199,14 @@ sap.ui.define([
 	ListContent.prototype._setItem = function (mItem) {
 		var oList = this._getList(),
 			mSettings = {
-			iconDensityAware: false,
-			title: mItem.title && (mItem.title.value || mItem.title),
-			description: mItem.description && (mItem.description.value || mItem.description),
-			highlight: mItem.highlight,
-			info: mItem.info && mItem.info.value,
-			infoState: mItem.info && mItem.info.state
-		};
+				iconDensityAware: false,
+				title: mItem.title && (mItem.title.value || mItem.title),
+				description: mItem.description && (mItem.description.value || mItem.description),
+				highlight: mItem.highlight,
+				info: mItem.info && mItem.info.value,
+				infoState: mItem.info && mItem.info.state,
+				attributes: []
+			};
 
 		if (mItem.icon) {
 			mSettings.icon = BindingHelper.formattedProperty(mItem.icon.src, function (sValue) {
@@ -218,6 +224,20 @@ sap.ui.define([
 
 			mSettings.iconSize = mItem.icon.size || mSettings.iconSize;
 			mSettings.iconBackgroundColor = mItem.icon.backgroundColor || (mItem.icon.text ? undefined : AvatarColor.Transparent);
+		}
+
+		if (mItem.attributesLayoutType) {
+			mSettings.attributesLayoutType = mItem.attributesLayoutType;
+		}
+
+		if (mItem.attributes) {
+			mItem.attributes.forEach(function (attr) {
+				mSettings.attributes.push(new ObjectStatus({
+					text: attr.value,
+					state: attr.state,
+					emptyIndicatorMode: EmptyIndicatorMode.On
+				}));
+			});
 		}
 
 		if (mItem.chart) {

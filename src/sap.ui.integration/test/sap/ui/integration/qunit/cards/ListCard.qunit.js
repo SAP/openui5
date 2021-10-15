@@ -438,6 +438,88 @@ sap.ui.define([
 		}
 	};
 
+	var oManifest_ListCard_Attributes = {
+		"sap.app": {
+			"id": "oManifest_ListCard_Attributes"
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "Notebooks"
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"Name": "Notebook Basic 15",
+							"Availability": "Out of stock",
+							"AvailabilityState": "Error",
+							"Processor": "2,80 GHz quad core",
+							"Monitor": "15\" LCD",
+							"RAM": "4 GB DDR3 RAM",
+							"HHD": "500 GB Hard Disc",
+							"OS": "Windows 8 Pro",
+							"OSState": "Success"
+						},
+						{
+							"Name": "Notebook Basic 17",
+							"Availability": "Available",
+							"AvailabilityState": "Success",
+							"Processor": "2,80 GHz quad core",
+							"Monitor": "17\" LCD",
+							"RAM": "4 GB DDR3 RAM",
+							"HHD": "500 GB Hard Disc",
+							"OS": "Windows 8 Pro",
+							"OSState": "Success",
+							"AttributesLayoutType": "OneColumn"
+						},
+						{
+							"Name": "Notebook Basic 19",
+							"Availability": "Only 2 left",
+							"AvailabilityState": "Warning",
+							"Processor": "2,80 GHz quad core",
+							"Monitor": "18\" LCD",
+							"RAM": "4 GB DDR3 RAM",
+							"HHD": "1000 GB Hard Disc",
+							"HHDState": "Success",
+							"OS": "Windows 8 Pro",
+							"OSState": "Success"
+						}
+					]
+				},
+				"maxItems": 3,
+				"item": {
+					"title": "{Name}",
+					"description": "{Description}",
+					"info": {
+						"value": "{Availability}",
+						"state": "{AvailabilityState}"
+					},
+					"attributesLayoutType": "{AttributesLayoutType}",
+					"attributes": [
+						{
+							"value": "{Processor}"
+						},
+						{
+							"value": "{Monitor}"
+						},
+						{
+							"value": "{RAM}"
+						},
+						{
+							"value": "{HHD}",
+							"state": "{HHDState}"
+						},
+						{
+							"value": "{OS}",
+							"state": "{OSState}"
+						}
+					]
+				}
+			}
+		}
+	};
+
 	QUnit.module("List Card", {
 		beforeEach: function () {
 			this.oCard = new Card({
@@ -536,6 +618,34 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest(oManifest);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.test("List Card - attributes", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+
+			var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[0],
+				oListItem2 = this.oCard.getCardContent().getAggregation("_content").getItems()[1];
+
+			Core.applyChanges();
+
+			// Assert
+			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrs .sapUiIntLCIAttrRow").length, 3, "3 attr rows are created.");
+			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrs .sapUiIntLCIAttrCell").length, 5, "5 attr cells are created.");
+			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrs .sapUiIntLCIAttrSecondCell").length, 2, "2 attr second cells are created.");
+
+			assert.strictEqual(oListItem2.$().find(".sapUiIntLCIAttrs .sapUiIntLCIAttrRow").length, 5, "5 attr rows are created.");
+			assert.strictEqual(oListItem2.$().find(".sapUiIntLCIAttrs .sapUiIntLCIAttrCell").length, 5, "5 attr cells are created.");
+			assert.notOk(oListItem2.$().find(".sapUiIntLCIAttrs .sapUiIntLCIAttrSecondCell").length, "attr second cells are not created.");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest_ListCard_Attributes);
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 

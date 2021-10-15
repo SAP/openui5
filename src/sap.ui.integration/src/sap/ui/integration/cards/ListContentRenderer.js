@@ -46,7 +46,8 @@ sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
 
 		var bIsCompact = this.isCompact(oControl),
 			oTemplate = oConfiguration.item,
-			fItemHeight = bIsCompact ? 2 : 2.75; // list item height in "rem"
+			fItemHeight = bIsCompact ? 2 : 2.75, // list item height in "rem"
+			iAttrLength;
 
 		if (oTemplate.description || oTemplate.chart) {
 			fItemHeight = 5; // list item height with description or chart in "rem"
@@ -54,6 +55,11 @@ sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
 
 		if (oTemplate.description && oTemplate.chart) {
 			fItemHeight = 6; // list item height with description and chart in "rem"
+		}
+
+		if (oTemplate.attributes) {
+			iAttrLength = Math.ceil(oTemplate.attributes.length / 2);
+			fItemHeight += iAttrLength * 1.5; // attribute row height in "rem"
 		}
 
 		if (oTemplate.actionsStrip) {

@@ -148,6 +148,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * Defines the layout type of the List card attributes.
+	 * @enum {string}
+	 * @public
+	 * @since 1.96
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.AttributesLayoutType = {
+		/**
+		 * One column.
+		 * @public
+		 */
+		OneColumn: "OneColumn",
+		/**
+		 * Two columns.
+		 * @public
+		 */
+		TwoColumns: "TwoColumns"
+	};
+
+	/**
 	 * An object type that represents card menu action properties.
 	 * @typedef {Object}
 	 * @public
