@@ -5,12 +5,12 @@ var Range = require("../range").Range;
 
 function hardWrap(editor, options) {
     var max = options.column || editor.getOption("printMarginColumn");
-       
+
     var row = Math.min(options.startRow, options.endRow);
     var endRow = Math.max(options.startRow, options.endRow);
-    
+
     var session = editor.session;
-    
+
     while (row <= endRow) {
         var line = session.getLine(row);
         if (line.length > max) {
@@ -178,7 +178,7 @@ ace.define("ace/keyboard/vim",[], function(require, exports, module) {
 
 
   CodeMirror.findMatchingTag = function(cm, head) {
-    
+
   };
 
   CodeMirror.signal = function(o, name, e) { return o._signal(name, e) };
@@ -819,7 +819,9 @@ dom.importCssString(".normal-mode .ace_cursor{\
       dialog.className = "ace_dialog ace_dialog-top";
 
     if (typeof template == "string") {
-      dialog.innerHTML = template;
+      // ##### BEGIN MODIFIED BY SAP
+      throw new Error("Can not use string template for the dialog. This is required to avoid CSP inline styles violations");
+      // ##### END MODIFIED BY SAP
     } else { // Assuming it's a detached DOM element.
       dialog.appendChild(template);
     }
@@ -6137,7 +6139,7 @@ dom.importCssString(".normal-mode .ace_cursor{\
     { keys: '<C-A-S-h>', type: 'action', action: 'aceCommand', actionArgs: { name: "selectNextBefore" } },
     { keys: '<C-A-S-l>', type: 'action', action: 'aceCommand', actionArgs: { name: "selectNextAfter" } }
   );
-  
+
   defaultKeymap.push({
     keys: 'gq',
     type: 'operator',
@@ -6164,7 +6166,7 @@ dom.importCssString(".normal-mode .ace_cursor{\
       }
     }
   });
-    
+
   actions.aceCommand = function(cm, actionArgs, vim) {
     cm.vimCmd = actionArgs;
     if (cm.ace.inVirtualSelectionMode)
@@ -6195,4 +6197,3 @@ dom.importCssString(".normal-mode .ace_cursor{\
                         }
                     });
                 })();
-            
