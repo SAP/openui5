@@ -9,6 +9,7 @@ sap.ui.define([
 	"use strict";
 
 	return {
+		"hideControl": "default",
 		"splitMenuButton": SplitMenuButtonsHandler,
 		"rename": BaseRename.createRenameChangeHandler({
 			propertyName: "text",
