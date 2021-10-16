@@ -15,48 +15,25 @@ sap.ui.define(function() {
 				ui5: {
 					"xx-supportedLanguages": "en"
 				},
-				qunit: {
-					// make sure results are consistent/stable and the "statistics" test in the end is actually run in the end
-					reorder: false
-				},
 				// tests are created async with the ControlIterator, so the test has to start QUnit
 				autostart: false
 			},
 			ControlIteratorExample: {
 				title: "QUnit Page for sap.ui.qunit.utils.ControlIterator - most basic usage (example 1: one test per control)",
-				qunit: {
-					// make sure results are consistent/stable and the "statistics" test in the end is actually run in the end
-					reorder: false
-				},
 				// tests are added asynchronously, hence autostart is disabled and QUnit.start is called later
 				autostart: false
 			},
 			ControlIteratorExample2: {
-				title: "QUnit Page for sap.ui.qunit.utils.ControlIterator - most basic usage (example 2: all controls within one test)",
-				qunit: {
-					// make sure results are consistent/stable and the "statistics" test in the end is actually run in the end
-					reorder: false
-				}
+				title: "QUnit Page for sap.ui.qunit.utils.ControlIterator - most basic usage (example 2: all controls within one test)"
 			},
 			ControlMemoryLeaks: {
 				title: "QUnit Page for memory leak detection in UI5 controls"
 			},
 			ControlRenderer: {
-				title: "QUnit Page for memory leak detection in UI5 controls",
-				ui5: {
-					bindingSyntax: "complex"
-				},
-				qunit: {
-					// make sure results are consistent/stable and the "statistics" test in the end is actually run in the end
-					reorder: false
-				}
+				title: "QUnit Page for memory leak detection in UI5 controls"
 			},
 			ControlMemoryLeaksUsingIterator: {
 				title: "QUnit Page for memory leak detection in UI5 controls",
-				qunit: {
-					// MemoryLeakCheck loads qunit-1
-					version: 1
-				},
 				// tests are added asynchronously, hence autostart is disabled and QUnit.start is called later
 				autostart: false
 			},

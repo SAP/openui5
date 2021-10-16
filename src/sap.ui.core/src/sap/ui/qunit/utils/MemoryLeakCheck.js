@@ -4,18 +4,16 @@
 
 /*global QUnit*/
 
-sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control', 'sap/ui/core/Core' /* provides sap.ui.getCore() */ ],
-		function(jQuery, Element, Control) {
+sap.ui.define([ 'sap/ui/core/Element', 'sap/ui/core/Control', 'sap/ui/core/Core' /* provides sap.ui.getCore() */ ],
+		function(Element, Control) {
 	"use strict";
 
-	//TODO: global jquery call found
-	jQuery.sap.require("sap.ui.qunit.qunit-css");
-	//TODO: global jquery call found
-	jQuery.sap.require("sap.ui.thirdparty.qunit");
-	//TODO: global jquery call found
-	jQuery.sap.require("sap.ui.qunit.qunit-junit");
-	//TODO: global jquery call found
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	if ( typeof QUnit === "undefined" ) {
+		sap.ui.requireSync("sap/ui/qunit/qunit-css"); // legacy-relevant - sync fallback when caller did not load QUnit
+		sap.ui.requireSync("sap/ui/thirdparty/qunit"); // legacy-relevant - sync fallback when caller did not load QUnit
+		sap.ui.requireSync("sap/ui/qunit/qunit-junit"); // legacy-relevant - sync fallback when caller did not load QUnit
+		sap.ui.requireSync("sap/ui/qunit/qunit-coverage"); // legacy-relevant - sync fallback when caller did not load QUnit
+	}
 
 	QUnit.config.reorder = false;   // make sure results are consistent/stable and the "statistics" test in the end is actually run in the end
 
