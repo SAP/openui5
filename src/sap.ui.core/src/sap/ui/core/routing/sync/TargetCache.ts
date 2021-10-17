@@ -1,0 +1,1 @@
+import View from "sap/ui/core/mvc/View";

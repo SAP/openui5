@@ -1,0 +1,1 @@
+import module3 from "./module3";

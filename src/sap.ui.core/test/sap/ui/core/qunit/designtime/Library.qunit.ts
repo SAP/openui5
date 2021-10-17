@@ -1,0 +1,1 @@
+import libraryValidator from "sap/ui/dt/enablement/libraryTest";

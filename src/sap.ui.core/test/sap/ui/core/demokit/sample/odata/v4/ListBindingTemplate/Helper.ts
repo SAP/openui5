@@ -1,0 +1,1 @@
+import BindingParser from "sap/ui/base/BindingParser";

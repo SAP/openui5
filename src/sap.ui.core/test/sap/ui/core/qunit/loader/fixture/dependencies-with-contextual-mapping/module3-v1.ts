@@ -1,0 +1,1 @@
+import moduleInfo from "module";

@@ -1,0 +1,1 @@
+import XMLView from "sap/ui/core/mvc/XMLView";

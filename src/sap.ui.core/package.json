@@ -13,5 +13,10 @@
     "type": "git",
     "url": "https://github.com/SAP/openui5.git"
   },
-  "dependencies": {}
+  "devDependencies": {
+    "@types/jquery": "^3.5.1",
+    "@types/openui5": "^1.91.0",
+    "@types/qunit": "^2.5.4",
+    "typescript": "^4.4.4"
+  }
 }

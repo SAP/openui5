@@ -1,0 +1,1 @@
+import Device from "sap/ui/Device";

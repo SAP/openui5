@@ -1,0 +1,1 @@
+import jQuery from "sap/ui/thirdparty/jquery";

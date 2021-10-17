@@ -1,0 +1,1 @@
+import ODataModel from "sap/ui/model/odata/ODataModel";

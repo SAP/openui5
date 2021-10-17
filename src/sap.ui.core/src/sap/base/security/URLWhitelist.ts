@@ -1,0 +1,1 @@
+import URLListValidator from "sap/base/security/URLListValidator";

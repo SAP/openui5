@@ -1,0 +1,224 @@
+import Log from "sap/base/Log";
+import ObjectPath from "sap/base/util/ObjectPath";
+import Control from "sap/ui/core/Control";
+import NumberFormat from "sap/ui/core/format/NumberFormat";
+import FormatException from "sap/ui/model/FormatException";
+import ParseException from "sap/ui/model/ParseException";
+import ValidateException from "sap/ui/model/ValidateException";
+import Int from "sap/ui/model/odata/type/Int";
+import ODataType from "sap/ui/model/odata/type/ODataType";
+import TestUtils from "sap/ui/test/TestUtils";
+var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+function anyInt(sName, iMin, iMax) {
+    var oType;
+    function createType(oFormatOptions, oConstraints) {
+        return new (ObjectPath.get(sName))(oFormatOptions, oConstraints);
+    }
+    function testRange(assert, iValue, sExpectedMessage) {
+        TestUtils.withNormalizedMessages(function () {
+            try {
+                oType.validateValue(iValue);
+                assert.ok(false, "Expected ValidateException not thrown");
+            }
+            catch (e) {
+                assert.ok(e instanceof ValidateException);
+                assert.strictEqual(e.message, sExpectedMessage);
+            }
+        });
+    }
+    QUnit.module(sName, {
+        beforeEach: function () {
+            this.oLogMock = this.mock(Log);
+            this.oLogMock.expects("warning").never();
+            this.oLogMock.expects("error").never();
+            sap.ui.getCore().getConfiguration().setLanguage("en-US");
+            oType = createType();
+        },
+        afterEach: function () {
+            sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+        }
+    });
+    QUnit.test("basics", function (assert) {
+        assert.ok(oType instanceof Int, "is an Int");
+        assert.ok(oType instanceof ODataType, "is an ODataType");
+        assert.strictEqual(oType.getName(), sName, "is the right name");
+        assert.strictEqual(oType.oFormatOptions, undefined, "no formatting options");
+        assert.ok(oType.hasOwnProperty("oConstraints"), "be V8-friendly");
+        assert.strictEqual(oType.oConstraints, undefined, "are the right constraints");
+        assert.strictEqual(oType.oFormat, null, "no formatter preload");
+    });
+    QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints", function (assert) {
+        var oType = createType(null, null);
+        assert.deepEqual(oType.oFormatOptions, null, "no format options");
+        assert.deepEqual(oType.oConstraints, undefined, "default constraints");
+    });
+    QUnit.test("localization change", function (assert) {
+        var oControl = new Control();
+        oType.formatValue(1234, "string");
+        oControl.bindProperty("tooltip", { path: "/unused", type: oType });
+        sap.ui.getCore().getConfiguration().setLanguage("de-CH");
+        assert.strictEqual(oType.oFormat, null, "localization change resets formatter");
+        oType.formatValue(1234, "int");
+        assert.strictEqual(oType.oFormat, null, "no formatter for int");
+        assert.strictEqual(oType.formatValue(1234, "string"), "1\u2019234", "adjusted to changed language");
+        assert.ok(oType.oFormat, "Formatter has been created on demand");
+    });
+    QUnit.test("formatValue", function (assert) {
+        assert.strictEqual(oType.formatValue(undefined), null, "undefined formatted as null");
+        assert.strictEqual(oType.formatValue(null), null, "null formatted as null");
+        assert.strictEqual(oType.formatValue(123, "string"), "123", "number formatted as string");
+        assert.strictEqual(oType.formatValue(123.5, "string"), "123", "decimal number formatted as string");
+        assert.strictEqual(oType.formatValue(123, "float"), 123, "decimal number as float");
+        assert.strictEqual(oType.formatValue(123, "int"), 123, "decimal number as int");
+        assert.strictEqual(oType.formatValue(123.89, "int"), 123, "decimal number rounded as int");
+        assert.strictEqual(oType.formatValue(123, "any"), 123, "decimal number as any");
+        try {
+            oType.formatValue(123, "object");
+            assert.ok(false, "Expected FormatException not thrown");
+        }
+        catch (e) {
+            assert.ok(e instanceof FormatException);
+            assert.strictEqual(e.message, "Don't know how to format " + sName + " to object");
+        }
+        this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize").returns("string");
+        assert.strictEqual(oType.formatValue(123, "sap.ui.core.CSSSize"), "123");
+    });
+    QUnit.test("parseValue", function (assert) {
+        try {
+            oType.parseValue(true, "boolean");
+            assert.ok(false, "Expected ParseException not thrown");
+        }
+        catch (e) {
+            assert.ok(e instanceof ParseException);
+            assert.strictEqual(e.message, "Don't know how to parse " + sName + " from boolean");
+        }
+        assert.strictEqual(oType.parseValue("1,234", "string"), 1234, "number parsed from string");
+        assert.strictEqual(oType.parseValue("1234", "string"), 1234, "number parsed from string");
+        assert.strictEqual(oType.parseValue(1234, "int"), 1234, "number parsed from int");
+        assert.strictEqual(oType.parseValue(null, "foo"), null, "null accepted for any type");
+        assert.strictEqual(oType.parseValue("", "foo"), null, "empty string becomes null for any type");
+        sap.ui.getCore().getConfiguration().setLanguage("de-DE");
+        oType = new (ObjectPath.get(sName))();
+        assert.strictEqual(oType.parseValue(1234.001, "float"), 1234, "don't parse float as string");
+        this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize").returns("string");
+        assert.strictEqual(oType.parseValue("1234", "sap.ui.core.CSSSize"), 1234);
+    });
+    ["foo", "123.809"].forEach(function (oValue) {
+        QUnit.test("parse invalid value from string: " + oValue, function (assert) {
+            TestUtils.withNormalizedMessages(function () {
+                try {
+                    oType.parseValue(oValue, "string");
+                    assert.ok(false, "Expected ParseException not thrown");
+                }
+                catch (e) {
+                    assert.ok(e instanceof ParseException);
+                    assert.strictEqual(e.message, "EnterInt");
+                }
+            });
+        });
+    });
+    ["123", undefined, false].forEach(function (iValue) {
+        QUnit.test("illegal values and value type: " + iValue, function (assert) {
+            try {
+                oType.validateValue(iValue);
+                assert.ok(false, "Expected ValidateException not thrown");
+            }
+            catch (e) {
+                assert.ok(e instanceof ValidateException);
+                assert.strictEqual(e.message, iValue + " (of type " + typeof iValue + ") is not a valid " + sName + " value");
+            }
+        });
+    });
+    [undefined, false, true].forEach(function (bNullable) {
+        QUnit.test("setConstraints: nullable=" + bNullable, function (assert) {
+            var oExpectedConstraints = bNullable === false ? { nullable: false } : undefined;
+            oType = new (ObjectPath.get(sName))({}, { minimum: -100, maximum: 100, nullable: bNullable });
+            assert.deepEqual(oType.oConstraints, oExpectedConstraints, "only nullable accepted");
+        });
+    });
+    QUnit.test("validation success", function (assert) {
+        [iMin, iMax].forEach(function (iValue) {
+            oType.validateValue(iValue);
+        });
+    });
+    QUnit.test("validate w/ decimal", function (assert) {
+        TestUtils.withNormalizedMessages(function () {
+            try {
+                oType.validateValue(123.456);
+                assert.ok(false, "Expected ValidateException not thrown");
+            }
+            catch (e) {
+                assert.ok(e instanceof ValidateException);
+                assert.strictEqual(e.message, "EnterInt");
+            }
+        });
+    });
+    QUnit.test("range tests", function (assert) {
+        var sExpectedMessage, oNumberFormat = NumberFormat.getIntegerInstance({
+            groupingEnabled: true
+        });
+        sExpectedMessage = "EnterNumberMin " + oNumberFormat.format(iMin);
+        testRange(assert, -Infinity, sExpectedMessage);
+        testRange(assert, iMin - 1, sExpectedMessage);
+        sExpectedMessage = "EnterNumberMax " + oNumberFormat.format(iMax);
+        testRange(assert, iMax + 1, sExpectedMessage);
+        testRange(assert, Infinity, sExpectedMessage);
+    });
+    QUnit.test("nullable", function (assert) {
+        oType.validateValue(null);
+        this.oLogMock.expects("warning").withExactArgs("Illegal nullable: 42", null, sName);
+        oType = new (ObjectPath.get(sName))({});
+        assert.strictEqual(oType.oConstraints, undefined);
+        oType = new (ObjectPath.get(sName))({}, { nullable: true });
+        assert.strictEqual(oType.oConstraints, undefined);
+        oType = new (ObjectPath.get(sName))({}, { nullable: "true" });
+        assert.strictEqual(oType.oConstraints, undefined);
+        oType = new (ObjectPath.get(sName))({}, { nullable: undefined });
+        assert.strictEqual(oType.oConstraints, undefined);
+        oType = new (ObjectPath.get(sName))({}, { nullable: 42 });
+        assert.strictEqual(oType.oConstraints, undefined);
+        oType = new (ObjectPath.get(sName))({}, { nullable: false });
+        assert.strictEqual(oType.oConstraints.nullable, false);
+        oType = new (ObjectPath.get(sName))({}, { nullable: "false" });
+        assert.strictEqual(oType.oConstraints.nullable, false);
+        TestUtils.withNormalizedMessages(function () {
+            oType = createType({}, { nullable: false });
+            try {
+                oType.validateValue(null);
+                assert.ok(false);
+            }
+            catch (e) {
+                assert.ok(e instanceof ValidateException);
+                assert.strictEqual(e.message, "EnterInt");
+            }
+        });
+    });
+    [{
+            set: { foo: "bar" },
+            expect: { foo: "bar", groupingEnabled: true }
+        }, {
+            set: { decimals: 7, groupingEnabled: false },
+            expect: { decimals: 7, groupingEnabled: false }
+        }].forEach(function (oFixture) {
+        QUnit.test("formatOptions: " + JSON.stringify(oFixture.set), function (assert) {
+            var oSpy, oType = createType(oFixture.set);
+            assert.deepEqual(oType.oFormatOptions, oFixture.set);
+            oSpy = this.spy(NumberFormat, "getIntegerInstance");
+            oType.formatValue(42, "string");
+            sinon.assert.calledWithExactly(oSpy, oFixture.expect);
+        });
+    });
+    QUnit.test("format: bad input type", function (assert) {
+        var oBadModelValue = new Date(), oType = createType();
+        ["string", "int", "float"].forEach(function (sTargetType) {
+            assert.throws(function () {
+                oType.formatValue(oBadModelValue, sTargetType);
+            }, new FormatException("Illegal " + sName + " value: " + oBadModelValue));
+        });
+        assert.strictEqual(oType.formatValue(oBadModelValue, "any"), oBadModelValue);
+    });
+}
+anyInt("sap.ui.model.odata.type.Int16", -32768, 32767);
+anyInt("sap.ui.model.odata.type.Int32", -2147483648, 2147483647);
+anyInt("sap.ui.model.odata.type.SByte", -128, 127);
+anyInt("sap.ui.model.odata.type.Byte", 0, 255);

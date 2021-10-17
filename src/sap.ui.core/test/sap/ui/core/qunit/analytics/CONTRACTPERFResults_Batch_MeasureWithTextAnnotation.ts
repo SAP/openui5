@@ -1,0 +1,27 @@
+import o4aFakeService from "sap/ui/core/qunit/analytics/o4aFakeService";
+o4aFakeService.addResponse({
+    batch: true,
+    uri: [
+        "GET CONTRACTPERFResults?$select=CostOvrWithhold_F,TransactionCurrency," + "CostInGlobalCurrency_F,GlobalCurrency&$top=100&$inlinecount=allpages",
+        "GET CONTRACTPERFResults?$select=SalesDocument,CostOvrWithhold_F,TransactionCurrency," + "CostInGlobalCurrency_F,GlobalCurrency&$orderby=SalesDocument%20asc&$top=20" + "&$inlinecount=allpages"
+    ],
+    header: o4aFakeService.headers.BATCH,
+    content: "--AAD136757C5CF75E21C04F59B8682CEA0\r\nContent-Type: application/http\r\nContent-Length: 364\r\ncontent-transfer-encoding: binary\r\n\r\nHTTP/1.1 200 OK\r\nContent-Type: application/json\r\ncontent-language: en-US\r\nContent-Length: 494\r\n\r\n{\"d\":{\"results\":[{\"__metadata\": {\"uri\":\"http://o4aFakeService:8080/CONTRACTPERFResults('0')\",\"type\":\"servicemock.CONTRACTPERFType\"},\"TransactionCurrency\":\"USD\",\"CostOvrWithhold_F\":\"1.00 USD\",\"CostInGlobalCurrency_F\":\"1.00\",\"GlobalCurrency\":\"USD\"},{\"__metadata\": {\"uri\":\"http://o4aFakeService:8080/CONTRACTPERFResults('1')\",\"type\":\"servicemock.CONTRACTPERFType\"},\"TransactionCurrency\":\"EUR\",\"CostOvrWithhold_F\":\"1.00 EUR\",\"CostInGlobalCurrency_F\":\"1.00\",\"GlobalCurrency\":\"USD\"}],\"__count\":\"2\"}}\r\n--AAD136757C5CF75E21C04F59B8682CEA0\r\nContent-Type: application/http\r\nContent-Length: 2442\r\ncontent-transfer-encoding: binary\r\n\r\nHTTP/1.1 200 OK\r\nContent-Type: application/json\r\ncontent-language: en-US\r\nContent-Length: 539\r\n\r\n{\"d\":{\"results\":[{\"__metadata\": {\"uri\":\"http://o4aFakeService:8080/CONTRACTPERFResults('D1')\",\"type\":\"servicemock.CONTRACTPERFType\"},\"SalesDocument\":\"D1\",\"TransactionCurrency\":\"USD\",\"CostOvrWithhold_F\":\"1.00 USD\",\"CostInGlobalCurrency_F\":\"1.00\",\"GlobalCurrency\":\"USD\"},{\"__metadata\": {\"uri\":\"http://o4aFakeService:8080/CONTRACTPERFResults('D2')\",\"type\":\"servicemock.CONTRACTPERFType\"},\"SalesDocument\":\"D2\",\"TransactionCurrency\":\"EUR\",\"CostOvrWithhold_F\":\"1.00 EUR\",\"CostInGlobalCurrency_F\":\"1.00\",\"GlobalCurrency\":\"USD\"}],\"__count\":\"2\"}}\r\n--AAD136757C5CF75E21C04F59B8682CEA0--\r\n"
+});
+o4aFakeService.addResponse({
+    batch: true,
+    uri: ["CONTRACTPERFResults?$select=CostInGlobalCurrency_F,GlobalCurrency"],
+    header: o4aFakeService.headers.BATCH,
+    content: "--AAD136757C5CF75E21C04F59B8682CEA0\r\nContent-Type: application/http\r\nContent-Length: 364\r\ncontent-transfer-encoding: binary\r\n\r\nHTTP/1.1 200 OK\r\nContent-Type: application/json\r\ncontent-language: en-US\r\nContent-Length: 192\r\n\r\n{\"d\":{\"results\":[{\"__metadata\": {\"uri\":\"http://o4aFakeService:8080/CONTRACTPERFResults('00')\",\"type\":\"servicemock.CONTRACTPERFType\"},\"CostInGlobalCurrency_F\":\"2.00\",\"GlobalCurrency\":\"USD\"}]}}\r\n--AAD136757C5CF75E21C04F59B8682CEA0--\r\n"
+});
+o4aFakeService.addResponse({
+    batch: true,
+    uri: [
+        "GET CONTRACTPERFResults?$select=CostOvrWithhold_F,TransactionCurrency" + "&$inlinecount=allpages",
+        "GET CONTRACTPERFResults?$select=SalesDocument,SalesOrganization&$top=0" + "&$inlinecount=allpages",
+        "GET CONTRACTPERFResults?$select=SalesDocument,CostOvrWithhold_F,TransactionCurrency" + "&$orderby=SalesDocument%20asc",
+        "GET CONTRACTPERFResults?$select=SalesDocument,SalesOrganization,CostOvrWithhold_F," + "TransactionCurrency&$orderby=SalesDocument%20asc,SalesOrganization%20asc"
+    ],
+    header: o4aFakeService.headers.BATCH,
+    content: "--AAD136757C5CF75E21C04F59B8682CEA0\r\nContent-Type: application/http\r\nContent-Length: 364\r\ncontent-transfer-encoding: binary\r\n\r\nHTTP/1.1 200 OK\r\nContent-Type: application/json\r\ncontent-language: en-US\r\nContent-Length: 1015\r\n\r\n{\"d\":{\"results\":[{\"__metadata\": {\"uri\":\"http://o4aFakeService:8080/CONTRACTPERFResults('0')\",\"type\":\"servicemock.CONTRACTPERFType\"},\"TransactionCurrency\":\"USD\",\"CostOvrWithhold_F\":\"1.00 USD\"}],\"__count\":\"1\"}}\r\n--AAD136757C5CF75E21C04F59B8682CEA0\r\nContent-Type: application/http\r\nContent-Length: 404\r\ncontent-transfer-encoding: binary\r\n\r\nHTTP/1.1 200 OK\r\nContent-Type: application/json\r\ncontent-language: en-US\r\nContent-Length: 35\r\n\r\n{\"d\":{\"results\":[],\"__count\":\"1\"}}\r\n--AAD136757C5CF75E21C04F59B8682CEA0\r\nContent-Type: application/http\r\nContent-Length: 2442\r\ncontent-transfer-encoding: binary\r\n\r\nHTTP/1.1 200 OK\r\nContent-Type: application/json\r\ncontent-language: en-US\r\nContent-Length: 1251\r\n\r\n{\"d\":{\"results\":[{\"__metadata\": {\"uri\":\"http://o4aFakeService:8080/CONTRACTPERFResults('0_D1')\",\"type\":\"servicemock.CONTRACTPERFType\"},\"SalesDocument\":\"D1\",\"TransactionCurrency\":\"USD\",\"CostOvrWithhold_F\":\"1.00 USD\"}],\"__count\":\"1\"}}\r\n--AAD136757C5CF75E21C04F59B8682CEA0\r\nContent-Type: application/http\r\nContent-Length: 2442\r\ncontent-transfer-encoding: binary\r\n\r\nHTTP/1.1 200 OK\r\nContent-Type: application/json\r\ncontent-language: en-US\r\nContent-Length: 1513\r\n\r\n{\"d\":{\"results\":[{\"__metadata\": {\"uri\":\"http://o4aFakeService:8080/CONTRACTPERFResults('0_D1')\",\"type\":\"servicemock.CONTRACTPERFType\"},\"SalesDocument\":\"D1\",\"SalesOrganization\":\"FOO\",\"TransactionCurrency\":\"USD\",\"CostOvrWithhold_F\":\"1.00 USD\"}],\"__count\":\"1\"}}\r\n--AAD136757C5CF75E21C04F59B8682CEA0--\r\n"
+});

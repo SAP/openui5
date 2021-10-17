@@ -1,0 +1,61 @@
+import Helper from "sap/ui/core/sample/common/Helper";
+import opaTest from "sap/ui/test/opaQunit";
+Helper.qUnitModule("sap.ui.core.internal.samples.odata.v2.SalesOrders - Create and Delete");
+opaTest("Check if creating and deleting sales order items works", function (Given, When, Then) {
+    Given.iStartMyUIComponent({
+        componentConfig: {
+            name: "sap.ui.core.internal.samples.odata.v2.SalesOrders"
+        }
+    });
+    When.onMainPage.showSalesOrder("106");
+    Then.onMainPage.checkSalesOrderLoaded("106");
+    Then.onMainPage.checkSalesOrderItemsLoaded("106");
+    When.onMainPage.rememberCurrentMessageCount();
+    When.onMainPage.pressCreateItem();
+    Then.onMainPage.checkDialogOpen("Create a New Sales Order Item");
+    When.onMainPage.changeProductIdInDialog("");
+    When.onMainPage.pressNewItemSaveButton();
+    Then.onMainPage.checkDialogOpen("Error", "Mandatory field 'PRODUCT_GUID' is empty");
+    When.onMainPage.closeDialog("Error");
+    Then.onMainPage.checkDialogOpen("Create a New Sales Order Item");
+    When.onMainPage.pressNewItemDiscardButton();
+    Then.onMainPage.checkDialogNotOpen("Create a New Sales Order Item");
+    When.onMainPage.rememberSalesOrderDetails();
+    When.onMainPage.rememberCurrentItemCount();
+    When.onMainPage.pressCreateItem();
+    Then.onMainPage.checkDialogOpen("Create a New Sales Order Item");
+    When.onMainPage.changeProductIdInDialog("");
+    When.onMainPage.pressNewItemSaveButton();
+    Then.onMainPage.checkDialogOpen("Error", "Mandatory field 'PRODUCT_GUID' is empty");
+    When.onMainPage.closeDialog("Error");
+    Then.onMainPage.checkDialogOpen("Create a New Sales Order Item");
+    When.onMainPage.changeProductIdInDialog("HT-1000");
+    When.onMainPage.changeNoteInDialog("");
+    When.onMainPage.pressNewItemSaveButton();
+    Then.onMainPage.checkDialogOpen("Success");
+    When.onMainPage.closeDialog("Success");
+    Then.onMainPage.checkItemCountChangedBy(2);
+    Then.onMainPage.checkSalesOrderDetailsUpdated();
+    When.onMainPage.toggleMessagePopover();
+    Then.onMainPage.checkMessagePopoverOpen();
+    Then.onMainPage.checkMessageInPopover("030", "order");
+    Then.onMainPage.checkMessageInPopover("030", "note");
+    When.onMainPage.toggleMessagePopover();
+    When.onMainPage.pressMoreDetails(0);
+    Then.onMainPage.checkDialogOpen("Product Details");
+    Then.onMainPage.checkDialogShowingProductIdAndName("HT-1000", "Notebook Basic 15");
+    When.onMainPage.closeDialog("Product Details");
+    When.onMainPage.selectRow(0);
+    When.onMainPage.pressDeleteItem();
+    Then.onMainPage.checkDialogOpen("Sales Order Item Deletion");
+    When.onMainPage.confirmDialog();
+    Then.onMainPage.checkMessageToast();
+    Then.onMainPage.checkItemCountChangedBy(-2);
+    Then.onMainPage.checkSalesOrderDetailsUpdated();
+    When.onMainPage.toggleMessagePopover();
+    Then.onMainPage.checkMessagePopoverOpen();
+    Then.onMainPage.checkMessageNotInPopover("030", "order");
+    Then.onMainPage.checkMessageNotInPopover("030", "note");
+    When.onMainPage.toggleMessagePopover();
+    Given.iTeardownMyApp();
+});

@@ -1,0 +1,1 @@
+sap.ui.controller("fixture.debug-mode.Main", {});

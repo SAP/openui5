@@ -1,0 +1,25 @@
+import jQuery from "jquery.sap.global";
+import encodeXML from "sap/base/security/encodeXML";
+import encodeJS from "sap/base/security/encodeJS";
+import encodeURL from "sap/base/security/encodeURL";
+import encodeURLParameters from "sap/base/security/encodeURLParameters";
+import encodeCSS from "sap/base/security/encodeCSS";
+import URLListValidator from "sap/base/security/URLListValidator";
+import URLWhitelist from "sap/base/security/URLWhitelist";
+import sanitizeHTML from "sap/base/security/sanitizeHTML";
+jQuery.sap.encodeHTML = encodeXML;
+jQuery.sap.encodeXML = encodeXML;
+jQuery.sap.escapeHTML = encodeXML;
+jQuery.sap.encodeJS = encodeJS;
+jQuery.sap.escapeJS = encodeJS;
+jQuery.sap.encodeURL = encodeURL;
+jQuery.sap.encodeURLParameters = encodeURLParameters;
+jQuery.sap.encodeCSS = encodeCSS;
+jQuery.sap.clearUrlWhitelist = URLListValidator.clear;
+jQuery.sap.addUrlWhitelist = URLListValidator.add.bind(URLWhitelist);
+jQuery.sap.removeUrlWhitelist = function (iIndex) {
+    URLListValidator._delete(URLListValidator.entries()[iIndex]);
+};
+jQuery.sap.getUrlWhitelist = URLListValidator.entries;
+jQuery.sap.validateUrl = URLListValidator.validate;
+jQuery.sap._sanitizeHTML = sanitizeHTML;
