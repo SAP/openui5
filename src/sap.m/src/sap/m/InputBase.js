@@ -1014,12 +1014,14 @@ function(
 		var oEndIcon = this.getAggregation("_endIcon") || [],
 			oBeginIcon = this.getAggregation("_beginIcon") || [],
 			aIcons = oEndIcon.concat(oBeginIcon),
+			iIconMargin,
 			iIconWidth;
 
 		return aIcons.reduce(function(iAcc, oIcon){
+			iIconMargin = oIcon && oIcon.getDomRef() ? parseFloat(getComputedStyle(oIcon.getDomRef()).marginRight) : 0;
 			iIconWidth = oIcon && oIcon.getDomRef() ? oIcon.getDomRef().offsetWidth : 0;
 
-			return iAcc + iIconWidth;
+			return iAcc + iIconWidth + iIconMargin;
 		}, 0);
 	};
 
