@@ -496,7 +496,7 @@ sap.ui.define([
 	 * <b>IMPORTANT:</b></br>
 	 * This should be only used as FALLBACK when the Control events do not cover a specific use-case! Always try using
 	 * SAPUI5 control events, as e.g. accessibility-related functionality is then provided automatically.
-	 * E.g. when working with a <code>sap.ui.commons.Button</code>, always use the Button's "press" event, not the native "click" event, because
+	 * E.g. when working with a <code>sap.m.Button</code>, always use the Button's "press" event, not the native "click" event, because
 	 * "press" is also guaranteed to be fired when certain keyboard activity is supposed to trigger the Button.
 	 *
 	 * In the event handler, <code>this</code> refers to the Control - not to the root DOM element like in jQuery. While the DOM element can

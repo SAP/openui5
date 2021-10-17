@@ -1,4 +1,7 @@
-sap.ui.define(["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/core/mvc/ControllerExtension"
+], function(Log, ControllerExtension) {
 	"use strict";
 	//this is just an example, normally they would be a lookup in the component settings and flex changes for the component
 	//ideally the code of the controller would be outsourced to
@@ -13,7 +16,7 @@ sap.ui.define(["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtens
 				});
 			});
 		} else {
-			jQuery.sap.log.error("Never do sync stuff!!");
+			Log.error("Never do sync stuff!!");
 		}
 	};
 	return ExtensionProvider;

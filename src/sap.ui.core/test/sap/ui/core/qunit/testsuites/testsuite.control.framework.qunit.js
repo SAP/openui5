@@ -13,16 +13,12 @@ sap.ui.define(function() {
 		tests: {
 			"jquery.sap.ui": {
 				page: "test-resources/sap/ui/core/qunit/jquery.sap.ui.qunit.html",
-				title: "jquery.sap.ui",
-				ui5: {
-					libs: "sap.ui.commons",
-					theme: "sap_bluecrystal"
-				}
+				title: "jquery.sap.ui"
 			},
 			BlockLayerUtils: {
 				title: "sap.ui.core.BlockLayerUtils",
 				ui5: {
-					libs: "sap.ui.commons, sap.m"
+					libs: "sap.m"
 				},
 				sinon: {
 					version: 4,
@@ -124,7 +120,7 @@ sap.ui.define(function() {
 			PlaceAt: {
 				title: "sap.ui.core: Control.placeAt / Core.setRoot",
 				ui5: {
-					libs: "sap.ui.commons",
+					libs: "sap.m",
 					language: "en"
 				}
 			},
@@ -168,7 +164,7 @@ sap.ui.define(function() {
 			},
 			"util/ValueStateSupport": {
 				ui5: {
-					libs: "sap.ui.commons"
+					libs: "sap.m"
 				}
 			}
 		}

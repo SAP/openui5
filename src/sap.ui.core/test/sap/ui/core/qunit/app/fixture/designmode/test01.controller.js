@@ -1,6 +1,8 @@
-sap.ui.define([], function() {
+sap.ui.define([
+	"sap/ui/core/mvc/Controller"
+], function(Controller) {
 	"use strict";
-	sap.ui.controller("example.designmode.test01", {
+	return Controller.extend("test.designmode.test01", {
 
 	// lifecycle hooks
 		onInit : function() {

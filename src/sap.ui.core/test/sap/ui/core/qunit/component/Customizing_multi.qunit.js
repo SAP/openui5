@@ -1,21 +1,20 @@
 sap.ui.define([
+	"sap/ui/base/Event",
 	'jquery.sap.global',
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
-	'sap/ui/core/UIComponent',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/mvc/View',
 	'sap/ui/core/mvc/XMLView',
+	"sap/ui/qunit/utils/createAndAppendDiv",
 	'sap/ui/qunit/QUnitUtils'
-], function(jQuery, Component, ComponentContainer, UIComponent, Controller, View, XMLView, qutils) {
+], function(Event, jQuery, Component, ComponentContainer, Controller, View, XMLView, createAndAppendDiv, qutils) {
 
 	"use strict";
 	/*global QUnit, sinon */
 
 	// create content div
-	var oDIV = document.createElement("div");
-	oDIV.id = "content";
-	document.body.appendChild(oDIV);
+	createAndAppendDiv("content");
 
 	// Event handler functions
 	var iStandardSub2ControllerCalled = 0;
@@ -32,29 +31,38 @@ sap.ui.define([
 
 	var oLifecycleSpy = this.oLifecycleSpy = sinon.spy();
 
-
-	// UI Construction
-
-	jQuery.sap.declare("testdata.customizing.another.Component");
-	var AnotherComponent = UIComponent.extend("testdata.customizing.another.Component", {});
-	jQuery.sap.declare("testdata.customizing.anothersub.Component");
-	/*var AnotherSubComponent = */AnotherComponent.extend("testdata.customizing.anothersub.Component", {
-		metadata : {
-			version : "1.0",
-			customizing: {
-				"sap.ui.controllerExtensions": {
-					"testdata.customizing.sap.Sub2": {
-						"controllerName": "testdata.customizing.sap.Sub2"
-					}
-				}
-			}
-		}
-	});
-
-	var oAnotherCompSub, oCompSub, oCompCont;
+	function triggerButtonPress(sButtonId) {
+		var oButton = sap.ui.getCore().byId(sButtonId);
+		var oEvent = new Event(sButtonId, oButton, {});
+		oButton.firePress(oEvent);
+	}
 
 	QUnit.module("", {
 		before: function() {
+			// define the custom component classes
+			sap.ui.predefine("testdata/customizing/another/Component", [
+				"sap/ui/core/UIComponent"
+			], function(UIComponent) {
+				return UIComponent.extend("testdata.customizing.another.Component", {});
+			});
+
+			sap.ui.predefine("testdata/customizing/anothersub/Component", [
+				"testdata/customizing/another/Component"
+			], function(AnotherComponent) {
+				return AnotherComponent.extend("testdata.customizing.anothersub.Component", {
+					metadata : {
+						version : "1.0",
+						customizing: {
+							"sap.ui.controllerExtensions": {
+								"testdata.customizing.sap.Sub2": {
+									"controllerName": "testdata.customizing.sap.Sub2"
+								}
+							}
+						}
+					}
+				});
+			});
+
 			// load and start the customized application
 			return Promise.all([
 				Component.create({
@@ -62,46 +70,45 @@ sap.ui.define([
 					id: "anotherComponent",
 					manifest: false
 				}).then(function(_oComp) {
-					oAnotherCompSub = _oComp;
-				}),
+					this.oAnotherCompSub = _oComp;
+				}.bind(this)),
 				Component.create({
 					name: "testdata.customizing.customersub",
 					id: "customerComponent",
 					manifest: false
 				}).then(function(_oComp) {
-					oCompSub = _oComp;
-					oCompCont = new ComponentContainer({
-						component: oCompSub
-					});
-					oCompCont.placeAt("content");
-					return oCompSub.getRootControl().loaded();
-				}).then(function() {
+					this.oCompSub = _oComp;
+					this.oCompSubContainer = new ComponentContainer({
+						component: this.oCompSub
+					}).placeAt("content");
+					return this.oCompSub.getRootControl().loaded();
+				}.bind(this)).then(function() {
 					sap.ui.getCore().applyChanges();
 				})
 			]);
 		},
 		after: function() {
-			oCompCont.destroy();
-			oCompSub.destroy();
-			oAnotherCompSub.destroy();
+			this.oCompSubContainer.destroy();
+			this.oCompSub.destroy();
+			this.oAnotherCompSub.destroy();
 		}
 	});
 
 	// View Replacement
 
 	QUnit.test("View Replacement", function(assert) {
-		assert.ok(jQuery.sap.domById("customerComponent---mainView--sub1View--customTextInCustomSub1"), "Replacement XMLView should be rendered");
-		assert.ok(!jQuery.sap.domById("customerComponent---mainView--sub1View--originalSapTextInSub1"), "Original XMLView should not be rendered");
+		assert.ok(document.getElementById("customerComponent---mainView--sub1View--customTextInCustomSub1"), "Replacement XMLView should be rendered");
+		assert.ok(!document.getElementById("customerComponent---mainView--sub1View--originalSapTextInSub1"), "Original XMLView should not be rendered");
 	});
 
 
 	// View Extension
 	QUnit.test("View Extension", function(assert) {
-		assert.ok(jQuery.sap.domById("customerComponent---mainView--sub2View--customFrag1BtnWithCustAction"), "XMLView Extension should be rendered");
-		assert.ok(jQuery.sap.domById("buttonWithCustomerAction"), "JSView Extension should be rendered");
+		assert.ok(document.getElementById("customerComponent---mainView--sub2View--customFrag1BtnWithCustAction"), "XMLView Extension should be rendered");
+		assert.ok(document.getElementById("buttonWithCustomerAction"), "JSView Extension should be rendered");
 		// extension within extension
-		assert.ok(jQuery.sap.domById("__jsview1--customerButton1"), "Extension within Extension Point should be rendered");
-		assert.ok(jQuery.sap.domById("customerComponent---mainView--frag1--customFrag1Btn"), "Extension within Fragment should be rendered");
+		assert.ok(document.getElementById("__jsview1--customerButton1"), "Extension within Extension Point should be rendered");
+		assert.ok(document.getElementById("customerComponent---mainView--frag1--customFrag1Btn"), "Extension within Fragment should be rendered");
 	});
 
 
@@ -128,11 +135,11 @@ sap.ui.define([
 		assert.strictEqual(iStandardSub2ControllerCalled, 0, "Standard Controller should not have been called yet");
 		assert.strictEqual(iCustomSub2ControllerCalled, 0, "Custom Controller should not have been called yet");
 		// trigger custom action
-		qutils.triggerEvent("click", "customerComponent---mainView--sub2View--customFrag1BtnWithCustAction");
+		triggerButtonPress("customerComponent---mainView--sub2View--customFrag1BtnWithCustAction");
 		assert.strictEqual(iStandardSub2ControllerCalled, 0, "Standard Controller should still not have been called");
 		assert.strictEqual(iCustomSub2ControllerCalled, 1, "Custom Controller should have been called now");
 		// trigger standard action
-		qutils.triggerEvent("click", "customerComponent---mainView--sub2View--standardBtnWithStandardAction");
+		triggerButtonPress("customerComponent---mainView--sub2View--standardBtnWithStandardAction");
 		assert.strictEqual(iStandardSub2ControllerCalled, 1, "Standard Controller should have been called now");
 		assert.strictEqual(iCustomSub2ControllerCalled, 1, "Custom Controller should not have been called again");
 
@@ -182,7 +189,7 @@ sap.ui.define([
 	QUnit.test("Property Modifications", function(assert) {
 		var oControl = sap.ui.getCore().byId("customerComponent---mainView--sub3View--customizableText");
 		assert.strictEqual(oControl.getVisible(), false, "'visible' property should be customizable");
-		assert.strictEqual(oControl.getEnabled(), true, "'enabled' property should not be customizable");
+		assert.strictEqual(oControl.getWrapping(), true, "'wrapping' property should not be customizable");
 	});
 
 
@@ -192,9 +199,8 @@ sap.ui.define([
 		var oFirstItem = sap.ui.getCore().byId("__item0-customerComponent---mainView--sub2View--lb-0");
 
 		assert.ok(oFirstItem, "First ListItem should exist");
-		assert.ok(oFirstItem.getDomRef(), "First ListItem should be rendered");
 		assert.equal(oFirstItem.getText(), "(Customer's replacement ListItem)", "First ListItem should be the customized one");
-		assert.ok(sap.ui.getCore().byId("__jsview0--defaultContentTextView"), "JS extension point 1 should contain default content");
+		assert.ok(sap.ui.getCore().byId("__jsview0--defaultContentText"), "JS extension point 1 should contain default content");
 		assert.ok(sap.ui.getCore().byId("iHaveCausedDestruction"), "JS Extension Point 45 Content has been correctly replaced");
 	});
 
@@ -309,7 +315,7 @@ sap.ui.define([
 
 	QUnit.module("Owner-Component Handling (Controller Extension) - asynchronous", {
 		before: function() {
-			sap.ui.predefine("testdata/customizing/asynchronous/sap/CompA/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			sap.ui.define("testdata/customizing/asynchronous/sap/CompA/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 				return UIComponent.extend("testdata.customizing.asynchronous.sap.CompA.Component", {
 					metadata: {
 						version : "1.0",

@@ -1,11 +1,12 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	'sap/ui/core/mvc/View',
-	'sap/ui/core/mvc/JSONView',
-	'sap/ui/core/mvc/JSView',
-	'sap/ui/core/mvc/XMLView',
-	'sap/ui/core/mvc/HTMLView'
-], function(View, JSONView, JSView, XMLView, HTMLView) {
+	"sap/base/util/ObjectPath",
+	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/JSONView",
+	"sap/ui/core/mvc/JSView",
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/mvc/HTMLView"
+], function(ObjectPath, View, JSONView, JSView, XMLView, HTMLView) {
 	"use strict";
 
 	// create content div
@@ -76,7 +77,7 @@ sap.ui.define([
 
 		QUnit.test("Preparation - View requirements", function(assert) {
 			assert.expect(2);
-			var view = jQuery.sap.getObject("sap.ui.core.mvc." + oConfig.type + "View");
+			var view = ObjectPath.get("sap.ui.core.mvc." + oConfig.type + "View");
 			assert.ok(view.asyncSupport, "View type supports asynchronous loading");
 			assert.ok(view.prototype.loaded, "View type supports Promises via loaded method");
 		});

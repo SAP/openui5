@@ -2,11 +2,12 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/IntervalTrigger",
-	"sap/ui/commons/Button",
-	"sap/ui/commons/ButtonRenderer",
-	"sap/ui/commons/layout/MatrixLayout",
+	"sap/m/Button",
+	"sap/m/ButtonRenderer",
+	"sap/ui/layout/HorizontalLayout",
+	"sap/ui/layout/VerticalLayout",
 	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(Control, IntervalTrigger, Button, ButtonRenderer, MatrixLayout, createAndAppendDiv) {
+], function(Control, IntervalTrigger, Button, ButtonRenderer, HorizontalLayout, VerticalLayout, createAndAppendDiv) {
 	"use strict";
 
 	createAndAppendDiv("triggers");
@@ -29,6 +30,11 @@ sap.ui.define([
 			render: function(oRm, oControl) {
 				oRm.openStart("div", oControl);
 				oRm.class("sampleListener");
+				oRm.style("display", "inline-block");
+				oRm.style("margin", "2px");
+				oRm.style("padding", "3px 5px");
+				oRm.style("width", "20rem");
+				oRm.style("text-align", "center");
 				oRm.openEnd();
 
 				oRm.text("Lorem Ipsum");
@@ -71,7 +77,7 @@ sap.ui.define([
 
 	var aListeners = [];
 	var oBtn = {};
-	var oLayout = new MatrixLayout().placeAt("triggers");
+	var oLayout = new VerticalLayout().placeAt("triggers");
 
 	function onPress() {
 		removeListener(this);
@@ -85,7 +91,11 @@ sap.ui.define([
 			press: onPress
 		});
 
-		oLayout.createRow(aListeners[i], oBtn);
+		oLayout.addContent(
+			new HorizontalLayout({
+				content: [aListeners[i], oBtn]
+			})
+		);
 		oTrigger.addListener(aListeners[i].trigger, aListeners[i]);
 	}
 

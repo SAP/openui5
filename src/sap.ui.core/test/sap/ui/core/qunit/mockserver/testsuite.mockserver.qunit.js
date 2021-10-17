@@ -1,82 +1,65 @@
-sap.ui.define(function () {
-
+sap.ui.define([
+	"sap/base/util/merge"
+], function (merge) {
 	"use strict";
-	return {
-		name: "TestSuite for MockServer",
-		defaults: {
-			sinon: 1 // because MockServer has a hard dependency to sinon v1
-		},
-		tests: {
-			MockServer: {
-				title: "Tests for sap/ui/core/util/MockServer",
-				ui5: {
-					libs: ["sap.ui.commons"]
-				}
-			},
-			MockServerFeature: {
-				title: "Tests for sap/ui/core/util/Mockserver: given data and complex filter features"
-			},
-			MockServerAPF: {
-				title: "Tests for sap/ui/core/util/MockServer: APF model"
-			},
-			DraftEnabledMockServer: {
-				title: "Tests for sap/ui/core/util/DraftEnabledMockServer"
-			},
-			"MockServer (sinon-4)": {
-				title: "Tests for sap/ui/core/util/MockServer",
-				loader: {
-					map: {
-						"*": {
-							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
-							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
-						}
-					}
-				},
-				sinon: 4,
-				module: "./MockServer.qunit",
-				ui5: {
-					libs: ["sap.ui.commons"]
-				}
-			},
-			"MockServerFeature (sinon-4)": {
-				title: "Tests for sap/ui/core/util/Mockserver: given data and complex filter features",
-				loader: {
-					map: {
-						"*": {
-							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
-							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
-						}
-					}
-				},
-				sinon: 4,
-				module: "./MockServerFeature.qunit"
-			},
-			"MockServerAPF (sinon-4)": {
-				title: "Tests for sap/ui/core/util/MockServer: APF model",
-				loader: {
-					map: {
-						"*": {
-							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
-							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
-						}
-					}
-				},
-				sinon: 4,
-				module: "./MockServerAPF.qunit"
-			},
-			"DraftEnabledMockServer (sinon-4)": {
-				title: "Tests for sap/ui/core/util/DraftEnabledMockServer",
-				loader: {
-					map: {
-						"*": {
-							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
-							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
-						}
-					}
-				},
-				sinon: 4,
-				module: "./DraftEnabledMockServer.qunit"
+
+	var oCommonTests = {
+		MockServer: {
+			title: "Tests for sap/ui/core/util/MockServer",
+			module: "./MockServer.qunit",
+			ui5: {
+				libs: ["sap.m"]
 			}
+		},
+		MockServerFeature: {
+			title: "Tests for sap/ui/core/util/Mockserver: given data and complex filter features",
+			module: "./MockServerFeature.qunit"
+		},
+		MockServerAPF: {
+			title: "Tests for sap/ui/core/util/MockServer: APF model",
+			module: "./MockServerAPF.qunit"
+		},
+		DraftEnabledMockServer: {
+			title: "Tests for sap/ui/core/util/DraftEnabledMockServer",
+			module: "./DraftEnabledMockServer.qunit"
 		}
 	};
+
+
+	// --- generic part - duplicates tests, once with sinon 1 and once with sinon 4 ---
+
+	var oTestSuite = {
+		name: "TestSuite for MockServer",
+		tests: {}
+	};
+
+	Object.keys(oCommonTests).forEach(function (name) {
+		oTestSuite.tests[name + "1"] = merge({}, oCommonTests[name], {
+			sinon: {
+				version: 1
+			}
+		});
+		if ( oTestSuite.tests[name + "1"].title ) {
+			oTestSuite.tests[name + "1"].title = oTestSuite.tests[name + "1"].title + " (Sinon 1)";
+		}
+
+		oTestSuite.tests[name + "4"] = merge({}, oCommonTests[name], {
+			loader: {
+				map: {
+					"*": {
+						"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+						"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+					}
+				}
+			},
+			sinon: {
+				version: 4
+			}
+		});
+		if ( oTestSuite.tests[name + "4"].title ) {
+			oTestSuite.tests[name + "4"].title = oTestSuite.tests[name + "4"].title + " (Sinon 4)";
+		}
+	});
+
+	return oTestSuite;
 });

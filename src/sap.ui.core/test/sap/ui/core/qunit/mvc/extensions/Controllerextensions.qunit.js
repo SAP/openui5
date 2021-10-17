@@ -1,10 +1,11 @@
 /*global QUnit */
 sap.ui.define([
-	'sap/ui/core/mvc/Controller',
-	'sap/ui/core/mvc/XMLView',
-	'sap/ui/core/mvc/ControllerExtension',
-	'sap/ui/core/mvc/OverrideExecution'
-], function(Controller, XMLView, ControllerExtension, OverrideExecution) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/mvc/ControllerExtension",
+	"sap/ui/core/mvc/OverrideExecution",
+	"sap/base/util/deepEqual"
+], function(Controller, XMLView, ControllerExtension, OverrideExecution, deepEqual) {
 	"use strict";
 
 	var mAllPublicMethods = {
@@ -464,7 +465,7 @@ sap.ui.define([
 		);
 		assert.strictEqual(aPublicExpected.length, Object.keys(oExtension).length, "extension: has the right amount of public functions");
 		//check method returning this: Should be the interface
-		assert.ok(jQuery.sap.equal(Object.keys(oExtension), Object.keys(oExtension.checkInterface())), "If method returns 'this' we should also return the interface");
+		assert.ok(deepEqual(Object.keys(oExtension), Object.keys(oExtension.checkInterface())), "If method returns 'this' we should also return the interface");
 
 
 		//methods with _ throw private error if called
@@ -514,7 +515,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 		afterEach: function() {
-			//jQuery.sap.setObject("sample.ExtensionProvider", null);
+			//ObjectPath.set("sample.ExtensionProvider", null);
 			Controller._sExtensionProvider = null;
 			this.view.destroy();
 			this.view = null;
@@ -703,7 +704,7 @@ sap.ui.define([
 
 		},
 		afterEach: function() {
-			//jQuery.sap.setObject("sample.ExtensionProvider", null);
+			//ObjectPath.set("sample.ExtensionProvider", null);
 			Controller.registerExtensionProvider(null);
 			this.view.destroy();
 			this.view = null;

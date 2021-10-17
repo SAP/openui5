@@ -27,7 +27,7 @@ sap.ui.define(function() {
 			JSON: {
 				title: "sap.ui.core: JSON Native Support",
 				ui5: {
-					libs: "sap.ui.commons"
+					libs: "sap.m"
 				}
 			},
 			QUnit: {
@@ -49,8 +49,7 @@ sap.ui.define(function() {
 			SinonJS: {
 				title: "sap.ui.thirdparty.sinon: Support",
 				ui5: {
-					libs: "sap.ui.commons",
-					theme: "sap_bluecrystal"
+					libs: "sap.m"
 				},
 				sinon: {
 					version: 1, // sinon 1 itself is tested

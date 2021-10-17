@@ -287,7 +287,7 @@ sap.ui.define([
 			}
 		};
 
-        oModel.metadataLoaded().then(function(){
+		oModel.metadataLoaded().then(function(){
 
 			var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
@@ -301,14 +301,14 @@ sap.ui.define([
 						done();
 				}});
 			}});
-        });
+		});
 	});
 
 	QUnit.test("Affected Targets - ODataMessageParser._createTarget - Absolute message targets", function(assert){
 		var done = assert.async();
 		var oModel = new ODataModel(this.sServiceUri);
 
-        oModel.metadataLoaded().then(function(){
+		oModel.metadataLoaded().then(function(){
 
 			var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
@@ -325,7 +325,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oModelCanonical = new ODataModel(this.sServiceUri, { canonicalRequests: true });
 
-        oModelCanonical.metadataLoaded().then(function(){
+		oModelCanonical.metadataLoaded().then(function(){
 
 			oModelCanonical.read("/SalesOrderSet", {
 				urlParameters: { "$expand": "ToLineItems,ToLineItems/ToProduct" }
@@ -354,7 +354,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oModelCanonical = new ODataModel(this.sServiceUri, { canonicalRequests: true });
 
-        oModelCanonical.metadataLoaded().then(function(){
+		oModelCanonical.metadataLoaded().then(function(){
 
 			oModelCanonical.read("/SalesOrderSet");
 			oModelCanonical.read("/SalesOrderSet('0500000000')/ToLineItems");

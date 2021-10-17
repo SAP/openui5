@@ -54,16 +54,16 @@ jQuery.sap.require("sap.ui.core.Control");
 sap.ui.core.Control.extend("sap.ui.testlib.TestButton", {
 
 	metadata : {
-		  library : "sap.ui.commons",
-		  properties : {
-		    "text" : {name : "text", type : "string", group : "Appearance", defaultValue : ''},
-		    "enabled" : {name : "enabled", type : "boolean", group : "Behavior", defaultValue : true},
-		    "visible" : {name : "visible", type : "boolean", group : "", defaultValue : true},
-		    "width" : {name : "width", type : "int", group : "", defaultValue : 200}
-		  },
-		  events : {
-		    "press" : "press"
-		  }
+		library : "sap.ui.testlib",
+		properties : {
+			"text" : {name : "text", type : "string", group : "Appearance", defaultValue : ''},
+			"enabled" : {name : "enabled", type : "boolean", group : "Behavior", defaultValue : true},
+			"visible" : {name : "visible", type : "boolean", group : "", defaultValue : true},
+			"width" : {name : "width", type : "int", group : "", defaultValue : 200}
+		},
+		events : {
+			"press" : "press"
+		}
 	},
 
 	onclick : function(oEvent) {

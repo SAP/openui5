@@ -4263,7 +4263,7 @@ sap.ui.define([
 	 * <pre>
 	 *   &lt;div id="SAPUI5UiArea">&lt;/div>
 	 *   &lt;script>
-	 *     var oRoot = new sap.ui.commons.Label();
+	 *     var oRoot = new sap.m.Label();
 	 *     oRoot.setText("Hello world!");
 	 *     sap.ui.setRoot("SAPUI5UiArea", oRoot);
 	 *   &lt;/script>

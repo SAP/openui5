@@ -1,2 +1,8 @@
-sap.ui.controller("serializer.view.NestedHtmlView", {
+sap.ui.define([
+	"sap/ui/core/mvc/Controller"
+], function(Controller) {
+	"use strict";
+
+	return Controller.extend("serializer.view.NestedHtmlView", {
+	});
 });

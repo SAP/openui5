@@ -4,12 +4,12 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/RenderManager",
-	"sap/ui/commons/layout/MatrixLayout",
+	"sap/ui/layout/VerticalLayout",
 	"sap/ui/testlib/TestButton",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer"
-], function(HTML, oCore, Control, RenderManager, MatrixLayout, TestButton, jQuery, UIComponent, ComponentContainer) {
+], function(HTML, oCore, Control, RenderManager, VerticalLayout, TestButton, jQuery, UIComponent, ComponentContainer) {
 	"use strict";
 
 	var normalize = (function() {
@@ -125,8 +125,8 @@ sap.ui.define([
 	};
 
 	function okFragment(assert, oFragment, sUIArea, sComment) {
-		var $ = jQuery(oFragment.selector, jQuery("#" + sUIArea)[0]);
-		assert.ok($.length > 0, "expected fragment exists");
+		var $ = jQuery(oFragment.selector, document.getElementById(sUIArea));
+		assert.ok($.length > 0, "expected HTML fragment exists");
 		assert.ok(oFragment.check(assert, $), sComment);
 	}
 
@@ -175,11 +175,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("single root, nested control", function(assert) {
-		new MatrixLayout().createRow(
+		new VerticalLayout({
+			content: [
 				new HTML("html2", {
 					content : FRAGMENT_2.content,
 					preferDOM : false
-				})).placeAt("uiAreaA");
+				})
+			]
+		}).placeAt("uiAreaA");
 
 		return afterRerendering(function() {
 			okFragment(assert, FRAGMENT_2, "uiAreaA", "UIArea contains expected HTML fragment");
@@ -266,10 +269,13 @@ sap.ui.define([
 	QUnit.test("content property + preferDOM, initial rendering", function(assert) {
 		//Cleanup UIArea because placeAt only adds new control to UIArea
 		oCore.getUIArea("uiAreaA").removeAllContent();
-		new MatrixLayout().createRow(
+		new VerticalLayout({
+			content: [
 				new HTML("html3", {
 					content : FRAGMENT_1.content
-				})).placeAt("uiAreaA");
+				})
+			]
+		}).placeAt("uiAreaA");
 
 		return afterRerendering(function() {
 			okFragment(assert, FRAGMENT_1, "uiAreaA", "UIArea contains expected HTML fragment");
@@ -463,7 +469,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("predefined content, single root, nested controls", function(assert) {
-		new MatrixLayout().createRow(new HTML("html5")).placeAt("uiAreaC");
+		new VerticalLayout({
+			content: [ new HTML("html5") ]
+		}).placeAt("uiAreaC");
 
 		return afterRerendering(function() {
 			okFragment(assert, FRAGMENT_4, "uiAreaC",
@@ -490,17 +498,17 @@ sap.ui.define([
 
 	QUnit.test("predefined content, multiple roots, nested controls, initial rendering", function(assert) {
 
-		var layout = new MatrixLayout("layout7");
+		var layout = new VerticalLayout("layout7");
 		var html = new HTML("html7");
-		layout.createRow(html);
+		layout.addContent(html);
 		layout.placeAt("uiAreaD");
 
 		return afterRerendering(function() {
-			var uiAreaD = jQuery("#uiAreaD")[0];
-			assert.ok(jQuery("div", uiAreaD).length == 3, "div has been rendered");
-			assert.ok(jQuery("div", uiAreaD).css("width") == "256px", "div has been rendered");
-			assert.ok(jQuery("div", uiAreaD).css("height") == "64px", "div has been rendered");
-			assert.ok(normalize(jQuery("div", uiAreaD).css("background-color")) == "rgb(0,0,255)", "div has been rendered");
+			var $LayoutChildren = jQuery("#uiAreaD .sapUiVltCell > div");
+			assert.strictEqual($LayoutChildren.length, 3, "div has been rendered");
+			assert.strictEqual($LayoutChildren.css("width"), "256px", "div has been rendered");
+			assert.strictEqual($LayoutChildren.css("height"), "64px", "div has been rendered");
+			assert.strictEqual(normalize($LayoutChildren.css("background-color")), "rgb(0,0,255)", "div has been rendered");
 		});
 	});
 
@@ -513,14 +521,13 @@ sap.ui.define([
 		layout.invalidate();
 
 		return afterRerendering(function() {
-			var uiAreaD = jQuery("#uiAreaD")[0];
+			var $LayoutChildren = jQuery("#uiAreaD .sapUiVltCell > div");
 			//assert.ok(oldLayoutDomRef != layout.getDomRef(), "layout has been rerendered");
-			assert.ok(jQuery("div", uiAreaD).length == 3, "div has been rendered");
-			assert.ok(jQuery("div", uiAreaD).css("width") == "256px", "div has been rendered");
-			assert.ok(jQuery("div", uiAreaD).css("height") == "64px", "div has been rendered");
-			assert.ok(normalize(jQuery("div", uiAreaD).css("background-color")) == "rgb(0,0,255)", "div has been rendered");
+			assert.ok($LayoutChildren.length == 3, "div has been rendered");
+			assert.ok($LayoutChildren.css("width") == "256px", "div has been rendered");
+			assert.ok($LayoutChildren.css("height") == "64px", "div has been rendered");
+			assert.ok(normalize($LayoutChildren.css("background-color")) == "rgb(0,0,255)", "div has been rendered");
 		});
-
 	});
 
 	QUnit.test("order of controls in UIArea", function(assert) {

@@ -2,8 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/commons/Button', 'sap/ui/core/UIComponent'],
-	function(Button, UIComponent) {
+sap.ui.define([
+	"sap/m/Button",
+	"sap/ui/core/UIComponent"
+], function(Button, UIComponent) {
 	"use strict";
 
 	// new Component

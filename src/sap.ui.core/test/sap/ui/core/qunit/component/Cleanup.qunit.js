@@ -425,7 +425,7 @@ sap.ui.define([
 		}).then(function(aComponents) {
 
 			var oComponent6 = aComponents[0],
-			    oComponent7 = aComponents[1];
+				oComponent7 = aComponents[1];
 
 			// destroy component "test7" and just style7.css should be removed
 			oComponent7.destroy();

@@ -1,14 +1,16 @@
 /* global sinon, QUnit */
 sap.ui.define([
 	"sap/ui/core/BusyIndicator",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
 ], function (
 	BusyIndicator,
-	Core
+	oCore,
+	jQuery
 ) {
 	"use strict";
 
-	var bInitialized = Core.isInitialized();
+	var bInitialized = oCore.isInitialized();
 
 	var oSpyShow = sinon.spy(BusyIndicator, "show");
 	var oSpyShowNowIfRequested = sinon.spy(BusyIndicator, "_showNowIfRequested");
@@ -29,7 +31,7 @@ sap.ui.define([
 	QUnit.module("BusyIndicator before DOM", {
 		beforeEach: function () {
 			this.sClass = ".sapUiLocalBusyIndicator";
-			if (jQuery.sap.getUriParameters().get("sap-ui-theme") == "sap_goldreflection") {
+			if (new URLSearchParams(window.location.search).get("sap-ui-theme") == "sap_goldreflection") {
 				this.sClass = ".sapUiBusy";
 			}
 		},
@@ -43,7 +45,7 @@ sap.ui.define([
 	QUnit.test("Check if 'show' waits for DOM", function (assert) {
 		var done = assert.async();
 
-		Core.attachInit(function () {
+		oCore.attachInit(function () {
 			assert.notOk(bInitialized, "Core wasn't ready when 'show' was called");
 			assert.ok(oSpyShow.callCount > 1, "'show' called more than once");
 
@@ -78,7 +80,7 @@ sap.ui.define([
 		}.bind(this));
 
 		// now boot the core
-		Core.boot();
+		oCore.boot();
 	});
 
 	// make sure the BusyIndicator is not rendered initially

@@ -1,12 +1,13 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/core/HTML",
 	"sap/ui/Device",
+	"sap/ui/core/HTML",
 	"sap/ui/core/RenderManager",
-	"sap/ui/commons/Panel",
-	"sap/ui/commons/TabStrip",
+	"sap/m/Panel",
+	"sap/m/IconTabBar",
+	"sap/m/IconTabFilter",
 	"sap/ui/thirdparty/jquery"
-], function(HTML, Device, RenderManager, Panel, TabStrip, jQuery) {
+], function(Device, HTML, RenderManager, Panel, IconTabBar, IconTabFilter, jQuery) {
 	"use strict";
 
 	// =================================================================
@@ -32,11 +33,19 @@ sap.ui.define([
 	oBtn2.innerHTML = "My Native Button 2";
 	oPreserveArea.appendChild(oBtn2);
 
-	var oTabStrip = new TabStrip();
-	oTabStrip.setWidth("100%");
-	oTabStrip.setHeight("100px");
-	oTabStrip.createTab("Tab01", oHTML1);
-	oTabStrip.createTab("Tab02", oHTML2);
+	var oTabStrip = new IconTabBar({
+		selectedKey: "Tab01"
+	});
+	oTabStrip.addItem(new IconTabFilter({
+		key: "Tab01",
+		text: "Tab01",
+		content: [oHTML1]
+	}));
+	oTabStrip.addItem(new IconTabFilter({
+		key: "Tab02",
+		text: "Tab02",
+		content: [oHTML2]
+	}));
 
 	var oHTML3 = new HTML();
 	var oDiv = document.createElement("div");
@@ -44,7 +53,7 @@ sap.ui.define([
 	oPreserveArea.appendChild(oDiv);
 
 	var oPanel = new Panel();
-	oPanel.setText("Hello World");
+	oPanel.setHeaderText("Hello World");
 	oPanel.placeAt(oDiv);
 
 	var oHTML4 = new HTML();
@@ -55,25 +64,29 @@ sap.ui.define([
 
 	oPanel.addContent(oHTML4);
 
-	oTabStrip.createTab("Tab03", oHTML3);
+	oTabStrip.addItem(new IconTabFilter({
+		key: "Tab03",
+		text: "Tab03",
+		content: [oHTML3]
+	}));
 
 	oBtn1.onclick = function () {
 		// modification of tab title triggers rerendering
-		oTabStrip.getTabs()[0].getTitle().setText(oTabStrip.getTabs()[0].getTitle().getText() + ".");
+		oTabStrip.getItems()[0].setText(oTabStrip.getItems()[0].getText() + ".");
 	};
 
 	oBtn2.onclick = function () {
 		// modification of tab title triggers rerendering
-		oTabStrip.getTabs()[0].getTitle().setText(oTabStrip.getTabs()[0].getTitle().getText() + "!");
+		oTabStrip.getItems()[0].setText(oTabStrip.getItems()[0].getText() + "!");
 		// modification of panel title triggers rerendering
-		oPanel.setText(oPanel.getTitle().getText() + "!");
+		oPanel.setHeaderText(oPanel.getHeaderText() + "!");
 	};
 
 	oBtn3.onclick = function () {
 		// modification of tab title triggers rerendering
-		oTabStrip.getTabs()[0].getTitle().setText(oTabStrip.getTabs()[0].getTitle().getText() + "?");
+		oTabStrip.getItems()[0].setText(oTabStrip.getItems()[0].getText() + "?");
 		// modification of panel title triggers rerendering
-		oPanel.setText(oPanel.getTitle().getText() + ".");
+		oPanel.setHeaderText(oPanel.getHeaderText() + ".");
 	};
 
 	oTabStrip.placeAt("content");
@@ -119,7 +132,7 @@ sap.ui.define([
 	QUnit.test("tabSwitch1", function(assert) {
 		var done = assert.async();
 
-		oTabStrip.setSelectedIndex(1);
+		oTabStrip.setSelectedKey("Tab02");
 
 		setTimeout(function() {
 			assert.ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
@@ -133,7 +146,7 @@ sap.ui.define([
 	QUnit.test("tabSwitch2", function(assert) {
 		var done = assert.async();
 
-		oTabStrip.setSelectedIndex(2);
+		oTabStrip.setSelectedKey("Tab03");
 
 		setTimeout(function() {
 			assert.ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
@@ -161,7 +174,7 @@ sap.ui.define([
 	QUnit.test("tabSwitch3", function(assert) {
 		var done = assert.async();
 
-		oTabStrip.setSelectedIndex(0);
+		oTabStrip.setSelectedKey("Tab01");
 
 		setTimeout(function() {
 			assert.ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");

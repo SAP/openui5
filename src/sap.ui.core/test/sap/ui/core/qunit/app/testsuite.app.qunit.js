@@ -4,6 +4,11 @@ sap.ui.define(function () {
 	return {
 		name: "TestSuite for app",
 		defaults: {
+			ui5: {
+				resourceroots: {
+					"test": "test-resources/sap/ui/core/qunit/app/fixture/"
+				}
+			},
 			beforeBootstrap: "./beforeBootstrap"
 		},
 		tests: {
@@ -11,25 +16,10 @@ sap.ui.define(function () {
 				title: "Tests for sap/ui/model/message/MessageListBinding"
 			},
 			DesignMode: {
-				title: "Tests for sap/ui/core/Configuration: DesignMode",
-				ui5: {
-					noConflict: true,
-					"xx-designMode": true,
-					resourceroots: {
-						"example.designmode": "test-resources/sap/ui/core/qunit/testdata/designmode/"
-					}
-				}
+				title: "Tests for sap/ui/core/Configuration: DesignMode (XMLView)"
 			},
-			DesignModeSupressedDeactivation: {
-				title: "Tests for sap/ui/core/Configuration: DesignMode",
-				ui5: {
-					noConflict: true,
-					"xx-designMode": true,
-					"xx-suppressDeactivationOfControllerCode": true,
-					resourceroots: {
-						"example.designmode": "test-resources/sap/ui/core/qunit/testdata/designmode/"
-					}
-				}
+			DesignMode_unavoidablySync: {
+				title: "Tests for sap/ui/core/Configuration: DesignMode (HTMLView)"
 			},
 			"ThemeClassParameters(base)": {
 				title: "Tests for sap/ui/core/theming/Parameters (base): Theme-Dependent CSS Classes",

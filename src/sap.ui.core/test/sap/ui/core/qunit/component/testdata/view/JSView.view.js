@@ -4,7 +4,7 @@ sap.ui.define(["sap/m/Button"], function (Button) {
 	sap.ui.jsview("error.test.JSView", {
 		createContent: function (oController) {
 			return new Button({
-						text: "click me"
+				text: "click me"
 			});
 		}
 	});

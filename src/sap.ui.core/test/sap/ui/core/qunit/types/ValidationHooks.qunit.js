@@ -2,51 +2,48 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/type/String",
 	"sap/ui/model/type/Integer",
-	"sap/ui/commons/RatingIndicator",
+	"sap/ui/model/type/String",
+	"sap/m/Input",
+	"sap/m/RatingIndicator",
 	"sap/ui/model/FormatException",
-	"sap/ui/commons/TextField",
-	"sap/ui/model/ValidateException",
-	"sap/ui/model/ParseException"],
-	function (createAndAppendDiv, JSONModel, SAPString, Integer, RatingIndicator, FormatException, TextField, ValidateException, ParseException) {
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException"
+], function (createAndAppendDiv, JSONModel, TypeInteger, TypeString, Input, RatingIndicator, FormatException, ParseException, ValidateException) {
 	"use strict";
 
 		// prepare DOM
 		createAndAppendDiv(["target1", "target2"]);
 
-		var oModel;
-		var oTxt;
+		var oModel = new JSONModel();
+		sap.ui.getCore().setModel(oModel);
 
-		function setup(sPath, oType) {
-			oModel = new JSONModel();
-			oModel.setData({
-				visibleItems: 3,
-				test: "hello",
-				rating: "4"
-			});
-			sap.ui.getCore().setModel(oModel);
-			oTxt = new TextField();
-			oTxt.bindValue(sPath, oType);
-
-			oTxt.placeAt("target1");
-		}
-
-		function teardown() {
-			oTxt.destroy();
-		}
+		QUnit.module("", {
+			beforeEach: function() {
+				oModel.setData({
+					visibleItems: 3,
+					test: "hello",
+					rating: "4"
+				});
+				this.oInput = new Input().placeAt("target1");
+			},
+			afterEach: function() {
+				this.oInput.destroy();
+			}
+		});
 
 		QUnit.test("validation error", function (assert) {
 			var done = assert.async();
-			var oType = new SAPString(null, {
+			var oType = new TypeString(null, {
 				minLength: 1,
 				maxLength: 5
 			});
-			setup("/test", oType);
+			var oInput = this.oInput;
+			oInput.bindValue("/test", oType);
 			var bSuccess = false;
 			sap.ui.getCore().attachValidationError(handler);
 			function handler(oEvent) {
-				assert.equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+				assert.equal(oEvent.getParameter("element").getId(), oInput.getId(), "element");
 				assert.equal(oEvent.getParameter('property'), "value", "property");
 				assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
 				assert.equal(oEvent.getParameter("oldValue"), "hello", "old value");
@@ -56,11 +53,10 @@ sap.ui.define([
 				assert.equal(oEvent.getParameter("exception").violatedConstraints[0], "maxLength", "violated constraints check");
 				bSuccess = true;
 			}
-			oTxt.setValue("blubbbbb");
+			oInput.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
-				assert.ok(bSuccess, "error occurred sucessfully");
+				assert.ok(bSuccess, "error occurred successfully");
 				sap.ui.getCore().detachValidationError(handler);
-				teardown(handler);
 				done();          // resume normal testing
 			}, 100);
 
@@ -68,12 +64,13 @@ sap.ui.define([
 
 		QUnit.test("parse error", function (assert) {
 			var done = assert.async();
-			var oType = new Integer();
-			setup("/visibleItems", oType);
+			var oType = new TypeInteger();
+			var oInput = this.oInput;
+			oInput.bindValue("/visibleItems", oType);
 			var bSuccess = false;
 			sap.ui.getCore().attachParseError(handler);
 			function handler(oEvent) {
-				assert.equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+				assert.equal(oEvent.getParameter("element").getId(), oInput.getId(), "element");
 				assert.equal(oEvent.getParameter('property'), "value", "property");
 				assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
 				assert.equal(oEvent.getParameter("oldValue"), 3, "old value");
@@ -82,11 +79,10 @@ sap.ui.define([
 
 				bSuccess = true;
 			}
-			oTxt.setValue("blubbbbb");
+			oInput.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "error occurred sucessfully");
 				sap.ui.getCore().detachParseError(handler);
-				teardown(handler);
 				done();          // resume normal testing
 			}, 100);
 
@@ -94,11 +90,12 @@ sap.ui.define([
 
 		QUnit.test("format error", function (assert) {
 			var done = assert.async();
-			var oType = new SAPString();
+			var oType = new TypeString();
 			var oRating = new RatingIndicator();
 			oRating.bindValue("/rating", oType);
 			oRating.placeAt("target2");
-			setup("/rating", oType);
+			var oInput = this.oInput;
+			oInput.bindValue("/rating", oType);
 			var bSuccess = false;
 			sap.ui.getCore().attachFormatError(handler);
 			function handler(oEvent) {
@@ -111,12 +108,11 @@ sap.ui.define([
 
 				bSuccess = true;
 			}
-			oTxt.setValue("blubbbbb");
+			oInput.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "error occurred sucessfully");
 				sap.ui.getCore().detachFormatError(handler);
 				oRating.destroy();
-				teardown(handler);
 				done();          // resume normal testing
 			}, 100);
 
@@ -124,12 +120,13 @@ sap.ui.define([
 
 		QUnit.test("validation success", function (assert) {
 			var done = assert.async();
-			var oType = new SAPString();
-			setup("/test", oType);
+			var oType = new TypeString();
+			var oInput = this.oInput;
+			oInput.bindValue("/test", oType);
 			var bSuccess = false;
 			sap.ui.getCore().attachValidationSuccess(handler);
 			function handler(oEvent) {
-				assert.equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+				assert.equal(oEvent.getParameter("element").getId(), oInput.getId(), "element");
 				assert.equal(oEvent.getParameter('property'), "value", "property");
 				assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
 				assert.equal(oEvent.getParameter("oldValue"), "hello", "old value");
@@ -137,11 +134,10 @@ sap.ui.define([
 
 				bSuccess = true;
 			}
-			oTxt.setValue("blubbbbb");
+			oInput.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "validation was sucessful");
 				sap.ui.getCore().detachValidationSuccess(handler);
-				teardown(handler);
 				done();          // resume normal testing
 			}, 100);
 
@@ -149,8 +145,9 @@ sap.ui.define([
 
 		QUnit.test("event checks 1", function (assert) {
 			var done = assert.async();
-			var oType = new Integer();
-			setup("/visibleItems", oType);
+			var oType = new TypeInteger();
+			var oInput = this.oInput;
+			oInput.bindValue("/visibleItems", oType);
 			var bSuccess = false;
 			var iEventCount = 0;
 			sap.ui.getCore().attachParseError(handler);
@@ -173,7 +170,7 @@ sap.ui.define([
 				bSuccess = false;
 				iEventCount++;
 			}
-			oTxt.setValue("blubbbbb");
+			oInput.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "parse error occurred sucessfully and no other events occurred");
 				assert.ok(iEventCount == 1, "event count should be 1");
@@ -181,7 +178,6 @@ sap.ui.define([
 				sap.ui.getCore().detachFormatError(handler);
 				sap.ui.getCore().detachValidationError(handler);
 				sap.ui.getCore().detachValidationSuccess(handler);
-				teardown(handler);
 				done();          // resume normal testing
 			}, 100);
 
@@ -189,11 +185,12 @@ sap.ui.define([
 
 		QUnit.test("event checks 2", function (assert) {
 			var done = assert.async();
-			var oType = new SAPString(null, {
+			var oType = new TypeString(null, {
 				minLength: 1,
 				maxLength: 5
 			});
-			setup("/test", oType);
+			var oInput = this.oInput;
+			oInput.bindValue("/test", oType);
 			var iEventCount = 0;
 			var bSuccess = false;
 			sap.ui.getCore().attachParseError(handler);
@@ -216,7 +213,7 @@ sap.ui.define([
 				bSuccess = false;
 				iEventCount++;
 			}
-			oTxt.setValue("blubbbbb");
+			oInput.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "validation error occurred sucessfully and no other events occurred");
 				assert.ok(iEventCount == 1, "event count should be 1");
@@ -224,7 +221,6 @@ sap.ui.define([
 				sap.ui.getCore().detachFormatError(handler);
 				sap.ui.getCore().detachValidationError(handler);
 				sap.ui.getCore().detachValidationSuccess(handler);
-				teardown(handler);
 				done();          // resume normal testing
 			}, 100);
 
@@ -232,14 +228,15 @@ sap.ui.define([
 
 		QUnit.test("validation success on core and control --> bubbling", function (assert) {
 			var done = assert.async();
-			var oType = new SAPString();
-			setup("/test", oType);
+			var oType = new TypeString();
+			var oInput = this.oInput;
+			oInput.bindValue("/test", oType);
 			var bSuccess = false;
 			sap.ui.getCore().attachValidationSuccess(handler);
-			oTxt.attachValidationSuccess(handler);
+			oInput.attachValidationSuccess(handler);
 			var iCount = 0;
 			function handler(oEvent) {
-				assert.equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+				assert.equal(oEvent.getParameter("element").getId(), oInput.getId(), "element");
 				assert.equal(oEvent.getParameter('property'), "value", "property");
 				assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
 				assert.equal(oEvent.getParameter("oldValue"), "hello", "old value");
@@ -247,13 +244,12 @@ sap.ui.define([
 				iCount++;
 				bSuccess = true;
 			}
-			oTxt.setValue("blubbbbb");
+			oInput.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "validation was sucessful");
 				assert.equal(iCount, 2, "validation event count");
 				sap.ui.getCore().detachValidationSuccess(handler);
-				oTxt.detachValidationSuccess(handler);
-				teardown(handler);
+				oInput.detachValidationSuccess(handler);
 				done();          // resume normal testing
 			}, 100);
 
@@ -261,17 +257,18 @@ sap.ui.define([
 
 		QUnit.test("validation error on core and control --> bubbling", function (assert) {
 			var done = assert.async();
-			var oType = new SAPString(null, {
+			var oType = new TypeString(null, {
 				minLength: 1,
 				maxLength: 5
 			});
-			setup("/test", oType);
+			var oInput = this.oInput;
+			oInput.bindValue("/test", oType);
 			var bSuccess = false;
 			sap.ui.getCore().attachValidationError(handler);
-			oTxt.attachValidationError(handler);
+			oInput.attachValidationError(handler);
 			var iCount = 0;
 			function handler(oEvent) {
-				assert.equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+				assert.equal(oEvent.getParameter("element").getId(), oInput.getId(), "element");
 				assert.equal(oEvent.getParameter('property'), "value", "property");
 				assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
 				assert.equal(oEvent.getParameter("oldValue"), "hello", "old value");
@@ -282,13 +279,12 @@ sap.ui.define([
 				bSuccess = true;
 				iCount++;
 			}
-			oTxt.setValue("blubbbbb");
+			oInput.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "error occurred sucessfully");
 				assert.equal(iCount, 2, "validation event count");
 				sap.ui.getCore().detachValidationError(handler);
-				oTxt.detachValidationError(handler);
-				teardown(handler);
+				oInput.detachValidationError(handler);
 				done();          // resume normal testing
 			}, 100);
 
@@ -296,17 +292,18 @@ sap.ui.define([
 
 		QUnit.test("validation error on core and control --> cancel bubbling", function (assert) {
 			var done = assert.async();
-			var oType = new SAPString(null, {
+			var oType = new TypeString(null, {
 				minLength: 1,
 				maxLength: 5
 			});
-			setup("/test", oType);
+			var oInput = this.oInput;
+			oInput.bindValue("/test", oType);
 			var bSuccess = false;
 			sap.ui.getCore().attachValidationError(handler);
-			oTxt.attachValidationError(handler);
+			oInput.attachValidationError(handler);
 			var iCount = 0;
 			function handler(oEvent) {
-				assert.equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+				assert.equal(oEvent.getParameter("element").getId(), oInput.getId(), "element");
 				assert.equal(oEvent.getParameter('property'), "value", "property");
 				assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
 				assert.equal(oEvent.getParameter("oldValue"), "hello", "old value");
@@ -318,27 +315,27 @@ sap.ui.define([
 				iCount++;
 				oEvent.cancelBubble();
 			}
-			oTxt.setValue("blubbbbb");
+			oInput.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "error occurred sucessfully");
 				assert.equal(iCount, 1, "validation event count");
 				sap.ui.getCore().detachValidationError(handler);
-				oTxt.detachValidationError(handler);
-				teardown(handler);
+				oInput.detachValidationError(handler);
 				done();          // resume normal testing
 			}, 100);
 		});
 
 		QUnit.test("parse error on core and control --> bubbling", function (assert) {
 			var done = assert.async();
-			var oType = new Integer();
-			setup("/visibleItems", oType);
+			var oType = new TypeInteger();
+			var oInput = this.oInput;
+			oInput.bindValue("/visibleItems", oType);
 			var bSuccess = false;
-			oTxt.attachParseError(handler);
+			oInput.attachParseError(handler);
 			sap.ui.getCore().attachParseError(handler);
 			var iCount = 0;
 			function handler(oEvent) {
-				assert.equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+				assert.equal(oEvent.getParameter("element").getId(), oInput.getId(), "element");
 				assert.equal(oEvent.getParameter('property'), "value", "property");
 				assert.equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
 				assert.equal(oEvent.getParameter("oldValue"), 3, "old value");
@@ -347,13 +344,12 @@ sap.ui.define([
 				bSuccess = true;
 				iCount++;
 			}
-			oTxt.setValue("blubbbbb");
+			oInput.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "error occurred sucessfully");
-				oTxt.detachParseError(handler);
+				oInput.detachParseError(handler);
 				assert.equal(iCount, 2, "validation event count");
 				sap.ui.getCore().detachParseError(handler);
-				teardown(handler);
 				done();          // resume normal testing
 			}, 100);
 
@@ -361,14 +357,15 @@ sap.ui.define([
 
 		QUnit.test("format error on core and control --> cancel bubbling", function (assert) {
 			var done = assert.async();
-			var oType = new SAPString();
+			var oType = new TypeString();
 			var oRating = new RatingIndicator();
 			oRating.bindValue("/rating", oType);
 			oRating.placeAt("target2");
-			setup("/rating", oType);
+			var oInput = this.oInput;
+			oInput.bindValue("/rating", oType);
 			var bSuccess = false;
 			sap.ui.getCore().attachFormatError(handler);
-			oTxt.attachFormatError(handler);
+			oInput.attachFormatError(handler);
 			var iCount = 0;
 			function handler(oEvent) {
 				assert.equal(oEvent.getParameter("element").getId(), oRating.getId(), "element");
@@ -382,14 +379,13 @@ sap.ui.define([
 				iCount++;
 				oEvent.cancelBubble();
 			}
-			oTxt.setValue("blubbbbb");
+			oInput.setValue("blubbbbb");
 			setTimeout(function () { // delay the following test
 				assert.ok(bSuccess, "error occurred sucessfully");
 				sap.ui.getCore().detachFormatError(handler);
-				oTxt.detachFormatError(handler);
+				oInput.detachFormatError(handler);
 				assert.equal(iCount, 1, "validation event count");
 				oRating.destroy();
-				teardown(handler);
 				done();          // resume normal testing
 			}, 100);
 

@@ -1,18 +1,17 @@
 sap.ui.define([
-	'sap/ui/core/Component',
-	'sap/ui/core/ComponentContainer',
-	'sap/ui/core/mvc/Controller',
-	'sap/ui/core/mvc/View',
-	'sap/ui/qunit/QUnitUtils'
-], function(Component, ComponentContainer, Controller, View, qutils) {
+	"sap/ui/base/Event",
+	"sap/ui/core/Component",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/View",
+	"sap/ui/qunit/utils/createAndAppendDiv"
+], function(Event, Component, ComponentContainer, Controller, View, createAndAppendDiv) {
 
 	"use strict";
 	/*global QUnit, sinon */
 
 	// create content div
-	var oDIV = document.createElement("div");
-	oDIV.id = "content";
-	document.body.appendChild(oDIV);
+	createAndAppendDiv("content");
 
 	// Event handler functions
 	var iStandardSub2ControllerCalled = 0;
@@ -29,6 +28,11 @@ sap.ui.define([
 
 	var oLifecycleSpy = this.oLifecycleSpy = sinon.spy();
 
+	function triggerButtonPress(sButtonId) {
+		var oButton = sap.ui.getCore().byId(sButtonId);
+		var oEvent = new Event(sButtonId, oButton, {});
+		oButton.firePress(oEvent);
+	}
 
 	// UI Construction
 	var oComp, oCompCont;
@@ -115,11 +119,11 @@ sap.ui.define([
 		assert.strictEqual(iStandardSub2ControllerCalled, 0, "Standard Controller should not have been called yet");
 		assert.strictEqual(iCustomSub2ControllerCalled, 0, "Custom Controller should not have been called yet");
 		// trigger custom action
-		qutils.triggerEvent("click", "theComponent---mainView--sub2View--customFrag1BtnWithCustAction");
+		triggerButtonPress("theComponent---mainView--sub2View--customFrag1BtnWithCustAction");
 		assert.strictEqual(iStandardSub2ControllerCalled, 0, "Standard Controller should still not have been called");
 		assert.strictEqual(iCustomSub2ControllerCalled, 1, "Custom Controller should have been called now");
 		// trigger standard action
-		qutils.triggerEvent("click", "theComponent---mainView--sub2View--standardBtnWithStandardAction");
+		triggerButtonPress("theComponent---mainView--sub2View--standardBtnWithStandardAction");
 		assert.strictEqual(iStandardSub2ControllerCalled, 1, "Standard Controller should have been called now");
 		assert.strictEqual(iCustomSub2ControllerCalled, 1, "Custom Controller should not have been called again");
 
@@ -174,7 +178,7 @@ sap.ui.define([
 	QUnit.test("Property Modifications", function(assert) {
 		var oControl = sap.ui.getCore().byId("theComponent---mainView--sub3View--customizableText");
 		assert.strictEqual(oControl.getVisible(), false, "'visible' property should be customizable");
-		assert.strictEqual(oControl.getEnabled(), true, "'enabled' property should not be customizable");
+		assert.strictEqual(oControl.getWrapping(), true, "'wrapping' property should not be customizable");
 
 		oControl = sap.ui.getCore().byId("theComponent---mainView--sub2View--btnToHide");
 		assert.strictEqual(oControl.getVisible(), false, "'visible' property should be customizable");
@@ -187,9 +191,8 @@ sap.ui.define([
 		var oFirstItem = sap.ui.getCore().byId("__item0-theComponent---mainView--sub2View--lb-0");
 
 		assert.ok(oFirstItem, "First ListItem should exist");
-		assert.ok(oFirstItem.getDomRef(), "First ListItem should be rendered");
 		assert.equal(oFirstItem.getText(), "(Customer's replacement ListItem)", "First ListItem should be the customized one");
-		assert.ok(sap.ui.getCore().byId("__jsview0--defaultContentTextView"), "JS extension point 1 should contain default content");
+		assert.ok(sap.ui.getCore().byId("__jsview0--defaultContentText"), "JS extension point 1 should contain default content");
 		assert.ok(sap.ui.getCore().byId("iHaveCausedDestruction"), "JS Extension Point 45 Content has been correctly replaced");
 	});
 
@@ -234,12 +237,12 @@ sap.ui.define([
 							aLifeCycleCalls.push("ControllerExtension onAfterRendering()");
 
 							// trigger original action
-							qutils.triggerEvent("click", "theComponent---mainView--sub2View--standardBtnWithStandardAction");
+							triggerButtonPress("theComponent---mainView--sub2View--standardBtnWithStandardAction");
 							assert.ok(bOriginalSAPActionCalled, "ControllerExtension custom event handler 'originalSAPAction' called!");
 							assert.equal(iStandardSub2ControllerCalled, 0, "Original event handler 'originalSAPAction' is not called!");
 
 							// trigger custom action
-							qutils.triggerEvent("click", "theComponent---mainView--sub2View--customFrag1BtnWithCustAction");
+							triggerButtonPress("theComponent---mainView--sub2View--customFrag1BtnWithCustAction");
 							assert.ok(bCustomerActionCalled, "ControllerExtension custom event handler 'customerAction' called!");
 							assert.equal(iCustomSub2ControllerCalled, 0, "Original event handler 'customerAction' is not called!");
 

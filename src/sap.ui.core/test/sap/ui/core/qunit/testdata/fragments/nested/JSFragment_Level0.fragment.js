@@ -3,11 +3,11 @@ sap.ui.define([
 ], function(Fragment) {
 	"use strict";
 	return {
-        createContent: function () {
-            return Fragment.load({
-                name: "testdata.fragments.nested.JSFragment_Level1",
-                type: "JS"
-            });
-        }
-    };
+		createContent: function () {
+			return Fragment.load({
+				name: "testdata.fragments.nested.JSFragment_Level1",
+				type: "JS"
+			});
+		}
+	};
 });

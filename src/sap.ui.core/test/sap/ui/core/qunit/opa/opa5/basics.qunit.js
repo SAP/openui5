@@ -306,7 +306,7 @@ sap.ui.define([
 	QUnit.module("waitFor", {
 		beforeEach: function () {
 			var sView = [
-				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.commons">',
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">',
 				'<Button id="foo"/>',
 				'</mvc:View>'
 			].join('');
@@ -347,7 +347,7 @@ sap.ui.define([
 	opaTest("Should find a button if id, controlType and viewName are set", function (oOpa) {
 		oOpa.waitFor({
 			id: "foo",
-			controlType: "sap.ui.commons.Button",
+			controlType: "sap.m.Button",
 			viewName: "myViewName",
 			success: function (oButton) {
 				Opa5.assert.strictEqual(oButton, this.oView.byId("foo"), "correct button instance");
@@ -395,7 +395,7 @@ sap.ui.define([
 	QUnit.module("Config and waitFor",{
 		beforeEach: function () {
 			var sView = [
-				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.commons">',
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">',
 					'<Button id="foo"/>',
 				'</mvc:View>'
 			].join('');

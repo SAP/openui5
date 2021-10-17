@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 					"dependencies": {
 						"minUI5Version": "1.22.5",
 						"libs": {
-							"sap.ui.commons": {
+							"sap.ui.layout": {
 								"minVersion": "1.22.0"
 							}
 						},

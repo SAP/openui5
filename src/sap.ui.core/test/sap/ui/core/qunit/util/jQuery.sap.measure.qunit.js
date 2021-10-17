@@ -4,10 +4,10 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/Device",
 	"sap/ui/core/UIComponent",
-	"sap/ui/commons/Button",
+	"sap/m/Button",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/performance/trace/Interaction"
-], function(jQuery, Device, UIComponent, CommonsButton, createAndAppendDiv, Interaction) {
+], function(jQuery, Device, UIComponent, Button, createAndAppendDiv, Interaction) {
 	"use strict";
 
 	createAndAppendDiv("target1");
@@ -184,7 +184,7 @@ sap.ui.define([
 
 	QUnit.test("render Button", function(assert) {
 		assert.expect(5);
-		var oButton = new CommonsButton("B1",{text:"Test"});
+		var oButton = new Button("B1",{text:"Test"});
 		oButton.placeAt("target1");
 		sap.ui.getCore().applyChanges();
 		var aMeasurements = jQuery.sap.measure.getAllMeasurements();
@@ -203,16 +203,16 @@ sap.ui.define([
 		 * @evo-todo temp. disable test as JS resources are no longer loaded with jQuery.ajax
 		 * In general, loading JS Resources no longer might be done with an XHR (e.g. <script> tag), how to write a generic test?
 
-		oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/ui/commons/Button.js").absoluteTo(document.location.origin + document.location.pathname).href());
+		oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/m/Button.js").absoluteTo(document.location.origin + document.location.pathname).href());
 		if (!oMeasurement){
 			// check if debug sources are used
-			oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/ui/commons/Button-dbg.js").absoluteTo(document.location.origin + document.location.pathname).href());
+			oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/m/Button-dbg.js").absoluteTo(document.location.origin + document.location.pathname).href());
 		}
 		assert.ok(oMeasurement, "Measurement for request for Button.js found");
-		oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/ui/commons/ButtonRenderer.js").absoluteTo(document.location.origin + document.location.pathname).href());
+		oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/m/ButtonRenderer.js").absoluteTo(document.location.origin + document.location.pathname).href());
 		if (!oMeasurement){
 			// check if debug sources are used
-			oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/ui/commons/ButtonRenderer-dbg.js").absoluteTo(document.location.origin + document.location.pathname).href());
+			oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/m/ButtonRenderer-dbg.js").absoluteTo(document.location.origin + document.location.pathname).href());
 		}
 		assert.ok(oMeasurement, "Measurement for request for ButtonRenderer.js found");
 		*/
@@ -389,7 +389,7 @@ sap.ui.define([
 
 	QUnit.module("Interaction", {
 		beforeEach: function() {
-			this.oButton = new CommonsButton();
+			this.oButton = new Button();
 			jQuery.sap.measure.endInteraction(true);
 			jQuery.sap.measure.clearInteractionMeasurements();
 			jQuery.sap.measure.clear();
@@ -560,7 +560,7 @@ sap.ui.define([
 		jQuery.sap.measure.setActive(true);
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		// Tests synchronous time intensive API which makes use of measurement API
-		jQuery.sap.require("sap.m.Button");
+		jQuery.sap.require("sap.m.Input");
 		jQuery.sap.measure.endInteraction();
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
@@ -596,7 +596,7 @@ sap.ui.define([
 		jQuery.sap.measure.setActive(true);
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		// Tests synchronous time intensive API which makes use of measurement API
-		jQuery.sap.require("sap.m.Button");
+		jQuery.sap.require("sap.m.List");
 		waitASecond();
 		jQuery.sap.measure.endInteraction();
 		jQuery.sap.measure.startInteraction("click", this.oButton);

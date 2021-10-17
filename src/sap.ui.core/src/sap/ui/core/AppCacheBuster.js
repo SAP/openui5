@@ -367,8 +367,8 @@ sap.ui.define([
 				fnEnhancedXhrOpen = XMLHttpRequest.prototype.open;
 
 				// enhance the validateProperty function to intercept URI types
-				//  test via: new sap.ui.commons.Image({src: "acctest/img/Employee.png"}).getSrc()
-				//            new sap.ui.commons.Image({src: "./acctest/../acctest/img/Employee.png"}).getSrc()
+				//  test via: new sap.m.Image({src: "acctest/img/Employee.png"}).getSrc()
+				//            new sap.m.Image({src: "./acctest/../acctest/img/Employee.png"}).getSrc()
 				ManagedObject.prototype.validateProperty = function(sPropertyName, oValue) {
 					var oMetadata = this.getMetadata(),
 						oProperty = oMetadata.getProperty(sPropertyName),

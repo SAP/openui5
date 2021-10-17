@@ -8,7 +8,7 @@
 	"sap.ui5": {
 		"dependencies": {
 			"libs": {
-				"sap.ui.commons": {}
+				"sap.m": {}
 			}
 		},
 		"config": {

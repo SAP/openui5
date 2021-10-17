@@ -1,5 +1,7 @@
-sap.ui.define(['sap/ui/core/routing/History', 'sap/ui/core/routing/Router'],
-	function(History, Router) {
+sap.ui.define([
+	"sap/ui/core/routing/History",
+	"sap/ui/core/routing/Router"
+], function(History, Router) {
 	"use strict";
 
 	var RouterExtension = Router.extend("samples.components.routing.RouterExtension", {

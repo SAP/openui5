@@ -1,5 +1,8 @@
-sap.ui.define(['sap/base/Log', 'sap/ui/core/mvc/Controller', 'sap/m/MessageToast'],
-	function(Log, Controller, MessageToast) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/core/mvc/Controller",
+	"sap/m/MessageToast"
+], function(Log, Controller, MessageToast) {
 	"use strict";
 
 	var Sub4Controller = Controller.extend("samples.components.ext.sap.Sub4", {

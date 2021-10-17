@@ -11,7 +11,7 @@
 
 	"dependencies" : {
 		"libs" : [
-			"sap.ui.commons"
+			"sap.ui.layout"
 		],
 		"components" : [
 			"sap.ui.test.other"

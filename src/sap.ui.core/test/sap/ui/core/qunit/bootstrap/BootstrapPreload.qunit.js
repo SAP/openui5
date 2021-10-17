@@ -1,13 +1,16 @@
 /*global QUnit */
 sap.ui.define([
-	"jquery.sap.global"
-], function(jQuery) {
+	"sap/ui/Device",
+	"sap/base/Log",
+	"sap/base/util/ObjectPath",
+	"sap/ui/thirdparty/jquery"
+], function(Device, Log, ObjectPath, jQuery) {
 	"use strict";
 
 	// wraps jQuery.ajax to count and collect *.js requests
 	var fnOldAjax = jQuery.ajax;
 	var aAjaxCalls = [];
-	var sRoot = jQuery.sap.getModulePath("", "/");
+	var sRoot = sap.ui.require.toUrl("") + "/";
 
 	jQuery.ajax = function(settings) {
 		if ( settings && settings.url && /\.js$/.test(settings.url) ) {
@@ -28,20 +31,6 @@ sap.ui.define([
 		return aAjaxCalls;
 	}
 
-	var _aExpectedAjaxCalls = {
-		/*
-		"sap.ui.commons" : [
-			"sap/ui/unified/FileUploaderParameter.js",
-			"sap/ui/unified/library.js",
-			"sap/ui/unified/MenuItem.js",
-			"sap/ui/unified/MenuItemBase.js",
-			"sap/ui/unified/MenuTextFieldItem.js",
-			"sap/ui/unified/FileUploader.js",
-			"sap/ui/unified/Menu.js"
-		]
-		*/
-	};
-
 	function checkLibrary(assert, sLibraryName, bExpectLazyStubs) {
 
 		// ensure that assert.* even works if a test page doesn't provide 'assert' as a param (e.g. pages outside openui5 repo)
@@ -55,7 +44,7 @@ sap.ui.define([
 
 		ajaxCallsReset();
 		assert.ok(sap.ui.require(sLibraryName.replace(/\./g,"/") + "/library"), "module for library " + sLibraryName + " must have been declared");
-		assert.ok(jQuery.sap.getObject(sLibraryName), "namespace " + sLibraryName + " must exists");
+		assert.ok(ObjectPath.get(sLibraryName), "namespace " + sLibraryName + " must exists");
 
 		var oLib = sap.ui.getCore().getLoadedLibraries()[sLibraryName];
 		assert.ok(!!oLib, "library info object must exists");
@@ -69,7 +58,7 @@ sap.ui.define([
 		if ( Array.isArray(oLib.types) ) {
 			oLib.types.forEach(function(sType) {
 				if ( aBuiltInTypes.indexOf(sType) < 0 ) {
-					var oClass = jQuery.sap.getObject(sType);
+					var oClass = ObjectPath.get(sType);
 					assert.ok(typeof oClass === "object", "type " + sType + " must be an object");
 				}
 			});
@@ -85,7 +74,7 @@ sap.ui.define([
 					assert.notEqual(sap.ui.require(sElement), bExpectLazyStubs, "module for element " + sElement + " must have been declared");
 					assert.equal(sap.ui.lazyRequire._isStub(sElement), bExpectLazyStubs, sMessage + ":" + sElement);
 					if ( !bExpectLazyStubs ) {
-						var oClass = jQuery.sap.getObject(sElement);
+						var oClass = ObjectPath.get(sElement);
 						assert.equal(typeof oClass, "function", "Element constructor for " + sElement + " must exist and must be a function");
 					}
 				}
@@ -98,7 +87,7 @@ sap.ui.define([
 					assert.notEqual(sap.ui.require(sControl), bExpectLazyStubs, "module for element " + sControl + " must have been declared");
 					assert.equal(sap.ui.lazyRequire._isStub(sControl), bExpectLazyStubs, sMessage + ":" + sControl);
 					if ( !bExpectLazyStubs ) {
-						var oClass = jQuery.sap.getObject(sControl);
+						var oClass = ObjectPath.get(sControl);
 						assert.equal(typeof oClass, "function", "Control constructor for " + sControl + " must exist and must be a function");
 					}
 				}
@@ -107,14 +96,14 @@ sap.ui.define([
 
 		if ( Array.isArray(oLib.elements) ) {
 			oLib.elements.forEach(function(sElement) {
-				var FNClass = jQuery.sap.getObject(sElement);
+				var FNClass = ObjectPath.get(sElement);
 				if ( bExpectLazyStubs ) {
 					try {
 						new FNClass();
 					} catch (e) {
-						jQuery.sap.log.error(e.message || e);
+						Log.error(e.message || e);
 					}
-					FNClass = jQuery.sap.getObject(sElement);
+					FNClass = ObjectPath.get(sElement);
 				}
 				assert.ok(typeof FNClass.prototype.getMetadata === "function", "Element class " + sElement + " should have been loaded and initialized");
 			});
@@ -122,27 +111,25 @@ sap.ui.define([
 
 		if ( Array.isArray(oLib.controls) ) {
 			oLib.controls.forEach(function(sControl) {
-				var FNClass = jQuery.sap.getObject(sControl);
+				var FNClass = ObjectPath.get(sControl);
 				if ( bExpectLazyStubs ) {
 					try {
 						new FNClass();
 					} catch (e) {
-						jQuery.sap.log.error(e.message || e);
+						Log.error(e.message || e);
 					}
-					FNClass = jQuery.sap.getObject(sControl);
+					FNClass = ObjectPath.get(sControl);
 				}
 				assert.ok(typeof FNClass.prototype.getMetadata === "function", "Control class " + sControl + " should have been loaded and initialized");
 			});
 		}
 
-		var aExpectedCalls = bExpectLazyStubs ? (_aExpectedAjaxCalls[sLibraryName] || []) : [];
-		assert.deepEqual(ajaxCalls(), aExpectedCalls, (aExpectedCalls.length === 0 ? "no" : "only some expected") + " additional ajax calls should have happened");
+		assert.deepEqual(ajaxCalls(), [], "no additional ajax calls should have happened");
 
 	}
 
 	QUnit.test("Check Existance of Core", function(assert) {
 		/* check that SAPUI5 has been loaded */
-		assert.ok(jQuery, "jQuery has been loaded");
 		assert.ok(jQuery.sap, "jQuery.sap namespace exists");
 		assert.ok(window.sap, "sap namespace exists");
 		assert.ok(sap.ui, "sap.ui namespace exists");
@@ -150,7 +137,7 @@ sap.ui.define([
 		assert.ok(sap.ui.getCore(), "sap.ui.getCore() returns a value");
 
 		var id = jQuery("html").attr("data-sap-ui-browser");
-		if ( sap.ui.Device.browser.name ) {
+		if ( Device.browser.name ) {
 			assert.ok(typeof id === "string" && id, "browser is known: data-sap-ui-browser should have been set and must not be empty");
 		} else {
 			assert.ok(!id, "browser is unknown: data-sap-ui-browser should not have been set (or empty)");

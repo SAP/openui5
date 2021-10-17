@@ -1,7 +1,7 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/commons/CheckBox",
+	"sap/m/CheckBox",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/core/ValueStateSupport"

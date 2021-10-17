@@ -9,6 +9,9 @@ sap.ui.define(function() {
 			},
 			qunit: {
 				version: 2
+			},
+			sinon: {
+				version: 4
 			}
 		},
 		tests: {
@@ -21,12 +24,7 @@ sap.ui.define(function() {
 			XMLModel: {
 				title: "QUnit tests: Data binding XML Model",
 				ui5: {
-					libs: "sap.ui.layout,sap.ui.commons",
-					theme: "sap_bluecrystal"
-				},
-				sinon: {
-					version: 4,
-					qunitBridge: true
+					libs: "sap.ui.layout,sap.m"
 				}
 			},
 			XMLModelNS: {
@@ -35,7 +33,7 @@ sap.ui.define(function() {
 			XMLPropertyBinding: {
 				title: "QUnit tests:XML Property Binding",
 				ui5: {
-					libs: "sap.ui.commons,sap.ui.layout,sap.m"
+					libs: "sap.ui.layout,sap.m"
 				}
 			},
 			XMLTreeBinding: {
@@ -44,8 +42,7 @@ sap.ui.define(function() {
 			XMLTwoWay: {
 				title: "QUnit tests: Data binding XML Two Way Binding",
 				ui5: {
-					libs: "sap.ui.commons",
-					theme: "sap_bluecrystal"
+					libs: "sap.m"
 				}
 			}
 		}

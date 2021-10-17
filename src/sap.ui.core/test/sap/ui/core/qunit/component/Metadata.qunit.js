@@ -51,7 +51,7 @@ sap.ui.define([
 				"version": "1.0.0",
 				"includes" : ["style.css", "script.js"],
 				"dependencies": {
-					"libs": ["sap.ui.commons"],
+					"libs": ["sap.ui.layout"],
 					"components" : ["sap.ui.test.other"],
 					"ui5version" : "1.22.5"
 				},
@@ -188,7 +188,7 @@ sap.ui.define([
 							}
 						},
 						"libs": {
-							"sap.ui.commons": {
+							"sap.ui.layout": {
 								"minVersion": "1.22.0"
 							}
 						},
@@ -369,7 +369,7 @@ sap.ui.define([
 					this.oExpectedRawManifest
 				].forEach(function(oManifest) {
 					oManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
-					oManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.commons"] = {};
+					oManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.layout"] = {};
 					delete oManifest["sap.ui5"]["resourceRoots"];
 					delete oManifest["sap.app"]["title"];
 					delete oManifest["sap.app"]["description"];
@@ -453,7 +453,7 @@ sap.ui.define([
 					this.oExpectedRawManifest
 				].forEach(function(oManifest) {
 					oManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
-					oManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.commons"] = {};
+					oManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.layout"] = {};
 					delete oManifest["sap.ui5"]["resourceRoots"];
 					delete oManifest["sap.app"]["title"];
 					delete oManifest["sap.app"]["description"];

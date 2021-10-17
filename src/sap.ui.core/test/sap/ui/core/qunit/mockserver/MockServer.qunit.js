@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/model/odata/ODataModel",
 	"jquery.sap.global",
 	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/commons/Label",
+	"sap/m/Label",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/base/util/isEmptyObject"
 ], function(

@@ -1,5 +1,7 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
-	function(jQuery, Controller) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/core/mvc/Controller"
+], function(Log, Controller) {
 	"use strict";
 
 	/*global oLifecycleSpy */
@@ -7,25 +9,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
 	return Controller.extend("testdata.customizing.sap.Sub6", {
 
 		onInit: function() {
-			jQuery.sap.log.info("Sub6 Controller onInit()");
+			Log.info("Sub6 Controller onInit()");
 			oLifecycleSpy("Sub6 Controller onInit()");
 		},
 
 		onExit: function() {
-			jQuery.sap.log.info("Sub6 Controller onExit()");
+			Log.info("Sub6 Controller onExit()");
 			oLifecycleSpy("Sub6 Controller onExit()");
 		},
 
 		onBeforeRendering: function() {
-			jQuery.sap.log.info("Sub6 Controller onBeforeRendering()");
+			Log.info("Sub6 Controller onBeforeRendering()");
 			oLifecycleSpy("Sub6 Controller onBeforeRendering()");
 		},
 
 		onAfterRendering: function() {
-			jQuery.sap.log.info("Sub6 Controller onAfterRendering()");
+			Log.info("Sub6 Controller onAfterRendering()");
 			oLifecycleSpy("Sub6 Controller onAfterRendering()");
 		},
-
 
 		originalSAPAction: function() {
 			//alert("This is an original SAP Action");

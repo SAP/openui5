@@ -1,7 +1,7 @@
 /*global QUnit */
 sap.ui.define(["sap/base/Log",
-    "test-resources/sap/ui/support/TestHelper",
-    "sap/ui/core/mvc/View",
+	"test-resources/sap/ui/support/TestHelper",
+	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/mvc/JSView"
 ], function (Log, testRule, View, ViewType, JSView) {

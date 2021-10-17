@@ -1,5 +1,8 @@
-sap.ui.define(['sap/base/Log', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'],
-	function(Log, Controller, JSONModel) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel"
+], function(Log, Controller, JSONModel) {
 	"use strict";
 
 	var MainController = Controller.extend("samples.components.ext.sap.Main", {

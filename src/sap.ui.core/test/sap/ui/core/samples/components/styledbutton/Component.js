@@ -2,8 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/commons/Button', 'sap/ui/core/UIComponent', 'sap/ui/model/base/ManagedObjectModel'],
-	function(Button, UIComponent, ManagedObjectModel) {
+sap.ui.define([
+	"sap/m/Button",
+	"sap/ui/core/UIComponent",
+	"sap/ui/model/base/ManagedObjectModel"
+], function(Button, UIComponent, ManagedObjectModel) {
 	"use strict";
 
 
@@ -16,8 +19,7 @@ sap.ui.define(['sap/ui/commons/Button', 'sap/ui/core/UIComponent', 'sap/ui/model
 			},
 			aggregations : {},
 			associations : {},
-			events : {},
-			library: "sap.ui.core.samples.components.styledbutton"
+			events : {}
 		}
 	});
 

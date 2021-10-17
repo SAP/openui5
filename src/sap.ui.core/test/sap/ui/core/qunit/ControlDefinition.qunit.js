@@ -367,7 +367,7 @@
 			var myTf = new my.lib.MyInput("myTf", {value:"test"});
 			assert.ok(myTf, "myTf should be a control instance now");
 			assert.ok(myTf instanceof my.lib.MyInput, "myTf should be an instance of my.lib.MyTextField");
-			assert.ok(myTf instanceof Input, "myTf should inherit from sap.ui.commons.TextField");
+			assert.ok(myTf instanceof Input, "myTf should inherit from sap.m.Input");
 			assert.equal(myTf.getValue(), "test" + valueSuffix, "value should be modified by overridden method");
 			myTf.destroy();
 		});
@@ -480,10 +480,10 @@
 					},
 					aggregations : {
 						"multiples" : {singularName:"control"},
-						"single" : {type:"sap.ui.commons.Button", multiple:false}
+						"single" : {type:"sap.m.Button", multiple:false}
 					},
 					associations : {
-						"assi" : "sap.ui.commons.Button"
+						"assi" : "sap.m.Button"
 					},
 					events : {
 						"somethingHappened" : {},
@@ -513,14 +513,14 @@
 			assert.equal(aggregations.multiples.singularName, "control", "'multiples' should have singularName 'control'");
 			assert.equal(typeof aggregations.single, "object", "there should be a 'single' aggregation info object");
 			assert.equal(aggregations.single.name, "single", "'single' should have name 'single'");
-			assert.equal(aggregations.single.type, "sap.ui.commons.Button", "'single' should have type 'sap.ui.commons.Button'");
+			assert.equal(aggregations.single.type, "sap.m.Button", "'single' should have type 'sap.m.Button'");
 			assert.equal(aggregations.single.multiple, false, "'single' should have cardinality 'single'");
 
 			var associations = md.getAssociations();
 			assert.equal(Object.keys(associations).length, 1, "there should be one public association");
 			assert.equal(typeof associations.assi, "object", "there should be a 'assi' aggregation info object");
 			assert.equal(associations.assi.name, "assi", "'assi' should have name 'assi'");
-			assert.equal(associations.assi.type, "sap.ui.commons.Button", "'assi' should have type 'sap.ui.commons.Button'");
+			assert.equal(associations.assi.type, "sap.m.Button", "'assi' should have type 'sap.m.Button'");
 			assert.equal(associations.assi.multiple, false, "'assi' should have cardinality 'single'");
 
 			var events = md.getAllEvents();

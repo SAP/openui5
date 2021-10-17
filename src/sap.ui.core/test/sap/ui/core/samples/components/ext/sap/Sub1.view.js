@@ -1,11 +1,13 @@
-sap.ui.define(['sap/ui/commons/TextView', 'sap/ui/core/mvc/JSView'],
-	function(TextView, JSView) {
+sap.ui.define([
+	"sap/m/Text",
+	"sap/ui/core/mvc/JSView"
+], function(Text, JSView) {
 	"use strict";
 
 	sap.ui.jsview("samples.components.ext.sap.Sub1", {
 
 		createContent : function(oController) {
-			return new TextView({text: "I am the SAP original view and should be replaced"});
+			return new Text({text: "I am the SAP original view and should be replaced"});
 		}
 	});
 

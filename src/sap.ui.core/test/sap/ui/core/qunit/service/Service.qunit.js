@@ -22,7 +22,7 @@ sap.ui.define([
 				this._bDelayedInitialized = true;
 			},
 
-            doSomething: function() {
+			doSomething: function() {
 				this._doSomething();
 			},
 
@@ -845,7 +845,7 @@ sap.ui.define([
 						"EagerService": {
 							"factoryName": "my.ServiceFactoryAlias",
 							"optional": true,
-                            "startup": "eager"
+							"startup": "eager"
 						},
 						"LazyService": {
 							"factoryName": "lazy.ServiceFactoryAlias"
@@ -874,15 +874,15 @@ sap.ui.define([
 		// load the test component
 		return Component.create({
 			manifest: {
-                "sap.app": {
-                    "id": "samples.components.button"
-                },
+				"sap.app": {
+					"id": "samples.components.button"
+				},
 				"sap.ui5": {
 					"services": {
 						"WaitForService": {
 							"factoryName": "my.ServiceFactoryAlias",
 							"optional": true,
-                            "startup": "waitFor"
+							"startup": "waitFor"
 						},
 						"LazyService": {
 							"factoryName": "lazy.ServiceFactoryAlias"
@@ -919,7 +919,7 @@ sap.ui.define([
 							"EagerService": {
 								"factoryName": "my.ServiceFactoryAlias",
 								"optional": true,
-                                "startup": "waitFor"
+								"startup": "waitFor"
 							},
 							"LazyService": {
 								"factoryName": "lazy.ServiceFactoryAlias"
