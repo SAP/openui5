@@ -1220,6 +1220,7 @@ sap.ui.define([
 				oContext : "~oContext",
 				sCreatedEntitiesKey : "~sCreatedEntitiesKey",
 				oModel : oModel,
+				sPath : "~sPath",
 				_fireChange : function () {},
 				getResolvedPath : function () {}
 			},
@@ -1236,6 +1237,7 @@ sap.ui.define([
 		this.mock(Object).expects("assign")
 			.withExactArgs(sinon.match(function (mParam0) {
 				assert.deepEqual(mParam0, {
+					context : "~oContext",
 					properties : "~oInitialData",
 					refreshAfterChange : false
 				});
@@ -1244,7 +1246,7 @@ sap.ui.define([
 				return true;
 			}), sinon.match.same(mParameters));
 		this.mock(oModel).expects("createEntry")
-			.withExactArgs("~resolvedPath", sinon.match(function (mParam) {
+			.withExactArgs("~sPath", sinon.match(function (mParam) {
 				return mParam === mCreateParameters;
 			}))
 			.returns(oCreatedContext);
@@ -1274,6 +1276,7 @@ sap.ui.define([
 				oContext : "~oContext",
 				sCreatedEntitiesKey : "~sCreatedEntitiesKey",
 				oModel : oModel,
+				sPath : "~sPath",
 				_fireChange : function () {},
 				getResolvedPath : function () {}
 			},
@@ -1292,7 +1295,8 @@ sap.ui.define([
 			.withExactArgs()
 			.returns(oCreatedContextsCache);
 		this.mock(oModel).expects("createEntry")
-			.withExactArgs("~resolvedPath", {
+			.withExactArgs("~sPath", {
+				context : "~oContext",
 				properties : "~oInitialData",
 				refreshAfterChange : false
 			})

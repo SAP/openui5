@@ -1576,7 +1576,10 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.create = function (oInitialData, bAtEnd, mParameters) {
 		var oCreatedContext, oCreatedContextsCache, sResolvedPath,
-			mCreateParameters = {properties : oInitialData, refreshAfterChange : false},
+			mCreateParameters = {
+				context : this.oContext,
+				properties : oInitialData,
+				refreshAfterChange : false},
 			that = this;
 
 		if (bAtEnd === true) {
@@ -1601,7 +1604,7 @@ sap.ui.define([
 		sResolvedPath = this.getResolvedPath();
 		oCreatedContextsCache = this.oModel._getCreatedContextsCache();
 		Object.assign(mCreateParameters, mParameters);
-		oCreatedContext = this.oModel.createEntry(sResolvedPath, mCreateParameters);
+		oCreatedContext = this.oModel.createEntry(this.sPath, mCreateParameters);
 		oCreatedContext.created().catch(function () {
 			oCreatedContextsCache.removeContext(oCreatedContext, sResolvedPath,
 				that.sCreatedEntitiesKey);
