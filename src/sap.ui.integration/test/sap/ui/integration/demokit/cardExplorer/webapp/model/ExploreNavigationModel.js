@@ -1197,6 +1197,15 @@ sap.ui.define([
 										key: 'manifest.json'
 									}
 								]
+							},
+							{
+								title: 'Date Range Filter',
+								key: 'dateRangeFilter',
+								files: [{
+									url: '/samples/filters/dateRangeFilter.json',
+									name: 'manifest.json',
+									key: 'manifest.json'
+								}]
 							}
 						]
 					},
