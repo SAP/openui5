@@ -265,19 +265,62 @@ sap.ui.define([
 
 			return FlexRuntimeInfoAPI.waitForChanges({element: oControl}).then(function() {
 				assert.equal(oWaitForChangesStub.callCount, 1, "the waitForChanges method was called");
-				assert.ok(oWaitForChangesStub.alwaysCalledWithExactly(oControl), "the controls are passed as parameter");
+
+				var aPassedValue = [{
+					selector: oControl
+				}];
+				assert.ok(oWaitForChangesStub.alwaysCalledWithExactly(aPassedValue), "the controls are passed as parameter");
 			});
 		});
+
 		QUnit.test("FlexRuntimeInfoAPI.waitForChanges on multiple controls", function(assert) {
 			var oControl = new Control();
-			this.aObjectsToDestroy.push(oControl);
-			var aControls = [oControl];
+			var oControl1 = new Control();
+			this.aObjectsToDestroy.push(oControl, oControl1);
+			var aControls = [oControl, oControl1];
 			var oWaitForChangesStub = sandbox.stub().resolves();
 			mockFlexController(oControl, {waitForChangesToBeApplied: oWaitForChangesStub});
 
 			return FlexRuntimeInfoAPI.waitForChanges({selectors: aControls}).then(function() {
 				assert.equal(oWaitForChangesStub.callCount, 1, "the waitForChanges method was called");
-				assert.ok(oWaitForChangesStub.alwaysCalledWithExactly(aControls), "the controls are passed as parameter");
+
+				var aPassedValue = [{
+					selector: oControl
+				}, {
+					selector: oControl1
+				}];
+				assert.ok(oWaitForChangesStub.alwaysCalledWithExactly(aPassedValue), "the controls are passed as parameter");
+			});
+		});
+
+		QUnit.test("FlexRuntimeInfoAPI.waitForChanges with change types", function(assert) {
+			var oControl = new Control();
+			var oControl1 = new Control();
+			this.aObjectsToDestroy.push(oControl, oControl1);
+			var oWaitForChangesStub = sandbox.stub().resolves();
+			var aComplexSelectors = [
+				{
+					selector: oControl,
+					changeTypes: ["changeType1", "changeType2"]
+				},
+				{
+					selector: oControl1,
+					changeTypes: ["changeType3", "changeType4"]
+				}
+			];
+			mockFlexController(oControl, {waitForChangesToBeApplied: oWaitForChangesStub});
+
+			return FlexRuntimeInfoAPI.waitForChanges({complexSelectors: aComplexSelectors}).then(function() {
+				assert.equal(oWaitForChangesStub.callCount, 1, "the waitForChanges method was called");
+
+				var aPassedValue = [{
+					selector: oControl,
+					changeTypes: ["changeType1", "changeType2"]
+				}, {
+					selector: oControl1,
+					changeTypes: ["changeType3", "changeType4"]
+				}];
+				assert.ok(oWaitForChangesStub.alwaysCalledWithExactly(aPassedValue), "the controls are passed as parameter");
 			});
 		});
 	});
@@ -341,7 +384,7 @@ sap.ui.define([
 					return oVariantModel.initialize()
 						.then(function() {
 							this.oComp.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
-							this.oCompContainer = new ComponentContainer("sap-ui-static", {
+							this.oCompContainer = new ComponentContainer({
 								component: this.oComp
 							}).placeAt("qunit-fixture");
 

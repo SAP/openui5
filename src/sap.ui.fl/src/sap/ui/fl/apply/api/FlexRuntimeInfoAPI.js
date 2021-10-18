@@ -42,20 +42,40 @@ sap.ui.define([
 
 		/**
 		 * Resolves with a promise after all the changes for all controls that are passed have been processed.
-		 * You can either pass a single control or multiple, don't mix selectors and element parameters.
+		 * You can either pass a single control, multiple controls or an array with objects that may contain additional configuration.
+		 * Only use one of the possible parameters.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Selector} mPropertyBag.element - Control whose changes are being waited for, the control has to exist
 		 * @param {sap.ui.fl.Selector[]} mPropertyBag.selectors - An array of {@link sap.ui.fl.Selector}s, whose changes are being waited for, the controls have to exist
-		 * @returns {Promise} Promise that resolves when all changes on the control are processed
+		 * @param {object[]} mPropertyBag.complexSelectors - An array containing an object with {@link sap.ui.fl.Selector} and further configuration
+		 * @param {sap.ui.fl.Selector} mPropertyBag.complexSelectors.selector - A {@link sap.ui.fl.Selector}
+		 * @param {string[]} [mPropertyBag.complexSelectors.changeTypes] - An array containing the change types that will be considered. If empty no filtering will be done
+		 * @returns {Promise} Resolves when all changes on the control(s) are processed
 		 *
 		 * @private
 		 * @ui5-restricted
 		 */
 		waitForChanges: function(mPropertyBag) {
-			var oFirstElement = mPropertyBag.element || mPropertyBag.selectors[0];
-			var vWaitForSelector = mPropertyBag.element || mPropertyBag.selectors;
-			return ChangesController.getFlexControllerInstance(oFirstElement).waitForChangesToBeApplied(vWaitForSelector);
+			var aComplexSelectors;
+			var oFirstElement;
+			if (mPropertyBag.element) {
+				aComplexSelectors = [{
+					selector: mPropertyBag.element
+				}];
+				oFirstElement = mPropertyBag.element;
+			} else if (mPropertyBag.selectors) {
+				aComplexSelectors = mPropertyBag.selectors.map(function(oSelector) {
+					return {
+						selector: oSelector
+					};
+				});
+				oFirstElement = mPropertyBag.selectors[0];
+			} else if (mPropertyBag.complexSelectors) {
+				aComplexSelectors = mPropertyBag.complexSelectors;
+				oFirstElement = mPropertyBag.complexSelectors[0].selector;
+			}
+			return ChangesController.getFlexControllerInstance(oFirstElement).waitForChangesToBeApplied(aComplexSelectors);
 		},
 
 		/**
