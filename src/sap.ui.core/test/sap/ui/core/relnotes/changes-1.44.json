@@ -2555,5 +2555,32 @@
         ]
       }
     ]
+  },
+  "1.44.47": {
+    "date": "October 2021",
+    "notes": [
+      {
+        "id": "808fac8d06331f0772ade904251f782335a7730c",
+        "type": "FIX",
+        "text": " scrollLeftRTL: adapt to chrome behavior change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070328364"
+          }
+        ]
+      },
+      {
+        "id": "7e61759765e813ba46c19faec405b7dcf3a2eec7",
+        "type": "FIX",
+        "text": " handlebars: usage of latest version 4.7.6",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
