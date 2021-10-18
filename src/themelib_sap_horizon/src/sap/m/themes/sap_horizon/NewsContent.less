@@ -3,8 +3,8 @@
 /* Horizon theme                      */
 /* ================================== */
 
-@_sap_m_NewsContent_HeaderTextColor: contrast(@_sap_m_TileContent_NewsContentBackgroundColor, @sapUiTileTitleTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
-@_sap_m_NewsContent_SubHeaderTextColor: contrast(@_sap_m_TileContent_NewsContentBackgroundColor, @sapUiTileTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+@_sap_m_NewsContent_HeaderTextColor: contrast(@sapTile_Background,@sapContent_LabelColor,@sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@_sap_m_NewsContent_SubHeaderTextColor: contrast(@sapTile_Background,@sapContent_LabelColor,@sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 .sapMNwC {
 	background-color: fade(@sapUiTileBackground, 60);
@@ -13,7 +13,6 @@
 
 .sapMTileCnt.News {
 	.sapMNwC {
-		text-shadow: 0 0 0.125rem contrast(@_sap_m_NewsContent_SubHeaderTextColor, @sapUiContentShadowColor, @sapUiContentContrastShadowColor, @sapUiContentContrastTextThreshold);
 		.sapMNwCSbh {
 			color: @_sap_m_NewsContent_SubHeaderTextColor;
 			line-height: normal;

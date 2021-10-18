@@ -3,7 +3,7 @@
 /* Horizon theme                      */
 /* ================================== */
 
-@_sap_m_TileContent_NewsContentBackgroundColor: fade(darken(@sapUiBrand, 18), 85);
+@_sap_m_TileContent_NewsContentBackgroundColor: fade(@sapTile_Background, 96);
 @_sap_m_TileContent_NewsFooterTextColor: @_sap_m_NewsContent_SubHeaderTextColor;
 
 .sapMTileCnt.News {
@@ -12,5 +12,4 @@
 
 .sapMTileCnt.News .sapMTileCntFtrTxt {
 	color: @_sap_m_TileContent_NewsFooterTextColor;
-	text-shadow: 0 0 0.125rem contrast(@_sap_m_NewsContent_SubHeaderTextColor, @sapUiContentShadowColor, @sapUiContentContrastShadowColor, @sapUiContentContrastTextThreshold);
 }
