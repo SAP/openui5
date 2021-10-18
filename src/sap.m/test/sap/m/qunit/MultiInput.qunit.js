@@ -1522,6 +1522,29 @@ sap.ui.define([
 		oMI.destroy();
 	});
 
+	QUnit.test("Event propagation onsapenter rules", function (assert) {
+		var oMI = new MultiInput().placeAt("qunit-fixture");
+		var oEvent = {setMarked: function () {}};
+		var oSpy = this.spy(oEvent, "setMarked");
+		Core.applyChanges();
+
+		// Act
+		oMI.onsapenter(oEvent);
+
+		// Assert
+		assert.notOk(oSpy.calledOnce, "The event should not be marked in case of empty input");
+
+		// Act
+		oMI.setValue("My test value");
+		Core.applyChanges();
+		oMI.onsapenter(oEvent);
+
+		// Assert
+		assert.ok(oSpy.calledOnce, "The event should be marked when there's a text in the input");
+
+		oMI.destroy();
+	});
+
 	QUnit.test("mobile - clear input value after selection a suggestion", function (assert) {
 
 		// Setup
