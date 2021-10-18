@@ -1282,6 +1282,67 @@ html[data-sap-ui-browser*='ff'] {
 	}
 	.sapMGTContent {
 		.sapMTileCnt {
+			.sapMTileContainer {
+				height: 3.25rem;
+				display: flex;
+				.sapMTilePriority {
+					margin: 0.25rem 0.5rem 0 1rem;
+					.sapMTilePriorityCnt {
+						display: flex;
+						align-items: center;
+						height: 1.5rem;
+						width: fit-content;
+						border-radius: 0.25rem;
+						overflow: hidden;
+						.sapMTilePriorityBorder {
+							width: 0.125rem;
+							height: inherit;
+						}
+						.sapMTilePriorityValue {
+							font-size: 0.75rem;
+							font-weight: bold;
+							line-height: 1rem;
+							padding: 0.25rem 0.5rem 0.25rem 0.625rem;
+						}
+					}
+				}
+				.High {
+					.sapMTilePriorityCnt {
+						background-color: @sapErrorBackground;
+						.sapMTilePriorityBorder {
+							background-color: @sapErrorBorderColor;
+						}
+						.sapMTilePriorityValue {
+							color: @sapNegativeTextColor;
+						}
+					}
+				}
+				.Medium {
+					.sapMTilePriorityCnt {
+						background-color: @sapWarningBackground;
+						.sapMTilePriorityBorder {
+							background-color: @sapWarningBorderColor;
+						}
+						.sapMTilePriorityValue {
+							color: @sapCriticalTextColor;
+						}
+					}
+				}
+				.Low {
+					.sapMTilePriorityCnt {
+						background-color: @sapSuccessBackground;
+						.sapMTilePriorityBorder {
+							background-color: @sapSuccessBorderColor;
+						}
+						.sapMTilePriorityValue {
+							color: @sapPositiveTextColor;
+						}
+					}
+				}
+				.sapMTileCntContent {
+					padding-left: 0;
+				}
+			}
 			.sapMTileCntContent {
 				height: 3.25rem;
 				.sapMImageContent {
@@ -1317,6 +1378,11 @@ html[data-sap-ui-browser*='ff'] {
 .TwoByOne.sapMGTActionMode.sapMTileSmallPhone {
 	.sapMGTContent {
 		.sapMTileCnt {
+			.sapMTileContainer {
+				.sapMTilePriority {
+					margin-left: 0.5rem;
+				}
+			}
 			.sapMTileFtrCnt {
 				.sapMGTActionModeContainer {
 					margin-right: 0.5rem;

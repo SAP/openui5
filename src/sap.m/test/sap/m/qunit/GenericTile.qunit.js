@@ -14,12 +14,13 @@ sap.ui.define([
 	"sap/m/FlexBox",
 	"sap/m/GenericTileRenderer",
 	"sap/m/library",
+	"sap/ui/core/library",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/events/KeyCodes",
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension"
 ], function(jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, ResizeHandler, GenericTileLineModeRenderer,
-            Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, isEmptyObject, KeyCodes) {
+            Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, Core, isEmptyObject, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.m.Size
@@ -39,6 +40,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.GenericTileMode
 	var GenericTileMode = library.GenericTileMode;
+
+	//shortcut for sap.ui.core.Priority
+	var Priority = Core.Priority;
 
 	// shortcut for sap.m.GenericTileScope
 	var GenericTileScope = library.GenericTileScope;
@@ -3287,6 +3291,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 				headerImage: "sap-icon://alert",
 				tileContent: new TileContent("tile-cont", {
 					unit: "EUR",
+					priority: Priority.High,
 					footer: "Current Quarter",
 					content: new NumericContent("numeric-cnt", {
 						state: LoadState.Loaded,
@@ -3319,6 +3324,10 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 			assert.ok(document.getElementById("generic-tile-subHdr-text"), "Generic tile subheader was rendered successfully");
 			assert.ok(document.getElementById("generic-tile-icon-image"), "Generic tile icon was rendered successfully");
 			assert.ok(document.getElementById("tile-cont"), "TileContent was rendered successfully");
+			assert.ok(document.getElementById("tile-cont-priority"), "Priority container was rendered successfully");
+			assert.ok(document.getElementById("tile-cont-priority-content"), "Priority content was rendered successfully");
+			assert.ok(document.getElementById("tile-cont-priority-border"), "Priority border was rendered successfully");
+			assert.ok(document.getElementById("tile-cont-priority-value"), "Priority value was rendered successfully");
 			assert.ok(document.getElementById("numeric-cnt"), "NumericContent was rendered successfully");
 			assert.ok(document.getElementById("numeric-cnt-indicator"), "Indicator was rendered successfully");
 			assert.ok(document.getElementById("numeric-cnt-value"), "Value was rendered successfully");
@@ -3401,12 +3410,52 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		assert.ok(document.querySelector("#generic-tile-icon-image").classList.contains(ValueColor.Neutral), "Neutral Color is applied");
 	});
 
+	QUnit.test("Priority Changes for TileContent", function(assert) {
+		var oTileContent = this.oGenericTile.getTileContent()[0];
+
+		//Switch to None Priority
+		oTileContent.setPriority(Priority.None);
+		sap.ui.getCore().applyChanges();
+		assert.notOk(document.getElementById("tile-cont-priority"), Priority.None + ": Priority container is not rendered");
+		assert.notOk(document.getElementById("tile-cont-priority-content"), Priority.None + ": Priority content is not rendered");
+		assert.notOk(document.getElementById("tile-cont-priority-border"), Priority.None + ": Priority border is not rendered");
+		assert.notOk(document.getElementById("tile-cont-priority-value"), Priority.None + ": Priority value is not rendered");
+
+		//Switch to High Priority
+		oTileContent.setPriority(Priority.High);
+		sap.ui.getCore().applyChanges();
+		assert.ok(document.getElementById("tile-cont-priority"), Priority.High + ": Priority container is rendered");
+		assert.ok(document.getElementById("tile-cont-priority").classList.contains(Priority.High), Priority.High + ": High StyleClass is applied");
+		assert.ok(document.getElementById("tile-cont-priority-content"), Priority.High + ":Priority content is rendered");
+		assert.equal(document.getElementById("tile-cont-priority-value").innerText, Priority.High, Priority.High + ":Priority value is rendered");
+		assert.ok(document.getElementById("tile-cont-priority-border"), Priority.High + ":Priority border is rendered");
+
+		//Switch to Medium Priority
+		oTileContent.setPriority(Priority.Medium);
+		sap.ui.getCore().applyChanges();
+		assert.ok(document.getElementById("tile-cont-priority"), Priority.Medium + ": Priority container is rendered");
+		assert.ok(document.getElementById("tile-cont-priority").classList.contains(Priority.Medium), Priority.Medium + ": Medium StyleClass is applied");
+		assert.ok(document.getElementById("tile-cont-priority-content"), Priority.Medium + ":Priority content is rendered");
+		assert.equal(document.getElementById("tile-cont-priority-value").innerText, Priority.Medium, Priority.Medium + ":Priority value is rendered");
+		assert.ok(document.getElementById("tile-cont-priority-border"), Priority.Medium + ":Priority border is rendered");
+
+		//Switch to Low Priority
+		oTileContent.setPriority(Priority.Low);
+		sap.ui.getCore().applyChanges();
+		assert.ok(document.getElementById("tile-cont-priority"), Priority.Low + ": Priority container is rendered");
+		assert.ok(document.getElementById("tile-cont-priority").classList.contains(Priority.Low), Priority.Low + ": Low StyleClass is applied");
+		assert.ok(document.getElementById("tile-cont-priority-content"), Priority.Low + ":Priority content is rendered");
+		assert.equal(document.getElementById("tile-cont-priority-value").innerText, Priority.Low, Priority.Low + ":Priority value is rendered");
+		assert.ok(document.getElementById("tile-cont-priority-border"), Priority.Low + ":Priority border is rendered");
+	});
+
 	QUnit.test("Action Mode for Different Frame Types", function(assert) {
 		//Switch to OneByOne
 		this.oGenericTile.setFrameType(FrameType.OneByOne);
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(this.oGenericTile.getDomRef().classList.contains("OneByOne"), "OneByOne FrameType class has been added");
+		assert.notOk(document.getElementById("tile-cont-priority"), "Priority container is not rendered");
 		assert.notOk(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is not rendered");
 
 		//Switch to OneByHalf
@@ -3414,6 +3463,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(this.oGenericTile.getDomRef().classList.contains("OneByHalf"), "OneByHalf FrameType class has been added");
+		assert.notOk(document.getElementById("tile-cont-priority"), "Priority container is not rendered");
 		assert.notOk(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is not rendered");
 
 		//Switch to TwoByHalf
@@ -3421,6 +3471,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(this.oGenericTile.getDomRef().classList.contains("TwoByHalf"), "TwoByHalf FrameType class has been added");
+		assert.notOk(document.getElementById("tile-cont-priority"), "Priority container is not rendered");
 		assert.notOk(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is not rendered");
 
 		//Switch to TwoByOne
@@ -3428,6 +3479,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(this.oGenericTile.getDomRef().classList.contains("TwoByOne"), "TwoByOne FrameType class has been added");
+		assert.ok(document.getElementById("tile-cont-priority"), "Priority container is rendered");
 		assert.ok(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is rendered");
 	});
 
@@ -3436,24 +3488,28 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		this.oGenericTile.setMode(GenericTileMode.HeaderMode);
 		sap.ui.getCore().applyChanges();
 
+		assert.notOk(document.getElementById("tile-cont-priority"), "Priority container is not rendered");
 		assert.notOk(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is not rendered in Header Mode");
 
 		//Switch to ContentMode
 		this.oGenericTile.setMode(GenericTileMode.ContentMode);
 		sap.ui.getCore().applyChanges();
 
+		assert.notOk(document.getElementById("tile-cont-priority"), "Priority container is not rendered");
 		assert.notOk(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is not rendered in Content Mode");
 
 		//Switch to LineMode
 		this.oGenericTile.setMode(GenericTileMode.LineMode);
 		sap.ui.getCore().applyChanges();
 
+		assert.notOk(document.getElementById("tile-cont-priority"), "Priority container is not rendered");
 		assert.notOk(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is not rendered in Line Mode");
 
 		//Switch to ActionMode
 		this.oGenericTile.setMode(GenericTileMode.ActionMode);
 		sap.ui.getCore().applyChanges();
 
+		assert.ok(document.getElementById("tile-cont-priority"), "Priority container is rendered");
 		assert.ok(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is rendered in Action Mode");
 	});
 
