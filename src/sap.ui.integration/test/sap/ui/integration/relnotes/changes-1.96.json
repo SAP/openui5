@@ -3,6 +3,17 @@
     "date": "October 2021",
     "notes": [
       {
+        "id": "7f0cc1bbc1ba2c681467fe2e6c56cdbf7a3ee799",
+        "type": "FIX",
+        "text": " Integration Card: Refresh data icon is now correctly displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170237540"
+          }
+        ]
+      },
+      {
         "id": "0c2c39c95aaeb35e87182aca2bb60cb95d2ce54d",
         "type": "FEATURE",
         "text": " Integration card: \"configurationChange\" event is added"
