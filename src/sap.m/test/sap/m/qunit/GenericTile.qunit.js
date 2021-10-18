@@ -3284,7 +3284,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 				subheader: "Expenses By Region",
 				frameType: FrameType.TwoByOne,
 				header: "Comparative Annual Totals",
-				headerImage: IMAGE_PATH + "female_BaySu.jpg",
+				headerImage: "sap-icon://alert",
 				tileContent: new TileContent("tile-cont", {
 					unit: "EUR",
 					footer: "Current Quarter",
@@ -3316,7 +3316,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		fnWithRenderAsserts: function(assert) {
 			assert.ok(document.getElementById("generic-tile"), "Generic tile was rendered successfully");
 			assert.ok(document.getElementById("generic-tile-hdr-text"), "Generic tile header was rendered successfully");
-			assert.notOk(document.getElementById("generic-tile-subHdr-text"), "Generic tile subheader is not rendered");
+			assert.ok(document.getElementById("generic-tile-subHdr-text"), "Generic tile subheader was rendered successfully");
 			assert.ok(document.getElementById("generic-tile-icon-image"), "Generic tile icon was rendered successfully");
 			assert.ok(document.getElementById("tile-cont"), "TileContent was rendered successfully");
 			assert.ok(document.getElementById("numeric-cnt"), "NumericContent was rendered successfully");
@@ -3376,6 +3376,31 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		assert.notOk(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is not rendered");
 	});
 
+	QUnit.test("Header Icon Color changes upon ValueColor property change", function(assert) {
+		//Default Color Check
+		assert.ok(document.querySelector("#generic-tile-icon-image").classList.contains(ValueColor.None), "Default Color is applied");
+
+		//Change to Good ValueColor
+		this.oGenericTile.setValueColor(ValueColor.Good);
+		sap.ui.getCore().applyChanges();
+		assert.ok(document.querySelector("#generic-tile-icon-image").classList.contains(ValueColor.Good), "Good Color is applied");
+
+		//Change to Critical ValueColor
+		this.oGenericTile.setValueColor(ValueColor.Critical);
+		sap.ui.getCore().applyChanges();
+		assert.ok(document.querySelector("#generic-tile-icon-image").classList.contains(ValueColor.Critical), "Critical Color is applied");
+
+		//Change to Error ValueColor
+		this.oGenericTile.setValueColor(ValueColor.Error);
+		sap.ui.getCore().applyChanges();
+		assert.ok(document.querySelector("#generic-tile-icon-image").classList.contains(ValueColor.Error), "Error Color is applied");
+
+		//Change to Neutral ValueColor
+		this.oGenericTile.setValueColor(ValueColor.Neutral);
+		sap.ui.getCore().applyChanges();
+		assert.ok(document.querySelector("#generic-tile-icon-image").classList.contains(ValueColor.Neutral), "Neutral Color is applied");
+	});
+
 	QUnit.test("Action Mode for Different Frame Types", function(assert) {
 		//Switch to OneByOne
 		this.oGenericTile.setFrameType(FrameType.OneByOne);
@@ -3411,30 +3436,27 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		this.oGenericTile.setMode(GenericTileMode.HeaderMode);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(document.getElementById("generic-tile-subHdr-text"), "Generic tile subheader is rendered in Header Mode");
 		assert.notOk(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is not rendered in Header Mode");
 
 		//Switch to ContentMode
 		this.oGenericTile.setMode(GenericTileMode.ContentMode);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(document.getElementById("generic-tile-subHdr-text"), "Generic tile subheader is rendered in Content Mode");
 		assert.notOk(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is not rendered in Content Mode");
 
 		//Switch to LineMode
 		this.oGenericTile.setMode(GenericTileMode.LineMode);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(document.getElementById("generic-tile-subHdr-text"), "Generic tile subheader is rendered in Line Mode");
 		assert.notOk(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is not rendered in Line Mode");
 
 		//Switch to ActionMode
 		this.oGenericTile.setMode(GenericTileMode.ActionMode);
 		sap.ui.getCore().applyChanges();
 
-		assert.notOk(document.getElementById("generic-tile-subHdr-text"), "Generic tile subheader is not rendered in Action Mode");
 		assert.ok(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is rendered in Action Mode");
 	});
+
 	QUnit.module("GenericTile IconMode", {
 		beforeEach: function() {
 			this.oGenericTile = new GenericTile({

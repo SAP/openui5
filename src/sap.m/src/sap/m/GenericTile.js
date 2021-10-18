@@ -1547,11 +1547,19 @@ sap.ui.define([
 
 	/**
 	 * Checks if Navigate Action Button should be used in Article Mode
-	 * @returns {boolean} - true if Navigarte Action Button is enabled
+	 * @returns {boolean} - true if Navigate Action Button is enabled
 	 * @private
 	 */
 	GenericTile.prototype._isNavigateActionEnabled = function() {
 		return this.getMode() === GenericTileMode.ArticleMode && this.getUrl() && this.getEnableNavigationButton();
+	};
+
+	/**
+	 * Returns true if the GenericTile is in ActionMode and frameType is TwoByOne.
+	 * @returns {boolean} - true if the GenericTile is in ActionMode
+	 */
+	GenericTile.prototype._isActionMode = function () {
+		return this.getFrameType() === FrameType.TwoByOne && this.getMode() === GenericTileMode.ActionMode && this.getActionButtons().length;
 	};
 
 	/**
@@ -1574,7 +1582,7 @@ sap.ui.define([
 		var bIsActionButtonPressed = false,
 		bIsNavigateActionPressed = false;
 
-		if (oTile.getMode() === GenericTileMode.ActionMode) {
+		if (oTile._isActionMode()) {
 			var oActionsContainerNode = document.querySelector("#" + oTile.getId() + "-actionButtons");
 			bIsActionButtonPressed = oActionsContainerNode && oActionsContainerNode !== event.target &&  oActionsContainerNode.contains(event.target);
 		}

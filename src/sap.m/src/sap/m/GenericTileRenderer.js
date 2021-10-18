@@ -48,7 +48,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		var isHalfFrame = frameType === frameTypes.OneByHalf || frameType === frameTypes.TwoByHalf;
 
 		// Render a link when URL is provided, not in action scope and the state is enabled
-		var bRenderLink = oControl.getUrl() && !oControl._isInActionScope() && sState !== LoadState.Disabled && !oControl._isNavigateActionEnabled();
+		var bRenderLink = oControl.getUrl() && !oControl._isInActionScope() && sState !== LoadState.Disabled && !oControl._isNavigateActionEnabled() && !oControl._isActionMode();
 
 		if (oControl._isInActionScope()) {
 			sScopeClass = encodeCSS("sapMGTScopeActions");
@@ -86,15 +86,16 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		}
 		oRm.class(oControl._isIconMode() ? sClass : frameType);
 
-		var bIsArticleMode = oControl.getMode() === GenericTileMode.ArticleMode;
+		var bIsArticleMode = oControl.getMode() === GenericTileMode.ArticleMode,
+			bIsActionMode = oControl.getMode() === GenericTileMode.ActionMode;
 
-		if (frameType === frameTypes.TwoByOne && oControl.getMode() === GenericTileMode.ActionMode) {
+		if (bIsActionMode) {
 			oRm.class("sapMGTActionMode");
 		}
 		if (bIsArticleMode) {
 			oRm.class("sapMGTArticleMode");
 		}
-		if (!bIsArticleMode && frameType === frameTypes.OneByOne && oControl.getSystemInfo() || oControl.getAppShortcut()){
+		if (!bIsArticleMode && !bIsActionMode && frameType === frameTypes.OneByOne && oControl.getSystemInfo() || oControl.getAppShortcut()) {
 			oRm.class("tileWithAppInfo");
 		}
 		//Set respective Class/ BackgroundColor for IconMode
@@ -252,7 +253,16 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				oRm.attr("title", sTooltipText);
 			}
 			oRm.openEnd();
+
+			//Render Header Image
 			if (sHeaderImage) {
+				oControl._oImage.removeStyleClass(ValueColor.None);
+				if (this._sPreviousStyleClass) {
+					oControl._oImage.removeStyleClass(this._sPreviousStyleClass);
+				}
+				this._sPreviousStyleClass = this._isValueColorValid(oControl.getValueColor()) ? oControl.getValueColor() : ValueColor.None;
+				oControl._oImage.addStyleClass(this._sPreviousStyleClass);
+
 				oRm.renderControl(oControl._oImage);
 			}
 
@@ -268,8 +278,8 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 					}
 				}
 			}
-			var bIsActionMode = frameType === frameTypes.TwoByOne && oControl.getMode() === GenericTileMode.ActionMode;
-			if (!(isHalfFrame && isContentPresent) && !bIsActionMode) {
+
+			if (!(isHalfFrame && isContentPresent)) {
 				if (oControl.getSubheader() && (!oControl._isIconMode())) {//Restrict creation of SubHeader for IconMode
 					this._renderSubheader(oRm, oControl);
 				}
@@ -291,18 +301,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				}
 				oRm.close("div");
 			}
-			//Render Action Buttons, only in ActionMode and in TwoByOne frame type
-			if (bIsActionMode && oControl.getActionButtons().length) {
-				oRm.openStart("div", oControl.getId() + "-actionButtons");
-				oRm.class("sapMGTActionsContainer");
-				oRm.openEnd();
-				oControl.getActionButtons().forEach(function(oActionButton) {
-					oRm.renderControl(oActionButton);
-				});
-				oRm.close("div");
-			}
-			//Restrict creation of InfoContainer for IconMode
-			if (!oControl._isIconMode() && (frameType === frameTypes.OneByOne && (oControl.getSystemInfo() || oControl.getAppShortcut()))){
+
+			//Restrict creation of InfoContainer for IconMode, ActionMode and ArticleMode
+			if (!bIsArticleMode && !bIsActionMode && !oControl._isIconMode() && (frameType === frameTypes.OneByOne && (oControl.getSystemInfo() || oControl.getAppShortcut()))){
 				oRm.openStart("div", oControl.getId() + "-tInfo");
 				oRm.class("sapMGTTInfoContainer");
 				oRm.openEnd();
