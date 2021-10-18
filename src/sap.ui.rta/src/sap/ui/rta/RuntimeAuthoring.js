@@ -511,6 +511,7 @@ function(
 			.then(function () {
 				//Resolve the CSS variable set in themes/base/OverlayWithScrollbar.css
 				Overlay.getOverlayContainer().get(0).style.setProperty("--sap-ui-rta-scrollbar-scrollWidth", DOMUtil.getScrollbarWidth() + "px");
+				Overlay.getOverlayContainer().get(0).style.setProperty("--sap-ui-rta-scrollbar-scrollWidthPlusTwo", DOMUtil.getScrollbarWidth() + 2 + "px");
 				return oDesignTimePromise;
 			})
 			.then(function () {
