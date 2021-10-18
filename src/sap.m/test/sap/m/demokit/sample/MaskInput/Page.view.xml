@@ -1,4 +1,4 @@
-<mvc:View controllerName="sap.m.sample.MaskInput.Page"
+<mvc:View
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:form="sap.ui.layout.form"
 	height="100%"
@@ -6,22 +6,10 @@
 	<App>
 		<Page showHeader="false">
 
-			<Panel width="auto">
-				<HBox alignItems="Center">
-					<Text
-						renderWhitespace="true"
-						text="Clear button is  " />
-					<Switch state="{/showClearIcon}" />
-					<Text
-						renderWhitespace="true"
-						text="  for all MaskInputs below" />
-				</HBox>
-			</Panel>
-
 			<form:SimpleForm title="Generic Mask Input" editable="true">
 
 				<Label text="Any character" tooltip="Any character"/>
-				<MaskInput mask="~~~~~~~~~~" placeholderSymbol="_" placeholder="Enter text" showClearIcon="{/showClearIcon}">
+				<MaskInput mask="~~~~~~~~~~" placeholderSymbol="_" placeholder="Enter text">
 					<rules>
 						<MaskInputRule maskFormatSymbol="~" regex="[^_]"/>
 					</rules>
@@ -29,7 +17,7 @@
 
 				<Label text="Latin characters (case insensitive) and numbers"
 					   tooltip="Latin characters (case insensitive) and numbers"/>
-				<MaskInput mask="**********" placeholderSymbol="_" placeholder="Enter text" showClearIcon="{/showClearIcon}">
+				<MaskInput mask="**********" placeholderSymbol="_" placeholder="Enter text">
 					<rules>
 						<MaskInputRule/>
 					</rules>
@@ -37,14 +25,14 @@
 
 				<Label text="Latin characters (case sensitive) and numbers"
 					   tooltip="Latin characters (case sensitive) and numbers"/>
-				<MaskInput mask="CCCCCCCC" placeholderSymbol="_" placeholder="Enter text" showClearIcon="{/showClearIcon}">
+				<MaskInput mask="CCCCCCCC" placeholderSymbol="_" placeholder="Enter text">
 					<rules>
 						<MaskInputRule maskFormatSymbol="C" regex="[A-Z0-9]"/>
 					</rules>
 				</MaskInput>
 
 				<Label text="Numeric only" tooltip="Numeric only"/>
-				<MaskInput mask="999999" placeholderSymbol="_" placeholder="Enter a six digit number" showClearIcon="{/showClearIcon}" />
+				<MaskInput mask="999999" placeholderSymbol="_" placeholder="Enter a six digit number" showClearIcon="true" />
 
 			</form:SimpleForm>
 
