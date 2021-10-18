@@ -16,6 +16,9 @@
 @_sap_m_SearchField_Compact_FormPaddingLeft: 0.5rem;
 @_sap_m_SearchField_ResetIcon: "\e03e";
 @_sap_m_SearchField_Border: none;
+@_sap_m_SearchField_FocusOffset: 0;
+@_sap_m_SearchField_FocusBorderRadius: inherit;
+@_sap_m_SearchField_PlaceholderFontStyle: normal;
 
 .sapMSFF {
 	border-radius: @sapUiFieldBorderCornerRadius;
@@ -35,6 +38,10 @@
 
 .sapMSFB {
 	height: 2.1875rem;
+}
+
+.sapMSFB:last-of-type {
+	border-radius: 0 @sapUiFieldBorderCornerRadius @sapUiFieldBorderCornerRadius 0;
 }
 
 .sapMSFB:focus {
@@ -69,8 +76,6 @@
 
 .sapMSF.sapMFocus .sapMSFF {
 	background: @sapField_Hover_Background;
-	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapField_Focus_BorderColor;
-	outline-width: 2px;
 	box-shadow: @sapContent_Interaction_Shadow;
 }
 
@@ -87,14 +92,6 @@
 	background-size: 100% @sapField_BorderWidth;
 	background-repeat: repeat-x;
 	background-position: bottom;
-}
-
-html.sap-desktop .sapMFocus > .sapMSFF::before {
-	display: none;
-}
-
-.sapMSFB:last-of-type {
-	border-radius: 0 4px 4px 0;
 }
 
 .sapUiSizeCompact .sapMSFB {
