@@ -778,7 +778,7 @@ sap.ui.define([
 				oFieldHelp.open(true);
 			}
 			var oSource = oEvent.srcControl;
-			if (oFieldHelp.isOpen(true) && (!this._oContentFactory.isMeasure() || oSource.getShowValueHelp())) {
+			if (oFieldHelp.isOpen(true) && (!this._oContentFactory.isMeasure() || (oSource.getShowValueHelp && oSource.getShowValueHelp()))) {
 				oSource.addStyleClass("sapMFocus"); // to show focus outline again after navigation
 				oFieldHelp.removeFocus();
 			}
