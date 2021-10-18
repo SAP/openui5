@@ -992,6 +992,7 @@ sap.ui.define([
 
 	QUnit.module("Given that RuntimeAuthoring is created but not started", {
 		before: function () {
+			this.oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			return oComponentPromise;
 		},
 		beforeEach: function() {
@@ -1140,9 +1141,8 @@ sap.ui.define([
 			propertyName: "status"
 		}].forEach(function (oErrorResponse) {
 			QUnit.test("When transport function is called and transportChanges returns Promise.reject() with error in the property: " + oErrorResponse.propertyName, function (assert) {
-				var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-				var sErrorBoxText = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
-					+ oTextResources.getText("MSG_ERROR_REASON", oErrorResponse.errorText);
+				var sErrorBoxText = this.oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
+					+ this.oTextResources.getText("MSG_ERROR_REASON", oErrorResponse.errorText);
 				sandbox.stub(PersistenceWriteAPI, "publish").rejects(oErrorResponse.error);
 				var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
 				var oMessageToastStub = sandbox.stub(MessageToast, "show");
@@ -1180,11 +1180,15 @@ sap.ui.define([
 
 		QUnit.test("When restore function is called in the CUSTOMER layer", function(assert) {
 			var oShowMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox").resolves(MessageBox.Action.OK);
+			var sResetMessageKey = "FORM_PERS_RESET_MESSAGE";
+			var sResetTitleKey = "FORM_PERS_RESET_TITLE";
 
 			return this.oRta.restore().then(function() {
 				assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown");
-				assert.equal(oShowMessageBoxStub.lastCall.args[1], this.oRta._getTextResources().getText("FORM_PERS_RESET_MESSAGE"), "then the message is correct");
-				assert.equal(oShowMessageBoxStub.lastCall.args[2].titleKey, this.oRta._getTextResources().getText("FORM_PERS_RESET_TITLE"), "then the message is correct");
+				assert.equal(oShowMessageBoxStub.lastCall.args[1], sResetMessageKey, "then the message key is correct");
+				assert.notEqual(this.oTextResources.getText(sResetMessageKey), sResetMessageKey, "then the message text is available on the resource file");
+				assert.equal(oShowMessageBoxStub.lastCall.args[2].titleKey, sResetTitleKey, "then the title key is correct");
+				assert.notEqual(this.oTextResources.getText(sResetTitleKey), sResetTitleKey, "then the title text is available on the resource file");
 				assert.equal(this.oDeleteChangesStub.callCount, 1, "then _deleteChanges was called");
 				assert.equal(this.oEnableRestartSpy.callCount, 1, "then restart was enabled...");
 				assert.equal(this.oEnableRestartSpy.lastCall.args[0], Layer.CUSTOMER, "for the correct layer");
@@ -1205,11 +1209,15 @@ sap.ui.define([
 			this.oRta.setFlexSettings({
 				layer: Layer.USER
 			});
+			var sPersResetMessageKey = "FORM_PERS_RESET_MESSAGE_PERSONALIZATION";
+			var sPersResetTitleKey = "BTN_RESTORE";
 
 			return this.oRta.restore().then(function() {
 				assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown");
-				assert.equal(oShowMessageBoxStub.lastCall.args[1], this.oRta._getTextResources().getText("FORM_PERS_RESET_MESSAGE_PERSONALIZATION"), "then the message is correct");
-				assert.equal(oShowMessageBoxStub.lastCall.args[2].titleKey, this.oRta._getTextResources().getText("BTN_RESTORE"), "then the message is correct");
+				assert.equal(oShowMessageBoxStub.lastCall.args[1], sPersResetMessageKey, "then the message key is correct");
+				assert.notEqual(this.oTextResources.getText(sPersResetMessageKey), sPersResetMessageKey, "then the message text is available on the resource file");
+				assert.equal(oShowMessageBoxStub.lastCall.args[2].titleKey, sPersResetTitleKey, "then the title key is correct");
+				assert.notEqual(this.oTextResources.getText(sPersResetTitleKey), sPersResetTitleKey, "then the message text is available on the resource file");
 				assert.equal(this.oDeleteChangesStub.callCount, 1, "then _deleteChanges was called");
 				assert.equal(this.oEnableRestartSpy.callCount, 1, "then restart was enabled...");
 				assert.equal(this.oEnableRestartSpy.lastCall.args[0], Layer.USER, "for the correct layer");

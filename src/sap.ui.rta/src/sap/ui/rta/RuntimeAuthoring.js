@@ -1275,17 +1275,17 @@ function(
 	 */
 	RuntimeAuthoring.prototype._onRestore = function() {
 		var sLayer = this.getLayer();
-		var sMessage = sLayer === Layer.USER
-			? this._getTextResources().getText("FORM_PERS_RESET_MESSAGE_PERSONALIZATION")
-			: this._getTextResources().getText("FORM_PERS_RESET_MESSAGE");
-		var sTitle = sLayer === Layer.USER
-			? this._getTextResources().getText("BTN_RESTORE")
-			: this._getTextResources().getText("FORM_PERS_RESET_TITLE");
+		var sMessageKey = sLayer === Layer.USER
+			? "FORM_PERS_RESET_MESSAGE_PERSONALIZATION"
+			: "FORM_PERS_RESET_MESSAGE";
+		var sTitleKey = sLayer === Layer.USER
+			? "BTN_RESTORE"
+			: "FORM_PERS_RESET_TITLE";
 
 		this.getPluginManager().handleStopCutPaste();
 
-		return Utils.showMessageBox("warning", sMessage, {
-			titleKey: sTitle,
+		return Utils.showMessageBox("warning", sMessageKey, {
+			titleKey: sTitleKey,
 			actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 			emphasizedAction: MessageBox.Action.OK
 		}).then(function(sAction) {
