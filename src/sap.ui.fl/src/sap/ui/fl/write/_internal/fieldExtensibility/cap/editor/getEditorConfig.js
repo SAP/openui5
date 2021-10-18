@@ -216,14 +216,22 @@ sap.ui.define([
 				"cds.String": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 				"cds.Integer": "sap/ui/integration/designtime/baseEditor/propertyEditor/integerEditor/IntegerEditor",
 				"cds.Decimal": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
-				"cds.Date": "sap/ui/fl/write/_internal/fieldExtensibility/cap/editor/propertyEditor/dateEditor/DateEditor",
+				"cds.Date": "sap/ui/integration/designtime/baseEditor/propertyEditor/dateEditor/DateEditor",
 				"cds.Time": "sap/ui/fl/write/_internal/fieldExtensibility/cap/editor/propertyEditor/timeEditor/TimeEditor",
-				"cds.DateTime": "sap/ui/fl/write/_internal/fieldExtensibility/cap/editor/propertyEditor/dateTimeEditor/DateTimeEditor",
+				"cds.DateTime": "sap/ui/integration/designtime/baseEditor/propertyEditor/dateTimeEditor/DateTimeEditor",
 				"cds.Boolean": "sap/ui/fl/write/_internal/fieldExtensibility/cap/editor/propertyEditor/booleanEditor/BooleanEditor"
 			},
 			i18n: "sap/ui/fl/messagebundle.properties",
 			validators: {
 				isRequired: "sap/ui/fl/write/_internal/fieldExtensibility/cap/editor/validators/IsRequired"
+			},
+			propertyEditorConfigs: {
+				"cds.Date": {
+					pattern: "YYYY-MM-dd"
+				},
+				"cds.DateTime": {
+					pattern: "YYYY-MM-dd'T'HH:mm:ss'Z'"
+				}
 			}
 		};
 	};

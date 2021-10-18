@@ -33,11 +33,12 @@ sap.ui.define([
 		 * @function
 		 * @name sap.ui.integration.designtime.baseEditor.validator.IsDate.validate
 		 */
-		validate: function (sDateString) {
-			var sDate = new Date(sDateString);
+		validate: function (sDateString, oConfig) {
+			var formatterInstance = oConfig.formatterInstance;
+			var oDate = (formatterInstance && formatterInstance.parse(sDateString)) || new Date(sDateString);
 			return sDateString === undefined
 				|| IsValidBinding.validate(sDateString, { allowPlainStrings: false })
-				|| (sDate && !isNaN(new Date(sDate).getTime()));
+				|| (oDate && !isNaN(new Date(oDate).getTime()));
 		}
 	};
 });

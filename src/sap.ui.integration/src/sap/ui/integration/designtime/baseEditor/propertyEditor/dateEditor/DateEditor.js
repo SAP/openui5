@@ -49,18 +49,26 @@ sap.ui.define([
 					isEnabled: !oConfig.allowBindings
 				},
 				isDate: {
-					type: "isDate"
+					type: "isDate",
+					config: {
+						formatterInstance: function() {
+							var sDatePattern = (this.getConfig() || {}).pattern;
+							var oConfig = sDatePattern
+								? {
+									pattern: sDatePattern
+								}
+								: undefined;
+							return this.getFormatterInstance(oConfig);
+						}.bind(this)
+					}
 				}
 			}
 		);
 	};
 
 	DateEditor.prototype.formatValue = function (sValue) {
-		var oDate = new Date(sValue);
-		if (!this._isValidDate(oDate)) {
-			return sValue;
-		}
-		return this.getFormatterInstance().format(oDate);
+		var oDate = this._parse(sValue);
+		return this._format(oDate, true) || sValue;
 	};
 
 	DateEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata, {
@@ -69,6 +77,12 @@ sap.ui.define([
 		},
 		typeLabel: {
 			defaultValue: "BASE_EDITOR.TYPES.DATE"
+		},
+		pattern: {
+			defaultValue: "YYYY-MM-dd'T'HH:mm:ss.SSS'Z'"
+		},
+		utc: {
+			defaultValue: false
 		}
 	});
 
@@ -84,24 +98,55 @@ sap.ui.define([
 
 	DateEditor.prototype._onChange = function (oEvent) {
 		var sValue = oEvent.getParameter("newValue");
-		var sParsedValue = this._parse(sValue);
-		this.setValue(sParsedValue);
+		var oDate = this._parse(sValue, true);
+		var sDateString = this._format(oDate) || sValue;
+		this.setValue(sDateString);
 	};
 
-	DateEditor.prototype._parse = function (sValue) {
-		if (sValue === "") {
+	DateEditor.prototype._parse = function (sValue, bUseDefaultPattern) {
+		if (sValue == null || sValue === "") {
+			return sValue;
+		}
+		var bUTC = (this.getConfig() || {}).utc !== false;
+		if (bUseDefaultPattern) {
+			return this.getFormatterInstance().parse(sValue, bUTC);
+		}
+		var sDatePattern = (this.getConfig() || {}).pattern;
+		if (sDatePattern) {
+			var oDateFormatterInstance = this.getFormatterInstance({
+				pattern: sDatePattern
+			});
+			return oDateFormatterInstance.parse(sValue, bUTC);
+		}
+		return undefined;
+	};
+
+	DateEditor.prototype._format = function (oDate, bUseDefaultPattern) {
+		if (!this._isValidDate(oDate)) {
 			return undefined;
 		}
-		var sParsedDate = new Date(sValue);
-		return this._isValidDate(sParsedDate) ? sParsedDate.toISOString() : sValue;
+		var bUTC = (this.getConfig() || {}).utc !== false;
+		if (bUseDefaultPattern) {
+			return this.getFormatterInstance().format(oDate, bUTC);
+		}
+		var sDatePattern = (this.getConfig() || {}).pattern;
+		if (sDatePattern) {
+			var oDateFormatterInstance = this.getFormatterInstance({
+				pattern: sDatePattern
+			});
+			return oDateFormatterInstance.format(oDate, bUTC);
+		}
+		return undefined;
 	};
 
-	DateEditor.prototype._isValidDate = function (sDate) {
-		return sDate && !isNaN(sDate.getTime());
+	DateEditor.prototype._isValidDate = function (oDate) {
+		return oDate && !isNaN(oDate.getTime());
 	};
 
-	DateEditor.prototype.getFormatterInstance = function () {
-		return DateFormat.getDateInstance();
+	DateEditor.prototype.getFormatterInstance = function (mOptions) {
+		return DateFormat.getDateInstance(mOptions || {
+			pattern: "YYYY-MM-dd"
+		});
 	};
 
 	return DateEditor;

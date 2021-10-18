@@ -34,34 +34,27 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
+	TimeEditor.configMetadata = Object.assign({}, DateEditor.configMetadata, {
+		pattern: {
+			defaultValue: "HH:mm:ss"
+		},
+		// By default, ignore timezones due to winter/summer time etc. as 1st Jan 1970 is set as date
+		utc: {
+			defaultValue: false
+		}
+	});
+
 	TimeEditor.prototype.getDefaultValidators = function () {
 		return Object.assign(
 			{},
-			BasePropertyEditor.prototype.getDefaultValidators.call(this)
+			DateEditor.prototype.getDefaultValidators.call(this)
 		);
 	};
 
-	TimeEditor.prototype.formatValue = function (sValue) {
-		return sValue;
-	};
-
-	TimeEditor.prototype._parse = function (sValue) {
-		if (sValue === "") {
-			return undefined;
-		}
-
-		// For now use a hardcoded format, move to default config later
-		var oTimeFormatterInstance = DateFormat.getTimeInstance({
-			pattern: "HH:mm:ss"
+	TimeEditor.prototype.getFormatterInstance = function (mOptions) {
+		return DateFormat.getTimeInstance(mOptions || {
+			pattern: "HH:mm:ss.SSSS"
 		});
-		var oParsedDate = oTimeFormatterInstance.parse(sValue);
-		return this._isValidDate(oParsedDate)
-			? oTimeFormatterInstance.format(oParsedDate)
-			: sValue;
-	};
-
-	TimeEditor.prototype.getFormatterInstance = function () {
-		return DateFormat.getTimeInstance();
 	};
 
 	return TimeEditor;
