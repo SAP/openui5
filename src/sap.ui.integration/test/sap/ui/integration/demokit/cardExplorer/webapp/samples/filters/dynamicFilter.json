@@ -9,7 +9,7 @@
 			"filters": {
 				"shipper": {
 					"value": "{{parameters.selectedShipperID}}",
-					"type": "string",
+					"type": "Select",
 					"label": "Shipper",
 					"description": "Filter the orders by shipper.",
 					"item": {

@@ -15,10 +15,10 @@ sap.ui.define([
 
 	QUnit.test("Filter type", function (assert) {
 		assert.strictEqual(FilterBarFactory.prototype._getClass(), SelectFilter, "'SelectFilter' should be returned when type is not specified");
-		assert.strictEqual(FilterBarFactory.prototype._getClass("select"), SelectFilter, "'SelectFilter' should be returned when type is 'select'");
+		assert.strictEqual(FilterBarFactory.prototype._getClass("Select"), SelectFilter, "'SelectFilter' should be returned when type is 'Select'");
 		assert.strictEqual(FilterBarFactory.prototype._getClass("integer"), SelectFilter, "'SelectFilter' should be returned when type is 'integer'");
 		assert.strictEqual(FilterBarFactory.prototype._getClass("string"), SelectFilter, "'SelectFilter' should be returned when type is 'string'");
-		assert.strictEqual(FilterBarFactory.prototype._getClass("dateRange"), DateRangeFilter, "'DateRangeFilter' should be returned when type is 'dateRange'");
+		assert.strictEqual(FilterBarFactory.prototype._getClass("DateRange"), DateRangeFilter, "'DateRangeFilter' should be returned when type is 'DateRange'");
 		assert.strictEqual(FilterBarFactory.prototype._getClass("invalidType"), undefined, "'undefined' should be returned when type is not valid");
 	});
 

@@ -1891,7 +1891,7 @@
 				"configuration": {
 					"filters": {
 						"f": {
-							"type": "dateRange",
+							"type": "DateRange",
 							"value": {
 								"operator": "dateRange",
 								"values": ["1997-05-01", "1997-05-31"]

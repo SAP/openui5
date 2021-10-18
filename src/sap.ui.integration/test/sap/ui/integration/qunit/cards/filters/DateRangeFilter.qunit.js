@@ -72,7 +72,7 @@ sap.ui.define([
 				"configuration": {
 					"filters": {
 						"dateRangeFilter": {
-							"type": "dateRange"
+							"type": "DateRange"
 						}
 					}
 				},
