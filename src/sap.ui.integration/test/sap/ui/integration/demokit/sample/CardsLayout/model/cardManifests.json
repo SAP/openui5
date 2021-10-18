@@ -313,6 +313,7 @@
 			}
 		}
 	},
+	"component": "./componentCard/manifest.json",
 	"list2": {
 		"sap.app": {
 			"id": "sample.CardsLayout.model.list2",

@@ -48,7 +48,7 @@
 							<f:GridContainerItemLayoutData minRows="4" columns="3" />
 						</w:layoutData>
 					</w:Card>
-					<w:Card manifest="{/componentCardUrl}" action="onAction">
+					<w:Card manifest="{path: 'manifests>/component', formatter: '.resolveCardUrl'}" action="onAction">
 						<w:layoutData>
 							<f:GridContainerItemLayoutData  minRows="5" columns="6" />
 						</w:layoutData>
