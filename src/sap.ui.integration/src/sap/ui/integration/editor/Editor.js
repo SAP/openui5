@@ -2783,10 +2783,6 @@ sap.ui.define([
 	//theming from parameters to css valiables if css variables are not turned on
 	//find out if css vars are turned on
 	Editor._appendThemeVars = function () {
-		var oOldElement = document.getElementById("sap-ui-integration-editor-style");
-		if (oOldElement && oOldElement.parentNode) {
-			oOldElement.parentNode.removeChild(oOldElement);
-		}
 		var aVars = [
 			"sapUiButtonHoverBackground",
 			"sapUiBaseBG",
@@ -2806,14 +2802,9 @@ sap.ui.define([
 			}
 		});
 		if (mParams) {
-			var aResult = [],
-				oStyle = document.createElement("style");
-			oStyle.setAttribute("id", "sap-ui-integration-editor-style");
 			for (var n in mParams) {
-				aResult.push("--" + n + ":" + mParams[n]);
+				document.body.style.setProperty("--" + n, mParams[n]);
 			}
-			oStyle.innerHTML = ".sapUiIntegrationEditor, .sapUiIntegrationFieldSettings, .sapUiIntegrationIconSelectList {" + aResult.join(";") + "}";
-			document.body.appendChild(oStyle);
 		}
 	};
 
