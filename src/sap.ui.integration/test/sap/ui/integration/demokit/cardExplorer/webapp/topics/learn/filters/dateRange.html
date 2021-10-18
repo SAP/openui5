@@ -343,29 +343,29 @@
 	"sap.card": {
 		"configuration": {
 			"filters": {
-				"dateRange": {
+				"activityPeriod": {
 					"type": "DateRange",
 					"value": {
-						"option": "dateRange",
-						"values": [
-							"1996-08-06",
-							"1996-08-16"
-						]
+						"option": "today",
+						"values": []
 					}
 				}
 			}
 		},
 		"data": {
 			"request": {
-				"url": "/Orders",
-				"parameters": {
-					"$filter": "OrderDate gt {filters>/dateRange/range/start} and OrderDate lt {filters>/dateRange/range/end}"
+				"request": {
+					"url": "/activities",
+					"parameters": {
+						"startDate": "{filters>/activityPeriod/range/start}",
+						"endDate": "{filters>/activityPeriod/range/end}"
+					}
 				}
 			}
 		},
-		"type": "List",
+		"type": "Timeline",
 		"header": {
-			"title": "Completed Orders"
+			"title": "My Activities"
 		},
 		"content": {
 			...

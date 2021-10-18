@@ -1,0 +1,45 @@
+[
+	{
+		"Title": "Weekly sync: Marketplace / Design Stream",
+		"Description": "MRR WDF18 C3.2(GLASSBOX)",
+		"Icon": "sap-icon://appointment-2",
+		"Time": "2021-10-21T10:00:00.000Z"
+	},
+	{
+		"Title": "Call 'Project Nimbus'",
+		"Icon": "sap-icon://outgoing-call",
+		"Time": "2021-10-20T14:00:00.000Z"
+	},
+	{
+		"Title": "Video Conference for FLP@SF, S4,Hybris",
+		"Icon": "sap-icon://my-view",
+		"Time": "2021-10-20T16:00:00.000Z"
+	},
+	{
+		"Title": "Visit Nimbus",
+		"Icon": "sap-icon://visits",
+		"Time": "2021-10-20T16:30:00.000Z"
+	},
+	{
+		"Title": "Quarter Financial Results",
+		"Icon": "sap-icon://customer-financial-fact-sheet",
+		"Time": "2021-10-20T14:25:00.000Z"
+	},
+	{
+		"Title": "Sync with Manager",
+		"Icon": "sap-icon://appointment-2",
+		"Time": "2021-10-20T17:45:00.000Z"
+	},
+	{
+		"Title": "Weekly Sync - CP Design",
+		"Description": "MR 02 2.43",
+		"Icon": "sap-icon://appointment-2",
+		"Time": "2021-10-20T12:25:00.000Z"
+	},
+	{
+		"Title": "Video Conference Call - UI5",
+		"Description": "Online meeting",
+		"Icon": "sap-icon://appointment-2",
+		"Time": "2021-10-20T13:30:00.000Z"
+	}
+]

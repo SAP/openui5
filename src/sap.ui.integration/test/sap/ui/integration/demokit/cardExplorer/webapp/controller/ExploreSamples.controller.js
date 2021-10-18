@@ -5,9 +5,7 @@ sap.ui.define([
 	"../model/ExploreSettingsModel",
 	"../model/formatter",
 	"../util/FileUtils",
-	"sap/ui/core/util/MockServer",
-	"../localService/SEPMRA_PROD_MAN/mockServer",
-	"../localService/graphql/mockServer",
+	"../localService/MockServerManager",
 	"sap/m/MessageToast",
 	"sap/f/GridContainerItemLayoutData",
 	"sap/ui/core/Core",
@@ -27,9 +25,7 @@ sap.ui.define([
 	exploreSettingsModel,
 	formatter,
 	FileUtils,
-	MockServer,
-	SEPMRA_PROD_MAN_mockServer,
-	graphql_mockServer,
+	MockServerManager,
 	MessageToast,
 	GridContainerItemLayoutData,
 	Core,
@@ -81,8 +77,8 @@ sap.ui.define([
 
 		onExit: function () {
 			this._deregisterResize();
-			this._destroyMockServers();
 			this._unregisterCachingServiceWorker();
+			MockServerManager.destroyAll();
 		},
 
 		/**
@@ -599,7 +595,7 @@ sap.ui.define([
 
 			Promise.all([
 				this._initCardSample(oCurrentSample),
-				this._initMockServers(oCurrentSample),
+				MockServerManager.initAll(!!oCurrentSample.mockServer),
 				this._initCaching(oCurrentSample)
 			]).then(this._cancelIfSampleChanged(function () {
 				this._oFileEditor
@@ -646,36 +642,6 @@ sap.ui.define([
 					throw oErr;
 				}
 			});
-		},
-
-		_initMockServers: function (oSample) {
-			var pAwait = Promise.resolve(),
-				bMockServer = !!oSample.mockServer;
-
-			// init mock server only on demand
-			if (bMockServer) {
-				pAwait = Promise.all([
-					SEPMRA_PROD_MAN_mockServer.init(),
-					graphql_mockServer.init()
-				]);
-				this._bMockServersCreated = true;
-			} else {
-				// Stop all mock servers on samples which don't need it. Else all requests go through sinon.
-				this._destroyMockServers();
-			}
-
-			return pAwait;
-		},
-
-		_destroyMockServers: function (oSample) {
-			if (!this._bMockServersCreated) {
-				return;
-			}
-
-			SEPMRA_PROD_MAN_mockServer.destroy();
-			graphql_mockServer.destroy();
-			MockServer.destroyAll(); // restore sinon fake server
-			this._bMockServersCreated = false;
 		},
 
 		_initCardSample: function (oSample) {

@@ -796,7 +796,7 @@ sap.ui.define([
 						key: 'timeline',
 						subSamples: [
 							{
-								title: 'Upcoming Activities',
+								title: 'Past Activities',
 								key: 'general',
 								settings: {
 									columns: 3
@@ -944,12 +944,32 @@ sap.ui.define([
 						target: 'exploreSamples',
 						key: 'dateRangeFilter',
 						experimental: true,
-						files: [
+						subSamples: [
 							{
-
-								url: '/samples/filters/dateRange/dateRangeFilter.json',
-								name: 'manifest.json',
-								key: 'manifest.json'
+								title: 'My Activities',
+								key: 'general',
+								settings: {
+									columns: 3
+								},
+								mockServer: true,
+								files: [
+									{
+										url: '/samples/filters/dateRange/activities.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: "Completed Orders",
+								key: "completedOrders",
+								files: [
+									{
+										url: '/samples/filters/dateRange/dateRangeFilter.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
 							}
 						]
 					},
