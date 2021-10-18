@@ -4,14 +4,20 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Core",
 	"sap/ui/integration/cards/BaseListContent",
+	"sap/ui/integration/cards/ListContent",
+	"sap/ui/integration/util/CardActions",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/qunit/utils/MemoryLeakCheck"
 ], function (
 	mLibrary,
 	Core,
 	BaseListContent,
+	ListContent,
+	CardActions,
 	Card,
-	waitForThemeApplied
+	waitForThemeApplied,
+	MemoryLeakCheck
 ) {
 	"use strict";
 
@@ -1201,6 +1207,23 @@ sap.ui.define([
 
 			this.oCard.setManifest(oManifest_ListCard);
 		}.bind(this));
+	});
+
+	MemoryLeakCheck.checkControl("ListContent", function () {
+		var oListContent = new ListContent();
+
+		sinon.stub(oListContent, "getCardInstance").returns({
+			getBindingContext: function () {
+				return undefined;
+			}
+		});
+
+		oListContent.setActions(new CardActions());
+		oListContent.setConfiguration({
+			item: {}
+		});
+
+		return oListContent;
 	});
 
 	return waitForThemeApplied();

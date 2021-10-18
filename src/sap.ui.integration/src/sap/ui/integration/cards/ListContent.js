@@ -105,10 +105,6 @@ sap.ui.define([
 				}
 			}
 		});
-
-		this._oItemTemplate = new ListContentItem({
-			iconDensityAware: false
-		});
 	};
 
 	/**
