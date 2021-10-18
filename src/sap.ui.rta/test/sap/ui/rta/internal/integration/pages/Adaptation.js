@@ -54,22 +54,6 @@ sap.ui.define([
 						errorMessage: "The app is still busy.."
 					});
 				},
-				iWaitUntilTheCompactContextMenuAppears: function(sContextMenuButtonIcon, sContextMenuButtonTooltip) {
-					return this.waitFor({
-						autoWait: false,
-						controlType: "sap.m.Button",
-						matchers: function(oButton) {
-							// we set the view busy, so we need to query the parent of the app
-							return (oButton.getTooltip() === sContextMenuButtonTooltip &&
-									oButton.getIcon() === sContextMenuButtonIcon &&
-									oButton.isActive() === true);
-						},
-						success: function() {
-							Opa5.assert.ok(true, "the compact contextMenu is open now");
-						},
-						errorMessage: "The compact contextMenu is still closed"
-					});
-				},
 				iRightClickOnAnElementOverlay: function(sId) {
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
@@ -107,12 +91,12 @@ sap.ui.define([
 				},
 				iClickOnAContextMenuEntry: function(iIndex) {
 					return this.waitFor({
-						controlType: "sap.m.Popover",
+						controlType: "sap.ui.unified.Menu",
 						matchers: function(oMenu) {
 							return oMenu.$().hasClass("sapUiDtContextMenu");
 						},
-						success: function(aPopover) {
-							aPopover[0].getContent()[0].getItems()[iIndex].firePress();
+						success: function(aMenu) {
+							aMenu[0].getItems()[iIndex].$().trigger("click");
 						},
 						errorMessage: "Did not find the Context Menu"
 					});
@@ -120,7 +104,7 @@ sap.ui.define([
 				iClickOnAContextMenuEntryWithText: function(sText) {
 					var oResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 					return this.waitFor({
-						controlType: "sap.m.Button",
+						controlType: "sap.ui.unified.MenuItem",
 						matchers: new PropertyStrictEquals({
 							name: "text",
 							value: oResources.getText(sText)
@@ -131,11 +115,8 @@ sap.ui.define([
 				},
 				iClickOnAContextMenuEntryWithIcon: function(sIcon) {
 					return this.waitFor({
-						controlType: "sap.m.Button",
+						controlType: "sap.ui.unified.MenuItem",
 						matchers: [
-							function(oButton) {
-								return (oButton.getParent().getId().indexOf("popoverContentBox") >= 0 || oButton.getParent().getId().indexOf("popoverExpContentBox") >= 0);
-							},
 							new PropertyStrictEquals({
 								name: "icon",
 								value: sIcon
@@ -406,25 +387,25 @@ sap.ui.define([
 				},
 				iShouldSeetheContextMenu: function() {
 					return this.waitFor({
-						controlType: "sap.m.Popover",
-						matchers: function(oPopover) {
-							return oPopover.hasStyleClass("sapUiDtContextMenu");
+						controlType: "sap.ui.unified.Menu",
+						matchers: function(oMenu) {
+							return oMenu.hasStyleClass("sapUiDtContextMenu");
 						},
-						success: function(oPopover) {
-							Opa5.assert.ok(oPopover[0].getVisible(), "The context menu is shown.");
+						success: function(oMenu) {
+							Opa5.assert.ok(oMenu[0], "The context menu is shown.");
 						},
 						errorMessage: "Did not find the Context Menu"
 					});
 				},
 				iShouldSeetheContextMenuEntries: function(aContextEntries) {
 					return this.waitFor({
-						controlType: "sap.m.VBox",
-						matchers: function(oVBox) {
-							return oVBox.getId().indexOf("popoverExpContentBox") >= 0;
+						controlType: "sap.ui.unified.Menu",
+						matchers: function(oMenu) {
+							return oMenu.hasStyleClass("sapUiDtContextMenu");
 						},
-						success: function(oVBox) {
+						success: function(oMenu) {
 							var aIsContextEntries = [];
-							oVBox[0].getItems().forEach(function(oItem) {
+							oMenu[0].getItems().forEach(function(oItem) {
 								aIsContextEntries.push(oItem.getText());
 							});
 							Opa5.assert.deepEqual(aIsContextEntries, aContextEntries, "expected [" + aContextEntries + "] context entries found");
@@ -432,17 +413,15 @@ sap.ui.define([
 						errorMessage: "Did not find the Context Menu entries"
 					});
 				},
-				iShouldSeetheNumberOfContextMenuActions: function(iActions, bIsMiniMenu) {
-					var sControlType = bIsMiniMenu ? "sap.m.HBox" : "sap.m.VBox";
-					var sIdPart = bIsMiniMenu ? "popoverContentBox" : "popoverExpContentBox";
+				iShouldSeetheNumberOfContextMenuActions: function(iActions) {
 					return this.waitFor({
-						controlType: sControlType,
-						matchers: function(oControl) {
-							return oControl.getId().indexOf(sIdPart) >= 0;
+						controlType: "sap.ui.unified.Menu",
+						matchers: function(oMenu) {
+							return oMenu.hasStyleClass("sapUiDtContextMenu");
 						},
-						success: function(oControl) {
+						success: function(oMenu) {
 							var iItems = 0;
-							oControl[0].getItems().forEach(function(oItem) {
+							oMenu[0].getItems().forEach(function(oItem) {
 								if (oItem.getVisible()) {
 									iItems++;
 								}

@@ -76,12 +76,10 @@ sap.ui.define([
 			return this.oRta.getCommandStack()._oLastCommand;
 		}
 
-		function fnPressRenameAndEnsureFunctionality(assert, oControl, oRenameButton, sText) {
+		function fnPressRenameAndEnsureFunctionality(assert, oControl, oRenameItem, sText) {
 			var $fieldOverlay = this.oCompanyCodeFieldOverlay.$();
 
 			return new Promise(function(fnResolve) {
-				oRenameButton.firePress();
-
 				sap.ui.getCore().getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function (sChannel, sEvent, mParams) {
 					if (mParams.overlay === this.oCompanyCodeFieldOverlay) {
 						var $editableField = $fieldOverlay.find(".sapUiRtaEditableField");
@@ -122,6 +120,7 @@ sap.ui.define([
 						QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ENTER, false, false, false);
 					}
 				}, this);
+				QUnitUtils.triggerEvent("click", oRenameItem.getDomRef());
 			}.bind(this));
 		}
 
@@ -140,8 +139,8 @@ sap.ui.define([
 					// open context menu dialog
 					this.oCompanyCodeFieldOverlay.setSelected(true);
 					RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(function () {
-						var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[1];
-						oContextMenuButton.firePress();
+						var oMenu = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+						QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[1].getDomRef());
 						sap.ui.getCore().applyChanges();
 
 						oDialog.attachOpened(function () {
@@ -176,7 +175,7 @@ sap.ui.define([
 							// select the field in the list and close the dialog with OK
 							oFieldToAdd.selected = true;
 							var oOkButton = sap.ui.getCore().byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
-							sap.ui.qunit.QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
+							QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
 							sap.ui.getCore().applyChanges();
 						}.bind(this));
 					}.bind(this));
@@ -242,10 +241,10 @@ sap.ui.define([
 					sap.ui.getCore().applyChanges();
 				}.bind(this));
 
-				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				var oContextMenuButton = oContextMenuControl.getButtons()[1];
-				assert.equal(oContextMenuButton.getText(), "Add: Field", "then the add field action button is available in the menu");
-				oContextMenuButton.firePress();
+				var oMenu = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				var oContextMenuItem = oMenu.getItems()[1];
+				assert.equal(oContextMenuItem.getText(), "Add: Field", "then the add field action button is available in the menu");
+				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[1].getDomRef());
 				sap.ui.getCore().applyChanges();
 			}.bind(this));
 		});
@@ -417,14 +416,14 @@ sap.ui.define([
 					// select the field in the list and close the dialog with OK
 					oFieldToAdd.selected = true;
 					var oOkButton = sap.ui.getCore().byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
-					sap.ui.qunit.QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
+					QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
 					sap.ui.getCore().applyChanges();
 				}.bind(this));
 
-				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				var oContextMenuButton = oContextMenuControl.getButtons()[1];
-				assert.equal(oContextMenuButton.getText(), "Add: Field", "the the add field action button is available in the menu");
-				oContextMenuButton.firePress();
+				var oMenu = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				var oContextMenuItem = oMenu.getItems()[1];
+				assert.equal(oContextMenuItem.getText(), "Add: Field", "then the add field action button is available in the menu");
+				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[1].getDomRef());
 				sap.ui.getCore().applyChanges();
 			}.bind(this));
 		});
@@ -437,11 +436,11 @@ sap.ui.define([
 			this.oCompanyCodeFieldOverlay.focus();
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-			oContextMenuControl.attachOpened(function () {
-				assert.ok(oContextMenuControl.getPopover(false).isOpen(), "ContextMenu is open");
+			this.oRta.getPlugins()["contextMenu"].attachEventOnce("openedContextMenu", function() {
+				assert.ok(true, "ContextMenu is open");
 				// press rename button
-				var oRenameButton = oContextMenuControl.getButtons()[0];
-				fnPressRenameAndEnsureFunctionality.call(this, assert, this.oCompanyCodeField, oRenameButton, "TestCompactMenu")
+				var oRenameItem = oContextMenuControl._getVisualParent().getItems()[0];
+				fnPressRenameAndEnsureFunctionality.call(this, assert, this.oCompanyCodeField, oRenameItem, "TestCompactMenu")
 					.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 					.then(function (iNumberOfChanges) {
 						assert.equal(iNumberOfChanges, 1);
@@ -482,12 +481,12 @@ sap.ui.define([
 			oCombinedElementOverlay.setSelected(true);
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-			oContextMenuControl.attachEventOnce("Opened", function () {
-				var oContextMenuButton = oContextMenuControl.getButtons().filter(function (oButton) {
-					return oButton.getText() === "Split";
+			this.oRta.getPlugins()["contextMenu"].attachEventOnce("openedContextMenu", function() {
+				var oContextMenuItem = oContextMenuControl._getVisualParent().getItems().filter(function (oItem) {
+					return oItem.getText() === "Split";
 				})[0];
-				assert.ok(oContextMenuButton, "the the split action button is available in the menu");
-				oContextMenuButton.firePress();
+				assert.ok(oContextMenuItem, "the the split action button is available in the menu");
+				QUnitUtils.triggerEvent("click", oContextMenuItem.getDomRef());
 				sap.ui.getCore().applyChanges();
 			});
 			QUnitUtils.triggerKeyup(oCombinedElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
