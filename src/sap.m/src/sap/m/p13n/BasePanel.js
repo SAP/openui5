@@ -115,6 +115,7 @@ sap.ui.define([
 		Control.prototype.init.apply(this, arguments);
 
 		this._oP13nModel = new JSONModel({});
+		this._oP13nModel.setSizeLimit(10000);
 		this.setModel(this._oP13nModel, this.P13N_MODEL);
 
 	   // list is necessary to set the template + model on

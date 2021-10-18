@@ -232,13 +232,13 @@ sap.ui.define([
 
 		//Remove previous
 		if (sOldKey) {
-			this._updatePresence(sOldKey, false);
+			this._updatePresence(sOldKey, false, undefined);
 		}
 		//store old key
 		oEvt.getSource()._key = sNewKey;
 
 		//add new
-		this._updatePresence(sNewKey, true);
+		this._updatePresence(sNewKey, true, this._oListControl.getItems().indexOf(oListItem));
 
 		//Add a new row in case the last "empty" row has been configured
 		if (sNewKey !== this.NONE_KEY && bIsLastRow) {
@@ -261,7 +261,7 @@ sap.ui.define([
 					press: function (oEvt) {
 						var oRow = oEvt.getSource().getParent().getParent().getParent();
 						this._oListControl.removeItem(oRow);
-						this._updatePresence(oRow.getContent()[0].getContent()[0]._key, false);
+						this._updatePresence(oRow.getContent()[0].getContent()[0]._key, false, undefined);
 						if (this._oListControl.getItems().length === 0) {
 							this._addQueryRow();
 						} else {
@@ -282,7 +282,7 @@ sap.ui.define([
 		BasePanel.prototype._moveSelectedItem.apply(this, arguments);
 	};
 
-	QueryPanel.prototype._updatePresence = function (sKey, bAdd, sOldKey) {
+	QueryPanel.prototype._updatePresence = function (sKey, bAdd, iNewIndex) {
 		var aItems = this._getP13nModel().getProperty("/items");
 		var aRelevant = aItems.filter(function (oItem) {
 			return oItem.name === sKey;
@@ -290,6 +290,11 @@ sap.ui.define([
 
 		if (aRelevant[0]) {
 			aRelevant[0][this.PRESENCE_ATTRIBUTE] = bAdd;
+		}
+
+		if (iNewIndex !== undefined) {
+			var iOldIndex = aItems.indexOf(aRelevant[0]);
+			aItems.splice(iNewIndex, 0, aItems.splice(iOldIndex, 1)[0]);
 		}
 
 		this._getP13nModel().setProperty("/items", aItems);

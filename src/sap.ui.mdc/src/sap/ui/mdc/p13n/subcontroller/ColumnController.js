@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"./BaseController", "sap/ui/mdc/p13n/panels/ListView", "sap/ui/mdc/p13n/panels/SelectionPanel", "sap/m/Column"
-], function (BaseController, ListView, SelectionPanel, Column) {
+	"./BaseController", "sap/m/p13n/SelectionPanel"
+], function (BaseController, SelectionPanel) {
     "use strict";
 
     var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
@@ -23,7 +23,7 @@ sap.ui.define([
 
     ColumnController.prototype.model2State = function() {
         var aItems = [];
-        this._oAdaptationModel.getProperty("/items").forEach(function(oItem){
+        this._oPanel.getP13nData(true).forEach(function(oItem){
             if (oItem.visible){
                 aItems.push({
                     name: oItem.name
@@ -35,21 +35,15 @@ sap.ui.define([
 
     ColumnController.prototype.getAdaptationUI = function(oPropertyHelper){
 
-        var oSelectionPanel = new ListView({
+        var oSelectionPanel = new SelectionPanel({
             enableReorder: true,
             showHeader: true,
-            enableCount: true
+            enableCount: true,
+            fieldColumn: oResourceBundle.getText("fieldsui.COLUMNS")
         });
-
-        oSelectionPanel.setPanelColumns([oResourceBundle.getText("fieldsui.COLUMNS"), new Column({
-            width: "25%",
-            hAlign: "Center",
-            vAlign: "Middle"
-        })]);
-
-        var oAdaptationModel = this._getP13nModel(oPropertyHelper);
-        oSelectionPanel.setP13nModel(oAdaptationModel);
-
+        var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+        oSelectionPanel.setP13nData(oAdaptationData.items);
+        this._oPanel = oSelectionPanel;
         return Promise.resolve(oSelectionPanel);
     };
 

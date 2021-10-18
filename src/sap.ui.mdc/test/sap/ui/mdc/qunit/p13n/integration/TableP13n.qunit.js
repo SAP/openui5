@@ -84,7 +84,7 @@ sap.ui.define([
 
 			//check inner panel
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
-			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.ListView"), "Correct panel created");
+			assert.ok(oP13nControl.getContent()[0].isA("sap.m.p13n.SelectionPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 			var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
 			assert.equal(oInnerTable.getItems().length, oPropertyHelper.getProperties().length, "correct amount of items has been set");
@@ -106,8 +106,8 @@ sap.ui.define([
 			//check inner control (should be a wrapper)
 			var oWrapper = oP13nControl.getContent()[0];
 			assert.ok(oWrapper.isA("sap.ui.mdc.p13n.panels.Wrapper"), "Wrapper created");
-			assert.ok(oWrapper.getView("Column").getContent().isA("sap.ui.mdc.p13n.panels.ListView"), "Correct panel created");
-			assert.ok(oWrapper.getView("Sort").getContent().isA("sap.ui.mdc.p13n.panels.SortQueryPanel"), "Correct panel created");
+			assert.ok(oWrapper.getView("Column").getContent().isA("sap.m.p13n.SelectionPanel"), "Correct panel created");
+			assert.ok(oWrapper.getView("Sort").getContent().isA("sap.m.p13n.SortPanel"), "Correct panel created");
 			done();
 		}.bind(this));
 	});
@@ -177,7 +177,7 @@ sap.ui.define([
 
 			//check inner panel
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
-			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.ListView"), "Correct panel created");
+			assert.ok(oP13nControl.getContent()[0].isA("sap.m.p13n.SelectionPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 			assert.equal(oInnerTable.getItems().length, 1, "only one item has been created (as only one has been passed as parameter)");
 			done();
@@ -193,8 +193,10 @@ sap.ui.define([
 			//trigger event handler manually --> usually triggered by user interaction
 			//user interaction manipulates the inner model of the panel,
 			//to mock user interaction we directly act the change on the p13n panel model
-			var aItems = Engine.getInstance().getController(this.oTable, "Column").getP13nData();
-			aItems.pop(); //remove one item to trigger a change
+			var oColumnController = Engine.getInstance().getController(this.oTable, "Column");
+			var aItems = oColumnController.getP13nData();
+			aItems.pop();
+			sinon.stub(oColumnController, "getP13nData").returns(aItems);
 
 			var oModificationHandler = TestModificationHandler.getInstance();
 			oModificationHandler.processChanges = function(aChanges){
@@ -210,10 +212,11 @@ sap.ui.define([
 					"The stored key should be equal to the 'name' in property info (NOT PATH!)");
 				Engine.getInstance()._setModificationHandler(this.oTable, FlexModificationHandler.getInstance());
 				done();
+				oColumnController.getP13nData.restore();
 			}.bind(this);
 			Engine.getInstance()._setModificationHandler(this.oTable, oModificationHandler);
 
-			Engine.getInstance().handleP13n(this.oTable, ["Column"], {items: aItems});
+			Engine.getInstance().handleP13n(this.oTable, ["Column"]);
 
 		}.bind(this));
 
@@ -232,7 +235,7 @@ sap.ui.define([
 
 			//check inner panel
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
-			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SortQueryPanel"), "Correct panel created");
+			assert.ok(oP13nControl.getContent()[0].isA("sap.m.p13n.SortPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
             var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
 
@@ -273,7 +276,7 @@ sap.ui.define([
 
 			//check inner panel
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
-			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SortQueryPanel"), "Correct panel created");
+			assert.ok(oP13nControl.getContent()[0].isA("sap.m.p13n.SortPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 
 			//-1 non sortable property
@@ -316,7 +319,7 @@ sap.ui.define([
 
 			//check inner panel
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
-			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.ListView"), "Correct panel created");
+			assert.ok(oP13nControl.getContent()[0].isA("sap.m.p13n.SelectionPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 
 			//-1 non visible property

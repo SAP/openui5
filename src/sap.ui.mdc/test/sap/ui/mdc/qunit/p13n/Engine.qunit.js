@@ -13,7 +13,7 @@ sap.ui.define([
     "sap/m/HBox",
     "sap/ui/mdc/p13n/PersistenceProvider",
     "sap/ui/fl/variants/VariantManagement",
-    "sap/ui/mdc/p13n/panels/BasePanel",
+    "sap/m/p13n/BasePanel",
     "sap/ui/core/library",
     "sap/ui/mdc/p13n/FlexUtil",
     "sap/ui/mdc/enum/PersistenceMode"
@@ -305,7 +305,7 @@ sap.ui.define([
         .then(function(oP13nUI){
             assert.ok(this.oEngine.hasActiveP13n(this.oControl, "Test"), "There personalization is flagged as open to only initialize it once");
             assert.ok(oP13nUI.isA("sap.m.Dialog"), "A control instance has been returned as UI");
-            assert.ok(oP13nUI.getContent()[0].isA("sap.ui.mdc.p13n.panels.BasePanel"), "A control instance has been returned as UI");
+            assert.ok(oP13nUI.getContent()[0].isA("sap.m.p13n.BasePanel"), "A control instance has been returned as UI");
 
             oP13nUI.destroy();
             this.oEngine.setActiveP13n(this.oControl, null);
@@ -339,7 +339,7 @@ sap.ui.define([
         .then(function(oP13nUI){
             assert.ok(!this.oEngine.hasActiveP13n(this.oControl, "Test"), "There is no personalization open (only via showUI)");
             assert.ok(oP13nUI.isA("sap.m.Dialog"), "A control instance has been returned as UI");
-            assert.ok(oP13nUI.getContent()[0].isA("sap.ui.mdc.p13n.panels.BasePanel"), "A control instance has been returned as UI");
+            assert.ok(oP13nUI.getContent()[0].isA("sap.m.p13n.BasePanel"), "A control instance has been returned as UI");
 
             oP13nUI.destroy();
 

@@ -1,7 +1,7 @@
 /* global QUnit */
 sap.ui.define([
     "sap/ui/mdc/p13n/P13nBuilder",
-    "sap/ui/mdc/p13n/panels/BasePanel",
+    "sap/m/p13n/BasePanel",
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/Element"
 ], function(P13nBuilder, BasePanel, JSONModel, Element) {
@@ -117,16 +117,14 @@ sap.ui.define([
         var done = assert.async();
 
         var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
-        var oModel = new JSONModel(oP13nData);
-        var oPanel = new BasePanel(oPanel);
-
-        oPanel.setP13nModel(oModel);
+        var oPanel = new BasePanel();
+        oPanel.setP13nData(oP13nData.items);
 
        P13nBuilder.createP13nPopover(oPanel, {
             title: "Test"
         }).then(function(oPopover){
             assert.ok(oPopover.isA("sap.m.ResponsivePopover"), "Correct container control created");
-            assert.ok(oPopover.getContent()[0].isA("sap.ui.mdc.p13n.panels.BasePanel"), "correct Content provided");
+            assert.ok(oPopover.getContent()[0].isA("sap.m.p13n.BasePanel"), "correct Content provided");
             assert.equal(oPopover.getTitle(), "Test");
 
             oPopover.destroy();
@@ -141,10 +139,8 @@ sap.ui.define([
         var done = assert.async();
 
         var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
-        var oModel = new JSONModel(oP13nData);
-        var oPanel = new BasePanel(oPanel);
-
-        oPanel.setP13nModel(oModel);
+        var oPanel = new BasePanel();
+        oPanel.setP13nData(oP13nData.items);
 
         P13nBuilder.createP13nDialog(oPanel, {
             title: "Test",
@@ -152,7 +148,7 @@ sap.ui.define([
         }).then(function(oDialog){
             assert.ok(oDialog.getId(), "myTestDialog");
             assert.ok(oDialog.isA("sap.m.Dialog"), "Correct container control created");
-            assert.ok(oDialog.getContent()[0].isA("sap.ui.mdc.p13n.panels.BasePanel"), "correct Content provided");
+            assert.ok(oDialog.getContent()[0].isA("sap.m.p13n.BasePanel"), "correct Content provided");
             assert.equal(oDialog.getTitle(), "Test");
 
             oDialog.destroy();
@@ -167,10 +163,8 @@ sap.ui.define([
         var done = assert.async();
 
         var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
-        var oModel = new JSONModel(oP13nData);
-        var oPanel = new BasePanel(oPanel);
-
-        oPanel.setP13nModel(oModel);
+        var oPanel = new BasePanel();
+        oPanel.setP13nData(oP13nData.items);
 
         P13nBuilder.createP13nDialog(oPanel, {
             title: "Test",
@@ -196,12 +190,11 @@ sap.ui.define([
 
         var done = assert.async();
 
-        var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
-        var oModel = new JSONModel(oP13nData);
-        var oPanel = new BasePanel(oPanel);
         var oResetBtn, oDialog;
 
-        oPanel.setP13nModel(oModel);
+        var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
+        var oPanel = new BasePanel();
+        oPanel.setP13nData(oP13nData.items);
 
         P13nBuilder.createP13nDialog(oPanel, {
             title: "Test",
