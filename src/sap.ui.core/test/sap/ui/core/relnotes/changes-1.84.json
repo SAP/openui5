@@ -502,5 +502,32 @@
         ]
       }
     ]
+  },
+  "1.84.19": {
+    "date": "October 2021",
+    "notes": [
+      {
+        "id": "68a815f37c6988d75d9b27fa50859e7b5e1254a6",
+        "type": "FIX",
+        "text": " NumberFormat: Currency symbols should not be affected by trailingCurrencyCode option",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006756752021"
+          }
+        ]
+      },
+      {
+        "id": "408bce786c43dd584a7cc89782507961634ab128",
+        "type": "FIX",
+        "text": " ManagedObject: fix cloning of associations to root object",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

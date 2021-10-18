@@ -925,5 +925,47 @@
         ]
       }
     ]
+  },
+  "1.84.19": {
+    "date": "October 2021",
+    "notes": [
+      {
+        "id": "0f8e887676da924460d3300861f9bd68bd753d7b",
+        "type": "FIX",
+        "text": " sap.m.Select: Correct focus on combi devices",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006164082021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180201197"
+          }
+        ]
+      },
+      {
+        "id": "6d7f052874a3119a8fea90ffdae674e5a92cc7a6",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator: Step announcement is corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170217511"
+          }
+        ]
+      },
+      {
+        "id": "fc6b78d28c312bac3d1bda815fa9c5388309ef70",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: removed unwanted announcement of Back button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170215778"
+          }
+        ]
+      }
+    ]
   }
 }
