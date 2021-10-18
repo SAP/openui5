@@ -3,6 +3,44 @@
     "date": "October 2021",
     "notes": [
       {
+        "id": "0d3010eb9101d95e31046832861b49983a3526ed",
+        "type": "FIX",
+        "text": " NumberFormat: Currency symbols should not be affected by trailingCurrencyCode option",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006756752021"
+          }
+        ]
+      },
+      {
+        "id": "8741943b0410edc904317b9c45c95bdeee0d34aa",
+        "type": "FIX",
+        "text": " base/ManagedObjectMetadata: #addAPIParentInfoEnd",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006162002021"
+          }
+        ]
+      },
+      {
+        "id": "a0900e36fb4c7c53656e9f9df655e978ec676b6b",
+        "type": "FEATURE",
+        "text": " SAP-icons font v5.0 / v4.12"
+      },
+      {
+        "id": "26e3fc7089426e321e6a93d8b4a289d92d32abed",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding#_processLevelMembersQueryResponse: trigger update in case of no data",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170218821"
+          }
+        ]
+      },
+      {
         "id": "9da943b5ac9752bdb3e7e989e7e36c7541b33e4d",
         "type": "FIX",
         "text": " core/Router: Add typedef for RouteInfo",

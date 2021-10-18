@@ -3,6 +3,11 @@
     "date": "October 2021",
     "notes": [
       {
+        "id": "a0900e36fb4c7c53656e9f9df655e978ec676b6b",
+        "type": "FEATURE",
+        "text": " SAP-icons font v5.0 / v4.12"
+      },
+      {
         "id": "0aa923ebb85aa88b74a5a1eeb8bc5acd6c7f7220",
         "type": "FEATURE",
         "text": " sap_horizon: commons + ux3 libraries"

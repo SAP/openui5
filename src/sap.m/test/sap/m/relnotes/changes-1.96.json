@@ -3,6 +3,60 @@
     "date": "October 2021",
     "notes": [
       {
+        "id": "5304ebd9bd0b9a2ca219d0019556d6a27726d17b",
+        "type": "FEATURE",
+        "text": " sap.m.MultiComboBox: Select All checkbox implementation"
+      },
+      {
+        "id": "62bb31f726b6df2d5eab933939dac65804bb0a3d",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: added 'remove' action for UI Adaptation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007056162021"
+          }
+        ]
+      },
+      {
+        "id": "cf3a9cfe0efbf0b9839b3f9ab8dd9785c2daedad",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Input width is now properly calculated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170172291"
+          }
+        ]
+      },
+      {
+        "id": "a0900e36fb4c7c53656e9f9df655e978ec676b6b",
+        "type": "FEATURE",
+        "text": " SAP-icons font v5.0 / v4.12"
+      },
+      {
+        "id": "a2a492e340a4c8d6e15a57469febcc6ba1e6cd4e",
+        "type": "FIX",
+        "text": " sap.m.Input: Clear icon visibility enhancement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170253186"
+          }
+        ]
+      },
+      {
+        "id": "e53d338c34bbcab77ae2978deef5ac9629f75954",
+        "type": "FIX",
+        "text": " P13nDialog: IconTabBar items border fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180308710"
+          }
+        ]
+      },
+      {
         "id": "c7c2c97d5423f2d8742ee5b8a4e90f7b0edfc349",
         "type": "FIX",
         "text": " sap.m.ObjectStatus: fixed failing test in Firefox browser",
