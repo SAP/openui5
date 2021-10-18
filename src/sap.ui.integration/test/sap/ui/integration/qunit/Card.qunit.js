@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/cards/BaseContent",
 	"sap/ui/integration/cards/Header",
-	"sap/ui/integration/cards/Filter",
+	"sap/ui/integration/cards/filters/SelectFilter",
 	"sap/ui/integration/util/DataProvider",
 	"sap/ui/core/Core",
 	"sap/ui/core/Manifest",

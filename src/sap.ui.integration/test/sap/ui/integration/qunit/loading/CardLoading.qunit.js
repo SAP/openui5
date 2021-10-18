@@ -7,7 +7,7 @@ sap.ui.define([
 		"sap/ui/integration/util/LoadingProvider",
 		"sap/ui/integration/cards/BaseContent",
 		"sap/ui/integration/cards/Header",
-		"sap/ui/integration/cards/Filter",
+		"sap/ui/integration/cards/filters/SelectFilter",
 		"sap/ui/integration/library"
 	],
 	function (

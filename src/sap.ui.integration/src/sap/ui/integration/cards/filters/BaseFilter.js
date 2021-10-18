@@ -8,9 +8,6 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/m/HBox",
 	"sap/m/Text",
-	"sap/m/Select",
-	"sap/ui/core/ListItem",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/integration/model/ObservableModel",
 	"sap/ui/integration/util/LoadingProvider"
 ], function (
@@ -20,16 +17,13 @@ sap.ui.define([
 	Icon,
 	HBox,
 	Text,
-	Select,
-	ListItem,
-	JSONModel,
 	ObservableModel,
 	LoadingProvider
 ) {
 	"use strict";
 
 	/**
-	 * Constructor for a new <code>Filter</code>.
+	 * Constructor for a new <code>BaseFilter</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
@@ -43,12 +37,13 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @private
-	 * @since 1.84
-	 * @alias sap.ui.integration.cards.Filter
+	 * @since 1.96
+	 * @alias sap.ui.integration.cards.filters.BaseFilter
 	 */
-	var Filter = Control.extend("sap.ui.integration.cards.Filter", {
+	var BaseFilter = Control.extend("sap.ui.integration.cards.filters.BaseFilter", {
 		metadata: {
-
+			"abstract" : true,
+			library: "sap.ui.integration",
 			properties: {
 				/**
 				 * Filter's key as it's defined in the manifest.
@@ -61,23 +56,16 @@ sap.ui.define([
 				config: { type: "object", defaultValue: "null" },
 
 				/**
-				 * The currently selected filter value.
+				 * The value of the filter that can be used in the manifest.
 				 */
-				value: { type: "string", defaultValue: "" }
+				value: { type: "object", defaultValue: null }
 			},
-
 			aggregations: {
-				/**
-				 * The internally used sap.m.Select control instance.
-				 */
-				_select: { type: "sap.m.Select", multiple: false, visibility: "hidden" },
-
 				/**
 				 * The internally used LoadingProvider.
 				 */
 				_loadingProvider: { type: "sap.ui.core.Element", multiple: false, visibility: "hidden" }
 			},
-
 			associations: {
 
 				/**
@@ -87,7 +75,6 @@ sap.ui.define([
 			}
 
 		},
-
 		renderer: {
 			apiVersion: 2,
 			render: function (oRM, oFilter) {
@@ -104,7 +91,7 @@ sap.ui.define([
 				if (oFilter._hasError()) {
 					oRM.renderControl(oFilter._getErrorMessage());
 				} else {
-					oRM.renderControl(oFilter._getSelect());
+					oRM.renderControl(oFilter.getField());
 				}
 
 				oRM.close("div");
@@ -112,7 +99,7 @@ sap.ui.define([
 		}
 	});
 
-	Filter.prototype.init = function () {
+	BaseFilter.prototype.init = function () {
 		this.setAggregation("_loadingProvider", new LoadingProvider());
 
 		this.attachEventOnce("_dataReady", function () {
@@ -120,34 +107,64 @@ sap.ui.define([
 		});
 	};
 
-	Filter.prototype.exit = function () {
+	BaseFilter.prototype.exit = function () {
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();
 			this._oDataProvider = null;
 		}
 	};
 
-	Filter.prototype.isLoading = function () {
+	BaseFilter.prototype.isLoading = function () {
 		var oLoadingProvider = this.getAggregation("_loadingProvider");
 
 		return !oLoadingProvider.isDataProviderJson() && oLoadingProvider.getLoading();
 	};
 
-	Filter.prototype._getSelect = function () {
-		var oControl = this.getAggregation("_select");
-		if (!oControl) {
-			oControl = this._createSelect();
-			this.setAggregation("_select", oControl);
-		}
-
-		return oControl;
+	BaseFilter.prototype.getField = function () {
+		return null;
 	};
 
-	Filter.prototype._hasError = function () {
+	/**
+	 * @private
+	 * @ui5-restricted
+	 */
+	BaseFilter.prototype.showLoadingPlaceholders = function () {
+		this.getAggregation("_loadingProvider").setLoading(true);
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted
+	 */
+	BaseFilter.prototype.hideLoadingPlaceholders = function () {
+		this.getAggregation("_loadingProvider").setLoading(false);
+	};
+
+	BaseFilter.prototype.onDataChanged = function () { };
+
+	BaseFilter.prototype.getValueForModel = function () { };
+
+	BaseFilter.prototype.refreshData = function () {
+		if (this._oDataProvider) {
+			this._oDataProvider.triggerDataUpdate();
+		}
+	};
+
+	/**
+	 * Gets the card instance of which this element is part of.
+	 * @ui5-restricted
+	 * @private
+	 * @returns {sap.ui.integration.widgets.Card} The card instance.
+	 */
+	BaseFilter.prototype.getCardInstance = function () {
+		return Core.byId(this.getCard());
+	};
+
+	BaseFilter.prototype._hasError = function () {
 		return !!this._bError;
 	};
 
-	Filter.prototype._getErrorMessage = function () {
+	BaseFilter.prototype._getErrorMessage = function () {
 		var sMessage = "Unable to load the filter.";
 
 		return new HBox({
@@ -160,39 +177,16 @@ sap.ui.define([
 		});
 	};
 
-	Filter.prototype._handleError = function (sLogMessage) {
+	BaseFilter.prototype._handleError = function (sLogMessage) {
 		Log.error(sLogMessage);
 
 		this._bError = true;
 		this.invalidate();
 	};
 
-	Filter.prototype._onDataRequestComplete = function () {
+	BaseFilter.prototype._onDataRequestComplete = function () {
 		this.fireEvent("_dataReady");
 		this.hideLoadingPlaceholders();
-	};
-
-	/**
-	 * @private
-	 * @ui5-restricted
-	 */
-	Filter.prototype.showLoadingPlaceholders = function () {
-		this.getAggregation("_loadingProvider").setLoading(true);
-	};
-
-	/**
-	 * @private
-	 * @ui5-restricted
-	 */
-	Filter.prototype.hideLoadingPlaceholders = function () {
-		this.getAggregation("_loadingProvider").setLoading(false);
-	};
-
-	Filter.prototype._onDataChanged = function () {
-		var oSelect = this._getSelect();
-
-		oSelect.setSelectedKey(this.getValue());
-		this._updateSelected(oSelect.getSelectedItem());
 	};
 
 	/**
@@ -200,7 +194,7 @@ sap.ui.define([
 	 * @private
 	 * @param {object} oDataConfig Data configuration
 	 */
-	Filter.prototype._setDataConfiguration = function (oDataConfig) {
+	BaseFilter.prototype._setDataConfiguration = function (oDataConfig) {
 		var oCard = this.getCardInstance(),
 			oModel;
 
@@ -225,7 +219,7 @@ sap.ui.define([
 		}
 
 		oModel.attachEvent("change", function () {
-			this._onDataChanged();
+			this.onDataChanged();
 		}.bind(this));
 
 		this._oDataProvider.attachDataRequested(function () {
@@ -245,85 +239,5 @@ sap.ui.define([
 		this._oDataProvider.triggerDataUpdate();
 	};
 
-	Filter.prototype._updateSelected = function (oSelectedItem) {
-		var oFiltersModel = this.getModel("filters"),
-			sFilterKey = this.getKey(),
-			oCard = this.getCardInstance(),
-			sManifestKey = "/sap.card/configuration/filters/" + sFilterKey + "/value",
-			sParams = {};
-
-		oFiltersModel.setProperty("/" + sFilterKey, {
-			"value": oSelectedItem.getKey(),
-			"selectedItem": {
-				"title": oSelectedItem.getText(),
-				"key": oSelectedItem.getKey()
-			}
-		});
-
-		sParams[sManifestKey] = oSelectedItem.getKey();
-		if (oCard) {
-			oCard._fireConfigurationChange(sParams);
-		}
-	};
-
-	/**
-	 * Constructs a Select control configured with the Filter's properties.
-	 *
-	 * @private
-	 * @returns {sap.m.Select} configured instance
-	 */
-	Filter.prototype._createSelect = function () {
-		var oSelect = new Select(),
-			sItemTemplateKey,
-			sItemTemplateTitle,
-			sItemsPath = "/",
-			oConfig = this.getConfig();
-
-		oSelect.attachChange(function (oEvent) {
-			var sValue = oEvent.getParameter("selectedItem").getKey();
-			this.setValue(sValue);
-			this._updateSelected(oEvent.getParameter("selectedItem"));
-		}.bind(this));
-
-		if (oConfig && oConfig.item) {
-			sItemsPath = oConfig.item.path || sItemsPath;
-		}
-
-		if (oConfig && oConfig.item && oConfig.item.template) {
-			sItemTemplateKey = oConfig.item.template.key;
-			sItemTemplateTitle = oConfig.item.template.title;
-		}
-
-		if (oConfig && oConfig.items) {
-			sItemTemplateKey = "{key}";
-			sItemTemplateTitle = "{title}";
-			this.setModel(new JSONModel(oConfig.items));
-		}
-
-		oSelect.bindItems({
-			path: sItemsPath,
-			template: new ListItem({ key: sItemTemplateKey, text: sItemTemplateTitle })
-		});
-		oSelect.setSelectedKey(this.getValue());
-
-		return oSelect;
-	};
-
-	Filter.prototype.refreshData = function () {
-		if (this._oDataProvider) {
-			this._oDataProvider.triggerDataUpdate();
-		}
-	};
-
-	/**
-	 * Gets the card instance of which this element is part of.
-	 * @ui5-restricted
-	 * @private
-	 * @returns {sap.ui.integration.widgets.Card} The card instance.
-	 */
-	Filter.prototype.getCardInstance = function () {
-		return Core.byId(this.getCard());
-	};
-
-	return Filter;
+	return BaseFilter;
 });

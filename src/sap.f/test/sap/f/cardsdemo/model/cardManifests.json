@@ -1871,15 +1871,73 @@
 						"icon": {
 							"src": "{icon}"
 						},
-						"title": {
-							"label": "{{title_label}}",
-							"value": "{Name}"
-						},
-						"description": {
-							"label": "{{description_label}}",
-							"value": "{Description}"
+						"title": "{Name}",
+						"description": "{Description}"
+					}
+				}
+			}
+		},
+		"dateRangeFilter": {
+			"sap.app": {
+				"id": "cardsdemo.filters.filter",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardsdemo/cardcontent/someitems.json"
+					}
+				},
+				"configuration": {
+					"filters": {
+						"f": {
+							"type": "dateRange",
+							"value": {
+								"operator": "dateRange",
+								"values": ["1997-05-01", "1997-05-31"]
+							}
 						}
 					}
+				},
+				"type": "Object",
+				"header": {
+					"title": "Card with Date Range Filter",
+					"icon": {
+						"src": "sap-icon://filter"
+					}
+				},
+				"content": {
+					"groups": [
+						{
+							"title": "Values",
+							"items": [
+								{
+									"label": "range/start",
+									"value": "{filters>/f/range/start}"
+								},
+								{
+									"label": "range/end",
+									"value": "{filters>/f/range/end}"
+								},
+								{
+									"label": "rangeOData/start",
+									"value": "{filters>/f/rangeOData/start}"
+								},
+								{
+									"label": "rangeOData/end",
+									"value": "{filters>/f/rangeOData/end}"
+								},
+								{
+									"label": "value/operator",
+									"value": "{filters>/f/value/operator}"
+								},
+								{
+									"label": "value/values",
+									"value": "{filters>/f/value/values}"
+								}
+							]
+						}
+					]
 				}
 			}
 		}

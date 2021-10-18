@@ -215,15 +215,6 @@ sap.ui.define(function () {
 			"cards/TableCard": {},
 			"cards/ObjectCard": {},
 			"cards/WebPageCard": {},
-			"CardFiltering": {
-				coverage: {
-					only: [
-						"sap/ui/integration/cards/Filter",
-						"sap/ui/integration/widgets/Card",
-						"sap/ui/integration/util/FilterBarFactory"
-					]
-				}
-			},
 			"cards/AnalyticsCloudContent": {
 				coverage: {
 					only: [
@@ -239,6 +230,20 @@ sap.ui.define(function () {
 				}
 			},
 			"cards/Footer": {},
+			"cards/filters/CardFiltering": {
+				module: [
+					"./cards/filters/CardFiltering.qunit",
+					"./cards/filters/DateRangeFilter.qunit",
+					"./cards/filters/FilterBarFactory.qunit",
+					"./cards/filters/SelectFilter.qunit"
+				],
+				coverage: {
+					only: [
+						"sap/ui/integration/cards/filters/",
+						"sap/ui/integration/widgets/Card"
+					]
+				}
+			},
 			"controls/ActionsToolbar": {},
 			"controls/ActionsStrip": {},
 			"controls/ListContentItem": {},

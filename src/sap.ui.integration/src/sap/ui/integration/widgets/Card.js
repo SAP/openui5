@@ -31,7 +31,7 @@ sap.ui.define([
 	"sap/ui/integration/util/ContentFactory",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/formatters/IconFormatter",
-	"sap/ui/integration/util/FilterBarFactory",
+	"sap/ui/integration/cards/filters/FilterBarFactory",
 	"sap/ui/integration/util/CardActions",
 	"sap/ui/integration/util/CardObserver"
 ], function (
@@ -1269,24 +1269,6 @@ sap.ui.define([
 		if (oExtension) {
 			oExtension.onCardReady();
 		}
-
-		this._fillFiltersModel();
-	};
-
-	/**
-	 * Fills the filters model with its initial values.
-	 *
-	 * @private
-	 */
-	Card.prototype._fillFiltersModel = function () {
-		var oModel = this.getModel("filters"),
-			mFiltersConfig = this._oCardManifest.get(MANIFEST_PATHS.FILTERS);
-
-		for (var sKey in mFiltersConfig) {
-			oModel.setProperty("/" + sKey, {
-				"value": mFiltersConfig[sKey].value
-			});
-		}
 	};
 
 	/**
@@ -1585,11 +1567,9 @@ sap.ui.define([
 
 	Card.prototype.createFilterBar = function () {
 		var mFiltersConfig = this._oCardManifest.get(MANIFEST_PATHS.FILTERS),
-			oFilterModel = this.getModel("filters"),
-			oFilters = oFilterModel.getProperty("/"),
 			oFactory = new FilterBarFactory(this);
 
-		return oFactory.create(mFiltersConfig, oFilters);
+		return oFactory.create(mFiltersConfig, this.getModel("filters"));
 	};
 
 	Card.prototype.createFooter = function () {
