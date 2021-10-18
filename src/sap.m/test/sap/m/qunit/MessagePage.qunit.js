@@ -21,6 +21,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
+
 	createAndAppendDiv("content").style.height = "100%";
 
 
@@ -127,6 +130,21 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual($title.length, 1, "MessagePage title is rendered");
+	});
+
+	QUnit.test("TitleLevel is set correctly", function(assert) {
+		// Arrange
+		this.oMessagePage.setTitle("Sample title");
+
+		// Assert init state
+		assert.strictEqual(this.oMessagePage.getTitleLevel(), TitleLevel.Auto, "MessagePage is initialized with default titleLevel");
+
+		// Act
+		this.oMessagePage.setTitleLevel(TitleLevel.H4);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oMessagePage._getTitle().getLevel(), TitleLevel.H4, "MessagePage titleLevel is correctly set to the title instance");
 	});
 
 	QUnit.module("Api tests", {
