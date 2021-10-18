@@ -2,11 +2,21 @@
  * ! ${copyright}
  */
 sap.ui.define([
-
-], function () {
+	"sap/ui/mdc/p13n/Engine"
+	], function (Engine) {
 	"use strict";
 
 	return {
+		actions: {
+			settings: function () {
+				//RTA expects the settings to be returned as function
+				return {
+					handler: function (oControl, mPropertyBag) {
+						return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, oControl.getP13nMode());
+					}
+				};
+			}
+		},
 		properties: {
 			width: {
 				ignore: false
