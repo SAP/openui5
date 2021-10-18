@@ -39,6 +39,7 @@ sap.ui.define([
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarLayoutData",
 	"sap/m/VBox",
+	'sap/m/HBox',
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/library",
 	"sap/m/library",
@@ -80,6 +81,7 @@ sap.ui.define([
 	OverflowToolbar,
 	OverflowToolbarLayoutData,
 	VBox,
+	HBox,
 	KeyCodes,
 	coreLibrary,
 	mobileLibrary,
@@ -369,7 +371,7 @@ sap.ui.define([
 			this.oVariantText.addStyleClass("sapUiFlVarMngmtTextMaxWidth");
 		}
 
-		var oVariantModifiedText = new Label(this.getId() + "-modified", {
+		var oVariantModifiedText = new Text(this.getId() + "-modified", {
 			text: "*",
 			visible: {
 				path: "modified",
@@ -398,7 +400,6 @@ sap.ui.define([
 
 		this.oVariantPopoverTrigger.addAriaLabelledBy(this.oVariantInvisibleText);
 		this.oVariantPopoverTrigger.addStyleClass("sapUiFlVarMngmtTriggerBtn");
-		this.oVariantPopoverTrigger.addStyleClass("sapMTitleStyleH4");
 
 		this.oVariantLayout = new HorizontalLayout({
 			content: [
@@ -495,6 +496,7 @@ sap.ui.define([
 			showExecuteOnSelection: false,
 			showSetAsDefault: true,
 			showPublic: false,
+			showContexts: false,
 			editable: true,
 			popoverTitle: this._oRb.getText("VARIANT_MANAGEMENT_VARIANTS")
 		});
@@ -536,6 +538,21 @@ sap.ui.define([
 		var oInnerModel = this.getModel(VariantManagement.INNER_MODEL_NAME);
 		if (oInnerModel) {
 			oInnerModel.setProperty("/showPublic", bValue);
+		}
+	};
+
+	VariantManagement.prototype._getShowContexts = function() {
+		var oModel = this.getModel(VariantManagement.INNER_MODEL_NAME);
+		if (oModel) {
+			return oModel.getProperty("/showContexts");
+		}
+
+		return false;
+	};
+	VariantManagement.prototype._setShowContexts = function(bValue) {
+		var oInnerModel = this.getModel(VariantManagement.INNER_MODEL_NAME);
+		if (oInnerModel) {
+			oInnerModel.setProperty("/showContexts", bValue);
 		}
 	};
 
@@ -1278,7 +1295,13 @@ sap.ui.define([
 					if (this._sStyleClass) {
 						this._setShowPublic(this._bShowPublic);
 						this.oSaveAsDialog.removeStyleClass(this._sStyleClass);
+
+						if (this._oRolesComponentContainer) {
+							this.oSaveAsDialog.removeContent(this._oRolesComponentContainer);
+						}
+
 						this._sStyleClass = undefined;
+						this._oRolesComponentContainer = null;
 					}
 				}.bind(this),
 				beginButton: this.oSaveSave,
@@ -1314,20 +1337,167 @@ sap.ui.define([
 		this.oSaveAsDialog.close();
 	};
 
+
+	VariantManagement.prototype._getSelectedContexts = function() {
+		return this._oRolesComponentContainer.getComponentInstance().getSelectedContexts();
+	};
+	VariantManagement.prototype._setSelectedContexts = function(mContexts) {
+		if (!mContexts) {
+			mContexts = { role: []};
+		}
+		this._oRolesComponentContainer.getComponentInstance().setSelectedContexts(mContexts);
+	};
+
+	VariantManagement.prototype._isInErrorContexts = function() {
+		return this._oRolesComponentContainer.getComponentInstance().hasErrorsAndShowErrorMessage();
+	};
+
+	VariantManagement.prototype._determineRolesSpecificText = function(mContexts, oTextControl) {
+		if (!mContexts) {
+			mContexts = { role: []};
+		}
+		if (mContexts && oTextControl) {
+			oTextControl.setText(this._oRb.getText((mContexts.role && mContexts.role.length > 0) ? "VARIANT_MANAGEMENT_VISIBILITY_RESTRICTED" : "VARIANT_MANAGEMENT_VISIBILITY_NON_RESTRICTED"));
+		}
+	};
+
+	VariantManagement.prototype._checkAndAddRolesContainerToManageDialog = function() {
+		if (this._oRolesComponentContainer && this._oRolesDialog) {
+			var oRolesComponentContainer = null;
+			this._oRolesDialog.getContent().some(function(oContent) {
+				if (oContent === this._oRolesComponentContainer) {
+					oRolesComponentContainer = oContent;
+					return true;
+				}
+
+				return false;
+			}.bind(this));
+
+			if (!oRolesComponentContainer) {
+				this._oRolesDialog.addContent(this._oRolesComponentContainer);
+			}
+		}
+	};
+
+	VariantManagement.prototype._createRolesDialog = function() {
+		if (!this._oRolesDialog) {
+			this._oRolesDialog = new Dialog(this.getId() + "-roledialog", {
+				draggable: true,
+				resizable: true,
+				contentWidth: "40%",
+				title: this._oRb.getText("VARIANT_MANAGEMENT_SELECTROLES_DIALOG"),
+				beginButton: new Button(this.getId() + "-rolesave", {
+					text: this._oRb.getText("VARIANT_MANAGEMENT_SAVE"),
+					type: ButtonType.Emphasized,
+					press: function() {
+						if (!this._checkAndCreateContextInfoChanges(this._oCurrentContextsKey, this._oTextControl)) {
+							return;
+						}
+						this._oRolesDialog.close();
+					}.bind(this)
+				}),
+				endButton: new Button(this.getId() + "-rolecancel", {
+					text: this._oRb.getText("VARIANT_MANAGEMENT_CANCEL"),
+					press: function() {
+						this._oRolesDialog.close();
+					}.bind(this)
+				}),
+				content: [this._oRolesComponentContainer],
+				stretch: Device.system.phone
+			});
+
+			this._oRolesDialog.setParent(this);
+			this._oRolesDialog.addStyleClass("sapUiContentPadding");
+			this._oRolesDialog.addStyleClass(this._sStyleClass);
+
+			this._oRolesDialog.isPopupAdaptationAllowed = function() {
+				return false;
+			};
+		}
+
+		this._checkAndAddRolesContainerToManageDialog();
+	};
+
+	VariantManagement.prototype._openRolesDialog = function(oItem, oTextControl) {
+		this._createRolesDialog();
+
+		this._oCurrentContextsKey = oItem.key;
+		this._oTextControl = oTextControl;
+
+		this._setSelectedContexts(oItem.contexts);
+
+		this._oRolesDialog.open();
+	};
+
+	VariantManagement.prototype._checkAndCreateContextInfoChanges = function(sKey, oTextControl) {
+		if (sKey) {
+			if (this._oRolesComponentContainer) {
+				try {
+					if (!this._isInErrorContexts()) {
+						var mContexts = this._getSelectedContexts();
+
+						var oItem = this._getItemByKey(sKey);
+						if (oItem) {
+							oItem.contexts = mContexts;
+							this._determineRolesSpecificText(mContexts, oTextControl);
+						}
+					} else {
+						return false;
+					}
+				} catch (ex) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	};
+
+	VariantManagement.prototype._checkAndAddRolesContainerToSaveAsDialog = function() {
+		if (this._oRolesComponentContainer && this.oSaveAsDialog) {
+			var oRolesComponentContainer = null;
+			this.oSaveAsDialog.getContent().some(function(oContent) {
+				if (oContent === this._oRolesComponentContainer) {
+					oRolesComponentContainer = oContent;
+					return true;
+				}
+
+				return false;
+			}.bind(this));
+
+			this._setSelectedContexts({ role: []});
+			if (!oRolesComponentContainer) {
+				this.oSaveAsDialog.addContent(this._oRolesComponentContainer);
+			}
+		}
+	};
+
 	/**
-	 * Opens the <i>Save as</i> dialog.
-	 * @public
-	 * @param {string} sRtaStyleClassName - style-class to be used 	 */
-	VariantManagement.prototype.openSaveAsDialogForKeyUser = function (sRtaStyleClassName) {
-		this._openSaveAsDialog(sRtaStyleClassName);
+	 * Opens the <i>Save As</i> dialog.
+	 * @param {string} sRtaStyleClassName - style-class to be used
+	 * @param {object} oRolesComponentContainer - component for roles handling
+	 */
+	VariantManagement.prototype.openSaveAsDialogForKeyUser = function (sRtaStyleClassName, oRolesComponentContainer) {
+		this._openSaveAsDialog(true);
 		this.oSaveAsDialog.addStyleClass(sRtaStyleClassName);
 		this._sStyleClass = sRtaStyleClassName; // indicates that dialog is running in key user scenario
 
 		this._bShowPublic = this._getShowPublic();
 		this._setShowPublic(false);
+
+		if (oRolesComponentContainer) {
+			Promise.all([oRolesComponentContainer]).then(function(vArgs) {
+				this._oRolesComponentContainer = vArgs[0];
+				this._checkAndAddRolesContainerToSaveAsDialog();
+
+				this.oSaveAsDialog.open();
+			}.bind(this));
+		} else {
+			this.oSaveAsDialog.open();
+		}
 	};
 
-	VariantManagement.prototype._openSaveAsDialog = function() {
+	VariantManagement.prototype._openSaveAsDialog = function(bDoNotOpen) {
 		this._createSaveAsDialog();
 
 		this.oInputName.setValue(this.getSelectedVariantText(this.getCurrentVariantKey()));
@@ -1354,7 +1524,9 @@ sap.ui.define([
 			this.oLabelKey.setVisible(false);
 		}
 
-		this.oSaveAsDialog.open();
+		if (!bDoNotOpen) {
+			this.oSaveAsDialog.open();
+		}
 	};
 
 	VariantManagement.prototype._handleVariantSaveAs = function(sNewVariantName) {
@@ -1393,8 +1565,23 @@ sap.ui.define([
 			overwrite: false,
 			def: this.oDefault.getSelected(),
 			execute: this.oExecuteOnSelect.getSelected(),
-			"public": this._sStyleClass ? undefined : this.oPublic.getSelected()
+			"public": this._sStyleClass ? undefined : this.oPublic.getSelected(),
+			contexts: this._sStyleClass ? this._getContextInfoChanges() : undefined
 		});
+	};
+
+	VariantManagement.prototype._getContextInfoChanges = function() {
+		if (this._oRolesComponentContainer) {
+			try {
+				if (!this._isInErrorContexts()) {
+					return this._getSelectedContexts();
+				}
+			} catch (ex) {
+				return null;
+			}
+		}
+
+		return null;
 	};
 
 	VariantManagement.prototype._handleVariantSave = function() {
@@ -1423,16 +1610,41 @@ sap.ui.define([
 
 	/**
 	 * Opens the <i>Manage Views</i> dialog.
-	 * @public
 	 * @param {boolean} bCreateAlways - Indicates that if this is set to <code>true</code>, the former dialog will be destroyed before a new one is created
 	 * @param {string} sClass - style-class to be used
+	 * @param {object} oRolesComponentContainer - component for roles handling
 	 */
-	VariantManagement.prototype.openManagementDialog = function(bCreateAlways, sClass) {
+	VariantManagement.prototype.openManagementDialog = function(bCreateAlways, sClass, oRolesComponentContainer) {
 		if (bCreateAlways && this.oManagementDialog) {
 			this.oManagementDialog.destroy();
 			this.oManagementDialog = undefined;
 		}
-		this._openManagementDialog(sClass);
+
+		if (sClass) {
+			this._sStyleClass = sClass;
+			this._bShowPublic = this._getShowPublic();
+			this._setShowPublic(false);
+		}
+
+		if (oRolesComponentContainer) {
+			Promise.all([oRolesComponentContainer]).then(function(vArgs) {
+				this._oRolesComponentContainer = vArgs[0];
+
+				this._setShowContexts(!!this._oRolesComponentContainer);
+				this._openManagementDialog();
+
+				if (this._sStyleClass) {
+					this.oManagementDialog.addStyleClass(this._sStyleClass);
+				}
+			}.bind(this));
+		} else {
+			this._setShowContexts(false);
+			this._openManagementDialog();
+
+			if (this._sStyleClass) {
+				this.oManagementDialog.addStyleClass(this._sStyleClass);
+			}
+		}
 	};
 
 	VariantManagement.prototype._triggerSearchInManageDialog = function(oEvent, oManagementTable) {
@@ -1531,6 +1743,19 @@ sap.ui.define([
 						}
 					}), new Column({
 						header: new Text({
+							text: this._oRb.getText("VARIANT_MANAGEMENT_VISIBILITY"),
+							wrappingType: "Hyphenated"
+						}),
+						width: "8rem",
+						demandPopin: true,
+						popinDisplay: PopinDisplay.Inline,
+						minScreenWidth: ScreenSize.Tablet,
+						visible: {
+							path: "/showContexts",
+							model: VariantManagement.INNER_MODEL_NAME
+						}
+					}), new Column({
+						header: new Text({
 							text: this._oRb.getText("VARIANT_MANAGEMENT_AUTHOR")
 						}),
 						demandPopin: true,
@@ -1574,6 +1799,7 @@ sap.ui.define([
 						this._setShowPublic(this._bShowPublic);
 						this.oManagementDialog.removeStyleClass(this._sStyleClass);
 						this._sStyleClass = undefined;
+						this._oRolesComponentContainer = null;
 					}
 				}.bind(this),
 				content: [
@@ -1629,6 +1855,7 @@ sap.ui.define([
 		var sBindingPath;
 		var oNameControl;
 		var oExecuteOnSelectCtrl;
+		var oRolesCell;
 		var oItem = oContext.getObject();
 		if (!oItem) {
 			return undefined;
@@ -1662,6 +1889,11 @@ sap.ui.define([
 
 		var fSelectFav = function(oEvent) {
 			this._handleManageFavoriteChanged(oEvent.oSource, oEvent.oSource.getBindingContext(this._sModelName).getObject());
+		}.bind(this);
+
+		var fRolesPressed = function(oEvent) {
+			var oItem = oEvent.oSource.getBindingContext(this._sModelName).getObject();
+			this._openRolesDialog(oItem, oEvent.oSource.getParent().getItems()[0]);
 		}.bind(this);
 
 		if (oItem.rename) {
@@ -1710,7 +1942,7 @@ sap.ui.define([
 			press: fSelectFav
 		});
 
-		if (this.getStandardVariantKey() === oItem.key) {
+		if ((this.getStandardVariantKey() === oItem.key) || (this.getDefaultVariantKey() === oItem.key)) {
 			oFavoriteIcon.addStyleClass("sapUiFlVarMngmtFavNonInteractiveColor");
 		} else {
 			oFavoriteIcon.addStyleClass("sapUiFlVarMngmtFavColor");
@@ -1729,6 +1961,23 @@ sap.ui.define([
 				select: fSelectCB,
 				selected: '{' + this._sModelName + ">executeOnSelect}"
 			});
+		}
+
+		// roles
+		if (this._sStyleClass && (oItem.key !== this.getStandardVariantKey())) {
+			var oText = new Text({ wrapping: false });
+			this._determineRolesSpecificText(oItem.contexts, oText);
+			var oIcon = new Icon({
+				src: "sap-icon://edit",
+				press: fRolesPressed
+			});
+			oIcon.addStyleClass("sapUiFlVarMngmtRolesEdit");
+			oIcon.setTooltip(this._oRb.getText("VARIANT_MANAGEMENT_VISIBILITY_ICON_TT"));
+			oRolesCell = new HBox({
+				items: [oText, oIcon]
+			});
+		} else {
+			oRolesCell = new Text();
 		}
 
 		return new ColumnListItem({
@@ -1752,7 +2001,7 @@ sap.ui.define([
 							return oItem.key === sKey;
 						}
 					}
-				}), oExecuteOnSelectCtrl, new Text({
+				}), oExecuteOnSelectCtrl, oRolesCell, new Text({
 					text: '{' + this._sModelName + ">author}",
 					textAlign: "Begin"
 				}), oDeleteButton, new Text({
@@ -1762,7 +2011,7 @@ sap.ui.define([
 		});
 	};
 
-	VariantManagement.prototype._openManagementDialog = function(sClass) {
+	VariantManagement.prototype._openManagementDialog = function() {
 		this._createManagementDialog();
 
 		if (this.oVariantPopOver) {
@@ -1789,12 +2038,7 @@ sap.ui.define([
 				filters: this._getVisibleFilter()
 			});
 		}
-		if (sClass) {
-			this._sStyleClass = sClass;
-			this._bShowPublic = this._getShowPublic();
-			this._setShowPublic(false);
-			this.oManagementDialog.addStyleClass(sClass);
-		}
+
 		this.oManagementDialog.open();
 	};
 
@@ -1860,6 +2104,7 @@ sap.ui.define([
 			oItem.title = oItem.originalTitle;
 			oItem.favorite = oItem.originalFavorite;
 			oItem.executeOnSelection = oItem.originalExecuteOnSelection;
+			oItem.contexts = oItem.originalContexts;
 		});
 
 		sDefaultVariantKey = this.getOriginalDefaultVariantKey();
@@ -2212,9 +2457,8 @@ sap.ui.define([
 			oModel.destroy();
 		}
 
-		if (this._sStyleClass) {
-			this._sStyleClass = undefined;
-		}
+		this._oRolesComponentContainer = null;
+		this._sStyleClass = null;
 
 		this._fRegisteredApplyAutomaticallyOnStandardVariant = null;
 	};

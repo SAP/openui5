@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/layout/Grid",
 	"sap/m/OverflowToolbar",
 	"sap/m/Input",
+	"sap/m/Text",
 	"sap/m/RadioButton",
 	"sap/ui/core/Icon",
 	"sap/ui/thirdparty/jquery",
@@ -22,6 +23,7 @@ sap.ui.define([
 	Grid,
 	OverflowToolbar,
 	Input,
+	Text,
 	RadioButton,
 	Icon,
 	jQuery,
@@ -106,7 +108,9 @@ sap.ui.define([
 							layer: Layer.CUSTOMER,
 							favorite: true,
 							originalFavorite: true,
-							visible: true
+							visible: true,
+							contexts: { role: ["V"] },
+							originalContexts: { role: ["V"] }
 						}, {
 							key: "3",
 							title: "Three",
@@ -114,7 +118,9 @@ sap.ui.define([
 							layer: Layer.CUSTOMER,
 							favorite: true,
 							originalFavorite: true,
-							visible: true
+							visible: true,
+							contexts: { role: [] },
+							originalContexts: { role: [] }
 						}, {
 							key: "4",
 							title: "Four",
@@ -1222,7 +1228,7 @@ sap.ui.define([
 
 			var aCells = aRows[0].getCells();
 			assert.ok(aCells);
-			assert.equal(aCells.length, 8);
+			assert.equal(aCells.length, 9);
 
 			assert.ok(aCells[2].isA("sap.m.Text"));
 			assert.equal(aCells[2].getText(), "Public");
@@ -1243,7 +1249,7 @@ sap.ui.define([
 
 			var aCells = aRows[0].getCells();
 			assert.ok(aCells);
-			assert.equal(aCells.length, 8);
+			assert.equal(aCells.length, 9);
 
 			assert.ok(aCells[4].isA("sap.m.CheckBox"));
 
@@ -1255,7 +1261,7 @@ sap.ui.define([
 			aRows = this.oVariantManagement.oManagementTable.getItems();
 			aCells = aRows[0].getCells();
 			assert.ok(aCells);
-			assert.equal(aCells.length, 8);
+			assert.equal(aCells.length, 9);
 
 			assert.ok(aCells[4].isA("sap.m.CheckBox"));
 			assert.equal(aCells[4].getText(), "TEST");
@@ -1285,6 +1291,102 @@ sap.ui.define([
 
 			assert.ok(this.oVariantManagement.getApplyAutomaticallyOnVariant(oVariant));
 			assert.equal(nCount, 1);
+		});
+
+		QUnit.test("Checking management dialog with roles component", function(assert) {
+			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+
+			var done = assert.async();
+
+			sinon.stub(this.oVariantManagement, "_getSelectedContexts");
+			sinon.stub(this.oVariantManagement, "_setSelectedContexts");
+			sinon.stub(this.oVariantManagement, "_isInErrorContexts").returns(false);
+
+			var oComponentPromise = new Promise(function(resolve) {
+				resolve({});
+			});
+
+			this.oVariantManagement._sStyleClass = "KUStyle";
+			this.oVariantManagement._createManagementDialog();
+			assert.ok(this.oVariantManagement.oManagementDialog);
+
+
+			this.oVariantManagement.oManagementDialog.attachAfterOpen(function() {
+				var aRows = this.oVariantManagement.oManagementTable.getItems();
+				assert.ok(aRows);
+				assert.equal(aRows.length, 5);
+
+				//standard
+				var aCells = aRows[0].getCells();
+				assert.ok(aCells);
+				assert.equal(aCells.length, 9);
+
+				assert.ok(aCells[5].isA("sap.m.Text"));
+				assert.equal(aCells[5].getText(), "");
+
+				// restricted
+				aCells = aRows[2].getCells();
+				assert.ok(aCells);
+				assert.equal(aCells.length, 9);
+
+				var aItems = aCells[5].getItems();
+				assert.ok(aItems);
+				assert.ok(aItems.length);
+
+				assert.ok(aItems[0].isA("sap.m.Text"));
+				assert.equal(aItems[0].getText(), this.oVariantManagement._oRb.getText("VARIANT_MANAGEMENT_VISIBILITY_RESTRICTED"));
+
+				// unrestricted
+				aCells = aRows[3].getCells();
+				assert.ok(aCells);
+				assert.equal(aCells.length, 9);
+
+				aItems = aCells[5].getItems();
+				assert.ok(aItems);
+				assert.ok(aItems.length);
+
+				assert.ok(aItems[0].isA("sap.m.Text"));
+				assert.equal(aItems[0].getText(), this.oVariantManagement._oRb.getText("VARIANT_MANAGEMENT_VISIBILITY_NON_RESTRICTED"));
+
+				done();
+			}.bind(this));
+
+			this.oVariantManagement.openManagementDialog(false, "KUStyle", oComponentPromise);
+		});
+
+		QUnit.test("Checking save as dialog with roles component", function(assert) {
+			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+
+			var done = assert.async();
+
+			sinon.stub(this.oVariantManagement, "_getSelectedContexts");
+			sinon.stub(this.oVariantManagement, "_setSelectedContexts");
+			sinon.stub(this.oVariantManagement, "_isInErrorContexts").returns(false);
+
+			var oComponentPromise = new Promise(function(resolve) {
+				resolve(new Text({ text: "SAVE_AS"}));
+			});
+
+			this.oVariantManagement._createSaveAsDialog();
+			assert.ok(this.oVariantManagement.oSaveAsDialog);
+
+			var aContent = this.oVariantManagement.oSaveAsDialog.getContent();
+			assert.ok(aContent);
+			assert.equal(aContent.length, 5);
+
+			this.oVariantManagement.oSaveAsDialog.attachAfterOpen(function() {
+				assert.ok(true);
+
+				aContent = this.oVariantManagement.oSaveAsDialog.getContent();
+				assert.ok(aContent);
+				assert.equal(aContent.length, 6);
+				assert.ok(aContent[5].isA("sap.m.Text"));
+				assert.ok(aContent[5].getText(), "SAVE_AS");
+
+				done();
+			}.bind(this));
+
+			this.oVariantManagement.openSaveAsDialogForKeyUser("KUStyle", oComponentPromise);
 		});
 	});
 
