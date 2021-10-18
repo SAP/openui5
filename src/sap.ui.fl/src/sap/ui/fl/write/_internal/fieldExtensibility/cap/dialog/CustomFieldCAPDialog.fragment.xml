@@ -17,6 +17,7 @@
 		</content>
 		<beginButton>
 			<Button
+				enabled="{dialog>/isValid}"
 				type="Emphasized"
 				text="{i18n>CAP_ADD_FIELD_CREATE}"
 				press="onSave"

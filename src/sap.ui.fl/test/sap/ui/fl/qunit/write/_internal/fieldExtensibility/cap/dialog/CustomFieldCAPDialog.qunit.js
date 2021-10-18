@@ -275,6 +275,20 @@ sap.ui.define([
 				"then the custom annotation is added to the payload"
 			);
 		});
+
+		QUnit.test("when an invalid entity type is provided", function(assert) {
+			this.oCAPDialog._oEditor.setJson({
+				element: {
+					name: "TestField",
+					type: "cds.String"
+				},
+				extend: "InvalidType"
+			});
+			assert.notOk(
+				this.oCAPDialog.getProperty("_dialog").getBeginButton().getEnabled(),
+				"then the field cannot be saved"
+			);
+		});
 	});
 
 	QUnit.done(function () {

@@ -38,6 +38,7 @@ sap.ui.define([
 			var oInput = this.getContent();
 			var oJsonValue = this._parseJson(oInput.getValue());
 			if (oJsonValue instanceof Error) {
+				this.setHasOwnError(true);
 				oInput.setValueState("Error");
 				oInput.setValueStateText("Error: " + oJsonValue);
 			} else {
