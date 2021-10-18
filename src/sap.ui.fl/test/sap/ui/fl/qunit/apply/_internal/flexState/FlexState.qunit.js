@@ -319,6 +319,24 @@ sap.ui.define([
 		});
 	});
 
+	function getUshellContainerStub(oRegistrationHandlerStub, oDeRegistrationHandlerStub) {
+		var oUShellService = {
+			getServiceAsync: function(sService) {
+				if (sService === "ShellNavigation") {
+					return Promise.resolve({
+						registerNavigationFilter: oRegistrationHandlerStub,
+						unregisterNavigationFilter: oDeRegistrationHandlerStub,
+						NavigationFilterStatus: {
+							Continue: "continue"
+						}
+					});
+				}
+				return Promise.resolve();
+			}
+		};
+		return sandbox.stub(Utils, "getUshellContainer").returns(oUShellService);
+	}
+
 	QUnit.module("FlexState with loadFlexData and callPrepareFunction stubbed, filtering active", {
 		beforeEach: function() {
 			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(mResponse);
@@ -327,6 +345,7 @@ sap.ui.define([
 			this.oAppComponent = new UIComponent(sComponentId);
 			this.oIsLayerFilteringRequiredStub = sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(true);
 			this.oFilterStub = sandbox.spy(LayerUtils, "filterChangeDefinitionsByMaxLayer");
+			getUshellContainerStub(sandbox.stub(), sandbox.stub());
 		},
 		afterEach: function() {
 			FlexState.clearState();
@@ -391,21 +410,7 @@ sap.ui.define([
 			this.oRegistrationHandlerStub = sandbox.stub();
 			this.oDeRegistrationHandlerStub = sandbox.stub();
 
-			var oUShellService = {
-				getServiceAsync: function(sService) {
-					if (sService === "ShellNavigation") {
-						return Promise.resolve({
-							registerNavigationFilter: this.oRegistrationHandlerStub,
-							unregisterNavigationFilter: this.oDeRegistrationHandlerStub,
-							NavigationFilterStatus: {
-								Continue: "continue"
-							}
-						});
-					}
-					return Promise.resolve();
-				}.bind(this)
-			};
-			sandbox.stub(Utils, "getUshellContainer").returns(oUShellService);
+			getUshellContainerStub(this.oRegistrationHandlerStub, this.oDeRegistrationHandlerStub);
 		},
 		afterEach: function() {
 			FlexState.clearState();

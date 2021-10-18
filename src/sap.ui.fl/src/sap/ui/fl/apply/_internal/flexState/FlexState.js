@@ -171,10 +171,11 @@ sap.ui.define([
 	function filterByMaxLayer(mResponse) {
 		var mFilteredReturn = merge({}, mResponse);
 		var mFlexObjects = mFilteredReturn.changes;
-		if (LayerUtils.isLayerFilteringRequired(_oURLParsingService)) {
+		var oURLParsingService = getUShellService("URLParsing");
+		if (LayerUtils.isLayerFilteringRequired(oURLParsingService)) {
 			each(_mFlexObjectInfo, function(iIndex, mFlexObjectInfo) {
 				mFlexObjectInfo.pathInResponse.forEach(function(sPath) {
-					ObjectPath.set(sPath, LayerUtils.filterChangeDefinitionsByMaxLayer(ObjectPath.get(sPath, mFlexObjects), _oURLParsingService), mFlexObjects);
+					ObjectPath.set(sPath, LayerUtils.filterChangeDefinitionsByMaxLayer(ObjectPath.get(sPath, mFlexObjects), oURLParsingService), mFlexObjects);
 				});
 			});
 		}
@@ -208,26 +209,29 @@ sap.ui.define([
 	}
 
 	function registerMaxLayerHandler(sReference) {
-		if (_oShellNavigationService) {
+		var oShellNavigationService = getUShellService("ShellNavigation");
+		if (oShellNavigationService) {
 			_mNavigationHandlers[sReference] = handleMaxLayerChange.bind(null, sReference);
-			_oShellNavigationService.registerNavigationFilter(_mNavigationHandlers[sReference]);
+			oShellNavigationService.registerNavigationFilter(_mNavigationHandlers[sReference]);
 		}
 	}
 
 	function deRegisterMaxLayerHandler(sReference) {
-		if (_oShellNavigationService) {
+		var oShellNavigationService = getUShellService("ShellNavigation");
+		if (oShellNavigationService) {
 			if (_mNavigationHandlers[sReference]) {
-				_oShellNavigationService.unregisterNavigationFilter(_mNavigationHandlers[sReference]);
+				oShellNavigationService.unregisterNavigationFilter(_mNavigationHandlers[sReference]);
 				delete _mNavigationHandlers[sReference];
 			}
 		}
 	}
 
 	function handleMaxLayerChange(sReference, sNewHash, sOldHash) {
-		if (_oShellNavigationService) {
+		var oShellNavigationService = getUShellService("ShellNavigation");
+		if (oShellNavigationService) {
 			try {
-				var sCurrentMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sNewHash, _oURLParsingService);
-				var sPreviousMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sOldHash, _oURLParsingService);
+				var sCurrentMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sNewHash, getUShellService("URLParsing"));
+				var sPreviousMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sOldHash, getUShellService("URLParsing"));
 				if (sCurrentMaxLayer !== sPreviousMaxLayer) {
 					FlexState.clearFilteredResponse(sReference);
 				}
@@ -235,7 +239,7 @@ sap.ui.define([
 				// required to hinder any errors - can break FLP navigation
 				Log.error(oError.message);
 			}
-			return _oShellNavigationService.NavigationFilterStatus.Continue;
+			return oShellNavigationService.NavigationFilterStatus.Continue;
 		}
 		return undefined;
 	}
@@ -275,6 +279,17 @@ sap.ui.define([
 			.catch(function(oError) {
 				Log.error("Error getting service from Unified Shell: " + oError.message);
 			});
+	}
+
+	function getUShellService(sServiceName) {
+		if (Utils.getUshellContainer()) {
+			if (sServiceName === "ShellNavigation") {
+				return _oShellNavigationService;
+			} else if (sServiceName === "URLParsing") {
+				return _oURLParsingService;
+			}
+		}
+		return undefined;
 	}
 
 	/**
