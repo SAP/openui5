@@ -50,6 +50,34 @@ sap.ui.define([
 	};
 
 	/**
+	 * Finds and removes a context from the list of contexts for created entities.
+	 *
+	 * @param {sap.ui.model.odata.v2.Context} oCreatedContext
+	 *   The context for a created entity to be removed
+	 *
+	 * @private
+	 */
+	_CreatedContextsCache.prototype.findAndRemoveContext = function (oCreatedContext) {
+		var that = this;
+
+		Object.keys(this.mCache).some(function (sCachePath) {
+			var mListIDToContexts = that.mCache[sCachePath];
+
+			return Object.keys(mListIDToContexts).some(function (sListID) {
+				var aContexts = that.mCache[sCachePath][sListID];
+
+				if (aContexts.includes(oCreatedContext)) {
+					that.removeContext(oCreatedContext, sCachePath, sListID);
+
+					return true;
+				}
+
+				return false;
+			});
+		});
+	};
+
+	/**
 	 * Gets the contexts for created entities for the given path and list ID.
 	 *
 	 * @param {string} [sPath]

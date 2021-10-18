@@ -10264,8 +10264,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectMessages([]) // clean all expected messages
-				.expectValue("note", [""], 1) // TODO: why? time-boxed
+			// clean all expected messages
+			that.expectMessages([])
+				// The PropertyBinding is updated synchronously, the ListBinding asynchronously
+				.expectValue("note", "", 1)
 				.expectValue("id", ["43", "42", ""], 1)
 				.expectValue("note", ["New 1", "First SalesOrder", ""], 1);
 
@@ -10285,8 +10287,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Table control: sap.m.Table
 	// POST request for second item: noAdditionalSubmit
 	// CPOUI5MODELS-635
-	// Skip Reason: ODataModel#remove does not yet remove the entity from the list
-	QUnit.skip("All pairs test for multi create (2)", function (assert) {
+	QUnit.test("All pairs test for multi create (2)", function (assert) {
 		var oBinding, oCreatedContext0, oCreatedContext1, oTable,
 			oModel = createSalesOrdersModel(),
 			sView = '\
@@ -10381,16 +10382,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					requestUri : "SalesOrderSet('44')"
 				}, {})
 				.expectRequest("SalesOrderSet?$skip=0&$top=17"
-						+ "&$filter=not(SalesOrderID eq '44' or SalesOrderID eq '43')", {
+						//TODO: with CPOUI5MODELS-693, filter for persisted created entities missing
+						/*+ "&$filter=not(SalesOrderID eq '44' or SalesOrderID eq '43')"*/, {
 					results : [{
 						__metadata : {uri : "SalesOrderSet('42')"},
 						Note : "First SalesOrder",
 						SalesOrderID : "42"
 					}]
 				})
-				//First, the old value is deleted, then the new value is set
-				.expectValue("id", [""], 1)
-				.expectValue("note", [""], 1)
 				.expectValue("id", ["43", "42"], 1)
 				.expectValue("note", ["New 1", "First SalesOrder"], 1);
 
@@ -10508,6 +10507,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			// message for item with note "New 1" remains
 			that.expectMessages([{
 					code : "UF0",
 					descriptionUrl : "",
@@ -10517,8 +10517,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					target : "/SalesOrderSet('~key~')",
 					technical : true,
 					type : "Error"
-				}]) // message for item with note "New 1" remains
-				.expectValue("note", [""], 1) // TODO: why? time-boxed
+				}])
+				// The PropertyBinding is updated synchronously, the ListBinding asynchronously
+				.expectValue("note", "", 1)
 				.expectValue("id", ["42", ""], 2)
 				.expectValue("note", ["New 1", "First SalesOrder", ""], 1);
 
@@ -10539,8 +10540,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Table control: sap.ui.table.Table
 	// POST request for second item: noAdditionalSubmit
 	// CPOUI5MODELS-635
-	// Skip Reason: ODataModel#remove does not yet remove the entity from the list
-	QUnit.skip("All pairs test for multi create (4)", function (assert) {
+	QUnit.test("All pairs test for multi create (4)", function (assert) {
 		var oBinding, oCreatedContext0, oCreatedContext1, oCreatedContext2, oTable,
 			oModel = createSalesOrdersModel(),
 			sView = '\
@@ -10650,17 +10650,18 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					requestUri : "SalesOrderSet('44')"
 				}, {})
 				.expectRequest("SalesOrderSet?$skip=0&$top=102"
-						+ "&$filter=not(SalesOrderID eq '45' or SalesOrderID eq '44' "
-						+ "or SalesOrderID eq '43')", {
+						//TODO: with CPOUI5MODELS-693, filter for persisted created entities missing
+						/*+ "&$filter=not(SalesOrderID eq '45' or SalesOrderID eq '44' "
+						+ "or SalesOrderID eq '43')"*/, {
 					results : [{
 						__metadata : {uri : "SalesOrderSet('42')"},
 						Note : "First SalesOrder",
 						SalesOrderID : "42"
 					}]
 				})
-				//First, the old value is deleted, then the new value is set
-				.expectValue("id", [""], 1)
-				.expectValue("note", [""], 1)
+				// The PropertyBinding is updated synchronously, the ListBinding asynchronously
+				.expectValue("id", "", 1)
+				.expectValue("note", "", 1)
 				.expectValue("id", ["43", "42", ""], 1)
 				.expectValue("note", ["New 1", "First SalesOrder", ""], 1);
 

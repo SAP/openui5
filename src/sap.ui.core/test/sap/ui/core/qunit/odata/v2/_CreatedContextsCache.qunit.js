@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/_CreatedContextsCache",
 	"sap/ui/test/TestUtils"
 ], function (Log, _CreatedContextsCache, TestUtils) {
-	/*global QUnit*/
+	/*global QUnit, sinon*/
 	"use strict";
 
 	//*********************************************************************************************
@@ -109,6 +109,32 @@ sap.ui.define([
 		assert.deepEqual(oCache.mCache, oFixture.oResult);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("findAndRemoveContext:", function (assert) {
+		var oCache = new _CreatedContextsCache(),
+			oCacheMock = this.mock(oCache),
+			oContext = {};
+
+		oCache.mCache = {
+			"/foo" : {"": [{/*any V2 context*/}]},
+			"/bar" : {
+				"" : [{/*any V2 context*/}, {/*any V2 context*/}],
+				"qux" : [{/*any V2 context*/}, oContext, {/*any V2 context*/}]
+			}
+		};
+
+		oCacheMock.expects("removeContext").never();
+
+		// code under test
+		oCache.findAndRemoveContext({/*unknown context*/});
+
+		oCacheMock.expects("removeContext")
+			.withExactArgs(sinon.match.same(oContext), "/bar", "qux");
+
+		// code under test
+		oCache.findAndRemoveContext(oContext);
+	});
 
 	//*********************************************************************************************
 [{

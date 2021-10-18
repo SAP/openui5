@@ -169,23 +169,9 @@ sap.ui.define([
 				} else {
 					oItemContext.getModel().remove("", {
 						context : oItemContext,
-						refreshAfterChange : false, // manually done later
 						success : function () {
-							var oBinding;
-
 							MessageToast.show("Deleted sales order item " + sSalesOrderLineItem);
 							oTable.clearSelection();
-							// HACK
-							// a context contained in the list of created items is currently removed
-							// only if the transient entity is discarded or the binding is
-							// recreated; manually remove the persisted entity from the list of
-							// created context and refresh the binding
-							oBinding = oTable.getBinding("rows");
-
-							oBinding.getModel()._getCreatedContextsCache()
-								.removeContext(oItemContext, oBinding.getResolvedPath(), "");
-							oBinding.refresh();
-							// /HACK
 						}
 					});
 					that.readSalesOrder();
@@ -215,22 +201,8 @@ sap.ui.define([
 				} else {
 					oContext.getModel().remove("", {
 						context : oContext,
-						refreshAfterChange : false, // manually done later
 						success : function () {
-							var oBinding;
-
 							MessageToast.show("Deleted sales order " + sSalesOrderID);
-							// HACK
-							// a context contained in the list of created items is currently removed
-							// only if the transient entity is discarded or the binding is
-							// recreated; manually remove the persisted entity from the list of
-							// created context and refresh the binding
-							oBinding = oTable.getBinding("items");
-
-							oBinding.getModel()._getCreatedContextsCache()
-								.removeContext(oContext, oBinding.getResolvedPath(), "");
-							oBinding.refresh();
-							// /HACK
 						}
 					});
 				}

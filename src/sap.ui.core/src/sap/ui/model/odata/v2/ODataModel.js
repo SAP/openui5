@@ -4992,43 +4992,60 @@ sap.ui.define([
 	};
 
 	/**
-	 * Trigger a <code>DELETE</code> request to the OData service that was specified in the model constructor.
+	 * Trigger a <code>DELETE</code> request to the OData service that was specified in the model
+	 * constructor.
 	 *
-	 * @param {string} sPath A string containing the path to the data that should be removed.
-	 *		The path is concatenated to the service URL which was specified in the model constructor.
-	 * @param {object} [mParameters] Optional, can contain the following attributes:
-	 * @param {object} [mParameters.context] If specified, <code>sPath</code> has to be relative to the path given with the context.
-	 * @param {function} [mParameters.success] A callback function which is called when the data has been successfully retrieved.
-	 *		The handler can have the following parameters: <code>oData</code> and <code>response</code>.
-	 * @param {function} [mParameters.error] A callback function which is called when the request failed.
-	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
-	 * @param {string} [mParameters.eTag] If specified, the <code>If-Match</code> header will be set to this ETag.
-	 * @param {Object<string,string>} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
-	 * @param {Object<string,string>} [mParameters.headers] A map of headers for this request
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
-	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
-	 * @param {string} [mParameters.changeSetId] ID of the <code>ChangeSet</code> that this request should belong to
-	 * @param {boolean} [mParameters.refreshAfterChange] Since 1.46; defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
-	           If given, this overrules the model-wide <code>refreshAfterChange</code> flag for this operation only.
+	 * @param {string} sPath
+	 *   A string containing the path to the data that should be removed. The path is concatenated
+	 *   to the service URL which was specified in the model constructor.
+	 * @param {object} [mParameters]
+	 *   Optional, can contain the following attributes:
+	 * @param {object} [mParameters.context]
+	 *   If specified, <code>sPath</code> has to be relative to the path given with the context.
+	 * @param {function} [mParameters.success]
+	 *   A callback function which is called when the data has been successfully retrieved. The
+	 *   handler can have the following parameters: <code>oData</code> and <code>response</code>.
+	 * @param {function} [mParameters.error]
+	 *   A callback function which is called when the request failed. The handler can have the
+	 *   parameter: <code>oError</code> which contains additional error information.
+	 * @param {string} [mParameters.eTag]
+	 *   If specified, the <code>If-Match</code> header will be set to this ETag.
+	 * @param {Object<string,string>} [mParameters.urlParameters]
+	 *   A map containing the parameters that will be passed as query strings
+	 * @param {Object<string,string>} [mParameters.headers]
+	 *   A map of headers for this request
+	 * @param {string} [mParameters.batchGroupId]
+	 *   Deprecated - use <code>groupId</code> instead
+	 * @param {string} [mParameters.groupId]
+	 *   ID of a request group; requests belonging to the same group will be bundled in one batch
+	 *   request
+	 * @param {string} [mParameters.changeSetId]
+	 *   ID of the <code>ChangeSet</code> that this request should belong to
+	 * @param {boolean} [mParameters.refreshAfterChange]
+	 *   Since 1.46; defines whether to update all bindings after submitting this change operation,
+	 *   see {@link #setRefreshAfterChange}. If given, this overrules the model-wide
+	 *   <code>refreshAfterChange</code> flag for this operation only.
 	 *
-	 * @return {object} An object which has an <code>abort</code> function to abort the current request.
+	 * @return {object} An object which has an <code>abort</code> function to abort the current
+	 *   request.
 	 *
 	 * @public
 	 */
 	ODataModel.prototype.remove = function(sPath, mParameters) {
-		var oContext, sKey, fnSuccess, fnError, oRequest, sUrl, sGroupId,
-		sChangeSetId, sETag, bRefreshAfterChange,
-		mUrlParams, mHeaders, aUrlParams, sMethod, mRequests,
-		bDeferred, that = this, sNormalizedPath, sDeepPath, bCanonical = this.bCanonicalRequests;
+		var sChangeSetId, oContext, oContextToRemove, sDeepPath, bDeferred, fnError, sETag,
+			sGroupId, mHeaders, sKey, sMethod, sNormalizedPath, bRefreshAfterChange, oRequest,
+			mRequests, fnSuccess, sUrl, aUrlParams, mUrlParams,
+			bCanonical = this.bCanonicalRequests,
+			that = this;
 
 		if (mParameters) {
 			sGroupId = mParameters.groupId || mParameters.batchGroupId;
 			sChangeSetId = mParameters.changeSetId;
-			oContext  = mParameters.context;
+			oContext = mParameters.context;
 			fnSuccess = mParameters.success;
-			fnError   = mParameters.error;
-			sETag     = mParameters.eTag;
-			mHeaders  = mParameters.headers;
+			fnError = mParameters.error;
+			sETag = mParameters.eTag;
+			mHeaders = mParameters.headers;
 			mUrlParams = mParameters.urlParameters;
 			bRefreshAfterChange = mParameters.refreshAfterChange;
 			bCanonical = mParameters.canonicalRequest;
@@ -5049,20 +5066,23 @@ sap.ui.define([
 		sDeepPath = this.resolveDeep(sPath, oContext);
 
 		function handleSuccess(oData, oResponse) {
-			sKey = sUrl.substr(sUrl.lastIndexOf('/') + 1);
-			//remove query params if any
-			if (sKey.indexOf('?') !== -1) {
-				sKey = sKey.substr(0, sKey.indexOf('?'));
-			}
 			that._removeEntity(sKey);
-
+			if (oContextToRemove && oContextToRemove.isTransient() === false) {
+				that.oCreatedContextsCache.findAndRemoveContext(oContextToRemove);
+			}
 			if (fnSuccess) {
 				fnSuccess(oData, oResponse);
 			}
 		}
 
 		return this._processRequest(function(requestHandle) {
-			sUrl = that._createRequestUrlWithNormalizedPath(sNormalizedPath, aUrlParams, that.bUseBatch);
+			sUrl = that._createRequestUrlWithNormalizedPath(sNormalizedPath, aUrlParams,
+				that.bUseBatch);
+			sKey = sUrl.substr(sUrl.lastIndexOf('/') + 1);
+			//remove query params if any
+			sKey = sKey.split("?")[0];
+			oContextToRemove = that.mContexts["/" + sKey];
+
 			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, undefined, sETag,
 				undefined, true);
 
@@ -5071,7 +5091,8 @@ sap.ui.define([
 				mRequests = that.mDeferredRequests;
 			}
 
-			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, handleSuccess, fnError, requestHandle, bRefreshAfterChange);
+			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, handleSuccess,
+				fnError, requestHandle, bRefreshAfterChange);
 
 			return oRequest;
 		}, fnError, bDeferred);
