@@ -631,7 +631,6 @@ sap.ui.define([
 	 * belongs to, not by the application.
 	 *
 	 * @param {int} iStep Number of steps for navigation (e.g. 1 means next item, -1 means previous item)
-	 * @returns {Promise<object>} Promise returning object of navigated item (condition and itemId)
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
@@ -650,7 +649,7 @@ sap.ui.define([
 			};
 			var oNavigatePromise = this._retrievePromise("navigate");
 			var oExistingPromise = oNavigatePromise && !oNavigatePromise.isSettled() && oNavigatePromise.getInternalPromise();
-			return this._addPromise("navigate", oExistingPromise ? oExistingPromise.then(_fnOnNavigatable) : this._retrieveDelegateContent(oTypeahead).then(_fnOnNavigatable));
+			this._addPromise("navigate", oExistingPromise ? oExistingPromise.then(_fnOnNavigatable) : this._retrieveDelegateContent(oTypeahead).then(_fnOnNavigatable));
 		}
 	};
 
