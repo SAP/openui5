@@ -318,11 +318,9 @@ sap.ui.define([
 			render: function(oRm, oControl) {
 				oRm.openStart("div", oControl)
 					.class("sapUiFlVarMngmt")
-					.attr("title", oControl._oRb.getText("VARIANT_MANAGEMENT_TRIGGER_TT"))
 					.openEnd();
 
 				oRm.renderControl(oControl.oVariantLayout);
-
 				oRm.close("div");
 			}
 		}
@@ -390,7 +388,7 @@ sap.ui.define([
 		oVariantModifiedText.setVisible(false);
 		oVariantModifiedText.addStyleClass("sapUiFlVarMngmtModified");
 		oVariantModifiedText.addStyleClass("sapUiFlVarMngmtClickable");
-		oVariantModifiedText.addStyleClass("sapMTitleStyleH4");
+		oVariantModifiedText.addStyleClass("sapMTitleStyleH3");
 
 		this.oVariantPopoverTrigger = new ToggleButton(this.getId() + "-trigger", {
 			icon: "sap-icon://slim-arrow-down",
@@ -400,6 +398,8 @@ sap.ui.define([
 
 		this.oVariantPopoverTrigger.addAriaLabelledBy(this.oVariantInvisibleText);
 		this.oVariantPopoverTrigger.addStyleClass("sapUiFlVarMngmtTriggerBtn");
+
+		this.oVariantPopoverTrigger.addStyleClass("sapMTitleStyleH3");
 
 		this.oVariantLayout = new HorizontalLayout({
 			content: [
