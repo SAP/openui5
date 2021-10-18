@@ -517,8 +517,8 @@
 					</mdc:outParameters>
 				<mdc:typeahead>
 					<mdcv:Popover id="FB0-FH-City-Popover" title="City">
-						<mdcvc:MTable  id="FB0-FH-City-Popover-MTable" keyPath="city" descriptionPath="text" filterFields="$search" title="City">
-							<Table id="mTable-City1" items="{path: '/Cities', length: 10, parameters: {$select:'country_code,region_code'}}" width="30rem" useAsValueHelp="false">
+						<mdcvc:MTable  id="FB0-FH-City-Popover-MTable" keyPath="city" descriptionPath="text" filterFields="$search" title="City" useAsValueHelp="false">
+							<Table id="mTable-City1" items="{path: '/Cities', length: 10, parameters: {$select:'country_code,region_code'}}" width="30rem">
 								<columns>
 									<Column>
 										<Label text="City"/>
