@@ -107,6 +107,8 @@ sap.ui.define([
 	BasePanel.prototype.CHANGE_REASON_ADD = "Add";
 	BasePanel.prototype.CHANGE_REASON_REMOVE = "Remove";
 	BasePanel.prototype.CHANGE_REASON_MOVE = "Move";
+	BasePanel.prototype.CHANGE_REASON_SELECTALL = "SelectAll";
+	BasePanel.prototype.CHANGE_REASON_DESELECTALL = "DeselectAll";
 
 	//defines the name of the attribute describing the presence/active state
 	BasePanel.prototype.PRESENCE_ATTRIBUTE = "visible";
@@ -118,8 +120,11 @@ sap.ui.define([
 		this._oP13nModel.setSizeLimit(10000);
 		this.setModel(this._oP13nModel, this.P13N_MODEL);
 
-	   // list is necessary to set the template + model on
+	    // list is necessary to set the template + model on
 		this._oListControl = this._createInnerListControl();
+
+		// Determines whether the rearranged item should be focused
+		this._bFocusOnRearrange = true;
 
 		this._setInnerLayout();
 
@@ -476,8 +481,12 @@ sap.ui.define([
 		}, this);
 
 		if (bSelectAll || bDeSelectAll) {
-			this.fireChange();
+			this.fireChange({
+				reason: bSelectAll ? this.CHANGE_REASON_SELECTALL : this.CHANGE_REASON_DESELECTALL,
+				item: undefined //No direct item is affected
+			});
 		}
+
 
 		// in case of 'deselect all', the move buttons for positioning are going to be disabled
 		if (bDeSelectAll) {
@@ -584,13 +593,13 @@ sap.ui.define([
 		// store the moved item again due to binding
 		this._oSelectedItem = this._oListControl.getItems()[iNewIndex];
 
-		this._updateEnableOfMoveButtons(this._oSelectedItem, true);
+		this._updateEnableOfMoveButtons(this._oSelectedItem, this._bFocusOnRearrange);
 
 		this._handleActivated(this._oSelectedItem);
 
 		this.fireChange({
 			reason: this.CHANGE_REASON_MOVE,
-			item: undefined
+			item: this._getModelEntry(oItem)
 		});
 	};
 
@@ -627,6 +636,8 @@ sap.ui.define([
 
 	BasePanel.prototype.exit = function() {
 		Control.prototype.exit.apply(this, arguments);
+		this._bFocusOnRearrange = null;
+		this._oHoveredItem = null;
 		this._oSelectionBindingInfo = null;
 		this._oSelectedItem = null;
 		this._oListControl = null;
