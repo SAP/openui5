@@ -10,6 +10,7 @@
 @_sap_f_Card_HeaderFocusBorderRadius: inherit;
 @_sap_f_Card_BorderRadius: 1rem;
 @_sap_f_Card_TitleFontSize: @sapMFontHeader6Size;
+@_sap_f_Card_HoverBoxShadow: @sapContent_Shadow1;
 
 .sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCard,
 .sapFCard {
@@ -21,4 +22,8 @@
 	&.sapFCardBottomHeader .sapFCardHeader::before {
 		bottom: 1px;
 	}
+}
+
+.sapFCard:not(.sapFCardPreview):hover {
+	box-shadow: @_sap_f_Card_HoverBoxShadow;
 }
