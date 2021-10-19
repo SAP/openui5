@@ -37,6 +37,12 @@ sap.ui.define([
 		}
 		var oJson = deepClone(oOriginalJson);
 
+		// Set label
+		if (!ObjectPath.get(["element", "@Common.Label"], oJson)) {
+			var sName = ObjectPath.get(["element", "name"], oJson);
+			ObjectPath.set(["element", "@Common.Label"], sName, oJson);
+		}
+
 		// Format enum input validation
 		var vRange = ObjectPath.get(["element", "@assert.range"], oJson);
 		if (
@@ -116,7 +122,7 @@ sap.ui.define([
 					entityTypes: mEntitySetInformation.entityTypes
 				});
 				this._oEditor.attachJsonChange(function(oEvent) {
-					this._oJson = prepareJsonOutput(oEvent.getParameter("json"));
+					this._oJson = oEvent.getParameter("json");
 				}.bind(this));
 				oAddCustomFieldCAPDialog.open();
 			}.bind(this));
@@ -134,13 +140,14 @@ sap.ui.define([
 	};
 
 	CustomFieldCAPDialog.prototype.onSave = function() {
+		var oCsnOutput = prepareJsonOutput(this._oJson);
 		var oPayload = {
-			extensions: [JSON.stringify(this._oJson)]
+			extensions: [JSON.stringify(oCsnOutput)]
 		};
 
 		var oAddFieldPromise = new Promise(function(resolve, reject) {
 			var oXhr = new XMLHttpRequest();
-			oXhr.open("POST", "http://localhost:4004/extensibility/addExtension");
+			oXhr.open("POST", "/-/cds/extensibility/addExtension");
 			oXhr.setRequestHeader("Content-Type", "application/json");
 			oXhr.onload = function() {
 				if (oXhr.status >= 200 && oXhr.status < 400) {
