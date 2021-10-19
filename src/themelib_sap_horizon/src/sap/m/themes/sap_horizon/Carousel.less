@@ -12,6 +12,7 @@
 @_sap_m_Carousel_NumericIndicatorTextColor: @sapUiPageFooterTextColor;
 @_sap_m_Carousel_PrevAndNextSize: 2.125rem;
 @_sap_m_Carousel_PrevAndNextPosition: 0.5rem;
+@_sap_m_Carousel_PrevAndNextFocusBorderRadius: inherit;
 @_sap_m_Carousel_PageIndicatorWidthSizeS: 9rem;
 @_sap_m_Carousel_PageIndicatorWidthSizeM: @_sap_m_Carousel_PageIndicatorWidthSizeS;
 @_sap_m_Carousel_PageIndicatorWidthSizeL: @_sap_m_Carousel_PageIndicatorWidthSizeS;
@@ -41,19 +42,6 @@
 }
 
 .sapMCrslPrev:focus,
-.sapMCrslNext:focus,
-.sapMCrslPrev .sapUiIcon:focus,
-.sapMCrslNext .sapUiIcon:focus {
-  outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
-}
-
-html.sap-desktop .sapMCrslHud .sapMCrslPrev:focus,
-html.sap-desktop .sapMCrslHud .sapMCrslNext:focus {
-  &::before {
-	content: none;
-  }
-
-  &::after {
-	content: none;
-  }
+.sapMCrslNext:focus {
+	outline: none;
 }

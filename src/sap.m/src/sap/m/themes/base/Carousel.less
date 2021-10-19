@@ -8,6 +8,7 @@
 @_sap_m_Carousel_NumericIndicatorTextColor: @sapUiContentLabelColor;
 @_sap_m_Carousel_PrevAndNextSize: 2rem;
 @_sap_m_Carousel_PrevAndNextPosition: 0.625rem;
+@_sap_m_Carousel_PrevAndNextFocusBorderRadius: unset;
 @_sap_m_Carousel_PageIndicatorContainerPadding: 1rem;
 @_sap_m_Carousel_PageIndicatorWidthSizeS: 12rem;
 @_sap_m_Carousel_PageIndicatorWidthSizeM: 16rem;
@@ -557,26 +558,22 @@ html[data-sap-ui-animation='off'] {
 	display: block;
 }
 
-html.sap-desktop .sapMCrslHud .sapMCrslPrev:focus,
-html.sap-desktop .sapMCrslHud .sapMCrslNext:focus {
-  &::before {
-    content: "";
-    position: absolute;
-    top: @_sap_m_Carousel_FocusBorderOffsetArrow;
-    right: @_sap_m_Carousel_FocusBorderOffsetArrow;
-    bottom: @_sap_m_Carousel_FocusBorderOffsetArrow;
-    left: @_sap_m_Carousel_FocusBorderOffsetArrow;
-    pointer-events: none;
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    top: @_sap_m_Carousel_FocusBorderOffsetArrow;
-    right: @_sap_m_Carousel_FocusBorderOffsetArrow;
-    bottom: @_sap_m_Carousel_FocusBorderOffsetArrow;
-    left: @_sap_m_Carousel_FocusBorderOffsetArrow;
-    pointer-events: none;
-    border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
-  }
+html.sap-desktop {
+	.sapMCrslHud,
+	.sapMCrslControls {
+		.sapMCrslPrev:focus,
+		.sapMCrslNext:focus {
+			&::after {
+				content: "";
+				position: absolute;
+				top: @_sap_m_Carousel_FocusBorderOffsetArrow;
+				right: @_sap_m_Carousel_FocusBorderOffsetArrow;
+				bottom: @_sap_m_Carousel_FocusBorderOffsetArrow;
+				left: @_sap_m_Carousel_FocusBorderOffsetArrow;
+				pointer-events: none;
+				border-radius: @_sap_m_Carousel_PrevAndNextFocusBorderRadius;
+				border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+			}
+		}
+	}
 }
