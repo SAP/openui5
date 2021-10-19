@@ -1981,6 +1981,9 @@ sap.ui.define([
 			},
 			"semantic/ShareMenu": {
 				title: "Test Page for sap.m.semantic.ShareMenu"
+			},
+			"table/Util": {
+				title: "Test Page for sap.m.table.Util"
 			}
 		}
 	};

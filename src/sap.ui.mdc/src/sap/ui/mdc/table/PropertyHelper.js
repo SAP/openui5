@@ -5,13 +5,11 @@
 sap.ui.define([
 	"../util/PropertyHelper",
 	"sap/ui/core/Core",
-	"sap/ui/core/theming/Parameters",
-	"sap/m/library"
+	"sap/m/table/Util"
 ], function(
 	PropertyHelperBase,
 	Core,
-	ThemeParameters,
-	MLibrary
+	TableUtil
 ) {
 	"use strict";
 
@@ -210,31 +208,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Measures the given text width in a canvas and returns the converted rem value.
-	 *
-	 * @param {string} [sText] The text to be measured
-	 * @returns {float} The text width converted to rem
-	 * @private
-	 */
-	var measureText = (function() {
-		var fBaseFontSize = parseFloat(MLibrary.BaseFontSize);
-		var oCanvasContext = document.createElement("canvas").getContext("2d");
-		var fnUpdateFont = function() {
-			oCanvasContext.font = [
-				ThemeParameters.get({ name: "sapMFontMediumSize" }) || "0.875rem",
-				ThemeParameters.get({ name: "sapUiFontFamily" }) || "Arial"
-			].join(" ");
-		};
-
-		Core.attachThemeChanged(fnUpdateFont);
-		fnUpdateFont();
-
-		return function(sText) {
-			return oCanvasContext.measureText(sText || "").width / fBaseFontSize;
-		};
-	})();
-
-	/**
 	 * Sets the width of the provided column based on the <code>visualSettings</code> of the relevant <code>PropertyInfo</code>.
 	 *
 	 * @param {sap.ui.mdc.table.Column} oMDCColumn The MDCColumn instance for which to set the width
@@ -312,60 +285,20 @@ sap.ui.define([
 		} else {
 			var oTypeConfig = oProperty.getTypeConfig();
 			var oType = oTypeConfig.typeInstance;
-			var sBaseType = oTypeConfig.baseType;
-			var sChar = "A";
-			var vSample;
 
-			if (sBaseType === "Boolean") {
-				var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.core");
-				var fTrueWidth = measureText(oResourceBundle.getText("YES"));
-				var fFalseWidth = measureText(oResourceBundle.getText("NO"));
-				fWidth = Math.max(fTrueWidth, fFalseWidth);
-			} else if (sBaseType === "Numeric") {
-				var iPrecision = oType.getConstraints().precision;
-				var iScale = oType.getConstraints().scale;
-				var mNumericLimits = {
-					"Edm.Byte" : 3,
-					"Edm.SByte" : 3,
-					"Edm.Int16" : 5,
-					"Edm.Int32" : 9,
-					"Edm.Int64" : 12,
-					"Edm.Float" : 6,
-					"Edm.Single" : 6,
-					"Edm.Double" : 13,
-					"Edm.Decimal" : 15,
-					"Numeric" : 10
-				};
-				iPrecision = Math.min(iPrecision || 20, mNumericLimits[oTypeConfig.className] || mNumericLimits.Numeric);
-				vSample = 2 * Math.pow(10, iPrecision - (iScale || 0) - 1);
-			} else if (sBaseType === "Date" || sBaseType === "Time" || sBaseType === "DateTime") {
-				vSample = new Date(2023, 12, 26, 22, 47, 58);
-			} else if (sBaseType === "String") {
-				var iMaxLength = oType.getConstraints().maxLength;
-				if (!iMaxLength) {
-					fWidth = iMaxWidth * 0.7;
-				} else {
-					vSample = sChar.repeat(Math.min(8, iMaxLength)) + sChar.toLowerCase().repeat(Math.max(0, iMaxLength - 8));
-				}
-			} else {
-				fWidth = mWidthCalculation.defaultWidth;
-			}
-
-			if (vSample) {
-				var sSample = oType.formatValue(vSample, "string");
-				fWidth = measureText(sSample);
+			if (oType) {
+				fWidth = TableUtil.calcTypeWidth(oType, mWidthCalculation);
 			}
 			if (oProperty.getUnitProperty()) {
-				fWidth += measureText(sChar.repeat(4));
+				fWidth += 2.5;
 			}
 		}
 
 		fWidth += mWidthCalculation.gap;
 
-		if (mWidthCalculation.includeLabel && fWidth < iMaxWidth) {
-			var sLabel = oProperty.getLabel();
-			var fMaxLabelWidth = fWidth * Math.max(1, 1 - Math.log(Math.max(fWidth - 1.71, 0.2)) / Math.log(iMaxWidth * 0.62) + 1);
-			fLabelWidth = Math.min(measureText(sLabel), fMaxLabelWidth);
+		if (mWidthCalculation.includeLabel) {
+			var sLabel = oProperty.getLabel() || "";
+			fLabelWidth = TableUtil.calcHeaderWidth(sLabel, fWidth, iMaxWidth, iMinWidth);
 		}
 
 		fWidth = Math.max(iMinWidth, fWidth, fLabelWidth);
