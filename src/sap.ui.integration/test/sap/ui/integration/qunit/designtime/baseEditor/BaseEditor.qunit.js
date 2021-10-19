@@ -167,6 +167,44 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("When a property editor default config is set", function (assert) {
+			this.oBaseEditor.setConfig({
+				context: "context",
+				properties: {
+					"prop1": {
+						label: "Prop1",
+						path: "prop1",
+						type: "string",
+						someConfigOption: "propertyConfigSample"
+					}
+				},
+				propertyEditors: {
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				},
+				propertyEditorConfigs: {
+					"string": {
+						someConfigOption: "editorConfigSample",
+						someOtherConfigOption: "newConfigValue"
+					}
+				}
+			}).then(function() {
+				this.oBaseEditor.placeAt("qunit-fixture");
+			}.bind(this));
+
+			return this.oBaseEditor.ready().then(function() {
+				assert.strictEqual(
+					this.oBaseEditor.getPropertyEditorsSync()[0].getConfig().someConfigOption,
+					"propertyConfigSample",
+					"then the property config overrides the default config"
+				);
+				assert.strictEqual(
+					this.oBaseEditor.getPropertyEditorsSync()[0].getConfig().someOtherConfigOption,
+					"newConfigValue",
+					"then the default config is merged into the editor config"
+				);
+			}.bind(this));
+		});
+
 		QUnit.test("When property editor changes value", function (assert) {
 			var done = assert.async();
 			this.oBaseEditor.setConfig({
