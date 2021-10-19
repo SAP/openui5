@@ -26,7 +26,7 @@ sap.ui.define(["sap/ui/base/ManagedObject"],
 	 *
 	 * @constructor
 	 * @private
-	 * @ui5-restricted Used in sap.ui.integration and in shell-toolkit
+	 * @ui5-restricted sap.ui.integration, shell-toolkit
 	 * @since 1.65
 	 * @alias sap.ui.integration.util.DataProvider
 	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) designtime metamodel
@@ -157,7 +157,7 @@ sap.ui.define(["sap/ui/base/ManagedObject"],
 	 * Triggers a data update which results in either "dataChanged" event or an "error" event.
 	 *
 	 * @private
-	 * @ui5-restricted Used in sap.ui.integration and in shell-toolkit
+	 * @ui5-restricted sap.ui.integration, shell-toolkit
 	 * @returns {Promise} A promise resolved when the update has finished.
 	 */
 	DataProvider.prototype.triggerDataUpdate = function () {
@@ -199,7 +199,7 @@ sap.ui.define(["sap/ui/base/ManagedObject"],
 	/**
 	 * Triggers a data update and returns the result data.
 	 * @private
-	 * @ui5-restricted Used in sap.ui.integration and in shell-toolkit
+	 * @ui5-restricted sap.ui.integration, shell-toolkit
 	 * @returns {Promise} A promise resolved when the data is available and rejected in case of an error.
 	 */
 	DataProvider.prototype.getData = function () {

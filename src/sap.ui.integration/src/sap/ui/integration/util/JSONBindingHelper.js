@@ -28,7 +28,7 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @private
-	 * @ui5-restricted Used in sap.ui.integration and in shell-toolkit
+	 * @ui5-restricted sap.ui.integration, shell-toolkit
 	 * @alias sap.ui.integration.util.JSONBindingHelper
 	 */
 	var JSONBindingHelper = {};
@@ -40,7 +40,7 @@ sap.ui.define([
 	 * @param {object} oValue The object for which we want to create binding infos.
 	 * @param {object} mLocalBindingNamespaces Local binding functions
 	 * @private
-	 * @ui5-restricted Used in sap.ui.integration and in shell-toolkit
+	 * @ui5-restricted sap.ui.integration, shell-toolkit
 	 * @return {string} The json stringified object with the binding infos.
 	 */
 	JSONBindingHelper.createJsonWithBindingInfos = function (oValue, mLocalBindingNamespaces) {
