@@ -67,11 +67,13 @@ function(
 	 *
 	 * <h3>Overview</h3>
 	 *
-	 * <b>Note:</b> The <code>SinglePlanningCalendar</code> uses parts of the <code>sap.ui.unified</code> library.
+	 * <b>Note:</b> The application developer should add dependency to <code>sap.ui.unified</code> library on application level
+	 * to ensure that the library is loaded before the module dependencies will be required.
+	 * The <code>SinglePlanningCalendar</code> uses parts of the <code>sap.ui.unified</code> library.
 	 * This library will be loaded after the <code>SinglePlanningCalendar</code>, if it wasn't previously loaded.
-	 * This could lead to a waiting time when a <code>SinglePlanningCalendar</code> is used for the first time.
+	 * This could lead to CSP compliance issues and adds an additional waiting time when a <code>SinglePlanningCalendar</code> is used for the first time.
 	 * To prevent this, apps using the <code>SinglePlanningCalendar</code> must also load the
-	 * <code>sap.ui.unified</code> library.
+	 * <code>sap.ui.unified</code> library in advance.
 	 *
 	 * The <code>SinglePlanningCalendar</code> has the following structure:
 	 *
