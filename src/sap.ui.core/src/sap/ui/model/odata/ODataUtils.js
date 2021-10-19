@@ -71,7 +71,7 @@ sap.ui.define([
 	ODataUtils.createSortParams = function(aSorters) {
 		var sSortParam;
 		if (!aSorters || aSorters.length == 0) {
-			return;
+			return undefined;
 		}
 		sSortParam = "$orderby=";
 		for (var i = 0; i < aSorters.length; i++) {
@@ -120,7 +120,7 @@ sap.ui.define([
 		}
 
 		if (!oFilter) {
-			return;
+			return undefined;
 		}
 		return "$filter=" + this._createFilterParams(oFilter, oMetadata, oEntityType);
 	};
@@ -178,18 +178,20 @@ sap.ui.define([
 		}
 
 		if (!oFilter) {
-			return;
+			return undefined;
 		}
 
 		return create(oFilter, true);
 	};
 
 	/**
-	 * Converts a string or object-map with URL Parameters into an array.
-	 * If vParams is an object map, it will be also encoded properly.
+	 * Converts a string or object-map with URL parameters into an array.
+	 * If <code>vParams</code> is an object map, it will be also encoded properly.
+	 *
+	 * @param {string|object|array} vParams URL parameters
+	 * @returns {string[]} Encoded URL parameters
 	 *
 	 * @private
-	 * @param {string|object|array} vParams parameters
 	 */
 	ODataUtils._createUrlParamsArray = function(vParams) {
 		var aUrlParams, sType = typeof vParams, sParams;
@@ -385,7 +387,12 @@ sap.ui.define([
 
 
 	/**
-	 * convert multi filter to filter string
+	 * Convert multi filter to filter string.
+	 *
+	 * @param {object} oMultiFilter A multi filter
+	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata The metadata
+	 * @param {object} oEntityType The entity type to filter
+	 * @returns {string} A filter string
 	 *
 	 * @private
 	 */
@@ -417,7 +424,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Create a single filter segment of the OData filter parameters
+	 * Create a single filter segment of the OData filter parameters.
+	 *
+	 * @param {string} sPath The path to the value
+	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata The metadata
+	 * @param {object} oEntityType The value's entity type
+	 * @param {string} sOperator The filter operator
+	 * @param {object} oValue1 The first value
+	 * @param {object} oValue2 The second value
+	 * @param {boolean} [bCaseSensitive=true] Whether the case should be considered
+	 * @returns {string} The encoded string representation of the given filter
 	 *
 	 * @private
 	 */
