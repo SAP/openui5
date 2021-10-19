@@ -73,6 +73,15 @@ sap.ui.define([
 			},
 			selectionDetailsActions: {
 				ignore: false
+			},
+			_toolbar: {
+				ignore: true
+			},
+			_breadcrumbs: {
+				ignore: true
+			},
+			_innerChart: {
+				ignore: true
 			}
 		}
 	};
