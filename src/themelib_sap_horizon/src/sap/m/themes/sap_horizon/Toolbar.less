@@ -20,11 +20,6 @@ html.sap-desktop .sapMTBActive:focus {
 	padding: 0 0.5rem 0 0.75rem;
 }
 
-/* Solid Toolbar Context */
-.sapMTB-Solid-CTX.sapMTB {
-	background: @sapUiBaseBG;
-}
-
 /* Info Toolbar Context */
 .sapMTB-Info-CTX.sapMTB {
 	background: darken(@sapUiBaseColor, 10);
@@ -64,4 +59,14 @@ html.sap-desktop .sapMTB-Info-CTX.sapMTBActive:focus {
 
 .generate-contrast-color-toolbar(@backgroundColor) {
 	color: contrast(@backgroundColor, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+}
+
+// =====================================
+// solid toolbar context
+// =====================================
+
+.sapMTB-Solid-CTX.sapMTB {
+	background-color: @sapUiToolbarBackground;
+	border-top-right-radius: @sapElement_BorderCornerRadius;
+	border-top-left-radius: @sapElement_BorderCornerRadius;
 }
