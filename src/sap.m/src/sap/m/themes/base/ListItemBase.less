@@ -11,6 +11,8 @@
 @_sap_m_ListItemBase_Highlight_InformationColor: @sapUiInformationBorder;
 @_sap_m_ListItemBase_Navigated: @sapUiListSelectionBorderColor;
 @_sap_m_ListItemBase_Detail_Delete_MarginLeft: 0.125rem;
+@_sap_m_ListItemBase_Focus_Outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+@_sap_m_ListItemBase_Focus_OffsetWithGap: calc(-@sapUiContentFocusWidth ~"- 0.0625rem");
 
 .sapMLIB,
 .sapMLIBImgNav {
@@ -41,8 +43,8 @@
 }
 
 .sapMLIBFocusable:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -2px;
+	outline: @_sap_m_ListItemBase_Focus_Outline;
+	outline-offset: @_sap_m_ListItemBase_Focus_OffsetWithGap;
 }
 
 /* makes the focus outline visible when hightlight is used */
