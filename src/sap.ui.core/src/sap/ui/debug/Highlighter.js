@@ -57,7 +57,7 @@ sap.ui.define('sap/ui/debug/Highlighter', [
 
 		var oHighlightRect = (this.sId ? window.document.getElementById(this.sId) : null);
 		if (!oHighlightRect) {
-			oHighlightRect = oDomRef.ownerDocument.createElement("DIV");
+			oHighlightRect = oDomRef.ownerDocument.createElement("div");
 			oHighlightRect.setAttribute("id", this.sId);
 			oHighlightRect.style.position = "absolute";
 			oHighlightRect.style.border = this.iBorderWidth + "px solid " + this.sColor;
@@ -65,7 +65,13 @@ sap.ui.define('sap/ui/debug/Highlighter', [
 			oHighlightRect.style.margin = "0px";
 			oHighlightRect.style.padding = "0px";
 			if ( this.bFilled ) {
-				oHighlightRect.innerHTML = "<div style='background-color:" + this.sColor + ";opacity:0.2;filter:progid:DXImageTransform.Microsoft.Alpha(opacity=20);height:100%;width:100%'>&nbsp;</div>";
+				var oFiller = oDomRef.ownerDocument.createElement("div");
+				oFiller.textContent = "\u00a0";
+				oFiller.style.backgroundColor = this.sColor;
+				oFiller.style.opacity = "0.2";
+				oFiller.style.height = "100%";
+				oFiller.style.width = "100%";
+				oHighlightRect.appendChild(oFiller);
 			}
 			oDomRef.ownerDocument.body.appendChild(oHighlightRect);
 		}
