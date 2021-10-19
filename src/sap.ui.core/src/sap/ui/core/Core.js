@@ -1572,12 +1572,14 @@ sap.ui.define([
 			"lib must be a non-empty string or an object with at least a non-empty 'name' property and an optional (boolean) property 'json'" );
 
 		var fileTypeSupportedByLib = 'both';
+		var lazy = false;
 		if ( typeof lib === 'object' ) {
 			if ( lib.json === true ) {
 				fileTypeSupportedByLib = 'json';
 			} else if ( lib.json === false ) {
 				fileTypeSupportedByLib = 'js';
 			}
+			lazy = !!lib.lazy;
 			lib = lib.name;
 		}
 
@@ -1594,7 +1596,8 @@ sap.ui.define([
 
 		return {
 			name: lib,
-			fileType: fileType
+			fileType: fileType,
+			lazy: lazy
 		};
 
 	}
@@ -1629,6 +1632,15 @@ sap.ui.define([
 		// return any existing promise (either lib is currently loading or has been loaded)
 		if ( libInfo.promise ) {
 			return libInfo.promise;
+		}
+
+		if ( libConfig.lazy ) {
+			// For selected lazy dependencies, we load a library-preload-lazy module.
+			// Errors are ignored and the promise is not added to the library bookkeeping
+			// (but the loader avoids double loading).
+			Log.debug("Lazy dependency to '" + lib + "' encountered, loading library-preload-lazy.js");
+			return sap.ui.loader._.loadJSResourceAsync(
+				libPackage + '/library-preload-lazy.js', /* ignoreErrors = */ true);
 		}
 
 		// otherwise mark as pending
@@ -1711,6 +1723,18 @@ sap.ui.define([
 		}
 	}
 
+	/**
+	 * Set of libraries that provide a bundle info file (library-preload-lazy.js).
+	 *
+	 * The file will be loaded, when a lazy dependency to the library is encountered.
+	 * @private
+	 */
+	var oLibraryWithBundleInfo = new Set([
+		"sap.suite.ui.generic.template",
+		"sap.ui.comp",
+		"sap.ui.layout",
+		"sap.ui.unified"
+	]);
 
 	function dependenciesFromManifest(lib) {
 
@@ -1722,6 +1746,11 @@ sap.ui.define([
 			return Object.keys(libs).reduce(function(result, dep) {
 				if ( !libs[dep].lazy ) {
 					result.push(dep);
+				} else if (oLibraryWithBundleInfo.has(dep)) {
+					result.push({
+						name: dep,
+						lazy: true
+					});
 				}
 				return result;
 			}, []);
@@ -1824,9 +1853,11 @@ sap.ui.define([
 			return;
 		}
 
-		// currently loading
 		if ( libInfo.pending ) {
-			if ( libInfo.async ) {
+			if ( libConfig.lazy ) {
+				// ignore a lazy request when an eager request is already pending
+				return;
+			} else if ( libInfo.async ) {
 				Log.warning("request to load " + lib + " synchronously while async loading is pending; this causes a duplicate request and should be avoided by caller");
 				// fall through and preload synchronously
 			} else {
@@ -1834,6 +1865,19 @@ sap.ui.define([
 				Log.warning("request to load " + lib + " synchronously while sync loading is pending (cycle, ignored)");
 				return;
 			}
+		}
+
+		if ( libConfig.lazy ) {
+			// For selected lazy dependencies, we load a library-preload-lazy module.
+			// Errors are ignored and the library is not marked as pending in the bookkeeping
+			// (but the loader avoids double loading).
+			Log.debug("Lazy dependency to '" + lib + "' encountered, loading library-preload-lazy.js");
+			try {
+				sap.ui.requireSync(libPackage + '/library-preload-lazy');
+			} catch (e) {
+				Log.error("failed to load '" + libPackage + "/library-preload-lazy.js" + "' synchronously (" + (e && e.message || e) + ")");
+			}
+			return;
 		}
 
 		libInfo.pending = true;
