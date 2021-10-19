@@ -5,11 +5,15 @@
 sap.ui.define([
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess",
 	"sap/ui/fl/write/_internal/fieldExtensibility/cap/CAPAccess",
-	"sap/base/util/UriParameters"
+	"sap/base/util/UriParameters",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/fl/Utils"
 ], function(
 	ABAPAccess,
 	CAPAccess,
-	UriParameters
+	UriParameters,
+	ManagedObject,
+	FlUtils
 ) {
 	"use strict";
 
@@ -26,11 +30,19 @@ sap.ui.define([
 	var FieldExtensibility = {};
 
 	var _oCurrentScenario;
-	// we can add parameters here, but the assumption is that this is not dependent on a single control
-	function getImplementationForCurrentScenario() {
+
+	function getImplementationForCurrentScenario(oControl) {
 		if (!_oCurrentScenario) {
+			if (!(oControl instanceof ManagedObject)) {
+				return undefined;
+			}
+			var oAppComponent = FlUtils.getAppComponentForControl(oControl);
+			var oManifestConfig = (oAppComponent && oAppComponent.getManifestEntry("/sap.ui5/config")) || {};
 			var oUriParams = UriParameters.fromQuery(window.location.search);
-			if (oUriParams.get("sap-ui-fl-xx-capScenario") === "true") {
+			if (
+				oManifestConfig.experimentalCAPScenario
+				|| oUriParams.get("sap-ui-fl-xx-capScenario") === "true"
+			) {
 				_oCurrentScenario = CAPAccess;
 			} else {
 				_oCurrentScenario = ABAPAccess;
@@ -42,7 +54,10 @@ sap.ui.define([
 	function callFunctionInImplementation() {
 		var aArgs = Array.from(arguments);
 		var sFunctionName = aArgs.shift();
-		var oImplementation = getImplementationForCurrentScenario();
+		var oImplementation = getImplementationForCurrentScenario.apply(null, aArgs);
+		if (!oImplementation) {
+			return Promise.reject("Could not determine field extensibility scenario");
+		}
 		return Promise.resolve(oImplementation[sFunctionName].apply(null, aArgs));
 	}
 
