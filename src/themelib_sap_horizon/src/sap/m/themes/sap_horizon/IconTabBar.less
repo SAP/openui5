@@ -7,7 +7,7 @@
 // Variables overriding
 // ==========================================================================
 
-@_sap_m_IconTabBar_TextColor: @sapUiContentLabelColor;
+@_sap_m_IconTabBar_TextColor: @sapTextColor;
 @_sap_m_IconTabBar_TextShadow: none;
 
 // ==================== Cozy size ====================
@@ -123,7 +123,7 @@
 // Variables
 // ==========================================================================
 
-@_sap_m_IconTabBar_TextHoverColor: darken(@sapUiGroupTitleTextColor, 10);
+@_sap_m_IconTabBar_TextHoverColor: @sapUiSelected;
 @_sap_m_IconTabBar_SelectedTextColor: @sapUiSelected;
 @_sap_m_IconTabBar_SelectedTextHoverColor: darken(@sapUiSelected, 10);
 @_sap_m_IconTabBar_ArrowScroll_AfterHeight: 1px;
@@ -135,6 +135,9 @@
 
 // =========== Shell ===========
 @_sap_m_IconTabBar_ShellHeaderShadow: @sapUiShellShadow;
+@_sap_m_IconTabBar_ShellSelectedTextColor: @sapContent_Selected_TextColor;
+@sapUiShellNavigationSelectedColor: @sapContent_Selected_TextColor;
+
 
 /* Head Container */
 .sapMITH {
@@ -164,12 +167,48 @@
 			padding-top: 0;
 		}
 	}
+	.sapMITBDisabled {
+	  .sapMITHTextContent {
+		color: @sapTextColor;
+	  }
+	}
+
+  .sapMITBSelected {
+	  .sapMITBContentArrow::after {
+		  background: @sapContent_Selected_ForegroundColor;
+	  }
+  }
+  //More Button
+  .sapMITHStartOverflow,
+  .sapMITHEndOverflow {
+	.sapMITBItem {
+	  color: @sapButton_TextColor;
+	  background: @sapButton_Background;
+	  border: 1px solid @sapButton_BorderColor;
+
+	  .sapMITHShowSubItemsIcon {
+	   color: @sapButton_TextColor;
+	  }
+
+	  &:hover {
+		box-shadow: @sapContent_Interaction_Shadow;
+	  }
+	}
+  }
+
+  //Arrow button
+  .sapMITBFilterWithItems .sapMITBFilterExpandBtn .sapMBtnIcon:hover  {
+	color: @_sap_m_IconTabBar_TextHoverColor !important;
+  }
 }
 
 /* Head Container - compact */
 
 .sapUiSizeCompact.sapMITH {
 
+	.sapMITBFilterIcon {
+		line-height: 1.8rem;
+	}
 	.sapMITBHead {
 		padding-top: 0.875rem;
 	}
@@ -265,7 +304,7 @@
 		color: @_sap_m_IconTabBar_TextHoverColor;
 	}
 
-	.sapMITBFilterDefault.sapMITBSelected .sapMITBText {
+	.sapMITBFilterDefault.sapMITBSelected .sapMITBText{
 		color: @_sap_m_IconTabBar_SelectedTextColor;
 	}
 
@@ -303,7 +342,7 @@
 }
 
 .sapMITBFilterIcon {
-	border: 1px solid @sapUiHighlight;
+	border: 2px solid @sapUiHighlight;
 }
 
 .sapMITBFilterDefault {
@@ -456,6 +495,11 @@ html.sap-desktop {
 		}
 	}
 
+	.sapMITBFilter .sapMITBCount {
+		padding-left: 2px;
+		color: @sapContent_LabelColor;
+	}
+
 	.sapMITH.sapUiSizeCompact {
 
 		.sapMITBItem:focus.sapMITBAll {
@@ -464,6 +508,15 @@ html.sap-desktop {
 				top: 0.125rem;
 			}
 		}
+	}
+
+	.sapMITHStartOverflow,
+	.sapMITHEndOverflow {
+	  .sapMITBItem:not(.sapUiDnDDragging):focus {
+		&::after {
+		  border-radius: @_sap_m_IconTabBar_HeaderBorderRadius;
+		}
+	  }
 	}
 
 	.sapMITH {
@@ -478,3 +531,80 @@ html.sap-desktop {
 		}
 	}
 }
+
+html.sap-desktop {
+
+  .sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBFilterIcon {
+	&::after {
+	  top: -5px;
+	  bottom: -5px;
+	  right: -5px;
+	  left: -5px;
+	  border-radius: inherit;
+	}
+  }
+
+}
+.sapMITBTextOnly .sapMITBFilter .sapMITBCount  {
+  padding-bottom: 2px;
+}
+
+.sapMITBFilter .sapMITBText {
+  font-weight: bold;
+}
+/* ------------------------------------------------ */
+/* Shell overrides                        */
+/* ------------------------------------------------ */
+
+.sapUshellShellTabBar {
+
+  //More Button
+  .sapMITHStartOverflow,
+  .sapMITHEndOverflow {
+	.sapMITBItem {
+	  border: 1px solid @sapButton_BorderColor;
+	  color: @sapShell_Navigation_TextColor;
+	  background-color: @sapShell_InteractiveBackground !important;
+
+	  .sapMITHShowSubItemsIcon {
+		color: @sapShell_Navigation_TextColor;
+	  }
+
+	  &:hover {
+		box-shadow: @sapContent_Interaction_Shadow;
+	  }
+	}
+  }
+
+  .sapMITH .sapMITBFilter.sapMITBSelected .sapMITBCount,
+  .sapMITH .sapMITBFilter.sapMITBSelected .sapMITBCount {
+	color:  @sapShell_Navigation_SelectedColor;
+  }
+
+  .sapMITBSelected:not(sapMITBDisabled)  .sapMITBContentArrow::after {
+	background: @sapShell_Navigation_SelectedColor;
+  }
+
+  .sapMITBSelected:not(sapMITBDisabled) .sapMITHTextContent {
+	color: @sapShell_Navigation_Active_TextColor;
+  }
+
+  .sapMITH .sapMITBFilterWithItems .sapMITBFilterExpandBtn {
+	margin-left: 0.135rem;
+  }
+
+  html.sap-desktop & {
+
+	.sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBFilterIcon,
+	.sapMITBTextOnly .sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBText,
+	.sapMITBItem:not(.sapUiDnDDragging):focus.sapMITBAll,
+	.sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBText,
+	.sapMITHStartOverflow .sapMITBItem:not(.sapUiDnDDragging):focus,
+	.sapMITHEndOverflow .sapMITBItem:not(.sapUiDndDragging):focus {
+	  &::after {
+		border-color: @sapUiContentFocusColor !important;
+	  }
+	}
+  }
+}
+
