@@ -94,31 +94,13 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 																							   // afterwards
 			}
 
-			var bIsIOS7Safari = Device.os.ios && Device.os.version >= 7 && Device.os.version < 8 && Device.browser.name === "sf";
 			// initialize viewport
 			if (options.viewport) {
 				var sMeta;
 				var iInnerHeightBefore = Device.resize.height;
 				var iInnerWidthBefore = Device.resize.width;
-				if (bIsIOS7Safari && Device.system.phone) {
-					//if the softkeyboard is open in orientation change, we have to do this to solve the zoom bug
-					// on the phone - the phone zooms into the view although it shouldn't so these two lines will
-					// zoom out again see orientation change below the important part seems to be removing the
-					// device width
-					sMeta = 'minimal-ui, initial-scale=1.0, maximum-scale=1.0, user-scalable=0';
-				} else if (bIsIOS7Safari && Device.system.tablet) {
-					//remove the width = device width since it will not work correctly if the webside is embedded
-					// in a webview
-					sMeta = 'initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
-				} else if ((Device.os.ios && Device.system.phone) && (Math.max(window.screen.height, window.screen.width) === 568)) {
-					// iPhone 5
-					sMeta = "user-scalable=0, initial-scale=1.0";
-				} else if (Device.os.android && Device.os.version < 3) {
-					sMeta = "width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
-				} else {
-					// all other devices
-					sMeta = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
-				}
+
+				sMeta = "width=device-width, initial-scale=1.0";
 				$head.append(jQuery('<meta name="viewport" content="' + sMeta + '">'));
 
 				// Update Device API resize info, which is necessary in some scenarios after setting the viewport info

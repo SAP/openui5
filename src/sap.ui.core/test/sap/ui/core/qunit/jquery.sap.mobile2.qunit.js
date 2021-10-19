@@ -9,7 +9,7 @@ sap.ui.define(["jquery.sap.mobile"],function(/*jQuerySapMobile*/){
 			homeIconPrecomposed: true
 		});
 
-		// check viewport:  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		// check viewport
 		var $v = jQuery("meta").filter("[name=viewport]");
 		assert.equal($v.length, 0, "There should be no viewport meta tag");
 
