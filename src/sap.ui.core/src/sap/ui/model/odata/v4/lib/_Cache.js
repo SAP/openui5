@@ -2615,6 +2615,7 @@ sap.ui.define([
 			mQueryOptions,
 			mPredicates = {}, // a set of the predicates (as map to true) to speed up the search
 			sResourcePath,
+			bSkip,
 			mTypeForMetaPath = this.fetchTypes().getResult(),
 			that = this;
 
@@ -2689,8 +2690,15 @@ sap.ui.define([
 			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);
 
 		return this.oRequestor.request("GET", sResourcePath, oGroupLock, undefined, undefined,
-				undefined, undefined, this.sMetaPath, undefined, false, mMergeableQueryOptions
-			).then(function (oResult) {
+				undefined, undefined, this.sMetaPath, undefined, false, mMergeableQueryOptions,
+				function (aOtherPaths) {
+					if (arguments.length) {
+						aPaths = aPaths.concat(aOtherPaths);
+					} else {
+						bSkip = true; // my GET was merged
+						return aPaths;
+					}
+			}).then(function (oResult) {
 				var oElement, sPredicate, i, n;
 
 				function preventKeyPredicateChange(sPath) {
@@ -2699,6 +2707,10 @@ sap.ui.define([
 					return !aPaths.some(function (sSideEffectPath) {
 						return _Helper.getRelativePath(sPath, sSideEffectPath) !== undefined;
 					});
+				}
+
+				if (bSkip) {
+					return;
 				}
 
 				if (oResult.value.length !== aElements.length) {
@@ -3114,6 +3126,7 @@ sap.ui.define([
 			oOldValuePromise = this.oPromise,
 			mQueryOptions,
 			oResult,
+			bSkip,
 			that = this;
 
 		this.checkSharedRequest();
@@ -3131,7 +3144,15 @@ sap.ui.define([
 			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);
 		oResult = SyncPromise.all([
 			this.oRequestor.request("GET", sResourcePath, oGroupLock, undefined, undefined,
-				undefined, undefined, this.sMetaPath, undefined, false, mMergeableQueryOptions),
+				undefined, undefined, this.sMetaPath, undefined, false, mMergeableQueryOptions,
+				function (aOtherPaths) {
+					if (arguments.length) {
+						aPaths = aPaths.concat(aOtherPaths);
+					} else {
+						bSkip = true; // my GET was merged
+						return aPaths;
+					}
+				}),
 			this.fetchTypes(),
 			this.fetchValue(_GroupLock.$cached, "") // Note: includes some additional checks
 		]).then(function (aResult) {
@@ -3141,6 +3162,10 @@ sap.ui.define([
 		}).then(function (aResult) {
 			var oNewValue = aResult[0],
 				oOldValue = aResult[2];
+
+			if (bSkip) {
+				return;
+			}
 
 			// ensure that the new value has a predicate although key properties were not requested
 			_Helper.setPrivateAnnotation(oNewValue, "predicate",

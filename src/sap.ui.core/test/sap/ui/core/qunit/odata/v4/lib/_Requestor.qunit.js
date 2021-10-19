@@ -1501,6 +1501,7 @@ sap.ui.define([
 		var oBatchRequestSentExpectation,
 			oBatchResponseReceivedExpectation,
 			oCleanUpChangeSetsExpection,
+			fnSubmit = function () {},
 			aExpectedRequests = [[{
 				method : "POST",
 				url : "~Customers",
@@ -1512,6 +1513,7 @@ sap.ui.define([
 				},
 				body : {"ID" : 1},
 				$cancel : undefined,
+				$mergeRequests : undefined,
 				$metaPath : undefined,
 				$promise : sinon.match.defined,
 				$queryOptions : undefined,
@@ -1529,6 +1531,7 @@ sap.ui.define([
 				},
 				body : undefined,
 				$cancel : undefined,
+				$mergeRequests : undefined,
 				$metaPath : undefined,
 				$promise : sinon.match.defined,
 				$queryOptions : undefined,
@@ -1545,15 +1548,16 @@ sap.ui.define([
 					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
 					"Foo" : "bar"
 				},
-				body : undefined,
-				$cancel : undefined,
-				$metaPath : undefined,
+				body : "~payload~",
+				$cancel : "~cancel~",
+				$mergeRequests : "~mergeRequests~",
+				$metaPath : "~metaPath~",
 				$promise : sinon.match.defined,
-				$queryOptions : undefined,
+				$queryOptions : "~queryOptions~",
 				$reject : sinon.match.func,
 				$resolve : sinon.match.func,
-				$resourcePath : "~Products('23')",
-				$submit : undefined
+				$resourcePath : "~sOriginalResourcePath~",
+				$submit : sinon.match.same(fnSubmit)
 			}, {
 				method : "GET",
 				url : "~Products('4711')",
@@ -1564,6 +1568,7 @@ sap.ui.define([
 				},
 				body : undefined,
 				$cancel : undefined,
+				$mergeRequests : undefined,
 				$metaPath : undefined,
 				$promise : sinon.match.defined,
 				$queryOptions : undefined,
@@ -1589,7 +1594,9 @@ sap.ui.define([
 		oRequestorMock.expects("convertResourcePath").withExactArgs("Products('23')")
 			.returns("~Products('23')");
 		aPromises.push(oRequestor.request("GET", "Products('23')", this.createGroupLock(sGroupId),
-				{Foo : "bar",  Accept : "application/json;odata.metadata=full"})
+				{Foo : "bar",  Accept : "application/json;odata.metadata=full"}, "~payload~",
+				fnSubmit, "~cancel~", "~metaPath~", "~sOriginalResourcePath~", undefined,
+				"~queryOptions~", "~mergeRequests~")
 			.then(function (oResult) {
 				assert.deepEqual(oResult, {
 					"@odata.etag" : "ETag value",
@@ -1867,6 +1874,7 @@ sap.ui.define([
 					headers : oFixture.mExpectedRequestHeaders,
 					body : undefined,
 					$cancel : undefined,
+					$mergeRequests : undefined,
 					$metaPath : sMetaPath,
 					$promise : sinon.match.defined,
 					$queryOptions : undefined,
@@ -4440,11 +4448,13 @@ sap.ui.define([
 			}, {
 				url : "EntitySet2('42')",
 				$metaPath : "/EntitySet2",
+				$mergeRequests : function () {},
 				$promise : {},
 				$queryOptions : {}
 			}, {
 				url : "EntitySet2('42')",
 				$queryOptions : {},
+				$mergeRequests : function () {},
 				$resolve : function () {}
 			}];
 
@@ -4459,6 +4469,10 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(aRequests[6].$queryOptions),
 				sinon.match.same(aRequests[7].$queryOptions))
 			.returns(oMergedQueryOptions);
+		this.mock(aRequests[7]).expects("$mergeRequests")
+			.withExactArgs().returns("~aPaths~");
+		this.mock(aRequests[6]).expects("$mergeRequests")
+			.withExactArgs("~aPaths~");
 		this.mock(aRequests[7]).expects("$resolve")
 			.withExactArgs(sinon.match.same(aRequests[6].$promise));
 		oRequestorMock.expects("addQueryString")

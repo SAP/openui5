@@ -7991,7 +7991,7 @@ sap.ui.define([
 								{
 									$expand : {expand : null},
 									$select : ["Name"]
-								})
+								}, sinon.match.func)
 							.resolves(oResult);
 						that.mock(oCache).expects("visitResponse").withExactArgs(
 								sinon.match.same(oResult), sinon.match.same(mTypeForMetaPath),
@@ -8202,7 +8202,7 @@ sap.ui.define([
 				that.oRequestorMock.expects("request")
 					.withExactArgs("GET", "TEAMS('42')/Foo?bar", sinon.match.same(oGroupLock),
 						undefined, undefined, undefined, undefined, oCache.sMetaPath, undefined,
-						false, sinon.match.same(mMergeableQueryOptions))
+						false, sinon.match.same(mMergeableQueryOptions), sinon.match.func)
 					.resolves({value : [oNewValue]});
 				oHelperMock.expects("updateAll")
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('c')",
@@ -8272,7 +8272,7 @@ sap.ui.define([
 					that.oRequestorMock.expects("request")
 						.withExactArgs("GET", "TEAMS('42')/Foo?bar", sinon.match.same(oGroupLock),
 							undefined, undefined, undefined, undefined, oCache.sMetaPath, undefined,
-							false, sinon.match.same(mMergeableQueryOptions))
+							false, sinon.match.same(mMergeableQueryOptions), sinon.match.func)
 						.resolves({value : aData});
 					that.mock(oCache).expects("visitResponse").never();
 
@@ -8285,6 +8285,117 @@ sap.ui.define([
 							TestUtils.checkError(assert, oError, Error,
 								"Expected 1 row(s), but instead saw " + aData.length);
 						});
+				});
+		});
+	});
+
+	//*********************************************************************************************
+	// false: no request merging
+	// undefined: another request merges its aPaths into the resulting GET request.
+	//            Helper.updateAll is not skipped.
+	// true: the resulting GET request is merged. Helper.updateAll is skipped (It would be
+	//       done by the "other" request).
+	[false, undefined, true].forEach(function (bSkip) {
+		var sTitle = "CollectionCache#requestSideEffects: skip updateAll: " + bSkip;
+
+		QUnit.test(sTitle, function (assert) {
+			var oElement = {"@$ui5._" : {predicate : "('c')"}},
+				oGetRelativePathExpectation,
+				oGroupLock = {},
+				mIntersectedQueryOptions = {
+					"sap-client" : "123",
+					$expand : {expand : null},
+					$select : ["Name"]
+				},
+				mMergeableQueryOptions = {},
+				mNavigationPropertyPaths = {},
+				oNewValue = {value : [{"@$ui5._" : {predicate : "('c')"}}]},
+				aPaths = ["EMPLOYEE"],
+				mQueryOptions = {},
+				mQueryOptionsForExtract =
+					Object.assign({$filter : "~key_filter~"}, mIntersectedQueryOptions),
+				sResourcePath = "TEAMS('42')/Foo",
+				mTypeForMetaPath = {"/TEAMS/Foo" : "~type~"},
+				oUpdateAllExpectation,
+				oVisitResponseExpectation,
+				oCache = this.createCache(sResourcePath, {}, true);
+
+			oCache.aElements.push(oElement);
+			oCache.aElements.$byPredicate["('c')"] = oElement;
+
+			this.mock(oCache).expects("fetchTypes").withExactArgs()
+				.returns(SyncPromise.resolve(mTypeForMetaPath));
+			this.mock(oCache).expects("checkSharedRequest").withExactArgs();
+			this.mock(Object).expects("assign")
+				.withExactArgs({}, sinon.match.same(oCache.mQueryOptions),
+					sinon.match.same(oCache.mLateQueryOptions))
+				.returns(mQueryOptions);
+			this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
+					sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
+					sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
+					"/TEAMS/Foo", sinon.match.same(mNavigationPropertyPaths), "", true)
+				.returns(mIntersectedQueryOptions);
+			this.mock(_Helper).expects("getKeyFilter")
+				.withExactArgs(sinon.match.same(oCache.aElements[0]), "/TEAMS/Foo",
+					sinon.match.same(mTypeForMetaPath))
+				.returns("~key_filter~");
+			this.mock(_Helper).expects("selectKeyProperties")
+				.withExactArgs(sinon.match.same(mIntersectedQueryOptions), "~type~");
+			this.mock(_Helper).expects("extractMergeableQueryOptions")
+				.withExactArgs(mQueryOptionsForExtract).returns(mMergeableQueryOptions);
+			this.mock(this.oRequestor).expects("buildQueryString")
+				.withExactArgs("/TEAMS/Foo", mQueryOptionsForExtract, false, true)
+				.returns("?bar");
+			this.oRequestorMock.expects("request")
+				.withExactArgs("GET", sResourcePath + "?bar", sinon.match.same(oGroupLock),
+					undefined, undefined, undefined, undefined, "/TEAMS/Foo", undefined, false,
+					sinon.match.same(mMergeableQueryOptions), sinon.match.func)
+				.callsFake(function () {
+					if (bSkip === true) {
+						assert.deepEqual(arguments[11](), aPaths,
+							"arguments[11]: fnMergeRequests; returns its own paths");
+					} else if (bSkip === undefined) {
+						assert.strictEqual(arguments[11](["~another~", "~path~"]), undefined,
+							"arguments[11]: fnMergeRequests, gets other parts as parameter");
+					}
+					return Promise.resolve(oNewValue);
+				});
+
+			oVisitResponseExpectation = this.mock(oCache).expects("visitResponse")
+				.exactly(bSkip ? 0 : 1)
+				.withExactArgs(sinon.match.same(oNewValue), sinon.match.same(mTypeForMetaPath),
+					undefined, "", false, NaN);
+			oUpdateAllExpectation = this.mock(_Helper).expects("updateAll")
+				.exactly(bSkip ? 0 : 1)
+				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('c')",
+					sinon.match.same(oElement),
+					sinon.match.same(oNewValue.value[0]), sinon.match.func)
+				.callThrough();
+			if (bSkip === true) {
+				oGetRelativePathExpectation =
+					this.mock(_Helper).expects("getRelativePath").exactly(0);
+			} else if (bSkip === false) {
+				oGetRelativePathExpectation =
+					this.mock(_Helper).expects("getRelativePath").exactly(1);
+			} else {
+				oGetRelativePathExpectation =
+					this.mock(_Helper).expects("getRelativePath").exactly(3);
+			}
+
+			// code under test
+			return oCache
+				.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths, ["('c')"])
+				.then(function () {
+					if (bSkip === false) {
+						assert.deepEqual(oGetRelativePathExpectation.args, [['', 'EMPLOYEE']]);
+						assert.ok(oVisitResponseExpectation.calledBefore(oUpdateAllExpectation));
+					} else if (bSkip === undefined) {
+						assert.deepEqual(oGetRelativePathExpectation.args, [
+							['', 'EMPLOYEE'],
+							['', '~another~'],
+							['', '~path~']
+						]);
+					}
 				});
 		});
 	});
@@ -9050,12 +9161,21 @@ sap.ui.define([
 	//*********************************************************************************************
 [null, {}].forEach(function (mLateQueryOptions) {
 	[undefined, "Me"].forEach(function (sReadPath) {
-		var sTitle = "SingleCache#requestSideEffects, sResourcePath = " + sReadPath;
+		// false: no request merging
+		// undefined: another request merges its aPaths into the request, which is initiated by
+		//            requestSideEffects. Helper.updateAll is not skipped.
+		// true: the request that is initiated by requestSideEffects is merged into another one.
+		//       Helper.updateAll is skipped (It would be done by the "other" request).
+		// -- see "callsFake" of the "request" expectation
+		[false, undefined, true].forEach(function (bSkip) {
+			var sTitle = "SingleCache#requestSideEffects, sResourcePath = " + sReadPath
+				+ " mLateQueryOptions = " + mLateQueryOptions + " skip = " + bSkip;
 
 		QUnit.test(sTitle, function (assert) {
 			var sResourcePath = "Employees('42')",
 				oCache = this.createSingle(sResourcePath, {}),
 				oCacheMock = this.mock(oCache),
+				oGetRelativePathExpectation,
 				oGroupLock = {},
 				mMergedQueryOptions = {
 					"sap-client" : "123",
@@ -9100,27 +9220,57 @@ sap.ui.define([
 					oCache.sMetaPath, undefined, false, {
 						$expand : {expand : null},
 						$select : ["ROOM_ID"]
-					})
-				.resolves(oNewValue);
+					}, sinon.match.func)
+				.callsFake(function () {
+					if (bSkip === true) {
+						assert.deepEqual(arguments[11](), aPaths,
+							"arguments[11]: fnMergeRequests; returns its own paths");
+					} else if (bSkip === undefined) {
+						assert.strictEqual(arguments[11](["~another~", "~path~"]), undefined,
+							"arguments[11]: fnMergeRequests; gets other parts as parameter");
+					}
+					return Promise.resolve(oNewValue);
+				});
 			oCacheMock.expects("fetchTypes").withExactArgs()
 				.returns(SyncPromise.resolve(mTypeForMetaPath));
 			oCacheMock.expects("fetchValue")
 				.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
 				.returns(SyncPromise.resolve(oOldValue));
 			oVisitResponseExpectation = oCacheMock.expects("visitResponse")
+				.exactly(bSkip ? 0 : 1)
 				.withExactArgs(
 					sinon.match.same(oNewValue).and(sinon.match({"@$ui5._" : {predicate : "(~)"}})),
 					sinon.match.same(mTypeForMetaPath));
 			oUpdateAllExpectation = this.mock(_Helper).expects("updateAll")
+				.exactly(bSkip ? 0 : 1)
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
 					sinon.match.same(oOldValue), sinon.match.same(oNewValue), sinon.match.func)
-				.returns(SyncPromise.resolve(oOldValue));
+				.callThrough();
+			if (bSkip === true) {
+				oGetRelativePathExpectation = this.mock(_Helper).expects("getRelativePath")
+					.exactly(0);
+			} else if (bSkip === false) {
+				oGetRelativePathExpectation = this.mock(_Helper).expects("getRelativePath")
+					.exactly(1);
+			} else {
+				oGetRelativePathExpectation = this.mock(_Helper).expects("getRelativePath")
+					.exactly(3);
+			}
 
 			// code under test
 			oPromise = oCache.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths,
 					sReadPath)
 				.then(function () {
-					assert.ok(oVisitResponseExpectation.calledBefore(oUpdateAllExpectation));
+					if (bSkip === false) {
+						assert.deepEqual(oGetRelativePathExpectation.args, [['', 'ROOM_ID']]);
+						assert.ok(oVisitResponseExpectation.calledBefore(oUpdateAllExpectation));
+					} else if (bSkip === undefined) {
+						assert.deepEqual(oGetRelativePathExpectation.args, [
+							['', 'ROOM_ID'],
+							['', '~another~'],
+							['', '~path~']
+						]);
+					}
 				});
 
 			assert.ok(!oPromise.isFulfilled());
@@ -9132,6 +9282,7 @@ sap.ui.define([
 			assert.strictEqual(oCache.fetchValue(_GroupLock.$cached, "").getResult(), oOldValue);
 
 			return oPromise;
+		});
 		});
 	});
 });
@@ -9189,7 +9340,7 @@ sap.ui.define([
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", "~path~?~", sinon.match.same(oGroupLock), undefined, undefined,
 				undefined, undefined, oCache.sMetaPath, undefined, false,
-				sinon.match.same(mMergeableQueryOptions))
+				sinon.match.same(mMergeableQueryOptions), sinon.match.func)
 			.resolves(oNewValue);
 		this.mock(oCache).expects("fetchTypes").withExactArgs()
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
@@ -9298,7 +9449,7 @@ sap.ui.define([
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", "Employees('42')?~", sinon.match.same(oGroupLock), undefined,
 				undefined, undefined, undefined, oCache.sMetaPath, undefined, false,
-				sinon.match.same(mMergeableQueryOptions))
+				sinon.match.same(mMergeableQueryOptions), sinon.match.func)
 			.rejects(oError);
 		oCacheMock.expects("fetchTypes").withExactArgs()
 			.returns(SyncPromise.resolve(/*don't care*/));

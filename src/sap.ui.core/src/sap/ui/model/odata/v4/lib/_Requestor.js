@@ -1060,7 +1060,7 @@ sap.ui.define([
 	 * Merges all GET requests that are marked as mergeable, have the same resource path and the
 	 * same query options besides $expand and $select. One request with the merged $expand and
 	 * $select is left in the queue and all merged requests get the response of this one remaining
-	 * request.
+	 * request. For $mergeRequests, see parameter fnMergeRequests of {@link #request}.
 	 *
 	 * @param {object[]} aRequests The batch queue
 	 * @returns {object[]} The adjusted batch queue
@@ -1074,6 +1074,9 @@ sap.ui.define([
 				if (oCandidate.$queryOptions && oRequest.url === oCandidate.url) {
 					_Helper.aggregateExpandSelect(oCandidate.$queryOptions, oRequest.$queryOptions);
 					oRequest.$resolve(oCandidate.$promise);
+					if (oCandidate.$mergeRequests && oRequest.$mergeRequests) {
+						oCandidate.$mergeRequests(oRequest.$mergeRequests());
+					}
 
 					return true;
 				}
@@ -1543,6 +1546,10 @@ sap.ui.define([
 	 *   Query options if it is allowed to merge this request with another request having the same
 	 *   sResourcePath (only allowed for GET requests); the resulting resource path is the path from
 	 *   sResourcePath plus the merged query options; may only contain $expand and $select
+	 * @param {function(string[]):string[]} [fnMergeRequests]
+	 *    Function which is called during merging of GET requests. If a merged request has a
+	 *    function given, this function will be called and its return value is
+	 *    given to the one remaining request's function as a parameter.
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request; it will be rejected with an error having the
 	 *   property <code>canceled = true</code> instead of sending a request if
@@ -1553,7 +1560,8 @@ sap.ui.define([
 	 * @public
 	 */
 	_Requestor.prototype.request = function (sMethod, sResourcePath, oGroupLock, mHeaders, oPayload,
-			fnSubmit, fnCancel, sMetaPath, sOriginalResourcePath, bAtFront, mQueryOptions) {
+			fnSubmit, fnCancel, sMetaPath, sOriginalResourcePath, bAtFront, mQueryOptions,
+			fnMergeRequests) {
 		var iChangeSetNo,
 			oError,
 			sGroupId = oGroupLock && oGroupLock.getGroupId() || "$direct",
@@ -1597,6 +1605,7 @@ sap.ui.define([
 						that.mFinalHeaders),
 					body : oPayload,
 					$cancel : fnCancel,
+					$mergeRequests : fnMergeRequests,
 					$metaPath : sMetaPath,
 					$queryOptions : mQueryOptions,
 					$reject : fnReject,
