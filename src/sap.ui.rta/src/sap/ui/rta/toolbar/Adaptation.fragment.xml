@@ -112,7 +112,7 @@
 								itemSelected=".onCommandCategorySelection"
 								class="sapUiRtaToolbarVisualizationSelection">
 							<MenuItem
-									id="sapUiRta_changesListItem" 
+									id="sapUiRta_changesListItem"
 									text="{visualizationModel>title}"
 									key="{visualizationModel>key}"
 									icon="{visualizationModel>icon}"
