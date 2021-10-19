@@ -1,8 +1,9 @@
 sap.ui.define([
 	"delegates/odata/v4/TableDelegate",
 	"sap/ui/mdc/Field",
-	"sap/ui/mdc/Link"
-], function (ODataTableDelegate, Field, Link) {
+	"sap/ui/mdc/Link",
+	"sap/ui/model/odata/type/Int32"
+], function (ODataTableDelegate, Field, Link, Int32Type) {
 	"use strict";
 	var BooksTableDelegate = Object.assign({}, ODataTableDelegate);
 
@@ -19,7 +20,7 @@ sap.ui.define([
 				}
 
 				if (oProperty.name === "genre_code") {
-					oProperty.fieldHelp = "FHGenre";
+					oProperty.fieldHelp = "FHGenreSingle";
 					oProperty.label = "Genre";
 				}
 
@@ -32,6 +33,10 @@ sap.ui.define([
 					oProperty.caseSensitive = false;
 				}
 
+				if (oProperty.name === "ID") {
+					oProperty.typeConfig.typeInstance = new Int32Type({groupingEnabled: false}, {nullable: false});
+				}
+
 			});
 
 			return aProperties;
@@ -41,7 +46,7 @@ sap.ui.define([
 	BooksTableDelegate._createColumnTemplate = function (oProperty) {
 
 		var oCtrlProperties = {
-			value: "{" + (oProperty.path || oProperty.name) + "}",
+			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
 			editMode: "Display",
 			width:"100%",
 			multipleLines: false

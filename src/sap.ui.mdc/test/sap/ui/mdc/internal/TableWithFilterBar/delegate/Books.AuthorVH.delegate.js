@@ -81,7 +81,7 @@ sap.ui.define([
 				case "template1":
 
 					oCurrentContent.setFilterBar(
-						new FilterBar({
+						new FilterBar(oCurrentContent.getId() + "--" +  "template1-FB",{
 							liveMode: false,
 							delegate: {name: "sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate", payload: {}},
 							basicSearchField: new FilterField({
@@ -93,7 +93,7 @@ sap.ui.define([
 								placeholder: "Search"
 							}),
 							filterItems: [
-								new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"ID", dataType:"Edm.Int32", conditions:"{$filters>/conditions/ID}" }),
+								new FilterField(oCurrentContent.getId() + "--" +  "template1-FB-AuthorId", { delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"ID", dataType:"Edm.Int32", dataTypeFormatOptions: {groupingEnabled: false}, conditions:"{$filters>/conditions/ID}" }),
 								new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Name", conditions:"{$filters>/conditions/name}" }),
 								new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Country of Origin", maxConditions:-1, conditions:"{$filters>/conditions/countryOfOrigin_code}"})
 							]
@@ -117,7 +117,7 @@ sap.ui.define([
 							template : new sap.m.ColumnListItem({
 								type: "Active",
 								cells: [
-									new sap.m.Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32'}"}),
+									new sap.m.Text(oCurrentContent.getId() + "--" +  "template1-AuthoId", {text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"}),
 									new sap.m.Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"}),
 									new sap.m.Text({text: "{path: 'countryOfOrigin_code', type:'sap.ui.model.odata.type.String'}"})
 								]
@@ -129,7 +129,7 @@ sap.ui.define([
 				default:
 
 					oCurrentContent.setFilterBar(
-						new FilterBar({
+						new FilterBar(oCurrentContent.getId() + "--" +  "default-FB", {
 							liveMode: false,
 							delegate: {name: "sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate", payload: {}},
 							basicSearchField: new FilterField({
@@ -141,7 +141,7 @@ sap.ui.define([
 								placeholder: "Search"
 							}),
 							filterItems: [
-								new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"ID", dataType:"Edm.Int32", conditions:"{$filters>/conditions/ID}" }),
+								new FilterField(oCurrentContent.getId() + "--" +  "default-FB-AuthorId", { delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"ID", dataType:"Edm.Int32", dataTypeFormatOptions: {groupingEnabled: false}, conditions:"{$filters>/conditions/ID}" }),
 								new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Name", conditions:"{$filters>/conditions/name}" }),
 								new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Date of Birth", maxConditions:-1, dataType:"Edm.Date", conditions:"{$filters>/conditions/dateOfBirth}"})
 							]
@@ -165,7 +165,7 @@ sap.ui.define([
 							template : new sap.m.ColumnListItem({
 								type: "Active",
 								cells: [
-									new sap.m.Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32'}"}),
+									new sap.m.Text(oCurrentContent.getId() + "--" +  "default-AuthorId", {text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"}),
 									new sap.m.Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"}),
 									new sap.m.Text({text: "{path: 'dateOfBirth', type:'sap.ui.model.odata.type.Date'}"})
 								]

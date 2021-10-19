@@ -125,8 +125,8 @@
 							<mdc:ValueHelp id="FH1"
 								delegate="{name: 'sap/ui/v4demo/delegate/Books.AuthorVH.delegate', payload: {}}">
 								<mdc:typeahead>
-									<mdcv:Popover title="Author ID">
-										<mdcvc:MTable keyPath="ID" descriptionPath="name">
+									<mdcv:Popover id="FH1-Popover" title="Author ID">
+										<mdcvc:MTable id="FH1-Popover-MTable" keyPath="ID" descriptionPath="name">
 											<Table id="mTable1" items='{path : "/Authors", length: 10}' width="30rem">
 												<columns>
 													<Column width="5rem">
@@ -143,7 +143,7 @@
 												<items>
 													<ColumnListItem type="Active">
 														<cells>
-															<Text text="{ID}" />
+															<Text text="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" />
 															<Text text="{name}" />
 														</cells>
 													</ColumnListItem>
@@ -153,8 +153,8 @@
 									</mdcv:Popover>
 								</mdc:typeahead>
 								<mdc:dialog>
-									<mdcv:Dialog title="Author ID">
-										<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search">
+									<mdcv:Dialog id="FH1-Dialog" title="Author ID">
+										<mdcvc:MTable id="FH1-Dialog-MTable" keyPath="ID" descriptionPath="name" filterFields="$search">
 											<mdcvc:collectiveSearchItems>
 												<core:Item text="Default" key="default"/>
 												<core:Item text="with Country" key="template1"/>
@@ -172,7 +172,7 @@
 															placeholder="Search" />
 													</vhfb:basicSearchField>
 													<vhfb:filterItems>
-														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" dataType= "Edm.Int32" dataTypeFormatOptions="{groupingEnabled: false}" conditions= "{$filters>/conditions/ID}" />
 														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions= "{$filters>/conditions/name}" />
 														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Date of Birth" dataType= "Edm.Date" maxConditions="-1" conditions= "{$filters>/conditions/dateOfBirth}" fieldHelp= "FH2">
 															<mdc:dependents>
@@ -210,7 +210,7 @@
 												<items>
 													<ColumnListItem type="Active">
 														<cells>
-															<Text text="{ID}" />
+															<Text id="mTable2-authorId" text="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" />
 															<Text text="{name}" />
 															<Text text="{dateOfBirth}" />
 														</cells>
@@ -620,7 +620,8 @@
 								id="ff1" label="Author ID"
 								conditions="{$filters>/conditions/author_ID}"
 								dataType="Edm.Int32"
-								required="false" fieldHelp="FH1" display="DescriptionValue"/>
+								dataTypeFormatOptions="{groupingEnabled: false}"
+								required="false" fieldHelp="FH1" display="Description"/>
 
 							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
 								id="ff2" label="Title"
@@ -789,20 +790,19 @@
 							<mdc:table.ResponsiveTableType growingMode="Scroll" />
 						</mdc:type>
 						<mdc:dependents>
-							<mdcf:FieldValueHelp title="Sub Genre" id="FHSubGenreSingle" keyPath="code"
-								descriptionPath="title"
-								delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
-								<mdcf:inParameters>
+							<mdc:ValueHelp id="FHSubGenreSingle"
+								delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+								<mdc:inParameters>
 									<mdcf:InParameter id="IOFFVHSub-In-Class-Single" value="{classification_code}" helpPath="classification_code" />
 									<mdcf:InParameter id="IOFFVHSub-In-Genre-Single" value="{genre_code}" helpPath="genre_code" />
-								</mdcf:inParameters>
-								<mdcf:outParameters>
+								</mdc:inParameters>
+								<mdc:outParameters>
 									<mdcf:OutParameter id="IOFFVHSub-Out-Class-Single" value="{classification_code}" helpPath="classification_code" />
 									<mdcf:OutParameter id="IOFFVHSub-Out-Genre-Single" value="{genre_code}" helpPath="genre_code" />
-								</mdcf:outParameters>
-								<mdcf:content>
-									<mdcf:FieldValueHelpMTableWrapper>
-										<mdcf:table>
+								</mdc:outParameters>
+								<mdc:typeahead>
+									<mdcv:Popover title="Sub Genre">
+										<mdcvc:MTable keyPath="code" descriptionPath="title" useAsValueHelp="true">
 											<Table items='{path : "/SubGenres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
 												<columns>
 													<Column>
@@ -837,10 +837,53 @@
 													</ColumnListItem>
 												</items>
 											</Table>
-										</mdcf:table>
-									</mdcf:FieldValueHelpMTableWrapper>
-								</mdcf:content>
-							</mdcf:FieldValueHelp>
+										</mdcvc:MTable>
+									</mdcv:Popover>
+								</mdc:typeahead>
+							</mdc:ValueHelp>
+							<mdc:ValueHelp id="FHGenreSingle"
+								delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+								<mdc:inParameters>
+									<mdcf:InParameter id="IOFFVHGenre-In-Class-Single" value="{classification_code}" helpPath="classification_code" />
+								</mdc:inParameters>
+								<mdc:outParameters>
+									<mdcf:OutParameter id="IOFFVHGenre-Out-Class-Single" value="{classification_code}" helpPath="classification_code" />
+								</mdc:outParameters>
+								<mdc:typeahead>
+									<mdcv:Popover title="Genre">
+										<mdcvc:MTable keyPath="code" descriptionPath="title" useAsValueHelp="true">
+											<Table items='{path : "/Genres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+												<columns>
+													<Column>
+														<header>
+															<Text text="Code" />
+														</header>
+													</Column>
+													<Column>
+														<header>
+															<Text text="Title" />
+														</header>
+													</Column>
+													<Column>
+														<header>
+															<Text text="Classification" />
+														</header>
+													</Column>
+												</columns>
+												<items>
+													<ColumnListItem type="Active">
+														<cells>
+															<Text text="{code}" />
+															<Text text="{title}" />
+															<Text text="{classification_code}" />
+														</cells>
+													</ColumnListItem>
+												</items>
+											</Table>
+										</mdcvc:MTable>
+									</mdcv:Popover>
+								</mdc:typeahead>
+							</mdc:ValueHelp>
 						</mdc:dependents>
 					</mdc:Table>
 				</VBox>
