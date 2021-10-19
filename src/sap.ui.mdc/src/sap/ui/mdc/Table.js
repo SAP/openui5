@@ -119,7 +119,6 @@ sap.ui.define([
 	 *        <b>Note:</b> The control is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
 	 * @extends sap.ui.mdc.Control
 	 * @author SAP SE
-	 * @constructor The API/behavior is not finalized and hence this control should not be used for productive usage.
 	 * @private
 	 * @experimental
 	 * @since 1.58

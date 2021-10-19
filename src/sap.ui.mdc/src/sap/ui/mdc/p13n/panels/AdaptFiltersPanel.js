@@ -29,10 +29,9 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
-	 * @class
+	 * @class The AdaptFiltersPanel is meant to provide a container for different filter personalization views.
 	 * @extends sap.ui.mdc.ui.Container
 	 * @author SAP SE
-	 * @constructor The AdaptFiltersPanel is meant to provide a container for different filter personalization views.
 	 * @private
 	 * @experimental
 	 * @since 1.85

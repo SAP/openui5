@@ -29,6 +29,8 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @since 1.54.0
+	 * @experimental As of version 1.54
+	 * @ui5-restricted sap.ui.mdc
 	 * @alias sap.ui.mdc.field.FieldInfoBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -37,7 +39,13 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.mdc",
 			events: {
+				/**
+				 * This event is fired if the data was updated.
+				 */
 				dataUpdate: {},
+				/**
+				 * This event is fired after the popover is opened.
+				 */
 				popoverAfterOpen: {}
 			}
 		}

@@ -57,11 +57,9 @@ sap.ui.define([
 			DrillStackHandler,
 			ChartTypeButton,
 			MeasureItemClass,
-			VizTooltip,
-			FILTER_INTERFACE = "sap.ui.mdc.IFilter";
+			VizTooltip;
 
 		/**
-		 /**
 		 * Constructor for a new Chart.
 		 *
 		 * @param {string} [sId] id for the new control, generated automatically if no id is given
@@ -192,7 +190,7 @@ sap.ui.define([
 					 */
 					_colorings: {
 						type: "object",
-						visibility: "_hidden",
+						visibility: "hidden",
 						byValue: true
 					},
 
@@ -304,7 +302,7 @@ sap.ui.define([
 					* @since 1.78
 				 	*/
 					filter: {
-						type: FILTER_INTERFACE,
+						type: "sap.ui.mdc.IFilter",
 						multiple: false
 					}
 				},
@@ -624,9 +622,10 @@ sap.ui.define([
 		/**
 		 * Calls the Delegates to bind the aggregation onto the inner chart
 		 *
-		 * @param {string} sName name of the aggregation
-		 * @param oBindingInfo binding info for the aggregation
-		 * @param sSearchText search text (optional)
+		 * @param {string} sName Name of a public aggregation to bind
+		 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo binding info for the aggregation
+		 * @param {string} [sSearchText] search text (optional)
+		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 *
 		 * @experimental
 		 * @private
