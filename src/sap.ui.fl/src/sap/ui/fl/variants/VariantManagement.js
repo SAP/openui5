@@ -363,6 +363,7 @@ sap.ui.define([
 
 		this.oVariantText.addStyleClass("sapUiFlVarMngmtClickable");
 		this.oVariantText.addStyleClass("sapUiFlVarMngmtTitle");
+		this.oVariantText.addStyleClass("sapMTitleStyleH3");
 		if (Device.system.phone) {
 			this.oVariantText.addStyleClass("sapUiFlVarMngmtTextPhoneMaxWidth");
 		} else {
@@ -388,7 +389,6 @@ sap.ui.define([
 		oVariantModifiedText.setVisible(false);
 		oVariantModifiedText.addStyleClass("sapUiFlVarMngmtModified");
 		oVariantModifiedText.addStyleClass("sapUiFlVarMngmtClickable");
-		oVariantModifiedText.addStyleClass("sapMTitleStyleH3");
 
 		this.oVariantPopoverTrigger = new ToggleButton(this.getId() + "-trigger", {
 			icon: "sap-icon://slim-arrow-down",
@@ -398,7 +398,6 @@ sap.ui.define([
 
 		this.oVariantPopoverTrigger.addAriaLabelledBy(this.oVariantInvisibleText);
 		this.oVariantPopoverTrigger.addStyleClass("sapUiFlVarMngmtTriggerBtn");
-
 		this.oVariantPopoverTrigger.addStyleClass("sapMTitleStyleH3");
 
 		this.oVariantLayout = new HorizontalLayout({
