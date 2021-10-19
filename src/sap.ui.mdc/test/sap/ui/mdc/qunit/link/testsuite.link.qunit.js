@@ -65,6 +65,11 @@ sap.ui.define(function() {
 				title: "PersonalizationSelectionPanelEndUser"
 			},
 			"link/opa/test/PersonalizationSelectionPanelKeyUser.opa": {
+				loader: {
+					paths: {
+						"testutils/opa": "test-resources/sap/ui/mdc/testutils/opa"
+					}
+				},
 				title: "PersonalizationSelectionPanelKeyUser"
 			},
 			"link/opa/test/PersonalizationSelectionPanelRestore.opa": {

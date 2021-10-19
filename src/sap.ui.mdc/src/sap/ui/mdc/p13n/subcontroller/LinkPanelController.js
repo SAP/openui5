@@ -21,11 +21,13 @@ sap.ui.define([
 		}
     });
 
-
     LinkPanelController.prototype.getUISettings = function() {
         return {
             contentWidth: "28rem",
             contentHeight: "35rem",
+            reset: {
+                warningText: oResourceBundle.getText("info.SELECTION_DIALOG_RESET_WARNING")
+            },
             title: oResourceBundle.getText("info.SELECTION_DIALOG_ALIGNEDTITLE")
         };
     };
@@ -36,7 +38,7 @@ sap.ui.define([
 
     LinkPanelController.prototype.getAdaptationUI = function(oPropertyHelper) {
         var oSelectionPanel = new SelectionPanel({
-            fieldColumn: "Select All",//TODO: bundle text,
+            fieldColumn: oResourceBundle.getText("info.SELECTION_DIALOG_COLUMNHEADER_WITHOUT_COUNT"),
             enableCount: true,
             linkPressed: this._onLinkPressed
         });

@@ -14,11 +14,11 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.test.actions.Action
 	 * @public
-	 * @alias sap.ui.mdc.ActionToolbarTesting.pages.OpenContextMenu
+	 * @alias sap.ui.mdc.actions.OpenContextMenu
 	 * @author SAP SE
 	 * @since 1.96
 	 */
-	var ContextMenu = Action.extend("sap.ui.mdc.ActionToolbarTesting.pages.OpenContextMenu", /** @lends sap.ui.mdc.ActionToolbarTesting.pages.OpenContextMenu.prototype */ {
+	var ContextMenu = Action.extend("sap.ui.mdc.actions.OpenContextMenu", /** @lends sap.ui.mdc.actions.OpenContextMenu.prototype */ {
 		metadata : {
 			publicMethods : [ "executeOn" ]
 		},
@@ -34,7 +34,7 @@ sap.ui.define([
 			var $ActionDomRef = this.$(oControl);
 
 			if ($ActionDomRef.length) {
-				this.oLogger.timestamp("sap.ui.comp.actions.ContextMenu");
+				this.oLogger.timestamp("sap.ui.mdc.actions.OpenContextMenu");
 				this.oLogger.debug("Right-clicked the control " + oControl);
 
 				this._tryOrSimulateFocusin($ActionDomRef, oControl);

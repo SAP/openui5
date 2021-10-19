@@ -16,10 +16,51 @@ sap.ui.define([
 		metadata: {
 			manifest: "json"
 		},
-
+		constructor: function() {
+			UIComponent.call(this, "applicationUnderTest");
+		},
 		init: function() {
-			UIComponent.prototype.init.apply(this, arguments);
+			this.enableFakeFLP();
+			FakeLrepConnectorLocalStorage.enableFakeConnector();
+			this.startMockServer();
 
+			UIComponent.prototype.init.apply(this, arguments);
+		},
+		destroy: function() {
+			this.oMockServer.stop();
+			this.oMockServer.destroy();
+			FakeLrepConnectorLocalStorage.disableFakeConnector();
+			FakeFlpConnector.disableFakeConnector();
+			// call the base component's destroy function
+			UIComponent.prototype.destroy.apply(this, arguments);
+		},
+		exit: function() {
+			FakeFlpConnector.disableFakeConnector();
+			FakeLrepConnectorLocalStorage.disableFakeConnector();
+		},
+		startMockServer: function() {
+			var sMockServerUrl = "/odata/";
+
+			this.oMockServer = new MockServer({
+				rootUri: sMockServerUrl
+			});
+
+			var sPath = sap.ui.require.toUrl("appUnderTest/localService");
+
+			// load local mock data
+			this.oMockServer.simulate(sPath + "/metadata.xml", {
+				sMockdataBaseUrl: sPath + "/mockdata",
+				bGenerateMissingMockData: true
+			});
+
+			// start
+			this.oMockServer.start();
+
+			this.setModel(new ODataModel(sMockServerUrl, {
+				defaultBindingMode: "TwoWay"
+			}));
+		},
+		enableFakeFLP: function() {
 			FakeFlpConnector.enableFakeConnector({
 				'appUnderTest_SemanticObjectName': {
 					links: [
@@ -98,33 +139,6 @@ sap.ui.define([
 					]
 				}
 			});
-			FakeLrepConnectorLocalStorage.enableFakeConnector();
-
-			var sMockServerUrl = "/odata/";
-
-			var oMockServer = new MockServer({
-				rootUri: sMockServerUrl
-			});
-
-			var sPath = sap.ui.require.toUrl("appUnderTest/localService");
-
-			// load local mock data
-			oMockServer.simulate(sPath + "/metadata.xml", {
-				sMockdataBaseUrl: sPath + "/mockdata",
-				bGenerateMissingMockData: true
-			});
-
-			// start
-			oMockServer.start();
-
-			this.setModel(new ODataModel(sMockServerUrl, {
-				defaultBindingMode: "TwoWay"
-			}));
-		},
-
-		exit: function() {
-			FakeFlpConnector.disableFakeConnector();
-			FakeLrepConnectorLocalStorage.disableFakeConnector();
 		}
 	});
 });

@@ -323,9 +323,10 @@ sap.ui.define([
 		var fResolveRTA;
 
 		//var aVMs = Engine.hasForReference(oControl, "sap.ui.fl.variants.VariantManagement");
+		// TODO: clarify if we need this error handling / what to do with the Link if we want to keep it
 		var aPVs = Engine.hasForReference(oControl, "sap.ui.mdc.p13n.PersistenceProvider");
 
-		if (aPVs.length > 0) {
+		if (aPVs.length > 0 && !oControl.isA("sap.ui.mdc.link.Panel")) {
 			return Promise.reject("Please do not use a PeristenceProvider in RTA.");
 		}
 
@@ -349,6 +350,9 @@ sap.ui.define([
 				oCustomHeader.getContentRight()[0].setVisible(false);
 			}
 			oContainer.addStyleClass(mPropertyBag.styleClass);
+			if (mPropertyBag.fnAfterClose instanceof Function) {
+				oContainer.attachAfterClose(mPropertyBag.fnAfterClose);
+			}
 		});
 
 		oRTAPromise.then(function(){
@@ -618,7 +622,8 @@ sap.ui.define([
 	 *
 	 * @returns {object} The requested UI settings of the control instance and provided keys
 	 */
-	Engine.prototype.getUISettings = function(vControl, aKeys) {
+	Engine.prototype.getUISettings = function(vControl, vKeys) {
+		var aKeys = Array.isArray(vKeys) ? vKeys : [vKeys];
 		this.verifyController(vControl, aKeys);
 		var oPropertyHelper = this._getRegistryEntry(vControl).helper;
 		var mUiSettings = {};
