@@ -1,241 +1,99 @@
 sap.ui.define([
-	"sap/ui/Device"
-], function(Device) {
-
+	"sap/ui/Device",
+	"./testsuite.mobile.qunit"
+], function(Device, ConfigMobile) {
 	"use strict";
-	return {
-		name: "QUnit TestSuite for sap.m",
-		defaults: {
-			bootCore: true,
+
+	var oConfig = {
+		name: "QUnit TestSuite for sap.m input controls",
+		defaults: ConfigMobile.defaults,
+		tests: {}
+	};
+	var aTestsToExecute = [
+		"ComboBox",
+		"DatePicker",
+		"DateRangeSelection",
+		"DateTimeField",
+		"DateTimeInput",
+		"DateTimePicker",
+		"FeedInput",
+		"Input",
+		"InputBase",
+		"MaskInput",
+		"MultiComboBox",
+		"MultiInput",
+		"StepInput",
+		"SuggestionsPopover",
+		"TextArea",
+		"TimePicker",
+		"Token",
+		"Tokenizer",
+		"ValueStateMessage"
+	];
+	var oInputUtilTests = {
+		"inputUtils/highlightDOMElements": {
+			title: "QUnit Page for sap.m.inputs.highlightDOMElements",
 			ui5: {
-				libs: "sap.m",
-				theme: "sap_belize",
-				noConflict: true,
-				preload: "auto",
-				"xx-waitForTheme": "init"
+				compatVersion: "1.81"
 			},
 			qunit: {
-				version: 1,
-				reorder: false
-			},
-			sinon: {
-				version: 1,
-				qunitBridge: true,
-				useFakeTimers: false
-			},
-			module: "./{name}.qunit"
+				version: 2
+			}
 		},
-		tests: {
-			ComboBox: {
-				title: "Test Page for sap.m.ComboBox",
-				_alternativeTitle: "QUnit tests: sap.m.ComboBox",
-				ui5: {
-					libs: "sap.m, sap.ui.layout",
-					language: "en"
-				},
-				sinon: {
-					useFakeTimers: true
-				}
+		"inputUtils/wordStartsWithValue": {
+			title: "QUnit Page for sap.m.inputs.wordStartsWithValue",
+			ui5: {
+				compatVersion: "1.81"
 			},
-			DatePicker: {
-				title: "DatePicker - sap.m",
-				_alternativeTitle: "QUnit tests: sap.m.DatePicker",
-				qunit: {
-					// one test checks a module for not being loaded, another checks it for being loaded
-					// -> order of tests is significant!
-					reorder: false
-				},
-				ui5: {
-					language: "en-US"
-				}
+			qunit: {
+				version: 2
+			}
+		},
+		"inputUtils/completeTextSelected": {
+			title: "QUnit Page for sap.m.inputs.completeTextSelected",
+			ui5: {
+				compatVersion: "1.83"
 			},
-			DateRangeSelection: {
-				title: "DateRangeSelection - sap.m",
-				_alternativeTitle: "QUnit tests: sap.m.DateRangeSelection",
-				ui5: {
-					language: "en-US"
-				}
+			qunit: {
+				version: 2
+			}
+		},
+		"inputUtils/scrollToItem": {
+			title: "QUnit Page for sap.m.inputs.scrollToItem",
+			ui5: {
+				compatVersion: "1.84"
 			},
-			DateTimeField: {
-				title: "DateTimeField - sap.m",
-				_alternativeTitle: "QUnit tests: sap.m.DatePicker",
-				ui5: {
-					language: "en-US"
-				},
-				qunit: {
-					version: 2
-				}
+			qunit: {
+				version: 2
+			}
+		},
+		"inputUtils/selectionRange": {
+			title: "QUnit Page for sap.m.inputs.selectionRange",
+			ui5: {
+				compatVersion: "1.88"
 			},
-			DateTimeInput: {
-				title: "Test Page for sap.m.DateTimeInput",
-				_alternativeTitle: "QUnit page for sap.m.DateTimeInput",
-				ui5: {
-					language: "en-US"
-				},
-				sinon: {
-					useFakeTimers: true
-				}
+			qunit: {
+				version: 2
+			}
+		},
+		"inputUtils/calculateSelectionStart": {
+			title: "QUnit Page for sap.m.inputs.calculateSelectionStart",
+			ui5: {
+				compatVersion: "1.88"
 			},
-			DateTimePicker: {
-				title: "DatePicker - sap.m",
-				_alternativeTitle: "QUnit tests: sap.m.DateTimePicker",
-				ui5: {
-					language: "en-US"
-				}
-			},
-			FeedInput: {
-				title: "Test Page for sap.m.FeedInput",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
-				coverage: {
-					only: "//sap\/m\/FeedInput.*/"
-				}
-			},
-			Input: {
-				title: "QUnit page for sap.m.Input",
-				sinon: {
-					useFakeTimers: true
-				}
-			},
-			InputBase: {
-				title: "QUnit tests: sap.m.InputBase",
-				sinon: {
-					useFakeTimers: true
-				}
-			},
-			MaskInput: {
-				title: "Test Page for sap.m.MaskInput",
-				_alternativeTitle: "QUnit page for sap.m.MaskInput",
-				ui5: {
-					language: "en-US",
-					bindingSyntax: "simple"
-				},
-				sinon: {
-					useFakeTimers: true
-				}
-			},
-			MultiComboBox: {
-				title: "QUnit tests: sap.m.MultiComboBox",
-				sinon: {
-					useFakeTimers: true
-				}
-			},
-			MultiInput: {
-				title: "QUnit page for sap.m.MultiInput",
-				sinon: {
-					useFakeTimers: true
-				}
-			},
-			StepInput: {
-				title: "QUnit Page for sap.m.StepInput",
-				sinon: {
-					useFakeTimers: true
-				}
-			},
-			SuggestionsPopover: {
-				title: "QUnit Page for sap.m.SuggestionsPopover",
-				ui5: {
-					compatVersion: "1.65"
-				},
-				qunit: {
-					version: 2
-				},
-				coverage: {
-					only: [
-						"sap/m/SuggestionsPopover"
-					]
-				}
-			},
-			"inputUtils/highlightDOMElements": {
-				title: "QUnit Page for sap.m.inputs.highlightDOMElements",
-				ui5: {
-					compatVersion: "1.81"
-				},
-				qunit: {
-					version: 2
-				}
-			},
-			"inputUtils/wordStartsWithValue": {
-				title: "QUnit Page for sap.m.inputs.wordStartsWithValue",
-				ui5: {
-					compatVersion: "1.81"
-				},
-				qunit: {
-					version: 2
-				}
-			},
-			"inputUtils/completeTextSelected": {
-				title: "QUnit Page for sap.m.inputs.completeTextSelected",
-				ui5: {
-					compatVersion: "1.83"
-				},
-				qunit: {
-					version: 2
-				}
-			},
-			"inputUtils/scrollToItem": {
-				title: "QUnit Page for sap.m.inputs.scrollToItem",
-				ui5: {
-					compatVersion: "1.84"
-				},
-				qunit: {
-					version: 2
-				}
-			},
-			"inputUtils/selectionRange": {
-				title: "QUnit Page for sap.m.inputs.selectionRange",
-				ui5: {
-					compatVersion: "1.88"
-				},
-				qunit: {
-					version: 2
-				}
-			},
-			"inputUtils/calculateSelectionStart": {
-				title: "QUnit Page for sap.m.inputs.calculateSelectionStart",
-				ui5: {
-					compatVersion: "1.88"
-				},
-				qunit: {
-					version: 2
-				}
-			},
-			TextArea: {
-				title: "Test Page for sap.m.TextArea",
-				_alternativeTitle: "QUnit page for sap.m.TextArea",
-				sinon: {
-					useFakeTimers: true
-				}
-			},
-			TimePicker: {
-				title: "Test Page for sap.m.TimePicker",
-				_alternativeTitle: "QUnit page for sap.m.TimePicker",
-				ui5: {
-					language: "en-US"
-				},
-				sinon: {
-					version: 4
-				}
-			},
-			Token: {
-				title: "Test Page for sap.m.Token",
-				_alternativeTitle: "QUnit page for sap.m.Token"
-			},
-			Tokenizer: {
-				title: "Test Page for sap.m.Tokenizer",
-				_alternativeTitle: "QUnit page for sap.m.Tokenizer"
-			},
-			ValueStateMessage: {
-				title: "Test page for sap.m.delegate.ValueStateMessage",
-				_alternativeTitle: "QUnit tests for sap.m.delegate.ValueStateMessage",
-				sinon: {
-					useFakeTimers: true
-				}
+			qunit: {
+				version: 2
 			}
 		}
 	};
+
+	aTestsToExecute.forEach(function (sTest) {
+		oConfig.tests[sTest] = ConfigMobile.tests[sTest];
+	});
+
+	for (var test in oInputUtilTests) {
+		oConfig.tests[test] = oInputUtilTests[test];
+	}
+
+	return oConfig;
 });
