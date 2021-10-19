@@ -38,18 +38,6 @@ sap.ui.define([
                     return p13nActions.iPersonalizeChart.call(this, oChart, sChartType, aConfigurations);
                 },
                 /**
-                 * OPA5 test action
-                 * @param {sap.ui.core.Control | string} oChart Instance / ID of the <code>MDCChartNew</code> that is filtered
-                 * @param {FilterPersonalizationConfiguration[]} aConfigurations Array containing the filter personalization configuration objects
-                 * @returns {Promise} OPA waitFor
-                 * 1. Opens the personalization dialog of a given chart.
-                 * 2. Executes the given FilterPersonalizationConfiguration.
-                 * 3. Closes the personalization dialog.
-                 */
-                iPersonalizeFilter: function(oChart, aConfigurations) {
-                return p13nActions.iPersonalizeFilter.call(this, oChart, aConfigurations);
-                },
-                /**
                  * @typedef {Object} SortPersonalizationConfiguration
                  * @property {string} key Key of the item that is the result of the personalization
                  * @property {boolean} descending Determines whether the sort direction is descending
