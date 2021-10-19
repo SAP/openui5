@@ -301,7 +301,7 @@ sap.ui.define([
 		var oListBinding = oTable.getBinding("items");
 		sinon.spy(oListBinding, "filter");
 		var oCondition = Condition.createCondition("EQ", ["3"], undefined, undefined, ConditionValidated.NotValidated);
-		oMTable.setProperty("_inConditions", {inValue: [oCondition]});
+		oMTable.setProperty("inConditions", {inValue: [oCondition]});
 		oMTable.onShow(); // to trigger filtering
 
 		// compare arguments of filter as Filter object is changed during filtering
@@ -355,7 +355,7 @@ sap.ui.define([
 		var oListBinding = oTable.getBinding("items");
 		sinon.spy(oListBinding, "filter");
 		var oCondition = Condition.createCondition("EQ", ["3"], undefined, undefined, ConditionValidated.NotValidated);
-		oMTable.setProperty("_inConditions", {inValue: [oCondition]});
+		oMTable.setProperty("inConditions", {inValue: [oCondition]});
 		oMTable.onShow(); // to trigger filtering
 
 		// compare arguments of filter as Filter object is changed during filtering

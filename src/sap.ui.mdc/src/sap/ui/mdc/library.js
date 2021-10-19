@@ -130,7 +130,7 @@ sap.ui.define([
 	 * Interface for valuehelp containers / contents supporting typeahead functionality
 	 *
 	 *
-	 * @since 1.94
+	 * @since 1.95
 	 * @name sap.ui.mdc.valuehelp.ITypeaheadContent
 	 * @interface
 	 * @private
@@ -313,7 +313,7 @@ sap.ui.define([
 	 * Interface for valuehelp containers
 	 *
 	 *
-	 * @since 1.94
+	 * @since 1.95
 	 * @name sap.ui.mdc.valuehelp.ITypeaheadContainer
 	 * @interface
 	 * @private
@@ -503,7 +503,7 @@ sap.ui.define([
 	 * Interface for valuehelp containers / contents supporting typeahead functionality
 	 *
 	 *
-	 * @since 1.94
+	 * @since 1.95
 	 * @name sap.ui.mdc.valuehelp.IDialogContent
 	 * @interface
 	 * @private
@@ -588,7 +588,7 @@ sap.ui.define([
 	 * Interface for valuehelp containers
 	 *
 	 *
-	 * @since 1.94
+	 * @since 1.95
 	 * @name sap.ui.mdc.valuehelp.IDialogContainer
 	 * @interface
 	 * @private

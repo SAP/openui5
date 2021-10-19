@@ -17,6 +17,22 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	/**
+	 * Constructor for a new <code>FixedList</code> content.
+	 *
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
+	 * @class Content for the <code>sap.ui.mdc.valuehelp.base.Container</code> element showing a list with fix values.
+	 * @extends sap.ui.mdc.valuehelp.base.Content
+	 * @version ${version}
+	 * @constructor
+	 * @abstract
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * @since 1.95.0
+	 * @alias sap.ui.mdc.valuehelp.content.FixedList
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	var FixedList = ListContent.extend("sap.ui.mdc.valuehelp.content.FixedList", /** @lends sap.ui.mdc.valuehelp.content.FixedList.prototype */
 	{
 		metadata: {
@@ -26,7 +42,10 @@ sap.ui.define([
 				"sap.ui.mdc.valuehelp.IDialogContent"
 			],
 			properties: {
-				groupable: {
+				/**
+				 * If set, the items of the list can be grouped
+				 */
+				 groupable: {
 					type: "boolean",
 					group: "Appearance",
 					defaultValue : false

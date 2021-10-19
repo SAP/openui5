@@ -35,7 +35,7 @@ sap.ui.define([
 	 * @abstract
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * @since 1.91.0
+	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.base.Content
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -109,26 +109,64 @@ sap.ui.define([
 				}
 			},
 			events: {
+				/**
+				 * Fired if the selected condition changed.
+				 */
 				select: {
 					parameters: {
+						/**
+						 * Type of the selection change (add, remove)
+						 */
 						type: { type: "sap.ui.mdc.enum.SelectType" },
+						/**
+						 * Changed conditions
+						 *
+						 * <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
+						 */
 						conditions: { type: "object[]" }
 					}
 				},
-				requestDelegateContent: {},
-				requestSwitchToDialog: {},
+				/**
+				 * Fired if a change on the content is confirmed
+				 */
 				confirm: {
 					parameters: {
+						/**
+						 * True if the value help need to be closed
+						 */
 						close: { type: "boolean" }
 					}
 				},
+				/**
+				 * Fired if the change is cancelled.
+				 */
 				cancel: {},
+				/**
+				 * Fired if the content requests the delegate content.
+				 */
+				requestDelegateContent: {},
+				/**
+				 * Fired if the value help should switch to dialog mode.
+				 */
+				requestSwitchToDialog: {},
+				/**
+				 * Fired if a navigation was executed in the content
+				 */
 				navigated: {
 					parameters: {
-						leaveFocus: { type: "boolean" },
+						/**
+						 * True if the focus should be set back to the field.
+						 */
+						bLeaveFocus: { type: "boolean" },
+						/**
+						 * Navigated condition.
+						 *
+						 * <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
+						 */
 						condition: { type: "object" },
-//						value: { type: "string" },
-//						key: { type: "string" },
+						/**
+						 * ID of the navigated item. (This is needed to set the corresponding aria-attribute)
+						 */
 						itemId: { type: "string" }
 					}
 				}
@@ -166,6 +204,14 @@ sap.ui.define([
 	};
 
 
+	/**
+	 * Gets the content controls
+	 *
+	 * @returns {Promise<sap.ui.core.Control>} This promise resolves after the content is created
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
+	 */
 	Content.prototype.getContent = function () {
 
 	};
@@ -193,21 +239,69 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Called if the content will be shown.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
+	 */
 	Content.prototype.onShow = function () {
 		this._bVisible = true;
 		this._handleConditionsUpdate();
 		//this._handleFilterValueUpdate();
 	};
 
+	/**
+	 * Called if the content will be hidden.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
+	 */
 	Content.prototype.onHide = function () {
 		this._bVisible = false;
 	};
 
+	/**
+	 * Determines the item (key and description) for a given value.
+	 *
+	 * The content checks if there is an item with a key or description that fits this value.
+	 *
+	 * <b>Note:</b> This function must only be called by the <code>Container</code> element.
+	 *
+	 * @param {object} oConfig Configuration
+	 * @param {any} oConfig.value Value as entered by user
+	 * @param {any} [oConfig.parsedValue] Value parsed by type to fit the data type of the key
+	 * @param {object} [oConfig.inParameters] In parameters for the key (as a key must not be unique.)
+	 * @param {object} [oConfig.outParameters] Out parameters for the key (as a key must not be unique.)
+	 * @param {sap.ui.model.Context} [oConfig.bindingContext] <code>BindingContext</code> of the checked field. Inside a table the <code>ValueHelp</code> element might be connected to a different row.
+	 * @param {boolean} [oConfig.checkKeyFirst] If set, the content checks first if the value fits a key // TODO: not longer needed?
+	 * @param {boolean} oConfig.checkKey If set, the content checks only if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
+	 * @param {boolean} oConfig.checkDescription If set, the content checks only if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
+	 * @param {sap.ui.mdc.condition.ConditionModel} [oConfig.conditionModel] <code>ConditionModel</code>, in case of <code>FilterField</code>
+	 * @param {string} [oConfig.conditionModelName] Name of the <code>ConditionModel</code>, in case of <code>FilterField</code>
+	 * @param {boolean} [oConfig.caseSensitive] If set, the check is done case sensitive
+	 * @returns {Promise<sap.ui.mdc.field.FieldHelpItem>} Promise returning object containing description, key, in and out parameters.
+	 * @throws {sap.ui.model.FormatException|sap.ui.model.ParseException} if entry is not found or not unique
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Content.prototype.getItemForValue = function (oConfig) {
 
 	};
 
-	Content.prototype.isValidationSupported = function(oConfig) { // TODO only for TypeAhead content
+	/**
+	 * Defines if the content can be used for input validation.
+	 *
+	 * @returns {boolean} True if content can be used for input validation
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	Content.prototype.isValidationSupported = function() { // TODO only for TypeAhead content
+		return false;
 	};
 
 	Content.prototype.getScrollDelegate = function() {
@@ -240,20 +334,20 @@ sap.ui.define([
 	/**
 	 * Creates a condition based on the used operator.
 	 *
-	 * @param {string} sKey Operator for the condition
-	 * @param {string} sDescription Description of the operator
-	 * @param {object} oInParameters In parameters of the condition
-	 * @param {object} oOutParameters Out parameters of the condition
+	 * @param {string} vValue Value of the condition. For item conditions this must be the key.
+	 * @param {string} [sDescription] Description of the operator
+	 * @param {object} [oInParameters] In parameters of the condition
+	 * @param {object} [oOutParameters] Out parameters of the condition
 	 * @returns {sap.ui.mdc.condition.ConditionObject} The new condition object with the maintained operator along with <code>sKey</code> and <code>sDescription</code> as <code>aValues</code>
 	 * @private
 	 * @ui5-restricted FieldHelp subclasses
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	Content.prototype._createCondition = function(sKey, sDescription, oInParameters, oOutParameters) {
+	Content.prototype._createCondition = function(vValue, sDescription, oInParameters, oOutParameters) {
 
 		var oOperator = _getOperator.call(this);
 
-		var aValues = [sKey];
+		var aValues = [vValue];
 		if (oOperator.valueTypes.length > 1 && oOperator.valueTypes[1] !== Operator.ValueType.Static && sDescription !== null && sDescription !== undefined) {
 			// description is supported
 			aValues.push(sDescription);
@@ -276,6 +370,20 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Triggers navigation in the content.
+	 *
+	 * As this could be asyncron as data might be loaded a promise is returned.
+	 *
+	 * <b>Note:</b> This function must only be called by the <code>Container</code> element.
+	 *
+	 * @param {int} iStep Number of steps for navigation (e.g. 1 means next item, -1 means previous item)
+	 * @returns {Promise<object>} Promise returning object of navigated item (condition and itemId)
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Container
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Content.prototype.navigate = function(iStep) {
 
 	};
@@ -290,6 +398,16 @@ sap.ui.define([
 		return Element.prototype.getUIArea.apply(this, arguments);
 	};
 
+	/**
+	 * Determines if the container of the content is used as typeAhead inside the value help
+	 *
+	 * <b>Note:</b> This function is used by the content and must not be used from outside
+	 *
+	 * @returns {boolean} True if used as typeahead
+	 *
+	 * @private
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Content.prototype.isTypeahead = function () {
 		var oContainer = this.getParent();
 		return oContainer && oContainer.isTypeahead();
@@ -458,6 +576,18 @@ sap.ui.define([
 		return this._oOperator;
 	}
 
+	/**
+	 * Determines the title used in the TabBar of the dialog.
+	 *
+	 * <b>Note:</b> This function is used by the container and must not be used from outside
+	 *
+	 * @param {int} iCount Number of selected items or conditions
+	 * @returns {string} title
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Content.prototype.getFormattedTitle = function(iCount) {
 		var sTitle = this.getTitle();
 		if (sTitle) {
@@ -466,6 +596,17 @@ sap.ui.define([
 		return sTitle;
 	};
 
+	/**
+	 * Determines the title used in the header of the dialog.
+	 *
+	 * <b>Note:</b> This function is used by the container and must not be used from outside
+	 *
+	 * @returns {string} title
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Content.prototype.getFormattedShortTitle = function() {
 		return this.getShortTitle();
 	};

@@ -8,11 +8,8 @@ sap.ui.define([
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterConverter',
 	'sap/ui/mdc/enum/ConditionValidated',
-	'sap/ui/model/FilterType',
-	'sap/base/Log',
 	'sap/base/util/deepEqual',
 	'sap/ui/mdc/util/Common',
-	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/model/base/ManagedObjectModel',
 	'sap/m/MessageToast'
 ], function(
@@ -21,16 +18,29 @@ sap.ui.define([
 	Condition,
 	FilterConverter,
 	ConditionValidated,
-	FilterType,
-	Log,
 	deepEqual,
 	Common,
-	ManagedObjectObserver,
 	ManagedObjectModel,
 	MessageToast
 ) {
 	"use strict";
 
+	/**
+	 * Constructor for a new <code>FilterableListContent</code>.
+	 *
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
+	 * @class Content for the <code>sap.ui.mdc.valuehelp.base.Container</code> element.
+	 * @extends sap.ui.mdc.valuehelp.base.ListContent
+	 * @version ${version}
+	 * @constructor
+	 * @abstract
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * @since 1.95.0
+	 * @alias sap.ui.mdc.valuehelp.base.FilterableListContent
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	var FilterableListContent = ListContent.extend("sap.ui.mdc.valuehelp.base.FilterableListContent", /** @lends sap.ui.mdc.valuehelp.base.FilterableListContent.prototype */
 	{
 		metadata: {
@@ -74,7 +84,7 @@ sap.ui.define([
 				/**
 				 * Internal property to allow to bind the conditions created by InParameters to content
 				 */
-				_inConditions: {
+				inConditions: {
 					type: "object",
 					defaultValue: {},
 					byValue: true//,
@@ -83,7 +93,7 @@ sap.ui.define([
 				/**
 				 * Internal property to allow to bind the paths used by OutParameters to content
 				 */
-				_outParameters: {
+				outParameterNames: {
 					type: "string[]",
 					defaultValue: [],
 					byValue: true//,
@@ -91,15 +101,24 @@ sap.ui.define([
 				}
 			},
 			aggregations: {
+				/**
+				 * Items used for collective search. If none assigned, no collective search is available.
+				 */
 				collectiveSearchItems: {
 					type: "sap.ui.core.Item",
 					multiple: true,
 					singularName : "collectiveSearchItem"
 				},
+				/**
+				 * FilterBar
+				 */
 				filterBar: {
 					type: "sap.ui.mdc.filterbar.FilterBarBase",
 					multiple: false
 				},
+				/**
+				 * Default FilterBar, ceated internally if none given.
+				 */
 				_defaultFilterBar: {
 					type: "sap.ui.mdc.filterbar.FilterBarBase",
 					multiple: false,
@@ -119,11 +138,11 @@ sap.ui.define([
 
 		this._oObserver.observe(this, {
 			aggregations: ["_defaultFilterBar", "filterBar"],
-			properties: ["_inConditions"]
+			properties: ["inConditions"]
 		});
 
-		this.bindProperty("_inConditions", { path: "/_inConditions", model: "$valueHelp"}); // inherit from ValueHelp
-		this.bindProperty("_outParameters", { path: "/_outParameters", model: "$valueHelp"}); // inherit from ValueHelp
+		this.bindProperty("inConditions", { path: "/_inConditions", model: "$valueHelp"}); // inherit from ValueHelp
+		this.bindProperty("outParameterNames", { path: "/_outParameters", model: "$valueHelp"}); // inherit from ValueHelp
 	};
 
 	FilterableListContent.prototype._handleFilterValueUpdate = function (oChanges) {
@@ -184,12 +203,12 @@ sap.ui.define([
 
 		var aInParameters = oOptions && oOptions.inParameters || [];
 		if (aInParameters.length === 0) {
-			for (sPath in this.getProperty("_inConditions")) {
+			for (sPath in this.getProperty("inConditions")) {
 				aInParameters.push(sPath);
 			}
 		}
 
-		var aOutParameters = oOptions && oOptions.outParameters || this.getProperty("_outParameters");
+		var aOutParameters = oOptions && oOptions.outParameters || this.getProperty("outParameterNames");
 		var oInParameters = aInParameters.length > 0 ? {} : null;
 		var oOutParameters = aOutParameters.length > 0 ? {} : null;
 
@@ -393,7 +412,7 @@ sap.ui.define([
 			if (oChanges.name === "collectiveSearchItems") {
 				this._assignCollectiveSearch(true);
 			}
-			if (oChanges.name === "_inConditions") {
+			if (oChanges.name === "inConditions") {
 				_addInParameterToFilterBar.call(this, this._getPriorityFilterBar(), oChanges.current);
 			}
 
@@ -419,7 +438,7 @@ sap.ui.define([
 						oExistingBasicSearchField.setConditions([]);
 					}
 					this._assignCollectiveSearch();
-					_addInParameterToFilterBar.call(this, oFilterBar, this.getProperty("_inConditions"));
+					_addInParameterToFilterBar.call(this, oFilterBar, this.getProperty("inConditions"));
 					_addFilterValueToFilterBar.call(this, oFilterBar, this.getFilterValue());
 				}
 			}

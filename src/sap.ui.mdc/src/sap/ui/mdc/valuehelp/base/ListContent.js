@@ -11,6 +11,22 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	/**
+	 * Constructor for a new <code>ListContent</code>.
+	 *
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
+	 * @class Content for the <code>sap.ui.mdc.valuehelp.base.Container</code> element.
+	 * @extends sap.ui.mdc.valuehelp.base.Content
+	 * @version ${version}
+	 * @constructor
+	 * @abstract
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * @since 1.95.0
+	 * @alias sap.ui.mdc.valuehelp.base.ListContent
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	var ListContent = Content.extend("sap.ui.mdc.valuehelp.base.ListContent", /** @lends sap.ui.mdc.valuehelp.base.ListContent.prototype */
 	{
 		metadata: {
@@ -22,8 +38,6 @@ sap.ui.define([
 				 * If <code>$search</code> is used, this property has no effect on the <code>$search</code> request.
 				 *
 				 * If the used back-end service supports a case-insensitive search, set this property to <code>false</code>.
-				 *
-				 * @since 1.89.0
 				 */
 				caseSensitive: {
 					type: "boolean",
@@ -54,9 +68,8 @@ sap.ui.define([
 				 * Sets the in parameters of a field help.
 				 *
 				 * If set, the field help reads the data of these entities in the model and uses it to filter in the value help.
-				 * @since 1.66.0
 				 */
-				 inParameters: {
+				inParameters: {
 					type: "sap.ui.mdc.field.InParameter",
 					group: "Data",
 					multiple: true
@@ -66,7 +79,6 @@ sap.ui.define([
 				 * Sets the out parameters of a field help.
 				 *
 				 * If set, the fields sets the data of these entities in the model based to the selected values.
-				 * @since 1.66.0
 				 */
 				outParameters: {
 					type: "sap.ui.mdc.field.OutParameter",

@@ -14,6 +14,23 @@ sap.ui.define([
 	"use strict";
 
 	var MPopover, MLibrary, Toolbar, ToolbarSpacer;
+
+	/**
+	 * Constructor for a new <code>Popover</code> container.
+	 *
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
+	 * @class Container for the <code>sap.ui.mdc.ValueHelp</code> element showing a popover.
+	 * @extends sap.ui.mdc.valuehelp.base.Container
+	 * @version ${version}
+	 * @constructor
+	 * @abstract
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * @since 1.95.0
+	 * @alias sap.ui.mdc.valuehelp.Popover
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	var Popover = Container.extend("sap.ui.mdc.valuehelp.Popover", /** @lends sap.ui.mdc.valuehelp.Popover.prototype */
 	{
 		metadata: {
@@ -141,7 +158,7 @@ sap.ui.define([
 				oContent.detachEvent("contentUpdated", _setContainerHeight, this);
 				oContent.detachNavigated(this._handleNavigated, this);
 			} else {
-				oContent.attachEvent("contentUpdated", _setContainerHeight, this);
+				oContent.attachEvent("contentUpdated", _setContainerHeight, this); // TODO: put event in content interface ot check existance?
 			}
 		}
 		Container.prototype._observeChanges.apply(this, arguments);
