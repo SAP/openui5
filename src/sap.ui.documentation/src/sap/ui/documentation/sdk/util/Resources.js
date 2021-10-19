@@ -33,7 +33,8 @@
 			return sOrigin + sVersionPrefixPath + this._formatPath(sPath);
 		},
 		getHasProxy: function () {
-			return new window.URLSearchParams(window.location.search).get('sap-ui-xx-unifiedResources') != null;
+			return new window.URLSearchParams(window.location.search).get('sap-ui-xx-unifiedResources') != null ||
+				window["sap-ui-unified-resources"];
 		},
 		getResourcesVersion: function() {
 			return this.getHasProxy() && window.sessionStorage.getItem("versionPrefixPath") || "";
