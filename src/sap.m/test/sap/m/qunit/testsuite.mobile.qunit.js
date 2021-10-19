@@ -1332,6 +1332,51 @@ sap.ui.define([
 					useFakeTimers: false // some tests activate it
 				}
 			},
+			"table.ColumnMenu": {
+				title: "Test Page for sap.m.table.ColumnMenu",
+				module: "test-resources/sap/m/qunit/table/ColumnMenu.qunit",
+				paths: {
+					resourceroot: "test-resources/sap/m/qunit/table"
+				},
+				sinon: {
+					useFakeTimers: true
+				}
+			},
+			"table.ColumnMenuEntry": {
+				title: "Test Page for sap.m.table.ColumnMenuEntry",
+				module: "test-resources/sap/m/qunit/table/ColumnMenuEntry.qunit",
+				paths: {
+					resourceroot: "test-resources/sap/m/qunit/table"
+				}
+			},
+			"table.Item": {
+				title: "Test Page for sap.m.table.Item",
+				module: "test-resources/sap/m/qunit/table/Item.qunit",
+				paths: {
+					resourceroot: "test-resources/sap/m/qunit/table"
+				}
+			},
+			"table.ItemBase": {
+				title: "Test Page for sap.m.table.ItemBase",
+				module: "test-resources/sap/m/qunit/table/ItemBase.qunit",
+				paths: {
+					resourceroot: "test-resources/sap/m/qunit/table"
+				}
+			},
+			"table.QuickAction": {
+				title: "Test Page for sap.m.table.QuickAction",
+				module: "test-resources/sap/m/qunit/table/QuickAction.qunit",
+				paths: {
+					resourceroot: "test-resources/sap/m/qunit/table"
+				}
+			},
+			"table.QuickActionBase": {
+				title: "Test Page for sap.m.table.QuickActionBase",
+				module: "test-resources/sap/m/qunit/table/QuickActionBase.qunit",
+				paths: {
+					resourceroot: "test-resources/sap/m/qunit/table"
+				}
+			},
 			Text: {
 				title: "QUnit Tests - sap.m.Text"
 			},

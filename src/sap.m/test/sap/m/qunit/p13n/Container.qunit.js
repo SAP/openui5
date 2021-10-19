@@ -94,4 +94,30 @@ sap.ui.define([
         assert.equal(oList.getItems()[1].getTitle(), "panel2", "tab correct text");
         assert.equal(oList.getItems()[2].getTitle(), "panel3", "tab correct text");
     });
+
+    QUnit.test("check separator", function (assert) {
+        this.oP13nContainer.setListLayout(true);
+
+        this.oP13nContainer.addView(new AbstractContainerItem({
+            key: "panel1",
+            text: "panel1",
+            content: new Button()
+        }));
+        this.oP13nContainer.addView(new AbstractContainerItem({
+            key: "panel2",
+            text: "panel2",
+            content: new Button()
+        }));
+        this.oP13nContainer.addSeparator();
+        this.oP13nContainer.addView(new AbstractContainerItem({
+            key: "panel3",
+            text: "panel3",
+            content: new Button()
+        }));
+
+        var oList = this.oP13nContainer._getNavigationList();
+
+        assert.ok(oList.getItems()[1].hasStyleClass("sapMMenuDivider"));
+        assert.notOk(oList.getItems()[2].hasStyleClass("sapMMenuDivider"));
+    });
 });
