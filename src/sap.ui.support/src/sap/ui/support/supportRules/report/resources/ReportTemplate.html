@@ -1,97 +1,45 @@
-<style type="text/css">
-	body {
-		font-family: "72-Web", Arial, Helvetica, sans-serif;
-	}
-	main > header > h1 {
-		font-size: 1.8em;
-	}
-	section h1 {
-		font-size: 1.2em;
-	}
-	table {
-		font-size: 0.9em;
-	}
-	.sapUiSupportTechInfoCntnt td:first-child {
-		width: 12%;
-	}
-	.sapUiSupportTechInfoCntnt .sapUiSupportTitle td {
-		padding-top: 10px;
-	}
-	.sapUiSupportTechInfoCntnt .sapUiSupportTitle label {
-		padding-left: 4px;
-		font-size: 18px;
-		font-weight: bold;
-	}
-	.sapUiIssueGroupContent {
-		margin-top: 8px;
-	}
-	.unchecked::before {
-		vertical-align: middle;
-		display: inline-block;
-		width: 16px;
-		height: 16px;
-		content: "";
-		background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='%23333333'><path d='M42,3 C42.8125041,3 43.515622,3.28124719 44.109375,3.84375 C44.703128,4.40625281 45,5.12499563 45,6 L45,42 C45,42.8750044 44.703128,43.5937472 44.109375,44.15625 C43.515622,44.7187528 42.8125041,45 42,45 L6,45 C5.12499563,45 4.40625281,44.7187528 3.84375,44.15625 C3.28124719,43.5937472 3,42.8750044 3,42 L3,6 C3,5.12499563 3.28124719,4.40625281 3.84375,3.84375 C4.40625281,3.28124719 5.12499563,3 6,3 L42,3 Z M42,6 L6,6 L6,42 L42,42 L42,6 Z'></path></svg>") no-repeat;
-	}
-	.checked::before {
-		vertical-align: middle;
-		display: inline-block;
-		width: 16px;
-		height: 16px;
-		content: "";
-		background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='%23333333'><path d='M42,30 L45,30 L45,42 C45,42.8750044 44.703128,43.5937472 44.109375,44.15625 C43.515622,44.7187528 42.8125041,45 42,45 L6,45 C5.12499563,45 4.40625281,44.7187528 3.84375,44.15625 C3.28124719,43.5937472 3,42.8750044 3,42 L3,6 C3,5.18749594 3.28124719,4.48437797 3.84375,3.890625 C4.40625281,3.29687203 5.12499563,3 6,3 L18,3 L18,6 L6,6 L6,42 L42,42 L42,30 Z M47.625,2.34375 C48.0625022,2.78125219 48.1250016,3.28124719 47.8125,3.84375 L30.46875,29.34375 C30.2812491,29.7187519 29.9687522,29.9374997 29.53125,30 C29.0937478,30.0625003 28.7187516,29.9375016 28.40625,29.625 L16.6875,16.59375 C16.1249972,16.0312472 16.1249972,15.4687528 16.6875,14.90625 L18.65625,12.9375 C19.2812531,12.3124969 19.8749972,12.3124969 20.4375,12.9375 L27.9375,20.4375 C28.2500016,20.7500016 28.609373,20.8750003 29.015625,20.8125 C29.421877,20.7499997 29.7187491,20.5000022 29.90625,20.0625 L43.59375,0.65625 C43.7812509,0.281248125 44.078123,0.0625003125 44.484375,0 C44.890627,-0.0625003125 45.2499984,0.0624984375 45.5625,0.375 L47.625,2.34375 Z'></path></svg>") no-repeat;
-	}
-	td .unchecked::before,
-	td .checked::before {
-		margin-right: 8px;
-	}
-</style>
-
-{{getStyles metadata.styles}}
-
-<main>
-	<header>
-		<h1>{{metadata.title}}</h1>
-		<div>Generated on (<time>{{metadata.timestamp}}</time>)</div>
-		<div class="bottom-margin-small">{{metadata.analysisDurationTitle}}: <time>{{metadata.analysisDuration}}</time></div>
-		<div>{{getScope metadata.scope}}</div>
-	</header>
-	<div>
-		<section id="section_selected-rules">
-			<div class="expandable-control collapsed-content" data-expandableElement="selectedRulesContent"><h1 class="expandable-title">{{{metadata.title_SelectedRules}}}</h1></div>
-			<div id="selectedRulesContent">
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Support Assistant Report</title>
+		<link rel="stylesheet" href="{{baseUrl}}styles.css">
+	</head>
+	<body>
+		<div id="sap-report-content">
+			<main>
+				<header>
+					<h1>{{metadataTitle}}</h1>
+					<div>Generated on (<time>{{metadataTimestamp}}</time>)</div>
+					<div class="bottom-margin-small">{{metadataAnalysisDurationTitle}}: <time>{{metadataAnalysisDuration}}</time></div>
+					<div>{{metadataScope}}</div>
+				</header>
 				<div>
-					Rule Preset / ID :
-					{{#if rulePreset}}
-						<strong>{{rulePreset.title}} / {{rulePreset.id}}</strong>
-					{{else}}
-						none
-					{{/if}}
+					<section id="section_selected-rules">
+						<div class="expandable-control collapsed-content" data-expandableElement="selectedRulesContent"><h1 class="expandable-title">{{metadataTitleSelectedRules}}</h1></div>
+						<div id="selectedRulesContent">
+							<div>
+								Rule Preset / ID : {{rulePreset}}
+							</div>
+							{{rules}}
+						</div>
+					</section>
+					<section id="section_technical-details">
+						<div class="expandable-control collapsed-content" data-expandableElement="technicalInfoContent"><h1 class="expandable-title">{{metadataTitleTechnicalInfo}}</h1></div>
+						<div id="technicalInfoContent">{{technicalInfo}}</div>
+					</section>
+					<section id="section_app-info">
+						<div class="expandable-control collapsed-content" data-expandableElement="appInfoContent"><h1 class="expandable-title">{{metadataTitleAppInfo}}</h1></div>
+						<div id="appInfoContent">{{appInfo}}</div>
+					</section>
+					<section id="section_issues">
+						<div class="expandable-control collapsed-content" data-expandableElement="issuesContent"><h1 class="expandable-title">{{metadataTitleIssues}}</h1></div>
+						<div id="issuesContent">{{issues}}</div>
+					</section>
 				</div>
-				{{getRules rules}}
-			</div>
-		</section>
-		<section id="section_technical-details">
-			<div class="expandable-control collapsed-content" data-expandableElement="technicalInfoContent"><h1 class="expandable-title">{{metadata.title_TechnicalInfo}}</h1></div>
-			<div id="technicalInfoContent">{{getTechnicalInformation technicalInfo}}</div>
-		</section>
-		<section id="section_app-info">
-			<div class="expandable-control collapsed-content" data-expandableElement="appInfoContent"><h1 class="expandable-title">{{metadata.title_AppInfo}}</h1></div>
-			<div id="appInfoContent">{{getAppInfo appInfo}}</div>
-		</section>
-		<section id="section_issues">
-			<div class="expandable-control collapsed-content" data-expandableElement="issuesContent"><h1 class="expandable-title">{{metadata.title_Issues}}</h1></div>
-			<div id="issuesContent">{{getIssues issues}}</div>
-		</section>
-	</div>
-	<footer>
-	</footer>
-</main>
-
-{{getScripts metadata.scripts}}
-
-<script>
-	window.sapUiSupportReport.collapseExpand.init();
-	window.sapUiSupportReport.filter.init();
-</script>
-
+				<footer>
+				</footer>
+			</main>
+		</div>
+		<script src="{{baseUrl}}index.js"></script>
+	</body>
+</html>

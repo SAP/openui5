@@ -8,8 +8,6 @@
 sap.ui.define(['jquery.sap.global'], function(jQuery) {
 	'use strict';
 
-	var _OPARenderingInitialized = false;
-
 	function getEscapedString(value) {
 		if (value) {
 			if (Array.isArray(value)) {
@@ -177,47 +175,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 		return '<div>' + content + '</div>';
 	}
 
-	/**
-	 * Creates an html string containing the issues and appends it to the OPA html page
-	 * @param {Object} issues - the issues in viewmodel format
-	 * @returns {String}
-	 */
-	function renderIssuesForOPA(issues) {
-		if (!jQuery("#qunit") || !issues) {
-			return;
-		}
-
-		// TODO: Add rendered issues to a buffer and render all of them at the same time at the end of the OPA test.
-		var element = jQuery(this.render(issues));
-		jQuery("#qunit").append(element);
-
-		if (!_OPARenderingInitialized) {
-			var styles = [
-				jQuery.sap.getResourcePath('sap/ui/support/supportRules/report/resources/styles.css'),
-				jQuery.sap.getResourcePath('sap/ui/support/supportRules/report/resources/collapseExpand.css'),
-				jQuery.sap.getResourcePath('sap/ui/support/supportRules/report/resources/filter.css')
-			];
-			var collapseExpandUrl = jQuery.sap.getResourcePath('sap/ui/support/supportRules/report/resources/collapseExpand.js');
-			var filterUrl = jQuery.sap.getResourcePath('sap/ui/support/supportRules/report/resources/filter.js');
-
-			jQuery.each(styles, function (index, value) {
-				jQuery('<link>').appendTo('head').attr({ type: 'text/css', rel: 'stylesheet', href: value });
-			});
-			jQuery.getScript(collapseExpandUrl, function () {
-				window.sapUiSupportReport.collapseExpand.init();
-			});
-			jQuery.getScript(filterUrl, function () {
-				window.sapUiSupportReport.filter.init();
-			});
-			_OPARenderingInitialized = true;
-		} else {
-			window.sapUiSupportReport.collapseExpand.init();
-			window.sapUiSupportReport.filter.init();
-		}
-	}
-
 	return {
-		render: render,
-		renderIssuesForOPA: renderIssuesForOPA
+		render: render
 	};
 }, true);
