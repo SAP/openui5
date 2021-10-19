@@ -245,3 +245,36 @@ html[data-sap-ui-animation="off"] {
 		opacity: 1;
 	}
 }
+
+// =====================================
+// =====================================
+// Delta Styles for Horizon
+// =====================================
+
+.sapUxAPAnchorBarFiori3Height, .sapUiSizeCompact .sapUxAPAnchorBar,
+.sapUxAPAnchorBar, .sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
+.sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowLeft,
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowLeft,
+.sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowRight,
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowRight,
+.sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight,
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight,
+.sapUiSizeCompact .sapUxAPAnchorBar .anchorBarArrow>.sapUiHLayoutChildWrapper,
+.sapUxAPAnchorBar .anchorBarArrow>.sapUiHLayoutChildWrapper,
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton,
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMSB.sapMSBTransparent,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMSB.sapMSBTransparent, .sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner {
+    box-shadow: none;
+}
+
+.sapUxAPAnchorBarButton .sapMBtnInner {
+    font-weight: bold;
+}
+
+// Removal of capital style in older nav bars
+.sapUxAPAnchorBarUpperCase .sapUxAPAnchorBarButton, .sapUxAPAnchorBarUpperCase .sapUxAPAnchorBarButton .sapMBtn {
+    text-transform: none;
+}
