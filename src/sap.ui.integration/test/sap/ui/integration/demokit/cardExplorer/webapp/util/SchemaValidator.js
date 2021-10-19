@@ -132,9 +132,9 @@ sap.ui.define([
 	 */
 	SchemaValidator.validate = function (oManifest) {
 		return SchemaValidator._initValidate()
-			.catch(function () {
-				Log.error("Could not initialize Validator. Schema validation skipped!!!");
-				throw "Could not initialize Validator. Schema validation skipped!!!";
+			.catch(function (oError) {
+				Log.error("Could not initialize Validator. Schema validation skipped! " + oError);
+				throw "Could not initialize Validator. Schema validation skipped!";
 			})
 			.then(function (fnValidate) {
 				var bValid = fnValidate(oManifest);
