@@ -575,24 +575,8 @@
           ]
         },
         "info": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "value": {
-              "type": "string",
-              "description": "The value of the field"
-            },
-            "state": {
-              "oneOf": [
-                {
-                  "$ref": "#/definitions/state"
-                },
-                {
-                  "$ref": "#/definitions/simpleBinding"
-                }
-              ]
-            }
-          }
+            "description": "Defines an additional information text",
+            "$ref": "#/definitions/ContentType.List.Item.ValueStateItem"
         },
         "highlight": {
           "type": "string",
@@ -608,6 +592,28 @@
         },
         "icon": {
           "$ref": "#/definitions/icon"
+        },
+        "attributesLayoutType": {
+            "description": "Defines the layout type of the attributes",
+            "oneOf": [
+                {
+                    "enum": [
+                        "OneColumn",
+                        "TwoColumns"
+                    ],
+                    "default": "TwoColumns"
+                },
+                {
+                    "$ref": "#/definitions/simpleBinding"
+                }
+            ]
+        },
+        "attributes": {
+            "description": "Defines the attributes",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/ContentType.List.Item.ValueStateItem"
+            }
         },
         "actions": {
           "description": "Defines actions that can be applied on the item",
@@ -627,6 +633,28 @@
           }
         }
       }
+    },
+    "ContentType.List.Item.ValueStateItem": {
+        "description": "Represents value and state information for an object",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+            "value": {
+                "type": "string",
+                "description": "The value of the field"
+            },
+            "state": {
+                "description": "The state of the field",
+                "oneOf": [
+                    {
+                        "$ref": "#/definitions/state"
+                    },
+                    {
+                        "$ref": "#/definitions/simpleBinding"
+                    }
+                ]
+            }
+        }
     },
     "ContentType.Analytical": {
       "description": "Represents analytical content attributes",
