@@ -39,6 +39,14 @@
 	right: 0;
 }
 
+.sapMRb[aria-disabled=true]:focus:before {
+  border: @sapUiContentFocusWidth dashed @sapUiContentFocusColor;
+}
+
+.sapMRb.sapMRbHasLabel .sapMRbBLabel .sapMLabelTextWrapper {
+  color: @sapField_TextColor;
+}
+
 .sapMRbHasLabel .sapMRbB {
 	width: 2.75rem;
 }
@@ -118,7 +126,7 @@
 .sapMRbWarn.sapMRbSel,
 .sapMRbWarn.sapMRbSel.sapMRbRo {
 	.sapMRbBInn {
-		fill: @sapUiFieldTextColor;
+		fill:  @sapCriticalTextColor;
 		stroke: none;
 	}
 }
