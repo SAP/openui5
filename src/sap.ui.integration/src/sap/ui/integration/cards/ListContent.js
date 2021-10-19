@@ -258,9 +258,16 @@ sap.ui.define([
 			disabledPropertyValue: ListType.Inactive
 		});
 
+		var oGroup = this.getConfiguration().group;
+
+		if (oGroup) {
+			this._oSorter = this._getGroupSorter(oGroup);
+		}
 		var oBindingInfo = {
-			template: this._oItemTemplate
+			template: this._oItemTemplate,
+			sorter: this._oSorter
 		};
+
 		this._filterHiddenNavigationItems(mItem, oBindingInfo);
 		this._bindAggregationToControl("items", oList, oBindingInfo);
 	};

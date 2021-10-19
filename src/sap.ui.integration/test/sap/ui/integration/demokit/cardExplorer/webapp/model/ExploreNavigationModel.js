@@ -667,6 +667,15 @@ sap.ui.define([
 										key: 'QuickActionsExtension.js'
 									}
 								]
+							},
+							{
+								title: 'Grouping',
+								key: 'grouping',
+								files: [{
+									url: '/samples/list/grouping.json',
+									name: 'manifest.json',
+									key: 'manifest.json'
+								}]
 							}
 						]
 					},
@@ -766,6 +775,18 @@ sap.ui.define([
 										key: 'images/Elena_Petrova.jpg'
 									}
 								]
+							},
+							{
+								title: 'Grouping',
+									key: 'grouping',
+									settings: {
+										columns: 6
+									},
+									files: [{
+										url: '/samples/table/grouping.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}]
 							}
 						]
 					},
