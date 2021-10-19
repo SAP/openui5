@@ -4052,7 +4052,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.notOk($FocusDomRef.attr("role"), "no Help: no Role set");
 		assert.equal($FocusDomRef.attr("aria-roledescription"), sText, "no Help: Role Description set to MultiInput default");
-		assert.equal($FocusDomRef.attr("aria-haspopup"), "listbox", "no Help: aria-haspopup set from MultiInput");
+		assert.notOk($FocusDomRef.attr("aria-haspopup"), "no Help: aria-haspopup not set");
 		assert.equal($FocusDomRef.attr("autocomplete"), "off", "no Help: autocomplete set from Input");
 		assert.notOk($FocusDomRef.attr("aria-expanded"), "no Help: aria-expanded not set");
 		assert.notOk($FocusDomRef.attr("aria-controls"), "no Help: aria-controls not set");

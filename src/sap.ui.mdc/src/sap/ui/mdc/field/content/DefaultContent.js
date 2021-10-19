@@ -201,6 +201,7 @@ sap.ui.define([
 				tokens: { path: "$field>/conditions", template: oToken },
 				dependents: [oToken], // to destroy it if MultiInput is destroyed
 				autocomplete: false,
+				showSuggestion: false, // as true by default
 				change: oContentFactory.getHandleContentChange(),
 				liveChange: oContentFactory.getHandleContentLiveChange(),
 				tokenUpdate: oContentFactory.getHandleTokenUpdate(),
