@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/fieldExtensibility/cap/editor/getEditorConfig",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/deepClone",
-	"sap/ui/model/resource/ResourceModel"
+	"sap/ui/model/resource/ResourceModel",
+	"sap/ui/model/json/JSONModel"
 ], function(
 	ManagedObject,
 	Fragment,
@@ -18,7 +19,8 @@ sap.ui.define([
 	getEditorConfig,
 	ObjectPath,
 	deepClone,
-	ResourceModel
+	ResourceModel,
+	JSONModel
 ) {
 	"use strict";
 
@@ -112,6 +114,11 @@ sap.ui.define([
 				name: "sap.ui.fl.write._internal.fieldExtensibility.cap.dialog.CustomFieldCAPDialog",
 				controller: this
 			}).then(function(oAddCustomFieldCAPDialog) {
+				this._oDialogModel = new JSONModel({
+					isValid: true
+				});
+				this._oDialogModel.setDefaultBindingMode("OneWay");
+				oAddCustomFieldCAPDialog.setModel(this._oDialogModel, "dialog");
 				oAddCustomFieldCAPDialog.setModel(new ResourceModel({
 					bundle: oTextBundle
 				}), "i18n");
@@ -123,6 +130,12 @@ sap.ui.define([
 				});
 				this._oEditor.attachJsonChange(function(oEvent) {
 					this._oJson = oEvent.getParameter("json");
+				}.bind(this));
+				this._oEditor.attachValidationErrorChange(function(oEvent) {
+					var bHasError = oEvent.getParameter("hasError");
+					this._oDialogModel.setData({
+						isValid: !bHasError
+					});
 				}.bind(this));
 				oAddCustomFieldCAPDialog.open();
 			}.bind(this));

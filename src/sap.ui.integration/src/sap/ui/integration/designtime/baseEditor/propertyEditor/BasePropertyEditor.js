@@ -171,7 +171,20 @@ sap.ui.define([
 				/**
 				 * Fires when init is finished
 				 */
-				init: {}
+				init: {},
+
+				/**
+				 * Fires when the error state of the editor changes
+				 */
+				validationErrorChange: {
+					parameters: {
+						/**
+						 * Whether there is an error in the editor
+						 * @since 1.96.0
+						 */
+						hasError: { type: "boolean" }
+					}
+				}
 			}
 		},
 		/**
@@ -342,6 +355,7 @@ sap.ui.define([
 					value: vNextValue
 				});
 			}
+			this.setHasOwnError(!bResult);
 		}.bind(this));
 	};
 
@@ -619,6 +633,7 @@ sap.ui.define([
 							return oEditorWrapper !== oObservedWrapper;
 						});
 						this._checkReadyState();
+						this._checkForError();
 						break;
 					case 'parent':
 						// Observed elements might contain nested wrappers
@@ -695,6 +710,8 @@ sap.ui.define([
 			this._checkReadyState();
 		}.bind(this));
 
+		oWrapper.attachValidationErrorChange(this._checkForError.bind(this));
+
 		if (oWrapper.isA("sap.ui.integration.designtime.baseEditor.PropertyEditor")) {
 			oWrapper.attachPropertyEditorChange(function (oEvent) {
 				var oPropertyEditor = oEvent.getParameter("propertyEditor");
@@ -722,6 +739,28 @@ sap.ui.define([
 
 	BasePropertyEditor.prototype.isReady = function () {
 		return !!this._bIsReady;
+	};
+
+	BasePropertyEditor.prototype.setHasOwnError = function (bHasError) {
+		this._bHasOwnError = bHasError;
+		this._checkForError();
+	};
+
+	BasePropertyEditor.prototype._checkForError = function () {
+		var bHasError = this.hasError();
+		// If the error state switches, fire the event
+		if (bHasError !== this._bHasError) {
+			this._bHasError = bHasError;
+			this.fireValidationErrorChange({
+				hasError: bHasError
+			});
+		}
+	};
+
+	BasePropertyEditor.prototype.hasError = function () {
+		return !!this._bHasOwnError || this._aEditorWrappers.some(function(oWrapper) {
+			return oWrapper.hasError();
+		});
 	};
 
 	/**

@@ -164,6 +164,19 @@ sap.ui.define([
 				ready: {},
 
 				/**
+				 * Fires when the error state of the nested property editor changes
+				 */
+				 validationErrorChange: {
+					parameters: {
+						/**
+						 * Whether there is an error in the nested editor
+						 * @since 1.96.0
+						 */
+						hasError: { type: "boolean" }
+					}
+				},
+
+				/**
 				 * Fires before the value of the nested property editor changes
 				 */
 				beforeValueChange: {
@@ -389,6 +402,7 @@ sap.ui.define([
 		if (oPropertyEditor) {
 			this.setAggregation("propertyEditor", null);
 			oPropertyEditor.detachReady(this._onPropertyEditorReady, this);
+			oPropertyEditor.detachValidationErrorChange(this._onPropertyEditorError, this);
 			oPropertyEditor.destroy();
 			this._sCreatedBy = null;
 			this.firePropertyEditorChange({
@@ -405,6 +419,11 @@ sap.ui.define([
 	PropertyEditor.prototype.isReady = function () {
 		var oNestedEditor = this.getAggregation("propertyEditor");
 		return oNestedEditor && oNestedEditor.isReady() || false;
+	};
+
+	PropertyEditor.prototype.hasError = function () {
+		var oNestedEditor = this.getAggregation("propertyEditor");
+		return oNestedEditor && oNestedEditor.hasError();
 	};
 
 	PropertyEditor.prototype.ready = function () {
@@ -430,6 +449,12 @@ sap.ui.define([
 
 	PropertyEditor.prototype._onPropertyEditorReady = function () {
 		this.fireReady();
+	};
+
+	PropertyEditor.prototype._onPropertyEditorError = function (oEvent) {
+		this.fireValidationErrorChange({
+			hasError: oEvent.getParameter("hasError")
+		});
 	};
 
 	PropertyEditor.prototype._initPropertyEditor = function () {
@@ -496,6 +521,13 @@ sap.ui.define([
 				oPropertyEditor.attachReady(this._onPropertyEditorReady, this);
 				if (oPropertyEditor.isReady()) { // in case it's already ready
 					this.fireReady();
+				}
+
+				oPropertyEditor.attachValidationErrorChange(this._onPropertyEditorError, this);
+				if (oPropertyEditor.hasError()) {
+					this.fireValidationErrorChange({
+						hasError: true
+					});
 				}
 
 				this.firePropertyEditorChange({

@@ -213,6 +213,19 @@ sap.ui.define([
 				ready: {},
 
 				/**
+				 * Fires when the error state of one of the nested property editors changes
+				 */
+				 validationErrorChange: {
+					parameters: {
+						/**
+						 * Whether there is an error in one of the nested editors
+						 * @since 1.96.0
+						 */
+						hasError: { type: "boolean" }
+					}
+				},
+
+				/**
 				 * Fires when <code>layout</code> changes.
 				 */
 				layoutChange: {
@@ -646,6 +659,12 @@ sap.ui.define([
 		return !!this._bIsReady;
 	};
 
+	PropertyEditors.prototype.hasError = function () {
+		return this._aEditorWrappers.some(function (oWrapper) {
+			return oWrapper.hasError();
+		});
+	};
+
 	PropertyEditors.prototype._setReady = function (readyState) {
 		var bPreviousReadyState = this._bIsReady;
 		this._bIsReady = readyState;
@@ -729,6 +748,13 @@ sap.ui.define([
 			this._setReady(false);
 			this._checkReadyState();
 		}.bind(this));
+
+		oWrapper.attachValidationErrorChange(function() {
+			this.fireValidationErrorChange({
+				hasError: this.hasError()
+			});
+		}.bind(this));
+
 		// If the editor contains nested editors and setValue is called for the first time
 		// an observer is created to handle the destruction of nested wrappers
 		if (!this._oWrapperObserver) {

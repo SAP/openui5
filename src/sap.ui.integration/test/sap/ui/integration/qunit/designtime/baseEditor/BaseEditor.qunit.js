@@ -1174,6 +1174,23 @@ sap.ui.define([
 				}
 			});
 		});
+
+		QUnit.test("When a nested editor has an error", function (assert) {
+			var fnDone = assert.async();
+			var oNestedEditor = this.oBaseEditor.getPropertyEditorsByNameSync("foo")[0];
+			this.oBaseEditor.attachValidationErrorChange(function(oEvent) {
+				assert.ok(
+					oEvent.getParameter("hasError"),
+					"then the error event is fired"
+				);
+				fnDone();
+			});
+			oNestedEditor.setValue("{foo");
+			assert.ok(
+				this.oBaseEditor.hasError(),
+				"then the error bubbles up"
+			);
+		});
 	});
 
 	QUnit.done(function () {

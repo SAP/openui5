@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/restricted/_intersection",
+	"sap/base/util/restricted/_flatten",
 	"sap/base/util/restricted/_mergeWith",
 	"sap/base/util/restricted/_merge",
 	"sap/base/util/restricted/_omit",
@@ -51,6 +52,7 @@ sap.ui.define([
 	isPlainObject,
 	isEmptyObject,
 	_intersection,
+	_flatten,
 	_mergeWith,
 	_merge,
 	_omit,
@@ -227,6 +229,18 @@ sap.ui.define([
 				propertyEditorsReady: {
 					parameters: {
 						propertyEditors: { type: "array" }
+					}
+				},
+				/**
+				 * Fires when the error state of one of the nested property editors changes
+				 */
+				 validationErrorChange: {
+					parameters: {
+						/**
+						 * Whether there is an error in one of the nested editors
+						 * @since 1.96.0
+						 */
+						hasError: { type: "boolean" }
 					}
 				}
 			}
@@ -883,6 +897,11 @@ sap.ui.define([
 		oPropertyEditor.attachValueChange(this._onValueChange, this);
 		oPropertyEditor.attachDesigntimeMetadataChange(this._onDesigntimeMetadataChange, this);
 		oPropertyEditor.attachReady(this._checkReady, this);
+		oPropertyEditor.attachValidationErrorChange(function() {
+			this.fireValidationErrorChange({
+				hasError: this.hasError()
+			});
+		}.bind(this));
 	};
 
 	/**
@@ -969,6 +988,12 @@ sap.ui.define([
 				this.attachEventOnce("propertyEditorsReady", resolve);
 			}
 		}.bind(this));
+	};
+
+	BaseEditor.prototype.hasError = function () {
+		return _flatten(Object.values(this._mPropertyEditors || {})).some(function(oPropertyEditor) {
+			return oPropertyEditor.hasError();
+		});
 	};
 
 	BaseEditor.prototype._createPromise = function (fn) {

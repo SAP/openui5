@@ -784,6 +784,38 @@ sap.ui.define([
 
 			this.oPropertyEditors.setTags("foo");
 		});
+
+		QUnit.test("when a nested editor has an error", function (assert) {
+			var fnDone = assert.async();
+
+			this.oPropertyEditors.setConfig([
+				{
+					"label": "Baz property",
+					"path": "/baz",
+					"type": "string"
+				},
+				{
+					"label": "Foo1 property",
+					"path": "/foo1",
+					"type": "string"
+				}
+			]);
+
+			this.oPropertyEditors.ready().then(function () {
+				this.oPropertyEditors.attachValidationErrorChange(function(oEvent) {
+					assert.ok(
+						oEvent.getParameter("hasError"),
+						"then the error event is fired"
+					);
+					fnDone();
+				});
+				this.oPropertyEditors._getPropertyEditors()[0].setValue("{foo");
+				assert.ok(
+					this.oPropertyEditors.hasError(),
+					"then the error bubbles up"
+				);
+			}.bind(this));
+		});
 	});
 
 	QUnit.module("PropertyEditor is not descendant of BaseEditor initially", {

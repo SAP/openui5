@@ -340,18 +340,39 @@ function (
 				invalidFoo: {
 					path: "invalidFoo",
 					type: "string"
+				},
+				testArray: {
+					label: "array",
+					path: "testArray",
+					type: "array",
+					template: {
+						testProperty: {
+							label: "Test",
+							type: "string",
+							path: "test"
+						}
+					}
 				}
 			};
 			var mConfig = {
 				context: "/",
 				properties: mPropertyConfig,
 				propertyEditors: {
+					array: "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
 					string: "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
 				}
 			};
 			var mJson = {
 				foo: "bar",
-				invalidFoo: "{bar"
+				invalidFoo: "{bar",
+				testArray: [
+					{
+						test: "testA"
+					},
+					{
+						test: "testB"
+					}
+				]
 			};
 
 			this.oBaseEditor = new BaseEditor({
@@ -415,6 +436,105 @@ function (
 				oFooEditor.getContent().getValueState(),
 				"None",
 				"then the error state is update after the validator was disabled"
+			);
+		});
+
+		QUnit.test("when an invalid value is set", function(assert) {
+			var fnDone = assert.async();
+			var oFooEditor = this.oBaseEditor.getPropertyEditorsByNameSync("foo")[0];
+			oFooEditor.attachValidationErrorChange(function(oEvent) {
+				assert.ok(
+					oEvent.getParameter("hasError"),
+					"then the error event is fired"
+				);
+				fnDone();
+			});
+			assert.notOk(
+				oFooEditor.hasError(),
+				"then initially it has no error"
+			);
+			oFooEditor.setValue("{invalid");
+			assert.ok(
+				oFooEditor.hasError(),
+				"then the error state changes"
+			);
+		});
+
+		QUnit.test("when a valid value is set", function(assert) {
+			var fnDone = assert.async();
+			var oFooEditor = this.oBaseEditor.getPropertyEditorsByNameSync("invalidFoo")[0];
+			oFooEditor.attachValidationErrorChange(function(oEvent) {
+				assert.notOk(
+					oEvent.getParameter("hasError"),
+					"then the error event is fired"
+				);
+				fnDone();
+			});
+			assert.ok(
+				oFooEditor.hasError(),
+				"then initially it has an error"
+			);
+			oFooEditor.setValue("valid");
+			assert.notOk(
+				oFooEditor.hasError(),
+				"then the error state changes"
+			);
+		});
+
+		QUnit.test("when an invalid value inside a nested editor is set", function(assert) {
+			var fnDone = assert.async();
+			var oArrayEditor = this.oBaseEditor.getPropertyEditorsByNameSync("testArray")[0];
+			oArrayEditor.attachValidationErrorChange(function(oEvent) {
+				assert.ok(
+					oEvent.getParameter("hasError"),
+					"then the error event is fired"
+				);
+				fnDone();
+			});
+			assert.notOk(
+				oArrayEditor.hasError(),
+				"then initially it has no error"
+			);
+
+			var aNestedEditors = oArrayEditor.getAggregation("propertyEditor")._aEditorWrappers
+				.map(function (oEditorWrapper) {
+					return oEditorWrapper._getPropertyEditors()[0].getAggregation("propertyEditor");
+				});
+			aNestedEditors[1].setValue("{inValid");
+			assert.ok(
+				oArrayEditor.hasError(),
+				"then the error state changes"
+			);
+		});
+
+		QUnit.test("when an invalid value inside a nested editor is removed", function(assert) {
+			var fnDone = assert.async();
+			var oArrayEditor = this.oBaseEditor.getPropertyEditorsByNameSync("testArray")[0];
+			var aNestedEditors = oArrayEditor.getAggregation("propertyEditor")._aEditorWrappers
+				.map(function (oEditorWrapper) {
+					return oEditorWrapper._getPropertyEditors()[0].getAggregation("propertyEditor");
+				});
+
+			// Simulate nested error
+			aNestedEditors[1].setValue("{inValid");
+
+			oArrayEditor.attachValidationErrorChange(function(oEvent) {
+				assert.notOk(
+					oEvent.getParameter("hasError"),
+					"then the error event is fired"
+				);
+				fnDone();
+			});
+
+			// Remove affected item
+			oArrayEditor.setValue([
+				{
+					test: "testA"
+				}
+			]);
+			assert.notOk(
+				oArrayEditor.hasError(),
+				"then the error state changes"
 			);
 		});
 	});

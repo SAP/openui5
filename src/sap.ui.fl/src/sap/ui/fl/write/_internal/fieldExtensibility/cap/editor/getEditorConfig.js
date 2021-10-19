@@ -37,6 +37,13 @@ sap.ui.define([
 					validators: {
 						isRequired: {
 							type: "isRequired"
+						},
+						namePattern: {
+							type: "pattern",
+							errorMessage: "CAP_ERR_WHITESPACE",
+							config: {
+								pattern: "^\\S+$"
+							}
 						}
 					}
 				},
