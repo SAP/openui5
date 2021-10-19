@@ -28,7 +28,9 @@ sap.ui.define([
             decline: "sap-icon://decline",
             settings: "sap-icon://action-settings",
             movetotop: "sap-icon://collapse-group",
+            movetobottom: "sap-icon://expand-group",
             movedown: "sap-icon://navigation-down-arrow",
+            moveup: "sap-icon://navigation-up-arrow",
             group: "sap-icon://group-2"
         }
 

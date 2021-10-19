@@ -9,6 +9,11 @@ sap.ui.define([
 	return {
 		name: "{name}",
 		description: "{description}",
+		aggregations: {
+			_content: {
+				ignore: false
+			}
+		},
 		actions: {
 			settings: function () {
 				//RTA expects the settings to be returned as function

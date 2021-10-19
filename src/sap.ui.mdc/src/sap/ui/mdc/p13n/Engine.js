@@ -955,6 +955,7 @@ sap.ui.define([
 	Engine.prototype._retrievePropertyHelper = function(vControl, aCustomPropertyInfo){
 
 		var oRegistryEntry = this._getRegistryEntry(vControl);
+		var oControl = Engine.getControlInstance(vControl);
 
 		if (aCustomPropertyInfo) {
 			if (oRegistryEntry.helper){
@@ -968,7 +969,7 @@ sap.ui.define([
 			return Promise.resolve(oRegistryEntry.helper);
 		}
 
-		return vControl.initPropertyHelper().then(function(oPropertyHelper){
+		return oControl.initPropertyHelper().then(function(oPropertyHelper){
 			oRegistryEntry.helper = oPropertyHelper;
 			return oPropertyHelper;
 		}, function(sHelperError){

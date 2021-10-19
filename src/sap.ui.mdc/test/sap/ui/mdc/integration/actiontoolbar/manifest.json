@@ -1,17 +1,17 @@
 {
-	"_version": "0.1.0",
+	"_version": "1.11.0",
 	"sap.app": {
-		"_version": "0.1.0",
-		"id": "sap.ui.v4demo",
+		"_version": "1.11.0",
+		"id": "sap.ui.mdc.ActionToolbarTesting",
 		"type": "application",
-		"title": "{{appTitle}}",
-		"description": "{{appDescription}}",
+		"title": "sap.ui.mdc.ActionToolbar testing",
+		"description": "sap.ui.mdc.ActionToolbar testing app for OPA",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
 	"sap.ui": {
-		"_version": "0.1.0",
+		"_version": "1.11.0",
 		"technology": "UI5",
 		"deviceTypes": {
 			"desktop": true,
@@ -23,7 +23,8 @@
 		]
 	},
 	"sap.ui5": {
-		"_version": "1.7.0",
+		"_version": "1.11.0",
+		"flexEnabled": true,
 		"rootView": {
 			"viewName": "sap.ui.mdc.ActionToolbarTesting.view.App",
 			"type": "XML",
@@ -43,6 +44,12 @@
 					"lazy": false
 				},
 				"sap.ui.mdc": {
+					"lazy": true
+				},
+				"sap.ui.rta": {
+					"lazy": true
+				},
+				"sap.ui.dt": {
 					"lazy": true
 				}
 			}

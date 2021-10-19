@@ -7,17 +7,20 @@
 	<script
 			id="sap-ui-bootstrap"
 			src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.ui.mdc, sap.ui.fl, sap.ui.rta"
 			data-sap-ui-async="true"
 			data-sap-ui-compatVersion="edge"
-			data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
+			data-sap-ui-oninit="module:sap/ui/mdc/ActionToolbarTesting/index"
+			data-sap-ui-flexibilityServices='[{"connector": "LocalStorageConnector"}]'
 			data-sap-ui-resourceroots='{
-				"sap.ui.mdc.ActionToolbarTesting": "./"
+				"sap.ui.mdc.ActionToolbarTesting": "./",
+				"delegates": "../../delegates"
 			}'>
 	</script>
 </head>
 
 <body id="content" class="sapUiBody">
-    <div data-sap-ui-component data-id="container" data-name="sap.ui.mdc.ActionToolbarTesting" data-settings='{"id" : "ActionToolbarTesting"}'></div>
+    <div data-sap-ui-component data-id="container" id="containerId" data-name="sap.ui.mdc.ActionToolbarTesting" data-settings='{"id" : "ActionToolbarTesting"}'></div>
 </body>
 
 </html>

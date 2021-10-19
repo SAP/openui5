@@ -8,8 +8,10 @@ sap.ui.define([
 	"sap/m/OverflowToolbarPriority",
 	"sap/m/ToolbarSpacer",
 	"sap/m/ToolbarSeparator",
-	"sap/ui/mdc/enum/ActionToolbarActionAlignment"
-], function(OverflowToolbar, OverflowToolbarRenderer, OverflowToolbarPriority, ToolbarSpacer, ToolbarSeparator, ActionToolbarActionAlignment) {
+	"sap/ui/mdc/enum/ActionToolbarActionAlignment",
+	"sap/ui/mdc/p13n/subcontroller/ActionToolbarController",
+	"sap/ui/mdc/p13n/Engine"
+], function(OverflowToolbar, OverflowToolbarRenderer, OverflowToolbarPriority, ToolbarSpacer, ToolbarSeparator, ActionToolbarActionAlignment, ActionToolbarController, Engine) {
 	"use strict";
 
 	/**
@@ -37,6 +39,7 @@ sap.ui.define([
 	var ActionToolbar = OverflowToolbar.extend("sap.ui.mdc.ActionToolbar", {
 		metadata: {
 			library: "sap.ui.mdc",
+			designtime: "sap/ui/mdc/designtime/actiontoolbar/ActionToolbar.designtime",
 			defaultAggregation: "actions",
 			properties: {
 				/**
@@ -124,6 +127,12 @@ sap.ui.define([
 		this._oSpacer = new ToolbarSpacer();
 
 		this.setUseAsHeader(true);
+
+		Engine.getInstance().registerAdaptation(this, {
+			controller: {
+				actionsKey: ActionToolbarController
+			}
+		});
 	};
 
 	ActionToolbar.prototype.exit = function() {
@@ -334,6 +343,48 @@ sap.ui.define([
 		aContent = aContent.concat(this.getEndActionsEnd());
 
 		return aContent;
+	};
+
+	ActionToolbar.prototype.getCurrentState = function() {
+		var aActions = [], sId;
+
+		this.getActions().forEach(function(oAction, iIndex) {
+			sId = oAction && oAction.getId();
+			if (oAction.getVisible()){
+				aActions.push({
+					name: sId,
+					alignment: oAction.getLayoutInformation().alignment
+				});
+			}
+		});
+
+		return {
+			items: aActions
+		};
+	};
+
+	ActionToolbar.prototype.initPropertyHelper = function() {
+		return Promise.resolve({
+			getProperties: function() {
+
+				var aItems = [];
+				this.getActions().forEach(function(oAction){
+					aItems.push({
+						name: oAction.getId(),
+						alignment: oAction.getLayoutInformation().alignment,
+						getName: function() {
+							return oAction.getId();
+						},
+						getLabel: function() {
+							return oAction.getLabel();
+						},
+						visible: true
+					});
+				});
+
+				return aItems;
+			}.bind(this)
+		});
 	};
 
 	return ActionToolbar;

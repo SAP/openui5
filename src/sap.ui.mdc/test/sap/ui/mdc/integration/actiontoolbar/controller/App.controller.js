@@ -3,9 +3,19 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/mvc/Controller"
-], function(Controller) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/rta/api/startKeyUserAdaptation"
+], function(Controller, startKeyUserAdaptation) {
 	"use strict";
 
-	return Controller.extend("sap.ui.mdc.ActionToolbarTesting.controller.App", {});
+	var oController = Controller.extend("sap.ui.mdc.ActionToolbarTesting.controller.App", {
+		onPressRTA: function() {
+			var oOwnerComponent = this.getOwnerComponent();
+			startKeyUserAdaptation({
+				rootControl: oOwnerComponent.getAggregation("rootControl")
+			});
+		}
+	});
+
+	return oController;
 });

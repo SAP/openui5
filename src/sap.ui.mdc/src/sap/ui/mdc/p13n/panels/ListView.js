@@ -242,8 +242,11 @@ sap.ui.define([
     };
 
     ListView.prototype._removeFactoryControl = function() {
+        var aItems = this._oListControl.getItems().filter(function(oItem) {
+            return !oItem._bGroupHeader;
+        });
 
-        this._oListControl.getItems().forEach(function(oItem){
+        aItems.forEach(function(oItem){
             var oFirstCell = oItem.getCells()[0];
             if (oFirstCell.getItems().length > 1){
                 oFirstCell.removeItem(oFirstCell.getItems()[1]);

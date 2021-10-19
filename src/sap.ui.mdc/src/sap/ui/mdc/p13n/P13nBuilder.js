@@ -194,7 +194,7 @@ sap.ui.define([
         prepareAdaptationData: function(vProperties, fnEnhace, bGroupData) {
 
 			var oPropertyHelper =
-				vProperties.isA && vProperties.isA("sap.ui.mdc.util.PropertyHelper") ?
+				vProperties && vProperties.getProperties instanceof Function ?
 				vProperties : new P13nPropertyHelper(vProperties);
 
             var aItems = [];
