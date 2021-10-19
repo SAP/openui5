@@ -12,7 +12,8 @@
     border-color: @sapUiContentFocusColor;
 }
 
-.sapUiTableSelectAllCheckBox:hover::after,
-.sapUiTableSelModeMultiToggle .sapUiTableRowSelectionCell:hover::after {
-    background: @sapUiFieldHoverBackground;
+.sapUiTableRowSelectionHeaderCell:hover .sapUiTableSelectAllCheckBox::after,
+.sapUiTableRowHvr .sapUiTableRowSelectionCell::after{
+    background-color: @sapUiFieldHoverBackground;
+    box-shadow: @sapUiContentInteractionShadow;
 }
