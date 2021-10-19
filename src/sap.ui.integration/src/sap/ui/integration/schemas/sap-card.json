@@ -30,7 +30,8 @@
         "1.18.0",
         "1.19.0",
         "1.20.0",
-        "1.21.0"
+        "1.21.0",
+        "1.22.0"
       ]
     },
     "designtime": {
@@ -55,9 +56,15 @@
         },
         "filters": {
           "description": "Map of filters",
-          "type": "object",
           "additionalProperties": {
-            "$ref": "#/definitions/Configuration.Filter"
+            "oneOf": [
+              {
+                "$ref": "#/definitions/Configuration.FilterType.Select"
+              },
+              {
+                "$ref": "#/definitions/Configuration.FilterType.DateRange"
+              }
+            ]
           }
         },
         "destinations": {
@@ -140,14 +147,14 @@
         }
       }
     },
-	"requiredHeight": {
-		"description": "Represents card minimum required height",
-		"type": "string"
-	},
-	"requiredWidth": {
-		"description": "Represents card minimum required width",
-		"type": "string"
-	}
+    "requiredHeight": {
+      "description": "Represents card minimum required height",
+      "type": "string"
+    },
+    "requiredWidth": {
+      "description": "Represents card minimum required width",
+      "type": "string"
+    }
   },
   "allOf": [
     {
@@ -2185,17 +2192,24 @@
         }
       }
     },
-    "Configuration.Filter": {
-      "description": "[Experimental] Represents a filter definition",
+    "Configuration.FilterType.Select": {
+      "description": "[Experimental] Select filter",
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "type": {
+          "description": "The type of the filter",
+          "oneOf": [
+            {
+              "const": "Select"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
         "value": {
           "description": "The value of the filter"
-        },
-        "type": {
-          "description": "The type of the value for the filter",
-          "$ref": "#/definitions/Configuration.BasicDataType"
         },
         "data": {
           "$ref": "#/definitions/data"
@@ -2245,6 +2259,93 @@
         "key": {
           "description": "The unique key of the filter option. Mapped to the filter's value",
           "type": "string"
+        }
+      }
+    },
+    "Configuration.FilterType.DateRange": {
+      "description": "Date range filter",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "description": "The type of the filter",
+          "oneOf": [
+            {
+              "const": "DateRange"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "data": {
+          "$ref": "#/definitions/data"
+        },
+        "label": {
+          "description": "Label for the filter for user-friendly visualization in the design-time editor",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description of the filter for user-friendly visualization in the design-time editor",
+          "type": "string"
+        },
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "operator": {
+              "description": "The date range operator",
+              "type": "string"
+            },
+            "values": {
+              "type": "array"
+            }
+          }
+        },
+        "options": {
+          "description": "Options that will appear in the dropdown",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "date",
+              "today",
+              "yesterday",
+              "tomorrow",
+              "dateRange",
+              "from",
+              "to",
+              "yearToDate",
+              "lastDays",
+              "lastWeeks",
+              "lastMonths",
+              "lastQuarters",
+              "lastYears",
+              "nextDays",
+              "nextWeeks",
+              "nextMonths",
+              "nextQuarters",
+              "nextYears",
+              "todayFromTo",
+              "thisWeek",
+              "lastWeek",
+              "nextWeek",
+              "specificMonth",
+              "thisMonth",
+              "lastMonth",
+              "nextMonth",
+              "thisQuarter",
+              "lastQuarter",
+              "nextQuarter",
+              "quarter1",
+              "quarter2",
+              "quarter3",
+              "quarter4",
+              "thisYear",
+              "lastYear",
+              "nextYear"
+            ]
+          }
         }
       }
     },

@@ -52,7 +52,7 @@ sap.ui.define([
 
 		SchemaValidator.validate({})
 			.catch(function (sMessage) {
-				assert.strictEqual(sMessage, "Could not initialize Validator. Schema validation skipped!!!", "Initialization error should be thrown");
+				assert.strictEqual(sMessage, "Could not initialize Validator. Schema validation skipped!", "Initialization error should be thrown");
 				done();
 			});
 	});
