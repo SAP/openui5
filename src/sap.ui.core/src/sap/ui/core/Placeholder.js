@@ -36,9 +36,9 @@ sap.ui.define([
 		 * @param {object} mParameters Object containing the placeholder HTML file name
 		 * @param {string} [mParameters.html] Name of the HTML file that provides the placeholder content
 		 *
-		 * @ui5-restricted sap.fe
+		 * @private
+		 * @ui5-restricted SAPUI5 Distribution libraries only
 		 * @since 1.92
-		 * @public
 		 */
 		constructor : function(mParameters) {
 			BaseObject.call(this);
@@ -138,8 +138,8 @@ sap.ui.define([
 	 *
 	 * @param  {function} fnProvider Provider function which provides the placeholder HTML file name
 	 *
-	 * @public
-	 * @ui5-restricted sap.fe
+	 * @private
+	 * @ui5-restricted SAPUI5 Distribution libraries only
 	 * @since 1.92
 	 */
 	Placeholder.registerProvider = function(fnProvider) {

@@ -1,5 +1,6 @@
 /*global QUnit, sinon, hasher*/
 sap.ui.define([
+	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Placeholder",
 	"sap/ui/core/UIComponent",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/routing/TargetHandler"
 	], function(
+		LoaderExtensions,
 		ComponentContainer,
 		Placeholder,
 		UIComponent,
@@ -154,10 +156,27 @@ sap.ui.define([
 				});
 			});
 		}).then(function(oNavContainer) {
+
+			var oLoaderExtensionSpy = sinon.spy(LoaderExtensions, "loadResource");
+			oNavContainer.showPlaceholder({
+				placeholder: new Placeholder({
+					html: "my/placeholder.fragment.html"
+				})
+			});
+
+			assert.equal(oLoaderExtensionSpy.callCount, 0, "No placeholder should be loaded.");
+
+			oNavContainer.showPlaceholder();
+			assert.ok(oNavContainer, "Should not break after showPlaceholder is called");
+
+			oNavContainer.hidePlaceholder();
+			assert.ok(oNavContainer, "Should not break after hidePlaceholder is called");
+
 			// cleanup
 			oComponentContainer.destroy();
 			oNavConShowPlaceholderSpy.restore();
 			oMTargetHandlerSpy.restore();
+			oLoaderExtensionSpy.restore();
 		});
 	});
 });

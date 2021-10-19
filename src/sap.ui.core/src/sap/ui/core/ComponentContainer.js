@@ -268,11 +268,16 @@ sap.ui.define([
 	 * @param {sap.ui.core.Placeholder} mSettings.placeholder The placeholder instance
 	 * @return {Promise} Promise that resolves with the placeholder
 	 *
-	 * @public
+	 * @private
+	 * @ui5-restricted SAPUI5 Distribution libraries only
 	 * @since 1.91
 	 */
 	ComponentContainer.prototype.showPlaceholder = function(mSettings) {
 		var pLoaded;
+
+		if (!sap.ui.getCore().getConfiguration().getPlaceholder()) {
+			return;
+		}
 
 		if (this._placeholder) {
 			this.hidePlaceholder();
@@ -298,7 +303,8 @@ sap.ui.define([
 	/**
 	 * Hides the placeholder that is shown on the component container.
 	 *
-	 * @public
+	 * @private
+	 * @ui5-restricted SAP internal apps
 	 * @since 1.91
 	 */
 	ComponentContainer.prototype.hidePlaceholder = function() {
