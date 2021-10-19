@@ -26,7 +26,7 @@ sap.ui.define([
          * Assertion to check that there is a legend visible on the screen for given mdc chart.
          * @param {string} sId Id of the chart to be checked for a visible legend
          */
-		iShouldSeeALegendOnTheChart: function(sId) {
+		iShouldSeeALegend: function(sId) {
 
 		},
 
@@ -34,7 +34,7 @@ sap.ui.define([
          * Assertion to check that there is no legend visible on the screen for given mdc chart.
          * @param {string} sId Id of the chart to be checked for a visible legend
          */
-		iShouldSeeNoLegendOnTheChart: function(sId) {
+		iShouldSeeNoLegend: function(sId) {
 
 		},
 
@@ -70,7 +70,7 @@ sap.ui.define([
          * @param {array} aCheckDrillStack Drillstack to check for
          * @param {string} sChartId Id of the mdc chart
          */
-		iSeeTheDrillStackOnTheChart: function(aCheckDrillStack, sChartId) {
+		 iShouldSeeTheDrillStack: function(aCheckDrillStack, sChartId) {
 
 		},
 
@@ -106,7 +106,13 @@ sap.ui.define([
 				},
 				errorMessage: "No Dialogs found"
 			});
-	}
+		},
+		iShouldSeeVisibleDimensionsInOrder: function(aOrderedDimensionNames, sId) {
+
+		},
+		iShouldSeeVisibleMeasuresInOrder: function(aOrderedMeasureNames, sId) {
+
+		}
 
     };
 });
