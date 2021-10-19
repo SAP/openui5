@@ -2,9 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/security/encodeCSS", "sap/m/GenericTile"],
-	function(encodeCSS, GenericTile) {
+sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile", "sap/ui/core/library"],
+	function(library, encodeCSS, GenericTile, Core) {
 	"use strict";
+
+	var GenericTileMode = library.GenericTileMode,
+		FrameType = library.FrameType,
+		Priority = Core.Priority;
 
 	/**
 	 * TileContent renderer.
@@ -55,8 +59,41 @@ sap.ui.define(["sap/base/security/encodeCSS", "sap/m/GenericTile"],
 			return;
 		}
 
-		var oContent = oControl.getContent();
+		var oContent = oControl.getContent(),
+			oPriority = oControl.getPriority(),
+			oTile = oControl.getParent(),
+			bIsActionMode = oTile instanceof GenericTile && oTile.getMode() === GenericTileMode.ActionMode && oTile.getFrameType() === FrameType.TwoByOne,
+			bRenderPriority = bIsActionMode && oPriority && oPriority !== Priority.None;
+
 		if (oContent) {
+			if (bRenderPriority) {
+				oRm.openStart("div", oControl.getId() + "-content-container");
+				oRm.class("sapMTileContainer");
+				oRm.openEnd();
+				//Priority Container
+				oRm.openStart("div", oControl.getId() + "-priority");
+				oRm.class("sapMTilePriority");
+				oRm.class(oPriority);
+				oRm.openEnd();
+				//Inner Container
+				oRm.openStart("div", oControl.getId() + "-priority-content");
+				oRm.class("sapMTilePriorityCnt");
+				oRm.openEnd();
+				//Border
+				oRm.openStart("div", oControl.getId() + "-priority-border");
+				oRm.class("sapMTilePriorityBorder");
+				oRm.openEnd();
+				oRm.close("div");
+				//Value
+				oRm.openStart("span", oControl.getId() + "-priority-value");
+				oRm.class("sapMTilePriorityValue");
+				oRm.openEnd();
+				oRm.text(oControl._getPriorityText(oPriority));
+				oRm.close("span");
+				oRm.close("div");
+				oRm.close("div");
+			}
+
 			oRm.openStart("div", oControl.getId() + "-content");
 			oRm.class("sapMTileCntContent");
 			oRm.openEnd();
@@ -65,6 +102,10 @@ sap.ui.define(["sap/base/security/encodeCSS", "sap/m/GenericTile"],
 			}
 			oRm.renderControl(oContent);
 			oRm.close("div");
+
+			if (bRenderPriority) {
+				oRm.close("div");
+			}
 		}
 	};
 
