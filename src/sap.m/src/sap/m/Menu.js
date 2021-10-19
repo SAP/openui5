@@ -60,6 +60,13 @@ sap.ui.define([
 		 * @class
 		 * The <code>sap.m.Menu</code> control represents a hierarchical menu.
 		 * When opened on mobile devices it occupies the whole screen.
+		 *
+		 * <b>Note:</b> The application developer should add dependency to <code>sap.ui.unified</code> library
+		 * on application level to ensure that the library is loaded before the module dependencies will be required.
+		 * If the <code>sap.ui.unified</code> library is not loaded in advance, this
+		 * could lead to CSP compliance issues and adds an additional waiting time.
+		 * To prevent this, ensure that the <code>sap.ui.unified</code> library is loaded in advance.
+		 *
 		 * @extends sap.ui.core.Control
 		 * @implements sap.ui.core.IContextMenu
 		 *
