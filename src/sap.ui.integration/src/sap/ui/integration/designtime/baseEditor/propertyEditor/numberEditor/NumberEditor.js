@@ -53,7 +53,15 @@ sap.ui.define([
 		);
 	};
 
-	NumberEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata);
+	NumberEditor.configMetadata = Object.assign(
+		{},
+		BasePropertyEditor.configMetadata,
+		{
+			typeLabel: {
+				defaultValue: "BASE_EDITOR.TYPES.NUMBER"
+			}
+		}
+	);
 
 	NumberEditor.prototype.formatValue = function (sValue) {
 		if (_isNil(sValue) || isValidBindingString(sValue, false)) {

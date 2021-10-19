@@ -54,7 +54,15 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	IconEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata);
+	IconEditor.configMetadata = Object.assign(
+		{},
+		BasePropertyEditor.configMetadata,
+		{
+			typeLabel: {
+				defaultValue: "BASE_EDITOR.TYPES.SIMPLEICON"
+			}
+		}
+	);
 
 	IconEditor.prototype.onFragmentReady = function () {
 		var oInput = this.getContent();

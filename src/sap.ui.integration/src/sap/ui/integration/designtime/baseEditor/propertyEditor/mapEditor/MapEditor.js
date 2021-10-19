@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
+	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual",
 	"sap/ui/model/json/JSONModel",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/base/strings/formatMessage"
 ], function (
 	BasePropertyEditor,
+	PropertyEditorFactory,
 	deepClone,
 	deepEqual,
 	JSONModel,
@@ -23,20 +25,6 @@ sap.ui.define([
 	formatMessage
 ) {
 	"use strict";
-
-	var SUPPORTED_TYPE_LABELS = {
-		"string": "BASE_EDITOR.MAP.TYPES.STRING",
-		"boolean": "BASE_EDITOR.MAP.TYPES.BOOLEAN",
-		"number": "BASE_EDITOR.MAP.TYPES.NUMBER",
-		"integer": "BASE_EDITOR.MAP.TYPES.INTEGER",
-		"date": "BASE_EDITOR.MAP.TYPES.DATE",
-		"datetime": "BASE_EDITOR.MAP.TYPES.DATETIME",
-		"icon": "BASE_EDITOR.MAP.TYPES.ICON",
-		"simpleicon": "BASE_EDITOR.MAP.TYPES.SIMPLEICON",
-		"group": "BASE_EDITOR.MAP.TYPES.GROUP",
-		"separator": "BASE_EDITOR.MAP.TYPES.SEPARATOR",
-		"array": "BASE_EDITOR.MAP.TYPES.ARRAY"
-	};
 
 	/**
 	 * @class
@@ -94,6 +82,12 @@ sap.ui.define([
 	 * 	<td><code>BASE_EDITOR.MAP.DEFAULT_TYPE</code></td>
 	 * 	<td>I18n key for the item in the "Add: Item" label, e.g. "Add: Parameter" by default</td>
 	 * </tr>
+	 * <tr>
+	 * 	<td><code>defaultType</code></td>
+	 *  <td><code>string</code></td>
+	 * 	<td><code>null</code></td>
+	 * 	<td>Default type for all map items. If <code>null</code>, the editor will try to derive the type from the value or fall back to "string"</td>
+	 * </tr>
 	 * </table>
 	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
@@ -117,18 +111,11 @@ sap.ui.define([
 			this._itemsModel = new JSONModel();
 			this._itemsModel.setDefaultBindingMode("OneWay");
 			this.setModel(this._itemsModel, "itemsModel");
-			this._supportedTypesModel = new JSONModel();
+			this._supportedTypesModel = new JSONModel([]);
 			this._supportedTypesModel.setDefaultBindingMode("OneWay");
 			this.setModel(this._supportedTypesModel, "supportedTypes");
 			this.attachModelContextChange(function () {
 				if (this.getModel("i18n")) {
-					var oResourceBundle = this.getModel("i18n").getResourceBundle();
-					this._aSupportedTypes = Object.keys(SUPPORTED_TYPE_LABELS).map(function (sKey) {
-						return {
-							key: sKey,
-							label: oResourceBundle.getText(SUPPORTED_TYPE_LABELS[sKey])
-						};
-					});
 					this._setSupportedTypesModel();
 				}
 			}, this);
@@ -227,6 +214,11 @@ sap.ui.define([
 		},
 
 		_getDefaultType: function (vValue) {
+			var sDefaultType = this.getConfig().defaultType;
+			if (sDefaultType) {
+				return sDefaultType;
+			}
+
 			var aAllowedTypes = this._getAllowedTypes();
 			var sType = typeof vValue;
 			var sChosenType = includes(aAllowedTypes, sType) ? sType : undefined;
@@ -237,14 +229,35 @@ sap.ui.define([
 		},
 
 		_getAllowedTypes: function () {
-			return (this.getConfig() || MapEditor.configMetadata).allowedTypes;
+			var oConfig = this.getConfig();
+			return (
+				(oConfig && oConfig.allowedTypes)
+				|| MapEditor.configMetadata.allowedTypes.defaultValue
+			);
 		},
 
 		_setSupportedTypesModel: function () {
 			var aAllowedTypes = this._getAllowedTypes();
-			this._supportedTypesModel.setData(this._aSupportedTypes.filter(function (oSupportedType) {
-				return includes(aAllowedTypes, oSupportedType.key);
-			}));
+			var aRegisteredTypes = PropertyEditorFactory.getTypes();
+			Promise.all(aAllowedTypes.map(function(sType) {
+				return (aRegisteredTypes[sType] || Promise.resolve(BasePropertyEditor))
+					.then(function(oEditor) {
+						return {
+							key: sType,
+							editor: oEditor
+						};
+					});
+			}))
+				.then(function(aEditorInfos){
+					var aItems = aEditorInfos.map(function(oEditorInfo) {
+						var sLabelKey = oEditorInfo.editor.configMetadata.typeLabel.defaultValue;
+						return {
+							key: oEditorInfo.key,
+							title: this.getI18nProperty(sLabelKey)
+						};
+					}.bind(this));
+					this._supportedTypesModel.setData(aItems);
+				}.bind(this));
 		},
 
 		/**
@@ -295,12 +308,7 @@ sap.ui.define([
 					path: "type",
 					value: sType,
 					type: "select",
-					items: this._getAllowedTypes().map(function (sKey) {
-						return {
-							key: sKey,
-							title: this.getI18nProperty(SUPPORTED_TYPE_LABELS[sKey])
-						};
-					}.bind(this)),
+					items: this._supportedTypesModel.getData(),
 					visible: oConfig.allowTypeChange,
 					itemKey: sKey,
 					allowBindings: false
@@ -619,6 +627,9 @@ sap.ui.define([
 		allowedTypes: {
 			defaultValue: ["string"],
 			mergeStrategy: "intersection"
+		},
+		defaultType: {
+			defaultValue: null
 		},
 		allowSorting: {
 			defaultValue: true,

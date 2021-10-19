@@ -40,7 +40,15 @@ sap.ui.define([
 		return DateFormat.getDateTimeInstance();
 	};
 
-	DateTimeEditor.configMetadata = Object.assign({}, DateEditor.configMetadata);
+	DateTimeEditor.configMetadata = Object.assign(
+		{},
+		DateEditor.configMetadata,
+		{
+			typeLabel: {
+				defaultValue: "BASE_EDITOR.TYPES.DATETIME"
+			}
+		}
+	);
 
 	return DateTimeEditor;
 });

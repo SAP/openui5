@@ -113,7 +113,7 @@ sap.ui.define([
 		});
 	};
 
-	PropertyEditorFactory.getType = function(sType) {
+	PropertyEditorFactory.getByClassName = function(sType) {
 		return oPropertyEditorClasses[sType];
 	};
 

@@ -138,7 +138,15 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	JsonEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata);
+	JsonEditor.configMetadata = Object.assign(
+		{},
+		BasePropertyEditor.configMetadata,
+		{
+			typeLabel: {
+				defaultValue: "BASE_EDITOR.TYPES.JSON"
+			}
+		}
+	);
 
 	return JsonEditor;
 });

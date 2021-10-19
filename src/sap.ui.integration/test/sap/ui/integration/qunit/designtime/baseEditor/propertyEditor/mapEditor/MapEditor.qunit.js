@@ -2,11 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
+	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/ui/qunit/QUnitUtils",
 	"qunit/designtime/EditorQunitUtils",
 	"sap/base/util/ObjectPath"
 ], function (
 	BaseEditor,
+	BasePropertyEditor,
 	QUnitUtils,
 	EditorQunitUtils,
 	ObjectPath
@@ -80,6 +82,23 @@ sap.ui.define([
 			assert.ok(
 				this.oAddButton.getText().includes(sDefaultLabel),
 				"then the add button has the proper default label"
+			);
+		});
+
+		QUnit.test("When a nested editor has a type label", function(assert) {
+			var oNestedEditor = this.aItems[0].value.getAggregation("propertyEditor");
+			var sLabelKey = oNestedEditor.constructor.configMetadata.typeLabel.defaultValue;
+			assert.ok(sLabelKey.length, "then the nested editor's config metadata contains the label key");
+			assert.notStrictEqual(
+				sLabelKey,
+				BasePropertyEditor.configMetadata.typeLabel.defaultValue,
+				"then the label key is not the fallback key"
+			);
+			var sLabel = oNestedEditor.getI18nProperty(sLabelKey);
+			assert.strictEqual(
+				this.aItems[0].type.getContent().getItemByKey("string").getText(),
+				sLabel,
+				"then the map editor type selection displays the resolved type label"
 			);
 		});
 
@@ -564,6 +583,39 @@ sap.ui.define([
 				assert.ok(
 					getMapEditorContent(oMapEditor).addButton.getText().includes("SOME_I18N_KEY"),
 					"then the custom key is part of the label"
+				);
+			});
+		});
+
+		QUnit.test("When a default type is provided", function(assert) {
+			this.oBaseEditor.setConfig({
+				"properties": {
+					"sampleMap": {
+						"path": "/sampleMap",
+						"type": "map",
+						"defaultType": "json"
+					}
+				},
+				"propertyEditors": {
+					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
+					"json": "sap/ui/integration/designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor",
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
+				}
+			});
+
+			this.oBaseEditor.setJson({
+				sampleMap: {
+					someKey: "someStringContent"
+				}
+			});
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleMap").then(function (aPropertyEditor) {
+				var oMapEditor = aPropertyEditor[0];
+				assert.strictEqual(
+					getMapEditorContent(oMapEditor).items[0].value.getConfig().type,
+					"json",
+					"then the custom type is used"
 				);
 			});
 		});
