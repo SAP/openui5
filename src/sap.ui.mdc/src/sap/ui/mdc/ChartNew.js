@@ -531,6 +531,14 @@ sap.ui.define([
         };
 
         /**
+         * Gets the adaption UI for the p13n dialog
+         * @returns {Prmoise} promise that resolves with UI
+         */
+        Chart.prototype.getAdaptationUI = function () {
+            return this.getControlDelegate().getAdaptionUI(this);
+        };
+
+        /**
          * Propagates a change on the "item" aggregation to the inner chart via the delegate
          * The delegate must then update the inner chart accordingly
          *
@@ -747,6 +755,14 @@ sap.ui.define([
 
         Chart.prototype.getSelectionHandler = function () {
             return this.getControlDelegate().getInnerChartSelectionHandler(this);
+        };
+
+        Chart.prototype.getChartTypeLayoutConfig = function() {
+            return this.getControlDelegate().getChartTypeLayoutConfig();
+        };
+
+        Chart.prototype.getAllowedRolesForKinds = function() {
+            return this.getControlDelegate().getAllowedRolesForKinds();
         };
 
         /**

@@ -5,8 +5,9 @@ sap.ui.define([
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Util',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion',
-	'sap/ui/Device'
-], function(Opa5, opaTest, Arrangement, TestUtil, Action, Assertion,  Device) {
+	'sap/ui/Device',
+	"sap/base/util/UriParameters"
+], function(Opa5, opaTest, Arrangement, TestUtil, Action, Assertion,  Device, UriParameters) {
 	'use strict';
 
 	if (window.blanket) {
@@ -252,27 +253,49 @@ sap.ui.define([
 		Then.iShouldSeeP13nItems(aChartItems);
 	});
 	opaTest("When I select the 'Words (average)' measure and move the 'Words (average)' to the top, the chart should be changed", function(Given, When, Then) {
-		When.iSelectColumn("Words (average)", sViewSettings);
 
-		When.iPressButtonWithText("Reorder");
-		When.iClickOnTableItem("Words (average)").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
-		When.iPressButtonWithText("Select");
+		if (UriParameters.fromQuery(window.location.search).get("newChartP13n") === "true"){
+			When.iAddMeasure("Words (average)", sViewSettings);
+			When.iClickOnTableItemWithComboBox("Words (average)").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
+			aChartItems = [
+				{p13nItem: "Genre", selected: true},
+				{p13nItem: "Words (average)", selected: true},
+				{p13nItem: "Price (average)", selected: true},
+				{p13nItem: "Author ID", selected: false},
+				{p13nItem: "Classification", selected: false},
+				{p13nItem: "DetailGenre", selected: false},
+				{p13nItem: "Language", selected: false},
+				{p13nItem: "Price (max)", selected: false},
+				{p13nItem: "Price (min)", selected: false},
+				{p13nItem: "SubGenre", selected: false},
+				{p13nItem: "Title", selected: false},
+				{p13nItem: "Words (max)", selected: false},
+				{p13nItem: "Words (min)", selected: false}
+			];
+		} else {
+			When.iSelectColumn("Words (average)", sViewSettings);
+			When.iPressButtonWithText("Reorder");
+			When.iClickOnTableItem("Words (average)").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
+			When.iPressButtonWithText("Select");
 
-		aChartItems = [
-			{p13nItem: "Words (average)", selected: true},
-			{p13nItem: "Genre", selected: true},
-			{p13nItem: "Price (average)", selected: true},
-			{p13nItem: "Author ID", selected: false},
-			{p13nItem: "Classification", selected: false},
-			{p13nItem: "DetailGenre", selected: false},
-			{p13nItem: "Language", selected: false},
-			{p13nItem: "Price (max)", selected: false},
-			{p13nItem: "Price (min)", selected: false},
-			{p13nItem: "SubGenre", selected: false},
-			{p13nItem: "Title", selected: false},
-			{p13nItem: "Words (max)", selected: false},
-			{p13nItem: "Words (min)", selected: false}
-		];
+			aChartItems = [
+				{p13nItem: "Words (average)", selected: true},
+				{p13nItem: "Genre", selected: true},
+				{p13nItem: "Price (average)", selected: true},
+				{p13nItem: "Author ID", selected: false},
+				{p13nItem: "Classification", selected: false},
+				{p13nItem: "DetailGenre", selected: false},
+				{p13nItem: "Language", selected: false},
+				{p13nItem: "Price (max)", selected: false},
+				{p13nItem: "Price (min)", selected: false},
+				{p13nItem: "SubGenre", selected: false},
+				{p13nItem: "Title", selected: false},
+				{p13nItem: "Words (max)", selected: false},
+				{p13nItem: "Words (min)", selected: false}
+			];
+		}
+
+
 
 		Then.iShouldSeeP13nItems(aChartItems);
 
@@ -335,11 +358,15 @@ sap.ui.define([
 		]);
 	});
 	opaTest("When I select the 'Language' dimension and move the 'Language' to the top, the chart should be changed", function(Given, When, Then) {
-		When.iSelectColumn("Language", sViewSettings);
-
-		When.iPressButtonWithText("Reorder");
-		When.iClickOnTableItem("Language").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
-		When.iPressButtonWithText("Select");
+		if (UriParameters.fromQuery(window.location.search).get("newChartP13n") === "true"){
+			When.iAddDimension("Language", sViewSettings);
+			When.iClickOnTableItemWithComboBox("Language").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
+		} else {
+			When.iSelectColumn("Language", sViewSettings);
+			When.iPressButtonWithText("Reorder");
+			When.iClickOnTableItem("Language").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
+			When.iPressButtonWithText("Select");
+		}
 
 		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
 
