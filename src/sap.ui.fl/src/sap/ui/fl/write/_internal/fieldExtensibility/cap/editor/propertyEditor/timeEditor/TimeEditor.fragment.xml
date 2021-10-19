@@ -4,7 +4,7 @@
 >
 	<TimePicker
 		value="{displayValue}"
-		valueFormat="HH:mm:ss"
+		valueFormat="HH:mm:ss.SSSS"
 		change="_onChange"
 	/>
 </core:FragmentDefinition>

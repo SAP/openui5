@@ -62,22 +62,22 @@ sap.ui.define([
 		QUnit.test("When config and json data were set", function (assert) {
 			assert.deepEqual(
 				this.oDateEditorElement.getValue(),
-				DateFormat.getDateInstance().format(new Date(sampleDate)),
+				DateFormat.getDateInstance({
+					pattern: "yyyy-MM-dd"
+				}).format(new Date(sampleDate)),
 				"Then the editor has the correct value"
 			);
 		});
 
 		QUnit.test("When a value is edited in the editor", function (assert) {
 			var fnDone = assert.async();
-			var oCurrentDate = new Date();
+			var oCurrentDate = DateFormat.getDateInstance({ pattern: "MM/dd/yyyy" }).parse("10/19/2021", true);
 			var sCurrentDateString = DateFormat.getDateInstance().format(oCurrentDate);
-
-			oCurrentDate.setHours(0, 0, 0, 0);
 
 			this.oDateEditor.attachValueChange(function (oEvent) {
 				assert.deepEqual(
 					oEvent.getParameter("value"),
-					oCurrentDate.toISOString(),
+					"2021-10-19T00:00:00.000Z",
 					"Then the editor value is updated correctly"
 				);
 				fnDone();
@@ -108,6 +108,11 @@ sap.ui.define([
 				"{someBindingString}",
 				"Then it is properly updated in the editor"
 			);
+			assert.strictEqual(
+				this.oDateEditor.getContent().getValue(),
+				"{someBindingString}",
+				"then the output is properly displayed"
+			);
 		});
 
 		QUnit.test("When an invalid input is provided", function (assert) {
@@ -124,6 +129,74 @@ sap.ui.define([
 				sampleDate,
 				"Then the editor value is not updated"
 			);
+		});
+	});
+
+	QUnit.module("Configuration options", {
+		beforeEach: function () {
+			this.oBaseEditor = new BaseEditor();
+			this.oBaseEditor.placeAt("qunit-fixture");
+		},
+		afterEach: function () {
+			this.oBaseEditor.destroy();
+		}
+	}, function () {
+		QUnit.test("When the date pattern is customized", function (assert) {
+			this.oBaseEditor.setConfig({
+				properties: {
+					sampleDate: {
+						label: "Test Date",
+						type: "date",
+						path: "/foo",
+						pattern: "MM-yyyy-dd",
+						utc: false
+					}
+				},
+				propertyEditors: {
+					"date": "sap/ui/integration/designtime/baseEditor/propertyEditor/dateEditor/DateEditor"
+				}
+			});
+
+			this.oBaseEditor.setJson({
+				foo: "03-2020-05"
+			});
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleDate").then(function (aPropertyEditor) {
+				sap.ui.getCore().applyChanges();
+				var oDateEditor = aPropertyEditor[0];
+				assert.strictEqual(
+					oDateEditor.getValue(),
+					"03-2020-05",
+					"then the original date is not touched"
+				);
+				assert.strictEqual(
+					oDateEditor.getContent().getValue(),
+					DateFormat.getDateInstance({
+						pattern: "yyyy-MM-dd"
+					}).format(new Date(sampleDate), true),
+					"then the date picker value is properly formatted"
+				);
+
+				EditorQunitUtils.setInputValueAndConfirm(
+					oDateEditor.getContent(),
+					DateFormat.getDateInstance({
+						pattern: "yyyy-MM-dd"
+					}).format(new Date("2021-10-19T08:35:20.902Z"), true)
+				);
+
+				assert.strictEqual(
+					oDateEditor.getValue(),
+					"10-2021-19",
+					"then the output is properly formatted"
+				);
+				assert.strictEqual(
+					oDateEditor.getContent().getValue(),
+					DateFormat.getDateInstance({
+						pattern: "yyyy-MM-dd"
+					}).format(new Date("2021-10-19T08:35:20.902Z"), true),
+					"then the date picker value is properly formatted"
+				);
+			});
 		});
 	});
 

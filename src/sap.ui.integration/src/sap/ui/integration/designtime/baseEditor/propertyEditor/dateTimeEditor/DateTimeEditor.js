@@ -36,8 +36,10 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	DateTimeEditor.prototype.getFormatterInstance = function () {
-		return DateFormat.getDateTimeInstance();
+	DateTimeEditor.prototype.getFormatterInstance = function (mOptions) {
+		return DateFormat.getDateTimeInstance(mOptions || {
+			pattern: "YYYY-MM-dd'T'HH:mm:ss.SSSSZ"
+		});
 	};
 
 	DateTimeEditor.configMetadata = Object.assign(
@@ -46,6 +48,9 @@ sap.ui.define([
 		{
 			typeLabel: {
 				defaultValue: "BASE_EDITOR.TYPES.DATETIME"
+			},
+			utc: {
+				defaultValue: true
 			}
 		}
 	);

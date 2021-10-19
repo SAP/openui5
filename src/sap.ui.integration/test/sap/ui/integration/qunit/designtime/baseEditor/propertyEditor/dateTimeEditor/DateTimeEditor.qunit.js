@@ -62,7 +62,9 @@ sap.ui.define([
 		QUnit.test("When config and json data were set", function (assert) {
 			assert.deepEqual(
 				this.oDateTimeEditorElement.getValue(),
-				DateFormat.getDateTimeInstance().format(new Date(sampleDateTime)),
+				DateFormat.getDateTimeInstance({
+					pattern: "YYYY-MM-dd'T'HH:mm:ss.SSSSZ"
+				}).format(new Date(sampleDateTime), true),
 				"Then the editor has the correct value"
 			);
 		});
