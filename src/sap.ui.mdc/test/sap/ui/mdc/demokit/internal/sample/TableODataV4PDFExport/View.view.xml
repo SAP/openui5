@@ -1,0 +1,21 @@
+<mvc:View
+		xmlns:mdc="sap.ui.mdc"
+		xmlns:mdcTable="sap.ui.mdc.table"
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:variants="sap.ui.fl.variants"
+		xmlns:unified="sap.ui.unified"
+		controllerName="sap.ui.mdc.sample.TableODataV4PDFExport.View">
+	<OverflowToolbar>
+		<Input id="serviceUrl" placeholder="Service URL" width="20%"/>
+		<Input id="collectionName" placeholder="Collection name" width="20%"/>
+		<Input id="initiallyVisibleProperties" placeholder="Comma(,) separated initially visible property names" width="30%"/>
+		<Input id="username" placeholder="User name" width="10%"/>
+		<Input id="password" placeholder="Password" type="Password" width="10%"/>
+		<ToolbarSpacer/>
+		<OverflowToolbarButton icon="sap-icon://restart" tooltip="Refresh" text="Refresh" press=".onRefresh" />
+	</OverflowToolbar>
+	<VBox id="tableContainer" fitContainer="true">
+	</VBox>
+</mvc:View>

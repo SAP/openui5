@@ -1701,6 +1701,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._onExport = function(mCustomConfig) {
+		var that = this;
 		return this._createExportColumnConfiguration(mCustomConfig).then(function(aResult) {
 			var aSheetColumns = aResult[0];
 			var oPropertyHelper = aResult[1];
@@ -1711,21 +1712,22 @@ sap.ui.define([
 					MessageBox.error(Core.getLibraryResourceBundle("sap.ui.mdc").getText("table.NO_COLS_EXPORT"), {
 						styleClass: (this.$() && this.$().closest(".sapUiSizeCompact").length) ? "sapUiSizeCompact" : ""
 					});
-				}.bind(this));
+				}.bind(that));
 				return;
 			}
 
-			var oRowBinding = this._getRowBinding();
+			var oRowBinding = that._getRowBinding();
 			var mExportSettings = {
 				workbook: {
 					columns: aSheetColumns
 				},
 				dataSource: oRowBinding,
-				fileName: mCustomConfig ? mCustomConfig.fileName : this.getHeader()
+				fileType: mCustomConfig.selectedFileType == "pdf" ? "PDF" : "XLSX",
+				fileName: mCustomConfig ? mCustomConfig.fileName : that.getHeader()
 			};
 
-			this._loadExportLibrary().then(function() {
-				sap.ui.require(["sap/ui/export/ExportUtils", "sap/ui/export/Spreadsheet"], function(ExportUtils, Spreadsheet) {
+			that._loadExportLibrary().then(function() {
+				sap.ui.require(["sap/ui/export/ExportUtils"], function(ExportUtils) {
 					var oProcessor = Promise.resolve();
 
 					if (mCustomConfig.includeFilterSettings) {
@@ -1754,22 +1756,23 @@ sap.ui.define([
 							mUserSettings.includeFilterSettings = mCustomConfig.includeFilterSettings;
 						}
 
-						var oSheet = new Spreadsheet(mExportSettings);
-						oSheet.attachBeforeExport(function(oEvent) {
+						ExportUtils.getExportInstance(mExportSettings).then(function(oSheet){
+							oSheet.attachBeforeExport(function(oEvent) {
 							var oExportSettings = oEvent.getParameter("exportSettings");
 
-							this.fireBeforeExport({
+							that.fireBeforeExport({
 								exportSettings: oExportSettings,
 								userExportSettings: mUserSettings
+							  });
+						    }, that);
+							oSheet.build().finally(function() {
+								oSheet.destroy();
 							});
-						}, this);
-						oSheet.build().finally(function() {
-							oSheet.destroy();
 						});
-					}.bind(this));
-				}.bind(this));
-			}.bind(this));
-		}.bind(this));
+					});
+				});
+			});
+		});
 	};
 
 	/**
@@ -1777,12 +1780,13 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Table.prototype._onExportAs = function() {
+	Table.prototype._onExportAs = function(mCustomConfig) {
 		var that = this;
 
 		this._loadExportLibrary().then(function() {
 			sap.ui.require(['sap/ui/export/ExportUtils'], function(ExportUtils) {
-				ExportUtils.getExportSettingsViaDialog(that._cachedExportSettings, that).then(function(oUserInput) {
+				var bEnablePDFExport = new URL(window.location.href).search.indexOf("sap-ui-xx-enablePDFExport=true");
+				ExportUtils.getExportSettingsViaDialog(that._cachedExportSettings, that, undefined, bEnablePDFExport).then(function(oUserInput) {
 					that._cachedExportSettings = oUserInput;
 					that._onExport(oUserInput);
 				});
