@@ -498,10 +498,13 @@ sap.ui.define([
 			// Switch SubMenu
 			var mPropertyBag = {
 				eventItem: {
-					data: function () {
+					getParameters: function () {
 						return {
-							id: "CTX_VARIANT_SWITCH_SUBMENU",
-							key: "variant2"
+							item: {
+								getProperty: function() {
+									return "variant2";
+								}
+							}
 						};
 					}
 				}

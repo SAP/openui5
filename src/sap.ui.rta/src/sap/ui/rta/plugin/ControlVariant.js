@@ -600,9 +600,8 @@ sap.ui.define([
 				id: "CTX_VARIANT_SWITCH_SUBMENU",
 				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_VARIANT_SWITCH'),
 				handler: function(aElementOverlays, mPropertyBag) {
-					var oEventItemCustomData = mPropertyBag.eventItem.data();
+					var sNewVariantKey = mPropertyBag.eventItem.getParameters().item.getProperty("key");
 					var oTargetOverlay = aElementOverlays[0];
-					var sNewVariantKey = oEventItemCustomData.key;
 					var sCurrentVariantKey = oModel.getData()[sManagementReferenceId].currentVariant;
 					return this.switchVariant(oTargetOverlay, sNewVariantKey, sCurrentVariantKey);
 				}.bind(this),

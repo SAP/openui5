@@ -249,8 +249,14 @@ sap.ui.define([
 			}, "the third variant is there and correct");
 
 			var oEvent = {
-				data: function() {
-					return {key: "id3"};
+				getParameters: function () {
+					return {
+						item: {
+							getProperty: function() {
+								return "id3";
+							}
+						}
+					};
 				}
 			};
 
