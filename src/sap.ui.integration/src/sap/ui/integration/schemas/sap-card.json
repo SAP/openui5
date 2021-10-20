@@ -552,9 +552,9 @@
             }
           ]
         },
-		"group": {
-			"$ref": "#/definitions/group"
-		}
+        "group": {
+          "$ref": "#/definitions/group"
+        }
       }
     },
     "ContentType.List.Item": {
@@ -1195,9 +1195,9 @@
             }
           ]
         },
-		"group": {
-			"$ref": "#/definitions/group"
-		}
+        "group": {
+          "$ref": "#/definitions/group"
+        }
       }
     },
     "ContentType.Table.Column": {
@@ -2735,38 +2735,41 @@
               "$ref": "#/definitions/simpleBinding"
             }
           ]
+        }
+      }
+    },
+    "group": {
+      "description": "Represents group of items",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "description": "The title of the group",
+          "type": "string"
         },
-		"group": {
-			"description": "Represents group of items",
-			"type": "object",
-			"properties": {
-				"title": {
-					"description": "The title of the group",
-					"type": "string"
-				},
-				"order": {
-					"description": "The order by which the group will be sorted",
-					"properties": {
-						"path": {
-							"description": "Defines the path to the structure holding the data about the group order",
-							"type": "string"
-						},
-						"dir": {
-							"description": "The direction in which the group items will be ordered",
-							"oneOf": [
-								{
-									"enum": [
-										"ASC",
-										"DESC"
-									],
-									"default": "ASC"
-								}
-							]
-						}
-					}
-				}
-			}
-		}
+        "order": {
+          "description": "The order by which the group will be sorted",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "path": {
+              "description": "Defines the path to the structure holding the data about the group order",
+              "type": "string"
+            },
+            "dir": {
+              "description": "The direction in which the group items will be ordered",
+              "oneOf": [
+                {
+                  "enum": [
+                    "ASC",
+                    "DESC"
+                  ],
+                  "default": "ASC"
+                }
+              ]
+            }
+          }
+        }
       }
     }
   }
