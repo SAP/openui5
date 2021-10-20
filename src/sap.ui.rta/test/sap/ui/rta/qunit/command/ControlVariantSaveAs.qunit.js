@@ -206,7 +206,7 @@ sap.ui.define([
 					assert.strictEqual(aDirtyChanges[1].getId(), "change45", "the second change is the second dirty control change");
 					assert.notOk(oSaveAsVariant, "then saveAs variant from command unset");
 					assert.notOk(oControlVariantSaveAsCommand._oVariantChange, "then _oVariantChange property was unset for the command");
-					assert.ok(this.oModel.oData["variantMgmtId1"].modified, "the diry flag is set to true again");
+					assert.ok(this.oModel.oData["variantMgmtId1"].modified, "the dirty flag is set to true again");
 					return oControlVariantSaveAsCommand.undo();
 				}.bind(this))
 				.then(function() {

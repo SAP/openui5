@@ -96,6 +96,7 @@
 						"creation":"",
 						"originalLanguage":"EN",
 						"conditions":{},
+						"contexts" : {},
 						"support":{
 							"generator":"Change.createInitialFileContent",
 							"service":"",

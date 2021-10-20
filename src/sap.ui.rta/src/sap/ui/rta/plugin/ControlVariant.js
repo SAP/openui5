@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/fl/write/api/ContextSharingAPI",
 	"sap/ui/base/ManagedObject",
 	"sap/base/Log"
 ], function(
@@ -26,6 +27,7 @@ sap.ui.define([
 	flUtils,
 	Layer,
 	VariantManagement,
+	ContextSharingAPI,
 	ManagedObject,
 	Log
 ) {
@@ -488,12 +490,16 @@ sap.ui.define([
 		var sVariantManagementReference = oElementOverlay.getVariantManagement();
 		var oModel = this._getVariantModel(oVariantManagementControl);
 		var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
+		var mFlexSettings = this.getCommandFactory().getFlexSettings();
 
 		oModel.manageVariants(
 			oVariantManagementControl,
 			sVariantManagementReference,
-			this.getCommandFactory().getFlexSettings().layer,
-			Utils.getRtaStyleClassName())
+			mFlexSettings.layer,
+			Utils.getRtaStyleClassName()
+			// TODO: activate when VariantChanges V4 supports change update in the backend
+			// ContextSharingAPI.createComponent(mFlexSettings)
+		)
 		.then(function(aConfiguredChanges) {
 			return this.getCommandFactory().getCommandFor(
 				oVariantManagementControl,
