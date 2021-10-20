@@ -537,6 +537,44 @@ sap.ui.define([
         this.oAFPanel._getSearchField().fireLiveChange();
     });
 
+    QUnit.test("Check 'addCustomView' filterChange callback execution", function(assert){
+        var done = assert.async(2);
+
+        var iCount = 0;
+
+        //add a custom view
+        this.oAFPanel.addCustomView({
+            item: new SegmentedButtonItem({
+                key: "test",
+                icon: "sap-icon://bar-chart"
+            }),
+            content: new List("myCustomList",{}),
+            filterSelect: function(sValue){
+                if (iCount == 1) {
+                    assert.equal(sValue, "all", "Callback executed with 'all' key");
+                }
+                if (iCount == 2) {
+                    assert.equal(sValue, "visible", "Callback executed with 'visible' key");
+                }
+                iCount++;
+                done();
+            }
+        });
+
+        //Switch to custom view
+        this.oAFPanel.switchView("test");
+
+        //Trigger a Select event (with 'all')
+        this.oAFPanel._getQuickFilter().fireChange({
+            selectedItem: this.oAFPanel._getQuickFilter().getItems()[0]
+        });
+
+        //Trigger a Select event (with 'visible')
+        this.oAFPanel._getQuickFilter().fireChange({
+            selectedItem: this.oAFPanel._getQuickFilter().getItems()[0]
+        });
+    });
+
     QUnit.test("Check 'addCustomView' view switch callback execution", function(assert){
         var done = assert.async();
         var oItem = new SegmentedButtonItem({
