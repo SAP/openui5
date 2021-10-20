@@ -194,12 +194,12 @@ sap.ui.define([
 		if (bInbuiltEnabled || oFilter) {
 
 			if (oFilter) {
-				pOuterFilterSearch = oFilter.validate();
+				pOuterFilterSearch = oFilter.validate(true);
 			}
 
 			if (bInbuiltEnabled) {
 				pInnerFilterSearch = this.retrieveInbuiltFilter().then(function(oInnerFilter){
-					return oInnerFilter.validate();
+					return oInnerFilter.validate(true);
 				});
 			}
 
