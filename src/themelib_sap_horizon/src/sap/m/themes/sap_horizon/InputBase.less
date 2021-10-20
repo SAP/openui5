@@ -11,148 +11,205 @@
 @_sap_m_InputBase_InnerPadding: 0 0.625rem;
 @_sap_m_InputBase_Height: 2.25rem;
 @_sap_m_InputBase_DisabledOpacity: @sapUiContentDisabledOpacity;
-@_sap_m_InputBase_IconLineHeight: 2.125rem;
+@_sap_m_InputBase_IconLineHeight: 2rem;
 @_sap_m_InputBase_IconWidth: 2.125rem;
-@_sap_m_InputBase_IconMinWidth: 2.125rem;
+@_sap_m_InputBase_Compact_IconWidth: 1.5rem;
+@_sap_m_InputBase_IconMinWidth: 2rem;
+@_sap_m_InputBaseWrapper_Sum_Border: 0;
 
 .sapMInputBaseInner {
 	color: @sapUiFieldTextColor;
 }
 
 .sapMInputBaseContentWrapper {
+	border: none;
+	border-radius: @sapUiFieldBorderCornerRadius;
 	background: @sapUiFieldBackground;
-	border-radius: 0.5rem; // @sapUiFieldBorderCornerRadius;
-	border-bottom: 2px /* @sapUiFieldBorderWidth */ solid @sapUiFieldBorderColor;
+	background-image: linear-gradient(0deg, @sapField_BorderColor 0, @sapField_BorderColor 100%);
+	background-size: 100% @sapField_BorderWidth;
+	background-repeat: repeat-x;
+	background-position: bottom;
 
-	&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess){
-		border-width: 2px;
-		/* calculated line-height excluding the top and bottom borders */
-		.sapMInputBaseIcon {
-			line-height: 2rem;
-		}
-
-		.sapMTokenizer .sapMToken {
+	&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) .sapMTokenizer .sapMToken {
 			margin-top: 0.1875rem;
-		}
-	}
-
-	&.sapMInputBaseDisabledWrapper, &.sapMInputBaseReadonlyWrapper {
-		border: none;
 	}
 }
-
-.sapMInputBase:not(.sapMInputBaseDisabled):not(.sapMInputBaseIconPressed) .sapMInputBaseIconContainer .sapMInputBaseIcon {
-	color: @sapUiContentIconColor;
-	&:hover {
-		background: @sapUiButtonLiteHoverBackground;
-	}
-	&:active {
-		background-color: @sapUiButtonLiteActiveBackground;
-		color: @sapUiButtonActiveTextColor;
-	}
+.sapMInputBase:not(.sapMInputBaseReadonly) .sapMInputBaseIconContainer .sapMInputBaseIcon {
+	width: 2 * @sapContent_GridSize;
+	height: 2 * @sapContent_GridSize;
+	margin-right: 0.125 * @sapContent_GridSize;
+	margin-top: 0.125 * @sapContent_GridSize;
+	margin-bottom: 0.125 * @sapContent_GridSize;
+	border-radius: 0.125rem;
 }
 
-.sapMInputBaseIconPressed .sapMInputBaseIcon,
-.sapMInputBaseIconPressed .sapMInputBaseIcon:hover {
-	background: @sapUiButtonSelectedBackground;
-	border-left-color: @sapUiButtonSelectedBorderColor;
+.sapUiSizeCompact .sapMInputBase:not(.sapMInputBaseReadonly) .sapMInputBaseIconContainer .sapMInputBaseIcon {
+	min-width: 1.375rem;
+	margin-top: 0.125 * @sapContent_GridSize;
+	width: 1.375 * @sapContent_GridSize;
+	height: 1.375 * @sapContent_GridSize;
 }
 
-.sapMInputBaseDisabledWrapper .sapMInputBaseIcon {
-	color: @sapUiContentIconColor;
+.sapMInputBase:not(.sapMInputBaseDisabled).sapMInputBaseIconPressed .sapMInputBaseIconContainer .sapMInputBaseIcon,
+.sapMInputBase:not(.sapMInputBaseDisabled) .sapMInputBaseIconContainer .sapMInputBaseIcon:active {
+	background-color: @sapField_Focus_Background;
+	box-shadow: @sapContent_Interaction_Shadow;
+}
 
-	&:hover {
-		background: transparent;
-	}
+.sapMInputBaseIconPressed .sapMInputBaseIcon::before,
+.sapMInputBaseIcon:active {
+	color: @sapButton_Active_TextColor;
+}
+
+.sapMInputBaseHasEndIcons.sapMInputBaseHasBeginIcons .sapMInputBaseContentWrapper {
+	padding-left: 0.125 * @sapContent_GridSize;
 }
 
 .sapMInputBaseContentWrapperWarning {
 	background: @sapUiFieldWarningBackground;
-	border-color: @sapUiFieldWarningColor;
+	background-image: linear-gradient(0deg, @sapField_WarningColor 0, @sapField_WarningColor 100%);
+	background-size: 100% @sapField_WarningBorderWidth;
+	background-repeat: repeat-x;
+	background-position: bottom;
 }
 
 .sapMInputBaseContentWrapperSuccess {
 	background: @sapUiFieldSuccessBackground;
-	border-color: @sapUiFieldSuccessColor;
+	background-image: linear-gradient(0deg, @sapField_SuccessColor 0, @sapField_SuccessColor 100%);
+	background-size: 100% @sapField_SuccessBorderWidth;
+	background-repeat: repeat-x;
+	background-position: bottom;
+
 }
 
 .sapMInputBaseContentWrapperError {
 	background: @sapUiFieldInvalidBackground;
-	border-color: @sapUiFieldInvalidColor;
+	background-image: linear-gradient(0deg, @sapField_InvalidColor 0, @sapField_InvalidColor 100%);
+	background-size: 100% @sapField_InvalidBorderWidth;
+	background-repeat: repeat-x;
+	background-position: bottom;
 }
 
 .sapMInputBaseContentWrapperInformation {
 	background: @sapUiFieldInformationBackground;
-	border-color: @sapUiFieldInformationColor;
+	background-image: linear-gradient(0deg, @sapField_InformationColor 0, @sapField_InformationColor 100%);
+	background-size: 100% @sapField_InformationBorderWidth;
+	background-repeat: repeat-x;
+	background-position: bottom;
+}
+
+.sapMInputBaseReadonly .sapMInputBaseContentWrapper {
+	border-color: @sapField_ReadOnly_Background;
+	background-color: @sapField_ReadOnly_Background;
+}
+
+.sapMInputBaseDisabled {
+	opacity: @sapContent_DisabledOpacity;
 }
 
 .sapMFocus .sapMInputBaseContentWrapper {
-	border: none;
-	background-color: @sapUiButtonLiteActiveBackground;
-	box-shadow: 0 8px 16px 0 rgba(27,144,255,0.16), 0 0 2px 0 rgba(27,144,255,0.16);
+	background-color: @sapField_Focus_Background;
+	outline: none;
+
+	&:not(.sapMInputBaseContentWrapperState) {
+		box-shadow: inset 0px 0px 0px 2px @sapField_Focus_BorderColor;
+	}
 
 	&.sapMInputBaseReadonlyWrapper {
-		background: @sapUiFieldReadOnlyBackground;
+		background: @sapField_ReadOnly_Background;
 		box-shadow: none;
 		outline: none;
 	}
-}
 
-.sapMInputBase:not(.sapMInputFocused) {
-	.sapMInputBaseContentWrapperWarning {
-		&:hover {
-			background-color: @sapUiButtonLiteActiveBackground;
-		}
-
-		.sapMInputBaseInner {
-			color: @sapUiFieldWarningColor;
-		}
+	&.sapMInputBaseContentWrapperSuccess {
+		box-shadow: inset 0px 0px 0px 2px @sapField_SuccessColor;
 	}
 
-	.sapMInputBaseContentWrapperSuccess {
-		&:hover {
-			background-color: @sapUiButtonLiteActiveBackground;
-		}
-
-		.sapMInputBaseInner {
-			color: @sapUiFieldSuccessColor;
-		}
+	&.sapMInputBaseContentWrapperWarning {
+		box-shadow: inset 0px 0px 0px 2px @sapField_WarningColor;
 	}
 
-	.sapMInputBaseContentWrapperError {
-		&:hover {
-			background-color: @sapUiButtonLiteActiveBackground;
-		}
-
-		.sapMInputBaseInner,
-		.sapMInputBaseInner::placeholder {
-			color: @sapUiFieldInvalidColor;
-		}
+	&.sapMInputBaseContentWrapperError {
+		box-shadow: inset 0px 0px 0px 2px @sapField_InvalidColor;
 	}
 
-	.sapMInputBaseContentWrapper:not(.sapMInputBaseDisabledWrapper):not(.sapMInputBaseReadonlyWrapper) {
-		&:hover {
-			box-shadow: 0 8px 16px 0 rgba(131, 150, 168, 0.16), 0 0 2px 0 rgba(131, 150, 168, 0.16);
-		}
-
-		&.sapMInputBaseContentWrapperError:hover {
-			box-shadow: 0 8px 16px 0 rgba(245, 40, 40, 0.16), 0 0 2px 0 rgba(245, 40, 40, 0.16);
-		}
-
-		&.sapMInputBaseContentWrapperWarning:hover {
-			box-shadow: 0 8px 16px 0 rgba(255, 179, 0, 0.16), 0 0 2px 0 rgba(255, 179, 0, 0.16);
-		}
+	&.sapMInputBaseContentWrapperInformation {
+		box-shadow: inset 0px 0px 0px 2px @sapField_InformationColor;
 	}
 }
 
-.sapMInputBaseContentWrapperWarning .sapMInputBaseInner::placeholder {
-	color: @sapUiFieldWarningColor;
+.sapMInputBase:not(.sapMFocus) .sapMInputBaseContentWrapper:not(.sapMInputBaseDisabledWrapper):not(.sapMInputBaseReadonlyWrapper):not(.sapMInputBaseContentWrapperState):hover,
+.sapMInputBase:not(.sapMFocus).sapMInputBaseIconPressed .sapMInputBaseContentWrapper:not(.sapMInputBaseDisabledWrapper):not(.sapMInputBaseReadonlyWrapper):not(.sapMInputBaseContentWrapperState) {
+		box-shadow: @sapContent_Interaction_Shadow;
+		background: @sapField_Hover_Background;
+		background-image: linear-gradient(0deg, @sapField_BorderColor 0, @sapField_BorderColor 100%);
+		background-size: 100% @sapField_BorderWidth;
+		background-repeat: repeat-x;
+		background-position: bottom;
 }
 
-.sapMInputBaseContentWrapperSuccess .sapMInputBaseInner::placeholder {
-	color: @sapUiFieldSuccessColor;
+.sapMInputBase:not(.sapMFocus) .sapMInputBaseContentWrapperState:hover,
+.sapMInputBase:not(.sapMFocus).sapMInputBaseIconPressed .sapMInputBaseContentWrapperState{
+		background-color: @sapField_Hover_Background;
+
+		&.sapMInputBaseContentWrapperWarning:hover,
+		&.sapMInputBaseContentWrapperWarning {
+			box-shadow: @sapContent_Critical_Shadow;
+		}
+
+		&.sapMInputBaseContentWrapperSuccess:hover,
+		&.sapMInputBaseContentWrapperSuccess {
+			box-shadow: @sapContent_Positive_Shadow;
+		}
+
+		&.sapMInputBaseContentWrapperError:hover,
+		&.sapMInputBaseContentWrapperError {
+			box-shadow: @sapContent_Negative_Shadow;
+		}
+
+		&.sapMInputBaseContentWrapperInformation:hover,
+		&.sapMInputBaseContentWrapperInformation {
+			box-shadow: @sapContent_Informative_Shadow;
+		}
+	}
+
+.sapMInputBaseInner::-webkit-input-placeholder {
+	font-style: normal;
 }
 
-.sapMInputBaseContentWrapperError .sapMInputBaseInner::placeholder {
-	color: @sapUiFieldInvalidColor;
+.sapMInputBaseInner::-moz-placeholder {
+	font-style: normal;
+}
+
+.sapMInputBaseReadonly:after {
+	line-height: 1.5rem;
+	font-family: SAP-icons;
+	content: "\e292";
+	position: absolute;
+	top: 0.375rem;
+	right: 0rem;
+	overflow: hidden;
+	vertical-align: middle;
+	font-size: 0.75rem;
+	color: @sapField_PlaceholderTextColor;
+	padding-left: 0.125rem;
+	padding-right: 0.75rem;
+}
+
+.sapUiSizeCompact .sapMInputBaseReadonly:after {
+	line-height: 0.875rem;
+}
+
+.sapMInputBaseReadonly .sapMInputBaseInner {
+	width: ~"calc(100% - 1.625rem)";
+}
+
+.sapUiSizeCondensed .sapUiTableDataCell .sapMInputBase .sapMInputBaseIcon {
+		min-width: 1.125rem;
+		height: 1.125rem;
+		width: 1.125rem;
+		line-height: 1.125rem;
+		margin-right: 0.125rem;
+		margin-top: 0.125rem;
+		margin-bottom: 0.125rem;
 }

@@ -1,19 +1,25 @@
-/* ======================================== */
-/* CSS for control sap.m/ValueStateMessage  */
-/* Horizon theme                            */
-/* ======================================== */
-
-.sapMValueStateMessage {
-	box-shadow:@sapContent_Interaction_Shadow;
-	border-radius: @sapGroup_BorderCornerRadius;
-	padding-left: 1.75 * @sapContent_GridSize;
+.sapMValueStateHeaderText {
+	padding-left: 0.75rem;
 }
 
-.sapMValueStateMessageError:before {
+.sapMValueStateHeaderSuccess:before {
+	font-family: SAP-icons;
+	content: "\e1c1";
+	position: absolute;
+	top: 0.725rem;
+	left: 0rem;
+	vertical-align: middle;
+	font-size: 0.875rem;
+	color: @sapPositiveElementColor;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+}
+
+.sapMValueStateHeaderError:before {
 	font-family: SAP-icons;
 	content: "\e1ec";
 	position: absolute;
-	top: 0.313rem;
+	top: 0.725rem;
 	left: 0rem;
 	vertical-align: middle;
 	font-size: 0.875rem;
@@ -22,11 +28,11 @@
 	padding-right: 0.5rem;
 }
 
-.sapMValueStateMessageWarning:before {
+.sapMValueStateHeaderWarning:before {
 	font-family: SAP-icons;
-	content: "\e053s";
+	content: "\e053";
 	position: absolute;
-	top: 0.313rem;
+	top: 0.725rem;
 	left: 0rem;
 	vertical-align: middle;
 	font-size: 0.875rem;
@@ -35,11 +41,11 @@
 	padding-right: 0.5rem;
 }
 
-.sapMValueStateMessageInformation:before {
+.sapMValueStateHeaderInformation:before {
 	font-family: SAP-icons;
 	content: "\e289";
 	position: absolute;
-	top: 0.313rem;
+	top: 0.725rem;
 	left: 0rem;
 	vertical-align: middle;
 	font-size: 0.875rem;
