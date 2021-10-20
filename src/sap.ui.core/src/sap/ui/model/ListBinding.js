@@ -4,8 +4,8 @@
  */
 /*eslint-disable max-len */
 // Provides an abstraction for list bindings
-sap.ui.define(['./Binding', './Filter', './Sorter', 'sap/base/util/array/diff'],
-	function(Binding, Filter, Sorter, diff) {
+sap.ui.define(['./Binding', './Filter', './FilterType', './Sorter', 'sap/base/util/array/diff'],
+	function(Binding, Filter, FilterType, Sorter, diff) {
 	"use strict";
 
 
@@ -114,22 +114,21 @@ sap.ui.define(['./Binding', './Filter', './Sorter', 'sap/base/util/array/diff'],
 	 *
 	 * <h4>Application and Control Filters</h4>
 	 * Each list binding maintains two separate lists of filters, one for filters defined by the
-	 * control that owns the binding and another list for filters that an application can define
-	 * in addition. When executing the filter operation, both sets of filters are combined.
+	 * control that owns the binding, and another list for filters that an application can define in
+	 * addition. When executing the filter operation, both sets of filters are combined.
 	 *
-	 * By using the second parameter <code>sFilterType</code> of method <code>filter</code>,
-	 * the caller can control which set of filters is modified. If no type is given, then the
+	 * By using the <code>sFilterType</code> parameter of the <code>filter</code> method, the
+	 * caller can control which set of filters is modified. If no type is given, then the
 	 * behavior depends on the model implementation and should be documented in the API reference
 	 * for that model.
 	 *
 	 * <h4>Auto-Grouping of Filters</h4>
-	 * Filters are first grouped according to their binding path.
-	 * All filters belonging to the same group are ORed and after that the
-	 * results of all groups are ANDed.
-	 * Usually this means, all filters applied to a single table column
-	 * are ORed, while filters on different table columns are ANDed.
-	 * Please either use the automatic grouping of filters (where applicable) or use explicit
-	 * AND/OR filters, a mixture of both is not supported.
+	 * Filters are first grouped according to their binding path. All filters belonging to the same
+	 * path are ORed, and after that the results of all paths are ANDed. Usually this means that all
+	 * filters applied to the same property are ORed, while filters on different properties are
+	 * ANDed.
+	 * Please use either the automatic grouping of filters (where applicable) or explicit
+	 * AND/OR filters, as a mixture of both is not supported.
 	 *
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} aFilters
 	 *   Single filter object or an array of filter objects
@@ -467,6 +466,31 @@ sap.ui.define(['./Binding', './Filter', './Sorter', 'sap/base/util/array/diff'],
 	 */
 	ListBinding.prototype.getEntryData = function(oContext) {
 		return JSON.stringify(oContext.getObject());
+	};
+
+
+	/**
+	 * Returns the filters set via the constructor or via {@link #filter} for the given
+	 * {@link sap.ui.model.FilterType}.
+	 *
+	 * @param {sap.ui.model.FilterType} sFilterType
+	 *   The FilterType
+	 * @returns {sap.ui.model.Filter[]}
+	 *   An array of filters for the given filter type.
+	 * @throws {Error}
+	 *   If no or an invalid filter type was given
+	 * @public
+	 * @since 1.96.0
+	 */
+	ListBinding.prototype.getFilters = function (sFilterType) {
+		switch (sFilterType) {
+			case FilterType.Application:
+				return this.aApplicationFilters && this.aApplicationFilters.slice() || [];
+			case FilterType.Control:
+				return this.aFilters && this.aFilters.slice() || [];
+			default:
+				throw new Error("Invalid FilterType: " + sFilterType);
+		}
 	};
 
 	/**

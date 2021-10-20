@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterType",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/AnnotationHelper",
@@ -27,8 +28,9 @@ sap.ui.define([
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
 ], function (Log, uid, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text, Device,
-		EventProvider, SyncPromise, Controller, View, Filter, FilterOperator, Sorter, OperationMode,
-		AnnotationHelper, ODataListBinding, ODataModel, ValueListType, TestUtils, XMLHelper) {
+		EventProvider, SyncPromise, Controller, View, Filter, FilterOperator, FilterType, Sorter,
+		OperationMode, AnnotationHelper, ODataListBinding, ODataModel, ValueListType, TestUtils,
+		XMLHelper) {
 	/*eslint no-sparse-arrays: 0, camelcase: 0 */
 	"use strict";
 
@@ -35065,6 +35067,69 @@ sap.ui.define([
 			oListBinding.resume();
 
 			return that.waitForChanges(assert, "(4) suspend/resume");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: List report with static filter in the view and modified during runtime.
+	// Get the array of filters of the ListBinding, replace the first one and add a new one to it.
+	// Filter again using ODLB#filter
+	//
+	// JIRA: CPOUI5ODATAV4-1205
+	QUnit.test("CPOUI5ODATAV4-1205: sap.ui.model.ListBinding#getFilters", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="list" items="{path: \'/SalesOrderList\',\
+		filters : {path : \'GrossAmount\', operator : \'LE\', value1 : 125}}">\
+	<Text id="note" text="{Note}"/>\
+	<Text id="grossAmount" text="{GrossAmount}"/>\
+	<Text id="soItemCount" text="{SOItemCount}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$filter=GrossAmount le 125&$select=GrossAmount,"
+				+ "Note,SOItemCount,SalesOrderID&$skip=0&$top=100", {
+				value : [{
+					SalesOrderID : "1",
+					SOItemCount : 5,
+					GrossAmount : "125.00",
+					Note : "Note 1"
+				}, {
+					SalesOrderID : "2",
+					SOItemCount : 10,
+					GrossAmount : "100.00",
+					Note : "Note 2"
+				}]
+			})
+			.expectChange("note", ["Note 1", "Note 2"])
+			.expectChange("grossAmount", ["125.00", "100.00"])
+			.expectChange("soItemCount", ["5", "10"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oListBinding = that.oView.byId("list").getBinding("items"),
+				// code under test
+				aFilters = oListBinding.getFilters(FilterType.Application);
+
+			that.expectRequest("SalesOrderList?"
+				+ "$filter=GrossAmount le 100 and SOItemCount ge 10"
+				+ "&$select=GrossAmount,Note,SOItemCount,SalesOrderID&$skip=0&$top=100", {
+					value : [{
+						SalesOrderID : "2",
+						SOItemCount : 10,
+						GrossAmount : "100.00",
+						Note : "Note 2"
+					}]
+				})
+				.expectChange("note", ["Note 2"])
+				.expectChange("grossAmount", ["100.00"])
+				.expectChange("soItemCount", ["10"]);
+
+			// code under test (Filter getter)
+			aFilters[0] = new Filter(aFilters[0].getPath(), aFilters[0].getOperator(), 100);
+			aFilters.push(new Filter("SOItemCount", FilterOperator.GE, "10"));
+			oListBinding.filter(aFilters);
+
+			return that.waitForChanges(assert);
 		});
 	});
 

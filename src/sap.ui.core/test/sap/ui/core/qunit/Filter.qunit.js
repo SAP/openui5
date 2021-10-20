@@ -13,6 +13,76 @@ sap.ui.define([
 	var sOneMissing = "When using the filter operator 'Any', a lambda variable and a condition have to be given or neither.";
 	var sLegacyAnyAll = "The filter operators 'Any' and 'All' are only supported with the parameter object notation.";
 
+	QUnit.module("sap.ui.model.Filter: Basics");
+
+	QUnit.test("Filter getters", function (assert) {
+		var bAnd = "~truthy~",
+			bCaseSensitive = "~bCaseSensitive~",
+			fnComparator = function () {},
+			sCondition = "condition",
+			aFilters = [new Filter("path2", "operator", "value1")],
+			sOperator = "operator",
+			sPath = "path",
+			fnTest = function () {},
+			sValue1 = "value1",
+			sValue2 = "value2",
+			sVariable = "variable",
+			oFilterInfo = {
+				and : bAnd,
+				caseSensitive : bCaseSensitive,
+				comparator : fnComparator,
+				condition : sCondition,
+				filters : aFilters,
+				operator : sOperator,
+				path : sPath,
+				test : fnTest,
+				value1 : sValue1,
+				value2 : sValue2,
+				variable : sVariable
+			},
+			oFilter = new Filter(oFilterInfo);
+
+		// code under test (object notation of vFilterInfo used in constructor)
+		assert.strictEqual(oFilter.isAnd(), true);
+		assert.strictEqual(oFilter.isCaseSensitive(), bCaseSensitive);
+		assert.deepEqual(oFilter.getFilters(), aFilters);
+		assert.notStrictEqual(oFilter.getFilters(), aFilters);
+		assert.strictEqual(oFilter.getComparator(), fnComparator);
+		assert.strictEqual(oFilter.getCondition(), sCondition);
+		assert.strictEqual(oFilter.getOperator(), sOperator);
+		assert.strictEqual(oFilter.getPath(), sPath);
+		assert.strictEqual(oFilter.getValue1(), sValue1);
+		assert.strictEqual(oFilter.getValue2(), sValue2);
+		assert.strictEqual(oFilter.getVariable(), sVariable);
+		assert.strictEqual(oFilter.getTest(), fnTest);
+
+		oFilter = new Filter(sPath, sOperator, sValue1, sValue2);
+
+		// code under test (non-object notation used in constructor)
+		assert.strictEqual(oFilter.getPath(), sPath);
+		assert.strictEqual(oFilter.getOperator(), sOperator);
+		assert.strictEqual(oFilter.getValue1(), sValue1);
+		assert.strictEqual(oFilter.getValue2(), sValue2);
+
+		delete oFilterInfo.filters;
+		delete oFilterInfo.and;
+		oFilterInfo.aFilters = aFilters;
+		oFilterInfo.bAnd = 0; // some falsy value
+		oFilter = new Filter(oFilterInfo);
+
+		// code under test (legacy names used in constructor)
+		assert.strictEqual(oFilter.isAnd(), false);
+		assert.deepEqual(oFilter.getFilters(), aFilters);
+		assert.notStrictEqual(oFilter.getFilters(), aFilters);
+
+		// code under test (aFilters is undefined)
+		assert.strictEqual(new Filter({
+			path : sPath,
+			operator : sOperator,
+			value1 : sValue1
+		}).getFilters(), undefined);
+	});
+
 	QUnit.module("sap.ui.model.Filter: Unsupported Filter Operators");
 
 	QUnit.test("constructor - create Filter Any/All - ok", function (assert) {
