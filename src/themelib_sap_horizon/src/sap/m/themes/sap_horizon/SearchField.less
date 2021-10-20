@@ -23,6 +23,10 @@
 .sapMSFF {
 	border-radius: @sapUiFieldBorderCornerRadius;
 
+	//placeholder to be center aligned
+	display:flex;
+	align-items:center;
+
 	// bottom line
 	background-image: linear-gradient(0deg, @sapField_BorderColor 0, @sapField_BorderColor 100%);
 	background-size: 100% @sapField_BorderWidth;
@@ -38,6 +42,10 @@
 
 .sapMSFB {
 	height: 2.1875rem;
+	//center buttons
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .sapMSFB:last-of-type {
