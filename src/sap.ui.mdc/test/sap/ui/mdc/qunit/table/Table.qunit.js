@@ -3408,7 +3408,7 @@ sap.ui.define([
 				label: "No Width Calculation",
 				typeConfig: TypeUtil.getTypeConfig("Edm.String"),
 				visualSettings: {
-					widthCalculation: false
+					widthCalculation: null
 				}
 			}
 		]);

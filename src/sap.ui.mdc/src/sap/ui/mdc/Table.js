@@ -384,7 +384,7 @@ sap.ui.define([
 				 * The calculated column widths can have a minimum of 3rem and a maximum of 20rem.
 				 *
 				 * <b>Note:</b> To customize the automatic column width calculation the <code>visualSettings.widthSettings</code> key of the <code>PropertyInfo</code> can be used.
-				 * To avoid the heuristic column width calculation for a particular column, the <code>visualSettings.widthSettings</code> key of the <code>PropertyInfo</code> can be set to <code>false</code>.
+				 * To avoid the heuristic column width calculation for a particular column, the <code>visualSettings.widthSettings</code> key of the <code>PropertyInfo</code> must be set to <code>null</code>.
 				 * This feature has no effect if the <code>width</code> property of the column is bound or its value is set.
 				 *
 				 * @since 1.95

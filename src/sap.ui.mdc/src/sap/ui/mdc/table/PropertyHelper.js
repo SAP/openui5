@@ -222,7 +222,7 @@ sap.ui.define([
 		}
 
 		var mPropertyInfoVisualSettings = oProperty.getVisualSettings(sPropertyName);
-		if (mPropertyInfoVisualSettings && mPropertyInfoVisualSettings.widthCalculation === false) {
+		if (mPropertyInfoVisualSettings && mPropertyInfoVisualSettings.widthCalculation === null) {
 			return;
 		}
 
