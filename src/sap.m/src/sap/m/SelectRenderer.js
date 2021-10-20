@@ -84,6 +84,10 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 
 			oRm.style("max-width", oSelect.getMaxWidth());
 
+			if (bEnabled) {
+				oRm.attr("tabindex", "-1");
+			}
+
 			oRm.openEnd();
 			this.renderFocusElement(oRm, oSelect);
 			// Used in case control is in a form submitted by input[type="submit"].
