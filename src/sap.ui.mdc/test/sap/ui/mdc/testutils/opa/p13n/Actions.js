@@ -456,7 +456,7 @@ sap.ui.define([
 
 	var iPersonalizeListViewItems = function(oP13nDialog, aItems) {
 		this.waitFor({
-			controlType: oP13nDialog.getContent()[0].getView("columns") ? "sap.ui.mdc.p13n.panels.ListView" : "sap.m.p13n.SelectionPanel",
+			controlType: oP13nDialog.getContent()[0].getView("columns") && oP13nDialog.getContent()[0].getView("columns").getContent().isA("sap.ui.mdc.p13n.panels.ListView") ? "sap.ui.mdc.p13n.panels.ListView" : "sap.m.p13n.SelectionPanel",
 			matchers: new Ancestor(oP13nDialog, false),
 			success: function(aListViews) {
 				var oListView = aListViews[0];
@@ -972,7 +972,7 @@ sap.ui.define([
 			return iPersonalize.call(this, oControl, Util.texts.group, {
 				success: function(oP13nDialog) {
 					this.waitFor({
-						controlType: (oP13nDialog.getContent()[0].getView("group") ? "sap.ui.mdc.p13n.panels.GroupPanel" : "sap.m.p13n.GroupPanel"),
+						controlType: oP13nDialog.getContent()[0].getView("group") && oP13nDialog.getContent()[0].getView("group").getContent().isA("sap.ui.mdc.p13n.panels.GroupPanel") ? "sap.ui.mdc.p13n.panels.GroupPanel" : "sap.m.p13n.GroupPanel",
 						matchers: new Ancestor(oP13nDialog, false),
 						success: function(aGroupPanels) {
 							var oGroupPanel = aGroupPanels[0];
@@ -1014,7 +1014,7 @@ sap.ui.define([
 			return iPersonalize.call(this, oControl, Util.texts.sort, {
 				success: function(oP13nDialog) {
 					this.waitFor({
-						controlType: oP13nDialog.getContent()[0].getView("sort") ? "sap.ui.mdc.p13n.panels.SortQueryPanel" : "sap.m.p13n.SortPanel",
+						controlType: oP13nDialog.getContent()[0].getView("sort") && oP13nDialog.getContent()[0].getView("sort").getContent().isA("sap.ui.mdc.p13n.panels.SortQueryPanel") ? "sap.ui.mdc.p13n.panels.SortQueryPanel" : "sap.m.p13n.SortPanel",
 						matchers: new Ancestor(oP13nDialog, false),
 						success: function(aSortPanels) {
 							var oSortPanel = aSortPanels[0];
