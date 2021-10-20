@@ -31,3 +31,59 @@
 		}
 	}
 }
+
+/* Focus of toggled button */
+.sapMBtn:focus > .sapMBtnInner.sapMToggleBtnPressed.sapMFocusable {
+	outline-color: @sapUiContentFocusColor;
+}
+
+.sapMBtn .sapMBtnCritical.sapMToggleBtnPressed,
+.sapContrast span.sapMBtnInner.sapMBtnCritical.sapMToggleBtnPressed,
+.sapMBtn:hover .sapMBtnCritical.sapMToggleBtnPressed,
+.sapContrast:hover span.sapMBtnInner.sapMBtnCritical.sapMToggleBtnPressed,
+
+.sapMBtn .sapMBtnNegative.sapMToggleBtnPressed,
+.sapContrast span.sapMBtnInner.sapMBtnNegative.sapMToggleBtnPressed,
+.sapMBtn:hover .sapMBtnNegative.sapMToggleBtnPressed,
+.sapContrast:hover span.sapMBtnInner.sapMBtnNegative.sapMToggleBtnPressed,
+
+.sapMBtn .sapMBtnSuccess.sapMToggleBtnPressed,
+.sapContrast span.sapMBtnInner.sapMBtnSuccess.sapMToggleBtnPressed,
+.sapMBtn:hover .sapMBtnSuccess.sapMToggleBtnPressed,
+.sapContrast:hover span.sapMBtnInner.sapMBtnSuccess.sapMToggleBtnPressed,
+
+.sapMBtn .sapMBtnNeutral.sapMToggleBtnPressed,
+.sapContrast span.sapMBtnInner.sapMBtnNeutral.sapMToggleBtnPressed,
+.sapMBtn:hover .sapMBtnNeutral.sapMToggleBtnPressed,
+.sapContrast:hover span.sapMBtnInner.sapMBtnNeutral.sapMToggleBtnPressed {
+	.sapMBtnContent,
+	.sapMBtnIcon {
+		color: inherit;
+	}
+}
+
+span.sapMBtnInner.sapMToggleBtnPressed .sapMBtnIcon,
+span.sapMBtnInner.sapMToggleBtnPressed.sapMBtnTransparent > .sapMBtnIcon,
+html.sap-desktop .sapMToggleBtnPressed.sapMBtnTransparent > .sapMBtnIcon {
+	color: @sapUiButtonSelectedTextColor;
+}
+
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnActive) {
+	box-shadow: 0 0 0.125rem 0 fade(@sapInformativeColor, 72);
+}
+
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnActive).sapMBtnEmphasized {
+	box-shadow: 0 0 0.125rem 0 fade(@sapInformativeColor, 72);
+}
+
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnActive).sapMBtnAccept {
+	box-shadow: 0 0 0.125rem 0 fade(@sapPositiveColor, 72);
+}
+
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnActive).sapMBtnReject {
+	box-shadow: 0 0 0.125rem 0 fade(@sapNegativeColor, 72);
+}
+
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnActive).sapMBtnAttention {
+	box-shadow: 0 0 0.125rem 0 fade(@sapCriticalColor, 72);
+}

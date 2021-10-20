@@ -28,8 +28,23 @@ html.sap-desktop .sapUiCalendarApp:focus > .sapUiCalendarAppCont:after{
 	right: 1px;
 	bottom: 1px;
 	content: "";
-	border: 0.0625rem dotted @sapUiContentFocusColor;
+	border: 0.125rem solid @sapUiContentFocusColor;
 	pointer-events: none;
+	border-radius: 0.25rem;
+}
+
+.sapUiCalendarApp,
+.sapUiCalendarAppCont {
+	border-radius: 0.25rem;
+}
+
+html.sap-desktop .sapUiCalendarApp:hover:not(:active),
+html.sap-desktop .sapUiCalendarApp:focus:not(:active) > .sapUiCalendarAppCont{
+	background-color: @sapUiListBackground;
+}
+html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active),
+html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active) > .sapUiCalendarAppCont{
+	background-color: @sapUiListBackground;
 }
 
 .sapMListTblRow.sapMLIBFocusable:focus {
@@ -40,7 +55,8 @@ html.sap-desktop .sapUiCalendarApp:focus > .sapUiCalendarAppCont:after{
 		right: 1px;
 		bottom: 0px;
 		content: "";
-		border: 0.0625rem dotted @sapUiContentFocusColor;
+		border: 0.195rem solid @sapUiContentFocusColor;
+		border-left: none;
 		pointer-events: none;
 	}
 
@@ -62,11 +78,6 @@ html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
 	}
 }
 
-html.sap-desktop .sapUiCalendarAppSel:focus > .sapUiCalendarAppCont:after{
-	border-color: @sapUiContentContrastFocusColor;
-	left: 2px;
-}
-
 .sapUiCalendarApp.sapUiCalendarAppSel,
 .sapUiCalendarApp:active,
 .sapUiCalendarApp.sapUiCalendarAppSel:active{
@@ -76,7 +87,6 @@ html.sap-desktop .sapUiCalendarAppSel:focus > .sapUiCalendarAppCont:after{
 
 html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active),
 html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active){
-	background-color: @sapUiContentSelectedHoverBackground;
 	color: @sapUiContentSelectedTextColor;
 }
 
@@ -85,6 +95,8 @@ html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active){
 .sapUiCalendarApp.sapUiCalendarAppSel:active > .sapUiCalendarAppCont{
 	border-color: @sapUiListSelectionBorderColor;
 	border-left: 0.0625rem solid @sapUiListBackground;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
 }
 
 
@@ -100,7 +112,7 @@ html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active)  > .sa
 .sapUiCalendarApp.sapUiCalendarAppSel > .sapUiCalendarAppCont .sapUiCalendarAppTitle,
 .sapUiCalendarApp.sapUiCalendarAppSel > .sapUiCalendarAppCont .sapUiCalendarAppText,
 .sapUiCalendarApp.sapUiCalendarAppSel > .sapUiCalendarAppCont .sapUiCalendarAppDescription {
-	color: @sapUiListActiveTextColor;
+	color: @sapUiContentSelectedTextColor;
 }
 
 .sapUiCalendarAppTitle{
@@ -121,4 +133,18 @@ html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active)  > .sa
 	border-bottom-color: darken(@sapUiListBorderColor, 15);
 	background-color: lighten(@sapUiAccent1, 50);
 	color: @sapUiListTextColor;
+}
+.sapUiCalendarApp, .sapUiCalendarAppCont {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+.sapUiCalendarApp.sapUiCalendarAppTent > .sapUiCalendarAppCont {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+html.sap-desktop .sapUiCalendarApp:hover:not(:active),
+html.sap-desktop .sapUiCalendarApp:focus:not(:active)>.sapUiCalendarAppCont {
+	box-shadow: inset 0 0 0 0.125rem @sapContent_Selected_ForegroundColor, @sapContent_Selected_Shadow;
 }

@@ -72,3 +72,35 @@ html.sap-desktop .sapMPlanCal .sapUiCalItemOtherMonth:not(.sapUiCalItemSel):hove
 .sapUiSizeCompact .sapMPlanCalRowHead .sapMSLI {
 	height: auto;
 }
+
+.sapMPlanCal {
+	border-radius: 0.5rem;
+	.sapUiCalDatesRow {
+		.sapUiCalItemSel:focus > .sapUiCalItemText:after {
+			left: 0.015rem;
+			right: 0.015rem;
+		}
+	}
+	.sapUiCalTimesRow {
+		.sapUiCalItemSel:focus > .sapUiCalItemText:after {
+			left: 0.0rem;
+			right: 0.0rem;
+		}
+	}
+	.sapUiCalMonthsRow {
+		.sapUiCalItemSel:focus > .sapUiCalItemText:after {
+			left: 0;
+		}
+	}
+}
+
+.sapMPlanCal .sapUiCalendarRowAppsIntHead {
+	border-radius: 0.25rem;
+}
+
+.sapMPlanCal .sapMListTbl .sapMSLIImgIcon.sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon) {
+	border-radius: @sapGroup_BorderCornerRadius;
+	background-color: @sapAccentBackgroundColor5;
+	color: @sapAccentColor5;
+	font-size: @sapMFontHeader4Size;
+}

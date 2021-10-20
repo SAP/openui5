@@ -37,3 +37,26 @@ html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare div,
 	}
 }
 
+html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare:focus:after {
+	outline: 0.125rem solid @sapUiContentContrastFocusColor;
+	outline-offset: -0.125rem;
+	border-radius: 0.25rem;
+}
+
+html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare:focus:before {
+	outline: 0.125rem solid @sapUiContentFocusColor;
+	border-radius: 0.25rem;
+}
+
+.sapMColorPalette {
+	.sapMBtn {
+		&:focus {
+			.sap-desktop & {
+				&:after {
+					border-radius: 0.5rem;
+					border: 0.125rem solid @sapUiContentFocusColor;
+				}
+			}
+		}
+	}
+}
