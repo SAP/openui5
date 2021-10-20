@@ -115,6 +115,7 @@ sap.ui.define([
 		return z + 1;
 	}
 	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}/g,
+		REGEXP_PARAMETERS = /\{\{parameters\.([^\}\}]+)/g,
 		CONTEXT_TIMEOUT = 5000,
 		oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
 		MessageStripId = "__strip0";
@@ -2385,6 +2386,10 @@ sap.ui.define([
 						var sTranslationTextKey = null,
 							sPlaceholder = oItem._translatedDefaultPlaceholder;
 						if (sPlaceholder) {
+							//value with parameter syntax will not be translated
+							if (this._isValueWithParameterSyntax(sPlaceholder)) {
+								oItem.translatable = false;
+							}
 							//parameter translated value wins over designtime defaultValue
 							if (this._isValueWithHandlebarsTranslation(sPlaceholder)) {
 								sTranslationTextKey = sPlaceholder.substring(2, sPlaceholder.length - 2);
@@ -2402,6 +2407,10 @@ sap.ui.define([
 						sTranslationTextKey = null;
 						sPlaceholder = oItem._translatedPlaceholder;
 						if (sPlaceholder) {
+							//value with parameter syntax will not be translated
+							if (this._isValueWithParameterSyntax(sPlaceholder)) {
+								oItem.translatable = false;
+							}
 							//parameter translated value wins over designtime defaultValue
 							if (this._isValueWithHandlebarsTranslation(sPlaceholder)) {
 								sTranslationTextKey = sPlaceholder.substring(2, sPlaceholder.length - 2);
@@ -2732,6 +2741,13 @@ sap.ui.define([
 	Editor.prototype._isValueWithHandlebarsTranslation = function (vValue) {
 		if (typeof vValue === "string") {
 			return !!vValue.match(REGEXP_TRANSLATABLE);
+		}
+		return false;
+	};
+
+	Editor.prototype._isValueWithParameterSyntax = function (vValue) {
+		if (typeof vValue === "string") {
+			return !!vValue.match(REGEXP_PARAMETERS);
 		}
 		return false;
 	};

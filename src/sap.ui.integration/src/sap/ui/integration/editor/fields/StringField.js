@@ -142,15 +142,6 @@ sap.ui.define([
 						}
 					};
 				}
-				if (aParts) {
-					delete oVisualization.settings.tooltip;
-					if (oConfig.editable) {
-						oVisualization.settings.value = oValue;
-						oVisualization.settings.change = fnChange;
-					} else {
-						oVisualization.settings.text = oValue;
-					}
-				}
 			} else if (oConfig.enum) {
 				var oItem = new ListItem({
 					key: {
