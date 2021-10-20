@@ -1,5 +1,5 @@
 ---
-specVersion: "2.0"
+specVersion: "2.4"
 type: library
 metadata:
   name: sap.ui.layout
@@ -10,3 +10,21 @@ metadata:
 resources:
   configuration:
     propertiesFileSourceEncoding: ISO-8859-1
+builder:
+  bundles:
+    - bundleDefinition:
+        name: sap/ui/layout/library-preload-lazy.js
+        sections:
+          - mode: bundleInfo
+            name: sap/ui/layout/library-preload
+            filters:
+              - sap/ui/layout/
+              - sap/ui/layout/manifest.json
+              - '!sap/ui/layout/*-preload.js'
+              - '!sap/ui/layout/**/*.designtime.js'
+              - '!sap/ui/layout/**/designtime/'
+              - '!sap/ui/layout/**/*.support.js'
+            resolve: false
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
