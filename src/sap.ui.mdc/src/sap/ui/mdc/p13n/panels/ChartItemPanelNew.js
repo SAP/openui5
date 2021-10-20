@@ -558,7 +558,7 @@ sap.ui.define([
     };
 
 	//Called on exit of panel; resets templates
-	ChartItemPanel.prototype.getP13nState = function() {
+	ChartItemPanel.prototype.getP13nData = function() {
 
 		var aItems = this._getCleanP13nItems();
 
