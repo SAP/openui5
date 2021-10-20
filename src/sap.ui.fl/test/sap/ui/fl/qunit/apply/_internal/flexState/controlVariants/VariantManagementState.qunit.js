@@ -419,9 +419,9 @@ sap.ui.define([
 			var oVariantChanges2 = VariantManagementState.getVariantChangesForVariant({vmReference: "vmReference1", vReference: "variant2", reference: this.sReference});
 			var oVariantChanges3 = VariantManagementState.getVariantChangesForVariant({vmReference: "vmReference1", vReference: "notExisting", reference: this.sReference});
 
-			assert.equal(Object.keys(oVariantChanges1).length, 3, "three kinds of variant changes are returned");
-			assert.equal(Object.keys(oVariantChanges2).length, 2, "two kinds of variant changes are returned");
-			assert.deepEqual(oVariantChanges3, {}, "an empty object is returned");
+			assert.equal(Object.keys(oVariantChanges1).length, 3, "three kinds of variant changes are returned for the default variant (variant0)");
+			assert.equal(Object.keys(oVariantChanges2).length, 3, "three kinds of variant changes are returned for variant2");
+			assert.deepEqual(oVariantChanges3, {}, "an empty object is returned for variant3");
 		});
 
 		QUnit.test("when 'setCurrentVariant'  is called", function(assert) {

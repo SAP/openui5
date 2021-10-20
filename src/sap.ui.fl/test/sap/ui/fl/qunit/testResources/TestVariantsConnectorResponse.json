@@ -112,6 +112,10 @@
 			},
 			"content": {
 				"title":"{i18n>STANDARD_VARIANT_TITLE}"
+			},
+			"contexts": {
+				"role": ["ROLE1", "ROLE2"],
+				"country": ["DE", "IT"]
 			}
 		},
 		{
@@ -344,6 +348,22 @@
 			"changeType": "setExecuteOnSelect",
 			"content": {
 				"executeOnSelect": false
+			},
+			"selector": {
+				"id": "variant2",
+				"idIsLocal": false
+			},
+			"layer": "CUSTOMER"
+		},
+		{
+			"fileName": "id_1507716136285_55_setContexts",
+			"fileType": "ctrl_variant_change",
+			"changeType": "setContexts",
+			"content": {
+				"contexts": {
+					"role": ["ROLE1"],
+					"country": ["DE"]
+				}
 			},
 			"selector": {
 				"id": "variant2",

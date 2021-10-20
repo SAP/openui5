@@ -496,9 +496,8 @@ sap.ui.define([
 			oVariantManagementControl,
 			sVariantManagementReference,
 			mFlexSettings.layer,
-			Utils.getRtaStyleClassName()
-			// TODO: activate when VariantChanges V4 supports change update in the backend
-			// ContextSharingAPI.createComponent(mFlexSettings)
+			Utils.getRtaStyleClassName(),
+			ContextSharingAPI.createComponent(mFlexSettings)
 		)
 		.then(function(aConfiguredChanges) {
 			return this.getCommandFactory().getCommandFor(
