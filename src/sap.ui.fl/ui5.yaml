@@ -13,113 +13,6 @@ resources:
 builder:
   bundles:
     - bundleDefinition:
-        name: sap/ui/fl/library-preload-apply.js
-        sections:
-          - mode: provided
-            filters:
-              - sap/ui/fl/library.js
-              - sap/ui/fl/changeHandler/
-              - ui5loader-autoconfig.js
-              - sap/base/
-              - sap/m/
-              - sap/ui/Device.js
-              - sap/ui/base/
-              - sap/ui/core/
-              - sap/ui/dom/
-              - sap/ui/events/
-              - sap/ui/layout/
-              - sap/ui/model/
-              - sap/ui/performance/
-              - sap/ui/thirdparty/
-              - sap/ui/unified/
-              - sap/ui/util/
-            resolve: true
-          - mode: preload
-            name: sap/ui/fl/library-preload-apply
-            filters:
-              - sap/ui/fl/apply/
-              - sap/ui/fl/transport/TransportDialog.js
-              - sap/ui/fl/transport/TransportSelection.js
-              - sap/ui/fl/util/IFrame.flexibility.js
-            resolve: true
-      bundleOptions:
-        optimize: true
-        usePredefineCalls: true
-    - bundleDefinition:
-        name: sap/ui/fl/library-preload-remainder.js
-        sections:
-          - mode: provided
-            filters:
-              - sap/ui/fl/library.js
-              - sap/ui/fl/apply/
-              - sap/ui/fl/changeHandler/
-              - sap/ui/fl/write/
-              - ui5loader-autoconfig.js
-              - sap/base/
-              - sap/m/
-              - sap/ui/Device.js
-              - sap/ui/base/
-              - sap/ui/core/
-              - sap/ui/dom/
-              - sap/ui/events/
-              - sap/ui/layout/
-              - sap/ui/model/
-              - sap/ui/performance/
-              - sap/ui/thirdparty/
-              - sap/ui/unified/
-              - sap/ui/util/
-            resolve: true
-          - mode: preload
-            name: sap/ui/fl/library-preload-remainder
-            filters:
-              - sap/ui/fl/
-              - '!sap/ui/fl/support/'
-              - '!**/*.designtime.js'
-              - '!**/designtime/'
-              - '!**/*.support.js"'
-            resolve: true
-      bundleOptions:
-        optimize: true
-        usePredefineCalls: true
-    - bundleDefinition:
-        name: sap/ui/fl/library-preload-write.js
-        sections:
-          - mode: provided
-            filters:
-              - sap/ui/fl/library.js
-              - sap/ui/fl/apply/
-              - sap/ui/fl/changeHandler/
-              - ui5loader-autoconfig.js
-              - sap/base/
-              - sap/m/
-              - sap/ui/Device.js
-              - sap/ui/base/
-              - sap/ui/core/
-              - sap/ui/dom/
-              - sap/ui/events/
-              - sap/ui/layout/
-              - sap/ui/model/
-              - sap/ui/performance/
-              - sap/ui/thirdparty/
-              - sap/ui/unified/
-              - sap/ui/util/
-            resolve: true
-          - mode: preload
-            name: sap/ui/fl/library-preload-write
-            filters:
-              - sap/ui/fl/write/
-              - sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory.js
-              - sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory.js
-              - sap/ui/fl/FakeLrepConnectorLocalStorage.js
-              - sap/ui/fl/FakeLrepConnectorSessionStorage.js
-              - sap/ui/fl/FakeLrepLocalStorage.js
-              - sap/ui/fl/FakeLrepConnector.js
-              - sap/ui/fl/util/resolveBinding.js
-            resolve: true
-      bundleOptions:
-        optimize: true
-        usePredefineCalls: true
-    - bundleDefinition:
         name: sap/ui/fl/library-preload.js
         sections:
           - mode: provided
@@ -163,6 +56,77 @@ builder:
               - sap/ui/fl/util/IFrame.flexibility.js
             resolve: true
           - mode: bundleInfo
+            name: sap/ui/fl/library-preload-write
+            filters:
+              - sap/ui/fl/write/
+              - sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory.js
+              - sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory.js
+              - sap/ui/fl/FakeLrepConnectorLocalStorage.js
+              - sap/ui/fl/FakeLrepConnectorSessionStorage.js
+              - sap/ui/fl/FakeLrepLocalStorage.js
+              - sap/ui/fl/FakeLrepConnector.js
+              - sap/ui/fl/util/resolveBinding.js
+            resolve: true
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
+    - bundleDefinition:
+        name: sap/ui/fl/library-preload-apply.js
+        sections:
+          - mode: provided
+            filters:
+              - sap/ui/fl/library.js
+              - sap/ui/fl/changeHandler/
+              - ui5loader-autoconfig.js
+              - sap/base/
+              - sap/m/
+              - sap/ui/Device.js
+              - sap/ui/base/
+              - sap/ui/core/
+              - sap/ui/dom/
+              - sap/ui/events/
+              - sap/ui/layout/
+              - sap/ui/model/
+              - sap/ui/performance/
+              - sap/ui/thirdparty/
+              - sap/ui/unified/
+              - sap/ui/util/
+            resolve: true
+          - mode: preload
+            name: sap/ui/fl/library-preload-apply
+            filters:
+              - sap/ui/fl/apply/
+              - sap/ui/fl/transport/TransportDialog.js
+              - sap/ui/fl/transport/TransportSelection.js
+              - sap/ui/fl/util/IFrame.flexibility.js
+            resolve: true
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
+    - bundleDefinition:
+        name: sap/ui/fl/library-preload-write.js
+        sections:
+          - mode: provided
+            filters:
+              - sap/ui/fl/library.js
+              - sap/ui/fl/apply/
+              - sap/ui/fl/changeHandler/
+              - ui5loader-autoconfig.js
+              - sap/base/
+              - sap/m/
+              - sap/ui/Device.js
+              - sap/ui/base/
+              - sap/ui/core/
+              - sap/ui/dom/
+              - sap/ui/events/
+              - sap/ui/layout/
+              - sap/ui/model/
+              - sap/ui/performance/
+              - sap/ui/thirdparty/
+              - sap/ui/unified/
+              - sap/ui/util/
+            resolve: true
+          - mode: preload
             name: sap/ui/fl/library-preload-write
             filters:
               - sap/ui/fl/write/

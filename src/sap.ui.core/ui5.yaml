@@ -80,6 +80,8 @@ builder:
       bundleOptions:
         optimize: true
         usePredefineCalls: true
+        decorateBootstrapModule: true
+        addTryCatchRestartWrapper: true
     - bundleDefinition:
         name: sap-ui-core-dbg.js
         sections:
@@ -121,6 +123,8 @@ builder:
       bundleOptions:
         optimize: true
         usePredefineCalls: true
+        decorateBootstrapModule: true
+        addTryCatchRestartWrapper: true
     - bundleDefinition:
         name: sap-ui-core-nojQuery-dbg.js
         sections:
@@ -219,6 +223,8 @@ builder:
       bundleOptions:
         optimize: true
         usePredefineCalls: true
+        decorateBootstrapModule: true
+        addTryCatchRestartWrapper: true
     - bundleDefinition:
         name: sap/ui/test/starter/runTest-dbg.js
         sections:

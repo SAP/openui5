@@ -13,58 +13,47 @@ resources:
 builder:
   bundles:
     - bundleDefinition:
-        name: sap-ui-integration-card-editor.js
+        name: sap-ui-integration.js
         sections:
-          - mode: provided
-            filters: []
-          - mode: preload
-            name: sap-ui-integration-card-editor
+          - mode: raw
             filters:
-              - sap/ui/integration/customElements/CustomElementCardEditor.js
-              - sap/ui/integration/editor/
-              - sap/ui/integration/designtime/editor/
+              - sap/ui/integration/sap-ui-integration-config.js
+              - ui5loader-autoconfig.js
+            declareRawModules: false
+            resolve: true
+          - mode: preload
+            name: sap-ui-integration
+            filters:
+              - sap/ui/core/Core.js
+              - sap/ui/core/CustomData.js
+              - sap/ui/core/UIComponent.js
+              - sap/ui/core/mvc/XMLView.js
+              - sap/ui/integration/
+              - sap/f/cards/
+              - sap/ui/core/date/Gregorian.js
+              - '!sap/ui/integration/sap-ui-integration-config.js'
+              - '!sap/ui/integration/customElements/CustomElementCardEditor.js'
+              - '!sap/ui/integration/customElements/CustomElementEditor.js'
+              - '!sap/ui/core/plugin/'
+              - '!sap/ui/core/support/'
+              - '!sap/ui/core/tmpl/'
+              - '!sap/ui/core/util/serializer/'
+              - '!sap/ui/integration/*-preload.js'
+              - '!sap/ui/integration/designtime/'
+              - '!sap/ui/integration/editor/'
+              - '!sap/viz/'
+              - '!sap/suite/ui/commons/'
+              - sap/ui/core/support/Hotkeys
             resolve: true
             renderer: true
           - mode: require
             filters:
-              - sap/ui/integration/customElements/CustomElementCardEditor
+              - sap/ui/integration/library-bootstrap
       bundleOptions:
         optimize: true
         usePredefineCalls: true
-    - bundleDefinition:
-        name: sap-ui-integration-cardEditor.js
-        sections:
-          - mode: provided
-            filters: []
-          - mode: preload
-            name: sap-ui-integration-cardEditor
-            filters:
-              - sap/ui/integration/designtime/baseEditor/
-              - sap/ui/integration/designtime/cardEditor/
-              - '!sap/ui/integration/designtime/cardEditor/ConfigurationTemplate.js'
-            resolve: true
-            renderer: true
-      bundleOptions:
-        optimize: true
-        usePredefineCalls: true
-    - bundleDefinition:
-        name: sap-ui-integration-editor.js
-        sections:
-          - mode: provided
-            filters: []
-          - mode: preload
-            name: sap-ui-integration-editor
-            filters:
-              - sap/ui/integration/customElements/CustomElementEditor.js
-              - sap/ui/integration/editor/
-            resolve: true
-            renderer: true
-          - mode: require
-            filters:
-              - sap/ui/integration/customElements/CustomElementEditor
-      bundleOptions:
-        optimize: true
-        usePredefineCalls: true
+        decorateBootstrapModule: true
+        addTryCatchRestartWrapper: true
     - bundleDefinition:
         name: sap-ui-integration-nojQuery.js
         sections:
@@ -111,6 +100,133 @@ builder:
       bundleOptions:
         optimize: true
         usePredefineCalls: true
+        decorateBootstrapModule: true
+        addTryCatchRestartWrapper: true
+    - bundleDefinition:
+        name: sap-ui-integration-card-editor.js
+        sections:
+          - mode: provided
+            filters:
+              - sap/ui/integration/sap-ui-integration-config.js
+              - ui5loader-autoconfig.js
+              - sap/ui/core/Core.js
+              - sap/ui/core/CustomData.js
+              - sap/ui/core/UIComponent.js
+              - sap/ui/core/mvc/XMLView.js
+              - sap/ui/integration/
+              - sap/f/cards/
+              - sap/ui/core/date/Gregorian.js
+              - '!sap/ui/integration/sap-ui-integration-config.js'
+              - '!sap/ui/integration/customElements/CustomElementCardEditor.js'
+              - '!sap/ui/integration/customElements/CustomElementEditor.js'
+              - '!sap/ui/core/plugin/'
+              - '!sap/ui/core/support/'
+              - '!sap/ui/core/tmpl/'
+              - '!sap/ui/core/util/serializer/'
+              - '!sap/ui/integration/*-preload.js'
+              - '!sap/ui/integration/designtime/'
+              - '!sap/ui/integration/editor/'
+              - '!sap/viz/'
+              - '!sap/suite/ui/commons/'
+              - sap/ui/core/support/Hotkeys
+            resolve: true
+            renderer: true
+          - mode: preload
+            name: sap-ui-integration-card-editor
+            filters:
+              - sap/ui/integration/customElements/CustomElementCardEditor.js
+              - sap/ui/integration/editor/
+              - sap/ui/integration/designtime/editor/
+            resolve: true
+            renderer: true
+          - mode: require
+            filters:
+              - sap/ui/integration/customElements/CustomElementCardEditor
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
+    - bundleDefinition:
+        name: sap-ui-integration-cardEditor.js
+        sections:
+          - mode: provided
+            filters:
+              - sap/ui/integration/sap-ui-integration-config.js
+              - ui5loader-autoconfig.js
+              - sap/ui/core/Core.js
+              - sap/ui/core/CustomData.js
+              - sap/ui/core/UIComponent.js
+              - sap/ui/core/mvc/XMLView.js
+              - sap/ui/integration/
+              - sap/f/cards/
+              - sap/ui/core/date/Gregorian.js
+              - '!sap/ui/integration/sap-ui-integration-config.js'
+              - '!sap/ui/integration/customElements/CustomElementCardEditor.js'
+              - '!sap/ui/integration/customElements/CustomElementEditor.js'
+              - '!sap/ui/core/plugin/'
+              - '!sap/ui/core/support/'
+              - '!sap/ui/core/tmpl/'
+              - '!sap/ui/core/util/serializer/'
+              - '!sap/ui/integration/*-preload.js'
+              - '!sap/ui/integration/designtime/'
+              - '!sap/ui/integration/editor/'
+              - '!sap/viz/'
+              - '!sap/suite/ui/commons/'
+              - sap/ui/core/support/Hotkeys
+            resolve: true
+            renderer: true
+          - mode: preload
+            name: sap-ui-integration-cardEditor
+            filters:
+              - sap/ui/integration/designtime/baseEditor/
+              - sap/ui/integration/designtime/cardEditor/
+              - '!sap/ui/integration/designtime/cardEditor/ConfigurationTemplate.js'
+            resolve: true
+            renderer: true
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
+    - bundleDefinition:
+        name: sap-ui-integration-editor.js
+        sections:
+          - mode: provided
+            filters:
+              - sap/ui/integration/sap-ui-integration-config.js
+              - ui5loader-autoconfig.js
+              - sap/ui/core/Core.js
+              - sap/ui/core/CustomData.js
+              - sap/ui/core/UIComponent.js
+              - sap/ui/core/mvc/XMLView.js
+              - sap/ui/integration/
+              - sap/f/cards/
+              - sap/ui/core/date/Gregorian.js
+              - '!sap/ui/integration/sap-ui-integration-config.js'
+              - '!sap/ui/integration/customElements/CustomElementCardEditor.js'
+              - '!sap/ui/integration/customElements/CustomElementEditor.js'
+              - '!sap/ui/core/plugin/'
+              - '!sap/ui/core/support/'
+              - '!sap/ui/core/tmpl/'
+              - '!sap/ui/core/util/serializer/'
+              - '!sap/ui/integration/*-preload.js'
+              - '!sap/ui/integration/designtime/'
+              - '!sap/ui/integration/editor/'
+              - '!sap/viz/'
+              - '!sap/suite/ui/commons/'
+              - sap/ui/core/support/Hotkeys
+            resolve: true
+            renderer: true
+          - mode: preload
+            name: sap-ui-integration-editor
+            filters:
+              - sap/ui/integration/customElements/CustomElementEditor.js
+              - sap/ui/integration/editor/
+            resolve: true
+            renderer: true
+          - mode: require
+            filters:
+              - sap/ui/integration/customElements/CustomElementEditor
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
     - bundleDefinition:
         name: sap-ui-integration-shell-toolkit.js
         sections:
@@ -153,46 +269,8 @@ builder:
       bundleOptions:
         optimize: true
         usePredefineCalls: true
-    - bundleDefinition:
-        name: sap-ui-integration.js
-        sections:
-          - mode: raw
-            filters:
-              - sap/ui/integration/sap-ui-integration-config.js
-              - ui5loader-autoconfig.js
-            declareRawModules: false
-            resolve: true
-          - mode: preload
-            name: sap-ui-integration
-            filters:
-              - sap/ui/core/Core.js
-              - sap/ui/core/CustomData.js
-              - sap/ui/core/UIComponent.js
-              - sap/ui/core/mvc/XMLView.js
-              - sap/ui/integration/
-              - sap/f/cards/
-              - sap/ui/core/date/Gregorian.js
-              - '!sap/ui/integration/sap-ui-integration-config.js'
-              - '!sap/ui/integration/customElements/CustomElementCardEditor.js'
-              - '!sap/ui/integration/customElements/CustomElementEditor.js'
-              - '!sap/ui/core/plugin/'
-              - '!sap/ui/core/support/'
-              - '!sap/ui/core/tmpl/'
-              - '!sap/ui/core/util/serializer/'
-              - '!sap/ui/integration/*-preload.js'
-              - '!sap/ui/integration/designtime/'
-              - '!sap/ui/integration/editor/'
-              - '!sap/viz/'
-              - '!sap/suite/ui/commons/'
-              - sap/ui/core/support/Hotkeys
-            resolve: true
-            renderer: true
-          - mode: require
-            filters:
-              - sap/ui/integration/library-bootstrap
-      bundleOptions:
-        optimize: true
-        usePredefineCalls: true
+        decorateBootstrapModule: true
+        addTryCatchRestartWrapper: true
   jsdoc:
     excludes:
       - "sap/ui/integration/thirdparty/**"
