@@ -1675,7 +1675,18 @@ sap.ui.define([
 				oManifest = getManifest(lib);
 
 			if ( dependencies && dependencies.length ) {
-				dependencies = VersionInfo._getTransitiveDependencyForLibraries(dependencies);
+				var eagerDependencies = dependencies.filter(function(dep) {
+					return typeof dep === "string";
+				});
+				var lazyDependencies = dependencies.filter(function(dep) {
+					return typeof dep !== "string";
+				});
+				eagerDependencies = VersionInfo._getTransitiveDependencyForLibraries(eagerDependencies);
+
+				// combine transitive closure of eager dependencies and direct lazy dependencies,
+				// the latter might be redundant
+				dependencies = eagerDependencies.concat(lazyDependencies);
+
 				aPromises = dependencies.map(preloadLibraryAsync.bind(that));
 			}
 
