@@ -1130,11 +1130,7 @@ sap.ui.define([
 		oGroupLockMock.expects("unlock").withExactArgs().twice();
 		oGroupLevelCacheMock.expects("read")
 			.withExactArgs(1, 3, 0, "~oGroupLockCopy0~", "~fnDataRequested~")
-			.callsFake(function () {
-				return new Promise(function (resolve) {
-					setTimeout(resolve(oReadResult0), 500);
-				});
-			});
+			.returns(SyncPromise.resolve(Promise.resolve(oReadResult0)));
 		oGroupLevelCacheMock.expects("read")
 			.withExactArgs(2, 1, 0, "~oGroupLockCopy1~", "~fnDataRequested~")
 			.returns(SyncPromise.resolve(Promise.resolve(oReadResult1)));
