@@ -47,20 +47,20 @@ sap.ui.define([
 			oGroupPanel.setP13nData(this._initialData.group);
 		},
 
-		onContainerOpen: function() {
+		onContainerOpen: function(oEvt) {
 			var oView = this.getView();
-			var oPopup = oView.byId("d1");
+			var oPopup = oView.byId("p13nPopup");
 			if (!this._bIsOpen) {
 				this._setInitialData();
 				this._bIsOpen = true;
 			}
 
-			oPopup.open();
+			oPopup.open(oEvt.getSource());
 		},
 
-		closeDialog: function(oEvt) {
-			var oBtn = oEvt.getSource();
-			oBtn.getParent().close();
+		onClose: function(oEvt) {
+			var sReason = oEvt.getParameter("reason");
+			MessageToast.show("Dialog close reason: " + sReason);
 		},
 
 		reset: function(oEvt) {

@@ -853,6 +853,15 @@ sap.ui.define([
 					}
 				}
 			},
+			"p13n.Popup": {
+				title: "Test Page for sap.m.p13n.Popup",
+				module: "test-resources/sap/m/qunit/p13n/Popup.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
 			P13nDialog: {
 				title: "Test Page for sap.m.P13nDialog",
 				loader: {

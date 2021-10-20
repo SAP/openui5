@@ -11,38 +11,13 @@
 
         <Button id="openBtn" text="Show P13nContainer used in Popup" press="onContainerOpen"/>
 
-        <Dialog id="d1" resizeable="true" verticalScrolling="false" contentWidth="40rem" contentHeight="55rem">
-
-            <customHeader>
-                <Bar>
-                    <contentLeft>
-                        <Title text="Custom p13n Dialog"/>
-                    </contentLeft>
-                    <contentRight>
-                        <Button text="Reset" press="reset"/>
-                    </contentRight>
-                </Bar>
-            </customHeader>
-
-            <IconTabBar applyContentPadding="false">
-                <items>
-                    <IconTabFilter key="columns" text="Columns">
-                        <p13n:SelectionPanel id="columnsPanel" enableCount="true" showHeader="true" change="parseP13nState"/>
-                    </IconTabFilter>
-                    <IconTabFilter key="sort" text="Sort">
-                        <p13n:SortPanel id="sortPanel" change="parseP13nState"/>
-                    </IconTabFilter>
-                    <IconTabFilter key="group" text="Group">
-                        <p13n:GroupPanel id="groupPanel" change="parseP13nState"/>
-                    </IconTabFilter>
-                </items>
-            </IconTabBar>
-
-            <buttons>
-                <Button text="Ok" press="closeDialog"/>
-                <Button text="Cancel" press="closeDialog"/>
-            </buttons>
-        </Dialog>
+        <p13n:Popup id="p13nPopup" title="My Custom View Settings" close="onClose" warningText="Are you sure?" reset=".reset">
+            <p13n:panels>
+                <p13n:SelectionPanel id="columnsPanel" title="Columns" enableCount="true" showHeader="true" change="parseP13nState"/>
+                <p13n:SortPanel id="sortPanel" title="Sort" change="parseP13nState"/>
+                <p13n:GroupPanel id="groupPanel" title="Group" change="parseP13nState"/>
+            </p13n:panels>
+        </p13n:Popup>
 
         <ce:CodeEditor id="p13nEditor" class="sapUiSmallMargin" height="50rem"/>
 

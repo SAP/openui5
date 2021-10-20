@@ -17,7 +17,7 @@ sap.ui.define([
 	 * This control serves as base class for personalization implementations.
 	 * This base class is faceless and should be inherited to implement control specific personalization panels.
 	 *
-	 * @extends sap.ui.core.Control
+	 * @extends sap.m.p13n.Control
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -32,8 +32,18 @@ sap.ui.define([
 	var BasePanel = Control.extend("sap.m.p13n.BasePanel", {
 		metadata: {
 			library: "sap.m",
+			interfaces: [
+				"sap.m.p13n.IContent"
+			],
 			associations: {},
 			properties: {
+				/**
+				 * A short text describing the panel.
+				 * <b>Note:</b> This text will only be displayed in case the panel is being used in a <code>sap.m.p13n.Popup</code>.
+				 */
+				title: {
+					type: "string"
+				},
 				/**
 				 * Determines whether the reordering of personalization items should be enabled.
 				 */

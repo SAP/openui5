@@ -28,6 +28,9 @@ sap.ui.define([
 		metadata: {
 			"abstract": true,
 			library: "sap.m",
+			interfaces: [
+				"sap.m.p13n.IContent"
+			],
 			properties: {
 				/**
 				 * Title text appears in the panel.

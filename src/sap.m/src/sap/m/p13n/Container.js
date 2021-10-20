@@ -146,6 +146,15 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	* @override
+	*/
+	Container.prototype.removeView = function (oContainerItem) {
+		AbstractContainer.prototype.removeView.apply(this, arguments);
+		this._removeFromNavigator(oContainerItem);
+		return this;
+	};
+
 	Container.prototype._getTabBar = function () {
 		if (!this._oTabBar) {
 			this._oTabBar = new IconTabBar({
@@ -216,6 +225,27 @@ sap.ui.define([
 				key: sKey,
 				text: sText || sKey
 			}));
+		}
+	};
+
+	Container.prototype._removeFromNavigator = function (oContainerItem) {
+
+		var sKey = oContainerItem.getKey();
+
+		if (sKey == this.DEFAULT_KEY) {
+			return;
+		}
+
+		if (this.getListLayout()) {
+			var oItem = this._getNavigationList().getItems().find(function(oListItem){
+				return oListItem._key === sKey;
+			});
+			this._getNavigationList().removeItem(oItem);
+		} else {
+			var oTab = this._getTabBar().getItems().find(function(oTab){
+				return oTab.getKey() === sKey;
+			});
+			this._getTabBar().removeItem(oTab);
 		}
 	};
 

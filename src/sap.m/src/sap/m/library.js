@@ -167,6 +167,7 @@ sap.ui.define([
 			"sap.m.IBar",
 			"sap.m.IBadge",
 			"sap.m.IBreadcrumbs",
+			"sap.m.p13n.IContent",
 			"sap.m.IconTab",
 			"sap.m.IScale",
 			"sap.m.semantic.IGroup",
@@ -362,7 +363,8 @@ sap.ui.define([
 			"sap.m.p13n.GroupPanel",
 			"sap.m.p13n.QueryPanel",
 			"sap.m.p13n.SelectionPanel",
-			"sap.m.p13n.SortPanel"
+			"sap.m.p13n.SortPanel",
+			"sap.m.p13n.Popup"
 		],
 		elements: [
 			"sap.m.BadgeCustomData",
@@ -3021,6 +3023,58 @@ sap.ui.define([
 		 * @private
 		 */
 		selection: "selection"
+
+	};
+
+	/**
+	 *
+	 * Interface for P13nPopup which are suitable as content for the <code>sap.m.p13n.Popup</code>.
+	 * Implementation of this interface should include the following methods:
+	 * <ul>
+	 * <li><code>getTitle</code></li>
+	 * </ul>
+	 *
+	 * @since 1.97
+	 * @name sap.m.p13n.IContent
+	 * @interface
+	 * @private
+	 * @ui5-restricted
+	 * @experimental
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
+	 * Returns the title, which should be displayed in the P13nPopup to describe related content.
+	 *
+	 * @returns {string} The title for the corresponding content to be displayed in the <code>sap.m.p13n.Popup</code>.
+	 *
+	 * @function
+	 * @name sap.m.p13n.IContent.getTitle
+	 * @private
+	 * @ui5-restricted
+	 * @experimental
+	 */
+
+	/**
+	 * Type of popup used in the <code>sap.m.p13n.Popup</code>.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.P13nPopupMode = {
+
+		/**
+		 * Dialog type as popup type.
+		 * @public
+		 */
+		Dialog: "Dialog",
+
+		/**
+		 * ResponsivePopover type as popup type.
+		 * @public
+		 */
+		 ResponsivePopover: "ResponsivePopover"
 
 	};
 
