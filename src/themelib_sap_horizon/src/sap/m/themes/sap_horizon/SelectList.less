@@ -10,13 +10,6 @@
 /* selected */
 .sapMSelectListItemBaseSelected {
 	background: @sapUiListSelectionBackgroundColor;
-	border-bottom: 0.0625rem solid @sapUiSelected;
-}
-
-.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
-.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
-	outline: 0.0625rem dotted @sapUiContentFocusColor;
-	outline-offset: -0.125rem;
 }
 
 /* pressed */
@@ -25,63 +18,7 @@ html.sap-desktop .sapMSelectListItemBase.sapMSelectListItemBasePressed:focus {
 }
 
 .sapMSelectListItemBase.sapMSelectListItemBasePressed .sapMSelectListItemIcon {
-	color: @sapUiListTextColor;
-}
-
-.sapMSelectList {
-	padding: 0.25rem
-}
-
-.sapMSltPicker-CTX .sapMSelectListItem.sapMSelectListItemBaseSelected,
-.sapMSltPicker-CTX .sapMSelectListItem.sapMSelectListItemBaseSelected
- {
-	border-style: none;
-	border-width: 0;
-	border-radius: 0.25rem;
-	border-left-style: solid;
-	border-left-width: 0.125rem;
-	border-left-color: #1890ff;
-	color: @sapButton_Selected_TextColor;
-	background: @sapList_SelectionBackgroundColor;
-	outline: none;
-
-	.sapMSelectListItemIcon {
-		color: @sapButton_Selected_TextColor;
-	}
-
-	&:hover {
-		border-left-color: @sapButton_Active_TextColor;
-		color: #0040b0;
-	}
-
-	&.sapMSelectListItemBasePressed {
-		color: #002A86;
-		border-left-color: #002A86;
-		background: @sapList_SelectionBackgroundColor;
-	}
-}
-
-.sapMSltPicker-CTX .sapMSelectListItem:not(.sapMSelectListItemBaseSelected) {
-	border-left-style: solid;
-	border-left-width: 0.125rem;
-	border-left-color: transparent;
-
-	&:hover {
-		border-left-color: @sapButton_Track_Background;
-	}
-}
-
-:not(.sapMSelectListItemBaseDisabled).sapMSelectListItemBase.sapMSelectListItemBasePressed:not(.sapMSelectListItemBaseSelected) {
-	color: @sapUiListTextColor;
-	background: @sapUiListHoverBackground;
-	border-left-color: @sapContent_Illustrative_Color5;
-}
-
-.sapMSelectListItemBaseHoverable:hover,
-.sapMSltPicker-CTX.sapMPopover {
-	border-radius: 0.25rem;
-	border-bottom-color: @sapField_PlaceholderTextColor;
-	border-bottom-width: 0.125rem;
+	color: @sapUiContentContrastIconColor;
 }
 
 
@@ -91,7 +28,34 @@ html.sap-desktop .sapMSelectListItemBase.sapMSelectListItemBasePressed:focus {
 }
 
 /* focus */
-html.sap-desktop .sapMSelectListItemBase:focus {
-	outline:  0.0625rem dotted @sapUiContentFocusColor;
-	outline-offset: -0.125rem;
+html.sap-desktop .sapMSelectListItemBase:focus::after,
+.sapMSltPicker-CTX .sapMSelectListItemBaseSelected::after,
+.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected::after {
+	pointer-events: none;
+	content: "";
+	border: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
+
+.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
+.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
+	outline: none;
+}
+
+.sapMSelectListItemBase {
+	position: relative;
+
+	&:first-child::after {
+		border-top-left-radius: 0.75rem;
+		border-top-right-radius: 0.75rem;
+	}
+
+	&:last-child::after {
+		border-bottom-left-radius: 0.75rem;
+		border-bottom-right-radius: 0.75rem;
+	}
 }

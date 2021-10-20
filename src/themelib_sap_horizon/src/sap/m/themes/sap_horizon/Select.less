@@ -21,6 +21,11 @@
 	}
 }
 
+// Prevent jumping of icon only select when hover
+.sapMSltIconOnly.sapMSltHoverable:not(.sapMSltState) {
+	border: 0.0625rem solid transparent;
+}
+
 /*IconOnly Pressed */
 .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
 	background: @sapUiToggleButtonPressedBackground;
@@ -28,58 +33,11 @@
 }
 
 .sapMSlt:not(.sapMSltIconOnly) {
-	border-radius: 0.5rem;
+	border-radius: 0.25rem;
 }
 
 .sapMSlt {
 	height: 2.25rem;
-	border-left-color: @sapUiFieldBackground;
-	border-right-color: @sapUiFieldBackground;
-	border-top-color: @sapUiFieldBackground;
-	border-bottom-color: @sapUiFieldBorderColor;
-	border-bottom-width: 0.125rem;
-	background: @sapUiFieldBackground;
-
-	&.sapMSltDisabled,
-	&.sapMSltReadonly {
-		border-bottom-width: 0.0625rem;
-	}
-
-	&.sapMSltReadonly > .sapMSltLabel {
-		color: @sapButton_TextColor;
-	}
-}
-
-.sapMSltError {
-	border-bottom-color: @sapUiFieldInvalidColor;
-
-	&.sapMSltHoverable:not(.sapMSltPressed):hover > .sapMSltArrow {
-		background: @sapUiFieldBackground;
-	}
-}
-
-.sapMSltWarning {
-	border-bottom-color: @sapUiFieldWarningColor;
-
-	&.sapMSltHoverable:not(.sapMSltPressed):hover > .sapMSltArrow {
-		background: @sapUiFieldBackground;
-	}
-}
-
-.sapMSltSuccess {
-	border-bottom-color: @sapUiFieldSuccessColor;
-
-	&.sapMSltHoverable:not(.sapMSltPressed):hover > .sapMSltArrow {
-		background: @sapUiFieldBackground;
-	}
-}
-
-.sapMSltInformation {
-	border-bottom-color: @sapUiHighlight;
-
-	&.sapMSltHoverable:not(.sapMSltPressed):hover > .sapMSltArrow {
-		background: @sapUiFieldBackground;
-	}
 }
 
 .sapMSlt > .sapMSltLabel {
@@ -87,8 +45,6 @@
 }
 
 .sapMSltArrow {
-	margin: 0.1875rem;
-	height: ~"calc(100% - 0.375rem)";
 	line-height: 2rem;
 }
 
@@ -105,7 +61,7 @@
 .sapMSlt.sapMSltFocused:not(.sapMSltDisabled):not(.sapMSltState) {
 	outline: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
 	outline-offset: -0.125rem;
-	border-radius: 0.5rem;
+	border-radius: 0.25rem;
 }
 
 html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):before {
@@ -123,6 +79,14 @@ html.sap-desktop .sapMSltIconOnly.focus:not(.sapMSltExpanded):not(.sapMSltDisabl
 
 .sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover {
 	background: @sapUiFieldHoverBackground;
+
+	.sapMSltArrow {
+		border-radius: 0.25rem;
+	}
+}
+
+.sapMSltHoverable.sapMSltPressed:not(.sapMSltState):not(.sapMSltIconOnly):hover .sapMSltArrow {
+	border-radius: 0.125rem;
 }
 
 /* pressed and hover */
@@ -150,4 +114,57 @@ div.sapMSltPicker .sapMSltPickerValueState {
 
 .sapUiSizeCompact .sapMSlt > .sapMSltArrow {
 	line-height: 1.375rem;
+}
+
+.sapMSlt {
+    border: none;
+    background-image: linear-gradient(0deg, @sapField_BorderColor 0, @sapField_BorderColor 100%);
+    background-size: 100% @sapField_BorderWidth;
+    background-repeat: repeat-x;
+    background-position: bottom;
+}
+
+.sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover {
+    border:none;
+    box-shadow: @sapContent_Interaction_Shadow;
+	border: none;
+    background-image: linear-gradient(0deg, @sapField_BorderColor 0, @sapField_BorderColor 100%);
+    background-size: 100% @sapField_BorderWidth;
+    background-repeat: repeat-x;
+    background-position: bottom;
+}
+
+.sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):active {
+    border:none;
+    box-shadow: inset 0px 0px 0px 2px @sapField_Active_BorderColor;
+}
+
+.sapMSltArrow {
+    width: 2rem;
+    height: 2rem;
+    margin-top: 2px;
+    margin-right: 2px;
+}
+
+.sapUiSizeCompact .sapMSltArrow {
+    width: 2rem;
+    margin-top: 2px;
+    height: 1.375rem;
+    margin-right: 2px;
+}
+
+.sapMSltPressed >.sapMSltArrow {
+    background-color: @sapButton_Active_Background;
+    color: @sapButton_Active_TextColor;
+    box-shadow: @sapContent_Interaction_Shadow;
+    overflow: none;
+    border-radius: 0.125rem;
+}
+
+
+/* focus */
+html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled) {
+    &:before {
+        box-shadow: inset 0px 0px 0px 2px @sapField_Focus_BorderColor;
+    }
 }
