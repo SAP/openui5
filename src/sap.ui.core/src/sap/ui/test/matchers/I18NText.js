@@ -32,8 +32,8 @@ sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], f
 	 * }
 	 * </code></pre>
 	 *
-	 * As of version 1.96 if the flag useLibraryBundle is true the library resource bundle
-	 * of the control is used to resolve the i18n key
+	 * As of version 1.95 if the <code>useLibraryBundle</code> flag is set to <code>true</code>, the library resource bundle
+	 * of the control is used to resolve the i18n key.
 	 *
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new I18NText
