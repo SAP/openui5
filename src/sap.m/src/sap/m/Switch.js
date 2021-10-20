@@ -143,6 +143,11 @@ function(
 				iPosition = Switch._ONPOSITION;
 			}
 
+			// fix handle movement when the switch is shorter (no label) in some themes | BCP: 2170252080
+			if (iPosition > this._iNoLabelFix) {
+				iPosition = this._iNoLabelFix;
+			}
+
 			if (this._iCurrentPosition === iPosition) {
 				return;
 			}
@@ -265,6 +270,9 @@ function(
 
 			// add active state
 			this.$("switch").addClass(CSS_CLASS + "Pressed");
+
+			// necessary for fixing handle movement when the switch is shorter (no label) in some themes | BCP: 2170252080
+			this._iNoLabelFix = parseInt(window.getComputedStyle(this.getDomRef("switch")).outlineOffset);
 		};
 
 		/**
