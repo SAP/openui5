@@ -59,8 +59,9 @@ html.sap-desktop {
 	&.sapMSwtNoLabel {
 		width: 3.25rem;
 		height: 1.25rem;
-		&.sapMSwtOn .sapMSwtHandle {
-			left: 1.5rem;
+		outline-offset: -8px; // ON state handle movement limit correction in pixels for no-label switches, because of reduced width
+		&.sapMSwtOn .sapMSwtInner {
+			left: -0.5rem;
 		}
 	}
 }
@@ -260,8 +261,9 @@ html.sap-desktop {
 				height: 1rem;
 				margin-top: 0.125rem;
 				margin-bottom: 0.125rem;
-				&.sapMSwtOn .sapMSwtHandle {
-					left: 1rem;
+				outline-offset: -14px; // ON state handle movement limit correction in pixels for no-label switches, because of reduced width
+				&.sapMSwtOn .sapMSwtInner {
+					left: -0.88rem;
 				}
 			}
 			.sapMSwtHandle {
