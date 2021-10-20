@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/model/xml/XMLModel",
 	"sap/ui/model/Context",
 	"sap/ui/thirdparty/jquery"
-], function(Label, List, ListItem, VerticalLayout, XMLModel, Context, jQuery) {
+], function(Label, List, StandardListItem, VerticalLayout, XMLModel, Context, jQuery) {
 	"use strict";
 
 	var oLabel, oLayout, oModel, oModelChild, oTarget1, oTarget2, aTestData, aTestDataChild;
@@ -167,7 +167,7 @@ sap.ui.define([
 
 	QUnit.test("test model getProperty with bindingContext and path = null", function(assert) {
 		var oContext = oModel.createBindingContext("/member");
-		assert.equal(oModel.getProperty(null, oContext).length, 0 , "array of teammembers");
+		assert.equal(oModel.getProperty(null, oContext).length, 0 , "array of team members");
 	});
 
 	QUnit.test("test createBindingContext with two models", function(assert) {
@@ -183,8 +183,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("test model bindAggregation on Listbox", function(assert) {
-		var oLB = new List("myLb", {displaySecondaryValues:true, height:"200px"}),
-			oItemTemplate = new ListItem();
+		var oLB = new List("myLb"),
+			oItemTemplate = new StandardListItem();
 
 		oLB.placeAt("target2");
 		oItemTemplate.bindProperty("title", "@firstName").bindProperty("description", "@lastName");
@@ -356,7 +356,7 @@ sap.ui.define([
 		try {
 			oModel.setProperty("member/4/@lastName", "Jackson");
 		} catch (e) {
-			assert.ok(true, "setting a property for a relatve path should fail");
+			assert.ok(true, "setting a property for a relative path should fail");
 		}
 		value = oModel.getProperty("/member/4/@lastName");
 		assert.equal(value, "Ander", "model value");
@@ -367,7 +367,7 @@ sap.ui.define([
 	QUnit.test("text XML getObject", function(assert) {
 		var oModel = new XMLModel();
 		oModel.setXML(aTestData);
-		var oNode = oModel.getObject("/member/4/@lastName"); // direkt attribute access
+		var oNode = oModel.getObject("/member/4/@lastName"); // direct attribute access
 		assert.ok(oNode);
 		assert.equal(oNode, "Spring", "node attribute value");
 		oNode = oModel.getObject("/member/4/");

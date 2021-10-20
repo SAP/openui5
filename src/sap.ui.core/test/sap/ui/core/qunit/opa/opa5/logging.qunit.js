@@ -16,7 +16,7 @@ sap.ui.define([
 	QUnit.module("Logging", {
 		beforeEach: function () {
 			var sView = [
-				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.commons">',
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">',
 				'<Button id="foo">',
 				'</Button>',
 				'<Button id="bar">',

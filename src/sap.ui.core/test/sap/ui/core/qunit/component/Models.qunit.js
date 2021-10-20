@@ -1,6 +1,7 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/i18n/ResourceBundle",
+	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"sap/ui/model/xml/XMLModel",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/test/v2models/parent/CustomModel"
-], function(jQuery, ResourceBundle, Log, Component) {
+], function(jQuery, ResourceBundle, UriParameters, Log, Component) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -63,7 +64,7 @@ sap.ui.define([
 				oGetParameterStub.withArgs('sap-ui-xx-preload-component-models').returns('true');
 			}
 
-			this.oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns({
+			this.oGetUriParametersStub = sinon.stub(UriParameters, 'fromQuery').returns({
 				get: oGetParameterStub
 			});
 
@@ -148,13 +149,12 @@ sap.ui.define([
 	QUnit.module('default', {
 		before: function() {
 			// preload any used libraries / modules to avoid sync requests
-			return Promise.all([
-				sap.ui.getCore().loadLibraries([
-					"sap.ui.commons", "sap.ui.layout", "sap.ui.unified"
-				]),
-				new Promise(function(resolve, reject) {
+			return sap.ui.getCore().loadLibraries([
+					"sap.ui.layout", "sap.ui.unified", "sap.m"
+			]).then(function() {
+				return new Promise(function(resolve, reject) {
 					sap.ui.require([
-						"sap/ui/commons/Label",
+						"sap/m/Label",
 						"sap/ui/core/CustomData",
 						"sap/ui/core/mvc/XMLView",
 						"sap/ui/core/routing/Router",
@@ -162,19 +162,17 @@ sap.ui.define([
 					], function() {
 						resolve();
 					}, reject);
-				})
-			]);
+				});
+			});
 		},
 		beforeEach: function() {
 			bindHelper.call(this);
 
 			this.spyModels();
-			this.oLogSpy = sinon.spy(Log, "error");
+			this.oLogSpy = this.spy(Log, "error");
 		},
 		afterEach: function() {
 			this.restoreModels();
-			this.oLogSpy.restore();
-
 			this.restoreGetUriParameters();
 		}
 	});
@@ -349,7 +347,7 @@ sap.ui.define([
 			});
 
 
-			// jQuery.sap.log.error
+			// Log.error
 			sinon.assert.calledWithExactly(this.oLogSpy, "Component Manifest: Missing \"type\" for model \"no-model-type\"", "[\"sap.ui5\"][\"models\"][\"no-model-type\"]", this.oComponent.getMetadata().getComponentName());
 			sinon.assert.calledWithExactly(this.oLogSpy, sinon.match("Class \"sap.ui.not.defined.Model\" for model \"missing-model-class\" could not be loaded."), "[\"sap.ui5\"][\"models\"][\"missing-model-class\"]", this.oComponent.getMetadata().getComponentName());
 			sinon.assert.calledWithExactly(this.oLogSpy, "Component Manifest: Class \"sap.ui.test.v2models.parent.ModelNotDefined\" for model \"model-not-found\" could not be found", "[\"sap.ui5\"][\"models\"][\"model-not-found\"]", this.oComponent.getMetadata().getComponentName());
@@ -903,7 +901,7 @@ sap.ui.define([
 			});
 
 
-			// jQuery.sap.log.error
+			// Log.error
 			sinon.assert.calledWithExactly(this.oLogSpy, "Component Manifest: Missing \"type\" for model \"no-model-type\"", "[\"sap.ui5\"][\"models\"][\"no-model-type\"]", this.oComponent.getMetadata().getComponentName());
 			sinon.assert.calledWithExactly(this.oLogSpy, sinon.match("Class \"sap.ui.not.defined.Model\" for model \"missing-model-class\" could not be loaded."), "[\"sap.ui5\"][\"models\"][\"missing-model-class\"]", this.oComponent.getMetadata().getComponentName());
 			sinon.assert.calledWithExactly(this.oLogSpy, "Component Manifest: Class \"sap.ui.test.v2models.parent.ModelNotDefined\" for model \"model-not-found\" could not be found", "[\"sap.ui5\"][\"models\"][\"model-not-found\"]", this.oComponent.getMetadata().getComponentName());
@@ -1347,7 +1345,7 @@ sap.ui.define([
 			});
 
 
-			// jQuery.sap.log.error
+			// Log.error
 			sinon.assert.calledWithExactly(this.oLogSpy, "Component Manifest: Missing \"type\" for model \"no-model-type\"", "[\"sap.ui5\"][\"models\"][\"no-model-type\"]", this.oComponent.getMetadata().getComponentName());
 			sinon.assert.calledWithExactly(this.oLogSpy, sinon.match("Class \"sap.ui.not.defined.Model\" for model \"missing-model-class\" could not be loaded."), "[\"sap.ui5\"][\"models\"][\"missing-model-class\"]", this.oComponent.getMetadata().getComponentName());
 			sinon.assert.calledWithExactly(this.oLogSpy, "Component Manifest: Class \"sap.ui.test.v2models.parent.ModelNotDefined\" for model \"model-not-found\" could not be found", "[\"sap.ui5\"][\"models\"][\"model-not-found\"]", this.oComponent.getMetadata().getComponentName());
@@ -1610,10 +1608,12 @@ sap.ui.define([
 			sinon.assert.callCount(this.modelSpy.resource, 2);
 
 			assert.ok(this.modelSpy.resource.getCall(0).returnValue, "ResourceModel should be available");
-			assert.ok(this.modelSpy.resource.getCall(0).returnValue.getResourceBundle() instanceof Promise, "Promise should be available as async=true is set in manifest");
+			assert.ok(this.modelSpy.resource.getCall(0).returnValue.getResourceBundle() instanceof Promise,
+				"Promise should be available as async=true is set in manifest");
 
 			assert.ok(this.modelSpy.resource.getCall(1).returnValue, "ResourceModel should be available");
-			assert.ok(jQuery.sap.resources.isBundle(this.modelSpy.resource.getCall(1).returnValue.getResourceBundle()), "ResourceBundle should be available");
+			assert.ok(this.modelSpy.resource.getCall(1).returnValue.getResourceBundle() instanceof ResourceBundle,
+				"ResourceBundle should be available");
 
 			// check error log for "class-not-loaded" model
 			sinon.assert.calledWithExactly(this.oLogErrorSpy,
@@ -3693,16 +3693,20 @@ sap.ui.define([
 	QUnit.module("ui5:// URL resolution for local annotations", {
 		before: function() {
 			// preload any used libraries / modules to avoid sync requests
-			return new Promise(function(resolve, reject) {
-				sap.ui.require([
-					"sap/ui/commons/Label",
-					"sap/ui/core/CustomData",
-					"sap/ui/core/mvc/XMLView",
-					"sap/ui/core/routing/Router",
-					"sap/ui/model/odata/ODataAnnotations"
-				], function() {
-					resolve();
-				}, reject);
+			return sap.ui.getCore().loadLibraries([
+					"sap.ui.layout", "sap.ui.unified", "sap.m"
+			]).then(function() {
+				return new Promise(function(resolve, reject) {
+					sap.ui.require([
+						"sap/m/Label",
+						"sap/ui/core/CustomData",
+						"sap/ui/core/mvc/XMLView",
+						"sap/ui/core/routing/Router",
+						"sap/ui/model/odata/ODataAnnotations"
+					], function() {
+						resolve();
+					}, reject);
+				});
 			});
 		},
 		beforeEach: function() {

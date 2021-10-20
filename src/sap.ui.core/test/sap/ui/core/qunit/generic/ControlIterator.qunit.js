@@ -1,8 +1,9 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/utils/ControlIterator",
-	"sap/ui/core/Control"
-], function(ControlIterator, Control) {
+	"sap/ui/core/Control",
+	"sap/base/util/ObjectPath"
+], function(ControlIterator, Control, ObjectPath) {
 	"use strict";
 
 	// disable require.js to avoid issues with thirdparty
@@ -178,7 +179,7 @@ sap.ui.define([
 
 					aFailingControls.forEach(function(sControlName) {
 						if (ControlIterator.controlCanBeInstantiated(sControlName)) {
-							var oControlClass = jQuery.sap.getObject(sControlName);
+							var oControlClass = ObjectPath.get(sControlName);
 							var oControl = new oControlClass();
 
 							assert.throws(

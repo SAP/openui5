@@ -635,8 +635,8 @@ sap.ui.define([
 	 * <b>'library'</b> : <i>string</i><br>
 	 * Name of the library that the new subclass should belong to. If the subclass is a control or element, it will
 	 * automatically register with that library so that authoring tools can discover it.
-	 * By convention, the name of the subclass should have the library name as a prefix, e.g. 'sap.ui.commons.Panel' belongs
-	 * to library 'sap.ui.commons'.
+	 * By convention, the name of the subclass should have the library name as a prefix, but subfolders are allowed,
+	 * e.g. <code>sap.ui.layout.form.Form</code> belongs to library <code>sap.ui.layout</code>.
 	 *
 	 *
 	 * <b>'properties'</b> : <i>object</i><br>

@@ -1,6 +1,6 @@
 <mvc:View
 	controllerName="serializer.view.NestedXmlView"
-	xmlns="sap.ui.commons"
+	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc" >
 	<Button
 		text="Nested Button" >

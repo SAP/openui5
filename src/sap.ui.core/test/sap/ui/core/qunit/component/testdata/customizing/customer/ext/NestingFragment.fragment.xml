@@ -1,5 +1,5 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
-    <core:Fragment id="EPRootFragment" fragmentName="testdata.customizing.customer.ext.EPRoot" type="XML" />
+	<core:Fragment id="EPRootFragment" fragmentName="testdata.customizing.customer.ext.EPRoot" type="XML" />
 </core:FragmentDefinition>

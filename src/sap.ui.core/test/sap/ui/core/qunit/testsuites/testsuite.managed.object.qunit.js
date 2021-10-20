@@ -46,9 +46,11 @@ sap.ui.define(function() {
 					qunitBridge: true
 				}
 			},
-			ObjectMetadata: {
-				title: "sap.ui.base.Object",
-				module: "testdata/core/Object.qunit"
+			Metadata: {
+				title: "sap.ui.base.Metadata"
+			},
+			Object: {
+				title: "sap.ui.base.Object"
 			}
 		}
 	};

@@ -43,17 +43,17 @@ sap.ui.define([
 
 	var oModel1 = new JSONModel({
 		value : "1"
-    });
-    var oModel2 = new JSONModel({
+	});
+	var oModel2 = new JSONModel({
 		value : "2"
-    });
-    var oModel3 = new JSONModel({
+	});
+	var oModel3 = new JSONModel({
 		value : "3"
-    });
-    var oModel4 = new JSONModel({
+	});
+	var oModel4 = new JSONModel({
 		data: ["0","1","2"]
-    });
-    var oModel5 = new ODataModel(sUri);
+	});
+	var oModel5 = new ODataModel(sUri);
 
 	QUnit.module("Propagation listener", {
 		beforeEach : function() {
@@ -94,7 +94,7 @@ sap.ui.define([
 		}
 	});
 
-    QUnit.test("add Propagation Listener", function(assert) {
+	QUnit.test("add Propagation Listener", function(assert) {
 		window.fnPropListener = function(data, object) {
 			assert.ok(data, "data passed");
 			assert.equal(data.myData, "myData", "data object passed with data");
@@ -110,9 +110,9 @@ sap.ui.define([
 		this.ctrl.addAggregation("children", oChild2);
 		assert.ok(spy.callCount === 4, "Propagation listener called for new control and its child");
 		window.fnPropListener.restore();
-    });
+	});
 
-    QUnit.test("remove Propagation Listener", function(assert) {
+	QUnit.test("remove Propagation Listener", function(assert) {
 		window.fnPropListener = function(data, object) {
 			assert.ok(data, "data passed");
 			assert.equal(data.myData, "myData", "data object passed with data");
@@ -129,9 +129,9 @@ sap.ui.define([
 		this.ctrl.addAggregation("children", oChild2);
 		assert.ok(spy.callCount === 0, "Propagation listener not called");
 		window.fnPropListener.restore();
-    });
+	});
 
-    QUnit.test("propagation Listener and models/bindings", function(assert) {
+	QUnit.test("propagation Listener and models/bindings", function(assert) {
 		window.fnPropListener = function(data, object) {}.bind(null,{myData:"myData"});
 		this.ctrl.addPropagationListener(window.fnPropListener);
 		var spy = sinon.spy(window, "fnPropListener");
@@ -142,7 +142,7 @@ sap.ui.define([
 		this.ctrl.bindElement("/value");
 		assert.ok(spy.callCount === 0, "Propagation listener not called on bindElement");
 		window.fnPropListener.restore();
-    });
+	});
 
 	QUnit.module("Model propagation", {
 		beforeEach : function() {

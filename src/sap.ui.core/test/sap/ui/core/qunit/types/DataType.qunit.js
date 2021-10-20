@@ -1,12 +1,14 @@
 /*global sinon, QUnit*/
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/base/DataType',
-	'sap/ui/base/Object',
-	'sap/ui/core/Popup',
-	'sap/base/Log',
-	'jquery.sap.strings'
-], function (jQuery, DataType, BaseObject, Popup, Log) {
+	"jquery.sap.global",
+	"sap/ui/base/DataType",
+	"sap/ui/base/Object",
+	"sap/base/Log",
+	"sap/base/util/ObjectPath",
+	"sap/base/util/isPlainObject",
+	"sap/ui/core/Popup", // provides data type sap.ui.core.Popup.Dock
+	"jquery.sap.strings" // provides jQuery.sap.formatMessage
+], function (jQuery, DataType, BaseObject, Log, ObjectPath, isPlainObject) {
 	"use strict";
 
 	function random(values) {
@@ -353,8 +355,8 @@ sap.ui.define([
 		Log.setLevel(Log.Level.DEBUG);
 
 		// check precondition
-		var vGlobalProperty = jQuery.sap.getObject("sap.ui.base.Object");
-		assert.ok(vGlobalProperty && !jQuery.isPlainObject(vGlobalProperty), "[precondition] Object with name sap.ui.base.Object exists and is not a plain object");
+		var vGlobalProperty = ObjectPath.get("sap.ui.base.Object");
+		assert.ok(vGlobalProperty && !isPlainObject(vGlobalProperty), "[precondition] Object with name sap.ui.base.Object exists and is not a plain object");
 
 
 		assert.strictEqual(DataType.getType("sap.ui.base.Object"), DataType.getType("any"), "access to an invalid type should fallback to type 'any'");
@@ -688,9 +690,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("enum sap.ui.core.TextAlign", function (assert) {
-		var oEnum = jQuery.sap.getObject("sap.ui.core.TextAlign");
+		var oEnum = ObjectPath.get("sap.ui.core.TextAlign");
 		// precondition
-		assert.ok(oEnum && jQuery.isPlainObject(oEnum), "[precondition] enum object should exist as global property");
+		assert.ok(oEnum && isPlainObject(oEnum), "[precondition] enum object should exist as global property");
 
 		var type = DataType.getType("sap.ui.core.TextAlign");
 		assert.ok(!!type, "type 'sap.ui.core.TextAlign' exists");
@@ -702,18 +704,19 @@ sap.ui.define([
 		assert.ok(type.isEnumType(), "type should be marked as enum");
 		assert.strictEqual(type.getEnumValues(), oEnum, "type should return the globally defined object with keys and values");
 
-		jQuery.each(sap.ui.core.TextAlign, function (i, v) {
-			assert.equal(type.isValid(v), true, "accepts value " + v);
-			assert.equal(type.parseValue(i), v, "'" + i + "' should be parsed as '" + v + "'");
+		Object.keys(oEnum).forEach(function(name) {
+			var value = oEnum[name];
+			assert.equal(type.isValid(value), true, "accepts value " + value);
+			assert.equal(type.parseValue(name), value, "'" + name + "' should be parsed as '" + value + "'");
 		});
 		assert.equal(type.isValid("something"), false, "should not accept 'something'");
 		assert.ok(DataType.getType("sap.ui.core.TextAlign") === type, "multiple calls should return same type object");
 	});
 
 	QUnit.test("enum sap.ui.core.Popup.Dock", function (assert) {
-		var oEnum = jQuery.sap.getObject("sap.ui.core.Popup.Dock");
+		var oEnum = ObjectPath.get("sap.ui.core.Popup.Dock");
 		// precondition
-		assert.ok(oEnum && jQuery.isPlainObject(oEnum), "[precondition] enum object should exist as global property");
+		assert.ok(oEnum && isPlainObject(oEnum), "[precondition] enum object should exist as global property");
 
 		var type = DataType.getType("sap.ui.core.Popup.Dock");
 		assert.ok(!!type, "type 'sap.ui.core.Popup.Dock' exists");
@@ -725,9 +728,10 @@ sap.ui.define([
 		assert.ok(type.isEnumType(), "type should be marked as enum");
 		assert.strictEqual(type.getEnumValues(), oEnum, "type should return the globally defined object with keys and values");
 
-		jQuery.each(Popup.Dock, function (i, v) {
-			assert.equal(type.isValid(v), true, "'" + v + "' should be a valid value");
-			assert.equal(type.parseValue(i), v, "'" + i + "' should be parsed as '" + v + "'");
+		Object.keys(oEnum).forEach(function(name) {
+			var value = oEnum[name];
+			assert.equal(type.isValid(value), true, "accepts value " + value);
+			assert.equal(type.parseValue(name), value, "'" + name + "' should be parsed as '" + value + "'");
 		});
 		assert.equal(type.isValid("something"), false, "should not accept 'something'");
 		// TODO parsing of illegal values?

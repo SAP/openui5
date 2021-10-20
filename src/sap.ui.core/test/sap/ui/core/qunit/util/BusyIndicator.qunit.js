@@ -1,30 +1,27 @@
-/* global sinon, QUnit */
-sap.ui.define(["sap/ui/core/BusyIndicator"], function (BusyIndicator) {
+/* global QUnit */
+sap.ui.define([
+	"sap/ui/core/BusyIndicator",
+	"sap/ui/thirdparty/jquery"
+], function (BusyIndicator, jQuery) {
 	"use strict";
 
 	QUnit.module("BusyIndicatorTests", {
 		beforeEach: function () {
-			// ensures that private functions are available for sinon
-
 			// delay in ms when opening or closing the popup (meant for opening without delay)
 			this.iPopupDelay = 10;
 
-			this.oSpyShow = sinon.spy(BusyIndicator, "show");
-			this.oSpyShowNowIfRequested = sinon.spy(BusyIndicator, "_showNowIfRequested");
-			this.oSpyOnOpen = sinon.spy(BusyIndicator, "_onOpen");
+			this.oSpyShow = this.spy(BusyIndicator, "show");
+			this.oSpyShowNowIfRequested = this.spy(BusyIndicator, "_showNowIfRequested");
+			this.oSpyOnOpen = this.spy(BusyIndicator, "_onOpen");
 
 			this.sClass = ".sapUiLocalBusyIndicator";
-			if (jQuery.sap.getUriParameters().get("sap-ui-theme") == "sap_goldreflection") {
+			if (new URLSearchParams(window.location.search).get("sap-ui-theme") == "sap_goldreflection") {
 				this.sClass = ".sapUiBusy";
 			}
 		},
 
 		afterEach: function () {
 			BusyIndicator.hide();
-
-			this.oSpyShow.restore();
-			this.oSpyShowNowIfRequested.restore();
-			this.oSpyOnOpen.restore();
 		}
 	});
 

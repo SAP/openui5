@@ -169,7 +169,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			},
 			ViewSerializer: {
 				ui5: {
-					libs: "sap.ui.commons"
+					libs: "sap.m"
 				},
 				loader: {
 					paths: {

@@ -219,7 +219,7 @@ sap.ui.define([
 	QUnit.test("Model enhancement (with bundle)", function(assert) {
 		assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
 		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
-		var oBundle = jQuery.sap.resources({url: sCustomMessagesProperties});
+		var oBundle = ResourceBundle.create({url: sCustomMessagesProperties});
 		oModel.enhance(oBundle);
 		assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
@@ -230,10 +230,10 @@ sap.ui.define([
 			sap.ui.getCore().getConfiguration().setLanguage("en");
 
 			// Load the bundle beforehand
-			this.oBundle = jQuery.sap.resources({url: sMessagesProperties});
+			this.oBundle = ResourceBundle.create({url: sMessagesProperties});
 
 			// Spy on resource bundle loading
-			this.jQuerySapResources = this.spy(ResourceBundle, "create");
+			this.fnResBundleCreateSpy = this.spy(ResourceBundle, "create");
 
 			// Create the model with the existing bundle
 			this.oModel = new ResourceModel({
@@ -253,7 +253,7 @@ sap.ui.define([
 	QUnit.test("Basic", function(assert) {
 		this.prepare();
 
-		assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
+		assert.equal(this.fnResBundleCreateSpy.callCount, 0, "ResourceBundle.create should not be called when passing an existing resourcebundle");
 		assert.equal(this.oModel.getResourceBundle(), this.oBundle, "The passed bundle is returned by the model");
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle are available");
 
@@ -283,13 +283,13 @@ sap.ui.define([
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 
-		var oCustomBundle = jQuery.sap.resources({url: sCustomMessagesProperties});
+		var oCustomBundle = ResourceBundle.create({url: sCustomMessagesProperties});
 		this.oModel.enhance(oCustomBundle);
 
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 
-		var oCustomBundle = jQuery.sap.resources({url: sOtherMessagesProperties});
+		var oCustomBundle = ResourceBundle.create({url: sOtherMessagesProperties});
 		this.oModel.enhance(oCustomBundle);
 
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
@@ -330,11 +330,11 @@ sap.ui.define([
 			if (opts && typeof opts.bundle === "function") {
 				this.oBundle = opts.bundle.apply(this);
 			} else {
-				this.oBundle = jQuery.sap.resources({url: sMessagesProperties});
+				this.oBundle = ResourceBundle.create({url: sMessagesProperties});
 			}
 
 			// Spy on resource bundle loading
-			this.jQuerySapResources = this.spy(ResourceBundle, "create");
+			this.fnResBundleCreateSpy = this.spy(ResourceBundle, "create");
 
 			if (opts && typeof opts.model === "function") {
 				this.oModel = opts.model.apply(this);
@@ -352,47 +352,47 @@ sap.ui.define([
 			this.localizationChangeSpy = this.spy(this.oModel, "_handleLocalizationChange");
 		},
 		testEnhanceAndLanguageChange: function(assert) {
-			assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
+			assert.equal(this.fnResBundleCreateSpy.callCount, 0, "ResourceBundle.create should not be called when passing an existing resourcebundle");
 			assert.equal(this.oModel.getResourceBundle(), this.oBundle, "The passed bundle is returned by the model");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle are available");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 
 			this.oModel.enhance({bundleUrl: sCustomMessagesProperties});
 
-			assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
+			assert.equal(this.fnResBundleCreateSpy.callCount, 1, "ResourceBundle.create should be called once when enhancing the model");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 
-			// Reset the jQuery.sap.resources callCount
-			this.jQuerySapResources.reset();
+			// Reset the ResourceBundle.create callCount
+			this.fnResBundleCreateSpy.resetHistory();
 
 			sap.ui.getCore().getConfiguration().setLanguage("de");
 
 			assert.equal(this.localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
-			assert.equal(this.jQuerySapResources.callCount, 2, "jQuery.sap.resources should be called twice after changing the language");
+			assert.equal(this.fnResBundleCreateSpy.callCount, 2, "ResourceBundle.create should be called twice after changing the language");
 			assert.notEqual(this.oModel.getResourceBundle(), this.oBundle, "A new bundle has been created");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are now in 'de'");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "Texts from enhancement are now in 'de'");
 		},
 		testEnhanceAndLanguageChangeWithFixedLocale: function(assert) {
-			assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
+			assert.equal(this.fnResBundleCreateSpy.callCount, 0, "ResourceBundle.create should not be called when passing an existing resourcebundle");
 			assert.equal(this.oModel.getResourceBundle(), this.oBundle, "The passed bundle is returned by the model");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are available");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein angepasster Text", "text TEST_TEXT_CUSTOM of original model is correct");
 
 			this.oModel.enhance({bundleUrl: sCustomMessagesProperties, bundleLocale: "de"});
 
-			assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
+			assert.equal(this.fnResBundleCreateSpy.callCount, 1, "ResourceBundle.create should be called once when enhancing the model");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "text TEST_TEXT of enhanced model is correct");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 
-			// Reset the jQuery.sap.resources callCount
-			this.jQuerySapResources.reset();
+			// Reset the ResourceBundle.create callCount
+			this.fnResBundleCreateSpy.resetHistory();
 
 			sap.ui.getCore().getConfiguration().setLanguage("it");
 
 			assert.equal(this.localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
-			assert.equal(this.jQuerySapResources.callCount, 2, "jQuery.sap.resources should not be called after changing the language");
+			assert.equal(this.fnResBundleCreateSpy.callCount, 2, "ResourceBundle.create should not be called after changing the language");
 			assert.notEqual(this.oModel.getResourceBundle(), this.oBundle, "A new bundle has been created");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are still in 'de'");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "Texts from enhancement are still in 'de'");
@@ -409,24 +409,24 @@ sap.ui.define([
 	QUnit.test("bundle", function(assert) {
 		this.prepare();
 
-		assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
+		assert.equal(this.fnResBundleCreateSpy.callCount, 0, "ResourceBundle.create should not be called when passing an existing resourcebundle");
 		assert.equal(this.oModel.getResourceBundle(), this.oBundle, "The passed bundle is returned by the model");
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle are available");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 
 		this.oModel.enhance({bundleUrl: sCustomMessagesProperties});
 
-		assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
+		assert.equal(this.fnResBundleCreateSpy.callCount, 1, "ResourceBundle.create should be called once when enhancing the model");
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 
-		// Reset the jQuery.sap.resources callCount
-		this.jQuerySapResources.reset();
+		// Reset the ResourceBundle.create callCount
+		this.fnResBundleCreateSpy.resetHistory();
 
 		sap.ui.getCore().getConfiguration().setLanguage("de");
 
 		assert.equal(this.localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
-		assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called after changing the language");
+		assert.equal(this.fnResBundleCreateSpy.callCount, 0, "ResourceBundle.create should not be called after changing the language");
 		assert.equal(this.oModel.getResourceBundle(), this.oBundle, "The passed bundle is still returned by the model");
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle are still in 'en'");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "Texts from enhancement are still in 'en'");
@@ -479,7 +479,7 @@ sap.ui.define([
 	QUnit.test("bundle, bundleLocale", function(assert) {
 		this.prepare({
 			bundle: function() {
-				return jQuery.sap.resources({
+				return ResourceBundle.create({
 					url: sMessagesProperties,
 					locale: "de"
 				});
@@ -493,24 +493,24 @@ sap.ui.define([
 			}
 		});
 
-		assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
+		assert.equal(this.fnResBundleCreateSpy.callCount, 0, "ResourceBundle.create should not be called when passing an existing resourcebundle");
 		assert.equal(this.oModel.getResourceBundle(), this.oBundle, "The passed bundle is returned by the model");
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are available");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein angepasster Text", "text TEST_TEXT_CUSTOM of original model is correct");
 
 		this.oModel.enhance({bundleUrl: sCustomMessagesProperties, bundleLocale: "de"});
 
-		assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
+		assert.equal(this.fnResBundleCreateSpy.callCount, 1, "ResourceBundle.create should be called once when enhancing the model");
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "text TEST_TEXT of enhanced model is correct");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 
-		// Reset the jQuery.sap.resources callCount
-		this.jQuerySapResources.reset();
+		// Reset the ResourceBundle.create callCount
+		this.fnResBundleCreateSpy.resetHistory();
 
 		sap.ui.getCore().getConfiguration().setLanguage("it");
 
 		assert.equal(this.localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
-		assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called after changing the language");
+		assert.equal(this.fnResBundleCreateSpy.callCount, 0, "ResourceBundle.create should not be called after changing the language");
 		assert.equal(this.oModel.getResourceBundle(), this.oBundle, "The passed bundle is still returned by the model");
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are still in 'de'");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "Texts from enhancement are still in 'de'");
@@ -519,7 +519,7 @@ sap.ui.define([
 	QUnit.test("bundle, bundleLocale, bundleUrl", function(assert) {
 		this.prepare({
 			bundle: function() {
-				return jQuery.sap.resources({
+				return ResourceBundle.create({
 					url: sMessagesProperties,
 					locale: "de"
 				});
@@ -540,7 +540,7 @@ sap.ui.define([
 	QUnit.test("bundle, bundleLocale, bundleName", function(assert) {
 		this.prepare({
 			bundle: function() {
-				return jQuery.sap.resources({
+				return ResourceBundle.create({
 					url: sMessagesProperties,
 					locale: "de"
 				});
@@ -561,7 +561,7 @@ sap.ui.define([
 	QUnit.test("bundle, bundleLocale, bundleName, bundleUrl)", function(assert) {
 		this.prepare({
 			bundle: function() {
-				return jQuery.sap.resources({
+				return ResourceBundle.create({
 					url: sMessagesProperties,
 					locale: "de"
 				});
@@ -586,14 +586,14 @@ sap.ui.define([
 			sap.ui.getCore().getConfiguration().setLanguage("en");
 
 			// Load the bundle beforehand
-			return jQuery.sap.resources({
+			return ResourceBundle.create({
 				url: sMessagesProperties,
 				async: true
 			}).then(function(oBundle) {
 				this.oBundle = oBundle;
 
 				// Spy on resource bundle loading
-				this.jQuerySapResources = this.spy(ResourceBundle, "create");
+				this.fnResBundleCreateSpy = this.spy(ResourceBundle, "create");
 
 				// Create the model with the existing bundle
 				this.oModel = new ResourceModel({
@@ -616,7 +616,7 @@ sap.ui.define([
 	QUnit.test("Basic", function(assert) {
 		return this.prepare().then(function() {
 
-			assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
+			assert.equal(this.fnResBundleCreateSpy.callCount, 0, "ResourceBundle.create should not be called when passing an existing resourcebundle");
 
 			var pBundle = this.oModel.getResourceBundle();
 			assert.ok(pBundle instanceof Promise, "getResourceBundle returns a Promise");
@@ -656,7 +656,7 @@ sap.ui.define([
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 
-			return jQuery.sap.resources({
+			return ResourceBundle.create({
 				url: sCustomMessagesProperties,
 				async: true
 			}).then(function(oCustomBundle) {
@@ -709,7 +709,7 @@ sap.ui.define([
 			if (opts && typeof opts.bundle === "function") {
 				p = opts.bundle.apply(this);
 			} else {
-				p = jQuery.sap.resources({
+				p = ResourceBundle.create({
 					url: sMessagesProperties,
 					async: true
 				});
@@ -719,7 +719,7 @@ sap.ui.define([
 				this.oBundle = oBundle;
 
 				// Spy on resource bundle loading
-				this.jQuerySapResources = this.spy(ResourceBundle, "create");
+				this.fnResBundleCreateSpy = this.spy(ResourceBundle, "create");
 
 				if (opts && typeof opts.model === "function") {
 					this.oModel = opts.model.apply(this);
@@ -739,19 +739,19 @@ sap.ui.define([
 			}.bind(this));
 		},
 		testEnhanceAndLanguageChange: function(assert) {
-			assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
+			assert.equal(this.fnResBundleCreateSpy.callCount, 0, "ResourceBundle.create should not be called when passing an existing resourcebundle");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle are available");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 
 			var pEnhance = this.oModel.enhance({bundleUrl: sCustomMessagesProperties});
 
 			return pEnhance.then(function() {
-				assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
+				assert.equal(this.fnResBundleCreateSpy.callCount, 1, "ResourceBundle.create should be called once when enhancing the model");
 				assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 				assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 
-				// Reset the jQuery.sap.resources callCount
-				this.jQuerySapResources.reset();
+				// Reset the ResourceBundle.create callCount
+				this.fnResBundleCreateSpy.resetHistory();
 
 				sap.ui.getCore().getConfiguration().setLanguage("de");
 
@@ -764,17 +764,17 @@ sap.ui.define([
 			}.bind(this)).then(function(oModelBundle) {
 				assert.notEqual(oModelBundle, this.oBundle, "A new bundle has been created");
 
-				assert.equal(this.jQuerySapResources.callCount, 2, "jQuery.sap.resources should be called twice after changing the language (async)");
+				assert.equal(this.fnResBundleCreateSpy.callCount, 2, "ResourceBundle.create should be called twice after changing the language (async)");
 
 				// Wait for enhanced bundle to be re-loaded (return value is a Promise)
-				return this.jQuerySapResources.getCall(1).returnValue;
+				return this.fnResBundleCreateSpy.getCall(1).returnValue;
 			}.bind(this)).then(function() {
 				assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are now in 'de'");
 				assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "Texts from enhancement are now in 'de'");
 			}.bind(this));
 		},
 		testEnhanceAndLanguageChangeWithFixedLocale: function(assert) {
-			assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
+			assert.equal(this.fnResBundleCreateSpy.callCount, 0, "ResourceBundle.create should not be called when passing an existing resourcebundle");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are available");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein angepasster Text", "text TEST_TEXT_CUSTOM of original model is correct");
 
@@ -784,12 +784,12 @@ sap.ui.define([
 			});
 
 			return pEnhance.then(function() {
-				assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
+				assert.equal(this.fnResBundleCreateSpy.callCount, 1, "ResourceBundle.create should be called once when enhancing the model");
 				assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "text TEST_TEXT of enhanced model is correct");
 				assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 
-				// Reset the jQuery.sap.resources callCount
-				this.jQuerySapResources.reset();
+				// Reset the ResourceBundle.create callCount
+				this.fnResBundleCreateSpy.resetHistory();
 
 				sap.ui.getCore().getConfiguration().setLanguage("it");
 
@@ -802,10 +802,10 @@ sap.ui.define([
 			}.bind(this)).then(function(oModelBundle) {
 				assert.notEqual(oModelBundle, this.oBundle, "A new bundle has been created");
 
-				assert.equal(this.jQuerySapResources.callCount, 2, "jQuery.sap.resources should be called twice after changing the language (async)");
+				assert.equal(this.fnResBundleCreateSpy.callCount, 2, "ResourceBundle.create should be called twice after changing the language (async)");
 
 				// Wait for enhanced bundle to be re-loaded (return value is a Promise)
-				return this.jQuerySapResources.getCall(1).returnValue;
+				return this.fnResBundleCreateSpy.getCall(1).returnValue;
 			}.bind(this)).then(function() {
 				assert.equal(this.oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are still in 'de'");
 				assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "Texts from enhancement are still in 'de'");
@@ -823,24 +823,24 @@ sap.ui.define([
 	QUnit.test("bundle", function(assert) {
 		return this.prepare().then(function() {
 
-			assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
+			assert.equal(this.fnResBundleCreateSpy.callCount, 0, "ResourceBundle.create should not be called when passing an existing resourcebundle");
 			assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle are available");
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 
 			var pEnhance = this.oModel.enhance({bundleUrl: sCustomMessagesProperties});
 
 			return pEnhance.then(function() {
-				assert.equal(this.jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
+				assert.equal(this.fnResBundleCreateSpy.callCount, 1, "ResourceBundle.create should be called once when enhancing the model");
 				assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 				assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 
-				// Reset the jQuery.sap.resources callCount
-				this.jQuerySapResources.reset();
+				// Reset the ResourceBundle.create callCount
+				this.fnResBundleCreateSpy.resetHistory();
 
 				sap.ui.getCore().getConfiguration().setLanguage("de");
 
 				assert.equal(this.localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
-				assert.equal(this.jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called after changing the language");
+				assert.equal(this.fnResBundleCreateSpy.callCount, 0, "ResourceBundle.create should not be called after changing the language");
 
 				assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "Texts from the bundle are still in 'en'");
 				assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "Texts from enhancement are still in 'en'");
@@ -902,13 +902,13 @@ sap.ui.define([
 	QUnit.test("bundle, bundleLocale", function(assert) {
 
 		// Load bundle beforehand
-		var oBundle = jQuery.sap.resources({
+		var oBundle = ResourceBundle.create({
 			url: sMessagesProperties,
 			locale: "de"
 		});
 
 		// Spy on resource bundle loading
-		var jQuerySapResources = this.spy(ResourceBundle, "create");
+		var fnResBundleCreateSpy = this.spy(ResourceBundle, "create");
 
 		// Create the model with the existing bundle
 		var oModel = new ResourceModel({
@@ -924,24 +924,24 @@ sap.ui.define([
 		// Spy on "localizationChange" method
 		var localizationChangeSpy = this.spy(oModel, "_handleLocalizationChange");
 
-		assert.equal(jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called when passing an existing resourcebundle");
+		assert.equal(fnResBundleCreateSpy.callCount, 0, "ResourceBundle.create should not be called when passing an existing resourcebundle");
 		assert.equal(oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are available");
 		assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein angepasster Text", "text TEST_TEXT_CUSTOM of original model is correct");
 
 		var pEnhance = oModel.enhance({bundleUrl: sCustomMessagesProperties, bundleLocale: "de"});
 
 		return pEnhance.then(function() {
-			assert.equal(jQuerySapResources.callCount, 1, "jQuery.sap.resources should be called once when enhancing the model");
+			assert.equal(fnResBundleCreateSpy.callCount, 1, "ResourceBundle.create should be called once when enhancing the model");
 			assert.equal(oModel.getProperty("TEST_TEXT"), "Ein Text de", "text TEST_TEXT of enhanced model is correct");
 			assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 
-			// Reset the jQuery.sap.resources callCount
-			jQuerySapResources.reset();
+			// Reset the ResourceBundle.create callCount
+			fnResBundleCreateSpy.resetHistory();
 
 			sap.ui.getCore().getConfiguration().setLanguage("it");
 
 			assert.equal(localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
-			assert.equal(jQuerySapResources.callCount, 0, "jQuery.sap.resources should not be called after changing the language");
+			assert.equal(fnResBundleCreateSpy.callCount, 0, "ResourceBundle.create should not be called after changing the language");
 
 			assert.equal(oModel.getProperty("TEST_TEXT"), "Ein Text de", "Texts from the bundle are still in 'de'");
 			assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "Texts from enhancement are still in 'de'");
@@ -958,7 +958,7 @@ sap.ui.define([
 	QUnit.test("bundle, bundleLocale, bundleUrl", function(assert) {
 		return this.prepare({
 			bundle: function() {
-				return jQuery.sap.resources({
+				return ResourceBundle.create({
 					url: sMessagesProperties,
 					locale: "de",
 					async: true
@@ -981,7 +981,7 @@ sap.ui.define([
 	QUnit.test("bundle, bundleLocale, bundleName", function(assert) {
 		return this.prepare({
 			bundle: function() {
-				return jQuery.sap.resources({
+				return ResourceBundle.create({
 					url: sMessagesProperties,
 					locale: "de",
 					async: true
@@ -1004,7 +1004,7 @@ sap.ui.define([
 	QUnit.test("bundle, bundleLocale, bundleName, bundleUrl", function(assert) {
 		return this.prepare({
 			bundle: function() {
-				return jQuery.sap.resources({
+				return ResourceBundle.create({
 					url: sMessagesProperties,
 					locale: "de",
 					async: true
@@ -1096,7 +1096,7 @@ sap.ui.define([
 		oModel.getResourceBundle().then(function(oBundle) {
 			assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
 			assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
-			var oBundle = jQuery.sap.resources({url: sCustomMessagesProperties});
+			var oBundle = ResourceBundle.create({url: sCustomMessagesProperties});
 			var oPromise = oModel.enhance(oBundle);
 			oPromise.then(function() {
 				assert.equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
@@ -1127,7 +1127,7 @@ sap.ui.define([
 			var done = assert.async();
 			assert.equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
 			assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
-			var oBundle = jQuery.sap.resources({url: sCustomMessagesProperties});
+			var oBundle = ResourceBundle.create({url: sCustomMessagesProperties});
 			var oPromise = oModel.enhance(oBundle);
 			assert.equal(oModel.getProperty("TEST_TEXT"), null, "text TEST_TEXT of enhanced model is still null");
 			assert.equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "text TEST_TEXT_CUSTOM of enhanced model is still null");

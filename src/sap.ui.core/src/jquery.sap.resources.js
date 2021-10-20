@@ -31,7 +31,7 @@ sap.ui.define([
 	jQuery.sap.resources = function() {
 		// Do not directly assign new API to jQuery.sap.resources
 		// as "isBundle" and "_getFallbackLocales" would get assigned to
-		// the new API aswell (e.g. ResourceBundle.create.isBundle)
+		// the new API as well (e.g. ResourceBundle.create.isBundle)
 		return ResourceBundle.create.apply(ResourceBundle, arguments);
 	};
 

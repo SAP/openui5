@@ -1,9 +1,9 @@
 sap.ui.define(['sap/ui/core/UIComponent'], function (UIComponent) {
-    "use strict";
+	"use strict";
 
-    return UIComponent.extend("sap.ui.test.dependencyLoading.component1.Component", {
-        metadata: {
-            manifest: "json"
-        }
-    });
+	return UIComponent.extend("sap.ui.test.dependencyLoading.component1.Component", {
+		metadata: {
+			manifest: "json"
+		}
+	});
 });

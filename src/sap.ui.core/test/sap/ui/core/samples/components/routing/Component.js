@@ -2,8 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['./RouterExtension', 'sap/ui/commons/Button', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/Controller', 'sap/ui/core/mvc/JSView'],
-	function(RouterExtension, Button, UIComponent, Controller, JSView) {
+sap.ui.define([
+	"./RouterExtension",
+	"sap/m/Button",
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/JSView"
+], function(RouterExtension, Button, UIComponent, Controller, JSView) {
 	"use strict";
 
 

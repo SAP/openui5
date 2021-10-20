@@ -1,5 +1,5 @@
 sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
-    "use strict";
+	"use strict";
 
 	var Component = UIComponent.extend("test.routing.target.syncrootview", {
 

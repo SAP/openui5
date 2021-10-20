@@ -23,7 +23,7 @@ sap.ui.define([
 				 "/js/includeme.js"
 			], //array of css and/or javascript files that should be used in the component
 			dependencies : { // external dependencies
-				libs : ['sap.ui.ux3'], // array of required libraries, e.g. UX3 if your component depends on them
+				libs : ['sap.ui.layout', "sap.m" ], // array of required libraries, if your component depends on them
 				components : ["samples.components.styledbutton"],
 				ui5version : "1.13.0"
 			},

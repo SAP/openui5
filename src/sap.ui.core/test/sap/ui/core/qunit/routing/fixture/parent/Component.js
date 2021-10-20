@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/m/Panel"
 ], function (UIComponent, Panel) {
-    "use strict";
+	"use strict";
 
 	var Component = UIComponent.extend("test.routing.target.parent.Component", {
 		metadata : {

@@ -32,7 +32,7 @@ sap.ui.define(function() {
 					}
 				},
 				ui5: {
-					libs: "sap.ui.core,sap.ui.testlib,sap.ui.commons",
+					libs: "sap.ui.core,sap.ui.testlib,sap.ui.layout",
 					theme: "sap_bluecrystal"
 				},
 				qunit: {
@@ -42,8 +42,7 @@ sap.ui.define(function() {
 			HTMLinGWT: {
 				title: "QUnit Page for HTML Container in GWT Usage",
 				ui5: {
-					libs: "sap.ui.core,sap.ui.commons",
-					theme: "sap_bluecrystal"
+					libs: "sap.ui.core,sap.m"
 				},
 				qunit: {
 					reorder: false
@@ -73,7 +72,7 @@ sap.ui.define(function() {
 			LocalBusyIndicator: {
 				title: "sap.ui.core.LocalBusyIndicator",
 				ui5: {
-					libs: "sap.ui.commons, sap.m"
+					libs: "sap.m"
 				},
 				sinon: {
 					version: 4,

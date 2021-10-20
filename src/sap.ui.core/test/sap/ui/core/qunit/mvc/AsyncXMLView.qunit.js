@@ -1,14 +1,15 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	'sap/ui/core/cache/CacheManager',
-	'sap/ui/core/Component',
-	'sap/ui/core/mvc/View',
-	'sap/ui/core/mvc/XMLView',
-	'./testdata/TestPreprocessor',
-	'./AnyViewAsync.qunit',
-	'sap/base/Log',
-	'sap/base/util/LoaderExtensions',
-	'jquery.sap.script'
+	"sap/ui/core/cache/CacheManager",
+	"sap/ui/core/Component",
+	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/XMLView",
+	"./testdata/TestPreprocessor",
+	"./AnyViewAsync.qunit",
+	"sap/base/Log",
+	"sap/base/strings/hash",
+	"sap/base/util/LoaderExtensions",
+	"jquery.sap.script"
 ], function(
 	Cache,
 	Component,
@@ -17,6 +18,7 @@ sap.ui.define([
 	TestPreprocessor,
 	asyncTestsuite,
 	Log,
+	hash,
 	LoaderExtensions,
 	jQuery
 ) {
@@ -187,7 +189,7 @@ sap.ui.define([
 			function getKeyParts(aKeys, sManifest, aUsedTerminologies) {
 				var sUsedTerminologies = aUsedTerminologies ? aUsedTerminologies.join("_") + "_" : "";
 				var sLanguageTag = sap.ui.getCore().getConfiguration().getLanguageTag(),
-					sHashCode = jQuery.sap.hashCode(sManifest || "");
+					sHashCode = hash(sManifest || "");
 				return "_" + sLanguageTag + "_" + sUsedTerminologies + sBuildTimeStamp + "_" + aKeys.join("_") + "(" + sHashCode + ")";
 			}
 

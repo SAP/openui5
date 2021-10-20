@@ -20,34 +20,36 @@ sap.ui.require([
 
 					iExpandRecursively : function() {
 						return this.waitFor({
-							controlType : "sap.ui.commons.TreeNode",
+							controlType : "sap.m.StandardTreeItem",
 							matchers : new PropertyStrictEquals({
 								name : "expanded",
 								value : false
 							}),
-							actions : function (oTreeNode) {
-								if (oTreeNode.getNodes().length){
-									oTreeNode.expand();
+							actions : function (oTreeItem) {
+								if (!oTreeItem.isLeaf()) {
+									var oTree = oTreeItem.getTree();
+									var iPos = oTree.indexOfItem(oTreeItem);
+									oTree.expand(iPos);
 									this.iExpandRecursively();
 								}
 							}.bind(this),
-							errorMessage : "Didn't find collapsed tree nodes"
+							errorMessage : "Didn't find collapsed tree items"
 						});
 					}
 				}),
 				assertions : new Opa5({
 
-					iSeeAllNodesExpanded : function() {
+					iSeeAllItemsExpanded : function() {
 						return this.waitFor({
-							controlType : "sap.ui.commons.TreeNode",
+							controlType : "sap.m.StandardTreeItem",
 							matchers : new PropertyStrictEquals({
 								name : "expanded",
 								value : true
 							}),
-							success : function (aTreeNodes) {
-								Opa5.assert.strictEqual(aTreeNodes.length, 4, "All nodes with childrean are expanded");
+							success : function (aTreeItems) {
+								Opa5.assert.strictEqual(aTreeItems.length, 4, "All nodes with children are expanded");
 							},
-							errorMessage : "Didn't find expanded tree nodes"
+							errorMessage : "Didn't find expanded tree items"
 						});
 					}
 				})
@@ -62,7 +64,7 @@ sap.ui.require([
 
 		When.iExpandRecursively();
 
-		Then.iSeeAllNodesExpanded();
+		Then.iSeeAllItemsExpanded();
 		Then.iTeardownMyAppFrame();
 	});
 

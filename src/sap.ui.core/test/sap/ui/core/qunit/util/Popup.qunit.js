@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Button",
 	"sap/m/Text",
-	"sap/ui/core/ResizeHandler"
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/events/KeyCodes"
 ], function(
 	Popup,
 	Log,
@@ -27,7 +28,8 @@ sap.ui.define([
 	Panel,
 	Button,
 	Text,
-	ResizeHandler
+	ResizeHandler,
+	KeyCodes
 ){
 	"use strict";
 
@@ -50,10 +52,10 @@ sap.ui.define([
 	QUnit.test("Initial Check", function(assert) {
 		assert.ok((Popup !== undefined) && (Popup != null), "Popup class does not exist after being required");
 
-		oDomRef = jQuery.sap.domById("popup");
+		oDomRef = document.getElementById("popup");
 		assert.ok((oDomRef !== undefined) && (oDomRef != null), "popup div not found");
 
-		$Ref = jQuery.sap.byId("popup");
+		$Ref = jQuery("#popup");
 		assert.ok(($Ref !== undefined) && ($Ref != null), "popup jQuery object not found");
 		assert.equal($Ref.length, 1, "popup jQuery object has not exactly one item");
 		assert.equal(oPopup, null, "oPopup must be null initially (order of execution problem?)");
@@ -61,10 +63,10 @@ sap.ui.define([
 
 	QUnit.module("Basics", {
 		beforeEach : function() {
-			this.oDomRef = jQuery.sap.domById("popup");
+			this.oDomRef = document.getElementById("popup");
 			this.oPopup = new Popup(this.oDomRef);
 
-			this.$Ref = jQuery.sap.byId("popup");
+			this.$Ref = jQuery("#popup");
 		},
 		afterEach : function() {
 			this.oPopup.destroy();
@@ -83,10 +85,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check Amount of Public Methods", function(assert) {
-		var oPopup1DomRef = jQuery.sap.domById("popup1");
+		var oPopup1DomRef = document.getElementById("popup1");
 		var oPopup1 = new Popup(oPopup1DomRef);
 		var iMethodsCount1 = oPopup1.getMetadata()._aPublicMethods.length;
-		var oPopup2DomRef = jQuery.sap.domById("popup2");
+		var oPopup2DomRef = document.getElementById("popup2");
 		var oPopup2 = new Popup(oPopup2DomRef);
 		var iMethodsCount2 = oPopup2.getMetadata()._aPublicMethods.length;
 
@@ -260,10 +262,10 @@ sap.ui.define([
 
 	QUnit.module("Focus", {
 		beforeEach : function() {
-			this.oDomRef = jQuery.sap.domById("popup");
+			this.oDomRef = document.getElementById("popup");
 			this.oPopup = new Popup(this.oDomRef);
 
-			this.$Ref = jQuery.sap.byId("popup");
+			this.$Ref = jQuery("#popup");
 		},
 
 		afterEach : function() {
@@ -487,10 +489,10 @@ sap.ui.define([
 	QUnit.test("Check if focus is inside the Popup", function(assert) {
 		assert.expect(2);
 		var done = assert.async();
-		var oPopupDomRef = jQuery.sap.domById("popup");
+		var oPopupDomRef = document.getElementById("popup");
 		var oPopup = new Popup(oPopupDomRef);
-		var oButtonInside = jQuery.sap.domById("popupcontent");
-		var oButtonOustide = jQuery.sap.domById("focusableElement");
+		var oButtonInside = document.getElementById("popupcontent");
+		var oButtonOustide = document.getElementById("focusableElement");
 		var fnOpened = function() {
 			oPopup.detachOpened(fnOpened, this);
 
@@ -569,13 +571,13 @@ sap.ui.define([
 			desktop: true
 		});
 
-		var oSecondPopup = new Popup(jQuery.sap.domById("popup1"));
+		var oSecondPopup = new Popup(document.getElementById("popup1"));
 
 		var fnAfterSecondPopupClosed = function() {
 			oSecondPopup.destroy();
 			assert.ok(this.oPopup.isOpen(), "the first popup is still open");
 
-			var $BlockLayer = jQuery.sap.byId("sap-ui-blocklayer-popup");
+			var $BlockLayer = jQuery("#sap-ui-blocklayer-popup");
 			assert.equal($BlockLayer.length, 1, "there's 1 blocklayer");
 
 			jQuery.sap.focus($BlockLayer[0]);
@@ -614,12 +616,12 @@ sap.ui.define([
 			desktop: true
 		});
 
-		var oSecondPopup = new Popup(jQuery.sap.domById("popup1"));
+		var oSecondPopup = new Popup(document.getElementById("popup1"));
 
 		var fnAfterFirstPopupClosed = function() {
 			assert.ok(oSecondPopup.isOpen(), "the second popup is still open");
 
-			var $BlockLayer = jQuery.sap.byId("sap-ui-blocklayer-popup");
+			var $BlockLayer = jQuery("#sap-ui-blocklayer-popup");
 			assert.equal($BlockLayer.length, 1, "there's 1 blocklayer");
 
 			jQuery.sap.focus($BlockLayer[0]);
@@ -727,10 +729,10 @@ sap.ui.define([
 
 	QUnit.module("Animation", {
 		beforeEach : function() {
-			this.oDomRef = jQuery.sap.domById("popup");
+			this.oDomRef = document.getElementById("popup");
 			this.oPopup = new Popup(this.oDomRef);
 
-			this.$Ref = jQuery.sap.byId("popup");
+			this.$Ref = jQuery("#popup");
 
 			this.oSpyOpened = sinon.spy(this.oPopup, "_opened");
 			this.oSpyDuringOpen = sinon.spy(this.oPopup, "_duringOpen");
@@ -950,9 +952,9 @@ sap.ui.define([
 	// 		assert.equal(this.$Ref.css("display"), "block", "Popup should be 'display:block' before AutoClose");
 	// 		assert.equal(this.$Ref.css("visibility"), "visible", "Popup should be 'visibility:visible' before AutoClose");
 	//
-	// 		// jQuery.sap.domById("focusableElement2").focus(); // focus something else on the page
+	// 		// document.getElementById("focusableElement2").focus(); // focus something else on the page
 	// 		var oFocusEvent = jQuery.Event("focus"),
-	// 			$focus = jQuery.sap.byId("focusableElement2");
+	// 			$focus = jQuery("#focusableElement2");
 	// 		$focus.trigger(oFocusEvent);
 	// 		Core.applyChanges();
 	// 	};
@@ -978,21 +980,21 @@ sap.ui.define([
 	// 	var that = this;
 	// 	this.oPopup.setAutoClose(false);
 	// 	this.oPopup.setModal(true);
-	// 	jQuery.sap.domById("focusableElement2").focus(); // focus something else on the page
+	// 	document.getElementById("focusableElement2").focus(); // focus something else on the page
 	//
 	// 	setTimeout(function() {
 	// 		assert.equal(this.getFocusedElementId(), "focusableElement2", "the focusable button should have the focus before modality tests");
 	// 		that.oPopup.open(); // duration is still 0
 	//
-	// 		jQuery.sap.domById("popupcontent").focus(); // focus something in the popup
+	// 		document.getElementById("popupcontent").focus(); // focus something in the popup
 	// 		setTimeout(function() {
 	//   		assert.equal(this.getFocusedElementId(), "popupcontent", "popupcontent should be focused now");
 	//
-	//   		jQuery.sap.domById("secondpopupcontent").focus(); // focus something else in the popup
+	//   		document.getElementById("secondpopupcontent").focus(); // focus something else in the popup
 	//   		setTimeout(function() {
 	// 	  		assert.equal(this.getFocusedElementId(), "secondpopupcontent", "secondpopupcontent should be focused now");
 	//
-	// 	  		jQuery.sap.domById("focusableElement2").focus(); // focus something else
+	// 	  		document.getElementById("focusableElement2").focus(); // focus something else
 	// 	  		setTimeout(function() {
 	// 		  		assert.equal(this.getFocusedElementId(), "secondpopupcontent", "secondpopupcontent should again be focused after an attempt to focus the background");
 	//
@@ -1010,10 +1012,10 @@ sap.ui.define([
 
 	QUnit.module("Event", {
 		beforeEach : function() {
-			this.oDomRef = jQuery.sap.domById("popup");
+			this.oDomRef = document.getElementById("popup");
 			this.oPopup = new Popup(this.oDomRef);
 
-			this.$Ref = jQuery.sap.byId("popup");
+			this.$Ref = jQuery("#popup");
 		},
 		afterEach : function() {
 			this.oPopup.destroy();
@@ -1110,12 +1112,12 @@ sap.ui.define([
 
 	QUnit.module("Parent / Child Popups", {
 		beforeEach : function() {
-			this.oChildOpener = jQuery.sap.domById("popup2-btn");
+			this.oChildOpener = document.getElementById("popup2-btn");
 
-			oDomRef = jQuery.sap.domById("popup");
+			oDomRef = document.getElementById("popup");
 			this.oChildPop = new Popup(oDomRef);
 
-			oDomRef = jQuery.sap.domById("popup2");
+			oDomRef = document.getElementById("popup2");
 			this.oParentPop = new Popup(oDomRef);
 		},
 
@@ -1129,8 +1131,8 @@ sap.ui.define([
 
 	QUnit.test("Autoclose popup opened from another autoclose popup", function(assert) {
 		var done = assert.async();
-		var oPopup1DomRef = jQuery.sap.domById("popup1");
-		var oPopup2DomRef = jQuery.sap.domById("popup2");
+		var oPopup1DomRef = document.getElementById("popup1");
+		var oPopup2DomRef = document.getElementById("popup2");
 		var oPopup1 = new Popup(oPopup1DomRef);
 		var oPopup2 = new Popup(oPopup2DomRef);
 
@@ -1140,7 +1142,7 @@ sap.ui.define([
 		oPopup1.open();
 		assert.ok(oPopup1.isOpen(), "Popup1 is open");
 
-		var oButtonRef = jQuery.sap.domById("popup1-btn");
+		var oButtonRef = document.getElementById("popup1-btn");
 
 		oPopup2.setAutoClose(true);
 		oPopup2.setPosition(Popup.Dock.RightCenter, Popup.Dock.LeftCenter, oButtonRef, "0 0", "fit");
@@ -1254,7 +1256,7 @@ sap.ui.define([
 
 	QUnit.module("BlockLayer", {
 		beforeEach: function() {
-			this.oPopup = new Popup(jQuery.sap.domById("popup"), /*bModal*/ true);
+			this.oPopup = new Popup(document.getElementById("popup"), /*bModal*/ true);
 		},
 		afterEach: function() {
 			this.oPopup.destroy();
@@ -1355,8 +1357,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Stacked Modal Popups Should Change Z-Index of BlockLayer", function(assert) {
-		var oPopup1DomRef = jQuery.sap.domById("popup1");
-		var oPopup2DomRef = jQuery.sap.domById("popup2");
+		var oPopup1DomRef = document.getElementById("popup1");
+		var oPopup2DomRef = document.getElementById("popup2");
 		var oPopup1 = new Popup(oPopup1DomRef, /*bModal*/ true);
 		var oPopup2 = new Popup(oPopup2DomRef, /*bModal*/ true);
 
@@ -2217,7 +2219,7 @@ sap.ui.define([
 
 	QUnit.module("ShieldLayer", {
 		beforeEach : function(assert) {
-			var oPopupDomRef = jQuery.sap.domById("popup");
+			var oPopupDomRef = document.getElementById("popup");
 			this.oPopup = new Popup(oPopupDomRef, /*bModal*/ true);
 			this._Device_browser_mobile = Device.browser.mobile;
 			this._Device_browser_chrome = Device.browser.chrome;
@@ -2311,7 +2313,7 @@ sap.ui.define([
 				}
 			});
 
-			var oPopupDomRef = jQuery.sap.domById("popup1");
+			var oPopupDomRef = document.getElementById("popup1");
 			this.oPopup = new Popup(oPopupDomRef);
 			this.oPopup.setAutoClose(true);
 		},
@@ -2348,7 +2350,7 @@ sap.ui.define([
 
 			this.oInput.focus();
 
-			var oDOM = jQuery.sap.byId("focusableElement2");
+			var oDOM = jQuery("#focusableElement2");
 			if (this.oPopup.touchEnabled) {
 				QUnitUtils.triggerEvent("touchstart", oDOM);
 			} else {
@@ -2362,8 +2364,8 @@ sap.ui.define([
 		this.oInput.focus();
 		assert.ok(jQuery.sap.containsOrEquals(this.oInput.getDomRef(), document.activeElement), "focus is inside input");
 
-		QUnitUtils.triggerKeydown(this.oInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
-		QUnitUtils.triggerKeyup(this.oInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		QUnitUtils.triggerKeydown(this.oInput.getDomRef(), KeyCodes.ENTER);
+		QUnitUtils.triggerKeyup(this.oInput.getDomRef(), KeyCodes.ENTER);
 
 		assert.ok(!jQuery.sap.containsOrEquals(this.oInput.getDomRef(), document.activeElement), "The input is blurred after calling popup.open");
 
@@ -2401,8 +2403,8 @@ sap.ui.define([
 		oFocusDomElement = document.activeElement;
 		oBlurSpy = sinon.spy(oFocusDomElement, "blur");
 
-		QUnitUtils.triggerKeydown(this.oInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
-		QUnitUtils.triggerKeyup(this.oInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		QUnitUtils.triggerKeydown(this.oInput.getDomRef(), KeyCodes.ENTER);
+		QUnitUtils.triggerKeyup(this.oInput.getDomRef(), KeyCodes.ENTER);
 
 		assert.ok(jQuery.sap.containsOrEquals(this.oInput.getDomRef(), document.activeElement), "The input is still focused after calling popup.open");
 
@@ -2458,7 +2460,7 @@ sap.ui.define([
 			document.getElementById("focusableElementWithCustomAttributeParent").removeAttribute("data-custom-popup-content-1");
 		},
 		beforeEach: function() {
-			var oPopupDomRef = jQuery.sap.domById("popup1");
+			var oPopupDomRef = document.getElementById("popup1");
 			this.oPopup = new Popup(oPopupDomRef);
 		},
 		afterEach: function() {
@@ -2518,7 +2520,7 @@ sap.ui.define([
 
 	QUnit.module("bug fixes", {
 		beforeEach: function() {
-			var oPopupDomRef = jQuery.sap.domById("popup1");
+			var oPopupDomRef = document.getElementById("popup1");
 			this.oPopup = new Popup(oPopupDomRef);
 		},
 		afterEach: function() {
@@ -2561,7 +2563,7 @@ sap.ui.define([
 		var done = assert.async();
 		this.oPopup.setModal(true);
 
-		var oPopup2 = new Popup(jQuery.sap.domById("popup2"));
+		var oPopup2 = new Popup(document.getElementById("popup2"));
 		oPopup2.setModal(true);
 
 		var fnOpened = function() {
@@ -2569,7 +2571,7 @@ sap.ui.define([
 		};
 
 		var fnClosed = function() {
-			var $DomRefBL = jQuery.sap.byId("sap-ui-blocklayer-popup");
+			var $DomRefBL = jQuery("#sap-ui-blocklayer-popup");
 			assert.equal($DomRefBL.css("visibility"), "visible", "blocklayer is still visible");
 
 			done();
@@ -2602,7 +2604,7 @@ sap.ui.define([
 			oPopup.setPosition(
 				Popup.Dock.BeginTop,
 				Popup.Dock.BeginBottom,
-				jQuery.sap.domById("modalButton")
+				document.getElementById("modalButton")
 			);
 			var fnOpened1 = function() {
 				assert.ok(true, "the second popup is opened");
@@ -2612,7 +2614,7 @@ sap.ui.define([
 				oPopup1.setPosition(
 					Popup.Dock.BeginTop,
 					Popup.Dock.BeginBottom,
-					jQuery.sap.domById("autocloseButton")
+					document.getElementById("autocloseButton")
 				);
 				oPopup1.attachOpened(function() {
 					assert.ok(true, "the third popup is finally opened");
@@ -2649,7 +2651,7 @@ sap.ui.define([
 			oPopup.setPosition(
 				Popup.Dock.BeginTop,
 				Popup.Dock.BeginBottom,
-				jQuery.sap.domById("modalButton")
+				document.getElementById("modalButton")
 			);
 
 			assert.equal(document.activeElement.id, "modalButton", "the focus is set into the first popup");
@@ -2881,7 +2883,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Global within is forwarded to jQuery.ui.position", function(assert) {
-		var oDomRef = jQuery.sap.domById("popup");
+		var oDomRef = document.getElementById("popup");
 		var oPopup = new Popup(oDomRef);
 		var oPositionSpy = this.spy(jQuery.fn, "position");
 
@@ -2902,7 +2904,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("One Popup's own within is forwarded to jQuery.ui.position", function(assert) {
-		var oDomRef = jQuery.sap.domById("popup");
+		var oDomRef = document.getElementById("popup");
 		var oPopup = new Popup(oDomRef);
 		var oPositionSpy = this.spy(jQuery.fn, "position");
 
@@ -2923,7 +2925,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Blocklayer: one modal Popup with own within has the correct position", function(assert) {
-		var oDomRef = jQuery.sap.domById("popup");
+		var oDomRef = document.getElementById("popup");
 		var oPopup = new Popup(oDomRef, true);
 
 		Popup.setWithinArea(document.getElementById("withinArea"));
@@ -2942,7 +2944,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Blocklayer: one modal Popup with 'window' within has the correct position", function(assert) {
-		var oDomRef = jQuery.sap.domById("popup");
+		var oDomRef = document.getElementById("popup");
 		var oPopup = new Popup(oDomRef, true);
 
 		Popup.setWithinArea(window);
@@ -2961,11 +2963,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Blocklayer: multiple modal Popup with own within have the correct position, Closing Scenario 1", function(assert) {
-		var oDomRef = jQuery.sap.domById("popup");
+		var oDomRef = document.getElementById("popup");
 		var oPopup = new Popup(oDomRef, true);
 		var oWithinArea = document.getElementById("withinArea");
 
-		var oDomRef1 = jQuery.sap.domById("popup1");
+		var oDomRef1 = document.getElementById("popup1");
 		var oPopup1 = new Popup(oDomRef1, true);
 		var oWithinArea1 = document.getElementById("withinArea1");
 
@@ -3003,11 +3005,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Blocklayer: multiple modal Popup with own within have the correct position, Closing Scenario 2", function(assert) {
-		var oDomRef = jQuery.sap.domById("popup");
+		var oDomRef = document.getElementById("popup");
 		var oPopup = new Popup(oDomRef, true);
 		var oWithinArea = document.getElementById("withinArea");
 
-		var oDomRef1 = jQuery.sap.domById("popup1");
+		var oDomRef1 = document.getElementById("popup1");
 		var oPopup1 = new Popup(oDomRef1, true);
 		var oWithinArea1 = document.getElementById("withinArea1");
 
@@ -3045,11 +3047,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Blocklayer: open modal popup with within and then Popup without within", function(assert) {
-		var oDomRef = jQuery.sap.domById("popup");
+		var oDomRef = document.getElementById("popup");
 		var oPopup = new Popup(oDomRef, true);
 		var oWithinArea = document.getElementById("withinArea");
 
-		var oDomRef1 = jQuery.sap.domById("popup1");
+		var oDomRef1 = document.getElementById("popup1");
 		var oPopup1 = new Popup(oDomRef1, true);
 
 		var pPromise = waitTillOpen(oPopup).then(function() {
@@ -3089,11 +3091,11 @@ sap.ui.define([
 
 
 	QUnit.test("Blocklayer: open modal popup without within and then Popup with within", function(assert) {
-		var oDomRef = jQuery.sap.domById("popup");
+		var oDomRef = document.getElementById("popup");
 		var oPopup = new Popup(oDomRef, true);
 		var oWithinArea = document.getElementById("withinArea");
 
-		var oDomRef1 = jQuery.sap.domById("popup1");
+		var oDomRef1 = document.getElementById("popup1");
 		var oPopup1 = new Popup(oDomRef1, true);
 
 		var pPromise = waitTillOpen(oPopup).then(function() {
@@ -3134,10 +3136,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Blocklayer: multiple modal Popup with own within have the correct position on a overflowed page", function(assert) {
-		var oDomRef = jQuery.sap.domById("popup");
+		var oDomRef = document.getElementById("popup");
 		var oPopup = new Popup(oDomRef, true);
 		var oWithinArea = document.getElementById("withinArea");
-		var oDomRef1 = jQuery.sap.domById("popup1");
+		var oDomRef1 = document.getElementById("popup1");
 		var oPopup1 = new Popup(oDomRef1, true);
 		var oWithinArea1 = document.getElementById("withinArea1");
 
@@ -3207,7 +3209,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Blocklayer: resize blocklayer when within area is resized", function(assert) {
-		var oDomRef = jQuery.sap.domById("popup");
+		var oDomRef = document.getElementById("popup");
 		var oPopup = new Popup(oDomRef, true);
 
 		assert.expect(2);
@@ -3238,7 +3240,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Global within is updated after a popup is opened and open the popup again to check", function(assert) {
-		var oDomRef = jQuery.sap.domById("popup");
+		var oDomRef = document.getElementById("popup");
 		var oPopup = new Popup(oDomRef);
 		var oPositionSpy = this.spy(jQuery.fn, "position");
 
@@ -3275,7 +3277,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Global within is updated after a popup that has its own within is opened and open the popup again to check", function(assert) {
-		var oDomRef = jQuery.sap.domById("popup");
+		var oDomRef = document.getElementById("popup");
 		var oPopup = new Popup(oDomRef);
 		var oPositionSpy = this.spy(jQuery.fn, "position");
 		var oWithinDomRef = document.getElementById("withinArea");
@@ -3328,7 +3330,7 @@ sap.ui.define([
 		oControl.placeAt("uiarea");
 		sap.ui.getCore().applyChanges();
 
-		var oDomRef = jQuery.sap.domById("popup");
+		var oDomRef = document.getElementById("popup");
 		var oPopup = new Popup(oDomRef);
 		var oPositionSpy = this.spy(jQuery.fn, "position");
 

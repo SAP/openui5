@@ -91,7 +91,7 @@ sap.ui.define(function () {
 			ValidationHooks: {
 				title: "QUnit Page for ValidationHooks",
 				ui5: {
-					libs: "sap.ui.commons"
+					libs: "sap.m"
 				}
 			}
 		}

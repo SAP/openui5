@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/commons/Button', 'sap/ui/core/Fragment'],
+sap.ui.define(['sap/m/Button', 'sap/ui/core/Fragment'],
 	function(Button, Fragment) {
 	"use strict";
 

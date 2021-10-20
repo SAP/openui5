@@ -1,7 +1,7 @@
-sap.ui.define(['jquery.sap.global', 'testdata/customizing/customer/Component'],
-	function(jQuery, CustomerComponent) {
+sap.ui.define([
+	"testdata/customizing/customer/Component"
+], function(CustomerComponent) {
 	"use strict";
-
 
 	var Component = CustomerComponent.extend("testdata.customizing.customersub.Component", {
 

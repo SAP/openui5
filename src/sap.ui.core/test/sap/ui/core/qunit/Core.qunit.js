@@ -7,9 +7,10 @@ sap.ui.require([
 	'sap/base/i18n/ResourceBundle',
 	'sap/base/Log',
 	'sap/base/util/LoaderExtensions',
+	'sap/base/util/ObjectPath',
 	'sap/ui/Device',
 	'sap/ui/core/Element'
-], function(ResourceBundle, Log, LoaderExtensions, Device, Element) {
+], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Element) {
 	"use strict";
 
 	function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
@@ -39,7 +40,7 @@ sap.ui.require([
 	};
 
 	QUnit.assert.isLibLoaded = function(libName) {
-		this.ok(jQuery.sap.getObject(libName), "namespace for " + libName + " should exist");
+		this.ok(ObjectPath.get(libName), "namespace for " + libName + " should exist");
 		this.ok(sap.ui.getCore().getLoadedLibraries()[libName], "Core should know and list " + libName + " as 'loaded'");
 	};
 
@@ -73,11 +74,11 @@ sap.ui.require([
 	QUnit.test("loadLibrary", function(assert) {
 		assert.equal(typeof sap.ui.getCore().loadLibrary, "function", "Core has method loadLibrary");
 		assert.ok(sap.ui.loader._.getModuleState("sap/ui/testlib/library.js") === 0, "testlib lib has not been loaded yet");
-		assert.ok(!jQuery.sap.getObject("sap.ui.testlib"), "testlib namespace doesn't exists");
+		assert.ok(!ObjectPath.get("sap.ui.testlib"), "testlib namespace doesn't exists");
 		assert.ok(jQuery("head > link[id='sap-ui-theme-sap.ui.testlib']").length === 0, "style sheet doesn't exist");
 		sap.ui.getCore().loadLibrary("sap.ui.testlib", "./testdata/uilib");
 		assert.ok(sap.ui.loader._.getModuleState("sap/ui/testlib/library.js") !== 0, "testlib lib has been loaded");
-		assert.ok(jQuery.sap.getObject("sap.ui.testlib"), "testlib namespace exists");
+		assert.ok(ObjectPath.get("sap.ui.testlib"), "testlib namespace exists");
 		assert.ok(jQuery("head > link[id='sap-ui-theme-sap.ui.testlib']").length === 1, "style sheets have been added");
 
 		// load TestButton class
@@ -154,30 +155,30 @@ sap.ui.require([
 	QUnit.test("testSetThemeRoot", function(assert) {
 		sap.ui.getCore().setThemeRoot("my_theme", ["sap.ui.core"], "http://core.something.corp");
 		sap.ui.getCore().setThemeRoot("my_theme", "http://custom.something.corp");
-		sap.ui.getCore().setThemeRoot("my_theme", ["sap.ui.commons"], "http://commons.something.corp");
+		sap.ui.getCore().setThemeRoot("my_theme", ["sap.m"], "http://mobile.something.corp");
 
 		var corePath = oRealCore._getThemePath("sap.ui.core", "my_theme");
-		var commonsPath = oRealCore._getThemePath("sap.ui.commons", "my_theme");
+		var mobilePath = oRealCore._getThemePath("sap.m", "my_theme");
 		var otherPath = oRealCore._getThemePath("sap.ui.other", "my_theme");
 
 		assert.equal(corePath, "http://core.something.corp/sap/ui/core/themes/my_theme/", "path should be as configured");
-		assert.equal(commonsPath, "http://commons.something.corp/sap/ui/commons/themes/my_theme/", "path should be as configured");
+		assert.equal(mobilePath, "http://mobile.something.corp/sap/m/themes/my_theme/", "path should be as configured");
 		assert.equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/", "path should be as configured");
 
-		corePath = jQuery.sap.getModulePath("sap.ui.core.themes.my_theme", "/");
-		commonsPath = jQuery.sap.getModulePath("sap.ui.commons.themes.my_theme", "/");
-		otherPath = jQuery.sap.getModulePath("sap.ui.other.themes.my_theme", "/");
+		corePath = sap.ui.require.toUrl("sap/ui/core/themes/my_theme/");
+		mobilePath = sap.ui.require.toUrl("sap/m/themes/my_theme/");
+		otherPath = sap.ui.require.toUrl("sap/ui/other/themes/my_theme/");
 
 		assert.equal(corePath, "http://core.something.corp/sap/ui/core/themes/my_theme/", "path should be as configured");
-		assert.equal(commonsPath, "http://commons.something.corp/sap/ui/commons/themes/my_theme/", "path should be as configured");
+		assert.equal(mobilePath, "http://mobile.something.corp/sap/m/themes/my_theme/", "path should be as configured");
 		assert.equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/", "path should be as configured");
 
 		corePath = sap.ui.resource("sap.ui.core", "themes/my_theme/img/x.png");
-		commonsPath = sap.ui.resource("sap.ui.commons", "themes/my_theme/img/x.png");
+		mobilePath = sap.ui.resource("sap.m", "themes/my_theme/img/x.png");
 		otherPath = sap.ui.resource("sap.ui.other", "themes/my_theme/img/x.png");
 
 		assert.equal(corePath, "http://core.something.corp/sap/ui/core/themes/my_theme/img/x.png", "path should be as configured");
-		assert.equal(commonsPath, "http://commons.something.corp/sap/ui/commons/themes/my_theme/img/x.png", "path should be as configured");
+		assert.equal(mobilePath, "http://mobile.something.corp/sap/m/themes/my_theme/img/x.png", "path should be as configured");
 		assert.equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/img/x.png", "path should be as configured");
 
 		// Set theme root for all libs with forceUpdate
@@ -203,19 +204,19 @@ sap.ui.require([
 	// now check the location of the preconfigured themes
 	QUnit.test("themeRoot configuration", function(assert) {
 		var corePath = oRealCore._getThemePath("sap.ui.core", "my_preconfigured_theme");
-		var commonsPath = oRealCore._getThemePath("sap.ui.commons", "my_preconfigured_theme");
+		var mobilePath = oRealCore._getThemePath("sap.m", "my_preconfigured_theme");
 		var otherPath = oRealCore._getThemePath("sap.ui.other", "my_preconfigured_theme");
 
 		assert.equal(corePath, "http://preconfig.com/ui5-themes/sap/ui/core/themes/my_preconfigured_theme/", "path should be as configured");
-		assert.equal(commonsPath, "http://preconfig.com/ui5-themes/sap/ui/commons/themes/my_preconfigured_theme/", "path should be as configured");
+		assert.equal(mobilePath, "http://preconfig.com/ui5-themes/sap/m/themes/my_preconfigured_theme/", "path should be as configured");
 		assert.equal(otherPath, "http://preconfig.com/ui5-themes/sap/ui/other/themes/my_preconfigured_theme/", "path should be as configured");
 
 		corePath = oRealCore._getThemePath("sap.ui.core", "my_second_preconfigured_theme");
-		commonsPath = oRealCore._getThemePath("sap.ui.commons", "my_second_preconfigured_theme");
+		mobilePath = oRealCore._getThemePath("sap.m", "my_second_preconfigured_theme");
 		otherPath = oRealCore._getThemePath("sap.ui.other", "my_second_preconfigured_theme");
 
 		assert.equal(corePath, "http://core.preconfig.com/ui5-themes/sap/ui/core/themes/my_second_preconfigured_theme/", "path should be as configured");
-		assert.equal(commonsPath, "http://commons.preconfig.com/ui5-themes/sap/ui/commons/themes/my_second_preconfigured_theme/", "path should be as configured");
+		assert.equal(mobilePath, "http://mobile.preconfig.com/ui5-themes/sap/m/themes/my_second_preconfigured_theme/", "path should be as configured");
 		assert.equal(otherPath, "http://preconfig.com/ui5-themes/sap/ui/other/themes/my_second_preconfigured_theme/", "path should be as configured");
 
 		// read from script tag
@@ -340,7 +341,7 @@ sap.ui.require([
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
 
 		return pBundle.then(function(oBundle) {
-			assert.ok(oSpy.notCalled, "jQuery.sap.resources is not called");
+			assert.ok(oSpy.notCalled, "ResourceBundle.create is not called");
 			assert.ok(oBundle, "bundle could be retrieved");
 			assert.equal(oBundle.getText("SAPUI5_FRIDAY"), "Friday", "bundle can resolve texts");
 			assert.equal(oBundle.getText("SAPUI5_GM_ZSTEP"), "Zoom step {0}", "bundle can resolve texts");
@@ -356,7 +357,7 @@ sap.ui.require([
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
 
 		return pBundle.then(function(oBundle) {
-			assert.equal(oSpy.callCount, 1, "jQuery.sap.resources is called");
+			assert.equal(oSpy.callCount, 1, "ResourceBundle.create is called");
 			assert.ok(oBundle, "bundle could be retrieved");
 			assert.equal(oBundle.getText("SAPUI5_FRIDAY"), "Friday", "bundle can resolve texts");
 			assert.equal(oBundle.getText("SAPUI5_GM_ZSTEP"), "Zoom step {0}", "bundle can resolve texts");
@@ -595,10 +596,10 @@ sap.ui.require([
 		assert.ok(oBundle, "a promise should be returned");
 		assert.notOk(oBundle instanceof Promise, "a Bundle object should be returned, not a promise");
 
-		assert.equal(iCounter, 1, "jQuery.sap.resources is called once");
+		assert.equal(iCounter, 1, "ResourceBundle.create is called once");
 		pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test3", "en", true);
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
-		assert.equal(iCounter, 1, "jQuery.sap.resources is still called once");
+		assert.equal(iCounter, 1, "ResourceBundle.create is still called only once");
 
 		return pBundle;
 	});
@@ -680,7 +681,7 @@ sap.ui.require([
 			// TODO (sync initLibrary) sinon.assert.calledWith(sap.ui.require, ['testlibs/scenario1/lib5/library']);
 
 			// lib6 shouldn't have been loaded (only lazy dependency)
-			assert.ok(!jQuery.sap.getObject('testlibs.scenario1.lib6'), "lib6 should not have been loaded");
+			assert.ok(!ObjectPath.get('testlibs.scenario1.lib6'), "lib6 should not have been loaded");
 			assert.ok(!sap.ui.getCore().getLoadedLibraries()['testlibs.scenario1.lib6'], "Core should not know or report lib6 as 'loaded'");
 			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib6\/library-preload\.js$/));
 			// TODO (sync initLibrary) sinon.assert.neverCalledWith(jQuery.sap.require, 'testlibs.scenario1.lib6.library');
@@ -733,7 +734,7 @@ sap.ui.require([
 		sinon.assert.calledWith(sap.ui.requireSync, sinon.match(/scenario2\/lib5\/library-preload$/));
 
 		// lib6 shouldn't have been loaded (only lazy dependency)
-		assert.ok(!jQuery.sap.getObject('testlibs.scenario2.lib6'), "lib6 should not have been loaded");
+		assert.ok(!ObjectPath.get('testlibs.scenario2.lib6'), "lib6 should not have been loaded");
 		assert.ok(!sap.ui.getCore().getLoadedLibraries()['testlibs.scenario2.lib6'], "Core should not know or report lib6 as 'loaded'");
 		sinon.assert.neverCalledWith(sap.ui.requireSync, sinon.match(/scenario2\/lib6\/library-preload$/));
 
@@ -885,10 +886,12 @@ sap.ui.require([
 	QUnit.test("async (config object)", function(assert) {
 
 		this.stub(sap.ui.loader._, "loadJSResourceAsync").callsFake(function() {
-			jQuery.sap.declare('testlibs.scenario9.lib1.library');
-			sap.ui.getCore().initLibrary({
-				name: 'testlibs.scenario9.lib1',
-				noLibraryCSS: true
+			sap.ui.predefine("testlibs/scenario9/lib1/library", function() {
+				sap.ui.getCore().initLibrary({
+					name: 'testlibs.scenario9.lib1',
+					noLibraryCSS: true
+				});
+				return testlibs.scenario9.lib1;
 			});
 			return Promise.resolve(true);
 		});
@@ -899,7 +902,7 @@ sap.ui.require([
 		});
 		assert.ok(loaded instanceof Promise, "loadLibrary should return a promise when called with async:true");
 		assert.ok(sap.ui.loader._.loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario9\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
-		assert.equal(jQuery.sap.getResourcePath('testlibs/scenario9/lib1'), "./some/fancy/path", "path should have been registered");
+		assert.equal(sap.ui.require.toUrl('testlibs/scenario9/lib1'), "./some/fancy/path", "path should have been registered");
 
 		return loaded;
 	});
@@ -911,10 +914,12 @@ sap.ui.require([
 	QUnit.test("async (convenience shortcut)", function(assert) {
 
 		this.stub(sap.ui.loader._, "loadJSResourceAsync").callsFake(function() {
-			jQuery.sap.declare('testlibs.scenario10.lib1.library');
-			sap.ui.getCore().initLibrary({
-				name: 'testlibs.scenario10.lib1',
-				noLibraryCSS: true
+			sap.ui.predefine("testlibs/scenario10/lib1/library", function() {
+				sap.ui.getCore().initLibrary({
+					name: 'testlibs.scenario10.lib1',
+					noLibraryCSS: true
+				});
+				return testlibs.scenario10.lib1;
 			});
 			return Promise.resolve(true);
 		});
@@ -951,7 +956,7 @@ sap.ui.require([
 		assert.ok(sap.ui.loader._.loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario11\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
 
 		return loaded.then(function() {
-			assert.ok(sap.ui.require.calledWith(['testlibs/scenario11/lib1/library']), "should have called jQuery.sap.require for library.js");
+			assert.ok(sap.ui.require.calledWith(['testlibs/scenario11/lib1/library']), "should have called sap.ui.require for library.js");
 			assert.ok(true, "promise for a library without preload should resolve");
 		}, function() {
 			assert.ok(false, "promise for a library without preload should not be rejected");
@@ -1047,7 +1052,7 @@ sap.ui.require([
 				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario13\/lib5\/library-preload\.js$/));
 
 				// lib6 shouldn't have been loaded (only lazy dependency)
-				assert.ok(!jQuery.sap.getObject('testlibs.scenario13.lib6'), "lib6 should not have been loaded");
+				assert.ok(!ObjectPath.get('testlibs.scenario13.lib6'), "lib6 should not have been loaded");
 				assert.ok(!sap.ui.getCore().getLoadedLibraries()['testlibs.scenario13.lib6'], "Core should not know or report lib6 as 'loaded'");
 				sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario13\/lib6\/library-preload\.js$/));
 
@@ -1280,10 +1285,10 @@ sap.ui.require([
 		assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
 
 		return vResult.then(function() {
-			assert.ok(!jQuery.sap.getObject('my.lib12'), "lib12 should not have been loaded");
+			assert.ok(!ObjectPath.get('my.lib12'), "lib12 should not have been loaded");
 			assert.ok(!sap.ui.getCore().getLoadedLibraries()['my.lib12'], "Core should not know or report lib12 as 'loaded'");
 			assert.ok(jQuery.sap.isResourceLoaded('my/lib12/library.js'), "lib12 library module should be preloaded");
-			assert.ok(!jQuery.sap.getObject('my.lib13'), "lib13 should not have been loaded");
+			assert.ok(!ObjectPath.get('my.lib13'), "lib13 should not have been loaded");
 			assert.ok(!sap.ui.getCore().getLoadedLibraries()['my.lib13'], "Core should not know or report lib13 as 'loaded'");
 			assert.ok(jQuery.sap.isResourceLoaded('my/lib13/library.js'), "lib13 library module should be preloaded");
 		});

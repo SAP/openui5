@@ -74,7 +74,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 							label: "Gender",
 							fields: [
 								new RadioButton({text: "male", selected: true, groupName: "MyTest"}),
-							    new RadioButton({text: "female", selected: false, groupName: "MyTest"})
+								new RadioButton({text: "female", selected: false, groupName: "MyTest"})
 							]
 						})
 					]
@@ -116,8 +116,8 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 									selectedKey: "{country}",
 									items: [
 										new Item({key: "DE", text: "Germany"}),
-								        new Item({key: "US", text: "USA"}),
-								        new Item({key: "UK", text: "England"})
+										new Item({key: "US", text: "USA"}),
+										new Item({key: "UK", text: "England"})
 									]
 								})
 							]

@@ -1,9 +1,10 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
-	function(jQuery, Component1) {
+sap.ui.define([
+	"sap/ui/core/UIComponent"
+], function(UIComponent) {
 	"use strict";
 
 
-	var Component = Component1.extend("testdata.customizing.customer.Component", {
+	var Component = UIComponent.extend("testdata.customizing.customer.Component", {
 
 		metadata : {
 			version : "1.0",

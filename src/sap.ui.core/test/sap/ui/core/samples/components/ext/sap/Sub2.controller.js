@@ -1,5 +1,9 @@
-sap.ui.define(['sap/base/Log', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/m/MessageToast'],
-	function(Log, Controller, JSONModel, MessageToast) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/MessageToast"
+], function(Log, Controller, JSONModel, MessageToast) {
 	"use strict";
 
 	var Sub2Controller = Controller.extend("samples.components.ext.sap.Sub2", {

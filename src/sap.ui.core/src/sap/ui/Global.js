@@ -14,7 +14,7 @@
  * @sample
  * Ensures a control can be used afterwards but does not load immediately
  * sap.ui.lazyRequire("sap.ui.core.Control");
- * sap.ui.lazyRequire("sap.ui.commons.Button");
+ * sap.ui.lazyRequire("sap.m.Button");
  *
  * @version ${version}
  * @author  SAP SE
@@ -309,7 +309,7 @@ sap.ui.define([
 	 * It DOES work, however, when the given sResourcePath starts with "themes/" (= when it is a theme-dependent resource). Even when for this theme a different
 	 * location outside the normal library location is configured.
 	 *
-	 * @param {string} sLibraryName the name of a library, like "sap.ui.commons"
+	 * @param {string} sLibraryName the name of a library, like "sap.ui.layout"
 	 * @param {string} sResourcePath the relative path of a resource inside this library, like "img/mypic.png" or "themes/my_theme/img/mypic.png"
 	 * @returns {string} the URL of the requested resource
 	 *

@@ -4,15 +4,15 @@ sap.ui.define([
 	"sap/m/BusyDialog",
 	"sap/m/Button",
 	"sap/m/List",
+	"sap/m/Slider",
 	"sap/m/StandardListItem",
 	"sap/m/VBox",
-	"sap/ui/commons/Button",
-	"sap/ui/commons/Slider",
 	"sap/ui/core/Control",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils"
-], function(LocalBusyIndicatorSupport, BusyDialog, Button, List, StandardListItem, VBox, CommonsButton, CommonsSlider, Control, XMLView, jQuery, qutils) {
+], function(LocalBusyIndicatorSupport, BusyDialog, Button, List, Slider, StandardListItem, VBox, Control, XMLView, KeyCodes, jQuery, qutils) {
 	"use strict";
 
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
@@ -46,7 +46,7 @@ sap.ui.define([
 
 	function simulateTabEvent(oTarget, bBackward) {
 		var oParams = {};
-		oParams.keyCode = jQuery.sap.KeyCodes.TAB;
+		oParams.keyCode = KeyCodes.TAB;
 		oParams.which = oParams.keyCode;
 		oParams.shiftKey = !!bBackward;
 		oParams.altKey = false;
@@ -54,7 +54,7 @@ sap.ui.define([
 		oParams.ctrlKey = false;
 
 		if (typeof (oTarget) == "string") {
-			oTarget = jQuery.sap.domById(oTarget);
+			oTarget = document.getElementById(oTarget);
 		}
 
 		var oEvent = jQuery.Event({type: "keydown"});
@@ -69,7 +69,7 @@ sap.ui.define([
 			return;
 		}
 
-		var $Tabbables = findTabbables(document.activeElement, [jQuery.sap.domById("target1")], !bBackward);
+		var $Tabbables = findTabbables(document.activeElement, [document.getElementById("target1")], !bBackward);
 		if ($Tabbables.length) {
 			$Tabbables.get(bBackward ? $Tabbables.length - 1 : 0).focus();
 		}
@@ -110,7 +110,7 @@ sap.ui.define([
 				}) ]
 			}).placeAt("target1");
 			this.oFocusAfter = new Button("FocusAfter").placeAt("target1");
-			this.oSlider = new CommonsSlider().placeAt("target2");
+			this.oSlider = new Slider().placeAt("target2");
 
 			sap.ui.getCore().applyChanges();
 		},
@@ -173,7 +173,7 @@ sap.ui.define([
 		this.oListBox.setBusy(true);
 
 		simulateTabEvent(this.oFocusBefore.getDomRef());
-		oElem = jQuery.sap.domById(this.oListBox.getItems()[0].getId());
+		oElem = document.getElementById(this.oListBox.getItems()[0].getId());
 		checkFocus(oElem, assert);
 		simulateTabEvent(oElem);
 		checkFocus(this.oFocusAfter.getDomRef(), assert);
@@ -282,7 +282,7 @@ sap.ui.define([
 				}) ]
 			}).placeAt("target1");
 
-			this.oSlider = new CommonsSlider().placeAt("target2");
+			this.oSlider = new Slider().placeAt("target2");
 
 			sap.ui.getCore().applyChanges();
 		},
@@ -377,20 +377,24 @@ sap.ui.define([
 	QUnit.test("Busy indicator on XML View", function(assert) {
 		var done = assert.async();
 		// setup the busy view
-		var myView = sap.ui.xmlview({viewContent:'<mvc:View xmlns:mvc="sap.ui.core.mvc" busyIndicatorDelay="0"></mvc:View>'}).placeAt('target1');
-		sap.ui.getCore().applyChanges();
-		myView.setBusy(true);
-		// this rerendering is crucial to test the behavior
-		myView.rerender();
-		setTimeout(function() {
-			// assert
-			assert.ok(myView.$("busyIndicator").length, "BusyIndicator rendered");
-			myView.setBusy(false);
-			assert.ok(!myView.$("busyIndicator").length, "All BusyIndicators removed");
-			//cleanup
-			myView.destroy();
-			done();
-		}, 50);
+		return XMLView.create({
+			definition: '<mvc:View xmlns:mvc="sap.ui.core.mvc" busyIndicatorDelay="0"></mvc:View>'
+		}).then(function(myView) {
+			myView.placeAt('target1');
+			sap.ui.getCore().applyChanges();
+			myView.setBusy(true);
+			// this rerendering is crucial to test the behavior
+			myView.rerender();
+			setTimeout(function() {
+				// assert
+				assert.ok(myView.$("busyIndicator").length, "BusyIndicator rendered");
+				myView.setBusy(false);
+				assert.ok(!myView.$("busyIndicator").length, "All BusyIndicators removed");
+				//cleanup
+				myView.destroy();
+				done();
+			}, 50);
+		});
 	});
 
 	QUnit.test("span elements for tab chain", function(assert) {
@@ -419,7 +423,7 @@ sap.ui.define([
 	QUnit.module("Delay", {
 		beforeEach : function() {
 			this.iDelay = 500;
-			this.oButton = new CommonsButton({
+			this.oButton = new Button({
 				busy : true,
 				busyIndicatorDelay : this.iDelay,
 				text : "Delayed BusyIndicator"
@@ -545,7 +549,7 @@ sap.ui.define([
 	QUnit.test("Check if small Animation is used", function(assert) {
 		var done = assert.async();
 
-		this.oBtn = new CommonsButton({
+		this.oBtn = new Button({
 			text : "Blub",
 			width : "45px",
 			busyIndicatorSize : 'Small',
@@ -581,7 +585,7 @@ sap.ui.define([
 	QUnit.test("Check if small Animation is used", function(assert) {
 		var done = assert.async();
 
-		this.oBtn = new CommonsButton({
+		this.oBtn = new Button({
 			text : "Blub",
 			width : "45px",
 			busyIndicatorSize : 'Auto',
@@ -723,10 +727,10 @@ sap.ui.define([
 	QUnit.test("LocalBusyIndicatorSupport (error handling)", function(assert) {
 
 		// apply deprecated LocalBusyIndicatorSupport to a specific control
-		LocalBusyIndicatorSupport.apply(CommonsButton.prototype);
+		LocalBusyIndicatorSupport.apply(Button.prototype);
 
 		// LocalBusyIndicatorSupport should log an error when applying on a specific control
-		sinon.assert.calledWithExactly(this.oLogSpy, "Only controls can use the LocalBusyIndicator", CommonsButton.prototype);
+		sinon.assert.calledWithExactly(this.oLogSpy, "Only controls can use the LocalBusyIndicator", Button.prototype);
 
 	});
 

@@ -229,7 +229,7 @@ sap.ui.define([
 		assert.equal(oMessageModel.getObject('/')[1].message,'mt2', 'MessageModel: message2 instance ok');
 		assert.equal(oMessageModel.getObject('/')[2].message,'mt3', 'MessageModel: message3 instance ok');
 
-		jQuery.sap.delayedCall(0, this, function() {
+		setTimeout(function() {
 			spyDataState(oInput1, function(sName, oDataState) {
 				assert.ok(!oDataState.getMessages() || oDataState.getMessages().length == 0, 'Message propagated to control - remove');
 				assert.ok(oInput1.getValueState() === ValueState.None, 'Input: ValueState set correctly');
@@ -243,7 +243,7 @@ sap.ui.define([
 			});
 			oMessageManager.removeAllMessages();
 			assert.ok(oMessageModel.getObject('/').length == 0, 'No Messages in Model');
-		});
+		}, 0);
 	});
 
 	QUnit.test("parseError", function(assert) {
@@ -256,7 +256,7 @@ sap.ui.define([
 			});
 			oZip.setValue('bbb');
 		});
-		jQuery.sap.delayedCall(0, this, function() {
+		setTimeout(function() {
 			spyDataState(oZip, function(sName, oDataState) {
 				assert.ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
 				assert.ok(oZip.getValueState() === ValueState.None, 'Input: ValueState set correctly');
@@ -264,7 +264,7 @@ sap.ui.define([
 				done();
 			});
 			oZip.setValue('123');
-		});
+		}, this);
 	});
 
 	QUnit.test("validationError", function(assert) {
@@ -276,7 +276,7 @@ sap.ui.define([
 			assert.ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters', 'Input: ValueStateText set correctly');
 		});
 		oStreet.setValue('am Busche');
-		jQuery.sap.delayedCall(0, this, function() {
+		setTimeout(function() {
 			spyDataState(oStreet, function(sName, oDataState) {
 				assert.ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
 				assert.ok(oStreet.getValueState() === ValueState.None, 'Input: ValueState set correctly');
@@ -284,7 +284,7 @@ sap.ui.define([
 				done();
 			});
 			oStreet.setValue('Busch');
-		});
+		}, this);
 	});
 
 	QUnit.test("validationError - multiple input", function(assert) {
@@ -296,28 +296,28 @@ sap.ui.define([
 		});
 		oStreet.setValue('am Busche');
 
-		jQuery.sap.delayedCall(0, this, function() {
+		setTimeout(function() {
 			spyDataState(oStreet, function(sName, oDataState) {
 				assert.ok(oStreet.getValueState() === ValueState.None, 'Input: ValueState set correctly');
 				assert.ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly');
 			});
 			oStreet.setValue('Busch');
-			jQuery.sap.delayedCall(0, this, function() {
+			setTimeout(function() {
 				spyDataState(oStreet, function(sName, oDataState) {
 					assert.ok(oStreet.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
 					assert.ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters', 'Input: ValueStateText set correctly');
 				});
 				oStreet.setValue('am Busche');
-				jQuery.sap.delayedCall(0, this, function() {
+				setTimeout(function() {
 					spyDataState(oStreet, function(sName, oDataState) {
 						assert.ok(oStreet.getValueState() === ValueState.None, 'Input: ValueState set correctly');
 						assert.ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly');
 						done();
 					});
 					oStreet.setValue('Busch');
-				});
-			});
-		});
+				}, 0);
+			}, 0);
+		}, 0);
 	});
 
 	QUnit.test("AdditionalText property on message for different labels", function(assert) {

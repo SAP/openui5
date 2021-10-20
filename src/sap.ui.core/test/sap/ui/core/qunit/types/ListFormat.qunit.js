@@ -1,11 +1,11 @@
-/*global QUnit, sinon */
+/*global QUnit */
 sap.ui.define(['sap/ui/core/format/ListFormat', 'sap/ui/core/Locale', "sap/base/Log"], function (ListFormat, Locale, Log) {
 	"use strict";
 
 	QUnit.module("ListFormat", {
 		beforeEach: function () {
 			this.oLocale = new Locale("de-DE");
-			this.jQuerySapLogErrorSpy = sinon.spy(Log, "error");
+			this.LogErrorSpy = this.spy(Log, "error");
 			this.aInput = [
 				[],
 				["1"],
@@ -21,7 +21,6 @@ sap.ui.define(['sap/ui/core/format/ListFormat', 'sap/ui/core/Locale', "sap/base/
 		},
 		afterEach: function () {
 			delete this.oLocale;
-			this.jQuerySapLogErrorSpy.restore();
 		}
 	});
 
@@ -98,8 +97,8 @@ sap.ui.define(['sap/ui/core/format/ListFormat', 'sap/ui/core/Locale', "sap/base/
 		var oListFormat = ListFormat.getInstance(this.oLocale);
 		var sResult = oListFormat.format(sInput);
 		assert.equal(sResult, "", "An empty string should be returned.");
-		assert.equal(this.jQuerySapLogErrorSpy.callCount, 1, "jQuery.sap.log.error should be called.");
-		assert.equal(this.jQuerySapLogErrorSpy.getCall(0).args[0], "ListFormat can only format with an array given.", "Correct error log should be thrown.");
+		assert.equal(this.LogErrorSpy.callCount, 1, "Log.error should be called.");
+		assert.equal(this.LogErrorSpy.getCall(0).args[0], "ListFormat can only format with an array given.", "Correct error log should be thrown.");
 	});
 
 	QUnit.test("with given formatOptions", function (assert) {
@@ -146,13 +145,13 @@ sap.ui.define(['sap/ui/core/format/ListFormat', 'sap/ui/core/Locale', "sap/base/
 
 		sResult = oListFormat.format(aInput);
 		assert.equal(sResult, "", "An empty string should be returned.");
-		assert.equal(this.jQuerySapLogErrorSpy.callCount, 1, "jQuery.sap.log.error should be called.");
-		assert.equal(this.jQuerySapLogErrorSpy.getCall(0).args[0], "No list pattern exists for the provided format options (type, style).", "Correct error log should be thrown.");
+		assert.equal(this.LogErrorSpy.callCount, 1, "Log.error should be called.");
+		assert.equal(this.LogErrorSpy.getCall(0).args[0], "No list pattern exists for the provided format options (type, style).", "Correct error log should be thrown.");
 
 		aExpectedResult = oListFormat.parse(sResult);
 		assert.deepEqual(aExpectedResult, [], "Values are correctly parsed.");
-		assert.equal(this.jQuerySapLogErrorSpy.callCount, 2, "jQuery.sap.log.error should be called.");
-		assert.equal(this.jQuerySapLogErrorSpy.getCall(1).args[0], "No list pattern exists for the provided format options (type, style).", "Correct error log should be thrown.");
+		assert.equal(this.LogErrorSpy.callCount, 2, "Log.error should be called.");
+		assert.equal(this.LogErrorSpy.getCall(1).args[0], "No list pattern exists for the provided format options (type, style).", "Correct error log should be thrown.");
 
 	});
 

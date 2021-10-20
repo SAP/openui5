@@ -1,5 +1,7 @@
-sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'],
-	function(Controller, JSONModel) {
+sap.ui.define([
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel"
+], function(Controller, JSONModel) {
 	"use strict";
 
 	/*global aLifeCycleCalls, standardSub2ControllerCalled */
@@ -42,5 +44,4 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'],
 		}
 
 	});
-
 });

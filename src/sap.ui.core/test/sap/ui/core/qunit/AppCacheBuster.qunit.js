@@ -183,11 +183,11 @@ sap.ui.define([
 
 			// fake the script
 			this.server.respondWith(/.*\/~1234567890~\/js\/script.js/, function (xhr, id) {
-			    xhr.respond(200, { "Content-Type": "text/javascript" }, '');
+				xhr.respond(200, { "Content-Type": "text/javascript" }, '');
 			});
 			// the script1 will not be covered by the AppCacheBuster and therefore not prefixed!
 			this.server.respondWith(/js\/script1.js/, function (xhr, id) {
-			    xhr.respond(200, { "Content-Type": "text/javascript" }, '');
+				xhr.respond(200, { "Content-Type": "text/javascript" }, '');
 			});
 
 			// check normal URLs
@@ -359,10 +359,10 @@ sap.ui.define([
 
 		// fake the script
 		this.server.respondWith(/anyapp\/~1234567890~\/js\/script.js/, function (xhr, id) {
-		    xhr.respond(200, { "Content-Type": "text/javascript" }, '');
+			xhr.respond(200, { "Content-Type": "text/javascript" }, '');
 		});
 		this.server.respondWith(/anyapp\/js\/script1.js/, function (xhr, id) {
-		    xhr.respond(200, { "Content-Type": "text/javascript" }, '');
+			xhr.respond(200, { "Content-Type": "text/javascript" }, '');
 		});
 
 		// check normal URLs

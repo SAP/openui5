@@ -636,7 +636,7 @@ sap.ui.define([
 
 		var oRootControl = oComponent.getRootControl();
 		assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");
-		assert.ok(!jQuery.sap.startsWith(oRootControl.getId(), oComponent.getId()), "View id doesn't start with component id!");
+		assert.ok(!oRootControl.getId().startsWith(oComponent.getId()), "View id doesn't start with component id!");
 
 		oComponentContainer.destroy();
 		oComponent.destroy();
@@ -657,7 +657,7 @@ sap.ui.define([
 
 		var oRootControl = oComponent.getRootControl();
 		assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");
-		assert.ok(!jQuery.sap.startsWith(oRootControl.getId(), oComponent.getId()), "View id doesn't start with component id!");
+		assert.ok(!oRootControl.getId().startsWith(oComponent.getId()), "View id doesn't start with component id!");
 
 		oComponentContainer.destroy();
 		oComponent.destroy();
@@ -678,7 +678,7 @@ sap.ui.define([
 
 		var oRootControl = oComponent.getRootControl();
 		assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");
-		assert.ok(jQuery.sap.startsWith(oRootControl.getId(), oComponent.getId() + "---"), "View id starts with component id!");
+		assert.ok(oRootControl.getId().startsWith(oComponent.getId() + "---"), "View id starts with component id!");
 
 		assert.ok(!!oComponent.byId("theView"), "View can be accessed with byId of Component!");
 		assert.equal(oComponent.byId("theView").getId(), oComponent.createId("theView"), "View ID is prefixed with Component ID!");
@@ -702,7 +702,7 @@ sap.ui.define([
 
 		var oRootControl = oComponent.getRootControl();
 		assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");
-		assert.ok(jQuery.sap.startsWith(oRootControl.getId(), oComponent.getId() + "---"), "View id starts with component id!");
+		assert.ok(oRootControl.getId().startsWith(oComponent.getId() + "---"), "View id starts with component id!");
 
 		assert.ok(!!oComponent.byId("theView"), "View can be accessed with byId of Component!");
 		assert.equal(oComponent.byId("theView").getId(), oComponent.createId("theView"), "View ID is prefixed with Component ID!");

@@ -2,12 +2,12 @@
  * ${copyright}
  */
 
-// Provides control example.designmode.Button.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
-	function(jQuery, Control) {
+// Provides control test.designmode.TextField.
+sap.ui.define(['sap/ui/core/Control'],
+	function(Control) {
 	"use strict";
 
-	var TextField = Control.extend("example.designmode.TextField", {
+	var TextField = Control.extend("test.designmode.TextField", {
 
 		metadata: {
 

@@ -1,9 +1,10 @@
-sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
-	function(jQuery, Component1) {
+sap.ui.define([
+	"testdata/customizing/sap/Component"
+], function(SapComponent) {
 	"use strict";
 
 
-	var Component = Component1.extend("testdata.customizing.customer.Component", {
+	var Component = SapComponent.extend("testdata.customizing.customer.Component", {
 
 		metadata : {
 			version : "1.0",
@@ -67,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
 						},
 						"extension45": {
 							className: "sap.ui.core.Fragment",
-							fragmentName: "testdata.customizing.customer.CustomTextViewFrag",
+							fragmentName: "testdata.customizing.customer.CustomTextFrag",
 							type: "JS"
 						}
 					},
@@ -83,7 +84,7 @@ sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
 						},
 						"extension45": {
 							className: "sap.ui.core.Fragment",
-							fragmentName: "testdata.customizing.customer.CustomTextViewFrag",
+							fragmentName: "testdata.customizing.customer.CustomTextFrag",
 							type: "JS"
 						}
 					},
@@ -120,7 +121,7 @@ sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
 					"testdata.customizing.sap.Sub3": {
 						"customizableText": {
 							"visible": false,
-							"enabled": false // this should NOT work!! Only visible.
+							"wrapping": false // this should NOT work!! Only visible.
 						}
 					},
 					"testdata.customizing.sap.Sub4": {

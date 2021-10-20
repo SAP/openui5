@@ -71,7 +71,7 @@ sap.ui.define([
 		});
 
 		oOpa5.waitFor({
-			controlType: "sap.ui.commons.Button",
+			controlType: "sap.m.Button",
 			success: function () {
 				oOptions.assert.strictEqual(
 					oHashChanger.getHash(),

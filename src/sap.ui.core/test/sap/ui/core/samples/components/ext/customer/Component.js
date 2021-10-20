@@ -1,5 +1,6 @@
-sap.ui.define(['samples/components/ext/sap/Component'],
-	function(ExtSapComponent) {
+sap.ui.define([
+	"samples/components/ext/sap/Component"
+], function(ExtSapComponent) {
 	"use strict";
 
 
@@ -67,7 +68,7 @@ sap.ui.define(['samples/components/ext/sap/Component'],
 						},
 						"extension45": {
 							className: "sap.ui.core.Fragment",
-							fragmentName: "samples.components.ext.customer.CustomTextViewFrag",
+							fragmentName: "samples.components.ext.customer.CustomTextFrag",
 							type: "JS"
 						}
 					},

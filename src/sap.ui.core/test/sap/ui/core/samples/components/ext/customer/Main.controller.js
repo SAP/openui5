@@ -1,5 +1,7 @@
-sap.ui.define(['sap/base/Log', 'samples/components/ext/sap/Main.controller'],
-	function(Log, Controller) {
+sap.ui.define([
+	"sap/base/Log",
+	"samples/components/ext/sap/Main.controller"
+], function(Log, Controller) {
 	"use strict";
 
 	var MainController = Controller.extend("samples.components.ext.customer.Main", {

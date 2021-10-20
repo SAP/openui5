@@ -23,7 +23,7 @@ sap.ui.define([
 		return View.create(oViewOptions);
 	}
 
-    QUnit.module("title history", {
+	QUnit.module("title history", {
 		beforeEach: function () {
 			// reset hash
 			HashChanger.getInstance().setHash("");

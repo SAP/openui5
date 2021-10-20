@@ -1,16 +1,17 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/core/util/serializer/ViewSerializer",
-	"sap/ui/commons/Image",
 	"sap/ui/core/mvc/HTMLView",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/commons/Label",
-	"sap/ui/commons/Button",
-	"sap/ui/core/Core",
+	"sap/m/Button",
+	"sap/m/Image",
+	"sap/m/Label",
+	"sap/base/Log",
 	"sap/ui/qunit/utils/createAndAppendDiv"
 ],
-	function (ViewSerializer, Image, HTMLView, XMLView, Label, Button, Core, createAndAppendDiv) {
+	function (Core, ViewSerializer, HTMLView, XMLView, Button, Image, Label, Log, createAndAppendDiv) {
 		"use strict";
 
 		createAndAppendDiv(["htmlViewArea", "xmlViewArea", "xmlViewWithoutControllerArea"]);
@@ -75,8 +76,8 @@ sap.ui.define([
 			var mXMLViews = oViewSerializer.serializeToXML();
 			var sXMLResult = mXMLViews["serializer.view.TestHtml"];
 
-			jQuery.sap.log.info(sHTMLResult);
-			jQuery.sap.log.info(sXMLResult);
+			Log.info(sHTMLResult);
+			Log.info(sXMLResult);
 			var oView = sap.ui.htmlview("restoredHtmlView1", {
 				viewContent: sHTMLResult
 			});
@@ -95,8 +96,8 @@ sap.ui.define([
 			var mXMLViews = oViewSerializer.serializeToXML();
 			var sXMLResult = mXMLViews["serializer.view.TestXml"];
 
-			jQuery.sap.log.info(sHTMLResult);
-			jQuery.sap.log.info(sXMLResult);
+			Log.info(sHTMLResult);
+			Log.info(sXMLResult);
 			var oView = sap.ui.htmlview("restoredHtmlView2", {
 				viewContent: sHTMLResult
 			});

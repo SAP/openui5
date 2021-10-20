@@ -50,7 +50,8 @@ sap.ui.define([
 				noglobals: !Device.browser.safari
 			},
 			ui5: {
-				libs: "sap.m"
+				libs: "sap.m",
+				language: "en-US"
 			},
 			module: "./actions/Press.qunit"
 		},
@@ -378,7 +379,7 @@ sap.ui.define([
 		"OpaPlugin": {
 			title: "QUnit Page for sap.ui.test.OpaPlugin",
 			ui5: {
-				libs: ["sap.ui.commons", "sap.m"]
+				libs: ["sap.m"]
 			},
 			module: "./OpaPlugin.qunit",
 			autostart: false,

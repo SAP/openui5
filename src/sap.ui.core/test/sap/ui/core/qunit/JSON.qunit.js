@@ -1,5 +1,5 @@
 /* global QUnit */
-sap.ui.define(["sap/ui/commons/Button"], function(Button) {
+sap.ui.define(["sap/m/Button"], function(Button) {
 	"use strict";
 	QUnit.module("JSON Native Support basics");
 	QUnit.test("JSON object", function(assert) {
@@ -91,7 +91,6 @@ sap.ui.define(["sap/ui/commons/Button"], function(Button) {
 			sTooltip = "abc",
 			sWidth = "111px",
 			sIcon = "../images/help.gif",
-			sHelpId = "12345",
 			sPressMessage = "Button Pressed Event!",
 			bEnabled = false,
 			bVisible = false,
@@ -109,13 +108,11 @@ sap.ui.define(["sap/ui/commons/Button"], function(Button) {
 		oButton.setTooltip(sTooltip);
 		oButton.setIconFirst(bIconFirst);
 		oButton.setIcon(sIcon);
-		oButton.setHelpId(sHelpId);
 		oButton.attachPress(pressEventHandler1);
 
 		var s = JSON.stringify(oButton);
 		var oButtonJSONed = JSON.parse(s);
 		assert.equal(oButtonJSONed.sId, oButton.sId, "Retained sId property");
-		assert.equal(oButtonJSONed.mProperties.helpID, oButton.mProperties.helpID, "Retained helpID property");
 		assert.equal(oButtonJSONed.mProperties.icon, oButton.mProperties.icon, "Retained icon property");
 		assert.equal(oButtonJSONed.mProperties.iconFirst, oButton.mProperties.iconFirst, "Retained iconFirst property");
 		assert.equal(oButtonJSONed.mProperties.text, oButton.mProperties.text, "Retained text property");

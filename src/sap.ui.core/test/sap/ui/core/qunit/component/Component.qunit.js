@@ -97,7 +97,7 @@ sap.ui.define([
 	QUnit.test("Simple Component Instance", function(assert){
 		sap.ui.getCore().applyChanges();
 		assert.ok(document.getElementById("CompCont1"));
-		var elem = jQuery.sap.byId("buttonComponent---mybutn");
+		var elem = jQuery("#buttonComponent---mybutn");
 		assert.equal(elem.text(), "Text changed through settings", "Settings applied");
 	});
 
@@ -2338,7 +2338,7 @@ sap.ui.define([
 		};
 
 		// spy to check if we logged the error for debugging
-		var oLogSpy = this.spy(Log, "error");
+		var oLogStub = this.stub(Log, "error");
 
 		return Component.create({
 			name: "sap.ui.test.v2empty"
@@ -2346,8 +2346,7 @@ sap.ui.define([
 			assert.ok(false, "shouldn't reach here");
 		}).catch(function(oError) {
 			assert.equal(oError.message, sErrorText, "Error was thrown, and Promise is rejected with the correct reason");
-			assert.ok(oLogSpy.calledWithExactly("Failed to execute flexibility hook for manifest preprocessing.", oError), "Correct Error was logged for supportability");
-			oLogSpy.restore();
+			assert.ok(oLogStub.calledWithExactly("Failed to execute flexibility hook for manifest preprocessing.", oError), "Correct Error was logged for supportability");
 		});
 	});
 
@@ -2404,37 +2403,37 @@ sap.ui.define([
 		});
 	});
 
-    QUnit.module("Text Verticalization", {
-        beforeEach: function() {
-        },
-        afterEach: function() {
-            this.oComponent.destroy();
-        }
-    });
+	QUnit.module("Text Verticalization", {
+		beforeEach: function() {
+		},
+		afterEach: function() {
+			this.oComponent.destroy();
+		}
+	});
 
 	QUnit.test("Component0 with Terminologies defined in Component Metadata", function (assert) {
 		var oCreateManifestModelsSpy = sinon.spy(Component, "_createManifestModels");
 
-        return Component.create({
-            name: "testdata.terminologies",
+		return Component.create({
+			name: "testdata.terminologies",
 			manifest: false,
 			activeTerminologies: ["oil", "retail"]
-        }).then(function (oComponent) {
-            this.oComponent = oComponent;
+		}).then(function (oComponent) {
+			this.oComponent = oComponent;
 
 			// Check Resource Model creation
-            var oSettings = oCreateManifestModelsSpy.getCall(0).args[0].i18n.settings[0];
-            assert.equal(oCreateManifestModelsSpy.callCount, 1, "_createManifestModels should be called for the i18n model");
-            assert.equal(oSettings.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
-            assert.equal(oSettings.terminologies.oil.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/terminologies.oil.i18n.properties", "The bundleUrl should be resolved correctly");
+			var oSettings = oCreateManifestModelsSpy.getCall(0).args[0].i18n.settings[0];
+			assert.equal(oCreateManifestModelsSpy.callCount, 1, "_createManifestModels should be called for the i18n model");
+			assert.equal(oSettings.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.equal(oSettings.terminologies.oil.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/terminologies.oil.i18n.properties", "The bundleUrl should be resolved correctly");
 			assert.equal(oSettings.terminologies.retail.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/terminologies.retail.i18n.properties", "The bundleUrl should be resolved correctly");
 			assert.ok(oSettings.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
 			assert.ok(oSettings.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
 
 			// resolve bundle urls
 			var oEnhanceWith0 = oSettings.enhanceWith[0];
-            assert.equal(oEnhanceWith0.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
-            assert.equal(oEnhanceWith0.terminologies.oil.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.oil.i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.equal(oEnhanceWith0.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.equal(oEnhanceWith0.terminologies.oil.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.oil.i18n.properties", "The bundleUrl should be resolved correctly");
 			assert.equal(oEnhanceWith0.terminologies.retail.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.retail.i18n.properties", "The bundleUrl should be resolved correctly");
 			assert.ok(oEnhanceWith0.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
 			assert.ok(oEnhanceWith0.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
@@ -2450,7 +2449,7 @@ sap.ui.define([
 			assert.deepEqual(this.oComponent.getActiveTerminologies(), ["oil", "retail"], "The list of terminologies should be correct");
 
 			oCreateManifestModelsSpy.restore();
-        }.bind(this));
+		}.bind(this));
 	});
 
 	QUnit.test("Component0 - Propagate Terminologies via owner component", function (assert) {

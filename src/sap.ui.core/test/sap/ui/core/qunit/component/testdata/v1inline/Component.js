@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 
 			"dependencies" : {
 				"libs" : [
-					"sap.ui.commons"
+					"sap.ui.layout"
 				],
 				"components" : [
 					"sap.ui.test.other"

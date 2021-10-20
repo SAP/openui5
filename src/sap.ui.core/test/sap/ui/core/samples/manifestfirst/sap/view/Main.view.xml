@@ -1,7 +1,6 @@
-<mvc:View xmlns="sap.ui.commons"
-	xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
-	xmlns:core="sap.ui.core" controllerName="samples.manifestfirst.sap.view.Main">
-
-	<TextView id="text"></TextView>
-
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	controllerName="samples.manifestfirst.sap.view.Main">
+	<Text id="text"></Text>
 </mvc:View>

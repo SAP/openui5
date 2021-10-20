@@ -1,5 +1,9 @@
 /* global QUnit */
-sap.ui.define(["sap/ui/commons/Panel", "sap/ui/commons/Button", "sap/ui/qunit/utils/createAndAppendDiv"], function(Panel, Button, createAndAppendDiv) {
+sap.ui.define([
+	"sap/m/Panel",
+	"sap/m/Button",
+	"sap/ui/qunit/utils/createAndAppendDiv"
+], function(Panel, Button, createAndAppendDiv) {
 	"use strict";
 
 	createAndAppendDiv(["uiArea1", "uiArea2", "uiArea3", "uiArea4"]);
