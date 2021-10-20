@@ -3,6 +3,17 @@
     "date": "October 2021",
     "notes": [
       {
+        "id": "6ae30d23e5baacc913c68830bddcc0c5efb98af7",
+        "type": "FIX",
+        "text": " core/m: remove restriction meta tag of disabling user scalability",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780061368"
+          }
+        ]
+      },
+      {
         "id": "5304ebd9bd0b9a2ca219d0019556d6a27726d17b",
         "type": "FEATURE",
         "text": " sap.m.MultiComboBox: Select All checkbox implementation"
@@ -15,6 +26,17 @@
           {
             "type": "BCP",
             "reference": "002075129500007056162021"
+          }
+        ]
+      },
+      {
+        "id": "a5225d8d019efa64d719e56924410cf86e7c42a6",
+        "type": "FIX",
+        "text": " sap.m.Input: Clear selection on backspace",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170173605"
           }
         ]
       },
@@ -64,6 +86,17 @@
           {
             "type": "BCP",
             "reference": "2170248338"
+          }
+        ]
+      },
+      {
+        "id": "70927318271e332c2f44696c276b123fa1d10c10",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Mark onsapenter event in order to properly propagate events",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170213855"
           }
         ]
       },
