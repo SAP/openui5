@@ -22496,6 +22496,215 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: List report shows active version which is kept alive and shows messages.
+	// (Object page does not matter here.)
+	// "EditAction" or "GetDraft" function returns draft version which replaces the active one.
+	// PATCH and "ActivationAction" are sent in the same $batch (change set does not matter here).
+	// Refresh destroys both the draft and the active version (unrealistic) and calls
+	// <code>fnOnBeforeDestroy</code>.
+	// JIRA: CPOUI5ODATAV4-347
+["EditAction", "GetDraft"].forEach(function (sDraftOperation) {
+	QUnit.test("CPOUI5ODATAV4-347: draft operation = " + sDraftOperation, function (assert) {
+		var oActivationAction,
+			oActiveArtistContext,
+			oDraftOperation,
+			oInactiveArtistContext,
+			oListBinding,
+			sMessage1 = "It sure feels fine to see one's name in print",
+			sMessage2 = "A book's a book, though there's naught in 't",
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			fnOnBeforeDestroy = sinon.spy(),
+			oTable,
+			sView = '\
+<Table id="list" items="{path : \'/Artists\', parameters : {$$patchWithoutSideEffects : true}}">\
+	<Text id="artistID" text="{ArtistID}"/>\
+	<Text id="isActiveEntity" text="{IsActiveEntity}"/>\
+	<Input id="name" value="{Name}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name&$skip=0&$top=100", {
+				value : [{
+					"@odata.etag" : "activETag",
+					ArtistID : "42",
+					IsActiveEntity : true,
+					Name : "Missy Eliot"
+				}]
+			})
+			.expectChange("artistID", ["42"])
+			.expectChange("isActiveEntity", ["Yes"])
+			.expectChange("name", ["Missy Eliot"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=Messages", {
+					"@odata.etag" : "activETag",
+					Messages : [{
+						message : sMessage1,
+						numericSeverity : 1,
+						target : "Name"
+					}]
+				})
+				.expectMessages([{
+					message : sMessage1,
+					target : "/Artists(ArtistID='42',IsActiveEntity=true)/Name",
+					type : "Success"
+				}]);
+
+			oTable = that.oView.byId("list");
+			oListBinding = oTable.getBinding("items");
+			oActiveArtistContext = oListBinding.getCurrentContexts()[0];
+			oActiveArtistContext
+				.setKeepAlive(true, fnOnBeforeDestroy.bind(this), /*bRequestMessages*/true);
+
+			return that.waitForChanges(assert, "setKeepAlive, bRequestMessages");
+		}).then(function () {
+			return that.checkValueState(assert, oTable.getItems()[0].getCells()[2], "Success",
+					sMessage1);
+		}).then(function () {
+			var bAction = sDraftOperation === "EditAction";
+
+			oDraftOperation = that.oModel.bindContext("special.cases." + sDraftOperation + "(...)",
+				oActiveArtistContext, {$$inheritExpandSelect : true});
+
+			that.expectRequest({
+					headers : bAction ? {"If-Match": "activETag"} : {},
+					method : bAction ? "POST" : "GET",
+					url : "Artists(ArtistID='42',IsActiveEntity=true)/special.cases."
+						+ sDraftOperation + (bAction ? "" : "()")
+						+ "?$select=ArtistID,IsActiveEntity,Messages,Name",
+					payload : bAction ? {} : undefined
+				}, {
+					"@odata.etag" : "inactivETag",
+					ArtistID : "42",
+					IsActiveEntity : false,
+					Messages : [{
+						message : sMessage2,
+						numericSeverity : 1,
+						target : "Name"
+					}],
+					Name : "Missy Eliot"
+				})
+				.expectChange("isActiveEntity", ["No"])
+				.expectMessages([{
+					message : sMessage1,
+					target : "/Artists(ArtistID='42',IsActiveEntity=true)/Name",
+					type : "Success"
+				}, {
+					message : sMessage2,
+					target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
+					type : "Success"
+				}]);
+
+			return Promise.all([
+				// code under test
+				oDraftOperation.execute(/*sGroupId*/undefined, /*bIgnoreETag*/false,
+					/*fnOnStrictHandlingFailed*/null, /*bReplaceWithRVC*/true),
+				that.waitForChanges(assert, sDraftOperation)
+			]);
+		}).then(function (aResults) {
+			oInactiveArtistContext = aResults[0];
+
+			assert.ok(oActiveArtistContext.isKeepAlive(), true);
+			assert.strictEqual(oActiveArtistContext.getBinding(), oListBinding);
+			assert.strictEqual(oActiveArtistContext.getIndex(), undefined);
+
+			assert.ok(oInactiveArtistContext.isKeepAlive(), true);
+			assert.strictEqual(oInactiveArtistContext.getBinding(), oListBinding);
+			assert.strictEqual(oInactiveArtistContext.getIndex(), 0);
+
+			assert.strictEqual(oDraftOperation.getBoundContext().getProperty("IsActiveEntity"),
+				undefined, "draft data available via ODLB only");
+
+			return that.checkValueState(assert, oTable.getItems()[0].getCells()[2], "Success",
+					sMessage2);
+		}).then(function () {
+			oActivationAction = that.oModel.bindContext("special.cases.ActivationAction(...)",
+				oInactiveArtistContext, {$$inheritExpandSelect : true});
+
+			that.expectChange("name", ["Mrs Eliot"])
+				.expectRequest({
+					batchNo : 4,
+					headers : {
+						"If-Match" : "inactivETag",
+						Prefer : "return=minimal"
+					},
+					method : "PATCH",
+					payload : {Name : "Mrs Eliot"},
+					url : "Artists(ArtistID='42',IsActiveEntity=false)"
+				}, null, {ETag : "inactivETag*"}) // 204 No Content
+				.expectRequest({
+					batchNo : 4,
+					headers : {
+						"If-Match": "inactivETag"
+					},
+					method : "POST",
+					url : "Artists(ArtistID='42',IsActiveEntity=false)"
+						+ "/special.cases.ActivationAction"
+						+ "?$select=ArtistID,IsActiveEntity,Messages,Name",
+					payload : {}
+				}, {
+					"@odata.etag" : "activETag*",
+					ArtistID : "42",
+					IsActiveEntity : true,
+					Messages : [],
+					Name : "Mrs. Eliot" // "auto correction"
+				})
+				.expectChange("isActiveEntity", ["Yes"])
+				.expectChange("name", ["Mrs. Eliot"])
+				.expectMessages([{
+					message : sMessage2,
+					target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
+					type : "Success"
+				}]); //TODO how to get rid of message for draft?
+
+			return Promise.all([
+				// code under test
+				oInactiveArtistContext.setProperty("Name", "Mrs Eliot"),
+				// code under test
+				oActivationAction.execute(/*sGroupId*/undefined, /*bIgnoreETag*/false,
+					/*fnOnStrictHandlingFailed*/null, /*bReplaceWithRVC*/true),
+				that.waitForChanges(assert, "PATCH Name & POST ActivationAction")
+			]);
+		}).then(function (aResults) {
+			assert.ok(aResults[1] === oActiveArtistContext, "active context preserved");
+			assert.strictEqual(oInactiveArtistContext.getProperty("@odata.etag"), "inactivETag*");
+
+			// Note: oInactiveArtistContext.setKeepAlive(false); would be realistic, but we prefer
+			// to check fnOnBeforeDestroy in this test
+
+			// Note: draft operation is relative to ODLB and function would be refreshed, too
+			oDraftOperation.setContext(null);
+
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Messages,Name"
+					+ "&$filter=ArtistID eq '42' and IsActiveEntity eq false"
+					+ " or ArtistID eq '42' and IsActiveEntity eq true&$top=2", {
+					value : []
+				})
+				.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name&$skip=0&$top=100", {
+					value : []
+				})
+				.expectChange("artistID", [])
+				.expectChange("isActiveEntity", [])
+				.expectChange("name", [])
+				.expectMessages([]);
+
+			return Promise.all([
+				// code under test
+				oListBinding.requestRefresh(),
+				that.waitForChanges(assert, "refresh")
+			]);
+		}).then(function () {
+			assert.strictEqual(fnOnBeforeDestroy.callCount, 2);
+			assert.ok(fnOnBeforeDestroy.alwaysCalledOn(this), "Function#bind still works");
+			assert.ok(fnOnBeforeDestroy.calledWithExactly(), "still no args here");
+			assert.ok(
+				fnOnBeforeDestroy.calledWithExactly(sinon.match.same(oInactiveArtistContext)),
+				"for the 'clone', we need the context to distinguish");
+		});
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: Execute bound action; the parent binding has an empty path, but does not have a
 	// cache, so that $$inheritExpandSelect must search the query options in the parent's parent.
 	// JIRA: CPOUI5ODATAV4-189

@@ -1042,6 +1042,58 @@ sap.ui.define([
 	};
 
 	/**
+	 * Replaces the given old context with a new one for the given element and key predicate,
+	 * placing the new one at the same index and returning it. If a context for the given key
+	 * predicate already exists, it is reused. A newly created context will be kept-alive if the old
+	 * context was, and then it will share the <code>fnOnBeforeDestroy</code> method - but it will
+	 * be called with the new context as first argument.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oOldContext - The old context
+	 * @param {object} oElement - The element data
+	 * @param {string} sPredicate - The key predicate
+	 * @returns {sap.ui.model.odata.v4.Context} - The new context
+	 * @throws {Error} If a reused context is already part of the collection (has an index)
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.doReplaceWith = function (oOldContext, oElement, sPredicate) {
+		var iIndex = oOldContext.iIndex,
+			bKeepAlive = oOldContext.isKeepAlive(),
+			bNew,
+			fnOnBeforeDestroy = oOldContext.fnOnBeforeDestroy,
+			fnOnBeforeDestroyClone,
+			sPath = this.oHeaderContext.getPath() + sPredicate,
+			oResult = this.mPreviousContextsByPath[sPath];
+
+		if (oResult) {
+			if (oResult.iIndex !== undefined) {
+				throw new Error("Unexpected index: " + oResult);
+			}
+			oResult.iIndex = iIndex;
+		} else {
+			oResult = Context.create(this.oModel, this, sPath, iIndex);
+			bNew = true;
+		}
+		oOldContext.iIndex = undefined;
+		this.aContexts[iIndex] = oResult;
+		this.oCache.doReplaceWith(iIndex, oElement);
+		if (bKeepAlive) {
+			this.mPreviousContextsByPath[oOldContext.getPath()] = oOldContext;
+			if (bNew) {
+				if (fnOnBeforeDestroy) {
+					fnOnBeforeDestroyClone
+						= (fnOnBeforeDestroy.$original || fnOnBeforeDestroy).bind(null, oResult);
+					fnOnBeforeDestroyClone.$original = fnOnBeforeDestroy;
+				}
+				oResult.setKeepAlive(true, fnOnBeforeDestroyClone);
+			}
+		}
+		this._fireChange({reason : ChangeReason.Change});
+
+		return oResult;
+	};
+
+	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#doSetProperty
 	 */

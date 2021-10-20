@@ -9728,6 +9728,19 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("CollectionCache#doReplaceWith", function (assert) {
+		var oCache = this.createCache("Employees"),
+			oElement = {};
+
+		this.mock(oCache).expects("addKeptElement").withExactArgs(sinon.match.same(oElement));
+
+		// code under test
+		oCache.doReplaceWith(23, oElement);
+
+		assert.strictEqual(oCache.aElements[23], oElement);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("from$skip", function (assert) {
 		var aCollection = [];
 
