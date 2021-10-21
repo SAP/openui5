@@ -2,3 +2,74 @@
 /* CSS for control sap.m/RangeSlider  */
 /* Horizon theme                      */
 /* ================================== */
+.sapMRangeSlider.sapMSliderInner .sapMSliderHandle {
+	top: -0.75rem;
+}
+
+.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled):hover>.sapMSliderHandle {
+		border: 1px @sapContent_FocusStyle @sapContent_Selected_ForegroundColor;
+		background: transparent;
+		box-shadow: @sapContent_Selected_Shadow;
+}
+
+.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled):hover .sapMSliderProgress:focus ~ .sapMSliderHandle,
+.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle.sapMSliderHandlePressed {
+	&:not(:focus) {
+		background: transparent;
+		border: none;
+		outline: none;
+		box-shadow: 0px 0px 0px 2px @sapContent_FocusColor;
+		top: -0.75rem;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled):hover .sapMSliderProgress:focus ~ .sapMSliderHandle,
+	.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle.sapMSliderHandlePressed {
+		&:not(:focus) {
+			background: transparent;
+			border: none;
+			outline: none;
+			box-shadow: 0px 0px 0px 2px @sapContent_FocusColor;
+			top: -0.5625rem;
+		}
+	}
+
+	.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus {
+		background: transparent;
+		outline: none;
+		box-shadow: 0px 0px 0px 2px @sapContent_FocusColor;
+		top: -0.5625rem;
+	}
+}
+
+.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus {
+	background: transparent;
+	border: none;
+	outline: none;
+	box-shadow: 0px 0px 0px 2px @sapContent_FocusColor;
+	top: -0.75rem;
+}
+
+.sapMRangeSlider .sapMSliderInner::before {
+	background-color: @sapField_BorderColor;
+}
+
+
+html.sap-desktop .sapUiSizeCompact .sapMSliderProgress:focus:before {
+	padding-left: 2rem;
+	padding-top: 0.125rem;
+	padding-bottom: 0.25rem;
+	padding-right: 0.25rem;
+	top: 1px;
+}
+
+html.sap-desktop .sapMSliderProgress:focus:before {
+	border: 0.125rem solid #0070f2;
+	border-radius: 0.5rem;
+	padding-left: 2.375rem;
+	padding-top: 0.375rem;
+	padding-right: 0.25rem;
+	padding-bottom: 0.375rem;
+	top: 1px;
+}
