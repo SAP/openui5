@@ -594,13 +594,6 @@ sap.ui.define([
 		// check if sap.m library is used
 		this.bMobileLib = this.oBrowse.getMetadata().getName() == "sap.m.Button";
 
-		//retrieving the default browse button text from the resource bundle
-		if (!this.getIconOnly()) {
-			this.oBrowse.setText(this.getBrowseText());
-		} else  {
-			this.oBrowse.setTooltip(this.getBrowseText());
-		}
-
 		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
 			if (!FileUploader.prototype._sAccText) {
 				var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
@@ -616,16 +609,6 @@ sap.ui.define([
 		}
 		this._submitAfterRendering = false;
 
-	};
-
-	FileUploader.prototype.setButtonText = function(sText) {
-		this.setProperty("buttonText", sText, false);
-		if (!this.getIconOnly()) {
-			this.oBrowse.setText(sText || this.getBrowseText());
-		} else  {
-			this.oBrowse.setTooltip(this.getBrowseText());
-		}
-		return this;
 	};
 
 	FileUploader.prototype.setIcon = function(sIcon) {
@@ -655,18 +638,6 @@ sap.ui.define([
 	FileUploader.prototype.setIconFirst = function(bIconFirst) {
 		this.oBrowse.setIconFirst(bIconFirst);
 		this.setProperty("iconFirst", bIconFirst, false);
-		return this;
-	};
-
-	FileUploader.prototype.setIconOnly = function(bIconOnly) {
-		this.setProperty("iconOnly", bIconOnly, false);
-		if (bIconOnly) {
-			this.oBrowse.setText("");
-			this.oBrowse.setTooltip(this.getBrowseText());
-		} else  {
-			this.oBrowse.setText(this.getButtonText() || this.getBrowseText());
-			this.oBrowse.setTooltip("");
-		}
 		return this;
 	};
 
@@ -734,23 +705,17 @@ sap.ui.define([
 	};
 
 	FileUploader.prototype.setTooltip = function(oTooltip) {
-		var sTooltip,
-			sapUiFupInputMaskDOM;
+		var sTooltip;
 
-		this._refreshTooltipBaseDelegate(oTooltip);
-		this.setAggregation("tooltip", oTooltip, true);
-		this._updateAccDescription();
+		Control.prototype.setTooltip.call(this, oTooltip);
 
 		if (this.oFileUpload) {
 			sTooltip = this.getTooltip_AsString();
-			sapUiFupInputMaskDOM = this.$().find(".sapUiFupInputMask")[0];
 
 			if (sTooltip) {
 				this.oFileUpload.setAttribute("title", sTooltip);
-				sapUiFupInputMaskDOM && sapUiFupInputMaskDOM.setAttribute("title", sTooltip);
 			} else {
 				this.oFileUpload.removeAttribute("title");
-				sapUiFupInputMaskDOM && sapUiFupInputMaskDOM.removeAttribute("title");
 			}
 		}
 		return this;
@@ -842,20 +807,6 @@ sap.ui.define([
 		return sAccDescription;
 	};
 
-	/*
-	 * Updates the hidden element's text, which holds the accessibility description.
-	 * This method should be called whenever the placeholder/value/tooltip update.
-	 * Otherwise screen readers will simply read a description, which doesn't match
-	 * what's visible on the screen.
-	 */
-	FileUploader.prototype._updateAccDescription = function () {
-		var oAccDescriptionHolder = this.getDomRef("AccDescr"),
-			sNewDescription = this._generateAccDescriptionText();
-
-		if (oAccDescriptionHolder) {
-			oAccDescriptionHolder.innerHTML = encodeXML(sNewDescription);
-		}
-	};
 
 	/**
 	 * Helper to ensure, that the types (file or mime) are inside an array.
@@ -927,6 +878,18 @@ sap.ui.define([
 		// unbind the custom event handlers
 		jQuery(this.oFileUpload).off();
 
+		if (this.getIconOnly() && this.getButtonOnly()) {
+			this.oBrowse.setText("");
+			this.oBrowse.setTooltip(this.getTooltip_AsString() || this.getBrowseText());
+		} else if (this.getIconOnly()) {
+			this.oBrowse.setText("");
+			this.oBrowse.setTooltip(this.getBrowseText());
+		} else {
+			this.oBrowse.setText(this.getButtonText() || this.getBrowseText());
+			this.oBrowse.setTooltip("");
+		}
+
+		this.oFilePath.setPlaceholder(this.getPlaceholder());
 	};
 
 	/**
@@ -1101,15 +1064,6 @@ sap.ui.define([
 		}
 
 		return this.setProperty("valueStateText", sValueStateText, true);
-	};
-
-	FileUploader.prototype.setPlaceholder = function(sPlaceholder) {
-		this.setProperty("placeholder", sPlaceholder, true);
-		this.oFilePath.setPlaceholder(sPlaceholder);
-
-		this._updateAccDescription();
-
-		return this;
 	};
 
 	FileUploader.prototype.setStyle = function(sStyle) {
