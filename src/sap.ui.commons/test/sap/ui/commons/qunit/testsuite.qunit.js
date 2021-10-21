@@ -9,6 +9,7 @@ sap.ui.define(function() {
 				libs: "sap.ui.commons",
 				theme: "sap_bluecrystal",
 				noConflict: true,
+				"xx-waitForTheme": "init",
 				preload: "auto"
 			},
 			qunit: {
