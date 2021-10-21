@@ -57,7 +57,7 @@ sap.ui.define([
 
 				this._pIndividualPopover.then(function(oIndividuaLPopover){
 					this.oIndividualModel.setData(this._getAvatarModel(oBindingInfo, oEventSource));
-					oIndividuaLPopover.openBy(oEventSource);
+					oIndividuaLPopover.openBy(oEventSource).addStyleClass("sapFAvatarGroupPopover");
 				}.bind(this));
 			}
 		},
@@ -106,7 +106,7 @@ sap.ui.define([
 				this.oGroupModel.setData(aContent);
 				oGroupPopover.setContentHeight(this._sGroupPopoverHeight);
 				oNavCon.to(oMainPage);
-				oGroupPopover.openBy(oEventSource);
+				oGroupPopover.openBy(oEventSource).addStyleClass("sapFAvatarGroupPopover");
 			}.bind(this));
 		},
 
