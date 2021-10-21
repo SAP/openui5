@@ -316,7 +316,6 @@ sap.ui.define([
 			render: function(oRm, oControl) {
 				oRm.openStart("div", oControl)
 					.class("sapUiFlVarMngmt")
-					.attr("title", oControl._oRb.getText("VARIANT_MANAGEMENT_TRIGGER_TT"))
 					.openEnd();
 
 				oRm.renderControl(oControl.oVariantLayout);
@@ -399,7 +398,6 @@ sap.ui.define([
 
 		this.oVariantPopoverTrigger.addAriaLabelledBy(this.oVariantInvisibleText);
 		this.oVariantPopoverTrigger.addStyleClass("sapUiFlVarMngmtTriggerBtn");
-		this.oVariantPopoverTrigger.addStyleClass("sapMTitleStyleH4");
 
 		this.oVariantLayout = new HorizontalLayout({
 			content: [
