@@ -21,19 +21,14 @@
 }
 
 html.sap-desktop .sapMTokenizer:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -@_sap_m_Tokenizer_OutlineOffset;
+	outline: none;
+	box-shadow: 0px 0px 0px 2px @sapContent_FocusColor;
+	border-radius: @sapField_BorderCornerRadius;
 }
 
 /* editable tokens in read-only tokenizer */
-.sapMTokenizer.sapMTokenizerReadonly {
-	.sapMToken {
+.sapMTokenizer.sapMTokenizerReadonly .sapMToken {
 		color: @sapUiContentLabelColor;
-
-		&.sapMTokenSelected {
-			color: @sapUiToggleButtonPressedTextColor;
-		}
-	}
 }
 
 .sapUiSizeCompact {
@@ -69,4 +64,10 @@ html.sap-desktop .sapMTokenizer:focus {
   & .sapMTokenIcon {
     cursor: default;
   }
+}
+
+.sapMTokenizer.sapMTokenizerReadonly .sapMTokenizerIndicator,
+.sapMTokenizer .sapMTokenizerIndicator {
+	color: @sapLinkColor;
+	font-weight: bold;
 }
