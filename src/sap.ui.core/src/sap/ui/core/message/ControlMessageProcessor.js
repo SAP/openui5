@@ -49,13 +49,13 @@ sap.ui.define(['sap/ui/core/message/MessageProcessor'],
 
 	/**
 	 * Set Messages to check
-	 * @param {Object<string,array>}
-	 *         vMessages map of messages: {'target': [array of messages],...}
+	 * @param {Object<string,sap.ui.core.message.Message[]>}
+	 *         mMessages map of messages: {'target': [sap.ui.core.message.Message],...}
 	 * @protected
 	 */
-	ControlMessageProcessor.prototype.setMessages = function(vMessages) {
+	ControlMessageProcessor.prototype.setMessages = function(mMessages) {
 		this.mOldMessages = this.mMessages === null ? {} : this.mMessages;
-		this.mMessages = vMessages || {};
+		this.mMessages = mMessages || {};
 		this.checkMessages();
 		delete this.mOldMessages;
 	};
