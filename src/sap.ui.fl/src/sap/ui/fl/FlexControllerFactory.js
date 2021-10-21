@@ -108,8 +108,11 @@ sap.ui.define([
 			}
 
 			window.sessionStorage.removeItem("sap.ui.rta.restart." + Layer.CUSTOMER);
-			return new Promise(function (resolve) {
-				sap.ui.getCore().loadLibrary("sap.ui.rta", {async: true})
+			return new Promise(function (resolve, reject) {
+				Promise.all([
+					sap.ui.getCore().loadLibrary("sap.ui.rta", {async: true}),
+					oComponent.rootControlLoaded()
+				])
 				.then(function() {
 					sap.ui.require(["sap/ui/rta/api/startKeyUserAdaptation"], function (startKeyUserAdaptation) {
 						startKeyUserAdaptation({
@@ -117,6 +120,9 @@ sap.ui.define([
 						});
 						resolve(oResult);
 					});
+				})
+				.catch(function(oError) {
+					reject(oError);
 				});
 			});
 		}

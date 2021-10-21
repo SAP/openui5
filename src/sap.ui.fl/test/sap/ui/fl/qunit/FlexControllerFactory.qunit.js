@@ -424,6 +424,7 @@ sap.ui.define([
 			});
 			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
 			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
+			this.oAppComponent.rootControlLoaded = sandbox.stub().resolves();
 			return FlexControllerFactory.getChangesAndPropagate(this.oAppComponent, {})
 				.then(function() {
 					assert.equal(this.oLoadLibStub.callCount, 1, "rta library is requested");
@@ -472,6 +473,7 @@ sap.ui.define([
 			});
 			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
 			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
+			this.oAppComponent.rootControlLoaded = sandbox.stub().resolves();
 			return FlexControllerFactory.getChangesAndPropagate(this.oAppComponent, {})
 				.then(function() {
 					assert.equal(this.oLoadLibStub.callCount, 1, "rta library is requested");
@@ -479,6 +481,22 @@ sap.ui.define([
 					assert.equal(fnStartRtaSpy.callCount, 1, "and rta is started");
 					assert.equal(fnStartRtaSpy.getCall(0).args[0].rootControl, this.oAppComponent, "for the application component");
 					assert.equal(window.sessionStorage.getItem("sap.ui.rta.restart.CUSTOMER"), undefined, "and the restart parameter was removed from the sessionStorage");
+				}.bind(this));
+		});
+
+		QUnit.test("when a rta restart was triggered for the CUSTOMER layer via a boolean flag but Root Control is not loaded", function(assert) {
+			sandbox.stub(Utils, "getUrlParameter").returns(Layer.CUSTOMER);
+			window.sessionStorage.setItem("sap.ui.rta.restart.CUSTOMER", true);
+			var fnStartRtaSpy = sandbox.spy(startKeyUserAdaptation);
+			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
+			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
+			var sError = "Root Control didn't load";
+			this.oAppComponent.rootControlLoaded = sandbox.stub().rejects(new Error(sError));
+			return FlexControllerFactory.getChangesAndPropagate(this.oAppComponent, {})
+				.catch(function(oError) {
+					assert.equal(this.oLoadLibStub.callCount, 1, "rta library is requested");
+					assert.equal(fnStartRtaSpy.callCount, 0, "but rta is not started");
+					assert.equal(oError.message, sError, "and the promise is rejected with the right error");
 				}.bind(this));
 		});
 
