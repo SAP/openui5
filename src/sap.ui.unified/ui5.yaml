@@ -16,7 +16,7 @@ builder:
         name: sap/ui/unified/library-preload-lazy.js
         sections:
           - mode: bundleInfo
-            name: sap/ui/unified/library-preload
+            name: sap/ui/unified/library-preload.js
             filters:
               - sap/ui/unified/
               - sap/ui/unified/manifest.json

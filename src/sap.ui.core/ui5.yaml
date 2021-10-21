@@ -28,6 +28,7 @@ builder:
               - ui5loader-autoconfig.js
             declareRawModules: false
             resolve: true
+            sort: true
           - mode: preload
             name: jquery-sap-preload
             filters:
@@ -69,6 +70,7 @@ builder:
               - ui5loader-autoconfig.js
             declareRawModules: false
             resolve: true
+            sort: true
           - mode: preload
             name: sap-ui-core-preload
             filters:
@@ -90,6 +92,7 @@ builder:
               - ui5loader-autoconfig.js
             declareRawModules: false
             resolve: true
+            sort: true
           - mode: require
             filters:
               - sap/ui/core/Core.js
@@ -112,6 +115,7 @@ builder:
               - ui5loader-autoconfig.js
             declareRawModules: false
             resolve: true
+            sort: true
           - mode: preload
             name: sap-ui-core-preload
             filters:
@@ -141,6 +145,7 @@ builder:
               - ui5loader-autoconfig.js
             declareRawModules: false
             resolve: true
+            sort: true
           - mode: require
             filters:
               - sap/ui/core/Core.js
@@ -155,6 +160,7 @@ builder:
               - ui5loader-autoconfig.js
             declareRawModules: false
             resolve: true
+            sort: true
           - mode: require
             filters:
               - sap/ui/core/Core.js
@@ -209,6 +215,7 @@ builder:
               - ui5loader-autoconfig.js
             declareRawModules: false
             resolve: true
+            sort: true
           - mode: preload
             name: runTest-preload
             filters:
@@ -238,6 +245,7 @@ builder:
               - ui5loader-autoconfig.js
             declareRawModules: false
             resolve: true
+            sort: true
           - mode: require
             filters:
               - sap/ui/test/starter/_setupAndStart.js

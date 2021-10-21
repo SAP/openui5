@@ -21,6 +21,7 @@ builder:
               - ui5loader-autoconfig.js
             declareRawModules: false
             resolve: true
+            sort: true
           - mode: preload
             name: sap-ui-integration
             filters:
@@ -66,6 +67,7 @@ builder:
               - '!sap/ui/thirdparty/jquery-mobile-custom.js'
             declareRawModules: false
             resolve: true
+            sort: true
           - mode: preload
             name: sap-ui-integration
             filters:
@@ -236,6 +238,7 @@ builder:
               - ui5loader-autoconfig.js
             declareRawModules: false
             resolve: true
+            sort: true
           - mode: preload
             name: sap-ui-integration
             filters:
