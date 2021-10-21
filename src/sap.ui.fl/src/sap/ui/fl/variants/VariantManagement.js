@@ -398,7 +398,6 @@ sap.ui.define([
 
 		this.oVariantPopoverTrigger.addAriaLabelledBy(this.oVariantInvisibleText);
 		this.oVariantPopoverTrigger.addStyleClass("sapUiFlVarMngmtTriggerBtn");
-		this.oVariantPopoverTrigger.addStyleClass("sapMTitleStyleH4");
 
 		this.oVariantLayout = new HorizontalLayout({
 			content: [
