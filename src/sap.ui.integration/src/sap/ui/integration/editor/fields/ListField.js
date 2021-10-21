@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/ListItem",
 	"sap/base/util/each",
 	"sap/base/util/restricted/_debounce",
+	"sap/base/util/restricted/_isEqual",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/includes",
 	"sap/ui/core/SeparatorItem",
@@ -16,7 +17,7 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/base/util/deepClone"
 ], function (
-	BaseField, Input, Text, MultiComboBox, ListItem, each, _debounce, ObjectPath, includes, SeparatorItem, Core, Sorter, deepClone
+	BaseField, Input, Text, MultiComboBox, ListItem, each, _debounce, _isEqual, ObjectPath, includes, SeparatorItem, Core, Sorter, deepClone
 ) {
 	"use strict";
 	var sDefaultSeperator = "#";
@@ -130,7 +131,7 @@ sap.ui.define([
 				oControl.attachSelectionFinish(this.onSelectionFinish);
 				var oModel = this.getModel();
 				//merge the previous selected items with new items got from request
-				oModel.attachPropertyChange(this.mergeSelectedItems, this);
+				oModel.attachPropertyChange(this.onPropertyChange, this);
 			} else {
 				//listen to the selectionChange event of MultiComboBox
 				oControl.attachSelectionChange(this.onSelectionChange);
@@ -168,7 +169,7 @@ sap.ui.define([
 		return sItemKey;
 	};
 
-	ListField.prototype.mergeSelectedItems = function(oEvent) {
+	ListField.prototype.onPropertyChange = function(oEvent) {
 		var oConfig = this.getConfiguration();
 		if (!oConfig.valueItems) {
 			oConfig.valueItems = [];
@@ -188,33 +189,17 @@ sap.ui.define([
 			var aPath = sPath.split("/");
 			//get new items
 			var oResult = ObjectPath.get(aPath, oData);
-			if (Array.isArray(oResult)) {
-				//get keys of previous selected items
-				var aSelectedItemKeys = oConfig.valueItems.map(function (oSelectedItem) {
-					return this.getKeyFromItem(oSelectedItem);
-				}.bind(this));
-				//get the items which are in selectedItems list
-				var oItemsNotInSelectedItemsList = oResult.filter(function (item) {
-					var sItemKey = this.getKeyFromItem(item);
-					return !includes(aSelectedItemKeys, sItemKey);
-				}.bind(this));
-				//get the items which are selected and not in selectedItems list, for example, the selected items defined in manifest value
-				var oSelectedItemsMissedInSelectedItemsList = oItemsNotInSelectedItemsList.filter(function (item) {
-					return item.Selected === oResourceBundle.getText("EDITOR_ITEM_SELECTED");
-				});
-				//add the selected items which are not in selectedItems list into selectedItems list
-				oConfig.valueItems = oConfig.valueItems.concat(oSelectedItemsMissedInSelectedItemsList);
-				//get the items which are not selected
-				var oNotSelectedItems = oItemsNotInSelectedItemsList.filter(function (item) {
-					return item.Selected !== oResourceBundle.getText("EDITOR_ITEM_SELECTED");
-				});
-				//concat the filtered items to the selectedItems list as new data
-				oResult = oConfig.valueItems.concat(oNotSelectedItems);
-			} else {
-				oResult = oConfig.valueItems;
-			}
+			oResult = this.mergeSelectedItems(oConfig, oResult);
 			ObjectPath.set(aPath, oResult, oData);
-		} else if (Array.isArray(oData)) {
+		} else {
+			oData = this.mergeSelectedItems(oConfig, oData);
+		}
+		oValueModel.setData(oData);
+		this.setSuggestValue();
+	};
+
+	ListField.prototype.mergeSelectedItems = function(oConfig, oData) {
+		if (Array.isArray(oData)) {
 			//get keys of previous selected items
 			var aSelectedItemKeys = oConfig.valueItems.map(function (oSelectedItem) {
 				return this.getKeyFromItem(oSelectedItem);
@@ -236,11 +221,21 @@ sap.ui.define([
 			});
 			//concat the filtered items to the selectedItems list as new data
 			oData = oConfig.valueItems.concat(oNotSelectedItems);
+			var oControl = this.getAggregation("_field");
+			if (oControl.isOpen()) {
+				aSelectedItemKeys = oConfig.valueItems.map(function (oSelectedItem) {
+					return this.getKeyFromItem(oSelectedItem);
+				}.bind(this));
+				var aSelectedKeysInControl = oControl.getSelectedKeys();
+				// if the selected items not match, update the control
+				if (!_isEqual(aSelectedItemKeys, aSelectedKeysInControl)) {
+					oControl.setSelectedKeys(aSelectedItemKeys);
+				}
+			}
 		} else {
 			oData = oConfig.valueItems;
 		}
-		oValueModel.setData(oData);
-		this.setSuggestValue();
+		return oData;
 	};
 
 	ListField.prototype.setSuggestValue = function() {
