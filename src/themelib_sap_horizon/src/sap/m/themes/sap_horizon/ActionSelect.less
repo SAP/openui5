@@ -68,3 +68,16 @@ html.sap-desktop .sapMActionSelectPicker .sapMBtn:not(.sapMBtnDisabled) .sapMBtn
 		line-height: 2rem;
 	}
 }
+
+.sapMActionSelectPicker.sapMSltPicker-CTX .sapMSelectListItemBaseSelected.sapMActionSelectItemWithoutFocus:after {
+	border: none;
+}
+
+.sapMActionSelectPicker ul:not(:only-child) .sapMSelectListItemBaseSelected:last-child:after {
+	border-radius:0;
+}
+
+.sapMActionSelectPicker .sapMBtn:last-child:focus .sapMFocusable {
+	border-bottom-left-radius: @sapUiElementBorderCornerRadius;
+	border-bottom-right-radius: @sapUiElementBorderCornerRadius;
+}
