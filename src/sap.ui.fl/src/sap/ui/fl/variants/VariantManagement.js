@@ -363,7 +363,7 @@ sap.ui.define([
 
 		this.oVariantText.addStyleClass("sapUiFlVarMngmtClickable");
 		this.oVariantText.addStyleClass("sapUiFlVarMngmtTitle");
-		this.oVariantText.addStyleClass("sapMTitleStyleH3");
+		this.oVariantText.addStyleClass("sapMTitleStyleH4");
 		if (Device.system.phone) {
 			this.oVariantText.addStyleClass("sapUiFlVarMngmtTextPhoneMaxWidth");
 		} else {
@@ -398,7 +398,6 @@ sap.ui.define([
 
 		this.oVariantPopoverTrigger.addAriaLabelledBy(this.oVariantInvisibleText);
 		this.oVariantPopoverTrigger.addStyleClass("sapUiFlVarMngmtTriggerBtn");
-		this.oVariantPopoverTrigger.addStyleClass("sapMTitleStyleH3");
 
 		this.oVariantLayout = new HorizontalLayout({
 			content: [
