@@ -2,8 +2,6 @@
 sap.ui.define([
 	"sap/ui/layout/changeHandler/RenameSimpleForm",
 	"sap/ui/layout/form/SimpleForm",
-	"sap/ui/layout/form/FormElement",
-	"sap/ui/layout/form/FormContainer",
 	"sap/ui/fl/Change",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
@@ -13,8 +11,6 @@ sap.ui.define([
 ], function(
 	RenameSimpleForm,
 	SimpleForm,
-	FormElement,
-	FormContainer,
 	Change,
 	JsControlTreeModifier,
 	XmlTreeModifier,
@@ -23,7 +19,6 @@ sap.ui.define([
 	Input
 ) {
 	"use strict";
-
 
 	QUnit.module("using sap.ui.layout.changeHandler.RenameSimpleForm with legacy change format", {
 		beforeEach: function () {
@@ -70,15 +65,11 @@ sap.ui.define([
 			};
 
 			this.oChangeWrapper = new Change(oLegacyChange);
-
 			this.oChangeHandler = RenameSimpleForm;
-
 		},
-
 		afterEach: function () {
 			this.oSimpleForm.destroy();
 		}
-
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier and a legacy change", function (assert) {
@@ -204,11 +195,8 @@ sap.ui.define([
 			};
 
 			this.oChangeWithGlobalIdWrapper = new Change(oChangeWithGlobalId);
-
 			this.oChangeHandler = RenameSimpleForm;
-
 		},
-
 		afterEach: function () {
 			this.oSimpleForm.destroy();
 		}
@@ -269,13 +257,20 @@ sap.ui.define([
 		})
 			.then(function() {
 				assert.equal(this.oXmlLabel0.getAttribute("text"), this.sNewValue, "the label has changed");
+				var oExpectedChangeVizInfo = {
+					affectedControls: ["__element0"],
+					payload: {
+						originalLabel: "oldLabel0",
+						newLabel:  this.sNewValue
+					}
+				};
+				assert.deepEqual(this.oChangeHandler.getChangeVisualizationInfo(this.oChangeWithGlobalIdWrapper, this.oMockedComponent), oExpectedChangeVizInfo);
 			}.bind(this));
 	});
 
 	QUnit.test("applyChange shall raise an error if the control is invalid", function (assert) {
 		var oControl;
 		this.mPropertyBag.modifier = JsControlTreeModifier;
-		//Call CUT
 		return this.oChangeHandler.applyChange(this.oChangeWithGlobalIdWrapper, oControl, this.mPropertyBag)
 			.catch(function(oError) {
 				assert.ok(oError, "Shall raise an error");
@@ -384,7 +379,6 @@ sap.ui.define([
 
 		this.oChangeHandler.completeChangeContent(oChangeWrapper, oSpecificChangeInfo, this.mPropertyBag);
 		assert.equal(oChange.texts.formText.value, "", "the empty value has been copied to the change");
-
 	});
 
 	QUnit.test('when calling completeChangeContent with an undefined value', function (assert) {
@@ -412,7 +406,6 @@ sap.ui.define([
 			new Error("oSpecificChangeInfo.value attribute required"),
 			"the undefined value raises an error message"
 		);
-
 	});
 
 	QUnit.test('when calling completeChangeContent without renamedElementId', function (assert) {
