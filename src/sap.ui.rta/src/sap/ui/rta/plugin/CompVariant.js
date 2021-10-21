@@ -116,10 +116,9 @@ sap.ui.define([
 
 	function switchVariant(aOverlays, mPropertyBag) {
 		var oVariantManagementControl = aOverlays[0].getElement();
-		var oEventItemCustomData = mPropertyBag.eventItem.data();
 
 		createCommandAndFireEvent.call(this, aOverlays[0], "compVariantSwitch", {
-			targetVariantId: oEventItemCustomData.key,
+			targetVariantId: mPropertyBag.eventItem.getParameters().item.getProperty("key"),
 			sourceVariantId: oVariantManagementControl.getPresentVariantId()
 		});
 	}
