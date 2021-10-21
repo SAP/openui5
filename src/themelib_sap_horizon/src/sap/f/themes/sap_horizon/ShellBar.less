@@ -16,6 +16,17 @@
 	}
 	.CPImage,
 	& .sapMIBar.sapMTB .CPImage {
+		&:after {
+			position: absolute;
+			content: "";
+			left: 3px;
+			right: 3px;
+			top: 3px;
+			bottom: 3px;
+			outline: none;
+			pointer-events: none;
+			border-radius: 0.5rem;
+		}
 		.color1 {
 			stop-color: #0070F2;
 		}
@@ -32,9 +43,10 @@
 			stop-opacity: 0.2;
 		}
 		&:focus {
-			outline: 0.125rem solid @sapUiContentFocusColor;
-			outline-offset: -0.25rem;
-			border-radius: 0.5rem;
+			outline: none;
+			&:after {
+				box-shadow: inset 0px 0px 0px 0.125rem @sapUiContentFocusColor;
+			}
 		}
 		html[data-sap-ui-browser^="ie"] &:focus:before {
 			border-color: @sapUiContentContrastFocusColor;
@@ -56,7 +68,7 @@
 		background-color: @sapUiShellActiveBackground;
 		border-color: @sapUiShellActiveBackground;
 	}
-	.sapFShellBarProfile:hover {
+	.sapFShellBarProfile:not(:focus):hover {
 		box-shadow: 0 0 0.125rem 0 fade(@sapContent_ShadowColor, 72);
 	}
 	.sapFSHMegaMenu {
@@ -205,12 +217,6 @@
 		.sapFShellBarItem .sapMBtn,
 		.sapMTB-Transparent-CTX .sapFShellBarItem.sapMBtn,
 		.sapMTB-Transparent-CTX .sapFShellBarItem .sapMBtn {
-			&:focus .sapMBtnInner {
-				outline-color: contrast(@sapShellColor, @sapUiContentFocusColor, @sapUiContentContrastFocusColor, @sapContent_ContrastTextThreshold);
-			}
-			&:focus .sapMBtnFocusDiv {
-				border-color: contrast(@sapShellColor, @sapUiContentFocusColor, @sapUiContentContrastFocusColor, @sapContent_ContrastTextThreshold);
-			}
 			.sapMBtnInner::after,
 			.sapMBtnIcon {
 				background: transparent;
