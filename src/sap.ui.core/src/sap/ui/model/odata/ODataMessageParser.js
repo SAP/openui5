@@ -433,7 +433,7 @@ ODataMessageParser._isResponseForCreate = function (mRequestInfo) {
 	if (oRequest.key && oRequest.created && oResponse.statusCode >= 400) {
 		return false;
 	}
-	// return undefined; otherwise
+	return undefined;
 };
 
 /**

@@ -66,7 +66,11 @@ sap.ui.define(['sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/mode
 	};
 
 	/**
-	 * Returns true or false, depending on the child count of the given node.
+	 * Returns whether the node has children.
+	 *
+	 * @param {object} oNode The node
+	 * @returns {boolean} Whether the node has children
+	 *
 	 * @private
 	 */
 	ODataTreeBindingAdapter.prototype.nodeHasChildren = function(oNode) {
@@ -84,8 +88,12 @@ sap.ui.define(['sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/mode
 	};
 
 	/**
-	 * Calculates a group id for the given node.
-	 * The actual group ID differs between hierarchy-annotations and navigation properties.
+	 * Calculates a group id for the given node. The actual group ID differs between
+	 * hierarchy-annotations and navigation properties.
+	 *
+	 * @param {object} oNode The node
+	 * @returns {string} The calculated group id
+	 *
 	 * @private
 	 */
 	ODataTreeBindingAdapter.prototype._calculateGroupID = function (oNode) {
@@ -114,18 +122,18 @@ sap.ui.define(['sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/mode
 				//odata navigation properties
 				sGroupIDSuffix = oNode.context.sPath.substring(1) + "/";
 			}
-		} else {
+		} else if (this.bHasTreeAnnotations) {
 			//case 2: node sits on root level
-			if (this.bHasTreeAnnotations) {
-				sGroupIDBase = "/";
-				// See comment at replacement above
-				sEncodedValue = (oNode.context.getProperty(this.oTreeProperties["hierarchy-node-for"]) + "").replace(/\//g, "%2F");
-				sGroupIDSuffix = sEncodedValue + "/";
-			} else {
-				//odata nav properties case
-				sGroupIDBase = "/";
-				sGroupIDSuffix = oNode.context.sPath[0] === "/" ? oNode.context.sPath.substring(1) : oNode.context.sPath;
-			}
+			sGroupIDBase = "/";
+			// See comment at replacement above
+			sEncodedValue = (oNode.context.getProperty(this.oTreeProperties["hierarchy-node-for"])
+				+ "").replace(/\//g, "%2F");
+			sGroupIDSuffix = sEncodedValue + "/";
+		} else {
+			//odata nav properties case
+			sGroupIDBase = "/";
+			sGroupIDSuffix = oNode.context.sPath[0] === "/"
+				? oNode.context.sPath.substring(1) : oNode.context.sPath;
 		}
 
 		var sGroupID = sGroupIDBase + sGroupIDSuffix;
@@ -135,10 +143,14 @@ sap.ui.define(['sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/mode
 
 	/**
 	 * Resets all fields, which are used by the TreeBindingAdapter.
+	 *
+	 * @param {sap.ui.model.Context} [oContext] Only reset specific content matching the context
+	 * @param {object} [mParameters] Additional parameters
+	 *
 	 * @private
 	 */
 	ODataTreeBindingAdapter.prototype.resetData = function(oContext, mParameters) {
-		var vReturn = ODataTreeBinding.prototype.resetData.call(this, oContext, mParameters);
+		ODataTreeBinding.prototype.resetData.call(this, oContext, mParameters);
 
 		// clear the mapping table
 		this._aRowIndexMap = [];
@@ -157,8 +169,6 @@ sap.ui.define(['sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/mode
 			// clear the tree state
 			this._createTreeState(true);
 		}
-
-		return vReturn;
 	};
 
 	/**

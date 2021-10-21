@@ -36,7 +36,7 @@ sap.ui.define([
 			PropertyBinding.apply(this, arguments);
 			this.bInitial = true;
 			this.oValue = this._getValue();
-			this.vOriginalValue;
+			this.vOriginalValue = undefined;
 			this.getDataState().setValue(this.oValue);
 			this.setIgnoreMessages(mParameters && mParameters.ignoreMessages);
 		}
@@ -93,7 +93,9 @@ sap.ui.define([
 
 
 	/**
-	 * Setter for context
+	 * Setter for context.
+	 *
+	 * @param {sap.ui.model.Context} oContext The context
 	 */
 	ODataPropertyBinding.prototype.setContext = function(oContext) {
 		var bForceUpdate,
@@ -117,8 +119,8 @@ sap.ui.define([
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
 	 *
-	 * @param {boolean} force no cache true/false: Default = false
-	 *
+	 * @param {boolean} [bForceUpdate=false]
+	 *   Whether an update should be forced regardless of the bindings state
 	 */
 	ODataPropertyBinding.prototype.checkUpdate = function(bForceUpdate){
 		var sCodeListTerm,

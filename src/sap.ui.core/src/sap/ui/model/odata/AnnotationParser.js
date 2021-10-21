@@ -893,8 +893,10 @@ var AnnotationParser =  {
 			var oNode = xPath.nextNode(oNodeList, i);
 			var oValue = {};
 			var sText = xPath.getNodeText(oNode);
-			// TODO: Is nodeName correct or should we remove the namespace?
-			oValue[oNode.nodeName] = AnnotationParser._parserData.aliases ? AnnotationParser.replaceWithAlias(sText) : sText;
+
+			oValue[oNode.nodeName] = AnnotationParser._parserData.aliases
+				? AnnotationParser.replaceWithAlias(sText)
+				: sText;
 			aNodeValues.push(oValue);
 		}
 
