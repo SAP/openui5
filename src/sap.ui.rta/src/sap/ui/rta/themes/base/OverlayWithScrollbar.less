@@ -1,36 +1,55 @@
-@_sap_ui_rta_OverlayWithScrollbar_scrollWidth: var(--sap-ui-rta-scrollbar-scrollWidth);
-@_sap_ui_rta_OverlayWithScrollbar_scrollWidthPlusTwo: var(--sap-ui-rta-scrollbar-scrollWidthPlusTwo);
+.sapUiRta .sapUiDtOverlayWithScrollBar{
+	&.sapUiDtOverlaySelected {
+		&.sapUiDtOverlayWithScrollBarVertical {
+			&:after {
+				inset-inline-end: var(--sap-ui-rta-scrollbar-scrollWidth) !important;
+			}
+		}
 
-.sapUiRta .sapUiDtOverlaySelected.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarVertical:after {
-	inset-inline-end: @_sap_ui_rta_OverlayWithScrollbar_scrollWidth !important;
-}
+		&.sapUiDtOverlayWithScrollBarHorizontal {
+			&:after {
+				inset-block-end: var(--sap-ui-rta-scrollbar-scrollWidth) !important;
+			}
+		}
 
-.sapUiRta .sapUiDtOverlaySelected.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarHorizontal:after {
-	inset-block-end: @_sap_ui_rta_OverlayWithScrollbar_scrollWidth !important;
-}
+		&.sapUiDtOverlayFocusable {
+			&.sapUiDtOverlayWithScrollBarVertical {
+				&:focus:before {
+					inset-inline-end: var(--sap-ui-rta-scrollbar-scrollWidthPlusTwo) !important;
+				}
+			}
 
-.sapUiRta .sapUiDtOverlaySelected.sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarVertical:focus:before {
-	inset-inline-end: @_sap_ui_rta_OverlayWithScrollbar_scrollWidthPlusTwo !important;
-}
+			&.sapUiDtOverlayWithScrollBarHorizontal {
+				&:focus:before {
+					inset-block-end: var(--sap-ui-rta-scrollbar-scrollWidthPlusTwo) !important;
+				}
+			}
+		}
+	}
 
-.sapUiRta .sapUiDtOverlaySelected.sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarHorizontal:focus:before {
-	inset-block-end: @_sap_ui_rta_OverlayWithScrollbar_scrollWidthPlusTwo !important;
-}
+	&.sapUiDtOverlayFocusable {
+		&.sapUiDtOverlayWithScrollBarHorizontal {
+			&:focus:before {
+				inset-block-end: var(--sap-ui-rta-scrollbar-scrollWidth) !important;
+			}
+		}
+		&.sapUiDtOverlayWithScrollBarVertical {
+			&:focus:before {
+				inset-inline-end: var(--sap-ui-rta-scrollbar-scrollWidth) !important;
+			}
+		}
+	}
 
-.sapUiRta .sapUiDtOverlaySelected.sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarVertical:focus:before {
-	inset-inline-end: @_sap_ui_rta_OverlayWithScrollbar_scrollWidthPlusTwo !important;
-}
-
-.sapUiRta .sapUiDtOverlaySelected.sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarHorizontal:focus:before {
-	inset-block-end: @_sap_ui_rta_OverlayWithScrollbar_scrollWidthPlusTwo !important;
-}
-
-.sapUiRta .sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarHorizontal:focus:before,
-.sapUiRta .sapUiRtaOverlayHover.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarHorizontal:after {
-	inset-block-end: @_sap_ui_rta_OverlayWithScrollbar_scrollWidth !important;
-}
-
-.sapUiRta .sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarVertical:focus:before,
-.sapUiRta .sapUiRtaOverlayHover.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarVertical:after {
-	inset-inline-end: @_sap_ui_rta_OverlayWithScrollbar_scrollWidth !important;
+	&.sapUiRtaOverlayHover {
+		&.sapUiDtOverlayWithScrollBarHorizontal {
+			&:after {
+				inset-block-end: var(--sap-ui-rta-scrollbar-scrollWidth) !important;
+			}
+		}
+		&.sapUiDtOverlayWithScrollBarVertical {
+			&:after {
+				inset-inline-end: var(--sap-ui-rta-scrollbar-scrollWidth) !important;
+			}
+		}
+	}
 }
