@@ -230,67 +230,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("[XMLView.create] preprocessor settings must not be cloned", function(assert) {
-		assert.expect(4);
-
-		sap.ui.define("my/Preprocessor", [], function() {
-			return {
-				process:function(vSource, oViewInfo, mSettings) {
-
-					// custom setting should be the same instance as provided by the caller,
-					// even if it is a plain object
-					assert.strictEqual(mSettings.preprocessorData, oPreprocessorData,
-						"custom setting is same as given by caller");
-					assert.strictEqual(mSettings.preprocessorData.bar, "foo",
-						"late enhancement arrives in preprocessor");
-
-					// preprocessor adds something to the custom setting which should become visible for caller
-					if (vSource && oViewInfo) {
-						mSettings.preprocessorData.enriched = true;
-					}
-
-					return vSource;
-				}
-			};
-		});
-
-		var oPreprocessorSettings = {
-			preprocessor: "my.Preprocessor",
-			preprocessorData: {
-				foo: "bar"
-			}
-		};
-		// keep a reference to a custom setting
-		var oPreprocessorData = oPreprocessorSettings.preprocessorData;
-
-		var oViewSettings = {
-			definition:
-			'<mvc:View xmlns="sap.m" xmlns:mvc=\"sap.ui.core.mvc\" xmlns:html=\"http://www.w3.org/1999/xhtml\">' +
-			'<Dialog id="dialog" title="XML Fragment Dialog">' +
-			'   <Text text="title" />' +
-			'</Dialog>' +
-			'</mvc:View>',
-			preprocessors: {
-				xml: [
-					oPreprocessorSettings
-				]
-			}
-		};
-
-		var oViewPromise = XMLView.create(oViewSettings);
-
-		// late enhancement, should become visible in preprocessor
-		oPreprocessorData.bar = "foo";
-
-		return oViewPromise.then(function(oView) {
-			assert.ok(oViewSettings.preprocessors.xml[0]._settings, 'preprocessors info not cloned');
-			assert.strictEqual(oPreprocessorData.enriched, true,
-				"setting change done by preprocessor becomes visible on caller side");
-		}, function(err) {
-			assert.notOk(true, "should not fail");
-		});
-	});
-
 	QUnit.test("[sap.ui.xmlview] broken binding string, error on top-level", function(assert) {
 		var oView = sap.ui.xmlview({
 			id: "syncView1",
