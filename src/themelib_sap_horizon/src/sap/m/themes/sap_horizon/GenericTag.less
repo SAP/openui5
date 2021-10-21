@@ -85,11 +85,15 @@
 
 html.sap-desktop .sapMGenericTag {
 	&:before {
-		border: 1px solid @sapUiContentFocusColor;
+		display: none;
 	}
 	&:after {
-		border: 1px dotted @sapUiContentContrastFocusColor;
+		display: none;
 	}
+}
+
+html.sap-desktop .sapMGenericTag:focus .sapMGenericTagWrap {
+	box-shadow: 0 0 0 0.125rem @sapUiContentFocusColor;
 }
 
 .sapUiSizeCozy {
