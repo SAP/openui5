@@ -133,7 +133,7 @@
 					content : [
 						new Label({
 							text: "Christmas:",
-							labelFor: "oDTI1"
+							labelFor: "DTI1"
 						}),
 						new DateTimeInput("DTI1", {
 							placeholder : "Date Picker",
@@ -150,7 +150,7 @@
 						}),
 						new Label({
 							text: "Duration:",
-							labelFor: "oDTI2"
+							labelFor: "DTI2"
 						}),
 						new DateTimeInput("DTI2", {
 							placeholder : "Time Picker",
@@ -162,7 +162,7 @@
 						}),
 						new Label({
 							text: "DateTime:",
-							labelFor: "oDTI3"
+							labelFor: "DTI3"
 						}),
 						new DateTimeInput("DTI3", {
 							placeholder : "DateTime",
@@ -171,7 +171,7 @@
 						}),
 						new Label({
 							text: "Free style date value assingment according to valueFormat:",
-							labelFor: "oDTI4"
+							labelFor: "DTI4"
 						}),
 						// free style date value assingment according to valueFormat
 						new DateTimeInput("DTI4", {
@@ -183,7 +183,7 @@
 						}),
 						new Label({
 							text: "Formats which includes zones 'Z' can be used for local date time:",
-							labelFor: "oDTI5"
+							labelFor: "DTI5"
 						}),
 						// formats which includes zones "Z" can be used for local date time
 						new DateTimeInput("DTI5", {
@@ -196,14 +196,23 @@
 						}),
 
 						new Title({
-							text: "Data binding usage"
+							text: "Data binding usage",
+							width: "100%"
 						}),
 						// data binding usage
+						new Label({
+							text: "Date (MMM d, y):",
+							labelFor: "DTI6"
+						}),
 						new DateTimeInput("DTI6", {
 							value : {
 								path : "/dateVal1",
 								type : new DateType({strictParsing: true})
 							}
+						}),
+						new Label({
+							text: "Input:",
+							labelFor: "I1"
 						}),
 						new Input("I1", {
 							value: {
@@ -212,6 +221,10 @@
 							},
 							editable: false
 						}),
+						new Label({
+							text: "Date (E dd, MMMM yyyy):",
+							labelFor: "DTI7"
+						}),
 						new DateTimeInput("DTI7", {
 							value : {
 								path : "/dateVal2",
@@ -219,11 +232,19 @@
 							},
 							change : handleChange
 						}),
+						new Label({
+							text: "Date (style short):",
+							labelFor: "DTI8"
+						}),
 						new DateTimeInput("DTI8", {
 							value : {
 								path : "/dateVal3",
 								type : new DateType({style : "short", strictParsing: true})
 							}
+						}),
+						new Label({
+							text: "Time (style medium):",
+							labelFor: "DTI9"
 						}),
 						new DateTimeInput("DTI9", {
 							type : DateTimeInputType.Time,
@@ -233,6 +254,10 @@
 								type : new TimeType({style : "medium", strictParsing: true})
 							}
 						}),
+						new Label({
+							text: "DateTime (style medium):",
+							labelFor: "DTI10"
+						}),
 						new DateTimeInput("DTI10", {
 							type : DateTimeInputType.DateTime,
 							enabled : false,
@@ -240,6 +265,10 @@
 								path : "/dateVal5",
 								type : new DateTimeType({style : "medium", strictParsing: true})
 							}
+						}),
+						new Label({
+							text: "Input:",
+							labelFor: "I2"
 						}),
 						new Input("I2", {value: "Content of events DateTimeInput", editable: false}),
 						/*Table examinating different combination beetween DateTimeInput's type property and binding pattern of 'value'*/
