@@ -10,8 +10,12 @@
 /* ============================= */
 
 .sapFAvatarGroup:focus {
-	outline: 0.125rem solid @sapUiContentFocusColor;
-	border-radius: 0.5rem;
+	box-shadow: 0px 0px 0px 0.125rem @sapUiContentFocusColor;
+	outline: none;
+}
+
+.sapFAvatarGroup {
+	padding: 0.125rem;
 }
 
 .sapFAvatarGroupIndividual {
@@ -19,12 +23,16 @@
 	.sapFAvatarGroupItem:focus {
 		outline: none;
 		.sapFAvatar  {
-			outline: 0.125rem solid @sapUiContentFocusColor;
-			outline-offset: -0.125rem;
+			outline: none;
+			box-shadow: 0px 0px 0px 0.125rem @sapUiContentFocusColor;
 		}
 	}
 }
 
 .sapFAvatarGroupMoreButton.sapMBtn:focus > .sapMFocusable.sapMBtnInner {
 	outline-offset: -0.125rem;
+}
+
+.sapFAvatarGroupPopover .sapFCard {
+	border-radius: 0;
 }
