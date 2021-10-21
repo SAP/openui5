@@ -44,10 +44,10 @@
 		border-radius: 0.25rem;
 	}
 	& .sapMObjStatusIcon {
-		border-radius: @sapUiElementBorderCornerRadius 0 0 @sapUiElementBorderCornerRadius;
+		border-radius: 0.25rem 0 0 0.25rem;
 	}
 	& .sapMObjStatusIcon + .sapMObjStatusText {
-		border-radius: 0 @sapUiElementBorderCornerRadius @sapUiElementBorderCornerRadius 0;
+		border-radius: 0 0.25rem 0.25rem 0;
 	}
 }
 
@@ -58,14 +58,45 @@
 
 html.sap-desktop .sapMObjStatusActive:focus {
 	.sapMObjStatusLink::after {
-		outline: 0.125rem solid @sapUiContentFocusColor;
-		border-radius: 0.15rem;
+		outline: none;
+		border-radius: 0.25rem;
+		content: "";
+		position: absolute;
+		box-sizing: border-box;
+		left: -0.0625rem;
+		top: -0.0625rem;
+		right: -0.0625rem;
+		bottom: -0.0625rem;
+		pointer-events: none;
+		border: 0.125rem solid @sapUiContentFocusColor;
 	}
 	&.sapMObjectStatusLarge {
 		&.sapMObjStatusInverted .sapMObjStatusLink::after {
-			outline: 0.125rem solid @sapUiContentFocusColor;
-			outline-offset: 0.25rem;
-			border-radius: 0.5rem;
+			outline: none;
+			border-radius: 0.25rem;
+			content: "";
+			position: absolute;
+			box-sizing: border-box;
+			left: -0.0625rem;
+			top: -0.0625rem;
+			height: auto;
+			right: -0.0625rem;
+			bottom: -0.0625rem;
+			pointer-events: none;
+			border: 0.125rem solid @sapUiContentFocusColor;
 		}
 	}
+}
+
+.sapMObjStatusInverted.sapMObjStatusInformation .sapMObjStatusLink:active .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusInformation .sapMObjStatusLink:active .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusNone .sapMObjStatusLink:active .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusNone .sapMObjStatusLink:active .sapMObjStatusIcon ,
+.sapMObjStatusInverted.sapMObjStatusError .sapMObjStatusLink:active .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusError .sapMObjStatusLink:active .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusWarning .sapMObjStatusLink:active .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusWarning .sapMObjStatusLink:active .sapMObjStatusIcon,
+.sapMObjStatusInverted.sapMObjStatusSuccess .sapMObjStatusLink:active .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusSuccess .sapMObjStatusLink:active .sapMObjStatusIcon {
+	color: @sapUiContentContrastTextColor;
 }
