@@ -57,13 +57,6 @@
 	background: @sapUiButtonLiteHoverBackground;
 }
 
-.sapMSltPressed:not(.sapMSltDisabled):not(.sapMSltState),
-.sapMSlt.sapMSltFocused:not(.sapMSltDisabled):not(.sapMSltState) {
-	outline: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
-	outline-offset: -0.125rem;
-	border-radius: 0.25rem;
-}
-
 html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):before {
 	outline-offset: -2px;
 }
@@ -132,6 +125,12 @@ div.sapMSltPicker .sapMSltPickerValueState {
     background-size: 100% @sapField_BorderWidth;
     background-repeat: repeat-x;
     background-position: bottom;
+}
+
+.sapMSltPressed:not(.sapMSltDisabled):not(.sapMSltState),
+.sapMSlt.sapMSltFocused:not(.sapMSltDisabled):not(.sapMSltState) {
+    border:none;
+    box-shadow: inset 0px 0px 0px 2px @sapContent_FocusColor;
 }
 
 .sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):active {
