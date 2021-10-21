@@ -494,6 +494,18 @@ sap.ui.define([
 
 	};
 
+	ChartItemPanel.prototype._focusHandler = function(oEvt) {
+
+		var oTarget = core.byId(oEvt.target.id);
+
+		//Don't handle focus on button presses as this messes up event propagation
+		if (oTarget instanceof sap.m.Button){
+			return;
+		}
+
+		BasePanel.prototype._focusHandler.apply(this, arguments);
+	};
+
 	ChartItemPanel.prototype._handleActivated = function(oHoveredItem) {
 		var oItem = this._getModelItemByTableItem(oHoveredItem);
 		if (oItem && oItem.template) {
@@ -979,17 +991,19 @@ sap.ui.define([
 		});
 		this._getP13nModel().setProperty("/items", aFields);
 
-		// store the moved item again due to binding
-		this._oSelectedItem = this._oListControl.getItems().find(function(it){
-			var oItem = this._getModelItemByTableItem(it);
+		if (!bPreventFocusHandling){
+			// store the moved item again due to binding
+			this._oSelectedItem = this._oListControl.getItems().find(function(it){
+				var oItem = this._getModelItemByTableItem(it);
 
-			return oItem && oItem === aFields[iNewIndex];
+				return oItem && oItem === aFields[iNewIndex];
 
-		}.bind(this));
+			}.bind(this));
 
-		this._updateEnableOfMoveButtons(this._oSelectedItem, !bPreventFocusHandling);
+			this._updateEnableOfMoveButtons(this._oSelectedItem, !bPreventFocusHandling);
 
-		this._handleActivated(this._oSelectedItem);
+			this._handleActivated(this._oSelectedItem);
+		}
 
 		this._fireChangeItems();
 	};
