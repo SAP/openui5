@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/Configuration",
 	"sap/m/OverflowToolbarButton",
+	"sap/m/Panel",
 	"sap/m/library",
 	"sap/f/DynamicPageAccessibleLandmarkInfo",
 	"sap/ui/core/mvc/XMLView",
@@ -33,6 +34,7 @@ function (
 	UIComponent,
 	Configuration,
 	OverflowToolbarButton,
+	Panel,
 	mLibrary,
 	DynamicPageAccessibleLandmarkInfo,
 	XMLView,
@@ -1339,7 +1341,7 @@ function (
 			}.bind(this),
 			oScrollPositionSpy;
 
-		oHeader.addContent(new sap.m.Panel({height: "100px"}));
+		oHeader.addContent(new Panel({height: "100px"}));
 
 		// setup
 		oUtil.renderObject(this.oDynamicPage);
@@ -1367,7 +1369,7 @@ function (
 			oDeregisterSpy = this.spy(this.oDynamicPage, "_deRegisterResizeHandler"),
 			oAdaptScrollPositionSpy = this.spy(this.oDynamicPage, "_adaptScrollPositionOnHeaderChange");
 
-		oHeader.addContent(new sap.m.Panel({height: "100px"}));
+		oHeader.addContent(new Panel({height: "100px"}));
 
 		// setup
 		oUtil.renderObject(this.oDynamicPage);
@@ -1905,6 +1907,13 @@ function (
 
 	QUnit.test("DynamicPage _canSnapHeaderOnScroll() should return the correct value", function (assert) {
 		assert.equal(this.oDynamicPage._canSnapHeaderOnScroll(), true, "The header can snap");
+
+		this.oDynamicPage.setContent(new Panel({height: "800px"}));
+		Core.applyChanges();
+		assert.equal(this.oDynamicPage._canSnapHeaderOnScroll(), false, "The header cannot snap with scroll");
+
+		this.oDynamicPage._moveHeaderToTitleArea();
+		assert.equal(this.oDynamicPage._canSnapHeaderOnScroll(), false, "The header still cannot snap with scroll");
 	});
 
 	QUnit.test("DynamicPage _shouldExpandOnScroll() returns false initially", function (assert) {

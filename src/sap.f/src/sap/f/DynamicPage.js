@@ -1206,21 +1206,12 @@ sap.ui.define([
 
 	/**
 	 * Determines if it's possible for the header to collapse (snap) on scroll.
-	 * <code>Note:</code>
-	 * For IE and Edge we use 1px threshold,
-	 * because the clientHeight returns results in 1px difference compared to the scrollHeight,
-	 * the reason is not defined.
 	 *
 	 * @returns {boolean}
 	 * @private
 	 */
 	DynamicPage.prototype._canSnapHeaderOnScroll = function () {
-		var iMaxScrollPosition = this._getMaxScrollPosition();
-
-		if (this._bHeaderInTitleArea  && iMaxScrollPosition > 0) { // when snapping with scroll, the header will be in the content area
-			iMaxScrollPosition += this._getHeaderHeight();
-		}
-		return iMaxScrollPosition > this._getSnappingHeight();
+		return this._getMaxScrollPosition() > this._getSnappingHeight();
 	};
 
 	/**
