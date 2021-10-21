@@ -48,7 +48,7 @@ builder:
               - sap/ui/fl/interfaces/BaseLoadConnector.js
             resolve: true
           - mode: bundleInfo
-            name: sap/ui/fl/library-preload-apply
+            name: sap/ui/fl/library-preload-apply.js
             filters:
               - sap/ui/fl/apply/
               - sap/ui/fl/transport/TransportDialog.js
@@ -56,7 +56,7 @@ builder:
               - sap/ui/fl/util/IFrame.flexibility.js
             resolve: true
           - mode: bundleInfo
-            name: sap/ui/fl/library-preload-write
+            name: sap/ui/fl/library-preload-write.js
             filters:
               - sap/ui/fl/write/
               - sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory.js
