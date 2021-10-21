@@ -8,6 +8,7 @@ sap.ui.define([
 	'./JSONViewRenderer',
 	'./ViewType',
 	'./EventHandlerResolver',
+	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/model/resource/ResourceModel',
 	'sap/base/Log',
@@ -18,6 +19,7 @@ sap.ui.define([
 		JSONViewRenderer,
 		ViewType,
 		EventHandlerResolver,
+		merge,
 		ManagedObject,
 		ResourceModel,
 		Log,
@@ -68,7 +70,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.core.mvc.JSONView>} A promise which resolves with the created <code>JSONView</code> instance.
 	 */
 	JSONView.create = function(oOptions) {
-		var mParameters = View._cloneViewSettings(oOptions);
+		var mParameters = merge({}, oOptions);
 		//remove unsupported options:
 		for (var sOption in mParameters) {
 			if (sOption === 'preprocessors') {

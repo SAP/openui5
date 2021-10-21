@@ -235,7 +235,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.core.mvc.XMLView>} A Promise that resolves with the view instance or rejects with any thrown error.
 	 */
 	XMLView.create = function (oOptions) {
-		var mParameters = View._cloneViewSettings(oOptions);
+		var mParameters = merge({}, oOptions);
 
 		// mapping renamed parameters
 		mParameters.viewContent = mParameters.definition;

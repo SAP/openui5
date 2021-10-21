@@ -286,7 +286,6 @@ sap.ui.define([
 		renderer: ViewRenderer
 	});
 
-	var sCloneMarker = Symbol('ui5_clone_marker');
 	/**
 	 * Global map of preprocessors with view types and source types as keys,
 	 * e.g. _mPreprocessors[sViewType][sSourceType]
@@ -294,30 +293,6 @@ sap.ui.define([
 	 * @private
 	 */
 	View._mPreprocessors = {};
-
-	/**
-	 * Clone view settings object. Cloned settings are marked to avoid multiple cloning of the same object.
-	 * Cloning of preprocessors is omitted as these could be enriched during view processing and needs to stay stable for the caller.
-	 *
-	 * @param {object} mSettings The settings object
-	 * @returns {object} The cloned settings object
-	 * @private
-	 * @ui-restricted sap.ui.core
-	 */
-	View._cloneViewSettings = function(mSettings) {
-		var mSettingsClone = mSettings;
-		if (!mSettings[sCloneMarker]) {
-			var mPreprocessors = mSettings.preprocessors;
-			delete mSettings.preprocessors;
-			mSettingsClone = merge({}, mSettings);
-			if (mPreprocessors)  {
-				mSettingsClone.preprocessors = mPreprocessors;
-				mSettings.preprocessors = mPreprocessors;
-			}
-			mSettingsClone[sCloneMarker] = true;
-		}
-		return mSettingsClone;
-	};
 
 	/**
 	 * align object structure to internal preprocessor format to be able to store internal settings without conflicts
@@ -1084,7 +1059,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.core.mvc.View>} A Promise which resolves with the created View instance
 	 */
 	View.create = function(oOptions) {
-		var mParameters = this._cloneViewSettings(oOptions);
+		var mParameters = merge({}, oOptions);
 		mParameters.async = true;
 		mParameters.viewContent = mParameters.definition;
 

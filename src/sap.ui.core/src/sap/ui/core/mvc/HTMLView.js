@@ -8,6 +8,7 @@ sap.ui.define([
 	'./View',
 	'./HTMLViewRenderer',
 	'./ViewType',
+	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/DeclarativeSupport',
 	'sap/ui/model/resource/ResourceModel',
@@ -18,6 +19,7 @@ sap.ui.define([
 		View,
 		HTMLViewRenderer,
 		ViewType,
+		merge,
 		ManagedObject,
 		DeclarativeSupport,
 		ResourceModel,
@@ -73,7 +75,7 @@ sap.ui.define([
 	 * @return {Promise<sap.ui.core.mvc.HTMLView>} A promise which resolves with the created <code>HTMLView</code> instance
 	 */
 	HTMLView.create = function(oOptions) {
-		var mParameters = View._cloneViewSettings(oOptions);
+		var mParameters = merge({}, oOptions);
 		mParameters.type = ViewType.HTML;
 		return View.create(mParameters);
 	};
