@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/core/CustomData",
 	"sap/m/ComboBox",
 	"sap/m/ComboBoxTextField",
+	"sap/m/ComboBoxBase",
 	"sap/m/Label",
 	"sap/m/Select",
 	"sap/m/Link",
@@ -34,6 +35,7 @@ sap.ui.define([
 	CustomData,
 	ComboBox,
 	ComboBoxTextField,
+	ComboBoxBase,
 	Label,
 	Select,
 	Link,
@@ -152,6 +154,7 @@ sap.ui.define([
 		assert.strictEqual(oComboBox.getShowSecondaryValues(), false, 'By default the showSecondaryValues property of the ComboBox control is "false"');
 		assert.strictEqual(oComboBox.getFilterSecondaryValues(), false, 'By default the filterSecondaryValues property of the ComboBox control is "false"');
 		assert.ok(jQuery(oComboBox.getOpenArea()).hasClass("sapMInputBaseIconContainer"), "The correct dom is returned for the open area");
+		assert.strictEqual(oComboBox.getShowClearIcon(), false, 'By default the "showClearIcon" property of the ComboBox control is "false"');
 
 		// cleanup
 		oComboBox.destroy();
@@ -222,6 +225,30 @@ sap.ui.define([
 		// cleanup
 		oComboBox.destroy();
 		oModel.destroy();
+	});
+
+	QUnit.test("setting the value should update the effectiveShowClearIcon property", function (assert) {
+		// system under test
+		var oComboBox = new ComboBox();
+
+		// arrange
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oComboBox.setValue("test");
+
+		// assert
+		assert.strictEqual(oComboBox.getProperty("effectiveShowClearIcon"), true, "The property effectiveShowClearIcon was updated correctly to true.");
+
+		// act
+		oComboBox.setValue("");
+
+		// assert
+		assert.strictEqual(oComboBox.getProperty("effectiveShowClearIcon"), false, "The property effectiveShowClearIcon was updated correctly to false.");
+
+		// cleanup
+		oComboBox.destroy();
 	});
 
 	QUnit.module("getSelectedItem()");
@@ -2752,7 +2779,7 @@ sap.ui.define([
 			assert.strictEqual(document.activeElement, oComboBox.getFocusDomRef(), "The ComboBox should get the focus");
 		}
 
-		assert.ok(oComboBox.hasStyleClass(InputBase.ICON_PRESSED_CSS_CLASS));
+		assert.ok(oComboBox.hasStyleClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS), "The correct CSS class was added to the control.");
 
 		if (Device.system.desktop || Device.system.tablet) {
 			assert.strictEqual(oComboBox.$().outerWidth(), oComboBox.getPicker().$().outerWidth(), "The width of the picker pop-up is strictEqual to the width of the input");
@@ -2801,7 +2828,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.ok(oComboBox.hasStyleClass(InputBase.ICON_PRESSED_CSS_CLASS));
+		assert.ok(oComboBox.hasStyleClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS), "The correct CSS class was added to the control.");
 
 		// cleanup
 		oComboBox.destroy();
@@ -4756,14 +4783,25 @@ sap.ui.define([
 			assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-required"), undefined);
 			assert.ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE), 'The combo box element has the CSS class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + '"');
 			assert.ok(oComboBox.getAggregation("_endIcon").length, "The HTML span element for the arrow exists");
-			assert.ok(oComboBox.getAggregation("_endIcon")[0].getDomRef().classList.contains("sapUiIcon"), 'The arrow button has the CSS class sapUiIcon"');
-			assert.ok(oComboBox.getAggregation("_endIcon")[0].hasStyleClass("sapMInputBaseIcon"), 'The arrow button has the CSS class sapMInputBaseIcon "');
-			assert.strictEqual(oComboBox.getAggregation("_endIcon")[0].getNoTabStop(), true, "The arrow button is focusable, but it is not reachable via sequential keyboard navigation");
-			assert.strictEqual(oComboBox.getAggregation("_endIcon")[0].getDomRef().getAttribute("aria-label"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("COMBOBOX_BUTTON"));
+			assert.ok(oComboBox.getArrowIcon().getDomRef().classList.contains("sapUiIcon"), 'The arrow button has the CSS class sapUiIcon"');
+			assert.ok(oComboBox.getArrowIcon().hasStyleClass("sapMInputBaseIcon"), 'The arrow button has the CSS class sapMInputBaseIcon "');
+			assert.strictEqual(oComboBox.getArrowIcon().getNoTabStop(), true, "The arrow button is focusable, but it is not reachable via sequential keyboard navigation");
+			assert.strictEqual(oComboBox.getArrowIcon().getDomRef().getAttribute("aria-label"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("COMBOBOX_BUTTON"));
 
 			// cleanup
 			oComboBox.destroy();
 		});
+	});
+
+	QUnit.test("The sap.m library resource bundle is loaded", function (assert) {
+		var oCoreSpy = this.spy(sap.ui.getCore(), "getLibraryResourceBundle" );
+		var oComboBox = new ComboBox();
+
+		assert.strictEqual(oCoreSpy.called, true, "getLibraryResourceBundle");
+		assert.strictEqual(oCoreSpy.firstCall.args[0], "sap.m", "sap.m Resource bundle loaded.");
+
+		oCoreSpy.restore();
+		oComboBox.destroy();
 	});
 
 	QUnit.test("the arrow button should not be visible", function (assert) {
@@ -4778,7 +4816,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(oComboBox.getIcon().getVisible(), false, "Icons visibility is false");
+		assert.strictEqual(oComboBox.getArrowIcon().getVisible(), false, "Icons visibility is false");
 
 		// cleanup
 		oComboBox.destroy();
@@ -4945,6 +4983,28 @@ sap.ui.define([
 		assert.strictEqual(oComboBox._getList().getItems()[0].getTitle(), "Item 1", "List item title is updated");
 
 		// cleanup
+		oComboBox.destroy();
+	});
+
+	QUnit.test("Clear icon is rendered.", function (assert) {
+		var oComboBox = new ComboBox({
+			showClearIcon: true
+		});
+		var aEndIcons;
+		var sClearIconAltText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUT_CLEAR_ICON_ALT");
+
+		// Arrange
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		aEndIcons = oComboBox.getAggregation("_endIcon");
+
+		// Assert
+		assert.strictEqual(aEndIcons.length, 2, "There are two end icons.");
+		assert.strictEqual(aEndIcons[0].getAlt(), sClearIconAltText, "The first icon is the clear icon.");
+		assert.strictEqual(aEndIcons[0].getVisible(), false, "The clear icon is not visible");
+		assert.strictEqual(aEndIcons[1].getVisible(), true, "The arrow icon is visible");
+
 		oComboBox.destroy();
 	});
 
@@ -9743,7 +9803,7 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 		oComboBox.updateDomValue("lorem ipsum");
 
-		oComboBox.getIcon().firePress();
+		oComboBox.getArrowIcon().firePress();
 
 		// assert
 		assert.strictEqual(fnFireChangeSpy.callCount, 0);
@@ -10958,7 +11018,7 @@ sap.ui.define([
 		oComboBox._handlePopupOpenAndItemsLoad(false);
 
 		assert.ok(oComboBox.isOpen(), "ComboBox is open");
-		assert.ok(oComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS));
+		assert.ok(oComboBox.$().hasClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS));
 
 		oComboBox.destroy();
 	});
@@ -12371,9 +12431,10 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Should call toggleIconPressedState correctly in the process of showing items", function (assert) {
+	QUnit.test("Should call toggleStyleClass correctly in the process of showing items", function (assert) {
 		// Setup
-		var oSpy = new sinon.spy(this.oCombobox, "toggleIconPressedStyle");
+		var oSpy = this.spy(this.oCombobox, "toggleStyleClass"),
+			sClassName = ComboBoxBase.ARROW_PRESSED_CSS_CLASS;
 
 		// Act
 		this.oCombobox.showItems(function () {
@@ -12381,14 +12442,14 @@ sap.ui.define([
 		});
 
 		// Assert
-		assert.strictEqual(oSpy.callCount, 0, "The toggleIconPressedStyle method was not called.");
+		assert.strictEqual(oSpy.callCount, 0, "The toggleStyleClass method was not called.");
 
 		// Act
 		this.oCombobox._handlePopupOpenAndItemsLoad(true); // Icon press
 
 		// Assert
-		assert.strictEqual(oSpy.callCount, 1, "The toggleIconPressedStyle method was called once:");
-		assert.strictEqual(oSpy.getCall(0).args[0], true, "...first time with 'true'.");
+		assert.strictEqual(oSpy.callCount, 1, "The toggleStyleClass method was called once:");
+		assert.strictEqual(oSpy.getCall(0).args[0], sClassName, "...first time with '" + sClassName + "'.");
 
 		// Arrange
 		this.oCombobox._bShouldClosePicker = true;
@@ -12398,16 +12459,16 @@ sap.ui.define([
 		this.oCombobox._handlePopupOpenAndItemsLoad(); // Icon press
 
 		// Assert
-		assert.strictEqual(oSpy.callCount, 2, "The toggleIconPressedStyle method was called twice:");
-		assert.strictEqual(oSpy.getCall(1).args[0], false, "...second time with 'false'.");
+		assert.strictEqual(oSpy.callCount, 2, "The toggleStyleClass method was called twice:");
+		assert.strictEqual(oSpy.getCall(1).args[0], sClassName, "...second time with '" + sClassName + "'.");
 
 		// Clean
 		oSpy.restore();
 	});
 
-	QUnit.test("Should call toggleIconPressedState after showItems is called and oninput is triggered.", function (assert) {
+	QUnit.test("Should call toggleStyleClass after showItems is called and oninput is triggered.", function (assert) {
 		// Setup
-		var oSpy = new sinon.spy(this.oCombobox, "toggleIconPressedStyle"),
+		var oSpy = this.spy(this.oCombobox, "toggleStyleClass"),
 			oFakeEvent = {
 				isMarked: function () {return false;},
 				setMarked: function () {},
@@ -12415,7 +12476,8 @@ sap.ui.define([
 					value: "A Item"
 				},
 				srcControl: this.oCombobox
-			};
+			},
+			sClassName = ComboBoxBase.ARROW_PRESSED_CSS_CLASS;
 
 		// Act
 		this.oCombobox.showItems(function () {
@@ -12423,14 +12485,14 @@ sap.ui.define([
 		});
 
 		// Assert
-		assert.strictEqual(oSpy.callCount, 0, "The toggleIconPressedStyle method was not called.");
+		assert.strictEqual(oSpy.callCount, 0, "The toggleStyleClass method was not called.");
 
 		// Act
 		this.oCombobox.oninput(oFakeEvent); // Fake input
 
 		// Assert
-		assert.strictEqual(oSpy.callCount, 1, "The toggleIconPressedStyle method was called once:");
-		assert.strictEqual(oSpy.getCall(0).args[0], true, "...first time with 'true'.");
+		assert.strictEqual(oSpy.callCount, 1, "The toggleStyleClass method was called once:");
+		assert.strictEqual(oSpy.getCall(0).args[0], sClassName, "...first time with '" + sClassName + "'.");
 
 		// Clean
 		oSpy.restore();
@@ -13339,6 +13401,182 @@ sap.ui.define([
 		// Clean
 		oSorter.destroy();
 		oModel.destroy();
+		oComboBox.destroy();
+	});
+
+	QUnit.module("ClearIcon");
+
+	QUnit.test("onkeyup setting the effectiveShowClearIcon property - no value", function(assert) {
+		// Arrange
+		var oComboBox = new ComboBox({
+			showClearIcon: true
+		});
+		var oSpy;
+
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oSpy = this.spy(oComboBox, "setProperty");
+
+		// Act
+		oComboBox.onkeyup();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oSpy.called, true, "setProperty was called");
+		assert.strictEqual(oSpy.calledWith("effectiveShowClearIcon", false), true, "setProperty was called with the correct arguments");
+
+		// Clean
+		oSpy.restore();
+		oComboBox.destroy();
+	});
+
+	QUnit.test("onkeyup setting the effectiveShowClearIcon property - with value", function(assert) {
+		// Arrange
+		var oComboBox = new ComboBox({
+			showClearIcon: true,
+			value: "test"
+		});
+		var oSpy;
+
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oSpy = this.spy(oComboBox, "setProperty");
+
+		// Act
+		oComboBox.onkeyup();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oSpy.called, true, "setProperty was called");
+		assert.strictEqual(oSpy.calledWith("effectiveShowClearIcon", true), true, "setProperty was called with the correct arguments");
+
+		// Clean
+		oSpy.restore();
+		oComboBox.destroy();
+	});
+
+	QUnit.test("onkeyup setting the effectiveShowClearIcon property - not editable", function(assert) {
+		// Arrange
+		var oComboBox = new ComboBox({
+			showClearIcon: true,
+			editable: false
+		});
+		var oSpy;
+
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oSpy = this.spy(oComboBox, "setProperty");
+
+		// Act
+		oComboBox.onkeyup();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oSpy.called, false, "setProperty was not called");
+
+		// Clean
+		oSpy.restore();
+		oComboBox.destroy();
+	});
+
+	QUnit.test("'setShowClearIcon(false)' should hide the icon even if there is value", function(assert) {
+		// Arrange
+		var oComboBox = new ComboBox({
+			showClearIcon: true,
+			value: "test"
+		});
+		var oSpy;
+
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oSpy = this.spy(oComboBox._oClearIcon, "setVisible");
+
+		// Act
+		oComboBox.setShowClearIcon(false);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "setVisible was called exactly 1 time");
+		assert.strictEqual(oSpy.calledWith(false), true, "setVisible was called with 'false' as parameter");
+
+		// Clean
+		oSpy.restore();
+		oComboBox.destroy();
+	});
+
+	QUnit.test("'handleClearIconPress' should call clearSelection and setProperty", function(assert) {
+		// Arrange
+		var oComboBox = new ComboBox({
+			showClearIcon: true,
+			value: "test"
+		});
+		var oClearSelectionSpy, oSetPropertySpy;
+
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oClearSelectionSpy = this.spy(oComboBox, "clearSelection");
+		oSetPropertySpy = this.spy(oComboBox, "setProperty");
+
+		// Act
+		oComboBox.handleClearIconPress();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oClearSelectionSpy.called, true, "clearSelection was called");
+		assert.strictEqual(oSetPropertySpy.calledWith('effectiveShowClearIcon', false), true, "setProperty was called with the correct parameters");
+
+		// Clean
+		oClearSelectionSpy.restore();
+		oSetPropertySpy.restore();
+		oComboBox.destroy();
+	});
+
+	QUnit.test("'handleClearIconPress' should not do anything when control is disabled", function(assert) {
+		// Arrange
+		var oComboBox = new ComboBox({
+			showClearIcon: true,
+			value: "test",
+			enabled: false
+		});
+		var oClearSelectionSpy, oSetPropertySpy;
+
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oClearSelectionSpy = this.spy(oComboBox, "clearSelection");
+		oSetPropertySpy = this.spy(oComboBox, "setProperty");
+
+		// Act
+		oComboBox.handleClearIconPress();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oClearSelectionSpy.called, false, "clearSelection was called");
+		assert.strictEqual(oSetPropertySpy.calledWith('effectiveShowClearIcon', false), false, "setProperty was called with the correct parameters");
+
+		// Arrange
+		oComboBox.setEnabled(true);
+		oComboBox.setEditable(false);
+		sap.ui.getCore().applyChanges();
+		oClearSelectionSpy.reset();
+		oSetPropertySpy.reset();
+
+		// Act
+		oComboBox.handleClearIconPress();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oClearSelectionSpy.called, false, "clearSelection was called");
+		assert.strictEqual(oSetPropertySpy.calledWith('effectiveShowClearIcon', false), false, "setProperty was called with the correct parameters");
+
+		// Clean
+		oClearSelectionSpy.restore();
+		oSetPropertySpy.restore();
 		oComboBox.destroy();
 	});
 });

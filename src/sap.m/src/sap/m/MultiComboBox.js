@@ -1021,7 +1021,7 @@ function(
 
 		// if recommendations were shown - add the icon pressed style
 		if (this._getItemsShownWithFilter()) {
-			this.toggleIconPressedStyle(true);
+			this.toggleStyleClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS, true);
 		}
 	};
 
@@ -1043,6 +1043,8 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onkeyup = function(oEvent) {
+		ComboBoxBase.prototype.onkeyup.apply(this, arguments);
+
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
@@ -1092,7 +1094,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._showAlreadySelectedVisualEffect = function() {
-		var sAlreadySelectedText = this._oRbM.getText("VALUE_STATE_ERROR_ALREADY_SELECTED");
+		var sAlreadySelectedText = this._oRb.getText("VALUE_STATE_ERROR_ALREADY_SELECTED");
 
 		if (!this.getValue()) {
 			return;
@@ -1223,7 +1225,22 @@ function(
 			onfocusout: this._handleInputFocusOut
 		}, this);
 
+		oInput.attachChange(this._handleInnerInputChange.bind(this));
+
 		return oInput;
+	};
+
+	/**
+	 * Handles the picker input change.
+	 *
+	 * @param {jQuery.Event} oEvent The event object
+	 * @private
+	 */
+	MultiComboBox.prototype._handleInnerInputChange = function (oEvent) {
+		if (oEvent.getParameter("value") === "") {
+			this._sOldInput = "";
+			this.clearFilter();
+		}
 	};
 
 	/**
@@ -1234,6 +1251,7 @@ function(
 	MultiComboBox.prototype.onBeforeRendering = function() {
 		var bEditable = this.getEditable();
 		var oTokenizer = this.getAggregation("tokenizer");
+		var aItems = this.getItems();
 
 		ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
 
@@ -1243,7 +1261,7 @@ function(
 		oTokenizer.setEditable(bEditable);
 		this._updatePopoverBasedOnEditMode(bEditable);
 
-		if (!this.getItems().length) {
+		if (!aItems.length) {
 			this._clearTokenizer();
 		}
 
@@ -1252,6 +1270,15 @@ function(
 		}
 
 		this.toggleSelectAllVisibility(this.getShowSelectAll());
+
+		// In case there is an old input, the picker is opened and there are items
+		// we need to return the previous state of the filtering as syncPickerContent
+		// will have removed it.
+		if (this._sOldInput && aItems.length && this.isOpen()) {
+			itemsVisibilityHandler(this.getItems(), this.filterItems({ value: this._sOldInput, items: aItems }));
+			// wait a tick so the setVisible call has replaced the DOM
+			setTimeout(this.highlightList.bind(this, this._sOldInput));
+		}
 
 		this._deregisterResizeHandler();
 		this._synchronizeSelectedItemAndKey();
@@ -1271,7 +1298,7 @@ function(
 	 *
 	 * @param {boolean} [bForceListSync] Force MultiComboBox to SuggestionPopover sync
 	 * @protected
-	 * @returns {sap.m.Dialog|sap.m.Popover}
+	 * @returns {sap.m.Dialog|sap.m.Popover} The picker instance
 	 */
 	MultiComboBox.prototype.syncPickerContent = function (bForceListSync) {
 		var aItems, oList,
@@ -1335,19 +1362,6 @@ function(
 		oTokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
 		this._syncInputWidth(oTokenizer);
 		this._handleNMoreAccessibility();
-	};
-
-	/**
-	 * This hook method is called before the MultiComboBox's Pop-up is rendered.
-	 *
-	 * @protected
-	 */
-	MultiComboBox.prototype.onBeforeRenderingPicker = function() {
-		var fnOnBeforeRenderingPopupType = this["_onBeforeRendering" + this.getPickerType()];
-
-		if (fnOnBeforeRenderingPopupType) {
-			fnOnBeforeRenderingPopupType.call(this);
-		}
 	};
 
 	/**
@@ -1435,7 +1449,7 @@ function(
 		oDomRef && this.getFocusDomRef().setAttribute("aria-expanded", "false");
 
 		// remove the active state of the MultiComboBox's field
-		this.toggleIconPressedStyle(false);
+		this.toggleStyleClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS, false);
 
 		// Show all items when the list will be opened next time
 		this.clearFilter();
@@ -2261,7 +2275,7 @@ function(
 		this.removeStyleClass("sapMFocus");
 
 		// reset the value state
-		if (this.getValueState() === ValueState.Error && this.getValueStateText() === this._oRbM.getText("VALUE_STATE_ERROR_ALREADY_SELECTED")) {
+		if (this.getValueState() === ValueState.Error && this.getValueStateText() === this._oRb.getText("VALUE_STATE_ERROR_ALREADY_SELECTED")) {
 			this.setValueState(this._sInitialValueState);
 			this.setValueStateText(this._sInitialValueStateText);
 		}
@@ -3226,6 +3240,7 @@ function(
 			oInput.updateDomValue(this._sOldValue);
 		} else {
 			oInput.updateDomValue("");
+			oInput.setProperty("effectiveShowClearIcon", false);
 		}
 
 		if (this._iOldCursorPos) {
@@ -3261,7 +3276,6 @@ function(
 		this.setAggregation("tokenizer", this._oTokenizer);
 		this._aInitiallySelectedItems = [];
 
-		this._oRbM = core.getLibraryResourceBundle("sap.m");
 		this._oRbC = core.getLibraryResourceBundle("sap.ui.core");
 
 		this._fillList();
@@ -3270,6 +3284,7 @@ function(
 	/**
 	 * Fires when an object gets removed from the items aggregation
 	 *
+	 * @param {sap.ui.core.Item} oItem The item to be removed
 	 * @private
 	 */
 	MultiComboBox.prototype.handleItemRemoval = function (oItem) {
@@ -3324,7 +3339,6 @@ function(
 		}
 
 		this._oRbC = null;
-		this._oRbM = null;
 		this._oListItemEnterEventDelegate = null;
 		this.oValueStateNavDelegate = null;
 
@@ -3673,7 +3687,7 @@ function(
 			}).length === ListHelpers.getSelectableItems(aItems).length;
 
 		oSelectAllCheckbox
-			.setText(this._oRbM.getText("MULTICOMBOBOX_SELECT_ALL_CHECKBOX", [aSelectedItems.length, ListHelpers.getAllSelectableItems(aItems).length]))
+			.setText(this._oRb.getText("MULTICOMBOBOX_SELECT_ALL_CHECKBOX", [aSelectedItems.length, ListHelpers.getAllSelectableItems(aItems).length]))
 			.setSelected(bSelectAll);
 	};
 
@@ -3763,6 +3777,27 @@ function(
 		}
 
 		bShow && this.createSelectAllHeaderToolbar();
+	};
+
+	/**
+	 * Handles the clear icon press.
+	 *
+	 * @param {jquery.Event} oEvent The event object
+	 * @returns {void}
+	 *
+	 * @override
+	 */
+	MultiComboBox.prototype.handleClearIconPress = function () {
+		if (!(this.getEnabled() && this.getEditable())) {
+			return;
+		}
+
+		if (this.getValue() !== "") {
+			this.setValue("");
+			this._sOldInput = "";
+
+			this.setProperty("effectiveShowClearIcon", false);
+		}
 	};
 
 	return MultiComboBox;
