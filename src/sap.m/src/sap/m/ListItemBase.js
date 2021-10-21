@@ -1273,6 +1273,7 @@ function(
 		}
 
 		this.informList("FocusIn", oEvent.srcControl);
+		oEvent.setMarked();
 
 		if (oEvent.srcControl === this) {
 			return;
@@ -1285,7 +1286,6 @@ function(
 
 		// inform the list async that this item should be focusable
 		setTimeout(oList["setItemFocusable"].bind(oList, this), 0);
-		oEvent.setMarked();
 	};
 
 	// inform the list for the vertical navigation
