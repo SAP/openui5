@@ -1,0 +1,27 @@
+/* =========================================== */
+/* CSS for control sap.m/NotificationListBase  */
+/* Horizon theme                               */
+/* =========================================== */
+
+.sapMListItems {
+	>.sapMNLI:first-of-type,
+	>.sapMNLI:first-of-type:focus::before {
+		border-top-left-radius: @sapUiElementBorderCornerRadius;
+		border-top-right-radius: @sapUiElementBorderCornerRadius;
+	}
+
+	>.sapMNLI:last-of-type,
+	>.sapMNLI:last-of-type:focus::before {
+		border-bottom-left-radius: @sapUiElementBorderCornerRadius;
+		border-bottom-right-radius: @sapUiElementBorderCornerRadius;
+	}
+}
+
+html.sap-desktop {
+	.sapMNLIB:focus::before {
+		top: 0px;
+		right: 0px;
+		bottom: 0px;
+		left: 0px;
+	}
+}
