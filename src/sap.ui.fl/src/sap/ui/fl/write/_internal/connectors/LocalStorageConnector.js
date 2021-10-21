@@ -29,7 +29,8 @@ sap.ui.define([
 			return merge({
 				isPublicLayerAvailable: true,
 				isPublicFlVariantEnabled: true,
-				isVariantAdaptationEnabled: true
+				isVariantAdaptationEnabled: true,
+				isCondensingEnabled: false
 			}, oFeatures);
 		});
 	};
