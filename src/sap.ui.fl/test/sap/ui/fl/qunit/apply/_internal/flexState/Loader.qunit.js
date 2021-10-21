@@ -165,9 +165,8 @@ sap.ui.define([
 
 				return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
 					var aChanges = oResult.changes.changes;
-					assert.equal(aChanges.length, 5, "five changes are loaded");
+					assert.equal(aChanges.length, 3, "three changes are loaded");
 					assert.equal(aChanges[0].fileName, "1", "the file name of the first change is correct - MUST BE THE SAME");
-					assert.equal(aChanges[0].cloned, undefined, "the change is not flagged as a clone");
 					assert.deepEqual(aChanges[0].selector, {
 						id: "ProductDetail--GeneralForm--generalForm",
 						idIsLocal: true
@@ -181,51 +180,28 @@ sap.ui.define([
 							idIsLocal: true
 						}]
 					}, "the dependent selector of the first change is correct");
-					assert.equal(aChanges[1].fileName, "1", "the file name of the second change is correct");
-					assert.equal(aChanges[1].cloned, true, "the change is flagged as a clone");
+					assert.equal(aChanges[1].fileName, "2", "the file name of the third change is correct");
 					assert.deepEqual(aChanges[1].selector, {
-						id: "ProductDetail--GeneralForm--generalForm",
-						idIsLocal: false
-					}, "the selector of the second change is correct");
-					assert.deepEqual(aChanges[1].dependentSelector, {
-						movedElements: [{
-							id: "ProductDetail--GeneralForm--productLabel",
-							idIsLocal: false
-						}, {
-							id: "ProductDetail--GeneralForm--productLabel2",
-							idIsLocal: false
-						}]
-					}, "the dependent selector of the second change is correct");
-					assert.equal(aChanges[2].fileName, "2", "the file name of the third change is correct");
-					assert.equal(aChanges[2].cloned, undefined, "the change is not flagged as a clone");
-					assert.deepEqual(aChanges[2].selector, {
 						id: "ProductDetail--GeneralForm--generalForm",
 						idIsLocal: true
 					}, "the selector of the third change is correct");
-					assert.deepEqual(aChanges[2].dependentSelector, {
+					assert.deepEqual(aChanges[1].dependentSelector, {
 						movedElements: [{
 							id: "ProductDetail--GeneralForm--productLabel",
 							idIsLocal: true
 						}]
 					}, "the dependent selector of the third change is correct");
-					assert.equal(aChanges[3].fileName, "3", "the file name of the forth change is correct - MUST BE THE SAME");
-					assert.equal(aChanges[3].cloned, undefined, "the change is not flagged as a clone");
-					assert.deepEqual(aChanges[3].selector, {
+					assert.equal(aChanges[2].fileName, "3", "the file name of the forth change is correct - MUST BE THE SAME");
+					assert.deepEqual(aChanges[2].selector, {
 						id: "ProductDetail--GeneralForm--generalForm",
 						idIsLocal: true
 					}, "the selector of the forth change is correct");
-					assert.deepEqual(aChanges[3].dependentSelector, {
+					assert.deepEqual(aChanges[2].dependentSelector, {
 						movedElements: [{
 							id: "ProductDetail--GeneralForm--productLabel",
 							idIsLocal: true
 						}]
 					}, "the dependent selector of the forth change is correct");
-					assert.equal(aChanges[4].fileName, "3", "the file name of the fifth change is correct");
-					assert.deepEqual(aChanges[4].selector, "ProductDetail--GeneralForm--generalForm", "the selector of the fifth change is correct");
-					assert.equal(aChanges[4].cloned, true, "the change is flagged as a clone");
-					assert.deepEqual(aChanges[4].dependentSelector, {
-						movedElements: ["ProductDetail--GeneralForm--productLabel"]
-					}, "the dependent selector of the fifth change is correct");
 				});
 			});
 		});

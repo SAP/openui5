@@ -34,7 +34,7 @@ sap.ui.define([
 		return aFlexObjects.filter(function (oFlexObject) {
 			var sFileName = oFlexObject.fileName;
 			var bObjectAlreadyAdded = aFlexObjectIds.indexOf(sFileName) !== -1;
-			if (bObjectAlreadyAdded && !oFlexObject.cloned) {
+			if (bObjectAlreadyAdded) {
 				return false;
 			}
 
