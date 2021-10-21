@@ -6,6 +6,7 @@
 @_sap_ui_layout_ResponsiveSplitter_PaginatorHeight: 2.5rem;
 @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonWidth: 2.5rem;
 @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonHeight: 2.375rem;
+@_sap_ui_layout_ResponsiveSplitter_PaginatorButtonFocusBorderRadius: unset;
 
 .sapUiResponsiveSplitter {
 	width: 100%;
@@ -52,7 +53,7 @@
 	height: @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonHeight;
 	cursor: pointer;
 	background-color: transparent;
-	border-radius: 0.25rem;
+	border-radius: @sapUiButtonBorderCornerRadius;
 	position: relative;
 
 	&::after {
@@ -77,7 +78,8 @@
 		bottom: 0;
 		right: 0;
 		left: 0;
-		border: 0.0625rem dotted @sapUiContentFocusColor;
+		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		border-radius: @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonFocusBorderRadius;
 	}
 
 	&:hover {

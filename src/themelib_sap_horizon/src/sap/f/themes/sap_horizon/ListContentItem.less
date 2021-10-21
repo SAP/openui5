@@ -1,0 +1,18 @@
+/* =========================================================== */
+/* CSS for control sap.ui.integration.controls/ListContentItem */
+/* Horizon theme                                                   */
+/* =========================================================== */
+
+@_sap_f_Card_BorderRadius: 1rem;
+
+.sapFCard {
+	&:not(.sapFCardBottomHeader) .sapMLIBFocusable:last-child:focus {
+		border-radius: 0 0 @_sap_f_Card_BorderRadius @_sap_f_Card_BorderRadius;
+	}
+
+	&.sapFCardNoHeader {
+		.sapMLIBFocusable:first-child:focus {
+			border-radius: @_sap_f_Card_BorderRadius @_sap_f_Card_BorderRadius 0 0;
+		}
+	}
+}

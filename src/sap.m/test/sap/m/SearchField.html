@@ -10,6 +10,13 @@
 	id="sap-ui-bootstrap"
 	data-sap-ui-libs="sap.m">
 </script>
+
+	<style>
+		.customPadding section {
+			padding: 0 1rem;
+		}
+	</style>
+
 <script>
 
 	var app = new sap.m.App("searchApp", {initialPage:"searchPage"});
@@ -25,6 +32,15 @@
 	function onLiveChange(event) {
 		jQuery.sap.log.debug("searchField: liveChange for: " + event.getParameter("newValue"));
 	}
+
+	var oToggleBtnCompact = new sap.m.ToggleButton("toggleCompact", {
+		text: "Compact Mode",
+		pressed: !sap.ui.Device.system.phone && jQuery("body").hasClass("sapUiSizeCompact"),
+		press: function () {
+			jQuery("body").toggleClass("sapUiSizeCompact", this.getPressed());
+			jQuery("body").toggleClass("sapUiSizeCozy", !this.getPressed());
+		}
+	});
 
 	var oDialog = new sap.m.Dialog("Dialog", {
 		title: "SearchField in a Dialog",
@@ -61,7 +77,8 @@
 					text : "To Page 2",
 					press : function() { app.to("searchPage2", "show"); }
 				})
-			]
+			],
+			contentRight: oToggleBtnCompact,
 		}),
 		subHeader: new sap.m.Bar({
 			contentMiddle: [
@@ -206,6 +223,8 @@
 		]
 	});
 
+	page.addStyleClass("customPadding");
+	page2.addStyleClass("customPadding");
 	app.addPage(page).addPage(page2).placeAt("body");
 </script>
 </head>

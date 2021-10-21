@@ -16,6 +16,11 @@
 @_sap_m_Dialog_ErrorHeaderShadow: inset 0 -0.125rem @sapUiErrorBorder;
 @_sap_m_Dialog_WarningHeaderShadow: inset 0 -0.125rem @sapUiWarningBorder;
 @_sap_m_Dialog_InformationHeaderShadow: inset 0 -0.125rem @sapHighlightColor;
+@_sap_m_Dialog_BorderRadius: 0px;
+@_sap_m_Dialog_HeaderFocusBorderBottomOffset: 3px;
+@_sap_m_Dialog_HeaderFocusBorderTopOffset: 2px;
+@_sap_m_Dialog_HeaderFocusBorderLeftOffset: 2px;
+@_sap_m_Dialog_HeaderFocusBorderRightOffset: 2px;
 
 .sapMDialog,
 .sapMMessageDialog .sapMDialogScrollCont,
@@ -390,11 +395,12 @@ html.sap-desktop .sapMDialog {
 		&::after {
 			content: '';
 			position: absolute;
-			left: 2px;
-			bottom: 3px;
-			right: 2px;
-			top: 2px;
-			border: @sapUiContentFocusWidth dotted @sapUiContentFocusColor;
+			left: @_sap_m_Dialog_HeaderFocusBorderLeftOffset;
+			bottom: @_sap_m_Dialog_HeaderFocusBorderBottomOffset;
+			right: @_sap_m_Dialog_HeaderFocusBorderRightOffset;
+			top: @_sap_m_Dialog_HeaderFocusBorderTopOffset;
+			border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+			border-radius: @_sap_m_Dialog_BorderRadius @_sap_m_Dialog_BorderRadius 0 0;
 			pointer-events: none;
 		}
 	}
