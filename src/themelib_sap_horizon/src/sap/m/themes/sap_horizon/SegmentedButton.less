@@ -31,7 +31,7 @@
 	}
 }
 
-.sapMSegB .sapMSegBBtn:hover {
+.sapMSegB .sapMSegBBtn {
 	position: relative;
 }
 
@@ -64,17 +64,17 @@ html.sap-desktop .sapMSegBBtnFocusable.sapMBtnActive:hover .sapMSegBBtnInner {
 
 /* Custom focus outline: */
 html.sap-desktop {
-	.sapMSegBBtnFocusable:focus .sapMSegBBtnInner {
-		outline: 0.125rem solid;
-		outline-offset: -0.125rem;
-		outline-color: @sapUiContentFocusColor;
+	.sapMSegBBtnFocusable:focus .sapMSegBBtnInner:after {
+		content: "";
+		position: absolute;
+		box-sizing: border-box;
+		left: 0;
+		top: 0.25rem;
+		right: 0;
+		bottom: 0.25rem;
+		pointer-events: none;
+		border: 0.125rem solid @sapUiContentFocusColor;
 		border-radius: 0.5rem;
-	}
-
-	.sapMSegBBtnFocusable.sapMSegBBtnSel:focus .sapMSegBBtnInner {
-		outline: 0.125rem solid;
-		outline-offset: -0.125rem;
-		outline-color: @sapUiContentFocusColor;
 	}
 }
 
