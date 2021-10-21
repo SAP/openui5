@@ -256,7 +256,7 @@ sap.ui.define([
 		this._oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: CalendarType.Gregorian});
 		this._oFormatLong = DateFormat.getInstance({style: "long", calendarType: sCalendarType});
 
-		this._mouseMoveProxy = jQuery.proxy(this._handleMouseMove, this);
+		this._mouseMoveProxy = this._handleMouseMove.bind(this);
 
 		this._iColumns = 7;
 
@@ -1983,36 +1983,40 @@ sap.ui.define([
 
 	function _handleAfterFocus(oControlEvent){
 
-		var iIndex = oControlEvent.getParameter("index");
-		var oEvent = oControlEvent.getParameter("event");
+		var iIndex = oControlEvent.getParameter("index"),
+			oEvent = oControlEvent.getParameter("event"),
+			oOldDate = this._getDate(),
+			oFocusedDate = new CalendarDate(oOldDate, this.getPrimaryCalendarType()),
+			bOtherMonth = false,
+			bFireFocus = true,
+			aDomRefs = this._oItemNavigation.getItemDomRefs(),
+			// find out what day was focused
+			oDomRef = aDomRefs[iIndex],
+			sDayAttribute = oDomRef.getAttribute("data-sap-day"),
+			oDomRefDay;
 
 		if (!oEvent) {
 			return; // happens if focus is set via ItemNavigation.focusItem directly
 		}
 
-		var oOldDate = this._getDate();
-		var oFocusedDate = new CalendarDate(oOldDate, this.getPrimaryCalendarType());
-		var bOtherMonth = false;
-		var bFireFocus = true;
-
-		var aDomRefs = this._oItemNavigation.getItemDomRefs();
-		var i = 0;
-
-		// find out what day was focused
-		var $DomRef = jQuery(aDomRefs[iIndex]);
-		var $DomRefDay;
 		/* eslint-disable no-lonely-if */
-		if ($DomRef.hasClass("sapUiCalItemOtherMonth")) {
+		if (oDomRef.classList.contains("sapUiCalItemOtherMonth") || oDomRef.classList.contains("sapUiCalItemDsbl")) {
 			if (oEvent.type === "saphomemodifiers" && (oEvent.metaKey || oEvent.ctrlKey)) {
 				// on ctrl+home key focus first day of month
-				oFocusedDate.setDate(1);
+				for (var i = 0; i < aDomRefs.length; ++i) {
+					oDomRefDay = aDomRefs[i];
+					if (!(oDomRefDay.classList.contains("sapUiCalItemOtherMonth") || oDomRefDay.classList.contains("sapUiCalItemDsbl"))) {
+						oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(oDomRefDay.getAttribute("data-sap-day")), this.getPrimaryCalendarType());
+						break;
+					}
+				}
 				this._focusDate(oFocusedDate);
 			} else if (oEvent.type === "sapendmodifiers" && (oEvent.metaKey || oEvent.ctrlKey)) {
 				// on ctrl+end key focus last day of month
-				for ( i = aDomRefs.length - 1; i > 0; i--) {
-					$DomRefDay = jQuery(aDomRefs[i]);
-					if (!$DomRefDay.hasClass("sapUiCalItemOtherMonth")) {
-						oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse($DomRefDay.attr("data-sap-day")), this.getPrimaryCalendarType());
+				for (var i = aDomRefs.length - 1; i > 0; --i) {
+					oDomRefDay = aDomRefs[i];
+					if (!(oDomRefDay.classList.contains("sapUiCalItemOtherMonth") || oDomRefDay.classList.contains("sapUiCalItemDsbl"))) {
+						oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(oDomRefDay.getAttribute("data-sap-day")), this.getPrimaryCalendarType());
 						break;
 					}
 				}
@@ -2020,14 +2024,15 @@ sap.ui.define([
 			} else {
 				// focus old date again, but tell parent about the new date
 				bOtherMonth = true;
-				oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse($DomRef.attr("data-sap-day")), this.getPrimaryCalendarType());
+				oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sDayAttribute), this.getPrimaryCalendarType());
 				if (!oFocusedDate) {
 					oFocusedDate = new CalendarDate(oOldDate); // e.g. year > 9999
 				}
 				this._focusDate(oOldDate);
 
 				if (oEvent.type === "mousedown" ||
-						(this._sTouchstartYyyyMMdd && oEvent.type === "focusin" && this._sTouchstartYyyyMMdd === $DomRef.attr("data-sap-day"))) {
+						(this._sTouchstartYyyyMMdd && oEvent.type === "focusin" && this._sTouchstartYyyyMMdd === sDayAttribute)
+					|| oDomRef.classList.contains("sapUiCalItemDsbl")) {
 					// don't focus date in other month via mouse -> don't switch month in calendar while selecting day
 					bFireFocus = false;
 					this.fireFocus({date: oOldDate.toLocalJSDate(), otherMonth: false, restoreOldDate: true});
@@ -2035,20 +2040,18 @@ sap.ui.define([
 
 				// on touch devices a focusin is fired asyncrounously after the touch/mouse handling on DOM element if the focus was changed in the meantime
 				// focus old date again and do not fire focus event
-				if (oEvent.originalEvent && oEvent.originalEvent.type === "touchstart") {
-					this._sTouchstartYyyyMMdd = $DomRef.attr("data-sap-day");
-				} else {
-					this._sTouchstartYyyyMMdd = undefined;
-				}
+				this._sTouchstartYyyyMMdd = oEvent.originalEvent && (oEvent.originalEvent.type === "touchstart")
+					? sDayAttribute
+					: undefined;
 			}
 		} else {
 			// day in current month focused
-			if (jQuery(oEvent.target).hasClass("sapUiCalWeekNum")) {
+			if (oEvent.target.classList.contains("sapUiCalWeekNum")) {
 				// click on week number - focus old date
 				this._focusDate(oFocusedDate);
 			} else  {
 				// not if clicked on week number
-				oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse($DomRef.attr("data-sap-day")), this.getPrimaryCalendarType());
+				oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sDayAttribute), this.getPrimaryCalendarType());
 				this._oDate = oFocusedDate;
 			}
 			this._sTouchstartYyyyMMdd = undefined;
@@ -2056,7 +2059,7 @@ sap.ui.define([
 
 		if (oEvent.type === "mousedown" && this.getIntervalSelection()) {
 			// as in the focus event the month can be changed, store the last target here
-			this._sLastTargetId = $DomRef.attr("id");
+			this._sLastTargetId = oDomRef.id;
 		}
 
 		if (bFireFocus) {
@@ -2125,12 +2128,13 @@ sap.ui.define([
 			this.setDate(oDate.toLocalJSDate());
 		}
 
-		var sYyyymmdd = this._oFormatYyyymmdd.format(oDate.toUTCJSDate(), true);
-		var aDomRefs = this._oItemNavigation.getItemDomRefs();
-		var $DomRefDay;
-		for ( var i = 0; i < aDomRefs.length; i++) {
-			$DomRefDay = jQuery(aDomRefs[i]);
-			if ($DomRefDay.attr("data-sap-day") === sYyyymmdd) {
+		var sYyyymmdd = this._oFormatYyyymmdd.format(oDate.toUTCJSDate(), true),
+			aDomRefs = this._oItemNavigation.getItemDomRefs(),
+			oDomRefDay;
+
+		for (var i = 0; i < aDomRefs.length; i++) {
+			oDomRefDay = aDomRefs[i];
+			if (oDomRefDay.getAttribute("data-sap-day") === sYyyymmdd) {
 				if (document.activeElement !== aDomRefs[i]) {
 					if (bSkipFocus || Device.system.phone) {
 						this._oItemNavigation.setFocusedIndex(i);
