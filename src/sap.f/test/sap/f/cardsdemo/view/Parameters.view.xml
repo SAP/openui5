@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.f.cardsdemo.controller.ListContent"
+	controllerName="sap.f.cardsdemo.controller.Parameters"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.f"
@@ -24,38 +24,37 @@
 			</items>
 		</SegmentedButton>
 
+		<Button
+			text="Get Walldorf Weather"
+			press=".onChangeCity"
+			class="sapUiSmallMargin">
+			<layoutData>
+				<f:GridContainerItemLayoutData columns="2" />
+			</layoutData>
+		</Button>
+
 		<f:GridContainer class="sapUiSmallMargin">
-			<w:Card id="card1" baseUrl="./" manifest="{listContentManifests>/tasksContent}">
+			<w:Card id="weatherCard" baseUrl="./" manifest="{manifests>/paramsInRequest}" parameters="{params>/weather}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="3" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card2" baseUrl="./" manifest="{listContentManifests>/listCardWithProducts}">
+			<w:Card baseUrl="./" manifest="{manifests>/paramsInManifestOnly}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="3" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card manifest="./cardsdemo/bundles/listQuickActions/manifest.json" action=".onAction">
-			<w:layoutData>
-				<f:GridContainerItemLayoutData columns="4" />
-			</w:layoutData>
+			<w:Card baseUrl="./" manifest="{manifests>/paramsListCard}" parameters="{params>/location}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="3" />
+				</w:layoutData>
 			</w:Card>
-			<w:Card id="card3" manifest="./cardsdemo/cardcontent/listContent/quickActions.json" action=".onAction">
+			<w:Card baseUrl="./" manifest="{manifests>/paramsDefaultParamFromManifest}" parameters="{params>/locationCity}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card4" manifest="./cardsdemo/bundles/list/list.attributes.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="4" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card manifest="./cardsdemo/bundles/list/list.attributes.icon.chart.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="4" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="card5" manifest="./cardsdemo/bundles/list/list.attributes.actions.json">
+			<w:Card baseUrl="./" manifest="{manifests>/paramsDefaultParamFromManifestOverwrite}" parameters="{params>/locationOverwrite}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>

@@ -2,8 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
+sap.ui.define([
+	"./BaseContentRenderer",
+	"../library"
+], function (
+	BaseContentRenderer,
+	library
+) {
 	"use strict";
+
+	var AttributesLayoutType = library.AttributesLayoutType;
 
 	/**
 	 * ListContentRenderer renderer.
@@ -46,25 +54,42 @@ sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
 
 		var bIsCompact = this.isCompact(oControl),
 			oTemplate = oConfiguration.item,
-			fItemHeight = bIsCompact ? 2 : 2.75, // list item height in "rem"
+			fItemHeight = bIsCompact ? 1 : 1.125, // title height in "rem",
+			fVerticalPadding = bIsCompact ? 1 : 1.625, // vertical padding in "rem"
 			iAttrLength;
 
-		if (oTemplate.description || oTemplate.chart) {
-			fItemHeight = 5; // list item height with description or chart in "rem"
+		if (oTemplate.icon && !oTemplate.description) {
+			fVerticalPadding = bIsCompact ? 0 : 0.75;
+			fItemHeight = 2;
 		}
 
-		if (oTemplate.description && oTemplate.chart) {
-			fItemHeight = 6; // list item height with description and chart in "rem"
+		if (oTemplate.description) {
+			fVerticalPadding = 2;
+			fItemHeight += bIsCompact ? 2 : 1.875;
 		}
 
 		if (oTemplate.attributes) {
-			iAttrLength = Math.ceil(oTemplate.attributes.length / 2);
+			fVerticalPadding = 2.25;
+			iAttrLength = oTemplate.attributes.length / 2;
+
+			if (oTemplate.attributesLayoutType === AttributesLayoutType.OneColumn) {
+				iAttrLength = oTemplate.attributes.length;
+			}
+
+			iAttrLength = Math.ceil(iAttrLength);
 			fItemHeight += iAttrLength * 1.5; // attribute row height in "rem"
 		}
 
-		if (oTemplate.actionsStrip) {
-			fItemHeight += bIsCompact ? 2.5 : 3.25; // actions strip height in "rem"
+		if (oTemplate.chart) {
+			fItemHeight += 1; // chart height in "rem"
 		}
+
+		if (oTemplate.actionsStrip) {
+			fVerticalPadding = 1;
+			fItemHeight += bIsCompact ? 3 : 3.75; // actions strip height in "rem"
+		}
+
+		fItemHeight += fVerticalPadding;
 
 		return fItemHeight;
 	};

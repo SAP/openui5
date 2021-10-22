@@ -71,7 +71,7 @@ describe("sap.f.Card", function () {
 	it("List Card", function () {
 		navigateTo("List Card");
 
-		var aCardIds = ["listTasks"];
+		var aCardIds = ["card1", "card2", "card3", "card4", "card5"];
 
 		aCardIds.forEach(function (sId) {
 			takePictureOfElement({
@@ -493,35 +493,4 @@ describe("sap.f.Card", function () {
 		navigateBack();
 	});
 
-	it("List Card With Attributes", function () {
-		navigateTo("List with Attributes");
-
-		var aCardIds = ["card1", "card2", "card3"];
-
-		aCardIds.forEach(function (sId) {
-			takePictureOfElement({
-				control: {
-					viewNamespace: "sap.f.cardsdemo.view.",
-					viewName: "ListAttributes",
-					interaction: "root",
-					id: sId
-				}
-			}, "21_List_Card_Attrs_" + sId);
-		});
-
-		switchToCompactDensity();
-
-		aCardIds.forEach(function (sId) {
-			takePictureOfElement({
-				control: {
-					viewNamespace: "sap.f.cardsdemo.view.",
-					viewName: "ListAttributes",
-					interaction: "root",
-					id: sId
-				}
-			}, "21_List_Card_Attrs_" + sId + "_Compact");
-		});
-
-		navigateBack();
-	});
 });
