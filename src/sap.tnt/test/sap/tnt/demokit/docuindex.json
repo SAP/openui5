@@ -80,8 +80,8 @@
 		"samples": [
 			{
 				"id": "sap.tnt.sample.InfoLabel",
-				"name": "InfoLabel in non-editable Form",
-				"description": "<code>InfoLabel</code> used in non-editable <code>Form</code>. Property <code>displayOnly</code> of the Control must be set to true"
+				"name": "InfoLabel",
+				"description": "<code>InfoLabel</code> with all available color schemes"
 			},
 			{
 				"id": "sap.tnt.sample.InfoLabelInTable",
