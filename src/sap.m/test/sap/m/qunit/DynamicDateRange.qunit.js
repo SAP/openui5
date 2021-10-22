@@ -553,4 +553,28 @@ sap.ui.define([
 		assert.equal(oDateFormatter.format(aResultRange[0]), "Sep 23, 2021, 12:00:00 AM", "correct start date");
 		assert.equal(oDateFormatter.format(aResultRange[1]), "Sep 24, 2021, 11:59:59 PM", "correct end date");
 	});
+
+	QUnit.test("valueHelpUITypes objects lifecycle", function(assert) {
+		// arrange
+		var oOptionLast = new StandardDynamicDateOption({ key: "LASTDAYS" }),
+			aValueHelpUITypes1, aValueHelpUITypes2;
+
+		// act
+		aValueHelpUITypes1 = oOptionLast.getValueHelpUITypes(this.ddr);
+
+		// assert
+		assert.strictEqual(aValueHelpUITypes1.length, 1, "there are UI types, describing the UI for some of the standard options");
+
+		// act
+		aValueHelpUITypes2 = oOptionLast.getValueHelpUITypes(this.ddr);
+
+		// assert
+		assert.equal(aValueHelpUITypes1[0], aValueHelpUITypes2[0], "UI types for the standard options are reused");
+
+		// act
+		oOptionLast.destroy();
+
+		// assert
+		assert.ok(aValueHelpUITypes1[0].isDestroyed(), "the UI types are destroyed with the option");
+	});
 });

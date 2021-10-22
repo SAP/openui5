@@ -132,6 +132,16 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 
 		StandardDynamicDateOption.Keys = Keys;
 
+		StandardDynamicDateOption.prototype.exit = function() {
+			if (this.aValueHelpUITypes) {
+				while (this.aValueHelpUITypes.length) {
+					this.aValueHelpUITypes.pop().destroy();
+				}
+
+				delete this.aValueHelpUITypes;
+			}
+		};
+
 		StandardDynamicDateOption.prototype.getText = function(oControl) {
 			var sKey = this.getKey();
 			var oOptions = oControl._getOptions();
@@ -169,71 +179,81 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 		StandardDynamicDateOption.prototype.getValueHelpUITypes = function(oControl) {
 			var sKey = this.getKey();
 
-			switch (sKey) {
-				case Keys.TODAY:
-				case Keys.YESTERDAY:
-				case Keys.TOMORROW:
-				case Keys.THISWEEK:
-				case Keys.THISMONTH:
-				case Keys.THISQUARTER:
-				case Keys.THISYEAR:
-				case Keys.LASTWEEK:
-				case Keys.LASTMONTH:
-				case Keys.LASTQUARTER:
-				case Keys.LASTYEAR:
-				case Keys.NEXTWEEK:
-				case Keys.NEXTMONTH:
-				case Keys.NEXTQUARTER:
-				case Keys.NEXTYEAR:
-				case Keys.YEARTODATE:
-				case Keys.QUARTER1:
-				case Keys.QUARTER2:
-				case Keys.QUARTER3:
-				case Keys.QUARTER4:
-					return [];
-				case Keys.DATE:
-				case Keys.FROM:
-				case Keys.TO:
-					return [
-						new DynamicDateValueHelpUIType({
-							type: "date"
-						})];
-				case Keys.DATERANGE:
-					return [
-						new DynamicDateValueHelpUIType({
-							type: "daterange"
-						})];
-				case Keys.SPECIFICMONTH:
-					return [
-						new DynamicDateValueHelpUIType({
-							type: "month"
-						})];
-				case Keys.LASTDAYS:
-				case Keys.LASTWEEKS:
-				case Keys.LASTMONTHS:
-				case Keys.LASTQUARTERS:
-				case Keys.LASTYEARS:
-				case Keys.NEXTDAYS:
-				case Keys.NEXTWEEKS:
-				case Keys.NEXTMONTHS:
-				case Keys.NEXTQUARTERS:
-				case Keys.NEXTYEARS:
-					return [
-						new DynamicDateValueHelpUIType({
-							text: _resourceBundle.getText("DDR_LASTNEXTX_LABEL"),
-							type: "int"
-						})];
-				case Keys.TODAYFROMTO:
-					return [
-						new DynamicDateValueHelpUIType({
-							text: _resourceBundle.getText("DDR_TODAYFROMTO_FROM_LABEL"),
-							type: "int"
-						}),
-						new DynamicDateValueHelpUIType({
-							text: _resourceBundle.getText("DDR_TODAYFROMTO_TO_LABEL"),
-							type: "int"
-						})];
+			if (!this.aValueHelpUITypes) { //the empty array is still an initialized value and can be reused
+				switch (sKey) {
+					case Keys.TODAY:
+					case Keys.YESTERDAY:
+					case Keys.TOMORROW:
+					case Keys.THISWEEK:
+					case Keys.THISMONTH:
+					case Keys.THISQUARTER:
+					case Keys.THISYEAR:
+					case Keys.LASTWEEK:
+					case Keys.LASTMONTH:
+					case Keys.LASTQUARTER:
+					case Keys.LASTYEAR:
+					case Keys.NEXTWEEK:
+					case Keys.NEXTMONTH:
+					case Keys.NEXTQUARTER:
+					case Keys.NEXTYEAR:
+					case Keys.YEARTODATE:
+					case Keys.QUARTER1:
+					case Keys.QUARTER2:
+					case Keys.QUARTER3:
+					case Keys.QUARTER4:
+						this.aValueHelpUITypes = [];
+						break;
+					case Keys.DATE:
+					case Keys.FROM:
+					case Keys.TO:
+						this.aValueHelpUITypes = [
+							new DynamicDateValueHelpUIType({
+								type: "date"
+							})];
+						break;
+					case Keys.DATERANGE:
+						this.aValueHelpUITypes = [
+							new DynamicDateValueHelpUIType({
+								type: "daterange"
+							})];
+						break;
+					case Keys.SPECIFICMONTH:
+						this.aValueHelpUITypes = [
+							new DynamicDateValueHelpUIType({
+								type: "month"
+							})];
+						break;
+					case Keys.LASTDAYS:
+					case Keys.LASTWEEKS:
+					case Keys.LASTMONTHS:
+					case Keys.LASTQUARTERS:
+					case Keys.LASTYEARS:
+					case Keys.NEXTDAYS:
+					case Keys.NEXTWEEKS:
+					case Keys.NEXTMONTHS:
+					case Keys.NEXTQUARTERS:
+					case Keys.NEXTYEARS:
+						this.aValueHelpUITypes = [
+							new DynamicDateValueHelpUIType({
+								text: _resourceBundle.getText("DDR_LASTNEXTX_LABEL"),
+								type: "int"
+							})];
+						break;
+					case Keys.TODAYFROMTO:
+						this.aValueHelpUITypes = [
+							new DynamicDateValueHelpUIType({
+								text: _resourceBundle.getText("DDR_TODAYFROMTO_FROM_LABEL"),
+								type: "int"
+							}),
+							new DynamicDateValueHelpUIType({
+								text: _resourceBundle.getText("DDR_TODAYFROMTO_TO_LABEL"),
+								type: "int"
+							})];
+						break;
+				}
 			}
+
+			return this.aValueHelpUITypes.slice(0);
 		};
 
 		/**
