@@ -39,3 +39,15 @@
 .sapMMenuBtn .sapMBtn:not(.sapMSBArrow) .sapMBtnInner.sapMBtnIconFirst:not(.sapMBtnText) .sapMBtnIcon {
 	padding-right: 0rem;
 }
+
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnReject.sapMBtnActive::after {
+	color: @sapUiButtonRejectSelectedTextColor;
+}
+
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnAttention.sapMBtnActive::after {
+	color: @sapUiButtonAttentionTextColor;
+}
+
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
+	font-size: 1rem;
+}
