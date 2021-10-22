@@ -1769,8 +1769,11 @@ function(
 
 	Input.prototype.onkeyup = function (oEvent) {
 		var sValue = this.getValue();
+		var sLastValue = this.getLastValue();
+
 		if ([KeyCodes.BACKSPACE, KeyCodes.DELETE].indexOf(oEvent.which) !== -1 && !sValue) {
 			this.setSelectedKey(null);
+			(sLastValue !== sValue) && this.setLastValue(sLastValue);
 		}
 
 		this.getShowClearIcon() && this.setProperty("effectiveShowClearIcon", !!sValue);
