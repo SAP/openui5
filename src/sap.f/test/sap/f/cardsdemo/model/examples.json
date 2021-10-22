@@ -194,15 +194,9 @@
 		"group": "Other Card Examples"
 	},
 	{
-		"title": "List Content Quick Actions",
-		"description": "List Content Quick Actions",
-		"route": "listContentActions",
-		"group": "Other Card Examples"
-	},
-	{
-		"title": "List with Attributes",
-		"description": "List with Attributes",
-		"route": "listAttributes",
+		"title": "Parameters",
+		"description": "Card Parameters",
+		"route": "parameters",
 		"group": "Other Card Examples"
 	}
 ]

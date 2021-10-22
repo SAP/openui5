@@ -242,14 +242,9 @@
 					"target": "extensionAndHost"
 				},
 				{
-					"pattern": "listContentActions",
-					"name": "listContentActions",
-					"target": "listContentActions"
-				},
-				{
-					"pattern": "listAttributes",
-					"name": "listAttributes",
-					"target": "listAttributes"
+					"pattern": "parameters",
+					"name": "parameters",
+					"target": "parameters"
 				}
 			],
 			"targets": {
@@ -428,14 +423,9 @@
 					"viewName": "ExtensionAndHost",
 					"viewLevel": 1
 				},
-				"listContentActions": {
-					"viewId": "listContentActions",
-					"viewName": "ListContentActions",
-					"viewLevel": 1
-				},
-				"listAttributes": {
-					"viewId": "listAttributes",
-					"viewName": "ListAttributes",
+				"parameters": {
+					"viewId": "parameters",
+					"viewName": "Parameters",
 					"viewLevel": 1
 				}
 			}
