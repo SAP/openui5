@@ -2929,10 +2929,13 @@ sap.ui.define([
 	 *   separate row after all children, when a group level node is expanded (since 1.86.0);
 	 *   <code>true</code> for bottom only, <code>false</code> for top and bottom, the default is
 	 *   top only (that is, as part of the group level node)
-	 * @throws {Error}
-	 *   If the given data aggregation object is unsupported, if the system query option
-	 *   <code>$apply</code> has been specified explicitly before, or if there are pending changes
-	 *
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> the given data aggregation object is unsupported,
+	 *     <li> the <code>$apply</code> system query option has been specified explicitly before,
+	 *     <li> the binding has a kept-alive context,
+	 *     <li> there are pending changes
+	 *   </ul>
 	 * @example <caption>First group level is product category including subtotals for the net
 	 *     amount in display currency. On leaf level, transaction currency is used as an additional
 	 *     dimension and the net amount is averaged.</caption>
@@ -2958,8 +2961,19 @@ sap.ui.define([
 	ODataListBinding.prototype.setAggregation = function (oAggregation) {
 		var mParameters;
 
+		function hasKeptAliveContext(aContexts) {
+			return aContexts.some(function (oContext) {
+				return oContext && oContext.isKeepAlive();
+			});
+		}
+
 		if (this.hasPendingChanges()) {
 			throw new Error("Cannot set $$aggregation due to pending changes");
+		}
+		// Note: when called from the constructor aContexts is set later
+		if (this.aContexts && hasKeptAliveContext(this.aContexts)
+				|| hasKeptAliveContext(Object.values(this.mPreviousContextsByPath))) {
+			throw new Error("Cannot set $$aggregation due to a kept-alive context");
 		}
 
 		mParameters = Object.assign({}, this.mParameters);

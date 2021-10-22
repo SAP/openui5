@@ -20073,6 +20073,13 @@ sap.ui.define([
 				});
 			}, new Error("Cannot combine $$aggregation and $apply"));
 
+			assert.throws(function () {
+				// code under test
+				oListBinding.changeParameters({
+					$$aggregation : {}
+				});
+			}, new Error("Unsupported parameter: $$aggregation"));
+
 			return that.waitForChanges(assert);
 		}).then(function () {
 			// code under test (Note: no request!)
@@ -32889,11 +32896,13 @@ sap.ui.define([
 	// 2. Select a sales order and see that late properties are requested. Keep its context alive.
 	// 3. Filter the list, so that the context drops out of it. Check that the context is still
 	//    alive and has its data.
+	//    BCP: 2170211215 Check that #setAggregation is throwing an error (mPreviousContextsByPath)
 	// 4. Modify a property. See that the list has pending changes.
 	// 5. Reset the list's pending changes.
 	// 6. Delete the filter. Expect no request for the late properties.
 	// 7. Filter the list, so that the context remains. Give the sales order a new ETag. See that
 	//    the late properties are requested again.
+	// 8. BCP: 2170211215 Check that #setAggregation is throwing an error (aContexts)
 	// JIRA: CPOUI5ODATAV4-340
 	QUnit.test("CPOUI5ODATAV4-340: Context#setKeepAlive", function (assert) {
 		var oKeptContext,
@@ -32936,6 +32945,10 @@ sap.ui.define([
 				);
 
 			oTableBinding.filter(new Filter("SalesOrderID", FilterOperator.NE, "1"));
+
+			assert.throws(function () {
+				oTableBinding.setAggregation({});
+			}, new Error("Cannot set $$aggregation due to a kept-alive context"));
 
 			return that.waitForChanges(assert, "(3)");
 		}).then(function () {
@@ -32987,6 +33000,10 @@ sap.ui.define([
 			oTableBinding.filter(new Filter("SalesOrderID", FilterOperator.EQ, "1"));
 
 			return that.waitForChanges(assert, "(7)");
+		}).then(function () {
+			assert.throws(function () {
+				oTableBinding.setAggregation({});
+			}, new Error("Cannot set $$aggregation due to a kept-alive context"));
 		});
 	});
 
