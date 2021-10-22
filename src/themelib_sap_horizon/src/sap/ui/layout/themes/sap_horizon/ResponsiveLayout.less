@@ -3,12 +3,10 @@
 /* Horizon theme                                   */
 /* =============================================== */
 
-.sapUiFormResLayout.sapUiFormBackgrTranslucent > div {
-	background-color: fade(@sapUiGroupContentBackground, @sapUiTranslucentBGOpacity);
-}
-
-.sapUiFormResLayout.sapUiFormBackgrSolid > div {
+.sapUiFormResLayout.sapUiFormBackgrSolid,
+.sapUiFormResLayout.sapUiFormBackgrTranslucent {
 	background-color: @sapUiGroupContentBackground;
+	border-radius: @sapUiElementBorderCornerRadius;
 }
 
 .sapUiRLContainer > .sapUiFormTitle > .sapUiBtn {
