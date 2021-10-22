@@ -24,6 +24,7 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/Utils",
+	"sap/ui/layout/form/SimpleFormLayout",
 	// needs to be preloaded for the test to work
 	"sap/ui/layout/form/ResponsiveGridLayout"
 ],
@@ -47,7 +48,8 @@ function(
 	Filter,
 	FilterOperator,
 	JSONModel,
-	RtaUtils
+	RtaUtils,
+	SimpleFormLayout
 ) {
 	"use strict";
 
@@ -219,7 +221,7 @@ function(
 	function _createSimpleForm() {
 		oSimpleForm = new SimpleForm({
 			editable: true,
-			layout: "ResponsiveGridLayout",
+			layout: SimpleFormLayout.ResponsiveGridLayout,
 			labelSpanXL: 4,
 			labelSpanL: 4,
 			labelSpanM: 4,
@@ -282,7 +284,7 @@ function(
 
 			// initialize dialog and create member variables.
 			this.setTitle(oResources.getText("CREATE_APP_VARIANT_DIALOG_TITLE"));
-			this.setContentWidth("700px");
+			this.setContentWidth("860px");
 			this.setContentHeight("250px");
 
 			oCustomTileModel = new JSONModel({
