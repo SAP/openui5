@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/type/Double",
-	"sap/ui/comp/odata/type/FiscalDate",
 	"sap/ui/model/odata/type/Single",
 	"sap/ui/model/odata/type/Guid",
 	"sap/ui/model/odata/type/Int16",
@@ -18,7 +17,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/type/Time",
 	"sap/ui/model/odata/type/TimeOfDay"
-], function(Core, Util, ThemeParameters, BooleanType, Byte, DateType, DateTime, Decimal, Double, FiscalDate, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay) {
+], function(Core, Util, ThemeParameters, BooleanType, Byte, DateType, DateTime, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay) {
 	"use strict";
 	/* global QUnit,sinon */
 
@@ -115,10 +114,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("calcTypeWidth - Other", function(assert) {
-		assert.equal(Util.calcTypeWidth(new FiscalDate(null, {maxLength: 10}, {
-			anotationType: "com.sap.vocabularies.Common.v1.IsFiscalYearPeriod"
-		})), Util.measureText("A".repeat(10)));
-		assert.equal(Util.calcTypeWidth(new Guid()), 8);
+		var done = assert.async();
+
+		sap.ui.require(["sap/ui/comp/odata/type/FiscalDate"], function(FiscalDate) {
+			assert.equal(Util.calcTypeWidth(new FiscalDate(null, {maxLength: 10}, {
+				anotationType: "com.sap.vocabularies.Common.v1.IsFiscalYearPeriod"
+			})), Util.measureText("A".repeat(10)));
+			assert.equal(Util.calcTypeWidth(new Guid()), 8);
+			done();
+		}, function(oError) {
+			assert.ok(oError.message, "Test Skipped");
+			done();
+		});
 	});
 
 	QUnit.test("calcHeaderWidth", function(assert) {
