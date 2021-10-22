@@ -1029,7 +1029,7 @@ sap.ui.define([
 
 
 	/**
-	 * Returns the target EntityType for NavgigationProperty-name of another given Entytype object. The target is
+	 * Returns the target EntityType for the NavigationProperty of a given EntityType object. The target is
 	 * defined as the toRole of the navigationproperty; this method looks up the corresponding matching End in the
 	 * corresponding Association and returns the matching entityType
 	 * @see sap.ui.model.odata.ODataMetadata#_getEntityTypeByNavPropertyObject
@@ -1056,7 +1056,7 @@ sap.ui.define([
 
 
 	/**
-	 * Returns the target EntityType for a given NavgigationProperty object. The target is defined as the toRole of
+	 * Returns the target EntityType for a given NavigationProperty object. The target is defined as the toRole of
 	 * the navigationproperty; this method looks up the corresponding matching End in the corresponding Association
 	 * and returns the matching entityType
 	 *
@@ -1406,7 +1406,7 @@ sap.ui.define([
 	 * Returns the first EntitySet from all EntityContainers that matches the namespace and name of the given EntityType
 	 *
 	 * @param {map} mEntityType - The EntityType object
-	 * @return {map|null} Retuns the EntitySet object or null if not found
+	 * @return {map|null} Returns the EntitySet object or null if not found
 	 */
 	ODataMetadata.prototype._getEntitySetByType = function(mEntityType) {
 		var sEntityType = mEntityType.namespace + "." + mEntityType.name;
@@ -1472,7 +1472,7 @@ sap.ui.define([
 	 * Returns the first AssociationSet from all EntityContainers that matches the association name
 	 *
 	 * @param {string} sAssociation The full qualified association name
-	 * @return {map|null} Retuns the AssocationSet object or null if not found
+	 * @return {map|null} Returns the AssociationSet object or null if not found
 	 */
 	ODataMetadata.prototype._getAssociationSetByAssociation = function(sAssociation) {
 		var aSchema = this.oMetadata.dataServices.schema;
