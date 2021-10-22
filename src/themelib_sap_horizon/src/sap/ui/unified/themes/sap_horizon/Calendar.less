@@ -425,10 +425,18 @@ html.sap-desktop .sapUiCalItemSelBetween:focus:not(:hover){
 	line-height: 3rem;
 }
 
+.sapUiCalMonthSecType .sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemSecText {
+	color: @sapUiContentSelectedTextColor;
+}
+
 /*** compact mode (desktop size) ***/
 
-.sapUiSizeCompact .sapUiCalItemNow:not(.sapUiCalItemSelBetween) > .sapUiCalItemText{
-	line-height: 1.75rem;
+.sapUiSizeCompact .sapUiCalItemNow:not(.sapUiCalItemSelBetween) > .sapUiCalItemText {
+	line-height: 1.95rem;
+}
+
+.sapUiSizeCompact .sapUiCalMonthPicker .sapUiCalItem.sapUiCalItemSel {
+	line-height: 2rem;
 }
 
 .sapUiSizeCompact {
