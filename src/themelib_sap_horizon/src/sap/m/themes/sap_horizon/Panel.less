@@ -50,3 +50,13 @@
 .sapUiSizeCompact .sapMPanelWrappingDiv .sapUiIcon {
 	width: 2rem;
 }
+
+.sapMPanel.sapMPanelExpandable .sapMPanelWrappingDivTb .sapMTB.sapMPanelHeaderTB {
+	border-top-left-radius: 0;
+	margin-left: 2.25rem;
+	padding-left: 0.25rem;
+}
+
+.sapMPanel.sapMPanelExpandable .sapMPanelWrappingDivTb:not(.sapMPanelWrappingDivTbExpanded) .sapMPanelHeaderTB {
+	border-bottom-right-radius: @sapElement_BorderCornerRadius;
+}
