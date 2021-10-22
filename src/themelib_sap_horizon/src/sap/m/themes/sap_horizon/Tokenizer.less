@@ -42,28 +42,34 @@ html.sap-desktop .sapMTokenizer:focus {
 /* ------------------------------ */
 
 .sapMTokenizer.sapMTokenizerDisabled .sapMToken  {
-  &.sapMToken:hover,
-  &.sapMToken:focus,
-  &.sapMTokenSelected {
-    background: darken(@sapUiButtonBackground, 2);
-    cursor: default;
-    color: @sapUiBaseText;
-    outline: none;
-    border: 1px solid darken(@sapUiButtonBackground, 24);
-  }
+	&:hover,
+	&:focus,
+	&.sapMTokenSelected,
+	&.sapMTokenSelected:focus,
+	&.sapMTokenSelected:hover,
+	&:not(.sapMTokenSelected):not(:focus):hover {
+		background: @sapButton_TokenBackground;
+		cursor: default;
+		color: @sapUiBaseText;
+		outline: none;
+		border: 1px solid @sapButton_TokenBorderColor;
+		border-radius: @sapButton_BorderCornerRadius;
+		box-shadow: none;
+	}
 
-  &.sapMTokenSelected .sapMTokenText {
-    color: @sapUiBaseText;
-  }
+	.sapMTokenText,
+	.sapMTokenIcon {
+		color: @sapUiBaseText;
+	}
 
-  &.sapMTokenSelected .sapMTokenIcon {
-    color: @sapUiContentIconColor;
-    cursor: default;
-  }
+	.sapMTokenIcon {
+		cursor: default;
+	}
 
-  & .sapMTokenIcon {
-    cursor: default;
-  }
+}
+
+.sapMTokenizer.sapMTokenizerDisabled .sapMTokenizerIndicator {
+	cursor: default;
 }
 
 .sapMTokenizer.sapMTokenizerReadonly .sapMTokenizerIndicator,
