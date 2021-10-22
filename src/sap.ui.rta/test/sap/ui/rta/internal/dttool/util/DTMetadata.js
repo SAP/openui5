@@ -170,9 +170,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Loads the elements design time data
-	 */
 	DTMetadata.loadElement = function(sName) {
 		var that = this;
 		var oPromise = new Promise(function(resolve) {

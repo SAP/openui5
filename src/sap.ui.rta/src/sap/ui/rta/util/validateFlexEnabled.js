@@ -23,6 +23,10 @@ sap.ui.define([
 ) {
 	"use strict";
 	return function (oRta) {
+		var mMessageBoxShow = {};
+		var aPendingOverlaysToValidate = [];
+		var oComponent = FlUtils.getAppComponentForControl(oRta.getRootControlInstance());
+
 		function _displayMessage(oRta, oComponent, sText, sIconType, sTitle) {
 			var sComponentId = oComponent.getId();
 			if (!mMessageBoxShow[sComponentId]) {
@@ -101,10 +105,6 @@ sap.ui.define([
 				_displayMessage(oRta, oComponent, "MSG_UNSTABLE_ID_FOUND", "ERROR", "HEADER_ERROR");
 			}
 		}
-
-		var mMessageBoxShow = {};
-		var aPendingOverlaysToValidate = [];
-		var oComponent = FlUtils.getAppComponentForControl(oRta.getRootControlInstance());
 
 		oRta.attachEventOnce("stop", function () {
 			_setMessageBoxShow(oComponent.getId(), false);

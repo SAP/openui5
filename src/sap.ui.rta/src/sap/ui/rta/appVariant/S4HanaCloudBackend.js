@@ -141,7 +141,8 @@ sap.ui.define([
 	/**
 	 * Polls the OData model to check catalog publishing status of the given IAM app ID.
 	 *
-	 * @param  {string} sIamAppId Identity Access Management ID of SAP Fiori app
+	 * @param {string} sIamAppId - Identity Access Management ID of SAP Fiori app
+	 * @param {boolean} bAppVarCreation - Indicates if it's a creation scenario
 	 * @return {Promise<boolean>} Promise delivering a boolean value
 	 * @async
 	 */

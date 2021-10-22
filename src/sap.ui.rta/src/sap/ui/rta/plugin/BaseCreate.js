@@ -198,7 +198,7 @@ sap.ui.define([
 
 	/**
 	 * Handles the creation.
-	 * @param {boolean} bSibing - Create as a sibling
+	 * @param {boolean} bSibling - Create as a sibling
 	 * @param {sap.ui.dt.Overlay} oOverlay - Reference overlay for creation
 	 * @abstract
 	 */

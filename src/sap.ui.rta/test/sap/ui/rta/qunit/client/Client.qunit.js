@@ -51,6 +51,7 @@ function (
 	}, function () {
 		QUnit.test("creating an instance without window parameter", function (assert) {
 			assert.throws(function () {
+				// eslint-disable-next-line no-new
 				new RTAClient({
 					origin: "http://example.com"
 				});
@@ -58,6 +59,7 @@ function (
 		});
 		QUnit.test("creating an instance with invalid window parameter (incorrect window instance)", function (assert) {
 			assert.throws(function () {
+				// eslint-disable-next-line no-new
 				new RTAClient({
 					window: window,
 					origin: "http://example.com"
@@ -66,12 +68,14 @@ function (
 		});
 		QUnit.test("creating an instance with invalid window parameter (nil case)", function (assert) {
 			assert.throws(function () {
+				// eslint-disable-next-line no-new
 				new RTAClient({
 					window: null,
 					origin: "http://example.com"
 				});
 			});
 			assert.throws(function () {
+				// eslint-disable-next-line no-new
 				new RTAClient({
 					window: undefined,
 					origin: "http://example.com"
@@ -81,6 +85,7 @@ function (
 		QUnit.test("creating an instance without origin parameter", function (assert) {
 			return createIframe().then(function (oIframe) {
 				assert.throws(function () {
+					// eslint-disable-next-line no-new
 					new RTAClient({
 						window: oIframe.contentWindow
 					});
@@ -90,6 +95,7 @@ function (
 		QUnit.test("creating an instance with invalid origin parameter (non a string)", function (assert) {
 			return createIframe().then(function (oIframe) {
 				assert.throws(function () {
+					// eslint-disable-next-line no-new
 					new RTAClient({
 						window: oIframe.contentWindow,
 						origin: {}
@@ -100,12 +106,14 @@ function (
 		QUnit.test("creating an instance with invalid origin parameter (nil case)", function (assert) {
 			return createIframe().then(function (oIframe) {
 				assert.throws(function () {
+					// eslint-disable-next-line no-new
 					new RTAClient({
 						window: oIframe.contentWindow,
 						origin: null
 					});
 				});
 				assert.throws(function () {
+					// eslint-disable-next-line no-new
 					new RTAClient({
 						window: oIframe.contentWindow,
 						origin: undefined
@@ -116,6 +124,7 @@ function (
 		QUnit.test("creating an instance with invalid origin parameter (invalid string)", function (assert) {
 			return createIframe().then(function (oIframe) {
 				assert.throws(function () {
+					// eslint-disable-next-line no-new
 					new RTAClient({
 						window: oIframe.contentWindow,
 						origin: 'example.com'

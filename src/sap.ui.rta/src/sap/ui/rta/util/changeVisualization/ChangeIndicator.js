@@ -39,7 +39,6 @@ sap.ui.define([
 	 * @since 1.84.0
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted
 	 */
 	var ChangeIndicator = Control.extend("sap.ui.rta.util.changeVisualization.ChangeIndicator", {
 		metadata: {

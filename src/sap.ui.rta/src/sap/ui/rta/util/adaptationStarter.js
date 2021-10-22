@@ -36,7 +36,7 @@ sap.ui.define([
 	 * Starter util for UI adaptation.
 	 * With this API you are also able to modify the UI adaptation plugins list and or add some event handler functions to be called on start, failed and stop events.
 	 * @param {object} mOptions - Object with properties
-	 * @param {sap.ui.core.Element|sap.ui.core.UIComponent} mOptions.rootControl - Control instance from where UI adaptation should be started
+	 * @param {sap.ui.core.Control|sap.ui.core.UIComponent} mOptions.rootControl - Control instance to get the AppComponent. This then is used to start UI adaptation.
 	 * @param {function} [loadPlugins] - Callback function that enables the modification of the default plugin list of UI adaptation. UI adaptation is passed to this function and it should return a promise
 	 * @param {function} [onStart] - Event handler function called on start event
 	 * @param {function} [onFailed] - Event handler function called on failed event

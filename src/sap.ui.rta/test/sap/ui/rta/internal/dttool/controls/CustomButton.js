@@ -2,7 +2,6 @@
  * ! ${copyright}
  */
 // Provides control sap.ui.rta.internal.dttool.controls.CustomButton.
-/* globals sap */
 sap.ui.define([
 	"sap/m/Button",
 	"sap/m/ButtonRenderer"

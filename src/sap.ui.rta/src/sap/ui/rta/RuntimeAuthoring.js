@@ -31,7 +31,6 @@ sap.ui.define([
 	"sap/ui/rta/util/PopupManager",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/dt/DOMUtil",
-	"sap/ui/rta/util/StylesLoader",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/Device",
 	"sap/ui/rta/service/index",
@@ -45,8 +44,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/util/validateFlexEnabled",
 	"sap/ui/rta/util/changeVisualization/ChangeVisualization"
-],
-function(
+], function(
 	jQuery,
 	ManagedObject,
 	FioriToolbar,
@@ -74,7 +72,6 @@ function(
 	PopupManager,
 	BusyIndicator,
 	DOMUtil,
-	StylesLoader,
 	RtaAppVariantFeature,
 	Device,
 	ServicesIndex,
@@ -650,6 +647,7 @@ function(
 
 	/**
 	 * adapt the enablement of undo/redo/reset/transport button
+	 * @returns {Promise} Resolves as soon as the MessageBox is closed
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._onStackModified = function() {

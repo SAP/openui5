@@ -43,7 +43,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @private
 	 * @ui5-restricted
-	*/
+	 */
 
 	/**
 	 * Object containing an outline of available nodes.

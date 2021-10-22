@@ -80,9 +80,6 @@ sap.ui.define([
 			}
 		},
 
-		/**
-		 * Called when the iFrame is ready to receive messages
-		 */
 		onIFrameReady: function (oPayload) {
 			this.bIFrameReady = true;
 

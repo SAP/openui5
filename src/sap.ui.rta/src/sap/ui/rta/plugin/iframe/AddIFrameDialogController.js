@@ -223,11 +223,6 @@ sap.ui.define([
 			return this._mSettings;
 		},
 
-		/**
-		 * Verify that there is no error value state
-		 *
-		 * @private
-		 */
 		_areAllValueStateNones: function() {
 			var oData = this._oJSONModel.getData();
 			return _aTextInputFields.concat(_aNumericInputFields).every(function (sFieldName) {
@@ -235,11 +230,6 @@ sap.ui.define([
 			}, this);
 		},
 
-		/**
-		 * Verify that there is no empty input string
-		 *
-		 * @private
-		 */
 		_areAllTextFieldsValid: function() {
 			var oJSONModel = this._oJSONModel;
 			return _aTextInputFields.reduce(function(bAllValid, sFieldName) {
@@ -255,11 +245,6 @@ sap.ui.define([
 			}, true);
 		},
 
-		/**
-		 * Build the returned settings
-		 *
-		 * @private
-		 */
 		_buildReturnedSettings: function() {
 			var mSettings = {};
 			var oData = this._oJSONModel.getData();
@@ -314,7 +299,7 @@ sap.ui.define([
 		 */
 		_setFocusOnInvalidInput: function() {
 			var oData = this._oJSONModel.getData();
-			return _aNumericInputFields.some(function(sFieldName) {
+			_aNumericInputFields.some(function(sFieldName) {
 				if (oData[sFieldName]["valueState"] === ValueState.Error) {
 					var oElement = sap.ui.getCore().byId(oData[sFieldName]["id"]);
 					oElement.focus();

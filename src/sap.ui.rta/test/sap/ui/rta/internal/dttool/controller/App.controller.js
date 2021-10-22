@@ -135,9 +135,6 @@ sap.ui.define([
 			}
 		},
 
-		/**
-		 * Called when the iFrame is ready to receive Messages
-		 */
 		onIFrameReady: function (oPayload) {
 			if (this.oRTAClient) {
 				this.oRTAClient.destroy();

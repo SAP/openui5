@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-/* global Map */
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/m/InstanceManager",
@@ -241,7 +240,7 @@ sap.ui.define([
 
 	/**
 	 * Apply focus events to all open popups and set focus on the first.
-	 * @param {function} fnFocusEvent Function to apply to open popups
+	 * @param {function} fnEvent - Function to apply to open popups
 	 * @private
 	 */
 	PopupManager.prototype._applyPatchesToOpenPopups = function(fnEvent) {
@@ -254,7 +253,7 @@ sap.ui.define([
 
 	/**
 	 * Remove focus events from all open popups.
-	 * @param {function} fnFocusEvent Function to apply to open popups
+	 * @param {function} fnEvent - Function to apply to open popups
 	 * @private
 	 */
 	PopupManager.prototype._removePatchesToOpenPopups = function(fnEvent) {
@@ -335,13 +334,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Applies the passed function to the relevant open popups.
-	 *
-	 * @param {function} fnPopupMethod specifies function to be applied
-	 * @param {boolean} bFocus Set to true if the popup is in focus
-	 * @private
-	 */
 	PopupManager.prototype._applyPopupAttributes = function(mPropertyBag) {
 		//check if popups are open
 		var oRelevantPopups = this.getCategorizedOpenPopups();

@@ -20,9 +20,9 @@ sap.ui.define([
 	 * @alias module:sap/ui/rta/api/startKeyUserAdaptation
 	 *
 	 * @param {object} mPropertyBag - Object with properties
-	 * @param {sap.ui.core.Element|sap.ui.core.UIComponent} mPropertyBag.rootControl - Control instance from where key user adaptation should be started
+	 * @param {sap.ui.core.Control|sap.ui.core.UIComponent} mPropertyBag.rootControl - Control instance to get the AppComponent. This then is used to start UI adaptation.
 	 *
-	 * @returns {Promise} Resolves when adaptation was successfully started
+	 * @returns {Promise} Resolves when UI adaptation was successfully started
 	 * @public
 	 */
 	function startKeyUserAdaptation(mPropertyBag) {

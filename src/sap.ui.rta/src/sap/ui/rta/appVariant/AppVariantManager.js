@@ -44,10 +44,6 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * Opens the 'Save As' dialog.
-	 * @private
-	 */
 	AppVariantManager.prototype._openDialog = function(fnCreate, fnCancel) {
 		var oDialog = new AppVariantDialog("appVariantDialog");
 
@@ -136,6 +132,7 @@ sap.ui.define([
 
 	/**
 	 * @param {String} sAppVariantId - Application variant ID
+	 * @param {sap.ui.fl.Selector} vSelector - Selector
 	 * @returns {Promise} Resolved promise
 	 * @description Creates the app variant with all inline changes in backend.
 	 */
@@ -187,6 +184,7 @@ sap.ui.define([
 
 	/**
 	 * Dirty changes get taken over by the app variant.
+	 * @returns {Promise} Resolves as soon as the command stack is cleared
 	 * @private
 	 */
 	AppVariantManager.prototype._clearRTACommandStack = function() {
@@ -229,7 +227,7 @@ sap.ui.define([
 	/**
 	 *
 	 * @param {String} sIamId - Identity Access Management ID of SAP Fiori app
-	 * @param {String} sAppVariantId - Application variant ID
+	 * @param {String} sAppVarId - Application variant ID
 	 * @param {Boolean} bCreation - Indicates that app is being created
 	 * @returns {Promise} Resolved promise
 	 * @description When the app variant creation/deletion and catalog assignment/unassignment are executed successfully, this asynchronous process gets triggered. It talks to the server every 2.5 secs.

@@ -309,19 +309,10 @@ sap.ui.define([
 			});
 		},
 
-		/**
-		 * @param {sap.ui.base.Event} oEvent - event object
-		 * @private
-		 */
 		_onEditableFieldBlur: function () {
 			return RenameHandler._handlePostRename.call(this, false);
 		},
 
-		/**
-		 * Handles events after rename has been performed
-		 * @param {boolean} bRestoreFocus - to restore focus to overlay after rename completes
-		 * @private
-		 */
 		_handlePostRename: function (bRestoreFocus, oEvent) {
 			if (!this._bBlurOrKeyDownStarted) {
 				this._oEditedOverlay.removeStyleClass(RenameHandler.errorStyleClass);
@@ -397,10 +388,6 @@ sap.ui.define([
 			}
 		},
 
-		/**
-		 * @param {sap.ui.base.Event} oEvent - event object
-		 * @private
-		 */
 		_onEditableFieldKeydown: function (oEvent) {
 			switch (oEvent.keyCode) {
 				case KeyCodes.ENTER:
