@@ -198,9 +198,9 @@
 	line-height: 0.875rem;
 }
 
-.sapMInputBaseReadonly .sapMInputBaseInner,
-.sapMInputBaseReadonly.sapMInputBase:not(.sapMInputBaseHasEndIcons):not(.sapMInputBaseHasBeginIcons) .sapMInputBaseInner,
-.sapMInputBaseReadonly.sapMInputBaseNoWidth .sapMInputBaseInner {
+.sapMInputBaseReadonly:not(.sapMTextArea) .sapMInputBaseInner,
+.sapMInputBaseReadonly.sapMInputBase:not(.sapMTextArea):not(.sapMInputBaseHasEndIcons):not(.sapMInputBaseHasBeginIcons) .sapMInputBaseInner,
+.sapMInputBaseReadonly.sapMInputBaseNoWidth:not(.sapMTextArea) .sapMInputBaseInner {
 	width: ~"calc(100% - 1.625rem)";
 }
 
