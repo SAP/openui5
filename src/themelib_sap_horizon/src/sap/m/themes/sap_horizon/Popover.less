@@ -3,6 +3,21 @@
 /* Horizon theme                  */
 /* ============================== */
 
+.sapMPopover {
+	border-radius: @sapUiElementBorderCornerRadius;
+
+	&.sapMPopoverWithoutBar .sapMPopoverCont,
+	.sapMIBar.sapMHeader-CTX {
+		border-top-right-radius: 0.75rem;
+		border-top-left-radius: 0.75rem;
+	}
+
+	&.sapMPopoverWithoutFooter .sapMPopoverCont,
+	.sapMIBar.sapMFooter-CTX {
+		border-bottom-right-radius: 0.75rem;
+		border-bottom-left-radius: 0.75rem;
+	}
+}
 
 .sapMPopoverArr:after {
 	background: @sapUiGroupContentBackground;
