@@ -1,0 +1,14 @@
+.sapMMultiComboBoxPicker .sapMValueStateHeaderRoot.sapMFocusable:focus {
+	outline: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
+}
+
+.sapMMultiComboBoxPicker.sapMSuggestionsPopoverNoneState .sapMList li[data-sap-ui-first-suggestion-item]:focus,
+.sapMMultiComboBoxPicker .sapMValueStateHeaderRoot:focus {
+	border-top-left-radius:  @sapUiElementBorderCornerRadius;
+	border-top-right-radius:  @sapUiElementBorderCornerRadius;
+}
+
+.sapMMultiComboBoxPicker li[data-sap-ui-last-suggestion-item]:focus {
+	border-bottom-left-radius: @sapUiElementBorderCornerRadius;
+	border-bottom-right-radius: @sapUiElementBorderCornerRadius;
+}
