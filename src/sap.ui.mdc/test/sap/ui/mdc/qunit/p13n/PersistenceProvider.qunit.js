@@ -38,11 +38,11 @@ sap.ui.define([
     QUnit.test("PersistenceProvider is placed in the static area", function(assert){
         var aStaticAreaContent = sap.ui.getCore().getUIArea(sap.ui.getCore().getStaticAreaRef()).getContent();
 
-        assert.ok(aStaticAreaContent[0].isA("sap.ui.fl.variants.VariantManagement"), "VM has been placed in the static area");
+        assert.ok(aStaticAreaContent[0].getContent()[0].isA("sap.ui.fl.variants.VariantManagement"), "VM has been placed in the static area");
     });
 
     QUnit.test("PersistenceProvider created an inner fl.VariantManagement", function(assert){
-        assert.ok(this.oPP._oVM, "VM created");
+        assert.ok(sap.ui.getCore().byId(this.oPP.getId() + "--vm"), "VM created");
     });
 
     QUnit.test("inner VM cleanup", function(assert){

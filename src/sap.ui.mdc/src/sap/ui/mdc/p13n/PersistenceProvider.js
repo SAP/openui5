@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Control", 	"sap/ui/fl/variants/VariantManagement", "sap/ui/fl/Utils", "sap/ui/mdc/enum/PersistenceMode"
-], function(CoreControl, VariantManagement, Utils, mode) {
+	"sap/ui/core/Control", 	"sap/ui/fl/variants/VariantManagement", "sap/ui/fl/Utils", "sap/ui/mdc/enum/PersistenceMode", "sap/ui/layout/VerticalLayout"
+], function(CoreControl, VariantManagement, Utils, mode, VerticalLayout) {
 	"use strict";
 
 	/**
@@ -76,12 +76,21 @@ sap.ui.define([
 		this._bmodeLocked = true;
 
 		if (this.getMode() === mode.Transient) {
-			this._oVM = new VariantManagement(this.getId() + "--vm", {"for": this.getAssociation("for")});
+			var oVM = new VariantManagement(this.getId() + "--vm", {"for": this.getAssociation("for")});
 			this._oModelPromise.then(function (oModel) {
-				this._oVM.setModel(oModel, Utils.VARIANT_MODEL_NAME);
-			}.bind(this));
+				oVM.setModel(oModel, Utils.VARIANT_MODEL_NAME);
+			});
+			this._oWrapper = new VerticalLayout(this.getId() + "--accWrapper", {
+				content: [
+					oVM
+				],
+				onAfterRendering: function(oEvt) {
+					oEvt.getSource().getDomRef().setAttribute("aria-hidden", true);
+				}
+			});
+
 			var oStatic = sap.ui.getCore().getUIArea(sap.ui.getCore().getStaticAreaRef());
-			oStatic.addContent(this._oVM);
+			oStatic.addContent(this._oWrapper);
 		}
 
 		return this;
@@ -107,12 +116,12 @@ sap.ui.define([
 	};
 
 	PersistenceProvider.prototype.exit = function () {
-		if (this._oVM) {
+		if (this._oWrapper) {
 			var oStatic = sap.ui.getCore().getUIArea(sap.ui.getCore().getStaticAreaRef());
-			oStatic.removeContent(this._oVM);
+			oStatic.removeContent(this._oWrapper);
 
-			this._oVM.destroy();
-			this._oVM = null;
+			this._oWrapper.destroy();
+			this._oWrapper = null;
 		}
 
 		this._oModelPromise = null;
