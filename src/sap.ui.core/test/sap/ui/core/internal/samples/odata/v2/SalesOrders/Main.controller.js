@@ -151,6 +151,7 @@ sap.ui.define([
 			}, function (oError) {
 				MessageToast.show("Deleted transient sales order");
 			});
+			this.updateCount();
 		},
 
 		onDeleteItem : function () {
@@ -189,7 +190,8 @@ sap.ui.define([
 		onDeleteSalesOrder : function () {
 			var sMessage, sSalesOrderID,
 				oTable = this.byId("SalesOrderSet"),
-				oContext = oTable.getSelectedContexts()[0];
+				oContext = oTable.getSelectedContexts()[0],
+				that = this;
 
 			function onConfirm(sCode) {
 				if (sCode !== 'OK') {
@@ -198,10 +200,12 @@ sap.ui.define([
 
 				if (oContext.isTransient()) {
 					oContext.getModel().resetChanges([oContext.getPath()], undefined, true);
+					that.updateCount();
 				} else {
 					oContext.getModel().remove("", {
 						context : oContext,
 						success : function () {
+							that.updateCount();
 							MessageToast.show("Deleted sales order " + sSalesOrderID);
 						}
 					});
@@ -296,9 +300,10 @@ sap.ui.define([
 
 		onInit : function () {
 			var oRowSettings = this.byId("rowsettings"),
-				oView = this.getView();
+				oModel = this.getView().getModel();
 
-			oView.getModel().attachMessageChange(this.handleMessageChange, this);
+			oModel.attachMessageChange(this.handleMessageChange, this);
+			oModel.attachRequestCompleted(this.updateCount.bind(this));
 
 			// adding the formatter dynamically is a prerequisite that it is called with the control
 			// as 'this'
@@ -499,6 +504,16 @@ sap.ui.define([
 			}
 
 			return undefined;
+		},
+
+		updateCount : function () {
+			var oSalesOrdersBinding = this.byId("SalesOrderSet").getBinding("items"),
+				oUIModel = this.getView().getModel("ui");
+
+			if (oSalesOrdersBinding) {
+				// we don't support .../$count property bindings
+				oUIModel.setProperty("/salesOrdersCount", oSalesOrdersBinding.getCount() || 0);
+			}
 		},
 
 		updateMessageCount : function () {

@@ -894,7 +894,8 @@ sap.ui.define([
 								oResponseItem.__metadata = oResponseItem.__metadata
 									|| _getResponseMetadata(oExpectedRequest.requestUri, i);
 							});
-						} else if (oExpectedRequest.method !== "HEAD") {
+						} else if (oExpectedRequest.method !== "HEAD"
+								&& !oExpectedRequest.requestUri.includes("/$count")) {
 							oResponse.data.__metadata = oResponse.data.__metadata
 								|| _getResponseMetadata(oExpectedRequest.requestUri);
 						}
@@ -10383,8 +10384,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					requestUri : "SalesOrderSet('44')"
 				}, {})
 				.expectRequest("SalesOrderSet?$skip=0&$top=17"
-						//TODO: with CPOUI5MODELS-693, filter for persisted created entities missing
-						/*+ "&$filter=not(SalesOrderID eq '44' or SalesOrderID eq '43')"*/, {
+					+ "&$filter=not(SalesOrderID eq '44' or SalesOrderID eq '43')", {
 					results : [{
 						__metadata : {uri : "SalesOrderSet('42')"},
 						Note : "First SalesOrder",
@@ -10651,9 +10651,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					requestUri : "SalesOrderSet('44')"
 				}, {})
 				.expectRequest("SalesOrderSet?$skip=0&$top=102"
-						//TODO: with CPOUI5MODELS-693, filter for persisted created entities missing
-						/*+ "&$filter=not(SalesOrderID eq '45' or SalesOrderID eq '44' "
-						+ "or SalesOrderID eq '43')"*/, {
+					+ "&$filter=not(SalesOrderID eq '45' or SalesOrderID eq '44' "
+					+ "or SalesOrderID eq '43')", {
 					results : [{
 						__metadata : {uri : "SalesOrderSet('42')"},
 						Note : "First SalesOrder",
@@ -10796,6 +10795,153 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				oModel.resetChanges([oCreatedContext.getPath()], undefined, true),
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Paging and $count requests exclude created persisted entries to avoid duplicate
+	// entries, respectively wrong binding length. The $count request it triggered by switching the
+	// list bindings context.
+	// CPOUI5MODELS-693
+	QUnit.test("Paging/$count requests exclude created persisted entries", function (assert) {
+		var oBinding, oCreatedContext0, oCreatedContext1, oObjectPage, oTable,
+			oModel = createSalesOrdersModel(),
+			oObjectPageContext = new Context(oModel, "/BusinessPartnerSet('4711')",
+				"/BusinessPartnerSet('4711')"),
+			sView = '\
+<FlexBox id="flexbox">\
+	<t:Table id="table" rows="{\
+				filters : [{\
+					filters : [\
+						{path : \'SalesOrderID\', operator : \'GE\', value1 : \'13\'},\
+						{path : \'LifecycleStatus\', operator : \'EQ\', value1 : \'N\'}\
+					]}\
+				],\
+				parameters : {countMode : \'Request\'},\
+				path : \'ToSalesOrders\'\
+			}"\
+			threshold="0" visibleRowCount="1" >\
+		<Text id="id" text="{SalesOrderID}"/>\
+		<Text id="note" text="{Note}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectValue("id", [""])
+			.expectValue("note", [""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oObjectPage = that.oView.byId("flexbox");
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			that.expectHeadRequest()
+				.expectRequest("BusinessPartnerSet('4711')/ToSalesOrders/$count"
+					+ "?$filter=SalesOrderID ge '13' or LifecycleStatus eq 'N'", "17")
+				.expectRequest("BusinessPartnerSet('4711')/ToSalesOrders?$skip=0&$top=1"
+					+ "&$filter=SalesOrderID ge '13' or LifecycleStatus eq 'N'", {
+					results : [{
+						__metadata : {uri : "SalesOrderSet('42')"},
+						Note : "First SalesOrder",
+						SalesOrderID : "42"
+					}]
+				})
+				.expectValue("id", ["42"])
+				.expectValue("note", ["First SalesOrder"]);
+
+			oObjectPage.setBindingContext(oObjectPageContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+
+			that.expectValue("id", [""])
+				.expectValue("note", ["New 1"]);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("note", ["New 2"]);
+
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "New 1"
+					},
+					method : "POST",
+					requestUri : "BusinessPartnerSet('4711')/ToSalesOrders"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('43')"},
+						Note : "New 1",
+						SalesOrderID : "43"
+					},
+					statusCode : 201
+				})
+				.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "New 2"
+					},
+					method : "POST",
+					requestUri : "BusinessPartnerSet('4711')/ToSalesOrders"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('44')"},
+						Note : "New 2",
+						SalesOrderID : "44"
+					},
+					statusCode : 201
+				})
+				.expectValue("id", ["44"]);
+
+			return Promise.all([
+				oCreatedContext0.created(),
+				oCreatedContext1.created(),
+				that.oModel.submitChanges(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectValue("id", [""])
+				.expectValue("note", [""]);
+
+			oObjectPage.setBindingContext(null);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("BusinessPartnerSet('4711')/ToSalesOrders/$count"
+					+ "?$filter=(SalesOrderID ge '13' or LifecycleStatus eq 'N')"
+					+ " and not(SalesOrderID eq '44' or SalesOrderID eq '43')", "17")
+				.expectValue("id", ["44"])
+				.expectValue("note", ["New 2"]);
+
+			oObjectPage.setBindingContext(oObjectPageContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("BusinessPartnerSet('4711')/ToSalesOrders?$skip=1&$top=1"
+					+ "&$filter=(SalesOrderID ge '13' or LifecycleStatus eq 'N')"
+					+ " and not(SalesOrderID eq '44' or SalesOrderID eq '43')", {
+					results : [{
+						__metadata : {uri : "SalesOrderSet('41')"},
+						Note : "Second SalesOrder",
+						SalesOrderID : "41"
+					}]
+				})
+				.expectValue("id", [""], 3)
+				.expectValue("note", [""], 3)
+				.expectValue("id", ["41"], 3)
+				.expectValue("note", ["Second SalesOrder"], 3);
+
+			oTable.setFirstVisibleRow(3);
+
+			return that.waitForChanges(assert);
 		});
 	});
 });
