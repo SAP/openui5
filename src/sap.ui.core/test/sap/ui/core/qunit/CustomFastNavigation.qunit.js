@@ -16,7 +16,7 @@ sap.ui.define([
 	jQuery.sap.handleF6GroupNavigation = F6Navigation.handleF6GroupNavigation = function(oEvent, oSettings) {
 		oSettings = oSettings ? oSettings : {};
 		if (!oSettings.scope) {
-			oSettings.scope = jQuery.sap.domById("scope");
+			oSettings.scope = document.getElementById("scope");
 		}
 		if (!oSettings.target) {
 			oSettings.target = oEvent.target;
@@ -63,28 +63,28 @@ sap.ui.define([
 
 		onsapskipforward: function(oEvent) {
 			var sTarget;
-			if (jQuery.sap.startsWith(oEvent.target.id, this.getId() + "-input-1")) {
+			if (oEvent.target.id && oEvent.target.id.startsWith(this.getId() + "-input-1")) {
 				sTarget = this.getId() + "-input-2";
-			} else if (jQuery.sap.startsWith(oEvent.target.id, this.getId() + "-input-2")) {
+			} else if (oEvent.target.id && oEvent.target.id.startsWith(this.getId() + "-input-2")) {
 				sTarget = this.getId() + "-input-3";
 			}
 
 			if (sTarget) {
-				jQuery.sap.focus(jQuery.sap.domById(sTarget));
+				document.getElementById(sTarget).focus();
 				oEvent.preventDefault();
 			}
 		},
 
 		onsapskipback: function(oEvent) {
 			var sTarget;
-			if (jQuery.sap.startsWith(oEvent.target.id, this.getId() + "-input-2")) {
+			if (oEvent.target.id && oEvent.target.id.startsWith(this.getId() + "-input-2")) {
 				sTarget = this.getId() + "-input-1";
-			} else if (jQuery.sap.startsWith(oEvent.target.id, this.getId() + "-input-3")) {
+			} else if (oEvent.target.id && oEvent.target.id.startsWith(this.getId() + "-input-3")) {
 				sTarget = this.getId() + "-input-2";
 			}
 
 			if (sTarget) {
-				jQuery.sap.focus(jQuery.sap.domById(sTarget));
+				document.getElementById(sTarget).focus();
 				oEvent.preventDefault();
 			}
 		},
@@ -95,7 +95,7 @@ sap.ui.define([
 			}
 			var oNewDomRef = oEvent.forward ? this.getDomRef("input-1") : this.getDomRef("input-3");
 			if (oNewDomRef) {
-				jQuery.sap.focus(oNewDomRef);
+				oNewDomRef.focus();
 				oEvent.preventDefault();
 			}
 		}

@@ -167,7 +167,7 @@ sap.ui.define([
 			oHelperButton.fireEvent("press");
 			assert.ok(oHelperSpy.calledOnce, "The helper function is called");
 
-			oBoxShowSpy.reset();
+			oBoxShowSpy.resetHistory();
 			oNewButton.fireEvent("press");
 			assert.ok(oBoxShowSpy.calledOnce, "show method is called once");
 			assert.equal(oBoxShowSpy.getCall(0).args[0], "Boxed", "The method is called with correct argument");

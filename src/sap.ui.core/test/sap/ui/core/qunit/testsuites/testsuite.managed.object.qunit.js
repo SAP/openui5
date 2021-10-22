@@ -12,6 +12,9 @@ sap.ui.define(function() {
 			qunit: {
 				version: 2
 			},
+			sinon: {
+				version: 4
+			},
 			module: "testdata/core/{name}.qunit"
 		},
 		tests: {

@@ -1,9 +1,35 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/ui/core/ResizeHandler"
-], function(Control, ResizeHandler) {
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/dom/includeStylesheet",
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"require"
+], function(Control, ResizeHandler, includeStylesheet, createAndAppendDiv, require) {
 	"use strict";
+
+	// setup page content
+	createAndAppendDiv("resizeArea", createAndAppendDiv("resizeAreaContainer"));
+	createAndAppendDiv("content");
+
+	function setStyle(id, style) {
+		Object.assign(document.getElementById(id).style, style);
+	}
+
+	setStyle("resizeAreaContainer", {
+		backgroundColor: "cyan",
+		width: "100px",
+		height: "100px",
+		position: "relative"
+	});
+	setStyle("resizeArea", {
+		backgroundColor: "blue",
+		width: "100%",
+		height: "100%",
+		position: "absolute",
+		right: "0",
+		top: "0"
+	});
 
 	// Initialization
 	var oResizeHandler = null;
@@ -31,10 +57,6 @@ sap.ui.define([
 		lastResizeTargetCtrl = oEvent.control;
 		lastSize = oEvent.size;
 		QUnit.config.current.assert.ok(true, "ResizeHandler called");
-	}
-
-	function setStyle(id, style) {
-		document.getElementById(id).style = style;
 	}
 
 	var TestControl = Control.extend("TestControl", {
@@ -104,7 +126,10 @@ sap.ui.define([
 		var oResizeAreaDom = document.getElementById("resizeArea");
 		var sResizeListenerId = _register(oResizeAreaDom);
 
-		setStyle("resizeAreaContainer", "width:150px;height:150px;");
+		setStyle("resizeAreaContainer", {
+			width:"150px",
+			height:"150px"
+		});
 
 		setTimeout(function(){
 			assert.ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize");
@@ -120,7 +145,10 @@ sap.ui.define([
 		assert.expect(2);
 		var oResizeAreaDom = document.getElementById("resizeArea");
 		var sResizeListenerId = _register(oResizeAreaDom);
-		setStyle("resizeAreaContainer", "width:151px;height:150px;");
+		setStyle("resizeAreaContainer", {
+			width: "151px",
+			height: "150px"
+		});
 		setTimeout(function(){
 			assert.ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize");
 			ResizeHandler.deregister(sResizeListenerId);
@@ -133,7 +161,10 @@ sap.ui.define([
 		assert.expect(2);
 		var oResizeAreaDom = document.getElementById("resizeArea");
 		var sResizeListenerId = _register(oResizeAreaDom);
-		setStyle("resizeAreaContainer", "width:150px;height:150px;");
+		setStyle("resizeAreaContainer", {
+			width: "150px",
+			height: "150px"
+		});
 		window.setTimeout(function(){
 			assert.ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize");
 			ResizeHandler.deregister(sResizeListenerId);
@@ -146,7 +177,10 @@ sap.ui.define([
 		assert.expect(2);
 		var oResizeAreaDom = document.getElementById("resizeArea");
 		var sResizeListenerId = _register(oResizeAreaDom);
-		setStyle("resizeAreaContainer", "width:150px;height:151px;");
+		setStyle("resizeAreaContainer", {
+			width: "150px",
+			height: "151px"
+		});
 		setTimeout(function() {
 			assert.ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize");
 			ResizeHandler.deregister(sResizeListenerId);
@@ -159,7 +193,10 @@ sap.ui.define([
 		assert.expect(2);
 		var oResizeAreaDom = document.getElementById("resizeArea");
 		var sResizeListenerId = _register(oResizeAreaDom);
-		setStyle("resizeAreaContainer", "width:150px;height:150px;");
+		setStyle("resizeAreaContainer", {
+			width: "150px",
+			height: "150px"
+		});
 		setTimeout(function() {
 			assert.ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize");
 			ResizeHandler.deregister(sResizeListenerId);
@@ -172,7 +209,10 @@ sap.ui.define([
 		assert.expect(2);
 		var oResizeAreaDom = document.getElementById("resizeArea");
 		var sResizeListenerId = _register(oResizeAreaDom);
-		setStyle("resizeAreaContainer", "width:151px;height:151px;");
+		setStyle("resizeAreaContainer", {
+			width: "151px",
+			height: "151px"
+		});
 		setTimeout(function() {
 			assert.ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize");
 			ResizeHandler.deregister(sResizeListenerId);
@@ -185,7 +225,10 @@ sap.ui.define([
 		assert.expect(2);
 		var oResizeAreaDom = document.getElementById("resizeArea");
 		var sResizeListenerId = _register(oResizeAreaDom);
-		setStyle("resizeAreaContainer", "width:150px;height:150px;");
+		setStyle("resizeAreaContainer", {
+			width: "150px",
+			height: "150px"
+		});
 		setTimeout(function() {
 			assert.ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize");
 			ResizeHandler.deregister(sResizeListenerId);
@@ -198,7 +241,10 @@ sap.ui.define([
 		assert.expect(2);
 		var oResizeAreaDom = document.getElementById("resizeArea");
 		var sResizeListenerId = _register(oResizeAreaDom);
-		setStyle("resizeAreaContainer", "width:251px;height:251px;");
+		setStyle("resizeAreaContainer", {
+			width: "251px",
+			height: "251px"
+		});
 		setTimeout(function() {
 			assert.ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize");
 			ResizeHandler.deregister(sResizeListenerId);
@@ -211,7 +257,10 @@ sap.ui.define([
 		assert.expect(2);
 		var oResizeAreaDom = document.getElementById("resizeArea");
 		var sResizeListenerId = _register(oResizeAreaDom);
-		setStyle("resizeAreaContainer", "width:150px;height:150px;");
+		setStyle("resizeAreaContainer", {
+			width: "150px",
+			height: "150px"
+		});
 		setTimeout(function() {
 			assert.ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize");
 			ResizeHandler.deregister(sResizeListenerId);
@@ -225,7 +274,10 @@ sap.ui.define([
 		var oResizeAreaDom = document.getElementById("resizeArea");
 		var sResizeListenerId = _register(oResizeAreaDom);
 		ResizeHandler.deregister(sResizeListenerId);
-		setStyle("resizeAreaContainer", "width:151px;height:150px;");
+		setStyle("resizeAreaContainer", {
+			width: "151px",
+			height: "150px"
+		});
 		setTimeout(function() {
 			assert.ok(lastResizeTarget == null, "Listener should be NOT be called on DOM Resize after deregistering: " + lastResizeTarget);
 			done();
@@ -240,7 +292,11 @@ sap.ui.define([
 		assert.equal(oResizeAreaDom.offsetHeight, 150, "height should be 150px");
 
 		// now make the parent invisible
-		setStyle("resizeAreaContainer", "width:151px;height:150px;display:none;");
+		setStyle("resizeAreaContainer", {
+			width: "151px",
+			height: "150px",
+			display: "none"
+		});
 		assert.equal(oResizeAreaDom.offsetHeight, 0, "height should be 0px when the parent is display:none");
 
 		setTimeout(function() {
@@ -248,7 +304,11 @@ sap.ui.define([
 			lastResizeTarget = null;
 
 			// now make the parent visible again
-			setStyle("resizeAreaContainer", "width:151px;height:150px;");
+			setStyle("resizeAreaContainer", {
+				width: "151px",
+				height: "150px",
+				display: "block"
+			});
 			assert.equal(oResizeAreaDom.offsetHeight, 150, "height should be 150px again when the parent is display:block");
 
 			setTimeout(function() {
@@ -373,5 +433,4 @@ sap.ui.define([
 		// cleanup
 		ResizeHandler.deregister(sResizeListenerId);
 	});
-
 });

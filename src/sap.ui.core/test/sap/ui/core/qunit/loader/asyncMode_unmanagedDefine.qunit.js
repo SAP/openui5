@@ -53,7 +53,7 @@
 
 		// for adhoc defines, there's no module that could report the error -> throws
 		var origOnError = window.onerror;
-		window.onerror = sinon.stub().callsFake(function() {
+		window.onerror = this.stub().callsFake(function() {
 			assert.ok(window.onerror.calledOnce, "an error was thrown");
 			assert.ok(window.onerror.calledWith(sinon.match(/anonymous/).and(sinon.match(/require.*call/))), "...with the expected message");
 			window.onerror = origOnError;
@@ -72,7 +72,7 @@
 
 		// for adhoc defines, there's no module that could report the error -> throws
 		var origOnError = window.onerror;
-		window.onerror = sinon.stub().returns(true);
+		window.onerror = this.stub().returns(true);
 
 		function restoreAndDone() {
 			window.onerror = origOnError;
@@ -103,8 +103,8 @@
 		var done = assert.async();
 
 		var origOnError = window.onerror;
-		window.onerror = sinon.stub().returns(true);
-		sinon.stub(sap.ui.loader._.logger, "warning");
+		window.onerror = this.stub().returns(true);
+		this.stub(sap.ui.loader._.logger, "warning");
 
 		function restoreAndDone() {
 			sap.ui.loader._.logger.warning.restore();

@@ -1,4 +1,4 @@
-/*global QUnit,sinon*/
+/*global QUnit*/
 
 sap.ui.define([
 	"jquery.sap.global",
@@ -9,6 +9,8 @@ sap.ui.define([
 	"sap/base/Log"
 ], function(jQuery, TestControl, DropInfo, ManagedObject, ElementMetadata, Log) {
 	"use strict";
+
+	QUnit.module("");
 
 	QUnit.test("Default values", function(assert) {
 		var oDropInfo = new DropInfo();
@@ -24,7 +26,7 @@ sap.ui.define([
 
 	QUnit.test("invalidation", function(assert) {
 		var oDropInfo = new DropInfo();
-		var fnInvalidateSpy = sinon.spy(oDropInfo, "invalidate");
+		var fnInvalidateSpy = this.spy(oDropInfo, "invalidate");
 
 		oDropInfo.setEnabled(false);
 		assert.strictEqual(fnInvalidateSpy.callCount, 0, "Invalidation has not happened for enabled property");
@@ -197,7 +199,7 @@ sap.ui.define([
 
 	QUnit.test("fireDragEnter - invalid parameters", function(assert) {
 		var oDragEnterEvent = new jQuery.Event("dragenter");
-		var fnDragEnterSpy = sinon.spy();
+		var fnDragEnterSpy = this.spy();
 		var oDropInfo = new DropInfo({
 			dragEnter: fnDragEnterSpy
 		});
@@ -212,7 +214,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("fireDragEnter - event parameters", function(assert) {
-		var fnDragEnterSpy = sinon.spy(function(oEvent) {
+		var fnDragEnterSpy = this.spy(function(oEvent) {
 			var mParameters = oEvent.getParameters();
 			assert.ok(mParameters.dragSession, "dragSession exists");
 			assert.strictEqual(mParameters.target, oControl, "target is valid");
@@ -249,7 +251,7 @@ sap.ui.define([
 
 	QUnit.test("fireDragOver - invalid parameters", function(assert) {
 		var oDragOverEvent = new jQuery.Event("dragover");
-		var fnDragOverSpy = sinon.spy();
+		var fnDragOverSpy = this.spy();
 		var oDropInfo = new DropInfo({
 			dragOver: fnDragOverSpy
 		});
@@ -264,7 +266,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("fireDragOver - event parameters", function(assert) {
-		var fnDragOverSpy = sinon.spy(function(oEvent) {
+		var fnDragOverSpy = this.spy(function(oEvent) {
 			var mParameters = oEvent.getParameters();
 			assert.ok(mParameters.dragSession, "dragSession exists");
 			assert.strictEqual(mParameters.target, oControl, "target is valid");
@@ -297,7 +299,7 @@ sap.ui.define([
 
 	QUnit.test("fireDrop - invalid parameters", function(assert) {
 		var oDropEvent = new jQuery.Event("drop");
-		var fnDropSpy = sinon.spy();
+		var fnDropSpy = this.spy();
 		var oDropInfo = new DropInfo({
 			drop: fnDropSpy
 		});
@@ -312,7 +314,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("fireDrop - event parameters", function(assert) {
-		var fnDropSpy = sinon.spy(function(oEvent) {
+		var fnDropSpy = this.spy(function(oEvent) {
 			var mParameters = oEvent.getParameters();
 			assert.ok(mParameters.dragSession, "dragSession exists");
 			assert.strictEqual(mParameters.browserEvent, oDropEvent.originalEvent, "browserEvent is valid");

@@ -519,7 +519,7 @@ sap.ui.define([
 
 	QUnit.test("Read 'sap-ui-legacy-number-format' from URL", function(assert) {
 
-		var oSpySetLegacyNumberFormat = sinon.spy(Configuration.FormatSettings.prototype, "setLegacyNumberFormat");
+		var oSpySetLegacyNumberFormat = this.spy(Configuration.FormatSettings.prototype, "setLegacyNumberFormat");
 
 		[
 			{ param: '', expected: undefined },
@@ -547,7 +547,7 @@ sap.ui.define([
 
 	QUnit.test("Read 'sap-ui-legacy-date-format' from URL", function(assert) {
 
-		var oSpySetLegacyDateFormat = sinon.spy(Configuration.FormatSettings.prototype, "setLegacyDateFormat");
+		var oSpySetLegacyDateFormat = this.spy(Configuration.FormatSettings.prototype, "setLegacyDateFormat");
 
 		[
 			{ param: '', expected: undefined },
@@ -582,7 +582,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Read 'sap-ui-legacy-time-format' from URL", function(assert) {
-		var oSpySetLegacyTimeFormat = sinon.spy(Configuration.FormatSettings.prototype, "setLegacyTimeFormat");
+		var oSpySetLegacyTimeFormat = this.spy(Configuration.FormatSettings.prototype, "setLegacyTimeFormat");
 
 		[
 			{ param: '', expected: undefined },

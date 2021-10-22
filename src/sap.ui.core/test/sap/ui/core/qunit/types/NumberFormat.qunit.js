@@ -1397,11 +1397,11 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		oFormat.parse("1,123 ASD");
 		assert.equal(oRegexInstantiationSpy.callCount, 3, "create regexp instance for pattern");
 
-		oRegexInstantiationSpy.reset();
+		oRegexInstantiationSpy.resetHistory();
 		oFormat.parse("1,123 ASD");
 		assert.equal(oRegexInstantiationSpy.callCount, 3, "skip regexp instantiation for cached pattern");
 
-		oRegexInstantiationSpy.reset();
+		oRegexInstantiationSpy.resetHistory();
 		oFormat.parse("1,123 ASD");
 		assert.equal(oRegexInstantiationSpy.callCount, 3, "skip regexp instantiation for cached pattern");
 	});
@@ -1414,15 +1414,15 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 
 		oFormat.parse("1,123 km");
 
-		oRegexInstantiationSpy.reset();
+		oRegexInstantiationSpy.resetHistory();
 		oFormat.parse("1,123 m");
 		assert.equal(oRegexInstantiationSpy.callCount, 3, "skip regexp instantiation for cached pattern");
 
-		oRegexInstantiationSpy.reset();
+		oRegexInstantiationSpy.resetHistory();
 		oFormat.parse("1,123 ms");
 		assert.equal(oRegexInstantiationSpy.callCount, 3, "skip regexp instantiation for cached pattern");
 
-		oRegexInstantiationSpy.reset();
+		oRegexInstantiationSpy.resetHistory();
 		oFormat.parse("1,123 cm");
 		assert.equal(oRegexInstantiationSpy.callCount, 3, "skip regexp instantiation for cached pattern");
 	});

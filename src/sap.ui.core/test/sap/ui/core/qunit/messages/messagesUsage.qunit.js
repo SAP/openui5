@@ -6,11 +6,12 @@ sap.ui.define([
 	'sap/ui/core/message/Message',
 	'sap/ui/core/message/MessageManager',
 	'sap/ui/core/library',
+	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/core/UIComponent',
 	'sap/ui/qunit/utils/createAndAppendDiv'
-], function(Input, Model, Integer, Message, MessageManager, library, ComponentContainer, JSONModel, UIComponent, createAndAppendDiv){
+], function(Input, Model, Integer, Message, MessageManager, library, Component, ComponentContainer, JSONModel, UIComponent, createAndAppendDiv){
 	"use strict";
 
 	// create content div
@@ -30,48 +31,31 @@ sap.ui.define([
 			};
 
 			//create some components for testing
-			var oCompCont = new ComponentContainer("CompCont", {
-				name: "components",
-				id: "myMessageTest1"
-			});
-			var pCompContRendered = new Promise(function(res, rej){
-				oCompCont.addEventDelegate({
-					onAfterRendering: function (oEvent) {
-						res();
-					}
-				});
+			var pCompContRendered = Component.create({
+				name: "components"
+			}).then(function(oComponent) {
+				new ComponentContainer("CompCont", {
+					component: oComponent
+				}).placeAt("content");
 			});
 
-			var oCompContEnabled = new ComponentContainer("CompCont2", {
+			var pCompContEnabledRendered = Component.create({
 				name: "components.enabled",
-				id: "myMessageTest2",
 				handleValidation: true
-			});
-			var pCompContEnabledRendered = new Promise(function(res, rej){
-				oCompContEnabled.addEventDelegate({
-					onAfterRendering: function (oEvent) {
-						res();
-					}
-				});
+			}).then(function(oComponent) {
+				new ComponentContainer("CompCont2", {
+					component: oComponent
+				}).placeAt("content");
 			});
 
-			var oCompContDisabled = new ComponentContainer("CompCont3", {
+			var pCompContDisabledRendered = Component.create({
 				name: "components.disabled",
-				id: "myMessageTest3",
-				handleValidation: true
+				handleValidation: true // Note: same setting in component metadata overrides this
+			}).then(function(oComponent) {
+				new ComponentContainer("CompCont3", {
+					component: oComponent
+				}).placeAt("content");
 			});
-			var pCompContDisabledRendered = new Promise(function(res, rej){
-				oCompContDisabled.addEventDelegate({
-					onAfterRendering: function (oEvent) {
-						res();
-					}
-				});
-			});
-
-
-			oCompCont.placeAt("content");
-			oCompContEnabled.placeAt("content");
-			oCompContDisabled.placeAt("content");
 
 			this.initModel = function() {
 				this.oModel = new JSONModel();
@@ -88,8 +72,9 @@ sap.ui.define([
 				sap.ui.getCore().setModel(this.oModel);
 			};
 
-
-			return Promise.all([pCompContRendered, pCompContEnabledRendered, pCompContDisabledRendered]);
+			return Promise.all([pCompContRendered, pCompContEnabledRendered, pCompContDisabledRendered]).then(function() {
+				sap.ui.getCore().applyChanges();
+			});
 		},
 
 		beforeEach : function() {
@@ -166,196 +151,137 @@ sap.ui.define([
 		assert.ok(jQuery.isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
 	});
 
-	QUnit.module("Component: handleValidation / registerObject");
+	QUnit.module("Component: handleValidation / registerObject", {
+		createComponent: function(metadataHV, instanceHV) {
+			var flags = {
+				"undefined": "na",
+				"true": "true",
+				"false" : "false"
+			};
+			var sComponentName = "sap.ui.test.handlevalidation."
+				+ flags[metadataHV] + "." + flags[instanceHV];
+
+			var sClassName = sComponentName + ".Component";
+			var sModuleName = sClassName.replace(/\./g, "/");
+			sap.ui.define(sModuleName, [
+				"sap/ui/core/UIComponent"
+			], function(UIComponent) {
+				var metadata = {};
+				if ( metadataHV !== undefined ) {
+					metadata.handleValidation = metadataHV;
+				}
+				return UIComponent.extend(sClassName, {
+					metadata: metadata
+				});
+			});
+
+			var mSettings = {
+				name: sComponentName
+			};
+			if ( instanceHV !== undefined ) {
+				mSettings.handleValidation = instanceHV;
+			}
+			return Component.create(mSettings).then(function(oComponent) {
+				this.oComponent = oComponent;
+				return oComponent;
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oComponent.destroy();
+		}
+	});
 
 	QUnit.test("Metadata: n/a, instance: n/a", function(assert) {
-		var sComponentName = "sap.ui.test.handlevalidation.na.na";
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
 
-		jQuery.sap.declare(sComponentName + ".Component");
-		UIComponent.extend(sComponentName + ".Component", {
-			metadata: {}
+		return this.createComponent(undefined, undefined).then(function(oComponent) {
+			sinon.assert.callCount(oRegisterObjectSpy, 0);
 		});
-
-		var oComponent = sap.ui.component({
-			name: sComponentName
-		});
-
-		sinon.assert.callCount(oRegisterObjectSpy, 0);
-
-		oComponent.destroy();
 	});
 
 	QUnit.test("Metadata: n/a, instance: false", function(assert) {
-		var sComponentName = "sap.ui.test.handlevalidation.na.false";
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
 
-		jQuery.sap.declare(sComponentName + ".Component");
-		UIComponent.extend(sComponentName + ".Component", {
-			metadata: {}
+		return this.createComponent(undefined, false).then(function(oComponent) {
+			sinon.assert.callCount(oRegisterObjectSpy, 0);
 		});
-
-		var oComponent = sap.ui.component({
-			name: sComponentName,
-			handleValidation: false
-		});
-
-		sinon.assert.callCount(oRegisterObjectSpy, 0);
-
-		oComponent.destroy();
 	});
 
 	QUnit.test("Metadata: n/a, instance: true", function(assert) {
-		var sComponentName = "sap.ui.test.handlevalidation.na.true";
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
 
-		jQuery.sap.declare(sComponentName + ".Component");
-		UIComponent.extend(sComponentName + ".Component", {
-			metadata: {}
+		return this.createComponent(undefined, true).then(function(oComponent) {
+			sinon.assert.callCount(oRegisterObjectSpy, 1);
+			sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, true);
 		});
-
-		var oComponent = sap.ui.component({
-			name: sComponentName,
-			handleValidation: true
-		});
-
-		sinon.assert.callCount(oRegisterObjectSpy, 1);
-		sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, true);
-
 	});
 
 	QUnit.test("Metadata: false, instance: false", function(assert) {
-		var sComponentName = "sap.ui.test.handlevalidation.false.false";
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
 
-		jQuery.sap.declare(sComponentName + ".Component");
-		UIComponent.extend(sComponentName + ".Component", {
-			metadata: {
-				handleValidation: false
-			}
+		return this.createComponent(false, false).then(function(oComponent) {
+			sinon.assert.callCount(oRegisterObjectSpy, 1);
+			sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, false);
 		});
-
-		var oComponent = sap.ui.component({
-			name: sComponentName,
-			handleValidation: false
-		});
-
-		sinon.assert.callCount(oRegisterObjectSpy, 1);
-		sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, false);
-
 	});
 
 	QUnit.test("Metadata: false, instance: n/a", function(assert) {
-		var sComponentName = "sap.ui.test.handlevalidation.false.na";
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
 
-		jQuery.sap.declare(sComponentName + ".Component");
-		UIComponent.extend(sComponentName + ".Component", {
-			metadata: {
-				handleValidation: false
-			}
+		return this.createComponent(false, undefined).then(function(oComponent) {
+			sinon.assert.callCount(oRegisterObjectSpy, 1);
+			sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, false);
 		});
-
-		var oComponent = sap.ui.component({
-			name: sComponentName
-		});
-
-		sinon.assert.callCount(oRegisterObjectSpy, 1);
-		sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, false);
-
 	});
 
 	QUnit.test("Metadata: false, instance: true", function(assert) {
-		var sComponentName = "sap.ui.test.handlevalidation.false.true";
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
 
-		jQuery.sap.declare(sComponentName + ".Component");
-		UIComponent.extend(sComponentName + ".Component", {
-			metadata: {
-				handleValidation: false
-			}
+		return this.createComponent(false, true).then(function(oComponent) {
+			sinon.assert.callCount(oRegisterObjectSpy, 1);
+			sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, false);
 		});
-
-		var oComponent = sap.ui.component({
-			name: sComponentName,
-			handleValidation: true
-		});
-
-		sinon.assert.callCount(oRegisterObjectSpy, 1);
-		sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, false);
-
 	});
 
 	QUnit.test("Metadata: true, instance: true", function(assert) {
-		var sComponentName = "sap.ui.test.handlevalidation.true.true";
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
 
-		jQuery.sap.declare(sComponentName + ".Component");
-		UIComponent.extend(sComponentName + ".Component", {
-			metadata: {
-				handleValidation: true
-			}
+		return this.createComponent(true, true).then(function(oComponent) {
+			sinon.assert.callCount(oRegisterObjectSpy, 1);
+			sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, true);
 		});
-
-		var oComponent = sap.ui.component({
-			name: sComponentName,
-			handleValidation: true
-		});
-
-		sinon.assert.callCount(oRegisterObjectSpy, 1);
-		sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, true);
-
 	});
 
 	QUnit.test("Metadata: true, instance: n/a", function(assert) {
-		var sComponentName = "sap.ui.test.handlevalidation.true.na";
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
 
-		jQuery.sap.declare(sComponentName + ".Component");
-		UIComponent.extend(sComponentName + ".Component", {
-			metadata: {
-				handleValidation: true
-			}
+		return this.createComponent(true, undefined).then(function(oComponent) {
+			sinon.assert.callCount(oRegisterObjectSpy, 1);
+			sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, true);
 		});
-
-		var oComponent = sap.ui.component({
-			name: sComponentName
-		});
-
-		sinon.assert.callCount(oRegisterObjectSpy, 1);
-		sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, true);
-
 	});
 
 	QUnit.test("Metadata: true, instance: false", function(assert) {
-		var sComponentName = "sap.ui.test.handlevalidation.true.false";
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
 
-		jQuery.sap.declare(sComponentName + ".Component");
-		UIComponent.extend(sComponentName + ".Component", {
-			metadata: {
-				handleValidation: true
-			}
+		return this.createComponent(true, false).then(function(oComponent) {
+			sinon.assert.callCount(oRegisterObjectSpy, 1);
+			sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, true);
 		});
-
-		var oComponent = sap.ui.component({
-			name: sComponentName,
-			handleValidation: false
-		});
-
-		sinon.assert.callCount(oRegisterObjectSpy, 1);
-		sinon.assert.calledWithExactly(oRegisterObjectSpy, oComponent, true);
-
 	});
+
+
+
+	QUnit.module("");
 
 	QUnit.test("Model: checkMessages", function(assert) {
 		var oCheckMessagesSpy = sinon.spy(Model.prototype, "checkMessages");

@@ -240,7 +240,7 @@
 			// Not using "QUnit.config.current.ignoreGlobalErrors = true;" as this
 			// would still cause some test runners like Karma to report an error
 			this.origOnError = window.onerror;
-			window.onerror = sinon.stub().returns(false);
+			window.onerror = this.stub().returns(false);
 
 			return new Promise(function(resolve, reject) {
 				sap.ui.require(['jquery.sap.global'], resolve, reject);
@@ -472,7 +472,7 @@
 
 	QUnit.test("No Outgoing Request", function(assert) {
 		var done = assert.async();
-		var fnAppendChildSpy = sinon.spy(document.head, "appendChild");
+		var fnAppendChildSpy = this.spy(document.head, "appendChild");
 		var UNIQUE = {};
 
 		assert.expect(2);
@@ -489,7 +489,6 @@
 					fnAppendChildSpy.neverCalledWithMatch(sinon.match(function(oScript) {
 					return oScript && oScript.getAttribute("data-sap-ui-module") === "fixture/embedded-module-definitions/module1.js";
 				})), "no script tag should have been created for the embedded module");
-			fnAppendChildSpy.restore();
 			done();
 		}, done);
 
@@ -794,7 +793,7 @@
 	QUnit.skip("Repeated Module Definition (named)", function(assert) {
 
 		var logger = sap.ui.loader._.logger;
-		sinon.spy(logger, "error");
+		this.stub(logger, "error");
 
 		var done = assert.async();
 
@@ -831,9 +830,6 @@
 								sinon.match(/executed more than once/i).and(sinon.match(/will fail in future/i))
 							),
 							"an error with the expected text fragments should have been logged");
-
-
-						logger.error.restore();
 						done();
 					});
 				}, 50);
@@ -853,7 +849,7 @@
 	QUnit.skip("Repeated Module Definition (unnamed)", function(assert) {
 
 		var logger = sap.ui.loader._.logger;
-		sinon.spy(logger, "error");
+		this.stub(logger, "error");
 
 		var done = assert.async();
 		var myGlobalExport;
@@ -881,8 +877,6 @@
 			assert.deepEqual(myGlobalExport, expected1, "synchronously after the 2nd module definition still the old value must be visible");
 			setTimeout(function() {
 				assert.deepEqual(myGlobalExport, expected2, "after some time, the global variable should match the module's export");
-
-				logger.error.restore();
 				done();
 			}, 50);
 		}, 50);
@@ -914,6 +908,154 @@
 
 			done();
 		});
+	});
+
+
+
+	//****************************************************
+	// loadJSResourceAsync
+	//****************************************************
+
+	QUnit.module("loadJSResourceAsync", {
+		beforeEach: function() {
+			this.scriptsWith = function(rPattern) {
+				var count = 0;
+				document.querySelectorAll("head>script").forEach(function(script) {
+					if ( script.src && rPattern.test(script.src) ) {
+						count++;
+					}
+				});
+				return count;
+			};
+			var oHead = document.getElementsByTagName("head")[0];
+			var _fnOriginalAppendChild = oHead.appendChild;
+
+			this.callsFakeAppendChild = function(){};
+			this.oAppendChildStub = this.stub(oHead, "appendChild").callsFake(function(oElement) {
+				this.callsFakeAppendChild(oElement);
+				_fnOriginalAppendChild.apply(oHead, arguments);
+			}.bind(this));
+		}
+	});
+
+	QUnit.test("successful call", function(assert) {
+		var that = this;
+		var p = sap.ui.loader._.loadJSResourceAsync("fixture/forced-async-loading/bundle1.js");
+		return p.then(function() {
+			assert.ok(true, "promise should succeed");
+			assert.equal(this.oAppendChildStub.callCount, 1 , "should have been called once");
+			assert.ok(sap.ui.loader._.getModuleState('fixture/forced-async-loading/bundle1.js'), "resource should have been loaded");
+			assert.equal(that.scriptsWith(/fixture\/forced-async-loading\/bundle1\.js$/), 1, "script tag for lib should exist");
+		}.bind(this), function() {
+			assert.ok(false, "promise should not fail");
+		});
+
+	});
+
+	QUnit.test("failing call", function(assert) {
+		var that = this;
+		var p = sap.ui.loader._.loadJSResourceAsync("fixture/forced-async-loading/non-existing.js");
+		return p.then(function() {
+			assert.ok(false, "promise must not succeed");
+			assert.equal(this.oAppendChildStub.callCount, 2 , "should have been called twice");
+		}.bind(this), function() {
+			assert.ok(true, "promise should fail");
+			assert.equal(that.scriptsWith(/fixture\/forced-async-loading\/non-existing\.js$/), 1, "script tag should exist");
+		});
+
+	});
+
+	QUnit.test("failing call (ignore errors)", function(assert) {
+		var that = this;
+		var p = sap.ui.loader._.loadJSResourceAsync("fixture/forced-async-loading/non-existing-ignored.js", true);
+		return p.then(function() {
+			assert.ok(true, "promise should succeed");
+			assert.equal(this.oAppendChildStub.callCount, 2 , "should have been called twice");
+			assert.equal(that.scriptsWith(/fixture\/forced-async-loading\/non-existing-ignored\.js$/), 1, "script tag should exist");
+		}.bind(this), function() {
+			assert.ok(false, "promise must not fail");
+		});
+
+	});
+
+	QUnit.test("first call fails, second call passes", function(assert) {
+		var that = this;
+
+		//when the desired script tag is added to the head,
+		// set the src attribute to an invalid value to trigger an error event
+		// let the second call pass
+		//in order to simulate an SSO scenario in which the first call to a script fails, but the second succeeds
+		var bFirstFailure = true;
+		this.callsFakeAppendChild = function(oElement) {
+			if (oElement instanceof HTMLScriptElement) {
+				if (oElement.src.indexOf("forced-async-loading/bundle-first-failing.js") > -1) {
+					if (bFirstFailure) {
+						bFirstFailure = false;
+
+						//set the src to a non existing file such that an error event is fired to simulate a failing request
+						oElement.src = "non-existing-file";
+
+						//check the module state
+						var bIsResourceLoaded = !!sap.ui.loader._.getModuleState("fixture/forced-async-loading/bundle-first-failing.js");
+						assert.ok(bIsResourceLoaded, "Module should be in loading state");
+					}
+				}
+			}
+		};
+
+		var p = sap.ui.loader._.loadJSResourceAsync("fixture/forced-async-loading/bundle-first-failing.js");
+		return p.then(function() {
+			assert.ok(true, "promise should succeed");
+			assert.equal(this.oAppendChildStub.callCount, 2 , "should have been called twice");
+			assert.notOk(bFirstFailure, "there should be one failed try to load the module");
+			assert.ok(sap.ui.loader._.getModuleState('fixture/forced-async-loading/bundle-first-failing.js'), "resource should have been loaded");
+			assert.equal(that.scriptsWith(/fixture\/forced-async-loading\/bundle-first-failing\.js$/), 1, "script tag for bundle should exist");
+		}.bind(this), function() {
+			assert.ok(false, "promise must not fail");
+		});
+
+	});
+
+	QUnit.test("multiple calls (succeeding)", function(assert) {
+		var that = this;
+		var p1 = sap.ui.loader._.loadJSResourceAsync("fixture/forced-async-loading/bundle2.js");
+		var p2 = sap.ui.loader._.loadJSResourceAsync("fixture/forced-async-loading/bundle2.js");
+		p1 = p1.then(function() {
+			assert.ok(true, "promise should succeed");
+			assert.ok(sap.ui.loader._.getModuleState('fixture/forced-async-loading/bundle2.js'), "resource should have been loaded");
+		}, function() {
+			assert.ok(false, "promise should not fail");
+		});
+		p2 = p2.then(function() {
+			assert.ok(true, "promise should succeed");
+			assert.ok(sap.ui.loader._.getModuleState('fixture/forced-async-loading/bundle2.js'), "resource should have been loaded");
+		}, function() {
+			assert.ok(false, "promise should not fail");
+		});
+		return Promise.all([p1,p2]).then(function() {
+			assert.equal(that.scriptsWith(/fixture\/forced-async-loading\/bundle2\.js$/), 1, "only one script tag for lib should exist");
+			assert.equal(this.oAppendChildStub.callCount, 1 , "should have been called twice");
+		}.bind(this));
+	});
+
+	QUnit.test("multiple calls (failing)", function(assert) {
+		var that = this;
+		var p1 = sap.ui.loader._.loadJSResourceAsync("fixture/forced-async-loading/non-existing-multiple.js");
+		var p2 = sap.ui.loader._.loadJSResourceAsync("fixture/forced-async-loading/non-existing-multiple.js", true);
+		p1 = p1.then(function() {
+			assert.ok(false, "promise must not succeed");
+		}, function() {
+			assert.ok(true, "promise should fail");
+		});
+		p2 = p2.then(function() {
+			assert.ok(true, "promise should succeed"); // ignore errors!
+		}, function() {
+			assert.ok(false, "promise must not fail");
+		});
+		return Promise.all([p1,p2]).then(function() {
+			assert.equal(that.scriptsWith(/fixture\/forced-async-loading\/non-existing-multiple\.js$/), 1, "only one script tag for lib should exist");
+			assert.equal(this.oAppendChildStub.callCount, 2 , "should have been called twice");
+		}.bind(this));
 	});
 
 }());

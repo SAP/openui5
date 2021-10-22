@@ -143,7 +143,7 @@ sap.ui.define([
 		initFakeServer: function(sResponseCode, oResponse) {
 			this.oServer = this._oSandbox.useFakeServer();
 			this.oServer.autoRespond = true;
-			this.oServer.respondWith("GET", jQuery.sap.getResourcePath("sap-ui-version", ".json"), [
+			this.oServer.respondWith("GET", sap.ui.require.toUrl("sap-ui-version.json"), [
 				sResponseCode || 200,
 				{
 					"Content-Type": "application/json"

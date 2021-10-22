@@ -1,4 +1,4 @@
-/*global QUnit,sinon*/
+/*global QUnit*/
 
 sap.ui.define([
 	"jquery.sap.global",
@@ -9,6 +9,8 @@ sap.ui.define([
 	"sap/base/Log"
 ], function(jQuery, TestControl, DragInfo, ManagedObject, ElementMetadata, Log) {
 	"use strict";
+
+	QUnit.module("");
 
 	QUnit.test("Default values", function(assert) {
 		var oDragInfo = new DragInfo();
@@ -21,7 +23,7 @@ sap.ui.define([
 
 	QUnit.test("invalidation", function(assert) {
 		var oDragInfo = new DragInfo();
-		var fnInvalidateSpy = sinon.spy(oDragInfo, "invalidate");
+		var fnInvalidateSpy = this.spy(oDragInfo, "invalidate");
 
 		oDragInfo.setGroupName("abc");
 		assert.strictEqual(fnInvalidateSpy.callCount, 0, "Invalidation has not happened for groupName property");
@@ -166,7 +168,7 @@ sap.ui.define([
 
 	QUnit.test("fireDragStart - invalid parameters", function(assert) {
 		var oDragStartEvent = new jQuery.Event("dragstart");
-		var fnDragStartSpy = sinon.spy();
+		var fnDragStartSpy = this.spy();
 		var oDragInfo = new DragInfo({
 			dragStart: fnDragStartSpy
 		});
@@ -181,7 +183,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("fireDragStart - event parameters", function(assert) {
-		var fnDragStartSpy = sinon.spy(function(oEvent) {
+		var fnDragStartSpy = this.spy(function(oEvent) {
 			var mParameters = oEvent.getParameters();
 			assert.ok(mParameters.dragSession, "dragSession exists");
 			assert.strictEqual(mParameters.target, oControl, "target is valid");
@@ -218,7 +220,7 @@ sap.ui.define([
 
 	QUnit.test("fireDragEnd - invalid parameters", function(assert) {
 		var oDragEndEvent = new jQuery.Event("dragstart");
-		var fnDragEndSpy = sinon.spy();
+		var fnDragEndSpy = this.spy();
 		var oDragInfo = new DragInfo({
 			dragEnd: fnDragEndSpy
 		});
@@ -233,7 +235,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("fireDragEnd - event parameters", function(assert) {
-		var fnDragEndSpy = sinon.spy(function(oEvent) {
+		var fnDragEndSpy = this.spy(function(oEvent) {
 			var mParameters = oEvent.getParameters();
 			assert.ok(mParameters.dragSession, "dragSession exists");
 			assert.strictEqual(mParameters.target, oControl, "target is valid");

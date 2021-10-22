@@ -1,5 +1,5 @@
 
-/* global QUnit, sinon, TestControlRenderer */
+/* global QUnit, TestControlRenderer */
 sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Control",
@@ -615,9 +615,9 @@ sap.ui.define([
 		checkACCOutput(sOutput, "aria-selected=\"true\"");
 		checkACCOutput(sOutput, "aria-checked=\"true\"");
 		// escape it because attributes' values are escaped since 1.19.0 & 1.18.5 & 1.16.10
-		var sText = jQuery.sap.escapeHTML("TestACCContr123 test123");
+		var sText = encodeXML("TestACCContr123 test123");
 		checkACCOutput(sOutput, "aria-describedby=\"" + sText + "\"");
-		sText = jQuery.sap.escapeHTML("TestACCContr123 test234");
+		sText = encodeXML("TestACCContr123 test234");
 		checkACCOutput(sOutput, "aria-labelledby=\"" + sText + "\"");
 
 		//Check reset
@@ -656,9 +656,9 @@ sap.ui.define([
 		checkACCOutput(sOutput, "aria-selected=\"true\"");
 		checkACCOutput(sOutput, "aria-checked=\"true\"");
 		// escape it because attributes' values are escaped since 1.19.0 & 1.18.5 & 1.16.10
-		sText = jQuery.sap.escapeHTML("TestACCContr123 test123");
+		sText = encodeXML("TestACCContr123 test123");
 		checkACCOutput(sOutput, "aria-describedby=\"" + sText + "\"");
-		sText = jQuery.sap.escapeHTML("TestACCContr123 test234");
+		sText = encodeXML("TestACCContr123 test234");
 		checkACCOutput(sOutput, "aria-labelledby=\"" + sText + "\"");
 		checkACCOutput(sOutput, "aria-hello1=\"hello2\"");
 
@@ -681,19 +681,18 @@ sap.ui.define([
 		sOutput = rm.aBuffer.join("");
 		checkACCOutput(sOutput, "aria-readonly=\"false\"");
 		// escape it because attributes' values are escaped since 1.19.0 & 1.18.5 & 1.16.10
-		sText = jQuery.sap.escapeHTML("TestACCContr123 test123 hello1");
+		sText = encodeXML("TestACCContr123 test123 hello1");
 		checkACCOutput(sOutput, "aria-describedby=\"" + sText + "\"");
-		sText = jQuery.sap.escapeHTML("TestACCContr123 test234 hello2");
+		sText = encodeXML("TestACCContr123 test234 hello2");
 		checkACCOutput(sOutput, "aria-labelledby=\"" + sText + "\"");
 	});
 
 	QUnit.module("Writer API: Semantic Syntax (DOM) Assertions", {
 		beforeEach: function() {
 			this.oRM = sap.ui.getCore().createRenderManager();
-			this.oAssertionSpy = sinon.spy(console, "assert");
+			this.oAssertionSpy = this.spy(console, "assert");
 		},
 		afterEach: function() {
-			this.oAssertionSpy.restore();
 			this.oRM.destroy();
 		}
 	});
@@ -1184,7 +1183,8 @@ sap.ui.define([
 	QUnit.test("RenderManager writeIcon with font-family which has space inside", function(assert) {
 		var fnOrigGetIconInfo = IconPool.getIconInfo,
 			sFontFamily = "fontfamily which has space inside";
-		var oStub = sinon.stub(IconPool, "getIconInfo").callsFake(function (sIconName) {
+
+		this.stub(IconPool, "getIconInfo").callsFake(function (sIconName) {
 			var oRes = fnOrigGetIconInfo(sIconName);
 			oRes.fontFamily = sFontFamily;
 			return oRes;
@@ -1208,7 +1208,6 @@ sap.ui.define([
 		assert.notEqual($icon1.attr("aria-label"), undefined, "Attribute aria-label should be set");
 
 		jQueryById("area6").empty();
-		oStub.restore();
 	});
 
 	QUnit.test("RenderManager writeIcon with Image URL", function(assert) {
@@ -1272,8 +1271,8 @@ sap.ui.define([
 		assert.ok(!!oRenderer, "A renderer object should be provided");
 		assert.ok(!oRenderer.render, "Invalid renderer should not provide a render function");
 
-		// spy the jQuery.sap.log.error function
-		var oSpy = sinon.spy(Log, "error");
+		// spy the Log.error function
+		var oSpy = this.spy(Log, "error");
 
 		// rendering should not lead to an error
 		oControl.placeAt("area8");
@@ -1282,10 +1281,6 @@ sap.ui.define([
 
 		// check the error message
 		assert.equal("The renderer for class " + oMetadata.getName() + " is not defined or does not define a render function! Rendering of " + oControl.getId() + " will be skipped!", oSpy.getCall(0).args[0], "Error should be reported in the console!");
-
-		// restore the spy
-		oSpy.restore();
-
 	});
 
 
@@ -1293,7 +1288,7 @@ sap.ui.define([
 	QUnit.module("Events", {
 		beforeEach: function() {
 			this.oElement = document.createElement("div");
-			this.oSpy = sinon.spy();
+			this.oSpy = this.spy();
 			this.oContext = {};
 		},
 		afterEach: function() {
@@ -1304,38 +1299,38 @@ sap.ui.define([
 	QUnit.test("preserveContent", function(assert) {
 		RenderManager.attachPreserveContent(this.oSpy);
 		RenderManager.preserveContent(this.oElement);
-		sinon.assert.calledOnce(this.oSpy);
-		sinon.assert.calledWith(this.oSpy, {
+		assert.ok(this.oSpy.calledOnce);
+		assert.ok(this.oSpy.calledWith({
 			domNode: this.oElement
-		});
-		sinon.assert.calledOn(this.oSpy, RenderManager);
-		this.oSpy.reset();
+		}));
+		assert.ok(this.oSpy.calledOn(RenderManager));
+		this.oSpy.resetHistory();
 
 		RenderManager.detachPreserveContent(this.oSpy);
 		RenderManager.preserveContent(this.oElement);
-		sinon.assert.notCalled(this.oSpy);
+		assert.ok(this.oSpy.notCalled);
 	});
 
 	QUnit.test("preserveContent with context", function(assert) {
 		RenderManager.attachPreserveContent(this.oSpy, this.oContext);
 		RenderManager.preserveContent(this.oElement);
-		sinon.assert.calledOnce(this.oSpy);
-		sinon.assert.calledWith(this.oSpy, {
+		assert.ok(this.oSpy.calledOnce);
+		assert.ok(this.oSpy.calledWith({
 			domNode: this.oElement
-		});
-		sinon.assert.calledOn(this.oSpy, this.oContext);
+		}));
+		assert.ok(this.oSpy.calledOn(this.oContext));
 	});
 
 	QUnit.test("preserveContent duplicate listener", function(assert) {
 		RenderManager.attachPreserveContent(this.oSpy);
 		RenderManager.preserveContent(this.oElement);
-		sinon.assert.calledOnce(this.oSpy);
-		this.oSpy.reset();
+		assert.ok(this.oSpy.calledOnce);
+		this.oSpy.resetHistory();
 
 		RenderManager.attachPreserveContent(this.oSpy, this.oContext);
 		RenderManager.preserveContent(this.oElement);
-		sinon.assert.calledOnce(this.oSpy);
-		sinon.assert.calledOn(this.oSpy, this.oContext);
+		assert.ok(this.oSpy.calledOnce);
+		assert.ok(this.oSpy.calledOn(this.oContext));
 	});
 
 	QUnit.module("Invisible");

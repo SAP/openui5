@@ -12,10 +12,10 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/mvc/Controller",
-	'sap/base/util/LoaderExtensions',
-	"my/TypedView",
-	"jquery.sap.dom"
-], function (Log, qutils, Component, Fragment, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, XMLView, Controller, LoaderExtensions, TypedView) {
+	"sap/base/util/LoaderExtensions",
+	"sap/ui/thirdparty/jquery",
+	"my/TypedView"
+], function (Log, qutils, Component, Fragment, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, XMLView, Controller, LoaderExtensions, jQuery, TypedView) {
 	"use strict";
 
 	createAndAppendDiv(["content1", "content2", "content3", "content4", "binding"]);
@@ -736,16 +736,12 @@ sap.ui.define([
 					assert.ok(true, "Dummy Controller method 'doSomething' called");
 				}
 			};
-			this.loadTemplatePromiseSpy = sinon.spy(XMLTemplateProcessor, "loadTemplatePromise");
-			this.parseTemplatePromiseSpy = sinon.spy(XMLTemplateProcessor, "parseTemplatePromise");
-			this.loadResourceSpy = sinon.spy(LoaderExtensions, "loadResource");
-			this.requireSpy = sinon.spy(sap.ui, "require");
+			this.loadTemplatePromiseSpy = this.spy(XMLTemplateProcessor, "loadTemplatePromise");
+			this.parseTemplatePromiseSpy = this.spy(XMLTemplateProcessor, "parseTemplatePromise");
+			this.loadResourceSpy = this.spy(LoaderExtensions, "loadResource");
+			this.requireSpy = this.spy(sap.ui, "require");
 		},
 		afterEach: function(assert) {
-			this.loadTemplatePromiseSpy.restore();
-			this.parseTemplatePromiseSpy.restore();
-			this.loadResourceSpy.restore();
-			this.requireSpy.restore();
 		}
 	});
 
@@ -839,7 +835,7 @@ sap.ui.define([
 
 	QUnit.test("Fragment.load with properties 'name' and 'definition' provided at the same time", function (assert) {
 		var myXml = '<Button xmlns="sap.m" id="xmlfragbtn2" text="This is an XML Fragment" press="doSomething"></Button>';
-		var oLogErrorSpy = sinon.spy(Log, "error");
+		var oLogErrorSpy = this.spy(Log, "error");
 		return Fragment.load({
 			name: "testdata.fragments.XMLTestFragmentNoController",
 			definition: myXml
@@ -848,7 +844,6 @@ sap.ui.define([
 			assert.equal(this.loadTemplatePromiseSpy.callCount, 0, "XMLTemplateProcessor.loadTemplatePromise shouldn't be called. Fragment constructor is called");
 			assert.equal(oLogErrorSpy.callCount, 1, "Error message should be logged");
 			sinon.assert.calledWith(oLogErrorSpy, "The properties 'name' and 'definition' shouldn't be provided at the same time. The fragment definition will be used instead of the name. Fragment name was: testdata.fragments.XMLTestFragmentNoController");
-			oLogErrorSpy.restore();
 			oFragment.destroy();
 		}.bind(this));
 	});
@@ -1069,13 +1064,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Error handling", {
-		before: function() {
-			this.logSpy = sinon.spy(Log, "error");
+		beforeEach: function() {
+			this.logSpy = this.spy(Log, "error");
 		},
 		afterEach: function() {
-			this.logSpy.reset();
-		},
-		after: function() {
 			this.logSpy.restore();
 		}
 	});

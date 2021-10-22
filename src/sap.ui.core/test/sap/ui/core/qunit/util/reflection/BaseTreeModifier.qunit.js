@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/util/XMLHelper",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -16,6 +17,7 @@ function(
 	Control,
 	UIComponent,
 	ManagedObject,
+	XMLHelper,
 	sinon
 ) {
 	"use strict";
@@ -261,7 +263,7 @@ function(
 		QUnit.test("when checkAndPrefixIdsInFragment is called with various fragments", function(assert) {
 			var fnDone = assert.async(5);
 
-			var oXML1 = jQuery.sap.parseXML(
+			var oXML1 = XMLHelper.parse(
 				'<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">' +
 					// '<Label id="label123" text="These controls are within one multi-root Fragment:" />' +
 					'<Input />' +
@@ -274,7 +276,7 @@ function(
 				'</core:FragmentDefinition>'
 			);
 
-			var oXML2 = jQuery.sap.parseXML(
+			var oXML2 = XMLHelper.parse(
 				'<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">' +
 					'<Label id="label123" text="These controls are within one multi-root Fragment:" />' +
 					'<Input />' +
@@ -285,7 +287,7 @@ function(
 				'</core:FragmentDefinition>'
 			);
 
-			var oXML3 = jQuery.sap.parseXML(
+			var oXML3 = XMLHelper.parse(
 				'<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">' +
 					'<Label id="label123" text="These controls are within one multi-root Fragment:" />' +
 					'<Input id="input123" />' +
@@ -298,7 +300,7 @@ function(
 				'</core:FragmentDefinition>'
 			);
 
-			var oXML4 = jQuery.sap.parseXML(
+			var oXML4 = XMLHelper.parse(
 				'<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">' +
 					'<Label id="label123" text="These controls are within one multi-root Fragment:" />' +
 					'<Input id="input123" />' +
@@ -309,7 +311,7 @@ function(
 				'</core:FragmentDefinition>'
 			);
 
-			var oXML5 = jQuery.sap.parseXML(
+			var oXML5 = XMLHelper.parse(
 				'<core:FragmentDefinition xmlns:m="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout" xmlns="sap.uxap" xmlns:core="sap.ui.core">' +
 					'<ObjectPageLayout id="ProductDetailLayout" subSectionLayout="{ConfigModel>/subSectionLayout}" flexEnabled="true">' +
 						'<headerTitle>' +

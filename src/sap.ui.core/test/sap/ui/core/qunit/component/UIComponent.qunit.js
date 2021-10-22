@@ -846,9 +846,9 @@ sap.ui.define([
 
 		afterEach: function() {
 			this.oServer.restore();
-			this.requireSpy.reset();
-			this.logWarningSpy.reset();
-			this.oViewCreateSpy.reset();
+			this.requireSpy.resetHistory();
+			this.logWarningSpy.resetHistory();
+			this.oViewCreateSpy.resetHistory();
 		},
 
 		after: function() {

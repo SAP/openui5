@@ -150,7 +150,7 @@ sap.ui.define([
 			this.oLogErrorSpy = sinon.spy(Log, "error");
 		},
 		beforeEach: function() {
-			this.oLogErrorSpy.reset();
+			this.oLogErrorSpy.resetHistory();
 		},
 		after: function() {
 			this.oLogErrorSpy.restore();

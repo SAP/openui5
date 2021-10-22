@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Text",
 	"sap/ui/core/ResizeHandler",
+	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes"
 ], function(
 	Popup,
@@ -29,6 +30,7 @@ sap.ui.define([
 	Button,
 	Text,
 	ResizeHandler,
+	containsOrEquals,
 	KeyCodes
 ){
 	"use strict";
@@ -538,7 +540,7 @@ sap.ui.define([
 		};
 
 		var oOpenButton = jQuery("#popup1-btn");
-		jQuery.sap.focus(oOpenButton);
+		oOpenButton[0] && oOpenButton[0].focus();
 
 		var fnOpened = function() {
 			this.oPopup.detachOpened(fnOpened, this);
@@ -580,10 +582,10 @@ sap.ui.define([
 			var $BlockLayer = jQuery("#sap-ui-blocklayer-popup");
 			assert.equal($BlockLayer.length, 1, "there's 1 blocklayer");
 
-			jQuery.sap.focus($BlockLayer[0]);
+			$BlockLayer[0].focus();
 
 			window.setTimeout(function () {
-				assert.ok(jQuery.sap.containsOrEquals(this.oPopup.getContent(), document.activeElement), "The focus is set back to the popup");
+				assert.ok(containsOrEquals(this.oPopup.getContent(), document.activeElement), "The focus is set back to the popup");
 
 				this.oPopup.attachClosed(function() {
 					sandbox.restore();
@@ -624,10 +626,10 @@ sap.ui.define([
 			var $BlockLayer = jQuery("#sap-ui-blocklayer-popup");
 			assert.equal($BlockLayer.length, 1, "there's 1 blocklayer");
 
-			jQuery.sap.focus($BlockLayer[0]);
+			$BlockLayer[0].focus();
 
 			window.setTimeout(function () {
-				assert.ok(jQuery.sap.containsOrEquals(oSecondPopup.getContent(), document.activeElement), "The focus is set back to the popup");
+				assert.ok(containsOrEquals(oSecondPopup.getContent(), document.activeElement), "The focus is set back to the popup");
 
 				oSecondPopup.attachClosed(function() {
 					sandbox.restore();
@@ -2362,12 +2364,12 @@ sap.ui.define([
 		this.oPopup.setAutoCloseAreas([this.oInput]);
 
 		this.oInput.focus();
-		assert.ok(jQuery.sap.containsOrEquals(this.oInput.getDomRef(), document.activeElement), "focus is inside input");
+		assert.ok(containsOrEquals(this.oInput.getDomRef(), document.activeElement), "focus is inside input");
 
 		QUnitUtils.triggerKeydown(this.oInput.getDomRef(), KeyCodes.ENTER);
 		QUnitUtils.triggerKeyup(this.oInput.getDomRef(), KeyCodes.ENTER);
 
-		assert.ok(!jQuery.sap.containsOrEquals(this.oInput.getDomRef(), document.activeElement), "The input is blurred after calling popup.open");
+		assert.ok(!containsOrEquals(this.oInput.getDomRef(), document.activeElement), "The input is blurred after calling popup.open");
 
 		assert.ok(this.oPopup.isOpen(), "Popup should be opened");
 	});
@@ -2388,7 +2390,7 @@ sap.ui.define([
 
 		var fnOpened = function() {
 			assert.equal(oBlurSpy.callCount, 0, "The document.activeElement isn't blurred");
-			assert.ok(jQuery.sap.containsOrEquals(that.oInput.getDomRef(), document.activeElement), "focus is still inside input");
+			assert.ok(containsOrEquals(that.oInput.getDomRef(), document.activeElement), "focus is still inside input");
 
 			oBlurSpy.restore();
 			done();
@@ -2398,7 +2400,7 @@ sap.ui.define([
 		this.oPopup.setInitialFocusId(this.oInput.getId());
 
 		this.oInput.focus();
-		assert.ok(jQuery.sap.containsOrEquals(this.oInput.getDomRef(), document.activeElement), "focus is inside input");
+		assert.ok(containsOrEquals(this.oInput.getDomRef(), document.activeElement), "focus is inside input");
 
 		oFocusDomElement = document.activeElement;
 		oBlurSpy = sinon.spy(oFocusDomElement, "blur");
@@ -2406,7 +2408,7 @@ sap.ui.define([
 		QUnitUtils.triggerKeydown(this.oInput.getDomRef(), KeyCodes.ENTER);
 		QUnitUtils.triggerKeyup(this.oInput.getDomRef(), KeyCodes.ENTER);
 
-		assert.ok(jQuery.sap.containsOrEquals(this.oInput.getDomRef(), document.activeElement), "The input is still focused after calling popup.open");
+		assert.ok(containsOrEquals(this.oInput.getDomRef(), document.activeElement), "The input is still focused after calling popup.open");
 
 		assert.ok(this.oPopup.isOpen(), "Popup should be opened");
 	});

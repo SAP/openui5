@@ -1,8 +1,9 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/Device",
+	"sap/base/Log",
 	"sap/ui/core/cache/CacheManager"
-], function(Device, CacheManager) {
+], function(Device, Log, CacheManager) {
 	"use strict";
 
 	var aSupportedEnv = [];
@@ -286,11 +287,11 @@ sap.ui.define([
 	function deleteDatabaseEntries() {
 		if (CacheManager) {
 			return Promise.resolve(function() {
-				jQuery.sap.log.debug(new Date() + ". Deleting all entries");
+				Log.debug(new Date() + ". Deleting all entries");
 			}).then(function() {
 				return CacheManager.reset();
 			}).then(function() {
-				jQuery.sap.log.debug(new Date() + ". Entries deleted ");
+				Log.debug(new Date() + ". Entries deleted ");
 			});
 		}
 	}

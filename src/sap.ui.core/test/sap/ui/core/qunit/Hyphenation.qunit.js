@@ -214,7 +214,7 @@ var sSingleLangTest = "de",
 			// Initialize the default language and after that try to force multiple initializations.
 			this.oHyphenation.initialize().then(function() {
 
-				oSpy.reset();
+				oSpy.resetHistory();
 				var aPromises = [];
 
 				// Act

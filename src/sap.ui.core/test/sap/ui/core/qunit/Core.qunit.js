@@ -66,7 +66,7 @@ sap.ui.require([
 		assert.notOk(sap.ui.getCore() instanceof oRealCore.constructor, "Facade should not be an instance of sap.ui.core.Core");
 		assert.strictEqual(sap.ui.getCore(), sap.ui.getCore(), "consecutive calls to sap.ui.getCore() should return the exact same facade");
 
-		Log.error.reset();
+		Log.error.resetHistory();
 		assert.strictEqual(new oRealCore.constructor(), sap.ui.getCore(), "consecutive calls to the constructor should return the facade");
 		sinon.assert.calledWith(Log.error, sinon.match(/Only.*must create an instance of .*Core/).and(sinon.match(/use .*sap.ui.getCore\(\)/)));
 	});
@@ -335,7 +335,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with already loaded bundle", function(assert) {
-		var oSpy = sinon.spy(ResourceBundle, 'create'),
+		var oSpy = this.spy(ResourceBundle, 'create'),
 			pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", "de", true);
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
@@ -345,13 +345,11 @@ sap.ui.require([
 			assert.ok(oBundle, "bundle could be retrieved");
 			assert.equal(oBundle.getText("SAPUI5_FRIDAY"), "Friday", "bundle can resolve texts");
 			assert.equal(oBundle.getText("SAPUI5_GM_ZSTEP"), "Zoom step {0}", "bundle can resolve texts");
-
-			oSpy.restore();
 		});
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle", function(assert) {
-		var oSpy = sinon.spy(ResourceBundle, 'create'),
+		var oSpy = this.spy(ResourceBundle, 'create'),
 			pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", "en", true);
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
@@ -361,8 +359,6 @@ sap.ui.require([
 			assert.ok(oBundle, "bundle could be retrieved");
 			assert.equal(oBundle.getText("SAPUI5_FRIDAY"), "Friday", "bundle can resolve texts");
 			assert.equal(oBundle.getText("SAPUI5_GM_ZSTEP"), "Zoom step {0}", "bundle can resolve texts");
-
-			oSpy.restore();
 		});
 	});
 
@@ -435,7 +431,6 @@ sap.ui.require([
 		assert.equal(oSpyCall.args[0], 'sap/test/i18ntrue/messagebundle.properties', 'sap.ui.resource is called with the given message bundle name');
 
 		return pBundle.then(function(oBundle) {
-			oSpySapUiRequireToUrl.restore();
 			assert.ok(oBundle, "Bundle should be loaded");
 		});
 	});
@@ -1297,7 +1292,7 @@ sap.ui.require([
 	QUnit.test("Test piggyback access of private Core methods", function(assert) {
 
 		var oCoreInternals;
-		var oErrorLogSpy = sinon.spy(Log, "error");
+		var oErrorLogSpy = this.spy(Log, "error");
 
 		sap.ui.getCore().registerPlugin({
 			startPlugin : function(oCore) {
@@ -1311,7 +1306,6 @@ sap.ui.require([
 		assert.ok(Object.keys(oCoreInternals.mElements).length, 2, "Return all registered Element instances");
 		assert.equal(oErrorLogSpy.getCall(0).args[0], "oCore.mElements was a private member and has been removed. Use one of the methods in sap.ui.core.Element.registry instead", "Logs error on private methode access");
 
-		oErrorLogSpy.reset();
 		oElementA.destroy();
 		oElementB.destroy();
 	});

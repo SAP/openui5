@@ -1,4 +1,4 @@
-/*global sinon, QUnit */
+/*global QUnit */
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/ResourceBundle",
@@ -11,13 +11,10 @@ sap.ui.define([
 		beforeEach: function () {
 			var oConfiguration = sap.ui.getCore().getConfiguration();
 			var aSupportedLanguages = oConfiguration.getSupportedLanguages();
-			this.oSupportedLanguagesStub = sinon.stub(oConfiguration, "getSupportedLanguages");
+			this.oSupportedLanguagesStub = this.stub(oConfiguration, "getSupportedLanguages");
 			this.oSupportedLanguagesStub.returns(aSupportedLanguages);
-			this.oLogErrorStub = sinon.stub(Log, "error");
 		},
 		afterEach: function () {
-			this.oLogErrorStub.restore();
-			this.oSupportedLanguagesStub.restore();
 		}
 	});
 
@@ -30,11 +27,10 @@ sap.ui.define([
 
 		var oEmptyProps = createFakeProperties({number: "47"});
 
-		var oStub = sinon.stub(Properties, "create").returns(Promise.resolve(oEmptyProps));
+		this.stub(Properties, "create").returns(Promise.resolve(oEmptyProps));
 
 		ResourceBundle.create({url: 'my.properties', async: true}).then(function(oResourceBundle) {
 			assert.deepEqual(oResourceBundle.aPropertyFiles[0], oEmptyProps, "properties are correctly loaded");
-			oStub.restore();
 			done();
 		});
 
@@ -58,11 +54,11 @@ sap.ui.define([
 
 	/**
 	 *
-	 * @param sinon
+	 * @param sandbox
 	 * @return {*} ResourceBundle containing CustomBundle1 and CustomBundle2
 	 */
-	function createResourceBundleWithCustomBundles(sinon) {
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+	function createResourceBundleWithCustomBundles(sandbox) {
+		var oStub = sandbox.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		var oResourceBundle1;
 		var oResourceBundleCustom1;
@@ -70,15 +66,13 @@ sap.ui.define([
 		return ResourceBundle.create({url: 'my.properties', locale: "en", async: true})
 		.then(function(oResourceBundle) {
 			oResourceBundle1 = oResourceBundle;
-			oStub.restore();
-			oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "45", mec1: "ya"}));
+			oStub.returns(createFakePropertiesPromise({number: "45", mec1: "ya"}));
 
 			return ResourceBundle.create({url: 'custom1.properties', locale: "en", async: true});
 		})
 		.then(function(oResourceBundle) {
 			oResourceBundleCustom1 = oResourceBundle;
-			oStub.restore();
-			oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "46", mec2: "ye"}));
+			oStub.returns(createFakePropertiesPromise({number: "46", mec2: "ye"}));
 
 			return ResourceBundle.create({url: 'custom2.properties', locale: "en", async: true});
 		})
@@ -92,7 +86,7 @@ sap.ui.define([
 	}
 
 	QUnit.test("multiple resource bundles using _enhance", function(assert) {
-		return createResourceBundleWithCustomBundles(sinon).then(function(oResourceBundle) {
+		return createResourceBundleWithCustomBundles(this).then(function(oResourceBundle) {
 			assert.ok(oResourceBundle, "enhancing a resourceBundle works");
 		});
 	});
@@ -100,70 +94,64 @@ sap.ui.define([
 	QUnit.test("fallback locale: fallbackLocale undefined", function(assert) {
 		// fallback chain: -> de_CH (not supported) -> de (not supported) -> en (supported, default fallbackLocale)
 		// supportedLocales: only "en" is supported
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, supportedLocales: ["en"], fallbackLocale: undefined}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_en.properties", "en properties file is requested");
-			oStub.restore();
 		});
 	});
 
 	QUnit.test("fallback locale: supportedLocales undefined", function(assert) {
 		// fallback chain: -> de_CH (supported)
 		// if supportedLocales is undefined, all locales are supported
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, supportedLocales: undefined}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_de_CH.properties", "de_CH properties file is requested");
-			oStub.restore();
 		});
 	});
 
 	QUnit.test("fallback locale: supportedLocales empty, fallback set", function(assert) {
 		// fallback chain: -> de_CH (supported)
 		// if supportedLocales is empty, all locales are supported
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, supportedLocales: [], fallbackLocale: "da"}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_de_CH.properties", "de_CH properties file is requested");
-			oStub.restore();
 		});
 	});
 
 	QUnit.test("fallback locale: supportedLocales undefined, fallback set", function(assert) {
 		// fallback chain: -> de_CH (supported)
 		// if supportedLocales is undefined, all locales are supported
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, supportedLocales: undefined, fallbackLocale: "da"}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_de_CH.properties", "de_CH properties file is requested");
-			oStub.restore();
 		});
 	});
 
 	QUnit.test("fallback locale: supportedLocales not defined, fallback set", function(assert) {
 		// fallback chain: -> de_CH (supported)
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, fallbackLocale: "da"}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_de_CH.properties", "de_CH properties file is requested");
-			oStub.restore();
 		});
 
 	});
 
 	QUnit.test("fallback locale: supportedLocales does not contain fallbackLocale", function(assert) {
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 		var mParams = {url: 'my.properties', locale: "de", async: true, supportedLocales: ["de", "fr"], fallbackLocale: "da"};
 		assert.throws(function () {
 			ResourceBundle.create(mParams);
 		}, new Error("The fallback locale 'da' is not contained in the list of supported locales ['de', 'fr'] of the bundle 'my.properties' and will be ignored."));
-		oStub.restore();
 	});
 
 	QUnit.test("fallback locale: supportedLocales not defined, but configuration has supportedLocales", function(assert) {
@@ -171,103 +159,94 @@ sap.ui.define([
 		this.oSupportedLanguagesStub.returns(["da", "en"]);
 
 		// fallback chain: -> de_CH (not supported) -> de (not supported) -> da (fallback)
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, fallbackLocale: "da"}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_da.properties", "only da properties file is requested");
-			oStub.restore();
 		});
 	});
 
 	QUnit.test("fallback locale: matching fallback", function(assert) {
 		// fallback chain: -> de_CH (not supported) -> de (not supported) -> da (fallback)
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, supportedLocales: ["da", "en"], fallbackLocale: "da"}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_da.properties", "only da properties file is requested");
-			oStub.restore();
 		});
 
 	});
 
 	QUnit.test("fallback locale: empty fallback", function(assert) {
 		// fallback chain: -> de_CH (not supported) -> de (not supported) -> "" (fallback)
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, supportedLocales: ["da", "en", ""], fallbackLocale: ""}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my.properties", "only raw properties file is requested");
-			oStub.restore();
 		});
 
 	});
 
 	QUnit.test("fallback locale: default fallback is 'en'", function(assert) {
 		// fallback chain: -> de_CH (not supported) -> de (not supported) -> en (default fallback)
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, supportedLocales: ["da", "en"]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_en.properties", "only en properties file is requested");
-			oStub.restore();
 		});
 
 	});
 
 	QUnit.test("fallback locale: default fallback, 'en' is not supported", function(assert) {
 		// fallback chain: -> de_CH (not supported) -> de (not supported) -> en (not supported) -> "" (not supported)
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, supportedLocales: ["da"]}).then(function() {
 			assert.equal(oStub.callCount, 0, "is not called because no locale from the fallback chain is supported");
-			oStub.restore();
 		});
 	});
 
 	QUnit.test("fallback locale: fallback with region not supported", function(assert) {
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		assert.throws(function () {
 			ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, supportedLocales: ["da"], fallbackLocale: "en_US"});
 		}, new Error("The fallback locale 'en_US' is not contained in the list of supported locales ['da'] of the bundle 'my.properties' and will be ignored."));
 		assert.equal(oStub.callCount, 0, "is not called because no locale from the fallback chain is supported");
-		oStub.restore();
 	});
 
 	QUnit.test("fallback locale: default fallback, empty is supported", function(assert) {
 		// -> de_CH (not supported) -> de (not supported) -> en (not supported) -> "" (supported)
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, supportedLocales: ["da", ""]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my.properties", "raw properties file is requested");
-			oStub.restore();
 		});
 	});
 
 	QUnit.test("fallback locale with supportedLocales (normalization)", function(assert) {
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 		var aSupportedLocales = ["he", "en"];
 		var pResourceBundle = ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, supportedLocales: aSupportedLocales, fallbackLocale: "iw"});
 
 		return pResourceBundle.then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_he.properties", "locale is normalized but 'he' is part of the supportedLocales therefore 'iw' is mapped to 'he'");
-			oStub.restore();
 		});
 	});
 
 	QUnit.test("fallback locale with supportedLocales empty value (normalization)", function(assert) {
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 		var aSupportedLocales = ["he", "en", ""];
 		var pResourceBundle = ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, supportedLocales: aSupportedLocales, fallbackLocale: ""});
 
 		return pResourceBundle.then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my.properties", "empty language is supported and configured as fallback");
-			oStub.restore();
 		});
 	});
 
@@ -280,12 +259,11 @@ sap.ui.define([
 		// but since the supportedLocales contain "he_IL" the resulting locale is "he_IL" because its ISO639 value ("he_IL") is included in the supportedLocales
 		// fallback chain: de_CH (not supported) -> de (not supported) -> iw_IL (supported after conversion to BCP47) ==> he_IL
 
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, supportedLocales: aSupportedLocales, fallbackLocale: sFallbackLocale}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
 		});
 	});
 
@@ -293,23 +271,21 @@ sap.ui.define([
 		var sExpectedLocale = "sh";
 		var sLocale = "sr";
 
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
 		});
 	});
 
 	QUnit.test("locale sr -> (supportedLocales: ['sh'])", function(assert) {
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 		var sLocale = "sr";
 		var aSupportedLocales = ["sh"];
 
 		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales}).then(function() { //sh
 			assert.equal(oStub.callCount, 1);
-			oStub.restore();
 		});
 	});
 
@@ -317,12 +293,11 @@ sap.ui.define([
 		var sExpectedLocale = "sh";
 		var sLocale = "sh";
 
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
 		});
 	});
 
@@ -331,12 +306,11 @@ sap.ui.define([
 		var sLocale = "sh";
 		var aSupportedLocales = ["sh"];
 
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
 		});
 	});
 
@@ -344,12 +318,11 @@ sap.ui.define([
 		var sExpectedLocale = "sr_Latn";
 		var sLocale = "sh";
 
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: ["sr_Latn"]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
 		});
 	});
 
@@ -358,36 +331,33 @@ sap.ui.define([
 	QUnit.test("locale sr-Latn -> sh", function(assert) {
 		var sExpectedLocale = "sh";
 
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: "sr-Latn", async: true}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
 		});
 	});
 
 	QUnit.test("locale sr-Latn -> sr_Latn (supportedLocales: ['sr_Latn'])", function(assert) {
 		var sExpectedLocale = "sr_Latn";
 
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: "sr-Latn", async: true, supportedLocales: ["sr_Latn"]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
 		});
 	});
 
 	QUnit.test("locale sr-Latn -> sh (supportedLocales: ['sh'])", function(assert) {
 		var sExpectedLocale = "sh";
 
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: "sr-Latn", async: true, supportedLocales: ["sh"]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
 		});
 	});
 
@@ -400,12 +370,11 @@ sap.ui.define([
 		// the supportedLocales contain "he_IL" the resulting locale is "he_IL" because the locale's BCP47 value ("he_IL") is included in the supportedLocales
 		// fallback chain: iw_IL (supported after conversion) ==> he_IL
 
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
 		});
 	});
 
@@ -418,12 +387,11 @@ sap.ui.define([
 		// the supportedLocales contain "iw_IL" therefore the resulting locale is "iw_IL"
 		// fallback chain: iw_IL (supported) ==> iw_IL
 
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
 		});
 	});
 
@@ -436,12 +404,11 @@ sap.ui.define([
 		// the supportedLocales contain "he" therefore the resulting locale is "he" because the locale fallback chain's BCP47 value ("he") is included in the supportedLocales
 		// fallback chain: iw_IL (not supported) -> "iw" (supported after conversion to BCP47) ==> he
 
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
 		});
 	});
 
@@ -454,12 +421,11 @@ sap.ui.define([
 		// the supportedLocales contain "iw" therefore the resulting locale is "iw"
 		// fallback chain: iw_IL (not supported) -> "iw" (supported) ==> iw
 
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
 		});
 	});
 
@@ -472,12 +438,11 @@ sap.ui.define([
 		// the supportedLocales contain "iw" therefore the resulting locale is "iw"
 		// fallback chain: iw_IL (not supported) -> "iw" (supported) ==> iw
 
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
 		});
 	});
 
@@ -490,12 +455,11 @@ sap.ui.define([
 		// the supportedLocales contain "he" therefore the resulting locale is "he" because the locale fallback chain's BCP47 value ("he") is included in the supportedLocales
 		// fallback chain: iw_IL (not supported) -> "iw" (supported after conversion to BCP47) ==> he
 
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
 		});
 	});
 
@@ -509,12 +473,11 @@ sap.ui.define([
 		// the supportedLocales contain "he" therefore the resulting locale is "he" because the locale fallback chain's BCP47 value ("he") is included in the supportedLocales
 		// fallback chain: iw_IL (not supported) -> "iw" (supported after conversion to BCP47) ==> he
 
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
 		});
 	});
 
@@ -527,12 +490,11 @@ sap.ui.define([
 		// the supportedLocales contain "iw" therefore the resulting locale is "iw"
 		// fallback chain: iw_IL (not supported) -> "iw" (supported) ==> iw
 
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
 		});
 	});
 
@@ -545,12 +507,11 @@ sap.ui.define([
 		// the supportedLocales contain "iw_IL" therefore the resulting locale is "iw_IL"
 		// fallback chain: iw_IL (supported) ==> iw_IL
 
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
 		});
 	});
 
@@ -563,12 +524,11 @@ sap.ui.define([
 		// the supportedLocales contain "iw_IL" therefore the resulting locale is "iw_IL"
 		// fallback chain: iw_IL (supported) ==> iw_IL
 
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
 		});
 	});
 
@@ -581,12 +541,11 @@ sap.ui.define([
 		// the supportedLocales contain "he_IL" therefore the resulting locale is "he_IL" because the locale fallback chain's BCP47 value ("he_IL") is included in the supportedLocales
 		// fallback chain: iw_IL (supported after conversion to BCP47) ==> he_IL
 
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
 		});
 	});
 
@@ -617,7 +576,7 @@ sap.ui.define([
 
 
 	QUnit.test("fallback locale with modification of supportedLocales (side effects)", function(assert) {
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 		var aSupportedLocales = ["da", "en"];
 		var pResourceBundle = ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, supportedLocales: aSupportedLocales, fallbackLocale: "da"});
 
@@ -627,7 +586,6 @@ sap.ui.define([
 		return pResourceBundle.then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_da.properties", "although aSupportedLocales is modified ResourceBundle.create is not affected");
-			oStub.restore();
 		});
 	});
 
@@ -726,10 +684,10 @@ sap.ui.define([
 	QUnit.test("getText (multiple resource bundles) checking that nextLocale is loaded", function(assert) {
 		var done = assert.async();
 
-		createResourceBundleWithCustomBundles(sinon)
+		createResourceBundleWithCustomBundles(this)
 		.then(function(oResourceBundle) {
 
-			var oSpy = sinon.spy(Properties, "create");
+			var oSpy = this.spy(Properties, "create");
 
 			// no loading of fallback locale is triggered since all keys are within properties.
 			assert.equal(oResourceBundle.getText("number"), "46", "Found in last added custom bundle (custom bundle 2)");
@@ -741,19 +699,16 @@ sap.ui.define([
 			// fallback locale is loaded since key is not within properties.
 			assert.equal(oResourceBundle.getText("unknown"), "unknown", "Not present in any bundle");
 			assert.equal(oSpy.callCount, 3, "fallback locale was triggered for every bundle");
-			oSpy.restore();
 			done();
-		});
+		}.bind(this));
 
 	});
 
 	QUnit.test("getText ignore key fallback (last fallback)", function(assert) {
 		var done = assert.async();
 
-		createResourceBundleWithCustomBundles(sinon)
+		createResourceBundleWithCustomBundles(this)
 		.then(function(oResourceBundle) {
-
-			var oSpy = sinon.spy(Properties, "create");
 
 			// Correct behavior for a found text
 			assert.equal(oResourceBundle.getText("number", [], true), "46", "Correct behavior for a found text with key fallback activated.");
@@ -763,14 +718,12 @@ sap.ui.define([
 			assert.equal(oResourceBundle.getText("not_there", [], true), undefined, "Correct behavior for a not found text with key fallback activated.");
 			assert.equal(oResourceBundle.getText("not_there", [], false), "not_there", "Correct behavior for a not found text with key fallback deactivated.");
 
-			oSpy.restore();
 			done();
 		});
-
 	});
 
 	QUnit.test("getText should print meaningful assertion error when key is not found", function(assert) {
-		var oPropertiesCreateStub = sinon.stub(Properties, "create");
+		var oPropertiesCreateStub = this.stub(Properties, "create");
 			oPropertiesCreateStub
 			.withArgs({
 				url: "my_en_US.properties",
@@ -785,7 +738,7 @@ sap.ui.define([
 				headers: undefined
 			}).returns(createFakeProperties({ "foo": "bar" }));
 
-		var oConsoleAssertStub = sinon.stub(console, "assert");
+		var oConsoleAssertStub = this.stub(console, "assert");
 
 		// Only supported locale is "de". No fallback to my.properties
 		return ResourceBundle.create({url: 'my.properties', locale: "en_US", async: true, supportedLocales: ["en_US", "en"]}).then(function(oResourceBundle) {
@@ -803,31 +756,26 @@ sap.ui.define([
 				false,
 				"could not find any translatable text for key 'unknown' in bundle file(s): 'my_en_US.properties', 'my_en.properties'"
 			], "console.assert should be called with expected message");
-
-			oPropertiesCreateStub.restore();
-			oConsoleAssertStub.restore();
 		});
 	});
 
 	QUnit.test("constructor with fallback chain - locale 'de_CH'", function(assert) {
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		// fallback chain: -> de_CH -> de -> de_DE -> "" (supported)
 		return ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, supportedLocales: [""], fallbackLocale: ""}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my.properties", "raw properties file is requested");
-			oStub.restore();
 		});
 	});
 
 	QUnit.test("constructor with fallback chain - locale 'de'", function(assert) {
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		// fallback chain: -> de -> de_DE -> "" (supported)
 		return ResourceBundle.create({url: 'my.properties', locale: "de", async: true, supportedLocales: [""], fallbackLocale: ""}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my.properties", "raw properties file is requested");
-			oStub.restore();
 		});
 	});
 
@@ -837,7 +785,7 @@ sap.ui.define([
 		var sFallbackLocale = "";
 
 		// needs to be executed sync because
-		var oPropertiesCreateStub = sinon.stub(Properties, "create");
+		var oPropertiesCreateStub = this.stub(Properties, "create");
 		oPropertiesCreateStub.returns(createFakeProperties({name: "base"}));
 		oPropertiesCreateStub.onFirstCall().returns(createFakePropertiesPromise({name: "base"}));
 
@@ -856,8 +804,6 @@ sap.ui.define([
 				"my_de.properties",
 				"my.properties"
 			], "called urls must match");
-
-			oPropertiesCreateStub.restore();
 		});
 
 	});
@@ -867,7 +813,7 @@ sap.ui.define([
 		var sLocale = "de_CH";
 
 		// needs to be executed sync because
-		var oPropertiesCreateStub = sinon.stub(Properties, "create");
+		var oPropertiesCreateStub = this.stub(Properties, "create");
 		oPropertiesCreateStub.returns(createFakeProperties({name: "base"}));
 		oPropertiesCreateStub.onFirstCall().returns(createFakePropertiesPromise({name: "base"}));
 
@@ -887,8 +833,6 @@ sap.ui.define([
 				"my_en.properties",
 				"my.properties"
 			], "called urls must match");
-
-			oPropertiesCreateStub.restore();
 		});
 
 	});
@@ -899,7 +843,7 @@ sap.ui.define([
 		var sFallbackLocale = "fr_FR";
 
 		// needs to be executed sync because
-		var oPropertiesCreateStub = sinon.stub(Properties, "create");
+		var oPropertiesCreateStub = this.stub(Properties, "create");
 		oPropertiesCreateStub.returns(createFakeProperties({name: "base"}));
 		oPropertiesCreateStub.onFirstCall().returns(createFakePropertiesPromise({name: "base"}));
 
@@ -920,8 +864,6 @@ sap.ui.define([
 				"my_fr.properties",
 				"my.properties"
 			], "called urls must match");
-
-			oPropertiesCreateStub.restore();
 		});
 
 	});
@@ -932,7 +874,7 @@ sap.ui.define([
 		var sFallbackLocale = "de_DE";
 
 		// needs to be executed sync because
-		var oPropertiesCreateStub = sinon.stub(Properties, "create");
+		var oPropertiesCreateStub = this.stub(Properties, "create");
 		oPropertiesCreateStub.returns(createFakeProperties({name: "base"}));
 		oPropertiesCreateStub.onFirstCall().returns(createFakePropertiesPromise({name: "base"}));
 
@@ -952,8 +894,6 @@ sap.ui.define([
 				"my_de_DE.properties",
 				"my.properties"
 			], "called urls must match");
-
-			oPropertiesCreateStub.restore();
 		});
 
 	});
@@ -964,7 +904,7 @@ sap.ui.define([
 		var sFallbackLocale = "de_DE";
 
 		// needs to be executed sync because
-		var oPropertiesCreateStub = sinon.stub(Properties, "create");
+		var oPropertiesCreateStub = this.stub(Properties, "create");
 		oPropertiesCreateStub.returns(createFakeProperties({name: "base"}));
 		oPropertiesCreateStub.onFirstCall().returns(createFakePropertiesPromise({name: "base"}));
 
@@ -983,8 +923,6 @@ sap.ui.define([
 				"my_de_DE.properties",
 				"my.properties"
 			], "called urls must match");
-
-			oPropertiesCreateStub.restore();
 		});
 
 	});
@@ -995,7 +933,7 @@ sap.ui.define([
 		var sFallbackLocale = "he_IL";
 
 		// needs to be executed sync because
-		var oPropertiesCreateStub = sinon.stub(Properties, "create");
+		var oPropertiesCreateStub = this.stub(Properties, "create");
 		oPropertiesCreateStub.returns(createFakeProperties({name: "base"}));
 		oPropertiesCreateStub.onFirstCall().returns(createFakePropertiesPromise({name: "base"}));
 
@@ -1016,8 +954,6 @@ sap.ui.define([
 				"my_iw.properties",
 				"my.properties"
 			], "called urls must match");
-
-			oPropertiesCreateStub.restore();
 		});
 
 	});
@@ -1029,7 +965,7 @@ sap.ui.define([
 		var aSupportedLocales = ["de_CH", "he_IL", "iw"];
 
 		// needs to be executed sync because
-		var oPropertiesCreateStub = sinon.stub(Properties, "create");
+		var oPropertiesCreateStub = this.stub(Properties, "create");
 		oPropertiesCreateStub.returns(createFakeProperties({name: "base"}));
 		oPropertiesCreateStub.onFirstCall().returns(createFakePropertiesPromise({name: "base"}));
 
@@ -1048,8 +984,6 @@ sap.ui.define([
 				"my_he_IL.properties",
 				"my_iw.properties"
 			], "called urls must match");
-
-			oPropertiesCreateStub.restore();
 		});
 
 	});
@@ -1061,7 +995,7 @@ sap.ui.define([
 		var aSupportedLocales = ["de_CH", "he", "iw_IL"];
 
 		// needs to be executed sync because
-		var oPropertiesCreateStub = sinon.stub(Properties, "create");
+		var oPropertiesCreateStub = this.stub(Properties, "create");
 		oPropertiesCreateStub.returns(createFakeProperties({name: "base"}));
 		oPropertiesCreateStub.onFirstCall().returns(createFakePropertiesPromise({name: "base"}));
 
@@ -1080,8 +1014,6 @@ sap.ui.define([
 				"my_iw_IL.properties",
 				"my_he.properties"
 			], "called urls must match");
-
-			oPropertiesCreateStub.restore();
 		});
 
 	});
@@ -1175,9 +1107,9 @@ sap.ui.define([
 					+--- appvar1path retail de
 					+--- appvar1path oil de
 			*/
-			this.oCallChainStub = sinon.stub();
+			this.oCallChainStub = this.stub();
 
-			this.oPropertiesCreateStub = sinon.stub(Properties, "create");
+			this.oPropertiesCreateStub = this.stub(Properties, "create");
 
 			this.oPropertiesCreateStub.rejects("Failed");
 
@@ -1251,7 +1183,6 @@ sap.ui.define([
 			}).returns(createFakePropertiesPromise({name: "appvar2 oil de"}, this.oCallChainStub));
 		},
 		afterEach: function () {
-			this.oPropertiesCreateStub.restore();
 		}
 	});
 
@@ -1667,11 +1598,13 @@ sap.ui.define([
 	QUnit.test("2 enhancements with 2 terminologies", function(assert) {
 		var oOriginalGetTextFromProperties = ResourceBundle.prototype._getTextFromProperties;
 		var aBundleUrlsInCallOrder = [];
-		var oResourceBundleSpy = sinon.stub(ResourceBundle.prototype, "_getTextFromProperties").callsFake(function () {
+
+		this.stub(ResourceBundle.prototype, "_getTextFromProperties").callsFake(function () {
 			var oResult = oOriginalGetTextFromProperties.apply(this, arguments);
 			aBundleUrlsInCallOrder.push(this.oUrlInfo.url);
 			return oResult;
 		});
+
 		return ResourceBundle.create({
 			// specify url of the base .properties file
 			url : "test-resources/sap/ui/core/qunit/testdata/messages.properties",
@@ -1747,7 +1680,6 @@ sap.ui.define([
 				"test-resources/sap/ui/core/qunit/testdata/terminologies/oil/messages.properties",
 				"test-resources/sap/ui/core/qunit/testdata/messages.properties"
 			], "the value retrieval should be in correct order");
-			oResourceBundleSpy.restore();
 		});
 	});
 });

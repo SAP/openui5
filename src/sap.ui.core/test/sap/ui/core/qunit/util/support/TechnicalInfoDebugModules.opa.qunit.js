@@ -49,7 +49,7 @@ sap.ui.define([
 								bOpened = false;
 
 							try {
-								// trigger left ALT key (there is a separate check in jQuery.sap.global for this)
+								// trigger left ALT key (there is a separate check in Hotkeys.js for this)
 								var oEvent = new KeyboardEvent("keydown", {
 									bubbles: true,
 									cancelable: true,

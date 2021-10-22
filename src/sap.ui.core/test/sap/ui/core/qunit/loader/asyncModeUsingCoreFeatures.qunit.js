@@ -41,4 +41,17 @@ sap.ui.define(function() {
 		});
 	});
 
+
+
+	//****************************************************
+	// loadJSResourceAsync
+	//****************************************************
+
+	QUnit.module("loadJSResourceAsync");
+
+	QUnit.test("legacy API", function(assert) {
+		assert.strictEqual(jQuery.sap._loadJSResourceAsync, sap.ui.loader._.loadJSResourceAsync,
+			"Legacy API 'jQuery.sap._loadJSResourceAsync' just should be an alias for the new private loader API");
+	});
+
 });

@@ -319,7 +319,7 @@ sap.ui.define([
 		},
 		beforeEach: function() {
 			// make sure tests can check the spy independently
-			this.oEPSpy.reset();
+			this.oEPSpy.resetHistory();
 		},
 		after: function() {
 			// unload provider, so that subsequent async tests can reload the module again
@@ -337,7 +337,7 @@ sap.ui.define([
 		}).then(function(oView) {
 
 			// reset the spy before loading the fragment
-			this.oEPSpy.reset();
+			this.oEPSpy.resetHistory();
 
 			// should trigger exactly 1 EP Provider call
 			return Fragment.load({
@@ -366,7 +366,7 @@ sap.ui.define([
 		});
 
 		// reset the spy before loading the fragment
-		this.oEPSpy.reset();
+		this.oEPSpy.resetHistory();
 
 		// should trigger exactly 1 EP Provider call
 		var oFragmentContent = sap.ui.xmlfragment("EPInFragment", "testdata.customizing.customer.ext.FragmentWithEP", oView.getController());

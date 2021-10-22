@@ -1,4 +1,4 @@
-/*global QUnit, sinon */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/utils/ControlIterator",
 	"sap/ui/Device"
@@ -15,7 +15,7 @@ sap.ui.define([
 
 		var done = assert.async();
 
-		var syncSpy = sinon.spy(sap.ui, "requireSync");
+		var syncSpy = this.spy(sap.ui, "requireSync");
 		var aNonExistingRenderers = [];
 		ControlIterator.run(function(sControlName, oControlClass, oInfo) {
 			// check if, although control has been loaded already, retrieving the control's renderer would trigger a successful sync request

@@ -108,7 +108,7 @@ sap.ui.define([
 			this.assertBoundTo = function(fnActual, fnExpected, fnExpectedThis, sMessage) {
 				assert.ok(typeof fnActual === 'function' && typeof fnExpected === 'function' && typeof fnExpected.reset === 'function',
 						"(assertion precondition) actual must be a function, expected must be a spy");
-				fnExpected.reset();
+				fnExpected.resetHistory();
 				fnActual.call(/* arbitrary this */{}, /* arbitrary args */ "some", 42 );
 				assert.ok(fnExpected.calledOnce && fnExpected.calledOn(fnExpectedThis) && fnExpected.calledWithExactly("some", 42), sMessage);
 			};

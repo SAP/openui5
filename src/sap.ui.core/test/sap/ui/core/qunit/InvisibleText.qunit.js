@@ -1,8 +1,9 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/InvisibleText"
-], function(Log, InvisibleText) {
+	"sap/ui/core/InvisibleText",
+	"sap/ui/thirdparty/jquery"
+], function(Log, InvisibleText, jQuery) {
 	"use strict";
 
 	var oDIV = document.createElement("div");
@@ -12,15 +13,15 @@ sap.ui.define([
 	QUnit.module("");
 
 	QUnit.test("Hidden Text is really hidden", function(assert) {
-		var iWidth = jQuery.sap.byId("content").width();
-		var iHeight = jQuery.sap.byId("content").height();
+		var iWidth = jQuery("#content").width();
+		var iHeight = jQuery("#content").height();
 
 		var text = new InvisibleText({text: "Hello"});
 		text.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(iWidth, jQuery.sap.byId("content").width(), "Width of container not influenced by hidden text.");
-		assert.equal(iHeight, jQuery.sap.byId("content").height(), "Height of container not influenced by hidden text.");
+		assert.equal(iWidth, jQuery("#content").width(), "Width of container not influenced by hidden text.");
+		assert.equal(iHeight, jQuery("#content").height(), "Height of container not influenced by hidden text.");
 		assert.ok(text.$().parent().attr("id") == "content", "Invisible Text was rendered.");
 	});
 
@@ -79,7 +80,7 @@ sap.ui.define([
 		var oCtrl = new InvisibleText();
 		this.spy(Log, 'warning');
 		['tooltip', 'busy', 'busyIndicatorDelay', 'busyIndicatorSize', 'visible'].forEach(function(settingName) {
-			Log.warning.reset();
+			Log.warning.resetHistory();
 			var oProperty = oCtrl.getMetadata().getPropertyLikeSetting(settingName);
 			oProperty.get(oCtrl);
 			assert.equal(Log.warning.callCount, 0, "no warning should have been issued when calling the getter");

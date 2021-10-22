@@ -1,18 +1,57 @@
 sap.ui.define([
-	"sap/ui/model/base/ManagedObjectModel", "sap/ui/model/json/JSONModel", "sap/m/Text",
-	"sap/m/Input", "sap/m/List", "sap/m/Select", "sap/m/ColumnListItem", "sap/m/DatePicker",
-	"sap/ui/model/type/Date", "sap/ui/model/Context", "sap/m/VBox", "sap/ui/model/Filter",
+	"sap/m/ColumnListItem",
+	"sap/m/DatePicker",
+	"sap/m/Input",
+	"sap/m/List",
+	"sap/m/Select",
+	"sap/m/Text",
+	"sap/m/VBox",
+	"sap/ui/core/Element",
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/model/base/ManagedObjectModel",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/type/Date",
+	"sap/ui/model/Context",
+	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator"
-], function (ManagedObjectModel, JSONModel, Text, Input, List, Select, ColumnListItem, DatePicker,
-			 DateType, Context, VBox, Filter, FilterOperator) {
-	/*global QUnit, sinon */
+], function (ColumnListItem, DatePicker, Input, List, Select, Text, VBox, Element, XMLView,
+			 ManagedObjectModel, JSONModel, DateType, Context, Filter, FilterOperator) {
+	/*global QUnit */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
 	var mObjects = {};
 
+	var sXmlViewContent =
+		"<mvc:View height=\"100%\" xmlns:mvc=\"sap.ui.core.mvc\" xmlns:core=\"sap.ui.core\" xmlns=\"sap.m\" id=\"view\"" +
+		"	displayBlock=\"true\" unknownProperty=\"true\">" +
+		"	<Panel id=\"panel\">" +
+		"		<content>" +
+		"			<Button text=\"Button\" id=\"button1\" />" +
+		"			<Button text=\"Text of button 2\" id=\"button2\" />" +
+		"			<Text text=\"Text\" id=\"text\" />" +
+		"			<Panel id=\"innerPanel\">" +
+		"				<content>" +
+		"					<Input value=\"The inner input\" id=\"input\" />" +
+		"				</content>" +
+		"			</Panel>" +
+		"		</content>" +
+		"	</Panel>" +
+		"	<Panel id=\"neighborPanel\">" +
+		"		<content>" +
+		"			<Input value=\"the neighbor\" id=\"neighborInput\" />" +
+		"		</content>" +
+		"	</Panel>" +
+		"	<Select id=\"list\">" +
+		"		<items>" +
+		"			<core:Item key=\"a\" text=\"a\" id=\"listA\"/>" +
+		"			<core:Item key=\"b\" text=\"b\" id=\"listB\"/>" +
+		"		</items>" +
+		"	</Select>" +
+		"</mvc:View>";
+
 	//	define new types for testing
-	sap.ui.core.Element.extend("sap.ui.test.TestElement", {
+	var TestElement = Element.extend("sap.ui.test.TestElement", {
 		metadata: {
 			// ---- control specific ----
 			library: "sap.ui.core",
@@ -129,7 +168,7 @@ sap.ui.define([
 		// needed for grouping test
 		addSubObjGroup: function (oGroup, oControl) {
 			if (!oControl) {
-				oControl = new sap.ui.test.TestElement({
+				oControl = new TestElement({
 					value: oGroup.key,
 					booleanValue: true
 				});
@@ -138,7 +177,7 @@ sap.ui.define([
 		}
 	});
 
-	sap.ui.core.Element.extend("sap.ui.test.TestList", {
+	var TestList = Element.extend("sap.ui.test.TestList", {
 		metadata: {
 			properties: {
 				pageProp: {
@@ -167,7 +206,7 @@ sap.ui.define([
 
 	});
 
-	sap.ui.core.Element.extend("sap.ui.test.TestSelect", {
+	var TestSelect = Element.extend("sap.ui.test.TestSelect", {
 		metadata: {
 			properties: {
 				selected: {type: "string"},
@@ -179,7 +218,7 @@ sap.ui.define([
 		}
 	});
 
-	sap.ui.core.Element.extend("sap.ui.test.TestItem", {
+	var TestItem = Element.extend("sap.ui.test.TestItem", {
 		metadata: {
 			properties: {
 				key: {type: "string"},
@@ -213,15 +252,15 @@ sap.ui.define([
 
 	QUnit.module("ManagedObject Model", {
 		beforeEach: function () {
-			this.obj = new sap.ui.test.TestElement("myObject");
-			this.subObj = new sap.ui.test.TestElement();
-			this.subObj2 = new sap.ui.test.TestElement();
-			this.subObj3 = new sap.ui.test.TestElement();
-			this.hiddenObject = new sap.ui.test.TestElement({
+			this.obj = new TestElement("myObject");
+			this.subObj = new TestElement();
+			this.subObj2 = new TestElement();
+			this.subObj3 = new TestElement();
+			this.hiddenObject = new TestElement({
 				value: "hidden"
 			});
 			this.obj.addAggregation("_hiddenObjects", this.hiddenObject);
-			this.template = new sap.ui.test.TestElement({
+			this.template = new TestElement({
 				value: "{value}"
 			});
 			this.obj.setModel(oModel);
@@ -300,7 +339,7 @@ sap.ui.define([
 
 		oModel.addBinding(oBinding);
 
-		var oUpdateSpy = sinon.spy(oBinding, "checkUpdate");
+		var oUpdateSpy = this.spy(oBinding, "checkUpdate");
 
 		// code under test
 		assert.equal(oModel.setProperty("/value", "hello"), true, "Property set");
@@ -559,7 +598,7 @@ sap.ui.define([
 
 	QUnit.test("ManagedObject Model  - Aggregations with altType", function (assert) {
 		var oModel = this.oManagedObjectModel;
-		var oAltObject = new sap.ui.test.TestElement({
+		var oAltObject = new TestElement({
 			altType: "{obj>/altType}"
 		});
 		oAltObject.setModel(oModel, "obj");
@@ -636,7 +675,7 @@ sap.ui.define([
 
 		iCount = 2;
 		iLength = 2;
-		this.subObj2 = new sap.ui.test.TestElement("subObject1");
+		this.subObj2 = new TestElement("subObject1");
 		this.obj.addSubObj(this.subObj2);
 		assert.equal(iCalls, iCount, "Change event called " + iCount + " as expected");
 
@@ -731,323 +770,180 @@ sap.ui.define([
 		assert.equal(this.oManagedObjectModel.getJSON(), "{\"def\":\"value def\"}", "getJSON returns the stringified custom data");
 	});
 
-	QUnit.test("ManagedObjectModel - Generic Testing for sap.m Controls", function (assert) {
-		sap.ui.getCore().loadLibrary("sap.m");
-		assert.equal(true, true, "Not activated");
-		return;
+	QUnit.skip("ManagedObjectModel - Generic Testing for sap.m Controls", function (assert) {
+
 		/*
-		// this generic test loops over all controls in sap.m and checks whether a property binding in the model causes a change.
-		// currently there are some controls and properties excluded.
-
-		// test values for types
-		// maybe we can cover more types
-		var mTestProperties = {
-			"string": [
-				"", "\\", "{}", "ÄÖÜß"
-			],
-			"boolean": [
-				true, false
-			],
-			"int": [
-				1, 2, 1000000000000
-			],
-			"float": [
-				1.1, 2, 1000000000000.000000001
-			]
-		};
-		var mExcluded = {
-			"sap.m.DatePicker": {
-				"displayFormatType": true
-			},
-			"sap.m.DateTimeInput": {
-				"valueFormat": true
-			},
-			"sap.m.TimePicker": {
-				"localeId": true
-			},
-			"sap.m.TimePickerSlider": {
-				"selectedValue": true
-			},
-			"sap.m.UploadCollection": {
-				"noDataText": true,
-				"noDataDescription": true,
-				"instantUpload": true
-			},
-			"sap.m.TableSelectDialog": {
-				"noDataText": true
-			},
-			"sap.m.FeedContent": {
-				"contentText": true
-			},
-			"sap.m.MaskInput": {
-				"placeholderSymbol": true
-			},
-			"sap.m.NewsContent": {
-				"contentText": true
-			},
-			"sap.m.SplitContainer": {
-				"masterButtonText": true,
-				"backgroundOpacity": [
-					0, 0.5, 0.9, 1
-				]
-			},
-			"sap.m.Input": {
-				"selectedKey": true
-			},
-			"sap.m.Select": {
-				"selectedItemId": true
-			},
-			"sap.m.SelectList": {
-				"selectedItemId": true
-			},
-			"sap.m.ComboBox": {
-				"selectedItemId": true
-			},
-			"sap.m.SelectDialog": {
-				"noDataText": true
-			},
-			"sap.m.SegmentedButton": {
-				"selectedKey": true
-			},
-			"sap.m.ListBase": {
-				"noDataText": true
-			},
-			"sap.m.IconTabBar": {
-				"selectedKey": true,
-				"showSelection": true
-			},
-			"sap.m.GrowingList": {
-				"triggerText": true,
-				"scrollToLoad": true,
-				"threshold": true
-			},
-			"sap.m.GenericTile": {
-				"header": true
-			},
-			"sap.m.Carousel": {
-				"showBusyIndicator": true
-			},
-			"sap.m.App": {
-				"backgroundOpacity": [
-					0, 0.5, 0.9, 1
-				]
-			},
-			"sap.m.Shell": {
-				"backgroundOpacity": [
-					0, 0.5, 0.9, 1
-				]
-			},
-			"sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopover": true, // not processed at all
-			"sap.m.HeaderContainerItemContainer": true, // not processed at all
-			"sap.m.TimePickerSliders": true
-			// not processed at all
-		};
-
-		// get the controls from sap.m
-		var oLib = sap.ui.getCore().getLoadedLibraries()["sap.m"], aControls = oLib.controls;
-
-		for (var i = 0; i < aControls.length; i++) {
-			var sControlName = aControls[i];
-
-			if (sControlName in mExcluded && mExcluded[sControlName] === true) {
-				continue;
-			}
-
-			jQuery.sap.require(sControlName);
-			var oControl = new (jQuery.sap.getObject(sControlName))();
-			var oModel = new ManagedObjectModel(oControl);
-			var iBindingCount = 0;
-			var mProperties = oControl.getMetadata().getProperties();
-			for (var n in mProperties) {
-				var oProperty = mProperties[n], aTestValues = mTestProperties[oProperty.type];
-				if (sControlName in mExcluded) {
-					if (mExcluded[sControlName][n] === true) {
-						continue;
-					} else if (mExcluded[sControlName][n]) {
-						aTestValues = mExcluded[sControlName][n];
-					}
-				}
-				var iCount = 0;
-				var oBinding = oModel.bindProperty("/" + n);
-				oModel.addBinding(oBinding);
-				oBinding.attachChange(function (oEvent) {
-					iCount++;
-					assert.equal(oEvent.getSource().getValue() === oControl.getProperty(n), true, "Change Event fired for control " + sControlName + "-" + oEvent.getSource().getPath());
+		 * Helper to execute an async function for each element in an array, the executions are chained.
+		 */
+		function chained(array, callback, initialValue) {
+			return array.reduce(function(chain, item) {
+				return chain.then(function(previousResult) {
+					return callback(item, previousResult);
 				});
-				iBindingCount++;
-				if (oProperty.type && aTestValues) {
-					for (var j = 0; j < aTestValues.length; j++) {
-						iCount = 0;
-						var iExpectedCount = 0;
-						if (aTestValues[j] !== oProperty.get(oControl)) { // ignore the default values. they will never cause a change event
-							iExpectedCount = 1;
-						}
-						oProperty.set(oControl, aTestValues[j]);
-						assert.equal(iCount, iExpectedCount, "Exactly " + iExpectedCount + " property change events fired for " + sControlName + "-" + n);
-						assert.equal(oModel.getProperty("/" + n) === oControl.getProperty(n), true, "Checking Properties in model and on control " + sControlName + "-" + n);
-					}
+			}, Promise.resolve(initialValue));
+		}
+
+		return sap.ui.getCore().loadLibrary("sap.m", {async: true}).then(function(oLib) {
+
+			// this generic test loops over all controls in sap.m and checks whether a property binding in the model causes a change.
+			// currently there are some controls and properties excluded.
+
+			// test values for types
+			// maybe we can cover more types
+			var mTestProperties = {
+				"string": [
+					"", "\\", "{}", "ÄÖÜß"
+				],
+				"boolean": [
+					true, false
+				],
+				"int": [
+					1, 2, 1000000000000
+				],
+				"float": [
+					1.1, 2, 10000000.00000001
+				]
+			};
+			var mExcluded = {
+				"sap.m.DatePicker": {
+					"displayFormatType": true
+				},
+				"sap.m.DateTimeInput": {
+					"valueFormat": true
+				},
+				"sap.m.TimePicker": {
+					"localeId": true
+				},
+				"sap.m.TimePickerSlider": {
+					"selectedValue": true
+				},
+				"sap.m.UploadCollection": {
+					"noDataText": true,
+					"noDataDescription": true,
+					"instantUpload": true
+				},
+				"sap.m.TableSelectDialog": {
+					"noDataText": true
+				},
+				"sap.m.FeedContent": {
+					"contentText": true
+				},
+				"sap.m.MaskInput": {
+					"placeholderSymbol": true
+				},
+				"sap.m.NewsContent": {
+					"contentText": true
+				},
+				"sap.m.SplitContainer": {
+					"masterButtonText": true,
+					"backgroundOpacity": [
+						0, 0.5, 0.9, 1
+					]
+				},
+				"sap.m.Input": {
+					"selectedKey": true
+				},
+				"sap.m.Select": {
+					"selectedItemId": true
+				},
+				"sap.m.SelectList": {
+					"selectedItemId": true
+				},
+				"sap.m.ComboBox": {
+					"selectedItemId": true
+				},
+				"sap.m.SelectDialog": {
+					"noDataText": true
+				},
+				"sap.m.SegmentedButton": {
+					"selectedKey": true
+				},
+				"sap.m.ListBase": {
+					"noDataText": true
+				},
+				"sap.m.IconTabBar": {
+					"selectedKey": true,
+					"showSelection": true
+				},
+				"sap.m.GrowingList": {
+					"triggerText": true,
+					"scrollToLoad": true,
+					"threshold": true
+				},
+				"sap.m.GenericTile": {
+					"header": true
+				},
+				"sap.m.Carousel": {
+					"showBusyIndicator": true
+				},
+				"sap.m.App": {
+					"backgroundOpacity": [
+						0, 0.5, 0.9, 1
+					]
+				},
+				"sap.m.Shell": {
+					"backgroundOpacity": [
+						0, 0.5, 0.9, 1
+					]
+				},
+				"sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopover": true, // not processed at all
+				"sap.m.HeaderContainerItemContainer": true, // not processed at all
+				"sap.m.TimePickerSliders": true
+				// not processed at all
+			};
+
+			return chained(oLib.controls, function(sControlName) {
+
+				if (sControlName in mExcluded && mExcluded[sControlName] === true) {
+					return;
 				}
 
-			}
-			assert.equal(oModel.getBindings().length, iBindingCount, iBindingCount + " Bindings are available in the model ");
-			oModel.destroy();
-			assert.equal(oModel.getBindings().length, 0, "No more bindings after destroy");
-		}
-		*/
-	});
-
-	QUnit.test("ManagedObjectModel - Marker interface sap.ui.core.IDScope handling", function (assert) {
-		var sView = jQuery('#view').html();
-
-		var oView = sap.ui.xmlview({
-			viewContent: sView
+				return new Promise(function(resolve, reject) {
+					sap.ui.require([sControlName.replace(/\./g, "/")], function(ControlClass) {
+						var oControl = new ControlClass();
+						var oModel = new ManagedObjectModel(oControl);
+						var iBindingCount = 0;
+						var mProperties = oControl.getMetadata().getProperties();
+						for (var n in mProperties) {
+							var oProperty = mProperties[n], aTestValues = mTestProperties[oProperty.type];
+							if (sControlName in mExcluded) {
+								if (mExcluded[sControlName][n] === true) {
+									continue;
+								} else if (mExcluded[sControlName][n]) {
+									aTestValues = mExcluded[sControlName][n];
+								}
+							}
+							/* eslint-disable no-loop-func */
+							var iCount = 0;
+							var oBinding = oModel.bindProperty("/" + n);
+							oModel.addBinding(oBinding);
+							oBinding.attachChange(function (oEvent) {
+								iCount++;
+								assert.equal(oEvent.getSource().getValue() === oControl.getProperty(n), true, "Change Event fired for control " + sControlName + "-" + oEvent.getSource().getPath());
+							});
+							iBindingCount++;
+							if (oProperty.type && aTestValues) {
+								for (var j = 0; j < aTestValues.length; j++) {
+									iCount = 0;
+									var iExpectedCount = 0;
+									if (aTestValues[j] !== oProperty.get(oControl)) { // ignore the default values. they will never cause a change event
+										iExpectedCount = 1;
+									}
+									oProperty.set(oControl, aTestValues[j]);
+									assert.equal(iCount, iExpectedCount, "Exactly " + iExpectedCount + " property change events fired for " + sControlName + "-" + n);
+									assert.equal(oModel.getProperty("/" + n) === oControl.getProperty(n), true, "Checking Properties in model and on control " + sControlName + "-" + n);
+								}
+							}
+							/* eslint-enable no-loop-func */
+						}
+						assert.equal(oModel.getBindings().length, iBindingCount, iBindingCount + " Bindings are available in the model ");
+						oModel.destroy();
+						assert.equal(oModel.getBindings().length, 0, "No more bindings after destroy");
+						resolve();
+					}, reject);
+				});
+			});
 		});
-
-		sinon.spy(oView, "byId");
-
-		var sIdPrefix = oView.getId() + "--";
-
-		var oManagedObjectModel = new ManagedObjectModel(oView);
-
-		var oButton1 = oManagedObjectModel.getProperty("/#button1");
-
-		assert.ok(oButton1, "There is a button");
-		assert.equal(oButton1.getId(), sIdPrefix + "button1", "We get the button");
-		assert.ok(oView.byId.called, "As the view has the marker interface sap.ui.core.IDScope the byId method is called");
-
-		var oButton2 = oView.byId("button2");
-		var sText = oManagedObjectModel.getProperty("/#button2/text");
-		assert.equal(sText, oButton2.getText(), "We get the buttons text");
-
-		var oPanel = oManagedObjectModel.getProperty("/#panel");
-
-		assert.ok(oPanel, "There is a panel");
-		assert.equal(oPanel.getId(), sIdPrefix + "panel", "We get the correct panel");
-
-		//Check whether observer works on property bindings with ids
-		var oPropertyBinding = oManagedObjectModel.bindProperty("/#button2/text");
-		var iPropertyChangeCount = 0;
-		oPropertyBinding.attachChange(function () {
-			iPropertyChangeCount++;
-		});
-		oButton2.setText("Changed");
-		assert.equal(iPropertyChangeCount, 1, "Button text property binding change was fired");
-		assert.equal("Changed", oButton2.getText(), "Button Text was updated");
-
-		//Check whether observer works on list bindings with ids
-		var oListBinding = oManagedObjectModel.bindList("/#panel/content");
-		var iListChangeCount = 0;
-		oListBinding.attachChange(function () {
-			iListChangeCount++;
-		});
-		oPanel.removeContent(oButton2);
-		assert.equal(iListChangeCount, 1, "content list binding change was fired");
-		oPanel.addContent(oButton2);
-		assert.equal(iListChangeCount, 2, "content list binding change was fired");
-	});
-
-	QUnit.test("BCP: 002075129400001541162020", function (assert) {
-		var oManagedObjectModel
-				= new ManagedObjectModel(sap.ui.xmlview({viewContent : jQuery('#view').html()})),
-			oButton = oManagedObjectModel.getProperty("/#button2"),
-			oContentBinding = oManagedObjectModel.bindList("/#panel/content"),
-			iContentChangeCount = 0,
-			oInput = oManagedObjectModel.getProperty("/#input"),
-			oInnerContentBinding = oManagedObjectModel.bindList("/#innerPanel/content"),
-			iInnerContentChangeCount = 0,
-			oInnerPanel = oManagedObjectModel.getProperty("/#innerPanel"),
-			oNeighborContentBinding = oManagedObjectModel.bindList("/#neighborPanel/content"),
-			iNeighborContentChangeCount = 0,
-			oNeighborInput = oManagedObjectModel.getProperty("/#neighborInput");
-
-		oContentBinding.attachChange(function () {
-			iContentChangeCount = iContentChangeCount + 1;
-		});
-		oInnerContentBinding.attachChange(function () {
-			iInnerContentChangeCount = iInnerContentChangeCount + 1;
-		});
-		oNeighborContentBinding.attachChange(function () {
-			iNeighborContentChangeCount = iNeighborContentChangeCount + 1;
-		});
-
-		// code under test - a single list binding is changed
-		oButton.setText("changed if child");
-		assert.strictEqual(iContentChangeCount, 1, "content list binding change was fired");
-		assert.strictEqual(iInnerContentChangeCount, 0, "inner list binding not affected");
-		assert.strictEqual(iNeighborContentChangeCount, 0, "neighbor list binding not affected");
-
-		// code under test - a list binding inside an hierarchy is changed
-		oInput.setValue("Changed");
-		assert.strictEqual(iContentChangeCount, 2, "content list binding change was fired");
-		assert.strictEqual(iInnerContentChangeCount, 1, "inner list binding change");
-		assert.strictEqual(iNeighborContentChangeCount, 0, "neighbor list binding not affected");
-
-		// code under test - only the relevant binding is changed
-		oNeighborInput.setValue("Neighbor Changed");
-		assert.strictEqual(iContentChangeCount, 2, "content list binding not affected");
-		assert.strictEqual(iInnerContentChangeCount, 1, "inner list not affected");
-		assert.strictEqual(iNeighborContentChangeCount, 1, "neighbor list binding change was fired");
-
-		// code under test - check for empty content
-		oInnerPanel.removeContent(oInput);
-		assert.strictEqual(iContentChangeCount, 2, "content list binding not affected");
-		assert.strictEqual(iInnerContentChangeCount, 2, "inner list binding change");
-		assert.strictEqual(iNeighborContentChangeCount, 1, "neighbor list binding not affected");
-	});
-
-	QUnit.test("BCP: 002075129400001541162020 (with filtered bindings)", function (assert) {
-		var oManagedObjectModel
-				= new ManagedObjectModel(sap.ui.xmlview({viewContent: jQuery('#view').html()})),
-			oBinding = oManagedObjectModel.bindList("/#list/items"),
-			iBindingChangeCount = 0,
-			oBindingEmpty = oManagedObjectModel
-				.bindList("/#list/items", null, null, [new Filter("text", FilterOperator.EQ, "c")]),
-			iBindingEmptyChangeCount = 0,
-			oBindingEQa = oManagedObjectModel
-				.bindList("/#list/items", null, null, [new Filter("text", FilterOperator.EQ, "a")]),
-			iBindingEQaChangeCount = 0,
-			oBindingNEa = oManagedObjectModel
-				.bindList("/#list/items", null, null, [new Filter("text", FilterOperator.NE, "a")]),
-			iBindingNEaChangeCount = 0,
-			oItemA = oManagedObjectModel.getProperty("/#listA");
-
-		oBinding.attachChange( function () {
-			iBindingChangeCount = iBindingChangeCount + 1;
-		});
-		oBindingEmpty.attachChange( function () {
-			iBindingEmptyChangeCount = iBindingEmptyChangeCount + 1;
-		});
-		oBindingEQa.attachChange( function () {
-			iBindingEQaChangeCount = iBindingEQaChangeCount + 1;
-		});
-		oBindingNEa.attachChange( function () {
-			iBindingNEaChangeCount = iBindingNEaChangeCount + 1;
-		});
-
-		assert.strictEqual(oBinding.getLength(), 2);
-		assert.strictEqual(oBindingEmpty.getLength(), 0);
-		assert.strictEqual(oBindingEQa.getLength(), 1);
-		assert.strictEqual(oBindingNEa.getLength(), 1);
-
-		// code under test - filtering not affected
-		oItemA.setKey("c");
-		assert.strictEqual(iBindingChangeCount, 1);
-		assert.strictEqual(iBindingEmptyChangeCount, 1);
-		assert.strictEqual(iBindingEQaChangeCount, 1);
-		assert.strictEqual(iBindingNEaChangeCount, 1);
-
-		assert.strictEqual(oBindingEmpty.getLength(), 0);
-
-		// code under test - filtering affected
-		oItemA.setText("c");
-		assert.strictEqual(iBindingChangeCount, 2);
-		assert.strictEqual(iBindingEmptyChangeCount, 2);
-		assert.strictEqual(iBindingEQaChangeCount, 2);
-		assert.strictEqual(iBindingNEaChangeCount, 2);
-
-		assert.strictEqual(oBindingEmpty.getLength(), 1);
-		assert.strictEqual(oBindingEQa.getLength(), 0);
-		assert.strictEqual(oBindingNEa.getLength(), 2);
 	});
 
 	QUnit.test("Check Update with binding test function", function (assert) {
@@ -1095,9 +991,9 @@ sap.ui.define([
 			return false;
 		};
 
-		sinon.spy(oBinding1, "checkUpdate");
-		sinon.spy(oBinding2, "checkUpdate");
-		sinon.spy(oBinding3, "checkUpdate");
+		this.spy(oBinding1, "checkUpdate");
+		this.spy(oBinding2, "checkUpdate");
+		this.spy(oBinding3, "checkUpdate");
 		var fnDone = assert.async();
 		oModel.checkUpdate(true, true, fnFilter);
 		oModel.checkUpdate(false, true, fnFilter); // to test foceUpdate wins
@@ -1236,6 +1132,167 @@ sap.ui.define([
 		}.bind(this), 0);
 	});
 
+	QUnit.module("ManagedObject Model", {
+		beforeEach: function() {
+			return XMLView.create({
+				definition: sXmlViewContent
+			}).then(function(oView) {
+				this.oView = oView;
+				this.oModel = new ManagedObjectModel(oView);
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oModel.destroy();
+			this.oView.destroy();
+		}
+	});
+
+	QUnit.test("ManagedObjectModel - Marker interface sap.ui.core.IDScope handling", function (assert) {
+		var oManagedObjectModel = this.oModel;
+		var oView = this.oView;
+
+		this.spy(oView, "byId");
+		var sIdPrefix = oView.getId() + "--";
+
+		var oButton1 = oManagedObjectModel.getProperty("/#button1");
+
+		assert.ok(oButton1, "There is a button");
+		assert.equal(oButton1.getId(), sIdPrefix + "button1", "We get the button");
+		assert.ok(oView.byId.called, "As the view has the marker interface sap.ui.core.IDScope the byId method is called");
+
+		var oButton2 = oView.byId("button2");
+		var sText = oManagedObjectModel.getProperty("/#button2/text");
+		assert.equal(sText, oButton2.getText(), "We get the buttons text");
+
+		var oPanel = oManagedObjectModel.getProperty("/#panel");
+
+		assert.ok(oPanel, "There is a panel");
+		assert.equal(oPanel.getId(), sIdPrefix + "panel", "We get the correct panel");
+
+		//Check whether observer works on property bindings with ids
+		var oPropertyBinding = oManagedObjectModel.bindProperty("/#button2/text");
+		var iPropertyChangeCount = 0;
+		oPropertyBinding.attachChange(function () {
+			iPropertyChangeCount++;
+		});
+		oButton2.setText("Changed");
+		assert.equal(iPropertyChangeCount, 1, "Button text property binding change was fired");
+		assert.equal("Changed", oButton2.getText(), "Button Text was updated");
+
+		//Check whether observer works on list bindings with ids
+		var oListBinding = oManagedObjectModel.bindList("/#panel/content");
+		var iListChangeCount = 0;
+		oListBinding.attachChange(function () {
+			iListChangeCount++;
+		});
+		oPanel.removeContent(oButton2);
+		assert.equal(iListChangeCount, 1, "content list binding change was fired");
+		oPanel.addContent(oButton2);
+		assert.equal(iListChangeCount, 2, "content list binding change was fired");
+	});
+
+	QUnit.test("BCP: 002075129400001541162020", function (assert) {
+		var oManagedObjectModel = this.oModel,
+			oButton = oManagedObjectModel.getProperty("/#button2"),
+			oContentBinding = oManagedObjectModel.bindList("/#panel/content"),
+			iContentChangeCount = 0,
+			oInput = oManagedObjectModel.getProperty("/#input"),
+			oInnerContentBinding = oManagedObjectModel.bindList("/#innerPanel/content"),
+			iInnerContentChangeCount = 0,
+			oInnerPanel = oManagedObjectModel.getProperty("/#innerPanel"),
+			oNeighborContentBinding = oManagedObjectModel.bindList("/#neighborPanel/content"),
+			iNeighborContentChangeCount = 0,
+			oNeighborInput = oManagedObjectModel.getProperty("/#neighborInput");
+
+		oContentBinding.attachChange(function () {
+			iContentChangeCount = iContentChangeCount + 1;
+		});
+		oInnerContentBinding.attachChange(function () {
+			iInnerContentChangeCount = iInnerContentChangeCount + 1;
+		});
+		oNeighborContentBinding.attachChange(function () {
+			iNeighborContentChangeCount = iNeighborContentChangeCount + 1;
+		});
+
+		// code under test - a single list binding is changed
+		oButton.setText("changed if child");
+		assert.strictEqual(iContentChangeCount, 1, "content list binding change was fired");
+		assert.strictEqual(iInnerContentChangeCount, 0, "inner list binding not affected");
+		assert.strictEqual(iNeighborContentChangeCount, 0, "neighbor list binding not affected");
+
+		// code under test - a list binding inside an hierarchy is changed
+		oInput.setValue("Changed");
+		assert.strictEqual(iContentChangeCount, 2, "content list binding change was fired");
+		assert.strictEqual(iInnerContentChangeCount, 1, "inner list binding change");
+		assert.strictEqual(iNeighborContentChangeCount, 0, "neighbor list binding not affected");
+
+		// code under test - only the relevant binding is changed
+		oNeighborInput.setValue("Neighbor Changed");
+		assert.strictEqual(iContentChangeCount, 2, "content list binding not affected");
+		assert.strictEqual(iInnerContentChangeCount, 1, "inner list not affected");
+		assert.strictEqual(iNeighborContentChangeCount, 1, "neighbor list binding change was fired");
+
+		// code under test - check for empty content
+		oInnerPanel.removeContent(oInput);
+		assert.strictEqual(iContentChangeCount, 2, "content list binding not affected");
+		assert.strictEqual(iInnerContentChangeCount, 2, "inner list binding change");
+		assert.strictEqual(iNeighborContentChangeCount, 1, "neighbor list binding not affected");
+	});
+
+	QUnit.test("BCP: 002075129400001541162020 (with filtered bindings)", function (assert) {
+		var oManagedObjectModel = this.oModel,
+			oBinding = oManagedObjectModel.bindList("/#list/items"),
+			iBindingChangeCount = 0,
+			oBindingEmpty = oManagedObjectModel
+				.bindList("/#list/items", null, null, [new Filter("text", FilterOperator.EQ, "c")]),
+			iBindingEmptyChangeCount = 0,
+			oBindingEQa = oManagedObjectModel
+				.bindList("/#list/items", null, null, [new Filter("text", FilterOperator.EQ, "a")]),
+			iBindingEQaChangeCount = 0,
+			oBindingNEa = oManagedObjectModel
+				.bindList("/#list/items", null, null, [new Filter("text", FilterOperator.NE, "a")]),
+			iBindingNEaChangeCount = 0,
+			oItemA = oManagedObjectModel.getProperty("/#listA");
+
+		oBinding.attachChange( function () {
+			iBindingChangeCount = iBindingChangeCount + 1;
+		});
+		oBindingEmpty.attachChange( function () {
+			iBindingEmptyChangeCount = iBindingEmptyChangeCount + 1;
+		});
+		oBindingEQa.attachChange( function () {
+			iBindingEQaChangeCount = iBindingEQaChangeCount + 1;
+		});
+		oBindingNEa.attachChange( function () {
+			iBindingNEaChangeCount = iBindingNEaChangeCount + 1;
+		});
+
+		assert.strictEqual(oBinding.getLength(), 2);
+		assert.strictEqual(oBindingEmpty.getLength(), 0);
+		assert.strictEqual(oBindingEQa.getLength(), 1);
+		assert.strictEqual(oBindingNEa.getLength(), 1);
+
+		// code under test - filtering not affected
+		oItemA.setKey("c");
+		assert.strictEqual(iBindingChangeCount, 1);
+		assert.strictEqual(iBindingEmptyChangeCount, 1);
+		assert.strictEqual(iBindingEQaChangeCount, 1);
+		assert.strictEqual(iBindingNEaChangeCount, 1);
+
+		assert.strictEqual(oBindingEmpty.getLength(), 0);
+
+		// code under test - filtering affected
+		oItemA.setText("c");
+		assert.strictEqual(iBindingChangeCount, 2);
+		assert.strictEqual(iBindingEmptyChangeCount, 2);
+		assert.strictEqual(iBindingEQaChangeCount, 2);
+		assert.strictEqual(iBindingNEaChangeCount, 2);
+
+		assert.strictEqual(oBindingEmpty.getLength(), 1);
+		assert.strictEqual(oBindingEQa.getLength(), 0);
+		assert.strictEqual(oBindingNEa.getLength(), 2);
+	});
+
 	QUnit.module("Binding against ManagedObject Model of a bound control", {
 		beforeEach: function () {
 			this.aItems0 = [
@@ -1305,17 +1362,17 @@ sap.ui.define([
 				}
 			});
 
-			this._oModelList = new sap.ui.test.TestList({
+			this._oModelList = new TestList({
 				models: this.oJSONModel,
 				pageProp: "{/pageMe}",
 				selects: {
 					path: "/list",
-					template: new sap.ui.test.TestSelect({
+					template: new TestSelect({
 						selected: "{selected}",
 						pages: "{pages}",
 						items: {
 							path: "items",
-							template: new sap.ui.test.TestItem({
+							template: new TestItem({
 								key: "{key}",
 								text: "{text}"
 							})
@@ -1324,14 +1381,14 @@ sap.ui.define([
 				},
 				paging: {
 					path: "/pager",
-					template: new sap.ui.test.TestItem({
+					template: new TestItem({
 						key: "{key}",
 						text: "{text}"
 					})
 				},
 				assetPages: {
 					path: "/pager",
-					template: new sap.ui.test.TestItem({
+					template: new TestItem({
 						key: "{key}",
 						text: "{text}"
 					})

@@ -52,7 +52,7 @@ sap.ui.define([
 		assert.equal(sap.ui.getCore().getUIDirty(), true, "UI should be dirty after setting the button text");
 		var done = assert.async();
 		setTimeout(function() {
-			assert.equal(jQuery.sap.byId("myButton")[0].innerHTML, "new text", "button should have new text after setting the button text and some timeout");
+			assert.equal(document.getElementById("myButton").textContent, "new text", "button should have new text after setting the button text and some timeout");
 			assert.equal(sap.ui.getCore().getUIDirty(), false, "UI should be not dirty after setting the button text and some timeout");
 			done();
 		}, 500);

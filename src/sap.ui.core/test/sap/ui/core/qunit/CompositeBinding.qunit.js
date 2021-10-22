@@ -741,17 +741,17 @@ sap.ui.define([
 		this.model.setProperty("/a", "4");
 		assert.ok(oSpy.calledOnce, "fireChange has been called on composite binding");
 		assert.equal(this.composite.getExternalValue(), "4 2 3", "Value is updated for TwoWay");
-		oSpy.reset();
+		oSpy.resetHistory();
 
 		this.model.setProperty("/b", "5");
 		assert.ok(oSpy.calledOnce, "fireChange has been called on composite binding");
 		assert.equal(this.composite.getExternalValue(), "4 5 3", "Value is updated for OneWay");
-		oSpy.reset();
+		oSpy.resetHistory();
 
 		this.model.setProperty("/c", "6");
 		assert.ok(oSpy.notCalled, "fireChange has not been called on composite binding");
 		assert.equal(this.composite.getExternalValue(), "4 5 3", "Value is not updated for OneTime");
-		oSpy.reset();
+		oSpy.resetHistory();
 	});
 
 	//*********************************************************************************************

@@ -62,7 +62,7 @@ sap.ui.define([
 		var oButton = oCore.byId("buttonStyleClass");
 		assert.equal(!!oButton, false, 'No control with id "buttonStyleClass" found.');
 
-		DeclarativeSupport.compile(jQuery("#button-with-style-and-class"));
+		DeclarativeSupport.compile(jQuery("#button-with-style-class"));
 
 		var oButton = oCore.byId("buttonStyleClass");
 		assert.ok(!!oButton, 'Control with id "buttonStyleClass" found.');

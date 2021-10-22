@@ -9,11 +9,12 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/model/resource/ResourceModel',
 	'sap/ui/layout/VerticalLayout',
+	'sap/ui/util/XMLHelper',
 	'sap/m/Button',
 	'sap/m/Panel',
 	'./AnyView.qunit',
 	'jquery.sap.sjax'
-], function(Log, ResourceBundle, coreLibrary, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, Button, Panel, testsuite) {
+], function(Log, ResourceBundle, coreLibrary, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, XMLHelper, Button, Panel, testsuite) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -61,7 +62,7 @@ sap.ui.define([
 		var xml = jQuery.sap.syncGetText(sap.ui.require.toUrl("example/mvc/test.view.xml"), null, undefined);
 		// parse it and pass the XML document
 		return sap.ui.xmlview({
-			viewContent: jQuery.sap.parseXML(xml)
+			viewContent: XMLHelper.parse(xml)
 		});
 	});
 
@@ -71,7 +72,7 @@ sap.ui.define([
 		var xml = jQuery.sap.syncGetText(sap.ui.require.toUrl("example/mvc/test.view.xml"), null, undefined);
 		// parse it and pass the XML document
 		return sap.ui.xmlview({
-			xmlNode: jQuery.sap.parseXML(xml).documentElement
+			xmlNode: XMLHelper.parse(xml).documentElement
 		});
 	});
 
@@ -144,8 +145,8 @@ sap.ui.define([
 			this.logSpyWarning = sinon.spy(Log, "warning");
 		},
 		afterEach: function() {
-			this.logSpyError.reset();
-			this.logSpyWarning.reset();
+			this.logSpyError.resetHistory();
+			this.logSpyWarning.resetHistory();
 		},
 		after: function() {
 			this.logSpyError.restore();
@@ -1023,7 +1024,7 @@ sap.ui.define([
 				};
 			};
 			this.fnChangeSourcePreprocessor = function(xml) {
-				this.xml = jQuery.sap.parseXML(this.sViewContent).documentElement;
+				this.xml = XMLHelper.parse(this.sViewContent).documentElement;
 				return this.xml;
 			}.bind(this);
 			this.createView = function(bAsync) {

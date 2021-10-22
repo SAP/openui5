@@ -8,20 +8,13 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 
 	QUnit.module("sap.base.Log", {
 		beforeEach: function() {
-			sinon.spy(console, "error");
-			sinon.spy(console, "warn");
-			sinon.spy(console, "info");
-			sinon.spy(console, "debug");
-			sinon.spy(console, "trace");
+			this.spy(console, "error");
+			this.spy(console, "warn");
+			this.spy(console, "info");
+			this.spy(console, "debug");
+			this.spy(console, "trace");
 			Log.setLevel(5);
 			Log.setLogEntriesLimit(Infinity);
-		},
-		afterEach: function() {
-			console.error.restore();
-			console.warn.restore();
-			console.info.restore();
-			console.debug.restore();
-			console.trace.restore();
 		}
 	});
 
@@ -141,7 +134,7 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 	});
 
 	QUnit.test("Log: logSupportInfo", function(assert) {
-		var fnSupportInfo = sinon.spy(function() {return "support Info";});
+		var fnSupportInfo = this.spy(function() {return "support Info";});
 		console.error.callCount = 0;
 		console.warn.callCount = 0;
 		Log.setLevel(Log.Level.ERROR);
@@ -157,7 +150,7 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 		assert.equal(console.warn.callCount, 1, "warning logged!");
 		assert.equal(fnSupportInfo.callCount, 2, "supportInfo added!");
 
-		var onLogEntry = sinon.spy();
+		var onLogEntry = this.spy();
 		var oListener = {onLogEntry: onLogEntry};
 		Log.addLogListener(oListener);
 		Log.logSupportInfo(false);
@@ -181,10 +174,10 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 	});
 
 	QUnit.test("Log: Listener", function(assert) {
-		var fnListener = sinon.spy(),
-			fnAttachListener = sinon.spy(),
-			fnDiscardLogEntriesListener = sinon.spy(),
-			fnDetachListener = sinon.spy(),
+		var fnListener = this.spy(),
+			fnAttachListener = this.spy(),
+			fnDiscardLogEntriesListener = this.spy(),
+			fnDetachListener = this.spy(),
 			oListener = {
 				onLogEntry: fnListener,
 				onDiscardLogEntries: fnDiscardLogEntriesListener,

@@ -1,8 +1,12 @@
 /*global QUnit, sinon, jQuery, my */
-(function() {
+QUnit.config.autostart = false;
+
+sap.ui.require([
+	"sap/base/Log",
+	"sap/base/util/ObjectPath"
+], function(Log, ObjectPath) {
 	"use strict";
 
-	QUnit.config.autostart = false;
 
 
 	//****************************************************
@@ -30,24 +34,24 @@
 		this.server.respondWith(/second/, 'jQuery.sap.declare("my.second.module");' +
 				'my.second.module = "2nd";');
 
-		assert.equal(jQuery.sap.getObject("my.first.module"), undefined, "global name for module 'first' should be undefined");
+		assert.equal(ObjectPath.get("my.first.module"), undefined, "global name for module 'first' should be undefined");
 		assert.ok(!sap.ui.require("my/first/module"), "module 'first' should not be declared");
-		assert.equal(jQuery.sap.getObject("my.second.module"), undefined, "global name for module 'second' should be undefined");
+		assert.equal(ObjectPath.get("my.second.module"), undefined, "global name for module 'second' should be undefined");
 		assert.ok(!sap.ui.require("my/second/module"), "module 'second' should not be declared");
 
 		jQuery.sap.require("my.first.module");
-		assert.equal(jQuery.sap.getObject("my.first.module"), "1st", "require of 'first' should have loaded 'first'");
+		assert.equal(ObjectPath.get("my.first.module"), "1st", "require of 'first' should have loaded 'first'");
 		assert.ok(sap.ui.require("my/first/module"), "module 'first' should be declared");
-		assert.equal(jQuery.sap.getObject("my.second.module"), "2nd", "require of 'first' should have loaded 'second' (transitively)");
+		assert.equal(ObjectPath.get("my.second.module"), "2nd", "require of 'first' should have loaded 'second' (transitively)");
 		assert.ok(sap.ui.require("my/second/module"), "module 'first' should be declared");
 
 		jQuery.sap.require("my.second.module");
-		assert.equal(jQuery.sap.getObject("my.first.module"), "1st", "addtl. require of 'second' shouldn't touch globals");
-		assert.equal(jQuery.sap.getObject("my.second.module"), "2nd", "addtl. require of 'second' shouldn't touch globals");
+		assert.equal(ObjectPath.get("my.first.module"), "1st", "addtl. require of 'second' shouldn't touch globals");
+		assert.equal(ObjectPath.get("my.second.module"), "2nd", "addtl. require of 'second' shouldn't touch globals");
 
 		jQuery.sap.require("my.first.module");
-		assert.equal(jQuery.sap.getObject("my.first.module"), "1st", "addtl. require of 'first' shouldn't touch globals");
-		assert.equal(jQuery.sap.getObject("my.second.module"), "2nd", "addtl. require of 'first' shouldn't touch globals");
+		assert.equal(ObjectPath.get("my.first.module"), "1st", "addtl. require of 'first' shouldn't touch globals");
+		assert.equal(ObjectPath.get("my.second.module"), "2nd", "addtl. require of 'first' shouldn't touch globals");
 
 	});
 
@@ -62,9 +66,9 @@
 
 		jQuery.sap.require("my.first.module");
 
-		assert.equal(jQuery.sap.getObject("my.first.module"), "1st", "first module should have been loaded");
+		assert.equal(ObjectPath.get("my.first.module"), "1st", "first module should have been loaded");
 		assert.ok(sap.ui.loader._.getModuleState("my/first/module.js") !== 0, "module 'first' should be declared");
-		assert.equal(jQuery.sap.getObject("my.second.module"), undefined, "second module should have been loaded");
+		assert.equal(ObjectPath.get("my.second.module"), undefined, "second module should have been loaded");
 		assert.ok(sap.ui.loader._.getModuleState("my/second/module.js") !== 0, "module 'second' should be declared");
 
 	});
@@ -80,8 +84,8 @@
 
 		jQuery.sap.require("my.first.module");
 
-		assert.equal(jQuery.sap.getObject("my.first.module"), "1st", "first module should have been loaded");
-		assert.equal(jQuery.sap.getObject("my.second.module"), "1st", "second module should have been loaded");
+		assert.equal(ObjectPath.get("my.first.module"), "1st", "first module should have been loaded");
+		assert.equal(ObjectPath.get("my.second.module"), "1st", "second module should have been loaded");
 
 	});
 
@@ -97,7 +101,7 @@
 		var done = assert.async();
 		sap.ui.require(["my/first/module", "my/second/module"], function (firstModule, secondModule) {
 			assert.strictEqual(firstModule.my, "firstmodule");
-			assert.strictEqual(firstModule, jQuery.sap.getObject("my.first.module"));
+			assert.strictEqual(firstModule, ObjectPath.get("my.first.module"));
 			assert.strictEqual(secondModule.my, "secondmodule");
 			assert.ok(my && my.second === undefined);
 			done();
@@ -616,157 +620,6 @@
 	});
 
 	//****************************************************
-	// loadJSResourceAsync
-	//****************************************************
-
-	QUnit.module("loadJSResourceAsync", {
-		beforeEach: function() {
-			this.scriptsWith = function(rPattern) {
-				var count = 0;
-				jQuery("head>script").each(function(i, script) {
-					if ( script.src && rPattern.test(script.src) ) {
-						count++;
-					}
-				});
-				return count;
-			};
-			var oHead = window.document.getElementsByTagName("head")[0];
-			var _fnOriginalAppendChild = oHead.appendChild;
-
-			this.callsFakeAppendChild = function(){};
-			this.oAppendChildStub = sinon.stub(oHead, "appendChild").callsFake(function(oElement) {
-				this.callsFakeAppendChild(oElement);
-				_fnOriginalAppendChild.apply(oHead, arguments);
-			}.bind(this));
-		},
-		afterEach: function() {
-			if (this.oAppendChildStub) {
-				this.oAppendChildStub.restore();
-			}
-		}
-	});
-
-	QUnit.test("successful call", function(assert) {
-		var that = this;
-		var p = jQuery.sap._loadJSResourceAsync("fixture/forced-async-loading/bundle1.js");
-		return p.then(function() {
-			assert.ok(true, "promise should succeed");
-			assert.equal(this.oAppendChildStub.callCount, 1 , "should have been called once");
-			assert.ok(jQuery.sap.isResourceLoaded('fixture/forced-async-loading/bundle1.js'), "resource should have been loaded");
-			assert.equal(that.scriptsWith(/fixture\/forced-async-loading\/bundle1\.js$/), 1, "script tag for lib should exist");
-		}.bind(this), function() {
-			assert.ok(false, "promise should not fail");
-		});
-
-	});
-
-	QUnit.test("failing call", function(assert) {
-		var that = this;
-		var p = jQuery.sap._loadJSResourceAsync("fixture/forced-async-loading/non-existing.js");
-		return p.then(function() {
-			assert.ok(false, "promise must not succeed");
-			assert.equal(this.oAppendChildStub.callCount, 2 , "should have been called twice");
-		}.bind(this), function() {
-			assert.ok(true, "promise should fail");
-			assert.equal(that.scriptsWith(/fixture\/forced-async-loading\/non-existing\.js$/), 1, "script tag should exist");
-		});
-
-	});
-
-	QUnit.test("failing call (ignore errors)", function(assert) {
-		var that = this;
-		var p = jQuery.sap._loadJSResourceAsync("fixture/forced-async-loading/non-existing-ignored.js", true);
-		return p.then(function() {
-			assert.ok(true, "promise should succeed");
-			assert.equal(this.oAppendChildStub.callCount, 2 , "should have been called twice");
-			assert.equal(that.scriptsWith(/fixture\/forced-async-loading\/non-existing-ignored\.js$/), 1, "script tag should exist");
-		}.bind(this), function() {
-			assert.ok(false, "promise must not fail");
-		});
-
-	});
-
-	QUnit.test("first call fails, second call passes", function(assert) {
-		var that = this;
-
-		//when the desired script tag is added to the head,
-		// set the src attribute to an invalid value to trigger an error event
-		// let the second call pass
-		//in order to simulate an SSO scenario in which the first call to a script fails, but the second succeeds
-		var bFirstFailure = true;
-		this.callsFakeAppendChild = function(oElement) {
-			if (oElement instanceof HTMLScriptElement) {
-				if (oElement.src.indexOf("forced-async-loading/bundle-first-failing.js") > -1) {
-					if (bFirstFailure) {
-						bFirstFailure = false;
-
-						//set the src to a non existing file such that an error event is fired to simulate a failing request
-						oElement.src = "non-existing-file";
-
-						//check the module state
-						var bIsResourceLoaded = jQuery.sap.isResourceLoaded("fixture/forced-async-loading/bundle-first-failing.js");
-						assert.ok(bIsResourceLoaded, "Module should be in loading state");
-					}
-				}
-			}
-		};
-
-		var p = jQuery.sap._loadJSResourceAsync("fixture/forced-async-loading/bundle-first-failing.js");
-		return p.then(function() {
-			assert.ok(true, "promise should succeed");
-			assert.equal(this.oAppendChildStub.callCount, 2 , "should have been called twice");
-			assert.notOk(bFirstFailure, "there should be one failed try to load the module");
-			assert.ok(jQuery.sap.isResourceLoaded('fixture/forced-async-loading/bundle-first-failing.js'), "resource should have been loaded");
-			assert.equal(that.scriptsWith(/fixture\/forced-async-loading\/bundle-first-failing\.js$/), 1, "script tag for bundle should exist");
-		}.bind(this), function() {
-			assert.ok(false, "promise must not fail");
-		});
-
-	});
-
-	QUnit.test("multiple calls (succeeding)", function(assert) {
-		var that = this;
-		var p1 = jQuery.sap._loadJSResourceAsync("fixture/forced-async-loading/bundle2.js");
-		var p2 = jQuery.sap._loadJSResourceAsync("fixture/forced-async-loading/bundle2.js");
-		p1 = p1.then(function() {
-			assert.ok(true, "promise should succeed");
-			assert.ok(jQuery.sap.isResourceLoaded('fixture/forced-async-loading/bundle2.js'), "resource should have been loaded");
-		}, function() {
-			assert.ok(false, "promise should not fail");
-		});
-		p2 = p2.then(function() {
-			assert.ok(true, "promise should succeed");
-			assert.ok(jQuery.sap.isResourceLoaded('fixture/forced-async-loading/bundle2.js'), "resource should have been loaded");
-		}, function() {
-			assert.ok(false, "promise should not fail");
-		});
-		return Promise.all([p1,p2]).then(function() {
-			assert.equal(that.scriptsWith(/fixture\/forced-async-loading\/bundle2\.js$/), 1, "only one script tag for lib should exist");
-			assert.equal(this.oAppendChildStub.callCount, 1 , "should have been called twice");
-		}.bind(this));
-	});
-
-	QUnit.test("multiple calls (failing)", function(assert) {
-		var that = this;
-		var p1 = jQuery.sap._loadJSResourceAsync("fixture/forced-async-loading/non-existing-multiple.js");
-		var p2 = jQuery.sap._loadJSResourceAsync("fixture/forced-async-loading/non-existing-multiple.js", true);
-		p1 = p1.then(function() {
-			assert.ok(false, "promise must not succeed");
-		}, function() {
-			assert.ok(true, "promise should fail");
-		});
-		p2 = p2.then(function() {
-			assert.ok(true, "promise should succeed"); // ignore errors!
-		}, function() {
-			assert.ok(false, "promise must not fail");
-		});
-		return Promise.all([p1,p2]).then(function() {
-			assert.equal(that.scriptsWith(/fixture\/forced-async-loading\/non-existing-multiple\.js$/), 1, "only one script tag for lib should exist");
-			assert.equal(this.oAppendChildStub.callCount, 2 , "should have been called twice");
-		}.bind(this));
-	});
-
-	//****************************************************
 	// loadResource tests
 	//****************************************************
 
@@ -956,10 +809,10 @@
 					logSpy(oLogEntry.level, oLogEntry.message);
 				}
 			};
-			jQuery.sap.log.addLogListener(this.listener);
+			Log.addLogListener(this.listener);
 		},
 		afterEach: function() {
-			jQuery.sap.log.removeLogListener(this.listener);
+			Log.removeLogListener(this.listener);
 		}
 	});
 
@@ -969,12 +822,12 @@
 
 		//first, set path to anything (should be overwritten then...)
 		jQuery.sap.registerModulePath("qunit.test.path1", "/this/is/the/wrong/path/");
-		assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path1/))), "first path registration should have been logged");
-		this.logSpy.reset();
+		assert.ok(this.logSpy.calledWith(Log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path1/))), "first path registration should have been logged");
+		this.logSpy.resetHistory();
 
 		jQuery.sap.registerModulePath("qunit.test.path1", sPathInput);
-		assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path1/))), "second path registration should have been logged");
-		this.logSpy.reset();
+		assert.ok(this.logSpy.calledWith(Log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path1/))), "second path registration should have been logged");
+		this.logSpy.resetHistory();
 
 		assert.equal(jQuery.sap.getModulePath("qunit.test.path1"), sPathInput, "non-final path has been overwritten");
 
@@ -985,12 +838,12 @@
 
 		//first, set path to anything (should be overwritten then...)
 		jQuery.sap.registerModulePath("qunit.test.path2", "/this/is/the/wrong/path/");
-		assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path2/))), "first path registration should have been logged");
-		this.logSpy.reset();
+		assert.ok(this.logSpy.calledWith(Log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path2/))), "first path registration should have been logged");
+		this.logSpy.resetHistory();
 
 		jQuery.sap.registerModulePath("qunit.test.path2", {'url': sPathInput, 'final': false});
-		assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path2/))), "second path registration should have been logged");
-		this.logSpy.reset();
+		assert.ok(this.logSpy.calledWith(Log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path2/))), "second path registration should have been logged");
+		this.logSpy.resetHistory();
 
 		assert.equal(jQuery.sap.getModulePath("qunit.test.path2"), sPathInput, "False final flag was handled successfully.");
 	});
@@ -1000,12 +853,12 @@
 
 		//first, set path to the value it should be and stay (should NOT be overwritten then...)
 		jQuery.sap.registerModulePath("qunit.test.path3", {'url': sPathInput, 'final': true});
-		assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path3/)).and(sinon.match(/final/))), "first path registration should have been logged");
-		this.logSpy.reset();
+		assert.ok(this.logSpy.calledWith(Log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path3/)).and(sinon.match(/final/))), "first path registration should have been logged");
+		this.logSpy.resetHistory();
 
 		jQuery.sap.registerModulePath("qunit.test.path3", "/this/is/the/wrong/path/");
-		assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.WARNING, sinon.match(/registerResourcePath/).and(sinon.match(/already set as final/))), "warning should be logged when a final path is to be overwritten");
-		this.logSpy.reset();
+		assert.ok(this.logSpy.calledWith(Log.Level.WARNING, sinon.match(/registerResourcePath/).and(sinon.match(/already set as final/))), "warning should be logged when a final path is to be overwritten");
+		this.logSpy.resetHistory();
 
 		assert.equal(jQuery.sap.getModulePath("qunit.test.path3"), sPathInput, "Active final flag was handled successfully.");
 	});
@@ -1013,8 +866,8 @@
 	QUnit.test("no empty Module URLs allowed", function(assert) {
 		jQuery.sap.registerModulePath("qunit.test.path4", "");
 
-		assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path4/))), "first path registration should have been logged");
-		this.logSpy.reset();
+		assert.ok(this.logSpy.calledWith(Log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path4/))), "first path registration should have been logged");
+		this.logSpy.resetHistory();
 
 		assert.equal(jQuery.sap.getModulePath("qunit.test.path4"), ".", "Setting empty URL avoided successfully.");
 	});
@@ -1049,34 +902,34 @@
 
 	QUnit.test("single log entry for redundant calls", function(assert) {
 		jQuery.sap.registerModulePath("qunit.test.path8", "/qunit/test/path8");
-		assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "first path registration should have been logged");
-		this.logSpy.reset();
+		assert.ok(this.logSpy.calledWith(Log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "first path registration should have been logged");
+		this.logSpy.resetHistory();
 
 		jQuery.sap.registerModulePath("qunit.test.path8", "/qunit/test/path8");
-		assert.ok(this.logSpy.neverCalledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "redundant call should not be logged");
+		assert.ok(this.logSpy.neverCalledWith(Log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "redundant call should not be logged");
 
 		jQuery.sap.registerModulePath("qunit.test.path9", "/qunit/test/path9");
-		assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path9/))), "call with differing args should be logged");
+		assert.ok(this.logSpy.calledWith(Log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path9/))), "call with differing args should be logged");
 
 		jQuery.sap.registerModulePath("qunit.test.path8", "/qunit/test/path8");
-		assert.ok(this.logSpy.neverCalledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "redundant call should not be logged, even after other calls");
+		assert.ok(this.logSpy.neverCalledWith(Log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "redundant call should not be logged, even after other calls");
 
 		jQuery.sap.registerResourcePath("qunit/test/path8");
-		assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/)).and(sinon.match(/registration removed/))), "cleanup call should be logged");
-		this.logSpy.reset();
+		assert.ok(this.logSpy.calledWith(Log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/)).and(sinon.match(/registration removed/))), "cleanup call should be logged");
+		this.logSpy.resetHistory();
 
 		jQuery.sap.registerResourcePath("qunit/test/path8");
-		assert.ok(this.logSpy.neverCalledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/)).and(sinon.match(/registration removed/))), "redundant cleanup call should not be logged");
+		assert.ok(this.logSpy.neverCalledWith(Log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/)).and(sinon.match(/registration removed/))), "redundant cleanup call should not be logged");
 
 		jQuery.sap.registerModulePath("qunit.test.path8", "/qunit/test/path8");
-		assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "new call with same url should be logged after cleanup call");
-		this.logSpy.reset();
+		assert.ok(this.logSpy.calledWith(Log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "new call with same url should be logged after cleanup call");
+		this.logSpy.resetHistory();
 
 		jQuery.sap.registerModulePath("qunit.test.path8", { url: "/qunit/test/path8", "final": false });
-		assert.ok(this.logSpy.neverCalledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "redundant call should not be logged, even with different argument syntax");
+		assert.ok(this.logSpy.neverCalledWith(Log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "redundant call should not be logged, even with different argument syntax");
 
 		jQuery.sap.registerModulePath("qunit.test.path8", { url: "/qunit/test/path8", "final": true });
-		assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/)).and(sinon.match(/final/))), "call with same URL but different final flag should be logged");
+		assert.ok(this.logSpy.calledWith(Log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/)).and(sinon.match(/final/))), "call with same URL but different final flag should be logged");
 	});
 
 	QUnit.test("query parameters should be stripped off", function(assert) {
@@ -1459,4 +1312,4 @@
 
 	});
 
-}());
+});

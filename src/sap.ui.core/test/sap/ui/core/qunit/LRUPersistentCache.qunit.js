@@ -1,5 +1,5 @@
 /* global QUnit */
-sap.ui.define(["sap/ui/Device"], function(Device) {
+sap.ui.define(["sap/ui/Device", "sap/base/Log"], function(Device, Log) {
 	"use strict";
 	var oCache,
 		aSupportedEnv = [];
@@ -311,7 +311,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					}).then(function() {
 						return reInitCacheManager(oCache);
 					}).then(function() {
-						jQuery.sap.log.debug("Cache Manager reinitialized!");
+						Log.debug("Cache Manager reinitialized!");
 						assert.deepEqual(JSON.stringify(oCache._metadata), JSON.stringify(oCache._metadata), "After reload, the metadata is consistent");
 					});
 				});
@@ -505,7 +505,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 						var counter = 1;
 						this.stub(window.IDBObjectStore.prototype, "put").callsFake(function(entry, key) {
 							if (key === expectedKey && (counter >= callStart && counter <= callEnd)) {
-								jQuery.sap.log.debug("Sinon aborts the transaction [mocking put] for key=[" + expectedKey + "] " + counter + "nd time");
+								Log.debug("Sinon aborts the transaction [mocking put] for key=[" + expectedKey + "] " + counter + "nd time");
 								counter++;
 								/* We fake the objectStore.put operation and we manually call the transaction.onabort. From IndexedDB point of view
 								 / the transaction is not failed/aborted, so it calls transaction.oncomplete handler.
@@ -533,7 +533,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 						var that = this;
 						this.stub(window.IDBObjectStore.prototype, "delete").callsFake(function(key) {
 							if (key === expectedKey && (counter >= callStart && counter <= callEnd)) {
-								jQuery.sap.log.debug("Sinon aborts the transaction [mocking delete] for key=[" + expectedKey + "] " + counter + "nd time");
+								Log.debug("Sinon aborts the transaction [mocking delete] for key=[" + expectedKey + "] " + counter + "nd time");
 								counter++;
 								/* We fake the objectStore.delete operation and we manually call the transaction.onabort. From IndexedDB point of view
 								 / the transaction is not failed/aborted, so it calls transaction.oncomplete handler.
@@ -884,21 +884,21 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				function deleteDatabaseEntries() {
 					if (oCache) {
 						return Promise.resolve(function() {
-							jQuery.sap.log.debug(new Date() + ". Deleting all entries");
+							Log.debug(new Date() + ". Deleting all entries");
 						}).then(function() {
 							return oCache.reset();
 						}).then(function() {
-							jQuery.sap.log.debug(new Date() + ". Entries deleted ");
+							Log.debug(new Date() + ". Entries deleted ");
 						});
 					}
 				}
 
 				function reInitCacheManager(cm) {
-					jQuery.sap.log.debug("Reinit cache manager");
+					Log.debug("Reinit cache manager");
 					if (cm) {
-						jQuery.sap.log.debug("Closing database...");
+						Log.debug("Closing database...");
 						cm._db.close();
-						jQuery.sap.log.debug("Closing database...done");
+						Log.debug("Closing database...done");
 						cm = null;
 						return oCache.init().then(function(cm) {
 							cm.stringify = JSON.stringify;

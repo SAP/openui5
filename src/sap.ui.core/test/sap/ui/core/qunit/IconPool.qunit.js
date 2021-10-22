@@ -189,11 +189,11 @@ sap.ui.define([
 
 		IconPool.registerFont({
 			fontFamily: sFontFamily,
-			fontURI: jQuery.sap.getModulePath("sap.tnt.themes.base.fonts")
+			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts")
 		});
 
 		// insert sap-icons-TNT font
-		IconPool.insertFontFaceStyle(sFontFamily, jQuery.sap.getModulePath("sap.tnt.themes.base.fonts", "/"));
+		IconPool.insertFontFaceStyle(sFontFamily, sap.ui.require.toUrl("sap/tnt/themes/base/fonts/"));
 		assert.equal(document.fonts.size, iFontFaceCount + 1, "The icon font has been added to document.fonts");
 
 		var oLastFontFace = Array.from(document.fonts).pop();
@@ -204,7 +204,7 @@ sap.ui.define([
 
 		iFontFaceCount = document.fonts.size;
 		// insert font again
-		IconPool.insertFontFaceStyle(sFontFamily, jQuery.sap.getModulePath("sap.tnt.themes.base.fonts"));
+		IconPool.insertFontFaceStyle(sFontFamily, sap.ui.require.toUrl("sap/tnt/themes/base/fonts"));
 		assert.equal(document.fonts.size, iFontFaceCount, "No new FontFace is created");
 	});
 
@@ -214,7 +214,7 @@ sap.ui.define([
 		// inserting a font that is not registered must fail
 		var oErrorSpy = this.spy(Log, "error");
 
-		IconPool.insertFontFaceStyle("unRegisteredFont", jQuery.sap.getModulePath("sap.tnt.themes.base.fonts", "/"));
+		IconPool.insertFontFaceStyle("unRegisteredFont", sap.ui.require.toUrl("sap/tnt/themes/base/fonts/"));
 		assert.strictEqual(document.fonts.size, iFontFaceCount, "Inserting a unregistered font does not insert a new FontFace");
 		assert.strictEqual(oErrorSpy.callCount, 1, "Inserting an unregistered font logs an error");
 	});
@@ -227,11 +227,11 @@ sap.ui.define([
 		IconPool.registerFont({
 			fontFamily: "SAP-icons-TNT",
 			collectionName: "overwriteDefaultFont",
-			fontURI: jQuery.sap.getModulePath("sap.tnt.themes.base.fonts")
+			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts")
 		});
 
 		// overwriting SAP-icons with a different font must fail
-		IconPool.insertFontFaceStyle("SAP-icons", jQuery.sap.getModulePath("sap.tnt.themes.base.fonts", "/"), "overwriteDefaultFont");
+		IconPool.insertFontFaceStyle("SAP-icons", sap.ui.require.toUrl("sap/tnt/themes/base/fonts/"), "overwriteDefaultFont");
 		assert.strictEqual(document.fonts.size, iFontFaceCount, "Inserting a new font as 'SAP-icons' must not insert a new FontFace");
 		assert.strictEqual(oInfoSpy.callCount, 1, "Inserting font face for default font leads to an info log");
 	});
@@ -259,7 +259,7 @@ sap.ui.define([
 		IconPool.registerFont({
 			fontFamily: "SAP-icons",
 			collectionName: "overwriteDefaultFont",
-			fontURI: jQuery.sap.getModulePath("sap.tnt.themes.base.fonts")
+			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts")
 		});
 		assert.strictEqual(oErrorSpy.callCount, 1, "Re-registering the default font family logs an error");
 	});
@@ -269,12 +269,12 @@ sap.ui.define([
 
 		IconPool.registerFont({
 			fontFamily: "TwoTimes",
-			fontURI: jQuery.sap.getModulePath("sap.tnt.themes.base.fonts"),
+			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
 			lazy: true
 		});
 		IconPool.registerFont({
 			fontFamily: "TwoTimes",
-			fontURI: jQuery.sap.getModulePath("sap.tnt.themes.base.fonts"),
+			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
 			lazy: true
 		});
 		assert.strictEqual(oWarningSpy.callCount, 1, "Registering a font with the same name twice throws a warning");
@@ -307,7 +307,7 @@ sap.ui.define([
 		IconPool.registerFont({
 			fontFamily: "SAP-icons-TNT",
 			collectionName: "tntasync",
-			fontURI: jQuery.sap.getModulePath("sap.tnt.themes.base.fonts"),
+			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
 			lazy: true
 		});
 
@@ -362,7 +362,7 @@ sap.ui.define([
 		IconPool.registerFont({
 			fontFamily: "SAP-icons-TNT",
 			collectionName: "tntlazy",
-			fontURI: jQuery.sap.getModulePath("sap.tnt.themes.base.fonts"),
+			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
 			lazy: true
 		});
 
@@ -386,7 +386,7 @@ sap.ui.define([
 		IconPool.registerFont({
 			fontFamily: "SAP-icons-TNT",
 			collectionName: "tntnolazy",
-			fontURI: jQuery.sap.getModulePath("sap.tnt.themes.base.fonts")
+			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts")
 		});
 
 		assert.ok(stub.calledOnce, "The font metadata is loaded right away");
@@ -409,7 +409,7 @@ sap.ui.define([
 		IconPool.registerFont({
 			fontFamily: "METADATA",
 			collectionName: "tntmetadata",
-			fontURI: jQuery.sap.getModulePath("sap")
+			fontURI: sap.ui.require.toUrl("sap")
 		});
 
 		IconPool.getIconInfo("sap-icon://tntmetadata/foo");
@@ -422,7 +422,7 @@ sap.ui.define([
 		IconPool.registerFont({
 			fontFamily: "SAP-icons-TNT",
 			collectionName: "tntloaded",
-			fontURI: jQuery.sap.getModulePath("sap.tnt.themes.base.fonts")
+			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts")
 		});
 
 		IconPool.fontLoaded("tntloaded").then(function() {
@@ -463,7 +463,7 @@ sap.ui.define([
 		IconPool.registerFont({
 			fontFamily: "some-font-family",
 			collectionName: "somefont",
-			fontURI: jQuery.sap.getModulePath("sap.tnt.themes.base.fonts"),
+			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
 			lazy: true
 		});
 
@@ -484,7 +484,7 @@ sap.ui.define([
 		IconPool.registerFont({
 			fontFamily: "some-font-family1",
 			collectionName: "somefont1",
-			fontURI: jQuery.sap.getModulePath("sap.tnt.themes.base.fonts"),
+			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
 			lazy: true
 		});
 
@@ -549,7 +549,7 @@ sap.ui.define([
 		IconPool.registerFont({
 			fontFamily: "SAP-icons-TNT",
 			collectionName: "tntfakeasync",
-			fontURI: jQuery.sap.getModulePath("sap.tnt.themes.base.fonts"),
+			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
 			lazy: true
 		});
 
@@ -566,7 +566,7 @@ sap.ui.define([
 		IconPool.registerFont({
 			fontFamily: "SAP-icons-TNT",
 			collectionName: "tntAsyncSync",
-			fontURI: jQuery.sap.getModulePath("sap.tnt.themes.base.fonts"),
+			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
 			lazy: true
 		});
 
@@ -629,7 +629,7 @@ sap.ui.define([
 		IconPool.registerFont({
 			fontFamily: "SAP-icons-TNT",
 			collectionName: "tntfakemixed",
-			fontURI: jQuery.sap.getModulePath("sap.tnt.themes.base.fonts"),
+			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
 			lazy: true
 		});
 

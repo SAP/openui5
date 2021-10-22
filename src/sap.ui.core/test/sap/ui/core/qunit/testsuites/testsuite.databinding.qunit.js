@@ -206,7 +206,9 @@ sap.ui.define(function() {
 			},
 			ManagedObjectModel: {
 				title: "QUnit tests: sap.ui.model.base.ManagedObjectModel",
-				page: "test-resources/sap/ui/core/qunit/ManagedObjectModel.qunit.html"
+				coverage : {
+					only : "sap/ui/model/base"
+				}
 			},
 			"analytics/AnalyticalBinding": {
 				coverage : {

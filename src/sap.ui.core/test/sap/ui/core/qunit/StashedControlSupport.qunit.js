@@ -119,9 +119,12 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 				// extend the real sap.m.Button for test purposes - once!
 				StashedControlSupport.mixInto(Button);
 			}
-			this.oView = sap.ui.xmlview("view", {
-				viewContent: sViewContent
-			}).placeAt("content");
+			return XMLView.create({
+				id: "view",
+				definition: sViewContent
+			}).then(function(oView) {
+				this.oView = oView.placeAt("content");
+			}.bind(this));
 		},
 		afterEach: function(assert) {
 			assert.ok(this.assertSpy.neverCalledWith(sinon.match.falsy, sinon.match(/unknown setting.*visible/)),
@@ -133,7 +136,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 	QUnit.test("StashedControl support (controls)", function(assert) {
 		var done = assert.async();
 		this.oView.onAfterRendering = function() {
-			assert.strictEqual(jQuery("#view--StashedButton").length, 0, "Stashed button is not rendered");
+			assert.notOk(document.getElementById("view--StashedButton"), "Stashed button is not rendered");
 
 			var oButton = sap.ui.getCore().byId("view--StashedButton");
 
@@ -141,12 +144,12 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 			assert.ok(oButton instanceof Button, "Stashed button is instanceof sap.m.Button");
 			assert.ok(oButton.isStashed(), "Stashed button has stashed=true");
 			assert.notOk(oButton.getVisible(), "Stashed button has visible=false");
-			assert.strictEqual(jQuery("#view--Button").length, 1, "Button is rendered");
+			assert.ok(document.getElementById("view--Button"), "Button is rendered");
 			assert.ok(sap.ui.getCore().byId("view--Button") instanceof Button, "Button is a Button");
 
 			this.oView.onAfterRendering = function() {
 				var oUnstashedButton = sap.ui.getCore().byId("view--StashedButton");
-				assert.strictEqual(jQuery("#view--StashedButton").length, 1, "Unstashed button is rendered");
+				assert.ok(document.getElementById("view--StashedButton"), "Unstashed button is rendered");
 				assert.ok(oUnstashedButton instanceof Button, "Unstashed Button is still a Button");
 				assert.notOk(oUnstashedButton.isStashed(), "UnstashedButton.isStashed() != true");
 				assert.ok(oUnstashedButton.getVisible(), "Unstashed button has visible=true");
@@ -340,19 +343,19 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 
 		var fnTest = function () {
 			this.oView.onAfterRendering = function() {
-				assert.strictEqual(jQuery("#view--StashedButton").length, 0, "Stashed button is not rendered");
+				assert.notOk(document.getElementById("view--StashedButton"), "Stashed button is not rendered");
 
 				var oButton = sap.ui.getCore().byId("view--StashedButton");
 
 				assert.ok(oButton, "Stashed button is available by id");
 				assert.ok(oButton instanceof Button, "Stashed button is instanceof sap.m.Button");
 				assert.ok(oButton.isStashed(), "Stashed button has stashed=true");
-				assert.strictEqual(jQuery("#view--Button").length, 1, "Button is rendered");
+				assert.ok(document.getElementById("view--Button"), "Button is rendered");
 				assert.ok(sap.ui.getCore().byId("view--Button") instanceof Button, "Button is a Button");
 
 				this.oView.onAfterRendering = function() {
 					var oUnstashedButton = sap.ui.getCore().byId("view--StashedButton");
-					assert.strictEqual(jQuery("#view--StashedButton").length, 1, "Unstashed button is rendered");
+					assert.ok(document.getElementById("view--StashedButton"), "Unstashed button is rendered");
 					assert.ok(oUnstashedButton instanceof Button, "Unstashed Button is still a Button");
 					assert.notOk(oUnstashedButton.isStashed(), "UnstashedButton.isStashed() != true");
 
@@ -601,10 +604,10 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 
 			// since the stashed sections are set to invisible false, we should not find them in the DOM
 			// except maybe some placeholders, depending on the way the container-control renders
-			var oSection0DOM = jQuery("#" + aAllSections[0].getId())[0];
-			var oSection1DOM = jQuery("#" + aAllSections[1].getId())[0];
-			var oSection2DOM = jQuery("#" + aAllSections[2].getId())[0];
-			var oSection3DOM = jQuery("#" + aAllSections[3].getId())[0];
+			var oSection0DOM = document.getElementById(aAllSections[0].getId());
+			var oSection1DOM = document.getElementById(aAllSections[1].getId());
+			var oSection2DOM = document.getElementById(aAllSections[2].getId());
+			var oSection3DOM = document.getElementById(aAllSections[3].getId());
 
 			assert.notOk(oSection0DOM, "Section 0 is not rendered");
 			assert.ok(oSection1DOM, "Section 1 is rendered");
@@ -625,10 +628,10 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 
 			// since the stashed sections are set to invisible false, we should not find them in the DOM
 			// except maybe some placeholders, depending on the way the container-control renders
-			oSection0DOM = jQuery("#" + aAllSections[0].getId())[0];
-			oSection1DOM = jQuery("#" + aAllSections[1].getId())[0];
-			oSection2DOM = jQuery("#" + aAllSections[2].getId())[0];
-			oSection3DOM = jQuery("#" + aAllSections[3].getId())[0];
+			oSection0DOM = document.getElementById(aAllSections[0].getId());
+			oSection1DOM = document.getElementById(aAllSections[1].getId());
+			oSection2DOM = document.getElementById(aAllSections[2].getId());
+			oSection3DOM = document.getElementById(aAllSections[3].getId());
 
 			assert.ok(oSection0DOM, "Section 0 is rendered");
 			assert.ok(oSection1DOM, "Section 1 is rendered");
@@ -640,7 +643,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 	});
 
 	QUnit.test("Unstashed control should have aggregation bindings", function(assert) {
-		var oSpy = sinon.spy(console, "assert");
+		var oSpy = this.spy(console, "assert");
 		var oJSONModel = new JSONModel({
 			title: "Cool Tile",
 			subSections: [{
@@ -671,7 +674,6 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 			assert.equal(oBoundSection.getSubSections().length, 1, "aggregation bound, 1 subSection created");
 			assert.equal(oBoundSection.getSubSections()[0].getTitle(), "bar", "subSection bound and title resolved");
 			assert.equal(oSpy.callCount, 0, "No assertion due to unremoved stahsed attribute must occur");
-			oSpy.restore();
 		}.bind(this)).catch(function(e) {
 			assert.notOk(e.stack);
 		});

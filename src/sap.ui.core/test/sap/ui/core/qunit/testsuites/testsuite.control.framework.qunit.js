@@ -8,6 +8,9 @@ sap.ui.define(function() {
 			qunit: {
 				version: 2
 			},
+			sinon: {
+				version: 4
+			},
 			module: "test-resources/sap/ui/core/qunit/{name}.qunit"
 		},
 		tests: {
@@ -19,10 +22,6 @@ sap.ui.define(function() {
 				title: "sap.ui.core.BlockLayerUtils",
 				ui5: {
 					libs: "sap.m"
-				},
-				sinon: {
-					version: 4,
-					qunitBridge: true
 				}
 			},
 			"util/BusyIndicator": {
@@ -41,6 +40,9 @@ sap.ui.define(function() {
 			},
 			ControlDefinition: {
 				title: "sap.ui.core.Control (ControlDefinition)",
+				qunit: {
+					reorder: false // tests are depending on each other
+				},
 				ui5: {
 					libs: "sap.m"
 				},
@@ -136,16 +138,14 @@ sap.ui.define(function() {
 			},
 			ResizeHandler: {
 				title: "sap.ui.core.ResizeHandler",
-				/* own page kept because of custom styles and DOM (but uses runTest.js) */
-				page: "test-resources/sap/ui/core/qunit/ResizeHandler.qunit.html",
+				qunit: {
+					reorder: false
+				},
 				ui5: {
 					theme: "base"
 				}
 			},
 			StashedControlSupport: {
-				sinon: {
-					version: 4
-				},
 				title: "sap.ui.core.StashedControlSupport",
 				loader: {
 					paths: {

@@ -45,14 +45,14 @@ sap.ui.define([
 	QUnit.test("Initial Check", function(assert) {
 		assert.ok(document.getElementById("icon1"), "Icon is rendered");
 		$icon = oIcon.$();
-		$dummy = jQuery.sap.byId("dummy");
+		$dummy = jQuery("#dummy");
 	});
 
 	QUnit.test("Loading font file", function(assert) {
 		var done = assert.async();
 
 		setTimeout(function() {
-			assert.notEqual(jQuery.sap.byId("icon1").height(), 0, "Font file is loaded successfully");
+			assert.notEqual(jQuery("#icon1").height(), 0, "Font file is loaded successfully");
 			done();
 		}, 500);
 	});
@@ -116,7 +116,7 @@ sap.ui.define([
 					color: sColor,
 					backgroundColor: sBackgroundColor
 				}),
-				$dummy = jQuery.sap.byId("dummy");
+				$dummy = jQuery("#dummy");
 
 			$dummy.css("color", sColor);
 			$dummy.css("background-color", sBackgroundColor);

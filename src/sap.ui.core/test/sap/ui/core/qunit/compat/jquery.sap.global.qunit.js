@@ -43,26 +43,26 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device"], function(jQuery) {
 		jQuery.sap.assert(true, sMessage);
 		assert.notOk(assertSpy.called, "true, String");
 		sinon.assert.neverCalledWith(assertSpy, true, sRefMessage);
-		assertSpy.reset();
+		assertSpy.resetHistory();
 
 		jQuery.sap.assert(false, sMessage);
 		assert.ok(assertSpy.calledOnce, "false, String");
 		sinon.assert.calledWith(assertSpy, false, sRefMessage);
-		assertSpy.reset();
+		assertSpy.resetHistory();
 
 		jQuery.sap.assert(true, messageSpy);
 		assert.notOk(messageSpy.called, "true, function");
 		assert.notOk(assertSpy.called);
 		sinon.assert.neverCalledWith(assertSpy, true, sRefMessage);
-		assertSpy.reset();
-		messageSpy.reset();
+		assertSpy.resetHistory();
+		messageSpy.resetHistory();
 
 		jQuery.sap.assert(false, messageSpy);
 		sinon.assert.calledOnce(messageSpy);
 		sinon.assert.calledOnce(assertSpy);
 		sinon.assert.calledWith(assertSpy, false, sRefMessage);
-		assertSpy.reset();
-		messageSpy.reset();
+		assertSpy.resetHistory();
+		messageSpy.resetHistory();
 
 		/* eslint-disable no-console */
 		if (console.assert) {
@@ -88,14 +88,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device"], function(jQuery) {
 					return false;
 				}
 			}());
-			this.alert = window.alert;
-			window.alert = sinon.spy();
-			sinon.stub(console, 'warn'); // eslint-disable-line no-console
+			this.stub(window, "alert");
+			this.stub(console, 'warn'); // eslint-disable-line no-console
 		},
 		afterEach: function () {
 			jQuery.sap.debug(false);
-			window.alert = this.alert;
-			console.warn.restore(); // eslint-disable-line no-console
 		}
 	});
 

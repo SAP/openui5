@@ -3,9 +3,10 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/XMLTemplateProcessor",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/util/XMLHelper",
 	"sap/base/Log",
-	"jquery.sap.xml" // jQuery plugin, only used indirectly
-], function (coreLibrary, XMLTemplateProcessor, XMLView, Log, jQuery) {
+	"sap/ui/thirdparty/jquery"
+], function (coreLibrary, XMLTemplateProcessor, XMLView, XMLHelper, Log, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -39,7 +40,7 @@ sap.ui.define([
 		var oView = sap.ui.xmlview({
 			viewContent: sRootView
 		});
-		var xmlNode = jQuery.sap.parseXML(sView).documentElement;
+		var xmlNode = XMLHelper.parse(sView).documentElement;
 		var mSettings = {};
 		XMLTemplateProcessor.parseViewAttributes(xmlNode, oView, mSettings);
 		assert.deepEqual(mSettings, {displayBlock: true, height: "100%"}, "displayBlock was parsed, unknown setting was ignored");
@@ -73,7 +74,7 @@ sap.ui.define([
 				id: "root",
 				async: true
 			});
-			this.xml = jQuery.sap.parseXML(sView);
+			this.xml = XMLHelper.parse(sView);
 		},
 		afterEach: function() {
 			this.oView.destroy();
@@ -128,7 +129,7 @@ sap.ui.define([
 		return this.oView.loaded().then(function() {
 			XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, this.oView);
 			// serialize and deserialize the XML to enforce the namespaced attributes
-			this.xml = jQuery.sap.parseXML(
+			this.xml = XMLHelper.parse(
 				oXMLSerializer.serializeToString(this.xml.documentElement)
 			);
 			XMLTemplateProcessor.parseTemplate(this.xml.documentElement, this.oView);
@@ -298,7 +299,7 @@ sap.ui.define([
 				id: "view",
 				async: true
 			});
-			this.xml = jQuery.sap.parseXML(sView);
+			this.xml = XMLHelper.parse(sView);
 		},
 		afterEach: function() {
 			this.oView.destroy();

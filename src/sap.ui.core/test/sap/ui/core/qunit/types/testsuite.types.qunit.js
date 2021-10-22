@@ -5,7 +5,7 @@ sap.ui.define(function () {
 		name: "TestSuite for DataType and Formatter",
 		defaults: {
 			qunit: {
-				version: 1
+				version: 2
 			},
 			sinon: {
 				version: 4,

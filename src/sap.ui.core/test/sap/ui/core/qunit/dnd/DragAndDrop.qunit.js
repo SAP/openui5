@@ -448,7 +448,7 @@ sap.ui.define([
 		oEventTarget = this.oControl.getTopItems()[1].getDomRef();
 		setTime(2999);
 		oEventTarget.dispatchEvent(createNativeDragEventDummy("dragenter"));
-		oOnLongDragOverSpy.reset();
+		oOnLongDragOverSpy.resetHistory();
 		assertLongdragover(0);
 		setTime(3000);
 		assertLongdragover(1);

@@ -59,7 +59,7 @@
 			// Not using "QUnit.config.current.ignoreGlobalErrors = true;" as this
 			// would still cause some test runners like Karma to report an error
 			this.origOnError = window.onerror;
-			window.onerror = sinon.stub().returns(false);
+			window.onerror = this.stub().returns(false);
 
 			return new Promise(function(resolve, reject) {
 				sap.ui.require(['jquery.sap.global'], resolve, reject);
@@ -206,8 +206,8 @@
 	QUnit.module("Async/Sync Conflict", {
 		beforeEach: function() {
 			this.logger = sap.ui.loader._.logger;
-			sinon.spy(this.logger, "warning");
-			sinon.spy(sap.ui.require, "load");
+			this.spy(this.logger, "warning");
+			this.spy(sap.ui.require, "load");
 			window.fixture = window.fixture || {};
 			window.fixture["async-sync-conflict"] = {
 				executions: 0,
@@ -228,7 +228,7 @@
 		// we intercept head.appendChild calls and listen to the load/error events of the script in question
 		var scriptCompleted = new Promise(function(resolve, reject) {
 			var _fnOriginalAppendChild = document.head.appendChild;
-			sinon.stub(document.head, "appendChild").callsFake(function(oElement) {
+			this.stub(document.head, "appendChild").callsFake(function(oElement) {
 				// when the script tag for the module is appended, register for its load/error events
 				if ( oElement.getAttribute("data-sap-ui-module") === "fixture/async-sync-conflict/simple.js" ) {
 					oElement.addEventListener("load", resolve);
@@ -240,7 +240,7 @@
 			setTimeout(function() {
 				reject(new Error("script for module was not added within 20 seconds"));
 			}, 20000);
-		});
+		}.bind(this));
 
 		// Act:
 		// first require async
@@ -270,7 +270,7 @@
 		// we intercept head.appendChild calls and listen to the load/error events of the script in question
 		var scriptCompleted = new Promise(function(resolve, reject) {
 			var _fnOriginalAppendChild = document.head.appendChild;
-			sinon.stub(document.head, "appendChild").callsFake(function(oElement) {
+			this.stub(document.head, "appendChild").callsFake(function(oElement) {
 				// when the script tag for the module is appended, register for its load/error events
 				if ( oElement.getAttribute("data-sap-ui-module") === "fixture/async-sync-conflict/unique-executions.js" ) {
 					oElement.addEventListener("load", resolve);
@@ -282,7 +282,7 @@
 			setTimeout(function() {
 				reject(new Error("script for module was not added within 20 seconds"));
 			}, 20000);
-		});
+		}.bind(this));
 
 		window.aModuleExecutions = [];
 
@@ -476,4 +476,5 @@
 		assert.ok(isThenable(_export), "The export must be a thenable also on 2nd access");
 	});
 
+	QUnit.start();
 }());

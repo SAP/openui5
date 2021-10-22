@@ -185,8 +185,8 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		var oXhrHandle = this.dummyRequest();
 		var sPassportAction = oPassportHeaderSpy.args[0][4];
 
-		oHeaderSpy.reset();
-		oPassportHeaderSpy.reset();
+		oHeaderSpy.resetHistory();
+		oPassportHeaderSpy.resetHistory();
 		// first interaction ends with notifyStepStart - second interaction starts
 		Interaction.end(true);
 		oXhrHandle.abort();
@@ -299,7 +299,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		Interaction.end(true);
 		this.clock.tick(60000);
 		assert.ok(sendBeaconStub.calledOnce, "Beacon called once after 60s");
-		sendBeaconStub.reset();
+		sendBeaconStub.resetHistory();
 
 		this.clock.tick(30000);
 		Interaction.start();
@@ -309,7 +309,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		assert.ok(sendBeaconStub.notCalled, "Beacon not called when Interaction occured");
 		this.clock.tick(30000);
 		assert.ok(sendBeaconStub.calledOnce, "Beacon immediately called 60s after Interaction");
-		sendBeaconStub.reset();
+		sendBeaconStub.resetHistory();
 
 		this.clock.tick(30000);
 		Interaction.start();
@@ -322,14 +322,14 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		assert.ok(sendBeaconStub.notCalled, "Beacon not called when Interaction occured");
 		this.clock.tick(30000);
 		assert.ok(sendBeaconStub.calledOnce, "Beacon immediately called 60s after Interaction");
-		sendBeaconStub.reset();
+		sendBeaconStub.resetHistory();
 
 		Interaction.start();
 		addFakeProcessingTime();
 		Interaction.end(true);
 		FESR.setActive(false);
 		assert.ok(sendBeaconStub.calledOnce, "Beacon immediately called after deactivation");
-		sendBeaconStub.reset();
+		sendBeaconStub.resetHistory();
 
 		this.clock.tick(60000);
 		assert.ok(sendBeaconStub.notCalled, "Beacon not called after deactivation");

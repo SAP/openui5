@@ -14,7 +14,7 @@ sap.ui.define([
 	jQuery.sap.handleF6GroupNavigation = F6Navigation.handleF6GroupNavigation = function(oEvent, oSettings) {
 		oSettings = oSettings ? oSettings : {};
 		if (!oSettings.scope) {
-			oSettings.scope = jQuery.sap.domById("scope");
+			oSettings.scope = document.getElementById("scope");
 		}
 		if (!oSettings.target) {
 			oSettings.target = oEvent.target;

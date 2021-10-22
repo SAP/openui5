@@ -218,7 +218,7 @@ sap.ui.define([
 
 			// check script prefixing
 			jQuery.sap.includeScript("js/script.js", "myjs");
-			var sSource = jQuery.sap.byId("myjs").attr("src");
+			var sSource = jQuery("#myjs").attr("src");
 			assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 
 		});
@@ -228,7 +228,7 @@ sap.ui.define([
 
 			// check script prefixing
 			jQuery.sap.includeStyleSheet("css/style.css", "mycss");
-			var sSource = jQuery.sap.byId("mycss").attr("href");
+			var sSource = jQuery("#mycss").attr("href");
 			assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 
 		});
@@ -384,7 +384,7 @@ sap.ui.define([
 
 		// check script prefixing
 		jQuery.sap.includeScript(document.baseURI + "anyapp/js/script.js", "myjs");
-		var sSource = jQuery.sap.byId("myjs").attr("src");
+		var sSource = jQuery("#myjs").attr("src");
 		assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 
 	});
@@ -394,7 +394,7 @@ sap.ui.define([
 
 		// check script prefixing
 		jQuery.sap.includeStyleSheet(document.baseURI + "anyapp/css/style.css", "mycss");
-		var sSource = jQuery.sap.byId("mycss").attr("href");
+		var sSource = jQuery("#mycss").attr("href");
 		assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 
 	});

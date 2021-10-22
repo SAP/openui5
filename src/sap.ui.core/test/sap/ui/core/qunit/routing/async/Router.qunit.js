@@ -4814,7 +4814,7 @@ sap.ui.define([
 			assert.equal(oRouterRouteMatchedSpy.callCount, 2, "fireRouteMatched should be called twice");
 			assert.strictEqual(oRouterRouteMatchedSpy.getCall(1).thisValue, oParentRouter, "Should be the correct ");
 			oRouterRouteMatchedSpy.restore();
-			oRouterRouteMatchedSpy.reset();
+			oRouterRouteMatchedSpy.resetHistory();
 			done();
 		});
 	});
