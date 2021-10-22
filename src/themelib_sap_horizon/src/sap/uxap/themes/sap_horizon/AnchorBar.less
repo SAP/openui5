@@ -99,13 +99,14 @@ html .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapMTB
 
 /* visual in anchor bar */
 
+
 .sapUxAPAnchorBarButton {
 	padding-bottom: 0;
 
 	&.sapMMenuBtn .sapMSBActive:not(.sapMBtnDisabled) > .sapMBtnInner .sapMBtnIcon,
 	&.sapMMenuBtn .sapMSBArrow:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive .sapMBtnIcon,
 	&.sapMMenuBtn.sapMMenuBtnSplit .sapMSBText:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive .sapMBtnContent {
-		color: @sapUiGroupTitleTextColor;
+		color: @sapContent_Selected_TextColor;
 	}
 
 	&.sapMMenuBtn .sapMSBArrow:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive {
@@ -130,7 +131,7 @@ html .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapMTB
 
 		.sapMBtnContent,
 		.sapUiIcon {
-			color: @sapUiSelected;
+			color: @sapContent_Selected_TextColor;
 		}
 
 		&::after {
@@ -148,13 +149,13 @@ html .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapMTB
 			padding: (@sapUiFiori3ABUnderlineOffsetAndHeight / 2) @sapUiFiori3ABUnderlineOffsetAndHeight;
 			border-top-left-radius: @sapUiFiori3ABUnderlineTopRadius;
 			border-top-right-radius: @sapUiFiori3ABUnderlineTopRadius;
-			background-color: @sapUiActive;
+			background-color: @sapContent_Selected_ForegroundColor;
 		}
 	}
 
 	.sapMBtnDefault .sapMBtnContent {
 		overflow: visible;
-		color: @sapUiSelected;
+		color: @sapContent_Selected_TextColor;
 
 		&::after {
 			content: "";
@@ -165,7 +166,7 @@ html .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapMTB
 			padding: (@sapUiFiori3ABUnderlineOffsetAndHeight / 2) @sapUiFiori3ABUnderlineOffsetAndHeight;
 			border-top-left-radius: @sapUiFiori3ABUnderlineTopRadius;
 			border-top-right-radius: @sapUiFiori3ABUnderlineTopRadius;
-			background-color: @sapUiActive;
+			background-color: @sapContent_Selected_ForegroundColor;
 		}
 	}
 }
@@ -244,4 +245,78 @@ html[data-sap-ui-animation="off"] {
 	&.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtn {
 		opacity: 1;
 	}
+}
+
+// =====================================
+// =====================================
+// Delta Styles for Horizon
+// =====================================
+
+.sapUxAPAnchorBarFiori3Height, .sapUiSizeCompact .sapUxAPAnchorBar,
+.sapUxAPAnchorBar, .sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
+.sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowLeft,
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowLeft,
+.sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowRight,
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowRight,
+.sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight,
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight,
+.sapUiSizeCompact .sapUxAPAnchorBar .anchorBarArrow>.sapUiHLayoutChildWrapper,
+.sapUxAPAnchorBar .anchorBarArrow>.sapUiHLayoutChildWrapper,
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton,
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMSB.sapMSBTransparent,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMSB.sapMSBTransparent, .sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner,
+.sapUxAPAnchorBar .sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive) {
+    box-shadow: none;
+}
+
+.sapUxAPAnchorBarButton .sapMBtnInner {
+    font-weight: bold;
+}
+
+// Removal of capital style in older nav bars
+.sapUxAPAnchorBarUpperCase .sapUxAPAnchorBarButton, .sapUxAPAnchorBarUpperCase .sapUxAPAnchorBarButton .sapMBtn {
+    text-transform: none;
+}
+
+.sapUxAPAnchorBar .sapMSB {
+	.sapMSBText {
+		background-color: transparent;
+	}
+
+	.sapMSBInner {
+		padding: 0;
+	}
+}
+
+html.sap-desktop .sapUxAPAnchorBar .sapMBtn:focus > .sapMFocusable {
+	outline: none;
+}
+
+html.sap-desktop .sapMBtnBase.sapMBtn.sapUxAPAnchorBarButton:focus::after {
+	pointer-events: none;
+	content: "";
+	position: absolute;
+	top: 0.25rem;
+	right: 0;
+	bottom: 0.25rem;
+	left: 0;
+	border: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
+	border-radius: 0.5rem;
+}
+
+.sapUxAPAnchorBar .sapMSB .sapMBtn:not(.sapMSBText) .sapMBtnInner.sapMBtnIconFirst::before {
+	content: none;
+}
+
+.sapMBtn:hover:not(.sapMBtnDisabled) > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized) .sapUiIcon,
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton:hover .sapMSB.sapMSBTransparent .sapMBtnContent > *,
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton:hover .sapMBtn + .sapMBtn .sapMBtnInner *,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton:hover .sapMSB.sapMSBTransparent .sapMBtnContent > *,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton:hover .sapMBtn > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) bdi,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton:hover .sapMBtn + .sapMBtn .sapMBtnInner *,
+.sapMBtn:hover:not(.sapMBtnDisabled):not(.sapMSBActive) > .sapMBtnHoverable:not(.sapMBtnDisabled):not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnTransparent).sapMBtnDefault .sapMBtnContent{
+	color: @sapContent_Selected_TextColor;
 }
