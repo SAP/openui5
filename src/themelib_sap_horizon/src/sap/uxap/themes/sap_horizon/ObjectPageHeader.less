@@ -118,12 +118,15 @@ html .sapUiContainer-Narrow .sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sa
 // Delta Styles for Horizon
 // =====================================
 
-h2.sapUxAPObjectPageHeaderIdentifierTitle, h2.sapUxAPObjectPageHeaderIdentifierTitleForce {
+h2.sapUxAPObjectPageHeaderIdentifierTitle,
+h2.sapUxAPObjectPageHeaderIdentifierTitleForce {
 	font-size: @sapFontHeader2Size;
 	font-family: @sapFontBlackFamily;
 }
 
-.sapUxAPObjectPageHeaderStickied .sapUxAPObjectPageHeaderIdentifierTitle.sapUxAPObjectPageHeaderIdentifierTitleForce {
+.sapUxAPObjectPageHeaderStickied .sapUxAPObjectPageHeaderIdentifierTitle.sapUxAPObjectPageHeaderIdentifierTitleForce,
+.sapUxAPObjectPageHeaderStickied h2.sapUxAPObjectPageHeaderIdentifierTitle,
+.sapUxAPObjectPageHeaderStickied h2.sapUxAPObjectPageHeaderIdentifierTitleForce {
 	font-size: @sapFontHeader3Size;
 	padding-bottom: 0;
 	margin-bottom: 0;
