@@ -11,8 +11,7 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	Overlay,
 	ElementOverlay,
 	AggregationOverlay,
@@ -99,6 +98,7 @@ function(
 			Promise.all(
 				[this.oButton1, this.oButton2].map(function (oElement) {
 					return new Promise(function (fnResolve) {
+						// eslint-disable-next-line no-new
 						new ElementOverlay({
 							element: oElement,
 							init: function (oEvent) {

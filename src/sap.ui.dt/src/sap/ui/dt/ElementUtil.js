@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/base/util/isPlainObject",
 	"sap/ui/core/UIArea"
-],
-function(
+], function(
 	jQuery,
 	BaseObject,
 	Util,
@@ -55,9 +54,6 @@ function(
 		}, this);
 	};
 
-	/**
-	 *
-	 */
 	ElementUtil.getElementInstance = function(vElement) {
 		if (typeof vElement === "string") {
 			var oElement = sap.ui.getCore().byId(vElement);
@@ -66,9 +62,6 @@ function(
 		return vElement;
 	};
 
-	/**
-	 *
-	 */
 	ElementUtil.hasAncestor = function(oElement, oAncestor) {
 		oAncestor = this.fixComponentContainerElement(oAncestor);
 		var oFixedParent;
@@ -86,17 +79,11 @@ function(
 		return !!oElement;
 	};
 
-	/**
-	 *
-	 */
 	ElementUtil.getClosestElementForNode = function(oNode) {
 		var $ClosestElement = jQuery(oNode).closest("[data-sap-ui]");
 		return $ClosestElement.length ? sap.ui.getCore().byId($ClosestElement.attr("data-sap-ui")) : undefined;
 	};
 
-	/**
-	 *
-	 */
 	ElementUtil.fixComponentParent = function(oElement) {
 		if (BaseObject.isA(oElement, "sap.ui.core.UIComponent")) {
 			var oComponentContainer = oElement.oContainer;
@@ -108,9 +95,6 @@ function(
 		}
 	};
 
-	/**
-	 *
-	 */
 	ElementUtil.fixComponentContainerElement = function(oElement) {
 		if (BaseObject.isA(oElement, "sap.ui.core.ComponentContainer")) {
 			// This happens when the compontentContainer has not been rendered yet
@@ -122,9 +106,6 @@ function(
 		return oElement;
 	};
 
-	/**
-	 *
-	 */
 	ElementUtil.getDomRef = function(oElement) {
 		if (oElement) {
 			var oDomRef;
@@ -138,9 +119,6 @@ function(
 		}
 	};
 
-	/**
-	 *
-	 */
 	ElementUtil.findAllSiblingsInContainer = function(oElement, oContainer) {
 		var oParent = oElement && oElement.getParent();
 		if (!oParent) {
@@ -209,9 +187,6 @@ function(
 		return this.getAggregation(oParent, sAggregationName).indexOf(oElement);
 	};
 
-	/**
-	 *
-	 */
 	ElementUtil.addAggregation = function(oParent, sAggregationName, oElement) {
 		if (this.hasAncestor(oParent, oElement)) {
 			throw new Error("Trying to add an element to itself or its successors");
@@ -224,9 +199,6 @@ function(
 		}
 	};
 
-	/**
-	 *
-	 */
 	ElementUtil.removeAggregation = function(oParent, sAggregationName, oElement, bSuppressInvalidate) {
 		var sAggregationRemoveMutator = this.getAggregationAccessors(oParent, sAggregationName).remove;
 		if (sAggregationRemoveMutator) {
@@ -236,9 +208,6 @@ function(
 		}
 	};
 
-	/**
-	 *
-	 */
 	ElementUtil.insertAggregation = function(oParent, sAggregationName, oElement, iIndex) {
 		if (this.hasAncestor(oParent, oElement)) {
 			throw new Error("Trying to add an element to itself or its successors");
@@ -263,9 +232,6 @@ function(
 		}
 	};
 
-	/**
-	 *
-	 */
 	ElementUtil.isValidForAggregation = function(oParent, sAggregationName, oElement) {
 		var oAggregationMetadata = oParent.getMetadata().getAggregation(sAggregationName);
 
@@ -327,9 +293,6 @@ function(
 			}, this);
 	};
 
-	/**
-	 *
-	 */
 	ElementUtil.hasInterface = function(oElement, sInterface) {
 		var aInterfaces = oElement.getMetadata().getInterfaces();
 		return aInterfaces.indexOf(sInterface) !== -1;

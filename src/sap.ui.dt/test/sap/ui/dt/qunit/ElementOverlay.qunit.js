@@ -26,8 +26,7 @@ sap.ui.define([
 	"sap/ui/dt/qunit/TestUtil",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function (
 	SimpleScrollControl,
 	Bar,
 	Button,
@@ -218,6 +217,7 @@ function (
 			oLayout.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
+			// eslint-disable-next-line no-new
 			new ElementOverlay({
 				isRoot: true,
 				element: oLayout,
@@ -1686,6 +1686,7 @@ function (
 
 			assert.throws(
 				function () {
+					// eslint-disable-next-line no-new
 					new ElementOverlay({
 						element: oManagedObject
 					});

@@ -5,10 +5,12 @@ sap.ui.define(function () {
 	"use strict";
 
 	/**
-	* @function
-	* @experimental
-	* @private
-	*/
+	 * @function
+	 * @experimental
+	 * @param {function} fn - Function that should be wrapped in a promise
+	 * @returns {object} Cancelable Promise
+	 * @private
+	 */
 	return function (fn) {
 		var bCancelled = false;
 		var oCancelPromise;

@@ -15,8 +15,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function (
 	jQuery,
 	ControlDragDrop,
 	CutPaste,
@@ -59,7 +58,7 @@ function (
 			//		Button
 			//		HereNotMovableButton
 
-			var aALL_MOVABLE_TYPES = [
+			var aAllMovableTypes = [
 				"sap.m.Button",
 				"sap.m.ObjectAttribute"
 			];
@@ -88,11 +87,11 @@ function (
 			sap.ui.getCore().applyChanges();
 
 			this.oControlDragDrop = new ControlDragDrop({
-				draggableTypes: aALL_MOVABLE_TYPES
+				draggableTypes: aAllMovableTypes
 			});
 
 			this.oCutPaste = new CutPaste({
-				movableTypes: aALL_MOVABLE_TYPES
+				movableTypes: aAllMovableTypes
 			});
 
 			var fnCheckMovable = function (oOverlay) {
@@ -399,7 +398,7 @@ function (
 			//		Page
 			//	detailPages
 
-			var aALL_MOVABLE_TYPES = [
+			var aAllMovableTypes = [
 				"sap.m.Page"
 			];
 
@@ -416,11 +415,11 @@ function (
 			sap.ui.getCore().applyChanges();
 
 			this.oControlDragDrop = new ControlDragDrop({
-				draggableTypes: aALL_MOVABLE_TYPES
+				draggableTypes: aAllMovableTypes
 			});
 
 			this.oCutPaste = new CutPaste({
-				movableTypes: aALL_MOVABLE_TYPES
+				movableTypes: aAllMovableTypes
 			});
 
 

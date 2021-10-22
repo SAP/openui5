@@ -11,8 +11,7 @@ sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	jQuery,
 	Test,
 	DesignTime,

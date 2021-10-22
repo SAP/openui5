@@ -7,8 +7,7 @@ sap.ui.define([
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/OverlayRegistry"
-],
-function(
+], function(
 	ElementUtil,
 	DOMUtil,
 	OverlayRegistry
@@ -35,8 +34,8 @@ function(
 
 	/**
 	 * Returns all design time information of the element
-	 * @param  {sap.ui.core.Element} oElement the element to test
-	 * @return {map} result object
+	 * @param {sap.ui.core.Element} oElement - Element to test
+	 * @returns {map} Result object
 	 */
 	ElementTest.getInfo = function(oElement) {
 		var oMetadata = oElement.getMetadata();
@@ -51,8 +50,9 @@ function(
 
 	/**
 	 * Returns all aggregation infos of the element
-	 * @param  {sap.ui.core.Element} oElement the element to test
-	 * @return {map} result object
+	 * @param {sap.ui.core.Element} oElement - Element to test
+	 * @param {string} sAggregationName - Name of the aggregation
+	 * @returns {map} Result object
 	 */
 	ElementTest.getAggregationInfo = function(oElement, sAggregationName) {
 		var mAggregationTest = {
@@ -96,8 +96,8 @@ function(
 
 	/**
 	 * Returns all information of all aggregations of the element
-	 * @param  {sap.ui.core.Element} oElement the element to test
-	 * @return {map} result object
+	 * @param {sap.ui.core.Element} oElement - Element to test
+	 * @returns {map} Result object
 	 */
 	ElementTest.getAggregationsInfo = function(oElement) {
 		var mAggregationTests = {};

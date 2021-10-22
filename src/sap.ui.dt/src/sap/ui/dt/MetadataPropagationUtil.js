@@ -7,8 +7,7 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/base/util/merge",
 	"sap/base/util/isEmptyObject"
-],
-function(
+], function(
 	Util,
 	merge,
 	isEmptyObject
@@ -97,9 +96,10 @@ function(
 	 * Extend the passed aggregationOverlay metadata with propagated aggregationOverlay metadata from parent
 	 * and metadata to propagte from passed elementOverlay metadata.
 	 *
-	 * @param {object} mOriginalMetadata - aggregation designtime metadata data map to be extended with propagation data
-	 * @param {sap.ui.core.Element} oElement - element may be used as relevant container
-	 * @return {object} Returns extended data part of the element designtime metadata.
+	 * @param {object} mOriginalMetadata - Aggregation design time metadata data map to be extended with propagation data
+	 * @param {sap.ui.core.Element} oElement - Element may be used as relevant container
+	 * @param {object} mParentAggregationMetadata - Aggregation design time metadata of the parent
+	 * @return {object} Extended data part of the element design time metadata.
 	 */
 	MetadataPropagationUtil.propagateMetadataToAggregationOverlay = function(mOriginalMetadata, oElement, mParentAggregationMetadata) {
 		var mNewPropagationInfo;

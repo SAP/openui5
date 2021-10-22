@@ -171,8 +171,8 @@ sap.ui.define([
 
 	/**
 	 * Checks whether DOM Element has vertical or horizontal scrollbar
-	 * @param oDomRef {HTMLElement} - DOM Element
-	 * @returns {boolean}
+	 * @param {HTMLElement} oDomRef - DOM element
+	 * @returns {boolean} <code>true</code> if the DOM element has a scrollbar
 	 */
 	DOMUtil.hasScrollBar = function(oDomRef) {
 		return DOMUtil.hasVerticalScrollBar(oDomRef) || DOMUtil.hasHorizontalScrollBar(oDomRef);
@@ -215,7 +215,8 @@ sap.ui.define([
 
 
 	/**
-	 * @param {HTMLElement} oDomRef
+	 * @param {HTMLElement} oDomRef - DOM element
+	 * @returns {object} Object with overflowX and overflowY
 	 */
 	DOMUtil.getOverflows = function(oDomRef) {
 		var $DomRef = jQuery(oDomRef);
@@ -436,8 +437,8 @@ sap.ui.define([
 	/**
 	 * Check whether the target node is a descendant of a node referenced by id
 	 * @param {string} sId - ID of a potential parent node
-	 * @param oTargetNode - Node to look for in a potential parent node
-	 * @returns {boolean} - true if a potential parent contains the target node
+	 * @param {HTMLElement} oTargetNode - Node to look for in a potential parent node
+	 * @returns {boolean} <code>true</code> if a potential parent contains the target node
 	 */
 	DOMUtil.contains = function (sId, oTargetNode) {
 		var oNode = document.getElementById(sId);

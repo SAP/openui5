@@ -7,8 +7,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/dt/AggregationDesignTimeMetadata",
 	"sap/ui/dt/ElementUtil"
-],
-function(
+], function(
 	DesignTimeMetadata,
 	AggregationDesignTimeMetadata,
 	ElementUtil
@@ -250,6 +249,9 @@ function(
 	/**
 	 * Returns the scroll containers or an empty array
 	 *
+	 * @param {object} oElement - Element
+	 * @param {boolean} bInvalidate - Indicates if the scroll container should be invalidated first
+	 * @param {function} fnUpdateFunction - Function to be called for update
 	 * @return {array} scrollContainers or empty array
 	 * @public
 	 */

@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-/* global Map */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Element",
@@ -14,8 +13,7 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/base/Log",
 	"sap/ui/dt/util/ZIndexManager"
-],
-function (
+], function (
 	jQuery,
 	Element,
 	MutationObserver,
@@ -310,6 +308,7 @@ function (
 
 	/**
 	 * Creates and/or returns mutation observer instance
+	 * @returns {object} Mutation observer
 	 * @static
 	 */
 	Overlay.getMutationObserver = function() {
@@ -340,7 +339,7 @@ function (
 
 	/**
 	 * Returns set of attributes for DOM Node of overlay
-	 * @returns {{id: string, "data-sap-ui": string, class: string, tabindex: *}}
+	 * @returns {{id: string, "data-sap-ui": string, class: string, tabindex: *}} Object with attributes
 	 * @protected
 	 */
 	Overlay.prototype._getAttributes = function () {
@@ -537,7 +536,6 @@ function (
 	/**
 	 * Sets whether the overlay can get the browser focus (tabindex)
 	 * @param {boolean} bFocusable - true if the overlay is focusable
-	 * @returns {sap.ui.dt.Overlay} returns this
 	 * @public
 	 */
 	Overlay.prototype.setFocusable = function(bFocusable) {
@@ -560,7 +558,7 @@ function (
 
 	/**
 	 * Returns valuable parent node that has dimensions and certain position.
-	 * @returns {jQuery|null}
+	 * @returns {jQuery|null} Parent jQuery object or null, if there is none
 	 * @protected
 	 */
 	Overlay.prototype._getRenderingParent = function () {
@@ -572,6 +570,7 @@ function (
 	 * The calculation is based on original associated DOM state and parent overlays
 	 * This method also calls "applyStyles" method for every child Overlay of this Overlay (cascade)
 	 * @param {boolean} bForceScrollbarSync - `true` to force a scrollbars synchronisation if there are any
+	 * @returns {Promise} Resolves as soon as <code>applyStyles</code> is done
 	 * @public
 	 */
 	Overlay.prototype.applyStyles = function (bForceScrollbarSync) {
@@ -658,7 +657,7 @@ function (
 	 * then ZIndexManager is used to calculate a z-index value lower than open popups and higher than other controls.
 	 * @see sap.ui.core.util.ZIndexManager
 	 * @param {object} oGeometry - Geometry object to get reference z-index from
-	 * @param {jQuery} $overlayDomRef - DOM Element to receive the z-index
+	 * @param {jQuery} $overlayDomRef - DOM element to receive the z-index
 	 */
 	Overlay.prototype._setZIndex = function (oGeometry, $overlayDomRef) {
 		var oOriginalDomRef = oGeometry.domRef;
@@ -673,7 +672,7 @@ function (
 
 	/**
 	 * Sets size to specified DOM Element
-	 * @param {jQuery} $Target - DOM Element which will receive new size
+	 * @param {jQuery} $Target - DOM element which will receive new size
 	 * @param {object} oGeometry - Geometry object to get new dimensions from
 	 * @protected
 	 */
@@ -689,8 +688,8 @@ function (
 	};
 
 	/**
-	 * Sets position of specified DOM Element
-	 * @param {jQuery} $Target - DOM Element which will receive new position
+	 * Sets position of specified DOM element
+	 * @param {jQuery} $Target - DOM element which will receive new position
 	 * @param {object} oGeometry - Geometry object to get positioning from
 	 * @param {jQuery} $Parent - Offset element for position calculation
 	 * @protected
@@ -733,9 +732,10 @@ function (
 	 * Note: listeners are only removed, if the same combination of event type, callback function
 	 * and context object is given as in the call to <code>attachBrowserEvent</code>.
 	 *
-	 * @param {string} [sEventType] A string containing one or more JavaScript event types, such as "click" or "blur".
-	 * @param {function} [fnHandler] The function that is to be no longer executed.
-	 * @param {object} [oListener] The context object that was given in the call to <code>attachBrowserEvent</code>.
+	 * @param {string} [sEventType] - String containing one or more JavaScript event types, such as "click" or "blur".
+	 * @param {function} [fnHandler] - Function that is to be no longer executed.
+	 * @param {object} [oListener] - Context object that was given in the call to <code>attachBrowserEvent</code>.
+	 * @returns {sap.ui.dt.Overlay} <code>this</code> object
 	 * @public
 	 */
 	Overlay.prototype.detachBrowserEvent = function(sEventType, fnHandler, oListener) {
@@ -765,8 +765,7 @@ function (
 	/**
 	 * Cleans up when scrolling is no longer needed in the overlay
 	 * @param {jQuery} $TargetDomRef - DOM reference to the element where dummy container is located
-	 * @param {sap.ui.dt.ElementOverlay} [oTargetOverlay]
-	 *        Overlay which holds scrollbar padding via CSS classes. In case of root overlay, the target is undefined.
+	 * @param {sap.ui.dt.ElementOverlay} [oTargetOverlay] - Overlay which holds scrollbar padding via CSS classes. In case of root overlay, the target is undefined.
 	 *
 	 * @private
 	 */
@@ -864,6 +863,7 @@ function (
 	 * The geometry is calculated based on the associated element's DOM reference, if it exists or based on it's public children
 	 * Object may contain following fields: position - absolute position of Element in DOM; size - absolute size of Element in DOM
 	 * Object may contain domRef field, when the associated Element's DOM can be found
+	 * @param {boolean} bForceCalculation - Forces the recalculation of the geometry
 	 * @return {object} geometry object describing the DOM of the Element associated with this Overlay
 	 * @public
 	 */
@@ -898,7 +898,6 @@ function (
 	/**
 	 * Sets whether the Overlay is visible
 	 * @param {boolean} bVisible if the Overlay is visible
-	 * @returns {sap.ui.dt.Overlay} returns this
 	 * @public
 	 */
 	Overlay.prototype.setVisible = function(bVisible) {

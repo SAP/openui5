@@ -30,8 +30,7 @@ sap.ui.define([
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	jQuery,
 	Log,
 	List,
@@ -468,6 +467,7 @@ function(
 		QUnit.test("when a new element overlay's editable property is changed during synchronization process", function (assert) {
 			assert.expect(4);
 			var fnDone = assert.async();
+			var mExpectedResponse;
 			var oButton = new Button("button");
 			var oElementOverlayCreatedSpy = sandbox.spy();
 			var CustomPlugin = Plugin.extend("qunit.CustomPlugin", {
@@ -482,7 +482,6 @@ function(
 				_registerOverlays: function () {} // to avoid registration of existent overlays
 			});
 			var oCustomPlugin = new CustomPlugin();
-			var mExpectedResponse;
 			var oSyncedSpy = sandbox.spy();
 			var oElementOverlayEditableChangedSpy = sandbox.spy(function (oEvent) {
 				assert.deepEqual(oEvent.getParameters(), mExpectedResponse, "then event 'elementOverlayEditableChanged' was fired with the required parameters");
@@ -1769,9 +1768,6 @@ function(
 			});
 			oLayout.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-
-			this.oPromise1;
-			this.oPromise2;
 
 			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime")
 				.callThrough()

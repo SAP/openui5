@@ -5,8 +5,7 @@
 // Provides class sap.ui.dt.test.Test.
 sap.ui.define([
 	"sap/ui/base/ManagedObject"
-],
-function(ManagedObject) {
+], function(ManagedObject) {
 	"use strict";
 
 	/**
@@ -81,9 +80,9 @@ function(ManagedObject) {
 	/**
 	 * Creates a new suite and returns it.
 	 *
-	 * @param {string} sName The name of the suite.
-	 * @param {string} sMessage A message to display
-	 * @return {map} the entry object
+	 * @param {string} sName - Name of the suite
+	 * @param {string} sMessage - Message to display
+	 * @return {map} Entry object
 	 *
 	 * @protected
 	 */
@@ -102,10 +101,11 @@ function(ManagedObject) {
 	/**
 	 * Adds a new group to an array.
 	 *
-	 * @param {object[]} aParentChildren the array to insert the group
-	 * @param {string} sName The name of the group.
-	 * @param {string} sMessage A message to display
-	 * @return {map} the entry object
+	 * @param {object[]} aParentChildren - Array to insert the group
+	 * @param {string} sName - Name of the group
+	 * @param {string} sMessage - Message to display
+	 * @param {string} sNamePostfix - Namepostfix
+	 * @returns {map} Entry object
 	 *
 	 * @protected
 	 */
@@ -123,12 +123,12 @@ function(ManagedObject) {
 	/**
 	 * Adds a new test to an array.
 	 *
-	 * @param {object[]} aParentChildren the array to insert the test
-	 * @param {boolean} bResult The result of the test.
-	 * @param {string} sName The name of the test.
-	 * @param {string} sMessage A message to display
-	 * @param {map} status The status of the test.
-	 * @return {map} the entry object
+	 * @param {object[]} aParentChildren - Array to insert the test
+	 * @param {boolean} bResult - Result of the test
+	 * @param {string} sName - Name of the test
+	 * @param {string} sMessage - Message to display
+	 * @param {map} mStatus - Status of the test
+	 * @return {map} Entry object
 	 *
 	 * @protected
 	 */
@@ -146,13 +146,13 @@ function(ManagedObject) {
 	/**
 	 * Adds a new entry to an array.
 	 *
-	 * @param {object[]} aParentChildren the array to insert the entry
-	 * @param {boolean} bResult The result of the entry.
-	 * @param {string} sName The name of the entry.
-	 * @param {string} sMessage A message to display
-	 * @param {map} mStatus The status of the entry.
-	 * @param {string} sType The type of the entry.
-	 * @return {map} the entry object
+	 * @param {object[]} aParentChildren - Array to insert the entry
+	 * @param {boolean} bResult - Result of the entry
+	 * @param {string} sName - Name of the entry
+	 * @param {string} sMessage - Message to display
+	 * @param {map} mStatus - Status of the entry
+	 * @param {string} sType - Type of the entry
+	 * @return {map} Entry object
 	 *
 	 * @protected
 	 */
@@ -195,7 +195,8 @@ function(ManagedObject) {
 
 	/**
 	 * Aggregates the tests results.
-	 * @return {map} the aggregated result
+	 * @param {map} mResult - Result to aggregate
+	 * @return {map} Aggregated result
 	 *
 	 * @protected
 	 */

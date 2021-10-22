@@ -586,6 +586,7 @@ sap.ui.define([
 	/**
 	 * Stops observing the target object. Override this method in classes which extend ManagedObjectObserver.
 	 *
+	 * @param {object} oTarget - Target object
 	 * @protected
 	 */
 	ManagedObjectObserver.prototype.unobserve = function(oTarget) {

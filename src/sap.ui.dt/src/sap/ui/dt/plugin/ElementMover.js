@@ -62,8 +62,9 @@ sap.ui.define([
 
 	/**
 	 * Predicate to compute movability of a type
+	 * @param {object} oElement - Element to be checked
+	 * @returns {boolean} <code>true</code> if type is movable, <code>false</code> otherwise
 	 * @public
-	 * @return true if type is movable, false otherwise
 	 */
 	ElementMover.prototype.isMovableType = function(oElement) {
 		var aMovableTypes = this._getMovableTypes();

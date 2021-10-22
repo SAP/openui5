@@ -62,8 +62,7 @@ function(
 
 	/**
 	 * Registers an overlay for the element or element's id
-	 * @param {string|sap.ui.core.Element} vElementOrId element instance or id
-	 * @param {sap.ui.dt.Overlay} oOverlay overlay to register
+	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay to register
 	 * @public
 	 */
 	OverlayRegistry.register = function(oOverlay) {

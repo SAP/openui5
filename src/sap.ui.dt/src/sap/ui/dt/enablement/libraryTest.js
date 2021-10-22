@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/* global QUnit, XMLHttpRequest */
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",

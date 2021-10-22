@@ -71,6 +71,7 @@ sap.ui.define([
 
 
 	/**
+	 * @returns {Promise} Resolves when the design time is loaded
 	 * @private
 	 */
 	ElementActionDefinitionTest.prototype._setup = function() {
@@ -89,6 +90,8 @@ sap.ui.define([
 
 
 	/**
+	 * @param {object} oData - Design time data
+	 * @returns {string} Result
 	 * @private
 	 */
 	ElementActionDefinitionTest.prototype._testActions = function(oData) {

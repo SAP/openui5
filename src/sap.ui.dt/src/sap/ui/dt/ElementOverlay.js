@@ -419,6 +419,7 @@ sap.ui.define([
 
 	/**
 	 * Sorts children DOM Nodes in their visual order
+	 * @param {object} oContainer - Container object whose children should be sorted
 	 * @private
 	 */
 	ElementOverlay.prototype._sortChildren = function(oContainer) {
@@ -571,7 +572,8 @@ sap.ui.define([
 
 	/**
 	 * Gets information about scroll containers from DesignTime metadata
-	 * @returns {object[]} - returns an array with scroll containers description
+	 * @param {boolean} bInvalidate - Indicates if the scroll container should be invalidated first
+	 * @returns {object[]} Array with the scroll container's description
 	 */
 	ElementOverlay.prototype.getScrollContainers = function (bInvalidate) {
 		return this.getDesignTimeMetadata().getScrollContainers(this.getElement(), bInvalidate, this._updateScrollContainer.bind(this));

@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device"
-],
-function(
+], function(
 	BaseObject,
 	Plugin,
 	DOMUtil,
@@ -99,7 +98,7 @@ function(
 
 	/**
 	 * @override
-	 * @param {sap.ui.dt.Overlay} an Overlay which should be registered
+	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay which should be registered
 	 */
 	DragDrop.prototype.registerElementOverlay = function(oOverlay) {
 		// this._checkMovable(oOverlay);
@@ -153,7 +152,7 @@ function(
 
 	/**
 	 * @private
-	 * @param {sap.ui.dt.Overlay} an Overlay to attach events to
+	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay to attach events to
 	 */
 	DragDrop.prototype._attachDragEvents = function(oOverlay) {
 		oOverlay.attachBrowserEvent("dragstart", this._onDragStart, this);
@@ -164,7 +163,7 @@ function(
 
 	/**
 	 * @private
-	 * @param {sap.ui.dt.Overlay} an Overlay to detach events from
+	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay to detach events from
 	 */
 	DragDrop.prototype._detachDragEvents = function(oOverlay) {
 		oOverlay.detachBrowserEvent("dragstart", this._onDragStart, this);
@@ -174,70 +173,70 @@ function(
 	};
 
 	/**
-	 * @param {sap.ui.dt.Overlay} oOverlay overlay instance
+	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay instance
 	 * @protected
 	 */
 	DragDrop.prototype.onMovableChange = function() { };
 
 	/**
-	 * @param {sap.ui.dt.Overlay} oDraggedOverlay dragged overlay instance
+	 * @param {sap.ui.dt.Overlay} oDraggedOverlay - Dragged overlay instance
 	 * @protected
 	 */
 	DragDrop.prototype.onDragStart = function() { };
 
 	/**
-	 * @param {sap.ui.dt.Overlay} oDraggedOverlay dragged overlay instance
+	 * @param {sap.ui.dt.Overlay} oDraggedOverlay - Dragged overlay instance
 	 * @protected
 	 */
 	DragDrop.prototype.onDragEnd = function() { };
 
 	/**
-	 * @param {sap.ui.dt.Overlay} oDraggedOverlay dragged overlay instance
+	 * @param {sap.ui.dt.Overlay} oDraggedOverlay - Dragged overlay instance
 	 * @protected
 	 */
 	DragDrop.prototype.onDrag = function() { };
 
 	/**
-	 * @param {sap.ui.dt.Overlay} oOverlay overlay instance
+	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay instance
 	 * @return {boolean} return true to omit event.preventDefault
 	 * @protected
 	 */
 	DragDrop.prototype.onDragEnter = function() { };
 
 	/**
-	 * @param {sap.ui.dt.Overlay} oOverlay overlay instance
+	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay instance
 	 * @return {boolean} return true to omit event.preventDefault
 	 * @protected
 	 */
 	DragDrop.prototype.onDragLeave = function() { };
 
 	/**
-	 * @param {sap.ui.dt.Overlay} oOverlay overlay instance
+	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay instance
 	 * @return {boolean} return true to omit event.preventDefault
 	 * @protected
 	 */
 	DragDrop.prototype.onDragOver = function() { };
 
 	/**
-	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay aggregation overlay instance
+	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay - Aggregation overlay instance
 	 * @protected
 	 */
 	DragDrop.prototype.onAggregationDragEnter = function() { };
 
 	/**
-	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay aggregation overlay instance
+	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay - Aggregation overlay instance
 	 * @protected
 	 */
 	DragDrop.prototype.onAggregationDragOver = function() { };
 
 	/**
-	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay aggregation overlay instance
+	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay - Aggregation overlay instance
 	 * @protected
 	 */
 	DragDrop.prototype.onAggregationDragLeave = function() { };
 
 	/**
-	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay aggregation overlay instance
+	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay - Aggregation overlay instance
 	 * @protected
 	 */
 	DragDrop.prototype.onAggregationDrop = function() { };
@@ -469,6 +468,8 @@ function(
 	};
 
 	/**
+	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay instance
+	 * @returns {object} jQuery ghost object
 	 * @protected
 	 */
 	DragDrop.prototype.createGhost = function(oOverlay) {
@@ -510,7 +511,7 @@ function(
 
 	/**
 	 * @protected
-	 * @return {jQuery} jQuery object drag ghost
+	 * @return {jQuery} jQuery ghost object
 	 */
 	DragDrop.prototype.getGhost = function() {
 		return this._$ghost;

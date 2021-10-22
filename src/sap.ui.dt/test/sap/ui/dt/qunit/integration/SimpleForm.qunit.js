@@ -17,8 +17,7 @@ sap.ui.define([
 	"sap/ui/layout/form/GridElementData",
 	"sap/ui/layout/form/ResponsiveGridLayout",
 	"sap/ui/layout/form/ColumnLayout"
-],
-function (
+], function (
 	DesignTime,
 	OverlayRegistry,
 	TabHandling,
@@ -29,7 +28,7 @@ function (
 ) {
 	"use strict";
 
-	var aMOVABLE_TYPES = ["sap.ui.layout.form.FormElement", "sap.ui.layout.form.FormContainer"];
+	var aMovableTypes = ["sap.ui.layout.form.FormElement", "sap.ui.layout.form.FormContainer"];
 
 	function parameterizedTest(oSimpleFormLayout) {
 		QUnit.module("Given the SimpleForm using " + oSimpleFormLayout, {
@@ -54,7 +53,7 @@ function (
 						var oTabHandlingPlugin = new TabHandling();
 						var oSelectionPlugin = new MouseSelection();
 						this.oCutPaste = new CutPaste({
-							movableTypes: aMOVABLE_TYPES
+							movableTypes: aMovableTypes
 						});
 
 						this.oDesignTime = new DesignTime({

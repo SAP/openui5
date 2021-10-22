@@ -132,11 +132,13 @@ sap.ui.define([
 
 	/**
 	 * Opens the Context Menu
-	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
-	 * @param {boolean} bContextMenu whether the control should be opened as a context menu
-	 * @param {boolean} bIsSubMenu whether the new ContextMenu is a SubMenu opened by a menu item inside another ContextMenu
+	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay object
+	 * @param {boolean} bContextMenu - Whether the control should be opened as a context menu
+	 * @param {boolean} bIsSubMenu - Whether the new ContextMenu is a SubMenu opened by a menu item inside another ContextMenu
+	 * @param {object} oEvent - Click event of the menu
 	 */
 	ContextMenu.prototype.open = function (oOverlay, bContextMenu, bIsSubMenu, oEvent) {
+		var aSelectedOverlays;
 		function addMenuItems(oMenu, aMenuItems) {
 			aMenuItems.forEach(function(oMenuItem, index) {
 				var sText = typeof oMenuItem.text === "function" ? oMenuItem.text(oOverlay) : oMenuItem.text;
@@ -180,7 +182,7 @@ sap.ui.define([
 		this.setContextElement(oNewContextElement);
 		this.getDesignTime().getSelectionManager().attachChange(this._onSelectionChanged, this);
 
-		var aSelectedOverlays = this.getSelectedOverlays().filter(function (oElementOverlay) {
+		aSelectedOverlays = this.getSelectedOverlays().filter(function (oElementOverlay) {
 			return oElementOverlay !== oOverlay;
 		});
 		aSelectedOverlays.unshift(oOverlay);

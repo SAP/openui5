@@ -15,8 +15,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/RatingIndicator",
 	"./TableRenderer"
-],
-function(
+], function(
 	Control,
 	JSONModel,
 	TreeTable,

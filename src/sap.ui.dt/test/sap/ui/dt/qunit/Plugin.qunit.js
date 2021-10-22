@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	DesignTime,
 	OverlayRegistry,
 	Plugin,
@@ -74,6 +73,7 @@ function(
 			var fnDone = assert.async();
 
 			var oButton = new Button();
+			var oButton2 = new Button();
 			var oLayout = new VerticalLayout({
 				content: oButton
 			});
@@ -109,7 +109,6 @@ function(
 					fnDone();
 				}, this);
 
-				var oButton2 = new Button();
 				oLayout.addContent(oButton2);
 			}, this);
 
