@@ -7,12 +7,10 @@
 	font-family: @sapUiDesktopFontFamily;
 }
 
-.sapUiFormLayout.sapUiFormBackgrTranslucent > section {
-	background-color: fade(@sapUiGroupContentBackground, @sapUiTranslucentBGOpacity);
-}
-
-.sapUiFormLayout.sapUiFormBackgrSolid > section {
+.sapUiFormLayout.sapUiFormBackgrSolid,
+.sapUiFormLayout.sapUiFormBackgrTranslucent {
 	background-color: @sapUiGroupContentBackground;
+	border-radius: @sapUiElementBorderCornerRadius;
 }
 
 .sapUiForm .sapUiFormTitle {
