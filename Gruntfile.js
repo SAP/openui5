@@ -69,9 +69,7 @@ module.exports = function(grunt) {
 						// configuration copied from sap/ui/core/.library
 
 						// files are already part of sap-ui-core.js
-						'!sap/ui/thirdparty/baseuri.js',
 						'!sap/ui/thirdparty/es6-promise.js',
-						'!sap/ui/thirdparty/es6-shim-nopromise.js',
 						'!ui5loader*.js',
 
 						// exclude all merged files as well as the top level jQuery copy (not visible in OpenUI5)
@@ -97,9 +95,6 @@ module.exports = function(grunt) {
 						// '!sap/ui/thirdparty/caja-html-sanitizer.js'
 						'!sap/ui/thirdparty/d3.js',
 						'!sap/ui/thirdparty/datajs.js',
-						'!sap/ui/thirdparty/es6-object-assign.js',
-						'!sap/ui/thirdparty/es6-string-methods.js',
-						'!sap/ui/thirdparty/flexie.js',
 						'!sap/ui/thirdparty/handlebars.js',
 						// '!sap/ui/thirdparty/hasher.js'
 						'!sap/ui/thirdparty/IPv6.js',
@@ -149,8 +144,6 @@ module.exports = function(grunt) {
 						'!sap/ui/thirdparty/sinon-server.js',
 						'!sap/ui/thirdparty/sinon.js',
 						'!sap/ui/thirdparty/swipe-view.js',
-						'!sap/ui/thirdparty/unorm.js',
-						'!sap/ui/thirdparty/unormdata.js',
 						// URI is no longer excluded because it's needed in jquery.sap.global and others
 						// '!sap/ui/thirdparty/URI.js'
 						'!sap/ui/thirdparty/URITemplate.js',
