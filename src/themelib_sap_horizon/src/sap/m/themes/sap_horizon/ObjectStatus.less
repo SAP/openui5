@@ -41,7 +41,7 @@
 	& .sapMObjStatusIcon .sapMObjStatusIconOnly,
 	& .sapMObjStatusLink .sapMObjStatusIcon.sapMObjStatusIconOnly,
 	& .sapMObjStatusLink .sapMObjStatusText {
-		border-radius: @sapUiElementBorderCornerRadius;
+		border-radius: 0.25rem;
 	}
 	& .sapMObjStatusIcon {
 		border-radius: @sapUiElementBorderCornerRadius 0 0 @sapUiElementBorderCornerRadius;
@@ -54,4 +54,18 @@
 .sapMObjStatusInverted .sapMObjStatusText,
 .sapMObjStatusInverted .sapMObjStatusIcon {
 	color: @sapUiContentContrastTextColor;
+}
+
+html.sap-desktop .sapMObjStatusActive:focus {
+	.sapMObjStatusLink::after {
+		outline: 0.125rem solid @sapUiContentFocusColor;
+		border-radius: 0.15rem;
+	}
+	&.sapMObjectStatusLarge {
+		&.sapMObjStatusInverted .sapMObjStatusLink::after {
+			outline: 0.125rem solid @sapUiContentFocusColor;
+			outline-offset: 0.25rem;
+			border-radius: 0.5rem;
+		}
+	}
 }
