@@ -169,16 +169,25 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the column header control based on the current column property seetings.
+	 * Updates the column header control based on the current column property settings.
 	 * @private
 	 */
 	Column.prototype._updateColumnHeaderControl = function() {
 		if (this._oColumnHeaderLabel) {
 			this._oColumnHeaderLabel.setWidth(this.getHeaderVisible() ? null : "0px");
-			this._oColumnHeaderLabel.setWrapping(this._bMobileTable && this.getHeaderVisible());
+			this._oColumnHeaderLabel.setWrapping(this._bMobileTable && !this._bResizable && this.getHeaderVisible());
 			this._oColumnHeaderLabel.setText(this.getHeader());
 			this._oColumnHeaderLabel.setTextAlign(this.getHAlign());
 		}
+	};
+
+	/**
+	 * Updates the resizable state of the column.
+	 * @private
+	 */
+	Column.prototype.updateColumnResizing = function(bEnabled) {
+		this._bResizable = !!bEnabled;
+		this._updateColumnHeaderControl();
 	};
 
 	Column.prototype.setParent = function(oParent) {
@@ -206,10 +215,11 @@ sap.ui.define([
 	 * Creates and returns the column header control.
 	 * If <code>headerVisible=false</code> then, <code>width=0px</code> is applied to the sap.m.Label control for accessibility purpose.
 	 * @param {boolean} bMobileTable - indicates the type of the table
+	 * @param {boolean} bResizing - indicates whether the column is resizable
 	 * @returns {object} column header control
 	 * @private
 	 */
-	Column.prototype.getColumnHeaderControl = function(bMobileTable) {
+	Column.prototype.getColumnHeaderControl = function(bMobileTable, bResizing) {
 		if (this._oColumnHeaderLabel) {
 			this._oColumnHeaderLabel.destroy();
 		}
@@ -219,7 +229,7 @@ sap.ui.define([
 		});
 		this._bMobileTable = bMobileTable;
 
-		this._updateColumnHeaderControl();
+		this.updateColumnResizing(bResizing);
 
 		return this._oColumnHeaderLabel;
 	};
