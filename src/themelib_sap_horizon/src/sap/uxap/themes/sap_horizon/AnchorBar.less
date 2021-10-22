@@ -99,13 +99,14 @@ html .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapMTB
 
 /* visual in anchor bar */
 
+
 .sapUxAPAnchorBarButton {
 	padding-bottom: 0;
 
 	&.sapMMenuBtn .sapMSBActive:not(.sapMBtnDisabled) > .sapMBtnInner .sapMBtnIcon,
 	&.sapMMenuBtn .sapMSBArrow:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive .sapMBtnIcon,
 	&.sapMMenuBtn.sapMMenuBtnSplit .sapMSBText:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive .sapMBtnContent {
-		color: @sapUiGroupTitleTextColor;
+		color: @sapContent_Selected_TextColor;
 	}
 
 	&.sapMMenuBtn .sapMSBArrow:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive {
@@ -288,4 +289,34 @@ html[data-sap-ui-animation="off"] {
 	.sapMSBInner {
 		padding: 0;
 	}
+}
+
+html.sap-desktop .sapUxAPAnchorBar .sapMBtn:focus > .sapMFocusable {
+	outline: none;
+}
+
+html.sap-desktop .sapMBtnBase.sapMBtn.sapUxAPAnchorBarButton:focus::after {
+	pointer-events: none;
+	content: "";
+	position: absolute;
+	top: 0.25rem;
+	right: 0;
+	bottom: 0.25rem;
+	left: 0;
+	border: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
+	border-radius: 0.5rem;
+}
+
+.sapUxAPAnchorBar .sapMSB .sapMBtn:not(.sapMSBText) .sapMBtnInner.sapMBtnIconFirst::before {
+	content: none;
+}
+
+.sapMBtn:hover:not(.sapMBtnDisabled) > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized) .sapUiIcon,
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton:hover .sapMSB.sapMSBTransparent .sapMBtnContent > *,
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton:hover .sapMBtn + .sapMBtn .sapMBtnInner *,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton:hover .sapMSB.sapMSBTransparent .sapMBtnContent > *,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton:hover .sapMBtn > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) bdi,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton:hover .sapMBtn + .sapMBtn .sapMBtnInner *,
+.sapMBtn:hover:not(.sapMBtnDisabled):not(.sapMSBActive) > .sapMBtnHoverable:not(.sapMBtnDisabled):not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnTransparent).sapMBtnDefault .sapMBtnContent{
+	color: @sapContent_Selected_TextColor;
 }
