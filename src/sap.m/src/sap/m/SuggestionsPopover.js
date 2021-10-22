@@ -441,10 +441,53 @@ sap.ui.define([
 		if (oItem) {
 			oItem.addStyleClass("sapMLIBFocused");
 			oList.addStyleClass("sapMListFocus");
+			this.updateListDataAttributes(oList);
 		} else if (this.getValueStateActiveState()) {
 			oValueStateHeader.addStyleClass("sapMPseudoFocus");
 		} else {
 			oParent.addStyleClass("sapMFocus");
+		}
+	};
+
+	/**
+	 * Updates the data-sap-ui-* attributes of the list items.
+	 *
+	 * @private
+	 * @param {sap.m.List} oList The suggestions list.
+	 */
+	SuggestionsPopover.prototype.updateListDataAttributes = function (oList) {
+		if (!oList) {
+			return;
+		}
+
+		var aVisibleItems = oList.getVisibleItems();
+
+		if (!aVisibleItems) {
+			return;
+		}
+
+		aVisibleItems.forEach(function (oItem) {
+			var oItemDomRef = oItem.getDomRef();
+
+			if (oItemDomRef && oItemDomRef.hasAttribute("data-sap-ui-first-suggestion-item")) {
+				oItemDomRef.removeAttribute("data-sap-ui-first-suggestion-item");
+			}
+
+			if (oItemDomRef && oItemDomRef.hasAttribute("data-sap-ui-last-suggestion-item")) {
+				oItemDomRef.removeAttribute("data-sap-ui-last-suggestion-item");
+			}
+		});
+
+		if (aVisibleItems[0]) {
+			var oFirstVisibleItemDomRef = aVisibleItems[0].getDomRef();
+
+			oFirstVisibleItemDomRef && oFirstVisibleItemDomRef.setAttribute("data-sap-ui-first-suggestion-item", "");
+		}
+
+		if (aVisibleItems[aVisibleItems.length - 1]) {
+			var oLastVisibleItemDomRef = aVisibleItems[aVisibleItems.length - 1].getDomRef();
+
+			oLastVisibleItemDomRef && oLastVisibleItemDomRef.setAttribute("data-sap-ui-last-suggestion-item", "");
 		}
 	};
 
