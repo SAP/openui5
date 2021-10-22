@@ -14,11 +14,6 @@
 	text-transform: uppercase;
 }
 
-.sapUxAPObjectPageSubSection:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -1px;
-}
-
 .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
 	padding: 1rem 1rem 2rem 1rem;
 }
@@ -42,17 +37,60 @@
 
 /* compact size */
 .sapUiSizeCompact {
-	.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
-		padding: 1rem 1rem 2rem 1rem;
-	}
-	.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainer,
-	.sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer{
+	.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainerr{
 		padding-bottom: 1rem;
 	}
 	.sapUxAPObjectPageSubSectionHeaderTitle {
 		height: 1.125rem;
 		line-height: normal;
+		font-weight: bold;
 	}
 }
 
+// =====================================
+// =====================================
+// Delta Styles for Horizon
+// =====================================
 
+// Page Sub Section Focus - Experimental
+.sapUxAPObjectPageSubSection:focus {
+    outline: none;
+    box-shadow: inset 0px 0px 0px 2px @sapContent_ContrastFocusColor, 0px 0px 0px 2px @sapContent_FocusColor;
+}
+
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSubSection .sapUiRespGrid.sapUiRespGridHSpace1 {
+    padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+
+}
+
+.sapUxAPObjectPageSubSection {
+    margin-bottom: 1rem;
+    padding: 0;
+    padding-top: 0.5rem;
+}
+
+// =====================================
+// Object Page spacing fixes - To help address the too much white space customer feedback
+// =====================================
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainer,
+.sapUiSizeCompact .sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer {
+    padding: 0.5rem 0.5rem 0rem 0rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
+    padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+}
+
+.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
+    padding: 0;
+}
+
+.sapUxAPBlockContainer .sapUxAPObjectPageSubSectionAlignContent {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer .sapUxAPObjectPageSubSectionAlignContent {
+	margin-left: 0;
+	margin-right: 0;
+}

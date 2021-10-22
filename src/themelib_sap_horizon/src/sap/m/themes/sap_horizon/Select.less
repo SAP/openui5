@@ -21,6 +21,11 @@
 	}
 }
 
+// Prevent jumping of icon only select when hover
+.sapMSltIconOnly.sapMSltHoverable:not(.sapMSltState) {
+	border: 0.0625rem solid transparent;
+}
+
 /*IconOnly Pressed */
 .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
 	background: @sapUiToggleButtonPressedBackground;
@@ -28,7 +33,7 @@
 }
 
 .sapMSlt:not(.sapMSltIconOnly) {
-	border-radius: 0.125rem;
+	border-radius: 0.25rem;
 }
 
 .sapMSlt {
@@ -40,26 +45,16 @@
 }
 
 .sapMSltArrow {
-	line-height: 2.25rem;
+	line-height: 2rem;
 }
 
 .sapMSltPressed > .sapMSltArrow::before {
 	color: @sapUiButtonActiveTextColor;
 }
 
-html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled) {
-	&:before {
-		pointer-events: none;
-		content: "";
-		position: absolute;
-		left: 0;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		z-index: 1;
-		outline: 1px dotted @sapUiContentFocusColor;
-	}
-
+.sapMSlt.sapMSltPressed,
+.sapMSltPressed > .sapMSltArrow {
+	background: @sapUiButtonLiteHoverBackground;
 }
 
 html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):before {
@@ -70,13 +65,21 @@ html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisab
 	outline-offset: -2px;
 }
 
+
 html.sap-desktop .sapMSltIconOnly.focus:not(.sapMSltExpanded):not(.sapMSltDisabled).sapMSltPressed {
 	outline-color: @sapUiContentContrastFocusColor;
 }
 
 .sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover {
-	border-color: @sapUiFieldHoverBorderColor;
 	background: @sapUiFieldHoverBackground;
+
+	.sapMSltArrow {
+		border-radius: 0.25rem;
+	}
+}
+
+.sapMSltHoverable.sapMSltPressed:not(.sapMSltState):not(.sapMSltIconOnly):hover .sapMSltArrow {
+	border-radius: 0.125rem;
 }
 
 /* pressed and hover */
@@ -100,4 +103,67 @@ html.sap-desktop .sapMSltIconOnly.focus:not(.sapMSltExpanded):not(.sapMSltDisabl
 
 div.sapMSltPicker .sapMSltPickerValueState {
 	box-shadow: inset 0 -0.0625rem @_sap_m_Dialog_HeaderShadowColor;
+}
+
+.sapUiSizeCompact .sapMSlt > .sapMSltArrow {
+	line-height: 1.375rem;
+}
+
+.sapMSlt {
+    border: none;
+    background-image: linear-gradient(0deg, @sapField_BorderColor 0, @sapField_BorderColor 100%);
+    background-size: 100% @sapField_BorderWidth;
+    background-repeat: repeat-x;
+    background-position: bottom;
+}
+
+.sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover {
+    border:none;
+    box-shadow: @sapContent_Interaction_Shadow;
+	border: none;
+    background-image: linear-gradient(0deg, @sapField_BorderColor 0, @sapField_BorderColor 100%);
+    background-size: 100% @sapField_BorderWidth;
+    background-repeat: repeat-x;
+    background-position: bottom;
+}
+
+.sapMSltPressed:not(.sapMSltDisabled):not(.sapMSltState),
+.sapMSlt.sapMSltFocused:not(.sapMSltDisabled):not(.sapMSltState) {
+    border:none;
+    box-shadow: inset 0px 0px 0px 2px @sapContent_FocusColor;
+}
+
+.sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):active {
+    border:none;
+    box-shadow: inset 0px 0px 0px 2px @sapField_Active_BorderColor;
+}
+
+.sapMSltArrow {
+    width: 2rem;
+    height: 2rem;
+    margin-top: 2px;
+    margin-right: 2px;
+}
+
+.sapUiSizeCompact .sapMSltArrow {
+    width: 2rem;
+    margin-top: 2px;
+    height: 1.375rem;
+    margin-right: 2px;
+}
+
+.sapMSltPressed >.sapMSltArrow {
+    background-color: @sapButton_Active_Background;
+    color: @sapButton_Active_TextColor;
+    box-shadow: @sapContent_Interaction_Shadow;
+    overflow: none;
+    border-radius: 0.125rem;
+}
+
+
+/* focus */
+html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled) {
+    &:before {
+        box-shadow: inset 0px 0px 0px 2px @sapField_Focus_BorderColor;
+    }
 }

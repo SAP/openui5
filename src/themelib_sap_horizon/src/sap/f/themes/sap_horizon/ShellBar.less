@@ -16,22 +16,41 @@
 	}
 	.CPImage,
 	& .sapMIBar.sapMTB .CPImage {
+		&:after {
+			position: absolute;
+			content: "";
+			left: 3px;
+			right: 3px;
+			top: 3px;
+			bottom: 3px;
+			outline: none;
+			pointer-events: none;
+			border-radius: 0.5rem;
+		}
 		.color1 {
-			stop-color: #C0D9F2;
+			stop-color: #0070F2;
 		}
 		.color2 {
-			stop-color: #FFFFFF;
+			stop-color: #EBF8FF;
+		}
+		.opacity7 {
+			stop-opacity:0.7;
+		}
+		.opacity36 {
+			stop-opacity: 0.36;
+		}
+		.opacity2 {
+			stop-opacity: 0.2;
 		}
 		&:focus {
-			outline-color: @sapUiContentContrastFocusColor;
+			outline: none;
+			&:after {
+				box-shadow: inset 0px 0px 0px 0.125rem @sapUiContentFocusColor;
+			}
 		}
 		html[data-sap-ui-browser^="ie"] &:focus:before {
 			border-color: @sapUiContentContrastFocusColor;
 		}
-	}
-	.sapFShellBarHomeIcon:focus,
-	.sapFShellBarProfile:focus {
-		outline-color: @sapUiContentContrastFocusColor;
 	}
 
 	.sapFShellBarSearch {
@@ -48,6 +67,12 @@
 	.sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnDisabled) {
 		background-color: @sapUiShellActiveBackground;
 		border-color: @sapUiShellActiveBackground;
+	}
+	.sapFShellBarProfile:not(:focus):hover {
+		box-shadow: 0 0 0.125rem 0 fade(@sapContent_ShadowColor, 72);
+	}
+	.sapFSHMegaMenu {
+		overflow: visible;
 	}
 }
 
@@ -192,12 +217,6 @@
 		.sapFShellBarItem .sapMBtn,
 		.sapMTB-Transparent-CTX .sapFShellBarItem.sapMBtn,
 		.sapMTB-Transparent-CTX .sapFShellBarItem .sapMBtn {
-			&:focus .sapMBtnInner {
-				outline-color: contrast(@sapShellColor, @sapUiContentFocusColor, @sapUiContentContrastFocusColor, @sapContent_ContrastTextThreshold);
-			}
-			&:focus .sapMBtnFocusDiv {
-				border-color: contrast(@sapShellColor, @sapUiContentFocusColor, @sapUiContentContrastFocusColor, @sapContent_ContrastTextThreshold);
-			}
 			.sapMBtnInner::after,
 			.sapMBtnIcon {
 				background: transparent;
@@ -265,38 +284,9 @@
 
 		//sap.m.SearchField
 		.sapMSF {
-			.sapMSFF {
-				background: @sapUiShellColor;
-				border-color: lighten(@sapUiShellBorderColor, 30);
-				&:hover {
-					background: @sapUiShellHoverBackground;
-				}
-				.sapMSFI {
-					color: @sapUiShellTextColor;
-					&::placeholder{
-						color: @sapUiShellInteractiveTextColor;
-					}
-				}
-				.sapMSFB {
-					color: @sapUiShellInteractiveTextColor;
-					&:hover {
-						background: @sapUiShellHoverBackground;
-						color: @sapUiShellInteractiveTextColor;
-					}
-					&:active {
-						background: @sapUiShellActiveBackground;
-						color: @sapUiShellActiveTextColor;
-					}
-				}
-			}
 
 			&.sapMSFDisabled {
 				opacity: 0.4;
-			}
-
-			&.sapMFocus > .sapMSFF::before ,
-			html[data-sap-ui-browser^="ie"] &.sapMFocus .sapMSFF::before{
-				border-color: @sapUiContentContrastFocusColor;
 			}
 
 		}

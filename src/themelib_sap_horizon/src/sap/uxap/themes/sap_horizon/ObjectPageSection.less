@@ -9,7 +9,6 @@
 
 .sapUiSizeCompact .sapUxAPObjectPageSectionHeader,
 .sapUxAPObjectPageSectionHeader {
-	border-top: 0.0625rem solid @sapUiGroupTitleBorderColor;
 	height: 2.75rem;
 	line-height: 2.25rem;
 }
@@ -20,11 +19,6 @@
 	line-height: 2.25rem;
 	color: @sapUiGroupTitleTextColor;
 	font-size: @sapMFontHeader4Size;
-}
-
-.sapUxAPObjectPageSection:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -1px;
 }
 
 .sapUxAPObjectPageSectionHeader,
@@ -48,4 +42,43 @@
 	.sapUxAPObjectPageSubSectionWithSeeMore .sapUxAPSubSectionSeeMoreContainer {
 		padding-right: 1rem;
 	}
+}
+
+// =====================================
+// =====================================
+// Delta Styles for Horizon
+// =====================================
+
+// =====================================
+// Object Page section container style
+// =====================================
+.sapUxAPObjectPageSection .sapUxAPObjectPageSectionContainer .sapUxAPObjectPageSubSection .sapUxAPBlockContainer {
+    padding-bottom:0;
+    padding-top: 0.5rem;
+    padding-left: 0;
+    padding-right: 0;
+    background: @sapGroup_ContentBackground;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    border-radius: @sapElement_BorderCornerRadius;
+}
+
+// Page Section Focus - Experimental
+.sapUxAPObjectPageSection:focus {
+    outline: none;
+    box-shadow: inset 0px 0px 0px 2px @sapContent_ContrastFocusColor, 0px 0px 0px 2px @sapContent_FocusColor;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageSectionTitle {
+    padding-bottom: 0;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageSectionTitle,
+.sapUxAPObjectPageSectionTitle {
+    font-weight: bold;
+	line-height: 4rem;
+}
+
+.sapUxAPObjectPageSubSection .sapUiFormCLContainer {
+	padding-left: 0;
 }

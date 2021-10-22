@@ -1,0 +1,20 @@
+/* ===============================   */
+/* CSS for control sap./Breadcrumbs  */
+/* Horizon theme                     */
+/* ===============================   */
+
+
+
+
+.sapMBreadcrumbs {
+	.sapMBreadcrumbsCurrentLocation {
+		&:focus {
+			outline: none;
+			box-shadow: 0px 0px 0px 0.125rem @sapUiContentFocusColor;
+			border-radius: 0.25rem;
+		}
+	}
+	.sapMSltPressed:not(.sapMSltDisabled):not(.sapMSltState), .sapMSlt.sapMSltFocused:not(.sapMSltDisabled):not(.sapMSltState) {
+		outline-offset: 0;
+	}
+}

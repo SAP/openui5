@@ -161,3 +161,25 @@ To be used in Comparison pattern scenario. */
 .sapUiComparisonContainer .sapFDynamicPageTitleSnapped + .sapFDynamicPageContentWrapper .sapUiComparisonContent  {
 	margin-right: 0;
 }
+
+// =====================================
+// Dynamic page Header collapse Buttons
+// =====================================
+
+.sapFDynamicPageToggleHeaderIndicator.sapMBtn .sapMBtnInner, .sapFDynamicPageHeaderPinButton.sapMBtn .sapMBtnInner {
+    border-radius: @sapButton_BorderCornerRadius;
+    box-shadow: @sapContent_Shadow0;
+    background-color: @sapObjectHeader_Background;
+}
+
+.sapFDynamicPageToggleHeaderIndicator:after, .sapFDynamicPageHeaderPinButton:after {
+    background-image: none;
+}
+
+.sapFDynamicPageToggleHeaderIndicator:before, .sapFDynamicPageHeaderPinButton:before {
+    background-image: none;
+}
+
+.sapMBtn:hover:not(.sapMBtnDisabled):not(.sapMSBActive)>.sapMBtnHoverable:not(.sapMBtnDisabled):not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnTransparent).sapMBtnDefault .sapUiIcon, .sapMBtn:hover:not(.sapMBtnDisabled):not(.sapMSBActive)>.sapMBtnHoverable:not(.sapMBtnDisabled):not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnTransparent).sapMBtnBack .sapUiIcon, .sapMBtn:hover:not(.sapMBtnDisabled):not(.sapMSBActive)>.sapMBtnHoverable:not(.sapMBtnDisabled):not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnTransparent).sapMBtnGhost .sapUiIcon {
+    border-radius: @sapButton_BorderCornerRadius;
+}
