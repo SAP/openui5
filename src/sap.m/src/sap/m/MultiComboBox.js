@@ -2227,10 +2227,14 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onFocusinList = function() {
+		var oList = this._getList();
+
 		if (this._bListItemNavigationInvalidated && this._getList().getItemNavigation()) {
-			this._getList().getItemNavigation().setSelectedIndex(this._iInitialItemFocus);
+			oList.getItemNavigation().setSelectedIndex(this._iInitialItemFocus);
 			this._bListItemNavigationInvalidated = false;
 		}
+
+		this._getSuggestionsPopover().updateListDataAttributes(oList);
 	};
 
 	/**
