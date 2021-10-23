@@ -258,7 +258,10 @@ sap.ui.define([
 			.then(function() {
 				assert.equal(this.oXmlLabel0.getAttribute("text"), this.sNewValue, "the label has changed");
 				var oExpectedChangeVizInfo = {
-					affectedControls: ["__element0"],
+					affectedControls: [
+						// as the FormElements in a SimpeForm don't get stable IDs, we have to cheat
+						sap.ui.getCore().byId("component---Label0").getParent().getId()
+					],
 					payload: {
 						originalLabel: "oldLabel0",
 						newLabel:  this.sNewValue
