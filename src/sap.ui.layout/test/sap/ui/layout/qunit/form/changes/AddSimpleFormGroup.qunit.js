@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Title",
 	"sap/m/Label",
-	"sap/m/Input"
+	"sap/m/Input",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	AddSimpleFormGroup,
 	SimpleForm,
@@ -20,7 +21,8 @@ sap.ui.define([
 	XmlTreeModifier,
 	Title,
 	Label,
-	Input
+	Input,
+	jQuery
 ) {
 	"use strict";
 

@@ -1,7 +1,7 @@
-/*global QUnit, sinon */
+/*global QUnit */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/HTML",
 	"sap/ui/layout/cssgrid/CSSGrid",
@@ -168,9 +168,9 @@ sap.ui.define([
 					return that.oHTMLElementMock;
 				}
 			};
-			sinon.spy(GridLayoutBase.prototype, "_applySingleGridLayout");
-			sinon.spy(GridLayoutBase.prototype, "_setGridLayout");
-			sinon.spy(GridLayoutBase.prototype, "_removeGridLayout");
+			this.spy(GridLayoutBase.prototype, "_applySingleGridLayout");
+			this.spy(GridLayoutBase.prototype, "_setGridLayout");
+			this.spy(GridLayoutBase.prototype, "_removeGridLayout");
 		},
 		afterEach: function () {
 			this.oGridLayoutBase.destroy();
@@ -178,9 +178,6 @@ sap.ui.define([
 			this.oRenderManagerMock = null;
 			this.oControlMock = null;
 			this.oHTMLElementMock = null;
-			GridLayoutBase.prototype._applySingleGridLayout.restore();
-			GridLayoutBase.prototype._setGridLayout.restore();
-			GridLayoutBase.prototype._removeGridLayout.restore();
 		}
 	});
 
@@ -243,7 +240,7 @@ sap.ui.define([
 		this.oGridLayoutBase.getActiveGridSettings = function () {
 			return new GridSettings(getGridSettings());
 		};
-		var oSpy = sinon.spy(this.oHTMLElementMock.style, "setProperty");
+		var oSpy = this.spy(this.oHTMLElementMock.style, "setProperty");
 
 		// Act
 		this.oGridLayoutBase.applyGridLayout([this.oControlMock]);
@@ -254,12 +251,12 @@ sap.ui.define([
 
 	QUnit.module("GridResponsiveLayout", {
 		beforeEach: function () {
-			this.fnLayoutChangeHandler = sinon.spy();
+			this.fnLayoutChangeHandler = this.spy();
 			this.oGridLayout = new GridResponsiveLayout({
 				layoutChange: this.fnLayoutChangeHandler,
 				containerQuery: true
 			});
-			sinon.spy(this.oGridLayout, "applySizeClass");
+			this.spy(this.oGridLayout, "applySizeClass");
 		},
 		afterEach: function () {
 			this.oGridLayout.applySizeClass.restore();
@@ -367,16 +364,13 @@ sap.ui.define([
 				width: 0
 			}
 		};
-		sinon.spy(GridResponsiveLayout.prototype, "setActiveLayout");
+		this.spy(GridResponsiveLayout.prototype, "setActiveLayout");
 
 		// Act
 		this.oGridLayout.onGridResize(oResizeEventMock);
 
 		// Assert
 		assert.ok(GridResponsiveLayout.prototype.setActiveLayout.notCalled, "Should NOT call setActiveLayout when Resize Event size is 0");
-
-		// Cleanup
-		GridResponsiveLayout.prototype.setActiveLayout.restore();
 	});
 
 	QUnit.test("onGridResize - Resize Event", function (assert) {
@@ -396,7 +390,7 @@ sap.ui.define([
 		};
 
 		this.oGridLayout.setLayoutM(new GridSettings(getGridSettings()));
-		sinon.spy(GridResponsiveLayout.prototype, "setActiveLayout");
+		this.spy(GridResponsiveLayout.prototype, "setActiveLayout");
 
 		// Act
 		this.oGridLayout.onGridResize(oResizeEventMock);
@@ -407,9 +401,6 @@ sap.ui.define([
 		assert.equal(this.oGridLayout._sActiveLayout, "layoutM", "Should change to 'layoutM'");
 		assert.ok(this.oGridLayout.applySizeClass.calledOnce, "Should add size class when layout is applied");
 		assert.equal(this.oGridLayout.applySizeClass.getCall(0).args[1], "sapUiLayoutCSSGridM", "Should add class sapUiLayoutCSSGridM for 'M' size");
-
-		// Cleanup
-		GridResponsiveLayout.prototype.setActiveLayout.restore();
 	});
 
 	QUnit.module("GridBoxLayout", {
@@ -446,7 +437,7 @@ sap.ui.define([
 		var id = "#" + oGridList.sId + "-listUl";
 		var sGridAutoRows = getComputedStyle(document.querySelector(id)).gridAutoRows;
 
-		assert.equal(oGridList.getCustomLayout().getMetadata()._sClassName, "sap.ui.layout.cssgrid.GridBoxLayout", "GridBoxLayout is applied");
+		assert.ok(oGridList.getCustomLayout().isA("sap.ui.layout.cssgrid.GridBoxLayout"), "GridBoxLayout is applied");
 		assert.equal(sGridAutoRows, "auto",  "Height of the rows are calculated and CSS Grid property 'grid-auto-rows' is not set.");
 
 	});
@@ -477,7 +468,7 @@ sap.ui.define([
 		var id = "#" + oGridList.sId + "-listUl";
 		var sGridAutoRows = getComputedStyle(document.querySelector(id)).gridAutoRows;
 
-		assert.equal(oGridList.getCustomLayout().getMetadata()._sClassName, "sap.ui.layout.cssgrid.GridBoxLayout", "GridBoxLayout is applied");
+		assert.ok(oGridList.getCustomLayout().isA("sap.ui.layout.cssgrid.GridBoxLayout"), "GridBoxLayout is applied");
 		assert.equal(sGridAutoRows, "1fr",  "Height of the rows comes from CSS Grid property 'grid-auto-rows'");
 	});
 
@@ -559,11 +550,11 @@ sap.ui.define([
 
 	QUnit.module("ResponsiveColumnLayout", {
 		beforeEach: function () {
-			this.fnLayoutChangeHandler = sinon.spy();
+			this.fnLayoutChangeHandler = this.spy();
 			this.oGridLayout = new ResponsiveColumnLayout({
 				layoutChange: this.fnLayoutChangeHandler
 			});
-			sinon.spy(this.oGridLayout, "_applyLayout");
+			this.spy(this.oGridLayout, "_applyLayout");
 
 			var $GridParent = jQuery("<div><div id='cssGrid'></div></div>");
 			this.$GridParent = $GridParent;
@@ -665,8 +656,8 @@ sap.ui.define([
 	QUnit.test("Styles added with RenderManager", function (assert) {
 		// Arrange
 		var oRenderManagerMock = {
-			style: sinon.stub(),
-			"class": sinon.stub()
+			style: this.stub(),
+			"class": this.stub()
 		};
 
 		// Act
@@ -742,8 +733,8 @@ sap.ui.define([
 	QUnit.test("Set item layoutData", function (assert) {
 
 		// Arrange
-		sinon.spy(GridLayoutBase, "setItemStyles");
-		sinon.spy(this.oGrid, "onLayoutDataChange");
+		this.spy(GridLayoutBase, "setItemStyles");
+		this.spy(this.oGrid, "onLayoutDataChange");
 
 		// Act
 		this.oItem.setLayoutData(this.oLayoutData);

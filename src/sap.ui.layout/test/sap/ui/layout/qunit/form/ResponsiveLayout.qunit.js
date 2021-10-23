@@ -4,7 +4,7 @@
 // is tested in Form, FormContainer and FormElement qUnit tests.
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/base/util/each",
 	"sap/ui/layout/form/Form",
@@ -169,13 +169,13 @@ sap.ui.define([
 		assert.ok(oRFL.isA("sap.ui.layout.ResponsiveFlowLayout"), "Main Layout is ResponsiveFlowLayout");
 	});
 
-	QUnit.test("Respresentations of Containers", function(assert) {
+	QUnit.test("Representations of Containers", function(assert) {
 		var oRFL = sap.ui.getCore().byId("F1--RFLayout");
 		var aContent = oRFL.getContent();
 		assert.equal(aContent.length, 2, "Main RF-Layout content");
 		assert.ok(aContent[0].isA("sap.ui.layout.ResponsiveFlowLayout"), "Container1 is ResponsiveFlowLayout");
 		assert.equal(aContent[0].getId(), "FC1--RFLayout", "Layout for Container1");
-		assert.equal(aContent[1].getMetadata().getName(), "sap.ui.layout.form.ResponsiveLayoutPanel", "Container2 is Panel");
+		assert.ok(aContent[1].isA("sap.ui.layout.form.ResponsiveLayoutPanel"), "Container2 is Panel");
 		assert.equal(aContent[1].getId(), "FC2--Panel", "Panel for Container1");
 	});
 

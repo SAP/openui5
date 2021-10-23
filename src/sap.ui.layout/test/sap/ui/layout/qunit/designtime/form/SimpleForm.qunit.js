@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
-	"sap/ui/layout/library"
+	"sap/ui/layout/library",
+	"sap/base/util/uid"
 ], function (
 	elementDesigntimeTest,
 	elementActionTest,
@@ -15,7 +16,8 @@ sap.ui.define([
 	Button,
 	JSONModel,
 	DelegateMediatorAPI,
-	library
+	library,
+	uid
 ) {
 	"use strict";
 
@@ -291,7 +293,7 @@ sap.ui.define([
 					parameter: function(oView) {
 						return {
 							label: "New Title",
-							newControlId: oView.createId(jQuery.sap.uid()),
+							newControlId: oView.createId(uid()),
 							index: 1
 						};
 					}

@@ -3,29 +3,28 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/commons/Button",
-	"sap/ui/commons/TextField",
-	"sap/ui/commons/Image",
-	"sap/ui/commons/Slider",
-	"sap/ui/commons/TextArea",
-	"sap/ui/commons/RatingIndicator",
-	"sap/ui/commons/CheckBox",
-	"sap/ui/commons/Label",
-	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(Device, qutils, VerticalLayout, Button, TextField, Image, Slider, TextArea, RatingIndicator, CheckBox, Label, waitForThemeApplied) {
+	"sap/m/Button",
+	"sap/m/Input",
+	"sap/m/Image",
+	"sap/m/Slider",
+	"sap/m/TextArea",
+	"sap/m/RatingIndicator",
+	"sap/m/CheckBox",
+	"sap/m/Label"
+], function(Device, qutils, VerticalLayout, Button, Input, Image, Slider, TextArea, RatingIndicator, CheckBox, Label) {
 	"use strict";
 
 	var oLayout1 = new VerticalLayout("Layout1", {
 		content: [new Button("B1",{text:"Press me", tooltip:"Button tooltip"}),
-				new TextField("TF1",{value:"Test"}),
-				new Image("I1",{src:"http://www.sap.com/global/images/SAPLogo.gif"})]
+				new Input("IN1",{value:"Test"}),
+				new Image("I1",{src: sap.ui.require.toUrl("sap/ui/core/mimes/logo/sap_73x36.gif")})]
 	});
 	oLayout1.placeAt("content");
 
 	var oLayout2 = new VerticalLayout("Layout2", {
 		width: "200px",
 		content: [new Slider("S2",{value:25, tooltip:"Slider tooltip", width: "300px"}),
-				new TextArea("TA2",{value:"Test \n1\n2\n3\n4\n5\n6\n7\n8\n9", width: "250px", height: "150px"}),
+				new Input("TA2",{value:"Test \n1\n2\n3\n4\n5\n6\n7\n8\n9", width: "250px"}),
 				new RatingIndicator("RI2",{value: 4}),
 				new CheckBox("CB2",{text: "Test"})]
 	});
@@ -41,17 +40,17 @@ sap.ui.define([
 		assert.equal(oLayout2.getWidth(), "200px", "Custom 'Width':");
 	});
 
-	QUnit.module("Visual Appearence");
+	QUnit.module("Visual Appearance");
 
 	QUnit.test("Visibility", function(assert) {
 		// controls must be one below the other -> same X coordinate, nut higher Y coordinate
 		var oButtonDom = document.getElementById('B1');
-		var oTextDom = document.getElementById('TF1');
+		var oInputDom = document.getElementById('IN1');
 		var oImageDom = document.getElementById('I1');
-		assert.equal(oButtonDom.offsetLeft, oTextDom.offsetLeft, "Left offset of Button same as for TextField");
+		assert.equal(oButtonDom.offsetLeft, oInputDom.offsetLeft, "Left offset of Button same as for TextField");
 		assert.equal(oButtonDom.offsetLeft, oImageDom.offsetLeft, "Left offset of Button same as for Image");
-		assert.ok(oButtonDom.offsetTop < oTextDom.offsetTop, "Top offset of Button < TextField");
-		assert.ok(oTextDom.offsetTop < oImageDom.offsetTop, "Top offset of TextField < Image");
+		assert.ok(oButtonDom.offsetTop < oInputDom.offsetTop, "Top offset of Button < TextField");
+		assert.ok(oInputDom.offsetTop < oImageDom.offsetTop, "Top offset of TextField < Image");
 
 		// width must fit to defined one even if content is larger
 		var oLayout2Dom = document.getElementById('Layout2');
@@ -148,6 +147,4 @@ sap.ui.define([
 		assert.ok(oInfo.children && oInfo.children.length == 2, "Children");
 		oLayout.destroy();
 	});
-
-	return waitForThemeApplied();
 });

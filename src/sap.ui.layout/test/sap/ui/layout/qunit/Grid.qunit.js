@@ -1,4 +1,4 @@
-/* global QUnit, sinon */
+/* global QUnit */
 
 sap.ui.define([
 	"sap/m/Label",
@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/layout/Grid",
 	"sap/ui/layout/GridData",
 	"sap/ui/layout/library",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
 ],
 function (
 	Label,
@@ -16,7 +17,8 @@ function (
 	Grid,
 	GridData,
 	Library,
-	Core
+	Core,
+	jQuery
 ) {
 	"use strict";
 
@@ -330,8 +332,8 @@ function (
 
 	QUnit.test("onBeforeRendering applying of class", function (assert) {
 		// Arrange
-		var oSpyMethod = sinon.spy(Library.GridHelper, "getLibrarySpecificClass"),
-			oSpyAddStyleClass = sinon.spy(Grid.prototype, "addStyleClass"),
+		var oSpyMethod = this.spy(Library.GridHelper, "getLibrarySpecificClass"),
+			oSpyAddStyleClass = this.spy(Grid.prototype, "addStyleClass"),
 			fnOriginalLibrarySpecificClass,
 			oGrid;
 

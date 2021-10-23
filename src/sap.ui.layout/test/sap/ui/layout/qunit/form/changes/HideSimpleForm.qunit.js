@@ -11,8 +11,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Toolbar",
 	"sap/m/Title",
-	"sap/base/Log",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/base/Log"
 ], function(
 	HideSimpleForm,
 	SimpleForm,
@@ -24,12 +23,9 @@ sap.ui.define([
 	Input,
 	Toolbar,
 	mobileTitle,
-	Log,
-	sinon
+	Log
 ) {
 	"use strict";
-
-	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("using HideSimpleForm with old change format", {
 		beforeEach: function () {
@@ -71,7 +67,6 @@ sap.ui.define([
 
 		afterEach: function () {
 			this.oSimpleForm.destroy();
-			sandbox.restore();
 		}
 	});
 
@@ -224,7 +219,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("applyChange shall fail if the control is invalid", function (assert) {
-		var fnLogErrorSpy = sandbox.spy(Log, "error");
+		var fnLogErrorSpy = this.spy(Log, "error");
 
 		return this.oChangeHandler.applyChange(this.oChangeWithGlobalIdsWrapper, {}, {modifier : this.JsControlTreeModifier})
 			.then(function() {

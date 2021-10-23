@@ -29,8 +29,8 @@ sap.ui.define([
 			ui5: {
 				language: "en-US",
 				rtl: false,					// Whether to run the tests in RTL mode
-				libs: ["sap.ui.layout"],		// Libraries to load upfront in addition to the library which is tested (sap.ui.layout), if null no libs are loaded
-				"xx-waitForTheme": true		// Whether the start of the test should be delayed until the theme is applied
+				libs: ["sap.ui.layout"],	// Libraries to load upfront in addition to the library which is tested (sap.ui.layout), if null no libs are loaded
+				"xx-waitForTheme": "init"	// Whether the start of the test should be delayed until the theme is applied
 			},
 			coverage: {
 				only: "[sap/ui/layout/form]",	// Which files to show in the coverage report, if null, no files are excluded from coverage
@@ -262,7 +262,9 @@ sap.ui.define([
 					branchCoverage: true		// Whether to enable standard branch coverage
 				},
 				module: "./../designtime/form/AddFormContainer.qunit",
-				sinon: false
+				sinon: {
+					qunitBridge: false // bridge can't handle module with nested callback
+				}
 			}
 
 		}

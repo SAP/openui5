@@ -4,6 +4,9 @@ sap.ui.define([
 		"sap/ui/core/mvc/View",
 		"sap/ui/layout/changeHandler/AddFormField",
 		"sap/ui/layout/form/Form",
+		"sap/ui/layout/form/FormContainer",
+		"sap/ui/layout/form/FormElement",
+		"sap/ui/layout/form/ResponsiveGridLayout",
 		"sap/ui/fl/Change",
 		"sap/ui/core/util/reflection/JsControlTreeModifier",
 		"sap/ui/core/util/reflection/XmlTreeModifier",
@@ -14,6 +17,9 @@ sap.ui.define([
 		View,
 		AddFieldChangeHandler,
 		Form,
+		FormContainer,
+		FormElement,
+		ResponsiveGridLayout,
 		Change,
 		JsControlTreeModifier,
 		XmlTreeModifier,
@@ -41,10 +47,10 @@ sap.ui.define([
 
 			this.oForm = new Form({
 				id: "idForm",
-				layout: new sap.ui.layout.form.ResponsiveGridLayout(),
-				formContainers: new sap.ui.layout.form.FormContainer({
+				layout: new ResponsiveGridLayout(),
+				formContainers: new FormContainer({
 					id: "idFormContainer",
-					formElements: [new sap.ui.layout.form.FormElement()]
+					formElements: [new FormElement()]
 				}),
 				title : oTitle
 			});
@@ -124,10 +130,10 @@ sap.ui.define([
 
 			this.oForm = new Form({
 				id: "idForm",
-				layout: new sap.ui.layout.form.ResponsiveGridLayout(),
-				formContainers: new sap.ui.layout.form.FormContainer({
+				layout: new ResponsiveGridLayout(),
+				formContainers: new FormContainer({
 					id: "idFormContainer",
-					formElements: [new sap.ui.layout.form.FormElement()]
+					formElements: [new FormElement()]
 				}),
 				title : oTitle
 			});

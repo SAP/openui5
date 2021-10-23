@@ -1,18 +1,22 @@
-/*global QUnit sinon */
+/*global QUnit */
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/layout/Splitter",
 	"sap/ui/layout/SplitterLayoutData",
 	"sap/m/Button",
-	"sap/m/Panel"
+	"sap/m/Panel",
+	"sap/ui/core/library"
 ], function (
 	Log,
 	Splitter,
 	SplitterLayoutData,
 	Button,
-	Panel
+	Panel,
+	coreLibrary
 ) {
 	"use strict";
+
+	var Orientation = coreLibrary.Orientation;
 
 	function createExampleContent(sSize) {
 		if (createExampleContent.called === undefined) {
@@ -40,12 +44,12 @@ sap.ui.define([
 		return oContent;
 	}
 
-	var oSplitter = new Splitter("mySplitter0", {
-		contentAreas: [createExampleContent("100px"), createExampleContent("200px"), createExampleContent("300px")]
-	});
-
-	oSplitter.placeAt("qunit-fixture");
-	sap.ui.getCore().applyChanges();
+	function createTestSplitter() {
+		this.oSplitter = new Splitter("mySplitter0", {
+			contentAreas: [createExampleContent("100px"), createExampleContent("200px"), createExampleContent("300px")]
+		}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+	}
 
 	QUnit.module("API", {
 		beforeEach: function () {
@@ -68,10 +72,16 @@ sap.ui.define([
 		assert.ok(oButton.getLayoutData(), "Adding content area without layoutData should directly receive such.");
 	});
 
-	QUnit.module("Absolute Area Sizes");
+	QUnit.module("Absolute Area Sizes", {
+		beforeEach: createTestSplitter,
+		afterEach: function() {
+			this.oSplitter.destroy();
+		}
+	});
 
 	QUnit.test("Absolute Horizontal sizing", function (assert) {
-		oSplitter.setOrientation(sap.ui.core.Orientation.Horizontal);
+		var oSplitter = this.oSplitter;
+		oSplitter.setOrientation(Orientation.Horizontal);
 		oSplitter.getContentAreas()[0].getLayoutData().setSize("100px");
 		oSplitter.getContentAreas()[1].getLayoutData().setSize("200px");
 		oSplitter.getContentAreas()[2].getLayoutData().setSize("300px");
@@ -91,7 +101,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Absolute vertical sizing", function (assert) {
-		oSplitter.setOrientation(sap.ui.core.Orientation.Vertical);
+		var oSplitter = this.oSplitter;
+		oSplitter.setOrientation(Orientation.Vertical);
 		oSplitter.getContentAreas()[0].getLayoutData().setSize("100px");
 		oSplitter.getContentAreas()[1].getLayoutData().setSize("200px");
 		oSplitter.getContentAreas()[2].getLayoutData().setSize("300px");
@@ -206,10 +217,16 @@ sap.ui.define([
 		oSplitter.destroy();
 	});
 
-	QUnit.module("Automatic Area Sizes");
+	QUnit.module("Automatic Area Sizes", {
+		beforeEach: createTestSplitter,
+		afterEach: function() {
+			this.oSplitter.destroy();
+		}
+	});
 
 	QUnit.test("Automatic horizontal sizing ", function (assert) {
-		oSplitter.setOrientation(sap.ui.core.Orientation.Horizontal);
+		var oSplitter = this.oSplitter;
+		oSplitter.setOrientation(Orientation.Horizontal);
 		oSplitter.getContentAreas()[0].getLayoutData().setSize("auto");
 		oSplitter.getContentAreas()[1].getLayoutData().setSize("auto");
 		oSplitter.getContentAreas()[2].getLayoutData().setSize("auto");
@@ -229,7 +246,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Automatic vertical sizing ", function (assert) {
-		oSplitter.setOrientation(sap.ui.core.Orientation.Vertical);
+		var oSplitter = this.oSplitter;
+		oSplitter.setOrientation(Orientation.Vertical);
 		oSplitter.getContentAreas()[0].getLayoutData().setSize("auto");
 		oSplitter.getContentAreas()[1].getLayoutData().setSize("auto");
 		oSplitter.getContentAreas()[2].getLayoutData().setSize("auto");
@@ -266,10 +284,16 @@ sap.ui.define([
 		oSplitter.destroy();
 	});
 
-	QUnit.module("Mixed Area Sizes");
+	QUnit.module("Mixed Area Sizes", {
+		beforeEach: createTestSplitter,
+		afterEach: function() {
+			this.oSplitter.destroy();
+		}
+	});
 
 	QUnit.test("Mixed horizontal sizing", function (assert) {
-		oSplitter.setOrientation(sap.ui.core.Orientation.Horizontal);
+		var oSplitter = this.oSplitter;
+		oSplitter.setOrientation(Orientation.Horizontal);
 		oSplitter.getContentAreas()[0].getLayoutData().setSize("10px");
 		oSplitter.getContentAreas()[1].getLayoutData().setSize("auto");
 		oSplitter.getContentAreas()[2].getLayoutData().setSize("10px");
@@ -294,7 +318,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Mixed vertical sizing", function (assert) {
-		oSplitter.setOrientation(sap.ui.core.Orientation.Vertical);
+		var oSplitter = this.oSplitter;
+		oSplitter.setOrientation(Orientation.Vertical);
 		oSplitter.getContentAreas()[0].getLayoutData().setSize("10px");
 		oSplitter.getContentAreas()[1].getLayoutData().setSize("auto");
 		oSplitter.getContentAreas()[2].getLayoutData().setSize("10px");
@@ -341,8 +366,8 @@ sap.ui.define([
 		oSplitter.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		var oResizeSpy = sinon.spy(oSplitter, "_resize"),
-			oDelayedResizeSpy = sinon.spy(oSplitter, "_delayedResize");
+		var oResizeSpy = this.spy(oSplitter, "_resize"),
+			oDelayedResizeSpy = this.spy(oSplitter, "_delayedResize");
 
 		oSplitter.triggerResize();
 		assert.ok(oDelayedResizeSpy.calledOnce, "Call delayed resize");
@@ -380,8 +405,8 @@ sap.ui.define([
 		oSplitter.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		var oEnableKeyboardSupportSpy = sinon.spy(oSplitter, "_enableKeyboardListeners"),
-			oDisableKeyboardSupportSpy = sinon.spy(oSplitter, "_disableKeyboardListeners");
+		var oEnableKeyboardSupportSpy = this.spy(oSplitter, "_enableKeyboardListeners"),
+			oDisableKeyboardSupportSpy = this.spy(oSplitter, "_disableKeyboardListeners");
 
 		oSplitter.enableKeyboardSupport();
 		assert.ok(oEnableKeyboardSupportSpy.calledOnce, "Enable keyboard support");
@@ -409,7 +434,7 @@ sap.ui.define([
 		oSplitter.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		var oKeyboardResizeSpy = sinon.spy(oSplitter, "_resizeContents");
+		var oKeyboardResizeSpy = this.spy(oSplitter, "_resizeContents");
 		oKeyboardResizeSpy.withArgs(12, 5, true);
 
 		oSplitter._onKeyboardResize("inc", 5, oEvent);
@@ -470,6 +495,7 @@ sap.ui.define([
 		assert.strictEqual(oSplitter.$().children(".sapUiLoSplitterContent").length, 0, "Has 0 content areas");
 
 		oSplitter.destroy();
+		addedItem.destroy();
 	});
 
 	QUnit.test("resetContentAreasSizes", function (assert) {
@@ -557,7 +583,7 @@ sap.ui.define([
 
 	QUnit.test("Mousedown", function (assert) {
 		// arrange
-		var oSpy = sinon.spy(this.oSplitter, "_onBarMoveStart"),
+		var oSpy = this.spy(this.oSplitter, "_onBarMoveStart"),
 			oSplitterBar = this.oSplitter.$().children("#splitter-splitbar-0")[0],
 			oSplitterBarGrip = this.oSplitter.$().find(".sapUiLoSplitterBarGrip")[0],
 			oContentArea = this.oSplitter.$().children("#splitter-content-0")[0];
@@ -580,7 +606,7 @@ sap.ui.define([
 
 	QUnit.test("Touchstart", function (assert) {
 		// arrange
-		var oStub = sinon.stub(Splitter.prototype, "_onBarMoveStart"),
+		var oStub = this.stub(Splitter.prototype, "_onBarMoveStart"),
 			oSplitterBar = this.oSplitter.$().children("#splitter-splitbar-0")[0],
 			oSplitterBarGrip = this.oSplitter.$().find(".sapUiLoSplitterBarGrip")[0],
 			oContentArea = this.oSplitter.$().children("#splitter-content-0")[0],
@@ -600,9 +626,6 @@ sap.ui.define([
 		oFakeEvent.target = oSplitterBarGrip;
 		this.oSplitter.ontouchstart(oFakeEvent);
 		assert.strictEqual(oStub.callCount, 1, "Touch on a splitter bar icon should trigger _onBarMoveStart");
-
-		// cleanup
-		oStub.restore();
 	});
 
 	QUnit.module("Resize Handling");
@@ -623,25 +646,28 @@ sap.ui.define([
 				+ '<layout:Splitter id="myResizeSplitter">'
 				+ '</layout:Splitter>'
 				+ '</mvc:View>';
-			var oXMLView = new XMLView({viewContent: sXMLViewContent});
-			var oResizeSplitter = oXMLView.byId("myResizeSplitter");
+			XMLView.create({
+				definition: sXMLViewContent
+			}).then(function(oXMLView) {
+				var oResizeSplitter = oXMLView.byId("myResizeSplitter");
 
-			oXMLView.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-			var oSpy = sinon.spy(oResizeSplitter, "getCalculatedSizes");
+				oXMLView.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				var oSpy = this.spy(oResizeSplitter, "getCalculatedSizes");
 
-			oXMLView.attachBeforeRendering(function () {
-				// check
-				assert.ok(RenderManager.isPreservedContent(oXMLView.getDomRef()), "Splitter control is preserved as part of XMLView.");
-				oResizeSplitter.triggerResize(true);
-				assert.strictEqual(oSpy.called, false, "Splitter has not calculated its sizes again.");
+				oXMLView.attachBeforeRendering(function () {
+					// check
+					assert.ok(RenderManager.isPreservedContent(oXMLView.getDomRef()), "Splitter control is preserved as part of XMLView.");
+					oResizeSplitter.triggerResize(true);
+					assert.strictEqual(oSpy.called, false, "Splitter has not calculated its sizes again.");
 
-				oXMLView.destroy();
-				done();
-			});
+					oXMLView.destroy();
+					done();
+				});
 
-			oXMLView.rerender();
-		});
+				oXMLView.rerender();
+			}.bind(this));
+		}.bind(this));
 	});
 
 	QUnit.test("Splitter with Vertical orientation with parent with height 'auto'", function (assert) {
@@ -660,7 +686,7 @@ sap.ui.define([
 			content: [oSplitter]
 		});
 
-		var oResizeSpy = sinon.spy(oSplitter, "_resize");
+		var oResizeSpy = this.spy(oSplitter, "_resize");
 		var done = assert.async();
 
 		// Act
@@ -739,7 +765,7 @@ sap.ui.define([
 
 	QUnit.test("There is warning when there is not enough space to fit the content", function (assert) {
 		// arrange
-		var oLogSpy = sinon.spy(Log, "warning");
+		var oLogSpy = this.spy(Log, "warning");
 		this.oSplitter.setWidth("300px");
 		this.oSplitter.addContentArea(new Button({
 			layoutData: new SplitterLayoutData({
@@ -758,14 +784,11 @@ sap.ui.define([
 			oLogSpy.calledWith("The set sizes and minimal sizes of the splitter contents are bigger than the available space in the UI."),
 			"Warning is logged"
 		);
-
-		// clean up
-		oLogSpy.restore();
 	});
 
 	QUnit.test("There is NO warning when there is enough space to fit the content", function (assert) {
 		// arrange
-		var oLogSpy = sinon.spy(Log, "warning");
+		var oLogSpy = this.spy(Log, "warning");
 		this.oSplitter.setWidth("300px");
 		this.oSplitter.addContentArea(new Button({
 			layoutData: new SplitterLayoutData({
@@ -787,9 +810,6 @@ sap.ui.define([
 			),
 			"Warning is not logged"
 		);
-
-		// clean up
-		oLogSpy.restore();
 	});
 
 });

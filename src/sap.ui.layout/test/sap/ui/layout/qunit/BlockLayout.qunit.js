@@ -1,28 +1,32 @@
 /*global QUnit sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'sap/base/Log',
 	'sap/ui/layout/BlockLayoutCell',
 	'sap/ui/layout/BlockLayoutCellData',
 	'sap/ui/layout/BlockLayoutRow',
 	'sap/ui/layout/BlockLayout',
+	'sap/ui/layout/library',
 	'sap/m/Dialog',
 	'sap/m/Link',
 	'sap/m/Text',
 	'sap/ui/core/Core'
 ], function(
 	jQuery,
-	log,
+	Log,
 	BlockLayoutCell,
 	BlockLayoutCellData,
 	BlockLayoutRow,
 	BlockLayout,
+	layoutLibrary,
 	Dialog,
 	Link,
 	Text,
 	Core) {
 	'use strict';
+
+	var BlockBackgroundType = layoutLibrary.BlockBackgroundType;
+	var BlockRowColorSets = layoutLibrary.BlockRowColorSets;
 
 	QUnit.module("Block Layout Public and Private API", {
 		blockId: "block-layout-id",
@@ -40,10 +44,10 @@ sap.ui.define([
 			this.BlockLayout = new BlockLayout(this.blockId, {
 				content: this.BlockLayoutRow
 			});
-			this.logSpy = sinon.spy(jQuery.sap.log, "error");
+			this.logSpy = this.spy(Log, "error");
 
-			this.BlockLayoutConstants = sap.ui.layout.BlockLayout.CONSTANTS;
-			this.BlockLayoutRowConstants = sap.ui.layout.BlockLayoutRow.CONSTANTS;
+			this.BlockLayoutConstants = BlockLayout.CONSTANTS;
+			this.BlockLayoutRowConstants = BlockLayoutRow.CONSTANTS;
 
 			this.BlockLayout.placeAt("qunit-fixture");
 			Core.applyChanges();
@@ -54,7 +58,6 @@ sap.ui.define([
 		afterEach: function () {
 			this.BlockLayout.destroy();
 			this.BlockLayoutRow.destroy();
-			this.logSpy.restore();
 			this.cells = null;
 			this.logSpy = null;
 			this.BlockLayoutConstants = null;
@@ -177,15 +180,15 @@ sap.ui.define([
 		//setting sap.m.Text as title - should produce warning
 		var oSecondCell = this.BlockLayoutRow.getContent()[1];
 		var oTextTitle = new Text({text: "test text"});
-		var warningFunctionSpy = sinon.spy(log, "warning");
+		var warningFunctionStub = this.stub(Log, "warning");
 
 		oSecondCell.setTitle("test title 2");
 		oSecondCell.setTitleLink(oTextTitle);
 		Core.applyChanges();
 
 		assert.strictEqual(jQuery("#secondCell-Title").text(), "test title 2", "When there is invalid titleLink aggregation provided title of the cell should be \"test title 2\"");
-		sinon.assert.calledWith(warningFunctionSpy, sinon.match(/sap.ui.layout.BlockLayoutCell secondCell: Can't add value for titleLink aggregation different than sap.m.Link./));
-		log.warning.restore();
+		sinon.assert.calledWith(warningFunctionStub, sinon.match(/sap.ui.layout.BlockLayoutCell secondCell: Can't add value for titleLink aggregation different than sap.m.Link./));
+		Log.warning.restore();
 
 		//title is not set, the titleLink is set
 		oSecondCell.setTitle("");
@@ -239,7 +242,7 @@ sap.ui.define([
 
 	QUnit.test("BlockLayout default type dynamically change", function (assert) {
 		// Arrange
-		var sType = sap.ui.layout.BlockBackgroundType.Default;
+		var sType = BlockBackgroundType.Default;
 
 		// System under Test
 		var oBlockLayout = new BlockLayout({}).placeAt("qunit-fixture");
@@ -250,7 +253,7 @@ sap.ui.define([
 		assert.ok(oBlockLayout.getDomRef().classList.contains("sapUiBlockLayoutBackground" + sType), "Should have set proper CSS classes");
 
 		// Act
-		sType = sap.ui.layout.BlockBackgroundType.Accent;
+		sType = BlockBackgroundType.Accent;
 		oBlockLayout.setBackground(sType);
 		Core.applyChanges();
 
@@ -264,7 +267,7 @@ sap.ui.define([
 
 	QUnit.test("BlockLayout with predefined type", function (assert) {
 		// Arrange
-		var sType = sap.ui.layout.BlockBackgroundType.Accent;
+		var sType = BlockBackgroundType.Accent;
 
 		// System under Test
 		var oBlockLayout = new BlockLayout({background: sType}).placeAt("qunit-fixture");
@@ -279,7 +282,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("BlockLayoutRow predefined Color Set", function (assert) {
-		var sColorSet = sap.ui.layout.BlockRowColorSets.ColorSet2,
+		var sColorSet = BlockRowColorSets.ColorSet2,
 			oBlockRow = new BlockLayoutRow({rowColorSet: sColorSet});
 		Core.applyChanges();
 
@@ -292,12 +295,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("BlockLayoutRow dynamically change Color Set", function (assert) {
-		var sColorSet = sap.ui.layout.BlockRowColorSets.ColorSet2;
+		var sColorSet = BlockRowColorSets.ColorSet2;
 		var oBlockRow = new BlockLayoutRow({rowColorSet: sColorSet});
 		Core.applyChanges();
 
 		// Act
-		sColorSet = sap.ui.layout.BlockRowColorSets.ColorSet3;
+		sColorSet = BlockRowColorSets.ColorSet3;
 		oBlockRow.setRowColorSet(sColorSet);
 
 		// Assert
@@ -311,11 +314,11 @@ sap.ui.define([
 	QUnit.module("BlockLayout + BlockLayoutRow + BlockLayoutCell integrations");
 
 	QUnit.test("BlockLayout + 2 sequent BlockLayoutRow-s with the same color set", function (assert) {
-		var sColorSet = sap.ui.layout.BlockRowColorSets.ColorSet1,
+		var sColorSet = BlockRowColorSets.ColorSet1,
 			oRow1 = new BlockLayoutRow({rowColorSet: sColorSet}),
 			oRow2 = new BlockLayoutRow({rowColorSet: sColorSet}),
 			oBlockLayout = new BlockLayout({
-				background: sap.ui.layout.BlockBackgroundType.Accent,
+				background: BlockBackgroundType.Accent,
 				content: [oRow1, oRow2]
 			}).placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -328,7 +331,7 @@ sap.ui.define([
 		assert.ok(oRow2.hasStyleClass("sapUiBlockLayoutBackground" + sColorSet + "Inverted"), "Should have set proper CSS classes");
 
 		// Act
-		sColorSet = sap.ui.layout.BlockRowColorSets.ColorSet3;
+		sColorSet = BlockRowColorSets.ColorSet3;
 		oRow2.setRowColorSet(sColorSet);
 
 		// Assert
@@ -342,12 +345,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("BlockLayout + 2 sequent BlockLayoutRow-s with different color sets", function (assert) {
-		var sColorSet1 = sap.ui.layout.BlockRowColorSets.ColorSet21,
-			sColorSet2 = sap.ui.layout.BlockRowColorSets.ColorSet2,
+		var sColorSet1 = BlockRowColorSets.ColorSet21,
+			sColorSet2 = BlockRowColorSets.ColorSet2,
 			oRow1 = new BlockLayoutRow({rowColorSet: sColorSet1}),
 			oRow2 = new BlockLayoutRow({rowColorSet: sColorSet2}),
 			oBlockLayout = new BlockLayout({
-				background: sap.ui.layout.BlockBackgroundType.Accent,
+				background: BlockBackgroundType.Accent,
 				content: [oRow1, oRow2]
 			}).placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -385,11 +388,11 @@ sap.ui.define([
 				accentCells: [oCell1]
 			}),
 			oBlockLayout = new BlockLayout({
-				background: sap.ui.layout.BlockBackgroundType.Mixed,
+				background: BlockBackgroundType.Mixed,
 				content: [oRow]
 			}).placeAt("qunit-fixture");
 
-		var oSpy = sinon.spy(oRow, "_processMixedCellStyles");
+		var oSpy = this.spy(oRow, "_processMixedCellStyles");
 
 
 		Core.applyChanges();
@@ -415,7 +418,6 @@ sap.ui.define([
 		assert.ok(oCell2.hasStyleClass("sapContrastPlus"), "Should have set proper CSS classes");
 
 		// Cleanup
-		oSpy.restore();
 		oCell1 = null;
 		oRow = null;
 		oBlockLayout.destroy();
@@ -429,11 +431,11 @@ sap.ui.define([
 				accentCells: [oCell1]
 			}),
 			oBlockLayout = new BlockLayout({
-				background: sap.ui.layout.BlockBackgroundType.Accent,
+				background: BlockBackgroundType.Accent,
 				content: [oRow]
 			}).placeAt("qunit-fixture");
 
-		var oSpy = sinon.spy(oRow, "_processAccentCellStyles");
+		var oSpy = this.spy(oRow, "_processAccentCellStyles");
 		Core.applyChanges();
 
 		// Assert
@@ -451,7 +453,6 @@ sap.ui.define([
 		assert.ok(oCell2.hasStyleClass("sapUiBlockLayoutBackgroundColorSetGray1"), "Should have set proper CSS classes");
 
 		// Cleanup
-		oSpy.restore();
 		oCell1 = null;
 		oRow = null;
 		oBlockLayout.destroy();

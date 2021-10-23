@@ -1,7 +1,6 @@
 sap.ui.define([
-	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
-], function(Log, jQuery) {
+	"sap/base/Log"
+], function(Log) {
 
 	"use strict";
 
@@ -18,8 +17,8 @@ sap.ui.define([
 			ui5: {
 				language: "en-US",
 				rtl: false,					// Whether to run the tests in RTL mode
-				libs: ["sap.ui.layout"],		// Libraries to load upfront in addition to the library which is tested (sap.ui.layout), if null no libs are loaded
-				"xx-waitForTheme": true		// Whether the start of the test should be delayed until the theme is applied
+				libs: ["sap.ui.layout"],	// Libraries to load upfront in addition to the library which is tested (sap.ui.layout), if null no libs are loaded
+				"xx-waitForTheme": "init"	// Whether the start of the test should be delayed until the theme is applied
 			},
 			coverage: {
 				only:	"[sap/ui/layout]",	// Which files to show in the coverage report, if null, no files are excluded from coverage
@@ -39,8 +38,7 @@ sap.ui.define([
 				page: "test-resources/sap/ui/layout/qunit/AlignedFlowLayout.qunit.html",
 				ui5: {
 					compatVersion: "edge",
-					libs: ["sap.m", "sap.ui.layout"],
-					"xx-waitForTheme": "init"
+					libs: ["sap.m", "sap.ui.layout"]
 				}
 			},
 
@@ -62,12 +60,6 @@ sap.ui.define([
 					}
 				},
 				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				ui5: {
 					libs: ["sap.ui.layout", "sap.m", "sap.tnt", "sap.ui.documentation"],
 					"xx-componentPreload": "off"
@@ -82,8 +74,7 @@ sap.ui.define([
 			},
 			"CSSGrid-CSSGrid": {
 				group: "CSSGrid",
-				module: "./cssgrid/CSSGrid.qunit",
-				sinon: 1
+				module: "./cssgrid/CSSGrid.qunit"
 			},
 			"CSSGrid-GridTypes": {
 				group: "CSSGrid",
@@ -92,8 +83,7 @@ sap.ui.define([
 			},
 			"CSSGrid-GridLayouts": {
 				group: "CSSGrid",
-				module: "./cssgrid/GridLayouts.qunit",
-				sinon: 1
+				module: "./cssgrid/GridLayouts.qunit"
 			},
 			"Splitter": {
 				coverage: {
@@ -110,7 +100,6 @@ sap.ui.define([
 					"xx-waitForTheme": "init"
 				},
 				sinon: {
-					version: 1, // because the bridge for sinon-4 doesn't support fake timers yet
 					useFakeTimers: true
 				},
 				coverage: {
@@ -127,7 +116,7 @@ sap.ui.define([
 					only: ["sap/ui/layout/VerticalLayout"]
 				},
 				ui5: {
-					libs: ["sap.ui.commons"]
+					libs: ["sap.m"]
 				}
 			},
 			"AssociativeSplitter": {

@@ -1,9 +1,9 @@
-/*global QUnit, sinon */
+/*global QUnit */
 sap.ui.define([
 	'sap/base/Log',
 	'sap/ui/core/Core',
 	'sap/ui/qunit/QUnitUtils',
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'sap/ui/layout/SplitPane',
 	'sap/ui/layout/PaneContainer',
 	'sap/ui/layout/ResponsiveSplitter',
@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/m/Button',
 	'sap/m/Text',
 	'sap/m/ScrollContainer',
-	'sap/ui/core/HTML'
+	'sap/ui/core/HTML',
+	'sap/ui/events/KeyCodes'
 ], function (
 	Log,
 	Core,
@@ -24,7 +25,8 @@ sap.ui.define([
 	Button,
 	Text,
 	ScrollContainer,
-	HTML
+	HTML,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -273,7 +275,7 @@ sap.ui.define([
 		}, afterEach: function () {
 			this.oScrollContainer.destroy();
 		}, checkButtonSelection: function (assert, keyCode, sEvent) {
-			var oSpy = sinon.spy(this.oResponsiveSplitter, sEvent);
+			var oSpy = this.spy(this.oResponsiveSplitter, sEvent);
 			this.triggerKeyOnPaginator(1, keyCode);
 			assert.ok(oSpy.called, sEvent + " function should be called");
 			assert.ok(jQuery(this.oResponsiveSplitter._getVisibleButtons()[1]).hasClass("sapUiResponsiveSplitterPaginatorSelectedButton"), "The second button should be selected");
@@ -281,16 +283,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Trigger enter on Paginator's button", function (assert) {
-		this.checkButtonSelection(assert, jQuery.sap.KeyCodes.ENTER, "onsapenter");
+		this.checkButtonSelection(assert, KeyCodes.ENTER, "onsapenter");
 	});
 
 	QUnit.test("Trigger space on Paginator's button", function (assert) {
-		this.checkButtonSelection(assert, jQuery.sap.KeyCodes.SPACE, "onsapspace");
+		this.checkButtonSelection(assert, KeyCodes.SPACE, "onsapspace");
 	});
 
 	QUnit.test("Right arrow", function (assert) {
-		var oResizeSpy = sinon.spy(this.oResponsiveSplitter.getRootPaneContainer(), "fireResize");
-		QunitUtils.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.ARROW_RIGHT);
+		var oResizeSpy = this.spy(this.oResponsiveSplitter.getRootPaneContainer(), "fireResize");
+		QunitUtils.triggerKeydown(this.oSplitterBarDOM, KeyCodes.ARROW_RIGHT);
 		this.clock.tick(1);
 
 		var mParams = oResizeSpy.args[0][0];
@@ -301,8 +303,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Left arrow", function (assert) {
-		var oResizeSpy = sinon.spy(this.oResponsiveSplitter.getRootPaneContainer(), "fireResize");
-		QunitUtils.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.ARROW_LEFT);
+		var oResizeSpy = this.spy(this.oResponsiveSplitter.getRootPaneContainer(), "fireResize");
+		QunitUtils.triggerKeydown(this.oSplitterBarDOM, KeyCodes.ARROW_LEFT);
 		this.clock.tick(1);
 
 		var mParams = oResizeSpy.args[0][0];
@@ -313,21 +315,21 @@ sap.ui.define([
 	});
 
 	QUnit.test("Shift + Left arrow", function (assert) {
-		QunitUtils.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.ARROW_LEFT, true);
+		QunitUtils.triggerKeydown(this.oSplitterBarDOM, KeyCodes.ARROW_LEFT, true);
 		this.clock.tick(1);
 
 		assert.strictEqual(this.$FirstPane.width(), this.iFirstPaneInitialWidth - 1, "Splitter's width should be 1 pixel less");
 	});
 
 	QUnit.test("Shift + Right arrow", function (assert) {
-		QunitUtils.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.ARROW_RIGHT, true);
+		QunitUtils.triggerKeydown(this.oSplitterBarDOM, KeyCodes.ARROW_RIGHT, true);
 		this.clock.tick(1);
 
 		assert.strictEqual(this.$FirstPane.width(), this.iFirstPaneInitialWidth + 1, "Splitter's width should be 1 pixel bigger");
 	});
 
 	QUnit.test("Home", function (assert) {
-		QunitUtils.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.HOME);
+		QunitUtils.triggerKeydown(this.oSplitterBarDOM, KeyCodes.HOME);
 		this.clock.tick(1);
 
 		assert.strictEqual(this.$FirstPane.width(), 0, "Splitter's width should be 0 pixels");
@@ -336,24 +338,24 @@ sap.ui.define([
 	QUnit.test("End", function (assert) {
 		var $SecondPane = jQuery(this.$ResponsiveSplitter.find(".sapUiLoSplitterContent")[1]);
 
-		QunitUtils.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.END);
+		QunitUtils.triggerKeydown(this.oSplitterBarDOM, KeyCodes.END);
 		this.clock.tick(1);
 		assert.strictEqual($SecondPane.width(), 0, "Second Pane should have 0px width");
 	});
 
 	QUnit.test("Right Arrow on Paginator", function (assert) {
-		this.triggerKeyOnPaginator(0, jQuery.sap.KeyCodes.ARROW_RIGHT);
+		this.triggerKeyOnPaginator(0, KeyCodes.ARROW_RIGHT);
 		assert.strictEqual(document.activeElement, this.getButtonByIndex(1), "Should move the focus to the next button");
 	});
 
 	QUnit.test("Left Arrow on Paginator", function (assert) {
-		this.triggerKeyOnPaginator(1, jQuery.sap.KeyCodes.ARROW_LEFT);
+		this.triggerKeyOnPaginator(1, KeyCodes.ARROW_LEFT);
 		assert.strictEqual(document.activeElement, this.getButtonByIndex(0), "Should move the focus to the previous button");
 	});
 
 	QUnit.test("Right Arrow on the last button of the Paginator", function (assert) {
-		this.triggerKeyOnPaginator(0, jQuery.sap.KeyCodes.ARROW_RIGHT);
-		this.triggerKeyOnPaginator(1, jQuery.sap.KeyCodes.ARROW_RIGHT);
+		this.triggerKeyOnPaginator(0, KeyCodes.ARROW_RIGHT);
+		this.triggerKeyOnPaginator(1, KeyCodes.ARROW_RIGHT);
 		assert.strictEqual(document.activeElement, this.getButtonByIndex(1), "Should not move the focus");
 	});
 
@@ -408,7 +410,7 @@ sap.ui.define([
 			});
 
 			this.oResourceBundle = Core.getLibraryResourceBundle("sap.ui.layout");
-			sinon.stub(this.oResourceBundle, "getText")
+			this.stub(this.oResourceBundle, "getText")
 				.withArgs("RESPONSIVE_SPLITTER_RESIZE", [1, 2]).returns("Resize between pane 1 and pane 2")
 				.withArgs("RESPONSIVE_SPLITTER_RESIZE", [2, 3]).returns("Resize between pane 2 and pane 3")
 				.withArgs("RESPONSIVE_SPLITTER_RESIZE", ["3.1", "3.2"]).returns("Resize between pane 3.1 and pane 3.2")
@@ -421,7 +423,6 @@ sap.ui.define([
 			this.oResponsiveSplitter.getRootPaneContainer().addPane(oPaneContainer);
 			Core.applyChanges();
 		}, afterEach: function () {
-			this.oResourceBundle.getText.restore();
 			this.oScrollContainer.destroy();
 		}
 	});
@@ -695,7 +696,7 @@ sap.ui.define([
 			rootPaneContainer: new PaneContainer({
 				panes: [
 					new SplitPane({
-						content: new HTML({content: '<svg id="testSvg"></svg>'})
+						content: new HTML({id: "testSvg", content: '<svg id="testSvg"></svg>'})
 					})
 				]
 			})
@@ -754,7 +755,7 @@ sap.ui.define([
 
 	QUnit.test("There is warning when there is not enough space to fit the content", function (assert) {
 		// arrange
-		var oLogSpy = sinon.spy(Log, "warning");
+		var oLogSpy = this.spy(Log, "warning");
 		this.oResponsiveSplitter.setWidth("300px");
 		this.oResponsiveSplitter.setRootPaneContainer(new PaneContainer({
 			panes: [
@@ -784,14 +785,11 @@ sap.ui.define([
 			),
 			"Warning is logged"
 		);
-
-		// clean up
-		oLogSpy.restore();
 	});
 
 	QUnit.test("There is NO warning when there is enough space to fit the content", function (assert) {
 		// arrange
-		var oLogSpy = sinon.spy(Log, "warning");
+		var oLogSpy = this.spy(Log, "warning");
 		this.oResponsiveSplitter.setWidth("300px");
 		this.oResponsiveSplitter.setRootPaneContainer(new PaneContainer({
 			panes: [
@@ -821,9 +819,6 @@ sap.ui.define([
 			),
 			"Warning is not logged"
 		);
-
-		// clean up
-		oLogSpy.restore();
 	});
 
 	QUnit.module("Special Cases");

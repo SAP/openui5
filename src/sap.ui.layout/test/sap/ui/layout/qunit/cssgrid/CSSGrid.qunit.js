@@ -1,4 +1,4 @@
-/*global QUnit, sinon */
+/*global QUnit */
 
 sap.ui.define([
 	"sap/ui/layout/cssgrid/CSSGrid",
@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/ui/layout/cssgrid/GridResponsiveLayout",
 	"sap/ui/layout/cssgrid/GridLayoutDelegate",
 	"sap/ui/core/Core",
-	"sap/ui/core/ResizeHandler",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/core/ResizeHandler"
 ],
 function (
 	CSSGrid,
@@ -19,8 +18,7 @@ function (
 	GridResponsiveLayout,
 	GridLayoutDelegate,
 	Core,
-	ResizeHandler,
-	waitForThemeApplied
+	ResizeHandler
 ) {
 	"use strict";
 
@@ -31,7 +29,7 @@ function (
 	QUnit.test("Initialization", function (assert) {
 
 		// Arrange
-		sinon.spy(CSSGrid.prototype, "_addGridLayoutDelegate");
+		this.spy(CSSGrid.prototype, "_addGridLayoutDelegate");
 
 		// Act
 		var oGrid = new CSSGrid();
@@ -55,9 +53,6 @@ function (
 
 		assert.ok(CSSGrid.prototype._addGridLayoutDelegate.calledOnce, "GridLayoutDelegate should be initialized");
 		assert.ok(oGrid.oGridLayoutDelegate, "GridLayoutDelegate initialized");
-
-		// Cleanup
-		CSSGrid.prototype._addGridLayoutDelegate.restore();
 	});
 
 	QUnit.test("IGridConfigurable Interface implementation", function (assert) {
@@ -76,9 +71,7 @@ function (
 		// Arrange
 		var oGrid = new CSSGrid();
 
-		sinon.stub(CSSGrid.prototype, "getDomRef", function () {
-			return { test: "test" };
-		});
+		this.stub(CSSGrid.prototype, "getDomRef").returns({ test: "test" });
 
 		// Act
 		var aGridDomRefs = oGrid.getGridDomRefs();
@@ -88,8 +81,6 @@ function (
 		assert.equal(aGridDomRefs.length, 1, "Should have only one dom ref");
 		assert.equal(aGridDomRefs[0].test, "test", "Should have the correct dom ref");
 
-		// Cleanup
-		CSSGrid.prototype.getDomRef.restore();
 	});
 
 	QUnit.test("IGridConfigurable Interface implementation - getGridLayoutConfiguration custom", function (assert) {
@@ -97,9 +88,7 @@ function (
 		// Arrange
 		var oGrid = new CSSGrid();
 
-		sinon.stub(CSSGrid.prototype, "getCustomLayout", function () {
-			return { test: "test" };
-		});
+		this.stub(CSSGrid.prototype, "getCustomLayout").returns({ test: "test" });
 
 		// Act
 		var oLayout = oGrid.getGridLayoutConfiguration();
@@ -107,8 +96,6 @@ function (
 		// Assert
 		assert.ok(oLayout && oLayout.test === "test", "Should have a custom layout");
 
-		// Cleanup
-		CSSGrid.prototype.getCustomLayout.restore();
 	});
 
 	QUnit.test("IGridConfigurable Interface implementation - getGridLayoutConfiguration default", function (assert) {
@@ -139,7 +126,7 @@ function (
 	QUnit.test("Delegate", function (assert) {
 
 		// Arrange
-		sinon.spy(CSSGrid.prototype, "_removeGridLayoutDelegate");
+		this.spy(CSSGrid.prototype, "_removeGridLayoutDelegate");
 
 		var oGrid = new CSSGrid();
 
@@ -149,9 +136,6 @@ function (
 		// Assert
 		assert.ok(CSSGrid.prototype._removeGridLayoutDelegate.calledOnce, "Should call _removeGridLayoutDelegate on exit");
 		assert.ok(oGrid.oGridLayoutDelegate === null, "Should destroy GridLayoutDelegate on exit");
-
-		// Cleanup
-		CSSGrid.prototype._removeGridLayoutDelegate.restore();
 	});
 
 	QUnit.test("Observer", function (assert) {
@@ -186,7 +170,7 @@ function (
 			new HTML({ content: "<div></div>" })
 		];
 
-		sinon.stub(GridLayoutBase, "setItemStyles");
+		this.stub(GridLayoutBase, "setItemStyles");
 
 		// Act
 		aItems.forEach(function (oItem) {
@@ -197,16 +181,13 @@ function (
 		// Assert
 		assert.ok(this.oGrid.getItems().length === 3, "Should have 3 items");
 		assert.ok(GridLayoutBase.setItemStyles.callCount === 3, "Should set styles for every item");
-
-		// Cleanup
-		GridLayoutBase.setItemStyles.restore();
 	});
 
 	QUnit.module("_onGridChange", {
 		beforeEach: function () {
 			this.oGrid = new CSSGrid();
-			this.oSpyAddDelegate = sinon.spy();
-			this.oSpyRemoveDelegate = sinon.spy();
+			this.oSpyAddDelegate = this.spy();
+			this.oSpyRemoveDelegate = this.spy();
 		},
 		afterEach: function () {
 			this.oSpyAddDelegate = null;
@@ -322,8 +303,8 @@ function (
 	QUnit.test("Set item layoutData", function (assert) {
 
 		// Arrange
-		sinon.spy(GridLayoutBase, "setItemStyles");
-		sinon.spy(this.oGrid, "onLayoutDataChange");
+		this.spy(GridLayoutBase, "setItemStyles");
+		this.spy(this.oGrid, "onLayoutDataChange");
 
 		// Act
 		this.oItem.setLayoutData(this.oLayoutData);
@@ -334,12 +315,8 @@ function (
 		assert.ok(this.oGrid.onLayoutDataChange.calledOnce, "Should call layoutDataChange handler");
 		assert.ok(this.oItem.getDomRef().style.getPropertyValue("grid-row"), "Should have grid-row property");
 		assert.ok(this.oItem.getDomRef().style.getPropertyValue("grid-column"), "Should have grid-column property");
-
-
-		// Cleanup
-		GridLayoutBase.setItemStyles.restore();
-		this.oGrid.onLayoutDataChange.restore();
 	});
+
 	QUnit.test("Remove item layoutData", function (assert) {
 
 		// Arrange
@@ -496,8 +473,8 @@ function (
 	QUnit.test("_setItemStyles - Missing item object", function (assert) {
 
 		// Arrange
-		sinon.spy(GridItemLayoutData, "removeItemStyles");
-		sinon.spy(GridItemLayoutData, "_setItemStyle");
+		this.spy(GridItemLayoutData, "removeItemStyles");
+		this.spy(GridItemLayoutData, "_setItemStyle");
 
 		// Act
 		GridLayoutBase.setItemStyles();
@@ -505,10 +482,6 @@ function (
 		// Assert
 		assert.ok(GridItemLayoutData.removeItemStyles.notCalled, "Should NOT call _removeItemStyles when no item is provided");
 		assert.ok(GridItemLayoutData._setItemStyle.notCalled, "Should NOT call _setItemStyle when no item is provided");
-
-		// Cleanup
-		GridItemLayoutData.removeItemStyles.restore();
-		GridItemLayoutData._setItemStyle.restore();
 	});
 
 	QUnit.test("_setItemStyle", function (assert) {
@@ -543,8 +516,8 @@ function (
 	QUnit.test("Delegate with responsive layout", function (assert) {
 
 		// Arrange
-		var oResizeRegisterSpy = sinon.spy(ResizeHandler, "register"),
-			oResizeUnregisterSpy  = sinon.spy(ResizeHandler, "deregister"),
+		var oResizeRegisterSpy = this.spy(ResizeHandler, "register"),
+			oResizeUnregisterSpy  = this.spy(ResizeHandler, "deregister"),
 			oGrid = new CSSGrid({
 				customLayout: new GridResponsiveLayout()
 			}),
@@ -567,8 +540,8 @@ function (
 	QUnit.test("onResize", function (assert) {
 
 		// Arrange
-		var fnResizeStub = sinon.stub(),
-			fnApplyLayoutStub = sinon.stub(),
+		var fnResizeStub = this.stub(),
+			fnApplyLayoutStub = this.stub(),
 			oMockedGrid = {
 				getGridLayoutConfiguration: function () {
 					return {
@@ -631,6 +604,4 @@ function (
 		assert.strictEqual(oItemPositionBeforeBusy.top, oItemPositionAfterBusy.top, "The element should NOT be moved vertically after it gets busy");
 		assert.strictEqual(oItemPositionBeforeBusy.left, oItemPositionAfterBusy.left, "The element should NOT be moved horizontally after it gets busy");
 	});
-
-	return waitForThemeApplied();
 });

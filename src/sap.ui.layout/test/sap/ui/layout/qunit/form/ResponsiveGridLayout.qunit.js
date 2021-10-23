@@ -4,7 +4,7 @@
 // is tested in Form, FormContainer and FormElement qUnit tests.
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/base/util/each",
 	"sap/ui/layout/form/Form",

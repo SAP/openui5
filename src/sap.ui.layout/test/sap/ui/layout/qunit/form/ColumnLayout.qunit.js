@@ -1,4 +1,4 @@
-/* global QUnit, sinon */
+/* global QUnit */
 
 // Test only the things relevant for ColumnLayout. The basic Form functionality
 // is tested in Form, FormContainer and FormElement qUnit tests.
@@ -6,7 +6,7 @@
 // layout must be tested in some visual test.
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/layout/form/ColumnLayout",
 	"sap/ui/layout/form/Form",
@@ -285,8 +285,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("keyboard", function(assert) {
-		sinon.spy(oColumnLayout, "onsapright");
-		sinon.spy(oColumnLayout, "onsapleft");
+		this.spy(oColumnLayout, "onsapright");
+		this.spy(oColumnLayout, "onsapleft");
 
 		qutils.triggerKeyboardEvent("CL1", "ARROW_DOWN");
 		assert.ok(oColumnLayout.onsapright.called, "sapright called");
@@ -937,7 +937,7 @@ sap.ui.define([
 		assert.equal(oLayoutData && oLayoutData.getCellsSmall(), 1, "cellsSmall");
 
 		// test for promise
-		var oStub = sinon.stub(sap.ui, "require");
+		var oStub = this.stub(sap.ui, "require");
 		oStub.withArgs("sap/ui/layout/form/ColumnElementData").onFirstCall().returns(undefined);
 		oStub.callThrough();
 
@@ -975,7 +975,7 @@ sap.ui.define([
 		oLayoutData2.destroy();
 
 		// test for promise
-		var oStub = sinon.stub(sap.ui, "require");
+		var oStub = this.stub(sap.ui, "require");
 		oStub.withArgs("sap/ui/layout/form/ColumnElementData").onFirstCall().returns(undefined);
 		oStub.callThrough();
 

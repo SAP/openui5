@@ -1,4 +1,4 @@
-/* global QUnit, sinon */
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/layout/form/SemanticFormElement",
@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/m/Text",
-	"sap/ui/core/Control"
+	"sap/ui/core/Control",
+	"sap/ui/thirdparty/jquery"
 	],
 	function(
 			SemanticFormElement,
@@ -14,7 +15,8 @@ sap.ui.define([
 			Label,
 			Input,
 			Text,
-			Control
+			Control,
+			jQuery
 	) {
 	"use strict";
 
@@ -205,7 +207,7 @@ sap.ui.define([
 		assert.equal(aFields[0], oField2, "Second field rendered");
 
 		// change Label text
-		sinon.spy(oLabel, "setText");
+		this.spy(oLabel, "setText");
 		oLabel1.setText("Changed Label");
 		assert.equal(oLabel && oLabel.getText(), "Label 2", "Label text");
 		assert.notOk(oLabel.setText.called, "Internal Label not updated from unassigned Label");
@@ -432,7 +434,7 @@ sap.ui.define([
 		assert.ok(aFields[0].isA("sap.m.Text"), "Text control rendered");
 		assert.equal(aFields[0].getText && aFields[0].getText(), "Text 1", "rendered text");
 
-		sinon.spy(aFields[0], "setText");
+		this.spy(aFields[0], "setText");
 
 		oRenderControl.invalidate(); // simulate invalidate bubbled by setText to Form
 		sap.ui.getCore().applyChanges();

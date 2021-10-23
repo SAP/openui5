@@ -1,4 +1,4 @@
-/* global QUnit, sinon */
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
@@ -141,7 +141,7 @@ sap.ui.define([
 		};
 
 		// simulate Form
-		sinon.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
+		this.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
 
 		// simulate button click
 		oButton.firePress();
@@ -152,7 +152,7 @@ sap.ui.define([
 	QUnit.test("Expander press", function(assert) {
 		oFormContainer.setExpandable(true);
 
-		asyncExpanderTest(assert, expanderPress);
+		asyncExpanderTest(assert, expanderPress.bind(this));
 	});
 
 	QUnit.module("Title", {
@@ -303,7 +303,7 @@ sap.ui.define([
 		};
 
 		// simulate Form
-		sinon.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
+		this.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
 
 		oFormContainer.onLayoutDataChange();
 		assert.ok(bCalled, "onLayoutDataChange called on Form");
@@ -322,7 +322,7 @@ sap.ui.define([
 		};
 
 		// simulate Form
-		sinon.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
+		this.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
 
 		oFormContainer.contentOnAfterRendering("1", "2");
 		assert.ok(bCalled, "contentOnAfterRendering called on Form");
@@ -340,7 +340,7 @@ sap.ui.define([
 		};
 
 		// simulate Form
-		sinon.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
+		this.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
 
 		assert.equal(oFormContainer.getRenderedDomRef(), "X", "Value returned from Form");
 	});
@@ -355,7 +355,7 @@ sap.ui.define([
 		};
 
 		// simulate Form
-		sinon.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
+		this.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
 
 		assert.equal(oFormContainer.getElementRenderedDomRef(), "X", "Value returned from Form");
 	});
@@ -365,8 +365,8 @@ sap.ui.define([
 
 		var oFormElement1 = new FormElement("FE1");
 		var oFormElement2 = new FormElement("FE2");
-		sinon.spy(oFormElement1, "_setEditable");
-		sinon.spy(oFormElement2, "_setEditable");
+		this.spy(oFormElement1, "_setEditable");
+		this.spy(oFormElement2, "_setEditable");
 
 		oFormContainer.addFormElement(oFormElement1);
 

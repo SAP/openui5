@@ -6,13 +6,11 @@
 	<title>ResponsiveSplitter</title>
 	<script src="shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-	data-sap-ui-trace="false"
-	data-sap-ui-libs="sap.ui.layout,sap.m,sap.ui.ux3"
-	src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-resourceroots='{
-		"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
-	}'>
-
+			data-sap-ui-libs="sap.ui.layout,sap.m"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-resourceroots='{
+				"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
+			}'>
 	</script>
 
 	<style type="text/css" media="screen">
@@ -25,162 +23,171 @@
 	</style>
 
 	<script>
-	var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr.";
+	sap.ui.require([
+		"sap/m/Panel",
+		"sap/m/Text",
+		"sap/ui/layout/PaneContainer",
+		"sap/ui/layout/ResponsiveSplitter",
+		"sap/ui/layout/SplitterLayoutData",
+		"sap/ui/layout/SplitPane",
 
-	var createPanel = function (headerText) {
-		var panel = new sap.m.Panel({
-			headerText: headerText,
-			content: new sap.m.Text({text: lorem + lorem})
+	], function(Panel, Text, PaneContainer, ResponsiveSplitter, SplitterLayoutData, SplitPane) {
+		var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr.";
+
+		var createPanel = function (headerText) {
+			var panel = new Panel({
+				headerText: headerText,
+				content: new Text({text: lorem + lorem})
+			});
+
+			return panel;
+		};
+
+		var oDefaultPane = new SplitPane("defaultPane", {
+			content: new Panel({
+				headerText: "2",
+				content: new Text({text: lorem + lorem})
+			}),
+			requiredParentWidth: 900,
+			demandPane: true
 		});
 
-		return panel;
-	};
+		var oResponsiveSplitter = new ResponsiveSplitter("responsiveSplitter", {
+			defaultPane: "defaultPane",
+			rootPaneContainer: [
+				new PaneContainer({
+					orientation: "Horizontal",
+					panes: [
 
-	var oDefaultPane = new sap.ui.layout.SplitPane("defaultPane", {
-		content: new sap.m.Panel({
-			headerText: "2",
-			content: new sap.m.Text({text: lorem + lorem})
-		}),
-		requiredParentWidth: 900,
-		demandPane: true
-	});
-
-	var oResponsiveSplitter = new sap.ui.layout.ResponsiveSplitter("responsiveSplitter", {
-		defaultPane: "defaultPane",
-		rootPaneContainer: [
-			new sap.ui.layout.PaneContainer({
-				orientation: "Horizontal",
-				panes: [
-
-					new sap.ui.layout.PaneContainer({
-						orientation: "Vertical",
-						panes: [
-							new sap.ui.layout.SplitPane({
-								demandPane: true,
-								content:  new sap.m.Panel({
-									headerText: "3",
-									content: new sap.m.Text({text: lorem + lorem})
+						new PaneContainer({
+							orientation: "Vertical",
+							panes: [
+								new SplitPane({
+									demandPane: true,
+									content:  new Panel({
+										headerText: "3",
+										content: new Text({text: lorem + lorem})
+									}),
+									requiredParentWidth: 900
 								}),
-								requiredParentWidth: 900
+								new SplitPane({
+									demandPane: true,
+									content:  new Panel({
+										headerText: "4",
+										content: new Text({text: lorem + lorem})
+									}),
+									requiredParentWidth: 800
+								}),
+								new SplitPane({
+									demandPane: true,
+									content: new Panel({
+										headerText: "1.5",
+										content: new Text({text: lorem + lorem})
+									}),
+									requiredParentWidth: 950
+								})
+							]
+						}),
+						new SplitPane({
+							demandPane: true,
+							content: new Panel({
+								headerText: "7",
+								content: new Text({text: lorem + lorem})
 							}),
-							new sap.ui.layout.SplitPane({
-								demandPane: true,
-								content:  new sap.m.Panel({
-									headerText: "4",
-									content: new sap.m.Text({text: lorem + lorem})
-								}),
-								requiredParentWidth: 800
+							requiredParentWidth: 400
+						}),
+						new SplitPane({
+							demandPane: true,
+							content: new Panel({
+								headerText: "8",
+								content: new Text({text: lorem + lorem})
 							}),
-							new sap.ui.layout.SplitPane({
-								demandPane: true,
-								content: new sap.m.Panel({
-									headerText: "1.5",
-									content: new sap.m.Text({text: lorem + lorem})
-								}),
-								requiredParentWidth: 950
+							requiredParentWidth: 500
+						}),
+						oDefaultPane,
+						new SplitPane({
+							demandPane: true,
+							content: new Panel({
+								headerText: "1",
+								content: new Text({text: lorem + lorem})
+							}),
+							requiredParentWidth: 1000,
+							layoutData: new SplitterLayoutData({
+								size: "30%"
 							})
-						]
-					}),
-					new sap.ui.layout.SplitPane({
-						demandPane: true,
-						content: new sap.m.Panel({
-							headerText: "7",
-							content: new sap.m.Text({text: lorem + lorem})
 						}),
-						requiredParentWidth: 400
-					}),
-					new sap.ui.layout.SplitPane({
-						demandPane: true,
-						content: new sap.m.Panel({
-							headerText: "8",
-							content: new sap.m.Text({text: lorem + lorem})
-						}),
-						requiredParentWidth: 500
-					}),
-					oDefaultPane,
-					new sap.ui.layout.SplitPane({
-						demandPane: true,
-						content: new sap.m.Panel({
-							headerText: "1",
-							content: new sap.m.Text({text: lorem + lorem})
-						}),
-						requiredParentWidth: 1000,
-						layoutData: new sap.ui.layout.SplitterLayoutData({
-							size: "30%"
+						new PaneContainer({
+							orientation: "Vertical",
+							panes: [
+								new SplitPane({
+									demandPane: true,
+									content:  new Panel({
+										headerText: "7 ",
+										content: new Text({text: lorem + lorem})
+									}),
+									requiredParentWidth: 400
+								}),
+								new SplitPane({
+									demandPane: true,
+									content:  new Panel({
+										headerText: "6.5",
+										content: new Text({text: lorem + lorem})
+									}),
+									requiredParentWidth: 600
+								}),
+								new SplitPane({
+									demandPane: true,
+									content: new Panel({
+										headerText: "6",
+										content: new Text({text: lorem + lorem})
+									}),
+									requiredParentWidth: 600
+								})
+							]
 						})
-					}),
-					new sap.ui.layout.PaneContainer({
-						orientation: "Vertical",
-						panes: [
-							new sap.ui.layout.SplitPane({
-								demandPane: true,
-								content:  new sap.m.Panel({
-									headerText: "7 ",
-									content: new sap.m.Text({text: lorem + lorem})
-								}),
-								requiredParentWidth: 400
-							}),
-							new sap.ui.layout.SplitPane({
-								demandPane: true,
-								content:  new sap.m.Panel({
-									headerText: "6.5",
-									content: new sap.m.Text({text: lorem + lorem})
-								}),
-								requiredParentWidth: 600
-							}),
-							new sap.ui.layout.SplitPane({
-								demandPane: true,
-								content: new sap.m.Panel({
-									headerText: "6",
-									content: new sap.m.Text({text: lorem + lorem})
-								}),
-								requiredParentWidth: 600
-							})
-						]
-					})
-				]
-			})
-		]
+					]
+				})
+			]
+		});
+
+		// oResponsiveSplitter = new ResponsiveSplitter({
+		// 	defaultPane: "default",
+		// 	rootPaneContainer: new PaneContainer({
+		// 		panes: [
+		// 			// new SplitPane({
+		// 			// 	demandPane: true,
+		// 			// 	requiredParentWidth: 1200,
+		// 			// 	content: new Panel({
+		// 			// 		headerText: "Splitter Area 1 1200"
+		// 			// 	})
+		// 			// }), new PaneContainer({
+		// 				// orientation: "Vertical",
+		// 				// panes: [
+		// 					new SplitPane( {
+		// 						demandPane: true,
+		// 						requiredParentWidth: 6000,
+		// 						content: new Panel({
+		// 							headerText: "Splitter Area 2 - Default 800"
+		// 						})
+		// 					}),
+		// 					new SplitPane("default",{
+		// 						demandPane: true,
+		// 						requiredParentWidth: 6000,
+		// 						content: new Panel({
+		// 							headerText: "Splitter Area 3 400"
+		// 						})
+		// 					}),
+
+		// 				]
+		// 			})
+		// 		// ]
+		// 	// })
+		// });
+
+		oResponsiveSplitter.placeAt("content");
+
+		// oResponsiveSplitter1.placeAt("content");
 	});
-
-	// oResponsiveSplitter = new sap.ui.layout.ResponsiveSplitter({
-	// 	defaultPane: "default",
-	// 	rootPaneContainer: new sap.ui.layout.PaneContainer({
-	// 		panes: [
-	// 			// new sap.ui.layout.SplitPane({
-	// 			// 	demandPane: true,
-	// 			// 	requiredParentWidth: 1200,
-	// 			// 	content: new sap.m.Panel({
-	// 			// 		headerText: "Splitter Area 1 1200"
-	// 			// 	})
-	// 			// }), new sap.ui.layout.PaneContainer({
-	// 				// orientation: "Vertical",
-	// 				// panes: [
-	// 					new sap.ui.layout.SplitPane( {
-	// 						demandPane: true,
-	// 						requiredParentWidth: 6000,
-	// 						content: new sap.m.Panel({
-	// 							headerText: "Splitter Area 2 - Default 800"
-	// 						})
-	// 					}),
-	// 					new sap.ui.layout.SplitPane("default",{
-	// 						demandPane: true,
-	// 						requiredParentWidth: 6000,
-	// 						content: new sap.m.Panel({
-	// 							headerText: "Splitter Area 3 400"
-	// 						})
-	// 					}),
-
-	// 				]
-	// 			})
-	// 		// ]
-	// 	// })
-	// });
-
-	oResponsiveSplitter.placeAt("content");
-
-	// oResponsiveSplitter1.placeAt("content");
-
 	</script>
 </head>
 <body class="sapUiBody">

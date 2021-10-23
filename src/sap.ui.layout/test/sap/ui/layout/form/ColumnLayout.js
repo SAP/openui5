@@ -417,7 +417,7 @@ sap.ui.require([
 					}),
 					new FormElement({
 						label: "Image",
-						fields: [new Image({src: "../../commons/images/SAPLogo.gif", width: "73px", densityAware: false})]
+						fields: [new Image({src: sap.ui.require.toUrl("sap/ui/core/mimes/logo/sap_73x36.gif"), width: "73px", densityAware: false})]
 					})
 				]
 			}),

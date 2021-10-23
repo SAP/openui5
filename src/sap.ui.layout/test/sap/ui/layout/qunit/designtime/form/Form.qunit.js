@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/m/Title",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/fl/apply/api/DelegateMediatorAPI"
+	"sap/ui/fl/apply/api/DelegateMediatorAPI",
+	"sap/base/util/uid"
 ], function (
 	elementDesigntimeTest,
 	elementActionTest,
@@ -21,7 +22,8 @@ sap.ui.define([
 	Toolbar,
 	Title,
 	JSONModel,
-	DelegateMediatorAPI
+	DelegateMediatorAPI,
+	uid
 ) {
 	"use strict";
 
@@ -88,7 +90,7 @@ sap.ui.define([
 				parameter : function(oView){
 					return {
 						label : 'New Group',
-						newControlId : oView.createId(jQuery.sap.uid()),
+						newControlId : oView.createId(uid()),
 						index : 0
 					};
 				}

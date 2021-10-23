@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/layout/library",
@@ -187,7 +187,7 @@ sap.ui.define([
 
 	QUnit.test("Title with async Theme-Parameter loading", function(assert) {
 		var fnCallback;
-		sinon.stub(Parameters, "get").callsFake(function(vName, oElement) {
+		this.stub(Parameters, "get").callsFake(function(vName, oElement) {
 			if (vName instanceof Object && !Array.isArray(vName) && Array.isArray(vName.name) && vName.name[0] === 'sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize') {
 				fnCallback = vName.callback;
 				return undefined;
@@ -211,8 +211,6 @@ sap.ui.define([
 		assert.ok(window.document.getElementById("F1--title"), "Title rendered");
 		assert.equal(jQuery("#F1--title").text(), "Test", "Title rendered");
 		assert.ok(jQuery("#F1--title").is("h1"), "Title is rendered as H1");
-
-		Parameters.get.restore();
 	});
 
 	QUnit.test("ariaLabelledBy", function(assert) {
@@ -249,8 +247,8 @@ sap.ui.define([
 	QUnit.test("addFormContainer", function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		var oFormContainer2 = new FormContainer("FC2");
-		sinon.spy(oFormContainer1, "_setEditable");
-		sinon.spy(oFormContainer2, "_setEditable");
+		this.spy(oFormContainer1, "_setEditable");
+		this.spy(oFormContainer2, "_setEditable");
 
 		oForm.addFormContainer(oFormContainer1);
 		oForm.addFormContainer(oFormContainer2);
@@ -270,8 +268,8 @@ sap.ui.define([
 	QUnit.test("insertFormContainer", function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		var oFormContainer2 = new FormContainer("FC2");
-		sinon.spy(oFormContainer1, "_setEditable");
-		sinon.spy(oFormContainer2, "_setEditable");
+		this.spy(oFormContainer1, "_setEditable");
+		this.spy(oFormContainer2, "_setEditable");
 
 		oForm.insertFormContainer(oFormContainer1, 0);
 		oForm.insertFormContainer(oFormContainer2, 0);
@@ -457,7 +455,7 @@ sap.ui.define([
 
 	QUnit.test("Title with async Theme-Parameter loading", function(assert) {
 		var fnCallback;
-		sinon.stub(Parameters, "get").callsFake(function(vName, oElement) {
+		this.stub(Parameters, "get").callsFake(function(vName, oElement) {
 			if (vName instanceof Object && !Array.isArray(vName) && Array.isArray(vName.name) && vName.name[0] === 'sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize') {
 				fnCallback = vName.callback;
 				return undefined;
@@ -483,8 +481,6 @@ sap.ui.define([
 		assert.ok(window.document.getElementById("FC1--title"), "Title rendered");
 		assert.equal(jQuery("#FC1--title").text(), "Test", "Title rendered");
 		assert.ok(jQuery("#FC1--title").is("h2"), "Title is rendered as H2");
-
-		Parameters.get.restore();
 	});
 
 	QUnit.test("ariaLabelledBy", function(assert) {
@@ -544,7 +540,7 @@ sap.ui.define([
 
 	// for FormElements and Fields just test rendering as API is tested in other qUnit tests
 	QUnit.test("Rendering", function(assert) {
-		sinon.spy(oFormLayout, "contentOnAfterRendering");
+		this.spy(oFormLayout, "contentOnAfterRendering");
 
 		var oFormContainer1 = new FormContainer("FC1");
 		var oFormElement1 = new FormElement("FE1");
@@ -640,8 +636,8 @@ sap.ui.define([
 		assert.notOk(jQuery("#F1").hasClass("sapUiFormEdit"), "Form not editable rendered");
 		assert.notOk(jQuery("#F1").attr("aria-readonly"), "aria-readonly not set");
 
-		sinon.spy(oFormContainer1, "_setEditable");
-		sinon.spy(oFormContainer2, "_setEditable");
+		this.spy(oFormContainer1, "_setEditable");
+		this.spy(oFormContainer2, "_setEditable");
 
 		oForm.setEditable(true);
 		sap.ui.getCore().applyChanges();
@@ -673,7 +669,7 @@ sap.ui.define([
 		oForm.addFormContainer(oFormContainer1);
 		sap.ui.getCore().applyChanges();
 
-		sinon.spy(oForm, "onLayoutDataChange");
+		this.spy(oForm, "onLayoutDataChange");
 		oGD.setSpan("XL12 L12 M12 S12");
 		assert.ok(oForm.onLayoutDataChange.called, "LayoutDataChanged calles on Form");
 	});

@@ -1,4 +1,4 @@
-/*global QUnit*/
+/*global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/core/Title",
@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
 	"sap/ui/fl/Change",
-	"sap/base/Log",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/base/Log"
 ],
 function (
 	Title,
@@ -23,15 +22,17 @@ function (
 	FormContainer,
 	FormElement,
 	Change,
-	Log,
-	sinon
+	Log
 ) {
 	'use strict';
 
-	var sandbox = sinon.createSandbox();
-
 	QUnit.module("AddFormContainer for Form", {
 		beforeEach: function () {
+			/* create a sandbox similar to the standard one to ease a later migration */
+			this.sandbox = sinon.createSandbox({
+				injectInto: this,
+				properties: ["spy", "stub", "mock"]
+			});
 			this.oMockedAppComponent = {
 				getLocalId: function () {
 					return undefined;
@@ -42,7 +43,7 @@ function (
 			if (this.oForm) {
 				this.oForm.destroy();
 			}
-			sandbox.restore();
+			this.sandbox.restore();
 		}
 	}, function() {
 		QUnit.test('Add the same smart form container to Form two times', function (assert) {
@@ -72,7 +73,7 @@ function (
 				view : oView,
 				appComponent : this.oMockedAppComponent
 			};
-			var oLogErrorSpy = sandbox.spy(Log, "error");
+			var oLogErrorSpy = this.spy(Log, "error");
 
 			assert.equal(this.oForm.getFormContainers().length, 1,
 			"the form has only one form element in the beginning");

@@ -152,7 +152,7 @@ sap.ui.require([
 	var oLayout1 = new ResponsiveLayout("L1");
 
 	var oForm1 = new Form("F1",{
-		title: new Title({text: "Form Title", icon: "../../commons/images/help.gif", tooltip: "Title tooltip", emphasized: true}),
+		title: new Title({text: "Form Title", icon: "sap-icon://sys-help", tooltip: "Title tooltip", emphasized: true}),
 		editable: true,
 		layout: oLayout1,
 		formContainers: [
@@ -193,7 +193,7 @@ sap.ui.require([
 				]
 			}),
 			new FormContainer("C2",{
-				title: new Title({text: "Address", icon: "../../commons/images/mail.gif", tooltip: "Title tooltip", level: CoreLib.TitleLevel.H4, emphasized: true}),
+				title: new Title({text: "Address", icon: "sap-icon://email", tooltip: "Title tooltip", level: CoreLib.TitleLevel.H4, emphasized: true}),
 				expandable: true,
 				formElements: [
 					new FormElement({

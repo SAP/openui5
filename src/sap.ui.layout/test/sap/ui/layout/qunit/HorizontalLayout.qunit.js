@@ -2,61 +2,69 @@
 
 sap.ui.define([
 	"sap/ui/layout/HorizontalLayout",
-	"sap/ui/commons/Button",
-	"sap/ui/commons/TextField",
-	"sap/ui/commons/Label",
+	"sap/m/Button",
+	"sap/m/Input",
+	"sap/m/Label",
 	"sap/ui/Device",
-	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(HorizontalLayout, Button, TextField, Label, Device, waitForThemeApplied) {
+	"sap/ui/thirdparty/jquery"
+], function(HorizontalLayout, Button, Input, Label, Device, jQuery) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
-	var oLayout1 = new HorizontalLayout("Layout1", {
-		content: [new Button("B1",{text:"X", tooltip:"Button tooltip"}),
-				new TextField("TF1",{value:"Test",width:"50px"}),
-				new Button("B2",{text:"Y", tooltip:"Button tooltip"})]
+	QUnit.module("", {
+		beforeEach: function() {
+			this.oLayout1 = new HorizontalLayout("Layout1", {
+				content: [new Button("B1",{text:"X", tooltip:"Button tooltip"}),
+						new Input("IN1",{value:"Test",width:"50px"}),
+						new Button("B2",{text:"Y", tooltip:"Button tooltip"})]
+			}).placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oLayout1.destroy();
+		}
 	});
-	oLayout1.placeAt(DOM_RENDER_LOCATION);
-
 
 	QUnit.test("Children Rendered", function(assert) {
-		assert.ok(jQuery.sap.domById('B1'), "Button should be rendered");
-		assert.ok(jQuery.sap.domById('TF1'), "TextField should be rendered");
-		assert.ok(jQuery.sap.domById('B2'), "Second button should be rendered");
+		assert.ok(document.getElementById('B1'), "Button should be rendered");
+		assert.ok(document.getElementById('IN1'), "Input should be rendered");
+		assert.ok(document.getElementById('B2'), "Second button should be rendered");
 	});
 
 	QUnit.test("Layout", function(assert) {
-		var oButton = jQuery.sap.byId('B1');
-		var oText = jQuery.sap.byId('TF1');
-		var oImage = jQuery.sap.byId('B2');
-		assert.ok(oButton.offset().left < oText.offset().left, "Left offset of Button < TextField");
-		assert.ok(oText.offset().left < oImage.offset().left, "Left offset of TextField < Second button");
+		var oButton = jQuery('#B1');
+		var oInput = jQuery('#IN1');
+		var oImage = jQuery('#B2');
+		assert.ok(oButton.offset().left < oInput.offset().left, "Left offset of Button < Input");
+		assert.ok(oInput.offset().left < oImage.offset().left, "Left offset of Input < Second button");
 
 		// offset() returns fractional numbers on Firefox Mac, so use offsetLeft instead
-		assert.equal(oText[0].offsetLeft, oButton[0].offsetLeft + oButton[0].offsetWidth, "TextField should be exactly right of Button");
+		assert.equal(oInput[0].offsetLeft, oButton[0].offsetLeft + oButton[0].offsetWidth, "Input should be exactly right of Button");
 	});
 
 	QUnit.test("NoWrap", function(assert) {
-		sap.ui.getCore().byId("TF1").setWidth("5000px");
+		this.oLayout1.setAllowWrapping(false);
+		sap.ui.getCore().byId("IN1").setWidth("5000px");
 		sap.ui.getCore().applyChanges();
 
-		var oButton = jQuery.sap.byId('B1');
-		var oText = jQuery.sap.byId('TF1');
-		var oImage = jQuery.sap.byId('B2');
-		assert.ok(oButton.offset().left < oText.offset().left, "Left offset of Button < TextField");
-		assert.ok(oText.offset().left < oImage.offset().left, "Left offset of TextField < Second button");
+		var oButton = jQuery('#B1');
+		var oInput = jQuery('#IN1');
+		var oImage = jQuery('#B2');
+		assert.ok(oButton.offset().left < oInput.offset().left, "Left offset of Button < Input");
+		assert.ok(oInput.offset().left < oImage.offset().left, "Left offset of Input < Second button");
 	});
 
 	QUnit.test("Wrapping", function(assert) {
-		oLayout1.setAllowWrapping(true);
+		this.oLayout1.setAllowWrapping(true);
+		sap.ui.getCore().byId("IN1").setWidth("5000px");
 		sap.ui.getCore().applyChanges();
 
-		var oButton = jQuery.sap.byId('B1');
-		var oText = jQuery.sap.byId('TF1');
-		var oImage = jQuery.sap.byId('B2');
-		assert.equal(oText.offset().left, oButton.offset().left, "Left offset of Button == TextField");
-		assert.equal(oImage.offset().left, oText.offset().left, "Left offset of TextField == Second button");
+		var oButton = jQuery('#B1');
+		var oInput = jQuery('#IN1');
+		var oImage = jQuery('#B2');
+		assert.equal(oInput.offset().left, oButton.offset().left, "Left offset of Button == Input");
+		assert.equal(oImage.offset().left, oInput.offset().left, "Left offset of Input == Second button");
 	});
 
 	QUnit.test("Container Padding Classes", function (assert) {
@@ -138,6 +146,4 @@ sap.ui.define([
 		assert.ok(oInfo.children && oInfo.children.length == 2, "Children");
 		oLayout.destroy();
 	});
-
-	return waitForThemeApplied();
 });
