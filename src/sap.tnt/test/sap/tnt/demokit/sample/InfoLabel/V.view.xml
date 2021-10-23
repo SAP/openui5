@@ -6,74 +6,47 @@
 	xmlns:tnt="sap.tnt"
 	height="100%">
 	<ScrollContainer vertical="true" height="100%">
-		<f:Form id="FormDisplay" editable="false">
-			<f:layout>
-				<f:ResponsiveGridLayout
-					labelSpanXL="3"
-					labelSpanL="3"
-					labelSpanM="3"
-					labelSpanS="12"
-					adjustLabelSpan="false"
-					emptySpanXL="4"
-					emptySpanL="4"
-					emptySpanM="4"
-					emptySpanS="0"
-					columnsXL="1"
-					columnsL="1"
-					columnsM="1"
-					singleContainerFullSize="false" />
-			</f:layout>
-			<f:formContainers>
-				<f:FormContainer>
-					<f:formElements>
-						<f:FormElement label="Color Scheme 1">
-							<f:fields>
-								<tnt:InfoLabel id="il1" text="2" renderMode="Narrow" colorScheme="1" displayOnly= "true" />
-							</f:fields>
-						</f:FormElement>
-						<f:FormElement label="Color Scheme 2">
-							<f:fields>
-								<tnt:InfoLabel id="il2" text="5" renderMode="Narrow" colorScheme="2" displayOnly= "true" />
-							</f:fields>
-						</f:FormElement>
-						<f:FormElement label="Color Scheme 3">
-							<f:fields>
-								<tnt:InfoLabel id="il3" text="12.5" renderMode="Narrow" colorScheme="3" displayOnly= "true" />
-							</f:fields>
-						</f:FormElement>
-						<f:FormElement label="Color Scheme 4">
-							<f:fields>
-								<tnt:InfoLabel id="il4" text="2k" renderMode="Narrow" colorScheme="4" displayOnly= "true" />
-							</f:fields>
-						</f:FormElement>
-						<f:FormElement label="Color Scheme 5">
-							<f:fields>
-								<tnt:InfoLabel id="il5" text="text info label" renderMode="Loose" colorScheme="5" displayOnly= "true" />
-							</f:fields>
-						</f:FormElement>
-						<f:FormElement label="Color Scheme 6">
-							<f:fields>
-								<tnt:InfoLabel id="il6" text="just a long info label" colorScheme="6" width = "140px" displayOnly= "true" />
-							</f:fields>
-						</f:FormElement>
-						<f:FormElement label="Color Scheme 7">
-							<f:fields>
-								<tnt:InfoLabel id="il7" text="label shorter than width" colorScheme="7" width="250px" displayOnly= "true" />
-							</f:fields>
-						</f:FormElement>
-						<f:FormElement label="Color Scheme 8">
-							<f:fields>
-								<tnt:InfoLabel id="il8" text="with icon" colorScheme="8" displayOnly= "true" icon="sap-icon://home-share" />
-							</f:fields>
-						</f:FormElement>
-						<f:FormElement label="Color Scheme 9">
-							<f:fields>
-								<tnt:InfoLabel id="il9" text="in warehouse" colorScheme="9" displayOnly= "true" />
-							</f:fields>
-						</f:FormElement>
-					</f:formElements>
-				</f:FormContainer>
-			</f:formContainers>
-		</f:Form>
+		<FlexBox direction="Column" alignItems="Start" class="sapUiMediumMargin">
+			<FlexBox direction="Row" alignItems="Start" class="sapUiTinyMarginBottom">
+				<Text text="Color Scheme 1" class="sapUiTinyMarginEnd"/>
+				<tnt:InfoLabel id="il1" text="2" renderMode="Narrow" colorScheme="1"/>
+			</FlexBox>
+			<FlexBox direction="Row" alignItems="Start"  class="sapUiTinyMarginBottom">
+				<Text text="Color Scheme 2" class="sapUiTinyMarginEnd"/>
+				<tnt:InfoLabel id="il2" text="5" renderMode="Narrow" colorScheme="2"/>
+			</FlexBox>
+			<FlexBox direction="Row" alignItems="Start"  class="sapUiTinyMarginBottom">
+				<Text text="Color Scheme 3" class="sapUiTinyMarginEnd"/>
+				<tnt:InfoLabel id="il3" text="12.5" renderMode="Narrow" colorScheme="3"/>
+			</FlexBox>
+			<FlexBox direction="Row" alignItems="Start" class="sapUiTinyMarginBottom">
+				<Text text="Color Scheme 4" class="sapUiTinyMarginEnd"/>
+				<tnt:InfoLabel id="il4" text="2k" renderMode="Narrow" colorScheme="4"/>
+			</FlexBox>
+			<FlexBox direction="Row" alignItems="Start" class="sapUiTinyMarginBottom">
+				<Text text="Color Scheme 5" class="sapUiTinyMarginEnd"/>
+				<tnt:InfoLabel id="il5" text="text info label" renderMode="Loose" colorScheme="5" />
+			</FlexBox>
+			<FlexBox direction="Row" alignItems="Start" class="sapUiTinyMarginBottom">
+				<Text text="Color Scheme 6" class="sapUiTinyMarginEnd"/>
+				<tnt:InfoLabel id="il6" text="just a long info label" colorScheme="6" width = "140px"/>
+			</FlexBox>
+			<FlexBox direction="Row" alignItems="Start" class="sapUiTinyMarginBottom">
+				<Text text="Color Scheme 7" class="sapUiTinyMarginEnd"/>
+				<tnt:InfoLabel id="il7" text="label shorter than width" colorScheme="7" width="250px"/>
+			</FlexBox>
+			<FlexBox direction="Row" alignItems="Start" class="sapUiTinyMarginBottom">
+				<Text text="Color Scheme 8" class="sapUiTinyMarginEnd"/>
+				<tnt:InfoLabel id="il8" text="with icon" colorScheme="8" icon="sap-icon://home-share" />
+			</FlexBox>
+			<FlexBox direction="Row" alignItems="Start" class="sapUiTinyMarginBottom">
+				<Text text="Color Scheme 9" class="sapUiTinyMarginEnd"/>
+				<tnt:InfoLabel id="il9" text="in warehouse" colorScheme="9"/>
+			</FlexBox>
+			<FlexBox direction="Row" alignItems="Start" class="sapUiTinyMarginBottom">
+				<Text text="Any Color Scheme in Display Only Mode" class="sapUiTinyMarginEnd"/>
+				<tnt:InfoLabel id="il10" text="display only in form" colorScheme="1" displayOnly= "true" />
+			</FlexBox>
+		</FlexBox>
 	</ScrollContainer>
 </mvc:View>
