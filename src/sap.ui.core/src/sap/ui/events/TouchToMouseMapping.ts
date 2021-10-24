@@ -1,5 +1,5 @@
 export class TouchToMouseMapping {
-    constructor(oContext: any) {
+    static init(oContext: any) {
         var oDocument = oContext, bHandleEvent = false, oTarget = null, bIsMoved = false, iStartX, iStartY, i = 0;
         var aMouseEvents = ["mousedown", "mouseover", "mouseup", "mouseout", "click"];
         var fireMouseEvent = function (sType, oEvent) {

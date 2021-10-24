@@ -3,7 +3,7 @@ import JSONModel from "sap/ui/model/json/JSONModel";
 import Log from "sap/base/Log";
 import UriParameters from "sap/base/util/UriParameters";
 export class oMockServerInterface {
-    constructor(oOptionsParameter: any) {
+    static init(oOptionsParameter: any) {
         var oOptions = oOptionsParameter || {};
         return new Promise(function (fnResolve, fnReject) {
             var sManifestUrl = sap.ui.require.toUrl(_sAppPath + "manifest.json"), oManifestModel = new JSONModel(sManifestUrl);

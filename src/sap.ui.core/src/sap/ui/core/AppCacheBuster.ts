@@ -27,7 +27,7 @@ export class AppCacheBuster {
             }
         }
     }
-    constructor(...args: any) {
+    static init(...args: any) {
         oSession.active = true;
         fnValidateProperty = ManagedObject.prototype.validateProperty;
         descScriptSrc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, "src");

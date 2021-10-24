@@ -3,48 +3,112 @@ import assert from "sap/base/assert";
 import Log from "sap/base/Log";
 import isPlainObject from "sap/base/util/isPlainObject";
 import resolveReference from "sap/base/util/resolveReference";
-var DataType = function () {
-    throw new Error();
-};
-DataType.prototype.getName = function () {
-    return undefined;
-};
-DataType.prototype.getBaseType = function () {
-    return undefined;
-};
-DataType.prototype.getPrimitiveType = function () {
-    var oType = this;
-    while (oType.getBaseType()) {
-        oType = oType.getBaseType();
+export class DataType {
+    getName(...args: any) {
+        return undefined;
     }
-    return oType;
-};
-DataType.prototype.getComponentType = function () {
-    return undefined;
-};
-DataType.prototype.getDefaultValue = function () {
-    return undefined;
-};
-DataType.prototype.isArrayType = function () {
-    return false;
-};
-DataType.prototype.isEnumType = function () {
-    return false;
-};
-DataType.prototype.getEnumValues = function () {
-    return undefined;
-};
-DataType.prototype.parseValue = function (sValue) {
-    return sValue;
-};
+    getBaseType(...args: any) {
+        return undefined;
+    }
+    getPrimitiveType(...args: any) {
+        var oType = this;
+        while (oType.getBaseType()) {
+            oType = oType.getBaseType();
+        }
+        return oType;
+    }
+    getComponentType(...args: any) {
+        return undefined;
+    }
+    getDefaultValue(...args: any) {
+        return undefined;
+    }
+    isArrayType(...args: any) {
+        return false;
+    }
+    isEnumType(...args: any) {
+        return false;
+    }
+    getEnumValues(...args: any) {
+        return undefined;
+    }
+    parseValue(sValue: any) {
+        return sValue;
+    }
+    setNormalizer(fnNormalizer: any) {
+        assert(typeof fnNormalizer === "function", "DataType.setNormalizer: fnNormalizer must be a function");
+        this._fnNormalizer = typeof fnNormalizer === "function" ? fnNormalizer : undefined;
+    }
+    normalize(oValue: any) {
+        return this._fnNormalizer ? this._fnNormalizer(oValue) : oValue;
+    }
+    static getType(sTypeName: any) {
+        assert(sTypeName && typeof sTypeName === "string", "sTypeName must be a non-empty string");
+        var oType = mTypes[sTypeName];
+        if (!(oType instanceof DataType)) {
+            if (sTypeName.indexOf("[]", sTypeName.length - 2) > 0) {
+                var sComponentTypeName = sTypeName.slice(0, -2), oComponentType = this.getType(sComponentTypeName);
+                oType = oComponentType && createArrayType(oComponentType);
+                if (oType) {
+                    mTypes[sTypeName] = oType;
+                }
+            }
+            else if (sTypeName !== "array") {
+                oType = ObjectPath.get(sTypeName);
+                if (oType instanceof DataType) {
+                    mTypes[sTypeName] = oType;
+                }
+                else if (isPlainObject(oType)) {
+                    oType = mTypes[sTypeName] = createEnumType(sTypeName, oType);
+                }
+                else if (oType) {
+                    Log.warning("'" + sTypeName + "' is not a valid data type. Falling back to type 'any'.");
+                    oType = mTypes.any;
+                }
+                else {
+                    Log.error("data type '" + sTypeName + "' could not be found.");
+                    oType = undefined;
+                }
+            }
+        }
+        return oType;
+    }
+    static createType(sName: any, mSettings: any, vBase: any) {
+        assert(typeof sName === "string" && sName, "DataType.createType: type name must be a non-empty string");
+        assert(vBase == null || vBase instanceof DataType || typeof vBase === "string" && vBase, "DataType.createType: base type must be empty or a DataType or a non-empty string");
+        if (/[\[\]]/.test(sName)) {
+            Log.error("DataType.createType: array types ('something[]') must not be created with createType, " + "they're created on-the-fly by DataType.getType");
+        }
+        if (typeof vBase === "string") {
+            vBase = DataType.getType(vBase);
+        }
+        vBase = vBase || mTypes.any;
+        if (vBase.isArrayType() || vBase.isEnumType()) {
+            Log.error("DataType.createType: base type must not be an array- or enum-type");
+        }
+        if (sName === "array" || mTypes[sName] instanceof DataType) {
+            if (sName === "array" || mTypes[sName].getBaseType() == null) {
+                throw new Error("DataType.createType: primitive or hidden type " + sName + " can't be re-defined");
+            }
+            Log.warning("DataTypes.createType: type " + sName + " is redefined. " + "This is an unsupported usage of DataType and might cause issues.");
+        }
+        var oType = mTypes[sName] = createType(sName, mSettings, vBase);
+        return oType;
+    }
+    static registerInterfaceTypes(aTypes: any) {
+        aTypes.forEach(function (sType) {
+            oInterfaces.add(sType);
+            ObjectPath.set(sType, sType);
+        });
+    }
+    static isInterfaceType(sType: any) {
+        return oInterfaces.has(sType);
+    }
+    constructor(...args: any) {
+        throw new Error();
+    }
+}
 DataType.prototype.isValid = undefined;
-DataType.prototype.setNormalizer = function (fnNormalizer) {
-    assert(typeof fnNormalizer === "function", "DataType.setNormalizer: fnNormalizer must be a function");
-    this._fnNormalizer = typeof fnNormalizer === "function" ? fnNormalizer : undefined;
-};
-DataType.prototype.normalize = function (oValue) {
-    return this._fnNormalizer ? this._fnNormalizer(oValue) : oValue;
-};
 function createType(sName, mSettings, oBase) {
     mSettings = mSettings || {};
     var oBaseObject = oBase || DataType.prototype;
@@ -227,66 +291,4 @@ function createEnumType(sTypeName, oEnum) {
     };
     return oType;
 }
-DataType.getType = function (sTypeName) {
-    assert(sTypeName && typeof sTypeName === "string", "sTypeName must be a non-empty string");
-    var oType = mTypes[sTypeName];
-    if (!(oType instanceof DataType)) {
-        if (sTypeName.indexOf("[]", sTypeName.length - 2) > 0) {
-            var sComponentTypeName = sTypeName.slice(0, -2), oComponentType = this.getType(sComponentTypeName);
-            oType = oComponentType && createArrayType(oComponentType);
-            if (oType) {
-                mTypes[sTypeName] = oType;
-            }
-        }
-        else if (sTypeName !== "array") {
-            oType = ObjectPath.get(sTypeName);
-            if (oType instanceof DataType) {
-                mTypes[sTypeName] = oType;
-            }
-            else if (isPlainObject(oType)) {
-                oType = mTypes[sTypeName] = createEnumType(sTypeName, oType);
-            }
-            else if (oType) {
-                Log.warning("'" + sTypeName + "' is not a valid data type. Falling back to type 'any'.");
-                oType = mTypes.any;
-            }
-            else {
-                Log.error("data type '" + sTypeName + "' could not be found.");
-                oType = undefined;
-            }
-        }
-    }
-    return oType;
-};
-DataType.createType = function (sName, mSettings, vBase) {
-    assert(typeof sName === "string" && sName, "DataType.createType: type name must be a non-empty string");
-    assert(vBase == null || vBase instanceof DataType || typeof vBase === "string" && vBase, "DataType.createType: base type must be empty or a DataType or a non-empty string");
-    if (/[\[\]]/.test(sName)) {
-        Log.error("DataType.createType: array types ('something[]') must not be created with createType, " + "they're created on-the-fly by DataType.getType");
-    }
-    if (typeof vBase === "string") {
-        vBase = DataType.getType(vBase);
-    }
-    vBase = vBase || mTypes.any;
-    if (vBase.isArrayType() || vBase.isEnumType()) {
-        Log.error("DataType.createType: base type must not be an array- or enum-type");
-    }
-    if (sName === "array" || mTypes[sName] instanceof DataType) {
-        if (sName === "array" || mTypes[sName].getBaseType() == null) {
-            throw new Error("DataType.createType: primitive or hidden type " + sName + " can't be re-defined");
-        }
-        Log.warning("DataTypes.createType: type " + sName + " is redefined. " + "This is an unsupported usage of DataType and might cause issues.");
-    }
-    var oType = mTypes[sName] = createType(sName, mSettings, vBase);
-    return oType;
-};
 var oInterfaces = new Set();
-DataType.registerInterfaceTypes = function (aTypes) {
-    aTypes.forEach(function (sType) {
-        oInterfaces.add(sType);
-        ObjectPath.set(sType, sType);
-    });
-};
-DataType.isInterfaceType = function (sType) {
-    return oInterfaces.has(sType);
-};

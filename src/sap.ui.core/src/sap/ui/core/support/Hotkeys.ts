@@ -1,6 +1,6 @@
 import Log from "sap/base/Log";
 export class oHotkeys {
-    constructor(getModuleSystemInfo: any, oCfgData: any) {
+    static init(getModuleSystemInfo: any, oCfgData: any) {
         var bLeftAlt = false;
         document.addEventListener("keydown", function (e) {
             try {

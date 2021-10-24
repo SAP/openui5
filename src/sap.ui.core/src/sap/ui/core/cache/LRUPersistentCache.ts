@@ -1,7 +1,7 @@
 import Log from "sap/base/Log";
 import Measurement from "sap/ui/performance/Measurement";
 export class LRUPersistentCache {
-    constructor(...args: any) {
+    static init(...args: any) {
         this._metadata = {};
         this._mru = -1;
         this._lru = -1;

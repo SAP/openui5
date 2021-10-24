@@ -6,10 +6,402 @@ import ObjectPath from "sap/base/util/ObjectPath";
 import escapeRegExp from "sap/base/strings/escapeRegExp";
 import merge from "sap/base/util/merge";
 import isPlainObject from "sap/base/util/isPlainObject";
-var ManagedObjectMetadata = function (sClassName, oClassInfo) {
-    Metadata.apply(this, arguments);
-};
-ManagedObjectMetadata.prototype = Object.create(Metadata.prototype);
+export class ManagedObjectMetadata {
+    static prototype = Object.create(Metadata.prototype);
+    private static _guessSingularName = guessSingularName;
+    static Kind = Kind;
+    static uid = uid;
+    applySettings(oClassInfo: any) {
+        var that = this, oStaticInfo = oClassInfo.metadata;
+        Metadata.prototype.applySettings.call(this, oClassInfo);
+        function normalize(mInfoMap, FNClass) {
+            var mResult = {}, sName;
+            if (mInfoMap) {
+                for (sName in mInfoMap) {
+                    if (hasOwnProperty.call(mInfoMap, sName)) {
+                        mResult[sName] = new FNClass(that, sName, mInfoMap[sName]);
+                    }
+                }
+            }
+            return mResult;
+        }
+        function filter(mInfoMap, bPublic) {
+            var mResult = {}, sName;
+            for (sName in mInfoMap) {
+                if (bPublic === (mInfoMap[sName].visibility === "public")) {
+                    mResult[sName] = mInfoMap[sName];
+                }
+            }
+            return mResult;
+        }
+        var rLibName = /([a-z][^.]*(?:\.[a-z][^.]*)*)\./;
+        function defaultLibName(sName) {
+            var m = rLibName.exec(sName);
+            return (m && m[1]) || "";
+        }
+        this._sLibraryName = oStaticInfo.library || defaultLibName(this.getName());
+        this._mSpecialSettings = normalize(oStaticInfo.specialSettings, this.metaFactorySpecialSetting);
+        var mAllProperties = normalize(oStaticInfo.properties, this.metaFactoryProperty);
+        this._mProperties = filter(mAllProperties, true);
+        this._mPrivateProperties = filter(mAllProperties, false);
+        var mAllAggregations = normalize(oStaticInfo.aggregations, this.metaFactoryAggregation);
+        this._mAggregations = filter(mAllAggregations, true);
+        this._mPrivateAggregations = filter(mAllAggregations, false);
+        this._sDefaultAggregation = oStaticInfo.defaultAggregation || null;
+        this._sDefaultProperty = oStaticInfo.defaultProperty || null;
+        var mAllAssociations = normalize(oStaticInfo.associations, this.metaFactoryAssociation);
+        this._mAssociations = filter(mAllAssociations, true);
+        this._mPrivateAssociations = filter(mAllAssociations, false);
+        this._mEvents = normalize(oStaticInfo.events, this.metaFactoryEvent);
+        this._oDesignTime = oClassInfo.metadata["designtime"] || oClassInfo.metadata["designTime"];
+        this._sProvider = oClassInfo.metadata["provider"];
+        if (oClassInfo.metadata.__version > 1) {
+            this.generateAccessors();
+        }
+    }
+    afterApplySettings(...args: any) {
+        Metadata.prototype.afterApplySettings.call(this);
+        var oParent = this.getParent();
+        if (oParent instanceof ManagedObjectMetadata) {
+            this._mAllEvents = Object.assign({}, oParent._mAllEvents, this._mEvents);
+            this._mAllPrivateProperties = Object.assign({}, oParent._mAllPrivateProperties, this._mPrivateProperties);
+            this._mAllProperties = Object.assign({}, oParent._mAllProperties, this._mProperties);
+            this._mAllPrivateAggregations = Object.assign({}, oParent._mAllPrivateAggregations, this._mPrivateAggregations);
+            this._mAllAggregations = Object.assign({}, oParent._mAllAggregations, this._mAggregations);
+            this._mAllPrivateAssociations = Object.assign({}, oParent._mAllPrivateAssociations, this._mPrivateAssociations);
+            this._mAllAssociations = Object.assign({}, oParent._mAllAssociations, this._mAssociations);
+            this._sDefaultAggregation = this._sDefaultAggregation || oParent._sDefaultAggregation;
+            this._sDefaultProperty = this._sDefaultProperty || oParent._sDefaultProperty;
+            this._mAllSpecialSettings = Object.assign({}, oParent._mAllSpecialSettings, this._mSpecialSettings);
+            this._sProvider = this._sProvider || oParent._sProvider;
+        }
+        else {
+            this._mAllEvents = this._mEvents;
+            this._mAllPrivateProperties = this._mPrivateProperties;
+            this._mAllProperties = this._mProperties;
+            this._mAllPrivateAggregations = this._mPrivateAggregations;
+            this._mAllAggregations = this._mAggregations;
+            this._mAllPrivateAssociations = this._mPrivateAssociations;
+            this._mAllAssociations = this._mAssociations;
+            this._mAllSpecialSettings = this._mSpecialSettings;
+        }
+    }
+    getLibraryName(...args: any) {
+        return this._sLibraryName;
+    }
+    addProperty(sName: any, oInfo: any) {
+        var oProp = this._mProperties[sName] = new Property(this, sName, oInfo);
+        if (!this._mAllProperties[sName]) {
+            this._mAllProperties[sName] = oProp;
+        }
+        if (this._fnPropertyBagFactory) {
+            this._fnPropertyBagFactory.prototype[sName] = oProp.getDefaultValue();
+        }
+    }
+    hasProperty(sName: any) {
+        return !!this._mAllProperties[sName];
+    }
+    getProperty(sName: any) {
+        var oProp = this._mAllProperties[sName];
+        return typeof oProp === "object" ? oProp : undefined;
+    }
+    getProperties(...args: any) {
+        return this._mProperties;
+    }
+    getAllProperties(...args: any) {
+        return this._mAllProperties;
+    }
+    getAllPrivateProperties(...args: any) {
+        return this._mAllPrivateProperties;
+    }
+    getManagedProperty(sName: any) {
+        sName = sName || this._sDefaultProperty;
+        var oProp = sName ? this._mAllProperties[sName] || this._mAllPrivateProperties[sName] : undefined;
+        return typeof oProp === "object" ? oProp : undefined;
+    }
+    getDefaultPropertyName(...args: any) {
+        return this._sDefaultProperty;
+    }
+    getDefaultProperty(...args: any) {
+        return this.getProperty(this.getDefaultPropertyName());
+    }
+    hasAggregation(sName: any) {
+        return !!this._mAllAggregations[sName];
+    }
+    getAggregation(sName: any) {
+        sName = sName || this._sDefaultAggregation;
+        var oAggr = sName ? this._mAllAggregations[sName] : undefined;
+        return typeof oAggr === "object" ? oAggr : undefined;
+    }
+    getAggregations(...args: any) {
+        return this._mAggregations;
+    }
+    getAllAggregations(...args: any) {
+        return this._mAllAggregations;
+    }
+    getAllPrivateAggregations(...args: any) {
+        return this._mAllPrivateAggregations;
+    }
+    getManagedAggregation(sAggregationName: any) {
+        sAggregationName = sAggregationName || this._sDefaultAggregation;
+        var oAggr = sAggregationName ? this._mAllAggregations[sAggregationName] || this._mAllPrivateAggregations[sAggregationName] : undefined;
+        return typeof oAggr === "object" ? oAggr : undefined;
+    }
+    getDefaultAggregationName(...args: any) {
+        return this._sDefaultAggregation;
+    }
+    getDefaultAggregation(...args: any) {
+        return this.getAggregation();
+    }
+    forwardAggregation(sForwardedSourceAggregation: any, mOptions: any) {
+        var oAggregation = this.getAggregation(sForwardedSourceAggregation);
+        if (!oAggregation) {
+            throw new Error("aggregation " + sForwardedSourceAggregation + " does not exist");
+        }
+        if (!mOptions || !mOptions.aggregation || !(mOptions.idSuffix || mOptions.getter) || (mOptions.idSuffix && mOptions.getter)) {
+            throw new Error("an 'mOptions' object with 'aggregation' property and either 'idSuffix' or 'getter' property (but not both) must be given" + " but does not exist");
+        }
+        if (oAggregation._oParent === this) {
+            oAggregation.forwarding = mOptions;
+            oAggregation._oForwarder = new AggregationForwarder(oAggregation);
+        }
+        else {
+            oAggregation = new this.metaFactoryAggregation(this, sForwardedSourceAggregation, {
+                type: oAggregation.type,
+                altTypes: oAggregation.altTypes,
+                multiple: oAggregation.multiple,
+                singularName: oAggregation.singularName,
+                bindable: oAggregation.bindable,
+                deprecated: oAggregation.deprecated,
+                visibility: oAggregation.visibility,
+                selector: oAggregation.selector,
+                forwarding: mOptions
+            });
+            this._mAggregations[sForwardedSourceAggregation] = this._mAllAggregations[sForwardedSourceAggregation] = oAggregation;
+        }
+    }
+    getAggregationForwarder(sAggregationName: any) {
+        var oAggregation = this._mAllAggregations[sAggregationName];
+        return oAggregation ? oAggregation._oForwarder : undefined;
+    }
+    getDefaultPropertyName(...args: any) {
+        return this._sDefaultProperty;
+    }
+    getDefaultProperty(...args: any) {
+        return this.getProperty(this.getDefaultPropertyName());
+    }
+    getPropertyLikeSetting(sName: any) {
+        var oProp = this._mAllProperties[sName];
+        if (typeof oProp === "object") {
+            return oProp;
+        }
+        oProp = this._mAllAggregations[sName];
+        return (typeof oProp === "object" && oProp.altTypes && oProp.altTypes.length > 0) ? oProp : undefined;
+    }
+    hasAssociation(sName: any) {
+        return !!this._mAllAssociations[sName];
+    }
+    getAssociation(sName: any) {
+        var oAssoc = this._mAllAssociations[sName];
+        return typeof oAssoc === "object" ? oAssoc : undefined;
+    }
+    getAssociations(...args: any) {
+        return this._mAssociations;
+    }
+    getAllAssociations(...args: any) {
+        return this._mAllAssociations;
+    }
+    getAllPrivateAssociations(...args: any) {
+        return this._mAllPrivateAssociations;
+    }
+    getManagedAssociation(sName: any) {
+        var oAggr = this._mAllAssociations[sName] || this._mAllPrivateAssociations[sName];
+        return typeof oAggr === "object" ? oAggr : undefined;
+    }
+    hasEvent(sName: any) {
+        return !!this._mAllEvents[sName];
+    }
+    getEvent(sName: any) {
+        var oEvent = this._mAllEvents[sName];
+        return typeof oEvent === "object" ? oEvent : undefined;
+    }
+    getEvents(...args: any) {
+        return this._mEvents;
+    }
+    getAllEvents(...args: any) {
+        return this._mAllEvents;
+    }
+    addSpecialSetting(sName: any, oInfo: any) {
+        var oSS = new SpecialSetting(this, sName, oInfo);
+        this._mSpecialSettings[sName] = oSS;
+        if (!this._mAllSpecialSettings[sName]) {
+            this._mAllSpecialSettings[sName] = oSS;
+        }
+    }
+    hasSpecialSetting(sName: any) {
+        return !!this._mAllSpecialSettings[sName];
+    }
+    getPropertyDefaults(...args: any) {
+        var mDefaults = this._mDefaults, s;
+        if (mDefaults) {
+            return mDefaults;
+        }
+        if (this.getParent() instanceof ManagedObjectMetadata) {
+            mDefaults = Object.assign({}, this.getParent().getPropertyDefaults());
+        }
+        else {
+            mDefaults = {};
+        }
+        for (s in this._mProperties) {
+            mDefaults[s] = this._mProperties[s].getDefaultValue();
+        }
+        for (s in this._mPrivateProperties) {
+            mDefaults[s] = this._mPrivateProperties[s].getDefaultValue();
+        }
+        this._mDefaults = mDefaults;
+        return mDefaults;
+    }
+    createPropertyBag(...args: any) {
+        if (!this._fnPropertyBagFactory) {
+            this._fnPropertyBagFactory = function PropertyBag() { };
+            this._fnPropertyBagFactory.prototype = this.getPropertyDefaults();
+        }
+        return new (this._fnPropertyBagFactory)();
+    }
+    getJSONKeys(...args: any) {
+        if (this._mJSONKeys) {
+            return this._mJSONKeys;
+        }
+        var mAllSettings = {}, mJSONKeys = {};
+        function addKeys(m) {
+            var sName, oInfo, oPrevInfo;
+            for (sName in m) {
+                oInfo = m[sName];
+                oPrevInfo = mAllSettings[sName];
+                if (!oPrevInfo || oInfo._iKind < oPrevInfo._iKind) {
+                    mAllSettings[sName] = mJSONKeys[sName] = oInfo;
+                }
+                mJSONKeys[oInfo._sUID] = oInfo;
+            }
+        }
+        addKeys(this._mAllSpecialSettings);
+        addKeys(this.getAllProperties());
+        addKeys(this.getAllAggregations());
+        addKeys(this.getAllAssociations());
+        addKeys(this.getAllEvents());
+        this._mJSONKeys = mJSONKeys;
+        this._mAllSettings = mAllSettings;
+        return this._mJSONKeys;
+    }
+    getAllSettings(...args: any) {
+        if (!this._mAllSettings) {
+            this.getJSONKeys();
+        }
+        return this._mAllSettings;
+    }
+    removeUnknownSettings(mSettings: any) {
+        assert(mSettings == null || typeof mSettings === "object", "mSettings must be null or an object");
+        if (mSettings == null) {
+            return mSettings;
+        }
+        var mValidKeys = this.getJSONKeys(), mResult = {}, sName;
+        for (sName in mSettings) {
+            if (hasOwnProperty.call(mValidKeys, sName)) {
+                mResult[sName] = mSettings[sName];
+            }
+        }
+        return mResult;
+    }
+    generateAccessors(...args: any) {
+        var proto = this.getClass().prototype, prefix = this.getName() + ".", methods = this._aPublicMethods, n;
+        function add(name, fn, info) {
+            if (!proto[name]) {
+                proto[name] = (info && info.deprecated) ? deprecation(fn, prefix + info.name) : fn;
+            }
+            methods.push(name);
+        }
+        for (n in this._mProperties) {
+            this._mProperties[n].generate(add);
+        }
+        for (n in this._mAggregations) {
+            this._mAggregations[n].generate(add);
+        }
+        for (n in this._mAssociations) {
+            this._mAssociations[n].generate(add);
+        }
+        for (n in this._mEvents) {
+            this._mEvents[n].generate(add);
+        }
+    }
+    loadDesignTime(oManagedObject: any, sScopeKey: any) {
+        sScopeKey = typeof sScopeKey === "string" && sScopeKey || "default";
+        var oInstanceDesigntimeLoaded = loadInstanceDesignTime(oManagedObject);
+        if (!this._oDesignTimePromise) {
+            var oWhenParentLoaded;
+            var oParent = this.getParent();
+            if (oParent instanceof ManagedObjectMetadata) {
+                oWhenParentLoaded = oParent.loadDesignTime(null, sScopeKey);
+            }
+            else {
+                oWhenParentLoaded = Promise.resolve({});
+            }
+            this._oDesignTimePromise = loadOwnDesignTime(this).then(function (mOwnDesignTime) {
+                return oWhenParentLoaded.then(function (mParentDesignTime) {
+                    return mergeDesignTime(mOwnDesignTime, mParentDesignTime, sScopeKey);
+                });
+            });
+        }
+        return Promise.all([oInstanceDesigntimeLoaded, this._oDesignTimePromise]).then(function (aData) {
+            var oInstanceDesigntime = aData[0], oDesignTime = aData[1];
+            return merge({}, oDesignTime, getScopeBasedDesignTime(oInstanceDesigntime || {}, sScopeKey));
+        });
+    }
+    uid(...args: any) {
+        var sId = this._sUIDToken;
+        if (typeof sId !== "string") {
+            sId = this.getName();
+            sId = sId.slice(sId.lastIndexOf(".") + 1);
+            sId = sId.replace(/([a-z])([A-Z])/g, "$1 $2").split(" ").slice(-1)[0];
+            sId = this._sUIDToken = sId.replace(/([^A-Za-z0-9-_.:])|([0-9]+$)/g, "").toLowerCase();
+        }
+        return uid(sId);
+    }
+    static addAPIParentInfoBegin(oAggregatedObject: any, oParent: any, sAggregationName: any) {
+        if (!oAggregatedObject) {
+            return;
+        }
+        var oNewAPIParentInfo = { parent: oParent, aggregationName: sAggregationName };
+        if (oAggregatedObject.aAPIParentInfos) {
+            if (oAggregatedObject.aAPIParentInfos.forwardingCounter) {
+                oAggregatedObject.aAPIParentInfos.forwardingCounter++;
+            }
+            else {
+                delete oAggregatedObject.aAPIParentInfos;
+            }
+        }
+        if (!oAggregatedObject.aAPIParentInfos) {
+            oAggregatedObject.aAPIParentInfos = [oNewAPIParentInfo];
+            oAggregatedObject.aAPIParentInfos.forwardingCounter = 1;
+        }
+        else {
+            oAggregatedObject.aAPIParentInfos.push(oNewAPIParentInfo);
+        }
+    }
+    static addAPIParentInfoEnd(oAggregatedObject: any) {
+        oAggregatedObject && oAggregatedObject.aAPIParentInfos && oAggregatedObject.aAPIParentInfos.forwardingCounter--;
+    }
+    static setDesignTimeDefaultMapping(mPredefinedDesignTime: any) {
+        mPredefinedDesignTimeModules = mPredefinedDesignTime;
+    }
+    static isGeneratedId(sId: any) {
+        sUIDPrefix = sUIDPrefix || sap.ui.getCore().getConfiguration().getUIDPrefix();
+        rGeneratedUID = rGeneratedUID || new RegExp("(^|-{1,3})" + escapeRegExp(sUIDPrefix));
+        return rGeneratedUID.test(sId);
+    }
+    constructor(sClassName: any, oClassInfo: any) {
+        Metadata.apply(this, arguments);
+    }
+}
 ManagedObjectMetadata.prototype.constructor = ManagedObjectMetadata;
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 function capitalize(sName) {
@@ -48,7 +440,6 @@ var Kind = {
     MULTIPLE_ASSOCIATION: 4,
     EVENT: 5
 };
-ManagedObjectMetadata._guessSingularName = guessSingularName;
 function SpecialSetting(oClass, name, info) {
     info = typeof info !== "object" ? { type: info } : info;
     this.name = name;
@@ -369,30 +760,6 @@ AggregationForwarder.prototype.insert = function (oInstance, oAggregatedObject, 
     ManagedObjectMetadata.addAPIParentInfoEnd(oAggregatedObject);
     return oInstance;
 };
-ManagedObjectMetadata.addAPIParentInfoBegin = function (oAggregatedObject, oParent, sAggregationName) {
-    if (!oAggregatedObject) {
-        return;
-    }
-    var oNewAPIParentInfo = { parent: oParent, aggregationName: sAggregationName };
-    if (oAggregatedObject.aAPIParentInfos) {
-        if (oAggregatedObject.aAPIParentInfos.forwardingCounter) {
-            oAggregatedObject.aAPIParentInfos.forwardingCounter++;
-        }
-        else {
-            delete oAggregatedObject.aAPIParentInfos;
-        }
-    }
-    if (!oAggregatedObject.aAPIParentInfos) {
-        oAggregatedObject.aAPIParentInfos = [oNewAPIParentInfo];
-        oAggregatedObject.aAPIParentInfos.forwardingCounter = 1;
-    }
-    else {
-        oAggregatedObject.aAPIParentInfos.push(oNewAPIParentInfo);
-    }
-};
-ManagedObjectMetadata.addAPIParentInfoEnd = function (oAggregatedObject) {
-    oAggregatedObject && oAggregatedObject.aAPIParentInfos && oAggregatedObject.aAPIParentInfos.forwardingCounter--;
-};
 AggregationForwarder.prototype.remove = function (oInstance, vAggregatedObject) {
     var oTarget = this.getTarget(oInstance);
     var result = this.targetAggregationInfo.remove(oTarget, vAggregatedObject);
@@ -536,329 +903,6 @@ ManagedObjectMetadata.prototype.metaFactoryProperty = Property;
 ManagedObjectMetadata.prototype.metaFactoryAggregation = Aggregation;
 ManagedObjectMetadata.prototype.metaFactoryAssociation = Association;
 ManagedObjectMetadata.prototype.metaFactoryEvent = Event;
-ManagedObjectMetadata.prototype.applySettings = function (oClassInfo) {
-    var that = this, oStaticInfo = oClassInfo.metadata;
-    Metadata.prototype.applySettings.call(this, oClassInfo);
-    function normalize(mInfoMap, FNClass) {
-        var mResult = {}, sName;
-        if (mInfoMap) {
-            for (sName in mInfoMap) {
-                if (hasOwnProperty.call(mInfoMap, sName)) {
-                    mResult[sName] = new FNClass(that, sName, mInfoMap[sName]);
-                }
-            }
-        }
-        return mResult;
-    }
-    function filter(mInfoMap, bPublic) {
-        var mResult = {}, sName;
-        for (sName in mInfoMap) {
-            if (bPublic === (mInfoMap[sName].visibility === "public")) {
-                mResult[sName] = mInfoMap[sName];
-            }
-        }
-        return mResult;
-    }
-    var rLibName = /([a-z][^.]*(?:\.[a-z][^.]*)*)\./;
-    function defaultLibName(sName) {
-        var m = rLibName.exec(sName);
-        return (m && m[1]) || "";
-    }
-    this._sLibraryName = oStaticInfo.library || defaultLibName(this.getName());
-    this._mSpecialSettings = normalize(oStaticInfo.specialSettings, this.metaFactorySpecialSetting);
-    var mAllProperties = normalize(oStaticInfo.properties, this.metaFactoryProperty);
-    this._mProperties = filter(mAllProperties, true);
-    this._mPrivateProperties = filter(mAllProperties, false);
-    var mAllAggregations = normalize(oStaticInfo.aggregations, this.metaFactoryAggregation);
-    this._mAggregations = filter(mAllAggregations, true);
-    this._mPrivateAggregations = filter(mAllAggregations, false);
-    this._sDefaultAggregation = oStaticInfo.defaultAggregation || null;
-    this._sDefaultProperty = oStaticInfo.defaultProperty || null;
-    var mAllAssociations = normalize(oStaticInfo.associations, this.metaFactoryAssociation);
-    this._mAssociations = filter(mAllAssociations, true);
-    this._mPrivateAssociations = filter(mAllAssociations, false);
-    this._mEvents = normalize(oStaticInfo.events, this.metaFactoryEvent);
-    this._oDesignTime = oClassInfo.metadata["designtime"] || oClassInfo.metadata["designTime"];
-    this._sProvider = oClassInfo.metadata["provider"];
-    if (oClassInfo.metadata.__version > 1) {
-        this.generateAccessors();
-    }
-};
-ManagedObjectMetadata.prototype.afterApplySettings = function () {
-    Metadata.prototype.afterApplySettings.call(this);
-    var oParent = this.getParent();
-    if (oParent instanceof ManagedObjectMetadata) {
-        this._mAllEvents = Object.assign({}, oParent._mAllEvents, this._mEvents);
-        this._mAllPrivateProperties = Object.assign({}, oParent._mAllPrivateProperties, this._mPrivateProperties);
-        this._mAllProperties = Object.assign({}, oParent._mAllProperties, this._mProperties);
-        this._mAllPrivateAggregations = Object.assign({}, oParent._mAllPrivateAggregations, this._mPrivateAggregations);
-        this._mAllAggregations = Object.assign({}, oParent._mAllAggregations, this._mAggregations);
-        this._mAllPrivateAssociations = Object.assign({}, oParent._mAllPrivateAssociations, this._mPrivateAssociations);
-        this._mAllAssociations = Object.assign({}, oParent._mAllAssociations, this._mAssociations);
-        this._sDefaultAggregation = this._sDefaultAggregation || oParent._sDefaultAggregation;
-        this._sDefaultProperty = this._sDefaultProperty || oParent._sDefaultProperty;
-        this._mAllSpecialSettings = Object.assign({}, oParent._mAllSpecialSettings, this._mSpecialSettings);
-        this._sProvider = this._sProvider || oParent._sProvider;
-    }
-    else {
-        this._mAllEvents = this._mEvents;
-        this._mAllPrivateProperties = this._mPrivateProperties;
-        this._mAllProperties = this._mProperties;
-        this._mAllPrivateAggregations = this._mPrivateAggregations;
-        this._mAllAggregations = this._mAggregations;
-        this._mAllPrivateAssociations = this._mPrivateAssociations;
-        this._mAllAssociations = this._mAssociations;
-        this._mAllSpecialSettings = this._mSpecialSettings;
-    }
-};
-ManagedObjectMetadata.Kind = Kind;
-ManagedObjectMetadata.prototype.getLibraryName = function () {
-    return this._sLibraryName;
-};
-ManagedObjectMetadata.prototype.addProperty = function (sName, oInfo) {
-    var oProp = this._mProperties[sName] = new Property(this, sName, oInfo);
-    if (!this._mAllProperties[sName]) {
-        this._mAllProperties[sName] = oProp;
-    }
-    if (this._fnPropertyBagFactory) {
-        this._fnPropertyBagFactory.prototype[sName] = oProp.getDefaultValue();
-    }
-};
-ManagedObjectMetadata.prototype.hasProperty = function (sName) {
-    return !!this._mAllProperties[sName];
-};
-ManagedObjectMetadata.prototype.getProperty = function (sName) {
-    var oProp = this._mAllProperties[sName];
-    return typeof oProp === "object" ? oProp : undefined;
-};
-ManagedObjectMetadata.prototype.getProperties = function () {
-    return this._mProperties;
-};
-ManagedObjectMetadata.prototype.getAllProperties = function () {
-    return this._mAllProperties;
-};
-ManagedObjectMetadata.prototype.getAllPrivateProperties = function () {
-    return this._mAllPrivateProperties;
-};
-ManagedObjectMetadata.prototype.getManagedProperty = function (sName) {
-    sName = sName || this._sDefaultProperty;
-    var oProp = sName ? this._mAllProperties[sName] || this._mAllPrivateProperties[sName] : undefined;
-    return typeof oProp === "object" ? oProp : undefined;
-};
-ManagedObjectMetadata.prototype.getDefaultPropertyName = function () {
-    return this._sDefaultProperty;
-};
-ManagedObjectMetadata.prototype.getDefaultProperty = function () {
-    return this.getProperty(this.getDefaultPropertyName());
-};
-ManagedObjectMetadata.prototype.hasAggregation = function (sName) {
-    return !!this._mAllAggregations[sName];
-};
-ManagedObjectMetadata.prototype.getAggregation = function (sName) {
-    sName = sName || this._sDefaultAggregation;
-    var oAggr = sName ? this._mAllAggregations[sName] : undefined;
-    return typeof oAggr === "object" ? oAggr : undefined;
-};
-ManagedObjectMetadata.prototype.getAggregations = function () {
-    return this._mAggregations;
-};
-ManagedObjectMetadata.prototype.getAllAggregations = function () {
-    return this._mAllAggregations;
-};
-ManagedObjectMetadata.prototype.getAllPrivateAggregations = function () {
-    return this._mAllPrivateAggregations;
-};
-ManagedObjectMetadata.prototype.getManagedAggregation = function (sAggregationName) {
-    sAggregationName = sAggregationName || this._sDefaultAggregation;
-    var oAggr = sAggregationName ? this._mAllAggregations[sAggregationName] || this._mAllPrivateAggregations[sAggregationName] : undefined;
-    return typeof oAggr === "object" ? oAggr : undefined;
-};
-ManagedObjectMetadata.prototype.getDefaultAggregationName = function () {
-    return this._sDefaultAggregation;
-};
-ManagedObjectMetadata.prototype.getDefaultAggregation = function () {
-    return this.getAggregation();
-};
-ManagedObjectMetadata.prototype.forwardAggregation = function (sForwardedSourceAggregation, mOptions) {
-    var oAggregation = this.getAggregation(sForwardedSourceAggregation);
-    if (!oAggregation) {
-        throw new Error("aggregation " + sForwardedSourceAggregation + " does not exist");
-    }
-    if (!mOptions || !mOptions.aggregation || !(mOptions.idSuffix || mOptions.getter) || (mOptions.idSuffix && mOptions.getter)) {
-        throw new Error("an 'mOptions' object with 'aggregation' property and either 'idSuffix' or 'getter' property (but not both) must be given" + " but does not exist");
-    }
-    if (oAggregation._oParent === this) {
-        oAggregation.forwarding = mOptions;
-        oAggregation._oForwarder = new AggregationForwarder(oAggregation);
-    }
-    else {
-        oAggregation = new this.metaFactoryAggregation(this, sForwardedSourceAggregation, {
-            type: oAggregation.type,
-            altTypes: oAggregation.altTypes,
-            multiple: oAggregation.multiple,
-            singularName: oAggregation.singularName,
-            bindable: oAggregation.bindable,
-            deprecated: oAggregation.deprecated,
-            visibility: oAggregation.visibility,
-            selector: oAggregation.selector,
-            forwarding: mOptions
-        });
-        this._mAggregations[sForwardedSourceAggregation] = this._mAllAggregations[sForwardedSourceAggregation] = oAggregation;
-    }
-};
-ManagedObjectMetadata.prototype.getAggregationForwarder = function (sAggregationName) {
-    var oAggregation = this._mAllAggregations[sAggregationName];
-    return oAggregation ? oAggregation._oForwarder : undefined;
-};
-ManagedObjectMetadata.prototype.getDefaultPropertyName = function () {
-    return this._sDefaultProperty;
-};
-ManagedObjectMetadata.prototype.getDefaultProperty = function () {
-    return this.getProperty(this.getDefaultPropertyName());
-};
-ManagedObjectMetadata.prototype.getPropertyLikeSetting = function (sName) {
-    var oProp = this._mAllProperties[sName];
-    if (typeof oProp === "object") {
-        return oProp;
-    }
-    oProp = this._mAllAggregations[sName];
-    return (typeof oProp === "object" && oProp.altTypes && oProp.altTypes.length > 0) ? oProp : undefined;
-};
-ManagedObjectMetadata.prototype.hasAssociation = function (sName) {
-    return !!this._mAllAssociations[sName];
-};
-ManagedObjectMetadata.prototype.getAssociation = function (sName) {
-    var oAssoc = this._mAllAssociations[sName];
-    return typeof oAssoc === "object" ? oAssoc : undefined;
-};
-ManagedObjectMetadata.prototype.getAssociations = function () {
-    return this._mAssociations;
-};
-ManagedObjectMetadata.prototype.getAllAssociations = function () {
-    return this._mAllAssociations;
-};
-ManagedObjectMetadata.prototype.getAllPrivateAssociations = function () {
-    return this._mAllPrivateAssociations;
-};
-ManagedObjectMetadata.prototype.getManagedAssociation = function (sName) {
-    var oAggr = this._mAllAssociations[sName] || this._mAllPrivateAssociations[sName];
-    return typeof oAggr === "object" ? oAggr : undefined;
-};
-ManagedObjectMetadata.prototype.hasEvent = function (sName) {
-    return !!this._mAllEvents[sName];
-};
-ManagedObjectMetadata.prototype.getEvent = function (sName) {
-    var oEvent = this._mAllEvents[sName];
-    return typeof oEvent === "object" ? oEvent : undefined;
-};
-ManagedObjectMetadata.prototype.getEvents = function () {
-    return this._mEvents;
-};
-ManagedObjectMetadata.prototype.getAllEvents = function () {
-    return this._mAllEvents;
-};
-ManagedObjectMetadata.prototype.addSpecialSetting = function (sName, oInfo) {
-    var oSS = new SpecialSetting(this, sName, oInfo);
-    this._mSpecialSettings[sName] = oSS;
-    if (!this._mAllSpecialSettings[sName]) {
-        this._mAllSpecialSettings[sName] = oSS;
-    }
-};
-ManagedObjectMetadata.prototype.hasSpecialSetting = function (sName) {
-    return !!this._mAllSpecialSettings[sName];
-};
-ManagedObjectMetadata.prototype.getPropertyDefaults = function () {
-    var mDefaults = this._mDefaults, s;
-    if (mDefaults) {
-        return mDefaults;
-    }
-    if (this.getParent() instanceof ManagedObjectMetadata) {
-        mDefaults = Object.assign({}, this.getParent().getPropertyDefaults());
-    }
-    else {
-        mDefaults = {};
-    }
-    for (s in this._mProperties) {
-        mDefaults[s] = this._mProperties[s].getDefaultValue();
-    }
-    for (s in this._mPrivateProperties) {
-        mDefaults[s] = this._mPrivateProperties[s].getDefaultValue();
-    }
-    this._mDefaults = mDefaults;
-    return mDefaults;
-};
-ManagedObjectMetadata.prototype.createPropertyBag = function () {
-    if (!this._fnPropertyBagFactory) {
-        this._fnPropertyBagFactory = function PropertyBag() { };
-        this._fnPropertyBagFactory.prototype = this.getPropertyDefaults();
-    }
-    return new (this._fnPropertyBagFactory)();
-};
-ManagedObjectMetadata.prototype.getJSONKeys = function () {
-    if (this._mJSONKeys) {
-        return this._mJSONKeys;
-    }
-    var mAllSettings = {}, mJSONKeys = {};
-    function addKeys(m) {
-        var sName, oInfo, oPrevInfo;
-        for (sName in m) {
-            oInfo = m[sName];
-            oPrevInfo = mAllSettings[sName];
-            if (!oPrevInfo || oInfo._iKind < oPrevInfo._iKind) {
-                mAllSettings[sName] = mJSONKeys[sName] = oInfo;
-            }
-            mJSONKeys[oInfo._sUID] = oInfo;
-        }
-    }
-    addKeys(this._mAllSpecialSettings);
-    addKeys(this.getAllProperties());
-    addKeys(this.getAllAggregations());
-    addKeys(this.getAllAssociations());
-    addKeys(this.getAllEvents());
-    this._mJSONKeys = mJSONKeys;
-    this._mAllSettings = mAllSettings;
-    return this._mJSONKeys;
-};
-ManagedObjectMetadata.prototype.getAllSettings = function () {
-    if (!this._mAllSettings) {
-        this.getJSONKeys();
-    }
-    return this._mAllSettings;
-};
-ManagedObjectMetadata.prototype.removeUnknownSettings = function (mSettings) {
-    assert(mSettings == null || typeof mSettings === "object", "mSettings must be null or an object");
-    if (mSettings == null) {
-        return mSettings;
-    }
-    var mValidKeys = this.getJSONKeys(), mResult = {}, sName;
-    for (sName in mSettings) {
-        if (hasOwnProperty.call(mValidKeys, sName)) {
-            mResult[sName] = mSettings[sName];
-        }
-    }
-    return mResult;
-};
-ManagedObjectMetadata.prototype.generateAccessors = function () {
-    var proto = this.getClass().prototype, prefix = this.getName() + ".", methods = this._aPublicMethods, n;
-    function add(name, fn, info) {
-        if (!proto[name]) {
-            proto[name] = (info && info.deprecated) ? deprecation(fn, prefix + info.name) : fn;
-        }
-        methods.push(name);
-    }
-    for (n in this._mProperties) {
-        this._mProperties[n].generate(add);
-    }
-    for (n in this._mAggregations) {
-        this._mAggregations[n].generate(add);
-    }
-    for (n in this._mAssociations) {
-        this._mAssociations[n].generate(add);
-    }
-    for (n in this._mEvents) {
-        this._mEvents[n].generate(add);
-    }
-};
 function preloadDesigntimeLibrary(oMetadata) {
     var sLibrary = oMetadata.getLibraryName(), sPreload = sap.ui.getCore().getConfiguration().getPreload(), oLibrary = sap.ui.getCore().getLoadedLibraries()[sLibrary];
     if (oLibrary && oLibrary.designtime) {
@@ -902,9 +946,6 @@ function loadOwnDesignTime(oMetadata) {
     });
 }
 var mPredefinedDesignTimeModules = {};
-ManagedObjectMetadata.setDesignTimeDefaultMapping = function (mPredefinedDesignTime) {
-    mPredefinedDesignTimeModules = mPredefinedDesignTime;
-};
 function loadInstanceDesignTime(oInstance) {
     var sInstanceSpecificModule = oInstance instanceof ObjectPath.get("sap.ui.base.ManagedObject") && typeof oInstance.data === "function" && oInstance.data("sap-ui-custom-settings") && oInstance.data("sap-ui-custom-settings")["sap.ui.dt"] && oInstance.data("sap-ui-custom-settings")["sap.ui.dt"].designtime;
     if (typeof sInstanceSpecificModule === "string") {
@@ -941,29 +982,6 @@ function mergeDesignTime(mOwnDesignTime, mParentDesignTime, sScopeKey) {
         _oLib: mOwnDesignTime._oLib
     });
 }
-ManagedObjectMetadata.prototype.loadDesignTime = function (oManagedObject, sScopeKey) {
-    sScopeKey = typeof sScopeKey === "string" && sScopeKey || "default";
-    var oInstanceDesigntimeLoaded = loadInstanceDesignTime(oManagedObject);
-    if (!this._oDesignTimePromise) {
-        var oWhenParentLoaded;
-        var oParent = this.getParent();
-        if (oParent instanceof ManagedObjectMetadata) {
-            oWhenParentLoaded = oParent.loadDesignTime(null, sScopeKey);
-        }
-        else {
-            oWhenParentLoaded = Promise.resolve({});
-        }
-        this._oDesignTimePromise = loadOwnDesignTime(this).then(function (mOwnDesignTime) {
-            return oWhenParentLoaded.then(function (mParentDesignTime) {
-                return mergeDesignTime(mOwnDesignTime, mParentDesignTime, sScopeKey);
-            });
-        });
-    }
-    return Promise.all([oInstanceDesigntimeLoaded, this._oDesignTimePromise]).then(function (aData) {
-        var oInstanceDesigntime = aData[0], oDesignTime = aData[1];
-        return merge({}, oDesignTime, getScopeBasedDesignTime(oInstanceDesigntime || {}, sScopeKey));
-    });
-};
 var mUIDCounts = {}, sUIDPrefix;
 function uid(sId) {
     assert(!/[0-9]+$/.exec(sId), "AutoId Prefixes must not end with numbers");
@@ -972,20 +990,4 @@ function uid(sId) {
     mUIDCounts[sId] = iCount + 1;
     return sId + iCount;
 }
-ManagedObjectMetadata.uid = uid;
-ManagedObjectMetadata.prototype.uid = function () {
-    var sId = this._sUIDToken;
-    if (typeof sId !== "string") {
-        sId = this.getName();
-        sId = sId.slice(sId.lastIndexOf(".") + 1);
-        sId = sId.replace(/([a-z])([A-Z])/g, "$1 $2").split(" ").slice(-1)[0];
-        sId = this._sUIDToken = sId.replace(/([^A-Za-z0-9-_.:])|([0-9]+$)/g, "").toLowerCase();
-    }
-    return uid(sId);
-};
 var rGeneratedUID;
-ManagedObjectMetadata.isGeneratedId = function (sId) {
-    sUIDPrefix = sUIDPrefix || sap.ui.getCore().getConfiguration().getUIDPrefix();
-    rGeneratedUID = rGeneratedUID || new RegExp("(^|-{1,3})" + escapeRegExp(sUIDPrefix));
-    return rGeneratedUID.test(sId);
-};

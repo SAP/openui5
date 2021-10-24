@@ -2,7 +2,7 @@ import Device from "sap/ui/Device";
 import History from "sap/ui/core/routing/History";
 import Log from "sap/base/Log";
 export class HistoryUtils {
-    constructor(...args: any) {
+    static init(...args: any) {
         if (HistoryUtils._isOriginalReplaceStateFunctionActive() && History._bUsePushState) {
             window.history.replaceState = function () {
                 fnSetCounter(fnGetCounter().value + 1);

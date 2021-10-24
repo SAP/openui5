@@ -1,7 +1,9 @@
 import Exception from "sap/ui/base/Exception";
-var ValidateException = function (message, violatedConstraints) {
-    this.name = "ValidateException";
-    this.message = message;
-    this.violatedConstraints = violatedConstraints;
-};
-ValidateException.prototype = Object.create(Exception.prototype);
+export class ValidateException {
+    static prototype = Object.create(Exception.prototype);
+    constructor(message: any, violatedConstraints: any) {
+        this.name = "ValidateException";
+        this.message = message;
+        this.violatedConstraints = violatedConstraints;
+    }
+}

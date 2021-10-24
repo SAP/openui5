@@ -2,7 +2,7 @@ import Device from "sap/ui/Device";
 import Log from "sap/base/Log";
 import jQuery from "sap/ui/thirdparty/jquery";
 export class Mobile {
-    constructor(options: any) {
+    static init(options: any) {
         var $head = jQuery("head");
         if (!_bInitTriggered) {
             _bInitTriggered = true;

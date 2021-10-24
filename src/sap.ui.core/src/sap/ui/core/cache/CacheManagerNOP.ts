@@ -14,7 +14,7 @@ export class CacheManagerNOP {
     static reset(...args: any) {
         return Promise.resolve();
     }
-    constructor(...args: any) {
+    static init(...args: any) {
         return Promise.resolve(this);
     }
     private static _getCount(...args: any) {

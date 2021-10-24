@@ -1,6 +1,6 @@
 import deepEqual from "sap/base/util/deepEqual";
 export class TestFWK {
-    constructor(oContentWindow: any) {
+    static init(oContentWindow: any) {
         this.oContentWindow = oContentWindow;
         this.updateContent();
     }

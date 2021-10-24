@@ -6,252 +6,776 @@ import deepEqual from "sap/base/util/deepEqual";
 import formatMessage from "sap/base/strings/formatMessage";
 import Log from "sap/base/Log";
 import extend from "sap/base/util/extend";
-var DateFormat = function () {
-    throw new Error();
-};
-var mCldrDatePattern = {};
-DateFormat.oDateInfo = {
-    oDefaultFormatOptions: {
-        style: "medium",
-        relativeScale: "day",
-        relativeStyle: "wide"
-    },
-    aFallbackFormatOptions: [
-        { style: "short" },
-        { style: "medium" },
-        { pattern: "yyyy-MM-dd" },
-        { pattern: "yyyyMMdd", strictParsing: true }
-    ],
-    bShortFallbackFormatOptions: true,
-    bPatternFallbackWithoutDelimiter: true,
-    getPattern: function (oLocaleData, sStyle, sCalendarType) {
-        return oLocaleData.getDatePattern(sStyle, sCalendarType);
-    },
-    oRequiredParts: {
-        "text": true,
-        "year": true,
-        "weekYear": true,
-        "month": true,
-        "day": true
-    },
-    aRelativeScales: ["year", "month", "week", "day"],
-    aRelativeParseScales: ["year", "quarter", "month", "week", "day", "hour", "minute", "second"],
-    aIntervalCompareFields: ["Era", "FullYear", "Quarter", "Month", "Week", "Date"]
-};
-DateFormat.oDateTimeInfo = {
-    oDefaultFormatOptions: {
-        style: "medium",
-        relativeScale: "auto",
-        relativeStyle: "wide"
-    },
-    aFallbackFormatOptions: [
-        { style: "short" },
-        { style: "medium" },
-        { pattern: "yyyy-MM-dd'T'HH:mm:ss" },
-        { pattern: "yyyyMMdd HHmmss" }
-    ],
-    getPattern: function (oLocaleData, sStyle, sCalendarType) {
-        var iSlashIndex = sStyle.indexOf("/");
-        if (iSlashIndex > 0) {
-            return oLocaleData.getCombinedDateTimePattern(sStyle.substr(0, iSlashIndex), sStyle.substr(iSlashIndex + 1), sCalendarType);
+export class DateFormat {
+    static oDateInfo = {
+        oDefaultFormatOptions: {
+            style: "medium",
+            relativeScale: "day",
+            relativeStyle: "wide"
+        },
+        aFallbackFormatOptions: [
+            { style: "short" },
+            { style: "medium" },
+            { pattern: "yyyy-MM-dd" },
+            { pattern: "yyyyMMdd", strictParsing: true }
+        ],
+        bShortFallbackFormatOptions: true,
+        bPatternFallbackWithoutDelimiter: true,
+        getPattern: function (oLocaleData, sStyle, sCalendarType) {
+            return oLocaleData.getDatePattern(sStyle, sCalendarType);
+        },
+        oRequiredParts: {
+            "text": true,
+            "year": true,
+            "weekYear": true,
+            "month": true,
+            "day": true
+        },
+        aRelativeScales: ["year", "month", "week", "day"],
+        aRelativeParseScales: ["year", "quarter", "month", "week", "day", "hour", "minute", "second"],
+        aIntervalCompareFields: ["Era", "FullYear", "Quarter", "Month", "Week", "Date"]
+    };
+    static oDateTimeInfo = {
+        oDefaultFormatOptions: {
+            style: "medium",
+            relativeScale: "auto",
+            relativeStyle: "wide"
+        },
+        aFallbackFormatOptions: [
+            { style: "short" },
+            { style: "medium" },
+            { pattern: "yyyy-MM-dd'T'HH:mm:ss" },
+            { pattern: "yyyyMMdd HHmmss" }
+        ],
+        getPattern: function (oLocaleData, sStyle, sCalendarType) {
+            var iSlashIndex = sStyle.indexOf("/");
+            if (iSlashIndex > 0) {
+                return oLocaleData.getCombinedDateTimePattern(sStyle.substr(0, iSlashIndex), sStyle.substr(iSlashIndex + 1), sCalendarType);
+            }
+            else {
+                return oLocaleData.getCombinedDateTimePattern(sStyle, sStyle, sCalendarType);
+            }
+        },
+        oRequiredParts: {
+            "text": true,
+            "year": true,
+            "weekYear": true,
+            "month": true,
+            "day": true,
+            "hour0_23": true,
+            "hour1_24": true,
+            "hour0_11": true,
+            "hour1_12": true
+        },
+        aRelativeScales: ["year", "month", "week", "day", "hour", "minute", "second"],
+        aRelativeParseScales: ["year", "quarter", "month", "week", "day", "hour", "minute", "second"],
+        aIntervalCompareFields: ["Era", "FullYear", "Quarter", "Month", "Week", "Date", "DayPeriod", "Hours", "Minutes", "Seconds"]
+    };
+    static oTimeInfo = {
+        oDefaultFormatOptions: {
+            style: "medium",
+            relativeScale: "auto",
+            relativeStyle: "wide"
+        },
+        aFallbackFormatOptions: [
+            { style: "short" },
+            { style: "medium" },
+            { pattern: "HH:mm:ss" },
+            { pattern: "HHmmss" }
+        ],
+        getPattern: function (oLocaleData, sStyle, sCalendarType) {
+            return oLocaleData.getTimePattern(sStyle, sCalendarType);
+        },
+        oRequiredParts: {
+            "text": true,
+            "hour0_23": true,
+            "hour1_24": true,
+            "hour0_11": true,
+            "hour1_12": true
+        },
+        aRelativeScales: ["hour", "minute", "second"],
+        aRelativeParseScales: ["year", "quarter", "month", "week", "day", "hour", "minute", "second"],
+        aIntervalCompareFields: ["DayPeriod", "Hours", "Minutes", "Seconds"]
+    };
+    init(...args: any) {
+        var sCalendarType = this.oFormatOptions.calendarType;
+        this.aMonthsAbbrev = this.oLocaleData.getMonths("abbreviated", sCalendarType);
+        this.aMonthsWide = this.oLocaleData.getMonths("wide", sCalendarType);
+        this.aMonthsNarrow = this.oLocaleData.getMonths("narrow", sCalendarType);
+        this.aMonthsAbbrevSt = this.oLocaleData.getMonthsStandAlone("abbreviated", sCalendarType);
+        this.aMonthsWideSt = this.oLocaleData.getMonthsStandAlone("wide", sCalendarType);
+        this.aMonthsNarrowSt = this.oLocaleData.getMonthsStandAlone("narrow", sCalendarType);
+        this.aDaysAbbrev = this.oLocaleData.getDays("abbreviated", sCalendarType);
+        this.aDaysWide = this.oLocaleData.getDays("wide", sCalendarType);
+        this.aDaysNarrow = this.oLocaleData.getDays("narrow", sCalendarType);
+        this.aDaysShort = this.oLocaleData.getDays("short", sCalendarType);
+        this.aDaysAbbrevSt = this.oLocaleData.getDaysStandAlone("abbreviated", sCalendarType);
+        this.aDaysWideSt = this.oLocaleData.getDaysStandAlone("wide", sCalendarType);
+        this.aDaysNarrowSt = this.oLocaleData.getDaysStandAlone("narrow", sCalendarType);
+        this.aDaysShortSt = this.oLocaleData.getDaysStandAlone("short", sCalendarType);
+        this.aQuartersAbbrev = this.oLocaleData.getQuarters("abbreviated", sCalendarType);
+        this.aQuartersWide = this.oLocaleData.getQuarters("wide", sCalendarType);
+        this.aQuartersNarrow = this.oLocaleData.getQuarters("narrow", sCalendarType);
+        this.aQuartersAbbrevSt = this.oLocaleData.getQuartersStandAlone("abbreviated", sCalendarType);
+        this.aQuartersWideSt = this.oLocaleData.getQuartersStandAlone("wide", sCalendarType);
+        this.aQuartersNarrowSt = this.oLocaleData.getQuartersStandAlone("narrow", sCalendarType);
+        this.aErasNarrow = this.oLocaleData.getEras("narrow", sCalendarType);
+        this.aErasAbbrev = this.oLocaleData.getEras("abbreviated", sCalendarType);
+        this.aErasWide = this.oLocaleData.getEras("wide", sCalendarType);
+        this.aDayPeriods = this.oLocaleData.getDayPeriods("abbreviated", sCalendarType);
+        this.aFormatArray = this.parseCldrDatePattern(this.oFormatOptions.pattern);
+        this.sAllowedCharacters = this.getAllowedCharacters(this.aFormatArray);
+    }
+    private _format(oJSDate: any, bUTC: any) {
+        if (this.oFormatOptions.relative) {
+            var sRes = this.formatRelative(oJSDate, bUTC, this.oFormatOptions.relativeRange);
+            if (sRes) {
+                return sRes;
+            }
+        }
+        var sCalendarType = this.oFormatOptions.calendarType;
+        var oDate = UniversalDate.getInstance(oJSDate, sCalendarType);
+        var aBuffer = [], oPart, sResult, sSymbol;
+        for (var i = 0; i < this.aFormatArray.length; i++) {
+            oPart = this.aFormatArray[i];
+            sSymbol = oPart.symbol || "";
+            aBuffer.push(this.oSymbols[sSymbol].format(oPart, oDate, bUTC, this));
+        }
+        sResult = aBuffer.join("");
+        if (sap.ui.getCore().getConfiguration().getOriginInfo()) {
+            sResult = new String(sResult);
+            sResult.originInfo = {
+                source: "Common Locale Data Repository",
+                locale: this.oLocale.toString(),
+                style: this.oFormatOptions.style,
+                pattern: this.oFormatOptions.pattern
+            };
+        }
+        return sResult;
+    }
+    format(vJSDate: any, bUTC: any) {
+        var sCalendarType = this.oFormatOptions.calendarType, sResult;
+        if (bUTC === undefined) {
+            bUTC = this.oFormatOptions.UTC;
+        }
+        if (Array.isArray(vJSDate)) {
+            if (!this.oFormatOptions.interval) {
+                Log.error("Non-interval DateFormat can't format more than one date instance.");
+                return "";
+            }
+            if (vJSDate.length !== 2) {
+                Log.error("Interval DateFormat can only format with 2 date instances but " + vJSDate.length + " is given.");
+                return "";
+            }
+            if (this.oFormatOptions.singleIntervalValue) {
+                if (vJSDate[0] === null) {
+                    Log.error("First date instance which is passed to the interval DateFormat shouldn't be null.");
+                    return "";
+                }
+                if (vJSDate[1] === null) {
+                    sResult = this._format(vJSDate[0], bUTC);
+                }
+            }
+            if (sResult === undefined) {
+                var bValid = vJSDate.every(function (oJSDate) {
+                    return oJSDate && !isNaN(oJSDate.getTime());
+                });
+                if (!bValid) {
+                    Log.error("At least one date instance which is passed to the interval DateFormat isn't valid.");
+                    return "";
+                }
+                sResult = this._formatInterval(vJSDate, bUTC);
+            }
         }
         else {
-            return oLocaleData.getCombinedDateTimePattern(sStyle, sStyle, sCalendarType);
+            if (!vJSDate || isNaN(vJSDate.getTime())) {
+                Log.error("The given date instance isn't valid.");
+                return "";
+            }
+            if (this.oFormatOptions.interval) {
+                Log.error("Interval DateFormat expects an array with two dates for the first argument but only one date is given.");
+                return "";
+            }
+            sResult = this._format(vJSDate, bUTC);
         }
-    },
-    oRequiredParts: {
-        "text": true,
-        "year": true,
-        "weekYear": true,
-        "month": true,
-        "day": true,
-        "hour0_23": true,
-        "hour1_24": true,
-        "hour0_11": true,
-        "hour1_12": true
-    },
-    aRelativeScales: ["year", "month", "week", "day", "hour", "minute", "second"],
-    aRelativeParseScales: ["year", "quarter", "month", "week", "day", "hour", "minute", "second"],
-    aIntervalCompareFields: ["Era", "FullYear", "Quarter", "Month", "Week", "Date", "DayPeriod", "Hours", "Minutes", "Seconds"]
-};
-DateFormat.oTimeInfo = {
-    oDefaultFormatOptions: {
-        style: "medium",
-        relativeScale: "auto",
-        relativeStyle: "wide"
-    },
-    aFallbackFormatOptions: [
-        { style: "short" },
-        { style: "medium" },
-        { pattern: "HH:mm:ss" },
-        { pattern: "HHmmss" }
-    ],
-    getPattern: function (oLocaleData, sStyle, sCalendarType) {
-        return oLocaleData.getTimePattern(sStyle, sCalendarType);
-    },
-    oRequiredParts: {
-        "text": true,
-        "hour0_23": true,
-        "hour1_24": true,
-        "hour0_11": true,
-        "hour1_12": true
-    },
-    aRelativeScales: ["hour", "minute", "second"],
-    aRelativeParseScales: ["year", "quarter", "month", "week", "day", "hour", "minute", "second"],
-    aIntervalCompareFields: ["DayPeriod", "Hours", "Minutes", "Seconds"]
-};
-DateFormat.getInstance = function (oFormatOptions, oLocale) {
-    return this.getDateInstance(oFormatOptions, oLocale);
-};
-DateFormat.getDateInstance = function (oFormatOptions, oLocale) {
-    return this.createInstance(oFormatOptions, oLocale, this.oDateInfo);
-};
-DateFormat.getDateTimeInstance = function (oFormatOptions, oLocale) {
-    return this.createInstance(oFormatOptions, oLocale, this.oDateTimeInfo);
-};
-DateFormat.getTimeInstance = function (oFormatOptions, oLocale) {
-    return this.createInstance(oFormatOptions, oLocale, this.oTimeInfo);
-};
+        if (sCalendarType == CalendarType.Japanese && this.oLocale.getLanguage() === "ja") {
+            sResult = sResult.replace(/(^|[^\d])1年/g, "$1\u5143\u5E74");
+        }
+        return sResult;
+    }
+    private _formatInterval(aJSDates: any, bUTC: any) {
+        var sCalendarType = this.oFormatOptions.calendarType;
+        var oFromDate = UniversalDate.getInstance(aJSDates[0], sCalendarType);
+        var oToDate = UniversalDate.getInstance(aJSDates[1], sCalendarType);
+        var oDate;
+        var oPart;
+        var sSymbol;
+        var aBuffer = [];
+        var sPattern;
+        var aFormatArray = [];
+        var oDiffField = this._getGreatestDiffField([oFromDate, oToDate], bUTC);
+        if (!oDiffField) {
+            return this._format(aJSDates[0], bUTC);
+        }
+        if (this.oFormatOptions.format) {
+            sPattern = this.oLocaleData.getCustomIntervalPattern(this.oFormatOptions.format, oDiffField, sCalendarType);
+        }
+        else {
+            sPattern = this.oLocaleData.getCombinedIntervalPattern(this.oFormatOptions.pattern, sCalendarType);
+        }
+        aFormatArray = this.parseCldrDatePattern(sPattern);
+        oDate = oFromDate;
+        for (var i = 0; i < aFormatArray.length; i++) {
+            oPart = aFormatArray[i];
+            sSymbol = oPart.symbol || "";
+            if (oPart.repeat) {
+                oDate = oToDate;
+            }
+            aBuffer.push(this.oSymbols[sSymbol].format(oPart, oDate, bUTC, this));
+        }
+        return aBuffer.join("");
+    }
+    private _getGreatestDiffField(aDates: any, bUTC: any) {
+        var bDiffFound = false, mDiff = {};
+        this.aIntervalCompareFields.forEach(function (sField) {
+            var sGetterPrefix = "get" + (bUTC ? "UTC" : ""), sMethodName = sGetterPrefix + sField, sFieldGroup = mFieldToGroup[sField], vFromValue = aDates[0][sMethodName].apply(aDates[0]), vToValue = aDates[1][sMethodName].apply(aDates[1]);
+            if (!deepEqual(vFromValue, vToValue)) {
+                bDiffFound = true;
+                mDiff[sFieldGroup] = true;
+            }
+        });
+        if (bDiffFound) {
+            return mDiff;
+        }
+        return null;
+    }
+    private _parse(sValue: any, aFormatArray: any, bUTC: any, bStrict: any) {
+        var iIndex = 0, oPart, sSubValue, oResult;
+        var oDateValue = {
+            valid: true
+        };
+        var oParseConf = {
+            formatArray: aFormatArray,
+            dateValue: oDateValue,
+            strict: bStrict
+        };
+        for (var i = 0; i < aFormatArray.length; i++) {
+            sSubValue = sValue.substr(iIndex);
+            oPart = aFormatArray[i];
+            oParseConf.index = i;
+            oResult = this.oSymbols[oPart.symbol || ""].parse(sSubValue, oPart, this, oParseConf) || {};
+            oDateValue = extend(oDateValue, oResult);
+            if (oResult.valid === false) {
+                break;
+            }
+            iIndex += oResult.length || 0;
+        }
+        oDateValue.index = iIndex;
+        if (oDateValue.pm) {
+            oDateValue.hour += 12;
+        }
+        if (oDateValue.dayNumberOfWeek === undefined && oDateValue.dayOfWeek !== undefined) {
+            oDateValue.dayNumberOfWeek = this._adaptDayOfWeek(oDateValue.dayOfWeek);
+        }
+        if (oDateValue.quarter !== undefined && oDateValue.month === undefined && oDateValue.day === undefined) {
+            oDateValue.month = 3 * oDateValue.quarter;
+            oDateValue.day = 1;
+        }
+        return oDateValue;
+    }
+    private _parseInterval(sValue: any, sCalendarType: any, bUTC: any, bStrict: any) {
+        var aDateValues, iRepeat, oDateValue;
+        this.intervalPatterns.some(function (sPattern) {
+            var aFormatArray = this.parseCldrDatePattern(sPattern);
+            iRepeat = undefined;
+            for (var i = 0; i < aFormatArray.length; i++) {
+                if (aFormatArray[i].repeat) {
+                    iRepeat = i;
+                    break;
+                }
+            }
+            if (iRepeat === undefined) {
+                oDateValue = this._parse(sValue, aFormatArray, bUTC, bStrict);
+                if (oDateValue.index === 0 || oDateValue.index < sValue.length) {
+                    oDateValue.valid = false;
+                }
+                if (oDateValue.valid === false) {
+                    return;
+                }
+                aDateValues = [oDateValue, oDateValue];
+                return true;
+            }
+            else {
+                aDateValues = [];
+                oDateValue = this._parse(sValue, aFormatArray.slice(0, iRepeat), bUTC, bStrict);
+                if (oDateValue.valid === false) {
+                    return;
+                }
+                aDateValues.push(oDateValue);
+                var iLength = oDateValue.index;
+                oDateValue = this._parse(sValue.substring(iLength), aFormatArray.slice(iRepeat), bUTC, bStrict);
+                if (oDateValue.index === 0 || oDateValue.index + iLength < sValue.length) {
+                    oDateValue.valid = false;
+                }
+                if (oDateValue.valid === false) {
+                    return;
+                }
+                aDateValues.push(oDateValue);
+                return true;
+            }
+        }.bind(this));
+        return aDateValues;
+    }
+    parse(sValue: any, bUTC: any, bStrict: any) {
+        sValue = sValue == null ? "" : String(sValue).trim();
+        var oDateValue;
+        var sCalendarType = this.oFormatOptions.calendarType;
+        if (bUTC === undefined) {
+            bUTC = this.oFormatOptions.UTC;
+        }
+        if (bStrict === undefined) {
+            bStrict = this.oFormatOptions.strictParsing;
+        }
+        if (sCalendarType == CalendarType.Japanese && this.oLocale.getLanguage() === "ja") {
+            sValue = sValue.replace(/元年/g, "1\u5E74");
+        }
+        if (!this.oFormatOptions.interval) {
+            var oJSDate = this.parseRelative(sValue, bUTC);
+            if (oJSDate) {
+                return oJSDate;
+            }
+            oDateValue = this._parse(sValue, this.aFormatArray, bUTC, bStrict);
+            if (oDateValue.index === 0 || oDateValue.index < sValue.length) {
+                oDateValue.valid = false;
+            }
+            oJSDate = fnCreateDate(oDateValue, sCalendarType, bUTC, bStrict);
+            if (oJSDate) {
+                return oJSDate;
+            }
+        }
+        else {
+            var aDateValues = this._parseInterval(sValue, sCalendarType, bUTC, bStrict);
+            var oJSDate1, oJSDate2;
+            if (aDateValues && aDateValues.length == 2) {
+                var oDateValue1 = mergeWithoutOverwrite(aDateValues[0], aDateValues[1]);
+                var oDateValue2 = mergeWithoutOverwrite(aDateValues[1], aDateValues[0]);
+                oJSDate1 = fnCreateDate(oDateValue1, sCalendarType, bUTC, bStrict);
+                oJSDate2 = fnCreateDate(oDateValue2, sCalendarType, bUTC, bStrict);
+                if (oJSDate1 && oJSDate2) {
+                    if (this.oFormatOptions.singleIntervalValue && oJSDate1.getTime() === oJSDate2.getTime()) {
+                        return [oJSDate1, null];
+                    }
+                    var bValid = isValidDateRange(oJSDate1, oJSDate2);
+                    if (bStrict && !bValid) {
+                        Log.error("StrictParsing: Invalid date range. The given end date is before the start date.");
+                        return [null, null];
+                    }
+                    return [oJSDate1, oJSDate2];
+                }
+            }
+        }
+        if (!this.bIsFallback) {
+            var vDate;
+            this.aFallbackFormats.every(function (oFallbackFormat) {
+                vDate = oFallbackFormat.parse(sValue, bUTC, bStrict);
+                if (Array.isArray(vDate)) {
+                    return !(vDate[0] && vDate[1]);
+                }
+                else {
+                    return !vDate;
+                }
+            });
+            return vDate;
+        }
+        if (!this.oFormatOptions.interval) {
+            return null;
+        }
+        else {
+            return [null, null];
+        }
+    }
+    parseCldrDatePattern(sPattern: any) {
+        if (mCldrDatePattern[sPattern]) {
+            return mCldrDatePattern[sPattern];
+        }
+        var aFormatArray = [], i, bQuoted = false, oCurrentObject = null, sState = "", sNewState = "", mAppeared = {}, bIntervalStartFound = false;
+        for (i = 0; i < sPattern.length; i++) {
+            var sCurChar = sPattern.charAt(i), sNextChar, sPrevChar, sPrevPrevChar;
+            if (bQuoted) {
+                if (sCurChar == "'") {
+                    sPrevChar = sPattern.charAt(i - 1);
+                    sPrevPrevChar = sPattern.charAt(i - 2);
+                    sNextChar = sPattern.charAt(i + 1);
+                    if (sPrevChar == "'" && sPrevPrevChar != "'") {
+                        bQuoted = false;
+                    }
+                    else if (sNextChar == "'") {
+                        i += 1;
+                    }
+                    else {
+                        bQuoted = false;
+                        continue;
+                    }
+                }
+                if (sState == "text") {
+                    oCurrentObject.value += sCurChar;
+                }
+                else {
+                    oCurrentObject = {
+                        type: "text",
+                        value: sCurChar
+                    };
+                    aFormatArray.push(oCurrentObject);
+                    sState = "text";
+                }
+            }
+            else {
+                if (sCurChar == "'") {
+                    bQuoted = true;
+                }
+                else if (this.oSymbols[sCurChar]) {
+                    sNewState = this.oSymbols[sCurChar].name;
+                    if (sState == sNewState) {
+                        oCurrentObject.digits++;
+                    }
+                    else {
+                        oCurrentObject = {
+                            type: sNewState,
+                            symbol: sCurChar,
+                            digits: 1
+                        };
+                        aFormatArray.push(oCurrentObject);
+                        sState = sNewState;
+                        if (!bIntervalStartFound) {
+                            if (mAppeared[sNewState]) {
+                                oCurrentObject.repeat = true;
+                                bIntervalStartFound = true;
+                            }
+                            else {
+                                mAppeared[sNewState] = true;
+                            }
+                        }
+                    }
+                }
+                else {
+                    if (sState == "text") {
+                        oCurrentObject.value += sCurChar;
+                    }
+                    else {
+                        oCurrentObject = {
+                            type: "text",
+                            value: sCurChar
+                        };
+                        aFormatArray.push(oCurrentObject);
+                        sState = "text";
+                    }
+                }
+            }
+        }
+        mCldrDatePattern[sPattern] = aFormatArray;
+        return aFormatArray;
+    }
+    parseRelative(sValue: any, bUTC: any) {
+        var aPatterns, oEntry, rPattern, oResult, iValue;
+        if (!sValue) {
+            return null;
+        }
+        aPatterns = this.oLocaleData.getRelativePatterns(this.aRelativeParseScales, this.oFormatOptions.relativeStyle);
+        for (var i = 0; i < aPatterns.length; i++) {
+            oEntry = aPatterns[i];
+            rPattern = new RegExp("^\\s*" + oEntry.pattern.replace(/\{0\}/, "(\\d+)") + "\\s*$", "i");
+            oResult = rPattern.exec(sValue);
+            if (oResult) {
+                if (oEntry.value !== undefined) {
+                    return computeRelativeDate(oEntry.value, oEntry.scale);
+                }
+                else {
+                    iValue = parseInt(oResult[1]);
+                    return computeRelativeDate(iValue * oEntry.sign, oEntry.scale);
+                }
+            }
+        }
+        function computeRelativeDate(iDiff, sScale) {
+            var iToday, oToday = new Date(), oJSDate;
+            if (bUTC) {
+                iToday = oToday.getTime();
+            }
+            else {
+                iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate(), oToday.getHours(), oToday.getMinutes(), oToday.getSeconds(), oToday.getMilliseconds());
+            }
+            oJSDate = new Date(iToday);
+            switch (sScale) {
+                case "second":
+                    oJSDate.setUTCSeconds(oJSDate.getUTCSeconds() + iDiff);
+                    break;
+                case "minute":
+                    oJSDate.setUTCMinutes(oJSDate.getUTCMinutes() + iDiff);
+                    break;
+                case "hour":
+                    oJSDate.setUTCHours(oJSDate.getUTCHours() + iDiff);
+                    break;
+                case "day":
+                    oJSDate.setUTCDate(oJSDate.getUTCDate() + iDiff);
+                    break;
+                case "week":
+                    oJSDate.setUTCDate(oJSDate.getUTCDate() + iDiff * 7);
+                    break;
+                case "month":
+                    oJSDate.setUTCMonth(oJSDate.getUTCMonth() + iDiff);
+                    break;
+                case "quarter":
+                    oJSDate.setUTCMonth(oJSDate.getUTCMonth() + iDiff * 3);
+                    break;
+                case "year":
+                    oJSDate.setUTCFullYear(oJSDate.getUTCFullYear() + iDiff);
+                    break;
+            }
+            if (bUTC) {
+                return oJSDate;
+            }
+            else {
+                return new Date(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate(), oJSDate.getUTCHours(), oJSDate.getUTCMinutes(), oJSDate.getUTCSeconds(), oJSDate.getUTCMilliseconds());
+            }
+        }
+    }
+    formatRelative(oJSDate: any, bUTC: any, aRange: any) {
+        var oToday = new Date(), oDateUTC, sScale = this.oFormatOptions.relativeScale || "day", iDiff, sPattern, iDiffSeconds;
+        iDiffSeconds = (oJSDate.getTime() - oToday.getTime()) / 1000;
+        if (this.oFormatOptions.relativeScale == "auto") {
+            sScale = this._getScale(iDiffSeconds, this.aRelativeScales);
+        }
+        if (!aRange) {
+            aRange = this._mRanges[sScale];
+        }
+        if (sScale == "year" || sScale == "month" || sScale == "day") {
+            oToday = new Date(Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate()));
+            oDateUTC = new Date(0);
+            if (bUTC) {
+                oDateUTC.setUTCFullYear(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate());
+            }
+            else {
+                oDateUTC.setUTCFullYear(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate());
+            }
+            oJSDate = oDateUTC;
+        }
+        iDiff = this._getDifference(sScale, [oToday, oJSDate]);
+        if (this.oFormatOptions.relativeScale != "auto" && (iDiff < aRange[0] || iDiff > aRange[1])) {
+            return null;
+        }
+        sPattern = this.oLocaleData.getRelativePattern(sScale, iDiff, iDiffSeconds > 0, this.oFormatOptions.relativeStyle);
+        return formatMessage(sPattern, [Math.abs(iDiff)]);
+    }
+    private _getScale(iDiffSeconds: any, aScales: any) {
+        var sScale, sTestScale;
+        iDiffSeconds = Math.abs(iDiffSeconds);
+        for (var i = 0; i < aScales.length; i++) {
+            sTestScale = aScales[i];
+            if (iDiffSeconds >= this._mScales[sTestScale]) {
+                sScale = sTestScale;
+                break;
+            }
+        }
+        if (!sScale) {
+            sScale = aScales[aScales.length - 1];
+        }
+        return sScale;
+    }
+    private _adaptDayOfWeek(iDayOfWeek: any) {
+        var iFirstDayOfWeek = LocaleData.getInstance(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()).getFirstDayOfWeek();
+        var iDayNumberOfWeek = iDayOfWeek - (iFirstDayOfWeek - 1);
+        if (iDayNumberOfWeek <= 0) {
+            iDayNumberOfWeek += 7;
+        }
+        return iDayNumberOfWeek;
+    }
+    private _getDifference(sScale: any, aDates: any) {
+        var oFromDate = aDates[0];
+        var oToDate = aDates[1];
+        return Math.round(mRelativeDiffs[sScale](oFromDate, oToDate, this));
+    }
+    getAllowedCharacters(aFormatArray: any) {
+        if (this.oFormatOptions.relative) {
+            return "";
+        }
+        var sAllowedCharacters = "";
+        var bNumbers = false;
+        var bAll = false;
+        var oPart;
+        for (var i = 0; i < aFormatArray.length; i++) {
+            oPart = aFormatArray[i];
+            switch (oPart.type) {
+                case "text":
+                    if (sAllowedCharacters.indexOf(oPart.value) < 0) {
+                        sAllowedCharacters += oPart.value;
+                    }
+                    break;
+                case "day":
+                case "year":
+                case "weekYear":
+                case "dayNumberOfWeek":
+                case "weekInYear":
+                case "hour0_23":
+                case "hour1_24":
+                case "hour0_11":
+                case "hour1_12":
+                case "minute":
+                case "second":
+                case "fractionalsecond":
+                    if (!bNumbers) {
+                        sAllowedCharacters += "0123456789";
+                        bNumbers = true;
+                    }
+                    break;
+                case "month":
+                case "monthStandalone":
+                    if (oPart.digits < 3) {
+                        if (!bNumbers) {
+                            sAllowedCharacters += "0123456789";
+                            bNumbers = true;
+                        }
+                    }
+                    else {
+                        bAll = true;
+                    }
+                    break;
+                default:
+                    bAll = true;
+                    break;
+            }
+        }
+        if (bAll) {
+            sAllowedCharacters = "";
+        }
+        return sAllowedCharacters;
+    }
+    static getInstance(oFormatOptions: any, oLocale: any) {
+        return this.getDateInstance(oFormatOptions, oLocale);
+    }
+    static getDateInstance(oFormatOptions: any, oLocale: any) {
+        return this.createInstance(oFormatOptions, oLocale, this.oDateInfo);
+    }
+    static getDateTimeInstance(oFormatOptions: any, oLocale: any) {
+        return this.createInstance(oFormatOptions, oLocale, this.oDateTimeInfo);
+    }
+    static getTimeInstance(oFormatOptions: any, oLocale: any) {
+        return this.createInstance(oFormatOptions, oLocale, this.oTimeInfo);
+    }
+    static createInstance(oFormatOptions: any, oLocale: any, oInfo: any) {
+        var oFormat = Object.create(this.prototype);
+        if (oFormatOptions instanceof Locale) {
+            oLocale = oFormatOptions;
+            oFormatOptions = undefined;
+        }
+        if (!oLocale) {
+            oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+        }
+        oFormat.oLocale = oLocale;
+        oFormat.oLocaleData = LocaleData.getInstance(oLocale);
+        oFormat.oFormatOptions = extend({}, oInfo.oDefaultFormatOptions, oFormatOptions);
+        if (!oFormat.oFormatOptions.calendarType) {
+            oFormat.oFormatOptions.calendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+        }
+        if (!oFormat.oFormatOptions.pattern) {
+            if (oFormat.oFormatOptions.format) {
+                oFormat.oFormatOptions.pattern = oFormat.oLocaleData.getCustomDateTimePattern(oFormat.oFormatOptions.format, oFormat.oFormatOptions.calendarType);
+            }
+            else {
+                oFormat.oFormatOptions.pattern = oInfo.getPattern(oFormat.oLocaleData, oFormat.oFormatOptions.style, oFormat.oFormatOptions.calendarType);
+            }
+        }
+        if (oFormat.oFormatOptions.interval) {
+            if (oFormat.oFormatOptions.format) {
+                oFormat.intervalPatterns = oFormat.oLocaleData.getCustomIntervalPattern(oFormat.oFormatOptions.format, null, oFormat.oFormatOptions.calendarType);
+                if (typeof oFormat.intervalPatterns === "string") {
+                    oFormat.intervalPatterns = [oFormat.intervalPatterns];
+                }
+                oFormat.intervalPatterns.push(oFormat.oLocaleData.getCustomDateTimePattern(oFormat.oFormatOptions.format, oFormat.oFormatOptions.calendarType));
+            }
+            else {
+                oFormat.intervalPatterns = [
+                    oFormat.oLocaleData.getCombinedIntervalPattern(oFormat.oFormatOptions.pattern, oFormat.oFormatOptions.calendarType),
+                    oFormat.oFormatOptions.pattern
+                ];
+            }
+            var sCommonConnectorPattern = createIntervalPatternWithNormalConnector(oFormat);
+            oFormat.intervalPatterns.push(sCommonConnectorPattern);
+        }
+        if (!oFormat.oFormatOptions.fallback) {
+            if (!oInfo.oFallbackFormats) {
+                oInfo.oFallbackFormats = {};
+            }
+            var sLocale = oLocale.toString(), sCalendarType = oFormat.oFormatOptions.calendarType, sKey = sLocale + "-" + sCalendarType, sPattern, aFallbackFormatOptions;
+            if (oFormat.oFormatOptions.pattern && oInfo.bPatternFallbackWithoutDelimiter) {
+                sKey = sKey + "-" + oFormat.oFormatOptions.pattern;
+            }
+            if (oFormat.oFormatOptions.interval) {
+                sKey = sKey + "-" + "interval";
+            }
+            var oFallbackFormats = oInfo.oFallbackFormats[sKey] ? Object.assign({}, oInfo.oFallbackFormats[sKey]) : undefined;
+            if (!oFallbackFormats) {
+                aFallbackFormatOptions = oInfo.aFallbackFormatOptions;
+                if (oInfo.bShortFallbackFormatOptions) {
+                    sPattern = oInfo.getPattern(oFormat.oLocaleData, "short");
+                    aFallbackFormatOptions = aFallbackFormatOptions.concat(DateFormat._createFallbackOptionsWithoutDelimiter(sPattern));
+                }
+                if (oFormat.oFormatOptions.pattern && oInfo.bPatternFallbackWithoutDelimiter) {
+                    aFallbackFormatOptions = DateFormat._createFallbackOptionsWithoutDelimiter(oFormat.oFormatOptions.pattern).concat(aFallbackFormatOptions);
+                }
+                oFallbackFormats = DateFormat._createFallbackFormat(aFallbackFormatOptions, sCalendarType, oLocale, oInfo, oFormat.oFormatOptions.interval);
+            }
+            oFormat.aFallbackFormats = oFallbackFormats;
+        }
+        oFormat.oRequiredParts = oInfo.oRequiredParts;
+        oFormat.aRelativeScales = oInfo.aRelativeScales;
+        oFormat.aRelativeParseScales = oInfo.aRelativeParseScales;
+        oFormat.aIntervalCompareFields = oInfo.aIntervalCompareFields;
+        oFormat.init();
+        return oFormat;
+    }
+    private static _createFallbackFormat(aFallbackFormatOptions: any, sCalendarType: any, oLocale: any, oInfo: any, bInterval: any) {
+        return aFallbackFormatOptions.map(function (oOptions) {
+            var oFormatOptions = Object.assign({}, oOptions);
+            if (bInterval) {
+                oFormatOptions.interval = true;
+            }
+            oFormatOptions.calendarType = sCalendarType;
+            oFormatOptions.fallback = true;
+            var oFallbackFormat = DateFormat.createInstance(oFormatOptions, oLocale, oInfo);
+            oFallbackFormat.bIsFallback = true;
+            return oFallbackFormat;
+        });
+    }
+    private static _createFallbackOptionsWithoutDelimiter(sBasePattern: any) {
+        var rNonDateFields = /[^dMyGU]/g, oDayReplace = {
+            regex: /d+/g,
+            replace: "dd"
+        }, oMonthReplace = {
+            regex: /M+/g,
+            replace: "MM"
+        }, oYearReplace = {
+            regex: /[yU]+/g,
+            replace: ["yyyy", "yy"]
+        };
+        sBasePattern = sBasePattern.replace(rNonDateFields, "");
+        sBasePattern = sBasePattern.replace(oDayReplace.regex, oDayReplace.replace);
+        sBasePattern = sBasePattern.replace(oMonthReplace.regex, oMonthReplace.replace);
+        return oYearReplace.replace.map(function (sReplace) {
+            return {
+                pattern: sBasePattern.replace(oYearReplace.regex, sReplace),
+                strictParsing: true
+            };
+        });
+    }
+    constructor(...args: any) {
+        throw new Error();
+    }
+}
+var mCldrDatePattern = {};
 function createIntervalPatternWithNormalConnector(oFormat) {
     var sPattern = oFormat.oLocaleData.getIntervalPattern("", oFormat.oFormatOptions.calendarType);
     sPattern = sPattern.replace(/[^\{\}01 ]/, "-");
     return sPattern.replace(/\{(0|1)\}/g, oFormat.oFormatOptions.pattern);
 }
-DateFormat.createInstance = function (oFormatOptions, oLocale, oInfo) {
-    var oFormat = Object.create(this.prototype);
-    if (oFormatOptions instanceof Locale) {
-        oLocale = oFormatOptions;
-        oFormatOptions = undefined;
-    }
-    if (!oLocale) {
-        oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
-    }
-    oFormat.oLocale = oLocale;
-    oFormat.oLocaleData = LocaleData.getInstance(oLocale);
-    oFormat.oFormatOptions = extend({}, oInfo.oDefaultFormatOptions, oFormatOptions);
-    if (!oFormat.oFormatOptions.calendarType) {
-        oFormat.oFormatOptions.calendarType = sap.ui.getCore().getConfiguration().getCalendarType();
-    }
-    if (!oFormat.oFormatOptions.pattern) {
-        if (oFormat.oFormatOptions.format) {
-            oFormat.oFormatOptions.pattern = oFormat.oLocaleData.getCustomDateTimePattern(oFormat.oFormatOptions.format, oFormat.oFormatOptions.calendarType);
-        }
-        else {
-            oFormat.oFormatOptions.pattern = oInfo.getPattern(oFormat.oLocaleData, oFormat.oFormatOptions.style, oFormat.oFormatOptions.calendarType);
-        }
-    }
-    if (oFormat.oFormatOptions.interval) {
-        if (oFormat.oFormatOptions.format) {
-            oFormat.intervalPatterns = oFormat.oLocaleData.getCustomIntervalPattern(oFormat.oFormatOptions.format, null, oFormat.oFormatOptions.calendarType);
-            if (typeof oFormat.intervalPatterns === "string") {
-                oFormat.intervalPatterns = [oFormat.intervalPatterns];
-            }
-            oFormat.intervalPatterns.push(oFormat.oLocaleData.getCustomDateTimePattern(oFormat.oFormatOptions.format, oFormat.oFormatOptions.calendarType));
-        }
-        else {
-            oFormat.intervalPatterns = [
-                oFormat.oLocaleData.getCombinedIntervalPattern(oFormat.oFormatOptions.pattern, oFormat.oFormatOptions.calendarType),
-                oFormat.oFormatOptions.pattern
-            ];
-        }
-        var sCommonConnectorPattern = createIntervalPatternWithNormalConnector(oFormat);
-        oFormat.intervalPatterns.push(sCommonConnectorPattern);
-    }
-    if (!oFormat.oFormatOptions.fallback) {
-        if (!oInfo.oFallbackFormats) {
-            oInfo.oFallbackFormats = {};
-        }
-        var sLocale = oLocale.toString(), sCalendarType = oFormat.oFormatOptions.calendarType, sKey = sLocale + "-" + sCalendarType, sPattern, aFallbackFormatOptions;
-        if (oFormat.oFormatOptions.pattern && oInfo.bPatternFallbackWithoutDelimiter) {
-            sKey = sKey + "-" + oFormat.oFormatOptions.pattern;
-        }
-        if (oFormat.oFormatOptions.interval) {
-            sKey = sKey + "-" + "interval";
-        }
-        var oFallbackFormats = oInfo.oFallbackFormats[sKey] ? Object.assign({}, oInfo.oFallbackFormats[sKey]) : undefined;
-        if (!oFallbackFormats) {
-            aFallbackFormatOptions = oInfo.aFallbackFormatOptions;
-            if (oInfo.bShortFallbackFormatOptions) {
-                sPattern = oInfo.getPattern(oFormat.oLocaleData, "short");
-                aFallbackFormatOptions = aFallbackFormatOptions.concat(DateFormat._createFallbackOptionsWithoutDelimiter(sPattern));
-            }
-            if (oFormat.oFormatOptions.pattern && oInfo.bPatternFallbackWithoutDelimiter) {
-                aFallbackFormatOptions = DateFormat._createFallbackOptionsWithoutDelimiter(oFormat.oFormatOptions.pattern).concat(aFallbackFormatOptions);
-            }
-            oFallbackFormats = DateFormat._createFallbackFormat(aFallbackFormatOptions, sCalendarType, oLocale, oInfo, oFormat.oFormatOptions.interval);
-        }
-        oFormat.aFallbackFormats = oFallbackFormats;
-    }
-    oFormat.oRequiredParts = oInfo.oRequiredParts;
-    oFormat.aRelativeScales = oInfo.aRelativeScales;
-    oFormat.aRelativeParseScales = oInfo.aRelativeParseScales;
-    oFormat.aIntervalCompareFields = oInfo.aIntervalCompareFields;
-    oFormat.init();
-    return oFormat;
-};
-DateFormat.prototype.init = function () {
-    var sCalendarType = this.oFormatOptions.calendarType;
-    this.aMonthsAbbrev = this.oLocaleData.getMonths("abbreviated", sCalendarType);
-    this.aMonthsWide = this.oLocaleData.getMonths("wide", sCalendarType);
-    this.aMonthsNarrow = this.oLocaleData.getMonths("narrow", sCalendarType);
-    this.aMonthsAbbrevSt = this.oLocaleData.getMonthsStandAlone("abbreviated", sCalendarType);
-    this.aMonthsWideSt = this.oLocaleData.getMonthsStandAlone("wide", sCalendarType);
-    this.aMonthsNarrowSt = this.oLocaleData.getMonthsStandAlone("narrow", sCalendarType);
-    this.aDaysAbbrev = this.oLocaleData.getDays("abbreviated", sCalendarType);
-    this.aDaysWide = this.oLocaleData.getDays("wide", sCalendarType);
-    this.aDaysNarrow = this.oLocaleData.getDays("narrow", sCalendarType);
-    this.aDaysShort = this.oLocaleData.getDays("short", sCalendarType);
-    this.aDaysAbbrevSt = this.oLocaleData.getDaysStandAlone("abbreviated", sCalendarType);
-    this.aDaysWideSt = this.oLocaleData.getDaysStandAlone("wide", sCalendarType);
-    this.aDaysNarrowSt = this.oLocaleData.getDaysStandAlone("narrow", sCalendarType);
-    this.aDaysShortSt = this.oLocaleData.getDaysStandAlone("short", sCalendarType);
-    this.aQuartersAbbrev = this.oLocaleData.getQuarters("abbreviated", sCalendarType);
-    this.aQuartersWide = this.oLocaleData.getQuarters("wide", sCalendarType);
-    this.aQuartersNarrow = this.oLocaleData.getQuarters("narrow", sCalendarType);
-    this.aQuartersAbbrevSt = this.oLocaleData.getQuartersStandAlone("abbreviated", sCalendarType);
-    this.aQuartersWideSt = this.oLocaleData.getQuartersStandAlone("wide", sCalendarType);
-    this.aQuartersNarrowSt = this.oLocaleData.getQuartersStandAlone("narrow", sCalendarType);
-    this.aErasNarrow = this.oLocaleData.getEras("narrow", sCalendarType);
-    this.aErasAbbrev = this.oLocaleData.getEras("abbreviated", sCalendarType);
-    this.aErasWide = this.oLocaleData.getEras("wide", sCalendarType);
-    this.aDayPeriods = this.oLocaleData.getDayPeriods("abbreviated", sCalendarType);
-    this.aFormatArray = this.parseCldrDatePattern(this.oFormatOptions.pattern);
-    this.sAllowedCharacters = this.getAllowedCharacters(this.aFormatArray);
-};
-DateFormat._createFallbackFormat = function (aFallbackFormatOptions, sCalendarType, oLocale, oInfo, bInterval) {
-    return aFallbackFormatOptions.map(function (oOptions) {
-        var oFormatOptions = Object.assign({}, oOptions);
-        if (bInterval) {
-            oFormatOptions.interval = true;
-        }
-        oFormatOptions.calendarType = sCalendarType;
-        oFormatOptions.fallback = true;
-        var oFallbackFormat = DateFormat.createInstance(oFormatOptions, oLocale, oInfo);
-        oFallbackFormat.bIsFallback = true;
-        return oFallbackFormat;
-    });
-};
-DateFormat._createFallbackOptionsWithoutDelimiter = function (sBasePattern) {
-    var rNonDateFields = /[^dMyGU]/g, oDayReplace = {
-        regex: /d+/g,
-        replace: "dd"
-    }, oMonthReplace = {
-        regex: /M+/g,
-        replace: "MM"
-    }, oYearReplace = {
-        regex: /[yU]+/g,
-        replace: ["yyyy", "yy"]
-    };
-    sBasePattern = sBasePattern.replace(rNonDateFields, "");
-    sBasePattern = sBasePattern.replace(oDayReplace.regex, oDayReplace.replace);
-    sBasePattern = sBasePattern.replace(oMonthReplace.regex, oMonthReplace.replace);
-    return oYearReplace.replace.map(function (sReplace) {
-        return {
-            pattern: sBasePattern.replace(oYearReplace.regex, sReplace),
-            strictParsing: true
-        };
-    });
-};
 var oParseHelper = {
     isNumber: function (iCharCode) {
         return iCharCode >= 48 && iCharCode <= 57;
@@ -1165,115 +1689,6 @@ DateFormat.prototype.oSymbols = {
         }
     }
 };
-DateFormat.prototype._format = function (oJSDate, bUTC) {
-    if (this.oFormatOptions.relative) {
-        var sRes = this.formatRelative(oJSDate, bUTC, this.oFormatOptions.relativeRange);
-        if (sRes) {
-            return sRes;
-        }
-    }
-    var sCalendarType = this.oFormatOptions.calendarType;
-    var oDate = UniversalDate.getInstance(oJSDate, sCalendarType);
-    var aBuffer = [], oPart, sResult, sSymbol;
-    for (var i = 0; i < this.aFormatArray.length; i++) {
-        oPart = this.aFormatArray[i];
-        sSymbol = oPart.symbol || "";
-        aBuffer.push(this.oSymbols[sSymbol].format(oPart, oDate, bUTC, this));
-    }
-    sResult = aBuffer.join("");
-    if (sap.ui.getCore().getConfiguration().getOriginInfo()) {
-        sResult = new String(sResult);
-        sResult.originInfo = {
-            source: "Common Locale Data Repository",
-            locale: this.oLocale.toString(),
-            style: this.oFormatOptions.style,
-            pattern: this.oFormatOptions.pattern
-        };
-    }
-    return sResult;
-};
-DateFormat.prototype.format = function (vJSDate, bUTC) {
-    var sCalendarType = this.oFormatOptions.calendarType, sResult;
-    if (bUTC === undefined) {
-        bUTC = this.oFormatOptions.UTC;
-    }
-    if (Array.isArray(vJSDate)) {
-        if (!this.oFormatOptions.interval) {
-            Log.error("Non-interval DateFormat can't format more than one date instance.");
-            return "";
-        }
-        if (vJSDate.length !== 2) {
-            Log.error("Interval DateFormat can only format with 2 date instances but " + vJSDate.length + " is given.");
-            return "";
-        }
-        if (this.oFormatOptions.singleIntervalValue) {
-            if (vJSDate[0] === null) {
-                Log.error("First date instance which is passed to the interval DateFormat shouldn't be null.");
-                return "";
-            }
-            if (vJSDate[1] === null) {
-                sResult = this._format(vJSDate[0], bUTC);
-            }
-        }
-        if (sResult === undefined) {
-            var bValid = vJSDate.every(function (oJSDate) {
-                return oJSDate && !isNaN(oJSDate.getTime());
-            });
-            if (!bValid) {
-                Log.error("At least one date instance which is passed to the interval DateFormat isn't valid.");
-                return "";
-            }
-            sResult = this._formatInterval(vJSDate, bUTC);
-        }
-    }
-    else {
-        if (!vJSDate || isNaN(vJSDate.getTime())) {
-            Log.error("The given date instance isn't valid.");
-            return "";
-        }
-        if (this.oFormatOptions.interval) {
-            Log.error("Interval DateFormat expects an array with two dates for the first argument but only one date is given.");
-            return "";
-        }
-        sResult = this._format(vJSDate, bUTC);
-    }
-    if (sCalendarType == CalendarType.Japanese && this.oLocale.getLanguage() === "ja") {
-        sResult = sResult.replace(/(^|[^\d])1年/g, "$1\u5143\u5E74");
-    }
-    return sResult;
-};
-DateFormat.prototype._formatInterval = function (aJSDates, bUTC) {
-    var sCalendarType = this.oFormatOptions.calendarType;
-    var oFromDate = UniversalDate.getInstance(aJSDates[0], sCalendarType);
-    var oToDate = UniversalDate.getInstance(aJSDates[1], sCalendarType);
-    var oDate;
-    var oPart;
-    var sSymbol;
-    var aBuffer = [];
-    var sPattern;
-    var aFormatArray = [];
-    var oDiffField = this._getGreatestDiffField([oFromDate, oToDate], bUTC);
-    if (!oDiffField) {
-        return this._format(aJSDates[0], bUTC);
-    }
-    if (this.oFormatOptions.format) {
-        sPattern = this.oLocaleData.getCustomIntervalPattern(this.oFormatOptions.format, oDiffField, sCalendarType);
-    }
-    else {
-        sPattern = this.oLocaleData.getCombinedIntervalPattern(this.oFormatOptions.pattern, sCalendarType);
-    }
-    aFormatArray = this.parseCldrDatePattern(sPattern);
-    oDate = oFromDate;
-    for (var i = 0; i < aFormatArray.length; i++) {
-        oPart = aFormatArray[i];
-        sSymbol = oPart.symbol || "";
-        if (oPart.repeat) {
-            oDate = oToDate;
-        }
-        aBuffer.push(this.oSymbols[sSymbol].format(oPart, oDate, bUTC, this));
-    }
-    return aBuffer.join("");
-};
 var mFieldToGroup = {
     Era: "Era",
     FullYear: "Year",
@@ -1285,97 +1700,6 @@ var mFieldToGroup = {
     Hours: "Hour",
     Minutes: "Minute",
     Seconds: "Second"
-};
-DateFormat.prototype._getGreatestDiffField = function (aDates, bUTC) {
-    var bDiffFound = false, mDiff = {};
-    this.aIntervalCompareFields.forEach(function (sField) {
-        var sGetterPrefix = "get" + (bUTC ? "UTC" : ""), sMethodName = sGetterPrefix + sField, sFieldGroup = mFieldToGroup[sField], vFromValue = aDates[0][sMethodName].apply(aDates[0]), vToValue = aDates[1][sMethodName].apply(aDates[1]);
-        if (!deepEqual(vFromValue, vToValue)) {
-            bDiffFound = true;
-            mDiff[sFieldGroup] = true;
-        }
-    });
-    if (bDiffFound) {
-        return mDiff;
-    }
-    return null;
-};
-DateFormat.prototype._parse = function (sValue, aFormatArray, bUTC, bStrict) {
-    var iIndex = 0, oPart, sSubValue, oResult;
-    var oDateValue = {
-        valid: true
-    };
-    var oParseConf = {
-        formatArray: aFormatArray,
-        dateValue: oDateValue,
-        strict: bStrict
-    };
-    for (var i = 0; i < aFormatArray.length; i++) {
-        sSubValue = sValue.substr(iIndex);
-        oPart = aFormatArray[i];
-        oParseConf.index = i;
-        oResult = this.oSymbols[oPart.symbol || ""].parse(sSubValue, oPart, this, oParseConf) || {};
-        oDateValue = extend(oDateValue, oResult);
-        if (oResult.valid === false) {
-            break;
-        }
-        iIndex += oResult.length || 0;
-    }
-    oDateValue.index = iIndex;
-    if (oDateValue.pm) {
-        oDateValue.hour += 12;
-    }
-    if (oDateValue.dayNumberOfWeek === undefined && oDateValue.dayOfWeek !== undefined) {
-        oDateValue.dayNumberOfWeek = this._adaptDayOfWeek(oDateValue.dayOfWeek);
-    }
-    if (oDateValue.quarter !== undefined && oDateValue.month === undefined && oDateValue.day === undefined) {
-        oDateValue.month = 3 * oDateValue.quarter;
-        oDateValue.day = 1;
-    }
-    return oDateValue;
-};
-DateFormat.prototype._parseInterval = function (sValue, sCalendarType, bUTC, bStrict) {
-    var aDateValues, iRepeat, oDateValue;
-    this.intervalPatterns.some(function (sPattern) {
-        var aFormatArray = this.parseCldrDatePattern(sPattern);
-        iRepeat = undefined;
-        for (var i = 0; i < aFormatArray.length; i++) {
-            if (aFormatArray[i].repeat) {
-                iRepeat = i;
-                break;
-            }
-        }
-        if (iRepeat === undefined) {
-            oDateValue = this._parse(sValue, aFormatArray, bUTC, bStrict);
-            if (oDateValue.index === 0 || oDateValue.index < sValue.length) {
-                oDateValue.valid = false;
-            }
-            if (oDateValue.valid === false) {
-                return;
-            }
-            aDateValues = [oDateValue, oDateValue];
-            return true;
-        }
-        else {
-            aDateValues = [];
-            oDateValue = this._parse(sValue, aFormatArray.slice(0, iRepeat), bUTC, bStrict);
-            if (oDateValue.valid === false) {
-                return;
-            }
-            aDateValues.push(oDateValue);
-            var iLength = oDateValue.index;
-            oDateValue = this._parse(sValue.substring(iLength), aFormatArray.slice(iRepeat), bUTC, bStrict);
-            if (oDateValue.index === 0 || oDateValue.index + iLength < sValue.length) {
-                oDateValue.valid = false;
-            }
-            if (oDateValue.valid === false) {
-                return;
-            }
-            aDateValues.push(oDateValue);
-            return true;
-        }
-    }.bind(this));
-    return aDateValues;
 };
 var fnCreateDate = function (oDateValue, sCalendarType, bUTC, bStrict) {
     var oDate, iYear = typeof oDateValue.year === "number" ? oDateValue.year : 1970;
@@ -1461,245 +1785,6 @@ function isValidDateRange(oStartDate, oEndDate) {
     }
     return true;
 }
-DateFormat.prototype.parse = function (sValue, bUTC, bStrict) {
-    sValue = sValue == null ? "" : String(sValue).trim();
-    var oDateValue;
-    var sCalendarType = this.oFormatOptions.calendarType;
-    if (bUTC === undefined) {
-        bUTC = this.oFormatOptions.UTC;
-    }
-    if (bStrict === undefined) {
-        bStrict = this.oFormatOptions.strictParsing;
-    }
-    if (sCalendarType == CalendarType.Japanese && this.oLocale.getLanguage() === "ja") {
-        sValue = sValue.replace(/元年/g, "1\u5E74");
-    }
-    if (!this.oFormatOptions.interval) {
-        var oJSDate = this.parseRelative(sValue, bUTC);
-        if (oJSDate) {
-            return oJSDate;
-        }
-        oDateValue = this._parse(sValue, this.aFormatArray, bUTC, bStrict);
-        if (oDateValue.index === 0 || oDateValue.index < sValue.length) {
-            oDateValue.valid = false;
-        }
-        oJSDate = fnCreateDate(oDateValue, sCalendarType, bUTC, bStrict);
-        if (oJSDate) {
-            return oJSDate;
-        }
-    }
-    else {
-        var aDateValues = this._parseInterval(sValue, sCalendarType, bUTC, bStrict);
-        var oJSDate1, oJSDate2;
-        if (aDateValues && aDateValues.length == 2) {
-            var oDateValue1 = mergeWithoutOverwrite(aDateValues[0], aDateValues[1]);
-            var oDateValue2 = mergeWithoutOverwrite(aDateValues[1], aDateValues[0]);
-            oJSDate1 = fnCreateDate(oDateValue1, sCalendarType, bUTC, bStrict);
-            oJSDate2 = fnCreateDate(oDateValue2, sCalendarType, bUTC, bStrict);
-            if (oJSDate1 && oJSDate2) {
-                if (this.oFormatOptions.singleIntervalValue && oJSDate1.getTime() === oJSDate2.getTime()) {
-                    return [oJSDate1, null];
-                }
-                var bValid = isValidDateRange(oJSDate1, oJSDate2);
-                if (bStrict && !bValid) {
-                    Log.error("StrictParsing: Invalid date range. The given end date is before the start date.");
-                    return [null, null];
-                }
-                return [oJSDate1, oJSDate2];
-            }
-        }
-    }
-    if (!this.bIsFallback) {
-        var vDate;
-        this.aFallbackFormats.every(function (oFallbackFormat) {
-            vDate = oFallbackFormat.parse(sValue, bUTC, bStrict);
-            if (Array.isArray(vDate)) {
-                return !(vDate[0] && vDate[1]);
-            }
-            else {
-                return !vDate;
-            }
-        });
-        return vDate;
-    }
-    if (!this.oFormatOptions.interval) {
-        return null;
-    }
-    else {
-        return [null, null];
-    }
-};
-DateFormat.prototype.parseCldrDatePattern = function (sPattern) {
-    if (mCldrDatePattern[sPattern]) {
-        return mCldrDatePattern[sPattern];
-    }
-    var aFormatArray = [], i, bQuoted = false, oCurrentObject = null, sState = "", sNewState = "", mAppeared = {}, bIntervalStartFound = false;
-    for (i = 0; i < sPattern.length; i++) {
-        var sCurChar = sPattern.charAt(i), sNextChar, sPrevChar, sPrevPrevChar;
-        if (bQuoted) {
-            if (sCurChar == "'") {
-                sPrevChar = sPattern.charAt(i - 1);
-                sPrevPrevChar = sPattern.charAt(i - 2);
-                sNextChar = sPattern.charAt(i + 1);
-                if (sPrevChar == "'" && sPrevPrevChar != "'") {
-                    bQuoted = false;
-                }
-                else if (sNextChar == "'") {
-                    i += 1;
-                }
-                else {
-                    bQuoted = false;
-                    continue;
-                }
-            }
-            if (sState == "text") {
-                oCurrentObject.value += sCurChar;
-            }
-            else {
-                oCurrentObject = {
-                    type: "text",
-                    value: sCurChar
-                };
-                aFormatArray.push(oCurrentObject);
-                sState = "text";
-            }
-        }
-        else {
-            if (sCurChar == "'") {
-                bQuoted = true;
-            }
-            else if (this.oSymbols[sCurChar]) {
-                sNewState = this.oSymbols[sCurChar].name;
-                if (sState == sNewState) {
-                    oCurrentObject.digits++;
-                }
-                else {
-                    oCurrentObject = {
-                        type: sNewState,
-                        symbol: sCurChar,
-                        digits: 1
-                    };
-                    aFormatArray.push(oCurrentObject);
-                    sState = sNewState;
-                    if (!bIntervalStartFound) {
-                        if (mAppeared[sNewState]) {
-                            oCurrentObject.repeat = true;
-                            bIntervalStartFound = true;
-                        }
-                        else {
-                            mAppeared[sNewState] = true;
-                        }
-                    }
-                }
-            }
-            else {
-                if (sState == "text") {
-                    oCurrentObject.value += sCurChar;
-                }
-                else {
-                    oCurrentObject = {
-                        type: "text",
-                        value: sCurChar
-                    };
-                    aFormatArray.push(oCurrentObject);
-                    sState = "text";
-                }
-            }
-        }
-    }
-    mCldrDatePattern[sPattern] = aFormatArray;
-    return aFormatArray;
-};
-DateFormat.prototype.parseRelative = function (sValue, bUTC) {
-    var aPatterns, oEntry, rPattern, oResult, iValue;
-    if (!sValue) {
-        return null;
-    }
-    aPatterns = this.oLocaleData.getRelativePatterns(this.aRelativeParseScales, this.oFormatOptions.relativeStyle);
-    for (var i = 0; i < aPatterns.length; i++) {
-        oEntry = aPatterns[i];
-        rPattern = new RegExp("^\\s*" + oEntry.pattern.replace(/\{0\}/, "(\\d+)") + "\\s*$", "i");
-        oResult = rPattern.exec(sValue);
-        if (oResult) {
-            if (oEntry.value !== undefined) {
-                return computeRelativeDate(oEntry.value, oEntry.scale);
-            }
-            else {
-                iValue = parseInt(oResult[1]);
-                return computeRelativeDate(iValue * oEntry.sign, oEntry.scale);
-            }
-        }
-    }
-    function computeRelativeDate(iDiff, sScale) {
-        var iToday, oToday = new Date(), oJSDate;
-        if (bUTC) {
-            iToday = oToday.getTime();
-        }
-        else {
-            iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate(), oToday.getHours(), oToday.getMinutes(), oToday.getSeconds(), oToday.getMilliseconds());
-        }
-        oJSDate = new Date(iToday);
-        switch (sScale) {
-            case "second":
-                oJSDate.setUTCSeconds(oJSDate.getUTCSeconds() + iDiff);
-                break;
-            case "minute":
-                oJSDate.setUTCMinutes(oJSDate.getUTCMinutes() + iDiff);
-                break;
-            case "hour":
-                oJSDate.setUTCHours(oJSDate.getUTCHours() + iDiff);
-                break;
-            case "day":
-                oJSDate.setUTCDate(oJSDate.getUTCDate() + iDiff);
-                break;
-            case "week":
-                oJSDate.setUTCDate(oJSDate.getUTCDate() + iDiff * 7);
-                break;
-            case "month":
-                oJSDate.setUTCMonth(oJSDate.getUTCMonth() + iDiff);
-                break;
-            case "quarter":
-                oJSDate.setUTCMonth(oJSDate.getUTCMonth() + iDiff * 3);
-                break;
-            case "year":
-                oJSDate.setUTCFullYear(oJSDate.getUTCFullYear() + iDiff);
-                break;
-        }
-        if (bUTC) {
-            return oJSDate;
-        }
-        else {
-            return new Date(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate(), oJSDate.getUTCHours(), oJSDate.getUTCMinutes(), oJSDate.getUTCSeconds(), oJSDate.getUTCMilliseconds());
-        }
-    }
-};
-DateFormat.prototype.formatRelative = function (oJSDate, bUTC, aRange) {
-    var oToday = new Date(), oDateUTC, sScale = this.oFormatOptions.relativeScale || "day", iDiff, sPattern, iDiffSeconds;
-    iDiffSeconds = (oJSDate.getTime() - oToday.getTime()) / 1000;
-    if (this.oFormatOptions.relativeScale == "auto") {
-        sScale = this._getScale(iDiffSeconds, this.aRelativeScales);
-    }
-    if (!aRange) {
-        aRange = this._mRanges[sScale];
-    }
-    if (sScale == "year" || sScale == "month" || sScale == "day") {
-        oToday = new Date(Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate()));
-        oDateUTC = new Date(0);
-        if (bUTC) {
-            oDateUTC.setUTCFullYear(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate());
-        }
-        else {
-            oDateUTC.setUTCFullYear(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate());
-        }
-        oJSDate = oDateUTC;
-    }
-    iDiff = this._getDifference(sScale, [oToday, oJSDate]);
-    if (this.oFormatOptions.relativeScale != "auto" && (iDiff < aRange[0] || iDiff > aRange[1])) {
-        return null;
-    }
-    sPattern = this.oLocaleData.getRelativePattern(sScale, iDiff, iDiffSeconds > 0, this.oFormatOptions.relativeStyle);
-    return formatMessage(sPattern, [Math.abs(iDiff)]);
-};
 DateFormat.prototype._mRanges = {
     second: [-60, 60],
     minute: [-60, 60],
@@ -1718,21 +1803,6 @@ DateFormat.prototype._mScales = {
     month: 2592000,
     quarter: 7776000,
     year: 31536000
-};
-DateFormat.prototype._getScale = function (iDiffSeconds, aScales) {
-    var sScale, sTestScale;
-    iDiffSeconds = Math.abs(iDiffSeconds);
-    for (var i = 0; i < aScales.length; i++) {
-        sTestScale = aScales[i];
-        if (iDiffSeconds >= this._mScales[sTestScale]) {
-            sScale = sTestScale;
-            break;
-        }
-    }
-    if (!sScale) {
-        sScale = aScales[aScales.length - 1];
-    }
-    return sScale;
 };
 function cutDateFields(oDate, iStartIndex) {
     var aFields = [
@@ -1785,72 +1855,4 @@ var mRelativeDiffs = {
         oToDate = cutDateFields(oToDate, 6);
         return (oToDate.getTime() - oFromDate.getTime()) / (oFormat._mScales.second * 1000);
     }
-};
-DateFormat.prototype._adaptDayOfWeek = function (iDayOfWeek) {
-    var iFirstDayOfWeek = LocaleData.getInstance(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()).getFirstDayOfWeek();
-    var iDayNumberOfWeek = iDayOfWeek - (iFirstDayOfWeek - 1);
-    if (iDayNumberOfWeek <= 0) {
-        iDayNumberOfWeek += 7;
-    }
-    return iDayNumberOfWeek;
-};
-DateFormat.prototype._getDifference = function (sScale, aDates) {
-    var oFromDate = aDates[0];
-    var oToDate = aDates[1];
-    return Math.round(mRelativeDiffs[sScale](oFromDate, oToDate, this));
-};
-DateFormat.prototype.getAllowedCharacters = function (aFormatArray) {
-    if (this.oFormatOptions.relative) {
-        return "";
-    }
-    var sAllowedCharacters = "";
-    var bNumbers = false;
-    var bAll = false;
-    var oPart;
-    for (var i = 0; i < aFormatArray.length; i++) {
-        oPart = aFormatArray[i];
-        switch (oPart.type) {
-            case "text":
-                if (sAllowedCharacters.indexOf(oPart.value) < 0) {
-                    sAllowedCharacters += oPart.value;
-                }
-                break;
-            case "day":
-            case "year":
-            case "weekYear":
-            case "dayNumberOfWeek":
-            case "weekInYear":
-            case "hour0_23":
-            case "hour1_24":
-            case "hour0_11":
-            case "hour1_12":
-            case "minute":
-            case "second":
-            case "fractionalsecond":
-                if (!bNumbers) {
-                    sAllowedCharacters += "0123456789";
-                    bNumbers = true;
-                }
-                break;
-            case "month":
-            case "monthStandalone":
-                if (oPart.digits < 3) {
-                    if (!bNumbers) {
-                        sAllowedCharacters += "0123456789";
-                        bNumbers = true;
-                    }
-                }
-                else {
-                    bAll = true;
-                }
-                break;
-            default:
-                bAll = true;
-                break;
-        }
-    }
-    if (bAll) {
-        sAllowedCharacters = "";
-    }
-    return sAllowedCharacters;
 };

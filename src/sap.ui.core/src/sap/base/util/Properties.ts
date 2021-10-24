@@ -1,38 +1,71 @@
 import LoaderExtensions from "sap/base/util/LoaderExtensions";
-var Properties = function () {
-    this.mProperties = {};
-    this.aKeys = null;
-};
-Properties.prototype.getProperty = function (sKey, sDefaultValue) {
-    var sValue = this.mProperties[sKey];
-    if (typeof (sValue) == "string") {
-        return sValue;
+export class Properties {
+    getProperty(sKey: any, sDefaultValue: any) {
+        var sValue = this.mProperties[sKey];
+        if (typeof (sValue) == "string") {
+            return sValue;
+        }
+        else if (sDefaultValue) {
+            return sDefaultValue;
+        }
+        return null;
     }
-    else if (sDefaultValue) {
-        return sDefaultValue;
+    getKeys(...args: any) {
+        if (!this.aKeys) {
+            this.aKeys = Object.keys(this.mProperties);
+        }
+        return this.aKeys;
     }
-    return null;
-};
-Properties.prototype.getKeys = function () {
-    if (!this.aKeys) {
-        this.aKeys = Object.keys(this.mProperties);
+    setProperty(sKey: any, sValue: any) {
+        if (typeof (sValue) != "string") {
+            return;
+        }
+        if (typeof (this.mProperties[sKey]) != "string" && this.aKeys) {
+            this.aKeys.push(String(sKey));
+        }
+        this.mProperties[sKey] = sValue;
     }
-    return this.aKeys;
-};
-Properties.prototype.setProperty = function (sKey, sValue) {
-    if (typeof (sValue) != "string") {
-        return;
+    clone(...args: any) {
+        var oClone = new Properties();
+        oClone.mProperties = Object.assign({}, this.mProperties);
+        return oClone;
     }
-    if (typeof (this.mProperties[sKey]) != "string" && this.aKeys) {
-        this.aKeys.push(String(sKey));
+    static create(mParams: any) {
+        mParams = Object.assign({ url: undefined, headers: {} }, mParams);
+        var bAsync = !!mParams.async, oProp = new Properties(), vResource;
+        function _parse(sText) {
+            if (typeof sText === "string") {
+                parse(sText, oProp);
+                return oProp;
+            }
+            return mParams.returnNullIfMissing ? null : oProp;
+        }
+        if (typeof mParams.url === "string") {
+            vResource = LoaderExtensions.loadResource({
+                url: mParams.url,
+                dataType: "text",
+                headers: mParams.headers,
+                failOnError: false,
+                async: bAsync
+            });
+        }
+        if (bAsync) {
+            if (!vResource) {
+                return Promise.resolve(_parse(null));
+            }
+            return vResource.then(function (oVal) {
+                return _parse(oVal);
+            }, function (oVal) {
+                throw (oVal instanceof Error ? oVal : new Error("Problem during loading of property file '" + mParams.url + "': " + oVal));
+            });
+        }
+        return _parse(vResource);
     }
-    this.mProperties[sKey] = sValue;
-};
-Properties.prototype.clone = function () {
-    var oClone = new Properties();
-    oClone.mProperties = Object.assign({}, this.mProperties);
-    return oClone;
-};
+    constructor(...args: any) {
+        this.mProperties = {};
+        this.aKeys = null;
+    }
+}
 var flatstr = (typeof chrome === "object" || typeof v8 === "object") ? function (s, iConcatOps) {
     if (iConcatOps > 2 && 40 * iConcatOps > s.length) {
         Number(s);
@@ -105,34 +138,3 @@ function parse(sText, oProp) {
         oProp.mProperties[sKey] = flatstr(sValue, sValue ? iConcatOps : 0);
     }
 }
-Properties.create = function (mParams) {
-    mParams = Object.assign({ url: undefined, headers: {} }, mParams);
-    var bAsync = !!mParams.async, oProp = new Properties(), vResource;
-    function _parse(sText) {
-        if (typeof sText === "string") {
-            parse(sText, oProp);
-            return oProp;
-        }
-        return mParams.returnNullIfMissing ? null : oProp;
-    }
-    if (typeof mParams.url === "string") {
-        vResource = LoaderExtensions.loadResource({
-            url: mParams.url,
-            dataType: "text",
-            headers: mParams.headers,
-            failOnError: false,
-            async: bAsync
-        });
-    }
-    if (bAsync) {
-        if (!vResource) {
-            return Promise.resolve(_parse(null));
-        }
-        return vResource.then(function (oVal) {
-            return _parse(oVal);
-        }, function (oVal) {
-            throw (oVal instanceof Error ? oVal : new Error("Problem during loading of property file '" + mParams.url + "': " + oVal));
-        });
-    }
-    return _parse(vResource);
-};
