@@ -1184,5 +1184,36 @@
         ]
       }
     ]
+  },
+  "1.71.39": {
+    "date": "October 2021",
+    "notes": [
+      {
+        "id": "a9d4bd09a91598ce0216323ac62a6e752318cad5",
+        "type": "FIX",
+        "text": " ManagedObject: fix cloning of associations to root object",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "9d3b4292f78be775c7d5f44c6d1a70e8153a7be1",
+        "type": "FIX",
+        "text": " ManagedObject.findAggregatedObjects: add possibility to include binding templates into the search",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170077221"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070449873"
+          }
+        ]
+      }
+    ]
   }
 }
