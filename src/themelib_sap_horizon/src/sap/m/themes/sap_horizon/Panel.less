@@ -5,6 +5,13 @@
 
 .sapMPanel {
 	min-height: 2.5rem;
+	border-radius: @sapElement_BorderCornerRadius;
+
+	.sapMPanelWrappingDiv:not(.sapMPanelWrappingDivExpanded),
+	.sapMPanelWrappingDivTb:not(.sapMPanelWrappingDivTbExpanded) {
+		border-radius: @sapElement_BorderCornerRadius;
+		overflow: hidden;
+	}
 }
 
 .sapMPanelBGSolid {
@@ -28,10 +35,28 @@
 /* do not want border if expanded and if only header text */
 .sapMPanelWrappingDivTb {
 	border-bottom: 0.0625rem solid @sapUiGroupTitleBorderColor;
+	background: @sapGroup_ContentBackground;
+}
+
+.sapMPanelExpandable .sapMPanelWrappingDiv {
+	&.sapMPanelWrappingDivExpanded:focus {
+		border-top-left-radius: @sapElement_BorderCornerRadius;
+		border-top-right-radius: @sapElement_BorderCornerRadius;
+		outline-offset: -0.125rem;
+	}
+
+	&:not(.sapMPanelWrappingDivExpanded):focus {
+		border-radius: @sapElement_BorderCornerRadius;
+		outline-offset: -0.125rem;
+	}
+}
+
+.sapMPanelContent {
+	background: @sapGroup_ContentBackground;
 }
 
 .sapMPanelContent:not(.sapMPanelBGTransparent) {
-	border-bottom: 0.0625rem solid @sapUiGroupTitleBorderColor;
+	border-bottom: none;
 }
 
 .sapMPanel .sapMPanelHdr {
