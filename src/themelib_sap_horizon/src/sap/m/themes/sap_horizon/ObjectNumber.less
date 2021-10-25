@@ -12,3 +12,74 @@
 .sapMObjectNumberInverted .sapMObjectNumberUnit {
 	text-shadow: @sapUiContentContrastTextShadow;
 }
+
+.sapMObjectNumberInverted {
+	.sapMObjectNumberInner {
+		border-radius: 0.25rem;
+	}
+}
+
+html.sap-desktop .sapMObjectNumberActive:focus {
+	.sapMObjectNumberInner::after {
+		left: -0.0625rem;
+		top: -0.0625rem;
+		right: -0.0625rem;
+		bottom: -0.0625rem;
+		height: auto;
+		outline: none;
+		border-radius: 0.25rem;
+		border: 0.125rem solid @sapUiContentFocusColor;
+	}
+
+	&.sapMObjectNumberInverted .sapMObjectNumberInner::after {
+		left: -0.0625rem;
+		top: -0.0625rem;
+		right: -0.0625rem;
+		bottom: -0.0625rem;
+		height: auto;
+		outline: none;
+		border-radius: 0.25rem;
+		border: 0.125rem solid @sapUiContentFocusColor;
+	}
+
+	&.sapMObjectNumberLarge {
+		.sapMObjectNumberInner::after {
+			left: -0.0625rem;
+			top: -0.0625rem;
+			right: -0.0625rem;
+			bottom: -0.0625rem;
+			height: auto;
+		}
+		&.sapMObjectNumberInverted .sapMObjectNumberInner::after {
+			left: -0.0625rem;
+			top: -0.0625rem;
+			right: -0.0625rem;
+			bottom: -0.0625rem;
+			height: auto;
+			outline: none;
+			border-radius: 0.25rem;
+			border: 0.125rem solid @sapUiContentFocusColor;
+		}
+	}
+}
+
+.objectNumberStatusMixIn(@class, @innerBackgroundColor, @innerColor, @activeInnerBackgroundColor, @activeInnerColor, @pressedInnerBackgroundColor) {
+	.sapMObjectNumberInverted.@{class} {
+		.sapMObjectNumberInner {
+			background-color: @innerBackgroundColor;
+			color: @innerColor;
+		}
+
+		&.sapMObjectNumberActive {
+			.sapMObjectNumberInner:hover {
+				background-color: @activeInnerBackgroundColor;
+				color: @activeInnerColor;
+			}
+			.sapMObjectNumberInner:active,
+			&.sapMObjectNumberPressed .sapMObjectNumberInner {
+				background-color: @pressedInnerBackgroundColor;
+				color: @innerColor;
+			}
+		}
+	}
+}

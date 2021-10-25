@@ -106,6 +106,56 @@
 				textAlign: sap.ui.core.TextAlign.Right
 			});
 
+			var txt10 = new sap.m.Label({text: "Active ObjectNumber"});
+
+			var on10 = new sap.m.ObjectNumber("on10", {
+				number: "1.50",
+				active: true
+			});
+
+			var txt11 = new sap.m.Label({text: "Inverted ObjectNumber"});
+
+			var on11 = new sap.m.ObjectNumber("on11", {
+				number: "1.50",
+                inverted: true
+			});
+
+			var txt12 = new sap.m.Label({text: "Large ObjectNumber"});
+
+			var on12 = new sap.m.ObjectNumber("on12", {
+				number: "1.50"
+			}).addStyleClass("sapMObjectNumberLarge");
+
+			var txt13 = new sap.m.Label({text: "Inverted active ObjectNumber"});
+
+			var on13 = new sap.m.ObjectNumber("on13", {
+				number: "1.50",
+                active: true,
+				inverted: true
+			});
+
+			var txt14 = new sap.m.Label({text: "Active large ObjectNumber"});
+
+			var on14 = new sap.m.ObjectNumber("on14", {
+				number: "1.50",
+				active: true
+			}).addStyleClass("sapMObjectNumberLarge");
+
+			var txt15 = new sap.m.Label({text: "Inverted large ObjectNumber"});
+
+			var on15 = new sap.m.ObjectNumber("on15", {
+				number: "1.50",
+				inverted: true
+			}).addStyleClass("sapMObjectNumberLarge");
+
+			var txt16 = new sap.m.Label({text: "Inverted active large ObjectNumber"});
+
+			var on16 = new sap.m.ObjectNumber("on16", {
+				number: "1.50",
+                active: true,
+				inverted: true
+			}).addStyleClass("sapMObjectNumberLarge");
+
 			// items
 			var oItemNone = new sap.ui.core.Item({
 				key: sap.ui.core.ValueState.None,
@@ -161,7 +211,21 @@
 					txt8,
 					on8,
 					txt9,
-					on9
+					on9,
+					txt10,
+					on10,
+					txt11,
+					on11,
+					txt12,
+					on12,
+					txt13,
+					on13,
+					txt14,
+					on14,
+					txt15,
+					on15,
+					txt16,
+					on16
 				]
 			});
 			app.setInitialPage(page.getId());
