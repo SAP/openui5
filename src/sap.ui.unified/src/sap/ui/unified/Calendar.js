@@ -2002,6 +2002,7 @@ sap.ui.define([
 			for (i = 0; i < aMonths.length; ++i) {
 				if (aMonths[i].checkDateFocusable(oFocusedDate.toLocalJSDate())) {
 					aMonths[i].setDate(oFocusedDate.toLocalJSDate());
+					aMonths[i]._focusDate(oFocusedDate);
 					return;
 				}
 			}
