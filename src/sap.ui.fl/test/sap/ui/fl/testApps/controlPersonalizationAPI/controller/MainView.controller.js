@@ -36,7 +36,7 @@ sap.ui.define([
 		},
 
 		formatStatusText: function (aChanges, oView1LabelId, oView1VariantLabelId, oView2LabelId, oView2VariantLabelId) {
-			var sPersonalizationMessage = "At lease one label in the application IS personalized.";
+			var sPersonalizationMessage = "At least one label in the application IS personalized.";
 			var sNoPersonalizationMessage = "NOT A SINGLE label in the application is personalized";
 			return Helper.formatStatusText(aChanges, [oView1LabelId, oView1VariantLabelId, oView2LabelId, oView2VariantLabelId],
 				sPersonalizationMessage, sNoPersonalizationMessage);

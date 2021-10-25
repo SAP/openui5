@@ -3,14 +3,14 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/ControlPersonalizationAPI",
+	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/rta/api/startKeyUserAdaptation"
 ], function(
 	Log,
 	MessageBox,
 	Controller,
 	LayerUtils,
-	ControlPersonalizationAPI,
+	ControlPersonalizationWriteAPI,
 	startKeyUserAdaptation
 ) {
 	"use strict";
@@ -80,7 +80,7 @@ sap.ui.define([
 							// add dirty changes2
 							// change1: move sections with simple form
 							var oMoveChangeData = {
-								selectorControl: this.byId("ObjectPageLayout"),
+								selectorElement: this.byId("ObjectPageLayout"),
 								changeSpecificData: {
 									changeType: "moveControls",
 									movedElements: [{
@@ -100,17 +100,17 @@ sap.ui.define([
 							};
 							// change2: remove section with smart form
 							var oRemoveChangeData = {
-								selectorControl: this.byId("ObjectPageSectionWithSmartForm"),
+								selectorElement: this.byId("ObjectPageSectionWithSmartForm"),
 								changeSpecificData: {
 									changeType: "stashControl"
 								}
 							};
-							ControlPersonalizationAPI.addPersonalizationChanges({controlChanges: [oMoveChangeData, oRemoveChangeData]});
+							ControlPersonalizationWriteAPI.add({changes: [oMoveChangeData, oRemoveChangeData]});
 							this.iCounter++;
 						} else if (this.iCounter === 1) {
 							// on second press of "Personalization Changes button"
 							var oMoveChangeData2 = {
-								selectorControl: this.byId("ObjectPageLayout"),
+								selectorElement: this.byId("ObjectPageLayout"),
 								changeSpecificData: {
 									changeType: "moveControls",
 									movedElements: [{
@@ -129,9 +129,7 @@ sap.ui.define([
 								}
 							};
 
-							ControlPersonalizationAPI.addPersonalizationChanges({
-								controlChanges: [oMoveChangeData2]
-							});
+							ControlPersonalizationWriteAPI.add({changes: [oMoveChangeData2]});
 
 							oButton.setEnabled(false);
 							this.iCounter++;

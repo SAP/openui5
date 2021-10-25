@@ -3,14 +3,14 @@ sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
-	"sap/ui/fl/ControlPersonalizationAPI",
+	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/rta/util/UrlParser"
 ], function (
 	UIComponent,
 	FlexControllerFactory,
 	ChangePersistenceFactory,
 	FakeLrepConnectorLocalStorage,
-	ControlPersonalizationAPI,
+	ControlPersonalizationWriteAPI,
 	UrlParser
 ) {
 	"use strict";
@@ -46,12 +46,12 @@ sap.ui.define([
 		},
 
 		createChangesAndSave: function (mChangeData, oControl) {
-			ControlPersonalizationAPI.addPersonalizationChanges(
+			ControlPersonalizationWriteAPI.add(
 				{
-					controlChanges: [
+					changes: [
 						{
 							changeSpecificData: mChangeData,
-							selectorControl: oControl
+							selectorElement: oControl
 						}
 					]
 				}
@@ -61,7 +61,7 @@ sap.ui.define([
 		},
 
 		resetPersonalization: function(aControls) {
-			ControlPersonalizationAPI.resetChanges(aControls)
+			ControlPersonalizationWriteAPI.reset({selectors: aControls})
 				.then(this.updateChangesModel.bind(this));
 		},
 

@@ -1,16 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/ControlPersonalizationAPI",
 	"sap/ui/rta/api/startKeyUserAdaptation"
 ], function(
 	Controller,
-	RuntimeAuthoring,
-	Utils,
-	LayerUtils,
-	ControlPersonalizationAPI,
 	startKeyUserAdaptation
 ) {
 	"use strict";
