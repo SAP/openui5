@@ -346,7 +346,7 @@ sap.ui.define([
 					FlexRuntimeInfoAPI.waitForChanges.restore();
 					assert.equal(this.oPanel.getDependents().length, 1, "Dialog opened");
 					assert.ok(this.oPanel.getDependents()[0].isA("sap.m.Dialog"), "Dialog is a 'sap.m.Dialog'");
-					assert.ok(this.oPanel.getDependents()[0].getContent()[0].isA("sap.ui.mdc.link.SelectionPanel"), "Dialog content is a 'sap.ui.mdc.link.SelectionPanel'");
+					assert.ok(this.oPanel.getDependents()[0].getContent()[0].isA("sap.ui.mdc.p13n.panels.LinkSelectionPanel"), "Dialog content is a 'sap.ui.mdc.p13n.panels.LinkSelectionPanel'");
 					done();
 				}.bind(this), 500);
 			}.bind(this));

@@ -142,7 +142,7 @@ sap.ui.define([
 
 		fnCheckLinks(Then, this.mItems);
 
-		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
 	});
 
 	opaTest("When I deselect the 'Category Link2 (Superior)' and select the 'Category Link3' item, the 'Restore' button should be enabled", function(Given, When, Then) {
@@ -189,7 +189,7 @@ sap.ui.define([
 
 		fnCheckLinks(Then, this.mItems);
 
-		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
 	});
 
 	opaTest("When I press 'Ok' button, the dialog should close", function(Given, When, Then) {

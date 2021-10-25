@@ -2,15 +2,15 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/ui/Device",
 	"sap/ui/test/Opa5",
 	"sap/ui/core/library",
 	"sap/ui/core/format/DateFormat",
 	"test-resources/sap/ui/mdc/qunit/link/opa/test/Util",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/Ancestor",
+	"sap/ui/test/matchers/Descendant",
 	"./waitForPersonalizationDialog"
-], function(Device, Opa5, coreLibrary, DateFormat, TestUtil, PropertyStrictEquals, Ancestor, waitForPersonalizationDialog) {
+], function(Opa5, coreLibrary, DateFormat, TestUtil, PropertyStrictEquals, Ancestor, Descendant, waitForPersonalizationDialog) {
 	"use strict";
 	var Assertion = Opa5.extend("sap.ui.mdc.qunit.link.opa.test.Assertion", {
 		isTabSelected: function(oSegmentedButton, sTabName) {
@@ -20,34 +20,6 @@ sap.ui.define([
 			var sSelectedButtonID = oSegmentedButton.getSelectedButton();
 			var oSelectedButton = TestUtil.getNavigationItem(oSegmentedButton, sTabName);
 			return sSelectedButtonID === oSelectedButton.getId();
-		},
-		/**
-		 * Returns NavigationItem
-		 * @param {sap.m.SegmentedButton || sap.m.List} oNavigationControl
-		 * @param {string} sPanelName
-		 * @returns NavigationItem
-		 */
-		getNavigationItem: function(oNavigationControl, sPanelName) {
-			if (!oNavigationControl || sPanelName === "") {
-				return null;
-			}
-			var oNavigationItem = null;
-			if (Device.system.phone) {
-				oNavigationControl.getItems().some(function(oNavigationItem_) {
-					if (oNavigationItem_.getTitle() === sPanelName) {
-						oNavigationItem = oNavigationItem_;
-						return true;
-					}
-				});
-			} else {
-				oNavigationControl.getButtons().some(function(oNavigationItem_) {
-					if (oNavigationItem_.getText() === sPanelName) {
-						oNavigationItem = oNavigationItem_;
-						return true;
-					}
-				});
-			}
-			return oNavigationItem;
 		},
 		iShouldSeePersonalizationButton: function(sControlType) {
 			sControlType = sControlType || "sap.m.OverflowToolbarButton";
@@ -84,73 +56,6 @@ sap.ui.define([
 					Opa5.assert.ok(!aDomDialogs.length, "The personalization dialog is closed");
 				},
 				timeout: 5
-			});
-		},
-		iShouldSeeNavigationControl: function() {
-			if (Device.system.phone) {
-				return this.waitFor({
-					controlType: "sap.m.List",
-					success: function(aLists) {
-						Opa5.assert.ok(aLists.length === 1, "List should appear");
-					},
-					errorMessage: "sap.m.List not found"
-				});
-			}
-			return this.waitFor({
-				searchOpenDialogs: true,
-				controlType: "sap.m.SegmentedButton",
-				success: function(aSegmentedButtons) {
-					Opa5.assert.ok(aSegmentedButtons.length === 1, "Segmented Button should appear");
-				},
-				errorMessage: "sap.m.SegmentedButton not found"
-			});
-		},
-		iShouldSeeNavigationControlWithPanels: function(iNumberOfPanels) {
-			if (Device.system.phone) {
-				return this.waitFor({
-					controlType: "sap.m.List",
-					success: function(aLists) {
-						Opa5.assert.ok(aLists[0].getItems().length === iNumberOfPanels, "List with " + iNumberOfPanels + " lines should appear");
-					}
-				});
-			}
-			return this.waitFor({
-				controlType: "sap.m.SegmentedButton",
-				success: function(aSegmentedButtons) {
-					Opa5.assert.ok(aSegmentedButtons[0].getButtons().length === iNumberOfPanels, "Segmented Button with " + iNumberOfPanels + " tabs should appear");
-				}
-			});
-		},
-		iShouldSeePanelsInOrder: function(aOrderedPanelNames) {
-			if (Device.system.phone) {
-				return this.waitFor({
-					controlType: "sap.m.List",
-					success: function(aLists) {
-						Opa5.assert.ok(aLists[0].getItems());
-					}
-				});
-			}
-			return this.waitFor({
-				controlType: "sap.m.SegmentedButton",
-				success: function(aSegmentedButtons) {
-					aOrderedPanelNames.forEach(function(sPanelType, iIndex) {
-						var sTabText = aSegmentedButtons[0].getButtons()[iIndex].getText();
-						var sText = TestUtil.getTextOfPanel(sPanelType);
-						Opa5.assert.ok(sTabText === sText, (iIndex + 1) + ". tab should be " + sPanelType);
-					});
-				}
-			});
-		},
-		iShouldSeeSelectedTab: function(sPanelType) {
-			// On desktop we can check if the tap is selected. On phone we do not have SegmentedButtons on the top of panel.
-			if (Device.system.phone) {
-				return;
-			}
-			return this.waitFor({
-				controlType: "sap.m.SegmentedButton",
-				success: function(aSegmentedButtons) {
-					Opa5.assert.ok(this.isTabSelected(aSegmentedButtons[0], TestUtil.getTextOfPanel(sPanelType)), "The '" + sPanelType + "' tab is selected");
-				}
 			});
 		},
 		iShouldSeePanel: function(sPanelType) {
@@ -359,14 +264,44 @@ sap.ui.define([
 			return this.waitFor({
 				searchOpenDialogs: true,
 				controlType: "sap.m.Table",
-				success: function(aLists) {
-					var aItems = aLists[0].getItems().filter(function(oItem) {
-						return oItem.getCells()[0].getText() === sItemText;
+				success: function(aTables) {
+					Opa5.assert.equal(aTables.length, 1, "sap.m.Table found on Dialog");
+					var oTable = aTables[0];
+					this.waitFor({
+						controlType: "sap.m.Link",
+						matchers: [
+							new Ancestor(oTable, false),
+							new PropertyStrictEquals({
+								name: "text",
+								value: sItemText
+							})
+						],
+						success: function(aLinks) {
+							Opa5.assert.equal(aLinks.length, 1, "sap.m.Link with text '" + sItemText + "' found on Dialog.");
+							var oLink = aLinks[0];
+							this.waitFor({
+								controlType: "sap.m.ColumnListItem",
+								matchers: new Descendant(oLink, false),
+								success: function(aColumnListItems) {
+									Opa5.assert.equal(aColumnListItems.length, 1, "sap.m.ColumnListItem with sap.m.Link found in Table");
+									var oColumnListItem = aColumnListItems[0];
+									this.waitFor({
+										controlType: "sap.m.CheckBox",
+										matchers: [
+											new Ancestor(oColumnListItem, false),
+											new PropertyStrictEquals({
+												name: "selected",
+												value: bSelected
+											})
+										],
+										success: function(aCheckBoxes) {
+											Opa5.assert.equal(aCheckBoxes.length, 1, (bSelected ? "selected" : "unselected") + " sap.m.CheckBox found in sap.m.ColumnListItem");
+										}
+									});
+								}
+							});
+						}
 					});
-					Opa5.assert.equal(aItems.length, 1);
-					Opa5.assert.ok(aItems[0].getCells()[0]._getCompositeAggregation().getContent()[0].getItems()[1].getItems()[0].isA("sap.m.Link"), "List item contains sap.m.Link");
-					Opa5.assert.equal(aItems[0].getCells()[0]._getCompositeAggregation().getContent()[0].getItems()[1].getItems()[0].getVisible(), true, "sap.m.Link is visible");
-					Opa5.assert.equal(aItems[0].getSelected(), bSelected, sItemText + " is " + (bSelected ? "selected" : "unselected"));
 				}
 			});
 		},
@@ -374,14 +309,26 @@ sap.ui.define([
 			return this.waitFor({
 				searchOpenDialogs: true,
 				controlType: "sap.m.Table",
-				success: function(aLists) {
-					var aItems = aLists[0].getItems().filter(function(oItem) {
-						return oItem.getCells()[0].getText() === sItemText;
+				success: function(aTables) {
+					Opa5.assert.equal(aTables.length, 1, "sap.m.Table found on Dialog");
+					var oTable = aTables[0];
+					this.waitFor({
+						controlType: "sap.m.Link",
+						matchers: [
+							new Ancestor(oTable, false),
+							new PropertyStrictEquals({
+								name: "text",
+								value: sItemText
+							}),
+							new PropertyStrictEquals({
+								name: "enabled",
+								value: bEnabled
+							})
+						],
+						success: function(aLinks) {
+							Opa5.assert.equal(aLinks.length, 1, (bEnabled ? "enable" : "disabled") + " sap.m.Link found on Dialog");
+						}
 					});
-					Opa5.assert.equal(aItems.length, 1);
-					Opa5.assert.ok(aItems[0].getCells()[0]._getCompositeAggregation().getContent()[0].getItems()[1].getItems()[0].isA("sap.m.Link"), "List item contains sap.m.Link");
-					Opa5.assert.equal(aItems[0].getCells()[0]._getCompositeAggregation().getContent()[0].getItems()[1].getItems()[0].getVisible(), true, "sap.m.Link is visible");
-					Opa5.assert.equal(aItems[0].getCells()[0]._getCompositeAggregation().getContent()[0].getItems()[1].getItems()[0].getEnabled(), bEnabled, sItemText + " is " + (bEnabled ? "enable" : "disabled"));
 				}
 			});
 		},
@@ -404,16 +351,32 @@ sap.ui.define([
 			return this.waitFor({
 				searchOpenDialogs: true,
 				controlType: "sap.m.Table",
-				success: function(aLists) {
-					var aItems = aLists[0].getItems().filter(function(oItem) {
-						return oItem.getCells()[0].getText() === sItemText;
+				success: function(aTables) {
+					Opa5.assert.equal(aTables.length, 1, "sap.m.Table found on Dialog");
+					var oTable = aTables[0];
+					this.waitFor({
+						controlType: "sap.m.Link",
+						matchers: [
+							new Ancestor(oTable, false),
+							new PropertyStrictEquals({
+								name: "text",
+								value: sItemText
+							})
+						],
+						success: function(aLinks) {
+							Opa5.assert.equal(aLinks.length, 1, "sap.m.Link with text '" + sItemText + "' found on Dialog.");
+							var oLink = aLinks[0];
+							this.waitFor({
+								controlType: "sap.m.ColumnListItem",
+								matchers: new Descendant(oLink, false),
+								success: function(aColumnListItems) {
+									Opa5.assert.equal(aColumnListItems.length, 1, "sap.m.ColumnListItem with sap.m.Link found in Table");
+									var oColumnListItem = aColumnListItems[0];
+									Opa5.assert.equal(oTable.getItems().indexOf(oColumnListItem), iIndex, sItemText + " is on position " + iIndex);
+								}
+							});
+						}
 					});
-					Opa5.assert.equal(aItems.length, 1);
-					Opa5.assert.ok(aItems[0].getCells()[0]._getCompositeAggregation().getContent()[0].getItems()[1].getItems()[0].isA("sap.m.Link"), "List item contains sap.m.Link");
-					Opa5.assert.ok(aItems[0].getCells()[0]._getCompositeAggregation().getContent()[0].getItems()[1].getItems()[0], "sap.m.Link exists");
-					Opa5.assert.equal(aItems[0].getCells()[0]._getCompositeAggregation().getContent()[0].getItems()[1].getItems()[0].getVisible(), true, "sap.m.Link is visible");
-					Opa5.assert.equal(aItems[0].getVisible(), true);
-					Opa5.assert.equal(aLists[0].getItems().indexOf(aItems[0]), iIndex, sItemText + " is on position " + iIndex);
 				}
 			});
 		},

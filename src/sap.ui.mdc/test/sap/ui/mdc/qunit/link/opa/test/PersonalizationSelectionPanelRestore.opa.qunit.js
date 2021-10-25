@@ -81,7 +81,7 @@ sap.ui.define([
 
 		fnCheckLinks(Then, this.mItems);
 
-		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
 	});
 
 	opaTest("When I deselect the 'Name Link2 (Superior)' item and select the 'FactSheet of Name' item, the 'Restore' button should be enabled", function(Given, When, Then) {
@@ -173,7 +173,7 @@ sap.ui.define([
 
 		fnCheckLinks(Then, this.mItems);
 
-		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
 	});
 
 	opaTest("When I select the 'FactSheet of Name' item, the 'Restore' button should be enabled", function(Given, When, Then) {
@@ -212,7 +212,7 @@ sap.ui.define([
 		Then.thePersonalizationDialogShouldBeClosed();
 
 		When.iPressOnLinkPersonalizationButton();
-		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
 		When.iSelectLink("FactSheet of Name");
 		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 		When.iPressOkButton();

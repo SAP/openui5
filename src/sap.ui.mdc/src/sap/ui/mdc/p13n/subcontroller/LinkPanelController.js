@@ -5,15 +5,15 @@
 sap.ui.define([
     "sap/ui/mdc/p13n/P13nBuilder",
 	"./BaseController",
-    "sap/m/Column",
-    "sap/ui/mdc/p13n/panels/ListView",
-    "sap/ui/mdc/link/SelectionPanel",
-    "sap/ui/mdc/link/SelectionPanelItem"
-], function (P13nBuilder, BaseController, Column, ListView, SelectionPanel, SelectionPanelItem) {
+    "sap/ui/mdc/p13n/panels/LinkSelectionPanel",
+    "sap/m/library",
+    "sap/m/MessageBox"
+], function (P13nBuilder, BaseController, SelectionPanel, library, MessageBox) {
     "use strict";
 
     var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
+    var MultiSelectMode = library.MultiSelectMode;
     var LinkPanelController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.LinkPanelController", {
         constructor: function() {
 			BaseController.apply(this, arguments);
@@ -35,24 +35,50 @@ sap.ui.define([
     };
 
     LinkPanelController.prototype.getAdaptationUI = function(oPropertyHelper) {
-
         var oSelectionPanel = new SelectionPanel({
-            items: {
-                path: "p13n>/items",
-                template: new SelectionPanelItem({
-                    visible: "{p13n>visible}",
-                    key: "{p13n>name}",
-                    text: "{p13n>text}",
-                    description: "{p13n>description}",
-                    href: "{p13n>href}"
-                })
-            }
+            fieldColumn: "Select All",//TODO: bundle text,
+            enableCount: true,
+            linkPressed: this._onLinkPressed
         });
-
-        oSelectionPanel.setModel(this._getP13nModel(oPropertyHelper), "p13n");
-        oSelectionPanel.open();
-
+        var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+        oSelectionPanel.setP13nData(oAdaptationData.items);
+        oSelectionPanel.setEnableReorder(false);
+        oSelectionPanel.setMultiSelectMode(MultiSelectMode.Default);
+        this._oPanel = oSelectionPanel;
         return Promise.resolve(oSelectionPanel);
+    };
+
+    LinkPanelController.prototype._onLinkPressed = function(oEvent) {
+        var sTarget = oEvent.getSource().getTarget();
+
+        if (sTarget !== "_blank") {
+            oEvent.preventDefault();
+
+            var oPanel = this.getAdaptationControl();
+            var sHref = oEvent.getSource().getHref();
+
+            if (oPanel.getBeforeNavigationCallback) {
+                oPanel.getBeforeNavigationCallback()(oEvent).then(function (bNavigate) {
+                    if (bNavigate) {
+                        oPanel.navigate(sHref);
+                    }
+                });
+            } else {
+                MessageBox.show(sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("info.SELECTION_DIALOG_LINK_VALIDATION_QUESTION"), {
+                    icon: MessageBox.Icon.WARNING,
+                    title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("info.SELECTION_DIALOG_LINK_VALIDATION_TITLE"),
+                    actions: [
+                        MessageBox.Action.YES, MessageBox.Action.NO
+                    ],
+                    onClose: function (oAction) {
+                        if (oAction === MessageBox.Action.YES) {
+                            oPanel.navigate(sHref);
+                        }
+                    },
+                    styleClass: this.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""
+                });
+            }
+        }
     };
 
     LinkPanelController.prototype._createAddRemoveChange = function(oControl, vOperations, oContent) {

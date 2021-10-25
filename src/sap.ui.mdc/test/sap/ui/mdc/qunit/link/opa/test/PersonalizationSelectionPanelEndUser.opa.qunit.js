@@ -84,7 +84,7 @@ sap.ui.define([
 
 		fnCheckLinks(Then, this.mItems);
 
-		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
 	});
 
 	opaTest("When I select the 'Edit Description' item, the 'Restore' button should be enabled", function(Given, When, Then) {

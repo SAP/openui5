@@ -4,26 +4,15 @@
 
 sap.ui.define([
 	'sap/ui/core/XMLComposite',
-	'sap/ui/mdc/library',
-	'sap/m/HBox',
-	'sap/m/VBox',
-	'sap/m/Text',
-	'sap/m/Image',
-	'sap/m/Link',
-	'sap/ui/core/CustomData',
 	'sap/base/Log',
-	'sap/m/SelectDialog',
-	'sap/m/StandardListItem',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/model/BindingMode',
 	'sap/ui/base/ManagedObjectObserver',
-	'sap/ui/mdc/flexibility/PanelItem.flexibility',
-	'sap/ui/mdc/flexibility/Panel.flexibility',
-	"sap/ui/core/syncStyleClass",
 	"sap/ui/mdc/p13n/subcontroller/LinkPanelController",
 	"sap/ui/mdc/p13n/Engine",
-	"sap/ui/mdc/mixin/AdaptationMixin"
-], function(XMLComposite, mdcLibrary, HBox, VBox, Text, Image, Link, CustomData, Log, SelectDialog, StandardListItem, JSONModel, BindingMode, ManagedObjectObserver, PanelItemFlexibility, PanelFlexibility, syncStyleClass, LinkPanelController, Engine, AdaptationMixin) {
+	"sap/ui/mdc/mixin/AdaptationMixin",
+	"sap/ui/mdc/link/PanelItem"
+], function(XMLComposite, Log, JSONModel, BindingMode, ManagedObjectObserver, LinkPanelController, Engine, AdaptationMixin, PanelItem) {
 	"use strict";
 
 	/**
@@ -175,19 +164,118 @@ sap.ui.define([
 			oEvent.preventDefault();
 			this.getBeforeNavigationCallback()(oEvent).then(function(bNavigate) {
 				if (bNavigate) {
-					window.location.href = sHref;
+					this.navigate(sHref);
 				}
-			});
+			}.bind(this));
+		}
+	};
+
+	Panel.prototype.navigate = function(sHref) {
+		if (sHref.indexOf("#") === 0 && sap.ushell && sap.ushell.Container && sap.ushell.Container.getServiceAsync) {
+			// if we are inside a FLP -> navigate with CrossApplicationNavigation
+			var that = this;
+			if (!that.oNavigationPromise) {
+				that.oNavigationPromise = sap.ushell.Container.getServiceAsync("CrossApplicationNavigation").then(function (oCrossApplicationNavigation) {
+					oCrossApplicationNavigation.toExternal({
+						target: {
+							// navigate to href without #
+							shellHash: sHref.substring(1)
+						}
+					});
+					that.oNavigationPromise = undefined;
+				});
+			}
+		} else {
+			// if we are not inside a FLP -> navigate "normally"
+			window.location.href = sHref;
 		}
 	};
 
 	Panel.prototype.onPressLinkPersonalization = function() {
-		var oPopover = this.getParent();
-		oPopover.setModal(true);
-		Engine.getInstance().uimanager.show(this, "LinkItems").then(function(oDialog) {
-			oDialog.attachAfterClose(function(){
-				oPopover.setModal(false);
-			});
+		sap.ui.require([this.getMetadataHelperPath() || "sap/ui/mdc/Link"], function(MetadataHelper) {
+			var oModel = this._getInternalModel();
+			var aMBaselineItems = MetadataHelper.retrieveBaseline(this);
+			var aMBaselineItemsTotal = aMBaselineItems;
+			var fnUpdateResetButton = function(oSelectionPanel) {
+				var aSelectedItems = oSelectionPanel._oListControl.getItems().filter(function(oItem) {
+					return oItem.getSelected();
+				});
+				aSelectedItems = aSelectedItems.map(function(oSelectedItem) {
+					var oItem = oSelectionPanel._getP13nModel().getProperty(oSelectedItem.getBindingContext(oSelectionPanel.P13N_MODEL).sPath);
+					return {
+						id: oItem.name,
+						description: oItem.description,
+						href: oItem.href,
+						target: oItem.target,
+						text: oItem.text,
+						visible: oItem.visible
+					};
+				});
+				var bShowResetEnabled = Panel._showResetButtonEnabled(aMBaselineItemsTotal, aSelectedItems);
+				this._getInternalModel().setProperty("/showResetEnabled", bShowResetEnabled);
+			};
+
+			var oPopover = this.getParent();
+			oPopover.setModal(true);
+			Engine.getInstance().uimanager.show(this, "LinkItems").then(function(oDialog) {
+				var oResetButton = oDialog.getCustomHeader().getContentRight()[0];
+				var oSelectionPanel = oDialog.getContent()[0];
+				oResetButton.setModel(oModel, "$sapuimdclinkPanel");
+				oResetButton.bindProperty("enabled", {
+					path: '$sapuimdclinkPanel>/showResetEnabled'
+				});
+				fnUpdateResetButton.call(this, oSelectionPanel);
+				oSelectionPanel.attachChange(function(oEvent) {
+					fnUpdateResetButton.call(this, oSelectionPanel);
+				}.bind(this));
+				oDialog.attachAfterClose(function(){
+					oPopover.setModal(false);
+				});
+			}.bind(this));
+		}.bind(this));
+	};
+
+	Panel._showResetButtonEnabled = function(aMBaseLineItems, aSelectedItems) {
+		var bShowResetButtonEnabled = false;
+
+		var aMVisibleRuntimeItems = Panel._getVisibleItems(aSelectedItems);
+		var aMVisibleBaseLineItems = Panel._getVisibleItems(aMBaseLineItems);
+
+		if (aSelectedItems.length !== aMBaseLineItems.length) {
+			bShowResetButtonEnabled = true;
+		} else if (aMVisibleBaseLineItems.length && aMVisibleRuntimeItems.length) {
+			var bAllVisibleBaselineItemsIncludedInVisibleRuntimeItems = Panel._allItemsIncludedInArray(aMVisibleBaseLineItems, aMVisibleRuntimeItems);
+			var bAllVisibleRuntimeItemsIncludedInVisibleBaselineItems = Panel._allItemsIncludedInArray(aMVisibleRuntimeItems, aMVisibleBaseLineItems);
+
+			bShowResetButtonEnabled = !bAllVisibleBaselineItemsIncludedInVisibleRuntimeItems || !bAllVisibleRuntimeItemsIncludedInVisibleBaselineItems;
+		}
+		return bShowResetButtonEnabled;
+	};
+
+	Panel._allItemsIncludedInArray = function(aMItemsToBeIncluded, aMArrayToCheck) {
+		var bAllItemsIncluded = true;
+		aMItemsToBeIncluded.forEach(function(oItemToBeIncluded) {
+			var aMItemsIncluded = Panel._getItemsById(oItemToBeIncluded.id, aMArrayToCheck);
+			if (aMItemsIncluded.length === 0) {
+				bAllItemsIncluded = false;
+			}
+		});
+		return bAllItemsIncluded;
+	};
+
+	Panel._getItemsById = function(sId, aMItems) {
+		return aMItems.filter(function(oItem) {
+			return oItem.id === sId;
+		});
+	};
+
+	Panel._getItemById = function(sId, aArray) {
+		return Panel._getItemsById(sId, aArray)[0];
+	};
+
+	Panel._getVisibleItems = function(aMItems) {
+		return aMItems.filter(function(oItem) {
+			return oItem.id !== undefined && oItem.visible;
 		});
 	};
 
