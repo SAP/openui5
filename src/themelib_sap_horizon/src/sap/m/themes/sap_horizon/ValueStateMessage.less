@@ -4,5 +4,46 @@
 /* ======================================== */
 
 .sapMValueStateMessage {
-	border-width: 0;
+	box-shadow:@sapContent_Interaction_Shadow;
+	border-radius: @sapGroup_BorderCornerRadius;
+	padding-left: 1.75 * @sapContent_GridSize;
+}
+
+.sapMValueStateMessageError:before {
+	font-family: SAP-icons;
+	content: "\e1ec";
+	position: absolute;
+	top: 0.313rem;
+	left: 0rem;
+	vertical-align: middle;
+	font-size: 0.875rem;
+	color: @sapNegativeElementColor;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+}
+
+.sapMValueStateMessageWarning:before {
+	font-family: SAP-icons;
+	content: "\e053s";
+	position: absolute;
+	top: 0.313rem;
+	left: 0rem;
+	vertical-align: middle;
+	font-size: 0.875rem;
+	color: @sapCriticalElementColor;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+}
+
+.sapMValueStateMessageInformation:before {
+	font-family: SAP-icons;
+	content: "\e289";
+	position: absolute;
+	top: 0.313rem;
+	left: 0rem;
+	vertical-align: middle;
+	font-size: 0.875rem;
+	color: @sapInformativeElementColor;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
 }
