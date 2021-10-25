@@ -1346,7 +1346,7 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD.getSelectedSortItem(), this.oVSD.getSortItems()[1].getId(), "Second selected sort item is set successfully by selected flag");
 		assert.strictEqual(this.oVSD.getSelectedGroupItem(), null, "Selected group item is null");
 		assert.strictEqual(this.oVSD.getSelectedPresetFilterItem(), null, "Selected preset filter item is null");
-		assert.strictEqual(this.oVSD._sortContent.length, 4, "Sort content is initialized and has two items");
+		assert.strictEqual(this.oVSD._sortContent.length, 4, "Sort content is initialized and has four items");
 		assert.strictEqual(this.oVSD._groupContent, undefined, "Group content is not initialized");
 		assert.strictEqual(this.oVSD._filterContent, undefined, "Filter content is not initialized");
 		assert.strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
@@ -1401,7 +1401,7 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD.getSelectedGroupItem(), this.oVSD.getGroupItems()[1].getId(), "Second selected group item is set successfully by selected flag");
 		assert.strictEqual(this.oVSD.getSelectedPresetFilterItem(), null, "Selected preset filter item is null");
 		assert.strictEqual(this.oVSD._sortContent, undefined, "Group content is not initialized");
-		assert.strictEqual(this.oVSD._groupContent.length, 4, "Group content is initialized and has two items");
+		assert.strictEqual(this.oVSD._groupContent.length, 4, "Group content is initialized and has four items");
 		assert.strictEqual(this.oVSD._filterContent, undefined, "Filter content is not initialized");
 		assert.strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
 
@@ -1451,9 +1451,10 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD.getSelectedPresetFilterItem(), this.oVSD.getPresetFilterItems()[1].getId(), "Second preset filter item is set successfully by selected flag");
 		assert.strictEqual(this.oVSD._sortContent, undefined, "Group content is not initialized");
 		assert.strictEqual(this.oVSD._groupContent, undefined, "Group content is not initialized");
-		assert.strictEqual(this.oVSD._filterContent.length, 2, "Filter content is initalized and has two items");
+		assert.strictEqual(this.oVSD._filterContent.length, 3, "Filter content is initalized and has three items");
 		assert.strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
 		assert.strictEqual(this.oVSD.getSelectedFilterItems().length, 0, "There are no selected filter items");
+		assert.strictEqual(this.oVSD._filterList.getAriaLabelledBy().length, 1, "Filter by list should have aria ariaLabelledBy set");
 		assert.ok(document.getElementById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should be rendered");
 	});
 
@@ -2119,7 +2120,7 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD.getSelectedPresetFilterItem(), null, "Selected preset filter item is null");
 		assert.strictEqual(this.oVSD._sortContent, undefined, "Group content is not initialized");
 		assert.strictEqual(this.oVSD._groupContent, undefined, "Group content is not initialized");
-		assert.strictEqual(this.oVSD._filterContent.length, 2, "Filter content is initialized and has two items");
+		assert.strictEqual(this.oVSD._filterContent.length, 3, "Filter content is initialized and has three items");
 		assert.strictEqual(this.oVSD._page1.getSubHeader(), null, "Sub-header with segmented button is not set on first page");
 		assert.ok(compareFilterKeys(this.oFilterState, this.oVSD.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
 		assert.ok(document.getElementById(sId + "-resetbutton"), "Filter reset button should be rendered");
