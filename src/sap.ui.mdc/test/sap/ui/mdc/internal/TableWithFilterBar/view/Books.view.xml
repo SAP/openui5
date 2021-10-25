@@ -7,7 +7,6 @@
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdcat="sap.ui.mdc.actiontoolbar"
 	xmlns:mdcc="sap.ui.mdc.chart"
-	xmlns:mdccn="sap.ui.mdc.chartNew"
 	xmlns:mdcf="sap.ui.mdc.field"
 	xmlns:mdcl="sap.ui.mdc.link"
 	xmlns:ui="sap.ui"
@@ -648,86 +647,43 @@
 			</f2:header>
 			<f2:content>
 				<VBox id="idContainer" height="100%">
-					<IconTabBar
-						id="idIconTabBarFiori2"
-						class="sapUiResponsiveContentPadding">
-						<items>
-							<IconTabFilter
-								text="old"
-								key="old">
-								<mdc:Chart id="bookChartold" filter="booksFilterBar" noDataText="This is a test noData text" data="{path: '/Books'}" p13nMode="Item,Sort,Type" delegate="{
-										'name': 'sap/ui/mdc/odata/v4/ChartDelegate',
+					<mdc:Chart id="bookChart" filter="booksFilterBar" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate="{
+										'name': 'sap/ui/mdc/odata/v4/vizChart/ChartDelegate',
 										'payload': {
 											collectionName: 'Books'
 										}
 									}" chartType="column" header="Books Chart" height="400px" width="100%">
-									<mdc:selectionDetailsActions>
-										<mdcc:SelectionDetailsActions>
-											<mdcc:detailsItemActions>
-												<core:Item key="ItemAction1" text="ItemAction 1"></core:Item>
-												<core:Item key="ItemAction2" text="ItemAction 2"></core:Item>
-											</mdcc:detailsItemActions>
+						<mdc:selectionDetailsActions>
+							<mdcc:SelectionDetailsActions>
+								<mdcc:detailsItemActions>
+									<core:Item key="ItemAction1" text="ItemAction 1"></core:Item>
+									<core:Item key="ItemAction2" text="ItemAction 2"></core:Item>
+								</mdcc:detailsItemActions>
 
-											<mdcc:detailsActions>
-												<core:Item key="Action1" text="Action 1"></core:Item>
-												<core:Item key="Action2" text="Action 2"></core:Item>
-											</mdcc:detailsActions>
+								<mdcc:detailsActions>
+									<core:Item key="Action1" text="Action 1"></core:Item>
+									<core:Item key="Action2" text="Action 2"></core:Item>
+								</mdcc:detailsActions>
 
-											<mdcc:actionGroups>
-												<core:Item key="GroupAction1" text="GroupAction 1"></core:Item>
-												<core:Item key="GroupAction2" text="GroupAction 2"></core:Item>
-											</mdcc:actionGroups>
-										</mdcc:SelectionDetailsActions>
-									</mdc:selectionDetailsActions>
-									<mdc:items>
-										<mdcc:DimensionItem id="dim1old" key="language_code" role="category" label="Languages"/>
-										<mdcc:MeasureItem id="meas1old" key="averagemetricsWords" role="axis1" label="Words (avg)"/>
-									</mdc:items>
-								</mdc:Chart>
-							</IconTabFilter>
-							<IconTabFilter
-								text="new"
-								key="new">
-								<mdc:ChartNew id="bookChart" filter="booksFilterBar" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate="{
-										'name': 'sap/ui/mdc/odata/v4/vizChart/ChartDelegateNew',
-										'payload': {
-											collectionName: 'Books'
-										}
-									}" chartType="column" header="Books ChartNew" height="400px" width="100%">
-									<mdc:selectionDetailsActions>
-										<mdccn:SelectionDetailsActionsNew>
-											<mdccn:detailsItemActions>
-												<core:Item key="ItemAction1" text="ItemAction 1"></core:Item>
-												<core:Item key="ItemAction2" text="ItemAction 2"></core:Item>
-											</mdccn:detailsItemActions>
-
-											<mdccn:detailsActions>
-												<core:Item key="Action1" text="Action 1"></core:Item>
-												<core:Item key="Action2" text="Action 2"></core:Item>
-											</mdccn:detailsActions>
-
-											<mdccn:actionGroups>
-												<core:Item key="GroupAction1" text="GroupAction 1"></core:Item>
-												<core:Item key="GroupAction2" text="GroupAction 2"></core:Item>
-											</mdccn:actionGroups>
-										</mdccn:SelectionDetailsActionsNew>
-									</mdc:selectionDetailsActions>
-									<mdc:actions>
-										<mdcat:ActionToolbarAction id="chartAction1">
-											<Button type="Emphasized" text="Dummy Action 1" />
-										</mdcat:ActionToolbarAction>
-										<mdcat:ActionToolbarAction id="chartAction2">
-											<Button type="Emphasized" text="Dummy Action 2" />
-										</mdcat:ActionToolbarAction>
-									</mdc:actions>
-									<mdc:items>
-										<mdccn:ItemNew id="dim1" type="groupable" name="language_code" role="category" label="Languages"/>
-										<mdccn:ItemNew id="meas1" type="aggregatable" name="averagemetricsWords" role="axis1" label="Words (avg)"/>
-									</mdc:items>
-								</mdc:ChartNew>
-							</IconTabFilter>
-						</items>
-					</IconTabBar>
+								<mdcc:actionGroups>
+									<core:Item key="GroupAction1" text="GroupAction 1"></core:Item>
+									<core:Item key="GroupAction2" text="GroupAction 2"></core:Item>
+								</mdcc:actionGroups>
+							</mdcc:SelectionDetailsActions>
+						</mdc:selectionDetailsActions>
+						<mdc:actions>
+							<mdcat:ActionToolbarAction id="chartAction1">
+								<Button type="Emphasized" text="Dummy Action 1" />
+							</mdcat:ActionToolbarAction>
+							<mdcat:ActionToolbarAction id="chartAction2">
+								<Button type="Emphasized" text="Dummy Action 2" />
+							</mdcat:ActionToolbarAction>
+						</mdc:actions>
+						<mdc:items>
+							<mdcc:Item id="dim1" type="groupable" name="language_code" role="category" label="Languages"/>
+							<mdcc:Item id="meas1" type="aggregatable" name="averagemetricsWords" role="axis1" label="Words (avg)"/>
+						</mdc:items>
+					</mdc:Chart>
 
 					<mdc:Table id="booksTable" header="Books" filter="booksFilterBar" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate="{name: 'sap/ui/v4demo/delegate/Books.Table.delegate', payload: {collectionName: 'Books'}}" showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" rowAction="{=['Navigation']}">
 						<mdc:actions>

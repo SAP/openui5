@@ -11,7 +11,7 @@ sap.ui.define([
 		//return Opa5.assert.ok(true);
 
 			return this.waitFor({
-				controlType: "sap.ui.mdc.ChartNew",
+				controlType: "sap.ui.mdc.Chart",
 				check: function(aChart) {
 					return aChart.length === 1;
 				},

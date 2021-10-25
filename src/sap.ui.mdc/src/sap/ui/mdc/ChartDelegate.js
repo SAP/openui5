@@ -1,274 +1,393 @@
-/*!
- * ${copyright}
+/*
+ * ! ${copyright}
  */
 
+// ---------------------------------------------------------------------------------------
+// Helper class used to help create content in the MDC chart and fill relevant metadata
+// ---------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/ui/mdc/AggregationBaseDelegate",
-	"sap/ui/base/SyncPromise",
-	"sap/ui/mdc/chart/MeasureItem",
-	"sap/ui/mdc/chart/DimensionItem",
-	"sap/ui/core/Core",
-	"sap/ui/mdc/util/FilterUtil"
-], function(
-	AggregationBaseDelegate,
-	SyncPromise,
-	MeasureItem,
-	DimensionItem,
-	Core,
-	FilterUtil
-) {
-	"use strict";
+    "sap/ui/mdc/AggregationBaseDelegate"
+], function (AggregationBaseDelegate) {
+    "use strict";
 
-	/**
-	 * Base delegate module for the <code>sap.ui.mdc.Chart</code> control.
-	 *
-	 * This module provides an interface and some basic functionality for sub-modules.
-	 * Sub-modules usually interpret service metadata that represents entity-relationship
-	 * models, service capabilities, and annotations.
-	 *
-	 * The result of this service metadata information is used to automatically create
-	 * some chart's inner controls, for example, dimension and measure items.
-	 *
-	 * <b>Note:</b> The module is experimental and is not finalized, hence it should not
-	 * be used productively.
-	 *
-	 * @private
-	 * @experimental
-	 * @alias module:sap/ui/mdc/ChartDelegate
-	 * @since 1.62
-	 * @author SAP SE
-	 */
-	var ChartDelegate = Object.assign({}, AggregationBaseDelegate);
-
-	/**
-	 * Delegates metadata structure.
-	 *
-	 * @typedef {object} sap.ui.mdc.ChartDelegate.Metadata Metadata structure
-	 * @property {sap.ui.mdc.chart.Item[]} items The items in the <code>items</code> aggregation of the
-	 * <code>sap.ui.mdc.Chart</code> control
-	 * @property {array} properties An array of properties the entity set that is used via the
-	 * {@link sap.ui.mdc.Chart} class
-	 * Although being part of the entity, not every property results in a chart item only those properties
-	 * that support aggregation or grouping.
-	 * @property {boolean} sortable Indicates whether the chart control is sortable
-	 * @property {boolean} filterable Indicates whether the chart control is filterable
-	 */
-	ChartDelegate.Metadata = {
-		items: [],
-		properties: [],
-		sortable: true,
-		filterable: true
-	};
-
-	/**
-	 * Delegate metadata property structure.
-	 * An object that represents the result of the chart control delegates metadata item structure.
-	 *
-	 * @typedef {object} sap.ui.mdc.ChartDelegate.MetadataProperty Metadata property structure
-	 * @property {sap.ui.mdc.ChartItemType} kind The type of the item
-	 * @property {sap.ui.mdc.ChartItemRoleType} role The role of the item
-	 * @property {array} contextDefiningProperties An array of properties' context (TBD)
-	 * @property {string} className The chart item class name reflecting the chart aggregation items.
-	 * For example, an {@link sap.ui.mcd.chart.MeasureItem} item or an {@link sap.ui.mcd.chart.DimensionItem}
-	 * item.
-	 * @property {string} aggregationMethod For measures a string corresponding to the aggregation method.
-	 * For example, <code>min</code>, <code>max</code>, <code>sum</code>, <code>average</code>,
-	 * <code>count</code>, if not set for a measure the measure is a custom aggregate
-	 * @property {boolean} default Indicates whether the aggregation method is the default method
-	 * @property {boolean} custom Indicates whether the corresponding chart item is a custom aggregate
-	 * @property {string} name The name of the chart item which for measures coincides with its alias
-	 * @property {string} propertyPath The path to the corresponding object attribute in the model only
-	 * evaluated for measures
-	 * @property {string} label Defines the label of the chart item
-	 * @property {string} textProperty The reference to a text property for a chart item.
-	 * <b>Note:</b> ony used for dimensions
-	 * @property {boolean} sortable Indicates whether the chart item is sortable
-	 * @property {string} sortDirection Defines the sort direction of the chart item.
-	 * Possible values are <code>both</code>, <code>asc</code> and <code>desc</code>
-	 * @property {boolean} filterable Indicates whether the chart item is filterable
-	 * @property {array} allowedExpressions Allowed filter expressions
-	 * @private
-	 * @static
-	 */
-	ChartDelegate.MetadataProperty = {
-		kind: "",
-		role: "",
-		contextDefiningProperties: [],
-		className: "",
-		aggregationMethod: "",
-		"default": true,
-		custom: false,
-		name: "",
-		propertyPath: "",
-		label: "",
-		textProperty: "",
-		sortable: true,
-		sortDirection: "",
-		filterable: true,
-		allowedExpressions: []
-	};
-
-	/**
-	 * Fetches the relevant metadata for the chart control and returns property info array.
-	 *
-	 * <b>Note:</b> To be overwritten by sub-modules.
-	 *
-	 * @static
-	 * @param {sap.ui.mdc.Chart} oChart A chart instance
-	 * @returns {Promise<sap.ui.mdc.ChartDelegate.Metadata>} A <code>Promise</code> object,
-	 * otherwise a <code>Promise</code> object to be rejected
-	 */
-	ChartDelegate.retrieveAllMetadata = function(oChart) {
-		return Promise.resolve(ChartDelegate.Metadata);
-	};
-
-	/**
-	 * Fetches the metadata properties that can be used as items for the chart.
-	 *
-	 * <b>Note:</b> To be overwritten by sub-modules.
-	 *
-	 * @param {sap.ui.mdc.Chart} oChart A chart instance
-	 * @static
-	 * @return {Promise<sap.ui.mdc.ChartDelegate.MetadataProperty[]>} A fulfilled <code>Promise</code>
-	 * object or a <code>Promise</code> object to be fulfilled, otherwise a <code>Promise</code>
-	 * object to be rejected
-	 */
-	ChartDelegate.fetchProperties = function(oChart) {
-		var aProperties = [ this.MetadataProperty ];
-		return Promise.resolve(aProperties);
-	};
-
-	/**
-	 * Retrieve a control/fragment pointing to the current aggregation.
-	 *
-	 * <b>Note:</b> To be overwritten by sub-modules.
-	 *
-	 * @param {string} sAggregationName The name of the aggregation
-	 * @param {sap.ui.mdc.ChartDelegate.MetadataProperty} oMetadataProperty The metadata property
-	 * @static
-	 * @abstract
-	 * @returns {object} Aggregation settings
-	 */
-	ChartDelegate.retrieveAggregationItem = function(sAggregationName, oMetadataProperty) {
-		return {};
-	};
+    /**
+     * Base delegate class for sap.ui.mdc.Chart.<br>
+     * <b>Note:</b> The class is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
+     *
+     * @author SAP SE
+     * @private
+     * @experimental
+     * @since 1.88
+     * @alias sap.ui.mdc.ChartDelegate
+     */
+    var ChartDelegate = Object.assign({}, AggregationBaseDelegate);
 
 
-	/**
-	 * Updates the binding info with the relevant filters
-	 *
-	 * @param {Object} oMDCChart The MDC chart instance
-	 * @param {Object} oBindingInfo The binding info of the chart
-	 */
-	ChartDelegate.updateBindingInfo = function(oMDCChart, oBindingInfo) {
-		if (oMDCChart && oMDCChart.getAggregation("_chart") && oBindingInfo) {
+    /**
+     * Toolbar relevant API (WIP)
+     */
 
-			var oFilter = Core.byId(oMDCChart.getFilter());
-			if (oFilter) {
-				var mConditions = oFilter.getConditions();
+    /**
+     *Zooms in on the inner chart.
+     * @param {int} iValue Number of steps for zooming in
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.zoomIn = function (iValue) {
+    };
 
-				if (mConditions) {
-
-					if (!oBindingInfo) {
-						oBindingInfo = {};
-					}
-
-					var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
-					var oFilterInfo = FilterUtil.getFilterInfo(ChartDelegate.getTypeUtil(), mConditions, aPropertiesMetadata);
-					oBindingInfo.filters = oFilterInfo.filters;
-				}
-			}
-		}
-	};
-
-	/**
-	 * Checks the binding of the chart and rebinds it if required.
-	 *
-	 * @param {Object} oMDCChart The MDC chart instance
-	 * @param {Object} oBindingInfo The binding info of the chart
-	 */
-	ChartDelegate.rebindChart = function(oMDCChart, oBindingInfo) {
-		if (oMDCChart && oMDCChart.getAggregation("_chart") && oBindingInfo) {
-			oMDCChart.getAggregation("_chart").bindData(oBindingInfo);
-		}
-	};
+    /**
+     *Zooms out of the inner chart.
+     * @param {int} iValue Number of steps for zooming out
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.zoomOut = function (iValue) {
+    };
 
 
-	/**
-	 * Create a chart item based on the metadata.
-	 *
-	 * This method is a factory method that interprets the provided metadata to create the concrete
-	 * chart item by calling, for example, the {@link sap.ui.mdc.ChartDelegate#createDimensionItem}
-	 * or the {@link sap.ui.mdc.ChartDelegate#createMeasureItem} method.
-	 *
-	 * @param {string} sName
-	 * @param {sap.ui.mdc.Chart} oChart A chart instance
-	 * @param {string} sRole
-	 * @static
-	 * @returns {Promise<sap.ui.mdc.chart.Item>} A promise object
-	 */
-	ChartDelegate.createChartItem = function(sName, oChart, sRole) {
-		return this.fetchProperties(oChart).then(function(aProperties) {
+    /**
+     * @typedef {Object} ZoomState
+     * @property {bool} enabled <code>true</code> if zooming is enabled
+     * @property {number} currentZoomLevel Current zoom level of the chart in percent (between 0 and 1)
+     */
+    /**
+     * Retrieves the current zooming information for the inner chart.
+     * @returns {ZoomState} Current zoom state on the inner chart
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.getZoomState = function () {
+    };
 
-			var oPropertyInfo = aProperties.find(function(oCurrentPropertyInfo) {
-				return oCurrentPropertyInfo.name === sName;
-			});
+    /**
+     * @typedef {Object} SelectionDetails
+     * @property {string} eventId  ID of the selection event
+     * @property {sap.core.Control} reference Reference to inner chart
+     */
+    /**
+     ** Returns the event handler for <code>chartSelectionDetails</code> as an object.
+     *
+     * @returns {SelectionDetails} Event handler for chartSelectionDetails
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.getInnerChartSelectionHandler = function () {
+    };
 
-			if (!oPropertyInfo) {
-				return null;
-			}
+    /**
+     * Sets the visibility of the legend.
+     * <b>Note:</b> This function is called by the MDC chart only. You must not call it directly but use {@link sap.ui.mdc.Chart#setLegendVisible LegendVisible} instead.
+     * @param {bool} bVisible <code>true</code> to show legend, <code>false</code> to hide
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.setLegendVisible = function (bVisible) {
+    };
 
-			var oChartItem = null,
-				sID = oChart.getId() + "--" + sName,
-				sCreateItemMethodName = "create" + oPropertyInfo.kind + "Item",
-				fnItemCreator = this[sCreateItemMethodName];
+    /**
+     * Creates a sorter for a given property.
+     * @param {sap.ui.mdc.Chart.Item} oMDCItem MDC item for which a sorter is created
+     * @param {object} oSortProperty The sorting information
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.getSorterForItem = function (oMDCItem, oSortProperty) {
+        //TODO: Check wether we really need this method.
+        //TODO: Right now it is needed since the name of a property does not include the aggregation method -> leads to an error when calling back-end
+        //TODO: In old chart, aggragation method was included in name since every method had their own Item
+    };
 
-			if (typeof fnItemCreator === "function") {
-				var oSettings = this.retrieveAggregationItem(oPropertyInfo.kind, oPropertyInfo).settings;
-				oChartItem = fnItemCreator.call(this, sID, oSettings);
+    /**
+     * Inserts an MDC chart item (for <code>sap.chart.Chart</code>, this would be a measure/dimension) into the inner chart.
+     * This function is called by the MDC chart after a change of the <code>Items</code> aggregation.
+     * <b>Note:</b> Do not call this yourself, as it would not be synced with the MDC chart, but instead insert the Item into the MDC chart.
+     * @param {sap.ui.mdc.chart.Item} oMDCChartItem MDC chart item that is inserted into the inner chart
+     * @param {int} iIndex The index into which items are inserted
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.insertItemToInnerChart = function (oMDCChartItem, iIndex) {
+    };
 
-				if (sRole) {
-					oChartItem.setRole(sRole);
-				}
-			}
+    /**
+     * Removes an item (for <code>sap.chart.Chart</code>, this would be a measure/dimension) from the inner chart.
+     * This function is called by the MDC chart after a change of the <code>Items</code> aggregation.
+     * <b>Note:</b> Do not call this yourself, as it would not be synced with the MDC chart, but instead remove the item from the MDC chart.
+     * @param {sap.ui.mdc.chart.Item} oMDCChartItem The item to be removed from the inner chart
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.removeItemFromInnerChart = function (oMDCChartItem) {
+    };
 
-			return oChartItem;
-		}.bind(this));
-	};
+    /**
+     * Creates a new MDC chart item for a given property name and updates the inner chart.
+     * <b>Note:</b> This does <b>not</b> add the MDC chart item to the <code>Items</code> aggregation of the MDC chart.
+     * Called and used by <code>p13n</code>.
+     * @param {string} sPropertyName Name of the property added
+     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart to which the item is added
+     * @returns {Promise<sap.ui.mdc.Chart.Item>} <code>Promise</code> that resolves with new MDC chart item as parameter
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.addItem = function (sPropertyName, oMDCChart, mPropertyBag, sRole) {
+    };
 
-	/**
-	 * Create a chart dimension item.
-	 *
-	 * @param {string} [sID] ID for the dimension item, generated automatically if no ID is given
-	 * @param {object} oSettings Initial settings for the dimension item
-	 * @returns {sap.ui.mdc.chart.DimensionItem} An dimension item instance
-	 */
-	ChartDelegate.createDimensionItem = function(sID, oSettings) {
-		return new DimensionItem(sID, oSettings);
-	};
+    /**
+     * Removes an existing MDC chart item for a given property name and updates the inner chart.
+     * Called and used by p13n
+     * @param {string} sPropertyName Name of the property removed
+     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart from which property is removed
+     * @returns {Promise<bool>} Promise containing information whether the item was deleted
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.removeItem = function (oProperty, oMDCChart) {
+        return Promise.resolve(true);
+    };
 
-	/**
-	 * Create a chart measure item.
-	 *
-	 * @param {string} [sID] ID for the measure item, generated automatically if no ID is given
-	 * @param {object} oSettings Initial settings for the measure item
-	 * @returns {sap.ui.mdc.chart.MeasureItem} A measure item instance
-	 */
-	ChartDelegate.createMeasureItem = function(sID, oSettings) {
-		return new MeasureItem(sID, oSettings);
-	};
+    /**
+     * Chart relevant API (WIP)
+     */
 
-	ChartDelegate.addItem = function(sPropertyName, oChart, mPropertyBag, sRole) {
-		if (typeof oChart.getModel === "function") {
-			return this.createChartItem(sPropertyName, oChart, sRole);
-		}
+    /**
+     * Loads the required libraries and creates the inner chart.
+     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
+     * @returns {Promise} Resolved once the inner chart has been initialized
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.initializeInnerChart = function (oMDCChart) {
+    };
 
-		return SyncPromise.resolve(null);
-	};
+    /**
+     * Creates the initial content for the chart before the metadata is retrieved.
+     * This can be used by chart libraries that can already show some information without the actual data (for example, axis labels, legend, ...).
+     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.createInitialChartContent = function (oMDCChart) {
+        //Not relevant for sap.chart.Chart
+    };
+    /**
+     * Returns the instance of the inner chart.
+     * @returns {sap.core.Control} Instance of the inner chart
+     */
+    ChartDelegate.getInnerChart = function () {
+    };
 
-	ChartDelegate.removeItem = function(sPropertyName, oChart, mPropertyBag) {
-		return SyncPromise.resolve(true);
-	};
+    /**
+     * @typedef {Object} ChartTypeObject
+     * @property {string} key Unique key of the chart type
+     * @property {string} icon URI for the icon for the current chart type
+     * @property {string} text Name of the current chart type
+     * @property {bool} selected Whether the chart type is the one currently used
+     */
+    /**
+     * Returns the current chart type.
+     * @returns {ChartTypeObject} Information about the current chart type
+     * @throws exception if inner chart is not initialized yet
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.getChartTypeInfo = function () {
+    };
 
-	return ChartDelegate;
+    /**
+     * This function is used by P13n to determine which chart type supports which layout options.
+     * There might be chart tyoes which do not support certain layout options (i.e. "Axis3").
+     * Layout config is defined as followed:
+     * {
+     *  key: string //identifier for the chart type
+     *  allowedLayoutOptions : [] //array containing allowed layout options as string
+     * }
+     *
+     * @returns {array}
+     */
+    ChartDelegate.getChartTypeLayoutConfig = function() {
+
+    };
+
+    /**
+     * Gets the available chart types for the current state of the inner chart.
+     *
+     * @returns {array<ChartTypeObject>} Array containing the available chart types
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted Fiori Elements
+     */
+    ChartDelegate.getAvailableChartTypes = function () {
+    };
+
+    /**
+     * Returns the current drilling stack of the inner chart.
+     * The returned objects need at least a <code>label</code> and a <code>name</code> property.
+     * Also, a <code>dimension</code> array containing the dimension drill stack at the current level is required.
+     * @returns {array} Array containing the drill stack
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.getDrillStack = function () {
+    };
+
+    /**
+     * Returns all sorted dimensions of an inner chart as property.
+     * This is used to determine possible drilldown dimensions in the drill down popover of the MDC chart.
+     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
+     * @returns {Promise<array<sap.ui.mdc.chart.Item>>} <code>Promise</code> containing an array of dimensions that is sorted
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.getSortedDimensions = function (oMDCChart) {
+    };
+
+    /**
+     * Determines which MDC items are drillable and returns them.
+     * This function is used by the breadcrumb navigation.
+     *
+     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
+     * @returns {array<sap.ui.mdc.chart.Item>} Array of MDC items that are drillable
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.getDrillableItems = function (oMDCChart) {
+    };
+
+    /**
+     * Sets the chart type of the inner chart.
+     * This function is called by the MDC chart when the <code>chartType</code> property is updated.
+     *  <b>Note:</b> This function is called by the MDC chart only. You must not call it directly but use {@link sap.ui.mdc.Chart#setChartType setChartType} instead.
+     * @param {string} sChartType The new chart type
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.setChartType = function (sChartType) {
+    };
+
+    /**
+     * Binds the inner chart to the back-end data and creates the inner chart content.
+     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
+     * @param {function} fnCallbackDataLoaded Callback function when data is loaded
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.createInnerChartContent = function (oMDCChart, fnCallbackDataLoaded) {
+    };
+
+    /**
+     * Checks the binding of the chart and rebinds it if required.
+     *
+     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
+     * @param {object} oBindingInfo The bindingInfo of the chart
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.rebindChart = function (oMDCChart, oBindingInfo) {
+    };
+
+    /**
+     * Returns the information whether the inner chart is currently bound.
+     * @returns {bool} <code>true</code> if inner chart is bound; <code>false</code> if not
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.getInnerChartBound = function () {
+    };
+
+    /**
+     * Updates the binding info with the relevant filters.
+     *
+     * @param {Object} oMDCChart The MDC chart instance
+     * @param {Object} oBindingInfo The binding info of the chart
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.updateBindingInfo = function (oMDCChart, oBindingInfo) {
+    };
+
+    /**
+     * Sets tooltips to visible/invisible for the inner chart.
+     * <b>Note:</b> This function is called by the MDC chart only. You must not call it directly but use {@link sap.ui.mdc.Chart#setShowChartTooltip setShowChartTooltip} instead.
+     * @param {bool}  bFlag <code>true</code> for visible, <code>false</code> for invisible
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.setChartTooltipVisibility = function (bFlag) {
+    };
+
+
+    /**
+     * Initializes a new chart property helper for V4 analytics with the property extensions merged into the property infos.
+     *
+     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
+     * @returns {Promise<sap.ui.mdc.chart.PropertyHelper>} <code>Promise</code> that resolves with the property helper
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.initPropertyHelper = function (oMDCChart) {
+        return Promise.resolve(true);
+    };
+
+    /**
+     * Returns the relevant propery infos based on the metadata used with the MDC chart instance.
+     *
+     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
+     * @returns {array} Array of the property infos to be used within MDC chart
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.fetchProperties = function (oMDCChart) {
+    };
+
+    return ChartDelegate;
 });

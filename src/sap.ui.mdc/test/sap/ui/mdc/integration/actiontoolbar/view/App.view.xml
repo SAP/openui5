@@ -4,7 +4,6 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:tnt="sap.tnt"
     xmlns:mdc="sap.ui.mdc"
-    xmlns:mdccn="sap.ui.mdc.chartNew"
     xmlns:mdcat="sap.ui.mdc.actiontoolbar">
     <App id="app">
         <Page id="pageId">

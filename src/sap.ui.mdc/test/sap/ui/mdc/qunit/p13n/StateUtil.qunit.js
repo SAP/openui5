@@ -825,7 +825,7 @@ sap.ui.define([
 		}.bind(this));
 
 	});
-
+	/* TO-Do: Check whether this is still needed with new MDC Chart
 	var _retrieveChartMetaData = function () {
 		return Promise.resolve({
 			chartType: "column",
@@ -1064,6 +1064,7 @@ sap.ui.define([
 			}.bind(this));
 		}.bind(this));
 	});
+	*/
 
 	QUnit.module("State event handling", {
 		beforeEach: function() {
@@ -1087,5 +1088,4 @@ sap.ui.define([
 		StateUtil.detachStateChange(fnHandler2);
 		assert.notOk(this.stateHandlerRegistry.mEventRegistry.hasOwnProperty("stateChange"), "Event listeners detached");
 	});
-
 });

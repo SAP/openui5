@@ -1,6 +1,6 @@
 <mvc:View
 		xmlns:mdc="sap.ui.mdc"
-		xmlns:mdcc="sap.ui.mdc.chartNew"
+		xmlns:mdcc="sap.ui.mdc.chart"
 		xmlns="sap.m"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
@@ -10,18 +10,17 @@
 		<ToolbarSpacer/>
 	</OverflowToolbar>
 
-	<mdc:ChartNew
+	<mdc:Chart
 		id="bookChart"
 		noDataText="This is a test noData text"
-		data="{path: '/Books'}"
 		p13nMode="Item,Sort,Type"
-		delegate="{name: 'sap/ui/mdc/odata/v4/vizChart/ChartDelegateNew', payload: {collectionName: 'Books'}}"
+		delegate="{name: 'sap/ui/mdc/odata/v4/vizChart/ChartDelegate', payload: {collectionName: 'Books'}}"
 		chartType="column"
 		header="Books Chart"
 		height="400px"
 		width="100%">
 	<mdc:selectionDetailsActions>
-		<mdcc:SelectionDetailsActionsNew>
+		<mdcc:SelectionDetailsActions>
 			<mdcc:detailsItemActions>
 				<core:Item key="ItemAction1" text="ItemAction 1"></core:Item>
 				<core:Item key="ItemAction2" text="ItemAction 2"></core:Item>
@@ -36,12 +35,12 @@
 				<core:Item key="GroupAction1" text="GroupAction 1"></core:Item>
 				<core:Item key="GroupAction2" text="GroupAction 2"></core:Item>
 			</mdcc:actionGroups>
-		</mdcc:SelectionDetailsActionsNew>
+		</mdcc:SelectionDetailsActions>
 	</mdc:selectionDetailsActions>
 	<mdc:items>
-		<mdcc:ItemNew id="dim1" name="language_code" role="category" label="Languages" type="groupable"/>
-		<mdcc:ItemNew id="meas1" name="averagemetricsWords" role="axis1" label="Words (avg)" type="aggregatable"/>
+		<mdcc:Item id="dim1" name="language_code" role="category" label="Languages" type="groupable"/>
+		<mdcc:Item id="meas1" name="averagemetricsWords" role="axis1" label="Words (avg)" type="aggregatable"/>
 	</mdc:items>
-	</mdc:ChartNew>
+	</mdc:Chart>
 
 </mvc:View>

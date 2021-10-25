@@ -38,7 +38,6 @@ sap.ui.define([
 
 		],
 		controls: [
-			"sap.ui.mdc.Chart",
 			"sap.ui.mdc.Table",
 			"sap.ui.mdc.FilterBar",
 			"sap.ui.mdc.field.FieldBase",
@@ -52,7 +51,7 @@ sap.ui.define([
 			"sap.ui.mdc.link.Panel",
 			"sap.ui.mdc.link.ContactDetails",
 			"sap.ui.mdc.ui.Container",
-			"sap.ui.mdc.ChartNew",
+			"sap.ui.mdc.Chart",
 			"sap.ui.mdc.p13n.PersistenceProvider"
 			],
 		elements: [
@@ -63,14 +62,11 @@ sap.ui.define([
 			"sap.ui.mdc.table.ResponsiveTableType",
 			"sap.ui.mdc.table.RowSettings",
 			"sap.ui.mdc.chart.Item",
-			"sap.ui.mdc.chart.DimensionItem",
-			"sap.ui.mdc.chart.MeasureItem",
-			"sap.ui.mdc.chartNew.ItemNew",
-			"sap.ui.mdc.chartNew.ChartSelectionDetailsNew",
-			"sap.ui.mdc.chartNew.ChartToolbarNew",
-			"sap.ui.mdc.chartNew.ChartTypeButtonNew",
-			"sap.ui.mdc.chartNew.DrillBreadcrumbsNew",
-			"sap.ui.mdc.chartNew.SelectionDetailsActionsNew",
+			"sap.ui.mdc.chart.ChartSelectionDetails",
+			"sap.ui.mdc.chart.ChartToolbar",
+			"sap.ui.mdc.chart.ChartTypeButton",
+			"sap.ui.mdc.chart.DrillBreadcrumbs",
+			"sap.ui.mdc.chart.SelectionDetailsActions",
 			"sap.ui.mdc.field.CustomFieldHelp",
 			"sap.ui.mdc.field.CustomFieldInfo",
 			"sap.ui.mdc.field.FieldHelpBase",
@@ -112,14 +108,13 @@ sap.ui.define([
 			flChangeHandlers: {
 				"sap.ui.mdc.Table": "sap/ui/mdc/flexibility/Table",
 				"sap.ui.mdc.Chart": "sap/ui/mdc/flexibility/Chart",
-				"sap.ui.mdc.ChartNew": "sap/ui/mdc/flexibility/Chart",
 				"sap.ui.mdc.FilterBar": "sap/ui/mdc/flexibility/FilterBar",
 				"sap.ui.mdc.filterbar.p13n.AdaptationFilterBar": "sap/ui/mdc/flexibility/FilterBar",
 				"sap.ui.mdc.link.PanelItem": "sap/ui/mdc/flexibility/PanelItem",
 				"sap.ui.mdc.link.Panel": "sap/ui/mdc/flexibility/Panel",
 				"sap.ui.mdc.ActionToolbar": "sap/ui/mdc/flexibility/ActionToolbar",
 				"sap.ui.mdc.actiontoolbar.ActionToolbarAction": "sap/ui/mdc/flexibility/ActionToolbarAction",
-				"sap.ui.mdc.chartNew.ChartToolbarNew": "sap/ui/mdc/flexibility/ActionToolbar"
+				"sap.ui.mdc.chart.ChartToolbar": "sap/ui/mdc/flexibility/ActionToolbar"
 			}
 		},
 		noLibraryCSS: false

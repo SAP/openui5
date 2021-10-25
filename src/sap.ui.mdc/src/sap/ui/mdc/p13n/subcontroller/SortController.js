@@ -31,20 +31,12 @@ sap.ui.define([
 
     SortController.prototype.getAdaptationUI = function(oPropertyHelper){
 
-        var oAdaptationControl = this.getAdaptationControl();
         var oSortPanel;
 
-        //TODO: remove this condition once 'ChartNew' migration has been merged
-        if (oAdaptationControl.isA("sap.ui.mdc.Chart") && !oAdaptationControl._bNewP13n) {
-            oSortPanel = new SortPanelOld();
-            var oAdaptationModel = this._getP13nModel(oPropertyHelper);
-            oSortPanel.setP13nModel(oAdaptationModel);
-        } else {
-            oSortPanel = new SortPanel();
-            var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
-            oSortPanel.setP13nData(oAdaptationData.items);
-            this._oPanel = oSortPanel;
-        }
+        oSortPanel = new SortPanel();
+        var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+        oSortPanel.setP13nData(oAdaptationData.items);
+        this._oPanel = oSortPanel;
 
         return Promise.resolve(oSortPanel);
     };

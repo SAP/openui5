@@ -9,7 +9,7 @@ sap.ui.define([
         "sap/m/SelectionDetailsItem",
         "sap/m/SelectionDetailsItemLine",
         "sap/m/SelectionDetailsRenderer",
-        "./SelectionDetailsActionsNew"
+        "./SelectionDetailsActions"
     ],
     function (
         Core,
@@ -24,11 +24,11 @@ sap.ui.define([
 
         /**
          /**
-         * Constructor for a new ChartSelectionDetailsNew.
+         * Constructor for a new ChartSelectionDetails.
          *
          * @param {string} [sId] id for the new control, generated automatically if no id is given
          * @param {object} [mSettings] initial settings for the new control
-         * @class The ChartSelectionDetailsNew control creates a sap.m.SelectionDetails popover based on metadata and the configuration specified.
+         * @class The ChartSelectionDetails control creates a sap.m.SelectionDetails popover based on metadata and the configuration specified.
          * @extends sap.m.SelectionDetails
          * @author SAP SE
          * @version ${version}
@@ -38,10 +38,10 @@ sap.ui.define([
          * @ui5-restricted sap.fe
          * @MDC_PUBLIC_CANDIDATE
          * @since 1.88
-         * @alias sap.ui.mdc.chartNew.ChartSelectionDetailsNew
+         * @alias sap.ui.mdc.chart.ChartSelectionDetails
          * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
          */
-        var ChartSelectionDetails = SelectionDetails.extend("sap.ui.mdc.chartNew.ChartSelectionDetailsNew", /** @lends sap.ui.mdc.chartNew.ChartSelectionDetailsNew.prototype */ {
+        var ChartSelectionDetails = SelectionDetails.extend("sap.ui.mdc.chart.ChartSelectionDetails", /** @lends sap.ui.mdc.chart.ChartSelectionDetails.prototype */ {
             metadata: {
                 library: "sap.ui.mdc",
                 interfaces: [
@@ -108,7 +108,7 @@ sap.ui.define([
         ChartSelectionDetails.prototype._hasNavigationTargets = function(aData) {
             return false;
         };
-        //TODO: Consider implementation and handling within ChartToolbarNew like the update of actions as well
+        //TODO: Consider implementation and handling within ChartToolbar like the update of actions as well
         ChartSelectionDetails.prototype._attachEvents = function() {
             // Attach to navigation event of selectionDetails
             // for semantic object navigation

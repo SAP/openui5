@@ -3,8 +3,8 @@
  */
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"../chart/ActionsViz",
-	"../chart/AssertionsViz",
+	"./ActionsViz",
+	"./AssertionsViz",
 	"../p13n/Actions"
 ], function(
 	Opa5,

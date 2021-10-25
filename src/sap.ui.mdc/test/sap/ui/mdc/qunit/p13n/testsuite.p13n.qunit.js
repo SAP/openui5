@@ -164,7 +164,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 						"sap.ui.mdc"
 					]
 				}
-			},/* Disabled temporarily -> srill needs to be adapted to new MDC Chart
+			},/* TO-Do: Check whether this is still needed with new MDC Chart
 			"ChartIntegration": {
 				group: "Control Integration",
 				module: "./integration/ChartP13n.qunit",
@@ -173,8 +173,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 						"sap.ui.mdc"
 					]
 				}
-			},
-			*/"BasePanel": {
+			},*/
+			"BasePanel": {
 				group: "UI Panels",
 				module: "./BasePanel.qunit",
 				ui5: {
