@@ -2814,5 +2814,84 @@
         ]
       }
     ]
+  },
+  "1.71.39": {
+    "date": "October 2021",
+    "notes": [
+      {
+        "id": "757b33698c23edee3a98ce175f19dc10dafe8f9c",
+        "type": "FIX",
+        "text": " sap.m.Button: Press event is fired in all cases and only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006515442021"
+          }
+        ]
+      },
+      {
+        "id": "6713ac9a62879aa30568dd0c9f04815af41c5862",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: dates strip is focused after today button is pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070448079"
+          }
+        ]
+      },
+      {
+        "id": "a9bd7534f640ed9462a9718476446578360fde86",
+        "type": "FIX",
+        "text": " sap.m.Select: Announce the new value with InvisibleMessage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002851422021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080351586"
+          }
+        ]
+      },
+      {
+        "id": "cad7642f072667b091dfebc9ffe7af39114536ef",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Support KK display format",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170188015"
+          }
+        ]
+      },
+      {
+        "id": "9c62cd4efa2874b44f490a4cf6a20a0a4ef95c25",
+        "type": "FIX",
+        "text": " ColumnHeaderPopover: Set focus back on opener before press event fired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070055382"
+          },
+          {
+            "type": "BCP",
+            "reference": "002028376700018518702021"
+          }
+        ]
+      },
+      {
+        "id": "a110911f817d074608d92b8766fbaec3f5e63593",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: aria-hidden attribute added when there are no tokens",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700018628612021"
+          }
+        ]
+      }
+    ]
   }
 }
