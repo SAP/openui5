@@ -190,18 +190,32 @@ sap.ui.define([
 		assert.notOk(oCodeEditor._oEditor, "ACE editor should be destroyed");
 	});
 
-	QUnit.module("Accessibility");
+	QUnit.module("Accessibility", {
+		beforeEach: function () {
+			this.oCodeEditor = new CodeEditor();
+			this.oCodeEditor.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCodeEditor.destroy();
+		}
+	});
 
 	QUnit.test("Aria role and roledescription", function(assert) {
-		var oCodeEditor = new CodeEditor({}),
-			sExpectedRoleDescriptionText = Core.getLibraryResourceBundle("sap.ui.codeeditor").getText("CODEEDITOR_ROLE_DESCRIPTION");
+		// Arrange
+		var sExpectedRoleDescriptionText = Core.getLibraryResourceBundle("sap.ui.codeeditor").getText("CODEEDITOR_ROLE_DESCRIPTION");
 
-		oCodeEditor.placeAt("qunit-fixture");
-		Core.applyChanges();
+		// Assert
+		assert.strictEqual(this.oCodeEditor.$().attr("role"), "application", "aria-role is 'application'");
+		assert.strictEqual(this.oCodeEditor.$().attr("aria-roledescription"), sExpectedRoleDescriptionText, "aria-roledescription is '" + sExpectedRoleDescriptionText + "'");
+	});
 
-		assert.strictEqual(oCodeEditor.$().attr("role"), "application", "aria-role is 'application'");
-		assert.strictEqual(oCodeEditor.$().attr("aria-roledescription"), sExpectedRoleDescriptionText, "aria-roledescription is '" + sExpectedRoleDescriptionText + "'");
+	QUnit.test("labelFor", function (assert) {
+		// Arrange
+		var sIdForLabel = this.oCodeEditor.getIdForLabel();
 
-		oCodeEditor.destroy();
+		// Assert
+		assert.strictEqual(sIdForLabel, this.oCodeEditor.getId() + "-editor-textarea", "The id of the textarea should be returned");
+		assert.ok(document.getElementById(sIdForLabel), "Element that can be labeled should exist");
 	});
 });
