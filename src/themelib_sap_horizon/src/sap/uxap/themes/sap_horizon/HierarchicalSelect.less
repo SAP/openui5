@@ -180,3 +180,22 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		}
 	}
 }
+
+// =====================================
+// =====================================
+// Delta Styles for Horizon
+// =====================================
+
+.sapUxAPHierarchicalSelect, .sapUxAPHierarchicalSelect .sapMSltLabel, .sapUxAPHierarchicalSelect .sapMSltArrow {
+    font-weight: bold;
+}
+
+.sapUxAPObjectPageLayout-Std-Phone .sapMSlt.sapUxAPHierarchicalSelect.sapMBarChild,
+html.sap-phone .sapMSlt.sapUxAPHierarchicalSelect.sapMBarChild {
+    border-radius: 0;
+}
+
+html.sap-desktop .sapUxAPHierarchicalSelect.sapMSltHoverable:hover {
+    background: transparent;
+    box-shadow: none;
+}

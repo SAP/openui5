@@ -9,7 +9,7 @@
 		titleAlignment="Center"
 		placement="Bottom"
 		contentWidth="250px"
-		contentHeight="350px">
+		contentHeight="332px">
 		<core:Fragment fragmentName="sap.f.sample.AvatarGroup.view.Card" type="XML"> </core:Fragment>
 	</Popover>
 </core:FragmentDefinition>

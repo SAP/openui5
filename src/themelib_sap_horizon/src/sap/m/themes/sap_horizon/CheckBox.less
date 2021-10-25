@@ -9,7 +9,7 @@
 	padding: 0 0 0 2.75rem;
 
 	.sapMLabel {
-		color: @sapButton_TextColor;
+		color: @sapField_TextColor;
 		padding-right: 0.625rem;
 	}
 }
@@ -34,11 +34,10 @@
 }
 
 .sapMCbRo .sapMCbBg {
-	border-radius: 0;
+	border-style: dotted;
 }
 
 .sapMCbHoverable:hover {
-	//border-color: @sapContent_FocusColor;
 	background-color: @sapField_Hover_Background;
     box-shadow: @sapContent_Interaction_Shadow;
 }
@@ -61,7 +60,7 @@
 	background-color: @sapUiFieldSuccessBackground;
 	border: 0.125rem solid @sapUiFieldSuccessColor;
 
-	.sapMCbMarkChecked:before {
+	&.sapMCbMarkChecked:before {
 		color: @sapUiFieldSuccessColor;
 	}
 
@@ -108,7 +107,7 @@
 }
 
 .sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked:before {
-	border: 0.25rem solid transparent;
+	border: 0.1875rem solid transparent;
 }
 
 /* CheckBox focus */
@@ -253,16 +252,12 @@ html.sap-desktop {
 			}
 		}
 
-		.sapMCbRo .sapMCbBg {
-			border-radius: 0;
-		}
-
 		.sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem(1px)' ( the focus width) */
 			left: 0.5rem;
 		}
 
 		.sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked:before {
-			border-width: 0.1875rem;
+			border-width: 0.125rem;
 		}
 
 		.sapUiForm .sapMCb:not(.sapMCbBgDis):focus:before {
