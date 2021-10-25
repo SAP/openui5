@@ -3,6 +3,15 @@
 /* Fiori 3 theme                                    */
 /* ================================================ */
 
+/* Background */
+.sapUiFormBackgrTranslucent > .sapUiFormCLContent {
+	background-color: fade(@sapUiGroupContentBackground, @sapUiTranslucentBGOpacity);
+}
+
+.sapUiFormBackgrSolid > .sapUiFormCLContent {
+	background-color: @sapUiGroupContentBackground;
+}
+
 /* Toolbar */
 .sapUiFormCL.sapUiFormToolbar > div:first-child {
 	height: 2.75rem; /* to have always 3rem on Form header */

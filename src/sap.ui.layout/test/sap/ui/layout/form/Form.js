@@ -330,6 +330,7 @@ sap.ui.require([
 								oLayout2.setBackgroundDesign(sBackground);
 								oLayout3.setBackgroundDesign(sBackground);
 								oLayout4.setBackgroundDesign(sBackground);
+								oLayout5.setBackgroundDesign(sBackground);
 							}
 						})]
 					})
