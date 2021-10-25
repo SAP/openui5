@@ -312,8 +312,11 @@ sap.ui.define([
 		onkeydown: function(oEvent) {
 			var bIsTabForward = oEvent.keyCode === KeyCodes.TAB && !oEvent.shiftKey;
 			var bIsTabBackward = oEvent.keyCode === KeyCodes.TAB && oEvent.shiftKey;
-			if ( bIsTabForward && oEvent.target.classList.contains('sapUiCalHeadBLast')) {
-				this.getAggregation('timeSliders').getDomRef().children[0].focus();
+			if (bIsTabForward) {
+				if (oEvent.target.classList.contains('sapUiCalHeadToday')
+					|| (oEvent.target.classList.contains('sapUiCalHeadBLast') && !this._oDateTimePicker._oCalendar.getShowCurrentDateButton())) {
+					this.getAggregation('timeSliders').getDomRef().children[0].focus();
+				}
 			}
 			if (bIsTabBackward && oEvent.target.classList.contains('sapUiCalItem')) {
 				var iLastElementIndex = this.oParent.getAggregation("footer").getAggregation("content").length - 1;

@@ -131,6 +131,7 @@ sap.ui.define(["sap/base/security/encodeXML"],
 			oRm.attr("title", sLabelToday);
 			oRm.accessibilityState(null, { label: sLabelToday});
 
+			oRm.class("sapUiCalHeadB");
 			oRm.class("sapUiCalHeadToday");
 			oRm.attr('tabindex', "-1");
 			oRm.openEnd(); // button element
