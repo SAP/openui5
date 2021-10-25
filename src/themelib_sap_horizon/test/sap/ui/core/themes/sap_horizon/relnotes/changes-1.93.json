@@ -1,0 +1,18 @@
+{
+  "1.93.2": {
+    "date": "October 2021",
+    "notes": [
+      {
+        "id": "14036df04bf47e01f997c6d5217fe59d5c81253e",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Adapt footer toolbar's rounded corners",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
+  }
+}

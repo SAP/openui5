@@ -391,5 +391,58 @@
         ]
       }
     ]
+  },
+  "1.93.2": {
+    "date": "October 2021",
+    "notes": [
+      {
+        "id": "ef7581bdf68b8e872250df49f5c68959b3fa75e0",
+        "type": "FIX",
+        "text": " sap.m.Switch: fixed handle misplacement on drag in Quartz themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170252080"
+          }
+        ]
+      },
+      {
+        "id": "618a70623854e7380fa7b34585846a776662a00b",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSliders: all inner parts are visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007564952021"
+          }
+        ]
+      },
+      {
+        "id": "cec3a639430b8932b73cbca79d542c6c5b2f41cc",
+        "type": "FIX",
+        "text": " sap.m.Select: Correct focus on combi devices",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006164082021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180201197"
+          }
+        ]
+      },
+      {
+        "id": "d02e01a40b5d2f2d2138e3595304d78d60921470",
+        "type": "FIX",
+        "text": " sap.m.UploadSet : inner controls created by setter not freed up",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006120612021"
+          }
+        ]
+      }
+    ]
   }
 }

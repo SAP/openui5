@@ -19,5 +19,21 @@
         "text": " sap.uxap.ObjectPageLayout: New property and event introduced"
       }
     ]
+  },
+  "1.93.2": {
+    "date": "October 2021",
+    "notes": [
+      {
+        "id": "26571653dfd745e815a255d49ba2f8b9b881a2bf",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected scroll to subSection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180373220"
+          }
+        ]
+      }
+    ]
   }
 }
