@@ -1,0 +1,358 @@
+{
+  "1.97.0": {
+    "date": "October 2021",
+    "notes": [
+      {
+        "id": "82a402b694811471cf5852ba5b7358944edb5e70",
+        "type": "FIX",
+        "text": " sap.m.Switch: fixed handle misplacement on drag in Quartz themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170252080"
+          }
+        ]
+      },
+      {
+        "id": "d17545e4ea2979d072aa43c87f3d5a9eb0370eca",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: ACC sample fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266529"
+          }
+        ]
+      },
+      {
+        "id": "96208e83d00fc4230baf47c8766a5c0d562cd66e",
+        "type": "FIX",
+        "text": " sap.m.DateTimeInput: ACC sample fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266524"
+          }
+        ]
+      },
+      {
+        "id": "0bc06af21375cea1e2c87740a32282886b7d9cc0",
+        "type": "FEATURE",
+        "text": " Controls adjusted to new theme SAP Horizon"
+      },
+      {
+        "id": "99eb09a805622ff9a3167343df9d2331c65e5ef8",
+        "type": "FEATURE",
+        "text": " sap.m.ComboBox: Clear icon implementation"
+      },
+      {
+        "id": "6ae30d23e5baacc913c68830bddcc0c5efb98af7",
+        "type": "FIX",
+        "text": " core/m: remove restriction meta tag of disabling user scalability",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780061368"
+          }
+        ]
+      },
+      {
+        "id": "5304ebd9bd0b9a2ca219d0019556d6a27726d17b",
+        "type": "FEATURE",
+        "text": " sap.m.MultiComboBox: Select All checkbox implementation"
+      },
+      {
+        "id": "62bb31f726b6df2d5eab933939dac65804bb0a3d",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: added 'remove' action for UI Adaptation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007056162021"
+          }
+        ]
+      },
+      {
+        "id": "a5225d8d019efa64d719e56924410cf86e7c42a6",
+        "type": "FIX",
+        "text": " sap.m.Input: Clear selection on backspace",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170173605"
+          }
+        ]
+      },
+      {
+        "id": "cf3a9cfe0efbf0b9839b3f9ab8dd9785c2daedad",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Input width is now properly calculated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170172291"
+          }
+        ]
+      },
+      {
+        "id": "a0900e36fb4c7c53656e9f9df655e978ec676b6b",
+        "type": "FEATURE",
+        "text": " SAP-icons font v5.0 / v4.12"
+      },
+      {
+        "id": "a2a492e340a4c8d6e15a57469febcc6ba1e6cd4e",
+        "type": "FIX",
+        "text": " sap.m.Input: Clear icon visibility enhancement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170253186"
+          }
+        ]
+      },
+      {
+        "id": "e53d338c34bbcab77ae2978deef5ac9629f75954",
+        "type": "FIX",
+        "text": " P13nDialog: IconTabBar items border fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180308710"
+          }
+        ]
+      },
+      {
+        "id": "c7c2c97d5423f2d8742ee5b8a4e90f7b0edfc349",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: fixed failing test in Firefox browser",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170248338"
+          }
+        ]
+      },
+      {
+        "id": "70927318271e332c2f44696c276b123fa1d10c10",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Mark onsapenter event in order to properly propagate events",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170213855"
+          }
+        ]
+      },
+      {
+        "id": "167cc63f635c862e1215b639d92c49b33a8d3d2d",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: fixed styles for ObjectNumber in editable SimpleForm",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170237776"
+          }
+        ]
+      },
+      {
+        "id": "26f980cb96219ae0b3452b22e11c7187c3b6af85",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: has enough contrast ratio between text and background of appointment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180165915"
+          }
+        ]
+      },
+      {
+        "id": "d8fba2f5a51ebdfad53397426a0fa4c9d18a814d",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: fixed styles for large ObjectNumber in editable SimpleForm",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180311186"
+          }
+        ]
+      },
+      {
+        "id": "beb598b19451c350fbfe545de53000605e79eea1",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: correct date parameter passed to headerDateSelect event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006821942021"
+          }
+        ]
+      },
+      {
+        "id": "244551c7e34324c1b5c21886961555a9c316a227",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Fix unstable QUnit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180358895"
+          }
+        ]
+      },
+      {
+        "id": "74273e392e470d0badebd739326faffb37bdb9bb",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Tab selection with VariantManagement now works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170234174"
+          }
+        ]
+      },
+      {
+        "id": "7418c90276ffb0ba05de01896735772625b729f5",
+        "type": "FIX",
+        "text": " sap.m.MaskInput: clear icon stays on focus out when there is value entered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "61645af3223ea8bba83f3a05857de704040a45d3",
+        "type": "FIX",
+        "text": " m/f.TargetHandler: improve API doc for setCloseDialogs with navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170181925"
+          }
+        ]
+      },
+      {
+        "id": "43814d948ad158a08d8af67e7f5c85025f0c34d1",
+        "type": "FIX",
+        "text": " core.Icon: support screen reader in VPC mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180128712"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670565585"
+          }
+        ]
+      },
+      {
+        "id": "65b009f828a670a9331107eb1195af27a36b6507",
+        "type": "FEATURE",
+        "text": " sap.f.cards.NumericHeader: New property \"sideIndicatorsAlignment\" implemented"
+      },
+      {
+        "id": "8f246fc77bc31056f9e7b3243cae2e146d35f433",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: ariaDescribedBy association is correctly updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180374676"
+          }
+        ]
+      },
+      {
+        "id": "515d878f70ee01074aa450cf03ebb6c67c277944",
+        "type": "FEATURE",
+        "text": " sap.m.MaskInput: added clearIcon functionality"
+      },
+      {
+        "id": "b0321bfddc4897db2184bbc229d11c536c200442",
+        "type": "FIX",
+        "text": " ScrollPosition qunit tests fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180342621"
+          }
+        ]
+      },
+      {
+        "id": "0a0b290ec8f68b7dd03e74f6fbe557280e9ff91b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: dates strip is focused after today button is pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070448079"
+          }
+        ]
+      },
+      {
+        "id": "c54033826f52e4618d27180a966dda18dd5a996c",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: includes space before colon in french",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180215798"
+          }
+        ]
+      },
+      {
+        "id": "d7c26e855c50a21b5ecc3ec1d75235b5f4da8b7a",
+        "type": "FIX",
+        "text": " sap.m.Select: Correct focus on combi devices",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006164082021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180201197"
+          }
+        ]
+      },
+      {
+        "id": "f8a0ffe878c64f640dc9e950fc9e26dc426e71c6",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbarButton: Updated OTB configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170208591"
+          }
+        ]
+      },
+      {
+        "id": "1891a80f952a5c84b293f0a11bc7f463105df1fb",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v4.11"
+      },
+      {
+        "id": "b0fae21069206913c036b061f708bdcbac9d4bc0",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Updates on suggestion items are now shown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170217899"
+          }
+        ]
+      },
+      {
+        "id": "2002dfc3817a0db848f92476b632bd13560d74da",
+        "type": "FIX",
+        "text": " sap.m.TimePicker, sap.m.MaskInput: proper handling of ESC key",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170219716"
+          }
+        ]
+      }
+    ]
+  }
+}

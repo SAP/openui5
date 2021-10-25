@@ -1,0 +1,34 @@
+{
+  "1.97.0": {
+    "date": "October 2021",
+    "notes": [
+      {
+        "id": "0bc06af21375cea1e2c87740a32282886b7d9cc0",
+        "type": "FEATURE",
+        "text": " Controls adjusted to new theme SAP Horizon"
+      },
+      {
+        "id": "bb143f3e31ddbb3adfd55ac317dd8d6e09099b8a",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: uses correct less parameter for week number font size",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170251078"
+          }
+        ]
+      },
+      {
+        "id": "47bc26ce765066d74e86e6f4a3efdf82a6cfb86b",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: cached input field element is now cleared on destroy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170197001"
+          }
+        ]
+      }
+    ]
+  }
+}

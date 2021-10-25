@@ -1,0 +1,23 @@
+{
+  "1.97.0": {
+    "date": "October 2021",
+    "notes": [
+      {
+        "id": "bed440020728a36e81f79729f1bbd72d4f4c9293",
+        "type": "FIX",
+        "text": " FilterField: prevent \"no Result\" anouncement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180330268"
+          }
+        ]
+      },
+      {
+        "id": "fad3f24c8786063508c2a23e7a38c4184a22e767",
+        "type": "FEATURE",
+        "text": " MultiValueField: use ExpandableText in display mode"
+      }
+    ]
+  }
+}
