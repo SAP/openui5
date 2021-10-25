@@ -24,12 +24,15 @@ sap.ui.define([
 
 	CodeExtManager = {
 		/**
-		 * @param {string} oPropertyBag.id - change Id if not present it will be generated
-		 * @param {string} oPropertyBag.codeRef - relative path of code file
-		 * @param {string} oPropertyBag.controllerName - controller name
-		 * @param {string} oPropertyBag.appVariantId - appVariantId or componentName in which the context is present
+		 * @param {object} oPropertyBag - Object with properties
+		 * @param {string} oPropertyBag.id - Change ID. Will be generated if not present.
+		 * @param {string} oPropertyBag.codeRef - Relative path of code file
+		 * @param {string} oPropertyBag.controllerName - Controller name
+		 * @param {string} oPropertyBag.appVariantId - <code>AppVariantId</code> or <code>componentName</code> in which the context is present
+		 * @param {object} mOptions - Property bag of options for the codeExt change creation
 		 * @param {string} mOptions.transportId - Id of ABAP Transport which CodeExt change assigned to
 		 * @param {string} mOptions.packageName - Name of ABAP Package which CodeExt change assigned to
+		 * @returns {Promise} Resolves as soon as the writing was completed
 		 */
 		createOrUpdateCodeExtChange: function(oPropertyBag, mOptions) {
 			if (!oPropertyBag.content || !oPropertyBag.content.codeRef) {
@@ -55,11 +58,12 @@ sap.ui.define([
 		},
 
 		/**
-		 * @param {array} aChanges - list of changes need to be created
+		 * @param {array} aChanges - List of changes need to be created
 		 * @param {object} mOptions - Property bag of options for the codeExt change creation
-		 * @param {string} mOptions.codeRef - code reference which changes are associated with
-		 * @param {string} mOptions.transportId - id of ABAP transport on which the change is assigned to
-		 * @param {string} mOptions.packageName - name of ABAP package on which the change is assigned to
+		 * @param {string} mOptions.codeRef - Code reference which changes are associated with
+		 * @param {string} mOptions.transportId - ID of the ABAP transport to which the change is assigned
+		 * @param {string} mOptions.packageName - Name of the ABAP transport to which the change is assigned
+		 * @returns {Promise} Resolves as soon as the writing is completed
 		 */
 		createCodeExtChanges: function(aChanges, mOptions) {
 			aChanges = aChanges || [];
@@ -85,9 +89,11 @@ sap.ui.define([
 		},
 
 		/**
-		 * @param {sap.ui.fl.Change} oChange
+		 * @param {sap.ui.fl.Change} oChange - Change instance
+		 * @param {object} mOptions - Property bag of options for the codeExt change creation
 		 * @param {string} mOptions.transportId - ID of ABAP Transport which CodeExt change assigned to
 		 * @param {string} mOptions.packageName - Name of ABAP Package which CodeExt change assigned to
+		 * @returns {Promise} Resolves as soon as the deletion is completed
 		 */
 		deleteCodeExtChange: function(oChange, mOptions) {
 			if (oChange.changeType !== "codeExt" || oChange.fileType !== "change") {

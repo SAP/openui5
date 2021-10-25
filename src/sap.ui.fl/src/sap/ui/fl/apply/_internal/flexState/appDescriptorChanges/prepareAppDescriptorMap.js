@@ -12,7 +12,7 @@ sap.ui.define([
 	/**
 	 * Prepares the AppDescriptorMap from the flex response
 	 *
-	 * @param {object} mPropertyBag
+	 * @param {object} mPropertyBag - Property Bag
 	 * @param {object} [mPropertyBag.storageResponse.changes.appDescriptorChanges] - All app descriptor changes
 	 *
 	 * @returns {object} The prepared map of App Descriptors

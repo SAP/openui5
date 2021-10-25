@@ -90,6 +90,7 @@ sap.ui.define([
 		 * @param {sap.ui.fl.Layer} [mPropertyBag.layer] - Layer in which the variant removal takes place
 		 * @param {boolean} [mPropertyBag.changeSpecificData.isUserDependent] - Flag if the variant is personalization only
 		 * this either updates the variant from the layer or writes a change to that layer.
+		 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The updated variant
 		 * @private
 		 * @ui5-restricted sap.ui.rta.command, sap.ui.comp.smartvariants.SmartVariantManagement
 		 */
@@ -110,6 +111,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.id - ID of the variant
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer in which the variant removal takes place;
 		 * this either removes the variant from the layer or writes a change to that layer.
+		 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The removed variant
 		 * @private
 		 * @ui5-restricted sap.ui.rta.command
 		 */

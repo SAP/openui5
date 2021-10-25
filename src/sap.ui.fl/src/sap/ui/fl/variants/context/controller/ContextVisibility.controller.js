@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/m/MessageStrip",
 	"sap/ui/core/MessageType",
 	"sap/base/util/restricted/_isEqual"
-],
-function (
+], function (
 	Controller,
 	Fragment,
 	WriteStorage,
@@ -112,6 +111,7 @@ function (
 
 		/**
 		 * If restricted radio button is selected, then it reveals the hidden selected contexts list.
+		 * @param {sap.ui.base.Event} oEvent - Event object
 		 */
 		onSelectRestrictedRadioButton: function(oEvent) {
 			oEvent.getSource().setSelected(true);
@@ -127,6 +127,7 @@ function (
 		/**
 		 * Checks if all data is loaded from back end.
 		 * If not, it retrieves the next chunk from the back end and then updates the model.
+		 * @returns {Promise} Resolves with additional data
 		 */
 		_appendDataFromBackend: function() {
 			var oRoles = this.oContextsModel.getProperty("/values");
@@ -141,6 +142,8 @@ function (
 		 * Proxy handler that is called if <code>updateStarted</code> events are fired.
 		 * Delegates to <code>_appendDataFromBackend</code> in case of a <code>Growing</code> event.
 		 * <code>Growing</code> events are triggered if the user clicks on <code>More</code> or scrolls down in the <code>Select Contexts</code> list.
+		 * @param {sap.ui.base.Event} oEvent - Event object
+		 * @returns {Promise} Resolves with additional data
 		 */
 		_updateStartedHandler: function(oEvent) {
 			if (oEvent.getParameter && oEvent.getParameter("reason") === "Growing") {
@@ -151,6 +154,8 @@ function (
 
 		/**
 		 * Retrieves contexts from the back end, then opens a new <code>Select Contexts</code> dialog.
+		 * @param {object} oDialog - The Select Contexts dialog
+		 * @returns {Promise} Resolves as soon as the dialog is opened
 		 */
 		_addContexts: function(oDialog) {
 			oDialog.clearSelection();
@@ -162,6 +167,7 @@ function (
 
 		/**
 		 * Proxy handler method that calls <code>_addContext</code> if the <code>Select Contexts</code> dialog is not yet opened.
+		 * @returns {Promise} Resolves as soon as the dialog is opened
 		 */
 		onAddContextsHandler: function() {
 			if (!this._oDialog) {
@@ -174,6 +180,8 @@ function (
 
 		/**
 		 * Retrieves filtered data from the back end, then updates the model.
+		 * @param {sap.ui.base.Event} oEvent - Event object
+		 * @returns {Promise<object>} The data
 		 */
 		onSearch: function(oEvent) {
 			oEvent.getSource().clearSelection();
@@ -193,6 +201,7 @@ function (
 
 		/**
 		 * Removes a single selected context.
+		 * @param {sap.ui.base.Event} oEvent - Event object
 		 */
 		onDeleteContext: function(oEvent) {
 			var aItems = this.oSelectedContextsModel.getProperty("/selected");
@@ -215,6 +224,7 @@ function (
 
 		/**
 		 * Shows or removes error message depending on the input.
+		 * @param {boolean} bShowError - Whether the error should be shown on the UI
 		 */
 		showErrorMessage: function(bShowError) {
 			var sErrorMessageId = this.getView().getId() + "--noSelectedRolesError";

@@ -66,8 +66,8 @@ sap.ui.define([
 		/**
 		 * Handler if a route was matched;
 		 * Obtains information about layer, namespace, filename, and file type from the route's arguments, and then requests content from Layered Repository.
-		 * @param {Object} oRouteMatch - route object which is specified in the router and matched via regexp
-		 * @returns {Promise} - <code>LRepConnector</code> "getContent" promise
+		 * @param {object} oRouteMatch - Route object which is specified in the router and matched via regexp
+		 * @returns {Promise} <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
 		_onRouteMatched: function (oRouteMatch) {
@@ -99,11 +99,11 @@ sap.ui.define([
 		/**
 		 * Handler if content data was received;
 		 * Formats the received data into the correct file type and requests the file metadata.
-		 * @param {Object} oModelData - model data of current page
-		 * @param {Object} oPage - current page used to set display busy mode on/off
-		 * @param {Object} sContentSuffix - content suffix for sending the metadata request
-		 * @param {Object} oData - data which is received from <code>LRepConnector</code> "getContent" promise
-		 * @returns {Promise} - <code>LRepConnector</code> "getContent" promise
+		 * @param {object} oModelData - Model data of current page
+		 * @param {object} oPage - Current page used to set display busy mode on/off
+		 * @param {object} sContentSuffix - Content suffix for sending the metadata request
+		 * @param {object} oData - Data which is received from <code>LRepConnector</code> "getContent" promise
+		 * @returns {Promise} <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
 		_onContentReceived: function (oModelData, oPage, sContentSuffix, oData) {
@@ -125,9 +125,9 @@ sap.ui.define([
 		/**
 		 * Handler if content metadata was received;
 		 * Sets the received data to the current content model, updates the icon tab bar, and releases the busy mode of the current page.
-		 * @param {Object} oModelData - model data of current page
-		 * @param {Object} oPage - current page used to set display busy mode on/off
-		 * @param {Object} oMetadata - metadata which is received from <code>LRepConnector</code> "getContent" promise
+		 * @param {object} oModelData - Model data of current page
+		 * @param {object} oPage - Current page used to set display busy mode on/off
+		 * @param {object} oMetadata - Metadata which is received from <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
 		_onContentMetadataReceived: function (oModelData, oPage, oMetadata) {
@@ -280,7 +280,7 @@ sap.ui.define([
 
 		/**
 		 * Handler if a deletion was confirmed.
-		 * @returns {Promise} - <code>LRepConnector</code> "deleteFile" promise
+		 * @returns {Promise} <code>LRepConnector</code> "deleteFile" promise
 		 * @private
 		 */
 		_deleteFile: function (sLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer) {

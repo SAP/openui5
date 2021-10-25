@@ -1,7 +1,6 @@
 /*!
  * ${copyright}
  */
-/*global Error */
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
@@ -32,7 +31,7 @@ sap.ui.define([
 	/**
 	 * FlexSettings access
 	 *
-	 * @param {object} oSettings settings as JSON object
+	 * @param {object} oSettings - Settings as JSON object
 	 * @constructor
 	 * @alias sap.ui.fl.registry.Settings
 	 * @private
@@ -48,8 +47,8 @@ sap.ui.define([
 	/**
 	 * attaches a callback to an event on the event provider of Settings
 	 *
-	 * @param {string} sEventId name of the event
-	 * @param {function} oCallback
+	 * @param {string} sEventId - Name of the event
+	 * @param {function} oCallback - Callback that should be attached to the event
 	 */
 	Settings.attachEvent = function(sEventId, oCallback) {
 		Settings._oEventProvider.attachEvent(sEventId, oCallback);
@@ -58,8 +57,8 @@ sap.ui.define([
 	/**
 	 * detaches a callback to an event on the event provider of Settings
 	 *
-	 * @param {string} sEventId name of the event
-	 * @param {function} oCallback
+	 * @param {string} sEventId - Name of the event
+	 * @param {function} oCallback - Callback that should be detached from the event
 	 */
 	Settings.detachEvent = function(sEventId, oCallback) {
 		Settings._oEventProvider.detachEvent(sEventId, oCallback);
@@ -69,7 +68,7 @@ sap.ui.define([
 	 * Returns a settings instance after reading the settings from the back end if not already done. There is only one instance of settings during a
 	 * session.
 	 *
-	 * @returns {Promise} with parameter <code>oInstance</code> of type {sap.ui.fl.registry.Settings}
+	 * @returns {Promise} With parameter <code>oInstance</code> of type {sap.ui.fl.registry.Settings}
 	 */
 	Settings.getInstance = function() {
 		if (Settings._instance) {
@@ -125,7 +124,7 @@ sap.ui.define([
 	 * Writes the data received from the storage into an internal instance and then returns the settings object within a Promise.
 	 *
 	 * @param {object} oSettings - Data received from the storage
-	 * @returns {Promise} with parameter <code>oInstance</code> of type {sap.ui.fl.registry.Settings}
+	 * @returns {Promise} With parameter <code>oInstance</code> of type {sap.ui.fl.registry.Settings}
 	 *
 	 */
 	Settings._storeInstance = function(oSettings) {
@@ -139,7 +138,7 @@ sap.ui.define([
 	 * Returns a settings instance from the local instance cache. There is only one instance of settings during a session. If no instance has been
 	 * created before, undefined will be returned.
 	 *
-	 * @returns {sap.ui.fl.registry.Settings} instance or undefined if no instance has been created so far
+	 * @returns {sap.ui.fl.registry.Settings} Instance or undefined if no instance has been created so far
 	 */
 	Settings.getInstanceOrUndef = function() {
 		return Settings._instance;
@@ -176,7 +175,7 @@ sap.ui.define([
 	/**
 	 * Reads boolean property of settings.
 	 *
-	 * @param {string} sPropertyName name of property
+	 * @param {string} sPropertyName - Name of property
 	 * @returns {boolean} <code>true</code> if the property exists and is true
 	 */
 	Settings.prototype._getBooleanProperty = function(sPropertyName) {
@@ -195,7 +194,7 @@ sap.ui.define([
 	/**
 	 * Returns the information if translation is enabled for the KeyUser or not (has admin role).
 	 *
-	 * @returns {boolean} true if the user is a flexibility key user and has the admin role.
+	 * @returns {boolean} <code>true</code> if the user is a flexibility key user and has the admin role.
 	 */
 	Settings.prototype.isKeyUserTranslationEnabled = function() {
 		return this._getBooleanProperty("isKeyUserTranslationEnabled");
@@ -312,20 +311,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * Getter for the system Id of the connected backend.
+	 * Getter for the system ID of the connected back end.
 	 * Taken from the property 'system' of the flex settings. Only filled for an ABAP backend.
 	 *
-	 * @returns {String} system Id of the connected backend or undefined (when property 'system' does not exist in the flex settings file)
+	 * @returns {string} System ID of the connected back end or undefined (when property <code>system</code> does not exist in the flex settings file)
 	 */
 	Settings.prototype.getSystem = function() {
 		return this._oSettings.system;
 	};
 
 	/**
-	 * Getter for the client of the connected backend.
+	 * Getter for the client of the connected back end.
 	 * Taken from the property 'client' of the flex settings. Only filled for an ABAP backend.
 	 *
-	 * @returns {String} client of the connected backend or undefined (when property 'system' does not exist in the flex settings file)
+	 * @returns {string} Client of the connected backend or undefined (when property <code>system</code> does not exist in the flex settings file)
 	 */
 	Settings.prototype.getClient = function() {
 		return this._oSettings.client;
@@ -335,7 +334,7 @@ sap.ui.define([
 	 * Getter for the id of the current user.
 	 * Taken from the property 'userId' of the flex settings. Only filled when UShell is available.
 	 *
-	 * @returns {String} user ID of the current user. Undefined if UShell is not available.
+	 * @returns {string} User ID of the current user. Undefined if UShell is not available.
 	 */
 	 Settings.prototype.getUserId = function() {
 		return this._oSettings.userId;

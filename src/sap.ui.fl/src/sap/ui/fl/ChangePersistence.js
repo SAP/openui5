@@ -136,13 +136,13 @@ sap.ui.define([
 	ChangePersistence.prototype._preconditionsFulfilled = function(oChangeOrChangeContent) {
 		var oChangeContent = oChangeOrChangeContent instanceof Change ? oChangeOrChangeContent.getDefinition() : oChangeOrChangeContent;
 
-		function _isControlVariantChange() {
+		function isControlVariantChange() {
 			if ((oChangeContent.fileType === "ctrl_variant") || (oChangeContent.fileType === "ctrl_variant_change") || (oChangeContent.fileType === "ctrl_variant_management_change")) {
 				return oChangeContent.variantManagementReference || oChangeContent.variantReference || (oChangeContent.selector && oChangeContent.selector.id);
 			}
 		}
 
-		return oChangeContent.fileType === "change" || _isControlVariantChange();
+		return oChangeContent.fileType === "change" || isControlVariantChange();
 	};
 
 	/**
@@ -657,6 +657,7 @@ sap.ui.define([
 	 * @param {boolean} [bSkipUpdateCache] - If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
 	 * @param {sap.ui.fl.Change} [aChanges] - If passed only those changes are saved
+	 * @param {number} nParentVersion - Parent version
 	 * @returns {Promise} Resolving after all changes have been saved
 	 */
 	ChangePersistence.prototype.saveDirtyChanges = function(oAppComponent, bSkipUpdateCache, aChanges, nParentVersion) {
@@ -800,7 +801,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
+	 * @param {sap.ui.fl.Change[]} aDirtyChanges - Array of dirty changes
+	 * @param {boolean} [bSkipUpdateCache]-  If <code>true</code>, then the dirty change shall be saved for the newly created app variant, but not for the current app;
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
 	 */
 	ChangePersistence.prototype._massUpdateCacheAndDirtyState = function(aDirtyChanges, bSkipUpdateCache) {

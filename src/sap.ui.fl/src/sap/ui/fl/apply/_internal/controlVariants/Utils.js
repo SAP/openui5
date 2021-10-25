@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/base/util/includes",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Variant"
 ], function(
-	includes,
 	JsControlTreeModifier,
 	Variant
 ) {
@@ -52,11 +50,11 @@ sap.ui.define([
 		/**
 		 * Create a variant
 		 *
-		 * @param {object} mPropertyBag
+		 * @param {object} mPropertyBag - Property Bag
 		 * @param {object} mPropertyBag.variantSpecificData - Property bag (nvp) holding the variant information (see sap.ui.fl.Variant#createInitialFileContentoPropertyBag).
 		 * The property "mPropertyBag.variantSpecificData.content.packageName" is set to $TMP internally since flex changes are always local when they are created.
 		 * @param {sap.ui.fl.variants.VariantModel} mPropertyBag.model - Variant model
-		 * @returns {sap.ui.fl.Variant} the created variant
+		 * @returns {sap.ui.fl.Variant} The created variant
 		 * @public
 		 */
 		createVariant: function(mPropertyBag) {

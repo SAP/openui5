@@ -2,8 +2,6 @@
  * ! ${copyright}
  */
 
-/* global XMLHttpRequest */
-
 sap.ui.define([
 	"sap/base/security/encodeURLParameters"
 ], function (

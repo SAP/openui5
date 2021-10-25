@@ -13,8 +13,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/core/ListItem",
 	"sap/ui/fl/write/_internal/transport/Transports"
-],
-function(
+], function(
 	List,
 	InputListItem,
 	Button,
@@ -111,11 +110,6 @@ function(
 		}.bind(this));
 	};
 
-	/**
-	 * Creates the content list and places its content.
-	 *
-	 * @private
-	 */
 	TransportDialog.prototype._createContentList = function() {
 		this._oPackageListItem = new InputListItem({
 			label: this._oResources.getText("TRANSPORT_DIALOG_PACKAGE"),
@@ -431,6 +425,7 @@ function(
 	 * An ABAP package that can be used as default for the ABAP package selection.
 	 * The property can only be set once and afterwards it cannot be changed.
 	 * @param {string} sPackage - ABAP package that can be used as default for the ABAP package selection
+	 * @returns {sap.ui.fl.write._internal.transport.TransportDialog} The <code>this</code> object
 	 *
 	 * @public
 	 */
@@ -459,6 +454,7 @@ function(
 	/**
 	 * The set of ABAP transport requests that can be selected by a user.
 	 * @param {array} aSelection - Set of ABAP transport requests that can be selected by a user
+	 * @returns {sap.ui.fl.write._internal.transport.TransportDialog} The <code>this</code> object
 	 *
 	 * @public
 	 */
@@ -499,6 +495,7 @@ function(
 	 * The LREP object for which as transport request has to be selected.
 	 * The property can only be set once and afterwards it cannot be changed.
 	 * @param {object} oObject - LREP object for which a transport request has to be selected. The object has the attributes name, namespace, and type
+	 * @returns {sap.ui.fl.write._internal.transport.TransportDialog} The <code>this</code> object
 	 *
 	 * @public
 	 */
@@ -513,6 +510,7 @@ function(
 	/**
 	 * Flag indicating whether the selection of an ABAP package is to be hidden or not.
 	 * @param {boolean} bHide - If set to <code>true</code>, the package selection is hidden
+	 * @returns {sap.ui.fl.write._internal.transport.TransportDialog} The <code>this</code> object
 	 *
 	 * @public
 	 */

@@ -27,18 +27,16 @@ sap.ui.define([
 	 * @version ${version}
 	 * @experimental Since 1.27.0
 	 */
-	var XmlPreprocessorImpl = function() {
-	};
+	var XmlPreprocessorImpl = function() {};
 
 	/**
 	 * Asynchronous view processing method.
 	 *
-	 * @param {Node} oView XML node of the view to process
-	 * @param {object} mProperties
-	 * @param {string} mProperties.componentId - id of the component creating the view
-	 * @param {string} mPropertyBag.id - id of the processed view
-	 *
-	 * @returns {Promise.<Node>|Node} result of the processing, promise if executed asynchronously
+	 * @param {Node} oView - XML node of the view to process
+	 * @param {object} mProperties - Property Bag
+	 * @param {string} mProperties.componentId - ID of the component creating the view
+	 * @param {string} mPropertyBag.id - ID of the processed view
+	 * @returns {Promise.<Node>|Node} Result of the processing, promise if executed asynchronously
 	 *
 	 * @public
 	 */
@@ -90,8 +88,9 @@ sap.ui.define([
 	/**
 	 * Asynchronous determination of a hash key for caching purposes
 	 *
-	 * @param {Node} oView XML node of the view for which the key should be determined
-	 * @returns {Promise} promise returning the hash key
+	 * @param {object} mProperties - Property Bag
+	 * @param {string} mProperties.componentId - Component instance ID
+	 * @returns {Promise} Resolves with the hash key
 	 *
 	 * @public
 	 */

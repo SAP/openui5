@@ -66,6 +66,7 @@ sap.ui.define([
 	 * Until this function is called again the control does not change and information can be cached.
 	 *
 	 * @param {sap.ui.base.ManagedObject} oControl - Control instance that was selected
+	 * @returns {Promise} Resolves with the return value of the function in the implementation
 	 */
 	FieldExtensibility.onControlSelected = function(oControl) {
 		return callFunctionInImplementation("onControlSelected", oControl);
@@ -95,6 +96,7 @@ sap.ui.define([
 	 * Removes the flag that identifies the service as outdated.
 	 *
 	 * @param  {string|map} vServiceInfo - service uri or service info map containing <code>serviceName</code>, <code>serviceVersion</code> and <code>serviceType</code>
+	 * @returns {Promise} Resolves with the return value of the function in the implementation
 	 */
 	FieldExtensibility.setServiceValid = function(vServiceInfo) {
 		return callFunctionInImplementation("setServiceValid", vServiceInfo);
@@ -103,7 +105,7 @@ sap.ui.define([
 	/**
 	 * Retrieves the necessary texts.
 	 *
-	 * @returns {object} - Object with <code>tooltip</code> and <code>headerText</code>
+	 * @returns {Promise<object>} - Object with <code>tooltip</code> and <code>headerText</code>
 	 */
 	FieldExtensibility.getTexts = function() {
 		return callFunctionInImplementation("getTexts");
@@ -112,7 +114,7 @@ sap.ui.define([
 	/**
 	 * Retrieves the extension data.
 	 *
-	 * @returns {Object} All necessary information about the extension data. This will be passed to <code>FieldExtensibility.onTriggerCreateExtensionData</code>
+	 * @returns {Promise<object>} All necessary information about the extension data. This will be passed to <code>FieldExtensibility.onTriggerCreateExtensionData</code>
 	 */
 	FieldExtensibility.getExtensionData = function() {
 		// TODO: currently the return value must be an object that includes .BusinessContexts in order to be shown in the Dialog.
@@ -124,6 +126,8 @@ sap.ui.define([
 	 * Handler for the button to trigger extension data creation.
 	 *
 	 * @param {object} oExtensibilityInfo - Information about the extension data. Should be the return value of <code>FieldExtensibility.getExtensionData</code>
+	 * @param {string} sRtaStyleClassName - CSS style class that should be added to any dialogs
+	 * @returns {Promise} Resolves with the return value of the function in the implementation
 	 */
 	FieldExtensibility.onTriggerCreateExtensionData = function(oExtensibilityInfo, sRtaStyleClassName) {
 		return callFunctionInImplementation("onTriggerCreateExtensionData", oExtensibilityInfo, sRtaStyleClassName);

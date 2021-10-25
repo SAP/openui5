@@ -88,10 +88,8 @@ sap.ui.define([
 					throw new Error("Id " + sId + " must not start with reserved " + layer_prefixes[sKey]);
 				}
 			});
-		} else {
-			if (!sId.startsWith(sPrefix)) {
-				throw new Error("Id " + sId + " must start with " + sPrefix);
-			}
+		} else if (!sId.startsWith(sPrefix)) {
+			throw new Error("Id " + sId + " must start with " + sPrefix);
 		}
 	}
 

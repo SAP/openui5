@@ -265,7 +265,7 @@ sap.ui.define([
 			oChangeParameter.support.generator = oChangeParameter.support.generator || "CompVariantState." + sChangeType;
 			oChangeParameter.support.sapui5Version = sap.ui.version;
 
-			var oChange = new UpdatableChange(oChangeParameter);
+			oChange = new UpdatableChange(oChangeParameter);
 			mCompVariantsMap.defaultVariants.push(oChange);
 			mCompVariantsMap.byId[oChange.getId()] = oChange;
 			oChange.addRevertInfo(new RevertData({
@@ -626,6 +626,7 @@ sap.ui.define([
 		var oVariantRevertData = oVariant.getRevertInfo().pop();
 		oVariant.removeRevertInfo(oVariantRevertData);
 		var oRevertDataContent = oVariantRevertData.getContent();
+		var oChange;
 
 		switch (oVariantRevertData.getType()) {
 			case CompVariantState.operationType.ContentUpdate:
@@ -642,7 +643,7 @@ sap.ui.define([
 					));
 				break;
 			case CompVariantState.operationType.NewChange:
-				var oChange = oVariantRevertData.getChange();
+				oChange = oVariantRevertData.getChange();
 				oVariant.removeChange(oChange);
 				removeChange(oChange);
 				revertVariantChange(
@@ -659,7 +660,7 @@ sap.ui.define([
 					));
 				break;
 			case CompVariantState.operationType.UpdateVariantViaChangeUpdate:
-				var oChange = oVariantRevertData.getChange();
+				oChange = oVariantRevertData.getChange();
 				revertVariantChange(
 					oVariant,
 					Object.assign(

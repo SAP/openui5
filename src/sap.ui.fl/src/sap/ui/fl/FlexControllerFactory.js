@@ -2,8 +2,6 @@
  * ${copyright}
  */
 
-/* global WeakMap */
-
 sap.ui.define([
 	"sap/ui/fl/FlexController",
 	"sap/ui/fl/Utils",
