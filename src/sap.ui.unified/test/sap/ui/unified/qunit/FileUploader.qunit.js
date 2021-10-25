@@ -1303,6 +1303,7 @@ sap.ui.define([
 
 		// Act
 		oFileUploader.setTooltip(sUpdatedTooltip);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		sAccDescription = document.getElementById("fu-AccDescr").innerHTML;
@@ -1327,6 +1328,7 @@ sap.ui.define([
 
 		// Act
 		oFileUploader.setPlaceholder(sUpdatedPlaceholder);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		sAccDescription = document.getElementById("fu-AccDescr").innerHTML;
