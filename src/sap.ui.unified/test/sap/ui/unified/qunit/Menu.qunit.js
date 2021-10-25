@@ -4,18 +4,18 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
+	"sap/ui/unified/MenuItemBase",
 	"sap/ui/unified/MenuTextFieldItem",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(qutils, Menu, MenuItem, MenuTextFieldItem, Log, waitForThemeApplied) {
+	"sap/m/Button",
+	"sap/ui/Device",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Popup",
+	"sap/ui/thirdparty/jquery"
+], function(qutils, Menu, MenuItem, MenuItemBase, MenuTextFieldItem, Log, Button, Device, KeyCodes, Popup, jQuery) {
 	"use strict";
 
-	try {
-		sap.ui.getCore().loadLibrary("sap.ui.commons");
-	} catch (e){
-		Log.error("This test page requires the library 'sap.ui.commons' which is not available.");
-		throw (e);
-	}
+	var Dock = Popup.Dock;
 
 	var oMenuItems = {};
 	var oMenus = {};
@@ -66,10 +66,8 @@ sap.ui.define([
 	oSubMenu.addItem(createMenuItem(9, "I9", false, -1, -1, null));
 	oSubMenu.addItem(createMenuItem(10, "I10", false, false, -1, oSubSubMenu));
 
-	var eDock = sap.ui.core.Popup.Dock;
-
-	var oButton = new sap.ui.commons.Button("button", {text: "Open Menu", press: function(){
-		oRootMenu.open(false, null, eDock.LeftTop, eDock.LeftTop, document, "0 0");
+	var oButton = new Button("button", {text: "Open Menu", press: function(){
+		oRootMenu.open(false, null, Dock.LeftTop, Dock.LeftTop, document, "0 0");
 	}});
 	oButton.placeAt("qunit-fixture");
 
@@ -86,17 +84,17 @@ sap.ui.define([
 		oLongMenu.addItem(createMenuItem(i, "I" + i, false, (i % 7 > 0), -1, null));
 	}
 
-	oButton = new sap.ui.commons.Button("button3", {text: "Open Menu 2", press: function(){
-		oSpecialMenu.open(false, null, eDock.LeftTop, eDock.LeftTop, document, "0 0");
+	oButton = new Button("button3", {text: "Open Menu 2", press: function(){
+		oSpecialMenu.open(false, null, Dock.LeftTop, Dock.LeftTop, document, "0 0");
 	}});
 	oButton.placeAt("qunit-fixture");
 
-	oButton = new sap.ui.commons.Button("button4", {text: "Open Menu 3", press: function(){
-		oLongMenu.open(false, null, eDock.LeftTop, eDock.LeftTop, document, "0 0");
+	oButton = new Button("button4", {text: "Open Menu 3", press: function(){
+		oLongMenu.open(false, null, Dock.LeftTop, Dock.LeftTop, document, "0 0");
 	}});
 	oButton.placeAt("qunit-fixture");
 
-	oButton = new sap.ui.commons.Button("button2", {text: "Toggle Menu Enabling", press: function(){
+	oButton = new Button("button2", {text: "Toggle Menu Enabling", press: function(){
 		oRootMenu.setEnabled(!oRootMenu.getEnabled());
 		oSpecialMenu.setEnabled(!oSpecialMenu.getEnabled());
 		oLongMenu.setEnabled(!oLongMenu.getEnabled());
@@ -104,7 +102,7 @@ sap.ui.define([
 
 	oButton.placeAt("qunit-fixture");
 
-	oButton = new sap.ui.commons.Button("button5", {text: "Toggle Menu Items Enabling", press: function(){
+	oButton = new Button("button5", {text: "Toggle Menu Items Enabling", press: function(){
 		toggleMenuItemsEnabling(oRootMenu);
 		toggleMenuItemsEnabling(oSpecialMenu);
 		toggleMenuItemsEnabling(oLongMenu);
@@ -172,9 +170,8 @@ sap.ui.define([
 	};
 
 	var openMenu = function(oMenu, bWithMouse, assert){
-		var eDock = sap.ui.core.Popup.Dock;
 		var oDomRef = jQuery("#qunit-fixture").get(0);
-		oMenu.open(!bWithMouse, oDomRef, eDock.LeftTop, eDock.LeftTop, oDomRef, "5 5");
+		oMenu.open(!bWithMouse, oDomRef, Dock.LeftTop, Dock.LeftTop, oDomRef, "5 5");
 		assert.ok(oMenu.bOpen, "Menu opened");
 	};
 
@@ -221,9 +218,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Menu - Custom Values", function(assert) {
-		qutils.triggerEvent("click", "button2", {});
+		qutils.triggerEvent("tap", "button2", {});
 		assert.equal(oRootMenu.getEnabled(), false, "Custom 'enabled':");
-		qutils.triggerEvent("click", "button2", {});
+		qutils.triggerEvent("tap", "button2", {});
 		assert.equal(oRootMenu.getEnabled(), true, "Custom 'enabled':");
 	});
 
@@ -277,7 +274,7 @@ sap.ui.define([
 
 		// act
 		/* try on a menu with the first two items disabled */
-		qutils.triggerEvent("click", "button5", {});
+		qutils.triggerEvent("tap", "button5", {});
 
 		// assert
 		assert.equal(oRootMenu.getEnabled(), true, "Custom 'enabled':");
@@ -286,7 +283,7 @@ sap.ui.define([
 		openRootMenu(false, assert);
 		checkHoveredItem("item5", undefined, assert); /* disabled items I3 and I4 skipped */
 		checkFocusedItem("item5", assert);
-		qutils.triggerEvent("click", "button5", {});
+		qutils.triggerEvent("tap", "button5", {});
 		closeAllMenusAndCheck(assert);
 
 		// cleanup
@@ -505,7 +502,7 @@ sap.ui.define([
 		closeAllMenusAndCheck(assert);
 
 		/* try on a menu with the first and last items disabled */
-		qutils.triggerEvent("click", "button5", {});
+		qutils.triggerEvent("tap", "button5", {});
 		assert.equal(oLongMenu.getEnabled(), true, "Custom 'enabled':");
 		/* beforeEach: first 6 menu-items are disabled */
 		assert.equal(oLongMenu.getItems()[0].getEnabled(), false, "Custom 'enabled':");
@@ -531,7 +528,7 @@ sap.ui.define([
 		checkHoveredItem("item21", oLongMenu, assert); /* the first enabled item from the list is hovered */
 		checkFocusedItem("item21", assert);
 
-		qutils.triggerEvent("click", "button5", {});
+		qutils.triggerEvent("tap", "button5", {});
 		closeAllMenusAndCheck(assert);
 	});
 
@@ -539,7 +536,7 @@ sap.ui.define([
 	if the menu has only one enabled item */
 	QUnit.test("Check Hover State on Single Item Menu", function(assert) {
 		/* toggle rootmenu items enabling: only one item will be enabled */
-		qutils.triggerEvent("click", "button5", {});
+		qutils.triggerEvent("tap", "button5", {});
 		assert.equal(oRootMenu.getEnabled(), true, "Custom 'enabled':");
 		assert.equal(oRootMenu.getItems()[0].getEnabled(), false, "Custom 'enabled':");
 		assert.equal(oRootMenu.getItems()[1].getEnabled(), false, "Custom 'enabled':");
@@ -568,7 +565,7 @@ sap.ui.define([
 		checkHoveredItem("item5", undefined, assert); /* no change */
 		checkFocusedItem("item5", assert);
 
-		qutils.triggerEvent("click", "button5", {});
+		qutils.triggerEvent("tap", "button5", {});
 		closeAllMenusAndCheck(assert);
 	});
 
@@ -634,7 +631,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Disabled Menu", function(assert) {
-		qutils.triggerEvent("click", "button2", {});
+		qutils.triggerEvent("tap", "button2", {});
 		assert.equal(oRootMenu.getEnabled(), false, "Custom 'enabled':");
 		openRootMenu(true, assert);
 
@@ -655,7 +652,7 @@ sap.ui.define([
 		qutils.triggerKeyboardEvent("menu2", "PAGE-DOWN");
 		checkHoveredItem(undefined, undefined, assert);
 
-		qutils.triggerEvent("click", "button2", {});
+		qutils.triggerEvent("tap", "button2", {});
 		assert.equal(oRootMenu.getEnabled(), true, "Custom 'enabled':");
 
 		closeAllMenusAndCheck(assert);
@@ -663,11 +660,11 @@ sap.ui.define([
 
 	QUnit.module("Mouse");
 
-	sap.ui.unified.Menu._DELAY_SUBMENU_TIMER = 10;
-	sap.ui.unified.Menu._DELAY_SUBMENU_TIMER_EXT = 10;
-	var DELAY_SUBMENU_TIMER = sap.ui.unified.Menu._DELAY_SUBMENU_TIMER + 20;
+	Menu._DELAY_SUBMENU_TIMER = 10;
+	Menu._DELAY_SUBMENU_TIMER_EXT = 10;
+	var DELAY_SUBMENU_TIMER = Menu._DELAY_SUBMENU_TIMER + 20;
 
-	if (sap.ui.Device.system.desktop) {
+	if (Device.system.desktop) {
 		QUnit.test("Delayed Open Submenu", function(assert) {
 			var done = assert.async();
 			openRootMenu(true, assert);
@@ -693,7 +690,7 @@ sap.ui.define([
 		});
 	}
 
-	if (sap.ui.Device.system.desktop) {
+	if (Device.system.desktop) {
 		QUnit.test("Select", function(assert) {
 			var done = assert.async();
 			openRootMenu(true, assert);
@@ -760,7 +757,7 @@ sap.ui.define([
 	QUnit.test("Disabled Item", function(assert) {
 		openRootMenu(true, assert);
 		lastSelectedItemId = null;
-		if (sap.ui.Device.system.desktop) {
+		if (Device.system.desktop) {
 			qutils.triggerEvent("mousemove", "item5", {});
 			checkHoveredItem("item5", undefined, assert);
 		}
@@ -771,7 +768,7 @@ sap.ui.define([
 		closeAllMenusAndCheck(assert);
 	});
 
-	if (sap.ui.Device.system.desktop) {
+	if (Device.system.desktop) {
 		QUnit.test("Disabled Item with Submenu", function(assert) {
 			var done = assert.async();
 			openRootMenu(true, assert);
@@ -816,7 +813,7 @@ sap.ui.define([
 	}
 
 	QUnit.test("Disabled Menu", function(assert) {
-		qutils.triggerEvent("click", "button2", {});
+		qutils.triggerEvent("tap", "button2", {});
 		assert.equal(oRootMenu.getEnabled(), false, "Custom 'enabled':");
 		openRootMenu(true, assert);
 
@@ -840,7 +837,7 @@ sap.ui.define([
 		qutils.triggerEvent("click", "item7", {});
 		assert.equal(lastSelectedItemId, null, "Event not triggered on disabled menu:");
 
-		qutils.triggerEvent("click", "button2", {});
+		qutils.triggerEvent("tap", "button2", {});
 		assert.equal(oRootMenu.getEnabled(), true, "Custom 'enabled':");
 
 		closeAllMenusAndCheck(assert);
@@ -859,7 +856,7 @@ sap.ui.define([
 		checkFocusedItem("item8", assert);
 		// if the device supports touches the programmatic focus is not working correctly
 		// so use touch events
-		if (!sap.ui.Device.support.touch) {
+		if (!Device.support.touch) {
 			jQuery("#qunit-fixture").get(0).focus();
 		} else {
 			qutils.triggerEvent("touchstart", "qunit-fixture", {touches:[{pageX:0, pageY:0}], targetTouches: [{pageX:0, pageY:0}], changedTouches: [{pageX:0, pageY:0}]});
@@ -874,7 +871,7 @@ sap.ui.define([
 		checkFocusedItem("item8", assert);
 		// if the device supports touches the programmatic focus is not working correctly
 		// so use touch events
-		if (!sap.ui.Device.support.touch) {
+		if (!Device.support.touch) {
 			oButton.focus();
 		} else {
 			qutils.triggerEvent("touchstart", oButton.getId(), {touches:[{pageX:0, pageY:0}], targetTouches: [{pageX:0, pageY:0}], changedTouches: [{pageX:0, pageY:0}]});
@@ -940,11 +937,11 @@ sap.ui.define([
 			qutils.triggerKeyEvent("keyup", sTfId, "A");
 
 			// use keyooen and keypress because on Firefox keypress is used in TextField
-			qutils.triggerKeyEvent("keydown", sTfId, jQuery.sap.KeyCodes.ESCAPE);
-			qutils.triggerKeyEvent("keypress", sTfId, jQuery.sap.KeyCodes.ESCAPE);
+			qutils.triggerKeyEvent("keydown", sTfId, KeyCodes.ESCAPE);
+			qutils.triggerKeyEvent("keypress", sTfId, KeyCodes.ESCAPE);
 			// 2 times because the undo stops propagation
-			qutils.triggerKeyEvent("keydown", sTfId, jQuery.sap.KeyCodes.ESCAPE);
-			qutils.triggerKeyEvent("keypress", sTfId, jQuery.sap.KeyCodes.ESCAPE);
+			qutils.triggerKeyEvent("keydown", sTfId, KeyCodes.ESCAPE);
+			qutils.triggerKeyEvent("keypress", sTfId, KeyCodes.ESCAPE);
 			checkMenusClosed("after 2.Escape", assert);
 			assert.ok(!lastSelectedItemId, "No Event triggered on Escape");
 
@@ -991,7 +988,7 @@ sap.ui.define([
 			qutils.triggerKeyEvent("keyup", sTfId, "ARROW_DOWN"); //key up happens on the text field
 			checkHoveredItem("item12", oSpecialMenu, assert); // item 12 is hovered
 			checkFocusedItem(sTfId, assert);
-			assert.ok(jQuery.sap.byId(sTfId).is(":focus"), 'Text field should be focused'); // text field inside item12 is focused
+			assert.ok(jQuery("#" + sTfId).is(":focus"), 'Text field should be focused'); // text field inside item12 is focused
 
 			if (jQuery("html").attr("data-sap-ui-browser") != "ie8"){
 				assert.ok(document.activeElement.id == sTfId, "Focus on textfield -1");
@@ -999,7 +996,7 @@ sap.ui.define([
 
 			qutils.triggerKeyboardEvent(sTfId, "ARROW_UP"); // arrow up on the text field inside item12
 			qutils.triggerKeyEvent("keyup", "item11", "ARROW_UP"); // key up happens on item 11
-			assert.ok(jQuery.sap.byId('item11').is(":focus"), 'Item11 should be focused'); // item11 should be focused (to have a focus outline)
+			assert.ok(jQuery('#item11').is(":focus"), 'Item11 should be focused'); // item11 should be focused (to have a focus outline)
 			checkHoveredItem("item11", oSpecialMenu, assert); // item11 should be hovered
 			checkFocusedItem("item11", assert);
 
@@ -1019,11 +1016,11 @@ sap.ui.define([
 			checkHoveredItem("item12", oSpecialMenu, assert);
 			checkFocusedItem(sTfId, assert);
 
-			jQuery.sap.byId(sTfId).cursorPos(1);
+			jQuery("#" + sTfId).cursorPos(1);
 			qutils.triggerKeyboardEvent(sTfId, "HOME");
 			checkHoveredItem("item12", oSpecialMenu, assert);
 			checkFocusedItem(sTfId, assert);
-			jQuery.sap.byId(sTfId).cursorPos(0);
+			jQuery("#" + sTfId).cursorPos(0);
 			qutils.triggerKeyboardEvent(sTfId, "HOME");
 			checkHoveredItem("item11", oSpecialMenu, assert);
 			checkFocusedItem("item11", assert);
@@ -1032,11 +1029,11 @@ sap.ui.define([
 			checkHoveredItem("item12", oSpecialMenu, assert);
 			checkFocusedItem(sTfId, assert);
 
-			jQuery.sap.byId(sTfId).cursorPos(0);
+			jQuery("#" + sTfId).cursorPos(0);
 			qutils.triggerKeyboardEvent(sTfId, "END");
 			checkHoveredItem("item12", oSpecialMenu, assert);
 			checkFocusedItem(sTfId, assert);
-			jQuery.sap.byId(sTfId).cursorPos(jQuery.sap.byId(sTfId).val().length);
+			jQuery("#" + sTfId).cursorPos(jQuery("#" + sTfId).val().length);
 			qutils.triggerKeyboardEvent(sTfId, "END");
 			checkHoveredItem("item13", oSpecialMenu, assert);
 			checkFocusedItem("item13", assert);
@@ -1173,7 +1170,7 @@ sap.ui.define([
 			bSpyDestroyHandler;
 
 		oMenu.open();
-		bSpyDestroyHandler = this.spy(sap.ui.Device.resize, "detachHandler");
+		bSpyDestroyHandler = this.spy(Device.resize, "detachHandler");
 
 		// Act
 		oMenu.destroy();
@@ -1188,7 +1185,7 @@ sap.ui.define([
 			bSpyDestroyHandler;
 
 		oMenu.open();
-		bSpyDestroyHandler = this.spy(sap.ui.Device.resize, "detachHandler");
+		bSpyDestroyHandler = this.spy(Device.resize, "detachHandler");
 
 		// Act
 		oMenu.close();
@@ -1249,7 +1246,7 @@ sap.ui.define([
 	QUnit.test("Max Height", function(assert) {
 		var oMenu = new Menu({maxVisibleItems: 5});
 		for (var i = 0; i < 10; i++) {
-			oMenu.addItem(new sap.ui.unified.MenuItemBase());
+			oMenu.addItem(new MenuItemBase());
 		}
 		openMenu(oMenu, false, assert);
 		assert.ok(!!oMenu.$().css("max-height"), "Max. height is set");
@@ -1272,7 +1269,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Cozy Mode", function(assert) {
-		jQuery.sap.byId("qunit-fixture").toggleClass("sapUiSizeCozy", true);
+		jQuery("#qunit-fixture").toggleClass("sapUiSizeCozy", true);
 
 		var oMenu = new Menu({tooltip: "a tooltip"});
 		for (var i = 0; i < 10; i++) {
@@ -1284,7 +1281,7 @@ sap.ui.define([
 		assert.ok(oMenu.$().hasClass("sapUiSizeCozy"), "Cozy CSS class set");
 
 		oMenu.destroy();
-		jQuery.sap.byId("qunit-fixture").toggleClass("sapUiSizeCozy", false);
+		jQuery("#qunit-fixture").toggleClass("sapUiSizeCozy", false);
 	});
 
 	QUnit.test("openAsContextMenu functionality", function(assert) {
@@ -1321,6 +1318,4 @@ sap.ui.define([
 		oMenu.destroy();
 		oOpenStub.restore();
 	});
-
-	return waitForThemeApplied();
 });

@@ -3,12 +3,15 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/Calendar",
+	"sap/ui/core/CalendarType",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/Locale",
-	"sap/ui/unified/DateRange"
-], function(qutils, Calendar, UniversalDate, DateFormat, LocaleData, Locale, DateRange) {
+	"sap/ui/unified/DateRange",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
+], function(qutils, Calendar, CalendarType, UniversalDate, DateFormat, LocaleData, Locale, DateRange, KeyCodes, jQuery) {
 	"use strict";
 
 	var oLocaleData = LocaleData.getInstance(new Locale("en-US"));
@@ -17,7 +20,7 @@ sap.ui.define([
 	var oFormat = DateFormat.getDateInstance({
 		UTC: true,
 		pattern: "yyyyMMdd",
-		calendarType: sap.ui.core.CalendarType.Gregorian
+		calendarType: CalendarType.Gregorian
 	});
 
 	var oCal1 = new Calendar("Cal1", {}).placeAt("content");
@@ -107,7 +110,7 @@ sap.ui.define([
 		}
 
 		aYears[0].focus();
-		qutils.triggerKeydown(aYears[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown(aYears[0], KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 		assert.equal(oCal1.$("-Head-B2").text(), sExpectedStartYear, "Year is correct after navigation");
 	}

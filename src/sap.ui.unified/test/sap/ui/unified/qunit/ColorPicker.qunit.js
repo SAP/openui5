@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/m/Slider",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/waitForThemeApplied",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	ColorPicker,
 	ColorPickerDisplayMode,
@@ -22,12 +23,11 @@ sap.ui.define([
 	Slider,
 	InvisibleText,
 	qutils,
-	waitForThemeApplied,
-	Device
+	Device,
+	KeyCodes,
+	jQuery
 ) {
 	"use strict";
-
-	(function () {
 
 		var CONSTANTS = new ColorPicker()._getConstants(), // Get control constants
 			applyChanges = sap.ui.getCore().applyChanges;
@@ -214,7 +214,7 @@ sap.ui.define([
 			// Act - simulate typing in the first alpha value field.
 			this.oCP.oAlphaField.focus();
 			jQuery("#cp-aF").find("input").val("0.5");
-			qutils.triggerKeyboardEvent("cp-aF-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent("cp-aF-inner", KeyCodes.ENTER, false, false, false);
 			jQuery("#cp-aF").find("input").trigger("change");
 
 			// Assert
@@ -226,7 +226,7 @@ sap.ui.define([
 			// Act - simulate typing in the second alpha value field.
 			this.oCP.oAlphaField.focus();
 			jQuery("#cp-aF2").find("input").val("0.3");
-			qutils.triggerKeyboardEvent("cp-aF2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent("cp-aF2-inner", KeyCodes.ENTER, false, false, false);
 			jQuery("#cp-aF2").find("input").trigger("change");
 
 			// Assert
@@ -612,7 +612,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("_toggleFields", function (oAssert) {
-			var oDevicePhoneStub = this.stub(Device.system, "phone", true);
+			var oDevicePhoneStub = this.stub(Device.system, "phone").value(true);
 
 			this.oCP.placeAt("qunit-fixture");
 			applyChanges();
@@ -935,8 +935,5 @@ sap.ui.define([
 			assert.strictEqual(this.oCP.Color.s, 50, 'saturation is ok');
 			assert.strictEqual(this.oCP.Color.l, 50, 'light is ok');
 		});
-
-		return waitForThemeApplied();
-	})();
 
 });

@@ -6,18 +6,23 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/CalendarLegend",
+	"sap/ui/unified/CalendarLegendRenderer",
 	"sap/ui/unified/CalendarLegendItem",
+	"sap/ui/core/CalendarType",
 	"sap/ui/core/Locale",
+	"sap/ui/core/LocaleData",
 	"sap/ui/core/HTML",
 	'sap/ui/events/KeyCodes',
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/core/InvisibleText",
+	"sap/ui/core/format/DateFormat",
 	"sap/ui/unified/library",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/unified/CalendarMonthInterval",
-	"sap/ui/unified/calendar/MonthRenderer"
-], function(qutils, Calendar, DateRange, DateTypeRange, CalendarLegend,
-	CalendarLegendItem, Locale, HTML, KeyCodes, CalendarDate, InvisibleText, unifiedLibrary, waitForThemeApplied, CalendarMonthInterval, MonthRenderer) {
+	"sap/ui/unified/calendar/MonthRenderer",
+	"sap/ui/thirdparty/jquery"
+], function(qutils, Calendar, DateRange, DateTypeRange, CalendarLegend, CalendarLegendRenderer,
+	CalendarLegendItem, CalendarType, Locale, LocaleData, HTML, KeyCodes, CalendarDate, InvisibleText,
+	DateFormat, unifiedLibrary, CalendarMonthInterval, MonthRenderer, jQuery) {
 	"use strict";
 	// set language to en-US, since we have specific language strings tested
 	sap.ui.getCore().getConfiguration().setLanguage("en_US");
@@ -27,7 +32,7 @@ sap.ui.define([
 	var oSelectedDate;
 	var iStartDateChangeFired = 0;
 	var oLocaleUS = new Locale("en-US");
-	var oLocaleDataUS = sap.ui.core.LocaleData.getInstance(oLocaleUS);
+	var oLocaleDataUS = LocaleData.getInstance(oLocaleUS);
 
 	var handleStartDateChange = function(oEvent) {
 		iStartDateChangeFired++;
@@ -55,7 +60,7 @@ sap.ui.define([
 				]
 	});
 
-	var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
+	var oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyyMMdd"});
 
 	QUnit.module("Rendering", {
 		beforeEach: function () {
@@ -361,7 +366,7 @@ sap.ui.define([
 		assert.equal(jQuery("#Cal2--Month0-20110104").attr("title"), "Text", "20110104 has special days tooltip");
 		assert.equal(jQuery("#Cal2--Month0-20110104").attr("aria-label"), "4. Januar 2011; My Type 2", "20110104 aria label");
 
-		sDescribingDomTextId = sap.ui.unified.CalendarLegendRenderer.typeARIATexts["Type04"].getId();
+		sDescribingDomTextId = CalendarLegendRenderer.typeARIATexts["Type04"].getId();
 		assert.ok(jQuery("#Cal2--Month0-20110105").attr("aria-describedby").indexOf(sDescribingDomTextId) > -1, "special day is described by a static label");
 
 		assert.equal(jQuery("#Cal2--Month0-20110106").attr("aria-label"), "Non-Working Day 6. Januar 2011; My Type 1", "20110106 aria label");
@@ -412,7 +417,7 @@ sap.ui.define([
 
 		assert.equal(this.oCal2.getPrimaryCalendarType(), sap.ui.getCore().getConfiguration().getCalendarType(), "Calendar2: PrimaryCalendarType default");
 		this.oCal2.focusDate(new Date(2011, 0, 1)); // to be sure where focus is
-		this.oCal2.setPrimaryCalendarType(sap.ui.core.CalendarType.Islamic);
+		this.oCal2.setPrimaryCalendarType(CalendarType.Islamic);
 		sap.ui.getCore().applyChanges();
 
 		aMonths = jQuery("#Cal2-content").children(".sapUiCalMonthView");
@@ -436,7 +441,7 @@ sap.ui.define([
 
 		$Date = jQuery("#Cal2--YP-y20101208");
 		$Date.trigger("focus");
-		qutils.triggerKeyboardEvent($Date.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent($Date.get(0), KeyCodes.ENTER, false, false, false);
 
 		this.oCal2.setPrimaryCalendarType(sap.ui.getCore().getConfiguration().getCalendarType());
 		sap.ui.getCore().applyChanges();
@@ -445,7 +450,7 @@ sap.ui.define([
 	QUnit.test("YearRangePicker correct text is displayed for the year ranges based on the calendar type", function(assert) {
 		// Prepare
 		var oCal = new Calendar({
-				primaryCalendarType: sap.ui.core.CalendarType.Japanese,
+				primaryCalendarType: CalendarType.Japanese,
 				selectedDates: [new DateRange({startDate: new Date("3015", "0", "1")})]
 			}).placeAt("qunit-fixture"),
 			oHeaderButton2,
@@ -475,7 +480,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("secondaryCalendarType", function(assert) {
-		this.oCal2.setSecondaryCalendarType(sap.ui.core.CalendarType.Islamic);
+		this.oCal2.setSecondaryCalendarType(CalendarType.Islamic);
 		sap.ui.getCore().applyChanges();
 
 		var aMonths = jQuery("#Cal2-content").children(".sapUiCalMonthView"),
@@ -563,7 +568,7 @@ sap.ui.define([
 	QUnit.test("YearRangePicker has three columns and 9 year ranges when the calendar type is Gregorian", function (assert) {
 		// Prepare
 		var oCal = new Calendar({
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture"),
 			oYearRangePicker = oCal.getAggregation("yearRangePicker");
 
@@ -581,7 +586,7 @@ sap.ui.define([
 	QUnit.test("YearRangePicker has two columns and 8 year ranges when the calendar type is Islamic", function (assert) {
 		// Prepare
 		var oCal = new Calendar({
-				primaryCalendarType: sap.ui.core.CalendarType.Islamic
+				primaryCalendarType: CalendarType.Islamic
 			}).placeAt("qunit-fixture"),
 			oYearRangePicker;
 
@@ -601,7 +606,7 @@ sap.ui.define([
 	QUnit.test("YearRangePicker has one column and four year ranges when the calendar type is Japanese", function (assert) {
 		// Prepare
 		var oCal = new Calendar({
-				primaryCalendarType: sap.ui.core.CalendarType.Japanese
+				primaryCalendarType: CalendarType.Japanese
 			}).placeAt("qunit-fixture"),
 			oYearRangePicker = oCal.getAggregation("yearRangePicker");
 
@@ -618,7 +623,7 @@ sap.ui.define([
 	QUnit.test("Calendar type affects YearRangePicker rendering", function (assert) {
 		// Prepare
 		var oCal = new Calendar({
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture"),
 			oYearRangePicker = oCal.getAggregation("yearRangePicker"),
 			oAdjustYearRangeDisplaySpy = this.spy(oCal, "_adjustYearRangeDisplay");
@@ -626,7 +631,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Act
-		oCal.setPrimaryCalendarType(sap.ui.core.CalendarType.Buddhist);
+		oCal.setPrimaryCalendarType(CalendarType.Buddhist);
 
 		// Assert
 		assert.ok(oAdjustYearRangeDisplaySpy.called, "_adjustYearRangeDisplay is called once");
@@ -641,7 +646,7 @@ sap.ui.define([
 	QUnit.test("Month Button appearance (hidden/visible)", function (assert) {
 		// Prepare
 		var oCal = new Calendar({
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture"),
 			oHeader = oCal.getAggregation("header");
 
@@ -714,7 +719,7 @@ sap.ui.define([
 	QUnit.test("YearRangePicker aggregation is instantiated correctly", function (assert) {
 		// Prepare
 		var oCal = new Calendar({
-				primaryCalendarType: sap.ui.core.CalendarType.Islamic
+				primaryCalendarType: CalendarType.Islamic
 			}),
 			oYearRangePicker = oCal.getAggregation("yearRangePicker");
 
@@ -730,7 +735,7 @@ sap.ui.define([
 	QUnit.test("getSelectedDates returns the right values", function (assert) {
 		// Prepare
 		var oCal = new Calendar({
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+				primaryCalendarType: CalendarType.Gregorian
 			}),
 			oMonthPicker = oCal.getAggregation("monthPicker"),
 			aSelectedDays;
@@ -1025,7 +1030,7 @@ sap.ui.define([
 
 		var $Date = jQuery("#Cal1--YP-y99990101");
 		$Date.trigger("focus");
-		qutils.triggerKeydown($Date.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Date.get(0), KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 
 		var oDate = new Date(1,1,1);
@@ -1045,7 +1050,7 @@ sap.ui.define([
 
 		$Date = jQuery("#Cal1--YP-y00010101");
 		$Date.trigger("focus");
-		qutils.triggerKeydown($Date.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Date.get(0), KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 
 		this.oCal1.focusDate(new Date());
@@ -1098,7 +1103,7 @@ sap.ui.define([
 
 		$Date = jQuery("#Cal3--YP-y20140101");
 		$Date.trigger("focus");
-		qutils.triggerKeydown($Date.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Date.get(0), KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 
 		this.oCal3.focusDate(new Date(2005, 0, 10));
@@ -1113,7 +1118,7 @@ sap.ui.define([
 	QUnit.test("YearRangePicker correct max range is displayed when next header arrow button is pressed", function(assert) {
 		// Prepare
 		var oCal = new Calendar({
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian,
+				primaryCalendarType: CalendarType.Gregorian,
 				selectedDates: [new DateRange({startDate: new Date("9900", "0", "1")})]
 			}).placeAt("qunit-fixture"),
 			$NextArrowButton,
@@ -1143,7 +1148,7 @@ sap.ui.define([
 		// Prepare
 		var oStartDate = new CalendarDate(1, 0, 1),
 			oCal = new Calendar({
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian,
+				primaryCalendarType: CalendarType.Gregorian,
 				selectedDates: [new DateRange({startDate: oStartDate.toLocalJSDate()})]
 			}).placeAt("qunit-fixture"),
 			$prevArrowButton,
@@ -1230,7 +1235,7 @@ sap.ui.define([
 	QUnit.test("YearRangePicker min/max dates are set correctly", function (assert) {
 		// Prepare
 		var oCal = new Calendar({
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
 
 		sap.ui.getCore().applyChanges();
@@ -1256,7 +1261,7 @@ sap.ui.define([
 	QUnit.test("Header buttons visibility and text is correctly managed when displaying YearPicker and YearRangePicker instances", function (assert) {
 		// Prepare
 		var oCal = new Calendar({
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture"),
 			oHeader = oCal.getAggregation("header"),
 			oUpdateHeadersYearPrimaryTextSpy = this.spy(oCal, "_updateHeadersYearPrimaryText"),
@@ -1288,7 +1293,7 @@ sap.ui.define([
 	QUnit.test("Header buttons visibility and text is corretly managed when selecting a year range", function (assert) {
 		// Prepare
 		var oCal = new Calendar({
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian,
+				primaryCalendarType: CalendarType.Gregorian,
 				selectedDates: [new DateRange({startDate: new Date("2015", "0", "1")})]
 			}).placeAt("qunit-fixture"),
 			oHeader = oCal.getAggregation("header"),
@@ -1324,7 +1329,7 @@ sap.ui.define([
 		// Prepare
 		var oStartDate = new CalendarDate(1, 0, 1),
 			oCal = new Calendar({
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian,
+				primaryCalendarType: CalendarType.Gregorian,
 				selectedDates: [new DateRange({startDate: oStartDate.toLocalJSDate()})]
 			}).placeAt("qunit-fixture"),
 			oTogglePrevNexYearPicker = this.spy(oCal, "_togglePrevNexYearPicker"),
@@ -1359,7 +1364,7 @@ sap.ui.define([
 		// Prepare
 		var oStartDate = new CalendarDate(9999, 0, 1),
 			oCal = new Calendar({
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian,
+				primaryCalendarType: CalendarType.Gregorian,
 				selectedDates: [new DateRange({startDate: oStartDate.toLocalJSDate()})]
 			}).placeAt("qunit-fixture"),
 			oTogglePrevNexYearPicker = this.spy(oCal, "_togglePrevNexYearPicker"),
@@ -1396,7 +1401,7 @@ sap.ui.define([
 	QUnit.test("Header next button handler works correct for YearRangePicker", function (assert) {
 		// Prepare
 		var oCal = new Calendar({
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian,
+				primaryCalendarType: CalendarType.Gregorian,
 				selectedDates: [new DateRange({startDate:new Date(2000, 0, 1)})]
 			}).placeAt("qunit-fixture"),
 			oYearRangePicker = oCal.getAggregation("yearRangePicker"),
@@ -1427,7 +1432,7 @@ sap.ui.define([
 	QUnit.test("Header previous button handler works correct for YearRangePicker", function (assert) {
 		// Prepare
 		var oCal = new Calendar({
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian,
+				primaryCalendarType: CalendarType.Gregorian,
 				selectedDates: [new DateRange({startDate:new Date(2000, 0, 1)})]
 			}).placeAt("qunit-fixture"),
 			oYearRangePicker = oCal.getAggregation("yearRangePicker"),
@@ -1540,7 +1545,7 @@ sap.ui.define([
 		oYearPickerButton = jQuery("#" + oCalId + "--YP-y" + sYear + "0101");
 		oYearPickerButton.trigger("focus");
 		sap.ui.getCore().applyChanges();
-		qutils.triggerKeydown(oYearPickerButton.get(0), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(oYearPickerButton.get(0), KeyCodes.ENTER);
 		sap.ui.getCore().applyChanges();
 	}
 
@@ -2009,7 +2014,7 @@ sap.ui.define([
 	QUnit.test("_isTwoMonthsInTwoColumns returns true if calendar is with two months in two columns", function (assert) {
 		// arrange
 		var oCalendar = new Calendar({ months: 2 }),
-			oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 2; });
+			oGetColumnsStub = this.stub(oCalendar, "_getColumns").returns(2);
 
 		// act & assert
 		assert.ok(oCalendar._isTwoMonthsInTwoColumns(), "should return true");
@@ -2022,7 +2027,7 @@ sap.ui.define([
 	QUnit.test("_isTwoMonthsInTwoColumns returns false if calendar is with two months in one column", function (assert) {
 		// arrange
 		var oCalendar = new Calendar({ months: 2 }),
-			oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 1; });
+			oGetColumnsStub = this.stub(oCalendar, "_getColumns").returns(1);
 
 		// act & assert
 		assert.equal(oCalendar._isTwoMonthsInTwoColumns(), false, "should return false");
@@ -2035,7 +2040,7 @@ sap.ui.define([
 	QUnit.test("_isTwoMonthsInTwoColumns returns false if calendar is with not two months in two columns", function (assert) {
 		// arrange
 		var oCalendar = new Calendar({ months: 1 }),
-			oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 2; });
+			oGetColumnsStub = this.stub(oCalendar, "_getColumns").returns(2);
 
 		// act & assert
 		assert.equal(oCalendar._isTwoMonthsInTwoColumns(), false, "should return false");
@@ -2048,7 +2053,7 @@ sap.ui.define([
 	QUnit.test("_isTwoMonthsInOneColumn returns true if calendar is with two months in one column", function (assert) {
 		// arrange
 		var oCalendar = new Calendar({ months: 2 }),
-			oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 1; });
+			oGetColumnsStub = this.stub(oCalendar, "_getColumns").returns(1);
 
 		// act & assert
 		assert.ok(oCalendar._isTwoMonthsInOneColumn(), "should return true");
@@ -2061,7 +2066,7 @@ sap.ui.define([
 	QUnit.test("_isTwoMonthsInOneColumn returns false if calendar is with two months in more than one column", function (assert) {
 		// arrange
 		var oCalendar = new Calendar({ months: 2 }),
-			oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 3; });
+			oGetColumnsStub = this.stub(oCalendar, "_getColumns").returns(3);
 
 		// act & assert
 		assert.equal(oCalendar._isTwoMonthsInOneColumn(), false, "should return false");
@@ -2074,7 +2079,7 @@ sap.ui.define([
 	QUnit.test("_isTwoMonthsInOneColumn returns false if calendar is with not two months in one column", function (assert) {
 		// arrange
 		var oCalendar = new Calendar({ months: 1 }),
-			oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 1; });
+			oGetColumnsStub = this.stub(oCalendar, "_getColumns").returns(1);
 
 		// act & assert
 		assert.equal(oCalendar._isTwoMonthsInOneColumn(), false, "should return false");
@@ -2089,7 +2094,7 @@ sap.ui.define([
 		var oCalendar = new Calendar(),
 			oAddStyleClassSpy = this.spy(oCalendar, "addStyleClass"),
 			oRemoveStyleClassSpy = this.spy(oCalendar, "removeStyleClass"),
-			oIsTwoMonthsInTwoColumnsStub = this.stub(oCalendar, "_isTwoMonthsInTwoColumns", function () { return true; });
+			oIsTwoMonthsInTwoColumnsStub = this.stub(oCalendar, "_isTwoMonthsInTwoColumns").returns(true);
 
 		// act
 		oCalendar._toggleTwoMonthsInTwoColumnsCSS();
@@ -2111,7 +2116,7 @@ sap.ui.define([
 		var oCalendar = new Calendar(),
 			oAddStyleClassSpy = this.spy(oCalendar, "addStyleClass"),
 			oRemoveStyleClassSpy = this.spy(oCalendar, "removeStyleClass"),
-			oIsTwoMonthsInTwoColumnsStub = this.stub(oCalendar, "_isTwoMonthsInTwoColumns", function () { return false; });
+			oIsTwoMonthsInTwoColumnsStub = this.stub(oCalendar, "_isTwoMonthsInTwoColumns").returns(false);
 
 		// act
 		oCalendar._toggleTwoMonthsInTwoColumnsCSS();
@@ -2135,7 +2140,7 @@ sap.ui.define([
 			oCalendar = new Calendar({ months: 2 }),
 			oHeader = oCalendar.getAggregation("header"),
 			oSetTextButton1Spy = this.spy(oHeader, "setTextButton1"),
-			oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 2; });
+			oGetColumnsStub = this.stub(oCalendar, "_getColumns").returns(2);
 		oCalendar._sFirstMonthName = sExpectedText;
 
 		// act
@@ -2156,7 +2161,7 @@ sap.ui.define([
 			oCalendar = new Calendar({ months: 2 }),
 			oHeader = oCalendar.getAggregation("header"),
 			oSetTextButton1Spy = this.spy(oHeader, "setTextButton1"),
-			oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 1; });
+			oGetColumnsStub = this.stub(oCalendar, "_getColumns").returns(1);
 		oCalendar._sFirstMonthName = sExpectedText;
 
 		// act
@@ -2176,7 +2181,7 @@ sap.ui.define([
 		var oCalendar = new Calendar({ months: 1 }),
 			oHeader = oCalendar.getAggregation("header"),
 			oSetTextButton1Spy = this.spy(oHeader, "setTextButton1"),
-			oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 2; });
+			oGetColumnsStub = this.stub(oCalendar, "_getColumns").returns(2);
 
 		// act
 		oCalendar._setPrimaryHeaderMonthButtonText();
@@ -2198,7 +2203,7 @@ sap.ui.define([
 			oSetVisibleSpy = this.spy(oSecondMonthHeader, "setVisible"),
 			oSetVisibleButton3Spy = this.spy(oHeader, "_setVisibleButton3"),
 			oSetVisibleButton4Spy = this.spy(oHeader, "_setVisibleButton4"),
-			oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 1; });
+			oGetColumnsStub = this.stub(oCalendar, "_getColumns").returns(1);
 
 		// act
 		oCalendar._updateHeadersButtons();
@@ -2224,7 +2229,7 @@ sap.ui.define([
 				oSetVisibleSpy = this.spy(oSecondMonthHeader, "setVisible"),
 				oSetVisibleButton3Spy = this.spy(oHeader, "_setVisibleButton3"),
 				oSetVisibleButton4Spy = this.spy(oHeader, "_setVisibleButton4"),
-				oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 2; });
+				oGetColumnsStub = this.stub(oCalendar, "_getColumns").returns(2);
 
 		// act
 		oCalendar._updateHeadersButtons();
@@ -2250,7 +2255,7 @@ sap.ui.define([
 				oSetVisibleSpy = this.spy(oSecondMonthHeader, "setVisible"),
 				oSetVisibleButton3Spy = this.spy(oHeader, "_setVisibleButton3"),
 				oSetVisibleButton4Spy = this.spy(oHeader, "_setVisibleButton4"),
-				oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 3; });
+				oGetColumnsStub = this.stub(oCalendar, "_getColumns").returns(3);
 
 		// act
 		oCalendar._updateHeadersButtons();
@@ -2429,7 +2434,7 @@ sap.ui.define([
 		var oSpyEventPreventDefault = this.spy(),
 			oEvent = { keyCode: KeyCodes.F4, preventDefault: oSpyEventPreventDefault, shiftKey: true },
 			oCalendar = new Calendar(),
-			oYRFirstDateStub = this.stub(oCalendar._getYearPicker(), "getFirstRenderedDate", function () { return new Date(); });
+			oYRFirstDateStub = this.stub(oCalendar._getYearPicker(), "getFirstRenderedDate").callsFake(function () { return new Date(); });
 
 		this.stub(oCalendar, "_getSucessorsPickerPopup").returns(true);
 
@@ -2508,7 +2513,7 @@ sap.ui.define([
 			oFakeEvent = {
 				target: {
 					id: oCalendar.getId() + "-inner",
-					which: jQuery.sap.KeyCodes.PAGE_UP
+					which: KeyCodes.PAGE_UP
 				},
 				which: 115,
 				defaultPrevented: false,
@@ -2537,7 +2542,7 @@ sap.ui.define([
 			oFakeEvent = {
 				target: {
 					id: oCalendar.getId() + "-inner",
-					which: jQuery.sap.KeyCodes.PAGE_UP
+					which: KeyCodes.PAGE_UP
 				},
 				shiftKey: true,
 				which: 115,
@@ -2546,7 +2551,7 @@ sap.ui.define([
 					this.defaultPrevented = true;
 				}
 			}, oSpy = this.spy(oCalendar, "_showYearPicker"),
-			oYRFirstDateStub = this.stub(oCalendar._getYearPicker(), "getFirstRenderedDate", function () { return new Date(); });
+			oYRFirstDateStub = this.stub(oCalendar._getYearPicker(), "getFirstRenderedDate").callsFake(function () { return new Date(); });
 
 		// act
 		oCalendar.onkeydown(oFakeEvent);
@@ -2566,7 +2571,7 @@ sap.ui.define([
 			oFakeEvent = {
 				target: {
 					id: oCalendar.getId() + "-inner",
-					which: jQuery.sap.KeyCodes.PAGE_UP
+					which: KeyCodes.PAGE_UP
 				},
 				shiftKey: true,
 				which: 115,
@@ -2575,7 +2580,7 @@ sap.ui.define([
 					this.defaultPrevented = true;
 				}
 			}, oSpy = this.spy(oCalendar, "_showYearRangePicker"),
-			oYRFirstDateStub = this.stub(oCalendar._getYearPicker(), "getFirstRenderedDate", function () { return new Date(); });
+			oYRFirstDateStub = this.stub(oCalendar._getYearPicker(), "getFirstRenderedDate").callsFake(function () { return new Date(); });
 
 		// act
 		oCalendar.onkeydown(oFakeEvent);
@@ -2641,7 +2646,7 @@ sap.ui.define([
 		// prepare
 		var oCalM = new Calendar("CalM", {
 				showWeekNumbers: false,
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+				primaryCalendarType: CalendarType.Gregorian
 			}),
 			dummyCellSpy = this.spy(MonthRenderer, "renderDummyCell");
 
@@ -2660,7 +2665,7 @@ sap.ui.define([
 		assert.equal(dummyCellSpy.callCount, 1, "The function was called when calendar type is Gregorian and showWeekNumber=true");
 
 		//arrange
-		oCalM.setPrimaryCalendarType(sap.ui.core.CalendarType.Islamic);
+		oCalM.setPrimaryCalendarType(CalendarType.Islamic);
 		sap.ui.getCore().applyChanges();
 
 		//act
@@ -2887,6 +2892,4 @@ sap.ui.define([
 		// clean
 		oCal.destroy();
 	});
-
-	return waitForThemeApplied();
 });

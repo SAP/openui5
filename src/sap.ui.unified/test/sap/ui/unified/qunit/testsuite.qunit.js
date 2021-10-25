@@ -10,13 +10,14 @@ sap.ui.define(function() {
 				version: 2					// Whether QUnit should be loaded and if so, what version
 			},
 			sinon: {
-				version: 1					// Whether Sinon should be loaded and if so, what version
+				version: 4					// Whether Sinon should be loaded and if so, what version
 			},
 			ui5: {
 				language: "en-US",
 				rtl: false,					// Whether to run the tests in RTL mode
 				libs: ["sap.ui.unified"],	// Libraries to load upfront in addition to the library which is tested (sap.ui.unified), if null no libs are loaded
-				"xx-waitForTheme": true		// Whether the start of the test should be delayed until the theme is applied
+				theme: "sap_belize",
+				"xx-waitForTheme": "init"	// Whether the start of the test should be delayed until the theme is applied
 			},
 			coverage: {
 				only:	"[sap/ui/unified]",	// Which files to show in the coverage report, if null, no files are excluded from coverage
@@ -45,10 +46,6 @@ sap.ui.define(function() {
 			},
 			"Calendar": {
 				group: "Calendar",
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
-				},
 				qunit: {
 					reorder: false
 				},
@@ -58,10 +55,6 @@ sap.ui.define(function() {
 			},
 			"CalendarRow": {
 				group: "Calendar",
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
-				},
 				qunit: {
 					reorder: false
 				},
@@ -71,16 +64,8 @@ sap.ui.define(function() {
 			},
 			"CalendarDateInterval": {
 				group: "Calendar",
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
-				},
 				qunit: {
 					reorder: false
-				},
-				sinon: {
-					sinon: 1,
-					useFakeTimers: false
 				},
 				coverage: {
 					only: ["sap/ui/unified/CalendarDateInterval"]
@@ -88,10 +73,6 @@ sap.ui.define(function() {
 			},
 			"CalendarMonthInterval": {
 				group: "Calendar",
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
-				},
 				qunit: {
 					reorder: false
 				},
@@ -105,10 +86,6 @@ sap.ui.define(function() {
 			},
 			"CalendarOneMonthInterval": {
 				group: "Calendar",
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
-				},
 				qunit: {
 					reorder: false
 				},
@@ -118,10 +95,6 @@ sap.ui.define(function() {
 			},
 			"CalendarWeekInterval": {
 				group: "Calendar",
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
-				},
 				qunit: {
 					reorder: false
 				},
@@ -131,10 +104,6 @@ sap.ui.define(function() {
 			},
 			"CalendarTimeInterval": {
 				group: "Calendar",
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
-				},
 				qunit: {
 					reorder: false
 				},
@@ -144,10 +113,6 @@ sap.ui.define(function() {
 			},
 			"CalendarDate": {
 				group: "Calendar",
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
-				},
 				qunit: {
 					reorder: false
 				},
@@ -158,9 +123,7 @@ sap.ui.define(function() {
 			"Calendar_Islamic": {
 				group: "Calendar",
 				ui5: {
-					calendarType: "islamic",
-					noConflict: true,
-					theme: "sap_belize"
+					calendarType: "islamic"
 				},
 				coverage: {
 					only: ["sap/ui/unified/Calendar_Islamic"]
@@ -169,9 +132,7 @@ sap.ui.define(function() {
 			"Calendar_Japanese": {
 				group: "Calendar",
 				ui5: {
-					calendarType: "Japanese",
-					noConflict: true,
-					theme: "sap_belize"
+					calendarType: "Japanese"
 				},
 				coverage: {
 					only: ["sap/ui/unified/Calendar_Japanese"]
@@ -179,30 +140,18 @@ sap.ui.define(function() {
 			},
 			"CalendarLegend": {
 				group: "Calendar",
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
-				},
 				coverage: {
 					only: ["sap/ui/unified/CalendarLegend"]
 				}
 			},
 			"CalendarUtils": {
 				group: "Calendar",
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
-				},
 				coverage: {
 					only: ["sap/ui/unified/calendar/CalendarUtils"]
 				}
 			},
 			"Month": {
 				group: "Calendar",
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
-				},
 				coverage: {
 					only: ["sap/ui/unified/calendar/Month"]
 				}
@@ -210,9 +159,7 @@ sap.ui.define(function() {
 			"FileUploader": {
 				group: "FileUploader",
 				ui5: {
-					libs: ["sap.ui.unified", "sap.m"],
-					noConflict: true,
-					theme: "sap_belize"
+					libs: ["sap.ui.unified", "sap.m"]
 				},
 				coverage: {
 					only: ["sap/ui/unified/FileUploader"]
@@ -220,12 +167,8 @@ sap.ui.define(function() {
 			},
 			"Header": {
 				group: "Header",
-				qunit: {
-					version: 2
-				},
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
+				sinon: {
+					version: 1 // sinon-qunit-bridge does not supported nested tests
 				},
 				coverage: {
 					only: ["sap/ui/unified/Header"]
@@ -233,40 +176,24 @@ sap.ui.define(function() {
 			},
 			"ColorPicker": {
 				group: "ColorPicker",
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
-				},
 				coverage: {
 					only: ["sap/ui/unified/ColorPicker"]
 				}
 			},
 			"ColorPickerPopover": {
 				group: "ColorPickerPopover",
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
-				},
 				coverage: {
 					only: ["sap/ui/unified/ColorPickerPopover"]
 				}
 			},
 			"Currency": {
 				group: "Currency",
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
-				},
 				coverage: {
 					only: ["sap/ui/unified/Currency"]
 				}
 			},
 			"Menu": {
 				group: "Menu",
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
-				},
 				qunit: {
 					reorder: false
 				},
@@ -276,10 +203,6 @@ sap.ui.define(function() {
 			},
 			"MenuItem": {
 				group: "Menu",
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
-				},
 				qunit: {
 					reorder: false
 				},
@@ -289,10 +212,6 @@ sap.ui.define(function() {
 			},
 			"MonthPicker": {
 				group: "Calendar",
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
-				},
 				qunit: {
 					reorder: false
 				},
@@ -302,10 +221,6 @@ sap.ui.define(function() {
 			},
 			"YearPicker": {
 				group: "Calendar",
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
-				},
 				qunit: {
 					reorder: false
 				},
@@ -315,10 +230,6 @@ sap.ui.define(function() {
 			},
 			"IndexPicker": {
 				group: "Calendar",
-				ui5: {
-					noConflict: true,
-					theme: "sap_belize"
-				},
 				qunit: {
 					reorder: false
 				},
@@ -336,12 +247,6 @@ sap.ui.define(function() {
 					}
 				},
 				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				ui5: {
 					libs: ["sap.ui.unified", "sap.ui.documentation", "sap.ui.layout", "sap.m"],
 					"xx-componentPreload": "off"

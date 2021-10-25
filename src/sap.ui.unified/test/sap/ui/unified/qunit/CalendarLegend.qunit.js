@@ -9,21 +9,25 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/Calendar",
 	"sap/ui/unified/DateTypeRange",
-	"sap/base/Log"
+	"sap/ui/unified/StandardCalendarLegendItem",
+	"sap/base/Log",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/thirdparty/jquery"
 ], function(CalendarLegend, CalendarLegendRenderer, CalendarLegendItem,
-	unifiedLibrary, DateRange, JSONModel, Calendar, DateTypeRange, Log) {
+	unifiedLibrary, DateRange, JSONModel, Calendar, DateTypeRange, StandardCalendarLegendItem, Log, DateFormat, XMLView, jQuery) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
-	var StandardCalendarLegendItem = sap.ui.unified.StandardCalendarLegendItem;
+	var StandardCalendarLegendItem = StandardCalendarLegendItem;
 
-	var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({
+	var oFormatYyyymmdd = DateFormat.getInstance({
 		pattern: "yyyyMMdd"
 	});
 
 	var aSpecialDays = [["20140801", undefined, "Type01", 1], ["20140802", undefined, "Type02", 2], ["20140803", undefined, "Type03", 3], ["20140804", undefined, "Type04", 4], ["20140805", undefined, "Type05", 5], ["20140806", undefined, "Type06", 6], ["20140807", undefined, "Type07", 7], ["20140808", undefined, "Type08", 8], ["20140809", undefined, "Type09", 9], ["20140810", undefined, "Type10", 10]];
 
-	var oCal = new sap.ui.unified.Calendar("Cal", {
+	var oCal = new Calendar("Cal", {
 		selectedDates: [new DateRange({startDate: oFormatYyyymmdd.parse("20140820")})],
 		select: function (oEvent) {
 			Log.info("Select");
@@ -109,7 +113,7 @@ sap.ui.define([
 
 	QUnit.test("standardItems=\"\" in XML View", function (assert) {
 		//Act
-		 var sView =
+		var sView =
 			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.unified" xmlns:l="sap.ui.layout">\
 				<CalendarLegend id="CalendarLegend"\
 					standardItems="">\
@@ -119,15 +123,18 @@ sap.ui.define([
 				</CalendarLegend>\
 			</mvc:View>';
 
-		var myView = sap.ui.xmlview({viewContent: sView}),
-			oCalLegend = myView.byId("CalendarLegend");
+		return XMLView.create({
+			definition: sView
+		}).then(function(myView) {
+			var oCalLegend = myView.byId("CalendarLegend");
 
-		//Assert
-		assert.deepEqual(oCalLegend.getStandardItems(), [], "Should return the same items");
-		assert.equal(oCalLegend.getItems().length, 1, "Should has 1 Calendar item");
+			//Assert
+			assert.deepEqual(oCalLegend.getStandardItems(), [], "Should return the same items");
+			assert.equal(oCalLegend.getItems().length, 1, "Should has 1 Calendar item");
 
-		//Cleanup
-		myView.destroy();
+			//Cleanup
+			myView.destroy();
+		});
 	});
 
 	QUnit.test("standardItems with DataBinding in XML View", function (assert) {
@@ -143,19 +150,22 @@ sap.ui.define([
 			</CalendarLegend>\
 		</mvc:View>';
 
-		var myView = sap.ui.xmlview({viewContent: sView}),
-			oCalLegend = myView.byId("CalendarLegend");
+		return XMLView.create({
+			definition: sView
+		}).then(function(myView) {
+			var oCalLegend = myView.byId("CalendarLegend");
 
-		myView.setModel(new JSONModel({
-			"standardItems": [StandardCalendarLegendItem.NonWorkingDay, StandardCalendarLegendItem.Selected]
-		}));
+			myView.setModel(new JSONModel({
+				"standardItems": [StandardCalendarLegendItem.NonWorkingDay, StandardCalendarLegendItem.Selected]
+			}));
 
-		//Assert
-		assert.deepEqual(oCalLegend.getStandardItems(), [StandardCalendarLegendItem.NonWorkingDay,
-			StandardCalendarLegendItem.Selected], "Should return the same items");
+			//Assert
+			assert.deepEqual(oCalLegend.getStandardItems(), [StandardCalendarLegendItem.NonWorkingDay,
+				StandardCalendarLegendItem.Selected], "Should return the same items");
 
-		//Cleanup
-		myView.destroy();
+			//Cleanup
+			myView.destroy();
+		});
 	});
 
 	QUnit.module("Rendering", {

@@ -8,9 +8,12 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
 	"sap/m/Button",
-	"sap/ui/unified/library"
+	"sap/ui/unified/library",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
 ], function(qutils, CalendarMonthInterval, CalendarLegend, CalendarLegendItem,
-	DateRange, DateTypeRange, Button, unifiedLibrary) {
+	DateRange, DateTypeRange, Button, unifiedLibrary, DateFormat, KeyCodes, jQuery) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
@@ -48,7 +51,7 @@ sap.ui.define([
 				]
 	});
 
-	var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
+	var oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyyMMdd"});
 
 	QUnit.module("Rendering", {
 		beforeEach: function () {
@@ -323,7 +326,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		var $NewYear = jQuery("#Cal1--YP-y20130101"); // use keybord to select year to prevent event processing from ItemNavigation
 		$NewYear.trigger("focus");
-		qutils.triggerKeydown($NewYear.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($NewYear.get(0), KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 		assert.ok(!jQuery(jQuery("#Cal1--YP").get(0)).is(":visible"), "Calendar1: Year picker not visible after selecting year");
 		assert.equal(jQuery("#Cal1--Head-B2").text(), "2013 – 2014", "Calendar1: year 2013 - 2014 shown");
@@ -393,7 +396,7 @@ sap.ui.define([
 		bSelectFired = false;
 		oSelectedDate = undefined;
 		$selectMonth.trigger("focus");
-		qutils.triggerKeydown($selectMonth[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($selectMonth[0], KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 		assert.ok(bSelectFired, "Select event fired");
 		assert.equal(oFormatYyyymmdd.format(oSelectedDate), "20130501", "Month was selected");
@@ -421,7 +424,7 @@ sap.ui.define([
 
 		var $Date = jQuery("#CalP--Cal--YP-y20160101");
 		$Date.trigger("focus");
-		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(sap.ui.getCore().byId("CalP").getStartDate().getFullYear(), 2016, "start date is set correctly");
@@ -433,7 +436,7 @@ sap.ui.define([
 
 	QUnit.test("User opens the picker but escapes it - click outside for desktop or click cancel button", function(assert) {
 		// arrange
-		var oSpyCancel = this.spy(sap.ui.unified.CalendarMonthInterval.prototype, "fireCancel"),
+		var oSpyCancel = this.spy(CalendarMonthInterval.prototype, "fireCancel"),
 			oCalP = new CalendarMonthInterval("CalP",{
 			pickerPopup: true
 		}).placeAt("qunit-fixture");
@@ -444,7 +447,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Year picker visible");
 
-		sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 		sap.ui.getCore().applyChanges();
 		assert.ok(!jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Year picker not visible after closing");
 		assert.strictEqual(oSpyCancel.callCount, 1, "CalendarMonthInterval 'fireCancel' was called once");
@@ -455,7 +458,7 @@ sap.ui.define([
 
 	QUnit.test("When the picker is opened, it allows only months to be selected.", function(assert) {
 		// arrange
-		this.spy(sap.ui.unified.CalendarMonthInterval.prototype, "fireCancel");
+		this.spy(CalendarMonthInterval.prototype, "fireCancel");
 		var oCalP = new CalendarMonthInterval("CalP",{
 			startDate: new Date("2015", "7", "13"),
 			pickerPopup: true
@@ -469,7 +472,7 @@ sap.ui.define([
 		assert.equal(jQuery("#CalP--Cal--Head").children().length, 3, "Only arrows and year picker button are rendered");
 		assert.equal(jQuery("#CalP--Cal--Head-B2").get(0).innerHTML, "2005 - 2024", "Correct year range is shown on the button");
 
-		sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 
 		// clean
 		oCalP.destroy();
@@ -523,7 +526,7 @@ sap.ui.define([
 		assert.strictEqual(oCalPicker._oMaxDate.getYear(), 9999, "max year is set to 9999");
 
 		// close calendarPicker
-		sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 		sap.ui.getCore().applyChanges();
 
 		// change the pickerPopup to false
@@ -544,7 +547,7 @@ sap.ui.define([
 		assert.strictEqual(oCalPicker._oMinDate.getYear(), 2015, "min year is set to 2015");
 		assert.strictEqual(oCalPicker._oMaxDate.getYear(), 2017, "max year is set to 2017");
 
-		sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 		// clean
 		oCalP.destroy();
 	});
@@ -561,7 +564,7 @@ sap.ui.define([
 		qutils.triggerEvent("click", "CalP--Head-B2");
 
 		// close calendarPicker
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ESCAPE);
 
 		// check if the triggering button receives the focus after picker close
 		assert.strictEqual(document.activeElement.id, oCalP.getAggregation("header").getDomRef("B2").id, "After picker close the triggering button receives the focus");
@@ -585,7 +588,7 @@ sap.ui.define([
 		assert.strictEqual(oCalP.$("contentOver").get(0).style.display, "", "After opening the picker overlay is shown");
 
 		// close calendarPicker
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ESCAPE);
 
 		// clean
 		oCalP.destroy();
@@ -596,7 +599,7 @@ sap.ui.define([
 	QUnit.test("destroying CalendarMonthInterval", function(assert) {
 		// arrange
 		var oCal = new CalendarMonthInterval("Cal"),
-			oRange = new sap.ui.unified.DateTypeRange();
+			oRange = new DateTypeRange();
 
 		oRange.setTooltip("tooltip");
 		oCal.addSpecialDate(oRange);

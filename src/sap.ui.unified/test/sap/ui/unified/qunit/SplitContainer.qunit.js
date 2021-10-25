@@ -2,20 +2,27 @@
 
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"jquery.sap.dom",
+	"sap/ui/dom/containsOrEquals",
 	"sap/ui/core/Control",
 	"sap/ui/unified/SplitContainer",
-	'sap/ui/qunit/utils/waitForThemeApplied'
-], function(qutils, jsd, Control, SplitContainer, waitForThemeApplied) {
+	"sap/base/util/ObjectPath",
+	"sap/ui/thirdparty/jquery"
+], function(qutils, containsOrEquals, Control, SplitContainer, ObjectPath, jQuery) {
 	"use strict";
 
 	// Control initialization
 
 	var TestControl = Control.extend("my.Test", {
-		renderer: function(rm, ctrl){
-			rm.write("<div style='width:10px;height:10px;background-color:gray;'");
-			rm.writeControlData(ctrl);
-			rm.write("></div>");
+		renderer: {
+			apiVersion: 2,
+			render: function(rm, ctrl){
+				rm.openStart("div", ctrl);
+				rm.style("width", "10px");
+				rm.style("height", "10px");
+				rm.style("background-color", "gray");
+				rm.openEnd();
+				rm.close("div");
+			}
 		}
 	});
 
@@ -33,7 +40,7 @@ sap.ui.define([
 
 	function testMultiAggregation(sName, oCtrl, assert){
 		var oAggMetaData = oCtrl.getMetadata().getAggregations()[sName];
-		var oType = jQuery.sap.getObject(oAggMetaData.type === "sap.ui.core.Control" ? "my.Test" : oAggMetaData.type);
+		var oType = ObjectPath.get(oAggMetaData.type === "sap.ui.core.Control" ? "my.Test" : oAggMetaData.type);
 
 		function _get(){
 			return oCtrl[oAggMetaData._sGetter]();
@@ -95,15 +102,15 @@ sap.ui.define([
 	QUnit.module("Rendering");
 
 	QUnit.test("Content", function(assert) {
-		assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("sc-canvas"), jQuery.sap.domById("_ctnt")), "Content rendered correctly");
-		assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("sc-pane"), jQuery.sap.domById("_sec_ctnt")), "Secondary Content rendered correctly");
+		assert.ok(containsOrEquals(document.getElementById("sc-canvas"), document.getElementById("_ctnt")), "Content rendered correctly");
+		assert.ok(containsOrEquals(document.getElementById("sc-pane"), document.getElementById("_sec_ctnt")), "Secondary Content rendered correctly");
 	});
 
 	QUnit.test("Secondary Content Width", function(assert) {
 		var done = assert.async();
 		oSC.setSecondaryContentSize("200px");
 		setTimeout(function(){
-			assert.equal(jQuery.sap.byId("sc-pane").outerWidth(), 200, "Secondary Content Width after change");
+			assert.equal(jQuery("#sc-pane").outerWidth(), 200, "Secondary Content Width after change");
 			done();
 		}, 600);
 	});
@@ -114,7 +121,7 @@ sap.ui.define([
 	QUnit.test("Open/Close Secondary Content", function(assert) {
 		var done = assert.async();
 		function checkVisibility(){
-			return jQuery.sap.byId("sc-panecntnt").is(":visible");
+			return jQuery("#sc-panecntnt").is(":visible");
 		}
 
 		assert.ok(!checkVisibility(), "Secondary Content initially hidden");
@@ -129,6 +136,4 @@ sap.ui.define([
 			}, 600);
 		}, 600);
 	});
-
-	return waitForThemeApplied();
 });

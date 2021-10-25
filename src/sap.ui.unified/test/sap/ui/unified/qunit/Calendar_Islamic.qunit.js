@@ -2,20 +2,23 @@
 
 sap.ui.define([
 	"sap/ui/unified/Calendar",
+	"sap/ui/core/CalendarType",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
-	"sap/ui/unified/DateRange"
-], function(Calendar, UniversalDate, DateFormat, LocaleData, DateRange) {
+	"sap/ui/unified/DateRange",
+	"sap/ui/thirdparty/jquery"
+], function(Calendar, CalendarType, UniversalDate, DateFormat, Locale, LocaleData, DateRange, jQuery) {
 	"use strict";
 
-	var oLocaleData = LocaleData.getInstance(new sap.ui.core.Locale("en-US"));
+	var oLocaleData = LocaleData.getInstance(new Locale("en-US"));
 	var aMonthNames = oLocaleData.getMonths("wide");
 
 	var oFormat = DateFormat.getDateInstance({
 		UTC: true,
 		pattern: "yyyyMMdd",
-		calendarType: sap.ui.core.CalendarType.Gregorian
+		calendarType: CalendarType.Gregorian
 	});
 
 	var oCal1;

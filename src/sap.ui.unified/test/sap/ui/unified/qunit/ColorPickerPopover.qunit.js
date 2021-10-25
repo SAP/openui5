@@ -3,16 +3,22 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/unified/ColorPickerPopover",
+	"sap/ui/unified/library",
 	"sap/m/ResponsivePopover",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
 	createAndAppendDiv,
 	ColorPickerPopover,
+	unifiedLibrary,
 	ResponsivePopover,
-	Button
+	Button,
+	jQuery
 ) {
 	"use strict";
+
+	var ColorPickerDisplayMode = unifiedLibrary.ColorPickerDisplayMode;
 
 	QUnit.module("Control API");
 
@@ -47,10 +53,8 @@ sap.ui.define([
 		var oOpener = new Button(),
 			oCPP = new ColorPickerPopover(),
 			oRPopover = new ResponsivePopover(),
-			oStubEnsurePopover = this.stub(oCPP, "_ensurePopover", function () {
-				return oRPopover;
-			}),
-			oSpyResponsivePopoverOpenBy = this.spy(sap.m.ResponsivePopover.prototype, "openBy");
+			oStubEnsurePopover = this.stub(oCPP, "_ensurePopover").returns(oRPopover),
+			oSpyResponsivePopoverOpenBy = this.spy(ResponsivePopover.prototype, "openBy");
 
 		// Act
 		oCPP.openBy(oOpener);
@@ -71,10 +75,8 @@ sap.ui.define([
 		var oOpener = new Button(),
 			oCPP = new ColorPickerPopover(),
 			oRPopover = new ResponsivePopover(),
-			oStubEnsurePopover = this.stub(oCPP, "_ensurePopover", function () {
-				return oRPopover;
-			}),
-			oSpyResponsivePopoverGetDomRef = this.spy(sap.m.ResponsivePopover.prototype, "getDomRef");
+			oStubEnsurePopover = this.stub(oCPP, "_ensurePopover").returns(oRPopover),
+			oSpyResponsivePopoverGetDomRef = this.spy(ResponsivePopover.prototype, "getDomRef");
 
 		// Act
 		oCPP.getDomRef();
@@ -95,10 +97,8 @@ sap.ui.define([
 		var oOpener = new Button(),
 			oCPP = new ColorPickerPopover(),
 			oRPopover = new ResponsivePopover(),
-			oStubEnsurePopover = this.stub(oCPP, "_ensurePopover", function () {
-				return oRPopover;
-			}),
-			oSpyResponsivePopoveClose = this.spy(sap.m.ResponsivePopover.prototype, "close");
+			oStubEnsurePopover = this.stub(oCPP, "_ensurePopover").returns(oRPopover),
+			oSpyResponsivePopoveClose = this.spy(ResponsivePopover.prototype, "close");
 
 		// Act
 		oCPP.close();
@@ -151,7 +151,7 @@ sap.ui.define([
 	QUnit.test("liveChange event", function (assert) {
 		// Prepare
 		var oCPP = new ColorPickerPopover({
-				displayMode: sap.ui.unified.ColorPickerDisplayMode.Large
+				displayMode: ColorPickerDisplayMode.Large
 			}),
 			aTestCasesRed = [128, 192, 255, 0],
 			iTestCasesLength = aTestCasesRed.length,

@@ -4,7 +4,10 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/CalendarDateInterval",
+	"sap/ui/core/CalendarType",
+	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
+	"sap/ui/core/format/DateFormat",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/calendar/CalendarDate",
@@ -12,9 +15,10 @@ sap.ui.define([
 	"sap/ui/unified/calendar/DatesRow",
 	"sap/ui/unified/library",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(KeyCodes, qutils, CalendarDateInterval, LocaleData, DateRange, DateTypeRange,
-	CalendarDate, CalendarWeekInterval, DatesRow, unifiedLibrary, Log, waitForThemeApplied) {
+	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery"
+], function(KeyCodes, qutils, CalendarDateInterval, CalendarType, Locale, LocaleData, DateFormat, DateRange, DateTypeRange,
+	CalendarDate, CalendarWeekInterval, DatesRow, unifiedLibrary, Log, Device, jQuery) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
@@ -33,7 +37,7 @@ sap.ui.define([
 		}
 	};
 
-	var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
+	var oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyyMMdd"});
 	var oToday = new Date();
 
 	QUnit.module("Rendering", {
@@ -41,7 +45,7 @@ sap.ui.define([
 			this.oCal = new CalendarDateInterval("myCal",{
 				startDateChange: handleStartDateChange,
 				startDate: new Date("2015", "1", "2"),
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -146,7 +150,7 @@ sap.ui.define([
 			this.oCal = new CalendarDateInterval("myCal", {
 				startDateChange: handleStartDateChange,
 				startDate: new Date("2015", "1", "2"),
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -183,7 +187,7 @@ sap.ui.define([
 			this.oCal = new CalendarDateInterval("myCal", {
 				startDateChange: handleStartDateChange,
 				startDate: new Date("2015", "1", "2"),
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -238,7 +242,7 @@ sap.ui.define([
 			this.oCal = new CalendarDateInterval("myCal", {
 				startDateChange: handleStartDateChange,
 				startDate: new Date("2015", "3", "10"),
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -357,7 +361,7 @@ sap.ui.define([
 	QUnit.test("Header previous button handler works correct for YearRangePicker", function (assert) {
 		// Prepare
 		var oCal = new CalendarDateInterval({
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian,
+				primaryCalendarType: CalendarType.Gregorian,
 				selectedDates: [new DateRange({startDate:new Date(2000, 0, 1)})]
 			}).placeAt("qunit-fixture"),
 			oYearRangePicker = oCal.getAggregation("yearRangePicker"),
@@ -387,7 +391,7 @@ sap.ui.define([
 
 	QUnit.test("There is no focus on mobile", function (assert) {
 		// Prepare
-		var oDeviceStub = this.stub(sap.ui.Device.system, "phone", true),
+		var oDeviceStub = this.stub(Device.system, "phone").value(true),
 			oFocusSpy = this.spy(this.oCal, "focus");
 
 		// Act
@@ -422,7 +426,7 @@ sap.ui.define([
 			this.oCal = new CalendarDateInterval("myCal", {
 				startDateChange: handleStartDateChange,
 				startDate: new Date("2015", "3", "10"),
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -518,7 +522,7 @@ sap.ui.define([
 			this.oCal = new CalendarDateInterval("myCal", {
 				startDateChange: handleStartDateChange,
 				startDate: new Date("2015", "3", "10"),
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -709,7 +713,7 @@ sap.ui.define([
 			this.oCal = new CalendarDateInterval("myCal", {
 				startDateChange: handleStartDateChange,
 				startDate: new Date("2015", "1", "2"),
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -769,7 +773,7 @@ sap.ui.define([
 			iDays = 6,
 			oMaxDate = new CalendarDate(2018, 9, 20),
 			oMinDate = new CalendarDate(2018, 10, 20),
-			oGetDaysStub = this.stub(this.oCal, "_getDays", function () { return iDays; });
+			oGetDaysStub = this.stub(this.oCal, "_getDays").returns(iDays);
 
 		// Act
 		oResult = this.oCal._getMaxDateAlignedToMinDate(oMaxDate, oMinDate);
@@ -831,7 +835,7 @@ sap.ui.define([
 			oCalendarDateInterval = new CalendarDateInterval({ maxDate: new Date(2018, 11, 20) }),
 			ogetMaxDateAlignedToMinDateSpy = this.spy(oCalendarDateInterval, "_getMaxDateAlignedToMinDate"),
 			oAlignStartDateToMinAndMaxSpy = this.spy(oCalendarDateInterval, "_getStartDateAlignedToMinAndMaxDate"),
-			oGetDaysStub = this.stub(oCalendarDateInterval, "_getDays", function () { return iDays; });
+			oGetDaysStub = this.stub(oCalendarDateInterval, "_getDays").returns(iDays);
 
 		// Act
 		oCalendarDateInterval._calculateStartDate(oCalendarDateInterval._oMaxDate, oCalendarDateInterval._oMinDate, oStartDate);
@@ -854,8 +858,8 @@ sap.ui.define([
 		var oSetHeaderTextSpy = this.spy(oHeader, "setTextButton1");
 		var oSetHeaderAriaSpy = this.spy(oHeader, "setAriaLabelButton1");
 		//simulate as if it is in a planning calendar
-		var oGetPickerPopupStub = this.stub(oCalendarDateInterval, "getPickerPopup", function() {return true;});
-		var sDelimiter = LocaleData.getInstance(new sap.ui.core.Locale("en-US")).getIntervalPattern().replace("{0}", "").replace("{1}", "");
+		var oGetPickerPopupStub = this.stub(oCalendarDateInterval, "getPickerPopup").returns(true);
+		var sDelimiter = LocaleData.getInstance(new Locale("en-US")).getIntervalPattern().replace("{0}", "").replace("{1}", "");
 
 		//act
 		oCalendarDateInterval._setHeaderText(new CalendarDate(2017, 11, 31));
@@ -893,7 +897,7 @@ sap.ui.define([
 				startDateChange: handleStartDateChange,
 				startDate: new Date("2015", "7", "13"),
 				pickerPopup: true,
-				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -927,7 +931,7 @@ sap.ui.define([
 	QUnit.test("fireStartDateChange", function(assert) {
 		// arrange
 		var $Date, oCalStartDate,
-			oSpyFireDateChange = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "fireStartDateChange");
+			oSpyFireDateChange = this.spy(CalendarDateInterval.prototype, "fireStartDateChange");
 
 
 		assert.ok(!jQuery("#CalP--Cal").get(0), "Calendar picker not initial rendered");
@@ -968,14 +972,14 @@ sap.ui.define([
 
 	QUnit.test("User opens the picker but escapes it - click outside for desktop or click cancel button", function(assert) {
 		// arrange
-		var oSpyCancel = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "fireCancel");
+		var oSpyCancel = this.spy(CalendarDateInterval.prototype, "fireCancel");
 
 		qutils.triggerEvent("click", "CalP--Head-B1");
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
 
-		sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(!jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker not visible after closing");
@@ -1016,7 +1020,7 @@ sap.ui.define([
 		assert.strictEqual(oCalPicker.getSelectedDates()[0].getStartDate().getDate(), 17, "start date is 17");
 		assert.strictEqual(oCalPicker.getSelectedDates()[0].getEndDate().getDate(), 23, "end date is 23");
 
-		sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 	});
 
 	QUnit.test("Text of the direct navigation button is correct", function(assert) {
@@ -1092,7 +1096,7 @@ sap.ui.define([
 		assert.strictEqual(oCalPicker._oMaxDate.getYear(), 9999, "max year is set to 9999");
 
 		// close calendarPicker
-		sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 		sap.ui.getCore().applyChanges();
 
 		// change the pickerPopup to false
@@ -1113,7 +1117,7 @@ sap.ui.define([
 		assert.strictEqual(oCalPicker._oMinDate.getYear(), 2015, "min year is set to 2015");
 		assert.strictEqual(oCalPicker._oMaxDate.getYear(), 2017, "max year is set to 2017");
 
-		sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 	});
 
 	QUnit.test("Triggering button receives the focus on picker ESC", function(assert) {
@@ -1122,7 +1126,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// close calendarPicker
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ESCAPE);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ESCAPE);
 		sap.ui.getCore().applyChanges();
 
 		// check if the triggering button receives the focus after picker close
@@ -1160,7 +1164,7 @@ sap.ui.define([
 		assert.strictEqual(this.oCal.$("contentOver").get(0).style.display, "", "After opening the picker overlay is shown");
 
 		// close calendarPicker
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ESCAPE);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ESCAPE);
 	});
 
 	QUnit.module("WeekNumbers");
@@ -1189,6 +1193,4 @@ sap.ui.define([
 		//clean
 		oDatesRow.destroy();
 	});
-
-	return waitForThemeApplied();
 });

@@ -1,8 +1,9 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/unified/calendar/CalendarDate"
-], function(CalendarDate) {
+	"sap/ui/unified/calendar/CalendarDate",
+	"sap/ui/core/CalendarType"
+], function(CalendarDate, CalendarType) {
 	"use strict";
 
 	QUnit.module("Constructor");
@@ -77,8 +78,8 @@ sap.ui.define([
 		//Act
 		var oSourceJSDate = new Date(2017, 3, 23),
 				oSourceCalendarDate = new CalendarDate(oSourceJSDate.getFullYear(), oSourceJSDate.getMonth(), oSourceJSDate.getDate(),
-						sap.ui.core.CalendarType.Gregorian),
-				oTargetCalendarDate = new CalendarDate(oSourceCalendarDate, sap.ui.core.CalendarType.Islamic),
+						CalendarType.Gregorian),
+				oTargetCalendarDate = new CalendarDate(oSourceCalendarDate, CalendarType.Islamic),
 				oGeneratedJSDate = oTargetCalendarDate.toLocalJSDate();
 
 		//Assert
@@ -690,7 +691,7 @@ sap.ui.define([
 		//Act
 		var oSourceJSDate = new Date(2017, 3, 23),
 				oSourceCalendarDate = new CalendarDate(oSourceJSDate.getFullYear(), oSourceJSDate.getMonth(), oSourceJSDate.getDate(),
-						sap.ui.core.CalendarType.Islamic),
+						CalendarType.Islamic),
 				oGeneratedJSDate = oSourceCalendarDate.toLocalJSDate();
 
 		//Assert
@@ -737,7 +738,7 @@ sap.ui.define([
 		//Act
 		var oJSDate = new Date(2017, 3, 23),
 				oSourceCalendarDate = new CalendarDate(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate(),
-						sap.ui.core.CalendarType.Islamic),
+						CalendarType.Islamic),
 				oGeneratedJSDate = oSourceCalendarDate.toUTCJSDate(),
 				oExpectedUTCJSDate = new Date(Date.UTC(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate(), oJSDate.getHours(), oJSDate.getMinutes(), oJSDate.getSeconds(), oJSDate.getMilliseconds()));
 

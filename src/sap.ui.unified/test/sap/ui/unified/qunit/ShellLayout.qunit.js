@@ -2,19 +2,27 @@
 
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"jquery.sap.dom",
+	"sap/ui/dom/containsOrEquals",
 	"sap/ui/core/Control",
-	"sap/ui/unified/ShellLayout"
-], function(qutils, jsd, Control, ShellLayout) {
+	"sap/ui/unified/ShellLayout",
+	"sap/base/util/ObjectPath",
+	"sap/ui/thirdparty/jquery"
+], function(qutils, containsOrEquals, Control, ShellLayout, ObjectPath, jQuery) {
 	"use strict";
 
 	// Control initialization
 
 	var TestControl = Control.extend("my.Test", {
-		renderer: function(rm, ctrl){
-			rm.write("<div style='width:10px;height:10px;background-color:gray;'");
-			rm.writeControlData(ctrl);
-			rm.write("></div>");
+		renderer: {
+			apiVersion: 2,
+			render: function(rm, ctrl){
+				rm.openStart("div", ctrl);
+				rm.style("width", "10px");
+				rm.style("height", "10px");
+				rm.style("background-color", "gray");
+				rm.openEnd();
+				rm.close("div");
+			}
 		}
 	});
 
@@ -42,7 +50,7 @@ sap.ui.define([
 
 	function testMultiAggregation(sName, oCtrl, sGetter, sMutator, assert){
 		var oAggMetaData = oCtrl.getMetadata().getAggregations()[sName];
-		var oType = jQuery.sap.getObject(!oAggMetaData || oAggMetaData.type === "sap.ui.core.Control" ? "my.Test" : oAggMetaData.type);
+		var oType = ObjectPath.get(!oAggMetaData || oAggMetaData.type === "sap.ui.core.Control" ? "my.Test" : oAggMetaData.type);
 
 		sGetter = oAggMetaData ? oAggMetaData._sGetter : sGetter;
 		sMutator = oAggMetaData ? oAggMetaData._sMutator : sMutator;
@@ -128,11 +136,11 @@ sap.ui.define([
 
 	QUnit.test("Content", function(assert) {
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-hdrcntnt"), jQuery.sap.domById("_header")), "Header rendered correctly");
-		assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-curt-container-canvas"), jQuery.sap.domById("_curt_ctnt")), "Curtain Content rendered correctly");
-		assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-curt-container-pane"), jQuery.sap.domById("_curt_pane_ctnt")), "Curtain Pane rendered correctly");
-		assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-container-canvas"), jQuery.sap.domById("_ctnt")), "Content rendered correctly");
-		assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-container-pane"), jQuery.sap.domById("_pane_ctnt")), "Pane Content rendered correctly");
+		assert.ok(containsOrEquals(document.getElementById("shell-hdrcntnt"), document.getElementById("_header")), "Header rendered correctly");
+		assert.ok(containsOrEquals(document.getElementById("shell-curt-container-canvas"), document.getElementById("_curt_ctnt")), "Curtain Content rendered correctly");
+		assert.ok(containsOrEquals(document.getElementById("shell-curt-container-pane"), document.getElementById("_curt_pane_ctnt")), "Curtain Pane rendered correctly");
+		assert.ok(containsOrEquals(document.getElementById("shell-container-canvas"), document.getElementById("_ctnt")), "Content rendered correctly");
+		assert.ok(containsOrEquals(document.getElementById("shell-container-pane"), document.getElementById("_pane_ctnt")), "Pane Content rendered correctly");
 	});
 
 	QUnit.module("Behavior");
@@ -140,7 +148,7 @@ sap.ui.define([
 	QUnit.test("Open/Close Pane", function(assert) {
 		var done = assert.async();
 		function checkVisibility(){
-			return jQuery.sap.byId("shell-container-panecntnt").is(":visible");
+			return jQuery("#shell-container-panecntnt").is(":visible");
 		}
 
 		assert.ok(!checkVisibility(), "Pane initially hidden");
@@ -159,7 +167,7 @@ sap.ui.define([
 	QUnit.test("Open Curtain", function(assert) {
 		var done = assert.async();
 		function checkVisibility(){
-			return !jQuery.sap.byId("shell").hasClass("sapUiUfdShellCurtainClosed");
+			return !jQuery("#shell").hasClass("sapUiUfdShellCurtainClosed");
 		}
 
 		assert.ok(!checkVisibility(), "Curtain initially hidden");
@@ -174,7 +182,7 @@ sap.ui.define([
 	QUnit.test("Open/Close Curtain Pane", function(assert) {
 		var done = assert.async();
 		function checkVisibility(){
-			return jQuery.sap.byId("shell-curt-container-panecntnt").is(":visible");
+			return jQuery("#shell-curt-container-panecntnt").is(":visible");
 		}
 
 		assert.ok(!checkVisibility(), "Curtain Pane initially hidden");
@@ -193,7 +201,7 @@ sap.ui.define([
 	QUnit.test("Close Curtain", function(assert) {
 		var done = assert.async();
 		function checkVisibility(){
-			return !jQuery.sap.byId("shell").hasClass("sapUiUfdShellCurtainClosed");
+			return !jQuery("#shell").hasClass("sapUiUfdShellCurtainClosed");
 		}
 
 		assert.ok(checkVisibility(), "Curtain visible");
@@ -207,7 +215,7 @@ sap.ui.define([
 
 	QUnit.test("Show/Hide Header", function(assert) {
 		function checkVisibility(){
-			return jQuery.sap.byId("shell-hdr").is(":visible");
+			return jQuery("#shell-hdr").is(":visible");
 		}
 
 		assert.ok(checkVisibility(), "Header visible");
