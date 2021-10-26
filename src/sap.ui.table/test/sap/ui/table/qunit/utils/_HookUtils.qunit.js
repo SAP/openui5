@@ -283,14 +283,14 @@ sap.ui.define([
 		assert.ok(oRegistrationSpy.secondCall.calledOn(oContext), "Hook that was registered with context was called with that context");
 
 		// Try to change the context of an installation.
-		oInstallationSpy.reset();
+		oInstallationSpy.resetHistory();
 		Hook.install(oTable, oObject, oContext);
 		oHookWithArguments.validCall(oTable);
 
 		assert.ok(oInstallationSpy.calledOn(oObject), "Installing the same hook with another context does not change the context");
 
 		// Uninstall and install with a context.
-		oInstallationSpy.reset();
+		oInstallationSpy.resetHistory();
 		Hook.uninstall(oTable, oObject);
 		Hook.install(oTable, oObject, oContext);
 		oHookWithArguments.validCall(oTable);
@@ -360,7 +360,7 @@ sap.ui.define([
 		Hook.register(oTable, oHookWithArguments.key, oSpy);
 		oHookWithArguments.validCall(oTable);
 		assert.ok(oSpy.calledOnce, "Registered");
-		oSpy.reset();
+		oSpy.resetHistory();
 
 		Hook.deregister(oTable, oHookWithArguments.key, oSpy);
 		oHookWithArguments.validCall(oTable);
@@ -418,7 +418,7 @@ sap.ui.define([
 		Hook.install(oTable, oObject);
 		oHookWithArguments.validCall(oTable);
 		assert.ok(oSpy.calledOnce, "Installed");
-		oSpy.reset();
+		oSpy.resetHistory();
 
 		Hook.uninstall(oTable, oObject);
 		oHookWithArguments.validCall(oTable);

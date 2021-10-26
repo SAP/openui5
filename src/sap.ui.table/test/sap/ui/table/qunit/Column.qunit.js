@@ -509,8 +509,8 @@ sap.ui.define([
 			"Table#invalidate called after setting the template to 'null'");
 
 		this.oColumn.setVisible(false);
-		oInvalidateRowsAggregationSpy.reset();
-		oTableInvalidateSpy.reset();
+		oInvalidateRowsAggregationSpy.resetHistory();
+		oTableInvalidateSpy.resetHistory();
 		this.oColumn.setTemplate(new TableQUnitUtils.TestControl());
 		assert.strictEqual(oInvalidateRowsAggregationSpy.callCount, 0,
 			"Table#invalidateRowsAggregation NOT called after setting the template for invisible column");
@@ -518,8 +518,8 @@ sap.ui.define([
 			"Table#invalidate NOT called after setting the template for invisible column");
 
 		this.oColumn.setVisible(true);
-		oInvalidateRowsAggregationSpy.reset();
-		oTableInvalidateSpy.reset();
+		oInvalidateRowsAggregationSpy.resetHistory();
+		oTableInvalidateSpy.resetHistory();
 		this.oColumn.destroyTemplate();
 		assert.strictEqual(oInvalidateRowsAggregationSpy.callCount, 0,
 			"Table#invalidateRowsAggregation NOT called after destroying the template");
@@ -556,8 +556,8 @@ sap.ui.define([
 			"Table#invalidate NOT called after setting the template to 'null'");
 
 		this.oColumn.setVisible(false);
-		oCreationRowUpdateSpy.reset();
-		oTableInvalidateSpy.reset();
+		oCreationRowUpdateSpy.resetHistory();
+		oTableInvalidateSpy.resetHistory();
 		this.oColumn.setCreationTemplate(new TableQUnitUtils.TestControl());
 		assert.strictEqual(oCreationRowUpdateSpy.callCount, 0,
 			"CreationRow#_update NOT called after setting the template for invisible column");
@@ -565,8 +565,8 @@ sap.ui.define([
 			"Table#invalidate NOT called after setting the template for invisible column");
 
 		this.oColumn.setVisible(true);
-		oCreationRowUpdateSpy.reset();
-		oTableInvalidateSpy.reset();
+		oCreationRowUpdateSpy.resetHistory();
+		oTableInvalidateSpy.resetHistory();
 		this.oColumn.destroyCreationTemplate();
 		assert.strictEqual(oCreationRowUpdateSpy.callCount, 0,
 			"CreationRow#_update NOT called after destroying the template");
@@ -708,7 +708,7 @@ sap.ui.define([
 			assert.strictEqual(oTemplateClone, null, sTemplateType + " type: Returned null");
 			assert.ok(oGetFreeTemplateCloneSpy.notCalled, sTemplateType + " type: Column#_getFreeTemplateClone was not called");
 
-			oGetFreeTemplateCloneSpy.reset();
+			oGetFreeTemplateCloneSpy.resetHistory();
 		}
 
 		assert.deepEqual(this.getTemplateCloneCount(), 0, "No template clones exist");
@@ -750,7 +750,7 @@ sap.ui.define([
 
 			assert.ok(mTemplateCloneFunctionSpies[sTemplateType].calledOnce, sTemplateType + " type: Template#clone was called once");
 
-			oGetFreeTemplateCloneSpy.reset();
+			oGetFreeTemplateCloneSpy.resetHistory();
 		}
 	});
 
@@ -792,7 +792,7 @@ sap.ui.define([
 
 			assert.ok(mTemplateCloneFunctionSpies[sTemplateType].calledOnce, "Template#clone was called once");
 
-			oGetFreeTemplateCloneSpy.reset();
+			oGetFreeTemplateCloneSpy.resetHistory();
 		}
 	});
 
@@ -811,7 +811,7 @@ sap.ui.define([
 			oTemplateClone = this.oColumn.getTemplateClone(1, sTemplateType);
 			sinon.stub(oTemplateClone, "getParent").returns("i have a parent");
 			sinon.stub(this.oColumn.getTemplateClone(2, sTemplateType), "getParent").returns("i have a parent");
-			sinon.restore(oTemplateClone); // Now the clone is free.
+			oTemplateClone.getParent.restore(); // Now the clone is free.
 			mTemplateCloneFunctionSpies[sTemplateType] = sinon.spy(oTemplate, "clone");
 			mFreeTemplateClones[sTemplateType] = oTemplateClone;
 		}
@@ -838,7 +838,7 @@ sap.ui.define([
 
 			assert.ok(mTemplateCloneFunctionSpies[sTemplateType].notCalled, "Template#clone was not called");
 
-			oGetFreeTemplateCloneSpy.reset();
+			oGetFreeTemplateCloneSpy.resetHistory();
 		}
 	});
 
@@ -926,7 +926,7 @@ sap.ui.define([
 			assert.ok(oDestroyTemplateClonesSpy.calledWithExactly(sTemplateType),
 				sTemplateType + " type: Column#_destroyTemplateClones was called with the correct type information");
 
-			oDestroyTemplateClonesSpy.reset();
+			oDestroyTemplateClonesSpy.resetHistory();
 		}
 	});
 
@@ -951,7 +951,7 @@ sap.ui.define([
 			assert.ok(oDestroyTemplateClonesSpy.calledWithExactly(sTemplateType),
 				sTemplateType + " type: Column#_destroyTemplateClones was called with the correct type information");
 
-			oDestroyTemplateClonesSpy.reset();
+			oDestroyTemplateClonesSpy.resetHistory();
 		}
 
 		// Control#destroy
@@ -960,7 +960,7 @@ sap.ui.define([
 			this.setTemplate(this.aTemplateTypes[i], new TableQUnitUtils.TestControl());
 		}
 
-		oDestroyTemplateClonesSpy.reset();
+		oDestroyTemplateClonesSpy.resetHistory();
 
 		for (i = 0; i < this.aTemplateTypes.length; i++) {
 			sTemplateType = this.aTemplateTypes[i];
@@ -979,7 +979,7 @@ sap.ui.define([
 			assert.ok(oDestroyTemplateClonesSpy.calledWithExactly(sTemplateType),
 				sTemplateType + " type: Column#_destroyTemplateClones was called with the correct type information");
 
-			oDestroyTemplateClonesSpy.reset();
+			oDestroyTemplateClonesSpy.resetHistory();
 		}
 	});
 

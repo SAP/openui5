@@ -127,12 +127,12 @@ sap.ui.define([
 			oTable.setVisibleRowCount(4);
 			assert.ok(oSyncInterface.rowCount.calledWithExactly(4), "Row count changed: The correct row count was synced");
 			assert.strictEqual(oSyncInterface.rowCount.callCount, 1, "The row count was synced once");
-			oSyncInterface.rowCount.reset();
+			oSyncInterface.rowCount.resetHistory();
 
 			oTable.setVisibleRowCount(4);
 			assert.ok(oSyncInterface.rowCount.calledWithExactly(4), "Row count not changed (but setter called): The correct row count was synced");
 			assert.strictEqual(oSyncInterface.rowCount.callCount, 1, "The row count was synced once");
-			oSyncInterface.rowCount.reset();
+			oSyncInterface.rowCount.resetHistory();
 
 			oTable.setVisibleRowCountMode(library.VisibleRowCountMode.Auto);
 			sap.ui.getCore().applyChanges();
@@ -143,7 +143,7 @@ sap.ui.define([
 			assert.ok(oSyncInterface.rowCount.calledWithExactly(oTable.getRows().length),
 				"Switched to VisibleRowCountMode=Auto: The correct row count was synced");
 			assert.strictEqual(oSyncInterface.rowCount.callCount, 2, "The row count was synced 2 times");
-			oSyncInterface.rowCount.reset();
+			oSyncInterface.rowCount.resetHistory();
 
 			oTable._bVariableRowHeightEnabled = true;
 			oTable.invalidate();
@@ -153,18 +153,18 @@ sap.ui.define([
 			assert.ok(oSyncInterface.rowCount.calledWithExactly(oTable.getRows().length),
 				"Variable row heights enabled: The correct row count was synced");
 			assert.strictEqual(oSyncInterface.rowCount.callCount, 1, "The row count was synced once");
-			oSyncInterface.rowCount.reset();
+			oSyncInterface.rowCount.resetHistory();
 
 		}).then(function() {
 			oTable.setVisibleRowCount(oTable.getVisibleRowCount() + 1);
 			assert.ok(oSyncInterface.rowCount.notCalled, "Row count setter called in VisibleRowCountMode=Auto: The row count was not synced");
-			oSyncInterface.rowCount.reset();
+			oSyncInterface.rowCount.resetHistory();
 
 		}).then(function() {
 			oTable.unbindRows();
 			assert.ok(oSyncInterface.rowCount.getCall(0).calledWithExactly(0), "Unbind rows: The correct row count was synced");
 			assert.strictEqual(oSyncInterface.rowCount.callCount, 1, "Unbind rows: The row count was synced once");
-			oSyncInterface.rowCount.reset();
+			oSyncInterface.rowCount.resetHistory();
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			oTable.bindRows({path: "/"});
@@ -191,7 +191,7 @@ sap.ui.define([
 			} else {
 				assert.ok(false, "Selection changed: The selection of all 3 rows should have been synced");
 			}
-			oSyncInterface.rowSelection.reset();
+			oSyncInterface.rowSelection.resetHistory();
 
 		}).then(function() {
 			oTable.unbindRows(); // No Binding, no rows, no selection.
@@ -215,7 +215,7 @@ sap.ui.define([
 			} else {
 				assert.ok(false, "Selection changed: The selection of all 3 rows should have been synced");
 			}
-			oSyncInterface.rowSelection.reset();
+			oSyncInterface.rowSelection.resetHistory();
 
 		}).then(function() {
 			oTable.setFirstVisibleRow(1);
@@ -230,7 +230,7 @@ sap.ui.define([
 			} else {
 				assert.ok(false, "Selection changed: The selection of all 3 rows should have been synced");
 			}
-			oSyncInterface.rowSelection.reset();
+			oSyncInterface.rowSelection.resetHistory();
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			// After the rows update triggered by #setFirstVisibleRow.
@@ -242,7 +242,7 @@ sap.ui.define([
 			} else {
 				assert.ok(false, "Selection changed: The selection of all 3 rows should have been synced");
 			}
-			oSyncInterface.rowSelection.reset();
+			oSyncInterface.rowSelection.resetHistory();
 
 		}).then(function() {
 			oTable.setSelectedIndex(2); // No change of selection.
@@ -330,7 +330,7 @@ sap.ui.define([
 				"After rendering: The inner vertical scroll position was correctly synced");
 			assert.strictEqual(oSyncInterface.innerVerticalScrollPosition.callCount, 1,
 				"After rendering: The inner vertical scroll position was synced once");
-			oSyncInterface.innerVerticalScrollPosition.reset();
+			oSyncInterface.innerVerticalScrollPosition.resetHistory();
 		}).then(oTable.qunit.$scrollVSbTo(23)).then(oTable.qunit.whenViewportScrolled).then(function() {
 			assert.ok(oSyncInterface.innerVerticalScrollPosition.calledWithExactly(23),
 				"After scrolling: The inner vertical scroll position was correctly synced");
@@ -553,7 +553,7 @@ sap.ui.define([
 
 			assert.ok(oTableInvalidate.calledOnce, "The table was invalidated");
 			assert.strictEqual(Div.childElementCount, 1, "The container contains only one element");
-			oTableInvalidate.reset();
+			oTableInvalidate.resetHistory();
 
 			sap.ui.getCore().applyChanges();
 
@@ -572,7 +572,7 @@ sap.ui.define([
 			// invalidated. The user of the synchronization is supposed to call placeVerticalScrollbarAt again in onAfterRendering. The table should
 			// still have the reference to the external scrollbar in this situation and insert it back into the DOM.
 			oTable.invalidate();
-			oTableInvalidate.reset();
+			oTableInvalidate.resetHistory();
 			Div.firstElementChild.removeChild(oExternalVSb);
 
 			sap.ui.getCore().applyChanges();

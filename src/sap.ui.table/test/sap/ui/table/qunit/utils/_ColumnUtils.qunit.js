@@ -816,7 +816,7 @@ sap.ui.define([
 		assert.ok(oColumnResizeHandler.called, "ColumnResize handler was called");
 
 		// Do not fire the event.
-		oColumnResizeHandler.reset();
+		oColumnResizeHandler.resetHistory();
 		ColumnUtils.resizeColumn(oTable, 0, aOriginalColumnWidths[0], false);
 		assertUnchanged();
 		assert.ok(oColumnResizeHandler.notCalled, "ColumnResize handler was not called");

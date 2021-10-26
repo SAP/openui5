@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/table/extensions/Pointer",
 	"sap/ui/table/utils/TableUtils",
-	"sap/ui/table/library"
-], function(TableQUnitUtils, qutils, Device, PointerExtension, TableUtils, tableLibrary) {
+	"sap/ui/table/library",
+	"sap/ui/thirdparty/jquery"
+], function(TableQUnitUtils, qutils, Device, PointerExtension, TableUtils, tableLibrary, jQuery) {
 	"use strict";
 
 	// mapping of global function calls
@@ -326,7 +327,7 @@ sap.ui.define([
 			});
 		}
 
-		this.stub(Device.system, "desktop", false);
+		this.stub(Device.system, "desktop").value(false);
 		oColumn.setResizable(true);
 		sap.ui.getCore().applyChanges();
 
@@ -401,7 +402,7 @@ sap.ui.define([
 		jQuery(oElem).trigger("contextmenu");
 		assert.ok(!oColumnMenu.bOpen, "Menu is closed");
 		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
-		oContextMenuEvent.reset();
+		oContextMenuEvent.resetHistory();
 		assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
 		checkFocus(oElem, assert);
 
@@ -428,7 +429,7 @@ sap.ui.define([
 		bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
 		assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
 		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
-		oContextMenuEvent.reset();
+		oContextMenuEvent.resetHistory();
 		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
 
 		// Close the menu with the right mouse button.
@@ -437,7 +438,7 @@ sap.ui.define([
 		assert.ok(!oColumnMenu.bOpen, "Menu is closed");
 		checkFocus(oElem, assert);
 		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
-		oContextMenuEvent.reset();
+		oContextMenuEvent.resetHistory();
 		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
 
 		// Open the menu with the left mouse button.
@@ -453,7 +454,7 @@ sap.ui.define([
 		assert.ok(!oColumnMenu.bOpen, "Menu is closed");
 		checkFocus(oElem, assert);
 		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
-		oContextMenuEvent.reset();
+		oContextMenuEvent.resetHistory();
 		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
 	});
 
@@ -488,7 +489,7 @@ sap.ui.define([
 		jQuery(oElem).trigger("contextmenu");
 		assert.notEqual(oTable._oCellContextMenu, null, "Menu is created");
 		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
-		oContextMenuEvent.reset();
+		oContextMenuEvent.resetHistory();
 		assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
 		checkFocus(oElem, assert);
 
@@ -509,7 +510,7 @@ sap.ui.define([
 		bFirstItemHovered = oTable._oCellContextMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
 		assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
 		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
-		oContextMenuEvent.reset();
+		oContextMenuEvent.resetHistory();
 		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
 
 		// Open the menu with the right mouse button on the same element.
@@ -517,7 +518,7 @@ sap.ui.define([
 		jQuery(oElem).trigger("contextmenu");
 		assert.ok(oTable._oCellContextMenu.bOpen, "Menu is opened");
 		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
-		oContextMenuEvent.reset();
+		oContextMenuEvent.resetHistory();
 		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
 
 		// If an interactive/clickable element inside a data cell was clicked, open the default context menu instead of the column or cell context
@@ -531,7 +532,7 @@ sap.ui.define([
 			jQuery($CellContent).trigger("contextmenu");
 			assert.ok(!oTable._oCellContextMenu.bOpen, "Menu is closed");
 			oContextMenuEventArgument = oContextMenuEvent.args[0][0];
-			oContextMenuEvent.reset();
+			oContextMenuEvent.resetHistory();
 			assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
 			$CellContent.toggleClass(aKnownClickableControls[i], false);
 		}

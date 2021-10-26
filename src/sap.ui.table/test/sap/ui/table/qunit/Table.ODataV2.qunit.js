@@ -34,7 +34,7 @@ sap.ui.define([
 		var oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			oGetContextsSpy.reset();
+			oGetContextsSpy.resetHistory();
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 2, "Method to get contexts called 2 times");
@@ -52,7 +52,7 @@ sap.ui.define([
 		var oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			oGetContextsSpy.reset();
+			oGetContextsSpy.resetHistory();
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
@@ -74,7 +74,7 @@ sap.ui.define([
 		var oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			oGetContextsSpy.reset();
+			oGetContextsSpy.resetHistory();
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			return new Promise(function(resolve) {
@@ -97,7 +97,7 @@ sap.ui.define([
 		var oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			oGetContextsSpy.reset();
+			oGetContextsSpy.resetHistory();
 			oTable.getBinding().sort();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 2, "Method to get contexts called 2 times");
@@ -115,7 +115,7 @@ sap.ui.define([
 		var oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			oGetContextsSpy.reset();
+			oGetContextsSpy.resetHistory();
 			oTable.getBinding().sort();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			return new Promise(function(resolve) {
@@ -143,7 +143,7 @@ sap.ui.define([
 		var oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			oGetContextsSpy.reset();
+			oGetContextsSpy.resetHistory();
 			oTable.getBinding().sort();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			return new Promise(function(resolve) {

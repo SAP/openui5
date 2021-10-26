@@ -339,7 +339,7 @@ sap.ui.define([
 				var $TreeIcon = $Row.find(".sapUiTableTreeIcon");
 
 				if (!bIsExpandable && document.activeElement === $TreeIcon[0]) {
-					GroupingUtils.TableUtils.getParentCell(oTable, $TreeIcon[0]).focus();
+					GroupingUtils.TableUtils.getParentCell(oTable, $TreeIcon[0]).trigger("focus");
 				}
 
 				$TreeIcon.toggleClass("sapUiTableTreeIconLeaf", !bIsExpandable)

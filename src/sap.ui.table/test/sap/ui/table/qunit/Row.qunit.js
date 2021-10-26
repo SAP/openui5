@@ -257,7 +257,7 @@ sap.ui.define([
 		this.oRow.expand();
 		assert.strictEqual(oExpandSpy.callCount, 1, "'Expand' hook called once when calling #expand on a collapsed row");
 
-		oExpandSpy.reset();
+		oExpandSpy.resetHistory();
 		this.oRow.isExpandable.returns(true);
 		this.oRow.isExpanded.returns(false);
 		this.oRow.toggleExpandedState();
@@ -289,7 +289,7 @@ sap.ui.define([
 		this.oRow.collapse();
 		assert.strictEqual(oCollapseSpy.callCount, 1, "'Collapse' hook called once when calling #collapse on an expanded row");
 
-		oCollapseSpy.reset();
+		oCollapseSpy.resetHistory();
 		this.oRow.isExpandable.returns(true);
 		this.oRow.isExpanded.returns(true);
 		this.oRow.toggleExpandedState();

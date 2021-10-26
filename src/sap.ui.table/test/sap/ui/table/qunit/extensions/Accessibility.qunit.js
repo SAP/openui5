@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/library",
 	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator"
-], function(TableQUnitUtils, TableUtils, ManagedObject, Column, RowSettings, Library, JSONModel, Device, coreLibrary, Filter, FilterOperator) {
+	"sap/ui/model/FilterOperator",
+	"sap/ui/thirdparty/jquery"
+], function(TableQUnitUtils, TableUtils, ManagedObject, Column, RowSettings, Library, JSONModel, Device, coreLibrary, Filter, FilterOperator, jQuery) {
 	"use strict";
 
 	var SelectionMode = Library.SelectionMode;
@@ -38,7 +39,7 @@ sap.ui.define([
 		metadata: {
 			properties: {
 				text: {
-					type: "String"
+					type: "string"
 				}
 			}
 		},

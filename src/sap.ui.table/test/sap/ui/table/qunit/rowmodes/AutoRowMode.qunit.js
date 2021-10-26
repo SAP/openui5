@@ -426,8 +426,8 @@ sap.ui.define([
 		assert.ok(oDisableNoData.notCalled, "Change from true to false: #disableNoData was not called");
 		assert.equal(oEnableNoData.callCount, 1, "Change from true to false: #enableNoData was called once");
 
-		oDisableNoData.reset();
-		oEnableNoData.reset();
+		oDisableNoData.resetHistory();
+		oEnableNoData.resetHistory();
 		oRowMode.setHideEmptyRows(true);
 		assert.equal(oDisableNoData.callCount, 1, "Change from false to true: #disableNoData was called once");
 		assert.ok(oEnableNoData.notCalled, "Change from false to true: #enableNoData was not called");
@@ -483,17 +483,17 @@ sap.ui.define([
 		var oTable = this.createTable();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			oGetContextsSpy.reset();
+			oGetContextsSpy.resetHistory();
 		}).then(oTable.qunit.$resize({height: "756px"})).then(function() {
 			assert.strictEqual(oGetContextsSpy.callCount, 1, "Method to get contexts called once");
 			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
 				"The call considers the row count");
-			oGetContextsSpy.reset();
+			oGetContextsSpy.resetHistory();
 		}).then(oTable.qunit.resetSize).then(function() {
 			assert.strictEqual(oGetContextsSpy.callCount, 1, "Method to get contexts called once");
 			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
 				"The call considers the row count");
-			oGetContextsSpy.reset();
+			oGetContextsSpy.resetHistory();
 		});
 	});
 

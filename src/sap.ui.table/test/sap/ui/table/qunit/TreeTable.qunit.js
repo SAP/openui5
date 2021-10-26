@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/table/library"
-], function(TableQUnitUtils, TreeTable, Column, TableUtils, JSONModel, library) {
+	"sap/ui/table/library",
+	"sap/ui/thirdparty/jquery"
+], function(TableQUnitUtils, TreeTable, Column, TableUtils, JSONModel, library, jQuery) {
 	"use strict";
 
 	// Shortcuts
@@ -745,9 +746,9 @@ sap.ui.define([
 				oTestConfig.prepare();
 			}
 
-			this.oBindingExpandSpy.reset();
-			this.oBindingCollapseSpy.reset();
-			this.oChangeEventSpy.reset();
+			this.oBindingExpandSpy.resetHistory();
+			this.oBindingCollapseSpy.resetHistory();
+			this.oChangeEventSpy.resetHistory();
 
 			if (oTestConfig.expand === true) {
 				this.oTable.expand(oTestConfig.indices);
