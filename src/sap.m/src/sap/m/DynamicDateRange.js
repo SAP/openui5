@@ -32,7 +32,6 @@ sap.ui.define([
 	'./NavContainer',
 	'./DynamicDateRangeRenderer',
 	'./StandardDynamicDateOption',
-	'./StandardDynamicDateRangeKeys',
 	'sap/ui/dom/jquery/Focusable',
 	'./library'],
 	function(
@@ -64,7 +63,6 @@ sap.ui.define([
 		NavContainer,
 		DynamicDateRangeRenderer,
 		StandardDynamicDateOption,
-		StandardDynamicDateRangeKeys,
 		Focusable,
 		library
 	) {
@@ -652,7 +650,7 @@ sap.ui.define([
 					return iGroupDiff;
 				}
 
-				return StandardDynamicDateRangeKeys.indexOf(a.getKey()) - StandardDynamicDateRangeKeys.indexOf(b.getKey());
+				return library.StandardDynamicDateRangeKeys.indexOf(a.getKey()) - library.StandardDynamicDateRangeKeys.indexOf(b.getKey());
 			});
 
 			// for last x/next x options leave only the first of each, remove the rest
