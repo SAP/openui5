@@ -74,6 +74,7 @@
 					}
 				]
 			},
+			"maxItems": 6,
 			"item": {
 				"icon": {
 					"src": "{icon}"
