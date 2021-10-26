@@ -3,21 +3,19 @@
 /* Horizon theme                                       */
 /* =================================================== */
 
+
+.sapUiFormResGrid.sapUiFormBackgrSolid,
+.sapUiFormResGrid.sapUiFormBackgrTranslucent {
+	background-color: @sapUiGroupContentBackground;
+	border-radius: @sapUiElementBorderCornerRadius;
+}
+
 /* Toolbar */
 .sapUiFormResGrid.sapUiFormToolbar > div:first-child {
 	background-color: transparent;
 	height: 2.75rem;
 	line-height: 2.75rem;
 	padding-right: 1rem;
-}
-
-/* Grid */
-.sapUiFormResGrid.sapUiFormBackgrTranslucent > div {
-	background-color: fade(@sapUiGroupContentBackground, @sapUiTranslucentBGOpacity);
-}
-
-.sapUiFormResGrid.sapUiFormBackgrSolid > div {
-	background-color: @sapUiGroupContentBackground;
 }
 
 /* alignment of Labels */
