@@ -1113,10 +1113,37 @@ sap.ui.define([
 		oPropertyHelper.destroy();
 	});
 
+	QUnit.test("Circular property reference", function(assert) {
+		var oPropertyHelper = new PropertyHelper([{
+			name: "propA",
+			label: "Property A",
+			foo: "propB"
+		}, {
+			name: "propB",
+			label: "Property B",
+			foo: "propA"
+		}], null, null, {
+			foo: {type: "PropertyReference"}
+		});
+
+		this.deepEqualProperties(assert, oPropertyHelper, [{
+			name: "propA",
+			label: "Property A",
+			foo: "propB"
+		}, {
+			name: "propB",
+			label: "Property B",
+			foo: "propA"
+		}]);
+
+		oPropertyHelper.destroy();
+	});
+
 	QUnit.test("Property reference cache", function(assert) {
 		var oPropertyHelper = new PropertyHelper([{
 			name: "prop",
-			label: "Property"
+			label: "Property",
+			baz: "prop2"
 		}, {
 			name: "complexProp",
 			label: "Complex property",
@@ -1124,6 +1151,9 @@ sap.ui.define([
 			foo: {
 				baz: ["prop"]
 			}
+		}, {
+			name: "prop2",
+			label: "Property 2"
 		}], null, null, {
 			foo: {
 				type: {
@@ -1131,16 +1161,24 @@ sap.ui.define([
 					baz: {type: "PropertyReference[]", allowedForComplexProperty: true}
 				},
 				allowedForComplexProperty: true
-			}
+			},
+			bar: {type: "PropertyReference", defaultValue: "attribute:baz"},
+			baz: {type: "PropertyReference"}
 		});
 
-		assert.ok(!oPropertyHelper.getProperty("prop").hasOwnProperty("_propertyInfos"),
+		assert.ok(!oPropertyHelper.getProperty("prop").hasOwnProperty("propertyInfosProperties"),
 			"Complex property reference cache in a simple property");
-		assert.strictEqual(oPropertyHelper.getProperty("complexProp")._propertyInfos[0], oPropertyHelper.getProperty("prop"),
+		assert.ok(!oPropertyHelper.getProperty("prop2").hasOwnProperty("singleRefProperty"),
+			"Property reference cache if no reference defined");
+		assert.strictEqual(oPropertyHelper.getProperty("complexProp").propertyInfosProperties[0], oPropertyHelper.getProperty("prop"),
 			"Cached property reference of a complex property");
-		assert.strictEqual(oPropertyHelper.getProperty("complexProp").foo._bar[0], oPropertyHelper.getProperty("prop"),
+		assert.strictEqual(oPropertyHelper.getProperty("complexProp").foo.barProperties[0], oPropertyHelper.getProperty("prop"),
+			"Cached property reference array of default value");
+		assert.strictEqual(oPropertyHelper.getProperty("complexProp").foo.bazProperties[0], oPropertyHelper.getProperty("prop"),
+			"Cached property reference array of specified value");
+		assert.strictEqual(oPropertyHelper.getProperty("prop").barProperty, oPropertyHelper.getProperty("prop2"),
 			"Cached property reference of default value");
-		assert.strictEqual(oPropertyHelper.getProperty("complexProp").foo._baz[0], oPropertyHelper.getProperty("prop"),
+		assert.strictEqual(oPropertyHelper.getProperty("prop").bazProperty, oPropertyHelper.getProperty("prop2"),
 			"Cached property reference of specified value");
 	});
 
@@ -1375,8 +1413,11 @@ sap.ui.define([
 					object: {
 						object: {}
 					},
-					array: [{}]
-				}
+					array: [{}],
+					func: function() {}
+				},
+				singleRef: "otherProp",
+				multiRef: ["otherProp"]
 			}, {
 				name: "complexProp",
 				label: "Complex property",
@@ -1393,13 +1434,16 @@ sap.ui.define([
 					}
 				}
 			}, null, {
-				additionalAttribute: {type: "object"}
+				additionalAttribute: {type: "object"},
+				singleRef: {type: "PropertyReference"},
+				multiRef: {type: "PropertyReference[]"}
 			}, {
 				foo: {
 					type: {
 						bar: {type: "object"},
 						baz: {type: "string[]"},
-						propertyRef: {type: "PropertyReference[]"}
+						propertyRef: {type: "PropertyReference[]"},
+						singlePropertyRef: {type: "PropertyReference"}
 					}
 				}
 			});
@@ -1418,16 +1462,20 @@ sap.ui.define([
 		assert.ok(Object.isFrozen(oComplexProp), "Complex property is frozen");
 		assert.ok(Object.isFrozen(oOtherProp), "Simple property referenced by complex property is frozen");
 		assert.ok(Object.isFrozen(oComplexProp.propertyInfos), "Attribute 'propertyInfos' is frozen");
-		assert.ok(Object.isFrozen(oComplexProp._propertyInfos), "Cached property reference of complex property is frozen");
+		assert.ok(Object.isFrozen(oComplexProp.propertyInfosProperties), "Cached property reference of complex property is frozen");
+		assert.ok(Object.isFrozen(oComplexProp.propertyInfosProperties[0]), "Properties in cached property reference of complex property are frozen");
+		assert.ok(Object.isFrozen(oProp.singleRefProperty), "Single-reference cache is frozen");
+		assert.ok(Object.isFrozen(oProp.multiRefProperties), "Multi-reference cache is frozen");
+		assert.ok(Object.isFrozen(oProp.multiRefProperties[0]), "Properties in multi-reference cache are frozen");
 		assert.ok(Object.isFrozen(oProp.additionalAttribute), "Plain object attribute is frozen");
 		assert.ok(Object.isFrozen(oProp.additionalAttribute.object), "Plain object attribute: Nested object is frozen");
 		assert.ok(Object.isFrozen(oProp.additionalAttribute.object.object), "Plain object attribute: Deeply nested object is frozen");
 		assert.ok(Object.isFrozen(oProp.additionalAttribute.array), "Plain object attribute: Nested array is frozen");
 		assert.ok(Object.isFrozen(oProp.additionalAttribute.array[0]), "Plain object attribute: Object in nested array is frozen");
+		assert.ok(Object.isFrozen(oProp.additionalAttribute.func), "Function attribute is frozen");
 		assert.ok(Object.isFrozen(oProp.extension.foo), "Complex object attribute is frozen");
 		assert.ok(Object.isFrozen(oProp.extension.foo.bar), "Complex object attribute: Nested object is frozen");
 		assert.ok(Object.isFrozen(oProp.extension.foo.baz), "Complex object attribute: Nested array is frozen");
-		assert.ok(Object.isFrozen(oProp.extension.foo._propertyRef), "Complex object attribute: Cached property reference is frozen");
 	});
 
 	QUnit.test("Property info array", function(assert) {
@@ -1534,7 +1582,7 @@ sap.ui.define([
 			"The property array contains as many entries as there are properties");
 
 		this.aOriginalProperties.forEach(function(oOriginalProperty, iIndex) {
-			assert.strictEqual(aProperties[iIndex].getName(), oOriginalProperty.name,
+			assert.strictEqual(aProperties[iIndex].name, oOriginalProperty.name,
 				"The property array references the correct property at index " + iIndex);
 		});
 
@@ -1549,8 +1597,8 @@ sap.ui.define([
 			"The property map contains as many entries as there are properties");
 
 		this.aProperties.forEach(function(oProperty) {
-			assert.strictEqual(mProperties[oProperty.getName()], oProperty,
-				"The map references the correct property for the key '" + oProperty.getName() + "'");
+			assert.strictEqual(mProperties[oProperty.name], oProperty,
+				"The map references the correct property for the key '" + oProperty.name + "'");
 		});
 
 		this.oPropertyHelper.destroy();
@@ -1601,653 +1649,240 @@ sap.ui.define([
 		assert.strictEqual(this.oPropertyHelper.hasProperty("propA"), false, "After destruction");
 	});
 
-	QUnit.test("isComplex", function(assert) {
-		assert.strictEqual(this.oPropertyHelper.isComplex(), null, "No arguments");
-		assert.strictEqual(this.oPropertyHelper.isComplex({}), null, "Empty object");
-		assert.strictEqual(this.oPropertyHelper.isComplex("propA"), false, "Name of a simple property");
-		assert.strictEqual(this.oPropertyHelper.isComplex(this.aProperties[0]), null, "Simple property");
-		assert.strictEqual(this.oPropertyHelper.isComplex("complexPropA"), true, "Name of a complex property");
-		assert.strictEqual(this.oPropertyHelper.isComplex(this.aProperties[2]), null, "Complex property");
-		assert.strictEqual(this.oPropertyHelper.isComplex("unknownProp"), null, "Unknown property key");
-		assert.strictEqual(this.oPropertyHelper.isComplex({
-			name: "propA",
-			label: "Property"
-		}), null, "Unknown simple property");
-		assert.strictEqual(this.oPropertyHelper.isComplex({
-			name: "complexPropA",
-			label: "Complex Property",
-			propertyInfos: ["propA", "propB"]
-		}), null, "Unknown complex property");
-
-		this.oPropertyHelper.destroy();
-		assert.strictEqual(this.oPropertyHelper.isComplex("complexPropA"), null, "After destruction");
-	});
-
 	QUnit.test("isPropertyComplex", function(assert) {
-		assert.strictEqual(this.oPropertyHelper.isPropertyComplex(), false, "No arguments");
-		assert.strictEqual(this.oPropertyHelper.isPropertyComplex({}), false, "Empty object");
-		assert.strictEqual(this.oPropertyHelper.isPropertyComplex("propA"), false, "Name of a simple property");
-		assert.strictEqual(this.oPropertyHelper.isPropertyComplex(this.aProperties[0]), false, "Known simple property");
-		assert.strictEqual(this.oPropertyHelper.isPropertyComplex("complexPropA"), false, "Name of a complex property");
-		assert.strictEqual(this.oPropertyHelper.isPropertyComplex(this.aProperties[2]), true, "Known complex property");
-		assert.strictEqual(this.oPropertyHelper.isPropertyComplex("unknownProp"), false, "Unknown property key");
-		assert.strictEqual(this.oPropertyHelper.isPropertyComplex({
+		assert.strictEqual(_PropertyHelper.isPropertyComplex(), false, "No arguments");
+		assert.strictEqual(_PropertyHelper.isPropertyComplex({}), false, "Empty object");
+		assert.strictEqual(_PropertyHelper.isPropertyComplex("propA"), false, "Name of a simple property");
+		assert.strictEqual(_PropertyHelper.isPropertyComplex(this.aProperties[0]), false, "Known simple property");
+		assert.strictEqual(_PropertyHelper.isPropertyComplex("complexPropA"), false, "Name of a complex property");
+		assert.strictEqual(_PropertyHelper.isPropertyComplex(this.aProperties[2]), true, "Known complex property");
+		assert.strictEqual(_PropertyHelper.isPropertyComplex("unknownProp"), false, "Unknown property key");
+		assert.strictEqual(_PropertyHelper.isPropertyComplex({
 			name: "propA",
 			label: "Property"
 		}), false, "Unknown simple property");
-		assert.strictEqual(this.oPropertyHelper.isPropertyComplex({
+		assert.strictEqual(_PropertyHelper.isPropertyComplex({
 			name: "complexPropA",
 			label: "Complex Property",
 			propertyInfos: ["propA", "propB"]
 		}), true, "Unknown complex property");
 
 		this.oPropertyHelper.destroy();
-		assert.strictEqual(this.oPropertyHelper.isPropertyComplex({
+		assert.strictEqual(_PropertyHelper.isPropertyComplex({
 			name: "complexPropA",
 			label: "Complex Property",
 			propertyInfos: ["propA", "propB"]
 		}), true, "After destruction");
 	});
 
-	QUnit.test("getReferencedProperties", function(assert) {
-		assert.deepEqual(this.oPropertyHelper.getReferencedProperties(), [], "No arguments");
-		assert.deepEqual(this.oPropertyHelper.getReferencedProperties({}), [], "Empty object");
-		assert.deepEqual(this.oPropertyHelper.getReferencedProperties("propA"), [], "Name of a simple property");
-		assert.deepEqual(this.oPropertyHelper.getReferencedProperties(this.aProperties[0]), [], "Simple property");
-		assert.deepEqual(this.oPropertyHelper.getReferencedProperties("complexPropA"), [
-			this.aProperties[0], this.aProperties[1]
-		], "Name of a complex property");
-		assert.deepEqual(this.oPropertyHelper.getReferencedProperties(this.aProperties[2]), [], "Complex property");
-		assert.deepEqual(this.oPropertyHelper.getReferencedProperties("unknownProp"), [], "Unknown property key");
-		assert.deepEqual(this.oPropertyHelper.getReferencedProperties({
-			name: "propA",
-			label: "Property"
-		}), [], "Unknown simple property");
-		assert.deepEqual(this.oPropertyHelper.getReferencedProperties({
-			name: "complexPropA",
-			label: "Complex Property",
-			propertyInfos: ["propA", "propB"]
-		}), [], "Unknown complex property");
-
-		this.oPropertyHelper.destroy();
-		assert.deepEqual(this.oPropertyHelper.getReferencedProperties("complexPropA"), [], "After destruction");
-	});
-
-	QUnit.test("getUnitProperty", function(assert) {
-		assert.deepEqual(this.oPropertyHelper.getUnitProperty(), null, "No arguments");
-		assert.deepEqual(this.oPropertyHelper.getUnitProperty({}), null, "Empty object");
-		assert.deepEqual(this.oPropertyHelper.getUnitProperty("propA"), this.aProperties[1], "Name of a simple property");
-		assert.deepEqual(this.oPropertyHelper.getUnitProperty(this.aProperties[0]), null, "Simple property");
-		assert.deepEqual(this.oPropertyHelper.getUnitProperty("complexPropA"), null, "Name of a complex property");
-		assert.deepEqual(this.oPropertyHelper.getUnitProperty(this.aProperties[2]), null, "Complex property");
-		assert.deepEqual(this.oPropertyHelper.getUnitProperty("unknownProp"), null, "Unknown property key");
-		assert.deepEqual(this.oPropertyHelper.getUnitProperty({
-			name: "propA",
-			label: "Property",
-			unit: "propB"
-		}), null, "Unknown simple property");
-		assert.deepEqual(this.oPropertyHelper.getUnitProperty({
-			name: "complexPropA",
-			label: "Complex Property",
-			unit: "propB",
-			propertyInfos: ["propA", "propB"]
-		}), null, "Unknown complex property");
-
-		this.oPropertyHelper.destroy();
-		assert.deepEqual(this.oPropertyHelper.getUnitProperty("propA"), null, "After destruction");
-	});
-
-	QUnit.test("isSortable", function(assert) {
-		assert.strictEqual(this.oPropertyHelper.isSortable(), null, "No arguments");
-		assert.strictEqual(this.oPropertyHelper.isSortable({}), null, "Empty object");
-		assert.strictEqual(this.oPropertyHelper.isSortable("propA"), true, "Name of a sortable simple property");
-		assert.strictEqual(this.oPropertyHelper.isSortable(this.aProperties[0]), null, "Sortable simple property");
-		assert.strictEqual(this.oPropertyHelper.isSortable("complexPropA"), false,
-			"Name of a complex property referencing sortable properties");
-		assert.strictEqual(this.oPropertyHelper.isSortable(this.aProperties[2]), null, "Complex property referencing sortable properties");
-		assert.strictEqual(this.oPropertyHelper.isSortable("propB"), false, "Name of a non-sortable simple property");
-		assert.strictEqual(this.oPropertyHelper.isSortable(this.aProperties[1]), null, "Non-sortable simple property");
-		assert.strictEqual(this.oPropertyHelper.isSortable("complexPropB"), false,
-			"Name of a complex property referencing non-sortable properties");
-		assert.strictEqual(this.oPropertyHelper.isSortable(this.aProperties[3]), null, "Complex property referencing non-sortable properties");
-		assert.strictEqual(this.oPropertyHelper.isSortable("unknownProp"), null, "Unknown property key");
-		assert.strictEqual(this.oPropertyHelper.isSortable({
-			name: "propA",
-			label: "Property"
-		}), null, "Unknown simple property");
-		assert.strictEqual(this.oPropertyHelper.isSortable({
-			name: "complexPropA",
-			label: "Complex Property",
-			propertyInfos: ["propA", "propB"]
-		}), null, "Unknown complex property");
-
-		this.oPropertyHelper.destroy();
-		assert.strictEqual(this.oPropertyHelper.isSortable("propA"), null, "After destruction");
-	});
-
 	QUnit.test("getSortableProperties", function(assert) {
-		assert.deepEqual(this.oPropertyHelper.getSortableProperties(), [], "No arguments");
-		assert.deepEqual(this.oPropertyHelper.getSortableProperties({}), [], "Empty object");
-		assert.deepEqual(this.oPropertyHelper.getSortableProperties("propA"), [this.aProperties[0]], "Name of a sortable simple property");
-		assert.deepEqual(this.oPropertyHelper.getSortableProperties(this.aProperties[0]), [], "Sortable simple property");
-		assert.deepEqual(this.oPropertyHelper.getSortableProperties("complexPropA"), [
-			this.aProperties[0]
-		], "Name of a complex property referencing sortable properties");
-		assert.deepEqual(this.oPropertyHelper.getSortableProperties(this.aProperties[2]), [], "Complex property referencing sortable properties");
-		assert.deepEqual(this.oPropertyHelper.getSortableProperties("propB"), [], "Name of a non-sortable simple property");
-		assert.deepEqual(this.oPropertyHelper.getSortableProperties(this.aProperties[1]), [], "Non-sortable simple property");
-		assert.deepEqual(this.oPropertyHelper.getSortableProperties("complexPropB"), [],
-			"Name of a complex property referencing non-sortable properties");
-		assert.deepEqual(this.oPropertyHelper.getSortableProperties(this.aProperties[3]), [], "Complex property referencing non-sortable properties");
-		assert.deepEqual(this.oPropertyHelper.getSortableProperties("unknownProp"), [], "Unknown property key");
-		assert.deepEqual(this.oPropertyHelper.getSortableProperties({
-			name: "propA",
-			label: "Property"
-		}), [], "Unknown simple property");
-		assert.deepEqual(this.oPropertyHelper.getSortableProperties({
-			name: "complexPropA",
-			label: "Complex Property",
-			propertyInfos: ["propA", "propB"]
-		}), [], "Unknown complex property");
-
-		this.oPropertyHelper.destroy();
-		assert.deepEqual(this.oPropertyHelper.getSortableProperties("propA"), [], "After destruction");
-	});
-
-	QUnit.test("getAllSortableProperties", function(assert) {
-		assert.deepEqual(this.oPropertyHelper.getAllSortableProperties(), [
+		assert.deepEqual(this.oPropertyHelper.getSortableProperties(), [
 			this.aProperties[0]
 		]);
 
 		this.oPropertyHelper.destroy();
-		assert.deepEqual(this.oPropertyHelper.getAllSortableProperties(), [], "After destruction");
-	});
-
-	QUnit.test("isFilterable", function(assert) {
-		assert.strictEqual(this.oPropertyHelper.isFilterable(), null, "No arguments");
-		assert.strictEqual(this.oPropertyHelper.isFilterable({}), null, "Empty object");
-		assert.strictEqual(this.oPropertyHelper.isFilterable("propA"), true, "Name of a filterable simple property");
-		assert.strictEqual(this.oPropertyHelper.isFilterable(this.aProperties[0]), null, "Filterable simple property");
-		assert.strictEqual(this.oPropertyHelper.isFilterable("complexPropA"), false,
-			"Name of a complex property referencing filterable properties");
-		assert.strictEqual(this.oPropertyHelper.isFilterable(this.aProperties[2]), null, "Complex property referencing sortable properties");
-		assert.strictEqual(this.oPropertyHelper.isFilterable("propB"), false, "Name of a non-filterable simple property");
-		assert.strictEqual(this.oPropertyHelper.isFilterable(this.aProperties[1]), null, "Non-filterable simple property");
-		assert.strictEqual(this.oPropertyHelper.isFilterable("complexPropB"), false,
-			"Name of a complex property referencing non-filterable properties");
-		assert.strictEqual(this.oPropertyHelper.isFilterable(this.aProperties[3]), null, "Complex property referencing non-filterable properties");
-		assert.strictEqual(this.oPropertyHelper.isFilterable("unknownProp"), null, "Unknown property key");
-		assert.strictEqual(this.oPropertyHelper.isFilterable({
-			name: "propA",
-			label: "Property"
-		}), null, "Unknown simple property");
-		assert.strictEqual(this.oPropertyHelper.isFilterable({
-			name: "complexPropA",
-			label: "Complex Property",
-			propertyInfos: ["propA", "propB"]
-		}), null, "Unknown complex property");
-
-		this.oPropertyHelper.destroy();
-		assert.strictEqual(this.oPropertyHelper.isFilterable("propA"), null, "After destruction");
+		assert.deepEqual(this.oPropertyHelper.getSortableProperties(), [], "After destruction");
 	});
 
 	QUnit.test("getFilterableProperties", function(assert) {
-		assert.deepEqual(this.oPropertyHelper.getFilterableProperties(), [], "No arguments");
-		assert.deepEqual(this.oPropertyHelper.getFilterableProperties({}), [], "Empty object");
-		assert.deepEqual(this.oPropertyHelper.getFilterableProperties("propA"), [this.aProperties[0]], "Name of a filterable simple property");
-		assert.deepEqual(this.oPropertyHelper.getFilterableProperties(this.aProperties[0]), [], "Filterable simple property");
-		assert.deepEqual(this.oPropertyHelper.getFilterableProperties("complexPropA"), [
-			this.aProperties[0]
-		], "Name of a complex property referencing filterable properties");
-		assert.deepEqual(this.oPropertyHelper.getFilterableProperties(this.aProperties[2]), [], "Complex property referencing filterable properties");
-		assert.deepEqual(this.oPropertyHelper.getFilterableProperties("propB"), [], "Name of a non-filterable simple property");
-		assert.deepEqual(this.oPropertyHelper.getFilterableProperties(this.aProperties[1]), [], "Non-filterable simple property");
-		assert.deepEqual(this.oPropertyHelper.getFilterableProperties("complexPropB"), [],
-			"Name of a complex property referencing non-filterable properties");
-		assert.deepEqual(this.oPropertyHelper.getFilterableProperties(this.aProperties[3]), [],
-			"Complex property referencing non-filterable properties");
-		assert.deepEqual(this.oPropertyHelper.getFilterableProperties("unknownProp"), [], "Unknown property key");
-		assert.deepEqual(this.oPropertyHelper.getFilterableProperties({
-			name: "propA",
-			label: "Property"
-		}), [], "Unknown simple property");
-		assert.deepEqual(this.oPropertyHelper.getFilterableProperties({
-			name: "complexPropA",
-			label: "Complex Property",
-			propertyInfos: ["propA", "propB"]
-		}), [], "Unknown complex property");
-
-		this.oPropertyHelper.destroy();
-		assert.deepEqual(this.oPropertyHelper.getFilterableProperties("propA"), [], "After destruction");
-	});
-
-	QUnit.test("getAllFilterableProperties", function(assert) {
-		assert.deepEqual(this.oPropertyHelper.getAllFilterableProperties(), [
+		assert.deepEqual(this.oPropertyHelper.getFilterableProperties(), [
 			this.aProperties[0]
 		]);
 
 		this.oPropertyHelper.destroy();
-		assert.deepEqual(this.oPropertyHelper.getAllFilterableProperties(), [], "After destruction");
+		assert.deepEqual(this.oPropertyHelper.getFilterableProperties(), [], "After destruction");
 	});
 
-	QUnit.test("getLabel", function(assert) {
-		assert.strictEqual(this.oPropertyHelper.getLabel(), null, "No arguments");
-		assert.strictEqual(this.oPropertyHelper.getLabel({}), null, "Empty object");
-		assert.strictEqual(this.oPropertyHelper.getLabel("propA"), "Property A", "Name of a simple property");
-		assert.strictEqual(this.oPropertyHelper.getLabel(this.aProperties[0]), null, "Simple property");
-		assert.strictEqual(this.oPropertyHelper.getLabel("complexPropA"), "Complex Property A", "Name of a complex property");
-		assert.strictEqual(this.oPropertyHelper.getLabel(this.aProperties[2]), null, "Complex property");
-		assert.strictEqual(this.oPropertyHelper.getLabel("unknownProp"), null, "Unknown property key");
-		assert.strictEqual(this.oPropertyHelper.getLabel({
-			name: "propA",
-			label: "Property"
-		}), null, "Unknown simple property");
-		assert.strictEqual(this.oPropertyHelper.getLabel({
-			name: "complexPropA",
-			label: "Complex Property",
-			propertyInfos: ["propA", "propB"]
-		}), null, "Unknown complex property");
-
-		this.oPropertyHelper.destroy();
-		assert.strictEqual(this.oPropertyHelper.getLabel("propA"), null, "After destruction");
-	});
-
-	QUnit.test("getGroupLabel", function(assert) {
-		assert.strictEqual(this.oPropertyHelper.getGroupLabel(), null, "No arguments");
-		assert.strictEqual(this.oPropertyHelper.getGroupLabel({}), null, "Empty object");
-		assert.strictEqual(this.oPropertyHelper.getGroupLabel("propA"), "Property A group label", "Name of a simple property");
-		assert.strictEqual(this.oPropertyHelper.getGroupLabel(this.aProperties[0]), null, "Simple property");
-		assert.strictEqual(this.oPropertyHelper.getGroupLabel("complexPropA"), "Complex Property A group label", "Name of a complex property");
-		assert.strictEqual(this.oPropertyHelper.getGroupLabel(this.aProperties[2]), null, "Complex property");
-		assert.strictEqual(this.oPropertyHelper.getGroupLabel("propB"), "", "Name of a simple property without a group label");
-		assert.strictEqual(this.oPropertyHelper.getGroupLabel(this.aProperties[1]), null, "Simple property without a group label");
-		assert.strictEqual(this.oPropertyHelper.getGroupLabel("complexPropB"), "", "Name of a complex property without a group label");
-		assert.strictEqual(this.oPropertyHelper.getGroupLabel(this.aProperties[3]), null, "Complex property without a group label");
-		assert.strictEqual(this.oPropertyHelper.getGroupLabel("unknownProp"), null, "Unknown property key");
-		assert.strictEqual(this.oPropertyHelper.getGroupLabel({
-			name: "propA",
-			label: "Property",
-			groupLabel: "something"
-		}), null, "Unknown simple property");
-		assert.strictEqual(this.oPropertyHelper.getGroupLabel({
-			name: "complexPropA",
-			label: "Complex Property",
-			propertyInfos: ["propA", "propB"],
-			groupLabel: "something"
-		}), null, "Unknown complex property");
-
-		this.oPropertyHelper.destroy();
-		assert.strictEqual(this.oPropertyHelper.getGroupLabel("propA"), null, "After destruction");
-	});
-
-	QUnit.test("getPath", function(assert) {
-		assert.strictEqual(this.oPropertyHelper.getPath(), null, "No arguments");
-		assert.strictEqual(this.oPropertyHelper.getPath({}), null, "Empty object");
-		assert.strictEqual(this.oPropertyHelper.getPath("propA"), "propAPath", "Name of a simple property");
-		assert.strictEqual(this.oPropertyHelper.getPath(this.aProperties[0]), null, "Simple property");
-		assert.strictEqual(this.oPropertyHelper.getPath("complexPropA"), null, "Name of a complex property");
-		assert.strictEqual(this.oPropertyHelper.getPath(this.aProperties[2]), null, "Complex property");
-		assert.strictEqual(this.oPropertyHelper.getPath("propB"), "", "Name of a simple property without a path");
-		assert.strictEqual(this.oPropertyHelper.getPath(this.aProperties[1]), null, "Simple property without a path");
-		assert.strictEqual(this.oPropertyHelper.getPath("unknownProp"), null, "Unknown property key");
-		assert.strictEqual(this.oPropertyHelper.getPath({
-			name: "propA",
-			label: "Property",
-			path: "propPath"
-		}), null, "Unknown simple property");
-		assert.strictEqual(this.oPropertyHelper.getPath({
-			name: "complexPropA",
-			label: "Complex Property",
-			propertyInfos: ["propA", "propB"]
-		}), null, "Unknown complex property");
-
-		this.oPropertyHelper.destroy();
-		assert.strictEqual(this.oPropertyHelper.getPath("propA"), null, "After destruction");
-	});
-
-	QUnit.test("isKey", function(assert) {
-		assert.strictEqual(this.oPropertyHelper.isKey(), null, "No arguments");
-		assert.strictEqual(this.oPropertyHelper.isKey({}), null, "Empty object");
-		assert.strictEqual(this.oPropertyHelper.isKey("propA"), true, "Name of a simple property being a key");
-		assert.strictEqual(this.oPropertyHelper.isKey(this.aProperties[0]), null, "Simple property being a key");
-		assert.strictEqual(this.oPropertyHelper.isKey("complexPropA"), false, "Name of a complex property");
-		assert.strictEqual(this.oPropertyHelper.isKey(this.aProperties[2]), null, "Complex property");
-		assert.strictEqual(this.oPropertyHelper.isKey("propB"), false, "Name of a simple property not being a key");
-		assert.strictEqual(this.oPropertyHelper.isKey(this.aProperties[1]), null, "Simple property not being a key");
-		assert.strictEqual(this.oPropertyHelper.isKey("complexPropB"), false, "Name of a complex property");
-		assert.strictEqual(this.oPropertyHelper.isKey(this.aProperties[3]), null, "Complex property");
-		assert.strictEqual(this.oPropertyHelper.isKey("unknownProp"), null, "Unknown property key");
-		assert.strictEqual(this.oPropertyHelper.isKey({
-			name: "propA",
-			label: "Property"
-		}), null, "Unknown simple property");
-		assert.strictEqual(this.oPropertyHelper.isKey({
-			name: "complexPropA",
-			label: "Complex Property",
-			propertyInfos: ["propA", "propB"]
-		}), null, "Unknown complex property");
-
-		this.oPropertyHelper.destroy();
-		assert.strictEqual(this.oPropertyHelper.isKey("propA"), null, "After destruction");
-	});
-
-	QUnit.test("getAllKeyProperties", function(assert) {
-		assert.deepEqual(this.oPropertyHelper.getAllKeyProperties(), [
+	QUnit.test("getKeyProperties", function(assert) {
+		assert.deepEqual(this.oPropertyHelper.getKeyProperties(), [
 			this.aProperties[0]
 		]);
 
 		this.oPropertyHelper.destroy();
-		assert.deepEqual(this.oPropertyHelper.getAllKeyProperties(), [], "After destruction");
-	});
-
-	QUnit.test("isVisible", function(assert) {
-		assert.strictEqual(this.oPropertyHelper.isVisible(), null, "No arguments");
-		assert.strictEqual(this.oPropertyHelper.isVisible({}), null, "Empty object");
-		assert.strictEqual(this.oPropertyHelper.isVisible("propA"), true, "Name of a visible simple property");
-		assert.strictEqual(this.oPropertyHelper.isVisible(this.aProperties[0]), null, "Visible simple property");
-		assert.strictEqual(this.oPropertyHelper.isVisible("complexPropA"), true, "Name of a visible complex property");
-		assert.strictEqual(this.oPropertyHelper.isVisible(this.aProperties[2]), null, "Visible complex property");
-		assert.strictEqual(this.oPropertyHelper.isVisible("propB"), false, "Name of an invisible simple property");
-		assert.strictEqual(this.oPropertyHelper.isVisible(this.aProperties[1]), null, "Invisible simple property");
-		assert.strictEqual(this.oPropertyHelper.isVisible("complexPropB"), false, "Name of an invisible complex property");
-		assert.strictEqual(this.oPropertyHelper.isVisible(this.aProperties[3]), null, "Invisible complex property");
-		assert.strictEqual(this.oPropertyHelper.isVisible("complexPropC"), true, "Name of a visible complex property referencing invisible properties");
-		assert.strictEqual(this.oPropertyHelper.isVisible(this.aProperties[4]), null, "Visible complex property referencing invisible properties");
-		assert.strictEqual(this.oPropertyHelper.isVisible("unknownProp"), null, "Unknown property key");
-		assert.strictEqual(this.oPropertyHelper.isVisible({
-			name: "propA",
-			label: "Property"
-		}), null, "Unknown simple property");
-		assert.strictEqual(this.oPropertyHelper.isVisible({
-			name: "complexPropA",
-			label: "Complex Property",
-			propertyInfos: ["propA", "propB"]
-		}), null, "Unknown complex property");
-
-		this.oPropertyHelper.destroy();
-		assert.strictEqual(this.oPropertyHelper.isVisible("propA"), null, "After destruction");
+		assert.deepEqual(this.oPropertyHelper.getKeyProperties(), [], "After destruction");
 	});
 
 	QUnit.test("getVisibleProperties", function(assert) {
-		assert.deepEqual(this.oPropertyHelper.getVisibleProperties(), [], "No arguments");
-		assert.deepEqual(this.oPropertyHelper.getVisibleProperties({}), [], "Empty object");
-		assert.deepEqual(this.oPropertyHelper.getVisibleProperties("propA"), [this.aProperties[0]], "Name of a visible simple property");
-		assert.deepEqual(this.oPropertyHelper.getVisibleProperties(this.aProperties[0]), [], "Visible simple property");
-		assert.deepEqual(this.oPropertyHelper.getVisibleProperties("complexPropA"), [
-			this.aProperties[0]
-		], "Name of a visible complex property referencing visible properties");
-		assert.deepEqual(this.oPropertyHelper.getVisibleProperties(this.aProperties[2]), [],
-			"Visible complex property referencing visible properties");
-		assert.deepEqual(this.oPropertyHelper.getVisibleProperties("complexPropC"), [],
-			"Name of a visible complex property referencing invisible properties");
-		assert.deepEqual(this.oPropertyHelper.getVisibleProperties(this.aProperties[4]), [],
-			"Visible complex property referencing invisible properties");
-		assert.deepEqual(this.oPropertyHelper.getVisibleProperties("propB"), [], "Name of an invisible simple property");
-		assert.deepEqual(this.oPropertyHelper.getVisibleProperties(this.aProperties[1]), [], "Invisible simple property");
-		assert.deepEqual(this.oPropertyHelper.getVisibleProperties("complexPropD"), [
-			this.aProperties[0]
-		], "Name of an invisible complex property referencing visible properties");
-		assert.deepEqual(this.oPropertyHelper.getVisibleProperties(this.aProperties[5]), [],
-			"Invisible complex property referencing visible properties");
-		assert.deepEqual(this.oPropertyHelper.getVisibleProperties("complexPropB"), [],
-			"Name of an invisible complex property referencing invisible properties");
-		assert.deepEqual(this.oPropertyHelper.getVisibleProperties(this.aProperties[3]), [],
-			"Invisible complex property referencing invisible properties");
-		assert.deepEqual(this.oPropertyHelper.getVisibleProperties("unknownProp"), [], "Unknown property key");
-		assert.deepEqual(this.oPropertyHelper.getVisibleProperties({
-			name: "propA",
-			label: "Property"
-		}), [], "Unknown simple property");
-		assert.deepEqual(this.oPropertyHelper.getVisibleProperties({
-			name: "complexPropA",
-			label: "Complex Property",
-			propertyInfos: ["propA", "propB"]
-		}), [], "Unknown complex property");
-
-		this.oPropertyHelper.destroy();
-		assert.deepEqual(this.oPropertyHelper.getVisibleProperties("propA"), [], "After destruction");
-	});
-
-	QUnit.test("getAllVisibleProperties", function(assert) {
-		assert.deepEqual(this.oPropertyHelper.getAllVisibleProperties(), [
+		assert.deepEqual(this.oPropertyHelper.getVisibleProperties(), [
 			this.aProperties[0],
 			this.aProperties[2],
 			this.aProperties[4]
 		]);
 
 		this.oPropertyHelper.destroy();
-		assert.deepEqual(this.oPropertyHelper.getAllVisibleProperties(), [], "After destruction");
-	});
-
-	QUnit.test("isGroupable", function(assert) {
-		assert.strictEqual(this.oPropertyHelper.isGroupable(), null, "No arguments");
-		assert.strictEqual(this.oPropertyHelper.isGroupable({}), null, "Empty object");
-		assert.strictEqual(this.oPropertyHelper.isGroupable("propA"), true, "Name of a groupable simple property");
-		assert.strictEqual(this.oPropertyHelper.isGroupable(this.aProperties[0]), null, "Groupable simple property");
-		assert.strictEqual(this.oPropertyHelper.isGroupable("complexPropA"), false,
-			"Name of a complex property referencing groupable properties");
-		assert.strictEqual(this.oPropertyHelper.isGroupable(this.aProperties[2]), null, "Complex property referencing groupable properties");
-		assert.strictEqual(this.oPropertyHelper.isGroupable("propB"), false, "Name of a non-groupable simple property");
-		assert.strictEqual(this.oPropertyHelper.isGroupable(this.aProperties[1]), null, "Non-groupable simple property");
-		assert.strictEqual(this.oPropertyHelper.isGroupable("complexPropB"), false,
-			"Name of a complex property referencing non-groupable properties");
-		assert.strictEqual(this.oPropertyHelper.isGroupable(this.aProperties[3]), null, "Complex property referencing non-groupable properties");
-		assert.strictEqual(this.oPropertyHelper.isGroupable("unknownProp"), null, "Unknown property key");
-		assert.strictEqual(this.oPropertyHelper.isGroupable({
-			name: "propA",
-			label: "Property"
-		}), null, "Unknown simple property");
-		assert.strictEqual(this.oPropertyHelper.isGroupable({
-			name: "complexPropA",
-			label: "Complex Property",
-			propertyInfos: ["propA", "propB"]
-		}), null, "Unknown complex property");
-
-		this.oPropertyHelper.destroy();
-		assert.strictEqual(this.oPropertyHelper.isGroupable("propA"), null, "After destruction");
+		assert.deepEqual(this.oPropertyHelper.getVisibleProperties(), [], "After destruction");
 	});
 
 	QUnit.test("getGroupableProperties", function(assert) {
-		assert.deepEqual(this.oPropertyHelper.getGroupableProperties(), [], "No arguments");
-		assert.deepEqual(this.oPropertyHelper.getGroupableProperties({}), [], "Empty object");
-		assert.deepEqual(this.oPropertyHelper.getGroupableProperties("propA"), [this.aProperties[0]], "Name of a groupable simple property");
-		assert.deepEqual(this.oPropertyHelper.getGroupableProperties(this.aProperties[0]), [], "Groupable simple property");
-		assert.deepEqual(this.oPropertyHelper.getGroupableProperties("complexPropA"), [
-			this.aProperties[0]
-		], "Name of a complex property referencing groupable properties");
-		assert.deepEqual(this.oPropertyHelper.getGroupableProperties(this.aProperties[2]), [], "Complex property referencing groupable properties");
-		assert.deepEqual(this.oPropertyHelper.getGroupableProperties("propB"), [], "Name of a non-groupable simple property");
-		assert.deepEqual(this.oPropertyHelper.getGroupableProperties(this.aProperties[1]), [], "Non-groupable simple property");
-		assert.deepEqual(this.oPropertyHelper.getGroupableProperties("complexPropB"), [],
-			"Name of a complex property referencing non-groupable properties");
-		assert.deepEqual(this.oPropertyHelper.getGroupableProperties(this.aProperties[3]), [],
-			"Complex property referencing non-groupable properties");
-		assert.deepEqual(this.oPropertyHelper.getGroupableProperties("unknownProp"), [], "Unknown property key");
-		assert.deepEqual(this.oPropertyHelper.getGroupableProperties({
-			name: "propA",
-			label: "Property"
-		}), [], "Unknown simple property");
-		assert.deepEqual(this.oPropertyHelper.getGroupableProperties({
-			name: "complexPropA",
-			label: "Complex Property",
-			propertyInfos: ["propA", "propB"]
-		}), [], "Unknown complex property");
-
-		this.oPropertyHelper.destroy();
-		assert.deepEqual(this.oPropertyHelper.getGroupableProperties("propA"), [], "After destruction");
-	});
-
-	QUnit.test("getAllGroupableProperties", function(assert) {
-		assert.deepEqual(this.oPropertyHelper.getAllGroupableProperties(), [
+		assert.deepEqual(this.oPropertyHelper.getGroupableProperties(), [
 			this.aProperties[0]
 		]);
 
 		this.oPropertyHelper.destroy();
-		assert.deepEqual(this.oPropertyHelper.getAllGroupableProperties(), [], "After destruction");
-	});
-
-	QUnit.test("getName", function(assert) {
-		assert.strictEqual(this.oPropertyHelper.getName(), null, "No arguments");
-		assert.strictEqual(this.oPropertyHelper.getName({}), null, "Empty object");
-		assert.strictEqual(this.oPropertyHelper.getName("propA"), "propA", "Name of a simple property");
-		assert.strictEqual(this.oPropertyHelper.getName(this.aProperties[0]), null, "Simple property");
-		assert.strictEqual(this.oPropertyHelper.getName("complexPropA"), "complexPropA", "Name of a complex property");
-		assert.strictEqual(this.oPropertyHelper.getName(this.aProperties[2]), null, "Complex property");
-		assert.strictEqual(this.oPropertyHelper.getName("unknownProp"), null, "Unknown property key");
-		assert.strictEqual(this.oPropertyHelper.getName({
-			name: "propA",
-			label: "Property"
-		}), null, "Unknown simple property");
-		assert.strictEqual(this.oPropertyHelper.getName({
-			name: "complexPropA",
-			label: "Complex Property",
-			propertyInfos: ["propA", "propB"]
-		}), null, "Unknown complex property");
-
-		this.oPropertyHelper.destroy();
-		assert.strictEqual(this.oPropertyHelper.getName("propA"), null, "After destruction");
-	});
-
-	QUnit.test("getExportSettings", function(assert) {
-		assert.strictEqual(this.oPropertyHelper.getExportSettings(), null, "No arguments");
-		assert.strictEqual(this.oPropertyHelper.getExportSettings({}), null, "Empty object");
-		assert.deepEqual(this.oPropertyHelper.getExportSettings("propA"), {
-			width: 20,
-			label: "Property A export label"
-		}, "Name of a simple property");
-		assert.deepEqual(this.oPropertyHelper.getExportSettings(this.aProperties[0]), null, "Simple property");
-		assert.deepEqual(this.oPropertyHelper.getExportSettings("complexPropA"), {
-			width: 30,
-			label: "Complex Property A export label"
-		}, "Name of a complex property");
-		assert.deepEqual(this.oPropertyHelper.getExportSettings(this.aProperties[2]), null, "Complex property");
-		assert.strictEqual(this.oPropertyHelper.getExportSettings("propB"), null, "Name of a simple property without export settings");
-		assert.strictEqual(this.oPropertyHelper.getExportSettings(this.aProperties[1]), null, "Simple property without export settings");
-		assert.strictEqual(this.oPropertyHelper.getExportSettings("complexPropB"), null, "Name of a complex property without export settings");
-		assert.strictEqual(this.oPropertyHelper.getExportSettings(this.aProperties[3]), null, "Complex property without export settings");
-		assert.strictEqual(this.oPropertyHelper.getExportSettings("unknownProp"), null, "Unknown property key");
-		assert.strictEqual(this.oPropertyHelper.getExportSettings({
-			name: "propA",
-			label: "Property",
-			exportSettings: {
-				width: 11,
-				label: "Export label"
-			}
-		}), null, "Unknown simple property");
-		assert.strictEqual(this.oPropertyHelper.getExportSettings({
-			name: "complexPropA",
-			label: "Complex Property",
-			propertyInfos: ["propA", "propB"],
-			exportSettings: {
-				width: 11,
-				label: "Export label"
-			}
-		}), null, "Unknown complex property");
-
-		this.oPropertyHelper.destroy();
-		assert.strictEqual(this.oPropertyHelper.getExportSettings("propA"), null, "After destruction");
-	});
-
-	QUnit.test("getMaxConditions", function(assert) {
-		assert.strictEqual(this.oPropertyHelper.getMaxConditions(), null, "No arguments");
-		assert.strictEqual(this.oPropertyHelper.getMaxConditions({}), null, "Empty object");
-		assert.strictEqual(this.oPropertyHelper.getMaxConditions("propA"), 2, "Name of a simple property");
-		assert.strictEqual(this.oPropertyHelper.getMaxConditions(this.aProperties[0]), null, "Simple property");
-		assert.strictEqual(this.oPropertyHelper.getMaxConditions("complexPropA"), null, "Name of a complex property");
-		assert.strictEqual(this.oPropertyHelper.getMaxConditions(this.aProperties[2]), null, "Complex property");
-		assert.strictEqual(this.oPropertyHelper.getMaxConditions("unknownProp"), null, "Unknown property key");
-		assert.strictEqual(this.oPropertyHelper.getMaxConditions({
-			name: "propA",
-			label: "Property"
-		}), null, "Unknown simple property");
-		assert.strictEqual(this.oPropertyHelper.getMaxConditions({
-			name: "complexPropA",
-			label: "Complex Property",
-			propertyInfos: ["propA", "propB"]
-		}), null, "Unknown complex property");
-
-		this.oPropertyHelper.destroy();
-		assert.strictEqual(this.oPropertyHelper.getMaxConditions("propA"), null, "After destruction");
-	});
-
-	QUnit.test("getTypeConfig", function(assert) {
-		assert.strictEqual(this.oPropertyHelper.getTypeConfig(), null, "No arguments");
-		assert.strictEqual(this.oPropertyHelper.getTypeConfig({}), null, "Empty object");
-		assert.deepEqual(this.oPropertyHelper.getTypeConfig("propA"), this.oTypeConfig, "Name of a simple property");
-		assert.strictEqual(this.oPropertyHelper.getTypeConfig(this.aProperties[0]), null, "Simple property");
-		assert.strictEqual(this.oPropertyHelper.getTypeConfig("complexPropA"), null, "Name of a complex property");
-		assert.strictEqual(this.oPropertyHelper.getTypeConfig(this.aProperties[2]), null, "Complex property");
-		assert.strictEqual(this.oPropertyHelper.getTypeConfig("unknownProp"), null, "Unknown property key");
-		assert.strictEqual(this.oPropertyHelper.getTypeConfig({
-			name: "propA",
-			label: "Property"
-		}), null, "Unknown simple property");
-		assert.strictEqual(this.oPropertyHelper.getTypeConfig({
-			name: "complexPropA",
-			label: "Complex Property",
-			propertyInfos: ["propA", "propB"]
-		}), null, "Unknown complex property");
-
-		this.oPropertyHelper.destroy();
-		assert.strictEqual(this.oPropertyHelper.getTypeConfig("propA"), null, "After destruction");
+		assert.deepEqual(this.oPropertyHelper.getGroupableProperties(), [], "After destruction");
 	});
 
 	QUnit.module("Property", {
-		before: function() {
-			this.aExpectedMethods = [
-				"isComplex", "getReferencedProperties", "isSortable", "getSortableProperties", "isFilterable", "isKey", "getLabel", "getName",
-				"getFilterableProperties","getGroupLabel", "getPath", "isVisible", "getVisibleProperties", "getExportSettings", "getMaxConditions",
-				"getTypeConfig", "isGroupable", "getGroupableProperties", "getUnitProperty"
-			];
+		beforeEach: function() {
 			this.oPropertyHelper = new PropertyHelper([{
 				name: "prop",
-				label: "Property"
+				label: "Property",
+				groupable: true
+			}, {
+				name: "prop2",
+				label: "Property 2",
+				sortable: false,
+				filterable: false,
+				visible: false
 			}, {
 				name: "complexProp",
 				label: "Complex property",
 				propertyInfos: ["prop"]
+			}, {
+				name: "complexProp2",
+				label: "Complex property 2",
+				propertyInfos: ["prop2"]
+			}, {
+				name: "complexProp3",
+				label: "Complex property 3",
+				propertyInfos: ["prop"],
+				visible: false
+			}, {
+				name: "complexProp4",
+				label: "Complex property 4",
+				propertyInfos: ["prop2"],
+				visible: false
 			}]);
 		},
-		after: function() {
+		afterEach: function() {
 			this.oPropertyHelper.destroy();
 		},
 		assertProperty: function(assert, oProperty) {
+			var aExpectedMethods = [
+				"isComplex", "getReferencedProperties", "getSortableProperties", "getFilterableProperties", "getVisibleProperties",
+				"getGroupableProperties"
+			];
+			var aActualMethods = [];
+
 			assert.ok(Object.getPrototypeOf(oProperty) === Object.prototype, "The property inherits directly from Object");
 
-			for (var i = 0; i < this.aExpectedMethods.length; i++) {
-				var sMethod = this.aExpectedMethods[i];
-				assert.equal(typeof oProperty[sMethod], "function", "Has function '" + sMethod + "'");
-			}
-		},
-		assertCalls: function(assert, oProperty, sPropertyName) {
-			for (var i = 0; i < this.aExpectedMethods.length; i++) {
-				var sMethod = this.aExpectedMethods[i];
-				var oSpy = sinon.spy(this.oPropertyHelper, sMethod);
+			Object.getOwnPropertyNames(oProperty).forEach(function(sProperty) {
+				if (typeof oProperty[sProperty] === "function") {
+					aActualMethods.push(sProperty);
+				}
+			});
 
-				oProperty[sMethod]();
-				assert.ok(oSpy.calledOnceWithExactly(sPropertyName), "'" + sMethod + "' called once with the correct arguments");
-
-				oSpy.restore();
-			}
+			assert.deepEqual(aActualMethods.sort(), aExpectedMethods.sort(), "Methods");
 		}
 	});
 
 	QUnit.test("Simple property", function(assert) {
-		var oProperty = this.oPropertyHelper.getProperties()[0];
-		this.assertProperty(assert, oProperty);
-		this.assertCalls(assert, oProperty, "prop");
+		this.assertProperty(assert, this.oPropertyHelper.getProperties()[0]);
 	});
 
 	QUnit.test("Complex property", function(assert) {
-		var oProperty = this.oPropertyHelper.getProperties()[1];
-		this.assertProperty(assert, oProperty);
-		this.assertCalls(assert, oProperty, "complexProp");
+		this.assertProperty(assert, this.oPropertyHelper.getProperties()[1]);
 	});
 
 	QUnit.test("Property referenced by complex property", function(assert) {
-		var oProperty = this.oPropertyHelper.getProperties()[1].getReferencedProperties()[0];
-		this.assertProperty(assert, oProperty);
-		this.assertCalls(assert, oProperty, "prop");
+		this.assertProperty(assert, this.oPropertyHelper.getProperty("complexProp").getReferencedProperties()[0]);
+	});
+
+	QUnit.test("isComplex", function(assert) {
+		var oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
+
+		assert.strictEqual(this.oPropertyHelper.getProperty("prop").isComplex(), false, "Simple property");
+		assert.strictEqual(oComplexProperty.isComplex(), true, "Complex property");
+		assert.ok(Object.isFrozen(oComplexProperty.isComplex), "The function is frozen");
+
+		this.oPropertyHelper.destroy();
+		assert.strictEqual(oComplexProperty.isComplex(), true, "After destruction");
+	});
+
+	QUnit.test("getReferencedProperties", function(assert) {
+		var oSimpleProperty = this.oPropertyHelper.getProperty("prop");
+		var oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
+
+		assert.deepEqual(oSimpleProperty.getReferencedProperties(), [], "Simple property");
+		assert.deepEqual(oComplexProperty.getReferencedProperties(), [oSimpleProperty], "Complex property");
+		assert.ok(Object.isFrozen(oComplexProperty.getReferencedProperties), "The function 'getReferencedProperties' is frozen");
+		assert.ok(Object.isFrozen(oComplexProperty.getReferencedProperties()), "The array returned by 'getReferencedProperties' is frozen");
+		assert.ok(Object.isFrozen(oComplexProperty.getReferencedProperties()[0]), "Properties returned by 'getReferencedProperties' are frozen");
+
+		this.oPropertyHelper.destroy();
+		assert.deepEqual(oComplexProperty.getReferencedProperties(), [oSimpleProperty], "After destruction");
+	});
+
+	QUnit.test("getSortableProperties", function(assert) {
+		var oSimpleProperty = this.oPropertyHelper.getProperty("prop");
+		var oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
+
+		oSimpleProperty.getSortableProperties().push("s"); // Returned array must not be influenced by changes to previously returned arrays.
+		assert.deepEqual(oSimpleProperty.getSortableProperties(), [oSimpleProperty], "Sortable simple property");
+		assert.deepEqual(oComplexProperty.getSortableProperties(), [oSimpleProperty], "Complex property referencing sortable properties");
+		assert.deepEqual(this.oPropertyHelper.getProperty("prop2").getSortableProperties(), [], "Non-sortable simple property");
+		assert.deepEqual(this.oPropertyHelper.getProperty("complexProp2").getSortableProperties(), [],
+			"Complex property referencing non-sortable properties");
+		assert.ok(Object.isFrozen(oSimpleProperty.getSortableProperties), "The function is frozen");
+		assert.ok(Object.isFrozen(oSimpleProperty.getSortableProperties()[0]), "Returned properties are frozen");
+
+		this.oPropertyHelper.destroy();
+		assert.deepEqual(oComplexProperty.getSortableProperties(), [oSimpleProperty], "After destruction");
+	});
+
+	QUnit.test("getFilterableProperties", function(assert) {
+		var oSimpleProperty = this.oPropertyHelper.getProperty("prop");
+		var oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
+
+		oSimpleProperty.getFilterableProperties().push("s"); // Returned array must not be influenced by changes to previously returned arrays.
+		assert.deepEqual(oSimpleProperty.getFilterableProperties(), [oSimpleProperty], "Filterable simple property");
+		assert.deepEqual(oComplexProperty.getFilterableProperties(), [oSimpleProperty], "Complex property referencing filterable properties");
+		assert.deepEqual(this.oPropertyHelper.getProperty("prop2").getFilterableProperties(), [], "Non-filterable simple property");
+		assert.deepEqual(this.oPropertyHelper.getProperty("complexProp2").getFilterableProperties(), [],
+			"Complex property referencing non-filterable properties");
+		assert.ok(Object.isFrozen(oSimpleProperty.getFilterableProperties), "The function is frozen");
+		assert.ok(Object.isFrozen(oSimpleProperty.getFilterableProperties()[0]), "Returned properties are frozen");
+
+		this.oPropertyHelper.destroy();
+		assert.deepEqual(oComplexProperty.getFilterableProperties(), [oSimpleProperty], "After destruction");
+	});
+
+	QUnit.test("getGroupableProperties", function(assert) {
+		var oSimpleProperty = this.oPropertyHelper.getProperty("prop");
+		var oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
+
+		oSimpleProperty.getGroupableProperties().push("s"); // Returned array must not be influenced by changes to previously returned arrays.
+		assert.deepEqual(oSimpleProperty.getGroupableProperties(), [oSimpleProperty], "Groupable simple property");
+		assert.deepEqual(oComplexProperty.getGroupableProperties(), [oSimpleProperty], "Complex property referencing groupable properties");
+		assert.deepEqual(this.oPropertyHelper.getProperty("prop2").getGroupableProperties(), [], "Non-groupable simple property");
+		assert.deepEqual(this.oPropertyHelper.getProperty("complexProp2").getGroupableProperties(), [],
+			"Complex property referencing non-groupable properties");
+		assert.ok(Object.isFrozen(oSimpleProperty.getGroupableProperties), "The function is frozen");
+		assert.ok(Object.isFrozen(oSimpleProperty.getGroupableProperties()[0]), "Returned properties are frozen");
+
+		this.oPropertyHelper.destroy();
+		assert.deepEqual(oComplexProperty.getGroupableProperties(), [oSimpleProperty], "After destruction");
+	});
+
+	QUnit.test("getVisibleProperties", function(assert) {
+		var oSimpleProperty = this.oPropertyHelper.getProperty("prop");
+		var oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
+
+		oSimpleProperty.getVisibleProperties().push("s"); // Returned array must not be influenced by changes to previously returned arrays.
+		assert.deepEqual(oSimpleProperty.getVisibleProperties(), [oSimpleProperty], "Visible simple property");
+		assert.deepEqual(oComplexProperty.getVisibleProperties(), [oSimpleProperty], "Visible complex property referencing visible properties");
+		assert.deepEqual(this.oPropertyHelper.getProperty("complexProp2").getVisibleProperties(), [],
+			"Visible complex property referencing invisible properties");
+		assert.deepEqual(this.oPropertyHelper.getProperty("prop2").getVisibleProperties(), [], "Invisible simple property");
+		assert.deepEqual(this.oPropertyHelper.getProperty("complexProp3").getVisibleProperties(), [oSimpleProperty],
+			"Invisible complex property referencing visible properties");
+		assert.deepEqual(this.oPropertyHelper.getProperty("complexProp4").getVisibleProperties(), [],
+			"Invisible complex property referencing invisible properties");
+		assert.ok(Object.isFrozen(oSimpleProperty.getVisibleProperties), "The function is frozen");
+		assert.ok(Object.isFrozen(oSimpleProperty.getVisibleProperties()[0]), "Returned properties are frozen");
+
+		this.oPropertyHelper.destroy();
+		assert.deepEqual(oComplexProperty.getVisibleProperties(), [oSimpleProperty], "After destruction");
 	});
 
 	QUnit.module("Inheritance");
@@ -2293,22 +1928,15 @@ sap.ui.define([
 			label: "Complex property",
 			propertyInfos: ["prop"]
 		}];
-		var oCustomPropertyField = {prop: "value"};
+		var oCustomPropertyAttribute = {prop: "value"};
 		var MyPropertyHelper = PropertyHelper.extend("sap.ui.mdc.test.table.PropertyHelper", {
-			prepareProperty: function() {
-				var oProperty = arguments[0];
-
+			prepareProperty: function(oProperty) {
 				oPreparePropertySpy.apply(this, merge([], arguments));
 				PropertyHelper.prototype.prepareProperty.apply(this, arguments);
-
-				try {
-					oProperty.getName = function() {
-						return "getName modified";
-					};
-				} catch (e) {} //eslint-disable-line no-empty
-
-				oProperty.myName = oProperty.getName();
-				oProperty.myField = oCustomPropertyField;
+				oProperty.myAttribute = oCustomPropertyAttribute;
+				oProperty.myMethod = function() {return "MyMethod";};
+				oProperty.label = "label modified";
+				oProperty.isComplex = function() {return "isComplex modified";};
 			}
 		});
 		var oMyPropertyHelper = new MyPropertyHelper(aProperties);
@@ -2317,9 +1945,14 @@ sap.ui.define([
 		assert.equal(oPreparePropertySpy.callCount, 2, "#prepareProperty called twice");
 		assert.ok(oPreparePropertySpy.firstCall.calledWithExactly(aProperties[0]), "Arguments of first #prepareProperty call");
 		assert.ok(oPreparePropertySpy.secondCall.calledWithExactly(aProperties[1]), "Arguments of second #prepareProperty call");
-		assert.deepEqual(oProperty.myField, oCustomPropertyField, "Property is extensible");
-		assert.ok(Object.isFrozen(oProperty.myField), "Property extensions are frozen");
-		assert.strictEqual(oProperty.myName, "prop", "Default methods cannot be changed");
+		assert.deepEqual(oProperty.myAttribute, oCustomPropertyAttribute, "Attributes can be added");
+		assert.ok(Object.isFrozen(oProperty.myAttribute), "Added attributes are frozen");
+		assert.deepEqual(oProperty.myMethod(), "MyMethod", "Methods can be added");
+		assert.ok(Object.isFrozen(oProperty.myMethod), "Added methods are frozen");
+		assert.strictEqual(oProperty.label, "label modified", "Default attributes can be changed");
+		assert.ok(Object.isFrozen(oProperty.label), "Changed default attributes are frozen");
+		assert.strictEqual(oProperty.isComplex(), "isComplex modified", "Default methods can be changed");
+		assert.ok(Object.isFrozen(oProperty.isComplex), "Changed default methods are frozen");
 
 		oMyPropertyHelper.destroy();
 	});

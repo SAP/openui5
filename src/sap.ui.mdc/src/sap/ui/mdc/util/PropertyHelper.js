@@ -42,7 +42,7 @@ sap.ui.define([
 	 *     attribute. The default value of this attribute is then the value of the other attribute. This works only one level deep.
 	 *     Examples: "attribute:name", "attribute:attributeName.subAttributeName"
 	 */
-	var mAttributeMetadata = {
+	var mAttributeMetadata = { // TODO: "allowedForComplexProperty" propagation to children + reserved reference attribute, e.g. unit -> unitProperty
 		// Common
 		name: { // Unique key
 			type: "string", // TODO: sap.ui.core.ID cannot be used currently, because some OPA tests fail
@@ -59,7 +59,6 @@ sap.ui.define([
 			defaultValue: true,
 			allowedForComplexProperty: true
 		},
-		// TODO: Is there a valid use-case for name !== path? Can two properties having the same path cause problems (e.g. for sort/filter)?
 		path: { // The technical path for a data source property.
 			type: "string",
 			valueForComplexProperty: null
@@ -73,7 +72,6 @@ sap.ui.define([
 				baseType: {
 					type: "string"
 				},
-				// TODO: Avoid instances in property infos. Create them on demand, poss. in a getter.
 				typeInstance: {
 					type: "object" // sap.ui.model.SimpleType
 				}
@@ -153,8 +151,76 @@ sap.ui.define([
 		// extension - Used to add model-specific information. For example, for analytics in OData, see sap.ui.mdc.odata.v4.TableDelegate.
 	};
 
+	/**
+	 * The methods listed in this map are added to every property info object.
+	 */
+	var mPropertyMethods = {
+		/**
+		 * Checks whether the property is complex.
+		 *
+		 * @this PropertyInfo
+		 * @returns {boolean|null} Whether the property is complex
+		 */
+		isComplex: function() {
+			return PropertyHelper.isPropertyComplex(this);
+		},
+		/**
+		 * Gets all properties referenced by the property.
+		 *
+		 * @this PropertyInfo
+		 * @returns {object[]} The referenced properties
+		 */
+		getReferencedProperties: function() {
+			// TODO: Return all referenced properties, e.g. unit, text, etc.?
+			return this.propertyInfosProperties || [];
+		},
+		/**
+		 * Gets all sortable properties referenced by the property, including the property itself if it is non-complex.
+		 *
+		 * @this PropertyInfo
+		 * @returns {object[]} The sortable properties
+		 */
+		getSortableProperties: function() {
+			return extractProperties(this, function(oProperty) {
+				return oProperty.sortable;
+			});
+		},
+		/**
+		 * Gets all filterable properties referenced by the property, including the property itself if it is non-complex.
+		 *
+		 * @this PropertyInfo
+		 * @returns {object[]} The filterable properties
+		 */
+		getFilterableProperties: function() {
+			return extractProperties(this, function(oProperty) {
+				return oProperty.filterable;
+			});
+		},
+		/**
+		 * Gets all groupable properties referenced by the property, including the property itself if it is non-complex.
+		 *
+		 * @this PropertyInfo
+		 * @returns {object[]} The groupable properties
+		 */
+		getGroupableProperties: function() {
+			return extractProperties(this, function(oProperty) {
+				return oProperty.groupable;
+			});
+		},
+		/**
+		 * Gets all visible properties referenced by the property, including the property itself if it is non-complex.
+		 *
+		 * @this PropertyInfo
+		 * @returns {object[]} The visible properties
+		 */
+		getVisibleProperties: function() {
+			return extractProperties(this, function(oProperty) {
+				return oProperty.visible;
+			});
+		}
+	};
+
 	var aCommonAttributes = ["name", "label", "visible", "path", "typeConfig", "maxConditions", "group", "groupLabel", "caseSensitive"];
-	var aPropertyMethods = [];
 	var _private = new WeakMap();
 
 	function stringifyPlainObject(oObject) {
@@ -177,11 +243,12 @@ sap.ui.define([
 
 	function enrichProperties(oPropertyHelper, aProperties) {
 		aProperties.map(function(oProperty) {
-			aPropertyMethods.forEach(function(sMethod) {
+			Object.keys(mPropertyMethods).forEach(function(sMethod) {
 				Object.defineProperty(oProperty, sMethod, {
 					value: function() {
-						return oPropertyHelper[sMethod].call(oPropertyHelper, oProperty.name);
-					}
+						return mPropertyMethods[sMethod].call(this);
+					},
+					writable: true
 				});
 			});
 		});
@@ -190,22 +257,19 @@ sap.ui.define([
 	function deepFreeze(oObject) {
 		var aKeys = Object.getOwnPropertyNames(oObject);
 
+		Object.freeze(oObject);
+
 		for (var i = 0; i < aKeys.length; i++) {
 			var vValue = oObject[aKeys[i]];
-			var bValueIsArray = Array.isArray(vValue);
 
-			if (isPlainObject(vValue) || bValueIsArray) {
-				if (aKeys[i].startsWith("_")) {
-					if (bValueIsArray) {
-						Object.freeze(vValue);
-					}
-				} else {
-					deepFreeze(vValue);
-				}
+			if (typeof vValue === "function") {
+				Object.freeze(vValue);
+			} else if (isPlainObject(vValue) && !Object.isFrozen(vValue)) {
+				deepFreeze(vValue);
+			} else if (Array.isArray(vValue)) {
+				deepFreeze(vValue);
 			}
 		}
-
-		return Object.freeze(oObject);
 	}
 
 	function deepFind(oObject, sPath) {
@@ -251,7 +315,7 @@ sap.ui.define([
 	function preparePropertyDeep(oPropertyHelper, oProperty, mProperties, sPath, oPropertySection, mAttributeSection) {
 		var bTopLevel = sPath == null;
 		var aDependenciesForDefaults = [];
-		var bIsComplex = oPropertyHelper.isPropertyComplex(oProperty);
+		var bIsComplex = PropertyHelper.isPropertyComplex(oProperty);
 
 		if (bTopLevel) {
 			mAttributeSection = _private.get(oPropertyHelper).mAttributeMetadata;
@@ -301,16 +365,19 @@ sap.ui.define([
 	function preparePropertyReferences(oPropertySection, sAttribute, mProperties) {
 		var vPropertyReference = oPropertySection[sAttribute];
 		var vProperties;
+		var sPropertyName = sAttribute;
 
 		if (Array.isArray(vPropertyReference)) {
 			vProperties = vPropertyReference.map(function(sName) {
 				return mProperties[sName];
 			});
+			sPropertyName += "Properties";
 		} else {
 			vProperties = mProperties[vPropertyReference];
+			sPropertyName += "Property";
 		}
 
-		Object.defineProperty(oPropertySection, "_" + sAttribute, {
+		Object.defineProperty(oPropertySection, sPropertyName, {
 			value: vProperties
 		});
 	}
@@ -343,22 +410,14 @@ sap.ui.define([
 		}, {}));
 	}
 
-	function extractProperties(oPropertyHelper, sPropertyName, fnFilter) {
-		var oProperty = oPropertyHelper.getProperty(sPropertyName);
-
-		if (!oProperty) {
+	function extractProperties(oProperty, fnFilter) {
+		if (oProperty.isComplex()) {
+			return oProperty.getReferencedProperties().filter(fnFilter);
+		} else if (fnFilter(oProperty)) {
+			return [oProperty];
+		} else {
 			return [];
 		}
-
-		if (oProperty.isComplex()) {
-			return oProperty.getReferencedProperties().filter(function(oProperty) {
-				return fnFilter.call(oPropertyHelper, oProperty.getName());
-			});
-		} else if (fnFilter.call(oPropertyHelper, oProperty.getName())) {
-			return [oProperty];
-		}
-
-		return [];
 	}
 
 	function mergeExtensionsIntoProperties(aProperties, mExtensions) {
@@ -536,7 +595,7 @@ sap.ui.define([
 
 		validatePropertyDeep(this, oProperty, aProperties);
 
-		if (this.isPropertyComplex(oProperty)) {
+		if (PropertyHelper.isPropertyComplex(oProperty)) {
 			if (oProperty.propertyInfos.length === 0) {
 				throwInvalidPropertyError("Complex property does not reference existing properties.", oProperty);
 			}
@@ -574,7 +633,7 @@ sap.ui.define([
 
 			if (!mAttribute) {
 				reportInvalidProperty("Property contains invalid attribute '" + sAttributePath + "'.", oProperty);
-			} else if (oPropertyHelper.isPropertyComplex(oProperty) && !mAttribute.allowedForComplexProperty) {
+			} else if (PropertyHelper.isPropertyComplex(oProperty) && !mAttribute.allowedForComplexProperty) {
 				reportInvalidProperty("Complex property contains invalid attribute '" + sAttributePath + "'.", oProperty);
 			} else if (typeof mAttribute.type === "object" && vValue && typeof vValue === "object") {
 				validatePropertyDeep(
@@ -605,7 +664,7 @@ sap.ui.define([
 
 		for (var i = 0; i < aProperties.length; i++) {
 			if (oUniquePropertiesSet.has(aProperties[i].name)) {
-				if (oPropertyHelper.isPropertyComplex(aProperties[i])) {
+				if (PropertyHelper.isPropertyComplex(aProperties[i])) {
 					throwInvalidPropertyError("Property references complex properties in the '" + sPath + "' attribute.", oProperty);
 				}
 				oUniquePropertiesSet.delete(aProperties[i].name);
@@ -702,159 +761,40 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether a property is complex.
-	 *
-	 * @see #isPropertyComplex
-	 * @param {string} sName Name of a property
-	 * @returns {boolean|null} Whether the property is complex, or <code>null</code> if it is unknown
-	 * @public
-	 */
-	PropertyHelper.prototype.isComplex = function(sName) {
-		var oProperty = this.getProperty(sName);
-		return oProperty ? this.isPropertyComplex(oProperty) : null;
-	};
-	aPropertyMethods.push("isComplex");
-
-	/**
 	 * Checks whether a property is a complex property. Works with any property info, even if unknown to the property helper.
 	 *
-	 * @see #isComplex
 	 * @param {object} oProperty A property info object
-	 * @returns {boolean|null} Whether the property is complex
+	 * @returns {boolean} Whether the property is complex
 	 * @protected
+	 * @static
 	 */
-	PropertyHelper.prototype.isPropertyComplex = function(oProperty) {
+	PropertyHelper.isPropertyComplex = function(oProperty) {
 		return oProperty != null && typeof oProperty === "object" ? "propertyInfos" in oProperty : false;
 	};
 
 	/**
-	 * Gets all properties referenced by a complex property.
-	 *
-	 * @param {string} sName Name of a complex property
-	 * @returns {object[]} The properties the complex property references
-	 * @public
-	 */
-	PropertyHelper.prototype.getReferencedProperties = function(sName) {
-		var oProperty = this.getProperty(sName);
-		return (oProperty && oProperty._propertyInfos) || [];
-	};
-	aPropertyMethods.push("getReferencedProperties");
-
-	/**
-	 * Gets the unit property.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {object|null} The unit property, or <code>null</code> if it is unknown
-	 * @public
-	 */
-	PropertyHelper.prototype.getUnitProperty = function(sName) {
-		var oProperty = this.getProperty(sName);
-		return (oProperty && oProperty._unit) || null;
-	};
-	aPropertyMethods.push("getUnitProperty");
-
-	/**
-	 * Checks whether a property is sortable.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {boolean|null} Whether the property is sortable, or <code>null</code> if it is unknown
-	 * @public
-	 */
-	PropertyHelper.prototype.isSortable = function(sName) {
-		var oProperty = this.getProperty(sName);
-		return oProperty ? oProperty.sortable : null;
-	};
-	aPropertyMethods.push("isSortable");
-
-	/**
-	 * Gets all sortable properties referenced by a complex property. For convenience, the name of a non-complex property can be given that is then
-	 * returned if it is sortable.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {object[]} The sortable properties
-	 * @public
-	 */
-	PropertyHelper.prototype.getSortableProperties = function(sName) {
-		return extractProperties(this, sName, this.isSortable);
-	};
-	aPropertyMethods.push("getSortableProperties");
-
-	/**
-	 * Gets all sortable, non-complex properties.
+	 * Gets all sortable properties.
 	 *
 	 * @returns {object[]} All sortable properties
 	 * @public
 	 */
-	PropertyHelper.prototype.getAllSortableProperties = function() {
+	PropertyHelper.prototype.getSortableProperties = function() {
 		return this.getProperties().filter(function(oProperty) {
-			return oProperty.isSortable();
+			return oProperty.sortable;
 		});
 	};
 
 	/**
-	 * Checks whether a property is filterable.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {boolean|null} Whether the property is filterable, or <code>null</code> if it is unknown
-	 * @public
-	 */
-	PropertyHelper.prototype.isFilterable = function(sName) {
-		var oProperty = this.getProperty(sName);
-		return oProperty ? oProperty.filterable : null;
-	};
-	aPropertyMethods.push("isFilterable");
-
-	/**
-	 * Gets all filterable properties referenced by a complex property. For convenience, the name of a non-complex property can be given that is then
-	 * returned if it is filterable.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {object[]} The filterable properties
-	 * @public
-	 */
-	PropertyHelper.prototype.getFilterableProperties = function(sName) {
-		return extractProperties(this, sName, this.isFilterable);
-	};
-	aPropertyMethods.push("getFilterableProperties");
-
-	/**
-	 * Gets all filterable, non-complex properties.
+	 * Gets all filterable properties.
 	 *
 	 * @returns {object[]} All filterable properties
 	 * @public
 	 */
-	PropertyHelper.prototype.getAllFilterableProperties = function() {
+	PropertyHelper.prototype.getFilterableProperties = function() {
 		return this.getProperties().filter(function(oProperty) {
-			return oProperty.isFilterable();
+			return oProperty.filterable;
 		});
 	};
-
-
-	/**
-	 * Checks whether a property is goupable.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {boolean|null} Whether the property is groupable, or <code>null</code> if it is unknown
-	 * @public
-	 */
-	PropertyHelper.prototype.isGroupable = function(sName) {
-		var oProperty = this.getProperty(sName);
-		return oProperty ? oProperty.groupable : null;
-	};
-	aPropertyMethods.push("isGroupable");
-
-	/**
-	 * Gets all groupable properties referenced by a complex property. For convenience, the name of a non-complex property can be given that is then
-	 * returned if it is groupable.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {object[]} The groupable properties
-	 * @public
-	 */
-	PropertyHelper.prototype.getGroupableProperties = function(sName) {
-		return extractProperties(this, sName, this.isGroupable);
-	};
-	aPropertyMethods.push("getGroupableProperties");
 
 	/**
 	 * Gets all groupable properties.
@@ -862,63 +802,11 @@ sap.ui.define([
 	 * @returns {object[]} All groupable properties
 	 * @public
 	 */
-	PropertyHelper.prototype.getAllGroupableProperties = function() {
+	PropertyHelper.prototype.getGroupableProperties = function() {
 		return this.getProperties().filter(function(oProperty) {
-			return oProperty.isGroupable();
+			return oProperty.groupable;
 		});
 	};
-
-	/**
-	 * Gets the label of a property.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {string|null} The label of the property, or <code>null</code> if it is unknown
-	 * @public
-	 */
-	PropertyHelper.prototype.getLabel = function(sName) {
-		var oProperty = this.getProperty(sName);
-		return oProperty ? oProperty.label : null;
-	};
-	aPropertyMethods.push("getLabel");
-
-	/**
-	 * Gets the label of the group a property is in.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {string|null} The group label of the property, or <code>null</code> if it is unknown
-	 * @public
-	 */
-	PropertyHelper.prototype.getGroupLabel = function(sName) {
-		var oProperty = this.getProperty(sName);
-		return oProperty ? oProperty.groupLabel : null;
-	};
-	aPropertyMethods.push("getGroupLabel");
-
-	/**
-	 * Gets the binding path of a property.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {string|null} The binding path of the property, or <code>null</code> if it is complex or unknown
-	 * @public
-	 */
-	PropertyHelper.prototype.getPath = function(sName) {
-		var oProperty = this.getProperty(sName);
-		return oProperty ? oProperty.path : null;
-	};
-	aPropertyMethods.push("getPath");
-
-	/**
-	 * Checks whether a property is part of the key of its entity.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {string|null} Whether it is a key property, or <code>null</code> if it is unknown
-	 * @public
-	 */
-	PropertyHelper.prototype.isKey = function(sName) {
-		var oProperty = this.getProperty(sName);
-		return oProperty ? oProperty.key : null;
-	};
-	aPropertyMethods.push("isKey");
 
 	/**
 	 * Gets all key properties.
@@ -926,37 +814,11 @@ sap.ui.define([
 	 * @returns {object[]} All key properties
 	 * @public
 	 */
-	PropertyHelper.prototype.getAllKeyProperties = function() {
+	PropertyHelper.prototype.getKeyProperties = function() {
 		return this.getProperties().filter(function(oProperty) {
-			return oProperty.isKey();
+			return oProperty.key;
 		});
 	};
-
-	/**
-	 * Checks whether a property is visible.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {boolean|null} Whether the property is visible, or <code>null</code> if it is unknown
-	 * @public
-	 */
-	PropertyHelper.prototype.isVisible = function(sName) {
-		var oProperty = this.getProperty(sName);
-		return oProperty ? oProperty.visible : null;
-	};
-	aPropertyMethods.push("isVisible");
-
-	/**
-	 * Gets all visible properties referenced by a complex property. For convenience, the name of a non-complex property can be given that is then
-	 * returned if it is visible.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {object[]} The visible properties
-	 * @public
-	 */
-	PropertyHelper.prototype.getVisibleProperties = function(sName) {
-		return extractProperties(this, sName, this.isVisible);
-	};
-	aPropertyMethods.push("getVisibleProperties");
 
 	/**
 	 * Gets all visible properties.
@@ -964,81 +826,11 @@ sap.ui.define([
 	 * @returns {object[]} All visible properties
 	 * @public
 	 */
-	PropertyHelper.prototype.getAllVisibleProperties = function() {
+	PropertyHelper.prototype.getVisibleProperties = function() {
 		return this.getProperties().filter(function(oProperty) {
-			return oProperty.isVisible();
+			return oProperty.visible;
 		});
 	};
-
-	/**
-	 * Gets the export settings. Primarily to be used with the {@link sap.ui.export.Spreadsheet}.
-	 *
-	 * @see {@link topic:2691788a08fc43f7bf269ea7c6336caf Spreadsheet Export}
-	 * @param {string} sName Name of a property
-	 * @returns {object|null} Export settings
-	 * @public
-	 */
-	PropertyHelper.prototype.getExportSettings = function(sName) {
-		var oProperty = this.getProperty(sName);
-		return oProperty ? oProperty.exportSettings : null;
-	};
-	aPropertyMethods.push("getExportSettings");
-
-	/**
-	 * Gets the visual settings.
-	 *
-	 * @function
-	 * @name getVisualSettings
-	 * @param {string} sName Name of a property
-	 * @returns {object|false|null} The visual settings
-	 * @public
-	 */
-	PropertyHelper.prototype.getVisualSettings = function(sName) {
-		var oProperty = this.getProperty(sName);
-		return oProperty ? oProperty.visualSettings : null;
-	};
-	aPropertyMethods.push("getVisualSettings");
-
-	/**
-	 * Gets the unique name (key) of a property.
-	 *
-	 * <b>Subclasses must not change the return value!</b>
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {string|null} The name of the property, or <code>null</code> if it is unknown
-	 * @public
-	 */
-	PropertyHelper.prototype.getName = function(sName) {
-		var oProperty = this.getProperty(sName);
-		return oProperty ? oProperty.name : null;
-	};
-	aPropertyMethods.push("getName");
-
-	/**
-	 * Gets the maximum possible conditions of a property.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {int|null} The maximum possible conditions of the property, or <code>null</code> if it is complex or unknown
-	 * @public
-	 */
-	PropertyHelper.prototype.getMaxConditions = function(sName) {
-		var oProperty = this.getProperty(sName);
-		return oProperty ? oProperty.maxConditions : null;
-	};
-	aPropertyMethods.push("getMaxConditions");
-
-	/**
-	 * Gets the type config of a property.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {object|null} The type config of the property, or <code>null</code> if it is complex or unknown
-	 * @public
-	 */
-	PropertyHelper.prototype.getTypeConfig = function(sName) {
-		var oProperty = this.getProperty(sName);
-		return oProperty ? oProperty.typeConfig : null;
-	};
-	aPropertyMethods.push("getTypeConfig");
 
 	/**
 	 * @override

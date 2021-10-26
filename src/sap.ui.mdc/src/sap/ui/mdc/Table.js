@@ -1107,8 +1107,9 @@ sap.ui.define([
 		}
 
 		oTable._fullyInitialized().then(function() {
+			var oPropertyHelper = oTable.getPropertyHelper();
 			var aPropertyLabels = aFilteredProperties.map(function(sPropertyName) {
-				return oTable.getPropertyHelper().getLabel(sPropertyName);
+				return oPropertyHelper.hasProperty(sPropertyName) ? oPropertyHelper.getProperty(sPropertyName).label : "";
 			});
 			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 			var oListFormat = ListFormat.getInstance();
@@ -1732,7 +1733,7 @@ sap.ui.define([
 
 					if (mCustomConfig.includeFilterSettings) {
 						oProcessor = ExportUtils.parseFilterConfiguration(oRowBinding, function(sPropertyName) {
-							return oPropertyHelper.getLabel(sPropertyName);
+							return oPropertyHelper.hasProperty(sPropertyName) ? oPropertyHelper.getProperty(sPropertyName).label : null;
 						}).then(function(oFilterConfig) {
 							if (oFilterConfig) {
 								mExportSettings.workbook.context = {
@@ -1982,20 +1983,25 @@ sap.ui.define([
 
 		this._fullyInitialized().then(function() {
 			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			var oProperty = this.getPropertyHelper().getProperty(oMDCColumn.getDataProperty());
+
 			if (this._oPopover) {
 				this._oPopover.destroy();
 				this._oPopover = null;
 			}
-			if (this.isSortingEnabled()) {
-				var aAscendItems = [] , aDescendItems = [];
-				this.getPropertyHelper().getSortableProperties(oMDCColumn.getDataProperty()).forEach(function(oProperty) {
+
+			if (this.isSortingEnabled() && oProperty) {
+				var aAscendItems = [];
+				var aDescendItems = [];
+
+				oProperty.getSortableProperties().forEach(function(oProperty) {
 					aAscendItems.push(new Item({
-						text: oProperty.getLabel(),
-						key: oProperty.getName()
+						text: oProperty.label,
+						key: oProperty.name
 					}));
 					aDescendItems.push(new Item({
-						text: oProperty.getLabel(),
-						key: oProperty.getName()
+						text: oProperty.label,
+						key: oProperty.name
 					}));
 				});
 
@@ -2020,25 +2026,15 @@ sap.ui.define([
 					oColumn.addDependent(this._oPopover);
 				}
 			}
-			var aHeaderItems = [];
-			var aFilterable = [];
 			var oDelegate = this.getControlDelegate();
-			aHeaderItems = (oDelegate.addColumnMenuItems && oDelegate.addColumnMenuItems(this, oMDCColumn)) || [];
+			var aHeaderItems = (oDelegate.addColumnMenuItems && oDelegate.addColumnMenuItems(this, oMDCColumn)) || [];
 
-			this.getPropertyHelper().getFilterableProperties(oMDCColumn.getDataProperty()).forEach(function(oProperty) {
-				aFilterable.push(new Item({
-					text: oProperty.getLabel(),
-					key: oProperty.getName()
-				}));
-			});
-
-			if (this.isFilteringEnabled() && aFilterable.length) {
-				var oFilter = new ColumnPopoverSelectListItem({
+			if (this.isFilteringEnabled() && oProperty && oProperty.getFilterableProperties().length > 0) {
+				aHeaderItems.unshift(new ColumnPopoverSelectListItem({
 					label: oResourceBundle.getText("table.SETTINGS_FILTER"),
 					icon: "sap-icon://filter",
 					action: [onShowFilterDialog, this]
-				});
-				aHeaderItems.unshift(oFilter);
+				}));
 			}
 
 			if (bResizeButton) {
@@ -2546,9 +2542,10 @@ sap.ui.define([
 
 		aMDCColumns.forEach(function(oMDCColumn) {
 			var oInnerColumn = Core.byId(oMDCColumn.getId() + "-innerColumn");
-			var aSortablePaths = oPropertyHelper.getSortableProperties(oMDCColumn.getDataProperty()).map(function(oProperty) {
-				return oProperty.getPath();
-			});
+			var oProperty = oPropertyHelper.getProperty(oMDCColumn.getDataProperty());
+			var aSortablePaths = oProperty ? oProperty.getSortableProperties().map(function(oProperty) {
+				return oProperty.path;
+			}) : [];
 
 			if (aSortablePaths.length > 0) {
 				var oSorter = aSorters.find(function(oSorter) {
@@ -2681,8 +2678,10 @@ sap.ui.define([
 			oPropertyHelper = this.getPropertyHelper();
 
 		aSorterProperties.forEach(function(oSorter) {
-			var sPath = oPropertyHelper.getPath(oSorter.name);
-			aSorters.push(new Sorter(sPath, oSorter.descending));
+			if (oPropertyHelper.hasProperty(oSorter.name)) {
+				var sPath = oPropertyHelper.getProperty(oSorter.name).path;
+				aSorters.push(new Sorter(sPath, oSorter.descending));
+			}
 		});
 
 		return aSorters;

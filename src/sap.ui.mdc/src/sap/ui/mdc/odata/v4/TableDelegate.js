@@ -140,9 +140,10 @@ sap.ui.define([
 			var aAggregateProperties = Object.keys(oState.aggregations);
 			var aAggregateGroupableProperties = [];
 			var oListFormat = ListFormat.getInstance();
-			aAggregateProperties.forEach(function(oItem) {
-				if (oControl.getPropertyHelper().isGroupable(oItem)) {
-					aAggregateGroupableProperties.push(oItem);
+			aAggregateProperties.forEach(function(sProperty) {
+				var oProperty = oControl.getPropertyHelper().getProperty(sProperty);
+				if (oProperty && oProperty.groupable) {
+					aAggregateGroupableProperties.push(sProperty);
 				}
 			});
 
@@ -254,8 +255,14 @@ sap.ui.define([
 		}
 
 		var oPropertyHelper = oTable.getPropertyHelper();
-		var aGroupProperties = oPropertyHelper.getGroupableProperties(oMDCColumn.getDataProperty());
-		var aAggregateProperties = oPropertyHelper.getAggregatableProperties(oMDCColumn.getDataProperty());
+		var oProperty = oPropertyHelper.getProperty(oMDCColumn.getDataProperty());
+
+		if (!oProperty) {
+			return [];
+		}
+
+		var aGroupProperties = oProperty.getGroupableProperties();
+		var aAggregateProperties = oProperty.getAggregatableProperties();
 		var oPopover = oTable._oPopover;
 		var oAggregatePopoverItem;
 		var oGroupPopoverItem;
@@ -275,11 +282,11 @@ sap.ui.define([
 			});
 		}
 
-		if (oTable.isGroupingEnabled() && aGroupProperties && aGroupProperties.length > 0) {
+		if (oTable.isGroupingEnabled() && aGroupProperties.length > 0) {
 			oGroupPopoverItem = createGroupPopoverItem(aGroupProperties, oMDCColumn);
 		}
 
-		if (oTable.isAggregationEnabled() && aAggregateProperties && aAggregateProperties.length > 0) {
+		if (oTable.isAggregationEnabled() && aAggregateProperties.length > 0) {
 			oAggregatePopoverItem = createAggregatePopoverItem(aAggregateProperties, oMDCColumn);
 		}
 
@@ -289,8 +296,8 @@ sap.ui.define([
 	function createGroupPopoverItem(aGroupProperties, oMDCColumn) {
 		var aGroupChildren = aGroupProperties.map(function(oGroupProperty) {
 			return new Item({
-				text: oGroupProperty.getLabel(),
-				key: oGroupProperty.getName()
+				text: oGroupProperty.label,
+				key: oGroupProperty.name
 			});
 		});
 
@@ -310,8 +317,8 @@ sap.ui.define([
 	function createAggregatePopoverItem(aAggregateProperties, oMDCColumn) {
 		var aAggregateChildren = aAggregateProperties.map(function(oAggregateProperty) {
 			return new Item({
-				text: oAggregateProperty.getLabel(),
-				key: oAggregateProperty.getName()
+				text: oAggregateProperty.label,
+				key: oAggregateProperty.name
 			});
 		});
 
@@ -513,10 +520,8 @@ sap.ui.define([
 		var aUnitProperties = [];
 
 		aProperties.forEach(function(oProperty) {
-			var oUnitProperty = oProperty ? oProperty.getUnitProperty() : null;
-
-			if (oUnitProperty) {
-				aUnitProperties.push(oUnitProperty);
+			if (oProperty.unitProperty) {
+				aUnitProperties.push(oProperty.unitProperty);
 			}
 		});
 

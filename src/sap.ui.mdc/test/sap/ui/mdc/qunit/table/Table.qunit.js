@@ -3445,7 +3445,7 @@ sap.ui.define([
 			// by side of the gap, columnGap1 and columnGap2 are identical
 			sPropertyName = aColumns[5].getDataProperty();
 			oProperty = oPropertyHelper.getProperty(sPropertyName);
-			assert.equal(parseFloat(aColumns[6].getWidth()) + oProperty.getVisualSettings().widthCalculation.gap + "rem", aColumns[5].getWidth(), "Additional gap of " + oProperty.getVisualSettings().widthCalculation.gap + "rem for Column columnGap1 is calculated correctly");
+			assert.equal(parseFloat(aColumns[6].getWidth()) + oProperty.visualSettings.widthCalculation.gap + "rem", aColumns[5].getWidth(), "Additional gap of " + oProperty.visualSettings.widthCalculation.gap + "rem for Column columnGap1 is calculated correctly");
 
 			// visualSettings.widthCalculation=false
 			assert.notOk(aColumns[7].getWidth(), "There is not width set since visualSettings.widthCalculation=false");

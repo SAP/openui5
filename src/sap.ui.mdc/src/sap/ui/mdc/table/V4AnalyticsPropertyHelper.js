@@ -47,58 +47,23 @@ sap.ui.define([
 
 	/**
 	 * @inheritDoc
-	 * @override
 	 */
 	PropertyHelper.prototype.prepareProperty = function(oProperty) {
-		var sPropertyName = oProperty.getName();
-		var that = this;
-
 		TablePropertyHelper.prototype.prepareProperty.apply(this, arguments);
+		oProperty.aggregatable = oProperty.extension.defaultAggregate != null;
 
-		["isAggregatable", "getAggregatableProperties", "getDefaultAggregate"].forEach(function(sMethod) {
-			Object.defineProperty(oProperty, sMethod, {
-				value: function() {
-					return that[sMethod].call(that, sPropertyName);
-				}
+		/**
+		 * Gets all aggregatable properties referenced by the property, including the property itself if it is non-complex.
+		 *
+		 * @returns {object[]} The aggregatable properties
+		 */
+		oProperty.getAggregatableProperties = function() {
+			var aProperties = oProperty.isComplex() ? oProperty.getReferencedProperties() : [oProperty];
+
+			return aProperties.filter(function(oProperty) {
+				return oProperty.aggregatable;
 			});
-		});
-	};
-
-	function getExtensionAttribute(oPropertyHelper, sPropertyName, sAttributeName) {
-		var oProperty = oPropertyHelper.getProperty(sPropertyName);
-		return oProperty ? oProperty.extension[sAttributeName] : null;
-	}
-
-	/**
-	 * Checks whether a property is aggregatable.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {boolean|null} Whether the property is aggregatable, or <code>null</code> if it is unknown
-	 * @public
-	 */
-	PropertyHelper.prototype.isAggregatable = function(sName) {
-		return this.hasProperty(sName) ? this.getDefaultAggregate(sName) !== null : null;
-	};
-
-	/**
-	 * Gets all aggregatable properties referenced by a complex property. For convenience, a non-complex property can be given that is then
-	 * returned if it is aggregatable.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {object[]} The aggregatable properties
-	 * @public
-	 */
-	PropertyHelper.prototype.getAggregatableProperties = function(sName) {
-		var oProperty = this.getProperty(sName);
-		var aProperties = [];
-
-		if (oProperty) {
-			aProperties = oProperty.isComplex() ? oProperty.getReferencedProperties() : [oProperty];
-		}
-
-		return aProperties.filter(function(oProperty) {
-			return oProperty.isAggregatable();
-		});
+		};
 	};
 
 	/**
@@ -107,31 +72,10 @@ sap.ui.define([
 	 * @returns {object[]} All aggregatable properties
 	 * @public
 	 */
-	PropertyHelper.prototype.getAllAggregatableProperties = function() {
+	PropertyHelper.prototype.getAggregatableProperties = function() {
 		return this.getProperties().filter(function(oProperty) {
-			return oProperty.isAggregatable();
+			return oProperty.aggregatable;
 		});
-	};
-
-	/**
-	 * Gets the information about the default aggregate.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {{unit: (object|null), contextDefiningProperties: object[]}|null}
-	 *     The default aggregate, or <code>null</code> if the property has no default aggregate or is unknown
-	 * @public
-	 */
-	PropertyHelper.prototype.getDefaultAggregate = function(sName) {
-		var mDefaultAggregate = getExtensionAttribute(this, sName, "defaultAggregate");
-
-		if (!mDefaultAggregate) {
-			return null;
-		}
-
-		return {
-			contextDefiningProperties: mDefaultAggregate._contextDefiningProperties || [],
-			unit: this.getUnitProperty(sName)
-		};
 	};
 
 	return PropertyHelper;

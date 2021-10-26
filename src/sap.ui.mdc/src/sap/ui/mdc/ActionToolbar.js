@@ -372,12 +372,7 @@ sap.ui.define([
 					aItems.push({
 						name: oAction.getId(),
 						alignment: oAction.getLayoutInformation().alignment,
-						getName: function() {
-							return oAction.getId();
-						},
-						getLabel: function() {
-							return oAction.getLabel();
-						},
+						label: oAction.getLabel(),
 						visible: true
 					});
 				});
