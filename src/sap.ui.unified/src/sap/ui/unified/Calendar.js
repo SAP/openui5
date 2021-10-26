@@ -1198,44 +1198,56 @@ sap.ui.define([
 	Calendar.prototype.onsaptabnext = function(oEvent){
 		var oHeader = this.getAggregation("header");
 
-			if (containsOrEquals(this.getDomRef("content"), oEvent.target)) {
-				if (oHeader.getVisibleButton1()) {
-					oHeader.getDomRef("B1").focus();
-					oEvent.preventDefault();
-				} else if (oHeader.getVisibleButton2()) {
-					oHeader.getDomRef("B2").focus();
-					oEvent.preventDefault();
-				} else if (!this._bPoupupMode) {
-					// remove Tabindex from day, month, year - to break cycle
-					this._clearTabindex0();
-				} else {
-					this._clearTabindex0();
-					oEvent.preventDefault();
-				}
-			} else if (oEvent.target.id === oHeader.getId() + "-B1") {
-				oHeader.getVisibleButton2() && oHeader.getDomRef("B2").focus();
-
+		if (containsOrEquals(this.getDomRef("content"), oEvent.target)) {
+			if (oHeader.getVisibleButton1()) {
+				oHeader.getDomRef("B1").focus();
 				oEvent.preventDefault();
-			} else if (oEvent.target.id === oHeader.getId() + "-B2") {
-				if (this._bPoupupMode) {
-					this._moveFocusToCalContent();
-
-					oEvent.preventDefault();
-				} else {
-					// remove Tabindex from day, month, year - to break cycle
-					this._clearTabindex0();
-				}
-
+			} else if (oHeader.getVisibleButton2()) {
+				oHeader.getDomRef("B2").focus();
+				oEvent.preventDefault();
+			} else if (oHeader.getVisibleCurrentDateButton()) {
+				oHeader.getDomRef("today").focus();
+				oEvent.preventDefault();
+			} else if (!this._bPoupupMode) {
+				// remove Tabindex from day, month, year - to break cycle
+				this._clearTabindex0();
+			} else {
+				this._clearTabindex0();
+				oEvent.preventDefault();
 			}
+		} else if (oEvent.target.id === oHeader.getId() + "-B1") {
+			oHeader.getVisibleButton2() && oHeader.getDomRef("B2").focus();
+			oEvent.preventDefault();
+		} else if (oEvent.target.id === oHeader.getId() + "-B2") {
+			if (oHeader.getVisibleCurrentDateButton()) {
+				oHeader.getDomRef("today").focus();
+				oEvent.preventDefault();
+			} else {
+				this._tabNextFinalize(this._bPoupupMode, oEvent);
+			}
+		} else if (oEvent.target.id === oHeader.getId() + "-today") {
+			this._tabNextFinalize(this._bPoupupMode, oEvent);
+		}
 
+	};
+
+	Calendar.prototype._tabNextFinalize = function(bPopupMode, oEvent) {
+		if (bPopupMode) {
+			this._moveFocusToCalContent();
+			oEvent.preventDefault();
+		} else {
+			// remove Tabindex from day, month, year - to break cycle
+			this._clearTabindex0();
+		}
 	};
 
 	Calendar.prototype.onsaptabprevious = function(oEvent){
 		var oHeader = this.getAggregation("header");
-
 		if (containsOrEquals(this.getDomRef("content"), oEvent.target)) {
 			if (this._bPoupupMode) {
-				if (oHeader.getVisibleButton2()) {
+				if (oHeader.getVisibleCurrentDateButton()) {
+					oHeader.getDomRef("today").focus();
+				} else if (oHeader.getVisibleButton2()) {
 					oHeader.getDomRef("B2").focus();
 				} else {
 					oHeader.getVisibleButton1() && oHeader.getDomRef("B1").focus();
@@ -1247,10 +1259,19 @@ sap.ui.define([
 			}
 		} else if (oEvent.target.id === oHeader.getId() + "-B1") {
 			this._moveFocusToCalContent();
-
 			oEvent.preventDefault();
 		} else if (oEvent.target.id === oHeader.getId() + "-B2") {
 			if (oHeader.getVisibleButton1()) {
+				oHeader.getDomRef("B1").focus();
+			} else {
+				this._moveFocusToCalContent();
+			}
+
+			oEvent.preventDefault();
+		} else if (oEvent.target.id === oHeader.getId() + "-today") {
+			if (oHeader.getVisibleButton2()) {
+				oHeader.getDomRef("B2").focus();
+			} else if (oHeader.getVisibleButton1()){
 				oHeader.getDomRef("B1").focus();
 			} else {
 				this._moveFocusToCalContent();
@@ -1287,6 +1308,7 @@ sap.ui.define([
 
 	Calendar.prototype._moveFocusToCalContent = function() {
 		var oYearPicker = this.getAggregation("yearPicker"),
+			oYearRangePicker = this.getAggregation("yearRangePicker"),
 			oMonthPicker = this._getMonthPicker(),
 			aMonths = this.getAggregation("month"),
 			oMonth, oMonthDate,
@@ -1299,7 +1321,7 @@ sap.ui.define([
 					oMonth = aMonths[i];
 					oMonthDate = CalendarDate.fromLocalJSDate(oMonth.getDate(), this.getPrimaryCalendarType());
 					if (oFocusedDate.isSame(oMonthDate)) {
-						oMonth._oItemNavigation.focusItem(oMonth._oItemNavigation.getFocusedIndex());
+						oMonth.focus();
 					} else {
 						oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()].setAttribute("tabindex", "0");
 					}
@@ -1308,16 +1330,23 @@ sap.ui.define([
 
 			case 1: // month picker
 				if (!this._getSucessorsPickerPopup()) {
-					oMonthPicker._oItemNavigation.focusItem(oMonthPicker._oItemNavigation.getFocusedIndex());
+					oMonthPicker.focus();
 				}
 				break;
 
 			case 2: // year picker
 				if (!this._getSucessorsPickerPopup()) {
-					oYearPicker._oItemNavigation.focusItem(oYearPicker._oItemNavigation.getFocusedIndex());
+					oYearPicker.focus();
 				}
 				break;
-				// no default
+
+			case 3: // year range picker
+				if (!this._getSucessorsPickerPopup()) {
+					oYearRangePicker.focus();
+				}
+				break;
+
+			// no default
 		}
 	};
 
@@ -1340,9 +1369,12 @@ sap.ui.define([
 
 	Calendar.prototype._focusOnShiftTab = function() {
 		var oHeader = this.getAggregation("header"),
-			oDomRefB2 = oHeader.getDomRef("B2");
+			oDomRefB2 = oHeader.getDomRef("B2"),
+			oDomRefToday = oHeader.getDomRef("today");
 
-		if (oDomRefB2) {
+		if (oDomRefToday) {
+			oDomRefToday.focus();
+		} else if (oDomRefB2) {
 			oDomRefB2.focus();
 		} else {
 			this.focus();
