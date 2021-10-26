@@ -260,24 +260,22 @@ sap.ui.define([
 			includeLabel: true,
 			excludeProperties: [],
 			verticalArrangement: false
-		}, mPropertyInfoWidthCalculation);
+		}, mPropertyInfoWidthCalculation, mWidthCalculation || {});
 
 		var iMinWidth = Math.max(1, mWidthCalculation.minWidth);
 		var iMaxWidth = Math.max(iMinWidth, mWidthCalculation.maxWidth);
 
 		if (oProperty.isComplex()) {
-			oProperty.getReferencedProperties().forEach(function(oReferencedProperty) {
-				if ([].concat(mWidthCalculation.excludeProperties).includes(oReferencedProperty.name)) {
-					return;
-				}
+			var aRelevantReferencedProperties = oProperty.getReferencedProperties().filter(function(oProp) {
+				return ![].concat(mWidthCalculation.excludeProperties).includes(oProp.name);
+			});
 
+			aRelevantReferencedProperties.forEach(function(oReferencedProperty) {
 				var fReferencedPropertyWidth = this._calcColumnWidth(oReferencedProperty, {
-					minWidth: 1,
-					maxWidth: iMaxWidth - fWidth,
 					includeLabel: false
 				});
 
-				if (mWidthCalculation.verticalArrangement) {
+				if (mWidthCalculation.verticalArrangement || aRelevantReferencedProperties.length == 1) {
 					fWidth = Math.max(fReferencedPropertyWidth, fWidth);
 				} else {
 					fWidth = fWidth + fReferencedPropertyWidth + 0.5; // add 0.5rem for some extra spacing in h-alignment

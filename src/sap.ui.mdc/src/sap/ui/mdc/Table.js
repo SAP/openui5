@@ -1948,6 +1948,11 @@ sap.ui.define([
 		} else {
 			oTableType.disableColumnResizer(this, this._oTable);
 		}
+
+		var aMDCColumns = this.getColumns();
+		aMDCColumns.forEach(function(oColumn) {
+			oColumn.updateColumnResizing(bEnableColumnResizer);
+		}, this);
 	};
 
 	Table.prototype._updateSelectionBehavior = function() {
@@ -2183,7 +2188,7 @@ sap.ui.define([
 			width: oMDCColumn.getWidth(),
 			minWidth: Math.round(oMDCColumn.getMinWidth() * parseFloat(MLibrary.BaseFontSize)),
 			hAlign: oMDCColumn.getHAlign(),
-			label: oMDCColumn.getColumnHeaderControl(this._bMobileTable),
+			label: oMDCColumn.getColumnHeaderControl(this._bMobileTable, this.getEnableColumnResize()),
 			resizable: this.getEnableColumnResize(),
 			autoResizable: this.getEnableColumnResize()
 		});
@@ -2201,7 +2206,7 @@ sap.ui.define([
 			width: oMDCColumn.getWidth(),
 			autoPopinWidth: oMDCColumn.getMinWidth(),
 			hAlign: oMDCColumn.getHAlign(),
-			header: oMDCColumn.getColumnHeaderControl(this._bMobileTable),
+			header: oMDCColumn.getColumnHeaderControl(this._bMobileTable, this.getEnableColumnResize()),
 			importance: oMDCColumn.getImportance(),
 			popinDisplay: "Inline"
 		});
