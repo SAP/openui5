@@ -149,7 +149,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oMockEvent = {getSource : function(){return {data : function(){return {propertyName: "test3"};}};}};
 		var oUpdateIndexesSpy = sinon.spy(this.oChartItemPanel, "_updateVisibleIndexes");
-		assert.ok(this.oChartItemPanel.getP13nState()[2].visible, "Item3 is visible");
+		assert.ok(this.oChartItemPanel.getP13nData()[2].visible, "Item3 is visible");
 
 		this.oChartItemPanel.attachEvent("changeItems", function(oEvent){
 			assert.ok(oEvent, "change event has been fired");
@@ -161,7 +161,7 @@ sap.ui.define([
 		this.oChartItemPanel._onPressHide(oMockEvent);
 
 		assert.ok(oUpdateIndexesSpy.calledOnce, "Visible Index update called");
-		assert.ok(!this.oChartItemPanel.getP13nState()[2].visible, "Item3 is invisible");
+		assert.ok(!this.oChartItemPanel.getP13nData()[2].visible, "Item3 is invisible");
 
 	}.bind(this));
 
@@ -184,13 +184,11 @@ sap.ui.define([
 
 		this.oChartItemPanel.setP13nData(aItems);
 
-		assert.ok(this.oChartItemPanel.getP13nData().length == 4, "Model has correct amount of items");
+		assert.ok(this.oChartItemPanel.getP13nData().length == 2, "Model has correct amount of items");
 		assert.ok(this.oChartItemPanel.getP13nData()[0].availableRoles, "Item was updated with available Roles");
 		assert.ok(!this.oChartItemPanel.getP13nData()[0].template, "Template property was added");
 		assert.ok(this.oChartItemPanel.getP13nData()[1].availableRoles, "Item was updated with available Roles");
 		assert.ok(!this.oChartItemPanel.getP13nData()[1].template, "Template property was added");
-		assert.ok(this.oChartItemPanel.getP13nData()[2].template, "Template 1 was appended to model");
-		assert.ok(this.oChartItemPanel.getP13nData()[3].template, "Template 2 was appended to model");
 		assert.ok(oUpdateIndexesSpy.calledOnce, "Visible Index update called");
 
 	}.bind(this));
