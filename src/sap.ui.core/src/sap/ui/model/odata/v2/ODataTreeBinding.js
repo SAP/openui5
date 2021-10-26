@@ -100,8 +100,8 @@ sap.ui.define([
 			//make sure we have at least an empty parameter object
 			this.mParameters = this.mParameters || mParameters || {};
 
-			this.sGroupId;
-			this.sRefreshGroupId;
+			this.sGroupId = undefined;
+			this.sRefreshGroupId = undefined;
 			this.oFinalLengths = {};
 			this.oLengths = {};
 			this.oKeys = {};
@@ -156,14 +156,9 @@ sap.ui.define([
 			}
 
 			// internal operation mode switch, default is the same as "OperationMode.Server"
-			this.bClientOperation = false;
-
-			// the internal operation mode might change, the external operation mode (this.sOperationMode) will always be the original value
-			switch (this.sOperationMode) {
-				case OperationMode.Server: this.bClientOperation = false; break;
-				case OperationMode.Client: this.bClientOperation = true; break;
-				case OperationMode.Auto: this.bClientOperation = false; break; //initially start the same as the server mode
-			}
+			// the internal operation mode might change, the external operation mode
+			// (this.sOperationMode) will always be the original value
+			this.bClientOperation = this.sOperationMode === OperationMode.Client;
 
 			// the threshold for the OperationMode.Auto
 			this.iThreshold = (mParameters && mParameters.threshold) || 0;
@@ -204,19 +199,30 @@ sap.ui.define([
 	/**
 	 * Builds a node filter string.
 	 * mParams.id holds the ID value for filtering on the hierarchy node.
+	 *
+	 * @param {object} mParams The filter params
+	 * @returns {string} The filter to use with <code>$filter</code>
 	 */
 	ODataTreeBinding.prototype._getNodeFilterParams = function (mParams) {
-		var sPropName = mParams.isRoot ? this.oTreeProperties["hierarchy-node-for"] : this.oTreeProperties["hierarchy-parent-node-for"];
+		var sPropName = mParams.isRoot ? this.oTreeProperties["hierarchy-node-for"]
+			: this.oTreeProperties["hierarchy-parent-node-for"];
 		var oEntityType = this._getEntityType();
-		return ODataUtils._createFilterParams(new Filter(sPropName, "EQ", mParams.id), this.oModel.oMetadata, oEntityType);
+		return ODataUtils._createFilterParams(new Filter(sPropName, "EQ", mParams.id),
+			this.oModel.oMetadata, oEntityType);
 	};
 
 	/**
 	 * Builds the Level-Filter string
+	 *
+	 * @param {string} sOperator The filter operator
+	 * @param {number} iLevel The filter level
+	 * @returns {string} The filter to use with <code>$filter</code>
 	 */
 	ODataTreeBinding.prototype._getLevelFilterParams = function (sOperator, iLevel) {
 		var oEntityType = this._getEntityType();
-		return ODataUtils._createFilterParams(new Filter(this.oTreeProperties["hierarchy-level-for"], sOperator, iLevel), this.oModel.oMetadata, oEntityType);
+		return ODataUtils._createFilterParams(
+			new Filter(this.oTreeProperties["hierarchy-level-for"], sOperator, iLevel),
+			this.oModel.oMetadata, oEntityType);
 	};
 
 	/**
@@ -409,19 +415,22 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataTreeBinding.prototype.hasChildren = function(oContext) {
+		var iLength;
+
 		if (this.bHasTreeAnnotations) {
 			if (!oContext) {
 				return false;
 			}
-			var sDrilldownState = oContext.getProperty(this.oTreeProperties["hierarchy-drill-state-for"]);
+			var sDrilldownState = oContext.getProperty(
+				this.oTreeProperties["hierarchy-drill-state-for"]);
 
 			var sNodeKey = this.oModel.getKey(oContext);
-			//var sHierarchyNode = oContext.getProperty(this.oTreeProperties["hierarchy-node-for"]);
 
-			var iLength = this.oLengths[sNodeKey];
+			iLength = this.oLengths[sNodeKey];
 
-			// if the server returned no children for a node (even though it has a DrilldownState of "expanded"),
-			// the length for this node is set to 0 and finalized -> no children available
+			// if the server returned no children for a node (even though it has a DrilldownState of
+			// "expanded"), the length for this node is set to 0 and finalized
+			// -> no children available
 			if (iLength === 0 && this.oFinalLengths[sNodeKey]) {
 				return false;
 			}
@@ -433,8 +442,10 @@ sap.ui.define([
 			} else if (sDrilldownState === "leaf"){
 				return false;
 			} else {
-				Log.warning("The entity '" + oContext.getPath() + "' has not specified Drilldown State property value.");
-				//fault tolerance for empty property values (we optimistically say that those nodes can be expanded/collapsed)
+				Log.warning("The entity '" + oContext.getPath() +
+					"' has not specified Drilldown State property value.");
+				//fault tolerance for empty property values (we optimistically say that those nodes
+				// can be expanded/collapsed)
 				if (sDrilldownState === undefined || sDrilldownState === "") {
 					return true;
 				}
@@ -444,9 +455,10 @@ sap.ui.define([
 			if (!oContext) {
 				return this.oLengths[this.getPath()] > 0;
 			}
-			var iLength = this.oLengths[oContext.getPath() + "/" + this._getNavPath(oContext.getPath())];
+			iLength = this.oLengths[oContext.getPath() + "/" + this._getNavPath(oContext.getPath())];
 
-			//only return false if we definitely know that the length is 0, otherwise, we have either a known length or none at all (undefined)
+			//only return false if we definitely know that the length is 0, otherwise, we have
+			// either a known length or none at all (undefined)
 			return iLength !== 0;
 		}
 	};
@@ -556,6 +568,7 @@ sap.ui.define([
 				}
 			}
 
+			return false;
 			// check requested sections where we still wait for an answer
 		};
 
@@ -601,7 +614,7 @@ sap.ui.define([
 				i = Math.max((aMissingSections[0].startIndex - iThreshold - this._iPageSize), 0);
 				var iFirstStartIndex = aMissingSections[0].startIndex;
 				for (i; i < iFirstStartIndex; i++) {
-					var sKey = this.oKeys[sNodeId][i];
+					sKey = this.oKeys[sNodeId][i];
 					if (!sKey) {
 						if (!fnFindInLoadedSections(i)) {
 							aMissingSections = TreeBindingUtils.mergeSections(aMissingSections, {startIndex: i, length: 1});
@@ -618,7 +631,7 @@ sap.ui.define([
 				}
 
 				for (i; i < iEndIndex; i++) {
-					var sKey = this.oKeys[sNodeId][i];
+					sKey = this.oKeys[sNodeId][i];
 					if (!sKey) {
 						if (!fnFindInLoadedSections(i)) {
 							aMissingSections = TreeBindingUtils.mergeSections(aMissingSections, {startIndex: i, length: 1});
@@ -626,14 +639,13 @@ sap.ui.define([
 					}
 				}
 			}
-		} else {
 			// for initial loading of a node use this shortcut.
-			if (!fnFindInLoadedSections(iStartIndex)) {
-				// "i" is our shifted forward startIndex for the "negative" thresholding
-				// in this case i is always smaller than iStartIndex, but minimum is 0
-				var iLengthShift = iStartIndex - i;
-				aMissingSections = TreeBindingUtils.mergeSections(aMissingSections, {startIndex: i, length: iLength + iLengthShift + iThreshold});
-			}
+		} else if (!fnFindInLoadedSections(iStartIndex)) {
+			// "i" is our shifted forward startIndex for the "negative" thresholding
+			// in this case i is always smaller than iStartIndex, but minimum is 0
+			var iLengthShift = iStartIndex - i;
+			aMissingSections = TreeBindingUtils.mergeSections(aMissingSections,
+				{startIndex: i, length: iLength + iLengthShift + iThreshold});
 		}
 
 		// check if metadata are already available
@@ -699,17 +711,23 @@ sap.ui.define([
 					// request the missing sections and manage the loaded sections map
 					for (i = 0; i < aMissingSections.length; i++) {
 						var oRequestedSection = aMissingSections[i];
-						this._mLoadedSections[sNodeId] = TreeBindingUtils.mergeSections(this._mLoadedSections[sNodeId], {startIndex: oRequestedSection.startIndex, length: oRequestedSection.length});
-						this._loadSubNodes(sNodeId, oRequestedSection.startIndex, oRequestedSection.length, 0, aParams, mRequestParameters, oRequestedSection);
+						this._mLoadedSections[sNodeId] = TreeBindingUtils.mergeSections(
+							this._mLoadedSections[sNodeId],
+							{
+								startIndex: oRequestedSection.startIndex,
+								length: oRequestedSection.length
+							});
+						this._loadSubNodes(sNodeId, oRequestedSection.startIndex,
+							oRequestedSection.length, 0, aParams, mRequestParameters,
+							oRequestedSection);
 					}
-				} else {
-					// OperationMode is set to "Client" AND we have something missing (should only happen once, at the very first loading request)
+				} else if (!this.oAllKeys
+						&& !this.mRequestHandles[ODataTreeBinding.REQUEST_KEY_CLIENT]) {
+					// OperationMode is set to "Client" AND we have something missing (should only
+					// happen once, at the very first loading request)
 					// of course also make sure no request is running already
-					if (!this.oAllKeys && !this.mRequestHandles[ODataTreeBinding.REQUEST_KEY_CLIENT]) {
-						this._loadCompleteTreeWithAnnotations(aParams);
-					}
+					this._loadCompleteTreeWithAnnotations(aParams);
 				}
-
 			}
 		}
 
@@ -773,7 +791,7 @@ sap.ui.define([
 		// if necessary we add all other filters to the count request
 		var sFilterParams = "";
 		if (this.bUseServersideApplicationFilters) {
-			var sFilterParams = this.getFilterParams();
+			sFilterParams = this.getFilterParams();
 		}
 
 		//only build filter statement if necessary
@@ -807,10 +825,13 @@ sap.ui.define([
 
 	/**
 	 * Issues a $count request for the given node-id/odata-key.
-	 * Only used when running in CountMode.Request. Inlinecounts are appended directly when issuing a loading request.
+	 * Only used when running in <code>CountMode.Request</code>. Inlinecounts are appended directly
+	 * when issuing a loading request.
+	 *
+	 * @param {string} sNodeId The node's ID
 	 * @private
 	 */
-	ODataTreeBinding.prototype._getCountForNodeId = function(sNodeId, iStartIndex, iLength, iThreshold, mParameters) {
+	ODataTreeBinding.prototype._getCountForNodeId = function(sNodeId) {
 		var that = this,
 			sGroupId;
 
@@ -906,8 +927,12 @@ sap.ui.define([
 	/**
 	 * Creates key map for given data
 	 *
-	 * @param {Array} aData data which should be preprocessed
-	 * @returns {Object<string,string[]>} Map of parent and child keys
+	 * @param {Array} aData
+	 *   Data which should be preprocessed
+	 * @param {boolean} bSkipFirstNode
+	 *   Whether to skip the first node
+	 * @returns {Object<string,string[]>|undefined}
+	 *   Map of parent and child keys or <code>undefined</code> when <code>aData</code> is empty
 	 *
 	 * @private
 	 */
@@ -933,6 +958,8 @@ sap.ui.define([
 
 			return mKeys;
 		}
+
+		return undefined;
 	};
 
 	/**
@@ -959,8 +986,8 @@ sap.ui.define([
 	/**
 	 * Update node key in case if it changes
 	 *
-	 * @param {object} oNode
-	 * @param {string} sNewKey
+	 * @param {object} oNode The node
+	 * @param {string} sNewKey The new key
 	 *
 	 * @private
 	 */
@@ -1064,17 +1091,27 @@ sap.ui.define([
 	/**
 	 * Triggers backend requests to load the child nodes of the node with the given sNodeId.
 	 *
-	 * @param {string} sNodeId the value of the hierarchy node property on which a parent node filter will be performed
-	 * @param {int} iStartIndex start index of the page
-	 * @param {int} iLength length of the page
-	 * @param {int} iThreshold additionally loaded entities
-	 * @param {array} aParams OData URL parameters, already concatenated with "="
-	 * @param {object} mParameters additional request parameters
-	 * @param {object} mParameters.navPath the navigation path
+	 * @param {string} sNodeId
+	 *   The value of the hierarchy node property on which a parent node filter will be performed
+	 * @param {int} iStartIndex
+	 *   Start index of the page
+	 * @param {int} iLength
+	 *   Length of the page
+	 * @param {int} iThreshold
+	 *   Additionally loaded entities
+	 * @param {array} aParams
+	 *   OData URL parameters, already concatenated with "="
+	 * @param {object} mParameters
+	 *   Additional request parameters
+	 * @param {object} mParameters.navPath
+	 *   The navigation path
+	 * @param {object} oRequestedSection
+	 *   The requested section
 	 *
 	 * @private
 	 */
-	ODataTreeBinding.prototype._loadSubNodes = function(sNodeId, iStartIndex, iLength, iThreshold, aParams, mParameters, oRequestedSection) {
+	ODataTreeBinding.prototype._loadSubNodes = function(sNodeId, iStartIndex, iLength, iThreshold,
+			aParams, mParameters, oRequestedSection) {
 		var that = this,
 			sGroupId,
 			bInlineCountRequested = false;
@@ -1100,6 +1137,7 @@ sap.ui.define([
 		var sRequestKey = "" + sNodeId + "-" + iStartIndex + "-" + this._iPageSize + "-" + iThreshold;
 
 		function fnSuccess(oData) {
+			var oEntry, i;
 
 			if (oData) {
 				// make sure we have a keys array
@@ -1121,8 +1159,8 @@ sap.ui.define([
 				if (that.bHasTreeAnnotations) {
 					var mLastNodeIdIndices = {};
 
-					for (var i = 0; i < oData.results.length; i++) {
-						var oEntry = oData.results[i];
+					for (i = 0; i < oData.results.length; i++) {
+						oEntry = oData.results[i];
 
 						if (i == 0) {
 							mLastNodeIdIndices[sNodeId] = iStartIndex;
@@ -1135,8 +1173,8 @@ sap.ui.define([
 					}
 				} else {
 					// Case 1b: Navigation Properties
-					for (var i = 0; i < oData.results.length; i++) {
-						var oEntry = oData.results[i];
+					for (i = 0; i < oData.results.length; i++) {
+						oEntry = oData.results[i];
 						var sKey = that.oModel._getKey(oEntry);
 						that._processODataObject(oEntry, "/" + sKey, mParameters.navPath);
 						that.oKeys[sNodeId][i + iStartIndex] = sKey;
@@ -1223,9 +1261,11 @@ sap.ui.define([
 	ODataTreeBinding.REQUEST_KEY_CLIENT = "_OPERATIONMODE_CLIENT_TREE_LOADING";
 
 	/**
-	 * Loads the complete collection from the given binding path.
-	 * The tree is then reconstructed from the response entries based on the properties with hierarchy annotations.
+	 * Loads the complete collection from the given binding path. The tree is then reconstructed
+	 * from the response entries based on the properties with hierarchy annotations.
 	 * Adds additional URL parameters.
+	 *
+	 * @param {string[]} aURLParams Additional URL parameters
 	 */
 	ODataTreeBinding.prototype._loadCompleteTreeWithAnnotations = function (aURLParams) {
 		var that = this;
@@ -1373,16 +1413,11 @@ sap.ui.define([
 		} else {
 			this.oKeys = {};
 
-			// the internal operation mode might change, the external operation mode (this.sOperationMode) will always be the original value
+			// the internal operation mode might change, the external operation mode
+			// (this.sOperationMode) will always be the original value
 			// internal operation mode switch, default is the same as "OperationMode.Server"
-			this.bClientOperation = false;
+			this.bClientOperation = this.sOperationMode === OperationMode.Client;
 
-			// the internal operation mode might change, the external operation mode (this.sOperationMode) will always be the original value
-			switch (this.sOperationMode) {
-				case OperationMode.Server: this.bClientOperation = false; break;
-				case OperationMode.Client: this.bClientOperation = true; break;
-				case OperationMode.Auto: this.bClientOperation = false; break; //initially start the same as the server mode
-			}
 			// if no data is available after the reset we can't be sure the threshold is met or rejected
 			this.bThresholdRejected = false;
 
@@ -1437,8 +1472,8 @@ sap.ui.define([
 	 * validation, use the parameter <code>bForceUpdate</code>.
 	 *
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
-	 * @param {object} [mChangedEntities]
-	 * @param {string} [mEntityTypes]
+	 * @param {object} [mChangedEntities] A map of changed entities
+	 * @param {string} [mEntityTypes] A map of entity types
 	 *
 	 * @private
 	 */
@@ -1525,7 +1560,12 @@ sap.ui.define([
 	 * @param {sap.ui.model.FilterType} sFilterType
 	 *   Type of the filter which should be adjusted. If it is not given,
 	 *   the type <code>FilterType.Control</code> is assumed
-	 * @return {this} Returns <code>this</code> to facilitate method chaining
+	 * @param {boolean} [bReturnSuccess]
+	 *   Whether to return <code>true</code> or <code>false</code>, instead of <code>this</code>,
+	 *   depending on whether the filtering has been done
+	 * @return {this}
+	 *   Returns <code>this</code> to facilitate method chaining
+	 *
 	 * @see sap.ui.model.TreeBinding.prototype.filter
 	 * @public
 	 */
@@ -1540,7 +1580,8 @@ sap.ui.define([
 		if (sFilterType == FilterType.Control && (!this.bClientOperation || this.sOperationMode == OperationMode.Server)) {
 			Log.warning("Filtering with ControlFilters is ONLY possible if the ODataTreeBinding is running in OperationMode.Client or " +
 			"OperationMode.Auto, in case the given threshold is lower than the total number of tree nodes.");
-			return;
+
+			return this;
 		}
 
 		// empty filters
@@ -1676,11 +1717,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sorts the Tree according to the given Sorter(s).
-	 * In OperationMode.Client or OperationMode.Auto (if the given threshold is satisfied), the sorters are applied locally on the client.
+	 * Sorts the Tree according to the given Sorter(s). In <code>OperationMode.Client</code> or
+	 * <code>OperationMode.Auto</code> (if the given threshold is satisfied), the sorters are
+	 * applied locally on the client.
 	 *
-	 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} aSorters the Sorter or an Array of sap.ui.model.Sorter instances
+	 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} aSorters
+	 *   The Sorter or an Array of sap.ui.model.Sorter instances
+	 * @param {boolean} [bReturnSuccess]
+	 *   Whether to return <code>true</code> or <code>false</code>, instead of <code>this</code>,
+	 *   depending on whether the sorting has been done
 	 * @return {this} returns <code>this</code> to facilitate method chaining
+	 *
 	 * @public
 	 */
 	ODataTreeBinding.prototype.sort = function(aSorters, bReturnSuccess) {
@@ -1724,6 +1771,10 @@ sap.ui.define([
 	/**
 	 * Sets the comparator for each sorter in the sorters array according to the
 	 * Edm type of the sort property
+	 *
+	 * @param {sap.ui.model.Sorter[]} aSorters The sorters
+	 * @param {object} oEntityType The entity type of the collection
+	 *
 	 * @private
 	 */
 	ODataTreeBinding.prototype.addSortComparators = function(aSorters, oEntityType) {
@@ -1765,10 +1816,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Check whether this Binding would provide new values and in case it changed,
-	 * inform interested parties about this.
+	 * Check whether this Binding would provide new values and in case it changed,fire a change
+	 * event.
 	 *
 	 * @param {boolean} bForceUpdate
+	 *   Whether to fire the event regardless of the bindings state
+	 * @param {object} mChangedEntities
+	 *   A map of changed entities
 	 *
 	 * @private
 	 */
@@ -1786,10 +1840,14 @@ sap.ui.define([
 							bChangeDetected = true;
 							return false;
 						}
+
+						return true;
 					});
 					if (bChangeDetected) {
 						return false;
 					}
+
+					return true;
 				});
 			}
 		}
@@ -1805,7 +1863,9 @@ sap.ui.define([
 	 * Splits the given path along the navigation properties.
 	 * Only used when bound against a service, which describes the tree via navigation properties.
 	 *
-	 * @param {string} sPath
+	 * @param {string} sPath The path
+	 * @returns {string} The split path
+	 *
 	 * @private
 	 */
 	ODataTreeBinding.prototype._getNavPath = function(sPath) {
@@ -1813,7 +1873,7 @@ sap.ui.define([
 		var sAbsolutePath = this.oModel.resolve(sPath, this.getContext());
 
 		if (!sAbsolutePath) {
-			return;
+			return undefined;
 		}
 
 		var aPathParts = sAbsolutePath.split("/"),
@@ -1826,6 +1886,7 @@ sap.ui.define([
 			//Replace context with subitems context
 			sNavPath = this.oNavigationPaths[sCurrent];
 		}
+
 		return sNavPath;
 	};
 
@@ -1876,6 +1937,8 @@ sap.ui.define([
 	 * Also checks if clientside property mappings are given.
 	 *
 	 * The extracted hierarchy information will be stored in "this.oTreeProperties" (if any)
+	 *
+	 * @returns {boolean} Whether the metadata has tree annotations
 	 *
 	 * @private
 	 */
@@ -1953,6 +2016,8 @@ sap.ui.define([
 					that.oTreeProperties[sName] = oProperty.name;
 				}
 			});
+
+			return true;
 		});
 
 		return fnSanityCheckTreeAnnotations();
@@ -2036,10 +2101,12 @@ sap.ui.define([
 	/**
 	 * Initially only apply the Adapter interface.
 	 * The real adapter will be applied after the initialize.
+	 *
+	 * @returns {this} A reference to itself
 	 * @private
 	 */
 	ODataTreeBinding.prototype.applyAdapterInterface = function () {
-		/**
+		/*
 		 * Data Interface.
 		 * Documentation, see the corresponding Adapter classes.
 		 */
@@ -2058,7 +2125,7 @@ sap.ui.define([
 		this.getContextByIndex = this.getContextByIndex || function () {
 			return;
 		};
-		/**
+		/*
 		 * Event Interface.
 		 * Documentation, see the corresponding Adapter classes.
 		 */
@@ -2119,6 +2186,8 @@ sap.ui.define([
 						that.oTreeProperties[sName] = oProperty.name;
 					}
 				});
+
+				return true;
 			});
 			//perform magnitude annotation check
 			this.oTreeProperties[sMagnitudeAnnotation] = this.oTreeProperties[sMagnitudeAnnotation]
@@ -2283,9 +2352,7 @@ sap.ui.define([
 
 		sPath = this.getResolvedPath();
 
-		if (sPath) {
-			return this.oModel._createRequestUrl(sPath, null, aParams);
-		}
+		return sPath && this.oModel._createRequestUrl(sPath, null, aParams);
 	};
 
 	/**
@@ -2328,7 +2395,8 @@ sap.ui.define([
 	 * annotation specification,
 	 * or when providing the annotation information locally as a binding parameter.
 	 * For more information, see {@link sap.ui.model.odata.v2.ODataModel#bindTree}.
-	 * @param {int} iRootLevel
+	 *
+	 * @param {int} iRootLevel The new <code>rootLevel</code>
 	 *
 	 * @public
 	 */
@@ -2345,7 +2413,8 @@ sap.ui.define([
 
 	/**
 	 * Returns the rootLevel
-	 * @returns {int}
+	 *
+	 * @returns {int} The root level
 	 *
 	 * @public
 	 */
@@ -2355,9 +2424,13 @@ sap.ui.define([
 
 	/**
 	 * Retrieves the EntityType of the bindings path, resolved with the current context.
+	 *
+	 * @returns {object|undefined}
+	 *   The entity type or <code>undefined</code>, if the bindings path can't be resolved
+	 *
 	 * @private
 	 */
-	ODataTreeBinding.prototype._getEntityType = function(){
+	ODataTreeBinding.prototype._getEntityType = function() {
 		var sResolvedPath = this.getResolvedPath();
 
 		if (sResolvedPath) {
