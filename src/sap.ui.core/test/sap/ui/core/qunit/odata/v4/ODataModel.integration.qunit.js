@@ -33201,7 +33201,7 @@ sap.ui.define([
 		var oKeptContext,
 			oListBinding,
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
-			fnOnBeforeDestroy = sinon.stub(),
+			fnOnBeforeDestroy = sinon.spy(),
 			oTable,
 			sView = '\
 <Text id="count" text="{$count}"/>\
@@ -33612,7 +33612,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-366
 	QUnit.test("CPOUI5ODATAV4-366: Context#refresh on a context that is not in the collection"
 			+ "; after refresh the entity is deleted", function (assert) {
-		var fnOnBeforeDestroy = sinon.stub(),
+		var fnOnBeforeDestroy = sinon.spy(),
 			that = this;
 
 		return this.createKeepAliveScenario(assert, true, fnOnBeforeDestroy)
@@ -33741,7 +33741,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-366
 	QUnit.test("CPOUI5ODATAV4-366: Context#refresh on a context that is in the collection"
 		+ ", after refresh the entity is deleted", function (assert) {
-		var fnOnBeforeDestroy = sinon.stub(),
+		var fnOnBeforeDestroy = sinon.spy(),
 			that = this;
 
 		return this.createKeepAliveScenario(assert, false, fnOnBeforeDestroy)
@@ -34100,7 +34100,7 @@ sap.ui.define([
 	QUnit.test("CPOUI5ODATAV4-488: Refresh w/ kept-alive context", function (assert) {
 		var oKeptContext,
 			oListBinding,
-			fnOnBeforeDestroy = sinon.stub(),
+			fnOnBeforeDestroy = sinon.spy(),
 			oTable,
 			that = this;
 
@@ -34518,7 +34518,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-544
 	QUnit.test("CPOUI5ODATAV4-578: kept-alive entity of object page deleted", function (assert) {
 		var oError = createErrorInsideBatch({message : "Not found"}),
-			fnOnBeforeDestroy = sinon.stub(),
+			fnOnBeforeDestroy = sinon.spy(),
 			that = this;
 
 		return this.createKeepAliveScenario(assert, false, fnOnBeforeDestroy)

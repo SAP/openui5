@@ -32,7 +32,7 @@ sap.ui.define([
 			},
 			oDataRow = {},
 			// handleResponse must be at the prototype
-			oFirstLevelCache = Object.assign(Object.create({handleResponse : sinon.stub()}), {
+			oFirstLevelCache = Object.assign(Object.create({handleResponse : sinon.spy()}), {
 				sMetaPath : "/meta/path",
 				mQueryOptions : {"sap-client" : "123"},
 				oRequestor : {
