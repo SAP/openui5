@@ -2928,7 +2928,18 @@ sap.ui.define([
 				http2 = sap.ui.getCore().getConfiguration().getDepCache(),
 				sPreloadName,
 				oTransitiveDependencies,
-				aLibs;
+				aLibs,
+				errorLogging = function (sPreloadName, bAsync) {
+					return function (e) {
+						var sErrorMessage = "Component-preload for this component does not exist.";
+						Log.warning(
+							"Couldn't preload component from " + sPreloadName + ": " + ((e && e.message) || e),
+							!bAsync ? sErrorMessage : sErrorMessage + " If the component is part of a library or another component, the configuration 'sap.app/embeddedBy' is not maintained. " +
+							" The 'sap.app/embeddedBy' property must be relative path inside the deployment unit (library or component).",
+							"sap.ui.core.Component#preload"
+						);
+					};
+				};
 
 			// only load the Component-preload file if the Component module is not yet available
 			if ( bComponentPreload && sComponentName != null && !sap.ui.loader._.getModuleState(sController.replace(/\./g, "/") + ".js") ) {
@@ -2943,10 +2954,10 @@ sap.ui.define([
 						Array.prototype.push.apply(aLibs, oTransitiveDependencies.dependencies);
 
 						// load library preload for every transitive dependency
-						return sap.ui.getCore().loadLibraries( aLibs, { preloadOnly: true } );
+						return sap.ui.getCore().loadLibraries( aLibs, { preloadOnly: true } ).catch(errorLogging(oTransitiveDependencies.library, true));
 					} else {
 						sPreloadName = sController.replace(/\./g, "/") + (http2 ? '-h2-preload.js' : '-preload.js'); // URN
-						return sap.ui.loader._.loadJSResourceAsync(sPreloadName, true);
+						return sap.ui.loader._.loadJSResourceAsync(sPreloadName).catch(errorLogging(sPreloadName, true));
 					}
 				}
 
@@ -2954,7 +2965,7 @@ sap.ui.define([
 					sPreloadName = sController + '-preload'; // Module name
 					sap.ui.requireSync(sPreloadName.replace(/\./g, "/"));
 				} catch (e) {
-					Log.warning("couldn't preload component from " + sPreloadName + ": " + ((e && e.message) || e));
+					errorLogging(sPreloadName, false)(e);
 				}
 			} else if (bAsync) {
 				return Promise.resolve();
@@ -3157,11 +3168,20 @@ sap.ui.define([
 				collect(oManifest.then(function(oManifest) {
 
 					// preload the component only if not embedded in a library
-					// if the component is embedded in a lib. we expect a matching dependency in the manifest
-					// this way the cascading dependency loading later on will make sure the component itself is available
+					// If the Component controller is not preloaded, the Component.js file is loaded as a single request later on.
+					// This situation should be fixed by the factory caller, so we log it as a warning.
 					var pPreload = Promise.resolve();
-					if (!oManifest.getEntry("/sap.app/embeddedBy")) {
-						pPreload = preload(oManifest.getComponentName(), true);
+					var sEmbeddedBy = oManifest.getEntry("/sap.app/embeddedBy");
+					var sComponentName = oManifest.getComponentName();
+					if (!sEmbeddedBy) {
+						pPreload = preload(sComponentName, true);
+					} else if (!sap.ui.loader._.getModuleState(getControllerModuleName() + ".js")) {
+						Log.warning(
+							"Component '" + sComponentName + "' is defined to be embedded in a library or another component",
+							"The relatively given preload for the embedding resource was not loaded before hand. " +
+							"Please make sure to load the embedding resource containing this Component before instantiating.",
+							"sap.ui.core.Component#embeddedBy"
+						);
 					}
 
 					return pPreload.then(function() {
