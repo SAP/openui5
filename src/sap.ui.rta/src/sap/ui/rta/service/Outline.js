@@ -65,8 +65,9 @@ sap.ui.define([
 	 * @property {string} id - ID of the control
 	 * @property {string} [instanceName] - Text retrieved from node's design time metadata <code>getLabel()</code>
 	 * @property {string} [name] - Singular name from node's design time metadata
-	 * @property {string} technicalName - Class type for element nodes/aggregation name for aggregation nodes.
+	 * @property {string} technicalName - Class type for element nodes/aggregation name for aggregation nodes
 	 * @property {boolean} editable - Indicates whether the node is editable
+	 * @property {string} [templateReference] - Element ID referncing corresponding template
 	 * @property {string} [icon] - Icon path for the node
 	 * @property {string} type - Type of node
 	 * @property {boolean} [visible] - Visibility of node of type <code>element</code>
@@ -195,6 +196,55 @@ sap.ui.define([
 			}
 		};
 
+		function getTemplateData(oChildOverlay, mTemplateData, mInnerTemplateData) {
+			var sAggregationName = oChildOverlay.getAggregationName && oChildOverlay.getAggregationName();
+			if (sAggregationName) {
+				var sAggregationOverlayId = oChildOverlay.getParent().getId();
+				// Aggregation with root template
+				if (mInnerTemplateData[sAggregationName]) {
+					return Object.assign({
+						templateFor: sAggregationOverlayId
+					}, mInnerTemplateData[sAggregationName]);
+				}
+				return ((mTemplateData && mTemplateData.elements) || [])
+					.map(function(oElement) {
+						// Template
+						if (
+							oElement.type === "aggregationBindingTemplate"
+							|| oElement.parentAggregationName === sAggregationName
+						) {
+							return Object.assign({
+								templateFor: sAggregationOverlayId
+							}, oElement);
+						}
+						// Regular aggregation
+						return oElement.technicalName === sAggregationName && oElement;
+					})
+					.filter(Boolean)[0];
+			}
+			// Template root element
+			var aAggregationTemplateOverlays = (
+				oChildOverlay.getParentElementOverlay().getAggregationBindingTemplateOverlays
+				&& oChildOverlay.getParentElementOverlay().getAggregationBindingTemplateOverlays()
+					.reduce(function (aAllRootElementOverlaysInsideTemplates, oAggregationOverlay) {
+						return aAllRootElementOverlaysInsideTemplates.concat(oAggregationOverlay.getChildren());
+					}, [])
+			) || [];
+			if (aAggregationTemplateOverlays.includes(oChildOverlay)) {
+				return undefined;
+			}
+			if (!mTemplateData) {
+				return undefined;
+			}
+			// Element inside clone
+			var oParent = oChildOverlay.getParentElementOverlay();
+			if (oParent.getId() === mTemplateData.templateFor) {
+				return mTemplateData;
+			}
+			var iIndex = oChildOverlay.getParent().getChildren().indexOf(oChildOverlay);
+			return mTemplateData.elements[iIndex];
+		}
+
 		/**
 		 * Returns outline model data including the children until max depth (<code>this.iDepth</code> or last child is reached).
 		 * During execution, the <code>fnFilter</code> is used to determine whether node data should be added.
@@ -203,17 +253,19 @@ sap.ui.define([
 		 * @param {sap.ui.dt.Overlay} oOverlay - Overlay for this node
 		 * @param {int} [iDepth] - Level of children to traverse
 		 * @param {sap.ui.dt.Overlay} [oParentOverlay] - Parent overlay (if present) for the passed overlay
+		 * @param {object} [mTemplateData] - Propagates template data to the aggregation template clones
 		 * @returns {OutlineObject} Outline model data
 		 */
-		oOutline._getChildrenNodes = function (oOverlay, iDepth, oParentOverlay) {
+		oOutline._getChildrenNodes = function (oOverlay, iDepth, oParentOverlay, mTemplateData) {
 			var bValidDepth = DtUtil.isInteger(iDepth);
+			var mAggregationTemplates = {};
 
 			if (oOverlay.getShouldBeDestroyed()) {
 				return {};
 			}
 
 			//get necessary properties from overlay
-			var oData = this._getNodeProperties(oOverlay, oParentOverlay) || {};
+			var oData = this._getNodeProperties(oOverlay, oParentOverlay, mTemplateData) || {};
 
 			var aChildren = oOverlay.getChildren();
 			//find aggregation binding template overlays
@@ -222,20 +274,12 @@ sap.ui.define([
 				&& oOverlay.getAggregationBindingTemplateOverlays()
 			) || [];
 
-			//for binding template overlays, do not include children of the
-			//corresponding aggregations on the outline (e.g. items)
 			if (aAggregationTemplateOverlays.length > 0) {
-				var aExcludedAggregations = [];
 				aChildren = aAggregationTemplateOverlays.reduce(function(aCollectedChildren, oAggregationTemplateOverlay) {
-					aExcludedAggregations.push(oAggregationTemplateOverlay.getAggregationName());
-					return oAggregationTemplateOverlay.getChildren().concat(aCollectedChildren);
-				}, aChildren)
-				.filter(function(oChild) {
-					if (oChild.getAggregationName && aExcludedAggregations.indexOf(oChild.getAggregationName()) > -1) {
-						return false;
-					}
-					return true;
-				});
+					var oTemplateOverlay = oAggregationTemplateOverlay.getChildren()[0];
+					mAggregationTemplates[oTemplateOverlay.getId()] = oAggregationTemplateOverlay.getAggregationName();
+					return [oTemplateOverlay].concat(aCollectedChildren);
+				}, aChildren);
 			}
 
 			//check if the tree should be traversed deeper and children overlays are present
@@ -246,9 +290,16 @@ sap.ui.define([
 				//decrement depth for children nodes
 				iDepth = bValidDepth ? iDepth - 1 : iDepth;
 
+				var mInnerTemplateData = {};
 				oData.elements = aChildren
 					.map(function (oChildOverlay) {
-						return this._getChildrenNodes(oChildOverlay, iDepth, oChildOverlay.getParent());
+						var mNextTemplateData = getTemplateData(oChildOverlay, mTemplateData, mInnerTemplateData);
+						var oNextData = this._getChildrenNodes(oChildOverlay, iDepth, oChildOverlay.getParent(), mNextTemplateData);
+						if (oNextData.type === "aggregationBindingTemplate") {
+							var sAggregationName = mAggregationTemplates[oChildOverlay.getId()];
+							mInnerTemplateData[sAggregationName] = merge({}, oNextData);
+						}
+						return oNextData;
 					}, this)
 					.filter(function (oChildNode) {
 						return !isEmptyObject(oChildNode);
@@ -268,10 +319,6 @@ sap.ui.define([
 				&& oParentElementOverlay.getAggregationOverlay(sParentAggregationName, "AggregationBindingTemplateOverlays") === oParentAggregationOverlay;
 		}
 
-		function getNumberOfTemplateChildrenOverlays(oParentAggregationOverlay, sParentAggregationName) {
-			return oParentAggregationOverlay.getParent().getAggregationOverlay(sParentAggregationName).getChildren().length;
-		}
-
 		function getElementOverlayData(oOverlay, oElement, oDtMetadata) {
 			var oData = {
 				editable: oOverlay.getEditable(),
@@ -282,20 +329,18 @@ sap.ui.define([
 			}
 			var oParentAggregationOverlay = oOverlay.getParent() && oOverlay.getParentAggregationOverlay();
 			var sParentAggregationName = (oParentAggregationOverlay && oParentAggregationOverlay.getAggregationName()) || "";
-			var sDtNameSuffix = "";
 			// Aggregation Binding Template
 			if (isAggregationBindingTemplate(oOverlay, oParentAggregationOverlay, sParentAggregationName)) {
-				var iNoOfChildren = getNumberOfTemplateChildrenOverlays(oParentAggregationOverlay, sParentAggregationName);
-				sDtNameSuffix = " [" + iNoOfChildren + "]";
 				oData.type = "aggregationBindingTemplate";
 				oData.icon = "sap-icon://attachment-text-file";
+				oData.parentAggregationName = sParentAggregationName;
 			} else {
 				oData.type = "element";
 			}
 
 			var oDtName = oDtMetadata.getName(oElement);
 			if (oDtName && oDtName.singular) {
-				oData.name = (oDtName && oDtName.singular) + sDtNameSuffix;
+				oData.name = oDtName && oDtName.singular;
 			}
 			return oData;
 		}
@@ -320,13 +365,17 @@ sap.ui.define([
 			return oData;
 		}
 
-		function getDefaultData(oElement, oDtMetadata) {
+		function getDefaultData(oElement, oDtMetadata, mTemplateData) {
 			var oData = {
 				id: oElement.getId(),
 				technicalName: oElement.getMetadata().getName(),
 				editable: false,
 				type: null
 			};
+
+			if (mTemplateData) {
+				oData.templateReference = mTemplateData.id;
+			}
 
 			var sDefaultIcon = getDefaultIcon(oDtMetadata);
 			if (sDefaultIcon) {
@@ -352,12 +401,13 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.dt.Overlay} oOverlay - Overlay of the node for which properties are calculated
 		 * @param {sap.ui.dt.Overlay} [oParentOverlay] - Parent overlay (if present) for the passed overlay
+		 * @param {object} [mTemplateData] - Template data
 		 * @returns {object} Data containing applicable properties
 		 */
-		 oOutline._getNodeProperties = function (oOverlay, oParentOverlay) {
+		 oOutline._getNodeProperties = function (oOverlay, oParentOverlay, mTemplateData) {
 			var oElement = oOverlay.getElement();
 			var oDtMetadata = oOverlay.getDesignTimeMetadata();
-			var oData = getDefaultData(oElement, oDtMetadata);
+			var oData = getDefaultData(oElement, oDtMetadata, mTemplateData);
 
 			if (oOverlay instanceof ElementOverlay) {
 				return Object.assign(oData, getElementOverlayData(oOverlay, oElement, oDtMetadata));

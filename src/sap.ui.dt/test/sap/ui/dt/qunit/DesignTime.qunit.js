@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/CustomListItem",
 	"sap/m/Button",
+	"sap/m/Toolbar",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/m/Page",
@@ -36,6 +37,7 @@ sap.ui.define([
 	List,
 	CustomListItem,
 	Button,
+	Toolbar,
 	VerticalLayout,
 	HorizontalLayout,
 	Page,
@@ -923,7 +925,7 @@ sap.ui.define([
 
 			var fnSpy = sandbox.spy(DesignTime.prototype, "_createChildren");
 
-			this.oDesignTime._createChildren(oOuterLayoutOverlay).then(function() {
+			this.oDesignTime._createChildren(oOuterLayoutOverlay, {}).then(function() {
 				oButton1Overlay = OverlayRegistry.getOverlay(this.oButton1);
 				var oOuterLayoutAggregationOverlay = OverlayRegistry.getOverlay(this.oOuterLayout).getAggregationOverlay("content");
 				var oInnerLayoutAggregationOverlay = OverlayRegistry.getOverlay(this.oInnerLayout).getAggregationOverlay("content");
@@ -1158,15 +1160,18 @@ sap.ui.define([
 		});
 	});
 
+	function getJsonModelWithData(iCount, sIdPrefix, sIdSuffix) {
+		var oData = [];
+		for (var i = 0, n = iCount; i < n; i++) {
+			oData.push({text: (sIdPrefix || "item") + i + (sIdSuffix || "-bound")});
+		}
+		return new JSONModel(oData);
+	}
+
 	QUnit.module("Given that the DesignTime is initialized with control including aggregation bindinding", {
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
-			// create list with bound items
-			var oData = [
-				{text: "item1-bound"},
-				{text: "item2-bound"}
-			];
-			var oModel = new JSONModel(oData);
+			var oModel = getJsonModelWithData(2);
 			this.oCustomListItemTemplate = new CustomListItem("boundListItem", {content: [new Button("boundListItem-btn", {text: '{text}'})]});
 			this.oBoundList = new List("boundlist").setModel(oModel);
 			this.oBoundList.bindAggregation("items", {
@@ -1222,6 +1227,166 @@ sap.ui.define([
 			assert.ok(oButtonTemplateOverlay, "overlay for the button inside aggregation template (custom list item) exists");
 			assert.ok(DOMUtil.isVisible(oButton1AOverlay.getDomRef()), "then the first bound button overlay is visible");
 			assert.notOk(DOMUtil.isVisible(oButtonTemplateOverlay.getDomRef()), "then the button overlay inside aggregation template is not visible");
+		});
+	});
+
+	QUnit.module("Given that the DesignTime is initialized with controls including aggregation binding and nested aggregation binding", {
+		beforeEach: function(assert) {
+			var fnDone = assert.async();
+			// create list with bound items
+			var oRootModel = getJsonModelWithData(2, "outer", "");
+			var oInnerModel = getJsonModelWithData(3, "inner", "");
+
+			// VerticalLayout
+			//	List -> with aggregation binding on items aggregation
+			//		[items]
+			//			CustomListItem -> (template) without binding
+			//				Button
+			//				List -> with aggregation binding on items
+			//					[items]
+			//						CustomListItem (nested template)
+			//							Button
+			//				Button
+			//		[headerToolbar]
+			//			Toolbar -> without binding
+			// 				Button
+
+			this.oInnerTemplate = new CustomListItem("inner-template", {
+				content: [new Button("deep-button", {text: "deep"})]
+			});
+			this.oInnerList = new List("inner-list").setModel(oInnerModel);
+			this.oInnerList.bindAggregation("items", {
+				path: "/",
+				template: this.oInnerTemplate,
+				templateShareable: false
+			});
+
+			this.oOuterTemplate = new CustomListItem("outer-template", {
+				content: [
+					new Button("inner-top-button", {text: "inner-top"}),
+					this.oInnerList,
+					new Button("inner-bottom-button", {text: "inner-bottom"})
+				]
+			});
+
+			this.oToolbar = new Toolbar("external-toolbar", {
+				content: [new Button("external-button", {text: "external"})]
+			});
+
+			this.oRootList = new List("root-list", {
+				headerToolbar: [this.oToolbar]
+			}).setModel(oRootModel);
+			this.oRootList.bindAggregation("items", {
+				path: "/",
+				template: this.oOuterTemplate,
+				templateShareable: false
+			});
+
+			this.oVerticalLayout = new VerticalLayout("verticalLayout", {
+				content: [this.oRootList]
+			});
+			this.oVerticalLayout.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oVerticalLayout]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", fnDone);
+		},
+		afterEach: function() {
+			this.oDesignTime.destroy();
+			this.oVerticalLayout.destroy();
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("when designtime is created", function (assert) {
+			var aOverlays = OverlayRegistry.getOverlays();
+			assert.strictEqual(aOverlays.length, 55, "then 55 Overlays are created");
+
+			var oVerticalLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+			var oOuterAggregationBindingTemplateOverlay = OverlayRegistry.getOverlay(this.oRootList).getAggregationBindingTemplateOverlays()[0];
+			var oExternalListToolbarOverlay = OverlayRegistry.getOverlay(this.oRootList.getHeaderToolbar());
+
+			assert.strictEqual(oVerticalLayoutOverlay.getElement().getId(), "verticalLayout",
+				"then overlay is created for vertical layout");
+			assert.strictEqual(oVerticalLayoutOverlay.getAggregationBindingTemplateOverlays().length, 0,
+				"then thera are no templates attached to the vertical layout overlay");
+			assert.strictEqual(oOuterAggregationBindingTemplateOverlay.getElement().getId(), "root-list",
+				"then overlay is created for aggregation binding template and attached to the List overlay");
+			assert.strictEqual(oExternalListToolbarOverlay.getElement().getId(), "external-toolbar",
+				"then overlay for not bound item on an additional aggregation exists");
+			assert.strictEqual(oExternalListToolbarOverlay.getAggregationBindingTemplateOverlays().length, 0,
+				"then there are no templates attached to the additional aggregation");
+
+			// inside outer template
+			var oTopButtonInsideOuterTemplateOverlay = OverlayRegistry.getOverlay("inner-top-button");
+			var oListInsideOuterTemplateOverlay = OverlayRegistry.getOverlay("inner-list");
+			var oBottomButtonInsideOuterTemplateOverlay = OverlayRegistry.getOverlay("inner-bottom-button");
+
+			assert.ok(oTopButtonInsideOuterTemplateOverlay,	"then overlay is created for first item inside aggregation binding template");
+			assert.strictEqual(oTopButtonInsideOuterTemplateOverlay.getAggregationBindingTemplateOverlays().length, 0,
+				"then there are no templates attached to the top button inside aggregation binding template");
+			assert.ok(oListInsideOuterTemplateOverlay, "then overlay for first bound item exists");
+			assert.strictEqual(oListInsideOuterTemplateOverlay.getAggregationBindingTemplateOverlays()[0].getElement().getId(), "inner-list",
+				"then there is a template attached (nested) to the list inside aggregation binding template");
+			assert.ok(oBottomButtonInsideOuterTemplateOverlay, "then overlay is created for second item inside aggregation binding template");
+			assert.strictEqual(oBottomButtonInsideOuterTemplateOverlay.getAggregationBindingTemplateOverlays().length, 0,
+				"then there are no templates attached to the bottom button inside aggregation binding template");
+
+			// inside inner template
+			var oInnerTemplateOverlay = OverlayRegistry.getOverlay(this.oInnerList).getAggregationBindingTemplateOverlays()[0].getChildren()[0]; // columnListItem
+			var oButtonInsideInnerTemplateOverlay = oInnerTemplateOverlay.getChildren()[0].getChildren()[0];
+
+			assert.ok(oInnerTemplateOverlay, "then overlay is created for the inner (nested) aggregation binding template");
+			assert.strictEqual(oButtonInsideInnerTemplateOverlay.getElement().getId(), "deep-button",
+				"then overlay is created for nested aggregation binding template and attached to the List overlay");
+			assert.strictEqual(oButtonInsideInnerTemplateOverlay.getAggregationBindingTemplateOverlays().length, 0,
+				"then there are no templates attached to the button inside the inner (nested) aggregation binding template");
+
+			// instances created from template by aggregation binding
+			var oFirstAggregationBindingInstanceOverlay = OverlayRegistry.getOverlay(this.oRootList.getItems()[0]);
+			var oSecondAggregationBindingInstanceOverlay = OverlayRegistry.getOverlay(this.oRootList.getItems()[1]);
+
+			assert.strictEqual(oFirstAggregationBindingInstanceOverlay.getElement().getId(), "outer-template-root-list-0",
+				"then overlay for first bound item exists");
+			assert.strictEqual(oFirstAggregationBindingInstanceOverlay.getAggregationBindingTemplateOverlays().length, 0,
+				"then there are no templates attached to the first instance from template");
+			assert.strictEqual(oSecondAggregationBindingInstanceOverlay.getElement().getId(), "outer-template-root-list-1",
+				"then overlay for second bound item exists");
+			assert.strictEqual(oSecondAggregationBindingInstanceOverlay.getAggregationBindingTemplateOverlays().length, 0,
+				"then there are no templates attached to the second instance from template");
+
+			// inside first instance of the outer template
+			var oFirstInstanceElement = this.oRootList.getItems()[0]; // customListItem
+			var oTopButtonInsideOuterInstanceOverlay = OverlayRegistry.getOverlay(oFirstInstanceElement.getContent()[0]);
+			var oListInsideOuterInstanceOverlay = OverlayRegistry.getOverlay(oFirstInstanceElement.getContent()[1]);
+			var oBottomButtonInsideOuterInstanceOverlay = OverlayRegistry.getOverlay(oFirstInstanceElement.getContent()[2]);
+
+			assert.ok(oTopButtonInsideOuterInstanceOverlay,	"then overlay is created for first item inside aggregation binding instance");
+			assert.strictEqual(oTopButtonInsideOuterInstanceOverlay.getAggregationBindingTemplateOverlays().length, 0,
+				"then there are no templates attached to the top button inside aggregation binding instance");
+			assert.ok(oListInsideOuterInstanceOverlay, "then overlay for first bound item exists");
+			assert.strictEqual(oListInsideOuterInstanceOverlay.getAggregationBindingTemplateOverlays().length, 0,
+				"then there are no templates attached (nested) to the list inside aggregation binding instance");
+			assert.ok(oBottomButtonInsideOuterInstanceOverlay, "then overlay is created for second item inside aggregation binding instance");
+			assert.strictEqual(oBottomButtonInsideOuterInstanceOverlay.getAggregationBindingTemplateOverlays().length, 0,
+				"then there are no templates attached to the bottom button inside aggregation binding instance");
+
+			// inside first instance: nested template into outer template
+			var oInnerTemplateInstanceElement = oFirstInstanceElement.getContent()[1].getItems()[0]; // [customListItem]
+			var oInnerTemplateInstanceOverlay = OverlayRegistry.getOverlay(oInnerTemplateInstanceElement);
+			var oButtonInsideInnerInstanceOverlay = OverlayRegistry.getOverlay(oInnerTemplateInstanceElement.getContent()[0]);
+
+			assert.ok(oInnerTemplateInstanceOverlay, "then overlay is created for the inner (nested) aggregation binding instance");
+			assert.strictEqual(oInnerTemplateInstanceOverlay.getAggregationBindingTemplateOverlays().length, 0,
+				"then there are no templates attached to the inner template instance ");
+			assert.strictEqual(oButtonInsideInnerInstanceOverlay.getElement().getId(), "deep-button-root-list-0-inner-list-root-list-0-0",
+				"then overlay is created for nested aggregation binding instance of the button and attached to the List overlay");
+			assert.strictEqual(oButtonInsideInnerInstanceOverlay.getAggregationBindingTemplateOverlays().length, 0,
+				"then there are no templates attached to the button inside the inner (nested) aggregation binding instance");
+			assert.strictEqual(oButtonInsideInnerInstanceOverlay.getChildren().length, 0,
+				"then there are no other ovelrays attached to the button inside the inner (nested) aggregation binding template");
 		});
 	});
 
