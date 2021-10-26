@@ -5156,20 +5156,18 @@ sap.ui.define([
 
 	});
 
-	QUnit.module('Destroy', {
-		beforeEach: function () {
-			this.oPC = new PlanningCalendar();
-			this.oPC.placeAt("bigUiArea");
-		},
-		afterEach: function () {
-			this.oPC.destroy();
-			this.oPC = null;
-		}
-	});
+	QUnit.module('Destroy');
 
 	QUnit.test("When the control is destroyed there's no need of custom invalidation logic", function (assert) {
+
+		sap.ui.getCore().applyChanges();	// because of BCP 2080159964/ Reply from 21.07.2020  14:26:04
+
+		this.oPC = new PlanningCalendar();
+		this.oPC.placeAt("bigUiArea");
+
 		//define
 		var oControlInvalidateSpy = this.spy(Control.prototype, "invalidate");
+
 
 		//act
 		this.oPC.addSpecialDate(new DateTypeRange({startDate: new Date(), tooltip: "test"}));
@@ -5183,6 +5181,10 @@ sap.ui.define([
 		//cleanup
 		oControlInvalidateSpy.restore();
 		this.oPC._bIsBeingDestroyed = false;
+
+		this.oPC.destroy();
+		this.oPC = null;
+
 	});
 
 	QUnit.module("WeekNumbers");
