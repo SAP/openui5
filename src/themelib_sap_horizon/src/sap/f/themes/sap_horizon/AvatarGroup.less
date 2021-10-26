@@ -1,0 +1,38 @@
+/* ============================= */
+/* CSS for control sap.f/AvatarGroup  */
+/* Horizon theme                 */
+/* ============================= */
+
+
+/* ============================= */
+/* CSS for control sap.f/AvatarGroup  */
+/* Base theme                    */
+/* ============================= */
+
+.sapFAvatarGroup:focus {
+	box-shadow: 0px 0px 0px 0.125rem @sapUiContentFocusColor;
+	outline: none;
+}
+
+.sapFAvatarGroup {
+	padding: 0.125rem;
+}
+
+.sapFAvatarGroupIndividual {
+
+	.sapFAvatarGroupItem:focus {
+		outline: none;
+		.sapFAvatar  {
+			outline: none;
+			box-shadow: 0px 0px 0px 0.125rem @sapUiContentFocusColor;
+		}
+	}
+}
+
+.sapFAvatarGroupMoreButton.sapMBtn:focus > .sapMFocusable.sapMBtnInner {
+	outline-offset: -0.125rem;
+}
+
+.sapFAvatarGroupPopover .sapFCard {
+	border-radius: 0;
+}

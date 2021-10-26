@@ -20,11 +20,6 @@ html.sap-desktop .sapMTBActive:focus {
 	padding: 0 0.5rem 0 0.75rem;
 }
 
-/* Solid Toolbar Context */
-.sapMTB-Solid-CTX.sapMTB {
-	background: @sapUiBaseBG;
-}
-
 /* Info Toolbar Context */
 .sapMTB-Info-CTX.sapMTB {
 	background: darken(@sapUiBaseColor, 10);
@@ -64,4 +59,23 @@ html.sap-desktop .sapMTB-Info-CTX.sapMTBActive:focus {
 
 .generate-contrast-color-toolbar(@backgroundColor) {
 	color: contrast(@backgroundColor, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+}
+
+// Border radius for default and solid states as they result in white color
+.sapMTB:not(.sapMTB-Info-CTX) {
+	border-top-right-radius: @sapElement_BorderCornerRadius;
+	border-top-left-radius: @sapElement_BorderCornerRadius;
+}
+
+// =====================================
+// solid toolbar context
+// =====================================
+
+.sapMTB-Solid-CTX.sapMTB {
+	background-color: @sapUiToolbarBackground;
+}
+
+html.sap-desktop .sapMTBActive:focus {
+	outline: none;
+	box-shadow: inset 0px 0px 0px @sapContent_FocusWidth  @sapUiContentFocusColor;
 }
