@@ -3,11 +3,11 @@
 sap.ui.define([
 	"sap/ui/unified/calendar/YearPicker",
 	"sap/ui/unified/DateRange",
-	"sap/ui/unified/calendar/CalendarDate"
-], function(YearPicker, DateRange, CalendarDate) {
+	"sap/ui/unified/calendar/CalendarDate",
+	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery"
+], function(YearPicker, DateRange, CalendarDate, Device, jQuery) {
 	"use strict";
-
-	(function () {
 
 		QUnit.module("API ", {
 			beforeEach: function () {
@@ -352,9 +352,9 @@ sap.ui.define([
 		QUnit.test("Years are properly selected on touch devices mouseup", function (assert) {
 			var iSelectedYear = 3,
 					oMousePosition = { clientX: 10, clientY: 10 },
-					deviceStub = this.stub(sap.ui.Device.support, "touch", true),
-					isValueInThresholdStub = this.stub(this.oYP, "_isValueInThreshold", function () { return true; }),
-					itemNavigationStub = this.stub(this.oYP._oItemNavigation, "getFocusedIndex", function () { return iSelectedYear; }),
+					deviceStub = this.stub(Device.support, "touch").value(true),
+					isValueInThresholdStub = this.stub(this.oYP, "_isValueInThreshold").returns(true),
+					itemNavigationStub = this.stub(this.oYP._oItemNavigation, "getFocusedIndex").returns(iSelectedYear),
 					selectSpy = this.spy(function () {});
 
 			this.oYP.attachSelect(selectSpy);
@@ -372,5 +372,4 @@ sap.ui.define([
 			itemNavigationStub.restore();
 		});
 
-	})();
 });

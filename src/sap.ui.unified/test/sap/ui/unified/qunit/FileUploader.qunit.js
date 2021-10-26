@@ -800,7 +800,7 @@ sap.ui.define([
 	QUnit.module("private functions");
 	QUnit.test("Testing sending passed files with XHR", function (assert) {
 		var oFileUploader = createFileUploader(),
-			bIsExecutedInFireFox = sap.ui.Device.browser.firefox,
+			bIsExecutedInFireFox = Device.browser.firefox,
 			aFiles = {
 				"0": createFakeFile({
 					name:"FileUploader.qunit.html",
@@ -1204,7 +1204,7 @@ sap.ui.define([
 		// setup
 		var oNewLabel,
 			sInternalButtonAriaLabelledby,
-			oLabel = new sap.m.Label("initialLabel", {
+			oLabel = new Label("initialLabel", {
 				text: "Select Document",
 				labelFor: "fu"
 			}),
@@ -1215,7 +1215,7 @@ sap.ui.define([
 		oFileUploader.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		oNewLabel = new sap.m.Label("newLabel", { labelFor: "fu" });
+		oNewLabel = new Label("newLabel", { labelFor: "fu" });
 
 		oNewLabel.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -1341,7 +1341,7 @@ sap.ui.define([
 
 	QUnit.test("Description for required FileUploader", function (assert) {
 		// Setup
-		var oLabel = new sap.m.Label({ text: "Label", labelFor: "fu", required: true }),
+		var oLabel = new Label({ text: "Label", labelFor: "fu", required: true }),
 			oFileUploader = new FileUploader("fu"),
 			sRequiredText = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("FILEUPLOAD_REQUIRED");
 
@@ -1374,7 +1374,7 @@ sap.ui.define([
 
 	QUnit.test("Click focuses the fileuploader button", function (assert) {
 		//Arrange
-		this.stub(Device, "browser", {"safari": true});
+		this.stub(Device, "browser").value({"safari": true});
 		var oFileUploader = new FileUploader("fu"),
 			oSpy = this.spy(oFileUploader.oBrowse, "focus");
 

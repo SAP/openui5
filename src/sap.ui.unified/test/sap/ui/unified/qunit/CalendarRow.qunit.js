@@ -5,16 +5,22 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendRenderer",
 	"sap/ui/unified/CalendarRowRenderer",
 	"sap/ui/unified/CalendarLegendItem",
+	"sap/ui/core/CalendarType",
 	"sap/ui/core/InvisibleText",
+	"sap/ui/core/format/DateFormat",
 	"sap/ui/unified/CalendarRow",
 	"sap/ui/unified/CalendarAppointment",
-	"sap/ui/unified/library"
+	"sap/ui/unified/library",
+	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery"
 ], function(qutils, CalendarLegend, CalendarLegendRenderer, CalendarRowRenderer,
-	CalendarLegendItem, InvisibleText, CalendarRow, CalendarAppointment, unifiedLibrary) {
+	CalendarLegendItem, CalendarType, InvisibleText, DateFormat, CalendarRow, CalendarAppointment, unifiedLibrary, Device, jQuery) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
-	var oFormatYyyyMMddHHmm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMddHHmm", calendarType: sap.ui.core.CalendarType.Gregorian});
+	var CalendarIntervalType = unifiedLibrary.CalendarIntervalType;
+	var GroupAppointmentsMode = unifiedLibrary.GroupAppointmentsMode;
+	var oFormatYyyyMMddHHmm = DateFormat.getInstance({pattern: "yyyyMMddHHmm", calendarType: CalendarType.Gregorian});
 
 	var sSelectedAppointmentId = "";
 	var iSelectedGroupAppointments = 0;
@@ -68,113 +74,113 @@ sap.ui.define([
 		startDateChange: handleStartDateChange,
 		intervalSelect: handleIntervalSelect,
 		leaveRow: handleLeaveRow,
-		appointments: [new sap.ui.unified.CalendarAppointment("App0", {
+		appointments: [new CalendarAppointment("App0", {
 				startDate: new Date("2015", "01", "01", "08", "15"),
 				endDate: new Date("2015", "01", "01", "08", "20"),
-				type: sap.ui.unified.CalendarDayType.None,
+				type: CalendarDayType.None,
 				title: "Appointment 0",
 				tooltip: "Tooltip 0",
 				text: "Appointment of 5 minutes, 2 hour in past",
 				key: "A0"
 			}),
-			new sap.ui.unified.CalendarAppointment("App1", {
+			new CalendarAppointment("App1", {
 				startDate: new Date("2015", "01", "01", "11", "15"),
 				endDate: new Date("2015", "01", "01", "13", "15"),
-				type: sap.ui.unified.CalendarDayType.None,
+				type: CalendarDayType.None,
 				title: "Appointment 1",
 				tooltip: "Tooltip 1",
 				text: "Appointment of 2 hours, 1 hour in future",
 				icon: "sap-icon://call",
 				key: "A1"
 			}),
-			new sap.ui.unified.CalendarAppointment("App2", {
+			new CalendarAppointment("App2", {
 				startDate: new Date("2015", "01", "01", "09", "45"),
 				endDate: new Date("2015", "01", "01", "11", "45"),
-				type: sap.ui.unified.CalendarDayType.Type01,
+				type: CalendarDayType.Type01,
 				tentative: true,
 				title: "Appointment 2",
 				tooltip: "Tooltip 2",
 				text: "Appointment of 2 hour, 30 minutes in past",
 				key: "A2"
 			}),
-			new sap.ui.unified.CalendarAppointment("App3", {
+			new CalendarAppointment("App3", {
 				startDate: new Date("2015", "01", "01", "15", "00"),
 				endDate: new Date("2015", "01", "01", "15", "30"),
-				type: sap.ui.unified.CalendarDayType.Type02,
+				type: CalendarDayType.Type02,
 				title: "Appointment 3",
 				tooltip: "Tooltip 3",
 				text: "Appointment of 30 minutes",
 				key: "A3"
 			}),
-			new sap.ui.unified.CalendarAppointment("App4", {
+			new CalendarAppointment("App4", {
 				startDate: new Date("2015", "01", "01", "15", "30"),
 				endDate: new Date("2015", "01", "01", "16", "00"),
-				type: sap.ui.unified.CalendarDayType.Type03,
+				type: CalendarDayType.Type03,
 				title: "Appointment 4",
 				tooltip: "Tooltip 4",
 				text: "Appointment of 30 minutes, starts at end of App3",
 				key: "A4"
 			}),
-			new sap.ui.unified.CalendarAppointment("App5", {
+			new CalendarAppointment("App5", {
 				startDate: new Date("2015", "01", "02", "10", "30"),
 				endDate: new Date("2015", "01", "02", "11", "00"),
-				type: sap.ui.unified.CalendarDayType.Type04,
+				type: CalendarDayType.Type04,
 				title: "Appointment 5",
 				tooltip: "Tooltip 5",
 				text: "Appointment of 30 minutes, next day",
 				key: "A5"
 			}),
-			new sap.ui.unified.CalendarAppointment("App6", {
+			new CalendarAppointment("App6", {
 				startDate: new Date("2015", "01", "02", "0", "0"),
 				endDate: new Date("2015", "01", "02", "23", "59", "59"),
-				type: sap.ui.unified.CalendarDayType.Type05,
+				type: CalendarDayType.Type05,
 				title: "Appointment 6",
 				tooltip: "Tooltip 6",
 				text: "Appointment of full next day",
 				key: "A6"
 			}),
-			new sap.ui.unified.CalendarAppointment("App7", {
+			new CalendarAppointment("App7", {
 				startDate: new Date("2015", "02", "01", "0", "0"),
 				endDate: new Date("2015", "04", "31", "23", "59", "59"),
-				type: sap.ui.unified.CalendarDayType.Type06,
+				type: CalendarDayType.Type06,
 				title: "Appointment 7",
 				tooltip: "Tooltip 7",
 				text: "Appointment of full next 2 months",
 				key: "A7"
 			}),
-			new sap.ui.unified.CalendarAppointment("App8", {
+			new CalendarAppointment("App8", {
 				startDate: new Date("2015", "05", "02", "0", "0"),
 				endDate: new Date("2015", "05", "02", "23", "59", "59"),
-				type: sap.ui.unified.CalendarDayType.Type07,
+				type: CalendarDayType.Type07,
 				title: "Appointment 8",
 				tooltip: "Tooltip 8",
 				text: "Appointment of one day",
 				key: "A8"
 			})
 		],
-		intervalHeaders: [new sap.ui.unified.CalendarAppointment("IHead1", {
+		intervalHeaders: [new CalendarAppointment("IHead1", {
 				startDate: new Date("2015", "01", "01", "12", "00"),
 				endDate: new Date("2015", "01", "01", "13", "00"),
-				type: sap.ui.unified.CalendarDayType.None,
+				type: CalendarDayType.None,
 				title: "Head 1",
 				tooltip: "Tooltip 1",
 				text: "Head of one hour",
 				icon: "sap-icon://sap-ui5",
 				key: "I1"
 			}),
-			new sap.ui.unified.CalendarAppointment("IHead2", {
+			new CalendarAppointment("IHead2", {
 				startDate: new Date("2015", "01", "03", "00", "00"),
 				endDate: new Date("2015", "01", "04", "23", "59"),
-				type: sap.ui.unified.CalendarDayType.Type01,
+				type: CalendarDayType.Type01,
 				title: "Head 2",
 				tooltip: "Tooltip 2",
 				text: "Head of 2 days",
 				key: "I2"
 			}),
-			new sap.ui.unified.CalendarAppointment("IHead3", {
+			new CalendarAppointment("IHead3", {
 				startDate: new Date("2015", "02", "01", "00", "00"),
 				endDate: new Date("2015", "02", "31", "23", "59"),
-				type: sap.ui.unified.CalendarDayType.Type02,
+				type: CalendarDayType.Type02,
 				title: "Head 3",
 				tooltip: "Tooltip 3",
 				text: "Head of 1 month",
@@ -185,7 +191,7 @@ sap.ui.define([
 
 	var initializeRow1 = function(){
 		oRow1.setIntervals(12);
-		oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Hour);
+		oRow1.setIntervalType(CalendarIntervalType.Hour);
 		oRow1.setStartDate(new Date("2015", "01", "01", "10", "15"));
 		var aAppointments = oRow1.getAppointments();
 		for (var i = 1; i < aAppointments.length; i++){
@@ -231,20 +237,20 @@ sap.ui.define([
 
 	QUnit.test("Calendar Row", function(assert) {
 		//Assert default value
-		assert.equal(oRow1.getGroupAppointmentsMode(), sap.ui.unified.GroupAppointmentsMode.Collapsed, "Calendar Row 1: group appointment mode is set");
+		assert.equal(oRow1.getGroupAppointmentsMode(), GroupAppointmentsMode.Collapsed, "Calendar Row 1: group appointment mode is set");
 		//Act
-		oRow1.setGroupAppointmentsMode(sap.ui.unified.GroupAppointmentsMode.Expanded);
+		oRow1.setGroupAppointmentsMode(GroupAppointmentsMode.Expanded);
 		//Assert
-		assert.equal(oRow1.getGroupAppointmentsMode(), sap.ui.unified.GroupAppointmentsMode.Expanded, "Calendar Row 1: group appointment mode is set");
+		assert.equal(oRow1.getGroupAppointmentsMode(), GroupAppointmentsMode.Expanded, "Calendar Row 1: group appointment mode is set");
 		//Cleanup
-		oRow1.setGroupAppointmentsMode(sap.ui.unified.GroupAppointmentsMode.Collapsed);
+		oRow1.setGroupAppointmentsMode(GroupAppointmentsMode.Collapsed);
 	});
 
 	QUnit.test("Calendar Row appointments removed from groups when groupAppointmentsMode is Expanded", function(assert) {
 		//Prepare
 		var previousGroupAppointmentsMode = oRow1.getGroupAppointmentsMode();
 		var previousIntervalType = oRow1.getIntervalType();
-		oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Month);
+		oRow1.setIntervalType(CalendarIntervalType.Month);
 		sap.ui.getCore().applyChanges();
 
 		// Assert before act
@@ -267,9 +273,9 @@ sap.ui.define([
 
 	QUnit.test("Calendar Row group appointments are not changed on the phone device when groupAppointmentsMode is Expanded", function(assert) {
 		//Prepare
-		var deviceStub = this.stub(sap.ui.Device.system, "phone", true);
+		var deviceStub = this.stub(Device.system, "phone").value(true);
 		var previousIntervalType = oRow1.getIntervalType();
-		oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Month);
+		oRow1.setIntervalType(CalendarIntervalType.Month);
 		sap.ui.getCore().applyChanges();
 		var previousGroupAppointmentsMode = oRow1.getGroupAppointmentsMode();
 
@@ -278,7 +284,7 @@ sap.ui.define([
 		assert.ok(nbItemsBefore > 0, "CalendarRow 1: groupAppointments aggregation has " + nbItemsBefore + " items");
 
 		//Act
-		oRow1.setGroupAppointmentsMode(sap.ui.unified.GroupAppointmentsMode.Expanded);
+		oRow1.setGroupAppointmentsMode(GroupAppointmentsMode.Expanded);
 		sap.ui.getCore().applyChanges();
 		assert.ok(true, "Set the groupAppointmentsMode to Expanded");
 
@@ -360,7 +366,7 @@ sap.ui.define([
 		aIntervals = jQuery("#Row1-Apps").children(".sapUiCalendarRowAppsInt");
 		assert.ok(!jQuery(aIntervals[1]).hasClass("sapUiCalendarRowAppsNoWork"), "Row1: interval1 not non-working interval");
 
-		oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Day);
+		oRow1.setIntervalType(CalendarIntervalType.Day);
 		sap.ui.getCore().applyChanges();
 		aIntervals = jQuery("#Row1-Apps").children(".sapUiCalendarRowAppsInt");
 		assert.ok(jQuery(aIntervals[0]).hasClass("sapUiCalendarRowAppsNoWork"), "Row1: interval0 non-working interval");
@@ -395,7 +401,7 @@ sap.ui.define([
 		assert.ok(!bNonWorkingIntervals, "Row1: no non working interval displayed");
 
 		oRow1.setNonWorkingDays();
-		oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Hour);
+		oRow1.setIntervalType(CalendarIntervalType.Hour);
 		sap.ui.getCore().applyChanges();
 	});
 
@@ -625,7 +631,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Appointments - days view", function(assert) {
-		oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Day);
+		oRow1.setIntervalType(CalendarIntervalType.Day);
 		sap.ui.getCore().applyChanges();
 		var $Appointment0 = jQuery("#App0");
 		var $Appointment1 = jQuery("#App1");
@@ -691,7 +697,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Appointments - month view", function(assert) {
-		oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Month);
+		oRow1.setIntervalType(CalendarIntervalType.Month);
 		sap.ui.getCore().applyChanges();
 		var $Appointment0 = jQuery("#App0");
 		var $Appointment1 = jQuery("#App1");
@@ -863,7 +869,7 @@ sap.ui.define([
 		assert.equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201502011159", "EndDate set");
 		assert.ok(!bSubInterval, "No sub-interval clicked");
 
-		oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Day);
+		oRow1.setIntervalType(CalendarIntervalType.Day);
 		sap.ui.getCore().applyChanges();
 		oIntervalStartDate = undefined;
 		oIntervalEndDate = undefined;
@@ -874,7 +880,7 @@ sap.ui.define([
 		assert.equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201502022359", "EndDate set");
 		assert.ok(!bSubInterval, "No sub-interval clicked");
 
-		oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Month);
+		oRow1.setIntervalType(CalendarIntervalType.Month);
 		sap.ui.getCore().applyChanges();
 		oIntervalStartDate = undefined;
 		oIntervalEndDate = undefined;
@@ -885,7 +891,7 @@ sap.ui.define([
 		assert.equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201503312359", "EndDate set");
 		assert.ok(!bSubInterval, "No sub-interval clicked");
 
-		oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Hours);
+		oRow1.setIntervalType(CalendarIntervalType.Hours);
 		sap.ui.getCore().applyChanges();
 	});
 
@@ -902,7 +908,7 @@ sap.ui.define([
 		assert.equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201502011129", "EndDate set");
 		assert.ok(bSubInterval, "sub-interval clicked");
 
-		oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Day);
+		oRow1.setIntervalType(CalendarIntervalType.Day);
 		sap.ui.getCore().applyChanges();
 		aSubIntervals = jQuery("#Row1-AppsInt1").children(".sapUiCalendarRowAppsSubInt");
 		oIntervalStartDate = undefined;
@@ -914,7 +920,7 @@ sap.ui.define([
 		assert.equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201502020159", "EndDate set");
 		assert.ok(bSubInterval, "sub-interval clicked");
 
-		oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Month);
+		oRow1.setIntervalType(CalendarIntervalType.Month);
 		sap.ui.getCore().applyChanges();
 		aSubIntervals = jQuery("#Row1-AppsInt1").children(".sapUiCalendarRowAppsSubInt");
 		oIntervalStartDate = undefined;
@@ -926,7 +932,7 @@ sap.ui.define([
 		assert.equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201503022359", "EndDate set");
 		assert.ok(bSubInterval, "sub-interval clicked");
 
-		oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Hours);
+		oRow1.setIntervalType(CalendarIntervalType.Hours);
 		oRow1.setShowSubIntervals(false);
 		sap.ui.getCore().applyChanges();
 	});
@@ -1054,7 +1060,7 @@ sap.ui.define([
 		assert.notOk(oApp2.$().is(":visible"), "The second appointment is not visible");
 		assert.ok(oApp3.$().is(":visible"), "The third appointment is visible");
 		//arrange
-		oRow2.setIntervalType(sap.ui.unified.CalendarIntervalType.Month);
+		oRow2.setIntervalType(CalendarIntervalType.Month);
 		sap.ui.getCore().applyChanges();
 		//assert
 		assert.ok(oApp.$().is(":visible"), "The first appointment is visible");
@@ -1100,7 +1106,7 @@ QUnit.module("RTL", {
 
 			this.oRowRTL = new CalendarRow("RowRTL",  {
 				startDate: new Date("2015", "01", "01", "10", "15"),
-				intervalType: sap.ui.unified.CalendarIntervalType.Day,
+				intervalType: CalendarIntervalType.Day,
 				appointments: [
 					new CalendarAppointment("App0RTL", {
 						startDate: new Date("2015", "01", "01", "08", "15"),
@@ -1176,7 +1182,7 @@ QUnit.module("Accessibility", {
 				new CalendarAppointment({
 					startDate: new Date(2017, 3, 1, 13, 0, 0, 0),
 					endDate: new Date(2017, 3, 1, 18, 30, 0, 0),
-					type: sap.ui.unified.CalendarDayType.None,
+					type: CalendarDayType.None,
 					title: "Appointment 0",
 					tooltip: "Tooltip 0",
 					text: "Appointment in the past",
@@ -1185,7 +1191,7 @@ QUnit.module("Accessibility", {
 				new CalendarAppointment({
 					startDate: new Date(2017, 3, 1, 9, 15, 0, 0),
 					endDate: new Date(2017, 3, 1, 19, 45, 0, 0),
-					type: sap.ui.unified.CalendarDayType.Type01,
+					type: CalendarDayType.Type01,
 					title: "Appointment 1",
 					tooltip: "Tooltip 1",
 					text: "Appointment of 2 hours, 1 hour in future",
@@ -1195,7 +1201,7 @@ QUnit.module("Accessibility", {
 				new CalendarAppointment({
 					startDate: new Date(2017, 3, 1, 14, 0, 0, 0),
 					endDate: new Date(2017, 3, 1, 16, 0, 0, 0),
-					type: sap.ui.unified.CalendarDayType.Type02,
+					type: CalendarDayType.Type02,
 					tentative: true,
 					title: "Appointment 2",
 					tooltip: "Tooltip 2",
@@ -1222,7 +1228,7 @@ QUnit.module("Accessibility", {
 QUnit.test("CalendarRow '_oFormatAria' formatter", function (assert) {
 	var that = this,
 		fnGetAriaDescriptionText = function (oAppointment) {
-			if (!(oAppointment && oAppointment instanceof sap.ui.unified.CalendarAppointment)) {
+			if (!(oAppointment && oAppointment instanceof CalendarAppointment)) {
 				return;
 			}
 			var sLocalizedStart = that.sut._oRb.getText("CALENDAR_START_TIME"),
@@ -1234,10 +1240,10 @@ QUnit.test("CalendarRow '_oFormatAria' formatter", function (assert) {
 			return sLocalizedStart + ": " + sFormattedStartDate + "; " + sLocalizedEnd + ": " + sFormattedEndDate + sType;
 		},
 		aAppointments = this.sut.getAppointments(),
-		aIntervalHeaders = this.sut.getIntervalHeaders();
 
+		aIntervalHeaders = this.sut.getIntervalHeaders();
 	assert.ok(this.sut._oFormatAria, "Formatter has been initialized");
-	assert.ok(this.sut._oFormatAria instanceof sap.ui.core.format.DateFormat, "Formatter is of a correct type");
+	assert.ok(this.sut._oFormatAria instanceof DateFormat, "Formatter is of a correct type");
 	assert.ok(this.sut._oFormatAria.oFormatOptions.pattern.indexOf("E") > -1, "Formatted date/datetime string includes weekday");
 	aAppointments.forEach(function (oAppointment, iIndex) {
 		var sExpectedDescription = fnGetAriaDescriptionText(oAppointment),

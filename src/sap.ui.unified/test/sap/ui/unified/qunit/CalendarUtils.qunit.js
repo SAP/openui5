@@ -1,8 +1,9 @@
-/*global QUnit, sinon */
+/*global QUnit */
 
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/calendar/CalendarUtils",
+	"sap/ui/core/LocaleData",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/date/Islamic",
 	"sap/ui/core/date/Persian",
@@ -11,21 +12,19 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/core/Locale",
 	"sap/ui/core/CalendarType"
-], function(qutils, CalendarUtils, UniversalDate, Islamic, Persian, Japanese, Buddhist, CalendarDate, Locale, CalendarType) {
+], function(qutils, CalendarUtils, LocaleData, UniversalDate, Islamic, Persian, Japanese, Buddhist, CalendarDate, Locale, CalendarType) {
 	"use strict";
 
 	QUnit.module("getFirstDateOfWeek/Month for week Sunday-Saturday (en_US locale)", {
 		beforeEach: function () {
-			this.oStub1 = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale", function () {
+			this.oStub1 = this.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale").callsFake(function () {
 				return new Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
 			});
-			this.oStub2 = sinon.stub(sap.ui.getCore().getConfiguration(), "getFormatLocale", function () {
+			this.oStub2 = this.stub(sap.ui.getCore().getConfiguration(), "getFormatLocale").callsFake(function () {
 				return new Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
 			});
 		},
 		afterEach: function () {
-			this.oStub1.restore();
-			this.oStub2.restore();
 		}
 	});
 
@@ -77,16 +76,14 @@ sap.ui.define([
 
 	QUnit.module("getFirstDateOfWeek for week Monday-Sunday (en_GB locale)", {
 		beforeEach: function () {
-			this.oStub1 = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale", function () {
+			this.oStub1 = this.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale").callsFake(function () {
 				return new Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
 			});
-			this.oStub2 = sinon.stub(sap.ui.getCore().getConfiguration(), "getFormatLocale", function () {
+			this.oStub2 = this.stub(sap.ui.getCore().getConfiguration(), "getFormatLocale").callsFake(function () {
 				return new Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
 			});
 		},
 		afterEach: function () {
-			this.oStub1.restore();
-			this.oStub2.restore();
 		}
 	});
 
@@ -183,7 +180,7 @@ sap.ui.define([
 
 		oDate = new Date(Date.UTC(2016, 10, 17, 0)); // 17.11.2016
 		oLocale = new Locale('en-US');
-		oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
+		oLocaleData = LocaleData.getInstance(oLocale);
 
 		// act
 		iWeekNumber_enUS = CalendarUtils.calculateWeekNumber(oDate, 2016, 'en-US-x-sapufmt', oLocaleData);
@@ -199,7 +196,7 @@ sap.ui.define([
 		var oDateLastWeek = new Date(2020, 11, 31, 6);
 		var oDateFirstWeek = new Date(2021, 0, 1, 6);
 		var oLocale = new Locale('en');
-		var oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
+		var oLocaleData = LocaleData.getInstance(oLocale);
 
 		var formatLocaleObject = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
 		var getLanguageStub = this.stub(formatLocaleObject, "getLanguage").returns("en");
@@ -221,7 +218,7 @@ sap.ui.define([
 		var oDateLastWeek = new Date(2020, 11, 31, 6);
 		var oDateFirstWeek = new Date(2021, 0, 1, 6);
 		var oLocale = new Locale('en_US');
-		var oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
+		var oLocaleData = LocaleData.getInstance(oLocale);
 
 		var formatLocaleObject = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
 		var getLanguageStub = this.stub(formatLocaleObject, "getLanguage").returns("en_US");
@@ -243,7 +240,7 @@ sap.ui.define([
 		var oDateLastWeek = new Date(2020, 11, 31, 6);
 		var oDateFirstWeek = new Date(2021, 0, 1, 6);
 		var oLocale = new Locale('de');
-		var oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
+		var oLocaleData = LocaleData.getInstance(oLocale);
 
 		var formatLocaleObject = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
 		var getLanguageStub = this.stub(formatLocaleObject, "getLanguage").returns("de");
@@ -269,7 +266,7 @@ sap.ui.define([
 
 		oDate = new Date(Date.UTC(2016, 10, 17, 0)); // 17.11.2016
 		oLocale = new Locale('en-GB');
-		oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
+		oLocaleData = LocaleData.getInstance(oLocale);
 
 		// act
 		iWeekNumber = CalendarUtils.calculateWeekNumber(oDate, 2016, 'en-GB', oLocaleData);
@@ -299,12 +296,11 @@ sap.ui.define([
 
 	QUnit.module("_DATE_getFirstDateOfWeek for week Sunday-Saturday (en_US locale)", {
 		beforeEach: function () {
-			this.oStub = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale", function () {
+			this.oStub = this.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale").callsFake(function () {
 				return new Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
 			});
 		},
 		afterEach: function () {
-			this.oStub.restore();
 		}
 	});
 
@@ -347,12 +343,11 @@ sap.ui.define([
 
 	QUnit.module("_getFirstDateOfWeek(CalendarDate) for week Monday-Sunday (en_GB locale)", {
 		beforeEach: function () {
-			this.oStub = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale", function () {
+			this.oStub = this.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale").callsFake(function () {
 				return new Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
 			});
 		},
 		afterEach: function () {
-			this.oStub.restore();
 		}
 	});
 
@@ -587,8 +582,8 @@ sap.ui.define([
 		assert.equal(CalendarUtils._daysBetween(new CalendarDate(2017, 0, 1), new CalendarDate(2017, 0, 2)), -1, "1 day negative");
 
 		assert.equal(CalendarUtils._daysBetween(new CalendarDate(2017, 0, 1), new CalendarDate(2017, 0, 1)), 0, "no delta");
-		assert.equal(CalendarUtils._daysBetween(new CalendarDate(2017, 0, 1, sap.ui.core.CalendarType.Islamic),
-			new CalendarDate(2017, 0, 2, sap.ui.core.CalendarType.Islamic)), -1, "1 day negative");
+		assert.equal(CalendarUtils._daysBetween(new CalendarDate(2017, 0, 1, CalendarType.Islamic),
+			new CalendarDate(2017, 0, 2, CalendarType.Islamic)), -1, "1 day negative");
 
 	});
 

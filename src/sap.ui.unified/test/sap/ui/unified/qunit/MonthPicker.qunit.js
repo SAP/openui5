@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/Device",
-	"sap/ui/events/KeyCodes"
-], function(MonthPicker, DateRange, CalendarDate, Device, KeyCodes) {
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
+], function(MonthPicker, DateRange, CalendarDate, Device, KeyCodes, jQuery) {
 	"use strict";
 	(function () {
 
@@ -48,9 +49,9 @@ sap.ui.define([
 		QUnit.test("Months are properly selected on touch devices mouseup", function (assert) {
 			var iSelectedMonth = 3,
 				oMousePosition = { clientX: 10, clientY: 10 },
-				deviceStub = this.stub(Device.support, "touch", true),
-				isValueInThresholdStub = this.stub(this.oMP, "_isValueInThreshold", function () { return true; }),
-				itemNavigationStub = this.stub(this.oMP._oItemNavigation, "getFocusedIndex", function () { return iSelectedMonth; }),
+				deviceStub = this.stub(Device.support, "touch").value(true),
+				isValueInThresholdStub = this.stub(this.oMP, "_isValueInThreshold").returns(true),
+				itemNavigationStub = this.stub(this.oMP._oItemNavigation, "getFocusedIndex").returns(iSelectedMonth),
 				selectSpy = this.spy(function () {});
 
 			this.oMP.attachSelect(selectSpy);
@@ -271,7 +272,7 @@ sap.ui.define([
 				oSelectedDates = this.MP._getSelectedDates(),
 				// In Microsoft Edge sap.ui.Device.support.touch is "true" on some desktopes
 				// and we are making sure that MonthPicker.prototype._handleMouseDown will work
-				oDeviceStub = this.stub(Device.support, "touch", false),
+				oDeviceStub = this.stub(Device.support, "touch").value(false),
 				aRefs;
 
 			this.MP.placeAt("qunit-fixture");
@@ -499,9 +500,9 @@ sap.ui.define([
 		QUnit.test("Selecting a month that is disabled due to min/max motnhs set on mobile", function(assert) {
 			// prepare
 			var iFocusedIndex = 8,
-				oDeviceStub = this.stub(Device.support, "touch", true),
-				oIsValueInThresholdStub = this.stub(this.MP, "_isValueInThreshold", function () { return true; }),
-				oItemNavigationStub = this.stub(this.MP._oItemNavigation, "getFocusedIndex", function () { return iFocusedIndex; }),
+				oDeviceStub = this.stub(Device.support, "touch").value(true),
+				oIsValueInThresholdStub = this.stub(this.MP, "_isValueInThreshold").returns(true),
+				oItemNavigationStub = this.stub(this.MP._oItemNavigation, "getFocusedIndex").returns(iFocusedIndex),
 				oFakeEvent = {
 					target: jQuery("<div></div>").attr({
 						"id": this.MP.getId() + "-m8",

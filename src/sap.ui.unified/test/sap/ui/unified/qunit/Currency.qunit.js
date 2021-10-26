@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/ui/core/Core",
 	"sap/m/Panel",
-	"sap/m/library"
-], function(Currency, JSONModel, VBox, Core, Panel, mobileLibrary) {
+	"sap/m/library",
+	"sap/ui/thirdparty/jquery"
+], function(Currency, JSONModel, VBox, Core, Panel, mobileLibrary, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection

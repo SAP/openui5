@@ -9,10 +9,15 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
+	"sap/ui/core/CalendarType",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/unified/library"
+	"sap/ui/core/delegate/ItemNavigation",
+	"sap/ui/unified/library",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery"
 ], function(Month, CalendarDate, CalendarLegend, CalendarLegendRenderer,
-	CalendarLegendItem, Button, DateRange, DateTypeRange, InvisibleText, unifiedLibrary) {
+	CalendarLegendItem, Button, DateRange, DateTypeRange, CalendarType, InvisibleText, ItemNavigation, unifiedLibrary, KeyCodes, Device, jQuery) {
 	"use strict";
 
 	(function () {
@@ -283,7 +288,7 @@ sap.ui.define([
 
 		QUnit.test("There is no focus on mobile", function (oAssert) {
 			// Prepare
-			var oDeviceStub = this.stub(sap.ui.Device.system, "phone", true),
+			var oDeviceStub = this.stub(Device.system, "phone").value(true),
 				oItemNavSpy = this.spy(this.oM._oItemNavigation, "focusItem");
 
 			// Act
@@ -379,7 +384,7 @@ sap.ui.define([
 
 			var oTarget = this.oM.getDomRef().querySelectorAll(".sapUiCalWeekNum")[1],
 				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
-				deviceStub = this.stub(sap.ui.Device.support, "touch", true);
+				deviceStub = this.stub(Device.support, "touch").value(true);
 
 			// Act
 			this.oM._oMousedownPosition = oMouseEvent;
@@ -399,7 +404,7 @@ sap.ui.define([
 
 			var oTarget = this.oM.getDomRef().querySelector(".sapUiCalWH"),
 				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
-				deviceStub = this.stub(sap.ui.Device.support, "touch", true);
+				deviceStub = this.stub(Device.support, "touch").value(true);
 
 			// Act
 			this.oM._oMousedownPosition = oMouseEvent;
@@ -417,7 +422,7 @@ sap.ui.define([
 			var oTarget = document.createElement("span");
 			oTarget.classList.add("sapUiCalItemText");
 			var oMouseEvent = { clientX: 10, clientY: 10, target: oTarget, button: 2 },
-				deviceStub = this.stub(sap.ui.Device.support, "touch", true),
+				deviceStub = this.stub(Device.support, "touch").value(true),
 				isSelectedDaySpy = this.spy(this.oM, "_selectDay");
 
 			//act
@@ -440,7 +445,7 @@ sap.ui.define([
 			var oTarget = this.oM.getDomRef().querySelectorAll(".sapUiCalWeekNum")[1],
 				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
 				isSelectedDaySpy = this.spy(this.oM, "_selectDay"),
-				oBrowserStub = this.stub(sap.ui.Device, "browser", {edge: true});
+				oBrowserStub = this.stub(Device, "browser").value({edge: true});
 
 			//act
 			this.oM._handleMousedown(oMouseEvent, CalendarDate.fromLocalJSDate(new Date(2017, 6, 20), this.oM.getPrimaryCalendarType()));
@@ -458,14 +463,14 @@ sap.ui.define([
 			var oTarget = document.createElement("span"),
 				oTargetParent = document.createElement("div"),
 				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget},
-				deviceStub = this.stub(sap.ui.Device.support, "touch", true),
+				deviceStub = this.stub(Device.support, "touch").value(true),
 				oMonthSelectSpy = this.spy(this.oM, "fireSelect");
 
 			oTarget.classList.add("sapUiCalDayName");
 			oTargetParent.setAttribute('data-sap-day', "20170101");
 			oTargetParent.appendChild(oTarget);
 			this.oM._oMousedownPosition = oMouseEvent;
-			this.oM._oItemNavigation = new sap.ui.core.delegate.ItemNavigation();
+			this.oM._oItemNavigation = new ItemNavigation();
 
 			// Act
 			this.oM.onmouseup(oMouseEvent);
@@ -483,14 +488,14 @@ sap.ui.define([
 			var oTarget = document.createElement("span"),
 				oTargetParent = document.createElement("div"),
 				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget},
-				deviceStub = this.stub(sap.ui.Device.support, "touch", true),
+				deviceStub = this.stub(Device.support, "touch").value(true),
 				oMonthSelectSpy = this.spy(this.oM, "fireSelect");
 
 			oTarget.classList.add("sapUiCalItemText");
 			oTargetParent.setAttribute('data-sap-day', "20170101");
 			oTargetParent.appendChild(oTarget);
 			this.oM._oMousedownPosition = oMouseEvent;
-			this.oM._oItemNavigation = new sap.ui.core.delegate.ItemNavigation();
+			this.oM._oItemNavigation = new ItemNavigation();
 
 			// Act
 			this.oM.onmouseup(oMouseEvent);
@@ -974,7 +979,7 @@ sap.ui.define([
 		QUnit.module("Week selection allowance", {
 			beforeEach: function () {
 				this.oM = new Month({
-					primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+					primaryCalendarType: CalendarType.Gregorian
 				});
 			},
 			afterEach: function () {
@@ -1004,7 +1009,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Calendar type other than Gregorian", function (assert) {
-			var oCalendarType = sap.ui.core.CalendarType;
+			var oCalendarType = CalendarType;
 
 			// Islamic
 			this.oM.setPrimaryCalendarType(oCalendarType.Islamic);
@@ -1032,7 +1037,7 @@ sap.ui.define([
 		QUnit.module("Week selection/deselection - Multiple day selection", {
 			beforeEach: function () {
 				this.oM = new Month({
-					primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+					primaryCalendarType: CalendarType.Gregorian
 				}).placeAt("qunit-fixture");
 
 				this.oTarget = document.createElement("span");
@@ -1084,12 +1089,12 @@ sap.ui.define([
 				oMockEvent = {
 					target: this.oTarget,
 					shiftKey: true,
-					keyCode: jQuery.sap.KeyCodes.SPACE,
+					keyCode: KeyCodes.SPACE,
 					stopPropagation: function () {},
 					preventDefault: function () {}
 				};
 
-			this.stub(sap.ui.Device.support, "touch", true);
+			this.stub(Device.support, "touch").value(true);
 
 			this.oM.setSingleSelection(false);
 
@@ -1109,8 +1114,8 @@ sap.ui.define([
 			var oWeekNumberSelectSpy = this.spy(this.oM, "fireWeekNumberSelect"),
 				oMockEvent = { target: this.oM.getDomRef().querySelectorAll(".sapUiCalWeekNum")[1] };
 
-			this.stub(sap.ui.Device.support, "touch", true);
-			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
+			this.stub(Device.support, "touch").value(true);
+			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold").returns(true);
 
 			this.oM.setSingleSelection(false);
 
@@ -1130,8 +1135,8 @@ sap.ui.define([
 			var oWeekNumberSelectSpy = this.spy(this.oM, "fireWeekNumberSelect"),
 				oMockEvent = { target: this.oM.getDomRef().querySelectorAll(".sapUiCalWeekNum")[1] };
 
-			this.stub(sap.ui.Device.support, "touch", false);
-			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
+			this.stub(Device.support, "touch").value(false);
+			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold").returns(true);
 
 			this.oM.setSingleSelection(false);
 
@@ -1152,12 +1157,12 @@ sap.ui.define([
 				oMockEvent = {
 					target: this.oTarget,
 					shiftKey: true,
-					keyCode: jQuery.sap.KeyCodes.SPACE,
+					keyCode: KeyCodes.SPACE,
 					stopPropagation: function () {},
 					preventDefault: function () {}
 				};
 
-			this.stub(sap.ui.Device.support, "touch", true);
+			this.stub(Device.support, "touch").value(true);
 			this.oM.setIntervalSelection(true);
 
 			// Act
@@ -1176,8 +1181,8 @@ sap.ui.define([
 			var oWeekNumberSelectSpy = this.spy(this.oM, "fireWeekNumberSelect"),
 				oMockEvent = { target: this.oM.getDomRef().querySelectorAll(".sapUiCalWeekNum")[1] };
 
-			this.stub(sap.ui.Device.support, "touch", true);
-			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
+			this.stub(Device.support, "touch").value(true);
+			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold").returns(true);
 			this.oM.setIntervalSelection(true);
 
 			// Act
@@ -1196,8 +1201,8 @@ sap.ui.define([
 			var oWeekNumberSelectSpy = this.spy(this.oM, "fireWeekNumberSelect"),
 				oMockEvent = { target: this.oM.getDomRef().querySelectorAll(".sapUiCalWeekNum")[1] };
 
-			this.stub(sap.ui.Device.support, "touch", false);
-			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
+			this.stub(Device.support, "touch").value(false);
+			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold").returns(true);
 
 			this.oM.setIntervalSelection(true);
 
@@ -1217,7 +1222,7 @@ sap.ui.define([
 			beforeEach: function () {
 				this.oM = new Month({
 					singleSelection: false,
-					primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+					primaryCalendarType: CalendarType.Gregorian
 				}).placeAt("qunit-fixture");
 
 				this.oRangeStart = document.createElement("span");
@@ -1269,19 +1274,19 @@ sap.ui.define([
 				oRangeEndEvent = {
 					target: this.oRangeEnd,
 					shiftKey: true,
-					keyCode: jQuery.sap.KeyCodes.ENTER,
+					keyCode: KeyCodes.ENTER,
 					stopPropagation: function () {},
 					preventDefault: function () {}
 				},
 				oDeselectionEvent = {
 					target: this.oRangeStart,
 					shiftKey: true,
-					keyCode: jQuery.sap.KeyCodes.ENTER,
+					keyCode: KeyCodes.ENTER,
 					stopPropagation: function () {},
 					preventDefault: function () {}
 				};
 
-			this.stub(sap.ui.Device.support, "touch", true);
+			this.stub(Device.support, "touch").value(true);
 
 			// Act
 			this.oM.onsapselect(oRangeStartEvent); // Selecting the interval's starting day
@@ -1309,8 +1314,8 @@ sap.ui.define([
 					shiftKey: true
 				};
 
-			this.stub(sap.ui.Device.support, "touch", true);
-			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
+			this.stub(Device.support, "touch").value(true);
+			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold").returns(true);
 
 			// Act
 			this.oM.onmouseup(oRangeStartEvent); // Click on interval's starting day
@@ -1347,8 +1352,8 @@ sap.ui.define([
 					setMark: function () {}
 				};
 
-			this.stub(sap.ui.Device.support, "touch", false);
-			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
+			this.stub(Device.support, "touch").value(false);
+			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold").returns(true);
 
 			// Act
 			// Pass a second parameter, because for selecting single day, _handleMousedown will call

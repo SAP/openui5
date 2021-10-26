@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/CalendarWeekInterval",
+	"sap/ui/unified/CalendarDateInterval",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/m/PlanningCalendar",
 	"sap/m/PlanningCalendarRow",
@@ -11,9 +12,11 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/unified/DateTypeRange",
 	"sap/base/Log",
-	"sap/ui/unified/library"
-], function(qutils, CalendarWeekInterval, CalendarDate, PlanningCalendar, PlanningCalendarRow,
-	CalendarAppointment, SearchField, Button, DateTypeRange, Log, unifiedLibrary) {
+	"sap/ui/unified/library",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
+], function(qutils, CalendarWeekInterval, CalendarDateInterval, CalendarDate, PlanningCalendar, PlanningCalendarRow,
+	CalendarAppointment, SearchField, Button, DateTypeRange, Log, unifiedLibrary, KeyCodes, jQuery) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
@@ -36,8 +39,8 @@ sap.ui.define([
 
 	QUnit.test("'_handleFocus()' has correct output when datesRow is is focused in visible area", function (assert) {
 		//prepare
-		var _handleFocusCalendarDateSpy = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "_handleFocus"),
-			_focusDateExtendCalendarDateSpy = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "_focusDateExtend"),
+		var _handleFocusCalendarDateSpy = this.spy(CalendarDateInterval.prototype, "_handleFocus"),
+			_focusDateExtendCalendarDateSpy = this.spy(CalendarDateInterval.prototype, "_focusDateExtend"),
 			_focusDateExtendWeekDateSpy = this.spy(this.sut, "_focusDateExtend"),
 			oDate = new Date(2015, 0, 2, 19, 15, 0);
 		//act
@@ -54,8 +57,8 @@ sap.ui.define([
 
 	QUnit.test("'_handleFocus()' has correct output when datesRow is is focused outside visible area (border reached)", function (assert) {
 		//prepare
-		var _handleFocusCalendarDateSpy = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "_handleFocus"),
-				_focusDateExtendCalendarDateSpy = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "_focusDateExtend"),
+		var _handleFocusCalendarDateSpy = this.spy(CalendarDateInterval.prototype, "_handleFocus"),
+				_focusDateExtendCalendarDateSpy = this.spy(CalendarDateInterval.prototype, "_focusDateExtend"),
 				_focusDateExtendWeekDateSpy = this.spy(this.sut, "_focusDateExtend"),
 				oDate = new Date(2015, 0, 2, 19, 15, 0);
 		//act
@@ -109,7 +112,7 @@ sap.ui.define([
 		// select 14.08.2015
 		$Date = jQuery("#CalP--Cal--Month0-20150814");
 		$Date.trigger("focus");
-		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
 
 		assert.equal(sap.ui.getCore().byId("CalP").getStartDate().getDate(), 9, "start date is set correctly");
 
@@ -140,7 +143,7 @@ sap.ui.define([
 		// select 14.08.2015
 		$Date = jQuery("#CalP--Cal--Month0-20150805");
 		$Date.trigger("focus");
-		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(sap.ui.getCore().byId("CalP").getStartDate().getDate(), 2, "start date is set correctly");
@@ -155,7 +158,7 @@ sap.ui.define([
 	QUnit.test("fireStartDateChange", function(assert) {
 		// arrange
 		var $Date, oCalStartDate,
-			oSpyFireDateChange = this.spy(sap.ui.unified.CalendarWeekInterval.prototype, "fireStartDateChange"),
+			oSpyFireDateChange = this.spy(CalendarWeekInterval.prototype, "fireStartDateChange"),
 			oCalP = new CalendarWeekInterval("CalP",{
 						startDate: new Date("2015", "7", "9"),
 						pickerPopup: true
@@ -173,7 +176,7 @@ sap.ui.define([
 		// click on September
 		$Date = jQuery("#CalP--Cal--MP-m8");
 		$Date.trigger("focus");
-		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 
 		// click on Year button inside calendar picker
@@ -182,13 +185,13 @@ sap.ui.define([
 		// click on 2016
 		$Date = jQuery("#CalP--Cal--YP-y20160101");
 		$Date.trigger("focus");
-		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 
 		// click on 17 of September 2016
 		$Date = jQuery("#CalP--Cal--Month0-20160917");
 		$Date.trigger("focus");
-		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 
 		oCalStartDate = sap.ui.getCore().byId("CalP").getStartDate();
@@ -204,7 +207,7 @@ sap.ui.define([
 
 	QUnit.test("User opens the picker but escapes it - click outside for desktop or click cancel button", function(assert) {
 		// arrange
-		var oSpyCancel = this.spy(sap.ui.unified.CalendarWeekInterval.prototype, "fireCancel");
+		var oSpyCancel = this.spy(CalendarWeekInterval.prototype, "fireCancel");
 		var oCalP = new CalendarWeekInterval("CalP",{
 			pickerPopup: true
 			}).placeAt("qunit-fixture");
@@ -214,7 +217,7 @@ sap.ui.define([
 		qutils.triggerEvent("click", "CalP--Head-B1");
 		assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
 
-		sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 		assert.ok(!jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker not visible after closing");
 		assert.strictEqual(oSpyCancel.callCount, 1, "CalendarWeekInterval 'fireCancel' was called once");
 
@@ -246,7 +249,7 @@ sap.ui.define([
 		// click on 17 of August 2017
 		$Date = jQuery("#CalP--Cal--Month0-20170817");
 		$Date.trigger("focus");
-		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
 
 		// open again the CalendarPicker
 		qutils.triggerEvent("click", "CalP--Head-B1");
@@ -256,7 +259,7 @@ sap.ui.define([
 		assert.strictEqual(oCalPicker.getSelectedDates()[0].getStartDate().getDate(), 13, "start date is 13");
 		assert.strictEqual(oCalPicker.getSelectedDates()[0].getEndDate().getDate(), 19, "end date is 19");
 
-		sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 
 		// clean
 		oCalP.destroy();
@@ -281,13 +284,13 @@ sap.ui.define([
 		// click on December
 		$Date = jQuery("#CalP--Cal--MP-m11");
 		$Date.trigger("focus");
-		qutils.triggerKeydown($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 
 		// click on 11 of December
 		$Date = jQuery("#CalP--Cal--Month0-20171211");
 		$Date.trigger("focus");
-		qutils.triggerKeydown($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(jQuery("#CalP--Head-B1").text(), "December 2017", "button text is correct");
@@ -344,7 +347,7 @@ sap.ui.define([
 		assert.strictEqual(oCalPicker._oMaxDate.getYear(), 9999, "max year is set to 9999");
 
 		// close calendarPicker
-		sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 		sap.ui.getCore().applyChanges();
 
 		// change the pickerPopup to false
@@ -365,7 +368,7 @@ sap.ui.define([
 		assert.strictEqual(oCalPicker._oMinDate.getYear(), 2015, "min year is set to 2015");
 		assert.strictEqual(oCalPicker._oMaxDate.getYear(), 2017, "max year is set to 2017");
 
-		sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 		// clean
 		oCalP.destroy();
 	});
@@ -380,7 +383,7 @@ sap.ui.define([
 				oCalendarWeekInterval = new CalendarWeekInterval({ maxDate: new Date(2018, 11, 20) }),
 				ogetMaxDateAlignedToMinDateSpy = this.spy(oCalendarWeekInterval, "_getMaxDateAlignedToMinDate"),
 				oAlignStartDateToMinAndMaxSpy = this.spy(oCalendarWeekInterval, "_getStartDateAlignedToMinAndMaxDate"),
-				oGetDaysStub = this.stub(oCalendarWeekInterval, "_getDays", function () { return iDays; });
+				oGetDaysStub = this.stub(oCalendarWeekInterval, "_getDays").returns(iDays);
 
 		// Act
 		oCalendarWeekInterval._calculateStartDate(oCalendarWeekInterval._oMaxDate, oCalendarWeekInterval._oMinDate, oStartDate);

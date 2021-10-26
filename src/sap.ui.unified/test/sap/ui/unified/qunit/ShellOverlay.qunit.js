@@ -2,18 +2,20 @@
 
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"jquery.sap.dom",
+	"sap/ui/dom/containsOrEquals",
 	"sap/ui/core/Control",
 	"sap/ui/unified/Shell",
-	"sap/ui/unified/ShellOverlay"
-], function(qutils, jsd, Control, Shell, ShellOverlay) {
+	"sap/ui/unified/ShellOverlay",
+	"sap/base/util/ObjectPath",
+	"sap/ui/thirdparty/jquery"
+], function(qutils, containsOrEquals, Control, Shell, ShellOverlay, ObjectPath, jQuery) {
 	"use strict";
 
 	// Control initialization
 
 	function testMultiAggregation(sName, oCtrl, assert){
 		var oAggMetaData = oCtrl.getMetadata().getAggregations()[sName];
-		var oType = jQuery.sap.getObject(oAggMetaData.type === "sap.ui.core.Control" ? "my.Test" : oAggMetaData.type);
+		var oType = ObjectPath.get(oAggMetaData.type === "sap.ui.core.Control" ? "my.Test" : oAggMetaData.type);
 
 		function _get(){
 			return oCtrl[oAggMetaData._sGetter]();
@@ -48,7 +50,7 @@ sap.ui.define([
 	}
 
 	function checkVisibility(){
-		return jQuery.sap.byId("overlay1").is(":visible");
+		return jQuery("#overlay1").is(":visible");
 	}
 
 	function testCloseOverlay(bViaAPI, assert, done){
@@ -80,10 +82,16 @@ sap.ui.define([
 
 
 	var TestControl = Control.extend("my.Test", {
-		renderer: function(rm, ctrl){
-			rm.write("<div style='width:10px;height:10px;background-color:gray;'");
-			rm.writeControlData(ctrl);
-			rm.write("></div>");
+		renderer: {
+			apiVersion: 2,
+			render: function(rm, ctrl){
+				rm.openStart("div", ctrl);
+				rm.style("width", "10px");
+				rm.style("height", "10px");
+				rm.style("background-color", "gray");
+				rm.openEnd();
+				rm.close("div");
+			}
 		}
 	});
 
@@ -144,8 +152,8 @@ sap.ui.define([
 
 		setTimeout(function(){
 			assert.ok(checkVisibility(), "Overlay visible");
-			assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("overlay1-hdr-center"), jQuery.sap.domById("search1")), "Search rendered correctly");
-			assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("overlay1-cntnt"), jQuery.sap.domById("content")), "Content rendered correctly");
+			assert.ok(containsOrEquals(document.getElementById("overlay1-hdr-center"), document.getElementById("search1")), "Search rendered correctly");
+			assert.ok(containsOrEquals(document.getElementById("overlay1-cntnt"), document.getElementById("content")), "Content rendered correctly");
 			done();
 		}, 600);
 	});
