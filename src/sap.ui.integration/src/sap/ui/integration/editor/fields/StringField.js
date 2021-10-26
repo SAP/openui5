@@ -546,10 +546,10 @@ sap.ui.define([
 	StringField.prototype.onAfterOpen = function () {
 		ComboBox.prototype.onAfterOpen.apply(this, arguments);
 		var oPopover = this.getPicker();
-		if (oPopover._oCalcedPos === "Bottom" && !oPopover.hasStyleClass("sapUiIntegrationEditorPopupBottom")) {
-			oPopover.addStyleClass("sapUiIntegrationEditorPopupBottom");
-		} else if (oPopover._oCalcedPos !== "Bottom" &&  oPopover.hasStyleClass("sapUiIntegrationEditorPopupBottom")) {
-			oPopover.removeStyleClass("sapUiIntegrationEditorPopupBottom");
+		if (oPopover._oCalcedPos === "Bottom" && !oPopover.hasStyleClass("sapUiIntegrationEditorPopupHeight")) {
+			oPopover.addStyleClass("sapUiIntegrationEditorPopupHeight");
+		} else if (oPopover._oCalcedPos !== "Bottom" &&  oPopover.hasStyleClass("sapUiIntegrationEditorPopupHeight")) {
+			oPopover.removeStyleClass("sapUiIntegrationEditorPopupHeight");
 		}
 	};
 
