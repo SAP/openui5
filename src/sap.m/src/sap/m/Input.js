@@ -326,13 +326,7 @@ function(
 			 * Specifies whether the clear icon should be shown/hidden on user interaction.
 			 * @private
 			 */
-			effectiveShowClearIcon: { type: "boolean", defaultValue: false, visibility: "hidden" },
-
-			/**
-			 * Specifies whether to display separators in tabular suggestions.
-			 * @private
-			 */
-			separateSuggestions: { type: "boolean", defaultValue: false, visibility: "hidden" }
+			effectiveShowClearIcon: { type: "boolean", defaultValue: false, visibility: "hidden" }
 		},
 		defaultAggregation : "suggestionItems",
 		aggregations : {
@@ -2301,7 +2295,7 @@ function(
 		var oSuggestionsTable = new Table(this.getId() + "-popup-table", {
 			mode: ListMode.SingleSelectMaster,
 			showNoData: false,
-			showSeparators: this.getProperty("separateSuggestions") ? ListSeparators.Inner : ListSeparators.None,
+			showSeparators: ListSeparators.None,
 			width: "100%",
 			enableBusyIndicator: false,
 			rememberSelections : false,
@@ -3259,25 +3253,6 @@ function(
 	 */
 	Input.prototype._getTypedInValue = function () {
 		return this._sTypedInValue;
-	};
-
-	/**
-	 * Setter for the separateSuggestions property representing whether to display separators in tabular suggestions.
-	 *
-	 * @private
-	 * @param {boolean} bValue The new value for the property.
-	 * @returns {this} <code>this</code> to allow method chaining.
-	 */
-	Input.prototype._setSeparateSuggestions = function (bValue) {
-		var oSuggestionsTable = this._getSuggestionsTable();
-
-		this.setProperty("separateSuggestions", bValue);
-
-		if (oSuggestionsTable) {
-			oSuggestionsTable.setShowSeparators(bValue ? ListSeparators.Inner : ListSeparators.None);
-		}
-
-		return this;
 	};
 
 	return Input;
