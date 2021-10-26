@@ -15,7 +15,7 @@ sap.ui.define([
 	 *
 	 * @class
 	 * This control serves as base class for personalization implementations.
-	 * This base class is faceless and should be inherited to implement control specific personalization panels.
+	 * This faceless class serves as a way to implement control-specific personalization panels.
 	 *
 	 * @extends sap.m.p13n.Control
 	 *
@@ -39,13 +39,13 @@ sap.ui.define([
 			properties: {
 				/**
 				 * A short text describing the panel.
-				 * <b>Note:</b> This text will only be displayed in case the panel is being used in a <code>sap.m.p13n.Popup</code>.
+				 * <b>Note:</b> This text will only be displayed if the panel is being used in a <code>sap.m.p13n.Popup</code>.
 				 */
 				title: {
 					type: "string"
 				},
 				/**
-				 * Determines whether the reordering of personalization items should be enabled.
+				 * Determines whether the reordering of personalization items is enabled.
 				 */
 				enableReorder: {
 					type: "boolean",
@@ -54,7 +54,7 @@ sap.ui.define([
 			},
 			aggregations: {
 				/**
-				 * Defines an optional message strip to be displayed in the content area
+				 * Defines an optional message strip to be displayed in the content area.
 				 */
 				 messageStrip: {
 					type: "sap.m.MessageStrip",
@@ -80,11 +80,11 @@ sap.ui.define([
 			},
 			events: {
 				/**
-				 * This event is fired if there has been made any change within the <code>BasePanel</code> control.
+				 * This event is fired if any change has been made within the <code>BasePanel</code> control.
 				 */
 				change: {
 					/**
-					 * The reason why the panel state has changed, e.g. "Add", "Remove" or "Move".
+					 * The reason why the panel state has changed, for example, items have been added, removed, or moved.
 					 */
 					reason: {
 						type: "string"
@@ -143,7 +143,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Can be overwritten in case a different wrapping Control is required for the inner content
+	 * Can be overwritten if a different wrapping control is required for the inner content.
 	 */
 	BasePanel.prototype._setInnerLayout = function() {
 		this.setAggregation("_content", new VBox({
@@ -154,8 +154,22 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {Array} aP13nData An array containing the personalization state that should be represented by the <code>BasePanel</code>.
+	 * P13n <code>Item</code> object type.
 	 *
+	 * @type {sap.m.p13n.Item}
+	 * @static
+	 * @constant
+	 * @typedef {Object} sap.m.p13n.Item
+	 * @property {string} name The unique key of the item
+	 * @property {string} label The label describing the personalization item
+	 * @property {boolean} visible Defines the selection state of the personalization item
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+
+	/**
+	 * Sets the personalization state of the panel instance.
+	 * @param {sap.m.p13n.Item[]} aP13nData An array containing the personalization state that is represented by the <code>BasePanel</code>.
 	 * @returns {sap.m.p13n.BasePanel} The BasePanel instance
 	 */
 	BasePanel.prototype.setP13nData = function(aP13nData) {
@@ -164,7 +178,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * @returns {Array} An array containing the personalization state that is currently displayed by the <code>BasePanel</code>.
+	 * @param {boolean} bOnlyActive Determines whether only the present items is included
+	 * @returns {Array} An array containing the personalization state that is currently displayed by the <code>BasePanel</code>
 	 */
 	BasePanel.prototype.getP13nData = function (bOnlyActive) {
 		var aItems = merge([], this._getP13nModel().getProperty("/items"));
@@ -181,7 +196,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.m.MessageStrip} oStrip Instance of a sap.m.MessageStrip
 	 *
-	 * @returns {sap.m.p13n.BasePanel} The BasePanel instance
+	 * @returns {sap.m.p13n.BasePanel} The <code>BasePanel</code> instance
 	 */
 	BasePanel.prototype.setMessageStrip = function(oStrip){
 		if (!oStrip) {
@@ -209,10 +224,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * The <code>enableReorder</code> property decides if additional move buttons should be shown on hovering over
-	 * the inner list. In addition drag and drop will be enabled on the inner list control.
+	 * The <code>enableReorder</code> property determines whether additional move buttons are shown when hovering over
+	 * the inner list. In addition, drag and drop will be enabled for the inner list control.
 	 *
-	 * @param {boolean} bEnableReorder Decies whether reordering should be enabled or disabled.
+	 * @param {boolean} bEnableReorder Determines whether reordering is enabled
 	 *
 	 * @returns {sap.m.p13n.BasePanel} The BasePanel instance
 	 */

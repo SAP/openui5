@@ -14,8 +14,8 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The <code>AbstractContainer</code> control can be used to define a fixed header/footer area while offering the possibility
-	 * to define different controls as content, which can be dynamically added/removed and switched.
+	 * The <code>AbstractContainer</code> control can be used to define a fixed header and footer area while offering the possibility
+	 * to define various controls as content, which can be dynamically added, removed, and switched.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @since 1.96.0
 	 *
 	 * @private
-	 * @ui5-retricted
+	 * @ui5-restricted
 	 * @experimental
 	 */
 	var AbstractContainer = Control.extend("sap.m.p13n.AbstractContainer", {
@@ -58,7 +58,7 @@ sap.ui.define([
 					}
 				},
 				/**
-				 * Defines the content for the <code>AbstractContainer</code> subHeader area.
+				 * Defines the content for the <code>AbstractContainer</code> <code>subHeader</code> area.
 				 */
 				subHeader: {
 					type: "sap.m.IBar",
@@ -94,7 +94,7 @@ sap.ui.define([
 				_content: {
 					type: "sap.ui.core.Control",
 					multiple: false,
-					hidden: true
+					visibility: "hidden"
 				}
 			},
 			events: {
@@ -164,7 +164,7 @@ sap.ui.define([
 	/**
 	 * This method can be used to remove a view from the <code>AbstractContainer</code> instance.
 	 *
-	 * @param {string|sap.m.p13n.AbstractContainerItem} vContainerItem View that should be removed
+	 * @param {string|sap.m.p13n.AbstractContainerItem} vContainerItem View that is removed
 	 * @param {boolean} bSuppress Supress invalidate
 	 *
 	 * @returns {sap.m.p13n.AbstractContainer} The <code>AbstractContainer<code> instance
@@ -182,7 +182,7 @@ sap.ui.define([
 	/**
 	 * This method can be used to add a view to the <code>AbstractContainer</code> instance.
 	 *
-	 * @param {sap.m.p13n.AbstractContainerItem} vContainerItem <code>AbstractContainerItem</code> that should be added
+	 * @param {sap.m.p13n.AbstractContainerItem} vContainerItem <code>AbstractContainerItem</code> that is added
 	 * @param {boolean} bSuppress Supress invalidate
 	 *
 	 * @returns {sap.m.p13n.AbstractContainer} The <code>AbstractContainer<code> instance
@@ -215,9 +215,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * This method can be used to switch to an existing view using the according <code>ContainerItem</code> key.
+	 * This method can be used to switch to an existing view using the related <code>ContainerItem</code> key.
 	 *
-	 * @param {string} sKey The key of the ContainerItem whose content should be visible up next
+	 * @param {string} sKey The key of the ContainerItem whose content is made visible next
 	 */
 	AbstractContainer.prototype.switchView = function(sKey) {
 		var oNewView = this.getView(sKey);
@@ -245,9 +245,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * This method can be used to retrieve the current present view by using the according <code>ContainerItem</code> key.
+	 * This method can be used to retrieve the current view by using the related <code>ContainerItem</code> key.
 	 *
-  	 * @param {string} sKey The key of the ContainerItem which should be retrieved
+  	 * @param {string} sKey The key of the ContainerItem which is retrieved
 	 *
 	 * @returns {sap.m.p13n.AbstractContainerItem} The matching ContainerItem
 	 */
@@ -260,7 +260,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Get a plain representation of the current views.
+	 * Gets a plain representation of the current views.
 	 *
 	 * @returns {object} The current view aggeregation as map
 	 */

@@ -35,16 +35,14 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * This control can be used as personalization panel to define
-	 * content that may be added/removed for an associated control instance during runtime by the user.
+	 * This control can be used to customize personalization content for adding/removing items for an associated control instance.
 	 *
 	 * @extends sap.m.p13n.BasePanel
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @private
-	 * @ui5-restricted
+	 * @public
 	 * @experimental
 	 *
 	 * @since 1.96
@@ -55,15 +53,15 @@ sap.ui.define([
 			library: "sap.m",
 			properties: {
 				/**
-				 * Shows an additional header with a SearchField and 'Show Selected' button
+				 * Shows an additional header with a search field and the Show Selected button.
 				 */
 				showHeader: {
 					type: "boolean",
 					defaultValue: false
 				},
 				/**
-				 * Enables a count for selected items compared to available items as '<fields> (3 / 12)' in addition
-				 * for the first provided column text
+				 * Enables a count for selected items compared to available items, for example, Currency (3/12), in addition
+				 * to the first column text.
 				 */
 				enableCount: {
 					type: "boolean",
@@ -77,7 +75,7 @@ sap.ui.define([
 					defaultValue: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("p13n.DEFAULT_DESCRIPTION")
 				},
 				 /**
-				 * The secondary column in the panel showing the movement buttons for reordering.
+				 * The second column in the panel showing the move buttons for reordering.
 				 */
 				activeColumn: {
 					type: "string",
