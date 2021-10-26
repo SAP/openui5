@@ -417,6 +417,7 @@ sap.ui.define([
 					tokens: {path: '/conditions', model: "$valueHelp", templateShareable: false, template: oTokenTemplate, filters: oFilter},
 					layoutData: new FlexItemData({growFactor: 1, maxWidth: "calc(100% - 2rem)"})
 				});
+				this.oTokenizer.addAriaDescribedBy( this.oTokenizer.getTokensInfoId());
 				this.oTokenizer.addStyleClass("sapMdcTokenizer");
 
 				this.oRemoveAllBtn = new Button({

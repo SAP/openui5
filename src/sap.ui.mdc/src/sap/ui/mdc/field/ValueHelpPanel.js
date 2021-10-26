@@ -122,6 +122,7 @@ sap.ui.define([
 
 			if (!this._oTokenizer) {
 				this._oTokenizer = this.byId("VHPTokenizer");
+				this._oTokenizer.addAriaDescribedBy( this._oTokenizer.getTokensInfoId());
 				this._oTokenizer._oScroller.setHorizontal(true);
 			}
 			this._oTokenizerPanel = this.byId("VHPTokenizerPanel");
