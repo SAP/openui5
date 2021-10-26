@@ -34950,6 +34950,115 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: The context of an object page is moved to the list report and is not shown
+	// initially. A property of this context is updated. Before the request is sent, the list
+	// scrolls down and shows the entity. The property is updated again. The PATCHes must be merged.
+	// Use a nested entity to ensure that moveEntityTo and merging PATCH requests also work with
+	// navigation properties in the moved context.
+	//
+	// JIRA: CPOUI5ODATAV4-1270
+	QUnit.test("moveEntityTo: merging property changes while paging", function (assert) {
+		var oDetailBinding,
+			oKeptAliveContext,
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oSetPropertyPromise1,
+			oSetPropertyPromise2,
+			sView = '\
+<Table id="listReport" growing="true" growingThreshold="2"\
+		items="{path : \'/Artists\', suspended : true}">\
+	<Text id="id" text="{ArtistID}"/>\
+</Table>\
+<FlexBox id="objectPage">\
+	<Input id="name" value="{BestFriend/Name}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("id", [])
+			.expectChange("name");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("Artists(ArtistID='A3',IsActiveEntity=true)"
+					+ "?$select=ArtistID,IsActiveEntity"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
+					"@odata.etag" : "etag.A3",
+					ArtistID : "A3",
+					IsActiveEntity : true,
+					BestFriend : {
+						"@odata.etag" : "etag.B",
+						ArtistID : "B",
+						IsActiveEntity : true,
+						Name : "Best Friend"
+					}
+				})
+				.expectChange("name", "Best Friend");
+
+			oDetailBinding = oModel.bindContext("/Artists(ArtistID='A3',IsActiveEntity=true)");
+			oKeptAliveContext = oDetailBinding.getBoundContext();
+			that.oView.byId("objectPage").setBindingContext(oKeptAliveContext);
+
+			return that.waitForChanges(assert, "initialize object page");
+		}).then(function () {
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity&$skip=0&$top=2", {
+					value : [{
+						"@odata.etag" : "etag.A1",
+						ArtistID : "A1",
+						IsActiveEntity : true
+					}, {
+						"@odata.etag" : "etag.A2",
+						ArtistID : "A2",
+						IsActiveEntity : true
+					}]
+				})
+				.expectChange("id", ["A1", "A2"]);
+
+			oDetailBinding.moveEntityTo(that.oView.byId("listReport").getBinding("items"));
+
+			return that.waitForChanges(assert, "moveEntityTo");
+		}).then(function () {
+			that.expectChange("name", "Best Friend*");
+
+			oSetPropertyPromise1
+				= oKeptAliveContext.setProperty("BestFriend/Name", "Best Friend*", "update");
+
+			return that.waitForChanges(assert, "1st update");
+		}).then(function () {
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity&$skip=2&$top=2", {
+					value : [{
+						"@odata.etag" : "etag.A3",
+						ArtistID : "A3",
+						IsActiveEntity : true
+					}]
+				})
+				.expectChange("id", [,, "A3"]);
+
+			that.oView.byId("listReport").requestItems();
+
+			return that.waitForChanges(assert, "scroll down");
+		}).then(function () {
+			that.expectChange("name", "Best Friend**");
+
+			oSetPropertyPromise2
+				= oKeptAliveContext.setProperty("BestFriend/Name", "Best Friend**", "update");
+
+			return that.waitForChanges(assert, "2nd update");
+		}).then(function () {
+			that.expectRequest({
+					headers : {"If-Match" : "etag.B"},
+					method : "PATCH",
+					payload : {"Name" : "Best Friend**"},
+					url : "Artists(ArtistID='B',IsActiveEntity=true)"
+				}); // no response required
+
+			return Promise.all([
+				oSetPropertyPromise1,
+				oSetPropertyPromise2,
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert, "submit $batch: PATCHes must be merged")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: List report with absolute binding, object page with a late property. Ensure that
 	// the late property is not requested for all rows of the list, but only for the single row that
 	// needs it.

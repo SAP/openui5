@@ -7610,8 +7610,10 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oEntityContext));
 		this.mock(oEntityBinding).expects("getInheritableQueryOptions").withExactArgs()
 			.returns("~queryOptions~");
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("/EMPLOYEES('1')")
+			.returns("/EMPLOYEES");
 		this.mock(oBinding).expects("aggregateQueryOptions")
-			.withExactArgs("~queryOptions~", "", true).returns(true);
+			.withExactArgs("~queryOptions~", "/EMPLOYEES", true).returns(true);
 		this.mock(oEntityContext).expects("fetchValue").withExactArgs(null, null, true)
 			.returns(SyncPromise.resolve("~entity~"));
 		this.mock(_Helper).expects("getPrivateAnnotation").withExactArgs("~entity~", "predicate")
@@ -7714,8 +7716,10 @@ sap.ui.define([
 			.returns(SyncPromise.resolve("~entity~"));
 		this.mock(_Helper).expects("getPrivateAnnotation").withExactArgs("~entity~", "predicate")
 			.returns("('1')");
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("/EMPLOYEES('1')")
+			.returns("/EMPLOYEES");
 		this.mock(oBinding).expects("aggregateQueryOptions")
-			.withExactArgs("~queryOptions~", "", true).returns(false);
+			.withExactArgs("~queryOptions~", "/EMPLOYEES", true).returns(false);
 
 		assert.throws(function () {
 			// code under test

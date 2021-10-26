@@ -1872,7 +1872,7 @@ sap.ui.define([
 		 * properties therein.
 		 *
 		 * Restrictions:
-		 * - oTarget and oSource are expected to have the same structure; when there is an
+		 * - oTarget and oSource are expected to have the same structure: when there is an
 		 *   object at a given path in either of them, the other one must have an object or
 		 *   <code>null</code>.
 		 * - no change events for collection-valued properties; list bindings without own cache must
@@ -1935,7 +1935,7 @@ sap.ui.define([
 		 * advertised actions.
 		 *
 		 * Restrictions:
-		 * - oOldObject and oNewObject are expected to have the same structure; when there is an
+		 * - oOldObject and oNewObject are expected to have the same structure: when there is an
 		 *   object at a given path in either of them, the other one must have an object or
 		 *   <code>null</code>.
 		 * - no change events for collection-valued properties
@@ -2003,13 +2003,43 @@ sap.ui.define([
 		},
 
 		/**
+		 * Recursively adds all properties of oSource to oTarget that do not exist there yet.
+		 * Ensures that object references in oTarget remain unchanged.
+		 *
+		 * Restrictions:
+		 * - oTarget and oSource are expected to have the same structure: when there is an
+		 *   object at a given path in either of them, the other one must have an object.
+		 *   <code>null</code>, or no property at all.
+		 * - arrays are not merged in any way, they are taken either from oSource or from oTarget
+		 *
+		 * @param {object} oTarget - The target
+		 * @param {object} oSource - The source
+		 */
+		updateNonExisting : function (oTarget, oSource) {
+			Object.keys(oSource).forEach(function (sKey) {
+				var vSourceValue = oSource[sKey],
+					vTargetValue;
+
+				if (sKey in oTarget) {
+					vTargetValue = oTarget[sKey];
+					if (vSourceValue && vTargetValue
+							&& typeof vSourceValue === "object" && !Array.isArray(vSourceValue)) {
+						_Helper.updateNonExisting(vTargetValue, vSourceValue);
+					}
+				} else {
+					oTarget[sKey] = vSourceValue;
+				}
+			});
+		},
+
+		/**
 		 * Updates the old value with the given new value for the selected properties (see
 		 * {@link #updateExisting}). If no selected properties are given or if "*" is contained in
 		 * the selected properties, then all properties are selected. Fires change events for all
 		 * changed properties.
 		 *
 		 * Restrictions:
-		 * - oOldValue and oNewValue are expected to have the same structure; when there is an
+		 * - oOldValue and oNewValue are expected to have the same structure: when there is an
 		 *   object at a given path in either of them, the other one must have an object or
 		 *   <code>null</code>.
 		 * - "*" in aSelect does not work correctly if oNewValue contains navigation properties
