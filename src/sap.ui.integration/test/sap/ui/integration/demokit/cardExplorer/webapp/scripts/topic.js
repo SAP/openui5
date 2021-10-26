@@ -20,6 +20,10 @@
 			if (oLink.dataset.demokitHref) {
 				oLink.href = getUrlToDemokit(oLink.dataset.demokitHref);
 			}
+
+			if (oLink.getAttribute("target") === "_blank") {
+				oLink.setAttribute("rel", "noopener noreferrer");
+			}
 		}
 	}
 
