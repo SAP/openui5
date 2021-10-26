@@ -1,5 +1,5 @@
 ---
-specVersion: "2.0"
+specVersion: "2.6"
 type: library
 metadata:
   name: sap.ui.documentation
@@ -14,3 +14,6 @@ builder:
   jsdoc:
     excludes:
       - "sap/ui/documentation/sdk/thirdparty/**"
+  minification:
+    excludes:
+      - "sap/ui/documentation/sdk/thirdparty/highlight.js/*.js"
