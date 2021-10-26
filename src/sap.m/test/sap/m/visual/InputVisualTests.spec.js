@@ -169,4 +169,17 @@ describe("sap.m.InputVisualTests", function() {
 			expect(takeScreenshot()).toLookAs("suggestions_updated_visible");
 		});
 	});
+
+	it("Should visualize input with suggestion separators", function () {
+		var oInput = element(by.id("sugTableInput8"));
+		browser.executeScript("document.getElementById('sugTableInput8').scrollIntoView()").then(function () {
+			oInput.click();
+
+			oInput._setSeparateSuggestions(true);
+
+			// Should show suggestion separators
+			browser.actions().sendKeys("H").perform();
+			expect(takeScreenshot()).toLookAs("suggestion_separators_are_visible");
+		});
+	});
 });
