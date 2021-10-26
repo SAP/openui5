@@ -723,6 +723,72 @@
 			}
 		});
 
+		//*******************************
+
+		// JSON Model for rows and i18n model for columns
+		// Tabular suggest with list separators
+		var oSuggestTableInput8 = new sap.m.Input("sugTableInput8", {
+			placeholder: "Tabular suggest list separator demo (starts with H)",
+			maxSuggestionWidth: "500px",
+			showSuggestion: true,
+			enableTableAutoPopinMode: true,
+			suggestionColumns : [
+				new sap.m.Column({
+					styleClass : "name",
+					hAlign : "Begin",
+					header : new sap.m.Label({
+						text : "{i18n>/Name}"
+					})
+				}),
+				new sap.m.Column({
+					hAlign : "Center",
+					styleClass : "qty",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "{i18n>/Qty}"
+					}),
+					minScreenWidth : "Tablet",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "Center",
+					styleClass : "limit",
+					width : "30%",
+					header : new sap.m.Label({
+						text : "{i18n>/Value}"
+					}),
+					minScreenWidth : "XXSmall",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "End",
+					styleClass : "price",
+					width : "30%",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "{i18n>/Price}"
+					}),
+					minScreenWidth : "400px",
+					demandPopin : true
+				})
+			]
+		});
+
+		var oSugggestTable8Btn =  new sap.m.Button("sugTable8Btn", {
+			text: "Toggle list separators",
+			press: function () {
+				var bSeparateSuggestions = oSuggestTableInput8._getSeparateSuggestions();
+				oSuggestTableInput8._setSeparateSuggestions(!bSeparateSuggestions);
+			}
+		})
+
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(oSuggestionData);
+		oSuggestTableInput8.setModel(oModel);
+		oSuggestTableInput8.bindAggregation("suggestionRows", "/tabularSuggestionItems", oTableItemTemplate);
+
+		//*******************************
+
 		var oValueStateInput1 = new sap.m.Input("vsinput1", {
 			valueState: "Error",
 			valueStateText: "Error Message!!!!!!!!!",
@@ -916,6 +982,13 @@
 							oSuggestTableInput5,
 							oSuggestTableInput6,
 							oSuggestTableInput7,
+							new sap.ui.layout.HorizontalLayout("oHL", {
+								width: "100%",
+								content: [
+									oSuggestTableInput8,
+									oSugggestTable8Btn
+								]
+							}),
 							oValueStateInput1,
 							oValueStateInput2,
 							oValueStateInput3,
