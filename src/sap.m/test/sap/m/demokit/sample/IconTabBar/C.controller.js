@@ -19,9 +19,6 @@ sap.ui.define([
 				sKey = oEvent.getParameter("key"),
 				// Array to combine filters
 				aFilters = [],
-				oCombinedFilterG,
-				oCombinedFilterKG,
-
 				// Values for Filter
 				fMaxOkWeightKG = 1,
 				fMaxOkWeightG = fMaxOkWeightKG * 1000,
@@ -29,17 +26,28 @@ sap.ui.define([
 				fMaxHeavyWeightG = fMaxHeavyWeightKG * 1000;
 
 			if (sKey === "Ok") {
-				oCombinedFilterG = new Filter([new Filter("WeightMeasure", "LT", fMaxOkWeightG), new Filter("WeightUnit", "EQ", "G")], true);
-				oCombinedFilterKG = new Filter([new Filter("WeightMeasure", "LT", fMaxOkWeightKG), new Filter("WeightUnit", "EQ", "KG")], true);
+				aFilters.push(
+					new Filter([
+						new Filter([new Filter("WeightMeasure", "LT", fMaxOkWeightG), new Filter("WeightUnit", "EQ", "G")], true),
+						new Filter([new Filter("WeightMeasure", "LT", fMaxOkWeightKG), new Filter("WeightUnit", "EQ", "KG")], true)
+					], false)
+				);
 			} else if (sKey === "Heavy") {
-				oCombinedFilterG = new Filter([new Filter("WeightMeasure", "BT", fMaxOkWeightG, fMaxHeavyWeightG), new Filter("WeightUnit", "EQ", "G")], true);
-				oCombinedFilterKG = new Filter([new Filter("WeightMeasure", "BT", fMaxOkWeightKG, fMaxHeavyWeightKG), new Filter("WeightUnit", "EQ", "KG")], true);
+				aFilters.push(
+					new Filter([
+						new Filter([new Filter("WeightMeasure", "BT", fMaxOkWeightG, fMaxHeavyWeightG), new Filter("WeightUnit", "EQ", "G")], true),
+						new Filter([new Filter("WeightMeasure", "BT", fMaxOkWeightKG, fMaxHeavyWeightKG), new Filter("WeightUnit", "EQ", "KG")], true)
+					], false)
+				);
 			} else if (sKey === "Overweight") {
-				oCombinedFilterKG = new Filter([new Filter("WeightMeasure", "GT", fMaxHeavyWeightKG), new Filter("WeightUnit", "EQ", "KG")], true);
-				oCombinedFilterG = new Filter([new Filter("WeightMeasure", "GT", fMaxHeavyWeightG), new Filter("WeightUnit", "EQ", "G")], true);
+				aFilters.push(
+					new Filter([
+						new Filter([new Filter("WeightMeasure", "GT", fMaxHeavyWeightKG), new Filter("WeightUnit", "EQ", "KG")], true),
+						new Filter([new Filter("WeightMeasure", "GT", fMaxHeavyWeightG), new Filter("WeightUnit", "EQ", "G")], true)
+					], false)
+				);
 			}
 
-			aFilters.push(new Filter([oCombinedFilterKG, oCombinedFilterG], false));
 			oBinding.filter(aFilters);
 		}
 
