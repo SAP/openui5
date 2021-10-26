@@ -28,8 +28,6 @@ sap.ui.define([
 		CountMode, ODataFilter, ODataUtils,  OperationMode) {
 	"use strict";
 
-	/*global Set */
-
 	var aCreateParametersAllowlist = ["changeSetId", "error", "expand", "groupId", "success"];
 
 	/**
@@ -260,6 +258,9 @@ sap.ui.define([
 	 * As in OData all entities have a unique ID in the URL, the path of the
 	 * context is suitable here.
 	 *
+	 * @param {sap.ui.model.Context} oContext The context
+	 * @returns {string} The entry key for the given context
+	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.getEntryKey = function(oContext) {
@@ -269,7 +270,14 @@ sap.ui.define([
 	/**
 	 * Returns the entry data as required for change detection/diff.
 	 *
-	 * This is a JSON serialization of the entity, in case select/expand were used with only the selected/expanded parts.
+	 * This is a JSON serialization of the entity, in case select/expand were used with only the
+	 * selected/expanded parts.
+	 *
+	 * @param {sap.ui.model.Context} oContext
+	 *   The context
+	 * @returns {any}
+	 *   The value for the given context or <code>undefined</code> if data or entity type
+	 *   cannot be found or if not all selected properties are available
 	 *
 	 * @private
 	 */
@@ -565,48 +573,46 @@ sap.ui.define([
 				that.bLengthFinal = true;
 				that.applyFilter();
 				that.applySort();
-			} else {
 				// For server mode, update data and or length dependent on the current result
-				if (oData.results.length > 0) {
-					// Collecting contexts, after the $inlinecount was evaluated, so we do not have to clear it again when
-					// the Auto modes initial threshold <> count check failed.
-					each(oData.results, function(i, entry) {
-						that.aKeys[iStartIndex + i] = that.oModel._getKey(entry);
-					});
+			} else if (oData.results.length > 0) {
+				// Collecting contexts, after the <code>$inlinecount</code> was evaluated, so we do
+				// not have to clear it again when Auto modes initial threshold <> count check
+				// failed.
+				each(oData.results, function(i, entry) {
+					that.aKeys[iStartIndex + i] = that.oModel._getKey(entry);
+				});
 
-					// if we got data and the results + startindex is larger than the
-					// length we just apply this value to the length
-					if (that.iLength < iStartIndex + oData.results.length) {
-						that.iLength = iStartIndex + oData.results.length;
-						that.bLengthFinal = false;
-					}
+				// if we got data and the results + startindex is larger than the
+				// length we just apply this value to the length
+				if (that.iLength < iStartIndex + oData.results.length) {
+					that.iLength = iStartIndex + oData.results.length;
+					that.bLengthFinal = false;
+				}
 
-					// if less entries are returned than have been requested
-					// set length accordingly
-					if (!oData.__next && (oData.results.length < iLength || iLength === undefined)) {
-						that.iLength = iStartIndex + oData.results.length;
-						that.bLengthFinal = true;
-					}
-				} else {
-					// In fault tolerance mode, if an empty array and next link is returned,
-					// finalize the length accordingly
-					if (that.bFaultTolerant && oData.__next) {
-						that.iLength = iStartIndex;
-						that.bLengthFinal = true;
-					}
+				// if less entries are returned than have been requested set length accordingly
+				if (!oData.__next && (oData.results.length < iLength || iLength === undefined)) {
+					that.iLength = iStartIndex + oData.results.length;
+					that.bLengthFinal = true;
+				}
+			} else {
+				// In fault tolerance mode, if an empty array and next link is returned,
+				// finalize the length accordingly
+				if (that.bFaultTolerant && oData.__next) {
+					that.iLength = iStartIndex;
+					that.bLengthFinal = true;
+				}
 
-					// check if there are any results at all...
-					if (iStartIndex === 0) {
-						that.iLength = 0;
-						that.aKeys = [];
-						that.bLengthFinal = true;
-					}
+				// check if there are any results at all...
+				if (iStartIndex === 0) {
+					that.iLength = 0;
+					that.aKeys = [];
+					that.bLengthFinal = true;
+				}
 
-					// if next requested page has no results, and startindex = actual length
-					// we could set lengthFinal true as we know the length.
-					if (iStartIndex === that.iLength) {
-						that.bLengthFinal = true;
-					}
+				// if next requested page has no results, and startindex = actual length
+				// we could set lengthFinal true as we know the length.
+				if (iStartIndex === that.iLength) {
+					that.bLengthFinal = true;
 				}
 			}
 
@@ -711,8 +717,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype._getLength = function() {
-		var that = this;
-		var sGroupId;
+		var sGroupId, sPath,
+			that = this;
 
 		if (this.sCountMode !== CountMode.Request && this.sCountMode !== CountMode.Both) {
 			return;
@@ -763,7 +769,7 @@ sap.ui.define([
 		}
 
 		// Use context and check for relative binding
-		var sPath = this.getResolvedPath();
+		sPath = this.getResolvedPath();
 
 		// Only send request, if path is defined
 		if (sPath) {
@@ -823,6 +829,12 @@ sap.ui.define([
 	};
 
 	/**
+	 * Refreshes the binding.
+	 *
+	 * @param {boolean} bForceUpdate Whether an update should be forced
+	 * @param {object} [mChangedEntities] A map of changed entities
+	 * @param {object} [mEntityTypes] A map of entity types
+	 *
 	 * @private
 	 */
 	ODataListBinding.prototype._refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
@@ -852,6 +864,8 @@ sap.ui.define([
 
 						return false;
 					}
+
+					return true;
 				});
 			}
 			if (!mChangedEntities && !mEntityTypes) { // default
@@ -1045,6 +1059,8 @@ sap.ui.define([
 							bChangeDetected = true;
 							return false;
 						}
+
+						return true;
 					});
 				}
 			}
@@ -1129,9 +1145,7 @@ sap.ui.define([
 
 		sPath = this.getResolvedPath();
 
-		if (sPath) {
-			return this.oModel._createRequestUrl(sPath, null, aParams);
-		}
+		return sPath && this.oModel._createRequestUrl(sPath, null, aParams);
 	};
 
 	/**
@@ -1184,7 +1198,6 @@ sap.ui.define([
 				this.sChangeReason = ChangeReason.Sort;
 				this._fireRefresh({reason : this.sChangeReason});
 			}
-			// TODO remove this if the sort event gets removed which is now deprecated
 			this._fireSort({sorter: aSorters});
 			bSuccess = true;
 		}
@@ -1197,9 +1210,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the comparator for each sorter/filter in the array according to the
-	 * Edm type of the sort/filter property.
-	 * @param bSort Whether a comparator usable for sorting should be returned, where comparison with null returns a valid result.
+	 * Sets the comparator for each sorter/filter in the array according to the Edm type of the
+	 * sort/filter property.
+	 *
+	 * @param {object[]} aEntries
+	 *   Array of sorters/filters
+	 * @param {boolean} bSort
+	 *   Whether a comparator usable for sorting should be returned, where comparison with null
+	 *   returns a valid result
+	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.addComparators = function(aEntries, bSort) {
@@ -1233,9 +1252,13 @@ sap.ui.define([
 	/**
 	 * Creates a comparator usable for sorting.
 	 *
-	 * The OData comparators return "NaN" for comparisons containing null values. While this is a valid result when used for filtering,
-	 * for sorting the null values need to be put in order, so the comparator must return either -1 or 1 instead, to have null sorted
-	 * at the top in ascending order and on the bottom in descending order.
+	 * The OData comparators return "NaN" for comparisons containing null values. While this is a
+	 * valid result when used for filtering, for sorting the null values need to be put in order, so
+	 * the comparator must return either -1 or 1 instead, to have null sorted at the top in
+	 * ascending order and on the bottom in descending order.
+	 *
+	 * @param {function} fnCompare Function to compare two values with
+	 * @returns {function} The sort comparator
 	 *
 	 * @private
 	 */
@@ -1255,8 +1278,13 @@ sap.ui.define([
 	}
 
 	/**
-	 * Does normalize the filter values according to the given Edm type. This is necessary for comparators
-	 * to work as expected, even if the wrong JavaScript type is passed to the filter (string vs number)
+	 * Does normalize the filter values according to the given Edm type. This is necessary for
+	 * comparators to work as expected, even if the wrong JavaScript type is passed to the filter
+	 * (string vs number).
+	 *
+	 * @param {string} sType The Edm type
+	 * @param {object} oFilter The filter
+	 *
 	 * @private
 	 */
 	function normalizeFilterValues(sType, oFilter) {
@@ -1384,7 +1412,6 @@ sap.ui.define([
 				this.sChangeReason = ChangeReason.Filter;
 				this._fireRefresh({reason: this.sChangeReason});
 			}
-			// TODO remove this if the filter event gets removed which is now deprecated
 			if (sFilterType === FilterType.Application) {
 				this._fireFilter({filters: this.aApplicationFilters});
 			} else {
