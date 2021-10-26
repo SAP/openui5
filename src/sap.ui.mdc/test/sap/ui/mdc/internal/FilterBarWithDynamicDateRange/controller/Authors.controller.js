@@ -1,3 +1,4 @@
+
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/date/UniversalDate",
@@ -5,11 +6,40 @@ sap.ui.define([
 	"sap/ui/mdc/condition/RangeOperator",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/p13n/StateUtil",
-	"sap/ui/mdc/condition/FilterConverter"
-], function (Controller, UniversalDate, UniversalDateUtils, RangeOperator, FilterOperatorUtil, StateUtil, FilterConverter) {
+	"sap/ui/mdc/condition/FilterConverter",
+	"sap/ui/base/ManagedObjectObserver",
+	"sap/m/DynamicDateOption",
+	"sap/m/DynamicDateFormat",
+	"sap/base/strings/formatMessage",
+	"sap/ui/mdc/odata/v4/FieldBaseDelegate",
+	"sap/m/DynamicDateUtil",
+	"sap/m/DynamicDateValueHelpUIType",
+	"sap/m/Slider"
+], function (Controller, UniversalDate, UniversalDateUtils, RangeOperator, FilterOperatorUtil, StateUtil, FilterConverter,
+	ManagedObjectObserver,
+	DynamicDateOption,
+	DynamicDateFormat,
+	formatMessage, dummyDelegate, DynamicDateUtil, DynamicDateValueHelpUIType,
+	Slider) {
 	"use strict";
 
 	return Controller.extend("sap.ui.v4demo.controller.Authors", {
+
+		onInit : function(oEvent) {
+			var oFF = this.getView().byId("ff1");
+			oFF.setOperators(FilterOperatorUtil.getOperatorsForType("Date"));
+			["NE", "NOTBT", "NOTLE", "NOTLT", "NOTGE", "NOTGT"].forEach(function(sOp) { oFF.removeOperator(sOp); });
+
+			// ["LT", "GT"].forEach(function(sOp) { oFF.removeOperator(sOp); });
+
+
+			oFF = this.getView().byId("ff3");
+			oFF.setOperators(FilterOperatorUtil.getOperatorsForType("Date"));
+			["NE", "NOTBT", "NOTLE", "NOTLT", "NOTGE", "NOTGT"].forEach(function(sOp) { oFF.removeOperator(sOp); });
+
+			// ["LT", "GT"].forEach(function(sOp) { oFF.removeOperator(sOp); });
+
+		},
 
 		onFiltersChanged: function(oEvent) {
 			var oText = this.getView().byId("statusTextExpanded");
@@ -28,22 +58,9 @@ sap.ui.define([
 		},
 
 		handleConditionModelChange: function(oEvent) {
-			// var oDataTypes = {};
 			var oView = this.getView();
-			// var oForm = oView.byId("Form1");
-			// var oCM = oForm.getModel("cm");
-			// var oConditions = oCM.getAllConditions();
-			// var aFormContent = oForm.getContent();
-
-			// for (var i = 0; i < aFormContent.length; i++) {
-			// 	var oField = aFormContent[i];
-			// 	if (oField.isA("sap.ui.mdc.field.FieldBase")) {
-			// 		oDataTypes[oField.getFieldPath()] = { type: oField._oContentFactory.getDataType() };
-			// 	}
-			// }
 
 			var oFilterBar = oEvent.oSource;
-			// var oConditions = oFilterBar.getConditions(); //???? how to access the current values
 			var oCM = oFilterBar._getConditionModel();
 			var oConditions = oCM.getAllConditions();
 
@@ -85,86 +102,85 @@ sap.ui.define([
 					return false;
 				};
 
+				var aFieldIds = ["ff1", "ff3"];
+
 				if (bHasDECondition) {
 					// add a new RangeOperator
-					this.createFiscalPeriodRangeOperator("DE");
-				} else {
+					this.createFiscalPeriodRangeOperator("DE", aFieldIds);
+				} else
 					//???? how can we check if the new FISCALPDE was used and remove it?
 					if (usesOperator( mConditions.dateOfDeath, "FISCALPDE")) {
-						// oFilterBar.setSuspendSelection(true);
-						// oFilterBar.setIgnoreQueuing(true);
 						StateUtil.applyExternalState(oFilterBar, { filter: { "dateOfDeath" : []}}).then(
 							function() {
-								//oFilterBar.setSuspendSelection(false);
-								this.destroyFiscalPeriodRangeOperator("DE");
+								this.destroyFiscalPeriodRangeOperator("DE", aFieldIds);
 							}.bind(this)
 						);
 					} else {
-						this.destroyFiscalPeriodRangeOperator("DE");
+						this.destroyFiscalPeriodRangeOperator("DE", aFieldIds);
 					}
-				}
+
 				if (bHasUSCondition) {
 					// add a new RangeOperator
-					this.createFiscalPeriodRangeOperator("US");
-				} else {
+					this.createFiscalPeriodRangeOperator("US", aFieldIds);
+				} else
 					//???? how can we check if the new FISCALPDE was used and remove it?
 					if (usesOperator( mConditions.dateOfDeath, "FISCALPUS")) {
-						// oFilterBar.setSuspendSelection(true);
-						// oFilterBar.setIgnoreQueuing(true);
 						StateUtil.applyExternalState(oFilterBar, { filter: { "dateOfDeath" : []}}).then(
 							function() {
-								//oFilterBar.setSuspendSelection(false);
-								this.destroyFiscalPeriodRangeOperator("US");
+								this.destroyFiscalPeriodRangeOperator("US", aFieldIds);
 							}.bind(this)
 						);
 					} else {
-						this.destroyFiscalPeriodRangeOperator("US");
+						this.destroyFiscalPeriodRangeOperator("US", aFieldIds);
 					}
-				}
+
 			} else {
 				// Remove new RangeOperator
-				this.destroyFiscalPeriodRangeOperator("DE");
-				this.destroyFiscalPeriodRangeOperator("US");
+				this.destroyFiscalPeriodRangeOperator("DE", aFieldIds);
+				this.destroyFiscalPeriodRangeOperator("US", aFieldIds);
 			}
 		},
 
-		destroyFiscalPeriodRangeOperator: function(sLang) {
+		destroyFiscalPeriodRangeOperator: function(sLang, aFieldIds) {
 			if (this._mRangeOperators[sLang]) {
 				FilterOperatorUtil.removeOperator(this._mRangeOperators[sLang]);
-				// FilterOperatorUtil.removeOperatorForType("Date", this._mRangeOperators[sLang]);
 
+				// FilterOperatorUtil.removeOperatorForType("Date", this._mRangeOperators[sLang]);
 				//or remove from the Filterfield
-				var oFF = this.getView().byId("ff1");
-				oFF.removeOperator(this._mRangeOperators[sLang]);
+				aFieldIds.forEach(function(sId) {
+					var oFF = this.getView().byId(sId);
+					oFF.removeOperator(this._mRangeOperators[sLang]);
+				}.bind(this));
 
 				//TODO What happens with conditions which we created with this RangeOperator?
 				//Convert the RangeOPerator From To into a between ...
-				var oFilterBar = this.getView().byId("authorsFilterBar");
-				var mConditions = oFilterBar.getConditions();
-				if (mConditions.dateOfDeath) {
+				// var oFilterBar = this.getView().byId("authorsFilterBar");
+				// var mConditions = oFilterBar.getConditions();
+				// if (mConditions.dateOfDeath) {
 
-					var aDateOfDeath = mConditions.dateOfDeath;
-					//???? Or in case the RangeOperator was used, we convert it into a BT operator
-					aDateOfDeath.forEach(function(oCnd) {
-						if (oCnd.operator === this._mRangeOperators[sLang].name) {
-							// oCnd.operator = "BT";
-							// oCnd.values = [new Date(), new Date()];
-						}
-					}.bind(this));
-				}
+				// 	var aDateOfDeath = mConditions.dateOfDeath;
+				// 	//???? Or in case the RangeOperator was used, we convert it into a BT operator
+				// 	aDateOfDeath.forEach(function(oCnd) {
+				// 		if (oCnd.operator === this._mRangeOperators[sLang].name) {
+				// 			// oCnd.operator = "BT";
+				// 			// oCnd.values = [new Date(), new Date()];
+				// 		}
+				// 	}.bind(this));
+				// }
 
 				delete this._mRangeOperators[sLang];
 			}
 		},
 
-		createFiscalPeriodRangeOperator: function(sLang) {
+		createFiscalPeriodRangeOperator: function(sLang, aFieldIds) {
 			if (!this._mRangeOperators[sLang]) {
 				this._mRangeOperators[sLang] =  new RangeOperator({
 					name: "FISCALP" + sLang,
+					group: { id: 0, text: "Fiscal Ranges" }, // this can be used to add the Operator into an existing Group with id 1...6 or when you specify the text you get a new Group.
 					tokenParse: "^#tokenText#$",
 					tokenFormat: "#tokenText#",
 					longText: "Fiscalperiod " + sLang,
-					tokenText: "Fiscalperiod-" + sLang + " ({0})",
+					tokenText: "Fiscalperiod-" + sLang + ": {0}",
 					// valueTypes: [sap.ui.mdc.condition.Operator.ValueType.Static],
 					// paramTypes: [],
 					valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}, constraints: { minimum: 1, maximum: 4}}],
@@ -190,19 +206,46 @@ sap.ui.define([
 				//TODO add a propery with the current language on the Range, will be used in this example inside the calcRange to calculate different time spans...
 				this._mRangeOperators[sLang].value = sLang;
 
+				if (sLang === "DE") {
+					// use cistom control
+					this._mRangeOperators[sLang].createControl = function(oType, sPath, iIndex, sId, aClass)  {
+						var oSlider = new Slider(sId, {
+							value: { path: sPath, type: oType, mode: 'TwoWay' },
+							width: "100%",
+							min: 1,
+							max: 4,
+							enableTickmarks: true
+						});
+						return oSlider;
+					};
+				}
+
 				FilterOperatorUtil.addOperator(this._mRangeOperators[sLang]);
 
 				// either set the new Range for the Type Date
 				// FilterOperatorUtil.addOperatorForType("Date", this._mRangeOperators[sLang]);
 
 				//or on the Filterfield
-				var oFF = this.getView().byId("ff1");
-				oFF.addOperator(this._mRangeOperators[sLang]);
+				aFieldIds.forEach(function(sId) {
+					var oFF = this.getView().byId(sId);
+					oFF.addOperator(this._mRangeOperators[sLang]);
+				}.bind(this));
+
 			}
 
+		},
+
+		handleDDRChange: function(oEvent) {
+			var DDR = oEvent.getSource();
+
+			if (!oEvent.getParameter("valid")) {
+				DDR.setValueState("Error");
+				DDR.setValueStateText("Not valid");
+			} else {
+				DDR.setValueState("None");
+				DDR.setValueStateText(null);
+			}
 		}
-
-
 
 	});
 });

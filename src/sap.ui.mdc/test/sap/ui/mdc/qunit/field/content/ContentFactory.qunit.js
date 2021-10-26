@@ -23,8 +23,9 @@ sap.ui.define([
 	"sap/m/DateRangeSelection",
 	"sap/m/DateTimePicker",
 	"sap/m/SearchField",
-	"sap/m/TimePicker"
-], function(QUnit, FieldBase, ContentFactory, DefaultContent, LinkContent, DateContent, DateTimeContent, TimeContent, BooleanContent, UnitContent, SearchContent, EditMode, ContentMode, MdcLink, Text, ExpandableText, Link, FieldInput, FieldMultiInput, TextArea, DatePicker, DateRangeSelection, DateTimePicker, SearchField, TimePicker) {
+	"sap/m/TimePicker",
+	"sap/m/DynamicDateRange"
+], function(QUnit, FieldBase, ContentFactory, DefaultContent, LinkContent, DateContent, DateTimeContent, TimeContent, BooleanContent, UnitContent, SearchContent, EditMode, ContentMode, MdcLink, Text, ExpandableText, Link, FieldInput, FieldMultiInput, TextArea, DatePicker, DateRangeSelection, DateTimePicker, SearchField, TimePicker, DynamicDateRange) {
 	"use strict";
 
 	QUnit.test("Constructor", function(assert) {
@@ -290,8 +291,8 @@ sap.ui.define([
 				var aExpectedControls = aExpectedControlArrays[iIndex];
 				var sContentMode = aContentModes[iIndex];
 
-				aCreatedControls.forEach(function(oCreatedControl) {
-					var oExpectedControl = aExpectedControls[aCreatedControls.indexOf(oCreatedControl)];
+				aCreatedControls.forEach(function(oCreatedControl, iIndex) {
+					var oExpectedControl = aExpectedControls[iIndex];
 					assert.ok(oExpectedControl && oCreatedControl instanceof oExpectedControl, "Correct controls returned for ContentType '" + sContentTypeName + "' in ContentMode '" + sContentMode + "'");
 				});
 			});
@@ -323,7 +324,7 @@ sap.ui.define([
 					[Text],
 					[ExpandableText],
 					[ExpandableText],
-					[FieldInput],
+					[DynamicDateRange],
 					[FieldMultiInput],
 					[null],
 					[DatePicker],

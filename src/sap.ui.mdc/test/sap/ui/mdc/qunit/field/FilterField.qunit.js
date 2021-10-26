@@ -148,7 +148,7 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		sap.ui.getCore().getMessageManager().registerObject(oFilterField, true); // to test valueState
-		oFilterField.setDataType("sap.ui.model.type.Date");
+		oFilterField.setDataType("sap.ui.model.type.Integer");
 		oFilterField.setMaxConditions(1);
 		oFilterField.placeAt("content");
 		sap.ui.getCore().applyChanges();

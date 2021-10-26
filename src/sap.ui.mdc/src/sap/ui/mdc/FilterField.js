@@ -119,6 +119,10 @@ sap.ui.define([
 
 		FieldBase.prototype.init.apply(this, arguments);
 
+		this._oObserver.observe(this, {
+			properties: ["value", "operators"]
+		});
+
 	};
 
 	FilterField.prototype.exit = function() {
@@ -146,6 +150,15 @@ sap.ui.define([
 		}
 
 		return FieldBase.prototype.setProperty.apply(this, arguments);
+	};
+
+	FilterField.prototype._observeChanges = function(oChanges) {
+
+		FieldBase.prototype._observeChanges.apply(this, arguments);
+
+		if (oChanges.name === "operators") { // could lead to change of internal control
+			this._updateInternalContent();
+		}
 
 	};
 

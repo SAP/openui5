@@ -159,6 +159,20 @@
 						fieldHelp="CFH1">
 					</mdc:FilterField>
 
+					<m:Label text="single value field (Date) using DynamicDateRange"></m:Label>
+					<mdc:FilterField id="FF7a-DDR"
+						conditions="{cm>/conditions/Date}"
+						dataType="sap.ui.model.odata.type.DateTime"
+						dataTypeFormatOptions="{style: 'long'}"
+						dataTypeConstraints="{displayFormat: 'Date'}"
+						display="Value"
+						maxConditions="1"
+						placeholder="{/#Product/Date/@sap:label}"
+						label="{/#Product/Date/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange">
+					</mdc:FilterField>
+
 					<m:Label text="single value field (Date) only between"></m:Label>
 					<mdc:FilterField id="FF7b"
 						conditions="{cm>/conditions/Date}"

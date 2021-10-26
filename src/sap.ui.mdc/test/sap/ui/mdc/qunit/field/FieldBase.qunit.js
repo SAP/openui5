@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldValueHelpDelegate",
 	"sap/ui/mdc/field/FieldInput",
 	"sap/ui/mdc/field/FieldMultiInput",
+	"sap/ui/mdc/field/DynamicDateRangeConditionsType",
 	"sap/ui/mdc/field/content/DefaultContent",
 	"sap/ui/mdc/enum/EditMode",
 	"sap/ui/mdc/enum/FieldDisplay",
@@ -34,11 +35,13 @@ sap.ui.define([
 	"sap/m/TimePicker",
 	"sap/m/DateTimePicker",
 	"sap/m/DateRangeSelection",
+	"sap/m/DynamicDateRange",
 	"sap/m/Button",
 	"sap/m/Link",
 	"sap/ui/mdc/condition/ConditionModel",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
+	"sap/ui/mdc/condition/OperatorDynamicDateOption",
 	"sap/ui/mdc/field/ConditionsType",
 	"sap/ui/mdc/field/ConditionType",
 	"sap/ui/mdc/enum/BaseType",
@@ -66,6 +69,7 @@ sap.ui.define([
 	FieldValueHelpDelegate,
 	FieldInput,
 	FieldMultiInput,
+	DynamicDateRangeConditionsType,
 	DefaultContent,
 	EditMode,
 	FieldDisplay,
@@ -85,11 +89,13 @@ sap.ui.define([
 	TimePicker,
 	DateTimePicker,
 	DateRangeSelection,
+	DynamicDateRange,
 	Button,
 	Link,
 	ConditionModel,
 	Condition,
 	FilterOperatorUtil,
+	OperatorDynamicDateOption,
 	ConditionsType,
 	ConditionType,
 	BaseType,
@@ -1143,7 +1149,7 @@ sap.ui.define([
 		sinon.stub(oFieldEditSingle3, "_getOperators").callsFake(function() {return ["BT"];});
 		oFieldEditSingle3.placeAt("content");
 
-		// Input with default help
+		// DynamicDateRange
 		var oFieldEditSingle4 = new FieldBase("F7", {
 			editMode: EditMode.Editable,
 			conditions: "{cm>/conditions/Date}",
@@ -1232,11 +1238,13 @@ sap.ui.define([
 			// Input with default help
 			aContent = oFieldEditSingle4.getAggregation("_content");
 			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.ok(oContent instanceof Input, "Input rendered");
-			assert.equal(oContent.getValue(), "=20.12.2018", "Value set on Input control");
-			assert.equal(jQuery(oContent.getFocusDomRef()).val(), "=20.12.2018", "Value shown on Input control");
-			assert.ok(oContent.getShowValueHelp(), "valueHelp used");
-			assert.equal(oFieldEditSingle4._sDefaultFieldHelp, "Field-DefineConditions-Help", "Default Field help set");
+			var oCompareValue = {
+				"operator": "DATE",
+				values: [new Date(2018, 11, 20)]
+			};
+			assert.ok(oContent instanceof DynamicDateRange, "DynamicDateRange rendered");
+			assert.deepEqual(oContent.getValue(), oCompareValue, "Value set on DynamicDateRange control");
+			assert.equal(jQuery(oContent.getFocusDomRef()).val(), "20.12.2018", "Value shown on DynamicDateRange control");
 
 			oFieldEditSingle4.setEditMode(EditMode.Display);
 			sap.ui.getCore().applyChanges();
