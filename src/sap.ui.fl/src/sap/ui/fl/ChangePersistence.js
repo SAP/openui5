@@ -417,7 +417,7 @@ sap.ui.define([
 	 * @param {map} mPropertyBag - Contains additional data needed for reading changes
 	 * @param {string} [mPropertyBag.layer] - Specifies a single layer for loading changes
 	 * @param {boolean} [mPropertyBag.includeDirtyChanges] - Whether dirty changes of the current session should be included
-	 * @returns {Promise} Promise resolving with an array of changes
+	 * @returns {sap.ui.fl.Change[]} Array of changes
 	 * @public
 	 */
 	ChangePersistence.prototype.getAllUIChanges = function(mPropertyBag) {

@@ -285,6 +285,7 @@ sap.ui.define([
 				vmReference: "vmReference1",
 				reference: this.sReference,
 				vReference: "variant0",
+				includeDirtyChanges: false,
 				changeInstance: true
 			};
 			assert.deepEqual(oGetVariantChangesStub.lastCall.args[0], mExpectedParameters, "the correct variant was asked for changes");
@@ -294,6 +295,7 @@ sap.ui.define([
 				vmReference: "vmReference1",
 				reference: this.sReference,
 				vReference: "variant2",
+				includeDirtyChanges: false,
 				changeInstance: false
 			};
 			VariantManagementState.getInitialChanges({
@@ -368,6 +370,44 @@ sap.ui.define([
 
 			assert.ok(bDefaultVariantChangeInstances, "then all returned control changes were change instances for a non default variant");
 			assert.ok(bNonDefaultVariantChangeInstances, "then all returned control changes were change instances for a default variant");
+		});
+
+		QUnit.test("when 'getControlChangesForVariant' is called with includeDirtyChanges parameter", function(assert) {
+			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
+			var oDirtyChange = new Change({
+				fileName: "dirtyChange",
+				layer: Layer.CUSTOMER
+			});
+			VariantManagementState.addChangeToVariant({
+				change: oDirtyChange,
+				vmReference: "vmReference1",
+				vReference: "variant0",
+				reference: this.sReference
+			});
+
+			function includesDirtyChange(aChanges) {
+				return !!aChanges.find(function(oChange) {
+					return oChange.fileName === "dirtyChange";
+				});
+			}
+
+			var aAllChanges = VariantManagementState.getControlChangesForVariant({
+				vmReference: "vmReference1",
+				reference: this.sReference
+			});
+			assert.ok(
+				includesDirtyChange(aAllChanges),
+				"then by default the dirty change is returned"
+			);
+			var aPersistedChanges = VariantManagementState.getControlChangesForVariant({
+				vmReference: "vmReference1",
+				reference: this.sReference,
+				includeDirtyChanges: false
+			});
+			assert.notOk(
+				includesDirtyChange(aPersistedChanges),
+				"then if the parameter is set, the dirty change is excluded"
+			);
 		});
 
 		QUnit.test("when 'getVariantChangesForVariant' is called", function(assert) {

@@ -166,6 +166,7 @@ sap.ui.define([
 	 * @param {String} mPropertyBag.vmReference - Variant management reference
 	 * @param {String} mPropertyBag.vReference - ID of the variant
 	 * @param {string} mPropertyBag.reference - Component reference
+	 * @param {boolean} [mPropertyBag.includeDirtyChanges] - Whether dirty changes of the current session should be included, <code>true</code> by default
 	 * @param {boolean} [mPropertyBag.changeInstance] <code>true</code> if each change has to be an instance of <code>sap.ui.fl.Change</code>
 	 *
 	 * @returns {object[]|sap.ui.fl.Change[]} All changes of the variant
@@ -176,7 +177,12 @@ sap.ui.define([
 		var aResult = [];
 		var oVariant = VariantManagementState.getVariant(mPropertyBag);
 		if (oVariant) {
-			aResult = oVariant.controlChanges;
+			aResult = oVariant.controlChanges.filter(function(oChange) {
+				return (
+					mPropertyBag.includeDirtyChanges !== false
+					|| oChange.getState() === Change.states.PERSISTED
+				);
+			});
 			if (!mPropertyBag.changeInstance) {
 				aResult = aResult.map(function(oChange) {
 					return oChange.getDefinition();
@@ -429,15 +435,14 @@ sap.ui.define([
 				|| !mPropertyBag.vmReference
 			) {
 				var sCurrentVReference = oVariantsMap[sVMReference].currentVariant ? "currentVariant" : "defaultVariant";
-				var mArguments = {
+				var mArguments = Object.assign({}, mPropertyBag, {
 					vmReference: sVMReference,
 					vReference: oVariantsMap[sVMReference][sCurrentVReference],
-					reference: mPropertyBag.reference,
-					changeInstance: mPropertyBag.changeInstance
-				};
+					includeDirtyChanges: false
+				});
 
 				// Concatenate with the previous flex changes
-				return aInitialChanges.concat(VariantManagementState.getControlChangesForVariant(Object.assign({}, mPropertyBag, mArguments)));
+				return aInitialChanges.concat(VariantManagementState.getControlChangesForVariant(mArguments));
 			}
 			return aInitialChanges;
 		}, []);

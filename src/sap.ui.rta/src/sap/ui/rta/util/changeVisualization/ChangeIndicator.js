@@ -300,7 +300,10 @@ sap.ui.define([
 			+ mChangeInformation.commandName.toUpperCase()
 		);
 		var sChangeText = sDescription || oRtaResourceBundle.getText(sChangeTextKey, sElementLabel);
-		var sDate = DateFormat.getDateTimeInstance().format(new Date(mChangeInformation.change.getCreation()));
+		var sCreationDate = mChangeInformation.change.getCreation();
+		var sDate = sCreationDate
+			? DateFormat.getDateTimeInstance().format(new Date(sCreationDate))
+			: oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CREATED_IN_SESSION_DATE");
 		var bEnableDetailButton = (
 			sMode === "change"
 			&& (mChangeInformation.commandName === "move" || mChangeInformation.commandName === "split")

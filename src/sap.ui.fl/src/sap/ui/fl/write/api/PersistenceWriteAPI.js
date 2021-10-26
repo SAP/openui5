@@ -320,7 +320,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.siteId] - ID of the site belonging to the current running component
 	 * @param {string} [mPropertyBag.layer] - Specifies a single layer for loading change; if this parameter is set, the max layer filtering is not applied
 	 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that changes are to be loaded without layer filtering
-	 * @param {boolean} [mPropertyBag.includeVariants] - Indicates that smart variants are to be included
+	 * @param {boolean} [mPropertyBag.includeCtrlVariants] - Flag if control variant changes should be included
 	 * @param {boolean} [mPropertyBag.includeDirtyChanges] - Flag if dirty UI changes should be included
 	 * @param {string} [mPropertyBag.cacheKey] - Key to validate the cache entry stored on client side
 	 * @param {boolean} [mPropertyBag.invalidateCache] - Indicates whether the cache is to be invalidated
