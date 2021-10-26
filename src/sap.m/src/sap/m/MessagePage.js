@@ -43,6 +43,9 @@ sap.ui.define([
 		// shortcut for sap.m.BarDesign
 		var BarDesign = library.BarDesign;
 
+		// shortcut for sap.ui.core.TitleLevel
+		var TitleLevel = coreLibrary.TitleLevel;
+
 		/**
 		 * Constructor for a new MessagePage.
 		 *
@@ -91,6 +94,14 @@ sap.ui.define([
 				 * Determines the title in the header of MessagePage.
 				 */
 				title : { type : "string", group : "Misc", defaultValue : null },
+				/**
+				 * Defines the semantic level of the title. When using <code>Auto</code>, no explicit level information is written.
+				 *
+				 * <b>Note:</b> Used for accessibility purposes only.
+				 *
+				 * @since 1.97
+				 */
+				titleLevel : { type: "sap.ui.core.TitleLevel", group: "Appearance", defaultValue: TitleLevel.Auto },
 				/**
 				 * Determines the visibility of the MessagePage header.
 				 * Can be used to hide the header of the MessagePage when it's embedded in another page.
@@ -233,12 +244,15 @@ sap.ui.define([
 		MessagePage.prototype.setTitle = function(sTitle) {
 			this.setProperty("title", sTitle, true); // no re-rendering
 
-			if (!this._oTitle) {
-				this._oTitle = new Title(this.getId() + "-title");
-				this._getInternalHeader().addContentMiddle(this._oTitle);
-			}
+			this._getTitle().setText(sTitle);
 
-			this._oTitle.setText(sTitle);
+			return this;
+		};
+
+		MessagePage.prototype.setTitleLevel = function(sTitleLevel) {
+			this.setProperty("titleLevel", sTitleLevel, true); // no re-rendering
+
+			this._getTitle().setLevel(sTitleLevel);
 
 			return this;
 		};
@@ -343,6 +357,21 @@ sap.ui.define([
 			}
 
 			return this.getAggregation("_text");
+		};
+
+		/**
+		 * @returns {sap.m.Title} the control which will display the MessagePage's title
+		 * @private
+		 */
+		MessagePage.prototype._getTitle = function() {
+			if (!this._oTitle) {
+				this._oTitle = new Title(this.getId() + "-title", {
+					level: this.getTitleLevel()
+				});
+				this._getInternalHeader().addContentMiddle(this._oTitle);
+			}
+
+			return this._oTitle;
 		};
 
 		/**
