@@ -2998,37 +2998,6 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("The suggestionSeparators property should be correctly set", function (assert) {
-		var oInput9 = new Input({
-			showSuggestion: true,
-			suggestionItems: [
-				new Item({ text: "Test 1" }),
-				new Item({ text: "Test 2" }),
-				new Item({ text: "Test 3" })
-			]
-		});
-
-		// Arrange
-		oInput9.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		assert.equal(oInput9.getProperty("separateSuggestions"), false, "The separateSuggestions property initially set to false");
-
-		assert.equal(oInput9._getSuggestionsTable().getShowSeparators(), "None", "The showSeparators property of the suggestionsTable initially set to sap.m.ListSeparators.None");
-
-		// Act
-		oInput9._setSeparateSuggestions(true);
-
-		// Assert
-		assert.equal(oInput9.getProperty("separateSuggestions"), true, "The separateSuggestions property set to true");
-
-		assert.equal(oInput9._getSuggestionsTable().getShowSeparators(), "Inner", "The showSeparators property of the suggestionsTable set to sap.m.ListSeparators.Inner");
-
-		// Clean
-		oInput9.destroy();
-	});
-
 	QUnit.test("Property startSuggestion on Desktop (non Zero)",  function(assert) {
 		var oSystem = {
 				desktop: true,
