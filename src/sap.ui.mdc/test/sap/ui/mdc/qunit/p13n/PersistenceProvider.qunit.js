@@ -25,6 +25,8 @@ sap.ui.define([
             this.oPP = new PersistenceProvider({
                 mode: mode.Transient
             });
+
+            this.oPP.placeAt("qunit-fixture");
 		},
 		afterEach: function(){
             this.oPP.destroy();
@@ -39,6 +41,17 @@ sap.ui.define([
         var aStaticAreaContent = sap.ui.getCore().getUIArea(sap.ui.getCore().getStaticAreaRef()).getContent();
 
         assert.ok(aStaticAreaContent[0].getContent()[0].isA("sap.ui.fl.variants.VariantManagement"), "VM has been placed in the static area");
+    });
+
+    QUnit.test("PersistenceProvider is wrapped by a container that sets aria-hidden after rendering", function(assert){
+        var done = assert.async();
+        var aStaticAreaContent = sap.ui.getCore().getUIArea(sap.ui.getCore().getStaticAreaRef()).getContent();
+
+        this.oPP.onAfterRendering = function() {
+            assert.equal(aStaticAreaContent[0].getDomRef().getAttribute("aria-hidden"), "true", "accWrapper container sets aria-hidden attribute");
+            done();
+        };
+
     });
 
     QUnit.test("PersistenceProvider created an inner fl.VariantManagement", function(assert){

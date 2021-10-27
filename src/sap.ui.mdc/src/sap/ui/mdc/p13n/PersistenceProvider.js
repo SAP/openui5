@@ -83,11 +83,13 @@ sap.ui.define([
 			this._oWrapper = new VerticalLayout(this.getId() + "--accWrapper", {
 				content: [
 					oVM
-				],
-				onAfterRendering: function(oEvt) {
-					oEvt.getSource().getDomRef().setAttribute("aria-hidden", true);
-				}
+				]
 			});
+
+			this._oWrapper.onAfterRendering = function() {
+				VerticalLayout.prototype.onAfterRendering.apply(this, arguments);
+				this.getDomRef().setAttribute("aria-hidden", true);
+			};
 
 			var oStatic = sap.ui.getCore().getUIArea(sap.ui.getCore().getStaticAreaRef());
 			oStatic.addContent(this._oWrapper);
