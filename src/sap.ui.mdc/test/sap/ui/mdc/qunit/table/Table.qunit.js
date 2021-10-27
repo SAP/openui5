@@ -2049,15 +2049,15 @@ sap.ui.define([
 			assert.equal(aMDCColumns[0].getHeader(), aInnerColumns[0].getHeader().getText());
 			assert.equal(aInnerColumns[0].isA("sap.m.Column"), true);
 			assert.equal(aInnerColumns[0].getHeader().getText(), "Test2", "column0: label is correct");
-			assert.equal(aInnerColumns[0].getHeader().getWrapping(), true);
+			assert.equal(aInnerColumns[0].getHeader().getWrapping(), !aMDCColumns[0]._bResizable);
 			assert.equal(aInnerColumns[0].getHeader().getWrappingType(), "Hyphenated");
 			assert.equal(aInnerColumns[1].isA("sap.m.Column"), true);
 			assert.equal(aInnerColumns[1].getHeader().getText(), "Test", "column1: label is correct");
-			assert.equal(aInnerColumns[1].getHeader().getWrapping(), true);
+			assert.equal(aInnerColumns[1].getHeader().getWrapping(), !aMDCColumns[1]._bResizable);
 			assert.equal(aInnerColumns[1].getHeader().getWrappingType(), "Hyphenated");
 			assert.equal(aInnerColumns[2].isA("sap.m.Column"), true);
 			assert.equal(aInnerColumns[2].getHeader().getText(), "Test3", "column1: label is correct");
-			assert.equal(aInnerColumns[2].getHeader().getWrapping(), true);
+			assert.equal(aInnerColumns[2].getHeader().getWrapping(), !aMDCColumns[2]._bResizable);
 			assert.equal(aInnerColumns[2].getHeader().getWrappingType(), "Hyphenated");
 		}.bind(this));
 	});
@@ -3435,6 +3435,7 @@ sap.ui.define([
 			// 4th column width is 2rem, the default minWidth, due Edm.Byte has a limit of 3 chars ~ 1.459rem
 			var sPropertyName = aColumns[3].getDataProperty();
 			var oProperty = oPropertyHelper.getProperty(sPropertyName);
+
 			var fWidth = oPropertyHelper._calcColumnWidth(oProperty);
 			assert.equal(fWidth + "rem", (parseFloat(aColumns[3].getWidth()) - fPadding) + "rem", "Column numberValue width is " + fWidth + "rem");
 			assert.equal(fWidth + "rem", (parseFloat(getInnerColumnWidth(aColumns[3])) - fPadding) + "rem", "Column numberValue width is " + fWidth + "rem");
@@ -4514,9 +4515,11 @@ sap.ui.define([
 
 			this.oTable.setEnableColumnResize(false);
 			assert.notOk(this.oTable._oTable.getDependents()[0].getEnabled(), "Column Resizer disabled from Responsive inner table");
+			assert.strictEqual(this.oTable.getColumns()[0]._oColumnHeaderLabel.getWrapping(), true, "Wrapping enabled on label control");
 
 			this.oTable.setEnableColumnResize(true);
 			assert.ok(this.oTable._oTable.getDependents()[0].getEnabled(), "Column Resizer is added to the Responsive inner table by oTable#setEnableColumnResize");
+			assert.strictEqual(this.oTable.getColumns()[0]._oColumnHeaderLabel.getWrapping(), false, "Wrapping disabled on label control");
 
 			var oMatchMediaStub = sinon.stub(window, "matchMedia");
 			oMatchMediaStub.withArgs("(hover:none)").returns({
@@ -4548,10 +4551,12 @@ sap.ui.define([
 		this.oTable.initialized().then(function() {
 			assert.ok(this.oTable._oTable.getColumns()[0].getResizable(), "Resizable property of the inner column is set to true");
 			assert.ok(this.oTable._oTable.getColumns()[0].getAutoResizable(), "AutoResizable property of the inner column is set to true");
+			assert.strictEqual(this.oTable.getColumns()[0]._oColumnHeaderLabel.getWrapping(), false, "Wrapping disabled on label control");
 
 			this.oTable.setEnableColumnResize(false);
 			assert.notOk(this.oTable._oTable.getColumns()[0].getAutoResizable(), "AutoResizable property of the inner column is set to false");
 			assert.notOk(this.oTable._oTable.getColumns()[0].getResizable(), "Resizable property of the inner column is set to false");
+			assert.strictEqual(this.oTable.getColumns()[0]._oColumnHeaderLabel.getWrapping(), false, "Wrapping disabled on label control");
 			done();
 		}.bind(this));
 	});
@@ -4568,10 +4573,12 @@ sap.ui.define([
 		this.oTable.initialized().then(function() {
 			assert.notOk(this.oTable._oTable.getColumns()[0].getAutoResizable(), "AutoResizable property of the inner column is set to false");
 			assert.notOk(this.oTable._oTable.getColumns()[0].getResizable(), "Resizable property of the inner column is set to false");
+			assert.strictEqual(this.oTable.getColumns()[0]._oColumnHeaderLabel.getWrapping(), false, "Wrapping disabled on label control");
 
 			this.oTable.setEnableColumnResize(true);
 			assert.ok(this.oTable._oTable.getColumns()[0].getResizable(), "Resizable property of the inner column is set to true");
 			assert.ok(this.oTable._oTable.getColumns()[0].getAutoResizable(), "AutoResizable property of the inner column is set to true");
+			assert.strictEqual(this.oTable.getColumns()[0]._oColumnHeaderLabel.getWrapping(), false, "Wrapping disabled on label control");
 			done();
 		}.bind(this));
 	});
