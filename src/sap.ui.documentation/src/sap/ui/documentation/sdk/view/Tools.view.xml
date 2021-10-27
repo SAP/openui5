@@ -53,10 +53,11 @@
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin toolspageCardInfo">
 							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
-								<Title
+								<custom:TitleLink
 										level="H1"
 										titleStyle="H1"
 										text="{/uiThemeDesigner/text}"
+										href="{/uiThemeDesigner/href}"
 										target="_blank"
 										wrapping="true"/>
 							</html:div>
@@ -66,16 +67,6 @@
 									<Link text="{i18n>TOOLS_VIEW_DOC}"
 										target="_blank"
 										href="https://help.sap.com/viewer/09f6818d8e064537973102d6289e2aca/Cloud/en-US"/>
-									<Image
-										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
-										tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
-										width="1.25rem"
-										press="onDisclaimerLinkPress"/>
-								</html:div>
-								<html:div class="sapUIDisclaimerLink">
-									<Link text="{i18n>TOOLS_CARD_2_LINK_1}"
-										target="_blank"
-										href="https://www.sap.com/community/topics/ui-theme-designer.html"/>
 									<Image
 										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
 										tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
