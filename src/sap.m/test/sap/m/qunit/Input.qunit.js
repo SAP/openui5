@@ -4909,6 +4909,59 @@ sap.ui.define([
 		oStub.restore();
 	});
 
+	QUnit.test('Change event add/remove value', function (assert) {
+		// arrange
+		var oInput = new Input().placeAt("content");
+		var oSpy = this.spy();
+		sap.ui.getCore().applyChanges();
+
+		oInput.attachChange(oSpy);
+
+		// Act
+		oInput._$input.trigger("focus").trigger(jQuery.Event("keydown", { which: KeyCodes.G })).val("G").trigger("input");
+		qutils.triggerKeydown(oInput._$input, "G");
+		qutils.triggerKeyup(oInput._$input, "G");
+		oInput.onsapenter();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "change event has been fired");
+
+		// Act
+		oSpy.reset();
+		oInput.onsapenter();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 0, "change event has NOT been fired for the same value twice.");
+
+
+		// Act
+		oSpy.reset();
+		oInput._$input.trigger("focus").trigger(jQuery.Event("keydown", { which: KeyCodes.BACKSPACE })).val("").trigger("input");
+		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
+		qutils.triggerKeyup(oInput._$input, KeyCodes.BACKSPACE);
+		oInput.onsapenter();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "change event has been fired");
+
+		// Act
+		oSpy.reset();
+		oInput._$input.trigger("focus").trigger(jQuery.Event("keydown", { which: KeyCodes.BACKSPACE })).val("").trigger("input");
+		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
+		qutils.triggerKeyup(oInput._$input, KeyCodes.BACKSPACE);
+		oInput.onsapenter();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 0, "change event has NOT been fired for the same value twice.");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
 	QUnit.module("Clear Icon");
 
 	QUnit.test("Clear icon should not be visible by default", function (assert) {
