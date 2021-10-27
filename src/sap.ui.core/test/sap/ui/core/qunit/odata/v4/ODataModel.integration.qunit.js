@@ -602,8 +602,9 @@ sap.ui.define([
 			// {map<string, true>}
 			// If an ID is in this.mIgnoredChanges, change events with null are ignored
 			this.mIgnoredChanges = {};
-			// {map<string, true>}
-			// whether a control is part of a list or not; used when expecting changes
+			// {map<string, boolean|undefined>}
+			// whether a control is part of a list or not; used when expecting changes;
+			// undefined means we don't know yet because a null change is expected w/o index
 			this.mIsListByControlId = {};
 			// {map<string, string[][]>}
 			// this.mListChanges["id"][i] is a list of expected changes for the property "text" of
@@ -1619,16 +1620,25 @@ sap.ui.define([
 				return oObject[vProperty];
 			}
 
-			function isList(bIsList) {
-				var bSaved = that.mIsListByControlId[sControlId];
-
-				if (that.oView && bSaved !== bIsList && bSaved !== null && bIsList !== null) {
-					throw new Error(sControlId in that.mIsListByControlId
-						? "Inconsistent usage of array values for " + sControlId
-						: "The first expectChange must be before createView: " + sControlId
-					);
+			/*
+			 * @param {boolean|undefined} bInList
+			 */
+			function isList(bInList) {
+				if (sControlId in that.mIsListByControlId) {
+					if (bInList !== undefined) {
+						if (that.mIsListByControlId[sControlId] === undefined) {
+							that.mIsListByControlId[sControlId] = bInList;
+						} else if (bInList !== that.mIsListByControlId[sControlId]) {
+							throw new Error("Inconsistent usage of array values for " + sControlId);
+						}
+					}
+				} else {
+					if (that.oView) {
+						throw new Error("The first expectChange must be before createView: "
+							+ sControlId); //... or you need to call #setFormatter!
+					}
+					that.mIsListByControlId[sControlId] = bInList;
 				}
-				that.mIsListByControlId[sControlId] = bIsList;
 			}
 
 			if (arguments.length === 3) {
@@ -1643,7 +1653,8 @@ sap.ui.define([
 					array(aExpectations, i).push(vRowValue);
 				});
 			} else {
-				isList(vValue === null ? null : false);
+				// Note: NULL changes may, but need not, belong to a list - we cannot tell here
+				isList(vValue === null ? undefined : false);
 				aExpectations = array(this.mChanges, sControlId);
 				if (arguments.length > 1) {
 					aExpectations.push(vValue);
@@ -1943,14 +1954,32 @@ sap.ui.define([
 		 */
 		setFormatter : function (assert, oControl, sControlId, bInList) {
 			var oBindingInfo = oControl.getBindingInfo("text") || oControl.getBindingInfo("value"),
+				oHere,
+				sName,
 				fnOriginalFormatter = oBindingInfo.formatter,
 				oType = oBindingInfo.type,
 				bIsCompositeType = oType && oType.getMetadata().isA("sap.ui.model.CompositeType"),
 				that = this;
 
-			this.mIsListByControlId[sControlId] = !!bInList; // must be a boolean
+			bInList = !!bInList; // must be a boolean
+			if (this.mIsListByControlId[sControlId] !== undefined
+				&& this.mIsListByControlId[sControlId] !== bInList) {
+					throw new Error("Inconsistent usage of array values for " + sControlId);
+			}
+			this.mIsListByControlId[sControlId] = bInList;
+			if (!bInList) {
+				for (oHere = oControl; oHere; oHere = oHere.getParent()) {
+					sName = oHere.getMetadata().getName();
+					if (sName.includes("Column") || sName.includes("List")) {
+						throw new Error("Missing bInList for sControlId: " + sControlId);
+					}
+				}
+			}
+
 			oBindingInfo.formatter = function (sValue) {
-				var oContext = bInList && this.getBindingContext();
+				var oBinding,
+					oContext = bInList ? this.getBindingContext() : undefined,
+					vRow = oContext; // Note: NULL makes a difference here
 
 				if (fnOriginalFormatter) {
 					sValue = fnOriginalFormatter.apply(this, arguments);
@@ -1965,12 +1994,19 @@ sap.ui.define([
 				// not all parts are set as it is the case for sap.ui.model.odata.type.Unit.
 				// Only check the value once all parts are available.
 				if (!bIsCompositeType || sValue !== null) {
-					that.checkValue(assert, sValue, sControlId,
-						oContext && (oContext.getBinding
-							? oContext.getBinding() && oContext.getIndex()
-							: oContext.getPath()
-						)
-					);
+					if (oContext) { // Note: this implies bInList
+						if (oContext.getBinding) { // v4.Context
+							oBinding = oContext.getBinding();
+							while (!(oBinding instanceof ODataListBinding)) {
+								oContext = oBinding.getContext();
+								oBinding = oContext.getBinding();
+							}
+							vRow = oContext.getIndex();
+						} else { // e.g. meta model
+							vRow = oContext.getPath();
+						}
+					}
+					that.checkValue(assert, sValue, sControlId, vRow);
 				}
 
 				return sValue;
@@ -3535,7 +3571,7 @@ sap.ui.define([
 				+ "&$skip=0&$top=100", {
 				value : [{ContactGUID : "guid", LastName : "Doe"}]
 			})
-			.expectChange("lastName", "Doe")
+			.expectChange("lastName", ["Doe"])
 			.expectRequest("SalesOrderList('SO1')?sap-client=123&$select=SalesOrderID", {
 				SalesOrderID : "SO1"
 			})
@@ -7211,17 +7247,14 @@ sap.ui.define([
 					}]
 				})
 				.expectChange("note", ["foo"])
-				//TODO companyName is embedded in a context binding; index not considered in test
-				// framework
-				.expectChange("companyName", "SAP");
+				.expectChange("companyName", ["SAP"]);
 
 			return this.createView(assert, sView, oModel).then(function () {
 				var oTable = that.oView.byId("table");
 
-				that.expectChange("note", ["bar", "foo"])
-					.expectChange("note", ["baz"])
-					.expectChange("companyName", null)
-					.expectChange("companyName", "SAP");
+				that.expectChange("note", ["bar"])
+					.expectChange("note", ["baz", "foo"])
+					.expectChange("companyName", [null, "SAP"]);
 
 				oCreatedContext = oTable.getBinding("items").create({Note : "bar"}, bSkipRefresh);
 				oTable.getItems()[0].getCells()[0].getBinding("value").setValue("baz");
@@ -7255,7 +7288,7 @@ sap.ui.define([
 							}
 						})
 						.expectChange("note", ["fresh from server"])
-						.expectChange("companyName", "ACM");
+						.expectChange("companyName", ["ACM"]);
 				}
 
 				return Promise.all([
@@ -11544,7 +11577,7 @@ sap.ui.define([
 					Name : "Missy Eliot"
 				}]
 			})
-			.expectChange("name", "Missy Eliot")
+			.expectChange("name", ["Missy Eliot"])
 			.expectChange("nameCreated");
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -13305,7 +13338,7 @@ sap.ui.define([
 					}
 				}]
 			})
-			.expectChange("text", oText.validateProperty("text", 42));
+			.expectChange("text", [oText.validateProperty("text", 42)]);
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -13335,8 +13368,7 @@ sap.ui.define([
 					}
 				}]
 			})
-			// Note: change does not appear inside a list binding, it's inside the context binding!
-			.expectChange("text", oText.validateProperty("text", 42));
+			.expectChange("text", [oText.validateProperty("text", 42)]);
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -13362,8 +13394,7 @@ sap.ui.define([
 					}
 				}]
 			})
-			// Note: change does not appear inside a list binding, it's inside the context binding!
-			.expectChange("text", oText.validateProperty("text", 42));
+			.expectChange("text", [oText.validateProperty("text", 42)]);
 
 		return this.createView(assert, sView);
 	});
@@ -25807,10 +25838,8 @@ sap.ui.define([
 					IsActiveEntity : true
 				}]
 			})
-			.expectChange("currency", "GBP")
-			.expectChange("currency", "JPY")
-			.expectChange("name", "Best Friend of 23")
-			.expectChange("name", "Best Friend of 24");
+			.expectChange("currency", ["GBP", "JPY"])
+			.expectChange("name", ["Best Friend of 23", "Best Friend of 24"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oBestFriendBox = that.oView.byId("table").getItems()[1].getCells()[0];
@@ -25833,8 +25862,8 @@ sap.ui.define([
 						IsActiveEntity : true
 					}]
 				})
-				.expectChange("currency", "JPY2")
-				.expectChange("name", "New Best Friend of 24");
+				.expectChange("currency", [, "JPY2"])
+				.expectChange("name", [, "New Best Friend of 24"]);
 
 			return Promise.all([
 				// code under test
@@ -25865,7 +25894,7 @@ sap.ui.define([
 						IsActiveEntity : true
 					}]
 				})
-				.expectChange("currency", "JPY3");
+				.expectChange("currency", [, "JPY3"]);
 
 			return Promise.all([
 				// code under test
@@ -30133,7 +30162,7 @@ sap.ui.define([
 					CValue : 21
 				}]
 			})
-			.expectChange("avalue::table", "11")
+			.expectChange("avalue::table", ["11"])
 			.expectChange("cid", ["2"])
 			.expectChange("dvalue");
 
@@ -30166,7 +30195,7 @@ sap.ui.define([
 						}
 					}]
 				})
-				.expectChange("avalue::table", "122");
+				.expectChange("avalue::table", ["122"]);
 
 			// code under test
 			return Promise.all([
@@ -32594,8 +32623,8 @@ sap.ui.define([
 					Name : "Missy Eliot"
 				}]
 			})
-			.expectChange("friend", "Best Friend")
-			.expectChange("name", "Missy Eliot");
+			.expectChange("friend", ["Best Friend"])
+			.expectChange("name", ["Missy Eliot"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oHeaderContext = that.oView.byId("table").getBinding("items").getHeaderContext();
@@ -32613,7 +32642,7 @@ sap.ui.define([
 						IsActiveEntity : true
 					}]
 				})
-				.expectChange("friend", "Yet Another Best Friend");
+				.expectChange("friend", ["Yet Another Best Friend"]);
 			that.oLogMock.expects("error").withArgs("Failed to request side effects");
 
 			return Promise.all([
@@ -34279,11 +34308,11 @@ sap.ui.define([
 				TEAM_2_EMPLOYEES : []
 			})
 			.expectChange("name", [])
-			.expectChange("teamId");
+			.expectChange("teamId", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectChange("name", ["John Doe"])
-				.expectChange("teamId", null);
+				.expectChange("teamId", [null]);
 
 			// code under test
 			oContext = that.oView.byId("employees").getBinding("items")
@@ -34298,7 +34327,7 @@ sap.ui.define([
 				}, {ID : "2", Name : "John Doe"})
 				.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')/EMPLOYEE_2_MANAGER"
 					+ "?$select=ID,TEAM_ID", {ID : "23", TEAM_ID : "1"})
-				.expectChange("teamId", "1");
+				.expectChange("teamId", ["1"]);
 
 			return Promise.all([
 				that.oModel.submitBatch("update"),
@@ -35980,7 +36009,7 @@ sap.ui.define([
 				}]
 			})
 			.expectChange("age", ["30"])
-			.expectChange("name", "Frederic Fall");
+			.expectChange("name", ["Frederic Fall"]);
 
 		return this.createView(assert, sView).then(function () {
 			var oTable = that.oView.byId("table"),
@@ -35991,7 +36020,7 @@ sap.ui.define([
 			oListBinding.sort(new Sorter("AGE"));
 
 			that.expectChange("age", null)
-				.expectChange("name", null)
+				.expectChange("name", null, null) // addtl ODCB makes a difference here
 				.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$skip=0&$top=110", {
 					value : [{
 						AGE : 40,
@@ -36000,7 +36029,7 @@ sap.ui.define([
 					}]
 				})
 				.expectChange("age", ["40"])
-				.expectChange("name", "Frederic Fall *");
+				.expectChange("name", ["Frederic Fall *"]);
 
 			// code under test
 			oTable.bindRows({path : "TEAM_2_EMPLOYEES", parameters : {$$ownRequest : true}});
