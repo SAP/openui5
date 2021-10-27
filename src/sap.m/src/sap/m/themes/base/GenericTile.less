@@ -1391,9 +1391,20 @@ html[data-sap-ui-browser*='ff'] {
 		}
 	}
 }
+
+@media (min-width:320px) and (max-width:599px){
+    .sapMGT.sapMGTOneByOne {
+        width: 9rem;
+        height: 9rem;
+    }
+}
+@media (min-width:600px) {
+    .sapMGT.sapMGTOneByOne {
+        width: 7rem;
+        height: 7rem;
+    }
+}
 .sapMGT.sapMGTOneByOne {
-	width: 7.5rem;
-    height: 6.875rem;
     border-radius: 1rem;
     border: none;
 }
@@ -1411,7 +1422,6 @@ html[data-sap-ui-browser*='ff'] {
 	font-size: 0.875rem;
 	color: @sapUiContentContrastTextColor;
     text-align: center !important;
-	font-weight: 500;
 }
 
 .sapMGTOneByOneIcon {
