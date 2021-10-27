@@ -829,7 +829,9 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		oComp && oComp.destroy();
+		if (oComp) {
+			oComp.destroy();
+		}
 		jQuery("#content").hide();
 		jQuery("#qunit-fixture").hide();
 	});

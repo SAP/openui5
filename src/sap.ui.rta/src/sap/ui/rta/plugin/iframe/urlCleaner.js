@@ -12,7 +12,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sURL URL to clean
 	 * @returns {string} Cleaned URL
-	 * @ui5-restricted sap.ui.rta
+	 * @private
 	 */
 	return function (sURL) {
 		return sURL.replace(/\t|\r|\n/g, "");

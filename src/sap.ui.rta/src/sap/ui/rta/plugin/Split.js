@@ -113,6 +113,7 @@ sap.ui.define([
 
 	/**
 	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - element overlay to split
+	 * @returns {Promise<sap.ui.rta.command.Split>} Resolves with a split command
 	 */
 	Split.prototype.handleSplit = function (oElementOverlay) {
 		var oSplitElement = oElementOverlay.getElement();

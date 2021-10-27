@@ -6,8 +6,7 @@ sap.ui.define([
 	"sap/m/OverflowToolbarButton",
 	"sap/m/ButtonRenderer",
 	"sap/m/Button"
-],
-function(
+], function(
 	SapMOverflowToolbarButton,
 	ButtonRenderer,
 	Button
@@ -69,6 +68,7 @@ function(
 	 * Get the Text if in Overflow-Area or Text in Toolbar is wanted
 	 *
 	 * @private
+	 * @returns {string} Text
 	 */
 	OverflowToolbarButton.prototype._getText = function() {
 		if ((this.getIcon() === "" && this.getVisibleIcon() === "") || this._bInOverflow) {

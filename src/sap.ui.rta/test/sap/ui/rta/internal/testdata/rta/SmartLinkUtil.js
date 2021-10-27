@@ -56,7 +56,7 @@ sap.ui.define([
 						getLinks: function(aParams) {
 							var aLinks = [];
 							if (!Array.isArray(aParams)) {
-								mSetting[aParams.semanticObject] ? aLinks = mSetting[aParams.semanticObject].links : aLinks = [];
+								aLinks = mSetting[aParams.semanticObject] ? mSetting[aParams.semanticObject].links : [];
 							} else {
 								aParams.forEach(function(aParams_) {
 									mSetting[aParams_[0].semanticObject] ? aLinks.push([

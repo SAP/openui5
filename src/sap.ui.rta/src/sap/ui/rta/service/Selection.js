@@ -17,6 +17,7 @@ sap.ui.define(function () {
 	 * @private
 	 * @ui5-restricted
 	*/
+
 	return function (oRta, fnPublish) {
 		var oSelectionManager = oRta._oDesignTime.getSelectionManager();
 

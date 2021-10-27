@@ -1,4 +1,4 @@
-/* global QUnit, Map*/
+/* global QUnit*/
 QUnit.dump.maxDepth = 50;
 
 sap.ui.define([
@@ -14,8 +14,7 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/base/util/restricted/_omit",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	RuntimeAuthoring,
 	ElementDesignTimeMetadata,
 	DesignTime,

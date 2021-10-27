@@ -25,7 +25,6 @@ sap.ui.define([
 	 * @since 1.86.0
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted
 	 */
 	var ChangeIndicatorRegistry = ManagedObject.extend("sap.ui.rta.util.changeVisualization.ChangeIndicatorRegistry", {
 		metadata: {

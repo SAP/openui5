@@ -1023,6 +1023,7 @@ sap.ui.define([
 			});
 
 			return new Promise(function (fnResolve) {
+				// eslint-disable-next-line no-new
 				new ElementOverlay({
 					element: this.oVariantManagementControl.getTitle(),
 					init: function (oEvent) {

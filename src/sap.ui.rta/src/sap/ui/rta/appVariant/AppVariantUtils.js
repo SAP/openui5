@@ -2,8 +2,6 @@
  * ${copyright}
  */
 
-/* global XMLHttpRequest */
-
 sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/m/MessageBox",
@@ -14,8 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI"
-],
-function(
+], function(
 	FlexUtils,
 	MessageBox,
 	RtaUtils,
@@ -478,9 +475,6 @@ function(
 		};
 	};
 
-	/**
-	 * Builds the final success message on S/4HANA Cloud.
-	 */
 	AppVariantUtils.buildFinalSuccessInfoS4HANACloud = function() {
 		var sMessage = AppVariantUtils.getText("MSG_SAVE_APP_VARIANT_NEW_TILE_AVAILABLE");
 		return { text: sMessage	};

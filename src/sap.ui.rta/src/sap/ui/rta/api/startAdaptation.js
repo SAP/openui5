@@ -30,7 +30,7 @@ sap.ui.define([
 	 * @alias module:sap/ui/rta/api/startAdaptation
 	 *
 	 * @param {object} mOptions - Object with properties
-	 * @param {sap.ui.core.Element|sap.ui.core.UIComponent} mOptions.rootControl - Control instance from where UI adaptation should be started
+	 * @param {sap.ui.core.Control|sap.ui.core.UIComponent} mOptions.rootControl - Control instance to get the AppComponent. This then is used to start UI adaptation.
 	 * @param {object} [mOptions.flexSettings] - Map with flex-related settings
 	 * @param {string} [mOptions.flexSettings.layer] - The Layer in which RTA should be started. Default: "CUSTOMER"
 	 * @param {boolean} [mOptions.flexSettings.developerMode] - Whether RTA is started in developerMode mode. Default: <code>false</code>
@@ -39,7 +39,6 @@ sap.ui.define([
 	 * @param {function} [onFailed] - Event handler function called on failed event
 	 * @param {function} [onStop] - Event handler function called on stop event
 	 * @returns {Promise} Resolves when UI adaptation was successfully started
-	 * @ui5-restricted
 	 * @public
 	 */
 	function startAdaptation(mOptions, loadPlugins, onStart, onFailed, onStop) {

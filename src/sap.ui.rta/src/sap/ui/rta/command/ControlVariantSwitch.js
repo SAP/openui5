@@ -72,11 +72,6 @@ sap.ui.define([
 		return this._updateModelVariant(sOldVariantReference, oAppComponent);
 	};
 
-	/**
-	 * Update variant for the underlying model.
-	 * @private
-	 * @returns {Promise} Returns promise resolve
-	 */
 	ControlVariantSwitch.prototype._updateModelVariant = function (sVariantReference, oAppComponent) {
 		if (this.getTargetVariantReference() !== this.getSourceVariantReference()) {
 			return this.oModel.updateCurrentVariant({

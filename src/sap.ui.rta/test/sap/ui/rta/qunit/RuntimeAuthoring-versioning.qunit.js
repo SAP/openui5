@@ -435,15 +435,15 @@ sap.ui.define([
 
 		QUnit.test("a higher layer changes exist with dirty draft changes", function (assert) {
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
-			var mParsedHash = {
+			var mInitialParsedHash = {
 				params: {
 					"sap-ui-fl-version": [sap.ui.fl.Versions.Draft]
 				}
 			};
 			var oReloadCurrentAppStub = sandbox.stub(this.oRta._getUShellService("AppLifeCycle"), "reloadCurrentApp").returns(true);
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_VIEWS_PERSONALIZATION_AND_WITHOUT_DRAFT", assert);
-			var mParsedHash = this.oRta._removeVersionParameterForFLP({deleteMaxLayer: true, hasHigherLayerChanges: true}, mParsedHash);
-			assert.equal(mParsedHash, mParsedHash, "hash didnt change");
+			var mParsedHash = this.oRta._removeVersionParameterForFLP({deleteMaxLayer: true, hasHigherLayerChanges: true}, mInitialParsedHash);
+			assert.equal(mInitialParsedHash, mParsedHash, "hash didnt change");
 			assert.equal(oReloadCurrentAppStub.calledOnce, false, "no hash reload");
 		});
 

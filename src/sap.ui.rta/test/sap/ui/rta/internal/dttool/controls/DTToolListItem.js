@@ -2,7 +2,6 @@
  * ! ${copyright}
  */
 // Provides control sap.ui.rta.internal.dttool.controls.DTToolListItem.
-/* globals sap */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/InputListItem",

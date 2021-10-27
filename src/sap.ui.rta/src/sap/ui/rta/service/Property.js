@@ -2,8 +2,6 @@
  * ${copyright}
  */
 
-/* global Map */
-
 sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",

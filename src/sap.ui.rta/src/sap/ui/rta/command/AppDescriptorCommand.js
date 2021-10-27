@@ -62,8 +62,9 @@ sap.ui.define([
 
 	/**
 	 * Prepare the app descriptor change, setting the layer.
-	 * @param  {object} mFlexSettings Map of flex Settings
-	 * @param  {string} mFlexSettings.layer Layer where the change is applied
+	 * @param  {object} mFlexSettings - Map of flex settings
+	 * @param  {string} mFlexSettings.layer - Layer where the change is applied
+	 * @returns {boolean} <code>true</true>
 	 */
 	AppDescriptorCommand.prototype.prepare = function (mFlexSettings) {
 		this.setLayer(mFlexSettings.layer);

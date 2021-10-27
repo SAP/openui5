@@ -2,7 +2,6 @@
  * ! ${copyright}
  */
 // Provides control sap.ui.rta.internal.dttool.controls.OutlineTree.
-/* globals sap */
 sap.ui.define([
 	"sap/m/Tree",
 	"sap/m/TreeRenderer"

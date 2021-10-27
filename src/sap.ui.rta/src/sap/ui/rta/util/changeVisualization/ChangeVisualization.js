@@ -81,7 +81,6 @@ sap.ui.define([
 	 * @since 1.84.0
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted
 	 */
 	var ChangeVisualization = Control.extend("sap.ui.rta.util.changeVisualization.ChangeVisualization", {
 		metadata: {
