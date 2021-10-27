@@ -87,7 +87,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (this._canUseNativeFormSupport) {
 				this._internals = this.attachInternals();
 			}
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		_onmouseover() {
 			this.content.forEach(item => {
@@ -99,14 +98,21 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				item.classList.remove("ui5_hovered");
 			});
 		}
+		_onclick(event) {
+			if (event.isMarked === "button") {
+				this._input.click(event);
+			}
+		}
 		_onkeydown(event) {
 			if (Keys.isEnter(event)) {
 				this._input.click(event);
+				event.preventDefault();
 			}
 		}
 		_onkeyup(event) {
 			if (Keys.isSpace(event)) {
 				this._input.click(event);
+				event.preventDefault();
 			}
 		}
 		_onfocusin() {
@@ -197,10 +203,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.emptyInput.files;
 		}
 		get browseText() {
-			return this.i18nBundle.getText(i18nDefaults.FILEUPLOAD_BROWSE);
+			return FileUploader.i18nBundle.getText(i18nDefaults.FILEUPLOAD_BROWSE);
 		}
 		get titleText() {
-			return this.i18nBundle.getText(i18nDefaults.FILEUPLOADER_TITLE);
+			return FileUploader.i18nBundle.getText(i18nDefaults.FILEUPLOADER_TITLE);
 		}
 		get _canUseNativeFormSupport() {
 			return !!this.attachInternals;
@@ -215,12 +221,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return "file";
 		}
 		get valueStateTextMappings() {
-			const i18nBundle = this.i18nBundle;
 			return {
-				"Success": i18nBundle.getText(i18nDefaults.VALUE_STATE_SUCCESS),
-				"Information": i18nBundle.getText(i18nDefaults.VALUE_STATE_INFORMATION),
-				"Error": i18nBundle.getText(i18nDefaults.VALUE_STATE_ERROR),
-				"Warning": i18nBundle.getText(i18nDefaults.VALUE_STATE_WARNING),
+				"Success": FileUploader.i18nBundle.getText(i18nDefaults.VALUE_STATE_SUCCESS),
+				"Information": FileUploader.i18nBundle.getText(i18nDefaults.VALUE_STATE_INFORMATION),
+				"Error": FileUploader.i18nBundle.getText(i18nDefaults.VALUE_STATE_ERROR),
+				"Warning": FileUploader.i18nBundle.getText(i18nDefaults.VALUE_STATE_WARNING),
 			};
 		}
 		get valueStateText() {
@@ -266,7 +271,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return [Input, Popover];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			FileUploader.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	FileUploader.define();

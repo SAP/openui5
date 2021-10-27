@@ -46,7 +46,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: ListSeparators,
 				defaultValue: ListSeparators.All,
 			},
-			 growing: {
+			growing: {
 				type: ListGrowingMode,
 				defaultValue: ListGrowingMode.None,
 			},
@@ -64,14 +64,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: String,
 				defaultValue: "",
 			},
-			 accessibleRole: {
+			accessibleRole: {
 				type: String,
-				defaultValue: "listbox",
+				defaultValue: "list",
 			},
-			 _inViewport: {
+			_inViewport: {
 				type: Boolean,
 			},
-			 _loadMoreActive: {
+			_loadMoreActive: {
 				type: Boolean,
 			},
 		},
@@ -120,7 +120,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return List_css;
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			List.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		static get dependencies() {
 			return [BusyIndicator];
@@ -142,7 +142,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.addEventListener("ui5-_selection-requested", this.onSelectionRequested.bind(this));
 			this.addEventListener("ui5-_focus-requested", this.focusUploadCollectionItem.bind(this));
 			this._handleResize = this.checkListInViewport.bind(this);
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 			this.initialIntersection = true;
 		}
 		onExitDOM() {
@@ -176,6 +175,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get headerID() {
 			return `${this._id}-header`;
 		}
+		get modeLabelID() {
+			return `${this._id}-modeLabel`;
+		}
 		get listEndDOM() {
 			return this.shadowRoot.querySelector(".ui5-list-end-marker");
 		}
@@ -185,6 +187,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get showNoDataText() {
 			return !this.hasData && this.noDataText;
 		}
+		get isDelete() {
+			return this.mode === ListMode.Delete;
+		}
+		get isSingleSelect() {
+			return [
+				ListMode.SingleSelect,
+				ListMode.SingleSelectBegin,
+				ListMode.SingleSelectEnd,
+				ListMode.SingleSelectAuto,
+			].includes(this.mode);
+		}
 		get isMultiSelect() {
 			return this.mode === ListMode.MultiSelect;
 		}
@@ -192,10 +205,29 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (this.accessibleNameRef || this.accessibleName) {
 				return undefined;
 			}
-			return this.shouldRenderH1 ? this.headerID : undefined;
+			const ids = [];
+			if (this.isMultiSelect || this.isSingleSelect || this.isDelete) {
+				ids.push(this.modeLabelID);
+			}
+			if (this.shouldRenderH1) {
+				ids.push(this.headerID);
+			}
+			return ids.length ? ids.join(" ") : undefined;
 		}
 		get ariaLabelТxt() {
 			return AriaLabelHelper.getEffectiveAriaLabelText(this);
+		}
+		get ariaLabelModeText() {
+			if (this.isMultiSelect) {
+				return List.i18nBundle.getText(i18nDefaults.ARIA_LABEL_LIST_MULTISELECTABLE);
+			}
+			if (this.isSingleSelect) {
+				return List.i18nBundle.getText(i18nDefaults.ARIA_LABEL_LIST_SELECTABLE);
+			}
+			if (this.isDelete) {
+				return List.i18nBundle.getText(i18nDefaults.ARIA_LABEL_LIST_DELETABLE);
+			}
+			return undefined;
 		}
 		get grows() {
 			return this.growing !== ListGrowingMode.None;
@@ -210,7 +242,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.growing === ListGrowingMode.Button;
 		}
 		get _growingButtonText() {
-			return this.i18nBundle.getText(i18nDefaults.LOAD_MORE_TEXT);
+			return List.i18nBundle.getText(i18nDefaults.LOAD_MORE_TEXT);
 		}
 		get busyIndPosition() {
 			if (Device.isIE() || !this.grows) {
@@ -318,9 +350,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.getSlottedNodes("items").filter(item => !item.disabled);
 		}
 		_onkeydown(event) {
-			if (Keys.isSpace(event)) {
-				event.preventDefault();
-			}
 			if (Keys.isTabNext(event)) {
 				this._handleTabNext(event);
 			}

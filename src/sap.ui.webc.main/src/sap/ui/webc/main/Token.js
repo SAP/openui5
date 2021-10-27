@@ -70,7 +70,7 @@ sap.ui.define([
 			aggregations: {
 
 				/**
-				 * Defines the close icon for the token. If nothing is provided to this slot, the default close icon will be used. Accepts <code>sap.ui.webc.main.Icon</code>
+				 * Defines the close icon for the token. If nothing is provided to this slot, the default close icon will be used. Accepts <code>sap.ui.webc.main.Icon</code>.
 				 */
 				closeIcon: {
 					type: "sap.ui.webc.main.IIcon",

@@ -31,6 +31,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: String,
 				defaultValue: UploadCollectionDnDMode.None,
 			},
+			accessibleName: {
+				type: String,
+			},
 		},
 		managedSlots: true,
 		slots:  {
@@ -78,11 +81,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents-fiori");
+			UploadCollection.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents-fiori");
 		}
 		constructor() {
 			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents-fiori");
 			this._bodyDnDHandler = event => {
 				if (this._dndOverlayMode !== UploadCollectionDnDMode.Drop) {
 					this._dndOverlayMode = event.mode;
@@ -148,6 +150,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					"uc-drag-overlay": this._dndOverlayMode === UploadCollectionDnDMode.Drag,
 					"uc-drop-overlay": this._dndOverlayMode === UploadCollectionDnDMode.Drop,
 				},
+				noFiles: {
+					"uc-no-files": true,
+					"uc-no-files-dnd-overlay": this._showDndOverlay,
+				},
 			};
 		}
 		get _root() {
@@ -160,22 +166,22 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this._dndOverlayMode !== UploadCollectionDnDMode.None;
 		}
 		get _showNoData() {
-			return this.items.length === 0 && !this._showDndOverlay;
+			return this.items.length === 0;
 		}
 		get _noDataText() {
-			return this.noDataText || this.i18nBundle.getText(i18nDefaults.UPLOADCOLLECTION_NO_DATA_TEXT);
+			return this.noDataText || UploadCollection.i18nBundle.getText(i18nDefaults.UPLOADCOLLECTION_NO_DATA_TEXT);
 		}
 		get _noDataDescription() {
-			return this.noDataDescription || this.i18nBundle.getText(i18nDefaults.UPLOADCOLLECTION_NO_DATA_DESCRIPTION);
+			return this.noDataDescription || UploadCollection.i18nBundle.getText(i18nDefaults.UPLOADCOLLECTION_NO_DATA_DESCRIPTION);
 		}
 		get _roleDescription() {
-			return this.i18nBundle.getText(i18nDefaults.UPLOADCOLLECTION_ARIA_ROLE_DESCRIPTION);
+			return UploadCollection.i18nBundle.getText(i18nDefaults.UPLOADCOLLECTION_ARIA_ROLE_DESCRIPTION);
 		}
 		get _dndOverlayText() {
 			if (this._dndOverlayMode === UploadCollectionDnDMode.Drag) {
-				return this.i18nBundle.getText(i18nDefaults.UPLOADCOLLECTION_DRAG_FILE_INDICATOR);
+				return UploadCollection.i18nBundle.getText(i18nDefaults.UPLOADCOLLECTION_DRAG_FILE_INDICATOR);
 			}
-			return this.i18nBundle.getText(i18nDefaults.UPLOADCOLLECTION_DROP_FILE_INDICATOR);
+			return UploadCollection.i18nBundle.getText(i18nDefaults.UPLOADCOLLECTION_DROP_FILE_INDICATOR);
 		}
 	}
 	UploadCollection.define();

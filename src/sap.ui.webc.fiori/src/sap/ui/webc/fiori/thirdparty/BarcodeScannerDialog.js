@@ -18881,7 +18881,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
   class BarcodeScannerDialog extends UI5Element__default {
   	constructor() {
   		super();
-  		this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents-fiori");
   		this._codeReader = new BrowserMultiFormatReader();
   	}
   	static get metadata() {
@@ -18903,7 +18902,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
   		return [BarcodeScannerDialog_css];
   	}
   	static async onDefine() {
-  		await i18nBundle.fetchI18nBundle("@ui5/webcomponents-fiori");
+  		BarcodeScannerDialog.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents-fiori");
   	}
   	show() {
   		if (this.loading) {
@@ -18977,10 +18976,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
   		return !!this.dialog && this.dialog.opened;
   	}
   	get _cancelButtonText() {
-  		return this.i18nBundle.getText(i18nDefaults.BARCODE_SCANNER_DIALOG_CANCEL_BUTTON_TXT);
+  		return BarcodeScannerDialog.i18nBundle.getText(i18nDefaults.BARCODE_SCANNER_DIALOG_CANCEL_BUTTON_TXT);
   	}
   	get _busyIndicatorText() {
-  		return this.i18nBundle.getText(i18nDefaults.BARCODE_SCANNER_DIALOG_LOADING_TXT);
+  		return BarcodeScannerDialog.i18nBundle.getText(i18nDefaults.BARCODE_SCANNER_DIALOG_LOADING_TXT);
   	}
   	static get dependencies() {
   		return [

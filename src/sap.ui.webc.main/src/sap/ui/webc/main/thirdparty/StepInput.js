@@ -122,7 +122,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	class StepInput extends UI5Element__default {
 		constructor() {
 			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		static get metadata() {
 			return metadata;
@@ -143,19 +142,19 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			StepInput.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		get type() {
 			return InputType.Number;
 		}
 		get decIconTitle() {
-			return this.i18nBundle.getText(i18nDefaults.STEPINPUT_DEC_ICON_TITLE);
+			return StepInput.i18nBundle.getText(i18nDefaults.STEPINPUT_DEC_ICON_TITLE);
 		}
 		get decIconName() {
 			return "less";
 		}
 		get incIconTitle() {
-			return this.i18nBundle.getText(i18nDefaults.STEPINPUT_INC_ICON_TITLE);
+			return StepInput.i18nBundle.getText(i18nDefaults.STEPINPUT_INC_ICON_TITLE);
 		}
 		get incIconName() {
 			return "add";

@@ -12,10 +12,13 @@ sap.ui.define(['exports', '../locale/languageChange', '../locale/getLocale', '..
 		"sh": "sr",
 	};
 	const _showAssetsWarningOnce = localeId => {
-		if (!warningShown) {
-			console.warn(`[LocaleData] Supported locale "${localeId}" not configured, import the "Assets.js" module from the webcomponents package you are using.`);
-			warningShown = true;
+		if (warningShown) {
+			return;
 		}
+		{
+			console.warn(`[LocaleData] Supported locale "${localeId}" not configured, import the "Assets.js" module from the webcomponents package you are using.`);
+		}
+		warningShown = true;
 	};
 	const calcLocale = (language, region, script) => {
 		language = (language && M_ISO639_OLD_TO_NEW[language]) || language;

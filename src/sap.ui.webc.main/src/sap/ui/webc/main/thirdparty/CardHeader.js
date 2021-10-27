@@ -1,9 +1,10 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Keys', './generated/templates/CardHeaderTemplate.lit', './Icon', './generated/i18n/i18n-defaults', './generated/themes/CardHeader.css'], function (UI5Element, litRender, i18nBundle, Keys, CardHeaderTemplate_lit, Icon, i18nDefaults, CardHeader_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/Integer', './generated/templates/CardHeaderTemplate.lit', './Icon', './generated/i18n/i18n-defaults', './generated/themes/CardHeader.css'], function (UI5Element, litRender, i18nBundle, Keys, Integer, CardHeaderTemplate_lit, Icon, i18nDefaults, CardHeader_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
 	var UI5Element__default = /*#__PURE__*/_interopDefaultLegacy(UI5Element);
 	var litRender__default = /*#__PURE__*/_interopDefaultLegacy(litRender);
+	var Integer__default = /*#__PURE__*/_interopDefaultLegacy(Integer);
 
 	const metadata = {
 		tag: "ui5-card-header",
@@ -30,6 +31,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			interactive: {
 				type: Boolean,
 			},
+			ariaLevel: {
+				type: Integer__default,
+				defaultValue: 3,
+			},
 			_headerActive: {
 				type: Boolean,
 				noAttribute: true,
@@ -40,10 +45,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		},
 	};
 	class CardHeader extends UI5Element__default {
-		constructor() {
-			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
-		}
 		static get metadata() {
 			return metadata;
 		}
@@ -66,14 +67,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get ariaHeaderRole() {
 			return this.interactive ? "button" : "heading";
 		}
-		get ariaLevel() {
-			return this.interactive ? undefined : "3";
+		get _ariaLevel() {
+			if (this.interactive) {
+				return undefined;
+			}
+			return this.ariaLevel;
 		}
 		get ariaCardHeaderRoleDescription() {
-			return this.interactive ? this.i18nBundle.getText(i18nDefaults.ARIA_ROLEDESCRIPTION_INTERACTIVE_CARD_HEADER) : this.i18nBundle.getText(i18nDefaults.ARIA_ROLEDESCRIPTION_CARD_HEADER);
+			return this.interactive ? CardHeader.i18nBundle.getText(i18nDefaults.ARIA_ROLEDESCRIPTION_INTERACTIVE_CARD_HEADER) : CardHeader.i18nBundle.getText(i18nDefaults.ARIA_ROLEDESCRIPTION_CARD_HEADER);
 		}
 		get ariaCardAvatarLabel() {
-			return this.i18nBundle.getText(i18nDefaults.AVATAR_TOOLTIP);
+			return CardHeader.i18nBundle.getText(i18nDefaults.AVATAR_TOOLTIP);
 		}
 		get ariaLabelledByHeader() {
 			const labels = [];
@@ -101,9 +105,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return [Icon];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			CardHeader.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
-		_headerClick() {
+		_headerClick(event) {
+			event.stopImmediatePropagation();
 			if (this.interactive) {
 				this.fireEvent("click");
 			}

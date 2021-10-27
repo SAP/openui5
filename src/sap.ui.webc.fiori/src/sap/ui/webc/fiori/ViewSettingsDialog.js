@@ -19,7 +19,7 @@ sap.ui.define([
 	 * @extends sap.ui.webc.common.WebComponent
 	 * @class
 	 *
-	 * <h3>Overview</h3> The <code>sap.ui.webc.fiori.ViewSettingsDialog</code> component helps the user to sort data within a list or a table. It consists of several lists like <code>Sort order</code> which is built-in and <code>Sort By</code> which must be provided by the developer. The selected options can be used to create sorters for the table.
+	 * <h3>Overview</h3> The <code>sap.ui.webc.fiori.ViewSettingsDialog</code> component helps the user to sort data within a list or a table. It consists of several lists like <code>Sort order</code> which is built-in and <code>Sort By</code> and <code>Filter By</code> lists, for which you must be provide items(<code>sap.ui.webc.fiori.SortItem</code> & <code>sap.ui.webc.fiori.FilterItem</code> respectively) These options can be used to create sorters for a table.
 	 *
 	 * The <code>sap.ui.webc.fiori.ViewSettingsDialog</code> interrupts the current application processing as it is the only focused UI element and the main screen is dimmed/blocked. The <code>sap.ui.webc.fiori.ViewSettingsDialog</code> is modal, which means that user action is required before returning to the parent window is possible.
 	 *
@@ -32,8 +32,8 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @since 1.92.0
-	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
+	 * @since 1.95.0
+	 * @experimental Since 1.95.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.fiori.ViewSettingsDialog
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -54,10 +54,19 @@ sap.ui.define([
 			aggregations: {
 
 				/**
-				 * Defines the <code>sortItems</code> list.
+				 *
+				 */
+				filterItems: {
+					type: "sap.ui.webc.fiori.IFilterItem",
+					multiple: true,
+					slot: "filterItems"
+				},
+
+				/**
+				 *
 				 */
 				sortItems: {
-					type: "sap.ui.webc.main.IListItem",
+					type: "sap.ui.webc.fiori.ISortItem",
 					multiple: true,
 					slot: "sortItems"
 				}
@@ -77,7 +86,7 @@ sap.ui.define([
 						},
 
 						/**
-						 * The current sort by selected.
+						 * The currently selected <code>sap.ui.webc.fiori.SortItem</code> text attribute.
 						 */
 						sortBy: {
 							type: "string"
@@ -98,7 +107,7 @@ sap.ui.define([
 						},
 
 						/**
-						 * The current sort by selected.
+						 * The currently selected <code>sap.ui.webc.fiori.SortItem</code> text attribute.
 						 */
 						sortBy: {
 							type: "string"

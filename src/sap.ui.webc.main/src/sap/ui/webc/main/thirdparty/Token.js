@@ -44,10 +44,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		static get styles() {
 			return Token_css;
 		}
-		constructor() {
-			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
-		}
 		_handleSelect() {
 			this.selected = !this.selected;
 			this.fireEvent("select");
@@ -71,7 +67,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 		}
 		get tokenDeletableText() {
-			return this.i18nBundle.getText(i18nDefaults.TOKEN_ARIA_DELETABLE);
+			return Token.i18nBundle.getText(i18nDefaults.TOKEN_ARIA_DELETABLE);
 		}
 		get iconURI() {
 			return Theme.getTheme() === "sap_fiori_3" ? "decline" : "sys-cancel";
@@ -80,7 +76,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return [Icon];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			Token.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	Token.define();

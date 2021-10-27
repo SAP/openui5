@@ -60,7 +60,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * On object of strings that defines several additional accessibility texts for even further customization.
+				 * An object of strings that defines several additional accessibility texts for even further customization.
 				 *
 				 * It supports the following fields: - <code>startColumnAccessibleName</code>: the accessibility name for the <code>startColumn</code> region - <code>midColumnAccessibleName</code>: the accessibility name for the <code>midColumn</code> region - <code>endColumnAccessibleName</code>: the accessibility name for the <code>endColumn</code> region - <code>startArrowLeftText</code>: the text that the first arrow (between the <code>begin</code> and <code>mid</code> columns) will have when pointing to the left - <code>startArrowRightText</code>: the text that the first arrow (between the <code>begin</code> and <code>mid</code> columns) will have when pointing to the right - <code>endArrowLeftText</code>: the text that the second arrow (between the <code>mid</code> and <code>end</code> columns) will have when pointing to the left - <code>endArrowRightText</code>: the text that the second arrow (between the <code>mid</code> and <code>end</code> columns) will have when pointing to the right
 				 */

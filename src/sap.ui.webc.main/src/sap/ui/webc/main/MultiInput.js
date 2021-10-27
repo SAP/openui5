@@ -55,7 +55,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Receives id(or many ids) of the elements that label the input
+				 * Receives id(or many ids) of the elements that label the input.
 				 */
 				accessibleNameRef: {
 					type: "string",
@@ -129,7 +129,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Determines whether a value help icon will be should in the end of the input. Pressing the icon will fire <code>value-help-trigger</code> event.
+				 * Determines whether a value help icon will be visualized in the end of the input. Pressing the icon will fire <code>value-help-trigger</code> event.
 				 */
 				showValueHelpIcon: {
 					type: "boolean",
@@ -202,7 +202,7 @@ sap.ui.define([
 				 */
 				icon: {
 					type: "sap.ui.webc.main.IIcon",
-					multiple: false,
+					multiple: true,
 					slot: "icon"
 				},
 
@@ -245,7 +245,7 @@ sap.ui.define([
 				suggestionItemPreview: {
 					parameters: {
 						/**
-						 * The previewed suggestion item
+						 * The previewed suggestion item.
 						 */
 						item: {
 							type: "HTMLElement"
@@ -266,30 +266,9 @@ sap.ui.define([
 				suggestionItemSelect: {
 					parameters: {
 						/**
-						 * The selected item
+						 * The selected item.
 						 */
 						item: {
-							type: "HTMLElement"
-						}
-					}
-				},
-
-				/**
-				 * Fired when the user scrolls the suggestion popover.
-				 */
-				suggestionScroll: {
-					parameters: {
-						/**
-						 * The current scroll position
-						 */
-						scrollTop: {
-							type: "int"
-						},
-
-						/**
-						 * The scroll container
-						 */
-						scrollContainer: {
 							type: "HTMLElement"
 						}
 					}

@@ -85,7 +85,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		constructor() {
 			super();
 			this._header = {};
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		onBeforeRendering() {
 			if (!this._animationRunning) {
@@ -173,7 +172,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			};
 		}
 		get toggleButtonTitle() {
-			return this.i18nBundle.getText(i18nDefaults.PANEL_ICON);
+			return Panel.i18nBundle.getText(i18nDefaults.PANEL_ICON);
 		}
 		get expanded() {
 			return !this.collapsed;
@@ -230,7 +229,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return [Button];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			Panel.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	Panel.define();

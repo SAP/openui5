@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/types/CSSColor', './generated/templates/ColorPaletteItemTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/ColorPaletteItem.css'], function (UI5Element, litRender, i18nBundle, CSSColor, ColorPaletteItemTemplate_lit, i18nDefaults, ColorPaletteItem_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/types/CSSColor', 'sap/ui/webc/common/thirdparty/base/Device', './generated/templates/ColorPaletteItemTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/ColorPaletteItem.css'], function (UI5Element, litRender, i18nBundle, CSSColor, Device, ColorPaletteItemTemplate_lit, i18nDefaults, ColorPaletteItem_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -20,6 +20,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			},
 			index: {
 				type: String,
+			},
+			phone: {
+				type: Boolean,
 			},
 			_disabled: {
 				type: Boolean,
@@ -44,17 +47,24 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return ColorPaletteItemTemplate_lit;
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			ColorPaletteItem.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		constructor() {
 			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		onBeforeRendering() {
 			this._disabled = !this.value;
+			this.phone = Device.isPhone();
 		}
 		get colorLabel() {
-			return this.i18nBundle.getText(i18nDefaults.COLORPALETTE_COLOR_LABEL);
+			return ColorPaletteItem.i18nBundle.getText(i18nDefaults.COLORPALETTE_COLOR_LABEL);
+		}
+		get styles() {
+			return {
+				root: {
+					"background-color": this.value,
+				},
+			};
 		}
 	}
 	ColorPaletteItem.define();

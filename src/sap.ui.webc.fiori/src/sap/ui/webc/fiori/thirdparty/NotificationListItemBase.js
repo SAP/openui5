@@ -40,10 +40,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 		},
 	};
 	class NotificationListItemBase extends ListItemBase__default {
-		constructor() {
-			super();
-			this.i18nFioriBundle = i18nBundle.getI18nBundle("@ui5/webcomponents-fiori");
-		}
 		static get metadata() {
 			return metadata;
 		}
@@ -137,6 +133,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 		async getOverflowPopover() {
 			const staticAreaItem = await this.getStaticAreaItemDomRef();
 			return staticAreaItem.querySelector(".ui5-notification-overflow-popover");
+		}
+		static async onDefine() {
+			NotificationListItemBase.i18nFioriBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents-fiori");
 		}
 	}
 

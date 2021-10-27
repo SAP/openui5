@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/main/thirdparty/types/Priority', 'sap/ui/webc/main/thirdparty/List', 'sap/ui/webc/main/thirdparty/Button', 'sap/ui/webc/main/thirdparty/BusyIndicator', 'sap/ui/webc/main/thirdparty/Icon', 'sap/ui/webc/main/thirdparty/Popover', './NotificationListItemBase', './generated/i18n/i18n-defaults', './generated/templates/NotificationListGroupItemTemplate.lit', './generated/themes/NotificationListGroupItem.css'], function (i18nBundle, Priority, List, Button, BusyIndicator, Icon, Popover, NotificationListItemBase, i18nDefaults, NotificationListGroupItemTemplate_lit, NotificationListGroupItem_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/main/thirdparty/types/Priority', 'sap/ui/webc/main/thirdparty/List', 'sap/ui/webc/main/thirdparty/Button', 'sap/ui/webc/main/thirdparty/BusyIndicator', 'sap/ui/webc/main/thirdparty/Icon', 'sap/ui/webc/main/thirdparty/Popover', './NotificationListItemBase', './generated/i18n/i18n-defaults', './generated/templates/NotificationListGroupItemTemplate.lit', './generated/themes/NotificationListGroupItem.css'], function (Priority, List, Button, BusyIndicator, Icon, Popover, NotificationListItemBase, i18nDefaults, NotificationListGroupItemTemplate_lit, NotificationListGroupItem_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -60,33 +60,30 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/mai
 				Popover__default,
 			];
 		}
-		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents-fiori");
-		}
 		get itemsCount() {
 			return this.items.length;
 		}
 		get overflowBtnAccessibleName() {
-			return this.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_ITEM_OVERLOW_BTN_TITLE);
+			return NotificationListGroupItem.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_ITEM_OVERLOW_BTN_TITLE);
 		}
 		get closeBtnAccessibleName() {
-			return this.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_GROUP_ITEM_CLOSE_BTN_TITLE);
+			return NotificationListGroupItem.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_GROUP_ITEM_CLOSE_BTN_TITLE);
 		}
 		get toggleBtnAccessibleName() {
 			if (this.collapsed) {
-				return this.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_GROUP_ITEM_TOGGLE_BTN_EXPAND_TITLE);
+				return NotificationListGroupItem.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_GROUP_ITEM_TOGGLE_BTN_EXPAND_TITLE);
 			}
-			return this.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_GROUP_ITEM_TOGGLE_BTN_COLLAPSE_TITLE);
+			return NotificationListGroupItem.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_GROUP_ITEM_TOGGLE_BTN_COLLAPSE_TITLE);
 		}
 		get priorityText() {
 			if (this.priority === Priority__default.High) {
-				return this.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_ITEM_HIGH_PRIORITY_TXT);
+				return NotificationListGroupItem.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_ITEM_HIGH_PRIORITY_TXT);
 			}
 			if (this.priority === Priority__default.Medium) {
-				return this.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_ITEM_MEDIUM_PRIORITY_TXT);
+				return NotificationListGroupItem.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_ITEM_MEDIUM_PRIORITY_TXT);
 			}
 			if (this.priority === Priority__default.Low) {
-				return this.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_ITEM_LOW_PRIORITY_TXT);
+				return NotificationListGroupItem.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_ITEM_LOW_PRIORITY_TXT);
 			}
 			return "";
 		}
@@ -95,15 +92,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/mai
 		}
 		get readText() {
 			if (this.read) {
-				return this.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_ITEM_READ);
+				return NotificationListGroupItem.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_ITEM_READ);
 			}
-			return this.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_ITEM_UNREAD);
+			return NotificationListGroupItem.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_ITEM_UNREAD);
 		}
 		get groupText() {
-			return this.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_GROUP_ITEM_TXT);
+			return NotificationListGroupItem.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_GROUP_ITEM_TXT);
 		}
 		get counterText() {
-			const text = this.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_GROUP_ITEM_COUNTER_TXT);
+			const text = NotificationListGroupItem.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_GROUP_ITEM_COUNTER_TXT);
 			return this.showCounter ? `${text} ${this.itemsCount}` : "";
 		}
 		get ariaLabelledBy() {

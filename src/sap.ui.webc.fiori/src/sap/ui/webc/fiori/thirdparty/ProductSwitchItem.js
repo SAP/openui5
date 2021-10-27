@@ -31,6 +31,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			focused: {
 				type: Boolean,
 			},
+			selected: {
+				type: Boolean,
+			},
 			_tabIndex: {
 				type: String,
 				defaultValue: "-1",
@@ -90,6 +93,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.active = false;
 			}
 			if (Keys.isSpace(event)) {
+				if (Keys.isSpaceShift(event)) {
+					event.stopPropagation();
+				}
 				this._fireItemClick();
 			}
 		}

@@ -26,20 +26,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', './ListItemBase'
 		static get styles() {
 			return [ListItemBase.styles, GroupHeaderListItem_css];
 		}
-		constructor() {
-			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
-		}
 		get group() {
 			return true;
 		}
 		get groupHeaderText() {
-			return this.i18nBundle.getText(i18nDefaults.GROUP_HEADER_TEXT);
+			return GroupHeaderListItem.i18nBundle.getText(i18nDefaults.GROUP_HEADER_TEXT);
+		}
+		get ariaLabelText() {
+			return [this.textContent, this.accessibleName].filter(Boolean).join(" ");
 		}
 		static async onDefine() {
-			await Promise.all([
-				i18nBundle.fetchI18nBundle("@ui5/webcomponents"),
-			]);
+			GroupHeaderListItem.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	GroupHeaderListItem.define();

@@ -128,7 +128,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 			return parseInt(this.maxValue.split(":")[2]);
 		}
 		get dateAriaDescription() {
-			return this.i18nBundle.getText(i18nDefaults.DURATION_INPUT_DESCRIPTION);
+			return DurationPicker.i18nBundle.getText(i18nDefaults.DURATION_INPUT_DESCRIPTION);
 		}
 		get accInfo() {
 			return {

@@ -348,6 +348,12 @@ sap.ui.define([
 				itemDelete: function(oEvent) {
 					// console.log("Event itemDelete fired for Tree with parameters: ", oEvent.getParameters());
 				},
+				itemMouseout: function(oEvent) {
+					// console.log("Event itemMouseout fired for Tree with parameters: ", oEvent.getParameters());
+				},
+				itemMouseover: function(oEvent) {
+					// console.log("Event itemMouseover fired for Tree with parameters: ", oEvent.getParameters());
+				},
 				itemToggle: function(oEvent) {
 					// console.log("Event itemToggle fired for Tree with parameters: ", oEvent.getParameters());
 				},

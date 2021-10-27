@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/renderer/executeTemplate', './types/SemanticColor', './types/TabLayout', './TabContainer', './Icon', './CustomListItem', './generated/templates/TabTemplate.lit', './generated/templates/TabInStripTemplate.lit', './generated/templates/TabInOverflowTemplate.lit', './generated/themes/Tab.css', './generated/themes/TabInStrip.css', './generated/themes/TabInOverflow.css'], function (UI5Element, litRender, executeTemplate, SemanticColor, TabLayout, TabContainer, Icon, CustomListItem, TabTemplate_lit, TabInStripTemplate_lit, TabInOverflowTemplate_lit, Tab_css, TabInStrip_css, TabInOverflow_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/renderer/executeTemplate', './types/SemanticColor', './TabContainer', './Icon', './CustomListItem', './generated/templates/TabTemplate.lit', './generated/templates/TabInStripTemplate.lit', './generated/templates/TabInOverflowTemplate.lit', './generated/themes/Tab.css', './generated/themes/TabInStrip.css', './generated/themes/TabInOverflow.css'], function (UI5Element, litRender, executeTemplate, SemanticColor, TabContainer, Icon, CustomListItem, TabTemplate_lit, TabInStripTemplate_lit, TabInOverflowTemplate_lit, Tab_css, TabInStrip_css, TabInOverflow_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -70,6 +70,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				CustomListItem,
 			];
 		}
+		get displayText() {
+			let text = this.text;
+			if (this._isInline && this.additionalText) {
+				text += ` (${this.additionalText})`;
+			}
+			return text;
+		}
 		get isSeparator() {
 			return false;
 		}
@@ -125,8 +132,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (this.disabled) {
 				classes.push("ui5-tab-strip-item--disabled");
 			}
-			if (this.tabLayout === TabLayout.Inline) {
+			if (this._isInline) {
 				classes.push("ui5-tab-strip-item--inline");
+			}
+			if (this.additionalText) {
+				classes.push("ui5-tab-strip-item--withAddionalText");
 			}
 			if (!this.icon && !this._mixedMode) {
 				classes.push("ui5-tab-strip-item--textOnly");

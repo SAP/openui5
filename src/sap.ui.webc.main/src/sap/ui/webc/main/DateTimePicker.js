@@ -35,9 +35,7 @@ sap.ui.define([
 	 *     <li>typing in the input field</li>
 	 * </ul>
 	 *
-	 * Programatically, to set date/time for the <code>DateTimePicker</code>, use the <code>value</code> property <br>
-	 * <br>
-	 * As most of the input based components, the <code>DateTimePicker</code> supports properties, such as: <code>disabled</code>, <code>readonly</code>, <code>valueState</code> and <code>placeholder</code>.
+	 * Programatically, to set date/time for the <code>DateTimePicker</code>, use the <code>value</code> property
 	 *
 	 * <h3>Formatting</h3>
 	 *
@@ -121,7 +119,7 @@ sap.ui.define([
 				 * <br>
 				 *
 				 *
-				 * <b>Note:<b> For calendars other than Gregorian, the week numbers are not displayed regardless of what is set.
+				 * <b>Note:</b> For calendars other than Gregorian, the week numbers are not displayed regardless of what is set.
 				 */
 				hideWeekNumbers: {
 					type: "boolean",
@@ -137,7 +135,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Determines the мinimum date available for selection.
+				 * Determines the minimum date available for selection.
 				 */
 				minDate: {
 					type: "string",

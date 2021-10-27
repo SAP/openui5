@@ -67,10 +67,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		},
 	};
 	class Avatar extends UI5Element__default {
-		constructor() {
-			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
-		}
 		static get metadata() {
 			return metadata;
 		}
@@ -87,7 +83,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return [Icon];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			Avatar.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		get tabindex() {
 			return this._tabIndex || (this.interactive ? "0" : "-1");
@@ -115,17 +111,18 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (this.accessibleName) {
 				return this.accessibleName;
 			}
-			return this.i18nBundle.getText(i18nDefaults.AVATAR_TOOLTIP) || undefined;
+			return Avatar.i18nBundle.getText(i18nDefaults.AVATAR_TOOLTIP) || undefined;
 		}
 		get hasImage() {
 			this._hasImage = !!this.image.length;
 			return this._hasImage;
 		}
-		_onclick(event) {
-			if (this.interactive) {
-				event.stopPropagation();
-				this.fireEvent("click");
-			}
+		onBeforeRendering() {
+			this._onclick = this.interactive ? this._onClickHandler.bind(this) : undefined;
+		}
+		_onClickHandler(event) {
+			event.stopPropagation();
+			this.fireEvent("click");
 		}
 		_onkeydown(event) {
 			if (!this.interactive) {

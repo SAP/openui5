@@ -75,14 +75,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return [WheelSlider];
 		}
 		static async onDefine() {
-			await Promise.all([
+			[TimeSelection.i18nBundle] = await Promise.all([
+				i18nBundle.getI18nBundle("@ui5/webcomponents"),
 				LocaleData.fetchCldr(getLocale__default().getLanguage(), getLocale__default().getRegion(), getLocale__default().getScript()),
-				i18nBundle.fetchI18nBundle("@ui5/webcomponents"),
 			]);
 		}
 		constructor() {
 			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		get _hoursConfiguration() {
 			const hourFormat = this.getFormat().aFormatArray.find(item => item.type.startsWith("hour"));
@@ -126,7 +125,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this._currentSlider === "seconds";
 		}
 		get _periodSliderFocused() {
-			return this._currentSlider === "period";
+			return this._currentSlider === "periods";
 		}
 		get _hours() {
 			let hours;
@@ -241,7 +240,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.shadowRoot.querySelector(`[data-sap-slider="${this._currentSlider}"]`);
 		}
 		get _activeSliders() {
-			return ["hours", "minutes", "seconds", "period"].filter(slider => this[`_has${capitalizeFirst(slider)}Slider`]);
+			return ["hours", "minutes", "seconds", "periods"].filter(slider => this[`_has${capitalizeFirst(slider)}Slider`]);
 		}
 		_onfocusin(event) {
 			if (!this._currentSlider) {
@@ -298,16 +297,16 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.isValid(this.value) ? this.dateValue : new Date();
 		}
 		get hoursSliderTitle() {
-			return this.i18nBundle.getText(i18nDefaults.TIMEPICKER_HOURS_LABEL);
+			return TimeSelection.i18nBundle.getText(i18nDefaults.TIMEPICKER_HOURS_LABEL);
 		}
 		get minutesSliderTitle() {
-			return this.i18nBundle.getText(i18nDefaults.TIMEPICKER_MINUTES_LABEL);
+			return TimeSelection.i18nBundle.getText(i18nDefaults.TIMEPICKER_MINUTES_LABEL);
 		}
 		get secondsSliderTitle() {
-			return this.i18nBundle.getText(i18nDefaults.TIMEPICKER_SECONDS_LABEL);
+			return TimeSelection.i18nBundle.getText(i18nDefaults.TIMEPICKER_SECONDS_LABEL);
 		}
 		get periodSliderTitle() {
-			return this.i18nBundle.getText(i18nDefaults.TIMEPICKER_PERIODS_LABEL);
+			return TimeSelection.i18nBundle.getText(i18nDefaults.TIMEPICKER_PERIODS_LABEL);
 		}
 		get _isCyclic() {
 			return !Device.isIE();

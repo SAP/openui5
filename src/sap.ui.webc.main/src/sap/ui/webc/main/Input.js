@@ -28,7 +28,7 @@ sap.ui.define([
 	 * The <code>sap.ui.webc.main.Input</code> component allows the user to enter and edit text or numeric values in one line. <br>
 	 * Additionally, you can provide <code>suggestionItems</code>, that are displayed in a popover right under the input. <br>
 	 * <br>
-	 * The text field can be editable or read-only (<code>readonly</code> property), and it can be enabled or disabled (<code>enabled</code> property). To visualize semantic states, such as "error" or "warning", the <code>valueState</code> property is provided. When the user makes changes to the text, the change event is fired, which enables you to react on any text change. <br>
+	 * The text field can be editable or read-only (<code>readonly</code> property), and it can be enabled or disabled (<code>disabled</code> property). To visualize semantic states, such as "error" or "warning", the <code>valueState</code> property is provided. When the user makes changes to the text, the change event is fired, which enables you to react on any text change. <br>
 	 * <br>
 	 * <b>Note:</b> If you are using the <code>sap.ui.webc.main.Input</code> as a single npm module, don't forget to import the <code>InputSuggestions</code> module from "@ui5/webcomponents/dist/features/InputSuggestions.js" to enable the suggestions functionality.
 	 *
@@ -60,7 +60,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Receives id(or many ids) of the elements that label the input
+				 * Receives id(or many ids) of the elements that label the input.
 				 */
 				accessibleNameRef: {
 					type: "string",
@@ -199,7 +199,7 @@ sap.ui.define([
 				 */
 				icon: {
 					type: "sap.ui.webc.main.IIcon",
-					multiple: false,
+					multiple: true,
 					slot: "icon"
 				},
 
@@ -233,7 +233,7 @@ sap.ui.define([
 				suggestionItemPreview: {
 					parameters: {
 						/**
-						 * The previewed suggestion item
+						 * The previewed suggestion item.
 						 */
 						item: {
 							type: "HTMLElement"
@@ -254,30 +254,9 @@ sap.ui.define([
 				suggestionItemSelect: {
 					parameters: {
 						/**
-						 * The selected item
+						 * The selected item.
 						 */
 						item: {
-							type: "HTMLElement"
-						}
-					}
-				},
-
-				/**
-				 * Fired when the user scrolls the suggestion popover.
-				 */
-				suggestionScroll: {
-					parameters: {
-						/**
-						 * The current scroll position
-						 */
-						scrollTop: {
-							type: "int"
-						},
-
-						/**
-						 * The scroll container
-						 */
-						scrollContainer: {
 							type: "HTMLElement"
 						}
 					}

@@ -48,7 +48,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		constructor() {
 			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		_closeClick() {
 			this.fireEvent("close", {});
@@ -60,7 +59,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			MessageStrip.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		static designClassesMappings() {
 			return {
@@ -82,7 +81,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return `Message Strip ${this.design} ${this.hideCloseButton ? "" : "closable"}`;
 		}
 		get _closeButtonText() {
-			return this.i18nBundle.getText(i18nDefaults.MESSAGE_STRIP_CLOSE_BUTTON);
+			return MessageStrip.i18nBundle.getText(i18nDefaults.MESSAGE_STRIP_CLOSE_BUTTON);
 		}
 		get classes() {
 			return {

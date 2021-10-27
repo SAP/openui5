@@ -82,13 +82,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				getItemsCallback: this._getVisibleTokens.bind(this),
 			});
 			this._scrollEnablement = new ScrollEnablement__default(this);
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		async onBeforeRendering() {
 			if (this.showPopover && !this._getTokens().length) {
 				const popover = await this.getPopover();
 				popover.close();
 			}
+			this._nMoreCount = this.overflownTokens.length;
 		}
 		onEnterDOM() {
 			ResizeHandler__default.register(this.shadowRoot.querySelector(".ui5-tokenizer--content"), this._resizeHandler);
@@ -121,7 +121,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			});
 		}
 		onAfterRendering() {
-			this._nMoreCount = this.overflownTokens.length;
 			this._scrollEnablement.scrollContainer = this.expanded ? this.contentDom : this;
 		}
 		_tokenDelete(event) {
@@ -133,8 +132,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				nextTokenIndex = deletedTokenIndex === this._getVisibleTokens().length - 1 ? deletedTokenIndex - 1 : deletedTokenIndex + 1;
 			}
 			const nextToken = this._getVisibleTokens()[nextTokenIndex];
-			this._itemNav.setCurrentItem(nextToken);
-			if (nextToken) {
+			if (nextToken && !Device.isPhone()) {
+				this._itemNav.setCurrentItem(nextToken);
 				setTimeout(() => {
 					nextToken.focus();
 				}, 0);
@@ -174,7 +173,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			popover.close();
 		}
 		get _nMoreText() {
-			return this.i18nBundle.getText(i18nDefaults.MULTIINPUT_SHOW_MORE_TOKENS, [this._nMoreCount]);
+			return Tokenizer.i18nBundle.getText(i18nDefaults.MULTIINPUT_SHOW_MORE_TOKENS, this._nMoreCount);
 		}
 		get showNMore() {
 			return !this.expanded && this.showMore && this.overflownTokens.length;
@@ -183,10 +182,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.shadowRoot.querySelector(".ui5-tokenizer--content");
 		}
 		get tokenizerLabel() {
-			return this.i18nBundle.getText(i18nDefaults.TOKENIZER_ARIA_LABEL);
+			return Tokenizer.i18nBundle.getText(i18nDefaults.TOKENIZER_ARIA_LABEL);
 		}
 		get morePopoverTitle() {
-			return this.i18nBundle.getText(i18nDefaults.TOKENIZER_POPOVER_REMOVE);
+			return Tokenizer.i18nBundle.getText(i18nDefaults.TOKENIZER_POPOVER_REMOVE);
 		}
 		get overflownTokens() {
 			if (!this.contentDom) {
@@ -241,7 +240,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				popoverValueStateMessage: {
 					"width": Device.isPhone() ? "100%" : `${this.popoverMinWidth}px`,
 					"min-height": "2rem",
-					"padding": Device.isPhone() ? "0.25rem 1rem" : "0.3rem 0.625rem",
 				},
 				popoverHeader: {
 					"min-height": "2rem",
@@ -254,12 +252,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_tokensCountText() {
 			const iTokenCount = this._getTokens().length;
 			if (iTokenCount === 0) {
-				return this.i18nBundle.getText(i18nDefaults.TOKENIZER_ARIA_CONTAIN_TOKEN);
+				return Tokenizer.i18nBundle.getText(i18nDefaults.TOKENIZER_ARIA_CONTAIN_TOKEN);
 			}
 			if (iTokenCount === 1) {
-				return this.i18nBundle.getText(i18nDefaults.TOKENIZER_ARIA_CONTAIN_ONE_TOKEN);
+				return Tokenizer.i18nBundle.getText(i18nDefaults.TOKENIZER_ARIA_CONTAIN_ONE_TOKEN);
 			}
-			return this.i18nBundle.getText(i18nDefaults.TOKENIZER_ARIA_CONTAIN_SEVERAL_TOKENS, iTokenCount);
+			return Tokenizer.i18nBundle.getText(i18nDefaults.TOKENIZER_ARIA_CONTAIN_SEVERAL_TOKENS, iTokenCount);
 		}
 		_focusLastToken() {
 			if (this.tokens.length === 0) {
@@ -277,7 +275,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			Tokenizer.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		async getPopover() {
 			return (await this.getStaticAreaItemDomRef()).querySelector("[ui5-responsive-popover]");

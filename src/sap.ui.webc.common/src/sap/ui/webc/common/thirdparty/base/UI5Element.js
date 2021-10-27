@@ -1,4 +1,4 @@
-sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventProvider', './util/getSingletonElementInstance', './StaticAreaItem', './updateShadowRoot', './Render', './CustomElementsRegistry', './DOMObserver', './config/NoConflict', './locale/getEffectiveDir', './types/DataType', './util/StringHelper', './util/isValidPropertyName', './util/isDescendantOf', './util/SlotsHelper', './util/arraysAreEqual', './util/getClassCopy', './locale/RTLAwareRegistry', './isLegacyBrowser'], function (merge, Boot, UI5ElementMetadata, EventProvider, getSingletonElementInstance, StaticAreaItem, updateShadowRoot, Render, CustomElementsRegistry, DOMObserver, NoConflict, getEffectiveDir, DataType, StringHelper, isValidPropertyName, isDescendantOf, SlotsHelper, arraysAreEqual, getClassCopy, RTLAwareRegistry, isLegacyBrowser) { 'use strict';
+sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventProvider', './util/getSingletonElementInstance', './StaticAreaItem', './updateShadowRoot', './Render', './CustomElementsRegistry', './DOMObserver', './config/NoConflict', './locale/getEffectiveDir', './types/DataType', './util/StringHelper', './util/isValidPropertyName', './util/isDescendantOf', './util/SlotsHelper', './util/arraysAreEqual', './util/getClassCopy', './locale/RTLAwareRegistry', './theming/preloadLinks'], function (merge, Boot, UI5ElementMetadata, EventProvider, getSingletonElementInstance, StaticAreaItem, updateShadowRoot, Render, CustomElementsRegistry, DOMObserver, NoConflict, getEffectiveDir, DataType, StringHelper, isValidPropertyName, isDescendantOf, SlotsHelper, arraysAreEqual, getClassCopy, RTLAwareRegistry, preloadLinks) { 'use strict';
 
 	let autoId = 0;
 	const elementTimeouts = new Map();
@@ -323,15 +323,11 @@ sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventP
 			if (!this.shadowRoot || this.shadowRoot.children.length === 0) {
 				return;
 			}
-			this._assertShadowRootStructure();
-			return this.shadowRoot.children.length === 1
-				? this.shadowRoot.children[0] : this.shadowRoot.children[1];
-		}
-		_assertShadowRootStructure() {
-			const expectedChildrenCount = document.adoptedStyleSheets || isLegacyBrowser() ? 1 : 2;
-			if (this.shadowRoot.children.length !== expectedChildrenCount) {
+			const children = [...this.shadowRoot.children].filter(child => !["link", "style"].includes(child.localName));
+			if (children.length !== 1) {
 				console.warn(`The shadow DOM for ${this.constructor.getMetadata().getTag()} does not have a top level element, the getDomRef() method might not work as expected`);
 			}
+			return children[0];
 		}
 		getFocusDomRef() {
 			const domRef = this.getDomRef();
@@ -537,6 +533,7 @@ sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventP
 				this._generateAccessors();
 				CustomElementsRegistry.registerTag(tag);
 				window.customElements.define(tag, this);
+				preloadLinks(this);
 				if (altTag && !customElements.get(altTag)) {
 					CustomElementsRegistry.registerTag(altTag);
 					window.customElements.define(altTag, getClassCopy(this, () => {

@@ -4,11 +4,11 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
 	"sap/ui/webc/fiori/ViewSettingsDialog",
-	"sap/ui/webc/main/CustomListItem",
-	"sap/ui/webc/main/Button",
-	"sap/ui/webc/main/GroupHeaderListItem",
-	"sap/ui/webc/main/StandardListItem"
-], function(createAndAppendDiv, Core, ViewSettingsDialog, CustomListItem, Button, GroupHeaderListItem, StandardListItem) {
+	"sap/ui/webc/fiori/FilterItem",
+	"sap/ui/webc/fiori/FilterItemOption",
+	"sap/ui/webc/fiori/SortItem",
+	"sap/ui/webc/main/Button"
+], function(createAndAppendDiv, Core, ViewSettingsDialog, FilterItem, FilterItemOption, SortItem, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
@@ -16,45 +16,59 @@ sap.ui.define([
 	QUnit.module("Rendering", {
 		beforeEach: function() {
 			this.oViewSettingsDialog = new ViewSettingsDialog({
-				sortItems: [
-					new CustomListItem({
-						content: [
-							new Button({
-								icon: "employee",
-								text: "Some text...",
-								click: function(oEvent) {
-									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-								}
+				filterItems: [
+					new FilterItem({
+						text: "Some text...",
+						values: [
+							new FilterItemOption({
+								text: "Some text..."
 							}),
-							new Button({
-								icon: "employee",
-								text: "Some text...",
-								click: function(oEvent) {
-									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-								}
+							new FilterItemOption({
+								text: "Some text..."
 							}),
-							new Button({
-								icon: "employee",
-								text: "Some text...",
-								click: function(oEvent) {
-									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-								}
+							new FilterItemOption({
+								text: "Some text..."
 							})
-						],
-						detailClick: function(oEvent) {
-							// console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
-						}
+						]
 					}),
-					new GroupHeaderListItem({
+					new FilterItem({
+						text: "Some text...",
+						values: [
+							new FilterItemOption({
+								text: "Some text..."
+							}),
+							new FilterItemOption({
+								text: "Some text..."
+							}),
+							new FilterItemOption({
+								text: "Some text..."
+							})
+						]
+					}),
+					new FilterItem({
+						text: "Some text...",
+						values: [
+							new FilterItemOption({
+								text: "Some text..."
+							}),
+							new FilterItemOption({
+								text: "Some text..."
+							}),
+							new FilterItemOption({
+								text: "Some text..."
+							})
+						]
+					})
+				],
+				sortItems: [
+					new SortItem({
 						text: "Some text..."
 					}),
-					new StandardListItem({
-						additionalText: "Some text...",
-						icon: "employee",
-						text: "Some text...",
-						detailClick: function(oEvent) {
-							// console.log("Event detailClick fired for StandardListItem with parameters: ", oEvent.getParameters());
-						}
+					new SortItem({
+						text: "Some text..."
+					}),
+					new SortItem({
+						text: "Some text..."
 					})
 				],
 				cancel: function(oEvent) {

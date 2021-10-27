@@ -87,11 +87,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/mai
 			];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents-fiori");
-		}
-		constructor() {
-			super();
-			this.i18nFioriBundle = i18nBundle.getI18nBundle("@ui5/webcomponents-fiori");
+			[UploadCollectionItem.i18nFioriBundle] = await Promise.all([
+				i18nBundle.getI18nBundle("@ui5/webcomponents-fiori"),
+				super.onDefine(),
+			]);
 		}
 		async _initInputField() {
 			await Render.renderFinished();
@@ -207,22 +206,22 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/mai
 			return getFileExtension__default(this.fileName);
 		}
 		get _renameBtnText() {
-			return this.i18nFioriBundle.getText(i18nDefaults.UPLOADCOLLECTIONITEM_RENAMEBUTTON_TEXT);
+			return UploadCollectionItem.i18nFioriBundle.getText(i18nDefaults.UPLOADCOLLECTIONITEM_RENAMEBUTTON_TEXT);
 		}
 		get _cancelRenameBtnText() {
-			return this.i18nFioriBundle.getText(i18nDefaults.UPLOADCOLLECTIONITEM_CANCELBUTTON_TEXT);
+			return UploadCollectionItem.i18nFioriBundle.getText(i18nDefaults.UPLOADCOLLECTIONITEM_CANCELBUTTON_TEXT);
 		}
 		get _showProgressIndicator() {
 			return this.uploadState !== UploadState.Complete;
 		}
 		get _progressText() {
 			if (this.uploadState === UploadState.Uploading) {
-				return this.i18nFioriBundle.getText(i18nDefaults.UPLOADCOLLECTIONITEM_UPLOADING_STATE);
+				return UploadCollectionItem.i18nFioriBundle.getText(i18nDefaults.UPLOADCOLLECTIONITEM_UPLOADING_STATE);
 			}
 			if (this.uploadState === UploadState.Error) {
-				return this.i18nFioriBundle.getText(i18nDefaults.UPLOADCOLLECTIONITEM_ERROR_STATE);
+				return UploadCollectionItem.i18nFioriBundle.getText(i18nDefaults.UPLOADCOLLECTIONITEM_ERROR_STATE);
 			}
-			return this.i18nFioriBundle.getText(i18nDefaults.UPLOADCOLLECTIONITEM_READY_STATE);
+			return UploadCollectionItem.i18nFioriBundle.getText(i18nDefaults.UPLOADCOLLECTIONITEM_READY_STATE);
 		}
 		get _showRetry() {
 			return !this.hideRetryButton && this.uploadState === UploadState.Error;
@@ -231,13 +230,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/mai
 			return !this.hideTerminateButton && this.uploadState === UploadState.Uploading;
 		}
 		get _retryButtonTooltip() {
-			return this.i18nFioriBundle.getText(i18nDefaults.UPLOADCOLLECTIONITEM_RETRY_BUTTON_TEXT);
+			return UploadCollectionItem.i18nFioriBundle.getText(i18nDefaults.UPLOADCOLLECTIONITEM_RETRY_BUTTON_TEXT);
 		}
 		get _terminateButtonTooltip() {
-			return this.i18nFioriBundle.getText(i18nDefaults.UPLOADCOLLECTIONITEM_TERMINATE_BUTTON_TEXT);
+			return UploadCollectionItem.i18nFioriBundle.getText(i18nDefaults.UPLOADCOLLECTIONITEM_TERMINATE_BUTTON_TEXT);
 		}
 		get _editButtonTooltip() {
-			return this.i18nFioriBundle.getText(i18nDefaults.UPLOADCOLLECTIONITEM_EDIT_BUTTON_TEXT);
+			return UploadCollectionItem.i18nFioriBundle.getText(i18nDefaults.UPLOADCOLLECTIONITEM_EDIT_BUTTON_TEXT);
 		}
 		get valueStateName() {
 			if (this.uploadState === UploadState.Error) {

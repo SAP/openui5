@@ -57,7 +57,7 @@ sap.ui.define([
 				/**
 				 * Defines whether the component is in disabled state. <br>
 				 * <br>
-				 * <b>Note:</b> A disabledcomponent is completely noninteractive.
+				 * <b>Note:</b> A disabled component is completely noninteractive.
 				 */
 				disabled: {
 					type: "boolean",

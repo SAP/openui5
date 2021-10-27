@@ -44,7 +44,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return [SegmentedButtonItem];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			SegmentedButton.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		constructor() {
 			super();
@@ -55,7 +55,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.percentageWidthSet = false;
 			this.hasPreviouslyFocusedItem = false;
 			this._handleResizeBound = this._doLayout.bind(this);
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		onEnterDOM() {
 			ResizeHandler__default.register(this.parentNode, this._handleResizeBound);
@@ -121,6 +120,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		_onclick(event) {
 			this._selectItem(event);
+			this.selectedItem.focus();
 		}
 		_onkeydown(event) {
 			if (Keys.isEnter(event)) {
@@ -167,10 +167,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this._selectedItem;
 		}
 		get ariaDescribedBy() {
-			return this.i18nBundle.getText(i18nDefaults.SEGMENTEDBUTTON_ARIA_DESCRIBEDBY);
+			return SegmentedButton.i18nBundle.getText(i18nDefaults.SEGMENTEDBUTTON_ARIA_DESCRIBEDBY);
 		}
 		get ariaDescription() {
-			return this.i18nBundle.getText(i18nDefaults.SEGMENTEDBUTTON_ARIA_DESCRIPTION);
+			return SegmentedButton.i18nBundle.getText(i18nDefaults.SEGMENTEDBUTTON_ARIA_DESCRIPTION);
 		}
 	}
 	SegmentedButton.define();

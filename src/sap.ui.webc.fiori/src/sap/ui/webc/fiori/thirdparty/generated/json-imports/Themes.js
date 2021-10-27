@@ -2,13 +2,14 @@ sap.ui.define(['require', 'sap/ui/webc/common/thirdparty/base/asset-registries/T
 
 	const loadThemeProperties = async (themeName) => {
 		switch (themeName) {
-			case "sap_belize": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-d0336f5e'], resolve, reject) })).default;
-			case "sap_belize_hcb": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-816bd805'], resolve, reject) })).default;
-			case "sap_belize_hcw": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-68447658'], resolve, reject) })).default;
-			case "sap_fiori_3": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-f592e4f1'], resolve, reject) })).default;
-			case "sap_fiori_3_dark": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-a596f129'], resolve, reject) })).default;
-			case "sap_fiori_3_hcb": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-cc7a39f2'], resolve, reject) })).default;
-			case "sap_fiori_3_hcw": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-a8f6197d'], resolve, reject) })).default;
+			case "sap_belize": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-895735e6'], resolve, reject) })).default;
+			case "sap_belize_hcb": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-4ddc38d4'], resolve, reject) })).default;
+			case "sap_belize_hcw": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-96c1f5da'], resolve, reject) })).default;
+			case "sap_fiori_3": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-e1178bd1'], resolve, reject) })).default;
+			case "sap_fiori_3_dark": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-cec0858b'], resolve, reject) })).default;
+			case "sap_fiori_3_hcb": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-f5b2132a'], resolve, reject) })).default;
+			case "sap_fiori_3_hcw": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-7e50d0ba'], resolve, reject) })).default;
+			case "sap_horizon": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-0359ea4b'], resolve, reject) })).default;
 			default: throw "unknown theme"
 		}
 	};
@@ -19,7 +20,7 @@ sap.ui.define(['require', 'sap/ui/webc/common/thirdparty/base/asset-registries/T
 		}
 		return data;
 	};
-	["sap_belize", "sap_belize_hcb", "sap_belize_hcw", "sap_fiori_3", "sap_fiori_3_dark", "sap_fiori_3_hcb", "sap_fiori_3_hcw"]
+	["sap_belize", "sap_belize_hcb", "sap_belize_hcw", "sap_fiori_3", "sap_fiori_3_dark", "sap_fiori_3_hcb", "sap_fiori_3_hcw", "sap_horizon"]
 	  .forEach(themeName => Themes.registerThemePropertiesLoader("@ui5/webcomponents-fiori", themeName, loadAndCheck));
 
 });

@@ -75,7 +75,7 @@ sap.ui.define([
 				 *
 				 * <br>
 				 * <br>
-				 * <b>Note:</b>
+				 * <b>The available values are:</b>
 				 *
 				 *
 				 * <ul>
@@ -93,7 +93,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines whether the component is disabled (default is set to <code>false</code>). A disabled component can't be pressed or focused, and it is not in the tab chain.
+				 * Defines whether the component is disabled. A disabled component can't be pressed or focused, and it is not in the tab chain.
 				 */
 				disabled: {
 					type: "boolean",

@@ -105,10 +105,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				document.addEventListener("mouseup", this._deactivate);
 				isGlobalHandlerAttached = true;
 			}
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		onEnterDOM() {
-			this._isTouch = Device.isPhone() || Device.isTablet();
+			this._isTouch = (Device.isPhone() || Device.isTablet()) && !Device.isCombi();
 		}
 		onBeforeRendering() {
 			const FormSupport = FeaturesRegistry.getFeature("FormSupport");
@@ -202,7 +201,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			};
 		}
 		get buttonTypeText() {
-			return this.i18nBundle.getText(Button.typeTextMappings()[this.design]);
+			return Button.i18nBundle.getText(Button.typeTextMappings()[this.design]);
 		}
 		get tabIndexValue() {
 			const tabindex = this.getAttribute("tabindex");
@@ -215,7 +214,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.iconOnly && !this.title;
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			Button.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	Button.define();

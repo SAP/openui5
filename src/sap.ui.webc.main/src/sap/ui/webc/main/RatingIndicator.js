@@ -19,7 +19,7 @@ sap.ui.define([
 	 * @extends sap.ui.webc.common.WebComponent
 	 * @class
 	 *
-	 * <h3>Overview</h3> The RatingIndicator is used to display a specific number of icons that are used to rate an item. Additionally, it is also used to display the average and overall ratings.
+	 * <h3>Overview</h3> The Rating Indicator is used to display a specific number of icons that are used to rate an item. Additionally, it is also used to display the average and overall ratings.
 	 *
 	 * <h3>Usage</h3> The recommended number of icons is between 5 and 7.
 	 *
@@ -62,7 +62,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * The number of displayed rating symbols
+				 * The number of displayed rating symbols.
 				 */
 				max: {
 					type: "int",
@@ -80,7 +80,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * The indicated value of the rating <br>
+				 * The indicated value of the rating. <br>
 				 * <br>
 				 * <b>Note:</b> If you set a number which is not round, it would be shown as follows:
 				 * <ul>

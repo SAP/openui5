@@ -29,10 +29,11 @@
 				<license url="https://github.com/SAP/ui5-webcomponents/blob/master/LICENSE.txt" type="Apache-2.0"></license>
 				<copyright>SAP</copyright>
 				<pattern>sap/ui/webc/common/thirdparty/base/*.*</pattern>
-				<pattern>sap/ui/webc/common/thirdparty/theme-base/*.*</pattern>
+				<pattern>sap/ui/webc/common/thirdparty/theming/*.*</pattern>
 				<pattern>sap/ui/webc/common/thirdparty/localization/*.*</pattern>
 				<pattern>sap/ui/webc/common/thirdparty/icons/*.*</pattern>
 				<pattern>sap/ui/webc/common/thirdparty/icons-tnt/*.*</pattern>
+				<pattern>sap/ui/webc/common/thirdparty/icons-business-suite/*.*</pattern>
 			</lib>
 			<lib name="lit-html" displayName="lit-html" version="1.4.1" homepage="https://lit-html.polymer-project.org">
 				<license url="https://github.com/lit/lit/blob/main/LICENSE" type="BSD-3-Clause"></license>

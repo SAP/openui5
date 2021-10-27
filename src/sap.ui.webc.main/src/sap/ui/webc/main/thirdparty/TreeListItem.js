@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/types/ValueState', './ListItem', './Icon', 'sap/ui/webc/common/thirdparty/icons/navigation-right-arrow', 'sap/ui/webc/common/thirdparty/icons/navigation-down-arrow', './generated/i18n/i18n-defaults', './generated/templates/TreeListItemTemplate.lit', './generated/themes/TreeListItem.css'], function (Integer, Keys, i18nBundle, ValueState, ListItem, Icon, navigationRightArrow, navigationDownArrow, i18nDefaults, TreeListItemTemplate_lit, TreeListItem_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/Device', './ListItem', './Icon', 'sap/ui/webc/common/thirdparty/icons/navigation-right-arrow', 'sap/ui/webc/common/thirdparty/icons/navigation-down-arrow', './generated/i18n/i18n-defaults', './generated/templates/TreeListItemTemplate.lit', './generated/themes/TreeListItem.css'], function (Integer, Keys, i18nBundle, ValueState, Device, ListItem, Icon, navigationRightArrow, navigationDownArrow, i18nDefaults, TreeListItemTemplate_lit, TreeListItem_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -85,10 +85,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 				Icon,
 			];
 		}
-		constructor() {
-			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
-		}
 		onBeforeRendering() {
 			this.actionable = false;
 		}
@@ -96,6 +92,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 			const allClasses = super.classes;
 			allClasses.main["ui5-li-root-tree"] = true;
 			return allClasses;
+		}
+		get styles() {
+			return {
+				preContent: {
+					"padding-left": Device.isIE() ? `${this.effectiveLevel}rem` : `calc(var(--_ui5-tree-indent-step) * ${this.effectiveLevel})`,
+				},
+			};
 		}
 		get effectiveLevel() {
 			return this.level - 1;
@@ -122,7 +125,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 				ariaLevel: this.level,
 				posinset: this._posinset,
 				setsize: this._setsize,
-				listItemAriaLabel: this.ariaLabelText,
+				ariaSelectedText: this.ariaSelectedText,
+				listItemAriaLabel: TreeListItem.i18nBundle.getText(i18nDefaults.TREE_ITEM_ARIA_LABEL),
 			};
 		}
 		_toggleClick(event) {
@@ -146,18 +150,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 				}
 			}
 		}
-		get ariaLabelText() {
-			let text = this.i18nBundle.getText(i18nDefaults.TREE_ITEM_ARIA_LABEL);
-			if (this.selected) {
-				text += ` ${this.i18nBundle.getText(i18nDefaults.LIST_ITEM_SELECTED)}`;
-			}
-			return text;
-		}
 		get iconAccessibleName() {
-			return this.expanded ? this.i18nBundle.getText(i18nDefaults.TREE_ITEM_COLLAPSE_NODE) : this.i18nBundle.getText(i18nDefaults.TREE_ITEM_EXPAND_NODE);
+			return this.expanded ? TreeListItem.i18nBundle.getText(i18nDefaults.TREE_ITEM_COLLAPSE_NODE) : TreeListItem.i18nBundle.getText(i18nDefaults.TREE_ITEM_EXPAND_NODE);
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			TreeListItem.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	TreeListItem.define();

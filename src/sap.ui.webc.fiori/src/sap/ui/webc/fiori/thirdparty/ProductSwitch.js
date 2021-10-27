@@ -32,7 +32,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 				rowSize: this._rowSize,
 				getItemsCallback: () => this.items,
 			});
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		static get metadata() {
 			return metadata;
@@ -53,10 +52,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 			};
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			ProductSwitch.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents-fiori");
 		}
 		get _ariaLabelText() {
-			return this.i18nBundle.getText(i18nDefaults.PRODUCT_SWITCH_CONTAINER_LABEL);
+			return ProductSwitch.i18nBundle.getText(i18nDefaults.PRODUCT_SWITCH_CONTAINER_LABEL);
 		}
 		onEnterDOM() {
 			this._handleResizeBound = this._handleResize.bind(this);
@@ -77,6 +76,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 			} else {
 				this._setRowSize(4);
 			}
+		}
+		handleProductSwitchItemClick(event) {
+			this.items.forEach(item => { item.selected = false; });
+			event.target.selected = true;
 		}
 		_onfocusin(event) {
 			const target = event.target;

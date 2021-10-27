@@ -55,13 +55,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		constructor() {
 			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		get colSpan() {
 			return this._colSpan;
 		}
 		get ariaLabelText() {
-			return `${this.i18nBundle.getText(i18nDefaults.TABLE_GROUP_ROW_ARIA_LABEL)} ${this.innerText}. ${this._ariaPosition}`;
+			return `${TableGroupRow.i18nBundle.getText(i18nDefaults.TABLE_GROUP_ROW_ARIA_LABEL)} ${this.innerText}. ${this._ariaPosition}`;
 		}
 		visibleColCount() {
 			let count = this._columnsInfo.reduce((acc, column) => {
@@ -79,7 +78,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._colSpan = this.visibleColCount();
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			TableGroupRow.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	TableGroupRow.define();

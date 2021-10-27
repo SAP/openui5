@@ -23,6 +23,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element'], function (UI5El
 			wholeItemToggleable: {
 				type: Boolean,
 			},
+			 title: {
+				type: String,
+			},
 		},
 		events:  {
 		},
@@ -37,6 +40,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element'], function (UI5El
 	class SideNavigationItem extends UI5Element__default {
 		static get metadata() {
 			return metadata;
+		}
+		get _tooltip() {
+			return this.title || this.text;
 		}
 	}
 	SideNavigationItem.define();

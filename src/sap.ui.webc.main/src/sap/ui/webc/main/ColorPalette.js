@@ -19,11 +19,11 @@ sap.ui.define([
 	 * @extends sap.ui.webc.common.WebComponent
 	 * @class
 	 *
-	 * <h3>Overview</h3> The ColorPalette provides the users with a range of predefined colors. The colors are fixed and do not change with the theme.
+	 * <h3>Overview</h3> The <code>sap.ui.webc.main.ColorPalette</code> provides the users with a range of predefined colors. The colors are fixed and do not change with the theme.
 	 *
 	 * <h3>Usage</h3>
 	 *
-	 * The Colorpalette is meant for users that needs to select a color from a predefined set. To define the colors, use the <code>sap.ui.webc.main.ColorPaletteItem</code> component inside the default slot of the <code>sap.ui.webc.main.ColorPalette</code>.
+	 * The <code>sap.ui.webc.main.ColorPalette</code> is meant for users that need to select a color from a predefined set. To define the colors, use the <code>sap.ui.webc.main.ColorPaletteItem</code> component inside the default slot of the <code>sap.ui.webc.main.ColorPalette</code>.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -43,7 +43,7 @@ sap.ui.define([
 			aggregations: {
 
 				/**
-				 * Defines the <code>sap.ui.webc.main.ColorPaletteItem</code> items.
+				 * Defines the <code>sap.ui.webc.main.ColorPaletteItem</code> elements.
 				 */
 				colors: {
 					type: "sap.ui.webc.main.IColorPaletteItem",

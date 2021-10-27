@@ -29,7 +29,7 @@ sap.ui.define(['./generated/templates/SegmentedButtonItemTemplate.lit', './Toggl
 			return SegmentedButtonItemTemplate_lit;
 		}
 		get ariaDescription() {
-			return this.i18nBundle.getText(i18nDefaults.SEGMENTEDBUTTONITEM_ARIA_DESCRIPTION);
+			return SegmentedButtonItem.i18nBundle.getText(i18nDefaults.SEGMENTEDBUTTONITEM_ARIA_DESCRIPTION);
 		}
 	}
 	SegmentedButtonItem.define();

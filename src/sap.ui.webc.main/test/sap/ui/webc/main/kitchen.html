@@ -435,6 +435,7 @@
 
 
                 var oColorPicker = new ColorPicker({
+                    color: "blue",
                     change: function(oEvent) {
                         console.log("Event change fired for ColorPicker with parameters: ", oEvent.getParameters());
                     }
@@ -995,12 +996,26 @@
                     value: "Control value",
                     valueState: "Warning",
                     valueStateMessage: "Value State Message",
-                    icon: new Icon({
-                        name: "add",
-                        click: function(oEvent) {
-                            console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
-                        }
-                    }),
+                    icon: [
+                        new Icon({
+                            name: "add",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Icon({
+                            name: "add",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Icon({
+                            name: "add",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
                     suggestionItems: [
                         new SuggestionGroupItem({
                             text: "Some text..."
@@ -1025,9 +1040,6 @@
                     },
                     suggestionItemSelect: function(oEvent) {
                         console.log("Event suggestionItemSelect fired for Input with parameters: ", oEvent.getParameters());
-                    },
-                    suggestionScroll: function(oEvent) {
-                        console.log("Event suggestionScroll fired for Input with parameters: ", oEvent.getParameters());
                     }
                 });
                 oInput.placeAt("testInput");
@@ -1219,12 +1231,26 @@
                     value: "Control value",
                     valueState: "Warning",
                     valueStateMessage: "Value State Message",
-                    icon: new Icon({
-                        name: "add",
-                        click: function(oEvent) {
-                            console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
-                        }
-                    }),
+                    icon: [
+                        new Icon({
+                            name: "add",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Icon({
+                            name: "add",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Icon({
+                            name: "add",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
                     suggestionItems: [
                         new SuggestionGroupItem({
                             text: "Some text..."
@@ -1287,9 +1313,6 @@
                     },
                     suggestionItemSelect: function(oEvent) {
                         console.log("Event suggestionItemSelect fired for MultiInput with parameters: ", oEvent.getParameters());
-                    },
-                    suggestionScroll: function(oEvent) {
-                        console.log("Event suggestionScroll fired for MultiInput with parameters: ", oEvent.getParameters());
                     },
                     tokenDelete: function(oEvent) {
                         console.log("Event tokenDelete fired for MultiInput with parameters: ", oEvent.getParameters());
@@ -2497,6 +2520,12 @@
                     },
                     itemDelete: function(oEvent) {
                         console.log("Event itemDelete fired for Tree with parameters: ", oEvent.getParameters());
+                    },
+                    itemMouseout: function(oEvent) {
+                        console.log("Event itemMouseout fired for Tree with parameters: ", oEvent.getParameters());
+                    },
+                    itemMouseover: function(oEvent) {
+                        console.log("Event itemMouseover fired for Tree with parameters: ", oEvent.getParameters());
                     },
                     itemToggle: function(oEvent) {
                         console.log("Event itemToggle fired for Tree with parameters: ", oEvent.getParameters());

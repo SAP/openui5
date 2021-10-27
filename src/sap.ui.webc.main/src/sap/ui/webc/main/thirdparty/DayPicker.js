@@ -70,8 +70,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/we
 			const firstDayOfWeek = this._getFirstDayOfWeek();
 			const monthsNames = localeData.getMonths("wide", this._primaryCalendarType);
 			const secondaryMonthsNames = this.hasSecondaryCalendarType && localeData.getMonths("wide", this.secondaryCalendarType);
-			const nonWorkingDayLabel = this.i18nBundle.getText(i18nDefaults.DAY_PICKER_NON_WORKING_DAY);
-			const todayLabel = this.i18nBundle.getText(i18nDefaults.DAY_PICKER_TODAY);
+			const nonWorkingDayLabel = DayPicker.i18nBundle.getText(i18nDefaults.DAY_PICKER_NON_WORKING_DAY);
+			const todayLabel = DayPicker.i18nBundle.getText(i18nDefaults.DAY_PICKER_TODAY);
 			const tempDate = this._getFirstDay();
 			const todayDate = CalendarDate__default.fromLocalJSDate(new Date(), this._primaryCalendarType);
 			const calendarDate = this._calendarDate;
@@ -96,7 +96,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/we
 				const nonWorkingAriaLabel = isWeekend ? `${nonWorkingDayLabel} ` : "";
 				const todayAriaLabel = isToday ? `${todayLabel} ` : "";
 				const ariaLabel = this.hasSecondaryCalendarType
-					? `${todayAriaLabel}${nonWorkingAriaLabel}${monthsNames[tempDate.getMonth()]} ${tempDate.getDate()}, ${tempDate.getYear()} ${secondaryMonthsNames[tempSecondDate.getMonth()]} ${tempSecondDate.getDate()}, ${tempSecondDate.getYear()}`
+					? `${todayAriaLabel}${nonWorkingAriaLabel}${monthsNames[tempDate.getMonth()]} ${tempDate.getDate()}, ${tempDate.getYear()}; ${secondaryMonthsNames[tempSecondDate.getMonth()]} ${tempSecondDate.getDate()}, ${tempSecondDate.getYear()}`
 					: `${todayAriaLabel}${nonWorkingAriaLabel}${monthsNames[tempDate.getMonth()]} ${tempDate.getDate()}, ${tempDate.getYear()}`;
 				const day = {
 					timestamp: timestamp.toString(),
@@ -161,7 +161,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/we
 			this._dayNames = [];
 			this._dayNames.push({
 				classes: "ui5-dp-dayname",
-				name: this.i18nBundle.getText(i18nDefaults.DAY_PICKER_WEEK_NUMBER_TEXT),
+				name: DayPicker.i18nBundle.getText(i18nDefaults.DAY_PICKER_WEEK_NUMBER_TEXT),
 			});
 			for (let i = 0; i < DAYS_IN_WEEK; i++) {
 				dayOfTheWeek = i + this._getFirstDayOfWeek();
@@ -452,6 +452,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/we
 					width: "100%",
 				},
 			};
+		}
+		get ariaRoledescription() {
+			return this.hasSecondaryCalendarType
+				? `${this._primaryCalendarType} calendar with secondary ${this.secondaryCalendarType} calendar`
+				: `${this._primaryCalendarType} calendar`;
 		}
 	}
 	DayPicker.define();

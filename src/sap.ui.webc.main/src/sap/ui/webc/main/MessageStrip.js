@@ -65,7 +65,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines whether the MessageStrip renders close icon.
+				 * Defines whether the MessageStrip renders close button.
 				 */
 				hideCloseButton: {
 					type: "boolean",

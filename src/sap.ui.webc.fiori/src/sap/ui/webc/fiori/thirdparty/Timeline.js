@@ -45,16 +45,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._itemNavigation = new ItemNavigation__default(this, {
 				getItemsCallback: () => this.items,
 			});
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents-fiori");
 		}
 		static get dependencies() {
 			return [TimelineItem];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents-fiori");
+			Timeline.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents-fiori");
 		}
 		get ariaLabel() {
-			return this.i18nBundle.getText(i18nDefaults.TIMELINE_ARIA_LABEL);
+			return Timeline.i18nBundle.getText(i18nDefaults.TIMELINE_ARIA_LABEL);
 		}
 		_onfocusin(event) {
 			const target = event.target;

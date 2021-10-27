@@ -1,9 +1,10 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', './generated/templates/IllustratedMessageTemplate.lit', './types/IllustrationMessageType', './illustrations/BeforeSearch', './generated/themes/IllustratedMessage.css'], function (UI5Element, ResizeHandler, Illustrations, i18nBundle, litRender, IllustratedMessageTemplate_lit, IllustrationMessageType, BeforeSearch, IllustratedMessage_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/main/thirdparty/Title', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', './generated/templates/IllustratedMessageTemplate.lit', './types/IllustrationMessageType', './illustrations/BeforeSearch', './generated/themes/IllustratedMessage.css'], function (UI5Element, ResizeHandler, Illustrations, i18nBundle, Title, litRender, IllustratedMessageTemplate_lit, IllustrationMessageType, BeforeSearch, IllustratedMessage_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
 	var UI5Element__default = /*#__PURE__*/_interopDefaultLegacy(UI5Element);
 	var ResizeHandler__default = /*#__PURE__*/_interopDefaultLegacy(ResizeHandler);
+	var Title__default = /*#__PURE__*/_interopDefaultLegacy(Title);
 	var litRender__default = /*#__PURE__*/_interopDefaultLegacy(litRender);
 
 	const ILLUSTRATION_NOT_FOUND = "ILLUSTRATION_NOT_FOUND";
@@ -43,7 +44,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	class IllustratedMessage extends UI5Element__default {
 		constructor() {
 			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents-fiori");
 			this._handleResize = this.handleResize.bind(this);
 		}
 		static get metadata() {
@@ -59,7 +59,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return IllustratedMessageTemplate_lit;
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents-fiori");
+			IllustratedMessage.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents-fiori");
 		}
 		static get BREAKPOINTS() {
 			return {
@@ -76,6 +76,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				SCENE: "scene",
 			};
 		}
+		static get dependencies() {
+			return [Title__default];
+		}
 		onBeforeRendering() {
 			const illustrationData = Illustrations.getIllustrationDataSync(this.name);
 			if (illustrationData === ILLUSTRATION_NOT_FOUND) {
@@ -86,8 +89,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.spotSvg = illustrationData.spotSvg;
 			this.dialogSvg = illustrationData.dialogSvg;
 			this.sceneSvg = illustrationData.sceneSvg;
-			this.illustrationTitle = this.i18nBundle.getText(illustrationData.title);
-			this.illustrationSubtitle = this.i18nBundle.getText(illustrationData.subtitle);
+			this.illustrationTitle = IllustratedMessage.i18nBundle.getText(illustrationData.title);
+			this.illustrationSubtitle = IllustratedMessage.i18nBundle.getText(illustrationData.subtitle);
 		}
 		onEnterDOM() {
 			ResizeHandler__default.register(this, this._handleResize);
@@ -126,6 +129,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get effectiveSubitleText() {
 			return this.subtitleText ? this.subtitleText : this.illustrationSubtitle;
+		}
+		get hasTitle() {
+			return this.titleText || this.illustrationTitle;
+		}
+		get hasSubtitle() {
+			return this.subtitleText || this.illustrationSubtitle;
 		}
 		get hasActions() {
 			return !!this.actions.length && this.media !== IllustratedMessage.MEDIA.BASE;

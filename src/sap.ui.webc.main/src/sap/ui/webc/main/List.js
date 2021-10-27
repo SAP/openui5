@@ -74,7 +74,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Sets the accessible aria name of the component.
+				 * Defines the accessible name of the component.
 				 */
 				accessibleName: {
 					type: "string",
@@ -82,7 +82,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Receives id(or many ids) of the elements that label the input
+				 * Defines the IDs of the elements that label the input.
 				 */
 				accessibleNameRef: {
 					type: "string",
@@ -92,11 +92,10 @@ sap.ui.define([
 				/**
 				 * Defines the accessible role of the component. <br>
 				 * <br>
-				 * <b>Note:</b> If you use notification list items, it's recommended to set <code>accessible-role="list"</code> for better accessibility.
 				 */
 				accessibleRole: {
 					type: "string",
-					defaultValue: "listbox"
+					defaultValue: "list"
 				},
 
 				/**
@@ -163,7 +162,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Determines whether the list items are indented.
+				 * Determines whether the component is indented.
 				 */
 				indent: {
 					type: "boolean",

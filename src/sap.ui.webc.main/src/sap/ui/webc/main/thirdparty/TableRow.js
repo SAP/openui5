@@ -66,10 +66,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		static get template() {
 			return TableRowTemplate_lit;
 		}
-		constructor() {
-			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
-		}
 		_onmouseup() {
 			this.deactivate();
 		}
@@ -120,7 +116,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (event.isMarked === "button") {
 				return;
 			}
-			if (!this.contains(document.activeElement)) {
+			if (!this.contains(this.getRootNode().activeElement)) {
 				this._onfocusin(event, true );
 				this.deactivate();
 			}
@@ -137,7 +133,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.fireEvent("selection-requested", { row: this });
 		}
 		_getActiveElementTagName() {
-			return document.activeElement.localName.toLocaleLowerCase();
+			return this.getRootNode().activeElement.localName.toLocaleLowerCase();
 		}
 		activate() {
 			if (this.type === TableRowType.Active) {
@@ -208,7 +204,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return `${ariaLabel}. ${this._ariaPosition}`;
 		}
 		get ariaLabelRowSelection() {
-			return this.i18nBundle.getText(i18nDefaults.ARIA_LABEL_ROW_SELECTION);
+			return TableRow.i18nBundle.getText(i18nDefaults.ARIA_LABEL_ROW_SELECTION);
 		}
 		get isSingleSelect() {
 			return this.mode === "SingleSelect";
@@ -230,7 +226,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return textContent.replace(/[\n\r\t]/g, "").trim();
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			TableRow.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	TableRow.define();

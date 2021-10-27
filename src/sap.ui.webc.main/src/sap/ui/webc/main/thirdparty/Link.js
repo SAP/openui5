@@ -62,7 +62,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		constructor() {
 			super();
 			this._dummyAnchor = document.createElement("a");
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		static get metadata() {
 			return metadata;
@@ -108,7 +107,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			};
 		}
 		get linkTypeText() {
-			return this.i18nBundle.getText(Link.typeTextMappings()[this.design]);
+			return Link.i18nBundle.getText(Link.typeTextMappings()[this.design]);
 		}
 		get parsedRef() {
 			return (this.href && this.href.length > 0) ? this.href : undefined;
@@ -117,7 +116,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.accessibleRole || "link";
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			Link.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		_onclick(event) {
 			event.isMarked = "link";

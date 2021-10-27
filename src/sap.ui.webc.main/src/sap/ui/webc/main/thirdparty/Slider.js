@@ -26,7 +26,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/co
 			super();
 			this._stateStorage.value = null;
 			this._setInitialValue("value", null);
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		onBeforeRendering() {
 			if (!this.isCurrentStateOutdated()) {
@@ -142,10 +141,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/co
 			return this.disabled || undefined;
 		}
 		get _ariaLabelledByText() {
-			return this.i18nBundle.getText(i18nDefaults.SLIDER_ARIA_DESCRIPTION);
+			return Slider.i18nBundle.getText(i18nDefaults.SLIDER_ARIA_DESCRIPTION);
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			Slider.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	Slider.define();

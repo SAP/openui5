@@ -19,6 +19,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			_iconOnly: {
 				type: Boolean,
 			},
+			active: {
+				type: Boolean,
+			},
 		},
 		managedSlots: true,
 		slots:  {
@@ -31,10 +34,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		},
 	};
 	class Badge extends UI5Element__default {
-		constructor() {
-			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
-		}
 		static get metadata() {
 			return metadata;
 		}
@@ -48,11 +47,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return Badge_css;
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			Badge.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		onBeforeRendering() {
 			this._hasIcon = this.hasIcon;
 			this._iconOnly = this.iconOnly;
+		}
+		_onmousedown() {
+			this.active = true;
+		}
+		_onmouseup() {
+			this.active = false;
 		}
 		get hasText() {
 			return !!this.textContent.trim().length;
@@ -64,7 +69,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.hasIcon && !this.hasText;
 		}
 		get badgeDescription() {
-			return this.i18nBundle.getText(i18nDefaults.BADGE_DESCRIPTION);
+			return Badge.i18nBundle.getText(i18nDefaults.BADGE_DESCRIPTION);
 		}
 	}
 	Badge.define();

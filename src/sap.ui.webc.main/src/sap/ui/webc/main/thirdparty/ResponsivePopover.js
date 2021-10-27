@@ -1,12 +1,8 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/PopupUtils', './generated/i18n/i18n-defaults', './generated/templates/ResponsivePopoverTemplate.lit', './Popover', './Dialog', './Button', './Title', 'sap/ui/webc/common/thirdparty/icons/decline', './generated/themes/ResponsivePopover.css'], function (Device, i18nBundle, PopupUtils, i18nDefaults, ResponsivePopoverTemplate_lit, Popover, Dialog, Button, Title, decline, ResponsivePopover_css) { 'use strict';
 
-	const POPOVER_MIN_WIDTH = 100;
 	const metadata = {
 		tag: "ui5-responsive-popover",
 		properties:  {
-			noStretch: {
-				type: Boolean,
-			},
 			withPadding: {
 				type: Boolean,
 			},
@@ -24,7 +20,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 	class ResponsivePopover extends Popover {
 		constructor() {
 			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		static get metadata() {
 			return metadata;
@@ -51,25 +46,19 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			];
 		}
 		async showAt(opener, preventInitialFocus = false) {
-			this.style.display = this._isPhone ? "contents" : "";
-			if (this.isOpen() || (this._dialog && this._dialog.isOpen())) {
-				return;
-			}
 			if (!Device.isPhone()) {
-				if (!this.noStretch) {
-					this._minWidth = Math.max(POPOVER_MIN_WIDTH, opener.getBoundingClientRect().width);
-				}
 				await super.showAt(opener, preventInitialFocus);
 			} else {
+				this.style.display = "contents";
 				this.style.zIndex = PopupUtils.getNextZIndex();
-				await this._dialog.show();
+				await this._dialog.show(preventInitialFocus);
 			}
 		}
 		close(escPressed = false, preventRegistryUpdate = false, preventFocusRestore = false) {
 			if (!Device.isPhone()) {
 				super.close(escPressed, preventRegistryUpdate, preventFocusRestore);
 			} else {
-				this._dialog.close();
+				this._dialog.close(escPressed, preventRegistryUpdate, preventFocusRestore);
 			}
 		}
 		toggle(opener) {
@@ -80,13 +69,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 		}
 		isOpen() {
 			return Device.isPhone() ? this._dialog.isOpen() : super.isOpen();
-		}
-		get styles() {
-			const popoverStyles = super.styles;
-			popoverStyles.root = {
-				"min-width": `${this._minWidth}px`,
-			};
-			return popoverStyles;
 		}
 		get _dialog() {
 			return this.shadowRoot.querySelector("[ui5-dialog]");
@@ -101,7 +83,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			return this._isPhone || !this.contentOnlyOnDesktop;
 		}
 		get _closeDialogAriaLabel() {
-			return this.i18nBundle.getText(i18nDefaults.RESPONSIVE_POPOVER_CLOSE_DIALOG_BUTTON);
+			return ResponsivePopover.i18nBundle.getText(i18nDefaults.RESPONSIVE_POPOVER_CLOSE_DIALOG_BUTTON);
 		}
 		_afterDialogOpen(event) {
 			this.opened = true;
@@ -116,7 +98,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			this.fireEvent(type, event.detail);
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			ResponsivePopover.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	ResponsivePopover.define();

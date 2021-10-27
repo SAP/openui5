@@ -121,15 +121,13 @@ sap.ui.define([
 				Control.apply(this, arguments);
 
 				this.__onInvalidationBound = this.__onInvalidation.bind(this);
+				this.__handleCustomEventBound = this.__handleCustomEvent.bind(this);
 
-				// After the DOM element is rendered for the first time, attach the invalidation callback (in __onAfterRenderingDelegate)
 				this.__delegates = {
+					onBeforeRendering: this.__onBeforeRenderingDelegate,
 					onAfterRendering: this.__onAfterRenderingDelegate
 				};
 				this.addDelegate(this.__delegates, true, this, false);
-
-				// Listen for all DOM events, described in the Component Wrapper's metadata
-				this.__attachCustomEventsListeners();
 			},
 
 			renderer: WebComponentRenderer
@@ -241,12 +239,19 @@ sap.ui.define([
 		};
 
 		/**
-		 * Implement the onInvalidation hook for each UI5 Web Component, and update __slot, if the component has an individual slot
+		 * @private
+		 */
+		WebComponent.prototype.__onBeforeRenderingDelegate = function() {
+			this.__detachCustomEventsListeners();
+		};
+
+		/**
 		 * @private
 		 */
 		WebComponent.prototype.__onAfterRenderingDelegate = function() {
-			var oDomRef = this.getDomRef();
+			this.__attachCustomEventsListeners();
 
+			var oDomRef = this.getDomRef();
 			window.customElements.whenDefined(oDomRef.localName).then(function() {
 				oDomRef.attachInvalidate(this.__onInvalidationBound);
 
@@ -295,16 +300,21 @@ sap.ui.define([
 			var oEvents = this.getMetadata().getEvents();
 			for (var sEventName in oEvents) {
 				var sCustomEventName = hyphenate(sEventName);
-				this.attachBrowserEvent(sCustomEventName, this.__handleCustomEvent, this);
+				this.getDomRef().addEventListener(sCustomEventName, this.__handleCustomEventBound);
 			}
 		};
 
 		WebComponent.prototype.__detachCustomEventsListeners = function() {
+			var oDomRef = this.getDomRef();
+			if (!oDomRef) {
+				return;
+			}
+
 			var oEvents = this.getMetadata().getEvents();
 			for (var sEventName in oEvents) {
 				if (oEvents.hasOwnProperty(sEventName)) {
 					var sCustomEventName = hyphenate(sEventName);
-					this.detachBrowserEvent(sCustomEventName, this.__handleCustomEvent, this);
+					oDomRef.removeEventListener(sCustomEventName, this.__handleCustomEventBound);
 				}
 			}
 		};
@@ -356,7 +366,6 @@ sap.ui.define([
 
 			return this.getDomRef()[name];
 		};
-
 
 		WebComponent.prototype.destroy = function() {
 			var oDomRef = this.getDomRef();

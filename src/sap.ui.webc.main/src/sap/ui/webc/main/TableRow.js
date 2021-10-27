@@ -31,7 +31,7 @@ sap.ui.define([
 	 * The <code>sap.ui.webc.main.TableRow</code> exposes the following CSS Shadow Parts:
 	 * <ul>
 	 *     <li>row - Used to style the native <code>tr</code> element</li>
-	 *     <li>popin-row - Used to style the <code>tr</code> element</li> when a row pops in
+	 *     <li>popin-row - Used to style the <code>tr</code> element when a row pops in</li>
 	 * </ul>
 	 *
 	 * @author SAP SE
@@ -69,9 +69,9 @@ sap.ui.define([
 				 * <ul>
 				 *     <li><code>Active</code></li>
 				 *     <li><code>Inactive</code></li>
-				 *     <ul> <br>
-				 *         <br>
-				 *         <b>Note:</b> When set to <code>Active</code>, the item will provide visual response upon press, while with type <code>Inactive</code> - will not.
+				 * </ul> <br>
+				 * <br>
+				 * <b>Note:</b> When set to <code>Active</code>, the item will provide visual response upon press, while with type <code>Inactive</code> - will not.
 				 */
 				type: {
 					type: "sap.ui.webc.main.TableRowType",

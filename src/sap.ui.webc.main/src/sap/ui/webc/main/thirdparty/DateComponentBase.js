@@ -39,7 +39,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		constructor() {
 			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		get _primaryCalendarType() {
 			const localeData = getCachedLocaleDataInstance__default(getLocale__default());
@@ -89,9 +88,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return dateFormat;
 		}
 		static async onDefine() {
-			await Promise.all([
+			[DateComponentBase.i18nBundle] = await Promise.all([
+				i18nBundle.getI18nBundle("@ui5/webcomponents"),
 				LocaleData.fetchCldr(getLocale__default().getLanguage(), getLocale__default().getRegion(), getLocale__default().getScript()),
-				i18nBundle.fetchI18nBundle("@ui5/webcomponents"),
 			]);
 		}
 	}

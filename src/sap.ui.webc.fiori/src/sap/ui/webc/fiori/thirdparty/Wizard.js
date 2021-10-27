@@ -35,7 +35,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			width: {
 				type: Float__default,
 			},
-			 stepSwitchThreshold: {
+			stepSwitchThreshold: {
 				type: Float__default,
 				defaultValue: STEP_SWITCH_THRESHOLDS.DEFAULT,
 			},
@@ -81,7 +81,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				getItemsCallback: () => this.enabledStepsInHeaderDOM,
 			});
 			this._onStepResize = this.onStepResize.bind(this);
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents-fiori");
 		}
 		static get metadata() {
 			return metadata;
@@ -116,7 +115,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents-fiori");
+			Wizard.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents-fiori");
 		}
 		static get PHONE_BREAKPOINT() {
 			return 599;
@@ -335,7 +334,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const bExpanded = stepInHeader.getAttribute(EXPANDED_STEP) === "true";
 			const newlySelectedIndex = this.slottedSteps.indexOf(stepToSelect);
 			const firstFocusableElement = await FocusableElements.getFirstFocusableElement(stepToSelect.firstElementChild);
-			firstFocusableElement.focus();
+			if (firstFocusableElement) {
+				firstFocusableElement.focus();
+			}
 			if (selectedStep === stepToSelect) {
 				this.scrollToContentItem(this.selectedStepIndex);
 				return;
@@ -352,7 +353,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return contentHeight;
 		}
 		getStepAriaLabelText(step, ariaLabel) {
-			return this.i18nBundle.getText(i18nDefaults.WIZARD_STEP_ARIA_LABEL, ariaLabel);
+			return Wizard.i18nBundle.getText(i18nDefaults.WIZARD_STEP_ARIA_LABEL, ariaLabel);
 		}
 		get stepsDOM() {
 			return Array.from(this.shadowRoot.querySelectorAll(".ui5-wiz-content-item"));
@@ -410,34 +411,34 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.width <= Wizard.PHONE_BREAKPOINT;
 		}
 		get navAriaRoleDescription() {
-			return this.i18nBundle.getText(i18nDefaults.WIZARD_NAV_ARIA_ROLE_DESCRIPTION);
+			return Wizard.i18nBundle.getText(i18nDefaults.WIZARD_NAV_ARIA_ROLE_DESCRIPTION);
 		}
 		get navAriaLabelText() {
-			return this.i18nBundle.getText(i18nDefaults.WIZARD_NAV_ARIA_LABEL);
+			return Wizard.i18nBundle.getText(i18nDefaults.WIZARD_NAV_ARIA_LABEL);
 		}
 		get navAriaDescribedbyText() {
-			return this.i18nBundle.getText(i18nDefaults.WIZARD_LIST_ARIA_DESCRIBEDBY);
+			return Wizard.i18nBundle.getText(i18nDefaults.WIZARD_LIST_ARIA_DESCRIBEDBY);
 		}
 		get listAriaLabelText() {
-			return this.i18nBundle.getText(i18nDefaults.WIZARD_LIST_ARIA_LABEL);
+			return Wizard.i18nBundle.getText(i18nDefaults.WIZARD_LIST_ARIA_LABEL);
 		}
 		get actionSheetStepsText() {
-			return this.i18nBundle.getText(i18nDefaults.WIZARD_ACTIONSHEET_STEPS_ARIA_LABEL);
+			return Wizard.i18nBundle.getText(i18nDefaults.WIZARD_ACTIONSHEET_STEPS_ARIA_LABEL);
 		}
 		get navStepDefaultHeading() {
-			return this.i18nBundle.getText(i18nDefaults.WIZARD_NAV_STEP_DEFAULT_HEADING);
+			return Wizard.i18nBundle.getText(i18nDefaults.WIZARD_NAV_STEP_DEFAULT_HEADING);
 		}
 		get optionalStepText() {
-			return this.i18nBundle.getText(i18nDefaults.WIZARD_OPTIONAL_STEP_ARIA_LABEL);
+			return Wizard.i18nBundle.getText(i18nDefaults.WIZARD_OPTIONAL_STEP_ARIA_LABEL);
 		}
 		get activeStepText() {
-			return this.i18nBundle.getText(i18nDefaults.WIZARD_STEP_ACTIVE);
+			return Wizard.i18nBundle.getText(i18nDefaults.WIZARD_STEP_ACTIVE);
 		}
 		get inactiveStepText() {
-			return this.i18nBundle.getText(i18nDefaults.WIZARD_STEP_INACTIVE);
+			return Wizard.i18nBundle.getText(i18nDefaults.WIZARD_STEP_INACTIVE);
 		}
 		get ariaLabelText() {
-			return this.accessibleName || this.i18nBundle.getText(i18nDefaults.WIZARD_NAV_ARIA_ROLE_DESCRIPTION);
+			return this.accessibleName || Wizard.i18nBundle.getText(i18nDefaults.WIZARD_NAV_ARIA_ROLE_DESCRIPTION);
 		}
 		get effectiveStepSwitchThreshold() {
 			return clamp__default(this.stepSwitchThreshold, STEP_SWITCH_THRESHOLDS.MIN, STEP_SWITCH_THRESHOLDS.MAX);
@@ -475,7 +476,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					accInfo,
 					refStepId: step._id,
 					tabIndex: this.selectedStepIndex === idx ? "0" : "-1",
-					styles: `z-index: ${isAfterCurrent ? --inintialZIndex : 1}`,
+					styles: {
+						zIndex: isAfterCurrent ? --inintialZIndex : 1,
+					},
 				};
 			});
 		}

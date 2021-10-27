@@ -115,7 +115,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._firstRendering = true;
 			this._openValueStateMsgPopover = false;
 			this._fnOnResize = this._onResize.bind(this);
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		onEnterDOM() {
 			ResizeHandler__default.register(this, this._fnOnResize);
@@ -161,9 +160,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._openValueStateMsgPopover = true;
 			this.previousValue = this.getInputDomRef().value;
 		}
-		_onfocusout() {
+		_onfocusout(event) {
+			const focusedOutToValueStateMessage = event.relatedTarget && event.relatedTarget.shadowRoot && event.relatedTarget.shadowRoot.querySelector(".ui5-valuestatemessage-root");
 			this.focused = false;
-			this._openValueStateMsgPopover = false;
+			if (!focusedOutToValueStateMessage) {
+				this._openValueStateMsgPopover = false;
+			}
 		}
 		_onchange() {
 			this.fireEvent("change", {});
@@ -231,9 +233,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				if (maxLength) {
 					leftCharactersCount = maxLength - this.value.length;
 					if (leftCharactersCount >= 0) {
-						exceededText = this.i18nBundle.getText(i18nDefaults.TEXTAREA_CHARACTERS_LEFT, [leftCharactersCount]);
+						exceededText = TextArea.i18nBundle.getText(i18nDefaults.TEXTAREA_CHARACTERS_LEFT, leftCharactersCount);
 					} else {
-						exceededText = this.i18nBundle.getText(i18nDefaults.TEXTAREA_CHARACTERS_EXCEEDED, [Math.abs(leftCharactersCount)]);
+						exceededText = TextArea.i18nBundle.getText(i18nDefaults.TEXTAREA_CHARACTERS_EXCEEDED, Math.abs(leftCharactersCount));
 					}
 				}
 			} else {
@@ -321,18 +323,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.valueStateTextMappings()[this.valueState];
 		}
 		valueStateTextMappings() {
-			const i18nBundle = this.i18nBundle;
 			return {
-				"Information": i18nBundle.getText(i18nDefaults.VALUE_STATE_INFORMATION),
-				"Error": i18nBundle.getText(i18nDefaults.VALUE_STATE_ERROR),
-				"Warning": i18nBundle.getText(i18nDefaults.VALUE_STATE_WARNING),
+				"Information": TextArea.i18nBundle.getText(i18nDefaults.VALUE_STATE_INFORMATION),
+				"Error": TextArea.i18nBundle.getText(i18nDefaults.VALUE_STATE_ERROR),
+				"Warning": TextArea.i18nBundle.getText(i18nDefaults.VALUE_STATE_WARNING),
 			};
 		}
 		static get dependencies() {
 			return [Popover];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			TextArea.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	TextArea.define();

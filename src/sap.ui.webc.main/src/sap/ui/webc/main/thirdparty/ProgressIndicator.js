@@ -21,6 +21,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: Integer__default,
 				defaultValue: 0,
 			},
+			displayValue: {
+				type: String,
+			},
 			valueState: {
 				type: ValueState__default,
 				defaultValue: ValueState__default.None,
@@ -48,19 +51,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			super();
 			this._previousValue = 0;
 			this._transitionDuration = 0;
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		onBeforeRendering() {
 			this._transitionDuration = Math.abs(this._previousValue - this.validatedValue) * 20;
 			this._previousValue = this.validatedValue;
 		}
 		valueStateTextMappings() {
-			const i18nBundle = this.i18nBundle;
 			return {
-				"Error": i18nBundle.getText(i18nDefaults.VALUE_STATE_ERROR),
-				"Warning": i18nBundle.getText(i18nDefaults.VALUE_STATE_WARNING),
-				"Success": i18nBundle.getText(i18nDefaults.VALUE_STATE_SUCCESS),
-				"Information": i18nBundle.getText(i18nDefaults.VALUE_STATE_INFORMATION),
+				"Error": ProgressIndicator.i18nBundle.getText(i18nDefaults.VALUE_STATE_ERROR),
+				"Warning": ProgressIndicator.i18nBundle.getText(i18nDefaults.VALUE_STATE_WARNING),
+				"Success": ProgressIndicator.i18nBundle.getText(i18nDefaults.VALUE_STATE_SUCCESS),
+				"Information": ProgressIndicator.i18nBundle.getText(i18nDefaults.VALUE_STATE_INFORMATION),
 			};
 		}
 		valueStateIconMappings() {
@@ -117,7 +118,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.disabled || undefined;
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			ProgressIndicator.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	ProgressIndicator.define();

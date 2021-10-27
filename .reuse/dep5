@@ -418,7 +418,7 @@ Comment: these files contain content from SAP and BooleanExpressionEvaluator: Bo
 
 # Library: sap.ui.webc.common:
 
-Files: src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/base/*.* src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/theme-base/*.* src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/localization/*.* src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/icons/*.* src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/icons-tnt/*.*
+Files: src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/base/*.* src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/theming/*.* src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/localization/*.* src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/icons/*.* src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/icons-tnt/*.* src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/icons-business-suite/*.*
 Copyright: SAP
 License: Apache-2.0
 Comment: these files belong to: UI5 Web Components

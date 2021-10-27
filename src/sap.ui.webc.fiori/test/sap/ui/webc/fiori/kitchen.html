@@ -40,10 +40,13 @@
                 "sap/ui/webc/fiori/UploadCollection",
                 "sap/ui/webc/fiori/UploadCollectionItem",
                 "sap/ui/webc/fiori/ViewSettingsDialog",
+                "sap/ui/webc/fiori/FilterItem",
+                "sap/ui/webc/fiori/FilterItemOption",
+                "sap/ui/webc/fiori/SortItem",
                 "sap/ui/webc/fiori/Wizard",
                 "sap/ui/webc/fiori/WizardStep"
             ], function(
-                Bar, Button, BarcodeScannerDialog, FlexibleColumnLayout, IllustratedMessage, NotificationListItem, NotificationAction, Avatar, Page, ProductSwitch, ProductSwitchItem, ShellBar, ShellBarItem, CustomListItem, GroupHeaderListItem, StandardListItem, Input, Icon, SuggestionGroupItem, SuggestionItem, SideNavigation, SideNavigationItem, SideNavigationSubItem, Timeline, TimelineItem, UploadCollection, UploadCollectionItem, ViewSettingsDialog, Wizard, WizardStep
+                Bar, Button, BarcodeScannerDialog, FlexibleColumnLayout, IllustratedMessage, NotificationListItem, NotificationAction, Avatar, Page, ProductSwitch, ProductSwitchItem, ShellBar, ShellBarItem, CustomListItem, GroupHeaderListItem, StandardListItem, Input, Icon, SuggestionGroupItem, SuggestionItem, SideNavigation, SideNavigationItem, SideNavigationSubItem, Timeline, TimelineItem, UploadCollection, UploadCollectionItem, ViewSettingsDialog, FilterItem, FilterItemOption, SortItem, Wizard, WizardStep
             ) {
 
                 var oBar = new Bar({
@@ -538,12 +541,26 @@
                         value: "Control value",
                         valueState: "Warning",
                         valueStateMessage: "Value State Message",
-                        icon: new Icon({
-                            name: "add",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
-                            }
-                        }),
+                        icon: [
+                            new Icon({
+                                name: "add",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            new Icon({
+                                name: "add",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            new Icon({
+                                name: "add",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                                }
+                            })
+                        ],
                         suggestionItems: [
                             new SuggestionGroupItem({
                                 text: "Some text..."
@@ -568,9 +585,6 @@
                         },
                         suggestionItemSelect: function(oEvent) {
                             console.log("Event suggestionItemSelect fired for Input with parameters: ", oEvent.getParameters());
-                        },
-                        suggestionScroll: function(oEvent) {
-                            console.log("Event suggestionScroll fired for Input with parameters: ", oEvent.getParameters());
                         }
                     }),
                     startButton: new Button({
@@ -1028,45 +1042,59 @@
                 oViewSettingsDialog0Button.placeAt("methodsViewSettingsDialog");
 
                 var oViewSettingsDialog = new ViewSettingsDialog({
-                    sortItems: [
-                        new CustomListItem({
-                            content: [
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
+                    filterItems: [
+                        new FilterItem({
+                            text: "Some text...",
+                            values: [
+                                new FilterItemOption({
+                                    text: "Some text..."
                                 }),
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
+                                new FilterItemOption({
+                                    text: "Some text..."
                                 }),
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
+                                new FilterItemOption({
+                                    text: "Some text..."
                                 })
-                            ],
-                            detailClick: function(oEvent) {
-                                console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
-                            }
+                            ]
                         }),
-                        new GroupHeaderListItem({
+                        new FilterItem({
+                            text: "Some text...",
+                            values: [
+                                new FilterItemOption({
+                                    text: "Some text..."
+                                }),
+                                new FilterItemOption({
+                                    text: "Some text..."
+                                }),
+                                new FilterItemOption({
+                                    text: "Some text..."
+                                })
+                            ]
+                        }),
+                        new FilterItem({
+                            text: "Some text...",
+                            values: [
+                                new FilterItemOption({
+                                    text: "Some text..."
+                                }),
+                                new FilterItemOption({
+                                    text: "Some text..."
+                                }),
+                                new FilterItemOption({
+                                    text: "Some text..."
+                                })
+                            ]
+                        })
+                    ],
+                    sortItems: [
+                        new SortItem({
                             text: "Some text..."
                         }),
-                        new StandardListItem({
-                            additionalText: "Some text...",
-                            icon: "employee",
-                            text: "Some text...",
-                            detailClick: function(oEvent) {
-                                console.log("Event detailClick fired for StandardListItem with parameters: ", oEvent.getParameters());
-                            }
+                        new SortItem({
+                            text: "Some text..."
+                        }),
+                        new SortItem({
+                            text: "Some text..."
                         })
                     ],
                     cancel: function(oEvent) {

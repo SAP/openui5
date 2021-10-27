@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/config/Theme', './generated/themes/SliderBase.css'], function (UI5Element, litRender, Float, Integer, ResizeHandler, Device, Keys, Theme, SliderBase_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/icons/source-code', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/config/Theme', './generated/themes/SliderBase.css'], function (UI5Element, litRender, Float, Integer, ResizeHandler, sourceCode, Keys, Theme, SliderBase_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -82,6 +82,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				sap_belize: "#bfbfbf",
 				sap_belize_hcw: "#000000",
 				sap_belize_hcb: "#ffffff",
+				sap_horizon: "#d5dadd",
 			};
 		}
 		static get UP_EVENTS() {
@@ -211,9 +212,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const directionStart = this.directionStart;
 			const step = this._effectiveStep;
 			const newValue = SliderBase.getValueFromInteraction(event, step, min, max, domRect, directionStart);
-			if (Device.isPhone() && this.showTooltip) {
-				this._tooltipVisibility = SliderBase.TOOLTIP_VISIBILITY.VISIBLE;
-			}
 			this._isUserInteraction = true;
 			this._moveEventType = !this._moveEventType ? SliderBase.MOVE_EVENT_MAP[event.type] : this._moveEventType;
 			SliderBase.UP_EVENTS.forEach(upEventType => window.addEventListener(upEventType, this._upHandler));
@@ -229,9 +227,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 		}
 		handleUpBase(valueType) {
-			if (Device.isPhone() && this.showTooltip) {
-				this._tooltipVisibility = SliderBase.TOOLTIP_VISIBILITY.HIDDEN;
-			}
 			SliderBase.UP_EVENTS.forEach(upEventType => window.removeEventListener(upEventType, this._upHandler));
 			window.removeEventListener(this._moveEventType, this._moveHandler);
 			this._moveEventType = null;
@@ -332,8 +327,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const maxStr = String(this._effectiveMax);
 			const minStr = String(this._effectiveMin);
 			const stepStr = String(this._effectiveStep);
-			const tickmarkWidth = "1px";
 			const currentTheme = Theme.getTheme();
+			const tickmarkWidth = "1px";
 			const currentColor = SliderBase.TICKMARK_COLOR_MAP[currentTheme];
 			this._tickmarksAmount = `${maxStr - minStr} / ${stepStr}`;
 			this._hiddenTickmarks = false;
@@ -366,7 +361,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const currentValue = this[affectedValue];
 			const min = this._effectiveMin;
 			const max = this._effectiveMax;
-			let step = this._effectiveStep;
+			let step = this.effectiveDir === "rtl" ? -this._effectiveStep : this._effectiveStep;
 			step = isBigStep && ((max - min) / step > 10) ? (max - min) / 10 : step;
 			if (Keys.isEnd(event)) {
 				return max - currentValue;

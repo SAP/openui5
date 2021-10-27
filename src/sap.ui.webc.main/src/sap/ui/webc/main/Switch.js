@@ -34,8 +34,8 @@ sap.ui.define([
 	 * The <code>sap.ui.webc.main.Switch</code> exposes the following CSS Shadow Parts:
 	 * <ul>
 	 *     <li>slider - Used to style the track, where the handle is being slid</li>
-	 *     <li>text-on - Used to style the onText</li>
-	 *     <li>text-off - Used to style the offText</li>
+	 *     <li>text-on - Used to style the <code>textOn</code> property text</li>
+	 *     <li>text-off - Used to style the <code>textOff</code> property text</li>
 	 *     <li>handle - Used to style the handle of the switch</li>
 	 * </ul>
 	 *
@@ -88,7 +88,7 @@ sap.ui.define([
 				/**
 				 * Defines the text, displayed when the component is not checked. <br>
 				 * <br>
-				 * <b>Note:</b> We recommend using short texts, up to 3 letters (larger texts would be cut off).
+				 * <b>Note:</b> We recommend using short texts, up to 3 letters (larger texts would be cut off). <b>Note:</b> This property will have no effect if the theme is set to <code>sap_horizon</code>.
 				 */
 				textOff: {
 					type: "string",
@@ -100,7 +100,7 @@ sap.ui.define([
 				 *
 				 * <br>
 				 * <br>
-				 * <b>Note:</b> We recommend using short texts, up to 3 letters (larger texts would be cut off).
+				 * <b>Note:</b> We recommend using short texts, up to 3 letters (larger texts would be cut off). <b>Note:</b> This property will have no effect if the theme is set to <code>sap_horizon</code>.
 				 */
 				textOn: {
 					type: "string",

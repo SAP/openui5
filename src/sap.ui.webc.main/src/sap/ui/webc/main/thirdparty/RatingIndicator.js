@@ -57,12 +57,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return RatingIndicatorTemplate_lit;
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			RatingIndicator.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		constructor() {
 			super();
 			this._liveValue = null;
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		onBeforeRendering() {
 			this.calcState();
@@ -134,10 +133,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.getAttribute("title") || this.defaultTooltip;
 		}
 		get defaultTooltip() {
-			return this.i18nBundle.getText(i18nDefaults.RATING_INDICATOR_TOOLTIP_TEXT);
+			return RatingIndicator.i18nBundle.getText(i18nDefaults.RATING_INDICATOR_TOOLTIP_TEXT);
 		}
 		get _ariaRoleDescription() {
-			return this.i18nBundle.getText(i18nDefaults.RATING_INDICATOR_TEXT);
+			return RatingIndicator.i18nBundle.getText(i18nDefaults.RATING_INDICATOR_TEXT);
 		}
 		get _ariaDisabled() {
 			return this.disabled || undefined;

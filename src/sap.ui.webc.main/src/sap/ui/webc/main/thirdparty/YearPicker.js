@@ -50,6 +50,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/localization/DateFormat', 'sap/ui/
 			}
 			const oYearFormat = DateFormat__default.getDateInstance({ format: "y", calendarType: this._primaryCalendarType }, getLocale__default());
 			this._calculateFirstYear();
+			this._lastYear = this._firstYear + PAGE_SIZE - 1;
 			const calendarDate = this._calendarDate;
 			const minDate = this._minDate;
 			const maxDate = this._maxDate;

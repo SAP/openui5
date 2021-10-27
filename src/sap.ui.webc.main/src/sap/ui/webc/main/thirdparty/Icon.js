@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/asset-registries/Icons', 'sap/ui/webc/common/thirdparty/base/util/createStyleInHead', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/asset-registries/i18n', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/isLegacyBrowser', './generated/templates/IconTemplate.lit', './generated/themes/Icon.css'], function (UI5Element, litRender, Icons, createStyleInHead, i18nBundle, i18n, Keys, isLegacyBrowser, IconTemplate_lit, Icon_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/asset-registries/Icons', 'sap/ui/webc/common/thirdparty/base/util/createStyleInHead', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/isLegacyBrowser', './generated/templates/IconTemplate.lit', './generated/themes/Icon.css'], function (UI5Element, litRender, Icons, createStyleInHead, i18nBundle, Keys, isLegacyBrowser, IconTemplate_lit, Icon_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -8,6 +8,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	var isLegacyBrowser__default = /*#__PURE__*/_interopDefaultLegacy(isLegacyBrowser);
 
 	const ICON_NOT_FOUND = "ICON_NOT_FOUND";
+	const PRESENTATION_ROLE = "presentation";
 	const metadata = {
 		tag: "ui5-icon",
 		languageAware: true,
@@ -94,11 +95,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.fireEvent("click");
 			}
 		}
-		_onclick(event) {
-			if (this.interactive) {
-				event.stopPropagation();
-				this.fireEvent("click");
-			}
+		_onClickHandler(event) {
+			event.stopPropagation();
+			this.fireEvent("click");
 		}
 		get _dir() {
 			if (!this.effectiveDir) {
@@ -111,12 +110,18 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get effectiveAriaHidden() {
 			if (this.ariaHidden === "") {
+				if (this.isDecorative) {
+					return true;
+				}
 				return;
 			}
 			return this.ariaHidden;
 		}
 		get tabIndex() {
 			return this.interactive ? "0" : "-1";
+		}
+		get isDecorative() {
+			return this.effectiveAccessibleRole === PRESENTATION_ROLE;
 		}
 		get effectiveAccessibleRole() {
 			if (this.role) {
@@ -125,7 +130,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (this.interactive) {
 				return "button";
 			}
-			return this.effectiveAccessibleName ? "img" : "presentation";
+			return this.effectiveAccessibleName ? "img" : PRESENTATION_ROLE;
 		}
 		static createGlobalStyle() {
 			if (isLegacyBrowser__default()) {
@@ -165,13 +170,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.accData = iconData.accData;
 			this.ltr = iconData.ltr;
 			this.packageName = iconData.packageName;
+			this._onclick = this.interactive ? this._onClickHandler.bind(this) : undefined;
 			if (this.accessibleName) {
 				this.effectiveAccessibleName = this.accessibleName;
 			} else if (this.accData) {
-				if (!i18n.getI18nBundleData(this.packageName)) {
-					await i18n.fetchI18nBundle(this.packageName);
-				}
-				const i18nBundle$1 = i18nBundle.getI18nBundle(this.packageName);
+				const i18nBundle$1 = await i18nBundle.getI18nBundle(this.packageName);
 				this.effectiveAccessibleName = i18nBundle$1.getText(this.accData) || undefined;
 			}
 		}

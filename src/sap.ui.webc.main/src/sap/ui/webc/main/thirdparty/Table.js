@@ -118,7 +118,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return [BusyIndicator];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			Table.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		constructor() {
 			super();
@@ -133,7 +133,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			});
 			this.fnOnRowFocused = this.onRowFocused.bind(this);
 			this._handleResize = this.popinContent.bind(this);
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 			this.tableEndObserved = false;
 			this.addEventListener("ui5-selection-requested", this._handleSelect.bind(this));
 		}
@@ -146,7 +145,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					row._columnsInfo = columnSettings;
 					row._columnsInfoString = JSON.stringify(row._columnsInfo);
 				}
-				row._ariaPosition = this.i18nBundle.getText(i18nDefaults.TABLE_ROW_POSITION, index + 1, rowsCount);
+				row._ariaPosition = Table.i18nBundle.getText(i18nDefaults.TABLE_ROW_POSITION, index + 1, rowsCount);
 				row._busy = this.busy;
 				row.removeEventListener("ui5-_focused", this.fnOnRowFocused);
 				row.addEventListener("ui5-_focused", this.fnOnRowFocused);
@@ -341,6 +340,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get styles() {
 			return {
+				table: {
+					height: "48px",
+				},
 				busy: {
 					position: this.busyIndPosition,
 				},
@@ -356,17 +358,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return !Device.isIE() && this.growing === TableGrowingMode.Scroll;
 		}
 		get _growingButtonText() {
-			return this.growingButtonText || this.i18nBundle.getText(i18nDefaults.LOAD_MORE_TEXT);
+			return this.growingButtonText || Table.i18nBundle.getText(i18nDefaults.LOAD_MORE_TEXT);
 		}
 		get ariaLabelText() {
-			const headerRowText = this.i18nBundle.getText(i18nDefaults.TABLE_HEADER_ROW_TEXT);
+			const headerRowText = Table.i18nBundle.getText(i18nDefaults.TABLE_HEADER_ROW_TEXT);
 			const columnsTitle = this.columns.map(column => {
 				return column.textContent.trim();
 			}).join(" ");
 			return `${headerRowText} ${columnsTitle}`;
 		}
 		get ariaLabelSelectAllText() {
-			return this.i18nBundle.getText(i18nDefaults.ARIA_LABEL_SELECT_ALL_CHECKBOX);
+			return Table.i18nBundle.getText(i18nDefaults.ARIA_LABEL_SELECT_ALL_CHECKBOX);
 		}
 		get loadMoreAriaLabelledBy() {
 			if (this.moreDataText) {

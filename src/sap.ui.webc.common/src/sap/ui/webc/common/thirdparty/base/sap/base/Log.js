@@ -163,18 +163,10 @@ sap.ui.define(['./util/now'], function (now) { 'use strict';
                     }
                     break;
                 case Log.Level.DEBUG:
-                    if (console.debug) {
-                        isDetailsError ? console.debug(logText, '\n', sDetails) : console.debug(logText);
-                    } else {
-                        isDetailsError ? console.log(logText, '\n', sDetails) : console.log(logText);
-                    }
+                    isDetailsError ? console.debug(logText, '\n', sDetails) : console.debug(logText);
                     break;
                 case Log.Level.TRACE:
-                    if (console.trace) {
-                        isDetailsError ? console.trace(logText, '\n', sDetails) : console.trace(logText);
-                    } else {
-                        isDetailsError ? console.log(logText, '\n', sDetails) : console.log(logText);
-                    }
+                    isDetailsError ? console.trace(logText, '\n', sDetails) : console.trace(logText);
                     break;
                 }
                 if (console.info && oLogEntry.supportInfo) {
