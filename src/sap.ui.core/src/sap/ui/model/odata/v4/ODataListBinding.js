@@ -2970,8 +2970,7 @@ sap.ui.define([
 		if (this.hasPendingChanges()) {
 			throw new Error("Cannot set $$aggregation due to pending changes");
 		}
-		// Note: when called from the constructor aContexts is set later
-		if (this.aContexts && hasKeptAliveContext(this.aContexts)
+		if (hasKeptAliveContext(this.aContexts)
 				|| hasKeptAliveContext(Object.values(this.mPreviousContextsByPath))) {
 			throw new Error("Cannot set $$aggregation due to a kept-alive context");
 		}
