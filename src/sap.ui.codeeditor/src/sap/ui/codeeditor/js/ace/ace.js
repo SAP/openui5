@@ -1438,6 +1438,10 @@ var TextInput = function(parentNode, host) {
     var text = dom.createElement("textarea");
     text.className = "ace_text-input";
 
+    // ##### BEGIN MODIFIED BY SAP
+    text.setAttribute("id", host.container.id + "-textarea");
+    // ##### END MODIFIED BY SAP
+
     text.setAttribute("wrap", "off");
     text.setAttribute("autocorrect", "off");
     text.setAttribute("autocapitalize", "off");

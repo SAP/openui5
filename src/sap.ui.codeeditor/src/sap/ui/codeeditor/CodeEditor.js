@@ -211,6 +211,7 @@ sap.ui.define([
 		this._bIsRenderingPhase = false;
 
 		this._oEditorDomRef = document.createElement("div");
+		this._oEditorDomRef.id = this.getId() + "-editor";
 		this._oEditorDomRef.style.height = "100%";
 		this._oEditorDomRef.style.width = "100%";
 
@@ -360,6 +361,18 @@ sap.ui.define([
 		this._oEditor.resize();
 
 		this._registerResizeListener();
+	};
+
+	/**
+	 * Returns the DOMNode ID to be used for the "labelFor" attribute of the label.
+	 *
+	 * By default, this is the ID of the control itself.
+	 *
+	 * @return {string} ID to be used for the <code>labelFor</code>
+	 * @public
+	 */
+	CodeEditor.prototype.getIdForLabel = function () {
+		return this.getId() + "-editor-textarea";
 	};
 
 	/**
