@@ -388,9 +388,13 @@ sap.ui.define([
 
 	QUnit.test("skipOpening", function(assert) {
 
-		sinon.spy(oValueHelp, "close");
+		sinon.spy(oContainer, "close");
 		oValueHelp.skipOpening();
-		assert.ok(oValueHelp.close.called, "ValueHelp close called"); // skipping needs to be tested in Container
+		assert.notOk(oContainer.close.called, "Container close not called");
+
+		sinon.stub(oContainer, "isOpening").returns(true);
+		oValueHelp.skipOpening();
+		assert.ok(oContainer.close.called, "Container close called");
 
 	});
 
@@ -862,6 +866,18 @@ sap.ui.define([
 
 		sinon.stub(oContainer, "isOpen").returns(true);
 		assert.ok(oValueHelp.isOpen(), "ValueHelp open if Container open");
+
+	});
+
+	QUnit.test("skipOpening", function(assert) {
+
+		sinon.spy(oContainer, "close");
+		oValueHelp.skipOpening();
+		assert.notOk(oContainer.close.called, "Container close not called");
+
+		sinon.stub(oContainer, "isOpening").returns(true);
+		oValueHelp.skipOpening();
+		assert.ok(oContainer.close.called, "Container close called");
 
 	});
 
