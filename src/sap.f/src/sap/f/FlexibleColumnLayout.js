@@ -6,6 +6,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"./library",
+	"sap/ui/core/library",
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/Control",
@@ -19,10 +20,12 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/base/util/isEmptyObject",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/ui/core/InvisibleMessage"
 ], function(
 	jQuery,
 	library,
+	coreLibrary,
 	Device,
 	ResizeHandler,
 	Control,
@@ -36,7 +39,8 @@ sap.ui.define([
 	Log,
 	assert,
 	isEmptyObject,
-	merge
+	merge,
+	InvisibleMessage
 ) {
 	"use strict";
 
@@ -44,6 +48,8 @@ sap.ui.define([
 	// shortcut for sap.f.LayoutType
 	var LT = library.LayoutType;
 
+	// shortcut for sap.ui.core.InvisibleMessageMode
+	var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
 
 	/**
 	 * Constructor for a new <code>sap.f.FlexibleColumnLayout</code>.
@@ -683,6 +689,15 @@ sap.ui.define([
 			end: 0
 		};
 
+		this._oInvisibleMessage = null;
+	};
+
+	FlexibleColumnLayout.prototype._announceMessage = function (sResourceBundleKey) {
+		var sText = FlexibleColumnLayout._getResourceBundle().getText(sResourceBundleKey);
+
+		if (this._oInvisibleMessage) {
+			this._oInvisibleMessage.announce(sText, InvisibleMessageMode.Polite);
+		}
 	};
 
 	/**
@@ -868,6 +883,10 @@ sap.ui.define([
 	};
 
 	FlexibleColumnLayout.prototype.onBeforeRendering = function () {
+		if (!this._oInvisibleMessage) {
+			this._oInvisibleMessage = InvisibleMessage.getInstance();
+		}
+
 		this._deregisterResizeHandler();
 		this._oAnimationEndListener.cancelAll();
 	};
@@ -1016,7 +1035,10 @@ sap.ui.define([
 			icon: "sap-icon://slim-arrow-left",
 			tooltip: FlexibleColumnLayout._getResourceBundle().getText("FCL_BEGIN_COLUMN_BACK_ARROW"),
 			type: "Transparent",
-			press: this._onArrowClick.bind(this, "left")
+			press: function () {
+				this._onArrowClick("left");
+				this._announceMessage("FCL_MIDDLE_COLUMN_EXPANDED_MESSAGE");
+			}.bind(this)
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonRight");
 		this.setAggregation("_beginColumnBackArrow", oBeginColumnBackArrow, true);
 
@@ -1024,7 +1046,10 @@ sap.ui.define([
 			icon: "sap-icon://slim-arrow-right",
 			tooltip: FlexibleColumnLayout._getResourceBundle().getText("FCL_MID_COLUMN_FORWARD_ARROW"),
 			type: "Transparent",
-			press: this._onArrowClick.bind(this, "right")
+			press: function () {
+				this._onArrowClick("right");
+				this._announceMessage("FCL_FIRST_COLUMN_EXPANDED_MESSAGE");
+			}.bind(this)
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonLeft");
 		this.setAggregation("_midColumnForwardArrow", oMidColumnForwardArrow, true);
 
@@ -1032,7 +1057,10 @@ sap.ui.define([
 			icon: "sap-icon://slim-arrow-left",
 			tooltip: FlexibleColumnLayout._getResourceBundle().getText("FCL_MID_COLUMN_BACK_ARROW"),
 			type: "Transparent",
-			press: this._onArrowClick.bind(this, "left")
+			press: function () {
+				this._onArrowClick("left");
+				this._announceMessage("FCL_LAST_COLUMN_EXPANDED_MESSAGE");
+			}.bind(this)
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonRight");
 		this.setAggregation("_midColumnBackArrow", oMidColumnBackArrow, true);
 
@@ -1040,7 +1068,10 @@ sap.ui.define([
 			icon: "sap-icon://slim-arrow-right",
 			tooltip: FlexibleColumnLayout._getResourceBundle().getText("FCL_END_COLUMN_FORWARD_ARROW"),
 			type: "Transparent",
-			press: this._onArrowClick.bind(this, "right")
+			press: function () {
+				this._onArrowClick("right");
+				this._announceMessage("FCL_MIDDLE_COLUMN_EXPANDED_MESSAGE");
+			}.bind(this)
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonLeft");
 		this.setAggregation("_endColumnForwardArrow", oEndColumnForwardArrow, true);
 	};
