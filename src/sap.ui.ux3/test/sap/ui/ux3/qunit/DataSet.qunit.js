@@ -324,13 +324,22 @@ sap.ui.define([
 	}
 
 	QUnit.test("Floating Layout", function(assert) {
-		oDataSetLayout.setItemMinWidth(200);
-		sap.ui.getCore().applyChanges();
+		var done = assert.async(),
+			fnAfterRenderHandler = function() {
+				assert.ok(oDataSetLayout.$().hasClass("sapUiUx3DSSVFloating"), "class 'sapUiUx3DSSVFloating' is set");
+				var expectedItems = Math.floor(oDataSetLayout.$().width() / 200);
+				assert.equal(getNumberOfItemsPerRow(), expectedItems, expectedItems + " item(s) per row");
+				assert.ok(oDataSetLayout.$().children()[0].getBoundingClientRect().width - 200 <= 10 /*just some tolerance*/, "item has width of 200px");
 
-		assert.ok(oDataSetLayout.$().hasClass("sapUiUx3DSSVFloating"), "class 'sapUiUx3DSSVFloating' is set");
-		var expectedItems = Math.floor(oDataSetLayout.$().width() / 200);
-		assert.equal(getNumberOfItemsPerRow(), expectedItems, expectedItems + " item(s) per row");
-		assert.ok(jQuery(oDataSetLayout.$().children()[0]).outerWidth() - 200 <= 10 /*just some tolerance*/, "item has width of 200px");
+				oDataSetLayout.removeDelegate(this);
+				done();
+			};
+
+		oDataSetLayout.addDelegate({
+			onAfterRendering: fnAfterRenderHandler
+		});
+
+		oDataSetLayout.setItemMinWidth(200);
 	});
 
 	QUnit.test("Responsive Layout", function(assert) {
