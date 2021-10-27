@@ -240,6 +240,9 @@ sap.ui.define([
 	EnabledPropagator.apply(IconTabHeader.prototype, [true]);
 
 	IconTabHeader.prototype.init = function () {
+		// if it is "true", the "select" event will be fired
+		// even when the "selectedKey" property is changed via API (without user interaction).
+		this._bFireSelectEvent = false;
 		this._aTabKeys = [];
 		this._oAriaHeadText = null;
 		this._bIsRendered = false;
@@ -478,7 +481,8 @@ sap.ui.define([
 	IconTabHeader.prototype.setSelectedKey = function (sKey) {
 		var aItems = this.getTabFilters(),
 			bIsParentIconTabBar = this._isInsideIconTabBar(),
-			bSelectedItemFound;
+			bSelectedItemFound,
+			bApiChange = true;
 
 		if (aItems.length > 0) {
 			sKey = sKey || aItems[0]._getNonEmptyKey();
@@ -488,7 +492,7 @@ sap.ui.define([
 		if (this.$().length) {
 			for (var i = 0; i < aItems.length; i++) {
 				if (aItems[i]._getNonEmptyKey() === sKey) {
-					this.setSelectedItem(aItems[i], true);
+					this.setSelectedItem(aItems[i], bApiChange);
 					bSelectedItemFound = true;
 					break;
 				}
@@ -591,6 +595,12 @@ sap.ui.define([
 		this.setProperty("selectedKey", sSelectedKey, true);
 		if (bIsParentIconTabBar) {
 			oParent.setProperty("selectedKey", sSelectedKey, true);
+		}
+
+		if (bIsParentIconTabBar) {
+			bAPIChange = bAPIChange && !oParent._bFireSelectEvent;
+		} else {
+			bAPIChange = bAPIChange && !this._bFireSelectEvent;
 		}
 
 		if (!bAPIChange) {
