@@ -852,33 +852,31 @@ sap.ui.define([
 
 		SinglePlanningCalendarGrid.prototype._adjustAppointmentsHeightforCompact = function (sDate, oColumnStartDateAndHour, oColumnEndDateAndHour) {
 			var oAppointment,
-				$appointment,
+				oAppDomRef,
 				oAppStartDate,
 				oAppEndDate,
 				iAppTop,
 				iAppBottom,
 				bAppStartIsOutsideVisibleStartHour,
 				bAppEndIsOutsideVisibleEndHour,
-				iRowHeight = this._getRowHeight(),
-				that = this;
+				iRowHeight = this._getRowHeight();
 
 			if (this._oAppointmentsToRender[sDate]) {
 				this._oAppointmentsToRender[sDate].oAppointmentsList.getIterator().forEach(function(oAppNode) {
 					oAppointment = oAppNode.getData();
-					$appointment = jQuery("div[data-sap-day='" + sDate + "'].sapMSinglePCColumn #" + oAppointment.getId());
+					oAppDomRef = oAppointment.getDomRef();
 					oAppStartDate = oAppointment.getStartDate();
 					oAppEndDate = oAppointment.getEndDate();
 					bAppStartIsOutsideVisibleStartHour = oColumnStartDateAndHour.getTime() > oAppStartDate.getTime();
 					bAppEndIsOutsideVisibleEndHour = oColumnEndDateAndHour.getTime() < oAppEndDate.getTime();
 
-					iAppTop = bAppStartIsOutsideVisibleStartHour ? 0 : that._calculateTopPosition(oAppStartDate);
-					iAppBottom = bAppEndIsOutsideVisibleEndHour ? 0 : that._calculateBottomPosition(oAppEndDate);
+					iAppTop = bAppStartIsOutsideVisibleStartHour ? 0 : this._calculateTopPosition(oAppStartDate);
+					iAppBottom = bAppEndIsOutsideVisibleEndHour ? 0 : this._calculateBottomPosition(oAppEndDate);
 
-					$appointment.css("top", iAppTop);
-					$appointment.css("bottom", iAppBottom);
-					$appointment.find(".sapUiCalendarApp")
-								.css("min-height", iRowHeight / 2 - 3);
-				});
+					oAppDomRef.style["top"] = iAppTop + "px";
+					oAppDomRef.style["bottom"] = iAppBottom  + "px";
+					oAppDomRef.querySelector(".sapUiCalendarApp").style["minHeight"] = (iRowHeight / 2 - 3) + "px";
+				}.bind(this));
 			}
 		};
 
