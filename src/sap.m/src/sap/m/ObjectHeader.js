@@ -826,9 +826,9 @@ sap.ui.define([
 					domRef : window.document.getElementById(sSourceId)
 				});
 			}
-		} else if (sSourceId === this.getId() + "-titleArrow") {
+		} else if (oEvent.target.classList.contains("sapUiIconTitle")) {
 			this.fireTitleSelectorPress({
-				domRef : window.document.getElementById(sSourceId)
+				domRef : oEvent.target.parentElement
 			});
 		} else if (sSourceId.indexOf(this.getId()) !== -1) {
 			// we didn't click on any of the active parts of the ObjectHeader
