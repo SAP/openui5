@@ -1893,7 +1893,7 @@
 						"f": {
 							"type": "DateRange",
 							"value": {
-								"operator": "dateRange",
+								"option": "dateRange",
 								"values": ["1997-05-01", "1997-05-31"]
 							}
 						}
@@ -1928,8 +1928,8 @@
 									"value": "{filters>/f/rangeOData/end}"
 								},
 								{
-									"label": "value/operator",
-									"value": "{filters>/f/value/operator}"
+									"label": "value/option",
+									"value": "{filters>/f/value/option}"
 								},
 								{
 									"label": "value/values",

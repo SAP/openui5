@@ -6,7 +6,6 @@ sap.ui.define([
 	var oMockServer,
 		sMockDataPath = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/localService/SEPMRA_PROD_MAN/mockdata/SEPMRA_C_PD_Product.json");
 
-
 	// only queries of type "{Products(Key Value) {inner query}}"" are supported
 	function createResponseData (aProducts, sQuery) {
 		var oParts = sQuery.match(/{(.*){(.*)}}/), // support only queries of type {Products() {inner query}}
@@ -79,15 +78,6 @@ sap.ui.define([
 			});
 
 			return this._pInit;
-		},
-
-		/**
-		 * Returns the mock server for Products service.
-		 * @public
-		 * @returns {sap.ui.core.util.MockServer} The mock server instance.
-		 */
-		getMockServer: function () {
-			return oMockServer;
 		},
 
 		destroy: function () {

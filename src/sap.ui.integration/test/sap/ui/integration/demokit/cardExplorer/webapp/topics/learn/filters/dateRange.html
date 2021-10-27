@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>DateRange Filter</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Date Range Filter</h1>
+			<div class="messageStripWarning">
+				Experimental feature since version 1.96. The API may change.
+			</div>
+			<p>
+				Date range filter allows users to select a relative or an absolute time period.
+			</p>
+
+			<h2 id="properties">Properties</h2>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td><a href="#dateRangeFilterValueProperties">DateRangeFilterValue</a></td>
+						<td></td>
+						<td>Yes</td>
+						<td>The value of the filter.</td>
+						<td>1.37.0</td>
+						<td>1.96</td>
+					</tr>
+					<tr>
+						<td>options</td>
+						<td>string[]</td>
+						<td>[
+							"date",
+							"today",
+							"dateRange",
+							"from",
+							"to",
+							"lastDays",
+							"nextDays",
+							"lastWeeks",
+							"nextWeeks"
+						]</td>
+						<td>No</td>
+						<td>
+							The options that will appear in the dropdown.
+							For all possible values see the <a href="#options">Options table</a>.
+						</td>
+						<td>1.37.0</td>
+						<td>1.96</td>
+					</tr>
+				</table>
+			</div>
+
+			<h3 id="dateRangeFilterValueProperties">DateRangeFilterValue Properties</h3>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>option</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>The date range option. It should be one of the set <code>options</code>.</td>
+						<td>1.37.0</td>
+						<td>1.96</td>
+					</tr>
+					<tr>
+						<td>values</td>
+						<td>array</td>
+						<td></td>
+						<td>Yes</td>
+						<td>
+							Values to initialize the option. Some use dates, while others require quantifier of type integer.
+							When date is used, every valid parameter for JavaScript Date constructor like timestamp or date string can be used.
+							For each option see the <a href="#options">Options table</a>.
+						</td>
+						<td>1.37.0</td>
+						<td>1.96</td>
+					</tr>
+				</table>
+			</div>
+
+			<h3 id="options">Options</h3>
+			<div class="tableWrapper">
+				<table class="plainFirstColumn">
+					<tr>
+						<th>Option</th>
+						<th>Description</th>
+						<th>Required Values</th>
+					</tr>
+
+					<!-- days -->
+					<tr>
+						<td>date</td>
+						<td>Specific date</td>
+						<td>[Date]</td>
+					</tr>
+					<tr>
+						<td>today</td>
+						<td></td>
+						<td>[]</td>
+					</tr>
+					<tr>
+						<td>yesterday</td>
+						<td></td>
+						<td>[]</td>
+					</tr>
+					<tr>
+						<td>tomorrow</td>
+						<td></td>
+						<td>[]</td>
+					</tr>
+
+					<!-- ranges -->
+					<tr>
+						<td>dateRange</td>
+						<td>Period between two dates</td>
+						<td>[Date, Date]</td>
+					</tr>
+					<tr>
+						<td>from</td>
+						<td></td>
+						<td>[Date]</td>
+					</tr>
+					<tr>
+						<td>to</td>
+						<td></td>
+						<td>[Date]</td>
+					</tr>
+					<tr>
+						<td>yearToDate</td>
+						<td>Range between the first day of the current year and today</td>
+						<td>[]</td>
+					</tr>
+					<tr>
+						<td>lastDays</td>
+						<td>Last "X" days</td>
+						<td>[int]</td>
+					</tr>
+					<tr>
+						<td>lastWeeks</td>
+						<td>Last "X" weeks</td>
+						<td>[int]</td>
+					</tr>
+					<tr>
+						<td>lastMonths</td>
+						<td>Last "X" months</td>
+						<td>[int]</td>
+					</tr>
+					<tr>
+						<td>lastQuarters</td>
+						<td>Last "X" quarters</td>
+						<td>[int]</td>
+					</tr>
+					<tr>
+						<td>lastYears</td>
+						<td>Last "X" years</td>
+						<td>[int]</td>
+					</tr>
+					<tr>
+						<td>nextDays</td>
+						<td>Next "X" days</td>
+						<td>[int]</td>
+					</tr>
+					<tr>
+						<td>nextWeeks</td>
+						<td>Next "X" weeks</td>
+						<td>[int]</td>
+					</tr>
+					<tr>
+						<td>nextMonths</td>
+						<td>Next "X" months</td>
+						<td>[int]</td>
+					</tr>
+					<tr>
+						<td>nextQuarters</td>
+						<td>Next "X" quarters</td>
+						<td>[int]</td>
+					</tr>
+					<tr>
+						<td>nextYears</td>
+						<td>Next "X" years</td>
+						<td>[int]</td>
+					</tr>
+					<tr>
+						<td>todayFromTo</td>
+						<td>Today - "X" days / + "Y" days </td>
+						<td>[int, int]</td>
+					</tr>
+
+					<!-- weeks -->
+					<tr>
+						<td>thisWeek</td>
+						<td></td>
+						<td>[]</td>
+					</tr>
+					<tr>
+						<td>lastWeek</td>
+						<td></td>
+						<td>[]</td>
+					</tr>
+					<tr>
+						<td>nextWeek</td>
+						<td></td>
+						<td>[]</td>
+					</tr>
+
+					<!-- months -->
+					<tr>
+						<td>specificMonth</td>
+						<td>
+							Month from the start of the year. For example, "0" for January, "11" for December,
+							"-1" for December the previous year, "12" for January of the following year, and so on.</td>
+						<td>[int]</td>
+					</tr>
+					<tr>
+						<td>thisMonth</td>
+						<td></td>
+						<td>[]</td>
+					</tr>
+					<tr>
+						<td>lastMonth</td>
+						<td></td>
+						<td>[]</td>
+					</tr>
+
+					<!-- quarters -->
+					<tr>
+						<td>thisQuarter</td>
+						<td></td>
+						<td>[]</td>
+					</tr>
+					<tr>
+						<td>lastQuarter</td>
+						<td></td>
+						<td>[]</td>
+					</tr>
+					<tr>
+						<td>nextQuarter</td>
+						<td></td>
+						<td>[]</td>
+					</tr>
+					<tr>
+						<td>quarter1</td>
+						<td></td>
+						<td>[]</td>
+					</tr>
+					<tr>
+						<td>quarter2</td>
+						<td></td>
+						<td>[]</td>
+					</tr>
+					<tr>
+						<td>quarter3</td>
+						<td></td>
+						<td>[]</td>
+					</tr>
+					<tr>
+						<td>quarter4</td>
+						<td></td>
+						<td>[]</td>
+					</tr>
+
+					<!-- years -->
+					<tr>
+						<td>thisYear</td>
+						<td></td>
+						<td>[]</td>
+					</tr>
+					<tr>
+						<td>lastYear</td>
+						<td></td>
+						<td>[]</td>
+					</tr>
+					<tr>
+						<td>nextYear</td>
+						<td></td>
+						<td>[]</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="filtersModel">Filters Model</h2>
+			<p>The following values are available for filter of type "DateRange":</p>
+			<table>
+				<tr>
+					<th>Path</th>
+					<th>Description</th>
+				</tr>
+				<tr>
+					<td>{filters>/keyOfTheFilter/value/option}</td>
+					<td>The current option.</td>
+				</tr>
+				<tr>
+					<td>{filters>/keyOfTheFilter/value/values}</td>
+					<td>The current option values.</td>
+				</tr>
+				<tr>
+					<td>{filters>/keyOfTheFilter/range/start}</td>
+					<td>The start date of the range in ISO 8601 format.</td>
+				</tr>
+				<tr>
+					<td>{filters>/keyOfTheFilter/range/end}</td>
+					<td>The end date of the range in ISO 8601 format.</td>
+				</tr>
+				<tr>
+					<td>{filters>/keyOfTheFilter/rangeOData/start}</td>
+					<td>The start date of the range in ISO 8601 format. It is in the boundaries of Edm.DateTime type of the OData protocol.</td>
+				</tr>
+				<tr>
+					<td>{filters>/keyOfTheFilter/rangeOData/end}</td>
+					<td>The end date of the range in ISO 8601 format.  It is in the boundaries of Edm.DateTime type of the OData protocol.</td>
+				</tr>
+			</table>
+
+			<h2 id="examples">Examples</h2>
+
+			<p>A filter for product category is defined and later used inside a data request.</p>
+			<pre class="lang-json">{
+	"sap.card": {
+		"configuration": {
+			"filters": {
+				"activityPeriod": {
+					"type": "DateRange",
+					"value": {
+						"option": "today",
+						"values": []
+					}
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"request": {
+					"url": "/activities",
+					"parameters": {
+						"startDate": "{filters>/activityPeriod/range/start}",
+						"endDate": "{filters>/activityPeriod/range/end}"
+					}
+				}
+			}
+		},
+		"type": "Timeline",
+		"header": {
+			"title": "My Activities"
+		},
+		"content": {
+			...
+		}
+	}
+}</pre>
+
+			<a class="try-button" href="../../../index.html#/explore/dateRangeFilter" target="_parent">Try it Out</a>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Date Range Filter</a></div>
+			<div><a href="#properties">Properties</a></div>
+			<div><a href="#dateRangeFilterValueProperties">DateRangeFilterValue Properties</a></div>
+			<div><a href="#options">Options</a></div>
+			<div><a href="#filtersModel">Filters Model</a></div>
+			<div><a href="#examples">Examples</a></div>
+		</div>
+	</div>
+</body>
+
+</html>

@@ -15,12 +15,6 @@ sap.ui.define([
 		 * @param {object} [oOptionsParameter] init parameters for the mock server.
 		 */
 		init: function (oOptionsParameter) {
-			// configure all mock servers with default delay of 1s
-			MockServer.config({
-				autoRespond: true,
-				autoRespondAfter: 1000
-			});
-
 			// avoid reinitialization of mock server
 			if (oMockServer) {
 				return Promise.resolve();
@@ -76,15 +70,6 @@ sap.ui.define([
 			oMockServer.start();
 
 			return Promise.resolve();
-		},
-
-		/**
-		 * Returns the mock server for SEPMRA_PROD_MAN service.
-		 * @public
-		 * @returns {sap.ui.core.util.MockServer} The mock server instance.
-		 */
-		getMockServer: function () {
-			return oMockServer;
 		},
 
 		destroy: function () {

@@ -118,14 +118,14 @@ sap.ui.define([
 		// Arrange
 		this.oDRF.setConfig({
 			value: {
-				operator: "DATE",
+				option: "date",
 				values: ["1997-05-01T00:00:00.000Z"]
 			}
 		});
 		var oModelValue = this.oDRF.getValueForModel();
 
 		// Assert
-		assert.ok(oModelValue.value.hasOwnProperty("operator"), "'operator' property should be part of value");
+		assert.ok(oModelValue.value.hasOwnProperty("option"), "'option' property should be part of value");
 		assert.ok(oModelValue.value.hasOwnProperty("values"), "'values' property should be part of value");
 		assert.ok(oModelValue.range.hasOwnProperty("start"), "'start' property should be part of range");
 		assert.ok(oModelValue.range.hasOwnProperty("end"), "'end' property should be part of range");
@@ -142,7 +142,7 @@ sap.ui.define([
 		});
 		this.oDRF.setConfig({
 			value: {
-				operator: "DATE",
+				option: "date",
 				values: ["1997-05-01T00:00:00.000Z"]
 			}
 		});
@@ -153,11 +153,11 @@ sap.ui.define([
 		assert.strictEqual(oModelValue.range.end, aLocalDates[1].getJSDate().toISOString(), "Range end should be in ISO format");
 	});
 
-	QUnit.test("Lower boundary of 'TO' filter", function (assert) {
+	QUnit.test("Lower boundary of 'to' filter", function (assert) {
 		// Arrange
 		this.oDRF.setConfig({
 			value: {
-				operator: "TO",
+				option: "to",
 				values: ["1997-05-01T00:00:00.000Z"]
 			}
 		});
@@ -168,11 +168,11 @@ sap.ui.define([
 		assert.strictEqual(oModelValue.rangeOData.start, new Date("1753-01-01").toISOString(), "Lower boundary of rangeOData should be correct");
 	});
 
-	QUnit.test("Upper boundary of 'FROM' filter", function (assert) {
+	QUnit.test("Upper boundary of 'from' filter", function (assert) {
 		// Arrange
 		this.oDRF.setConfig({
 			value: {
-				operator: "FROM",
+				option: "from",
 				values: ["1997-05-01T00:00:00.000Z"]
 			}
 		});
@@ -223,14 +223,14 @@ sap.ui.define([
 		// Arrange
 		this.oDRF.setConfig({
 			value: {
-				operator: "lastDays",
+				option: "lastDays",
 				values: [2]
 			}
 		});
 		var oModelValue = this.oDRF.getValueForModel();
 
 		// Assert
-		assert.strictEqual(oModelValue.value.operator, "lastDays");
+		assert.strictEqual(oModelValue.value.option, "lastDays");
 	});
 
 });

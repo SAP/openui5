@@ -1,22 +1,22 @@
 {
 	"sap.app": {
-		"id": "cardsdemo.filters.dateRangeFilter",
+		"id": "card.explorer.filters.dateRange",
 		"type": "card"
 	},
 	"sap.card": {
 		"configuration": {
 			"destinations": {
 				"northwind": {
-					"name": "Northwind",
+					"name": "Northwind_V4",
 					"label": "Northwind V4 Service URL",
 					"defaultUrl": "https://services.odata.org/v4/Northwind/Northwind.svc"
 				}
 			},
 			"filters": {
 				"dateRange": {
-					"type": "dateRange",
+					"type": "DateRange",
 					"value": {
-						"operator": "DateRange",
+						"option": "dateRange",
 						"values": [
 							"1996-08-06",
 							"1996-08-16"
@@ -47,7 +47,7 @@
 				"path": "/value"
 			},
 			"item": {
-				"title": "{ShipCountry}",
+				"title": "{ShipAddress}, {ShipCity}, {ShipCountry}",
 				"description": "{= format.dateTime(${OrderDate}, {format: 'yMMMd'}) }"
 			}
 		}
