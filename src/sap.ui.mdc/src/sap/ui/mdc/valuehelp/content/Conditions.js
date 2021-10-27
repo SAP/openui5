@@ -59,11 +59,6 @@ sap.ui.define([
 					}
 				},
 				aggregations: {
-					_defineConditionPanel: {
-						type: "sap.ui.mdc.field.DefineConditionPanel",
-						multiple: false,
-						visibility: "hidden"
-					}
 				},
 				events: {}
 			}
@@ -88,16 +83,19 @@ sap.ui.define([
 
 	Conditions.prototype.getContent = function () {
 		return this._retrievePromise("content", function () {
-			return loadModules([
+			var aModules = [
 				"sap/ui/mdc/field/DefineConditionPanel",
-				"sap/ui/model/base/ManagedObjectModel", // TODO use on ValueHelp level? But then how to bind local properties?
+				"sap/ui/model/base/ManagedObjectModel" // TODO use on ValueHelp level? But then how to bind local properties?
 //				"sap/ui/mdc/condition/FilterOperatorUtil"
-				"sap/m/ScrollContainer"
-			]).then(function (aModules) {
+			];
+			if (this.provideScrolling()) {
+				aModules.push("sap/m/ScrollContainer");
+			}
+			return loadModules(aModules).then(function (aModules) {
 					var DefineConditionPanel = aModules[0];
 					var ManagedObjectModel = aModules[1];
 //					FilterOperatorUtil = aModules[2];
-					var ScrollContainer = aModules[2];
+					var ScrollContainer = aModules.length > 2 && aModules[2];
 
 					this._oManagedObjectModel = new ManagedObjectModel(this);
 					this._oDefineConditionPanel = new DefineConditionPanel(
@@ -110,26 +108,22 @@ sap.ui.define([
 							conditionProcessed: _handleConditionProcessed.bind(this)
 						}
 					).setModel(this._oManagedObjectModel, "$help");
-					this.setAggregation("_defineConditionPanel", this._oDefineConditionPanel, true); // to have in control tree
 
-					this._oScrollContainer = new ScrollContainer(this.getId() + "-SC", {
-						height: "100%",
-						width: "100%",
-						vertical: true
-					});
+					if (ScrollContainer) {
+						this._oScrollContainer = new ScrollContainer(this.getId() + "-SC", {
+							height: "100%",
+							width: "100%",
+							vertical: true,
+							content: [this._oDefineConditionPanel]
+						});
 
-					this._oScrollContainer._oWrapper = this;
-					this._oScrollContainer.getContent = function() {
-						var aContent = [];
-						var oDefineConditionPanel = this._oWrapper && this._oWrapper._oDefineConditionPanel;
-						if (oDefineConditionPanel) {
-							aContent.push(oDefineConditionPanel);
-						}
-						return aContent;
-					};
-					this.setAggregation("displayContent", this._oScrollContainer);
-					return this._oScrollContainer;
-				}.bind(this));
+						this.setAggregation("displayContent", this._oScrollContainer);
+						return this._oScrollContainer;
+					} else {
+						this.setAggregation("displayContent", this._oDefineConditionPanel);
+						return this._oDefineConditionPanel;
+					}
+			}.bind(this));
 		}.bind(this));
 	};
 

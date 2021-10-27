@@ -413,6 +413,22 @@ sap.ui.define([
 		return oContainer && oContainer.isTypeahead();
 	};
 
+	/**
+	 * Determines if the the content needs to provide a scrolling mechanism like a
+	 * <code>ScrollContainer</code>
+	 *
+	 * <b>Note:</b> This function is used by the content and must not be used from outside
+	 *
+	 * @returns {boolean} True a scrolling mechanism is needed
+	 *
+	 * @private
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	Content.prototype.provideScrolling = function () {
+		var oContainer = this.getParent();
+		return !oContainer || !oContainer.providesScrolling();
+	};
+
 	Content.prototype.isContainerOpen = function () {
 		var oContainer = this.getParent();
 		return oContainer && oContainer.isOpen();

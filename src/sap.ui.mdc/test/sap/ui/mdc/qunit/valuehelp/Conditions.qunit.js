@@ -47,6 +47,9 @@ sap.ui.define([
 		isTypeahead: function() {
 			return bIsTypeahead;
 		},
+		providesScrolling: function() {
+			return bIsTypeahead;
+		},
 		isOpen: function() {
 			return bIsOpen;
 		},
@@ -110,7 +113,7 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	QUnit.test("getContent", function(assert) {
+	QUnit.test("getContent with scrolling", function(assert) {
 
 		var iSelect = 0;
 		var aConditions;
@@ -190,7 +193,41 @@ sap.ui.define([
 
 				fnDone();
 			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called");
+				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+				fnDone();
+			});
+		}
+
+	});
+
+	QUnit.test("getContent without scrolling", function(assert) {
+
+		bIsTypeahead = true; // Popover would provide ScrollContainer
+		var oContent = oConditions.getContent();
+
+		if (oContent) {
+			var fnDone = assert.async();
+			oContent.then(function(oContent) {
+				assert.ok(oContent, "Content returned");
+				assert.ok(oContent.isA("sap.ui.mdc.field.DefineConditionPanel"), "DefineConditionPanel in ScrollContainer");
+				assert.equal(oContent.getLabel(), "Test", "title");
+				assert.deepEqual(oContent.getConditions(), oConditions.getConditions(), "Conditions on DefineConditionPanel");
+				assert.ok(oContent.getInputOK(), "inputOK on DefineConditionPanel");
+				var oFormatOptions = oContent.getFormatOptions();
+				var oTestFormatOptions = {
+					valueType: oType,
+					maxConditions: -1,
+					delegate: FieldBaseDelegate,
+					delegateName: "sap/ui/mdc/field/FieldBaseDelegate",
+					payload: { text: "X" },
+					operators: ["EQ", "BT", "Contains"],
+					display: FieldDisplay.Description
+				};
+				assert.deepEqual(oFormatOptions, oTestFormatOptions, "FormatOptions on DefineConditionPanel");
+
+				fnDone();
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
 				fnDone();
 			});
 		}

@@ -437,6 +437,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines if the container provides a own scroll functionality.
+	 * If not, the <code>Content</code> needs to provide a scrolling solution like a <code>ScrollContainer</code>.
+	 *
+	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
+	 *
+	 * @returns {boolean} True if scrolling is provided
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	Container.prototype.providesScrolling = function () {
+		return false;
+	};
+
+	/**
 	 * Determines the delegate of the value help
 	 *
 	 * <b>Note:</b> This function is used by the container and content and must not be used from outside

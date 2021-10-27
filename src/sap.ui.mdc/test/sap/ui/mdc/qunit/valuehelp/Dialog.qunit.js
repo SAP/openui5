@@ -192,6 +192,13 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("providesScrolling", function(assert) {
+
+		var bScrolling = oDialog.providesScrolling();
+		assert.notOk(bScrolling, "provides no scrolling");
+
+	});
+
 	QUnit.module("assigned to ValueHelp", {
 		beforeEach: function() {
 			oValueHelpConfig = {

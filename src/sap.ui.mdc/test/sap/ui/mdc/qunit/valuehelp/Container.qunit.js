@@ -446,6 +446,13 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("providesScrolling", function(assert) {
+
+		var bScrolling = oContainer.providesScrolling();
+		assert.notOk(bScrolling, "provides no scrolling");
+
+	});
+
 	QUnit.test("getValueHelpDelegate", function(assert) {
 
 		var oDelegate = oContainer.getValueHelpDelegate();
