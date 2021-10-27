@@ -18,7 +18,8 @@ sap.ui.define([
     "sap/m/VBox",
     "sap/ui/base/ManagedObjectObserver",
     "sap/ui/core/ResizeHandler",
-    "sap/ui/mdc/p13n/panels/ChartItemPanelNew"
+    "sap/ui/mdc/p13n/panels/ChartItemPanelNew",
+    "sap/m/MessageStrip"
 ], function (
     V4ChartDelegate,
     loadModules,
@@ -35,7 +36,8 @@ sap.ui.define([
     VBox,
     ManagedObjectObserver,
     ResizeHandler,
-    ChartItemPanel
+    ChartItemPanel,
+    MessageStrip
 ) {
     "use strict";
     /**
@@ -323,7 +325,14 @@ sap.ui.define([
         //var aRolesAvailable = [MDCLib.ChartItemRoleType.axis1, MDCLib.ChartItemRoleType.axis2, MDCLib.ChartItemRoleType.axis3, MDCLib.ChartItemRoleType.category, MDCLib.ChartItemRoleType.category2, MDCLib.ChartItemRoleType.series];
         var oArguments = {panelConfig: oLayoutConfig};
 
-        return Promise.resolve(new ChartItemPanel(oArguments));
+        var oPanel = new ChartItemPanel(oArguments);
+
+        if (oMDCChart.getChartType() === "heatmap"){
+            var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+            oPanel.setMessageStrip(new MessageStrip({text: MDCRb.getText("chart.PERSONALIZATION_DIALOG_MEASURE_WARNING"), type:"Warning"}));
+        }
+
+        return Promise.resolve(oPanel);
     };
 
     /**
