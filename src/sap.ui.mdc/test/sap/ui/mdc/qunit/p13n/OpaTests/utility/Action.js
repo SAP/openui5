@@ -134,7 +134,7 @@ sap.ui.define([
 				searchOpenDialogs: true,
 				matchers: {
 					ancestor: {
-						controlType: "sap.ui.mdc.p13n.panels.Wrapper"
+						controlType: "sap.m.p13n.Container"
 					},
 					properties: {
 						text: sTab

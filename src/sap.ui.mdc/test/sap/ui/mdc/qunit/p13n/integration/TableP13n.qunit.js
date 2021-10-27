@@ -105,7 +105,7 @@ sap.ui.define([
 
 			//check inner control (should be a wrapper)
 			var oWrapper = oP13nControl.getContent()[0];
-			assert.ok(oWrapper.isA("sap.ui.mdc.p13n.panels.Wrapper"), "Wrapper created");
+			assert.ok(oWrapper.isA("sap.m.p13n.Container"), "Wrapper created");
 			assert.ok(oWrapper.getView("Column").getContent().isA("sap.m.p13n.SelectionPanel"), "Correct panel created");
 			assert.ok(oWrapper.getView("Sort").getContent().isA("sap.m.p13n.SortPanel"), "Correct panel created");
 			done();

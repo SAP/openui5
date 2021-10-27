@@ -5,10 +5,11 @@
 sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/mdc/p13n/P13nBuilder",
-	"sap/ui/mdc/p13n/panels/Wrapper",
+	"sap/m/p13n/Container",
+	"sap/m/p13n/AbstractContainerItem",
 	"sap/base/util/UriParameters",
 	"sap/base/Log"
-], function (BaseObject, P13nBuilder, Wrapper, SAPUriParameters, Log) {
+], function (BaseObject, P13nBuilder, P13nContainer, AbstractContainerItem, SAPUriParameters, Log) {
 	"use strict";
 
 	var ERROR_INSTANCING = "UIManager: This class is a singleton and should not be used without an AdaptationProvider. Please use 'sap.ui.mdc.p13n.Engine.getInstance().uimanager' instead";
@@ -139,7 +140,7 @@ sap.ui.define([
 				var bWrapperUsed = aKeys.length > 1;
 				var oAdaptationUI;
 				var oContent = oP13nControl.getContent()[0];
-				if (bWrapperUsed && oContent.isA("sap.ui.mdc.p13n.panels.Wrapper") && oContent.getView(sKey)) {
+				if (bWrapperUsed && oContent.isA("sap.m.p13n.Container") && oContent.getView(sKey)) {
 					oAdaptationUI = oContent.getView(sKey).getContent();
 				} else {
 					oAdaptationUI = oContent;
@@ -204,11 +205,15 @@ sap.ui.define([
 		}.bind(this));
 
 		return Promise.all(aPAdaptationUI).then(function(aUIs){
-			var oPopupContent = bUseP13nContainer ? new Wrapper() : aUIs[0].panel;
+			var oPopupContent = bUseP13nContainer ? new P13nContainer() : aUIs[0].panel;
 			if (bUseP13nContainer) {
 				aUIs.forEach(function(mUI){
 					if (mUI.panel) {
-						oPopupContent.addPanel(mUI.panel, mUI.key, mUI.tab);
+						oPopupContent.addView(new AbstractContainerItem({
+							key: mUI.key,
+							text: mUI.tab,
+							content: mUI.panel
+						}));
 					}
 				});
 				oPopupContent.switchView(aUIs[0].key);

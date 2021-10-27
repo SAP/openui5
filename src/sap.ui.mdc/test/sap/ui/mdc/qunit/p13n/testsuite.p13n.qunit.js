@@ -210,15 +210,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
-			"Wrapper": {
-				group: "UI Panels",
-				module: "./panels/Wrapper.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
 			"QueryPanel": {
 				group: "UI Panels",
 				module: "./panels/QueryPanel.qunit",
