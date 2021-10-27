@@ -540,7 +540,16 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.skipOpening = function() { // ? Use close based logic instead?
-		this.close();
+		var oTypeahead = this.getTypeahead();
+		var oDialog = this.getDialog();
+
+		if (oTypeahead && oTypeahead.isOpening()) {
+			oTypeahead.close();
+		}
+
+		if (oDialog && oDialog.isOpening()) {
+			oDialog.close();
+		}
 	};
 
 	/**
