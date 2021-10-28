@@ -396,6 +396,7 @@ sap.ui.define([
 				})
 			]);
 			this.oChangeVisualization.triggerModeChange("MockComponent", {
+				getControl: function() {},
 				setModel: function(oData) {
 					assert.strictEqual(
 						oData.getData().commandCategories[3].count,

@@ -147,6 +147,9 @@ sap.ui.define([
 
 	ChangeVisualization.prototype.exit = function () {
 		this._oChangeIndicatorRegistry.destroy();
+		if (this.oRootOverlay) {
+			this.oRootOverlay.getDomRef().removeEventListener("click", onClick.bind(null, this.oMenuButton), {capture: true});
+		}
 	};
 
 	ChangeVisualization.prototype._reset = function () {
@@ -539,6 +542,10 @@ sap.ui.define([
 		aVisibleIndicators[iIndexToSelect].focus();
 	};
 
+	function onClick(oMenuButton) {
+		oMenuButton.getMenu().close();
+	}
+
 	/**
 	 * Triggers the mode switch (on/off).
 	 *
@@ -546,9 +553,18 @@ sap.ui.define([
 	 * @param {sap.ui.triggerModeChange.Toolbar} oToolbar - Toolbar of RTA
 	 */
 	ChangeVisualization.prototype.triggerModeChange = function(oRootControl, oToolbar) {
+		this.oMenuButton = oToolbar.getControl("toggleChangeVisualizationMenuButton");
+		this.oRootOverlay = OverlayRegistry.getOverlay(oRootControl);
+
 		if (this.getIsActive()) {
 			this.setIsActive(false);
+			if (this.oRootOverlay) {
+				this.oRootOverlay.getDomRef().removeEventListener("click", onClick.bind(null, this.oMenuButton), {capture: true});
+			}
 			return;
+		}
+		if (this.oRootOverlay) {
+			this.oRootOverlay.getDomRef().addEventListener("click", onClick.bind(null, this.oMenuButton), {capture: true});
 		}
 		if (!this.getRootControlId()) {
 			this.setRootControlId(oRootControl);
