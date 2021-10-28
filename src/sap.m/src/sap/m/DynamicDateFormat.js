@@ -8,13 +8,13 @@ sap.ui.define([
 	'sap/ui/core/format/NumberFormat',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
-	'./StandardDynamicDateRangeKeys',
 	"sap/base/Log",
 	"sap/base/util/deepExtend",
 	"sap/base/util/isEmptyObject",
-	"sap/ui/core/date/UniversalDateUtils"
+	"sap/ui/core/date/UniversalDateUtils",
+	"./library"
 ],
-	function(DateFormat, NumberFormat, Locale, LocaleData, StandardDynamicDateRangeKeys, Log, deepExtend, isEmptyObject, UniversalDateUtils) {
+	function(DateFormat, NumberFormat, Locale, LocaleData, Log, deepExtend, isEmptyObject, UniversalDateUtils, library) {
 		"use strict";
 
 		/**
@@ -56,8 +56,8 @@ sap.ui.define([
 			"TODAYFROMTO": ["int", "int"]
 		};
 
-		for (var i = 0; i < StandardDynamicDateRangeKeys.length; i++) {
-			var sKey = StandardDynamicDateRangeKeys[i];
+		for (var i = 0; i < library.StandardDynamicDateRangeKeys.length; i++) {
+			var sKey = library.StandardDynamicDateRangeKeys[i];
 			var sPattern = _resourceBundle.getText("DYNAMIC_DATE_" + sKey.toUpperCase() + "_FORMAT");
 			var aStaticParts = sPattern.split('{').map(function(sPart) {
 				var iClosingBracket = sPart.indexOf('}');
