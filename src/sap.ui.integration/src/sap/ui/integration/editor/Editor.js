@@ -2442,8 +2442,6 @@ sap.ui.define([
 								//set the _translatedValue with item manifest value or default value.
 								oItem._translatedValue  = oItem._translatedPlaceholder;
 								oItem.value = oItem._beforeValue;
-							} else {
-								oItem.value = oItem._beforeValue;
 							}
 						}
 						if (this.getMode() === "translation") {
