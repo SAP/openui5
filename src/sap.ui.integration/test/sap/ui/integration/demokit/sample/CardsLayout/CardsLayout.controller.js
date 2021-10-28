@@ -11,7 +11,6 @@ sap.ui.define([
 
 		onInit: function () {
 			var cardManifests = new JSONModel(),
-				componentCardUrl = sap.ui.require.toUrl("sap/ui/integration/sample/CardsLayout/componentCard/manifest.json"),
 				homeIconUrl = sap.ui.require.toUrl("sap/ui/integration/sample/CardsLayout/images/CompanyLogo.png"),
 				date = DateFormat.getDateInstance({style: "long"}).format(new Date());
 
@@ -19,7 +18,6 @@ sap.ui.define([
 
 			this.getView().setModel(cardManifests, "manifests");
 			this.getView().setModel(new JSONModel({
-				componentCardUrl: componentCardUrl,
 				homeIconUrl: homeIconUrl,
 				date: date
 			}));
@@ -29,6 +27,10 @@ sap.ui.define([
 			if (oEvent.getParameter("type") === integrationLibrary.CardActionType.Navigation) {
 				MessageToast.show("URL: " + oEvent.getParameter("parameters").url);
 			}
+		},
+
+		resolveCardUrl: function (sUrl) {
+			return sap.ui.require.toUrl("sap/ui/integration/sample/CardsLayout/" + sUrl);
 		}
 
 	});
