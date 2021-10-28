@@ -323,6 +323,13 @@ sap.ui.define([
 		assert.ok(oEmphasizedInfoElement, "A SPAN with the emphasized information is created");
 		assert.ok(oEmphasizedInfoElement.classList.contains("sapUiPseudoInvisibleText"), "SPAN is pseudo invisible instead of invisible");
 		assert.strictEqual(oEmphasizedInfoElement.innerHTML, sEmphasizedText, "Control has mapped the correct text for emphasizing");
+
+		this.oON.setNumber(undefined);
+		sap.ui.getCore().applyChanges();
+		oEmphasizedInfoElement = document.getElementById(this.oONEmphasizedInfoId);
+
+		assert.notOk(oEmphasizedInfoElement, "Text element for emphasized information is not present");
+
 	});
 
 	QUnit.test("ObjectNumber with ariaDescribedBy association", function (assert) {
