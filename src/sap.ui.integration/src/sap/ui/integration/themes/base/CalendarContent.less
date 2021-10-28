@@ -216,3 +216,17 @@
 		}
 	}
 }
+
+// adjust calendar card on small screen sizes (phone)
+html.sapUiMedia-Std-Phone .sapFCardCalendarContent .sapFCalCard,
+html.sapUiMedia-StdExt-Phone .sapFCardCalendarContent .sapFCalCard {
+	padding: 1rem 0.375rem;
+	.sapMIBar.sapMTB .sapMBarChild ~ .sapMBarChild {
+		margin-left: 0;
+	}
+	.sapUiCalMonthPicker,
+	.sapUiCalYearPicker {
+		width: auto;
+	}
+}
+
