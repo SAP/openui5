@@ -71,7 +71,7 @@ sap.ui.define([
 		},
 
 		formatStatusTextCombined: function (aChanges, oLabelId, oVariantLabelId) {
-			var sPersonalizationMessage = "At lease one label in the view IS personalized.";
+			var sPersonalizationMessage = "At least one label in the view IS personalized.";
 			var sNoPersonalizationMessage = "NOT A SINGLE label in the view is personalized";
 			return Helper.formatStatusText(aChanges, [oLabelId, oVariantLabelId],
 				sPersonalizationMessage, sNoPersonalizationMessage);
