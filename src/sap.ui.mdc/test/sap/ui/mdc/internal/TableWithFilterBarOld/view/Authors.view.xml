@@ -39,11 +39,11 @@
 
 			<mdc:FilterBar id="authorsFilterBar" variantBackreference="IDVariantManagementOfTable" filtersChanged="onFiltersChanged" liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/Authors.FB.delegate', payload: {collectionName: 'Authors'}}" p13nMode="Item,Value">
 				<mdc:dependents>
-					<mdcf:FieldValueHelp filterFields="$search" id="FVH_Generic_Multi" title="Conditions" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />
-					<mdcf:FieldValueHelp id="fhName" title="Name" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />
-					<mdcf:FieldValueHelp id="fhAdob" title="Birth Epoch" showConditionPanel="true" filterFields="*dateOfBirth*" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />
-					<mdcf:ConditionFieldHelp id="fhAdod" title="Define Filter Conditions" label="Date of death" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}"/>
-					<mdcf:FieldValueHelp id="IOFFVHCountry" noDialog="true" title="Countries" showConditionPanel="true" filterFields="*code,descr*" keyPath="code" descriptionPath="descr" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+					<mdcf:FieldValueHelp filterFields="$search" id="FVH_Generic_Multi" title="Conditions" showConditionPanel="true" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Authors', key: ''}}" />
+					<mdcf:FieldValueHelp id="fhName" title="Name" showConditionPanel="true" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Authors', key: 'name'}}" />
+					<mdcf:FieldValueHelp id="fhAdob" title="Birth Epoch" showConditionPanel="true" filterFields="*dateOfBirth*" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Authors', key: 'dateOfBirth'}}" />
+					<mdcf:ConditionFieldHelp id="fhAdod" title="Define Filter Conditions" label="Date of death" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Authors', key: 'dateOfDeath'}}"/>
+					<mdcf:FieldValueHelp id="IOFFVHCountry" noDialog="true" title="Countries" showConditionPanel="true" filterFields="*code,descr*" keyPath="code" descriptionPath="descr" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Authors', key: 'code'}}">
 					<mdcf:suggestContent>
 						<mdcf:FieldValueHelpMTableWrapper>
 								<Table items="{path: '/Countries'}" width="30rem">
@@ -86,7 +86,7 @@
 						</mdcf:content>
 					</mdcf:FieldValueHelp>
 
-					<mdcf:FieldValueHelp id="IOFFVHRegion" title="Regions" showConditionPanel="true" filterFields="*code,country_code,text*" keyPath="code" descriptionPath="text" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+					<mdcf:FieldValueHelp id="IOFFVHRegion" title="Regions" showConditionPanel="true" filterFields="*code,country_code,text*" keyPath="code" descriptionPath="text" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Authors', key: 'code'}}">
 						<mdcf:inParameters>
 							<mdcf:InParameter id="IOFFVHRegion-In-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" />
 						</mdcf:inParameters>
@@ -149,7 +149,7 @@
 						</mdcf:content>
 					</mdcf:FieldValueHelp>
 
-					<mdcf:FieldValueHelp id="IOFFVHCity" title="Cities" showConditionPanel="true" filterFields="*country_code,region_code,city,text*" keyPath="city" descriptionPath="text" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+					<mdcf:FieldValueHelp id="IOFFVHCity" title="Cities" showConditionPanel="true" filterFields="*country_code,region_code,city,text*" keyPath="city" descriptionPath="text" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Authors', key: 'city'}}">
 						<mdcf:inParameters>
 							<mdcf:InParameter id="IOFFVHCity_In-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" />
 							<mdcf:InParameter id="IOFFVHCity_In-Region" value="{$filters>/conditions/regionOfOrigin_code}" helpPath="region_code" />

@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/mdc/TableDelegate",
+	"sap/ui/mdc/odata/v4/TableDelegate",
 	"sap/ui/core/Core",
 	"sap/ui/mdc/util/FilterUtil",
 	"sap/ui/mdc/odata/v4/util/DelegateUtil",
@@ -170,6 +170,9 @@ sap.ui.define([
 			// get the basic search
 			var sSearchText = oFilter.getSearch instanceof Function ? oFilter.getSearch() :  "";
 			if (sSearchText) {
+				if (sSearchText.indexOf(" ") === -1) { // to allow serach for "(".....
+					sSearchText = '"' + sSearchText + '"'; // TODO: escape " in string
+				} // if it contains spaces allow opeartors like OR...
 
 				if (!oBindingInfo.parameters) {
 					oBindingInfo.parameters = {};

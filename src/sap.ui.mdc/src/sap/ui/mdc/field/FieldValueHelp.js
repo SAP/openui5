@@ -646,11 +646,11 @@ sap.ui.define([
 
 				if (oWrapper) {
 					oWrapper.fieldHelpOpen(false);
-						_updateSelectedItems.call(this);
-					}
-					this._aOldConditions = this.getConditions();
-					oDialog.open();
-					this._bDialogOpen = true; // to know already during opening animation
+					_updateSelectedItems.call(this);
+				}
+				this._aOldConditions = this.getConditions();
+				oDialog.open();
+				this._bDialogOpen = true; // to know already during opening animation
 			} else {
 				this._bOpen = true;
 			}

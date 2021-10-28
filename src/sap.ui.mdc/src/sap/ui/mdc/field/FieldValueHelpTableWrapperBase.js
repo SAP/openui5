@@ -559,6 +559,7 @@ sap.ui.define([
 				oListBinding.suspend();
 			}
 
+			sSearch = oDelegate.delegate.adjustSearch(oDelegate.payload, this._bSuggestion, sSearch);
 			oDelegate.delegate.executeSearch(oDelegate.payload, oListBinding, sSearch);
 			Log.info("ValueHelp-Search: " + sSearch);
 		}
