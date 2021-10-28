@@ -846,8 +846,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("TestTitleSelectorTap", function(assert) {
-
-		qutils.triggerEvent("tap", ohBasicId + "-titleArrow");
+		var oFakeEvent = {
+			target: ohBasic.getDomRef().querySelector(".sapUiIconTitle")
+		};
+		ohBasic.ontap(oFakeEvent);
 		assert.ok(oTitleArrowDomRef, "oTitleArrowDomRef is set to titleArrow");
 		assert.equal(oTitleArrowDomRef.id, ohBasicId + "-titleArrow", "Title Arrow should be clickable");
 		oTitleArrowDomRef = null;
