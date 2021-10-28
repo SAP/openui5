@@ -44,6 +44,46 @@
 					<f2:content>
 						<mdc:FilterBar id="booksFilterBar" variantBackreference="IDVariantManagementOfTable" filtersChanged="onFiltersChanged" filterConditions = '\{"stock" : [\{"operator":"BT","values":[100,50000]}]\}' liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/Books.FB.delegate', payload: {collectionName: 'Books'}}" p13nMode="Item,Value">
 						<mdc:dependents>
+							<mdc:ValueHelp
+								id="fhAdob"
+								delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+								<mdc:dialog>
+									<mdcv:Popover title="Birth Epoch">
+										<mdcvc:Conditions label="Date of birth"></mdcvc:Conditions>
+									</mdcv:Popover>
+								</mdc:dialog>
+							</mdc:ValueHelp>
+
+							<mdc:ValueHelp
+								id="fhAdobDialog"
+								delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+								<mdc:dialog>
+									<mdcv:Dialog title="Birth Epoch">
+										<mdcvc:Conditions label="Date of birth"></mdcvc:Conditions>
+									</mdcv:Dialog>
+								</mdc:dialog>
+							</mdc:ValueHelp>
+
+							<mdc:ValueHelp
+								id="fhAdod"
+								delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+								<mdc:dialog>
+									<mdcv:Popover title="Date of Death">
+										<mdcvc:Conditions label="Date of death"></mdcvc:Conditions>
+									</mdcv:Popover>
+								</mdc:dialog>
+							</mdc:ValueHelp>
+
+							<mdc:ValueHelp
+								id="fhAdodDialog"
+								delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+								<mdc:dialog>
+									<mdcv:Dialog title="Date of Death">
+										<mdcvc:Conditions label="Date of death"></mdcvc:Conditions>
+									</mdcv:Dialog>
+								</mdc:dialog>
+							</mdc:ValueHelp>
+
 
 							<mdc:ValueHelp id="FH4"
 								delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">

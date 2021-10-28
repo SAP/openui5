@@ -79,6 +79,16 @@ sap.ui.define([
 					oPropertyInfo.label = "Detail Genre";
 				}
 
+				if (oPropertyInfo.name === "author/dateOfBirth") {
+					// oPropertyInfo.fieldHelp = "fhAdob";
+					oPropertyInfo.maxConditions = 1;
+				}
+
+				if (oPropertyInfo.name === "author/dateOfDeath") {
+					oPropertyInfo.fieldHelp = "fhAdod";
+					oPropertyInfo.maxConditions = 1;
+				}
+
 			});
 
 			if (!bSearchExists) {
