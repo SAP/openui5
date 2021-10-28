@@ -537,7 +537,7 @@ function(
 			var	sValueStateText = this._getValueStateText();
 
 			if (this._oInvisibleMessage) {
-				this._oInvisibleMessage.announce(sValueStateText, InvisibleMessageMode.Assertive);
+				this._oInvisibleMessage.announce(sValueStateText, InvisibleMessageMode.Polite);
 			}
 		};
 
