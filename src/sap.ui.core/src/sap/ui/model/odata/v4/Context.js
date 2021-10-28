@@ -1342,6 +1342,8 @@ sap.ui.define([
 	 *     <li> a key property of the entity has not been requested,
 	 *     <li> the list binding is relative and does not use the <code>$$ownRequest</code>
 	 *       parameter (see {@link sap.ui.model.odata.v4.ODataModel#bindList}),
+	 *     <li> the list binding uses or inherits the <code>$$sharedRequest</code> parameter
+	 *       (see {@link sap.ui.model.odata.v4.ODataModel#bindList}),
 	 *     <li> the list binding uses data aggregation
 	 *       (see {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}),
 	 *     <li> messages are requested, but the model does not use the <code>autoExpandSelect</code>

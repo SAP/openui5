@@ -625,6 +625,9 @@ sap.ui.define([
 		if (this.mParameters.$$aggregation) {
 			throw new Error("Unsupported $$aggregation at " + this);
 		}
+		if (this.bSharedRequest) {
+			throw new Error("Unsupported $$sharedRequest at " + this);
+		}
 	};
 
 	/**

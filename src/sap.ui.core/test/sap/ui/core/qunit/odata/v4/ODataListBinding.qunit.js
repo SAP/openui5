@@ -7006,6 +7006,32 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("checkKeepAlive: $$sharedRequest", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined,
+				{$$sharedRequest : true});
+
+		assert.throws(function () {
+			// code under test
+			oBinding.checkKeepAlive({/*oContext*/});
+		}, new Error("Unsupported $$sharedRequest at " + oBinding));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkKeepAlive: sharedRequests from model", function (assert) {
+		var oModel = new ODataModel({
+				serviceUrl : "/service/?sap-client=111",
+				synchronizationMode : "None",
+				sharedRequests : true
+			}),
+			oBinding = oModel.bindList("/EMPLOYEES");
+
+		assert.throws(function () {
+			// code under test
+			oBinding.checkKeepAlive({/*oContext*/});
+		}, new Error("Unsupported $$sharedRequest at " + oBinding));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("checkKeepAlive: relative", function (assert) {
 		var oBinding,
 			oParentContext = Context.createNewContext({/*oModel*/}, oParentBinding, "/TEAMS('1')");
