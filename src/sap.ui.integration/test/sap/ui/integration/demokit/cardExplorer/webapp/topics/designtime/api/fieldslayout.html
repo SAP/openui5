@@ -31,8 +31,7 @@
 		}
 
 		td[data-sample],
-		td[data-sample] .sapUiIntegrationCardEditor,
-		td[data-sample] .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm {
+		td[data-sample] .sapUiIntegrationEditor {
 			width: 400px;
 			height: 120px;
 		}
@@ -159,7 +158,7 @@
 			<h2 id="fields">Examples for Field Configuration</h2>
 			<p>
 				The following examples are part of the items of the form map within the design-time file.
-			<div style="overflow-x:auto">
+			<div style="overflow-x:auto;overflow-y:hidden">
 				<table class="tableWrapper">
 					<tr>
 						<th>Purpose</th>
@@ -176,7 +175,7 @@
 						<td>
 							<pre class="lang-json" data-sample="1">{
 	"manifestpath": "/sap.card...param/value",
-	"label": "Fixed Label Text",
+	"label": "String",
 	"type": "string"
 }</pre>
 						</td>
@@ -191,7 +190,7 @@
 						<td>
 							<pre class="lang-json" data-sample="2">{
 	"manifestpath": "/sap.card...param/value",
-	"label": "Fixed Label Text",
+	"label": "Boolean",
 	"type": "boolean"
 }</pre>
 						</td>
@@ -206,7 +205,7 @@
 						<td>
 							<pre class="lang-json" data-sample="3">{
 	"manifestpath": "/sap.card...param/value",
-	"label": "Fixed Label Text",
+	"label": "Integer",
 	"type": "integer"
 }</pre>
 						</td>
@@ -222,7 +221,7 @@
 							<pre class="lang-json" data-sample="4">{
 	"param1": {
 		"manifestpath": "/sap.card/configuration/parameters/param1/value",
-		"label": "Fixed Label Text",
+		"label": "Date",
 		"type": "date"
 	}
 }</pre>
@@ -239,8 +238,77 @@
 							<pre class="lang-json" data-sample="5">{
 	"param1": {
 		"manifestpath": "/sap.card/configuration/parameters/param1/value",
-		"label": "Fixed Label Text",
+		"label": "Datetime",
 		"type": "datetime"
+	}
+}</pre>
+						</td>
+					</tr>
+					<tr>
+						<td>Simple String Array field (MultiComboBox)</td>
+
+
+						<td data-sample="6">
+							Loading...
+						</td>
+						<td>
+							<pre class="lang-json" data-sample="6">{
+	"param1": {
+		"manifestpath": "/sap.card/configuration/parameters/param1/value",
+		"label": "String Array (MultiComboBox)",
+		"type": "string[]",
+		"values": {
+			"data": {
+				"json": [
+					{"text": "text1", "key": "key1", "additionalText": "addtext1"},
+					{"text": "text2", "key": "key2", "additionalText": "addtext2"},
+					{"text": "text3", "key": "key3", "additionalText": "addtext3"}
+				],
+				"path": "/"
+			},
+			"item": {
+				"text": "{text}",
+				"key": "{key}",
+				"additionalText": "{additionalText}"
+			}
+		}
+	}
+}</pre>
+						</td>
+					</tr>
+					<tr>
+						<td>Simple String Array field (MultiInput)</td>
+
+
+						<td data-sample="7">
+							Loading...
+						</td>
+						<td>
+							<pre class="lang-json" data-sample="7">{
+	"param1": {
+		"manifestpath": "/sap.card/configuration/parameters/param1/value",
+		"label": "String Array (MultiInput)",
+		"type": "string[]",
+		"values": {
+			"data": {
+				"request": {
+					"url": "https://services.odata.org/V4/Northwind/Northwind.svc/Customers",
+					"parameters": {
+						"$select": "CustomerID, CompanyName, Country, City, Address",
+						"$filter": "startswith(CompanyName,'{currentSettings>suggestValue}')"
+					}
+				},
+				"path": "/value"
+			},
+			"item": {
+				"text": "{CompanyName}",
+				"key": "{CustomerID}",
+				"additionalText": "{Country}"
+			}
+		},<mark>
+		"visualization": {
+			"type": "MultiInput"
+		}</mark>
 	}
 }</pre>
 						</td>
@@ -250,11 +318,11 @@
 							each other</td>
 
 
-						<td data-sample="6">
+						<td data-sample="8">
 							Loading...
 						</td>
 						<td>
-							<pre class="lang-json" data-sample="6">{
+							<pre class="lang-json" data-sample="8">{
 	"param1": {
 		"manifestpath": "/sap.card...param/value1",
 		"label": "Field 1",
@@ -273,11 +341,11 @@
 					<tr>
 						<td>Group header before a field</td>
 
-						<td data-sample="7">
+						<td data-sample="9">
 							Loading...
 						</td>
 						<td>
-							<pre class="lang-json" data-sample="7">{
+							<pre class="lang-json" data-sample="9">{
 	"group": {
 		"label": "Group Header",
 		"type": "group"
@@ -294,11 +362,11 @@
 						<td>Simple Separator field</td>
 
 
-						<td data-sample="8">
+						<td data-sample="10">
 							Loading...
 						</td>
 						<td>
-							<pre class="lang-json" data-sample="8">{
+							<pre class="lang-json" data-sample="10">{
 	"param1": {
 		"type": "separator"
 	},
@@ -393,11 +461,11 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						<td>Showing the fields with layout property.</td>
 
 
-						<td data-sample="9">
+						<td data-sample="11">
 							Loading...
 						</td>
 						<td>
-							<pre class="lang-js" data-sample="9" style="height:250px">
+							<pre class="lang-js" data-sample="11" style="height:250px">
 {
 	"param1": {
 		"manifestpath": "/sap.card/configuration/parameters/param1/value",

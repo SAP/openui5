@@ -1209,6 +1209,10 @@ sap.ui.define([
 							if (oItem.valueItems) {
 								mResult[oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueItems"] = oItem.valueItems;
 							}
+							// save the value tokens for backend filter with MultiInput
+							if (oItem.valueTokens) {
+								mResult[oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueTokens"] = oItem.valueTokens;
+							}
 							/* hide multi language function since there has a translation issue in Portal
 							//if current parameter is string and translatable, create or merge valueTranslations property of it.
 							//set the current change to current language in valueTranslations.
@@ -2461,6 +2465,12 @@ sap.ui.define([
 						var oValueItems = this._manifestModel.getProperty(sValueItemsPath);
 						if (oValueItems) {
 							oItem.valueItems = oValueItems;
+						}
+						// get value tokens of MultiInput from manifest change for current item
+						var sValueTokensPath = oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueTokens";
+						var oValueTokens = this._manifestModel.getProperty(sValueTokensPath);
+						if (oValueTokens) {
+							oItem.valueTokens = oValueTokens;
 						}
 					}
 

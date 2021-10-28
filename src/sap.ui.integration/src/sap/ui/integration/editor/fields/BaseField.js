@@ -640,7 +640,13 @@ sap.ui.define([
 			if (oControl.attachChange) {
 				oControl.attachChange(function (oEvent) {
 					if (oEvent.mParameters.value === "") {
-						this._triggerValidation(oEvent.getParameter("value"));
+						// for list field, if change value === "", should validate the whole value list
+						var oConfig = this.getConfiguration();
+						if (oConfig.type === "string[]") {
+							this._triggerValidation(oConfig.value);
+						} else {
+							this._triggerValidation(oEvent.getParameter("value"));
+						}
 					}
 				}.bind(this));
 			}
