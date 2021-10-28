@@ -3081,7 +3081,10 @@ function(
 		 * @returns {object} The <code>sap.m.Select</code> accessibility information
 		 */
 		Select.prototype.getAccessibilityInfo = function() {
-			var bIconOnly = this._isIconOnly(),
+			var aDescriptions = [],
+				sDescription = "",
+				oResourceBundle = Core.getLibraryResourceBundle("sap.m"),
+				bIconOnly = this._isIconOnly(),
 				oInfo = {
 					role: this.getRenderer().getAriaRole(this),
 					focusable: this.getEnabled(),
@@ -3096,13 +3099,21 @@ function(
 					sDesc = oIconInfo && oIconInfo.text ? oIconInfo.text : "";
 				}
 
-				oInfo.type = Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON");
-				oInfo.description = sDesc;
+				oInfo.type = oResourceBundle.getText("ACC_CTR_TYPE_BUTTON");
+				aDescriptions.push(sDesc);
 			} else if (this.getType() === "Default") {
-				oInfo.type = Core.getLibraryResourceBundle("sap.m").getText("SELECT_ROLE_DESCRIPTION");
-				oInfo.description = this._getSelectedItemText();
+				oInfo.type = oResourceBundle.getText("SELECT_ROLE_DESCRIPTION");
+				aDescriptions.push(this._getSelectedItemText());
 			}
 
+			if (this._isRequired()) {
+				aDescriptions.push(oResourceBundle.getText("SELECT_REQUIRED"));
+			}
+
+			sDescription = aDescriptions.join(" ").trim();
+			if (sDescription) {
+				oInfo.description = sDescription;
+			}
 			return oInfo;
 		};
 
