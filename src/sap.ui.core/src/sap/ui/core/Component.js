@@ -3528,6 +3528,7 @@ sap.ui.define([
 	 *
 	 * @namespace sap.ui.core.Component.registry
 	 * @public
+	 * @since 1.67
 	 */
 
 	/**
