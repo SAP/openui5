@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/BackendConnector",
 	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
-	"sap/ui/fl/write/_internal/connectors/Utils"
+	"sap/ui/fl/write/_internal/connectors/Utils",
+	"sap/base/util/restricted/_pick"
 ], function(
 	merge,
 	BackendConnector,
 	InitialConnector,
 	InitialUtils,
-	WriteUtils
+	WriteUtils,
+	_pick
 ) {
 	"use strict";
 
@@ -40,6 +42,10 @@ sap.ui.define([
 				GET: PREFIX + API_VERSION + "/versions/",
 				ACTIVATE: PREFIX + API_VERSION + "/versions/activate/",
 				DISCARD: PREFIX + API_VERSION + "/versions/draft/"
+			},
+			TRANSLATION: {
+				DOWNLOAD: PREFIX + API_VERSION + "/translation/texts/",
+				GET_SOURCELANGUAGE: PREFIX + API_VERSION + "/translation/sourcelanguages/"
 			}
 		},
 		isLanguageInfoRequired: true,
@@ -101,6 +107,24 @@ sap.ui.define([
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
 			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.DISCARD, mPropertyBag);
 			return WriteUtils.sendRequest(sVersionsUrl, "DELETE", mPropertyBag);
+		}
+	};
+
+	KeyUserConnector.translation = {
+		getTexts: function (mPropertyBag) {
+			var mParameters = _pick(mPropertyBag, ["sourceLanguage", "targetLanguage"]);
+			var sTranslationUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.TRANSLATION.DOWNLOAD, mPropertyBag, mParameters);
+			return InitialUtils.sendRequest(sTranslationUrl, "GET", mPropertyBag).then(function(oResult) {
+				return oResult.response;
+			});
+		},
+
+		getSourceLanguages: function (mPropertyBag) {
+			var mParameters = {};
+			var sTranslationUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.TRANSLATION.GET_SOURCELANGUAGE, mPropertyBag, mParameters);
+			return InitialUtils.sendRequest(sTranslationUrl, "GET", mPropertyBag).then(function(oResult) {
+				return oResult.response;
+			});
 		}
 	};
 

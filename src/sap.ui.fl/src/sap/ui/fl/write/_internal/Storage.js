@@ -412,5 +412,37 @@ sap.ui.define([
 		}
 	};
 
+	Storage.translation = {
+		/**
+		 * Gets the source languages for the given application.
+		 *
+		 * @param {object} mPropertyBag - Property bag
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer
+		 * @param {string} mPropertyBag.reference - Flexibility reference
+		 * @returns {Promise} Resolving after the languages are retrieved;
+		 * rejects if an error occurs
+		 */
+		getSourceLanguages: function (mPropertyBag) {
+			return _getWriteConnectors()
+				.then(_executeActionByName.bind(undefined, "translation.getSourceLanguages", mPropertyBag));
+		},
+
+		/**
+		 * Gets the translatable texts for the given source & target language for the given application
+		 *
+		 * @param {object} mPropertyBag - Property bag
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer
+		 * @param {string} mPropertyBag.sourceLanguage - Source language for for which the request should be made
+		 * @param {string} mPropertyBag.targetLanguage - Target language for for which the request should be made
+		 * @param {string} mPropertyBag.reference - Flexibility reference
+		 * @returns {Promise} Resolving after the languages are retrieved;
+		 * rejects if an error occurs
+		 */
+		getTexts: function (mPropertyBag) {
+			return _getWriteConnectors()
+			.then(_executeActionByName.bind(undefined, "translation.getTexts", mPropertyBag));
+		}
+	};
+
 	return Storage;
 });

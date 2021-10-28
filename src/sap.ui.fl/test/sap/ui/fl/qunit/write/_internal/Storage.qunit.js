@@ -1377,6 +1377,86 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given Storage when translation.getSourceLanguage is called", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and a list of languages is returned", function (assert) {
+			var mPropertyBag = {
+				url: "/flexKeyuser",
+				appComponent: {},
+				layer: Layer.CUSTOMER
+			};
+
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
+			]);
+
+			var aReturnedLanguages = [
+				"en-US",
+				"de-DE"
+			];
+			sandbox.stub(WriteKeyUserConnector.translation, "getSourceLanguages").resolves(aReturnedLanguages);
+
+			return Storage.translation.getSourceLanguages(mPropertyBag).then(function (aLanguages) {
+				assert.equal(aLanguages, aReturnedLanguages);
+			});
+		});
+
+		QUnit.test("and the method is not implemented in the connector", function (assert) {
+			assert.expect(1);
+			var mPropertyBag = {
+				url: "/flexKeyuser",
+				appComponent: {},
+				layer: Layer.CUSTOMER
+			};
+
+			return Storage.translation.getSourceLanguages(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.equal(sRejectionMessage, "translation.getSourceLanguages is not implemented", "then the rejection message is passed");
+			});
+		});
+	});
+
+	QUnit.module("Given Storage when translation.getTranslationTexts is called", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and a download file is returned", function (assert) {
+			var mPropertyBag = {
+				sourceLanguage: "en-US",
+				targetLanguage: "de-DE",
+				url: "/flexKeyuser",
+				appComponent: {},
+				layer: Layer.CUSTOMER
+			};
+
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
+			]);
+
+			sandbox.stub(WriteKeyUserConnector.translation, "getTexts").resolves({test: "test"});
+
+			return Storage.translation.getTexts(mPropertyBag).then(function (oDownloadFile) {
+				assert.deepEqual(oDownloadFile, {test: "test"});
+			});
+		});
+
+		QUnit.test("and the method is not implemented in the connector", function (assert) {
+			assert.expect(1);
+			var mPropertyBag = {
+				url: "/flexKeyuser",
+				appComponent: {},
+				layer: Layer.CUSTOMER
+			};
+
+			return Storage.translation.getTexts(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.equal(sRejectionMessage, "translation.getTexts is not implemented", "then the rejection message is passed");
+			});
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});

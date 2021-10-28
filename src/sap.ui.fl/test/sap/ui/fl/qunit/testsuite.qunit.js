@@ -463,6 +463,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/api/ReloadInfoAPI"]
 				}
 			},
+			"write/api/TranslationAPI": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/TranslationAPI"]
+				}
+			},
 			"write/api/SmartBusinessWriteAPI": {
 				group: "Write API",
 				coverage: {

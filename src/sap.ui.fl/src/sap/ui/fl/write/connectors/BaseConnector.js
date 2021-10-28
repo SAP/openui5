@@ -214,6 +214,36 @@ sap.ui.define([
 			discardDraft: function () {
 				return Promise.reject("versions.discardDraft is not implemented");
 			}
+		},
+
+		translation: {
+			/**
+			 * Interface called to get the source languages for the given application
+			 *
+			 * @param {object} mPropertyBag - Property bag
+			 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer
+			 * @param {string} mPropertyBag.reference - Flex reference
+			 * @returns {Promise} Promise resolving after the languages are retrieved;
+			 * rejects if an error occurs
+			 */
+			getSourceLanguages: function () {
+				return Promise.reject("translation.getSourceLanguages is not implemented");
+			},
+
+			/**
+			 * Interface called to get the translatable texts for the given source & target language for the given application
+			 *
+			 * @param {object} mPropertyBag - Property bag
+			 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer
+			 * @param {string} mPropertyBag.sourceLanguage - Source language for for which the request should be made
+			 * @param {string} mPropertyBag.targetLanguage - Target language for for which the request should be made
+			 * @param {string} mPropertyBag.reference - Flex reference
+			 * @returns {Promise} Promise resolving after the download was started;
+			 * rejects if an error occurs
+			 */
+			getTexts: function () {
+				return Promise.reject("translation.getTexts is not implemented");
+			}
 		}
 	};
 
