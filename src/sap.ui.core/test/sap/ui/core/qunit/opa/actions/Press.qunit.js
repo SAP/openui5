@@ -205,6 +205,37 @@ function(Press,
 		oPressAction.executeOn(oFirstListItem);
 	});
 
+	QUnit.test("Should press a button using key modifiers", function(assert) {
+		var done = assert.async();
+
+		// Arrange
+		var oButton = new Button({id: "_button1"});
+		oButton.placeAt("qunit-fixture");
+
+		aControlsToClean.push(oButton);
+
+		//Make sure that button is rendered
+		sap.ui.getCore().applyChanges();
+
+		// System under Test
+		var oPressAction = new Press({altKey: true, ctrlKey: true, shiftKey: true});
+
+		// create onclick listener
+		$("#_button1").on("click", function(oEvent) {
+
+			assert.ok(true, "Press Event has been triggered");
+			assert.ok(oEvent.altKey, "Alt key modifier is pressed");
+			assert.ok(oEvent.ctrlKey, "Ctrl key modifier is pressed");
+			assert.ok(oEvent.shiftKey, "Shift key modifier is pressed");
+
+			//Call 'done' to resume qunit processing
+			done();
+		});
+
+		// Act
+		oPressAction.executeOn(oButton);
+	});
+
 	QUnit.test("List should fire selection change event", function(assert) {
 		var done = assert.async();
 

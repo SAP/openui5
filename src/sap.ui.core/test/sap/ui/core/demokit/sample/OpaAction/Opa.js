@@ -87,6 +87,28 @@ sap.ui.require([
 		});
 	});
 
+	opaTest("Should press Tokens with a Ctrl key modifier", function (Given, When, Then) {
+
+		When.waitFor({
+			controlType: "sap.m.Token",
+			actions: new Press({
+				ctrlKey: true
+			}),
+			success: function(oTokens){
+				var check = true;
+
+				oTokens.forEach(function(oToken){
+					if (!oToken.getSelected()) {
+						check = false;
+					}
+				});
+
+				Opa5.assert.ok(check, "All the tokens have been selected");
+			},
+			errorMessage: "Failed to select all tokens"
+		});
+	});
+
 	QUnit.module("Entering text in Controls");
 
 	opaTest("Should enter text in form inputs", function (Given, When, Then) {

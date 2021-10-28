@@ -3,7 +3,8 @@
 	xmlns:form="sap.ui.layout.form"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:dnd="sap.ui.core.dnd">
+	xmlns:dnd="sap.ui.core.dnd"
+	xmlns:l="sap.ui.layout">
 	<App id="myApp">
 		<Page id="firstPage">
 			<headerContent>
@@ -97,6 +98,8 @@
 					<core:Item text="USA" key="USA"/>
 				</Select>
 			</form:SimpleForm>
+			<Label text="MultiInput with tokens" labelFor="multiInput1"/>
+			<MultiInput id="multiInput1" width="100%" showValueHelp="false"/>
 			<Button text="Press here to trigger a press on the page" press="onPressPage"/>
 			<Button text="Press here to open a popover" press="onPressOpenPopover"/>
 			<List
