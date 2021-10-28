@@ -1,7 +1,9 @@
-/*global describe,it,element,by,takeScreenshot,expect,browser*/
+/*global describe,it,element,by,takeScreenshot,expect,browser,protractor*/
 
 describe("sap.m.ComboBoxClearIcon", function() {
 	"use strict";
+
+	browser.testrunner.currentSuite.meta.controlName = 'sap.m.ComboBox';
 
 	it("Should load the ClearButton test page",function() {
 		element(by.id("customCssButton")).click();
@@ -29,7 +31,7 @@ describe("sap.m.ComboBoxClearIcon", function() {
 	});
 
 	it("MultiComboBox - focus out should hide the clear icon", function() {
-		element(by.id("customCssButton")).click();
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		expect(takeScreenshot()).toLookAs("mcbClearIcon-hidden-focusout");
 	});
 
