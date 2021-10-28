@@ -1379,8 +1379,34 @@ function(
 
 		var oInfo = Input.prototype.getAccessibilityInfo.apply(this, arguments);
 		oInfo.type = oRb.getText("ACC_CTR_TYPE_MULTIINPUT");
-		oInfo.description = ((oInfo.description || "") + " " + sText).trim();
+		oInfo.description = (this.getValueDescriptionInfo() + " " + sText).trim();
 		return oInfo;
+	};
+
+	/**
+	 * Gets the value of the accessibility description info field.
+	 *
+	 * @protected
+	 * @override
+	 * @returns {string} The value of the accessibility description info
+	 */
+	MultiInput.prototype.getValueDescriptionInfo = function () {
+		var iTokensLength = this.getTokens().length;
+		var sDescriptionText = this.getDescription() || "";
+		var sValue = this.getValue();
+
+		if (sValue) {
+			return sValue;
+		}
+
+		// Empty string or the description text should be set as acc description in case there are no tokens and no value.
+		// This way the tokens will be announced as the control's value.
+		if (iTokensLength > 0) {
+			return sDescriptionText;
+		} else {
+			// "Empty" or the description text should be set as acc description in case there are no tokens and no value.
+			return sDescriptionText ? sDescriptionText : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_EMPTY");
+		}
 	};
 
 	MultiInput.prototype._modifyPopupInput = function (oPopupInput) {

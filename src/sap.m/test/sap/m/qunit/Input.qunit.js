@@ -4171,34 +4171,53 @@ sap.ui.define([
 
 	QUnit.module("Accessibility");
 
-	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oInput = new Input({value: "Value", tooltip: "Tooltip", placeholder: "Placeholder"});
+	QUnit.test("General - getAccessibilityInfo method", function(assert) {
+		//Arrange
+		var oInput = new Input({value: "Value", tooltip: "Tooltip", placeholder: "Placeholder"}),
+			oInfo = oInput.getAccessibilityInfo(),
+			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sEmptyDescriptionText = oRb.getText("INPUTBASE_VALUE_EMPTY");
+
+		// Assert
 		assert.ok(!!oInput.getAccessibilityInfo, "Input has a getAccessibilityInfo function");
-		var oInfo = oInput.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
 		assert.strictEqual(oInput.getRenderer().getAriaRole(), "", "No custom ARIA role");
-		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_INPUT"), "Type");
+		assert.strictEqual(oInfo.type, oRb.getText("ACC_CTR_TYPE_INPUT"), "Type");
 		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
+
+		// Act
 		oInput.setValue("");
 		oInput.setEnabled(false);
 		oInfo = oInput.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "", "Description");
+
+		// Assert
+		assert.strictEqual(oInfo.description, sEmptyDescriptionText, "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
+
+		// Act
 		oInput.setEnabled(true);
 		oInput.setEditable(false);
 		oInfo = oInput.getAccessibilityInfo();
+
+		// Assert
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
+
+		// Act
 		oInput.setDescription("Description");
 		oInfo = oInput.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Description", "Description");
+
+		// Assert
+		assert.strictEqual(oInfo.description, sEmptyDescriptionText + " Description", "Description");
+
+		// Cleanup
 		oInput.destroy();
 	});
 

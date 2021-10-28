@@ -5497,7 +5497,7 @@ sap.ui.define([
 		oMultiComboBox.setValue("");
 		oMultiComboBox.setEnabled(false);
 		oInfo = oMultiComboBox.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "", "Description");
+		assert.strictEqual(oInfo.description, Core.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_EMPTY"), "Description - Empty as there are no tokens and no value");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
