@@ -536,7 +536,11 @@
 									oDialog.open();
 								}
 							}),
-							new sap.m.Select({
+							new sap.m.Label({
+								text: "Form factor: ",
+								labelFor: "formFactorSelect"
+							}),
+							new sap.m.Select("formFactorSelect", {
 								items: [
 									new Item({text: "Cozy"}),
 									new Item({text: "Compact"})
