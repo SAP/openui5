@@ -43,6 +43,8 @@ sap.ui.define([
 	 *   Defines whether a filter condition for this property is required.
 	 * @property {object} [visualSettings]
 	 *   This object contains all relevant properties for visual adjustments.
+	 * @property {object} [visualSettings.widthCalculation]
+	 *   This object contains all properties and their default values for the column width calculation
 	 *
 	 * @private
 	 * @experimental
@@ -287,17 +289,8 @@ sap.ui.define([
 	PropertyHelper.prototype._calcColumnWidth = function (oProperty, mWidthCalculation) {
 		var fWidth = 0;
 		var fLabelWidth = 0;
-		var mPropertyInfoWidthCalculation = oProperty.visualSettings ? oProperty.visualSettings.widthCalculation : {};
-
-		mWidthCalculation = Object.assign({
-			minWidth: 2,
-			maxWidth: 19,
-			defaultWidth: 8,
-			gap: 0,
-			includeLabel: true,
-			excludeProperties: [],
-			verticalArrangement: false
-		}, mPropertyInfoWidthCalculation, mWidthCalculation || {});
+		var mPropertyInfoWidthCalculation = oProperty.visualSettings.widthCalculation;
+		mWidthCalculation = Object.assign({}, mPropertyInfoWidthCalculation);
 
 		var iMinWidth = Math.max(1, mWidthCalculation.minWidth);
 		var iMaxWidth = Math.max(iMinWidth, mWidthCalculation.maxWidth);

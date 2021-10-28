@@ -3511,8 +3511,8 @@ sap.ui.define([
 			oProperty = oPropertyHelper.getProperty(sPropertyName);
 			assert.equal(parseFloat(aColumns[6].getWidth()) + oProperty.visualSettings.widthCalculation.gap + "rem", aColumns[5].getWidth(), "Additional gap of " + oProperty.visualSettings.widthCalculation.gap + "rem for Column columnGap1 is calculated correctly");
 
-			// visualSettings.widthCalculation=false
-			assert.notOk(aColumns[7].getWidth(), "There is not width set since visualSettings.widthCalculation=false");
+			// visualSettings.widthCalculation=null
+			assert.notOk(aColumns[7].getWidth(), "There is no width set since visualSettings.widthCalculation=null");
 
 			done();
 		}.bind(this));

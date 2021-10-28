@@ -185,7 +185,59 @@ sap.ui.define([
 			allowedForComplexProperty: true
 		},
 		visualSettings: { // This object contains all relevant properties for visual adjustments
-			type: "object"
+			type: {
+				widthCalculation: { // This object contains all properties and their default values for the column width calculation
+					type: {
+						minWidth: {
+							type: "int",
+							"default": {
+								value: 2
+							}
+						},
+						maxWidth: {
+							type: "int",
+							"default": {
+								value: 19
+							}
+						},
+						defaultWidth: {
+							type: "int",
+							"default": {
+								value: 8
+							}
+						},
+						gap: {
+							type: "int",
+							"default": {
+								value: 0
+							}
+						},
+						includeLabel: {
+							type: "boolean",
+							"default": {
+								value: true
+							}
+						},
+						excludeProperties: {
+							type: "PropertyReference[]"
+						},
+						verticalArrangement: {
+							type: "boolean",
+							"default": {
+								value: false
+							}
+						}
+					},
+					"default": {
+						value: {},
+						ignoreIfNull: true
+					}
+				}
+			},
+			"default": {
+				value: {}
+			},
+			allowedForComplexProperty: true
 		},
 
 		// Chart
