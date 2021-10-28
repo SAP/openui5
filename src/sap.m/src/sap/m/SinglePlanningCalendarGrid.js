@@ -850,7 +850,7 @@ sap.ui.define([
 			};
 		};
 
-		SinglePlanningCalendarGrid.prototype._adjustAppointmentsHeightforCompact = function (sDate, oColumnStartDateAndHour, oColumnEndDateAndHour) {
+		SinglePlanningCalendarGrid.prototype._adjustAppointmentsHeightforCompact = function (sDate, oColumnStartDateAndHour, oColumnEndDateAndHour, iColumn) {
 			var oAppointment,
 				oAppDomRef,
 				oAppStartDate,
@@ -859,12 +859,13 @@ sap.ui.define([
 				iAppBottom,
 				bAppStartIsOutsideVisibleStartHour,
 				bAppEndIsOutsideVisibleEndHour,
-				iRowHeight = this._getRowHeight();
+				iRowHeight = this._getRowHeight(),
+				iRow = 0;
 
 			if (this._oAppointmentsToRender[sDate]) {
 				this._oAppointmentsToRender[sDate].oAppointmentsList.getIterator().forEach(function(oAppNode) {
 					oAppointment = oAppNode.getData();
-					oAppDomRef = oAppointment.getDomRef();
+					oAppDomRef = this.getDomRef().querySelector("#" + oAppointment.getId() + "-" + iColumn + "_" + iRow);
 					oAppStartDate = oAppointment.getStartDate();
 					oAppEndDate = oAppointment.getEndDate();
 					bAppStartIsOutsideVisibleStartHour = oColumnStartDateAndHour.getTime() > oAppStartDate.getTime();
@@ -876,6 +877,7 @@ sap.ui.define([
 					oAppDomRef.style["top"] = iAppTop + "px";
 					oAppDomRef.style["bottom"] = iAppBottom  + "px";
 					oAppDomRef.querySelector(".sapUiCalendarApp").style["minHeight"] = (iRowHeight / 2 - 3) + "px";
+					++iRow;
 				}.bind(this));
 			}
 		};
@@ -921,7 +923,7 @@ sap.ui.define([
 						sDate = this._getDateFormatter().format(oColumnCalDate.toLocalJSDate()),
 						oColumnStartDateAndHour = new UniversalDate(oColumnCalDate.getYear(), oColumnCalDate.getMonth(), oColumnCalDate.getDate(), this._getVisibleStartHour()),
 						oColumnEndDateAndHour = new UniversalDate(oColumnCalDate.getYear(), oColumnCalDate.getMonth(), oColumnCalDate.getDate(), this._getVisibleEndHour(), 59, 59);
-					this._adjustAppointmentsHeightforCompact(sDate, oColumnStartDateAndHour, oColumnEndDateAndHour);
+					this._adjustAppointmentsHeightforCompact(sDate, oColumnStartDateAndHour, oColumnEndDateAndHour, i);
 				}
 				this._adjustBlockersHeightforCompact();
 			} else {
