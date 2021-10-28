@@ -2474,6 +2474,7 @@ function(
 	 */
 	Input.prototype.getAccessibilityInfo = function() {
 		var oInfo = InputBase.prototype.getAccessibilityInfo.apply(this, arguments);
+
 		oInfo.description = ((oInfo.description || "") + " " + this.getDescription()).trim();
 		return oInfo;
 	};

@@ -10366,6 +10366,7 @@ sap.ui.define([
 	QUnit.module("getAccessibilityInfo");
 
 	QUnit.test("getAccessibilityInfo", function (assert) {
+		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		var oComboBox = new ComboBox({
 			value: "Value",
 			tooltip: "Tooltip",
@@ -10375,7 +10376,7 @@ sap.ui.define([
 		var oInfo = oComboBox.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oComboBox.getRenderer().getAriaRole(), "AriaRole");
-		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO"), "Type");
+		assert.strictEqual(oInfo.type, oRb.getText("ACC_CTR_TYPE_COMBO"), "Type");
 		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
@@ -10383,7 +10384,7 @@ sap.ui.define([
 		oComboBox.setValue("");
 		oComboBox.setEnabled(false);
 		oInfo = oComboBox.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "", "Description");
+		assert.strictEqual(oInfo.description, oRb.getText("INPUTBASE_VALUE_EMPTY"), "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
