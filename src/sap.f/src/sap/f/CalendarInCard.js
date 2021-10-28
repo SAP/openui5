@@ -199,6 +199,8 @@ sap.ui.define([
 		} else {
 			this._oPickerBtn.setText(this._formatPickerText());
 		}
+
+		this._addMonthFocusDelegate();
 		this._updateTodayButtonState();
 		this.fireStartDateChange();
 		this.fireSelect();
