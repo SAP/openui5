@@ -137,6 +137,13 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("providesScrolling", function(assert) {
+
+		var bScrolling = oPopover.providesScrolling();
+		assert.ok(bScrolling, "provides scrolling");
+
+	});
+
 	QUnit.module("assigned to ValueHelp", {
 		beforeEach: function() {
 			oValueHelpConfig = {maxConditions: 1};

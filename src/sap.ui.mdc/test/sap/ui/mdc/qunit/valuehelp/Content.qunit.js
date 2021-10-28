@@ -36,6 +36,9 @@ sap.ui.define([
 		isTypeahead: function() {
 			return bIsTypeahead;
 		},
+		providesScrolling: function() {
+			return bIsTypeahead;
+		},
 		isOpen: function() {
 			return bIsOpen;
 		},
@@ -197,6 +200,14 @@ sap.ui.define([
 		assert.notOk(oContent.isTypeahead(), "not typeahead");
 		bIsTypeahead = true;
 		assert.ok(oContent.isTypeahead(), "is typeahead");
+
+	});
+
+	QUnit.test("provideScrolling", function(assert) {
+
+		assert.ok(oContent.provideScrolling(), "scrolling needed if not provided by Container");
+		bIsTypeahead = true;
+		assert.notOk(oContent.provideScrolling(), "scrolling not needed if provided by Container");
 
 	});
 

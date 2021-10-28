@@ -151,6 +151,10 @@ sap.ui.define([
 		}
 	};
 
+	Popover.prototype.providesScrolling = function () {
+		return true;
+	};
+
 	Popover.prototype._observeChanges = function (oChanges) {
 		if (oChanges.name === "content") {
 			var oContent = oChanges.child;
