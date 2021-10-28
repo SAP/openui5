@@ -82,6 +82,7 @@ sap.ui.define([
 		 * @return {object} the info object of the registered icon which has the name, collection, uri, fontFamily, content and suppressMirroring properties.
 		 * @static
 		 * @public
+		 * @function
 		 */
 		IconPool.addIcon = _IconRegistry.addIcon;
 
@@ -93,6 +94,7 @@ sap.ui.define([
 		 * @return {string} URI of the icon or <code>undefined</code> if the icon can't be found in the IconPool
 		 * @static
 		 * @public
+		 * @function
 		 */
 		IconPool.getIconURI = _IconRegistry.getIconURI;
 
@@ -126,6 +128,7 @@ sap.ui.define([
 		 *   or <code>undefined</code> when the icon can't be found or no icon name was given.
 		 * @static
 		 * @public
+		 * @function
 		 */
 		IconPool.getIconInfo = _IconRegistry.getIconInfo;
 
@@ -134,6 +137,7 @@ sap.ui.define([
 		 * @param {string} sCollectionName icon collection name
 		 * @returns {Promise|undefined} a Promise that resolves when the icon font is loaded;
 		 *   or <code>undefined</code> if the icon font has not been registered yet
+		 * @static
 		 * @public
 		 * @since 1.56.0
 		 */
@@ -162,6 +166,7 @@ sap.ui.define([
 		 * @return {boolean} Whether the URI matches the icon URI format
 		 * @static
 		 * @public
+		 * @function
 		 */
 		IconPool.isIconURI = _IconRegistry.isIconURI;
 
@@ -171,6 +176,7 @@ sap.ui.define([
 		 * @return {array} An array contains all of the registered collections' names.
 		 * @static
 		 * @public
+		 * @function
 		 */
 		IconPool.getIconCollectionNames = _IconRegistry.getIconCollectionNames;
 
@@ -181,6 +187,7 @@ sap.ui.define([
 		 * @return {array} An array contains all of the registered icon names under the given collection.
 		 * @static
 		 * @public
+		 * @function
 		 */
 		IconPool.getIconNames = _IconRegistry.getIconNames;
 
@@ -190,6 +197,9 @@ sap.ui.define([
 		 * @param {string} sFontFace the file name of the font face
 		 * @param {string} sPath the path to the font file
 		 * @param {string} [sCollectionName] the collection name, if not specified the font face is used
+		 * @static
+		 * @public
+		 * @function
 		 */
 		IconPool.insertFontFaceStyle = _IconRegistry.insertFontFaceStyle;
 
@@ -204,6 +214,7 @@ sap.ui.define([
 		 * @param {object} [oConfig.metadataURI] an URI to a file containing the configuration object specified with oConfig.metadata
 		 * @param {boolean} [oConfig.lazy] load the icon font metadata only when an icon is requested with {@link #.getIconInfo}
 		 *   if not specified a JSON file with the name oConfig.fontFamily will be loaded from the location specified in oConfig.fontURI
+		 * @static
 		 * @public
 		 * @since 1.56.0
 		 */

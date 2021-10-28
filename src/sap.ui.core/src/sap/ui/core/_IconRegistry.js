@@ -723,23 +723,10 @@ sap.ui.define([
 			return oCoreResourceBundle;
 		}
 
-		/**
-		 * The IconPool is a static class for retrieving or registering icons.
-		 * It also provides helping methods for easier consumption of icons.
-		 * There are already icons registered in IconPool, please use the Demo App named
-		 * "Icon Explorer" to find the name of the icon.
-		 *
-		 * In order to use the icon inside an existing control, please call
-		 * {@link sap.ui.core.IconPool.getIconURI} and assign the URI to the control's property
-		 * which supports icons.
-		 * If you want to support both, icons and standard images in your own control, please use
-		 * the static method {@link sap.ui.core.IconPool.createControlByURI} to either create an Icon in
-		 * case the first argument is an icon-URL or another control which you define by
-		 * providing it as the second argument.
-		 *
-		 * @namespace
-		 * @public
-		 * @alias sap.ui.core.IconPool
+		/*
+		 * The private "sap/ui/core/_IconRegistry" holds the implementation for some functions exposed
+		 * via the the "sap/ui/core/IconPool".
+		 * Please see the corresponding API documentation there.
 		 */
 		var _IconRegistry = {
 			sapIconFontFamily: SAP_ICON_FONT_FAMILY
@@ -754,21 +741,8 @@ sap.ui.define([
 			return mFontRegistry;
 		};
 
-		/**
-		 * Register an additional icon to the sap.ui.core.IconPool.
-		 *
-		 * @param {string} iconName the name of the icon.
-		 * @param {string} collectionName the name of icon collection. The built in icons are with empty collectionName, so if additional icons need to be registered in IconPool, the collectionName can't be empty.
-		 * @param {object} iconInfo the icon info which contains the following properties:
-		 * @param {string} iconInfo.fontFamily is the name of the font when importing the font using @font-face in CSS
-		 * @param {string|string[]} iconInfo.content is the special hexadecimal code without the prefix, for example "e000" or several of them
-		 * @param {boolean} [iconInfo.overWrite=false] indicates if already registered icons should be overwritten when the same name and collection are given. The built in icons can never be overwritten.
-		 * @param {boolean} [iconInfo.suppressMirroring=false] indicates whether this icon should NOT be mirrored in RTL (right to left) mode.
-		 * @param {module:sap/base/i18n/ResourceBundle} [iconInfo.resourceBundle] ResourceBundle to be used for translation. Key format: "Icon.<iconName>".
-		 *
-		 * @return {object} the info object of the registered icon which has the name, collection, uri, fontFamily, content and suppressMirroring properties.
-		 * @static
-		 * @public
+		/*
+		 * See IconPool.addIcon
 		 */
 		_IconRegistry.addIcon = function(iconName, collectionName, iconInfo) {
 			// OLD API Compatibility fontFamily, content, overWrite, suppressMirroring
@@ -842,50 +816,16 @@ sap.ui.define([
 			return icon;
 		};
 
-		/**
-		 * Returns the URI of the icon in the pool which has the given <code>iconName</code> and <code>collectionName</code>.
-		 *
-		 * @param {string} iconName Name of the icon, must not be empty
-		 * @param {string} [collectionName] Name of the icon collection; to access built-in icons, omit the collection name
-		 * @return {string} URI of the icon or <code>undefined</code> if the icon can't be found in the IconPool
-		 * @static
-		 * @public
+		/*
+		 * See IconPool.getIconURI
 		 */
 		_IconRegistry.getIconURI = function (iconName, collectionName) {
 			var icon = this.getIconInfo(iconName, collectionName);
 			return icon && icon.uri;
 		};
 
-		/**
-		 * Returns an info object for the icon with the given <code>iconName</code> and <code>collectionName</code>.
-		 *
-		 * Instead of giving name and collection, a complete icon-URI can be provided as <code>iconName</code>.
-		 * The method will determine name and collection from the URI, see {@link #.isIconURI IconPool.isIconURI}
-		 * for details.
-		 *
-		 * The returned info object has the following properties:
-		 * <ul>
-		 * <li><code>string: name</code> Name of the icon</li>
-		 * <li><code>string: collection</code> Name of the collection that contains the icon or <code>undefined</code> in case of the default collection</li>
-		 * <li><code>string: uri</code> Icon URI that identifies the icon</li>
-		 * <li><code>string: fontFamily</code> CSS font family to use for this icon</li>
-		 * <li><code>string: content</code> Character sequence that represents the icon in the icon font</li>
-		 * <li><code>string: text</code> Alternative text describing the icon (optional, might be empty)</li>
-		 * <li><code>boolean: suppressMirroring</code> Whether the icon needs no mirroring in right-to-left mode</li>
-		 * </ul>
-		 *
-		 * @param {string} iconName Name of the icon, or a complete icon-URI with icon collection and icon name;
-		 *   must not be empty
-		 * @param {string} [collectionName] Name of the icon collection; to access built-in icons,
-		 *   omit the collection name
-		 * @param {string} [loadingMode="sync"] The approach for loading the icon info, if it is not already available:
-		 *   sync - font metadata is loaded synchronously and the icon info is returned immediately
-		 *   async - a promise is returned that returns the icon info when the font metadata is loaded
-		 *   mixed - until the font metadata is loaded a promise is returned, afterwards the icon info
-		 * @return {object|Promise|undefined} Info object or Promise for the icon depending on the loadingMode
-		 *   or <code>undefined</code> when the icon can't be found or no icon name was given.
-		 * @static
-		 * @public
+		/*
+		 * See IconPool.getIconInfo
 		 */
 		_IconRegistry.getIconInfo = function (iconName, collectionName, loadingMode) {
 			var parts,
@@ -985,20 +925,8 @@ sap.ui.define([
 		};
 
 
-		/**
-		 * Returns whether the given <code>uri</code> is an icon URI.
-		 *
-		 * A string is an icon URI when it can be parsed as a URI and when it has one of the two forms
-		 * <ul>
-		 * <li>sap-icon://collectionName/iconName</li>
-		 * <li>sap-icon://iconName</li>
-		 * </ul>
-		 * where collectionName and iconName must be non-empty.
-		 *
-		 * @param {string} uri The URI to check
-		 * @return {boolean} Whether the URI matches the icon URI format
-		 * @static
-		 * @public
+		/*
+		 * See IconPool.isIconURI
 		 */
 		_IconRegistry.isIconURI = function (uri) {
 			if (!uri) {
@@ -1009,30 +937,24 @@ sap.ui.define([
 			return parts.protocol === ICON_PROTOCOL && !!parts.hostname;
 		};
 
-		/**
-		 * Returns all names of registered collections in IconPool
-		 *
-		 * @return {array} An array contains all of the registered collections' names.
-		 * @static
-		 * @public
+		/*
+		 * See IconPool.getIconCollectionNames
 		 */
 		_IconRegistry.getIconCollectionNames = function () {
 			return Object.keys(mRegistry);
 		};
 
-		/**
-		 * Returns all name of icons that are registered under the given collection.
-		 *
-		 * @param {string} collectionName the name of collection where icon names are retrieved.
-		 * @return {array} An array contains all of the registered icon names under the given collection.
-		 * @static
-		 * @public
+		/*
+		 * See IconPool.getIconNames
 		 */
 		_IconRegistry.getIconNames = function (collectionName) {
 			var collection = mRegistry[collectionName];
 			return collection ? Object.keys(collection) : [];
 		};
 
+		/*
+		 * See IconPool.insertFontFaceStyle
+		 */
 		_IconRegistry.insertFontFaceStyle = function (sFontFace, sPath, sCollectionName) {
 			var oFontFace,
 				mFontRegistry = _IconRegistry.getFontRegistry();
@@ -1090,6 +1012,14 @@ sap.ui.define([
 			mFontRegistry[sCollectionName].fontFace = sFontFace;
 		};
 
+		/**
+		 * Loads the font metadata for the given collection.
+		 *
+		 * @param {string} collectionName the font collection name
+		 * @param {boolean} async whether the metadata is loaded async or sync
+		 * @returns {Promise<undefined>|undefined} if async is set to true a Promise is returned, otherwise undefined
+		 * @private
+		 */
 		_IconRegistry._loadFontMetadata = function (collectionName, async) {
 			var oConfig,
 				mRegistry = _IconRegistry.get(),
