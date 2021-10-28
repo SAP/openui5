@@ -20,7 +20,7 @@ sap.ui.define(['./library'],
          * @readonly
          * @const {string}
          */
-        ChartRenderer.CSS_CLASS = "sapUiMDCChartNew";
+        ChartRenderer.CSS_CLASS = "sapUiMDCChart";
 
         /**
          * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -32,7 +32,7 @@ sap.ui.define(['./library'],
                 oRm.openStart("div", oMDCChart);
                 //TODO: Clarify why writeControlData doesn't work on rerender
                 oRm.attr("id", oMDCChart.getId());
-                //oRm.class(ChartRenderer.CSS_CLASS);
+                oRm.class(ChartRenderer.CSS_CLASS);
                 //oRm.class("sapUiFixFlex");
                 //oRm.style("overflow", "hidden");
                 oRm.style("height", oMDCChart.getHeight());
