@@ -217,16 +217,31 @@
 	}
 }
 
-// adjust calendar card on small screen sizes (phone)
-html.sapUiMedia-Std-Phone .sapFCardCalendarContent .sapFCalCard,
-html.sapUiMedia-StdExt-Phone .sapFCardCalendarContent .sapFCalCard {
-	padding: 1rem 0.375rem;
-	.sapMIBar.sapMTB .sapMBarChild ~ .sapMBarChild {
-		margin-left: 0;
+// adjust calendar card on small screen sizes (phone) or higner zoom factor
+html.sapUiMedia-Std-Phone,
+html.sapUiMedia-StdExt-Phone {
+	.sapFCardCalendarContent .sapFCalCard {
+		padding: 1rem 0.375rem;
+		.sapMIBar.sapMTB .sapMBarChild ~ .sapMBarChild {
+			margin-left: 0.125rem;
+		}
 	}
+}
+
+html.sapUiMedia-Std-Tablet,
+html.sapUiMedia-StdExt-Tablet {
+	.sapFCardCalendarContent .sapFCalCard {
+		.sapMIBar.sapMTB .sapMBarChild ~ .sapMBarChild {
+			margin-left: 0.25rem;
+		}
+	}
+}
+
+.sapFCardCalendarContent .sapFCalCard {
 	.sapUiCalMonthPicker,
 	.sapUiCalYearPicker {
 		width: auto;
 	}
 }
+
 
