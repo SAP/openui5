@@ -51,15 +51,15 @@ sap.ui.define([
 	) {
 		"use strict";
 
-		var ROW_HEIGHT_COZY = 69,
-			ROW_HEIGHT_COMPACT = 48,
-			BLOCKER_ROW_HEIGHT_COZY = 34,
-			BLOCKER_ROW_HEIGHT_COMPACT = 25,
+		var ROW_HEIGHT_COZY = 4.3125, // Unit in rem, equals 69px with default font size
+			ROW_HEIGHT_COMPACT = 3, // Unit in rem, equals 48px with default font size
+			BLOCKER_ROW_HEIGHT_COZY = 2.125, // Unit in rem, equals 34px with default font size
+			BLOCKER_ROW_HEIGHT_COMPACT = 1.5625, // Unit in rem, equals 25px with default font size
 			HALF_HOUR_MS = 3600000 / 2,
 			ONE_MIN_MS = 60 * 1000,
 			// Day view only - indicates the special dates
 			// 3px height the marker itself + 2x2px on its top and bottom both on cozy & compact
-			DAY_MARKER_HEIGHT_PX = 7,
+			DAY_MARKER_HEIGHT = 0.4375, // Unit in rem, equals 7px with default font size
 			FIRST_HOUR_OF_DAY = 0,
 			LAST_HOUR_OF_DAY = 24;
 
@@ -874,9 +874,9 @@ sap.ui.define([
 					iAppTop = bAppStartIsOutsideVisibleStartHour ? 0 : this._calculateTopPosition(oAppStartDate);
 					iAppBottom = bAppEndIsOutsideVisibleEndHour ? 0 : this._calculateBottomPosition(oAppEndDate);
 
-					oAppDomRef.style["top"] = iAppTop + "px";
-					oAppDomRef.style["bottom"] = iAppBottom  + "px";
-					oAppDomRef.querySelector(".sapUiCalendarApp").style["minHeight"] = (iRowHeight / 2 - 3) + "px";
+					oAppDomRef.style["top"] = iAppTop + "rem";
+					oAppDomRef.style["bottom"] = iAppBottom  + "rem";
+					oAppDomRef.querySelector(".sapUiCalendarApp").style["minHeight"] = (iRowHeight / 2 - 0.1875) + "rem";
 					++iRow;
 				}.bind(this));
 			}
@@ -886,16 +886,16 @@ sap.ui.define([
 			var iMaxLevel = this._getBlockersToRender().iMaxlevel,
 				iContainerHeight = (iMaxLevel + 1) * this._getBlockerRowHeight(),
 				// Day view has bigger height because of the day marker for special days
-				iRecalculatedContHeight = this._getColumns() === 1 ? iContainerHeight + DAY_MARKER_HEIGHT_PX : iContainerHeight,
+				iRecalculatedContHeight = this._getColumns() === 1 ? iContainerHeight + DAY_MARKER_HEIGHT : iContainerHeight,
 				iBlockerRowHeight = this._getBlockerRowHeight();
 
-			if (iMaxLevel > 0) { // hackie thing to calculate the container witdth. When we have more than 1 line of blockers - we must add 3 px in order to render the blockers visually in the container.
-				iRecalculatedContHeight = iRecalculatedContHeight + 3;
+			if (iMaxLevel > 0) { // hackie thing to calculate the container witdth. When we have more than 1 line of blockers - we must add 0.1875rem in order to render the blockers visually in the container.
+				iRecalculatedContHeight = iRecalculatedContHeight + 0.1875;
 			}
-			this.$().find(".sapMSinglePCBlockersColumns").css("height", iRecalculatedContHeight);
+			this.$().find(".sapMSinglePCBlockersColumns").css("height", iRecalculatedContHeight + "rem");
 
-			this._oBlockersToRender.oBlockersList.getIterator().forEach(function(oBlokcerNode) {
-				oBlokcerNode.getData().$().css("top", iBlockerRowHeight * oBlokcerNode.level + 1);
+			this._oBlockersToRender.oBlockersList.getIterator().forEach(function(oBlockerNode) {
+				oBlockerNode.getData().$().css("top", (iBlockerRowHeight * oBlockerNode.level + 0.0625) + "rem");
 			});
 		};
 
@@ -908,7 +908,7 @@ sap.ui.define([
 
 			if (this._getColumns() === 1) {
 				iContainerHeight = (iMaxLevel + 1) * this._getBlockerRowHeight();
-				this.$().find(".sapMSinglePCBlockersColumns").css("height", iContainerHeight + DAY_MARKER_HEIGHT_PX);
+				this.$().find(".sapMSinglePCBlockersColumns").css("height", (iContainerHeight + DAY_MARKER_HEIGHT) + "rem");
 			}
 		};
 
@@ -1388,7 +1388,7 @@ sap.ui.define([
 				iMinutes = oDate.getMinutes(),
 				iRowHeight = this._getRowHeight();
 
-			return Math.floor((iRowHeight * iHour) + (iRowHeight / 60) * iMinutes);
+			return (iRowHeight * iHour) + (iRowHeight / 60) * iMinutes;
 		};
 
 		/**
@@ -1403,7 +1403,7 @@ sap.ui.define([
 				iMinutes = oDate.getMinutes(),
 				iRowHeight = this._getRowHeight();
 
-			return Math.floor((iRowHeight * iHour) - (iRowHeight / 60) * iMinutes);
+			return (iRowHeight * iHour) - (iRowHeight / 60) * iMinutes;
 		};
 
 		/**
@@ -1433,7 +1433,7 @@ sap.ui.define([
 				bCurrentHourNotVisible = !this._isVisibleHour(oDate.getHours());
 
 			$nowMarker.toggleClass("sapMSinglePCNowMarkerHidden", bCurrentHourNotVisible);
-			$nowMarker.css("top", this._calculateTopPosition(oDate) + "px");
+			$nowMarker.css("top", this._calculateTopPosition(oDate) + "rem");
 			$nowMarkerText.text(this._formatTimeAsString(oDate));
 			$nowMarkerAMPM.text(this._addAMPM(oDate));
 			$nowMarkerText.append($nowMarkerAMPM);
