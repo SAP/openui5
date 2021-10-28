@@ -4213,14 +4213,16 @@ sap.ui.define([
 	QUnit.test("General - getAccessibilityInfo method", function(assert) {
 		//Arrange
 		var oInput = new Input({value: "Value", tooltip: "Tooltip", placeholder: "Placeholder"}),
-			oInfo = oInput.getAccessibilityInfo();
+			oInfo = oInput.getAccessibilityInfo(),
+			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sEmptyDescriptionText = oRb.getText("INPUTBASE_VALUE_EMPTY");
 
 		// Assert
 		assert.ok(!!oInput.getAccessibilityInfo, "Input has a getAccessibilityInfo function");
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
 		assert.strictEqual(oInput.getRenderer().getAriaRole(), "", "No custom ARIA role");
-		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_INPUT"), "Type");
+		assert.strictEqual(oInfo.type, oRb.getText("ACC_CTR_TYPE_INPUT"), "Type");
 		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
@@ -4232,7 +4234,7 @@ sap.ui.define([
 		oInfo = oInput.getAccessibilityInfo();
 
 		// Assert
-		assert.strictEqual(oInfo.description, "", "Description");
+		assert.strictEqual(oInfo.description, sEmptyDescriptionText, "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -4252,7 +4254,7 @@ sap.ui.define([
 		oInfo = oInput.getAccessibilityInfo();
 
 		// Assert
-		assert.strictEqual(oInfo.description, "Description", "Description");
+		assert.strictEqual(oInfo.description, sEmptyDescriptionText + " Description", "Description");
 
 		// Cleanup
 		oInput.destroy();
