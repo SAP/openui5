@@ -417,7 +417,8 @@ sap.ui.define([
 				case "expression":
 					return bExpression ? vValue : "{=" + vValue + "}";
 
-				// no default
+				default:
+					return undefined;
 			}
 		},
 
