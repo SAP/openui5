@@ -45,6 +45,7 @@ sap.ui.define([
 	var FilterField = FieldBase.extend("sap.ui.mdc.FilterField", /* @lends sap.ui.mdc.FilterField.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
+			designtime: "sap/ui/mdc/designtime/field/FilterField.designtime",
 			properties: {
 				/**
 				 * Supported operator names for conditions.

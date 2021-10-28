@@ -60,6 +60,7 @@ sap.ui.define([
 	var Field = FieldBase.extend("sap.ui.mdc.Field", /* @lends sap.ui.mdc.Field.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
+			designtime: "sap/ui/mdc/designtime/field/Field.designtime",
 			properties: {
 				/**
 				 * The value of the field.
