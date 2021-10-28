@@ -32,25 +32,18 @@ sap.ui.define([
 				mFlexData.variantDependentControlChanges,
 				mFlexData.variantManagementChanges
 			].forEach(function (aFlexItems) {
-				// a for is used due to the alteration of the array and its length
-				for (var i = aFlexItems.length - 1; i >= 0; i--) {
-					var oFlexItem = aFlexItems[i];
+				aFlexItems.forEach(function (oFlexItem) {
 					if (!oFlexItem.selector.idIsLocal) {
-						// ensure the UID stays the same to send the correct ID on a condensing request (delete section)
-						var oFlexItemCopy = deepClone(oFlexItem);
-						oFlexItem.cloned = true;
-						oFlexItemCopy.selector = getIdIsLocalTrueObject(oFlexItemCopy.selector);
+						oFlexItem.selector = getIdIsLocalTrueObject(oFlexItem.selector);
 
-						// do the same for dependentSelectors
-						if (oFlexItemCopy.dependentSelector) {
-							Object.keys(oFlexItemCopy.dependentSelector).forEach(function (oFlexItemCopy, sCategory) {
-								oFlexItemCopy.dependentSelector[sCategory] = oFlexItemCopy.dependentSelector[sCategory].map(getIdIsLocalTrueObject);
-							}.bind(undefined, oFlexItemCopy));
+						if (oFlexItem.dependentSelector) {
+							Object.keys(oFlexItem.dependentSelector).forEach(function (sCategory) {
+								oFlexItem.dependentSelector[sCategory] =
+                                    oFlexItem.dependentSelector[sCategory].map(getIdIsLocalTrueObject);
+							});
 						}
-
-						aFlexItems.splice(i, 0, oFlexItemCopy);
 					}
-				}
+				});
 			});
 		}
 

@@ -481,37 +481,6 @@ sap.ui.define([
 				assert.equal(oResult.changes.length, 1, "only one change was returned");
 			});
 		});
-
-		QUnit.test("Given 2 connectors provide a change with the same id due to a cloning from the Loader", function (assert) {
-			var oStaticFileConnectorResponse = StorageUtils.getEmptyFlexDataResponse();
-			var oLrepConnectorResponse = StorageUtils.getEmptyFlexDataResponse();
-
-			var oChange1 = new Change({
-				fileName: "rename_id_123",
-				fileType: "change",
-				layer: Layer.VENDOR,
-				reference: "app.id",
-				content: {}
-			});
-
-			var oChange2 = new Change({
-				fileName: "rename_id_123",
-				fileType: "change",
-				cloned: true,
-				layer: Layer.VENDOR,
-				reference: "app.id",
-				content: {}
-			});
-
-			oLrepConnectorResponse.changes = [oChange1.getDefinition(), oChange2.getDefinition()];
-
-			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oStaticFileConnectorResponse);
-			sandbox.stub(LrepConnector, "loadFlexData").resolves(oLrepConnectorResponse);
-
-			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
-				assert.equal(oResult.changes.length, 2, "both changes were returned");
-			});
-		});
 	});
 
 	QUnit.module("Given all connector stubs", {
