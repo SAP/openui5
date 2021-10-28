@@ -1603,15 +1603,13 @@ function(
 						}
 					}.bind(this),
 					oncontextmenu: function (oEvent) {
-						if (!Device.os.android) {
-							// Context menu is shown on "long-touch"
-							// so prevent of showing it while "long-touching" on the button
-							oEvent.stopImmediatePropagation(true);
-							if (oEvent.originalEvent && oEvent.originalEvent.cancelable) {
-								oEvent.preventDefault();
-							}
-							oEvent.stopPropagation();
+						// Context menu is shown on "long-touch"
+						// so prevent of showing it while "long-touching" on the button
+						oEvent.stopImmediatePropagation(true);
+						if (oEvent.originalEvent && oEvent.originalEvent.cancelable) {
+							oEvent.preventDefault();
 						}
+						oEvent.stopPropagation();
 					},
 					ontouchend: function(oEvent) {
 						if (Device.system.phone || Device.system.tablet) {
