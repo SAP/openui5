@@ -55,6 +55,7 @@ sap.ui.define([
 
 	QueryPanel.prototype.init = function () {
 		BasePanel.prototype.init.apply(this, arguments);
+		this._bFocusOnRearrange = false;
 		this.setEnableReorder(true);
 		this.addStyleClass("sapMP13nQueryPanel");
 	};
@@ -80,6 +81,7 @@ sap.ui.define([
 
 	QueryPanel.prototype._moveTableItem = function (oItem, iNewIndex) {
 		BasePanel.prototype._moveTableItem.apply(this, arguments);
+		this._updateEnableOfMoveButtons(oItem, false);
 		this._oListControl.removeItem(oItem);
 		this._oListControl.insertItem(oItem, iNewIndex);
 	};
