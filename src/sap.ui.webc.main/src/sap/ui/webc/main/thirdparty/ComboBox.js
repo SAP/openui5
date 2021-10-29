@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/util/InvisibleMessage', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-down', 'sap/ui/webc/common/thirdparty/icons/decline', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Keys', './ComboBoxFilters-f59100bd', './generated/i18n/i18n-defaults', './generated/templates/ComboBoxTemplate.lit', './generated/templates/ComboBoxPopoverTemplate.lit', './generated/themes/ComboBox.css', './generated/themes/ComboBoxPopover.css', './generated/themes/ResponsivePopoverCommon.css', './generated/themes/ValueStateMessage.css', './ComboBoxItem', './Icon', './Popover', './ResponsivePopover', './List', './BusyIndicator', './Button', './StandardListItem', './ComboBoxGroupItem'], function (UI5Element, litRender, ValueState, Device, Integer, AriaLabelHelper, announce, slimArrowDown, decline, i18nBundle, Keys, ComboBoxFilters, i18nDefaults, ComboBoxTemplate_lit, ComboBoxPopoverTemplate_lit, ComboBox_css, ComboBoxPopover_css, ResponsivePopoverCommon_css, ValueStateMessage_css, ComboBoxItem, Icon, Popover, ResponsivePopover, List, BusyIndicator, Button, StandardListItem, ComboBoxGroupItem) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/util/InvisibleMessage', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-down', 'sap/ui/webc/common/thirdparty/icons/decline', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Keys', './ComboBoxFilters-f59100bd', './generated/i18n/i18n-defaults', './generated/templates/ComboBoxTemplate.lit', './generated/templates/ComboBoxPopoverTemplate.lit', './generated/themes/ComboBox.css', './generated/themes/ComboBoxPopover.css', './generated/themes/ResponsivePopoverCommon.css', './generated/themes/ValueStateMessage.css', './generated/themes/Suggestions.css', './ComboBoxItem', './Icon', './Popover', './ResponsivePopover', './List', './BusyIndicator', './Button', './StandardListItem', './ComboBoxGroupItem'], function (UI5Element, litRender, ValueState, Device, Integer, AriaLabelHelper, announce, slimArrowDown, decline, i18nBundle, Keys, ComboBoxFilters, i18nDefaults, ComboBoxTemplate_lit, ComboBoxPopoverTemplate_lit, ComboBox_css, ComboBoxPopover_css, ResponsivePopoverCommon_css, ValueStateMessage_css, Suggestions_css, ComboBoxItem, Icon, Popover, ResponsivePopover, List, BusyIndicator, Button, StandardListItem, ComboBoxGroupItem) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -106,7 +106,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return ComboBox_css;
 		}
 		static get staticAreaStyles() {
-			return [ResponsivePopoverCommon_css, ValueStateMessage_css, ComboBoxPopover_css];
+			return [ResponsivePopoverCommon_css, ValueStateMessage_css, ComboBoxPopover_css, Suggestions_css];
 		}
 		static get template() {
 			return ComboBoxTemplate_lit;
@@ -583,6 +583,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get classes() {
 			return {
+				popover: {
+					"ui5-suggestions-popover": !this.isPhone,
+					"ui5-suggestions-popover-with-value-state-header": !this.isPhone && this.hasValueStateText,
+				},
 				popoverValueState: {
 					"ui5-valuestatemessage-header": true,
 					"ui5-valuestatemessage-root": true,

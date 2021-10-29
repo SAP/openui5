@@ -2,15 +2,15 @@ sap.ui.define(['require', 'sap/ui/webc/common/thirdparty/base/asset-registries/T
 
 	const loadThemeProperties = async (themeName) => {
 		switch (themeName) {
-			case "sap_belize": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-960661a2'], resolve, reject) })).default;
-			case "sap_belize_hcb": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-dad15cff'], resolve, reject) })).default;
-			case "sap_belize_hcw": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-009092b4'], resolve, reject) })).default;
-			case "sap_fiori_3": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-1070887a'], resolve, reject) })).default;
-			case "sap_fiori_3_dark": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-ea45f868'], resolve, reject) })).default;
-			case "sap_fiori_3_hcb": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-f1b9a40b'], resolve, reject) })).default;
-			case "sap_fiori_3_hcw": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-0a1eda50'], resolve, reject) })).default;
-			case "sap_horizon": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-e0128df2'], resolve, reject) })).default;
-			case "sap_horizon_exp": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-16cdd4d5'], resolve, reject) })).default;
+			case "sap_belize": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-72222273'], resolve, reject) })).default;
+			case "sap_belize_hcb": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-c8280424'], resolve, reject) })).default;
+			case "sap_belize_hcw": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-5ceeaf34'], resolve, reject) })).default;
+			case "sap_fiori_3": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-08ecfd87'], resolve, reject) })).default;
+			case "sap_fiori_3_dark": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-6c032c84'], resolve, reject) })).default;
+			case "sap_fiori_3_hcb": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-1635e149'], resolve, reject) })).default;
+			case "sap_fiori_3_hcw": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-b2591780'], resolve, reject) })).default;
+			case "sap_horizon": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-72eb192c'], resolve, reject) })).default;
+			case "sap_horizon_exp": return (await new Promise(function (resolve, reject) { require(['../../parameters-bundle.css-e477a76b'], resolve, reject) })).default;
 			default: throw "unknown theme"
 		}
 	};

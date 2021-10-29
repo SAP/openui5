@@ -118,6 +118,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			}
 			this._getComponent().onItemSelected(this._getRealItems()[this.selectedItemIndex], keyboardUsed);
 			item.selected = false;
+			item.focused = false;
 			this._getComponent().open = false;
 		}
 		onItemPreviewed(item) {
@@ -209,9 +210,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			};
 			if (previousItem) {
 				previousItem.selected = false;
+				previousItem.focused = false;
 			}
 			if (currentItem) {
 				currentItem.selected = true;
+				currentItem.focused = true;
 				if (this.handleFocus) {
 					currentItem.focus();
 				}
@@ -225,6 +228,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			const items = this._getItems();
 			items.forEach(item => {
 				item.selected = false;
+				item.focused = false;
 			});
 		}
 		_isItemIntoView(item) {
