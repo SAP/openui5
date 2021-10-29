@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.StandardDynamicDateOption.
-sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepInput', './RadioButton', './RadioButtonGroup', 'sap/ui/unified/Calendar', 'sap/ui/unified/calendar/MonthPicker', 'sap/ui/core/format/DateFormat', './StandardDynamicDateRangeKeys', 'sap/ui/core/date/UniversalDateUtils', 'sap/ui/core/date/UniversalDate', 'sap/m/DynamicDateValueHelpUIType', './library'],
-	function(Element, DynamicDateOption, Label, StepInput, RadioButton, RadioButtonGroup, Calendar, MonthPicker, DateFormat, StandardDynamicDateRangeKeys, UniversalDateUtils, UniversalDate, DynamicDateValueHelpUIType, library) {
+sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepInput', './RadioButton', './RadioButtonGroup', 'sap/ui/unified/Calendar', 'sap/ui/unified/calendar/MonthPicker', 'sap/ui/core/format/DateFormat', 'sap/ui/core/date/UniversalDateUtils', 'sap/ui/core/date/UniversalDate', 'sap/m/DynamicDateValueHelpUIType', './library'],
+	function(Element, DynamicDateOption, Label, StepInput, RadioButton, RadioButtonGroup, Calendar, MonthPicker, DateFormat, UniversalDateUtils, UniversalDate, DynamicDateValueHelpUIType, library) {
 		"use strict";
 
 		/**

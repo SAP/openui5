@@ -5,10 +5,10 @@
 // Provides utility class sap.m.DynamicDateUtil
 sap.ui.define([
 	"./StandardDynamicDateOption",
-	"./StandardDynamicDateRangeKeys",
-	"sap/base/Log"
+	"sap/base/Log",
+	"./library"
 ], function(
-	StandardDynamicDateOption, StandardDynamicDateRangeKeys, Log) {
+	StandardDynamicDateOption, Log, library) {
 	"use strict";
 
 	/**
@@ -58,7 +58,7 @@ sap.ui.define([
 			"DATERANGE": new StandardDynamicDateOption({ key: "DATERANGE", valueTypes: ["date", "date"] }),
 			"DATE": new StandardDynamicDateOption({ key: "DATE", valueTypes: ["date"] })
 		},
-		_allKeys: StandardDynamicDateRangeKeys.slice(0)
+		_allKeys: library.StandardDynamicDateRangeKeys.slice(0)
 	};
 
 	/**
@@ -128,7 +128,7 @@ sap.ui.define([
 		aOptionKeys = aOptionKeys || Object.keys(DynamicDateUtil._options);
 
 		var aOptions = aOptionKeys.sort(function(sKey1, sKey2) {
-			return StandardDynamicDateRangeKeys.indexOf(sKey1) - StandardDynamicDateRangeKeys.indexOf(sKey2);
+			return library.StandardDynamicDateRangeKeys.indexOf(sKey1) - library.StandardDynamicDateRangeKeys.indexOf(sKey2);
 		}).map(function(sKey) {
 			return DynamicDateUtil._options[sKey];
 		});

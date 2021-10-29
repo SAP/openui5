@@ -16,7 +16,7 @@ sap.ui.define([
 	'sap/ui/model/ParseException',
 	'sap/ui/model/ValidateException',
 	'sap/m/DynamicDate',
-	'sap/m/StandardDynamicDateRangeKeys'
+	'sap/m/library'
 ],
 	function(
 		ConditionsType,
@@ -31,7 +31,7 @@ sap.ui.define([
 		ParseException,
 		ValidateException,
 		DynamicDateType,
-		StandardDynamicDateRangeKeys
+		mLibrary
 		) {
 	"use strict";
 
@@ -119,12 +119,12 @@ sap.ui.define([
 
 			var aValues = [];
 			var sOption = oOperator.name;
-			if (StandardDynamicDateRangeKeys.indexOf(sOption) === -1) {
+			if (mLibrary.StandardDynamicDateRangeKeys.indexOf(sOption) === -1) {
 				sOption = oOperator.alias || sOption;
 			}
 
 			for (var i = 0; i < oOperator.valueTypes.length; i++) {
-				if (StandardDynamicDateRangeKeys.indexOf(sOption) >= 0 && oOperator.valueTypes[i] === Operator.ValueType.Self) { // only for standard operators
+				if (mLibrary.StandardDynamicDateRangeKeys.indexOf(sOption) >= 0 && oOperator.valueTypes[i] === Operator.ValueType.Self) { // only for standard operators
 					aValues.push(_dateToTimestamp.call(this, oCondition.values[i]));
 				} else if (oOperator.valueTypes[i] && oOperator.valueTypes[i] !== Operator.ValueType.Static) {
 					aValues.push(oCondition.values[i]);
@@ -221,7 +221,7 @@ sap.ui.define([
 				var aValues = [];
 
 				for (var i = 0; i < oOperator.valueTypes.length; i++) {
-					if (StandardDynamicDateRangeKeys.indexOf(oValue.operator) >= 0 && oOperator.valueTypes[i] === Operator.ValueType.Self) { // only for standard operators
+					if (mLibrary.StandardDynamicDateRangeKeys.indexOf(oValue.operator) >= 0 && oOperator.valueTypes[i] === Operator.ValueType.Self) { // only for standard operators
 						aValues.push(_timestampToDate.call(this, vResult.values[i]));
 					} else if (oOperator.valueTypes[i] && oOperator.valueTypes[i] !== Operator.ValueType.Static) {
 						aValues.push(vResult.values[i]);
