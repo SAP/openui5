@@ -889,29 +889,43 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 		});
 
 		QUnit.test("format and parse weekYear/weekInYear pattern", function (assert) {
-			sap.ui.getCore().getConfiguration().setLanguage("en_US");
-			var oDateFormat = DateFormat.getDateInstance({
-				pattern: "Y-w"
-			});
-			assert.equal(oDateFormat.format(new Date(2014, 0, 1)), "2014-1", "For en-US 1st of January is always week 1");
-			assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "2015-1", "For en-US 1st of January is always week 1");
-			assert.equal(oDateFormat.format(new Date(2016, 0, 1)), "2016-1", "For en-US 1st of January is always week 1");
-			assert.equal(oDateFormat.format(new Date(2014, 11, 31)), "2014-53", "For en-US 31st of December is always week 53");
-			assert.equal(oDateFormat.format(new Date(2015, 11, 31)), "2015-53", "For en-US 31st of December is always week 53");
-			assert.equal(oDateFormat.format(new Date(2016, 11, 31)), "2016-53", "For en-US 31st of December is always week 53");
-			assert.equal(oDateFormat.parse("2015-1").valueOf(), new Date(2015, 0, 1).valueOf(), "Date can be correctly parsed to 1st of January 2015");
+			var oDateFormat;
+			var aLocales;
 
-			sap.ui.getCore().getConfiguration().setLanguage("de_DE");
-			oDateFormat = DateFormat.getDateInstance({
-				pattern: "Y-w"
+			// Locale "en" with no region will default to "en_US" for the calendar week
+			// US has a split week, which means that January 1st is always calendar week 1
+			// and the last week of the year always ends with December 31st.
+			aLocales = ["en_US", "en"];
+			aLocales.forEach(function(sLocale) {
+				sap.ui.getCore().getConfiguration().setLanguage(sLocale);
+				oDateFormat = DateFormat.getDateInstance({
+					pattern: "Y-w"
+				});
+				assert.equal(oDateFormat.format(new Date(2014, 0, 1)), "2014-1", "For " + sLocale + " 1st of January is always week 1");
+				assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "2015-1", "For " + sLocale + " 1st of January is always week 1");
+				assert.equal(oDateFormat.format(new Date(2016, 0, 1)), "2016-1", "For " + sLocale + " 1st of January is always week 1");
+				assert.equal(oDateFormat.format(new Date(2014, 11, 31)), "2014-53", "For " + sLocale + " 31st of December is always week 53");
+				assert.equal(oDateFormat.format(new Date(2015, 11, 31)), "2015-53", "For " + sLocale + " 31st of December is always week 53");
+				assert.equal(oDateFormat.format(new Date(2016, 11, 31)), "2016-53", "For " + sLocale + " 31st of December is always week 53");
+				assert.equal(oDateFormat.parse("2015-1").valueOf(), new Date(2015, 0, 1).valueOf(), "Date can be correctly parsed to 1st of January 2015");
 			});
-			assert.equal(oDateFormat.format(new Date(2014, 0, 1)), "2014-1", "For de-DE 1st of January 2014 is week 1/2014");
-			assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "2015-1", "For de-DE 1st of January 2015 is week 1/2015");
-			assert.equal(oDateFormat.format(new Date(2016, 0, 1)), "2015-53", "For de-DE 1st of January 2016 is week 53/2015");
-			assert.equal(oDateFormat.format(new Date(2014, 11, 31)), "2015-1", "For de-DE 31st of December 2014 is week 1/2015");
-			assert.equal(oDateFormat.format(new Date(2015, 11, 31)), "2015-53", "For de-DE 31st of December 2015 is week 53/2015");
-			assert.equal(oDateFormat.format(new Date(2016, 11, 31)), "2016-52", "For de-DE 31st of December 2016 is week 52/2016");
-			assert.equal(oDateFormat.parse("2015-1").valueOf(), new Date(2014, 11, 29).valueOf(), "Date can be correctly parsed to 29th of December 2014");
+
+			// Other languages than en_US has the rule of "the first thursday in the year",
+			// the first thursday in the year is part of calendar week 1 and every calendar week is 7 days long.
+			aLocales = ["de_DE", "en_GB"];
+			aLocales.forEach(function(sLocale) {
+				sap.ui.getCore().getConfiguration().setLanguage(sLocale);
+				oDateFormat = DateFormat.getDateInstance({
+					pattern: "Y-w"
+				});
+				assert.equal(oDateFormat.format(new Date(2014, 0, 1)), "2014-1", "For " + sLocale + " 1st of January 2014 is week 1/2014");
+				assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "2015-1", "For " + sLocale + " 1st of January 2015 is week 1/2015");
+				assert.equal(oDateFormat.format(new Date(2016, 0, 1)), "2015-53", "For " + sLocale + " 1st of January 2016 is week 53/2015");
+				assert.equal(oDateFormat.format(new Date(2014, 11, 31)), "2015-1", "For " + sLocale + " 31st of December 2014 is week 1/2015");
+				assert.equal(oDateFormat.format(new Date(2015, 11, 31)), "2015-53", "For " + sLocale + " 31st of December 2015 is week 53/2015");
+				assert.equal(oDateFormat.format(new Date(2016, 11, 31)), "2016-52", "For " + sLocale + " 31st of December 2016 is week 52/2016");
+				assert.equal(oDateFormat.parse("2015-1").valueOf(), new Date(2014, 11, 29).valueOf(), "Date can be correctly parsed to 29th of December 2014");
+			});
 
 			sap.ui.getCore().getConfiguration().setLanguage("en_US");
 		});
