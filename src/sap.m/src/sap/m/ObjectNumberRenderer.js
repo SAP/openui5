@@ -135,7 +135,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', './library', 'sap/
 	};
 
 	ObjectNumberRenderer.renderEmphasizedInfoElement = function(oRm, oON) {
-		if (!oON.getEmphasized()) {
+		if (!oON.getEmphasized() || !oON.getNumber()) {
 			return;
 		}
 
