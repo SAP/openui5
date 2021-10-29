@@ -310,16 +310,19 @@ sap.ui.define([
 						event: { type: "jQuery.Event" },
 						/**
 						 * The navigation direction that is used to reach the border.
+						 * @since 1.85
 						 */
 						direction: {type: "sap.f.NavigationDirection"},
 
 						/**
 						 * The row index, from which the border is reached.
+						 * @since 1.85
 						 */
 						row: {type: "int"},
 
 						/**
 						 * The column index, from which the border is reached.
+						 * @since 1.85
 						 */
 						column: {type: "int"}
 					}
