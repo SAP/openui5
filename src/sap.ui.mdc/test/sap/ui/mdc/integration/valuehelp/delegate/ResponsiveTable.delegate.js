@@ -155,6 +155,9 @@ sap.ui.define([
 
 			// get the basic search
 			var sSearchText = oFilterBar.getSearch instanceof Function ? oFilterBar.getSearch() :  "";
+			if (sSearchText && sSearchText.indexOf(" ") === -1) { // to allow search for "(".....
+				sSearchText = '"' + sSearchText + '"'; // TODO: escape " in string
+			} // if it contains spaces allow opeartors like OR...
 			oBindingInfo.parameters.$search = sSearchText || undefined;
 		}
 

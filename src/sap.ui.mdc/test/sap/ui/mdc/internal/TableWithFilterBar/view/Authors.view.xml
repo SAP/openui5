@@ -44,7 +44,7 @@
 					<mdc:ValueHelp
 						id="FVH_Generic_Multi"
 						title="Conditions"
-						delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+						delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 						<mdc:dialog>
 							<mdcv:Popover>
 								<mdcvc:Conditions label="Conditions"/>
@@ -54,7 +54,7 @@
 
 					<mdc:ValueHelp
 						id="fhName"
-						delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+						delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 						<mdc:dialog>
 							<mdcv:Dialog title="Name">
 								<mdcvc:Conditions label="Name"></mdcvc:Conditions>
@@ -64,7 +64,7 @@
 
 					<mdc:ValueHelp
 						id="fhAdob"
-						delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+						delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 						<mdc:dialog>
 							<mdcv:Popover title="Birth Epoch">
 								<mdcvc:Conditions label="Date of birth"></mdcvc:Conditions>
@@ -84,7 +84,7 @@
 
 					<mdc:ValueHelp
 						id="fhAdodmulti"
-						delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+						delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 						<mdc:dialog>
 							<mdcv:Dialog title="Date of death" >
 								<mdcvc:Conditions label="Date of death"></mdcvc:Conditions>
@@ -94,7 +94,7 @@
 
 					<mdc:ValueHelp
 						id="fhAdod"
-						delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+						delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 						<mdc:dialog>
 							<mdcv:Popover title="Define Filter Conditions">
 								<mdcvc:Conditions label="Date of death"></mdcvc:Conditions>
@@ -114,7 +114,7 @@
 
 					<mdc:ValueHelp
 						id="IOFFVHCountry"
-						delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+						delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 						<mdc:typeahead>
 							<mdcv:Popover >
 								<mdcvc:MTable filterFields="$search" keyPath="code"	descriptionPath="descr">
@@ -141,7 +141,7 @@
 
 					<mdc:ValueHelp
 						id="IOFFVHRegion"
-						delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+						delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 						<mdc:inParameters>
 							<mdcf:InParameter id="IOFFVHRegion-In-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" />
 						</mdc:inParameters>
@@ -212,7 +212,7 @@
 
 					<mdc:ValueHelp
 						id="IOFFVHCity"
-						delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+						delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 						<mdc:inParameters>
 							<mdcf:InParameter id="IOFFVHCity_In-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" />
 							<mdcf:InParameter id="IOFFVHCity_In-Region" value="{$filters>/conditions/regionOfOrigin_code}" helpPath="region_code" />

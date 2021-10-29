@@ -96,7 +96,7 @@
 																		<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Date of Birth" dataType= "Edm.Date" maxConditions="-1" conditions= "{$filters>/conditions/dateOfBirth}" fieldHelp= "FH2">
 																			<mdc:dependents>
 																				<mdc:ValueHelp id="FH2"
-																					delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+																					delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 																					<mdc:dialog>
 																						<mdcv:Dialog title="Date of Birth">
 																							<mdcvc:Conditions label="Date of Birth"/>
@@ -161,7 +161,7 @@
 									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fPrice" value="{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency', formatOptions: {parseAsString: true}}" fieldHelp="FVH-Currency" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}">
 										<mdc:dependents>
 											<mdc:ValueHelp id="FVH-Currency" title="Currencies"
-												delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+												delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 												<mdc:typeahead>
 													<mdcv:Popover>
 														<mdcvc:FixedList items="{/Currencies}" useAsValueHelp="true">
@@ -187,7 +187,7 @@
 								</f:content>
 								<f:dependents>
 									<mdc:ValueHelp id="FHGenre"
-										delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+										delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 										<mdc:inParameters>
 											<mdcf:InParameter id="IOFFVHGenre-In-Class" value="{classification_code}" helpPath="classification_code" />
 										</mdc:inParameters>
@@ -264,7 +264,7 @@
 										</mdc:dialog>
 									</mdc:ValueHelp>
 									<mdc:ValueHelp id="FHSubGenre"
-										delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+										delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 										<mdc:inParameters>
 											<mdcf:InParameter id="IOFFVHSub-In-Class" value="{classification_code}" helpPath="classification_code" />
 											<mdcf:InParameter id="IOFFVHSub-In-Genre" value="{genre_code}" helpPath="genre_code" />
