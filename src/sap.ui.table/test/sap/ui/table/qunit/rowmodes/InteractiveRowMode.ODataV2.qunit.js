@@ -22,7 +22,7 @@ sap.ui.define([
 			return this.oDataModel.metadataLoaded();
 		},
 		beforeEach: function() {
-			this.oGetContextsSpy.reset();
+			this.oGetContextsSpy.resetHistory();
 		},
 		after: function() {
 			this.oMockServer.destroy();

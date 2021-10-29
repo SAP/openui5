@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
-	"sap/ui/Device"
-], function(TableQUnitUtils, TableUtils, DragDropInfo, CoreLibrary, Control, Device) {
+	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery"
+], function(TableQUnitUtils, TableUtils, DragDropInfo, CoreLibrary, Control, Device, jQuery) {
 	"use strict";
 
 	// mapping of globals
@@ -144,7 +145,7 @@ sap.ui.define([
 		oTable.getColumns()[1].setWidth("3000px");
 		sap.ui.getCore().applyChanges();
 
-		var oFakeIndicator = jQuery("<div style='width: 0; height: 0; left: 0; right: 0'></div>");
+		var oFakeIndicator = jQuery("<div></div>").attr("style", "width: 0; height: 0; left: 0; right: 0");
 		var oFakeEvent = {
 			dragSession: {
 				mData: {},
@@ -327,9 +328,7 @@ sap.ui.define([
 		}
 
 		function testEmptyRow() {
-			sinon.stub(oTable.getRows()[0], "isEmpty", function() {
-				return true;
-			});
+			sinon.stub(oTable.getRows()[0], "isEmpty").returns(true);
 
 			test(getCell(0, 0).parent(), {sRowType: "Empty", sRowAreaType: "Fixed", iRowIndex: 0});
 			test(getCell(0, 1).parent(), {sRowType: "Empty", sRowAreaType: "Scrollable", iRowIndex: 0});
@@ -549,7 +548,7 @@ sap.ui.define([
 		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(oTable, oFakeEvent);
 		assert.equal(oRow2ExpandSpy.callCount, 1, "Data cell in fixed column - Row#expand was called once on the correct row");
 
-		oRow1ExpandSpy.reset();
+		oRow1ExpandSpy.resetHistory();
 		oFakeEvent.target = oTable.getRows()[0].getCells()[1].getDomRef();
 		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(oTable, oFakeEvent);
 		assert.equal(oRow1ExpandSpy.callCount, 1, "Data cell in scrollable column - Row#expand was called once on the correct row");
@@ -563,7 +562,7 @@ sap.ui.define([
 				return oTable.getRows()[0].getCells()[1];
 			}
 		};
-		oRow1ExpandSpy.reset();
+		oRow1ExpandSpy.resetHistory();
 		oFakeEvent.target = oTable.getRows()[0].getCells()[1].getDomRef();
 		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(oTable, oFakeEvent);
 		assert.ok(oRow1ExpandSpy.notCalled, "If the cell content is the drop target, Row#expand is not called");

@@ -108,7 +108,7 @@ sap.ui.define([
 				this.oUtilsOpenContentCellContextMenu
 			]
 				.forEach(function(oSpy) {
-					oSpy.reset();
+					oSpy.resetHistory();
 				});
 		},
 		assertEventCalled: function(assert, oEventInfo, bCalled, mExpectedParameters) {
@@ -120,7 +120,7 @@ sap.ui.define([
 				assert.ok(oEventInfo.handler.notCalled, oEventInfo.name + ": The event handler has not been called");
 			}
 
-			oEventInfo.handler.reset();
+			oEventInfo.handler.resetHistory();
 			oEventInfo.lastCallParameters = null;
 		},
 		assertNoEventsCalled: function(assert) {
@@ -529,9 +529,9 @@ sap.ui.define([
 		function resetSpies() {
 			that.resetSpies();
 			aColumnOpenMenuSpies.forEach(function(oSpy) {
-				oSpy.reset();
+				oSpy.resetHistory();
 			});
-			oCloseContentCellContextMenu.reset();
+			oCloseContentCellContextMenu.resetHistory();
 		}
 
 		aColumns[1].setHeaderSpan(2);
@@ -584,8 +584,8 @@ sap.ui.define([
 
 		function resetSpies() {
 			that.resetSpies();
-			oOpenCustomContentCellContextMenu.reset();
-			oOpenDefaultContentCellContextMenu.reset();
+			oOpenCustomContentCellContextMenu.resetHistory();
+			oOpenDefaultContentCellContextMenu.resetHistory();
 		}
 
 		oTable.setVisibleRowCount(iNumberOfRows + 1);
@@ -689,7 +689,7 @@ sap.ui.define([
 
 		function resetSpies() {
 			that.resetSpies();
-			oCloseDefaultContentCellContextMenu.reset();
+			oCloseDefaultContentCellContextMenu.resetHistory();
 		}
 
 		function test(fnCreateMenu, sModelName, oEvent) {
@@ -759,8 +759,8 @@ sap.ui.define([
 				assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
 				assert.ok(fnOpen.notCalled, "#open was not called");
 				resetSpies();
-				fnOpenAsContextMenu.reset();
-				fnOpen.reset();
+				fnOpenAsContextMenu.resetHistory();
+				fnOpen.resetHistory();
 
 				oCell = getCell(1, 0)[0];
 				return fakeSumRow(1);
@@ -801,7 +801,7 @@ sap.ui.define([
 
 		function resetSpies() {
 			that.resetSpies();
-			oCloseCustomContentCellContextMenu.reset();
+			oCloseCustomContentCellContextMenu.resetHistory();
 		}
 
 		oCell = getCell(0, 0)[0];
@@ -834,8 +834,8 @@ sap.ui.define([
 			"#open was called");
 		assertCloseMenuSpiesCalled();
 		resetSpies();
-		fnOpenAsContextMenu.reset();
-		fnOpen.reset();
+		fnOpenAsContextMenu.resetHistory();
+		fnOpen.resetHistory();
 
 		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, getRowHeader(0)[0]), false, "Returned false");
 		this.assertDefaultContentCellContextMenuExists(assert, true);
@@ -843,8 +843,8 @@ sap.ui.define([
 		assert.ok(fnOpen.notCalled, "#open was not called");
 		assertCloseMenuSpiesNotCalled();
 		resetSpies();
-		fnOpenAsContextMenu.reset();
-		fnOpen.reset();
+		fnOpenAsContextMenu.resetHistory();
+		fnOpen.resetHistory();
 
 		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, getRowAction(0)[0]), false, "Returned false");
 		this.assertDefaultContentCellContextMenuExists(assert, true);
@@ -852,8 +852,8 @@ sap.ui.define([
 		assert.ok(fnOpen.notCalled, "#open was not called");
 		assertCloseMenuSpiesNotCalled();
 		resetSpies();
-		fnOpenAsContextMenu.reset();
-		fnOpen.reset();
+		fnOpenAsContextMenu.resetHistory();
+		fnOpen.resetHistory();
 
 		oCell = getCell(0, 0)[0];
 		oFakeEventObject.target = oCell;
@@ -862,8 +862,8 @@ sap.ui.define([
 		assert.ok(fnOpenAsContextMenu.calledOnceWithExactly(oFakeEventObject, oCell), "#openAsContextMenu was called");
 		assertCloseMenuSpiesCalled();
 		resetSpies();
-		fnOpenAsContextMenu.reset();
-		fnOpen.reset();
+		fnOpenAsContextMenu.resetHistory();
+		fnOpen.resetHistory();
 
 		return fakeGroupRow(0).then(function() {
 			assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell), false, "Returned false");
@@ -958,7 +958,7 @@ sap.ui.define([
 
 		TableUtils.Menu._closeDefaultContentCellContextMenu(oTable);
 		assert.ok(oCloseMenu.calledOnce, "#close was called");
-		oCloseMenu.reset();
+		oCloseMenu.resetHistory();
 
 		TableUtils.Menu._closeDefaultContentCellContextMenu(oTable);
 		assert.ok(oCloseMenu.notCalled, "#close was not called");

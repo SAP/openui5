@@ -9,8 +9,8 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/sinon-qunit" /*Sinon itself already part of MockServer*/
-], function(TableQUnitUtils, TreeTable, Column, ODataModel, TableUtils, Filter, MockServer, Core, SinonQUnit) {
+	"sap/ui/thirdparty/jquery"
+], function(TableQUnitUtils, TreeTable, Column, ODataModel, TableUtils, Filter, MockServer, Core, jQuery) {
 	"use strict";
 
 	//MockServer for use with annotated tree

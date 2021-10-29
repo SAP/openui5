@@ -218,7 +218,7 @@ sap.ui.define([
 			mGroupModeSetter[mTestSettings.newMode]();
 			assert.equal(oInvalidate.callCount, mTestSettings.expectInvalidation ? 1 : 0,
 				"Set from " + sCurrentMode + " mode to " + mTestSettings.newMode + " mode");
-			oInvalidate.reset();
+			oInvalidate.resetHistory();
 			sCurrentMode = mTestSettings.newMode;
 		});
 	});

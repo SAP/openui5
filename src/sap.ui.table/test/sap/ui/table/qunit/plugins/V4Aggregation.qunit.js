@@ -375,7 +375,7 @@ sap.ui.define([
 				fixedBottom: bFixedBottomEnabled
 			}), "GrandTotal + Subtotals");
 
-			oSetRowCountConstraints.reset();
+			oSetRowCountConstraints.resetHistory();
 			this.oPlugin.setAggregationInfo({
 				visible: ["Property1"],
 				grandTotal: ["Property1"]
@@ -385,7 +385,7 @@ sap.ui.define([
 				fixedBottom: bFixedBottomEnabled
 			}), "GrandTotal");
 
-			oSetRowCountConstraints.reset();
+			oSetRowCountConstraints.resetHistory();
 			this.oPlugin.setAggregationInfo({
 				visible: ["Property1"],
 				subtotals: ["Property1"]
@@ -395,7 +395,7 @@ sap.ui.define([
 				fixedBottom: false
 			}), "Subtotals");
 
-			oSetRowCountConstraints.reset();
+			oSetRowCountConstraints.resetHistory();
 			this.oPlugin.setAggregationInfo({
 				visible: ["Property1"]
 			});
@@ -609,7 +609,7 @@ sap.ui.define([
 					assert.ok(oSpy.calledOnceWithExactly(), sMessagePrefix + "reset settings");
 				}
 
-				oSpy.reset();
+				oSpy.resetHistory();
 			});
 		}
 	});

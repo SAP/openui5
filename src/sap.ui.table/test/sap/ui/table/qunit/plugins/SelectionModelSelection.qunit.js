@@ -108,7 +108,7 @@ sap.ui.define([
 		this.oTable.insertPlugin(new (SelectionPlugin.extend("sap.ui.table.test.SelectionPlugin"))(), 0);
 		this.oTable.getPlugins()[0].destroy();
 		this.oTable.setSelectionInterval(2, 6);
-		this.oSelectionChangeSpy.reset();
+		this.oSelectionChangeSpy.resetHistory();
 		this.oTable.getBinding().getModel().getData().push({});
 		this.oTable.getBinding().refresh();
 

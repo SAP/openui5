@@ -28,7 +28,7 @@ sap.ui.define([
 			return this.oDataModel.metadataLoaded();
 		},
 		beforeEach: function() {
-			this.oGetContextsSpy.reset();
+			this.oGetContextsSpy.resetHistory();
 		},
 		after: function() {
 			this.oMockServer.destroy();
@@ -215,12 +215,12 @@ sap.ui.define([
 		var oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			oGetContextsSpy.reset();
+			oGetContextsSpy.resetHistory();
 		}).then(oTable.qunit.$resize({height: "756px"})).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 1, "Method to get contexts called once");
 			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
 				"The call considers the row count");
-			oGetContextsSpy.reset();
+			oGetContextsSpy.resetHistory();
 
 		}).then(oTable.qunit.resetSize).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 1, "Method to get contexts called once");
@@ -235,7 +235,7 @@ sap.ui.define([
 		var oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			oGetContextsSpy.reset();
+			oGetContextsSpy.resetHistory();
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 2, "Method to get contexts called 2 times"); // refreshRows, updateRows
@@ -254,7 +254,7 @@ sap.ui.define([
 		var oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			oGetContextsSpy.reset();
+			oGetContextsSpy.resetHistory();
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 2, "Method to get contexts called 2 times"); // refreshRows, updateRows

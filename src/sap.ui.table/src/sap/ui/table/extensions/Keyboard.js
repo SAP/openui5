@@ -553,7 +553,11 @@ sap.ui.define([
 			}
 		}
 
-		oElement.focus();
+		if (oElement instanceof HTMLElement) {
+			oElement.focus();
+		} else {
+			oElement.trigger("focus");
+		}
 	};
 
 	return KeyboardExtension;

@@ -173,7 +173,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 			assert.ok(oSetPropertySpy.calledOnce, "setProperty is called once");
 			assert.ok(oSetPropertySpy.calledWithExactly("limit", 5, true), "setProperty called with the correct parameters");
-			oSetPropertySpy.reset();
+			oSetPropertySpy.resetHistory();
 
 			oSelectionPlugin.setLimit(0);
 			sap.ui.getCore().applyChanges();
@@ -223,8 +223,8 @@ sap.ui.define([
 
 		}).then(function() {
 			sinon.stub(oSelectionPlugin, "_getHighestSelectableIndex").returns(-1);
-			fnGetContexts.reset();
-			oSelectionChangeSpy.reset();
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
 			return oSelectionPlugin.addSelectionInterval(0, 0).then(function() {
 				assert.ok(false, "The promise should have been rejected because the indices are out of range");
 			}).catch(function(oError) {
@@ -236,8 +236,8 @@ sap.ui.define([
 			});
 
 		}).then(function() {
-			fnGetContexts.reset();
-			oSelectionChangeSpy.reset();
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
 			return oSelectionPlugin.addSelectionInterval(iHighestSelectableIndex + 1, iHighestSelectableIndex + 1).then(function() {
 				assert.ok(false, "The promise should have been rejected because the indices are out of range");
 			}).catch(function(oError) {
@@ -249,8 +249,8 @@ sap.ui.define([
 
 		}).then(function() {
 			oSelectionPlugin.setSelectionMode(SelectionMode.None);
-			fnGetContexts.reset();
-			oSelectionChangeSpy.reset();
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
 			oSelectionPlugin.addSelectionInterval(6, 7).then(function() {
 				assert.ok(false, "The promise should have been rejected because the selection mode is \"None\"");
 			}).catch(function(oError){
@@ -287,8 +287,8 @@ sap.ui.define([
 				assert.deepEqual(oEvent.getParameters().rowIndices, [5], "selectionChange event: \"rowIndices\" parameter is correct");
 				assert.notOk(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
 			});
-			fnGetContexts.reset();
-			oSelectionChangeSpy.reset();
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
 			return oSelectionPlugin.addSelectionInterval(-1, 5).then(function() {
 				assert.ok(fnGetContexts.calledWithExactly(1, 5, 0, true), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
@@ -299,8 +299,8 @@ sap.ui.define([
 
 		}).then(function() {
 			return new Promise(function(resolve) {
-				fnGetContexts.reset();
-				oSelectionChangeSpy.reset();
+				fnGetContexts.resetHistory();
+				oSelectionChangeSpy.resetHistory();
 				oSelectionPlugin.addSelectionInterval(5, 5);
 				setTimeout(function () {
 					assert.ok(fnGetContexts.calledWithExactly(5, 1, 0, true), "getContexts was called with the correct parameters");
@@ -318,8 +318,8 @@ sap.ui.define([
 					"selectionChange event: \"rowIndices\" parameter is correct");
 				assert.notOk(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
 			});
-			fnGetContexts.reset();
-			oSelectionChangeSpy.reset();
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
 			return oSelectionPlugin.addSelectionInterval(iSelectableCount - 1, iSelectableCount + 100).then(function() {
 				assert.ok(fnGetContexts.calledWithExactly(iSelectableCount - 1, 1, 0, true), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
@@ -365,7 +365,7 @@ sap.ui.define([
 					resolve();
 				});
 
-				fnGetContexts.reset();
+				fnGetContexts.resetHistory();
 				oSelectionPlugin.addSelectionInterval(9, 4);
 			});
 		});
@@ -396,10 +396,10 @@ sap.ui.define([
 				assert.notOk(oEvent.getParameters().limitReached, "limitReached parameter is correct");
 				resolve();
 			});
-			fnGetContexts.reset();
-			oSelectionChangeSpy.reset();
-			oFirstVisibleRowChangedSpy.reset();
-			oRowsUpdatedSpy.reset();
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
+			oFirstVisibleRowChangedSpy.resetHistory();
+			oRowsUpdatedSpy.resetHistory();
 			oSelectionPlugin.addSelectionInterval(0, 0);
 
 		}).then(function() {
@@ -409,10 +409,10 @@ sap.ui.define([
 				assert.ok(fnGetContexts.calledWithExactly(1, 6, 0, true), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 			});
-			fnGetContexts.reset();
-			oSelectionChangeSpy.reset();
-			oFirstVisibleRowChangedSpy.reset();
-			oRowsUpdatedSpy.reset();
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
+			oFirstVisibleRowChangedSpy.resetHistory();
+			oRowsUpdatedSpy.resetHistory();
 			return oSelectionPlugin.addSelectionInterval(0, 10).then(function() {
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5],
 					"Selection is cut down to the possible limit. The first index was already selected, 5 new indices are added to the selection.");
@@ -430,10 +430,10 @@ sap.ui.define([
 				assert.ok(fnGetContexts.calledWithExactly(6, 6, 0, true), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 			});
-			fnGetContexts.reset();
-			oSelectionChangeSpy.reset();
-			oFirstVisibleRowChangedSpy.reset();
-			oRowsUpdatedSpy.reset();
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
+			oFirstVisibleRowChangedSpy.resetHistory();
+			oRowsUpdatedSpy.resetHistory();
 			return oSelectionPlugin.addSelectionInterval(6, 15).then(function() {
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
 					"Selection is cut down to the possible limit. The first index was already selected, 5 new indices are added to the selection.");
@@ -463,8 +463,8 @@ sap.ui.define([
 
 		}).then(function() {
 			sinon.stub(oSelectionPlugin, "_getHighestSelectableIndex").returns(-1);
-			fnGetContexts.reset();
-			oSelectionChangeSpy.reset();
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
 			return oSelectionPlugin.setSelectionInterval(0, 0).then(function() {
 				assert.ok(false, "The promise should have been rejected because the indices are out of range");
 			}).catch(function(oError) {
@@ -476,8 +476,8 @@ sap.ui.define([
 			});
 
 		}).then(function() {
-			fnGetContexts.reset();
-			oSelectionChangeSpy.reset();
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
 			return oSelectionPlugin.setSelectionInterval(iHighestSelectableIndex + 1, iHighestSelectableIndex + 1).then(function() {
 				assert.ok(false, "The promise should have been rejected because the indices are out of range");
 			}).catch(function(oError) {
@@ -489,8 +489,8 @@ sap.ui.define([
 
 		}).then(function() {
 			oSelectionPlugin.setSelectionMode(SelectionMode.None);
-			fnGetContexts.reset();
-			oSelectionChangeSpy.reset();
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
 			oSelectionPlugin.setSelectionInterval(6, 7).then(function() {
 				assert.ok(false, "The promise should have been rejected because the selection mode is \"None\"");
 			}).catch(function(oError){
@@ -514,8 +514,8 @@ sap.ui.define([
 			assert.deepEqual(oEvent.getParameters().rowIndices, [0, 1, 2, 3, 4], "selectionChange event: \"rowIndices\" parameter is correct");
 			assert.ok(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
 		});
-		fnGetContexts.reset();
-		oSelectionChangeSpy.reset();
+		fnGetContexts.resetHistory();
+		oSelectionChangeSpy.resetHistory();
 
 		return oSelectionPlugin.setSelectionInterval(-1, 10).then(function() {
 			assert.ok(fnGetContexts.calledWithExactly(0, 6, 0, true), "getContexts was called with the correct parameters");
@@ -529,8 +529,8 @@ sap.ui.define([
 					"selectionChange event: \"rowIndices\" parameter is correct");
 				assert.ok(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
 			});
-			fnGetContexts.reset();
-			oSelectionChangeSpy.reset();
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
 			return oSelectionPlugin.setSelectionInterval(5, 15).then(function() {
 				assert.ok(fnGetContexts.calledWithExactly(5, 6, 0, true), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
@@ -540,8 +540,8 @@ sap.ui.define([
 
 		}).then(function() {
 			return new Promise(function(resolve) {
-				fnGetContexts.reset();
-				oSelectionChangeSpy.reset();
+				fnGetContexts.resetHistory();
+				oSelectionChangeSpy.resetHistory();
 				oSelectionPlugin.setSelectionInterval(5, 10); // Limit reached
 				setTimeout(function () {
 					assert.ok(fnGetContexts.calledWithExactly(5, 6, 0, true), "getContexts was called with the correct parameters");
@@ -554,8 +554,8 @@ sap.ui.define([
 
 		}).then(function() {
 			return new Promise(function(resolve) {
-				fnGetContexts.reset();
-				oSelectionChangeSpy.reset();
+				fnGetContexts.resetHistory();
+				oSelectionChangeSpy.resetHistory();
 				oSelectionPlugin.setSelectionInterval(5, 9); // Limit not reached
 				setTimeout(function () {
 					assert.ok(fnGetContexts.calledWithExactly(5, 5, 0, true), "getContexts was called with the correct parameters");
@@ -572,8 +572,8 @@ sap.ui.define([
 					"selectionChange event: \"rowIndices\" parameter is correct");
 				assert.notOk(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
 			});
-			fnGetContexts.reset();
-			oSelectionChangeSpy.reset();
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
 			return oSelectionPlugin.setSelectionInterval(iSelectableCount - 1, iSelectableCount + 100).then(function() {
 				assert.ok(fnGetContexts.calledWithExactly(iSelectableCount - 1, 1, 0, true), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
@@ -606,8 +606,8 @@ sap.ui.define([
 
 		}).then(function() {
 			sinon.stub(oSelectionPlugin, "_getHighestSelectableIndex").returns(-1);
-			fnGetContexts.reset();
-			oSelectionChangeSpy.reset();
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
 			return oSelectionPlugin.setSelectedIndex(0).then(function() {
 				assert.ok(false, "The promise should have been rejected because the indices are out of range");
 			}).catch(function(oError) {
@@ -619,8 +619,8 @@ sap.ui.define([
 			});
 
 		}).then(function() {
-			fnGetContexts.reset();
-			oSelectionChangeSpy.reset();
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
 			return oSelectionPlugin.setSelectedIndex(iHighestSelectableIndex + 1).then(function() {
 				assert.ok(false, "The promise should have been rejected because the indices are out of range");
 			}).catch(function(oError) {
@@ -632,8 +632,8 @@ sap.ui.define([
 
 		}).then(function() {
 			oSelectionPlugin.setSelectionMode(SelectionMode.None);
-			fnGetContexts.reset();
-			oSelectionChangeSpy.reset();
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
 			oSelectionPlugin.setSelectedIndex(1).then(function() {
 				assert.ok(false, "The promise should have been rejected because the selection mode is \"None\"");
 			}).catch(function(oError){
@@ -668,8 +668,8 @@ sap.ui.define([
 				assert.deepEqual(oEvent.getParameters().rowIndices, [3, 5], "selectionChange event: \"rowIndices\" parameter is correct");
 				assert.notOk(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
 			});
-			fnGetContexts.reset();
-			oSelectionChangeSpy.reset();
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
 			return oSelectionPlugin.setSelectedIndex(5).then(function() {
 				assert.ok(fnGetContexts.calledWithExactly(5, 1, 0, true), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
@@ -870,8 +870,8 @@ sap.ui.define([
 
 		}).then(function() {
 			oSelectionPlugin.setLimit(0);
-			fnGetContexts.reset();
-			oSelectionChangeSpy.reset();
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
 			return oSelectionPlugin.selectAll().then(function() {
 				assert.ok(false, "The promise should have been rejected because there is nothing to select");
 			}).catch(function(oError) {
@@ -884,8 +884,8 @@ sap.ui.define([
 
 		}).then(function() {
 			oSelectionPlugin.setSelectionMode(SelectionMode.None);
-			fnGetContexts.reset();
-			oSelectionChangeSpy.reset();
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
 			oSelectionPlugin.selectAll().then(function() {
 				assert.ok(false, "The promise should have been rejected because the selection mode is \"None\"");
 			}).catch(function(oError){
@@ -912,7 +912,7 @@ sap.ui.define([
 
 		assert.equal(oSelectionPlugin.getRenderConfig().headerSelector.type, "toggle", "The headerSelector type is toggle");
 
-		fnGetContexts.reset();
+		fnGetContexts.resetHistory();
 		oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
 			assert.deepEqual(oEvent.getParameters().rowIndices, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
 				"selectionChange event: \"rowIndices\" parameter is correct");
@@ -1061,7 +1061,7 @@ sap.ui.define([
 				done();
 			});
 
-			fnGetContexts.reset();
+			fnGetContexts.resetHistory();
 			oSelectionPlugin.setSelectionInterval(0, 4);
 		});
 
@@ -1106,8 +1106,8 @@ sap.ui.define([
 		var oPopoverCloseSpy;
 
 		function resetSpies() {
-			oPopoverOpenBySpy.reset();
-			oPopoverCloseSpy.reset();
+			oPopoverOpenBySpy.resetHistory();
+			oPopoverCloseSpy.resetHistory();
 		}
 
 		assert.notOk(oSelectionPlugin._oNotificationPopover, "Notification popover does not exist");

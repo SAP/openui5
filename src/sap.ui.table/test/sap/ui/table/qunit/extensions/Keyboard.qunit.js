@@ -12,8 +12,9 @@ sap.ui.define([
 	"sap/ui/table/extensions/ExtensionBase",
 	"sap/ui/table/extensions/Keyboard",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/Device"
-], function(TableQUnitUtils, TableUtils, qutils, Table, TreeTable, AnalyticalTable, CreationRow, containsOrEquals, ExtensionBase, KeyboardExtension, JSONModel, Device) {
+	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery"
+], function(TableQUnitUtils, TableUtils, qutils, Table, TreeTable, AnalyticalTable, CreationRow, containsOrEquals, ExtensionBase, KeyboardExtension, JSONModel, Device, jQuery) {
 	"use strict";
 
 	// mapping of global function calls
@@ -384,7 +385,7 @@ sap.ui.define([
 				oTable.setModel(oModel);
 			} else {
 				assert.strictEqual(document.activeElement, $Cell[0], "focus is restored on the data cell");
-				oTable.detachRowsUpdated();
+				oTable.detachRowsUpdated(onRowsUpdated);
 				done();
 			}
 		}
@@ -405,7 +406,7 @@ sap.ui.define([
 				oTable.setModel(oModel);
 			} else {
 				assert.strictEqual(document.activeElement, $Cell[0], "focus is restored on the data cell");
-				oTable.detachRowsUpdated();
+				oTable.detachRowsUpdated(onRowsUpdated);
 				done();
 			}
 		}
@@ -427,7 +428,7 @@ sap.ui.define([
 				oTable.setModel(oModel);
 			} else {
 				assert.strictEqual(document.activeElement, $Cell[0], "focus is restored on the data cell");
-				oTable.detachRowsUpdated();
+				oTable.detachRowsUpdated(onRowsUpdated);
 				done();
 			}
 		}
@@ -452,7 +453,7 @@ sap.ui.define([
 			} else {
 				assert.ok(window.checkFocus($Input, assert),
 					"focus stays on the interactive element in the CreationRow");
-				oTable.detachRowsUpdated();
+				oTable.detachRowsUpdated(onRowsUpdated);
 				done();
 			}
 		}
@@ -489,8 +490,8 @@ sap.ui.define([
 		aTestElementIds.forEach(function(sId) {
 			document.getElementById(sId).focus();
 
-			oInitItemNavigationSpy.reset();
-			oOnFocusInSpy.reset();
+			oInitItemNavigationSpy.resetHistory();
+			oOnFocusInSpy.resetHistory();
 			oTable.rerender();
 
 			assert.ok(oInitItemNavigationSpy.calledOnce, "Re-rendered when focus was on " + sId + ": The item navigation was reinitialized");
@@ -498,8 +499,8 @@ sap.ui.define([
 			assert.ok(oOnFocusInSpy.callCount <= 1,
 				"Re-rendered when focus was on " + sId + ": The onfocusin event was not triggered more than once");
 
-			oInitItemNavigationSpy.reset();
-			oOnFocusInSpy.reset();
+			oInitItemNavigationSpy.resetHistory();
+			oOnFocusInSpy.resetHistory();
 			oTable._getRowMode().renderTableRows();
 
 			assert.ok(oInitItemNavigationSpy.calledOnce, "Re-rendered rows when focus was on " + sId + ": The item navigation was reinitialized");
@@ -511,9 +512,9 @@ sap.ui.define([
 		// Focus a cell in the TreeTable to check if the Table steals the focus.
 		var oFocusedElement = getCell(0, 0, true, null, oTreeTable)[0];
 
-		oInitItemNavigationSpy.reset();
+		oInitItemNavigationSpy.resetHistory();
 		oInvalidateItemNavigationSpy = sinon.spy(oKeyboardExtension, "invalidateItemNavigation");
-		oOnFocusInSpy.reset();
+		oOnFocusInSpy.resetHistory();
 		oTable.rerender();
 
 		assert.ok(oInitItemNavigationSpy.notCalled,
@@ -525,8 +526,8 @@ sap.ui.define([
 		assert.ok(oOnFocusInSpy.notCalled,
 			"Re-rendered when focus was on an element outside the table: The onfocusin event was not triggered");
 
-		oInitItemNavigationSpy.reset();
-		oInvalidateItemNavigationSpy.reset();
+		oInitItemNavigationSpy.resetHistory();
+		oInvalidateItemNavigationSpy.resetHistory();
 		oTable._getRowMode().renderTableRows();
 
 		assert.ok(oInitItemNavigationSpy.notCalled,

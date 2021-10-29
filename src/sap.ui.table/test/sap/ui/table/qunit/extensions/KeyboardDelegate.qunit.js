@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/model/json/JSONModel"
-], function(TableQUnitUtils, qutils, TableUtils, KeyboardDelegate, Device, F6Navigation, library, Table, Column, KeyCodes, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/thirdparty/jquery"
+], function(TableQUnitUtils, qutils, TableUtils, KeyboardDelegate, Device, F6Navigation, library, Table, Column, KeyCodes, JSONModel, jQuery) {
 	"use strict";
 
 	var createTables = window.createTables;
@@ -476,7 +477,7 @@ sap.ui.define([
 
 			if (bSilentFocus) {
 				assert.ok(oSetSilentFocusSpy.calledOnce, "Input type: " + oElement.type + " - The element was focused silently");
-				oSetSilentFocusSpy.reset();
+				oSetSilentFocusSpy.resetHistory();
 			} else {
 				assert.ok(oSetSilentFocusSpy.notCalled, "Input type: " + oElement.type + " - The element was not focused silently");
 			}
@@ -3765,7 +3766,7 @@ sap.ui.define([
 
 			while (sId) {
 				var oElem = oTable.$(sId);
-				oElem.focus();
+				oElem.trigger("focus");
 				oElem = checkFocus(oElem, assert);
 				qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
 				checkFocus(oElem, assert);
@@ -3887,7 +3888,7 @@ sap.ui.define([
 
 	QUnit.test("Focus on cell content - Home & End & Arrow Keys", function(assert) {
 		var oElem = findTabbables(getCell(0, 0).get(0), [getCell(0, 0).get(0)], true);
-		oElem.focus();
+		oElem.trigger("focus");
 
 		// If the focus is on an element inside the cell,
 		// the focus should not be changed when pressing one of the following keys.
@@ -3934,14 +3935,14 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			var oEventTarget = aEventTargetGetters[i]();
-			oEventTarget.focus();
+			oEventTarget.trigger("focus");
 			checkFocus(oEventTarget, assert);
 
 			for (var j = 0; j < aKeystrokes.length; j++) {
 				var oKeystroke = aKeystrokes[j];
 				var aArguments = oKeystroke.arguments;
 
-				oEventTarget.focus();
+				oEventTarget.trigger("focus");
 				oEventTarget[0]._oKeystroke = oKeystroke;
 				aArguments[0] = oEventTarget; // The first parameter is the event target.
 				oKeystroke.trigger.apply(qutils, aArguments);
@@ -3955,7 +3956,7 @@ sap.ui.define([
 		});
 
 		var oTreeIcon = getCell(0, 0, null, null, oTreeTable).find(".sapUiTableTreeIconNodeClosed");
-		oTreeIcon.focus();
+		oTreeIcon.trigger("focus");
 		checkFocus(oTreeIcon, assert);
 		qutils.triggerKeydown(oTreeIcon, Key.SPACE, false, false, false);
 	});
@@ -3967,13 +3968,13 @@ sap.ui.define([
 		function test(oInitiallyFocusedCell, oTestedCell, oFinallyFocusedCell, fnKeyPress, sTitle) {
 			var bTestedCellIsRowHeader = TableUtils.getCellInfo(oTestedCell).isOfType(TableUtils.CELLTYPE.ROWHEADER);
 
-			oInitiallyFocusedCell.focus();
+			oInitiallyFocusedCell.trigger("focus");
 
 			// Enter action mode
 			if (bTestedCellIsRowHeader) {
 				oTable._getKeyboardExtension()._actionMode = true;
 				oTable._getKeyboardExtension().suspendItemNavigation();
-				oTestedCell.focus();
+				oTestedCell.trigger("focus");
 			} else {
 				TableUtils.getInteractiveElements(oTestedCell)[0].focus();
 			}
@@ -5325,14 +5326,14 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		function test(assert) {
-			oRowToggleExpandedState.reset();
+			oRowToggleExpandedState.resetHistory();
 			qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
 			checkFocus(oElem, assert);
 			this.assertSelection(assert, 0, false);
 			assert.ok(cellClickEventHandler.notCalled, "Click handler not called");
 			assert.equal(oRowToggleExpandedState.callCount, 1, "Space: Row#toggleExpandedState called once");
 
-			oRowToggleExpandedState.reset();
+			oRowToggleExpandedState.resetHistory();
 			qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
 			checkFocus(oElem, assert);
 			this.assertSelection(assert, 0, false);
@@ -5351,27 +5352,27 @@ sap.ui.define([
 		var oRowToggleExpandedState = this.spy(oTreeTable.getRows()[0], "toggleExpandedState");
 
 		function testCollapseExpandAndFocus(assert, $Element) {
-			$Element.focus();
+			$Element.trigger("focus");
 
-			oRowToggleExpandedState.reset();
+			oRowToggleExpandedState.resetHistory();
 			qutils.triggerKeyup($Element, Key.SPACE, false, false, false);
 			assert.equal(oRowToggleExpandedState.callCount, 1, "Space: Row#toggleExpandedState called once");
 			checkFocus($Element, assert);
 
-			oRowToggleExpandedState.reset();
+			oRowToggleExpandedState.resetHistory();
 			qutils.triggerKeydown($Element, Key.ENTER, false, false, false);
 			assert.equal(oRowToggleExpandedState.callCount, 1, "Enter: Row#toggleExpandedState called once");
 			checkFocus($Element, assert);
 		}
 
 		function testNoCollapseExpand(assert, $Element) {
-			$Element.focus();
+			$Element.trigger("focus");
 
-			oRowToggleExpandedState.reset();
+			oRowToggleExpandedState.resetHistory();
 			qutils.triggerKeyup($Element, Key.SPACE, false, false, false);
 			assert.ok(oRowToggleExpandedState.notCalled, "Space: Row#toggleExpandedState not called");
 
-			oRowToggleExpandedState.reset();
+			oRowToggleExpandedState.resetHistory();
 			qutils.triggerKeydown($Element, Key.ENTER, false, false, false);
 			assert.ok(oRowToggleExpandedState.notCalled, "Enter: Row#toggleExpandedState not called");
 		}
@@ -5391,7 +5392,7 @@ sap.ui.define([
 		}).then(function() {
 			var $Element = getCell(1, 0, false, null, oTreeTable).find(".sapUiTableTreeIcon");
 
-			$Element.focus();
+			$Element.trigger("focus");
 			qutils.triggerKeydown($Element, Key.ENTER, false, false, false);
 
 			return new Promise(function(resolve) {
@@ -5582,7 +5583,7 @@ sap.ui.define([
 			for (var i = 0; i < aCells.length; i++) {
 				var oElem = aCells[i];
 
-				oElem.focus();
+				oElem.trigger("focus");
 				checkFocus(oElem, assert);
 
 				for (var j = 0; j < aSelectedIndices.length; j++) {
@@ -5663,7 +5664,7 @@ sap.ui.define([
 			var oRowExpand = this.spy(oTable.getRows()[0], "expand");
 			var oRowCollapse = this.spy(oTable.getRows()[0], "collapse");
 
-			oCellElement.focus();
+			oCellElement.trigger("focus");
 
 			qutils.triggerKeydown(oCellElement, Key.Arrow.DOWN, false, true, false);
 			assert.equal(oRowExpand.callCount, 1, "Row#expand called once");
@@ -5689,11 +5690,11 @@ sap.ui.define([
 			var oRowExpand = this.spy(oTable.getRows()[0], "expand");
 			var oRowCollapse = this.spy(oTable.getRows()[0], "collapse");
 
-			oCellElement.focus();
+			oCellElement.trigger("focus");
 			qutils.triggerKeydown(oCellElement, Key.Arrow.DOWN, false, false, false);
 			assert.ok(oRowExpand.notCalled, "Row#expand not called");
 
-			oCellElement.focus();
+			oCellElement.trigger("focus");
 			qutils.triggerKeydown(oCellElement, Key.Arrow.UP, false, false, false);
 			assert.ok(oRowCollapse.notCalled, "Row#collapse not called");
 
@@ -5704,7 +5705,7 @@ sap.ui.define([
 
 	QUnit.test("Table with grouping", function(assert) {
 		function testFocus(oCellElement) {
-			oCellElement.focus();
+			oCellElement.trigger("focus");
 			checkFocus(oCellElement, assert);
 
 			qutils.triggerKeydown(oCellElement, Key.Arrow.DOWN, false, true, false);
@@ -5755,13 +5756,13 @@ sap.ui.define([
 		testCollapseExpandAndFocus: function(assert, oTable, oCellElement) {
 			var oRowToggleExpandedState = this.spy(oTable.getRows()[0], "toggleExpandedState");
 
-			oCellElement.focus();
+			oCellElement.trigger("focus");
 
 			qutils.triggerKeydown(oCellElement, Key.F4, false, false, false);
 			assert.equal(oRowToggleExpandedState.callCount, 1, "Row#toggleExpandedState called once");
 			checkFocus(oCellElement, assert);
 
-			oRowToggleExpandedState.reset();
+			oRowToggleExpandedState.resetHistory();
 			qutils.triggerKeydown(oCellElement, Key.F4, false, false, false);
 			assert.equal(oRowToggleExpandedState.callCount, 1, "Row#toggleExpandedState called once");
 			checkFocus(oCellElement, assert);
@@ -5780,12 +5781,12 @@ sap.ui.define([
 		testNoCollapseExpand: function(assert, oTable, oCellElement) {
 			var oRowToggleExpandedState = this.spy(oTable.getRows()[0], "toggleExpandedState");
 
-			oCellElement.focus();
+			oCellElement.trigger("focus");
 			qutils.triggerKeydown(oCellElement, Key.F4, false, false, false);
 			assert.ok(oRowToggleExpandedState.notCalled, "Row#toggleExpandedState not called");
 
-			oRowToggleExpandedState.reset();
-			oCellElement.focus();
+			oRowToggleExpandedState.resetHistory();
+			oCellElement.trigger("focus");
 			qutils.triggerKeydown(oCellElement, Key.F4, false, false, false);
 			assert.ok(oRowToggleExpandedState.notCalled, "Row#toggleExpandedState not called");
 
@@ -5795,7 +5796,7 @@ sap.ui.define([
 
 	QUnit.test("Table with grouping", function(assert) {
 		function testFocus(oCellElement) {
-			oCellElement.focus();
+			oCellElement.trigger("focus");
 			checkFocus(oCellElement, assert);
 
 			qutils.triggerKeydown(oCellElement, Key.F4, false, false, false);
@@ -5843,7 +5844,7 @@ sap.ui.define([
 			var oRowExpand = this.spy(oTable.getRows()[0], "expand");
 			var oRowCollapse = this.spy(oTable.getRows()[0], "collapse");
 
-			oCellElement.focus();
+			oCellElement.trigger("focus");
 
 			qutils.triggerKeypress(oCellElement, Key.PLUS, false, false, false);
 			assert.equal(oRowExpand.callCount, 1, "Row#expand called once");
@@ -5869,11 +5870,11 @@ sap.ui.define([
 			var oRowExpand = this.spy(oTable.getRows()[0], "expand");
 			var oRowCollapse = this.spy(oTable.getRows()[0], "collapse");
 
-			oCellElement.focus();
+			oCellElement.trigger("focus");
 			qutils.triggerKeydown(oCellElement, Key.PLUS, false, false, false);
 			assert.ok(oRowExpand.notCalled, "Row#expand not called");
 
-			oCellElement.focus();
+			oCellElement.trigger("focus");
 			qutils.triggerKeydown(oCellElement, Key.MINUS, false, false, false);
 			assert.ok(oRowCollapse.notCalled, "Row#collapse not called");
 
@@ -5884,7 +5885,7 @@ sap.ui.define([
 
 	QUnit.test("Table with grouping", function(assert) {
 		function testFocus(oCellElement) {
-			oCellElement.focus();
+			oCellElement.trigger("focus");
 			checkFocus(oCellElement, assert);
 
 			qutils.triggerKeypress(oCellElement, Key.PLUS, false, false, false);
@@ -5935,7 +5936,7 @@ sap.ui.define([
 		];
 
 		aTestElements.forEach(function(oElem) {
-			oElem.focus();
+			oElem.trigger("focus");
 			jQuery(oElem).trigger("contextmenu");
 			assert.ok(oOpenContextMenuSpy.calledOnceWith(oTable, oElem[0]),
 				"TableUtils.Menu.openContextMenu was called with the correct arguments");
@@ -5944,8 +5945,8 @@ sap.ui.define([
 			var oContextMenuEventArgument = oContextMenuEventHandlerSpy.args[0][0];
 			assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
 
-			oOpenContextMenuSpy.reset();
-			oContextMenuEventHandlerSpy.reset();
+			oOpenContextMenuSpy.resetHistory();
+			oContextMenuEventHandlerSpy.resetHistory();
 		});
 	});
 
@@ -5965,8 +5966,8 @@ sap.ui.define([
 		oContextMenuEventArgument = oContextMenuEventHandlerSpy.args[0][0];
 		assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
 
-		oOpenContextMenuSpy.reset();
-		oContextMenuEventHandlerSpy.reset();
+		oOpenContextMenuSpy.resetHistory();
+		oContextMenuEventHandlerSpy.resetHistory();
 
 		oElem = oTable.getRows()[0].getCells()[0].getDomRef();
 		oElem.focus();
@@ -6000,8 +6001,8 @@ sap.ui.define([
 			var oContextMenuEventArgument = oContextMenuEventHandlerSpy.args[0][0];
 			assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
 
-			oOpenContextMenuSpy.reset();
-			oContextMenuEventHandlerSpy.reset();
+			oOpenContextMenuSpy.resetHistory();
+			oContextMenuEventHandlerSpy.resetHistory();
 		});
 	});
 
@@ -7170,7 +7171,7 @@ sap.ui.define([
 			var fnTestAsync = this.testAsync;
 
 			oElem = this.getElement(0, iColumnIndex);
-			oElem.focus();
+			oElem.trigger("focus");
 			checkFocus(oElem, assert);
 
 			pTestSequence = pTestSequence.then(function() {

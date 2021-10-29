@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
-	"sap/ui/model/json/JSONModel"
-], function(TableQUnitUtils, TablePersoController, qutils, Table, Column, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/thirdparty/jquery"
+], function(TableQUnitUtils, TablePersoController, qutils, Table, Column, JSONModel, jQuery) {
 	"use strict";
 
 	var oController = null, oTable = null;

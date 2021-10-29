@@ -11,7 +11,7 @@ sap.ui.define([
 				reorder: false
 			},
 			sinon: {
-				version: 1					// Whether Sinon should be loaded and if so, what version
+				version: 4					// Whether Sinon should be loaded and if so, what version
 			},
 			ui5: {
 				language: "en-US",
@@ -24,6 +24,12 @@ sap.ui.define([
 				branchCoverage: true		// Whether to enable standard branch coverage
 			},
 			loader: {
+				map: {
+					"*": {
+						"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+						"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+					}
+				},
 				paths: {
 					"sap/ui/table/qunit": "test-resources/sap/ui/table/qunit/",
 					"sap/ui/core/qunit": "test-resources/sap/ui/core/qunit/",
@@ -43,21 +49,7 @@ sap.ui.define([
 			},
 			"ExploredSamples": {
 				group: "Library",
-				loader: {
-					map: {
-						"*": {
-							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
-							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
-						}
-					}
-				},
 				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
-				},
 				ui5: {
 					libs: ["sap.ui.table", "sap.m", "sap.ui.layout", "sap.ui.documentation"],
 					"xx-componentPreload": "off"
@@ -67,15 +59,13 @@ sap.ui.define([
 
 			/* Control */
 			"Table": {
-				sinon: false, /*uses Mockserver*/
 				ui5: {
 					// Test has dependencies to sap.ui.unified and sap.m modules
 					libs: ["sap.ui.table", "sap.ui.unified", "sap.m"]
 				}
 			},
 			"Table with ODataV2": {
-				module: "./Table.ODataV2.qunit",
-				sinon: false /*uses Mockserver*/
+				module: "./Table.ODataV2.qunit"
 			},
 			"Column": {
 				ui5: {
@@ -105,7 +95,6 @@ sap.ui.define([
 			},
 			"TreeTable with ODataV2": {
 				module: "./TreeTable.ODataV2.qunit",
-				sinon: false, /*uses Mockserver*/
 				coverage: {
 					only: null /*full report*/
 				}
@@ -131,12 +120,6 @@ sap.ui.define([
 			"MenuUtils": {
 				group: "Utils",
 				module: "./utils/_{name}.qunit",
-				qunit: {
-					version: "edge"
-				},
-				sinon: {
-					version: "edge"
-				},
 				ui5: {
 					// Test has dependencies to sap.ui.unified and sap.m modules
 					libs: ["sap.ui.table", "sap/ui/unified", "sap.m"]
@@ -148,18 +131,11 @@ sap.ui.define([
 			},
 			"BindingUtils": {
 				group: "Utils",
-				module: "./utils/_{name}.qunit",
-				sinon: false /*uses Mockserver*/
+				module: "./utils/_{name}.qunit"
 			},
 			"HookUtils": {
 				group: "Utils",
-				module: "./utils/_{name}.qunit",
-				qunit: {
-					version: "edge"
-				},
-				sinon: {
-					version: "edge"
-				}
+				module: "./utils/_{name}.qunit"
 			},
 
 			// Extensions
@@ -177,13 +153,7 @@ sap.ui.define([
 			},
 			"KeyboardDelegate": {
 				group: "Extensions",
-				module: "./extensions/{name}.qunit",
-				qunit: {
-					version: "edge"
-				},
-				sinon: {
-					version: "edge"
-				}
+				module: "./extensions/{name}.qunit"
 			},
 			"KeyboardDelegate-RTL": {
 				group: "Extensions",
@@ -191,12 +161,6 @@ sap.ui.define([
 				ui5: {
 					rtl: true,
 					"xx-waitForTheme": "init"
-				},
-				qunit: {
-					version: "edge"
-				},
-				sinon: {
-					version: "edge"
 				}
 			},
 			"Pointer": {
@@ -237,8 +201,7 @@ sap.ui.define([
 			},
 			"FixedRowMode with ODataV2": {
 				group: "Row Mode",
-				module: "./rowmodes/FixedRowMode.ODataV2.qunit",
-				sinon: false /*uses Mockserver*/
+				module: "./rowmodes/FixedRowMode.ODataV2.qunit"
 			},
 			"InteractiveRowMode": {
 				group: "Row Mode",
@@ -246,8 +209,7 @@ sap.ui.define([
 			},
 			"InteractiveRowMode with ODataV2": {
 				group: "Row Mode",
-				module: "./rowmodes/InteractiveRowMode.ODataV2.qunit",
-				sinon: false /*uses Mockserver*/
+				module: "./rowmodes/InteractiveRowMode.ODataV2.qunit"
 			},
 			"AutoRowMode": {
 				group: "Row Mode",
@@ -255,8 +217,7 @@ sap.ui.define([
 			},
 			"AutoRowMode with ODataV2": {
 				group: "Row Mode",
-				module: "./rowmodes/AutoRowMode.ODataV2.qunit",
-				sinon: false /*uses Mockserver*/
+				module: "./rowmodes/AutoRowMode.ODataV2.qunit"
 			},
 			"VariableRowMode": {
 				group: "Row Mode",
@@ -266,29 +227,19 @@ sap.ui.define([
 			// Plugins
 			"PluginBase": {
 				group: "Plugins",
-				module: "./plugins/{name}.qunit",
-				sinon: {
-					version: "edge",
-					qunitBridge: true
-				}
+				module: "./plugins/{name}.qunit"
 			},
 			"SelectionModelSelection": {
 				group: "Plugins",
-				module: "./plugins/{name}.qunit",
-				sinon: {
-					version: "edge",
-					qunitBridge: true
-				}
+				module: "./plugins/{name}.qunit"
 			},
 			"SelectionModelSelection with ODataV2": {
 				group: "Plugins",
-				module: "./plugins/SelectionModelSelection.ODataV2.qunit",
-				sinon: false /*uses Mockserver*/
+				module: "./plugins/SelectionModelSelection.ODataV2.qunit"
 			},
 			"MultiSelectionPlugin": {
 				group: "Plugins",
 				module: "./plugins/{name}.qunit",
-				sinon: false, /*uses Mockserver*/
 				ui5: {
 					// sap.ui.table.plugins.MultiSelectionPlugin requires sap.m modules
 					libs: ["sap.ui.table", "sap.m"]
@@ -304,11 +255,7 @@ sap.ui.define([
 			},
 			"V4Aggregation": {
 				group: "Plugins",
-				module: "./plugins/{name}.qunit",
-				sinon: {
-					version: "edge",
-					qunitBridge: true
-				}
+				module: "./plugins/{name}.qunit"
 			}
 		}
 	};

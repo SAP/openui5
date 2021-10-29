@@ -39,7 +39,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	TableQUnitUtils,
 	qutils,
@@ -79,7 +80,8 @@ sap.ui.define([
 	MLibrary,
 	Menu,
 	MenuItem,
-	Log
+	Log,
+	jQuery
 ) {
 	"use strict";
 
@@ -562,7 +564,7 @@ sap.ui.define([
 					var $Elem = (bFirstInteractiveElement && TableUtils.getFirstInteractiveElement(oRow)) ?
 						TableUtils.getFirstInteractiveElement(oRow) : oRow.getDomRef("col0");
 					assert.deepEqual(document.activeElement, $Elem, "The focus was set correctly");
-					oSpy.reset();
+					oSpy.resetHistory();
 					return resolve();
 				});
 			});
@@ -858,18 +860,18 @@ sap.ui.define([
 		oDomRef.style.height = "100px";
 		oTable._updateTableSizes(TableUtils.RowsUpdateReason.Unknown);
 		assert.ok(oResetRowHeights.called, "The table has a height and width -> _updateTableSizes was executed");
-		oResetRowHeights.reset();
+		oResetRowHeights.resetHistory();
 
 		oDomRef.style.height = "0px";
 		oTable._updateTableSizes(TableUtils.RowsUpdateReason.Unknown);
 		assert.ok(oResetRowHeights.called, "The table has no height -> _updateTableSizes was executed");
-		oResetRowHeights.reset();
+		oResetRowHeights.resetHistory();
 
 		oDomRef.style.width = "0px";
 		oDomRef.style.height = "100px";
 		oTable._updateTableSizes(TableUtils.RowsUpdateReason.Unknown);
 		assert.ok(oResetRowHeights.notCalled, "The table has no width -> _updateTableSizes was not executed");
-		oResetRowHeights.reset();
+		oResetRowHeights.resetHistory();
 	});
 
 	QUnit.test("getCellControl", function(assert) {
@@ -964,7 +966,7 @@ sap.ui.define([
 		oRowSettings = oTable.getRows()[0].getAggregation("_settings");
 		assert.ok(oRowSettings != null, "The rows have a settings template clone");
 
-		oOnAfterRenderingEventListener.reset();
+		oOnAfterRenderingEventListener.resetHistory();
 		oTable.getRowSettingsTemplate().setHighlight(CoreLibrary.MessageType.Success);
 		sap.ui.getCore().applyChanges();
 		assert.ok(oOnAfterRenderingEventListener.notCalled, "Changing the highlight property of the template did not cause the table to re-render");
@@ -973,7 +975,7 @@ sap.ui.define([
 		assert.strictEqual(oRowSettings.getHighlight(), CoreLibrary.MessageType.None,
 			"Changing the highlight property of the template did not change the highlight property of the template clones in the rows");
 
-		oOnAfterRenderingEventListener.reset();
+		oOnAfterRenderingEventListener.resetHistory();
 		oTable.getRowSettingsTemplate().invalidate();
 		sap.ui.getCore().applyChanges();
 		assert.ok(oOnAfterRenderingEventListener.calledOnce, "Invalidating the template caused the table to re-render");
@@ -982,7 +984,7 @@ sap.ui.define([
 		assert.strictEqual(oRowSettings.getHighlight(), CoreLibrary.MessageType.None,
 			"Invalidating the template did not change the highlight property of the template clones in the rows");
 
-		oOnAfterRenderingEventListener.reset();
+		oOnAfterRenderingEventListener.resetHistory();
 		oTable.setRowSettingsTemplate(new RowSettings({
 			highlight: CoreLibrary.MessageType.Warning
 		}));
@@ -1045,7 +1047,7 @@ sap.ui.define([
 			oTable._bRtlMode = null;
 			TableUtils.Menu.openContextMenu(oTable, getCell(0, 0, null, null, oTable));
 			oTable.getColumns()[0].getMenu()._bInvalidated = false;
-			oInvalidateSpy.reset();
+			oInvalidateSpy.resetHistory();
 
 			if (bChangeTextDirection) {
 				mChanges.changes.rtl = "";
@@ -1201,7 +1203,7 @@ sap.ui.define([
 		assert.equal(oMenu.getItems().length, 2, "Column menu without filter has only two sort items");
 		oMenu.close();
 
-		var oRemoveAggregationSpy = sinon.spy(sap.ui.table.ColumnMenu.prototype, "removeAggregation");
+		var oRemoveAggregationSpy = sinon.spy(ColumnMenu.prototype, "removeAggregation");
 		oTable.setShowColumnVisibilityMenu(true);
 		sap.ui.getCore().applyChanges();
 		oColumn = oTable.getColumns()[5];
@@ -1399,7 +1401,7 @@ sap.ui.define([
 		var oColumn = oTable.getColumns()[0];
 		var oMenu = oColumn.getMenu();
 		assert.ok(oMenu !== null, "Column menu is not null");
-		assert.ok(oMenu instanceof ColumnMenu, "Column menu is instance of sap.ui.table.ColumnMenu");
+		assert.ok(oMenu instanceof ColumnMenu, "Column menu is instance of ColumnMenu");
 		assert.ok(oMenu._oColumn instanceof Column, "Internal reference to column is set");
 		assert.ok(oMenu._oTable instanceof Table, "Internal reference to table is set");
 	});
@@ -1486,28 +1488,28 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		oTable.setFixedColumnCount(1);
 
-		var oCol1 = new sap.ui.table.Column({
+		var oCol1 = new Column({
 			headerSpan: [3,1],
-			multiLabels: [new sap.m.Label({text: "A"}),new sap.m.Label({text: "AA"})],
-			template: new sap.m.Label()
+			multiLabels: [new Label({text: "A"}),new Label({text: "AA"})],
+			template: new Label()
 		});
 		oTable.addColumn(oCol1);
 		assert.equal(oTable.getComputedFixedColumnCount(), 1, "The computed fixedColumCount is correct");
 		assert.equal(oTable.getRenderer().getLastFixedColumnIndex(oTable), 0, "The lastFixedColumIndex is correct");
 
-		var oCol2 = new sap.ui.table.Column({
+		var oCol2 = new Column({
 			headerSpan: [2,1],
-			multiLabels: [new sap.m.Label({text: "A"}),new sap.m.Label({text: "AB"})],
-			template: new sap.m.Label()
+			multiLabels: [new Label({text: "A"}),new Label({text: "AB"})],
+			template: new Label()
 		});
 		oTable.addColumn(oCol2);
 		assert.equal(oTable.getComputedFixedColumnCount(), 2, "The computed fixedColumnCount is correct");
 		assert.equal(oTable.getRenderer().getLastFixedColumnIndex(oTable), 1, "The lastFixedColumIndex is correct");
 
-		var oCol3 = new sap.ui.table.Column({
+		var oCol3 = new Column({
 			headerSpan: [1,1],
-			multiLabels: [new sap.m.Label({text: "A"}),new sap.m.Label({text: "AC"})],
-			template: new sap.m.Label()
+			multiLabels: [new Label({text: "A"}),new Label({text: "AC"})],
+			template: new Label()
 		});
 		oTable.addColumn(oCol3);
 		assert.equal(oTable.getComputedFixedColumnCount(), 3, "The computed fixedColumnCount is correct");
@@ -1668,19 +1670,19 @@ sap.ui.define([
 		assert.ok(oGetBinding.calledWithExactly("rows"), "Without arguments: Called with 'rows'");
 		assert.ok(oGetBinding.calledOn(oTable), "Without arguments: Called with the correct context");
 
-		oGetBinding.reset();
+		oGetBinding.resetHistory();
 		assert.strictEqual(oTable.getBinding(null), oRowsBinding, "With 'null': returned the rows binding");
 		assert.ok(oGetBinding.calledOnce, "With 'null': Called once on the base class");
 		assert.ok(oGetBinding.calledWithExactly("rows"), "With 'null': Called with 'rows'");
 		assert.ok(oGetBinding.calledOn(oTable), "With 'null': Called with the correct context");
 
-		oGetBinding.reset();
+		oGetBinding.resetHistory();
 		assert.strictEqual(oTable.getBinding("rows"), oRowsBinding, "With 'rows': returned the rows binding");
 		assert.ok(oGetBinding.calledOnce, "With 'rows': Called once on the base class");
 		assert.ok(oGetBinding.calledWithExactly("rows"), "With 'rows': Called with 'rows'");
 		assert.ok(oGetBinding.calledOn(oTable), "With 'rows': Called with the correct context");
 
-		oGetBinding.reset();
+		oGetBinding.resetHistory();
 		assert.strictEqual(oTable.getBinding("columns"), oColumnsBinding, "With 'columns': returned the columns binding");
 		assert.ok(oGetBinding.calledOnce, "With 'columns': Called once on the base class");
 		assert.ok(oGetBinding.calledWithExactly("columns"), "With 'columns': Called with 'columns'");
@@ -2399,13 +2401,13 @@ sap.ui.define([
 			var oBindingInfo = oTable.getBindingInfo("rows");
 
 			function resetSpies() {
-				oDestroyRows.reset();
-				oInnerBindRows.reset();
-				oInnerUnbindRows.reset();
-				oOnBindingChange.reset();
-				oOnBindingDataRequested.reset();
-				oOnBindingDataReceived.reset();
-				oBindAggregationOfControl.reset();
+				oDestroyRows.resetHistory();
+				oInnerBindRows.resetHistory();
+				oInnerUnbindRows.resetHistory();
+				oOnBindingChange.resetHistory();
+				oOnBindingDataRequested.resetHistory();
+				oOnBindingDataReceived.resetHistory();
+				oBindAggregationOfControl.resetHistory();
 			}
 
 			// Rebind
@@ -2489,12 +2491,12 @@ sap.ui.define([
 			oBindingInfo = {
 				path: "/modelData",
 				sorter: new Sorter({
-					path: "modelData>money",
+					path: "money",
 					descending: true
 				}),
 				filters: [
 					new Filter({
-						path: "modelData>money",
+						path: "money",
 						operator: "LT",
 						value1: 5
 					})
@@ -2511,9 +2513,9 @@ sap.ui.define([
 			fnBind(oBindingInfo);
 			this.assertBindingInfo(assert, "BindingInfo", oTable.getBindingInfo("rows"), oBindingInfo);
 			resetSpies();
-			oExternalChangeSpy.reset();
-			oExternalDataRequestedSpy.reset();
-			oExternalDataReceivedSpy.reset();
+			oExternalChangeSpy.resetHistory();
+			oExternalDataRequestedSpy.resetHistory();
+			oExternalDataReceivedSpy.resetHistory();
 
 			oTable.getBinding().fireEvent("change");
 			oTable.getBinding().fireEvent("dataRequested");
@@ -2523,21 +2525,21 @@ sap.ui.define([
 			assert.ok(oExternalChangeSpy.calledOnce, "The external change event listener was called once");
 			assert.ok(oExternalChangeSpy.calledOn(oTable.getBinding()),
 				"The external change event listener was called with the correct context");
-			assert.ok(sinon.calledInOrder(oOnBindingChange, oExternalChangeSpy),
+			assert.ok(oOnBindingChange.calledBefore(oExternalChangeSpy),
 				"The change event listener of the table was called before the external change spy");
 			assert.ok(oOnBindingDataRequested.calledOnce, "The dataRequested event listener was called once");
 			assert.ok(oOnBindingDataRequested.calledOn(oTable), "The dataRequested event listener was called with the correct context");
 			assert.ok(oExternalDataRequestedSpy.calledOnce, "The external dataRequested event listener was called once");
 			assert.ok(oExternalDataRequestedSpy.calledOn(oTable.getBinding()),
 				"The external dataRequested event listener was called with the correct context");
-			assert.ok(sinon.calledInOrder(oOnBindingDataRequested, oExternalDataRequestedSpy),
+			assert.ok(oOnBindingDataRequested.calledBefore(oExternalDataRequestedSpy),
 				"The dataRequested event listener of the table was called before the external dataRequested spy");
 			assert.ok(oOnBindingDataReceived.calledOnce, "The dataReceived event listener was called once");
 			assert.ok(oOnBindingDataReceived.calledOn(oTable), "The dataReceived event listener was called with the correct context");
 			assert.ok(oExternalDataReceivedSpy.calledOnce, "The external dataReceived event listener was called once");
 			assert.ok(oExternalDataReceivedSpy.calledOn(oTable.getBinding()),
 				"The external dataReceived event listener was called with the correct context");
-			assert.ok(sinon.calledInOrder(oOnBindingDataReceived, oExternalDataReceivedSpy),
+			assert.ok(oOnBindingDataReceived.calledBefore(oExternalDataReceivedSpy),
 				"The dataReceived event listener of the table was called before the external dataReceived spy");
 
 			oBindAggregationOfControl.restore();
@@ -2546,11 +2548,11 @@ sap.ui.define([
 			var oInnerBindRows = sinon.spy(oTable, "_bindRows");
 			var oBindAggregationOfControl = sinon.spy(Control.prototype, "bindAggregation");
 			var oSorter = new Sorter({
-				path: "modelData>money",
+				path: "money",
 				descending: true
 			});
 			var oFilter = new Filter({
-				path: "modelData>money",
+				path: "money",
 				operator: "LT",
 				value1: 5
 			});
@@ -2569,8 +2571,8 @@ sap.ui.define([
 			this.assertBindingInfo(assert, "(sPath)", oTable.getBindingInfo("rows"), {
 				path: "/modelData"
 			});
-			oInnerBindRows.reset();
-			oBindAggregationOfControl.reset();
+			oInnerBindRows.resetHistory();
+			oBindAggregationOfControl.resetHistory();
 
 			// (sPath, oSorter)
 			fnBind("/modelData", oSorter);
@@ -2584,8 +2586,8 @@ sap.ui.define([
 				path: "/modelData",
 				sorter: oSorter
 			});
-			oInnerBindRows.reset();
-			oBindAggregationOfControl.reset();
+			oInnerBindRows.resetHistory();
+			oBindAggregationOfControl.resetHistory();
 
 			// (sPath, oSorter, aFilters)
 			fnBind("/modelData", oSorter, [oFilter]);
@@ -2600,8 +2602,8 @@ sap.ui.define([
 				sorter: oSorter,
 				filters: [oFilter]
 			});
-			oInnerBindRows.reset();
-			oBindAggregationOfControl.reset();
+			oInnerBindRows.resetHistory();
+			oBindAggregationOfControl.resetHistory();
 
 			// (sPath, vTemplate, oSorter, aFilters)
 			fnBind("/modelData", oTemplate, oSorter, [oFilter]);
@@ -2653,7 +2655,7 @@ sap.ui.define([
 		assert.ok(oInnerBindRows.calledOnce, "With model - _bindRows was called");
 		assert.ok(oInnerBindRows.calledWithExactly(oTable.getBindingInfo("rows")),
 			"With model - _bindRows was called with the correct parameters");
-		oInnerBindRows.reset();
+		oInnerBindRows.resetHistory();
 
 		/*eslint-disable no-new */
 		oTable = new Table({
@@ -2729,8 +2731,8 @@ sap.ui.define([
 		assert.strictEqual(oVirtualRow.getBindingContext("namedModel"), oBinding.getContexts(0, 1)[0],
 			"AddVirtualContext: Virtual row has the correct context");
 		assert.notOk(oVirtualRow.bIsDestroyed, "AddVirtualContext: Virtual row is not destroyed");
-		oInvalidateSpy.reset();
-		oUpdateRowsHookSpy.reset();
+		oInvalidateSpy.resetHistory();
+		oUpdateRowsHookSpy.resetHistory();
 
 		oBinding.fireEvent("change", {
 			detailedReason: "RemoveVirtualContext",
@@ -2760,7 +2762,7 @@ sap.ui.define([
 	QUnit.test("Filter", function(assert) {
 		oTable.setFirstVisibleRow(1);
 		oTable.getBinding().filter(new Filter({
-			path: "modelData>money",
+			path: "money",
 			operator: "LT",
 			value1: 5
 		}));
@@ -2770,7 +2772,7 @@ sap.ui.define([
 	QUnit.test("Sort", function(assert) {
 		oTable.setFirstVisibleRow(1);
 		oTable.getBinding().sort(new Sorter({
-			path: "modelData>money",
+			path: "money",
 			descending: true
 		}));
 		assert.equal(oTable.getFirstVisibleRow(), 0, "'firstVisibleRow' set to 0 when sorting");
@@ -4360,7 +4362,7 @@ sap.ui.define([
 				assert.deepEqual(this.oPasteSpy._mEventParameters.data, [[sData]], sTestTitle + "The data parameter has the correct value");
 			}
 
-			this.oPasteSpy.reset();
+			this.oPasteSpy.resetHistory();
 		}
 	});
 
@@ -4446,7 +4448,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("TreeTableRenderer", function(assert) {
+	QUnit.test("AnalyticalTableRenderer", function(assert) {
 		var done = assert.async();
 		sap.ui.require(["sap/ui/table/AnalyticalTableRenderer", "sap/ui/table/AnalyticalTable"], function(oRenderer, oTable) {
 			assert.ok(oRenderer === sap.ui.table.AnalyticalTableRenderer, "Global Namespace");
@@ -4775,32 +4777,32 @@ sap.ui.define([
 		assert.ok(oGetContexts.calledWithExactly(undefined, undefined, undefined, undefined),
 			"Called without arguments: Binding#getContexts call arguments");
 
-		oGetContexts.reset();
+		oGetContexts.resetHistory();
 		assert.strictEqual(oTable._getContexts(1), sReturnValue, "Called with (1): Return value");
 		assert.equal(oGetContexts.callCount, 1, "Called with (1): Binding#getContexts called once");
 		assert.ok(oGetContexts.calledWithExactly(1, undefined, undefined, undefined), "Called with (1): Binding#getContexts call arguments");
 
-		oGetContexts.reset();
+		oGetContexts.resetHistory();
 		assert.strictEqual(oTable._getContexts(1, 2), sReturnValue, "Called with (1, 2): Return value");
 		assert.equal(oGetContexts.callCount, 1, "Called with (1, 2): Binding#getContexts called once");
 		assert.ok(oGetContexts.calledWithExactly(1, 2, undefined, undefined), "Called with (1, 2): Binding#getContexts call arguments");
 
-		oGetContexts.reset();
+		oGetContexts.resetHistory();
 		assert.strictEqual(oTable._getContexts(1, 2, 3), sReturnValue, "Called with (1, 2, 3): Return value");
 		assert.equal(oGetContexts.callCount, 1, "Called with (1, 2, 3): Binding#getContexts called once");
 		assert.ok(oGetContexts.calledWithExactly(1, 2, 3, undefined), "Called with (1, 2, 3): Binding#getContexts call arguments");
 
-		oGetContexts.reset();
+		oGetContexts.resetHistory();
 		assert.strictEqual(oTable._getContexts(1, 2, 3, true), sReturnValue, "Called with (1, 2, 3, true): Return value");
 		assert.equal(oGetContexts.callCount, 1, "Called with (1, 2, 3, true): Binding#getContexts called once");
 		assert.ok(oGetContexts.calledWithExactly(1, 2, 3, true), "Called with (1, 2, 3, true): Binding#getContexts call arguments");
 
-		oGetContexts.reset();
+		oGetContexts.resetHistory();
 		assert.strictEqual(oTable._getContexts(1, 2, 3, false), sReturnValue, "Called with (1, 2, 3, false): Return value");
 		assert.equal(oGetContexts.callCount, 1, "Called with (1, 2, 3, false): Binding#getContexts called once");
 		assert.ok(oGetContexts.calledWithExactly(1, 2, 3, false), "Called with (1, 2, 3, false): Binding#getContexts call arguments");
 
-		oGetContexts.reset();
+		oGetContexts.resetHistory();
 		assert.strictEqual(oTable._getContexts(1, null, undefined, true), sReturnValue, "Called with (1, null, undefined, true): Return value");
 		assert.equal(oGetContexts.callCount, 1, "Called with (1, null, undefined, true): Binding#getContexts called once");
 		assert.ok(oGetContexts.calledWithExactly(1, null, undefined, true),
@@ -4918,8 +4920,8 @@ sap.ui.define([
 			oTable.setModel(null);
 			assert.strictEqual(oTable._getTotalRowCount(), 0, "Without a binding the total row count is 0, regardless of the binding info");
 
-			oTable.setModel(oModel);
 			oTable.unbindRows();
+			oTable.setModel(oModel);
 			assert.strictEqual(oTable._getTotalRowCount(), 0, "Without a binding or binding info the total row count is 0");
 
 			oMockServer.destroy();
@@ -5437,7 +5439,7 @@ sap.ui.define([
 		this.oTable.insertAggregation("_hiddenDependents", new Text(), 0);
 		assert.ok(this.oTableInvalidate.notCalled,
 			"The table is not invalidated when inserting a hidden dependent without suppressing invalidation");
-		this.oTableInvalidate.reset();
+		this.oTableInvalidate.resetHistory();
 
 		this.oTable.insertAggregation("_hiddenDependents", new Text(), 0, true);
 		assert.ok(this.oTableInvalidate.notCalled,
@@ -5448,7 +5450,7 @@ sap.ui.define([
 		this.oTable.addAggregation("_hiddenDependents", new Text());
 		assert.ok(this.oTableInvalidate.notCalled,
 			"The table is not invalidated when adding a hidden dependent without suppressing invalidation");
-		this.oTableInvalidate.reset();
+		this.oTableInvalidate.resetHistory();
 
 		this.oTable.addAggregation("_hiddenDependents", new Text(), true);
 		assert.ok(this.oTableInvalidate.notCalled,
@@ -5459,14 +5461,14 @@ sap.ui.define([
 		var oText = new Text();
 
 		this.oTable.addAggregation("_hiddenDependents", oText);
-		this.oTableInvalidate.reset();
+		this.oTableInvalidate.resetHistory();
 		this.oTable.removeAggregation("_hiddenDependents", oText);
 		assert.ok(this.oTableInvalidate.notCalled,
 			"The table is not invalidated when removing a hidden dependent without suppressing invalidation");
-		this.oTableInvalidate.reset();
+		this.oTableInvalidate.resetHistory();
 
 		this.oTable.addAggregation("_hiddenDependents", oText);
-		this.oTableInvalidate.reset();
+		this.oTableInvalidate.resetHistory();
 		this.oTable.removeAggregation("_hiddenDependents", oText, true);
 		assert.ok(this.oTableInvalidate.notCalled,
 			"The table is not invalidated when removing a hidden dependent and suppressing invalidation");
@@ -5474,12 +5476,12 @@ sap.ui.define([
 
 	QUnit.test("removeAllAggregation", function(assert) {
 		this.oTable.addAggregation("_hiddenDependents", new Text());
-		this.oTableInvalidate.reset();
+		this.oTableInvalidate.resetHistory();
 
 		this.oTable.removeAllAggregation("_hiddenDependents");
 		assert.ok(this.oTableInvalidate.notCalled,
 			"The table is not invalidated when removing all hidden dependents without suppressing invalidation");
-		this.oTableInvalidate.reset();
+		this.oTableInvalidate.resetHistory();
 
 		this.oTable.removeAllAggregation("_hiddenDependents", true);
 		assert.ok(this.oTableInvalidate.notCalled,
@@ -5488,12 +5490,12 @@ sap.ui.define([
 
 	QUnit.test("destroyAggregation", function(assert) {
 		this.oTable.addAggregation("_hiddenDependents", new Text());
-		this.oTableInvalidate.reset();
+		this.oTableInvalidate.resetHistory();
 
 		this.oTable.destroyAggregation("_hiddenDependents");
 		assert.ok(this.oTableInvalidate.notCalled,
 			"The table is not invalidated when destroying all hidden dependents without suppressing invalidation");
-		this.oTableInvalidate.reset();
+		this.oTableInvalidate.resetHistory();
 
 		this.oTable.destroyAggregation("_hiddenDependents", true);
 		assert.ok(this.oTableInvalidate.notCalled,
@@ -5504,7 +5506,7 @@ sap.ui.define([
 		var oText = new Text();
 
 		this.oTable.addAggregation("_hiddenDependents", oText);
-		this.oTableInvalidate.reset();
+		this.oTableInvalidate.resetHistory();
 		oText.destroy();
 		assert.ok(this.oTableInvalidate.notCalled,
 			"The table is not invalidated when destroying a hidden dependent");
@@ -5538,7 +5540,7 @@ sap.ui.define([
 
 		this.oTable.bindRows(oBindingInfo);
 		assert.ok(oRowsBoundSpy.notCalled, "Bind without model: 'RowsBound' hook was not called");
-		oRowsBoundSpy.reset();
+		oRowsBoundSpy.resetHistory();
 
 		this.oTable.setModel(TableQUnitUtils.createJSONModelWithEmptyRows(1));
 		assert.equal(oRowsBoundSpy.callCount, 1, "Set model: 'RowsBound' hook was called once");
@@ -5556,11 +5558,11 @@ sap.ui.define([
 		this.oTable.unbindRows();
 		assert.equal(oUnbindRowsSpy.callCount, 1, "Unbind if bound: 'UnbindRows' hook was called once");
 		assert.ok(oUnbindRowsSpy.calledWithExactly(oBindingInfo), "Unbind if bound: 'UnbindRows' hook was correctly called");
-		oUnbindRowsSpy.reset();
+		oUnbindRowsSpy.resetHistory();
 
 		this.oTable.unbindRows();
 		assert.ok(oUnbindRowsSpy.notCalled, "Unbind if not bound: 'UnbindRows' hook was not called");
-		oUnbindRowsSpy.reset();
+		oUnbindRowsSpy.resetHistory();
 
 		this.oTable.bindRows(oBindingInfo);
 		this.oTable.bindRows({path: "/other"});
@@ -5579,16 +5581,16 @@ sap.ui.define([
 		this.oTable.unbindRows();
 		assert.equal(oRowsUnboundSpy.callCount, 1, "Unbind if bound: 'RowsUnbound' hook was called once");
 		assert.ok(oRowsUnboundSpy.calledWithExactly(), "Unbind if bound: 'RowsUnbound' hook was correctly called");
-		oRowsUnboundSpy.reset();
+		oRowsUnboundSpy.resetHistory();
 
 		this.oTable.unbindRows();
 		assert.ok(oRowsUnboundSpy.notCalled, "Unbind if not bound: 'RowsUnbound' hook was not called");
-		oRowsUnboundSpy.reset();
+		oRowsUnboundSpy.resetHistory();
 
 		this.oTable.bindRows(oBindingInfo);
 		this.oTable.bindRows({path: "/other"});
 		assert.ok(oRowsUnboundSpy.notCalled, "Bind rows if bound: 'RowsUnbound' hook was not called");
-		oRowsUnboundSpy.reset();
+		oRowsUnboundSpy.resetHistory();
 
 		this.oTable.bindRows(oBindingInfo);
 		this.oTable.destroy();
@@ -5605,7 +5607,7 @@ sap.ui.define([
 		this.oTable.getBinding().fireEvent("refresh", {reason: ChangeReason.Refresh});
 		assert.equal(oRefreshRowsSpy.callCount, 1, "Binding refresh with reason: 'RefreshRows' hook was called once");
 		assert.ok(oRefreshRowsSpy.calledWithExactly(ChangeReason.Refresh), "Binding refresh with reason: 'RefreshRows' hook was correctly called");
-		oRefreshRowsSpy.reset();
+		oRefreshRowsSpy.resetHistory();
 
 		this.oTable.getBinding().fireEvent("refresh");
 		assert.equal(oRefreshRowsSpy.callCount, 1, "Binding refresh without reason: 'RefreshRows' hook was called once");
@@ -5619,24 +5621,24 @@ sap.ui.define([
 		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Table.UpdateRows, oUpdateRowsSpy);
 		this.oTable.setModel(TableQUnitUtils.createJSONModelWithEmptyRows(20));
 		this.oTable.bindRows({path: "/"});
-		oUpdateRowsSpy.reset();
+		oUpdateRowsSpy.resetHistory();
 
 		this.oTable.getBinding().fireEvent("change", {reason: ChangeReason.Change});
 		assert.equal(oUpdateRowsSpy.callCount, 1, "Binding change with reason: 'UpdateRows' hook was called once");
 		assert.ok(oUpdateRowsSpy.calledWithExactly(ChangeReason.Change), "Binding change with reason: 'UpdateRows' hook was correctly called");
-		oUpdateRowsSpy.reset();
+		oUpdateRowsSpy.resetHistory();
 
 		this.oTable.getBinding().fireEvent("change");
 		assert.equal(oUpdateRowsSpy.callCount, 1, "Binding change without reason: 'UpdateRows' hook was called once");
 		assert.ok(oUpdateRowsSpy.calledWithExactly(TableUtils.RowsUpdateReason.Unknown),
 			"Binding change without reason: 'UpdateRows' hook was correctly called");
-		oUpdateRowsSpy.reset();
+		oUpdateRowsSpy.resetHistory();
 
 		this.oTable.setFirstVisibleRow(1);
 		assert.equal(oUpdateRowsSpy.callCount, 1, "Change 'firstVisibleRow': 'UpdateRows' hook was called once");
 		assert.ok(oUpdateRowsSpy.calledWithExactly(TableUtils.RowsUpdateReason.FirstVisibleRowChange),
 			"Change 'firstVisibleRow': 'UpdateRows' hook was correctly called");
-		oUpdateRowsSpy.reset();
+		oUpdateRowsSpy.resetHistory();
 
 		this.oTable._setFirstVisibleRowIndex(2, {
 			onScroll: true
@@ -5668,24 +5670,24 @@ sap.ui.define([
 			assert.equal(oTotalRowCountChangedSpy.callCount, 1, "Bind: 'TotalRowCountChanged' hook called once");
 			assert.ok(oTotalRowCountChangedSpy.calledWithExactly(), "Bind: 'TotalRowCountChanged' hook parameters");
 
-			oTotalRowCountChangedSpy.reset();
+			oTotalRowCountChangedSpy.resetHistory();
 			that.oTable.getBinding().filter(new Filter({path: "something", operator: "EQ", value1: "something"}));
 		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oTotalRowCountChangedSpy.callCount, 1, "Filter: 'TotalRowCountChanged' hook called once");
 			assert.ok(oTotalRowCountChangedSpy.calledWithExactly(), "Filter: 'TotalRowCountChanged' hook parameters");
 
-			oTotalRowCountChangedSpy.reset();
+			oTotalRowCountChangedSpy.resetHistory();
 			that.oTable.getBinding().filter();
 		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oTotalRowCountChangedSpy.callCount, 1, "Remove filter: 'TotalRowCountChanged' hook called once");
 			assert.ok(oTotalRowCountChangedSpy.calledWithExactly(), "Remove filter: 'TotalRowCountChanged' hook parameters");
 
-			oTotalRowCountChangedSpy.reset();
+			oTotalRowCountChangedSpy.resetHistory();
 			that.oTable.getBinding().sort(new Sorter({path: "something"}));
 		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oTotalRowCountChangedSpy.callCount, 0, "Sort: 'TotalRowCountChanged' hook not called");
 
-			oTotalRowCountChangedSpy.reset();
+			oTotalRowCountChangedSpy.resetHistory();
 			that.oTable.unbindRows();
 		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oTotalRowCountChangedSpy.callCount, 1, "Unbind: 'TotalRowCountChanged' hook called once");
@@ -5782,23 +5784,23 @@ sap.ui.define([
 		this.oTable.setNoData("Hello");
 		assert.ok(oInvalidateSpy.notCalled, "Table not invalidated when changing NoData from default text to custom text");
 
-		oInvalidateSpy.reset();
+		oInvalidateSpy.resetHistory();
 		this.oTable.setNoData("Hello2");
 		assert.ok(oInvalidateSpy.notCalled, "Table not invalidated when changing NoData from text to a different text");
 
-		oInvalidateSpy.reset();
+		oInvalidateSpy.resetHistory();
 		this.oTable.setNoData("Hello2");
 		assert.ok(oInvalidateSpy.notCalled, "Table not invalidated when changing NoData from text to the same text");
 
-		oInvalidateSpy.reset();
+		oInvalidateSpy.resetHistory();
 		this.oTable.setNoData(oText1);
 		assert.equal(oInvalidateSpy.callCount, 1, "Table invalidated when changing NoData from text to control");
 
-		oInvalidateSpy.reset();
+		oInvalidateSpy.resetHistory();
 		this.oTable.setNoData(oText2);
 		assert.equal(oInvalidateSpy.callCount, 1, "Table invalidated when changing NoData from control to control");
 
-		oInvalidateSpy.reset();
+		oInvalidateSpy.resetHistory();
 		this.oTable.setNoData("Hello2");
 		assert.equal(oInvalidateSpy.callCount, 1, "Table invalidated when changing NoData from control to text");
 

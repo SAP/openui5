@@ -421,7 +421,7 @@ sap.ui.define([
 
 		var oBinding = this.oTable.getBinding();
 		oBinding.fireEvent("change");
-		oDataRequestedSpy.reset(); // The AnalyticalBinding tends to send multiple requests initially.
+		oDataRequestedSpy.resetHistory(); // The AnalyticalBinding tends to send multiple requests initially.
 		oBinding.fireEvent("dataRequested");
 		oBinding.fireEvent("dataReceived");
 		oBinding.fireEvent("selectionChanged");
@@ -864,7 +864,7 @@ sap.ui.define([
 			};
 
 			// no real binding is required here. Instead mock a binding object
-			sinon.stub(this._oTable, "getBinding", function() {
+			sinon.stub(this._oTable, "getBinding").callsFake(function() {
 				var oBinding = {};
 				var aProperties = [
 					{name: "m1", type: "measure", filterable: false},

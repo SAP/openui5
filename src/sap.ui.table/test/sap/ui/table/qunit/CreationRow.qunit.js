@@ -96,8 +96,8 @@ sap.ui.define([
 		assert.ok(oApplySpy.calledOnce, "The CreationRow's \"apply\" event was called once");
 		assert.ok(oResetFocusSpy.calledOnce, "CreationRow#resetFocus was called once");
 
-		oApplySpy.reset();
-		oResetFocusSpy.reset();
+		oApplySpy.resetHistory();
+		oResetFocusSpy.resetHistory();
 
 		oCreationRow.attachEventOnce("apply", function(oEvent) {
 			oEvent.preventDefault();
@@ -108,8 +108,8 @@ sap.ui.define([
 		assert.ok(oApplySpy.calledOnce, "The CreationRow's \"apply\" event was called once");
 		assert.ok(oResetFocusSpy.notCalled, "CreationRow#resetFocus was not called");
 
-		oApplySpy.reset();
-		oResetFocusSpy.reset();
+		oApplySpy.resetHistory();
+		oResetFocusSpy.resetHistory();
 		this.oTable.getColumns()[1].destroy();
 		sap.ui.getCore().applyChanges();
 
@@ -292,7 +292,7 @@ sap.ui.define([
 		var oClock = sinon.useFakeTimers();
 
 		function test(fnAct, fnAssert) {
-			oFireApplySpy.reset();
+			oFireApplySpy.resetHistory();
 			aEvents = [];
 			fnAct();
 
@@ -616,7 +616,7 @@ sap.ui.define([
 
 		sap.ui.getCore().applyChanges();
 		assert.ok(oApplyButtonAfterRendering.calledOnce, "The button was re-rendered");
-		oApplyButtonAfterRendering.reset();
+		oApplyButtonAfterRendering.resetHistory();
 
 		this.oCreationRow.setApplyEnabled(true);
 		assert.strictEqual(oApplyButton.getEnabled(), true, "The button is enabled after setting \"applyEnabled\" of the CreationRow to \"true\"");

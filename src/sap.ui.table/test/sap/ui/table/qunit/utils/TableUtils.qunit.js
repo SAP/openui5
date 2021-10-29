@@ -11,7 +11,9 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/table/RowSettings",
-	"sap/ui/base/Object"
+	"sap/ui/base/Object",
+	"sap/base/i18n/ResourceBundle",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	TableQUnitUtils,
 	TableUtils,
@@ -23,7 +25,9 @@ sap.ui.define([
 	CoreLibrary,
 	Control,
 	RowSettings,
-	BaseObject
+	BaseObject,
+	ResourceBundle,
+	jQuery
 ) {
 	"use strict";
 
@@ -1001,7 +1005,7 @@ sap.ui.define([
 		/* Synchronous */
 
 		oBundle = TableUtils.getResourceBundle();
-		assert.ok(jQuery.sap.resources.isBundle(oBundle), "{async: false, reload: false} - Returned a bundle");
+		assert.ok(oBundle instanceof ResourceBundle, "{async: false, reload: false} - Returned a bundle");
 		assert.strictEqual(TableUtils.getResourceBundle(), oBundle, "{async: false, reload: false} - Returned the already loaded bundle");
 
 		sap.ui.getCore().getConfiguration().setLanguage(sTestLanguageA);
@@ -1010,7 +1014,7 @@ sap.ui.define([
 		assert.strictEqual(TableUtils.getResourceBundle(), oBundle,
 			"{async: false, reload: false} (language changed) - Returned the already loaded bundle");
 		oBundle = TableUtils.getResourceBundle({reload: true});
-		assert.ok(oBundle !== oPreviousBundle && jQuery.sap.resources.isBundle(oBundle),
+		assert.ok(oBundle !== oPreviousBundle && oBundle instanceof ResourceBundle,
 			"{async: false, reload: true} - Returned a new bundle");
 		assert.strictEqual(TableUtils.getResourceBundle({reload: true}), oBundle,
 			"{async: false, reload: true} - Returned the already loaded bundle");
@@ -1032,7 +1036,7 @@ sap.ui.define([
 		}).then(function(_oBundle) {
 			oPreviousBundle = oBundle;
 			oBundle = _oBundle;
-			assert.ok(oBundle !== oPreviousBundle && jQuery.sap.resources.isBundle(oBundle), "Promise returned a new bundle");
+			assert.ok(oBundle !== oPreviousBundle && oBundle instanceof ResourceBundle, "Promise returned a new bundle");
 
 			pPromise = TableUtils.getResourceBundle({async: true, reload: true});
 			assert.ok(pPromise instanceof Promise, "{async: true, reload: true} - Returned a Promise");
@@ -1058,8 +1062,8 @@ sap.ui.define([
 
 		function reset() {
 			bCallbackCalled = false;
-			oTestObject.funcA.reset();
-			oTestObject.funcB.reset();
+			oTestObject.funcA.resetHistory();
+			oTestObject.funcB.resetHistory();
 		}
 
 		TableUtils.dynamicCall(oTestObject, function(vObject) {
@@ -1300,7 +1304,7 @@ sap.ui.define([
 		assert.ok(oDelegateSpy.calledOnce, "Element#addDelegate was called once");
 		assert.ok(oDelegateSpy.calledWithExactly(oDelegateDummy, false, oDelegateDummy, false),
 			"Element#addDelegate is called with the correct parameters");
-		oDelegateSpy.reset();
+		oDelegateSpy.resetHistory();
 
 		TableUtils.addDelegate(oTable, oDelegateDummy, oThisDummy);
 		assert.ok(oDelegateSpy.calledOnce, "Element#addDelegate was called once");
@@ -1348,11 +1352,14 @@ sap.ui.define([
 
 	QUnit.module("Resize Handler", {
 		beforeEach: function() {
-			jQuery("#qunit-fixture").append("<div id='__table-outer' style='height: 500px; width: 500px; overflow: hidden; background: red;'>" +
-											"<div id='__table-inner' style='height: 200px; width: 200px; background: blue;'>" +
-											"<div id='__table-center' style='height: 100px; width: 100px; background: green;'></div>" +
+			jQuery("#qunit-fixture").append("<div id='__table-outer'>" +
+											"<div id='__table-inner'>" +
+											"<div id='__table-center'></div>" +
 											"</div>" +
 											"</div>");
+			jQuery("#__table-outer").attr("style", "height: 500px; width: 500px; overflow: hidden; background: red;");
+			jQuery("#__table-inner").attr("style", "height: 200px; width: 200px; background: blue;");
+			jQuery("#__table-center").attr("style", "height: 100px; width: 100px; background: green;");
 
 			this.oTable = {
 				id: "__table",
@@ -1689,7 +1696,7 @@ sap.ui.define([
 		},
 		assertNotCalled: function(assert) {
 			assert.equal(this.fnTestFunction.callCount, 0, "Not called");
-			this.fnTestFunction.reset();
+			this.fnTestFunction.resetHistory();
 		},
 		assertCalled: function(assert, oContext, aLastArguments) {
 			assert.equal(this.fnTestFunction.callCount, 1, "Called once");
@@ -1706,7 +1713,7 @@ sap.ui.define([
 				}
 			}
 
-			this.fnTestFunction.reset();
+			this.fnTestFunction.resetHistory();
 		}
 	});
 
@@ -1773,119 +1780,71 @@ sap.ui.define([
 	});
 
 	QUnit.test("Frame-wise - No calls", function(assert) {
-		var that = this;
-
 		TableUtils.throttleFrameWise(this.fnTestFunction);
 
-		return new Promise(function(resolve) {
-			window.requestAnimationFrame(function() {
-				that.assertNotCalled(assert);
-				resolve();
-			});
-		});
+		this.oClock.runToFrame();
+		this.assertNotCalled(assert);
 	});
 
 	QUnit.test("Frame-wise - One call", function(assert) {
 		var fnThrottled = TableUtils.throttleFrameWise(this.fnTestFunction);
 		var oContext = {iAmThis: true};
-		var that = this;
 
-		return new Promise(function(resolve) {
-			fnThrottled.call(oContext, "animation frame");
-			window.requestAnimationFrame(function() {
-				that.assertCalled(assert, oContext, ["animation frame"]);
-				resolve();
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				fnThrottled.call(oContext);
-				window.requestAnimationFrame(function() {
-					fnThrottled.call(oContext, "animation frame", 3);
-					that.assertCalled(assert, oContext);
-					resolve();
-				});
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				window.requestAnimationFrame(function() {
-					that.assertCalled(assert, oContext, ["animation frame", 3]);
-					resolve();
-				});
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				window.requestAnimationFrame(function() {
-					that.assertNotCalled(assert);
-					resolve();
-				});
-			});
-		});
+		fnThrottled.call(oContext, "animation frame");
+		this.oClock.runToFrame();
+		this.assertCalled(assert, oContext, ["animation frame"]);
+
+		fnThrottled.call(oContext);
+		this.oClock.runToFrame();
+		fnThrottled.call(oContext, "animation frame", 3);
+		this.assertCalled(assert, oContext);
+
+		this.oClock.runToFrame();
+		this.assertCalled(assert, oContext, ["animation frame", 3]);
+
+		this.oClock.runToFrame();
+		this.assertNotCalled(assert);
 	});
 
 	QUnit.test("Frame-wise - Multiple calls", function(assert) {
 		var fnThrottled = TableUtils.throttleFrameWise(this.fnTestFunction);
 		var oContext = {iAmThis: true};
-		var that = this;
 
-		return new Promise(function(resolve) {
-			fnThrottled.call();
-			fnThrottled.call(oContext, "something");
-			fnThrottled.call(oContext, "animation frame");
-			window.requestAnimationFrame(function() {
-				that.assertCalled(assert, oContext, ["animation frame"]);
-				resolve();
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				fnThrottled.call(oContext, "something");
-				fnThrottled.call(oContext, "animation frame", 2);
-				fnThrottled.call(oContext);
-				window.requestAnimationFrame(function() {
-					fnThrottled.call();
-					fnThrottled.call(oContext, "something");
-					fnThrottled.call(oContext, "animation frame", 3);
-					that.assertCalled(assert, oContext);
-					resolve();
-				});
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				window.requestAnimationFrame(function() {
-					that.assertCalled(assert, oContext, ["animation frame", 3]);
-					resolve();
-				});
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				window.requestAnimationFrame(function() {
-					that.assertNotCalled(assert);
-					resolve();
-				});
-			});
-		});
+		fnThrottled.call();
+		fnThrottled.call(oContext, "something");
+		fnThrottled.call(oContext, "animation frame");
+		this.oClock.runToFrame();
+		this.assertCalled(assert, oContext, ["animation frame"]);
+
+		fnThrottled.call(oContext, "something");
+		fnThrottled.call(oContext, "animation frame", 2);
+		fnThrottled.call(oContext);
+		this.oClock.runToFrame();
+
+		fnThrottled.call();
+		fnThrottled.call(oContext, "something");
+		fnThrottled.call(oContext, "animation frame", 3);
+		this.assertCalled(assert, oContext);
+
+		this.oClock.runToFrame();
+		this.assertCalled(assert, oContext, ["animation frame", 3]);
+
+		this.oClock.runToFrame();
+		this.assertNotCalled(assert);
 	});
 
 	QUnit.test("Frame-wise - Cancellation", function(assert) {
 		var fnThrottled = TableUtils.throttleFrameWise(this.fnTestFunction);
 		var oContext = {iAmThis: true};
-		var that = this;
 
 		fnThrottled();
 		fnThrottled.cancel();
 
-		return new Promise(function(resolve) {
-			window.requestAnimationFrame(function() {
-				that.assertNotCalled(assert);
-				resolve();
-			});
-		}).then(function() {
-			fnThrottled.call(oContext, "animation frame");
-			return new Promise(function(resolve) {
-				window.requestAnimationFrame(function() {
-					that.assertCalled(assert, oContext, ["animation frame"]);
-					resolve();
-				});
-			});
-		});
+		this.oClock.runToFrame();
+		this.assertNotCalled(assert);
+
+		fnThrottled.call(oContext, "animation frame");
+		this.oClock.runToFrame();
+		this.assertCalled(assert, oContext, ["animation frame"]);
 	});
 });

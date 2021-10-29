@@ -342,8 +342,8 @@ sap.ui.define([
 		assert.ok(oDisableNoData.notCalled, "Change from true to false: #disableNoData was not called");
 		assert.equal(oEnableNoData.callCount, 1, "Change from true to false: #enableNoData was called once");
 
-		oDisableNoData.reset();
-		oEnableNoData.reset();
+		oDisableNoData.resetHistory();
+		oEnableNoData.resetHistory();
 		oRowMode.setHideEmptyRows(true);
 		assert.equal(oDisableNoData.callCount, 1, "Change from false to true: #disableNoData was called once");
 		assert.ok(oEnableNoData.notCalled, "Change from false to true: #enableNoData was not called");
