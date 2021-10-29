@@ -60,7 +60,13 @@ sap.ui.define([
 				oRm.addClass("sapUiIntegrationDTPreviewDark");
 			}
 			if (oControl.getSettings().preview.position && (oControl.getSettings().preview.position === "top" || oControl.getSettings().preview.position === "bottom")) {
-				oRm.addClass("sapUiIntegrationDTPreviewMarginForAlignTopAndBottom");
+				var sLanguge = Core.getConfiguration().getLanguage().replaceAll('_', '-');
+				// for the languages "ar-SA"(Arabic) and "he-IL"(Hebrew) which write from right to left, use spec style
+				if (sLanguge.startsWith("ar") || sLanguge.startsWith("he")) {
+					oRm.addClass("sapUiIntegrationDTPreviewMarginForAlignTopAndBottomSpec");
+				} else {
+					oRm.addClass("sapUiIntegrationDTPreviewMarginForAlignTopAndBottom");
+				}
 			}
 			oRm.writeClasses();
 			oRm.openEnd();
@@ -158,7 +164,15 @@ sap.ui.define([
 		if (oPreview) {
 			this.setAggregation("cardPreview", oPreview);
 			if (!this.getSettings().preview || this.getSettings().preview.scaled !== false) {
-				oPreview.addStyleClass("sapUiIntegrationDTPreviewScale");
+				oPreview.removeStyleClass("sapUiIntegrationDTPreviewScale");
+				oPreview.removeStyleClass("sapUiIntegrationDTPreviewScaleSpec");
+				var sLanguge = Core.getConfiguration().getLanguage().replaceAll('_', '-');
+				// for the languages "ar-SA"(Arabic) and "he-IL"(Hebrew) which write from right to left, use spec style
+				if (sLanguge.startsWith("ar") || sLanguge.startsWith("he")) {
+					oPreview.addStyleClass("sapUiIntegrationDTPreviewScaleSpec");
+				} else {
+					oPreview.addStyleClass("sapUiIntegrationDTPreviewScale");
+				}
 			} else {
 				oPreview.addStyleClass("sapUiIntegrationDTPreviewNoScale");
 			}
@@ -362,11 +376,19 @@ sap.ui.define([
 		if (!this._oModeToggleButton) {
 			this._oModeToggleButton = new ToggleButton();
 			this._oModeToggleButton.setTooltip();
-			this._oModeToggleButton.addStyleClass("sapUiIntegrationDTPreviewButton");
 			this._oModeToggleButton.attachPress(function () {
 				this._toggleCurrentMode();
 				this.update();
 			}.bind(this));
+		}
+		this._oModeToggleButton.removeStyleClass("sapUiIntegrationDTPreviewButton");
+		this._oModeToggleButton.removeStyleClass("sapUiIntegrationDTPreviewButtonSpec");
+		var sLanguge = Core.getConfiguration().getLanguage().replaceAll('_', '-');
+		// for the languages "ar-SA"(Arabic) and "he-IL"(Hebrew) which write from right to left, use spec style
+		if (sLanguge.startsWith("ar") || sLanguge.startsWith("he")) {
+			this._oModeToggleButton.addStyleClass("sapUiIntegrationDTPreviewButtonSpec");
+		} else {
+			this._oModeToggleButton.addStyleClass("sapUiIntegrationDTPreviewButton");
 		}
 		var tb = this._oModeToggleButton,
 			currentMode = this._getCurrentMode();
