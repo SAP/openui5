@@ -105,6 +105,12 @@ sap.ui.define([
 		oLabelElement = this.oColumn.getDomRef();
 		assert.strictEqual(oLabelElement && oLabelElement.textContent, this.oColumn.getHeader(), "header text forwarded to ACC label");
 
+		this.oColumn.setHeaderVisible(true);
+		this.oColumn.updateColumnResizing(true);
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), false, "wrapping on label control is disabled when resizing is activated");
+		this.oColumn.updateColumnResizing(false);
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), true, "wrapping on label control is enabled when resizing is deactivated");
+
 		this.oColumn._removeAriaStaticDom();
 	});
 
@@ -140,6 +146,12 @@ sap.ui.define([
 		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWidth(), "0px", "width set on label control according to according to headerVisible");
 		oLabelElement = this.oColumn.getDomRef();
 		assert.strictEqual(oLabelElement && oLabelElement.textContent, this.oColumn.getHeader(), "header text forwarded to ACC label");
+
+		this.oColumn.setHeaderVisible(true);
+		this.oColumn.updateColumnResizing(true);
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), false, "wrapping on label control is disabled when resizing is activated");
+		this.oColumn.updateColumnResizing(false);
+		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), false, "wrapping on label control is disabled when resizing is deactivated");
 
 		this.oColumn._removeAriaStaticDom();
 	});
