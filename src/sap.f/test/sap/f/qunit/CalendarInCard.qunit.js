@@ -178,7 +178,8 @@ sap.ui.define([
 			oPickerBtn = oCalendar._oPickerBtn,
 			oMonthPicker = oCalendar._getMonthPicker(),
 			oYearPicker = oCalendar._getYearPicker(),
-			oYearRangePicker = oCalendar._getYearRangePicker();
+			oYearRangePicker = oCalendar._getYearRangePicker(),
+			oAddMonthDelegateSpy = this.spy(oCalendar, "_addMonthFocusDelegate");
 
 		// Act
 		oCalendar._handleTodayPress();
@@ -220,6 +221,7 @@ sap.ui.define([
 		// Assert
 		assert.equal(oYearRangePicker.getYear(), 2010, "year range set correct");
 		assert.notOk(oPickerBtn.getVisible(), "picker button is not visible");
+		assert.strictEqual(oAddMonthDelegateSpy.callCount, 4, "Month focus delegate is added");
 
 		// Cleanup
 		clock.restore();
