@@ -8,9 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/m/Text",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/core/Icon",
 	"sap/ui/events/KeyCodes",
-	"sap/base/strings/capitalize",
 	"sap/ui/rta/util/changeVisualization/categories/getVisualizationCategory",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/util/resolveBinding"
@@ -20,9 +18,7 @@ sap.ui.define([
 	Control,
 	Text,
 	DateFormat,
-	Icon,
 	KeyCodes,
-	capitalize,
 	getVisualizationCategory,
 	FlUtils,
 	resolveBinding
@@ -50,13 +46,6 @@ sap.ui.define([
 				changes: {
 					type: "array",
 					defaultValue: []
-				},
-				/**
-				 * Mode of the indicator, "change" or "dependent"
-				 */
-				mode: {
-					type: "string",
-					defaultValue: "change"
 				},
 				/**
 				 * Distance from the left side of the screen in px
@@ -93,11 +82,6 @@ sap.ui.define([
 					type: "sap.m.Text",
 					multiple: false,
 					visibility: "hidden"
-				},
-				_icon: {
-					type: "sap.ui.core.Icon",
-					multiple: false,
-					visibility: "hidden"
 				}
 			},
 			events: {
@@ -128,21 +112,12 @@ sap.ui.define([
 			render: function(oRm, oControl) {
 				oRm.openStart("div", oControl);
 				oRm.class("sapUiRtaChangeIndicator");
-				oRm.class("sapUiRtaChangeIndicator" + capitalize(oControl.getMode()));
-				if (
-					oControl.getMode() === "change"
-					&& oControl.getModel()
-					&& oControl.getModel().getData().selectedChange
-				) {
-					// Root selector of dependent selection
-					oRm.class("sapUiRtaChangeIndicatorChangeSolid");
-				}
+				oRm.class("sapUiRtaChangeIndicatorChange");
 				oRm.style("width", oControl._getSize() + "px");
 				oRm.style("height", oControl._getSize() + "px");
 				oRm.openEnd();
 				oRm.openStart("div");
 				oRm.openEnd();
-				oRm.renderControl(oControl.getAggregation("_icon"));
 				oRm.renderControl(oControl.getAggregation("_text"));
 				oRm.close("div");
 				oRm.close("div");
@@ -161,24 +136,6 @@ sap.ui.define([
 			text: "{= (${changes} || []).length}",
 			visible: "{= (${changes} || []).length > 1}"
 		}).addStyleClass("sapUiRtaChangeIndicatorText"));
-
-		this.setAggregation("_icon", new Icon({
-			src: "sap-icon://display",
-			visible: {
-				path: "/selectedChange",
-				formatter: function (sSelectedChange) {
-					return !!(
-						sSelectedChange
-						&& this.getChanges().some(function (oChange) {
-							return (
-								oChange.id === sSelectedChange
-								&& oChange.dependent === false
-							);
-						})
-					);
-				}.bind(this)
-			}
-		}).addStyleClass("sapUiRtaChangeIndicatorIcon"));
 
 		this.attachBrowserEvent("click", this._onSelect, this);
 		this.attachBrowserEvent("keydown", this._onKeyDown, this);
@@ -231,27 +188,10 @@ sap.ui.define([
 		this._oDetailModel.setData((aChanges || []).map(this._formatChangesModelItem.bind(this)));
 	};
 
-	ChangeIndicator.prototype.setMode = function (sMode) {
-		this.setProperty("mode", sMode);
-		// Mode might have changed the information displayed for each change
-		this._oDetailModel.setData((this.getChanges() || []).map(this._formatChangesModelItem.bind(this)));
-	};
-
 	ChangeIndicator.prototype._onSelect = function (oEvent) {
 		this.focus();
 		oEvent.stopPropagation();
-		if (
-			this.getModel().getData().selectedChange
-			&& !this.getChanges().some(function (oChange) {
-				return oChange.dependent;
-			})
-		) {
-			this.fireSelectChange({
-				changeId: undefined
-			});
-		} else {
-			this._openDetailPopover();
-		}
+		this._openDetailPopover();
 	};
 
 	ChangeIndicator.prototype._onKeyDown = function(oEvent) {
@@ -288,33 +228,30 @@ sap.ui.define([
 
 		var oOverlay = sap.ui.getCore().byId(this.getOverlayId());
 		var sElementLabel = oOverlay.getDesignTimeMetadata().getLabel(oAffectedElement);
-		var oVisualizationUtil = getVisualizationCategory(mChangeInformation.commandCategory);
-		var sDescription = oVisualizationUtil && oVisualizationUtil.getDescription(mPayload, sElementLabel);
+		var oVisualizationUtil = getVisualizationCategory(mChangeInformation.commandName);
+		var oDescription = oVisualizationUtil && oVisualizationUtil.getDescription(mPayload, sElementLabel);
 		var oRtaResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-		var sMode = this.getMode();
 		var sChangeTitle = mChangeInformation.commandName.charAt(0).toUpperCase() + mChangeInformation.commandName.slice(1);
 		sElementLabel = sElementLabel && "'" + sElementLabel + "'";
 		var sChangeTextKey = (
-			"TXT_CHANGEVISUALIZATION_"
-			+ sMode.toUpperCase() + "_"
+			"TXT_CHANGEVISUALIZATION_CHANGE_"
 			+ mChangeInformation.commandName.toUpperCase()
 		);
-		var sChangeText = sDescription || oRtaResourceBundle.getText(sChangeTextKey, sElementLabel);
+		var sChangeText = oDescription ? oDescription.descriptionText : oRtaResourceBundle.getText(sChangeTextKey, sElementLabel);
 		var sCreationDate = mChangeInformation.change.getCreation();
-		var sDate = sCreationDate
-			? DateFormat.getDateTimeInstance().format(new Date(sCreationDate))
-			: oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CREATED_IN_SESSION_DATE");
-		var bEnableDetailButton = (
-			sMode === "change"
-			&& (mChangeInformation.commandName === "move" || mChangeInformation.commandName === "split")
-		);
+		var oDate = new Date(sCreationDate);
+		var sFallbackDate = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CREATED_IN_SESSION_DATE");
+		var sFullDate = sCreationDate ? DateFormat.getDateTimeInstance().format(oDate) : sFallbackDate;
+		var sRelativeDate = sCreationDate ? DateFormat.getDateTimeInstance({relative: "true"}).format(oDate) : sFallbackDate;
+		var sDetailButtonText = oDescription && oDescription.buttonText;
 		return {
 			id: mChangeInformation.id,
 			change: mChangeInformation,
 			changeTitle: sChangeTitle,
 			description: sChangeText,
-			date: sDate,
-			enableDetailButton: bEnableDetailButton
+			fullDate: sFullDate,
+			relativeDate: sRelativeDate,
+			detailButtonText: sDetailButtonText
 		};
 	};
 
@@ -342,7 +279,6 @@ sap.ui.define([
 		var sChangeId = this.getChanges().length > 1
 			? oEvent.getSource().getBindingContext("details").getObject().id
 			: this.getChanges()[0].id;
-
 		this.fireSelectChange({
 			changeId: sChangeId
 		});

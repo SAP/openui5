@@ -546,13 +546,17 @@ sap.ui.define([
 
 		QUnit.test("when details are selected for a change", function (assert) {
 			prepareChanges(
-				[createMockChange("testMove", "move", "Comp1---idMain1--rb1")],
+				[
+					createMockChange("testMove", "move", "Comp1---idMain1--lb1"),
+					createMockChange("testAdd1", "remove", "Comp1---idMain1--rb2"),
+					createMockChange("testAdd2", "remove", "Comp1---idMain1--lb2")
+				],
 				undefined,
 				{
-					getChangeVisualizationInfo: function () {
+					getChangeVisualizationInfo: function (oChange) {
 						return {
 							dependentControls: [sap.ui.getCore().byId("Comp1---idMain1--rb2")], // Test if vis can handle elements
-							affectedControls: ["Comp1---idMain1--rb1"] // Test if vis can handle IDs
+							affectedControls: [oChange.getSelector()] // Test if vis can handle IDs
 						};
 					}
 				}
@@ -571,23 +575,27 @@ sap.ui.define([
 					});
 					return oSelectChangePromise.then(function () {
 						sap.ui.getCore().applyChanges();
+
+						var oDependentOverlayDomRef = OverlayRegistry.getOverlay("Comp1---idMain1--rb2").getDomRef();
+						assert.ok(
+							oDependentOverlayDomRef.className.split(" ").includes("sapUiRtaChangeIndicatorDependent"),
+							"then the appropriate style class is added"
+						);
 						assert.strictEqual(
 							collectIndicatorReferences().filter(function (oIndicator) {
 								return oIndicator.getVisible();
 							}).length,
-							2,
-							"then only the selected change and its dependent indicator are shown"
+							3,
+							"then all the ChangeIndicators are shown"
 						);
-
-						// Pressing right arrow key twice should focus selected element again
-						// as there are two indicators
-						QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ARROW_RIGHT);
-						QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ARROW_RIGHT);
-						assert.strictEqual(
-							oChangeIndicator.getDomRef(),
-							document.activeElement,
-							"then the focus chain is updated"
-						);
+						return waitForMethodCall(oDependentOverlayDomRef.classList, "remove")
+							.then(function () {
+								sap.ui.getCore().applyChanges();
+								assert.notOk(
+									oDependentOverlayDomRef.className.split(" ").includes("sapUiRtaChangeIndicatorDependent"),
+									"then the appropriate style class is removed"
+								);
+							});
 					});
 				}.bind(this));
 		});
