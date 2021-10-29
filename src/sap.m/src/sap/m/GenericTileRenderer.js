@@ -219,7 +219,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			if (this._isValueColorValid(oControl.getValueColor())) {
 				oRm.openStart("div");
 				oRm.class("sapMGTCriticalBorder");
-					oRm.class(oControl.getValueColor());
+				oRm.class(oControl.getValueColor());
 				oRm.openEnd();
 				oRm.close("div");
 			}
@@ -432,6 +432,10 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 	GenericTileRenderer._renderHeader = function(oRm, oControl) {
 		oRm.openStart("div", oControl.getId() + "-hdr-text");
 		oRm.class("sapMGTHdrTxt");
+		if (oControl._isActionMode() && this._isValueColorValid(oControl.getValueColor())) {
+			oRm.class("sapMGTCriticalHdrTxt");
+			oRm.class(oControl.getValueColor());
+		}
 		oRm.openEnd();
 		oRm.renderControl(oControl._oTitle);
 		oRm.close("div");
