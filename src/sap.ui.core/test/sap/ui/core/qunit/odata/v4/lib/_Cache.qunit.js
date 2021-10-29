@@ -5687,8 +5687,8 @@ sap.ui.define([
 				_Helper.setPrivateAnnotation(oElement0, "predicate", "foo");
 				_Helper.setPrivateAnnotation(oElement1, "predicate", "bar");
 			});
-		this.mock(_Helper).expects("merge").exactly(sResultETag === "old" ? 1 : 0)
-			.withExactArgs(sinon.match.same(oElement1), sinon.match.same(oKeptElement));
+		this.mock(_Helper).expects("updateNonExisting").exactly(sResultETag === "old" ? 1 : 0)
+			.withExactArgs(sinon.match.same(oKeptElement), sinon.match.same(oElement1));
 		this.mock(oCache).expects("hasPendingChangesForPath").exactly(sResultETag === "old" ? 0 : 1)
 			.withExactArgs("bar").returns(false);
 
@@ -5696,9 +5696,9 @@ sap.ui.define([
 		oCache.handleResponse(2, 4, oResult, oFetchTypesResult);
 
 		assert.strictEqual(oCache.aElements[2], oElement0);
-		assert.strictEqual(oCache.aElements[3], oElement1);
+		assert.strictEqual(oCache.aElements[3], sResultETag === "old" ? oKeptElement : oElement1);
 		assert.strictEqual(oCache.aElements.$byPredicate["foo"], oElement0);
-		assert.strictEqual(oCache.aElements.$byPredicate["bar"], oElement1);
+		assert.strictEqual(oCache.aElements.$byPredicate["bar"], oCache.aElements[3]);
 		assert.strictEqual(Object.keys(oCache.aElements.$byPredicate).length, 2);
 	});
 });

@@ -2299,7 +2299,8 @@ sap.ui.define([
 		}
 
 		// add the context binding's query options as late query options
-		if (!this.aggregateQueryOptions(mEntityQueryOptions, "", /*bImmutable*/true)) {
+		if (!this.aggregateQueryOptions(mEntityQueryOptions, _Helper.getMetaPath(sEntityPath),
+				/*bImmutable*/true)) {
 			throw new Error(oEntityContext + ": could not move the entity. Probably a list binding"
 				+ " w/o $$ownRequest depends on it");
 		}

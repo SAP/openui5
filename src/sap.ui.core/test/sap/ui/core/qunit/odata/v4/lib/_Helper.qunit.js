@@ -1300,6 +1300,53 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("updateNonExisting", function (assert) {
+		var oSource = {
+				b1 : "n/a",
+				b2 : {
+					b1 : "b1s",
+					s1 : "s1"
+				},
+				b3 : null,
+				b4 : ["s1", "s2", "s3"],
+				b5 : {s1: "s1"},
+				s1 : "s1"
+			},
+			oTarget = {
+				b1 : "",
+				b2 : {
+					b1 : "b1t",
+					t1 : "t1"
+				},
+				b3 : {},
+				b4 : ["t1", "t2"],
+				b5 : null,
+				t1 : "t1"
+			},
+			oB2 = oTarget.b2,
+			oB3 = oTarget.b3;
+
+		// code under test
+		_Helper.updateNonExisting(oTarget, oSource);
+
+		assert.deepEqual(oTarget, {
+			b1 : "",
+			b2 : {
+				b1 : "b1t",
+				s1 : "s1",
+				t1 : "t1"
+			},
+			b3 : {},
+			b4 : ["t1", "t2"],
+			b5 : null,
+			s1 : "s1",
+			t1 : "t1"
+		});
+		assert.strictEqual(oTarget.b2, oB2, "nested instance remained");
+		assert.strictEqual(oTarget.b3, oB3, "nested instance remained");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("updateSelected: simple/complex and not wanted properties", function (assert) {
 		var oCacheBefore = {
 				Address : {
