@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/Device",
 	"sap/m/ActionSheet",
+	"sap/ui/core/InvisibleText",
 	"./WizardProgressNavigatorRenderer",
 	"./Button",
 	"sap/ui/thirdparty/jquery"
@@ -20,6 +21,7 @@ function(
 	ItemNavigation,
 	Device,
 	ActionSheet,
+	InvisibleText,
 	WizardProgressNavigatorRenderer,
 	Button,
 	jQuery
@@ -192,6 +194,11 @@ function(
 		this.removeDelegate(this._oStepNavigation);
 		this._oStepNavigation.destroy();
 		this._oStepNavigation = null;
+
+		if (this._oActionSheetInvisibleText) {
+			this._oActionSheetInvisibleText.destroy();
+			this._oActionSheetInvisibleText = null;
+		}
 
 		this._oActionSheet.destroy();
 		this._oActionSheet = null;
@@ -431,17 +438,25 @@ function(
 	 * @private
 	 */
 	WizardProgressNavigator.prototype._updateStepAriaLabelAttribute = function (iNewIndex, iOldIndex) {
+		var oStepNew = this._aCachedSteps[iNewIndex];
+		var sOptionalText = this._aStepOptionalIndication[iNewIndex] ? "Optional " : "";
+		var sValueText = this._oResourceBundle.getText("WIZARD_STEP_LABEL_CURRENT", [iNewIndex + 1, this.getStepTitles()[iNewIndex], sOptionalText]);
+
 		if (iOldIndex !== undefined && this._aCachedSteps[iOldIndex]) {
 			this._aCachedSteps[iOldIndex]
 				.removeAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_CURRENT);
+			this._aCachedSteps[iOldIndex]
+				.removeAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_LABEL);
 		}
 
-		if (this._aCachedSteps[iNewIndex]) {
-			this._aCachedSteps[iNewIndex]
+		if (oStepNew) {
+			oStepNew
 				.setAttribute(
-					WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_CURRENT, "step");
+					WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_CURRENT, true);
+			oStepNew
+				.setAttribute(
+					WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_LABEL, sValueText);
 		}
-
 	};
 
 	/**
@@ -615,12 +630,19 @@ function(
 	WizardProgressNavigator.prototype._showActionSheet = function (oDomTarget, bAtStart) {
 		var iFromStep = bAtStart ? 0 : this._getStepNumber(oDomTarget) - 1;
 		var iToStep = bAtStart ? this._getStepNumber(oDomTarget) : this._aCachedSteps.length;
-		var sIcon, sTitle;
+		var sIcon, sStepNumber, sStepTextContent, sTitle, oStepTitleSpan, oActionSheetParent, sActionSheetAriaLabelId;
+
+		this._oActionSheetInvisibleText = new InvisibleText({
+			text: this._oResourceBundle.getText("WIZARD_STEPS")
+		}).toStatic();
 
 		this._oActionSheet.removeAllButtons();
 		for (var i = iFromStep; i < iToStep; i++) {
 			sIcon = this.getStepIcons()[i];
-			sTitle = this._aCachedSteps[i].getAttribute("aria-label");
+			sStepNumber = (i + 1) + ".";
+			oStepTitleSpan = this._aCachedSteps[i].querySelector(".sapMWizardProgressNavStepTitle");
+			sStepTextContent = oStepTitleSpan && oStepTitleSpan.textContent;
+			sTitle = sStepNumber + " " + sStepTextContent;
 
 			this._oActionSheet.addButton(new Button({
 				width: "200px",
@@ -633,8 +655,14 @@ function(
 				}.bind(this, i + 1)
 			}));
 		}
-
 		this._oActionSheet.openBy(oDomTarget);
+
+		sActionSheetAriaLabelId = this._oActionSheetInvisibleText.getId();
+		oActionSheetParent = this._oActionSheet.getParent();
+
+		if (oActionSheetParent && oActionSheetParent.getAriaLabelledBy().indexOf(sActionSheetAriaLabelId) === -1) {
+			oActionSheetParent.addAriaLabelledBy(sActionSheetAriaLabelId);
+		}
 	};
 
 	/**
