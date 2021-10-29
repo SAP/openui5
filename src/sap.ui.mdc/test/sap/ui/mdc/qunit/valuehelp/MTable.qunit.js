@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/ui/mdc/enum/SelectType",
 	"sap/ui/mdc/filterbar/vh/FilterBar",
+	"sap/ui/mdc/FilterField", // to have it loaded when BasicSearch should be created
 	"sap/ui/model/ParseException",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/json/JSONModel",
@@ -38,6 +39,7 @@ sap.ui.define([
 		ConditionValidated,
 		SelectType,
 		FilterBar,
+		FilterField,
 		ParseException,
 		FormatException,
 		JSONModel,
