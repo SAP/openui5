@@ -19,7 +19,7 @@ sap.ui.define([
 	 * @extends sap.ui.webc.common.WebComponent
 	 * @class
 	 *
-	 * <h3>Overview</h3> The ColorPicker allows users to choose any color and provides different input options for selecting colors.
+	 * <h3>Overview</h3> The <code>sap.ui.webc.main.ColorPicker</code> allows users to choose any color and provides different input options for selecting colors.
 	 *
 	 * <h3>Usage</h3>
 	 *
@@ -54,7 +54,7 @@ sap.ui.define([
 				 * <b>Note</b>: use HEX, RGB, RGBA, HSV formats or a CSS color name when modifying this property.
 				 */
 				color: {
-					type: "string"
+					type: "sap.ui.core.CSSColor"
 				}
 			},
 			events: {

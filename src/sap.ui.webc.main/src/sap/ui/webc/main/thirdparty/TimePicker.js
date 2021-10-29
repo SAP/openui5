@@ -48,7 +48,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/we
 			};
 		}
 		get dateAriaDescription() {
-			return this.i18nBundle.getText(i18nDefaults.TIMEPICKER_INPUT_DESCRIPTION);
+			return TimePicker.i18nBundle.getText(i18nDefaults.TIMEPICKER_INPUT_DESCRIPTION);
 		}
 	}
 	TimePicker.define();

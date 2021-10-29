@@ -1,10 +1,9 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/util/FocusableElements', 'sap/ui/webc/common/thirdparty/base/util/createStyleInHead', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/util/PopupUtils', './generated/templates/PopupTemplate.lit', './generated/templates/PopupBlockLayerTemplate.lit', './popup-utils/OpenedPopupsRegistry', './generated/themes/Popup.css', './generated/themes/PopupStaticAreaStyles.css'], function (Render, litRender, UI5Element, Device, FocusableElements, createStyleInHead, Keys, PopupUtils, PopupTemplate_lit, PopupBlockLayerTemplate_lit, OpenedPopupsRegistry, Popup_css, PopupStaticAreaStyles_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/util/FocusableElements', 'sap/ui/webc/common/thirdparty/base/ManagedStyles', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/util/PopupUtils', './generated/templates/PopupTemplate.lit', './generated/templates/PopupBlockLayerTemplate.lit', './popup-utils/OpenedPopupsRegistry', './generated/themes/Popup.css', './generated/themes/PopupStaticAreaStyles.css', './generated/themes/PopupGlobal.css'], function (Render, litRender, UI5Element, Device, FocusableElements, ManagedStyles, Keys, PopupUtils, PopupTemplate_lit, PopupBlockLayerTemplate_lit, OpenedPopupsRegistry, Popup_css, PopupStaticAreaStyles_css, PopupGlobal_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
 	var litRender__default = /*#__PURE__*/_interopDefaultLegacy(litRender);
 	var UI5Element__default = /*#__PURE__*/_interopDefaultLegacy(UI5Element);
-	var createStyleInHead__default = /*#__PURE__*/_interopDefaultLegacy(createStyleInHead);
 
 	const metadata = {
 		managedSlots: true,
@@ -47,23 +46,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 			"scroll": {},
 		},
 	};
-	let customBlockingStyleInserted = false;
 	const createBlockingStyle = () => {
-		if (customBlockingStyleInserted) {
-			return;
+		if (!ManagedStyles.hasStyle("data-ui5-popup-scroll-blocker")) {
+			ManagedStyles.createStyle(PopupGlobal_css, "data-ui5-popup-scroll-blocker");
 		}
-		createStyleInHead__default(`
-		.ui5-popup-scroll-blocker {
-			width: 100%;
-			height: 100%;
-			position: fixed;
-			overflow: hidden;
-		}
-	`, { "data-ui5-popup-scroll-blocker": "" });
-		customBlockingStyleInserted = true;
 	};
 	createBlockingStyle();
-	let bodyScrollingBlockers = 0;
+	const bodyScrollingBlockers = new Set();
 	class Popup extends UI5Element__default {
 		static get metadata() {
 			return metadata;
@@ -90,7 +79,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 		}
 		onExitDOM() {
 			if (this.isOpen()) {
-				Popup.unblockBodyScrolling();
+				Popup.unblockBodyScrolling(this);
 				this._removeOpenedPopup();
 			}
 		}
@@ -100,9 +89,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 		_preventBlockLayerFocus(event) {
 			event.preventDefault();
 		}
-		static blockBodyScrolling() {
-			bodyScrollingBlockers++;
-			if (bodyScrollingBlockers !== 1) {
+		static blockBodyScrolling(popup) {
+			bodyScrollingBlockers.add(popup);
+			if (bodyScrollingBlockers.size !== 1) {
 				return;
 			}
 			if (window.pageYOffset > 0) {
@@ -110,9 +99,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 			}
 			document.body.classList.add("ui5-popup-scroll-blocker");
 		}
-		static unblockBodyScrolling() {
-			bodyScrollingBlockers--;
-			if (bodyScrollingBlockers !== 0) {
+		static unblockBodyScrolling(popup) {
+			bodyScrollingBlockers.delete(popup);
+			if (bodyScrollingBlockers.size !== 0) {
 				return;
 			}
 			document.body.classList.remove("ui5-popup-scroll-blocker");
@@ -198,7 +187,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 			if (this.isModal && !this.shouldHideBackdrop) {
 				this.getStaticAreaItemDomRef();
 				this._blockLayerHidden = false;
-				Popup.blockBodyScrolling();
+				Popup.blockBodyScrolling(this);
 			}
 			this._zIndex = PopupUtils.getNextZIndex();
 			this.style.zIndex = this._zIndex;
@@ -225,7 +214,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 			}
 			if (this.isModal) {
 				this._blockLayerHidden = true;
-				Popup.unblockBodyScrolling();
+				Popup.unblockBodyScrolling(this);
 			}
 			this.hide();
 			this.opened = false;

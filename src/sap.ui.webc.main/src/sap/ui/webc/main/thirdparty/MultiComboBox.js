@@ -82,6 +82,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				defaultValue: 0,
 				noAttribute: true,
 			},
+			_performingSelectionTwice: {
+				type: Boolean,
+			},
 		},
 		events:  {
 			change: {},
@@ -132,9 +135,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._filteredItems = [];
 			this.selectedValues = [];
 			this._inputLastValue = "";
+			this._valueBeforeOpen = "";
 			this._deleting = false;
 			this._validationTimeout = null;
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 			this._handleResizeBound = this._handleResize.bind(this);
 		}
 		onEnterDOM() {
@@ -149,28 +152,20 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_inputChange() {
 			this.fireEvent("change");
 		}
-		_showMorePopover() {
-			this.filterSelected = true;
-			this._toggleRespPopover();
-		}
 		togglePopover() {
-			if (!Device.isPhone()) {
-				this._inputDom.focus();
-			}
-			this._toggleRespPopover();
+			this.allItemsPopover.toggle(this);
+		}
+		_showFilteredItems() {
+			this.filterSelected = true;
+			this._showMorePressed = true;
+			this.togglePopover();
 		}
 		filterSelectedItems(event) {
-			if (this.allItemsSelected) {
-				this.filterSelected = true;
-				return;
-			}
 			this.filterSelected = event.target.pressed;
+			this.selectedItems = this._filteredItems.filter(item => item.selected);
 		}
 		get _showAllItemsButtonPressed() {
-			return this.filterSelected || this.allItemsSelected;
-		}
-		get allItemsSelected() {
-			return this.items.length === this.selectedValues.length;
+			return this.filterSelected;
 		}
 		get _inputDom() {
 			return this.shadowRoot.querySelector("#ui5-multi-combobox-input");
@@ -180,6 +175,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const value = input.value;
 			const filteredItems = this._filterItems(value);
 			const oldValueState = this.valueState;
+			if (this.filterSelected) {
+				this.filterSelected = false;
+			}
 			const skipFiring = (this._inputDom.value === this.value) && Device.isIE() && !this._keyDown && !!this.placeholder;
 			if (skipFiring) {
 				event.preventDefault();
@@ -192,10 +190,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (!filteredItems.length && value && !this.allowCustomValues) {
 				input.value = this._inputLastValue;
 				this.valueState = "Error";
-				this._validationTimeout = setTimeout(() => {
-					this.valueState = oldValueState;
-					this._validationTimeout = null;
-				}, 2000);
+				this._resetValueState(oldValueState);
 				return;
 			}
 			this._inputLastValue = input.value;
@@ -258,20 +253,94 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			if (Keys.isShow(event) && !this.readonly && !this.disabled) {
 				event.preventDefault();
-				this._toggleRespPopover();
+				this.togglePopover();
 			}
-			if (Keys.isDown(event) && this.allItemsPopover.opened && this.items.length) {
-				event.preventDefault();
-				await this._getList();
-				const firstListItem = this.list.items[0];
-				this.list._itemNavigation.setCurrentItem(firstListItem);
-				firstListItem.focus();
+			if (this.open && (Keys.isUp(event) || Keys.isDown(event))) {
+				this._handleArrowNavigation(event);
 			}
 			if (Keys.isBackSpace(event) && event.target.value === "") {
 				event.preventDefault();
 				this._tokenizer._focusLastToken();
 			}
+			if (Keys.isEscape(event) && (!this.allowCustomValues || (!this.open && this.allowCustomValues))) {
+				this.value = this._lastValue;
+			}
+			if (Keys.isEnter(event)) {
+				this.handleEnter();
+			}
 			this._keyDown = true;
+		}
+		_onValueStateKeydown(event) {
+			const isArrowDown = Keys.isDown(event);
+			const isArrowUp = Keys.isUp(event);
+			event.preventDefault();
+			if (isArrowDown) {
+				this._handleArrowDown(event);
+			}
+			if (isArrowUp) {
+				this._inputDom.focus();
+			}
+		}
+		_onItemKeydown(event) {
+			const isFirstItem = this.list.items[0] === event.target;
+			event.preventDefault();
+			if (!Keys.isUp(event) || !isFirstItem) {
+				return;
+			}
+			if (this.valueStateHeader) {
+				this.valueStateHeader.focus();
+				return;
+			}
+			this._inputDom.focus();
+		}
+		async _handleArrowNavigation(event) {
+			const isArrowDown = Keys.isDown(event);
+			const hasSuggestions = this.allItemsPopover.opened && this.items.length;
+			event.preventDefault();
+			if (this.hasValueStateMessage && !this.valueStateHeader) {
+				await this._setValueStateHeader();
+			}
+			if (isArrowDown && this.focused && this.valueStateHeader) {
+				this.valueStateHeader.focus();
+				return;
+			}
+			if (isArrowDown && this.focused && hasSuggestions) {
+				this._handleArrowDown(event);
+			}
+		}
+		_handleArrowDown(event) {
+			const firstListItem = this.list.items[0];
+			this.list._itemNavigation.setCurrentItem(firstListItem);
+			firstListItem.focus();
+		}
+		handleEnter() {
+			const lowerCaseValue = this.value.toLowerCase();
+			const matchingItem = this.items.find(item => item.text.toLowerCase() === lowerCaseValue);
+			const oldValueState = this.valueState;
+			if (matchingItem) {
+				if (matchingItem.selected) {
+					if (this._validationTimeout) {
+						return;
+					}
+					this.valueState = "Error";
+					this._performingSelectionTwice = true;
+					this._resetValueState(oldValueState, () => {
+						this._performingSelectionTwice = false;
+					});
+				} else {
+					matchingItem.selected = true;
+					this.value = "";
+					this.fireSelectionChange();
+				}
+				this.allItemsPopover.close();
+			}
+		}
+		_resetValueState(valueState, callback) {
+			this._validationTimeout = setTimeout(() => {
+				this.valueState = valueState;
+				this._validationTimeout = null;
+				callback && callback();
+			}, 2000);
 		}
 		_onTokenizerKeydown(event) {
 			if (Keys.isRight(event)) {
@@ -286,31 +355,44 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_filterItems(str) {
 			return (ComboBoxFilters.Filters[this.filter] || ComboBoxFilters.StartsWithPerTerm)(str, this.items);
 		}
+		_afterOpenPicker() {
+			this._toggle();
+			if (!Device.isPhone()) {
+				this._innerInput.focus();
+			} else {
+				this.allItemsPopover.focus();
+			}
+		}
 		_toggle() {
 			this.open = !this.open;
 			this.fireEvent("open-change");
-			if (!this.open) {
-				this._afterClosePopover();
-			}
 		}
 		_getSelectedItems() {
 			this.selectedValues = this.items.filter(item => item.selected);
 			return this.selectedValues;
 		}
 		_listSelectionChange(event) {
-			event.target.items.forEach(item => {
+			this.syncItems(event.target.items);
+			if (!Device.isPhone()) {
+				this.fireSelectionChange();
+			}
+			if (!event.detail.selectionComponentPressed && !Keys.isSpace(event.detail)) {
+				this.allItemsPopover.close();
+				this.value = "";
+				if (Device.isPhone()) {
+					this.fireSelectionChange();
+				}
+				this.fireEvent("input");
+			}
+		}
+		syncItems(listItems) {
+			listItems.forEach(item => {
 				this.items.forEach(mcbItem => {
 					if (mcbItem._id === item.getAttribute("data-ui5-token-id")) {
 						mcbItem.selected = item.selected;
 					}
 				});
 			});
-			this.fireSelectionChange();
-			if (!event.detail.selectionComponentPressed && !Keys.isSpace(event.detail)) {
-				this.allItemsPopover.close();
-				this.value = "";
-				this.fireEvent("input");
-			}
 		}
 		fireSelectionChange() {
 			this.fireEvent("selection-change", { items: this._getSelectedItems() });
@@ -324,21 +406,31 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const staticAreaItem = await this.getStaticAreaItemDomRef();
 			this.list = staticAreaItem.querySelector(".ui5-multi-combobox-all-items-list");
 		}
-		_toggleRespPopover() {
-			this.allItemsPopover.toggle(this);
-		}
 		_click(event) {
-			if (Device.isPhone() && !this.readonly && !this._showMorePressed) {
+			if (Device.isPhone() && !this.readonly && !this._showMorePressed && !this._deleting) {
 				this.allItemsPopover.showAt(this);
 			}
 			this._showMorePressed = false;
 		}
-		_afterClosePopover() {
+		_afterClosePicker() {
 			if (Device.isPhone()) {
 				this.blur();
 			}
+			this._toggle();
 			this._iconPressed = false;
 			this.filterSelected = false;
+		}
+		_beforeOpen() {
+			this._itemsBeforeOpen = this.items.map(item => {
+				return {
+					ref: item,
+					selected: item.selected,
+				};
+			});
+			this._valueBeforeOpen = this.value;
+			if (this.filterSelected) {
+				this.selectedItems = this._filteredItems.filter(item => item.selected);
+			}
 		}
 		onBeforeRendering() {
 			const input = this.shadowRoot.querySelector("input");
@@ -348,15 +440,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			const filteredItems = this._filterItems(this.value);
 			this._filteredItems = filteredItems;
-			if (Device.isPhone() && this.allItemsPopover && this.allItemsPopover.opened) {
-				this.allItemsPopover.focus();
-			}
 		}
 		async onAfterRendering() {
 			await this._getRespPopover();
 			await this._getList();
 			this.toggle(this.shouldDisplayOnlyValueStateMessage);
 			this.storeResponsivePopoverWidth();
+			this._deleting = false;
 		}
 		get _isPhone() {
 			return Device.isPhone();
@@ -376,11 +466,27 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.closePopover();
 			}
 		}
+		handleCancel() {
+			this._itemsBeforeOpen.forEach(item => {
+				item.ref.selected = item.selected;
+			});
+			this.togglePopover();
+			this.value = this._valueBeforeOpen;
+		}
+		handleOK() {
+			if (Device.isPhone()) {
+				this.fireSelectionChange();
+			}
+			this.togglePopover();
+		}
 		async openPopover() {
 			const popover = await this._getPopover();
 			if (popover) {
 				popover.showAt(this);
 			}
+		}
+		_forwardFocusToInner() {
+			this._innerInput.focus();
 		}
 		async closePopover() {
 			const popover = await this._getPopover();
@@ -390,24 +496,38 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const staticAreaItem = await this.getStaticAreaItemDomRef();
 			return staticAreaItem.querySelector("[ui5-popover]");
 		}
+		async _getResponsivePopover() {
+			const staticAreaItem = await this.getStaticAreaItemDomRef();
+			return staticAreaItem.querySelector("[ui5-responsive-popover]");
+		}
+		async _setValueStateHeader() {
+			const responsivePopover = await this._getResponsivePopover();
+			this.valueStateHeader = responsivePopover.querySelector("div.ui5-responsive-popover-header.ui5-valuestatemessage-root");
+		}
 		get _tokenizer() {
 			return this.shadowRoot.querySelector("[ui5-tokenizer]");
 		}
 		inputFocusIn() {
 			if (!Device.isPhone()) {
 				this.focused = true;
+			} else {
+				this._innerInput.blur();
 			}
+			this._lastValue = this.value;
 		}
 		inputFocusOut(event) {
 			if (!this.shadowRoot.contains(event.relatedTarget) && !this._deleting) {
 				this.focused = false;
+				if (!Device.isPhone() && !this.allowCustomValues && (this.staticAreaItem !== event.relatedTarget)) {
+					this.value = "";
+				}
 			}
 		}
 		get editable() {
 			return !this.readonly;
 		}
 		get _isFocusInside() {
-			return this.focused || this._tokenizerFocused;
+			return !Device.isPhone() && (this.focused || this._tokenizerFocused);
 		}
 		get selectedItemsListMode() {
 			return this.readonly ? "None" : "MultiSelect";
@@ -422,7 +542,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.hasValueState && this.valueState !== ValueState__default.Success;
 		}
 		get valueStateText() {
-			return this.valueStateTextMappings[this.valueState];
+			let key = this.valueState;
+			if (this._performingSelectionTwice) {
+				key = "Error_Selection";
+			}
+			return this.valueStateTextMappings[key];
 		}
 		get valueStateTextId() {
 			return this.hasValueState ? `${this._id}-valueStateDesc` : undefined;
@@ -450,9 +574,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get valueStateTextMappings() {
 			return {
-				"Success": this.i18nBundle.getText(i18nDefaults.VALUE_STATE_SUCCESS),
-				"Error": this.i18nBundle.getText(i18nDefaults.VALUE_STATE_ERROR),
-				"Warning": this.i18nBundle.getText(i18nDefaults.VALUE_STATE_WARNING),
+				"Success": MultiComboBox.i18nBundle.getText(i18nDefaults.VALUE_STATE_SUCCESS),
+				"Error": MultiComboBox.i18nBundle.getText(i18nDefaults.VALUE_STATE_ERROR),
+				"Error_Selection": MultiComboBox.i18nBundle.getText(i18nDefaults.VALUE_STATE_ERROR_ALREADY_SELECTED),
+				"Warning": MultiComboBox.i18nBundle.getText(i18nDefaults.VALUE_STATE_WARNING),
 			};
 		}
 		get _innerInput() {
@@ -464,13 +589,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.getDomRef().querySelector("#ui5-multi-combobox-input");
 		}
 		get _headerTitleText() {
-			return this.i18nBundle.getText(i18nDefaults.INPUT_SUGGESTIONS_TITLE);
+			return MultiComboBox.i18nBundle.getText(i18nDefaults.INPUT_SUGGESTIONS_TITLE);
 		}
 		get _iconAccessibleNameText() {
-			return this.i18nBundle.getText(i18nDefaults.SELECT_OPTIONS);
+			return MultiComboBox.i18nBundle.getText(i18nDefaults.SELECT_OPTIONS);
 		}
 		get _dialogOkButton() {
-			return this.i18nBundle.getText(i18nDefaults.MULTICOMBOBOX_DIALOG_OK_BUTTON);
+			return MultiComboBox.i18nBundle.getText(i18nDefaults.MULTICOMBOBOX_DIALOG_OK_BUTTON);
 		}
 		get _tokenizerExpanded() {
 			return (this._isFocusInside || this.open) && !this.readonly;
@@ -479,6 +604,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return {
 				popoverValueState: {
 					"ui5-valuestatemessage-root": true,
+					"ui5-valuestatemessage-header": true,
 					"ui5-valuestatemessage--success": this.valueState === ValueState__default.Success,
 					"ui5-valuestatemessage--error": this.valueState === ValueState__default.Error,
 					"ui5-valuestatemessage--warning": this.valueState === ValueState__default.Warning,
@@ -491,15 +617,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				popoverValueStateMessage: {
 					"width": `${this._listWidth}px`,
 					"display": this._listWidth === 0 ? "none" : "inline-block",
-					"padding": "0.9125rem 1rem",
 				},
 				popoverHeader: {
-					"max-width": `${this._inputWidth}px`,
+					"max-width": Device.isPhone() ? "100%" : `${this._inputWidth}px`,
 				},
 			};
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			MultiComboBox.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	MultiComboBox.define();

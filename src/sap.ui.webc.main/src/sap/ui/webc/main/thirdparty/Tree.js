@@ -49,6 +49,16 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					item: { type: HTMLElement },
 				},
 			},
+			"item-mouseover": {
+				detail: {
+					item: { type: HTMLElement },
+				},
+			},
+			"item-mouseout": {
+				detail: {
+					item: { type: HTMLElement },
+				},
+			},
 			"item-click": {
 				detail: {
 					item: { type: HTMLElement },
@@ -132,6 +142,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const listItem = event.detail.item;
 			const treeItem = listItem.treeItem;
 			this.fireEvent("item-delete", { item: treeItem });
+		}
+		_onListItemMouseOver(event) {
+			const treeItem = event.target.treeItem;
+			this.fireEvent("item-mouseover", { item: treeItem });
+		}
+		_onListItemMouseOut(event) {
+			const treeItem = event.target.treeItem;
+			this.fireEvent("item-mouseout", { item: treeItem });
 		}
 		_onListSelectionChange(event) {
 			const previouslySelectedItems = event.detail.previouslySelectedItems.map(item => item.treeItem);

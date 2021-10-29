@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', './generated/templates/CardTemplate.lit', './Icon', './generated/i18n/i18n-defaults', './generated/themes/Card.css'], function (UI5Element, litRender, i18nBundle, CardTemplate_lit, Icon, i18nDefaults, Card_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', './generated/templates/CardTemplate.lit', './Icon', './generated/i18n/i18n-defaults', './generated/themes/Card.css'], function (UI5Element, litRender, i18nBundle, AriaLabelHelper, CardTemplate_lit, Icon, i18nDefaults, Card_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -19,15 +19,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			},
 		},
 		properties:  {
+			accessibleName: {
+				type: String,
+			},
+			accessibleNameRef: {
+				type: String,
+			},
 		},
 		events:  {
 		},
 	};
 	class Card extends UI5Element__default {
-		constructor() {
-			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
-		}
 		static get metadata() {
 			return metadata;
 		}
@@ -49,17 +51,19 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get _hasHeader() {
 			return !!this.header.length;
 		}
-		get _ariaCardRoleDescription() {
-			return this.i18nBundle.getText(i18nDefaults.ARIA_ROLEDESCRIPTION_CARD);
+		get _getAriaLabel() {
+			const effectiveAriaLabelText = AriaLabelHelper.getEffectiveAriaLabelText(this),
+				effectiveAriaLabel = effectiveAriaLabelText ? ` ${effectiveAriaLabelText}` : "";
+			return Card.i18nBundle.getText(i18nDefaults.ARIA_ROLEDESCRIPTION_CARD) + effectiveAriaLabel;
 		}
 		get _ariaCardContentLabel() {
-			return this.i18nBundle.getText(i18nDefaults.ARIA_LABEL_CARD_CONTENT);
+			return Card.i18nBundle.getText(i18nDefaults.ARIA_LABEL_CARD_CONTENT);
 		}
 		static get dependencies() {
 			return [Icon];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			Card.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	Card.define();

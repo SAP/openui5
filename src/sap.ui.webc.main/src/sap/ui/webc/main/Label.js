@@ -64,7 +64,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines whether semi-colon is added to the component text. <br>
+				 * Defines whether colon is added to the component text. <br>
 				 * <br>
 				 * <b>Note:</b> Usually used in forms.
 				 */

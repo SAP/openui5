@@ -46,6 +46,22 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Defines the accessible name of the component, which is used as the name of the card region and should be unique per card. <b>Note:</b> <code>accessibleName</code> should be always set, unless <code>accessibleNameRef</code> is set.
+				 */
+				accessibleName: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
+				 * Defines the IDs of the elements that label the component.
+				 */
+				accessibleNameRef: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
 				 * Defines the height of the control
 				 */
 				height: {

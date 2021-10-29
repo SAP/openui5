@@ -55,7 +55,7 @@ sap.ui.define([
 				/**
 				 * Defines the state of the <code>additionalText</code>. <br>
 				 * <br>
-				 * Available options are: <code>"None"</code> (by default), <code>"Success"</code>, <code>"Warning"</code> and <code>"Erorr"</code>.
+				 * Available options are: <code>"None"</code> (by default), <code>"Success"</code>, <code>"Information"</code>, <code>"Warning"</code> and <code>"Erorr"</code>.
 				 */
 				additionalTextState: {
 					type: "sap.ui.core.ValueState",

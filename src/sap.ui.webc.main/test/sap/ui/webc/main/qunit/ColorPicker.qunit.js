@@ -12,6 +12,7 @@ sap.ui.define([
 	QUnit.module("Rendering", {
 		beforeEach: function() {
 			this.oColorPicker = new ColorPicker({
+				color: "blue",
 				change: function(oEvent) {
 					// console.log("Event change fired for ColorPicker with parameters: ", oEvent.getParameters());
 				}

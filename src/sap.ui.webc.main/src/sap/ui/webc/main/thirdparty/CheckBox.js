@@ -6,6 +6,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 	var litRender__default = /*#__PURE__*/_interopDefaultLegacy(litRender);
 	var ValueState__default = /*#__PURE__*/_interopDefaultLegacy(ValueState);
 
+	let isGlobalHandlerAttached = false;
+	let activeCb = null;
 	const metadata = {
 		tag: "ui5-checkbox",
 		languageAware: true,
@@ -36,6 +38,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			name: {
 				type: String,
 			},
+			active: {
+				type: Boolean,
+			},
 		},
 		events:  {
 			change: {},
@@ -61,7 +66,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 		}
 		constructor() {
 			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
+			this._deactivate = () => {
+				if (activeCb) {
+					activeCb.active = false;
+				}
+			};
+			if (!isGlobalHandlerAttached) {
+				document.addEventListener("mouseup", this._deactivate);
+				isGlobalHandlerAttached = true;
+			}
 		}
 		onBeforeRendering() {
 			this._enableFormSupport();
@@ -80,18 +93,31 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 		_onclick() {
 			this.toggle();
 		}
+		_onmousedown() {
+			this.active = true;
+			activeCb = this;
+		}
+		_onmouseup() {
+			this.active = false;
+		}
+		_onfocusout() {
+			this.active = false;
+		}
 		_onkeydown(event) {
 			if (Keys.isSpace(event)) {
 				event.preventDefault();
+				this.active = true;
 			}
 			if (Keys.isEnter(event)) {
 				this.toggle();
+				this.active = true;
 			}
 		}
 		_onkeyup(event) {
 			if (Keys.isSpace(event)) {
 				this.toggle();
 			}
+			this.active = false;
 		}
 		toggle() {
 			if (this.canToggle()) {
@@ -110,11 +136,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			return !(this.disabled || this.readonly);
 		}
 		valueStateTextMappings() {
-			const i18nBundle = this.i18nBundle;
 			return {
-				"Error": i18nBundle.getText(i18nDefaults.VALUE_STATE_ERROR),
-				"Warning": i18nBundle.getText(i18nDefaults.VALUE_STATE_WARNING),
-				"Success": i18nBundle.getText(i18nDefaults.VALUE_STATE_SUCCESS),
+				"Error": CheckBox.i18nBundle.getText(i18nDefaults.VALUE_STATE_ERROR),
+				"Warning": CheckBox.i18nBundle.getText(i18nDefaults.VALUE_STATE_WARNING),
+				"Success": CheckBox.i18nBundle.getText(i18nDefaults.VALUE_STATE_SUCCESS),
 			};
 		}
 		get classes() {
@@ -159,7 +184,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			CheckBox.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	CheckBox.define();

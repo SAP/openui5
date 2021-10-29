@@ -21,14 +21,14 @@ sap.ui.define([
 	 *
 	 * <h3>Overview</h3>
 	 *
-	 * The <code>sap.ui.webc.fiori.Wizard</code> helps users complete a complex task by dividing it into sections and guiding the user through it. It has two main areas - a navigation area at the top showing the step sequence and a content area below it.
+	 * The <code>sap.ui.webc.fiori.Wizard</code> helps users to complete a complex task by dividing it into sections and guiding them through it. It has two main areas - a navigation area at the top showing the step sequence and a content area below it.
 	 *
 	 * <h3>Structure</h3>
 	 * <h4>Navigation area</h4> The top most area of the <code>sap.ui.webc.fiori.Wizard</code> is occupied by the navigation area. It shows the sequence of steps, where the recommended number of steps is between 3 and 8 steps.
 	 * <ul>
 	 *     <li> Steps can have different visual representations - numbers or icons.
 	 *     <li> Steps might have labels for better readability - titleText and subTitleText.</li>
-	 *     <li> Steps are defined by using the <code>sap.ui.webc.fiori.WizardStep</code> as slotted element within the <code>sap.ui.webc.fiori.Wizard</code></li>
+	 *     <li> Steps are defined by using the <code>sap.ui.webc.fiori.WizardStep</code> as slotted element within the <code>sap.ui.webc.fiori.Wizard</code>.</li>
 	 * </ul>
 	 *
 	 * <b>Note:</b> If no selected step is defined, the first step will be auto selected. <br>
@@ -48,18 +48,18 @@ sap.ui.define([
 	 * </code> <code>&#9;&lt;ui5-wizard&gt;&lt;/ui5-wizard&gt;<br>
 	 * </code> <code>&lt;/ui5-dialog&gt;</code>
 	 *
-	 * <h4>Moving to next step</h4> The <code>sap.ui.webc.fiori.WizardStep</code> provides the necessary API and it's up to the user of the component to use it to move to the next step. You have to set its <code>selected</code> property (and remove the <code>disabled</code> one if set) to <code>true</code>. And, the <code>sap.ui.webc.fiori.Wizard</code> will automatically scroll to the content of the newly selected step. <br>
+	 * <h4>Moving to next step</h4> The <code>sap.ui.webc.fiori.WizardStep</code> provides the necessary API and it's up to the user of the component to use it to move to the next step. You have to set its <code>selected</code> property (and remove the <code>disabled</code> one if set) to <code>true</code>. The <code>sap.ui.webc.fiori.Wizard</code> will automatically scroll to the content of the newly selected step. <br>
 	 * <br>
 	 *
 	 *
 	 * The Fiori 3 guidelines recommends having a "nextStep" button in the content area. You can place a button, or any other type of element to trigger step change, inside the <code>sap.ui.webc.fiori.WizardStep</code>, and show/hide it when certain fields are filled or user defined criteria is met.
 	 *
 	 * <h3>Usage</h3>
-	 * <h4>When to use:</h4> When the user has to accomplish a long set of tasks.
+	 * <h4>When to use:</h4> When the user has to accomplish a long or unfamiliar task.
 	 *
 	 * <h4>When not to use:</h4> When the task has less than 3 steps.
 	 *
-	 * <h3>Responsive Behavior</h3> On small widths the step's titleText, subtitleText and separators in the navigation area will start truncate and shrink and from particular point they will hide to free as much space as possible.
+	 * <h3>Responsive Behavior</h3> On small widths the step's titleText, subtitleText and separators in the navigation area shrink and from particular point the steps are grouped together and overlap. Tapping on them will show a popover to select the step to navigate to. On mobile device, the grouped steps are presented within a dialog.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -115,21 +115,21 @@ sap.ui.define([
 				stepChange: {
 					parameters: {
 						/**
-						 * the new step
+						 * The new step.
 						 */
 						step: {
 							type: "HTMLElement"
 						},
 
 						/**
-						 * the previous step
+						 * The previous step.
 						 */
 						previousStep: {
 							type: "HTMLElement"
 						},
 
 						/**
-						 * the step change occurs due to user's click or 'Enter'/'Space' key press on step within the navigation
+						 * The step change occurs due to user's click or 'Enter'/'Space' key press on step within the navigation.
 						 */
 						changeWithClick: {
 							type: "boolean"

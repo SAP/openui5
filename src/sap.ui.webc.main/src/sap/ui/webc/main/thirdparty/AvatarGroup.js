@@ -77,7 +77,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._colorIndex = 0;
 			this._hiddenItems = 0;
 			this._onResizeHandler = this._onResize.bind(this);
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		static get metadata() {
 			return metadata;
@@ -97,7 +96,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			AvatarGroup.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		get hiddenItems() {
 			return this.items.slice(this._hiddenStartIndex);
@@ -111,17 +110,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get _ariaLabelText() {
 			const hiddenItemsCount = this.hiddenItems.length;
 			const typeLabelKey = this._isGroup ? i18nDefaults.AVATAR_GROUP_ARIA_LABEL_GROUP : i18nDefaults.AVATAR_GROUP_ARIA_LABEL_INDIVIDUAL;
-			let text = this.i18nBundle.getText(typeLabelKey);
-			text += ` ${this.i18nBundle.getText(i18nDefaults.AVATAR_GROUP_DISPLAYED_HIDDEN_LABEL, [this._itemsCount - hiddenItemsCount], [hiddenItemsCount])}`;
+			let text = AvatarGroup.i18nBundle.getText(typeLabelKey);
+			text += ` ${AvatarGroup.i18nBundle.getText(i18nDefaults.AVATAR_GROUP_DISPLAYED_HIDDEN_LABEL, this._itemsCount - hiddenItemsCount, hiddenItemsCount)}`;
 			if (this._isGroup) {
-				text += ` ${this.i18nBundle.getText(i18nDefaults.AVATAR_GROUP_SHOW_COMPLETE_LIST_LABEL)}`;
+				text += ` ${AvatarGroup.i18nBundle.getText(i18nDefaults.AVATAR_GROUP_SHOW_COMPLETE_LIST_LABEL)}`;
 			} else {
-				text += ` ${this.i18nBundle.getText(i18nDefaults.AVATAR_GROUP_MOVE)}`;
+				text += ` ${AvatarGroup.i18nBundle.getText(i18nDefaults.AVATAR_GROUP_MOVE)}`;
 			}
 			return text;
 		}
 		get _overflowButtonAriaLabelText() {
-			return this._isGroup ? undefined : this.i18nBundle.getText(i18nDefaults.AVATAR_GROUP_SHOW_COMPLETE_LIST_LABEL);
+			return this._isGroup ? undefined : AvatarGroup.i18nBundle.getText(i18nDefaults.AVATAR_GROUP_SHOW_COMPLETE_LIST_LABEL);
 		}
 		get _containerAriaHasPopup() {
 			return this._isGroup ? this._getAriaHasPopup() : undefined;

@@ -265,7 +265,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			return this.placeholder !== undefined ? this.placeholder : this._displayFormat;
 		}
 		get _headerTitleText() {
-			return this.i18nBundle.getText(i18nDefaults.INPUT_SUGGESTIONS_TITLE);
+			return DatePicker.i18nBundle.getText(i18nDefaults.INPUT_SUGGESTIONS_TITLE);
 		}
 		get phone() {
 			return Device.isPhone();
@@ -292,13 +292,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			};
 		}
 		get openIconTitle() {
-			return this.i18nBundle.getText(i18nDefaults.DATEPICKER_OPEN_ICON_TITLE);
+			return DatePicker.i18nBundle.getText(i18nDefaults.DATEPICKER_OPEN_ICON_TITLE);
 		}
 		get openIconName() {
 			return "appointment-2";
 		}
 		get dateAriaDescription() {
-			return this.i18nBundle.getText(i18nDefaults.DATEPICKER_DATE_DESCRIPTION);
+			return DatePicker.i18nBundle.getText(i18nDefaults.DATEPICKER_DATE_DESCRIPTION);
 		}
 		get _shouldHideHeader() {
 			return false;

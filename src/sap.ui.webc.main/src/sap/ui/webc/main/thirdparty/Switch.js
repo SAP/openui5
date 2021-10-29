@@ -43,9 +43,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		static get template() {
 			return SwitchTemplate_lit;
 		}
-		constructor() {
-			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
+		get sapNextIcon() {
+			return this.checked ? "accept" : "less";
 		}
 		_onclick(event) {
 			this.toggle();
@@ -98,10 +97,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.disabled ? "true" : undefined;
 		}
 		get accessibilityOnText() {
-			return this._textOn || this.i18nBundle.getText(i18nDefaults.SWITCH_ON);
+			return this._textOn || Switch.i18nBundle.getText(i18nDefaults.SWITCH_ON);
 		}
 		get accessibilityOffText() {
-			return this._textOff || this.i18nBundle.getText(i18nDefaults.SWITCH_OFF);
+			return this._textOff || Switch.i18nBundle.getText(i18nDefaults.SWITCH_OFF);
 		}
 		get hiddenText() {
 			return this.checked ? this.accessibilityOnText : this.accessibilityOffText;
@@ -110,7 +109,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return [Icon];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			Switch.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	Switch.define();

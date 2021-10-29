@@ -54,7 +54,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 				type: PopoverPlacementType,
 				defaultValue: PopoverPlacementType.Right,
 			},
-			_maxContentHeight: { type: Integer__default },
+			_maxContentHeight: {
+				type: Integer__default,
+				noAttribute: true,
+			},
+			_maxContentWidth: {
+				type: Integer__default,
+				noAttribute: true,
+			},
 		},
 		managedSlots: true,
 		slots:  {
@@ -82,7 +89,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 		static get template() {
 			return PopoverTemplate_lit;
 		}
-		static get MIN_OFFSET() {
+		static get VIEWPORT_MARGIN() {
 			return 10;
 		}
 		onEnterDOM() {
@@ -159,40 +166,47 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 			if (this._preventRepositionAndClose) {
 				return this.close();
 			}
-			if (this._oldPlacement && (this._oldPlacement.left === placement.left) && (this._oldPlacement.top === placement.top) && stretching) {
-				super._show();
-				this.style.width = this._width;
-				return;
-			}
 			this._oldPlacement = placement;
-			const left = clamp__default(
-				this._left,
-				Popover.MIN_OFFSET,
-				document.documentElement.clientWidth - popoverSize.width - Popover.MIN_OFFSET,
-			);
-			const top = clamp__default(
-				this._top,
-				Popover.MIN_OFFSET,
-				document.documentElement.clientHeight - popoverSize.height - Popover.MIN_OFFSET,
-			);
-			let { arrowX, arrowY } = placement;
-			const popoverOnLeftBorder = this._left === 0;
-			const popoverOnRightBorder = this._left + popoverSize.width >= document.documentElement.clientWidth;
-			if (popoverOnLeftBorder) {
-				arrowX -= Popover.MIN_OFFSET;
-			} else if (popoverOnRightBorder) {
-				arrowX += Popover.MIN_OFFSET;
-			}
-			this.arrowTranslateX = arrowX;
-			const popoverOnTopBorder = this._top === 0;
-			const popoverOnBottomBorder = this._top + popoverSize.height >= document.documentElement.clientHeight;
-			if (popoverOnTopBorder) {
-				arrowY -= Popover.MIN_OFFSET;
-			} else if (popoverOnBottomBorder) {
-				arrowY += Popover.MIN_OFFSET;
-			}
-			this.arrowTranslateY = arrowY;
 			this.actualPlacementType = placement.placementType;
+			let left = clamp__default(
+				this._left,
+				Popover.VIEWPORT_MARGIN,
+				document.documentElement.clientWidth - popoverSize.width - Popover.VIEWPORT_MARGIN,
+			);
+			if (this.actualPlacementType === PopoverPlacementType.Right) {
+				left = Math.max(left, this._left);
+			}
+			let top = clamp__default(
+				this._top,
+				Popover.VIEWPORT_MARGIN,
+				document.documentElement.clientHeight - popoverSize.height - Popover.VIEWPORT_MARGIN,
+			);
+			if (this.actualPlacementType === PopoverPlacementType.Bottom) {
+				top = Math.max(top, this._top);
+			}
+			let { arrowX, arrowY } = placement;
+			const isVertical = this.actualPlacementType === PopoverPlacementType.Top
+				|| this.actualPlacementType === PopoverPlacementType.Bottom;
+			if (isVertical) {
+				const popoverOnLeftBorderOffset = Popover.VIEWPORT_MARGIN - this._left;
+				const popoverOnRightBorderOffset = this._left + popoverSize.width + Popover.VIEWPORT_MARGIN - document.documentElement.clientWidth;
+				if (popoverOnLeftBorderOffset > 0) {
+					arrowX -= popoverOnLeftBorderOffset;
+				} else if (popoverOnRightBorderOffset > 0) {
+					arrowX += popoverOnRightBorderOffset;
+				}
+			}
+			this.arrowTranslateX = Math.round(arrowX);
+			if (!isVertical) {
+				const popoverOnTopBorderOffset = Popover.VIEWPORT_MARGIN - this._top;
+				const popoverOnBottomBorderOffset = this._top + popoverSize.height + Popover.VIEWPORT_MARGIN - document.documentElement.clientHeight;
+				if (popoverOnTopBorderOffset > 0) {
+					arrowY -= popoverOnTopBorderOffset;
+				} else if (popoverOnBottomBorderOffset > 0) {
+					arrowY += popoverOnBottomBorderOffset;
+				}
+			}
+			this.arrowTranslateY = Math.round(arrowY);
 			Object.assign(this.style, {
 				top: `${top}px`,
 				left: `${left}px`,
@@ -228,6 +242,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 			const clientWidth = document.documentElement.clientWidth;
 			const clientHeight = document.documentElement.clientHeight;
 			let maxHeight = clientHeight;
+			let maxWidth = clientWidth;
 			let width = "";
 			let height = "";
 			const placementType = this.getActualPlacementType(targetRect, popoverSize);
@@ -264,12 +279,16 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 			case PopoverPlacementType.Left:
 				left = Math.max(targetRect.left - popoverSize.width - arrowOffset, 0);
 				top = this.getHorizontalTop(targetRect, popoverSize);
+				if (!allowTargetOverlap) {
+					maxWidth = targetRect.left - arrowOffset;
+				}
 				break;
 			case PopoverPlacementType.Right:
 				if (allowTargetOverlap) {
 					left = Math.max(Math.min(targetRect.left + targetRect.width + arrowOffset, clientWidth - popoverSize.width), 0);
 				} else {
 					left = targetRect.left + targetRect.width + arrowOffset;
+					maxWidth = clientWidth - targetRect.right - arrowOffset;
 				}
 				top = this.getHorizontalTop(targetRect, popoverSize);
 				break;
@@ -287,15 +306,16 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 					top -= top + popoverSize.height - clientHeight;
 				}
 			}
-			let maxContentHeight = Math.round(maxHeight);
+			let maxContentHeight = maxHeight;
 			if (this._displayHeader) {
 				const headerDomRef = this.shadowRoot.querySelector(".ui5-popup-header-root")
 					|| this.shadowRoot.querySelector(".ui5-popup-header-text");
 				if (headerDomRef) {
-					maxContentHeight = Math.round(maxHeight - headerDomRef.offsetHeight);
+					maxContentHeight = maxHeight - headerDomRef.offsetHeight;
 				}
 			}
-			this._maxContentHeight = maxContentHeight - Popover.MIN_OFFSET;
+			this._maxContentHeight = Math.round(maxContentHeight - Popover.VIEWPORT_MARGIN);
+			this._maxContentWidth = Math.round(maxWidth - Popover.VIEWPORT_MARGIN);
 			const arrowPos = this.getArrowPosition(targetRect, popoverSize, left, top, isVertical);
 			if (this._left === undefined || Math.abs(this._left - left) > 1.5) {
 				this._left = Math.round(left);
@@ -426,6 +446,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 				...super.styles,
 				content: {
 					"max-height": `${this._maxContentHeight}px`,
+					"max-width": `${this._maxContentWidth}px`,
 				},
 				arrow: {
 					transform: `translate(${this.arrowTranslateX}px, ${this.arrowTranslateY}px)`,

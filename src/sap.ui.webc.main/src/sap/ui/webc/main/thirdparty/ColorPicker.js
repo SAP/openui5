@@ -83,9 +83,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		onBeforeRendering() {
 			this._color = ColorConversion.getRGBColor(this.color);
+			const tempColor = `rgba(${this._color.r}, ${this._color.g}, ${this._color.b}, 1)`;
 			this._setHex();
 			this._setValues();
-			this.style.setProperty("--ui5_Color_Picker_Progress_Container_Color", this.color);
+			this.style.setProperty("--ui5_Color_Picker_Progress_Container_Color", tempColor);
 		}
 		async onAfterRendering() {
 			if (Device.isIE()) {
@@ -183,10 +184,16 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		_handleAlphaInput(event) {
 			this._alpha = parseFloat(event.target.value);
+			this._setColor(this._color);
 		}
 		_handleHueInput(event) {
 			this.selectedHue = event.target.value;
+			this._hue = this.selectedHue;
 			this._setMainColor(this._hue);
+			const tempColor = this._calculateColorFromCoordinates(this._selectedCoordinates.x + 6.5, this._selectedCoordinates.y + 6.5);
+			if (tempColor) {
+				this._setColor(ColorConversion.HSLToRGB(tempColor));
+			}
 		}
 		_handleHEXChange(event) {
 			let newValue = event.target.value.toLowerCase();
@@ -215,6 +222,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			case "blue":
 				tempColor = { ...this._color, b: targetValue };
 				break;
+			default:
+				tempColor = { ...this._color };
 			}
 			this._setColor(tempColor);
 		}

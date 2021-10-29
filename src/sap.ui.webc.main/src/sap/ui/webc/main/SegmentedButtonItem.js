@@ -32,8 +32,8 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @since 1.92.0
-	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
+	 * @since 1.95.0
+	 * @experimental Since 1.95.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.main.SegmentedButtonItem
 	 * @implements sap.ui.webc.main.ISegmentedButtonItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -63,7 +63,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines whether the component is disabled (default is set to <code>false</code>). A disabled component can't be pressed or focused, and it is not in the tab chain.
+				 * Defines whether the component is disabled. A disabled component can't be pressed or focused, and it is not in the tab chain.
 				 */
 				disabled: {
 					type: "boolean",

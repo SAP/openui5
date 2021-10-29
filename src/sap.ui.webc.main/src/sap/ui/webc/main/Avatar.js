@@ -36,7 +36,7 @@ sap.ui.define([
 	 *
 	 * <ul>
 	 *     <li>[SPACE, ENTER, RETURN] - Fires the <code>click</code> event if the <code>interactive</code> property is set to true.</li>
-	 *     <li>[SHIFT] - If [SPACE] or [ENTER],[RETURN] is pressed, pressing [SHIFT] releases the component without triggering the click event.</li>
+	 *     <li>[SHIFT] - If [SPACE] is pressed, pressing [SHIFT] releases the component without triggering the click event.</li>
 	 * </ul> <br>
 	 * <br>
 	 *

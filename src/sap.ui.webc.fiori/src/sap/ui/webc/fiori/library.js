@@ -7,9 +7,10 @@
  */
 sap.ui.define([
 		"sap/ui/webc/common/library",
+		"sap/ui/webc/common/thirdparty/base/CSP",
 		"./thirdparty/Assets"
 	], // library dependency
-	function() {
+	function(commonLibrary, CSP) {
 
 		"use strict";
 
@@ -21,12 +22,15 @@ sap.ui.define([
 			noLibraryCSS: true,
 			designtime: "sap/ui/webc/main/designtime/library.designtime",
 			interfaces: [
+				"sap.ui.webc.fiori.IFilterItem",
+				"sap.ui.webc.fiori.IFilterItemOption",
 				"sap.ui.webc.fiori.INotificationAction",
 				"sap.ui.webc.fiori.INotificationListItem",
 				"sap.ui.webc.fiori.IProductSwitchItem",
 				"sap.ui.webc.fiori.IShellBarItem",
 				"sap.ui.webc.fiori.ISideNavigationItem",
 				"sap.ui.webc.fiori.ISideNavigationSubItem",
+				"sap.ui.webc.fiori.ISortItem",
 				"sap.ui.webc.fiori.ITimelineItem",
 				"sap.ui.webc.fiori.IUploadCollectionItem",
 				"sap.ui.webc.fiori.IWizardStep"
@@ -42,6 +46,8 @@ sap.ui.define([
 			controls: [
 				"sap.ui.webc.fiori.Bar",
 				"sap.ui.webc.fiori.BarcodeScannerDialog",
+				"sap.ui.webc.fiori.FilterItem",
+				"sap.ui.webc.fiori.FilterItemOption",
 				"sap.ui.webc.fiori.FlexibleColumnLayout",
 				"sap.ui.webc.fiori.IllustratedMessage",
 				"sap.ui.webc.fiori.NotificationAction",
@@ -55,6 +61,7 @@ sap.ui.define([
 				"sap.ui.webc.fiori.SideNavigation",
 				"sap.ui.webc.fiori.SideNavigationItem",
 				"sap.ui.webc.fiori.SideNavigationSubItem",
+				"sap.ui.webc.fiori.SortItem",
 				"sap.ui.webc.fiori.Timeline",
 				"sap.ui.webc.fiori.TimelineItem",
 				"sap.ui.webc.fiori.UploadCollection",
@@ -80,6 +87,28 @@ sap.ui.define([
 		 */
 		var thisLib = sap.ui.webc.fiori;
 
+
+		/**
+		 * Interface for components that may be slotted inside <code>ui5-view-settings-dialog</code> as filter items
+		 *
+		 * @name sap.ui.webc.fiori.IFilterItem
+		 * @interface
+		 * @public
+		 * @since 1.97.0
+		 * @experimental Since 1.97.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+
+		/**
+		 * Interface for components that may be slotted inside <code>ui5-filter-item</code> as values
+		 *
+		 * @name sap.ui.webc.fiori.IFilterItemOption
+		 * @interface
+		 * @public
+		 * @since 1.97.0
+		 * @experimental Since 1.97.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
 
 		/**
 		 * Interface for components that may be slotted as an action inside <code>ui5-li-notification</code> and <code>ui5-li-notification-group</code>
@@ -144,6 +173,17 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+
+		/**
+		 * Interface for components that may be slotted inside <code>ui5-view-settings-dialog</code> as sort items
+		 *
+		 * @name sap.ui.webc.fiori.ISortItem
+		 * @interface
+		 * @public
+		 * @since 1.97.0
+		 * @experimental Since 1.97.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
@@ -305,8 +345,8 @@ Use to display both a master and a detail page when the user should focus on the
 		 *
 		 * @enum {string}
 		 * @public
-		 * @since 1.92.0
-		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 * @since 1.95.0
+		 * @experimental Since 1.95.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.IllustrationMessageType = {
@@ -364,6 +404,114 @@ Use to display both a master and a detail page when the user should focus on the
 			 * @public
 			 */
 			NoTasks: "NoTasks",
+
+			/**
+			 * "TntCodePlaceholder" illustration type.
+			 * @public
+			 */
+			TntCodePlaceholder: "TntCodePlaceholder",
+
+			/**
+			 * "TntCompany" illustration type.
+			 * @public
+			 */
+			TntCompany: "TntCompany",
+
+			/**
+			 * "TntExternalLink" illustration type.
+			 * @public
+			 */
+			TntExternalLink: "TntExternalLink",
+
+			/**
+			 * "TntFaceID" illustration type.
+			 * @public
+			 */
+			TntFaceID: "TntFaceID",
+
+			/**
+			 * "TntFingerprint" illustration type.
+			 * @public
+			 */
+			TntFingerprint: "TntFingerprint",
+
+			/**
+			 * "TntLock" illustration type.
+			 * @public
+			 */
+			TntLock: "TntLock",
+
+			/**
+			 * "TntMission" illustration type.
+			 * @public
+			 */
+			TntMission: "TntMission",
+
+			/**
+			 * "TntNoApplications" illustration type.
+			 * @public
+			 */
+			TntNoApplications: "TntNoApplications",
+
+			/**
+			 * "TntNoFlows" illustration type.
+			 * @public
+			 */
+			TntNoFlows: "TntNoFlows",
+
+			/**
+			 * "TntNoUsers" illustration type.
+			 * @public
+			 */
+			TntNoUsers: "TntNoUsers",
+
+			/**
+			 * "TntRadar" illustration type.
+			 * @public
+			 */
+			TntRadar: "TntRadar",
+
+			/**
+			 * "TntServices" illustration type.
+			 * @public
+			 */
+			TntServices: "TntServices",
+
+			/**
+			 * "TntSessionExpired" illustration type.
+			 * @public
+			 */
+			TntSessionExpired: "TntSessionExpired",
+
+			/**
+			 * "TntSessionExpiring" illustration type.
+			 * @public
+			 */
+			TntSessionExpiring: "TntSessionExpiring",
+
+			/**
+			 * "TntSuccess" illustration type.
+			 * @public
+			 */
+			TntSuccess: "TntSuccess",
+
+			/**
+			 * "TntSuccessfulAuth" illustration type.
+			 * @public
+			 */
+			TntSuccessfulAuth: "TntSuccessfulAuth",
+
+			/**
+			 * "TntUnlock" illustration type.
+			 * @public
+			 */
+			TntUnlock: "TntUnlock",
+
+			/**
+			 * "TntUnsuccessfulAuth" illustration type.
+			 * @public
+			 */
+			TntUnsuccessfulAuth: "TntUnsuccessfulAuth",
 
 			/**
 			 * "UnableToLoad" illustration type.
@@ -470,6 +618,8 @@ Use to display both a master and a detail page when the user should focus on the
 			 */
 			Uploading: "Uploading"
 		};
+
+		CSP.setPackageCSSRoot("@ui5/webcomponents-fiori", sap.ui.require.toUrl("sap/ui/webc/fiori/thirdparty/css/"));
 
 		return thisLib;
 

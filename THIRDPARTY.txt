@@ -412,10 +412,11 @@ Copyright: SAP
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/base/*.*
-	src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/theme-base/*.*
+	src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/theming/*.*
 	src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/localization/*.*
 	src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/icons/*.*
 	src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/icons-tnt/*.*
+	src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/icons-business-suite/*.*
 
 Component: lit-html, version: 1.4.1
 Copyright: Google LLC

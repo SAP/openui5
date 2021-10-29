@@ -165,7 +165,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/u
 			};
 		}
 		get ariaRoleDescription() {
-			return this.i18nBundle.getText(i18nDefaults.MULTIINPUT_ROLEDESCRIPTION_TEXT);
+			return MultiInput.i18nBundle.getText(i18nDefaults.MULTIINPUT_ROLEDESCRIPTION_TEXT);
 		}
 		static get dependencies() {
 			return [

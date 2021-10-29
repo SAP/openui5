@@ -91,7 +91,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._scrollEnablement.attachEvent("touchend", event => {
 				this._updateScrolling(event);
 			});
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 			this._onResizeBound = this._onResize.bind(this);
 			this._resizing = false;
 			this._lastFocusedElements = [];
@@ -251,7 +250,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					tabIndex: visible ? "0" : "-1",
 					posinset: idx + 1,
 					setsize: this.content.length,
-					width: this._itemWidth,
+					styles: {
+						width: `${this._itemWidth}px`,
+					},
 					classes: visible ? "" : "ui5-carousel-item--hidden",
 				};
 			});
@@ -330,7 +331,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			for (let index = 0; index < pages; index++) {
 				dots.push({
 					active: index === this._selectedIndex,
-					ariaLabel: this.i18nBundle.getText(i18nDefaults.CAROUSEL_DOT_TEXT, [index + 1], [pages]),
+					ariaLabel: Carousel.i18nBundle.getText(i18nDefaults.CAROUSEL_DOT_TEXT, index + 1, pages),
 				});
 			}
 			return dots;
@@ -358,16 +359,16 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this._isRTL ? this.pagesCount - (this.pagesCount - this._selectedIndex) + 1 : this._selectedIndex + 1;
 		}
 		get ofText() {
-			return this.i18nBundle.getText(i18nDefaults.CAROUSEL_OF_TEXT);
+			return Carousel.i18nBundle.getText(i18nDefaults.CAROUSEL_OF_TEXT);
 		}
 		get ariaActiveDescendant() {
 			return this.content.length ? `${this._id}-carousel-item-${this._selectedIndex + 1}` : undefined;
 		}
 		get nextPageText() {
-			return this.i18nBundle.getText(i18nDefaults.CAROUSEL_NEXT_ARROW_TEXT);
+			return Carousel.i18nBundle.getText(i18nDefaults.CAROUSEL_NEXT_ARROW_TEXT);
 		}
 		get previousPageText() {
-			return this.i18nBundle.getText(i18nDefaults.CAROUSEL_PREVIOUS_ARROW_TEXT);
+			return Carousel.i18nBundle.getText(i18nDefaults.CAROUSEL_PREVIOUS_ARROW_TEXT);
 		}
 		get visibleItemsIndices() {
 			const visibleItemsIndices = [];
@@ -385,7 +386,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			Carousel.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	Carousel.define();

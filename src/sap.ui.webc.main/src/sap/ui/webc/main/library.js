@@ -7,9 +7,10 @@
  */
 sap.ui.define([
 		"sap/ui/webc/common/library",
+		"sap/ui/webc/common/thirdparty/base/CSP",
 		"./thirdparty/Assets"
 	], // library dependency
-	function() {
+	function(commonLibrary, CSP) {
 
 		"use strict";
 
@@ -91,6 +92,7 @@ sap.ui.define([
 				"sap.ui.webc.main.CheckBox",
 				"sap.ui.webc.main.ColorPalette",
 				"sap.ui.webc.main.ColorPaletteItem",
+				"sap.ui.webc.main.ColorPalettePopover",
 				"sap.ui.webc.main.ColorPicker",
 				"sap.ui.webc.main.ComboBox",
 				"sap.ui.webc.main.ComboBoxGroupItem",
@@ -180,8 +182,8 @@ sap.ui.define([
 		 * @name sap.ui.webc.main.IBreadcrumbsItem
 		 * @interface
 		 * @public
-		 * @since 1.92.0
-		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 * @since 1.95.0
+		 * @experimental Since 1.95.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
@@ -290,8 +292,8 @@ sap.ui.define([
 		 * @name sap.ui.webc.main.ISegmentedButtonItem
 		 * @interface
 		 * @public
-		 * @since 1.92.0
-		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 * @since 1.95.0
+		 * @experimental Since 1.95.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
@@ -549,8 +551,8 @@ sap.ui.define([
 		 *
 		 * @enum {string}
 		 * @public
-		 * @since 1.92.0
-		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 * @since 1.95.0
+		 * @experimental Since 1.95.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.BreadcrumbsDesign = {
@@ -574,8 +576,8 @@ sap.ui.define([
 		 *
 		 * @enum {string}
 		 * @public
-		 * @since 1.92.0
-		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 * @since 1.95.0
+		 * @experimental Since 1.95.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.BreadcrumbsSeparatorStyle = {
@@ -1510,6 +1512,8 @@ sap.ui.define([
 			 */
 			Normal: "Normal"
 		};
+
+		CSP.setPackageCSSRoot("@ui5/webcomponents", sap.ui.require.toUrl("sap/ui/webc/main/thirdparty/css/"));
 
 		return thisLib;
 

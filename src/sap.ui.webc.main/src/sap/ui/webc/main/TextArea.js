@@ -24,7 +24,7 @@ sap.ui.define([
 	 *
 	 * <h3>Overview</h3>
 	 *
-	 * The <code>sap.ui.webc.main.TextArea</code> component provides large spaces for text entries in the form of multiple rows. It has the functionality of the <code>TextField</code> with the additional functionality for multiline texts. <br>
+	 * The <code>sap.ui.webc.main.TextArea</code> component is used to enter multiple lines of text. <br>
 	 * <br>
 	 * When empty, it can hold a placeholder similar to a <code>sap.ui.webc.main.Input</code>. You can define the rows of the <code>sap.ui.webc.main.TextArea</code> and also determine specific behavior when handling long texts.
 	 *
@@ -70,7 +70,7 @@ sap.ui.define([
 				/**
 				 * Indicates whether the user can interact with the component or not. <br>
 				 * <br>
-				 * <b>Note:</b> Disabled components cannot be focused and they are out of the tab chain.
+				 * <b>Note:</b> A disabled component is completely noninteractive.
 				 */
 				disabled: {
 					type: "boolean",
@@ -88,7 +88,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the maximum number of lines that the Web Component can grow.
+				 * Defines the maximum number of lines that the component can grow.
 				 */
 				growingMaxLines: {
 					type: "int",
@@ -176,7 +176,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the value of the Web Component.
+				 * Defines the value of the component.
 				 */
 				value: {
 					type: "string",

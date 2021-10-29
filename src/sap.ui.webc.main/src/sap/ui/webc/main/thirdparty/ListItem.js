@@ -18,7 +18,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 			},
 			role: {
 				type: String,
-				defaultValue: "option",
+				defaultValue: "listitem",
 			},
 			_mode: {
 				type: ListMode,
@@ -58,7 +58,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 					this.active = false;
 				}
 			};
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		onBeforeRendering(...params) {
 			this.actionable = (this.type === ListItemType.Active) && (this._mode !== ListMode.Delete);
@@ -196,22 +195,28 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 			}
 			return undefined;
 		}
+		get ariaSelectedText() {
+			let ariaSelectedText;
+			if (this.ariaSelected !== undefined) {
+				ariaSelectedText = this.ariaSelected ? ListItem.i18nBundle.getText(i18nDefaults.LIST_ITEM_SELECTED) : ListItem.i18nBundle.getText(i18nDefaults.LIST_ITEM_NOT_SELECTED);
+			}
+			return ariaSelectedText;
+		}
 		get deleteText() {
-			return this.i18nBundle.getText(i18nDefaults.DELETE);
+			return ListItem.i18nBundle.getText(i18nDefaults.DELETE);
 		}
 		get _accInfo() {
 			return {
 				role: this.role,
 				ariaExpanded: undefined,
 				ariaLevel: undefined,
-				ariaLabel: this.i18nBundle.getText(i18nDefaults.ARIA_LABEL_LIST_ITEM_CHECKBOX),
-				listItemAriaLabel: undefined,
+				ariaLabel: ListItem.i18nBundle.getText(i18nDefaults.ARIA_LABEL_LIST_ITEM_CHECKBOX),
+				ariaLabelRadioButton: ListItem.i18nBundle.getText(i18nDefaults.ARIA_LABEL_LIST_ITEM_RADIO_BUTTON),
+				ariaSelectedText: this.ariaSelectedText,
 			};
 		}
 		static async onDefine() {
-			await Promise.all([
-				i18nBundle.fetchI18nBundle("@ui5/webcomponents"),
-			]);
+			ListItem.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 

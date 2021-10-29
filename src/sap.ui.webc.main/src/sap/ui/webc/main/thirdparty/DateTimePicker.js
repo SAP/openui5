@@ -101,16 +101,16 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap
 			return "date-time";
 		}
 		get btnOKLabel() {
-			return this.i18nBundle.getText(i18nDefaults.TIMEPICKER_SUBMIT_BUTTON);
+			return DateTimePicker.i18nBundle.getText(i18nDefaults.TIMEPICKER_SUBMIT_BUTTON);
 		}
 		get btnCancelLabel() {
-			return this.i18nBundle.getText(i18nDefaults.TIMEPICKER_CANCEL_BUTTON);
+			return DateTimePicker.i18nBundle.getText(i18nDefaults.TIMEPICKER_CANCEL_BUTTON);
 		}
 		get btnDateLabel() {
-			return this.i18nBundle.getText(i18nDefaults.DATETIME_PICKER_DATE_BUTTON);
+			return DateTimePicker.i18nBundle.getText(i18nDefaults.DATETIME_PICKER_DATE_BUTTON);
 		}
 		get btnTimeLabel() {
-			return this.i18nBundle.getText(i18nDefaults.DATETIME_PICKER_TIME_BUTTON);
+			return DateTimePicker.i18nBundle.getText(i18nDefaults.DATETIME_PICKER_TIME_BUTTON);
 		}
 		get showFooter() {
 			return true;
@@ -125,18 +125,19 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap
 			return super.phone || this._phoneMode;
 		}
 		get dateAriaDescription() {
-			return this.i18nBundle.getText(i18nDefaults.DATETIME_DESCRIPTION);
+			return DateTimePicker.i18nBundle.getText(i18nDefaults.DATETIME_DESCRIPTION);
 		}
 		get _shouldHideHeader() {
 			return true;
 		}
 		onSelectedDatesChange(event) {
 			event.preventDefault();
+			const dateTimePickerContent = event.path ? event.path[1] : event.composedPath()[1];
 			this._previewValues = {
 				...this._previewValues,
 				calendarTimestamp: event.detail.timestamp,
 				calendarValue: event.detail.values[0],
-				timeSelectionValue: event.path[1].lastChild.value,
+				timeSelectionValue: dateTimePickerContent.lastChild.value,
 			};
 		}
 		onTimeSelectionChange(event) {

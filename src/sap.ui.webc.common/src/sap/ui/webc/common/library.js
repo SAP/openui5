@@ -11,9 +11,10 @@ sap.ui.define([
 		"./Icons",
 		"./thirdparty/base/features/OpenUI5Support",
 		"./thirdparty/base/AssetRegistry",
-		"./thirdparty/base/CustomElementsScope"
+		"./thirdparty/base/CustomElementsScope",
+		"./thirdparty/base/CSP"
 	],
-	function(coreLibrary, DataType, Icons, OpenUI5Support, AssetRegistry, CustomElementsScope) {
+	function(coreLibrary, DataType, Icons, OpenUI5Support, AssetRegistry, CustomElementsScope, CSP) {
 
 	"use strict";
 
@@ -63,6 +64,11 @@ sap.ui.define([
 	var thisLib = sap.ui.webc.common;
 
 	CustomElementsScope.setCustomElementsScopingSuffix("ui5");
+
+	CSP.setUseLinks(!document.adoptedStyleSheets);
+	CSP.setPreloadLinks(false);
+	CSP.setPackageCSSRoot("@ui5/webcomponents-base", sap.ui.require.toUrl("sap/ui/webc/common/thirdparty/base/css/"));
+	CSP.setPackageCSSRoot("@ui5/webcomponents-theming", sap.ui.require.toUrl("sap/ui/webc/common/thirdparty/theming/css/"));
 
 	return thisLib;
 });

@@ -26,7 +26,7 @@ sap.ui.define([
 	 *
 	 * The <code>sap.ui.webc.main.ComboBox</code> component represents a drop-down menu with a list of the available options and a text input field to narrow down the options.
 	 *
-	 * It is commonly used to enable users to select one or more options from a predefined list. <h3>Structure</h3> The <code>sap.ui.webc.main.ComboBox</code> consists of the following elements:
+	 * It is commonly used to enable users to select an option from a predefined list. <h3>Structure</h3> The <code>sap.ui.webc.main.ComboBox</code> consists of the following elements:
 	 * <ul>
 	 *     <li> Input field - displays the selected option or a custom user entry. Users can type to narrow down the list or enter their own value.
 	 *     <li> Drop-down arrow - expands\collapses the option list.</li>
@@ -72,7 +72,7 @@ sap.ui.define([
 				/**
 				 * Defines whether the component is in disabled state. <br>
 				 * <br>
-				 * <b>Note:</b> A disabled component is completely uninteractive.
+				 * <b>Note:</b> A disabled component is completely noninteractive.
 				 */
 				disabled: {
 					type: "boolean",
@@ -104,7 +104,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines whether the component is readonly. <br>
+				 * Defines whether the component is read-only. <br>
 				 * <br>
 				 * <b>Note:</b> A read-only component is not editable, but still provides visual feedback upon user interaction.
 				 */

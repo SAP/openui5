@@ -71,7 +71,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._prevLayout = null;
 			this.initialRendering = true;
 			this._handleResize = this.handleResize.bind(this);
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents-fiori");
 		}
 		static get metadata() {
 			return metadata;
@@ -89,7 +88,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return [Button__default];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents-fiori");
+			FlexibleColumnLayout.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents-fiori");
 		}
 		static get BREAKPOINTS() {
 			return {
@@ -347,13 +346,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.shadowRoot.querySelector(".ui5-fcl-column--end");
 		}
 		get accStartColumnText() {
-			return this.accessibilityTexts.startColumnAccessibleName || this.i18nBundle.getText(i18nDefaults.FCL_START_COLUMN_TXT);
+			return this.accessibilityTexts.startColumnAccessibleName || FlexibleColumnLayout.i18nBundle.getText(i18nDefaults.FCL_START_COLUMN_TXT);
 		}
 		get accMiddleColumnText() {
-			return this.accessibilityTexts.midColumnAccessibleName || this.i18nBundle.getText(i18nDefaults.FCL_MIDDLE_COLUMN_TXT);
+			return this.accessibilityTexts.midColumnAccessibleName || FlexibleColumnLayout.i18nBundle.getText(i18nDefaults.FCL_MIDDLE_COLUMN_TXT);
 		}
 		get accEndColumnText() {
-			return this.accessibilityTexts.endColumnAccessibleName || this.i18nBundle.getText(i18nDefaults.FCL_END_COLUMN_TXT);
+			return this.accessibilityTexts.endColumnAccessibleName || FlexibleColumnLayout.i18nBundle.getText(i18nDefaults.FCL_END_COLUMN_TXT);
 		}
 		get _effectiveLayoutsByMedia() {
 			return this._layoutsConfiguration || FCLLayout$1.getLayoutsByMedia();
@@ -361,16 +360,16 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get accStartArrowText() {
 			const customTexts = this.accessibilityTexts;
 			if (this.startArrowDirection === "mirror") {
-				return customTexts.startArrowLeftText || this.i18nBundle.getText(i18nDefaults.FCL_START_COLUMN_COLLAPSE_BUTTON_TOOLTIP);
+				return customTexts.startArrowLeftText || FlexibleColumnLayout.i18nBundle.getText(i18nDefaults.FCL_START_COLUMN_COLLAPSE_BUTTON_TOOLTIP);
 			}
-			return customTexts.startArrowRightText || this.i18nBundle.getText(i18nDefaults.FCL_START_COLUMN_EXPAND_BUTTON_TOOLTIP);
+			return customTexts.startArrowRightText || FlexibleColumnLayout.i18nBundle.getText(i18nDefaults.FCL_START_COLUMN_EXPAND_BUTTON_TOOLTIP);
 		}
 		get accEndArrowText() {
 			const customTexts = this.accessibilityTexts;
 			if (this.endArrowDirection === "mirror") {
-				return customTexts.endArrowRightText || this.i18nBundle.getText(i18nDefaults.FCL_END_COLUMN_COLLAPSE_BUTTON_TOOLTIP);
+				return customTexts.endArrowRightText || FlexibleColumnLayout.i18nBundle.getText(i18nDefaults.FCL_END_COLUMN_COLLAPSE_BUTTON_TOOLTIP);
 			}
-			return customTexts.endArrowLeftText || this.i18nBundle.getText(i18nDefaults.FCL_END_COLUMN_EXPAND_BUTTON_TOOLTIP);
+			return customTexts.endArrowLeftText || FlexibleColumnLayout.i18nBundle.getText(i18nDefaults.FCL_END_COLUMN_EXPAND_BUTTON_TOOLTIP);
 		}
 	}
 	FlexibleColumnLayout.define();

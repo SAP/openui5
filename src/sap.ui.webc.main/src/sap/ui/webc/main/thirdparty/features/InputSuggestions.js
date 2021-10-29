@@ -10,8 +10,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			this.fnOnSuggestionItemFocus = this.onItemFocused.bind(this);
 			this.fnOnSuggestionItemMouseOver = this.onItemMouseOver.bind(this);
 			this.fnOnSuggestionItemMouseOut = this.onItemMouseOut.bind(this);
+			this._getSuggestionPopover();
 			this.selectedItemIndex = null;
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 			this.accInfo = {};
 		}
 		defaultSlotProperties(hightlightValue) {
@@ -80,14 +80,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			return sc.offsetHeight < sc.scrollHeight;
 		}
 		async open() {
-			this.responsivePopover = await this._respPopover();
+			this._getComponent().open = true;
 			this._beforeOpen();
-			if (this._getItems().length) {
-				this.responsivePopover.showAt(this._getComponent());
-			}
+			this.responsivePopover.showAt(this._getComponent());
 		}
 		async close(preventFocusRestore = false) {
-			this.responsivePopover = await this._respPopover();
+			this._getComponent().open = false;
+			this.responsivePopover = await this._getSuggestionPopover();
 			this.responsivePopover.close(false, false, preventFocusRestore);
 		}
 		updateSelectedItemPosition(pos) {
@@ -119,7 +118,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			}
 			this._getComponent().onItemSelected(this._getRealItems()[this.selectedItemIndex], keyboardUsed);
 			item.selected = false;
-			this.close();
+			this._getComponent().open = false;
 		}
 		onItemPreviewed(item) {
 			this._getComponent().onItemPreviewed(item);
@@ -147,11 +146,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 				return;
 			}
 			if (!this.attachedAfterOpened) {
-				this._respPopover.addEventListener("ui5-after-open", this._onOpen.bind(this));
+				this._getSuggestionPopover.addEventListener("ui5-after-open", this._onOpen.bind(this));
 				this.attachedAfterOpened = true;
 			}
 			if (!this.attachedAfterClose) {
-				this._respPopover.addEventListener("ui5-after-close", this._onClose.bind(this));
+				this._getSuggestionPopover.addEventListener("ui5-after-close", this._onClose.bind(this));
 				this.attachedAfterClose = true;
 			}
 		}
@@ -241,7 +240,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 		}
 		async _getScrollContainer() {
 			if (!this._scrollContainer) {
-				await this._respPopover();
+				await this._getSuggestionPopover();
 				this._scrollContainer = this.responsivePopover.shadowRoot.querySelector(".ui5-popup-content");
 			}
 			return this._scrollContainer;
@@ -253,7 +252,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			return this.component;
 		}
 		async _getList() {
-			this.responsivePopover = await this._respPopover();
+			this.responsivePopover = await this._getSuggestionPopover();
 			return this.responsivePopover.querySelector("[ui5-list]");
 		}
 		async _getListWidth() {
@@ -263,7 +262,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 		_getRealItems() {
 			return this._getComponent().getSlottedNodes(this.slotName);
 		}
-		async _respPopover() {
+		async _getSuggestionPopover() {
 			if (this.responsivePopover) {
 				return this.responsivePopover;
 			}
@@ -272,9 +271,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			return this.responsivePopover;
 		}
 		get itemSelectionAnnounce() {
-			const i18nBundle = this.i18nBundle,
-				itemPositionText = i18nBundle.getText(i18nDefaults.LIST_ITEM_POSITION, [this.accInfo.currentPos], [this.accInfo.listSize]),
-				itemSelectionText = i18nBundle.getText(i18nDefaults.LIST_ITEM_SELECTED);
+			const itemPositionText = Suggestions.i18nBundle.getText(i18nDefaults.LIST_ITEM_POSITION, this.accInfo.currentPos, this.accInfo.listSize),
+				itemSelectionText = Suggestions.i18nBundle.getText(i18nDefaults.LIST_ITEM_SELECTED);
 			return `${itemPositionText} ${this.accInfo.itemText} ${itemSelectionText}`;
 		}
 		getRowText(suggestion) {
@@ -316,6 +314,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 				GroupHeaderListItem,
 				Button,
 			];
+		}
+		static async init() {
+			Suggestions.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	Suggestions.SCROLL_STEP = 60;

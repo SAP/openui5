@@ -10,7 +10,6 @@ sap.ui.define(['exports', './thirdparty/merge', './FeaturesRegistry', './generat
 		noConflict: false,
 		formatSettings: {},
 		fetchDefaultLanguage: false,
-		assetsPath: "",
 	};
 	const getAnimationMode = () => {
 		initConfiguration();
@@ -43,10 +42,6 @@ sap.ui.define(['exports', './thirdparty/merge', './FeaturesRegistry', './generat
 	const getFormatSettings = () => {
 		initConfiguration();
 		return initialConfig.formatSettings;
-	};
-	const getAssetsPath = () => {
-		initConfiguration();
-		return initialConfig.assetsPath;
 	};
 	const booleanMapping = new Map();
 	booleanMapping.set("true", true);
@@ -81,12 +76,19 @@ sap.ui.define(['exports', './thirdparty/merge', './FeaturesRegistry', './generat
 			applyURLParam(key, value, "sap-ui");
 		});
 	};
+	const normalizeParamValue = (param, value) => {
+		if (param === "theme" && value.includes("@")) {
+			return value.split("@")[0];
+		}
+		return value;
+	};
 	const applyURLParam = (key, value, paramType) => {
 		const lowerCaseValue = value.toLowerCase();
 		const param = key.split(`${paramType}-`)[1];
 		if (booleanMapping.has(value)) {
 			value = booleanMapping.get(lowerCaseValue);
 		}
+		value = normalizeParamValue(param, value);
 		initialConfig[param] = value;
 	};
 	const applyOpenUI5Configuration = () => {
@@ -108,7 +110,6 @@ sap.ui.define(['exports', './thirdparty/merge', './FeaturesRegistry', './generat
 	};
 
 	exports.getAnimationMode = getAnimationMode;
-	exports.getAssetsPath = getAssetsPath;
 	exports.getCalendarType = getCalendarType;
 	exports.getFetchDefaultLanguage = getFetchDefaultLanguage;
 	exports.getFormatSettings = getFormatSettings;

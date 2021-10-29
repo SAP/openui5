@@ -67,9 +67,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			];
 		}
 		static async onDefine() {
-			await Promise.all([
+			[TimePickerBase.i18nBundle] = await Promise.all([
+				i18nBundle.getI18nBundle("@ui5/webcomponents"),
 				LocaleData.fetchCldr(getLocale__default().getLanguage(), getLocale__default().getRegion(), getLocale__default().getScript()),
-				i18nBundle.fetchI18nBundle("@ui5/webcomponents"),
 			]);
 		}
 		static get staticAreaStyles() {
@@ -77,7 +77,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		constructor() {
 			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		get _placeholder() {
 			return undefined;
@@ -179,7 +178,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (Keys.isShow(e)) {
 				e.preventDefault();
 				this.togglePicker();
-			} else if (Keys.isPageUpShiftCtrl(e)) {
+			}
+			if (this.isOpen()) {
+				return;
+			}
+			if (Keys.isPageUpShiftCtrl(e)) {
 				e.preventDefault();
 				this._modifyValueBy(1, "second");
 			} else if (Keys.isPageUpShift(e)) {
@@ -246,10 +249,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			e.preventDefault();
 		}
 		get submitButtonLabel() {
-			return this.i18nBundle.getText(i18nDefaults.TIMEPICKER_SUBMIT_BUTTON);
+			return TimePickerBase.i18nBundle.getText(i18nDefaults.TIMEPICKER_SUBMIT_BUTTON);
 		}
 		get cancelButtonLabel() {
-			return this.i18nBundle.getText(i18nDefaults.TIMEPICKER_CANCEL_BUTTON);
+			return TimePickerBase.i18nBundle.getText(i18nDefaults.TIMEPICKER_CANCEL_BUTTON);
 		}
 		get openIconName() {
 			return "time-entry-request";

@@ -100,7 +100,7 @@ sap.ui.define([
 				 * <br>
 				 *
 				 *
-				 * <b>Note:<b> For calendars other than Gregorian, the week numbers are not displayed regardless of what is set.
+				 * <b>Note:</b> For calendars other than Gregorian, the week numbers are not displayed regardless of what is set.
 				 */
 				hideWeekNumbers: {
 					type: "boolean",
@@ -116,7 +116,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Determines the мinimum date available for selection.
+				 * Determines the minimum date available for selection.
 				 */
 				minDate: {
 					type: "string",

@@ -1,16 +1,18 @@
-sap.ui.define(['./renderer/executeTemplate', './theming/getConstructableStyle', './theming/getEffectiveStyle', './isLegacyBrowser'], function (executeTemplate, getConstructableStyle, getEffectiveStyle, isLegacyBrowser) { 'use strict';
+sap.ui.define(['./renderer/executeTemplate', './theming/getConstructableStyle', './theming/getEffectiveStyle', './theming/getEffectiveLinksHrefs', './isLegacyBrowser', './CSP'], function (executeTemplate, getConstructableStyle, getEffectiveStyle, getEffectiveLinksHrefs, isLegacyBrowser, CSP) { 'use strict';
 
 	const updateShadowRoot = (element, forStaticArea = false) => {
-		let styleToPrepend;
+		let styleStrOrHrefsArr;
 		const template = forStaticArea ? "staticAreaTemplate" : "template";
 		const shadowRoot = forStaticArea ? element.staticAreaItem.shadowRoot : element.shadowRoot;
 		const renderResult = executeTemplate(element.constructor[template], element);
-		if (document.adoptedStyleSheets) {
+		if (CSP.shouldUseLinks()) {
+			styleStrOrHrefsArr = getEffectiveLinksHrefs(element.constructor, forStaticArea);
+		} else if (document.adoptedStyleSheets) {
 			shadowRoot.adoptedStyleSheets = getConstructableStyle(element.constructor, forStaticArea);
 		} else if (!isLegacyBrowser()) {
-			styleToPrepend = getEffectiveStyle(element.constructor, forStaticArea);
+			styleStrOrHrefsArr = getEffectiveStyle(element.constructor, forStaticArea);
 		}
-		element.constructor.render(renderResult, shadowRoot, styleToPrepend, { host: element });
+		element.constructor.render(renderResult, shadowRoot, styleStrOrHrefsArr, { host: element });
 	};
 
 	return updateShadowRoot;

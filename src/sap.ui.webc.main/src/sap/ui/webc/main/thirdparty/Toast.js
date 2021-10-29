@@ -25,6 +25,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 			hover: {
 				type: Boolean,
 			},
+			domRendered: {
+				type: Boolean,
+			},
 		},
 		slots:  {
 			"default": {
@@ -74,6 +77,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 			};
 		}
 		_initiateOpening() {
+			this.domRendered = true;
 			requestAnimationFrame(_ => {
 				this.open = true;
 			});
@@ -82,6 +86,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 			if (this.hover) {
 				return;
 			}
+			this.domRendered = false;
 			this.open = false;
 		}
 		_onmouseover() {

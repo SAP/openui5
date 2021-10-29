@@ -21,14 +21,14 @@ sap.ui.define([
 	 *
 	 * <h3>Overview</h3>
 	 *
-	 * A component that represents a logical step as part of the <code>sap.ui.webc.fiori.Wizard</code>. It is meant to aggregate arbitrary HTML elements that forms the content of a single step.
+	 * A component that represents a logical step as part of the <code>sap.ui.webc.fiori.Wizard</code>. It is meant to aggregate arbitrary HTML elements that form the content of a single step.
 	 *
 	 * <h3>Structure</h3>
 	 * <ul>
-	 *     <li>Each wizard step has arbitrary content</li>
-	 *     <li>Each wizard step might have texts - defined by the <code>titleText</code> and <code>subtitleText</code> properties</li>
-	 *     <li>Each wizard step might have an icon - defined by the <code>icon</code> property</li>
-	 *     <li>Each wizard step might display a number in place of the <code>icon</code>, when it's missing</li>
+	 *     <li>Each wizard step has arbitrary content.</li>
+	 *     <li>Each wizard step might have texts - defined by the <code>titleText</code> and <code>subtitleText</code> properties.</li>
+	 *     <li>Each wizard step might have an icon - defined by the <code>icon</code> property.</li>
+	 *     <li>Each wizard step might display a number in place of the <code>icon</code>, when it's missing.</li>
 	 * </ul>
 	 *
 	 * <h3>Usage</h3> The <code>sap.ui.webc.fiori.WizardStep</code> component should be used only as slot of the <code>sap.ui.webc.fiori.Wizard</code> component and should not be used standalone.
@@ -98,7 +98,7 @@ sap.ui.define([
 				 * <br>
 				 *
 				 *
-				 * <b>Note:</b> the icon is displayed in the <code>sap.ui.webc.fiori.Wizard</code> navigation header. <br>
+				 * <b>Note:</b> The icon is displayed in the <code>sap.ui.webc.fiori.Wizard</code> navigation header. <br>
 				 * <br>
 				 *
 				 *
@@ -126,8 +126,7 @@ sap.ui.define([
 				 * <br>
 				 *
 				 *
-				 * <b>Note:</b> the text is displayed in the <code>sap.ui.webc.fiori.Wizard</code> navigation header. <br>
-				 * <b>Note:</b> the text will hide on small sizes (about 559 px).
+				 * <b>Note:</b> the text is displayed in the <code>sap.ui.webc.fiori.Wizard</code> navigation header.
 				 */
 				subtitleText: {
 					type: "string",
@@ -139,8 +138,7 @@ sap.ui.define([
 				 * <br>
 				 *
 				 *
-				 * <b>Note:</b> the text is displayed in the <code>sap.ui.webc.fiori.Wizard</code> navigation header. <br>
-				 * <b>Note:</b> the text will hide on small sizes (about 559 px).
+				 * <b>Note:</b> The text is displayed in the <code>sap.ui.webc.fiori.Wizard</code> navigation header.
 				 */
 				titleText: {
 					type: "string",

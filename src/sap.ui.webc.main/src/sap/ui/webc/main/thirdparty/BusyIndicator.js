@@ -39,7 +39,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	class BusyIndicator extends UI5Element__default {
 		constructor() {
 			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 			this._keydownHandler = this._handleKeydown.bind(this);
 			this._preventEventHandler = this._preventEvent.bind(this);
 		}
@@ -75,10 +74,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return [Label];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			BusyIndicator.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		get ariaTitle() {
-			return this.i18nBundle.getText(i18nDefaults.BUSY_INDICATOR_TITLE);
+			return BusyIndicator.i18nBundle.getText(i18nDefaults.BUSY_INDICATOR_TITLE);
 		}
 		get labelId() {
 			return this.text ? `${this._id}-label` : undefined;

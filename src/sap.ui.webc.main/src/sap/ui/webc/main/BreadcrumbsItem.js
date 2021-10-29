@@ -28,8 +28,8 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @since 1.92.0
-	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
+	 * @since 1.95.0
+	 * @experimental Since 1.95.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.main.BreadcrumbsItem
 	 * @implements sap.ui.webc.main.IBreadcrumbsItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel

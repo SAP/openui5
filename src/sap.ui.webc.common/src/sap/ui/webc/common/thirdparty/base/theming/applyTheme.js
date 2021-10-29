@@ -1,6 +1,6 @@
-sap.ui.define(['../asset-registries/Themes', './createThemePropertiesStyleTag', './getThemeDesignerTheme', './ThemeLoaded', '../FeaturesRegistry'], function (Themes, createThemePropertiesStyleTag, getThemeDesignerTheme, ThemeLoaded, FeaturesRegistry) { 'use strict';
+sap.ui.define(['../asset-registries/Themes', '../ManagedStyles', './getThemeDesignerTheme', './ThemeLoaded', '../FeaturesRegistry'], function (Themes, ManagedStyles, getThemeDesignerTheme, ThemeLoaded, FeaturesRegistry) { 'use strict';
 
-	const BASE_THEME_PACKAGE = "@ui5/webcomponents-theme-base";
+	const BASE_THEME_PACKAGE = "@ui5/webcomponents-theming";
 	const isThemeBaseRegistered = () => {
 		const registeredPackages = Themes.getRegisteredPackages();
 		return registeredPackages.has(BASE_THEME_PACKAGE);
@@ -10,13 +10,10 @@ sap.ui.define(['../asset-registries/Themes', './createThemePropertiesStyleTag', 
 			return;
 		}
 		const cssText = await Themes.getThemeProperties(BASE_THEME_PACKAGE, theme);
-		createThemePropertiesStyleTag(cssText, BASE_THEME_PACKAGE);
+		ManagedStyles.createOrUpdateStyle(cssText, "data-ui5-theme-properties", BASE_THEME_PACKAGE);
 	};
 	const deleteThemeBase = () => {
-		const styleElement = document.head.querySelector(`style[data-ui5-theme-properties="${BASE_THEME_PACKAGE}"]`);
-		if (styleElement) {
-			styleElement.parentElement.removeChild(styleElement);
-		}
+		ManagedStyles.removeStyle("data-ui5-theme-properties", BASE_THEME_PACKAGE);
 	};
 	const loadComponentPackages = async theme => {
 		const registeredPackages = Themes.getRegisteredPackages();
@@ -25,7 +22,7 @@ sap.ui.define(['../asset-registries/Themes', './createThemePropertiesStyleTag', 
 				return;
 			}
 			const cssText = await Themes.getThemeProperties(packageName, theme);
-			createThemePropertiesStyleTag(cssText, packageName);
+			ManagedStyles.createOrUpdateStyle(cssText, "data-ui5-theme-properties", packageName);
 		});
 	};
 	const detectExternalTheme = () => {

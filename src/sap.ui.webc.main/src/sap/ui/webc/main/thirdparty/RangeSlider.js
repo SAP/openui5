@@ -36,7 +36,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/co
 			super();
 			this._stateStorage.startValue = null;
 			this._stateStorage.endValue = null;
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		get tooltipStartValue() {
 			const stepPrecision = this.constructor._getDecimalPrecisionOfNumber(this._effectiveStep);
@@ -50,18 +49,18 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/co
 			return this.disabled || undefined;
 		}
 		get _ariaLabelledByText() {
-			return this.i18nBundle.getText(i18nDefaults.RANGE_SLIDER_ARIA_DESCRIPTION);
+			return RangeSlider.i18nBundle.getText(i18nDefaults.RANGE_SLIDER_ARIA_DESCRIPTION);
 		}
 		get _ariaHandlesText() {
 			const isRTL = this.effectiveDir === "rtl";
 			const isReversed = this._areValuesReversed();
 			const ariaHandlesText = {};
 			if ((isRTL && !isReversed) || (!isRTL && isReversed)) {
-				ariaHandlesText.startHandleText = this.i18nBundle.getText(i18nDefaults.RANGE_SLIDER_END_HANDLE_DESCRIPTION);
-				ariaHandlesText.endHandleText = this.i18nBundle.getText(i18nDefaults.RANGE_SLIDER_START_HANDLE_DESCRIPTION);
+				ariaHandlesText.startHandleText = RangeSlider.i18nBundle.getText(i18nDefaults.RANGE_SLIDER_END_HANDLE_DESCRIPTION);
+				ariaHandlesText.endHandleText = RangeSlider.i18nBundle.getText(i18nDefaults.RANGE_SLIDER_START_HANDLE_DESCRIPTION);
 			} else {
-				ariaHandlesText.startHandleText = this.i18nBundle.getText(i18nDefaults.RANGE_SLIDER_START_HANDLE_DESCRIPTION);
-				ariaHandlesText.endHandleText = this.i18nBundle.getText(i18nDefaults.RANGE_SLIDER_END_HANDLE_DESCRIPTION);
+				ariaHandlesText.startHandleText = RangeSlider.i18nBundle.getText(i18nDefaults.RANGE_SLIDER_START_HANDLE_DESCRIPTION);
+				ariaHandlesText.endHandleText = RangeSlider.i18nBundle.getText(i18nDefaults.RANGE_SLIDER_END_HANDLE_DESCRIPTION);
 			}
 			return ariaHandlesText;
 		}
@@ -359,7 +358,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/co
 			};
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			RangeSlider.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	RangeSlider.define();

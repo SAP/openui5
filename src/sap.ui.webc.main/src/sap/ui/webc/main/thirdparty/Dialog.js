@@ -107,12 +107,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 		_show() {
 			super._show();
 			this._center();
-			this._attachResizeHandlers();
 		}
 		onBeforeRendering() {
 			this._isRTL = this.effectiveDir === "rtl";
 			this.onPhone = Device.isPhone();
 			this.onDesktop = Device.isDesktop();
+			this._detachResizeHandlers();
+		}
+		onAfterRendering() {
+			this._attachResizeHandlers();
 		}
 		onExitDOM() {
 			super.onExitDOM();
@@ -121,10 +124,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 		_attachResizeHandlers() {
 			ResizeHandler__default.register(this, this._screenResizeHandler);
 			ResizeHandler__default.register(document.body, this._screenResizeHandler);
+			this._resizeHandlersAttached = true;
 		}
 		_detachResizeHandlers() {
-			ResizeHandler__default.deregister(this, this._screenResizeHandler);
-			ResizeHandler__default.deregister(document.body, this._screenResizeHandler);
+			if (this._resizeHandlersAttached) {
+				ResizeHandler__default.deregister(this, this._screenResizeHandler);
+				ResizeHandler__default.deregister(document.body, this._screenResizeHandler);
+				this._resizeHandlersAttached = false;
+			}
 		}
 		_center() {
 			const height = window.innerHeight - this.offsetHeight,
@@ -239,7 +246,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 				style = window.getComputedStyle(this),
 				minWidth = Number.parseFloat(style.minWidth),
 				minHeight = Number.parseFloat(style.minHeight),
-				maxWidth = 	window.innerWidth - left,
+				maxWidth = window.innerWidth - left,
 				maxHeight = window.innerHeight - top;
 			let width = Number.parseFloat(style.width),
 				height = Number.parseFloat(style.height);

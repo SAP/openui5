@@ -1,13 +1,14 @@
 sap.ui.define(function () { 'use strict';
 
 	const getThemeMetadata = () => {
-		let el = document.querySelector(".sapThemeMetaData-Base-baseLib");
+		let el = document.querySelector(".sapThemeMetaData-Base-baseLib") || document.querySelector(".sapThemeMetaData-UI5-sap-ui-core");
 		if (el) {
 			return getComputedStyle(el).backgroundImage;
 		}
 		el = document.createElement("span");
 		el.style.display = "none";
 		el.classList.add("sapThemeMetaData-Base-baseLib");
+		el.classList.add("sapThemeMetaData-UI5-sap-ui-core");
 		document.body.appendChild(el);
 		const metadata = getComputedStyle(el).backgroundImage;
 		document.body.removeChild(el);

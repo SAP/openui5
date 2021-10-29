@@ -22,11 +22,11 @@ sap.ui.define([
 	 * @extends sap.ui.webc.common.WebComponent
 	 * @class
 	 *
-	 * <h3>Overview</h3> The <code>sap.ui.webc.main.TimePicker</code> component provides an input field with assigned sliders which opens on user action. The <code>sap.ui.webc.main.TimePicker</code> allows users to select a localized time using touch, mouse, or keyboard input. It consists of two parts: the time input field and the sliders.
+	 * <h3>Overview</h3> The <code>sap.ui.webc.main.TimePicker</code> component provides an input field with assigned sliders which are opened on user action. The <code>sap.ui.webc.main.TimePicker</code> allows users to select a localized time using touch, mouse, or keyboard input. It consists of two parts: the time input field and the sliders.
 	 *
 	 * <h3>Usage</h3> The user can enter a time by:
 	 * <ul>
-	 *     <li>Using the sliders that opens in a popup</li>
+	 *     <li>Using the sliders that are displayed in a popup</li>
 	 *     <li>Typing it in directly in the input field</li>
 	 * </ul> <br>
 	 * <br>

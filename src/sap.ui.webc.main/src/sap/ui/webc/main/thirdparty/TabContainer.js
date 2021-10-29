@@ -120,7 +120,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._itemNavigation = new ItemNavigation__default(this, {
 				getItemsCallback: () => this._getTabs(),
 			});
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		onBeforeRendering() {
 			this.items.filter(item => !item.isSeparator).forEach((item, index, arr) => {
@@ -322,6 +321,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				root: {
 					"ui5-tc-root": true,
 					"ui5-tc--textOnly": this.textOnly,
+					"ui5-tc--withAdditonalText": this.withAdditonalText,
+					"ui5-tc--standardTabLayout": this.standardTabLayout,
 				},
 				header: {
 					"ui5-tc__header": true,
@@ -361,14 +362,20 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get textOnly() {
 			return this.items.every(item => !item.icon);
 		}
+		get withAdditonalText() {
+			return this.items.some(item => !!item.additionalText);
+		}
+		get standardTabLayout() {
+			return this.tabLayout === TabLayout.Standard;
+		}
 		get previousIconACCName() {
-			return this.i18nBundle.getText(i18nDefaults.TABCONTAINER_PREVIOUS_ICON_ACC_NAME);
+			return TabContainer.i18nBundle.getText(i18nDefaults.TABCONTAINER_PREVIOUS_ICON_ACC_NAME);
 		}
 		get nextIconACCName() {
-			return this.i18nBundle.getText(i18nDefaults.TABCONTAINER_NEXT_ICON_ACC_NAME);
+			return TabContainer.i18nBundle.getText(i18nDefaults.TABCONTAINER_NEXT_ICON_ACC_NAME);
 		}
 		get overflowMenuTitle() {
-			return this.i18nBundle.getText(i18nDefaults.TABCONTAINER_OVERFLOW_MENU_TITLE);
+			return TabContainer.i18nBundle.getText(i18nDefaults.TABCONTAINER_OVERFLOW_MENU_TITLE);
 		}
 		get tabsAtTheBottom() {
 			return this.tabsPlacement === TabContainerTabsPlacement.Bottom;
@@ -388,7 +395,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			TabContainer.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	const isTabLi = el => el.localName === "li" && el.getAttribute("role") === "tab";

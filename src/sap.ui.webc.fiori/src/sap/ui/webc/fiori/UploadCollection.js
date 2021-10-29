@@ -41,6 +41,14 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Sets the accessible aria name of the component.
+				 */
+				accessibleName: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
 				 * Defines the height of the control
 				 */
 				height: {
@@ -106,7 +114,9 @@ sap.ui.define([
 			aggregations: {
 
 				/**
-				 * Defines the <code>sap.ui.webc.fiori.UploadCollection</code> header.
+				 * Defines the <code>sap.ui.webc.fiori.UploadCollection</code> header. <br>
+				 * <br>
+				 * <b>Note:</b> If <code>header</code> slot is provided, the labelling of the <code>UploadCollection</code> is a responsibility of the application developer. <code>accessibleName</code> should be used.
 				 */
 				header: {
 					type: "sap.ui.core.Control",

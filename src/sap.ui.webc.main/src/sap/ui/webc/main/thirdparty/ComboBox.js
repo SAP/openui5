@@ -47,6 +47,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			focused: {
 				type: Boolean,
 			},
+			_isValueStateFocused: {
+				type: Boolean,
+			},
 			accessibleName: {
 				type: String,
 				defaultValue: undefined,
@@ -117,7 +120,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._initialRendering = true;
 			this._itemFocused = false;
 			this._selectionChanged = false;
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		onBeforeRendering() {
 			if (this._initialRendering) {
@@ -127,13 +129,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.popover.close();
 			}
 			this._selectMatchingItem();
-			if (this._isKeyNavigation && this.responsivePopover && this.responsivePopover.opened) {
-				this.focused = false;
-			} else if (this.shadowRoot.activeElement) {
-				this.focused = this.shadowRoot.activeElement.id === "ui5-combobox-input";
-			}
 			this._initialRendering = false;
-			this._isKeyNavigation = false;
 		}
 		async onAfterRendering() {
 			await this._respPopover();
@@ -142,23 +138,38 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			if (this.shouldClosePopover() && !Device.isPhone()) {
 				this.responsivePopover.close(false, false, true);
+				this._clearFocus();
+				this._itemFocused = false;
 			}
-			this._itemFocused = false;
 			this.toggleValueStatePopover(this.shouldOpenValueStateMessagePopover);
 			this.storeResponsivePopoverWidth();
+			if (Device.isSafari() && this._autocomplete && this.filterValue !== this.value) {
+				this.inner.setSelectionRange(
+					(this._isKeyNavigation ? 0 : this.filterValue.length),
+					this.value.length,
+				);
+			}
 		}
 		shouldClosePopover() {
-			return this.responsivePopover.opened && !this.focused && !this._itemFocused;
+			return this.responsivePopover.opened && !this.focused && !this._itemFocused && !this._isValueStateFocused;
 		}
 		_focusin(event) {
 			this.focused = true;
 			this._lastValue = this.value;
+			this._autocomplete = false;
 			!Device.isPhone() && event.target.setSelectionRange(0, this.value.length);
 		}
-		_focusout() {
-			this.focused = false;
+		_focusout(event) {
+			const focusedOutToValueStateMessage = event.relatedTarget && event.relatedTarget.shadowRoot && event.relatedTarget.shadowRoot.querySelector(".ui5-valuestatemessage-root");
 			this._fireChangeEvent();
-			!Device.isPhone() && this._closeRespPopover();
+			if (focusedOutToValueStateMessage) {
+				event.stopImmediatePropagation();
+				return;
+			}
+			if (!this.shadowRoot.contains(event.relatedTarget)) {
+				this.focused = false;
+				!Device.isPhone() && this._closeRespPopover(event);
+			}
 		}
 		_afterOpenPopover() {
 			this._iconPressed = true;
@@ -218,26 +229,28 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const { value } = event.target;
 			if (event.target === this.inner) {
 				event.stopImmediatePropagation();
+				this.focused = true;
+				this._isValueStateFocused = false;
 			}
 			this._filteredItems = this._filterItems(value);
 			this.value = value;
 			this.filterValue = value;
 			this._clearFocus();
-			if (this._autocomplete && value !== "") {
-				const item = this._autoCompleteValue(value);
-				if (!this._selectionChanged && (item && !item.selected && !item.isGroupItem)) {
+			if (this._autocomplete) {
+				const item = this._getFirstMatchingItem(value);
+				this._applyAtomicValueAndSelection(item, value, true);
+				if (value !== "" && !this._selectionChanged && (item && !item.selected && !item.isGroupItem)) {
 					this.fireEvent("selection-change", {
 						item,
 					});
 					this._selectionChanged = false;
-					item.focused = true;
 				}
 			}
 			this.fireEvent("input");
 			if (Device.isPhone()) {
 				return;
 			}
-			if (!this._filteredItems.length) {
+			if (!this._filteredItems.length || value === "") {
 				this._closeRespPopover();
 			} else {
 				this._openRespPopover();
@@ -256,32 +269,52 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (this.readonly || !this._filteredItems.length) {
 				return;
 			}
+			const isOpen = this.open;
 			const isArrowDown = Keys.isDown(event);
 			const isArrowUp = Keys.isUp(event);
 			const currentItem = this._filteredItems.find(item => {
-				return this.responsivePopover.opened ? item.focused : item.selected;
+				return isOpen ? item.focused : item.selected;
 			});
-			let indexOfItem = this._filteredItems.indexOf(currentItem);
+			const indexOfItem = this._filteredItems.indexOf(currentItem);
 			event.preventDefault();
-			if ((indexOfItem === 0 && isArrowUp) || (this._filteredItems.length - 1 === indexOfItem && isArrowDown)) {
+			if ((this.focused === true && isArrowUp && isOpen) || (this._filteredItems.length - 1 === indexOfItem && isArrowDown)) {
+				return;
+			}
+			this._isKeyNavigation = true;
+			if (isArrowDown) {
+				this._handleArrowDown(event, indexOfItem);
+			}
+			if (isArrowUp) {
+				this._handleArrowUp(event, indexOfItem);
+			}
+		}
+		_handleItemNavigation(event, indexOfItem, isForward) {
+			const isOpen = this.open;
+			const currentItem = this._filteredItems[indexOfItem];
+			const nextItem = isForward ? this._filteredItems[indexOfItem + 1] : this._filteredItems[indexOfItem - 1];
+			const isGroupItem = currentItem && currentItem.isGroupItem;
+			if ((!isOpen) && ((isGroupItem && !nextItem) || (!isGroupItem && !currentItem))) {
 				return;
 			}
 			this._clearFocus();
-			indexOfItem += isArrowDown ? 1 : -1;
-			indexOfItem = indexOfItem < 0 ? 0 : indexOfItem;
-			this._filteredItems[indexOfItem].focused = true;
-			if (this.responsivePopover.opened) {
-				this.announceSelectedItem(indexOfItem);
+			if (isOpen) {
+				this._itemFocused = true;
+				this.value = isGroupItem ? this.filterValue : currentItem.text;
+				this.focused = false;
+				currentItem.focused = true;
+			} else {
+				this.focused = true;
+				this.value = isGroupItem ? nextItem.text : currentItem.text;
+				currentItem.focused = false;
 			}
-			this.value = this._filteredItems[indexOfItem].isGroupItem ? this.filterValue : this._filteredItems[indexOfItem].text;
-			this._isKeyNavigation = true;
-			this._itemFocused = true;
+			this._isValueStateFocused = false;
 			this._selectionChanged = true;
-			if (this._filteredItems[indexOfItem].isGroupItem) {
+			if (isGroupItem && isOpen) {
 				return;
 			}
-			this._filteredItems[indexOfItem].selected = true;
-			const item = this._autoCompleteValue(this.value);
+			this._announceSelectedItem(indexOfItem);
+			const item = this._getFirstMatchingItem(this.value);
+			this._applyAtomicValueAndSelection(item, "", true);
 			if ((item && !item.selected)) {
 				this.fireEvent("selection-change", {
 					item,
@@ -290,20 +323,70 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.fireEvent("input");
 			this._fireChangeEvent();
 		}
+		_handleArrowDown(event, indexOfItem) {
+			const isOpen = this.open;
+			if (this.focused && indexOfItem === -1 && this.hasValueStateText && isOpen) {
+				this._isValueStateFocused = true;
+				this.focused = false;
+				return;
+			}
+			indexOfItem = !isOpen && this.hasValueState && indexOfItem === -1 ? 0 : indexOfItem;
+			this._handleItemNavigation(event, ++indexOfItem, true );
+		}
+		_handleArrowUp(event, indexOfItem) {
+			const isOpen = this.open;
+			if (indexOfItem === 0 && !this.hasValueStateText) {
+				this._clearFocus();
+				this.focused = true;
+				this._itemFocused = false;
+				return;
+			}
+			if (indexOfItem === 0 && this.hasValueStateText && isOpen) {
+				this._clearFocus();
+				this._itemFocused = false;
+				this._isValueStateFocused = true;
+				this._filteredItems[0].selected = false;
+				return;
+			}
+			if (this._isValueStateFocused) {
+				this.focused = true;
+				this._isValueStateFocused = false;
+				return;
+			}
+			indexOfItem = !isOpen && this.hasValueState && indexOfItem === -1 ? 0 : indexOfItem;
+			this._handleItemNavigation(event, --indexOfItem, false );
+		}
 		_keydown(event) {
 			const isArrowKey = Keys.isDown(event) || Keys.isUp(event);
 			this._autocomplete = !(Keys.isBackSpace(event) || Keys.isDelete(event));
+			this._isKeyNavigation = false;
 			if (isArrowKey) {
 				this.handleArrowKeyPress(event);
 			}
 			if (Keys.isEnter(event)) {
 				this._fireChangeEvent();
 				this._closeRespPopover();
+				this.focused = true;
+			}
+			if (Keys.isEscape(event)) {
+				this.focused = true;
+				this.value = !this.open ? this._lastValue : this.value;
+				this._isValueStateFocused = false;
 			}
 			if (Keys.isShow(event) && !this.readonly && !this.disabled) {
 				event.preventDefault();
 				this._resetFilter();
 				this._toggleRespPopover();
+				const selectedItem = this._filteredItems.find(item => {
+					return item.selected;
+				});
+				if (selectedItem && this.open) {
+					this._itemFocused = true;
+					selectedItem.focused = true;
+					this.focused = false;
+				} else {
+					this.focused = true;
+				}
 			}
 		}
 		_click(event) {
@@ -316,6 +399,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.value = this._selectedItemText;
 				this.filterValue = this._selectedItemText;
 			}
+			this._isValueStateFocused = false;
+			this._clearFocus();
 			this.responsivePopover.close();
 		}
 		_openRespPopover() {
@@ -336,7 +421,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				return groupHasFilteredItems;
 			}
 		}
-		_autoCompleteValue(current) {
+		_getFirstMatchingItem(current) {
 			const currentlyFocusedItem = this.items.find(item => item.focused === true);
 			if (currentlyFocusedItem && currentlyFocusedItem.isGroupItem) {
 				this.value = this.filterValue;
@@ -344,22 +429,19 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			const matchingItems = this._startsWithMatchingItems(current).filter(item => !item.isGroupItem);
 			if (matchingItems.length) {
-				this.value = matchingItems[0] ? matchingItems[0].text : current;
-			} else {
-				this.value = current;
-			}
-			if (this._isKeyNavigation) {
-				setTimeout(() => {
-					this.inner.setSelectionRange(this.filterValue.length, this.value.length);
-				}, 0);
-			} else if (matchingItems.length) {
-				setTimeout(() => {
-					this.inner.setSelectionRange(this.filterValue.length, this.value.length);
-				}, 0);
-			}
-			if (matchingItems.length) {
 				return matchingItems[0];
 			}
+		}
+		_applyAtomicValueAndSelection(item, filterValue, highlightValue) {
+			if (!item) {
+				return;
+			}
+			const value = (item && item.text) || "";
+			this.inner.value = value;
+			if (highlightValue) {
+				this.inner.setSelectionRange(filterValue.length, value.length);
+			}
+			this.value = value;
 		}
 		_selectMatchingItem() {
 			const currentlyFocusedItem = this.items.find(item => item.focused);
@@ -408,16 +490,16 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_onItemFocus(event) {
 			this._itemFocused = true;
 		}
-		announceSelectedItem(indexOfItem) {
-			const itemPositionText = this.i18nBundle.getText(i18nDefaults.LIST_ITEM_POSITION, [indexOfItem + 1], [this._filteredItems.length]);
-			const itemSelectionText = this.i18nBundle.getText(i18nDefaults.LIST_ITEM_SELECTED);
+		_announceSelectedItem(indexOfItem) {
+			const itemPositionText = ComboBox.i18nBundle.getText(i18nDefaults.LIST_ITEM_POSITION, indexOfItem + 1, this._filteredItems.length);
+			const itemSelectionText = ComboBox.i18nBundle.getText(i18nDefaults.LIST_ITEM_SELECTED);
 			announce__default(`${itemPositionText} ${itemSelectionText}`, "Polite");
 		}
 		get _headerTitleText() {
-			return this.i18nBundle.getText(i18nDefaults.INPUT_SUGGESTIONS_TITLE);
+			return ComboBox.i18nBundle.getText(i18nDefaults.INPUT_SUGGESTIONS_TITLE);
 		}
 		get _iconAccessibleNameText() {
-			return this.i18nBundle.getText(i18nDefaults.SELECT_OPTIONS);
+			return ComboBox.i18nBundle.getText(i18nDefaults.SELECT_OPTIONS);
 		}
 		get inner() {
 			return Device.isPhone() ? this.responsivePopover.querySelector(".ui5-input-inner-phone") : this.shadowRoot.querySelector("[inner-input]");
@@ -447,10 +529,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get valueStateTextMappings() {
 			return {
-				"Success": this.i18nBundle.getText(i18nDefaults.VALUE_STATE_SUCCESS),
-				"Error": this.i18nBundle.getText(i18nDefaults.VALUE_STATE_ERROR),
-				"Warning": this.i18nBundle.getText(i18nDefaults.VALUE_STATE_WARNING),
-				"Information": this.i18nBundle.getText(i18nDefaults.VALUE_STATE_INFORMATION),
+				"Success": ComboBox.i18nBundle.getText(i18nDefaults.VALUE_STATE_SUCCESS),
+				"Error": ComboBox.i18nBundle.getText(i18nDefaults.VALUE_STATE_ERROR),
+				"Warning": ComboBox.i18nBundle.getText(i18nDefaults.VALUE_STATE_WARNING),
+				"Information": ComboBox.i18nBundle.getText(i18nDefaults.VALUE_STATE_INFORMATION),
 			};
 		}
 		get shouldOpenValueStateMessagePopover() {
@@ -485,6 +567,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				ComboBoxGroupItem,
 			];
 		}
+		static async onDefine() {
+			ComboBox.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
+		}
 		get styles() {
 			return {
 				popoverHeader: {
@@ -493,13 +578,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				suggestionPopoverHeader: {
 					"display": this._listWidth === 0 ? "none" : "inline-block",
 					"width": `${this._listWidth}px`,
-					"padding": "0.9125rem 1rem",
 				},
 			};
 		}
 		get classes() {
 			return {
 				popoverValueState: {
+					"ui5-valuestatemessage-header": true,
 					"ui5-valuestatemessage-root": true,
 					"ui5-valuestatemessage--success": this.valueState === ValueState__default.Success,
 					"ui5-valuestatemessage--error": this.valueState === ValueState__default.Error,

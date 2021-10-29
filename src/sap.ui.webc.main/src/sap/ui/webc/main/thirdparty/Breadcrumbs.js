@@ -64,7 +64,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sa
 		}
 		constructor() {
 			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
 			this._initItemNavigation();
 			this._onResizeHandler = this._updateOverflow.bind(this);
 			this._breadcrumbItemWidths = new WeakMap();
@@ -305,13 +304,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sa
 			return !!this.responsivePopover && this.responsivePopover.opened;
 		}
 		get _accessibleNameText() {
-			return this.i18nBundle.getText(i18nDefaults.BREADCRUMBS_ARIA_LABEL);
+			return Breadcrumbs.i18nBundle.getText(i18nDefaults.BREADCRUMBS_ARIA_LABEL);
 		}
 		get _dropdownArrowAccessibleNameText() {
-			return this.i18nBundle.getText(i18nDefaults.BREADCRUMBS_OVERFLOW_ARIA_LABEL);
+			return Breadcrumbs.i18nBundle.getText(i18nDefaults.BREADCRUMBS_OVERFLOW_ARIA_LABEL);
 		}
 		get _cancelButtonText() {
-			return this.i18nBundle.getText(i18nDefaults.BREADCRUMBS_CANCEL_BUTTON);
+			return Breadcrumbs.i18nBundle.getText(i18nDefaults.BREADCRUMBS_CANCEL_BUTTON);
 		}
 		static get dependencies() {
 			return [
@@ -323,6 +322,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sa
 				StandardListItem,
 				Icon,
 			];
+		}
+		static async onDefine() {
+			Breadcrumbs.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 	}
 	Breadcrumbs.define();

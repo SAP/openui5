@@ -74,8 +74,12 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 	const isDesktop = () => {
 		return (!isTablet() && !isPhone()) || isWindows8OrAbove();
 	};
+	const isCombi = () => {
+		return isTablet() && isDesktop();
+	};
 
 	exports.isChrome = isChrome;
+	exports.isCombi = isCombi;
 	exports.isDesktop = isDesktop;
 	exports.isIE = isIE;
 	exports.isPhone = isPhone;

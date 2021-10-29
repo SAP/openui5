@@ -6,6 +6,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 	var litRender__default = /*#__PURE__*/_interopDefaultLegacy(litRender);
 	var ValueState__default = /*#__PURE__*/_interopDefaultLegacy(ValueState);
 
+	let isGlobalHandlerAttached = false;
+	let activeRadio = null;
 	const metadata = {
 		tag: "ui5-radio-button",
 		altTag: "ui5-radiobutton",
@@ -37,10 +39,16 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 				type: WrappingType,
 				defaultValue: WrappingType.None,
 			},
+			accessibleName: {
+				type: String,
+			},
 			_tabIndex: {
 				type: String,
 				defaultValue: "-1",
 				noAttribute: true,
+			},
+			 active: {
+				type: Boolean,
 			},
 		},
 		slots:  {
@@ -55,7 +63,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 	class RadioButton extends UI5Element__default {
 		constructor() {
 			super();
-			this.i18nBundle = i18nBundle.getI18nBundle("@ui5/webcomponents");
+			this._deactivate = () => {
+				if (activeRadio) {
+					activeRadio.active = false;
+				}
+			};
+			if (!isGlobalHandlerAttached) {
+				document.addEventListener("mouseup", this._deactivate);
+				isGlobalHandlerAttached = true;
+			}
 		}
 		static get metadata() {
 			return metadata;
@@ -73,7 +89,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			return [Label];
 		}
 		static async onDefine() {
-			await i18nBundle.fetchI18nBundle("@ui5/webcomponents");
+			RadioButton.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		onBeforeRendering() {
 			this.syncGroup();
@@ -132,9 +148,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 		}
 		_onkeydown(event) {
 			if (Keys.isSpace(event)) {
+				this.active = true;
 				return event.preventDefault();
 			}
 			if (Keys.isEnter(event)) {
+				this.active = true;
 				return this.toggle();
 			}
 			if (Keys.isDown(event) || Keys.isRight(event)) {
@@ -148,6 +166,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			if (Keys.isSpace(event)) {
 				this.toggle();
 			}
+			this.active = false;
+		}
+		_onmousedown() {
+			this.active = true;
+			activeRadio = this;
+		}
+		_onmouseup() {
+			this.active = false;
+		}
+		_onfocusout() {
+			this.active = false;
 		}
 		toggle() {
 			if (!this.canToggle()) {
@@ -165,10 +194,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			return !(this.disabled || this.readonly || this.checked);
 		}
 		valueStateTextMappings() {
-			const i18nBundle = this.i18nBundle;
 			return {
-				"Error": i18nBundle.getText(i18nDefaults.VALUE_STATE_ERROR),
-				"Warning": i18nBundle.getText(i18nDefaults.VALUE_STATE_WARNING),
+				"Error": RadioButton.i18nBundle.getText(i18nDefaults.VALUE_STATE_ERROR),
+				"Warning": RadioButton.i18nBundle.getText(i18nDefaults.VALUE_STATE_WARNING),
 			};
 		}
 		get classes() {
@@ -185,8 +213,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 		get ariaDisabled() {
 			return this.disabled ? "true" : undefined;
 		}
-		get ariaLabelledBy() {
-			return this.text ? `${this._id}-label` : undefined;
+		get ariaLabelText() {
+			return [this.text, this.accessibleName].filter(Boolean).join(" ");
 		}
 		get ariaDescribedBy() {
 			return this.hasValueState ? `${this._id}-descr` : undefined;

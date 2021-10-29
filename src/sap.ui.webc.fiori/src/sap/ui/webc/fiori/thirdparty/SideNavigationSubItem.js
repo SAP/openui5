@@ -16,6 +16,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element'], function (UI5El
 			icon: {
 				type: String,
 			},
+			title: {
+				type: String,
+			},
 		},
 		events:  {
 		},
@@ -23,6 +26,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element'], function (UI5El
 	class SideNavigationSubItem extends UI5Element__default {
 		static get metadata() {
 			return metadata;
+		}
+		get _tooltip() {
+			return this.title || this.text;
 		}
 	}
 	SideNavigationSubItem.define();

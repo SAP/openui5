@@ -20,12 +20,26 @@ sap.ui.define([
 				value: "Control value",
 				valueState: "Warning",
 				valueStateMessage: "Value State Message",
-				icon: new Icon({
-					name: "add",
-					click: function(oEvent) {
-						// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
-					}
-				}),
+				icon: [
+					new Icon({
+						name: "add",
+						click: function(oEvent) {
+							// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+						}
+					}),
+					new Icon({
+						name: "add",
+						click: function(oEvent) {
+							// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+						}
+					}),
+					new Icon({
+						name: "add",
+						click: function(oEvent) {
+							// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+						}
+					})
+				],
 				suggestionItems: [
 					new SuggestionGroupItem({
 						text: "Some text..."
@@ -50,9 +64,6 @@ sap.ui.define([
 				},
 				suggestionItemSelect: function(oEvent) {
 					// console.log("Event suggestionItemSelect fired for Input with parameters: ", oEvent.getParameters());
-				},
-				suggestionScroll: function(oEvent) {
-					// console.log("Event suggestionScroll fired for Input with parameters: ", oEvent.getParameters());
 				}
 			});
 			this.oInput.placeAt("uiArea");

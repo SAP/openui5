@@ -59,7 +59,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 			return this.placeholder !== undefined ? this.placeholder : `${this._displayFormat} ${this._effectiveDelimiter} ${this._displayFormat}`;
 		}
 		get dateAriaDescription() {
-			return this.i18nBundle.getText(i18nDefaults.DATERANGE_DESCRIPTION);
+			return DateRangePicker.i18nBundle.getText(i18nDefaults.DATERANGE_DESCRIPTION);
 		}
 		async _onInputSubmit(event) {
 			const input = this._getInput();
