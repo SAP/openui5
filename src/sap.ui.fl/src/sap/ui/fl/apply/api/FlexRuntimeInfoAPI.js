@@ -3,13 +3,23 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/ControlPersonalizationAPI",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/apply/_internal/ChangesController"
+	"sap/base/util/includes",
+	"sap/base/Log",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils"
 ], function(
-	OldControlPersonalizationAPI,
-	Utils,
-	ChangesController
+	includes,
+	Log,
+	JsControlTreeModifier,
+	VariantUtils,
+	ChangesController,
+	FlexControllerFactory,
+	Layer,
+	Utils
 ) {
 	"use strict";
 
@@ -23,7 +33,6 @@ sap.ui.define([
 	 * @ui5-restricted UI5 controls, OVP, tests
 	 */
 	var FlexRuntimeInfoAPI = /** @lends sap.ui.fl.apply.api.FlexRuntimeInfoAPI */{
-
 		/**
 		 * Checks if personalization changes exist for controls.
 		 *
@@ -37,7 +46,47 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		isPersonalized: function(mPropertyBag) {
-			return OldControlPersonalizationAPI.isPersonalized(mPropertyBag.selectors, mPropertyBag.changeTypes);
+			function logAndReject(sMessage) {
+				Log.error(sMessage);
+				return Promise.reject(sMessage);
+			}
+
+			function ifValidFileType(oChange) {
+				return oChange.getFileType() === "change";
+			}
+
+			function filterBySelectors(oAppComponent, aControls, oChange) {
+				var aIdsOfPassedControls = aControls.map(function (oControl) {
+					return oControl.id || oControl.getId();
+				});
+				var oSelector = oChange.getSelector();
+				var sControlId = JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent);
+				return includes(aIdsOfPassedControls, sControlId);
+			}
+
+			function filterByChangeType(aChangeTypes, oChange) {
+				return (Array.isArray(aChangeTypes) && aChangeTypes.length > 0)
+					? includes(aChangeTypes, oChange.getChangeType())
+					: true;
+			}
+
+			if (!mPropertyBag.selectors || mPropertyBag.selectors.length === 0) {
+				return logAndReject("At least one control ID has to be provided as a parameter");
+			}
+
+			var oAppComponent = mPropertyBag.selectors[0].appComponent || Utils.getAppComponentForControl(mPropertyBag.selectors[0]);
+			if (!oAppComponent) {
+				return logAndReject("App Component could not be determined");
+			}
+
+			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
+			return oFlexController.getComponentChanges({currentLayer: Layer.USER, includeCtrlVariants: true})
+			.then(function (aChanges) {
+				return aChanges
+					.filter(filterBySelectors.bind(this, oAppComponent, mPropertyBag.selectors))
+					.filter(filterByChangeType.bind(this, mPropertyBag.changeTypes))
+					.some(ifValidFileType);
+			}.bind(this));
 		},
 
 		/**
@@ -103,7 +152,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		hasVariantManagement: function(mPropertyBag) {
-			return OldControlPersonalizationAPI.hasVariantManagement(mPropertyBag.element);
+			return VariantUtils.belongsToVariantManagement(mPropertyBag.element);
 		}
 	};
 

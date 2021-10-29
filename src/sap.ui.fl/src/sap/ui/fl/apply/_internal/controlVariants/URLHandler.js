@@ -345,7 +345,7 @@ sap.ui.define([
 	 * @returns {object} Object with two properties: the index of the URL parameter as 'index' and an array of variant URL parameters after the removal as 'parameters'
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.fl.variants.VariantModel, sap.ui.fl.ControlPersonalizationAPI
+	 * @ui5-restricted sap.ui.fl
 	 */
 	 URLHandler.removeURLParameterForVariantManagement = function(mPropertyBag) {
 		var mVariantParametersInURL = getVariantIndexInURL(mPropertyBag);

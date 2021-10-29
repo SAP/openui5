@@ -3,16 +3,24 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/ControlPersonalizationAPI",
+	"sap/base/Log",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/Element",
+	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils"
 ], function(
-	OldControlPersonalizationAPI,
+	Log,
+	JsControlTreeModifier,
+	Element,
+	VariantUtils,
+	ChangeHandlerStorage,
+	Settings,
 	FlexControllerFactory,
 	Layer,
-	Settings,
 	Utils
 ) {
 	"use strict";
@@ -26,6 +34,45 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted UI5 controls that allow personalization
 	 */
+
+	 function checkChangeSpecificData(oChange, sLayer) {
+		if (!oChange.changeSpecificData) {
+			return Promise.reject(new Error("No changeSpecificData available"));
+		}
+		if (!oChange.changeSpecificData.changeType) {
+			return Promise.reject(new Error("No valid changeType"));
+		}
+
+		if (!(oChange.selectorControl instanceof Element)) {
+			return Promise.reject(new Error("No valid selectorControl"));
+		}
+
+		var sControlType = oChange.selectorControl.getMetadata().getName();
+		return ChangeHandlerStorage.getChangeHandler(
+			oChange.changeSpecificData.changeType,
+			sControlType,
+			oChange.selectorControl,
+			JsControlTreeModifier,
+			sLayer
+		);
+	}
+
+	function getRelevantVariantManagementReference(oAppComponent, oControl, bUseStaticArea) {
+		var sVMControlId = VariantUtils.getRelevantVariantManagementControlId(oControl, [], bUseStaticArea);
+		return JsControlTreeModifier.getSelector(sVMControlId, oAppComponent).id;
+	}
+
+	function getAllVariantManagementReferences(oAppComponent) {
+		var aVMControlIds = VariantUtils.getAllVariantManagementControlIds(oAppComponent);
+		return aVMControlIds.map(function(sVMControlId) {
+			return JsControlTreeModifier.getSelector(sVMControlId, oAppComponent).id;
+		});
+	}
+
+	function logAndreject(sMessage) {
+		Log.error(sMessage);
+		return Promise.reject(sMessage);
+	}
 
 	/**
 	 * Object containing attributes of a change, along with the control to which this change should be applied.
@@ -41,7 +88,6 @@ sap.ui.define([
 	 */
 
 	var ControlPersonalizationWriteAPI = /** @lends sap.ui.fl.write.api.ControlPersonalizationWriteAPI */{
-
 		/**
 		 * Creates personalization changes, adds them to the flex persistence (not yet saved) and applies them to the control.
 		 *
@@ -55,12 +101,46 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		add: function(mPropertyBag) {
-			mPropertyBag.changes.forEach(function(oPersonalizationChange) {
-				oPersonalizationChange.selectorControl = oPersonalizationChange.selectorElement;
+			if (!mPropertyBag.changes.length) {
+				return Promise.resolve([]);
+			}
+			var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.changes[0].selectorElement || mPropertyBag.changes[0].selectorControl);
+			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
+			var oVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
+			var sLayer = Layer.USER;
+			var aSuccessfulChanges = [];
+
+			return mPropertyBag.changes.reduce(function(oPromise, oPersonalizationChange) {
+				return oPromise.then(function() {
+					oPersonalizationChange.selectorControl = oPersonalizationChange.selectorElement;
+					return checkChangeSpecificData(oPersonalizationChange, sLayer);
+				}).then(function() {
+					if (!mPropertyBag.ignoreVariantManagement) {
+						// check for preset variantReference
+						if (!oPersonalizationChange.changeSpecificData.variantReference) {
+							var sVariantManagementReference = getRelevantVariantManagementReference(oAppComponent, oPersonalizationChange.selectorControl, mPropertyBag.useStaticArea);
+							if (sVariantManagementReference) {
+								var sCurrentVariantReference = oVariantModel.oData[sVariantManagementReference].currentVariant;
+								oPersonalizationChange.changeSpecificData.variantReference = sCurrentVariantReference;
+							}
+						}
+					} else {
+						// delete preset variantReference
+						delete oPersonalizationChange.changeSpecificData.variantReference;
+					}
+
+					oPersonalizationChange.changeSpecificData = Object.assign(oPersonalizationChange.changeSpecificData, {developerMode: false, layer: sLayer});
+					return oFlexController.addChange(oPersonalizationChange.changeSpecificData, oPersonalizationChange.selectorControl);
+				}).then(function(oAddedChange) {
+					return oFlexController.applyChange(oAddedChange, oPersonalizationChange.selectorControl);
+				}).then(function(oAppliedChange) {
+					aSuccessfulChanges.push(oAppliedChange);
+				}).catch(function(oError) {
+					Log.error("A Change was not added successfully. Reason:", oError.message);
+				});
+			}, Promise.resolve()).then(function() {
+				return aSuccessfulChanges;
 			});
-			// old API is still using the old name
-			mPropertyBag.controlChanges = mPropertyBag.changes;
-			return OldControlPersonalizationAPI.addPersonalizationChanges(mPropertyBag);
 		},
 
 		/**
@@ -76,8 +156,22 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		reset: function(mPropertyBag) {
-			mPropertyBag.selectors = mPropertyBag.selectors || [];
-			return OldControlPersonalizationAPI.resetChanges(mPropertyBag.selectors, mPropertyBag.changeTypes);
+			if (!mPropertyBag.selectors || mPropertyBag.selectors.length === 0) {
+				return logAndreject("At least one control ID has to be provided as a parameter");
+			}
+
+			var oAppComponent = mPropertyBag.selectors[0].appComponent || Utils.getAppComponentForControl(mPropertyBag.selectors[0]);
+			if (!oAppComponent) {
+				return logAndreject("App Component could not be determined");
+			}
+
+			var aSelectorIds = mPropertyBag.selectors.map(function (vControl) {
+				var sControlId = vControl.id || vControl.getId();
+				var sLocalId = oAppComponent.getLocalId(sControlId);
+				return sLocalId || sControlId;
+			});
+			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
+			return oFlexController.resetChanges(Layer.USER, undefined, oAppComponent, aSelectorIds, mPropertyBag.changeTypes);
 		},
 
 		/**
@@ -124,7 +218,17 @@ sap.ui.define([
 		 */
 		save: function(mPropertyBag) {
 			var oAppComponent = mPropertyBag.selector.appComponent || Utils.getAppComponentForControl(mPropertyBag.selector);
-			return OldControlPersonalizationAPI.saveChanges(mPropertyBag.changes, oAppComponent);
+			if (!oAppComponent) {
+				return logAndreject("App Component could not be determined");
+			}
+			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
+			var oVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
+			var aVariantManagementReferences = getAllVariantManagementReferences(oAppComponent);
+			return oFlexController.saveSequenceOfDirtyChanges(mPropertyBag.changes, oAppComponent)
+				.then(function(oResponse) {
+					oVariantModel.checkDirtyStateForControlModels(aVariantManagementReferences);
+					return oResponse;
+				});
 		},
 
 		/**
