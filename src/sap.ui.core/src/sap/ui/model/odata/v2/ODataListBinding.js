@@ -141,9 +141,7 @@ sap.ui.define([
 		},
 
 		metadata : {
-			publicMethods : [
-			                 "getLength"
-			                 ]
+			publicMethods : ["getLength"]
 		}
 
 	});
@@ -228,6 +226,12 @@ sap.ui.define([
 
 		if (this.bRefresh) {
 			this.bRefresh = false;
+			// if we do not need to load data after a refresh event (e.g. we have enough created
+			// contexts) we need to fire a change event to fulfill the contract that after a refresh
+			// event a change event is triggered when the data is available.
+			if (!aContexts.dataRequested && aContexts.length > 0) {
+				this._fireChange({reason : ChangeReason.Change});
+			}
 		} else {
 			// Do not create context data and diff in case of refresh, only if real data has been received
 			// The current behaviour is wrong and makes diff detection useless for OData in case of refresh
@@ -485,19 +489,78 @@ sap.ui.define([
 	};
 
 	/**
-	 * Load data from model.
+	 * Adds the $filter query option to the given array of URL parameters if needed.
+	 * The application/control filters, as stored in <code>this.sFilterParams</code> are considered
+	 * only if the given <code>bUseFilterParams</code> is set. The exclude filter for created
+	 * persisted entities is always considered to avoid duplicates or a wrong count.
+	 *
+	 * @param {string[]} aURLParams The array of URL parameters
+	 * @param {boolean} bUseFilterParams Whether to consider <code>this.sFilterParams</code>
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype._addFilterQueryOption = function (aURLParams, bUseFilterParams) {
+		var sExcludeFilter = this._getCreatedPersistedExcludeFilter();
+
+		if (this.sFilterParams && bUseFilterParams) {
+			if (sExcludeFilter) {
+				// this.sFilterParams starts with $filter=, so slice it
+				aURLParams.push("$filter=(" + this.sFilterParams.slice(8) + ")%20and%20"
+					+ sExcludeFilter);
+			} else {
+				aURLParams.push(this.sFilterParams);
+			}
+		} else if (sExcludeFilter) {
+			aURLParams.push("$filter=" + sExcludeFilter);
+		}
+	};
+
+	/**
+	 * Gets the exclude filter for the created and persisted contexts of this list binding.
+	 *
+	 * @returns {string|undefined} The exclude filter or <code>undefined</code> if there are no
+	 *   created and persisted contexts in the cache.
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype._getCreatedPersistedExcludeFilter = function () {
+		var sExcludeFilter, aExcludeFilters,
+			aCreatedPersistedContexts = this._getCreatedContexts().filter(function (oContext) {
+				return !oContext.isTransient();
+			}),
+			that = this;
+
+		if (aCreatedPersistedContexts.length > 0) {
+			aExcludeFilters = aCreatedPersistedContexts.map(function (oContext) {
+				var sPath = oContext.getPath();
+
+				return that._getFilterForPredicate(sPath.slice(sPath.indexOf("(")));
+			});
+			sExcludeFilter = "not("
+				+ ODataUtils._createFilterParams(aExcludeFilters.length === 1
+						? aExcludeFilters[0]
+						: new Filter({filters : aExcludeFilters}),
+					this.oModel.oMetadata, this.oEntityType)
+				+ ")";
+		}
+
+		return sExcludeFilter;
+	};
+
+	/**
+	 * Load data for the given range from server.
 	 *
 	 * @param {int} iStartIndex The start index
-	 * @param {int} iLength The count of data to be requested
-	 * Load list data from the server
+	 * @param {int} iLength The amount of data to be requested
 	 * @private
 	 */
 	ODataListBinding.prototype.loadData = function(iStartIndex, iLength) {
-
-		var that = this,
-		bInlineCountRequested = false,
-		sGuid = uid(),
-		sGroupId;
+		var sGroupId,
+			sGuid = uid(),
+			bInlineCountRequested = false,
+			aParams = [],
+			sPath = this.sPath,
+			that = this;
 
 		// create range parameters and store start index for sort/filter requests
 		if (iStartIndex || iLength) {
@@ -509,18 +572,13 @@ sap.ui.define([
 
 		// create the request url
 		// $skip/$top and are excluded for OperationMode.Client and Auto if the threshold was sufficient
-		var aParams = [];
 		if (this.sRangeParams && !this.useClientMode()) {
 			aParams.push(this.sRangeParams);
 		}
 		if (this.sSortParams) {
 			aParams.push(this.sSortParams);
 		}
-		// When in OperationMode.Auto, the filters are excluded and applied clientside,
-		// except when the threshold was rejected, and the binding will internally run in Server Mode
-		if (this.sFilterParams && !this.useClientMode()) {
-			aParams.push(this.sFilterParams);
-		}
+		this._addFilterQueryOption(aParams, !this.useClientMode());
 		if (this.sCustomParams) {
 			aParams.push(this.sCustomParams);
 		}
@@ -655,8 +713,6 @@ sap.ui.define([
 
 		}
 
-		var sPath = this.sPath;
-
 		if (this.isRelative()){
 			sPath = this.getResolvedPath();
 		}
@@ -718,20 +774,14 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype._getLength = function() {
 		var sGroupId, sPath,
+			aParams = [],
 			that = this;
 
 		if (this.sCountMode !== CountMode.Request && this.sCountMode !== CountMode.Both) {
 			return;
 		}
 
-		// create a request object for the data request
-		// In OperationMode.Auto we explicitly omitt the filters for the count,
-		// filters will be applied afterwards on the client if count comes under the threshold
-		var aParams = [];
-		if (this.sFilterParams && this.sOperationMode != OperationMode.Auto) {
-			aParams.push(this.sFilterParams);
-		}
-
+		this._addFilterQueryOption(aParams, this.sOperationMode !== OperationMode.Auto);
 		// use only custom params for count and not expand,select params
 		if (this.mParameters && this.mParameters.custom) {
 			var oCust = { custom: {}};

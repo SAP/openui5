@@ -231,21 +231,6 @@ sap.ui.define([
 				"$metadata?sap-language=EN" : {
 					source : "metadata.xml"
 				},
-				"SalesOrderSet?$skip=0&$top=4&$orderby=SalesOrderID%20desc&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
-					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable.json"
-				},
-				"SalesOrderSet?$skip=4&$top=4&$orderby=SalesOrderID%20desc&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
-					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable2.json"
-				},
-				"SalesOrderSet?$skip=8&$top=4&$orderby=SalesOrderID%20desc&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
-					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable3.json"
-				},
-				"SalesOrderSet?$skip=0&$top=8&$orderby=SalesOrderID%20desc&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
-					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable4.json"
-				},
-				"SalesOrderSet?$skip=0&$top=12&$orderby=SalesOrderID%20desc&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
-					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTableALL.json"
-				},
 
 				/* Test Case I */
 				"SalesOrderSet('101')" : {
@@ -540,6 +525,10 @@ sap.ui.define([
 				"SalesOrderSet('106')/ToLineItems?$skip=0&$top=3" : [{
 					ifMatch : ithCall.bind(null, 3),
 					source : "Messages/TC6/SalesOrderSet-ToLineItems.json"
+				}],
+				"SalesOrderSet('106')/ToLineItems?$skip=0&$top=3&$filter=not(SalesOrderID%20eq%20%27106%27%20and%20ItemPosition%20eq%20%27030%27)" : [{
+					ifMatch : ithCall.bind(null, 3),
+					source : "Messages/TC6/SalesOrderSet-ToLineItems.json"
 				}, {
 					message : getLineItems("Messages/TC6/SalesOrderSet-ToLineItems.json",
 						undefined, 0, 2)
@@ -803,6 +792,42 @@ sap.ui.define([
 					code : 424,
 					source : "Messages/TC6/error-1.json"
 				}]
+			}, {
+				regExp : /GET .*\/SalesOrderSet\?\$skip=0&\$top=4.*/,
+				response : {
+					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable.json"
+				}
+			}, {
+				regExp : /GET .*\/SalesOrderSet\?\$skip=4&\$top=4.*/,
+				response : {
+					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable2.json"
+				}
+			}, {
+				regExp : /GET .*\/SalesOrderSet\?\$skip=8&\$top=4.*/,
+				response : {
+					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable3.json"
+				}
+			}, {
+				regExp : /GET .*\/SalesOrderSet\?\$skip=0&\$top=8.*/,
+				response : {
+					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable4.json"
+				}
+			}, {
+				regExp : /GET .*\/SalesOrderSet\?\$skip=0&\$top=12.*/,
+				response : {
+					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTableAll.json"
+				}
+			}, {
+				regExp : /GET .*\/SalesOrderSet\/\$count.*/,
+				response : {
+					headers : {
+						"Content-Length" : "2",
+						"Content-Type" : "text/plain",
+						DataServiceVersion : "2.0"
+					},
+					message : "12",
+					statusCode : "200"
+				}
 			}]
 		};
 	}

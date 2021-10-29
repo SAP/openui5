@@ -55,6 +55,7 @@ sap.ui.define([
 
 		oBinding = new ODataListBinding(oModel, "path", oContext);
 
+		this.mock(oBinding).expects("_addFilterQueryOption").withExactArgs([], true);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~path");
 		oBinding.bSkipDataEvents = true;
 		oBinding.bRefresh = bRefresh;
@@ -69,11 +70,92 @@ sap.ui.define([
 				success : sinon.match.func,
 				updateAggregatedMessages : bRefresh,
 				urlParameters : ["~custom"]
-			})
-			.returns();
+			});
 
 		// code under test
 		oBinding.loadData();
+	});
+});
+
+	//*********************************************************************************************
+[true, false].forEach(function (bUseClientMode) {
+	var sTitle = "loadData: calls _addFilterQueryOption; client mode=" + bUseClientMode;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = {read : function () {}},
+			oBinding = {
+				oModel : oModel,
+				sPath : "/~Path",
+				mRequestHandles : {},
+				bSkipDataEvents : true,
+				_addFilterQueryOption : function () {},
+				isRelative : function () {},
+				useClientMode : function () {}
+			};
+
+		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(bUseClientMode);
+		this.mock(oBinding).expects("_addFilterQueryOption")
+			.withExactArgs([], !bUseClientMode)
+			.callsFake(function (aParams) {
+				aParams.push("~filter"); // simulate _addFilterQueryOption implementation
+			});
+		this.mock(oBinding).expects("isRelative").withExactArgs().returns(false);
+		this.mock(oModel).expects("read").withExactArgs("/~Path", {
+				canonicalRequest : undefined,
+				context : undefined,
+				error : sinon.match.func,
+				groupId : undefined,
+				headers : undefined,
+				success : sinon.match.func,
+				updateAggregatedMessages : undefined,
+				urlParameters : ["~filter"]
+			});
+
+		// code under test
+		ODataListBinding.prototype.loadData.call(oBinding);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{operationMode : OperationMode.Auto, useFilterParams : false},
+	{operationMode : OperationMode.Client, useFilterParams : true},
+	{operationMode : OperationMode.Default, useFilterParams : true},
+	{operationMode : OperationMode.Server, useFilterParams : true}
+].forEach(function (oFixture) {
+	var sTitle = "_getLength: calls _addFilterQueryOption; operation mode="
+			+ oFixture.operationMode;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = {read : function () {}},
+			oBinding = {
+				sCountMode : CountMode.Request,
+				oModel : oModel,
+				sOperationMode : oFixture.operationMode,
+				sPath : "/~Path",
+				_addFilterQueryOption : function () {},
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("_addFilterQueryOption")
+			.withExactArgs([], oFixture.useFilterParams)
+			.callsFake(function (aParams) {
+				aParams.push("~filter"); // simulate _addFilterQueryOption implementation
+			});
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/~Path");
+
+		this.mock(oModel).expects("read").withExactArgs("/~Path/$count", {
+				canonicalRequest : undefined,
+				context : undefined,
+				error : sinon.match.func,
+				groupId : undefined,
+				success : sinon.match.func,
+				urlParameters : ["~filter"],
+				withCredentials : undefined
+			});
+
+		// code under test
+		ODataListBinding.prototype._getLength.call(oBinding);
 	});
 });
 
@@ -1001,21 +1083,30 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("getContexts: return V2 contexts returned by _getContexts", function (assert) {
+[true, false].forEach(function (bDataRequested) {
+	var sTitle = "getContexts: return V2 contexts returned by _getContexts, fires change event: "
+			+ !bDataRequested;
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
 				aAllKeys : [],
 				bLengthFinal : true,
 				bRefresh : true,
+				_fireChange : function () {},
 				_getContexts : function () {},
 				useClientMode : function () {}
 			},
 			aContexts = ["~V2Context0", "~V2Context1"],
 			aResultContexts;
 
-		this.mock(oBinding).expects("_getContexts")
-			.withExactArgs(0, 2)
-			.returns(aContexts);
+		if (bDataRequested) {
+			aContexts.dataRequested = true;
+		}
+		this.mock(oBinding).expects("_getContexts").withExactArgs(0, 2).returns(aContexts);
 		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(true);
+		this.mock(oBinding).expects("_fireChange")
+			.withExactArgs({reason : ChangeReason.Change})
+			.exactly(bDataRequested ? 0 : 1);
 
 		// code under test
 		aResultContexts = ODataListBinding.prototype.getContexts.call(oBinding, 0, 2);
@@ -1024,6 +1115,27 @@ sap.ui.define([
 		assert.strictEqual(oBinding.iLastLength, 2);
 		assert.strictEqual(oBinding.iLastStartIndex, 0);
 		assert.strictEqual(oBinding.iLastThreshold, undefined);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getContexts: no contexts after refresh and no data requested", function (assert) {
+		var oBinding = {
+				aAllKeys : null,
+				bLengthFinal : false,
+				bPendingRequest : true,
+				bRefresh : true,
+				_fireChange : function () {},
+				_getContexts : function () {},
+				useClientMode : function () {}
+			};
+
+		this.mock(oBinding).expects("_getContexts").withExactArgs(0, 2).returns([]);
+		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(true);
+		this.mock(oBinding).expects("_fireChange").never();
+
+		// code under test
+		ODataListBinding.prototype.getContexts.call(oBinding, 0, 2);
 	});
 
 	//*********************************************************************************************
@@ -1076,8 +1188,9 @@ sap.ui.define([
 	QUnit.test("getContexts: use _getMaximumLength", function (assert) {
 		var oBinding = {
 				sCreatedEntitiesKey : "~sCreatedEntitiesKey",
-				bRefresh : true,
 				bPendingRequest : true,
+				bRefresh : true,
+				_fireChange : function () {},
 				_getContexts : function () {},
 				_getMaximumLength : function () {},
 				useClientMode : function () {}
@@ -1088,6 +1201,7 @@ sap.ui.define([
 			.withExactArgs(0, "~iLength")
 			.returns("~aContexts");
 		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(true);
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
 
 		// code under test
 		assert.deepEqual(ODataListBinding.prototype.getContexts.call(oBinding, 0,
@@ -1474,4 +1588,145 @@ sap.ui.define([
 		assert.strictEqual(ODataListBinding.prototype._getCreatedContexts.call(oBinding),
 			"~aContexts");
 	});
+
+	//*********************************************************************************************
+[true, false].forEach(function (bOnlyTransientContexts) {
+	QUnit.test("_getCreatedPersistedExcludeFilter: " + bOnlyTransientContexts, function (assert) {
+		var oBinding = {
+				oEntityType : "~EntityType",
+				oModel : {
+					oMetadata : {}
+				},
+				_getCreatedContexts : function () {},
+				_getFilterForPredicate : function () {}
+			},
+			oBindingMock = this.mock(oBinding),
+			oContext0 = {
+				isTransient : function() {}
+			},
+			oContext1 = {
+				getPath : function () {},
+				isTransient : function() {}
+			},
+			oContext2 = {
+				getPath : function () {},
+				isTransient : function() {}
+			},
+			oFilter1 = new Filter("~Path", FilterOperator.EQ, "foo"),
+			oFilter2 = new Filter("~Path", FilterOperator.EQ, "bar");
+
+		oBindingMock.expects("_getCreatedContexts")
+			.withExactArgs()
+			.returns([oContext0, oContext1, oContext2]);
+		this.mock(oContext0).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oContext1).expects("isTransient").withExactArgs().returns(bOnlyTransientContexts);
+		this.mock(oContext2).expects("isTransient").withExactArgs().returns(bOnlyTransientContexts);
+		this.mock(oContext1).expects("getPath")
+			.exactly(bOnlyTransientContexts ? 0 : 1)
+			.withExactArgs()
+			.returns("~sPath('1')");
+		this.mock(oContext2).expects("getPath")
+			.exactly(bOnlyTransientContexts ? 0 : 1)
+			.withExactArgs()
+			.returns("~sPath('2')");
+		oBindingMock.expects("_getFilterForPredicate")
+			.exactly(bOnlyTransientContexts ? 0 : 1)
+			.withExactArgs("('1')")
+			.returns(oFilter1);
+		oBindingMock.expects("_getFilterForPredicate")
+			.exactly(bOnlyTransientContexts ? 0 : 1)
+			.withExactArgs("('2')")
+			.returns(oFilter2);
+		this.mock(ODataUtils).expects("_createFilterParams")
+			.exactly(bOnlyTransientContexts ? 0 : 1)
+			.withExactArgs(sinon.match(function (oFilter) {
+					assert.ok(oFilter instanceof Filter);
+					assert.deepEqual(oFilter.aFilters, [oFilter1, oFilter2]);
+					assert.strictEqual(oFilter.aFilters[0], oFilter1);
+					assert.strictEqual(oFilter.aFilters[1], oFilter2);
+					assert.strictEqual(oFilter.bAnd, undefined);
+
+					return true;
+				}),
+				sinon.match.same(oBinding.oModel.oMetadata), "~EntityType")
+			.returns("~sExcludeFilter");
+
+		// code under test
+		assert.strictEqual(
+			ODataListBinding.prototype._getCreatedPersistedExcludeFilter.call(oBinding),
+			bOnlyTransientContexts ? undefined : "not(~sExcludeFilter)");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_getCreatedPersistedExcludeFilter: only one persisted context", function (assert) {
+		var oBinding = {
+				oEntityType : "~EntityType",
+				oModel : {
+					oMetadata : {}
+				},
+				_getCreatedContexts : function () {},
+				_getFilterForPredicate : function () {}
+			},
+			oBindingMock = this.mock(oBinding),
+			oContext = {
+				getPath : function () {},
+				isTransient : function() {}
+			},
+			oFilter = new Filter("~Path", FilterOperator.EQ, "foo");
+
+		oBindingMock.expects("_getCreatedContexts").withExactArgs().returns([oContext]);
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext).expects("getPath").withExactArgs().returns("~sPath('1')");
+		oBindingMock.expects("_getFilterForPredicate").withExactArgs("('1')").returns(oFilter);
+		this.mock(ODataUtils).expects("_createFilterParams")
+			.withExactArgs(sinon.match.same(oFilter),
+				sinon.match.same(oBinding.oModel.oMetadata), "~EntityType")
+			.returns("~sExcludeFilter");
+
+		// code under test
+		assert.strictEqual(
+			ODataListBinding.prototype._getCreatedPersistedExcludeFilter.call(oBinding),
+			"not(~sExcludeFilter)");
+	});
+
+	//*********************************************************************************************
+[
+	{excludeFilter : "~sExcludeFilter", result : ["foo", "$filter=~sExcludeFilter"]},
+	{result : ["foo"]},
+	{filterParams : "$filter=~Filter", useFilterParams : true, result : ["foo", "$filter=~Filter"]},
+	{filterParams : "$filter=~Filter", useFilterParams : false, result : ["foo"]},
+	{
+		excludeFilter : "~sExcludeFilter",
+		filterParams : "$filter=~Filter",
+		useFilterParams : false,
+		result : ["foo", "$filter=~sExcludeFilter"]
+	},
+	{
+		excludeFilter : "~sExcludeFilter",
+		filterParams : "$filter=~Filter",
+		useFilterParams : true,
+		result : ["foo", "$filter=(~Filter)%20and%20~sExcludeFilter"]
+	}
+].forEach(function (oFixture) {
+	var sTitle = "_addFilterQueryOption: exclude filter=" + oFixture.excludeFilter;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = {
+				sFilterParams : oFixture.filterParams,
+				_getCreatedPersistedExcludeFilter : function () {}
+			},
+			aURLParams = ["foo"];
+
+		this.mock(oBinding).expects("_getCreatedPersistedExcludeFilter")
+			.withExactArgs()
+			.returns(oFixture.excludeFilter);
+
+		// code under test
+		ODataListBinding.prototype._addFilterQueryOption.call(oBinding, aURLParams,
+			oFixture.useFilterParams);
+
+		assert.deepEqual(aURLParams, oFixture.result);
+	});
+});
 });

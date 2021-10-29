@@ -37,7 +37,12 @@
 				<Table growing="true" growingThreshold="4" id="SalesOrderSet"
 					items="{
 						path : 'SalesOrders>/SalesOrderSet',
+						filters : [
+							{path : 'SalesOrderID', operator : 'GE', value1 : '0500000000'},
+							{path : 'LifecycleStatus', operator : 'EQ', value1 : 'N'}
+						],
 						parameters : {
+							countMode : 'Request',
 							select : 'CurrencyCode,GrossAmount,Note,SalesOrderID'
 						},
 						sorter : [{path : 'SalesOrderID', descending : true}]
@@ -45,7 +50,7 @@
 					mode="SingleSelectMaster" selectionChange="onSelectSalesOrder">
 					<headerToolbar>
 						<Toolbar>
-							<Title level="H2" text="Sales Orders">
+							<Title level="H2" text="{ui>/salesOrdersCount} Sales Orders">
 								<layoutData>
 									<ToolbarLayoutData shrinkable="false" />
 								</layoutData>
