@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/base/ManagedObjectObserver",
 	"./BlockBaseMetadata",
+	"./BlockBaseRenderer",
 	"sap/ui/model/Context",
 	"sap/ui/Device",
 	"sap/ui/layout/form/ColumnLayout",
@@ -24,6 +25,7 @@ sap.ui.define([
 	CoreView,
 	ManagedObjectObserver,
 	BlockBaseMetadata,
+	BlockBaseRenderer,
 	Context,
 	Device,
 	ColumnLayout,
@@ -184,7 +186,7 @@ sap.ui.define([
 //
 				}
 			},
-			renderer: "sap.uxap.BlockBaseRenderer"
+			renderer: BlockBaseRenderer
 		}, BlockBaseMetadata);
 
 		BlockBase.prototype.init = function () {
