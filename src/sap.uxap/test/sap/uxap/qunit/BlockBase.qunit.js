@@ -1,4 +1,4 @@
-/*global QUnit, sinon*/
+/*global QUnit */
 
 sap.ui.define([
 	"sap/ui/core/ComponentContainer",
@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
+	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView"],
-function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, XMLView) {
+function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, View, XMLView) {
 	"use strict";
 
 	QUnit.module("BlockBase");
@@ -27,20 +28,13 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 
 		assert.expect(5);
 
-		new Shell("Shell", {
-			app: new ComponentContainer("myComponentContainer", {
-				name: 'blockbasetest',
-				height: "100%"
-			})
-		}).placeAt('qunit-fixture');
+		function fnOnComponentCreated() {
+			Core.applyChanges();
 
-		Core.applyChanges();
-
-		setTimeout(function () {
 			oComponentContainer = Core.byId("myComponentContainer");
 			oComponent = oComponentContainer.getComponentInstance();
 
-			assert.ok(oComponent && oComponent.getMetadata().getName() === "blockbasetest.Component", "The component was successfully created");
+			assert.ok(oComponent && oComponent.isA("blockbasetest.Component"), "The component was successfully created");
 
 			oMainView = oComponent.getRootControl();
 			oMainController = oMainView.getController();
@@ -59,7 +53,21 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 			assert.strictEqual(oBlockViewController.getOwnerComponent(), oMainController.getOwnerComponent(), "The block view is owned by the component");
 
 			done();
-		}, 1000);
+		}
+
+		new Shell("Shell", {
+			app: new ComponentContainer("myComponentContainer", {
+				name: 'blockbasetest',
+				manifest: true,
+				height: "100%",
+				componentCreated: function() {
+					setTimeout(fnOnComponentCreated, 1000);
+				}
+			})
+		}).placeAt('qunit-fixture');
+
+		Core.applyChanges();
+
 	});
 
 	QUnit.test("blocks are target of lazy loading feature", function (assert) {
@@ -109,19 +117,15 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 			 oMockObjectPage = {
 				 _requestAdjustLayoutAndUxRules: function() {}
 			 },
-			 sandbox = sinon.sandbox.create(),
-			 oSpy = sandbox.spy(oMockObjectPage, "_requestAdjustLayoutAndUxRules");
+			 oSpy = this.spy(oMockObjectPage, "_requestAdjustLayoutAndUxRules");
 
-		sandbox.stub(oBlock, "_getObjectPageLayout", function() {
-			return oMockObjectPage;
-		});
+		this.stub(oBlock, "_getObjectPageLayout").returns(oMockObjectPage);
 
 		// Act: call the setter with the existing value
 		oBlock.setVisible(bVisible);
 		assert.equal(oSpy.callCount, 0, "no layout adjustment requested");
 
 		oBlock.destroy();
-		sandbox.restore();
 	});
 
 	QUnit.module("BlockBase Height", {
@@ -189,11 +193,9 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 				Core.applyChanges();
 				done();
 			}.bind(this));
-			this.sandbox = sinon.sandbox.create();
 		},
 		afterEach: function () {
 			this.oObjectPageInfoView.destroy();
-			this.sandbox.restore();
 		}
 	});
 
@@ -203,7 +205,7 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 		var oOPL = this.oObjectPageInfoView.byId("ObjectPageLayout"),
 		oTargetSubSection = oOPL.getSections()[0].getSubSections()[0],
 		oBlock = oTargetSubSection.getBlocks()[0],
-		fnUpdateBindingSpy = this.sandbox.spy(oBlock, "updateBindings");
+		fnUpdateBindingSpy = this.spy(oBlock, "updateBindings");
 
 		// Act: explicitly connect the section models (lazy loading)
 		// _bConnect private boolean flag is mocked to "false" in order to target our test scenario
@@ -242,7 +244,7 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 			oTargetSubSection = oOPL.getSections()[0].getSubSections()[0],
 			oBlock = oTargetSubSection.getBlocks()[0],
 			oExpandViewMetadata = oBlock.getMetadata().getView("Expanded"),
-			createSpy = this.sandbox.spy(sap.ui.core.mvc.View, "create"),
+			createSpy = this.spy(View, "create"),
 			done = assert.async();
 
 		oExpandViewMetadata.id = oBlock.getId() + "-Expanded"; // setup
@@ -252,7 +254,7 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 		oOPL.attachEventOnce("onAfterRenderingDOMReady", function () {
 
 			// Setup
-			createSpy.reset();
+			createSpy.resetHistory();
 
 			// Act: request create the same view more than once
 			oBlock.createView(oExpandViewMetadata);
@@ -271,7 +273,7 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 		var oOPL = this.oObjectPageInfoView.byId("ObjectPageLayout"),
 			oTargetSubSection = oOPL.getSections()[0].getSubSections()[0],
 			oBlock = oTargetSubSection.getBlocks()[0],
-			notifySpy = this.sandbox.spy(oBlock, "_notifyForLoadingInMode"),
+			notifySpy = this.spy(oBlock, "_notifyForLoadingInMode"),
 			done = assert.async();
 
 		assert.expect(1);
@@ -279,7 +281,7 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 		oOPL.attachEventOnce("onAfterRenderingDOMReady", function () {
 
 			// Setup
-			notifySpy.reset();
+			notifySpy.resetHistory();
 
 			// Act: request select the same view more than once
 			oBlock._selectView("Expanded");

@@ -7,8 +7,7 @@
 	<ObjectPageLayout id="ObjectPageLayout"
 					  enableLazyLoading="false"
 					  showTitleInHeaderContent="true"
-					  showEditHeaderButton="true"
-					  editHeaderButtonPress="handleEditBtnPress">
+					  showEditHeaderButton="true">
 		<headerTitle>
 			<ObjectPageHeader objectImageURI="test-resources/sap/uxap/qunit/img/person.png"
 							  objectTitle="Denise Smith"
@@ -22,11 +21,11 @@
 				<actions>
 					<ObjectPageHeaderActionButton icon="sap-icon://pull-down" text="show section" type="Emphasized"/>
 					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" type="Emphasized"/>
-					<ObjectPageHeaderActionButton text="Toggle Footer" hideIcon="true" hideText="false" type="Emphasized" press="toggleFooter"/>
+					<ObjectPageHeaderActionButton text="Toggle Footer" hideIcon="true" hideText="false" type="Emphasized"/>
 				</actions>
 				<breadCrumbsLinks>
-					<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
-					<m:Link text="Page 2 long link" press="handleLink2Press"/>
+					<m:Link text="Page 1 a very long link"/>
+					<m:Link text="Page 2 long link"/>
 				</breadCrumbsLinks>
 			</ObjectPageHeader>
 		</headerTitle>

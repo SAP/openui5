@@ -15,7 +15,7 @@
 		<sections>
 			<ObjectPageSection id="section1" title="{/sections/0/title}">
 				<customAnchorBarButton>
-					<m:Button text="my first section" press=".handleAnchorBarPress"/>
+					<m:Button text="my first section"/>
 				</customAnchorBarButton>
 				<ObjectPageSubSection title="first section">
 					<html:div class="dummyBlockContent7"></html:div>
@@ -34,7 +34,7 @@
 			</ObjectPageSection>
 			<ObjectPageSection id="section3" title="{/sections/2/title}">
 				<customAnchorBarButton>
-					<m:Button text="my third section" press=".handleAnchorBarPress"/>
+					<m:Button text="my third section"/>
 				</customAnchorBarButton>
 				<ObjectPageSubSection>
 					<html:div class="dummyBlockContentC"></html:div>

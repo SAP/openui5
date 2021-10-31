@@ -1,4 +1,4 @@
-/*global QUnit, sinon*/
+/*global QUnit*/
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
@@ -7,12 +7,16 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageHeader",
 	"sap/uxap/ObjectPageHeaderActionButton",
+	"sap/uxap/ObjectPageSection",
+	"sap/uxap/ObjectPageSubSection",
 	"sap/m/Button",
 	"sap/m/Link",
+	"sap/m/Text",
 	"sap/m/Breadcrumbs",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils"],
-function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionButton, Button, Link, Breadcrumbs, XMLView, QUtils) {
+function (jQuery, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionButton, ObjectPageSection, ObjectPageSubSection, Button, Link, Text, Breadcrumbs, XMLView, Device, QUtils) {
 	"use strict";
 
 	var oFactory = {
@@ -127,19 +131,16 @@ function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeade
 			oSpy;
 
 		for (var i = 0; i < 10; i++) { // add actions
-			oHeader.addAction(new sap.m.Button({text: "Action to take space"}));
+			oHeader.addAction(new Button({text: "Action to take space"}));
 		}
 		Core.applyChanges();
-		oSpy = sinon.spy(oHeader, "_adaptActions");
+		oSpy = this.spy(oHeader, "_adaptActions");
 
 		// Act
 		oPage._obtainSnappedTitleHeight(true);
 		// visibility of actions does not affect the final header height
 		// => no adaptation needed when we calculate the header-clone height
 		assert.strictEqual(oSpy.callCount, 0, "actions are not modified");
-
-		//restore
-		oSpy.restore();
 	});
 
 	QUnit.test("titleSelectorTooltip aggregation validation", function (assert) {
@@ -263,8 +264,8 @@ function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeade
 		var img1 = this.oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[0],
 			img2 = this.oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[1];
 
-		assert.strictEqual($(img1).control()[0].getSrc(), sUpdatedSrc, "image1 is updated");
-		assert.strictEqual($(img2).control()[0].getSrc(), sUpdatedSrc, "image2 is updated");
+		assert.strictEqual(jQuery(img1).control()[0].getSrc(), sUpdatedSrc, "image1 is updated");
+		assert.strictEqual(jQuery(img2).control()[0].getSrc(), sUpdatedSrc, "image2 is updated");
 	});
 	QUnit.test("Two different placeholders in DOM if showTitleInHeaderContent===true", function (assert) {
 		//act
@@ -306,7 +307,7 @@ function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeade
 
 		var done = assert.async(),
 
-		oHeader = new sap.uxap.ObjectPageHeader({
+		oHeader = new ObjectPageHeader({
 			objectTitle: "Long title that wraps and goes over more lines",
 			objectSubtitle: "Long subtitle that wraps and goes over more lines",
 			objectImageURI: "qunit/img/HugeHeaderPicture.png",
@@ -316,7 +317,7 @@ function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeade
 			markLocked:true,
 			markFlagged:true,
 			objectImageShape: "Circle",
-			actions: [ new sap.m.Button({text: "Action"})]
+			actions: [ new Button({text: "Action"})]
 		}),
 		sIdentifierLineOrigHeight,
 		oDelegate = { onAfterRendering: function() {
@@ -326,7 +327,7 @@ function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeade
 
 		oHeader.addEventDelegate(oDelegate, oHeader);
 
-		var op = new sap.uxap.ObjectPageLayout({
+		var op = new ObjectPageLayout({
 				height: "300px",
 				selectedSection: "s2",
 				showTitleInHeaderContent: true,
@@ -335,36 +336,36 @@ function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeade
 					oHeader
 				],
 				headerContent: [
-					new sap.m.Text({
+					new Text({
 						width: "200px",
 						text: "Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."
 					})
 				],
 				sections: [
-					new sap.uxap.ObjectPageSection("s1", {
+					new ObjectPageSection("s1", {
 						title: "section1",
 						subSections: [
-							new sap.uxap.ObjectPageSubSection({
-								blocks: [new sap.m.Text({ text: "Block content"})]
+							new ObjectPageSubSection({
+								blocks: [new Text({ text: "Block content"})]
 							})
 						]
 					}),
-					new sap.uxap.ObjectPageSection("s2", {
+					new ObjectPageSection("s2", {
 						title: "2 subsections",
 						subSections: [
-							new sap.uxap.ObjectPageSubSection({
+							new ObjectPageSubSection({
 								title: "subsection1",
-								blocks: [new sap.m.Text({ text: "Block content"})]
+								blocks: [new Text({ text: "Block content"})]
 							}),
-							new sap.uxap.ObjectPageSubSection("s2_2", {
+							new ObjectPageSubSection("s2_2", {
 								title: "subsection2",
-								blocks: [new sap.m.Text({ text: "Block content"})]
+								blocks: [new Text({ text: "Block content"})]
 							})
 						]
 					})
 				]
 			}),
-		scrollSpy = sinon.spy(op, "_onScroll");
+		scrollSpy = this.spy(op, "_onScroll");
 
 		op.placeAt("qunit-fixture");
 
@@ -375,7 +376,7 @@ function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeade
 				setTimeout(function() {
 					op.setSelectedSection("s1");
 					setTimeout(function() {
-						scrollSpy.reset(); // reset scroll spy for clean test
+						scrollSpy.resetHistory(); // reset scroll spy for clean test
 
 						// Act
 						op.getHeaderTitle()._adaptLayout();
@@ -397,24 +398,24 @@ function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeade
 		// Arrange
 		var done = assert.async(),
 			$oExpandButton,
-			oHeader = new sap.uxap.ObjectPageHeader(),
-			oObjectPage = new sap.uxap.ObjectPageLayout({
+			oHeader = new ObjectPageHeader(),
+			oObjectPage = new ObjectPageLayout({
 				height: "300px",
 				selectedSection: "s2", // to snap the header
 				showTitleInHeaderContent: true,
 				headerTitle: [ oHeader ],
 				sections: [
-					new sap.uxap.ObjectPageSection("s1", {
+					new ObjectPageSection("s1", {
 						subSections: [
-							new sap.uxap.ObjectPageSubSection({
-								blocks: [new sap.m.Text({ text: "Block content"})]
+							new ObjectPageSubSection({
+								blocks: [new Text({ text: "Block content"})]
 							})
 						]
 					}),
-					new sap.uxap.ObjectPageSection("s2", {
+					new ObjectPageSection("s2", {
 						subSections: [
-							new sap.uxap.ObjectPageSubSection({
-								blocks: [new sap.m.Text({ text: "Block content"})]
+							new ObjectPageSubSection({
+								blocks: [new Text({ text: "Block content"})]
 							})
 						]
 					})
@@ -599,8 +600,8 @@ function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeade
 			};
 
 		oHeader.removeAllActions();
-		oHeader.addAction(new sap.m.Button({text: "Button One"}))
-			.addAction(new sap.m.Button("secondBtn" ,{text: "Button Two"}));
+		oHeader.addAction(new Button({text: "Button One"}))
+			.addAction(new Button("secondBtn" ,{text: "Button Two"}));
 		oSecondBtn = Core.byId("secondBtn");
 
 		// act
@@ -610,7 +611,7 @@ function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeade
 		// act
 		oSecondBtn.addEventDelegate(oDelegate);
 		oSecondBtn.setVisible(true);
-		spyIdentifierResize = sinon.spy(ObjectPageHeader.prototype, "_resizeIdentifierLineContainer");
+		spyIdentifierResize = this.spy(ObjectPageHeader.prototype, "_resizeIdentifierLineContainer");
 	});
 
 	QUnit.test("Action button press event parameter", function (assert) {
@@ -636,15 +637,15 @@ function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeade
 
 	QUnit.test("_adaptLayout", function (assert) {
 		var oHeader = this.myView.byId("applicationHeader"),
-			oSpy = sinon.spy(oHeader, "_adaptObjectPageHeaderIndentifierLine");
+			oSpy = this.spy(oHeader, "_adaptObjectPageHeaderIndentifierLine");
 
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
 		});
 
-		this.stub(sap.ui.Device, "orientation", {
+		this.stub(Device, "orientation").value({
 			portrait: true,
 			landscape: false
 		});
@@ -667,13 +668,13 @@ function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeade
 		var done = assert.async();
 
 		var oHeader = this.myView.byId("applicationHeader"),
-			oInvalidateSpy = sinon.spy(oHeader, "invalidate"),
-			oAdaptLayoutSpy = sinon.spy(oHeader, "_adaptLayout");
+			oInvalidateSpy = this.spy(oHeader, "invalidate"),
+			oAdaptLayoutSpy = this.spy(oHeader, "_adaptLayout");
 
 		var oActionButton = this.myView.byId("testButton2");
 
-		oInvalidateSpy.reset();
-		oAdaptLayoutSpy.reset();
+		oInvalidateSpy.resetHistory();
+		oAdaptLayoutSpy.resetHistory();
 
 		var oDelegate = {
 			onAfterRendering: function() {
@@ -699,7 +700,7 @@ function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeade
 		// Arrange
 		var done = assert.async(),
 			oHeader = this.myView.byId("applicationHeader"),
-			oAdaptLayoutSpy = sinon.spy(oHeader, "_adaptLayout"),
+			oAdaptLayoutSpy = this.spy(oHeader, "_adaptLayout"),
 			oActionTestButton = this.myView.byId("testButton2"),
 			oActionInstallButton = this.myView.byId("installButton"),
 			oActionCheckBox = this.myView.byId("testCheckBox"),
@@ -746,13 +747,13 @@ function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeade
 	});
 
 	QUnit.test("_getActionsWidth", function (assert) {
-		this.stub(sap.ui.Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
 		});
 
-		this.stub(sap.ui.Device, "orientation", {
+		this.stub(Device, "orientation").value({
 			portrait: true,
 			landscape: false
 		});
@@ -786,7 +787,7 @@ function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeade
 			$HeaderClone_action;
 
 		// setup
-		oHeader.addAction(new sap.m.Button(sIdWithSpecialChars));
+		oHeader.addAction(new Button(sIdWithSpecialChars));
 		sap.ui.getCore().applyChanges();
 
 		// create the search context
@@ -958,7 +959,7 @@ function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeade
 
 	QUnit.test("Resize listener is called after rerender while hidden", function (assert) {
 		var oHeader = this.oHeaderView.byId("header"),
-			oSpy = sinon.spy(oHeader, "_adaptLayout"),
+			oSpy = this.spy(oHeader, "_adaptLayout"),
 			done = assert.async();
 
 		// Setup: hide the container where the header is placed
@@ -968,7 +969,7 @@ function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeade
 			onAfterRendering: function() {
 				oHeader.removeEventDelegate(oDelegate); // cleanup
 
-				oSpy.reset();
+				oSpy.resetHistory();
 				// Act: show the view
 				this.oHeaderView.$().show();
 

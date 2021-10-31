@@ -5,10 +5,10 @@ sap.ui.define(function () {
 		defaults: {
 			group: "Default",
 			qunit: {
-				version: "edge"
+				version: 2
 			},
 			sinon: {
-				version: 1
+				version: 4
 			},
 			ui5: {
 				language: "en",
@@ -20,8 +20,10 @@ sap.ui.define(function () {
 			},
 			loader: {
 				paths: {
+					"qunit": "test-resources/sap/uxap/qunit/",
 					"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/",
-					"qunit": "test-resources/sap/uxap/qunit/"
+					"sap/uxap/testblocks": "test-resources/sap/uxap/qunit/blocks/",
+					"view": "test-resources/sap/uxap/qunit/view/"
 				}
 			},
 			page: "test-resources/sap/uxap/qunit/testsandbox.qunit.html?test={name}",
@@ -31,11 +33,6 @@ sap.ui.define(function () {
 			"AnchorBar": {
 				coverage: {
 					only: ["sap/uxap/AnchorBar"]
-				},
-				ui5: {
-					resourceroots: {
-						"view": "test-resources/sap/uxap/qunit/view/"
-					}
 				}
 			},
 			"BlockBase": {
@@ -44,9 +41,7 @@ sap.ui.define(function () {
 				},
 				ui5: {
 					resourceroots: {
-						"blockbasetest": "test-resources/sap/uxap/qunit/blockbasetest/",
-						"sap/uxap/testblocks": "test-resources/sap/uxap/qunit/blocks/",
-						"view": "test-resources/sap/uxap/qunit/view/"
+						"blockbasetest": "test-resources/sap/uxap/qunit/blockbasetest/"
 					}
 				}
 			},
@@ -56,9 +51,7 @@ sap.ui.define(function () {
 				},
 				ui5: {
 					resourceroots: {
-						"sap/uxap/sample": "test-resources/sap/uxap/demokit/sample/",
-						"sap/uxap/testblocks": "test-resources/sap/uxap/qunit/blocks/",
-						"view": "test-resources/sap/uxap/qunit/view/"
+						"sap/uxap/sample": "test-resources/sap/uxap/demokit/sample/"
 					}
 				}
 			},
@@ -92,64 +85,31 @@ sap.ui.define(function () {
 			"ObjectPageAPICreation": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageAPICreation"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap/uxap/testblocks": "test-resources/sap/uxap/qunit/blocks/",
-						"view": "test-resources/sap/uxap/qunit/view/"
-					}
 				}
 			},
 			"ObjectPageContentScrolling": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageContentScrolling"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap/uxap/testblocks": "test-resources/sap/uxap/qunit/blocks/",
-						"view": "test-resources/sap/uxap/qunit/view/"
-					}
 				}
 			},
 			"ObjectPageFloatingFooter": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageFloatingFooter"]
-				},
-				ui5: {
-					resourceroots: {
-						"view": "test-resources/sap/uxap/qunit/view/"
-					}
 				}
 			},
 			"ObjectPageFormLayout": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageFormLayout"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap/uxap/testblocks": "test-resources/sap/uxap/qunit/blocks/",
-						"view": "test-resources/sap/uxap/qunit/view/"
-					}
 				}
 			},
 			"ObjectPageHeader": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageHeader"]
-				},
-				ui5: {
-					resourceroots: {
-						"view": "test-resources/sap/uxap/qunit/view/"
-					}
 				}
 			},
 			"ObjectPageHeaderContent": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageHeaderContent"]
-				},
-				ui5: {
-					resourceroots: {
-						"view": "test-resources/sap/uxap/qunit/view/"
-					}
 				}
 			},
 			"ObjectPageInXMLCreation": {
@@ -158,41 +118,23 @@ sap.ui.define(function () {
 				},
 				ui5: {
 					resourceroots: {
-						"sap/uxap/sample": "test-resources/sap/uxap/demokit/sample/",
-						"view": "test-resources/sap/uxap/qunit/view/"
+						"sap/uxap/sample": "test-resources/sap/uxap/demokit/sample/"
 					}
 				}
 			},
 			"ObjectPageKeyboardHandling": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageKeyboardHandling"]
-				},
-				ui5: {
-					resourceroots: {
-						"view": "test-resources/sap/uxap/qunit/view/"
-					}
 				}
 			},
 			"ObjectPageLazyLoading": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageLazyLoading"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap/uxap/testblocks": "test-resources/sap/uxap/qunit/blocks/",
-						"view": "test-resources/sap/uxap/qunit/view/"
-					}
 				}
 			},
 			"ObjectPageModelMapping": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageModelMapping"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap/uxap/testblocks": "test-resources/sap/uxap/qunit/blocks/",
-						"view": "test-resources/sap/uxap/qunit/view/"
-					}
 				}
 			},
 			"ObjectPageRules": {
@@ -201,63 +143,33 @@ sap.ui.define(function () {
 				},
 				ui5: {
 					resourceroots: {
-						"sap/uxap/sample": "test-resources/sap/uxap/demokit/sample/",
-						"sap/uxap/testblocks": "test-resources/sap/uxap/qunit/blocks/",
-						"view": "test-resources/sap/uxap/qunit/view/"
+						"sap/uxap/sample": "test-resources/sap/uxap/demokit/sample/"
 					}
 				}
 			},
 			"ObjectPageScreenReaderSupport": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageScreenReaderSupport"]
-				},
-				ui5: {
-					resourceroots: {
-						"view": "test-resources/sap/uxap/qunit/view/"
-					}
 				}
 			},
 			"ObjectPageSection": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageSection"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap/uxap/testblocks": "test-resources/sap/uxap/qunit/blocks/",
-						"view": "test-resources/sap/uxap/qunit/view/"
-					}
 				}
 			},
 			"ObjectPageState": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageState"]
-				},
-				ui5: {
-					resourceroots: {
-						"view": "test-resources/sap/uxap/qunit/view/"
-					}
 				}
 			},
 			"ObjectPageSubSection": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageSubSection"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap/uxap/testblocks": "test-resources/sap/uxap/qunit/blocks/",
-						"view": "test-resources/sap/uxap/qunit/view/"
-					}
 				}
 			},
 			"ObjectPageSubSectionStashing": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageSubSectionStashing"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap/uxap/testblocks": "test-resources/sap/uxap/qunit/blocks/",
-						"view": "test-resources/sap/uxap/qunit/view/"
-					}
 				}
 			},
 			"ObjectPageThrottledTask": {
@@ -268,12 +180,6 @@ sap.ui.define(function () {
 			"ObjectPageWithLazyLoadingTabs": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageWithLazyLoadingTabs"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap/uxap/testblocks": "test-resources/sap/uxap/qunit/blocks/",
-						"view": "test-resources/sap/uxap/qunit/view/"
-					}
 				}
 			},
 
@@ -283,6 +189,9 @@ sap.ui.define(function () {
 
 			"changeHandler/AddIFrameObjectPageLayout": {
 				group: "ChangeHandler",
+				sinon: {
+					version: 1 // sinon-qunit-bridge does not support nested QUnit modules
+				},
 				coverage: {
 					only: ["sap/uxap/changeHandler/AddIFrameObjectPageLayout"]
 				},

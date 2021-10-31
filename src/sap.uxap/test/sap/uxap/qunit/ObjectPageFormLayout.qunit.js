@@ -2,7 +2,7 @@
 sap.ui.define(["sap/ui/thirdparty/jquery",
                 "sap/ui/core/Core",
                 "sap/ui/core/mvc/XMLView"],
-function($, Core, XMLView) {
+function(jQuery, Core, XMLView) {
 	"use strict";
 
 
