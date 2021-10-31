@@ -39,7 +39,9 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: {}
+		renderer: {
+			apiVersion: 2
+		}
 	});
 
 	// shortcut for sap.m.ListType

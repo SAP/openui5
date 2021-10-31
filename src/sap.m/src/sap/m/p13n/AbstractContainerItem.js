@@ -6,7 +6,7 @@ sap.ui.define(['sap/ui/core/Element'],
 	function(Element) {
 	"use strict";
 
-    /**
+	/**
 	 * Constructor for a new <code>AbstractContainerItem</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
@@ -29,24 +29,24 @@ sap.ui.define(['sap/ui/core/Element'],
 	 * @private
 	 * @experimental
 	 */
-    var AbstractContainerItem = Element.extend("sap.m.p13n.AbstractContainerItem", {
-        metadata : {
+	var AbstractContainerItem = Element.extend("sap.m.p13n.AbstractContainerItem", {
+		metadata : {
 		library : "sap.m",
 		defaultAggregation: "content",
 		properties : {
 			/**
 			 * Unique key to identify a container item.
 			 */
-            key: {
-                type: "string",
-                defaultValue : null
+			key: {
+				type: "string",
+				defaultValue : null
 			},
 			/**
 			 * Text describing the provided content.
 			 */
 			text: {
-                type: "string",
-                defaultValue : null
+				type: "string",
+				defaultValue : null
 			},
 			/**
 			 * Additional icon for the content.
@@ -57,13 +57,13 @@ sap.ui.define(['sap/ui/core/Element'],
 			}
 		},
 		aggregations: {
-            /**
-             * Dynamic content to be displayed as container item.
-             */
-            content: {
-                type: "sap.ui.core.Control",
-                multiple: false
-            }
+			/**
+			 * Dynamic content to be displayed as container item.
+			 */
+			content: {
+				type: "sap.ui.core.Control",
+				multiple: false
+			}
 		}
 	}});
 
