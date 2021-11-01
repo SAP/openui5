@@ -71,7 +71,7 @@ describe("sap.f.Card", function () {
 	it("List Card", function () {
 		navigateTo("List Card");
 
-		var aCardIds = ["card1", "card2", "card3", "card4", "card5"];
+		var aCardIds = ["card1", "card2", "card3", "card4", "card5", "card6"];
 
 		aCardIds.forEach(function (sId) {
 			takePictureOfElement({
