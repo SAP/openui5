@@ -118,7 +118,8 @@
 	box-sizing: border-box;
 	top: 0.5rem;
 	left: -0.0625rem;
-	border: 0.0125rem solid @sapUiButtonHoverTextColor;
+	width: 0.0625rem;
+	background-color: @sapUiButtonHoverTextColor;
 	pointer-events: none;
 	height: 1.25rem;
 	border-radius: 0.35rem;
@@ -129,19 +130,19 @@
 .sapMSB.sapMSBSuccess .sapMBtn:not(.sapMSBText) .sapMBtnInner.sapMBtnIconFirst::before,
 .sapMSB.sapMSBCritical .sapMBtn:not(.sapMSBText) .sapMBtnInner.sapMBtnIconFirst::before,
 .sapMSB.sapMSBNegative .sapMBtn:not(.sapMSBText) .sapMBtnInner.sapMBtnIconFirst::before {
-	border-color: @sapUiButtonEmphasizedTextColor;
+	background-color: @sapUiButtonEmphasizedTextColor;
 }
 
 .sapMSB.sapMSBAccept .sapMBtn:not(.sapMSBText) .sapMBtnInner.sapMBtnIconFirst::before {
-	border-color: @sapUiButtonAcceptTextColor;
+	background-color: @sapUiButtonAcceptTextColor;
 }
 
 .sapMSB.sapMSBReject .sapMBtn:not(.sapMSBText) .sapMBtnInner.sapMBtnIconFirst::before {
-	border-color: @sapUiButtonRejectTextColor;
+	background-color: @sapUiButtonRejectTextColor;
 }
 
 .sapMSB.sapMSBAttention .sapMBtn:not(.sapMSBText) .sapMBtnInner.sapMBtnIconFirst::before {
-	border-color: @sapUiButtonAttentionTextColor;
+	background-color: @sapUiButtonAttentionTextColor;
 }
 
 .sapUiSizeCompact .sapMSB .sapMBtn:not(.sapMSBText) .sapMBtnInner.sapMBtnIconFirst::before {
