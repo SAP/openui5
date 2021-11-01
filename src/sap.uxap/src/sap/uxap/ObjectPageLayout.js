@@ -3049,6 +3049,9 @@ sap.ui.define([
 			return;
 		}
 
+		this._bMobileScenario = library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange());
+		this._bTabletScenario = library.Utilities.isTabletScenario(this._getCurrentMediaContainerRange());
+
 		if (!this._bDomReady) {
 			Log.info("ObjectPageLayout :: cannot _onUpdateScreenSize before dom is ready");
 			return;
@@ -3057,9 +3060,6 @@ sap.ui.define([
 		this._oLazyLoading.setLazyLoadingParameters();
 
 		setTimeout(function () {
-			this._bMobileScenario = library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange());
-			this._bTabletScenario = library.Utilities.isTabletScenario(this._getCurrentMediaContainerRange());
-
 			if (bIsAlwaysShowContentHeaderEnabled && (this._bHeaderInTitleArea != this._checkAlwaysShowContentHeader())) {
 				this.invalidate();
 			}
