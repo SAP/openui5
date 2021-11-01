@@ -50,13 +50,15 @@ html.sap-desktop .sapMSelectListItemBase:focus {
 .sapMSelectListItemBase {
 	position: relative;
 
+	&:last-child:not(:only-child)::after {
+		border-bottom-left-radius: 0.75rem;
+		border-bottom-right-radius: 0.75rem;
+	}
+}
+
+.sapMSltPicker-CTX:not(.sapMSltPickerWithSubHeader) .sapMSelectListItemBase {
 	&:first-child::after {
 		border-top-left-radius: 0.75rem;
 		border-top-right-radius: 0.75rem;
-	}
-
-	&:last-child::after {
-		border-bottom-left-radius: 0.75rem;
-		border-bottom-right-radius: 0.75rem;
 	}
 }
