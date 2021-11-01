@@ -1,7 +1,23 @@
 {
   "1.97.0": {
-    "date": "October 2021",
+    "date": "November 2021",
     "notes": [
+      {
+        "id": "ee3ba4b56d163982f3f2f8465de6c2f576385030",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.Context: setKeepAlive is not supported on bindings with $$sharedRequest"
+      },
+      {
+        "id": "ed2937dc7a1fc7a3c8ecd728e5b011aa933a8660",
+        "type": "FIX",
+        "text": " core.IconPool: Fix JSDoc, @function annotation for static functions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170285536"
+          }
+        ]
+      },
       {
         "id": "15876ecb000fb27fa9b524ad6a7edec08daf041f",
         "type": "FIX",

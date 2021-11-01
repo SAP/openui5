@@ -1,7 +1,18 @@
 {
   "1.97.0": {
-    "date": "October 2021",
+    "date": "November 2021",
     "notes": [
+      {
+        "id": "63ec0bc7930c3b44f9f98b5acd66f72a8215a0e1",
+        "type": "FIX",
+        "text": " sap.f.CalendarCard: focus is proprly handled on today button press",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266528"
+          }
+        ]
+      },
       {
         "id": "a51b9b1f9ad4bcd7bde43dd3133d95e63e884bb1",
         "type": "FIX",
