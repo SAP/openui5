@@ -19,8 +19,11 @@ sap.ui.define([
 	}
 
 	function prepareData (_aData) {
+		var oToday = new Date();
+
 		aData = _aData.map(function (oEntry) {
 			var oTime = new Date(oEntry.Time);
+			oTime.setMonth(oToday.getMonth()); // always use the current month
 
 			// yesterday, today, tomorrow
 			var aOffsets = [-1, 0, 1];
