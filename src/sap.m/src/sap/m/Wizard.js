@@ -315,6 +315,7 @@ sap.ui.define([
 			this._iStepCount = null;
 			this._bScrollLocked = null;
 			this._oResourceBundle = null;
+			this._bNextButtonPressed = null;
 		};
 
 		/**************************************** PUBLIC METHODS ***************************************/
@@ -779,6 +780,8 @@ sap.ui.define([
 					throw new Error("The wizard is in branching mode, and the nextStep association is not set.");
 				}
 
+				this._bNextButtonPressed = true;
+
 				oProgressNavigator.incrementProgress();
 
 				this._handleStepActivated(oProgressNavigator.getProgress());
@@ -793,11 +796,14 @@ sap.ui.define([
 		 * @private
 		 */
 		Wizard.prototype._getStepScrollOffset = function (oStep) {
-			var iScrollerTop = this._oScroller.getScrollTop(),
-				oProgressStep = this._getCurrentStepInstance(),
+			var oStepContainer = this.getDomRef("step-container"),
+				iScrollerTop = oStepContainer ? oStepContainer.scrollTop : 0,
 				oNextButton = this._getNextButton(),
-				iAdditionalOffset = 0,
-				iStepTop = 0;
+				oProgressStep = this._getCurrentStepInstance(),
+				iStepTop = 0, iAdditionalOffset = 0,
+				iStepScrollHeight = oStep.getDomRef() ? oStep.getDomRef().scrollHeight : 0,
+				iStepContainerClientHeight = oStepContainer ? oStepContainer.clientHeight : 0,
+				bStepContainsButton = !!oNextButton && containsOrEquals(oProgressStep.getDomRef(), oNextButton.getDomRef());
 
 			if (oStep && oStep.$() && oStep.$().position()) {
 				iStepTop = oStep.$().position().top || 0;
@@ -808,12 +814,15 @@ sap.ui.define([
 			 * Because the rendering from step.addContent(button) happens with delay,
 			 * we can't properly detect the offset of the step, that's why
 			 * additionalOffset is added like this.
+			 *
+			 * Additional Offset is also added if a 'next' button has been pressed
+			 * and the oStep is taller than the viewport. - BCP: 2180339806
 			 */
-			if (!Device.system.phone &&
-				oProgressStep && oNextButton &&
-				!containsOrEquals(oProgressStep.getDomRef(), oNextButton.getDomRef())) {
+			if ((!Device.system.phone && oProgressStep && !bStepContainsButton) || (iStepScrollHeight > iStepContainerClientHeight && this._bNextButtonPressed)) {
 				iAdditionalOffset = oNextButton.$().outerHeight();
 			}
+
+			this._bNextButtonPressed = false;
 
 			return (iScrollerTop + iStepTop) - (Wizard.CONSTANTS.SCROLL_OFFSET + iAdditionalOffset);
 		};

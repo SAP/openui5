@@ -147,4 +147,16 @@ describe("sap.m.Wizard", function() {
 		});
 		expect(takeScreenshot()).toLookAs("page-size-XL");
 	});
+
+	it("should scroll to a long step, keeping the title aligned and visible", function () {
+		element(by.id("long-step-wiz-sel")).click();
+		element(by.id("long-step-wiz-step1-nextButton")).click();
+		expect(takeScreenshot()).toLookAs("step-title-visible");
+
+		browser.executeScript("document.getElementById('long-step-wiz-step2-nextButton').scrollIntoView()").then(function() {
+			element(by.id("long-step-wiz-step2-nextButton")).click();
+		});
+
+		expect(takeScreenshot()).toLookAs("first-focusable-element-visible");
+	});
 });
