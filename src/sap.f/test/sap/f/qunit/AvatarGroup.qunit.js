@@ -1,4 +1,4 @@
-/*global QUnit, sinon */
+/*global QUnit */
 
 sap.ui.define([
 	"sap/f/AvatarGroup",
@@ -114,7 +114,7 @@ function (
 
 	QUnit.test("Avatar theme changing logic", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(this.oAvatarGroup, "_onResize");
+		var oSpy = this.spy(this.oAvatarGroup, "_onResize");
 
 		// Act
 		this.oAvatarGroup.onThemeChanged({ theme: "mock" });
@@ -125,14 +125,11 @@ function (
 		// Act
 		this.oAvatarGroup.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
-		oSpy.reset();
+		oSpy.resetHistory();
 		this.oAvatarGroup.onThemeChanged({ theme: "mock" });
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "_onResize is called when theme is changed");
-
-		// Clean up
-		oSpy.restore();
 	});
 
 	QUnit.module("AvatarGroupItems Creation", {
@@ -184,7 +181,7 @@ function (
 
 	QUnit.test("Space/Enter key pressed", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(this.oAvatarGroup, "ontap");
+		var oSpy = this.spy(this.oAvatarGroup, "ontap");
 
 		// Act
 		this.oAvatarGroup.onsapenter({});
@@ -197,23 +194,17 @@ function (
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 2, "Space key press calls ontap");
-
-		// Clean up
-		oSpy.restore();
 	});
 
 	QUnit.test("ontap", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(this.oAvatarGroup, "firePress");
+		var oSpy = this.spy(this.oAvatarGroup, "firePress");
 
 		// Act
 		this.oAvatarGroup.ontap({ srcControl: this.oAvatarGroup });
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "firePress event is fired");
-
-		// Clean up
-		oSpy.restore();
 	});
 
 	QUnit.test("onkeyup", function (assert) {
@@ -317,9 +308,7 @@ function (
 		// Arrange
 		this.oAvatarGroup.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
-		var oStub = sinon.stub(this.oAvatarGroup, "_getWidth", function () {
-			return 120;
-		});
+		this.stub(this.oAvatarGroup, "_getWidth").returns(120);
 
 		// Act
 		this.oAvatarGroup._onResize();
@@ -328,18 +317,13 @@ function (
 		assert.strictEqual(this.oAvatarGroup._bShowMoreButton, true, "Show more button should be shown");
 		assert.strictEqual(this.oAvatarGroup._bAutoWidth, false, "Auto width is false");
 		assert.strictEqual(this.oAvatarGroup._oShowMoreButton.getText(), "+3", "Text of show more button should be '+3'");
-
-		// Clean up
-		oStub.restore();
 	});
 
 	QUnit.test("_onResize not showing the ShowMoreButton", function (assert) {
 		// Arrange
 		this.oAvatarGroup.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
-		var oStub = sinon.stub(this.oAvatarGroup, "_getWidth", function () {
-			return 1000;
-		});
+		this.stub(this.oAvatarGroup, "_getWidth").returns(1000);
 
 		// Act
 		this.oAvatarGroup._onResize();
@@ -348,9 +332,6 @@ function (
 		assert.equal(this.oAvatarGroup._bShowMoreButton, false, "Show more button should not be shown");
 		assert.strictEqual(this.oAvatarGroup._bAutoWidth, true, "Auto width is true");
 		assert.strictEqual(this.oAvatarGroup._oShowMoreButton.getText(), "", "Show more button should not have text");
-
-		// Clean up
-		oStub.restore();
 	});
 
 });

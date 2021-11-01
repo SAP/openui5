@@ -1,4 +1,4 @@
-/*global QUnit, sinon */
+/*global QUnit */
 
 sap.ui.define([
 	"sap/f/GridList",
@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
 ],
 function (
 	GridList,
@@ -30,7 +31,8 @@ function (
 	Sorter,
 	Core,
 	qutils,
-	KeyCodes
+	KeyCodes,
+	jQuery
 ) {
 	"use strict";
 
@@ -43,7 +45,7 @@ function (
 	QUnit.test("Initialization", function (assert) {
 
 		// Arrange
-		sinon.spy(GridList.prototype, "_addGridLayoutDelegate");
+		this.spy(GridList.prototype, "_addGridLayoutDelegate");
 
 		// Act
 		var oGrid = new GridList();
@@ -59,7 +61,6 @@ function (
 		assert.ok(oGrid.oGridLayoutDelegate, "GridLayoutDelegate initialized");
 
 		// Cleanup
-		GridList.prototype._addGridLayoutDelegate.restore();
 		oGrid.destroy();
 	});
 
@@ -79,7 +80,7 @@ function (
 		// Arrange
 		var oGrid = new GridList();
 
-		sinon.stub(GridList.prototype, "getDomRef", function () {
+		this.stub(GridList.prototype, "getDomRef").callsFake(function () {
 			return { test: "test" };
 		});
 
@@ -119,7 +120,7 @@ function (
 	QUnit.test("Delegate", function (assert) {
 
 		// Arrange
-		sinon.spy(GridList.prototype, "_removeGridLayoutDelegate");
+		this.spy(GridList.prototype, "_removeGridLayoutDelegate");
 
 		var oGrid = new GridList();
 
@@ -129,9 +130,6 @@ function (
 		// Assert
 		assert.ok(GridList.prototype._removeGridLayoutDelegate.calledOnce, "Should call _removeGridLayoutDelegate on exit");
 		assert.ok(oGrid.oGridLayoutDelegate === null, "Should destroy GridLayoutDelegate on exit");
-
-		// Cleanup
-		GridList.prototype._removeGridLayoutDelegate.restore();
 	});
 
 	QUnit.test("Observer", function (assert) {
@@ -149,8 +147,8 @@ function (
 	QUnit.module("_onGridChange", {
 		beforeEach: function () {
 			this.oGrid = new GridList();
-			this.oSpyAddDelegate = sinon.spy();
-			this.oSpyRemoveDelegate = sinon.spy();
+			this.oSpyAddDelegate = this.spy();
+			this.oSpyRemoveDelegate = this.spy();
 		},
 		afterEach: function () {
 			this.oSpyAddDelegate = null;
@@ -638,7 +636,7 @@ function (
 			NavigationDirection.Right,
 			NavigationDirection.Up
 		].forEach(function (sDir) {
-			var oSpy = sinon.spy();
+			var oSpy = this.spy();
 			oGridList.attachBorderReached(oSpy);
 
 			// Act
@@ -648,7 +646,7 @@ function (
 
 			// Assert
 			assert.strictEqual(oSpy.callCount, 1, "'borderReached' event is fired");
-		});
+		}, this);
 
 		// Clean up
 		oGridList.destroy();
@@ -674,7 +672,7 @@ function (
 			"item5", "item6", "item7", "item8"
 		]));
 
-		var oSpy = sinon.spy();
+		var oSpy = this.spy();
 		oGridList.attachBorderReached(oSpy);
 		oGridList.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
@@ -707,8 +705,8 @@ function (
 			}
 		});
 
-		var oPageLoadedSpy = sinon.spy(oGridList, "onAfterPageLoaded");
-		var oUpdateFinishedSpy = sinon.spy(oGridList, "_fireUpdateFinished");
+		var oPageLoadedSpy = this.spy(oGridList, "onAfterPageLoaded");
+		var oUpdateFinishedSpy = this.spy(oGridList, "_fireUpdateFinished");
 
 		oGridList.setModel(new JSONModel([
 			"item1", "item2", "item3", "item4",
@@ -736,12 +734,9 @@ function (
 
 	QUnit.test("Matrix creation", function (assert) {
 		// Arrange
-		sinon.stub(Core, "isThemeApplied").returns(false);
+		this.stub(Core, "isThemeApplied").returns(false);
 
 		// Assert
 		assert.strictEqual(this.oGridList.getNavigationMatrix(), null, "'null' is returned when theme is not yet loaded");
-
-		// Clean up
-		Core.isThemeApplied.restore();
 	});
 });

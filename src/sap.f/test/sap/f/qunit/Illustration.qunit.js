@@ -1,4 +1,4 @@
-/*global QUnit, sinon*/
+/*global QUnit*/
 sap.ui.define([
 	"sap/base/Log",
 	"sap/f/Illustration",
@@ -30,9 +30,9 @@ function (
 
 	QUnit.test("onBeforeRendering", function (assert) {
 		// Arrange
-		var fnBuildSymbolSpy = sinon.spy(this.oIllustration, "_buildSymbolId"),
-			fnLoadAssetSpy = sinon.spy(IllustrationPool, "loadAsset"),
-			fnWarningSpy = sinon.spy(Log, "warning"),
+		var fnBuildSymbolSpy = this.spy(this.oIllustration, "_buildSymbolId"),
+			fnLoadAssetSpy = this.spy(IllustrationPool, "loadAsset"),
+			fnWarningStub = this.stub(Log, "warning"),
 			sDummySet = "sapIllus",
 			sDummyMedia = "Dialog",
 			sDummyType = "BeforeSearch";
@@ -44,12 +44,12 @@ function (
 		assert.ok(fnBuildSymbolSpy.calledOnce, "_buildSymbolId called once onBeforeRendering");
 		assert.strictEqual(fnLoadAssetSpy.callCount, 0,
 			"loadAsset function of the IllustrationPool is not called if the _sSymbolId is empty");
-		assert.ok(fnWarningSpy.calledOnce, "warning function of the Log class called when the _sSymbolId is empty");
-		assert.ok(fnWarningSpy.calledWithExactly(Illustration.CAN_NOT_BUILD_SYMBOL_MSG),
+		assert.ok(fnWarningStub.calledOnce, "warning function of the Log class called when the _sSymbolId is empty");
+		assert.ok(fnWarningStub.calledWithExactly(Illustration.CAN_NOT_BUILD_SYMBOL_MSG),
 			"warning function of the Log class called with the correct static message");
 
 		// Act
-		fnWarningSpy.reset();
+		fnWarningStub.resetHistory();
 		this.oIllustration.setSet(sDummySet, true)
 			.setMedia(sDummyMedia, true)
 			.setType(sDummyType);
@@ -59,12 +59,7 @@ function (
 		assert.ok(fnLoadAssetSpy.calledOnce, "loadAsset function of the IllustrationPool class called once onBeforeRendering _sSymbolId isn't empty");
 		assert.ok(fnLoadAssetSpy.calledWithExactly(this.oIllustration._sSymbolId, this.oIllustration._sId),
 			"loadAsset function of the IllustrationPool class called with the correct arguments (_sSymbolId and _sId)");
-		assert.strictEqual(fnWarningSpy.callCount, 0, "warning function of the Log class isn't called when the symbol isn't empty");
-
-		// Clean
-		fnBuildSymbolSpy.restore();
-		fnLoadAssetSpy.restore();
-		fnWarningSpy.restore();
+		assert.strictEqual(fnWarningStub.callCount, 0, "warning function of the Log class isn't called when the symbol isn't empty");
 	});
 
 	/* --------------------------- Illustration Private methods -------------------------------------- */

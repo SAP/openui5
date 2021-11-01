@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/f/DynamicPage",
 	"sap/f/DynamicPageTitle",
-	"qunit/DynamicPageUtil",
+	"./DynamicPageUtil",
 	"sap/ui/core/Core",
 	"sap/m/Link",
 	"sap/m/Title",
@@ -218,7 +218,7 @@ function (
 		assert.equal($oSeparator.hasClass("sapUiHidden"), false, "Toolbar Separator element is visible.");
 
 		// Act: Simulate shrinking of the Page`s width to less than 1280px.
-		oTitlePressSpy.reset();
+		oTitlePressSpy.resetHistory();
 		oTitle._onResize(iTitleSmallWidth);
 
 		// Assert
@@ -230,7 +230,7 @@ function (
 				"Toolbar Separator element is not visible, when the navigationActions are in top area.");
 
 		// Act: Remove all actions.
-		oTitlePressSpy.reset();
+		oTitlePressSpy.resetHistory();
 		oTitle.removeAllNavigationActions();
 		oTitle._onResize(iTitleLargeWidth);
 
@@ -425,9 +425,8 @@ function (
 			iTitleSmallWidth = 900,
 			iTitleBigWidth = 1500,
 			oActionToFocus = oTitle.getNavigationActions()[0].getDomRef(),
-			oSandbox = sinon.sandbox.create(),
-			oMoveToTopSpy = oSandbox.spy(oTitle, "_showNavigationActionsInTopArea"),
-			oMoveToMainSpy = oSandbox.spy(oTitle, "_showNavigationActionsInMainArea");
+			oMoveToTopSpy = this.spy(oTitle, "_showNavigationActionsInTopArea"),
+			oMoveToMainSpy = this.spy(oTitle, "_showNavigationActionsInMainArea");
 
 		oActionToFocus.focus();
 
@@ -441,8 +440,6 @@ function (
 
 		assert.strictEqual(oMoveToTopSpy.callCount, 1, "move actions to top is called");
 		assert.strictEqual(document.activeElement, oActionToFocus, "focus is preserved");
-
-		oSandbox.restore();
 	});
 
 
@@ -663,17 +660,21 @@ function (
 
 	/* --------------------------- DynamicPage Title API ---------------------------------- */
 	QUnit.module("DynamicPage Title - API ", {
-		beforeEach: function () {
+		before: function() {
 			sinon.config.useFakeTimers = true;
+		},
+		beforeEach: function () {
 			this.oDynamicPage = oFactory.getDynamicPage();
 			this.oDynamicPageTitle = this.oDynamicPage.getTitle();
 			oUtil.renderObject(this.oDynamicPage);
 		},
 		afterEach: function () {
-			sinon.config.useFakeTimers = false;
 			this.oDynamicPage.destroy();
 			this.oDynamicPage = null;
 			this.oDynamicPageTitle = null;
+		},
+		after: function() {
+			sinon.config.useFakeTimers = false;
 		}
 	});
 
@@ -1187,7 +1188,7 @@ function (
 			oGenericTag = oFactory.getGenericTag("Test 1"),
 			oDynamicPageTitle = this.oDynamicPageTitle,
 			fnDone = assert.async(),
-			oSpy,
+			oSpy = this.spy(oDynamicPageTitle, "_setContentAreaFlexBasis"),
 			iInitialFlexBasis,
 			iNewFlexBasis;
 
@@ -1203,7 +1204,7 @@ function (
 			oGenericTag.setVisible(false);
 
 			setTimeout(function () {
-				oSpy = sinon.spy(oDynamicPageTitle, "_setContentAreaFlexBasis");
+				oSpy.resetHistory();
 				iInitialFlexBasis = parseInt(oDynamicPageTitle.$("content").css("flex-basis"));
 
 				// Assert
@@ -1244,7 +1245,7 @@ function (
 		Core.applyChanges();
 
 		// Act
-		oSpy = sinon.spy(oDynamicPageTitle, "_setContentAreaFlexBasis");
+		oSpy = this.spy(oDynamicPageTitle, "_setContentAreaFlexBasis");
 		iInitialFlexBasis = parseInt(oDynamicPageTitle.$("content").css("flex-basis"));
 		oGenericTag.setText("New looooooooooooooonger text");
 		Core.applyChanges();
@@ -1274,7 +1275,7 @@ function (
 		Core.applyChanges();
 
 		// Act
-		oSpy = sinon.spy(oDynamicPageTitle, "_setContentAreaFlexBasis");
+		oSpy = this.spy(oDynamicPageTitle, "_setContentAreaFlexBasis");
 		iInitialFlexBasis = parseInt(oDynamicPageTitle.$("content").css("flex-basis"));
 		oGenericTag.setValue(new ObjectNumber({ number: "22222222222222222222222" }));
 		Core.applyChanges();
@@ -1306,7 +1307,7 @@ function (
 		Core.applyChanges();
 
 		// Act
-		oSpy = sinon.spy(oToolbar, "_cacheControlsInfo");
+		oSpy = this.spy(oToolbar, "_cacheControlsInfo");
 
 		// Simulating going to another page and resize handler triggered
 		oDynamicPageTitle.$().css("display", "none");

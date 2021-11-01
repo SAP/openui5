@@ -1,7 +1,7 @@
 /*global QUnit, sinon*/
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"qunit/DynamicPageUtil",
+	"./DynamicPageUtil",
 	"sap/f/DynamicPage",
 	"sap/f/DynamicPageTitle",
 	"sap/f/DynamicPageHeader",
@@ -12,7 +12,9 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/Configuration",
 	"sap/m/OverflowToolbarButton",
+	"sap/m/Input",
 	"sap/m/Panel",
+	"sap/m/Text",
 	"sap/m/library",
 	"sap/f/DynamicPageAccessibleLandmarkInfo",
 	"sap/ui/core/mvc/XMLView",
@@ -34,7 +36,9 @@ function (
 	UIComponent,
 	Configuration,
 	OverflowToolbarButton,
+	Input,
 	Panel,
+	Text,
 	mLibrary,
 	DynamicPageAccessibleLandmarkInfo,
 	XMLView,
@@ -48,7 +52,8 @@ function (
 	var TESTS_DOM_CONTAINER = DynamicPageUtil.sTestsDomContainer,
 		oFactory = DynamicPageUtil.oFactory,
 		oUtil = DynamicPageUtil.oUtil,
-		PageBackgroundDesign = mLibrary.PageBackgroundDesign;
+		PageBackgroundDesign = mLibrary.PageBackgroundDesign,
+		ToolbarStyle = mLibrary.ToolbarStyle;
 
 	/* --------------------------- DynamicPage API -------------------------------------- */
 	QUnit.module("DynamicPage - API ", {
@@ -83,7 +88,7 @@ function (
 	QUnit.test("Using setHeaderExpanded does not make DynamicPageTitle fire stateChange event", function (assert) {
 		// arrange
 		var oTitle = this.oDynamicPage.getTitle(),
-			oStateChangeListener = sinon.spy();
+			oStateChangeListener = this.spy();
 
 		oTitle.attachEvent("stateChange", oStateChangeListener);
 
@@ -287,7 +292,7 @@ function (
 				assert.strictEqual(fnPinChangeSpy.callCount, 0, "pinnedStateChange event isn't fired");
 
 				// Clean Up
-				fnPinChangeSpy.reset();
+				fnPinChangeSpy.resetHistory();
 				done();
 			}, 420);
 		}, 420);
@@ -424,13 +429,14 @@ function (
 	});
 
 	QUnit.test("_updateFitContainer is called onAfterRendering", function (assert) {
-		var oDeviceStub = this.stub(Device, "system",  {
+		var oSpy = this.spy(this.oDynamicPage, "_updateFitContainer"),
+			done = assert.async();
+
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: false,
 			tablet: true
-		}),
-		oSpy = this.spy(this.oDynamicPage, "_updateFitContainer"),
-		done = assert.async();
+		});
 
 		//Act
 		this.oDynamicPage.onAfterRendering();
@@ -438,7 +444,6 @@ function (
 		//Check
 		setTimeout(function() {
 			assert.ok(oSpy.called, "_updateFitContainer is called");
-			oDeviceStub.restore();
 			done();
 		}, 0);
 	});
@@ -494,21 +499,16 @@ function (
 	});
 
 	QUnit.test("DynamicPage with no Title is rendered without error", function (assert) {
-		var oDeviceStub = this.stub(Device, "system",  {
-					desktop: false,
-					phone: true,
-					tablet: false
-				}),
-			oHeaderExpandedStub = this.stub(this.oDynamicPageNoTitle, "getHeaderExpanded", function () {
-				return false;
+		this.stub(Device, "system").value({
+				desktop: false,
+				phone: true,
+				tablet: false
 			});
+		this.stub(this.oDynamicPageNoTitle, "getHeaderExpanded").returns(false);
 
 		this.oDynamicPageNoTitle.rerender();
 
 		assert.ok(true, "No error is thrown");
-
-		oDeviceStub.restore();
-		oHeaderExpandedStub.restore();
 	});
 
 	QUnit.test("DynamicPage pin button does not toggle collapse arrow visibility", function (assert) {
@@ -585,7 +585,7 @@ function (
 		// setup
 		this.oDynamicPage.getHeader().setVisible(false);
 		Core.applyChanges();
-		oSpy = sinon.spy(this.oDynamicPage, "_updateTitleVisualState");
+		oSpy = this.spy(this.oDynamicPage, "_updateTitleVisualState");
 
 		// act
 		this.oDynamicPage.getHeader().setVisible(true);
@@ -675,7 +675,7 @@ function (
 	QUnit.test("resizeListener is not called before the control is rerendered", function (assert) {
 
 		var oDynamicPage = this.oDynamicPage,
-			oSpy = sinon.spy(this.oDynamicPage, "_onChildControlsHeightChange"),
+			oSpy = this.spy(this.oDynamicPage, "_onChildControlsHeightChange"),
 			iHeightBeforeResize,
 			oDummyControl,
 			done = assert.async(),
@@ -707,7 +707,7 @@ function (
 
 				oDynamicPage.getHeader().addContent(oDummyControl);
 				oDynamicPage.getDomRef().style.height = (iHeightBeforeResize / 2) + "px";
-				oSpy.reset();
+				oSpy.resetHistory();
 				oDynamicPage.invalidate();
 				oDynamicPage.rerender();
 				oDynamicPage.removeEventDelegate(this);
@@ -903,17 +903,21 @@ function (
 
 	/* --------------------------- DynamicPage Mobile Rendering ---------------------------------- */
 	QUnit.module("DynamicPage - Rendering - Mobile", {
-		beforeEach: function () {
+		before: function() {
 			sinon.config.useFakeTimers = true;
+		},
+		beforeEach: function () {
 			oUtil.toMobileMode();
 			this.oDynamicPage = oFactory.getDynamicPage();
 			oUtil.renderObject(this.oDynamicPage);
 		},
 		afterEach: function () {
-			sinon.config.useFakeTimers = false;
 			oUtil.toDesktopMode();
 			this.oDynamicPage.destroy();
 			this.oDynamicPage = null;
+		},
+		after: function() {
+			sinon.config.useFakeTimers = false;
 		}
 	});
 
@@ -992,16 +996,20 @@ function (
 	/* --------------------------- DynamicPage Tablet Rendering ---------------------------------- */
 
 	QUnit.module("DynamicPage - Rendering - Tablet", {
-		beforeEach: function () {
+		before: function() {
 			sinon.config.useFakeTimers = true;
+		},
+		beforeEach: function () {
 			oUtil.toTabletMode();
 			this.oDynamicPage = oFactory.getDynamicPage();
 		},
 		afterEach: function () {
-			sinon.config.useFakeTimers = false;
 			oUtil.toDesktopMode();
 			this.oDynamicPage.destroy();
 			this.oDynamicPage = null;
+		},
+		after: function() {
+			sinon.config.useFakeTimers = false;
 		}
 	});
 
@@ -1044,11 +1052,9 @@ function (
 	/* --------------------------- DynamicPage Events and Handlers ---------------------------------- */
 	QUnit.module("DynamicPage Events, Handlers", {
 		beforeEach: function () {
-			sinon.config.useFakeTimers = true;
 			this.oDynamicPage = oFactory.getDynamicPageWithBigContent();
 		},
 		afterEach: function () {
-			sinon.config.useFakeTimers = false;
 			this.oDynamicPage.destroy();
 			this.oDynamicPage = null;
 		}
@@ -1065,7 +1071,7 @@ function (
 	});
 
 	QUnit.test("DynamicPage On Title Press: onsapenter event", function (assert) {
-		var oTitlePressListenerSpy = sinon.spy(),
+		var oTitlePressListenerSpy = this.spy(),
 			oTitle = this.oDynamicPage.getTitle();
 
 		// Arrange
@@ -1079,7 +1085,7 @@ function (
 	});
 
 	QUnit.test("DynamicPage On Title Press: onsapspace event", function (assert) {
-		var oTitlePressListenerSpy = sinon.spy(),
+		var oTitlePressListenerSpy = this.spy(),
 			oTitle = this.oDynamicPage.getTitle();
 
 		// Arrange
@@ -1093,7 +1099,7 @@ function (
 	});
 
 	QUnit.test("DynamicPage On Title Press: onsapspace event with shift", function (assert) {
-		var oTitlePressListenerSpy = sinon.spy(),
+		var oTitlePressListenerSpy = this.spy(),
 			oTitle = this.oDynamicPage.getTitle();
 
 		// Arrange
@@ -1109,12 +1115,12 @@ function (
 	QUnit.test("preventDefault is not called when event target is not the title of the DynamicPage", function (assert) {
 		// Arrange
 		var oTitle = this.oDynamicPage.getTitle(),
-			oInput = new sap.m.Input(),
+			oInput = new Input(),
 			oEventMock = {
 				srcControl: oInput,
 				preventDefault: function () {}
 			},
-			oEventSpy = sinon.spy(oEventMock, "preventDefault");
+			oEventSpy = this.spy(oEventMock, "preventDefault");
 
 		// Act
 		oTitle.onsapspace(oEventMock);
@@ -1124,7 +1130,7 @@ function (
 	});
 
 	QUnit.test("DynamicPage On Title Press: stateChange event is fired", function (assert) {
-		var oStateChangeListenerSpy = sinon.spy(),
+		var oStateChangeListenerSpy = this.spy(),
 			oTitle = this.oDynamicPage.getTitle();
 
 		this.oDynamicPage.getTitle().attachEvent("stateChange", oStateChangeListenerSpy);
@@ -1163,7 +1169,7 @@ function (
 	});
 
 	QUnit.test("DynamicPage On Expand Button Press stateChange event is fired", function (assert) {
-		var oStateChangeListenerSpy = sinon.spy(),
+		var oStateChangeListenerSpy = this.spy(),
 			oCollapseButton = this.oDynamicPage.getHeader()._getCollapseButton();
 
 		this.oDynamicPage.getTitle().attachEvent("stateChange", oStateChangeListenerSpy);
@@ -1264,7 +1270,7 @@ function (
 	});
 
 	QUnit.test("DynamicPage On Expand Button Press stateChange event is fired", function (assert) {
-		var oStateChangeListenerSpy = sinon.spy(),
+		var oStateChangeListenerSpy = this.spy(),
 			oExpandButton = this.oDynamicPage.getTitle()._getExpandButton();
 
 		this.oDynamicPage.getTitle().attachEvent("stateChange", oStateChangeListenerSpy);
@@ -1376,7 +1382,7 @@ function (
 		this.oDynamicPage.setHeaderExpanded(false);
 
 		//Act
-		oDeregisterSpy.reset();
+		oDeregisterSpy.resetHistory();
 		oHeader.removeAllContent();
 		Core.applyChanges();
 
@@ -1484,7 +1490,7 @@ function (
 
 		assert.equal(oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true, "header is bigger than allowed to be expanded in title");
 
-		oScrollSpy.reset();
+		oScrollSpy.resetHistory();
 
 		//act
 		oTitle.fireEvent("_titlePress");
@@ -1526,13 +1532,10 @@ function (
 
 	QUnit.test("Expand button of snapped header preserved on resize", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
-			oStubCanScroll = this.stub(this.oDynamicPage, "_canSnapHeaderOnScroll", function () {
-				return false;
-			}),
-			oStubHeaderHeight = this.stub(this.oDynamicPage, "_headerBiggerThanAllowedToBeExpandedInTitleArea", function () {
-				return true;
-			}),
 			oMockResizeWidthEvent = {size:{width: 100, height: 100}, oldSize:{height: 100}};
+
+		this.stub(this.oDynamicPage, "_canSnapHeaderOnScroll").returns(false);
+		this.stub(this.oDynamicPage, "_headerBiggerThanAllowedToBeExpandedInTitleArea").returns(true);
 
 		// Final setup step: snap header => the expand button should become visible after rendering
 		oDynamicPage.setHeaderExpanded(false);
@@ -1543,10 +1546,6 @@ function (
 		oDynamicPage._onResize(oMockResizeWidthEvent);
 
 		assert.ok(!oDynamicPage.getTitle()._getExpandButton().$().hasClass('sapUiHidden'), "expand button is visible");
-
-		//cleanup
-		oStubCanScroll.restore();
-		oStubHeaderHeight.restore();
 	});
 
 
@@ -1564,24 +1563,23 @@ function (
 
 	QUnit.test("DynamicPage _overridePreserveHeaderStateOnScroll() should be called, when a change of DynamicPage's height occurs and 'preserveHeaderStateOnScroll' is 'true'", function (assert) {
 		// Arrange
-		var oSpy,
-			oMockResizeWidthEvent = {size: {height: 500}, oldSize:{height: 100}},
+		var oMockResizeWidthEvent = {size: {height: 500}, oldSize:{height: 100}},
 			done = assert.async(),
-			oDynamicPage = this.oDynamicPage;
+			oDynamicPage = this.oDynamicPage,
+			oSpy = this.spy(oDynamicPage, "_overridePreserveHeaderStateOnScroll");
 
 		// Act
 		oDynamicPage.addEventDelegate({
 			"onAfterRendering": function() {
 				setTimeout(function() {
 					// Act
-					oSpy = sinon.spy(oDynamicPage, "_overridePreserveHeaderStateOnScroll");
+					oSpy.resetHistory();
 					oDynamicPage._onResize(oMockResizeWidthEvent);
 
 					// Assert
 					assert.ok(oSpy.calledOnce, "_overridePreserveHeaderStateOnScroll called once");
 
 					// Clean Up
-					oSpy.reset();
 					done();
 				}, 200);
 			}
@@ -1597,17 +1595,16 @@ function (
 			oDynamicPage = this.oDynamicPage,
 			oMockResizeWidthEvent = {size: {height: 500}, oldSize:{height: 100}},
 			oMockHeaderResizeWidthEvent = {size: {height: 500}, oldSize:{height: 0}, target: {id: this.oDynamicPage.getHeader().getId()}},
-			oStub = sinon.stub(oDynamicPage, "_headerBiggerThanAllowedToBeFixed", function() {
-				return true;
-			}),
 			done = assert.async();
+
+		this.stub(oDynamicPage, "_headerBiggerThanAllowedToBeFixed").returns(true);
 
 		// Act
 		oDynamicPage.addEventDelegate({
 			"onAfterRendering": function() {
 				setTimeout(function() {
 					// Act
-					oSpy = sinon.spy(oDynamicPage, "_overridePreserveHeaderStateOnScroll");
+					oSpy = this.spy(oDynamicPage, "_overridePreserveHeaderStateOnScroll");
 					oDynamicPage._onResize(oMockResizeWidthEvent);
 					oDynamicPage._onChildControlsHeightChange(oMockHeaderResizeWidthEvent);
 
@@ -1616,11 +1613,9 @@ function (
 					assert.ok(oDynamicPage._headerBiggerThanAllowedHeight, "_headerBiggerThanAllowedHeight flag is correct");
 
 					// Clean Up
-					oSpy.reset();
-					oStub.restore();
 					done();
-				}, 200);
-			}
+				}.bind(this), 200);
+			}.bind(this)
 		});
 
 		oDynamicPage.setPreserveHeaderStateOnScroll(true);
@@ -1629,22 +1624,20 @@ function (
 	QUnit.test("DynamicPage _overridePreserveHeaderStateOnScroll() shows the header when 'headerExpanded' is 'true'", function (assert) {
 		// Arrange
 		var oDynamicPage = this.oDynamicPage,
-			oSandBox = sinon.sandbox.create(),
-			oSpy = oSandBox.spy(oDynamicPage, "_setScrollPosition"),
+			oSpy = this.spy(oDynamicPage, "_setScrollPosition"),
 			done = assert.async();
 
 		// Act
 		oDynamicPage.addEventDelegate({
 			"onAfterRendering": function() {
 					// Act
-					oSpy.reset();
+					oSpy.resetHistory();
 					oDynamicPage._overridePreserveHeaderStateOnScroll();
 
 					// Assert
 					assert.notOk(oSpy.called, "no scrolling when the header is expanded");
 
 					// Clean Up
-					oSandBox.restore();
 					done();
 			}
 		});
@@ -1654,25 +1647,19 @@ function (
 
 	QUnit.test("DynamicPage _headerBiggerThanAllowedHeight should be 'true' for Desktop when needed", function (assert) {
 		// Arrange
-		var oBiggerHeaderStub = this.stub(this.oDynamicPage, "_headerBiggerThanAllowedToBeFixed", function () {
-				return true;
-			}),
-			oDeviceStub = this.stub(Device, "system", {
-					desktop: true,
-					tablet: false,
-					phone: false
-			});
+		this.stub(this.oDynamicPage, "_headerBiggerThanAllowedToBeFixed").returns(true);
+		this.stub(Device, "system").value({
+				desktop: true,
+				tablet: false,
+				phone: false
+		});
 
-			//Act
-			this.oDynamicPage._overridePreserveHeaderStateOnScroll();
+		//Act
+		this.oDynamicPage._overridePreserveHeaderStateOnScroll();
 
-			// Assert
-			assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedHeight, true,
-				"Preserving header state on scroll is overriden for desktop too, when it is too big");
-
-			// Clean up
-			oBiggerHeaderStub.restore();
-			oDeviceStub.restore();
+		// Assert
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedHeight, true,
+			"Preserving header state on scroll is overriden for desktop too, when it is too big");
 	});
 
 	QUnit.test("DynamicPage _expandHeader() should hide Snapped Content and show Expand Content", function (assert) {
@@ -1757,7 +1744,7 @@ function (
 		this.oDynamicPage.attachEvent("_moveHeader", oMoveHeaderSpy);
 		oDynamicPage._moveHeaderToTitleArea();
 		assert.equal($wrapper.find($header).length === 0, true, "Header is in not in the content area");
-		oMoveHeaderSpy.reset();
+		oMoveHeaderSpy.resetHistory();
 
 		// Act
 		oDynamicPage._moveHeaderToContentArea();
@@ -1981,7 +1968,7 @@ function (
 			oDynamicPage = this.oDynamicPage,
 			$wrapper = oDynamicPage.$wrapper,
 			oDynamicPageScrollBar = this.oDynamicPage.getAggregation("_scrollBar"),
-			oScrollPositionSpy = sinon.spy(oDynamicPageScrollBar, "setScrollPosition");
+			oScrollPositionSpy = this.spy(oDynamicPageScrollBar, "setScrollPosition");
 
 		//arrange
 		$wrapper.scrollTop(iExpectedScrollPosition);
@@ -2007,7 +1994,7 @@ function (
 
 		//arrange
 		oDynamicPageScrollBar.setScrollPosition(iExpectedScrollPosition);
-		oScrollPositionSpy = sinon.spy(oDynamicPageScrollBar, "setScrollPosition");
+		oScrollPositionSpy = this.spy(oDynamicPageScrollBar, "setScrollPosition");
 
 		//act
 		oDynamicPage._onScrollBarScroll();
@@ -2043,9 +2030,7 @@ function (
 	QUnit.test("DynamicPage preserves scroll position when navigating to another page and then comming back", function (assert) {
 		var iExpectedScrollPosition = 500,
 			oDynamicPage = this.oDynamicPage,
-			oStub = this.stub(this.oDynamicPage, "_getScrollPosition", function () {
-				return 0;
-			}); // Scroll position of wrapper is set to 0 when navigating to another page
+			oStub = this.stub(this.oDynamicPage, "_getScrollPosition").returns(0); // Scroll position of wrapper is set to 0 when navigating to another page
 
 		//arrange
 		oDynamicPage.$wrapper.scrollTop(iExpectedScrollPosition);
@@ -2101,12 +2086,15 @@ function (
 
 	QUnit.test("DynamicPage _headerBiggerThanAllowedToPin() returns the correct value", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
-			oSandBox = sinon.sandbox.create(),
-			fnStubConfig = function (iHeaderHeight, iDynamicPageHeight) {
-				oSandBox.stub(oDynamicPage, "_getEntireHeaderHeight").returns(iHeaderHeight);
-				oSandBox.stub(oDynamicPage, "_getOwnHeight").returns(iDynamicPageHeight);
-			},
 			fnSpy = this.spy(DynamicPage.prototype, "_togglePinButtonVisibility");
+
+		this.stub(oDynamicPage, "_getEntireHeaderHeight");
+		this.stub(oDynamicPage, "_getOwnHeight");
+
+		var fnStubConfig = function (iHeaderHeight, iDynamicPageHeight) {
+			oDynamicPage._getEntireHeaderHeight.returns(iHeaderHeight);
+			oDynamicPage._getOwnHeight.returns(iDynamicPageHeight);
+		};
 
 		fnStubConfig(700, 999);
 
@@ -2116,8 +2104,6 @@ function (
 		oDynamicPage._expandHeader();
 
 		assert.ok(fnSpy.notCalled, "_togglePinButtonVisibility should not be called");
-
-		oSandBox.restore();
 
 		fnStubConfig(100, 999);
 
@@ -2131,17 +2117,14 @@ function (
 
 	QUnit.test("DynamicPage _headerBiggerThanAllowedToPin() is called on child resize", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
-			oSandBox = sinon.sandbox.create(),
-			fnSpy = oSandBox.spy(oDynamicPage, "_headerBiggerThanAllowedToPin");
+			fnSpy = this.spy(oDynamicPage, "_headerBiggerThanAllowedToPin");
 
-		oSandBox.stub(oDynamicPage, "_canSnapHeaderOnScroll").returns(false);
+		this.stub(oDynamicPage, "_canSnapHeaderOnScroll").returns(false);
 
 		// Act: resize the header (call the resize listener synchronously to save timeout in the test)
 		oDynamicPage._onChildControlsHeightChange({target: oDynamicPage.getHeader().getDomRef(), size: {}, oldSize: {}});
 
 		assert.ok(fnSpy.called, "_headerBiggerThanAllowedToPin is called");
-
-		oSandBox.restore();
 	});
 
 	QUnit.test("DynamicPage _headerBiggerThanAllowedToBeExpandedInTitleArea() returns the correct value on desktop", function (assert) {
@@ -2267,12 +2250,12 @@ function (
 
 	QUnit.test("DynamicPageTitle _getActionsToolbar returns toolbar with correct style", function (assert) {
 		var oActionsToolbar = this.oDynamicPage.getTitle()._getActionsToolbar();
-		assert.equal(oActionsToolbar.getStyle(), sap.m.ToolbarStyle.Clear, "actions toolbar has correct style");
+		assert.equal(oActionsToolbar.getStyle(), ToolbarStyle.Clear, "actions toolbar has correct style");
 	});
 
 	QUnit.test("DynamicPageTitle _getNavigationActionsToolbar returns toolbar with correct style", function (assert) {
 		var oNavActionsToolbar = this.oDynamicPage.getTitle()._getNavigationActionsToolbar();
-		assert.equal(oNavActionsToolbar.getStyle(), sap.m.ToolbarStyle.Clear, "nav-actions toolbar has correct style");
+		assert.equal(oNavActionsToolbar.getStyle(), ToolbarStyle.Clear, "nav-actions toolbar has correct style");
 	});
 
 	QUnit.test("DynamicPage _applyContextualSettings changes media classes" , function (assert) {
@@ -2722,7 +2705,7 @@ function (
 		//arrange
 		this.oDynamicPage.setHeaderExpanded(false);
 		this.oDynamicPage.getTitle().setVisible(false);
-		this.oDynamicPage.getTitle().addSnappedContent(new sap.m.Text());
+		this.oDynamicPage.getTitle().addSnappedContent(new Text());
 
 		//act
 		try {
@@ -2769,12 +2752,8 @@ function (
 			sRole = "region",
 			sAriaExpandedValue = "true",
 			sAriaLabelValue = oFactory.getResourceBundle().getText("EXPANDED_HEADER");
-		this.stub(this.oDynamicPage, "_shouldSnapOnScroll", function () {
-			return true;
-		});
-		this.stub(this.oDynamicPage, "_canSnapHeaderOnScroll", function () {
-			return true;
-		});
+		this.stub(this.oDynamicPage, "_shouldSnapOnScroll").returns(true);
+		this.stub(this.oDynamicPage, "_canSnapHeaderOnScroll").returns(true);
 
 		assert.equal($header.attr("role"), sRole,
 			"DynamicPage Header role 'region'");
@@ -3160,7 +3139,7 @@ function (
 
 	QUnit.test("Calling _updateMedia with falsy value should not take action", function(assert) {
 		// setup
-		var oUpdateMediaStyleSpy = sinon.spy(this.oDynamicPage, "_updateMediaStyle");
+		var oUpdateMediaStyleSpy = this.spy(this.oDynamicPage, "_updateMediaStyle");
 
 		// act
 		this.oDynamicPage._updateMedia(0);

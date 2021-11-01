@@ -1,4 +1,4 @@
-/*global QUnit, sinon*/
+/*global QUnit*/
 sap.ui.define([
 	"sap/f/library",
 	"sap/ui/thirdparty/jquery",
@@ -90,7 +90,7 @@ function (
 
 	QUnit.test("init", function (assert) {
 		// Arrange
-		var fnUpdateInternalSpy = sinon.spy(this.oIllustratedMessage, "_updateInternalIllustrationSetAndType");
+		var fnUpdateInternalSpy = this.spy(this.oIllustratedMessage, "_updateInternalIllustrationSetAndType");
 
 		// Act
 		this.oIllustratedMessage.init();
@@ -99,30 +99,24 @@ function (
 		assert.ok(fnUpdateInternalSpy.calledOnce, "_updateInternalIllustrationSetAndType called once on init");
 		assert.ok(fnUpdateInternalSpy.calledWithExactly(this.oIllustratedMessage.getIllustrationType()),
 			"_updateInternalIllustrationSetAndType called width the illustrationType");
-
-		// Clean
-		fnUpdateInternalSpy.restore();
 	});
 
 	QUnit.test("onBeforeRendering", function (assert) {
 		// Arrange
-		var fnDetachResizeSpy = sinon.spy(this.oIllustratedMessage, "_detachResizeHandlers");
+		var fnDetachResizeSpy = this.spy(this.oIllustratedMessage, "_detachResizeHandlers");
 
 		// Act
 		this.oIllustratedMessage.onBeforeRendering();
 
 		// Assert
 		assert.ok(fnDetachResizeSpy.calledOnce, "_detachResizeHandlers called once onBeforeRendering");
-
-		// Clean
-		fnDetachResizeSpy.restore();
 	});
 
 	QUnit.test("onAfterRendering", function (assert) {
 		// Arrange
-		var fnUpdateDomSizeSpy = sinon.spy(this.oIllustratedMessage, "_updateDomSize"),
-			fnAttachResizeSpy = sinon.spy(this.oIllustratedMessage, "_attachResizeHandlers"),
-			fnPreventWidowResizeSpy = sinon.spy(this.oIllustratedMessage, "_preventWidowWords");
+		var fnUpdateDomSizeSpy = this.spy(this.oIllustratedMessage, "_updateDomSize"),
+			fnAttachResizeSpy = this.spy(this.oIllustratedMessage, "_attachResizeHandlers"),
+			fnPreventWidowResizeSpy = this.spy(this.oIllustratedMessage, "_preventWidowWords");
 
 		// Act
 		this.oIllustratedMessage.onAfterRendering();
@@ -135,25 +129,17 @@ function (
 			"_preventWidowWords first call is with IllustratedMessage's title Dom Ref as argument");
 		assert.ok(fnPreventWidowResizeSpy.secondCall.calledWithExactly(this.oIllustratedMessage._getDescription().getDomRef()),
 			"_preventWidowWords second call is with IllustratedMessage's description Dom Ref as argument");
-
-		// Clean
-		fnUpdateDomSizeSpy.restore();
-		fnAttachResizeSpy.restore();
-		fnPreventWidowResizeSpy.restore();
 	});
 
 	QUnit.test("exit", function (assert) {
 		// Arrange
-		var fnDetachResizeSpy = sinon.spy(this.oIllustratedMessage, "_detachResizeHandlers");
+		var fnDetachResizeSpy = this.spy(this.oIllustratedMessage, "_detachResizeHandlers");
 
 		// Act
 		this.oIllustratedMessage.exit();
 
 		// Assert
 		assert.ok(fnDetachResizeSpy.calledOnce, "_detachResizeHandlers called once on exit");
-
-		// Clean
-		fnDetachResizeSpy.restore();
 	});
 
 	/* --------------------------- IllustratedMessage GETTERS/SETTERS -------------------------------------- */
@@ -173,7 +159,7 @@ function (
 
 	QUnit.test("setIllustrationType", function (assert) {
 		// Arrange
-		var fnUpdateInternalSpy = sinon.spy(this.oIllustratedMessage, "_updateInternalIllustrationSetAndType"),
+		var fnUpdateInternalSpy = this.spy(this.oIllustratedMessage, "_updateInternalIllustrationSetAndType"),
 			sNewType = IllustratedMessageType.UnableToLoad;
 
 		// Act
@@ -183,9 +169,6 @@ function (
 		assert.ok(fnUpdateInternalSpy.calledOnce, "_updateInternalIllustrationSetAndType called once on setIllustrationType");
 		assert.ok(fnUpdateInternalSpy.calledWithExactly(sNewType),
 			"_updateInternalIllustrationSetAndType called with the new IllustratedMessageType.UnableToLoad illustrationType");
-
-		// Clean
-		fnUpdateInternalSpy.restore();
 	});
 
 	QUnit.test("_getDescription - sap.m.FormattedText", function (assert) {
@@ -318,8 +301,8 @@ function (
 
 	QUnit.test("_updateDomSize", function (assert) {
 		// Arrange
-		var fnUpdateMediaSpy = sinon.spy(this.oIllustratedMessage, "_updateMedia"),
-			fnUpdateMediaStyleSpy = sinon.spy(this.oIllustratedMessage, "_updateMediaStyle"),
+		var fnUpdateMediaSpy = this.spy(this.oIllustratedMessage, "_updateMedia"),
+			fnUpdateMediaStyleSpy = this.spy(this.oIllustratedMessage, "_updateMediaStyle"),
 			sNewSize = IllustratedMessageSize.Dialog;
 
 		// Act
@@ -333,8 +316,8 @@ function (
 			"_updateMedia called width the IllustratedMessage's Dom Reference width");
 
 		// Act
-		fnUpdateMediaSpy.reset();
-		fnUpdateMediaStyleSpy.reset();
+		fnUpdateMediaSpy.resetHistory();
+		fnUpdateMediaStyleSpy.resetHistory();
 		this.oIllustratedMessage.setIllustrationSize(sNewSize);
 		this.oIllustratedMessage._updateDomSize();
 
@@ -344,10 +327,6 @@ function (
 		assert.ok(fnUpdateMediaStyleSpy.calledWithExactly(IllustratedMessage.MEDIA[sNewSize.toUpperCase()]),
 			"_updateMediaStyle called width the IllustratedMessage's media with new illustrationSize to upper case as key");
 		assert.strictEqual(fnUpdateMediaSpy.callCount, 0, "_updateMedia is not called when illustrationSize is different from IllustratedMessageSize.Auto");
-
-		// Clean
-		fnUpdateMediaSpy.restore();
-		fnUpdateMediaStyleSpy.restore();
 	});
 
 	QUnit.test("_updateInternalIllustrationSetAndType", function (assert) {
@@ -370,7 +349,7 @@ function (
 	QUnit.test("_attachResizeHandlers", function (assert) {
 		// Arrange
 		var sResizeHandlerId = IllustratedMessage.RESIZE_HANDLER_ID.CONTENT,
-			fnRegisterResizeSpy = sinon.spy(this.oIllustratedMessage, "_registerResizeHandler");
+			fnRegisterResizeSpy = this.spy(this.oIllustratedMessage, "_registerResizeHandler");
 
 		this.oIllustratedMessage[sResizeHandlerId] = null;
 
@@ -388,7 +367,7 @@ function (
 			"New resize handler is registered after calling the _registerResizeHandler function");
 
 		// Act
-		fnRegisterResizeSpy.reset();
+		fnRegisterResizeSpy.resetHistory();
 		this.oIllustratedMessage[sResizeHandlerId] = null;
 		this.oIllustratedMessage.setIllustrationSize(IllustratedMessageSize.Spot);
 
@@ -397,15 +376,12 @@ function (
 			"_registerResizeHandler is not called inside the _attachResizeHandlers call when illustrationSize is different from IllustratedMessageSize.Auto");
 		assert.strictEqual(this.oIllustratedMessage[sResizeHandlerId], null,
 			"No new resize handler is registered after calling the _registerResizeHandler function");
-
-		// Clean
-		fnRegisterResizeSpy.restore();
 	});
 
 	QUnit.test("_detachResizeHandlers", function (assert) {
 		// Arrange
 		var sResizeHandlerId = IllustratedMessage.RESIZE_HANDLER_ID.CONTENT,
-			fnDeregisterResizeSpy = sinon.spy(this.oIllustratedMessage, "_deRegisterResizeHandler");
+			fnDeregisterResizeSpy = this.spy(this.oIllustratedMessage, "_deRegisterResizeHandler");
 
 		// Assert
 		assert.strictEqual(typeof this.oIllustratedMessage[sResizeHandlerId], 'string',
@@ -421,9 +397,6 @@ function (
 			"_deRegisterResizeHandler is called with the IllustratedMessage.RESIZE_HANDLER_ID.CONTENT as argument");
 		assert.strictEqual(this.oIllustratedMessage[sResizeHandlerId], null,
 			"IllustratedMessage's ResizeHandler is set to null after _deRegisterResizeHandler function execution");
-
-		// Clean
-		fnDeregisterResizeSpy.restore();
 	});
 
 	/* --------------------------- IllustratedMessage Updating Media Breakpoints -------------------------------------- */
@@ -431,7 +404,7 @@ function (
 	QUnit.test("_onResize", function (assert) {
 		// Arrange
 		var oMockEvent = {size: {width: 666}},
-			fnUpdateMediaSpy = sinon.spy(this.oIllustratedMessage, "_updateMedia");
+			fnUpdateMediaSpy = this.spy(this.oIllustratedMessage, "_updateMedia");
 
 		// Act
 		this.oIllustratedMessage._onResize(oMockEvent);
@@ -441,9 +414,6 @@ function (
 			"_updateMedia is called once inside the _onResize call");
 		assert.ok(fnUpdateMediaSpy.calledWithExactly(oMockEvent.size.width),
 			"_updateMedia is called with the oMockEvent's new width size");
-
-		// Clean
-		fnUpdateMediaSpy.restore();
 	});
 
 	QUnit.test("_updateMedia", function (assert) {
@@ -451,7 +421,7 @@ function (
 		assert.expect(9);
 
 		// Arrange
-		var fnUpdateMediaStyleSpy = sinon.spy(this.oIllustratedMessage, "_updateMediaStyle");
+		var fnUpdateMediaStyleSpy = this.spy(this.oIllustratedMessage, "_updateMediaStyle");
 
 		// Act
 		this.oIllustratedMessage._updateMedia(0);
@@ -471,11 +441,8 @@ function (
 				"_updateMediaStyle called with the correct class ( " + IllustratedMessage.MEDIA[sBreakPoint] + " ) for breakpoint: " + sBreakPoint);
 
 			// Clear
-			fnUpdateMediaStyleSpy.reset();
+			fnUpdateMediaStyleSpy.resetHistory();
 		}, this);
-
-		// Clean
-		fnUpdateMediaStyleSpy.restore();
 	});
 
 	QUnit.test("_updateMediaStyle", function (assert) {

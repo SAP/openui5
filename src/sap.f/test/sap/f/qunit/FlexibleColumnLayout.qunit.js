@@ -882,20 +882,15 @@ function (
 
 	QUnit.test("ResizeHandler's suspend method is not called for pinned columns", function (assert) {
 		// Arrange
-		var oSpySuspendHandler = this.spy(ResizeHandler, "suspend"),
-			oStubShouldRevealColumn = this.stub(this.oFCL, "_shouldRevealColumn", function () {
-				return true; // mock pinnable column
-			});
+		var oSpySuspendHandler = this.spy(ResizeHandler, "suspend");
+
+		this.stub(this.oFCL, "_shouldRevealColumn").returns(true); // mock pinnable column
 
 		// Act
 		this.oFCL._resizeColumns();
 
 		// Assert
 		assert.ok(oSpySuspendHandler.notCalled, "does not suspend resizeHandler for pinned columns");
-
-		// Clean up
-		oSpySuspendHandler.restore();
-		oStubShouldRevealColumn.restore();
 	});
 
 	QUnit.test("Suspending and resuming ResizeHandler upon column layout change", function (assert) {
@@ -907,8 +902,8 @@ function (
 			oBeginColumnArrow =  this.oFCL.getAggregation("_beginColumnBackArrow"),
 			oBeginColumn = this.oFCL._$columns["begin"],
 			oBeginColumnDomRef = oBeginColumn.get(0),
-			oSuspendSpy = sinon.spy(ResizeHandler, "suspend"),
-			oResumeSpy = sinon.spy(ResizeHandler, "resume");
+			oSuspendSpy = this.spy(ResizeHandler, "suspend"),
+			oResumeSpy = this.spy(ResizeHandler, "resume");
 
 		// act
 		oBeginColumnArrow.firePress();
@@ -918,8 +913,6 @@ function (
 		oBeginColumn.on("webkitTransitionEnd transitionend", function() {
 			setTimeout(function() { // wait for FCL promise to complete
 				assert.ok(oResumeSpy.calledWith(oBeginColumnDomRef), "ResizeHandler resumed for column");
-				oSuspendSpy.restore();
-				oResumeSpy.restore();
 				fnDone();
 			}, 0);
 		});
@@ -1062,7 +1055,6 @@ function (
 
 		// clean-up
 		oConfiguration.setAnimationMode(sOriginalAnimationMode);
-		oSpy.restore();
 	});
 
 	QUnit.module("ScreenReader supprot", {
@@ -1260,12 +1252,11 @@ function (
 
 	QUnit.test("Measuring width when FCL is visible", function (assert) {
 		// setup
-		var oSpy,
-			oStub;
+		var oSpy;
 
 		this.oFCL = new FlexibleColumnLayout();
 		oSpy = this.spy(this.oFCL, "_measureControlWidth");
-		oStub = this.stub(this.oFCL, "$", function() {
+		this.stub(this.oFCL, "$").callsFake(function() {
 			return {
 				is: function() { return true; },
 				width: function() {
@@ -1282,8 +1273,6 @@ function (
 		assert.ok(oSpy.called, "When _iWidth is 0, width is measured from the DOM until the control gets visible");
 
 		// clean-up
-		oSpy.restore();
-		oStub.restore();
 		this.oFCL.destroy();
 	});
 
@@ -1364,14 +1353,13 @@ function (
 	QUnit.module("columnResize", {
 		beforeEach: function () {
 			this.oFCL = new FlexibleColumnLayout();
-			this.oEventSpy = sinon.spy(this.oFCL, "fireColumnResize");
+			this.oEventSpy = this.spy(this.oFCL, "fireColumnResize");
 			this.iPreviousFixtureWidth = $("#" + sQUnitFixture).width();
 			$("#" + sQUnitFixture).width(DESKTOP_SIZE);
 		},
 
 		afterEach: function () {
 			this.oFCL.destroy();
-			this.oEventSpy.restore();
 			$("#" + sQUnitFixture).width(this.iPreviousFixtureWidth);
 		}
 	});
@@ -1380,12 +1368,11 @@ function (
 		assert.expect(1);
 		// setup
 		var fnDone = assert.async(),
-			oResizeFunctionSpy = sinon.spy(ResizeHandler, "resume"),
+			oResizeFunctionSpy = this.spy(ResizeHandler, "resume"),
 			fnCallback = function () {
 				this.oFCL.detachColumnResize(fnCallback);
 				// assert
 				assert.ok(this.oEventSpy.calledAfter(oResizeFunctionSpy), "event is fired after ResizeHandler.resume");
-				oResizeFunctionSpy.restore();
 				fnDone();
 			}.bind(this);
 
@@ -1393,7 +1380,7 @@ function (
 		Core.applyChanges();
 
 		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function () {
-			this.oEventSpy.reset();
+			this.oEventSpy.resetHistory();
 			this.oFCL.attachColumnResize(fnCallback);
 			this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
 		}.bind(this));
@@ -1403,14 +1390,13 @@ function (
 		assert.expect(3);
 		// setup
 		var fnDone = assert.async(),
-			oResizeFunctionSpy = sinon.spy(ResizeHandler, "resume"),
+			oResizeFunctionSpy = this.spy(ResizeHandler, "resume"),
 			fnCallback = function () {
 				this.oFCL.detachColumnResize(fnCallback);
 				// assert
 				assert.equal(oResizeFunctionSpy.callCount, 2, "ResizeHandler.resume is called for both columns");
 				assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['begin'].get(0)).calledOnce);
 				assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['mid'].get(0)).calledOnce);
-				oResizeFunctionSpy.restore();
 				fnDone();
 			}.bind(this);
 
@@ -1419,7 +1405,7 @@ function (
 		Core.applyChanges();
 
 		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function () {
-			oResizeFunctionSpy.reset();
+			oResizeFunctionSpy.resetHistory();
 			this.oFCL.attachColumnResize(fnCallback);
 			this.oFCL.setLayout(LT.ThreeColumnsMidExpanded);
 		}.bind(this));
@@ -1429,7 +1415,7 @@ function (
 		assert.expect(1);
 		// setup
 		var fnDone = assert.async(),
-			oFirstLayoutAnimationEnd = sinon.spy();
+			oFirstLayoutAnimationEnd = this.spy();
 
 		this.oFCL.setLayout(LT.TwoColumnsMidExpanded);
 		this.oFCL.placeAt(sQUnitFixture);
@@ -1460,7 +1446,7 @@ function (
 		this.oFCL.placeAt(sQUnitFixture);
 		Core.applyChanges();
 
-		this.oEventSpy.reset();
+		this.oEventSpy.resetHistory();
 		this.oFCL.setLayout(LT.ThreeColumnsEndExpanded);
 		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(fnCallback.bind(this));
 	});
@@ -1478,7 +1464,7 @@ function (
 		this.oFCL.placeAt(sQUnitFixture);
 		Core.applyChanges();
 
-		this.oEventSpy.reset();
+		this.oEventSpy.resetHistory();
 		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
 		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(fnCallback.bind(this));
 	});
@@ -1496,7 +1482,7 @@ function (
 		this.oFCL.placeAt(sQUnitFixture);
 		Core.applyChanges();
 
-		this.oEventSpy.reset();
+		this.oEventSpy.resetHistory();
 		this.oFCL.setLayout(LT.ThreeColumnsMidExpandedEndHidden);
 		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(fnCallback.bind(this));
 	});

@@ -1,4 +1,4 @@
-/*global QUnit, sinon*/
+/*global QUnit*/
 
 sap.ui.define([
 	"sap/f/dnd/GridDropInfo",
@@ -53,7 +53,7 @@ sap.ui.define([
 
 	QUnit.test("#fireDnD when the item is draggable and the container is droppable", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(),
+		var oSpy = this.spy(),
 			oDropConfig = {
 				grid: this.oGrid,
 				item: this.oDroppedControl,
@@ -80,7 +80,7 @@ sap.ui.define([
 
 	QUnit.test("#fireDnD when the item and the container are NOT draggable (no DragInfo)", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(),
+		var oSpy = this.spy(),
 			oDropConfig = {
 				grid: this.oGrid,
 				item: this.oDroppedControl,
@@ -105,7 +105,7 @@ sap.ui.define([
 
 	QUnit.test("#fireDnD when the item and the container are NOT draggable (DragInfo 'enabled=false')", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(),
+		var oSpy = this.spy(),
 			oDropConfig = {
 				grid: this.oGrid,
 				item: this.oDroppedControl,
@@ -133,7 +133,7 @@ sap.ui.define([
 
 	QUnit.test("#fireDnD when dragged item has different 'groupName' than the dropped item", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(),
+		var oSpy = this.spy(),
 			oDropConfig = {
 				grid: this.oGrid,
 				item: this.oDroppedControl,
@@ -164,8 +164,8 @@ sap.ui.define([
 
 	QUnit.test("#fireDnD when the drag and drop containers are different", function (assert) {
 		// Arrange
-		var oDropSpy1 = sinon.spy(),
-			oDropSpy2 = sinon.spy(),
+		var oDropSpy1 = this.spy(),
+			oDropSpy2 = this.spy(),
 			oDraggedControl = new Text({ text: "item1" }),
 			oDragContainer = new GridContainer({
 				items: [
@@ -221,7 +221,7 @@ sap.ui.define([
 
 	QUnit.test("#fireDnD when the drop container doesn't allow dropping", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(),
+		var oSpy = this.spy(),
 			oDraggedControl = new Text({ text: "item1" }),
 			oDragContainer = new GridContainer({
 				items: [
@@ -277,8 +277,8 @@ sap.ui.define([
 	QUnit.test("Simulate Keyboard Drag&Drop into an empty container", function (assert) {
 
 		// Arrange
-		var oDropSpy1 = sinon.spy(),
-			oDropSpy2 = sinon.spy(),
+		var oDropSpy1 = this.spy(),
+			oDropSpy2 = this.spy(),
 			oDraggedControl = new Text({
 				text: "Text 1"
 			}),
@@ -355,7 +355,7 @@ sap.ui.define([
 
 	QUnit.test("'preventDefault' called on 'dragStart' event of DragInfo", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(),
+		var oSpy = this.spy(),
 			oDropConfig = {
 				grid: this.oGrid,
 				item: this.oDroppedControl,
@@ -385,7 +385,7 @@ sap.ui.define([
 
 	QUnit.test("'preventDefault' called on 'dragEnter' event of DropInfo", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(),
+		var oSpy = this.spy(),
 			oDropConfig = {
 				grid: this.oGrid,
 				item: this.oDroppedControl,
@@ -417,8 +417,8 @@ sap.ui.define([
 
 	QUnit.test("#fireDnD skips drop containers with different 'groupName'", function (assert) {
 		// Arrange
-		var oDropSpy1 = sinon.spy(),
-			oDropSpy2 = sinon.spy(),
+		var oDropSpy1 = this.spy(),
+			oDropSpy2 = this.spy(),
 			oDraggedControl = new Text({ text: "item1" }),
 			oDragContainer = new GridContainer({
 				items: [

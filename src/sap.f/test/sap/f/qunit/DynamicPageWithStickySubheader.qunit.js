@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery",
-	"qunit/DynamicPageUtil",
+	"./DynamicPageUtil",
 	"sap/f/DynamicPage"
 ],
 	function (

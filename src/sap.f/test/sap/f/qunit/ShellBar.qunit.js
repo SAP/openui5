@@ -1,4 +1,4 @@
-/* global QUnit, sinon */
+/* global QUnit */
 
 sap.ui.define([
 	"sap/f/SearchManager",
@@ -380,22 +380,19 @@ function (
 
 	QUnit.test("onBeforeRendering", function (assert) {
 		// Arrange
-		var oAssignControlsToOverflowToolbarSpy = sinon.spy(this.oSB, "_assignControls");
+		var oAssignControlsToOverflowToolbarSpy = this.spy(this.oSB, "_assignControls");
 
 		// Act
 		this.oSB.onBeforeRendering();
 
 		// Assert
 		assert.strictEqual(oAssignControlsToOverflowToolbarSpy.callCount, 1, "Assign method called once");
-
-		// Cleanup
-		oAssignControlsToOverflowToolbarSpy.restore();
 	});
 
 	QUnit.test("exit", function (assert) {
 		// Arrange
-		var oResponsiveHandlerSpy = sinon.spy(this.oSB._oResponsiveHandler, "exit"),
-			oFactorySpy = sinon.spy(this.oSB._oFactory, "destroy");
+		var oResponsiveHandlerSpy = this.spy(this.oSB._oResponsiveHandler, "exit"),
+			oFactorySpy = this.spy(this.oSB._oFactory, "destroy");
 
 		// Act
 		this.oSB.destroy();
@@ -403,10 +400,6 @@ function (
 		// Assert
 		assert.strictEqual(oResponsiveHandlerSpy.callCount, 1, "Exit method called once");
 		assert.strictEqual(oFactorySpy.callCount, 1, "Cleanup method called once");
-
-		// Cleanup
-		oResponsiveHandlerSpy.restore();
-		oFactorySpy.restore();
 	});
 
 	QUnit.module("Utility methods", {
@@ -420,7 +413,7 @@ function (
 
 	QUnit.test("_getMenu", function (assert) {
 		// Arrange
-		var oFactoryGetterSpy = sinon.spy(this.oSB._oFactory, "getMegaMenu");
+		var oFactoryGetterSpy = this.spy(this.oSB._oFactory, "getMegaMenu");
 
 		// Act
 		var oMenuButton = this.oSB._getMenu();
@@ -428,9 +421,6 @@ function (
 		// Assert
 		assert.strictEqual(oFactoryGetterSpy.callCount, 1, "Factory getter called once");
 		assert.ok(oMenuButton.isA("sap.m.MenuButton"), "Method returned correct object");
-
-		// Cleanup
-		oFactoryGetterSpy.restore();
 	});
 
 	QUnit.test("_getOverflowToolbar", function (assert) {
@@ -562,30 +552,24 @@ function (
 
 		oControl.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
-		oStub = sinon.stub(oControl._oResponsiveHandler, "_handleResize").callsFake( function() {
+		oStub = this.stub(oControl._oResponsiveHandler, "_handleResize").callsFake(function() {
 			//Assert
 			assert.ok(true, "Responsivehandler delegated event called");
 		});
 		// Act
 		oControl._oOverflowToolbar.attachEvent("_controlWidthChanged", oStub, this);
 		oControl._oOverflowToolbar.fireEvent("_controlWidthChanged");
-
-		//Cleanup
-		oControl._oResponsiveHandler._handleResize.restore();
-		oControl = null; oStub = null;
 	});
 
 	QUnit.test("Sizes are cought when the theme is loaded", function (assert) {
-			// asert
-			var oHandleResizeSpy = sinon.spy(this.oSB._oResponsiveHandler, "_handleResize");
+		// arrange
+		var oHandleResizeSpy = this.spy(this.oSB._oResponsiveHandler, "_handleResize");
 
-			// act
-			this.oSB.onThemeChanged();
+		// act
+		this.oSB.onThemeChanged();
 
-			// asert
-			assert.strictEqual(oHandleResizeSpy.callCount, 1, "_handleResize is called when the theme is applied and the values are cought");
-
-			oHandleResizeSpy.restore();
+		// assert
+		assert.strictEqual(oHandleResizeSpy.callCount, 1, "_handleResize is called when the theme is applied and the values are cought");
 	});
 
 	QUnit.test("ResponsiveHandler phone/regular transformation test", function (assert) {
@@ -812,7 +796,7 @@ function (
 		// Arrange
 		var sNotificationsButtonNumber,
 			sOverflowToolbarButtonNumber,
-			oRendererSpy = sinon.spy(ShellBarRenderer, "render");
+			oRendererSpy = this.spy(ShellBarRenderer, "render");
 
 		// Act
 
@@ -1229,7 +1213,7 @@ function (
 			oACSecond = this.oSB.getAdditionalContent()[1],
 			oACThird = this.oSB.getAdditionalContent()[2],
 			aRemovedChildren,
-			oLogSpy = sinon.spy(Log, "warning");
+			oLogStub = this.stub(Log, "warning");
 
 		//Assert
 		assert.equal(this.oSB.removeAdditionalContent(2), oACThird, "removing additional content by index" +
@@ -1291,13 +1275,13 @@ function (
 		//Act
 		this.oSB.insertAdditionalContent(oACSecond);
 		//Assert
-		assert.ok(oLogSpy.calledOnce , "Trying" +
+		assert.ok(oLogStub.calledOnce , "Trying" +
 			" to insert an element, already in the Additional Content collection fails");
 
 		//Act
 		this.oSB.addAdditionalContent(oACFirst);
 		//Assert
-		assert.equal(oLogSpy.callCount, 2, "Trying" +
+		assert.equal(oLogStub.callCount, 2, "Trying" +
 			" to insert an element, already in the Additional Content collection fails");
 
 		assert.equal(this.oSB.removeAdditionalContent([]), null, "Passing invalid parameter to" +

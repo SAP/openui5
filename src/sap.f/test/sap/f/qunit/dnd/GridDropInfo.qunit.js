@@ -1,4 +1,4 @@
-/*global QUnit,sinon*/
+/*global QUnit*/
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
@@ -53,10 +53,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("When not enhanced, fallback to DropInfo", function(assert) {
-		var fnIsDroppableSpy = sinon.spy(DropInfo.prototype, "isDroppable"),
-			fnFireDragEnterSpy = sinon.spy(DropInfo.prototype, "fireDragEnter"),
-			fnFireDragOverSpy = sinon.spy(DropInfo.prototype, "fireDragOver"),
-			fnFireDropSpy = sinon.spy(DropInfo.prototype, "fireDrop"),
+		var fnIsDroppableSpy = this.spy(DropInfo.prototype, "isDroppable"),
+			fnFireDragEnterSpy = this.spy(DropInfo.prototype, "fireDragEnter"),
+			fnFireDragOverSpy = this.spy(DropInfo.prototype, "fireDragOver"),
+			fnFireDropSpy = this.spy(DropInfo.prototype, "fireDrop"),
 			oTestControl = new Text(),
 			oFakeEvent = createFakeEvent("dragover");
 
@@ -71,11 +71,6 @@ sap.ui.define([
 
 		this.oGridDropInfo.fireDrop(oFakeEvent);
 		assert.ok(fnFireDropSpy.called, "DropInfo fireDrop is called");
-
-		fnIsDroppableSpy.restore();
-		fnFireDragEnterSpy.restore();
-		fnFireDragOverSpy.restore();
-		fnFireDropSpy.restore();
 	});
 
 	QUnit.module("Integration in GridContainer", {
@@ -163,10 +158,10 @@ sap.ui.define([
 				getDragControl: function() {
 					return oDragItem;
 				},
-				setIndicatorConfig: sinon.stub(),
-				setDropControl: sinon.stub(),
-				getDropPosition: sinon.stub(),
-				getIndicator: sinon.stub()
+				setIndicatorConfig: this.stub(),
+				setDropControl: this.stub(),
+				getDropPosition: this.stub(),
+				getIndicator: this.stub()
 			};
 
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
@@ -181,9 +176,9 @@ sap.ui.define([
 	QUnit.test("fireDragEnter", function(assert) {
 		// Arrange
 		var oFakeEvent = createFakeEvent("dragenter"),
-			fnStub = sinon.stub(),
+			fnStub = this.stub(),
 			gridDragOver = GridDragOver.getInstance(),
-			attachDragOverSpy = sinon.spy(gridDragOver, "handleDragOver");
+			attachDragOverSpy = this.spy(gridDragOver, "handleDragOver");
 
 		oFakeEvent.dragSession = this.oFakeSession;
 
@@ -198,17 +193,15 @@ sap.ui.define([
 		assert.ok(fnStub.called, "Drag enter is called");
 
 		assert.ok(attachDragOverSpy.called, "'gridDragOver.handleDragOver' is called");
-
-		attachDragOverSpy.restore();
 	});
 
 	QUnit.test("fireDragEnter - preventDefault", function(assert) {
 
 		// Arrange
 		var oFakeEvent = createFakeEvent("dragenter"),
-			fnStub = sinon.stub(),
+			fnStub = this.stub(),
 			gridDragOver = GridDragOver.getInstance(),
-			attachDragOverSpy = sinon.spy(gridDragOver, "handleDragOver");
+			attachDragOverSpy = this.spy(gridDragOver, "handleDragOver");
 
 		oFakeEvent.dragSession = this.oFakeSession;
 
@@ -230,7 +223,7 @@ sap.ui.define([
 	QUnit.test("fireDragOver", function(assert) {
 		// Arrange
 		var oFakeEvent = createFakeEvent("dragover"),
-			fnStub = sinon.stub();
+			fnStub = this.stub();
 
 		oFakeEvent.dragSession = this.oFakeSession;
 
@@ -248,7 +241,7 @@ sap.ui.define([
 	QUnit.test("fireDrop", function(assert) {
 		// Arrange
 		var oFakeEvent = createFakeEvent("drop"),
-			fnStub = sinon.stub();
+			fnStub = this.stub();
 
 		oFakeEvent.dragSession = this.oFakeSession;
 

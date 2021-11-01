@@ -1,6 +1,30 @@
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/f/semantic/AddAction",
+	"sap/f/semantic/CloseAction",
+	"sap/f/semantic/CopyAction",
+	"sap/f/semantic/DeleteAction",
+	"sap/f/semantic/EditAction",
+	"sap/f/semantic/DiscussInJamAction",
+	"sap/f/semantic/ExitFullScreenAction",
+	"sap/f/semantic/FavoriteAction",
+	"sap/f/semantic/FlagAction",
+	"sap/f/semantic/FooterMainAction",
+	"sap/f/semantic/FullScreenAction",
+	"sap/f/semantic/MessagesIndicator",
+	"sap/f/semantic/NegativeAction",
+	"sap/f/semantic/PositiveAction",
+	"sap/f/semantic/PrintAction",
+	"sap/f/semantic/SendEmailAction",
+	"sap/f/semantic/SendMessageAction",
+	"sap/f/semantic/ShareInJamAction",
+	"sap/f/semantic/TitleMainAction",
+	"sap/f/semantic/SemanticConfiguration",
+	"sap/f/semantic/SemanticFooter",
 	"sap/f/semantic/SemanticPage",
+	"sap/f/semantic/SemanticShareMenu",
+	"sap/f/semantic/SemanticTitle",
+	"sap/m/DraftIndicator",
 	"sap/f/DynamicPageTitle",
 	"sap/m/OverflowToolbar",
 	"sap/m/ActionSheet",
@@ -12,7 +36,31 @@ sap.ui.define([
 ],
 function (
 	oCore,
+	AddAction,
+	CloseAction,
+	CopyAction,
+	DeleteAction,
+	EditAction,
+	DiscussInJamAction,
+	ExitFullScreenAction,
+	FavoriteAction,
+	FlagAction,
+	FooterMainAction,
+	FullScreenAction,
+	MessagesIndicator,
+	NegativeAction,
+	PositiveAction,
+	PrintAction,
+	SendEmailAction,
+	SendMessageAction,
+	ShareInJamAction,
+	TitleMainAction,
+	SemanticConfiguration,
+	SemanticFooter,
 	SemanticPage,
+	SemanticShareMenu,
+	SemanticTitle,
+	DraftIndicator,
 	DynamicPageTitle,
 	OverflowToolbar,
 	ActionSheet,
@@ -27,83 +75,83 @@ function (
 	var TESTS_DOM_CONTAINER = "qunit-fixture",
 		aSemanticActionsMetadata = [
 			{
-				"constructor" : sap.f.semantic.AddAction,
+				"constructor" : AddAction,
 				"className" : "AddAction"
 			},
 			{
-				"constructor" : sap.f.semantic.CloseAction,
+				"constructor" : CloseAction,
 				"className" : "CloseAction"
 			},
 			{
-				"constructor" : sap.f.semantic.CopyAction,
+				"constructor" : CopyAction,
 				"className" : "CopyAction"
 			},
 			{
-				"constructor" : sap.f.semantic.DeleteAction,
+				"constructor" : DeleteAction,
 				"className" : "DeleteAction"
 			},
 			{
-				"constructor" : sap.f.semantic.EditAction,
+				"constructor" : EditAction,
 				"className" : "EditAction"
 			},
 			{
-				"constructor" : sap.f.semantic.DiscussInJamAction,
+				"constructor" : DiscussInJamAction,
 				"className" : "DiscussInJamAction"
 			},
 			{
-				"constructor" : sap.m.DraftIndicator,
+				"constructor" : DraftIndicator,
 				"className" : "DraftIndicator"
 			},
 			{
-				"constructor" : sap.f.semantic.ExitFullScreenAction,
+				"constructor" : ExitFullScreenAction,
 				"className" : "ExitFullScreenAction"
 			},
 			{
-				"constructor" : sap.f.semantic.FavoriteAction,
+				"constructor" : FavoriteAction,
 				"className" : "FavoriteAction"
 			},
 			{
-				"constructor" : sap.f.semantic.FlagAction,
+				"constructor" : FlagAction,
 				"className" : "FlagAction"
 			},
 			{
-				"constructor" : sap.f.semantic.FooterMainAction,
+				"constructor" : FooterMainAction,
 				"className" : "FooterMainAction"
 			},
 			{
-				"constructor" : sap.f.semantic.FullScreenAction,
+				"constructor" : FullScreenAction,
 				"className" : "FullScreenAction"
 			},
 			{
-				"constructor" : sap.f.semantic.MessagesIndicator,
+				"constructor" : MessagesIndicator,
 				"className" : "MessagesIndicator"
 			},
 			{
-				"constructor" : sap.f.semantic.NegativeAction,
+				"constructor" : NegativeAction,
 				"className" : "NegativeAction"
 			},
 			{
-				"constructor" : sap.f.semantic.PositiveAction,
+				"constructor" : PositiveAction,
 				"className" : "PositiveAction"
 			},
 			{
-				"constructor" : sap.f.semantic.PrintAction,
+				"constructor" : PrintAction,
 				"className" : "PrintAction"
 			},
 			{
-				"constructor" : sap.f.semantic.SendEmailAction,
+				"constructor" : SendEmailAction,
 				"className" : "SendEmailAction"
 			},
 			{
-				"constructor" : sap.f.semantic.SendMessageAction,
+				"constructor" : SendMessageAction,
 				"className" : "SendMessageAction"
 			},
 			{
-				"constructor" : sap.f.semantic.ShareInJamAction,
+				"constructor" : ShareInJamAction,
 				"className" : "ShareInJamAction"
 			},
 			{
-				"constructor" : sap.f.semantic.TitleMainAction,
+				"constructor" : TitleMainAction,
 				"className" : "TitleMainAction"
 			}
 		],
@@ -112,13 +160,13 @@ function (
 				return new SemanticPage(oConfiguration || {});
 			},
 			getSemanticTitle : function(oContainer) {
-				return new sap.f.semantic.SemanticTitle(oContainer, null);
+				return new SemanticTitle(oContainer, null);
 			},
 			getSemanticFooter : function(oContainer) {
-				return new sap.f.semantic.SemanticFooter(oContainer, null);
+				return new SemanticFooter(oContainer, null);
 			},
 			getSemanticShareMenu : function (oContainer) {
-				return new sap.f.semantic.SemanticShareMenu(oContainer, this.getSemanticPage());
+				return new SemanticShareMenu(oContainer, this.getSemanticPage());
 			},
 			getDynamicPageTitle : function() {
 				return new DynamicPageTitle();
@@ -167,7 +215,7 @@ function (
 				return new Link(oConfig || {});
 			},
 			getSemanticConfiguration : function() {
-				return sap.f.semantic.SemanticConfiguration;
+				return SemanticConfiguration;
 			},
 			getSemanticActionsMetadata : function() {
 				return aSemanticActionsMetadata;

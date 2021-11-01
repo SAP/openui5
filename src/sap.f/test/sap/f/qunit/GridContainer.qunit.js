@@ -278,12 +278,18 @@ function (
 	});
 
 	QUnit.module("Items", {
+		before: function() {
+			sinon.config.useFakeTimers = true;
+		},
 		beforeEach: function () {
 			this.oGrid = new GridContainer();
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
+		},
+		after: function() {
+			sinon.config.useFakeTimers = false;
 		}
 	});
 
@@ -555,13 +561,13 @@ function (
 
 	QUnit.test("Item resize handler is deregistered and registered on invalidation", function (assert) {
 		// Arrange
-		var fnRegisterSpy = sinon.spy(ResizeHandler, "register"),
-			fnDeregisterSpy = sinon.spy(ResizeHandler, "deregister"),
+		var fnRegisterSpy = this.spy(ResizeHandler, "register"),
+			fnDeregisterSpy = this.spy(ResizeHandler, "deregister"),
 			oItem = new Card();
 
 		this.oGrid.addItem(oItem);
 		Core.applyChanges();
-		fnRegisterSpy.reset();
+		fnRegisterSpy.resetHistory();
 
 		// Act
 		oItem.invalidate();
@@ -621,23 +627,27 @@ function (
 	QUnit.test("Parse edge cases for settings", function (assert) {
 		// Arrange
 		var oSettings = new GridContainerSettings({rowSize: "5in", gap: "0"}),
-			fnLogErrorSpy = sinon.spy(Log, "error");
+			fnLogErrorSpy = this.spy(Log, "error");
 
 		// Assert
 		assert.ok(isNaN(oSettings.getRowSizeInPx()), "Row size of '5in' can not be parsed and results in NaN");
 		assert.ok(fnLogErrorSpy.calledOnce, "An error was logged about that row size '5in' can not be converted to 'px'");
 		assert.strictEqual(oSettings.getGapInPx(), 0, "Gap size of 0 is 0 in 'px'");
-
-		fnLogErrorSpy.restore();
 	});
 
 	QUnit.module("Layout settings & breakpoints", {
+		before: function() {
+			sinon.config.useFakeTimers = true;
+		},
 		beforeEach: function () {
 			this.oGrid = new GridContainer();
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
+		},
+		after: function() {
+			sinon.config.useFakeTimers = false;
 		}
 	});
 
@@ -704,6 +714,9 @@ function (
 	});
 
 	QUnit.module("Layout breakpoints", {
+		before: function() {
+			sinon.config.useFakeTimers = true;
+		},
 		beforeEach: function () {
 			this.oGrid = new GridContainer();
 
@@ -728,13 +741,16 @@ function (
 			};
 
 			// listen for layout change event
-			this.oLayoutChangeStub = sinon.stub();
+			this.oLayoutChangeStub = this.stub();
 			this.oGrid.attachLayoutChange(function (oEvent) {
 				this.oLayoutChangeStub(oEvent.getParameter("layout"));
 			}.bind(this));
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
+		},
+		after: function() {
+			sinon.config.useFakeTimers = false;
 		}
 	});
 
@@ -756,7 +772,7 @@ function (
 			sLayoutName = this.mLayouts[sWidth];
 			assertGridSettings(this.oGrid, this.mTestSettings[sLayoutName], sLayoutName, assert);
 			assert.ok(this.oLayoutChangeStub.calledWith(sLayoutName), "Layout change event was called for layout " + sLayoutName);
-			this.oLayoutChangeStub.reset();
+			this.oLayoutChangeStub.resetHistory();
 		}
 
 		Device.resize.width = iOriginalWidth;
@@ -784,7 +800,7 @@ function (
 			sLayoutName = this.mLayouts[sWidth];
 			assertGridSettings(this.oGrid, this.mTestSettings[sLayoutName], sLayoutName, assert);
 			assert.ok(this.oLayoutChangeStub.calledWith(sLayoutName), "Layout change event was called for layout " + sLayoutName);
-			this.oLayoutChangeStub.reset();
+			this.oLayoutChangeStub.resetHistory();
 		}
 
 		oContainer.destroy();
@@ -793,7 +809,7 @@ function (
 	QUnit.test("Should not trigger layout change when container hides", function (assert) {
 		// Arrange
 		var oContainer = new Panel({ content: this.oGrid }),
-			fnLayoutChangeSpy = sinon.stub();
+			fnLayoutChangeSpy = this.stub();
 
 		this.oGrid.setWidth("100%");
 		this.oGrid.setContainerQuery(true);
@@ -815,6 +831,9 @@ function (
 	});
 
 	QUnit.module("Resizing", {
+		before: function() {
+			sinon.config.useFakeTimers = true;
+		},
 		beforeEach: function () {
 			this.oGrid = new GridContainer();
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
@@ -823,6 +842,9 @@ function (
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
+		},
+		after: function() {
+			sinon.config.useFakeTimers = false;
 		}
 	});
 
@@ -839,7 +861,7 @@ function (
 
 	QUnit.test("resize container", function (assert) {
 
-		var fnApplyLayout = sinon.spy(this.oGrid, "_applyLayout");
+		var fnApplyLayout = this.spy(this.oGrid, "_applyLayout");
 
 		// Arrange
 		this.oGrid.$().width('123px');
@@ -960,7 +982,7 @@ function (
 		// Arrange
 		var oItemWrapper1 = this.oGrid.getDomRef().children[1],
 			oItemWrapper2 = this.oGrid.getDomRef().children[2],
-			oScrollSpy = sinon.spy(this.oGrid.getItems()[1].getCardHeader().getDomRef(), "scrollIntoView");
+			oScrollSpy = this.spy(this.oGrid.getItems()[1].getCardHeader().getDomRef(), "scrollIntoView");
 
 		oItemWrapper1.focus();
 		Core.applyChanges();
@@ -980,12 +1002,11 @@ function (
 		// Assert
 		assert.ok(oScrollSpy.notCalled, "scrollIntoView is not called");
 
-		oScrollSpy.reset();
+		oScrollSpy.resetHistory();
 	});
 
 	QUnit.test("Down Arrow navigating through grid container", function (assert) {
 		// Arrange
-		this.clock.restore();
 		var done = assert.async();
 		var oItemWrapper1 = this.oGrid.getDomRef().children[1],
 			oItemWrapper3 = this.oGrid.getDomRef().children[3],
@@ -1063,7 +1084,7 @@ function (
 		assert.strictEqual(document.activeElement, oTile.parentNode, "Focus is moved to the list item.");
 	});
 
-	QUnit.test("Tabbing tough a List Card should leave the grid container at last focusable element", function (assert) {
+	QUnit.test("Tabbing through a List Card should leave the grid container at last focusable element", function (assert) {
 		// Arrange
 		var done = assert.async();
 
@@ -1074,7 +1095,7 @@ function (
 			this.oGrid._oItemNavigation.setFocusedIndex(4);
 			var listDomRef = this.oCard.getCardContent()._getList().getDomRef(),
 				firstListItem = listDomRef.children[1].children[0],
-				oForwardTabSpy = sinon.spy(this.oGrid._oItemNavigation, "forwardTab");
+				oForwardTabSpy = this.spy(this.oGrid._oItemNavigation, "forwardTab");
 
 			firstListItem.focus();
 			Core.applyChanges();
@@ -1090,7 +1111,7 @@ function (
 	QUnit.test("'mouseup' on the control focus dom ref should focus the grid list item", function (assert) {
 		// Arrange
 		var done = assert.async(),
-			oJQueryTriggerSpy = sinon.spy(jQuery.prototype, "trigger");
+			oJQueryTriggerSpy = this.spy(jQuery.prototype, "trigger");
 
 		this.oCard.attachEvent("_ready", function () {
 			Core.applyChanges();
@@ -1112,7 +1133,6 @@ function (
 			// Assert
 			assert.ok(oJQueryTriggerSpy.calledWith("focus"), "Focus should be moved to the grid list item");
 
-			oJQueryTriggerSpy.restore();
 			done();
 		}.bind(this));
 	});
@@ -1120,8 +1140,8 @@ function (
 	QUnit.test("focusing the grid list item should call onfocusin of the control", function (assert) {
 		// Arrange
 		var done = assert.async(),
-			oCardFocusInSpy = sinon.spy(Card.prototype, "onfocusin"),
-			oIntegrationCardFocusInSpy = sinon.spy(IntegrationCard.prototype, "onfocusin");
+			oCardFocusInSpy = this.spy(Card.prototype, "onfocusin"),
+			oIntegrationCardFocusInSpy = this.spy(IntegrationCard.prototype, "onfocusin");
 
 		this.oCard.attachEvent("_ready", function () {
 			Core.applyChanges();
@@ -1138,8 +1158,6 @@ function (
 			// Assert
 			assert.ok(oIntegrationCardFocusInSpy.called, "onfocusin is called");
 
-			oCardFocusInSpy.restore();
-			oIntegrationCardFocusInSpy.restore();
 			done();
 		}.bind(this));
 	});
@@ -1148,7 +1166,7 @@ function (
 
 		// Arrange
 		var oItemWrapper = this.oGrid.getDomRef().children[4],
-			oAttachPressSpy = sinon.spy(this.oTile, "firePress");
+			oAttachPressSpy = this.spy(this.oTile, "firePress");
 		oItemWrapper.focus();
 		Core.applyChanges();
 
@@ -1436,23 +1454,20 @@ function (
 	QUnit.test("Keyboard Drag&Drop: Check that GridDragOver is not used", function (assert) {
 		// Arrange
 		var oFirstItemWrapper = this.oGrid.getItems()[0].getDomRef().parentElement,
-			fnGetInstanceSpy = sinon.spy(GridDragOver, "getInstance");
+			fnGetInstanceSpy = this.spy(GridDragOver, "getInstance");
 
 		// Act
 		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_DOWN, false, false, /**ctrl */ true );
 
 		// Assert
 		assert.ok(fnGetInstanceSpy.notCalled, "GridDragOver#getInstance() is not called during keyboard drag and drop.");
-
-		// Clean
-		fnGetInstanceSpy.restore();
 	});
 
 	QUnit.module("Keyboard Drag&Drop in RTL mode - suggested positions in different directions", {
 		beforeEach: function () {
 			var oSettings = new GridContainerSettings({columns: 2, rowSize: "80px", columnSize: "80px", gap: "16px"});
 
-			this.oRTLStub = sinon.stub(Core.getConfiguration(), "getRTL").returns(true);
+			this.oRTLStub = this.stub(Core.getConfiguration(), "getRTL").returns(true);
 
 			this.oGrid = new GridContainer({
 				layout: oSettings,
@@ -1495,7 +1510,6 @@ function (
 			Core.applyChanges();
 		},
 		afterEach: function () {
-			this.oRTLStub.restore();
 			this.oGrid.destroy();
 			this.oDraggedControl = null;
 			this.oDroppedControl = null;
@@ -1629,7 +1643,14 @@ function (
 		qutils.triggerKeydown(oSecondContainerItem, KeyCodes.ARROW_UP, false, false, /**ctrl */ true );
 	});
 
-	QUnit.module("Focus handling");
+	QUnit.module("Focus handling", {
+		before: function() {
+			sinon.config.useFakeTimers = true;
+		},
+		after: function() {
+			sinon.config.useFakeTimers = false;
+		}
+	});
 
 	QUnit.test("Pressing on clickable element inside an item doesn't move the focus to the item", function (assert) {
 		// Arrange
@@ -1644,7 +1665,7 @@ function (
 		Core.applyChanges();
 
 		oItemWrapper = oGrid.getDomRef().children[1];
-		oItemWrapperFocusSpy = sinon.spy(oItemWrapper, "focus");
+		oItemWrapperFocusSpy = this.spy(oItemWrapper, "focus");
 
 		// Act
 		qutils.triggerMouseEvent(oBtn.getFocusDomRef(), "mousedown");
@@ -1657,7 +1678,6 @@ function (
 
 		// Clean up
 		oGrid.destroy();
-		oItemWrapperFocusSpy.restore();
 	});
 
 	QUnit.test("Item with own focus, when the item has no focusable content", function (assert) {
@@ -1704,8 +1724,6 @@ function (
 	});
 
 	QUnit.test("Wrapper attributes", function (assert) {
-		this.clock.restore();
-
 		var done = assert.async(),
 			oWrapper = this.oGrid.$().children().eq(1);
 
@@ -1784,13 +1802,10 @@ function (
 
 	QUnit.test("Creating grid matrix when theme is not loaded", function (assert) {
 		// Arrange
-		sinon.stub(Core, "isThemeApplied").returns(false);
+		this.stub(Core, "isThemeApplied").returns(false);
 
 		// Assert
 		assert.strictEqual(this.oGrid.getNavigationMatrix(), null, "'null' is returned when theme is not yet loaded");
-
-		// Clean up
-		Core.isThemeApplied.restore();
 	});
 
 	QUnit.test("Grid matrix should not include items with visible=false", function (assert) {
@@ -1811,7 +1826,7 @@ function (
 	QUnit.test("Arrow Up at the top of the matrix should trigger 'borderReached' event", function (assert) {
 		// Arrange
 		var oTopMostItemWrapper = this.oGrid.getItems()[1].getDomRef().parentElement,
-			oSpy = sinon.spy();
+			oSpy = this.spy();
 
 		this.oGrid.attachBorderReached(oSpy);
 
@@ -1828,7 +1843,7 @@ function (
 	QUnit.test("Arrow Down at the bottom of the matrix should trigger 'borderReached' event", function (assert) {
 		// Arrange
 		var oBottomMostItemWrapper = this.oGrid.getItems()[3].getDomRef().parentElement,
-			oSpy = sinon.spy();
+			oSpy = this.spy();
 
 		this.oGrid.attachBorderReached(oSpy);
 

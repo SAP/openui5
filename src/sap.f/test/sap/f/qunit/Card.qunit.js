@@ -1,9 +1,10 @@
-/*global QUnit, sinon */
+/*global QUnit */
 
 sap.ui.define([
 	"sap/f/Card",
 	"sap/f/cards/Header",
 	"sap/f/cards/NumericHeader",
+	"sap/f/cards/NumericSideIndicator",
 	"sap/m/BadgeCustomData",
 	"sap/m/library",
 	"sap/ui/core/Core",
@@ -15,6 +16,7 @@ function (
 	Card,
 	CardHeader,
 	CardNumericHeader,
+	CardNumericSideIndicator,
 	BadgeCustomData,
 	mLibrary,
 	Core,
@@ -65,7 +67,7 @@ function (
 			oCard = new Card({
 				header: oHeader
 			}),
-			fnPressHandler = sinon.stub();
+			fnPressHandler = this.stub();
 
 		oHeader.attachPress(fnPressHandler);
 
@@ -86,7 +88,7 @@ function (
 			oCard = new Card({
 				header: oHeader
 			}),
-			fnPressHandler = sinon.stub();
+			fnPressHandler = this.stub();
 
 		oHeader.attachPress(fnPressHandler);
 
@@ -123,7 +125,7 @@ function (
 
 		// Arrange
 		var oHeader = new CardNumericHeader({
-				subTitle: "Lorem",
+				subtitle: "Lorem",
 				unitOfMeasurement: "EUR EUR EUR"
 			}),
 			oCard = new Card({
@@ -215,10 +217,10 @@ function (
 	QUnit.test("Side Indicator \"state\" property ", function (assert) {
 		// Arrange
 		var oHeader = new CardNumericHeader({
-			sideIndicators:{
+			sideIndicators: new CardNumericSideIndicator({
 				number: "5",
 				state: "Error"
-			}
+			})
 		});
 
 		// Act

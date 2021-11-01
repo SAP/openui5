@@ -17,8 +17,13 @@ function (
 
 	QUnit.module("Creating navigation matrix - different configurations", {
 		createGrid: function (sCont) {
-			this.$grid = jQuery(sCont);
+			this.$grid = jQuery(sCont).css({
+				display: "grid",
+				gridTemplateColumns: "repeat(3, 8rem)",
+				gridGap: "8px"
+			});
 			this.$grid.appendTo("#" + DOM_RENDER_LOCATION);
+			return this.$grid;
 		},
 		afterEach: function () {
 			this.$grid.detach();
@@ -27,7 +32,7 @@ function (
 
 	QUnit.test("1 row / 1 column per item", function (assert) {
 		this.createGrid(
-			"<div style='display: grid; grid-template-columns: repeat(3, 8rem); grid-gap: 8px;'>" +
+			"<div>" +
 				"<div>item 1</div>" +
 				"<div>item 2</div>" +
 				"<div>item 3</div>" +
@@ -56,14 +61,14 @@ function (
 	QUnit.test("Item with 2 rows / 2 cols", function (assert) {
 		// Arrange
 		this.createGrid(
-			"<div style='display: grid; grid-template-columns: repeat(3, 8rem); grid-gap: 8px;'>" +
+			"<div>" +
 				"<div>item 1</div>" +
-				"<div style='grid-row: span 2; grid-column: span 2;'>item 2</div>" +
+				"<div>item 2</div>" +
 				"<div>item 3</div>" +
 				"<div>item 4</div>" +
 				"<div>item 5</div>" +
 			"</div>"
-		);
+		).children()[1].style = "grid-row: span 2; grid-column: span 2;";
 		var aMatrix = GridNavigationMatrix.create(this.$grid[0], this.$grid.children().get(), {
 			gap: 8,
 			columns: this.$grid.css("gridTemplateColumns").split(/\s+/),
@@ -86,14 +91,14 @@ function (
 	QUnit.test("Item starting and ending on specific row (no grid-auto-flow)", function (assert) {
 		// Arrange
 		this.createGrid(
-			"<div style='display: grid; grid-template-columns: repeat(3, 8rem); grid-gap: 8px;'>" +
-				"<div style='grid-row: 2 / 3;'>item 1</div>" +
+			"<div>" +
+				"<div>item 1</div>" +
 				"<div>item 2</div>" +
 				"<div>item 3</div>" +
 				"<div>item 4</div>" +
 				"<div>item 5</div>" +
 			"</div>"
-		);
+		).children()[0].style = "grid-row: 2 / 3";
 		var aMatrix = GridNavigationMatrix.create(this.$grid[0], this.$grid.children().get(), {
 			gap: 8,
 			columns: this.$grid.css("gridTemplateColumns").split(/\s+/),
@@ -113,14 +118,14 @@ function (
 	QUnit.test("Item starting and ending on specific column (no grid-auto-flow)", function (assert) {
 		// Arrange
 		this.createGrid(
-			"<div style='display: grid; grid-template-columns: repeat(3, 8rem); grid-gap: 8px;'>" +
-				"<div style='grid-column: 2 / 3;'>item 1</div>" +
+			"<div>" +
+				"<div>item 1</div>" +
 				"<div>item 2</div>" +
 				"<div>item 3</div>" +
 				"<div>item 4</div>" +
 				"<div>item 5</div>" +
 			"</div>"
-		);
+		).children()[0].style = "grid-column: 2 / 3;";
 		var aMatrix = GridNavigationMatrix.create(this.$grid[0], this.$grid.children().get(), {
 			gap: 8,
 			columns: this.$grid.css("gridTemplateColumns").split(/\s+/),

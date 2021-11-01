@@ -1,6 +1,6 @@
 /*global QUnit, sinon*/
 sap.ui.define([
-	"qunit/SemanticUtil",
+	"./SemanticUtil",
 	"sap/m/Button",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/core/Core",
@@ -8,7 +8,9 @@ sap.ui.define([
 	"sap/f/semantic/DiscussInJamAction",
 	"sap/f/semantic/ShareInJamAction",
 	"sap/f/semantic/PrintAction",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/m/Text",
+	"sap/m/VBox"
 ],
 function (
 	SemanticUtil,
@@ -19,7 +21,9 @@ function (
 	DiscussInJamAction,
 	ShareInJamAction,
 	PrintAction,
-	InvisibleText
+	InvisibleText,
+	Text,
+	VBox
 ) {
 	"use strict";
 
@@ -792,7 +796,7 @@ function (
 		this.oSemanticPage.setModel(i18n, "i18n");
 
 
-		var oCustomShareButton = new sap.m.Button({
+		var oCustomShareButton = new Button({
 			icon: "sap-icon://excel-attachment",
 			text: "{i18n>action1}"
 		});
@@ -820,7 +824,7 @@ function (
 		});
 
 
-		var oCustomShareButton = new sap.m.Button({
+		var oCustomShareButton = new Button({
 			icon: "sap-icon://excel-attachment",
 			text: "{i18n>action1}"
 		});
@@ -996,10 +1000,10 @@ function (
 		this.oSemanticPage.addTitleSnappedContent(oSnappedTitle);
 		this.oSemanticPage.addTitleExpandedContent(oExpandedTitle);
 
-		this.oSemanticPage.setContent(new sap.m.VBox({
+		this.oSemanticPage.setContent(new VBox({
 			height: "2000px",
 			// width: "1000px",
-			items: [new sap.m.Text({text: "ELEMENTE DEFINITORII Aspecte generale Magazinul online www"})]
+			items: [new Text({text: "ELEMENTE DEFINITORII Aspecte generale Magazinul online www"})]
 		}));
 		Core.applyChanges();
 

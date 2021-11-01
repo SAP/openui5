@@ -1,4 +1,4 @@
-/*global QUnit, sinon */
+/*global QUnit */
 
 sap.ui.define([
 	"sap/f/AvatarGroupItem",
@@ -139,15 +139,12 @@ function (
 
 	QUnit.test("_setGroupType", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(this.oAvatarGroupItem, "invalidate");
+		var oSpy = this.spy(this.oAvatarGroupItem, "invalidate");
 		this.oAvatarGroupItem._setGroupType("Group");
 
 		// Assert
 		assert.strictEqual(this.oAvatarGroupItem._getGroupType(), "Group", "groupType of AvatarGroupItem is set correctly");
 		assert.strictEqual(oSpy.callCount, 1, "Invalidate is called");
-
-		// Clean up
-		oSpy.restore();
 	});
 
 	QUnit.test("_getAvatar", function (assert) {

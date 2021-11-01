@@ -1,4 +1,4 @@
-/*global QUnit, sinon*/
+/*global QUnit*/
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
@@ -126,7 +126,7 @@ sap.ui.define([
 		var oFakeEvent = new jQuery.Event("dragleave"),
 			oTargetControl = this.oGrid.getItems()[0],
 			mTargetRect = oTargetControl.getDomRef().getBoundingClientRect(),
-			oSpy = sinon.spy(this.oGridDragOver, "scheduleEndDrag"),
+			oSpy = this.spy(this.oGridDragOver, "scheduleEndDrag"),
 			oText = new Text({ text: "control outside the grid"}),
 			mCoreIndicatorStyle;
 
@@ -160,7 +160,6 @@ sap.ui.define([
 
 		// Clean up
 		oText.destroy();
-		oSpy.restore();
 	});
 
 	QUnit.test("Simulate drag over interrupted by invalidation", function(assert) {
@@ -220,7 +219,7 @@ sap.ui.define([
 
 	QUnit.test("Set invalid size", function(assert) {
 		// Arrange
-		var fnErrorSpy = sinon.spy(Log, "error");
+		var fnErrorStub = this.stub(Log, "error");
 
 		// Act
 		this.oGridDragOver.setDropIndicatorSize({
@@ -228,10 +227,8 @@ sap.ui.define([
 		});
 
 		// Assert
-		assert.ok(fnErrorSpy.calledOnce, "An error is logged.");
+		assert.ok(fnErrorStub.calledOnce, "An error is logged.");
 		assert.strictEqual(this.oGridDragOver._mDropIndicatorSize, null, "The indicator is not set.");
-
-		fnErrorSpy.restore();
 	});
 
 	QUnit.test("Set indicator size", function(assert) {

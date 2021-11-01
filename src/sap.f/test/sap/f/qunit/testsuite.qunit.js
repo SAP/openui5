@@ -5,10 +5,10 @@ sap.ui.define(function () {
 		defaults: {
 			group: "Default",
 			qunit: {
-				version: "edge"
+				version: 2
 			},
 			sinon: {
-				version: 1
+				version: 4
 			},
 			ui5: {
 				language: "en",
@@ -21,8 +21,7 @@ sap.ui.define(function () {
 			},
 			loader: {
 				paths: {
-					"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/",
-					"qunit": "test-resources/sap/f/qunit/"
+					"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
 				}
 			},
 			page: "test-resources/sap/f/qunit/testsandbox.qunit.html?test={name}",
@@ -75,9 +74,6 @@ sap.ui.define(function () {
 							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
 							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
 						}
-					},
-					paths: {
-						"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
 					}
 				},
 				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
@@ -106,9 +102,6 @@ sap.ui.define(function () {
 						"sap/f/GridContainerSettings",
 						"sap/f/GridContainerItemLayoutData"
 					]
-				},
-				sinon: {
-					useFakeTimers: true
 				}
 			},
 			"GridContainerUtils": {},

@@ -1,4 +1,4 @@
-/*global QUnit, sinon */
+/*global QUnit */
 
 sap.ui.define([
 	"sap/f/delegate/GridItemNavigation",
@@ -66,38 +66,41 @@ sap.ui.define([
 
 	QUnit.test("No error when matrix can't be calculated", function (assert) {
 		// Arrange
-		var fnThemeAppliedFake = sinon.stub(Core, "isThemeApplied").returns(false),
-			oGrid = this.oGrid,
+		var oGrid = this.oGrid,
 			$itemWrapper = jQuery(oGrid.getItems()[0].getDomRef().parentElement),
 			oFakeEvent = new jQuery.Event("keydown", {
 				keyCode: KeyCodes.ARROW_LEFT
 			});
 
+		this.stub(Core, "isThemeApplied").returns(false);
+
 		$itemWrapper.trigger(oFakeEvent);
 
 		// Assert
 		assert.ok(true, "There is no error if events are called before rendering or before theme is applied.");
-
-		// Clean up
-		fnThemeAppliedFake.restore();
 	});
 
 	QUnit.module("Focus", {
 		beforeEach: function () {
 			this.$grid = jQuery(
-				"<div style='display: grid; grid-template-columns: repeat(2, 120px); grid-template-rows: 80px; grid-gap: 8px;'>" +
+				"<div>" +
 					"<div> item1 </div>" +
 					"<div> item2 </div>" +
 					"<div> item3 </div>" +
 					"<div> item4 </div>" +
 				"</div>"
-			);
+			).css({
+				display: "grid",
+				gridTemplateColumns: "repeat(2, 120px)",
+				gridTemplateRows: "80px",
+				gridGap: "8px"
+			});
 
 			this.$grid.appendTo("#" + DOM_RENDER_LOCATION);
 			this.oItemNavigation = new GridItemNavigation();
 			this.oItemNavigation.setRootDomRef(this.$grid[0]);
 			this.oItemNavigation.setItemDomRefs(this.$grid.children().get());
-			sinon.stub(this.oItemNavigation, "_getGridInstance").callsFake(function () {
+			this.stub(this.oItemNavigation, "_getGridInstance").callsFake(function () {
 				return {
 					getNavigationMatrix: function () {
 						return GridNavigationMatrix.create(this.$grid[0], this.$grid.children().get(), {
@@ -111,7 +114,6 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.$grid.detach();
-			this.oItemNavigation._getGridInstance.restore();
 		}
 	});
 
@@ -144,7 +146,7 @@ sap.ui.define([
 			this.$grid.appendTo("#" + DOM_RENDER_LOCATION);
 			this.oItemNavigation = new GridItemNavigation();
 			this.oItemNavigation.setRootDomRef(this.$grid[0]);
-			sinon.stub(this.oItemNavigation, "_getGridInstance").callsFake(function () {
+			this.stub(this.oItemNavigation, "_getGridInstance").callsFake(function () {
 				return {
 					getNavigationMatrix: function () {
 						return null;
@@ -154,7 +156,6 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.$grid.detach();
-			this.oItemNavigation._getGridInstance.restore();
 		}
 	});
 

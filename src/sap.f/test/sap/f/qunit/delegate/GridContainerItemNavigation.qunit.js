@@ -1,4 +1,4 @@
-/*global QUnit, sinon */
+/*global QUnit */
 
 sap.ui.define([
 	"sap/f/delegate/GridContainerItemNavigation",
@@ -48,7 +48,7 @@ function (
 		Core.applyChanges();
 
 		oItemWrapper = oItem.getDomRef().parentElement;
-		oItemWrapperFocusSpy = sinon.spy(oItemWrapper, "focus");
+		oItemWrapperFocusSpy = this.spy(oItemWrapper, "focus");
 
 		// Act - simulate sequence of events during drag and drop
 		QUnitUtils.triggerMouseEvent(oItem.getFocusDomRef(), "mousedown");
@@ -58,8 +58,6 @@ function (
 
 		// Assert
 		assert.ok(oItemWrapperFocusSpy.notCalled, "The item is not explicitly focused while mouse is still down.");
-
-		oItemWrapperFocusSpy.restore();
 	});
 
 	QUnit.module("Mouse down check");

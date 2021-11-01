@@ -1,7 +1,7 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"qunit/DynamicPageUtil",
+	"./DynamicPageUtil",
 	"sap/ui/core/Core"
 ],
 function (
@@ -79,7 +79,7 @@ function (
 		assert.ok(oDynamicPage.$titleArea.hasClass(sSnappedClass));
 		assert.ok(oSetPropertySpy.calledWith("headerExpanded", false, true));
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be excluded from the tab chain");
-		oSetPropertySpy.reset();
+		oSetPropertySpy.resetHistory();
 
 		oDynamicPage.setHeaderExpanded(true);
 		assert.ok(oDynamicPage.getHeaderExpanded(), "header converted to expanded");
@@ -87,7 +87,7 @@ function (
 		assert.ok(!oDynamicPage.$titleArea.hasClass(sSnappedClass));
 		assert.ok(oSetPropertySpy.calledWith("headerExpanded", true, true));
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "visible", "Header should be included in the tab chain again");
-		oSetPropertySpy.reset();
+		oSetPropertySpy.resetHistory();
 
 		oDynamicPage._snapHeader();
 		assert.equal(oDynamicPage.getHeaderExpanded(), false, "setting it to false via user interaction");

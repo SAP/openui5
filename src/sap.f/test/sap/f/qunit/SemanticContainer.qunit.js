@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/core/library',
-	"qunit/SemanticUtil"
+	"./SemanticUtil"
 ],
 function (
 	$,
