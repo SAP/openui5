@@ -42,7 +42,12 @@
 					<f:GridContainerItemLayoutData columns="3" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card2" baseUrl="./" manifest="{listContentManifests>/listCardWithProducts}">
+			<w:Card id="card2" baseUrl="./" manifest="{listContentManifests>/listWithAvatars}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="3" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card id="card3" baseUrl="./" manifest="{listContentManifests>/listCardWithProducts}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="3" />
 				</w:layoutData>
@@ -52,12 +57,12 @@
 				<f:GridContainerItemLayoutData columns="4" />
 			</w:layoutData>
 			</w:Card>
-			<w:Card id="card3" manifest="./cardsdemo/cardcontent/listContent/quickActions.json" action=".onAction">
+			<w:Card id="card4" manifest="./cardsdemo/cardcontent/listContent/quickActions.json" action=".onAction">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card4" baseUrl="./" manifest="{listContentManifests>/listAttributes}">
+			<w:Card id="card5" baseUrl="./" manifest="{listContentManifests>/listAttributes}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
@@ -67,7 +72,7 @@
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card5" baseUrl="./" manifest="{listContentManifests>/listAttributesActions}">
+			<w:Card id="card6" baseUrl="./" manifest="{listContentManifests>/listAttributesActions}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>

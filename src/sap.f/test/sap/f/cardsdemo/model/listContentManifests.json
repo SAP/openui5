@@ -565,5 +565,32 @@
 				}
 			}
 		}
+	},
+	"listWithAvatars": {
+		"sap.app": {
+			"id": "cardsdemo.listContent.listWithAvatars",
+			"type": "card"
+		},
+		"sap.card": {
+			"data": {
+				"request": {
+					"url": "./cardsdemo/cardcontent/someitems.json"
+				}
+			},
+			"type": "List",
+			"header": {
+				"title": "List with Avatars"
+			},
+			"content": {
+				"item": {
+					"icon": {
+						"src": "{icon}",
+						"shape": "Circle"
+					},
+					"title": "{Name}"
+				},
+				"maxItems": 4
+			}
+		}
 	}
 }
