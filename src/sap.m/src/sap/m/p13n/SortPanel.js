@@ -30,7 +30,9 @@ sap.ui.define([
 	 */
 
 	var SortPanel = QueryPanel.extend("sap.m.p13n.SortPanel", {
-		renderer: {}
+		renderer: {
+			apiVersion: 2
+		}
 	});
 
 	SortPanel.prototype.PRESENCE_ATTRIBUTE = "sorted";

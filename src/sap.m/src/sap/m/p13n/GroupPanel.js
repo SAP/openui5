@@ -37,7 +37,9 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: {}
+		renderer: {
+			apiVersion: 2
+		}
 	});
 
 	GroupPanel.prototype.PRESENCE_ATTRIBUTE = "grouped";
