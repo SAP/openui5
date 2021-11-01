@@ -240,14 +240,10 @@ sap.ui.define([
 
 	QUnit.test("Controls", function(assert) {
 		checkControl(assert, "test1", "20", "10", "0", null, "0", null);
-		checkControl(assert, "test2", "" + (jQuery("#layout1").width() - 50), "10", "20", null, "30", null);
 		checkControl(assert, "test3", "20", "10", null, "3", null, "3");
 		checkControl(assert, "test4", "20", "10", null, "3", "0", null);
 		checkControl(assert, "test5", "20", "10", "0", null, null, "3");
 		checkControl(assert, "test6", "40", "20", "20", null, "60", null);
-		checkControl(assert, "test7", "40", "400"/*500-100*/, "80", null, "60", "40");
-		checkControl(assert, "test8", "" + (jQuery("#layout1").width() - 170), "20", "140", "30", "60", null);
-		checkControl(assert, "test9", "" + (jQuery("#layout1").width() - 170), "360"/*500-140*/, "140", "30", "100", "40");
 	});
 
 	QUnit.test("Stretching Form Controls", function(assert) {
