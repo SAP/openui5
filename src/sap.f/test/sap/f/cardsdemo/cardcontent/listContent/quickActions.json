@@ -19,6 +19,7 @@
 				},
 				"path": "/"
 			},
+			"maxItems": 3,
 			"item": {
 				"icon": {
 					"src": "{icon}"

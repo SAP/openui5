@@ -31,7 +31,8 @@
 						"value": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Exceeded' : 'In Range' }",
 						"state": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Error' : 'Success' }"
 					}
-				}
+				},
+				"maxItems": 3
 			}
 		}
 	},
@@ -117,6 +118,450 @@
 							"url": ""
 						}
 					}]
+				},
+				"maxItems": 7
+			}
+		}
+	},
+	"listAttributesActions": {
+		"sap.app": {
+			"type": "card",
+			"id": "list.attributes.actions"
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "List Card",
+				"subTitle": "City"
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"name": "Teico Inc.",
+							"description": "Sun Valley, Idaho",
+							"info": "2456",
+							"infoState": "Error",
+							"attributes": [
+								{
+									"name": "Attribute 1",
+									"state": "Error"
+								},
+								{
+									"name": "Info 1",
+									"state": "Error"
+								},
+								{
+									"name": "Attribute 2",
+									"state": "Success"
+								},
+								{
+									"name": "Info 2",
+									"state": "Success"
+								},
+								{
+									"name": "Attribute 3",
+									"state": "None"
+								},
+								{
+									"name": "Info 3",
+									"state": "None"
+								}
+							]
+						},
+						{
+							"name": "Freshhh LTD.",
+							"info": "1264",
+							"infoState": "Warning",
+							"attributes": [
+								{
+									"name": "Attribute 1",
+									"state": "Error"
+								},
+								{
+									"name": "Attribute 2",
+									"state": "Success"
+								},
+								{
+									"name": "Attribute 3",
+									"state": "None"
+								}
+							]
+						},
+						{
+							"name": "Lean Pulp",
+							"description": "Raymond, Callifornia",
+							"info": "236",
+							"infoState": "None",
+							"attributesLayoutType": "OneColumn",
+							"attributes": [
+								{
+									"name": "Attribute 1 Attribute 1 Attribute 1 Attribute 1",
+									"state": "Error"
+								},
+								{
+									"name": "Attribute 2 Attribute 2 Attribute 2 Attribute 2",
+									"state": "Success"
+								},
+								{
+									"name": "Attribute 3",
+									"state": "None"
+								}
+							]
+						}
+					]
+				},
+				"maxItems": 3,
+				"item": {
+					"title": {
+						"value": "{name}"
+					},
+					"description": {
+						"value": "{description}"
+					},
+					"info": {
+						"value": "{infoState}",
+						"state": "{infoState}"
+					},
+					"attributesLayoutType": "{attributesLayoutType}",
+					"attributes": [
+						{
+							"value": "{attributes/0/name}",
+							"state": "{attributes/0/state}"
+						},
+						{
+							"value": "{attributes/1/name}",
+							"state": "{attributes/1/state}"
+						},
+						{
+							"value": "{attributes/2/name}",
+							"state": "{attributes/2/state}"
+						},
+						{
+							"value": "{attributes/3/name}",
+							"state": "{attributes/3/state}"
+						},
+						{
+							"value": "{attributes/4/name}",
+							"state": "{attributes/4/state}"
+						},
+						{
+							"value": "{attributes/5/name}",
+							"state": "{attributes/5/state}"
+						}
+					],
+					"actionsStrip": [
+						{
+							"text": "Add",
+							"actions": [
+								{
+									"type": "Custom",
+									"parameters": {
+										"item": "{}"
+									}
+								}
+							]
+						},
+						{
+							"text": "Delete",
+							"actions": [
+								{
+									"type": "Custom",
+									"parameters": {
+										"item": "{}"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		}
+	},
+	"listAttributesIconChart": {
+		"sap.app": {
+			"type": "card",
+			"id": "list.attributes.icon.chart"
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "List Card",
+				"subTitle": "City"
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"name": "Freshhh LTD.",
+							"info": "1264",
+							"infoState": "Warning",
+							"attributes": [
+								{
+									"name": "Attribute 1",
+									"state": "Error"
+								},
+								{
+									"name": ""
+								},
+								{
+									"name": "Attribute 2",
+									"state": "Success"
+								},
+								{
+									"name": "Info 2",
+									"state": "Success"
+								},
+								{
+									"name": "Attribute 3",
+									"state": "None"
+								},
+								{
+									"name": "Info 3",
+									"state": "None"
+								}
+							]
+						},
+						{
+							"name": "Lean Pulp",
+							"description": "Raymond, Callifornia",
+							"info": "236",
+							"infoState": "None",
+							"attributesLayoutType": "OneColumn",
+							"attributes": [
+								{
+									"name": "Attribute 1 Attribute 1 Attribute 1 Attribute 1",
+									"state": "Error"
+								},
+								{
+									"name": "Attribute 2 Attribute 2 Attribute 2 Attribute 2",
+									"state": "Success"
+								},
+								{
+									"name": "Attribute 3",
+									"state": "None"
+								}
+							]
+						},
+						{
+							"name": "Lean Pulp",
+							"description": "Raymond, Callifornia",
+							"info": "236",
+							"infoState": "None",
+							"attributesLayoutType": "OneColumn",
+							"attributes": [
+								{
+									"name": "Attribute 1 Attribute 1 Attribute",
+									"state": "Error"
+								},
+								{
+									"name": "Attribute 2 Attribute 2 Attribute",
+									"state": "Success"
+								},
+								{
+									"name": "Attribute 3",
+									"state": "None"
+								}
+							]
+						}
+					]
+				},
+				"maxItems": 3,
+				"item": {
+					"icon": {
+						"src": "sap-icon://address-book"
+					},
+					"title": {
+						"value": "{name}"
+					},
+					"description": {
+						"value": "{description}"
+					},
+					"info": {
+						"value": "{infoState}",
+						"state": "{infoState}"
+					},
+					"attributesLayoutType": "{attributesLayoutType}",
+					"attributes": [
+						{
+							"value": "{attributes/0/name}",
+							"state": "{attributes/0/state}"
+						},
+						{
+							"value": "{attributes/1/name}",
+							"state": "{attributes/1/state}"
+						},
+						{
+							"value": "{attributes/2/name}",
+							"state": "{attributes/2/state}"
+						},
+						{
+							"value": "{attributes/3/name}",
+							"state": "{attributes/3/state}"
+						},
+						{
+							"value": "{attributes/4/name}",
+							"state": "{attributes/4/state}"
+						},
+						{
+							"value": "{attributes/5/name}",
+							"state": "{attributes/5/state}"
+						}
+					],
+					"chart": {
+						"type": "Bullet",
+						"minValue": 0,
+						"maxValue": 100,
+						"target": 60,
+						"value": 80,
+						"scale": "€",
+						"displayValue": "EUR",
+						"color": "Good"
+					}
+				}
+			}
+		}
+	},
+	"listAttributes": {
+		"sap.app": {
+			"type": "card",
+			"id": "list.attributes"
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "List Card",
+				"subTitle": "City"
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"name": "Teico Inc.",
+							"description": "Sun Valley, Idaho",
+							"info": "2456",
+							"infoState": "Error",
+							"attributesLayoutType": "TwoColumns",
+							"attributes": [
+								{
+									"name": "Attribute 1",
+									"state": "Error"
+								},
+								{
+									"name": "Info 1",
+									"state": "Error"
+								},
+								{
+									"name": "Attribute 2",
+									"state": "Success"
+								},
+								{
+									"name": "Info 2",
+									"state": "Success"
+								},
+								{
+									"name": "Attribute 3",
+									"state": "None"
+								},
+								{
+									"name": "Info 3",
+									"state": "None"
+								}
+							]
+						},
+						{
+							"name": "Freshhh LTD.",
+							"info": "1264",
+							"infoState": "Warning",
+							"attributes": [
+								{
+									"name": "Attribute 1 Attribute 1 Attribute 1 Attribute 1 Attribute 1",
+									"state": "Error"
+								},
+								{
+									"name": "Info 1 Info 1 Info 1 Info 1 Info 1 Info 1 Info 1 Info 1 Info 1 Info 1 Info 1 Info 1",
+									"state": "Error"
+								},
+								{
+									"name": "Attribute 2 Attribute 2 Attribute 2 Attribute 2 Attribute 2 Attribute 2 Attribute 2 Attribute 2",
+									"state": "Success"
+								},
+								{
+									"name": "Info 2",
+									"state": "Success"
+								},
+								{
+									"name": "Attribute 3",
+									"state": "None"
+								},
+								{
+									"name": "Info 3 Info 3 Info 3 Info 3 Info 3 Info 3 Info 3 Info 3 Info 3 Info 3 Info 3 Info 3",
+									"state": "None"
+								}
+							]
+						},
+						{
+							"name": "Lean Pulp",
+							"description": "Raymond, Callifornia",
+							"info": "236",
+							"infoState": "None",
+							"attributesLayoutType": "OneColumn",
+							"attributes": [
+								{
+									"name": "Attribute 1 Attribute 1 Attribute 1 Attribute 1",
+									"state": "Error"
+								},
+								{
+									"name": "Attribute 2 Attribute 2 Attribute 2 Attribute 2",
+									"state": "Success"
+								},
+								{
+									"name": "Attribute 3",
+									"state": "None"
+								}
+							]
+						}
+					]
+				},
+				"maxItems": 3,
+				"item": {
+					"title": {
+						"value": "{name}"
+					},
+					"description": {
+						"value": "{description}"
+					},
+					"info": {
+						"value": "{infoState}",
+						"state": "{infoState}"
+					},
+					"attributesLayoutType": "{attributesLayoutType}",
+					"attributes": [
+						{
+							"value": "{attributes/0/name}",
+							"state": "{attributes/0/state}"
+						},
+						{
+							"value": "{attributes/1/name}",
+							"state": "{attributes/1/state}"
+						},
+						{
+							"value": "{attributes/2/name}",
+							"state": "{attributes/2/state}"
+						},
+						{
+							"value": "{attributes/3/name}",
+							"state": "{attributes/3/state}"
+						},
+						{
+							"value": "{attributes/4/name}",
+							"state": "{attributes/4/state}"
+						},
+						{
+							"value": "{attributes/5/name}",
+							"state": "{attributes/5/state}"
+						}
+					]
 				}
 			}
 		}

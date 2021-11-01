@@ -6,6 +6,14 @@
 	xmlns:w="sap.ui.integration.widgets"
 	displayBlock="true">
 	<Page title="{i18n>appTitle}">
+		<headerContent>
+			<CheckBox
+				text="Loading"
+				select=".onLoadingSelect"
+				tooltip="List placehoder doesn't react on dynamic switch of compact and cozy densities"
+			>
+			</CheckBox>
+		</headerContent>
 		<subHeader>
 			<Toolbar>
 				<ToolbarSpacer/>
@@ -24,7 +32,11 @@
 			</items>
 		</SegmentedButton>
 
-		<f:GridContainer class="sapUiSmallMargin">
+		<f:GridContainer
+			id="gridCont"
+			class="sapUiSmallMargin"
+			inlineBlockLayout="true"
+		>
 			<w:Card id="card1" baseUrl="./" manifest="{listContentManifests>/tasksContent}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="3" />
@@ -45,17 +57,17 @@
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card4" manifest="./cardsdemo/bundles/list/list.attributes.json">
+			<w:Card id="card4" baseUrl="./" manifest="{listContentManifests>/listAttributes}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card manifest="./cardsdemo/bundles/list/list.attributes.icon.chart.json">
+			<w:Card baseUrl="./" manifest="{listContentManifests>/listAttributesIconChart}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card5" manifest="./cardsdemo/bundles/list/list.attributes.actions.json">
+			<w:Card id="card5" baseUrl="./" manifest="{listContentManifests>/listAttributesActions}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
