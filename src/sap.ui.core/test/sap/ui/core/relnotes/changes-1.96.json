@@ -1,7 +1,29 @@
 {
   "1.96.0": {
-    "date": "October 2021",
+    "date": "November 2021",
     "notes": [
+      {
+        "id": "37aea90463009d7881e025538d98729f7a1d95aa",
+        "type": "FIX",
+        "text": " core.IconPool: Fix JSDoc, @function annotation for static functions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170285536"
+          }
+        ]
+      },
+      {
+        "id": "2dd38d82e7f7783768d500022d8989416ea8e398",
+        "type": "FIX",
+        "text": " Core: avoid feeding lazy dependencies into VersionInfo",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170272029"
+          }
+        ]
+      },
       {
         "id": "0d3010eb9101d95e31046832861b49983a3526ed",
         "type": "FIX",

@@ -1,7 +1,18 @@
 {
   "1.96.0": {
-    "date": "October 2021",
+    "date": "November 2021",
     "notes": [
+      {
+        "id": "6f5e9d2ec9b23ca7369deee98b41718140bc1cf7",
+        "type": "FIX",
+        "text": " ColumnLayout: one Container with LayoutData",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170279203"
+          }
+        ]
+      },
       {
         "id": "4b51673016e1f8b45b00be9d82af1300d6be9c89",
         "type": "FIX",

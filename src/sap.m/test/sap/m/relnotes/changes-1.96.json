@@ -1,7 +1,44 @@
 {
   "1.96.0": {
-    "date": "October 2021",
+    "date": "November 2021",
     "notes": [
+      {
+        "id": "94036d7f801e191e8a499f6a4b8aaf326446ce00",
+        "type": "FIX",
+        "text": " sap.m.StepInput: No infinite spin on long press",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007623142021"
+          }
+        ]
+      },
+      {
+        "id": "15b5cd3c3eeb42e1e594fdfb534e8984af7a5435",
+        "type": "FIX",
+        "text": " sap.m.Input: fireChange event on empty input (edge case)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170280012"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170274834"
+          }
+        ]
+      },
+      {
+        "id": "a2adc47df1c55afdc7b21d3fdc3e226cf1cd4b44",
+        "type": "FIX",
+        "text": " sap.m.Switch: fixed handle misplacement on drag in Quartz themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170252080"
+          }
+        ]
+      },
       {
         "id": "6ae30d23e5baacc913c68830bddcc0c5efb98af7",
         "type": "FIX",

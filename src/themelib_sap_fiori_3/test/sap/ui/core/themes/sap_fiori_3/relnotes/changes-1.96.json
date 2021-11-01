@@ -1,7 +1,18 @@
 {
   "1.96.0": {
-    "date": "October 2021",
+    "date": "November 2021",
     "notes": [
+      {
+        "id": "a2adc47df1c55afdc7b21d3fdc3e226cf1cd4b44",
+        "type": "FIX",
+        "text": " sap.m.Switch: fixed handle misplacement on drag in Quartz themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170252080"
+          }
+        ]
+      },
       {
         "id": "972c55e20c8fd3b2868549b98102a85f8a085198",
         "type": "FIX",
