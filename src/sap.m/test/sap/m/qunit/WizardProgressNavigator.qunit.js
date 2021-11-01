@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/WizardProgressNavigator",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/Device"
-], function(QUnitUtils, WizardProgressNavigator, JSONModel, Device) {
+	"sap/ui/Device",
+	"sap/ui/core/InvisibleText"
+], function(QUnitUtils, WizardProgressNavigator, JSONModel, Device, InvisibleText) {
 	"use strict";
 
 	QUnit.module("sap.m.WizardProgressNavigator API", {
@@ -441,10 +442,10 @@ sap.ui.define([
 			"third anchor should have aria-disabled=true attribute");
 	});
 
-	QUnit.test("Current step should have aria-current=step", function(assert) {
+	QUnit.test("Current step should have aria-current=true", function(assert) {
 		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
 
-		assert.strictEqual($steps.eq(0).attr("aria-current"), "step",
+		assert.strictEqual($steps.eq(0).attr("aria-current"), "true",
 			"aria-current=step should be present on first step");
 	});
 
@@ -464,8 +465,8 @@ sap.ui.define([
 
 		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
 
-		assert.strictEqual($steps.eq(0).attr("aria-current"), "step",
-			"first step should have aria-current=step");
+		assert.strictEqual($steps.eq(0).attr("aria-current"), "true",
+			"first step should have aria-current=true");
 
 		assert.strictEqual($steps.eq(1).attr("aria-current"), undefined,
 			"second step should NOT have aria-current attribute");
@@ -474,36 +475,48 @@ sap.ui.define([
 			"third step should NOT have aria-current attribute");
 	});
 
-	QUnit.test("WizardProgressNavigator aria-roledescription attributes", function (assert) {
-		var sAriaRoleDescription = this.oProgressNavigator.getDomRef().getAttribute("aria-roledescription");
-		var sWizardProgressNavRoleDescription = this.oResourceBundle.getText("WIZARD_PROGRESS_NAVIGATOR_ARIA_ROLE_DESCRIPTION");
+	QUnit.test("WizardProgressNavigator aria-label attributes", function (assert) {
+		var sAriaLabel = this.oProgressNavigator.getDomRef().getAttribute("aria-label");
+		var sWizardAriaLabelText = this.oResourceBundle.getText("WIZARD_PROGRESS_NAVIGATOR_ARIA_LABEL");
 
-		assert.strictEqual(sAriaRoleDescription, sWizardProgressNavRoleDescription, "'aria-roledescription' attribute should be set to '" + sWizardProgressNavRoleDescription + "'");
+		assert.strictEqual(sAriaLabel, sWizardAriaLabelText, "'aria-label' attribute should be set to '" + sWizardAriaLabelText + "'");
 	});
 
-	QUnit.test("WizardProgressNavigator role attribute", function (assert) {
-		var sRole = this.oProgressNavigator.$().attr("role");
-		assert.strictEqual(sRole, "navigation", "'role' attribute should be set to 'navigation'");
-	});
-
-	QUnit.test("WizardProgressNavigator ul element role attribute", function (assert) {
+	QUnit.test("WizardProgressNavigator aria attributes are set correctly", function (assert) {
 		var sRole = this.oProgressNavigator.$().find(".sapMWizardProgressNavList").attr("role");
+		var sAriaLabel = this.oProgressNavigator.$().find(".sapMWizardProgressNavList").attr("aria-label");
+		var sWizardAriaLabelText = this.oResourceBundle.getText("WIZARD_PROGRESS_NAVIGATOR_LIST_ARIA_LABEL");
+		var sAriaControls = this.oProgressNavigator.$().find(".sapMWizardProgressNavList").attr("aria-controls");
+		var sWizardAriaControlsText = this.oProgressNavigator.getParent().sId + "-step-container";
+
+		assert.strictEqual(sAriaLabel, sWizardAriaLabelText, "'aria-label' attribute should be set to '" + sWizardAriaLabelText + "'");
+		assert.strictEqual(sAriaControls, sWizardAriaControlsText, "'aria-controls' attribute should be set to '" + sWizardAriaControlsText + "'");
 		assert.strictEqual(sRole, "list", "'role' attribute of the unordered list should be set to 'list'");
 	});
 
-	QUnit.test("WizardProgressNavigator li element role attribute", function (assert) {
-		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
-		for (var i = 0; i < $steps.length; i++){
-			assert.strictEqual($steps.eq(i).attr("role"), "listitem", "'role' attribute of the list item No" + (i + 1) + " should be set to 'listitem'");
-		}
+	QUnit.test("WizardProgressNavigator ul element aria describedby attribute", function (assert) {
+		var sDescribedById = InvisibleText.getStaticId("sap.m", "WIZARD_PROGRESS_NAVIGATOR_LIST_ARIA_DESCRIBEDBY");
+		var sDescribedByAttr = this.oProgressNavigator.$().find(".sapMWizardProgressNavList").attr("aria-describedby");
+
+		assert.strictEqual(sDescribedById, sDescribedByAttr, "'aria-describedby' attribute was set with the correct invisible text.");
 	});
 
-	QUnit.test("WizardProgressNavigator step label attribute must be rendered correctly with the step title text", function (assert) {
-		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep"),
-			sStepText = this.oResourceBundle.getText("WIZARD_PROG_NAV_STEP_TITLE");
+	QUnit.test("WizardProgressNavigator li element aria attributes are set correctly", function (assert) {
+		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
+		var sOptionalText;
+		var sWizardAriaLabelText;
+
 		for (var i = 0; i < $steps.length; i++){
-			var sStepTitle = sStepText + " " + (i + 1);
-			assert.strictEqual($steps.eq(i).attr("aria-label"), sStepTitle, "'aria-label' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + sStepTitle + "'");
+			sOptionalText = this.oProgressNavigator._aStepOptionalIndication[i] ? "Optional " : "";
+			sWizardAriaLabelText = this.oResourceBundle.getText("WIZARD_STEP_LABEL", [i + 1, this.oProgressNavigator.getStepTitles()[i], sOptionalText]);
+
+			if (i === 0) {
+				sWizardAriaLabelText = this.oResourceBundle.getText("WIZARD_STEP_LABEL_CURRENT", [i + 1, this.oProgressNavigator.getStepTitles()[i], sOptionalText]);
+				assert.strictEqual($steps.eq(i).attr("aria-label"), sWizardAriaLabelText, "'aria-label' attribute of the list item No" + (i + 1) + " should be set to '" + sWizardAriaLabelText + "'");
+			} else {
+				assert.strictEqual($steps.eq(i).attr("aria-label"), sWizardAriaLabelText, "'aria-label' attribute of the list item No" + (i + 1) + " should be set to '" + sWizardAriaLabelText + "'");
+				assert.strictEqual($steps.eq(i).attr("role"), "listitem", "'role' attribute of the list item No" + (i + 1) + " should be set to 'listitem'");
+			}
 		}
 	});
 
