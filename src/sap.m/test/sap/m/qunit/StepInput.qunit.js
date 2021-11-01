@@ -181,7 +181,7 @@ sap.ui.define([
 
 	QUnit.test("input", function (assert) {
 		//assert
-		assert.strictEqual(this.stepInput._getInput().getMetadata().getName(), "sap.m.internal.NumericInput",
+		assert.strictEqual(this.stepInput._getInput().getMetadata().getName(), "sap.m.NumericInput",
 			"the input aggregation holds an instance of a numeric input");
 		assert.strictEqual(this.stepInput.getValue(), 0, "The default value is correctly set in the input");
 
