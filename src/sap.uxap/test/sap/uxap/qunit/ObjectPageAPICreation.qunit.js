@@ -968,6 +968,31 @@ function (
 		helpers.renderObject(oObjectPage);
 	});
 
+	QUnit.test("media range is updated on-resize", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			done = assert.async(),
+			iWidth = 0;
+
+		this.stub(oObjectPage, "_getMediaContainerWidth", function() {
+			return iWidth;
+		});
+
+		assert.expect(1);
+
+		oObjectPage.addEventDelegate({
+			onAfterRendering: function() {
+				oObjectPage.removeEventDelegate(this);
+				iWidth = 1024; // change to desktop size
+				// invoke the resize listener synchronously to save a timeout
+				oObjectPage._onUpdateScreenSize({size: {width: 1024}, oldSize: {}});
+				assert.notOk(oObjectPage._bMobileScenario, "media range is updated");
+				done();
+			}
+		});
+
+		helpers.renderObject(oObjectPage);
+	});
+
 	QUnit.module("test setSelectedSection functionality");
 
 	QUnit.test("test setSelectedSection with initially empty ObjectPage", function (assert) {
