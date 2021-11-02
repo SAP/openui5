@@ -103,13 +103,20 @@ sap.ui.define([
 						label: sText
 					}
 				},
-				success: function(aBtn) {
-					aBtn[0].focus();
-					new EnterText({
-						text: sValue,
-						keepFocus: typeof bKeepFocus !== "undefined" ? bKeepFocus : true
-					}).executeOn(aBtn[0].getAggregation("_content")[0]);
-					Opa5.assert.equal(aBtn.length, 1, "Text '" + sValue + "' entered on FilterField with label '" + sText + "'.");
+				success: function(aFilterFields) {
+					Opa5.assert.equal(aFilterFields.length, 1, "Found FilterField with label '" + sText + "'.");
+					var sInnerControlType = aFilterFields[0].getAggregation("_content")[0].getMetadata().getName();
+					this.waitFor({
+						controlType: sInnerControlType,
+						matchers: new Ancestor(aFilterFields[0], true),
+						actions: new EnterText({
+							text: sValue,
+							keepFocus: typeof bKeepFocus !== "undefined" ? bKeepFocus : true
+						}),
+						success: function(aInputControl) {
+							Opa5.assert.equal(aInputControl.length, 1, "Text '" + sValue + "' entered on FilterField with label '" + sText + "'.");
+						}
+					});
 				}
 			});
 		},
