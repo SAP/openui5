@@ -1653,7 +1653,7 @@ sap.ui.define([
 		if (FlexibleColumnLayout.ARROWS_NAMES[sNewLayout][sShiftDirection] !== FlexibleColumnLayout.ARROWS_NAMES[sCurrentLayout][sShiftDirection] && bIsLayoutValid) {
 			var sOppositeShiftDirection = sShiftDirection === 'right' ? 'left' : 'right';
 
-			this._oColumnSeparatorArrows[FlexibleColumnLayout.ARROWS_NAMES[sNewLayout][sOppositeShiftDirection]].focus();
+			this._oColumnSeparatorArrows[FlexibleColumnLayout.ARROWS_NAMES[sNewLayout][sOppositeShiftDirection]].trigger("focus");
 		}
 		this._fireStateChange(true, false);
 	};
