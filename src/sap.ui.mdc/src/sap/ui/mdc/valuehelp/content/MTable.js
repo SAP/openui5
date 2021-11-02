@@ -819,7 +819,6 @@ sap.ui.define([
 					oDefaultFilterBar.attachSearch(_handleSearch, this);
 				}
 				oFilterBar.detachSearch(_handleSearch, this);
-				this._createDefaultFilterBar(); // TODO: should this be part of FilterableListContent?
 			}
 		}
 

@@ -418,21 +418,25 @@ sap.ui.define([
 
 			if (["_defaultFilterBar", "filterBar"].indexOf(oChanges.name) !== -1) {
 				var oFilterBar = oChanges.child;
+				var oExistingBasicSearchField = oFilterBar.getBasicSearchField();
 				if (oChanges.mutation === "insert") {
 					var sFilterFields =  this.getFilterFields();
-					var oExistingBasicSearchField = oFilterBar.getBasicSearchField();
 					if (!oExistingBasicSearchField && sFilterFields) {
 						return loadModules([
 							"sap/ui/mdc/FilterField"
 						]).then(function (aModules){
-							var FilterField = aModules[0];
-							oFilterBar.setBasicSearchField(new FilterField(this.getId() + "-search", {
-								conditions: "{$filters>/conditions/" + sFilterFields + "}",
-								placeholder:"{$i18n>filterbar.SEARCH}",
-								label:"{$i18n>filterbar.SEARCH}", // TODO: do we want a label?
-								maxConditions: 1,
-								width: "50%"
-							}));
+							if (!oFilterBar.bIsDestroyed) {
+								var FilterField = aModules[0];
+								var oSearchField = new FilterField(this.getId() + "-search", {
+									conditions: "{$filters>/conditions/" + sFilterFields + "}",
+									placeholder:"{$i18n>filterbar.SEARCH}",
+									label:"{$i18n>filterbar.SEARCH}", // TODO: do we want a label?
+									maxConditions: 1,
+									width: "50%"
+								});
+								oSearchField._bCreatedByValueHelp = true;
+								oFilterBar.setBasicSearchField(oSearchField);
+							}
 						}.bind(this));
 					} else if (oExistingBasicSearchField) {
 						oExistingBasicSearchField.setConditions([]);
@@ -440,6 +444,11 @@ sap.ui.define([
 					this._assignCollectiveSearch();
 					_addInParameterToFilterBar.call(this, oFilterBar, this.getProperty("inConditions"));
 					_addFilterValueToFilterBar.call(this, oFilterBar, this.getFilterValue());
+				} else if (oChanges.name === "filterBar") {
+					if (oExistingBasicSearchField && oExistingBasicSearchField._bCreatedByValueHelp) {
+						oExistingBasicSearchField.destroy(); // TODO: reuse for default FilterBar?
+					}
+					this._createDefaultFilterBar();
 				}
 			}
 		}
