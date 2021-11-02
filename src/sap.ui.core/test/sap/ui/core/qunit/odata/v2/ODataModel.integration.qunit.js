@@ -11007,4 +11007,95 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.strictEqual(oTable.getBinding("rows").getLength(), 2);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: All contexts of a bound list available on the client are returned, including
+	// transient and created contexts and without firing any request.
+	// CPOUI5MODELS-741
+	QUnit.test("ODataListBinding#getAllCurrentContexts", function (assert) {
+		var oCreatedContext,
+			oModel = createSalesOrdersModel({defaultCountMode : CountMode.Inline}),
+			oTable,
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderSet}" threshold="0" visibleRowCount="2">\
+	<Input id="note" value="{Note}" />\
+</t:Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=2&$inlinecount=allpages", {
+				__count : "97",
+				results : [{
+					__metadata : {
+						uri : "SalesOrderSet('1')"
+					},
+					Note : "SO1",
+					SalesOrderID : "1"
+				}, {
+					__metadata : {
+						uri : "SalesOrderSet('2')"
+					},
+					Note : "SO2",
+					SalesOrderID : "2"
+				}]
+			})
+			.expectValue("note", ["SO1", "SO2"])
+			.expectMessages([]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectValue("note", ["SONew", "SO1"]);
+
+			oCreatedContext = oTable.getBinding("rows").create({Note : "SONew"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			//code under test
+			var aAllCurrentContextsPaths = oTable.getBinding("rows").getAllCurrentContexts()
+					.map(function (oContext) {
+						return oContext.getPath();
+					});
+
+			assert.strictEqual(aAllCurrentContextsPaths.length, 3);
+			assert.ok(aAllCurrentContextsPaths.includes("/SalesOrderSet('1')"));
+			assert.ok(aAllCurrentContextsPaths.includes("/SalesOrderSet('2')"));
+			assert.ok(aAllCurrentContextsPaths.includes(oCreatedContext.getPath()));
+
+			that.expectRequest("SalesOrderSet?$skip=4&$top=2", {
+					results : [{
+						__metadata : {
+							uri : "SalesOrderSet('9')"
+						},
+						Note : "SO9",
+						SalesOrderID : "9"
+					}, {
+						__metadata : {
+							uri : "SalesOrderSet('10')"
+						},
+						Note : "SO10",
+						SalesOrderID : "10"
+					}]
+				})
+				.expectValue("note", ["", ""], 5)
+				.expectValue("note", ["SO9", "SO10"], 5);
+
+			oTable.setFirstVisibleRow(5);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			//code under test
+			var aAllCurrentContextsPaths = oTable.getBinding("rows").getAllCurrentContexts()
+					.map(function (oContext) {
+						return oContext.getPath();
+					});
+
+			assert.strictEqual(aAllCurrentContextsPaths.length, 5);
+			assert.ok(aAllCurrentContextsPaths.includes("/SalesOrderSet('1')"));
+			assert.ok(aAllCurrentContextsPaths.includes("/SalesOrderSet('2')"));
+			assert.ok(aAllCurrentContextsPaths.includes(oCreatedContext.getPath()));
+			assert.ok(aAllCurrentContextsPaths.includes("/SalesOrderSet('9')"));
+			assert.ok(aAllCurrentContextsPaths.includes("/SalesOrderSet('10')"));
+		});
+	});
 });
