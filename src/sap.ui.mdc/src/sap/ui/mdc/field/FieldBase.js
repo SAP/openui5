@@ -723,30 +723,34 @@ sap.ui.define([
 
 	FieldBase.prototype.onsapup = function(oEvent) {
 
-		var oFieldHelp = _getFieldHelp.call(this);
-		var oSource = oEvent.srcControl;
+		if (this.getEditMode() === EditMode.Editable) {
+			var oFieldHelp = _getFieldHelp.call(this);
+			var oSource = oEvent.srcControl;
 
-		if (oFieldHelp && (!oFieldHelp.valueHelpEnabled || oFieldHelp.valueHelpEnabled() || oFieldHelp.isOpen()) && (!this._oContentFactory.isMeasure() || oSource.getShowValueHelp())) {
-			// if only type-ahead but no real value help, only navigate if open TODO: remove function check
-			oEvent.preventDefault();
-			oEvent.stopPropagation();
-			oFieldHelp.setFilterValue(this._sFilterValue); // to be sure to filter for typed value
-			oFieldHelp.navigate(-1);
+			if (oFieldHelp && (!oFieldHelp.valueHelpEnabled || oFieldHelp.valueHelpEnabled() || oFieldHelp.isOpen()) && (!this._oContentFactory.isMeasure() || oSource.getShowValueHelp())) {
+				// if only type-ahead but no real value help, only navigate if open TODO: remove function check
+				oEvent.preventDefault();
+				oEvent.stopPropagation();
+				oFieldHelp.setFilterValue(this._sFilterValue); // to be sure to filter for typed value
+				oFieldHelp.navigate(-1);
+			}
 		}
 
 	};
 
 	FieldBase.prototype.onsapdown = function(oEvent) {
 
-		var oFieldHelp = _getFieldHelp.call(this);
-		var oSource = oEvent.srcControl;
+		if (this.getEditMode() === EditMode.Editable) {
+			var oFieldHelp = _getFieldHelp.call(this);
+			var oSource = oEvent.srcControl;
 
-		if (oFieldHelp && (!oFieldHelp.valueHelpEnabled || oFieldHelp.valueHelpEnabled() || oFieldHelp.isOpen()) && (!this._oContentFactory.isMeasure() || oSource.getShowValueHelp())) {
-			// if only type-ahead but no real value help, only navigate if open TODO: remove function check
-			oEvent.preventDefault();
-			oEvent.stopPropagation();
-			oFieldHelp.setFilterValue(this._sFilterValue); // to be sure to filter for typed value
-			oFieldHelp.navigate(1);
+			if (oFieldHelp && (!oFieldHelp.valueHelpEnabled || oFieldHelp.valueHelpEnabled() || oFieldHelp.isOpen()) && (!this._oContentFactory.isMeasure() || oSource.getShowValueHelp())) {
+				// if only type-ahead but no real value help, only navigate if open TODO: remove function check
+				oEvent.preventDefault();
+				oEvent.stopPropagation();
+				oFieldHelp.setFilterValue(this._sFilterValue); // to be sure to filter for typed value
+				oFieldHelp.navigate(1);
+			}
 		}
 
 	};

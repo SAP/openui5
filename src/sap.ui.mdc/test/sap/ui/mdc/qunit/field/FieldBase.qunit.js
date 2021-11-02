@@ -3275,6 +3275,17 @@ sap.ui.define([
 		assert.equal(oContent._$input.val(), "X", "Field shown value");
 		assert.ok(oFieldHelp.getTextForKey.notCalled, "no request for description triggered");
 
+		// no navigation in non-editable field
+		oFieldHelp.navigate.resetHistory();
+		oField.setEditMode(EditMode.ReadOnly);
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
+		assert.ok(oFieldHelp.navigate.notCalled, "navigate not called");
+		assert.ok(oContent.onsapnext.notCalled, "onsapnext not called on content control");
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
+		assert.ok(oFieldHelp.navigate.notCalled, "navigate not called");
+		assert.ok(oContent.onsapprevious.notCalled, "onsapprevious not called on content control");
+
+
 	});
 
 	QUnit.test("navigation single Field", function(assert) {
