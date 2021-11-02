@@ -5,14 +5,18 @@ sap.ui.define([
 	"sap/ui/layout/SplitterLayoutData",
 	"sap/m/Button",
 	"sap/m/Panel",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/RenderManager"
 ], function (
 	Log,
 	Splitter,
 	SplitterLayoutData,
 	Button,
 	Panel,
-	coreLibrary
+	coreLibrary,
+	XMLView,
+	RenderManager
 ) {
 	"use strict";
 
@@ -630,43 +634,34 @@ sap.ui.define([
 
 	QUnit.module("Resize Handling");
 
-	QUnit.test("Prevent size calculation while rerendering", function (assert) {
-		// Check whether the resize calculation is not done when the Splitter is located in the preserve area
+	QUnit.test("Size calculation when splitter is located in the preserve area", function (assert) {
+		// Arrange
 		var done = assert.async();
-		sap.ui.require([
-			'sap/ui/core/mvc/XMLView',
-			'sap/ui/layout/Splitter',
-			'sap/ui/core/RenderManager'],
-			function (XMLView,
-					  Splitter,
-					  RenderManager) {
+		var sXMLViewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout">'
+			+ '<layout:Splitter id="myResizeSplitter">'
+			+ '</layout:Splitter>'
+			+ '</mvc:View>';
 
-			// setup
-			var sXMLViewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout">'
-				+ '<layout:Splitter id="myResizeSplitter">'
-				+ '</layout:Splitter>'
-				+ '</mvc:View>';
-			XMLView.create({
-				definition: sXMLViewContent
-			}).then(function(oXMLView) {
-				var oResizeSplitter = oXMLView.byId("myResizeSplitter");
+		XMLView.create({
+			definition: sXMLViewContent
+		}).then(function(oXMLView) {
+			var oResizeSplitter = oXMLView.byId("myResizeSplitter");
 
-				oXMLView.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				var oSpy = this.spy(oResizeSplitter, "getCalculatedSizes");
+			oXMLView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			var oSpy = this.spy(oResizeSplitter, "getCalculatedSizes");
 
-				oXMLView.attachBeforeRendering(function () {
-					// check
-					assert.ok(RenderManager.isPreservedContent(oXMLView.getDomRef()), "Splitter control is preserved as part of XMLView.");
-					oResizeSplitter.triggerResize(true);
-					assert.strictEqual(oSpy.called, false, "Splitter has not calculated its sizes again.");
+			oXMLView.attachBeforeRendering(function () {
+				// check
+				assert.ok(RenderManager.isPreservedContent(oXMLView.getDomRef()), "Splitter control is preserved as part of XMLView.");
+				oResizeSplitter.triggerResize(true);
+				assert.strictEqual(oSpy.called, false, "Splitter has not calculated its sizes again.");
 
-					oXMLView.destroy();
-					done();
-				});
+				oXMLView.destroy();
+				done();
+			});
 
-				oXMLView.rerender();
-			}.bind(this));
+			oXMLView.rerender();
 		}.bind(this));
 	});
 
@@ -700,7 +695,27 @@ sap.ui.define([
 			// Clean up
 			oPanel.destroy();
 			done();
-		}, 200);
+		}, 250);
+	});
+
+	QUnit.test("Size calculation when splitter is not displayed", function (assert) {
+		// Arrange
+		var oSplitter = new Splitter({
+			contentAreas: []
+		});
+		oSplitter.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		var oSpy = this.spy(oSplitter, "getCalculatedSizes");
+
+		// Act
+		oSplitter.$().css("display", "none");
+		oSplitter.triggerResize(true);
+
+		// Assert
+		assert.ok(oSpy.notCalled, "Should not calculate sizes when not displayed");
+
+		// Clean up
+		oSplitter.destroy();
 	});
 
 	QUnit.module("Bars", {
