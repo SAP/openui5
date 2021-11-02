@@ -44,6 +44,7 @@ sap.ui.define([
 	var Field = FieldBase.extend("sap.ui.mdc.MultiValueField", /* @lends sap.ui.mdc.MultiValueField.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
+			designtime: "sap/ui/mdc/designtime/field/MultiValueField.designtime",
 			properties: {
 				/**
 				 * Path to the <code>MultiValueFieldDelegate</code> module that provides the required APIs to execute model-specific logic.<br>

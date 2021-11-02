@@ -98,6 +98,7 @@ sap.ui.define([
 	var FieldBase = Control.extend("sap.ui.mdc.field.FieldBase", /* @lends sap.ui.mdc.field.FieldBase.prototype */ {
 		metadata: {
 			interfaces: ["sap.ui.core.IFormContent", "sap.ui.core.ISemanticFormContent"],
+			designtime: "sap/ui/mdc/designtime/field/FieldBase.designtime",
 			library: "sap.ui.mdc",
 			properties: {
 				/**
