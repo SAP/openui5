@@ -75,7 +75,7 @@ sap.ui.define([
 				ignore: false
 			},
 			_toolbar: {
-				ignore: true
+				ignore: false
 			},
 			_breadcrumbs: {
 				ignore: true
