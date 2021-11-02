@@ -29,7 +29,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read: _refresh passed to _createRequest", function (assert) {
+[
+	{path : "~path?$filter=very_long_value", pathNoParams : "~path"},
+	{path : "~path/$count?$filter=very_long_value", pathNoParams : "~path/$count"},
+	{path : "~path/$count", pathNoParams : "~path/$count"}
+].forEach(function (oFixture, i) {
+	QUnit.test("read: _refresh passed to _createRequest, " + i, function (assert) {
 		var bCanonicalRequest = "{boolean} bCanonicalRequest",
 			oContext = "{sap.ui.model.Context} oContext",
 			sDeepPath = "~deepPath",
@@ -81,7 +86,6 @@ sap.ui.define([
 				success : fnSuccess,
 				urlParameters : mUrlParams
 			},
-			sPath = "~path/$count",
 			oRequest = {},
 			sSorterParams = "~$orderby",
 			sUrl = "~url",
@@ -92,14 +96,16 @@ sap.ui.define([
 		oODataUtilsMock.expects("_createUrlParamsArray").withExactArgs(mUrlParams)
 			.returns(aUrlParams);
 		oModelMock.expects("_getHeaders").withExactArgs(mHeaders, true).returns(mGetHeaders);
-		oModelMock.expects("_getETag").withExactArgs(sPath, oContext).returns(sETag);
+		oModelMock.expects("_getETag").withExactArgs(oFixture.pathNoParams, oContext)
+			.returns(sETag);
 		oModelMock.expects("_normalizePath")
 			.withExactArgs("~path", oContext, bIsCanonicalRequestNeeded)
 			.returns(sNormalizedTempPath);
 		oModelMock.expects("_normalizePath")
-			.withExactArgs(sPath, oContext, bIsCanonicalRequestNeeded)
+			.withExactArgs(oFixture.pathNoParams, oContext, bIsCanonicalRequestNeeded)
 			.returns(sNormalizedPath);
-		oModelMock.expects("resolveDeep").withExactArgs(sPath, oContext).returns(sDeepPath);
+		oModelMock.expects("resolveDeep").withExactArgs(oFixture.pathNoParams, oContext)
+			.returns(sDeepPath);
 		// inner function createReadRequest
 		oODataUtilsMock.expects("createSortParams").withExactArgs(aSorters).returns(sSorterParams);
 		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
@@ -124,8 +130,9 @@ sap.ui.define([
 			.returns(oRequest);
 
 		// code under test
-		ODataModel.prototype.read.call(oModel, sPath, mParameters);
+		ODataModel.prototype.read.call(oModel, oFixture.path, mParameters);
 	});
+});
 	//TODO create fixtures to test all paths of ODataModel#read
 
 	//*********************************************************************************************
