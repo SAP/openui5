@@ -777,10 +777,10 @@
 		var oSugggestTable8Btn =  new sap.m.Button("sugTable8Btn", {
 			text: "Toggle list separators",
 			press: function () {
-				var bSeparateSuggestions = oSuggestTableInput8._getSeparateSuggestions();
+				var bSeparateSuggestions = oSuggestTableInput8.getProperty("separateSuggestions");
 				oSuggestTableInput8._setSeparateSuggestions(!bSeparateSuggestions);
 			}
-		})
+		});
 
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(oSuggestionData);
@@ -982,9 +982,8 @@
 							oSuggestTableInput5,
 							oSuggestTableInput6,
 							oSuggestTableInput7,
-							new sap.ui.layout.HorizontalLayout("oHL", {
-								width: "100%",
-								content: [
+							new sap.m.HBox("oHB", {
+								items: [
 									oSuggestTableInput8,
 									oSugggestTable8Btn
 								]
