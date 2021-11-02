@@ -167,3 +167,111 @@ html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisab
         box-shadow: inset 0px 0px 0px 2px @sapField_Focus_BorderColor;
     }
 }
+
+// =====================================
+// Input Information state
+// =====================================
+.sapMSltInformation {
+    border: none;
+    background-image: linear-gradient(0deg, @sapField_InformationColor 0, @sapField_InformationColor 100%);
+    background-size: 100% @sapField_InformationBorderWidth;
+    background-repeat: repeat-x;
+    background-position: bottom;
+}
+
+.sapMSltInformation.sapMSltHoverable:not(.sapMSltIconOnly):not(.sapMSltDisabled):not(.sapMSltPressed):hover {
+    background-color: @sapField_Hover_Background;
+
+    &:not(.sapMSltFocused) {
+        box-shadow: @sapContent_Informative_Shadow; // NEW Parameter
+    }
+}
+
+.sapMSltHoverable.sapMSltInformation:not(.sapMSltIconOnly):active,
+.sapMSltFocused.sapMSltInformation {
+    box-shadow: inset 0px 0px 0px 2px @sapField_Active_BorderColor;
+    background-color: @sapField_Focus_Background;
+}
+
+// =====================================
+// Input Success state
+// =====================================
+
+.sapMSltSuccess {
+    border: none;
+    background-image: linear-gradient(0deg, @sapField_SuccessColor 0, @sapField_SuccessColor 100%);
+    background-size: 100% @sapField_SuccessBorderWidth;
+    background-repeat: repeat-x;
+    background-position: bottom;
+}
+
+.sapMSltSuccess.sapMSltHoverable:not(.sapMSltIconOnly):not(.sapMSltDisabled):not(.sapMSltPressed):hover  {
+    background-color: @sapField_Hover_Background;
+
+    &:not(.sapMSltFocused) {
+        box-shadow: @sapContent_Positive_Shadow; // New Parameter
+    }
+}
+
+// Field Success Focus - Experimental
+.sapMSltHoverable.sapMSltSuccess:not(.sapMSltIconOnly):active,
+.sapMSltFocused.sapMSltSuccess {
+    box-shadow: inset 0px 0px 0px 2px @sapField_SuccessColor;
+    border-radius: @sapField_BorderCornerRadius;
+    background-color: @sapField_Focus_Background;
+}
+
+// =====================================
+// Input Warning state
+// =====================================
+
+.sapMSltWarning {
+    border: none;
+    background-image: linear-gradient(0deg, @sapField_WarningColor 0, @sapField_WarningColor 100%);
+    background-size: 100% @sapField_WarningBorderWidth;
+    background-repeat: repeat-x;
+    background-position: bottom;
+}
+
+.sapMSltWarning.sapMSltHoverable:not(.sapMSltIconOnly):not(.sapMSltDisabled):not(.sapMSltPressed):hover {
+    background-color: @sapField_Hover_Background;
+
+    &:not(.sapMSltFocused) {
+        box-shadow: @sapContent_Critical_Shadow; // NEW Parameter
+    }
+}
+
+// Field Warning Focus - Experimental
+.sapMSltHoverable.sapMSltWarning:not(.sapMSltIconOnly):active,
+.sapMSltFocused.sapMSltWarning {
+    box-shadow: inset 0px 0px 0px 2px @sapField_WarningColor; // Experimental
+    background-color: @sapField_Focus_Background;
+}
+
+
+// =====================================
+// Input Error state
+// =====================================
+
+.sapMSltError {
+    border: none;
+    background-image: linear-gradient(0deg, @sapField_InvalidColor 0, @sapField_InvalidColor 100%);
+    background-size: 100% @sapField_InvalidBorderWidth;
+    background-repeat: repeat-x;
+    background-position: bottom;
+}
+
+.sapMSltError.sapMSltHoverable:not(.sapMSltIconOnly):not(.sapMSltDisabled):not(.sapMSltPressed):hover {
+    background-color: @sapField_Hover_Background;
+
+    &:not(.sapMSltFocused) {
+        box-shadow: @sapContent_Negative_Shadow; // New Parameter
+    }
+}
+
+// Field Error Focus - Experimental
+.sapMSltHoverable.sapMSltError:not(.sapMSltIconOnly):active,
+.sapMSltFocused.sapMSltError {
+    box-shadow: inset 0px 0px 0px 2px @sapField_InvalidColor;
+    background-color: @sapField_Focus_Background;
+}
