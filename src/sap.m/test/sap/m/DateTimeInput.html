@@ -25,6 +25,7 @@
 				"sap/m/Column",
 				"sap/m/DateTimeInput",
 				"sap/m/ColumnListItem",
+				"sap/m/VBox",
 				"sap/ui/core/Item",
 				"sap/ui/model/json/JSONModel",
 				"sap/ui/model/type/Date",
@@ -46,6 +47,7 @@
 				Column,
 				DateTimeInput,
 				ColumnListItem,
+				VBox,
 				Item,
 				JSONModel,
 				DateType,
@@ -134,7 +136,7 @@
 						new Label({
 							text: "Christmas:",
 							labelFor: "DTI1"
-						}),
+						}).addStyleClass("sapUiSmallMarginTop"),
 						new DateTimeInput("DTI1", {
 							placeholder : "Date Picker",
 							change : function(oEvent) {
@@ -151,7 +153,7 @@
 						new Label({
 							text: "Duration:",
 							labelFor: "DTI2"
-						}),
+						}).addStyleClass("sapUiSmallMarginTop"),
 						new DateTimeInput("DTI2", {
 							placeholder : "Time Picker",
 							type : DateTimeInputType.Time,
@@ -163,7 +165,7 @@
 						new Label({
 							text: "DateTime:",
 							labelFor: "DTI3"
-						}),
+						}).addStyleClass("sapUiSmallMarginTop"),
 						new DateTimeInput("DTI3", {
 							placeholder : "DateTime",
 							type : DateTimeInputType.DateTime,
@@ -172,7 +174,7 @@
 						new Label({
 							text: "Free style date value assingment according to valueFormat:",
 							labelFor: "DTI4"
-						}),
+						}).addStyleClass("sapUiSmallMarginTop"),
 						// free style date value assingment according to valueFormat
 						new DateTimeInput("DTI4", {
 							value : "29-05, 2012",
@@ -184,7 +186,7 @@
 						new Label({
 							text: "Formats which includes zones 'Z' can be used for local date time:",
 							labelFor: "DTI5"
-						}),
+						}).addStyleClass("sapUiSmallMarginTop"),
 						// formats which includes zones "Z" can be used for local date time
 						new DateTimeInput("DTI5", {
 							width : "99%",
@@ -198,12 +200,12 @@
 						new Title({
 							text: "Data binding usage",
 							width: "100%"
-						}),
+						}).addStyleClass("sapUiMediumMarginTop"),
 						// data binding usage
 						new Label({
 							text: "Date (MMM d, y):",
 							labelFor: "DTI6"
-						}),
+						}).addStyleClass("sapUiSmallMarginTop"),
 						new DateTimeInput("DTI6", {
 							value : {
 								path : "/dateVal1",
@@ -213,7 +215,7 @@
 						new Label({
 							text: "Input:",
 							labelFor: "I1"
-						}),
+						}).addStyleClass("sapUiSmallMarginTop"),
 						new Input("I1", {
 							value: {
 								path: "/dateVal1",
@@ -224,7 +226,7 @@
 						new Label({
 							text: "Date (E dd, MMMM yyyy):",
 							labelFor: "DTI7"
-						}),
+						}).addStyleClass("sapUiSmallMarginTop"),
 						new DateTimeInput("DTI7", {
 							value : {
 								path : "/dateVal2",
@@ -235,7 +237,7 @@
 						new Label({
 							text: "Date (style short):",
 							labelFor: "DTI8"
-						}),
+						}).addStyleClass("sapUiSmallMarginTop"),
 						new DateTimeInput("DTI8", {
 							value : {
 								path : "/dateVal3",
@@ -245,7 +247,7 @@
 						new Label({
 							text: "Time (style medium):",
 							labelFor: "DTI9"
-						}),
+						}).addStyleClass("sapUiSmallMarginTop"),
 						new DateTimeInput("DTI9", {
 							type : DateTimeInputType.Time,
 							editable : false,
@@ -257,7 +259,7 @@
 						new Label({
 							text: "DateTime (style medium):",
 							labelFor: "DTI10"
-						}),
+						}).addStyleClass("sapUiSmallMarginTop"),
 						new DateTimeInput("DTI10", {
 							type : DateTimeInputType.DateTime,
 							enabled : false,
@@ -269,71 +271,86 @@
 						new Label({
 							text: "Input:",
 							labelFor: "I2"
-						}),
+						}).addStyleClass("sapUiSmallMarginTop"),
 						new Input("I2", {value: "Content of events DateTimeInput", editable: false}),
-						/*Table examinating different combination beetween DateTimeInput's type property and binding pattern of 'value'*/
-						oListWithTypes = new Table({
-							inset: true,
-							headerText: "Databinding type vs DateTypeInput type",
-							columns: [
-								new Column({
-									header: new Label({text: "'type' property", wrapping: true})
-								}),
-								new Column({
-									header: new Label({text: "Supported bindings", wrapping: true})
-								}),
-								new Column({
-									header: new Label({text: "DateTimeInput", wrapping: true})
-								}),
-								new Column({
-									header: new Label({text: "Input bound to the same model property, without binding type", wrapping: true })
-								})
-							],
-							items : [
-								new ColumnListItem({
-									cells: [
-										new Select({
-											items: [
-												new Item({text: "sap.m.DateTimeInputType.Date", key: DateTimeInputType.Date}),
-												new Item({text: "sap.m.DateTimeInputType.Time", key: DateTimeInputType.Time}),
-												new Item({text: "sap.m.DateTimeInputType.DateTime", key: DateTimeInputType.DateTime})
-											],
-											selectedKey: DateTimeInputType.Date,
-											change: function(oEvent) {
-												var oSelectedItem = oEvent.getParameter("selectedItem"),
-													oDateTimeInput = oEvent.getSource().getParent().getCells()[2];
-												oDateTimeInput.setType(oSelectedItem.getKey(), "string");
-											}
-										}),
-										new Select({
-											items: [
-												new Item({text: "sap.ui.model.type.Date", key: "Date"}),
-												new Item({text: "sap.ui.model.type.Time", key: "Time"}),
-												new Item({text: "sap.ui.model.type.DateTime", key: "DateTime"}),
-												new Item({text: "sap.ui.model.odata.type.DateTimeOffset", key: "DateTimeOffset"}),
-											],
-											selectedKey: "Date",
-											change: function(oEvent) {
-												var oSelectedItem = oEvent.getParameter("selectedItem"),
-													oDateTimeInput = oEvent.getSource().getParent().getCells()[2],
-													oBI = oDateTimeInput.getBinding("value"),
-													oType = oTypeInstances[oSelectedItem.getKey()];
 
-												oBI.setType(oType, "string");
-												oDateTimeInput.rerender();
-											}
-										}),
+						/* Examinating different combination beetween DateTimeInput's type property and binding pattern of 'value' */
+						new Title({
+							text: "Databinding type vs DateTypeInput type",
+							width: "100%"
+						}).addStyleClass("sapUiMediumMarginTop"),
 
-										new DateTimeInput("DTIBinding",{
-											type: DateTimeInputType.Date,
-											value: {path: "/dateVal1", type: new DateType()}
-										}).setModel(oModel),
-
-										new Input({value:{path: "/dateVal1"}}).setModel(oModel)
+						new VBox({
+							items: [
+								new Label({
+									text: "'type' property",
+									wrapping: true
+								}).addStyleClass("sapUiSmallMarginTop"),
+								new Select({
+									items: [
+										new Item({text: "sap.m.DateTimeInputType.Date", key: DateTimeInputType.Date}),
+										new Item({text: "sap.m.DateTimeInputType.Time", key: DateTimeInputType.Time}),
+										new Item({text: "sap.m.DateTimeInputType.DateTime", key: DateTimeInputType.DateTime})
 									],
+									selectedKey: DateTimeInputType.Date,
+									change: function(oEvent) {
+										var oSelectedItem = oEvent.getParameter("selectedItem"),
+											oDateTimeInput = oEvent.getSource().getParent().getCells()[2];
+										oDateTimeInput.setType(oSelectedItem.getKey(), "string");
+									}
 								})
 							]
+						}),
+						new VBox({
+							items: [
+								new Label({
+									text: "Supported bindings",
+									wrapping: true
+								}).addStyleClass("sapUiSmallMarginTop"),
+								new Select({
+									items: [
+										new Item({text: "sap.ui.model.type.Date", key: "Date"}),
+										new Item({text: "sap.ui.model.type.Time", key: "Time"}),
+										new Item({text: "sap.ui.model.type.DateTime", key: "DateTime"}),
+										new Item({text: "sap.ui.model.odata.type.DateTimeOffset", key: "DateTimeOffset"}),
+									],
+									selectedKey: "Date",
+									change: function(oEvent) {
+										var oSelectedItem = oEvent.getParameter("selectedItem"),
+											oDateTimeInput = oEvent.getSource().getParent().getCells()[2],
+											oBI = oDateTimeInput.getBinding("value"),
+											oType = oTypeInstances[oSelectedItem.getKey()];
+
+										oBI.setType(oType, "string");
+										oDateTimeInput.rerender();
+									}
+								})
+							]
+						}),
+						new VBox({
+							items: [
+								new Label({
+									text: "DateTimeInput",
+									wrapping: true
+								}).addStyleClass("sapUiSmallMarginTop"),
+								new DateTimeInput("DTIBinding",{
+									type: DateTimeInputType.Date,
+									value: {path: "/dateVal1", type: new DateType()}
+								}).setModel(oModel)
+							]
+						}),
+						new VBox({
+							items: [
+								new Label({
+									text: "Input bound to the same model property, without binding type",
+									wrapping: true
+								}).addStyleClass("sapUiSmallMarginTop"),
+								new Input({
+									value: {path: "/dateVal1"}
+								}).setModel(oModel)
+							]
 						})
+
 					]
 				});
 
