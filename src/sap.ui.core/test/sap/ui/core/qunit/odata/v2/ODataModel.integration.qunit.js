@@ -6958,4 +6958,46 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		return this.createView(assert, sView, oModel);
 	});
+
+	//*********************************************************************************************
+	// Scenario: ODataModel#read is called with a path having a very long URL parameter, e.g.
+	// from AnalyticalBinding with a $filter set for very many entities. The path and deep path
+	// computed from this path must not contain this URL parameter; otherwise the model's canonical
+	// path cache (mPathCache) filled in ODataModel#_importData may contain huge keys leading to
+	// performance issues and high memory consumption.
+	// BCP: 002075129500007478172021
+	QUnit.test("ODataModel#read ignores URL parameters given with the path", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = "<FlexBox></FlexBox>", // content of view does not matter, just test #read
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderSet?$filter=Note%20eq%20'N1'%20or%20Note%20eq%20'N2'", {
+					results : [{
+						__metadata : {uri : "SalesOrderSet('1~0~')"},
+						Note : "N1",
+						SalesOrderID : "42~0~"
+					}, {
+						__metadata : {uri : "SalesOrderSet('2~1~')"},
+						Note : "N2",
+						SalesOrderID : "77~1~"
+					}]
+				});
+
+			// code under test
+			oModel.read("/SalesOrderSet?$filter=Note%20eq%20'Ignored'",
+				{filters : [
+					new Filter({path : 'Note', operator : FilterOperator.EQ, value1 : "N1"}),
+					new Filter({path : 'Note', operator : FilterOperator.EQ, value1 : "N2"})
+				]});
+
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			Object.keys(oModel.mPathCache).forEach(function (sKey) {
+				assert.ok(!sKey.includes("?"),
+					"canonical path cache key has no URL parameters, " + sKey);
+			});
+		});
+	});
 });

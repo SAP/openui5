@@ -5194,9 +5194,10 @@ sap.ui.define([
 	 *
 	 * The data will be stored in the model. The requested data is returned with the response.
 	 *
-	 * @param {string} sPath A string containing the path to the data which should
-	 *		be retrieved. The path is concatenated to the service URL
-	 *		which was specified in the model constructor.
+	 * @param {string} sPath
+	 *   An absolute path or a path relative to the context given in
+	 *   <code>mParameters.context</code>; if the path contains a query string, the query string is
+	 *   ignored, use <code>mParameters.urlParameters</code> instead
 	 * @param {object} [mParameters] Optional parameter map containing any of the following properties:
 	 * @param {object} [mParameters.context] If specified, <code>sPath</code> has to be relative to the path
 	 * 		given with the context.
@@ -5241,6 +5242,10 @@ sap.ui.define([
 			mUrlParams = mParameters.urlParameters;
 		}
 		bCanonical = this._isCanonicalRequestNeeded(bCanonical);
+
+		if (sPath.indexOf('?') !== -1) {
+			sPath = sPath.slice(0, sPath.indexOf('?'));
+		}
 
 		//if the read is triggered via a refresh we should use the refreshGroupId instead
 		if (this.sRefreshGroupId) {
