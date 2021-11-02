@@ -783,6 +783,38 @@ sap.ui.define([
 		return Control.prototype.destroyAggregation.call(this, sAggregationName, bSuppressInvalidate);
 	};
 
+	SemanticPage.prototype.onBeforeRendering = function () {
+		var oShareMenu = this._getShareMenu(),
+			aVisibleActions = oShareMenu._getVisibleActions(),
+			iVisibleActionsCount = aVisibleActions.length;
+
+		oShareMenu._getShareMenuButton().setVisible(iVisibleActionsCount > 1);
+
+		if (iVisibleActionsCount === 1) {
+			this._showSingleVisibleAction();
+		}
+
+		// Move back the previously only one visible action to the ShareMenu, if new ones have been added
+		if (this._iVisibleShareMenuAction === 1 & iVisibleActionsCount > 1) {
+			this._hideSingleVisibleAction();
+			this._iVisibleShareMenuAction = iVisibleActionsCount;
+
+		}
+	};
+
+	SemanticPage.prototype._addShareMenuSingleAction = function (oVisibleAction) {
+		if (oVisibleAction) {
+			var bIsKnownSemanticType = SemanticConfiguration.isKnownSemanticType(oVisibleAction.getMetadata().getName());
+
+			oVisibleAction._bIsSingleAction = true;
+
+			this._getSemanticTitle().addContent(oVisibleAction,
+				bIsKnownSemanticType ? SemanticConfiguration._Placement.titleIcon : SemanticConfiguration._Placement.titleText);
+
+			this._iVisibleShareMenuAction = 1;
+			this._oSingleVisibleAction = oVisibleAction;
+		}
+	};
 
 	/**
 	* Proxies the <code>sap.f.semantic.SemanticPage</code> <code>content</code>
@@ -1105,9 +1137,61 @@ sap.ui.define([
 			this._oShareMenu = new SemanticShareMenu(this._getActionSheet(), this);
 			// Ensure bindings on top level control propagate properly
 			this.addDependent(this._oShareMenu._oContainer);
+			this._oShareMenu.attachEvent("_visibleActionsChanged", this._onShareMenuActionsChanged.bind(this));
 		}
 
 		return this._oShareMenu;
+	};
+
+	SemanticPage.prototype._onShareMenuActionsChanged = function (oEvent) {
+		var iVisibleActionsCount = oEvent.getParameter("visibleActionsCount");
+
+		if (this._iVisibleShareMenuAction !== iVisibleActionsCount) {
+			if (iVisibleActionsCount === 1) {
+				this._showSingleVisibleAction();
+			}
+
+			if (iVisibleActionsCount !== 1) {
+				this._hideSingleVisibleAction();
+			}
+		}
+
+		this._iVisibleShareMenuAction = iVisibleActionsCount;
+	};
+
+	SemanticPage.prototype._showSingleVisibleAction = function () {
+		var oShareMenu = this._getShareMenu(),
+			aVisibleActions = oShareMenu._getVisibleActions(),
+			aAllShareMenuActions = oShareMenu._aShareMenuActions.concat(oShareMenu._aCustomShareActions),
+			oActionToBeMoved;
+
+		if (aVisibleActions.length === 1) {
+			oActionToBeMoved = aAllShareMenuActions.filter(function (oAction) {
+				return (oAction._getControl && oAction._getControl() === aVisibleActions[0])
+						|| oAction === aVisibleActions[0];
+			})[0];
+
+			this._addShareMenuSingleAction(oActionToBeMoved);
+		}
+	};
+
+	SemanticPage.prototype._hideSingleVisibleAction = function () {
+		var sPlacement = SemanticConfiguration._Placement.shareMenu,
+			oSemanticContainer = this._getSemanticContainer(sPlacement),
+			bIsKnownSemanticType;
+
+		if (this._oSingleVisibleAction) {
+			bIsKnownSemanticType = SemanticConfiguration.isKnownSemanticType(this._oSingleVisibleAction.getMetadata().getName());
+			this._oSingleVisibleAction._bIsSingleAction = false;
+			this._getSemanticTitle().removeContent(this._oSingleVisibleAction,
+				bIsKnownSemanticType ? SemanticConfiguration._Placement.titleIcon : SemanticConfiguration._Placement.titleText);
+
+			bIsKnownSemanticType ? oSemanticContainer.addContent(this._oSingleVisibleAction)
+				: oSemanticContainer.insertCustomAction(this._oSingleVisibleAction, 0);
+
+			this._onAddAggregation(this._oSingleVisibleAction, sPlacement);
+			this._oSingleVisibleAction = null;
+		}
 	};
 
 	/**

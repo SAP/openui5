@@ -6,10 +6,10 @@
 * Provides a private class <code>sap.f.semantic.SemanticContainer</code>.
 */
 sap.ui.define([
-	"sap/ui/base/Object",
+	"sap/ui/base/EventProvider",
 	"./SemanticConfiguration",
 	"sap/base/Log"
-], function(BaseObject, SemanticConfiguration, Log) {
+], function(EventProvider, SemanticConfiguration, Log) {
 	"use strict";
 
 	/**
@@ -22,12 +22,14 @@ sap.ui.define([
 	* @alias sap.f.semantic.SemanticContainer
 	* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	*/
-	var SemanticContainer = BaseObject.extend("sap.f.semantic.SemanticContainer", {
+	var SemanticContainer = EventProvider.extend("sap.f.semantic.SemanticContainer", {
 		constructor : function(oContainer, oParent) {
 			if (!oContainer) {
 				Log.error("SemanticContainer :: missing argument - container reference", this);
 				return;
 			}
+
+			EventProvider.apply(this, arguments);
 
 			this._oContainer = oContainer;
 			this._oParent = oParent;

@@ -209,7 +209,13 @@ sap.ui.define(["sap/m/library", "./SemanticContainer"], function(mobileLibrary, 
 			bIsMainAction = this._isMainAction(oSemanticControl),
 			iInsertIndex;
 
-		this._aSemanticTextActions.push(oSemanticControl);
+		if (oSemanticControl._bIsSingleAction) {
+			oControl._bInOverflow = false;
+		}
+
+		if (this._aSemanticTextActions.indexOf(oSemanticControl) < 0) {
+			this._aSemanticTextActions.push(oSemanticControl);
+		}
 
 		if (bIsMainAction) {
 			this._iMainActionCount++;
@@ -255,12 +261,18 @@ sap.ui.define(["sap/m/library", "./SemanticContainer"], function(mobileLibrary, 
 			sContainerAggregationMethod,
 			iInsertIndex;
 
+		if (oSemanticControl._bIsSingleAction) {
+			oControl._bInOverflow = false;
+		}
+
 		if (this._isNavigationAction(oSemanticControl)) {
 			this._aSemanticNavIconActions.push(oSemanticControl);
 			iInsertIndex = this._getSemanticNavIconActionInsertIndex(oSemanticControl);
 			sContainerAggregationMethod = "insertNavigationAction";
 		} else {
-			this._aSemanticSimpleIconActions.push(oSemanticControl);
+			if (this._aSemanticSimpleIconActions.indexOf(oSemanticControl) < 0) {
+				this._aSemanticSimpleIconActions.push(oSemanticControl);
+			}
 			iInsertIndex = this._getSemanticSimpleIconActionInsertIndex(oSemanticControl);
 			sContainerAggregationMethod = "insertAction";
 		}
