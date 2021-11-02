@@ -82,7 +82,6 @@ sap.ui.define([
 
 			// if nested list is already available and no filters or sorters are set,
 			// use the data and don't send additional requests
-			// TODO: what if nested list is not complete, because it was too large?
 			var oRef = this.oModel._getObject(this.sPath, this.oContext);
 			this.aExpandRefs = oRef;
 			if (Array.isArray(oRef) && !aSorters && !aFilters) {
@@ -95,25 +94,27 @@ sap.ui.define([
 				this.iLength = 0;
 				this.bLengthFinal = true;
 				this.bDataAvailable = true;
-			}	else {
+			} else if (this.oModel.getServiceMetadata()) {
 				// call getLength when metadata is already loaded or don't do anything
 				// if the metadata gets loaded it will call a refresh on all bindings
-				if (this.oModel.getServiceMetadata()) {
-					this.resetData();
-				}
+				this.resetData();
 			}
-
 		}
-
 	});
 
 	/**
 	 * Return contexts for the list
 	 *
-	 * @param {int} [iStartIndex=0] the start index of the requested contexts
-	 * @param {int} [iLength] the requested amount of contexts
+	 * @param {int} [iStartIndex=0]
+	 *   The start index of the requested contexts
+	 * @param {int} [iLength]
+	 *   The requested amount of contexts
 	 * @param {int} [iThreshold=0]
-	 * @return {sap.ui.model.Context[]} the array of contexts for each row of the bound list
+	 *   The maximum number of contexts to read before and after the given range; with this,
+	 *   controls can prefetch data that is likely to be needed soon, e.g. when scrolling down in a
+	 *   table
+	 * @return {sap.ui.model.Context[]}
+	 *   The array of contexts for each row of the bound list
 	 * @protected
 	 */
 	ODataListBinding.prototype.getContexts = function(iStartIndex, iLength, iThreshold) {
@@ -331,7 +332,6 @@ sap.ui.define([
 
 				if (!this.bInitial) {
 					// if nested list is already available, use the data and don't send additional requests
-					// TODO: what if nested list is not complete, because it was too large?
 					var oRef = this.oModel._getObject(this.sPath, this.oContext);
 					this.aExpandRefs = oRef;
 					// eslint-disable-next-line no-unsafe-negation
@@ -382,13 +382,15 @@ sap.ui.define([
 
 		sPath = this.oModel.resolve(this.sPath,this.oContext);
 
-		if (sPath) {
-			return this.oModel._createRequestUrl(sPath, null, aParams);
-		}
+		return sPath && this.oModel._createRequestUrl(sPath, null, aParams);
 	};
 
 	/**
-	 * Load list data from the server
+	 * Load list data from the server.
+	 *
+	 * @param {number} iStartIndex The first index to load
+	 * @param {number} iLength The number of entries to load
+	 * @param {boolean} bPretend Whether the request should be pretended
 	 */
 	ODataListBinding.prototype.loadData = function(iStartIndex, iLength, bPretend) {
 
@@ -534,9 +536,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Return the length of the list
-	 *
-	 * @return {int} the length
+	 * Request the length of the list from the backend and cache it.
 	 */
 	ODataListBinding.prototype._getLength = function() {
 
@@ -587,12 +587,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refreshes the binding, checks whether the model data has been changed and fires a change event
-	 * if this is the case. For server side models this should refetch the data from the server.
-	 * To update a control, even if no data has been changed, e.g. to reset a control after failed
-	 * validation, use the parameter <code>bForceUpdate</code>.
+	 * Refreshes the binding, checks whether the model data has been changed and fires a change
+	 * event if this is the case. For server side models this should refetch the data from the
+	 * server. To update a control, even if no data has been changed, e.g. to reset a control after
+	 * failed validation, use the parameter <code>bForceUpdate</code>.
 	 *
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
+	 * @param {object} [mChangedEntities] A map of changed entities
+	 * @param {object} [mEntityTypes] A map of entity types
 	 * @public
 	 */
 	ODataListBinding.prototype.refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
@@ -612,6 +614,8 @@ sap.ui.define([
 						bChangeDetected = true;
 						return false;
 					}
+
+					return true;
 				});
 			}
 			if (!mChangedEntities && !mEntityTypes) { // default
@@ -626,7 +630,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * fireRefresh
+	 * Fires a <code>refresh</code> event.
+	 *
+	 * @param {object} oParameters Parameters for the event
 	 */
 	ODataListBinding.prototype._fireRefresh = function(oParameters) {
 		 if (this.oModel.resolve(this.sPath, this.oContext)) {
@@ -653,14 +659,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Check whether this Binding would provide new values and in case it changed,
-	 * inform interested parties about this.
+	 * Checks whether this Binding would provide new values and in case it changed, fires a change
+	 * event.
 	 *
 	 * @param {boolean} bForceUpdate
+	 *   Whether the event should be fired regardless of the bindings state
 	 * @param {object} mChangedEntities
+	 *   A map of changed entities
 	 */
 	ODataListBinding.prototype.checkUpdate = function(bForceUpdate, mChangedEntities) {
-		var bChangeReason = this.sChangeReason ? this.sChangeReason : ChangeReason.Change,
+		var sChangeReason = this.sChangeReason ? this.sChangeReason : ChangeReason.Change,
 			bChangeDetected = false,
 			oLastData, oCurrentData,
 			that = this,
@@ -696,6 +704,8 @@ sap.ui.define([
 						bChangeDetected = true;
 						return false;
 					}
+
+					return true;
 				});
 			} else {
 				bChangeDetected = true;
@@ -717,13 +727,15 @@ sap.ui.define([
 							bChangeDetected = true;
 							return false;
 						}
+
+						return true;
 					});
 				}
 			}
 		}
 		if (bForceUpdate || bChangeDetected || this.bNeedsUpdate) {
 			this.bNeedsUpdate = false;
-			this._fireChange({reason: bChangeReason});
+			this._fireChange({reason: sChangeReason});
 		}
 		this.sChangeReason = undefined;
 		this.bIgnoreSuspend = false;
@@ -766,8 +778,14 @@ sap.ui.define([
 	/**
 	 * Sorts the list.
 	 *
-	 * @param {sap.ui.model.Sorter|Array} aSorters the Sorter or an array of sorter objects object which define the sort order
-	 * @return {this} returns <code>this</code> to facilitate method chaining
+	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} aSorters
+	 *   The Sorter or an array of sorter objects which define the sort order
+	 * @param {boolean} [bReturnSuccess=false]
+	 *   Whether to return <code>true</code> or <code>false</code>, instead of <code>this</code>,
+	 *   depending on whether the sorting has been done
+	 * @return {this}
+	 *   Returns <code>this</code> to facilitate method chaining or the success state
+	 *
 	 * @public
 	 */
 	ODataListBinding.prototype.sort = function(aSorters, bReturnSuccess) {
@@ -791,7 +809,6 @@ sap.ui.define([
 			this.abortPendingRequest();
 			this.sChangeReason = ChangeReason.Sort;
 			this._fireRefresh({reason : this.sChangeReason});
-			// TODO remove this if the sort event gets removed which is now deprecated
 			this._fireSort({sorter: aSorters});
 			bSuccess = true;
 		}
@@ -810,16 +827,23 @@ sap.ui.define([
 	 *
 	 * Filters the list.
 	 *
-	 * When using sap.ui.model.Filter the filters are first grouped according to their binding path.
-	 * All filters belonging to a group are combined with OR and after that the
+	 * When using <code>sap.ui.model.Filter</code> the filters are first grouped according to their
+	 * binding path. All filters belonging to a group are combined with OR and after that the
 	 * results of all groups are combined with AND.
-	 * Usually this means, all filters applied to a single table column
-	 * are combined with OR, while filters on different table columns are combined with AND.
+	 * Usually this means, all filters applied to a single table column are combined with OR, while
+	 * filters on different table columns are combined with AND.
 	 * Please note that a custom filter function is not supported.
 	 *
-	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} aFilters Single filter object or an array of filter objects
-	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted, if it is not given, the standard behaviour applies
-	 * @return {this} returns <code>this</code> to facilitate method chaining
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} aFilters
+	 *   Single filter object or an array of filter objects
+	 * @param {sap.ui.model.FilterType} sFilterType
+	 *   Type of the filter which should be adjusted, if it is not given, the standard behaviour
+	 *   applies
+	 * @param {boolean} [bReturnSuccess=false]
+	 *   Whether to return <code>true</code> or <code>false</code>, instead of <code>this</code>,
+	 *   depending on whether the filtering has been done
+	 * @return {this}
+	 *   Returns <code>this</code> to facilitate method chaining or the success state
 	 *
 	 * @public
 	 */
@@ -862,7 +886,6 @@ sap.ui.define([
 			this.abortPendingRequest();
 			this.sChangeReason = ChangeReason.Filter;
 			this._fireRefresh({reason : this.sChangeReason});
-			// TODO remove this if the filter event gets removed which is now deprecated
 			if (sFilterType == FilterType.Application) {
 				this._fireFilter({filters: this.aApplicationFilters});
 			} else {
