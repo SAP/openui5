@@ -1590,8 +1590,25 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[true, false].forEach(function (bOnlyTransientContexts) {
-	QUnit.test("_getCreatedPersistedExcludeFilter: " + bOnlyTransientContexts, function (assert) {
+	QUnit.test("_getCreatedPersistedExcludeFilter: only transient contexts", function (assert) {
+		var oBinding = {_getCreatedContexts : function () {}},
+			oContext0 = {isTransient : function() {}},
+			oContext1 = {isTransient : function() {}};
+
+		this.mock(oBinding).expects("_getCreatedContexts")
+			.withExactArgs()
+			.returns([oContext0, oContext1]);
+		this.mock(oContext0).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oContext1).expects("isTransient").withExactArgs().returns(true);
+		this.mock(ODataUtils).expects("_createFilterParams").never();
+
+		// code under test
+		assert.strictEqual(
+			ODataListBinding.prototype._getCreatedPersistedExcludeFilter.call(oBinding), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getCreatedPersistedExcludeFilter: with persisted contexts", function (assert) {
 		var oBinding = {
 				oEntityType : "~EntityType",
 				oModel : {
@@ -1601,9 +1618,7 @@ sap.ui.define([
 				_getFilterForPredicate : function () {}
 			},
 			oBindingMock = this.mock(oBinding),
-			oContext0 = {
-				isTransient : function() {}
-			},
+			oContext0 = {isTransient : function() {}},
 			oContext1 = {
 				getPath : function () {},
 				isTransient : function() {}
@@ -1619,26 +1634,13 @@ sap.ui.define([
 			.withExactArgs()
 			.returns([oContext0, oContext1, oContext2]);
 		this.mock(oContext0).expects("isTransient").withExactArgs().returns(true);
-		this.mock(oContext1).expects("isTransient").withExactArgs().returns(bOnlyTransientContexts);
-		this.mock(oContext2).expects("isTransient").withExactArgs().returns(bOnlyTransientContexts);
-		this.mock(oContext1).expects("getPath")
-			.exactly(bOnlyTransientContexts ? 0 : 1)
-			.withExactArgs()
-			.returns("~sPath('1')");
-		this.mock(oContext2).expects("getPath")
-			.exactly(bOnlyTransientContexts ? 0 : 1)
-			.withExactArgs()
-			.returns("~sPath('2')");
-		oBindingMock.expects("_getFilterForPredicate")
-			.exactly(bOnlyTransientContexts ? 0 : 1)
-			.withExactArgs("('1')")
-			.returns(oFilter1);
-		oBindingMock.expects("_getFilterForPredicate")
-			.exactly(bOnlyTransientContexts ? 0 : 1)
-			.withExactArgs("('2')")
-			.returns(oFilter2);
+		this.mock(oContext1).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext2).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext1).expects("getPath").withExactArgs().returns("~sPath('1')");
+		this.mock(oContext2).expects("getPath").withExactArgs().returns("~sPath('2')");
+		oBindingMock.expects("_getFilterForPredicate").withExactArgs("('1')").returns(oFilter1);
+		oBindingMock.expects("_getFilterForPredicate").withExactArgs("('2')").returns(oFilter2);
 		this.mock(ODataUtils).expects("_createFilterParams")
-			.exactly(bOnlyTransientContexts ? 0 : 1)
 			.withExactArgs(sinon.match(function (oFilter) {
 					assert.ok(oFilter instanceof Filter);
 					assert.deepEqual(oFilter.aFilters, [oFilter1, oFilter2]);
@@ -1654,9 +1656,8 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(
 			ODataListBinding.prototype._getCreatedPersistedExcludeFilter.call(oBinding),
-			bOnlyTransientContexts ? undefined : "not(~sExcludeFilter)");
+			"not(~sExcludeFilter)");
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("_getCreatedPersistedExcludeFilter: only one persisted context", function (assert) {
