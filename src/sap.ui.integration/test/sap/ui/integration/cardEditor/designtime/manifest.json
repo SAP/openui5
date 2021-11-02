@@ -265,6 +265,12 @@
 				},
 				"dependentBoolean2": {
 					"value": "Visible changes depend on boolean1"
+				},
+				"color1": {
+					"value": ""
+				},
+				"color2": {
+					"value": ""
 				}
 			},
 			"destinations": {

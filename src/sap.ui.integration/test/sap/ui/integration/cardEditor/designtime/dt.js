@@ -15,7 +15,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
 					},
 					"cardTitle": {
-						"manifestpath": "/sap.card/configuration/parameters/cardTitle/value",
+						"manifestpath": "/sap.card/header/title",
 						"type": "string",
 						"translatable": true,
 						"required": true,
@@ -367,7 +367,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "Validation"
 					},
 					"stringphone": {
-						"manifestpath": "/sap.card/configuration/parameters/string/value",
+						"manifestpath": "/sap.card/configuration/parameters/stringphone/value",
 						"type": "string",
 						"translatable": false,
 						"required": true,
@@ -382,7 +382,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						}
 					},
 					"stringphonenomessage": {
-						"manifestpath": "/sap.card/configuration/parameters/string/value",
+						"manifestpath": "/sap.card/configuration/parameters/stringphonenomessage/value",
 						"type": "string",
 						"translatable": false,
 						"required": true,
@@ -395,7 +395,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						}
 					},
 					"stringmaxmin": {
-						"manifestpath": "/sap.card/configuration/parameters/string/value",
+						"manifestpath": "/sap.card/configuration/parameters/stringmaxmin/value",
 						"type": "string",
 						"translatable": false,
 						"required": true,
@@ -793,7 +793,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"line": true
 					},
 					"color1": {
-						"manifestpath": "/sap.card/header/icon/backgroundColor",
+						"manifestpath": "/sap.card/configuration/parameters/color1/value",
 						"type": "string",
 						"description": "Description",
 						"label": "Icon Background",
@@ -844,7 +844,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						}
 					},
 					"color2": {
-						"manifestpath": "/sap.card/header/icon/backgroundColor",
+						"manifestpath": "/sap.card/configuration/parameters/color2/value",
 						"type": "string",
 						"description": "Description",
 						"label": "Icon Background",

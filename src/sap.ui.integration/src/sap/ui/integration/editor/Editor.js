@@ -1700,10 +1700,18 @@ sap.ui.define([
 			oSuggestValueBinding.attachChange(function () {
 				var oConfigTemp = merge({}, oConfig);
 				oConfigTemp._cancel = false;
-				this._addValueListModel(oConfigTemp, oField, true);
+				this._addValueListModel(oConfigTemp, oField);
 			}.bind(this));
 		}
-		this._addValueListModel(oConfig, oField);
+		if (oConfig.values) {
+			// for MultiInput used in string[] field with filter backend, do not request data when creating it
+			if (oConfig.type === "string[]" && oField.isFilterBackend() && oConfig.visualization && oConfig.visualization.type === "MultiInput") {
+				oField.setModel(new JSONModel({}), undefined);
+			} else {
+				this._addValueListModel(oConfig, oField);
+			}
+		}
+		this._createDependentFields(oConfig, oField);
 		oField._cols = oConfig.cols || 2; //by default 2 cols
 		if (oConfig.layout) {
 			oField._layout = oConfig.layout;
@@ -1729,7 +1737,7 @@ sap.ui.define([
 			for (var i = 0; i < aDependentFields.length; i++) {
 				var o = aDependentFields[i];
 				o.config._cancel = false;
-				this._addValueListModel(o.config, o.field, true, 500 * i);
+				this._addValueListModel(o.config, o.field, 500 * i);
 			}
 			this._bIgnoreUpdates = false;
 		}
@@ -1988,7 +1996,7 @@ sap.ui.define([
 	 * @param {object} oConfig
 	 * @param {BaseField} oField
 	 */
-	Editor.prototype._addValueListModel = function (oConfig, oField, bIgnore, nTimeout) {
+	Editor.prototype._addValueListModel = function (oConfig, oField, nTimeout) {
 		if (oConfig.values) {
 			var oValueModel;
 			if (oConfig.values.data) {
@@ -2045,38 +2053,40 @@ sap.ui.define([
 				//to carry the values.
 				oField.setModel(oValueModel, undefined);
 			}
-			if (!bIgnore) {
-				var sData = JSON.stringify(oConfig.values.data);
-				if (sData) {
-					var destParamRegExp = /parameters\.([^\}\}]+)|destinations\.([^\}\}]+)|\{items\>[\/?\w+]+\}/g,
-						aResult = sData.match(destParamRegExp);
-					if (aResult) {
-						//add the field to dependency to either the parameter or destination
-						for (var i = 0; i < aResult.length; i++) {
-							var sValueKey = "/value";
-							var sDependentPath = this.getConfigurationPath();
-							if (aResult[i].indexOf("destinations.") === 0 || aResult[i].indexOf("parameters.") === 0) {
-								if (aResult[i].indexOf("destinations.") === 0) {
-									sValueKey = "/name";
-								}
-								sDependentPath = sDependentPath + aResult[i].replace(".", "/") + "/" + sValueKey;
-							} else if (aResult[i].indexOf("{items>") === 0) {
-								sDependentPath = sDependentPath + "/parameters/" + aResult[i].slice(7, -1);
-							}
-							var oItem = this._mItemsByPaths[sDependentPath];
-							if (oItem) {
-								//DIGITALWORKPLACE-4802
-								//clone the config since the item may dependent to itself in filter backend feature
-								if (oItem._settingspath === oConfig._settingspath) {
-									oConfig = merge({}, oConfig);
-								}
-								oItem._dependentFields = oItem._dependentFields || [];
-								oItem._dependentFields.push({
-									field: oField,
-									config: oConfig
-								});
+		}
+	};
 
+	Editor.prototype._createDependentFields = function (oConfig, oField) {
+		if (oConfig.values) {
+			var sData = JSON.stringify(oConfig.values.data);
+			if (sData) {
+				var destParamRegExp = /parameters\.([^\}\}]+)|destinations\.([^\}\}]+)|\{items\>[\/?\w+]+\}/g,
+					aResult = sData.match(destParamRegExp);
+				if (aResult) {
+					//add the field to dependency to either the parameter or destination
+					for (var i = 0; i < aResult.length; i++) {
+						var sValueKey = "/value";
+						var sDependentPath = this.getConfigurationPath();
+						if (aResult[i].indexOf("destinations.") === 0 || aResult[i].indexOf("parameters.") === 0) {
+							if (aResult[i].indexOf("destinations.") === 0) {
+								sValueKey = "/name";
 							}
+							sDependentPath = sDependentPath + aResult[i].replace(".", "/") + "/" + sValueKey;
+						} else if (aResult[i].indexOf("{items>") === 0) {
+							sDependentPath = sDependentPath + "/parameters/" + aResult[i].slice(7, -1);
+						}
+						var oItem = this._mItemsByPaths[sDependentPath];
+						if (oItem) {
+							//DIGITALWORKPLACE-4802
+							//clone the config since the item may dependent to itself in filter backend feature
+							if (oItem._settingspath === oConfig._settingspath) {
+								oConfig = merge({}, oConfig);
+							}
+							oItem._dependentFields = oItem._dependentFields || [];
+							oItem._dependentFields.push({
+								field: oField,
+								config: oConfig
+							});
 						}
 					}
 				}
