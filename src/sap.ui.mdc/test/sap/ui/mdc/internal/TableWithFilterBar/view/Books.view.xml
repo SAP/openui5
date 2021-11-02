@@ -42,7 +42,10 @@
 			<f2:header>
 				<f2:DynamicPageHeader>
 					<f2:content>
-						<mdc:FilterBar id="booksFilterBar" variantBackreference="IDVariantManagementOfTable" filtersChanged="onFiltersChanged" filterConditions = '\{"stock" : [\{"operator":"BT","values":[100,50000]}]\}' liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/Books.FB.delegate', payload: {collectionName: 'Books'}}" p13nMode="Item,Value">
+						<mdc:FilterBar id="booksFilterBar" variantBackreference="IDVariantManagementOfTable" filtersChanged="onFiltersChanged"
+						filterConditions = '\{"stock" : [\{"operator":"BT","values":[100,50000]}]\}'
+						propertyInfo = '[\{"name": "stock", "dataType":"Edm.Int32", "maxConditions":-1, "required":false\}]' 						
+						liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/Books.FB.delegate', payload: {collectionName: 'Books'}}" p13nMode="Item,Value">
 						<mdc:dependents>
 							<mdc:ValueHelp
 								id="fhAdob"

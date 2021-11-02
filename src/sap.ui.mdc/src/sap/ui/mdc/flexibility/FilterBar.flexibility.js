@@ -2,7 +2,7 @@
  * ! ${copyright}
  */
 
-sap.ui.define(['./FilterItemFlex', './ConditionFlex'], function(FilterItemFlex, ConditionFlex) {
+sap.ui.define(['./FilterItemFlex', './ConditionFlex', './PropertyInfoFlex'], function(FilterItemFlex, ConditionFlex, PropertyInfoFlex) {
 	"use strict";
 
 	/**
@@ -18,6 +18,7 @@ sap.ui.define(['./FilterItemFlex', './ConditionFlex'], function(FilterItemFlex, 
 		"removeFilter": FilterItemFlex.createRemoveChangeHandler(),
 		"moveFilter": FilterItemFlex.createMoveChangeHandler(),
 		"addCondition": ConditionFlex.addCondition,
-		"removeCondition": ConditionFlex.removeCondition
+		"removeCondition": ConditionFlex.removeCondition,
+		"addPropertyInfo": PropertyInfoFlex.addPropertyInfo
 	};
 }, /* bExport= */true);
