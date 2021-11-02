@@ -7,7 +7,7 @@
 		"extension": "./QuickActionsExtension",
 		"type": "List",
 		"header": {
-			"title": "List Card - Legacy Extension Actions",
+			"title": "List Card - Data from Extension",
 			"subTitle": "City"
 		},
 		"content": {
