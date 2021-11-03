@@ -1034,6 +1034,20 @@ sap.ui.define([
 		assert.equal(this._oPC.getSelectedAppointments().length, 0,
 			"When deselecting an appointment without pressing CTRL key all selections are gone");
 
+		//with API
+		this._oPC.setMultipleAppointmentsSelection(true);
+		qutils.triggerEvent("tap", "_oPC-R1A1");
+		qutils.triggerEvent("tap", "_oPC-R1A2");
+		assert.equal(this._oPC.getSelectedAppointments().length, 2, "Two appointments are selected");
+		qutils.triggerEvent("tap", "_oPC-R1A1");
+		assert.equal(this._oPC.getSelectedAppointments().length, 1,
+			"When deselecting an appointment while multipleAppointmentsSelection is enabled, only this particular appointment is deselected");
+		qutils.triggerEvent("tap", "_oPC-R1A1");
+		this._oPC.setMultipleAppointmentsSelection(false);
+		qutils.triggerEvent("tap", "_oPC-R1A2");
+		assert.equal(this._oPC.getSelectedAppointments().length, 0,
+			"When deselecting an appointment while multipleAppointmentsSelection is enabled, all selections are gone");
+
 		// clean
 		oSelectedAppointment = undefined;
 	});

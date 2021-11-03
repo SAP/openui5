@@ -221,7 +221,16 @@ sap.ui.define([
 			 * @experimental Since 1.81.0
 			 * @since 1.81.0
 			 */
-			appointmentRoundWidth: { type: "sap.ui.unified.CalendarAppointmentRoundWidth", group: "Appearance", defaultValue: CalendarAppointmentRoundWidth.None}
+			appointmentRoundWidth: { type: "sap.ui.unified.CalendarAppointmentRoundWidth", group: "Appearance", defaultValue: CalendarAppointmentRoundWidth.None},
+
+			/**
+			 * Determines whether the selection of multiple appointments is enabled.
+			 *
+			 * Note: selection of multiple appointments is possible using CTRL key regardless of the value of this property.
+			 *
+			 * @since 1.97
+			 */
+			multipleAppointmentsSelection : {type : "boolean", group : "Data", defaultValue : false}
 		},
 		aggregations : {
 
@@ -588,7 +597,8 @@ sap.ui.define([
 		for (var i = 0; i < aVisibleAppointments.length; i++) {
 			var oAppointment = aVisibleAppointments[i].appointment;
 			if (containsOrEquals(oAppointment.getDomRef(), oEvent.target)) {
-				_selectAppointment.call(this, oAppointment, !(oEvent.ctrlKey || oEvent.metaKey));
+				var bRemoveOldSelection = !(this.getMultipleAppointmentsSelection() || oEvent.ctrlKey || oEvent.metaKey);
+				_selectAppointment.call(this, oAppointment, bRemoveOldSelection);
 				break;
 			}
 		}

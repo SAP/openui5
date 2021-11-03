@@ -266,15 +266,20 @@ sap.ui.define([
 			},
 
 			handleAppointmentSelect: function (oEvent) {
-				var oAppointment = oEvent.getParameter("appointment");
+				var oAppointment = oEvent.getParameter("appointment"),
+					oButtonBadgeCustomData = this.byId("MultiSelect").getBadgeCustomData(),
+					iSelectedAppointments = this.byId("PC1").getSelectedAppointments().length;
+
 				if (oAppointment) {
 					var sSelected = oAppointment.getSelected() ? "selected" : "deselected";
-					MessageBox.show("'" + oAppointment.getTitle() + "' " + sSelected + ". \n Selected appointments: " + this.byId("PC1").getSelectedAppointments().length);
+					MessageBox.show("'" + oAppointment.getTitle() + "' " + sSelected + ". \n Selected appointments: " + iSelectedAppointments);
 				} else {
 					var aAppointments = oEvent.getParameter("appointments");
 					var sValue = aAppointments.length + " Appointments selected";
 					MessageBox.show(sValue);
 				}
+
+				oButtonBadgeCustomData.setValue(iSelectedAppointments);
 			},
 
 			handleIntervalSelect: function (oEvent) {
@@ -316,6 +321,17 @@ sap.ui.define([
 
 				oPC.setCustomAppointmentsSorterCallback(fnSelectedSort);
 
+			},
+
+			onPress: function (oEvent) {
+				var oPC = this.byId("PC1"),
+					oButton = this.byId("MultiSelect");
+				oPC.setMultipleAppointmentsSelection(!oPC.getMultipleAppointmentsSelection());
+				if (oEvent.getParameter("pressed")) {
+					oButton.setTooltip("Disable multiple appointments selection");
+				} else {
+					oButton.setTooltip("Enable multiple appointments selection");
+				}
 			},
 
 			// custom function for appointments sort by alphabetical order

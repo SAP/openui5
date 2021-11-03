@@ -7,6 +7,7 @@
 	<VBox class="sapUiSmallMargin">
 		<PlanningCalendar
 			id="PC1"
+			stickyHeader="true"
 			showIntervalHeaders="true"
 			showEmptyIntervalHeaders="false"
 			appointmentsReducedHeight="true"
@@ -17,6 +18,18 @@
 			intervalSelect="handleIntervalSelect">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
+				<ToggleButton
+					id="MultiSelect"
+					icon="sap-icon://multi-select"
+					tooltip="Enable multi selection"
+					press=".onPress">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow"/>
+					</layoutData>
+					<customData>
+						<BadgeCustomData key="badge"/>
+					</customData>
+				</ToggleButton>
 				<Select
 						change="handleSortChange"
 						width="230px">
