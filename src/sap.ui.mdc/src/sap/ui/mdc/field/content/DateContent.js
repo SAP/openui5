@@ -242,11 +242,11 @@ sap.ui.define([
 		_getDateRangeOption: function(sOperator, oContentFactory, OperatorDynamicDateOption) {
 			var oOperator = FilterOperatorUtil.getOperator(sOperator);
 			var sOption = oOperator.name;
-			if (StandardDynamicDateRangeKeys.indexOf(sOption) === -1 ) {
+			if (!StandardDynamicDateRangeKeys[sOption]) {
 				sOption = oOperator.alias || sOption;
 			}
 
-			if (StandardDynamicDateRangeKeys.indexOf(sOption) >= 0 ) {
+			if (StandardDynamicDateRangeKeys[sOption]) {
 				return sOption; // use standard option
 			} else
 				// use OperatorDynamicDateOption

@@ -11,6 +11,59 @@ sap.ui.define([
 	StandardDynamicDateOption, Log, library) {
 	"use strict";
 
+	var STANDARD_KEYS_ARRAY = [
+		"DATE",
+		"TODAY",
+		"YESTERDAY",
+		"TOMORROW",
+
+		"FIRSTDAYWEEK",
+		"LASTDAYWEEK",
+		"FIRSTDAYMONTH",
+		"LASTDAYMONTH",
+		"FIRSTDAYQUARTER",
+		"LASTDAYQUARTER",
+		"FIRSTDAYYEAR",
+		"LASTDAYYEAR",
+		"DATERANGE",
+		"FROM",
+		"TO",
+		"YEARTODATE",
+		"DATETOYEAR",
+		"LASTDAYS",
+		"LASTWEEKS",
+		"LASTMONTHS",
+		"LASTQUARTERS",
+		"LASTYEARS",
+		"NEXTDAYS",
+		"NEXTWEEKS",
+		"NEXTMONTHS",
+		"NEXTQUARTERS",
+		"NEXTYEARS",
+		"TODAYFROMTO",
+
+		"THISWEEK",
+		"LASTWEEK",
+		"NEXTWEEK",
+
+		"SPECIFICMONTH",
+		"THISMONTH",
+		"LASTMONTH",
+		"NEXTMONTH",
+
+		"THISQUARTER",
+		"LASTQUARTER",
+		"NEXTQUARTER",
+		"QUARTER1",
+		"QUARTER2",
+		"QUARTER3",
+		"QUARTER4",
+
+		"THISYEAR",
+		"LASTYEAR",
+		"NEXTYEAR"
+	];
+
 	/**
 	 * @class
 	 * The DynamicDateUtil is a utility class for working with the DynamicDateOption instances.
@@ -68,7 +121,7 @@ sap.ui.define([
 			"DATERANGE": new StandardDynamicDateOption({ key: "DATERANGE", valueTypes: ["date", "date"] }),
 			"DATE": new StandardDynamicDateOption({ key: "DATE", valueTypes: ["date"] })
 		},
-		_allKeys: library.StandardDynamicDateRangeKeys.slice(0)
+		_allKeys: STANDARD_KEYS_ARRAY.slice(0)
 	};
 
 	/**
@@ -116,6 +169,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets sorted array of all standard keys.
+	 *
+	 * @returns {string[]} An array of standard option keys
+	 * @static
+	 * @public
+	 */
+	DynamicDateUtil.getStandardKeys = function () {
+		return STANDARD_KEYS_ARRAY;
+	};
+
+	/**
 	 * Parses a string to an array of objects in the DynamicDateRange's value format.
 	 * Uses the provided formatter.
 	 *
@@ -133,12 +197,13 @@ sap.ui.define([
 		}
 
 		var aResults = [],
-			oResult;
+			oResult,
+			aStandardDynamicDateRangeKeysArray = DynamicDateUtil.getStandardKeys();
 
 		aOptionKeys = aOptionKeys || Object.keys(DynamicDateUtil._options);
 
 		var aOptions = aOptionKeys.sort(function(sKey1, sKey2) {
-			return library.StandardDynamicDateRangeKeys.indexOf(sKey1) - library.StandardDynamicDateRangeKeys.indexOf(sKey2);
+			return aStandardDynamicDateRangeKeysArray.indexOf(sKey1) - aStandardDynamicDateRangeKeysArray.indexOf(sKey2);
 		}).map(function(sKey) {
 			return DynamicDateUtil._options[sKey];
 		});

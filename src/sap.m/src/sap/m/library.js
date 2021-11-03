@@ -3387,53 +3387,282 @@ sap.ui.define([
 	 * The option keys of all the standard options of a DynamicDateRange control.
 	 *
 	 * @public
-	 * @ui5-metamodel This array also will be described in the UI5 (legacy) designtime metamodel
+	 * @enum {string}
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @experimental Since 1.92. These keys are experimental. The API might be changed in future.
 	 */
-	thisLib.StandardDynamicDateRangeKeys = [
-		"DATE",
-		"TODAY",
-		"YESTERDAY",
-		"TOMORROW",
+	thisLib.StandardDynamicDateRangeKeys = {
 
-		"DATERANGE",
-		"FROM",
-		"TO",
-		"YEARTODATE",
-		"DATETOYEAR",
-		"LASTDAYS",
-		"LASTWEEKS",
-		"LASTMONTHS",
-		"LASTQUARTERS",
-		"LASTYEARS",
-		"NEXTDAYS",
-		"NEXTWEEKS",
-		"NEXTMONTHS",
-		"NEXTQUARTERS",
-		"NEXTYEARS",
-		"TODAYFROMTO",
+		/**
+		 * The date will be selected from a calendar.
+		 * @public
+		 */
+		DATE : "DATE",
 
-		"THISWEEK",
-		"LASTWEEK",
-		"NEXTWEEK",
+		/**
+		 * The date will be the day of selection.
+		 * @public
+		 */
+		TODAY : "TODAY",
 
-		"SPECIFICMONTH",
-		"THISMONTH",
-		"LASTMONTH",
-		"NEXTMONTH",
+		/**
+		 * The date will be the day before the day of selection.
+		 * @public
+		 */
+		YESTERDAY : "YESTERDAY",
 
-		"THISQUARTER",
-		"LASTQUARTER",
-		"NEXTQUARTER",
-		"QUARTER1",
-		"QUARTER2",
-		"QUARTER3",
-		"QUARTER4",
+		/**
+		 * The date will be the day after the day of selection.
+		 * @public
+		 */
+		TOMORROW : "TOMORROW",
 
-		"THISYEAR",
-		"LASTYEAR",
-		"NEXTYEAR"
-	];
+		/**
+		 * The date will be the first day of the current week.
+		 * @public
+		 */
+		FIRSTDAYWEEK : "FIRSTDAYWEEK",
+
+		/**
+		 * The date will be the last day of the current week.
+		 * @public
+		 */
+		LASTDAYWEEK : "LASTDAYWEEK",
+
+		/**
+		 * The date will be the first day of the current month.
+		 * @public
+		 */
+		FIRSTDAYMONTH : "FIRSTDAYMONTH",
+
+		/**
+		 * The date will be the last day of the current month.
+		 * @public
+		 */
+		LASTDAYMONTH : "LASTDAYMONTH",
+
+		/**
+		 * The date will be the first day of the current quarter.
+		 * @public
+		 */
+		FIRSTDAYQUARTER : "FIRSTDAYQUARTER",
+
+		/**
+		 * The date will be the last day of the current quarter.
+		 * @public
+		 */
+		LASTDAYQUARTER : "LASTDAYQUARTER",
+
+		/**
+		 * The date will be the first day of the current year.
+		 * @public
+		 */
+		FIRSTDAYYEAR : "FIRSTDAYYEAR",
+
+		/**
+		 * The date will be the last day of the current year.
+		 * @public
+		 */
+		LASTDAYYEAR : "LASTDAYYEAR",
+
+		/**
+		 * The range will be selected from a calendar.
+		 * @public
+		 */
+		DATERANGE : "DATERANGE",
+
+		/**
+		 * The range will start from a date selected from a calendar.
+		 * @public
+		 */
+		FROM : "FROM",
+
+		/**
+		 * The range will end in a date selected from a calendar.
+		 * @public
+		 */
+		TO : "TO",
+
+		/**
+		 * The range will start from the first day of the current year and ends with the date selected from a calendar.
+		 * @public
+		 */
+		YEARTODATE : "YEARTODATE",
+
+		/**
+		 * The range will start from the date selected from a calendar and ends with the last day of the current year.
+		 * @public
+		 */
+		DATETOYEAR : "DATETOYEAR",
+
+		/**
+		 * The range will contain the last X days. The count of the days is selected from a StepInput.
+		 * @public
+		 */
+		LASTDAYS : "LASTDAYS",
+
+		/**
+		 * The range will contain the last X weeks. The count of the weeks is selected from a StepInput.
+		 * @public
+		 */
+		LASTWEEKS : "LASTWEEKS",
+
+		/**
+		 * The range will contain the last X months. The count of the months is selected from a StepInput.
+		 * @public
+		 */
+		LASTMONTHS : "LASTMONTHS",
+
+		/**
+		 * The range will contain the last X quarters. The count of the quarters is selected from a StepInput.
+		 * @public
+		 */
+		LASTQUARTERS : "LASTQUARTERS",
+
+		/**
+		 * The range will contain the last X years. The count of the years is selected from a StepInput.
+		 * @public
+		 */
+		LASTYEARS : "LASTYEARS",
+
+		/**
+		 * The range will contain the next X days. The count of the days is selected from a StepInput.
+		 * @public
+		 */
+		NEXTDAYS : "NEXTDAYS",
+
+		/**
+		 * The range will contain the next X weeks. The count of the weeks is selected from a StepInput.
+		 * @public
+		 */
+		NEXTWEEKS : "NEXTWEEKS",
+
+		/**
+		 * The range will contain the next X months. The count of the months is selected from a StepInput.
+		 * @public
+		 */
+		NEXTMONTHS : "NEXTMONTHS",
+
+		/**
+		 * The range will contain the next X quarters. The count of the quarters is selected from a StepInput.
+		 * @public
+		 */
+		NEXTQUARTERS: "NEXTQUARTERS",
+
+		/**
+		 * The range will contain the next X years. The count of the years is selected from a StepInput.
+		 * @public
+		 */
+		NEXTYEARS : "NEXTYEARS",
+
+		/**
+		 * The range will contain the last X days and the next Y days. The count of the days is selected from a StepInput.
+		 * @public
+		 */
+		TODAYFROMTO : "TODAYFROMTO",
+
+		/**
+		 * The range will contain the days of the current week.
+		 * @public
+		 */
+		THISWEEK : "THISWEEK",
+
+		/**
+		 * The range will contain the days of the last week.
+		 * @public
+		 */
+		LASTWEEK : "LASTWEEK",
+
+		/**
+		 * The range will contain the days of the next week.
+		 * @public
+		 */
+		NEXTWEEK : "NEXTWEEK",
+
+		/**
+		 * The range will contain a month selected from a MonthPicker.
+		 * @public
+		 */
+		SPECIFICMONTH : "SPECIFICMONTH",
+
+		/**
+		 * The range will contain the days in the current month.
+		 * @public
+		 */
+		THISMONTH : "THISMONTH",
+
+		/**
+		 * The range will contain the days in the last month.
+		 * @public
+		 */
+		LASTMONTH : "LASTMONTH",
+
+		/**
+		 * The range will contain the days in the next month.
+		 * @public
+		 */
+		NEXTMONTH : "NEXTMONTH",
+
+		/**
+		 * The range will contain the days in the current quarter.
+		 * @public
+		 */
+		THISQUARTER : "THISQUARTER",
+
+		/**
+		 * The range will contain the days in the last quarter.
+		 * @public
+		 */
+		LASTQUARTER : "LASTQUARTER",
+
+		/**
+		 * The range will contain the days in the next quarter.
+		 * @public
+		 */
+		NEXTQUARTER : "NEXTQUARTER",
+
+		/**
+		 * The range will contain the days in the first quarter.
+		 * @public
+		 */
+		QUARTER1 : "QUARTER1",
+
+		/**
+		 * The range will contain the days in the second quarter.
+		 * @public
+		 */
+		QUARTER2 : "QUARTER2",
+
+		/**
+		 * The range will contain the days in the third quarter.
+		 * @public
+		 */
+		QUARTER3 : "QUARTER3",
+
+		/**
+		 * The range will contain the days in the fourth quarter.
+		 * @public
+		 */
+		QUARTER4 : "QUARTER4",
+
+		/**
+		 * The range will contain the days in the current year.
+		 * @public
+		 */
+		THISYEAR: "THISYEAR",
+
+		/**
+		 * The range will contain the days in the last year.
+		 * @public
+		 */
+		LASTYEAR : "LASTYEAR",
+
+		/**
+		 * The range will contain the days in the next year.
+		 * @public
+		 */
+		NEXTYEAR : "NEXTYEAR"
+	};
 
 	/**
 	 * QuickViewGroupElement is a combination of one label and another control (Link or Text) associated to this label.

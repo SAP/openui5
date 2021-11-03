@@ -55,9 +55,10 @@ sap.ui.define([
 			"SPECIFICMONTH": ["month"],
 			"TODAYFROMTO": ["int", "int"]
 		};
+		var aStandardDynamicDateRangeKeysArray = Object.keys(library.StandardDynamicDateRangeKeys);
 
-		for (var i = 0; i < library.StandardDynamicDateRangeKeys.length; i++) {
-			var sKey = library.StandardDynamicDateRangeKeys[i];
+		for (var i = 0; i < aStandardDynamicDateRangeKeysArray.length; i++) {
+			var sKey = aStandardDynamicDateRangeKeysArray[i];
 			var sPattern = _resourceBundle.getText("DYNAMIC_DATE_" + sKey.toUpperCase() + "_FORMAT");
 			var aStaticParts = sPattern.split('{').map(function(sPart) {
 				var iClosingBracket = sPart.indexOf('}');

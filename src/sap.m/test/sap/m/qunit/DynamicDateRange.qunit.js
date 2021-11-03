@@ -26,6 +26,7 @@ sap.ui.define([
 	QUnit.module("initialization", {
 		beforeEach: function() {
 			this.ddr = new DynamicDateRange();
+			this.ddr.setOptions([]);
 			this.ddr.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -313,6 +314,7 @@ sap.ui.define([
 	QUnit.module("StandardDynamicDateOption last/next x", {
 		beforeEach: function() {
 			this.ddr = new DynamicDateRange();
+			this.ddr.setOptions([]);
 
 			this.ddr.addOption("LASTDAYS");
 			this.ddr.addOption("LASTMONTHS");

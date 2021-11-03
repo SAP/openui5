@@ -134,8 +134,7 @@ var DynamicDateRangeController = Controller.extend("sap.m.sample.DynamicDateRang
 
 	onInit: function() {
 		var oModel = new JSONModel({
-				payments: aPayments,
-				dynamicDateFilterKeys: DynamicDateUtil.getAllOptionKeys()
+				payments: aPayments
 			}),
 			oEnvModel = new JSONModel({
 				filterInputWidth: !Device.system.phone ? '300px' : "auto"

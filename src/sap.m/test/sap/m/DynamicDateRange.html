@@ -17,7 +17,6 @@
 	var DynamicDateFormat = sap.ui.requireSync('sap/m/DynamicDateFormat');
 	var DynamicDateUtil = sap.ui.requireSync('sap/m/DynamicDateUtil');
 	var DynamicDateValueHelpUIType = sap.ui.requireSync('sap/m/DynamicDateValueHelpUIType');
-	var StandardKeys = sap.ui.requireSync('sap/m/StandardDynamicDateRangeKeys');
 
 	var oDisplayFormatter = DynamicDateFormat.getInstance({
 		"date": {
@@ -151,7 +150,6 @@
 
 	var oDDR1 = new sap.m.DynamicDateRange({
 			width: iWidth,
-			options: StandardKeys,
 			value: {
 				path: '/val1',
 				type: new sap.m.DynamicDate(null, {
@@ -193,7 +191,6 @@
 		}),
 		oDDR4 = new sap.m.DynamicDateRange({
 			width: iWidth,
-			options: StandardKeys,
 			enableGroupHeaders: false,
 			value: {
 				path: '/val4',

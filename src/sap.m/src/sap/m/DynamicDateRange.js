@@ -219,7 +219,56 @@ sap.ui.define([
 					 *
 					 * @since 1.92
 					 */
-					options: { type: "string[]", group: "Behavior", defaultValue: [] }
+					options: {
+						type: "string[]", group: "Behavior",
+						defaultValue: [
+							"DATE",
+							"TODAY",
+							"YESTERDAY",
+							"TOMORROW",
+							"FIRSTDAYWEEK",
+							"LASTDAYWEEK",
+							"FIRSTDAYMONTH",
+							"LASTDAYMONTH",
+							"FIRSTDAYQUARTER",
+							"LASTDAYQUARTER",
+							"FIRSTDAYYEAR",
+							"LASTDAYYEAR",
+							"DATERANGE",
+							"FROM",
+							"TO",
+							"YEARTODATE",
+							"DATETOYEAR",
+							"LASTDAYS",
+							"LASTWEEKS",
+							"LASTMONTHS",
+							"LASTQUARTERS",
+							"LASTYEARS",
+							"NEXTDAYS",
+							"NEXTWEEKS",
+							"NEXTMONTHS",
+							"NEXTQUARTERS",
+							"NEXTYEARS",
+							"TODAYFROMTO",
+							"THISWEEK",
+							"LASTWEEK",
+							"NEXTWEEK",
+							"SPECIFICMONTH",
+							"THISMONTH",
+							"LASTMONTH",
+							"NEXTMONTH",
+							"THISQUARTER",
+							"LASTQUARTER",
+							"NEXTQUARTER",
+							"QUARTER1",
+							"QUARTER2",
+							"QUARTER3",
+							"QUARTER4",
+							"THISYEAR",
+							"LASTYEAR",
+							"NEXTYEAR"
+						]
+					}
 				},
 				aggregations: {
 					_input: { type: "sap.m.Input", multiple: false, visibility: "hidden" },
@@ -641,6 +690,7 @@ sap.ui.define([
 
 			// get the control options' metadata
 			var aOptions = this._getOptions();
+			var aStandardDynamicDateRangeKeysArray = DynamicDateUtil.getStandardKeys();
 
 			// sort by group
 			aOptions.sort(function(a, b) {
@@ -650,7 +700,7 @@ sap.ui.define([
 					return iGroupDiff;
 				}
 
-				return library.StandardDynamicDateRangeKeys.indexOf(a.getKey()) - library.StandardDynamicDateRangeKeys.indexOf(b.getKey());
+				return aStandardDynamicDateRangeKeysArray.indexOf(a.getKey()) - aStandardDynamicDateRangeKeysArray.indexOf(b.getKey());
 			});
 
 			// for last x/next x options leave only the first of each, remove the rest
