@@ -17,8 +17,8 @@
 				"src/sap/ui/model/odata/v4/**/*.js",
 				"test/sap/ui/core/qunit/odata/v4/**/*.js"
 			],
-			"reportUnusedDisableDirectives": true,
 			"rules": {
+				"consistent-return": "off",
 				"no-unused-vars": ["error", {"argsIgnorePattern": "^_", "args": "all"}]
 			}
 		},
