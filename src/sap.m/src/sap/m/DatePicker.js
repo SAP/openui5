@@ -1240,7 +1240,10 @@ sap.ui.define([
 				onAfterRendering: function() {
 					var oPopup = this._oPopup && this._oPopup._getPopup();
 					oPopup && oPopup._oLastPosition && oPopup._applyPosition(oPopup._oLastPosition);
-					this._oCalendar.focus();
+
+					if (this._oPopup.isOpen()) {
+						this._oCalendar.focus();
+					}
 				}.bind(this)
 			};
 			this._oCalendar.addDelegate(this._oCalendarAfterRenderDelegate);
@@ -1529,6 +1532,8 @@ sap.ui.define([
 		this.$("inner").attr("aria-expanded", true);
 
 		InstanceManager.addPopoverInstance(this._oPopup);
+
+		this._oCalendar.focus();
 	}
 
 	function _handleClose() {
