@@ -1712,6 +1712,16 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 		this.oObjectPage.destroy();
 	});
 
+	QUnit.test("SubSection without title is not promoted", function (assert) {
+		var oSection = this.oObjectPage.getSections()[0],
+		$subSection = oSection.getSubSections()[0].$();
+
+		assert.ok(oSection.getSubSections().length > 0, "subsection is not the only child");
+		assert.notOk($subSection.hasClass("sapUxAPObjectPageSubSectionPromoted"), "subsection is not promoted");
+
+		this.oObjectPage.destroy();
+	});
+
 	QUnit.module("SubSection internalTitle");
 
 	QUnit.test("Subsection _setInternalTitleLevel should invalidate control", function (assert) {
