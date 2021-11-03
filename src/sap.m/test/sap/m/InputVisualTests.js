@@ -292,6 +292,74 @@ sap.ui.require([
 			template: new Item({text: "{name}"})
 		});
 
+		var oTabularSeparatorsInput = new Input("inputWithTabularSuggestionSeparators", {
+			width: "300px",
+			showSuggestion: true,
+			enableTableAutoPopinMode: true,
+			suggestionColumns : [
+				new Column({
+					styleClass : "name",
+					header : new Label({
+						text : "Column 1"
+					})
+				}),
+				new Column({
+					styleClass : "qty",
+					popinDisplay : "Inline",
+					header : new Label({
+						text : "Column 2"
+					})
+				}),
+				new Column({
+					styleClass : "limit",
+					width : "30%",
+					header : new Label({
+						text : "Column 3"
+					})
+				}),
+				new Column({
+					styleClass : "price",
+					width : "30%",
+					popinDisplay : "Inline",
+					header : new Label({
+						text : "Column 4"
+					})
+				})
+			]
+		});
+
+		oModel = new JSONModel();
+
+		aData = {
+			tabularSuggestionItems : [{
+				name : "Huch ein gutes Ding",
+				qty : "3 EA",
+				limit : "99.00 EUR",
+				price : "17.00 EUR"
+			}, {
+				name : "Hesser ist das",
+				qty : "1 EA",
+				limit : "20.00 EUR",
+				price : "13.00 EUR"
+			}, {
+				name : "Holter-di-polter",
+				qty : "10 EA",
+				limit : "15.00 EUR",
+				price : "12.00 EUR"
+			}, {
+				name : "Ha so was",
+				qty : "10 EA",
+				limit : "5.00 EUR",
+				price : "3.00 EUR"
+			}]
+		};
+
+		oTabularSeparatorsInput._setSeparateSuggestions(true);
+
+		oModel.setData(aData);
+		oTabularSeparatorsInput.setModel(oModel);
+		oTabularSeparatorsInput.bindAggregation("suggestionRows", "/tabularSuggestionItems", oSuggestionRowTemplate);
+
 		var oCustomCssButton = new sap.m.Button("customCssButton",{
 			text: "Toggle custom CSS for visual test",
 			press: function() {
@@ -422,7 +490,9 @@ sap.ui.require([
 						new Label({text: "Input with table suggetions", labelFor: "oSuggestTableInput"}),
 						oSuggestTableInput,
 						new Label({text: "Input with startSuggestions = 2", labelFor: "inputStartSuggestions"}),
-						oStartSuggestionsInput
+						oStartSuggestionsInput,
+						new Label({text: "Input with tabular suggestion separators", labelFor: "inputWithTabularSuggestionSeparators"}),
+						oTabularSeparatorsInput
 					]
 				})
 
