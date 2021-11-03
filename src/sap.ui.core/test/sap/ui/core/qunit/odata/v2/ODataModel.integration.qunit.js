@@ -2003,7 +2003,6 @@ sap.ui.define([
 		});
 	});
 
-
 	//*********************************************************************************************
 	// Integration test for correct path calculation during ODataModel#read(...). "To 1" navigation
 	// properties are not shortened independent whether the corresponding entity set is addressable.
@@ -3351,11 +3350,11 @@ usePreliminaryContext : false}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			// check validation error and current value on the UI
-			that.checkValueState(assert, oNoteInput, "Error",
-				"Enter a text with a maximum of 3 characters and spaces");
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				that.checkValueState(assert, oNoteInput, "Error",
+					"Enter a text with a maximum of 3 characters and spaces"),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			that.expectRequest("SalesOrderSet('2')", {
 					__metadata : {uri : "SalesOrderSet('2')"},
@@ -3373,10 +3372,10 @@ usePreliminaryContext : false}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			// code under test - check validation error and current value on the UI reverted
-			that.checkValueState(assert, oNoteInput, "None", "");
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				that.checkValueState(assert, oNoteInput, "None", ""),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -5544,7 +5543,7 @@ usePreliminaryContext : false}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.checkValueState(assert, "note", "Error", oNoteError.message);
+			return that.checkValueState(assert, "note", "Error", oNoteError.message);
 		});
 	});
 
@@ -5626,7 +5625,7 @@ usePreliminaryContext : false}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.checkValueState(assert, "noteLineItem", "Error", oNoteError.message);
+			return that.checkValueState(assert, "noteLineItem", "Error", oNoteError.message);
 		});
 	});
 
