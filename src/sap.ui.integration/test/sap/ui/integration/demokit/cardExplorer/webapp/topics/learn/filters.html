@@ -19,10 +19,11 @@
 				Filters allow end users to refine displayed data based on selected criteria.
 			</p>
 			<p>
-				Filters are defined in the "configuration" section of the manifest. They are displayed under the card header.
-				The value of each filter can be read from the <code>filters</code> model.
+				Filters are defined in the "configuration" section of the manifest.
+				The card developer choses the type of each filter, its initial value and the available options for the end user.
+				In order to make the filter functional its value has to be bound to the data requests made by the card.
+				All filters provide access to their current value through the <code>filters</code> model.
 				When the end user selects different value the model is updated, refreshing all fields that are bound to it.
-				The most common use case is to bind filter value to data request.
 			</p>
 
 			<h2 id="filterProperties">Filter Properties</h2>
