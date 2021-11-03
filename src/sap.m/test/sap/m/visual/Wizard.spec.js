@@ -100,19 +100,6 @@ describe("sap.m.Wizard", function() {
 		closeBtn.click();
 	});
 
-	it("should scroll to a long step, keeping the title aligned and visible", function () {
-		element(by.id("long-step-wiz-sel")).click();
-		element(by.id("long-step-wiz-step1-nextButton")).click();
-		expect(takeScreenshot()).toLookAs("long-step-wiz-step2");
-	});
-
-	it("should scroll to a long step, with the focused element kept in the viewport", function () {
-		element(by.id("long-step-wiz-sel")).click();
-		element(by.id("long-step-wiz-step1-nextButton")).click();
-		element(by.id("long-step-wiz-step2-nextButton")).click();
-		expect(takeScreenshot()).toLookAs("long-step-wiz-step3");
-	});
-
 	it("should change background design", function () {
 		element(by.id("background-change-wiz-sel")).click();
 		element(by.id("change-theme")).click();
@@ -159,5 +146,17 @@ describe("sap.m.Wizard", function() {
 			sap.ui.getCore().byId("linear-wiz").setWidth("1500px");
 		});
 		expect(takeScreenshot()).toLookAs("page-size-XL");
+	});
+
+	it("should scroll to a long step, keeping the title aligned and visible", function () {
+		element(by.id("long-step-wiz-sel")).click();
+		element(by.id("long-step-wiz-step1-nextButton")).click();
+		expect(takeScreenshot()).toLookAs("step-title-visible");
+
+		browser.executeScript("document.getElementById('long-step-wiz-step2-nextButton').scrollIntoView()").then(function() {
+			element(by.id("long-step-wiz-step2-nextButton")).click();
+		});
+
+		expect(takeScreenshot()).toLookAs("first-focusable-element-visible");
 	});
 });
