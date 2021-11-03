@@ -1866,9 +1866,9 @@ sap.ui.define([
 
 			var mPosition = {
 				top: iTop,
-				bottom: iBottom,
+				bottom: iBottom - oPosParams._fWindowTop,
 				left: iLeft,
-				right: iRight
+				right: typeof iRight === "number" ? iRight - oPosParams._fWindowLeft : iRight
 			};
 
 			return mPosition;
