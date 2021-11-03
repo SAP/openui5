@@ -22,6 +22,12 @@
 		"configuration": {
 			"editor": "dt",
 			"parameters": {
+				"parameterSyntaxInValue": {
+					"value": "New title: {{parameters.stringWithTranslatedValueIni18nFormat}}"
+				},
+				"contextModelSyntax": {
+					"value": []
+				},
 				"enableLearningCourses": {
 					"value": false
 				},
@@ -70,9 +76,6 @@
 				"stringphonenomessage": {
 					"value": "StringValue"
 				},
-				"enum": {
-					"value": ""
-				},
 				"stringmaxmin": {
 					"value": ""
 				},
@@ -120,6 +123,9 @@
 				},
 				"dateTimeLabelTrans": {
 					"value": "2020-09-02T11:21:51.470Z"
+				},
+				"enum": {
+					"value": ""
 				},
 				"stringWithStaticList": {
 					"value": "key1"
@@ -178,6 +184,9 @@
 					"value": ["ALFKI"]
 				},
 				"CustomersWithFilterInURL": {
+					"value": []
+				},
+				"Customers_MultiInput": {
 					"value": []
 				},
 				"CustomerWithFilterParameter": {
@@ -259,6 +268,12 @@
 				},
 				"dependentBoolean2": {
 					"value": "Visible changes depend on boolean1"
+				},
+				"color1": {
+					"value": ""
+				},
+				"color2": {
+					"value": ""
 				}
 			},
 			"destinations": {
@@ -291,6 +306,17 @@
 				"src": "sap-icon://accept",
 				"shape": "Circle",
 				"backgroundColor": ""
+			},
+			"status": {
+				"text": {
+				 	 "format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+					  		"activities",
+					  		"count"
+						]
+					}
+				}
 			}
 		},
 		"data": {

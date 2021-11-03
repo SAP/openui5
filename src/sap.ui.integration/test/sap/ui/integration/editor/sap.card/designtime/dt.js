@@ -26,6 +26,30 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"description": "test",
 						"cols": 1
 					},
+					"contextModelSyntax": {
+						"manifestpath": "/sap.card/configuration/parameters/contextModelSyntax/value",
+						"type": "string[]",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address"
+									},
+									"headers": {
+										"test1": "{context>sap.successfactors/currentUser/id/value}",
+										"test2": "{context>sap.successfactors/currentUser/id/label}"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						}
+					},
 					"string": {
 						"manifestpath": "/sap.card/configuration/parameters/string/value",
 						"type": "string",
@@ -94,6 +118,13 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedValueIni18nFormat/value",
 						"type": "string",
 						"label": "String with translated value in i18n format"
+					},
+					"parameterSyntaxInValue": {
+						"manifestpath": "/sap.card/configuration/parameters/parameterSyntaxInValue/value",
+						"type": "string",
+						"translatable": true,
+						"required": true,
+						"label": "Parameter syntax in value"
 					},
 					"separator6": {
 						"type": "separator"
@@ -336,7 +367,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "Validation"
 					},
 					"stringphone": {
-						"manifestpath": "/sap.card/configuration/parameters/string/value",
+						"manifestpath": "/sap.card/configuration/parameters/stringphone/value",
 						"type": "string",
 						"translatable": false,
 						"required": true,
@@ -351,7 +382,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						}
 					},
 					"stringphonenomessage": {
-						"manifestpath": "/sap.card/configuration/parameters/string/value",
+						"manifestpath": "/sap.card/configuration/parameters/stringphonenomessage/value",
 						"type": "string",
 						"translatable": false,
 						"required": true,
@@ -364,7 +395,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						}
 					},
 					"stringmaxmin": {
-						"manifestpath": "/sap.card/configuration/parameters/string/value",
+						"manifestpath": "/sap.card/configuration/parameters/stringmaxmin/value",
 						"type": "string",
 						"translatable": false,
 						"required": true,
@@ -633,6 +664,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								}).then(function (minLength){
 									if (value.length < minLength) {
 										context["control"].setEditable(false);
+										context["removeValidationMessage"]();
 										return {
 											"isValid": false,
 											"data": minLength
@@ -761,10 +793,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"line": true
 					},
 					"color1": {
-						"manifestpath": "/sap.card/header/icon/backgroundColor",
+						"manifestpath": "/sap.card/configuration/parameters/color1/value",
 						"type": "string",
 						"description": "Description",
-						"label": "Icon Background",
+						"label": "Color Select 1",
 						"visualization": {
 							"type": "ColorSelect",
 							"settings": {
@@ -812,10 +844,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						}
 					},
 					"color2": {
-						"manifestpath": "/sap.card/header/icon/backgroundColor",
+						"manifestpath": "/sap.card/configuration/parameters/color2/value",
 						"type": "string",
 						"description": "Description",
-						"label": "Icon Background",
+						"label": "Color Select 2",
 						"visualization": {
 							"type": "ColorSelect",
 							"settings": {
@@ -919,7 +951,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						}
 					},
 					"filterBackendInStringArray": {
-						"label": "Filter backend by input in MultiComboBox",
+						"label": "Filter backend by input in MultiComboBox or MultiInput",
 						"type": "group"
 					},
 					"CustomersWithMultiKeys": {
@@ -1030,6 +1062,31 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"key": "{CustomerID}",
 								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
 							}
+						}
+					},
+					"Customers_MultiInput": {
+						"manifestpath": "/sap.card/configuration/parameters/Customers_MultiInput/value",
+						"type": "string[]",
+						"required": true,
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address",
+										"$filter": "startswith(CompanyName,'{currentSettings>suggestValue}')"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						},
+						"visualization": {
+							"type": "MultiInput"
 						}
 					},
 					"filterBackendInString": {

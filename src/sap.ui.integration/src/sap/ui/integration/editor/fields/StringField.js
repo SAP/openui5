@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/CustomListItem",
 	"sap/m/VBox",
-	"./viz/IconSelect",
 	"sap/base/util/each",
 	"sap/base/util/restricted/_debounce",
 	"sap/ui/core/Core",
@@ -30,7 +29,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/core/CustomData"
 ], function (
-	BaseField, Input, Text, Title, Select, ComboBox, Popover, Button, OverflowToolbar, ToolbarSpacer, ListItem, List, CustomListItem, VBox, IconSelect, each, _debounce, Core, JSONModel, EditorResourceBundles, deepClone, Sorter, SeparatorItem, includes, merge, CustomData
+	BaseField, Input, Text, Title, Select, ComboBox, Popover, Button, OverflowToolbar, ToolbarSpacer, ListItem, List, CustomListItem, VBox, each, _debounce, Core, JSONModel, EditorResourceBundles, deepClone, Sorter, SeparatorItem, includes, merge, CustomData
 ) {
 	"use strict";
 	var REGEXP_PARAMETERS = /parameters\.([^\}\}]+)/g;

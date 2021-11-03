@@ -124,6 +124,9 @@
 				"dateTimeLabelTrans": {
 					"value": "2020-09-02T11:21:51.470Z"
 				},
+				"enum": {
+					"value": ""
+				},
 				"stringWithStaticList": {
 					"value": "key1"
 				},

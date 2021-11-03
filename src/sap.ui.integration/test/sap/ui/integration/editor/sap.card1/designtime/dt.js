@@ -14,25 +14,51 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "General",
 						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
 					},
-					"separator1": {
-						"type": "separator",
-						"line": true
-					},
 					"cardTitle": {
 						"manifestpath": "/sap.card1/configuration/parameters/cardTitle/value",
 						"type": "string",
 						"translatable": true,
 						"required": true,
+						"label": "cardTitle cardTitle cardTitle",
 						"allowDynamicValues": true,
 						"editableToUser": false,
-						"visibleToUser": false
+						"visibleToUser": false,
+						"description": "test",
+						"cols": 1
+					},
+					"contextModelSyntax": {
+						"manifestpath": "/sap.card1/configuration/parameters/contextModelSyntax/value",
+						"type": "string[]",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address"
+									},
+									"headers": {
+										"test1": "{context>sap.successfactors/currentUser/id/value}",
+										"test2": "{context>sap.successfactors/currentUser/id/label}"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						}
 					},
 					"string": {
 						"manifestpath": "/sap.card1/configuration/parameters/string/value",
 						"type": "string",
 						"translatable": true,
 						"required": true,
-						"editableToUser": false
+						"editableToUser": false,
+						"allowDynamicValues": true,
+						"description": "test",
+						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
 					},
 					"stringLabel": {
 						"manifestpath": "/sap.card1/configuration/parameters/stringLabel/value",
@@ -93,6 +119,13 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "string",
 						"label": "String with translated value in i18n format"
 					},
+					"parameterSyntaxInValue": {
+						"manifestpath": "/sap.card1/configuration/parameters/parameterSyntaxInValue/value",
+						"type": "string",
+						"translatable": true,
+						"required": true,
+						"label": "Parameter syntax in value"
+					},
 					"separator6": {
 						"type": "separator"
 					},
@@ -102,15 +135,13 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"description": "aa",
 						"type": "string",
 						"cols": 1,
-						"allowSettings": false,
 						"translatable": true
 					},
 					"stringInCols2": {
 						"manifestpath": "/sap.card1/configuration/parameters/stringInCols2/value",
 						"label": "URL",
 						"type": "string",
-						"cols": 1,
-						"allowSettings": false
+						"cols": 1
 					},
 					"separator7": {
 						"type": "separator"
@@ -213,6 +244,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card1/configuration/parameters/enum/value",
 						"label": "Enumerations",
 						"type": "enum",
+						"description": "teat test",
 						"required": true,
 						"enum": [
 							"Option A",
@@ -335,11 +367,12 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "Validation"
 					},
 					"stringphone": {
-						"manifestpath": "/sap.card1/configuration/parameters/string/value",
+						"manifestpath": "/sap.card1/configuration/parameters/stringphone/value",
 						"type": "string",
 						"translatable": false,
 						"required": true,
 						"placeholder": "555-4555",
+						"description": "test test",
 						"validation": {
 							"type": "error",
 							"maxLength": 20,
@@ -349,7 +382,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						}
 					},
 					"stringphonenomessage": {
-						"manifestpath": "/sap.card1/configuration/parameters/string/value",
+						"manifestpath": "/sap.card1/configuration/parameters/stringphonenomessage/value",
 						"type": "string",
 						"translatable": false,
 						"required": true,
@@ -362,7 +395,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						}
 					},
 					"stringmaxmin": {
-						"manifestpath": "/sap.card1/configuration/parameters/string/value",
+						"manifestpath": "/sap.card1/configuration/parameters/stringmaxmin/value",
 						"type": "string",
 						"translatable": false,
 						"required": true,
@@ -593,27 +626,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							}
 						}
 					},
-					"stringArray": {
-						"manifestpath": "/sap.card1/configuration/parameters/stringArray/value",
-						"label": "String Array",
-						"type": "string[]",
-						"values": {
-							"data": {
-								"json": [
-									{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
-									{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
-									{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" }
-								],
-								"path": "/"
-							},
-							"item": {
-								"text": "{text}",
-								"key": "{key}",
-								"additionalText": "{additionalText}",
-								"icon": "{icon}"
-							}
-						}
-					},
 					"stringArrayNoValues": {
 						"manifestpath": "/sap.card1/configuration/parameters/stringArrayNoValues/value",
 						"label": "String Array With No Values",
@@ -652,6 +664,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								}).then(function (minLength){
 									if (value.length < minLength) {
 										context["control"].setEditable(false);
+										context["removeValidationMessage"]();
 										return {
 											"isValid": false,
 											"data": minLength
@@ -758,7 +771,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"editable": "{currentSettings>editable}"
 							}
 						},
-						"cols": 1
+						"cols": 1,
+						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
 					},
 					"shape": {
 						"manifestpath": "/sap.card1/header/icon/shape",
@@ -779,10 +793,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"line": true
 					},
 					"color1": {
-						"manifestpath": "/sap.card1/header/icon/backgroundColor",
+						"manifestpath": "/sap.card1/configuration/parameters/color1/value",
 						"type": "string",
 						"description": "Description",
-						"label": "Icon Background",
+						"label": "Color Select 1",
 						"visualization": {
 							"type": "ColorSelect",
 							"settings": {
@@ -830,10 +844,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						}
 					},
 					"color2": {
-						"manifestpath": "/sap.card1/header/icon/backgroundColor",
+						"manifestpath": "/sap.card1/configuration/parameters/color2/value",
 						"type": "string",
 						"description": "Description",
-						"label": "Icon Background",
+						"label": "Color Select 2",
 						"visualization": {
 							"type": "ColorSelect",
 							"settings": {
@@ -921,6 +935,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card1/configuration/parameters/CustomerWithVisibleDependent/value",
 						"type": "string",
 						"visible": "{items>boolean1/value}",
+						"description": "test",
 						"values": {
 							"data": {
 								"request": {
@@ -936,7 +951,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						}
 					},
 					"filterBackendInStringArray": {
-						"label": "Filter backend by input in MultiComboBox",
+						"label": "Filter backend by input in MultiComboBox or MultiInput",
 						"type": "group"
 					},
 					"CustomersWithMultiKeys": {
@@ -1047,6 +1062,31 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"key": "{CustomerID}",
 								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
 							}
+						}
+					},
+					"Customers_MultiInput": {
+						"manifestpath": "/sap.card1/configuration/parameters/Customers_MultiInput/value",
+						"type": "string[]",
+						"required": true,
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address",
+										"$filter": "startswith(CompanyName,'{currentSettings>suggestValue}')"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						},
+						"visualization": {
+							"type": "MultiInput"
 						}
 					},
 					"filterBackendInString": {
@@ -1229,6 +1269,164 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"key": "{CustomerID}",
 								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
 							}
+						}
+					},
+					"layoutGroup": {
+						"type": "group",
+						"label": "Layout"
+					},
+					"cardTitle1": {
+						"manifestpath": "/sap.card1/configuration/parameters/cardTitle1/value",
+						"type": "string",
+						"translatable": true,
+						"required": true,
+						"label": "cardTitle cardTitle cardTitle",
+						"allowDynamicValues": true,
+						"editableToUser": false,
+						"visibleToUser": false,
+						"layout": {
+							"alignment": {
+								"field": "end",
+								"label": "end"
+							},
+							"label-width": "40%"
+						},
+						"cols": 1
+					},
+					"booleanLabel1": {
+						"manifestpath": "/sap.card1/configuration/parameters/booleanLabel1/value",
+						"label": "1111111",
+						"type": "boolean",
+						"description": "aaa",
+						"layout": {
+							"position": "field-label",
+							"alignment": {
+								"label": "end"
+							},
+							"label-width": "80%"
+						},
+						"cols": 1,
+						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
+					},
+					"booleanLabel2": {
+						"manifestpath": "/sap.card1/configuration/parameters/booleanLabel2/value",
+						"label": "22222",
+						"type": "boolean",
+						"layout": {
+							"alignment": {
+								"field": "end",
+								"label": "end"
+							},
+							"label-width": "50%"
+						},
+						"cols": 1
+					},
+					"booleanLabel3": {
+						"manifestpath": "/sap.card1/configuration/parameters/booleanLabel3/value",
+						"label": "33333",
+						"type": "boolean",
+						"layout": {
+							"label-width": "50%",
+							"alignment": {
+								"label": "end"
+							}
+						},
+						"description": "bbb",
+						"visualization": {
+							"type": "sap/m/Switch",
+							"settings": {
+								"state": "{currentSettings>value}",
+								"customTextOn": "Yes",
+								"customTextOff": "No",
+								"enabled": "{currentSettings>editable}"
+							}
+						},
+						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
+					},
+					"booleanLabel4": {
+						"manifestpath": "/sap.card1/configuration/parameters/booleanLabel4/value",
+						"label": "4444",
+						"type": "boolean",
+						"layout": {
+							"label-width": "90%",
+							"position": "field-label"
+						},
+						"cols": 1
+					},
+					"booleanLabel5": {
+						"manifestpath": "/sap.card1/configuration/parameters/booleanLabel5/value",
+						"label": "555",
+						"type": "boolean",
+						"layout": {
+							"label-width": "95%",
+							"position": "field-label"
+						}
+					},
+					"integerParameter1": {
+						"manifestpath": "/sap.card1/configuration/parameters/integerParameter1/value",
+						"type": "integer",
+						"layout": {
+							"label-width": "30%"
+						},
+						"required": true
+					},
+					"number1": {
+						"manifestpath": "/sap.card1/configuration/parameters/number1/value",
+						"type": "number",
+						"layout": {
+							"label-width": "40%",
+							"alignment": {
+								"label": "end"
+							}
+						}
+					},
+					"stringArray": {
+						"manifestpath": "/sap.card1/configuration/parameters/stringArray/value",
+						"type": "string[]",
+						"editable": true,
+						"values": {
+							"data": {
+								"json": [
+									{ "text": 0.3, "key": "key1", "additionalText": 1293883200000, "icon": "sap-icon://accept" },
+									{ "text": 0.6, "key": "key2", "additionalText": 1293883200000, "icon": "sap-icon://cart" },
+									{ "text": 0.8, "key": "key3", "additionalText": 1293883200000, "icon": "sap-icon://zoom-in" }
+								],
+								"path": "/"
+							},
+							"item": {
+								"text": "Percent: {= format.percent(${text}) }",
+								"key": "{key}",
+								"additionalText": "datetime: {= format.dateTime(${additionalText}, {style: 'long'}) }",
+								"icon": "{icon}"
+							}
+						},
+						"layout": {
+							"label-width": "50%",
+							"position": "field-label",
+							"alignment": {
+								"label": "end"
+							}
+						}
+					},
+					"string2": {
+						"manifestpath": "/sap.card1/configuration/parameters/string2/value",
+						"type": "string",
+						"translatable": true,
+						"required": true,
+						"editableToUser": false,
+						"allowDynamicValues": true,
+						"description": "test",
+						"layout": {
+							"label-width": "60%"
+						},
+						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
+					},
+					"number2": {
+						"manifestpath": "/sap.card1/configuration/parameters/number2/value",
+						"type": "number",
+						"layout": {
+							"label-width": "30%",
+							"position": "field-label"
 						}
 					}
 				}

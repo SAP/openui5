@@ -15,7 +15,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
 					},
 					"cardTitle": {
-						"manifestpath": "/sap.card/header/title",
+						"manifestpath": "/sap.card/configuration/parameters/cardTitle/value",
 						"type": "string",
 						"translatable": true,
 						"required": true,
@@ -796,7 +796,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/color1/value",
 						"type": "string",
 						"description": "Description",
-						"label": "Icon Background",
+						"label": "Color Select 1",
 						"visualization": {
 							"type": "ColorSelect",
 							"settings": {
@@ -847,7 +847,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/color2/value",
 						"type": "string",
 						"description": "Description",
-						"label": "Icon Background",
+						"label": "Color Select 2",
 						"visualization": {
 							"type": "ColorSelect",
 							"settings": {
