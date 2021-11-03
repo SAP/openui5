@@ -232,6 +232,12 @@ sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/base/ManagedObject", "sa
 			}
 			ManagedObject.prototype.setProperty.call(this, sName, vValue, bSupressInvalidation);
 
+			if ((sName === "text" && this.getAdditionalText() !== "" && this.getAggregation("_image")) ||
+				(sName === "additionalText" && this.getText() !== "" && this.getAggregation("_image"))) {
+					// update the decorative state of the icon if the text or additional text is changed
+					this.getAggregation("_image").setDecorative(vValue !== "");
+			}
+
 			// optimisation to not invalidate and rerender the whole parent DOM, but only manipulate the CSS class
 			// for invisibility on the concrete DOM element that needs to change
 			if (this.getParent() && this.getParent().changeItemState) {
@@ -247,23 +253,12 @@ sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/base/ManagedObject", "sa
 			return this;
 		};
 
-
-		/**
-		 * Property setter for the icon
-		 *
-		 * @param {sap.ui.core.URI} sIcon - new value of the Icon property
-		 * @return {this} this to allow method chaining
-		 * @public
-		 */
-		TabStripItem.prototype.setIcon = function(sIcon) {
-			return this._setIcon(sIcon);
-		};
-
-		TabStripItem.prototype._setIcon = function(sIcon, bSuppressRendering) {
+		TabStripItem.prototype.setIcon = function(sIcon, bSuppressRendering) {
 			var mProperties,
 				aCssClasses = ['sapMTabContIcon'],
 				oImage = this.getAggregation("_image"),
-				sImgId = this.getId() + "-img";
+				sImgId = this.getId() + "-img",
+				bDecorative = !!(this.getText() || this.getAdditionalText());
 
 			if (!sIcon) {
 				this.setProperty("icon", sIcon, bSuppressRendering);
@@ -279,6 +274,7 @@ sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/base/ManagedObject", "sa
 				mProperties = {
 					src : sIcon,
 					id: sImgId,
+					decorative: bDecorative,
 					tooltip: this.getIconTooltip()
 				};
 
