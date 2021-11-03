@@ -220,7 +220,7 @@ sap.ui.define([
 
 		/**
 		 * Marks multiple nodes as selected. In case the tree structure is invalid, it is rebuilt
-		 * before a <code>setSelctionInterval</code> operation.
+		 * before a <code>setSelectionInterval</code> operation.
 		 *
 		 * @param {number} iFromIndex The first index to mark as selected
 		 * @param {number} iToIndex The last index to mark as selected

@@ -1144,7 +1144,7 @@ sap.ui.define([
 	 * Invisible nodes (collapsed child nodes) will not be taken into account.
 	 *
 	 * Please also take notice of the fact, that "addSelectionInterval" does not change any other selection.
-	 * To override the current selection, please use "setSelctionInterval" or for a single entry use "setSelectedIndex".
+	 * To override the current selection, please use "setSelectionInterval" or for a single entry use "setSelectedIndex".
 	 *
 	 * @param {int} iFromIndex The starting index of the range which will be selected.
 	 * @param {int} iToIndex The starting index of the range which will be selected.
