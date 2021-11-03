@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/base/util/restricted/_difference",
 	"sap/base/util/deepEqual",
+	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Control",
 	"sap/ui/dt/OverlayRegistry",
@@ -22,6 +23,7 @@ sap.ui.define([
 ], function(
 	difference,
 	deepEqual,
+	Log,
 	JsControlTreeModifier,
 	Control,
 	OverlayRegistry,
@@ -333,6 +335,10 @@ sap.ui.define([
 				if (oChangeHandler && typeof oChangeHandler.getChangeVisualizationInfo === "function") {
 					return oChangeHandler.getChangeVisualizationInfo(oChange, oAppComponent);
 				}
+				return undefined;
+			})
+			.catch(function(vErr) {
+				Log.error(vErr);
 				return undefined;
 			});
 		}

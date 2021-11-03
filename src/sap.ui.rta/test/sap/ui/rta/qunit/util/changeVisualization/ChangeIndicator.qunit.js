@@ -137,6 +137,37 @@ function(
 						),
 						"then a description for the change is displayed"
 					);
+					var sDate = this.oChangeIndicator.getAggregation("_popover").getContent()[1].getContent()[1].getText();
+					assert.notOk(
+						isNaN(new Date(sDate).getTime()),
+						"then a valid date string is displayed"
+					);
+				}.bind(this));
+		});
+
+		QUnit.test("when a change was created within the session", function (assert) {
+			var oRtaResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			this.oChangeIndicator.getModel().setData({
+				changes: [Object.assign(
+					createMockChange("someChangeId", this.oButton.getId(), "remove"),
+					{
+						change: {
+							getCreation: function() {}
+						}
+					}
+				)]
+			});
+			sap.ui.getCore().applyChanges();
+			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
+			QUnitUtils.triggerEvent("click", this.oChangeIndicator.getDomRef());
+
+			return oOpenPopoverPromise
+				.then(function () {
+					assert.strictEqual(
+						this.oChangeIndicator.getAggregation("_popover").getContent()[1].getContent()[1].getText(),
+						oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CREATED_IN_SESSION_DATE"),
+						"then a fallback label for the date is displayed"
+					);
 				}.bind(this));
 		});
 
