@@ -12,7 +12,8 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * A utility class for working with the DynamicDateOption instances.
+	 * @class
+	 * The DynamicDateUtil is a utility class for working with the DynamicDateOption instances.
 	 *
 	 * @alias sap.m.DynamicDateUtil
 	 * @static
