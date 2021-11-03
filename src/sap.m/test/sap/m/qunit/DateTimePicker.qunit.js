@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/DateTimePicker",
 	"sap/m/Label",
+	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/DateTime",
 	"sap/ui/model/odata/type/DateTime",
@@ -19,6 +20,7 @@ sap.ui.define([
 	createAndAppendDiv,
 	DateTimePicker,
 	Label,
+	Button,
 	JSONModel,
 	DateTime,
 	ODataDateTime,
@@ -478,6 +480,35 @@ sap.ui.define([
 		jQuery("#DTP3-OK").trigger("focus");
 		qutils.triggerKeydown("DTP3-OK", KeyCodes.ENTER, false, false, false);
 		qutils.triggerKeyup("DTP3-OK", KeyCodes.ENTER, false, false, false);
+	});
+
+	QUnit.test("Open DateTimePicker from Button", function(assert) {
+		// Prepare
+		var oDTP = new DateTimePicker("HDTP", {
+				hideInput: true
+			}).placeAt("qunit-fixture"),
+			oButton = new Button({
+				icon: "sap-icon://appointment-2",
+				press: function() {
+					sap.ui.getCore().byId("HDTP").openBy(this.getDomRef());
+				}
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oButton.firePress();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(sap.ui.getCore().byId(oDTP.getId() + "-cal"), oDTP.getId() + ": calender exists");
+		assert.ok(oDTP._oPopup, oDTP.getId() + ": popup exists");
+		assert.ok(jQuery("#" + oDTP.getId() + "-cal")[0], "calendar rendered");
+		assert.ok(jQuery("#" + oDTP.getId() + "-cal").is(":visible"), "picker is visible");
+
+		// Clean
+		oDTP.destroy();
+		oButton.destroy();
 	});
 
 	QUnit.module("Accessibility");

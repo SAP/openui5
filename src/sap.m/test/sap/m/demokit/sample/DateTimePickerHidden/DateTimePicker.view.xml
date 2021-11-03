@@ -1,0 +1,37 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	controllerName="sap.m.sample.DateTimePickerHidden.DateTimePicker"
+	xmlns="sap.m">
+
+	<Title
+		class="sapUiSmallMargin"
+		text="Open Date Time Picker by Another Control" />
+
+	<VBox class="sapUiSmallMargin" >
+		<Label text="By Button with text" />
+		<Button
+			ariaHasPopup="Dialog"
+			text="Open Date Time Picker"
+			press=".openDateTimePicker" />
+	</VBox>
+	<VBox class="sapUiSmallMargin" >
+		<Label text="By Button with icon" />
+		<Button
+			ariaHasPopup="Dialog"
+			tooltip="Open Date Time Picker"
+			icon="sap-icon://appointment-2"
+			press=".openDateTimePicker" />
+	</VBox>
+	<VBox class="sapUiSmallMargin" >
+		<Label text="By Link" />
+		<Link
+			ariaHasPopup="Dialog"
+			text="Open Date Time Picker"
+			press=".openDateTimePicker" />
+	</VBox>
+	<DateTimePicker
+		id="HiddenDTP"
+		hideInput="true"
+		change=".changeDateTimeHandler" />
+
+</mvc:View>

@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/DatePicker",
 	"sap/m/InstanceManager",
 	"sap/m/Label",
+	"sap/m/Button",
 	"sap/ui/model/type/Date",
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -36,6 +37,7 @@ sap.ui.define([
 	DatePicker,
 	InstanceManager,
 	Label,
+	Button,
 	TypeDate,
 	DateTime,
 	ODataModel,
@@ -1814,7 +1816,7 @@ sap.ui.define([
 		oDatePicker.destroy();
 	});
 
-	QUnit.test("Open popup with CustomYaerPicker as content when datePicker display format contains only years", function(assert) {
+	QUnit.test("Open popup with CustomYearPicker as content when datePicker display format contains only years", function(assert) {
 		// Prepare
 		var oDP = new DatePicker({
 				dateValue: new Date("2014", "02", "26"),
@@ -1932,6 +1934,35 @@ sap.ui.define([
 
 		// Clean
 		oDP.destroy();
+	});
+
+	QUnit.test("Open DatePicker from Button", function(assert) {
+		// Prepare
+		var oDP = new DatePicker("HDP", {
+				hideInput: true
+			}).placeAt("qunit-fixture"),
+			oButton = new Button({
+				icon: "sap-icon://appointment-2",
+				press: function() {
+					sap.ui.getCore().byId("HDP").openBy(this.getDomRef());
+				}
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oButton.firePress();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(sap.ui.getCore().byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
+		assert.ok(oDP._oPopup, oDP.getId() + ": popup exists");
+		assert.ok(jQuery("#" + oDP.getId() + "-cal")[0], "calendar rendered");
+		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "picker is visible");
+
+		// Clean
+		oDP.destroy();
+		oButton.destroy();
 	});
 
 	QUnit.module("ARIA");
