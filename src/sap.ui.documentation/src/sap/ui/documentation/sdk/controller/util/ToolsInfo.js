@@ -62,6 +62,11 @@ sap.ui.define([],
 				"id": "fioriTools",
 				"text": "SAP Fiori Tools",
 				"href": "https://help.sap.com/viewer/product/SAP_FIORI_tools/Latest/en-US"
+			},
+			{
+				"id": "flexibleProgrammingModelExplorer",
+				"text": "Flexible Programming Model Explorer",
+				"href": "https://sapui5.hana.ondemand.com/test-resources/sap/fe/core/fpmExplorer/index.html#/overview/introduction"
 			}
 		];
 

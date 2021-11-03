@@ -147,10 +147,7 @@
 				</f:content>
 			</f:Card>
 			<!-- UI5 Tooling -->
-			<f:Card height="25rem">
-				<f:layoutData>
-					<l:GridData spanM="6" spanL="6"/>
-				</f:layoutData>
+			<f:Card class="threeColumnLayoutCard">
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin toolspageCardInfo">
@@ -196,10 +193,7 @@
 				</f:content>
 			</f:Card>
 			<!-- UI5 Inspector -->
-			<f:Card height="25rem">
-				<f:layoutData>
-					<l:GridData spanM="6" spanL="6" spanXL="4"/>
-				</f:layoutData>
+			<f:Card class="threeColumnLayoutCard">
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin toolspageCardInfo">
@@ -243,9 +237,6 @@
 			</f:Card>
 			<!-- Card Explorer -->
 			<f:Card class="threeColumnLayoutCard">
-				<f:layoutData>
-					<l:GridData spanXL="4"/>
-				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin toolspageCardInfo">
@@ -273,9 +264,6 @@
 			</f:Card>
 			<!-- Support Assistant -->
 			<f:Card class="threeColumnLayoutCard">
-				<f:layoutData>
-					<l:GridData spanXL="4"/>
-				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin toolspageCardInfo">
@@ -417,6 +405,25 @@
 							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_13_TEXT}" />
 						</VBox>
 						<Image src="./resources/sap/ui/documentation/sdk/images/tools/Tools_LiveEditor.jpg" class="toolsPageImage" alt="{i18n>TOOLS_CARD_13_IMG_ALT}"/>
+					</VBox>
+				</f:content>
+			</f:Card>
+			<!-- Flexible Programming Model Explorer -->
+			<f:Card class="threeColumnLayoutCard" visible="{=! (${device>/system/phone} || ${device>/browser/msie}) }">
+				<f:content>
+					<VBox justifyContent="SpaceBetween">
+						<VBox class="sapUiSmallMargin toolspageCardInfo">
+							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+								<custom:TitleLink
+										level="H1"
+										titleStyle="H1"
+										text="{/flexibleProgrammingModelExplorer/text}"
+										href="{/flexibleProgrammingModelExplorer/href}"
+										target="_blank"/>
+							</html:div>
+							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_14_TEXT}" />
+						</VBox>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/FlexibleProgrammingModelExplorer.jpg" class="toolsPageImage" alt="{i18n>TOOLS_CARD_14_IMG_ALT}"/>
 					</VBox>
 				</f:content>
 			</f:Card>
