@@ -66,6 +66,16 @@
 						id="fhAdob"
 						delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
 						<mdc:dialog>
+							<mdcv:Popover title="Birth Epoch">
+								<mdcvc:Conditions label="Date of birth"></mdcvc:Conditions>
+							</mdcv:Popover>
+						</mdc:dialog>
+					</mdc:ValueHelp>
+
+					<mdc:ValueHelp
+						id="fhAdobDialog"
+						delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+						<mdc:dialog>
 							<mdcv:Dialog title="Birth Epoch">
 								<mdcvc:Conditions label="Date of birth"></mdcvc:Conditions>
 							</mdcv:Dialog>
@@ -89,6 +99,16 @@
 							<mdcv:Popover title="Define Filter Conditions">
 								<mdcvc:Conditions label="Date of death"></mdcvc:Conditions>
 							</mdcv:Popover>
+						</mdc:dialog>
+					</mdc:ValueHelp>
+
+					<mdc:ValueHelp
+						id="fhAdodDialog"
+						delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+						<mdc:dialog>
+							<mdcv:Dialog title="Date of death">
+								<mdcvc:Conditions label="Date of death"></mdcvc:Conditions>
+							</mdcv:Dialog>
 						</mdc:dialog>
 					</mdc:ValueHelp>
 
