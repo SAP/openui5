@@ -373,7 +373,7 @@
 		},
 		{
 			"control": "sap.m.PagingButton",
-			"url": "../PagingButton.html",
+			"url": "PagingButton.html",
 			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
