@@ -1245,12 +1245,12 @@ sap.ui.define([
 			.returns(mParameters);
 		this.mock(oBinding).expects("_execute")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParameters),
-				"~bIgnoreETag~", "~fnOnStrictHandlingFailed~")
+				"~bIgnoreETag~", "~fnOnStrictHandlingFailed~", false)
 			.returns(oPromise);
 
-		// code under test
 		assert.strictEqual(
-			oBinding.execute("groupId", "~bIgnoreETag~", "~fnOnStrictHandlingFailed~"),
+			// code under test
+			oBinding.execute("groupId", "~bIgnoreETag~", "~fnOnStrictHandlingFailed~", false),
 			oPromise);
 	});
 
@@ -1258,32 +1258,103 @@ sap.ui.define([
 	[false, true].forEach(function (bBaseContext) {
 		QUnit.test("execute: relative, bBaseContext=" + bBaseContext, function (assert) {
 			var oContext = {
-					isTransient : function () { return false;},
-					getPath : function () { return "/Employees('42')";}
+					getBinding : function () {},
+					getPath : function () { return "/Employees('42')"; },
+					isTransient : function () { return false; }
 				},
 				oBinding = this.bindContext("schema.Operation(...)", oContext),
 				oGroupLock = {},
 				mParameters = {},
+				oParentBinding =  {
+					checkKeepAlive : function () {}
+				},
 				oPromise = {};
 
 			if (bBaseContext) {
+				delete oContext.getBinding;
 				delete oContext.isTransient;
+			} else {
+				this.mock(oContext).expects("getBinding").withExactArgs().returns(oParentBinding);
+				this.mock(oParentBinding).expects("checkKeepAlive")
+					.withExactArgs(sinon.match.same(oContext));
 			}
 			this.mock(oBinding).expects("checkSuspended").withExactArgs();
 			this.mock(this.oModel).expects("checkGroupId").withExactArgs("groupId");
-			this.mock(oBinding).expects("lockGroup").withExactArgs("groupId", true)
-				.returns(oGroupLock);
+			this.mock(oBinding).expects("lockGroup")
+				.withExactArgs("groupId", true).returns(oGroupLock);
 			this.mock(_Helper).expects("publicClone")
 				.withExactArgs(sinon.match.same(oBinding.oOperation.mParameters), true)
 				.returns(mParameters);
 			this.mock(oBinding).expects("_execute")
 				.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParameters),
-					"~bIgnoreETag~", undefined)
+					"~bIgnoreETag~", "~fnOnStrictHandlingFailed~",
+					bBaseContext ? false : "~bReplaceWithRVC~")
 				.returns(oPromise);
 
-			// code under test
-			assert.strictEqual(oBinding.execute("groupId", "~bIgnoreETag~"), oPromise);
+			assert.strictEqual(
+				// code under test
+				oBinding.execute("groupId", "~bIgnoreETag~", "~fnOnStrictHandlingFailed~",
+					bBaseContext ? false : "~bReplaceWithRVC~"),
+				oPromise);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("execute: relative, bReplaceWithRVC, checkKeepAlive throws", function (assert) {
+		var oContext = {
+				getBinding : function () {},
+				getPath : function () { return "/Employees('42')"; }
+			},
+			oBinding = this.bindContext("schema.Operation(...)", oContext),
+			oError = new Error("This call intentionally failed"),
+			oParentBinding =  {
+				checkKeepAlive : function () {}
+			};
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(this.oModel).expects("checkGroupId").withExactArgs("groupId");
+		this.mock(oContext).expects("getBinding").withExactArgs().returns(oParentBinding);
+		this.mock(oParentBinding).expects("checkKeepAlive")
+			.withExactArgs(sinon.match.same(oContext)).throws(oError);
+		this.mock(oBinding).expects("_execute").never();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.execute("groupId", false, null, true);
+		}, function (oError0) {
+			return oError0 === oError;
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("execute: bReplaceWithRVC throws because of base context", function (assert) {
+		var oContext = {
+				getPath : function () { return "/Employees('42')"; }
+			},
+			oBinding = this.bindContext("schema.Operation(...)", oContext);
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(this.oModel).expects("checkGroupId").withExactArgs("groupId");
+		this.mock(oBinding).expects("_execute").never();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.execute("groupId", false, null, true);
+		}, new Error("Cannot replace when parent context is not a V4 context"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("execute: bReplaceWithRVC throws because of absolute binding", function (assert) {
+		var oBinding = this.bindContext("/OperationImport(...)");
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(this.oModel).expects("checkGroupId").withExactArgs("groupId");
+		this.mock(oBinding).expects("_execute").never();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.execute("groupId", false, null, true);
+		}, new Error("Cannot replace when operation is not relative"));
 	});
 
 	//*********************************************************************************************
@@ -1755,6 +1826,104 @@ sap.ui.define([
 					assert.strictEqual(oBinding.oReturnValueContext, null);
 				});
 			});
+		});
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bSamePredicate) {
+	QUnit.test("_execute: bReplaceWithRVC, bSamePredicate=" + bSamePredicate, function (assert) {
+		var oGroupLock = {
+				getGroupId : function () {}
+			},
+			oParentEntity = {},
+			oResponseEntity = {},
+			oRootBinding = {
+				doReplaceWith : function () {}
+			},
+			oParentContext = Context.create(this.oModel, oRootBinding, "/TEAMS('42')"),
+			oBinding = this.bindContext("name.space.Operation(...)", oParentContext);
+
+		_Helper.setPrivateAnnotation(oParentEntity, "predicate", "('42')");
+		_Helper.setPrivateAnnotation(oResponseEntity, "predicate",
+			bSamePredicate ? "('42')" : "('77')");
+		this.mock(this.oModel.getMetaModel()).expects("fetchObject")
+			.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
+			.returns(SyncPromise.resolve(["~oOperationMetadata~"]));
+		this.mock(oBinding).expects("createCacheAndRequest")
+			.withExactArgs(sinon.match.same(oGroupLock), "/TEAMS('42')/name.space.Operation(...)",
+				"~oOperationMetadata~", "~mParameters~", sinon.match.func, "~bIgnoreETag~",
+				"~fnOnStrictHandlingFailed~")
+			.returns(Promise.resolve(oResponseEntity));
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
+		this.mock(oBinding).expects("refreshDependentBindings").withExactArgs("", "groupId", true)
+			.resolves();
+		this.mock(oBinding).expects("isReturnValueLikeBindingParameter")
+			.withExactArgs("~oOperationMetadata~").returns(true);
+		this.mock(oParentContext).expects("getValue").withExactArgs().returns(oParentEntity);
+		this.mock(oParentContext).expects("patch").exactly(bSamePredicate ? 1 : 0)
+			.withExactArgs(sinon.match.same(oResponseEntity));
+		this.mock(oBinding).expects("hasReturnValueContext").withExactArgs("~oOperationMetadata~")
+			.returns(true);
+		this.mock(Context).expects("createNewContext").never();
+		this.mock(oRootBinding).expects("doReplaceWith").exactly(bSamePredicate ? 0 : 1)
+			.withExactArgs(sinon.match.same(oParentContext), sinon.match.same(oResponseEntity),
+				"('77')")
+			.returns("~result~");
+
+		// code under test
+		return oBinding._execute(oGroupLock, "~mParameters~", "~bIgnoreETag~",
+			"~fnOnStrictHandlingFailed~", /*bReplaceWithRVC*/true)
+		.then(function (oResultingContext) {
+			assert.strictEqual(oResultingContext, bSamePredicate ? oParentContext : "~result~");
+			assert.strictEqual(oBinding.oCache, null);
+			assert.strictEqual(oBinding.oCachePromise.getResult(), null);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_execute: bReplaceWithRVC w/o r.v.c.", function (assert) {
+		var oGroupLock = {
+				getGroupId : function () {},
+				unlock : function () {}
+			},
+			oParentContext = Context.create(this.oModel, {/*oRootBinding*/}, "/TEAMS('42')"),
+			oBinding = this.bindContext("name.space.Operation(...)", oParentContext),
+			oReportErrorExpectation;
+
+		this.mock(this.oModel.getMetaModel()).expects("fetchObject")
+			.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
+			.returns(SyncPromise.resolve(["~oOperationMetadata~"]));
+		this.mock(oBinding).expects("createCacheAndRequest")
+			.withExactArgs(sinon.match.same(oGroupLock), "/TEAMS('42')/name.space.Operation(...)",
+				"~oOperationMetadata~", "~mParameters~", sinon.match.func, "~bIgnoreETag~",
+				"~fnOnStrictHandlingFailed~")
+			.returns(Promise.resolve("~oResponseEntity~"));
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
+		this.mock(oBinding).expects("refreshDependentBindings").withExactArgs("", "groupId", true)
+			.resolves();
+		this.mock(oBinding).expects("isReturnValueLikeBindingParameter")
+			.withExactArgs("~oOperationMetadata~").returns(false);
+		this.mock(oParentContext).expects("getValue").never();
+		this.mock(oParentContext).expects("patch").never();
+		this.mock(oBinding).expects("hasReturnValueContext").withExactArgs("~oOperationMetadata~")
+			.returns(false);
+		this.mock(Context).expects("createNewContext").never();
+		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
+		oReportErrorExpectation = this.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to execute /TEAMS('42')/name.space.Operation(...)", sClassName,
+			sinon.match.typeOf("error")); // Note: sinon.match.object does not match here :-(
+
+		// code under test
+		return oBinding._execute(oGroupLock, "~mParameters~", "~bIgnoreETag~",
+			"~fnOnStrictHandlingFailed~", /*bReplaceWithRVC*/true)
+		.then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.strictEqual(oError.message, "Cannot replace w/o return value context");
+			assert.strictEqual(oReportErrorExpectation.args[0][2], oError);
 		});
 	});
 

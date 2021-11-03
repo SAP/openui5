@@ -2085,6 +2085,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Replaces the old element at the given index with the given new element.
+	 *
+	 * @param {number} iIndex - The index
+	 * @param {object} oElement - The new element
+	 *
+	 * @public
+	 */
+	_CollectionCache.prototype.doReplaceWith = function (iIndex, oElement) {
+		this.aElements[iIndex] = oElement;
+		this.addKeptElement(oElement); // maintain $byPredicate
+	};
+
+	/**
 	 * Returns a promise to be resolved (synchronously if possible) with an OData object for the
 	 * requested data.
 	 *

@@ -266,6 +266,10 @@ sap.ui.define([
 	 *   actions only
 	 * @param {function} [fnOnStrictHandlingFailed]
 	 *   Callback for strict handling; supported for actions only
+	 * @param {boolean} [bReplaceWithRVC]
+	 *   Whether this operation binding's parent context, which must belong to a list binding, is
+	 *   replaced with the operation's return value context (see below) and that new list context is
+	 *   returned instead. Since 1.97.0.
 	 * @returns {Promise}
 	 *   A promise that is resolved without data or a return value context when the operation call
 	 *   succeeded, or rejected with an instance of <code>Error</code> in case of failure. A return
@@ -278,7 +282,7 @@ sap.ui.define([
 	 * @see #execute for details
 	 */
 	ODataContextBinding.prototype._execute = function (oGroupLock, mParameters, bIgnoreETag,
-			fnOnStrictHandlingFailed) {
+			fnOnStrictHandlingFailed, bReplaceWithRVC) {
 		var oMetaModel = this.oModel.getMetaModel(),
 			oOperationMetadata,
 			oPromise,
@@ -334,12 +338,25 @@ sap.ui.define([
 						if (that.oReturnValueContext) {
 							that.oReturnValueContext.destroy();
 						}
+
+						if (bReplaceWithRVC) {
+							that.oCache = null;
+							that.oCachePromise = SyncPromise.resolve(null);
+
+							return sContextPredicate === sResponsePredicate
+								? that.oContext
+								: that.oContext.getBinding().doReplaceWith(that.oContext,
+									oResponseEntity, sResponsePredicate);
+						}
+
 						that.oReturnValueContext = Context.createNewContext(that.oModel,
 							that, getReturnValueContextPath(sResolvedPath, sResponsePredicate));
 						// set the resource path for late property requests
 						that.oCache.setResourcePath(that.oReturnValueContext.getPath().slice(1));
 
 						return that.oReturnValueContext;
+					} else if (bReplaceWithRVC) {
+						throw new Error("Cannot replace w/o return value context");
 					}
 				});
 			}, function (oError) {
@@ -813,6 +830,19 @@ sap.ui.define([
 	 *   repeated <b>without</b> applying the preference or rejected with an <code>Error</code>
 	 *   instance <code>oError</code> where <code>oError.canceled === true</code>.
 	 *   Since 1.92.0.
+	 * @param {boolean} [bReplaceWithRVC]
+	 *   Whether this operation binding's parent context, which must belong to a list binding, is
+	 *   replaced with the operation's return value context (see below) and that list context is
+	 *   returned instead. The list context may be a newly created context or an existing context.
+	 *   A newly created context has the same <code>keepAlive</code> attribute and
+	 *   <code>fnOnBeforeDestroy</code> function as the parent context, see
+	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive}; <code>fnOnBeforeDestroy</code> will be
+	 *   called with the new context instance as the only argument in this case. An existing context
+	 *   does not change its <code>keepAlive</code> attribute. In any case, the resulting context
+	 *   takes the place (index, position) of the parent context
+	 *   {@link sap.ui.model.odata.v4.Context#getIndex}. If the parent context has requested
+	 *   messages when it was kept alive, they will be inherited if the $$inheritExpandSelect
+	 *   binding parameter is set to <code>true</code>. Since 1.97.0.
 	 * @returns {Promise}
 	 *   A promise that is resolved without data or with a return value context when the operation
 	 *   call succeeded, or rejected with an <code>Error</code> instance <code>oError</code> in case
@@ -827,31 +857,43 @@ sap.ui.define([
 	 *    <li> returns a <code>Promise</code> that resolves with <code>false</code>. In this case
 	 *      <code>oError.canceled === true</code>.
 	 *   </ul>
+	 *   It is also rejected if <code>bReplaceWithRVC</code> is supplied, and there is no return
+	 *   value context at all or the existing context as described above is currently part of the
+	 *   list's collection (that is, has an index).<br>
 	 *   A return value context is a {@link sap.ui.model.odata.v4.Context} which represents a bound
 	 *   operation response. It is created only if the operation is bound and has a single entity
 	 *   return value from the same entity set as the operation's binding parameter and has a
 	 *   parent context which is a {@link sap.ui.model.odata.v4.Context} and points to an entity
-	 *   from an entity set.
-	 *
+	 *   from an entity set.<br>
 	 *   If a return value context is created, it must be used instead of
 	 *   <code>this.getBoundContext()</code>. All bound messages will be related to the return value
 	 *   context only. Such a message can only be connected to a corresponding control if the
 	 *   control's property bindings use the return value context as binding context.
-	 * @throws {Error} If the binding's root binding is suspended, the given group ID is invalid, if
-	 *   the binding is not a deferred operation binding (see
-	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}), if the binding is unresolved (see
-	 *   {@link sap.ui.model.Binding#isResolved}) or relative to a transient context (see
-	 *   {@link sap.ui.model.odata.v4.Context#isTransient}), or if deferred operation bindings are
-	 *   nested, or if the OData resource path for a deferred operation binding's context cannot be
-	 *   determined, or if <code>fnOnStrictHandlingFailed</code> is called and does not return a
-	 *   <code>Promise</code>.
-
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li>the binding's root binding is suspended,
+	 *     <li> the given group ID is invalid,
+	 *     <li> the binding is not a deferred operation binding (see
+	 *       {@link sap.ui.model.odata.v4.ODataContextBinding}),
+	 *     <li> the binding is unresolved (see
+	 *       {@link sap.ui.model.Binding#isResolved})
+	 *     <li> the binding is relative to a transient context (see
+	 *       {@link sap.ui.model.odata.v4.Context#isTransient}),
+	 *     <li> deferred operation bindings are nested,
+	 *     <li> the OData resource path for a deferred operation binding's context cannot be
+	 *       determined,
+	 *     <li> <code>fnOnStrictHandlingFailed</code> is called and does not return a
+	 *       <code>Promise</code>,
+	 *     <li> <code>bReplaceWithRVC</code> is given, but this operation binding is not relative to
+	 *       a row context of a list binding which uses the <code>$$ownRequest</code> parameter (see
+	 *       {@link sap.ui.model.odata.v4.ODataModel#bindList}) and no data aggregation (see
+	 *       {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}).
 	 *
 	 * @public
 	 * @since 1.37.0
 	 */
 	ODataContextBinding.prototype.execute = function (sGroupId, bIgnoreETag,
-			fnOnStrictHandlingFailed) {
+			fnOnStrictHandlingFailed, bReplaceWithRVC) {
 		var sResolvedPath = this.getResolvedPath();
 
 		this.checkSuspended();
@@ -870,11 +912,19 @@ sap.ui.define([
 				throw new Error("Nested deferred operation bindings not supported: "
 					+ sResolvedPath);
 			}
+			if (bReplaceWithRVC) {
+				if (!this.oContext.getBinding) {
+					throw new Error("Cannot replace when parent context is not a V4 context");
+				}
+				this.oContext.getBinding().checkKeepAlive(this.oContext);
+			}
+		} else if (bReplaceWithRVC) {
+			throw new Error("Cannot replace when operation is not relative");
 		}
 
 		return this._execute(this.lockGroup(sGroupId, true),
 			_Helper.publicClone(this.oOperation.mParameters, true), bIgnoreETag,
-				fnOnStrictHandlingFailed);
+				fnOnStrictHandlingFailed, bReplaceWithRVC);
 	};
 
 	/**

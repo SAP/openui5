@@ -216,7 +216,7 @@ sap.ui.define([
 		assert.ok(oBinding.hasOwnProperty("aSorters"));
 		assert.ok(oBinding.hasOwnProperty("sUpdateGroupId"));
 
-		assert.ok(oParentBindingSpy.calledOnceWithExactly(oBinding));
+		assert.ok(oParentBindingSpy.calledOnceWithExactly(sinon.match.same(oBinding)));
 	});
 
 	//*********************************************************************************************
@@ -7941,6 +7941,237 @@ sap.ui.define([
 			// code under test
 			oBinding.moveEntityHere(oEntityContext);
 		}, new Error("No key predicate known at /EMPLOYEES('1')"));
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bKeepAlive) {
+	QUnit.test("doReplaceWith: existing Context, bKeepAlive = " + bKeepAlive, function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oDoReplaceWithExpectation,
+			oElement = {},
+			oExistingContext = {}, // no #setKeepAlive
+			oOldContext = {
+				iIndex : 42,
+				getPath : function () {},
+				isKeepAlive : function () {}
+			},
+			sPredicate = "('1')";
+
+		oBinding.mPreviousContextsByPath["~header~context~path~('1')"] = oExistingContext;
+		this.mock(oOldContext).expects("getPath").exactly(bKeepAlive ? 1 : 0).withExactArgs()
+			.returns("~old~context~path~");
+		this.mock(oOldContext).expects("isKeepAlive").withExactArgs().returns(bKeepAlive);
+		this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs()
+			.returns("~header~context~path~");
+		this.mock(Context).expects("create").never();
+		oDoReplaceWithExpectation = this.mock(oBinding.oCache).expects("doReplaceWith")
+			.withExactArgs(42, sinon.match.same(oElement));
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change})
+			.callsFake(function () {
+				assert.ok(oDoReplaceWithExpectation.calledOnce);
+				assert.strictEqual(oExistingContext.iIndex, 42);
+				assert.strictEqual(oOldContext.iIndex, undefined);
+				assert.strictEqual(oBinding.aContexts[42], oExistingContext);
+				assert.deepEqual(oBinding.mPreviousContextsByPath, bKeepAlive ? {
+					"~header~context~path~('1')" : oExistingContext,
+					"~old~context~path~" : oOldContext
+				} : {
+					"~header~context~path~('1')" : oExistingContext
+				});
+				assert.strictEqual(oBinding.mPreviousContextsByPath["~old~context~path~"],
+					bKeepAlive ? oOldContext : undefined);
+			});
+
+		assert.strictEqual(
+			// code under test
+			oBinding.doReplaceWith(oOldContext, oElement, sPredicate),
+			oExistingContext
+		);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("doReplaceWith: unexpected index", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oOldContext = {
+				iIndex : 42,
+				isKeepAlive : function () {}
+			};
+
+		oBinding.mPreviousContextsByPath["/EMPLOYEES('1')"] = {
+			iIndex : 0,
+			toString : function () { return "~toString~"; }
+		}; // no #setKeepAlive
+		this.mock(Context).expects("create").never();
+		this.mock(oBinding.oCache).expects("doReplaceWith").never();
+		this.mock(oBinding).expects("_fireChange").never();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.doReplaceWith(oOldContext, {}, "('1')");
+		}, new Error("Unexpected index: ~toString~"));
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bKeepAlive) {
+	[false, true].forEach(function (bHasOnBeforeDestroy) {
+		var sTitle = "doReplaceWith: new Context, bKeepAlive = " + bKeepAlive
+			+ ", bHasOnBeforeDestroy = " + bHasOnBeforeDestroy;
+
+		if (!bKeepAlive && bHasOnBeforeDestroy) {
+			return;
+		}
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oDoReplaceWithExpectation,
+			oElement = {},
+			oNewContext = {
+				setKeepAlive : function () {}
+			},
+			oOldContext = {
+				iIndex : 42,
+				fnOnBeforeDestroy : bHasOnBeforeDestroy ? sinon.spy() : undefined,
+				getPath : function () {},
+				isKeepAlive : function () {}
+			},
+			sPredicate = "('1')",
+			oSetKeepAliveExpectation;
+
+		this.mock(oOldContext).expects("getPath").exactly(bKeepAlive ? 1 : 0).withExactArgs()
+			.returns("~old~context~path~");
+		this.mock(oOldContext).expects("isKeepAlive").withExactArgs().returns(bKeepAlive);
+		this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs()
+			.returns("~header~context~path~");
+		this.mock(Context).expects("create")
+			.withExactArgs(sinon.match.same(oBinding.oModel), sinon.match.same(oBinding),
+				"~header~context~path~('1')", 42)
+			.returns(oNewContext);
+		oDoReplaceWithExpectation = this.mock(oBinding.oCache).expects("doReplaceWith")
+			.withExactArgs(42, sinon.match.same(oElement));
+		oSetKeepAliveExpectation = this.mock(oNewContext).expects("setKeepAlive")
+			.exactly(bKeepAlive ? 1 : 0)
+			.withExactArgs(true, bHasOnBeforeDestroy ? sinon.match.func : undefined);
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change})
+			.callsFake(function () {
+				assert.ok(oDoReplaceWithExpectation.calledOnce);
+				if (bKeepAlive) {
+					assert.ok(oSetKeepAliveExpectation.calledOnce);
+					assert.ok(oSetKeepAliveExpectation.calledAfter(oDoReplaceWithExpectation));
+				}
+				assert.strictEqual(oOldContext.iIndex, undefined);
+				assert.strictEqual(oBinding.aContexts[42], oNewContext);
+				assert.deepEqual(
+					oBinding.mPreviousContextsByPath,
+					bKeepAlive ? {"~old~context~path~" : oOldContext} : {}
+				);
+				assert.strictEqual(oBinding.mPreviousContextsByPath["~old~context~path~"],
+					bKeepAlive ? oOldContext : undefined);
+			});
+
+		assert.strictEqual(
+			// code under test
+			oBinding.doReplaceWith(oOldContext, oElement, sPredicate),
+			oNewContext
+		);
+
+		if (bHasOnBeforeDestroy) {
+			assert.notOk(oOldContext.fnOnBeforeDestroy.called);
+
+			// code under test
+			oSetKeepAliveExpectation.args[0][1]();
+
+			assert.ok(
+				oOldContext.fnOnBeforeDestroy.calledOnceWithExactly(sinon.match.same(oNewContext)));
+		}
+	});
+
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("doReplaceWith: copy the copy", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oCacheMock = this.mock(oBinding.oCache),
+			oContextMock = this.mock(Context),
+			oElement1 = {},
+			oElement2 = {},
+			oNewContext1 = {
+				iIndex : 42,
+				getPath : function () {
+					return "/EMPLOYEES('1')";
+				},
+				setKeepAlive : function () {}
+			},
+			oNewContext2 = {
+				setKeepAlive : function () {}
+			},
+			oOldContext = {
+				iIndex : 42,
+				fnOnBeforeDestroy : sinon.spy(),
+				getPath : function () {
+					return "/EMPLOYEES('0')";
+				},
+				isKeepAlive : function () {
+					return true;
+				}
+			},
+			sPredicate1 = "('1')",
+			sPredicate2 = "('2')",
+			oSetKeepAliveExpectation1,
+			oSetKeepAliveExpectation2;
+
+		oContextMock.expects("create")
+			.withExactArgs(sinon.match.same(oBinding.oModel), sinon.match.same(oBinding),
+				"/EMPLOYEES('1')", 42)
+			.returns(oNewContext1);
+		oCacheMock.expects("doReplaceWith").withExactArgs(42, sinon.match.same(oElement1));
+		oSetKeepAliveExpectation1 = this.mock(oNewContext1).expects("setKeepAlive")
+			.withExactArgs(true, sinon.match.func)
+			.callsFake(function (_bKeepAlive, fnOnBeforeDestroy1) {
+				this.isKeepAlive = function () {
+					return true;
+				};
+				this.fnOnBeforeDestroy = fnOnBeforeDestroy1;
+			});
+		// ignore call to #_fireChange (no listeners)
+
+		assert.strictEqual(
+			// code under test
+			oBinding.doReplaceWith(oOldContext, oElement1, sPredicate1),
+			oNewContext1
+		);
+
+		assert.notOk(oOldContext.fnOnBeforeDestroy.called);
+
+		// code under test
+		oSetKeepAliveExpectation1.args[0][1]();
+
+		assert.ok(
+			oOldContext.fnOnBeforeDestroy.calledOnceWithExactly(sinon.match.same(oNewContext1)));
+
+		oContextMock.expects("create")
+			.withExactArgs(sinon.match.same(oBinding.oModel), sinon.match.same(oBinding),
+				"/EMPLOYEES('2')", 42)
+			.returns(oNewContext2);
+		oCacheMock.expects("doReplaceWith").withExactArgs(42, sinon.match.same(oElement2));
+		oSetKeepAliveExpectation2 = this.mock(oNewContext2).expects("setKeepAlive")
+			.withExactArgs(true, sinon.match.func);
+
+		assert.strictEqual(
+			// code under test
+			oBinding.doReplaceWith(oNewContext1, oElement2, sPredicate2),
+			oNewContext2
+		);
+
+		// code under test
+		oSetKeepAliveExpectation2.args[0][1]();
+
+		assert.ok(oOldContext.fnOnBeforeDestroy.calledTwice);
+		assert.ok(oOldContext.fnOnBeforeDestroy.secondCall.calledWithExactly(
+			sinon.match.same(oNewContext2)));
+		assert.notStrictEqual(oOldContext.fnOnBeforeDestroy.args[1][0], oNewContext1);
+		assert.strictEqual(oOldContext.fnOnBeforeDestroy.args[1][0], oNewContext2);
 	});
 });
 
