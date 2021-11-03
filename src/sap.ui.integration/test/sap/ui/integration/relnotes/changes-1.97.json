@@ -1,7 +1,40 @@
 {
   "1.97.0": {
-    "date": "October 2021",
+    "date": "November 2021",
     "notes": [
+      {
+        "id": "9f667f20e006e3ac2c40e43253b90cfbdf8dcdc0",
+        "type": "FIX",
+        "text": " sap.f.CalendarInCard: control adjusted on small screen widths or higher zoom factor",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266515"
+          }
+        ]
+      },
+      {
+        "id": "7aaf1bafc36af210c06c9dfb825ee3bf4f0e2d88",
+        "type": "FIX",
+        "text": " sap.f.CalendarInCard: control adjusted on small screen widths (phone)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266514"
+          }
+        ]
+      },
+      {
+        "id": "8c44530921e80fca87e3de6f59770f50552a39a3",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Component card sample in demokit is now loading",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170261789"
+          }
+        ]
+      },
       {
         "id": "0bc06af21375cea1e2c87740a32282886b7d9cc0",
         "type": "FEATURE",

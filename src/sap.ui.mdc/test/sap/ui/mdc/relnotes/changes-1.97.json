@@ -1,7 +1,18 @@
 {
   "1.97.0": {
-    "date": "October 2021",
+    "date": "November 2021",
     "notes": [
+      {
+        "id": "5060cade30d62fb517a349f87c91f658780d661a",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Loading resources from library is now synced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170288191"
+          }
+        ]
+      },
       {
         "id": "bed440020728a36e81f79729f1bbd72d4f4c9293",
         "type": "FIX",

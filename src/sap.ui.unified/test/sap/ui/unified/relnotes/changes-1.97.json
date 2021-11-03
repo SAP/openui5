@@ -1,7 +1,29 @@
 {
   "1.97.0": {
-    "date": "October 2021",
+    "date": "November 2021",
     "notes": [
+      {
+        "id": "f659890211d410374b562777913fc3bd52f83ab8",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar, date-related pickers: Today button included in tab loop",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266511"
+          }
+        ]
+      },
+      {
+        "id": "3a79fb1c1e78dcdcbc6ac55222626c58ebdf3e9e",
+        "type": "FIX",
+        "text": " unified.FileUploader: Tooltip is shown in icon only mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170265100"
+          }
+        ]
+      },
       {
         "id": "0bc06af21375cea1e2c87740a32282886b7d9cc0",
         "type": "FEATURE",
