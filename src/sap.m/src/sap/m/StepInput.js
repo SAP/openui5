@@ -1590,7 +1590,8 @@ function(
 					onmouseup: function (oEvent) {
 						// check if the left mouse button is up
 						// handled in touchend for mobile
-						if (Device.system.desktop && oEvent.button === 0) {
+						// but the touchend comes before mousedown on android
+						if (oEvent.button === 0) {
 							this._bDelayedEventFire = undefined;
 							this._btndown = false;
 							this._stopSpin();
