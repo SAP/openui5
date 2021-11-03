@@ -11,6 +11,22 @@
 	vertical-align: bottom;
 }
 
+.newsButton.sapMBtn .sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator {
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 0;
+}
+
+.sapUiSizeCompact .newsButton.sapMBtn .sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator {
+	top: -0.25rem;
+	right: -0.125rem;
+}
+
+.sapUiDemokitCustomNLI.sapMNLI {
+	cursor: default;
+}
+
 .aboutDialog .sapMMsgStrip .sapMFT {
     word-break: break-word;
 }

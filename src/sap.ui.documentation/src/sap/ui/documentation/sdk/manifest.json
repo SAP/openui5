@@ -298,6 +298,13 @@
 					]
 				},
 				{
+					"pattern": "news",
+					"name": "news",
+					"target": [
+						"news"
+					]
+				},
+				{
 					"pattern": "search/{searchParam}:?options:",
 					"name": "search",
 					"target": [
@@ -421,6 +428,11 @@
 					"viewName": "Tools",
 					"viewLevel": 2,
 					"viewId": "tools"
+				},
+				"news": {
+					"viewName": "News",
+					"viewLevel": 2,
+					"viewId": "news"
 				},
 				"apiDetailInitial": {
 					"viewName": "ApiDetailInitial",

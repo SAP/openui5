@@ -97,6 +97,24 @@
 							</layoutData>
 						</Button>
 
+						<Button
+							visible="{=!${news>/newsPreparationFailureMessage}}"
+							id="notificationsButton"
+							tooltip="{i18n>APP_NEWS_BTN_TOOLTIP}"
+							press="handleNewsPress"
+							icon="sap-icon://bell"
+							type="Transparent"
+							class="newsButton">
+							<customData>
+								<BadgeCustomData
+									key="badge"
+									value="{news>/newsCount}"/>
+							</customData>
+							<layoutData>
+								<OverflowToolbarLayoutData priority="NeverOverflow" />
+							</layoutData>
+						</Button>
+
 						<MenuButton tooltip="{i18n>APP_INFORMATION_BTN_TOOLTIP}" id="aboutMenuButton" icon="sap-icon://action-settings" type="Transparent" visible="{=!${appView>/bSearchMode}}">
 							<layoutData>
 								<OverflowToolbarLayoutData priority="NeverOverflow" />

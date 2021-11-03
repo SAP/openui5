@@ -31,6 +31,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		}
 
 		if (!control.getItems().length && !control.getShowEmptyGroup()) {
+			InvisibleRenderer.render(rm, control, control.TagName);
 			return false;
 		}
 

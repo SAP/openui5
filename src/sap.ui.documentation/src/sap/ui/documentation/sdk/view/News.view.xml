@@ -1,0 +1,68 @@
+<mvc:View controllerName="sap.ui.documentation.sdk.controller.News"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		xmlns:core="sap.ui.core">
+
+	<MessagePage
+		visible="{=!!${/preparationFailureMessage}}"
+		text="{i18n>NEWS_PREP_FAILURE_TITLE}"
+		description="{/preparationFailureMessage}"
+		showHeader="false"
+		icon="sap-icon://message-warning"/>
+	<VBox visible="{=!${/preparationFailureMessage}}">
+		<NotificationList>
+
+			<NotificationListGroup
+				items="{path:  '/new', templateShareable: false}"
+				title="{i18n>NEWS_NEW_GROUP_TITLE}"
+				showCloseButton="false">
+
+				<buttons>
+					<Button text="{i18n>NEWS_BTN_MARK_AS_READ}" press="handleMarkAsRead" />
+				</buttons>
+
+				<NotificationListItem
+					title="{title}"
+					description="{description}"
+					datetime="{updated}"
+					close="handleNewsItemClose"
+					class="sapUiDemokitCustomNLI">
+					<buttons>
+						<Button visible="{= %{link} !== ''}" text="{i18n>NEWS_BTN_VISIT_LINK}" press="handleVisitLink">
+							<customData>
+								<core:CustomData key="newsLink" value="{link}"/>
+							</customData>
+						</Button>
+					</buttons>
+					<customData>
+						<core:CustomData key="newsID" value="{id}"/>
+					</customData>
+				</NotificationListItem>
+
+			</NotificationListGroup>
+
+			<NotificationListGroup
+				items="{path:  '/old', templateShareable: false}"
+				title="{i18n>NEWS_READ_GROUP_TITLE}"
+				showCloseButton="false">
+
+				<NotificationListItem
+					title="{title}"
+					description="{description}"
+					datetime="{updated}"
+					showCloseButton="false"
+					class="sapUiDemokitCustomNLI">
+					<buttons>
+						<Button visible="{= %{link} !== ''}" text="{i18n>NEWS_BTN_VISIT_LINK}" press="handleVisitLink">
+							<customData>
+								<core:CustomData key="newsLink" value="{link}"/>
+							</customData>
+						</Button>
+					</buttons>
+				</NotificationListItem>
+
+			</NotificationListGroup>
+		</NotificationList>
+	</VBox>
+</mvc:View>

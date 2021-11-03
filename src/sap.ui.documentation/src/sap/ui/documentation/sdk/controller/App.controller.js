@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/documentation/sdk/controller/BaseController",
+	"sap/ui/documentation/sdk/controller/util/NewsInfo",
 	"sap/ui/documentation/sdk/controller/util/SearchUtil",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/Filter",
@@ -34,6 +35,7 @@ sap.ui.define([
 	KeyCodes,
 	jQuery,
 	BaseController,
+	NewsInfo,
 	SearchUtil,
 	Controller,
 	Filter,
@@ -193,6 +195,9 @@ sap.ui.define([
 
 				}.bind(this));
 
+				this._oNewsModel = new JSONModel();
+				this.setModel(this._oNewsModel, "news");
+
 				// Cache view reference
 				this._oSupportedLangModel = new JSONModel();
 
@@ -212,6 +217,10 @@ sap.ui.define([
 
 				this._oConfigUtil = this.getOwnerComponent().getConfigUtil();
 				this._oCookieNames = this._oConfigUtil.COOKIE_NAMES;
+				this._sLocalStorageNewsName = this._oConfigUtil.LOCAL_STORAGE_NAMES['OLD_NEWS_IDS'];
+
+				NewsInfo.prepareNewsData(this._oConfigUtil);
+
 				this._bSupportsPrefersColorScheme = !!(window.matchMedia &&
 					(window.matchMedia('(prefers-color-scheme: dark)').matches ||
 					window.matchMedia('(prefers-color-scheme: light)').matches));
@@ -231,6 +240,7 @@ sap.ui.define([
 				}, this);
 
 				this.bus = Core.getEventBus();
+				this.bus.subscribe("newsChanged", "onDemoKitNewsChanged", this._syncNewsModelWithNewsInfo, this);
 
 				this._createConfigurationBasedOnURIInput();
 
@@ -287,6 +297,8 @@ sap.ui.define([
 				jQuery(document.body).addClass(this.getOwnerComponent().getContentDensityClass());
 
 				Device.orientation.attachHandler(this._onOrientationChange, this);
+
+				this._syncNewsModelWithNewsInfo();
 			},
 
 			onExit: function() {
@@ -376,6 +388,69 @@ sap.ui.define([
 
 					this._setHeaderSelectedKey("home");
 				}
+			},
+
+			navigateToNews: function() {
+				this.getRouter().navTo("news");
+			},
+
+			handleNewsPress: function (oEvent) {
+				var oButton = oEvent.getSource(),
+					oView = this.getView();
+
+				if (this._oNewsModel.getProperty("/newsCount") === 0) {
+					this.navigateToNews();
+				} else if (!this._oNewsPopover) {
+					Fragment.load({
+						name: "sap.ui.documentation.sdk.view.NewsPopover",
+						controller: this
+					}).then(function(oPopover) {
+						oView.addDependent(oPopover);
+						this._oNewsPopover = oPopover;
+						this._oNewsPopover.openBy(oButton);
+					}.bind(this));
+				} else {
+					this._oNewsPopover.openBy(oButton);
+				}
+			},
+
+			handleShowAllPress: function () {
+				this._oNewsPopover.close();
+				this.navigateToNews();
+			},
+
+			handleDismissAllPress: function () {
+				NewsInfo.moveAllNewItemsToOld();
+			},
+
+			handleNewsItemClose: function (oEvent) {
+				var oItem = oEvent.getSource(),
+					iItemCustomId = oItem.getCustomData()[0].getValue(),
+					oItemInfoInItemsProperty = this._oNewsModel.getProperty("/items").find(function(oItem){
+						return oItem.id === iItemCustomId;
+					});
+
+					NewsInfo.moveNewItemToOld(oItemInfoInItemsProperty);
+			},
+
+			handleVisitNewsLink: function(oEvent) {
+				var oItem = oEvent.getSource(),
+					sItemLink = oItem.getCustomData()[0].getValue();
+
+				URLHelper.redirect(sItemLink, true);
+			},
+
+			_syncNewsModelWithNewsInfo: function() {
+				var aNewsInfoCopy,
+					sPreparationFailureMessage = NewsInfo.getPreparationFailureMessage();
+
+				if (!sPreparationFailureMessage) {
+					aNewsInfoCopy = NewsInfo.getNewNewsArray().slice();
+					this._oNewsModel.setProperty("/items", aNewsInfoCopy);
+					this._oNewsModel.setProperty("/newsCount", aNewsInfoCopy.length);
+				}
+
+				this._oNewsModel.setProperty("/newsPreparationFailureMessage", sPreparationFailureMessage);
 			},
 
 			handleMenuItemClick: function (oEvent) {

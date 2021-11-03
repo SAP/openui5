@@ -19,6 +19,10 @@ sap.ui.define([
 			"DEMOKIT_IMPORTANT_MESSAGES_READ": "IMR"
 		},
 
+		"LOCAL_STORAGE_NAMES": {
+			"OLD_NEWS_IDS": "dk_old_news_ids"
+		},
+
 		constructor : function (oComponent) {
 			this._oComponent = oComponent;
 		},
@@ -64,6 +68,18 @@ sap.ui.define([
 			}
 
 			return "";
+		},
+
+		setLocalStorageItem: function (sItem, vValue) {
+			window.localStorage.setItem(sItem, JSON.stringify(vValue));
+		},
+
+		getLocalStorageItem: function (sItem) {
+			return JSON.parse(window.localStorage.getItem(sItem));
+		},
+
+		removeLocalStorageItem: function (sItem) {
+			window.localStorage.removeItem(sItem);
 		},
 
 		_getMasterTargetName: function(sRouteName) {
