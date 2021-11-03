@@ -243,6 +243,15 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	};
 
 	/**
+	 * Returns aria accessibility role for the no data entry.
+	 *
+	 * @returns {String}
+	 */
+	ListBaseRenderer.getNoDataAriaRole = function() {
+		return null;
+	};
+
+	/**
 	 * Returns the inner aria labelledby ids for the accessibility
 	 *
 	 * @param {sap.ui.core.Control} oControl an object representation of the control
@@ -312,6 +321,10 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	ListBaseRenderer.renderNoData = function(rm, oControl) {
 		rm.openStart("li", oControl.getId("nodata"));
 		rm.attr("tabindex", oControl.getKeyboardMode() == ListKeyboardMode.Navigation ? -1 : 0);
+		var sAriaRole = this.getNoDataAriaRole();
+		if (sAriaRole) {
+			rm.attr("role", sAriaRole);
+		}
 		rm.class("sapMLIB").class("sapMListNoData").class("sapMLIBTypeInactive");
 		ListItemBaseRenderer.addFocusableClasses.call(ListItemBaseRenderer, rm);
 		rm.openEnd();
