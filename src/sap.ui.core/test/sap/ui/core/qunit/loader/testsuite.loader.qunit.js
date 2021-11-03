@@ -64,11 +64,33 @@ sap.ui.define(function() {
 				autostart: false
 			},
 			/*
+			 * legacy-relevant:
+			 * Test-cases for...
+			 *   - conflict behavior of requireSync when in loader is configured async-mode.
+			 *   - Error-handling
+			 *
+			 * asyncMode_unavoidablySync.qunit.html is still an HTML page of its own as it wants to test the loader
+			 * without using the loader itself to setup the test.
+			 * (The generic starter Test.qunit.html and runTest.js script both use the loader internally)
+			 */
+			"asyncMode_unavoidablySync": {
+				/* separate test page as it only wants the loader, no core */
+				page: "test-resources/sap/ui/core/qunit/loader/asyncMode_unavoidablySync.qunit.html",
+				title: "Test Page for Module Loading (ui5loader)",
+				loader: {
+					paths: {
+						'fixture': 'test-resources/sap/ui/core/qunit/loader/fixture/'
+					}
+				},
+				bootCore: false,
+				autostart: false
+			},
+			/*
 			 * asyncMode_unmanagedDefine.qunit.html is still an HTML page of its own as it wants to test the loader
 			 * without using the loader itself to setup the test.
 			 * (The generic starter Test.qunit.html and runTest.js script both use the loader internally)
 			 */
-			asyncMode_unmanagedDefine: {
+			"asyncMode_unmanagedDefine": {
 				/* separate test page as it only wants the loader, no core */
 				page: "test-resources/sap/ui/core/qunit/loader/asyncMode_unmanagedDefine.qunit.html",
 				title: "Test Page for Module Loading (ui5loader)",
@@ -103,7 +125,8 @@ sap.ui.define(function() {
 				},
 				sinon: false
 			},
-			conflictWithRequire_unavoidablySync: {
+			// legacy-relevant: sync path tests
+			"conflictWithRequire_unavoidablySync": {
 				page: "test-resources/sap/ui/core/qunit/loader/conflictWithRequire_unavoidablySync.qunit.html",
 				title: "QUnit tests: conflict between require.js and ui5loader (sync)"
 			},
@@ -122,11 +145,12 @@ sap.ui.define(function() {
 				bootCore: false
 			},
 			/*
-			 * syncMode.qunit.html is still an HTML page of its own as it tests sync loading.
+			 * legacy-relevant:
+			 * syncMode_unavoidablySync.qunit.html is still an HTML page of its own as it tests sync loading.
 			 * The generic starter Test.qunit.html only supports async loading.
 			 */
-			syncMode: {
-				page: "test-resources/sap/ui/core/qunit/loader/syncMode.qunit.html",
+			"syncMode_unavoidablySync": {
+				page: "test-resources/sap/ui/core/qunit/loader/syncMode_unavoidablySync.qunit.html",
 				title: "Test Page for ui5loader (sync mode)",
 				loader: {
 					paths: {
@@ -134,8 +158,9 @@ sap.ui.define(function() {
 					}
 				}
 			},
-			syncModuleDefinition: {
-				page: "test-resources/sap/ui/core/qunit/loader/syncModuleDefinition.qunit.html",
+			// legacy-relevant: sync path tests
+			"syncModuleDefinition_unavoidablySync": {
+				page: "test-resources/sap/ui/core/qunit/loader/syncModuleDefinition_unavoidablySync.qunit.html",
 				title: "Test Page for ui5loader synchronous module definition"
 			}
 		}
