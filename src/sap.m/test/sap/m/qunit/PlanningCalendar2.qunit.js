@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon*/
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -742,15 +742,22 @@ sap.ui.define([
 	});
 
 	QUnit.test('clicking today navigates to todays month', function(assert) {
-		var oToday = new Date();
+		var oFakeNow = new Date(2016, 8, 10),
+			clock = sinon.useFakeTimers(oFakeNow.getTime());
+
+		this.oPC.setStartDate(new Date(2016, 5, 1));
 
 		//act
 		_clickTodayButton.call(this, this.oPC);
 
 		//assert
-		assert.equal(this.oPC.getStartDate().getFullYear(), oToday.getFullYear(), 'year is correct');
-		assert.equal(this.oPC.getStartDate().getMonth(), oToday.getMonth(), 'month is correct');
+		assert.equal(this.oPC.getStartDate().getFullYear(), oFakeNow.getFullYear(), 'year is correct');
+		assert.equal(this.oPC.getStartDate().getMonth(), oFakeNow.getMonth(), 'month is correct');
 		assert.equal(this.oPC.getStartDate().getDate(), 1, 'date is correct');
+		assert.strictEqual(document.activeElement.id, "oneMonthPlanningCalendar-OneMonthsRow-20160910", "Correct DOM element is focused");
+
+		//cleanup
+		clock.restore();
 	});
 
 	QUnit.test('switch to hours view shows the first hours of the month', function(assert) {
