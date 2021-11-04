@@ -142,7 +142,11 @@ sap.ui.define([
 		oObjectAttribute.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
-		assert.equal(oObjectAttribute.$().attr("role"), "link", "Active ObjectAttribute has link role.");
+		assert.equal(
+			oObjectAttribute.getDomRef().querySelector(".sapMObjectAttributeText").getAttribute("role"),
+			"link",
+			"Active ObjectAttribute text has link role."
+		);
 
 		// Clean up
 		oObjectAttribute.destroy();
@@ -380,7 +384,7 @@ sap.ui.define([
 
 		// assertions
 		assert.ok(oLink.hasClass("sapMLnk"), "The active attribute is rendered as sap.m.Link when the aggregation attributeLink is set.");
-		assert.equal(oLink.attr("tabindex"), -1, "The tabindex of the Link is set ot -1.");
+		assert.equal(oLink.attr("tabindex"), 0, "Link is focusable by default");
 		assert.equal(oLink[0].textContent, "this is sap.m.Link", "Text is the link test not the given from the text property.");
 
 		//Cleanup
@@ -399,14 +403,12 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// assertions
-		assert.equal(oAttr.$().attr("role"), "link", "ObjectAttribute with active=true has link role.");
 		assert.ok(oAttr.$().hasClass("sapMObjectAttributeActive"), "sapMObjectAttributeActive class is presented.");
 
 		// arrange
 		oAttr.setActive(false);
 
 		// assertions
-		assert.equal(oAttr.$().attr("role"), "link", "ObjectAttribute with active=false has link role.");
 		assert.ok(oAttr.$().hasClass("sapMObjectAttributeActive"), "sapMObjectAttributeActive class is presented.");
 
 		//Cleanup
@@ -430,21 +432,6 @@ sap.ui.define([
 
 		// assertions
 		assert.equal(oAttr.getAggregation('customContent').getText(), sExpected, "Text of the ObjectAttribute should be " + sExpected);
-
-		// cleanup
-		oAttr.destroy();
-	});
-
-	QUnit.test("When customContent is sap.m.Link it overrides its function _getTabindex", function (assert) {
-		// arrange
-		var oAttr = new ObjectAttribute({
-			title: "AttributeTitle",
-			customContent: new Link({ text: "LinkText" })
-		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
-
-		// assertions
-		assert.equal(oAttr.$().find(".sapMLnk").attr("tabindex"), "-1", "Tabindex of the Link should be -1");
 
 		// cleanup
 		oAttr.destroy();
@@ -675,6 +662,49 @@ sap.ui.define([
 		assert.ok(!this.oActiveAttr.$().hasClass("sapMObjectAttributeActive"), "sapMObjectAttributeActive class is not presented.");
 		assert.ok(!this.oActiveAttr.$().is('[role]'), "Active ObjectAttribute with no text does not have link role.");
 	});
+
+	QUnit.module("Accessibility");
+
+	QUnit.test("Aggregation sap.m.Link", function(assert) {
+
+		// arrange
+		// shortcut for sap.ui.core.aria.HasPopup
+		var AriaHasPopup = coreLibrary.aria.HasPopup,
+			oAttr1 = new ObjectAttribute({
+				text: "text",
+				customContent: [
+					new Link({text: "this is sap.m.Link"})
+				],
+				ariaHasPopup: AriaHasPopup.Dialog
+			}),
+			oAttr2 = new ObjectAttribute({
+				active: true,
+				text: "Active text",
+				ariaHasPopup: AriaHasPopup.Dialog
+			});
+
+		oAttr1.placeAt("qunit-fixture");
+		oAttr2.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// assertions
+		assert.equal(
+			oAttr1.getDomRef().querySelector(".sapMLnk").getAttribute("aria-haspopup"),
+			oAttr1.getAriaHasPopup().toLowerCase(),
+			"Aria-haspopup attribute properly rendered"
+		);
+
+		assert.equal(
+			oAttr2.getDomRef().querySelector(".sapMObjectAttributeText").getAttribute("aria-haspopup"),
+			oAttr2.getAriaHasPopup().toLowerCase(),
+			"Aria-haspopup attribute properly rendered"
+		);
+
+		//Cleanup
+		oAttr1.destroy();
+		oAttr2.destroy();
+	});
+
 
 	QUnit.module("Other");
 	QUnit.test("Empty ObjectAttribute will render a parent div", function (assert) {

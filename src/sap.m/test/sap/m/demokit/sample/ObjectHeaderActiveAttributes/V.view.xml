@@ -26,6 +26,7 @@
 		<ObjectAttribute
 			text="Provide feedback"
 			active="true"
+			ariaHasPopup="Dialog"
 			press="handleFeedbacklinkPressed" />
 		<ObjectAttribute
 			text="www.sap.com"

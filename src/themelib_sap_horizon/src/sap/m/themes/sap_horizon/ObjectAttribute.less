@@ -5,11 +5,11 @@
 
 @_sap_m_ObjectAttribute_ListTextShadowColor: none;
 
-.sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+.sapMObjectAttributeActive .sapMObjectAttributeText:focus {
 	position: relative;
 }
 
-.sapMObjectAttributeActive:focus .sapMObjectAttributeText::after {
+.sapMObjectAttributeActive .sapMObjectAttributeText:focus::after {
 	pointer-events: none;
 	display: block;
 	content: "";
@@ -22,7 +22,7 @@
 	border-radius: 0.25rem;
 }
 
-.sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+.sapMObjectAttributeActive .sapMObjectAttributeText:focus {
 	text-decoration: none;
 }
 
@@ -38,7 +38,7 @@
 
 .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:active,
 .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:hover,
-.sapMOHR .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:focus {
 	text-decoration: underline;
 	color: @sapUiLinkHover;
 }

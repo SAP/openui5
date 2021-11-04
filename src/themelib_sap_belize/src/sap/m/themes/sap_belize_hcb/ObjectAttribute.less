@@ -3,11 +3,11 @@
 /* Belize High Contrast Black theme       */
 /* ====================================== */
 
-.sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+.sapMObjectAttributeActive .sapMObjectAttributeText:focus {
 	position: relative;
 }
 
-html.sap-desktop .sapMObjectAttributeActive:focus .sapMObjectAttributeText::after {
+html.sap-desktop .sapMObjectAttributeActive .sapMObjectAttributeText:focus::after {
 	pointer-events: none;
 	display: block;
 	content: "";
@@ -19,7 +19,7 @@ html.sap-desktop .sapMObjectAttributeActive:focus .sapMObjectAttributeText::afte
 	outline: 0.125rem dotted @sapUiContentFocusColor;
 }
 
-html.sap-desktop .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+html.sap-desktop .sapMObjectAttributeActive .sapMObjectAttributeText:focus {
 	text-decoration: none;
 }
 

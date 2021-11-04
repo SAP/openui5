@@ -9,7 +9,8 @@ sap.ui.define(["sap/ui/core/library"],
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
-
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
 	/**
 	 * ObjectAttribute renderer.
 	 * @namespace
@@ -48,13 +49,9 @@ sap.ui.define(["sap/ui/core/library"],
 		}
 
 		// add tabindex, "active" class and ARIA only when the ObjectAttribute is clickable
-		// e.g. when is active ot the CustomContent is sap.m.Link
+		// e.g. when is active or the CustomContent is sap.m.Link
 		if (oOA._isClickable()) {
 			oRm.class("sapMObjectAttributeActive");
-			oRm.attr("tabindex", "0");
-			oRm.accessibilityState(oOA, {
-				role: "link"
-			});
 			if (!oOA.getTitle() && oOA.getText()) {
 			// in case of title only or text only, allow 100% of width to be taken
 				oRm.class("sapMObjectAttributeTextOnly");
@@ -122,10 +119,20 @@ sap.ui.define(["sap/ui/core/library"],
 
 	ObjectAttributeRenderer.renderActiveText = function (oRm, oOA, oParent) {
 		var oAttrAggregation = oOA.getAggregation("customContent"),
-			bRenderBDI = oOA.getTextDirection() === TextDirection.Inherit;
+			bRenderBDI = oOA.getTextDirection() === TextDirection.Inherit,
+			sAriaHasPopup = (oOA.getAriaHasPopup() === AriaHasPopup.None) ? "" : oOA.getAriaHasPopup().toLowerCase();
 
 		oRm.openStart("span", oOA.getId() + "-text");
 		oRm.class("sapMObjectAttributeText");
+		if (oAttrAggregation && oAttrAggregation.isA("sap.m.Link")) {
+			oAttrAggregation.setAriaHasPopup(oOA.getAriaHasPopup());
+		} else {
+			oRm.attr("tabindex", "0");
+			oRm.attr("role", "link");
+			if (sAriaHasPopup) {
+				oRm.attr("aria-haspopup", sAriaHasPopup);
+			}
+		}
 		oRm.openEnd();
 
 		if (oAttrAggregation && oParent) {

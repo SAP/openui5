@@ -36,11 +36,12 @@
 
 .sapMObjectAttributeActive .sapMObjectAttributeText:active,
 .sapMObjectAttributeActive .sapMObjectAttributeText:hover,
-.sapMObjectAttributeActive:focus .sapMObjectAttributeText,
+.sapMObjectAttributeActive .sapMObjectAttributeText:focus,
 .sapMObjectAttributeActive .sapMText:active,
 .sapMObjectAttributeActive .sapMText:focus,
 .sapMObjectAttributeActive .sapMText:hover {
 	text-decoration: underline;
+	outline: none;
 }
 
 .sapMObjectAttributeActive {
@@ -75,17 +76,12 @@
 }
 
 .sapMObjectAttributeDiv{
-	outline: none;
 	font-size: @sapMFontMediumSize;
 }
 
 .sapMLIBActive .sapMObjectAttributeText,
 .sapMLIBActive .sapMObjectAttributeDiv{
 	color: @sapUiListActiveTextColor;
-}
-
-html.sap-desktop .sapMObjectAttributeActive:focus {
-	outline: none;
 }
 
 .sapMObjectAttributeActive > span:only-of-type {
@@ -143,7 +139,7 @@ html.sap-desktop .sapMObjectAttributeActive:focus {
 
 .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:active,
 .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:hover,
-.sapMOHR .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:focus {
 	text-decoration: none;
 }
 
@@ -183,6 +179,6 @@ html.sap-desktop .sapMObjectAttributeActive:focus {
 
 .sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:active,
 .sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:hover,
-.sapMOH .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:focus {
 	text-decoration: none;
 }
