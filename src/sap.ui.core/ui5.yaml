@@ -210,6 +210,7 @@ builder:
               - sap/ui/test/starter/_configureLoader.js
             declareRawModules: false
             resolve: true
+            sort: true
           - mode: raw
             filters:
               - ui5loader-autoconfig.js
@@ -240,6 +241,7 @@ builder:
               - sap/ui/test/starter/_configureLoader.js
             declareRawModules: false
             resolve: true
+            sort: true
           - mode: raw
             filters:
               - ui5loader-autoconfig.js
