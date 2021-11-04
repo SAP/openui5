@@ -140,7 +140,7 @@ sap.ui.define([
 			table: oTable,
 			keyPath: "key",
 			descriptionPath: "text",
-			filterFields: "text,additionalText",
+			filterFields: "*text,additionalText*",
 			conditions: aConditions, // don't need to test the binding of Container here
 			config: { // don't need to test the binding of Container here
 				maxConditions: iMaxConditions,
@@ -291,12 +291,29 @@ sap.ui.define([
 
 	});
 
-	// QUnit.test("Filtering without $search", function(assert) {
+	QUnit.test("Filtering without $search", function(assert) {
 
-	// 	oMTable.setFilterValue("x");
-	// 	var aItems = oTable.getItems();
+		var oListBinding = oTable.getBinding("items");
+		sinon.spy(oListBinding, "filter");
+		oMTable.setFilterValue("x");
 
-	// });
+		// compare arguments of filter as Filter object is changed during filtering
+		assert.equal(oListBinding.filter.args.length, 1, "ListBinding filter called once");
+		assert.equal(oListBinding.filter.args[0].length, 2, "ListBinding filter number of arguments");
+		assert.equal(oListBinding.filter.args[0][0].length, 1, "ListBinding filter is array with one filter");
+		assert.equal(oListBinding.filter.args[0][0][0].aFilters.length, 2, "ListBinding filter contains 2 Filters filter");
+		assert.equal(oListBinding.filter.args[0][0][0].aFilters[0].sPath, "text", "ListBinding 1. filter path");
+		assert.equal(oListBinding.filter.args[0][0][0].aFilters[0].sOperator, FilterOperator.StartsWith, "ListBinding 1. filter operator");
+		assert.equal(oListBinding.filter.args[0][0][0].aFilters[0].oValue1, "x", "ListBinding 1. filter value1");
+		assert.equal(oListBinding.filter.args[0][0][0].aFilters[1].sPath, "additionalText", "ListBinding 2. filter path");
+		assert.equal(oListBinding.filter.args[0][0][0].aFilters[1].sOperator, FilterOperator.StartsWith, "ListBinding 2. filter operator");
+		assert.equal(oListBinding.filter.args[0][0][0].aFilters[1].oValue1, "x", "ListBinding 2. filter value1");
+		assert.equal(oListBinding.filter.args[0][1], FilterType.Application, "ListBinding filter type");
+		var aItems = oTable.getItems();
+		assert.equal(aItems.length, 1, "number of items");
+		assert.equal(aItems[0].getCells()[0].getText(), "I3", "Key of item");
+
+	});
 
 	QUnit.test("Filtering for InParameters", function(assert) {
 
@@ -334,6 +351,7 @@ sap.ui.define([
 		sinon.spy(oListBinding, "changeParameters");
 		oListBinding.suspend(); // check for resuming
 
+		oMTable.setFilterFields("$search");
 		oMTable.setFilterValue("X");
 		assert.ok(ValueHelpDelegateV4.isSearchSupported.called, "ValueHelpDelegateV4.isSearchSupported called");
 		assert.ok(ValueHelpDelegateV4.adjustSearch.called, "ValueHelpDelegateV4.adjustSearch called");
@@ -377,6 +395,38 @@ sap.ui.define([
 		fnResolve();
 		oContainer.isValueHelpDelegateInitialized.restore();
 		oContainer.awaitValueHelpDelegate.restore();
+
+	});
+
+	QUnit.test("isSearchSupported without $search", function(assert) {
+
+		var bSupported = oMTable.isSearchSupported();
+		assert.ok(bSupported, "supported for filtering");
+
+	});
+
+	QUnit.test("isSearchSupported uning $search", function(assert) {
+
+		sinon.stub(oContainer, "getValueHelpDelegate").returns(ValueHelpDelegateV4);
+		sinon.spy(ValueHelpDelegateV4, "isSearchSupported"); // returns false for non V4-ListBinding
+		var oListBinding = oTable.getBinding("items");
+		oListBinding.changeParameters = function(oParameters) {}; // just fake V4 logic
+
+		oMTable.setFilterFields("$search");
+		var bSupported = oMTable.isSearchSupported();
+		assert.ok(bSupported, "supported for $search");
+		assert.ok(ValueHelpDelegateV4.isSearchSupported.calledOnce, "ValueHelpDelegateV4.isSearchSupported called");
+
+		oContainer.getValueHelpDelegate.restore();
+		ValueHelpDelegateV4.isSearchSupported.restore();
+
+	});
+
+	QUnit.test("isSearchSupported - no search", function(assert) {
+
+		oMTable.setFilterFields();
+		var bSupported = oMTable.isSearchSupported();
+		assert.notOk(bSupported, "not supported if no FilterFields");
 
 	});
 
@@ -1231,6 +1281,7 @@ sap.ui.define([
 			$search: [Condition.createCondition("StartsWith", "i")]
 		});
 
+		oMTable.setFilterFields("$search");
 		oMTable.setFilterBar(oFilterBar);
 		oFilterBar.fireSearch();
 

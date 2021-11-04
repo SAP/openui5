@@ -398,8 +398,27 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isTypeaheadSupported", function(assert) {
+	QUnit.test("isTypeaheadSupported - not supported(default)", function(assert) {
 
+		var oPromise = oValueHelp.isTypeaheadSupported();
+		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
+
+		if (oPromise) {
+			var fnDone = assert.async();
+			oPromise.then(function(bSupported) {
+				assert.strictEqual(bSupported, false, "TypeAhead not supported");
+				fnDone();
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called");
+				fnDone();
+			});
+		}
+
+	});
+
+	QUnit.test("isTypeaheadSupported - supported", function(assert) {
+
+		sinon.stub(oContainer, "isTypeaheadSupported").returns(true);
 		var oPromise = oValueHelp.isTypeaheadSupported();
 		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
 

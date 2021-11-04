@@ -203,6 +203,13 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("isSearchSupported", function(assert) {
+
+		var bSupported = oContent.isSearchSupported();
+		assert.notOk(bSupported, "not supported as default");
+
+	});
+
 	QUnit.test("provideScrolling", function(assert) {
 
 		assert.ok(oContent.provideScrolling(), "scrolling needed if not provided by Container");

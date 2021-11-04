@@ -414,6 +414,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines if the content supports search
+	 *
+	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
+	 *
+	 * @returns {boolean} Flag if searching is supported
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Container
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	Content.prototype.isSearchSupported = function () {
+		return false;
+	};
+
+	/**
 	 * Determines if the the content needs to provide a scrolling mechanism like a
 	 * <code>ScrollContainer</code>
 	 *

@@ -26,7 +26,7 @@
 				delegate="{name: 'sap/ui/v4demo/delegate/FB0-FH1-ValueHelp.delegate', payload: {}}">
 				<mdc:typeahead>
 					<mdcv:Popover title="Test1">
-						<mdcvc:MTable keyPath="ID" descriptionPath="name"/>
+						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search"/>
 					</mdcv:Popover>
 				</mdc:typeahead>
 				<mdc:dialog>
@@ -39,7 +39,7 @@
 				delegate="{name: 'sap/ui/v4demo/delegate/FB0-FH1-1-multicombo-ValueHelp.delegate', payload: {}}">
 				<mdc:typeahead>
 					<mdcv:Popover title="Test1">
-						<mdcvc:MTable keyPath="ID" descriptionPath="name" useAsValueHelp="true">
+						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="true">
 							<Table id="mTable1-1-multicombo" items='{path : "/Authors"}' growing="true" growingScrollToLoad="true" width="20rem">
 								<columns>
 									<Column width="5rem">
@@ -80,7 +80,7 @@
 				delegate="{name: 'sap/ui/v4demo/delegate/FB0-FH1-10-ValueHelp.delegate', payload: {}}">
 				<mdc:typeahead>
 					<mdcv:Popover title="Test1">
-						<mdcvc:MTable keyPath="ID" descriptionPath="name"/>
+						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search"/>
 					</mdcv:Popover>
 				</mdc:typeahead>
 				<mdc:dialog>
@@ -93,7 +93,7 @@
 				delegate="{name: 'sap/ui/v4demo/delegate/FB0-FH1-11-ValueHelp.delegate', payload: {}}">
 				<mdc:typeahead>
 					<mdcv:Popover title="Test2">
-						<mdcvc:MTable keyPath="ID" descriptionPath="name"/>
+						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search"/>
 					</mdcv:Popover>
 				</mdc:typeahead>
 				<mdc:dialog>
@@ -206,6 +206,40 @@
 				</mdc:dialog>
 			</mdc:ValueHelp>
 
+			<mdc:ValueHelp id="FH-Books1"
+				delegate="{name: 'sap/ui/v4demo/delegate/FH-Books-ValueHelp.delegate', payload: {filter: '$search'}}">
+				<mdc:typeahead>
+					<mdcv:Popover id="FH_Books1-Pop" title="Books">
+						<mdcvc:MTable id="FH_Books1-Typeahead" keyPath="ID" descriptionPath="title" filterFields="$search"/>
+					</mdcv:Popover>
+				</mdc:typeahead>
+				<mdc:dialog>
+					<mdcv:Dialog id="FH_Books1-Dialog" title="Books"/>
+				</mdc:dialog>
+			</mdc:ValueHelp>
+			<mdc:ValueHelp id="FH-Books2"
+				delegate="{name: 'sap/ui/v4demo/delegate/FH-Books-ValueHelp.delegate', payload: {filter: '*title,descr*'}}">
+				<mdc:typeahead>
+					<mdcv:Popover id="FH_Books2-Pop" title="Books">
+						<mdcvc:MTable id="FH_Books2-Typeahead" keyPath="ID" descriptionPath="title" filterFields="*title,descr*"/>
+					</mdcv:Popover>
+				</mdc:typeahead>
+				<mdc:dialog>
+					<mdcv:Dialog id="FH_Books2-Dialog" title="Books"/>
+				</mdc:dialog>
+			</mdc:ValueHelp>
+			<mdc:ValueHelp id="FH-Books3"
+				delegate="{name: 'sap/ui/v4demo/delegate/FH-Books-ValueHelp.delegate', payload: {filter: ''}}">
+				<mdc:typeahead>
+					<mdcv:Popover id="FH_Books3-Pop" title="Books">
+						<mdcvc:MTable id="FH_Books3-Typeahead" keyPath="ID" descriptionPath="title"/>
+					</mdcv:Popover>
+				</mdc:typeahead>
+				<mdc:dialog>
+					<mdcv:Dialog id="FH_Books3-Dialog" title="Books"/>
+				</mdc:dialog>
+			</mdc:ValueHelp>
+
 		</mdc:dependents>
 		<mdc:filterItems>
 			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
@@ -311,6 +345,33 @@
 				dataType="sap.ui.model.odata.type.String"
 				fieldHelp="FB0-FH-City"
 				display="ValueDescription"
+				maxConditions="{settings>/maxConditions}"/>
+			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+				id="FB0-FF9"
+				label="Book ($search)"
+				conditions="{$filters>/conditions/ID}"
+				dataType="sap.ui.model.odata.type.Int32"
+				dataTypeFormatOptions="{groupingEnabled: false}"
+				fieldHelp="FH-Books1"
+				display="Description"
+				maxConditions="{settings>/maxConditions}"/>
+			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+				id="FB0-FF10"
+				label="Book (FilterFields)"
+				conditions="{$filters>/conditions/ID}"
+				dataType="sap.ui.model.odata.type.Int32"
+				dataTypeFormatOptions="{groupingEnabled: false}"
+				fieldHelp="FH-Books2"
+				display="Description"
+				maxConditions="{settings>/maxConditions}"/>
+			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+				id="FB0-FF11"
+				label="Book (no search)"
+				conditions="{$filters>/conditions/ID}"
+				dataType="sap.ui.model.odata.type.Int32"
+				dataTypeFormatOptions="{groupingEnabled: false}"
+				fieldHelp="FH-Books3"
+				display="Description"
 				maxConditions="{settings>/maxConditions}"/>
 		</mdc:filterItems>
 	</mdc:FilterBar>

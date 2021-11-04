@@ -437,6 +437,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines if the content of the container supports typeahead
+	 *
+	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
+	 *
+	 * @returns {boolean} Flag if searching is supported
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.ValueHelp, sap.ui.mdc.valueHelp.base.Content
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	Container.prototype.isTypeaheadSupported = function () {
+		return false;
+	};
+
+	/**
 	 * Determines if the container provides a own scroll functionality.
 	 * If not, the <code>Content</code> needs to provide a scrolling solution like a <code>ScrollContainer</code>.
 	 *

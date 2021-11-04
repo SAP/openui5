@@ -446,6 +446,13 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("isTypeaheadSupported", function(assert) {
+
+		var bSupported = oContainer.isTypeaheadSupported();
+		assert.notOk(bSupported, "not supported as default");
+
+	});
+
 	QUnit.test("providesScrolling", function(assert) {
 
 		var bScrolling = oContainer.providesScrolling();
