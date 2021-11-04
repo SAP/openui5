@@ -1,6 +1,6 @@
 /* ================================== */
 /* CSS for control sap.f/CardLoading  */
-/* Base theme          */
+/* Base theme                         */
 /* ================================== */
 @_sap_f_Card_FocusBorderWidth: 1px;
 @sap_f_Card_Background_Placeholder_Color: @sapContent_Placeholderloading_Background;
@@ -134,33 +134,6 @@
 				fill: @sapUiTileBackground;
 			}
 		}
-
-		.sapFCardContentShimmerPlaceholderItem {
-			height: 2.75rem;
-			padding: 0 1rem 0 1rem;
-			box-sizing: border-box;
-			display: flex;
-			position: relative;
-			align-items: center;
-			flex: 1 1 auto;
-
-			.sapFCardContentShimmerPlaceholderImg {
-				margin: 0rem 0.75rem 0rem 0rem;
-				height: 2rem;
-				width: 2rem;
-				display: inline-block;
-			}
-
-			.sapFCardContentShimmerPlaceholderRows {
-				flex-grow: 1;
-
-				.sapFCardContentShimmerPlaceholderRow {
-					height: 0.75rem;
-					margin-bottom: 0.5rem;
-					margin-top: 0.5rem;
-				}
-			}
-		}
 	}
 
 	.sapFCardLoadingShimmer {
@@ -218,11 +191,5 @@
 
 	.sapFCardFilter::after {
 		height: 1.8rem;
-	}
-
-	.sapFCardContent {
-		.sapFCardContentShimmerPlaceholderItem {
-			height: 2rem;
-		}
 	}
 }

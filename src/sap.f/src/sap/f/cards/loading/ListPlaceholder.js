@@ -8,7 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new <code>loading</code>.
+	 * Constructor for a new <code>ListPlaceholder</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
@@ -22,7 +22,7 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @since 1.76
-	 * @alias sap.f.cards.loading.ListLoadingContent
+	 * @alias sap.f.cards.loading.ListPlaceholder
 	 */
 	var ListPlaceholder = Control.extend("sap.f.cards.loading.ListPlaceholder", {
 		metadata: {
@@ -74,36 +74,33 @@ sap.ui.define([
 
 				for (var i = 0; i < iMaxItems; i++) {
 					oRm.openStart("div")
-						.class("sapFCardContentShimmerPlaceholderItem")
+						.class("sapFCardListPlaceholderItem")
 						.style("height", oControl.getItemHeight())
 						.openEnd();
 
 					if (oItem && oItem.icon) {
 						oRm.openStart("div")
-							.class("sapFCardContentShimmerPlaceholderImg")
+							.class("sapFCardListPlaceholderImg")
 							.class("sapFCardLoadingShimmer")
 							.openEnd()
 							.close("div");
 					}
 
 					oRm.openStart("div")
-						.class("sapFCardContentShimmerPlaceholderRows")
+						.class("sapFCardListPlaceholderRows")
 						.openEnd();
 
-					if (oItem && oItem.title) {
-						this.renderRow(oRm);
-					}
+					if (oItem) {
+						this.renderTitleAndDescription(oRm, oItem);
+						this.renderAttributes(oRm, oItem);
 
-					if (oItem && oItem.description) {
-						this.renderRow(oRm);
-					}
+						if (oItem.chart) {
+							this.renderRow(oRm);
+						}
 
-					if (oItem && oItem.chart) {
-						this.renderRow(oRm);
-					}
-
-					if (oItem && oItem.actionsStrip) {
-						this.renderRow(oRm);
+						if (oItem.actionsStrip) {
+							this.renderRow(oRm);
+						}
 					}
 
 					oRm.close("div");
@@ -112,12 +109,58 @@ sap.ui.define([
 				oRm.close("div");
 			},
 
-			renderRow: function (oRm) {
+			renderTitleAndDescription: function (oRm, oItem) {
+				if (oItem.attributes && oItem.title && oItem.description) {
+					this.renderRow(oRm, true);
+					return;
+				}
+
+				if (oItem.title) {
+					this.renderRow(oRm);
+				}
+
+				if (oItem.description) {
+					this.renderRow(oRm);
+				}
+			},
+
+			renderRow: function (oRm, bCombined) {
 				oRm.openStart("div")
-					.class("sapFCardContentShimmerPlaceholderRow")
-					.class("sapFCardLoadingShimmer")
-					.openEnd()
+					.class("sapFCardListPlaceholderRow")
+					.class("sapFCardLoadingShimmer");
+
+				if (bCombined) {
+					oRm.class("sapFCardListPlaceholderRowCombined");
+				}
+
+				oRm.openEnd()
 					.close("div");
+			},
+
+			renderAttributes: function (oRm, oItem) {
+				if (!oItem.attributes) {
+					return;
+				}
+
+				var iAttrRows = oItem.attributes.length / 2 + 1;
+
+				for (var j = 0; j < iAttrRows; j++) {
+					oRm.openStart("div")
+						.class("sapFCardListPlaceholderRow")
+						.openEnd();
+
+					var iAttrPerRow = j === iAttrRows - 1 ? 1 : 2; // render single attribute on the last row
+
+					for (var i = 0; i < iAttrPerRow; i++) {
+						oRm.openStart("div")
+							.class("sapFCardListPlaceholderAttr")
+							.class("sapFCardLoadingShimmer")
+							.openEnd()
+							.close("div");
+					}
+					oRm.close("div");
+				}
+
 			}
 		}
 	});
