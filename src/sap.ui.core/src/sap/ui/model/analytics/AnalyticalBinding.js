@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Disable some ESLint rules. camelcase (some "_" in names to indicate indexed variables (like in math)), valid-jsdoc (not completed yet), no-warning-comments (some TODOs are left)
+// Disable some ESLint rules. camelcase (some "_" in names to indicate indexed variables (like in math)), valid-jsdoc (not completed yet)
 // All other warnings, errors should be resolved
 /*eslint camelcase:0, valid-jsdoc:0, no-warning-comments:0, max-len:0 */
 
@@ -1474,7 +1474,6 @@ sap.ui.define([
 						oGroupIdRange.threshold);
 			}
 
-			// TODO check current code works, but it would be more natural if this _considerRequestGrouping would be outside of this loop
 			var aRequestId = [];
 			for (var j = -1, sGroupId2; (sGroupId2 = aGroupId[++j]) !== undefined; ) {
 				aRequestId.push(this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sGroupId2}));
@@ -2423,7 +2422,7 @@ sap.ui.define([
 				aGroupMembersAutoExpansionRequestDetails.push(oLevelMembersRequestDetails);
 				aRequestId.push(oLevelMembersRequestDetails.sRequestId);
 			} else if (oLevelFilter && oLevelFilter.aFilters.length > 0) {
-				if (!oLevelFilter._bMultiFilter || oLevelFilter.bAnd) { // TODO remove this test once impl got mature to get rid of access to internal member; it is a consistency check if break-up will deliver expected results...
+				if (!oLevelFilter._bMultiFilter || oLevelFilter.bAnd) {
 					oLogger.fatal("level filter in wrong shape; cannot break it up");
 				}
 				for (var i = 0; i < oLevelFilter.aFilters.length; i++) { // break up level filter into its tuple filters combined with logical OR
@@ -2939,7 +2938,7 @@ sap.ui.define([
 			this.mServiceFinalLength[sGroupId] = true;
 			this._setServiceKey(this._getKeyIndexMapping(sGroupId, 0), AnalyticalBinding._artificialRootContextGroupId);
 			this.bNeedsUpdate = true;
-			// simulate the async behavior for the root context in case of having no sums (TODO: reconsider!)
+			// simulate the async behavior for the root context in case of having no sums
 			setTimeout(function() {
 				if (that._cleanupGroupingForCompletedRequest(oRequestDetails.sRequestId)) {
 					that.fireDataReceived({__simulateAsyncAnalyticalBinding: true});
@@ -4213,8 +4212,6 @@ sap.ui.define([
 
 	// substitute for indexOf in the key array for some group
 	AnalyticalBinding.prototype._findKeyIndex = function(sGroupId, sKey) {
-		// TODO optimize by first looking into mMultiUnitKey; if not found, search in mServiceKey; if not found, return -1
-
 		// naive implementation follows
 		var aKeyIndex = this.mKeyIndex[sGroupId];
 		var aServiceKey = this.mServiceKey[sGroupId];
@@ -4599,10 +4596,14 @@ sap.ui.define([
 							bChangeDetected = true;
 							return false;
 						}
+
+						return true;
 					});
 					if (bChangeDetected) {
 						return false;
 					}
+
+					return true;
 				});
 			}
 			if (!mChangedEntities && !mEntityTypes) { // default
@@ -4638,10 +4639,14 @@ sap.ui.define([
 							bChangeDetected = true;
 							return false;
 						}
+
+						return true;
 					});
 					if (bChangeDetected) {
 						return false;
 					}
+
+					return true;
 				});
 			}
 		}
@@ -4780,6 +4785,7 @@ sap.ui.define([
 			return this.oModel._createRequestUrl(sPath, null, aParam).replace(/ /g, "%20");
 		}
 
+		return undefined;
 	};
 
 	//**********************************

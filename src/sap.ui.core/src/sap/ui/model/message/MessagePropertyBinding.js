@@ -26,7 +26,7 @@ sap.ui.define([
 	 */
 	var MessagePropertyBinding = ClientPropertyBinding.extend("sap.ui.model.message.MessagePropertyBinding");
 
-	/**
+	/*
 	 * @see sap.ui.model.PropertyBinding.prototype.setValue
 	 */
 	MessagePropertyBinding.prototype.setValue = function(oValue){
