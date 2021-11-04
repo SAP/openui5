@@ -83,7 +83,6 @@ sap.ui.define([
 			BasePanel.prototype.init.apply(this, arguments);
 
 			this._bindListItems();
-			this.setEnableReorder(true);
 
 		},
 		renderer: {}
@@ -161,6 +160,7 @@ sap.ui.define([
 		var sId = this._bMobileMode ? this.getId() + "-innerP13nListMobile" : this.getId() + "-innerP13nList";
 
 		var oTable = new Table(sId, Object.assign(this._getListControlConfig(), {}));
+		this.setEnableReorder(true); //We always want reordering to be active in this panel
 
 		oTable.addEventDelegate({
 			onAfterRendering: this._checkFocusAfterTableRerender.bind(this)
@@ -248,7 +248,7 @@ sap.ui.define([
 		var oComboBox = new ComboBox({
 			id: "p13nPanel-templateComboBox-" + sKind,
 			width: "100%",
-			placeholder: this._getPlaceholderTextForKind(sKind),
+			placeholder: this._getPlaceholderTextForTemplate(sKind),
 			items: {
 				path: this.P13N_MODEL + ">/items",
 				template: new Item({
@@ -266,19 +266,9 @@ sap.ui.define([
 		return oComboBox;
 	};
 
-	ChartItemPanel.prototype._getPlaceholderTextForKind = function(sKind) {
+	ChartItemPanel.prototype._getPlaceholderTextForTemplate = function(sKind) {
 		var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-		var sPlaceholderMeasure = MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_MEASURE');
-		var sPlaceholderDimension = MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_DIMENSION');
-
-		var mPlaceholderTexts = {
-			"Aggregatable": sPlaceholderMeasure,
-			"Groupable" : sPlaceholderDimension,
-			"Measure": sPlaceholderMeasure,
-			"Dimension" : sPlaceholderDimension
-		};
-
-		return mPlaceholderTexts[sKind];
+		return MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_PLACEHOLDER');
 	};
 
 	ChartItemPanel.prototype._getRoleSelect = function() {
@@ -791,7 +781,7 @@ sap.ui.define([
 		if (this._bMobileMode){
 			oConfig.columns = [new Column({
 				header: new Text({
-					text: this._getResourceTextMDC("chart.PERSONALIZATION_DIALOG_COLUMN_DESCRIPTION") + " / " + this._getResourceTextMDC("chart.PERSONALIZATION_DIALOG_COLUMN_TYPE")
+					text: this._getResourceTextMDC("chart.PERSONALIZATION_DIALOG_COLUMN_DESCRIPTION") + " / " + this._getResourceTextMDC("chart.PERSONALIZATION_DIALOG_COLUMN_ROLE")
 				})
 			}), new Column()];
 		} else {
@@ -804,7 +794,7 @@ sap.ui.define([
 
 			var oRoleColumn = new Column({
 				header: new Text({
-					text: this._getResourceTextMDC("chart.PERSONALIZATION_DIALOG_COLUMN_TYPE")
+					text: this._getResourceTextMDC("chart.PERSONALIZATION_DIALOG_COLUMN_ROLE")
 				})
 			});
 			oConfig.columns = [oDescColumn, oRoleColumn, new Column()];
@@ -1029,15 +1019,19 @@ sap.ui.define([
 	};
 
 	ChartItemPanel.prototype._getDragDropConfig = function () {
-		var oDndConfig = BasePanel.prototype._getDragDropConfig.apply(this, arguments);
+		if (!this._oDragDropInfo) {
+			var oDndConfig = BasePanel.prototype._getDragDropConfig.apply(this, arguments);
 
-		oDndConfig.attachDragStart(this._checkDragStart.bind(this));
-		oDndConfig.attachDragEnter(this._checkDrag.bind(this));
-		oDndConfig.attachDragEnd(function() {
-			this._oDraggedItem = null;
-		}.bind(this));
+			oDndConfig.attachDragStart(this._checkDragStart.bind(this));
+			oDndConfig.attachDragEnter(this._checkDrag.bind(this));
+			oDndConfig.attachDragEnd(function() {
+				this._oDraggedItem = null;
+			}.bind(this));
 
-		return oDndConfig;
+			return oDndConfig;
+		}
+
+		return this._oDragDropInfo;
 	};
 
 	ChartItemPanel.prototype._checkDrag = function(oEvent) {

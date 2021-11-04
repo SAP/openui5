@@ -107,10 +107,7 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_getPlaceholderTextForKind", function(assert){
-		assert.ok(this.oChartItemPanel._getPlaceholderTextForKind("Dimension") == MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_DIMENSION'), "Dimension has correct placeholder text");
-		assert.ok(this.oChartItemPanel._getPlaceholderTextForKind("Groupable") == MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_DIMENSION'), "Dimension has correct placeholder text");
-		assert.ok(this.oChartItemPanel._getPlaceholderTextForKind("Measure") == MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_MEASURE'), "Dimension has correct placeholder text");
-		assert.ok(this.oChartItemPanel._getPlaceholderTextForKind("Aggregatable") == MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_MEASURE'), "Dimension has correct placeholder text");
+		assert.ok(this.oChartItemPanel._getPlaceholderTextForTemplate() == MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_PLACEHOLDER'), "Templatecorrect placeholder text");
 	}.bind(this));
 
 	QUnit.test("_getRoleSelect", function(assert){
@@ -221,13 +218,13 @@ sap.ui.define([
 
 		assert.ok(oConfig.columns.length == 3, "3 Columns were created");
 		assert.ok(oConfig.columns[0].getHeader().getText() == MDCRb.getText('chart.PERSONALIZATION_DIALOG_COLUMN_DESCRIPTION'), "Column 1 has correct text");
-		assert.ok(oConfig.columns[1].getHeader().getText() == MDCRb.getText('chart.PERSONALIZATION_DIALOG_COLUMN_TYPE'), "Column 2 has correct text");
+		assert.ok(oConfig.columns[1].getHeader().getText() == MDCRb.getText('chart.PERSONALIZATION_DIALOG_COLUMN_ROLE'), "Column 2 has correct text");
 		assert.ok(oConfig.mode == "None", "Mode was set to None");
 
 		this.oChartItemPanel._bMobileMode = true;
 		oConfig = this.oChartItemPanel._getListControlConfig();
 		assert.ok(oConfig.columns.length == 2, "2 Columns were created for mobile");
-		assert.ok(oConfig.columns[0].getHeader().getText() == MDCRb.getText('chart.PERSONALIZATION_DIALOG_COLUMN_DESCRIPTION')  + " / " + MDCRb.getText('chart.PERSONALIZATION_DIALOG_COLUMN_TYPE'), "Column 1 has correct text");
+		assert.ok(oConfig.columns[0].getHeader().getText() == MDCRb.getText('chart.PERSONALIZATION_DIALOG_COLUMN_DESCRIPTION')  + " / " + MDCRb.getText('chart.PERSONALIZATION_DIALOG_COLUMN_ROLE'), "Column 1 has correct text");
 		assert.ok(oConfig.mode == "None", "Mode was set to None");
 	}.bind(this));
 
@@ -579,7 +576,7 @@ sap.ui.define([
 		var oComboBox = this.oChartItemPanel._getTemplateComboBox("Measure");
 
 		assert.ok(oComboBox instanceof sap.m.ComboBox, "ComboBox is returned");
-		assert.ok(oComboBox.getPlaceholder() == MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_MEASURE'), "ComboBox has correct placeholder");
+		assert.ok(oComboBox.getPlaceholder() == MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_PLACEHOLDER'), "ComboBox has correct placeholder");
 
 	}.bind(this));
 
