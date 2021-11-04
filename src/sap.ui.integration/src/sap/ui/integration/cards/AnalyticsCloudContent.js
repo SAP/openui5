@@ -85,6 +85,8 @@ sap.ui.define([
 	 */
 	AnalyticsCloudContent.prototype.setConfiguration = function (oConfiguration) {
 		BaseContent.prototype.setConfiguration.apply(this, arguments);
+		oConfiguration = this.getParsedConfiguration();
+
 		//workaround until actions refactor
 		this.fireEvent("_actionContentReady");
 		this._oActions.attach({
@@ -128,7 +130,7 @@ sap.ui.define([
 		}
 
 		var oCard = this.getCardInstance(),
-			oConfiguration = this.getConfiguration(),
+			oConfiguration = this.getParsedConfiguration(),
 			oBindingContext = this.getBindingContext(),
 			sPath,
 			oChartOptions;

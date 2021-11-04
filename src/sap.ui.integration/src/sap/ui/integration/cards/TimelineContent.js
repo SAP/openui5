@@ -115,14 +115,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Setter for configuring a <code>sap.ui.integration.cards.TimelineContent</code>.
-	 *
-	 * @public
-	 * @param {Object} oConfiguration Configuration object used to create the internal list.
-	 * @returns {this} Pointer to the control instance to allow method chaining.
+	 * @override
 	 */
 	TimelineContent.prototype.setConfiguration = function (oConfiguration) {
 		BaseListContent.prototype.setConfiguration.apply(this, arguments);
+		oConfiguration = this.getParsedConfiguration();
 
 		if (!oConfiguration) {
 			return this;
@@ -144,7 +141,7 @@ sap.ui.define([
 	 * Handler for when data is changed.
 	 */
 	TimelineContent.prototype.onDataChanged = function () {
-		this._checkHiddenNavigationItems(this.getConfiguration().item);
+		this._checkHiddenNavigationItems(this.getParsedConfiguration().item);
 	};
 
 	/**

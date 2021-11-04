@@ -5,12 +5,14 @@ sap.ui.define([
 	"./BaseFilter",
 	"sap/m/Select",
 	"sap/ui/core/ListItem",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/integration/util/BindingResolver"
 ], function (
 	BaseFilter,
 	Select,
 	ListItem,
-	JSONModel
+	JSONModel,
+	BindingResolver
 ) {
 	"use strict";
 
@@ -90,6 +92,34 @@ sap.ui.define([
 		return {
 			value: this.getConfig().value
 		};
+	};
+
+	/**
+	 * @returns {object} Filter configuration with static items
+	 */
+	SelectFilter.prototype.getStaticConfiguration = function () {
+		var oConfiguration =  this.getConfig();
+		var sPath = "/";
+		var aItems = this.getModel().getProperty(sPath);
+		var aResolvedItems = [];
+
+		if (oConfiguration.item && oConfiguration.item.path) {
+			sPath = oConfiguration.item.path;
+		}
+
+		for (var i = 0; i < aItems.length; i++) {
+			if (sPath === "/") {
+				aResolvedItems.push(BindingResolver.resolveValue(oConfiguration.item, this, sPath + i));
+			} else {
+				aResolvedItems.push(BindingResolver.resolveValue(oConfiguration.item, this, sPath + "/" + i));
+			}
+		}
+
+		var oStaticConfiguration = Object.assign({}, oConfiguration);
+		delete oStaticConfiguration.item;
+		oStaticConfiguration.items = aResolvedItems;
+
+		return oStaticConfiguration;
 	};
 
 	SelectFilter.prototype._getSelect = function () {

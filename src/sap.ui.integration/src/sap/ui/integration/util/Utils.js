@@ -130,5 +130,45 @@ sap.ui.define([
 		return typeof sString == "string" && ["null", "false", "undefined", ""].indexOf(sString.trim()) > -1;
 	};
 
+	Utils.setNestedPropertyValue = function (oObject, sPath, vValue) {
+		var aPaths = sPath.substring(1).split("/"),
+			sPathSegment;
+
+		for (var i = 0; i < aPaths.length - 1; i++) {
+			sPathSegment = aPaths[i];
+
+			// Prevent access to native properties
+			oObject = oObject.hasOwnProperty(sPathSegment) ? oObject[sPathSegment] : undefined;
+
+			// Only continue with lookup if the value is an object.
+			// Accessing properties of other types is not allowed!
+			if (oObject === null || typeof oObject !== "object") {
+				break;
+			}
+		}
+
+		oObject[aPaths[aPaths.length - 1]] = vValue;
+	};
+
+	Utils.getNestedPropertyValue = function (oObject, sPath) {
+		var aPaths = sPath.substring(1).split("/"),
+			sPathSegment;
+
+		for (var i = 0; i < aPaths.length; i++) {
+			sPathSegment = aPaths[i];
+
+			// Prevent access to native properties
+			oObject = oObject.hasOwnProperty(sPathSegment) ? oObject[sPathSegment] : undefined;
+
+			// Only continue with lookup if the value is an object.
+			// Accessing properties of other types is not allowed!
+			if (oObject === null || typeof oObject !== "object") {
+				break;
+			}
+		}
+
+		return oObject;
+	};
+
 	return Utils;
 });

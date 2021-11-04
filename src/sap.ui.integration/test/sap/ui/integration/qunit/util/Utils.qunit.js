@@ -92,5 +92,40 @@ sap.ui.define([
 				done();
 			});
 		});
+
+		QUnit.module("Utils.getNestedPropertyValue()");
+
+		QUnit.test("Get value", function (assert) {
+			// Arrange
+			var oObject = {
+				a: {
+					b: {
+						c: "value"
+					}
+				}
+			};
+
+			// Assert
+			assert.strictEqual(Utils.getNestedPropertyValue(oObject, "/a/b/c"), oObject.a.b.c, "The value corresponding to the given path is found");
+		});
+
+		QUnit.module("Utils.setNestedPropertyValue()");
+
+		QUnit.test("Set value", function (assert) {
+			// Arrange
+			var oObject = {
+				a: {
+					b: {
+						c: "value"
+					}
+				}
+			};
+
+			// Act
+			Utils.setNestedPropertyValue(oObject, "/a/b/c", "new value");
+
+			// Assert
+			assert.strictEqual(oObject.a.b.c, "new value", "The value corresponding to the given path is properly updated");
+		});
 	}
 );

@@ -245,6 +245,11 @@
 					"pattern": "parameters",
 					"name": "parameters",
 					"target": "parameters"
+				},
+				{
+					"pattern": "manifestResolver",
+					"name": "manifestResolver",
+					"target": "manifestResolver"
 				}
 			],
 			"targets": {
@@ -426,6 +431,11 @@
 				"parameters": {
 					"viewId": "parameters",
 					"viewName": "Parameters",
+					"viewLevel": 1
+				},
+				"manifestResolver": {
+					"viewId": "manifestResolver",
+					"viewName": "ManifestResolver",
 					"viewLevel": 1
 				}
 			}

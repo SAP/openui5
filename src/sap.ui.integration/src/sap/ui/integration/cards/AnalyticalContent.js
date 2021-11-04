@@ -151,7 +151,7 @@ sap.ui.define([
 	 * @private
 	 */
 	AnalyticalContent.prototype._createChart = function () {
-		var oConfiguration = this.getConfiguration();
+		var oConfiguration = this.getParsedConfiguration();
 
 		if (!oConfiguration.chartType) {
 			Log.error("\"sap.card\".content.chartType is mandatory property.", null, "sap.ui.integration.widgets.Card");
@@ -180,7 +180,7 @@ sap.ui.define([
 	};
 
 	AnalyticalContent.prototype._attachActions = function () {
-		var oConfiguration = this.getConfiguration();
+		var oConfiguration = this.getParsedConfiguration();
 		var oActionConfig = {
 			area: ActionArea.Content,
 			actions: oConfiguration.actions,
@@ -300,7 +300,7 @@ sap.ui.define([
 	 * @returns {sap.viz.ui5.data.FlattenedDataset} The data set for the VizFrame
 	 */
 	AnalyticalContent.prototype._getDataset = function (oResolvedConfiguration) {
-		var oConfiguration = this.getConfiguration();
+		var oConfiguration = this.getParsedConfiguration();
 		var aMeasures, aDimensions;
 
 		if (oConfiguration.dimensions) {

@@ -1,0 +1,47 @@
+<mvc:View
+	controllerName="sap.f.cardsdemo.controller.ManifestResolver"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:editor="sap.ui.codeeditor"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Resolve Manifest" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+			<HBox>
+				<VBox>
+					<Title text="Manifest" class="sapUiTinyMargin" />
+					<editor:CodeEditor
+						height="450px"
+						id="editor"
+						type="json">
+					</editor:CodeEditor>
+					<HBox>
+						<Label text="baseUrl:"></Label>
+						<Input id="baseUrlInp" change=".onBaseUrlChange"></Input>
+					</HBox>
+					<Button text="Resolve manifest" press=".onResolveManifestPress"></Button>
+					<layoutData>
+						<FlexItemData growFactor="1"></FlexItemData>
+					</layoutData>
+				</VBox>
+				<VBox>
+					<Title text="Output" class="sapUiTinyMargin" />
+					<editor:CodeEditor
+						height="450px"
+						id="output"
+						type="json">
+					</editor:CodeEditor>
+					<Button text="Prettify" press=".onPrettifyOutput"></Button>
+					<layoutData>
+						<FlexItemData growFactor="1"></FlexItemData>
+					</layoutData>
+				</VBox>
+			</HBox>
+	</Page>
+</mvc:View>
