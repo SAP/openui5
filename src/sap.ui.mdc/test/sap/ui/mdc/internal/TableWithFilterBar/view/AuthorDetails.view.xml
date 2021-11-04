@@ -113,7 +113,7 @@
 												</mdc:outParameters>
 												<mdc:typeahead>
 													<mdcv:Popover>
-														<mdcvc:MTable keyPath="code" descriptionPath="text">
+														<mdcvc:MTable keyPath="code" descriptionPath="text" filterFields="$search">
 															<Table items="{path: '/Regions', length: 10}" width="30rem">
 																<columns>
 																	<Column>
@@ -197,7 +197,7 @@
 												</mdc:outParameters>
 												<mdc:typeahead>
 													<mdcv:Popover>
-													<mdcvc:MTable keyPath="city" descriptionPath="text">
+													<mdcvc:MTable keyPath="city" descriptionPath="text" filterFields="$search">
 														<Table items="{path: '/Cities', length: 10}" width="30rem">
 															<columns>
 																<Column>
@@ -272,7 +272,7 @@
 											<mdc:ValueHelp id="FHAuthorGenre" delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
 												<mdc:typeahead>
 													<mdcv:Popover title="Genre">
-														<mdcvc:MTable keyPath="code" descriptionPath="title">
+														<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
 															<Table id="mTable1_genre" items='{path : "/Genres", length: 10}' width="30rem">
 																<columns>
 																	<Column width="10rem">
