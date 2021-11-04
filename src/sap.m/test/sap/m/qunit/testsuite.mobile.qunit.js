@@ -950,7 +950,8 @@ sap.ui.define([
 			PlanningCalendarLegend: {
 				title: "PlanningCalendarLegend - sap.m",
 				ui5: {
-					libs: "sap.m, sap.ui.unified"
+					libs: "sap.m, sap.ui.unified",
+					language: "en"
 				}
 			},
 			Popover: {

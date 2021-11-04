@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/PlanningCalendarLegend"
-], function(XMLView, JSONModel, PlanningCalendarLegend) {
+	"sap/m/PlanningCalendarLegend",
+	"sap/ui/unified/CalendarLegendItem"
+], function(XMLView, JSONModel, PlanningCalendarLegend, CalendarLegendItem) {
 	"use strict";
 
 	var sPclNoDB =
@@ -226,5 +227,39 @@ sap.ui.define([
 			//Cleanup
 			oPCLegend.destroy();
 		});
+	});
+
+	QUnit.test("itemsHeader and appointmentItemsHeader", function (assert) {
+		// arrange
+		var oPCLegend = new PlanningCalendarLegend({
+			items: [new CalendarLegendItem({ text: "abc", type: "Type01" })],
+			appointmentItems: [new CalendarLegendItem({ text: "def", type: "Type02" })]
+		});
+		oPCLegend.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader")[0].innerText, "Calendar", "there is a default items header");
+		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader")[1].innerText, "Appointments", "there is a default appointment items header");
+
+		// act
+		oPCLegend.setItemsHeader("");
+		oPCLegend.setAppointmentItemsHeader("");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").length, 0, "the items and appointment items headers can be empty");
+
+		// act
+		oPCLegend.setItemsHeader("A");
+		oPCLegend.setAppointmentItemsHeader("B");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader")[0].innerText, "A", "the items header is correct");
+		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader")[1].innerText, "B", "the appointment items header is correct");
+
+		// clean
+		oPCLegend.destroy();
 	});
 });
