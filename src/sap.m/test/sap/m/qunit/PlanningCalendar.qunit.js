@@ -3846,6 +3846,7 @@ sap.ui.define([
 			this.oPC2, "StartDate modified afterwards");
 		//assert
 		assert.equal(_getTodayButton.call(this, this.oPC2).getEnabled(), false, "Today button should not be enabled as current day IS visible");
+		assert.strictEqual(document.activeElement.id, "startDateAtTheMiddleOfTheWeek-WeeksRow-20160910", "Correct DOM element is focused");
 		//cleanup
 		clock.restore();
 
