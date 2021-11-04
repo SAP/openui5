@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/Change",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Variant"
@@ -27,6 +28,7 @@ sap.ui.define([
 	VariantsApplyUtil,
 	States,
 	FlexState,
+	Change,
 	LayerUtils,
 	Utils,
 	Variant
