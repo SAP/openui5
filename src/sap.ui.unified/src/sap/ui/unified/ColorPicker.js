@@ -574,10 +574,6 @@ sap.ui.define([
 		this._processChanges = this._processHSVChanges;
 		this._bHSLMode = false;
 
-		if (this.getDisplayMode() === ColorPickerDisplayMode.Simplified) {
-			CONSTANTS.HideForDisplay.value = ".hideDisplay";
-		}
-
 		this.bPressed = false;
 	};
 
@@ -1038,6 +1034,9 @@ sap.ui.define([
 
 		// Create internal controls
 		this._createInteractionControls();
+		if (this.getDisplayMode() === ColorPickerDisplayMode.Large) {
+			this._toggleInputsEnabled(this.Color.formatHSL);
+		}
 
 		// Layout Data - that will be needed for visual state update
 		this.oCPBoxGD = new GridData({span: "L6 M6 S12"}); // Color picker box
@@ -1337,12 +1336,19 @@ sap.ui.define([
 	/**
 	 * Event handler for changes of RGB or HSL radio button field.
 	 */
-	ColorPicker.prototype._handleRGBorHSLValueChange = function() {
-		// store new value
-		var oUnifiedRBGroup = this.oRGBorHSLRBUnifiedGroup;
-		this.Color.formatHSL = oUnifiedRBGroup ? oUnifiedRBGroup.getSelectedIndex() === 1 : this.oRGBorHSLRBGroup.getSelectedIndex() === 1;
-
+	ColorPicker.prototype._handleRGBorHSLValueChange = function(oEvent) {
+		this.Color.formatHSL = oEvent.getParameter("selectedIndex") === 1;
+		this._toggleInputsEnabled(this.Color.formatHSL);
 		this._updateColorStringProperty(true, true);
+	};
+
+	ColorPicker.prototype._toggleInputsEnabled = function(bHSL) {
+		this.oRedField.setEnabled(!bHSL);
+		this.oGreenField.setEnabled(!bHSL);
+		this.oBlueField.setEnabled(!bHSL);
+		this.oHueField.setEnabled(!!bHSL);
+		this.oSatField.setEnabled(!!bHSL);
+		this.oLitField.setEnabled(!!bHSL);
 	};
 
 	/**
