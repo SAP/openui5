@@ -19,7 +19,8 @@ sap.ui.define([
 	 *   The absolute deep path including all intermediate paths of the binding hierarchy
 	 * @param {sap.ui.base.SyncPromise} [oCreatePromise]
 	 *   A sync promise that is given when this context has been created by
-	 *   {@link sap.ui.model.odata.v2.ODataModel#createEntry}.
+	 *   {@link sap.ui.model.odata.v2.ODataModel#createEntry} or
+	 *   {@link sap.ui.model.odata.v2.ODataListBinding#create}.
 	 *
 	 *   When the entity represented by this context has been successfully persisted in the back
 	 *   end, the given promise resolves.
@@ -41,6 +42,7 @@ sap.ui.define([
 	 *   <ul>
 	 *     <li>an OData binding</li>
 	 *     <li>a view element</li>
+	 *     <li>{@link sap.ui.model.odata.v2.ODataListBinding#create}</li>
 	 *     <li>{@link sap.ui.model.odata.v2.ODataModel#callFunction}</li>
 	 *     <li>{@link sap.ui.model.odata.v2.ODataModel#createBindingContext}</li>
 	 *     <li>{@link sap.ui.model.odata.v2.ODataModel#createEntry}</li>
@@ -79,7 +81,8 @@ sap.ui.define([
 
 	/**
 	 * Returns a promise on the creation state of this context if it has been created via
-	 * {@link sap.ui.model.odata.v2.ODataModel#createEntry}; otherwise returns
+	 * {@link sap.ui.model.odata.v2.ODataModel#createEntry} or
+	 * {@link sap.ui.model.odata.v2.ODataListBinding#create}; otherwise returns
 	 * <code>undefined</code>.
 	 *
 	 * As long as the promise is not yet resolved or rejected, the entity represented by this
@@ -88,9 +91,15 @@ sap.ui.define([
 	 * Once the promise is resolved, the entity for this context is stored in the back end and
 	 * {@link #getPath} returns a path including the key predicate of the new entity.
 	 *
+	 * If the context has been created via {@link sap.ui.model.odata.v2.ODataListBinding#create} and
+	 * the entity for this context has been stored in the back end, {@link #created} returns
+	 * <code>undefined</code> after the data has been re-read from the back end and inserted at the
+	 * right position based on the list binding's filters and sorters.
+	 *
 	 * @returns {Promise}
 	 *   A promise for a context which has been created via
-	 *   {@link sap.ui.model.odata.v2.ODataModel#createEntry}, otherwise <code>undefined</code>.
+	 *   {@link sap.ui.model.odata.v2.ODataModel#createEntry} or
+	 *   {@link sap.ui.model.odata.v2.ODataListBinding#create}, otherwise <code>undefined</code>.
 	 *
 	 *   When the entity represented by this context has been persisted in the back end, the promise
 	 *   resolves without data.
@@ -162,15 +171,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * For a context created using {@link sap.ui.model.odata.v2.ODataModel#createEntry}, the method
-	 * returns <code>true</code> if the context is transient or <code>false</code> if the context is
-	 * not transient. A transient context represents an entity created on the client which has not
-	 * been persisted in the back end.
+	 * For a context created using {@link sap.ui.model.odata.v2.ODataModel#createEntry} or
+	 * {@link sap.ui.model.odata.v2.ODataListBinding#create}, the method returns <code>true</code>
+	 * if the context is transient or <code>false</code> if the context is not transient. A
+	 * transient context represents an entity created on the client which has not been persisted in
+	 * the back end.
 	 *
 	 * @returns {boolean}
 	 *   Whether this context is transient if it has been created using
-	 *   {@link sap.ui.model.odata.v2.ODataModel#createEntry}; returns <code>undefined</code> if the
-	 *   context has not been created using {@link sap.ui.model.odata.v2.ODataModel#createEntry}
+	 *   {@link sap.ui.model.odata.v2.ODataModel#createEntry} or
+	 *   {@link sap.ui.model.odata.v2.ODataListBinding#create}; returns <code>undefined</code>
+	 *   otherwise
 	 *
 	 * @public
 	 * @since 1.94.0
@@ -188,6 +199,16 @@ sap.ui.define([
 	 */
 	Context.prototype.isUpdated = function () {
 		return this.bUpdated;
+	};
+
+	/**
+	 * Resets the created promise to indicate that the entity has been re-read from the back end.
+	 *
+	 * @private
+	 */
+	Context.prototype.resetCreatedPromise = function () {
+		this.oCreatePromise = undefined;
+		this.oSyncCreatePromise = undefined;
 	};
 
 	/**

@@ -10743,11 +10743,13 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
-	// Scenario: Paging and $count requests exclude created persisted entries to avoid duplicate
+	// Scenario: Paging and $count requests exclude persisted created entries to avoid duplicate
 	// entries, respectively wrong binding length. The $count request it triggered by switching the
 	// list bindings context.
-	// CPOUI5MODELS-693
-	QUnit.test("Paging/$count requests exclude created persisted entries", function (assert) {
+	// An additional refresh (a user interaction) is performed. The expectation is that
+	// persisted entities are integrated into the existing data and their position changes.
+	// CPOUI5MODELS-693, CPOUI5MODELS-692
+	QUnit.test("Paging/$count requests exclude persisted created entries", function (assert) {
 		var oBinding, oCreatedContext0, oCreatedContext1, oObjectPage, oTable,
 			oModel = createSalesOrdersModel(),
 			oObjectPageContext = new Context(oModel, "/BusinessPartnerSet('4711')",
@@ -10852,23 +10854,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectValue("id", [""])
-				.expectValue("note", [""]);
-
-			oObjectPage.setBindingContext(null);
-
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectRequest("BusinessPartnerSet('4711')/ToSalesOrders/$count"
-					+ "?$filter=(SalesOrderID ge '13' or LifecycleStatus eq 'N')"
-					+ " and not(SalesOrderID eq '44' or SalesOrderID eq '43')", "17")
-				.expectValue("id", ["44"])
-				.expectValue("note", ["New 2"]);
-
-			oObjectPage.setBindingContext(oObjectPageContext);
-
-			return that.waitForChanges(assert);
-		}).then(function () {
 			that.expectRequest("BusinessPartnerSet('4711')/ToSalesOrders?$skip=1&$top=1"
 					+ "&$filter=(SalesOrderID ge '13' or LifecycleStatus eq 'N')"
 					+ " and not(SalesOrderID eq '44' or SalesOrderID eq '43')", {
@@ -10886,6 +10871,135 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oTable.setFirstVisibleRow(3);
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("BusinessPartnerSet('4711')/ToSalesOrders/$count"
+					+ "?$filter=SalesOrderID ge '13' or LifecycleStatus eq 'N'", "17")
+				.expectRequest("BusinessPartnerSet('4711')/ToSalesOrders?$skip=3&$top=1"
+					+ "&$filter=SalesOrderID ge '13' or LifecycleStatus eq 'N'", {
+					results : [{
+						__metadata : {uri : "SalesOrderSet('44')"},
+						Note : "New 2",
+						SalesOrderID : "44"
+					}]
+				})
+				.expectValue("id", ["44"], 3)
+				.expectValue("note", ["New 2"], 3);
+
+			// code under test
+			oBinding.refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oTable.getRows()[0].getBindingContext(), oCreatedContext1);
+			assert.strictEqual(oCreatedContext1.isTransient(), undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Server returned an empty list, user creates an entity and saves the data. Then
+	// user sorts the data. When removing a persisted created entity from the list of created
+	// entities it has to be ensured that the persisted created entities are read from server again
+	// and the table has the correct count.
+	// CPOUI5MODELS-692
+	QUnit.test("Sorting has to read persisted contexts from server again", function (assert) {
+		var oBinding, oCreatedContext0, oCreatedContext1, oTable,
+			oModel = createSalesOrdersModel(),
+			// use visibleRowCount="2" to avoid the control's default of 10 lines for which the
+			// expectations need to be defined
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderSet}" visibleRowCount="2">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=102", {
+				results : []
+			})
+			.expectValue("id", ["", ""])
+			.expectValue("note", ["", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			that.expectValue("note", ["New 1"]);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("note", ["New 2", "New 1"]);
+
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "New 1"
+					},
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('43')"},
+						Note : "New 1",
+						SalesOrderID : "43"
+					},
+					statusCode : 201
+				})
+				.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "New 2"
+					},
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('44')"},
+						Note : "New 2",
+						SalesOrderID : "44"
+					},
+					statusCode : 201
+				})
+				.expectValue("id", ["44", "43"]);
+
+			return Promise.all([
+				oCreatedContext0.created(),
+				oCreatedContext1.created(),
+				that.oModel.submitChanges(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderSet?$skip=0&$top=2&$orderby=SalesOrderID asc", {
+					results : [{
+						__metadata : {uri : "SalesOrderSet('43')"},
+						Note : "New 1",
+						SalesOrderID : "43"
+					}, {
+						__metadata : {uri : "SalesOrderSet('44')"},
+						Note : "New 2",
+						SalesOrderID : "44"
+					}]
+				})
+				.expectValue("id", ["43", "44"])
+				.expectValue("note", ["New 1", "New 2"]);
+
+			// code under test
+			oBinding.sort(new Sorter("SalesOrderID"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oTable.getRows().length, 2);
+			assert.strictEqual(oTable.getRows()[0].getCells()[0].getText(), "43");
+			assert.strictEqual(oTable.getRows()[1].getCells()[0].getText(), "44");
+			assert.strictEqual(oTable.getBinding("rows").getLength(), 2);
 		});
 	});
 });

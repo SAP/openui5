@@ -59,9 +59,10 @@ sap.ui.define([
 				itemFilter : aItemFilter,
 				itemSelected : false,
 				messageCount : 0,
-				salesOrdersCount : 0,
 				salesOrderID : "0500000005",
+				salesOrdersCount : 0,
 				salesOrderSelected : false,
+				salesOrdersFilter : "",
 				useTable : false
 			}), "ui");
 			this.setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "messages");

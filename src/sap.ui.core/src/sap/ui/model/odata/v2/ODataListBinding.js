@@ -134,8 +134,8 @@ sap.ui.define([
 				this.bThresholdRejected = true;
 			}
 
-			var bUseExpandedList = this.checkExpandedList();
-			if (!bUseExpandedList) {
+			if (!this.checkExpandedList()) {
+				this._removePersistedCreatedContexts();
 				this.resetData();
 			}
 		},
@@ -337,6 +337,10 @@ sap.ui.define([
 	/**
 	 * Setter for context.
 	 *
+	 * Entities that have been created via {@link #create} and saved in the back end are removed
+	 * from the creation rows area and inserted at the right position based on the current filters
+	 * and sorters.
+	 *
 	 * @param {Object} oContext
 	 *   The new context object
 	 * @throws {Error}
@@ -397,6 +401,7 @@ sap.ui.define([
 				this.abortPendingRequest();
 				this._fireChange({reason : ChangeReason.Context});
 			} else {
+				this._removePersistedCreatedContexts();
 				this._refresh();
 			}
 		}
@@ -863,6 +868,10 @@ sap.ui.define([
 	 * To update a control, even if no data has been changed, e.g. to reset a control after failed
 	 * validation, use the parameter <code>bForceUpdate</code>.
 	 *
+	 * Entities that have been created via {@link #create} and saved in the back end are removed
+	 * from the creation rows area and inserted at the right position based on the current filters
+	 * and sorters.
+	 *
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
 	 * @param {string} [sGroupId] The group Id for the refresh
 	 *
@@ -873,6 +882,7 @@ sap.ui.define([
 			sGroupId = bForceUpdate;
 			bForceUpdate = false;
 		}
+		this._removePersistedCreatedContexts();
 		this.sRefreshGroupId = sGroupId;
 		this._refresh(bForceUpdate);
 		this.sRefreshGroupId = undefined;
@@ -1201,9 +1211,16 @@ sap.ui.define([
 	/**
 	 * Sorts the list.
 	 *
-	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} aSorters A new sorter or an array of sorters which define the sort order
-	 * @param {boolean} [bReturnSuccess=false] Whether the success indicator should be returned instead of <code>this</code>
-	 * @return {this} Reference to <code>this</code> to facilitate method chaining or the success indicator
+	 * Entities that have been created via {@link #create} and saved in the back end are removed
+	 * from the creation rows area and inserted at the right position based on the current filters
+	 * and sorters.
+	 *
+	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} aSorters
+	 *   A new sorter or an array of sorters which define the sort order
+	 * @param {boolean} [bReturnSuccess=false]
+	 *   Whether the success indicator should be returned instead of <code>this</code>
+	 * @return {this}
+	 *   Reference to <code>this</code> to facilitate method chaining or the success indicator
 	 * @public
 	 */
 	ODataListBinding.prototype.sort = function(aSorters, bReturnSuccess) {
@@ -1242,7 +1259,12 @@ sap.ui.define([
 					this.sChangeReason = ChangeReason.Sort;
 				}
 			} else {
+				// when removing the persisted created entries from the cache we break the invariant
+				// that the number of entries (read from server) does not change when sorting. So
+				// we need to update the length we received from the server
+				this.iLength += this._removePersistedCreatedContexts().length;
 				// Only reset the keys, length usually doesn't change when sorting
+				// therefore #resetData is not required
 				this.aKeys = [];
 				this.abortPendingRequest(false);
 				this.sChangeReason = ChangeReason.Sort;
@@ -1399,6 +1421,10 @@ sap.ui.define([
 	 * are combined with OR, while filters on different table columns are combined with AND.
 	 * Please note that a custom filter function is only supported with operation mode <code>sap.ui.model.odata.OperationMode.Client</code>.
 	 *
+	 * Entities that have been created via {@link #create} and saved in the back end are removed
+	 * from the creation rows area and inserted at the right position based on the current filters
+	 * and sorters.
+	 *
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} aFilters Single filter or array of filter objects
 	 * @param {sap.ui.model.FilterType} [sFilterType=Control] Type of the filter which should be adjusted. If it is not given, type <code>Control</code> is assumed
 	 * @param {boolean} [bReturnSuccess=false] Whether the success indicator should be returned instead of <code>this</code>
@@ -1457,6 +1483,7 @@ sap.ui.define([
 					this.sChangeReason = ChangeReason.Filter;
 				}
 			} else {
+				this._removePersistedCreatedContexts();
 				this.resetData();
 				this.abortPendingRequest(true);
 				this.sChangeReason = ChangeReason.Filter;
@@ -1790,6 +1817,19 @@ sap.ui.define([
 			skip : Math.max(0, iServerStartIndex),
 			top : Math.max(0, iServerLength)
 		};
+	};
+
+	/**
+	 * Removes and returns the persisted created entities for this binding.
+	 *
+	 * @returns {sap.ui.model.odata.v2.Context[]}
+	 *   An array of persisted contexts that have been removed from the created contexts cache
+	 *
+	 * @private
+	 */
+	 ODataListBinding.prototype._removePersistedCreatedContexts = function () {
+		return this.oModel._getCreatedContextsCache()
+			.removePersistedContexts(this.getResolvedPath(), this.sCreatedEntitiesKey);
 	};
 
 	return ODataListBinding;
