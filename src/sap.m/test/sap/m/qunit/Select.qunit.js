@@ -10023,6 +10023,10 @@ sap.ui.define([
 			oInfo = oSelect.getAccessibilityInfo();
 			assert.strictEqual(oInfo.readonly, true, "Read-only");
 
+			oSelect.setRequired(true);
+			oInfo = oSelect.getAccessibilityInfo();
+			assert.strictEqual(oInfo.description.indexOf("Required") > -1, true, "Required");
+
 			oSelect.destroy();
 		});
 
