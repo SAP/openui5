@@ -745,7 +745,7 @@ sap.ui.define([
 				iNewIndex += 1;
 			}
 
-			if (iNewIndex) {
+			if (iNewIndex && iOldIndex != iNewIndex) {
 				this._moveItemsByIndex(iOldIndex, iNewIndex, true);
 			} else {
 				this._fireChangeItems(); //Otherwise already fired by _moveItemsByIndex
