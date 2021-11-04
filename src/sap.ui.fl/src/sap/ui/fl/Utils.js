@@ -15,8 +15,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/base/util/isPlainObject",
 	"sap/ui/base/SyncPromise"
-],
-function(
+], function(
 	jQuery,
 	Component,
 	BaseTreeModifier,
@@ -848,7 +847,7 @@ function(
 
 		/** Returns the type of "sap.app" from the manifest object passed.
 		 * @param {sap.ui.core.Manifest} oManifest - Manifest object
-		 * @returns {string | undefined} Manifest object's "type" property for "sap.app" entry
+		 * @returns {string|undefined} Manifest object's <code>type</code> property for <code>sap.app</code> entry
 		 * @private
 		 */
 		_getComponentTypeFromManifest: function(oManifest) {
@@ -856,8 +855,8 @@ function(
 		},
 
 		/** Returns the type of "sap.app" from the manifest object passed.
-		 * @param {sap.ui.core.Manifest} oRawManifest - raw manifest object
-		 * @returns {string | undefined} Manifest object's "type" property for "sap.app" entry
+		 * @param {sap.ui.core.Manifest} oManifest - Raw manifest object
+		 * @returns {string|undefined} Manifest object's <code>type</code> property for <code>sap.app</code> entry
 		 * @private
 		 */
 		_getComponentTypeFromRawManifest: function(oManifest) {
@@ -1016,8 +1015,9 @@ function(
 			}
 			var fnPromise = aPromiseQueue.shift();
 			if (typeof fnPromise === "function") {
+				var vResult;
 				try {
-					var vResult = fnPromise();
+					vResult = fnPromise();
 				} catch (e) {
 					vResult = Promise.reject(e);
 				}
@@ -1163,7 +1163,7 @@ function(
 
 		/**
 		 * Normalize reference, delete .Component at the end of the incoming string.
-		 * @param {string} reference
+		 * @param {string} sReference - Flex reference
 		 * @returns {string} Returns reference without .Component
 		 */
 		normalizeReference: function(sReference) {

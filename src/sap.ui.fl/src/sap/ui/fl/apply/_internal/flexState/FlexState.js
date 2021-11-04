@@ -402,6 +402,7 @@ sap.ui.define([
 	 * The next initialize call will add it again.
 	 *
 	 * @param {string} sReference - Flex reference of the app
+	 * @param {string} sComponentId - Component instance ID
 	 */
 	FlexState.clearFilteredResponse = function(sReference, sComponentId) {
 		if (

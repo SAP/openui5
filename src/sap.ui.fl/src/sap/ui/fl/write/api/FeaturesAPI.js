@@ -99,6 +99,7 @@ sap.ui.define([
 		/**
 		 * Checks if key user has also the admin role to enable the translation button
 		 *
+		 * @param {sap.ui.fl.Layer} sLayer - Current layer
 		 * @returns {Promise<boolean>} Resolves to a boolean indicating if they keyuser is also admin
 		 * @public
 		 */

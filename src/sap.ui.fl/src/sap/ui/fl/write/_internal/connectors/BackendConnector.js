@@ -177,7 +177,7 @@ sap.ui.define([
 
 		/**
 		 * Called to get the flex features.
-		 *
+		 * @param {object} mPropertyBag - Property bag
 		 * @returns {Promise<object>} Promise resolves with an object containing the flex features
 		 */
 		loadFeatures: function (mPropertyBag) {

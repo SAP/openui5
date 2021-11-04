@@ -7,15 +7,12 @@ sap.ui.define([
 	"sap/base/util/restricted/_pick",
 	"sap/base/util/includes",
 	"sap/base/util/isEmptyObject",
-	"sap/base/util/merge",
 	"sap/base/util/ObjectPath",
-	"sap/base/util/each",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Variant"
@@ -24,15 +21,12 @@ sap.ui.define([
 	_pick,
 	includes,
 	isEmptyObject,
-	merge,
 	ObjectPath,
-	each,
 	Log,
 	JsControlTreeModifier,
 	VariantsApplyUtil,
 	States,
 	FlexState,
-	Change,
 	LayerUtils,
 	Utils,
 	Variant
@@ -149,6 +143,7 @@ sap.ui.define([
 	 * Resets variant management state
 	 *
 	 * @param {string} sReference - Component reference
+	 * @param {string} sComponentId - Component instance ID
 	 *
 	 * @private
 	 * @ui5-restricted

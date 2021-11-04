@@ -3,12 +3,10 @@
  */
 
 sap.ui.define([
-	"sap/base/util/includes",
 	"sap/base/util/restricted/_pick",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/changes/Reverter"
 ], function(
-	includes,
 	_pick,
 	VariantManagementState,
 	Reverter
@@ -101,7 +99,7 @@ sap.ui.define([
 		/**
 		 * Switches variants.
 		 *
-		 * @param {object} mPropertyBag
+		 * @param {object} mPropertyBag - Property Bag
 		 * @param {sap.ui.fl.FlexController} mPropertyBag.flexController - Flex controller
 		 * @param {string} mPropertyBag.vmReference - Variant management reference
 		 * @param {string} mPropertyBag.reference - Flex reference

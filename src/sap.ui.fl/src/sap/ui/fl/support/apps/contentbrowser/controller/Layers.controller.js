@@ -20,7 +20,7 @@ sap.ui.define([
 	return Controller.extend("sap.ui.fl.support.apps.contentbrowser.controller.Layers", {
 		/**
 		 * Handler for triggering the navigation to a selected layer.
-		 * @param {Object} oEvent
+		 * @param {object} oEvent - Event object
 		 * @public
 		 */
 		onLayerSelected: function (oEvent) {
@@ -35,7 +35,7 @@ sap.ui.define([
 
 		/**
 		 * Handler for displaying the stored error messages.
-		 * @param {Object} oEvent
+		 * @param {object} oEvent - Event object
 		 * @public
 		 */
 		handleMessagePopoverPress: function (oEvent) {

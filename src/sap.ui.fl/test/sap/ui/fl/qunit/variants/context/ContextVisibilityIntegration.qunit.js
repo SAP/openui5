@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/fl/variants/context/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Layer",
 	"sap/base/util/restricted/_merge",
 	"sap/ui/thirdparty/jquery",
@@ -15,7 +14,6 @@ sap.ui.define([
 	ContextVisibilityComponent,
 	ComponentContainer,
 	WriteStorage,
-	JSONModel,
 	Layer,
 	_merge,
 	jQuery,
@@ -62,14 +60,6 @@ sap.ui.define([
 		});
 	}
 
-	function duplicateRoles(iNumberOfIterations, oDuplicatedRoles) {
-		var oRolesResponseDuplicate = _merge({}, oRolesResponse);
-		for (var i = 0; i <= iNumberOfIterations; i++) {
-			oRolesResponseDuplicate.values = oRolesResponseDuplicate.values.concat(oDuplicatedRoles);
-		}
-		return oRolesResponseDuplicate;
-	}
-
 	var oDuplicates = [
 		{
 			id: "ADMIN",
@@ -108,6 +98,13 @@ sap.ui.define([
 		]
 	};
 
+	function duplicateRoles(iNumberOfIterations, oDuplicatedRoles) {
+		var oRolesResponseDuplicate = _merge({}, oRolesResponse);
+		for (var i = 0; i <= iNumberOfIterations; i++) {
+			oRolesResponseDuplicate.values = oRolesResponseDuplicate.values.concat(oDuplicatedRoles);
+		}
+		return oRolesResponseDuplicate;
+	}
 
 	QUnit.module("Given ContextVisibility Component without selected contexts", {
 		before: function () {

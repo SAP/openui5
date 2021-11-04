@@ -1,19 +1,12 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/fl/library",
 	"sap/ui/fl/util/IFrame",
 	"sap/base/security/URLListValidator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView"
-
 ], function(
-	qutils,
-	createAndAppendDiv,
-	flexibleLibrary,
 	IFrame,
 	URLListValidator,
 	JSONModel,
@@ -281,7 +274,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("URL binding in XML view", {
-		beforeEach: function (assert) {
+		beforeEach: function () {
 			this.oUShellMock = mockUserInfoService(true);
 			return XMLView.create({
 				definition: '<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.fl.util">' +

@@ -20,27 +20,6 @@ sap.ui.define([
 	var PREFIX = "/flex/keyuser";
 	var API_VERSION = "/v1";
 
-	function _enhancePropertyBagWithTokenInfo(mPropertyBag) {
-		mPropertyBag.initialConnector = InitialConnector;
-		mPropertyBag.xsrfToken = InitialConnector.xsrfToken;
-		mPropertyBag.tokenUrl = KeyUserConnector.ROUTES.TOKEN;
-	}
-
-	function _enhancePropertyBagForDraftActivation(mPropertyBag) {
-		var oPayload = {
-			title: mPropertyBag.title
-		};
-		mPropertyBag.payload = JSON.stringify(oPayload);
-		mPropertyBag.dataType = "json";
-		mPropertyBag.contentType = "application/json; charset=utf-8";
-	}
-
-	function renameVersionNumberProperty(oVersion) {
-		oVersion.version = oVersion.versionNumber;
-		delete oVersion.versionNumber;
-		return oVersion;
-	}
-
 	/**
 	 * Connector for saving and deleting data from SAPUI5 Flexibility KeyUser service.
 	 *
@@ -50,7 +29,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl.write._internal.Storage
 	 */
-	var KeyUserConnector = merge({}, BackendConnector, /** @lends sap.ui.fl.write._internal.connectors.KeyUserConnector */ {
+	 var KeyUserConnector = merge({}, BackendConnector, /** @lends sap.ui.fl.write._internal.connectors.KeyUserConnector */ {
 		layers: InitialConnector.layers,
 
 		ROUTES: {
@@ -72,6 +51,27 @@ sap.ui.define([
 			});
 		}
 	});
+
+	function _enhancePropertyBagWithTokenInfo(mPropertyBag) {
+		mPropertyBag.initialConnector = InitialConnector;
+		mPropertyBag.xsrfToken = InitialConnector.xsrfToken;
+		mPropertyBag.tokenUrl = KeyUserConnector.ROUTES.TOKEN;
+	}
+
+	function _enhancePropertyBagForDraftActivation(mPropertyBag) {
+		var oPayload = {
+			title: mPropertyBag.title
+		};
+		mPropertyBag.payload = JSON.stringify(oPayload);
+		mPropertyBag.dataType = "json";
+		mPropertyBag.contentType = "application/json; charset=utf-8";
+	}
+
+	function renameVersionNumberProperty(oVersion) {
+		oVersion.version = oVersion.versionNumber;
+		delete oVersion.versionNumber;
+		return oVersion;
+	}
 
 	KeyUserConnector.versions = {
 		load: function (mPropertyBag) {

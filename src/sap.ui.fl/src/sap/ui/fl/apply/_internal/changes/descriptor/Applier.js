@@ -67,7 +67,7 @@ sap.ui.define([
 		 * @param {object} mStrategy.registry - Change handler registry
 		 * @param {function} mStrategy.handleError - Error handling strategy
 		 * @param {function} mStrategy.processTexts - Text postprocessing strategy
-		 * @returns Promise
+		 * @returns {Promise} Resolves as soon as the changes are applied
 		 */
 		applyChangesIncludedInManifest: function(oManifest, mStrategy) {
 			var aDescriptorChanges = getDescriptorChanges(oManifest);

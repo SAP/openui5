@@ -23,13 +23,11 @@ sap.ui.define([
 	/**
 	 * @private
 	 * @alias sap.ui.fl.write._internal.transport.TransportSelection
-	 * @constructor
 	 * @author SAP SE
 	 * @version ${version}
 	 * @since 1.74.0
 	 * Helper object to select an ABAP transport for an LREP object. This is not a generic utility to select a transport request, but part
 	 *        of the SmartVariant control.
-	 * @returns {sap.ui.fl.write._internal.transport.TransportSelection} New instance of <code>sap.ui.fl.write._internal.transport.TransportSelection</code>
 	 */
 	var TransportSelection = function() {};
 
@@ -49,6 +47,7 @@ sap.ui.define([
 	 * @param {function} fError - Callback to be invoked when an error occurred during selection of a transport request
 	 * @param {boolean} bCompactMode - Flag indicating whether the transport dialog should be opened in compact mode
 	 * @param {object} oControl - Control instance
+	 * @param {string} sStyleClass - CSS style class that should be added to any dialogs
 	 * @public
 	 */
 	TransportSelection.prototype.selectTransport = function(oObjectInfo, fOkay, fError, bCompactMode, oControl, sStyleClass) {
@@ -155,6 +154,7 @@ sap.ui.define([
 	 * @param {function} fOkay - Callback to be invoked when a transport request has successfully been selected
 	 * @param {function} fError - Callback to be invoked when an error occurred during selection of a transport request
 	 * @param {boolean} bCompactMode - Flag indicating whether the transport dialog should be opened in compact mode
+	 * @param {string} sStyleClass - CSS style class that should be added to any dialogs
 	 * @returns {sap.ui.fl.write._internal.transport.TransportDialog} Dialog
 	 * @private
 	 */
@@ -200,7 +200,7 @@ sap.ui.define([
 	/**
 	 * Returns whether the dialog to select a transport should be started.
 	 *
-	 * @param {object} oTransports- Available transports
+	 * @param {object} oTransports - Available transports
 	 * @param {boolean} bATOActive - Indicates whether the system is using ATO_NOTIFICATION or not
 	 * @returns {boolean} <code>true</code> if the LREP object is already locked in one of the transports, <code>false</code> otherwise
 	 * @private
@@ -301,7 +301,8 @@ sap.ui.define([
 	 * Opens the transport selection dialog
 	 *
 	 * @param {sap.ui.fl.Change} [oChange] - Change for which the transport information should be retrieved
-	 * @param {object} oControl- Object of the root control for the transport dialog
+	 * @param {object} oControl - Object of the root control for the transport dialog
+	 * @param {string} sStyleClass - CSS style class that should be added to any dialogs
 	 * @returns {Promise} Promise that resolves
 	 * @public
 	 */

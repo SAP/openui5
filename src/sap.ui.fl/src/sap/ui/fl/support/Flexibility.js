@@ -11,25 +11,35 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/FlexController",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/support/apps/uiFlexibilityDiagnostics/helper/Extractor",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/Component"
-], function (each, Plugin, Support, JsControlTreeModifier, JSONModel, FlexController, ChangePersistenceFactory, Utils, Extractor, XMLView, CoreComponent) {
+], function(
+	each,
+	Plugin,
+	Support,
+	JsControlTreeModifier,
+	JSONModel,
+	FlexController,
+	ChangePersistenceFactory,
+	Extractor,
+	XMLView,
+	CoreComponent
+) {
 	"use strict";
 
 	/**
-		 * Creates an instance of sap.ui.fl.support.Flexibility.
-		 * @class This class represents the plugin for the support tool functionality of UI5.
-		 * This class is internal and all its functions must not be used by an application
-		 *
-		 * @abstract
-		 * @extends sap.ui.core.support.Plugin
-		 * @version ${version}
-		 * @private
-		 * @ui5-restricted
-		 * @constructor
-		 */
+	 * Creates an instance of <code>sap.ui.fl.support.Flexibility</code>.
+	 * @class This class represents the plugin for the support tool functionality of UI5.
+	 * This class is internal and all its functions must not be used by an application
+	 *
+	 * @abstract
+	 * @extends sap.ui.core.support.Plugin
+	 * @version ${version}
+	 * @private
+	 * @ui5-restricted
+	 * @constructor
+	 */
 	var Flexibility = Plugin.extend("sap.ui.fl.support.Flexibility", {
 		constructor: function (oSupportStub) {
 			Plugin.apply(this, ["sapUiSupportFlexibility", "Flexibility", oSupportStub]);
@@ -52,11 +62,11 @@ sap.ui.define([
 	Flexibility.prototype.sDelimiter = ";";
 
 	/**
-		 * Creation of the support plugin.
-		 * On tool plugin site a rendering as well as a model creation for later data receiving is created.
-		 *
-		 * @param {sap.ui.core.support.Support} oSupportStub - support instance created within the support window instantiation
-		 */
+	 * Creation of the support plugin.
+	 * On the tool plugin site a rendering as well as a model creation for later data receiving is created.
+	 *
+	 * @param {sap.ui.core.support.Support} oSupportStub - Support instance created within the support window instantiation
+	 */
 	Flexibility.prototype.init = function (oSupportStub) {
 		Plugin.prototype.init.apply(this, arguments);
 
@@ -84,13 +94,15 @@ sap.ui.define([
 	};
 
 	/**
-		 * Rendering of the tool plugin side of the UI.
-		 * This creates a plain html-rendered header as well as a view containing the hierarchy of the flexibility data:
-		 * - Hierarchical List of controls and their changes
-		 * - details View with information to selected changes
-		 *
-		 * @private
-		 */
+	 * Rendering of the tool plugin side of the UI.
+	 * This creates a plain html-rendered header as well as a view containing the hierarchy of the flexibility data:
+	 * <ul>
+	 * <li>hierarchical list of controls and their changes</li>
+	 * <li>details view with information to selected changes</li>
+	 * </ul>
+	 *
+	 * @private
+	 */
 	Flexibility.prototype._renderToolPlugin = function () {
 		var _doPlainRendering = function () {
 			var rm = sap.ui.getCore().createRenderManager();
@@ -120,18 +132,18 @@ sap.ui.define([
 	};
 
 	/**
-		 * Requests the data from the application side support plugin
-		 *
-		 * @private
-		 * @restricted sap.ui.fl.support
-		 */
+	 * Requests the data from the application side support plugin.
+	 *
+	 * @private
+	 * @restricted sap.ui.fl.support
+	 */
 	Flexibility.prototype.onRefresh = function () {
 		Support.getStub().sendEvent(this.getId() + "GetApps", {});
 	};
 
 	/**
-		 * Collect list of apps
-		 */
+	 * Collects a list of apps.
+	 */
 	Flexibility.prototype.onsapUiSupportFlexibilityGetApps = function () {
 		var aApps = [];
 
@@ -151,7 +163,7 @@ sap.ui.define([
 
 	/**
 	 * Parses all registered components and extracts <code>sap.ui5/appVariantHierarchy</code>.
-	 * @param {string} sReference
+	 * @param {string} sReference - Flex reference
 	 * @returns {string} Joined app variant hierarchy and its app version
 	 */
 	Flexibility.prototype.getAppVariantHierarchy = function (sReference) {
@@ -171,11 +183,10 @@ sap.ui.define([
 	};
 
 	/**
-		 * Collect data of changes
-		 *
-		 * @param {sap.ui.base.Event} oEvent Event sent from the tool side plugin to request changes
-		 *
-		 */
+	 * Collects data of changes.
+	 *
+	 * @param {sap.ui.base.Event} oEvent - Event sent from the tool side plugin to request changes
+	 */
 	Flexibility.prototype.onsapUiSupportFlexibilityGetChangesMaps = function (oEvent) {
 		var sAppKey = oEvent.mParameters.appKey;
 		var aAppParameters = sAppKey.split(this.sDelimiter);
@@ -184,20 +195,20 @@ sap.ui.define([
 	};
 
 	/**
-		 * Handler on tool plugin side; passes the received data from the application plugin tool to a model.
-		 *
-		 * @param {sap.ui.base.Event} oEvent Event sent from the application side plugin with the applications
-		 */
+	 * Handler on tool plugin side; passes the received data from the application plugin tool to a model.
+	 *
+	 * @param {sap.ui.base.Event} oEvent - Event sent from the application side plugin with the applications
+	 */
 	Flexibility.prototype.onsapUiSupportFlexibilitySetApps = function (oEvent) {
 		var mApps = oEvent.getParameters();
 		this.oAppModel.setData(mApps);
 	};
 
 	/**
-		 * Handler on tool plugin side; passes the received data from the application plugin tool to a model.
-		 *
-		 * @param {sap.ui.base.Event} oEvent Event sent from the application side plugin with the changes
-		 */
+	 * Handler on tool plugin side; passes the received data from the application plugin tool to a model.
+	 *
+	 * @param {sap.ui.base.Event} oEvent - Event sent from the application side plugin with the changes
+	 */
 	Flexibility.prototype.onsapUiSupportFlexibilitySetChangesMaps = function (oEvent) {
 		var mCacheEntries = oEvent.getParameters();
 		this.oChangesModel.setData(mCacheEntries);
@@ -210,14 +221,21 @@ sap.ui.define([
 	};
 
 	/**
-		 * Collect data of changes
-		 *
-		 * @param {string} sAppName Name of the application
-		 *
-		 * @private
-		 */
+	 * Collects data of changes.
+	 *
+	 * @param {string} sAppName - Name of the application
+	 *
+	 * @private
+	 */
 	Flexibility.prototype._getChangesMapForApp = function (sAppName) {
-		function _collectChangesData(mChanges, sControlId) {
+		var mChangedControls = {};
+		var mChanges = {};
+		var aTreeNodes = [];
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sAppName);
+		var mChangeFromPersistence = oChangePersistence._mChanges.mChanges;
+		var mDependencies = oChangePersistence._mChangesInitial.mDependencies;
+
+		function collectChangesData(mChanges, sControlId) {
 			mChangedControls[sControlId] = [];
 			var aChangesForControl = mChangeFromPersistence[sControlId];
 			var oControl = sap.ui.getCore().byId(sControlId);
@@ -236,10 +254,10 @@ sap.ui.define([
 				}
 			}
 
-			mChangedControls[sControlId] = aChangesForControl.map(_collectDataForSingleChange.bind(this, oControl, aAppliedChanges, aFailedChangesJs, aFailedChangesXml, mChanges));
+			mChangedControls[sControlId] = aChangesForControl.map(collectDataForSingleChange.bind(this, oControl, aAppliedChanges, aFailedChangesJs, aFailedChangesXml, mChanges));
 		}
 
-		function _collectDataForSingleChange(oControl, aAppliedChanges, aFailedChangesJs, aFailedChangesXml, mChanges, oChange) {
+		function collectDataForSingleChange(oControl, aAppliedChanges, aFailedChangesJs, aFailedChangesXml, mChanges, oChange) {
 			var oChangeDetails = {
 				id: oChange.getId(),
 				changeType: oChange.getChangeType(),
@@ -283,7 +301,7 @@ sap.ui.define([
 			return oChangeDetails;
 		}
 
-		function _setIsInSubTreeInformation(oChangeDetails, sKey, oDependency) {
+		function setIsInSubTreeInformation(oChangeDetails, sKey, oDependency) {
 			var aChangeIds = oDependency.dependencies;
 			if (aChangeIds.indexOf(oChangeDetails.id) !== -1) {
 				var bSameSelector = JSON.stringify(mChanges[sKey].selector) === JSON.stringify(oChangeDetails.selector);
@@ -291,9 +309,9 @@ sap.ui.define([
 			}
 		}
 
-		function _setDependentChangeRelatedInformation(sControlId, mChangesOnControl) {
+		function setDependentChangeRelatedInformation(sControlId, mChangesOnControl) {
 			mChangesOnControl.forEach(function (oChangeDetails) {
-				jQuery.each(mDependencies, _setIsInSubTreeInformation.bind(this, oChangeDetails));
+				jQuery.each(mDependencies, setIsInSubTreeInformation.bind(this, oChangeDetails));
 
 				oChangeDetails.allDependendingControlsPresent = oChangeDetails.dependentControls.every(function (mControl) {
 					return mControl.controlPresent;
@@ -325,7 +343,7 @@ sap.ui.define([
 			});
 		}
 
-		function _fnCreateChangesNode(aChangesDetails) {
+		function fnCreateChangesNode(aChangesDetails) {
 			aChangesDetails = aChangesDetails.filter(function (oChange) {
 				return !aChangesDetails.some(function (oChangeInSameHierarchy) {
 					return oChangeInSameHierarchy.dependentChanges.some(function (oDependentChange) {
@@ -338,28 +356,21 @@ sap.ui.define([
 				return {
 					id: oChange.id,
 					text: oChange.changeType,
-					nodes: oChange.dependentChanges ? _fnCreateChangesNode(oChange.dependentChanges) : []
+					nodes: oChange.dependentChanges ? fnCreateChangesNode(oChange.dependentChanges) : []
 				};
 			});
 		}
 
-		function _createRootNodes(sControlId, aChangesDetails) {
+		function createRootNodes(sControlId, aChangesDetails) {
 			aTreeNodes.push({
 				text: sControlId,
-				nodes: _fnCreateChangesNode(aChangesDetails)
+				nodes: fnCreateChangesNode(aChangesDetails)
 			});
 		}
 
-		var mChanges = {};
-		var mChangedControls = {};
-		var aTreeNodes = [];
-		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sAppName);
-		var mChangeFromPersistence = oChangePersistence._mChanges.mChanges;
-		var mDependencies = oChangePersistence._mChangesInitial.mDependencies;
-
-		Object.keys(mChangeFromPersistence).forEach(_collectChangesData.bind(this, mChanges));
-		jQuery.each(mChangedControls, _setDependentChangeRelatedInformation);
-		jQuery.each(mChangedControls, _createRootNodes);
+		Object.keys(mChangeFromPersistence).forEach(collectChangesData.bind(this, mChanges));
+		jQuery.each(mChangedControls, setDependentChangeRelatedInformation);
+		jQuery.each(mChangedControls, createRootNodes);
 
 		this._oStub.sendEvent(this.getId() + "SetChangesMaps", {
 			changes: mChanges,

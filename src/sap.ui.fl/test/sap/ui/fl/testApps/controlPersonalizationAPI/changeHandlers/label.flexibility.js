@@ -13,8 +13,7 @@ sap.ui.define([
 				applyChange: function(oChange, oControl) {
 					oControl.setText(oControl.getText() + " X");
 				},
-				completeChangeContent: function(oChange) {
-					oChange;
+				completeChangeContent: function() {
 				},
 				revertChange: function(oChange, oControl) {
 					var sText = oControl.getText();

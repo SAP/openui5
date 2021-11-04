@@ -232,6 +232,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {sap.ui.fl.Change} mPropertyBag.change - Change instance
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
+	 * @returns {sap.ui.fl.Change} The change instance
 	 *
 	 * @private
 	 * @ui5-restricted

@@ -52,9 +52,9 @@ sap.ui.define([
 	}
 
 	function buildSectionMap(mCompSection, sSubSection, mCompVariants) {
-		var oClass = sSubSection === "variants" ? CompVariant : UpdatableChange;
+		var Class = sSubSection === "variants" ? CompVariant : UpdatableChange;
 		var aFlexObjects = mCompSection[sSubSection].map(function (oCompVariantChangeDefinition) {
-			var oFlexObject = new oClass(oCompVariantChangeDefinition);
+			var oFlexObject = new Class(oCompVariantChangeDefinition);
 			oFlexObject.setState(States.PERSISTED); // prevent persisting these anew
 			return oFlexObject;
 		});

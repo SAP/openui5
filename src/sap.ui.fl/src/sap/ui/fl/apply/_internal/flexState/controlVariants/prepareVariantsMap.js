@@ -335,7 +335,7 @@ sap.ui.define([
 	/**
 	 * Prepares the variants map from the flex response for the passed flex state
 	 *
-	 * @param {object} mPropertyBag
+	 * @param {object} mPropertyBag - Property bag
 	 * @param {object} mPropertyBag.storageResponse - Filtered flex response
 	 * @param {object} mPropertyBag.unfilteredStorageResponse - Unfiltered flex response
 	 * @param {string} mPropertyBag.componentId - Component id

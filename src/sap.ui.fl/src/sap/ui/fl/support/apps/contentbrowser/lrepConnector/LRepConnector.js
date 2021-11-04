@@ -23,11 +23,11 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	/**
 	 * Gets content from the layered repository.
 	 *
-	 * @param {String} sLayer - determines the layer for obtaining the content
-	 * @param {String} sContentSuffix - namespace plus filename and file type of content
-	 * @param {boolean} bReadContextMetadata - read content plus metadata information
-	 * @param {boolean} bReadRuntimeContext - gets the content in runtime instead of design time
-	 * @param {boolean} bRequestAsText - gets content data as plain text
+	 * @param {string} sLayer - Determines the layer for obtaining the content
+	 * @param {string} sContentSuffix - Namespace plus filename and file type of content
+	 * @param {boolean} bReadContextMetadata - Read content plus metadata information
+	 * @param {boolean} bReadRuntimeContext - Gets the content in runtime instead of design time
+	 * @param {boolean} bRequestAsText - Gets content data as plain text
 	 * @returns {Promise} Promise of GET content request to the back end
 	 * @public
 	 */
@@ -49,13 +49,13 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	/**
 	 * Saves a file to the layered repository.
 	 *
-	 * @param {String} sLayer - determines the layer for saving the content
-	 * @param {String} sNamespace - namespace of the file
-	 * @param {String} sFilename - name of the file
-	 * @param {String} sFileType - type of the file
-	 * @param {String} sContent - content of the file saved to the layered repository
-	 * @param [String] sTransportId - id of an ABAP transport or ATO_NOTIFICATION
-	 * @param [String] sPackageName - name of an ABAP package
+	 * @param {string} sLayer - Determines the layer for saving the content
+	 * @param {string} sNamespace - Namespace of the file
+	 * @param {string} sFilename - Name of the file
+	 * @param {string} sFileType - Type of the file
+	 * @param {string} sContent - Content of the file saved to the layered repository
+	 * @param {string} sTransportId - ID of an ABAP transport or ATO_NOTIFICATION
+	 * @param {string} sPackageName - Name of an ABAP package
 	 * @returns {Promise} Promise of the SAVE content request to the back end
 	 * @public
 	 */
@@ -78,11 +78,11 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	/**
 	 * Deletes a file from the layered repository.
 	 *
-	 * @param {String} sLayer - determines the layer for deleting the content
-	 * @param {String} sNamespace - namespace of the file
-	 * @param {String} sFileName - name of the file
-	 * @param {String} sFileType - type of the file
-	 * @param [String] sTransportId - id of the ABAP transport or ATO_NOTIFICATION
+	 * @param {string} sLayer - Determines the layer for deleting the content
+	 * @param {string} sNamespace - Namespace of the file
+	 * @param {string} sFileName - Name of the file
+	 * @param {string} sFileType - Type of the file
+	 * @param {string} sTransportId - ID of the ABAP transport or ATO_NOTIFICATION
 	 * @returns {Promise} Promise of DELETE content request to the back end
 	 * @public
 	 */
@@ -139,8 +139,8 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	/**
 	 * Get layer suffix for request URL;
 	 * If all layers are selected, the layer suffix is empty.
-	 * @param {String} sLayer - normal layer plus 'All'
-	 * @returns {String} correct layer suffix
+	 * @param {string} sLayer - Normal layer plus 'All'
+	 * @returns {string} Correct layer suffix
 	 * @private
 	 */
 	LrepConnector._getLayerSuffix = function (sLayer) {
@@ -152,8 +152,8 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 
 	/**
 	 * Get changelist suffix for request URL;
-	 * @param {String} sChangeList - transport id
-	 * @returns {String} correct changelist suffix
+	 * @param {string} sChangeList - Transport ID
+	 * @returns {string} Correct changelist suffix
 	 * @private
 	 */
 	LrepConnector._getChangeListSuffix = function (sChangeList) {
@@ -162,8 +162,8 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 
 	/**
 	 * Get package suffix for request URL;
-	 * @param {String} sPackage - package name
-	 * @returns {String} correct package suffix
+	 * @param {string} sPackage - Package name
+	 * @returns {string} Correct package suffix
 	 * @private
 	 */
 	LrepConnector._getPackageSuffix = function (sPackage) {
@@ -173,10 +173,10 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	/**
 	 * Get context suffix for request URL.
 	 *
-	 * @param {String} sLayerSuffix - layer suffix based on selected layer
-	 * @param {boolean} bReadRuntimeContext - gets content in runtime instead of design time
-	 * @param {boolean} bReadContextMetadata - reads content plus metadata information
-	 * @returns {String} correct context suffix for URL request
+	 * @param {string} sLayerSuffix - Layer suffix based on selected layer
+	 * @param {boolean} bReadRuntimeContext - Gets content in runtime instead of design time
+	 * @param {boolean} bReadContextMetadata - Reads content plus metadata information
+	 * @returns {string} Correct context suffix for URL request
 	 * @private
 	 */
 	LrepConnector._getContextSuffix = function (sLayerSuffix, bReadRuntimeContext, bReadContextMetadata) {
@@ -195,9 +195,9 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	/**
 	 * Reports an error during back-end request.
 	 *
-	 * @param {Object} oJqXHR - "jqXHR " object which is returned from ajax request
-	 * @param {String} sTextStatus - status text of the error
-	 * @param {Object} oErrorThrown - object which containing the error description
+	 * @param {object} oJqXHR - <code>jqXHR</code> object which is returned from ajax request
+	 * @param {string} sTextStatus - Status text of the error
+	 * @param {object} oErrorThrown - Object that contains the error description
 	 * @private
 	 */
 	LrepConnector._reportError = function (oJqXHR, sTextStatus, oErrorThrown) {
@@ -209,10 +209,10 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	/**
 	 * Sends a GET content request to the back end.
 	 *
-	 * @param {String} sUrl - request URL
-	 * @param {Function} fnResolve - callback function if request was resolved
-	 * @param {Function} fnReject - callback function if request was rejected
-	 * @param {boolean} bRequestAsText - sends ajax request with data type as plain text
+	 * @param {string} sUrl - Request URL
+	 * @param {function} fnResolve - Callback function if request was resolved
+	 * @param {function} fnReject - Callback function if request was rejected
+	 * @param {boolean} bRequestAsText - Sends ajax request with data type as plain text
 	 * @private
 	 */
 	LrepConnector._sendContentRequest = function (sUrl, fnResolve, fnReject, bRequestAsText) {
@@ -237,11 +237,10 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	/**
 	 * Gets the token and sends an updating request.
 	 *
-	 * @param {String} sUrl - request URL
-	 * @param {Object} oData - data for PUT request
-	 * @param {Function} fnResolve - callback function if request was resolved
-	 * @param {Function} fnReject - callback function if request was rejected
-	 * @param {Function} fnReject - callback function if request was rejected
+	 * @param {string} sUrl - Request URL
+	 * @param {object} oData - Data for PUT request
+	 * @param {function} fnResolve - Callback function if request was resolved
+	 * @param {function} fnReject - Callback function if request was rejected
 	 * @private
 	 */
 	LrepConnector._getTokenAndSendPutRequest = function (sUrl, oData, fnResolve, fnReject) {
@@ -254,11 +253,11 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	/**
 	 * Sends PUT content request to the back end.
 	 *
-	 * @param {Object} oXcsrfToken - token object
-	 * @param {String} sUrl - request URL
-	 * @param {Object} oData - data of PUT request
-	 * @param {Function} fnResolve - callback function if request was resolved
-	 * @param {Function} fnReject - callback function if request was rejected
+	 * @param {object} oXcsrfToken - Token object
+	 * @param {string} sUrl - Request URL
+	 * @param {object} oData - Data of PUT request
+	 * @param {function} fnResolve - Callback function if request was resolved
+	 * @param {function} fnReject - Callback function if request was rejected
 	 * @private
 	 */
 	LrepConnector._sendPutRequest = function (oXcsrfToken, sUrl, oData, fnResolve, fnReject) {
@@ -284,9 +283,9 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	/**
 	 * Gets token and sends DELETE content request to the back end.
 	 *
-	 * @param {String} sUrl - request URL
-	 * @param {Function} fnResolve - callback function if request was resolved
-	 * @param {Function} fnReject - callback function if request was rejected
+	 * @param {string} sUrl - Request URL
+	 * @param {function} fnResolve - Callback function if request was resolved
+	 * @param {function} fnReject - Callback function if request was rejected
 	 * @private
 	 */
 	LrepConnector._getTokenAndSendDeletionRequest = function (sUrl, fnResolve, fnReject) {
@@ -299,10 +298,10 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	/**
 	 * Sends DELETE request to the back end.
 	 *
-	 * @param {Object} oXcsrfToken - token object
-	 * @param {String} sUrl - request URL
-	 * @param {Function} fnResolve - callback function if request was resolved
-	 * @param {Function} fnReject - callback function if request was rejected
+	 * @param {object} oXcsrfToken - Token object
+	 * @param {string} sUrl - Request URL
+	 * @param {function} fnResolve - Callback function if request was resolved
+	 * @param {function} fnReject - Callback function if request was rejected
 	 * @private
 	 */
 	LrepConnector._sendDeletionRequest = function (oXcsrfToken, sUrl, fnResolve, fnReject) {
