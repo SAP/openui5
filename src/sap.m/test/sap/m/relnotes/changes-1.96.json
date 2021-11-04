@@ -653,5 +653,21 @@
         ]
       }
     ]
+  },
+  "1.96.1": {
+    "date": "November 2021",
+    "notes": [
+      {
+        "id": "58ef9ab8eaaf25a8f4bf28c72aada43e5438288a",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Stop infinite spin on Android",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007623142021"
+          }
+        ]
+      }
+    ]
   }
 }
