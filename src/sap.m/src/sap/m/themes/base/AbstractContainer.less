@@ -15,3 +15,18 @@
 .sapUiMAbstractContainerContent .wrapperDefaultList .sapMLIB{
     padding: 1.5rem;
 }
+
+.sapMAbstractContainer .sapMPage {
+	display: flex;
+	flex-direction: column;
+
+	&>section {
+		flex-grow: 1;
+		position: unset;
+		top: 0;
+	}
+
+	>footer:not(.sapUiHidden) {
+		position: relative;
+	}
+}

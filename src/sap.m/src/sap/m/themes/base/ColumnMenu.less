@@ -1,0 +1,41 @@
+/* ======================================= */
+/* CSS for control sap.m/table/ColumnMenu  */
+/* Base theme                              */
+/* ======================================= */
+
+.sapMTCMenu {
+
+}
+
+.sapMTCMenu.sapMWrapper {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+
+	.sapMContainerWrapper {
+		height: 100%;
+		overflow: hidden;
+	}
+}
+
+.sapMTCMenu .sapMTQAList{
+	display: grid;
+	grid-template-columns: minmax(min-content, max-content) 2fr;
+	column-gap: 10px;
+	row-gap: 5px;
+	padding: .5rem 1rem .5rem 1rem;
+}
+
+.sapMTCMenu .sapMTQAListHidden {
+	display: none;
+}
+
+.sapMTCMenu .sapMTQAList .sapMQAction {
+	display: contents;
+
+	.sapMQALabel {
+		justify-self: end;
+		align-self: center;
+		text-align: end;
+	}
+}

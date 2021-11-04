@@ -96,6 +96,40 @@ sap.ui.define([
 					multiple: false,
 					hidden: true
 				}
+			},
+			events: {
+				/**
+				 * This event will be fired before a view is switched.
+				 */
+				beforeViewSwitch: {
+					allowPreventDefault: true,
+					parameters: {
+						/**
+						 * This parameter is the current view.
+						 */
+						 source: {type: "string"},
+						 /**
+						  * This parameter is the target view.
+						  */
+						 target: {type: "string"}
+					}
+				},
+				/**
+				 * This event will be fired after a view is switched.
+				 */
+				afterViewSwitch: {
+					allowPreventDefault: true,
+					parameters: {
+						/**
+						 * This parameter is the current view.
+						 */
+						source: {type: "string"},
+						/**
+						 * This parameter is the target view.
+						 */
+						target: {type: "string"}
+					}
+				}
 			}
 		},
 		renderer: {
@@ -112,6 +146,7 @@ sap.ui.define([
 
 	AbstractContainer.prototype.init = function() {
 		Control.prototype.init.apply(this, arguments);
+		this.addStyleClass("sapMAbstractContainer");
 		this._initializeContent();
 	};
 
@@ -185,9 +220,7 @@ sap.ui.define([
 	 * @param {string} sKey The key of the ContainerItem whose content should be visible up next
 	 */
 	AbstractContainer.prototype.switchView = function(sKey) {
-
 		var oNewView = this.getView(sKey);
-
 		if (!oNewView) {
 			oNewView = this.getViews()[0];
 			if (!oNewView) {
@@ -195,10 +228,20 @@ sap.ui.define([
 			}
 		}
 
+		if (!this.fireBeforeViewSwitch({source: sCurrentViewKey, target: sKey})) {
+			this._bPrevented = true;
+			return; // view switch event was prevented by event handler.
+		}
+
+		this._bPrevented = false;
+		var sCurrentViewKey = this.getCurrentViewKey();
+
 		this._sCurrentView = oNewView.getKey();
 
 		this.oLayout.removeAllContent();
 		this.oLayout.addContent(oNewView.getContent());
+
+		this.fireAfterViewSwitch({source: sCurrentViewKey, target: sKey});
 	};
 
 	/**

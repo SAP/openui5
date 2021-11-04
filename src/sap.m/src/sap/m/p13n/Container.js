@@ -11,8 +11,10 @@ sap.ui.define([
 	"sap/m/p13n/AbstractContainerItem",
 	"sap/ui/Device",
 	"sap/m/library",
-	"sap/m/StandardListItem"
-], function (AbstractContainer, Bar, Button, List, IconTabBar, IconTabFilter, ContainerItem, Device, mLibrary, StandardListItem) {
+	"sap/m/StandardListItem",
+	"sap/m/CustomListItem",
+	"sap/ui/core/Control"
+], function (AbstractContainer, Bar, Button, List, IconTabBar, IconTabFilter, ContainerItem, Device, mLibrary, StandardListItem, CustomListItem, Control) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -126,15 +128,28 @@ sap.ui.define([
 	 */
 	Container.prototype.switchView = function (sKey) {
 		AbstractContainer.prototype.switchView.apply(this, arguments);
+		if (this._bPrevented) {
+			return;
+		}
 		var oParent = this.getParent();
 		if (oParent && oParent.isA("sap.ui.core.Control")){
 			oParent.focus();
 			oParent.invalidate();
+
+			// invalidate dependents as well
+			var aDependents = oParent.getDependents();
+			if (aDependents) {
+				aDependents.forEach(function (oDependent) {
+					if (oDependent && oDependent.isA("sap.ui.core.Control")) {
+						oDependent.invalidate();
+					}
+				});
+			}
 		}
 		this.oLayout.setShowHeader(sKey !== this.DEFAULT_KEY); //Don't show header in default view (avoid empty space),
 		this._getTabBar().setSelectedKey(sKey);
 		this._getNavBackBtn().setVisible(sKey !== this.DEFAULT_KEY);
-		this._getNavBackBtn().setText(sKey);
+		this._getNavBackBtn().setText((this.getView(sKey) && this.getView(sKey).getText()) || sKey);
 	};
 
 	/**
@@ -152,6 +167,23 @@ sap.ui.define([
 	Container.prototype.removeView = function (oContainerItem) {
 		AbstractContainer.prototype.removeView.apply(this, arguments);
 		this._removeFromNavigator(oContainerItem);
+	};
+
+	/*
+	 * This method can be used to add a separator line to the last added item.
+	 * This will only take effect in the "list" mode.
+	 *
+	 * @returns {sap.m.p13n.Container} The Container instance
+	 */
+	Container.prototype.addSeparator = function () {
+		if (!this.getProperty("listLayout")) {
+			return;
+		}
+
+		var oItems = this._getNavigationList().getItems();
+		var oLastItem = oItems[oItems.length - 1];
+		oLastItem.addStyleClass("sapMMenuDivider");
+
 		return this;
 	};
 
