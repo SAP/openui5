@@ -76,8 +76,6 @@ sap.ui.define([
 
 		/**
 		 * Returns a tree state handle to encapsulate the actual tree state.
-		 * TODO: Encode the list to avoid conflicts with delimiters in the flat expanded list?
-		 *       Re-Check this when back-end support is implemented.
 		 *
 		 * This function is exposed in the sub-classes/adapters (e.g. ODataTreeBindingAdapter) if
 		 * necessary/possible.
